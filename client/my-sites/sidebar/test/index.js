@@ -60,9 +60,9 @@ describe( 'MySitesSidebar', () => {
 			expect( isSelected ).toBe( false );
 		} );
 
-		test( 'clicking a marketing panel should activate the marketing/tools menu', () => {
+		test( 'clicking a marketing panel should activate the marketing menu', () => {
 			const isSelected = itemLinkMatches(
-				'/marketing/tools/example.wordpress.com',
+				'/marketing/sharing-buttons/example.wordpress.com',
 				'/marketing/connections/cpapfree.wordpress.com'
 			);
 

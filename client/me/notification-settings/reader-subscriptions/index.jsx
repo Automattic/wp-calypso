@@ -332,13 +332,13 @@ class NotificationSubscriptions extends Component {
 								{ this.props.deliveryWindowIsUtcFallback || ! this.props.deliveryWindowTimezone
 									? this.props.translate(
 											"We couldn't detect your time zone, so these times are shown in UTC."
-									  )
+										)
 									: this.props.translate(
 											'Times are shown in your local time zone (%(timezone)s).',
 											{
 												args: { timezone: this.props.deliveryWindowTimezone },
 											}
-									  ) }
+										) }
 							</FormSettingExplanation>
 						</FormFieldset>
 

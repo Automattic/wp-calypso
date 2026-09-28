@@ -29,8 +29,8 @@ const useAddOnPurchaseStatus = ( { addOnMeta, selectedSiteId }: Props ): AddOnPu
 		productSlug: addOnMeta.productSlug,
 	} );
 	const siteFeatures = Site.useSiteFeatures( { siteIdOrSlug: selectedSiteId } );
-	const isSiteFeature = addOnMeta.featureSlugs?.find(
-		( slug ) => siteFeatures.data?.active?.includes( slug )
+	const isSiteFeature = addOnMeta.featureSlugs?.find( ( slug ) =>
+		siteFeatures.data?.active?.includes( slug )
 	);
 
 	/**

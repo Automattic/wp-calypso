@@ -74,8 +74,9 @@ export default function IssueLicense( { selectedSite, suggestedProduct }: Assign
 		return Object.values(
 			selectedLicenses.reduce(
 				( acc: Record< string, SelectedLicenseProp[] >, license ) => (
-					( acc[ license.slug ] = ( acc[ license.slug ] || [] ).concat( license ) ), acc
-				),
+					( acc[ license.slug ] = ( acc[ license.slug ] || [] ).concat( license ) ),
+					acc
+				 ),
 				{}
 			)
 		)
@@ -105,8 +106,9 @@ export default function IssueLicense( { selectedSite, suggestedProduct }: Assign
 			? translate( 'Single license' )
 			: ( translate( '%(size)d licenses', { args: { size: selectedSize } } ) as string );
 
-	const selectedCount = selectedLicenses.filter( ( license ) => license.quantity === selectedSize )
-		?.length;
+	const selectedCount = selectedLicenses.filter(
+		( license ) => license.quantity === selectedSize
+	)?.length;
 
 	const navItems = availableSizes.map( ( size ) => {
 		const count = selectedLicenses.filter( ( license ) => license.quantity === size ).length;
@@ -116,7 +118,7 @@ export default function IssueLicense( { selectedSite, suggestedProduct }: Assign
 					? translate( 'Single license' )
 					: ( translate( '%(size)d licenses', {
 							args: { size },
-					  } ) as string ),
+						} ) as string ),
 			selected: selectedSize === size,
 			onClick: () => {
 				setSelectedSize( size );

@@ -120,7 +120,7 @@ export default async function blikProcessor(
 						? translate( 'BLIK code expired. Please try again.' )
 						: translate(
 								'Payment cancelled. If you have already approved the payment in your banking app, the payment may still go through. Please check your account before trying again.'
-						  );
+							);
 				},
 			} );
 

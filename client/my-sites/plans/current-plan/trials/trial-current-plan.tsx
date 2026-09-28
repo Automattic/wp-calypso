@@ -36,7 +36,7 @@ const TrialCurrentPlan = () => {
 	const isMobile = useMediaQuery( '(max-width: 480px)' );
 	const displayAllIncluded = ! isMobile || showAllTrialFeaturesInMobileView;
 	const bodyClass = isEcommerceTrial ? [ 'is-ecommerce-trial-plan' ] : [ 'is-business-trial-plan' ];
-	const isWooExpressTrial = purchase?.isWooExpressTrial;
+	const isWooExpressTrial = purchase?.is_woo_express_trial;
 
 	useOneDollarOfferTrack( selectedSite?.ID, 'plans' );
 

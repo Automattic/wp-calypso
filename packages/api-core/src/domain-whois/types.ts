@@ -37,6 +37,12 @@ export type DomainContactValidationRequestExtraFields = {
 		nexus_declaration?: boolean;
 		nexus_connection_type?: string;
 	};
+	es?: {
+		registrant_entity_type?: string;
+		registrant_identification_number?: string;
+		admin_identification_number?: string;
+		red_es_agreement_accepted?: boolean;
+	};
 	is_for_business?: boolean;
 };
 
@@ -82,6 +88,12 @@ export type ContactValidationResponseMessagesExtra = {
 		nexus_declaration?: string[];
 		nexus_connection_type?: string[];
 	};
+	es?: {
+		registrant_entity_type?: string[];
+		registrant_identification_number?: string[];
+		admin_identification_number?: string[];
+		red_es_agreement_accepted?: string[];
+	};
 	is_for_business?: boolean;
 };
 
@@ -118,6 +130,7 @@ export type DomainContactDetailsExtra = {
 	uk?: UkDomainContactExtraDetails | null;
 	fr?: FrDomainContactExtraDetails | null;
 	in?: InDomainContactExtraDetails | null;
+	es?: EsDomainContactExtraDetails | null;
 };
 
 export type CaDomainContactExtraDetails = {
@@ -150,6 +163,13 @@ export type WhoisContactExtra = Record< string, string >;
 export type InDomainContactExtraDetails = {
 	nexusDeclaration?: boolean;
 	nexusConnectionType?: string;
+};
+
+export type EsDomainContactExtraDetails = {
+	registrantEntityType?: string;
+	registrantIdentificationNumber?: string;
+	adminIdentificationNumber?: string;
+	redEsAgreementAccepted?: boolean;
 };
 
 export interface WhoisDataEntry {

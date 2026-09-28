@@ -8,7 +8,9 @@ import type { Task } from '../types';
 
 jest.mock( '@automattic/calypso-analytics' );
 
-jest.mock( '@automattic/data-stores', () => {
+jest.mock( '../use-launchpad', () => {
+	// jest.mock factories are hoisted above imports, so the fixture has to be required here.
+	// eslint-disable-next-line @typescript-eslint/no-require-imports
 	const { buildTask } = require( './lib/fixtures' );
 	return {
 		useLaunchpad: jest.fn( () => {

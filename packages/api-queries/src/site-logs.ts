@@ -17,4 +17,5 @@ export const siteLogsInfiniteQuery = ( siteId: number, params: SiteLogsParams ) 
 		},
 		staleTime: Infinity,
 		enabled: params.start <= params.end,
+		meta: { persist: false },
 	} );

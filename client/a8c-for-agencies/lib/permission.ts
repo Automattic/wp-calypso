@@ -182,8 +182,8 @@ export const isPathAllowed = ( pathname: string, agency: Agency | null ) => {
 		for ( const [ key, pattern ] of Object.entries( DYNAMIC_PATH_PATTERNS ) ) {
 			if ( pattern.test( pathname ) ) {
 				const dynamicPermissions = MEMBER_ACCESSIBLE_DYNAMIC_PATHS[ key ];
-				return capabilities.some(
-					( capability: string ) => dynamicPermissions?.includes( capability )
+				return capabilities.some( ( capability: string ) =>
+					dynamicPermissions?.includes( capability )
 				);
 			}
 		}

@@ -10,8 +10,7 @@ export function useSiteSettings( siteSlug?: SiteSlug ) {
 	const dispatch = useDispatch();
 	const siteId = useSelector( ( state ) => getSiteId( state, siteSlug! ) );
 	const settings = useSelector( ( state ) => siteId && getSiteSettings( state, siteId ) ) as
-		| SiteSettings
-		| undefined;
+		SiteSettings | undefined;
 
 	// Dispatch action to request the site settings.
 	useEffect( () => {

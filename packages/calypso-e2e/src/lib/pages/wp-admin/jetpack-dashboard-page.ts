@@ -1,4 +1,5 @@
 import { Page } from 'playwright';
+import { completeJetpackSso } from './jetpack-sso';
 
 export type DashboardTabs = 'At a Glance' | 'My Plan';
 export type SettingsTabs =
@@ -12,8 +13,7 @@ export type SettingsTabs =
 	| 'Monetize';
 // Discriminated union type.
 type JetpackTabs =
-	| { view: 'Dashboard'; tab: DashboardTabs }
-	| { view: 'Settings'; tab: SettingsTabs };
+	{ view: 'Dashboard'; tab: DashboardTabs } | { view: 'Settings'; tab: SettingsTabs };
 
 /**
  * Represents the Jetpack pages in WP-Admin.
@@ -41,6 +41,7 @@ export class JetpackDashboardPage {
 		await this.page.goto( `https://${ siteSlug }/wp-admin/admin.php?page=jetpack#/dashboard`, {
 			timeout: 15 * 1000,
 		} );
+		await completeJetpackSso( this.page );
 	}
 
 	/**

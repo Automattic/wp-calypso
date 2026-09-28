@@ -101,7 +101,7 @@ const PluginDetailsHeader = ( {
 		? plugin.version
 		: `${ currentVersionsRange?.min || plugin.version }${
 				currentVersionsRange?.max ? ` - ${ currentVersionsRange.max }` : ''
-		  }`;
+			}`;
 
 	return (
 		<div className="plugin-details-header__container">
@@ -131,7 +131,7 @@ const PluginDetailsHeader = ( {
 												</a>
 											),
 										},
-								  } ) }
+									} ) }
 						</span>
 
 						<span className="plugin-details-header__subtitle-separator">·</span>

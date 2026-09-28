@@ -14,7 +14,7 @@ jest.mock( '@wordpress/blocks', () => ( {
 } ) );
 jest.mock( '@wordpress/icons', () => {
 	const { createElement: mockCreateElement } =
-		jest.requireActual< typeof import('@wordpress/element') >( '@wordpress/element' );
+		jest.requireActual< typeof import( '@wordpress/element' ) >( '@wordpress/element' );
 
 	return {
 		check: 'check',
@@ -33,9 +33,9 @@ jest.mock( '@wordpress/icons', () => {
 	};
 } );
 jest.mock( '@wordpress/block-editor', () => {
-	const react = jest.requireActual< typeof import('react') >( 'react' );
+	const react = jest.requireActual< typeof import( 'react' ) >( 'react' );
 	const { RawHTML } =
-		jest.requireActual< typeof import('@wordpress/element') >( '@wordpress/element' );
+		jest.requireActual< typeof import( '@wordpress/element' ) >( '@wordpress/element' );
 	return {
 		BlockIcon: () => react.createElement( 'span', { 'data-testid': 'block-icon' } ),
 		RichText: {

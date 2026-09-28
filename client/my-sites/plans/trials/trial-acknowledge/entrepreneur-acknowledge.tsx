@@ -72,7 +72,7 @@ export const EntrepreneurTrialAcknowledgement = ( {
 	const plan = getPlan( PLAN_ECOMMERCE );
 	const planFeatures =
 		showFeatureList && plan && 'getPlanCompareFeatures' in plan
-			? plan.getPlanCompareFeatures?.() ?? []
+			? ( plan.getPlanCompareFeatures?.() ?? [] )
 			: [];
 
 	return (

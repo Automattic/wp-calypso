@@ -40,11 +40,11 @@ export default function MigrationsCommissionsEmptyState( {
 						/>
 						{ canTagSitesForCommission && (
 							<EmptyState.ActionItem
-								title={ __( 'Tag your transferred sites so we can pay you for them.' ) }
+								title={ __( 'Tag the sites you moved to Automattic so we can pay you for them.' ) }
 								description={
 									<>
 										{ __(
-											'If you transferred sites by yourself, follow these two steps to indicate which ones we should pay you for.'
+											'If you moved sites to Automattic yourself, follow these two steps to indicate which ones we should pay you for.'
 										) }
 										<ol>
 											<li>

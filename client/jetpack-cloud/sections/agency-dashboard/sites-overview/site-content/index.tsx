@@ -27,8 +27,7 @@ const addPageArgs = ( pageNumber: number ) => {
 
 interface Props {
 	data:
-		| { sites: Array< Site >; total: number; perPage: number; totalFavorites: number }
-		| undefined;
+		{ sites: Array< Site >; total: number; perPage: number; totalFavorites: number } | undefined;
 	isLoading: boolean;
 	currentPage: number;
 	isFavoritesTab: boolean;

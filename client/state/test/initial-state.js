@@ -615,7 +615,7 @@ describe( 'loading stored state with dynamic reducers', () => {
 								key.replace( keyPrefixRe, '' ),
 								value,
 							] )
-					  )
+						)
 					: {},
 		} );
 	};

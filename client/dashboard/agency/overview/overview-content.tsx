@@ -1,6 +1,7 @@
-import { __experimentalGrid as Grid, __experimentalVStack as VStack } from '@wordpress/components';
+import { __experimentalVStack as VStack } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
+import Grid from '../../components/grid';
 import { PendingTierCard, RejectedTierCard } from './application-status-cards';
 import EventCard from './event-card';
 import GrowthCard from './growth-card';
@@ -24,6 +25,7 @@ export interface AgencyOverviewLinks {
 	marketplace: string;
 	partnerDirectory: string;
 	contactSupport: string;
+	aiMcp: string;
 	helpful: HelpfulLink[];
 }
 
@@ -37,6 +39,10 @@ export interface AgencyOverviewContentProps {
 	capabilities?: string[];
 	/** Whether the agency already has an approved Partner Directory listing. */
 	hasPartnerDirectoryListing?: boolean;
+	/** Shows the Pressable introductory offer in the news column. */
+	isEligibleForPressableIntroOffer?: boolean;
+	/** Shows the Pressable expansion offer in the news column. */
+	isEligibleForPressableExpansionOffer?: boolean;
 	links: AgencyOverviewLinks;
 	shouldUseRouterLink?: boolean;
 	onScheduleCall?: () => void;
@@ -57,6 +63,8 @@ export default function AgencyOverviewContent( {
 	approvalStatus,
 	capabilities,
 	hasPartnerDirectoryListing,
+	isEligibleForPressableIntroOffer,
+	isEligibleForPressableExpansionOffer,
 	links,
 	shouldUseRouterLink,
 	onScheduleCall,
@@ -74,7 +82,7 @@ export default function AgencyOverviewContent( {
 	const lockedNote = isPending ? __( 'Unlocks when your account is activated' ) : undefined;
 
 	return (
-		<Grid columns={ isSmallViewport ? 1 : 2 } gap={ spacing }>
+		<Grid columns={ isSmallViewport ? 1 : 2 } gap={ isSmallViewport ? 'lg' : 'xl' }>
 			<VStack spacing={ spacing } justify="flex-start">
 				{ isRejected && <RejectedTierCard contactSupportHref={ links.contactSupport } /> }
 				{ isPending && (
@@ -123,8 +131,13 @@ export default function AgencyOverviewContent( {
 				/>
 			</VStack>
 			<VStack spacing={ spacing } justify="flex-start">
-				<EventCard recordTracksEvent={ recordTracksEvent } />
 				<HelpfulLinksCard links={ links.helpful } recordTracksEvent={ recordTracksEvent } />
+				<EventCard
+					isEligibleForPressableIntroOffer={ isEligibleForPressableIntroOffer }
+					isEligibleForPressableExpansionOffer={ isEligibleForPressableExpansionOffer }
+					aiMcpHref={ links.aiMcp }
+					recordTracksEvent={ recordTracksEvent }
+				/>
 			</VStack>
 		</Grid>
 	);

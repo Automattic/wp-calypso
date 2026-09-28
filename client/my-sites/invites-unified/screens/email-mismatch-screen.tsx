@@ -53,10 +53,10 @@ export function EmailMismatchScreen( {
 	const signInButtonLabel = isKnownUser
 		? translate( 'Sign in as %(email)s', {
 				args: { email: inviteSentTo },
-		  } )
+			} )
 		: translate( 'Register as %(email)s', {
 				args: { email: inviteSentTo },
-		  } );
+			} );
 
 	const heading = <Step.Heading text={ title } subText={ description } />;
 	const topBar = <Step.TopBar logo={ topBarLogo } />;

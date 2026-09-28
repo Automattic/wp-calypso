@@ -67,12 +67,12 @@ export default function LogoUploadField( {
 										__( 'Replace %1$s (current: %2$s)' ),
 										label,
 										fileName
-								  )
+									)
 								: sprintf(
 										/* translators: %s is the field label. */
 										__( 'Upload %s' ),
 										label
-								  )
+									)
 						}
 					>
 						{ previewUrl ? (

@@ -162,7 +162,7 @@ export function StackedNotification( { stack, onExpandedChange, getInAppUrl }: P
 	// Stacks share the same target (head member's target/target_url), so we
 	// resolve the in-app URL against the head — `keyFor` guarantees every
 	// member of a like/repost/mention/reply/quote stack shares `target.uri`.
-	const inAppUrl = ! isFollowStack ? getInAppUrl?.( stack.members[ 0 ] ) ?? null : null;
+	const inAppUrl = ! isFollowStack ? ( getInAppUrl?.( stack.members[ 0 ] ) ?? null ) : null;
 
 	const firstActor = stack.members[ 0 ].actor.display_name || stack.members[ 0 ].actor.handle;
 	const secondActor = stack.members[ 1 ]

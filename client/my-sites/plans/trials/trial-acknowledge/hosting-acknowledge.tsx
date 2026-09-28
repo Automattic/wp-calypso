@@ -71,7 +71,7 @@ export const HostingTrialAcknowledgement = ( {
 	const plan = getPlan( PLAN_BUSINESS );
 	const planFeatures =
 		showFeatureList && plan && 'getPlanCompareFeatures' in plan
-			? plan.getPlanCompareFeatures?.() ?? []
+			? ( plan.getPlanCompareFeatures?.() ?? [] )
 			: [];
 
 	return (

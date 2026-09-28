@@ -54,13 +54,13 @@ export default function useStagingSite( site: Site ) {
 	const { data: stagingSite } = useQuery( {
 		...siteByIdQuery( stagingSiteId ?? 0 ),
 		refetchInterval: ( query ) => {
-			if ( ! query.state.data ) {
+			if ( ! query.state.data || transferStatus !== 'completed' ) {
 				return 0;
 			}
 
 			return isAtomicTransferredSite( query.state.data ) ? false : 2000;
 		},
-		enabled: !! stagingSiteId && transferStatus === 'completed',
+		enabled: !! stagingSiteId,
 	} );
 
 	const { data: isStagingSiteDeleting } = useQuery( {
@@ -244,6 +244,7 @@ export default function useStagingSite( site: Site ) {
 
 	return {
 		productionSite,
+		stagingSiteId,
 		stagingSite,
 		isStagingSiteCreating: !! isStagingSiteCreating,
 		isStagingSiteDeleting: !! isStagingSiteDeleting,

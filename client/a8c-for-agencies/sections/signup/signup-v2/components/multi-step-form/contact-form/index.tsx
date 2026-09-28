@@ -6,6 +6,7 @@ import {
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import Form from 'calypso/a8c-for-agencies/components/form';
@@ -118,11 +119,16 @@ const SignupContactForm = ( { onContinue, initialFormData, withEmail = false }: 
 			},
 		} ) );
 		setPhoneCountryCode( data.phoneNumber && data.countryData?.code ? data.countryData.code : '' );
+		updateValidationError( { phoneNumber: undefined } );
 	};
 
 	const dataToContinue: Partial< AgencyDetailsSignupPayload > = useMemo(
-		() => ( phoneCountryCode ? { ...formData, country: phoneCountryCode } : formData ),
-		[ formData, phoneCountryCode ]
+		() => ( {
+			...formData,
+			...( phoneCountryCode ? { country: phoneCountryCode } : {} ),
+			...( showInternalFlags ? { skip_hubspot: skipHubspot } : {} ),
+		} ),
+		[ formData, phoneCountryCode, showInternalFlags, skipHubspot ]
 	);
 
 	const handleInputChange =
@@ -154,7 +160,7 @@ const SignupContactForm = ( { onContinue, initialFormData, withEmail = false }: 
 			if ( isDeniedNonUniqueDomain( agencyUrl, nonUniqueDomains ) ) {
 				dispatch(
 					recordTracksEvent( 'calypso_a4a_agency_signup_form_non_unique_domain_skipped', {
-						agencyUrl,
+						agency_url: agencyUrl,
 					} )
 				);
 				setIsProceeding( false );
@@ -173,7 +179,7 @@ const SignupContactForm = ( { onContinue, initialFormData, withEmail = false }: 
 						recordTracksEvent(
 							'calypso_a4a_agency_signup_form_duplicate_agency_warning_dialog_view',
 							{
-								agencyUrl,
+								agency_url: agencyUrl,
 							}
 						)
 					);
@@ -206,12 +212,8 @@ const SignupContactForm = ( { onContinue, initialFormData, withEmail = false }: 
 	const handleBypass = useCallback( () => {
 		dispatch( recordTracksEvent( 'calypso_a4a_agency_signup_form_internal_flags_bypass_clicked' ) );
 		setShowDuplicateModal( false );
-		onContinue( {
-			...dataToContinue,
-			bypass_duplicate_check: true,
-			skip_hubspot: skipHubspot,
-		} as Partial< AgencyDetailsSignupPayload > );
-	}, [ dispatch, dataToContinue, onContinue, skipHubspot ] );
+		onContinue( { ...dataToContinue, bypass_duplicate_check: true } );
+	}, [ dispatch, dataToContinue, onContinue ] );
 
 	const handleSkipHubspotToggle = useCallback(
 		( checked: boolean ) => {
@@ -251,6 +253,23 @@ const SignupContactForm = ( { onContinue, initialFormData, withEmail = false }: 
 		);
 	};
 
+	const internalFlagsFields = (
+		<>
+			<Text>
+				<strong>{ translate( 'Internal Flags' ) }</strong>
+			</Text>
+			<Text className="signup-contact-form__internal-flags-reason">
+				<em>{ getInternalFlagsReason() }</em>
+			</Text>
+			<CheckboxControl
+				__nextHasNoMarginBottom
+				label={ translate( "Don't send this signup to HubSpot" ) }
+				checked={ skipHubspot }
+				onChange={ handleSkipHubspotToggle }
+			/>
+		</>
+	);
+
 	return (
 		<Form
 			className="signup-contact-form"
@@ -262,7 +281,7 @@ const SignupContactForm = ( { onContinue, initialFormData, withEmail = false }: 
 					'Join %(agencyCount)s agencies and grow your business with {{span}}Automattic for Agencies.{{/span}} Get access to site management, earn commission on referrals, and explore our tier program to launch your business potential.',
 					{
 						args: {
-							agencyCount: '8,000+',
+							agencyCount: '10,000+',
 						},
 						components: {
 							span: <span className="signup-contact-form__a4a-span" />,
@@ -356,21 +375,33 @@ const SignupContactForm = ( { onContinue, initialFormData, withEmail = false }: 
 
 			{ noCountryList && <QuerySmsCountries /> }
 
-			<FormPhoneInput
-				isDisabled={ noCountryList }
-				countriesList={ countriesList }
-				onChange={ handlePhoneInputChange }
-				className="contact-form__phone-input"
-				phoneInputProps={ {
-					id: 'phone_number',
-					placeholder: translate( 'Phone number' ),
-				} }
-				countrySelectProps={ {
-					id: 'country_code',
-				} }
-				initialCountryCode={ initialFormData.phone?.countryCode || 'US' }
-				initialPhoneNumber={ initialFormData.phone?.phoneNumber }
-			/>
+			<div>
+				<FormPhoneInput
+					isDisabled={ noCountryList }
+					countriesList={ countriesList }
+					onChange={ handlePhoneInputChange }
+					className="contact-form__phone-input"
+					phoneInputProps={ {
+						id: 'phone_number',
+						placeholder: translate( 'Phone number' ),
+					} }
+					countrySelectProps={ {
+						id: 'country_code',
+					} }
+					initialCountryCode={ initialFormData.phone?.countryCode || 'US' }
+					initialPhoneNumber={ initialFormData.phone?.phoneNumber }
+				/>
+				<div
+					className={ clsx( 'a4a-form__error', { hidden: ! validationError.phoneNumber } ) }
+					role="alert"
+				>
+					{ validationError.phoneNumber }
+				</div>
+			</div>
+
+			{ showInternalFlags && (
+				<div className="signup-contact-form__internal-flags">{ internalFlagsFields }</div>
+			) }
 
 			<div className="signup-contact-form__tos">
 				<p>
@@ -431,18 +462,7 @@ const SignupContactForm = ( { onContinue, initialFormData, withEmail = false }: 
 
 						{ showInternalFlags && (
 							<div className="signup-contact-form__internal-flags">
-								<Text>
-									<strong>{ translate( 'Internal Flags' ) }</strong>
-								</Text>
-								<Text className="signup-contact-form__internal-flags-reason">
-									<em>{ getInternalFlagsReason() }</em>
-								</Text>
-								<CheckboxControl
-									__nextHasNoMarginBottom
-									label={ translate( "Don't send this signup to HubSpot" ) }
-									checked={ skipHubspot }
-									onChange={ handleSkipHubspotToggle }
-								/>
+								{ internalFlagsFields }
 								<Button variant="secondary" onClick={ handleBypass }>
 									{ translate( 'Bypass and create new agency anyway' ) }
 								</Button>

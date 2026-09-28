@@ -2,9 +2,9 @@
  * @jest-environment jsdom
  */
 
-import { act, render, screen } from '@testing-library/react';
+import { act, fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { SiteGenerationView } from '../view';
+import { SiteGenerationView, TINT_HOLD_MS } from '../view';
 import type { SiteGenerationState, SiteGenerationStep } from '../use-site-generation';
 
 jest.mock( 'i18n-calypso', () => ( {
@@ -23,6 +23,12 @@ const idleState = {
 	retryBuild: null,
 	isRetryingBuild: false,
 };
+
+function fireTransitionEnd( element: HTMLElement, propertyName: string ) {
+	const event = new Event( 'transitionend', { bubbles: true } );
+	Object.defineProperty( event, 'propertyName', { value: propertyName } );
+	fireEvent( element, event );
+}
 
 describe( 'SiteGenerationView progress and fallback states', () => {
 	it( 'shows an accessible elapsed time for the active step and updates it every second', () => {
@@ -157,8 +163,8 @@ describe( 'SiteGenerationView progress and fallback states', () => {
 		);
 
 		expect(
-			getAllByRole( 'status' ).some(
-				( region ) => region.textContent?.includes( 'Building the pages' )
+			getAllByRole( 'status' ).some( ( region ) =>
+				region.textContent?.includes( 'Building the pages' )
 			)
 		).toBe( false );
 	} );
@@ -173,6 +179,31 @@ const failedState: SiteGenerationState = {
 	retryBuild: jest.fn(),
 	isRetryingBuild: false,
 };
+
+describe( 'SiteGenerationView wait estimate', () => {
+	const workingState: SiteGenerationState = {
+		...idleState,
+		status: 'working',
+		steps: [ { id: 'prepare', label: 'Preparing your site', status: 'active' } ],
+	};
+
+	it( 'promises up to 4 minutes on the DSL graph', () => {
+		render( <SiteGenerationView graph="dsl" onReload={ jest.fn() } state={ workingState } /> );
+
+		expect( screen.getByText( /This can take up to 4 minutes\./ ) ).toBeInTheDocument();
+	} );
+
+	it.each( [ 'blocks-first' as const, undefined ] )(
+		'promises up to 10 minutes when the graph is %s',
+		( graph ) => {
+			render(
+				<SiteGenerationView graph={ graph } onReload={ jest.fn() } state={ workingState } />
+			);
+
+			expect( screen.getByText( /This can take up to 10 minutes\./ ) ).toBeInTheDocument();
+		}
+	);
+} );
 
 describe( 'SiteGenerationView server recovery', () => {
 	it( 'renders the server failure copy and starts the rebuild', async () => {
@@ -225,5 +256,68 @@ describe( 'SiteGenerationView server recovery', () => {
 		);
 
 		expect( screen.getByRole( 'button', { name: 'Start again' } ) ).toBeDisabled();
+	} );
+} );
+
+describe( 'SiteGenerationView canvas tint', () => {
+	const workingState: SiteGenerationState = {
+		...idleState,
+		status: 'working',
+		steps: [ { id: 'preparing', label: 'Preparing the site', status: 'active' } ],
+	};
+
+	it( 'tints the canvas with a new hue on every tap of the preview', () => {
+		const { container } = render(
+			<SiteGenerationView onReload={ jest.fn() } state={ workingState } />
+		);
+		const editor = screen.getByRole( 'region', { name: 'Site generation' } );
+		const preview = container.querySelector( '.site-generation__page-preview' ) as HTMLElement;
+
+		expect( editor ).toHaveAttribute( 'data-tinted', 'false' );
+		expect( container.querySelector( '.site-generation__tint' ) ).toBeNull();
+
+		fireEvent.pointerUp( preview );
+
+		const firstHue = editor.style.getPropertyValue( '--site-generation-hue' );
+		expect( editor ).toHaveAttribute( 'data-tinted', 'true' );
+		expect( firstHue ).not.toBe( '' );
+		expect( container.querySelector( '.site-generation__tint' ) ).toBeVisible();
+
+		fireEvent.pointerUp( preview );
+
+		expect( editor ).toHaveAttribute( 'data-tinted', 'true' );
+		expect( editor.style.getPropertyValue( '--site-generation-hue' ) ).not.toBe( firstHue );
+	} );
+
+	it( 'holds the tint, then fades it back to the default palette', () => {
+		jest.useFakeTimers();
+
+		try {
+			const { container } = render(
+				<SiteGenerationView onReload={ jest.fn() } state={ workingState } />
+			);
+			const editor = screen.getByRole( 'region', { name: 'Site generation' } );
+			const preview = container.querySelector( '.site-generation__page-preview' ) as HTMLElement;
+
+			fireEvent.pointerUp( preview );
+			act( () => jest.advanceTimersByTime( TINT_HOLD_MS - 1 ) );
+			expect( editor ).toHaveAttribute( 'data-tinted', 'true' );
+			expect( editor ).toHaveAttribute( 'data-tint-fading', 'false' );
+
+			act( () => jest.advanceTimersByTime( 1 ) );
+			expect( editor ).toHaveAttribute( 'data-tinted', 'false' );
+			expect( editor ).toHaveAttribute( 'data-tint-fading', 'true' );
+			expect( container.querySelector( '.site-generation__tint' ) ).toBeVisible();
+
+			fireTransitionEnd(
+				container.querySelector( '.site-generation__tint' ) as HTMLElement,
+				'background-color'
+			);
+			expect( editor ).toHaveAttribute( 'data-tint-fading', 'false' );
+			expect( editor.style.getPropertyValue( '--site-generation-hue' ) ).toBe( '' );
+			expect( container.querySelector( '.site-generation__tint' ) ).toBeNull();
+		} finally {
+			jest.useRealTimers();
+		}
 	} );
 } );

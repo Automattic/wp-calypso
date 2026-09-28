@@ -23,7 +23,6 @@ export * from './plans/types';
 export * from './theme';
 export * from './user/types';
 export * from './wpcom-plans-ui/types';
-export * from './queries/use-launchpad';
 export * from './queries/use-all-domains-query';
 export * from './queries/use-site-domains-query';
 export * from './queries/use-site-query';
@@ -64,6 +63,7 @@ export type {
 	HelpCenterSite,
 	HelpCenterSelect,
 	Dispatch as HelpCenterDispatch,
+	LoggedOutOdieChat,
 } from './help-center/types';
 export type {
 	AgentsManagerSelect,

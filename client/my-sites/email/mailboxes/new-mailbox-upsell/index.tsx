@@ -63,7 +63,7 @@ const NewMailboxUpsell = ( { domains }: { domains: ResponseDomain[] } ) => {
 						{ isFreeTrialNow
 							? translate(
 									'Create a new one for free during your trial to experience multiple mailbox efficiency.'
-							  )
+								)
 							: translate( 'Create a new one now to experience multiple mailbox efficiency.' ) }
 					</div>
 				</div>

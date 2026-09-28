@@ -32,11 +32,14 @@ describe( 'ChatResponseRenderedTracker', () => {
 			/>
 		);
 
-		expect( mockRecordBigSkyTracksEvent ).toHaveBeenCalledWith( 'chat_response_rendered', {
-			component_type: 'title-picker',
-			tool_id: 'jetpack_ai__show_component',
-			tool_call_id: 'tool-call-1',
-		} );
+		expect( mockRecordBigSkyTracksEvent ).toHaveBeenCalledWith(
+			'jetpack_big_sky_chat_response_rendered',
+			{
+				component_type: 'title-picker',
+				tool_id: 'jetpack_ai__show_component',
+				tool_call_id: 'tool-call-1',
+			}
+		);
 
 		rerender(
 			<ChatResponseRenderedTracker
@@ -57,11 +60,14 @@ describe( 'ChatResponseRenderedTracker', () => {
 		);
 
 		expect( mockRecordBigSkyTracksEvent ).toHaveBeenCalledTimes( 2 );
-		expect( mockRecordBigSkyTracksEvent ).toHaveBeenLastCalledWith( 'chat_response_rendered', {
-			component_type: 'title-picker',
-			tool_id: 'jetpack_ai__show_component',
-			tool_call_id: 'tool-call-2',
-		} );
+		expect( mockRecordBigSkyTracksEvent ).toHaveBeenLastCalledWith(
+			'jetpack_big_sky_chat_response_rendered',
+			{
+				component_type: 'title-picker',
+				tool_id: 'jetpack_ai__show_component',
+				tool_call_id: 'tool-call-2',
+			}
+		);
 	} );
 
 	it( 'omits an unavailable tool call id', () => {
@@ -69,10 +75,13 @@ describe( 'ChatResponseRenderedTracker', () => {
 			<ChatResponseRenderedTracker componentType="proofread" toolId="jetpack_ai__show_component" />
 		);
 
-		expect( mockRecordBigSkyTracksEvent ).toHaveBeenCalledWith( 'chat_response_rendered', {
-			component_type: 'proofread',
-			tool_id: 'jetpack_ai__show_component',
-		} );
+		expect( mockRecordBigSkyTracksEvent ).toHaveBeenCalledWith(
+			'jetpack_big_sky_chat_response_rendered',
+			{
+				component_type: 'proofread',
+				tool_id: 'jetpack_ai__show_component',
+			}
+		);
 	} );
 
 	it( 'records supported response properties', () => {
@@ -91,16 +100,19 @@ describe( 'ChatResponseRenderedTracker', () => {
 			/>
 		);
 
-		expect( mockRecordBigSkyTracksEvent ).toHaveBeenCalledWith( 'chat_response_rendered', {
-			component_type: 'ai-editorial-review',
-			tool_id: 'jetpack_ai__show_component',
-			suggested_edit_count: 2,
-			conflict_count: 1,
-			implication_count: 0,
-			guideline_violation_count: 3,
-			review_context: 'notes_and_guidelines',
-			cache_hit: true,
-		} );
+		expect( mockRecordBigSkyTracksEvent ).toHaveBeenCalledWith(
+			'jetpack_big_sky_chat_response_rendered',
+			{
+				component_type: 'ai-editorial-review',
+				tool_id: 'jetpack_ai__show_component',
+				suggested_edit_count: 2,
+				conflict_count: 1,
+				implication_count: 0,
+				guideline_violation_count: 3,
+				review_context: 'notes_and_guidelines',
+				cache_hit: true,
+			}
+		);
 	} );
 
 	it( 'omits unsupported and invalid response properties', () => {
@@ -119,11 +131,14 @@ describe( 'ChatResponseRenderedTracker', () => {
 			/>
 		);
 
-		expect( mockRecordBigSkyTracksEvent ).toHaveBeenCalledWith( 'chat_response_rendered', {
-			component_type: 'ai-editorial-review',
-			tool_id: 'jetpack_ai__show_component',
-			implication_count: 2,
-		} );
+		expect( mockRecordBigSkyTracksEvent ).toHaveBeenCalledWith(
+			'jetpack_big_sky_chat_response_rendered',
+			{
+				component_type: 'ai-editorial-review',
+				tool_id: 'jetpack_ai__show_component',
+				implication_count: 2,
+			}
+		);
 	} );
 } );
 
@@ -142,15 +157,18 @@ describe( 'createChatResponseActionCallback', () => {
 			itemCount: 3,
 		} );
 
-		expect( mockRecordBigSkyTracksEvent ).toHaveBeenCalledWith( 'chat_response_action', {
-			component_type: 'proofread',
-			tool_id: 'jetpack_ai__show_component',
-			tool_call_id: 'tool-call-1',
-			action: 'bulk_accept',
-			target: 'edit',
-			outcome: 'partial_failed',
-			item_count: 3,
-		} );
+		expect( mockRecordBigSkyTracksEvent ).toHaveBeenCalledWith(
+			'jetpack_big_sky_chat_response_action',
+			{
+				component_type: 'proofread',
+				tool_id: 'jetpack_ai__show_component',
+				tool_call_id: 'tool-call-1',
+				action: 'bulk_accept',
+				target: 'edit',
+				outcome: 'partial_failed',
+				item_count: 3,
+			}
+		);
 	} );
 
 	it( 'omits unavailable optional properties', () => {
@@ -161,12 +179,15 @@ describe( 'createChatResponseActionCallback', () => {
 
 		onResponseAction( { action: 'accept', target: 'option', outcome: 'success' } );
 
-		expect( mockRecordBigSkyTracksEvent ).toHaveBeenCalledWith( 'chat_response_action', {
-			component_type: 'title-picker',
-			tool_id: 'jetpack_ai__show_component',
-			action: 'accept',
-			target: 'option',
-			outcome: 'success',
-		} );
+		expect( mockRecordBigSkyTracksEvent ).toHaveBeenCalledWith(
+			'jetpack_big_sky_chat_response_action',
+			{
+				component_type: 'title-picker',
+				tool_id: 'jetpack_ai__show_component',
+				action: 'accept',
+				target: 'option',
+				outcome: 'success',
+			}
+		);
 	} );
 } );

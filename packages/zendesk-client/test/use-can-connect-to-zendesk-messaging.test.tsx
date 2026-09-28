@@ -15,7 +15,7 @@ jest.mock( '@automattic/calypso-analytics', () => ( {
 
 const REQUEST_EVENT = 'calypso_helpcenter_zendesk_config_request';
 const ERROR_EVENT = 'calypso_helpcenter_zendesk_config_error';
-const REPORTING_VERSION = 3;
+const REPORTING_VERSION = 4;
 const fetchMock = jest.fn();
 const originalFetch = globalThis.fetch;
 
@@ -67,6 +67,7 @@ describe( 'useCanConnectToZendeskMessaging', () => {
 			status_text: undefined,
 			failure_count: 0,
 			reporting_version: REPORTING_VERSION,
+			site_context_source: 'none',
 		} );
 	} );
 
@@ -102,7 +103,7 @@ describe( 'useCanConnectToZendeskMessaging', () => {
 		} );
 	} );
 
-	it( 'keeps the properties site-less for an invalid site id', async () => {
+	it( 'declares no site context for an invalid site id', async () => {
 		const queryClient = makeQueryClient();
 		const { result } = renderHook( () => useCanConnectToZendeskMessaging( true, 0 ), {
 			wrapper: makeWrapper( queryClient ),
@@ -115,6 +116,7 @@ describe( 'useCanConnectToZendeskMessaging', () => {
 			status_text: undefined,
 			failure_count: 0,
 			reporting_version: REPORTING_VERSION,
+			site_context_source: 'none',
 		} );
 	} );
 
@@ -137,6 +139,7 @@ describe( 'useCanConnectToZendeskMessaging', () => {
 			status_text: undefined,
 			failure_count: 0,
 			reporting_version: REPORTING_VERSION,
+			site_context_source: 'none',
 		} );
 	} );
 
@@ -220,6 +223,7 @@ describe( 'useCanConnectToZendeskMessaging', () => {
 			status_text: 'Zendesk unavailable',
 			failure_count: 4,
 			reporting_version: REPORTING_VERSION,
+			site_context_source: 'none',
 		} );
 	} );
 
@@ -242,6 +246,7 @@ describe( 'useCanConnectToZendeskMessaging', () => {
 			status_text: undefined,
 			failure_count: 2,
 			reporting_version: REPORTING_VERSION,
+			site_context_source: 'none',
 		} );
 	} );
 
@@ -295,6 +300,7 @@ describe( 'useCanConnectToZendeskMessaging', () => {
 			status_text: undefined,
 			failure_count: 2,
 			reporting_version: REPORTING_VERSION,
+			site_context_source: 'none',
 		} );
 	} );
 

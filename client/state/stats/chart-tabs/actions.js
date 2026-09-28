@@ -1,4 +1,8 @@
-import { STATS_CHART_COUNTS_REQUEST, STATS_CHART_COUNTS_RECEIVE } from 'calypso/state/action-types';
+import {
+	STATS_CHART_COUNTS_REQUEST,
+	STATS_CHART_COUNTS_RECEIVE,
+	STATS_CHART_COUNTS_FAILURE,
+} from 'calypso/state/action-types';
 import 'calypso/state/data-layer/wpcom/sites/stats/visits';
 
 import 'calypso/state/stats/init';
@@ -58,4 +62,8 @@ export function receiveChartCounts( siteId, date, period, quantity, data ) {
 		data,
 		requestKey,
 	};
+}
+
+export function failChartCounts( { siteId, requestKey, statFields } ) {
+	return { type: STATS_CHART_COUNTS_FAILURE, siteId, requestKey, statFields };
 }

@@ -126,7 +126,7 @@ export const handleSaveFailure = ( {
 		error === 'invalid_paypal'
 			? translate(
 					'Your account needs a valid PayPal email to receive earnings. Enter one below, then try saving again.'
-			  )
+				)
 			: translate( 'An unexpected error occurred. Please try again later.' ),
 		{ id: `wordads-notice-error-${ siteId }`, duration: 10000 }
 	),

@@ -187,6 +187,20 @@ describe( 'CreateShelfModal', () => {
 		expect( within( dialog ).getByRole( 'button', { name: 'All subscriptions' } ) ).toBeVisible();
 	} );
 
+	it( 'can return to an invalid later step after going back', async () => {
+		const { user } = setup();
+		await reachTopicsStep( user );
+
+		const tags = screen.getByRole( 'combobox', { name: 'Tags' } );
+		for ( let index = 1; index <= 9; index++ ) {
+			await user.type( tags, `tag-${ index }[Enter]` );
+		}
+
+		expect( screen.getByRole( 'button', { name: 'Create' } ) ).toBeDisabled();
+		await user.click( screen.getByRole( 'button', { name: 'Back' } ) );
+		expect( screen.getByRole( 'button', { name: 'Next' } ) ).toBeEnabled();
+	} );
+
 	it( 'cannot advance past the identity step without a name', async () => {
 		const { user } = setup();
 

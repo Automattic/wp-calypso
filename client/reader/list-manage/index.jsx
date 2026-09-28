@@ -6,12 +6,14 @@ import {
 } from '@automattic/api-queries';
 import page from '@automattic/calypso-router';
 import { Card } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
 import { useDispatch } from 'react-redux';
 import ReaderExportButton from 'calypso/blocks/reader-export-button';
 import { READER_EXPORT_TYPE_LIST } from 'calypso/blocks/reader-export-button/constants';
 import EmptyContent from 'calypso/components/empty-content';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import NavigationHeader from 'calypso/components/navigation-header';
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
@@ -139,7 +141,22 @@ function ReaderListCreate() {
 		<ReaderMain>
 			<NavigationHeader
 				title={ translate( 'Create List' ) }
-				subtitle={ translate( 'Lists let you organize multiple sites into custom feeds.' ) }
+				subtitle={ translate(
+					'Lists let you organize multiple sites into custom feeds. {{learnMoreLink}}Learn more{{/learnMoreLink}}',
+					{
+						components: {
+							learnMoreLink: (
+								<InlineSupportLink
+									supportPostId={ 92023 }
+									supportLink={ localizeUrl(
+										'https://wordpress.com/support/reader/reader-lists/'
+									) }
+									showIcon={ false }
+								/>
+							),
+						},
+					}
+				) }
 			/>
 			<ListForm isCreateForm isSubmissionDisabled={ isCreatingList } onSubmit={ handleSubmit } />
 		</ReaderMain>

@@ -435,7 +435,7 @@ const SiteSubscriptionRow = ( {
 							? translate( 'You will receive email notifications for new comments on this site.' )
 							: translate(
 									"You won't receive email notifications for new comments on this site."
-							  ) }
+								) }
 					</InfoPopover>
 				</div>
 			) }

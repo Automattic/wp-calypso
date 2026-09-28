@@ -8,7 +8,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { act, fireEvent, render } from '@testing-library/react';
+import { act, fireEvent, render, renderHook } from '@testing-library/react';
 import React from 'react';
 import AiEditorialReview from './components/ai-editorial-review';
 import ExcerptPicker from './components/excerpt-picker';
@@ -60,6 +60,7 @@ let mockCurrentPostType: string | undefined = 'post';
 let mockBlocksByClientId: Record< string, any > = {};
 let mockEditorBlocks: any[] = [];
 let mockImageStudioActions: { openImageStudio: jest.Mock } | null = null;
+const mockGetBlockEditorSettings = jest.fn();
 const SHOW_COMPONENT_TOOL_ID = 'jetpack_ai__show_component';
 const LEGACY_SHOW_COMPONENT_TOOL_ID = 'big_sky__show_component';
 const UPDATE_BLOCK_CONTENT_TOOL_ID = 'wpcom__update_block_content';
@@ -100,9 +101,9 @@ jest.mock( '@wordpress/block-editor', () => ( {
 	BlockIcon: () => null,
 	RichText: {
 		Content: ( { tagName = 'div', value, ...props }: Record< string, unknown > ) => {
-			const react = jest.requireActual< typeof import('react') >( 'react' );
+			const react = jest.requireActual< typeof import( 'react' ) >( 'react' );
 			const { RawHTML } =
-				jest.requireActual< typeof import('@wordpress/element') >( '@wordpress/element' );
+				jest.requireActual< typeof import( '@wordpress/element' ) >( '@wordpress/element' );
 			return react.createElement(
 				tagName as string,
 				props,
@@ -120,7 +121,7 @@ jest.mock( '@wordpress/blocks', () => ( {
 } ) );
 
 jest.mock( '@wordpress/components', () => {
-	const react = jest.requireActual< typeof import('react') >( 'react' );
+	const react = jest.requireActual< typeof import( 'react' ) >( 'react' );
 	return {
 		Panel: ( { children, className }: any ) =>
 			react.createElement(
@@ -187,6 +188,7 @@ jest.mock( '@wordpress/data', () => ( {
 					getSelectedBlock: () => mockSelectedBlock,
 					getBlock: ( clientId: string ) => mockBlocksByClientId[ clientId ],
 					getBlocks: () => mockEditorBlocks,
+					getSettings: mockGetBlockEditorSettings,
 				};
 			}
 			if ( store === 'core/editor' ) {
@@ -273,6 +275,10 @@ interface PostTypeMockOptions {
 	themeSupportsResolved?: boolean;
 	/** Whole getThemeSupports return value, for a store that returns something else. */
 	themeSupportsReturnValue?: unknown;
+	isPostEmpty?: boolean;
+	/** Drops the selector, as an editor predating it would. */
+	omitIsEditedPostEmpty?: boolean;
+	mediaUpload?: unknown;
 }
 
 function installPostTypeMock(
@@ -285,6 +291,8 @@ function installPostTypeMock(
 		postTypeRecordResolved = true,
 		themeSupportsThumbnails = true,
 		themeSupportsResolved = true,
+		isPostEmpty = false,
+		omitIsEditedPostEmpty = false,
 	} = options;
 
 	// remove_post_type_support unsets the key, so an explicit undefined omits it.
@@ -311,10 +319,14 @@ function installPostTypeMock(
 					return {
 						getCurrentPostId: () => postId,
 						getCurrentPostType: () => postType,
+						...( omitIsEditedPostEmpty ? {} : { isEditedPostEmpty: () => isPostEmpty } ),
 					};
 				}
 				if ( store === 'core/block-editor' ) {
 					return {
+						getSettings: () => ( {
+							mediaUpload: 'mediaUpload' in options ? options.mediaUpload : jest.fn(),
+						} ),
 						getSelectedBlock: () => mockSelectedBlock,
 						getBlock: ( clientId: string ) => mockBlocksByClientId[ clientId ],
 						getBlocks: () => [],
@@ -504,6 +516,7 @@ describe( 'getChatComponent', () => {
 		expect( getChatComponent( 'font-picker' ) ).toBeNull();
 		expect( getChatComponent( '' ) ).toBeNull();
 		expect( getChatComponent( 'anything-else' ) ).toBeNull();
+		expect( getChatComponent( 'toString' ) ).toBeNull();
 	} );
 } );
 
@@ -1436,8 +1449,8 @@ describe( 'PostFeedback', () => {
 	} );
 
 	const findApplyAllButton = ( container: HTMLElement ) =>
-		Array.from( container.querySelectorAll( 'button' ) ).find(
-			( button ) => button.textContent?.startsWith( 'Apply all' )
+		Array.from( container.querySelectorAll( 'button' ) ).find( ( button ) =>
+			button.textContent?.startsWith( 'Apply all' )
 		);
 
 	it( 'shows an enabled Apply all button when one-click rewrites are available', () => {
@@ -1653,8 +1666,8 @@ describe( 'Proofread', () => {
 	} );
 
 	const findApplyAllButton = ( container: HTMLElement ) =>
-		Array.from( container.querySelectorAll( 'button' ) ).find(
-			( button ) => button.textContent?.startsWith( 'Apply all' )
+		Array.from( container.querySelectorAll( 'button' ) ).find( ( button ) =>
+			button.textContent?.startsWith( 'Apply all' )
 		);
 
 	it( 'shows an enabled Apply all button when one-click fixes are available', () => {
@@ -1874,6 +1887,100 @@ describe( 'Proofread', () => {
 			jest.advanceTimersByTime( 1000 );
 		} );
 		jest.useRealTimers();
+	} );
+} );
+
+describe( 'empty post gating', () => {
+	// The three reviews sit inside the Get feedback dropdown, so that chip gates
+	// as a whole rather than each review separately.
+	const CONTENT_DEPENDENT_IDS = [
+		'optimize-title',
+		'generate-excerpt',
+		'get-feedback',
+		'seo-enhancer',
+	];
+
+	const ALL_FEATURES = {
+		optimizeTitleSuggestion: true,
+		excerptSuggestion: true,
+		proofreadContent: true,
+		seoSuggestions: true,
+	};
+
+	afterEach( () => {
+		delete ( globalThis as any ).agentsManagerData;
+		delete ( window as any ).wp;
+		mockImageStudioActions = null;
+	} );
+
+	function suggestionsFor( options: { isPostEmpty?: boolean; omitIsEditedPostEmpty?: boolean } ) {
+		installAiEditorialReviewData( ALL_FEATURES );
+		installPostTypeMock( 'post', 123, { supportsExcerpt: true, ...options } );
+		return getEmptyViewSuggestions();
+	}
+
+	it.each( CONTENT_DEPENDENT_IDS )( 'disables %s on an empty post', ( id ) => {
+		const suggestion = suggestionsFor( { isPostEmpty: true } ).find( ( s ) => s.id === id );
+
+		expect( suggestion ).toBeDefined();
+		expect( suggestion?.disabled ).toBe( true );
+	} );
+
+	it.each( CONTENT_DEPENDENT_IDS )( 'enables %s once the post has content', ( id ) => {
+		const suggestion = suggestionsFor( { isPostEmpty: false } ).find( ( s ) => s.id === id );
+
+		expect( suggestion ).toBeDefined();
+		expect( suggestion?.disabled ).toBeFalsy();
+	} );
+
+	it.each( CONTENT_DEPENDENT_IDS )( 'gives %s a reason for being disabled', ( id ) => {
+		const suggestion = suggestionsFor( { isPostEmpty: true } ).find( ( s ) => s.id === id );
+
+		expect( suggestion?.disabledReason ).toBe( 'This feature requires content to work.' );
+	} );
+
+	it( 'gives no reason once the suggestion is usable', () => {
+		const suggestion = suggestionsFor( { isPostEmpty: false } ).find(
+			( s ) => s.id === 'optimize-title'
+		);
+
+		expect( suggestion?.disabledReason ).toBeUndefined();
+	} );
+
+	it( 'keeps the disabled suggestions in the list so a blank post still shows them', () => {
+		const ids = suggestionsFor( { isPostEmpty: true } ).map( ( suggestion ) => suggestion.id );
+
+		CONTENT_DEPENDENT_IDS.forEach( ( id ) => expect( ids ).toContain( id ) );
+	} );
+
+	it( 'leaves generate-featured-image enabled, since the user types their own prompt', () => {
+		// The chip only appears when Image Studio is available.
+		mockImageStudioActions = { openImageStudio: jest.fn() };
+		const suggestion = suggestionsFor( { isPostEmpty: true } ).find(
+			( s ) => s.id === 'generate-featured-image'
+		);
+
+		expect( suggestion ).toBeDefined();
+		expect( suggestion?.disabled ).toBeFalsy();
+	} );
+
+	it( 'does not mutate the shared suggestion definitions', () => {
+		// They are module constants, so marking one disabled in place would leak into
+		// every later render.
+		suggestionsFor( { isPostEmpty: true } );
+		const suggestion = suggestionsFor( { isPostEmpty: false } ).find(
+			( s ) => s.id === 'optimize-title'
+		);
+
+		expect( suggestion?.disabled ).toBeFalsy();
+	} );
+
+	it( 'enables the suggestions when the editor cannot say whether the post is empty', () => {
+		const suggestion = suggestionsFor( { omitIsEditedPostEmpty: true } ).find(
+			( s ) => s.id === 'optimize-title'
+		);
+
+		expect( suggestion?.disabled ).toBeFalsy();
 	} );
 } );
 
@@ -2143,7 +2250,7 @@ describe( 'getEmptyViewSuggestions', () => {
 		expect( ids ).not.toContain( 'generate-excerpt' );
 	} );
 
-	it( 'shows Generate Featured Image when Image Studio is available', () => {
+	it( 'shows Generate Featured Image when Image Studio and uploads are available', () => {
 		installPostTypeMock( 'post' );
 		mockImageStudioActions = { openImageStudio: jest.fn() };
 
@@ -2154,6 +2261,33 @@ describe( 'getEmptyViewSuggestions', () => {
 		expect( chip?.label ).toBe( 'Generate featured image' );
 		expect( chip?.prompt ).toBe( '' );
 		expect( typeof chip?.action ).toBe( 'function' );
+	} );
+
+	it.each( [ false, undefined ] )(
+		'hides Generate Featured Image when mediaUpload is %s',
+		( mediaUpload ) => {
+			installPostTypeMock( 'post', 123, { mediaUpload } );
+			mockImageStudioActions = { openImageStudio: jest.fn() };
+
+			const ids = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.id );
+
+			expect( ids ).not.toContain( 'generate-featured-image' );
+		}
+	);
+
+	it( 'checks upload permission each time featured image suggestions are requested', () => {
+		const options: PostTypeMockOptions = { mediaUpload: undefined };
+		installPostTypeMock( 'post', 123, options );
+		mockImageStudioActions = { openImageStudio: jest.fn() };
+		const ids = () => getEmptyViewSuggestions().map( ( suggestion ) => suggestion.id );
+
+		expect( ids() ).not.toContain( 'generate-featured-image' );
+
+		options.mediaUpload = jest.fn();
+		expect( ids() ).toContain( 'generate-featured-image' );
+
+		options.mediaUpload = false;
+		expect( ids() ).not.toContain( 'generate-featured-image' );
 	} );
 
 	it( 'hides Generate Featured Image when Image Studio is not available', () => {
@@ -2367,6 +2501,8 @@ describe( 'getEmptyViewSuggestions', () => {
 
 describe( 'useSuggestions', () => {
 	beforeEach( () => {
+		mockGetBlockEditorSettings.mockReturnValue( { mediaUpload: jest.fn() } );
+		mockImageStudioActions = null;
 		useAbilitiesSetup( {
 			addMessage: () => undefined,
 			clearSuggestions: () => undefined,
@@ -2382,8 +2518,66 @@ describe( 'useSuggestions', () => {
 
 	afterEach( () => {
 		jest.useRealTimers();
+		mockImageStudioActions = null;
 		delete ( globalThis as any ).agentsManagerData;
 		delete ( window as any ).wp;
+	} );
+
+	it.each( [ false, undefined ] )(
+		'hides Image Studio suggestions when mediaUpload is %s',
+		( mediaUpload ) => {
+			installAiEditorialReviewData();
+			mockGetBlockEditorSettings.mockReturnValue( { mediaUpload } );
+			mockImageStudioActions = { openImageStudio: jest.fn() };
+			mockSelectedBlock = { clientId: 'image-1', name: 'core/image', attributes: { id: 42 } };
+
+			const { result } = renderHook( () => useSuggestions() );
+
+			expect( result.current.suggestions.map( ( suggestion ) => suggestion.id ) ).toEqual( [
+				'generate-alt-text',
+			] );
+		}
+	);
+
+	it.each( [
+		[ { id: 42 }, [ 'generate-alt-text', 'generate-image', 'edit-image' ] ],
+		[ {}, [ 'generate-alt-text', 'generate-image' ] ],
+	] )( 'shows permitted Image Studio suggestions for image attributes %j', ( attributes, ids ) => {
+		installAiEditorialReviewData();
+		mockImageStudioActions = { openImageStudio: jest.fn() };
+		mockSelectedBlock = { clientId: 'image-1', name: 'core/image', attributes };
+
+		const { result } = renderHook( () => useSuggestions() );
+
+		expect( result.current.suggestions.map( ( suggestion ) => suggestion.id ) ).toEqual( ids );
+	} );
+
+	it( 'updates Image Studio suggestions when the editor upload setting changes', () => {
+		installAiEditorialReviewData();
+		mockGetBlockEditorSettings.mockReturnValue( {} );
+		mockImageStudioActions = { openImageStudio: jest.fn() };
+		mockSelectedBlock = { clientId: 'image-1', name: 'core/image', attributes: { id: 42 } };
+		const { result, rerender } = renderHook( () => useSuggestions() );
+
+		expect( result.current.suggestions.map( ( suggestion ) => suggestion.id ) ).toEqual( [
+			'generate-alt-text',
+		] );
+
+		mockGetBlockEditorSettings.mockReturnValue( { mediaUpload: jest.fn() } );
+		rerender();
+
+		expect( result.current.suggestions.map( ( suggestion ) => suggestion.id ) ).toEqual( [
+			'generate-alt-text',
+			'generate-image',
+			'edit-image',
+		] );
+
+		mockGetBlockEditorSettings.mockReturnValue( { mediaUpload: false } );
+		rerender();
+
+		expect( result.current.suggestions.map( ( suggestion ) => suggestion.id ) ).toEqual( [
+			'generate-alt-text',
+		] );
 	} );
 
 	it( 'shows only block-specific suggestions when a block is selected', () => {
@@ -3448,6 +3642,32 @@ describe( 'toolProvider', () => {
 			expect( summaryDescription ).not.toContain( 'brief user-friendly description' );
 		} );
 
+		it( 'asks for a step summary in the show-component schema', async () => {
+			const abilities = await toolProvider.getAbilities();
+			const showComponent = abilities.find( ( a: any ) => a.name === SHOW_COMPONENT_ABILITY_NAME );
+			const legacyShowComponent = abilities.find(
+				( a: any ) => a.name === LEGACY_SHOW_COMPONENT_ABILITY_NAME
+			);
+
+			expect( showComponent?.input_schema?.properties?.summary?.type ).toBe( 'string' );
+			expect( showComponent?.input_schema?.required ).toEqual(
+				expect.arrayContaining( [ 'type', 'props' ] )
+			);
+			expect( showComponent?.input_schema?.properties?.type?.enum ).toEqual(
+				expect.arrayContaining( [
+					'title-picker',
+					'seo-description-picker',
+					'image-alt-text-picker',
+					'proofread',
+				] )
+			);
+			expect( showComponent?.input_schema?.properties?.type?.enum ).not.toContain(
+				'seo-description'
+			);
+			// The migration ability still delegates component types owned by Big Sky.
+			expect( legacyShowComponent?.input_schema?.properties?.type?.enum ).toBeUndefined();
+		} );
+
 		it( 'delegates non-Jetpack legacy show-component callbacks to Big Sky', async () => {
 			const args = {
 				type: 'color-picker',
@@ -3495,8 +3715,38 @@ describe( 'toolProvider', () => {
 			} );
 
 			expect( executeAbility ).not.toHaveBeenCalled();
-			expect( result ).toMatchObject( { success: false } );
-			expect( result.error ).toMatch( /missing type/ );
+			expect( result.result ).toMatchObject( { success: false } );
+			expect( result.result.error ).toMatch( /missing type/ );
+		} );
+
+		it( 'omits server-registered abilities from the registry', async () => {
+			const clientCallback = jest.fn();
+			( window as any ).wp.abilities = {
+				getAbilities: jest.fn().mockResolvedValue( [
+					{ name: 'big-sky/capture-canvas', category: 'big-sky' },
+					{
+						name: 'big-sky/stream-page-design',
+						meta: { streaming: { enabled: true } },
+					},
+					{
+						name: 'plugin/client-with-rest-meta',
+						callback: clientCallback,
+						meta: { show_in_rest: true },
+					},
+					{ name: 'wpcom/get-posts', meta: { show_in_rest: true, public: false } },
+					{ name: 'core/get-site-info', meta: { show_in_rest: true, public: true } },
+				] ),
+				executeAbility: jest.fn(),
+			};
+
+			const abilities = await toolProvider.getAbilities();
+			const names = abilities.map( ( a: any ) => a.name );
+
+			expect( names ).toContain( 'big-sky/capture-canvas' );
+			expect( names ).toContain( 'big-sky/stream-page-design' );
+			expect( names ).toContain( 'plugin/client-with-rest-meta' );
+			expect( names ).not.toContain( 'wpcom/get-posts' );
+			expect( names ).not.toContain( 'core/get-site-info' );
 		} );
 
 		it( 'omits update-block-content when block transformations are disabled', async () => {
@@ -3518,8 +3768,8 @@ describe( 'toolProvider', () => {
 
 		it( 'returns an error when type is missing', async () => {
 			const { result } = await toolProvider.executeAbility( SHOW_COMPONENT_TOOL_ID, {} );
-			expect( result ).toMatchObject( { success: false } );
-			expect( ( result as any ).error ).toMatch( /missing type/ );
+			expect( result.result ).toMatchObject( { success: false } );
+			expect( result.result.error ).toMatch( /missing type/ );
 		} );
 
 		it( 'returns an error for an unknown component type', async () => {
@@ -3527,8 +3777,56 @@ describe( 'toolProvider', () => {
 				type: 'nonexistent-picker',
 				props: {},
 			} );
-			expect( result ).toMatchObject( { success: false } );
-			expect( ( result as any ).error ).toMatch( /no component registered/ );
+			expect( result.result ).toMatchObject( { success: false } );
+			expect( result.result.error ).toMatch( /no component registered/ );
+		} );
+
+		it.each( [
+			[ 'omitted', undefined ],
+			[ 'empty', {} ],
+			[ 'not an object', 'some text' ],
+			[ 'an array', [ { description: 'Description' } ] ],
+			[ 'the wrong option property', { titles: [ { title: 'Title' } ] } ],
+			[ 'an empty option array', { descriptions: [] } ],
+			[ 'invalid option entries', { descriptions: [ {} ] } ],
+		] )( 'rejects %s props instead of rendering a picker that crashes', async ( _label, props ) => {
+			// New executions need enough data to render a useful component. Old
+			// history remains tolerant inside the components themselves.
+			const { result, returnToAgent } = ( await toolProvider.executeAbility(
+				SHOW_COMPONENT_TOOL_ID,
+				{
+					type: 'seo-description-picker',
+					props,
+				}
+			) ) as any;
+
+			expect( returnToAgent ).toBe( true );
+			expect( result.result.success ).toBe( false );
+			expect( result.result.error ).toMatch( /props/i );
+			expect( result.agentMessage ).toBeUndefined();
+		} );
+
+		it( 'returns an unknown-type failure to the agent so it can recover', async () => {
+			// `seo-description` is what the model sent when it skipped the
+			// generate-seo-description ability and called this tool itself. The
+			// registered type is `seo-description-picker`, so the call fails —
+			// and the agent has to hear about it to correct itself.
+			const { result, returnToAgent } = ( await toolProvider.executeAbility(
+				SHOW_COMPONENT_TOOL_ID,
+				{
+					type: 'seo-description',
+					props: { descriptions: [] },
+				}
+			) ) as any;
+
+			expect( returnToAgent ).toBe( true );
+			expect( result.result.error ).toBe(
+				'show-component: no component registered for type "seo-description"'
+			);
+			// The backend shows `message` to the user and hands `error` to the
+			// model, so a failure needs both.
+			expect( typeof result.result.message ).toBe( 'string' );
+			expect( result.result.message.length ).toBeGreaterThan( 0 );
 		} );
 
 		it.each( [ SHOW_COMPONENT_ABILITY_NAME, SHOW_COMPONENT_TOOL_ID ] )(
@@ -3536,7 +3834,7 @@ describe( 'toolProvider', () => {
 			async ( name ) => {
 				const { result } = ( await toolProvider.executeAbility( name, {
 					type: 'title-picker',
-					props: { titles: [] },
+					props: { titles: [ { title: 'Title' } ] },
 				} ) ) as any;
 
 				expect( JSON.parse( result.agentMessage ).tool_id ).toBe( SHOW_COMPONENT_TOOL_ID );
@@ -3549,17 +3847,12 @@ describe( 'toolProvider', () => {
 				{ title: 'Title 2', explanation: 'b' },
 				{ title: 'Title 3', explanation: 'c' },
 			];
-			const { result, returnToAgent } = ( await toolProvider.executeAbility(
-				SHOW_COMPONENT_TOOL_ID,
-				{
-					type: 'title-picker',
-					props: { titles },
-					toolCallId: 'call_test_123',
-				}
-			) ) as any;
+			const { result } = ( await toolProvider.executeAbility( SHOW_COMPONENT_TOOL_ID, {
+				type: 'title-picker',
+				props: { titles },
+				toolCallId: 'call_test_123',
+			} ) ) as any;
 
-			expect( returnToAgent ).toBe( false );
-			expect( result.returnToAgent ).toBe( false );
 			expect( typeof result.agentMessage ).toBe( 'string' );
 
 			const parsed = JSON.parse( result.agentMessage );
@@ -3573,12 +3866,67 @@ describe( 'toolProvider', () => {
 			expect( parsed.data.responseTrackingProperties ).toBeUndefined();
 		} );
 
+		it( 'returns to the agent with a structured success result', async () => {
+			const { result, returnToAgent } = ( await toolProvider.executeAbility(
+				SHOW_COMPONENT_TOOL_ID,
+				{
+					type: 'title-picker',
+					props: { titles: [ { title: 'Title' } ] },
+				}
+			) ) as any;
+
+			// The backend acks a `{ success, message }` echo without another LLM
+			// turn. Withholding the result leaves the tool call unanswered, and
+			// the model re-plans the whole request instead of continuing it.
+			expect( returnToAgent ).toBe( true );
+			expect( result.returnToAgent ).toBe( true );
+			expect( result.result ).toEqual( {
+				success: true,
+				message: 'Choose from the options I provided.',
+				details: { type: 'title-picker' },
+			} );
+		} );
+
+		it( 'reports the supplied summary as the result message', async () => {
+			const { result } = ( await toolProvider.executeAbility( SHOW_COMPONENT_TOOL_ID, {
+				type: 'proofread',
+				props: { summary: 'Proofread complete.', items: [] },
+				summary: 'Proofread complete. Fixed 2 typos.',
+			} ) ) as any;
+
+			// The backend records this text as the completed step, so a
+			// multi-step request continues from it instead of starting over.
+			expect( result.result.message ).toBe( 'Proofread complete. Fixed 2 typos.' );
+		} );
+
 		it.each( [
-			[ 'proofread', { items: [ {}, {} ] }, { suggested_edit_count: 2 } ],
-			[ 'post-feedback', { items: [ {} ] }, { suggested_edit_count: 1 } ],
+			[ 'no summary', undefined ],
+			[ 'a whitespace-only summary', '   ' ],
+		] )( 'defaults the result message given %s', async ( _label, summary ) => {
+			const { result } = ( await toolProvider.executeAbility( SHOW_COMPONENT_TOOL_ID, {
+				type: 'title-picker',
+				props: { titles: [ { title: 'Title' } ] },
+				summary,
+			} ) ) as any;
+
+			expect( result.result.message ).toBe( 'Choose from the options I provided.' );
+		} );
+
+		it.each( [
+			[
+				'proofread',
+				{ summary: 'Proofread complete.', items: [ {}, {} ] },
+				{ suggested_edit_count: 2 },
+			],
+			[
+				'post-feedback',
+				{ summary: 'Feedback complete.', items: [ {} ] },
+				{ suggested_edit_count: 1 },
+			],
 			[
 				'ai-editorial-review',
 				{
+					summary: 'Review complete.',
 					suggested_edits: [ {}, {} ],
 					conflicts: [ {} ],
 					implications: [],
@@ -3716,11 +4064,11 @@ describe( 'toolProvider', () => {
 				props: {},
 			} ) ) as any;
 
-			expect( result ).toMatchObject( {
+			expect( result.result ).toMatchObject( {
 				success: false,
 				error: 'show-component: no component registered for type "unregistered-component"',
-				returnToAgent: false,
 			} );
+			expect( result.returnToAgent ).toBe( true );
 			expect( result.agentMessage ).toBeUndefined();
 		} );
 
@@ -3757,8 +4105,8 @@ describe( 'toolProvider', () => {
 			} );
 
 			expect( executeAbility ).not.toHaveBeenCalled();
-			expect( result ).toMatchObject( { success: false } );
-			expect( result.error ).toMatch( /missing type/ );
+			expect( result.result ).toMatchObject( { success: false } );
+			expect( result.result.error ).toMatch( /missing type/ );
 		} );
 
 		it( 'does not attach a title checkpoint to AI Editorial Review components', async () => {

@@ -1,11 +1,11 @@
 import './span-tree.scss';
 
-import { Badge } from '@automattic/ui';
 import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
+import { Badge } from '@wordpress/ui';
 import { useMemo } from 'react';
 import { Text } from '../../../../components/text';
 import { formatMs } from '../utils';
@@ -14,16 +14,16 @@ import type {
 	ApmDetailSpan,
 	ApmDetailSpanPrunedChildren,
 } from '@automattic/api-core';
+import type { ComponentProps } from 'react';
 
-type BadgeIntent = 'success' | 'warning' | 'error' | 'info' | 'default';
-const CATEGORY_INTENT: Record< string, BadgeIntent > = {
-	plugins: 'error',
-	db: 'warning',
-	external: 'warning',
-	cache: 'success',
-	wp_core: 'default',
-	template: 'info',
-	transaction: 'info',
+const CATEGORY_INTENT: Record< string, ComponentProps< typeof Badge >[ 'intent' ] > = {
+	plugins: 'high',
+	db: 'medium',
+	external: 'medium',
+	cache: 'stable',
+	wp_core: 'draft',
+	template: 'informational',
+	transaction: 'informational',
 };
 
 // Per-transaction average wall-clock time spent in a span (sum across every
@@ -97,7 +97,7 @@ function SpanRowContent( { node, rootMaxMs }: { node: SpanNode; rootMaxMs: numbe
 	const totalMs = avgTotalMsPerTx( node );
 	const selfMs = avgSelfMsPerTx( node );
 	const fraction = rootMaxMs > 0 ? totalMs / rootMaxMs : 0;
-	const intent = CATEGORY_INTENT[ node.category ] ?? 'default';
+	const intent = CATEGORY_INTENT[ node.category ] ?? 'none';
 	const subtitleParts: string[] = [];
 	if ( node.plugins?.plugin ) {
 		subtitleParts.push( node.plugins.plugin );

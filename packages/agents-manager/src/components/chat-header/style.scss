@@ -6,6 +6,17 @@
 	gap: 4px;
 	padding-bottom: 4px;
 
+	&__internal-only {
+		flex-shrink: 0;
+		padding: 2px 6px;
+		border-radius: 8px;
+		background: var( --color-neutral-5, #f0f0f0 );
+		color: var( --color-neutral-70, #3c434a );
+		font-size: 11px;
+		font-weight: 500;
+		line-height: 16px;
+	}
+
 	// Full class name (not `&__`) so the compiled descendant selector
 	// out-specifies `.components-button` from @wordpress/components.
 	.agents-manager-chat-header__back-btn {

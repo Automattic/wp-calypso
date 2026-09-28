@@ -39,6 +39,15 @@ body.wp-admin.modal-open .agents-manager-chat--docked {
 	z-index: unset;
 }
 
+// The feedback dialog overlays the chat card, so each card is the dialog's
+// positioning context. Floating, that is the inner content box: it is the
+// element with the rounded corners and `overflow: hidden` that clips the
+// dialog, while the fixed outer container animates its offset separately.
+.agents-manager-chat--docked .agenttic.Chat-module_container,
+.agents-manager-chat--undocked .agenttic.Chat-module_floating > .Chat-module_content {
+	position: relative;
+}
+
 /* Agenttic UI */
 // Shared styles for the docked and undocked chat.
 .agenttic {

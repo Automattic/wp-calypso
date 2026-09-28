@@ -1,4 +1,4 @@
-import { useLaunchpad } from '@automattic/data-stores';
+import { useLaunchpad } from '@automattic/launchpad';
 import { StepContainer } from '@automattic/onboarding';
 import { useSelect, useDispatch as useWPDispatch } from '@wordpress/data';
 import { useEffect } from '@wordpress/element';

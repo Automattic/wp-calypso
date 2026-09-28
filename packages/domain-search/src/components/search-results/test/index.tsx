@@ -91,6 +91,7 @@ describe( 'SearchResults', () => {
 	it( 'allows resetting filters if there are no suggestions but the TLD filter is active', async () => {
 		const user = userEvent.setup();
 		const onFilterReset = jest.fn();
+		const onSearchStart = jest.fn();
 
 		mockGetSuggestionsQuery( {
 			params: { query: 'test-no-suggestions' },
@@ -103,7 +104,10 @@ describe( 'SearchResults', () => {
 		} );
 
 		render(
-			<TestDomainSearchWithSuggestions query="test-no-suggestions" events={ { onFilterReset } }>
+			<TestDomainSearchWithSuggestions
+				query="test-no-suggestions"
+				events={ { onFilterReset, onSearchStart } }
+			>
 				<Filter />
 				<SearchResults suggestions={ [] } getInlineBundle={ () => undefined } />
 			</TestDomainSearchWithSuggestions>
@@ -127,5 +131,6 @@ describe( 'SearchResults', () => {
 
 		await user.click( disableFiltersButton );
 		expect( onFilterReset ).toHaveBeenCalled();
+		expect( onSearchStart ).toHaveBeenLastCalledWith( 'test-no-suggestions', 'filter_reset' );
 	} );
 } );

@@ -82,9 +82,9 @@ export function updateActiveAgencyAvailability( isAvailable: boolean ): AgencyTh
 											...agency.lead_matching.profile.availability,
 											accepting_work: isAvailable,
 										},
-								  }
+									}
 								: agency.lead_matching.profile,
-					  }
+						}
 					: agency.lead_matching,
 			} )
 		);

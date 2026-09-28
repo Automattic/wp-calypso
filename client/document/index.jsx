@@ -4,7 +4,6 @@ import { WordPressLogo } from '@automattic/components';
 import { isLocaleRtl } from '@automattic/i18n-utils';
 import { Step } from '@automattic/onboarding';
 import clsx from 'clsx';
-import defaultCalypsoI18n, { I18NContext } from 'i18n-calypso';
 import { useMemo, Component } from 'react';
 import A4ALogo from 'calypso/a8c-for-agencies/components/a4a-logo';
 import EnvironmentBadge, {
@@ -22,9 +21,9 @@ import Head from 'calypso/components/head';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import Loading from 'calypso/components/loading';
 import WooCommerceLogo from 'calypso/components/woocommerce-logo';
-import { InterimOmnibar } from 'calypso/dashboard/app/interim-omnibar/interim-omnibar';
 import { InitialOmnibar } from 'calypso/dashboard/app/omnibar/omnibar';
 import { getDashboardStepperLogo } from 'calypso/dashboard/app/stepper-logo';
+import { A4AOmnibarHomeIcon } from 'calypso/dashboard/app-a4a/omnibar-home-icon';
 import { A4A_DASHBOARD_SECTION_DEFINITION } from 'calypso/dashboard/app-a4a/section';
 import { CIAB_DASHBOARD_SECTION_DEFINITION } from 'calypso/dashboard/app-ciab/section';
 import { DOTCOM_DASHBOARD_SECTION_DEFINITION } from 'calypso/dashboard/app-dotcom/section';
@@ -124,10 +123,12 @@ class Document extends Component {
 		const isDashboardOmnibarPage =
 			( isDashboardEnv() || env === 'development' ) &&
 			( sectionName === DOTCOM_DASHBOARD_SECTION_DEFINITION.name ||
-				sectionName === CIAB_DASHBOARD_SECTION_DEFINITION.name );
+				sectionName === CIAB_DASHBOARD_SECTION_DEFINITION.name ||
+				sectionName === A4A_DASHBOARD_SECTION_DEFINITION.name );
 
 		let headTitle = head.title;
-		let headFaviconUrl;
+		// Hostname overrides only reach the request's client data, not the base config.
+		let headFaviconUrl = clientData?.favicon_url;
 		let isWCCOM = false;
 
 		// To customize the page title and favicon for Gravatar-related login pages.
@@ -161,6 +162,7 @@ class Document extends Component {
 					branchName={ branchName }
 					inlineScriptNonce={ inlineScriptNonce }
 					faviconUrl={ headFaviconUrl }
+					faviconBrand={ clientData?.favicon_brand }
 					allowZoom={ isDashboardSection }
 					// Firefox can reuse the anonymous REST proxy prefetch after login; see https://github.com/Automattic/wp-calypso/pull/111842.
 					shouldPrefetchRestProxy={ ! app?.isFirefox }
@@ -188,20 +190,12 @@ class Document extends Component {
 					} ) }
 				>
 					{ /* eslint-disable wpcalypso/jsx-classname-namespace, react/no-danger */ }
-					{ isDashboardOmnibarPage && config.isEnabled( 'dashboard/omnibar-radical' ) && (
+					{ isDashboardOmnibarPage && (
 						<div id="wpcom-omnibar">
-							<InitialOmnibar user={ user } />
-						</div>
-					) }
-					{ isDashboardOmnibarPage && ! config.isEnabled( 'dashboard/omnibar-radical' ) && (
-						<div id="wpcom-omnibar">
-							<I18NContext.Provider value={ this.props.i18nCalypso || defaultCalypsoI18n }>
-								<InterimOmnibar
-									user={ user || null }
-									site={ null }
-									currentRoute={ this.props.path ?? '/' }
-								/>
-							</I18NContext.Provider>
+							<InitialOmnibar
+								user={ user }
+								homeIcon={ dashboard === 'a4a' ? <A4AOmnibarHomeIcon /> : undefined }
+							/>
 						</div>
 					) }
 					{ renderedLayout ? (

@@ -152,7 +152,7 @@ export function FollowingView( { connectionId, actor }: Props ) {
 			( connection
 				? `https://${ encodeURIComponent( connection.instance ) }/@${ encodeURIComponent(
 						item.acct
-				  ) }`
+					) }`
 				: '#' );
 
 		return {
@@ -200,7 +200,7 @@ export function FollowingView( { connectionId, actor }: Props ) {
 									onError: ( error ) => showFollowError( error, 'unfollow', item.handle ),
 								}
 							),
-				  },
+					},
 		};
 	};
 

@@ -208,7 +208,7 @@ const SitesDashboard = ( {
 							value: siteStatusGroups.find( ( item ) => item.slug === status )?.value || 1,
 						},
 					],
-			  }
+				}
 			: {} ),
 		...( selectedSite
 			? {
@@ -218,7 +218,7 @@ const SitesDashboard = ( {
 					mediaField: 'icon.ico',
 					showMedia: true,
 					descriptionField: 'URL',
-			  }
+				}
 			: {
 					type: 'table',
 					titleField: 'name',
@@ -245,7 +245,7 @@ const SitesDashboard = ( {
 							},
 						},
 					},
-			  } ),
+				} ),
 	};
 	const [ dataViewsState, setDataViewsState ] = useState< View >( defaultDataViewsState );
 
@@ -333,7 +333,7 @@ const SitesDashboard = ( {
 			? filteredSites.slice(
 					( dataViewsState.page - 1 ) * dataViewsState.perPage,
 					dataViewsState.page * dataViewsState.perPage
-			  )
+				)
 			: filteredSites;
 
 	const onboardingTours = useOnboardingTours();

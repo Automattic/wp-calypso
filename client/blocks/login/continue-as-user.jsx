@@ -86,7 +86,7 @@ export default function ContinueAsUser( {
 					variant="primary"
 					className="continue-as-user__continue-button"
 					isBusy={ validatingPath }
-					href={ validatedPath || '/' }
+					href={ validatedPath || '/home' }
 					__next40pxDefaultSize
 				>
 					{ translate( 'Continue' ) }
@@ -110,7 +110,7 @@ export default function ContinueAsUser( {
 				<Button
 					variant="primary"
 					isBusy={ validatingPath }
-					href={ validatedPath || '/' }
+					href={ validatedPath || '/home' }
 					__next40pxDefaultSize
 					className="continue-as-user__continue-button"
 				>

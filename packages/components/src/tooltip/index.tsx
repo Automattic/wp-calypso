@@ -5,6 +5,9 @@ import type { ReactNode } from 'react';
 
 import './style.scss';
 
+/** Popover resolves a context that exposes its node through getDOMNode(). */
+type DOMNodeProvider = { getDOMNode: () => Element | null };
+
 interface TooltipProps {
 	autoPosition?: boolean;
 	className?: string;
@@ -17,7 +20,7 @@ interface TooltipProps {
 	hideArrow?: boolean;
 	focusOnShow?: boolean;
 	children?: ReactNode;
-	context?: Element | { current: Element | null } | null;
+	context?: Element | DOMNodeProvider | { current: Element | DOMNodeProvider | null } | null;
 }
 
 function Tooltip( {

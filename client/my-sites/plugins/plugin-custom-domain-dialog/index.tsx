@@ -63,13 +63,13 @@ export const PluginCustomDomainDialog = ( {
 								{
 									components: { pluginName: <strong>{ plugin.name }</strong> },
 								}
-						  )
+							)
 						: translate(
 								'{{pluginName/}} will help you optimize your site around your primary domain. We recommend adding a custom domain before installing.',
 								{
 									components: { pluginName: <strong>{ plugin.name }</strong> },
 								}
-						  ) }
+							) }
 				</div>
 			</div>
 		</Dialog>

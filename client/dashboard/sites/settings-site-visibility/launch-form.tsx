@@ -97,7 +97,7 @@ export function LaunchAgencyDevelopmentSiteForm( { site }: { site: Site } ) {
 									launchUrl: a4aLink(
 										`/marketplace/checkout/${ site.slug }/a4a_wp_bundle_business_yearly`
 									),
-							  }
+								}
 							: { LaunchModal: AgencyDevelopmentSiteLaunchModal } ) }
 					/>
 					{ shouldShowReferClientButton && (
@@ -132,7 +132,7 @@ export function LaunchForm( { site }: { site: Site } ) {
 					<SiteLaunchButton
 						site={ site }
 						tracksContext="site_settings"
-						backTo={ `/sites/${ site.slug }` }
+						flowDestination={ `/sites/${ site.slug }` }
 					/>
 				}
 			>

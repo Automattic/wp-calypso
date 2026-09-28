@@ -27,7 +27,7 @@ export const readerAtmosphereKeys = {
 					connectionId,
 					actor,
 					filter,
-			  ] as const )
+				] as const )
 			: ( [ ...readerAtmosphereKeys.all, 'scoped-author-feed', connectionId, actor ] as const ),
 	actorFollowers: ( connectionId: number, actor: string ) =>
 		[ ...readerAtmosphereKeys.all, 'actor-followers', connectionId, actor ] as const,

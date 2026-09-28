@@ -31,10 +31,28 @@ describe( 'uploadPlugin', () => {
 		const action = uploadPlugin( { siteId, file: 'xyz' } );
 		expect( action ).toEqual(
 			expect.arrayContaining( [
+				recordTracksEvent( 'calypso_plugin_upload', { is_replace: false } ),
 				expect.objectContaining( {
 					formData: [ [ 'zip[]', 'xyz' ] ],
 					method: 'POST',
 					path: `/sites/${ siteId }/plugins/new`,
+				} ),
+			] )
+		);
+	} );
+
+	test( 'should return an http request action for replacing an installed plugin', () => {
+		const action = uploadPlugin( { siteId, file: 'xyz', replaceSlug: pluginId } );
+		expect( action ).toEqual(
+			expect.arrayContaining( [
+				recordTracksEvent( 'calypso_plugin_upload', { is_replace: true } ),
+				expect.objectContaining( {
+					formData: [
+						[ 'zip[]', 'xyz' ],
+						[ 'slug', pluginId ],
+					],
+					method: 'POST',
+					path: `/sites/${ siteId }/plugins/replace`,
 				} ),
 			] )
 		);

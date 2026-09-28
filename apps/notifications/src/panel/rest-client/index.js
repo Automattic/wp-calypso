@@ -19,7 +19,7 @@ const settings = {
 	// window (NOTES_PER_PAGE); the list fetches as many pages as needed to fill
 	// the window, so the window never outruns the loaded notes.
 	increment_limit: 10,
-	max_limit: 200,
+	max_limit: 1000,
 };
 
 export function Client() {

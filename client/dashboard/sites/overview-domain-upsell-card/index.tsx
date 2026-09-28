@@ -13,7 +13,7 @@ import { getCurrentDashboard } from '../../app/routing';
 import { Callout } from '../../components/callout';
 import { TextBlur } from '../../components/text-blur';
 import UpsellCTAButton from '../../components/upsell-cta-button';
-import { redirectToDashboardLink, wpcomLink } from '../../utils/link';
+import { dashboardLink, redirectToDashboardLink, wpcomLink } from '../../utils/link';
 import { DomainUpsellIllustraction } from './upsell-illustration';
 import type { Site } from '@automattic/api-core';
 
@@ -102,6 +102,8 @@ const DomainUpsellCardContent = ( {
 		getDomainAndPlanUpsellUrl( {
 			siteSlug: site.slug,
 			backUrl,
+			// Literal template to avoid pulling the dashboard router into tests.
+			domainConnectionSetupUrl: dashboardLink( '/domains/%s/domain-connection-setup' ),
 		} )
 	);
 
@@ -112,12 +114,11 @@ const DomainUpsellCardContent = ( {
 			description={
 				<Text variant="muted">
 					{ createInterpolateElement( description, {
-						// Keep this span's identity stable so that Google Translate doesn't crash the page.
-						// A known React issue: react/react#11538
+						planName: <span>{ site.plan?.product_name_short ?? '' }</span>,
 						domain: (
-							<span translate="no">
-								{ suggestedDomain ? suggestedDomain.domain_name : <TextBlur>{ search }</TextBlur> }
-							</span>
+							<TextBlur isBlurred={ ! suggestedDomain }>
+								{ suggestedDomain ? suggestedDomain.domain_name : search }
+							</TextBlur>
 						),
 						link: (
 							<UpsellCTAButton
@@ -173,7 +174,7 @@ const DomainUpsellCard = ( { site }: { site: Site } ) => {
 		);
 	}
 
-	if ( requiresPlanUpgrade( site ) ) {
+	if ( site.plan?.is_free ) {
 		return (
 			<DomainUpsellCardContent
 				site={ site }
@@ -183,6 +184,20 @@ const DomainUpsellCard = ( { site }: { site: Site } ) => {
 				) }
 				upsellId="site-overview-get-this-domain"
 				upsellCTAButtonText={ __( 'Choose a plan' ) }
+			/>
+		);
+	}
+
+	if ( site.plan?.billing_period === 'Monthly' ) {
+		return (
+			<DomainUpsellCardContent
+				site={ site }
+				title={ __( 'The perfect domain awaits' ) }
+				description={ __(
+					'Switch your <planName /> plan to annual billing to get <domain /> free for one year. You can also <link>choose your own domain name</link>.'
+				) }
+				upsellId="site-overview-get-this-domain"
+				upsellCTAButtonText={ __( 'Switch to annual billing' ) }
 			/>
 		);
 	}

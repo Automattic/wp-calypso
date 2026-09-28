@@ -100,7 +100,7 @@ export default function NeedSetup( { licenseKey }: Props ) {
 						),
 						ids: [ foundSiteLicenseByLicenseKey.id ],
 					},
-			  ]
+				]
 			: [] ),
 		// If there are other referral sites, we should show them next
 		...( otherReferralSites.length
@@ -109,7 +109,7 @@ export default function NeedSetup( { licenseKey }: Props ) {
 					available: 1,
 					subTitle: <ClientSite referral={ features.wpcom_atomic.referral } />,
 					ids: [ id ],
-			  } ) )
+				} ) )
 			: [] ),
 		...( availableSites.length
 			? [
@@ -124,7 +124,7 @@ export default function NeedSetup( { licenseKey }: Props ) {
 						} ),
 						ids: availableSites.map( ( { id }: { id: number } ) => id ),
 					},
-			  ]
+				]
 			: [] ),
 	];
 

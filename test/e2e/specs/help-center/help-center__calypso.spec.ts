@@ -72,8 +72,8 @@ test.describe( 'Help Center in Calypso', { tag: [ tags.CALYPSO_PR ] }, () => {
 			await helpCenterComponent.search( 'Change a domain name address' );
 			const resultTitles = await helpCenterComponent.getArticles().allTextContents();
 			expect(
-				resultTitles.some(
-					( title ) => normalizeString( title )?.includes( 'Change a domain name address' )
+				resultTitles.some( ( title ) =>
+					normalizeString( title )?.includes( 'Change a domain name address' )
 				)
 			).toBeTruthy();
 		} );

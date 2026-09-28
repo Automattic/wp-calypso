@@ -83,7 +83,7 @@ export default function UpsellCallout( {
 										businessPlanName: getPlanNames()[ DotcomPlans.BUSINESS ],
 										commercePlanName: getPlanNames()[ DotcomPlans.ECOMMERCE ],
 									}
-							  ) }
+								) }
 					</Text>
 				</>
 			}

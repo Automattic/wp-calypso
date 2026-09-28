@@ -20,9 +20,9 @@ export default function SecuritySocialLoginsSummary( { density }: { density?: De
 						/* translators: %d is the number of social logins */
 						_n( '%d social login', '%d social logins', socialLoginCount ),
 						socialLoginCount
-				  )
+					)
 				: __( 'No social logins added' ),
-			intent: socialLoginCount ? 'info' : 'default',
+			intent: socialLoginCount ? 'informational' : 'draft',
 		},
 	];
 

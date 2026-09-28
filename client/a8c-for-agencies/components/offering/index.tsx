@@ -8,7 +8,9 @@ const Offering: React.FC< OfferingCardProps > = ( { title, description, items, c
 			<h2 className="a4a-offering-card__title">{ title }</h2>
 			<p className="a4a-offering-card__description">{ description }</p>
 			{ children }
-			{ items?.map( ( item ) => <OfferingItem key={ item.title } { ...item } /> ) }
+			{ items?.map( ( item ) => (
+				<OfferingItem key={ item.title } { ...item } />
+			) ) }
 		</div>
 	);
 };

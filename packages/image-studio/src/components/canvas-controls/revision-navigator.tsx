@@ -57,8 +57,7 @@ export const RevisionNavigator = () => {
 					}
 
 					const attachment = select( coreStore ).getEntityRecord( 'postType', 'attachment', id ) as
-						| import('../../types/wordpress').AttachmentRecord
-						| undefined;
+						import( '../../types/wordpress' ).AttachmentRecord | undefined;
 
 					if ( ! attachment ) {
 						return null;

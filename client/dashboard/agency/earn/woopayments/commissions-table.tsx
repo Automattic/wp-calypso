@@ -9,7 +9,7 @@ import { __ } from '@wordpress/i18n';
 import { download, external } from '@wordpress/icons';
 import { useCallback, useMemo, useState } from 'react';
 import { DataViews } from '../../../components/dataviews';
-import { TextSkeleton } from '../../../components/text-skeleton';
+import { TextBlur } from '../../../components/text-blur';
 import { getSiteData } from './lib/site-data';
 import {
 	SiteColumn,
@@ -29,6 +29,7 @@ interface CommissionsTableProps {
 	isLoadingWooPaymentsData: boolean;
 	recordTracksEvent: RecordTracksEvent;
 	onDownloadReport: ( siteId: number ) => Promise< void >;
+	onContinueSetup: ( siteId: number ) => void;
 }
 
 export default function CommissionsTable( {
@@ -37,6 +38,7 @@ export default function CommissionsTable( {
 	isLoadingWooPaymentsData,
 	recordTracksEvent,
 	onDownloadReport,
+	onContinueSetup,
 }: CommissionsTableProps ) {
 	const [ isGeneratingReport, setIsGeneratingReport ] = useState( false );
 
@@ -72,14 +74,13 @@ export default function CommissionsTable( {
 				id: 'transactions',
 				label: __( 'Transactions' ),
 				getValue: () => '-',
-				render: ( { item } ) =>
-					isLoadingWooPaymentsData ? (
-						<TextSkeleton length={ 6 } />
-					) : (
+				render: ( { item } ) => (
+					<TextBlur isBlurred={ isLoadingWooPaymentsData } length={ 6 }>
 						<TransactionsColumn
 							transactions={ getSiteData( woopaymentsData, item.blogId ).transactions }
 						/>
-					),
+					</TextBlur>
+				),
 				enableHiding: false,
 				enableSorting: false,
 			},
@@ -87,12 +88,11 @@ export default function CommissionsTable( {
 				id: 'commissionsPaid',
 				label: __( 'Commissions paid' ),
 				getValue: () => '-',
-				render: ( { item } ) =>
-					isLoadingWooPaymentsData ? (
-						<TextSkeleton length={ 6 } />
-					) : (
+				render: ( { item } ) => (
+					<TextBlur isBlurred={ isLoadingWooPaymentsData } length={ 6 }>
 						<CommissionsPaidColumn payout={ getSiteData( woopaymentsData, item.blogId ).payout } />
-					),
+					</TextBlur>
+				),
 				enableHiding: false,
 				enableSorting: false,
 			},
@@ -100,14 +100,13 @@ export default function CommissionsTable( {
 				id: 'timeframeCommissions',
 				label: __( 'Timeframe commissions' ),
 				getValue: () => '-',
-				render: ( { item } ) =>
-					isLoadingWooPaymentsData ? (
-						<TextSkeleton length={ 6 } />
-					) : (
+				render: ( { item } ) => (
+					<TextBlur isBlurred={ isLoadingWooPaymentsData } length={ 6 }>
 						<TimeframeCommissionsColumn
 							estimatedPayout={ getSiteData( woopaymentsData, item.blogId ).estimatedPayout }
 						/>
-					),
+					</TextBlur>
+				),
 				enableHiding: false,
 				enableSorting: false,
 			},
@@ -120,6 +119,7 @@ export default function CommissionsTable( {
 						state={ item.state }
 						siteId={ item.blogId }
 						recordTracksEvent={ recordTracksEvent }
+						onContinueSetup={ onContinueSetup }
 					/>
 				),
 				enableHiding: false,
@@ -140,7 +140,7 @@ export default function CommissionsTable( {
 				enableSorting: false,
 			},
 		],
-		[ isLoadingWooPaymentsData, woopaymentsData, recordTracksEvent ]
+		[ isLoadingWooPaymentsData, woopaymentsData, recordTracksEvent, onContinueSetup ]
 	);
 
 	const { data, paginationInfo } = useMemo(

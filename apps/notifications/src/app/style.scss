@@ -13,7 +13,11 @@ $wpnc-slide-easing: cubic-bezier(0.33, 0, 0, 1);
 // inner wrapper) so apps/notifications owns its own popover layout and
 // consumers don't have to redeclare it. The popover's default 8px
 // padding is removed so the panel reaches the edges.
-.components-popover:has(.wpnc-app) .components-popover__content {
+//
+// These have to stay direct-child selectors. The panel's own popovers render
+// inline, so they sit inside `.wpnc-app` and a descendant selector would size
+// and strip the chrome off those too.
+.components-popover:has(.wpnc-app) > .components-popover__content {
 	width: 100vw;
 	height: 100vh;
 	max-height: inherit;
@@ -21,7 +25,7 @@ $wpnc-slide-easing: cubic-bezier(0.33, 0, 0, 1);
 }
 
 @include break-small {
-	.components-popover:has(.wpnc-app) .components-popover__content {
+	.components-popover:has(.wpnc-app) > .components-popover__content {
 		max-width: 448px;
 		margin-inline: 8px;
 	}
@@ -44,7 +48,7 @@ $wpnc-slide-easing: cubic-bezier(0.33, 0, 0, 1);
 		pointer-events: none;
 		outline: none;
 
-		.components-popover__content {
+		> .components-popover__content {
 			background: transparent;
 			box-shadow: none;
 			border: none;
@@ -58,11 +62,11 @@ $wpnc-slide-easing: cubic-bezier(0.33, 0, 0, 1);
 // Below small, the popover opens full-screen via `expandOnMobile`. Hide
 // the redundant popover header and let the content fill the height.
 .components-popover.is-expanded:has(.wpnc-app) {
-	.components-popover__header {
+	> .components-popover__header {
 		display: none;
 	}
 
-	.components-popover__content {
+	> .components-popover__content {
 		height: 100%;
 	}
 }
@@ -110,6 +114,8 @@ $wpnc-slide-easing: cubic-bezier(0.33, 0, 0, 1);
 	display: flex;
 	flex-direction: column;
 	overflow: hidden;
+	// Keep scrolling past the end of a pane from scrolling the page behind it.
+	overscroll-behavior: contain;
 	background: var(--color-surface, #fff);
 	// DataViews paints its wrapper with --wp-dataviews-color-background, which
 	// falls back to a --wpds surface token (the dark canvas in the dashboard).
@@ -188,9 +194,17 @@ $wpnc-slide-easing: cubic-bezier(0.33, 0, 0, 1);
 		border-inline-start: $wpnc-pane-border;
 		border-start-start-radius: $wpnc-pane-radius;
 		border-end-start-radius: $wpnc-pane-radius;
+		// Under the list, its square corners show past the list's
+		// rounded ones, so hide it after the slide-out finishes.
+		visibility: hidden;
+		transition:
+			transform 300ms $wpnc-slide-easing,
+			visibility 0s 300ms;
 
 		&.is-open {
 			pointer-events: auto;
+			visibility: visible;
+			transition-delay: 0s;
 		}
 	}
 
@@ -199,4 +213,53 @@ $wpnc-slide-easing: cubic-bezier(0.33, 0, 0, 1);
 		border-end-start-radius: 0;
 		box-shadow: none;
 	}
+}
+
+.wpnc-app__new-badge {
+	margin-inline-start: 6px;
+}
+
+// Marks the gear while the simplified layout is the one in use.
+.wpnc-app__settings-toggle.is-simplified {
+	position: relative;
+}
+
+.wpnc-app__settings-toggle.is-simplified::after {
+	content: "";
+	position: absolute;
+	inset-block-start: -2px;
+	inset-inline-end: -2px;
+	width: 6px;
+	height: 6px;
+	border-radius: 50%;
+	background: var(--color-accent);
+	// A ring in the panel's own background colour, so the dot reads against the gear
+	// rather than disappearing into its strokes.
+	box-shadow: 0 0 0 1px var(--color-surface);
+}
+
+
+.wpnc-app__layout-tour .components-popover__content {
+	width: 300px;
+	padding: 16px;
+	border-radius: 4px;
+}
+
+.wpnc-app__layout-tour-title {
+	margin: 0 0 8px;
+	font-size: 14px;
+	line-height: 20px;
+}
+
+.wpnc-app__layout-tour-text {
+	margin: 0 0 16px;
+	font-size: 13px;
+	line-height: 20px;
+	color: var(--color-text-subtle, #50575e);
+}
+
+.wpnc-app__layout-tour-body {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
 }

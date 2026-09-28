@@ -146,9 +146,12 @@ describe( 'usePickerVariations', () => {
 
 		act( () => result.current.handleSelect( variations[ 0 ] ) );
 
-		expect( mockRecordBigSkyTracksEvent ).toHaveBeenCalledWith( 'button_variation_click', {
-			button: 'Bold',
-		} );
+		expect( mockRecordBigSkyTracksEvent ).toHaveBeenCalledWith(
+			'jetpack_big_sky_button_variation_click',
+			{
+				button: 'Bold',
+			}
+		);
 	} );
 
 	it( 'keeps the picked variation highlighted when several share the live value', () => {

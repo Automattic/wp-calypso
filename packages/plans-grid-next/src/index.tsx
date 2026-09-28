@@ -3,7 +3,11 @@ import FeaturesGrid from './components/features-grid';
 import PlanButton from './components/plan-button';
 import PlanTypeSelector from './components/plan-type-selector';
 import { Plans2023Tooltip } from './components/plans-2023-tooltip';
-import { EFFECTIVE_TERMS_LIST } from './constants';
+import {
+	EFFECTIVE_TERMS_LIST,
+	TAILORED_FEATURE_LIST_INTENTS,
+	hasTailoredFeatureList,
+} from './constants';
 import useGridPlanForSpotlight from './hooks/data-store/use-grid-plan-for-spotlight';
 import useGridPlans, { usePlanTypesWithIntent } from './hooks/data-store/use-grid-plans';
 import useGridPlansForComparisonGrid from './hooks/data-store/use-grid-plans-for-comparison-grid';
@@ -52,7 +56,7 @@ export {
 /**
  * Constants
  */
-export { EFFECTIVE_TERMS_LIST };
+export { EFFECTIVE_TERMS_LIST, TAILORED_FEATURE_LIST_INTENTS, hasTailoredFeatureList };
 
 /**
  * Plan pricing utilities

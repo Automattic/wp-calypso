@@ -690,7 +690,7 @@ function DIFMPagePicker( props: StepProps ) {
 						),
 					},
 				}
-		  )
+			)
 		: translate(
 				'Click on the thumbnails to select or deselect pages. Your site build includes up to %(freePageCount)s pages, and you can add more for {{PriceWrapper}}%(extraPagePrice)s{{/PriceWrapper}} each. After checkout, you will have the opportunity to submit your content.',
 				{
@@ -710,7 +710,7 @@ function DIFMPagePicker( props: StepProps ) {
 						),
 					},
 				}
-		  );
+			);
 
 	const renderRefundText = () => {
 		return (

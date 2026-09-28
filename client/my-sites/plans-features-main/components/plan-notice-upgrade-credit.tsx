@@ -13,10 +13,10 @@ import Notice from 'calypso/components/notice';
 import { useUpgradeCreditsNoticeData } from 'calypso/my-sites/plans-features-main/hooks/use-upgrade-credits-notice';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
-import { getSitePurchases } from 'calypso/state/purchases/selectors/get-site-purchases';
+import { getRawSitePurchases } from 'calypso/state/purchases/selectors/get-raw-site-purchases';
+import type { Purchase } from '@automattic/api-core';
 import type { PlanSlug } from '@automattic/calypso-products';
 import type { PlansIntent } from '@automattic/plans-grid-next';
-import type { Purchase } from 'calypso/lib/purchases/types';
 import type { UpgradeCreditsNoticeSource } from 'calypso/my-sites/plans-features-main/hooks/use-upgrade-credits-notice';
 
 type UpgradeCreditsNoticeTextProps = {
@@ -82,7 +82,7 @@ const UpgradeCreditsNoticeText = ( {
 function hasOtherUpgradesPurchase( sitePurchases: Purchase[] | undefined ): boolean {
 	return (
 		sitePurchases?.some( ( purchase ) => {
-			const productSlug = purchase?.productSlug;
+			const productSlug = purchase?.product_slug;
 			if ( ! productSlug ) {
 				return false;
 			}
@@ -121,7 +121,7 @@ const PlanNoticeUpgradeCredit = ( {
 }: Props ) => {
 	const currencyCode = useSelector( getCurrentUserCurrencyCode );
 	const upgradeCreditsNoticeData = useUpgradeCreditsNoticeData( siteId, visiblePlans || [] );
-	const sitePurchases = useSelector( ( state ) => getSitePurchases( state, siteId ) );
+	const sitePurchases = useSelector( ( state ) => getRawSitePurchases( state, siteId ) );
 
 	const credits = upgradeCreditsNoticeData?.credits ?? 0;
 	const showNotice = credits > 0;

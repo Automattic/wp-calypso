@@ -21,16 +21,22 @@ export default function loadOmnibar( config: AppConfig ) {
 		return;
 	}
 
+	const AppOmnibar = config.components.omnibar;
+
 	hydrateRoot(
 		container,
 		<AppProvider config={ config }>
 			<QueryClientProvider client={ queryClient }>
 				<AnalyticsProvider client={ analyticsClient }>
-					<OmnibarContainer
-						user={ window.currentUser }
-						cartManagerClient={ shoppingCartManagerClient }
-						sectionName="dashboard"
-					/>
+					{ AppOmnibar ? (
+						<AppOmnibar user={ window.currentUser } />
+					) : (
+						<OmnibarContainer
+							user={ window.currentUser }
+							cartManagerClient={ shoppingCartManagerClient }
+							sectionName="dashboard"
+						/>
+					) }
 				</AnalyticsProvider>
 			</QueryClientProvider>
 		</AppProvider>

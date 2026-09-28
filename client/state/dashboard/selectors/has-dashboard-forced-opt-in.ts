@@ -6,8 +6,7 @@ import type { AppState } from 'calypso/types';
 
 export const hasDashboardForcedOptIn = ( state: AppState ): boolean => {
 	const preference = getPreference( state, 'hosting-dashboard-opt-in' ) as
-		| HostingDashboardOptIn
-		| undefined;
+		HostingDashboardOptIn | undefined;
 	const userId = getCurrentUserId( state ) ?? undefined;
 	const enrollment = getHostingDashboardEnrollment( preference, userId );
 

@@ -7,6 +7,8 @@ import { SupportStatus } from '../types';
 // Bump me to invalidate the cache.
 const VERSION = 3;
 
+export const SUPPORT_STATUS_QUERY_KEY = [ 'support-status', VERSION ];
+
 interface APIFetchOptions {
 	global: boolean;
 	path: string;
@@ -16,7 +18,7 @@ export function useSupportStatus( enabled = true ) {
 	const { currentUser } = useHelpCenterContext();
 
 	return useQuery< SupportStatus, Error >( {
-		queryKey: [ 'support-status', VERSION ],
+		queryKey: SUPPORT_STATUS_QUERY_KEY,
 		queryFn: async () =>
 			canAccessWpcomApis()
 				? await wpcomRequest( { path: '/help/support-status', apiNamespace: 'wpcom/v2' } )

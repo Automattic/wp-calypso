@@ -13,16 +13,18 @@ function pick< T extends object >(
 	...keys: Many< PropertyKey >[]
 ): Partial< T >;
 function pick( object: object | null | undefined, ...keys: Many< PropertyKey >[] ) {
-	const result: Record< PropertyKey, unknown > = {};
 	if ( object == null ) {
-		return result;
+		return {};
 	}
-	for ( const key of keys.flat() ) {
-		if ( Object.prototype.hasOwnProperty.call( object, key ) ) {
-			result[ key ] = ( object as Record< PropertyKey, unknown > )[ key ];
-		}
-	}
-	return result;
+	const source = object as Record< PropertyKey, unknown >;
+	// `Object.fromEntries` defines own data properties, so an own `__proto__`
+	// key is copied as data instead of invoking the inherited setter.
+	return Object.fromEntries(
+		keys
+			.flat()
+			.filter( ( key ) => Object.prototype.hasOwnProperty.call( source, key ) )
+			.map( ( key ) => [ key, source[ key ] ] )
+	);
 }
 
 export default pick;

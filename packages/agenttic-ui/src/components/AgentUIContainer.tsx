@@ -17,16 +17,31 @@ import styles from './chat/Chat.module.css';
 import { CollapsedView } from './views/CollapsedView';
 import { CompactView } from './views/CompactView';
 import { MinimizedView } from './views/MinimizedView';
-import type { AgentUIProps, Suggestion } from '../types';
+import type { AgentUIProps, SubmitSource, Suggestion } from '../types';
 
 interface AgentUIContainerProps extends AgentUIProps {
 	children: React.ReactNode;
+}
+
+function unionSuggestions( sets: Suggestion[][] ): Suggestion[] {
+	const seenIds = new Set< string >();
+	const union: Suggestion[] = [];
+	for ( const set of sets ) {
+		for ( const suggestion of set ) {
+			if ( ! seenIds.has( suggestion.id ) ) {
+				seenIds.add( suggestion.id );
+				union.push( suggestion );
+			}
+		}
+	}
+	return union;
 }
 
 export function AgentUIContainer( {
 	children,
 	messages,
 	isProcessing,
+	isStreaming,
 	error,
 	onSubmit,
 	variant = 'floating',
@@ -34,6 +49,9 @@ export function AgentUIContainer( {
 	triggerTitle,
 	placeholder,
 	notice,
+	beforeSubmit,
+	leadingActions,
+	trailingActions,
 	onOpen,
 	onExpand,
 	onClose,
@@ -165,6 +183,12 @@ export function AgentUIContainer( {
 		timeoutRefs.current.clear();
 	}, [] );
 
+	const canSubmitMessage = useCallback(
+		( message: string, source: SubmitSource ) =>
+			beforeSubmit ? beforeSubmit( message, source ) !== false : true,
+		[ beforeSubmit ]
+	);
+
 	const input = useInput( {
 		value: inputValue,
 		setValue: setInputValue,
@@ -175,6 +199,7 @@ export function AgentUIContainer( {
 			chat.setState( 'expanded' );
 			await onSubmit( message );
 		},
+		beforeSubmit: ( message ) => canSubmitMessage( message, 'input' ),
 		isProcessing,
 		isInputOverLimit,
 		floatingChatState: chat.state,
@@ -222,11 +247,16 @@ export function AgentUIContainer( {
 	} );
 
 	// Dedup-aware reporter for the actually-rendered suggestion set. Owned here so
-	// dedup survives the AnimatePresence instance swap between compact and expanded.
+	// dedup survives the AnimatePresence instance swap between compact and expanded,
+	// and so several mounted instances ( e.g. a grouped empty view ) report as one.
 	const onSuggestionsRenderedRef = useRef( onSuggestionsRendered );
 	onSuggestionsRenderedRef.current = onSuggestionsRendered;
 
+	// Per-instance rendered sets in mount order; hidden instances keep an empty
+	// slot so the union stays in on-screen order.
+	const renderedByInstanceRef = useRef< Map< string, Suggestion[] > >( new Map() );
 	const lastReportedKeyRef = useRef( '' );
+	const isReportScheduledRef = useRef( false );
 
 	// The ONLY reset: data-level clear, so identical ids returning later count fresh.
 	const hasSuggestions = !! suggestions?.length;
@@ -236,17 +266,39 @@ export function AgentUIContainer( {
 		}
 	}, [ hasSuggestions ] );
 
-	// Stable ( empty deps ) so it never retriggers consumers' effects.
-	const reportSuggestionsRendered = useCallback( ( shown: Suggestion[] ) => {
-		const key = shown.length ? JSON.stringify( shown.map( ( suggestion ) => suggestion.id ) ) : '';
+	// Stable ( empty deps ) so it never retriggers consumers' effects. Reported in
+	// a microtask so instances registering in one commit produce a single report.
+	const reportSuggestionsRendered = useCallback(
+		( instanceId: string, shown: Suggestion[] | null ) => {
+			if ( shown === null ) {
+				renderedByInstanceRef.current.delete( instanceId );
+			} else {
+				renderedByInstanceRef.current.set( instanceId, shown );
+			}
 
-		if ( ! key || key === lastReportedKeyRef.current ) {
-			return;
-		}
+			if ( isReportScheduledRef.current ) {
+				return;
+			}
 
-		lastReportedKeyRef.current = key;
-		onSuggestionsRenderedRef.current?.( shown );
-	}, [] );
+			isReportScheduledRef.current = true;
+
+			queueMicrotask( () => {
+				isReportScheduledRef.current = false;
+				const rendered = unionSuggestions( Array.from( renderedByInstanceRef.current.values() ) );
+				const key = rendered.length
+					? JSON.stringify( rendered.map( ( suggestion ) => suggestion.id ) )
+					: '';
+
+				if ( ! key || key === lastReportedKeyRef.current ) {
+					return;
+				}
+
+				lastReportedKeyRef.current = key;
+				onSuggestionsRenderedRef.current?.( rendered );
+			} );
+		},
+		[]
+	);
 
 	// Handle suggestion submission
 	const handleSuggestionSubmit = useCallback(
@@ -255,8 +307,16 @@ export function AgentUIContainer( {
 
 			if ( selectedSuggestion.autoSubmit ) {
 				// Auto-submit: send message directly to LLM
-				clearSuggestions?.();
 				const message = value.trim();
+
+				// A blocked send is a no-op: the suggestion stays in the list and the
+				// click is not reported, so hosts don't retire it as consumed.
+				if ( message && ! canSubmitMessage( message, 'suggestion' ) ) {
+					return;
+				}
+
+				clearSuggestions?.();
+
 				if ( message ) {
 					await onSubmit( message );
 				}
@@ -276,7 +336,7 @@ export function AgentUIContainer( {
 
 			onSuggestionClick?.( selectedSuggestion, availableSuggestions );
 		},
-		[ clearSuggestions, onSubmit, onSuggestionClick, input ]
+		[ clearSuggestions, onSubmit, onSuggestionClick, input, canSubmitMessage ]
 	);
 
 	// Handle opening the chat and call onOpen callback
@@ -342,13 +402,18 @@ export function AgentUIContainer( {
 	// Handle message submission (for button clicks)
 	const handleSubmit = useCallback( async () => {
 		const message = input.value.trim();
+
+		if ( ! canSubmitMessage( message, 'input' ) ) {
+			return;
+		}
+
 		input.clear();
 		if ( chat.state !== 'expanded' ) {
 			onExpand?.();
 		}
 		chat.setState( 'expanded' );
 		await onSubmit( message );
-	}, [ input, onSubmit, chat, onExpand ] );
+	}, [ input, onSubmit, chat, onExpand, canSubmitMessage ] );
 
 	// Handle expand (go to expanded state)
 	const handleExpand = useCallback( () => {
@@ -407,7 +472,7 @@ export function AgentUIContainer( {
 	const computedEmptyView = showEmptyView
 		? React.cloneElement( emptyView, {
 				onSuggestionClick: handleSuggestionSubmit,
-		  } as any )
+			} as any )
 		: undefined;
 
 	// Compute notice - prioritize input limit error over user-provided notice
@@ -420,7 +485,7 @@ export function AgentUIContainer( {
 				),
 				dismissible: false,
 				status: 'error' as const,
-		  }
+			}
 		: notice;
 
 	// Create context value
@@ -428,6 +493,7 @@ export function AgentUIContainer( {
 		// Core data
 		messages,
 		isProcessing,
+		isStreaming,
 		error,
 
 		// Input state
@@ -465,6 +531,10 @@ export function AgentUIContainer( {
 
 		// Notice
 		notice: computedNotice,
+
+		// Composer action slots
+		leadingActions,
+		trailingActions,
 
 		// Thinking message
 		thinkingMessage,
@@ -563,7 +633,7 @@ export function AgentUIContainer( {
 											? STYLE_CONSTANTS.COLLAPSED_SIZE
 											: STYLE_CONSTANTS.COMPACT_WIDTH,
 									height: getHeightForState( chat.state ),
-							  } ),
+								} ),
 						x:
 							chat.state === 'collapsed' && currentSide === 'right'
 								? STYLE_CONSTANTS.COMPACT_WIDTH - STYLE_CONSTANTS.COLLAPSED_SIZE
@@ -615,6 +685,8 @@ export function AgentUIContainer( {
 									onExpand={ handleExpand }
 									showExpandButton={ ! input.value.trim() }
 									focusOnMount={ wasClickedToOpen.current }
+									leadingActions={ leadingActions }
+									trailingActions={ trailingActions }
 									onStop={ onStop }
 									suggestions={ suggestions }
 									clearSuggestions={ clearSuggestions }

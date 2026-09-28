@@ -146,7 +146,7 @@ body:has( .omnibar ) {
 
 			svg {
 				position: relative;
-				inset-inline-start: -1px;
+				inset-inline-start: 1px;
 			}
 		}
 
@@ -159,12 +159,11 @@ body:has( .omnibar ) {
 		@media ( max-width: 480px ) {
 			.dashicons-before::before {
 				width: 46px;
-				inset-inline-start: 3px;
 			}
 
 			.omnibar__site-icon {
 				position: relative;
-				inset-inline-start: 3px;
+				inset-inline-start: 0.5px;
 			}
 		}
 

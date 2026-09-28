@@ -11,6 +11,8 @@ import PreferencesDefaultsSummary from '../preferences-defaults/summary';
 import PreferencesLanguage from '../preferences-language';
 import PreferencesNewHostingDashboard from '../preferences-new-hosting-dashboard';
 import PreferencesPrivacy from '../preferences-privacy';
+import PreferencesReader from '../preferences-reader';
+import PreferencesWordPressLabs from '../preferences-wordpress-labs';
 
 export default function Preferences() {
 	const { optIn, supports } = useAppContext();
@@ -27,11 +29,13 @@ export default function Preferences() {
 		>
 			<SummaryButtonList>
 				{ optIn ? <PreferencesNewHostingDashboard /> : null }
+				{ isEnabled( 'wordpress-labs' ) ? <PreferencesWordPressLabs /> : null }
 				<PreferencesAppearance />
 				{ isEnabled( 'mcp-settings' ) ? <PreferencesAiMcp /> : null }
 				<PreferencesLanguage />
 				<PreferencesDefaultsSummary />
 				<PreferencesPrivacy />
+				{ supports.reader ? <PreferencesReader /> : null }
 				{ supports.reader ? <PreferencesBlockedSites /> : null }
 			</SummaryButtonList>
 		</PageLayout>

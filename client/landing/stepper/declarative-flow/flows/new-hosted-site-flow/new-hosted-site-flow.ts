@@ -201,6 +201,7 @@ const hosting: FlowV2< typeof initialize > = {
 						const siteSlug = providedDependencies.siteSlug || getSignupCompleteSlug();
 						const destinationParams: Record< string, string > = {
 							siteId,
+							...( siteSlug ? { siteSlug } : {} ),
 						};
 						if ( studioSiteId ) {
 							destinationParams[ 'redirect_to' ] = addQueryArgs( `/home/${ siteId }`, {
@@ -209,9 +210,8 @@ const hosting: FlowV2< typeof initialize > = {
 							} );
 						} else if ( isWooPartner ) {
 							// For partners, we'll redirect to the WooCommerce admin page
-							destinationParams[
-								'redirect_to'
-							] = `https://${ siteSlug }/wp-admin/admin.php?page=wc-admin`;
+							destinationParams[ 'redirect_to' ] =
+								`https://${ siteSlug }/wp-admin/admin.php?page=wc-admin`;
 						}
 						// Purchasing Business or Commerce plans will trigger an atomic transfer, so go to stepper flow where we wait for it to complete.
 						const destination = addQueryArgs(
@@ -258,7 +258,7 @@ const hosting: FlowV2< typeof initialize > = {
 		const autoOpenPush = useQuery().get( 'autoOpenPush' );
 		const section = useQuery().get( 'section' );
 		useEffect( () => {
-			if ( studioSiteId ) {
+			if ( studioSiteId && currentStepSlug ) {
 				recordTracksEvent( 'calypso_studio_sync_step', {
 					flow: NEW_HOSTED_SITE_FLOW,
 					step: currentStepSlug,

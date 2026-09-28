@@ -83,4 +83,22 @@ describe( 'TitlePicker', () => {
 		expect( applied ).toHaveAttribute( 'aria-pressed', 'true' );
 		expect( screen.getByText( 'Title updated.' ) ).toBeInTheDocument();
 	} );
+
+	it.each( [
+		[ 'omitted', undefined ],
+		[ 'not an array', 'text' as any ],
+		[ 'an array of invalid entries', [ null, {}, { title: 7 }, { title: '  ' } ] as any ],
+	] )( 'renders nothing when the options are %s, instead of throwing', ( _label, titles ) => {
+		// History strips the picker options to save tokens, and a malformed
+		// payload can carry unusable entries. Mirrors usePickerVariations.
+		const { container } = render( <TitlePicker titles={ titles } /> );
+		expect( container ).toBeEmptyDOMElement();
+	} );
+
+	it( 'skips invalid entries and renders the valid options', () => {
+		const mixed = [ null, {}, { title: 7 }, { title: 'Valid Title' } ] as any;
+		render( <TitlePicker titles={ mixed } /> );
+		expect( screen.getByText( 'Valid Title' ) ).toBeInTheDocument();
+		expect( screen.getAllByRole( 'button' ) ).toHaveLength( 1 );
+	} );
 } );

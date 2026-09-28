@@ -1,6 +1,6 @@
 import './style.scss';
 
-import { SubscriptionBillPeriod, getPlanNames } from '@automattic/api-core';
+import { SubscriptionBillPeriod } from '@automattic/api-core';
 import { formatCurrency } from '@automattic/number-formatters';
 import { Button, ExternalLink, Icon } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
@@ -12,6 +12,7 @@ import { useHelpCenter } from '../../app/help-center';
 import { useLocale } from '../../app/locale';
 import { Text } from '../../components/text';
 import { formatDate, getCalendarDaysUntil, getRelativeDayString } from '../../utils/datetime';
+import { getDowngradeTargetProductName } from '../../utils/downgrade-target-name';
 import {
 	EXPIRY_ERROR_DAYS,
 	EXPIRY_WARNING_DAYS,
@@ -19,6 +20,7 @@ import {
 	isRenewingBeforeExpiration,
 	isExpiring,
 	isExpiredOrRemoved,
+	isFreeTrialEndingOnExpiryDate,
 	isIncludedWithPlan,
 	isOneTimePurchase,
 	isAkismetFreeProduct,
@@ -255,12 +257,8 @@ export function PurchaseExpiryStatus( {
 		);
 	}
 
-	const isIntroductoryOfferFreeTrial = purchase.introductory_offer?.cost_per_interval === 0;
-	if (
-		purchase.introductory_offer?.is_within_period &&
-		isIntroductoryOfferFreeTrial &&
-		isRenewingBeforeExpiration( purchase )
-	) {
+	const isFreeTrial = isFreeTrialEndingOnExpiryDate( purchase );
+	if ( isFreeTrial && isRenewingBeforeExpiration( purchase ) ) {
 		return createInterpolateElement(
 			sprintf(
 				// translators: %(date)s: a formatted date, %(amount)s: a currency amount, excludeTaxStringAbbreviation: something like "excludes VAT"
@@ -283,11 +281,7 @@ export function PurchaseExpiryStatus( {
 		);
 	}
 
-	if (
-		purchase.introductory_offer?.is_within_period &&
-		isIntroductoryOfferFreeTrial &&
-		! isExpiredOrRemoved( purchase )
-	) {
+	if ( isFreeTrial && ! isExpiredOrRemoved( purchase ) ) {
 		return (
 			<span>
 				{
@@ -325,9 +319,9 @@ export function PurchaseExpiryStatus( {
 	// renew at its current price — it changes to a lower-tier plan. Say so instead
 	// of the usual "Renews ... on <date>" line.
 	if ( isRenewingOnDate && purchase.is_delayed_downgrade_pending ) {
-		const slug = purchase.delayed_downgrade_to_product_slug;
-		const planNames = getPlanNames() as Record< string, string | undefined >;
-		const targetPlanName = slug ? planNames[ slug ] ?? null : null;
+		const targetPlanName = getDowngradeTargetProductName(
+			purchase.delayed_downgrade_to_product_slug
+		);
 		const renewalDate = formatDate( new Date( purchase.renew_date ?? '' ), locale, {
 			dateStyle: 'long',
 		} );
@@ -477,10 +471,11 @@ export function PurchaseExpiryStatus( {
 		return __( 'Included with Plan' );
 	}
 
-	if (
-		( isOneTimePurchase( purchase ) || isAkismetFreeProduct( purchase ) ) &&
-		purchase.product_slug !== 'domain_transfer'
-	) {
+	if ( isOneTimePurchase( purchase ) && purchase.product_slug !== 'domain_transfer' ) {
+		return __( 'One-time purchase' );
+	}
+
+	if ( isAkismetFreeProduct( purchase ) && purchase.product_slug !== 'domain_transfer' ) {
 		return __( 'Never Expires' );
 	}
 

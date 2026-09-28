@@ -39,21 +39,14 @@
  */
 
 import { select } from '@wordpress/data';
-import { ORCHESTRATOR_AGENT_ID, UNIFIED_CHAT_AGENT_ID } from '../constants';
+import { ORCHESTRATOR_AGENT_ID } from '../constants';
 
 // Agents whose turns can write to the editor canvas, and so are worth stopping
 // when it moves. The same dock serves support and Reader chats — including inside
 // the editor — and their turns never call a canvas ability, so aborting one for a
 // navigation is pure loss and the message would make no sense to the user.
 //
-// Both editor-capable agents are listed, not just the orchestrator: the canvas
-// abilities are migrating into AM, which serves them on unified-chat surfaces (see
-// the Big Sky plugin's AGENTS.md), so omitting unified chat would switch this off
-// exactly where the abilities are heading.
-const CANVAS_WRITING_AGENT_IDS = new Set< string >( [
-	ORCHESTRATOR_AGENT_ID,
-	UNIFIED_CHAT_AGENT_ID,
-] );
+const CANVAS_WRITING_AGENT_IDS = new Set< string >( [ ORCHESTRATOR_AGENT_ID ] );
 
 /**
  * Whether this agent's turns can write to the editor canvas.
@@ -320,7 +313,7 @@ export function getCanvasMove(): CanvasMove | null {
 		// No live canvas is a move to nowhere, not a reason to wait: see the note
 		// at the top of this module on why a bound request can never be looking at
 		// a canvas that is merely still mounting.
-		to: live ? live.label ?? live.key : null,
+		to: live ? ( live.label ?? live.key ) : null,
 	};
 }
 

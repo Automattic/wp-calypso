@@ -26,6 +26,10 @@
 		text-overflow: ellipsis;
 	}
 
+	.wpnc__subject {
+		flex: 1;
+	}
+
 	.wpnc__note-icon .wpnc__gridicon {
 		position: absolute;
 		bottom: -6px;
@@ -46,6 +50,11 @@
 		&.is-unread {
 			color: $white;
 			background: var(--wp-admin-theme-color);
+		}
+
+		&.is-unapproved {
+			color: var(--wpds-color-foreground-content-warning, #2e1900);
+			background: var(--wpds-color-background-surface-warning, #fde6be);
 		}
 	}
 }

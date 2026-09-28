@@ -249,7 +249,7 @@ function StatsDateLabel( {
 					),
 				},
 				comment: 'Example: "Activity for December 2017"',
-		  } )
+			} )
 		: translate( '{{prefix}}Stats for {{/prefix}}{{period/}}', {
 				components: {
 					prefix: <span className="prefix" />,
@@ -266,7 +266,7 @@ function StatsDateLabel( {
 				context: 'Stats: Main stats page heading',
 				comment:
 					'Example: "Stats for December 7", "Stats for December 8 - December 14", "Stats for December", "Stats for 2014"',
-		  } );
+			} );
 
 	if ( isShort ) {
 		sectionTitle = (

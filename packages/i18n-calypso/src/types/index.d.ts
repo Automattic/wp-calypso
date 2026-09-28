@@ -19,9 +19,7 @@ type ExistingReactNode = React.ReactElement | string | number;
 export type Substitution = ExistingReactNode;
 
 export type Substitutions =
-	| Substitution
-	| Substitution[]
-	| { [ placeholder: string ]: Substitution };
+	Substitution | Substitution[] | { [ placeholder: string ]: Substitution };
 
 export interface ComponentInterpolations {
 	[ placeholder: string ]: React.ReactElement;
@@ -73,6 +71,13 @@ export type EventListener = ( ...payload: any ) => any;
 
 export interface I18N {
 	/**
+	 * Translate a string passed in the options object.
+	 * @param options Options for the translation, carrying the original string.
+	 */
+	translate( options: DeprecatedTranslateOptions ): ExistingReactNode;
+	translate( original: string ): string;
+	translate( original: string ): ExistingReactNode;
+	/**
 	 * Translate a string.
 	 * @example translate( "Hello, %(name)s", { args: { name: "World" } } );
 	 * @param original The original string to translate.
@@ -80,9 +85,6 @@ export interface I18N {
 	 * If a substitution really should result in a blank string, pass an empty
 	 * string to make that explicit.
 	 */
-	translate( options: DeprecatedTranslateOptions ): ExistingReactNode;
-	translate( original: string ): string;
-	translate( original: string ): ExistingReactNode;
 	translate( original: string, options: TranslateOptions ): ExistingReactNode;
 	translate( original: string, options: TranslateOptionsText ): string;
 	translate( original: string, plural: string, options: TranslateOptionsPlural ): ExistingReactNode;

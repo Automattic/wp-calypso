@@ -258,6 +258,90 @@ describe( '<CancellationMainContent />', () => {
 		expect( screen.queryByText( /will also be removed/ ) ).not.toBeInTheDocument();
 	} );
 
+	describe( 'Google Workspace access message', () => {
+		const googleWorkspacePurchase = makePurchase( {
+			product_name: 'Google Workspace Business Starter',
+			product_slug: 'wp_google_workspace_business_starter_yearly',
+			is_plan: false,
+			meta: 'mydomain.com',
+		} );
+		const activeGoogleDomain = {
+			google_apps_subscription: { status: 'active' },
+		} as Domain;
+
+		test.each( [ [ 'cancel' ], [ 'auto-renew' ] ] as const )(
+			'grace period message appears on the %s variant',
+			( displayVariant ) => {
+				render(
+					<CancellationMainContent
+						{ ...defaultProps }
+						displayVariant={ displayVariant }
+						purchase={ googleWorkspacePurchase }
+						selectedDomain={ activeGoogleDomain }
+					/>
+				);
+
+				expect(
+					screen.getByText( /If you cancel your subscription for mydomain\.com now/ )
+				).toBeVisible();
+				expect(
+					screen.getByText(
+						'you will lose access to all of your Google Workspace features 30 days after it expires'
+					)
+				).toBeVisible();
+			}
+		);
+
+		test( 'grace period message does not appear on the remove variant', () => {
+			render(
+				<CancellationMainContent
+					{ ...defaultProps }
+					displayVariant="remove"
+					purchase={ googleWorkspacePurchase }
+					selectedDomain={ activeGoogleDomain }
+				/>
+			);
+
+			expect(
+				screen.queryByText( /If you cancel your subscription for mydomain\.com now/ )
+			).not.toBeInTheDocument();
+		} );
+
+		test( 'grace period message appears regardless of the split-cancel-remove flag', () => {
+			mockedIsEnabled.mockImplementation( ( flag ) => flag === 'purchases/split-cancel-remove' );
+
+			render(
+				<CancellationMainContent
+					{ ...defaultProps }
+					purchase={ googleWorkspacePurchase }
+					selectedDomain={ activeGoogleDomain }
+				/>
+			);
+
+			expect(
+				screen.getByText( /you will lose access to all of your Google Workspace features 30 days/ )
+			).toBeVisible();
+		} );
+
+		test( 'suspended subscriptions keep the immediate-loss wording', () => {
+			render(
+				<CancellationMainContent
+					{ ...defaultProps }
+					purchase={ googleWorkspacePurchase }
+					selectedDomain={
+						{ google_apps_subscription: { status: 'suspended' } } as unknown as Domain
+					}
+				/>
+			);
+
+			expect(
+				screen.getByText(
+					/you will lose access to all of your Google Workspace features immediately/
+				)
+			).toBeVisible();
+		} );
+	} );
+
 	test( 'Atomic items still render regardless of flag', () => {
 		mockedIsEnabled.mockImplementation( () => false );
 

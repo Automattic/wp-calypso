@@ -33,7 +33,7 @@ export default function CachingSettingsSummary( {
 			return [
 				{
 					text: __( 'Edge cache enabled' ),
-					intent: 'success' as const,
+					intent: 'stable' as const,
 				},
 			];
 		}

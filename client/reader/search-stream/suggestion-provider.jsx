@@ -105,7 +105,7 @@ const SuggestionsProvider = ( Element, count = 3 ) => {
 						count,
 						this.props.followedTags,
 						this.props.trendingTags
-				  ) );
+					) );
 
 		componentWillUnmount() {
 			// when unmounted, let the suggestions refresh

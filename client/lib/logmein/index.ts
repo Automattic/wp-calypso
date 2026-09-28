@@ -57,7 +57,9 @@ export function logmeinUrl( url: string, redirectTo = '' ): string {
 
 	// Set the param
 	newurl.searchParams.set( 'logmein', 'direct' );
-	redirectTo && newurl.searchParams.set( 'redirect_to', redirectTo );
+	if ( redirectTo ) {
+		newurl.searchParams.set( 'redirect_to', redirectTo );
+	}
 
 	return newurl.toString();
 }
@@ -73,12 +75,12 @@ export function logmeinUrl( url: string, redirectTo = '' ): string {
 function isValidLogmeinSite( site: SiteDetails ): boolean {
 	return Boolean(
 		! site.is_vip &&
-			! site.jetpack &&
-			! site.options?.is_automated_transfer &&
-			! site.options?.is_domain_only &&
-			! site.options?.is_redirect &&
-			! site.options?.is_wpcom_store &&
-			site.options?.is_mapped_domain
+		! site.jetpack &&
+		! site.options?.is_automated_transfer &&
+		! site.options?.is_domain_only &&
+		! site.options?.is_redirect &&
+		! site.options?.is_wpcom_store &&
+		site.options?.is_mapped_domain
 	);
 }
 

@@ -1,4 +1,3 @@
-import { Badge } from '@automattic/ui';
 import { useBreakpoint } from '@automattic/viewport-react';
 import {
 	Button,
@@ -10,6 +9,7 @@ import {
 import { filterSortAndPaginate } from '@wordpress/dataviews';
 import { __, sprintf } from '@wordpress/i18n';
 import { download } from '@wordpress/icons';
+import { Badge } from '@wordpress/ui';
 import { useMemo, useState } from 'react';
 import {
 	DATAVIEWS_TABLE,
@@ -27,7 +27,7 @@ import ArchiveReportConfirmationDialog from './archive-report-confirmation-dialo
 import useAmplifyReportRows, { AmplifyReportRow } from './use-report-rows';
 import type { Action, Field } from '@wordpress/dataviews';
 import type { AmplifyMode } from 'calypso/a8c-for-agencies/data/amplify/types';
-import type { ReactNode } from 'react';
+import type { ComponentProps, ReactNode } from 'react';
 
 function modeLabel( mode: AmplifyMode ): string {
 	switch ( mode ) {
@@ -55,13 +55,13 @@ function ScoreBadge( { score, label }: { score: number | null; label: string } )
 	if ( score === null ) {
 		return null;
 	}
-	let intent: 'success' | 'warning' | 'error';
+	let intent: NonNullable< ComponentProps< typeof Badge >[ 'intent' ] >;
 	if ( score >= 80 ) {
-		intent = 'success';
+		intent = 'stable';
 	} else if ( score >= 50 ) {
-		intent = 'warning';
+		intent = 'medium';
 	} else {
-		intent = 'error';
+		intent = 'high';
 	}
 	return (
 		<Badge intent={ intent }>
@@ -123,7 +123,7 @@ export default function AmplifyReportsContent() {
 				label: __( 'Analysis type' ),
 				getValue: ( { item }: { item: AmplifyReportRow } ) => modeLabel( item.mode ),
 				render: ( { item }: { item: AmplifyReportRow } ): ReactNode => (
-					<Badge>{ modeLabel( item.mode ) }</Badge>
+					<Badge intent="draft">{ modeLabel( item.mode ) }</Badge>
 				),
 				enableHiding: true,
 				enableSorting: true,
@@ -176,7 +176,7 @@ export default function AmplifyReportsContent() {
 				render: ( { item }: { item: AmplifyReportRow } ): ReactNode => {
 					if ( item.rowStatus === 'failed' ) {
 						return (
-							<Badge intent="error" title={ item.failureReason }>
+							<Badge intent="high" title={ item.failureReason }>
 								{ __( 'Analysis failed' ) }
 							</Badge>
 						);

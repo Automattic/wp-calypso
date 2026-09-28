@@ -121,10 +121,10 @@ const SiteTransferred = () => {
 	const subtitle = shouldBuyBusinessPlan
 		? translate(
 				'To keep your site active and access all features, please upgrade your plan in the next step and enjoy the full experience of your site.'
-		  )
+			)
 		: translate(
 				"Continue to full ownership by signing up for our exclusive plan. Enter your billing details and maintain your site's momentum!"
-		  );
+			);
 
 	return (
 		<>

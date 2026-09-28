@@ -12,6 +12,7 @@ import makeEmbedsSafe from '../rule-content-make-embeds-safe';
 import makeImagesSafe from '../rule-content-make-images-safe';
 import makeContentLinksSafe from '../rule-content-make-links-safe';
 import removeElementsBySelector from '../rule-content-remove-elements-by-selector';
+import removeEventHandlers from '../rule-content-remove-event-handlers';
 import removeStyles from '../rule-content-remove-styles';
 import createBetterExcerpt from '../rule-create-better-excerpt';
 import decodeEntities from '../rule-decode-entities';
@@ -24,6 +25,7 @@ import preventWidows from '../rule-prevent-widows';
 import safeImageProperties from '../rule-safe-image-properties';
 import stripHtml from '../rule-strip-html';
 import withContentDOM from '../rule-with-content-dom';
+import { domForHtml, externalLinkParagraph } from '../utils';
 
 jest.mock( '@automattic/calypso-url', () => ( {
 	...jest.requireActual( '@automattic/calypso-url' ),
@@ -450,6 +452,46 @@ describe( 'index', () => {
 				expect( normalized.content ).toBe( '<a>hi there</a>' );
 			} );
 		} );
+
+		test( 'removes unsafe xlink:href from SVG anchors', () => {
+			const post = {
+				content: '<svg><a xlink:href="javascript:alert(1)"><text>hi there</text></a></svg>',
+			};
+			const normalized = withContentDOM( [ makeContentLinksSafe ] )( post );
+
+			expect( normalized.content ).toBe( '<svg><a><text>hi there</text></a></svg>' );
+		} );
+
+		test( 'keeps safe and relative xlink:href on SVG anchors', () => {
+			const post = {
+				content:
+					'<svg><a xlink:href="https://example.com/"><text>a</text></a>' +
+					'<a xlink:href="#frag"><text>b</text></a></svg>',
+			};
+			const normalized = withContentDOM( [ makeContentLinksSafe ] )( post );
+
+			expect( normalized.content ).toBe( post.content );
+		} );
+
+		test( 'removes an unsafe plain href from an SVG anchor', () => {
+			const post = {
+				content: '<svg><a href="javascript:alert(1)"><text>hi there</text></a></svg>',
+			};
+			const normalized = withContentDOM( [ makeContentLinksSafe ] )( post );
+
+			expect( normalized.content ).toBe( '<svg><a><text>hi there</text></a></svg>' );
+		} );
+
+		test( 'keeps a safe plain href on an SVG anchor', () => {
+			// SVG 2 anchors use `href` rather than `xlink:href`, and their `href` IDL property is an
+			// SVGAnimatedString, so testing it the way an HTML anchor is tested strips safe links.
+			const post = {
+				content: '<svg><a href="https://example.com/"><text>hi there</text></a></svg>',
+			};
+			const normalized = withContentDOM( [ makeContentLinksSafe ] )( post );
+
+			expect( normalized.content ).toBe( post.content );
+		} );
 	} );
 
 	describe( 'content.makeImagesSafe', () => {
@@ -738,6 +780,28 @@ describe( 'index', () => {
 			);
 		} );
 
+		test( 'removes srcdoc, which would otherwise override an allowlisted src', () => {
+			const post = {
+				content:
+					'<iframe src="https://youtube.com" srcdoc="&lt;script&gt;alert(1)&lt;/script&gt;"></iframe>',
+			};
+			const normalized = withContentDOM( [ makeEmbedsSafe ] )( post );
+
+			expect( normalized.content ).toBe(
+				'<iframe src="https://youtube.com/" sandbox="allow-same-origin allow-scripts allow-popups"></iframe>'
+			);
+		} );
+
+		test( 'removes srcdoc from a frame that gets no sandbox at all', () => {
+			const post = {
+				content:
+					'<iframe src="https://spotify.com" srcdoc="&lt;script&gt;alert(1)&lt;/script&gt;"></iframe>',
+			};
+			const normalized = withContentDOM( [ makeEmbedsSafe ] )( post );
+
+			expect( normalized.content ).toBe( '<iframe src="https://spotify.com/"></iframe>' );
+		} );
+
 		test( 'removes iframes with an empty src', () => {
 			const post = {
 				content: '<iframe src=""></iframe>',
@@ -918,6 +982,67 @@ describe( 'index', () => {
 			}
 		);
 
+		test.each( [
+			[ 'a host outside Crowdsignal', 'example.com/s/', 'a-survey' ],
+			[ 'a Crowdsignal lookalike host', 'polldaddy.com.example.com/s/', 'a-survey' ],
+			[ 'a Crowdsignal host in the userinfo', 'polldaddy.com@example.com/s/', 'a-survey' ],
+			[ 'credentials on a Crowdsignal host', 'user:pass@example.survey.fm/', 'a-survey' ],
+			[ 'an unparseable URL', 'example.survey.fm:notaport/', 'a-survey' ],
+		] )( 'leaves Crowdsignal survey embeds alone when they name %s', ( _, domain, id ) => {
+			const content =
+				'<div class="pd-embed" data-settings="' +
+				`{&quot;type&quot;:&quot;iframe&quot;,&quot;domain&quot;:&quot;${ domain }&quot;,&quot;id&quot;:&quot;${ id }&quot;}` +
+				'"></div>';
+			const normalized = withContentDOM( [ detectSurveys ] )( { content } );
+
+			expect( normalized.content ).toBe( content );
+		} );
+
+		test( 'leaves Crowdsignal survey embeds alone when they carry no settings', () => {
+			const content = '<div class="pd-embed"></div>';
+
+			expect( withContentDOM( [ detectSurveys ] )( { content } ).content ).toBe( content );
+		} );
+
+		test( 'does not let Crowdsignal survey settings introduce markup', () => {
+			// JSON escapes stay inert through server-side sanitization and only become quotes and
+			// angle brackets once `JSON.parse` runs here. The host stays allowlisted so that the
+			// survey link really does get built out of the payload.
+			const domain =
+				'example.survey.fm/\\u0022\\u003e\\u003cp contenteditable autofocus ' +
+				'onfocus=\\u0022alert(1)\\u0022\\u003epwn\\u003c/p\\u003e\\u003ca href=\\u0022https://example.survey.fm/';
+			const post = {
+				content:
+					'<div class="pd-embed" data-settings="' +
+					`{&quot;type&quot;:&quot;iframe&quot;,&quot;domain&quot;:&quot;${ domain }&quot;,&quot;id&quot;:&quot;tail&quot;}` +
+					'"></div>',
+			};
+
+			const content = domForHtml( withContentDOM( [ detectSurveys ] )( post ).content );
+
+			expect( content.querySelectorAll( 'a' ) ).toHaveLength( 1 );
+			expect( content.querySelector( '[onfocus], [autofocus], [contenteditable]' ) ).toBeNull();
+			expect( content.textContent ).toBe( 'Take our survey' );
+		} );
+
+		test( 'percent-encodes Crowdsignal survey settings into the survey URL', () => {
+			const id = 'a-survey\\u0022 onmouseover=\\u0022alert(1)';
+			const post = {
+				content:
+					'<div class="pd-embed" data-settings="' +
+					`{&quot;type&quot;:&quot;iframe&quot;,&quot;domain&quot;:&quot;example.survey.fm/&quot;,&quot;id&quot;:&quot;${ id }&quot;}` +
+					'"></div>',
+			};
+
+			const normalized = withContentDOM( [ detectSurveys ] )( post );
+
+			expect( normalized.content ).toEqual(
+				expect.stringContaining(
+					'href="https://example.survey.fm/a-survey%22%20onmouseover=%22alert(1)"'
+				)
+			);
+		} );
+
 		test( 'removes elements by selector', () => {
 			const post = {
 				content: `
@@ -1002,9 +1127,90 @@ describe( 'index', () => {
 			const normalized = createBetterExcerpt( post );
 			expect( normalized.content_no_html ).toBe( 'hi there' );
 		} );
+
+		test( 'strips attributes from the elements it keeps', () => {
+			expect(
+				createBetterExcerpt( {
+					content:
+						'<p contenteditable autofocus onfocus="alert(1)" class="intro" id="first">one</p>' +
+						'<p>two<br onload="alert(2)"><sup title="nope">3</sup></p>',
+				} ).better_excerpt
+			).toBe( '<p>one</p><p>two<br><sup>3</sup></p>' );
+		} );
+
+		test( 'keeps the attributes that still direct how the excerpt reads', () => {
+			// An excerpt is rendered as one block, so a paragraph that does not carry its own
+			// direction is laid out by the majority script of the whole thing.
+			expect(
+				createBetterExcerpt( {
+					content: '<p dir="rtl" lang="he" class="intro" onclick="alert(1)">one</p>',
+				} ).better_excerpt
+			).toBe( '<p dir="rtl" lang="he">one</p>' );
+		} );
+	} );
+
+	describe( 'removeEventHandlers', () => {
+		test( 'removes event handler attributes', () => {
+			const post = {
+				content:
+					'<p onclick="alert(1)" ONMOUSEOVER="alert(2)" class="keep">hi</p>' +
+					'<img src="https://example.com/a.jpg" onerror="alert(3)">',
+			};
+			const normalized = withContentDOM( [ removeEventHandlers ] )( post );
+
+			expect( normalized.content ).toBe(
+				'<p class="keep">hi</p><img src="https://example.com/a.jpg">'
+			);
+		} );
+	} );
+
+	describe( 'externalLinkParagraph', () => {
+		test( 'keeps the label as text rather than markup', () => {
+			const paragraph = externalLinkParagraph(
+				'https://example.survey.fm/a-survey',
+				'<img src="x" onerror="alert(1)">'
+			);
+
+			expect( paragraph.children ).toHaveLength( 1 );
+			expect( paragraph.querySelector( 'img' ) ).toBeNull();
+			expect( paragraph.textContent ).toBe( '<img src="x" onerror="alert(1)">' );
+		} );
+
+		test( 'keeps the URL inside the href attribute', () => {
+			const paragraph = externalLinkParagraph(
+				'https://example.survey.fm/a-survey" onmouseover="alert(1)',
+				'Take our survey'
+			);
+
+			expect( paragraph.querySelectorAll( 'a' ) ).toHaveLength( 1 );
+			expect( paragraph.querySelector( '[onmouseover]' ) ).toBeNull();
+			expect( paragraph.firstChild.getAttribute( 'href' ) ).toBe(
+				'https://example.survey.fm/a-survey" onmouseover="alert(1)'
+			);
+		} );
 	} );
 
 	describe( 'Jetpack Carousel Linker', () => {
+		test( 'never turns a permalink that is not http(s) into an href', () => {
+			// linkJetpackCarousels skips the gallery rather than rewriting it, so the per-image
+			// links keep working. makeContentLinksSafe runs after it in the real pipeline and is
+			// the backstop should a later rule ever build such an href anyway.
+			const post = {
+				content:
+					'<div class="tiled-gallery" data-carousel-extra="{&quot;permalink&quot;:&quot;javascript:alert(1)&quot;}">' +
+					'<div class="tiled-gallery-item"><a href="https://example.com/foo/bar/">' +
+					'<img src="https://example.com/foo/bar/img/" data-attachment-id="500" />' +
+					'</a></div></div>',
+			};
+			const normalized = withContentDOM( [ linkJetpackCarousels, makeContentLinksSafe ] )( post );
+			const dom = domForHtml( normalized.content );
+
+			expect( dom.querySelector( '.tiled-gallery-item a' ).getAttribute( 'href' ) ).toBe(
+				'https://example.com/foo/bar/'
+			);
+			expect( dom.querySelector( '[href^="javascript:"]' ) ).toBeNull();
+		} );
+
 		test( 'should fix links to jetpack carousels', () => {
 			const source = `
 				<div class="tiled-gallery"
@@ -1038,6 +1244,22 @@ describe( 'index', () => {
 			`;
 			const normalized = withContentDOM( [ linkJetpackCarousels ] )( { content: source } );
 			expect( normalized.content.trim() ).toEqual( expected.trim() );
+		} );
+
+		test( 'should leave links alone when the permalink is not a web address', () => {
+			const source = `
+				<div class="tiled-gallery"
+					data-carousel-extra="{&quot;permalink&quot;:&quot;javascript:alert(1)//&quot;}">
+					<div class="tiled-gallery-item">
+						<a href="https://example.com/foo/bar/">
+							<img src="https://example.com/foo/bar/img/" data-attachment-id="500" />
+						</a>
+					</div>
+				</div>
+			`;
+			const normalized = withContentDOM( [ linkJetpackCarousels ] )( { content: source } );
+			expect( normalized.content ).toContain( 'href="https://example.com/foo/bar/"' );
+			expect( normalized.content ).not.toContain( 'href="javascript:' );
 		} );
 	} );
 } );

@@ -27,7 +27,7 @@ export function useCreateCreditCard( {
 						hasExistingCardMethods,
 						allowUseForAllSubscriptions,
 						defaultToUseForAllSubscriptions,
-				  } )
+					} )
 				: null,
 		[
 			currency,

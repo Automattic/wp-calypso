@@ -10,6 +10,7 @@ import type { ComponentProps } from 'react';
 const mockUseAgentChat = jest.fn();
 const mockUpdateSessionId = jest.fn();
 let mockManagerHasAgent = true;
+let mockManagerTurnInFlight = false;
 let mockAgentChatConfig: { onTaskUpdate?: ( update: TaskUpdate ) => Promise< void > } | undefined;
 let mockConversationConfig:
 	| {
@@ -51,6 +52,8 @@ const mockSetCheckpointActionReverted = jest.fn(
 );
 let mockSelectedBlockType: string | undefined;
 let mockBlockEditorStoreThrows = false;
+// Simulates Agenttic's floating truncation in the `AgentChat` mock.
+let mockRenderedSuggestionsLimit: number | undefined;
 let mockOpenPost: { id?: number | string; type?: string; title?: string } | null = null;
 
 let mockHasEditorRedo = false;
@@ -101,8 +104,7 @@ function mockGetCheckpointIdForMessage( message: {
 
 const mockCheckpointActions = () => {
 	let getCheckpointActionState:
-		| ( ( checkpointId: string ) => 'disabled' | 'enabled' | 'hidden' )
-		| undefined;
+		( ( checkpointId: string ) => 'disabled' | 'enabled' | 'hidden' ) | undefined;
 	const getActions = ( message: { content?: Array< { text?: string } > } ) => {
 		const checkpointId = mockGetCheckpointIdForMessage( message );
 		if ( ! checkpointId ) {
@@ -111,7 +113,7 @@ const mockCheckpointActions = () => {
 
 		const actionState = mockInvalidatedCheckpointIds.has( checkpointId )
 			? 'hidden'
-			: getCheckpointActionState?.( checkpointId ) ?? 'enabled';
+			: ( getCheckpointActionState?.( checkpointId ) ?? 'enabled' );
 		const canAct = actionState === 'enabled';
 		const isReverted = mockRevertedCheckpointIds.has( checkpointId );
 		const showDisabledAction = actionState === 'disabled';
@@ -155,6 +157,7 @@ const mockAgentChat = jest.fn(
 		inputValue,
 		onInputChange,
 		emptyViewSuggestions = [],
+		onContextCardAction,
 	}: {
 		messages?: unknown[];
 		onSuggestionClick: (
@@ -167,6 +170,12 @@ const mockAgentChat = jest.fn(
 		inputValue?: string;
 		onInputChange?: ( value: string ) => void;
 		emptyViewSuggestions?: Suggestion[];
+		onSuggestionsRendered?: ( shown: Suggestion[] ) => void;
+		isLoadingConversation?: boolean;
+		onContextCardAction?: (
+			card: { id: string },
+			action: { label: string; prompt: string; type: 'submit' }
+		) => void;
 	} ) => (
 		<>
 			<button
@@ -267,6 +276,16 @@ const mockAgentChat = jest.fn(
 			</button>
 			<button onClick={ () => onInputChange?.( 'Describe these images' ) }>Type message</button>
 			<button onClick={ () => onSubmit( 'Describe these images' ) }>Submit message</button>
+			<button
+				onClick={ () =>
+					onContextCardAction?.(
+						{ id: 'card-1' },
+						{ label: 'Ask', prompt: 'From the context card', type: 'submit' }
+					)
+				}
+			>
+				Submit context card
+			</button>
 			<button onClick={ () => onAbort?.() }>Stop</button>
 			{ error && <div data-testid="chat-error">{ error }</div> }
 			<div data-testid="input-value">{ inputValue }</div>
@@ -292,6 +311,7 @@ jest.mock(
 		getAgentManager: () => ( {
 			updateSessionId: mockUpdateSessionId,
 			hasAgent: () => mockManagerHasAgent,
+			isTurnInFlight: () => mockManagerTurnInFlight,
 		} ),
 		useAgentChat: ( config: typeof mockAgentChatConfig ) => {
 			mockAgentChatConfig = config;
@@ -301,7 +321,8 @@ jest.mock(
 	{ virtual: true }
 );
 jest.mock( '@wordpress/data', () => {
-	const { useEffect, useReducer, useRef } = jest.requireActual< typeof import('react') >( 'react' );
+	const { useEffect, useReducer, useRef } =
+		jest.requireActual< typeof import( 'react' ) >( 'react' );
 
 	return {
 		select: ( storeName: string ) => mockSelectDataStore( storeName ),
@@ -350,8 +371,10 @@ jest.mock( '../../contexts', () => {
 		} ),
 	};
 } );
+const mockRegisteredActions: Record< string, unknown > = {};
 jest.mock( '../../hooks/custom-actions', () => ( {
-	useRegisterCustomActions: () => {},
+	useRegisterCustomActions: ( actions: Record< string, unknown > ) =>
+		Object.assign( mockRegisteredActions, actions ),
 } ) );
 jest.mock( '../../utils/tracks', () => ( {
 	recordBigSkyTracksEvent: jest.fn(),
@@ -390,6 +413,18 @@ jest.mock( '../../hooks/use-image-upload', () => ( {
 	useImageUpload: () => mockUseImageUpload(),
 } ) );
 jest.mock( '../../hooks/use-sources-action', () => () => {} );
+// Returns `undefined` after a mock reset, which the wrapper reads as allowed.
+const mockCreditsBeforeSubmit = jest.fn( (): boolean | undefined => true );
+const mockCreditsVisibility = jest.fn();
+jest.mock( '../../hooks/use-credits', () => ( {
+	useCredits: ( { agentConfig, isOpen }: { agentConfig: unknown; isOpen: boolean } ) => {
+		mockCreditsVisibility( isOpen );
+		return {
+			chat: jest.requireMock( '@automattic/agenttic-client' ).useAgentChat( agentConfig ),
+			beforeSubmit: () => mockCreditsBeforeSubmit() !== false,
+		};
+	},
+} ) );
 jest.mock( '../../utils/convert-tool-messages-to-components', () => ( {
 	__esModule: true,
 	default: ( { messages }: { messages: unknown[] } ) => messages,
@@ -412,12 +447,34 @@ jest.mock( '../../utils/external-context', () => ( {
 jest.mock( '../../utils/is-reader-chat-agent', () => ( {
 	isReaderChatAgent: () => mockIsReaderChatAgent(),
 } ) );
-jest.mock( '../agent-chat', () => ( {
-	__esModule: true,
-	default: ( props: unknown ) => mockAgentChat( props as Parameters< typeof mockAgentChat >[ 0 ] ),
-} ) );
+jest.mock( '../agent-chat', () => {
+	const { useEffect, useRef } = jest.requireActual< typeof import( 'react' ) >( 'react' );
+	// Report the empty-view chips the way Agenttic does: nothing behind the loading
+	// skeleton, once per distinct id set, truncated when a test simulates the
+	// floating limit.
+	const MockAgentChat = ( props: Parameters< typeof mockAgentChat >[ 0 ] ) => {
+		const { emptyViewSuggestions = [], isLoadingConversation, onSuggestionsRendered } = props;
+		const shown = isLoadingConversation ? [] : emptyViewSuggestions;
+		const rendered = mockRenderedSuggestionsLimit
+			? shown.slice( 0, mockRenderedSuggestionsLimit )
+			: shown;
+		const renderedKey = rendered.map( ( suggestion ) => suggestion.id ).join( '|' );
+		const lastReportedKeyRef = useRef( '' );
+		useEffect( () => {
+			if ( renderedKey && renderedKey !== lastReportedKeyRef.current ) {
+				lastReportedKeyRef.current = renderedKey;
+				onSuggestionsRendered?.( rendered );
+			}
+			// Keyed on ids alone, like Agenttic's container dedupe.
+			// eslint-disable-next-line react-hooks/exhaustive-deps
+		}, [ renderedKey ] );
+		return mockAgentChat( props );
+	};
+	return { __esModule: true, default: MockAgentChat };
+} );
 
 import { getSessionId } from '../../utils/agent-session';
+import { takeActionOrigin } from '../../utils/action-origin';
 import {
 	bindToNavigationTarget,
 	bindToOpenCanvas,
@@ -426,7 +483,7 @@ import {
 	getBlockingMove,
 	startNewUserRequest,
 } from '../../utils/canvas-binding';
-import { recordBigSkyTracksEvent } from '../../utils/tracks';
+import { recordAgentsManagerTracksEvent, recordBigSkyTracksEvent } from '../../utils/tracks';
 import OrchestratorChat from '../orchestrator-chat';
 
 const chat = ( props: Partial< ComponentProps< typeof OrchestratorChat > > = {} ) => (
@@ -634,6 +691,8 @@ const countShowComponentMessages = () => {
 describe( 'OrchestratorChat', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
+		takeActionOrigin( 'open' );
+		takeActionOrigin( 'send' );
 		mockUseCheckpointAction.mockReturnValue( () => [] );
 		// Default getter: contributes no actions.
 		mockUseRegenerateAction.mockReturnValue( () => [] );
@@ -647,8 +706,10 @@ describe( 'OrchestratorChat', () => {
 		mockCurrentUserId = 1;
 		mockSelectedBlockType = undefined;
 		mockBlockEditorStoreThrows = false;
+		mockRenderedSuggestionsLimit = undefined;
 		sessionStorage.clear();
 		mockManagerHasAgent = true;
+		mockManagerTurnInFlight = false;
 		mockHasEditorRedo = false;
 		mockOpenPost = null;
 		mockEditorBlocks = [];
@@ -657,6 +718,17 @@ describe( 'OrchestratorChat', () => {
 		mockRevertedCheckpointIds.clear();
 		mockAgentChatConfig = undefined;
 		mockConversationConfig = undefined;
+	} );
+
+	it.each( [
+		[ 'docked', { isOpen: true, isDocked: true }, true ],
+		[ 'floating', { isOpen: true, isDocked: false }, true ],
+		[ 'compact', { isOpen: false, isDocked: false, isCompactMode: true }, true ],
+		[ 'closed', { isOpen: false, isDocked: false, isCompactMode: false }, false ],
+		[ 'closed dock', { isOpen: false, isDocked: true, isCompactMode: true }, false ],
+	] as const )( 'loads credits only for a visible %s composer', ( _name, options, visible ) => {
+		render( chat( options ) );
+		expect( mockCreditsVisibility ).toHaveBeenLastCalledWith( visible );
 	} );
 
 	it( 'ignores a conversation result for a discarded agent', () => {
@@ -701,11 +773,14 @@ describe( 'OrchestratorChat', () => {
 			autoSubmit: false,
 			suggestionId: 'simplify-text',
 		} );
-		expect( recordBigSkyTracksEvent ).toHaveBeenCalledWith( 'chat_suggestion_click', {
-			suggestion_text: 'Simplify this text to make it easier to read',
-			suggestion_id: 'simplify-text',
-			available_suggestions: '|simplify-text|',
-		} );
+		expect( recordBigSkyTracksEvent ).toHaveBeenCalledWith(
+			'jetpack_big_sky_chat_suggestion_click',
+			{
+				suggestion_text: 'Simplify this text to make it easier to read',
+				suggestion_id: 'simplify-text',
+				available_suggestions: '|simplify-text|',
+			}
+		);
 
 		window.removeEventListener( 'big-sky-inline-suggestion-click', listener );
 	} );
@@ -731,11 +806,14 @@ describe( 'OrchestratorChat', () => {
 			suggestionId: 'ai-editorial-review',
 		} );
 		expect( recordBigSkyTracksEvent ).toHaveBeenCalledTimes( 1 );
-		expect( recordBigSkyTracksEvent ).toHaveBeenCalledWith( 'chat_suggestion_click', {
-			suggestion_text: 'Run an AI Editorial Review',
-			suggestion_id: 'ai-editorial-review',
-			available_suggestions: '|ai-editorial-review|',
-		} );
+		expect( recordBigSkyTracksEvent ).toHaveBeenCalledWith(
+			'jetpack_big_sky_chat_suggestion_click',
+			{
+				suggestion_text: 'Run an AI Editorial Review',
+				suggestion_id: 'ai-editorial-review',
+				available_suggestions: '|ai-editorial-review|',
+			}
+		);
 
 		window.removeEventListener( 'big-sky-inline-suggestion-click', listener );
 	} );
@@ -775,7 +853,7 @@ describe( 'OrchestratorChat', () => {
 			suggestionId: 'weekly-brief',
 		} );
 		expect( recordBigSkyTracksEvent ).toHaveBeenCalledWith(
-			'chat_suggestion_click',
+			'jetpack_big_sky_chat_suggestion_click',
 			expect.objectContaining( { suggestion_id: 'weekly-brief' } )
 		);
 
@@ -806,12 +884,15 @@ describe( 'OrchestratorChat', () => {
 		fireEvent.click( screen.getByText( 'Click block suggestion' ) );
 
 		expect( recordBigSkyTracksEvent ).toHaveBeenCalledTimes( 1 );
-		expect( recordBigSkyTracksEvent ).toHaveBeenCalledWith( 'chat_suggestion_click', {
-			suggestion_text: 'Check the grammar and spelling of this text',
-			suggestion_id: 'check-grammar',
-			available_suggestions: '|check-grammar|',
-			block_type: 'core/paragraph',
-		} );
+		expect( recordBigSkyTracksEvent ).toHaveBeenCalledWith(
+			'jetpack_big_sky_chat_suggestion_click',
+			{
+				suggestion_text: 'Check the grammar and spelling of this text',
+				suggestion_id: 'check-grammar',
+				available_suggestions: '|check-grammar|',
+				block_type: 'core/paragraph',
+			}
+		);
 		expect( ( listener.mock.calls[ 0 ][ 0 ] as CustomEvent ).detail ).toEqual( {
 			value: 'Check the grammar and spelling of this text',
 			autoSubmit: false,
@@ -828,7 +909,7 @@ describe( 'OrchestratorChat', () => {
 		fireEvent.click( screen.getByText( 'Click suggestion' ) );
 
 		expect( recordBigSkyTracksEvent ).toHaveBeenCalledWith(
-			'chat_suggestion_click',
+			'jetpack_big_sky_chat_suggestion_click',
 			expect.objectContaining( { suggestion_id: 'simplify-text' } )
 		);
 	} );
@@ -864,13 +945,16 @@ describe( 'OrchestratorChat', () => {
 		fireEvent.click( screen.getByText( 'Click block dropdown suggestion' ) );
 
 		expect( recordBigSkyTracksEvent ).toHaveBeenCalledTimes( 1 );
-		expect( recordBigSkyTracksEvent ).toHaveBeenCalledWith( 'chat_suggestion_click', {
-			suggestion_text: 'Change the tone of this text to be more formal',
-			suggestion_id: 'change-tone',
-			available_suggestions: '|change-tone|',
-			option_id: 'formal',
-			block_type: 'core/paragraph',
-		} );
+		expect( recordBigSkyTracksEvent ).toHaveBeenCalledWith(
+			'jetpack_big_sky_chat_suggestion_click',
+			{
+				suggestion_text: 'Change the tone of this text to be more formal',
+				suggestion_id: 'change-tone',
+				available_suggestions: '|change-tone|',
+				option_id: 'formal',
+				block_type: 'core/paragraph',
+			}
+		);
 		expect( ( listener.mock.calls[ 0 ][ 0 ] as CustomEvent ).detail ).toEqual( {
 			value: 'Change the tone of this text to be more formal',
 			autoSubmit: false,
@@ -887,12 +971,15 @@ describe( 'OrchestratorChat', () => {
 		fireEvent.click( screen.getByText( 'Click post dropdown suggestion' ) );
 
 		expect( recordBigSkyTracksEvent ).toHaveBeenCalledTimes( 1 );
-		expect( recordBigSkyTracksEvent ).toHaveBeenCalledWith( 'chat_suggestion_click', {
-			suggestion_text: 'Generate an SEO title for this post',
-			suggestion_id: 'seo-enhancer',
-			available_suggestions: '|seo-enhancer|',
-			option_id: 'seo-title',
-		} );
+		expect( recordBigSkyTracksEvent ).toHaveBeenCalledWith(
+			'jetpack_big_sky_chat_suggestion_click',
+			{
+				suggestion_text: 'Generate an SEO title for this post',
+				suggestion_id: 'seo-enhancer',
+				available_suggestions: '|seo-enhancer|',
+				option_id: 'seo-title',
+			}
+		);
 	} );
 
 	it( 'records the option when the click carries no available suggestions', () => {
@@ -912,12 +999,15 @@ describe( 'OrchestratorChat', () => {
 
 		fireEvent.click( screen.getByText( 'Click feedback dropdown without context' ) );
 
-		expect( recordBigSkyTracksEvent ).toHaveBeenCalledWith( 'chat_suggestion_click', {
-			suggestion_text: 'Proofread this saved post',
-			suggestion_id: 'get-feedback',
-			available_suggestions: '|get-feedback|',
-			option_id: 'proofread-content',
-		} );
+		expect( recordBigSkyTracksEvent ).toHaveBeenCalledWith(
+			'jetpack_big_sky_chat_suggestion_click',
+			{
+				suggestion_text: 'Proofread this saved post',
+				suggestion_id: 'get-feedback',
+				available_suggestions: '|get-feedback|',
+				option_id: 'proofread-content',
+			}
+		);
 	} );
 
 	it( 'passes the floating suggestion limit to external providers', () => {
@@ -954,12 +1044,15 @@ describe( 'OrchestratorChat', () => {
 		rerender( chat( { useSuggestions } ) );
 		fireEvent.click( screen.getByText( 'Click block suggestion' ) );
 
-		expect( recordBigSkyTracksEvent ).toHaveBeenLastCalledWith( 'chat_suggestion_click', {
-			suggestion_text: 'Check the grammar and spelling of this text',
-			suggestion_id: 'check-grammar',
-			available_suggestions: '|check-grammar|',
-			block_type: 'core/heading',
-		} );
+		expect( recordBigSkyTracksEvent ).toHaveBeenLastCalledWith(
+			'jetpack_big_sky_chat_suggestion_click',
+			{
+				suggestion_text: 'Check the grammar and spelling of this text',
+				suggestion_id: 'check-grammar',
+				available_suggestions: '|check-grammar|',
+				block_type: 'core/heading',
+			}
+		);
 	} );
 
 	it( 'keeps showing the provider suggestions in the empty view after the store is cleared', () => {
@@ -1084,10 +1177,13 @@ describe( 'OrchestratorChat', () => {
 		expect( screen.queryByText( 'Proofread' ) ).toBeNull();
 		expect( screen.getByText( 'Change tone' ) ).toBeTruthy();
 		expect( screen.getByText( 'Check grammar' ) ).toBeTruthy();
-		expect( recordBigSkyTracksEvent ).toHaveBeenCalledWith( 'chat_suggestions_rendered', {
-			suggestions: '|change-tone|check-grammar|',
-			block_type: 'core/paragraph',
-		} );
+		expect( recordBigSkyTracksEvent ).toHaveBeenCalledWith(
+			'jetpack_big_sky_chat_suggestions_rendered',
+			{
+				suggestions: '|change-tone|check-grammar|',
+				block_type: 'core/paragraph',
+			}
+		);
 	} );
 
 	it( 'tracks the same contextual suggestions again when the selected block type changes', () => {
@@ -1104,20 +1200,26 @@ describe( 'OrchestratorChat', () => {
 
 		const { rerender } = render( chat( { useSuggestions } ) );
 
-		expect( recordBigSkyTracksEvent ).toHaveBeenLastCalledWith( 'chat_suggestions_rendered', {
-			suggestions: '|change-tone|check-grammar|',
-			block_type: 'core/paragraph',
-		} );
+		expect( recordBigSkyTracksEvent ).toHaveBeenLastCalledWith(
+			'jetpack_big_sky_chat_suggestions_rendered',
+			{
+				suggestions: '|change-tone|check-grammar|',
+				block_type: 'core/paragraph',
+			}
+		);
 		rerender( chat( { useSuggestions } ) );
 		expect( recordBigSkyTracksEvent ).toHaveBeenCalledTimes( 1 );
 
 		mockSelectedBlockType = 'core/heading';
 		rerender( chat( { useSuggestions } ) );
 
-		expect( recordBigSkyTracksEvent ).toHaveBeenLastCalledWith( 'chat_suggestions_rendered', {
-			suggestions: '|change-tone|check-grammar|',
-			block_type: 'core/heading',
-		} );
+		expect( recordBigSkyTracksEvent ).toHaveBeenLastCalledWith(
+			'jetpack_big_sky_chat_suggestions_rendered',
+			{
+				suggestions: '|change-tone|check-grammar|',
+				block_type: 'core/heading',
+			}
+		);
 		expect( recordBigSkyTracksEvent ).toHaveBeenCalledTimes( 2 );
 	} );
 
@@ -1163,9 +1265,12 @@ describe( 'OrchestratorChat', () => {
 
 		render( chat( { emptyViewSuggestions: staticDefaults } ) );
 
-		expect( recordBigSkyTracksEvent ).toHaveBeenCalledWith( 'chat_suggestions_rendered', {
-			suggestions: '|getting-started|',
-		} );
+		expect( recordBigSkyTracksEvent ).toHaveBeenCalledWith(
+			'jetpack_big_sky_chat_suggestions_rendered',
+			{
+				suggestions: '|getting-started|',
+			}
+		);
 	} );
 
 	it( 'tracks suggestions without block context when the block editor store is unavailable', () => {
@@ -1181,9 +1286,12 @@ describe( 'OrchestratorChat', () => {
 
 		render( chat( { useSuggestions } ) );
 
-		expect( recordBigSkyTracksEvent ).toHaveBeenCalledWith( 'chat_suggestions_rendered', {
-			suggestions: '|check-grammar|',
-		} );
+		expect( recordBigSkyTracksEvent ).toHaveBeenCalledWith(
+			'jetpack_big_sky_chat_suggestions_rendered',
+			{
+				suggestions: '|check-grammar|',
+			}
+		);
 	} );
 
 	it( 'does not track chat_suggestions_rendered while the conversation is loading', () => {
@@ -1196,7 +1304,7 @@ describe( 'OrchestratorChat', () => {
 
 		expect( screen.queryByText( 'Getting started with WordPress' ) ).toBeNull();
 		expect( recordBigSkyTracksEvent ).not.toHaveBeenCalledWith(
-			'chat_suggestions_rendered',
+			'jetpack_big_sky_chat_suggestions_rendered',
 			expect.anything()
 		);
 	} );
@@ -1212,8 +1320,92 @@ describe( 'OrchestratorChat', () => {
 
 		expect( screen.queryByText( 'Getting started with WordPress' ) ).toBeNull();
 		expect( recordBigSkyTracksEvent ).not.toHaveBeenCalledWith(
-			'chat_suggestions_rendered',
+			'jetpack_big_sky_chat_suggestions_rendered',
 			expect.anything()
+		);
+	} );
+
+	it( 'does not re-track cached suggestions when the block type changes while loading', () => {
+		mockSelectedBlockType = 'core/paragraph';
+		const blockSuggestions: Suggestion[] = [
+			{ id: 'check-grammar', label: 'Check grammar', prompt: 'Check the grammar' },
+		];
+		const useSuggestions = jest.fn( () => ( {
+			suggestions: blockSuggestions,
+			replaceEmptyViewSuggestions: true,
+		} ) );
+		mockUseAgentChat.mockReturnValue( agentChatReturn( { suggestions: blockSuggestions } ) );
+
+		const { rerender } = render( chat( { useSuggestions } ) );
+		expect( recordBigSkyTracksEvent ).toHaveBeenCalledTimes( 1 );
+
+		mockUseConversation.mockReturnValue( { isLoading: true } );
+		mockSelectedBlockType = 'core/heading';
+		rerender( chat( { useSuggestions } ) );
+
+		expect( recordBigSkyTracksEvent ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'tracks the suggestions Agenttic reports as rendered rather than the full list', () => {
+		// Floating mode: Agenttic renders the first three chips only.
+		mockRenderedSuggestionsLimit = 3;
+		const staticDefaults: Suggestion[] = [ 'one', 'two', 'three', 'four', 'five' ].map(
+			( id ) => ( { id, label: id, prompt: id } )
+		);
+
+		render( chat( { emptyViewSuggestions: staticDefaults } ) );
+
+		expect( recordBigSkyTracksEvent ).toHaveBeenCalledTimes( 1 );
+		expect( recordBigSkyTracksEvent ).toHaveBeenCalledWith(
+			'jetpack_big_sky_chat_suggestions_rendered',
+			{ suggestions: '|one|two|three|' }
+		);
+	} );
+
+	it( 'reports the rendered set as the available suggestions for clicks without context', () => {
+		mockRenderedSuggestionsLimit = 1;
+		const feedback: Suggestion = {
+			id: 'get-feedback',
+			label: 'Get feedback',
+			prompt: '',
+			options: [
+				{ id: 'proofread-content', label: 'Proofread', value: 'Proofread this saved post' },
+			],
+		};
+		const truncated: Suggestion = { id: 'seo-enhancer', label: 'SEO Enhancer', prompt: 'SEO' };
+
+		render( chat( { emptyViewSuggestions: [ feedback, truncated ] } ) );
+		jest.mocked( recordBigSkyTracksEvent ).mockClear();
+
+		fireEvent.click( screen.getByText( 'Click feedback dropdown without context' ) );
+
+		expect( recordBigSkyTracksEvent ).toHaveBeenCalledWith(
+			'jetpack_big_sky_chat_suggestion_click',
+			expect.objectContaining( { available_suggestions: '|get-feedback|' } )
+		);
+	} );
+
+	it( 'records the rendered subset when an empty-view click hands over the full list', () => {
+		mockRenderedSuggestionsLimit = 1;
+		const shown: Suggestion = {
+			id: 'getting-started',
+			label: 'Getting started',
+			prompt: 'getting-started',
+		};
+		const truncated: Suggestion = { id: 'seo-enhancer', label: 'SEO Enhancer', prompt: 'SEO' };
+
+		render( chat( { emptyViewSuggestions: [ shown, truncated ] } ) );
+		jest.mocked( recordBigSkyTracksEvent ).mockClear();
+
+		// The mock's empty view passes its whole list, like GroupedEmptyView does.
+		fireEvent.click( screen.getByText( 'Getting started' ) );
+
+		expect( recordBigSkyTracksEvent ).toHaveBeenCalledWith(
+			'jetpack_big_sky_chat_suggestion_click',
+			expect.objectContaining( {
+				suggestion_id: 'getting-started',
+				available_suggestions: '|getting-started|',
+			} )
 		);
 	} );
 
@@ -1227,6 +1419,163 @@ describe( 'OrchestratorChat', () => {
 		await waitFor( () => {
 			expect( onSubmit ).toHaveBeenCalledWith( 'Describe these images' );
 		} );
+	} );
+
+	it( 'labels a send from the composer', () => {
+		render( chat() );
+
+		fireEvent.click( screen.getByText( 'Submit message' ) );
+
+		expect( recordBigSkyTracksEvent ).toHaveBeenCalledWith(
+			'jetpack_big_sky_chat_input_send_message',
+			expect.objectContaining( { source: 'composer' } )
+		);
+	} );
+
+	it( 'labels a send whose text is a suggestion on screen', () => {
+		render( chat( { emptyViewSuggestions: [ { id: 's1', label: 'Describe these images' } ] } ) );
+
+		fireEvent.click( screen.getByText( 'Submit message' ) );
+
+		expect( recordBigSkyTracksEvent ).toHaveBeenCalledWith(
+			'jetpack_big_sky_chat_input_send_message',
+			expect.objectContaining( { source: 'suggestion' } )
+		);
+	} );
+
+	it( 'labels a send a host submits through the actions bridge', async () => {
+		render( chat() );
+
+		const submitChatMessage = mockRegisteredActions.submitChatMessage as (
+			message: string
+		) => Promise< void >;
+		await act( async () => {
+			await submitChatMessage( 'From the host' );
+		} );
+
+		expect( recordBigSkyTracksEvent ).toHaveBeenCalledWith(
+			'jetpack_big_sky_chat_input_send_message',
+			expect.objectContaining( { source: 'host' } )
+		);
+	} );
+
+	it( 'does not label a context-card submit as host', async () => {
+		render( chat() );
+
+		fireEvent.click( screen.getByText( 'Submit context card' ) );
+
+		await waitFor( () => {
+			expect( recordBigSkyTracksEvent ).toHaveBeenCalledWith(
+				'jetpack_big_sky_chat_input_send_message',
+				expect.objectContaining( { source: 'composer' } )
+			);
+		} );
+	} );
+
+	it( 'gates a context-card submit on credits and keeps the card for a retry', async () => {
+		mockCreditsBeforeSubmit.mockReturnValueOnce( false );
+		render( chat() );
+
+		fireEvent.click( screen.getByText( 'Submit context card' ) );
+
+		await act( async () => {} );
+		expect( mockCreditsBeforeSubmit ).toHaveBeenCalled();
+		const { removeExternalContextCard } = jest.requireMock( '../../utils/external-context' );
+		expect( removeExternalContextCard ).not.toHaveBeenCalled();
+		expect( recordBigSkyTracksEvent ).not.toHaveBeenCalledWith(
+			'jetpack_big_sky_chat_input_send_message',
+			expect.anything()
+		);
+	} );
+
+	it( 'gates a host submit through the actions bridge on credits', async () => {
+		mockCreditsBeforeSubmit.mockReturnValueOnce( false );
+		render( chat() );
+
+		const submitChatMessage = mockRegisteredActions.submitChatMessage as (
+			message: string
+		) => Promise< void >;
+		await act( async () => {
+			await submitChatMessage( 'From the host' );
+		} );
+
+		expect( recordBigSkyTracksEvent ).not.toHaveBeenCalledWith(
+			'jetpack_big_sky_chat_input_send_message',
+			expect.anything()
+		);
+
+		// The blocked host send must not leave its origin pending for the
+		// composer send that follows.
+		fireEvent.click( screen.getByText( 'Submit message' ) );
+
+		expect( recordBigSkyTracksEvent ).toHaveBeenCalledWith(
+			'jetpack_big_sky_chat_input_send_message',
+			expect.objectContaining( { source: 'composer' } )
+		);
+	} );
+
+	it( 'gates a regeneration on credits', async () => {
+		const agentticRegenerate = jest.fn();
+		mockUseAgentChat.mockReturnValue(
+			agentChatReturn( { getRegenerateHandler: jest.fn( () => agentticRegenerate ) } )
+		);
+		mockCreditsBeforeSubmit.mockReturnValueOnce( false );
+		render( chat() );
+
+		const regenerateConfig = mockUseRegenerateAction.mock.calls.at( -1 )![ 0 ] as {
+			getRegenerateHandler?: ( message: unknown ) => ( () => Promise< void > ) | null | undefined;
+		};
+		await act( async () => {
+			await regenerateConfig.getRegenerateHandler?.( { id: 'agent-1' } )?.();
+		} );
+
+		expect( mockCreditsBeforeSubmit ).toHaveBeenCalled();
+		expect( agentticRegenerate ).not.toHaveBeenCalled();
+		expect( recordAgentsManagerTracksEvent ).not.toHaveBeenCalledWith(
+			'calypso_agents_manager_response_action_regenerate',
+			expect.anything()
+		);
+	} );
+
+	it( 'records a regeneration when credits allow it', async () => {
+		const agentticRegenerate = jest.fn();
+		mockUseAgentChat.mockReturnValue(
+			agentChatReturn( { getRegenerateHandler: jest.fn( () => agentticRegenerate ) } )
+		);
+		mockCreditsBeforeSubmit.mockReturnValueOnce( true );
+		render( chat() );
+
+		const regenerateConfig = mockUseRegenerateAction.mock.calls.at( -1 )![ 0 ] as {
+			getRegenerateHandler?: ( message: unknown ) => ( () => Promise< void > ) | null | undefined;
+		};
+		await act( async () => {
+			await regenerateConfig.getRegenerateHandler?.( { id: 'agent-1' } )?.();
+		} );
+
+		expect( agentticRegenerate ).toHaveBeenCalledTimes( 1 );
+		expect( recordAgentsManagerTracksEvent ).toHaveBeenCalledWith(
+			'calypso_agents_manager_response_action_regenerate',
+			{ message_id: 'agent-1' }
+		);
+	} );
+
+	it( 'does not label a typed send that matches a suggestion that is not on screen', () => {
+		mockUseAgentChat.mockReturnValue(
+			agentChatReturn( {
+				suggestions: [
+					{ id: 's1', label: 'Describe these images', prompt: 'Describe these images' },
+				],
+			} )
+		);
+
+		render( chat( { suggestionsVisible: false } ) );
+
+		fireEvent.click( screen.getByText( 'Submit message' ) );
+
+		expect( recordBigSkyTracksEvent ).toHaveBeenCalledWith(
+			'jetpack_big_sky_chat_input_send_message',
+			expect.objectContaining( { source: 'composer' } )
+		);
 	} );
 
 	it( 'fires `file_upload_success` after images upload on send, with the uploaded media count', async () => {
@@ -1246,9 +1595,12 @@ describe( 'OrchestratorChat', () => {
 
 		await waitFor( () => {
 			expect( uploadImagesToWordPress ).toHaveBeenCalled();
-			expect( recordBigSkyTracksEvent ).toHaveBeenCalledWith( 'file_upload_success', {
-				count: 2,
-			} );
+			expect( recordBigSkyTracksEvent ).toHaveBeenCalledWith(
+				'jetpack_big_sky_file_upload_success',
+				{
+					count: 2,
+				}
+			);
 		} );
 	} );
 
@@ -1302,9 +1654,12 @@ describe( 'OrchestratorChat', () => {
 		fireEvent.click( screen.getByText( 'Submit message' ) );
 
 		await waitFor( () => {
-			expect( recordBigSkyTracksEvent ).toHaveBeenCalledWith( 'file_upload_cancel', {
-				count: 1,
-			} );
+			expect( recordBigSkyTracksEvent ).toHaveBeenCalledWith(
+				'jetpack_big_sky_file_upload_cancel',
+				{
+					count: 1,
+				}
+			);
 		} );
 		expect( onSubmit ).not.toHaveBeenCalled();
 	} );
@@ -1326,7 +1681,7 @@ describe( 'OrchestratorChat', () => {
 				'Failed to upload images. Please try again.'
 			);
 		} );
-		expect( recordBigSkyTracksEvent ).toHaveBeenCalledWith( 'file_upload_error', {
+		expect( recordBigSkyTracksEvent ).toHaveBeenCalledWith( 'jetpack_big_sky_file_upload_error', {
 			count: 1,
 		} );
 		expect( onSubmit ).not.toHaveBeenCalled();
@@ -1394,6 +1749,10 @@ describe( 'OrchestratorChat', () => {
 
 		expect( abortUpload ).toHaveBeenCalled();
 		expect( abortCurrentRequest ).not.toHaveBeenCalled();
+		expect( recordAgentsManagerTracksEvent ).toHaveBeenCalledWith(
+			'calypso_agents_manager_chat_response_stopped',
+			{ stopped_during: 'upload' }
+		);
 	} );
 
 	it( 'stops the agent request when no upload is in flight', () => {
@@ -1404,6 +1763,119 @@ describe( 'OrchestratorChat', () => {
 		fireEvent.click( screen.getByText( 'Stop' ) );
 
 		expect( abortCurrentRequest ).toHaveBeenCalled();
+		expect( recordAgentsManagerTracksEvent ).toHaveBeenCalledWith(
+			'calypso_agents_manager_chat_response_stopped',
+			{ stopped_during: 'response' }
+		);
+	} );
+
+	describe( 'chat error tracking', () => {
+		const chatErrorCalls = () =>
+			jest
+				.mocked( recordAgentsManagerTracksEvent )
+				.mock.calls.filter(
+					( [ eventName ] ) => eventName === 'calypso_agents_manager_chat_error'
+				);
+
+		it( 'records one event per error shown, with its type', () => {
+			mockUseAgentChat.mockReturnValue(
+				agentChatReturn( { error: 'ai_editorial_review_over_limit' } )
+			);
+
+			const { rerender } = render( chat() );
+			rerender( chat() );
+
+			expect( chatErrorCalls() ).toEqual( [
+				[ 'calypso_agents_manager_chat_error', { error_type: 'usage_limit' } ],
+			] );
+		} );
+
+		it( 'records the same error again once the chat has recovered from it', () => {
+			mockUseAgentChat.mockReturnValue( agentChatReturn( { error: 'Some other error.' } ) );
+			const { rerender } = render( chat() );
+
+			mockUseAgentChat.mockReturnValue( agentChatReturn( { error: null } ) );
+			rerender( chat() );
+
+			mockUseAgentChat.mockReturnValue( agentChatReturn( { error: 'Some other error.' } ) );
+			rerender( chat() );
+
+			expect( chatErrorCalls() ).toEqual( [
+				[ 'calypso_agents_manager_chat_error', { error_type: 'other' } ],
+				[ 'calypso_agents_manager_chat_error', { error_type: 'other' } ],
+			] );
+		} );
+
+		it( 'records nothing while there is no error', () => {
+			render( chat() );
+
+			expect( chatErrorCalls() ).toEqual( [] );
+		} );
+	} );
+
+	describe( 'response outcome tracking', () => {
+		const outcomeCalls = () =>
+			jest
+				.mocked( recordAgentsManagerTracksEvent )
+				.mock.calls.filter(
+					( [ eventName ] ) => eventName === 'calypso_agents_manager_chat_response_completed'
+				);
+
+		beforeEach( () => {
+			jest.mocked( recordAgentsManagerTracksEvent ).mockClear();
+		} );
+
+		it( 'records one completed outcome per task, with the reply message id', async () => {
+			render( chat() );
+
+			await act( async () => {
+				await mockAgentChatConfig?.onTaskUpdate?.(
+					createCompletedCheckpointUpdate( 'task-outcome', 'agent-outcome' )
+				);
+				await mockAgentChatConfig?.onTaskUpdate?.(
+					createCompletedCheckpointUpdate( 'task-outcome', 'agent-outcome' )
+				);
+			} );
+
+			expect( outcomeCalls() ).toEqual( [
+				[
+					'calypso_agents_manager_chat_response_completed',
+					{ status: 'completed', message_id: 'agent-outcome' },
+				],
+			] );
+		} );
+
+		it.each( [ 'failed', 'canceled' ] as const )( 'records a %s outcome', async ( state ) => {
+			render( chat() );
+
+			await act( async () => {
+				await mockAgentChatConfig?.onTaskUpdate?.( {
+					id: `task-${ state }`,
+					status: { state },
+					final: true,
+					kind: 'status',
+				} as TaskUpdate );
+			} );
+
+			expect( outcomeCalls() ).toEqual( [
+				[ 'calypso_agents_manager_chat_response_completed', { status: state } ],
+			] );
+		} );
+
+		it( 'records nothing while the task is still working', async () => {
+			render( chat() );
+
+			await act( async () => {
+				await mockAgentChatConfig?.onTaskUpdate?.( {
+					id: 'task-working',
+					status: { state: 'working' },
+					final: false,
+					kind: 'status',
+				} as TaskUpdate );
+			} );
+
+			expect( outcomeCalls() ).toEqual( [] );
+		} );
 	} );
 
 	it( 'drops a same-tick duplicate send before upload state propagates', async () => {
@@ -1425,7 +1897,7 @@ describe( 'OrchestratorChat', () => {
 			expect( uploadImagesToWordPress ).toHaveBeenCalledTimes( 1 );
 		} );
 		expect( recordBigSkyTracksEvent ).not.toHaveBeenCalledWith(
-			'file_upload_error',
+			'jetpack_big_sky_file_upload_error',
 			expect.anything()
 		);
 	} );
@@ -1445,7 +1917,7 @@ describe( 'OrchestratorChat', () => {
 
 		expect( uploadImagesToWordPress ).not.toHaveBeenCalled();
 		expect( recordBigSkyTracksEvent ).not.toHaveBeenCalledWith(
-			'chat_input_send_message',
+			'jetpack_big_sky_chat_input_send_message',
 			expect.anything()
 		);
 	} );
@@ -2219,7 +2691,7 @@ describe( 'OrchestratorChat', () => {
 		expect( actionAfterDrift?.componentProps ).not.toHaveProperty( 'onRedo' );
 		expect( checkpoint.swapCheckpoint ).not.toHaveBeenCalled();
 		expect( recordBigSkyTracksEvent ).not.toHaveBeenCalledWith(
-			'restore_checkpoint_action',
+			'jetpack_big_sky_restore_checkpoint_action',
 			expect.objectContaining( { id: 'editor-drift-checkpoint', outcome: 'failed' } )
 		);
 
@@ -3156,7 +3628,7 @@ describe( 'OrchestratorChat', () => {
 								onClick: onRegenerate,
 								disabled: ! options.isLatestAgentMessage,
 							},
-					  ]
+						]
 					: []
 		);
 		mockUseAgentChat.mockReturnValue(
@@ -3202,7 +3674,15 @@ describe( 'OrchestratorChat', () => {
 		);
 	} );
 
-	it( 'tells the regenerate getter which message is latest and whether it is streaming', () => {
+	it( 'keeps response actions on the raw streaming state while images upload', () => {
+		renderWithImageUpload( createImageUpload( { isUploadingImages: true } ) );
+
+		expect( mockAgentChat.mock.calls[ 0 ][ 0 ] ).toEqual(
+			expect.objectContaining( { isProcessing: true, isStreaming: false } )
+		);
+	} );
+
+	it( 'tells the regenerate getter which message is latest', () => {
 		const getRegenerateActions = jest.fn( () => [] );
 		mockUseRegenerateAction.mockReturnValue( getRegenerateActions );
 		mockUseAgentChat.mockReturnValue(
@@ -3233,11 +3713,11 @@ describe( 'OrchestratorChat', () => {
 
 		expect( getRegenerateActions ).toHaveBeenCalledWith(
 			expect.objectContaining( { id: 'agent-1' } ),
-			{ isLatestAgentMessage: false, isStreaming: true }
+			{ isLatestAgentMessage: false }
 		);
 		expect( getRegenerateActions ).toHaveBeenCalledWith(
 			expect.objectContaining( { id: 'agent-2' } ),
-			{ isLatestAgentMessage: true, isStreaming: true }
+			{ isLatestAgentMessage: true }
 		);
 	} );
 
@@ -3497,22 +3977,6 @@ describe( 'OrchestratorChat', () => {
 
 			expect( abortCurrentRequest ).not.toHaveBeenCalled();
 			expect( addMessage ).not.toHaveBeenCalled();
-		} );
-
-		it( 'aborts for unified chat as well as the orchestrator', () => {
-			// The canvas abilities are migrating into AM, which serves them on
-			// unified-chat surfaces. Gating on the orchestrator alone would leave this
-			// switched off exactly where those abilities are heading.
-			mockAgentConfig = { agentId: 'wpcom-workflow-unified_chat' };
-			mockUseAgentChat.mockReturnValue( agentChatReturn( { isProcessing: true } ) );
-			const { abortCurrentRequest } = mockUseAgentChat();
-
-			render( chat() );
-			bindToOpenCanvas();
-
-			openPage( CONTACT_PAGE );
-
-			expect( abortCurrentRequest ).toHaveBeenCalledTimes( 1 );
 		} );
 
 		it( 'never aborts on a surface with no editor', () => {

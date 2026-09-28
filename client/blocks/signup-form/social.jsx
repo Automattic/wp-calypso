@@ -18,7 +18,6 @@ import {
 import { isWpccFlow } from 'calypso/signup/is-flow';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
-import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 
 class SocialSignupForm extends Component {
@@ -41,7 +40,7 @@ class SocialSignupForm extends Component {
 	};
 
 	handleSignup = ( result ) => {
-		const { isDevAccount, handleResponse } = this.props;
+		const { handleResponse } = this.props;
 
 		recordTracksEvent( 'calypso_signup_social_button_success', {
 			social_account_type: result.service,
@@ -49,10 +48,7 @@ class SocialSignupForm extends Component {
 
 		window.sessionStorage?.removeItem( 'login_redirect_to' );
 
-		handleResponse( result.service, result.access_token, result.id_token, {
-			...result,
-			is_dev_account: result.service === 'github' ? true : isDevAccount,
-		} );
+		handleResponse( result.service, result.access_token, result.id_token, result );
 	};
 
 	trackSignupAndRememberRedirect = ( event ) => {
@@ -215,17 +211,9 @@ class SocialSignupForm extends Component {
 }
 
 export default connect(
-	( state ) => {
-		const query = getCurrentQueryArguments( state );
-		const devAccountLandingPageRefs = [ 'hosting-lp', 'developer-lp' ];
-		const isDevAccount = devAccountLandingPageRefs.includes( query?.ref );
-		const oauth2Client = getCurrentOAuth2Client( state );
-
-		return {
-			currentRoute: getCurrentRoute( state ),
-			oauth2Client: oauth2Client,
-			isDevAccount: isDevAccount,
-		};
-	},
+	( state ) => ( {
+		currentRoute: getCurrentRoute( state ),
+		oauth2Client: getCurrentOAuth2Client( state ),
+	} ),
 	{ showErrorNotice: errorNotice }
 )( localize( SocialSignupForm ) );

@@ -245,6 +245,30 @@ See https://dequeuniversity.com/rules/axe/4.6/link-in-text-block?application=Axe
 	text-decoration: none;
 }
 
+/* Card's own `margin: 0 auto` would center these once the width is capped. */
+.earn__upsell-card.promo-card {
+	max-width: 660px;
+	margin-inline: 0 auto;
+
+	/* For an upsell that is a whole tab's content, with nothing beside it to line
+	   up with. Ones sitting in a stack of cards keep the cap and align instead. */
+	&.is-content-width {
+		max-width: fit-content;
+	}
+}
+
+/* The benefits continue the paragraph, so the 20px gap moves below them. */
+.earn__upsell-card p:has(+ .earn__upsell-card-benefits) {
+	margin-bottom: 8px;
+}
+
+.earn__upsell-card-benefits {
+	margin-block: 0 20px;
+	margin-inline-start: 0;
+	padding-inline-start: 20px;
+	list-style: disc;
+}
+
 .earn__notes {
 	clear: both;
 	padding-bottom: 12px;

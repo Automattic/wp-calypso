@@ -60,6 +60,31 @@ describe( 'HandleEmailedLinkForm 2FA handoff', () => {
 		expect( instance.setState ).toHaveBeenCalledWith( { isRedirecting: true } );
 	} );
 
+	it( 'keeps the 2FA prompt when the redirect is a Jetpack SSO login', () => {
+		// Regression: `login()` used to hand back a `redirect_to` containing `jetpack-sso`
+		// verbatim, so this navigated to the SSO handler before the second factor was
+		// collected. With no session yet, the handler bounced the user back to the login page.
+		const redirectToSanitized =
+			'https://wordpress.com/wp-login.php?action=jetpack-sso&site_id=123&sso_nonce=abc';
+		const instance = buildInstance( { redirectToSanitized } );
+
+		instance.UNSAFE_componentWillUpdate(
+			{
+				...instance.props,
+				...TWO_FACTOR_PROPS,
+				isAuthenticated: true,
+				isFetching: false,
+				authError: null,
+			},
+			{ hasSubmitted: true, isRedirecting: false }
+		);
+
+		expect( page ).toHaveBeenCalledWith(
+			'/log-in/authenticator?redirect_to=https%3A%2F%2Fwordpress.com%2Fwp-login.php%3Faction%3Djetpack-sso%26site_id%3D123%26sso_nonce%3Dabc'
+		);
+		expect( instance.setState ).toHaveBeenCalledWith( { isRedirecting: true } );
+	} );
+
 	it( 'reboots after login when the account has no second factor', () => {
 		const instance = buildInstance();
 

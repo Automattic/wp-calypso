@@ -41,8 +41,8 @@
 		"watch": "tsc --build ./tsconfig.json --watch"
 	},
 	"dependencies": {
-		"@automattic/agenttic-client": "^0.1.89",
-		"@automattic/agenttic-ui": "^0.1.89",
+		"@automattic/agenttic-client": "workspace:^",
+		"@automattic/agenttic-ui": "workspace:^",
 		"@automattic/calypso-analytics": "workspace:^",
 		"@automattic/components": "workspace:^",
 		"@automattic/data-stores": "workspace:^",
@@ -65,6 +65,8 @@
 		"@wordpress/icons": "^13.3.0",
 		"@wordpress/media-utils": "^5.48.0",
 		"@wordpress/primitives": "^4.48.0",
+		"@wordpress/private-apis": "^1.51.0",
+		"@wordpress/router": "^1.51.0",
 		"@wordpress/url": "^4.48.0",
 		"clsx": "^2.1.1",
 		"deepmerge": "^4.3.1",

@@ -3,8 +3,8 @@ import { Icon } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { globe } from '@wordpress/icons';
 import { Suspense, lazy, useState } from 'react';
+import { getUserLanguage } from '../locale';
 import { useSessionLocale } from '../locale/session-locale';
-import { getUserLanguage } from '../shared-locale-loader';
 import type { User } from '@automattic/api-core';
 import type { OmnibarNode } from '@automattic/omnibar';
 

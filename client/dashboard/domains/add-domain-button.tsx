@@ -17,7 +17,10 @@ function buildDomainQueryArgs( siteSlug?: string, adminUrl?: string ) {
 
 	if ( siteSlug ) {
 		queryArgs.siteSlug = siteSlug;
-		queryArgs.domainConnectionSetupUrl = getDomainConnectionSetupTemplateUrl();
+		const domainConnectionSetupUrl = getDomainConnectionSetupTemplateUrl();
+		if ( domainConnectionSetupUrl ) {
+			queryArgs.domainConnectionSetupUrl = domainConnectionSetupUrl;
+		}
 	}
 
 	const dashboard = getCurrentDashboard();

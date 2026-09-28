@@ -102,7 +102,7 @@ const ActivityActor: FunctionComponent< Props > = ( {
 					/* translators: %s is the MCP client name and version */
 					__( 'via %s (MCP)' ),
 					actorMcpClient
-			  )
+				)
 			: translate( 'via MCP' );
 	}
 

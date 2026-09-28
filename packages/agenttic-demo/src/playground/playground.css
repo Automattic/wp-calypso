@@ -165,6 +165,44 @@
 	}
 }
 
+/* Mock credits ring in the composer's trailing slot (the real meter with
+   tooltip and popover lives in the host) */
+
+.demo-credits-ring {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 32px;
+	height: 32px;
+}
+
+/* Credits tool panel content */
+
+.credits-tool {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+	min-width: 200px;
+}
+
+.credits-tool__slider {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+	color: #c8c8d2;
+	font-size: 12px;
+
+	& input {
+		accent-color: #2271b1;
+		margin: 0;
+	}
+}
+
+.credits-tool__presets {
+	display: flex;
+	gap: 4px;
+}
+
 /* Message tester panel content */
 
 .message-tester {

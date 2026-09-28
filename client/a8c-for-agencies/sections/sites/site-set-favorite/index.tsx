@@ -85,12 +85,12 @@ export default function SiteSetFavorite( { isFavorite, siteId, siteUrl }: Props 
 							args: {
 								siteUrl,
 							},
-					  } )
+						} )
 					: translate( '%(siteUrl)s has been removed from your favorites.', {
 							args: {
 								siteUrl,
 							},
-					  } ) }
+						} ) }
 				{ ! showOnlyFavorites && (
 					<Button
 						className="site-set-favorite__view-favorite"

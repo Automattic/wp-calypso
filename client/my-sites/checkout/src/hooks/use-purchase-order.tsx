@@ -23,12 +23,7 @@ export async function fetchPurchaseOrder(
 }
 
 export type PurchaseOrderStatus =
-	| 'error'
-	| 'processing'
-	| 'async-pending'
-	| 'payment-confirmed'
-	| 'payment-failure'
-	| 'success';
+	'error' | 'processing' | 'async-pending' | 'payment-confirmed' | 'payment-failure' | 'success';
 type OrderTransactionStatus =
 	| typeof ERROR
 	| typeof PROCESSING

@@ -216,6 +216,12 @@ function usePhoneNumberState(
 			( value === rawValue || value === displayValue || value === icannValue )
 		) {
 			debug( 'props change did not change normalized value', value );
+			// Record the value we are ignoring. Consumers of this component often
+			// normalize the value and send it back asynchronously, so by the time it
+			// arrives the user may have typed more characters. Without this, the next
+			// render would compare that same stale value against the newer displayed
+			// value, decide they differ, and overwrite what the user typed.
+			previousValue.current = value;
 			return;
 		}
 		previousValue.current = value;

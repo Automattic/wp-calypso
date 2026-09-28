@@ -110,14 +110,14 @@ export function ComposerOverflowHandoff( { text }: ComposerOverflowHandoffProps 
 
 	const preferredSite =
 		preferredSiteId !== null && preferredSiteId !== undefined
-			? sites.find( ( site ) => site.ID === preferredSiteId ) ?? null
+			? ( sites.find( ( site ) => site.ID === preferredSiteId ) ?? null )
 			: null;
 
 	const tracks = config.overflowHandoff
 		? {
 				editorOpened: ( siteId: number ) =>
 					config.overflowHandoff!.editorOpened( mode!, { siteId } ),
-		  }
+			}
 		: undefined;
 
 	const blockContent = buildParagraphBlocks( text );
@@ -132,12 +132,12 @@ export function ComposerOverflowHandoff( { text }: ComposerOverflowHandoffProps 
 				{ hasRequestedMediaHandoff
 					? translate(
 							'Want to add media? Adding images isn’t supported here yet — publish it on your own site instead.'
-					  )
+						)
 					: translate( 'Too long for %(protocol)s? Publish it on your own site instead.', {
 							args: { protocol: config.protocolLabel },
 							comment:
 								'%(protocol)s is a brand name (e.g. "Bluesky", "Mastodon") and should not be translated.',
-					  } ) }
+						} ) }
 			</p>
 			{ preferredSite ? (
 				<PreferredSiteHandoff

@@ -39,7 +39,7 @@ export function BetaProgramNotice( { site, wpVersion, actions }: BetaProgramNoti
 						{
 							support: <Button variant="link" onClick={ () => setShowHelpCenter( true ) } />,
 						}
-				  )
+					)
 				: createInterpolateElement(
 						__(
 							'If you notice anything unexpected, <support>let us know</support>. Your feedback helps shape WordPress. You can switch back to the stable release or <backup>restore your backup</backup> anytime.'
@@ -52,7 +52,7 @@ export function BetaProgramNotice( { site, wpVersion, actions }: BetaProgramNoti
 								<a href={ backupUrl } />
 							),
 						}
-				  ) }
+					) }
 		</Notice>
 	);
 }

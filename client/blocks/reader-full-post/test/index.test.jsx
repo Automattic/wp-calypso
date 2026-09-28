@@ -23,7 +23,7 @@ jest.mock( 'calypso/reader/stream/use-stream-post-key-selection', () => ( {
 
 // The seen gate reads React Query caches these tests don't provide.
 jest.mock( 'calypso/reader/data/seen-posts', () => ( {
-	useIsSeenEnabled: jest.fn( () => false ),
+	useCanMarkSeen: jest.fn( () => false ),
 	withSeenPostsMutations: ( WrappedComponent ) => WrappedComponent,
 } ) );
 
@@ -258,7 +258,7 @@ describe( 'FullPostView Comments API Disabled Logic', () => {
 
 describe( 'FullPostView automatic mark-as-seen on view', () => {
 	const baseProps = {
-		isSeenEnabled: true,
+		canMarkSeen: true,
 		teams: [],
 		referralStream: '',
 		setViewingFullPostKey: jest.fn(),
@@ -315,7 +315,7 @@ describe( 'FullPostView automatic mark-as-seen on view', () => {
 		const requestMarkAsSeenBlog = jest.fn();
 		const instance = new FullPostView( {
 			...baseProps,
-			isSeenEnabled: false,
+			canMarkSeen: false,
 			requestMarkAsSeen,
 			requestMarkAsSeenBlog,
 			post: { ...feedPost, is_seen: false },
@@ -325,5 +325,122 @@ describe( 'FullPostView automatic mark-as-seen on view', () => {
 
 		expect( requestMarkAsSeen ).not.toHaveBeenCalled();
 		expect( requestMarkAsSeenBlog ).not.toHaveBeenCalled();
+	} );
+
+	it( 'marks the post once seen eligibility resolves after the post already loaded', () => {
+		const requestMarkAsSeen = jest.fn();
+		const pendingProps = {
+			...baseProps,
+			canMarkSeen: false,
+			requestMarkAsSeen,
+			requestMarkAsSeenBlog: jest.fn(),
+			post: { ...feedPost, is_seen: false },
+		};
+		const instance = new FullPostView( pendingProps );
+
+		runAttemptToSendPageView( instance );
+		expect( requestMarkAsSeen ).not.toHaveBeenCalled();
+
+		instance.props = { ...pendingProps, canMarkSeen: true };
+		instance.componentDidUpdate( pendingProps );
+
+		expect( requestMarkAsSeen ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'marks a different post that happens to share the same post ID', () => {
+		const requestMarkAsSeen = jest.fn();
+		const first = {
+			...baseProps,
+			canMarkSeen: true,
+			requestMarkAsSeen,
+			requestMarkAsSeenBlog: jest.fn(),
+			post: { ...feedPost, is_seen: false, ID: 42, feed_item_ID: 10, global_ID: 'post-a' },
+			feed: { ID: 1 },
+		};
+		const instance = new FullPostView( first );
+
+		runAttemptToSendPageView( instance );
+		expect( requestMarkAsSeen ).toHaveBeenCalledTimes( 1 );
+
+		// Reuses ID 42: post IDs are only unique per site.
+		instance.props = {
+			...first,
+			post: { ...feedPost, is_seen: false, ID: 42, feed_item_ID: 20, global_ID: 'post-b' },
+			feed: { ID: 2 },
+		};
+		instance.componentDidUpdate( first );
+
+		expect( requestMarkAsSeen ).toHaveBeenCalledTimes( 2 );
+	} );
+
+	it( 'marks a second post when neither post carries a global_ID', () => {
+		const requestMarkAsSeen = jest.fn();
+		// Cached posts can reach us without a `global_ID`.
+		const first = {
+			...baseProps,
+			requestMarkAsSeen,
+			requestMarkAsSeenBlog: jest.fn(),
+			post: { ...feedPost, is_seen: false, feed_item_ID: 10, global_ID: undefined },
+			feed: { ID: 1 },
+		};
+		const instance = new FullPostView( first );
+
+		runAttemptToSendPageView( instance );
+		expect( requestMarkAsSeen ).toHaveBeenCalledTimes( 1 );
+
+		instance.props = {
+			...first,
+			post: { ...feedPost, is_seen: false, feed_item_ID: 20, global_ID: undefined },
+			feed: { ID: 2 },
+		};
+		instance.componentDidUpdate( first );
+
+		expect( requestMarkAsSeen ).toHaveBeenCalledTimes( 2 );
+	} );
+
+	it( 'does not re-mark a post the reader explicitly marked as unseen', () => {
+		const requestMarkAsSeen = jest.fn();
+		const enabledProps = {
+			...baseProps,
+			canMarkSeen: true,
+			requestMarkAsSeen,
+			requestMarkAsSeenBlog: jest.fn(),
+			post: { ...feedPost, is_seen: false },
+		};
+		const instance = new FullPostView( enabledProps );
+
+		runAttemptToSendPageView( instance );
+		expect( requestMarkAsSeen ).toHaveBeenCalledTimes( 1 );
+
+		// Flipping the gate off and on is what drives the retry path.
+		const regatingProps = { ...enabledProps, canMarkSeen: false };
+		instance.props = regatingProps;
+		instance.componentDidUpdate( enabledProps );
+
+		instance.props = { ...enabledProps, canMarkSeen: true };
+		instance.componentDidUpdate( regatingProps );
+
+		expect( requestMarkAsSeen ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'does not re-mark while feed metadata hydrates for the same post', () => {
+		const requestMarkAsSeen = jest.fn();
+		const initialProps = {
+			...baseProps,
+			canMarkSeen: true,
+			requestMarkAsSeen,
+			requestMarkAsSeenBlog: jest.fn(),
+			post: { ...feedPost, is_seen: false, ID: 42 },
+			feed: { ID: 1 },
+		};
+		const instance = new FullPostView( initialProps );
+
+		runAttemptToSendPageView( instance );
+		expect( requestMarkAsSeen ).toHaveBeenCalledTimes( 1 );
+
+		instance.props = { ...initialProps, feed: { ID: 2 } };
+		instance.componentDidUpdate( initialProps );
+
+		expect( requestMarkAsSeen ).toHaveBeenCalledTimes( 1 );
 	} );
 } );

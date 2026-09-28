@@ -205,7 +205,7 @@ function Authorize( {
 					avatarUrl: meta.user.avatar_URL,
 					username: meta.user.username,
 					siteCount: meta.user.site_count,
-			  }
+				}
 			: null;
 
 		// Map variant names: 'horizontal' -> 'small', 'centered' -> 'large'

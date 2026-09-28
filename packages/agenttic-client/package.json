@@ -1,6 +1,6 @@
 {
 	"name": "@automattic/agenttic-client",
-	"version": "0.1.89",
+	"version": "0.1.90",
 	"type": "module",
 	"description": "A TypeScript client library for connection to the Automattic agent framework.",
 	"main": "dist/index.js",
@@ -22,10 +22,11 @@
 	},
 	"files": [
 		"dist",
-		"README.md"
+		"!dist/tsconfig.tsbuildinfo"
 	],
 	"scripts": {
 		"build": "yarn run clean && vite build && tsc --project tsconfig.json --emitDeclarationOnly",
+		"prepare": "yarn run build",
 		"dev": "vite build --watch",
 		"clean": "rm -rf dist",
 		"type-check": "tsc --noEmit",

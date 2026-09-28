@@ -110,6 +110,7 @@ const BloggingPromptCard = ( { siteId, viewContext, showMenu, index } ) => {
 					siteId={ siteId }
 					prompts={ prompts }
 					tracksPrefix={ getTracksPrefix() }
+					viewContext={ viewContext }
 					index={ index }
 					menu={ renderMenu() }
 				/>

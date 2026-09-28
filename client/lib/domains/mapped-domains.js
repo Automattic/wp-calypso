@@ -8,10 +8,6 @@ export function getMappedDomains( domains ) {
 	return domains.filter( isMappedDomain );
 }
 
-export function hasMappedDomain( domains ) {
-	return getMappedDomains( domains ).length > 0;
-}
-
 /**
  * Checks if the supplied domain is a mapped domain and has WordPress.com name servers.
  * @param {Object} domain - domain object

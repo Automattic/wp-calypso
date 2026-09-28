@@ -2,6 +2,7 @@
  * @jest-environment jsdom
  */
 import { act } from '@testing-library/react';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import {
 	PLUGIN_ACTIVATE_REQUEST,
 	PLUGIN_ACTIVATE_REQUEST_FAILURE,
@@ -58,6 +59,15 @@ jest.mock( '../use-install-deadline', () => ( {
 	...jest.requireActual( '../use-install-deadline' ),
 	useInstallDeadline: ( args: DeadlineArgs ) => mockUseInstallDeadline( args ),
 } ) );
+
+jest.mock( 'calypso/lib/analytics/tracks', () => ( {
+	recordTracksEvent: jest.fn(),
+} ) );
+
+const errorViewEvents = () =>
+	jest
+		.mocked( recordTracksEvent )
+		.mock.calls.filter( ( [ name ] ) => name === 'calypso_marketplace_install_error_view' );
 
 const SITE_ID = 1;
 
@@ -131,6 +141,27 @@ const uploadTransferring = () => ( {
 const withUploadError = ( uploadError: object ) => ( {
 	ui: { selectedSiteId: SITE_ID },
 	plugins: { upload: { uploadError: { [ SITE_ID ]: uploadError } } },
+} );
+
+const withReplaceCandidate = ( uploadError: object ) => ( {
+	ui: { selectedSiteId: SITE_ID },
+	plugins: {
+		upload: {
+			uploadError: { [ SITE_ID ]: uploadError },
+			uploadFile: { [ SITE_ID ]: { name: 'plugin.zip' } },
+		},
+		installed: {
+			plugins: {
+				[ SITE_ID ]: [
+					{
+						slug: 'hello-dolly',
+						version: '1.6',
+						active: false,
+					},
+				],
+			},
+		},
+	},
 } );
 
 describe( 'useProductInstall', () => {
@@ -231,6 +262,46 @@ describe( 'useProductInstall', () => {
 				expect( result.current.error ).toEqual( { type: 'rejected-upload', reason } );
 			}
 		);
+
+		it( 'reports a replace candidate when backend slug and file are available', () => {
+			const { result } = renderProductInstall(
+				{},
+				withReplaceCandidate( {
+					error: 'folder_exists',
+					plugin_slug: 'hello-dolly',
+					plugin_version: '2.0',
+				} )
+			);
+
+			expect( result.current.error ).toEqual( {
+				type: 'plugin-exists',
+				pluginSlug: 'hello-dolly',
+				installedVersion: '1.6',
+				uploadedVersion: '2.0',
+			} );
+		} );
+
+		it( 'keeps the existing rejection when the backend slug is missing', () => {
+			const { result } = renderProductInstall(
+				{},
+				withReplaceCandidate( { error: 'folder_exists', plugin_version: '2.0' } )
+			);
+
+			expect( result.current.error ).toEqual( { type: 'rejected-upload', reason: 'exists' } );
+		} );
+
+		it( 'keeps the existing rejection when the retained file is missing', () => {
+			const { result } = renderProductInstall(
+				{},
+				withUploadError( {
+					error: 'folder_exists',
+					plugin_slug: 'hello-dolly',
+					plugin_version: '2.0',
+				} )
+			);
+
+			expect( result.current.error ).toEqual( { type: 'rejected-upload', reason: 'exists' } );
+		} );
 
 		// Upload flow has no route slug; statuses live under the dispatched plugin id.
 		it( 'surfaces a failed activation instead of waiting out the deadline', () => {
@@ -430,6 +501,49 @@ describe( 'useProductInstall', () => {
 			expect( mockUseInstallDeadline.mock.calls.at( -1 )?.[ 0 ] ).toMatchObject( {
 				enabled: true,
 			} );
+		} );
+	} );
+
+	describe( 'error view impression', () => {
+		beforeEach( () => {
+			jest.mocked( recordTracksEvent ).mockClear();
+		} );
+		afterEach( () => {
+			mockUseInstallDeadline.mockImplementation( noDeadlineVerdict );
+		} );
+
+		it( 'fires once for a preflight error, which never reaches the wait telemetry', () => {
+			jest.useFakeTimers();
+			try {
+				const { rerender } = renderProductInstall( { pluginSlug: 'give' } );
+				expect( errorViewEvents() ).toHaveLength( 0 );
+
+				act( () => {
+					jest.advanceTimersByTime( 2000 );
+				} );
+				rerender();
+
+				expect( errorViewEvents() ).toHaveLength( 1 );
+				expect( errorViewEvents()[ 0 ][ 1 ] ).toMatchObject( {
+					error_type: 'non-installable-plan',
+					flow: 'plugin',
+					product_slug: 'give',
+				} );
+			} finally {
+				jest.useRealTimers();
+			}
+		} );
+
+		it( 'fires once for a transfer failure', () => {
+			mockUseInstallDeadline.mockImplementation(
+				deadlineVerdict( { hasTimedOut: true, hasTransferFailed: true } )
+			);
+
+			const { rerender } = renderProductInstall( {}, uploadAwaitingActivation( 'direct' ) );
+			rerender();
+
+			expect( errorViewEvents() ).toHaveLength( 1 );
+			expect( errorViewEvents()[ 0 ][ 1 ] ).toMatchObject( { error_type: 'transfer-failed' } );
 		} );
 	} );
 } );

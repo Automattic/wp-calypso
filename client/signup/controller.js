@@ -6,6 +6,10 @@ import { createElement } from 'react';
 import store from 'store';
 import { notFound } from 'calypso/controller';
 import { login } from 'calypso/lib/paths';
+import {
+	getLegacyPlanFlowRedirect,
+	shouldRedirectLegacyPlanFlow,
+} from 'calypso/lib/signup/legacy-plan-flows';
 import { addQueryArgs } from 'calypso/lib/url';
 import flows from 'calypso/signup/config/flows';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
@@ -101,6 +105,19 @@ export default {
 		}
 
 		next();
+	},
+
+	// The server redirect only sees hard navigations; `/start` is also a client route, so an
+	// in-app link reaches this router instead. Runs before anything touches signup state so
+	// the hand-off to Stepper leaves nothing half-written behind.
+	redirectLegacyPlanFlow( context, next ) {
+		const { flowName, lang } = context.params;
+
+		if ( ! shouldRedirectLegacyPlanFlow( flowName ) ) {
+			return next();
+		}
+
+		window.location.replace( getLegacyPlanFlowRedirect( flowName, context.query, lang ) );
 	},
 
 	async redirectToFlow( context, next ) {
@@ -304,6 +321,13 @@ export default {
 		};
 		if ( ! isEmpty( additionalDependencies ) ) {
 			context.store.dispatch( updateDependencies( additionalDependencies ) );
+		}
+
+		if ( 'launch-site' === flowName ) {
+			// The dependency store persists between visits, and `redirect_to` is optional, so an
+			// abandoned launch would otherwise decide where the next one leaves the user. Re-read it
+			// from the query the flow was entered with.
+			context.store.dispatch( updateDependencies( { redirect_to: query?.redirect_to ?? null } ) );
 		}
 
 		context.primary = createElement( SignupComponent, {

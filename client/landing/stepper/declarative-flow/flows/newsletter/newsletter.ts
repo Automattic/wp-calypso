@@ -1,5 +1,6 @@
 import { DomainSuggestion } from '@automattic/api-core';
-import { Onboard, OnboardActions, updateLaunchpadSettings } from '@automattic/data-stores';
+import { Onboard, OnboardActions } from '@automattic/data-stores';
+import { updateLaunchpadSettings } from '@automattic/launchpad';
 import { NEWSLETTER_FLOW } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { useDispatch } from '@wordpress/data';

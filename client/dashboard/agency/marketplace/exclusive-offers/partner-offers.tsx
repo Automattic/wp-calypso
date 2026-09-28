@@ -1,7 +1,5 @@
-import { Badge } from '@automattic/ui';
 import {
 	Button,
-	__experimentalGrid as Grid,
 	__experimentalSpacer as Spacer,
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
@@ -9,9 +7,11 @@ import {
 } from '@wordpress/components';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
+import { Badge } from '@wordpress/ui';
 import { useState, useMemo } from 'react';
 import { ButtonStack } from '../../../components/button-stack';
 import { Card, CardBody } from '../../../components/card';
+import Grid from '../../../components/grid';
 import { filterOptions, partnerOffers } from './constants';
 import type { PartnerOffer, RecordTracksEvent } from './types';
 import type { View, Field } from '@wordpress/dataviews';
@@ -63,7 +63,7 @@ function PartnerOfferCard( {
 						>
 							{ item.logo }
 						</HStack>
-						{ offerType?.label && <Badge>{ offerType.label }</Badge> }
+						{ offerType?.label && <Badge intent="draft">{ offerType.label }</Badge> }
 					</HStack>
 					<VStack spacing={ 1 }>
 						<Text size={ 13 } weight={ 500 }>
@@ -203,7 +203,7 @@ export default function PartnerOffers( {
 					<DataViews.FiltersToggled />
 				</Spacer>
 			</DataViews>
-			<Grid templateColumns="repeat( auto-fill, minmax( 280px, 1fr ) )" gap={ 8 }>
+			<Grid templateColumns="repeat( auto-fill, minmax( 280px, 1fr ) )" gap="2xl">
 				{ filteredData.map( ( item ) => (
 					<PartnerOfferCard
 						key={ item.id }

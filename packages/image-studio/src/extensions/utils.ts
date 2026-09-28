@@ -50,8 +50,7 @@ export function handleImageSelection( {
 
 	// Fetch the full attachment record. ImageData lacks some fields like 'link' and 'sizes' that the image block uses.
 	const attachment = select( coreStore ).getEntityRecord( 'postType', 'attachment', image.id ) as
-		| MediaAttachment
-		| undefined;
+		MediaAttachment | undefined;
 
 	// Transform the attachment from the REST API format to block editor format.
 	// Maps REST API fields (alt_text, source_url, caption.raw, title.raw) to block editor fields (alt, caption, title, url).

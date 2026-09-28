@@ -69,7 +69,7 @@ export function FailedPurchasePage() {
 				productSlug: item.product_slug,
 				productCost: item.product_cost,
 				meta: item.product_meta,
-		  } ) )
+			} ) )
 		: undefined;
 
 	return (

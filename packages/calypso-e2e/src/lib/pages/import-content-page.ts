@@ -33,7 +33,7 @@ export class ImportContentPage {
 		this.squarespaceImportButton = this.page.getByRole( 'button', { name: 'Squarespace' } );
 		this.substackImportButton = this.page.getByRole( 'link', { name: 'Substack' } ); // It's a link, not a button.
 		this.wordPressHeading = this.page.getByRole( 'heading', { name: 'WordPress' } );
-		this.wordPressImportButton = this.page.getByRole( 'link', { name: 'WordPress' } ); // It's a link, not a button.
+		this.wordPressImportButton = this.page.getByRole( 'button', { name: 'WordPress' } );
 	}
 
 	/**

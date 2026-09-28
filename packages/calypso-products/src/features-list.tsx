@@ -501,10 +501,10 @@ const FEATURES_LIST: FeatureList = {
 			return isEnabled( 'themes/premium' )
 				? i18n.translate(
 						'Including premium themes, advanced design and monetization options, PayPal Payment Buttons, and a custom domain name for one year.'
-				  )
+					)
 				: i18n.translate(
 						'Including advanced design and monetization options, PayPal Payment Buttons, and a custom domain name for one year.'
-				  );
+					);
 		},
 	},
 
@@ -626,10 +626,10 @@ const FEATURES_LIST: FeatureList = {
 			params?.isExperimentVariant
 				? i18n.translate(
 						'Free sites use a name.wordpress.com subdomain. Upgrade to use a custom domain name.'
-				  )
+					)
 				: i18n.translate(
 						'Your site address will use a WordPress.com subdomain (sitename.wordpress.com).'
-				  ),
+					),
 	},
 	[ FEATURE_ADVANCED_SEO_TOOLS ]: {
 		getSlug: () => FEATURE_ADVANCED_SEO_TOOLS,
@@ -642,7 +642,7 @@ const FEATURES_LIST: FeatureList = {
 				? i18n.translate( 'Rank well in search with built-in search engine optimization tools.' )
 				: i18n.translate(
 						'Boost traffic to your site with tools that make your content more findable on search engines and social media.'
-				  ),
+					),
 	},
 
 	[ FEATURE_ADVANCED_SEO_EXPANDED_ABBR ]: {
@@ -778,11 +778,11 @@ const FEATURES_LIST: FeatureList = {
 			params?.isExperimentVariant
 				? i18n.translate(
 						'Showcase your video beautifully with the high-quality, ad-free VideoPress player.'
-				  )
+					)
 				: i18n.translate(
 						'The easiest way to upload videos to your website and display them ' +
 							'using a fast, unbranded, customizable player with rich stats.'
-				  ),
+					),
 		getStoreSlug: () => 'videopress',
 	},
 	[ FEATURE_VIDEO_UPLOADS_JETPACK_PREMIUM ]: {
@@ -885,11 +885,11 @@ const FEATURES_LIST: FeatureList = {
 			params?.isExperimentVariant
 				? i18n.translate(
 						'Install any of over 60,000 plugins from the WordPress.com marketplace, or upload a plugin directly to your site.'
-				  )
+					)
 				: i18n.translate(
 						'Plugins extend the functionality of your site and ' +
 							'open up endless possibilities for presenting your content and interacting with visitors.'
-				  ),
+					),
 	},
 
 	[ FEATURE_INSTALL_PLUGINS ]: {
@@ -926,10 +926,10 @@ const FEATURES_LIST: FeatureList = {
 			params?.isExperimentVariant
 				? i18n.translate(
 						'Free sites use a name.wordpress.com subdomain. Upgrade to use a custom domain name.'
-				  )
+					)
 				: i18n.translate(
 						'Your site address will use a WordPress.com subdomain (sitename.wordpress.com).'
-				  ),
+					),
 	},
 
 	[ FEATURE_FREE_THEMES ]: {
@@ -1733,7 +1733,7 @@ const FEATURES_LIST: FeatureList = {
 			params?.isExperimentVariant
 				? i18n.translate(
 						'Free sites display WordPress.com ads to visitors. Upgrade to Personal to turn them off.'
-				  )
+					)
 				: i18n.translate( 'Unlock a clean, ad-free browsing experience for your visitors.' ),
 	},
 	[ FEATURE_COLLECT_PAYMENTS_NEWSLETTER ]: {
@@ -2113,7 +2113,7 @@ const FEATURES_LIST: FeatureList = {
 			params?.isExperimentVariant
 				? i18n.translate(
 						'Access your site via SSH and manage it with WP-CLI. Deploy from GitHub with a few clicks.'
-				  )
+					)
 				: i18n.translate( 'Use familiar developer tools to manage and deploy your site.' ),
 	},
 	[ FEATURE_DEV_TOOLS_SSH ]: {
@@ -2136,7 +2136,7 @@ const FEATURES_LIST: FeatureList = {
 			params?.isExperimentVariant
 				? i18n.translate(
 						'Clone your production site for testing changes before taking them live.'
-				  )
+					)
 				: i18n.translate( 'Test product and design changes in a staging site.' ),
 	},
 
@@ -2200,7 +2200,7 @@ const FEATURES_LIST: FeatureList = {
 			params?.isExperimentVariant
 				? i18n.translate(
 						'Create and automate beautiful emails to 500 subscribers right from your WordPress dashboard, with the MailPoet Business plan.'
-				  )
+					)
 				: '',
 	},
 	[ FEATURE_ADVANCED_JETPACK_FORMS ]: {
@@ -2722,7 +2722,7 @@ const FEATURES_LIST: FeatureList = {
 			params?.isExperimentVariant
 				? i18n.translate(
 						'Your support questions answered first by our expert, friendly Happiness team.'
-				  )
+					)
 				: i18n.translate( 'The fastest 24/7 support from our expert, friendly Happiness team.' ),
 	},
 	[ FEATURE_UPLOAD_VIDEO ]: {
@@ -2733,7 +2733,7 @@ const FEATURES_LIST: FeatureList = {
 				? i18n.translate( 'Host your videos on your own site.' )
 				: i18n.translate(
 						'Upload video files like mp4 and display them beautifully in 4K resolution, with picture-in-picture, subtitles, and without intrusive ads.'
-				  ),
+					),
 	},
 	// For the copy request dated 20250207 in pcNC1U-1vN-p2
 	[ FEATURE_STATS_BASIC_20250206 ]: {
@@ -2745,7 +2745,7 @@ const FEATURES_LIST: FeatureList = {
 				? i18n.translate( 'See traffic history, peak traffic times, and filter by date.' )
 				: i18n.translate(
 						'Access full traffic history, filter by date, and see peak traffic times.'
-				  ),
+					),
 	},
 	[ FEATURE_STATS_ADVANCED_20250206 ]: {
 		getSlug: () => FEATURE_STATS_ADVANCED_20250206,
@@ -2757,7 +2757,7 @@ const FEATURES_LIST: FeatureList = {
 			params?.isExperimentVariant
 				? i18n.translate(
 						'Access all stats & analytics, including UTM tracking and device insights.'
-				  )
+					)
 				: i18n.translate( 'Unlock all stats, including UTM tracking and device insights.' ),
 	},
 	[ FEATURE_AI_ASSISTANT ]: {
@@ -3214,7 +3214,7 @@ const FEATURES_LIST: FeatureList = {
 			)
 				? i18n.translate(
 						'Enjoy unrestricted usage of our AI tool to design your perfect website.'
-				  )
+					)
 				: i18n.translate( 'Build your site with our AI Website Builder.' ),
 	},
 	[ FEATURE_BIG_SKY_WEBSITE_BUILDER_CHECKOUT ]: {
@@ -3227,7 +3227,7 @@ const FEATURES_LIST: FeatureList = {
 			)
 				? i18n.translate(
 						'Enjoy unrestricted usage of our AI tool to design your perfect website.'
-				  )
+					)
 				: i18n.translate( 'Build your site with our AI Website Builder.' ),
 	},
 
@@ -3258,7 +3258,7 @@ const FEATURES_LIST: FeatureList = {
 			params?.isExperimentVariant
 				? i18n.translate(
 						'Skip the blank screen — create and launch a WordPress.com website in minutes by chatting with AI.'
-				  )
+					)
 				: i18n.translate( 'Build your site with our AI Website Builder.' ),
 	},
 	[ FEATURE_GUIDED_WEBSITE_BUILDER ]: {
@@ -3295,7 +3295,7 @@ const FEATURES_LIST: FeatureList = {
 			params?.isExperimentVariant
 				? i18n.translate(
 						'Use AI to generate better content and manage your site — all without leaving WordPress.'
-				  )
+					)
 				: i18n.translate( 'Enhance your content creation with AI-powered writing and design.' ),
 	},
 	[ FEATURE_AI_WRITER_DESIGNER_LIMITED ]: {
@@ -3321,7 +3321,7 @@ const FEATURES_LIST: FeatureList = {
 			params?.isExperimentVariant
 				? i18n.translate(
 						'Build and grow your online presence with a professional email address at your domain name, powered by Titan'
-				  )
+					)
 				: i18n.translate( 'Get a professional email address with your domain, free for one year.' ),
 	},
 	[ FEATURE_BLAZE_AD_CREDITS ]: {
@@ -3335,7 +3335,7 @@ const FEATURES_LIST: FeatureList = {
 				? i18n.translate( 'Promote your content with Blaze ads.' )
 				: i18n.translate(
 						'Promote your content across millions of sites with $200 in free Blaze ad credits.'
-				  ),
+					),
 	},
 
 	[ FEATURE_UNLIMITED_ENTITIES ]: {
@@ -3346,7 +3346,7 @@ const FEATURES_LIST: FeatureList = {
 				? i18n.translate( 'Create and collaborate freely — no caps or restrictions.' )
 				: i18n.translate(
 						'Grow your site without limits — unlimited content, users, and traffic.'
-				  ),
+					),
 	},
 	[ FEATURE_WOO_THEMES ]: {
 		getSlug: () => FEATURE_WOO_THEMES,

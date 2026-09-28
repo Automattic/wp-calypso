@@ -8,5 +8,9 @@
 	},
 	"include": [ "src", "src/*.json", "src/types/index.d.ts", "types" ],
 	"exclude": [ "**/__tests__/*" ],
-	"references": [ { "path": "../components" }, { "path": "../zendesk-client" } ]
+	"references": [
+		{ "path": "../agenttic-ui" },
+		{ "path": "../components" },
+		{ "path": "../zendesk-client" }
+	]
 }

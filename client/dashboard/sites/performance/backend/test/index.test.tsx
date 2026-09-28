@@ -242,7 +242,7 @@ describe( '<SitePerformanceBackend>', () => {
 		// but one of these three titles must always appear with the formatted avg.
 		expect(
 			await screen.findByText(
-				/(Healthy backend|Backend needs improvement|Backend is slow) — avg /
+				/(Healthy server response|Server response needs improvement|Server response is slow) — avg /
 			)
 		).toBeVisible();
 	} );
@@ -257,7 +257,9 @@ describe( '<SitePerformanceBackend>', () => {
 		await screen.findByRole( 'heading', { name: 'Response time breakdown' } );
 
 		expect(
-			screen.queryByText( /(Healthy backend|Backend needs improvement|Backend is slow) — avg / )
+			screen.queryByText(
+				/(Healthy server response|Server response needs improvement|Server response is slow) — avg /
+			)
 		).not.toBeInTheDocument();
 	} );
 

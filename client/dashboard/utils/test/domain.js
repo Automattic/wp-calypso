@@ -1,6 +1,7 @@
 import { DomainStatus, DomainSubtype, WhoisType } from '@automattic/api-core';
 import {
 	canEnableAutoRenew,
+	canSetAsPrimaryIgnoringSsl,
 	findRegistrantWhois,
 	findPrivacyServiceWhois,
 	isPendingPrimaryDomain,
@@ -43,34 +44,53 @@ describe( 'utils', () => {
 			primary_domain: false,
 		};
 
-		test( 'returns true for a registered domain that can be set as primary but is not yet primary', () => {
-			expect( isPendingPrimaryDomain( baseDomain ) ).toBe( true );
+		test( 'returns true when the backend reports the domain as pending', () => {
+			expect( isPendingPrimaryDomain( { ...baseDomain, set_primary_domain_pending: true } ) ).toBe(
+				true
+			);
 		} );
 
-		test( 'returns false when domain is already primary', () => {
-			expect( isPendingPrimaryDomain( { ...baseDomain, primary_domain: true } ) ).toBe( false );
-		} );
-
-		test( 'returns false when domain cannot be set as primary', () => {
-			expect( isPendingPrimaryDomain( { ...baseDomain, can_set_as_primary: false } ) ).toBe(
+		test( 'returns false when the backend reports the domain as not pending', () => {
+			expect( isPendingPrimaryDomain( { ...baseDomain, set_primary_domain_pending: false } ) ).toBe(
 				false
 			);
 		} );
 
-		test( 'returns false for non-registration domains', () => {
+		test( 'returns false for a non-primary registration the backend does not report as pending', () => {
+			expect( isPendingPrimaryDomain( baseDomain ) ).toBe( false );
+		} );
+	} );
+
+	describe( 'canSetAsPrimaryIgnoringSsl', () => {
+		const baseDomain = {
+			subtype: { id: DomainSubtype.DOMAIN_CONNECTION, label: 'Connection' },
+			can_set_as_primary: true,
+			primary_domain: false,
+			domain_status: { id: DomainStatus.ACTIVE, label: 'Active', type: 'success' },
+		};
+		const site = { options: { is_redirect: false } };
+		const user = { meta: { data: { flags: { active_flags: [] } } } };
+
+		test( 'returns true for an eligible non-redirect domain', () => {
+			expect( canSetAsPrimaryIgnoringSsl( { domain: baseDomain, site, user } ) ).toBe( true );
+		} );
+
+		test( 'returns false when the site is a redirect', () => {
 			expect(
-				isPendingPrimaryDomain( {
-					...baseDomain,
-					subtype: { id: DomainSubtype.DEFAULT_ADDRESS, label: 'Default' },
+				canSetAsPrimaryIgnoringSsl( {
+					domain: baseDomain,
+					site: { options: { is_redirect: true } },
+					user,
 				} )
 			).toBe( false );
 		} );
 
-		test( 'returns false for domain connections', () => {
+		test( 'returns false when the domain cannot be set as primary', () => {
 			expect(
-				isPendingPrimaryDomain( {
-					...baseDomain,
-					subtype: { id: DomainSubtype.DOMAIN_CONNECTION, label: 'Connection' },
+				canSetAsPrimaryIgnoringSsl( {
+					domain: { ...baseDomain, can_set_as_primary: false },
+					site,
+					user,
 				} )
 			).toBe( false );
 		} );

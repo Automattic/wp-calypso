@@ -584,7 +584,7 @@ function findBlockSnapshotByCurrentText(
 		const attributeNames = attributeName
 			? [ attributeName ].filter(
 					( candidate ) => getAttributeContent( block, candidate ) !== undefined
-			  )
+				)
 			: getStringLikeAttributeNames( block );
 		attributeNames.forEach( ( candidate ) => {
 			if ( ! block.clientId ) {

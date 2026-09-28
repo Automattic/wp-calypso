@@ -562,11 +562,29 @@ function compact( elements: ( string | false | undefined | null )[] ): string[] 
 }
 
 const WPComGetBillingTimeframe = (): TranslateResult =>
-	i18n.translate( 'per month, billed annually' );
+	i18n.fixMe( {
+		text: 'per month, billed yearly, excl. taxes',
+		newCopy: i18n.translate( 'per month, billed yearly, excl. taxes', {
+			comment: 'Excl. Taxes is short for excluding taxes',
+		} ),
+		oldCopy: i18n.translate( 'per month, billed yearly' ),
+	} ) as TranslateResult;
 const WPComGetBiennialBillingTimeframe = (): TranslateResult =>
-	i18n.translate( '/month, billed every two years' );
+	i18n.fixMe( {
+		text: '/month, billed every two years, excl. taxes',
+		newCopy: i18n.translate( '/month, billed every two years, excl. taxes', {
+			comment: 'Excl. Taxes is short for excluding taxes',
+		} ),
+		oldCopy: i18n.translate( '/month, billed every two years' ),
+	} ) as TranslateResult;
 const WPComGetTriennialBillingTimeframe = (): TranslateResult =>
-	i18n.translate( '/month, billed every three years' );
+	i18n.fixMe( {
+		text: '/month, billed every three years, excl. taxes',
+		newCopy: i18n.translate( '/month, billed every three years, excl. taxes', {
+			comment: 'Excl. Taxes is short for excluding taxes',
+		} ),
+		oldCopy: i18n.translate( '/month, billed every three years' ),
+	} ) as TranslateResult;
 
 const getBiAnnualTimeframe = (): BillingTerm => ( {
 	term: TERM_BIENNIALLY,
@@ -580,7 +598,14 @@ const getAnnualTimeframe = (): BillingTerm => ( {
 
 const getMonthlyTimeframe = (): BillingTerm => ( {
 	term: TERM_MONTHLY,
-	getBillingTimeFrame: () => translate( 'per month, billed monthly' ),
+	getBillingTimeFrame: () =>
+		i18n.fixMe( {
+			text: 'per month, billed monthly, excl. taxes',
+			newCopy: i18n.translate( 'per month, billed monthly, excl. taxes', {
+				comment: 'Excl. Taxes is short for excluding taxes',
+			} ),
+			oldCopy: i18n.translate( 'per month, billed monthly' ),
+		} ) as TranslateResult,
 } );
 const getJetpackCommonPlanDetails = () => ( {
 	getRecommendedFor: () => [
@@ -979,7 +1004,7 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 			? {
 					...baseFeatures,
 					[ FEATURE_STATS_JP ]: i18n.translate( 'Full history, filters & peak times' ),
-			  }
+				}
 			: baseFeatures;
 	},
 
@@ -1025,6 +1050,7 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_AUDIO_UPLOADS,
 		WPCOM_FEATURES_FULL_ACTIVITY_LOG,
 		WPCOM_FEATURES_BIG_SKY,
+		WPCOM_FEATURES_LOGS,
 	],
 	getInferiorFeatures: () => [],
 	getCancellationFeatures: () => [
@@ -1267,7 +1293,7 @@ const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 					[ FEATURE_STATS_JP ]: i18n.translate(
 						'Advanced insights, including UTM & device analytics'
 					),
-			  }
+				}
 			: baseFeatures;
 	},
 	getHostingSignupFeatures: ( term ) => () =>
@@ -1816,7 +1842,7 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 					[ FEATURE_STATS_JP ]: i18n.translate(
 						'Advanced insights, including UTM & device analytics'
 					),
-			  }
+				}
 			: baseFeatures;
 	},
 	get2023PlanComparisonJetpackFeatureOverride: () => {
@@ -1844,6 +1870,7 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 		WPCOM_FEATURES_ANTISPAM,
 		WPCOM_FEATURES_FULL_ACTIVITY_LOG,
 		WPCOM_FEATURES_BIG_SKY,
+		WPCOM_FEATURES_LOGS,
 	],
 	getInferiorFeatures: () => [],
 	getCancellationFeatures: () => [
@@ -2144,7 +2171,7 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 					[ FEATURE_STATS_JP ]: i18n.translate(
 						'Advanced insights, including UTM & device analytics'
 					),
-			  }
+				}
 			: featureLabels;
 	},
 
@@ -2518,12 +2545,12 @@ const getJetpackBusinessDetails = (): IncompleteJetpackPlan => ( {
 			? i18n.translate(
 					'{{strong}}Best for organizations:{{/strong}} The most powerful WordPress sites.',
 					plansDescriptionHeadingComponent
-			  )
+				)
 			: i18n.translate(
 					'{{strong}}Best for organizations:{{/strong}} The most powerful WordPress sites: real-time backups ' +
 						'and premium themes.',
 					plansDescriptionHeadingComponent
-			  ),
+				),
 	getTagline: () => i18n.translate( 'You have the full suite of security and performance tools.' ),
 	getPlanCardFeatures: () => [
 		FEATURE_BACKUP_REALTIME_V2,
@@ -3940,7 +3967,7 @@ PLANS_LIST[ PLAN_WPCOM_STARTER ] = {
 	getStoreSlug: () => PLAN_WPCOM_STARTER,
 	getDescription: () =>
 		i18n.translate( 'Start with a custom domain name, simple payments, and extra storage.' ),
-	getBillingTimeFrame: () => i18n.translate( 'per month, billed yearly' ),
+	getBillingTimeFrame: WPComGetBillingTimeframe,
 	getPlanCompareFeatures: () => [
 		FEATURE_UNLIMITED_TRAFFIC,
 		FEATURE_MANAGED_HOSTING,
@@ -3972,7 +3999,7 @@ PLANS_LIST[ PLAN_WPCOM_PRO ] = {
 	term: TERM_ANNUALLY,
 	getProductId: () => 1032,
 	getStoreSlug: () => PLAN_WPCOM_PRO,
-	getBillingTimeFrame: () => i18n.translate( 'per month, billed yearly' ),
+	getBillingTimeFrame: WPComGetBillingTimeframe,
 };
 
 PLANS_LIST[ PLAN_WPCOM_PRO_MONTHLY ] = {

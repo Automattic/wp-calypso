@@ -1,8 +1,8 @@
 export enum CampaignStatus {
-	'created',
-	'active',
-	'canceled',
-	'finished',
+	created,
+	active,
+	canceled,
+	finished,
 }
 
 export type AudienceList = {

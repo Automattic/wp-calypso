@@ -88,6 +88,7 @@ export const SITE_REQUEST_OPTIONS = [
 	'is_difm_lite_in_progress',
 	'difm_lite_site_options',
 	'is_gating_business_q1',
+	'is_legacy_gating_site',
 	'site_intent',
 	'site_partner_bundle',
 	'theme_slug',

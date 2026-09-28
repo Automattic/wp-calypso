@@ -48,10 +48,10 @@ class Locked extends Component {
 						{ privateDomain && registrar === registrarNames.WWD
 							? translate(
 									'To transfer your domain, we must unlock it and remove Privacy Protection. Your contact information will be publicly available during the transfer period. The domain will remain unlocked and your contact information will be publicly available until the transfer is canceled or completed.'
-							  )
+								)
 							: translate(
 									'To transfer your domain, we must unlock it. It will remain unlocked until the transfer is canceled or completed.'
-							  ) }{ ' ' }
+								) }{ ' ' }
 					</p>
 					<TransferOutWarning domainName={ domainName } selectedSiteSlug={ selectedSite.slug } />
 					{ this.isManualTransferRequired() && this.renderManualTransferInfo() }

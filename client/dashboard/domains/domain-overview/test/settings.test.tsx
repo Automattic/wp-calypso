@@ -2,9 +2,18 @@
  * @jest-environment jsdom
  */
 import { DomainSubtype, type Domain } from '@automattic/api-core';
+import { isSupportSession } from '@automattic/calypso-support-session';
 import { screen, waitFor } from '@testing-library/react';
 import { render } from '../../../test-utils';
 import DomainOverviewSettings from '../settings';
+
+jest.mock( '@automattic/calypso-support-session', () => ( {
+	isSupportSession: jest.fn( () => false ),
+} ) );
+
+afterEach( () => {
+	( isSupportSession as jest.Mock ).mockReturnValue( false );
+} );
 
 const domainName = 'example.com';
 
@@ -161,6 +170,28 @@ describe( 'DomainOverviewSettings', () => {
 
 			// Should not show contact details or glue records
 			expect( screen.queryByText( 'Contact details & privacy' ) ).not.toBeInTheDocument();
+			expect( screen.queryByText( 'Glue records' ) ).not.toBeInTheDocument();
+		} );
+
+		test( 'shows contact details in a support session even when user cannot manage', async () => {
+			( isSupportSession as jest.Mock ).mockReturnValue( true );
+
+			renderDomainSettings( {
+				subtype: { id: DomainSubtype.DOMAIN_REGISTRATION, label: 'Domain Registration' },
+				current_user_can_manage: false,
+				can_manage_dns_records: true,
+				expired: false,
+				pending_transfer: false,
+				is_gravatar_restricted_domain: false,
+			} );
+
+			await waitFor( () => {
+				expect( screen.getByText( 'Settings' ) ).toBeInTheDocument();
+			} );
+
+			expect( screen.getByText( 'Contact details & privacy' ) ).toBeVisible();
+
+			// Glue records still depend on the user being able to manage the domain
 			expect( screen.queryByText( 'Glue records' ) ).not.toBeInTheDocument();
 		} );
 

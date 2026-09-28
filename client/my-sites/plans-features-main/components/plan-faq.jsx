@@ -91,7 +91,7 @@ const PlanFAQ = ( { titanMonthlyRenewalCost = 0 } ) => {
 										),
 									},
 								}
-						  )
+							)
 						: null }
 				</>
 			</FoldableFAQ>
@@ -184,7 +184,7 @@ const PlanFAQ = ( { titanMonthlyRenewalCost = 0 } ) => {
 									),
 								},
 							}
-					  )
+						)
 					: translate(
 							'No it won’t! You’re welcome to create your new site with us before pointing the domain here. ' +
 								'That way your current site can stay “live” until your new one is ready.{{br /}}{{br /}}' +
@@ -194,7 +194,7 @@ const PlanFAQ = ( { titanMonthlyRenewalCost = 0 } ) => {
 							{
 								components: { br: <br /> },
 							}
-					  ) }
+						) }
 			</FoldableFAQ>
 			<FoldableFAQ
 				id="faq-8"
@@ -212,7 +212,7 @@ const PlanFAQ = ( { titanMonthlyRenewalCost = 0 } ) => {
 								components: { br: <br /> },
 								args: { titanMonthlyRenewalCost },
 							}
-					  )
+						)
 					: translate(
 							'Absolutely! We offer a few different options to meet your needs. For most customers, our ' +
 								'Professional Email service is the smart choice. This robust hosted email solution is ' +
@@ -222,7 +222,7 @@ const PlanFAQ = ( { titanMonthlyRenewalCost = 0 } ) => {
 							{
 								components: { br: <br /> },
 							}
-					  ) }
+						) }
 			</FoldableFAQ>
 			<FoldableFAQ
 				id="faq-9"
@@ -300,7 +300,7 @@ const PlanFAQ = ( { titanMonthlyRenewalCost = 0 } ) => {
 							{
 								components: { br: <br /> },
 							}
-					  )
+						)
 					: translate(
 							'We’d love to chat with you! All paid plans include access to one-on-one support from our ' +
 								'team of WordPress experts (we call them Happiness Engineers). The %(personalPlanName)s plan includes ' +
@@ -315,7 +315,7 @@ const PlanFAQ = ( { titanMonthlyRenewalCost = 0 } ) => {
 								},
 								components: { br: <br /> },
 							}
-					  ) }
+						) }
 			</FoldableFAQ>
 		</div>
 	);

@@ -19,7 +19,7 @@ export const showComponentAbility: Ability = {
 	name: 'big-sky/show-component',
 	label: __( 'Show Component', __i18n_text_domain__ ),
 	category: BIG_SKY_ABILITY_CATEGORY,
-	description: __( 'Display a component in the UI with specified props', __i18n_text_domain__ ),
+	description: 'Display a component in the UI with specified props',
 	input_schema: {
 		type: 'object',
 		properties: {

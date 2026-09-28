@@ -4,11 +4,11 @@ import {
 	wordpressAgentSlackOauthMutation,
 	wordpressAgentSlackPairMutation,
 } from '@automattic/api-queries';
-import { Badge } from '@automattic/ui';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Button, Notice, Spinner, __experimentalVStack as VStack } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
+import { Badge } from '@wordpress/ui';
 import { useState } from 'react';
 import SlackMark from 'calypso/assets/images/logos/slack-mark.svg';
 import { useAnalytics } from '../../app/analytics';
@@ -49,14 +49,12 @@ export default function WordPressAgentSlack( {
 				/* translators: %s is the WordPress.com user's display name and/or username. */
 				__( 'Connect your WordPress.com account %s to this Slack workspace?' ),
 				username
-		  )
+			)
 		: __( 'Connect your WordPress.com account to this Slack workspace?' );
-	const installTitle = pairToken
-		? __( 'Install WordPress Agent in another Slack workspace' )
-		: __( 'Install WordPress Agent in Slack' );
+	const installTitle = __( 'Slack' );
 	const installDescription = pairToken
 		? __( 'This is a separate step for adding WordPress Agent to a different Slack workspace.' )
-		: __( 'Add WordPress Agent to a Slack workspace, then connect your WordPress.com account.' );
+		: __( 'Add your agent to Slack and manage your sites from there.' );
 	const isActionPending =
 		oauthMutation.isPending || pairMutation.isPending || disconnectMutation.isPending;
 	const error =
@@ -119,7 +117,7 @@ export default function WordPressAgentSlack( {
 						title={ connection.team_name }
 						actions={
 							connection.installed && connection.is_owner ? (
-								<Badge intent="info">{ __( 'Integration owner' ) }</Badge>
+								<Badge intent="informational">{ __( 'Integration owner' ) }</Badge>
 							) : undefined
 						}
 						description={
@@ -127,11 +125,12 @@ export default function WordPressAgentSlack( {
 								? createInterpolateElement(
 										__( 'Your account is <connected>connected</connected>.' ),
 										{ connected: <strong /> }
-								  )
+									)
 								: __( 'The app is no longer installed in this workspace.' )
 						}
 					/>
 					<Button
+						__next40pxDefaultSize
 						variant="secondary"
 						isDestructive
 						onClick={ () => disconnect( connection.team_id ) }
@@ -146,11 +145,7 @@ export default function WordPressAgentSlack( {
 			</div>
 		) );
 	} else {
-		connectionsContent = (
-			<CardBody>
-				{ __( 'You have not connected WordPress Agent to a Slack workspace yet.' ) }
-			</CardBody>
-		);
+		connectionsContent = null;
 	}
 
 	return (
@@ -187,6 +182,7 @@ export default function WordPressAgentSlack( {
 							) }
 						/>
 						<Button
+							__next40pxDefaultSize
 							variant="primary"
 							onClick={ pair }
 							isBusy={ pairMutation.isPending }
@@ -200,26 +196,27 @@ export default function WordPressAgentSlack( {
 
 			<Card>
 				<CardBody className="wordpress-agent-connection__row">
-					<SectionHeader
-						level={ 3 }
-						title={ installTitle }
-						description={ installDescription }
-						decoration={ <img src={ SlackMark } alt="" width={ 24 } height={ 24 } /> }
-					/>
+					<SectionHeader level={ 3 } title={ installTitle } description={ installDescription } />
 					<Button
+						__next40pxDefaultSize
 						variant="primary"
+						className="wordpress-agent-slack__install-button"
 						onClick={ install }
 						isBusy={ oauthMutation.isPending }
 						disabled={ isActionPending }
 					>
-						{ pairToken
-							? __( 'Install in another workspace' )
-							: __( 'Install to a new Slack instance' ) }
+						<img src={ SlackMark } alt="" width={ 20 } height={ 20 } />
+						{ /* Wrap in span; avoids a Google Translate DOM crash (react/react#11538) */ }
+						<span>{ pairToken ? __( 'Add to another workspace' ) : __( 'Add to Slack' ) }</span>
 					</Button>
 				</CardBody>
 
-				<CardDivider />
-				{ connectionsContent }
+				{ connectionsContent && (
+					<>
+						<CardDivider />
+						{ connectionsContent }
+					</>
+				) }
 			</Card>
 		</VStack>
 	);

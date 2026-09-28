@@ -296,7 +296,8 @@ function getMoveDestinations( itemId: string ): {
 	}
 	const li = document.querySelector( itemSelector( itemId ) ) as HTMLElement | null;
 	const currentGroupId = li
-		? li.parentElement?.closest( 'li.wp-admin-sidebar-group' )?.getAttribute( 'data-group' ) ?? null
+		? ( li.parentElement?.closest( 'li.wp-admin-sidebar-group' )?.getAttribute( 'data-group' ) ??
+			null )
 		: null;
 	return { isInGroup: currentGroupId !== null };
 }

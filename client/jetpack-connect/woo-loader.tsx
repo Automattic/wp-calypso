@@ -60,14 +60,11 @@ export const WooLoader = ( { className, stages }: Props ) => {
 	const stage = stages[ currentStageIndex ];
 
 	useEffect( () => {
-		const interval = setInterval(
-			() => {
-				setCurrentStageIndex( ( _currentStageIndex ) =>
-					stages[ _currentStageIndex + 1 ] ? _currentStageIndex + 1 : 0
-				);
-			},
-			stages[ currentStageIndex ]?.duration ?? 3000
-		);
+		const interval = setInterval( () => {
+			setCurrentStageIndex( ( _currentStageIndex ) =>
+				stages[ _currentStageIndex + 1 ] ? _currentStageIndex + 1 : 0
+			);
+		}, stages[ currentStageIndex ]?.duration ?? 3000 );
 
 		return () => clearInterval( interval );
 	}, [ stages, currentStageIndex ] );

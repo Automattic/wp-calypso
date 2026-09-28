@@ -1,7 +1,6 @@
 import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
-	__experimentalScrollable as Scrollable,
 	Button,
 	Card,
 	CheckboxControl,
@@ -103,7 +102,10 @@ export const DomainSearchControlsFilterPopover = ( {
 				className="domain-search-controls__filters-popover-available-tlds-container"
 				isRounded={ false }
 			>
-				<Scrollable role="listbox" scrollDirection="y" style={ { maxHeight: '18.5rem' } }>
+				<div
+					role="listbox"
+					style={ { maxHeight: '18.5rem', overflowX: 'hidden', overflowY: 'auto' } }
+				>
 					{ tldList.map( ( tld ) => {
 						return tld.isLabel ? (
 							<FilterPopoverLabel key={ tld.text } text={ tld.text } />
@@ -115,7 +117,7 @@ export const DomainSearchControlsFilterPopover = ( {
 							/>
 						);
 					} ) }
-				</Scrollable>
+				</div>
 			</Card>
 		);
 	};

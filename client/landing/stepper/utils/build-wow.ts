@@ -3,7 +3,6 @@ import { logToLogstash } from 'calypso/lib/logstash';
 import wpcom from 'calypso/lib/wp';
 import { pollUntil, PollTimeoutError } from './poll-until';
 
-export const BUILD_WOW_QUERY_VALUE = '1';
 const BUILD_WOW_SITE_SPEC_PATH = '/setup/ai-site-builder-spec/site-spec';
 
 /**
@@ -12,7 +11,7 @@ const BUILD_WOW_SITE_SPEC_PATH = '/setup/ai-site-builder-spec/site-spec';
  * instead: a typo in the URL then means "whatever the deploy runs" rather than
  * a build request that fails outright.
  */
-const BUILD_WOW_GRAPHS = [ 'html-first', 'legacy' ] as const;
+const BUILD_WOW_GRAPHS = [ 'blocks-first', 'dsl' ] as const;
 export type BuildWowGraph = ( typeof BUILD_WOW_GRAPHS )[ number ];
 
 export function getBuildWowGraph( queryParams: URLSearchParams ): BuildWowGraph | undefined {
@@ -49,13 +48,6 @@ type BigSkyPluginStatus = {
 	remote_option_ready?: boolean;
 };
 
-export function isBuildWowEnabled(
-	queryParams: URLSearchParams,
-	isAutomattician = false
-): boolean {
-	return isAutomattician && queryParams.get( 'build_wow' ) === BUILD_WOW_QUERY_VALUE;
-}
-
 export function getBuildWowSiteIdentifier( {
 	siteSlug,
 	siteId,
@@ -74,23 +66,33 @@ export function getBuildWowSiteIdentifier( {
 	return null;
 }
 
+/**
+ * The spec widget reads `prompt` off the page URL and sends it as the opening
+ * message, so a prompt collected earlier rides along here.
+ */
 export function getBuildWowSiteSpecUrl( {
 	siteSlug,
 	siteId,
 	ref,
 	source,
+	prompt,
+	graph,
 }: {
 	siteSlug?: string | null;
 	siteId?: string | number | null;
 	ref?: string | null;
 	source?: string | null;
+	prompt?: string | null;
+	graph?: BuildWowGraph;
 } ): string {
 	return addQueryArgs( BUILD_WOW_SITE_SPEC_PATH, {
-		build_wow: BUILD_WOW_QUERY_VALUE,
+		build_wow: '1',
 		...( siteSlug ? { siteSlug } : {} ),
 		...( siteId && String( siteId ) !== '0' ? { siteId } : {} ),
 		...( ref ? { ref } : {} ),
 		...( source ? { source } : {} ),
+		...( prompt ? { prompt } : {} ),
+		...( graph ? { graph } : {} ),
 	} );
 }
 
@@ -104,7 +106,8 @@ export function isBuildWowSiteEditorReady( response: BuildWowResponse ): boolean
 export async function requestBuildWowSite(
 	siteIdentifier: string,
 	specId?: string,
-	graph?: BuildWowGraph
+	graph?: BuildWowGraph,
+	blueprintId?: string
 ): Promise< BuildWowResponse > {
 	return wpcom.req.post(
 		{
@@ -117,6 +120,9 @@ export async function requestBuildWowSite(
 			// queues a build: the server records the graph with that build, and a
 			// call without a spec queues nothing to record it against.
 			...( specId && graph ? { graph } : {} ),
+			// The blueprint hybrid: the blueprint onboarding already put the site on Atomic, which
+			// the server otherwise refuses as somebody's established site.
+			...( blueprintId ? { blueprint_id: blueprintId } : {} ),
 		}
 	);
 }

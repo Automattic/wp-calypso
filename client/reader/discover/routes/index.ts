@@ -1,20 +1,32 @@
-type Route = { path: string; requiresAuth?: boolean };
+import { getCurrentTabFromURL } from 'calypso/reader/utils';
+import { RECOMMENDED_TAB, SEARCH_TAB, FRESHLY_PRESSED_TAB, TAGS_TAB, LATEST_TAB } from '../helper';
+
+type Route = { path: string; tab?: string; requiresAuth?: boolean };
 export const DISCOVER_PREFIX = 'discover';
-export const DEFAULT_DISCOVER_TAB = 'recommended';
 
 /**
  * The routes for the discover page.
  * Please pay attention which changes on this list requires restart the devlopment server
  *
+ * `tab` ties a route to the tab slug `getSelectedTab` derives from the URL, so the
+ * path segment and the slug can't drift apart.
  */
 const ROUTES: Route[] = [
-	{ path: `/${ DISCOVER_PREFIX }` },
-	{ path: `/${ DISCOVER_PREFIX }/recommended` },
-	{ path: `/${ DISCOVER_PREFIX }/tags` },
-	{ path: `/${ DISCOVER_PREFIX }/latest` },
+	{ path: `/${ DISCOVER_PREFIX }`, tab: RECOMMENDED_TAB },
+	{ path: `/${ DISCOVER_PREFIX }/${ RECOMMENDED_TAB }`, tab: RECOMMENDED_TAB },
+	{ path: `/${ DISCOVER_PREFIX }/${ SEARCH_TAB }`, tab: SEARCH_TAB },
+	{ path: `/${ DISCOVER_PREFIX }/${ FRESHLY_PRESSED_TAB }`, tab: FRESHLY_PRESSED_TAB },
+	{ path: `/${ DISCOVER_PREFIX }/${ TAGS_TAB }`, tab: TAGS_TAB },
+	{ path: `/${ DISCOVER_PREFIX }/${ LATEST_TAB }`, tab: LATEST_TAB },
 	{ path: `/${ DISCOVER_PREFIX }/reddit`, requiresAuth: true },
 	{ path: `/${ DISCOVER_PREFIX }/add-new`, requiresAuth: true },
-] as const;
+];
+
+/**
+ * The tab a discover URL selects, defaulting to Recommended for a bare `/discover`.
+ */
+export const getSelectedTab = ( path: string ) =>
+	getCurrentTabFromURL( path, DISCOVER_PREFIX, RECOMMENDED_TAB );
 
 export const getRouteWithPrefix = ( langParam: string | undefined, route: Route ) => {
 	if ( ! langParam ) {
@@ -39,6 +51,18 @@ export const getPrivateRoutes = ( anyLangParam: string, routes: Route[] = ROUTES
 	return getLocalizedRoutes( anyLangParam, privateRoutes );
 };
 
-export const getDiscoverRoutes = ( langParam: string | undefined ) => {
-	return getLocalizedRoutes( langParam, ROUTES );
-};
+/**
+ * Search renders a different page than the other tabs, so it registers its own
+ * middleware chain and is excluded from the discover stream routes.
+ */
+export const getSearchRoutes = ( langParam: string | undefined ) =>
+	getLocalizedRoutes(
+		langParam,
+		ROUTES.filter( ( route ) => route.tab === SEARCH_TAB )
+	);
+
+export const getDiscoverRoutes = ( langParam: string | undefined ) =>
+	getLocalizedRoutes(
+		langParam,
+		ROUTES.filter( ( route ) => route.tab !== SEARCH_TAB )
+	);

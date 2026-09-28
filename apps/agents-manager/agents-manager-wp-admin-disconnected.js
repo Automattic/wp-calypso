@@ -2,7 +2,7 @@
  * WP Admin disconnected variant entry point.
  *
  * This lightweight variant is used when:
- * - The unified experience is disabled
+ * - The full Agents Manager experience is unavailable
  * - The help center icon is displayed by PHP (already in the admin bar)
  * - Full Agents Manager functionality is not needed
  *

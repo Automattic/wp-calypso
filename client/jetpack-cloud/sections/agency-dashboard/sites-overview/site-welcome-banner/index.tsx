@@ -93,10 +93,10 @@ export default function SiteWelcomeBanner( {
 				isDashboardView
 					? translate(
 							'Manage features and discover issues with any of your sites, which are automatically added when Jetpack is connected.'
-					  )
+						)
 					: translate(
 							'Manage features and discover issues with any of your sites within your new dashboard.'
-					  )
+						)
 			}
 			disableCircle
 			horizontal

@@ -4,6 +4,7 @@ import InlineHelpSearchCard from 'calypso/blocks/inline-help/inline-help-search-
 import { useHelpCenterContext } from '../contexts/HelpCenterContext';
 import { useHelpCenterSearch } from '../hooks';
 import HelpCenterSearchResults from './help-center-search-results';
+import { getHelpCenterSiteContext } from './help-center-site-context';
 import './help-center-search.scss';
 import './help-center-launchpad.scss';
 
@@ -16,9 +17,10 @@ export const HelpCenterSupportGuides = ( {
 	onSearchChange,
 	currentRoute,
 }: HelpCenterSupportGuidesProps ) => {
-	const { sectionName, site } = useHelpCenterContext();
+	const { sectionName, site, primarySiteId } = useHelpCenterContext();
 	const { searchQuery, setSearchQueryAndEmailSubject, redirectToArticle } =
 		useHelpCenterSearch( onSearchChange );
+	const { blogId, siteContextSource } = getHelpCenterSiteContext( site?.ID, primarySiteId );
 
 	return (
 		<div className="inline-help__search">
@@ -27,8 +29,8 @@ export const HelpCenterSupportGuides = ( {
 				onSearch={ setSearchQueryAndEmailSubject }
 				location="help-center"
 				isVisible
-				blogId={ site?.ID }
-				siteContextSource="help_center_context"
+				blogId={ blogId }
+				siteContextSource={ siteContextSource }
 				placeholder={ __( 'Search guides…', __i18n_text_domain__ ) }
 				sectionName={ sectionName }
 				useSearchControl

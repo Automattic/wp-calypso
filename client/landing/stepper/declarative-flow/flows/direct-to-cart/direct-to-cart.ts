@@ -211,7 +211,7 @@ const flow: FlowV2< typeof initialize > = {
 					const outerRedirect = externalRedirect
 						? addQueryArgs( '/setup/transferring-hosted-site', {
 								redirect_to: externalRedirect,
-						  } )
+							} )
 						: `/home/${ siteSlug }`;
 					persistSignupDestination( outerRedirect );
 					setSignupCompleteFlowName( DIRECT_TO_CART_FLOW );

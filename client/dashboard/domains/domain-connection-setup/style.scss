@@ -12,6 +12,13 @@
 	.summary-button.components-button .summary-button-title {
 		font-weight: 500;
 	}
+
+	// Match the @wordpress/components Button link variant underline.
+	.dashboard-domain-connection-verification__help-links a {
+		text-decoration: underline;
+		text-underline-offset: 0.2em;
+		text-decoration-thickness: from-font;
+	}
 }
 
 .verification-in-progress-next-steps {

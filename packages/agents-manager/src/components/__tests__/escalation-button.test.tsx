@@ -10,6 +10,7 @@ const mockGetTabSessionId = jest.fn();
 const mockLoadAllMessagesFromServer = jest.fn();
 const mockNavigate = jest.fn();
 const mockUseGetZendeskConversations = jest.fn();
+let mockZendeskSmoochIntegrationKey: string | undefined = 'woo';
 
 jest.mock(
 	'@automattic/agenttic-client',
@@ -59,11 +60,12 @@ jest.mock( '../../contexts', () => ( {
 			sessionId: 'ai-chat-123',
 		},
 		getTabSessionId: mockGetTabSessionId,
-		zendeskSmoochIntegrationKey: 'woo',
+		zendeskSmoochIntegrationKey: mockZendeskSmoochIntegrationKey,
 	} ),
 } ) );
 
 import { EscalationButton, findConversationByChatSessionId } from '../escalation-button';
+import { setLoadedProviderIds } from '../../utils/loaded-provider-ids';
 
 function createConversation(
 	id: string,
@@ -81,6 +83,8 @@ function createConversation(
 describe( 'EscalationButton', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
+		setLoadedProviderIds( [ 'woocommerce-ai' ] );
+		mockZendeskSmoochIntegrationKey = 'woo';
 		mockGetTabSessionId.mockReturnValue( 'ai-chat-123' );
 		mockUseGetZendeskConversations.mockReturnValue( {
 			conversations: [],
@@ -92,6 +96,19 @@ describe( 'EscalationButton', () => {
 			pagination: {},
 			sessionId: 'ai-chat-123',
 		} );
+	} );
+
+	afterEach( () => {
+		setLoadedProviderIds( undefined );
+	} );
+
+	it( 'hides the Zendesk handoff outside the Woo AI provider', () => {
+		setLoadedProviderIds( [ 'jetpack-ai-sidebar' ] );
+
+		render( <EscalationButton messageId="message-1" /> );
+
+		expect( mockUseGetZendeskConversations ).toHaveBeenCalledWith( false );
+		expect( screen.queryByText( 'Switch to Happiness Engineer' ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'continues an existing Zendesk conversation for the active AI chat', () => {

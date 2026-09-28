@@ -809,6 +809,7 @@ export function CheckoutFormSubmit( {
 	submitButtonHeader,
 	submitButtonFooter,
 	disableSubmitButton,
+	disableContinueButton,
 	submitButton,
 	onPageLoadError,
 	continueToNextIncompleteStep,
@@ -817,6 +818,11 @@ export function CheckoutFormSubmit( {
 	submitButtonHeader?: ReactNode;
 	submitButtonFooter?: ReactNode;
 	disableSubmitButton?: boolean;
+	/**
+	 * Disables the "Continue" button shown by `continueToNextIncompleteStep`,
+	 * for when a step's content is not ready to be validated yet.
+	 */
+	disableContinueButton?: boolean;
 	submitButton?: ReactNode;
 	onPageLoadError?: CheckoutPageErrorCallback;
 	continueToNextIncompleteStep?: boolean;
@@ -831,6 +837,7 @@ export function CheckoutFormSubmit( {
 		stepSkipValidationOnSubmitMap,
 	} = state;
 	const { getStepCompleteCallback, setStepCompleteStatus, makeStepActive } = actions;
+	const { formStatus } = useFormStatus();
 	const isThereAnotherNumberedStep = activeStepNumber < totalSteps;
 	const areAllStepsComplete = Object.values( stepCompleteStatus ).every(
 		( isComplete ) => isComplete === true
@@ -946,11 +953,10 @@ export function CheckoutFormSubmit( {
 	// actually an incomplete step to go to. The latter guard matters for returning
 	// purchasers whose steps are all auto-completed while the active step is still
 	// an earlier step: there is nothing to continue to, so show the Pay button.
+	// `disableSubmitButton` only disables Pay. Continue validates the current
+	// step rather than paying, so it stays available while a later step exists.
 	const showContinueToNextIncompleteStep =
-		!! continueToNextIncompleteStep &&
-		! disableSubmitButton &&
-		isThereAnotherNumberedStep &&
-		!! nextIncompleteStepId;
+		!! continueToNextIncompleteStep && isThereAnotherNumberedStep && !! nextIncompleteStepId;
 
 	const goToNextIncompleteStep = async () => {
 		// Prefer the next incomplete step; otherwise just advance one step so the
@@ -1018,10 +1024,16 @@ export function CheckoutFormSubmit( {
 					className="checkout-steps__continue-button"
 					// Distinguish this from the per-step inline "Continue" buttons for
 					// assistive technology, which would otherwise announce "Continue" twice.
-					aria-label={ __( 'Continue to the next step' ) }
+					aria-label={
+						formStatus === FormStatus.VALIDATING
+							? __( 'Please wait…' )
+							: __( 'Continue to the next step' )
+					}
 					onClick={ goToNextIncompleteStep }
+					disabled={ disableContinueButton || formStatus !== FormStatus.READY }
+					isBusy={ formStatus === FormStatus.VALIDATING }
 				>
-					{ __( 'Continue' ) }
+					{ formStatus === FormStatus.VALIDATING ? __( 'Please wait…' ) : __( 'Continue' ) }
 				</Button>
 			) : (
 				submitButton || (

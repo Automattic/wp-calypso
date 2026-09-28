@@ -61,20 +61,24 @@ jest.mock( 'calypso/state/current-user/selectors', () => ( {
 jest.mock( 'calypso/state/selectors/get-current-query-arguments', () => jest.fn() );
 jest.mock( 'calypso/state/selectors/get-current-route', () => jest.fn() );
 
-jest.mock( '../../lib/header-section', () => jest.fn() );
+jest.mock( '../components/logged-out-hero', () => ( {
+	setDiscoverLoggedOutHero: jest.fn(),
+} ) );
 
 jest.mock( '../discover-document-head', () => ( {
 	DiscoverDocumentHead: () => null,
 } ) );
 
-jest.mock( '../helper', () => ( {
-	FRESHLY_PRESSED_TAB: 'fresh',
+jest.mock( '../search-controller', () => ( {
+	fetchTrendingTagsIfLoggedOut: jest.fn(),
+	search: jest.fn(),
 } ) );
 
 jest.mock( '../routes', () => ( {
-	DISCOVER_PREFIX: '/discover',
 	getDiscoverRoutes: jest.fn( () => [ '/discover' ] ),
 	getPrivateRoutes: jest.fn( () => [ '/discover/site' ] ),
+	getSearchRoutes: jest.fn( () => [ '/discover/search' ] ),
+	getSelectedTab: jest.fn(),
 } ) );
 
 describe( 'reader discover routes', () => {

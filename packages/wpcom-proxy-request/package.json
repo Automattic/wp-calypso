@@ -1,6 +1,6 @@
 {
 	"name": "wpcom-proxy-request",
-	"version": "7.0.7",
+	"version": "7.1.0",
 	"description": "Proxied cookie-authenticated REST API requests to WordPress.com.",
 	"main": "dist/cjs/index.js",
 	"module": "dist/esm/index.js",

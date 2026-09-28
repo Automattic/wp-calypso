@@ -1,26 +1,15 @@
+import { requestPaymentMethodDeletion } from '@automattic/api-core';
+import { userPaymentMethodsQuery, userPaymentMethodsQueryKey } from '@automattic/api-queries';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useMemo } from 'react';
-import wp from 'calypso/lib/wp';
-import type { StoredPaymentMethod } from '@automattic/wpcom-checkout';
+import { useCallback } from 'react';
+import type { PaymentMethodRequestType, StoredPaymentMethod } from '@automattic/api-core';
 import type { ComponentType } from 'react';
 
-export const storedPaymentMethodsQueryKey = 'use-stored-payment-methods';
+export type { PaymentMethodRequestType };
 
-export type PaymentMethodRequestType = 'card' | 'agreement' | 'vault-token' | 'all';
-
-const fetchPaymentMethods = (
-	type: PaymentMethodRequestType,
-	expired: boolean
-): StoredPaymentMethod[] =>
-	wp.req.get( '/me/payment-methods', {
-		type,
-		expired: expired ? 'include' : 'exclude',
-		apiVersion: '1.2',
-	} );
-
-const requestPaymentMethodDeletion = ( id: StoredPaymentMethod[ 'stored_details_id' ] ) =>
-	wp.req.post( { path: '/me/stored-cards/' + id + '/delete' } );
+// Stable reference so consumers can safely use the result in dependency arrays.
+const NO_PAYMENT_METHODS: StoredPaymentMethod[] = [];
 
 export interface StoredPaymentMethodsState {
 	paymentMethods: StoredPaymentMethod[];
@@ -83,27 +72,19 @@ export function useStoredPaymentMethods( {
 } = {} ): StoredPaymentMethodsState {
 	const queryClient = useQueryClient();
 
-	const queryKey = [ storedPaymentMethodsQueryKey, type, expired ];
-
-	const { data, isLoading, error } = useQuery< StoredPaymentMethod[], Error >( {
-		queryKey,
-		queryFn: () => fetchPaymentMethods( type, expired ),
+	const { data, isLoading, error } = useQuery( {
+		...userPaymentMethodsQuery( { type, expired, isForBusiness } ),
 		enabled: ! isLoggedOut,
 	} );
 
 	const translate = useTranslate();
 	const isDataValid = Array.isArray( data );
-	const filteredPaymentMethods = useMemo( () => {
-		if ( ! isDataValid ) {
-			return [];
-		}
 
-		return isForBusiness
-			? data.filter( ( method ) => method?.tax_location?.is_for_business === isForBusiness )
-			: data;
-	}, [ isForBusiness, data, isDataValid ] );
-
-	const mutation = useMutation<
+	const {
+		mutate: deleteMutate,
+		isPending: isDeleting,
+		error: deleteError,
+	} = useMutation<
 		StoredPaymentMethod[ 'stored_details_id' ],
 		Error,
 		StoredPaymentMethod[ 'stored_details_id' ]
@@ -111,7 +92,7 @@ export function useStoredPaymentMethods( {
 		mutationFn: ( id ) => requestPaymentMethodDeletion( id ),
 		onSuccess: () => {
 			queryClient.invalidateQueries( {
-				queryKey: [ storedPaymentMethodsQueryKey ],
+				queryKey: userPaymentMethodsQueryKey,
 			} );
 		},
 	} );
@@ -119,18 +100,18 @@ export function useStoredPaymentMethods( {
 	const deletePaymentMethod = useCallback< StoredPaymentMethodsState[ 'deletePaymentMethod' ] >(
 		( id ) => {
 			return new Promise( ( resolve, reject ) => {
-				mutation.mutate( id, {
+				deleteMutate( id, {
 					onSuccess: () => resolve(),
 					onError: ( error ) => reject( error ),
 				} );
 			} );
 		},
-		[ mutation ]
+		[ deleteMutate ]
 	);
 
 	const errorMessage = ( () => {
-		if ( mutation.error ) {
-			return mutation.error.message;
+		if ( deleteError ) {
+			return deleteError.message;
 		}
 		if ( error ) {
 			return error.message;
@@ -144,9 +125,9 @@ export function useStoredPaymentMethods( {
 	} )();
 
 	return {
-		paymentMethods: filteredPaymentMethods,
+		paymentMethods: isDataValid ? data : NO_PAYMENT_METHODS,
 		isLoading: isLoggedOut ? false : isLoading,
-		isDeleting: mutation.isPending,
+		isDeleting,
 		error: errorMessage,
 		deletePaymentMethod,
 	};

@@ -44,7 +44,7 @@ const sanitizePhone = ( phoneNumber: string | null ) => {
 		? {
 				phoneNumberFull: sanitized,
 				phoneNumber: sanitized,
-		  }
+			}
 		: undefined;
 };
 

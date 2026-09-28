@@ -3,17 +3,21 @@
  */
 
 import { render } from '@testing-library/react';
+import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import Favicons from '../favicons';
 
+jest.mock( 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies' );
 jest.mock( 'calypso/lib/jetpack/is-jetpack-cloud' );
 
 describe( 'Favicons', () => {
 	beforeEach( () => {
+		isA8CForAgencies.mockImplementation( () => false );
 		isJetpackCloud.mockImplementation( () => false );
 	} );
 
 	afterEach( () => {
+		isA8CForAgencies.mockRestore();
 		isJetpackCloud.mockRestore();
 	} );
 
@@ -115,5 +119,40 @@ describe( 'Favicons', () => {
 		expect(
 			findFaviconBySizes( links, { rel: 'apple-touch-icon', sizes: '180x180' } )
 		).toHaveAttribute( 'href', expect.stringContaining( `${ basePath }/apple-touch-icon.png` ) );
+	} );
+
+	test( "should render the favicons for the 'brand' property regardless of the environment", () => {
+		const basePath = '/calypso/images/a8c-for-agencies/favicons';
+
+		expect( isA8CForAgencies() ).toEqual( false );
+		render( <Favicons environmentFaviconURL="" brand="a4a" /> );
+
+		const links = Array.from( document.getElementsByTagName( 'link' ) );
+		const metas = Array.from( document.getElementsByTagName( 'meta' ) );
+
+		expect( metas.find( ( { name } ) => name === 'application-name' ) ).toHaveAttribute(
+			'content',
+			'Automattic for Agencies'
+		);
+		expect( findFaviconBySizes( links, { rel: 'icon', sizes: '192x192' } ) ).toHaveAttribute(
+			'href',
+			`${ basePath }/android-chrome-192x192.png`
+		);
+		expect(
+			findFaviconBySizes( links, { rel: 'apple-touch-icon', sizes: '180x180' } )
+		).toHaveAttribute( 'href', `${ basePath }/apple-touch-icon.png` );
+	} );
+
+	test( "should fall back to the environment favicons when 'brand' is not set", () => {
+		isA8CForAgencies.mockImplementation( () => true );
+		expect( isA8CForAgencies() ).toEqual( true );
+		render( <Favicons environmentFaviconURL="" brand={ undefined } /> );
+
+		const links = Array.from( document.getElementsByTagName( 'link' ) );
+
+		expect( findFaviconBySizes( links, { rel: 'icon', sizes: '192x192' } ) ).toHaveAttribute(
+			'href',
+			'/calypso/images/a8c-for-agencies/favicons/android-chrome-192x192.png'
+		);
 	} );
 } );

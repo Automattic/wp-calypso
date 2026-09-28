@@ -2,6 +2,7 @@ import { sendReceiptEmailMutation } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
 import { Link, useNavigate } from '@tanstack/react-router';
 import { __experimentalText as Text, __experimentalVStack as VStack } from '@wordpress/components';
+import { filterSortAndPaginate } from '@wordpress/dataviews';
 import { __, sprintf } from '@wordpress/i18n';
 import { useMemo, type JSX } from 'react';
 import { receiptRoute } from '../../app/router/me';
@@ -93,16 +94,50 @@ export function useActions() {
 	);
 }
 
+type ReceiptComparator = ( firstReceipt: Receipt, secondReceipt: Receipt ) => number;
+
+const RECEIPT_COMPARATORS: Record< string, ReceiptComparator > = {
+	date: ( firstReceipt, secondReceipt ) =>
+		new Date( firstReceipt.date ).getTime() - new Date( secondReceipt.date ).getTime(),
+	service: ( firstReceipt, secondReceipt ) =>
+		summarizeReceiptItems( firstReceipt.items ).label.localeCompare(
+			summarizeReceiptItems( secondReceipt.items ).label
+		),
+	amount: ( firstReceipt, secondReceipt ) =>
+		firstReceipt.amount_integer - secondReceipt.amount_integer,
+};
+
+/**
+ * Wraps `filterSortAndPaginate()` to sort by the full receipt where a field's
+ * `getValue()` is shaped for filtering rather than sorting. DataViews passes
+ * `getValue()` results, not items, to a field's custom `sort()`.
+ */
+export function filterSortAndPaginateReceipts(
+	receipts: Receipt[],
+	view: View,
+	fields: Fields< Receipt >
+) {
+	const compare = view.sort ? RECEIPT_COMPARATORS[ view.sort.field ] : undefined;
+	if ( ! view.sort || ! compare ) {
+		return filterSortAndPaginate( receipts, view, fields );
+	}
+	const factor = view.sort.direction === 'asc' ? 1 : -1;
+	const sortedReceipts = [ ...receipts ].sort( ( a, b ) => factor * compare( a, b ) );
+	return filterSortAndPaginate( sortedReceipts, { ...view, sort: undefined }, fields );
+}
+
 export function getFields(
 	receipts: Receipt[],
 	countryList: CountryListItem[] = [],
 	visibleFields: string[] = WIDE_FIELDS,
 	locale: string,
 	sites: Site[] = [],
-	siteFilter?: number
+	siteFilter?: number,
+	canFilterBySite: boolean = true
 ): Fields< Receipt > {
-	// No point in having a filter if there's only one site.
-	const shouldAllowSiteFilter = sites.length > 1;
+	// No point in having a filter if there's only one site, or if the host has
+	// already scoped this screen to one site.
+	const shouldAllowSiteFilter = canFilterBySite && sites.length > 1;
 
 	return [
 		{
@@ -121,7 +156,7 @@ export function getFields(
 							operators: [ 'isAny' as Operator ],
 							...( siteFilter && { isPrimary: true } ),
 						},
-				  }
+					}
 				: { filterBy: false } ),
 			getValue: ( { item }: { item: Receipt } ) => {
 				return getReceiptSiteIds( item );
@@ -134,11 +169,6 @@ export function getFields(
 			enableHiding: false,
 			enableGlobalSearch: true,
 			enableSorting: true,
-			sort: ( firstReceipt: Receipt, secondReceipt: Receipt, direction: string ) => {
-				return direction === 'asc'
-					? new Date( firstReceipt.date ).getTime() - new Date( secondReceipt.date ).getTime()
-					: new Date( secondReceipt.date ).getTime() - new Date( firstReceipt.date ).getTime();
-			},
 			filterBy: {
 				operators: [ 'is' as Operator ],
 			},
@@ -157,13 +187,6 @@ export function getFields(
 			enableHiding: false,
 			enableGlobalSearch: true,
 			enableSorting: true,
-			sort: ( firstReceipt: Receipt, secondReceipt: Receipt, direction: string ) => {
-				const { label: firstLabel } = summarizeReceiptItems( firstReceipt.items );
-				const { label: secondLabel } = summarizeReceiptItems( secondReceipt.items );
-				return direction === 'asc'
-					? String( firstLabel ).localeCompare( String( secondLabel ) )
-					: String( secondLabel ).localeCompare( String( firstLabel ) );
-			},
 			filterBy: {
 				operators: [ 'is' as Operator ],
 			},
@@ -216,11 +239,6 @@ export function getFields(
 			enableHiding: false,
 			enableGlobalSearch: true,
 			enableSorting: true,
-			sort: ( firstReceipt: Receipt, secondReceipt: Receipt, direction: string ) => {
-				return direction === 'asc'
-					? firstReceipt.amount_integer - secondReceipt.amount_integer
-					: secondReceipt.amount_integer - firstReceipt.amount_integer;
-			},
 			filterBy: false,
 			getValue: ( { item }: { item: Receipt } ) => {
 				// Since we aren't using this value for sorting, filtering, or
@@ -374,7 +392,7 @@ function renderServiceNameDescription( receipt: Receipt ) {
 				__( '%1$s (%2$d requests/month)' ),
 				label.replace( /\s*\(.*$/, '' ).trim(),
 				500 * parseInt( String( receiptItem.licensed_quantity ) )
-		  )
+			)
 		: label;
 
 	return (
@@ -467,12 +485,12 @@ function renderReceiptAmount( receipt: Receipt, taxName?: string ) {
 				/* translators: taxAmount is a localized price like $12.34, taxName is a tax name like VAT or GST */
 				__( '(includes %(taxAmount)s %(taxName)s)' ),
 				{ taxAmount, taxName }
-		  )
+			)
 		: sprintf(
 				/* translators: %s is a localized price, like $12.34 */
 				__( '(includes %s tax)' ),
 				taxAmount
-		  );
+			);
 
 	return (
 		<VStack spacing={ 1 }>

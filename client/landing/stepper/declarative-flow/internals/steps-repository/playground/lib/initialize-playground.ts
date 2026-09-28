@@ -77,6 +77,11 @@ export async function initializeWordPressPlayground(
 				)
 			);
 			await client.mountOpfs( mountDescriptor );
+
+			// mountOpfs() starts the final journal flush without waiting for it, and each
+			// flush pass holds PHP's single-request semaphore. Wait for it here so the
+			// first request after the Playground becomes interactive isn't queued behind it.
+			await client.flushOpfs( mountDescriptor.mountpoint );
 		}
 
 		await client.isReady();

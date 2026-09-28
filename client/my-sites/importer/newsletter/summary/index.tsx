@@ -9,7 +9,11 @@ import { Dispatch, SetStateAction, useCallback, useEffect, useState } from 'reac
 import pauseSubstackBillingImg from 'calypso/assets/images/importer/pause-substack-billing.webp';
 import { Steps, StepStatus } from 'calypso/data/paid-newsletter/use-paid-newsletter-query';
 import { useSelector } from 'calypso/state';
-import { isJetpackSite, getSiteAdminUrl } from 'calypso/state/sites/selectors';
+import {
+	getSiteAdminUrl,
+	isJetpackMinimumVersion,
+	isJetpackSite,
+} from 'calypso/state/sites/selectors';
 import ImporterActionButton from '../../importer-action-buttons/action-button';
 import ImporterActionButtonContainer from '../../importer-action-buttons/container';
 import { getImporterStatus, normalizeFromSite } from '../utils';
@@ -57,8 +61,24 @@ export default function Summary( {
 }: SummaryProps ) {
 	const { __ } = useI18n();
 	const prefersReducedMotion = useReducedMotion();
-	const isJetpack = useSelector( ( state ) => isJetpackSite( state, selectedSite.ID ) );
-	const siteAdminUrl = useSelector( ( state ) => getSiteAdminUrl( state, selectedSite.ID ) );
+	const adminPhpUrl =
+		useSelector( ( state ) => getSiteAdminUrl( state, selectedSite.ID, 'admin.php' ) ) ??
+		`${ selectedSite.URL }/wp-admin/admin.php`;
+	// The Newsletter page's Subscribers tab shipped in Jetpack 16.1. Below that,
+	// `page=jetpack-newsletter` renders the legacy settings app and ignores `p`, so those sites
+	// keep the Jetpack Cloud subscriber list. Simple sites always have it.
+	const hasNewsletterSubscribersTab = useSelector(
+		( state ) =>
+			! isJetpackSite( state, selectedSite.ID ) ||
+			!! isJetpackMinimumVersion( state, selectedSite.ID, '16.1' )
+	);
+	const newsletterUrl = `${ adminPhpUrl }?page=jetpack-newsletter`;
+	// The Newsletter page is a router that reads its route from `p`, and it opens on Subscribers,
+	// so settings has to be asked for as an encoded route rather than a plain query arg.
+	const newsletterSettingsUrl = `${ newsletterUrl }&p=${ encodeURIComponent( '/?tab=settings' ) }`;
+	const subscribersUrl = hasNewsletterSubscribersTab
+		? newsletterUrl
+		: `https://cloud.jetpack.com/subscribers/${ selectedSite.slug }`;
 	const [ isImportCompleted, setIsImportCompleted ] = useState( false );
 	const [ importStepsResults, setImportStepsResults ] = useState< Steps | null >();
 	const importerStatus = getImporterStatus( steps );
@@ -223,10 +243,7 @@ export default function Summary( {
 				<hr />
 				<p>{ __( 'What would you like to do next?' ) }</p>
 				<ImporterActionButtonContainer noSpacing>
-					<ImporterActionButton
-						href={ `${ siteAdminUrl }admin.php?page=jetpack-newsletter` }
-						primary
-					>
+					<ImporterActionButton href={ newsletterSettingsUrl } primary>
 						{ __( 'Customize your newsletter' ) }
 					</ImporterActionButton>
 					{ steps?.content && (
@@ -234,13 +251,7 @@ export default function Summary( {
 							{ __( 'View content' ) }
 						</ImporterActionButton>
 					) }
-					<ImporterActionButton
-						href={
-							isJetpack
-								? `https://cloud.jetpack.com/subscribers/${ selectedSite.slug }`
-								: `/subscribers/${ selectedSite.slug }`
-						}
-					>
+					<ImporterActionButton href={ subscribersUrl }>
 						{ __( 'Manage subscribers' ) }
 					</ImporterActionButton>
 				</ImporterActionButtonContainer>

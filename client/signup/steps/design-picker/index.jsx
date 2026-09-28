@@ -280,7 +280,7 @@ export default function DesignPickerStep( props ) {
 				headerText: headerText(),
 				fallbackSubHeaderText: subHeaderText(),
 				subHeaderText: subHeaderText(),
-		  };
+			};
 
 	return (
 		<StepWrapper

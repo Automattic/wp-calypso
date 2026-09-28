@@ -15,12 +15,6 @@
 		display: inline-flex;
 		flex-shrink: 0;
 
-		&.is-current {
-			.breadcrumb__item {
-				color: $gray-900;
-			}
-		}
-
 		&:not(.is-current)::after {
 			content: '/';
 			color: $gray-200;

@@ -1,10 +1,11 @@
 import { AnimatePresence, motion } from 'framer-motion';
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect, useId, useMemo } from 'react';
 import { useAgentUIContext } from '../../context/AgentUIContext.tsx';
 import { cn } from '../../utils/classNames';
 import { fastSpringWithDelay } from '../animations';
 import { Button } from '../ui/button';
 import { SuggestionDropdown } from './SuggestionDropdown';
+import { SuggestionTooltip } from './SuggestionTooltip';
 import styles from './Suggestions.module.css';
 import type { Suggestion } from '../../types';
 
@@ -32,6 +33,7 @@ export const Suggestions: React.FC< SuggestionsProps > = ( {
 	translateY = '-100%',
 } ) => {
 	const { variant, reportSuggestionsRendered } = useAgentUIContext();
+	const instanceId = useId();
 
 	// Limit suggestions for floating layout to prevent overflow
 	const internalSuggestions = useMemo(
@@ -39,18 +41,30 @@ export const Suggestions: React.FC< SuggestionsProps > = ( {
 		[ suggestions, variant ]
 	);
 
-	// Report the set actually rendered — after truncation, only while visible.
-	// The container dedups across instance swaps, so this is intentionally dumb.
+	// Register the set actually rendered — after truncation, empty while hidden. The
+	// container unions every mounted instance and dedups, so this is intentionally dumb.
 	useEffect( () => {
-		if ( visible && internalSuggestions?.length ) {
-			reportSuggestionsRendered?.( internalSuggestions );
-		}
-	}, [ visible, internalSuggestions, reportSuggestionsRendered ] );
+		reportSuggestionsRendered?.(
+			instanceId,
+			visible && internalSuggestions?.length ? internalSuggestions : []
+		);
+	}, [ instanceId, visible, internalSuggestions, reportSuggestionsRendered ] );
+
+	useEffect(
+		() => () => {
+			reportSuggestionsRendered?.( instanceId, null );
+		},
+		[ instanceId, reportSuggestionsRendered ]
+	);
 
 	const handleSuggestionClick = async (
 		selectedSuggestion: Suggestion,
 		availableSuggestions: Suggestion[]
 	) => {
+		if ( selectedSuggestion.disabled ) {
+			return;
+		}
+
 		let shouldSubmit = true;
 		if ( selectedSuggestion.action ) {
 			shouldSubmit = await selectedSuggestion.action();
@@ -85,6 +99,47 @@ export const Suggestions: React.FC< SuggestionsProps > = ( {
 				>
 					{ internalSuggestions.map( ( suggestion: Suggestion, index: number ) => {
 						const isEligibleForDescription = !! suggestion.description && layout !== 'horizontal';
+						const hasDisabledReason = !! suggestion.disabled && !! suggestion.disabledReason;
+						const reasonId = hasDisabledReason
+							? `agenttic-suggestion-reason-${ suggestion.id }`
+							: undefined;
+
+						const chip =
+							suggestion.options && suggestion.options.length > 0 ? (
+								<SuggestionDropdown
+									suggestion={ suggestion }
+									onSelect={ handleSuggestionClick }
+									availableSuggestions={ internalSuggestions }
+									onOpenChange={ onDropdownOpenChange }
+									showDescription={ isEligibleForDescription }
+									describedById={ reasonId }
+								/>
+							) : (
+								<Button
+									onClick={ ( e ) => {
+										e.stopPropagation();
+										handleSuggestionClick( suggestion, internalSuggestions );
+									} }
+									aria-disabled={ suggestion.disabled }
+									aria-describedby={ reasonId }
+									variant="outline"
+									className={ styles.button }
+								>
+									<div
+										className={ cn(
+											styles[ 'suggestion-content' ],
+											isEligibleForDescription
+												? styles[ 'suggestion-content--with-description' ]
+												: ''
+										) }
+									>
+										<span className={ styles.label }>{ suggestion.label }</span>
+										{ isEligibleForDescription && (
+											<span className={ styles.description }>{ suggestion.description }</span>
+										) }
+									</div>
+								</Button>
+							);
 
 						return (
 							<motion.div
@@ -97,37 +152,15 @@ export const Suggestions: React.FC< SuggestionsProps > = ( {
 									delay: index * 0.05,
 								} }
 							>
-								{ suggestion.options && suggestion.options.length > 0 ? (
-									<SuggestionDropdown
-										suggestion={ suggestion }
-										onSelect={ handleSuggestionClick }
-										availableSuggestions={ internalSuggestions }
-										onOpenChange={ onDropdownOpenChange }
-										showDescription={ isEligibleForDescription }
-									/>
-								) : (
-									<Button
-										onClick={ ( e ) => {
-											e.stopPropagation();
-											handleSuggestionClick( suggestion, internalSuggestions );
-										} }
-										variant="outline"
-										className={ styles.button }
+								{ reasonId ? (
+									<SuggestionTooltip
+										label={ suggestion.disabledReason as string }
+										descriptionId={ reasonId }
 									>
-										<div
-											className={ cn(
-												styles[ 'suggestion-content' ],
-												isEligibleForDescription
-													? styles[ 'suggestion-content--with-description' ]
-													: ''
-											) }
-										>
-											<span className={ styles.label }>{ suggestion.label }</span>
-											{ isEligibleForDescription && (
-												<span className={ styles.description }>{ suggestion.description }</span>
-											) }
-										</div>
-									</Button>
+										{ chip }
+									</SuggestionTooltip>
+								) : (
+									chip
 								) }
 							</motion.div>
 						);

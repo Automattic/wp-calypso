@@ -150,8 +150,9 @@ const MarketplaceContainer = styled.div< { isloggedIn: boolean } >`
 
 const CardText = styled.span< { color: string } >`
 	color: ${ ( { color } ) => color };
-	font-family: 'SF Pro Text', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto',
-		'Oxygen-Sans', 'Ubuntu', 'Cantarell', 'Helvetica Neue', sans-serif;
+	font-family:
+		'SF Pro Text', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Oxygen-Sans',
+		'Ubuntu', 'Cantarell', 'Helvetica Neue', sans-serif;
 	font-weight: 400;
 	font-size: 14px;
 	line-height: 20px;
@@ -220,7 +221,7 @@ export const MarketplaceFooter = () => {
 	const headerTitle = isMarketplaceRedesignEnabled
 		? translate( "You pick the plugin,{{br}}{{/br}}we'll take care of the rest", {
 				components: { br: <br /> },
-		  } )
+			} )
 		: __( "You pick the plugin. We'll take care of the rest." );
 
 	const ctaButton = showCta ? (
@@ -249,10 +250,10 @@ export const MarketplaceFooter = () => {
 						{ isMarketplaceRedesignEnabled
 							? __(
 									'Plugins authored by WordPress.com are fully managed by our team. No security patches. No update nags. It just works.'
-							  )
+								)
 							: __(
 									'Premium plugins are fully managed by the team at WordPress.com. No security patches. No update nags. It just works.'
-							  ) }
+								) }
 					</FeatureItem>
 					<FeatureItem
 						header={
@@ -279,10 +280,10 @@ export const MarketplaceFooter = () => {
 						{ isMarketplaceRedesignEnabled
 							? __(
 									'Pay yearly and save. Or keep it flexible with monthly plugin pricing. It’s entirely up to you.'
-							  )
+								)
 							: __(
 									'Pay yearly and save. Or keep it flexible with monthly premium plugin pricing. It’s entirely up to you.'
-							  ) }
+								) }
 					</FeatureItem>
 				</ThreeColumnContainer>
 			</Section>

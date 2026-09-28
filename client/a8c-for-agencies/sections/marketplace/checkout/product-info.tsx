@@ -151,7 +151,7 @@ export default function ProductInfo( {
 					},
 					context: 'site URLs in the plan description',
 					comment: 'The `sitesList` is the list of site URLs in the plan description.',
-			  } )
+				} )
 			: '';
 	}
 
@@ -166,14 +166,14 @@ export default function ProductInfo( {
 					args: {
 						numLicenses: product.quantity,
 					},
-			  } )
+				} )
 			: translate( '%(numLicenses)d plan', '%(numLicenses)d plans', {
 					context: 'button label',
 					count: product.quantity,
 					args: {
 						numLicenses: product.quantity,
 					},
-			  } );
+				} );
 
 	return (
 		<div className="product-info">

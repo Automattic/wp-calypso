@@ -14,6 +14,12 @@ import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 
 import 'calypso/state/memberships/init';
 
+// Memberships endpoints can return HTTP 200 with an error in the response body.
+const getProductError = ( response ) => {
+	const error = ( response.body ?? response ).error;
+	return error ? new Error( error ) : null;
+};
+
 export const requestProducts = ( siteId ) => ( {
 	siteId,
 	type: MEMBERSHIPS_PRODUCTS_LIST,
@@ -92,7 +98,13 @@ export const requestUpdateProduct = ( siteId, product, noticeText ) => {
 				product
 			)
 			.then( ( newProduct ) => {
-				const membershipProduct = membershipProductFromApi( newProduct.product );
+				const error = getProductError( newProduct );
+				if ( error ) {
+					throw error;
+				}
+				const membershipProduct = membershipProductFromApi(
+					( newProduct.body ?? newProduct ).product
+				);
 				dispatch( receiveUpdateProduct( siteId, membershipProduct ) );
 				if ( noticeText ) {
 					dispatch(
@@ -140,64 +152,57 @@ export const requestDeleteProduct = (
 			} );
 		}
 
-		const requests = [
-			wpcom.req.post(
-				{
-					method: 'DELETE',
-					path: `/sites/${ siteId }/memberships/product/${ product.ID }`,
-					apiNamespace: 'wpcom/v2',
-				},
-				{
-					cancel_subscriptions: Boolean( cancelSubscriptions ),
-				}
-			),
-		];
-
-		if ( annualProduct ) {
-			requests.push(
-				wpcom.req.post(
+		const products = [ product, annualProduct ].filter( Boolean );
+		const requests = products.map( ( currentProduct ) =>
+			wpcom.req
+				.post(
 					{
 						method: 'DELETE',
-						path: `/sites/${ siteId }/memberships/product/${ annualProduct.ID }`,
+						path: `/sites/${ siteId }/memberships/product/${ currentProduct.ID }`,
 						apiNamespace: 'wpcom/v2',
 					},
 					{
 						cancel_subscriptions: Boolean( cancelSubscriptions ),
 					}
 				)
-			);
-		}
+				.then( ( response ) => {
+					const error = getProductError( response );
+					if ( error ) {
+						throw error;
+					}
+				} )
+		);
 
-		return Promise.all( requests )
-			.then( () => {
-				dispatch(
-					successNotice( noticeText, {
-						duration: 5000,
-					} )
-				);
-				return product.ID;
-			} )
-			.catch( ( error ) => {
-				dispatch( {
-					type: MEMBERSHIPS_PRODUCT_DELETE_FAILURE,
-					siteId,
-					error,
-					product,
-				} );
-				if ( annualProduct ) {
+		return Promise.allSettled( requests ).then( ( results ) => {
+			const failedRequests = results
+				.map( ( result, index ) => ( { result, product: products[ index ] } ) )
+				.filter( ( { result } ) => result.status === 'rejected' );
+
+			if ( failedRequests.length ) {
+				const error = failedRequests[ 0 ].result.reason;
+				failedRequests.forEach( ( { product: failedProduct, result } ) => {
 					dispatch( {
 						type: MEMBERSHIPS_PRODUCT_DELETE_FAILURE,
 						siteId,
-						error,
-						product: annualProduct,
+						error: result.reason,
+						product: failedProduct,
 					} );
-				}
+				} );
 				dispatch(
 					errorNotice( error.message, {
 						duration: 10000,
 					} )
 				);
-			} );
+				return;
+			}
+
+			dispatch(
+				successNotice( noticeText, {
+					duration: 5000,
+				} )
+			);
+			return product.ID;
+		} );
 	};
 };
 
@@ -230,6 +235,9 @@ export const requestUpdateTier = ( siteId, product, annualProduct, noticeText ) 
 			product,
 			null // We don't want to show a message on the first product update
 		)( dispatch ).then( ( membershipProduct ) => {
+			if ( ! membershipProduct ) {
+				return;
+			}
 			// The annual product does not exist yet
 			return addOrUpdateAnnualProduct( siteId, annualProduct, noticeText )( membershipProduct )(
 				dispatch

@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { useMultiTimeout } from '../../hooks/useMultiTimeout';
 import { type ActionButton, ChatInput } from '../chat/ChatInput';
 import { Suggestions } from '../chat/Suggestions';
-import type { Suggestion } from '../../types';
+import type { Suggestion, TrailingActions } from '../../types';
 
 // Constants for better maintainability
 const SUGGESTIONS_AUTO_HIDE_DELAY = 4000; // 4 seconds
@@ -20,6 +20,8 @@ interface CompactViewProps {
 	onExpand?: () => void;
 	showExpandButton?: boolean;
 	focusOnMount?: boolean;
+	leadingActions?: React.ReactNode;
+	trailingActions?: TrailingActions;
 	customActions?: ActionButton[];
 	actionOrder?: 'before-submit' | 'after-submit';
 	onStop?: () => void;
@@ -45,6 +47,8 @@ export function CompactView( {
 	onExpand,
 	showExpandButton = true,
 	focusOnMount = false,
+	leadingActions,
+	trailingActions,
 	customActions,
 	actionOrder,
 	onStop,
@@ -144,6 +148,8 @@ export function CompactView( {
 				onExpand={ onExpand }
 				showExpandButton={ showExpandButton }
 				focusOnMount={ focusOnMount }
+				leadingActions={ leadingActions }
+				trailingActions={ trailingActions }
 				customActions={ customActions }
 				actionOrder={ actionOrder }
 				onStop={ onStop }

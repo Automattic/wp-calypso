@@ -34,7 +34,13 @@ import {
 	DEFAULT_SHELF_TEXT_COLOR,
 	resolveShelfIconColor,
 } from 'calypso/reader/shelves/colors';
-import { getShelfErrorMessage, validateName } from 'calypso/reader/shelves/form-helpers';
+import {
+	getShelfErrorMessage,
+	validateFeeds,
+	validateLanguages,
+	validateName,
+	validateTags,
+} from 'calypso/reader/shelves/form-helpers';
 import { SHELF_ICONS } from 'calypso/reader/shelves/icons';
 import { isKnownLanguageCode, toBaseLanguageCode } from 'calypso/reader/shelves/languages';
 import { getShelfTabPath, parseShelfTabFromPath } from 'calypso/reader/shelves/routes';
@@ -236,6 +242,10 @@ function ShelfUpsertModalContent( {
 	const nameError = validateName( name, existingNames, translate );
 	const isPending = isCreate ? createShelf.isPending : updateShelf.isPending;
 	const selectedFeeds = selectedSources.map( ( source ) => source.feed );
+	const feedsError = validateFeeds( selectedFeeds.length, translate );
+	const tagsError = validateTags( tags.length, translate );
+	const languagesError = validateLanguages( languages.length, translate );
+	const hasValidationError = !! ( nameError || feedsError || tagsError || languagesError );
 
 	const handleAddDraftSource = ( subscription: SiteSubscriptionItem ) => {
 		const source = getSubscriptionDraftItem( subscription );
@@ -250,7 +260,7 @@ function ShelfUpsertModalContent( {
 	};
 
 	const handleSave = () => {
-		if ( nameError || isPending ) {
+		if ( hasValidationError || isPending ) {
 			return;
 		}
 
@@ -386,6 +396,7 @@ function ShelfUpsertModalContent( {
 					selectedSourceKeys={ selectedSources.map( ( source ) => source.key ) }
 					onAddDraftSource={ handleAddDraftSource }
 					onRemoveDraftSource={ handleRemoveDraftSource }
+					feedsError={ feedsError }
 				/>
 			);
 		}
@@ -394,8 +405,10 @@ function ShelfUpsertModalContent( {
 				<TopicsTab
 					tags={ tags }
 					onTagsChange={ setTags }
+					tagsError={ tagsError }
 					languages={ languages }
 					onLanguagesChange={ setLanguages }
+					languagesError={ languagesError }
 				/>
 			);
 		}
@@ -436,6 +449,10 @@ function ShelfUpsertModalContent( {
 	const wizardSteps = baseTabs;
 	const isLastStep = step === wizardSteps.length - 1;
 	const currentStep = wizardSteps[ step ];
+	const currentStepHasValidationError =
+		( currentStep.name === 'identity' && !! nameError ) ||
+		( currentStep.name === 'sources' && !! feedsError ) ||
+		( currentStep.name === 'topics' && !! ( tagsError || languagesError ) );
 
 	const goBack = () => setStep( ( current ) => Math.max( current - 1, 0 ) );
 	const goNext = () => {
@@ -521,7 +538,7 @@ function ShelfUpsertModalContent( {
 							__next40pxDefaultSize
 							variant="primary"
 							isBusy={ isPending }
-							disabled={ !! nameError || isPending }
+							disabled={ currentStepHasValidationError || isPending }
 							onClick={ goNext }
 						>
 							{ isLastStep ? translate( 'Create' ) : translate( 'Next' ) }
@@ -566,7 +583,7 @@ function ShelfUpsertModalContent( {
 							__next40pxDefaultSize
 							variant="primary"
 							isBusy={ isPending }
-							disabled={ ! isSeeded || !! nameError || isPending }
+							disabled={ ! isSeeded || hasValidationError || isPending }
 							onClick={ handleSave }
 						>
 							{ translate( 'Save changes' ) }

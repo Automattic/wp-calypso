@@ -1,6 +1,6 @@
-import { Badge } from '@automattic/ui';
 import { ExternalLink, Tooltip } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+import { Badge } from '@wordpress/ui';
 import RouterLinkButton from '../../../../components/router-link-button';
 import { urlToSlug } from '../../../../utils/url';
 import { findAgencyProduct } from '../lib/get-product-name';
@@ -25,7 +25,7 @@ export default function PurchaseSiteDetails( {
 	if ( purchase.site_assigned ) {
 		const product = findAgencyProduct( purchase.product_id, products );
 		if ( product?.slug.startsWith( 'pressable' ) ) {
-			return <Badge intent="success">{ __( 'Pressable' ) }</Badge>;
+			return <Badge intent="stable">{ __( 'Pressable' ) }</Badge>;
 		}
 
 		const siteSlug = urlToSlug( purchase.site_assigned );
@@ -47,10 +47,5 @@ export default function PurchaseSiteDetails( {
 		? __( 'When your client pays, you can initiate this site.' )
 		: __( 'When your client pays, you can assign this product to a site.' );
 
-	// Badge does not forward refs, so Tooltip needs a DOM element to anchor to.
-	return (
-		<Tooltip text={ tooltip }>
-			<span style={ { display: 'inline-flex' } }>{ badge }</span>
-		</Tooltip>
-	);
+	return <Tooltip text={ tooltip }>{ badge }</Tooltip>;
 }

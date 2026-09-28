@@ -179,7 +179,7 @@ export function FollowingView( { connectionId, actor }: Props ) {
 								}
 							);
 						},
-				  },
+					},
 		};
 	};
 

@@ -1,0 +1,25 @@
+@import "@wordpress/base-styles/breakpoints";
+
+// Weight the selector for Odyssey Stats.
+.stats-premium-analytics-preview-dialog {
+	@media (min-width: $break-small) {
+		&.components-modal__frame {
+			max-width: 480px;
+		}
+	}
+
+	p {
+		margin: 0 0 1em;
+	}
+
+	&__error {
+		color: var(--color-error);
+	}
+
+	&__actions {
+		display: flex;
+		justify-content: flex-end;
+		gap: 8px;
+		margin-block-start: 24px;
+	}
+}

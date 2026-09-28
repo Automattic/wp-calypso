@@ -8,8 +8,7 @@ type TrafficActivityType = 'Views' | 'Visitors' | 'Likes' | 'Comments';
 type StoreActivityType = 'Gross Sales' | 'Net sales' | 'Orders' | 'Avg. Order Value';
 // Discriminated Union type.
 type ActivityTypes =
-	| { tab: 'Traffic'; type: TrafficActivityType }
-	| { tab: 'Store'; type: StoreActivityType };
+	{ tab: 'Traffic'; type: TrafficActivityType } | { tab: 'Store'; type: StoreActivityType };
 type StatsPeriod = 'Days' | 'Weeks' | 'Months' | 'Years';
 type SubscriberOrigin = 'WordPress.com' | 'Email';
 

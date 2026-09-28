@@ -14,9 +14,11 @@
 import { getAgentManager, UIMessage } from '@automattic/agenttic-client';
 import { amToolProvider, getAmCheckpointContext } from '../abilities';
 import { findAbilityByName } from '../abilities/ability-name';
+import { withAbilityCompletionBroadcast } from './ability-completion-broadcast';
 import { withCanvasBinding, withCanvasGuard } from './canvas-guard';
 import { getAgentsManagerInlineData } from './get-agents-manager-inline-data';
 import { isReaderChatAgent } from './is-reader-chat-agent';
+import { setLoadedProviderIds } from './loaded-provider-ids';
 import {
 	getProviderCheckpointObservedAt,
 	getProviderCheckpointRecords,
@@ -34,22 +36,6 @@ import type {
 import type { UseAgentChatReturn } from '@automattic/agenttic-client';
 import type { MarkdownComponents, MarkdownExtensions } from '@automattic/agenttic-ui';
 import type { ReactNode } from 'react';
-
-/**
- * Hook that resumes the conversation after a full page navigation
- * (e.g., `wp-admin/navigate`) by sending a tool result.
- */
-export type NavigationContinuationHook = ( props: {
-	isProcessing: boolean;
-	sendToolResult: ( params: {
-		toolCallId: string;
-		toolId: string;
-		message: string;
-		sessionId: string;
-	} ) => Promise< void >;
-	sessionId: string;
-	pathname: string;
-} ) => void;
 
 /**
  * Abilities setup hook type - for registering hook-based abilities that utilize React
@@ -193,7 +179,6 @@ export interface LoadedProviders {
 	suppressEmptyViewDefaults?: boolean;
 	markdownComponents?: MarkdownComponents;
 	markdownExtensions?: MarkdownExtensions;
-	useNavigationContinuation?: NavigationContinuationHook;
 	useAbilitiesSetup?: AbilitiesSetupHook;
 	useSuggestions?: UseSuggestionsHook;
 	getChatComponent?: GetChatComponent;
@@ -597,16 +582,17 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 	if ( registerReaderFollowups ) {
 		// Reader Chat runs on the public frontend and should not inherit editor providers
 		// such as the Jetpack AI sidebar.
+		setLoadedProviderIds( [] );
 		return { useSuggestions: useReaderFollowupSuggestions };
 	}
 
 	if ( agentProviders.length === 0 ) {
+		setLoadedProviderIds( [] );
 		return {};
 	}
 
 	let mergedToolProvider: ToolProvider | undefined;
 	let mergedGetEmptyViewSuggestions: ( () => Suggestion[] ) | undefined;
-	let mergedNavigationContinuation: NavigationContinuationHook | undefined;
 	let mergedAbilitiesSetup: AbilitiesSetupHook | undefined;
 	let mergedGetChatComponent: GetChatComponent | undefined;
 	let mergedSiteBuildUtils: SiteBuildUtils | undefined;
@@ -702,9 +688,6 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 		}
 
 		// First-write-wins for singleton exports.
-		if ( module.useNavigationContinuation && ! mergedNavigationContinuation ) {
-			mergedNavigationContinuation = module.useNavigationContinuation;
-		}
 		if ( module.siteBuildUtils && ! mergedSiteBuildUtils ) {
 			mergedSiteBuildUtils = module.siteBuildUtils;
 		}
@@ -793,7 +776,10 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 	// After the branch, deliberately: the single-provider path above assigns
 	// `allToolProviders[ 0 ]` straight through, so a guard applied inside the
 	// multi-provider closure would silently not exist on those surfaces.
-	mergedToolProvider = withCanvasGuard( mergedToolProvider );
+	//
+	// Announcement inside the guard: an ability the guard refuses never ran,
+	// so there is no completion to announce for it.
+	mergedToolProvider = withCanvasGuard( withAbilityCompletionBroadcast( mergedToolProvider ) );
 
 	// Merge transformMessages: compose in registration order, so each provider
 	// rewrites what the previous one produced. Unlike the singleton exports this
@@ -858,6 +844,8 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 		};
 	}
 
+	setLoadedProviderIds( allProviderIds );
+
 	return {
 		toolProvider: mergedToolProvider,
 		contextProvider: mergedContextProvider,
@@ -865,7 +853,6 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 		markdownComponents: mergedMarkdownComponents,
 		markdownExtensions: mergedMarkdownExtensions,
 		providerIds: allProviderIds.length ? allProviderIds : undefined,
-		useNavigationContinuation: mergedNavigationContinuation,
 		useAbilitiesSetup: mergedAbilitiesSetup,
 		onTaskUpdate: mergedOnTaskUpdate,
 		useSuggestions: mergedUseSuggestions,

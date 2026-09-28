@@ -16,10 +16,10 @@ export const MigrationStartedDIFM = ( { site }: { site: SiteDetails } ) => {
 	)
 		? translate(
 				"We will review your site to make sure we have everything we need. Here's what you can expect next:"
-		  )
+			)
 		: translate(
 				"Our team has received your details. We will review your site to make sure we have everything we need. Here's what you can expect next:"
-		  );
+			);
 
 	const checklistItems = [
 		{

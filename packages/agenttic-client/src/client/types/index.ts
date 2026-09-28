@@ -24,13 +24,7 @@ export interface JsonRpcError {
 }
 
 export type TaskState =
-	| 'submitted'
-	| 'working'
-	| 'running'
-	| 'input-required'
-	| 'completed'
-	| 'canceled'
-	| 'failed';
+	'submitted' | 'working' | 'running' | 'input-required' | 'completed' | 'canceled' | 'failed';
 
 /**
  * Content type for text parts
@@ -250,6 +244,8 @@ export interface Artifact {
 }
 
 export interface Task {
+	/** Server-owned credit snapshot; opaque to the transport. */
+	ai_credits?: unknown;
 	id: string;
 	sessionId?: string;
 	status: TaskStatus;
@@ -334,6 +330,8 @@ export interface TaskUpdate {
 	status: TaskStatus;
 	final?: boolean;
 	artifact?: Artifact;
+	/** Credit status from the server's task result. Not persisted to messages. */
+	aiCredits?: unknown;
 	text: string; // Extracted text from status.message
 	agentMessage?: Message; // Optional separate agent message for when returnToAgent is false
 	progressMessage?: string; // Optional progress message extracted from progress parts
@@ -344,6 +342,7 @@ export interface TaskUpdate {
 }
 
 export interface Client {
+	/** Protocol errors retain aiCredits when the server supplies a terminal snapshot. */
 	sendMessage: ( params: SendMessageParams ) => Promise< TaskUpdate >;
 	sendMessageStream: ( params: SendMessageParams ) => AsyncIterable< TaskUpdate >;
 
@@ -375,6 +374,23 @@ export interface ToolExecutionResult {
 
 export interface ToolProvider {
 	getAvailableTools?: () => Promise< Tool[] >;
+	/**
+	 * Tools the client executes when the backend dispatches them in an
+	 * `input-required` handoff, WITHOUT advertising them to the agent as
+	 * callable. Use this for backend-driven handoffs the agent has no reason
+	 * to choose for itself (a confirmation step, for example). Tools listed
+	 * here are executed through `executeTool`, exactly like advertised tools;
+	 * they are ignored for `running`-state echoes, which only ever dispatch
+	 * advertised tools.
+	 *
+	 * This keeps the tool out of the agent's tool list — it is not an
+	 * authorization boundary. `input-required` is also how model-chosen calls
+	 * reach `executeTool`, so a call naming a dispatchable id still runs if
+	 * the backend relays one. Anything that must not run on the model's say-so
+	 * needs the backend to reject unadvertised tool names, or a confirmation
+	 * inside `executeTool` itself.
+	 */
+	getDispatchableTools?: () => Promise< Tool[] >;
 	executeTool?: (
 		toolId: string,
 		args: any,

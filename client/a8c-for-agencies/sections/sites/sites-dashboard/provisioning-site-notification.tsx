@@ -2,7 +2,7 @@ import page from '@automattic/calypso-router';
 import { Button } from '@automattic/components';
 import { ExternalLink } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import useShowFeedback from 'calypso/a8c-for-agencies/components/a4a-feedback/hooks/use-show-a4a-feedback';
 import { FeedbackType } from 'calypso/a8c-for-agencies/components/a4a-feedback/types';
 import LayoutBanner from 'calypso/a8c-for-agencies/components/layout/banner';
@@ -20,9 +20,10 @@ type BannerProps = {
 	migration?: boolean;
 	development?: boolean;
 	onDismiss?: () => void;
+	onSuccess?: () => void;
 };
 
-function Banner( { siteId, migration, development, onDismiss }: BannerProps ) {
+function Banner( { siteId, migration, development, onDismiss, onSuccess }: BannerProps ) {
 	const { isReady, site } = useIsSiteReady( { siteId } );
 	const [ showBanner, setShowBanner ] = useState( true );
 
@@ -40,6 +41,12 @@ function Banner( { siteId, migration, development, onDismiss }: BannerProps ) {
 
 	const { isFeedbackShown } = useShowFeedback( FeedbackType.PurchaseCompleted );
 
+	useEffect( () => {
+		if ( site ) {
+			onSuccess?.();
+		}
+	}, [ site, onSuccess ] );
+
 	const readySiteMessage = development
 		? translate(
 				'{{a}}%(siteURL)s{{/a}} is now ready. It may take a few minutes for it to show up in the site list below. Before the site launches, you will be able to find it under {{developmentTabLink}}Development{{/developmentTabLink}}.',
@@ -51,7 +58,7 @@ function Banner( { siteId, migration, development, onDismiss }: BannerProps ) {
 					},
 					comment: 'The %(siteURL)s is the URL of the site that has been provisioned.',
 				}
-		  )
+			)
 		: translate(
 				'{{a}}%(siteURL)s{{/a}} is now ready. It may take a few minutes for it to show up in the site list below.',
 				{
@@ -61,7 +68,7 @@ function Banner( { siteId, migration, development, onDismiss }: BannerProps ) {
 					},
 					comment: 'The %(siteURL)s is the URL of the site that has been provisioned.',
 				}
-		  );
+			);
 
 	const onClose = () => {
 		setShowBanner( false );
@@ -114,7 +121,7 @@ function Banner( { siteId, migration, development, onDismiss }: BannerProps ) {
 										{ translate( 'Set up your site' ) }
 									</Button>
 								),
-						  ]
+							]
 						: undefined
 				}
 				allowTemporaryDismissal={ ! isReady }
@@ -126,13 +133,13 @@ function Banner( { siteId, migration, development, onDismiss }: BannerProps ) {
 					? readySiteMessage
 					: translate(
 							"We're setting up your new WordPress.com site and will notify you once it's ready, which should only take a few minutes."
-					  ) }
+						) }
 			</LayoutBanner>
 		)
 	);
 }
 
-export default function ProvisioningSiteNotification() {
+export default function ProvisioningSiteNotification( { onSuccess }: { onSuccess?: () => void } ) {
 	const { provisioningSites, untrackSiteId } = useTrackProvisioningSites();
 
 	return provisioningSites.map( ( { id, migration, development } ) => {
@@ -143,6 +150,7 @@ export default function ProvisioningSiteNotification() {
 				migration={ migration }
 				development={ development }
 				onDismiss={ () => untrackSiteId( id ) }
+				onSuccess={ onSuccess }
 			/>
 		);
 	} );

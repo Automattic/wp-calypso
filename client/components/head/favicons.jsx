@@ -114,14 +114,24 @@ const a4aFavicons = () => (
 	</>
 );
 
-const Favicons = ( { environmentFaviconURL } ) => {
-	let favicons = wordPressFavicons;
+const brandFavicons = {
+	a4a: a4aFavicons,
+	jetpack: jetpackFavicons,
+	wordpress: wordPressFavicons,
+};
 
+const getEnvironmentBrand = () => {
 	if ( isA8CForAgencies() ) {
-		favicons = a4aFavicons;
-	} else if ( isJetpackCloud() ) {
-		favicons = jetpackFavicons;
+		return 'a4a';
 	}
+	if ( isJetpackCloud() ) {
+		return 'jetpack';
+	}
+	return 'wordpress';
+};
+
+const Favicons = ( { environmentFaviconURL, brand } ) => {
+	const favicons = brandFavicons[ brand ] ?? brandFavicons[ getEnvironmentBrand() ];
 
 	return (
 		<>
@@ -146,6 +156,7 @@ const Favicons = ( { environmentFaviconURL } ) => {
 
 Favicons.propTypes = {
 	environmentFaviconURL: PropTypes.string.isRequired,
+	brand: PropTypes.oneOf( [ 'a4a', 'jetpack', 'wordpress' ] ),
 };
 
 export default Favicons;

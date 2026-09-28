@@ -4,8 +4,7 @@ import type { CancelRemoveCategory } from './classify-purchase-for-copy';
 /**
  * Copy for the Cancel and Remove buttons on the Purchase Settings screen.
  * Shared between the dashboard (which classifies its api-core `Purchase`
- * via `./classify-purchase-for-copy`) and legacy (which classifies its
- * `Purchases.Purchase` via
+ * via `./classify-purchase-for-copy`) and legacy (which classifies it via
  * `client/me/purchases/manage-purchase/classify-purchase-for-copy.ts`).
  * Both surfaces hand this helper the resulting `CancelRemoveCategory` +
  * pre-computed strings, so the helper itself stays surface-agnostic.
@@ -140,11 +139,11 @@ function getRemoveDescription(
 						// translators: %(productName)s is a product name like "Jetpack Stats"
 						__( 'Get a refund and remove %(productName)s immediately.' ),
 						{ productName }
-				  )
+					)
 				: sprintf(
 						// translators: %(productName)s is a product name like "Jetpack Stats"
 						__( '%(productName)s will be removed immediately.' ),
 						{ productName }
-				  );
+					);
 	}
 }

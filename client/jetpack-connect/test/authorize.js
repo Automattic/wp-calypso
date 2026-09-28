@@ -5,6 +5,7 @@
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import deepFreeze from 'deep-freeze';
+import { translate } from 'i18n-calypso';
 import documentHeadReducer from 'calypso/state/document-head/reducer';
 import purchasesReducer from 'calypso/state/purchases/reducer';
 import siteConnectionReducer from 'calypso/state/site-connection/reducer';
@@ -102,6 +103,44 @@ describe( 'JetpackAuthorize', () => {
 		const { container } = renderWithRedux( <JetpackAuthorize { ...DEFAULT_PROPS } /> );
 
 		expect( container ).toMatchSnapshot();
+	} );
+
+	test( 'names WooPayments in the Woo header when the core profiler sends it inside a plugin list', () => {
+		renderWithRedux(
+			<JetpackAuthorize
+				{ ...DEFAULT_PROPS }
+				authQuery={ {
+					...DEFAULT_PROPS.authQuery,
+					from: 'woocommerce-core-profiler',
+					plugin_name: 'jetpack,woocommerce-payments',
+				} }
+				translate={ translate }
+			/>
+		);
+
+		expect(
+			screen.getByText( /features and functionality in WooPayments, you’ll first need/ )
+		).toBeInTheDocument();
+	} );
+
+	test( 'falls back to generic copy in the Woo header when no plugin name is known', () => {
+		renderWithRedux(
+			<JetpackAuthorize
+				{ ...DEFAULT_PROPS }
+				authQuery={ {
+					...DEFAULT_PROPS.authQuery,
+					from: 'woocommerce-core-profiler',
+					plugin_name: 'jetpack',
+				} }
+				translate={ translate }
+			/>
+		);
+
+		expect(
+			screen.getByText(
+				/features and functionality of the extensions you’ve chosen, you’ll first need/
+			)
+		).toBeInTheDocument();
 	} );
 
 	test( 'should render with the connector branding when from=jetpack-connector', () => {

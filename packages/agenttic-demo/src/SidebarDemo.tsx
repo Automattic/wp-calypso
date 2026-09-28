@@ -3,17 +3,22 @@ import {
 	EmptyView,
 	ImageUploader,
 	type ImageUploaderHandle,
+	ProgressRing,
 } from '@automattic/agenttic-ui';
 import React, { useEffect, useMemo, useRef } from 'react';
 import MessageTester from './MessageTester';
 import { useDemoChat } from './hooks/useDemoChat';
+import { useDemoCredits } from './hooks/useDemoCredits';
 import { useImageUploads } from './hooks/useImageUploads';
+import { CreditsTool } from './playground/CreditsTool';
 import { ViewTools } from './playground/PlaygroundShell';
 import { SuggestionsTool } from './playground/SuggestionsTool';
 
 const SidebarDemo: React.FC< { currentTheme: 'light' | 'dark' } > = ( { currentTheme } ) => {
 	const uploaderRef = useRef< ImageUploaderHandle >( null );
 	const { uploadedImages, handleFilesSelected, handleRemoveImage } = useImageUploads();
+
+	const demoCredits = useDemoCredits();
 
 	const {
 		messages,
@@ -30,6 +35,7 @@ const SidebarDemo: React.FC< { currentTheme: 'light' | 'dark' } > = ( { currentT
 	} = useDemoChat( {
 		sessionId: 'dev-session-sidebar',
 		enableStreaming: true,
+		onTaskUpdate: demoCredits.onTaskUpdate,
 	} );
 
 	const sampleSuggestions = useMemo(
@@ -126,6 +132,12 @@ const SidebarDemo: React.FC< { currentTheme: 'light' | 'dark' } > = ( { currentT
 				` }
 			</style>
 			<ViewTools>
+				<CreditsTool
+					plan={ demoCredits.plan }
+					percent={ demoCredits.percent }
+					onPlanChange={ demoCredits.changePlan }
+					onPercentChange={ demoCredits.changePercent }
+				/>
 				<SuggestionsTool
 					defaultSuggestions={ sampleSuggestions }
 					registerSuggestions={ registerSuggestions }
@@ -153,6 +165,8 @@ const SidebarDemo: React.FC< { currentTheme: 'light' | 'dark' } > = ( { currentT
 							messagesPosition="bottom"
 							className={ `agenttic ${ currentTheme }` }
 							placeholder="Ask anything..."
+							notice={ demoCredits.notice }
+							beforeSubmit={ demoCredits.beforeSubmit }
 							emptyView={
 								<EmptyView
 									heading="Howdy! How can I help you today?"
@@ -212,7 +226,21 @@ const SidebarDemo: React.FC< { currentTheme: 'light' | 'dark' } > = ( { currentT
 										acceptedFileTypes={ [ 'image/jpeg', 'image/png', 'image/gif', 'image/webp' ] }
 										showFileMetadata
 									/>
-									<AgentUI.Input imageUploaderRef={ uploaderRef } />
+									<AgentUI.Input
+										imageUploaderRef={ uploaderRef }
+										trailingActions={
+											demoCredits.plan !== 'none' && (
+												<span
+													role="img"
+													className="demo-credits-ring"
+													aria-label={ demoCredits.label }
+													title={ demoCredits.label }
+												>
+													<ProgressRing percent={ demoCredits.percent } tone={ demoCredits.tone } />
+												</span>
+											)
+										}
+									/>
 								</AgentUI.Footer>
 							</AgentUI.ConversationView>
 						</AgentUI.Container>

@@ -24,7 +24,7 @@ export default function usePluginVersionInfo(
 					...site,
 					...plugin.sites[ siteId ],
 				} as any; // This must be cast as any until this file is updated to work with the selectors in state/plugins/installed/selectors
-		  } )
+			} )
 		: [];
 
 	const siteIds = siteObjectsToSiteIds( sites );

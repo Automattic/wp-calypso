@@ -33,10 +33,10 @@ export function getPlanChangeAction(
 				...target,
 				title: __( 'Change plan' ),
 				description: __( 'Upgrade or downgrade to a plan that works for you.' ),
-		  }
+			}
 		: {
 				...target,
 				title: __( 'Upgrade plan' ),
 				description: __( 'Find the best fit for your needs.' ),
-		  };
+			};
 }

@@ -16,7 +16,7 @@ jest.mock( '@wordpress/blocks', () => ( {
 	getBlockType: jest.fn(),
 } ) );
 jest.mock( '@wordpress/block-editor', () => {
-	const react = jest.requireActual< typeof import('react') >( 'react' );
+	const react = jest.requireActual< typeof import( 'react' ) >( 'react' );
 	return {
 		BlockIcon: ( { icon }: { icon?: unknown } ) =>
 			react.createElement(

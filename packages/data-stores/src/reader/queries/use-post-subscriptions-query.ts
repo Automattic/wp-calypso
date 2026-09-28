@@ -109,9 +109,9 @@ const usePostSubscriptionsQuery = ( {
 		const searchFilter = ( item: PostSubscription ) =>
 			searchTermLowerCase
 				? item.post_title.toLocaleLowerCase().includes( searchTermLowerCase ) ||
-				  item.post_excerpt.toLocaleLowerCase().includes( searchTermLowerCase ) ||
-				  item.post_url.includes( searchTermLowerCase ) ||
-				  item.site_title.toLocaleLowerCase().includes( searchTermLowerCase )
+					item.post_excerpt.toLocaleLowerCase().includes( searchTermLowerCase ) ||
+					item.post_url.includes( searchTermLowerCase ) ||
+					item.site_title.toLocaleLowerCase().includes( searchTermLowerCase )
 				: true;
 		const sort = getSortFunction( sortTerm );
 

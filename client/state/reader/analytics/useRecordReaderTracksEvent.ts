@@ -28,7 +28,7 @@ export const useRecordReaderTracksEvent = () => {
 					queryClient.getQueryData< SiteSubscriptionsInfiniteData >(
 						getSiteSubscriptionsQueryKey()
 					)
-			  )
+				)
 			: 0;
 
 		return dispatchReaderTracksEvent(

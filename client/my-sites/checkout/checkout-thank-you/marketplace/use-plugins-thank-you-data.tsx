@@ -186,7 +186,7 @@ export default function usePluginsThankYouData(
 						translate( 'Setting up plugin installation' ), // Transferring to Atomic
 						translate( 'Installing plugin' ), // Transferring to Atomic
 						translate( 'Activating plugin' ),
-				  ],
+					],
 		// We intentionally don't set `isJetpack` as dependency to keep the same steps after the Atomic transfer.
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 		[ translate ]

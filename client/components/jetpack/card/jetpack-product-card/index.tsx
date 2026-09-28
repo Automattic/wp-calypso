@@ -112,7 +112,7 @@ const JetpackProductCard: React.FC< OwnProps > = ( {
 					percent: discount,
 				},
 				comment: 'Should be as concise as possible.',
-		  } )
+			} )
 		: null;
 
 	const starIcon = (
@@ -129,7 +129,7 @@ const JetpackProductCard: React.FC< OwnProps > = ( {
 	useEffect( () => {
 		// The <DisplayPrice /> appearance changes the layout of the page and breaks the scroll into view behavior. Therefore, we will only scroll the element into view once the price is fully loaded.
 		if ( anchorRef && anchorRef.current && originalPrice ) {
-			scrollCardIntoView && scrollCardIntoView( anchorRef.current, item.productSlug );
+			scrollCardIntoView?.( anchorRef.current, item.productSlug );
 		}
 	}, [ originalPrice, item.productSlug, scrollCardIntoView ] );
 

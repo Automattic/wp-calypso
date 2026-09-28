@@ -24,7 +24,7 @@ There are also three optional properties:
 Example:
 
 ```javascript
-const account = { steps: [ 'site', 'user' ], destination: '/' };
+const account = { steps: [ 'user-social' ], destination: '/' };
 ```
 
 Once you've added the flow to `flows-pure.js`, it'll be available for users at `/start/flow-name` where `flow-name` is the key of your flow in `flows`.
@@ -106,7 +106,7 @@ The above example includes an inline function definition, but we should keep the
 
 ```javascript
 const step = {
-	apiRequestFunction: stepActions.createSite,
+	apiRequestFunction: stepActions.createSiteWithCart,
 };
 ```
 

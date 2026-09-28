@@ -80,7 +80,7 @@ function EmptyDomainsListCard( { selectedSite, hasDomainCredit, isCompact, hasNo
 								domainPrice: domainProductCost,
 							},
 						}
-				  )
+					)
 				: null;
 		}
 		action = translate( 'Search for a domain' );

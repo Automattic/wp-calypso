@@ -33,6 +33,8 @@ export interface SuggestionDropdownProps {
 	onOpenChange?: ( open: boolean ) => void;
 	/** Render the suggestion's description under the label (vertical layout). */
 	showDescription?: boolean;
+	/** Id of the element explaining why the suggestion is inert, when it is. */
+	describedById?: string;
 }
 
 export const SuggestionDropdown: React.FC< SuggestionDropdownProps > = ( {
@@ -41,6 +43,7 @@ export const SuggestionDropdown: React.FC< SuggestionDropdownProps > = ( {
 	availableSuggestions,
 	onOpenChange,
 	showDescription,
+	describedById,
 } ) => {
 	const [ open, setOpen ] = React.useState( false );
 	const containerRef = React.useRef< HTMLDivElement | null >( null );
@@ -69,6 +72,11 @@ export const SuggestionDropdown: React.FC< SuggestionDropdownProps > = ( {
 
 	const updateOpen = React.useCallback(
 		( nextOpen: boolean ) => {
+			// `aria-disabled` leaves the trigger clickable, so the list has to be
+			// held shut here.
+			if ( nextOpen && suggestion.disabled ) {
+				return;
+			}
 			if ( nextOpen ) {
 				const suggestionsEl = containerRef.current?.closest< HTMLElement >(
 					'[data-slot="suggestions"]'
@@ -80,8 +88,15 @@ export const SuggestionDropdown: React.FC< SuggestionDropdownProps > = ( {
 			setOpen( nextOpen );
 			onOpenChange?.( nextOpen );
 		},
-		[ onOpenChange ]
+		[ onOpenChange, suggestion.disabled ]
 	);
+
+	// Close a list left open by a suggestion that became disabled behind it.
+	React.useEffect( () => {
+		if ( suggestion.disabled && open ) {
+			setOpen( false );
+		}
+	}, [ suggestion.disabled, open ] );
 
 	const handleOptionSelect = ( option: SuggestionOption ) => {
 		const { options: _options, ...rest } = suggestion;
@@ -98,7 +113,12 @@ export const SuggestionDropdown: React.FC< SuggestionDropdownProps > = ( {
 		<div ref={ setContainerNode } className={ styles.container }>
 			<Popover.Root open={ open } onOpenChange={ updateOpen }>
 				<Popover.Trigger asChild>
-					<Button variant="outline" className={ suggestionStyles.button }>
+					<Button
+						aria-disabled={ suggestion.disabled }
+						aria-describedby={ describedById }
+						variant="outline"
+						className={ suggestionStyles.button }
+					>
 						<div
 							className={ cn(
 								suggestionStyles[ 'suggestion-content' ],

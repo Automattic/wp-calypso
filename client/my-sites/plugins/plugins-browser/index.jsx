@@ -245,10 +245,10 @@ const PluginsBrowser = ( { trackPageViews = true, category, search } ) => {
 									isMarketplaceRedesignEnabled
 										? __(
 												'Add new features or connect your favorite tools with thousands of plugins — available on all paid WordPress.com plans.'
-										  )
+											)
 										: __(
 												'Add new functionality and integrations to your site with thousands of plugins.'
-										  )
+											)
 								}
 								searchTerms={ searchTerms }
 								renderTitleInH1={ ! category }

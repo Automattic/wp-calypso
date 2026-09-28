@@ -1,3 +1,6 @@
+import { userPreferenceQuery, userPreferencesMutation } from '@automattic/api-queries';
+import config from '@automattic/calypso-config';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { Button, Dropdown } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
@@ -5,11 +8,13 @@ import { bellUnread, bell } from '@wordpress/icons';
 import clsx from 'clsx';
 import { Suspense, lazy, useCallback, useEffect, useMemo, useState } from 'react';
 import wpcom from 'calypso/lib/wp';
+import { Text } from '../../components/text';
 import { dashboardLink } from '../../utils/link';
 import { useAuth } from '../auth';
 import { useHelpCenter } from '../help-center';
 import { useLocale } from '../locale';
 import { omnibarEvents, useOmnibarEvent } from '../omnibar/events';
+import type { UserPreferences } from '@automattic/api-core';
 import './style.scss';
 
 const AsyncNotificationApp = lazy( () => import( '@automattic/notifications/src/app' ) );
@@ -30,16 +35,34 @@ export default function Notifications( {
 	const [ hasUnseenNotifications, setHasUnseenNotifications ] = useState( user.has_unseen_notes );
 	const [ anchorEl, setAnchorEl ] = useState< HTMLElement | null >( null );
 
-	// The masterbar remounts the bell when the unseen count changes, detaching any
-	// cached node. Resolve the live bell at measurement time so the popover stays
-	// anchored, falling back to the captured node while it is still connected.
+	const isViewSettingsEnabled = config.isEnabled( 'notifications/view-settings' );
+
+	// Both share one query key, so this is a single request — and it is skipped entirely
+	// without the picker, where nothing reads either value.
+	const { data: layoutStyle } = useQuery( {
+		...userPreferenceQuery( 'notifications-layout-style' ),
+		enabled: isViewSettingsEnabled,
+	} );
+	const { data: viewSettingsSeen } = useQuery( {
+		...userPreferenceQuery( 'notifications-view-settings-seen' ),
+		enabled: isViewSettingsEnabled,
+	} );
+	const { mutateAsync: savePreferences } = useMutation( userPreferencesMutation() );
+
+	const handlePreferenceChange = useCallback(
+		( key: string, value: unknown ) =>
+			savePreferences( { [ key ]: value } as Partial< UserPreferences > ),
+		[ savePreferences ]
+	);
+
+	const notificationPreferences = useMemo(
+		() => ( layoutStyle === undefined ? undefined : { layoutStyle, viewSettingsSeen } ),
+		[ layoutStyle, viewSettingsSeen ]
+	);
+
 	const popoverAnchor = useMemo(
 		() => ( {
-			getBoundingClientRect: () =>
-				( anchorEl?.isConnected
-					? anchorEl
-					: document.querySelector< HTMLElement >( '#wpcom-omnibar .masterbar-notifications' )
-				)?.getBoundingClientRect() ?? new DOMRect(),
+			getBoundingClientRect: () => anchorEl?.getBoundingClientRect() ?? new DOMRect(),
 		} ),
 		[ anchorEl ]
 	);
@@ -145,7 +168,7 @@ export default function Notifications( {
 		};
 	}, [ handleOmnibarToggle ] );
 
-	return (
+	const dropdown = (
 		<Dropdown
 			popoverProps={ {
 				placement: 'bottom-start',
@@ -153,6 +176,11 @@ export default function Notifications( {
 				focusOnMount: true,
 				flip: false,
 				shift: true,
+				// Render in place so the popover is positioned against the fixed
+				// container below. Portalled to the body, its coordinates are
+				// document-relative and have to be recomputed on every scroll
+				// frame, which visibly lags behind the fixed masterbar.
+				...( anchor && { inline: true } ),
 				...( anchor ? { anchor: popoverAnchor } : anchorEl && { anchor: anchorEl } ),
 				onFocusOutside: () => {
 					// When focus moves to the omnibar (e.g. clicking the
@@ -184,10 +212,19 @@ export default function Notifications( {
 				)
 			}
 			renderContent={ () => (
-				<Suspense fallback={ null }>
+				<Suspense
+					fallback={
+						<Text variant="muted" style={ { display: 'block', padding: '8px 12px' } }>
+							{ __( 'Loading…' ) }
+						</Text>
+					}
+				>
 					<AsyncNotificationApp
 						locale={ locale }
 						isDismissible={ isMobileViewport }
+						isViewSettingsEnabled={ isViewSettingsEnabled }
+						preferences={ notificationPreferences }
+						onPreferenceChange={ handlePreferenceChange }
 						actionHandlers={ actionHandlers }
 						wpcom={ wpcom }
 					/>
@@ -195,4 +232,10 @@ export default function Notifications( {
 			) }
 		/>
 	);
+
+	if ( ! anchor ) {
+		return dropdown;
+	}
+
+	return <div className="dashboard-notifications__popover-container">{ dropdown }</div>;
 }

@@ -40,8 +40,8 @@ describe( 'QuestionCard', () => {
 		expect( container.querySelector( '[data-slot="choice"]' )?.textContent ).toContain( 'Concise' );
 		expect( container.textContent ).toContain( 'Concise' );
 
-		const detailed = Array.from( container.querySelectorAll( 'button' ) ).find(
-			( button ) => button.textContent?.includes( 'Detailed' )
+		const detailed = Array.from( container.querySelectorAll( 'button' ) ).find( ( button ) =>
+			button.textContent?.includes( 'Detailed' )
 		);
 
 		await act( async () => {

@@ -1,6 +1,7 @@
 import { EmailProvider } from '@automattic/api-core';
 import { mailboxAccountsQuery } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
+import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { formatCurrency } from '@automattic/number-formatters';
 import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
@@ -8,13 +9,13 @@ import { Button } from '@wordpress/components';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { currencyDollar, envelope } from '@wordpress/icons';
 import { useAnalytics } from '../../../app/analytics';
-import { addMailboxRoute } from '../../../app/router/emails';
+import { addMailboxRoute, chooseEmailSolutionRoute } from '../../../app/router/emails';
 import { ActionList } from '../../../components/action-list';
 import OverviewCard from '../../../components/overview-card';
 import { IntervalLength, MailboxProvider, TitanPlanTier } from '../../../emails/types';
 import { isMonthlyEmailProduct } from '../../../emails/utils/is-monthly-email-product';
-import { getTitanTierFromSlug } from '../../../emails/utils/titan-tiers';
-import { isTitanMail } from '../../../utils/purchase';
+import { getTitanTierFromSlug, isHighestTitanTier } from '../../../emails/utils/titan-tiers';
+import { getDelayedDowngradeRenewalPriceText, isTitanMail } from '../../../utils/purchase';
 import type { Purchase } from '@automattic/api-core';
 
 /**
@@ -72,9 +73,9 @@ export function AddMailboxesActionItem( { purchase }: { purchase: Purchase } ) {
 	);
 	const description = isMonthlyEmailProduct( purchase )
 		? /* translators: %s is a per-mailbox monthly price, e.g. "$3.50". */
-		  sprintf( __( 'Need more? Starts at %s/month/mailbox' ), perMailbox )
+			sprintf( __( 'Need more? Starts at %s/month/mailbox' ), perMailbox )
 		: /* translators: %s is a per-mailbox yearly price, e.g. "$42". */
-		  sprintf( __( 'Need more? Starts at %s/year/mailbox' ), perMailbox );
+			sprintf( __( 'Need more? Starts at %s/year/mailbox' ), perMailbox );
 
 	return (
 		<ActionList.ActionItem
@@ -89,7 +90,56 @@ export function AddMailboxesActionItem( { purchase }: { purchase: Purchase } ) {
 	);
 }
 
+/**
+ * The highest email tier has nothing higher to upgrade to, so the generic
+ * upgrade action is hidden. In that case "Manage your plan" takes over as a
+ * neutral entry into the tier grid, where the user can still change their plan.
+ */
+export function isEmailPlanAtHighestTier( purchase: Purchase ): boolean {
+	return (
+		isEmailPlanManagementEnabled( purchase ) &&
+		isHighestTitanTier( getTitanTierFromSlug( purchase.product_slug ) )
+	);
+}
+
+function useManagePlanNavigation( purchase: Purchase ) {
+	const navigate = useNavigate();
+	const { recordTracksEvent } = useAnalytics();
+
+	return () => {
+		recordTracksEvent( 'calypso_purchases_email_manage_plan_click', {
+			product_slug: purchase.product_slug,
+		} );
+		navigate( {
+			to: chooseEmailSolutionRoute.to,
+			params: { domain: purchase.meta ?? '' },
+			search: { intent: 'upgrade' as const },
+		} );
+	};
+}
+
+export function ManageEmailPlanActionItem( { purchase }: { purchase: Purchase } ) {
+	const onManage = useManagePlanNavigation( purchase );
+
+	return (
+		<ActionList.ActionItem
+			title={ __( 'Manage your plan' ) }
+			description={ __( 'Review your plan and see other options.' ) }
+			actions={
+				<Button variant="secondary" size="compact" onClick={ onManage }>
+					{ __( 'Manage' ) }
+				</Button>
+			}
+		/>
+	);
+}
+
 export function EmailPlanPriceCard( { purchase }: { purchase: Purchase } ) {
+	const hasEnTranslation = useHasEnTranslation();
+	const downgradeText = getDelayedDowngradeRenewalPriceText( purchase, hasEnTranslation );
+	const periodText = isMonthlyEmailProduct( purchase )
+		? __( 'Per mailbox/month. Excludes taxes.' )
+		: __( 'Per mailbox/year. Excludes taxes.' );
 	return (
 		<OverviewCard
 			icon={ currencyDollar }
@@ -97,11 +147,7 @@ export function EmailPlanPriceCard( { purchase }: { purchase: Purchase } ) {
 			heading={ formatCurrency( getPerMailboxPriceInteger( purchase ), purchase.currency_code, {
 				isSmallestUnit: true,
 			} ) }
-			description={
-				isMonthlyEmailProduct( purchase )
-					? __( 'Per mailbox/month. Excludes taxes.' )
-					: __( 'Per mailbox/year. Excludes taxes.' )
-			}
+			description={ downgradeText ? periodText + ' ' + downgradeText : periodText }
 		/>
 	);
 }
@@ -126,14 +172,14 @@ export function EmailPlanMailboxCard( { purchase }: { purchase: Purchase } ) {
 					// translators: %d is a number of mailboxes.
 					_n( '%d mailbox', '%d mailboxes', count ),
 					count
-			  );
+				);
 
 	return (
 		<OverviewCard
 			icon={ envelope }
 			title={ _n( 'Mailbox', 'Mailboxes', count ) }
 			heading={ heading }
-			description={ count === 1 && firstMailbox ? undefined : purchase.meta ?? undefined }
+			description={ count === 1 && firstMailbox ? undefined : ( purchase.meta ?? undefined ) }
 			link="/emails"
 			isLoading={ isLoading }
 		/>

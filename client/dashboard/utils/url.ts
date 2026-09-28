@@ -1,4 +1,4 @@
-import { getProtocol } from '@wordpress/url';
+import { determineUrlType, URL_TYPE } from '@automattic/calypso-url';
 import { wpcomLink } from './link';
 
 export function isRelativeUrl( url: string ) {
@@ -6,7 +6,8 @@ export function isRelativeUrl( url: string ) {
 		return false;
 	}
 
-	return ! url.startsWith( '//' ) && ! getProtocol( url );
+	const type = determineUrlType( url );
+	return type === URL_TYPE.PATH_ABSOLUTE || type === URL_TYPE.PATH_RELATIVE;
 }
 
 export function isOnboardingUrl( url: string ) {

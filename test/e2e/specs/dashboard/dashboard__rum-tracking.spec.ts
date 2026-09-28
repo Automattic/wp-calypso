@@ -54,7 +54,7 @@ test.describe( 'Dashboard: RUM Performance Tracking', { tag: [ tags.DASHBOARD_PR
 	 * Uses page.on('request') because wpcom-proxy-request sends through a cross-origin
 	 * iframe (public-api.wordpress.com), which page.route() cannot intercept.
 	 */
-	function observeLogstash( page: import('playwright').Page ): PerfNavEvent[] {
+	function observeLogstash( page: import( 'playwright' ).Page ): PerfNavEvent[] {
 		const events: PerfNavEvent[] = [];
 
 		page.on( 'request', ( request ) => {

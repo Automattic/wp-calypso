@@ -36,7 +36,7 @@ const LocaleSwitcher: React.FC< Props > = ( { isVisible, onClose } ) => {
 		? jetpackComLocales.map( ( code ) => ( {
 				label: names[ code ].name || code,
 				code,
-		  } ) )
+			} ) )
 		: [];
 	const absoluteHref =
 		typeof window !== 'undefined'

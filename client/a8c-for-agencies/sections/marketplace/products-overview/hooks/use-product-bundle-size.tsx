@@ -52,7 +52,7 @@ export function useProductBundleSize() {
 					: addQueryArgs( hrefWithoutHash, {
 							...getQueryArgs( window.location.href ),
 							[ BUNDLE_SIZE_PARAM_KEY ]: `${ size }`,
-					  } );
+						} );
 
 			window.history.pushState( null, '', queryArgs + window.location.hash ); // Insert back the hash to retain it.
 

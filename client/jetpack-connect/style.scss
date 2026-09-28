@@ -202,6 +202,10 @@ body:not( .is-jetpack-sso-partner-branded--woo ) {
 	}
 }
 
+.jetpack-connect__existing-search-notice .calypso-notice__text a {
+	text-decoration: underline;
+}
+
 .jetpack-connect__site-url-input-container,
 .purchase-product__site-url-input-container,
 .example-components__site-url-input-container {

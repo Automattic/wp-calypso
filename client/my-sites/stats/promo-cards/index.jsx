@@ -1,4 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { optionalConfig } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { DotPager } from '@automattic/components';
 import { translate } from 'i18n-calypso';
@@ -42,21 +43,23 @@ export default function PromoCards( { isOdysseyStats, slug, pageSlug } ) {
 	// Yoast promo is disabled for Odyssey & self-hosted & non-traffic pages.
 	const showYoastPromo =
 		isAnnualStatsPage && ! isOdysseyStats && ! jetpackNonAtomic && pageSlug === 'traffic';
+	// The Jetpack app needs the Jetpack plugin. The standalone Jetpack Stats plugin prints an empty `jetpack_version` when Jetpack is not active; Calypso and Jetpack releases older than that key omit it.
+	const showAppPromo = optionalConfig( 'jetpack_version' ) !== '';
 
 	const viewEvents = useMemo( () => {
 		const events = [];
 		if ( pageSlug === 'traffic' ) {
 			showBlazePromo && events.push( EVENT_TRAFFIC_BLAZE_PROMO_VIEW );
 			showYoastPromo && events.push( EVENT_YOAST_PROMO_VIEW );
-			events.push( EVENT_TRAFFIC_MOBILE_PROMO_VIEW );
+			showAppPromo && events.push( EVENT_TRAFFIC_MOBILE_PROMO_VIEW );
 		} else if ( pageSlug === 'annual-insights' ) {
 			showBlazePromo && events.push( EVENT_ANNUAL_BLAZE_PROMO_VIEW );
-			events.push( EVENT_ANNUAL_MOBILE_PROMO_VIEW );
+			showAppPromo && events.push( EVENT_ANNUAL_MOBILE_PROMO_VIEW );
 		} else if ( pageSlug === 'ads' ) {
-			events.push( EVENT_ADS_MOBILE_PROMO_VIEW );
+			showAppPromo && events.push( EVENT_ADS_MOBILE_PROMO_VIEW );
 		}
 		return events;
-	}, [ pageSlug, showBlazePromo, showYoastPromo ] );
+	}, [ pageSlug, showBlazePromo, showYoastPromo, showAppPromo ] );
 
 	// Handle view events upon initial mount and upon paging DotPager.
 	useEffect( () => {
@@ -114,41 +117,54 @@ export default function PromoCards( { isOdysseyStats, slug, pageSlug } ) {
 
 	const pagerDidSelectPage = ( index ) => setDotPagerIndex( index );
 
+	const cards = [
+		showBlazePromo && (
+			<PromoCardBlock
+				key="blaze"
+				productSlug="blaze"
+				clickEvent="calypso_stats_traffic_blaze_banner_click"
+				headerText={ translate( 'Reach new readers and customers' ) }
+				contentText={ translate(
+					'Use %(productName)s to increase your reach by promoting your work to the larger WordPress.com community of blogs and sites. ',
+					{ args: { productName: 'Blaze Ads' } }
+				) }
+				ctaText={ translate( 'Get started' ) }
+				image={ blazeIllustration }
+				href={ `/advertising/${ slug || '' }` }
+			/>
+		),
+		showYoastPromo && (
+			<PromoCardBlock
+				key="wordpress-seo-premium"
+				productSlug="wordpress-seo-premium"
+				clickEvent="calypso_stats_wordpress_seo_premium_banner_click"
+				headerText={ translate( 'Increase site visitors with Yoast SEO Premium' ) }
+				contentText={ translate(
+					'Purchase Yoast SEO Premium to ensure that more people find your incredible content.'
+				) }
+				ctaText={ translate( 'Learn more' ) }
+				image={ wordpressSeoIllustration }
+				href={ `/plugins/wordpress-seo-premium/${ slug }` }
+			/>
+		),
+		showAppPromo && (
+			<AppPromoCard
+				key="app"
+				className="stats__promo-card-apps"
+				clickHandler={ promoCardDidReceiveClick }
+			/>
+		),
+	].filter( Boolean );
+
+	if ( ! cards.length ) {
+		return null;
+	}
+
 	return (
 		<div className="stats__promo-container">
 			<div className="stats__promo-card">
 				<DotPager className="stats__promo-pager" onPageSelected={ pagerDidSelectPage }>
-					{ showBlazePromo && (
-						<PromoCardBlock
-							productSlug="blaze"
-							clickEvent="calypso_stats_traffic_blaze_banner_click"
-							headerText={ translate( 'Reach new readers and customers' ) }
-							contentText={ translate(
-								'Use %(productName)s to increase your reach by promoting your work to the larger WordPress.com community of blogs and sites. ',
-								{ args: { productName: 'Blaze Ads' } }
-							) }
-							ctaText={ translate( 'Get started' ) }
-							image={ blazeIllustration }
-							href={ `/advertising/${ slug || '' }` }
-						/>
-					) }
-					{ showYoastPromo && (
-						<PromoCardBlock
-							productSlug="wordpress-seo-premium"
-							clickEvent="calypso_stats_wordpress_seo_premium_banner_click"
-							headerText={ translate( 'Increase site visitors with Yoast SEO Premium' ) }
-							contentText={ translate(
-								'Purchase Yoast SEO Premium to ensure that more people find your incredible content.'
-							) }
-							ctaText={ translate( 'Learn more' ) }
-							image={ wordpressSeoIllustration }
-							href={ `/plugins/wordpress-seo-premium/${ slug }` }
-						/>
-					) }
-					<AppPromoCard
-						className="stats__promo-card-apps"
-						clickHandler={ promoCardDidReceiveClick }
-					/>
+					{ cards }
 				</DotPager>
 			</div>
 		</div>

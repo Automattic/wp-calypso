@@ -250,15 +250,15 @@ export class JetpackSignup extends Component {
 			const text =
 				error.data && error.data.email
 					? // translators: email is an email address. eg you@name.com
-					  translate(
+						translate(
 							'The email address "%(email)s" is associated with a WordPress.com account. ' +
 								'Log in to connect it to your Google profile, or choose a different Google profile.',
 							{ args: { email: error.data.email } }
-					  )
+						)
 					: translate(
 							'The email address is associated with a WordPress.com account. ' +
 								'Log in to connect it to your Google profile, or choose a different Google profile.'
-					  );
+						);
 
 			warningNotice( text, {
 				button: <a href={ this.getLoginRoute() }>{ translate( 'Log in' ) }</a>,

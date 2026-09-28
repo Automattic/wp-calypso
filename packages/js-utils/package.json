@@ -1,6 +1,6 @@
 {
 	"name": "@automattic/js-utils",
-	"version": "0.1.0",
+	"version": "0.1.1",
 	"description": "General purpose Javascript utility functions.",
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"license": "GPL-2.0-or-later",
@@ -24,7 +24,9 @@
 	},
 	"files": [
 		"dist",
-		"src"
+		"src",
+		"!dist/**/*.tsbuildinfo",
+		"!src/test"
 	],
 	"types": "dist/types",
 	"publishConfig": {
@@ -40,5 +42,8 @@
 	"devDependencies": {
 		"@automattic/calypso-typescript-config": "workspace:^",
 		"typescript": "^6.0.3"
+	},
+	"dependencies": {
+		"tslib": "^2.8.1"
 	}
 }

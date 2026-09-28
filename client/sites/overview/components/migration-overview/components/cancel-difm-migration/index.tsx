@@ -67,10 +67,10 @@ const CancelMigrationModal = ( {
 	const modalContent = ! isMigrationInProgress
 		? translate(
 				"If you cancel now, our Happiness Engineers will be notified that you've chosen not to move your site to WordPress.com, and your current site will remain exactly as it is."
-		  )
+			)
 		: translate(
 				"Since your migration is already underway, you'll need to send us a cancellation request. If you cancel now, you'll lose all your progress."
-		  );
+			);
 
 	return (
 		<Modal

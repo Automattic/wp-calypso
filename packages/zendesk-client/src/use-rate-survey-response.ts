@@ -40,13 +40,13 @@ export const useRateSurveyResponse = () => {
 						apiNamespace: 'wpcom/v2',
 						method: 'POST',
 						body: payload,
-				  } )
+					} )
 				: apiFetch< SurveyResponseRatingResult >( {
 						global: true,
 						path: '/help-center/csat-survey-response',
 						method: 'POST',
 						data: payload,
-				  } as APIFetchOptions );
+					} as APIFetchOptions );
 		},
 	} );
 };

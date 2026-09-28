@@ -62,6 +62,22 @@ img.payment-method-image {
 	margin-top: 4px;
 }
 
+a.is-link.billing-purchases__site-name {
+	text-decoration: none;
+	color: var( --dashboard__text-color );
+	font-weight: 500;
+}
+
+a.components-external-link.billing-purchases__site-url {
+	> span.components-external-link__contents {
+		text-decoration: none;
+	}
+
+	> .components-external-link__icon {
+		display: none;
+	}
+}
+
 button.purchase-payment-method__update {
 	// This button is inside a flexbox (HStack) which has `min-width: 0` set on
 	// all its children, but this overrides the default of `min-width: auto`

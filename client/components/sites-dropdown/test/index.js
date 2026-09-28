@@ -60,9 +60,42 @@ describe( 'index', () => {
 
 			toggleOpenSpy.mockRestore();
 		} );
+
+		test( 'when disabled, should not open on Enter or click', async () => {
+			const user = userEvent.setup();
+
+			const { container } = render( <SitesDropdown { ...props } hasMultipleSites disabled /> );
+			const toggle = container.querySelector( '.sites-dropdown__selected' );
+
+			expect( toggle ).toHaveAttribute( 'aria-disabled', 'true' );
+
+			toggle.focus();
+			await user.keyboard( '{Enter}' );
+			expect( container.firstChild ).not.toHaveClass( 'is-open' );
+
+			await user.click( toggle );
+			expect( container.firstChild ).not.toHaveClass( 'is-open' );
+		} );
 	} );
 
 	describe( 'selectSite', () => {
+		test( 'should do nothing when disabled', () => {
+			const setStateSpy = jest.fn();
+			const siteSelectedSpy = jest.fn();
+			const fakeContext = {
+				setState: setStateSpy,
+				props: {
+					onSiteSelect: siteSelectedSpy,
+					disabled: true,
+				},
+			};
+
+			SitesDropdown.prototype.selectSite.call( fakeContext, 12345 );
+
+			expect( siteSelectedSpy ).not.toHaveBeenCalled();
+			expect( setStateSpy ).not.toHaveBeenCalled();
+		} );
+
 		test( 'should update the `selectedSiteSlug`, and `open` state properties', () => {
 			const setStateSpy = jest.fn();
 			const siteSelectedSpy = jest.fn();

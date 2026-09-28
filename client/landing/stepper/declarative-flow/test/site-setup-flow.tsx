@@ -30,7 +30,7 @@ describe( 'Site Setup Flow', () => {
 	} );
 
 	describe( 'when the current step is importListing', () => {
-		it( 'redirects the user to the site-migration-import-or-content step when the origin param is set as site-migration-identify', async () => {
+		it( 'redirects the user to the migration offer when the origin param is set as site-migration-identify', async () => {
 			const { runUseStepNavigationSubmit } = renderFlow( siteSetupFlow );
 
 			runUseStepNavigationSubmit( {
@@ -43,7 +43,7 @@ describe( 'Site Setup Flow', () => {
 			} );
 
 			expect( window.location.assign ).toHaveBeenCalledWith(
-				'/setup/site-migration/site-migration-import-or-migrate?siteSlug=example.wordpress.com&siteId=123'
+				'/setup/site-migration/site-migration-how-to-migrate?siteSlug=example.wordpress.com&siteId=123'
 			);
 		} );
 

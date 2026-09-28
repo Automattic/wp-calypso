@@ -1,4 +1,16 @@
-export type DnsRecordType = 'A' | 'AAAA' | 'ALIAS' | 'CAA' | 'CNAME' | 'MX' | 'NS' | 'SRV' | 'TXT';
+export const DNS_RECORD_TYPES = [
+	'A',
+	'AAAA',
+	'ALIAS',
+	'CAA',
+	'CNAME',
+	'MX',
+	'NS',
+	'SRV',
+	'TXT',
+] as const;
+
+export type DnsRecordType = ( typeof DNS_RECORD_TYPES )[ number ];
 
 export type DnsRecord = {
 	aux?: number;

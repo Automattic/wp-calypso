@@ -6,6 +6,24 @@ export const PARTNER_PROGRAM_GUIDE_URL =
 
 export const PROGRAM_INCENTIVES_URL = 'https://automattic.com/for-agencies/program-incentives/';
 
+// Inlined from client/a8c-for-agencies/components/a4a-pressable-offer/constants
+// so the dashboard has no dependency on the classic A4A app.
+export const PRESSABLE_Q3_2026_OFFER_START_DATE = '2026-08-11';
+/** The day after the offer ends: the promo cards and the license fetch behind
+ * the expansion offer both stop at this date. */
+export const PRESSABLE_Q3_2026_OFFER_ENDS_AT = '2026-10-01';
+export const PRESSABLE_INTRODUCTORY_OFFER_TERMS_URL =
+	'https://pressable.com/legal/late-summer-promotion-terms-and-conditions/';
+export const PRESSABLE_EXPANSION_OFFER_TERMS_URL =
+	'https://pressable.com/legal/summer-2026-expansion-incentive-terms-and-conditions/';
+
+// Resolves in the classic A4A marketplace until a dashboard Pressable hosting
+// page exists, like the links in agency/marketplace/exclusive-offers.
+export const MARKETPLACE_HOSTING_PRESSABLE_PATH = '/marketplace/hosting/pressable';
+
+export const AI_MCP_ANNOUNCEMENT_BLOG_POST_URL =
+	'https://automattic.com/for-agencies/blog/our-new-mcp-brings-automattic-for-agencies-into-your-ai-workflow/';
+
 interface TierOverviewContent {
 	description: string;
 	hasPartnerManager: boolean;
@@ -26,7 +44,7 @@ export const TIER_OVERVIEW_CONTENT: Record< AgencyTierType, TierOverviewContent 
 	},
 	'pro-agency-partner': {
 		description: __(
-			'Free agency hosting, a dedicated Partner Manager, priority support, and co-marketing.'
+			'Qualified leads, a dedicated Partner Manager, priority support, and co-marketing.'
 		),
 		hasPartnerManager: true,
 	},

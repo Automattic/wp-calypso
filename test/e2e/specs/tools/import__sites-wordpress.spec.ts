@@ -11,11 +11,6 @@ test.describe(
 	'Site Import: Calypso: WordPress',
 	{
 		tag: [ tags.CALYPSO_RELEASE, tags.IMPORTS, tags.DESKTOP_ONLY ],
-		annotation: {
-			type: 'flowchart',
-			description:
-				'https://www.mermaidchart.com/play?utm_source=mermaid_live_editor&utm_medium=toggle#pako:eNqFU21r2zAQ_itHRrcWnFE57_mwQZJmFFpWtpQNln1QbaU2tSUjyZgw9nU_YD9xv2QnS4nlJG0N4izdc3ePnjv96kQiZp1pZ5OJKkqo1LCarTngd3YG3W4XbmnKoaA6UWZrXZz8WHeu80Ig_LwqujTOEWQPmFRwkyp9se78dOgQ0d-EjO8kUwr-_fkLX8oGvselUd6kjQTXjGvYSJHDPrjJ2UfofZEJGsP32xvYpBlrnAN0zgXfpDIHWupESC9yuC-yP3Oekc_zfYSFn-XKx4i9YfqdwtI8hq0oJahUeyQmiLjCS8iGfhtRxdtKx6ZmQjXEwiSBiuKltcDtxyYVIcfCCJ5tPUQPEbfpo6SaHfAgfUsVSgW5Q5ygS4xonxCmNE4Bi2vPzmc0u-dPXFQcsLjcQiFSrr3oUcNwbhl6TiPW9f5q6XGHp6daTCavahxeviYyD8303aXRk42PSilN1SKjeiNk7gF7z0wf5UInWGEXAkIezFvY9yfHU869oSU-rtbzwX9YMaXhM2f4_wFT1AafgN32rRlYMzyKW1XCukbWjK2Z1MYOlj9kuzhVB76FVSKZK0zIrvKpAFga0Syw56zjRgbefLgjx4Y4OmSyb2XDvCkdXh7R9ZFN6TB01lEI-63AltZf9TZjCs4fpSgLFgN2DKKMylRvL5oW4IlSC7aBKsFpMe3Mpm-W9RdEIhNy-pDR6OkA_JCVO-xstrhazl7APuI1uQPPx1fD-eQFsDREHYf5YhG2oR7YzECduXUWBrwf8GHARwGfBNhSXD1cA1zjAHXGhRiUrb6uH4t9DzjixoFVEyMwFcFEBDOh4ObObQJDQ3fNO7__AzQO7R4',
-		},
 	},
 	() => {
 		skipIfMailosaurLimitReached();
@@ -54,16 +49,18 @@ test.describe(
 			} );
 		} );
 
-		test( 'Two: As a New WordPress.com free plan user with a simple site, I can use the "WordPress.com Run Importer" link on the wp-admin Importers List page to import my content from my WordPress site', async ( {
-			pageImportContentFromWordPress,
+		test( 'Two: As a free plan user, I can reach the migration offer from the WordPress.com migration entry', async ( {
+			page,
 			pageImportLetsFindYourSite,
-			pageImportContentWordpressQuestion,
+			pageImportLetUsMigrateYourSite,
 			sitePublic,
 		} ) => {
 			const wordpressSiteURL = 'https://test.wordpress.com/';
 
-			await test.step( 'When I visit the "Let\'s find your site" page as coming from the wp-admin Tools > Import page', async function () {
-				await pageImportLetsFindYourSite.visit( sitePublic.blog_details.site_slug );
+			await test.step( 'When I open the migration-identify entry used by the WordPress.com importer link', async function () {
+				await pageImportLetsFindYourSite.visit( sitePublic.blog_details.site_slug, {
+					siteId: sitePublic.blog_details.blogid,
+				} );
 			} );
 
 			await test.step( "Then I see the Let's find your site page", async function () {
@@ -74,48 +71,19 @@ test.describe(
 				await pageImportLetsFindYourSite.enterSiteURLAndCheck( wordpressSiteURL );
 			} );
 
-			await test.step( 'Then I see the What do you want to do? page', async function () {
-				await expect( pageImportContentWordpressQuestion.heading ).toBeVisible();
-			} );
-
-			await test.step( 'When I choose "Import content only" option', async function () {
-				await pageImportContentWordpressQuestion.clickImportContentOnlyButton();
-			} );
-
-			await test.step( 'Then I see the Import content from WordPress page', async function () {
-				await expect( pageImportContentFromWordPress.heading ).toBeVisible();
-			} );
-
-			await test.step( 'When I upload a valid WordPress export file', async function () {
-				await pageImportContentFromWordPress.importFileContentPage.uploadExportFile(
-					TEST_WORDPRESS_EXPORT_FILE_PATH
-				);
-			} );
-
-			await test.step( 'Then I see an Import confirmation page showing the authorship of the content to be imported', async function () {
-				await expect( pageImportContentFromWordPress.heading ).toBeVisible();
-				await expect(
-					pageImportContentFromWordPress.importFileContentPage.yourFileIsReadyText
-				).toBeVisible( {
-					timeout: 30000,
-				} );
-				await expect(
-					pageImportContentFromWordPress.importFileContentPage.importButton
-				).toBeVisible();
-				await expect(
-					pageImportContentFromWordPress.importFileContentPage.importButton
-				).toBeEnabled();
+			await test.step( 'Then I reach the migration offer directly with my source and destination', async function () {
+				await expect( pageImportLetUsMigrateYourSite.heading ).toBeVisible();
+				const url = new URL( page.url() );
+				expect( url.pathname ).toContain( '/site-migration-how-to-migrate' );
+				expect( url.searchParams.get( 'siteSlug' ) ).toBe( sitePublic.blog_details.site_slug );
+				expect( url.searchParams.get( 'from' ) ).toBe( wordpressSiteURL );
 			} );
 		} );
 
-		test( 'Three: As a New WordPress.com free plan user with a simple site, I can use the WordPress option and enter my WordPress site on the Calypso List page to import my content from my WordPress site', async ( {
+		test( 'Three: As a free plan user, I can import a WordPress export file directly from the Calypso importer list', async ( {
 			pageImportContent,
-			pageImportLetsFindYourSite,
-			pageImportContentWordpressQuestion,
 			sitePublicShared: sitePublic,
 		} ) => {
-			const wordpressSiteURL = 'https://test.wordpress.com/';
-
 			await test.step( 'When I visit the "Import Content" page for my new site', async function () {
 				await pageImportContent.visit( sitePublic.blog_details.site_slug );
 			} );
@@ -127,18 +95,6 @@ test.describe(
 
 			await test.step( 'When I choose the WordPress importer', async function () {
 				await pageImportContent.wordPressImportButton.click();
-			} );
-
-			await test.step( 'When I enter my WordPress site URL and click Continue', async function () {
-				await pageImportLetsFindYourSite.enterSiteURLAndCheck( wordpressSiteURL );
-			} );
-
-			await test.step( 'Then I see the What do you want to do? page', async function () {
-				await expect( pageImportContentWordpressQuestion.heading ).toBeVisible();
-			} );
-
-			await test.step( 'When I choose "Import content only" option', async function () {
-				await pageImportContentWordpressQuestion.clickImportContentOnlyButton();
 			} );
 
 			await test.step( 'Then I see the Import content from WordPress page', async function () {
@@ -163,58 +119,98 @@ test.describe(
 			} );
 		} );
 
-		test( 'Four: As a New WordPress.com free plan user with a simple site, I can use the WordPress option and pick my platform on the Calypso List page to import my content from my WordPress site', async ( {
-			pageImportContent,
-			pageImportLetsFindYourSite,
-			pageImportLetUsMigrateYourSite,
-			pageImportContentWordpressQuestion,
-			pageImportContentFromAnotherPlatformOrFile,
-			pageImportPlans,
-			sitePublicShared: sitePublic,
-		} ) => {
-			await test.step( 'When I visit the "Import Content" page for my new site', async function () {
-				await pageImportContent.visit( sitePublic.blog_details.site_slug );
-			} );
+		test.describe( 'Destination selection', () => {
+			test.use( { sitePublicSiteCount: 2 } );
 
-			await test.step( 'Then I see the "Import Content" Calypso page with the choose import option', async function () {
-				await expect( pageImportContent.heading ).toBeVisible();
-				await expect( pageImportContent.wordPressImportButton ).toBeVisible();
-			} );
+			test( 'Four: As a free plan user, I can select WordPress from the migration platform picker and reach the upgrade step', async ( {
+				page,
+				pageImportLetsFindYourSite,
+				pageImportLetUsMigrateYourSite,
+				pageImportContentFromAnotherPlatformOrFile,
+				pageImportContentFromWordPress,
+				pageImportPlans,
+				sitePublic,
+			} ) => {
+				await test.step( 'When I open migration without a source or destination', async function () {
+					await pageImportLetsFindYourSite.visit( undefined, {
+						hideImporterLink: false,
+					} );
+				} );
 
-			await test.step( 'When I choose the WordPress importer', async function () {
-				await pageImportContent.wordPressImportButton.click();
-			} );
+				await test.step( 'When I use the "pick your current platform from a list" button', async function () {
+					await pageImportLetsFindYourSite.clickPickFromListButton();
+				} );
 
-			await test.step( 'When I use the "pick your current platform from a list" button', async function () {
-				await pageImportLetsFindYourSite.clickPickFromListButton();
-			} );
+				await test.step( 'Then I select my destination site', async function () {
+					await expect(
+						page.getByRole( 'heading', { name: 'Pick your destination' } )
+					).toBeVisible();
+					await page
+						.getByRole( 'searchbox', { name: 'Search', exact: true } )
+						.fill( sitePublic.blog_details.site_slug );
+					const destinationSite = page
+						.getByRole( 'link', { name: sitePublic.blog_details.site_slug } )
+						.locator( '..' )
+						.locator( '..' );
+					const selectSite = destinationSite.getByRole( 'button', {
+						name: 'Select this site',
+						exact: true,
+					} );
+					await expect( selectSite ).toHaveCount( 1 );
+					await selectSite.click();
+					await page
+						.getByRole( 'dialog', { name: 'Confirm your choice' } )
+						.getByRole( 'button', {
+							name: 'Continue',
+							exact: true,
+						} )
+						.click();
+				} );
 
-			await test.step( 'Then I see the "Import content from another platform or file" page', async function () {
-				await expect( pageImportContentFromAnotherPlatformOrFile.heading ).toBeVisible();
-			} );
+				await test.step( 'Then I see the "Import content from another platform or file" page', async function () {
+					await expect( pageImportContentFromAnotherPlatformOrFile.heading ).toBeVisible();
+				} );
 
-			await test.step( 'When I choose the "WordPress" option', async function () {
-				await pageImportContentFromAnotherPlatformOrFile.clickWordPressOption();
-			} );
+				await test.step( 'When I choose the "WordPress" option', async function () {
+					await pageImportContentFromAnotherPlatformOrFile.clickWordPressOption();
+				} );
 
-			await test.step( 'Then I see the What do you want to do? page', async function () {
-				await expect( pageImportContentWordpressQuestion.heading ).toBeVisible();
-			} );
+				await test.step( 'Then I see the "Let us migrate your site" page', async function () {
+					await expect( pageImportLetUsMigrateYourSite.heading ).toBeVisible();
+				} );
 
-			await test.step( 'When I choose the "Migrate site" option', async function () {
-				await pageImportContentWordpressQuestion.clickMigrateSiteButton();
-			} );
+				await test.step( 'When I choose to import a WordPress export file', async function () {
+					await pageImportLetUsMigrateYourSite.importExportFileButton.click();
+				} );
 
-			await test.step( 'Then I see the "Let us migrate your site" page', async function () {
-				await expect( pageImportLetUsMigrateYourSite.heading ).toBeVisible();
-			} );
+				await test.step( 'Then I can upload a file to the selected destination without upgrading', async function () {
+					await expect( pageImportContentFromWordPress.heading ).toBeVisible();
+					const query = new URL( page.url() ).searchParams;
+					expect( query.get( 'siteId' ) ).toBe( String( sitePublic.blog_details.blogid ) );
+					expect( query.get( 'siteSlug' ) ).toBe( sitePublic.blog_details.site_slug );
+					await pageImportContentFromWordPress.importFileContentPage.uploadExportFile(
+						TEST_WORDPRESS_EXPORT_FILE_PATH
+					);
+					await expect(
+						pageImportContentFromWordPress.importFileContentPage.yourFileIsReadyText
+					).toBeVisible( { timeout: 30000 } );
+				} );
 
-			await test.step( 'When I click the "Get Started" button', async function () {
-				await pageImportLetUsMigrateYourSite.clickGetStarted();
-			} );
+				await test.step( 'When I go back, I return to the migration offer', async function () {
+					await page.getByRole( 'button', { name: 'Back', exact: true } ).click();
+					await expect( pageImportLetUsMigrateYourSite.heading ).toBeVisible();
+					expect( new URL( page.url() ).searchParams.get( 'siteId' ) ).toBe(
+						String( sitePublic.blog_details.blogid )
+					);
+				} );
 
-			await test.step( 'Then I see the WordPress.com Plans page', async function () {
-				await expect( pageImportPlans.heading ).toBeVisible();
+				await test.step( 'When I click the "Get Started" button', async function () {
+					await pageImportLetUsMigrateYourSite.clickGetStarted();
+				} );
+
+				await test.step( 'Then I see the WordPress.com Plans page', async function () {
+					await expect( pageImportPlans.heading ).toBeVisible();
+				} );
 			} );
 		} );
 	}

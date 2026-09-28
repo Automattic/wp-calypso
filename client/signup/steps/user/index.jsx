@@ -538,7 +538,7 @@ export class UserStep extends Component {
 		const { translate } = this.props;
 
 		if ( this.userCreationPending() ) {
-			return translate( 'Creating Your Account…' );
+			return translate( 'Creating your account…' );
 		}
 
 		return translate( 'Create your account' );

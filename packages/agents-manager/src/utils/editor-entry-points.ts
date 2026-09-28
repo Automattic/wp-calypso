@@ -1,4 +1,3 @@
-import { getAgentsManagerInlineData } from './get-agents-manager-inline-data';
 import { isEditorPage } from './is-editor-page';
 
 /**
@@ -49,16 +48,9 @@ function isEditorEntryVisible(): boolean {
 }
 
 /**
- * Whether the editor toolbar Ask AI button should show. The host only loads the Agents Manager
+ * Whether the editor toolbar AI chat button should show. The host only loads the Agents Manager
  * bundle when the feature is enabled, so editor-entry visibility is the only gate left to check here.
  */
 export function isEditorAiEntryEnabled(): boolean {
 	return isEditorEntryVisible();
-}
-
-/**
- * Whether the editor toolbar Help Center "?" menu should show — only in the unified AI experience.
- */
-export function isEditorHelpMenuEnabled(): boolean {
-	return isEditorEntryVisible() && !! getAgentsManagerInlineData()?.useUnifiedExperience;
 }

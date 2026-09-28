@@ -119,7 +119,7 @@ const StatsClicks: React.FC< StatsDefaultModuleProps > = ( {
 							? {
 									url: summaryUrl,
 									label: translate( 'View more' ),
-							  }
+								}
 							: undefined
 					}
 				/>

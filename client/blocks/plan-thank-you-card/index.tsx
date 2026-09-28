@@ -53,7 +53,7 @@ const PlanThankYouCard = ( {
 		currentPlan && plans?.[ currentPlan.planSlug ]?.productNameShort
 			? translate( '%(planName)s Plan', {
 					args: { planName: plans[ currentPlan.planSlug ].productNameShort },
-			  } )
+				} )
 			: '';
 
 	return (

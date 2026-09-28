@@ -2,11 +2,9 @@ import { ProgressBar } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import clsx from 'clsx';
 import { useEffect, useRef, useState } from 'react';
-import { useSelector } from 'react-redux';
 import { useSearchParams } from 'react-router-dom';
 import { getPHPVersions } from 'calypso/data/php-versions';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { getBlueprintID } from '../../lib/blueprint';
 import { initializeWordPressPlayground } from '../../lib/initialize-playground';
 import { PlaygroundError } from '../playground-error';
@@ -23,9 +21,8 @@ export function PlaygroundIframe( {
 	hasPlaygroundClient: boolean;
 	setPlaygroundClient: ( client: PlaygroundClient ) => void;
 } ) {
-	const siteId = useSelector( getSelectedSiteId ) ?? 0;
 	const iframeRef = useRef< HTMLIFrameElement >( null );
-	const recommendedPHPVersion = getPHPVersions( siteId ).recommendedValue;
+	const recommendedPHPVersion = getPHPVersions().recommendedValue;
 	const [ searchParams, setSearchParams ] = useSearchParams();
 	const [ playgroundError, setPlaygroundError ] = useState< string | null >( null );
 	const [ isLoading, setIsLoading ] = useState( true );

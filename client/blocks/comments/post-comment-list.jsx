@@ -598,8 +598,8 @@ class PostCommentList extends Component {
 			haveEarlierCommentsToFetch || haveLaterCommentsToFetch
 				? commentCount
 				: // Use commentsTree on props since 'commentsTree' var here may have pingbacks
-				  // filtered out above.
-				  this.getCommentsCount( this.props.commentsTree.children );
+					// filtered out above.
+					this.getCommentsCount( this.props.commentsTree.children );
 
 		const showConversationFollowButton =
 			this.props.showConversationFollowButton && isConversationFollowable( this.props.post );

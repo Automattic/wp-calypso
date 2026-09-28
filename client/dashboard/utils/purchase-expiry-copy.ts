@@ -47,7 +47,7 @@ export function getExpiringSoonCopy( expiryDate: Date ): ExpiryStatusCopy | null
 					// translators: %(days)d is a number of days
 					_n( 'Expires in %(days)d day', 'Expires in %(days)d days', days ),
 					{ days }
-			  )
+				)
 			: null,
 	};
 }
@@ -99,7 +99,7 @@ export function getExpiredCopy( expiryDate: Date ): ExpiryStatusCopy {
 export function getExpiringSoonRenewalTitle( formattedExpiryDate: string ): string | null {
 	return translationExists( 'Expires on %s (renew this purchase)' )
 		? // translators: %s is a formatted date
-		  sprintf( __( 'Expires on %s (renew this purchase)' ), formattedExpiryDate )
+			sprintf( __( 'Expires on %s (renew this purchase)' ), formattedExpiryDate )
 		: null;
 }
 
@@ -109,6 +109,6 @@ export function getExpiringSoonRenewalTitle( formattedExpiryDate: string ): stri
 export function getExpiredRenewalTitle( formattedExpiryDate: string ): string | null {
 	return translationExists( 'Expired on %s (renew this purchase)' )
 		? // translators: %s is a formatted date
-		  sprintf( __( 'Expired on %s (renew this purchase)' ), formattedExpiryDate )
+			sprintf( __( 'Expired on %s (renew this purchase)' ), formattedExpiryDate )
 		: null;
 }

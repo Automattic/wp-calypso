@@ -17,6 +17,7 @@ import { useSupportStatus } from '../data/use-support-status';
 import { useChatStatus } from '../hooks';
 import { useHelpCenterTracksEvent } from '../hooks/use-help-center-tracks-event';
 import { HELP_CENTER_STORE } from '../stores';
+import { getPresalesResumeRoute } from './get-presales-resume-route';
 import { HelpCenterChat } from './help-center-chat';
 import { HelpCenterChatHistory } from './help-center-chat-history';
 import { HelpCenterContactForm } from './help-center-contact-form';
@@ -82,21 +83,26 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 	const containerRef = useRef< HTMLDivElement >( null );
 	const navigate = useNavigate();
 	const { setNavigateToRoute } = useDispatch( HELP_CENTER_STORE );
-	const { sectionName, site } = useHelpCenterContext();
+	const { sectionName, site, launcherContext, newLoggedOutInteractionsBotSlug } =
+		useHelpCenterContext();
 	const recordTracksEvent = useHelpCenterTracksEvent();
 	const featureConfig = useFeatureConfig();
 	const { data, isLoading: isLoadingSupportStatus } = useSupportStatus();
 	const { forceEmailSupport } = useChatStatus();
 	const currentSiteDomain = site?.domain;
 
-	const { navigateToRoute, isMinimized, hasPremiumSupport } = useSelect( ( select ) => {
-		const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
-		return {
-			navigateToRoute: store.getNavigateToRoute(),
-			isMinimized: store.getIsMinimized(),
-			hasPremiumSupport: store.getHasPremiumSupport(),
-		};
-	}, [] );
+	const { navigateToRoute, isMinimized, hasPremiumSupport, loggedOutOdieChat } = useSelect(
+		( select ) => {
+			const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
+			return {
+				navigateToRoute: store.getNavigateToRoute(),
+				isMinimized: store.getIsMinimized(),
+				hasPremiumSupport: store.getHasPremiumSupport(),
+				loggedOutOdieChat: store.getLoggedOutOdieChat( newLoggedOutInteractionsBotSlug ),
+			};
+		},
+		[ newLoggedOutInteractionsBotSlug ]
+	);
 	const isUserEligibleForPaidSupport =
 		Boolean( data?.eligibility?.is_user_eligible ) ||
 		hasPremiumSupport ||
@@ -121,7 +127,12 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 
 	useEffect( () => {
 		if ( navigateToRoute?.route ) {
-			const { route, coalesceParams } = navigateToRoute;
+			const { coalesceParams } = navigateToRoute;
+			const route = getPresalesResumeRoute(
+				navigateToRoute.route,
+				launcherContext,
+				loggedOutOdieChat
+			);
 			const fullLocation = [ location.pathname, location.search, location.hash ].join( '' );
 			// Only navigate once to keep the back button responsive.
 			if ( fullLocation !== route ) {
@@ -139,7 +150,14 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 			}
 			setNavigateToRoute( null );
 		}
-	}, [ navigate, navigateToRoute, setNavigateToRoute, location ] );
+	}, [
+		navigate,
+		navigateToRoute,
+		setNavigateToRoute,
+		location,
+		launcherContext,
+		loggedOutOdieChat,
+	] );
 
 	useEffect( () => {
 		function handler( event: Event ) {

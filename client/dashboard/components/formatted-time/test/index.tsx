@@ -8,6 +8,7 @@ import { useFormattedTime } from '../index';
 // Mock the useLocale hook to return a consistent locale
 jest.mock( '../../../app/locale', () => ( {
 	useLocale: () => 'en-US',
+	useIntlLocale: () => 'en-US',
 } ) );
 
 function TestFormattedTime( {

@@ -23,7 +23,7 @@ function updateCachedReadSiteBlockStatus( siteId, isBlocked ) {
 			? {
 					...site,
 					is_blocked: isBlocked,
-			  }
+				}
 			: site
 	);
 }

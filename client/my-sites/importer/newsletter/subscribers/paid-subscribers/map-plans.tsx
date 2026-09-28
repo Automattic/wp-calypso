@@ -1,10 +1,10 @@
 import { formatCurrency } from '@automattic/number-formatters';
-import { useQueryClient } from '@tanstack/react-query';
+import { useIsMutating, useQueryClient } from '@tanstack/react-query';
 import { createInterpolateElement } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
 import { useEffect, useState, useRef } from 'react';
 import { useMapStripePlanToProductMutation } from 'calypso/data/paid-newsletter/use-map-stripe-plan-to-product-mutation';
-import { useSetCompPlanMutation } from 'calypso/data/paid-newsletter/use-set-comp-plan-mutation';
+import { setCompPlanMutationKey } from 'calypso/data/paid-newsletter/use-set-comp-plan-mutation';
 import RecurringPaymentsPlanAddEditModal from 'calypso/my-sites/earn/components/add-edit-plan-modal';
 import {
 	PLAN_YEARLY_FREQUENCY,
@@ -16,7 +16,7 @@ import { useSelector } from 'calypso/state';
 import { getProductsForSiteId } from 'calypso/state/memberships/product-list/selectors';
 import { SubscribersStepProps } from '../../types';
 import StartImportButton from './../start-import-button';
-import { MapCompPlan } from './map-comp-plan';
+import CompSubscribers, { isCompSelectionSatisfied } from './comp-subscribers';
 import { MapPlan, TierToAdd } from './map-plan';
 import NoPlans from './no-plans';
 import SuccessNotice from './success-notice';
@@ -45,24 +45,8 @@ function shouldEnableImporting( cardData: any ) {
 		return false;
 	}
 
-	// If there are comped subscribers, require a comp plan selection that still
-	// resolves to a known Stripe plan (guards against stale selections after a
-	// Stripe account reconnect or plan deletion).
-	const compCount = parseInt( cardData?.meta?.comp_count || '0' );
-	if ( compCount > 0 ) {
-		const compStripePlanId = cardData?.comp_stripe_plan_id;
-		if ( ! compStripePlanId ) {
-			return false;
-		}
-		const compPlanExists = ( plans as any[] ).some(
-			( item: any ) => item?.product_id === compStripePlanId
-		);
-		if ( ! compPlanExists ) {
-			return false;
-		}
-	}
-
-	return true;
+	// If there are comped subscribers, require a tier that still exists to grant against.
+	return isCompSelectionSatisfied( cardData );
 }
 
 function findNewProduct( currentProducts: Array< Product >, previousProducts: Array< Product > ) {
@@ -91,13 +75,13 @@ export default function MapPlans( {
 	const currentStep = 'subscribers';
 
 	const queryClient = useQueryClient();
+	const isSavingCompPlan = useIsMutating( { mutationKey: setCompPlanMutationKey } ) > 0;
 
 	const newsletterTiers = useSelector( ( state ) =>
 		getProductsForSiteId( state, selectedSite.ID )
 	);
 	const { mapStripePlanToProduct, isPending: isSavingPlanMapping } =
 		useMapStripePlanToProductMutation();
-	const { setCompPlan, isPending: isSavingCompPlan } = useSetCompPlanMutation();
 	const newsletterTiersRef = useRef( newsletterTiers );
 	const stripePlanRef = useRef( '' );
 
@@ -180,13 +164,10 @@ export default function MapPlans( {
 		},
 	};
 
+	// The comp selection is written optimistically, so without this the import can start before the
+	// choice reaches the server, which would then report that no tier was chosen.
 	const isImportButtonDisabled =
 		! shouldEnableImporting( cardData ) || isSavingPlanMapping || isSavingCompPlan;
-
-	const compCount = parseInt( cardData?.meta?.comp_count || '0' );
-	const onCompPlanSelect = ( stripePlanId: string ) => {
-		setCompPlan( selectedSite.ID, engine, currentStep, stripePlanId );
-	};
 
 	const onProductSelect = ( stripePlanId: string, productId: string ) => {
 		mapStripePlanToProduct( selectedSite.ID, engine, currentStep, stripePlanId, productId );
@@ -235,14 +216,7 @@ export default function MapPlans( {
 						/>
 					);
 				} ) }
-				{ compCount > 0 && (
-					<MapCompPlan
-						compCount={ compCount }
-						plans={ cardData.plans }
-						selectedStripePlanId={ cardData.comp_stripe_plan_id ?? '' }
-						onCompPlanSelect={ onCompPlanSelect }
-					/>
-				) }
+				<CompSubscribers cardData={ cardData } siteId={ selectedSite.ID } engine={ engine } />
 			</div>
 
 			<StartImportButton

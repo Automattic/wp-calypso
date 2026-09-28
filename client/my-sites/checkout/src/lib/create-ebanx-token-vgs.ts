@@ -4,6 +4,7 @@
  * that uses VGS tokens for secure card data handling
  */
 
+import { fetchEbanxConfiguration } from '@automattic/api-core';
 import debugFactory from 'debug';
 import paymentGatewayLoader from 'calypso/lib/payment-gateway-loader';
 import wpcom from 'calypso/lib/wp';
@@ -55,15 +56,6 @@ export interface EbanxCardDetails {
 }
 
 /**
- * EBANX SDK configuration response from the API
- */
-interface EbanxConfiguration {
-	js_url: string;
-	environment: string;
-	public_key: string;
-}
-
-/**
  * EBANX SDK interface (minimal typing for the parts we use)
  */
 interface EbanxSdk {
@@ -91,9 +83,7 @@ async function getEbanxDeviceFingerprint(
 	try {
 		debug( 'fetching ebanx configuration for device fingerprint' );
 
-		const configuration: EbanxConfiguration = await wpcom.req.get( '/me/ebanx-configuration', {
-			request_type: requestType,
-		} );
+		const configuration = await fetchEbanxConfiguration( requestType );
 
 		debug( 'loading ebanx sdk for device fingerprint' );
 		const ebanx: EbanxSdk = await paymentGatewayLoader.ready( configuration.js_url, 'EBANX' );

@@ -91,10 +91,11 @@ export const getNormalizedName = ( name: string, type: DnsRecordType, domainName
  *
  * This is done after loading a DNS record from the backend.
  * For example, `name` fields that are the root domain name are replaced with an empty string.
- * @param record
+ * @param sourceRecord - The DNS record as returned by the backend
  * @returns
  */
-export const getProcessedRecord = ( record: DnsRecord ): DnsRecord => {
+export const getProcessedRecord = ( sourceRecord: DnsRecord ): DnsRecord => {
+	const record = { ...sourceRecord };
 	const isRootDomainRecord = record.name === `${ record.domain }.`;
 	if ( isRootDomainRecord ) {
 		record.name = '';

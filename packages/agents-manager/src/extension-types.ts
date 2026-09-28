@@ -1,7 +1,7 @@
 /**
  * Types for plugin extensions to the AI Agents system.
  *
- * These types allow external plugins (like Big Sky, CIAB Admin) to extend
+ * These types allow external plugins like Big Sky to extend
  * the wp-calypso orchestrator agent with custom abilities and context.
  */
 
@@ -70,14 +70,7 @@ export interface ClientContextType {
 	/**
 	 * Environment identifier
 	 */
-	environment:
-		| 'wp-admin'
-		| 'ciab-admin'
-		| 'calypso'
-		| 'wp-admin-disconnected'
-		| 'gutenberg-disconnected'
-		| 'ciab-disconnected'
-		| string;
+	environment: 'wp-admin' | 'calypso' | 'wp-admin-disconnected' | 'gutenberg-disconnected' | string;
 
 	/**
 	 * Optional context entries (sitemap, entities, etc.).

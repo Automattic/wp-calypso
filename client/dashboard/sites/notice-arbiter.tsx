@@ -1,14 +1,13 @@
 import { Children, useState } from 'react';
+import { useSiteExpiryNoticeCandidate } from '../components/site-expiry-notice';
 import type { ReactNode } from 'react';
 
 /**
- * Shared candidates compete on every page that renders the arbiter. The pick
- * is latched on mount so that a preference change mid-session (e.g. dismissing
- * a welcome notice) empties the slot instead of promoting the next notice.
+ * Shared candidates compete on every page that renders the arbiter. Today there
+ * is one: the sitewide plan-expiry notice, null off `/sites/*` site pages.
  */
-function useSharedCandidate(): ReactNode {
-	// If there were shared notices across all site pages, this is where they'd go.
-	return null;
+function useSharedCandidate(): { node: ReactNode; isUrgent: boolean } | null {
+	return useSiteExpiryNoticeCandidate();
 }
 
 /**
@@ -26,9 +25,10 @@ function useSharedCandidate(): ReactNode {
  *         }
  *     >
  *
- * The first non-null child wins. If no page candidate is eligible, the
- * arbiter falls back to its own shared candidates (engagement prompts).
- * Candidates must not decide visibility inside their own render ("self-null");
+ * The first non-null child wins. Shared candidates live in the arbiter. An
+ * urgent one (the plan-expiry notice within a week of expiry or past it)
+ * wins over page candidates; any other shared candidate only fills an empty
+ * slot. Candidates must not decide visibility inside their own render ("self-null");
  * the only sanctioned internal `return null` is an in-session dismissal,
  * which deliberately leaves the slot empty rather than showing the next
  * notice. See client/dashboard/sites/AGENTS.md.
@@ -42,17 +42,30 @@ export function SitesNoticeArbiter( { children }: { children?: ReactNode } ) {
 	const sharedCandidate = useSharedCandidate();
 	const pageCandidates = Children.toArray( children );
 
-	// Latched: if the page had a candidate when it loaded, never promote a
-	// shared candidate into the slot mid-session (e.g. after a dismissal).
+	// Latched: whichever tier held the slot when the page loaded keeps it. A
+	// dismissal mid-session (a page notice self-nulling, or a shared candidate
+	// whose hook goes null once the dismissal is written back) empties the slot
+	// rather than promoting the next notice.
 	const [ hadPageCandidateOnMount ] = useState( pageCandidates.length > 0 );
+	const [ hadUrgentSharedCandidateOnMount ] = useState( !! sharedCandidate?.isUrgent );
+
+	// The red tier: a site a week or less from losing its plan, or that already
+	// has, hears about it before anything the page wants to say.
+	if ( sharedCandidate?.isUrgent ) {
+		return sharedCandidate.node;
+	}
+
+	if ( hadUrgentSharedCandidateOnMount ) {
+		return null;
+	}
 
 	if ( pageCandidates.length > 0 ) {
-		return <>{ pageCandidates[ 0 ] }</>;
+		return pageCandidates[ 0 ];
 	}
 
 	if ( hadPageCandidateOnMount ) {
 		return null;
 	}
 
-	return <>{ sharedCandidate }</>;
+	return sharedCandidate?.node ?? null;
 }

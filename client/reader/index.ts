@@ -145,14 +145,49 @@ export default async function (): Promise< void > {
 	page( '/reader/feeds/lookup/*', redirectLoggedOutToSignup, feedLookup );
 
 	// Lists
-	page( '/reader/list/:user/:list/edit/items', sidebar, editListItems, makeLayout, clientRender );
-	page( '/reader/list/:user/:list/edit', sidebar, editList, makeLayout, clientRender );
+	page(
+		'/reader/list/:user/:list/edit/items',
+		redirectLoggedOutToSignup,
+		sidebar,
+		editListItems,
+		makeLayout,
+		clientRender
+	);
+	page(
+		'/reader/list/:user/:list/edit',
+		redirectLoggedOutToSignup,
+		sidebar,
+		editList,
+		makeLayout,
+		clientRender
+	);
 
-	page( '/reader/list/new', sidebar, createList, makeLayout, clientRender );
+	page(
+		'/reader/list/new',
+		redirectLoggedOutToSignup,
+		sidebar,
+		createList,
+		makeLayout,
+		clientRender
+	);
 
-	page( '/reader/list/:user/:list/export', sidebar, exportList, makeLayout, clientRender );
+	page(
+		'/reader/list/:user/:list/export',
+		redirectLoggedOutToSignup,
+		sidebar,
+		exportList,
+		makeLayout,
+		clientRender
+	);
 
-	page( '/reader/list/:user/:list/delete', sidebar, deleteList, makeLayout, clientRender );
+	page(
+		'/reader/list/:user/:list/delete',
+		redirectLoggedOutToSignup,
+		sidebar,
+		deleteList,
+		makeLayout,
+		clientRender
+	);
 
 	page(
 		[ '/reader/list/:user/:list', '/reader/list/:user/:list/:view' ],
@@ -219,12 +254,31 @@ export default async function (): Promise< void > {
 	);
 
 	setupReaderRedirects();
+	setupSearchRedirects();
 
 	// Catch-all: render a 404 for unrecognized /reader/* and /read/* paths instead of
 	// hanging. `readerNotFound` yields to sibling reader sections (search,
 	// conversations, …) that own the path, so only truly unknown paths render the 404.
 	page( '/reader/*', readerNotFound );
 	page( '/read/*', readerNotFound );
+}
+
+/**
+ * Reader search now lives at /discover/search. Keep the query string so
+ * existing links with a search term or sort keep working.
+ */
+function setupSearchRedirects(): void {
+	const anyLangParam = getAnyLanguageRouteParam();
+
+	const redirectToDiscoverSearch = ( context: Context ): void => {
+		const localePrefix = context.params.lang ? `/${ context.params.lang }` : '';
+		const query = context.querystring ? `?${ context.querystring }` : '';
+		page.redirect( `${ localePrefix }/discover/search${ query }` );
+	};
+
+	page( '/reader/search', redirectToDiscoverSearch );
+	page( `/${ anyLangParam }/reader/search`, redirectToDiscoverSearch );
+	page( '/recommendations', redirectToDiscoverSearch );
 }
 
 /**

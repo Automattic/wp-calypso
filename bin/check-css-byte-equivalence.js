@@ -288,7 +288,7 @@ async function writeDiffOutput( outputDir, baseDir, headDir, failures ) {
 							...( baseFormatError ? { base: baseFormatError } : {} ),
 							...( headFormatError ? { head: headFormatError } : {} ),
 						},
-				  }
+					}
 				: {} ),
 		} );
 	}

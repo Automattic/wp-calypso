@@ -23,12 +23,12 @@ export function useSubmitTicketMutation() {
 						apiNamespace: 'wpcom/v2',
 						method: 'POST',
 						body: newTicket,
-				  } )
+					} )
 				: apiFetch( {
 						global: true,
 						path: '/help-center/ticket/new',
 						method: 'POST',
 						data: newTicket,
-				  } as APIFetchOptions ),
+					} as APIFetchOptions ),
 	} );
 }

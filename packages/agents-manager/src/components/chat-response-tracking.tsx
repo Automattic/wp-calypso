@@ -73,7 +73,7 @@ export function createChatResponseActionCallback( {
 	toolCallId,
 }: ChatResponseIdentifiers ) {
 	return ( { action, target, outcome, itemCount }: ChatResponseAction ) => {
-		recordBigSkyTracksEvent( 'chat_response_action', {
+		recordBigSkyTracksEvent( 'jetpack_big_sky_chat_response_action', {
 			component_type: componentType,
 			tool_id: toolId,
 			...( toolCallId ? { tool_call_id: toolCallId } : {} ),
@@ -102,7 +102,7 @@ export default function ChatResponseRenderedTracker( {
 			return;
 		}
 		lastTrackedResponseRef.current = responseKey;
-		recordBigSkyTracksEvent( 'chat_response_rendered', {
+		recordBigSkyTracksEvent( 'jetpack_big_sky_chat_response_rendered', {
 			component_type: componentType,
 			tool_id: toolId,
 			...( toolCallId ? { tool_call_id: toolCallId } : {} ),

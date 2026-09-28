@@ -64,7 +64,6 @@ export interface UserSettings {
 	first_name: string;
 	last_name: string;
 	display_name: string;
-	is_dev_account: boolean;
 	password: string;
 	is_passwordless_user: boolean;
 	tracks_opt_out: boolean;

@@ -1,7 +1,6 @@
-import { SiteDetails } from '@automattic/data-stores/src/site';
 import { Task } from '../../types';
 
-export const defaultSiteDetails: SiteDetails = {
+export const defaultSiteDetails = {
 	ID: 211078228,
 	title: 'Test Newsletter',
 	name: 'testNewsletter',

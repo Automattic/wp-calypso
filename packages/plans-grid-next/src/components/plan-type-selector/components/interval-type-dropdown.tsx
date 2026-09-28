@@ -43,7 +43,7 @@ export const IntervalTypeDropdown: React.FunctionComponent< IntervalTypeProps > 
 	const describedByText = selectedOption?.accessibleName
 		? translate( 'Currently selected billing period: %(billingPeriod)s', {
 				args: { billingPeriod: selectedOption.accessibleName },
-		  } )
+			} )
 		: undefined;
 
 	return (
@@ -74,8 +74,7 @@ export const IntervalTypeDropdown: React.FunctionComponent< IntervalTypeProps > 
 						plans_intent: intent,
 						is_in_signup: isInSignup,
 					} );
-					onPlanIntervalUpdate &&
-						onPlanIntervalUpdate( intervalType as SupportedUrlFriendlyTermType );
+					onPlanIntervalUpdate?.( intervalType as SupportedUrlFriendlyTermType );
 				} }
 			/>
 		</div>

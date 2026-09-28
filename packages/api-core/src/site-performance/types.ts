@@ -9,7 +9,7 @@ export type SitePerformanceHistory = {
 	metrics: Partial< Record< Metrics, number[] > >;
 };
 
-type PerformanceMetricAuditDetailsHeading = {
+export type PerformanceMetricAuditDetailsHeading = {
 	key: string;
 	label: string;
 	valueType: string;

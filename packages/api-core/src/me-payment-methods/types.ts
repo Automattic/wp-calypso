@@ -113,4 +113,24 @@ export interface StoredPaymentMethodTaxLocation {
 	is_for_business?: boolean | undefined;
 }
 
+/**
+ * A payment method's tax location in the `tax_`-prefixed shape that the
+ * `/me/payment-methods/{id}/tax-location` endpoint itself reads and writes.
+ *
+ * `StoredPaymentMethodTaxLocation` is the same data as it appears when embedded
+ * in a `StoredPaymentMethod`; the two are not interchangeable on the wire.
+ */
+export interface PaymentMethodTaxInfo {
+	tax_postal_code: string;
+	tax_country_code: string;
+	tax_subdivision_code?: string;
+	tax_city?: string;
+	tax_organization?: string;
+	tax_address?: string;
+}
+
+export interface PaymentMethodTaxInfoResponse extends PaymentMethodTaxInfo {
+	is_tax_info_set: boolean;
+}
+
 export type PaymentMethodRequestType = 'card' | 'agreement' | 'vault-token' | 'all';

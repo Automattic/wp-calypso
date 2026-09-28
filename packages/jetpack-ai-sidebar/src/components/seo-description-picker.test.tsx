@@ -96,4 +96,25 @@ describe( 'SeoDescriptionPicker', () => {
 		expect( applied ).toHaveAttribute( 'aria-pressed', 'true' );
 		expect( screen.getByText( 'SEO description updated.' ) ).toBeInTheDocument();
 	} );
+
+	it.each( [
+		[ 'omitted', undefined ],
+		[ 'not an array', 'text' as any ],
+		[
+			'an array of invalid entries',
+			[ null, {}, { description: 7 }, { description: '  ' } ] as any,
+		],
+	] )( 'renders nothing when the options are %s, instead of throwing', ( _label, descriptions ) => {
+		// History strips the picker options to save tokens, and a malformed
+		// payload can carry unusable entries. Mirrors usePickerVariations.
+		const { container } = render( <SeoDescriptionPicker descriptions={ descriptions } /> );
+		expect( container ).toBeEmptyDOMElement();
+	} );
+
+	it( 'skips invalid entries and renders the valid options', () => {
+		const mixed = [ null, {}, { description: 7 }, { description: 'Valid description.' } ] as any;
+		render( <SeoDescriptionPicker descriptions={ mixed } /> );
+		expect( screen.getByText( 'Valid description.' ) ).toBeInTheDocument();
+		expect( screen.getAllByRole( 'button' ) ).toHaveLength( 1 );
+	} );
 } );

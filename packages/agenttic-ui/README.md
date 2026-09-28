@@ -217,6 +217,7 @@ interface AgentUIProps {
 	// Core chat data
 	messages: Message[];
 	isProcessing: boolean;
+	isStreaming?: boolean; // Whether the latest reply is still streaming, when that differs from `isProcessing` (the default)
 	error?: string | null;
 	onSubmit: ( message: string ) => void;
 	onStop?: () => void;
@@ -508,6 +509,7 @@ interface MessageAction {
 	disabled?: boolean;
 	pressed?: boolean;
 	showLabel?: boolean;
+	visibility?: 'always' | 'latest-turn'; // `latest-turn`: inline on the latest turn; floats in a panel on hover for earlier turns, docking once pressed
 }
 
 interface Suggestion {
@@ -519,10 +521,15 @@ interface Suggestion {
 interface NoticeConfig {
 	icon?: React.ReactNode | null | false;
 	message: string;
-	action?: {
-		label: string;
-		onClick: () => void;
-	};
+	action?:
+		| { label: string; onClick: () => void; href?: never }
+		| {
+				label: string;
+				href: string;
+				target?: React.HTMLAttributeAnchorTarget;
+				rel?: string;
+				onClick?: never;
+		  };
 	dismissible?: boolean;
 	onDismiss?: () => void;
 }
@@ -578,22 +585,30 @@ import {
 
 ## Development
 
+This package lives in the wp-calypso monorepo but still carries its
+pre-migration build setup — vite-built, ESM-only, flat `dist/`, consumed from
+`dist/` even in-repo. See the Development section in
+[`packages/agenttic-client/README.md`](../agenttic-client/README.md) for the
+full context before restructuring anything.
+
 ```bash
-# Build the package
-pnpm build
-
-# Run in development mode
-pnpm dev
-
-# Run tests
-pnpm test
-
-# Type checking
-pnpm type-check
-
-# Start Storybook
-pnpm storybook
+# From the wp-calypso root
+yarn workspace @automattic/agenttic-ui run build       # downloads translations; needs network
+yarn workspace @automattic/agenttic-ui run test        # vitest — not part of CI yet
+yarn workspace @automattic/agenttic-ui run type-check
+yarn workspace @automattic/agenttic-ui run storybook
 ```
+
+For live rebuilds while developing against an in-repo consumer, run
+`yarn workspace @automattic/agenttic-ui exec vite build --watch` — webpack
+watches the workspace `dist/` and rebuilds the consumer automatically.
+
+## Releasing
+
+Published to npm together with `@automattic/agenttic-client`, in lockstep. The
+release process — including the mandatory explicit build before
+`yarn npm publish` — is documented in the Releasing section of
+[`packages/agenttic-client/README.md`](../agenttic-client/README.md).
 
 ## Integration with agenttic-client
 

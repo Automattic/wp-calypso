@@ -13,8 +13,8 @@ export const rebootAfterLogin =
 			} )
 		);
 
-		// Redirects to / if no redirect url is available
-		const url = getRedirectToSanitized( getState() ) || '/';
+		// The login app's store has no sites state, so the landing resolver can't run here.
+		const url = getRedirectToSanitized( getState() ) || '/home';
 
 		// user ID is persisted in localstorage
 		// therefore we need to reset it before we redirect, otherwise we'll get

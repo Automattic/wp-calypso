@@ -42,6 +42,20 @@ describe( '<GravatarProfileSection>', () => {
 		);
 	} );
 
+	test( 'keeps the avatar src stable while typing in other fields', async () => {
+		const user = userEvent.setup();
+		mockUserSettings( settings );
+
+		render( <GravatarProfileSection /> );
+		await screen.findByRole( 'heading', { name: 'Public Gravatar profile' } );
+
+		const srcBefore = screen.getByAltText( 'Gravatar' ).getAttribute( 'src' );
+
+		await user.type( screen.getByRole( 'textbox', { name: 'Display name' } ), 'abc' );
+
+		expect( screen.getByAltText( 'Gravatar' ) ).toHaveAttribute( 'src', srcBefore );
+	} );
+
 	test( 'renders the form and saves the form', async () => {
 		const user = userEvent.setup();
 		mockUserSettings( settings );

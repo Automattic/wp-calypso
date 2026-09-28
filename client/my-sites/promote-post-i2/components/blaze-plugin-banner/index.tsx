@@ -24,11 +24,11 @@ export default function BlazePluginBanner() {
 						{ isWooBlaze
 							? translate(
 									'Increase your sales by promoting your products and pages across millions of blogs and sites.'
-							  )
+								)
 							: translate(
 									'Use %(productName)s to grow your audience by promoting your content across Tumblr and WordPress.com.',
 									{ args: { productName: 'Blaze Ads' } }
-							  ) }
+								) }
 					</div>
 				</section>
 				<section className="posts-list-banner__img-section">

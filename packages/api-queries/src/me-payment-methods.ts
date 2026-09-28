@@ -1,4 +1,5 @@
 import {
+	fetchPaymentMethodTaxInfo,
 	fetchUserPaymentMethods,
 	setPaymentMethodBackup,
 	requestPaymentMethodDeletion,
@@ -15,6 +16,12 @@ import type {
 	SaveCreditCardParams,
 	UpdateCreditCardParams,
 } from '@automattic/api-core';
+
+/**
+ * Prefix shared by every `/me/payment-methods` query, so that a mutation can
+ * invalidate the list and the per-method tax location together.
+ */
+export const userPaymentMethodsQueryKey = [ 'me', 'payment-methods' ];
 
 export const userPaymentMethodsQuery = ( {
 	type = 'all',
@@ -43,12 +50,18 @@ export const userPaymentMethodsQuery = ( {
 	isForBusiness?: boolean | null;
 } ) =>
 	queryOptions( {
-		queryKey: [ 'me', 'payment-methods', type, expired ],
+		queryKey: [ ...userPaymentMethodsQueryKey, type, expired ],
 		queryFn: () => fetchUserPaymentMethods( type, expired ),
 		select: ( data ) =>
 			Array.isArray( data ) && isForBusiness
 				? data.filter( ( method ) => method?.tax_location?.is_for_business === isForBusiness )
 				: data,
+	} );
+
+export const userPaymentMethodTaxInfoQuery = ( paymentMethodId: string ) =>
+	queryOptions( {
+		queryKey: [ ...userPaymentMethodsQueryKey, paymentMethodId, 'tax-location' ],
+		queryFn: () => fetchPaymentMethodTaxInfo( paymentMethodId ),
 	} );
 
 export const userPaymentMethodSetBackupQuery = () =>
@@ -57,7 +70,7 @@ export const userPaymentMethodSetBackupQuery = () =>
 			setPaymentMethodBackup( data.stored_details_id, data.is_backup ),
 		onSuccess: () => {
 			queryClient.invalidateQueries( {
-				queryKey: [ 'me', 'payment-methods' ],
+				queryKey: userPaymentMethodsQueryKey,
 			} );
 		},
 	} );
@@ -67,7 +80,7 @@ export const userPaymentMethodDeleteQuery = () =>
 		mutationFn: ( paymentMethodId: string ) => requestPaymentMethodDeletion( paymentMethodId ),
 		onSuccess: () => {
 			queryClient.invalidateQueries( {
-				queryKey: [ 'me', 'payment-methods' ],
+				queryKey: userPaymentMethodsQueryKey,
 			} );
 		},
 	} );
@@ -78,7 +91,7 @@ export const userPaymentMethodSetTaxInfoQuery = () =>
 			setPaymentMethodTaxInfo( data.stored_details_id, data.tax_location ),
 		onSuccess: () => {
 			queryClient.invalidateQueries( {
-				queryKey: [ 'me', 'payment-methods' ],
+				queryKey: userPaymentMethodsQueryKey,
 			} );
 		},
 	} );
@@ -95,7 +108,7 @@ export const saveCreditCardMutation = () =>
 		mutationFn: ( params: SaveCreditCardParams ) => saveCreditCard( params ),
 		onSuccess: () => {
 			queryClient.invalidateQueries( {
-				queryKey: [ 'me', 'payment-methods' ],
+				queryKey: userPaymentMethodsQueryKey,
 			} );
 		},
 	} );
@@ -106,7 +119,7 @@ export const updateCreditCardMutation = () =>
 		mutationFn: ( params: UpdateCreditCardParams ) => updateCreditCard( params ),
 		onSuccess: () => {
 			queryClient.invalidateQueries( {
-				queryKey: [ 'me', 'payment-methods' ],
+				queryKey: userPaymentMethodsQueryKey,
 			} );
 		},
 	} );

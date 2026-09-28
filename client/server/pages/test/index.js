@@ -16,11 +16,6 @@ jest.mock( '@automattic/calypso-config', () => {
 
 jest.mock( 'calypso/server/sanitize', () => jest.fn() );
 
-jest.mock( 'calypso/server/bundler/utils', () => ( {
-	hashFile: jest.fn( () => 'hash' ),
-	getUrl: jest.fn( jest.requireActual( 'calypso/server/bundler/utils' ).getUrl ),
-} ) );
-
 jest.mock( 'calypso/sections', () => {
 	// eslint-disable-next-line no-shadow
 	const sections = jest.requireActual( 'calypso/sections' );
@@ -1105,6 +1100,31 @@ describe( 'main app', () => {
 		} );
 	} );
 
+	describe( 'Route /tags and /tag', () => {
+		it( 'redirects logged-out visitors to the Discover tags tab', async () => {
+			const { response } = await app.run( { request: { url: '/tags' } } );
+			expect( response.redirect ).toHaveBeenCalledWith(
+				302,
+				'/discover/tags?selectedTag=dailyprompt'
+			);
+		} );
+
+		it( 'carries the tag and locale prefix through the redirect', async () => {
+			const { response } = await app.run( { request: { url: '/fr/tag/travel' } } );
+			expect( response.redirect ).toHaveBeenCalledWith(
+				302,
+				'/fr/discover/tags?selectedTag=travel'
+			);
+		} );
+
+		it( 'does not redirect logged-in users', async () => {
+			const { response } = await app.run( {
+				request: { url: '/tags', cookies: { wordpress_logged_in: true } },
+			} );
+			expect( response.redirect ).not.toHaveBeenCalled();
+		} );
+	} );
+
 	describe( 'Route /menus', () => {
 		it( 'redirects to menus when there is a site', async () => {
 			const { response } = await app.run( { request: { url: '/menus/my-site' } } );
@@ -1251,7 +1271,7 @@ describe( 'main app', () => {
 				} );
 
 				expect( response.redirect ).toHaveBeenCalledWith(
-					'https://wordpress.com/reader/search?q=my%20search'
+					'https://wordpress.com/discover/search?q=my%20search'
 				);
 			} );
 
@@ -1266,7 +1286,7 @@ describe( 'main app', () => {
 				} );
 
 				expect( response.redirect ).toHaveBeenCalledWith(
-					'https://wordpress.com/reader/search?q=my%20search'
+					'https://wordpress.com/discover/search?q=my%20search'
 				);
 			} );
 
@@ -1608,5 +1628,14 @@ describe( 'dashboard app', () => {
 		expect( request.context.sectionName ).toBe( 'dashboard-dotcom' );
 		expect( response.statusCode ).not.toBe( 404 );
 		expect( app.getMocks().serverRender ).toHaveBeenCalled();
+	} );
+
+	it( 'serves robots.txt that disallows all paths', async () => {
+		const { response } = await app.run( {
+			request: { url: '/robots.txt', hostname: 'my.wordpress.com' },
+		} );
+
+		expect( response.setHeader ).toHaveBeenCalledWith( 'Content-Type', 'text/plain' );
+		expect( response.send ).toHaveBeenCalledWith( 'User-agent: *\nDisallow: /\n' );
 	} );
 } );

@@ -4,7 +4,6 @@ import { JetpackLogo } from '@automattic/components/src/logos/jetpack-logo';
 import { useQuery } from '@tanstack/react-query';
 import {
 	Button,
-	__experimentalGrid as Grid,
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
 	Icon,
@@ -14,6 +13,7 @@ import { __, sprintf } from '@wordpress/i18n';
 import { wordpress } from '@wordpress/icons';
 import { useAnalytics } from '../../app/analytics';
 import { purchasesRoute } from '../../app/router/me';
+import Grid from '../../components/grid';
 import { commerceGardenPlan } from '../../components/icons';
 import OverviewCard from '../../components/overview-card';
 import { PurchaseExpiryStatus } from '../../components/purchase-expiry-status';
@@ -114,7 +114,7 @@ function JetpackPlanCard( {
 						className="jetpack-plan-card__icons"
 						columns={ 4 }
 						rows={ Math.ceil( productsToDisplay.length / 4 ) }
-						gap={ 2 }
+						gap="sm"
 					>
 						{ productsToDisplay.map( ( product ) => (
 							<Tooltip key={ product.id } text={ product.label } placement="top">

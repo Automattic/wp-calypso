@@ -52,8 +52,7 @@ function setupUseQuery( {
 
 function findCall( mock: jest.Mock, predicate: ( options: QueryOptions ) => boolean ) {
 	return mock.mock.calls.find( ( [ options ] ) => predicate( options as QueryOptions ) ) as
-		| [ QueryOptions ]
-		| undefined;
+		[ QueryOptions ] | undefined;
 }
 
 describe( 'useAchievementsVisibility', () => {

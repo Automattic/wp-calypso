@@ -4,7 +4,11 @@
 import page from '@automattic/calypso-router';
 import { makeLayout, redirectLoggedOut, render as clientRender } from 'calypso/controller';
 import { noSite } from 'calypso/my-sites/controller';
-import { checkoutWpcomSiteless } from '../controller';
+import {
+	checkoutAkismetSiteless,
+	checkoutMarketplaceSiteless,
+	checkoutWpcomSiteless,
+} from '../controller';
 import registerCheckoutRoutes from '../index';
 
 const mockLocaleMiddleware = jest.fn();
@@ -73,5 +77,42 @@ describe( 'checkout routes', () => {
 		expect( studioReturnIndex ).toBeGreaterThanOrEqual( 0 );
 		expect( genericIndex ).toBeGreaterThanOrEqual( 0 );
 		expect( studioReturnIndex ).toBeLessThan( genericIndex );
+	} );
+
+	describe( 'siteless renewals by subscription ID', () => {
+		it.each( [
+			[ '/checkout/akismet/renew/:subscriptionId', checkoutAkismetSiteless ],
+			[ '/checkout/marketplace/renew/:subscriptionId', checkoutMarketplaceSiteless ],
+			[ '/checkout/passport/renew/:subscriptionId', checkoutMarketplaceSiteless ],
+		] )( 'registers %s with its siteless handler', ( path, handler ) => {
+			registerCheckoutRoutes();
+
+			expect( page ).toHaveBeenCalledWith(
+				path,
+				mockLocaleMiddleware,
+				redirectLoggedOut,
+				noSite,
+				handler,
+				makeLayout,
+				clientRender
+			);
+		} );
+
+		// These are four-segment paths, so /checkout/:product/renew/:purchaseId would
+		// swallow them and read the service name as the product slug.
+		it.each( [
+			'/checkout/akismet/renew/:subscriptionId',
+			'/checkout/marketplace/renew/:subscriptionId',
+			'/checkout/passport/renew/:subscriptionId',
+		] )( 'registers %s ahead of the generic renewal route', ( path ) => {
+			registerCheckoutRoutes();
+
+			const sitelessIndex = registrationIndexOf( path );
+			const genericIndex = registrationIndexOf( '/checkout/:product/renew/:purchaseId' );
+
+			expect( sitelessIndex ).toBeGreaterThanOrEqual( 0 );
+			expect( genericIndex ).toBeGreaterThanOrEqual( 0 );
+			expect( sitelessIndex ).toBeLessThan( genericIndex );
+		} );
 	} );
 } );

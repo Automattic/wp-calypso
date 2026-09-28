@@ -1,10 +1,12 @@
 import { activeAgencyQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
+import { useRouter } from '@tanstack/react-router';
 import { __experimentalVStack as VStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useAnalytics } from '../../../app/analytics';
 import { useLocale } from '../../../app/locale';
+import { earnWooPaymentsSetupRoute } from '../../../app/router/agency';
 import { DataViewsCard } from '../../../components/dataviews';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
@@ -31,6 +33,16 @@ export default function EarnWooPayments() {
 	const { recordTracksEvent } = useAnalytics();
 	const locale = useLocale();
 	const { downloadCommissionsReport } = useDownloadCommissionsReport( agencyId );
+	const router = useRouter();
+
+	const navigateToSiteSetup = useCallback(
+		( siteId: number ) =>
+			router.navigate( {
+				to: earnWooPaymentsSetupRoute.fullPath,
+				params: { siteId: String( siteId ) },
+			} ),
+		[ router ]
+	);
 
 	const excludedSiteIds = useMemo(
 		() => sitesWithPluginsStates.map( ( site ) => site.blogId ),
@@ -47,9 +59,7 @@ export default function EarnWooPayments() {
 						agencyId={ agencyId }
 						excludedSiteIds={ excludedSiteIds }
 						recordTracksEvent={ recordTracksEvent }
-						navigate={ ( url ) => {
-							window.location.href = url;
-						} }
+						onSelectSite={ navigateToSiteSetup }
 					/>
 				) : undefined
 			}
@@ -81,6 +91,7 @@ export default function EarnWooPayments() {
 							isLoadingWooPaymentsData={ isLoadingWooPaymentsData }
 							recordTracksEvent={ recordTracksEvent }
 							onDownloadReport={ downloadCommissionsReport }
+							onContinueSetup={ navigateToSiteSetup }
 						/>
 					</DataViewsCard>
 				</VStack>

@@ -20,10 +20,10 @@ export const handleSupportInteractionsFetch = async (
 				path: `/support-interactions${ fullPath ?? '' }`,
 				apiNamespace: 'wpcom/v2',
 				body: data,
-		  } )
+			} )
 		: await apiFetch( {
 				method,
 				path: `/help-center/support-interactions${ fullPath ?? '' }`,
 				data,
-		  } );
+			} );
 };

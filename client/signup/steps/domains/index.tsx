@@ -1,4 +1,5 @@
 import { FreeDomainSuggestion, useMyDomainInputMode } from '@automattic/api-core';
+import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import {
 	isDomainForGravatarFlow,
@@ -71,6 +72,7 @@ const DomainSearchUI = (
 
 	const isDomainOnlyFlow = flowName === 'domain';
 	const isOnboardingWithEmailFlow = flowName === 'onboarding-with-email';
+	const showNamePulseSearch = isEnabled( 'domain-search/name-pulse' ) && isDomainOnlyFlow;
 
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const site = useSelector( getSelectedSite );
@@ -87,15 +89,16 @@ const DomainSearchUI = (
 	// eslint-disable-next-line no-nested-ternary
 	const currentSiteId = site?.ID ? site.ID : siteId ? parseInt( siteId, 10 ) : undefined;
 
-	const { query, setQuery, clearQuery } = useQueryHandler( {
+	const { query, setQuery, clearQuery, resetQuery } = useQueryHandler( {
 		initialQuery: queryObject.new,
 		currentSiteUrl,
+		persistQuery: ! showNamePulseSearch,
 	} );
 
 	const events = useMemo( () => {
 		return {
 			onQueryChange: setQuery,
-			onQueryClear: clearQuery,
+			onQueryClear: showNamePulseSearch ? resetQuery : clearQuery,
 			beforeAddDomainToCart: ( product: MinimalRequestCartProduct ) => {
 				if ( isDomainForGravatarFlow( flowName ) ) {
 					return {
@@ -270,6 +273,8 @@ const DomainSearchUI = (
 		siteSlug,
 		setQuery,
 		clearQuery,
+		resetQuery,
+		showNamePulseSearch,
 		submitSignupStep,
 		goToNextStep,
 		goToStep,
@@ -287,7 +292,7 @@ const DomainSearchUI = (
 	const config = useMemo( () => {
 		const allowedTlds = Array.isArray( allowedTldParam )
 			? allowedTldParam
-			: allowedTldParam?.split( ',' ) ?? [];
+			: ( allowedTldParam?.split( ',' ) ?? [] );
 
 		return {
 			vendor: getSuggestionsVendor( {
@@ -301,14 +306,21 @@ const DomainSearchUI = (
 				! isDomainOnlyFlow && ! isDomainForGravatarFlow( flowName ) && ! isOnboardingWithEmailFlow,
 			includeOwnedDomainInSuggestions: ! isDomainOnlyFlow,
 			allowsUsingOwnDomain: ! isDomainForGravatarFlow( flowName ) && ! isOnboardingWithEmailFlow,
+			showNamePulseSearch,
 		};
-	}, [ flowName, isDomainOnlyFlow, isOnboardingWithEmailFlow, allowedTldParam ] );
+	}, [
+		flowName,
+		isDomainOnlyFlow,
+		isOnboardingWithEmailFlow,
+		allowedTldParam,
+		showNamePulseSearch,
+	] );
 
 	const slots = useMemo( () => {
 		return {
 			BeforeResults: () => {
 				if (
-					isDomainOnlyFlow ||
+					( isDomainOnlyFlow && ! config.showNamePulseSearch ) ||
 					isDomainForGravatarFlow( flowName ) ||
 					isFreeFlow( flowName ) ||
 					isOnboardingWithEmailFlow
@@ -331,7 +343,7 @@ const DomainSearchUI = (
 				return <FreeDomainForAYearPromo textOnly />;
 			},
 		};
-	}, [ flowName, isOnboardingWithEmailFlow, isDomainOnlyFlow ] );
+	}, [ flowName, isOnboardingWithEmailFlow, isDomainOnlyFlow, config.showNamePulseSearch ] );
 
 	const flowAllowsMultipleDomainsInCart = isDomainOnlyFlow;
 
@@ -447,7 +459,8 @@ const DomainSearchUI = (
 			hideBack={ hideBack }
 			backUrl={ backUrl }
 			backLabelText={ backLabelText }
-			isWideLayout
+			isWideLayout={ ! config.showNamePulseSearch }
+			isFullLayout={ config.showNamePulseSearch }
 			stepContent={
 				<WPCOMDomainSearch
 					className="domain-search--step-wrapper"

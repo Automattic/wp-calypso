@@ -1,7 +1,6 @@
 import config from '@automattic/calypso-config';
 import { useTranslate } from 'i18n-calypso';
 import { transferStatus, type as domainType } from 'calypso/lib/domains/constants';
-import { isCancelable, isRemovable } from 'calypso/lib/purchases';
 import { cancelPurchase } from 'calypso/me/purchases/paths';
 import RemovePurchase from 'calypso/me/purchases/remove-purchase';
 import { getCancelPurchaseUrlFor } from 'calypso/my-sites/purchases/paths';
@@ -53,14 +52,14 @@ const DomainDeleteInfoCard = ( {
 			hasLoadedSites
 			hasLoadedUserPurchasesFromServer
 			site={ selectedSite }
-			purchase={ purchase.rawPurchase }
+			purchase={ purchase }
 			className={ removePurchaseClassName }
 		>
 			{ buttonLabel }
 		</RemovePurchase>
 	);
 
-	if ( isRemovable( purchase ) ) {
+	if ( purchase.is_removable ) {
 		return (
 			<DomainInfoCard
 				type="custom"
@@ -71,13 +70,13 @@ const DomainDeleteInfoCard = ( {
 		);
 	}
 
-	if ( ! isCancelable( purchase ) ) {
+	if ( ! purchase.is_cancelable ) {
 		return null;
 	}
 
 	const link = config.isEnabled( 'calypso/all-domain-management' )
-		? cancelPurchase( selectedSite.slug, purchase.id )
-		: getCancelPurchaseUrlFor( selectedSite.slug, purchase.id );
+		? cancelPurchase( selectedSite.slug, purchase.ID )
+		: getCancelPurchaseUrlFor( selectedSite.slug, purchase.ID );
 
 	return (
 		<DomainInfoCard

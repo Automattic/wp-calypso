@@ -76,7 +76,7 @@ const ActivityLogV2: FunctionComponent = () => {
 					showHeader
 						? translate(
 								'This is the complete event history for your site. Filter by date range and/or activity type.'
-						  )
+							)
 						: undefined
 				}
 			>

@@ -57,8 +57,8 @@ export default function PluginsListDataViews( {
 	if ( isA8CForAgencies() ) {
 		defaultLayouts = shouldUseListView ? { list: {} } : { table: {} };
 	}
-	const pluginUpdateCount = currentPlugins.filter(
-		( plugin ) => plugin.status?.includes( PLUGINS_STATUS.UPDATE )
+	const pluginUpdateCount = currentPlugins.filter( ( plugin ) =>
+		plugin.status?.includes( PLUGINS_STATUS.UPDATE )
 	).length;
 
 	const fields = useFields( bulkActionDialog, openPluginSitesPane, shouldUseListView );

@@ -1,9 +1,17 @@
 import { agencySiteQuery, siteBySlugQuery } from '@automattic/api-queries';
-import { isEnabled } from '@automattic/calypso-config';
 import { useQuery } from '@tanstack/react-query';
 import { __experimentalVStack as VStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { backup, category, chartBar, formatListBullets, pending, shield } from '@wordpress/icons';
+import {
+	backup,
+	category,
+	chartBar,
+	code,
+	formatListBullets,
+	pending,
+	settings,
+	shield,
+} from '@wordpress/icons';
 import { agencySiteRoute } from '../../../app/router/agency';
 import {
 	SidebarBackButton,
@@ -20,7 +28,10 @@ export default function AgencySiteSidebar() {
 	const { data: fullSite } = useQuery( siteBySlugQuery( siteSlug ) );
 	const supportsPerformance = fullSite ? siteTypeSupportsFeature( fullSite, 'performance' ) : false;
 	const supportsMonitoring = fullSite ? siteTypeSupportsFeature( fullSite, 'monitoring' ) : false;
-	const isApmEnabled = isEnabled( 'performance/apm' );
+	const supportsDeployments = fullSite ? siteTypeSupportsFeature( fullSite, 'deployments' ) : false;
+	const supportsSettings = fullSite
+		? siteTypeSupportsFeature( fullSite, 'settings' ) && !! fullSite.capabilities?.manage_options
+		: false;
 
 	return (
 		<VStack spacing={ 2 }>
@@ -38,25 +49,11 @@ export default function AgencySiteSidebar() {
 						>
 							{ __( 'Overview' ) }
 						</SidebarMenuItem>
-						{ supportsPerformance &&
-							( isApmEnabled ? (
-								<SidebarExpandableMenuItem
-									label={ __( 'Performance' ) }
-									icon={ chartBar }
-									to={ `/sites/${ siteSlug }/performance` }
-								>
-									<SidebarMenuItem to={ `/sites/${ siteSlug }/performance/frontend` }>
-										{ __( 'Frontend' ) }
-									</SidebarMenuItem>
-									<SidebarMenuItem to={ `/sites/${ siteSlug }/performance/backend` }>
-										{ __( 'Backend' ) }
-									</SidebarMenuItem>
-								</SidebarExpandableMenuItem>
-							) : (
-								<SidebarMenuItem icon={ chartBar } to={ `/sites/${ siteSlug }/performance` }>
-									{ __( 'Performance' ) }
-								</SidebarMenuItem>
-							) ) }
+						{ supportsPerformance && (
+							<SidebarMenuItem icon={ chartBar } to={ `/sites/${ siteSlug }/performance` }>
+								{ __( 'Performance' ) }
+							</SidebarMenuItem>
+						) }
 						{ site.has_backup && (
 							<SidebarMenuItem icon={ backup } to={ `/sites/${ siteSlug }/backups` }>
 								{ __( 'Backups' ) }
@@ -90,6 +87,16 @@ export default function AgencySiteSidebar() {
 								{ __( 'Activity' ) }
 							</SidebarMenuItem>
 						</SidebarExpandableMenuItem>
+						{ supportsDeployments && (
+							<SidebarMenuItem icon={ code } to={ `/sites/${ siteSlug }/deployments` }>
+								{ __( 'Deployments' ) }
+							</SidebarMenuItem>
+						) }
+						{ supportsSettings && (
+							<SidebarMenuItem icon={ settings } to={ `/sites/${ siteSlug }/settings` }>
+								{ __( 'Settings' ) }
+							</SidebarMenuItem>
+						) }
 					</SidebarMenu>
 				</VStack>
 			) }

@@ -46,7 +46,7 @@ const EmailedLoginLinkSuccessfullyJetpackConnect: FC< Props > = ( {
 								strong: <strong />,
 							},
 						}
-				  )
+					)
 				: translate( 'We sent a message to log in to WordPress.com' ),
 		} );
 	}, [ setHeaders, translate, emailAddress ] );

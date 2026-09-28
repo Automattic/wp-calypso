@@ -13,7 +13,6 @@ import {
 	Button,
 	Flex,
 	TextareaControl,
-	__experimentalDivider as Divider,
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
 	__experimentalHStack as HStack,
@@ -23,10 +22,11 @@ import { __, sprintf } from '@wordpress/i18n';
 import clsx from 'clsx';
 import { type ReactNode, useState } from 'react';
 import Breadcrumbs from '../../app/breadcrumbs';
-import { useLocale } from '../../app/locale';
+import { useIntlLocale } from '../../app/locale';
 import { receiptRoute, taxDetailsRoute } from '../../app/router/me';
 import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import { Card, CardBody } from '../../components/card';
+import Divider from '../../components/divider';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { isAkismetPro500Plan } from '../../utils/akismet';
@@ -43,7 +43,12 @@ import {
 	renderJetpackSearch10kTierBreakdown,
 	doesIntroductoryOfferHaveDifferentTermLengthThanProduct,
 } from './utils';
-import type { Receipt, ReceiptItem, ReceiptItemCostOverride } from '@automattic/api-core';
+import type {
+	Receipt,
+	ReceiptItem,
+	ReceiptItemCostOverride,
+	TaxCustomerInfo,
+} from '@automattic/api-core';
 import './styles.scss';
 
 export interface IntroductoryOfferTerms {
@@ -79,7 +84,7 @@ export default function Receipt() {
 		tax_state: receipt.tax_state || historyReceipt?.tax_state,
 	};
 
-	const locale = useLocale();
+	const locale = useIntlLocale();
 
 	const handlePrint = () => {
 		window.print();
@@ -116,12 +121,12 @@ export default function Receipt() {
 													/* translators: %s: organization name */
 													__( 'Payment processed by %s' ),
 													displayReceipt.org
-											  )
+												)
 											: sprintf(
 													/* translators: %s: organization name */
 													__( 'by %s' ),
 													displayReceipt.org
-											  ) }
+												) }
 									</Text>
 									{ displayReceipt.address && (
 										<Text variant="muted" size={ 11 }>
@@ -190,15 +195,18 @@ function ReceiptDetails( { receipt }: { receipt: Receipt } ) {
 
 export function BillingDetailsField( { receipt }: { receipt: Receipt } ) {
 	const [ billingDetailsText, setBillingDetailsText ] = useState(
-		receipt.cc_num !== 'XXXX' ? `${ receipt.cc_name }\n${ receipt.cc_email }` : ''
+		receipt.cc_num !== 'XXXX'
+			? [ receipt.cc_name, receipt.cc_email ].filter( Boolean ).join( '\n' )
+			: ''
 	);
-
-	if ( receipt.cc_num === 'XXXX' || ( ! receipt.cc_name && ! receipt.cc_email ) ) {
-		return null;
-	}
+	const isEmpty = billingDetailsText.trim().length === 0;
 
 	return (
-		<VStack spacing={ 1 } alignment="flex-start" className="receipt-billing-details">
+		<VStack
+			spacing={ 1 }
+			alignment="flex-start"
+			className={ clsx( 'receipt-billing-details', { 'is-empty': isEmpty } ) }
+		>
 			<Text upperCase variant="muted" size={ 11 }>
 				{ __( 'Billing details' ) }
 			</Text>
@@ -211,13 +219,7 @@ export function BillingDetailsField( { receipt }: { receipt: Receipt } ) {
 				__nextHasNoMarginBottom
 			/>
 			{ /* A printed textarea clips its overflow, so mirror the text into a print-only element. */ }
-			<div
-				className={ clsx( 'receipt-billing-details-printable', {
-					'is-empty': billingDetailsText.trim().length === 0,
-				} ) }
-			>
-				{ billingDetailsText }
-			</div>
+			<div className="receipt-billing-details-printable">{ billingDetailsText }</div>
 			<Text variant="muted" size={ 11 } className="receipt-billing-details-description">
 				{ __(
 					'Use this field to add your billing information (eg. business address) before printing.'
@@ -227,8 +229,8 @@ export function BillingDetailsField( { receipt }: { receipt: Receipt } ) {
 	);
 }
 
-function ReceiptTaxDetails( { receipt }: { receipt: Receipt } ) {
-	const hasReceiptTaxDetails = Boolean( receipt.tax_state ) || receipt.tax_is_for_business === true;
+export function ReceiptTaxDetails( { receipt }: { receipt: Receipt } ) {
+	const hasReceiptTaxDetails = Boolean( receipt.tax_state );
 	const { data: countryList } = useSuspenseQuery( countryListQuery() );
 	const countryName =
 		countryList.find( ( country ) => country.code === receipt.tax_country_code )?.name ??
@@ -256,7 +258,7 @@ function ReceiptTaxDetails( { receipt }: { receipt: Receipt } ) {
 		} );
 	}
 
-	if ( typeof receipt.tax_is_for_business === 'boolean' ) {
+	if ( isBusinessUseTaxRegion( receipt ) && typeof receipt.tax_is_for_business === 'boolean' ) {
 		taxDetails.push( {
 			key: 'business-use',
 			label: __( 'Business use' ),
@@ -286,8 +288,30 @@ type ReceiptTaxDetail = {
 	value: ReactNode;
 };
 
-function UserVatDetails( { receipt }: { receipt: Receipt } ) {
-	const { data: vatDetails } = useSuspenseQuery( userTaxDetailsQuery() );
+/**
+ * The tax identity to print on a receipt.
+ *
+ * A receipt describes a supply that already happened, so it has to name the
+ * party it happened with. The API says who that was, taking account of any
+ * reissue that has since superseded the receipt. The user's current details are
+ * only a stand-in for receipts served by an API that predates the field, where
+ * they remain the best guess available.
+ */
+function useReceiptVatDetails( receipt: Receipt ): TaxCustomerInfo {
+	const { data: userTaxDetails } = useSuspenseQuery( userTaxDetailsQuery() );
+
+	return (
+		receipt.tax_customer_info ?? {
+			country: userTaxDetails.country ?? '',
+			id: userTaxDetails.id ?? null,
+			name: userTaxDetails.name ?? null,
+			address: userTaxDetails.address ?? null,
+		}
+	);
+}
+
+export function UserVatDetails( { receipt }: { receipt: Receipt } ) {
+	const vatDetails = useReceiptVatDetails( receipt );
 	const sendEmailMutation = useMutation(
 		withSnackbar( sendReceiptEmailMutation(), {
 			success: __( 'Your receipt was sent by email successfully.' ),
@@ -414,13 +438,21 @@ function getPaymentMethodText( receipt: Receipt ): string | null {
 	return null;
 }
 
-function getBusinessTaxStateName( state: string ): string {
-	const businessUseTaxStates: Record< string, string > = {
-		CT: 'Connecticut',
-		OH: 'Ohio',
-	};
+const BUSINESS_USE_TAX_STATES: Record< string, string > = {
+	CT: 'Connecticut',
+	OH: 'Ohio',
+};
 
-	return businessUseTaxStates[ state.toUpperCase() ] ?? state;
+function getBusinessTaxStateName( state: string ): string {
+	return BUSINESS_USE_TAX_STATES[ state.toUpperCase() ] ?? state;
+}
+
+function isBusinessUseTaxRegion( receipt: Receipt ): receipt is Receipt & { tax_state: string } {
+	if ( receipt.tax_country_code?.toUpperCase() !== 'US' || ! receipt.tax_state ) {
+		return false;
+	}
+
+	return Boolean( BUSINESS_USE_TAX_STATES[ receipt.tax_state.toUpperCase() ] );
 }
 
 function mergeTaxIsForBusiness(
@@ -435,7 +467,7 @@ function mergeTaxIsForBusiness(
 }
 
 function getBusinessTaxSuffixLabel( receipt: Receipt ): string {
-	if ( ! receipt.tax_is_for_business || ! receipt.tax_state ) {
+	if ( ! receipt.tax_is_for_business || ! isBusinessUseTaxRegion( receipt ) ) {
 		return '';
 	}
 
@@ -447,7 +479,7 @@ function getBusinessTaxSuffixLabel( receipt: Receipt ): string {
 }
 
 function hasBusinessUseTaxDetails( receipt: Receipt ): boolean {
-	return receipt.tax_is_for_business === true && Boolean( receipt.tax_state );
+	return receipt.tax_is_for_business === true && isBusinessUseTaxRegion( receipt );
 }
 
 function ReceiptLineItems( { receipt }: { receipt: Receipt } ) {
@@ -530,7 +562,7 @@ function ReceiptLineItem( { item, receipt }: { item: ReceiptItem; receipt: Recei
 				__( '%1$s (%2$d requests/month)' ),
 				item.variation.replace( /\s*\(.*$/, '' ).trim(),
 				500 * parseInt( String( item.licensed_quantity ) )
-		  )
+			)
 		: item.variation;
 	const shouldShowDiscount = areReceiptItemDiscountsAccurate( receipt.date );
 	const subtotalInteger = shouldShowDiscount
@@ -597,7 +629,7 @@ function ReceiptItemDiscounts( { item, receiptDate }: { item: ReceiptItem; recei
 						? formatCurrency( -costOverride.discountAmount, item.currency, {
 								isSmallestUnit: true,
 								stripZeros: true,
-						  } )
+							} )
 						: '';
 
 				if (
@@ -736,12 +768,12 @@ function getIntroductoryOfferIntervalDisplay( {
 							/* translators: %d: number of months */
 							__( 'Price for first %d months' ),
 							intervalCount
-					  )
+						)
 					: sprintf(
 							/* translators: %d: number of months */
 							__( 'Discount for first %d months' ),
 							intervalCount
-					  );
+						);
 			}
 		}
 		if ( intervalUnit === 'year' ) {
@@ -753,12 +785,12 @@ function getIntroductoryOfferIntervalDisplay( {
 							/* translators: %d: number of years */
 							__( 'Price for first %d years' ),
 							intervalCount
-					  )
+						)
 					: sprintf(
 							/* translators: %d: number of years */
 							__( 'Discount for first %d years' ),
 							intervalCount
-					  );
+						);
 			}
 		}
 	}
@@ -784,7 +816,7 @@ function getIntroductoryOfferIntervalDisplay( {
 								/* translators: %d: number of renewals */
 								__( 'The first %d renewals are also discounted.' ),
 								remainingRenewalsUsingOffer
-						  );
+							);
 			}
 		} else if ( isPriceIncrease ) {
 			text +=
@@ -794,7 +826,7 @@ function getIntroductoryOfferIntervalDisplay( {
 							/* translators: %d: number of renewals */
 							__( 'Applies for %d renewals' ),
 							remainingRenewalsUsingOffer
-					  );
+						);
 		} else {
 			text +=
 				remainingRenewalsUsingOffer === 1
@@ -803,7 +835,7 @@ function getIntroductoryOfferIntervalDisplay( {
 							/* translators: %d: number of renewals */
 							__( '%d discounted renewals remaining.' ),
 							remainingRenewalsUsingOffer
-					  );
+						);
 		}
 	}
 

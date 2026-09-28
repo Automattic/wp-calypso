@@ -44,10 +44,8 @@ export const deleteLegacyContactMutation = () =>
 			// Drop the contact from the cached list right away so the UI returns to
 			// the empty state immediately, rather than showing the removed contact
 			// until the invalidation refetch below completes.
-			queryClient.setQueryData< LegacyContact[] >(
-				legacyContactsQuery().queryKey,
-				( contacts ) =>
-					contacts?.filter( ( contact ) => contact.legacy_contact_id !== legacyContactId )
+			queryClient.setQueryData< LegacyContact[] >( legacyContactsQuery().queryKey, ( contacts ) =>
+				contacts?.filter( ( contact ) => contact.legacy_contact_id !== legacyContactId )
 			);
 			queryClient.invalidateQueries( legacyContactsQuery() );
 			// Drop the single-contact query from the cache; it holds a sensitive

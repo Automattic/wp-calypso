@@ -121,10 +121,10 @@ export const loadBlocksWithCustomizations = ( optionalBlocks: Block[] = [] ) => 
 							const content =
 								providedUrl && providedUrl.protocol === 'https:'
 									? '<a href="' +
-									  node.textContent +
-									  '" rel="nofollow ugc">' +
-									  node.textContent +
-									  '</a>'
+										node.textContent +
+										'" rel="nofollow ugc">' +
+										node.textContent +
+										'</a>'
 									: node.textContent;
 							return createBlock( 'core/paragraph', { content } );
 						},

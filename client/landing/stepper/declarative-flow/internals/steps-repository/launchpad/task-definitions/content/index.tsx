@@ -1,4 +1,4 @@
-import { updateLaunchpadSettings } from '@automattic/data-stores/src/queries/use-launchpad';
+import { updateLaunchpadSettings } from '@automattic/launchpad';
 import { isNewsletterFlow } from '@automattic/onboarding';
 import { TaskAction } from '../../types';
 

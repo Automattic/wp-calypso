@@ -1,4 +1,5 @@
-import { Onboard, OnboardActions, updateLaunchpadSettings } from '@automattic/data-stores';
+import { Onboard, OnboardActions } from '@automattic/data-stores';
+import { updateLaunchpadSettings } from '@automattic/launchpad';
 import { EXAMPLE_FLOW } from '@automattic/onboarding';
 import { dispatch, useDispatch } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';

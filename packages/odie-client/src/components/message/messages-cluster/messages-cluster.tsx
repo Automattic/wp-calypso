@@ -85,12 +85,7 @@ function clusterMessagesBySender( messages: Message[] ) {
 		message: Message,
 		currentGroup: {
 			role:
-				| MessageRole
-				| 'csat'
-				| 'attachment'
-				| 'feedback'
-				| 'zendesk-intro'
-				| 'business-automated';
+				MessageRole | 'csat' | 'attachment' | 'feedback' | 'zendesk-intro' | 'business-automated';
 			messages: Message[];
 		}
 	) => {

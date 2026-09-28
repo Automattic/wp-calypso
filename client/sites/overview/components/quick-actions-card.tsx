@@ -76,7 +76,7 @@ const QuickActionsCard: FC = () => {
 					activeThemeData[ 0 ]?.stylesheet,
 					site?.ID,
 					activeThemeData[ 0 ]?.is_block_theme
-			  )
+				)
 			: ''
 	);
 	const importSiteUrl = addQueryArgs( { siteSlug: site?.slug }, '/setup/site-migration' );

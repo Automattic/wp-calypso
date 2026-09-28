@@ -9,6 +9,7 @@ import type { Site } from '@automattic/api-core';
 const EnvironmentSwitcher = ( { site }: { site: Site } ) => {
 	const {
 		productionSite,
+		stagingSiteId,
 		stagingSite,
 		isStagingSiteCreating,
 		isStagingSiteDeleting,
@@ -50,6 +51,7 @@ const EnvironmentSwitcher = ( { site }: { site: Site } ) => {
 					<EnvironmentSwitcherDropdown
 						currentSite={ site }
 						productionSite={ productionSite }
+						stagingSiteId={ stagingSiteId }
 						stagingSite={ stagingSite }
 						onClose={ onClose }
 						onAddStagingSite={ handleAddStagingSite }

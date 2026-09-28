@@ -149,7 +149,7 @@ const CommercialSiteUpgradeNotice = ( {
 	const bannerTitle = showPaywallNotice
 		? ( translate( 'You need to upgrade to a commercial license to continue using %(product)s', {
 				args: { product: STATS_PRODUCT_NAME },
-		  } ) as string )
+			} ) as string )
 		: translate( 'Upgrade to Stats Commercial' );
 
 	return (

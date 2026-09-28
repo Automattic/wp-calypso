@@ -283,7 +283,7 @@ const ServerCredentialsForm: FunctionComponent< Props > = ( {
 								),
 							},
 						}
-				  )
+					)
 				: translate(
 						'Read through the {{a}}%(hostName)s support site{{/a}} to learn how to obtain your credentials.',
 						{
@@ -308,7 +308,7 @@ const ServerCredentialsForm: FunctionComponent< Props > = ( {
 								),
 							},
 						}
-				  );
+					);
 		}
 		return translate( 'Your hosting provider will be able to supply this information to you.' );
 	};

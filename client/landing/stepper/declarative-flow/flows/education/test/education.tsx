@@ -224,6 +224,24 @@ describe( 'Education Flow', () => {
 		} );
 	} );
 
+	it( 'personalizes the domain search copy and hides the free-domain promo', () => {
+		let stepsProps: ReturnType< NonNullable< typeof educationFlow.useStepsProps > > | undefined;
+		const StepsProps = () => {
+			stepsProps = educationFlow.useStepsProps?.();
+			return null;
+		};
+
+		renderWithProvider( <StepsProps /> );
+
+		expect( stepsProps?.[ STEPS.DOMAIN_SEARCH.slug ] ).toEqual( {
+			headerText: 'Your Student Plan includes a free domain name',
+			subHeaderText:
+				'Get a .blog or .art domain name for free, or choose a different extension at regular price. You can also connect a domain you already own.',
+			hideFreeDomainPromo: true,
+			freeForFirstYearTlds: [ 'blog', 'art' ],
+		} );
+	} );
+
 	describe( 'deep-link guard', () => {
 		const renderSideEffect = ( currentStepSlug: string ) => {
 			const navigate = jest.fn();

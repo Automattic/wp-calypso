@@ -1,11 +1,5 @@
 export type FileBrowserNodeType =
-	| 'file'
-	| 'dir'
-	| 'wordpress'
-	| 'table'
-	| 'theme'
-	| 'plugin'
-	| 'archive';
+	'file' | 'dir' | 'wordpress' | 'table' | 'theme' | 'plugin' | 'archive';
 
 export type FileType =
 	| 'dir'

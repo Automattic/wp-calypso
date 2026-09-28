@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import { renderHook } from '@testing-library/react';
+import { act, renderHook } from '@testing-library/react';
 import { usePostTransferPluginRecovery } from '../use-post-transfer-plugin-recovery';
 
 const mockDispatch = jest.fn();
@@ -45,78 +45,105 @@ const render = ( props?: Partial< Props > ) =>
 	renderHook( ( p: Props ) => usePostTransferPluginRecovery( p ), {
 		initialProps: { ...defaults, ...props },
 	} );
-const tick = () => mockIntervalCallback?.();
+const tick = () => act( () => mockIntervalCallback?.() );
 // The in-flight guard clears in the dispatched thunk's `.finally`, a microtask; let it settle.
-const settle = () => Promise.resolve();
+const settle = () => act( () => Promise.resolve() );
+// Backoff is measured on the wall clock, which modern fake timers move with them.
+const elapse = ( ms: number ) => act( () => jest.advanceTimersByTime( ms ) );
 
 describe( 'usePostTransferPluginRecovery', () => {
 	beforeEach( () => {
+		jest.useFakeTimers();
 		jest.clearAllMocks();
 		mockIntervalCallback = null;
 		mockIntervalDelay = null;
 	} );
+	afterEach( () => jest.useRealTimers() );
 
-	it( 'polls the site plugins on an interval while enabled', () => {
+	it( 'lists the site plugins as soon as it is enabled, then on an interval', () => {
 		render( { installedPlugin: null } );
+		expect( fetchSitePlugins ).toHaveBeenCalledTimes( 1 );
+		expect( fetchSitePlugins ).toHaveBeenCalledWith( 1 );
 		expect( mockIntervalDelay ).toBe( 3000 );
 		tick();
-		expect( fetchSitePlugins ).toHaveBeenCalledWith( 1 );
+		expect( fetchSitePlugins ).toHaveBeenCalledTimes( 2 );
 	} );
 
-	it( 'does not poll while disabled', () => {
+	it( 'does nothing while disabled', () => {
 		render( { enabled: false } );
+		expect( fetchSitePlugins ).not.toHaveBeenCalled();
 		expect( mockIntervalDelay ).toBeNull();
 	} );
 
-	it( 'nudges an installed-but-inactive plugin active on a tick', () => {
+	it( 'nudges an installed-but-inactive plugin active without waiting for a tick', () => {
 		render();
-		tick();
 		expect( activatePlugin ).toHaveBeenCalledWith( 1, {
 			slug: 'sensei-pro',
 			id: 'sensei-pro/sensei-pro',
 		} );
 	} );
 
-	it( 'does not consume the retry budget while it cannot yet activate', async () => {
+	it( 'activates the moment the capability gap closes', () => {
 		const { rerender } = render( { canActivate: false } );
 		tick();
 		tick();
 		expect( activatePlugin ).not.toHaveBeenCalled();
 
-		// Once ready, all attempts remain available.
 		rerender( defaults );
-		tick();
-		await settle();
-		tick();
-		await settle();
-		tick();
-		expect( activatePlugin ).toHaveBeenCalledTimes( 3 );
+		expect( activatePlugin ).toHaveBeenCalledTimes( 1 );
 	} );
 
 	it( 'does not start a new attempt while the previous one is still in flight', () => {
 		render();
-		tick();
+		elapse( 60000 );
 		tick();
 		tick();
 		expect( activatePlugin ).toHaveBeenCalledTimes( 1 );
 	} );
 
-	it( 'retries a bounded number of times once attempts settle, not forever', async () => {
+	// The backend activates the plugin itself once its job runs, so a retry here is a fallback that
+	// should not hammer a site still coming up — but it must not stop either, since that job can fail.
+	it( 'backs off between attempts instead of giving up', async () => {
 		render();
-		for ( let i = 0; i < 6; i++ ) {
-			tick();
-			await settle();
-		}
+		await settle();
+		expect( activatePlugin ).toHaveBeenCalledTimes( 1 );
+
+		elapse( 1000 );
+		tick();
+		expect( activatePlugin ).toHaveBeenCalledTimes( 1 );
+
+		elapse( 2000 );
+		tick();
+		await settle();
+		expect( activatePlugin ).toHaveBeenCalledTimes( 2 );
+
+		elapse( 3000 );
+		tick();
+		expect( activatePlugin ).toHaveBeenCalledTimes( 2 );
+
+		elapse( 3000 );
+		tick();
+		await settle();
 		expect( activatePlugin ).toHaveBeenCalledTimes( 3 );
+
+		elapse( 12000 );
+		tick();
+		await settle();
+		elapse( 24000 );
+		tick();
+		await settle();
+		elapse( 30000 );
+		tick();
+		await settle();
+		expect( activatePlugin ).toHaveBeenCalledTimes( 6 );
 	} );
 
 	it( 'refreshes the plugin list right after activating, without waiting for the next poll', async () => {
 		render();
-		tick();
 		expect( activatePlugin ).toHaveBeenCalledTimes( 1 );
-		const pollFetches = fetchSitePlugins.mock.calls.length;
+		const fetchesBeforeSettle = fetchSitePlugins.mock.calls.length;
 		await settle();
-		expect( fetchSitePlugins.mock.calls.length ).toBeGreaterThan( pollFetches );
+		expect( fetchSitePlugins.mock.calls.length ).toBeGreaterThan( fetchesBeforeSettle );
 		expect( fetchSitePlugins ).toHaveBeenLastCalledWith( 1 );
 	} );
 
@@ -126,13 +153,12 @@ describe( 'usePostTransferPluginRecovery', () => {
 		expect( activatePlugin ).not.toHaveBeenCalled();
 	} );
 
-	it( 'waits to activate until the plugin appears in the refreshed list', () => {
+	it( 'activates as soon as the plugin appears in the refreshed list', () => {
 		const { rerender } = render( { installedPlugin: null } );
 		tick();
 		expect( activatePlugin ).not.toHaveBeenCalled();
 
 		rerender( defaults );
-		tick();
 		expect( activatePlugin ).toHaveBeenCalledTimes( 1 );
 	} );
 } );

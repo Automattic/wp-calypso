@@ -26,7 +26,9 @@ export default function HundredYearPlanSummary( {
 			density={ density }
 			decoration={ <Icon icon={ institution } /> }
 			badges={
-				settings.wpcom_locked_mode ? [ { text: __( 'Site locked' ), intent: 'info' as const } ] : []
+				settings.wpcom_locked_mode
+					? [ { text: __( 'Site locked' ), intent: 'informational' as const } ]
+					: []
 			}
 		/>
 	);

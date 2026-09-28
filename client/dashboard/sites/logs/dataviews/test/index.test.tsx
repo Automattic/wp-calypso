@@ -4,7 +4,8 @@
 
 import '@testing-library/jest-dom';
 import { LogType, type Site } from '@automattic/api-core';
-import { screen } from '@testing-library/react';
+import { queryClient as appQueryClient } from '@automattic/api-queries';
+import { fireEvent, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { render } from '../../../../test-utils';
@@ -42,12 +43,26 @@ const mockSite: DeepPartial< Site > = {
 	slug: 'test-site',
 };
 
+// Changing a view saves it and reads it back, so the fake remembers what was saved.
 function mockPreferences() {
+	let preferences: Record< string, unknown > = {};
+
 	nock( API_BASE )
 		.persist()
 		.get( '/rest/v1.1/me/preferences' )
 		.query( true )
-		.reply( 200, { calypso_preferences: {} } );
+		.reply( 200, () => ( { calypso_preferences: preferences } ) );
+
+	nock( API_BASE )
+		.persist()
+		.post( '/rest/v1.1/me/preferences' )
+		.reply( 200, ( uri, body ) => {
+			const { calypso_preferences: saved } = body as {
+				calypso_preferences: Record< string, unknown >;
+			};
+			preferences = { ...preferences, ...saved };
+			return { calypso_preferences: preferences };
+		} );
 }
 
 function mockPhpLogsOnce() {
@@ -75,10 +90,15 @@ function mockPhpLogsOnce() {
 		} );
 }
 
-function mockServerLogsOnce() {
+function mockServerLogs() {
+	const requestedQueries: Record< string, unknown >[] = [];
 	nock( API_BASE )
+		.persist()
 		.get( `/wpcom/v2/sites/${ mockSiteId }/hosting/logs` )
-		.query( true )
+		.query( ( query ) => {
+			requestedQueries.push( query );
+			return true;
+		} )
 		.reply( 200, {
 			message: 'ok',
 			data: {
@@ -109,6 +129,7 @@ function mockServerLogsOnce() {
 				scroll_id: null,
 			},
 		} );
+	return requestedQueries;
 }
 
 const fixedDateRange = {
@@ -144,7 +165,7 @@ describe( 'SiteLogsDataViews', () => {
 
 	test( 'renders Server logs', async () => {
 		mockPreferences();
-		mockServerLogsOnce();
+		mockServerLogs();
 
 		render(
 			<SiteLogsDataViews
@@ -190,6 +211,35 @@ describe( 'SiteLogsDataViews', () => {
 		expect( autoRefresh ).not.toHaveBeenCalled();
 	} );
 
+	test( 'picking a filter from the menu makes no new logs request', async () => {
+		mockPreferences();
+		const requestedQueries = mockServerLogs();
+		appQueryClient.clear();
+		const user = userEvent.setup();
+
+		render(
+			<SiteLogsDataViews
+				gmtOffset={ -8 }
+				timezoneString="America/Los_Angeles"
+				site={ mockSite as Site }
+				dateRange={ fixedDateRange }
+				autoRefresh={ false }
+				setAutoRefresh={ jest.fn() }
+				logType={ LogType.SERVER }
+			/>,
+			{ queryClient: appQueryClient }
+		);
+
+		expect( await screen.findByText( '/index', {}, { timeout: 5000 } ) ).toBeVisible();
+		const requestsBefore = requestedQueries.length;
+
+		await user.click( screen.getByRole( 'button', { name: 'Add filter' } ) );
+		await user.click( await screen.findByRole( 'menuitem', { name: 'Status' } ) );
+
+		await screen.findByRole( 'option', { name: '404' } );
+		expect( requestedQueries ).toHaveLength( requestsBefore );
+	} );
+
 	// When the parent supplies 'autoRefreshDisabledReason', the toggle control must be disabled to prevent interaction.
 	test( 'auto-refresh toggle is disabled when reason provided', async () => {
 		mockPreferences();
@@ -210,5 +260,50 @@ describe( 'SiteLogsDataViews', () => {
 
 		const toggle = await screen.findByRole( 'checkbox', { name: 'Auto-refresh' } );
 		expect( toggle ).toBeDisabled();
+	} );
+
+	test( 'filters by request URL, and Reset view clears it', async () => {
+		mockPreferences();
+		const requestedQueries = mockServerLogs();
+		appQueryClient.clear();
+		const user = userEvent.setup();
+
+		render(
+			<SiteLogsDataViews
+				gmtOffset={ -8 }
+				timezoneString="America/Los_Angeles"
+				site={ mockSite as Site }
+				dateRange={ fixedDateRange }
+				autoRefresh={ false }
+				setAutoRefresh={ jest.fn() }
+				logType={ LogType.SERVER }
+			/>,
+			{ queryClient: appQueryClient }
+		);
+
+		expect( await screen.findByText( '/index', {}, { timeout: 5000 } ) ).toBeVisible();
+
+		await user.click( screen.getByRole( 'button', { name: 'Add filter' } ) );
+		await user.click( await screen.findByRole( 'menuitem', { name: 'Request URL' } ) );
+
+		const input = await screen.findByRole( 'textbox', { name: 'Request URL' } );
+		await user.type( input, '/my-post/' );
+		expect( input ).toHaveValue( '/my-post/' );
+
+		// Enter also confirms an IME composition; applying there would unmount the box.
+		fireEvent.keyDown( input, { key: 'Enter', isComposing: true } );
+		expect( input ).toBeVisible();
+
+		await user.keyboard( '{Enter}' );
+
+		const requestedUrlFilter = () => requestedQueries.at( -1 )?.[ 'filter[request_url][]' ];
+		await waitFor( () => expect( requestedUrlFilter() ).toBe( '/my-post/' ) );
+
+		await user.click( await screen.findByRole( 'button', { name: 'View options' } ) );
+		// Role queries cost ~130ms each once the view options popover has opened.
+		await user.click( await screen.findByText( 'Reset view' ) );
+
+		await user.click( screen.getByLabelText( 'Add filter' ) );
+		expect( await screen.findByRole( 'menuitem', { name: 'Request URL' } ) ).toBeVisible();
 	} );
 } );

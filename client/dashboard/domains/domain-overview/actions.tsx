@@ -27,8 +27,8 @@ import InlineSupportLink from '../../components/inline-support-link';
 import RemoveDomainDialog from '../../components/purchase-dialogs/remove-domain-dialog';
 import RouterLinkButton from '../../components/router-link-button';
 import { SectionHeader } from '../../components/section-header';
-import { getDomainRenewalUrl } from '../../utils/domain';
 import { redirectToDashboardLink, wpcomLink } from '../../utils/link';
+import { getRenewalUrlFromPurchase } from '../../utils/purchase';
 import {
 	shouldShowTransferAction,
 	shouldShowTransferInAction,
@@ -120,7 +120,7 @@ export default function Actions( { isDisabled }: { isDisabled?: boolean } ) {
 							<Button
 								size="compact"
 								variant="secondary"
-								href={ getDomainRenewalUrl( domain, purchase ) }
+								href={ getRenewalUrlFromPurchase( purchase ) }
 								disabled={ isDisabled }
 							>
 								{ __( 'Renew' ) }

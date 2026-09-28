@@ -13,13 +13,15 @@ import 'calypso/state/plugins/init';
  * Upload a plugin to a site.
  * @param {number} siteId site ID
  * @param {window.File} file the plugin zip to upload
+ * @param {string} [replaceSlug] slug of an installed plugin to replace
  * @returns {Object} action object
  */
-export function uploadPlugin( siteId, file ) {
+export function uploadPlugin( siteId, file, replaceSlug ) {
 	return {
 		type: PLUGIN_UPLOAD,
 		siteId,
 		file,
+		replaceSlug,
 	};
 }
 

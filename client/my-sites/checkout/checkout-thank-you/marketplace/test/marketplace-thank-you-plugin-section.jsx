@@ -2,9 +2,10 @@
  * @jest-environment jsdom
  */
 
-import { render, screen } from '@testing-library/react';
-import { Provider } from 'react-redux';
+import { screen } from '@testing-library/react';
+import nock from 'nock';
 import configureStore from 'redux-mock-store';
+import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { ThankYouPluginSection } from '../marketplace-thank-you-plugin-section';
 
 jest.mock( 'react-redux', () => {
@@ -22,9 +23,6 @@ sites[ 1 ] = {
 };
 
 const initialState = {
-	purchases: {
-		hasLoadedSitePurchasesFromServer: true,
-	},
 	sites: {
 		items: sites,
 		domains: {
@@ -42,8 +40,20 @@ const initialState = {
 	},
 };
 
+function mockSitePurchases( purchases ) {
+	nock( 'https://public-api.wordpress.com' )
+		.get( '/rest/v1.2/upgrades' )
+		.query( { site: 1 } )
+		.reply( 200, purchases );
+}
+
 describe( 'index', () => {
+	afterEach( () => {
+		nock.cleanAll();
+	} );
+
 	test( "Plugin without a purchase, DOESN'T expire", async () => {
+		mockSitePurchases( [] );
 		const mockStore = configureStore();
 		const store = mockStore( initialState );
 		const plugin = {
@@ -56,25 +66,22 @@ describe( 'index', () => {
 			],
 		};
 
-		render(
-			<Provider store={ store }>
-				<ThankYouPluginSection plugin={ plugin } />
-			</Provider>
-		);
+		renderWithProvider( <ThankYouPluginSection plugin={ plugin } />, { store } );
 
-		expect( screen.getByText( "This plugin doesn't expire" ) ).toBeInTheDocument();
+		expect( await screen.findByText( "This plugin doesn't expire" ) ).toBeInTheDocument();
 	} );
 
 	test( 'Plugin with a purchase, MUST expire', async () => {
-		const mockStore = configureStore();
-		initialState.purchases.data = [
+		mockSitePurchases( [
 			{
+				ID: 1,
 				user_id: 12,
 				expiry_date: '2021-01-01T00:00:00+00:00',
 				product_id: 123,
 				blog_id: 1,
 			},
-		];
+		] );
+		const mockStore = configureStore();
 		const store = mockStore( initialState );
 		const plugin = {
 			variations: {
@@ -84,12 +91,8 @@ describe( 'index', () => {
 			},
 		};
 
-		render(
-			<Provider store={ store }>
-				<ThankYouPluginSection plugin={ plugin } />
-			</Provider>
-		);
+		renderWithProvider( <ThankYouPluginSection plugin={ plugin } />, { store } );
 
-		expect( screen.getByText( 'Expires on January 1, 2021' ) ).toBeInTheDocument();
+		expect( await screen.findByText( 'Expires on January 1, 2021' ) ).toBeInTheDocument();
 	} );
 } );

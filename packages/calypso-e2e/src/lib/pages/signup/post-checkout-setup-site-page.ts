@@ -1,14 +1,14 @@
 import { Locator, Page } from 'playwright';
 
 /**
- * Represents the post-checkout "Set up your site" choice screen that eligible
- * paid-plan users land on after checkout in the onboarding flow
+ * Represents the post-checkout "Let’s design your site" choice screen that
+ * eligible paid-plan users land on after checkout in the onboarding flow
  * (`/setup/onboarding/setup-your-site-ai`).
  *
- * The screen offers a choice between "Build with AI" and a manual / blank-site
- * setup. Flow tests reaching it generally navigate on to a specific page of
- * their own, so this object just exposes a check that the screen was rendered —
- * which confirms checkout completed and routed here.
+ * The screen offers a choice between "Start with a template" and "Create a
+ * custom design". Flow tests reaching it generally navigate on to a specific
+ * page of their own, so this object just exposes a check that the screen was
+ * rendered — which confirms checkout completed and routed here.
  */
 export class PostCheckoutSetupSitePage {
 	private page: Page;
@@ -21,7 +21,7 @@ export class PostCheckoutSetupSitePage {
 	 */
 	constructor( page: Page ) {
 		this.page = page;
-		this.heading = this.page.getByRole( 'heading', { name: 'Set up your site' } );
+		this.heading = this.page.getByRole( 'heading', { name: 'Let’s design your site' } );
 	}
 
 	/**

@@ -8,6 +8,7 @@ import {
 	type Suggestion,
 	type ChatState,
 	type UploadedImage,
+	type TrailingActions,
 } from '@automattic/agenttic-ui';
 import { useCallback, useMemo, useRef } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
@@ -16,9 +17,11 @@ import { formatWritingSuggestionLabels } from '../../hooks/use-empty-view-sugges
 import useFloatingPanelProps from '../../hooks/use-floating-panel-props';
 import useHasAiChatEntryButton from '../../hooks/use-has-ai-chat-entry-button';
 import { getAgentsManagerInlineData } from '../../utils/get-agents-manager-inline-data';
+import isAmAbilitiesDisabled from '../../utils/is-am-abilities-disabled';
 import { isEditorPage } from '../../utils/is-editor-page';
 import { isReaderChatHost } from '../../utils/is-reader-chat-agent';
 import lazyComponent from '../../utils/lazy-component';
+import { isSiteEditorContext } from '../../utils/site-editor-context';
 import { recordBigSkyTracksEvent } from '../../utils/tracks';
 import ChatHeader, { type Options as ChatHeaderOptions } from '../chat-header';
 import ChatMessageSkeleton from '../chat-message-skeleton';
@@ -47,6 +50,8 @@ interface Props {
 	groupWritingSuggestions?: boolean;
 	/** Indicates if the chat is processing a request. */
 	isProcessing: boolean;
+	/** Whether the latest reply is still streaming. Defaults to `isProcessing`. */
+	isStreaming?: boolean;
 	/** Custom thinking message to display while the agent is processing. */
 	thinkingMessage?: string | null;
 	/** Indicates if a conversation is being loaded. */
@@ -70,6 +75,8 @@ interface Props {
 		selectedSuggestion: Suggestion | string,
 		availableSuggestions?: Suggestion[]
 	) => void;
+	/** Called with the suggestions Agenttic actually renders (after truncation, only while visible). */
+	onSuggestionsRendered?: ( shown: Suggestion[] ) => void;
 	/** Called when the typing status changes. */
 	onTypingStatusChange?: ( isTyping: boolean ) => void;
 	/** Custom components for rendering markdown. */
@@ -82,6 +89,10 @@ interface Props {
 	onInputChange?: ( value: string ) => void;
 	/** Notice to display in the chat. */
 	notice?: NoticeConfig;
+	/** Content grouped with the composer's Send button (e.g. the credits meter). */
+	trailingActions?: TrailingActions;
+	/** Return false to keep the message in the input instead of sending it. */
+	beforeSubmit?: ComponentProps< typeof AgentUI.Container >[ 'beforeSubmit' ];
 	/** Indicates if the floating chat is in compact mode. */
 	isCompactMode?: boolean;
 	/** Image upload state from the parent component. When provided, enables the image uploader UI. */
@@ -116,6 +127,12 @@ const SelectedBlock = lazyComponent(
 	() => import( /* webpackChunkName: "am-selected-block" */ '../selected-block' )
 );
 
+// Opts into the router's private API, so it loads only on the one surface
+// that uses it.
+const EditorHistoryBridge = lazyComponent(
+	() => import( /* webpackChunkName: "am-editor-history-bridge" */ '../editor-history-bridge' )
+);
+
 const DEFAULT_ACCEPTED_IMAGE_TYPES = [
 	'image/jpeg',
 	'image/png',
@@ -139,7 +156,7 @@ function getEmptyViewHeading(): string {
 	if ( isReaderChatHost() ) {
 		return __( 'Ask me anything about this blog.', __i18n_text_domain__ );
 	}
-	return __( 'Howdy! How can I help you today?', __i18n_text_domain__ );
+	return __( 'What should we work on next?', __i18n_text_domain__ );
 }
 
 function getEmptyViewHelp(): string {
@@ -161,6 +178,7 @@ export default function AgentChat( {
 	emptyViewSuggestions = [],
 	groupWritingSuggestions = false,
 	isProcessing,
+	isStreaming,
 	thinkingMessage,
 	isLoadingConversation,
 	isDocked,
@@ -171,7 +189,10 @@ export default function AgentChat( {
 	onExpand,
 	clearSuggestions,
 	onSuggestionClick,
+	onSuggestionsRendered,
 	notice,
+	trailingActions,
+	beforeSubmit,
 	markdownComponents = {},
 	markdownExtensions = {},
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars -- Kept for API compatibility with `ZendeskChat`
@@ -245,7 +266,7 @@ export default function AgentChat( {
 	const handleBrowse = useCallback(
 		( files: File[] ) => {
 			if ( trackImageUpload ) {
-				recordBigSkyTracksEvent( 'file_upload_click', {
+				recordBigSkyTracksEvent( 'jetpack_big_sky_file_upload_click', {
 					count: files.length,
 				} );
 			}
@@ -256,7 +277,7 @@ export default function AgentChat( {
 	const handleDrop = useCallback(
 		( files: File[] ) => {
 			if ( trackImageUpload ) {
-				recordBigSkyTracksEvent( 'file_upload_drop', {
+				recordBigSkyTracksEvent( 'jetpack_big_sky_file_upload_drop', {
 					count: files.length,
 				} );
 			}
@@ -267,7 +288,7 @@ export default function AgentChat( {
 	const handleRemoveImage = useCallback(
 		( image: UploadedImage ) => {
 			if ( trackImageUpload ) {
-				recordBigSkyTracksEvent( 'file_upload_remove', {
+				recordBigSkyTracksEvent( 'jetpack_big_sky_file_upload_remove', {
 					image_id: image.id,
 				} );
 			}
@@ -278,13 +299,13 @@ export default function AgentChat( {
 
 	const handleImageDragStart = useCallback( () => {
 		if ( trackImageUpload ) {
-			recordBigSkyTracksEvent( 'file_upload_drag_start' );
+			recordBigSkyTracksEvent( 'jetpack_big_sky_file_upload_drag_start' );
 		}
 	}, [ trackImageUpload ] );
 
 	const handleUploadError = useCallback( () => {
 		if ( trackImageUpload ) {
-			recordBigSkyTracksEvent( 'file_upload_invalid' );
+			recordBigSkyTracksEvent( 'jetpack_big_sky_file_upload_invalid' );
 		}
 	}, [ trackImageUpload ] );
 
@@ -294,6 +315,7 @@ export default function AgentChat( {
 			className={ clsx( 'agenttic', { dark: isDocked } ) }
 			messages={ messages }
 			isProcessing={ isProcessing }
+			isStreaming={ isStreaming }
 			thinkingMessage={ thinkingMessage ?? undefined }
 			error={ error }
 			onSubmit={ onSubmit }
@@ -303,7 +325,9 @@ export default function AgentChat( {
 			suggestions={ displayedSuggestions }
 			clearSuggestions={ clearSuggestions }
 			onSuggestionClick={ onSuggestionClick ? handleDisplayedSuggestionClick : undefined }
+			onSuggestionsRendered={ onSuggestionsRendered }
 			floatingChatState={ floatingChatState }
+			triggerTitle={ __( 'Agent', __i18n_text_domain__ ) }
 			onClose={ onClose }
 			onExpand={ onExpand }
 			onStop={ onAbort }
@@ -313,6 +337,9 @@ export default function AgentChat( {
 			messagesPosition="bottom"
 			expandOnHover={ false }
 			notice={ notice }
+			beforeSubmit={ beforeSubmit }
+			// On the container so the floating compact composer gets it too
+			trailingActions={ trailingActions }
 			emptyView={
 				isLoadingConversation ? (
 					<ChatMessageSkeleton count={ 3 } />
@@ -328,13 +355,18 @@ export default function AgentChat( {
 			}
 		>
 			<AgentUI.ConversationView ref={ conversationViewRef }>
+				{ ! isAmAbilitiesDisabled() && isSiteEditorContext() && <EditorHistoryBridge /> }
 				<ChatHeader onClose={ onClose } options={ chatHeaderOptions } isDocked={ isDocked } />
 				{ isLoadingConversation ? <ChatMessageSkeleton count={ 3 } /> : <AgentUI.Messages /> }
 				{ ( onContextCardAction || onContextCardDismiss ) && (
 					<ContextCards onAction={ onContextCardAction } onDismiss={ onContextCardDismiss } />
 				) }
 				{ showFeedbackInput && (
-					<FeedbackInput onSubmit={ onSubmitFeedbackText } onCancel={ onCancelFeedback } />
+					<FeedbackInput
+						variant="dialog"
+						onSubmit={ onSubmitFeedbackText }
+						onCancel={ onCancelFeedback }
+					/>
 				) }
 				{ alternativeFooter ? (
 					alternativeFooter

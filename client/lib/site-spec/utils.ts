@@ -120,6 +120,11 @@ export interface SiteSpecConfig {
 		// `true` shows the site brief dialog in place of the basic spec preview;
 		// `'next'` also shows its socials/attachments sections.
 		siteBrief?: boolean | 'next';
+		// Which link types the brief offers. `'social'` (the widget's default)
+		// is social networks only; `'all'` adds a website link, its preview
+		// card and remove button. Sub-feature of `siteBrief: 'next'` — the
+		// widget ignores it otherwise.
+		links?: 'social' | 'all';
 	};
 	tosConfig?: ToSConfig;
 	placeholder?: string | string[];
@@ -203,6 +208,10 @@ export function getDefaultSiteSpecConfig(): SiteSpecConfig {
  * SiteSpec configuration for a site being built from a blueprint. Extends the
  * default config with the blueprint identifier so the widget forwards it to the
  * agent (as metadata.blueprint_id), which then runs a blueprint-aware interview.
+ *
+ * Confirms on the site brief rather than the basic spec preview, like the
+ * build-wow flow: the brief is where the user edits the page set, goals and
+ * social links the blueprint's apply step carries onto the imported site.
  * @param {Object} params            Params.
  * @param {string} params.blueprintId Blueprint identifier (numeric library id or slug).
  * @returns {SiteSpecConfig} Configuration object for the blueprint flow.
@@ -212,9 +221,17 @@ export function getBlueprintSiteSpecConfig( {
 }: {
 	blueprintId?: string;
 } ): SiteSpecConfig {
+	const defaultConfig = getDefaultSiteSpecConfig();
+
 	return {
-		...getDefaultSiteSpecConfig(),
+		...defaultConfig,
 		...( blueprintId ? { blueprintId } : {} ),
+		features: {
+			...defaultConfig.features,
+			siteBrief: 'next',
+			// Social networks only, pinned for the same reason as build-wow.
+			links: 'social',
+		},
 	};
 }
 
@@ -398,6 +415,10 @@ export function getBuildWowSiteSpecConfig( {
 		features: {
 			...defaultConfig.features,
 			siteBrief: 'next',
+			// Social networks only. `'social'` is the widget's default, but pin
+			// it so this flow keeps offering social links and nothing else if
+			// that default ever moves.
+			links: 'social',
 		},
 	};
 }

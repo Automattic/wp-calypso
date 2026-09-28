@@ -41,7 +41,7 @@
 		"build": "tsc --build ./tsconfig-build.json ./tsconfig-cjs.json && yarn run -T copy-assets",
 		"prepack": "yarn run clean && yarn run build",
 		"watch": "tsc --build ./tsconfig.json --watch",
-		"storybook:start": "storybook dev"
+		"storybook:start": "storybook dev -p 26836"
 	},
 	"dependencies": {
 		"@automattic/api-core": "workspace:^",
@@ -61,6 +61,7 @@
 		"@wordpress/icons": "^13.3.0",
 		"@wordpress/primitives": "^4.48.0",
 		"@wordpress/react-i18n": "^4.48.0",
+		"@wordpress/ui": "^0.20.0",
 		"clsx": "^2.1.1",
 		"moment": "^2.30.1",
 		"qs": "^6.15.2"

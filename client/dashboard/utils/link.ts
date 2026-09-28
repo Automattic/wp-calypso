@@ -2,6 +2,7 @@ import config from '@automattic/calypso-config';
 import { getCurrentDashboard, getDashboardFromQuery, buildDashboardLink } from '../app/routing';
 import { A4A_SIGNUP_PATHS } from '../section';
 import { isDashboardBackport } from './is-dashboard-backport';
+import { isJetpackCloud } from './jetpack';
 
 const CALYPSO_LIVE_ORIGIN = 'https://calypso.live';
 
@@ -113,10 +114,14 @@ export function dashboardLink( path: string = '' ) {
 
 /**
  * This function returns the link to the dashboard, with backport support.
+ *
+ * In a backport the path is returned relative, for flows on WordPress.com to
+ * resolve against their own origin. Jetpack Cloud does not share that origin,
+ * so there it is made absolute.
  */
 export function dashboardLinkWithBackport( path: string = '' ) {
 	if ( isDashboardBackport() ) {
-		return path;
+		return isJetpackCloud() ? new URL( path, window.location.origin ).href : path;
 	}
 
 	return dashboardLink( path );

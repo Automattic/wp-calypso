@@ -705,7 +705,7 @@ export function siteSelection( context, next ) {
 		const promise = shouldUpdateStateAfterUpgrade
 			? dispatch( requestSite( siteId ) ).catch( () => {
 					return null;
-			  } )
+				} )
 			: Promise.resolve();
 		promise.then( () => {
 			if ( onSelectedSiteAvailable( context ) ) {

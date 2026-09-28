@@ -20,11 +20,11 @@ export function ReelShareConfirmationDialog( {
 		? createInterpolateElement(
 				__( 'This video will be published to <account /> on Instagram.', __i18n_text_domain__ ),
 				{ account: <strong>{ igDisplayName }</strong> }
-		  )
+			)
 		: __(
 				'This Reel will be published to your connected Instagram account.',
 				__i18n_text_domain__
-		  );
+			);
 
 	return (
 		<ConfirmationDialog

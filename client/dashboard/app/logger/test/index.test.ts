@@ -5,7 +5,8 @@
 import { captureException } from '@automattic/calypso-sentry';
 import { logToLogstash } from 'calypso/lib/logstash';
 import { maybeReloadForChunkError } from '../../chunk-load-recovery';
-import { handleOnCatch, initLogger } from '../index';
+import { getDomInterferenceReport } from '../dom-interference';
+import { handleOnCatch, handleUncaughtError, initLogger } from '../index';
 import type { AnyRouter } from '@tanstack/react-router';
 import type { ErrorInfo } from 'react';
 
@@ -19,6 +20,12 @@ jest.mock( 'calypso/lib/logstash', () => ( {
 jest.mock( '../../chunk-load-recovery', () => ( {
 	maybeReloadForChunkError: jest.fn(),
 } ) );
+jest.mock( '../dom-interference', () => ( {
+	getDomInterferenceReport: jest.fn( () => ( {
+		tags: { dom_google_translate: 'true' },
+		context: { fontCount: 3 },
+	} ) ),
+} ) );
 
 const mockedLogToLogstash = jest.mocked( logToLogstash );
 const mockedCaptureException = jest.mocked( captureException );
@@ -27,6 +34,10 @@ const mockedMaybeReloadForChunkError = jest.mocked( maybeReloadForChunkError );
 beforeEach( () => {
 	jest.clearAllMocks();
 	mockedMaybeReloadForChunkError.mockReturnValue( false );
+	jest.mocked( getDomInterferenceReport ).mockReturnValue( {
+		tags: { dom_google_translate: 'true' },
+		context: { fontCount: 3 },
+	} );
 } );
 
 type ResolvedListener = ( event: { fromLocation?: { href: string } } ) => void;
@@ -76,7 +87,7 @@ describe( 'handleOnCatch', () => {
 		expect( mockedCaptureException ).not.toHaveBeenCalled();
 	} );
 
-	it( 'logs and captures a non-benign error', () => {
+	it( 'logs and captures a non-benign error with DOM fingerprint and component stack', () => {
 		const error = new Error( 'Boom' );
 		const errorInfo = createErrorInfo( 'at SitePage' );
 		const router = createRouter( { siteSlug: 'my-site', someId: '123' } );
@@ -108,17 +119,29 @@ describe( 'handleOnCatch', () => {
 					site_slug: 'my-site',
 					some_id: '123',
 				},
+				dom_google_translate: 'true',
+				dom_interference: { fontCount: 3 },
 			},
 		} );
 
 		expect( mockedCaptureException ).toHaveBeenCalledTimes( 1 );
 		expect( mockedCaptureException ).toHaveBeenCalledWith( error, {
-			tags: {
-				calypso_section: 'dashboard',
-				site_slug: 'my-site',
-				some_id: '123',
+			captureContext: {
+				tags: {
+					calypso_section: 'dashboard',
+					site_slug: 'my-site',
+					some_id: '123',
+					dom_google_translate: 'true',
+				},
+				contexts: {
+					'dom-interference': { fontCount: 3 },
+					react: { componentStack: 'at SitePage' },
+				},
+				extra: { previous_path: '/sites/my-site' },
+				// Splits the react-dom mega-issue by the failing component without
+				// touching `exception.values`.
+				fingerprint: [ '{{ default }}', 'SitePage' ],
 			},
-			extra: { previous_path: '/sites/my-site' },
 		} );
 	} );
 
@@ -171,5 +194,51 @@ describe( 'handleOnCatch', () => {
 
 		expect( mockedLogToLogstash ).toHaveBeenCalledTimes( 1 );
 		expect( mockedCaptureException ).not.toHaveBeenCalled();
+	} );
+} );
+
+describe( 'handleUncaughtError', () => {
+	let consoleError: jest.SpyInstance;
+
+	beforeEach( () => {
+		consoleError = jest.spyOn( console, 'error' ).mockImplementation( () => {} );
+	} );
+
+	afterEach( () => {
+		consoleError.mockRestore();
+	} );
+
+	it( 'reports an uncaught error with fingerprint and component stack, and still console.errors', () => {
+		const error = new Error( 'Uncaught boom' );
+
+		handleUncaughtError( error, { componentStack: 'at DomainUpsellCardContent' } );
+
+		expect( mockedLogToLogstash ).toHaveBeenCalledTimes( 1 );
+		expect( mockedCaptureException ).toHaveBeenCalledWith( error, {
+			captureContext: {
+				tags: {
+					calypso_section: 'dashboard',
+					dom_google_translate: 'true',
+				},
+				contexts: {
+					'dom-interference': { fontCount: 3 },
+					react: { componentStack: 'at DomainUpsellCardContent' },
+				},
+				fingerprint: [ '{{ default }}', 'DomainUpsellCardContent' ],
+			},
+			// Without this React's own `reportGlobalError` path is bypassed and
+			// Sentry would default the event to `handled: true`.
+			mechanism: { type: 'react.onUncaughtError', handled: false },
+		} );
+		expect( consoleError ).toHaveBeenCalledWith( error );
+	} );
+
+	it( 'normalizes a non-Error value before reporting', () => {
+		handleUncaughtError( 'just a string', {} );
+
+		expect( mockedCaptureException ).toHaveBeenCalledTimes( 1 );
+		const reported = mockedCaptureException.mock.calls[ 0 ][ 0 ] as Error;
+		expect( reported ).toBeInstanceOf( Error );
+		expect( reported.message ).toBe( 'just a string' );
 	} );
 } );

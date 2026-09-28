@@ -9,7 +9,11 @@ import {
 import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
 import { remoteLoginUser } from 'calypso/state/login/actions/remote-login-user';
 import { updateNonce } from 'calypso/state/login/actions/update-nonce';
-import { getTwoFactorAuthNonce, getTwoFactorUserId } from 'calypso/state/login/selectors';
+import {
+	getConsumedBlackboxSessionId,
+	getTwoFactorAuthNonce,
+	getTwoFactorUserId,
+} from 'calypso/state/login/selectors';
 import { getErrorFromHTTPError, postLoginRequest } from 'calypso/state/login/utils';
 
 import 'calypso/state/login/init';
@@ -17,11 +21,13 @@ import 'calypso/state/login/init';
 export const loginUserWithSecurityKey = () => ( dispatch, getState ) => {
 	const twoFactorAuthType = 'webauthn';
 	dispatch( { type: TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST } );
+	const blackboxSessionId = getConsumedBlackboxSessionId( getState() );
 	const loginParams = {
 		user_id: getTwoFactorUserId( getState() ),
 		client_id: config( 'wpcom_signup_id' ),
 		client_secret: config( 'wpcom_signup_key' ),
 		auth_type: twoFactorAuthType,
+		...( blackboxSessionId && { blackbox_session_id: blackboxSessionId } ),
 	};
 	return postLoginRequest( 'webauthn-challenge-endpoint', {
 		...loginParams,

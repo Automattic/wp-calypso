@@ -1,5 +1,5 @@
 import { productsQuery, siteFeaturesQuery, sitePurchasesQuery } from '@automattic/api-queries';
-import { FEATURE_WOOP, WPCOM_FEATURES_ATOMIC } from '@automattic/calypso-products';
+import { WPCOM_FEATURES_PARTNER_THEMES } from '@automattic/calypso-products';
 import { getThemeIdFromDesign } from '@automattic/design-picker';
 import { useQuery } from '@tanstack/react-query';
 import { useSelect } from '@wordpress/data';
@@ -55,9 +55,8 @@ export const useMarketplaceThemeProducts = ( {
 	const allProductsList = productsData ? Object.values( productsData ) : [];
 	const sitePurchasesList = sitePurchasesData ?? [];
 
-	const isExternallyManagedThemeAvailable = !! (
-		siteFeatures?.active?.includes( FEATURE_WOOP ) &&
-		siteFeatures?.active?.includes( WPCOM_FEATURES_ATOMIC )
+	const isExternallyManagedThemeAvailable = !! siteFeatures?.active?.includes(
+		WPCOM_FEATURES_PARTNER_THEMES
 	);
 
 	const marketplaceThemeProducts = billingProductSlug

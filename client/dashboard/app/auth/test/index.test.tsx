@@ -3,11 +3,18 @@
  */
 import config from '@automattic/calypso-config';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, renderHook, screen, waitFor } from '@testing-library/react';
 import nock from 'nock';
 import { bumpStat } from '../../analytics';
 import { AppProvider, APP_CONTEXT_DEFAULT_CONFIG } from '../../context';
-import { AuthProvider } from '../index';
+import {
+	AUTH_QUERY_KEY,
+	AuthProvider,
+	initializeCurrentUser,
+	sessionStateQuery,
+	updateCurrentUser,
+	useSessionStateQuery,
+} from '../index';
 import type { User } from '@automattic/api-core';
 
 jest.mock( '../../analytics', () => ( {
@@ -38,6 +45,25 @@ function renderAuth() {
 		),
 	};
 }
+
+describe( 'updateCurrentUser', () => {
+	afterEach( () => {
+		config.disable( 'wpcom-user-bootstrap' );
+		delete window.currentUser;
+	} );
+
+	test( 'survives a refetch in a bootstrapped session', async () => {
+		config.enable( 'wpcom-user-bootstrap' );
+		window.currentUser = { ...testUser, two_step_enabled: false };
+		const queryClient = new QueryClient();
+		await queryClient.fetchQuery( { queryKey: AUTH_QUERY_KEY, queryFn: initializeCurrentUser } );
+
+		updateCurrentUser( queryClient, { two_step_enabled: true } );
+		await queryClient.refetchQueries( { queryKey: AUTH_QUERY_KEY } );
+
+		expect( queryClient.getQueryData< User >( AUTH_QUERY_KEY )?.two_step_enabled ).toBe( true );
+	} );
+} );
 
 describe( '<AuthProvider> stats', () => {
 	beforeEach( () => {
@@ -174,5 +200,72 @@ describe( '<AuthProvider> stats', () => {
 		await waitFor( () =>
 			expect( mockedBumpStat ).toHaveBeenCalledWith( 'dashboard-auth', 'bounce:expired' )
 		);
+	} );
+} );
+
+describe( 'useSessionStateQuery', () => {
+	function renderSessionState( queryClient = new QueryClient() ) {
+		return renderHook( () => useSessionStateQuery(), {
+			wrapper: ( { children } ) => (
+				<QueryClientProvider client={ queryClient }>{ children }</QueryClientProvider>
+			),
+		} );
+	}
+
+	test( 'reports a session that can no longer authenticate as dead', async () => {
+		nock( 'https://public-api.wordpress.com' )
+			.get( '/rest/v1.1/me' )
+			.query( true )
+			.reply( 403, { error: 'authorization_required', message: 'User cannot access this' } );
+
+		const { result } = renderSessionState();
+
+		await waitFor( () => expect( result.current.data ).toBe( 'dead' ) );
+	} );
+
+	test( 'reports an account that merely lacks a permission as alive', async () => {
+		nock( 'https://public-api.wordpress.com' )
+			.get( '/rest/v1.1/me' )
+			.query( true )
+			.reply( 200, testUser );
+
+		const { result } = renderSessionState();
+
+		await waitFor( () => expect( result.current.data ).toBe( 'alive' ) );
+	} );
+
+	test( 'separates a probe that never answered from a dead session', async () => {
+		nock( 'https://public-api.wordpress.com' )
+			.get( '/rest/v1.1/me' )
+			.query( true )
+			.replyWithError( 'offline' );
+
+		const { result } = renderSessionState();
+
+		await waitFor( () => expect( result.current.data ).toBe( 'unknown' ) );
+	} );
+
+	test( 'reuses an answer already in the cache', async () => {
+		nock( 'https://public-api.wordpress.com' )
+			.get( '/rest/v1.1/me' )
+			.query( true )
+			.reply( 200, testUser );
+		// A refetch would consume this and flip the answer, so an extra request shows
+		// up rather than passing unnoticed.
+		nock( 'https://public-api.wordpress.com' )
+			.get( '/rest/v1.1/me' )
+			.query( true )
+			.reply( 403, { error: 'authorization_required', message: 'User cannot access this' } );
+
+		const queryClient = new QueryClient();
+		await queryClient.fetchQuery( sessionStateQuery() );
+
+		const { result } = renderSessionState( queryClient );
+
+		await waitFor( () => expect( result.current.data ).toBe( 'alive' ) );
+		await expect(
+			waitFor( () => expect( nock.isDone() ).toBe( true ), { timeout: 250 } )
+		).rejects.toThrow();
+		expect( result.current.data ).toBe( 'alive' );
 	} );
 } );

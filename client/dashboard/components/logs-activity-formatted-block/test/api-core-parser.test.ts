@@ -34,6 +34,34 @@ describe( 'parseActivityLogEntryContent', () => {
 		expect( result[ 1 ] ).toBe( ' post' );
 	} );
 
+	test( 'parses ranges with a URL and HTML type as links', () => {
+		const content = {
+			text: 'New Order: Order #339',
+			ranges: [
+				{
+					id: 'order-339',
+					url: 'https://examplesite/wp-admin/post.php?post=339&action=edit',
+					indices: [ 11, 21 ] as [ number, number ],
+					type: 'a',
+					section: 'shop_order',
+					intent: 'edit',
+				},
+			],
+		};
+
+		expect( parseActivityLogEntryContent( content ) ).toEqual( [
+			'New Order: ',
+			{
+				type: 'link',
+				url: 'https://examplesite/wp-admin/post.php?post=339&action=edit',
+				intent: 'edit',
+				section: 'shop_order',
+				text: 'Order #339',
+				children: [ 'Order #339' ],
+			},
+		] );
+	} );
+
 	test( 'nests child ranges within parent ranges', () => {
 		const content = {
 			text: 'Hello world',

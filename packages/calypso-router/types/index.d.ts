@@ -179,6 +179,11 @@ interface Page {
 	current: string;
 
 	/**
+	 * Current route pattern
+	 */
+	readonly currentRoutePattern: string | undefined;
+
+	/**
 	 * Navigate back to the previous route
 	 */
 	back: ( path: string ) => void;

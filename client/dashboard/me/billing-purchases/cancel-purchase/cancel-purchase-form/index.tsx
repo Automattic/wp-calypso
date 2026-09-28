@@ -501,7 +501,7 @@ function canGoToNextStep( {
 
 		return Boolean(
 			questionOneRadio &&
-				( purchase.is_jetpack_plan_or_product || ! purchase.is_plan || questionOneText )
+			( purchase.is_jetpack_plan_or_product || ! purchase.is_plan || questionOneText )
 		);
 	}
 

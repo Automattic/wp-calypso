@@ -134,13 +134,13 @@ const SubscriberTotals: React.FC< SubscriberTotalsProps > = ( {
 								count: filteredCount,
 								args: { matchingSubscriberCount: formatNumber( filteredCount ) },
 							}
-					  )
+						)
 					: translate( '%(filteredSubscriberCount)s %(filterLabel)s', {
 							args: {
 								filteredSubscriberCount: formatNumber( filteredCount ),
 								filterLabel,
 							},
-					  } ) }
+						} ) }
 			</span>
 			<span className="subscriber-totals__total">
 				{ translate( 'out of %(totalSubscriberCount)s total subscribers', {

@@ -43,17 +43,15 @@
 		}
 	}
 
-	// 2026 nav: white ink over the dark hero while the bar rests transparent.
-	// Scoped to the resting bar so the ink reverts to the package's dark default
-	// once the bar turns white on scroll/dropdown-open. CTA hover pair inverted to
-	// suit the dark hero.
+	// 2026 nav over the dark hero: white ink and a white-filled, blue-label CTA while the
+	// bar rests transparent; the package restores the dark ink and blue fill on scroll/open.
 	.lpc-header-nav-container:not(
 			:has( .x-dropdown--2026.x-dropdown-content[aria-hidden='false'] )
 		):not( .is-scrolled )
 		.x-nav--2026-redesign
 		.x-nav-item {
-		--x-nav-2026-cta-hover-fill: var(--studio-white);
-		--x-nav-2026-cta-hover-ink: var(--studio-gray-100);
+		--x-nav-2026-cta-fill: var(--studio-white);
+		--x-nav-2026-cta-ink: var(--studio-wordpress-blue-50);
 
 		color: var(--studio-white) !important;
 

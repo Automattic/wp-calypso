@@ -272,7 +272,7 @@ export function LogsDownloader( {
 									/* translators: %s: percentage value */
 									__( '%s%% downloaded' ),
 									String( Math.round( progress * 100 ) )
-							  )
+								)
 							: label
 					}
 				>

@@ -13,7 +13,7 @@ const ClientLogoList = ( props: ClientLogoListProps ) => {
 		? slugs.flatMap( ( slug ) => {
 				const match = CLIENT_LIST.find( ( c ) => c.slug === slug );
 				return match ? [ match ] : [];
-		  } )
+			} )
 		: CLIENT_LIST;
 
 	const elementProps: React.HTMLAttributes< HTMLDivElement > = {

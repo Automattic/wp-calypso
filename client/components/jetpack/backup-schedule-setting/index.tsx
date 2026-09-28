@@ -96,7 +96,7 @@ const BackupScheduleSetting: FunctionComponent = () => {
 				? translate( 'Currently using default time.' )
 				: translate( 'Time set by %(scheduledBy)s.', {
 						args: { scheduledBy: data.scheduledBy },
-				  } );
+					} );
 
 		const utcInfo = translate( 'UTC (%(timeRange)s) is used as the base timezone.', {
 			args: {

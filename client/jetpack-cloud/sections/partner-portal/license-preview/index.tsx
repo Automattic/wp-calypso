@@ -228,7 +228,7 @@ export default function LicensePreview( {
 						? bundleCountContent
 						: LicenseType.Standard === licenseType && (
 								<Badge type="success">{ translate( 'Standard license' ) }</Badge>
-						  ) }
+							) }
 				</div>
 
 				<div>

@@ -1,8 +1,10 @@
 import { activeAgencyQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
+import { useRouter } from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
 import wooPaymentsLogo from 'calypso/assets/images/a8c-for-agencies/woopayments/logo.svg';
 import { useAnalytics } from '../../../app/analytics';
+import { earnWooPaymentsSetupRoute } from '../../../app/router/agency';
 import { ActionList } from '../../../components/action-list';
 import EmptyState from '../../../components/empty-state';
 import InlineSupportLink from '../../../components/inline-support-link';
@@ -19,6 +21,7 @@ export default function WooPaymentsDashboardEmptyState() {
 	const { recordTracksEvent } = useAnalytics();
 	const { data: agency } = useQuery( activeAgencyQuery() );
 	const agencyId = agency?.id ?? 0;
+	const router = useRouter();
 
 	return (
 		<EmptyState.Wrapper>
@@ -47,9 +50,12 @@ export default function WooPaymentsDashboardEmptyState() {
 									agencyId={ agencyId }
 									excludedSiteIds={ EXCLUDED_SITE_IDS }
 									recordTracksEvent={ recordTracksEvent }
-									navigate={ ( url ) => {
-										window.location.href = url;
-									} }
+									onSelectSite={ ( siteId ) =>
+										router.navigate( {
+											to: earnWooPaymentsSetupRoute.fullPath,
+											params: { siteId: String( siteId ) },
+										} )
+									}
 								/>
 							}
 						/>

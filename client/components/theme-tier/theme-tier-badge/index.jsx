@@ -11,6 +11,7 @@ import ThemeTierCommunityBadge from './theme-tier-community-badge';
 import ThemeTierFreeBadge from './theme-tier-free-badge';
 import ThemeTierIncludedBadge from './theme-tier-included-badge';
 import ThemeTierPartnerBadge from './theme-tier-partner-badge';
+import ThemeTierRetiredBadge from './theme-tier-retired-badge';
 import ThemeTierStyleVariationBadge from './theme-tier-style-variation-badge';
 import ThemeTierUpgradeBadge from './theme-tier-upgrade-badge';
 
@@ -43,6 +44,10 @@ export default function ThemeTierBadge( {
 			// Don't make it seem like the theme is available via upgrade when it isn't.
 			// Do be clear whether use of the active and retired theme is contingent on the current plan.
 			return null;
+		}
+
+		if ( isThemeRetired && isThemeActiveForSite ) {
+			return <ThemeTierRetiredBadge />;
 		}
 
 		if ( themeTierSlug === 'free' ) {

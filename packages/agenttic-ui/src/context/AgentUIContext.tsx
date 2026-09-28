@@ -1,11 +1,12 @@
 import React, { createContext, useContext } from 'react';
-import type { ChatState, Message, NoticeConfig, Suggestion } from '../types';
+import type { ChatState, Message, NoticeConfig, Suggestion, TrailingActions } from '../types';
 import type { ComponentType } from 'react';
 
 export interface AgentUIContextValue {
 	// Core data
 	messages: Message[];
 	isProcessing: boolean;
+	isStreaming?: boolean;
 	error?: string | null;
 
 	// Input state
@@ -42,10 +43,16 @@ export interface AgentUIContextValue {
 		selectedSuggestion: Suggestion,
 		availableSuggestions: Suggestion[]
 	) => void;
-	reportSuggestionsRendered?: ( shown: Suggestion[] ) => void;
+	// What a mounted Suggestions instance renders: `[]` while hidden, `null` on unmount.
+	// The container unions every instance and dedups before calling onSuggestionsRendered.
+	reportSuggestionsRendered?: ( instanceId: string, shown: Suggestion[] | null ) => void;
 
 	// Notice
 	notice?: NoticeConfig;
+
+	// Composer action slots
+	leadingActions?: React.ReactNode;
+	trailingActions?: TrailingActions;
 
 	// Thinking message
 	thinkingMessage?: string;

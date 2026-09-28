@@ -194,18 +194,8 @@ test.describe(
 				await componentDomainSearch.skipPurchase();
 			} );
 
-			await test.step( 'And I open the escape hatch in the plans step', async function () {
-				await pageSignupPickPlan.openEscapeHatch();
-			} );
-
-			await test.step( 'Then I see the no custom domain warning', async function () {
-				await pageSignupPickPlan.validateNoCustomDomainWarning(
-					newSiteDetails.blog_details.site_slug
-				);
-			} );
-
-			await test.step( 'And I continue with the free plan', async function () {
-				await pageSignupPickPlan.continueWithFreeViaEscapeHatch();
+			await test.step( 'And I start with the free plan', async function () {
+				await pageSignupPickPlan.startWithFreePlan();
 			} );
 
 			await test.step( 'Then I see the launch celebration modal', async function () {

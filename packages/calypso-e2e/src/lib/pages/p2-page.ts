@@ -6,6 +6,8 @@ const selectors = {
 	publishedPost: ( postContent: string ) => `.entry-content:has-text("${ postContent }")`,
 };
 
+const EDITOR_MOUNT_TIMEOUT = 10 * 1000;
+
 /**
  * Class representing the P2 frontend.
  */
@@ -25,22 +27,12 @@ export class P2Page {
 	 * Click 'New post' to show the editor.
 	 */
 	async clickNewPost(): Promise< void > {
-		// The button is server-rendered before its click handler hydrates; a
-		// too-early click is silently lost, so retry until the editor opens.
-		const inserterToggle = this.page.locator( selectors.editorInserterToggle );
-		for ( let attempt = 0; attempt < 3; attempt++ ) {
-			if ( await inserterToggle.isVisible() ) {
-				return;
-			}
-			await this.page.click( selectors.newPostButton );
-			try {
-				await inserterToggle.waitFor( { state: 'visible', timeout: 5000 } );
-				return;
-			} catch {
-				// Handler was not attached yet; click again.
-			}
-		}
-		throw new Error( 'Editor did not open after clicking "New Post".' );
+		// P2 defers the editor bundle: the click fetches and serially executes the
+		// Gutenberg scripts before the editor mounts, ~7s on a loaded CI agent.
+		await this.page.click( selectors.newPostButton );
+		await this.page
+			.locator( selectors.editorInserterToggle )
+			.waitFor( { state: 'visible', timeout: EDITOR_MOUNT_TIMEOUT } );
 	}
 
 	/**

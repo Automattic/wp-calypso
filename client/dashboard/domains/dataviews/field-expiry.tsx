@@ -51,7 +51,7 @@ export const DomainExpiryField = ( {
 				>
 					{ __( 'Turn on auto-renew' ) }
 				</Link>
-		  );
+			);
 
 	return (
 		<VStack justify="flex-start" alignment="left" spacing={ 1 }>

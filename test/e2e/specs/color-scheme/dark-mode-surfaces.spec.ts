@@ -504,7 +504,7 @@ test.describe( 'Reader dark-mode surface', { tag: [ tags.CALYPSO_PR ] }, () => {
 		} );
 
 		await test.step( 'And a secondary Reader route keeps the dark-mode contract', async () => {
-			await page.goto( DataHelper.getCalypsoURL( 'reader/search' ) );
+			await page.goto( DataHelper.getCalypsoURL( 'discover/search' ) );
 			await expectDarkModeRoot( page, {
 				bodyClasses: [ 'is-reader-dark-mode' ],
 				expectColorSchemeBodyClass: true,

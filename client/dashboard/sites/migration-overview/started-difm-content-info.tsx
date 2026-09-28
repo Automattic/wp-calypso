@@ -50,14 +50,14 @@ function CancellationModal( { site, onClose }: { site: Site; onClose: () => void
 					'Since your migration is already underway, you’ll need to send us a cancellation request. If you cancel now, you’ll lose all your progress.'
 				),
 				buttonText: __( 'Cancel migration' ),
-		  }
+			}
 		: {
 				title: __( 'Cancel migration' ),
 				description: __(
 					'If you cancel now, our Happiness Engineers will be notified that you’ve chosen not to move your site to WordPress.com, and your current site will remain exactly as it is.'
 				),
 				buttonText: __( 'Send request' ),
-		  };
+			};
 
 	const handleConfirmCancel = () => {
 		recordTracksEvent(

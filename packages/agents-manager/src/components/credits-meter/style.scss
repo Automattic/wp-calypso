@@ -1,0 +1,149 @@
+.agents-manager-credits-meter {
+	display: inline-flex;
+
+	// `.components-button` out-specifies wp's icon-button defaults; the
+	// full class name keeps the compiled selector specific enough.
+	.agents-manager-credits-meter__toggle.components-button {
+		width: 32px;
+		height: 32px;
+		min-width: 32px;
+		padding: 0;
+		border-radius: 50%;
+
+		&:hover:not( :disabled ),
+		&[aria-expanded='true'] {
+			background-color: var( --color-muted );
+		}
+
+		// Show the focus ring for keyboard focus only.
+		&:focus:not( :focus-visible ) {
+			box-shadow: none;
+			outline: none;
+		}
+	}
+}
+
+// The popover follows the chat theme rather than wp's default white.
+.agents-manager-credits-meter__popover .components-popover__content {
+	width: 272px;
+	padding: 12px;
+	background-color: var( --color-popover );
+	color: var( --color-foreground );
+	border: none;
+	border-radius: 4px;
+	box-shadow: var( --shadow-lg );
+}
+
+.agents-manager-credits-meter__content {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+	font-size: 13px;
+	line-height: 1.4;
+}
+
+.agents-manager-credits-meter__header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+}
+
+.agents-manager-credits-meter__title {
+	font-weight: 600;
+}
+
+.agents-manager-credits-meter__manage.components-button {
+	height: auto;
+	padding: 0;
+	color: var( --color-muted-foreground );
+	font-size: 13px;
+	text-decoration: none;
+
+	&:hover:not( :disabled ),
+	&:focus:not( :disabled ) {
+		color: var( --color-foreground );
+	}
+}
+
+.agents-manager-credits-meter__pool {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+}
+
+.agents-manager-credits-meter__pool-header {
+	display: flex;
+	align-items: baseline;
+	gap: 8px;
+}
+
+.agents-manager-credits-meter__pool-label {
+	flex: 1;
+	font-weight: 500;
+}
+
+.agents-manager-credits-meter__pool-date,
+.agents-manager-credits-meter__pool-detail {
+	color: var( --color-muted-foreground );
+	font-size: 12px;
+}
+
+.agents-manager-credits-meter__pool-percent {
+	font-weight: 600;
+
+	&.is-exhausted {
+		color: var( --color-error-accent );
+	}
+}
+
+.agents-manager-credits-meter__bar {
+	height: 4px;
+	border-radius: 2px;
+	background-color: var( --color-muted );
+	overflow: hidden;
+}
+
+.agents-manager-credits-meter__bar-fill {
+	height: 100%;
+	border-radius: inherit;
+	background-color: var( --color-primary );
+}
+
+.agents-manager-credits-meter__message {
+	margin: 0;
+	color: var( --color-muted-foreground );
+	font-size: 12px;
+}
+
+.agents-manager-credits-meter__cta.components-button {
+	justify-content: center;
+	width: 100%;
+
+	&.is-primary {
+		background-color: var( --color-primary );
+		color: var( --color-primary-foreground );
+
+		&:hover:not( :disabled ) {
+			background-color: color-mix( in srgb, var( --color-primary ) 85%, #000 );
+		}
+	}
+
+	// Add credits uses a filled muted button, not wp's outlined secondary.
+	&.is-secondary {
+		background-color: var( --color-muted );
+		color: var( --color-foreground );
+		border: none;
+		box-shadow: none;
+
+		&:hover:not( :disabled ),
+		&:focus:not( :disabled ) {
+			background-color: color-mix( in srgb, var( --color-muted ) 85%, var( --color-foreground ) );
+			color: var( --color-foreground );
+			box-shadow: none;
+		}
+
+		&:focus-visible {
+			box-shadow: 0 0 0 2px var( --color-primary );
+		}
+	}
+}

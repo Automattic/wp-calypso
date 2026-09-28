@@ -73,7 +73,7 @@ const EmailVerificationGate = ( {
 					// translators: %s is a countdown to when the email can be resent, e.g. 4:59.
 					__( 'Resend (%s)' ),
 					formatCooldown( secondsUntilResend )
-			  )
+				)
 			: __( 'Resend' );
 
 	// The denominator for the clicks and confirmations that follow, and for the drop-offs that
@@ -120,7 +120,7 @@ const EmailVerificationGate = ( {
 						/>
 					),
 				}
-		  )
+			)
 		: createInterpolateElement(
 				sprintf(
 					// translators: %s is the email address the verification link was sent to.
@@ -132,7 +132,7 @@ const EmailVerificationGate = ( {
 				{
 					email: <strong />,
 				}
-		  );
+			);
 
 	return (
 		<>

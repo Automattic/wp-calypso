@@ -7,6 +7,7 @@ import {
 	HUNDRED_YEAR_DOMAIN_TRANSFER,
 	isAnyHostingFlow,
 	isNewsletterFlow,
+	isTransferringHostedSiteCreationFlow,
 	Step,
 } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
@@ -14,8 +15,10 @@ import { useI18n } from '@wordpress/react-i18n';
 import { useEffect, useState, useRef } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import Loading from 'calypso/components/loading';
+import TransferWaitCard from 'calypso/components/transfer-wait/card';
 import availableFlows from 'calypso/landing/stepper/declarative-flow/registered-flows';
 import { useRecordSignupComplete } from 'calypso/landing/stepper/hooks/use-record-signup-complete';
+import { useSiteData } from 'calypso/landing/stepper/hooks/use-site-data';
 import { ONBOARD_STORE, SITE_STORE } from 'calypso/landing/stepper/stores';
 import { recordSignupProcessingScreen } from 'calypso/lib/analytics/signup';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -23,15 +26,43 @@ import { useWaitHeartbeat } from 'calypso/lib/analytics/wait-heartbeat';
 import getWccomFrom from 'calypso/state/selectors/get-wccom-from';
 import useCaptureFlowException from '../../../../hooks/use-capture-flow-exception';
 import { shouldUseStepContainerV2 } from '../../../helpers/should-use-step-container-v2';
+import { describeStepMount } from '../../step-mount-registry';
 import { ProcessingResult } from './constants';
 import { useLoadingMessageIndex } from './hooks/use-loading-message-index';
 import { useProcessingLoadingMessages } from './hooks/use-processing-loading-messages';
 import HundredYearPlanFlowProcessingScreen from './hundred-year-plan-flow-processing-screen';
 import TailoredFlowPreCheckoutScreen from './tailored-flow-precheckout-screen';
+import type { ProcessingLoadingMessage } from './hooks/types';
 import type { Step as StepType } from '../../types';
 import type { OnboardSelect } from '@automattic/data-stores';
 import type { SiteIntent } from '@automattic/data-stores/src/onboard';
 import './style.scss';
+
+/**
+ * Mounted only for transfer flows, so the site request behind `useSiteData` stays out of every
+ * other flow's processing screen. The slug is what lets a stalled wait offer a way to the site.
+ */
+function SiteTransferWait( {
+	transferStatus,
+	startedAt,
+	hasTimedOut,
+}: {
+	transferStatus: string | null;
+	startedAt: number | null;
+	hasTimedOut: boolean;
+} ) {
+	const { siteSlug } = useSiteData();
+
+	return (
+		<TransferWaitCard
+			transferStatus={ transferStatus }
+			startedAt={ startedAt }
+			hasTimedOut={ hasTimedOut }
+			isPluginInstall={ false }
+			siteSlug={ siteSlug }
+		/>
+	);
+}
 
 const ProcessingStep: StepType< {
 	submits:
@@ -59,13 +90,18 @@ const ProcessingStep: StepType< {
 	accepts: {
 		title?: string;
 		subtitle?: string;
+		loadingMessages?: ProcessingLoadingMessage[];
 	};
 } > = function ( props ) {
 	const { submit } = props.navigation;
 	const { flow } = props;
 
 	const { __ } = useI18n();
-	const loadingMessages = useProcessingLoadingMessages( flow );
+	const defaultLoadingMessages = useProcessingLoadingMessages( flow );
+	const loadingMessages: ProcessingLoadingMessage[] =
+		props.loadingMessages && props.loadingMessages.length > 0
+			? props.loadingMessages
+			: defaultLoadingMessages;
 
 	const [ hasActionSuccessfullyRun, setHasActionSuccessfullyRun ] = useState( false );
 	const [ hasEmptyActionRun, setHasEmptyActionRun ] = useState( false );
@@ -110,14 +146,28 @@ const ProcessingStep: StepType< {
 		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getProgressTitle(),
 		[]
 	);
+	const transferStatus = useSelect(
+		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getTransferStatus(),
+		[]
+	);
+	const transferStartedAt = useSelect(
+		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getTransferStartedAt(),
+		[]
+	);
+	const transferTimedOut = useSelect(
+		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getTransferTimedOut(),
+		[]
+	);
 
 	// How the wait ended is known only inside the callback that ends it, and that callback submits —
 	// navigating away in the same tick, with no render in between to carry the outcome. Mutating the
 	// object the heartbeat is already holding is what gets it onto the closing event.
+	// Read once per mount, so a second mount of this step reports its own arrival, not the first's.
 	const waitProperties = useRef< Record< string, unknown > >( {
 		flow,
 		previous_step: props.data?.previousStep ?? null,
 		outcome: null,
+		...describeStepMount( props.stepName ),
 	} ).current;
 	waitProperties.flow = flow;
 	waitProperties.previous_step = props.data?.previousStep ?? null;
@@ -248,7 +298,15 @@ const ProcessingStep: StepType< {
 		return (
 			<>
 				<DocumentHead title={ __( 'Processing' ) } />
-				<Step.Loading title={ getCurrentMessage() } progress={ progress } delay={ 1000 } />
+				{ isTransferringHostedSiteCreationFlow( flow ) ? (
+					<SiteTransferWait
+						transferStatus={ transferStatus }
+						startedAt={ transferStartedAt }
+						hasTimedOut={ transferTimedOut }
+					/>
+				) : (
+					<Step.Loading title={ getCurrentMessage() } progress={ progress } delay={ 1000 } />
+				) }
 			</>
 		);
 	}

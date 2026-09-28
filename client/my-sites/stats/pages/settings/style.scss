@@ -1,0 +1,22 @@
+.stats-settings {
+	padding-block: 32px;
+
+	.stats-settings__content {
+		display: flex;
+		flex-direction: column;
+		gap: 24px;
+		max-width: 660px;
+		margin-inline: auto;
+	}
+
+	.stats-settings__section {
+		display: flex;
+		flex-direction: column;
+		gap: 16px;
+		padding: 24px;
+	}
+
+	.stats-settings__description {
+		margin: 0;
+	}
+}

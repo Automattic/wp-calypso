@@ -103,7 +103,7 @@ class ConversationCaterpillarComponent extends Component {
 											count: commentCount,
 										},
 									}
-							  )
+								)
 							: undefined
 					}
 				>

@@ -1,3 +1,32 @@
+const ALLOWED_PROTOCOLS = [ 'http:', 'https:' ];
+
+/**
+ * Parse a URL the top window may be navigated to.
+ * Anything that is not an absolute, credential-free web URL is rejected. A
+ * `javascript:` URL, for instance, parses with the same `host` as the iframe
+ * that requested it, while still executing script in the top document.
+ * @param {string} value The URL to parse.
+ * @returns {URL|null} The parsed URL, or null when it is not safe to navigate to.
+ */
+const parseNavigableURL = ( value ) => {
+	if ( typeof value !== 'string' ) {
+		return null;
+	}
+
+	let url;
+	try {
+		url = new URL( value );
+	} catch {
+		return null;
+	}
+
+	if ( ! ALLOWED_PROTOCOLS.includes( url.protocol ) || url.username || url.password ) {
+		return null;
+	}
+
+	return url;
+};
+
 /**
  * This function is inspired by `wp-includes/js/wp-embed.js` of WP.org.
  * It actually waits for a message from within the iFrame.
@@ -53,17 +82,17 @@ const WPiFrameResize = ( contentWrapper ) => {
 
 			/* Link to a specific URL on request. */
 			if ( 'link' === data.message ) {
-				const sourceURL = document.createElement( 'a' );
-				const targetURL = document.createElement( 'a' );
+				const sourceURL = parseNavigableURL( source.getAttribute( 'src' ) );
+				const targetURL = parseNavigableURL( data.value );
 
-				sourceURL.href = source.getAttribute( 'src' );
-				targetURL.href = data.value;
-
-				/* Only continue if link hostname matches iframe's hostname. */
-				if ( targetURL.host === sourceURL.host ) {
-					if ( document.activeElement === source ) {
-						window.top.location.href = data.value;
-					}
+				/* Only continue if the target is a web URL on the iframe's own host. */
+				if (
+					sourceURL &&
+					targetURL &&
+					targetURL.host === sourceURL.host &&
+					document.activeElement === source
+				) {
+					window.top.location.href = targetURL.href;
 				}
 			}
 		}

@@ -3,11 +3,11 @@ import { CuratedBlogsList } from './index';
 export const lifestyleBlogs: CuratedBlogsList = {
 	health: [
 		{
-			feed_ID: 27232798,
+			feed_ID: 176174818,
 			site_ID: 62003347,
-			site_URL: 'https://phoebemd.com/',
+			site_URL: 'https://healthinspiration.org/',
 			site_name: 'HEALTH + INSPIRATION',
-			feed_URL: 'http://phoebemd.com',
+			feed_URL: 'http://healthinspiration.org/feed',
 			has_icon: true,
 		},
 		{
@@ -43,11 +43,11 @@ export const lifestyleBlogs: CuratedBlogsList = {
 			has_icon: true,
 		},
 		{
-			feed_ID: 37662890,
-			site_ID: 37547896,
+			feed_ID: 107065658,
+			site_ID: 0,
 			site_URL: 'https://healthyhelperkaila.com/',
 			site_name: 'Healthy Helper',
-			feed_URL: 'http://healthyhelperblog.com/feed',
+			feed_URL: 'http://healthyhelperkaila.com/feed',
 			has_icon: false,
 		},
 		{
@@ -119,11 +119,11 @@ export const lifestyleBlogs: CuratedBlogsList = {
 			has_icon: true,
 		},
 		{
-			feed_ID: 1270452,
+			feed_ID: 179607633,
 			site_ID: 30938996,
 			site_URL: 'https://foodobs.wordpress.com/',
 			site_name: 'Food Observations',
-			feed_URL: 'http://foodobs.wordpress.com',
+			feed_URL: 'http://foodobs.wordpress.com/feed',
 			has_icon: true,
 		},
 		{
@@ -306,14 +306,6 @@ export const lifestyleBlogs: CuratedBlogsList = {
 			site_URL: 'https://neurosciencenews.com/',
 			site_name: 'Neuroscience News',
 			feed_URL: 'http://neurosciencenews.com/feed',
-			has_icon: true,
-		},
-		{
-			feed_ID: 144414492,
-			site_ID: 35212544,
-			site_URL: 'http://naturalremediesgoodhealth.com/',
-			site_name: 'News on Natural Remedies, Good Sleep and Good Health',
-			feed_URL: 'http://naturalremediesgoodhealth.com',
 			has_icon: true,
 		},
 		{

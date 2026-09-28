@@ -38,13 +38,13 @@ const GettingStartedVideo: React.FunctionComponent = () => {
 									children: null,
 								} ),
 							}
-					  )
+						)
 					: createInterpolateElement(
 							__( 'Watch <strong>Getting started on WordPress.com</strong> while you wait' ),
 							{
 								strong: createElement( 'strong' ),
 							}
-					  ) }
+						) }
 			</p>
 			<ReaderFeaturedVideoBlock { ...video } videoEmbed={ video } isExpanded />
 		</div>

@@ -1,16 +1,21 @@
-/* Prevent horizontal overflow and allow text wrapping */
-.dns-records-table {
-		.dataviews-view-table__cell-content-wrapper {
-			min-width: initial;
-			white-space: normal;
-			word-break: break-word;
-			overflow-wrap: break-word;
-			max-width: 100%;
+/**
+ * DNS values are single tokens — an IP address or a hostname — that stop making
+ * sense when broken across lines, and hostnames offer the browser plenty of
+ * hyphens to break at. DataViews already keeps cell text on one line, but values
+ * rendered through Text set `text-wrap: pretty`, which resets the inherited
+ * `text-wrap-mode` and lets them wrap again — hence the child selector rather
+ * than a rule on the cell itself.
+ *
+ * `min-width: 0` releases the 15ch floor DataViews puts on every column, which
+ * is far wider than the short Type and Name values need. Columns then size to
+ * their content and the table scrolls when the sum overflows its card.
+ */
+.dns-records-table .dataviews-view-table {
+	.dataviews-view-table__cell-content-wrapper {
+		min-width: 0;
 
-			// Ensure Text components wrap properly
-			> * {
-				word-break: break-word;
-				overflow-wrap: break-word;
-			}
+		> * {
+			white-space: nowrap;
+		}
 	}
 }

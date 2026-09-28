@@ -56,7 +56,7 @@ export default function useWPCOMOwnedSites() {
 							license.productId === creatorPlan?.yearly_product_id ) &&
 						! license.referral && // We make sure we do not count referrals
 						! license.meta?.isDevSite // And also a dev site
-			  ).length
+				).length
 			: 0,
 		isReady,
 	};

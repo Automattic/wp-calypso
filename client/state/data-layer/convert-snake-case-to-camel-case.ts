@@ -7,7 +7,7 @@ type ConvertToCamelCase< T > = T extends object
 		? Array< ConvertToCamelCase< U > >
 		: {
 				[ K in keyof T as SnakeToCamel< K & string > ]: ConvertToCamelCase< T[ K ] >;
-		  }
+			}
 	: T;
 
 export function convertSnakeCaseToCamelCase< T >( obj: T ): ConvertToCamelCase< T > {

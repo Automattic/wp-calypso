@@ -7,7 +7,7 @@ export const popularBlogs: CuratedBlogsList = {
 			site_ID: 179338616,
 			site_URL: 'https://variety.com/',
 			site_name: 'Variety',
-			feed_URL: 'http://pmc-variety.go-vip.net/feed',
+			feed_URL: 'http://variety.com/feed',
 			has_icon: true,
 		},
 		{

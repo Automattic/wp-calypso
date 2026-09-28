@@ -82,7 +82,7 @@ export default function TeamActionDialog( {
 		? ( translate( 'Are you sure you want to leave %(agencyName)s?', {
 				args: { agencyName: agency?.name ?? '' },
 				comment: '%(agencyName)s is the agency name',
-		  } ) as string )
+			} ) as string )
 		: translate( 'Remove team member' );
 
 	return (
@@ -99,12 +99,12 @@ export default function TeamActionDialog( {
 				? translate(
 						"By proceeding, you'll lose management access of all sites that belong to this agency and you will be removed from this dashboard. {{br/}}The agency owner will need to re-invite you if you wish to gain access again.",
 						{ components: { br: <br /> } }
-				  )
+					)
 				: translate( 'Are you sure you want to remove {{b}}%(memberName)s{{/b}}?', {
 						args: { memberName },
 						components: { b: <b /> },
 						comment: '%(memberName)s is the member name',
-				  } ) }
+					} ) }
 		</A4AConfirmationDialog>
 	);
 }

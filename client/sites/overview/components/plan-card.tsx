@@ -4,8 +4,8 @@ import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import { HostingCard, HostingCardLinkButton } from 'calypso/components/hosting-card';
+import { getSubtitleForDisplay, isPartnerPurchase } from 'calypso/dashboard/utils/purchase';
 import { isPlansPageUntangled } from 'calypso/lib/plans/untangling-plans-experiment';
-import { isPartnerPurchase, purchaseType } from 'calypso/lib/purchases';
 import { getManagePurchaseUrlFor } from 'calypso/my-sites/purchases/paths';
 import SitePreviewModal from 'calypso/sites-dashboard/components/site-preview-modal';
 import { isStagingSite } from 'calypso/sites-dashboard/utils';
@@ -78,8 +78,8 @@ const PlanCard = () => {
 
 	// Show that this is an Agency Managed plan for agency purchases.
 	const planName = isAgencyPurchase
-		? purchaseType( planPurchase )
-		: planDetails?.product_name_short ?? '';
+		? getSubtitleForDisplay( planPurchase )
+		: ( planDetails?.product_name_short ?? '' );
 	const planPurchaseLoading = ! isFreePlan && planPurchase === null;
 	const isLoading = ! planDetails || planPurchaseLoading;
 

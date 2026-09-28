@@ -90,10 +90,10 @@ export const PerformanceScore = ( props: PerformanceScoreProps ) => {
 										),
 									},
 								}
-						  )
+							)
 						: translate(
 								'We didn‘t find any recommendations for improving the speed of your site.'
-						  ) }
+							) }
 				</div>
 			</div>
 			<div className="disclaimer">

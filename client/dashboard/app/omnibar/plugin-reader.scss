@@ -8,7 +8,7 @@ $omnibar-reader-active-radius: 4px;
 	);
 }
 
-.omnibar .omnibar__reader {
+.omnibar .omnibar__menu.omnibar__reader {
 	@media ( max-width: 360px ) {
 		display: none;
 	}
@@ -31,6 +31,7 @@ $omnibar-reader-active-radius: 4px;
 .is-global-sidebar-visible .omnibar .omnibar__menu.omnibar__reader.is-active {
 	--omnibar-text-color: var( --color-sidebar-menu-selected-text );
 	--omnibar-highlight-color: var( --color-sidebar-menu-selected-text );
+	--omnibar-icon-color: var( --color-sidebar-menu-selected-text );
 
 	background: var( --color-sidebar-background );
 	border-start-start-radius: $omnibar-reader-active-radius;

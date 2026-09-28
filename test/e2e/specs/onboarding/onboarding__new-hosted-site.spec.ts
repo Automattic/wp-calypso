@@ -12,8 +12,43 @@ import {
 	cancelDashboardPurchaseFlow,
 	removeDashboardUpgradeFlow,
 } from '@automattic/calypso-e2e';
-import { skipIfNotTrunk, tags, test } from '../../lib/pw-base';
+import { expect, skipIfNotTrunk, tags, test } from '../../lib/pw-base';
 import { apiCancelAtomicPlan, apiCloseAccount } from '../shared';
+
+// How long a user may be left on the Dashboard before the post-transfer job
+// switches their site to the wp-admin interface. Seconds of that go unnoticed;
+// longer is a product problem, not a test timing artifact.
+const wpAdminInterfaceSettleTimeout = 5 * 1000;
+
+/**
+ * Waits for the post-transfer job to switch the site to the wp-admin interface.
+ *
+ * Already true when the flow lands the user in WP Admin; a bounded wait when it
+ * sent them to the Dashboard instead because the job had not landed yet.
+ */
+async function expectWPAdminInterface( restAPIClient: RestAPIClient, siteSlug: string ) {
+	await expect
+		.poll(
+			async () => {
+				const site = await restAPIClient.sendRequest(
+					restAPIClient.getRequestURL( '1.2', `/sites/${ encodeURIComponent( siteSlug ) }` ),
+					{
+						method: 'get',
+						headers: {
+							Authorization: await restAPIClient.getAuthorizationHeader( 'bearer' ),
+						},
+					}
+				);
+
+				return site?.options?.wpcom_admin_interface;
+			},
+			{
+				timeout: wpAdminInterfaceSettleTimeout,
+				message: 'The post-transfer job did not switch the site to the wp-admin interface.',
+			}
+		)
+		.toBe( 'wp-admin' );
+}
 
 test.describe(
 	DataHelper.createSuiteTitle( 'New Hosted Site Flow: Purchase a hosted site and cancel it' ),
@@ -106,12 +141,24 @@ test.describe(
 
 			await test.step( 'Then I wait for the Atomic transfer to complete', async () => {
 				await page.waitForURL( /.*transferring-hosted-site.*/ );
-				await page.waitForURL( /wp-admin/, { timeout: 180 * 1000 } );
+
+				// The flow exits to WP Admin once the post-transfer job has switched the site
+				// to the wp-admin interface, and to the Dashboard site overview while that job
+				// is still in flight. WP Admin is served from the site itself, the Dashboard
+				// under /sites/<slug>; the slug is the same either way.
+				await page.waitForURL( /wp-admin|\/sites\/[^/?#]+/, { timeout: 180 * 1000 } );
+
+				const landingURL = new URL( page.url() );
+				siteSlug = landingURL.pathname.match( /\/sites\/([^/?#]+)/ )?.[ 1 ] ?? landingURL.hostname;
 			} );
 
-			await test.step( 'Then I am in WP Admin', async () => {
-				await page.waitForURL( /wp-admin/ );
-				siteSlug = new URL( page.url() ).hostname;
+			await test.step( 'Then I am using the WP Admin interface', async () => {
+				const restAPIClient = new RestAPIClient(
+					{ username: testUser.username, password: testUser.password },
+					newUserDetails!.body.bearer_token
+				);
+
+				await expectWPAdminInterface( restAPIClient, siteSlug );
 			} );
 
 			await test.step( 'When I navigate to Billing > Active upgrades to cancel add-on', async () => {

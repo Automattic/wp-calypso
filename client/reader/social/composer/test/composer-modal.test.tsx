@@ -201,13 +201,12 @@ describe( '<ComposerModal>', () => {
 
 	it( 'seeds the textarea with mode.initialText when opening in standalone mode', () => {
 		renderModal( testComposerConfig );
-		act(
-			() =>
-				openFn?.( {
-					kind: 'standalone',
-					entry_point: 'fab',
-					initialText: '@alice.bsky.social ',
-				} )
+		act( () =>
+			openFn?.( {
+				kind: 'standalone',
+				entry_point: 'fab',
+				initialText: '@alice.bsky.social ',
+			} )
 		);
 
 		expect( screen.getByRole( 'textbox' ) ).toHaveValue( '@alice.bsky.social ' );
@@ -220,13 +219,12 @@ describe( '<ComposerModal>', () => {
 		const user = userEvent.setup();
 		renderModal( testComposerConfig );
 
-		act(
-			() =>
-				openFn?.( {
-					kind: 'standalone',
-					entry_point: 'fab',
-					initialText: '@alice.bsky.social ',
-				} )
+		act( () =>
+			openFn?.( {
+				kind: 'standalone',
+				entry_point: 'fab',
+				initialText: '@alice.bsky.social ',
+			} )
 		);
 		await user.type( screen.getByRole( 'textbox' ), 'hello' );
 		expect( screen.getByRole( 'textbox' ) ).toHaveValue( '@alice.bsky.social hello' );
@@ -234,13 +232,12 @@ describe( '<ComposerModal>', () => {
 		// Re-open with a fresh mode object (different ref, same kind +
 		// initialText). The guard should suppress the seed so the user's
 		// typing survives.
-		act(
-			() =>
-				openFn?.( {
-					kind: 'standalone',
-					entry_point: 'fab',
-					initialText: '@bob.bsky.social ',
-				} )
+		act( () =>
+			openFn?.( {
+				kind: 'standalone',
+				entry_point: 'fab',
+				initialText: '@bob.bsky.social ',
+			} )
 		);
 
 		expect( screen.getByRole( 'textbox' ) ).toHaveValue( '@alice.bsky.social hello' );

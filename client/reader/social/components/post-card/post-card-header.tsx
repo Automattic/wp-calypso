@@ -48,7 +48,7 @@ export function PostCardHeader( {
 
 	const inAppPostUrl = analytics?.getThreadUrl?.( post.uri ) ?? null;
 	const inAppParentUrl = post.reply_parent
-		? analytics?.getThreadUrl?.( post.reply_parent.uri ) ?? null
+		? ( analytics?.getThreadUrl?.( post.reply_parent.uri ) ?? null )
 		: null;
 
 	const fireAuthorClicked = () => {
@@ -122,7 +122,7 @@ export function PostCardHeader( {
 	const replyContextLabel = post.reply_parent
 		? translate( 'Replying to @%(handle)s', {
 				args: { handle: post.reply_parent.author.handle },
-		  } )
+			} )
 		: null;
 
 	const renderTimestamp = () => {

@@ -85,7 +85,7 @@ jest.mock( '../utils/agenttic-tracking', () => ( {
 } ) );
 
 const trackingMocks = jest.requireMock( '../utils/tracking' ) as jest.Mocked<
-	typeof import('../utils/tracking')
+	typeof import( '../utils/tracking' )
 >;
 const {
 	trackImageStudioSuggestionsRendered: mockTrackImageStudioSuggestionsRendered,
@@ -94,7 +94,7 @@ const {
 
 const { formatSuggestionIds: mockFormatSuggestionIds } = jest.requireMock(
 	'../utils/agenttic-tracking'
-) as jest.Mocked< typeof import('../utils/agenttic-tracking') >;
+) as jest.Mocked< typeof import( '../utils/agenttic-tracking' ) >;
 
 mockFormatSuggestionIds.mockImplementation(
 	( suggestions: any[] ) =>

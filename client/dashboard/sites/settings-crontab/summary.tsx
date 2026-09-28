@@ -40,9 +40,9 @@ export default function CrontabSettingsSummary( {
 							/* translators: %d is the number of scheduled jobs */
 							_n( '%d scheduled job', '%d scheduled jobs', crontabCount ),
 							crontabCount
-					  )
+						)
 					: __( 'No scheduled jobs' ),
-			intent: crontabCount > 0 ? ( 'success' as const ) : undefined,
+			intent: crontabCount > 0 ? ( 'stable' as const ) : ( 'draft' as const ),
 		},
 	].filter( ( badge ) => !! badge );
 

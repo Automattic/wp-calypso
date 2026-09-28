@@ -57,7 +57,7 @@ const useUnsubscribeModal = (
 											name: subscribers[ 0 ].display_name,
 										},
 										comment: 'Shows when a single subscriber is removed, using their name',
-								  } )
+									} )
 								: translate(
 										'%(count)d subscriber has been removed from your list.',
 										'%(count)d subscribers have been removed from your list.',
@@ -68,7 +68,7 @@ const useUnsubscribeModal = (
 											},
 											comment: 'Shows when multiple subscribers are removed, using the count',
 										}
-								  ),
+									),
 							{ duration: 5000, displayOnNextPage: true }
 						)
 					);

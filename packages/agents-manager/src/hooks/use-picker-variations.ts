@@ -14,6 +14,12 @@ import type { GlobalStyles, StyleVariation } from '../components/styles-preview'
 // list length comes from model-generated props.
 const MAX_VARIATIONS = 24;
 
+const VARIATION_CLICK_EVENTS = {
+	color: 'jetpack_big_sky_color_variation_click',
+	font: 'jetpack_big_sky_font_variation_click',
+	button: 'jetpack_big_sky_button_variation_click',
+} as const satisfies Record< StyleVariationType, `jetpack_big_sky_${ string }` >;
+
 interface Options {
 	variations?: StyleVariation[];
 	/**
@@ -114,7 +120,7 @@ export default function usePickerVariations( {
 			if ( variationType ) {
 				// Fire Big Sky's variation-click event name and props, so the
 				// existing dashboards keep working.
-				recordBigSkyTracksEvent( `${ variationType }_variation_click`, {
+				recordBigSkyTracksEvent( VARIATION_CLICK_EVENTS[ variationType ], {
 					[ variationType ]: variation.title,
 				} );
 			}

@@ -80,10 +80,7 @@ const AdvancedCredentials: FunctionComponent< Props > = ( {
 	const formSubmissionStatus = useSelector(
 		( state ) =>
 			getJetpackCredentialsUpdateStatus( state, siteId ) as
-				| 'unsubmitted'
-				| 'pending'
-				| 'success'
-				| 'failed'
+				'unsubmitted' | 'pending' | 'success' | 'failed'
 	);
 
 	const formSubmissionError = useSelector( ( state ) =>
@@ -364,7 +361,7 @@ const AdvancedCredentials: FunctionComponent< Props > = ( {
 											type: JETPACK_CREDENTIALS_UPDATE_RESET,
 											siteId,
 										} );
-								  }
+									}
 						}
 						onReview={ () => {
 							dispatch( {

@@ -87,7 +87,7 @@ class SuccessBanner extends PureComponent {
 							{ translate( 'Download' ) }
 						</Button>
 					),
-			  }
+				}
 			: {
 					title:
 						'alternate' === context
@@ -104,16 +104,16 @@ class SuccessBanner extends PureComponent {
 						'alternate' === context
 							? translate( 'We successfully cloned your site to the state as of %(date)s!', {
 									args: { date },
-							  } )
+								} )
 							: translate( 'We successfully restored your site back to %(date)s!', {
 									args: { date },
-							  } ),
+								} ),
 					actionButton: (
 						<Button href={ siteUrl } primary>
 							{ translate( 'View site' ) }
 						</Button>
 					),
-			  };
+				};
 		return (
 			<ActivityLogBanner
 				isDismissable

@@ -94,7 +94,7 @@ export class DateRange extends Component {
 				: this.clampDateToRange( this.props.moment( this.props.selectedStartDate ), {
 						dateFrom: firstSelectableDate,
 						dateTo: lastSelectableDate,
-				  } );
+					} );
 
 		let endDate =
 			this.props.selectedEndDate == null
@@ -102,7 +102,7 @@ export class DateRange extends Component {
 				: this.clampDateToRange( this.props.moment( this.props.selectedEndDate ), {
 						dateFrom: firstSelectableDate,
 						dateTo: lastSelectableDate,
-				  } );
+					} );
 
 		const selectedShortcutId = this.props.selectedShortcutId || null;
 

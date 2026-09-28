@@ -73,7 +73,7 @@ export default function DomainConnectionSetup( {
 						// translators: %s is the registrar name
 						__( '1. Login to %s' ),
 						registrar
-				  )
+					)
 				: __( '1. Login to your domain name provider' ),
 			label: __( 'I have opened the DNS settings' ),
 			content: (

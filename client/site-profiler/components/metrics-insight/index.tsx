@@ -15,8 +15,9 @@ type Insight = {
 };
 
 const Card = styled( FoldableCard )`
-	font-family: 'SF Pro Text', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto',
-		'Oxygen-Sans', 'Ubuntu', 'Cantarell', 'Helvetica Neue', sans-serif;
+	font-family:
+		'SF Pro Text', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Oxygen-Sans',
+		'Ubuntu', 'Cantarell', 'Helvetica Neue', sans-serif;
 	font-size: 16px;
 	line-height: normal;
 	letter-spacing: -0.1px;
@@ -28,8 +29,9 @@ type Header = {
 };
 
 const Header = styled.div`
-	font-family: 'SF Pro Text', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto',
-		'Oxygen-Sans', 'Ubuntu', 'Cantarell', 'Helvetica Neue', sans-serif;
+	font-family:
+		'SF Pro Text', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Oxygen-Sans',
+		'Ubuntu', 'Cantarell', 'Helvetica Neue', sans-serif;
 	font-size: 16px;
 	filter: ${ ( props: Header ) => ( props.locked ? 'blur(3px)' : 'none' ) };
 	user-select: ${ ( props: Header ) => ( props.locked ? 'none' : 'auto' ) };

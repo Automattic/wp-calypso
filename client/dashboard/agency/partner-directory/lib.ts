@@ -6,7 +6,7 @@ import type {
 	AgencyPartnerDirectorySlug,
 	AgencyProfile,
 } from '@automattic/api-core';
-import type { Badge } from '@automattic/ui';
+import type { Badge } from '@wordpress/ui';
 import type { ComponentProps } from 'react';
 
 export type StatusBadgeIntent = ComponentProps< typeof Badge >[ 'intent' ];
@@ -30,23 +30,27 @@ export function getDirectoryStatusBadge(
 ): DirectoryStatusBadge {
 	switch ( status ) {
 		case 'pending':
-			return { key: 'pending', label: __( 'Pending' ), intent: 'warning' };
+			return { key: 'pending', label: __( 'Pending' ), intent: 'medium' };
 		case 'approved':
-			return { key: 'approved', label: __( 'Approved' ), intent: 'success' };
+			return { key: 'approved', label: __( 'Approved' ), intent: 'stable' };
 		case 'rejected':
-			return { key: 'rejected', label: __( 'Not approved' ), intent: 'error' };
+			return { key: 'rejected', label: __( 'Not approved' ), intent: 'high' };
 		case 'closed':
-			return { key: 'closed', label: __( 'Closed' ), intent: 'default' };
+			return { key: 'closed', label: __( 'Closed' ), intent: 'draft' };
 		default:
-			return { key: 'unknown', label: '-', intent: 'default' };
+			return { key: 'unknown', label: '-', intent: 'draft' };
 	}
 }
 
-function isValidUrl( url: string ): boolean {
+export function isValidUrl( url: string ): boolean {
 	return (
 		url.length > 3 &&
 		/^(https?:\/\/)?([a-z0-9-]+\.)+[a-z]{2,}(:[0-9]{1,5})?(\/[^\s]*)?$/i.test( url )
 	);
+}
+
+export function areUrlsUnique( urls: string[] ): boolean {
+	return new Set( urls ).size === urls.length;
 }
 
 /**
@@ -74,6 +78,15 @@ export function isAgencyProfileComplete( profile?: AgencyProfile | null ): boole
 		listing.products.length > 0 &&
 		( listing.languages_spoken?.length ?? 0 ) > 0
 	);
+}
+
+/**
+ * Whether at least one directory listing in the application was approved.
+ */
+export function hasApprovedDirectory(
+	application?: AgencyPartnerDirectoryApplication | null
+): boolean {
+	return application?.directories?.some( ( { status } ) => status === 'approved' ) ?? false;
 }
 
 /**

@@ -161,7 +161,7 @@ function useSmooch( enabled = true, integrationKey?: string ) {
 			const integrationId = integrationKey
 				? SMOOCH_INTEGRATION_ID_CUSTOM[
 						integrationKey as keyof typeof SMOOCH_INTEGRATION_ID_CUSTOM
-				  ]
+					]
 				: SMOOCH_INTEGRATION_ID;
 
 			SmoochLibrary.render( container );
@@ -309,8 +309,7 @@ export const useManagedZendeskChat = ( {
 	const clientId = useMemo( () => {
 		const messages = conversation?.messages ?? [];
 		const msg = messages.find( ( m ) => m.source?.type === 'web' && m.source?.id ) as
-			| ZendeskMessage
-			| undefined;
+			ZendeskMessage | undefined;
 		return msg?.source?.id ?? '';
 	}, [ conversation?.messages ] );
 
@@ -337,11 +336,13 @@ export const useManagedZendeskChat = ( {
 
 	const disconnectedListener = useCallback( () => {
 		hadDisconnectRef.current = true;
+		connectionStatusRef.current = 'disconnected';
 		setConnectionStatus( 'disconnected' );
 		recordZendeskTracksEvent( 'calypso_smooch_messenger_disconnected' );
 	}, [ setConnectionStatus, recordZendeskTracksEvent ] );
 
 	const reconnectingListener = useCallback( () => {
+		connectionStatusRef.current = 'reconnecting';
 		setConnectionStatus( 'reconnecting' );
 		recordZendeskTracksEvent( 'calypso_smooch_messenger_reconnecting' );
 	}, [ setConnectionStatus, recordZendeskTracksEvent ] );
@@ -362,11 +363,12 @@ export const useManagedZendeskChat = ( {
 	const connectedListener = useCallback( () => {
 		// We only want to revert the connection status to connected if it was disconnected before.
 		// We don't want a "connected" status on page load, it's only useful as a sign of a recovered connection.
-		if ( connectionStatus ) {
+		if ( connectionStatusRef.current ) {
+			connectionStatusRef.current = 'connected';
 			setConnectionStatus( 'connected' );
 			recordZendeskTracksEvent( 'calypso_smooch_messenger_connected' );
 		}
-	}, [ setConnectionStatus, connectionStatus, recordZendeskTracksEvent ] );
+	}, [ setConnectionStatus, recordZendeskTracksEvent ] );
 
 	const navigate = useNavigate();
 
@@ -479,7 +481,7 @@ export const useManagedZendeskChat = ( {
 						},
 					],
 					actions: ! hasRated
-						? message.actions?.map( ( action ) => {
+						? ( message.actions?.map( ( action ) => {
 								const label =
 									action.metadata.score === 'GOOD'
 										? __( 'Good 👍', '__i18n_text_domain__' )
@@ -494,7 +496,7 @@ export const useManagedZendeskChat = ( {
 									},
 									pressed: action.metadata.score === score,
 								};
-						  } ) ?? []
+							} ) ?? [] )
 						: [],
 				};
 			}
@@ -693,7 +695,7 @@ export const useManagedZendeskChat = ( {
 					handleFilesSelected,
 					handleRemoveImage: handleRemoveImage as ( image: unknown ) => void,
 					uploadImagesToWordPress: () => Promise.resolve( [] as never[] ),
-			  }
+				}
 			: undefined;
 
 	const onSubmitWithAttachments = useCallback(

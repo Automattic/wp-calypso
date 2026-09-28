@@ -113,7 +113,7 @@ const HostSelection: FunctionComponent = () => {
 						? translate( 'My host is not listed here' )
 						: translate(
 								'I don’t know / my host is not listed here / I have my server credentials'
-						  ) }
+							) }
 					<Gridicon icon="chevron-right" />
 				</a>
 			</div>

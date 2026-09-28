@@ -1,0 +1,5 @@
+// Bounds the site list so it scrolls inside the modal with its pagination
+// pinned at the bottom, instead of the footer floating over the rows.
+.dashboard-marketplace-purchases__site-picker {
+	block-size: 320px;
+}

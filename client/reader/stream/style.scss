@@ -36,7 +36,7 @@
 	margin-bottom: 15px;
 
 	&.is-seen {
-		opacity: 0.5;
+		opacity: 0.65;
 	}
 
 	&.is-selected,
@@ -630,17 +630,6 @@ body.is-section-reader div.layout.is-global-sidebar-visible .is-site-stream .bac
 	.reader-related-card__featured-image {
 		border: 1px solid var( --color-neutral-0 );
 		margin: 0 0 14px;
-	}
-}
-
-.search-stream__results {
-	.stream__right-column {
-		.reader-sidebar-site_url {
-			display: block;
-		}
-		.reader-sidebar-site_description {
-			display: -webkit-box;
-		}
 	}
 }
 

@@ -57,7 +57,7 @@ export const useFetchAllManagedSites = () => {
 						site: urlToSlug( site.url ),
 						date: foundSite.options?.created_at || '',
 						rawSite: site,
-				  }
+					}
 				: null;
 		} )
 		.filter( Boolean ) as SiteItem[];

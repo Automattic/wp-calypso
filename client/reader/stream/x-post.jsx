@@ -8,11 +8,15 @@ import PropTypes from 'prop-types';
 import { createRef, PureComponent } from 'react';
 import UserAvatar from 'calypso/blocks/user-avatar';
 import { useFeedQuery } from 'calypso/reader/data/feed';
-import { useIsSeenEnabled } from 'calypso/reader/data/seen-posts';
+import {
+	useCanMarkSeen,
+	useIsSeenVisible,
+	useMarkAsSeenMutation,
+} from 'calypso/reader/data/seen-posts';
 import { useSite } from 'calypso/reader/data/site';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
-class CrossPost extends PureComponent {
+export class CrossPost extends PureComponent {
 	static propTypes = {
 		post: PropTypes.object.isRequired,
 		isSelected: PropTypes.bool.isRequired,
@@ -23,7 +27,9 @@ class CrossPost extends PureComponent {
 		postKey: PropTypes.object,
 		site: PropTypes.object,
 		feed: PropTypes.object,
-		isSeenEnabled: PropTypes.bool,
+		canMarkSeen: PropTypes.bool,
+		isSeenVisible: PropTypes.bool,
+		requestMarkAsSeen: PropTypes.func.isRequired,
 	};
 
 	cardRef = createRef();
@@ -70,8 +76,23 @@ class CrossPost extends PureComponent {
 		if ( ! event.defaultPrevented ) {
 			// some child handled it
 			event.preventDefault();
+			this.markAsSeen();
 			this.props.handleClick( this.props.xMetadata );
 		}
+	};
+
+	markAsSeen = () => {
+		const { canMarkSeen, post, postKey, requestMarkAsSeen } = this.props;
+		const feedId = postKey?.feedId || post.feed_ID;
+		if ( ! canMarkSeen || post.is_seen || ! feedId || ! post.feed_item_ID ) {
+			return;
+		}
+
+		requestMarkAsSeen( {
+			feedId,
+			feedItemIds: [ post.feed_item_ID ],
+			globalIds: post.global_ID ? [ post.global_ID ] : [],
+		} );
 	};
 
 	getSiteNameFromURL = ( siteURL ) => {
@@ -161,7 +182,7 @@ class CrossPost extends PureComponent {
 			reader__card: true,
 			'is-x-post': true,
 			'is-selected': this.props.isSelected,
-			'is-seen': this.props.isSeenEnabled && post?.is_seen,
+			'is-seen': this.props.isSeenVisible,
 		} );
 
 		// Remove the x-post text from the title.
@@ -213,18 +234,19 @@ export default function CrossPostContainer( props ) {
 	const { site } = useSite( siteId );
 	const resolvedFeedId = feedId || site?.feed_ID;
 	const { data: feedFromSite } = useFeedQuery( feedFromKey ? undefined : resolvedFeedId );
-	const isSeenEnabled = useIsSeenEnabled( {
-		feedId: resolvedFeedId,
-		blogId: siteId,
-		post: props.post,
-	} );
+	const { mutate: requestMarkAsSeen } = useMarkAsSeenMutation();
+	const seenProps = { feedId: resolvedFeedId, blogId: siteId, post: props.post };
+	const canMarkSeen = useCanMarkSeen( seenProps );
+	const isSeenVisible = useIsSeenVisible( seenProps );
 
 	return (
 		<LocalizedCrossPost
 			{ ...props }
 			site={ site }
 			feed={ feedFromKey || feedFromSite }
-			isSeenEnabled={ isSeenEnabled }
+			canMarkSeen={ canMarkSeen }
+			isSeenVisible={ isSeenVisible }
+			requestMarkAsSeen={ requestMarkAsSeen }
 		/>
 	);
 }

@@ -26,7 +26,7 @@ import JetpackProductInstall from 'calypso/my-sites/plans/current-plan/jetpack-p
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { CHECKLIST_KNOWN_TASKS } from 'calypso/state/data-layer/wpcom/checklist/index.js';
 import { requestGuidedTour } from 'calypso/state/guided-tours/actions';
-import { getSitePurchases } from 'calypso/state/purchases/selectors';
+import { getRawSitePurchases } from 'calypso/state/purchases/selectors';
 import getJetpackProductInstallStatus from 'calypso/state/selectors/get-jetpack-product-install-status';
 import getJetpackWpAdminUrl from 'calypso/state/selectors/get-jetpack-wp-admin-url';
 import getRewindState from 'calypso/state/selectors/get-rewind-state';
@@ -39,7 +39,7 @@ import {
 } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import JetpackChecklistHeader from './header';
-import type { Purchase } from 'calypso/lib/purchases/types';
+import type { Purchase } from '@automattic/api-core';
 import type { JetpackProductInstallStatus } from 'calypso/state/selectors/get-jetpack-product-install-status';
 import type { AppState, URL } from 'calypso/types';
 
@@ -96,11 +96,11 @@ class JetpackChecklist extends PureComponent< Props & LocalizeProps > {
 		};
 
 		const purchasesWithJetpackBackup = sitePurchases.filter( ( sitePurchase ) =>
-			includesJetpackBackup( sitePurchase.productSlug )
+			includesJetpackBackup( sitePurchase.product_slug )
 		);
 
 		const earliestJetpackBackupSubscribeDate = purchasesWithJetpackBackup
-			.map( ( purchase ) => moment( purchase.subscribedDate ) )
+			.map( ( purchase ) => moment( purchase.subscribed_date ) )
 			.sort( ( a, b ) => a.valueOf() - b.valueOf() )?.[ 0 ];
 
 		if ( ! earliestJetpackBackupSubscribeDate ) {
@@ -410,7 +410,7 @@ function mapStateToProps( state: AppState ) {
 			siteHasFeature( state, siteId, FEATURE_VIDEO_UPLOADS_JETPACK_PRO ) &&
 			isJetpackMinimumVersion( state, siteId ?? 0, OFFER_RESET_VIDEO_MINIMUM_JETPACK_VERSION )
 		),
-		sitePurchases: getSitePurchases( state, siteId ),
+		sitePurchases: getRawSitePurchases( state, siteId ),
 	};
 }
 

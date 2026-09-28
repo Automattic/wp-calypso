@@ -34,17 +34,6 @@ export function urlToSlug( url: TypedURL | Falsy ): SiteSlug | null {
 }
 
 /**
- * Removes the `http(s)://` part and the trailing slash from a URL.
- * "http://blog.wordpress.com" will be converted into "blog.wordpress.com".
- * "https://www.wordpress.com/blog/" will be converted into "www.wordpress.com/blog".
- * @param  urlToConvert The URL to convert
- * @returns              The URL's domain and path
- */
-export function urlToDomainAndPath( urlToConvert: TypedURL ): TypedURL {
-	return withoutHttp( urlToConvert ).replace( /\/$/, '' );
-}
-
-/**
  * Removes the protocol and path from a URL, returning only the domain.
  * Removes http(s):// prefix and all trailing slashes.
  * "http://blog.wordpress.com" will be converted into "blog.wordpress.com".

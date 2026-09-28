@@ -9,6 +9,7 @@ import {
 	markReaderPostsAsUnseenMutation,
 	markReaderWpcomPostsAsSeenMutation,
 	markReaderWpcomPostsAsUnseenMutation,
+	refetchSeenCounts,
 } from '../read-seen-posts';
 import type { ReactNode } from 'react';
 
@@ -38,6 +39,29 @@ beforeEach( () => {
 } );
 
 afterEach( () => nock.cleanAll() );
+
+describe( 'refetchSeenCounts', () => {
+	const getQuery = ( client: QueryClient, updatedAt: number ) => {
+		client.setQueryData( [ 'x' ], 'data', { updatedAt } );
+		return client.getQueryCache().find( { queryKey: [ 'x' ] } )!;
+	};
+
+	it( 'returns false when counts are younger than the max age', () => {
+		const query = getQuery( newClient(), Date.now() - 1_000 );
+		expect( refetchSeenCounts( query ) ).toBe( false );
+	} );
+
+	it( "returns 'always' when counts are older than the max age", () => {
+		const query = getQuery( newClient(), Date.now() - 31_000 );
+		expect( refetchSeenCounts( query ) ).toBe( 'always' );
+	} );
+
+	it( "returns 'always' for fresh but invalidated counts", () => {
+		const query = getQuery( newClient(), Date.now() - 1_000 );
+		query.invalidate();
+		expect( refetchSeenCounts( query ) ).toBe( 'always' );
+	} );
+} );
 
 describe( 'markReaderPostsAsSeenMutation', () => {
 	it( 'posts to /seen-posts/seen/new and decrements the feed subscription unseen_count', async () => {

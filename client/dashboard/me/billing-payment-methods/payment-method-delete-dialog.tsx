@@ -95,7 +95,7 @@ export const PaymentMethodDeleteDialog = ( {
 															dateStyle: 'long',
 														} ),
 													}
-											  )
+												)
 											: __( 'Pending renewal' ) }
 									</Text>
 								</HStack>

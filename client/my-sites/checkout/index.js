@@ -162,6 +162,18 @@ export default function () {
 		clientRender
 	);
 
+	// Must be registered before the generic /checkout/:product/renew/:purchaseId
+	// route, which would otherwise read "marketplace" as the product slug.
+	page(
+		`/checkout/marketplace/renew/:subscriptionId`,
+		setLocaleMiddleware(),
+		redirectLoggedOut,
+		noSite,
+		checkoutMarketplaceSiteless,
+		makeLayout,
+		clientRender
+	);
+
 	// Passport Marketplace checkout custom URLs
 	page(
 		`/checkout/passport/:productSlug`,
@@ -182,6 +194,16 @@ export default function () {
 		clientRender
 	);
 
+	page(
+		`/checkout/passport/renew/:subscriptionId`,
+		setLocaleMiddleware(),
+		redirectLoggedOut,
+		noSite,
+		checkoutMarketplaceSiteless,
+		makeLayout,
+		clientRender
+	);
+
 	// Akismet siteless checkout works logged-out, so do not include redirectLoggedOut or siteSelection.
 	page(
 		`/checkout/akismet/:productSlug`,
@@ -194,6 +216,16 @@ export default function () {
 
 	page(
 		`/checkout/akismet/:productSlug/renew/:purchaseId`,
+		setLocaleMiddleware(),
+		redirectLoggedOut,
+		noSite,
+		checkoutAkismetSiteless,
+		makeLayout,
+		clientRender
+	);
+
+	page(
+		`/checkout/akismet/renew/:subscriptionId`,
 		setLocaleMiddleware(),
 		redirectLoggedOut,
 		noSite,

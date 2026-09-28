@@ -12,7 +12,7 @@ const domainLabel = ( count: number, isBulkSelection: boolean, showCount: boolea
 
 	return isBulkSelection
 		? sprintf(
-				/* translators: Heading which displays the number of selected domains in a table */
+				/* translators: %(count)d is the number of selected domains. Heading which displays the number of selected domains in a table */
 				_n(
 					'%(count)d domain selected',
 					'%(count)d domains selected',
@@ -20,12 +20,12 @@ const domainLabel = ( count: number, isBulkSelection: boolean, showCount: boolea
 					__i18n_text_domain__
 				),
 				{ count }
-		  )
+			)
 		: sprintf(
-				/* translators: Heading which displays the number of domains in a table */
+				/* translators: %(count)d is the number of domains. Heading which displays the number of domains in a table */
 				_n( '%(count)d domain', '%(count)d domains', count, __i18n_text_domain__ ),
 				{ count }
-		  );
+			);
 };
 
 export const allSitesViewColumns = (

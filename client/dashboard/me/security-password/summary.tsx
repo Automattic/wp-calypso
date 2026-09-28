@@ -19,7 +19,7 @@ export default function SecurityAccountRecoverySummary( { density }: { density?:
 	if ( is_passwordless_user ) {
 		badges.push( {
 			text: __( 'Password not set' ),
-			intent: 'warning',
+			intent: 'low',
 		} );
 	}
 

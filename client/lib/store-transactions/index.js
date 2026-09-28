@@ -1,7 +1,7 @@
+import { fetchEbanxConfiguration, fetchStripeConfiguration } from '@automattic/api-core';
 import { translatedEbanxError } from '@automattic/wpcom-checkout';
 import debugFactory from 'debug';
 import paymentGatewayLoader from 'calypso/lib/payment-gateway-loader';
-import wp from 'calypso/lib/wp';
 
 const debug = debugFactory( 'calypso:store-transactions' );
 
@@ -24,9 +24,7 @@ const promisifiedEbanxDeviceFingerprint = ( ebanx ) => {
 export async function createEbanxToken( requestType, cardDetails ) {
 	debug( 'creating token with ebanx' );
 
-	const configuration = await wp.req.get( '/me/ebanx-configuration', {
-		request_type: requestType,
-	} );
+	const configuration = await fetchEbanxConfiguration( requestType );
 	const ebanx = await paymentGatewayLoader.ready( configuration.js_url, 'EBANX', false );
 
 	ebanx.config.setMode( configuration.environment );
@@ -64,7 +62,7 @@ function getEbanxParameters( cardDetails ) {
 }
 
 export async function getStripeConfiguration( requestArgs ) {
-	const config = await wp.req.get( '/me/stripe-configuration', requestArgs );
+	const config = await fetchStripeConfiguration( requestArgs );
 	debug( 'Stripe configuration', config );
 	return config;
 }

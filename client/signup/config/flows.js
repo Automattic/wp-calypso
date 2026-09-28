@@ -157,6 +157,12 @@ export function getLaunchReturnUrl( dependencies ) {
 }
 
 function getLaunchDestination( dependencies ) {
+	// `redirect_to` lands the user somewhere other than where they came from once the site is live,
+	// so `back_to` is free to keep meaning "the page the Back button returns to".
+	if ( dependencies.redirect_to ) {
+		return addQueryArgs( { celebrateLaunch: 'true' }, dependencies.redirect_to );
+	}
+
 	const { url, celebrateArgs } = getLaunchReturnTarget( dependencies );
 
 	return addQueryArgs( celebrateArgs, url );

@@ -12,7 +12,7 @@ import InvoicesListRow from '../invoices-list-row';
 
 import './style.scss';
 
-const InvoicePlaceholderCard = memo( () => {
+const InvoicePlaceholderCard = memo( function InvoicePlaceholderCard() {
 	return (
 		<InvoicesListRow>
 			<div>
@@ -77,11 +77,11 @@ export default function InvoicesList() {
 					? {
 							starting_after: items[ items.length - 1 ].id,
 							ending_before: '',
-					  }
+						}
 					: {
 							starting_after: '',
 							ending_before: items[ 0 ].id,
-					  }
+						}
 			);
 		},
 		[ invoices.isSuccess, invoices.data?.items, setPagination ]

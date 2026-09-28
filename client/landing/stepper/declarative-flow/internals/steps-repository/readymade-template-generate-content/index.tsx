@@ -1,6 +1,7 @@
 import { FormLabel } from '@automattic/components';
-import { OnboardSelect, updateLaunchpadSettings } from '@automattic/data-stores';
+import { OnboardSelect } from '@automattic/data-stores';
 import { useLocale } from '@automattic/i18n-utils';
+import { updateLaunchpadSettings } from '@automattic/launchpad';
 import { StepContainer } from '@automattic/onboarding';
 import { Button } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';

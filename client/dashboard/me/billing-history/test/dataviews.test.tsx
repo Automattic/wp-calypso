@@ -2,10 +2,10 @@
  * @jest-environment jsdom
  */
 import { screen } from '@testing-library/react';
-import { filterSortAndPaginate } from '@wordpress/dataviews';
+import { filterSortAndPaginate, type SortDirection } from '@wordpress/dataviews';
 import { type ComponentType } from 'react';
 import { render } from '../../../test-utils';
-import { getFields } from '../dataviews';
+import { filterSortAndPaginateReceipts, getFields } from '../dataviews';
 import type { Receipt, Site, User } from '@automattic/api-core';
 
 const receipt = {
@@ -132,6 +132,44 @@ describe( '<BillingHistory>', () => {
 			expect( siteField.filterBy ).toBe( false );
 		} );
 
+		test( 'does not offer a site filter when the host scopes the screen to one site', () => {
+			const fields = getFields(
+				[ receiptForSiteA ],
+				[],
+				[ 'date', 'service' ],
+				LOCALE,
+				[ siteA, siteB ],
+				siteA.ID,
+				false
+			);
+			const siteField = fields.find( ( field ) => field.id === 'site' )!;
+
+			expect( siteField.filterBy ).toBe( false );
+		} );
+
+		test( 'a hidden site filter still applies to the data', () => {
+			const fields = getFields(
+				[ receiptForSiteA, receiptForSiteB ],
+				[],
+				[ 'date', 'service' ],
+				LOCALE,
+				[ siteA, siteB ],
+				siteA.ID,
+				false
+			);
+
+			const { data } = filterSortAndPaginate(
+				[ receiptForSiteA, receiptForSiteB ],
+				{
+					type: 'table',
+					filters: [ { field: 'site', operator: 'isAny', value: [ '1' ] } ],
+				},
+				fields
+			);
+
+			expect( data ).toEqual( [ receiptForSiteA ] );
+		} );
+
 		test( 'filtering by site only keeps receipts with a matching line item', () => {
 			const fields = getFields(
 				[ receiptForSiteA, receiptForSiteB ],
@@ -151,6 +189,53 @@ describe( '<BillingHistory>', () => {
 			);
 
 			expect( data ).toEqual( [ receiptForSiteA ] );
+		} );
+	} );
+
+	describe( 'sorting', () => {
+		const makeReceipt = ( id: number, date: string, amount: number, variation: string ) =>
+			( {
+				...receipt,
+				id,
+				date,
+				amount_integer: amount,
+				items: [ { ...receipt.items[ 0 ], id, variation } ],
+			} ) as Receipt;
+
+		const oldest = makeReceipt( 1, '2024-01-01T00:00:00+00:00', 500, 'WordPress.com Business' );
+		const middle = makeReceipt( 2, '2025-01-01T00:00:00+00:00', 100, 'WordPress.com Personal' );
+		const newest = makeReceipt( 3, '2026-01-01T00:00:00+00:00', 300, 'Akismet' );
+		const receipts = [ middle, newest, oldest ];
+
+		function sortBy( field: string, direction: SortDirection ) {
+			const fields = getFields( receipts, [], [ 'date', 'service', 'type', 'amount' ], LOCALE );
+			const { data } = filterSortAndPaginateReceipts(
+				receipts,
+				{ type: 'table', sort: { field, direction } },
+				fields
+			);
+			return data.map( ( { id } ) => id );
+		}
+
+		test.each( [
+			[ 'date', 'asc', [ 1, 2, 3 ] ],
+			[ 'date', 'desc', [ 3, 2, 1 ] ],
+			[ 'service', 'asc', [ 3, 1, 2 ] ],
+			[ 'service', 'desc', [ 2, 1, 3 ] ],
+			[ 'amount', 'asc', [ 2, 3, 1 ] ],
+			[ 'amount', 'desc', [ 1, 3, 2 ] ],
+		] as const )( 'sorts by %s %s', ( field, direction, expected ) => {
+			expect( sortBy( field, direction ) ).toEqual( expected );
+		} );
+
+		test( 'paginates after sorting', () => {
+			const fields = getFields( receipts, [], [ 'date', 'service' ], LOCALE );
+			const { data } = filterSortAndPaginateReceipts(
+				receipts,
+				{ type: 'table', page: 1, perPage: 2, sort: { field: 'date', direction: 'desc' } },
+				fields
+			);
+			expect( data.map( ( { id } ) => id ) ).toEqual( [ 3, 2 ] );
 		} );
 	} );
 } );

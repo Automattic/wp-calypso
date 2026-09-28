@@ -126,8 +126,7 @@ export const setDelayedDowngradeMutation = () =>
 		meta: { statId: 'purch-downgrade-delayed-set' },
 		mutationFn: (
 			params: { purchaseId: number } & (
-				| { enabled: true; toProductId: number }
-				| { enabled: false }
+				{ enabled: true; toProductId: number } | { enabled: false }
 			)
 		) =>
 			setDelayedDowngrade(

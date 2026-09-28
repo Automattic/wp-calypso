@@ -5,7 +5,7 @@ ARG node_version=24.15.0
 ARG cache_seed_image=registry.a8c.com/calypso/cache-seed:latest
 
 ###################
-FROM node:${node_version}-bullseye-slim AS builder-cache-none
+FROM node:${node_version}-trixie-slim AS builder-cache-none
 
 WORKDIR /calypso
 ENV HOME=/calypso
@@ -18,7 +18,7 @@ RUN mkdir -p /calypso/.cache /calypso/.yarn
 FROM ${cache_seed_image} AS cache-seed-source
 
 ###################
-FROM node:${node_version}-bullseye-slim AS builder-cache-seed
+FROM node:${node_version}-trixie-slim AS builder-cache-seed
 
 WORKDIR /calypso
 ENV HOME=/calypso
@@ -42,6 +42,8 @@ ENV SKIP_CALYPSO_POSTINSTALL=true
 ENV SKIP_CALYPSO_PACKAGE_BUILDS=true
 ENV CONTAINER=docker
 ENV IS_CI=true
+
+RUN echo 'Acquire::Retries "5";' > /etc/apt/apt.conf.d/80-retries
 
 # For Sentry uploads
 RUN apt-get update && apt-get install -y --no-install-recommends ca-certificates && rm -rf /var/lib/apt/lists/*

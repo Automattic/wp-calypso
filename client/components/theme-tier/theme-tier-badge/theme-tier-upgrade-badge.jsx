@@ -23,7 +23,7 @@ const useUpgradeLabel = ( showPartnerPrice, planName, subscriptionPrices, transl
 	const isEcommerceTrialMonthly = planSlug === PLAN_ECOMMERCE_TRIAL_MONTHLY;
 
 	const displayPlanName = isEcommerceTrialMonthly
-		? getPlan( PLAN_ECOMMERCE )?.getTitle() ?? planName
+		? ( getPlan( PLAN_ECOMMERCE )?.getTitle() ?? planName )
 		: planName;
 
 	return useMemo( () => {
@@ -37,12 +37,12 @@ const useUpgradeLabel = ( showPartnerPrice, planName, subscriptionPrices, transl
 
 			return fullLabel.length > MAX_LABEL_LENGTH
 				? /* translators: This is a shorter version of the text "Available on %(planName)s plus %(price)s/month". */
-				  translate( '%(planName)s + %(price)s/mo', {
+					translate( '%(planName)s + %(price)s/mo', {
 						args: {
 							planName: displayPlanName,
 							price: subscriptionPrices.month,
 						},
-				  } )
+					} )
 				: fullLabel;
 		}
 

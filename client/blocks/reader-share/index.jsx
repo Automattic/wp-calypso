@@ -150,11 +150,11 @@ class ReaderShare extends Component {
 						? ReaderShareIcon( {
 								iconSize: this.props.iconSize,
 								viewBox: '-1 -1 24 24',
-						  } )
+							} )
 						: ReaderRepostIcon( {
 								iconSize: this.props.iconSize,
 								viewBox: '0 0 20 20',
-						  } ) }
+							} ) }
 				</Button>
 				{ this.state.showingMenu &&
 					( ! this.props.isReblogSelection ? (

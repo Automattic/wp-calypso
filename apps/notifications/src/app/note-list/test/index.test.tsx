@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import { render, screen, act } from '@testing-library/react';
+import { render, screen, act, fireEvent } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { init as initStore } from '../../../panel/state';
 import actions from '../../../panel/state/actions';
@@ -20,25 +20,27 @@ const makeNote = ( id: number, label: string, type = 'comment' ) => ( {
 	timestamp: `2026-06-0${ id % 10 }T00:00:00+00:00`,
 	title: `${ label } title`,
 	subject: [ { text: label, ranges: [], media: [] } ],
+	body: [],
 } );
 
-const renderTab = (
+const noteListTab = (
 	store: ReturnType< typeof initStore >,
 	filterName: FilterName,
 	clientOverride: Partial< typeof client > = {},
 	selectedNoteId: string | undefined = undefined
-) =>
-	render(
-		<Provider store={ store }>
-			<AppProvider client={ { ...client, ...clientOverride } as never } locale="en">
-				<NoteList
-					filterName={ filterName }
-					selectedNoteId={ selectedNoteId }
-					setSelectedNoteId={ noop }
-				/>
-			</AppProvider>
-		</Provider>
-	);
+) => (
+	<Provider store={ store }>
+		<AppProvider client={ { ...client, ...clientOverride } as never } locale="en">
+			<NoteList
+				filterName={ filterName }
+				selectedNoteId={ selectedNoteId }
+				setSelectedNoteId={ noop }
+			/>
+		</AppProvider>
+	</Provider>
+);
+
+const renderTab = ( ...args: Parameters< typeof noteListTab > ) => render( noteListTab( ...args ) );
 
 const renderUnread = ( store: ReturnType< typeof initStore > ) =>
 	renderTab( store, 'unread' as FilterName );
@@ -185,6 +187,102 @@ describe( 'NoteList loading state', () => {
 		} );
 
 		expect( getRow()?.querySelector( '.is-unread' ) ).not.toBeInTheDocument();
+	} );
+
+	// Past the first page, DataViews moves its window down but keeps earlier rows
+	// on screen. Reading one of those rows must still drop its unread styling.
+	it( 'drops the unread styling from an earlier row after scrolling past the first page', () => {
+		const store = initStore();
+		const notes = Array.from( { length: 40 }, ( _, index ) => ( {
+			...makeNote( 1000 + index, `Unread ${ index + 1 }` ),
+			timestamp: new Date( Date.UTC( 2026, 5, 30 ) - index * 60_000 ).toISOString(),
+		} ) );
+		store.dispatch( actions.notes.addNotes( notes ) );
+		store.dispatch(
+			actions.notes.setFilteredNoteIds(
+				'unread',
+				notes.map( ( note ) => note.id )
+			)
+		);
+		store.dispatch( actions.ui.loadedNotes() );
+
+		const { container } = renderUnread( store );
+		const scroller = container.querySelector( '.dataviews-layout__container' ) as HTMLElement;
+		Object.defineProperties( scroller, {
+			scrollHeight: { configurable: true, value: 4000 },
+			clientHeight: { configurable: true, value: 500 },
+			scrollTop: { configurable: true, value: 3500 },
+		} );
+		act( () => {
+			fireEvent.scroll( scroller );
+		} );
+		expect( screen.getByText( 'Unread 40' ) ).toBeInTheDocument();
+
+		const getRow = () => screen.getByText( 'Unread 1' ).closest( '[role="article"]' );
+		act( () => {
+			store.dispatch( actions.notes.readNote( 1000 ) );
+		} );
+
+		expect( getRow()?.querySelector( '.is-unread' ) ).not.toBeInTheDocument();
+	} );
+
+	// A comment awaiting approval is flagged in its row, the way the old panel did.
+	it( 'flags a comment awaiting approval in its row', () => {
+		const store = initStore();
+		const pending = {
+			...makeNote( 800, 'Unapproved comment' ),
+			body: [ { text: 'Nice post', actions: { 'approve-comment': false } } ],
+		};
+		const approved = {
+			...makeNote( 801, 'Approved comment' ),
+			body: [ { text: 'Nice post', actions: { 'approve-comment': true } } ],
+		};
+		store.dispatch( actions.notes.addNotes( [ pending, approved ] ) );
+		store.dispatch( actions.ui.loadedNotes() );
+
+		renderTab( store, 'all' as FilterName );
+
+		const pendingRow = screen.getByText( 'Unapproved comment' ).closest( '[role="article"]' );
+		expect( pendingRow ).toHaveTextContent( 'Pending' );
+		expect(
+			screen.getByText( 'Approved comment' ).closest( '[role="article"]' )
+		).not.toHaveTextContent( 'Pending' );
+	} );
+
+	// The open note's row is marked from live state for the same reason: an earlier
+	// row DataViews is no longer refreshing must still show the highlight.
+	it( 'shows the open-note highlight on an earlier row after scrolling past the first page', () => {
+		const store = initStore();
+		const notes = Array.from( { length: 40 }, ( _, index ) => ( {
+			...makeNote( 1000 + index, `Unread ${ index + 1 }` ),
+			timestamp: new Date( Date.UTC( 2026, 5, 30 ) - index * 60_000 ).toISOString(),
+		} ) );
+		store.dispatch( actions.notes.addNotes( notes ) );
+		store.dispatch(
+			actions.notes.setFilteredNoteIds(
+				'unread',
+				notes.map( ( note ) => note.id )
+			)
+		);
+		store.dispatch( actions.ui.loadedNotes() );
+
+		const { container, rerender } = renderUnread( store );
+		const scroller = container.querySelector( '.dataviews-layout__container' ) as HTMLElement;
+		Object.defineProperties( scroller, {
+			scrollHeight: { configurable: true, value: 4000 },
+			clientHeight: { configurable: true, value: 500 },
+			scrollTop: { configurable: true, value: 3500 },
+		} );
+		act( () => {
+			fireEvent.scroll( scroller );
+		} );
+		expect( screen.getByText( 'Unread 40' ) ).toBeInTheDocument();
+
+		rerender( noteListTab( store, 'unread' as FilterName, {}, '1000' ) );
+
+		const active = container.querySelectorAll( '.wpnc__subject.is-active' );
+		expect( active ).toHaveLength( 1 );
+		expect( active[ 0 ].textContent ).toContain( 'Unread 1' );
 	} );
 
 	it( 'renders time-grouped section headers in newest-first order', () => {

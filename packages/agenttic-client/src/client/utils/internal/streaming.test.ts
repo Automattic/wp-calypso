@@ -1,5 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { parseSSEStream } from './streaming';
+import { parseSSEStream, streamToTask } from './streaming';
+import type { TaskUpdate } from '../../types';
 
 const encoder = new TextEncoder();
 
@@ -291,11 +292,10 @@ describe( 'parseSSEStream', () => {
 			updates.push( update );
 		}
 
-		const sawStaleToolCall = updates.some(
-			( u ) =>
-				u.status.message?.parts?.some(
-					( p: any ) => p.type === 'data' && p.data?.toolCallId === 'call-stale'
-				)
+		const sawStaleToolCall = updates.some( ( u ) =>
+			u.status.message?.parts?.some(
+				( p: any ) => p.type === 'data' && p.data?.toolCallId === 'call-stale'
+			)
 		);
 		expect( sawStaleToolCall ).toBe( true );
 
@@ -868,6 +868,127 @@ describe( 'parseSSEStream', () => {
 		expect( updates[ 0 ].final ).toBe( true );
 	} );
 
+	it( 'preserves AI credits from a terminal task result', async () => {
+		const aiCredits = {
+			policy_id: 'wpcom-site-monthly-v1',
+			blog_id: 123,
+			preview: true,
+			credits_limit: 15_000,
+			credits_used: 3_000,
+			credits_remaining: 12_000,
+			blocked: false,
+			exhausted: false,
+			resets_at: '2026-10-01T00:00:00+00:00',
+		};
+		const updates = [];
+		const stream = streamFromEvents( [
+			{
+				jsonrpc: '2.0',
+				result: {
+					type: 'TaskStatusUpdateEvent',
+					taskId: 'task-with-extensions',
+					status: {
+						state: 'completed',
+						final: true,
+						message: {
+							kind: 'message',
+							messageId: 'response-with-extensions',
+							role: 'agent',
+							parts: [ { type: 'text', text: 'Done' } ],
+						},
+					},
+					ai_credits: aiCredits,
+				},
+			},
+		] );
+
+		for await ( const update of parseSSEStream( stream ) ) {
+			updates.push( update );
+		}
+
+		expect( updates ).toHaveLength( 1 );
+		expect( updates[ 0 ].aiCredits ).toEqual( aiCredits );
+	} );
+
+	it( 'yields terminal AI credits before propagating a protocol error', async () => {
+		const updates = [];
+		const stream = streamFromEvents( [
+			{
+				jsonrpc: '2.0',
+				error: { code: -32000, message: 'Agent request failed' },
+				result: {
+					type: 'TaskStatusUpdateEvent',
+					taskId: 'task-failed',
+					status: {
+						state: 'failed',
+						final: true,
+						message: {
+							kind: 'message',
+							messageId: 'response-failed',
+							role: 'agent',
+							parts: [ { type: 'text', text: 'Agent request failed' } ],
+						},
+					},
+					ai_credits: {
+						policy_id: 'wpcom-site-monthly-v1',
+						blog_id: 123,
+						preview: true,
+						credits_limit: 15_000,
+						credits_used: 15_000,
+						credits_remaining: 0,
+						blocked: false,
+						exhausted: true,
+						resets_at: '2026-10-01T00:00:00+00:00',
+					},
+				},
+			},
+		] );
+		let thrown: unknown;
+
+		try {
+			for await ( const update of parseSSEStream( stream ) ) {
+				updates.push( update );
+			}
+		} catch ( error ) {
+			thrown = error;
+		}
+
+		expect( updates ).toHaveLength( 1 );
+		expect( updates[ 0 ] ).toMatchObject( {
+			final: true,
+			status: { state: 'failed' },
+			aiCredits: { credits_remaining: 0, blocked: false, preview: true },
+		} );
+		expect( thrown ).toEqual( new Error( 'Streaming error: Agent request failed' ) );
+	} );
+
+	it( 'does not swallow an error when a combined payload is handled as a delta', async () => {
+		const stream = streamFromEvents( [
+			{
+				jsonrpc: '2.0',
+				method: 'message/delta',
+				params: {
+					id: 'task-with-error',
+					delta: { type: 'delta', deltaType: 'content', content: 'partial' },
+				},
+				error: { code: -32000, message: 'Terminal failure' },
+				result: { status: { state: 'failed', final: true } },
+			},
+		] );
+		const updates = [];
+		let thrown: unknown;
+		try {
+			for await ( const update of parseSSEStream( stream, { supportDeltas: true } ) ) {
+				updates.push( update );
+			}
+		} catch ( error ) {
+			thrown = error;
+		}
+
+		expect( updates ).toHaveLength( 1 );
+		expect( thrown ).toEqual( new Error( 'Streaming error: Terminal failure' ) );
+	} );
+
 	describe( 'delta pacing', () => {
 		afterEach( () => {
 			vi.unstubAllGlobals();
@@ -956,5 +1077,47 @@ describe( 'parseSSEStream', () => {
 			expect( updates ).toHaveLength( 5 );
 			expect( rafSpy.mock.calls.length ).toBeGreaterThanOrEqual( 1 );
 		} );
+	} );
+} );
+
+describe( 'streamToTask', () => {
+	async function* updates( values: TaskUpdate[] ) {
+		yield* values;
+	}
+	const finalUpdate: TaskUpdate = {
+		id: 'task-1',
+		status: { state: 'completed' },
+		final: true,
+		text: '',
+	};
+
+	it.each( [ { credits_remaining: 0, opaque: [ 'value' ] }, null, false, 0, '' ] )(
+		'preserves final opaque credit metadata %j in the raw Task field',
+		async ( aiCredits ) => {
+			const task = await streamToTask( updates( [ { ...finalUpdate, aiCredits } ] ) );
+			expect( task.ai_credits ).toBe( aiCredits );
+			expect( task ).not.toHaveProperty( 'aiCredits' );
+		}
+	);
+
+	it( 'does not promote nonfinal metadata or add absent metadata', async () => {
+		const task = await streamToTask(
+			updates( [
+				{ ...finalUpdate, final: false, aiCredits: { credits_remaining: 10 } },
+				finalUpdate,
+			] )
+		);
+		expect( task ).toEqual( { id: 'task-1', status: { state: 'completed' } } );
+		expect( task ).not.toHaveProperty( 'ai_credits' );
+	} );
+
+	it( 'uses the last final snapshot without retaining earlier credits', async () => {
+		const task = await streamToTask(
+			updates( [
+				{ ...finalUpdate, aiCredits: { credits_remaining: 10 } },
+				{ ...finalUpdate, id: 'task-2' },
+			] )
+		);
+		expect( task ).toEqual( { id: 'task-2', status: { state: 'completed' } } );
 	} );
 } );

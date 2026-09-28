@@ -25,7 +25,8 @@ const createOptionsFromPriceTierList = (
 ) => {
 	const priceTierList =
 		termPricing === 'yearly' ? plan.tier_yearly_prices || [] : plan.tier_monthly_prices || [];
-	const basePrice = termPricing === 'yearly' ? plan.yearly_price ?? 0 : plan.monthly_price ?? 0;
+	const basePrice =
+		termPricing === 'yearly' ? ( plan.yearly_price ?? 0 ) : ( plan.monthly_price ?? 0 );
 
 	const options = priceTierList.map( ( tier ) => {
 		const discountPercent = calculateDiscountPercentage( basePrice, tier.price );
@@ -62,7 +63,7 @@ export default function WPCOMPlanSlider( { quantity, ownedPlans, onChange, plan 
 	const wpcomProducts = data
 		? ( data.find(
 				( product ) => product.slug === 'wpcom-hosting'
-		  ) as unknown as APIProductFamily )
+			) as unknown as APIProductFamily )
 		: undefined;
 
 	const options = useMemo( () => {
@@ -107,7 +108,7 @@ export default function WPCOMPlanSlider( { quantity, ownedPlans, onChange, plan 
 			: Math.max(
 					0,
 					options.findIndex( ( o ) => o.value > ownedPlans )
-			  );
+				);
 	}, [ isOverMaxValue, options, ownedPlans, quantity ] );
 
 	return (

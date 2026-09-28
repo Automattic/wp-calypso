@@ -1,7 +1,6 @@
 import config, { isEnabled } from '@automattic/calypso-config';
-import { getUrlParts } from '@automattic/calypso-url';
 import { Step } from '@automattic/onboarding';
-import { UniversalNavbarFooter } from '@automattic/wpcom-template-parts';
+import { getFooterColorway } from '@automattic/wpcom-template-parts';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -15,6 +14,7 @@ import { withCurrentRoute } from 'calypso/components/route';
 import SympathyDevWarning from 'calypso/components/sympathy-dev-warning';
 import { getDashboardFromHostname } from 'calypso/dashboard/app/routing';
 import { getDashboardStepperLogo } from 'calypso/dashboard/app/stepper-logo';
+import { GlobalFooter } from 'calypso/layout/global-footer';
 import MasterbarLoggedOut from 'calypso/layout/masterbar/logged-out';
 import OauthClientMasterbar from 'calypso/layout/masterbar/oauth-client';
 import { Nav2026UniversalHeader } from 'calypso/layout/nav-2026-universal-header';
@@ -34,8 +34,6 @@ import {
 	isIosOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
 import { usePartnerBranding } from 'calypso/lib/partner-branding';
-import { createAccountUrl } from 'calypso/lib/paths';
-import isReaderTagEmbedPage from 'calypso/lib/reader/is-reader-tag-embed-page';
 import { getOnboardingUrl as getPatternLibraryOnboardingUrl } from 'calypso/my-sites/patterns/paths';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { getRedirectToOriginal, isTwoFactorEnabled } from 'calypso/state/login/selectors';
@@ -155,8 +153,6 @@ const LayoutLoggedOut = ( {
 	const isJetpackThankYou =
 		sectionName === 'checkout' && currentRoute.startsWith( '/checkout/jetpack/thank-you' );
 
-	const isReaderTagEmbed = typeof window !== 'undefined' && isReaderTagEmbedPage( window.location );
-
 	// It's used to add a class name for the login-related pages, except for `/log-in/link/use`.
 	const hasGravPoweredClientClass =
 		isGravPoweredClient && ! currentRoute.startsWith( '/log-in/link/use' );
@@ -175,12 +171,10 @@ const LayoutLoggedOut = ( {
 	const isEligibleSection = HELP_CENTER_FAB_SECTIONS.includes( sectionName );
 
 	// Logged-in users use the masterbar control instead.
-	// Reader tag embeds are widgets meant to be iframed by third parties — no FAB.
 	const showHelpCenterFab =
 		! isLoggedIn &&
 		isEnabled( 'help-center/logged-out-fab' ) &&
 		( isEligibleSection || HELP_CENTER_FAB_ROUTES.includes( currentRoute ) ) &&
-		! isReaderTagEmbed &&
 		userAllowedToHelpCenter;
 
 	const loadHelpCenter =
@@ -194,6 +188,10 @@ const LayoutLoggedOut = ( {
 		[ 'themes', 'theme' ].includes( sectionName ) &&
 		isEnabled( 'themes/showcase-modern' ) &&
 		! isLoggedIn;
+	const footerColorway = getFooterColorway(
+		isEnabled( 'footer-redesign/2026' ),
+		isEnabled( 'footer/dark' )
+	);
 
 	const classes = {
 		[ 'is-group-' + sectionGroup ]: sectionGroup,
@@ -233,12 +231,6 @@ const LayoutLoggedOut = ( {
 		isWooJPC && refreshColorScheme( 'default', colorScheme );
 	}, [] ); // Empty dependency array ensures it runs only once on mount
 
-	// Open new window to create account page when a logged in action was triggered on the Reader tag embed page and the user is not logged in
-	if ( ! isLoggedIn && loggedInAction && isReaderTagEmbed ) {
-		const { pathname } = getUrlParts( window.location.href );
-		window.open( createAccountUrl( { redirectTo: pathname, ref: 'reader-lp' } ), '_blank' );
-	}
-
 	if ( isBlazePro || isWoo ) {
 		/**
 		 * This effectively removes the masterbar completely from Login pages (only).
@@ -254,12 +246,7 @@ const LayoutLoggedOut = ( {
 		classes[ oauth2Client.name ] = true;
 
 		masterbar = <OauthClientMasterbar oauth2Client={ oauth2Client } />;
-	} else if (
-		config.isEnabled( 'jetpack-cloud' ) ||
-		isWpMobileApp() ||
-		isJetpackThankYou ||
-		isReaderTagEmbed
-	) {
+	} else if ( config.isEnabled( 'jetpack-cloud' ) || isWpMobileApp() || isJetpackThankYou ) {
 		masterbar = null;
 	} else if (
 		[
@@ -273,22 +260,18 @@ const LayoutLoggedOut = ( {
 			'themes',
 		].includes( sectionName )
 	) {
-		const nonMonochromeSections = [ 'plugins', 'themes', 'theme' ];
-
-		const className = clsx( {
-			'is-style-monochrome':
-				isEnabled( 'site-profiler/metrics' ) && ! nonMonochromeSections.includes( sectionName ),
-		} );
+		const nonMonochromeSections = [ 'plugins', 'reader', 'themes', 'theme' ];
+		const isMonochromeNav =
+			isEnabled( 'site-profiler/metrics' ) && ! nonMonochromeSections.includes( sectionName );
 
 		masterbar = (
 			<Nav2026UniversalHeader
 				isLoggedIn={ isLoggedIn }
 				sectionName={ sectionName }
-				className={ className }
-				{ ...( isEnabled( 'site-profiler/metrics' ) &&
-					! nonMonochromeSections.includes( sectionName ) && {
-						logoColor: 'white',
-					} ) }
+				className={ clsx( { 'is-style-monochrome': isMonochromeNav } ) }
+				{ ...( isMonochromeNav && {
+					logoColor: 'white',
+				} ) }
 				{ ...( isThemeShowcaseModern && { logoColor: 'var(--studio-black)' } ) }
 				{ ...( sectionName === 'subscriptions' && { variant: 'minimal' } ) }
 				{ ...( sectionName === 'patterns' && {
@@ -358,7 +341,11 @@ const LayoutLoggedOut = ( {
 
 				{ [ 'plugins' ].includes( sectionName ) && (
 					<>
-						<UniversalNavbarFooter currentRoute={ currentRoute } isLoggedIn={ isLoggedIn } />
+						<GlobalFooter
+							currentRoute={ currentRoute }
+							isLoggedIn={ isLoggedIn }
+							colorway={ footerColorway }
+						/>
 
 						{ config.isEnabled( 'layout/support-article-dialog' ) && (
 							<AsyncLoad require={ loadSupportArticleDialog } placeholder={ null } />
@@ -366,17 +353,19 @@ const LayoutLoggedOut = ( {
 					</>
 				) }
 
-				{ [ 'patterns', 'reader', 'theme', 'themes' ].includes( sectionName ) &&
-					! isReaderTagEmbed && (
-						<UniversalNavbarFooter currentRoute={ currentRoute } isLoggedIn={ isLoggedIn } />
-					) }
+				{ [ 'patterns', 'reader', 'theme', 'themes' ].includes( sectionName ) && (
+					<GlobalFooter
+						currentRoute={ currentRoute }
+						isLoggedIn={ isLoggedIn }
+						colorway={ footerColorway }
+					/>
+				) }
 
 				{ ! isLoggedIn &&
 					// Limit this to reader pages. If we need to expand its scope, make sure we do not
 					// render it in the 'signup' sections, otherwise this may appear a second time in
 					// the external signup window it opens.
-					[ 'reader' ].includes( sectionName ) &&
-					! isReaderTagEmbed && (
+					[ 'reader' ].includes( sectionName ) && (
 						<ReaderJoinConversationDialog
 							onClose={ () => clearLastActionRequiresLogin() }
 							isVisible={ !! loggedInAction }

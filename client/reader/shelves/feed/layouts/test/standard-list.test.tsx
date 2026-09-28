@@ -136,6 +136,47 @@ describe( 'StandardListLayout', () => {
 		);
 	} );
 
+	it( 'renders the excerpt in the direction its own text reads', () => {
+		// `formatExcerpt` strips every attribute, `dir` included, so direction has to come
+		// from the text rather than from the markup.
+		mockGetPostFields.mockReturnValue( {
+			id: 1,
+			key: 'blog-1-2',
+			title: 'Test post',
+			excerptHtml: '<p>\u05e9\u05dc\u05d5\u05dd \u05e2\u05d5\u05dc\u05dd</p>',
+			sourceName: 'Test site',
+			dayGroup: 'today',
+			postHref: '/reader/blogs/2/posts/1',
+			isUnread: false,
+		} );
+		mockUseInfiniteList.mockReturnValue( {
+			getListProps: ( props: ListProps = {} ) => ( { ...props, style: props.style ?? {} } ),
+			items: [ { index: 1, key: 'post-blog-1-2', start: 44 } ],
+			measureElement: jest.fn(),
+			scrollMargin: 0,
+			scrollToIndex: jest.fn(),
+		} );
+
+		const { container } = render(
+			<StandardListLayout
+				posts={ [ { ID: 1, site_ID: 2 } as ReadStreamPost ] }
+				streamKey="shelf:tags"
+				scrollElement={ null }
+				hasMore={ false }
+				isLoadingMore={ false }
+				loadMore={ jest.fn() }
+				restoreKey="work-id:standard-list"
+				isPostSelected={ () => false }
+				selectPost={ jest.fn() }
+				showTimestamp
+			/>
+		);
+
+		const excerpt = container.querySelector< HTMLElement >( '.shelf-feed-standard-list__excerpt' );
+		expect( excerpt ).not.toBeNull();
+		expect( excerpt?.style.direction ).toBe( 'rtl' );
+	} );
+
 	it( 'hides the published time when showTimestamp is false (Discover)', () => {
 		mockGetPostFields.mockReturnValue( {
 			id: 1,

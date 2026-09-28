@@ -14,4 +14,36 @@ describe( 'getSkipSuggestionCopy', () => {
 		expect( getSkipSuggestionCopy( 'onboarding', identity ) ).toBeUndefined();
 		expect( getSkipSuggestionCopy( null, identity ) ).toBeUndefined();
 	} );
+
+	it( 'applies per-flow title/button overrides on a flow that has no default copy', () => {
+		expect(
+			getSkipSuggestionCopy( 'onboarding', identity, {
+				title: 'Grab %(domain)s for free',
+				buttonText: 'Use a free address',
+			} )
+		).toEqual( {
+			title: 'Grab %(domain)s for free',
+			buttonText: 'Use a free address',
+		} );
+	} );
+
+	it( 'applies a partial override, leaving the other value undefined', () => {
+		expect(
+			getSkipSuggestionCopy( 'onboarding', identity, { title: 'Grab %(domain)s for free' } )
+		).toEqual( {
+			title: 'Grab %(domain)s for free',
+			buttonText: undefined,
+		} );
+	} );
+
+	it( 'lets an override win over the flow default', () => {
+		expect(
+			getSkipSuggestionCopy( 'ai-site-builder-onboarding', identity, {
+				buttonText: 'Skip for now',
+			} )
+		).toEqual( {
+			title: 'Start with %(domain)s',
+			buttonText: 'Skip for now',
+		} );
+	} );
 } );

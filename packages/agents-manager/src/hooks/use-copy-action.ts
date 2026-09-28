@@ -71,8 +71,9 @@ export default function useCopyAction(): ( message: UIMessage ) => MessageAction
 				type: 'component',
 				id: 'copy',
 				component: CopyActionButton,
-				componentProps: { text },
+				componentProps: { text, messageId: message.id },
 				order: 4,
+				visibility: 'latest-turn',
 			},
 		];
 	}, [] );

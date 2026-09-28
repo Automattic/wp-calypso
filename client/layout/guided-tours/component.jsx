@@ -87,7 +87,7 @@ const getTourWhenState = ( state ) => ( when ) => !! when( state );
 
 export default connect( ( state ) => {
 	const tourState = getGuidedTourState( state );
-	const shouldPause = isSectionLoading( state ) || tourState.isPaused;
+	const shouldPause = isSectionLoading( state );
 	return {
 		sectionName: getSectionName( state ),
 		shouldPause,

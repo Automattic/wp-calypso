@@ -71,7 +71,7 @@ describe( 'useQueryHandler', () => {
 		expect( sessionStorage.getItem( 'domain-search-query' ) ).toBe( 'new-domain' );
 	} );
 
-	it( 'should clear query from sessionStorage when clearQuery is called', () => {
+	it( 'should clear sessionStorage but keep the query in state when clearQuery is called', () => {
 		const { result } = renderHook( () => useQueryHandler( {} ) );
 
 		act( () => {
@@ -83,6 +83,22 @@ describe( 'useQueryHandler', () => {
 		} );
 
 		expect( sessionStorage.getItem( 'domain-search-query' ) ).toBeNull();
+		expect( result.current.query ).toBe( 'test-domain' );
+	} );
+
+	it( 'should clear sessionStorage and the query in state when resetQuery is called', () => {
+		const { result } = renderHook( () => useQueryHandler( {} ) );
+
+		act( () => {
+			result.current.setQuery( 'test-domain' );
+		} );
+
+		act( () => {
+			result.current.resetQuery();
+		} );
+
+		expect( sessionStorage.getItem( 'domain-search-query' ) ).toBeNull();
+		expect( result.current.query ).toBeUndefined();
 	} );
 
 	it( 'should clear a stored query when clearSessionStorageQuery is called directly', () => {
@@ -104,5 +120,32 @@ describe( 'useQueryHandler', () => {
 		expect( result.current.query ).toBeUndefined();
 
 		Storage.prototype.getItem = originalGetItem;
+	} );
+
+	describe( 'with persistQuery disabled', () => {
+		it( 'should not seed the query from sessionStorage', () => {
+			sessionStorage.setItem( 'domain-search-query', 'stored-domain' );
+			const { result } = renderHook( () => useQueryHandler( { persistQuery: false } ) );
+			expect( result.current.query ).toBeUndefined();
+		} );
+
+		it( 'should still seed the query from initialQuery', () => {
+			sessionStorage.setItem( 'domain-search-query', 'stored-domain' );
+			const { result } = renderHook( () =>
+				useQueryHandler( { initialQuery: 'test-domain', persistQuery: false } )
+			);
+			expect( result.current.query ).toBe( 'test-domain' );
+		} );
+
+		it( 'should update the query without writing to sessionStorage when setQuery is called', () => {
+			const { result } = renderHook( () => useQueryHandler( { persistQuery: false } ) );
+
+			act( () => {
+				result.current.setQuery( 'new-domain' );
+			} );
+
+			expect( result.current.query ).toBe( 'new-domain' );
+			expect( sessionStorage.getItem( 'domain-search-query' ) ).toBeNull();
+		} );
 	} );
 } );
