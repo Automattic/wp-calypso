@@ -67,6 +67,7 @@ export * from './me-social-logins';
 export * from './me-ssh';
 export * from './me-stripe-configuration';
 export * from './me-stripe-setup-intent';
+export * from './me-domain-contact-information';
 export * from './me-tax-contact-information';
 export * from './me-tax-details';
 export * from './me-transactions-supported-countries';
