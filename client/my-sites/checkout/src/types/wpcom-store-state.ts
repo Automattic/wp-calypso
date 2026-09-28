@@ -184,6 +184,10 @@ export function updateManagedContactDetailsShape< A, B >(
 					update.tldExtraFields.es.redEsAgreementAccepted,
 					data.tldExtraFields.es.redEsAgreementAccepted
 				),
+				redEsAgreementVersion: combine(
+					update.tldExtraFields.es.redEsAgreementVersion,
+					data.tldExtraFields.es.redEsAgreementVersion
+				),
 			};
 		} else {
 			tldExtraFields.es = data.tldExtraFields.es;
@@ -196,6 +200,7 @@ export function updateManagedContactDetailsShape< A, B >(
 			),
 			adminIdentificationNumber: construct( update.tldExtraFields.es.adminIdentificationNumber ),
 			redEsAgreementAccepted: construct( update.tldExtraFields.es.redEsAgreementAccepted ),
+			redEsAgreementVersion: construct( update.tldExtraFields.es.redEsAgreementVersion ),
 		};
 	}
 
@@ -314,6 +319,9 @@ export function flattenManagedContactDetailsShape< A, B >(
 						: null,
 					x.tldExtraFields.es.redEsAgreementAccepted
 						? f( x.tldExtraFields.es.redEsAgreementAccepted )
+						: null,
+					x.tldExtraFields.es.redEsAgreementVersion
+						? f( x.tldExtraFields.es.redEsAgreementVersion )
 						: null,
 				].filter( Boolean ) as B[] )
 			: [];
@@ -697,6 +705,7 @@ function prepareEsDomainContactExtraDetails(
 				details.tldExtraFields.es.registrantIdentificationNumber?.value,
 			adminIdentificationNumber: details.tldExtraFields.es.adminIdentificationNumber?.value,
 			redEsAgreementAccepted: details.tldExtraFields.es.redEsAgreementAccepted?.value === 'true',
+			redEsAgreementVersion: details.tldExtraFields.es.redEsAgreementVersion?.value,
 		};
 	}
 	return null;
@@ -713,6 +722,7 @@ function prepareEsDomainContactExtraDetailsErrors(
 			adminIdentificationNumber:
 				details.tldExtraFields.es?.adminIdentificationNumber?.errors?.[ 0 ],
 			redEsAgreementAccepted: details.tldExtraFields.es?.redEsAgreementAccepted?.errors?.[ 0 ],
+			redEsAgreementVersion: details.tldExtraFields.es?.redEsAgreementVersion?.errors?.[ 0 ],
 		};
 	}
 	return null;
@@ -758,6 +768,7 @@ export function prepareDomainContactValidationRequest(
 				details.tldExtraFields.es.registrantIdentificationNumber?.value,
 			admin_identification_number: details.tldExtraFields.es.adminIdentificationNumber?.value,
 			red_es_agreement_accepted: details.tldExtraFields.es.redEsAgreementAccepted?.value === 'true',
+			red_es_agreement_version: details.tldExtraFields.es.redEsAgreementVersion?.value,
 		};
 	}
 
@@ -864,6 +875,7 @@ export function formatDomainContactValidationResponse(
 					response.messages?.extra?.es?.registrant_identification_number,
 				adminIdentificationNumber: response.messages?.extra?.es?.admin_identification_number,
 				redEsAgreementAccepted: response.messages?.extra?.es?.red_es_agreement_accepted,
+				redEsAgreementVersion: response.messages?.extra?.es?.red_es_agreement_version,
 			},
 		},
 	};
@@ -912,6 +924,7 @@ function prepareManagedContactDetailsUpdate(
 				registrantIdentificationNumber: rawFields?.extra?.es?.registrantIdentificationNumber,
 				adminIdentificationNumber: rawFields?.extra?.es?.adminIdentificationNumber,
 				redEsAgreementAccepted: rawFields?.extra?.es?.redEsAgreementAccepted?.toString(),
+				redEsAgreementVersion: rawFields?.extra?.es?.redEsAgreementVersion,
 			},
 		},
 	};

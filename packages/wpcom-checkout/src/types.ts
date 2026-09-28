@@ -301,6 +301,7 @@ export type EsDomainContactExtraDetailsErrors = {
 	registrantIdentificationNumber?: string | TranslateResult;
 	adminIdentificationNumber?: string | TranslateResult;
 	redEsAgreementAccepted?: string | TranslateResult;
+	redEsAgreementVersion?: string | TranslateResult;
 };
 
 export type PayPalExpressEndpoint = (
@@ -438,6 +439,7 @@ export type ManagedContactDetailsTldExtraFieldsShape< T > = {
 		registrantIdentificationNumber?: T;
 		adminIdentificationNumber?: T;
 		redEsAgreementAccepted?: T;
+		redEsAgreementVersion?: T;
 	};
 };
 
@@ -616,6 +618,7 @@ export type DomainContactValidationRequestExtraFields = {
 		registrant_identification_number?: string;
 		admin_identification_number?: string;
 		red_es_agreement_accepted?: boolean;
+		red_es_agreement_version?: string;
 	};
 	is_for_business?: boolean;
 };
@@ -645,6 +648,7 @@ export type ContactValidationResponseMessagesExtra = {
 		registrant_identification_number?: string[];
 		admin_identification_number?: string[];
 		red_es_agreement_accepted?: string[];
+		red_es_agreement_version?: string[];
 	};
 	is_for_business?: boolean;
 };
