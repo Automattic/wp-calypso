@@ -610,7 +610,7 @@ function recordOrderInJetpackGTM( receipt: Receipt, receiptInfo: WpcomJetpackRec
 /**
  * Sends a purchase conversion event to Prasely.
  */
-function recordOrderInParsely( receiptInfo: WpcomJetpackCartInfo ): void {
+function recordOrderInParsely( receiptInfo: WpcomJetpackReceiptInfo ): void {
 	if ( ! mayWeTrackByTracker( 'parsely' ) ) {
 		return;
 	}
