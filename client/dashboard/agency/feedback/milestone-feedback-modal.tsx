@@ -1,11 +1,10 @@
+import ExperienceControl from '@automattic/components/src/experience-control';
 import {
 	Button,
 	CheckboxControl,
 	Modal,
 	TextareaControl,
 	__experimentalText as Text,
-	__experimentalToggleGroupControl as ToggleGroupControl,
-	__experimentalToggleGroupControlOption as ToggleGroupControlOption,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
@@ -14,12 +13,6 @@ import { ButtonStack } from '../../components/button-stack';
 import { getFeedbackCopy, type FeedbackCopyArgs } from './copy';
 import { useMilestoneFeedback } from './use-milestone-feedback';
 import type { FeedbackRating, FeedbackType } from './types';
-
-const RATINGS: FeedbackRating[] = [ 'bad', 'neutral', 'good' ];
-
-function toRating( value: string | number | undefined ): FeedbackRating | undefined {
-	return RATINGS.find( ( rating ) => rating === value );
-}
 
 interface Props {
 	type: FeedbackType;
@@ -35,12 +28,6 @@ export default function MilestoneFeedbackModal( { type, args, onClose }: Props )
 	const suggestionLabelId = useId();
 
 	const { title, description, suggestion } = getFeedbackCopy( type, args );
-
-	const ratingLabels: Record< FeedbackRating, string > = {
-		bad: __( 'Bad' ),
-		neutral: __( 'Neutral' ),
-		good: __( 'Good' ),
-	};
 
 	// Dismissing is a decision not to answer, so it is recorded as a skip.
 	const close = () => {
@@ -66,27 +53,11 @@ export default function MilestoneFeedbackModal( { type, args, onClose }: Props )
 		>
 			<VStack spacing={ 6 }>
 				<Text>{ description }</Text>
-				<ToggleGroupControl
-					__next40pxDefaultSize
-					__nextHasNoMarginBottom
-					isBlock
+				<ExperienceControl
 					label={ __( 'What was your experience like?' ) }
 					value={ rating }
-					onChange={ ( value ) => {
-						const next = toRating( value );
-						if ( next ) {
-							setRating( next );
-						}
-					} }
-				>
-					{ RATINGS.map( ( value ) => (
-						<ToggleGroupControlOption
-							key={ value }
-							value={ value }
-							label={ ratingLabels[ value ] }
-						/>
-					) ) }
-				</ToggleGroupControl>
+					onChange={ setRating }
+				/>
 				{ suggestion && (
 					<VStack spacing={ 2 } role="group" aria-labelledby={ suggestionLabelId }>
 						<Text id={ suggestionLabelId }>{ suggestion.label }</Text>
