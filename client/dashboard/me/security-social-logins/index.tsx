@@ -91,12 +91,19 @@ const SocialLoginItem = ( {
 
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 
-	const { mutate: disconnectSocialUser, isPending: isDisconnectingSocialUser } = useMutation(
-		disconnectSocialUserMutation()
-	);
-	const { mutate: connectSocialUser, isPending: isConnectingSocialUser } = useMutation(
-		connectSocialUserMutation()
-	);
+	// Set on the mutation rather than per `mutate()` call so it still runs if the page
+	// unmounts before the request finishes.
+	const onSocialUserChanged = () => {
+		refreshSocialLoginConnections( queryClient );
+	};
+	const { mutate: disconnectSocialUser, isPending: isDisconnectingSocialUser } = useMutation( {
+		...disconnectSocialUserMutation(),
+		onSuccess: onSocialUserChanged,
+	} );
+	const { mutate: connectSocialUser, isPending: isConnectingSocialUser } = useMutation( {
+		...connectSocialUserMutation(),
+		onSuccess: onSocialUserChanged,
+	} );
 
 	const [ isRemoveDialogOpen, setIsRemoveDialogOpen ] = useState( false );
 
@@ -114,7 +121,6 @@ const SocialLoginItem = ( {
 		} );
 		connectSocialUser( data, {
 			onSuccess: () => {
-				refreshSocialLoginConnections( queryClient );
 				createSuccessNotice(
 					sprintf(
 						/* translators: %s is the name of the social login */
@@ -137,7 +143,6 @@ const SocialLoginItem = ( {
 	const disconnectSocialLogin = () => {
 		disconnectSocialUser( lowerCaseService, {
 			onSuccess: () => {
-				refreshSocialLoginConnections( queryClient );
 				createSuccessNotice(
 					sprintf(
 						/* translators: %s is the name of the social login */
