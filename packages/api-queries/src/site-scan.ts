@@ -9,7 +9,7 @@ import {
 	fixThreat,
 	fetchSiteScanCounts,
 } from '@automattic/api-core';
-import { mutationOptions, queryOptions } from '@tanstack/react-query';
+import { mutationOptions, queryOptions, skipToken } from '@tanstack/react-query';
 import { queryClient } from './query-client';
 
 export const fixThreatsStatusQuery = ( siteId: number, threatIds: number[] ) =>
@@ -28,6 +28,15 @@ export const siteScanHistoryQuery = ( siteId: number ) =>
 	queryOptions( {
 		queryKey: [ 'site', siteId, 'scan', 'history' ],
 		queryFn: () => fetchSiteScanHistory( siteId ),
+	} );
+
+// Client-only: the scan API reports nothing between enqueueing a scan and the
+// backend starting it, so the enqueue time is kept in the cache to survive remounts.
+export const siteScanEnqueuedAtQuery = ( siteId: number ) =>
+	queryOptions< number | null >( {
+		queryKey: [ 'site', siteId, 'scan-enqueued-at' ],
+		queryFn: skipToken,
+		staleTime: Infinity,
 	} );
 
 export const siteScanEnqueueMutation = ( siteId: number ) =>

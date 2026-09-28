@@ -1,7 +1,10 @@
 import { SiteScan } from '@automattic/api-core';
-import { siteScanQuery } from '@automattic/api-queries';
-import { useQuery } from '@tanstack/react-query';
-import { useEffect, useRef, useState } from 'react';
+import { siteScanEnqueuedAtQuery, siteScanQuery } from '@automattic/api-queries';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useCallback, useEffect, useRef, useState } from 'react';
+
+// Give up on an enqueued scan the backend never picks up.
+const ENQUEUED_TIMEOUT_MS = 5 * 60 * 1000;
 
 export type ScanStatusType = 'idle' | 'enqueued' | 'running' | 'success' | 'error';
 
@@ -12,9 +15,22 @@ export interface ScanState {
 }
 
 export function useScanState( siteId: number ): ScanState {
+	const queryClient = useQueryClient();
 	const { data: scan } = useQuery( siteScanQuery( siteId ) );
+	const { data: enqueuedAt } = useQuery( siteScanEnqueuedAtQuery( siteId ) );
 	const [ hasSucceeded, setHasSucceeded ] = useState( false );
-	const [ isEnqueued, setIsEnqueued ] = useState( false );
+
+	const isEnqueued = !! enqueuedAt && Date.now() - enqueuedAt < ENQUEUED_TIMEOUT_MS;
+
+	const setIsEnqueued = useCallback(
+		( value: boolean ) => {
+			queryClient.setQueryData(
+				siteScanEnqueuedAtQuery( siteId ).queryKey,
+				value ? Date.now() : null
+			);
+		},
+		[ queryClient, siteId ]
+	);
 	const timeStampRef = useRef< string | null >( null );
 
 	const isRunning = ! scan?.most_recent && scan?.current;
@@ -27,7 +43,7 @@ export function useScanState( siteId: number ): ScanState {
 		if ( isRunning ) {
 			setIsEnqueued( false );
 		}
-	}, [ isEnqueued, isRunning ] );
+	}, [ isEnqueued, isRunning, setIsEnqueued ] );
 
 	if ( isEnqueued ) {
 		return { status: 'enqueued', scan: scan ?? null, setIsEnqueued };

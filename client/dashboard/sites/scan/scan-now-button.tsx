@@ -24,6 +24,9 @@ export function ScanNowButton( { site, scanState }: ScanNowButtonProps ) {
 		onMutate: () => {
 			setIsEnqueued( true );
 		},
+		onError: () => {
+			setIsEnqueued( false );
+		},
 	} );
 
 	// Lets fetch scans if we just enqueued a scan or if there's a scan running
