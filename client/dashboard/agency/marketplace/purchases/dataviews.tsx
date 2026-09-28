@@ -13,15 +13,19 @@ import {
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { Badge } from '@wordpress/ui';
+import { Text as DashboardText } from '../../../components/text';
 import { DEFAULT_PER_PAGE } from '../../../sites/dataviews/views';
 import { formatDate, parseDateAsUTC } from '../../../utils/datetime';
 import {
 	LICENSE_STATUS_FILTERS,
 	getLicenseDisplayStatus,
+	getLicenseRenewalDate,
 	getLicenseStatus,
 	getLicenseProductName,
 	getLicenseStatusLabels,
 	getLicenseTags,
+	getRenewalBadgeLabels,
+	getRenewalBadges,
 	getSiteHostname,
 	isBundleParent,
 	isLicenseStatus,
@@ -30,16 +34,17 @@ import {
 } from './license-status';
 import LicenseStatusBadge from './status-badge';
 import TransferredBadge from './transferred-badge';
-import type { LicenseStatus } from './license-status';
+import type { LicenseStatus, RenewalBadge } from './license-status';
 import type { FetchJetpackLicensesPageOptions, JetpackLicense } from '@automattic/api-core';
 import type { Field, View } from '@wordpress/dataviews';
+import type { ComponentProps } from 'react';
 
 export const DEFAULT_VIEW: View = {
 	type: 'table',
 	perPage: DEFAULT_PER_PAGE,
 	page: 1,
 	titleField: 'product',
-	fields: [ 'status', 'site', 'issued_at', 'cost' ],
+	fields: [ 'status', 'site', 'issued_at', 'renewal', 'cost' ],
 	sort: { field: 'issued_at', direction: 'desc' },
 };
 
@@ -123,6 +128,37 @@ function CostCell( { license }: { license: JetpackLicense } ) {
 				: /* translators: %s is a price, e.g. $47.95 */
 					sprintf( __( '%s/month' ), formatted ) }
 		</Text>
+	);
+}
+
+const RENEWAL_BADGE_INTENT: Record< RenewalBadge, ComponentProps< typeof Badge >[ 'intent' ] > = {
+	expired: 'high',
+	'auto-renew-off': 'medium',
+	refundable: 'informational',
+};
+
+function RenewalCell( { license, locale }: { license: JetpackLicense; locale: string } ) {
+	const expiry = getLicenseRenewalDate( license );
+	if ( ! expiry ) {
+		return <Text variant="muted">—</Text>;
+	}
+
+	const badges = getRenewalBadges( license );
+	const labels = getRenewalBadgeLabels();
+	return (
+		<HStack justify="flex-start" spacing={ 2 } expanded={ false }>
+			<DashboardText
+				intent={ badges.includes( 'expired' ) ? 'error' : undefined }
+				style={ { whiteSpace: 'nowrap' } }
+			>
+				{ formatDate( parseDateAsUTC( expiry ), locale ) }
+			</DashboardText>
+			{ badges.map( ( badge ) => (
+				<Badge key={ badge } intent={ RENEWAL_BADGE_INTENT[ badge ] }>
+					{ labels[ badge ] }
+				</Badge>
+			) ) }
+		</HStack>
 	);
 }
 
@@ -236,6 +272,15 @@ export function getLicenseFields( {
 			enableSorting: true,
 			getValue: ( { item } ) => item.revoked_at ?? '',
 			render: ( { item } ) => renderDate( item.revoked_at ),
+		},
+		{
+			id: 'renewal',
+			label: __( 'Renewal/expiry' ),
+			type: 'text',
+			filterBy: false,
+			enableSorting: false,
+			getValue: ( { item } ) => getLicenseRenewalDate( item ) ?? '',
+			render: ( { item } ) => <RenewalCell license={ item } locale={ locale } />,
 		},
 		{
 			id: 'cost',
