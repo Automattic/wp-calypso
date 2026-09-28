@@ -63,7 +63,7 @@ const onboardingUnifiedFlow: FlowV2< typeof initialize > = {
 
 					// Create minimal siteParams for post-checkout site creation
 					const siteParams = {
-						blog_name: '', // Will be auto-generated from username if empty
+						blog_name: '', // The server generates a word-label address when empty
 						blog_title: translate( 'My Site' ), // Default site title
 						public: Visibility.PublicNotIndexed, // Coming soon by default
 						options: {
