@@ -61,7 +61,27 @@ and rendered by the module's own card (`card.tsx`). An error post (deleted /
 private / 404) renders nothing, which doubles as the client half of the
 serve-time guard.
 
+## TrainTracks (READ-543)
+
+The endpoint doesn't send railcars, so `useNewBlogs` mints one per rec per snapshot
+(`buildRailcar`: `{ railcar, fetch_algo: 'cluster_rec_v0', fetch_position, rec_blog_id,
+rec_post_id }`, `fetch_position` = 1-based snapshot rank) and every event for a card shares it.
+The module renders `NewBlogRec` = `ReadNewBlogsRec` + `railcar`.
+
+| event                          | when                                | `action`                                                               |
+| ------------------------------ | ----------------------------------- | ---------------------------------------------------------------------- |
+| `calypso_traintracks_render`   | card 60% visible, once per railcar  | — (`ui_algo` `reader_recent_discover_new_blogs`, `ui_position` = slot) |
+| `calypso_traintracks_interact` | title click                         | `recommended_post_clicked`                                             |
+|                                | Subscribe / Unsubscribe             | `recommended_site_subscribed` / `recommended_site_unsubscribed`        |
+|                                | X                                   | `recommended_site_dismissed`                                           |
+|                                | More like this (per card on screen) | `recommended_more_clicked`                                             |
+|                                | Hide (per card on screen)           | `recommended_module_hidden`                                            |
+
+The `calypso_reader_discover_new_blogs_*` Tracks events from READ-542 fire alongside.
+`_render` fires on the first card impression (not on mount), so it counts the same
+thing as the TrainTracks renders. Helpers live in `tracks.ts`.
+
 ## Wiring left to do
 
 1. Persist dismiss and Hide server-side instead of `localStorage` (READ-542 layer 3).
-2. A/B assignment + fuller Tracks per READ-543.
+2. ExPlat assignment for the A/B (READ-543) — needs the experiment name.
