@@ -2,6 +2,7 @@
  * @jest-environment jsdom
  */
 import page from '@automattic/calypso-router';
+import { QueryClient } from '@tanstack/react-query';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
@@ -237,5 +238,92 @@ describe( 'FourForFour', () => {
 			'calypso_reader_four_for_four_closed',
 			{ followed_count: 0, is_complete: 0 }
 		);
+	} );
+
+	describe( 'saving progress', () => {
+		// No backoff between the progress mutation's own retries, and no
+		// retries for queries, so failure paths resolve quickly.
+		const createQueryClient = () =>
+			new QueryClient( {
+				defaultOptions: { queries: { retry: false }, mutations: { retryDelay: 0 } },
+			} );
+
+		it( 'shows an error when a save fails and saves again on retry', async () => {
+			const user = userEvent.setup();
+			mockStatus( 'opted_in', [ 3, 4, 5 ] );
+			mockCandidates( [ candidate( 2, 'Second Site' ) ] );
+			mockFollow( 2 );
+			const failures = nock( API )
+				.post( '/wpcom/v2/read/four-for-four/progress', { blog_ids: [ 2 ] } )
+				.times( 3 )
+				.reply( 500, { code: 'error' } );
+
+			renderWithProvider( <FourForFour />, { initialState, queryClient: createQueryClient() } );
+
+			await user.click( await screen.findByRole( 'button', { name: 'Subscribe' } ) );
+
+			expect( await screen.findByRole( 'alert' ) ).toHaveTextContent(
+				"We couldn't save your progress."
+			);
+			expect( failures.isDone() ).toBe( true );
+			expect( screen.queryByRole( 'status' ) ).not.toBeInTheDocument();
+
+			const retry = nock( API )
+				.post( '/wpcom/v2/read/four-for-four/progress', { blog_ids: [ 2 ] } )
+				.reply( 200, { status: 'completed', blog_id: 1, followed_blog_ids: [ 3, 4, 5, 2 ] } );
+
+			await user.click( screen.getByRole( 'button', { name: 'Try again' } ) );
+
+			expect( await screen.findByRole( 'status' ) ).toHaveTextContent( "You're in!" );
+			expect( retry.isDone() ).toBe( true );
+			expect( screen.queryByRole( 'alert' ) ).not.toBeInTheDocument();
+		} );
+
+		it( 'shows an error when the status fails to load and reloads it on retry', async () => {
+			const user = userEvent.setup();
+			nock( API ).get( '/wpcom/v2/read/four-for-four/status' ).reply( 500, { code: 'error' } );
+			mockCandidates( [ candidate( 2, 'Second Site' ) ] );
+
+			renderWithProvider( <FourForFour />, { initialState, queryClient: createQueryClient() } );
+
+			expect( await screen.findByRole( 'alert' ) ).toHaveTextContent(
+				"We couldn't save your progress."
+			);
+
+			mockStatus( 'opted_in', [ 3, 4 ] );
+			await user.click( screen.getByRole( 'button', { name: 'Try again' } ) );
+
+			await waitFor( () =>
+				expect( screen.getByRole( 'progressbar' ) ).toHaveAttribute( 'aria-valuenow', '2' )
+			);
+			expect( screen.queryByRole( 'alert' ) ).not.toBeInTheDocument();
+		} );
+
+		it( 'sends one save at a time, carrying follows that finished meanwhile', async () => {
+			const user = userEvent.setup();
+			mockStatus( 'opted_in' );
+			mockCandidates( [ candidate( 2, 'Second Site' ), candidate( 3, 'Third Site' ) ] );
+			mockFollow( 2 );
+			mockFollow( 3 );
+			const first = nock( API )
+				.post( '/wpcom/v2/read/four-for-four/progress', { blog_ids: [ 2 ] } )
+				.delay( 300 )
+				.reply( 200, { status: 'opted_in', blog_id: 1, followed_blog_ids: [ 2 ] } );
+			const second = nock( API )
+				.post( '/wpcom/v2/read/four-for-four/progress', { blog_ids: [ 3 ] } )
+				.reply( 200, { status: 'opted_in', blog_id: 1, followed_blog_ids: [ 2, 3 ] } );
+
+			renderWithProvider( <FourForFour />, { initialState, queryClient: createQueryClient() } );
+
+			await user.click( await screen.findByRole( 'button', { name: 'Subscribe' } ) );
+			await user.click( screen.getByTestId( 'list-item-3' ) );
+			await user.click( screen.getByRole( 'button', { name: 'Subscribe' } ) );
+
+			// The second save waits for the first to finish.
+			expect( second.isDone() ).toBe( false );
+			await waitFor( () => expect( first.isDone() ).toBe( true ) );
+			await waitFor( () => expect( second.isDone() ).toBe( true ) );
+			expect( screen.getByRole( 'progressbar' ) ).toHaveAttribute( 'aria-valuenow', '2' );
+		} );
 	} );
 } );

@@ -45,6 +45,8 @@ export function FourForFour() {
 		refetchCandidates,
 		status,
 		followedCount,
+		hasSaveError,
+		retrySave,
 	} = useFourForFour();
 
 	const [ selectedBlogId, setSelectedBlogId ] = useState< number | null >( null );
@@ -114,6 +116,15 @@ export function FourForFour() {
 									) }
 								</span>
 							</VStack>
+						</HStack>
+					) }
+
+					{ hasSaveError && (
+						<HStack className="four-for-four-modal__save-error" spacing={ 3 } role="alert">
+							<span>{ translate( "We couldn't save your progress." ) }</span>
+							<Button variant="link" onClick={ retrySave }>
+								{ translate( 'Try again' ) }
+							</Button>
 						</HStack>
 					) }
 

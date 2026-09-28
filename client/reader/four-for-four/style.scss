@@ -34,6 +34,14 @@
 		background-color: color-mix( in srgb, var( --color-accent ) 8%, var( --color-surface ) );
 	}
 
+	&__save-error {
+		margin: 4px 24px 0;
+		padding: 8px 16px;
+		border: 1px solid color-mix( in srgb, var( --color-error ) 25%, var( --color-surface ) );
+		border-radius: 8px;
+		background-color: color-mix( in srgb, var( --color-error ) 8%, var( --color-surface ) );
+	}
+
 	&__complete-icon {
 		flex-shrink: 0;
 		fill: var( --color-accent );
