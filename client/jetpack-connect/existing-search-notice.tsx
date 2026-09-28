@@ -8,7 +8,10 @@ import { useQuery } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
 import Notice from 'calypso/components/notice';
 import { urlToSlug } from 'calypso/lib/url';
-import { isExpiredOrRemoved } from 'calypso/me/purchases/lib/raw-purchase-helpers';
+import {
+	isExpiredAndInGracePeriod,
+	isRemoved,
+} from 'calypso/me/purchases/lib/raw-purchase-helpers';
 import { getPurchaseListUrlFor } from 'calypso/my-sites/purchases/paths';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
@@ -35,6 +38,7 @@ interface Props {
 interface SearchSubscription {
 	slug: string;
 	owned: boolean;
+	expired: boolean;
 }
 
 // `/me/sites` never lists `wpcom_search*` products, so sites hosted on WordPress.com also need their purchases.
@@ -59,32 +63,38 @@ function getExistingSearchSource(
 ) {
 	const subscriptions: SearchSubscription[] = [
 		...( site.products ?? [] )
-			.filter(
-				( product ) =>
-					isJetpackSearch( product ) && ! isJetpackSearchFree( product ) && ! product.expired
-			)
-			.map( ( product ) => ( { slug: product.product_slug, owned: !! product.user_is_owner } ) ),
+			.filter( ( product ) => isJetpackSearch( product ) && ! isJetpackSearchFree( product ) )
+			.map( ( product ) => ( {
+				slug: product.product_slug,
+				owned: !! product.user_is_owner,
+				expired: !! product.expired,
+			} ) ),
 		...purchases
 			.filter(
 				( purchase ) =>
 					isJetpackSearch( purchase ) &&
 					! isJetpackSearchFree( purchase ) &&
-					! isExpiredOrRemoved( purchase )
+					! isRemoved( purchase )
 			)
 			.map( ( purchase ) => ( {
 				slug: purchase.product_slug,
 				owned: !! userId && purchase.user_id === userId,
+				expired: isExpiredAndInGracePeriod( purchase ),
 			} ) ),
 	];
-	if ( subscriptions.some( ( { slug, owned } ) => owned && slug === routeProduct ) ) {
-		return 'renewal';
+	const renewable = subscriptions.filter( ( { slug, owned } ) => owned && slug === routeProduct );
+	if ( renewable.length ) {
+		return renewable.every( ( { expired } ) => expired ) ? 'expired' : 'renewal';
 	}
 	if ( subscriptions.length ) {
-		return 'product';
+		return subscriptions.every( ( { expired } ) => expired ) ? 'expiredProduct' : 'product';
 	}
 
 	const planSlug = site.plan?.product_slug;
-	return planSlug && ! site.plan?.expired && planHasJetpackSearch( planSlug ) ? 'plan' : null;
+	if ( ! planSlug || ! planHasJetpackSearch( planSlug ) ) {
+		return null;
+	}
+	return site.plan?.expired ? 'expiredPlan' : 'plan';
 }
 
 export default function ExistingSearchNotice( { site, siteUrl, product }: Props ) {
@@ -109,12 +119,24 @@ export default function ExistingSearchNotice( { site, siteUrl, product }: Props 
 			"Jetpack Search is already included in this site's plan. {{link}}Manage subscriptions{{/link}}",
 			{ components }
 		),
+		expiredPlan: translate(
+			"Jetpack Search is included in this site's plan, but the plan has expired. Renewing the plan will keep Search active. {{link}}Manage subscriptions{{/link}}",
+			{ components }
+		),
 		renewal: translate(
 			'This site already has a Jetpack Search subscription. Continuing will renew it. {{link}}Manage subscriptions{{/link}}',
 			{ components }
 		),
+		expired: translate(
+			"This site's Jetpack Search subscription has expired. Continuing will renew it. {{link}}Manage subscriptions{{/link}}",
+			{ components }
+		),
 		product: translate(
 			'This site already has a Jetpack Search subscription. {{link}}Manage subscriptions{{/link}}',
+			{ components }
+		),
+		expiredProduct: translate(
+			'This site already has a Jetpack Search subscription, but it has expired. Renewing it will keep Search active. {{link}}Manage subscriptions{{/link}}',
 			{ components }
 		),
 	};
