@@ -118,7 +118,7 @@ const HelpCenterContainer: React.FC< Container > = ( { handleClose, hidden, curr
 		};
 	}, [ shouldCloseOnEscapeRef, onDismiss ] );
 
-	useRaiseOnFocus( node );
+	useRaiseOnFocus( node, ! isMinimized );
 
 	if ( ! show || hidden ) {
 		return null;

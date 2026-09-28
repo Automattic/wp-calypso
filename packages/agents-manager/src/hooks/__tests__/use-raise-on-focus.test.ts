@@ -34,7 +34,7 @@ describe( 'useRaiseOnFocus', () => {
 		expect( chat ).not.toHaveAttribute( FOCUSED_ATTRIBUTE );
 	} );
 
-	it( 'focuses a panel when it opens, not while it is closed', () => {
+	it( 'focuses a panel when it opens, and keeps it focused when it closes', () => {
 		const chat = addPanel();
 
 		const { rerender } = renderHook(
@@ -45,6 +45,10 @@ describe( 'useRaiseOnFocus', () => {
 		expect( chat ).not.toHaveAttribute( FOCUSED_ATTRIBUTE );
 
 		rerender( { isOpen: true } );
+
+		expect( chat ).toHaveAttribute( FOCUSED_ATTRIBUTE );
+
+		rerender( { isOpen: false } );
 
 		expect( chat ).toHaveAttribute( FOCUSED_ATTRIBUTE );
 	} );
