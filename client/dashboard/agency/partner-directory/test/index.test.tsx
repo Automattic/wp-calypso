@@ -62,11 +62,7 @@ describe( '<AgencyPartnerDirectory>', () => {
 
 		render( <AgencyPartnerDirectory /> );
 
-		expect(
-			await screen.findByRole( 'heading', {
-				name: 'Boost your agency’s visibility across Automattic listings.',
-			} )
-		).toBeVisible();
+		expect( await screen.findByRole( 'heading', { name: 'How do I start?' } ) ).toBeVisible();
 		expect( screen.getByRole( 'link', { name: 'Apply now' } ) ).toBeVisible();
 	} );
 
