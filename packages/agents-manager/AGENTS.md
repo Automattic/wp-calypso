@@ -27,6 +27,7 @@ cd apps/agents-manager && yarn dev --sync
 - **`@wordpress/*` for React APIs, generic UI, and icons**: in new code, import React APIs from `@wordpress/element` (keep bare `react` imports type-only), generic UI primitives from `@wordpress/components`, and icons from `@wordpress/icons` — matching the script externals WordPress registers on wp-admin/editor surfaces, where a different source ships a duplicate copy. Chat UI comes from `@automattic/agenttic-ui` (the chat runtime above); this rule is not a license to replace it or to churn existing compliant imports.
 - **i18n**: Use `@wordpress/i18n` with the `__i18n_text_domain__` text domain placeholder — passed unquoted as it is a global constant, not a string literal. The webpack `DefinePlugin` replaces it with `'default'` at build time.
 - **Curly quotes**: Preserve `“”` `‘’` exactly as they appear. Do not convert to unicode escapes or ASCII equivalents.
+- **Docs move with the code**: any change to code, styles, config, or behavior MUST update every doc that describes it, in the same PR — `README.md` and `AGENTS.md` files, other Markdown docs, docblocks, and comments. Find them by searching for the names you changed (files, exports, props, classes, flags) instead of relying on memory, and check the docs again before finishing.
 
 ## Working in Heavily Shared Components
 
