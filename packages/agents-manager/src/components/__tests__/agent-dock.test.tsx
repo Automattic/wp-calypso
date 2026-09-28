@@ -658,12 +658,18 @@ describe( 'AgentDock', () => {
 	} );
 
 	it.each( [
-		{ chat: 'open', isOpen: true, node: mockPortalNode, isChatOpen: true },
-		{ chat: 'minimized', isOpen: true, isMinimized: true, node: mockPortalNode, isChatOpen: false },
-		{ chat: 'hidden', isOpen: false, node: null, isChatOpen: false },
-		{ chat: 'docked', isOpen: true, isLayoutDocked: true, node: null, isChatOpen: true },
+		{ state: 'open', isOpen: true, node: mockPortalNode, isChatOpen: true },
+		{
+			state: 'minimized',
+			isOpen: true,
+			isMinimized: true,
+			node: mockPortalNode,
+			isChatOpen: false,
+		},
+		{ state: 'hidden', isOpen: false, node: null, isChatOpen: false },
+		{ state: 'docked', isOpen: true, isLayoutDocked: true, node: null, isChatOpen: true },
 	] )(
-		'raises the floating chat on focus while it shows ($chat)',
+		'gives `useRaiseOnFocus` the node only while the chat floats and shows ($state)',
 		( { isOpen, isMinimized = false, isLayoutDocked = false, node, isChatOpen } ) => {
 			useWpAdminAgent();
 			mockHasAdminBar = true;
