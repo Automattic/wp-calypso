@@ -23,6 +23,9 @@ const isShoppingCartResponse = ( response: Response ): boolean => {
 // `reloadAndRetry` runs the search closure three times, inside a 120s test.
 const SEARCH_BUDGET = 60 * 1000;
 
+/** Thrown when a search spends its budget, carrying the last attempt's error. */
+class SearchBudgetError extends Error {}
+
 const normalizeText = ( value?: string | null ): string =>
 	( value ?? '' ).replace( /\s+/g, ' ' ).trim();
 
@@ -109,19 +112,25 @@ export class DomainSearchComponent {
 	async search( keyword: string ): Promise< void > {
 		const container = this.getContainer();
 		const deadline = Date.now() + SEARCH_BUDGET;
+		let lastAttemptError: unknown;
 
 		// Every wait below is bounded on its own, and `reloadAndRetry` runs the
 		// closure three times, so the search as a whole has to be bounded too: one
 		// that outlives the 120s test timeout reports that timeout instead of its
 		// own error - or the throttle the error stands for. Playwright reads a zero
 		// timeout as "wait forever", so a spent budget ends the search rather than
-		// reaching one.
+		// reaching one. The attempt that spent the budget is the one that says what
+		// went wrong, so its error is kept in the message.
 		const within = ( cap: number ): number => {
 			const left = deadline - Date.now();
 
 			if ( left <= 0 ) {
-				throw new Error(
-					`Search for "${ keyword }" exceeded its ${ SEARCH_BUDGET / 1000 }s budget.`
+				const lastAttempt =
+					lastAttemptError === undefined
+						? ''
+						: ` Last attempt failed with: ${ formatError( lastAttemptError ) }`;
+				throw new SearchBudgetError(
+					`Search for "${ keyword }" exceeded its ${ SEARCH_BUDGET / 1000 }s budget.${ lastAttempt }`
 				);
 			}
 
@@ -151,15 +160,26 @@ export class DomainSearchComponent {
 		 * @param {Page} page Page object.
 		 */
 		async function searchDomainClosure( page: Page ): Promise< void > {
+			try {
+				await searchDomainAttempt( page );
+			} catch ( error ) {
+				// A budget error already carries the last attempt's error; recording
+				// it too would nest one budget message inside the next.
+				if ( ! ( error instanceof SearchBudgetError ) ) {
+					lastAttemptError = error;
+				}
+				throw error;
+			}
+		}
+
+		/**
+		 * One attempt at the search, retried by `searchDomainClosure`.
+		 *
+		 * @param {Page} page Page object.
+		 */
+		async function searchDomainAttempt( page: Page ): Promise< void > {
 			const searchbox = page.getByRole( 'searchbox' );
 			const firstListitem = container.getByRole( 'listitem' ).first();
-
-			// Site flows pre-fill the searchbox and search for that value on
-			// mount. Typing before that first list renders drops the typed
-			// query: the input keeps the text but no request is made for it.
-			if ( ( await searchbox.inputValue() ) !== '' ) {
-				await firstListitem.waitFor( { timeout: within( 30 * 1000 ) } ).catch( () => {} );
-			}
 
 			const searchAndPressEnter = async () => {
 				await searchbox.fill( keyword );
@@ -194,6 +214,11 @@ export class DomainSearchComponent {
 				firstTitle = await firstListitem.getAttribute( 'title' );
 				if ( titleMatchesKeyword( firstTitle ) ) {
 					return;
+				}
+				// Out of budget, the row the list is stuck on is the finding; the
+				// next attempt reports it along with the budget.
+				if ( Date.now() >= deadline ) {
+					break;
 				}
 				await page.waitForTimeout( within( 200 ) );
 			}
