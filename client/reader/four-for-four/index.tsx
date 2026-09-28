@@ -98,7 +98,7 @@ export function FourForFour() {
 						</h2>
 						<p className="subscribe-modal__description">
 							{ translate(
-								'Click a site to preview it, then subscribe to any 4 that interest you. Once you do, your site joins this list for other new writers to find.'
+								'Click a site to preview it, then subscribe to any 4 that interest you. Once you do, your site can be shown here to other new writers.'
 							) }
 						</p>
 					</div>
@@ -110,7 +110,7 @@ export function FourForFour() {
 								<strong>{ translate( "You're in!" ) }</strong>
 								<span>
 									{ translate(
-										'Your site is now on the list other new writers see. Every extra subscription moves you further up it.'
+										'Your site can now be shown to other new writers. Every extra subscription moves you further up the list.'
 									) }
 								</span>
 							</VStack>
