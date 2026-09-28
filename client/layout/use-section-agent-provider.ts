@@ -55,6 +55,8 @@ export default function useSectionAgentProvider( sectionName: string, enabled: b
 
 		let cancelled = false;
 		let unregister: ( () => void ) | undefined;
+		let retryTimeout: ReturnType< typeof setTimeout > | undefined;
+		let retryDelay = 1000;
 		const register = ( provider: InlineProvider ) => {
 			if ( cancelled ) {
 				return;
@@ -63,16 +65,31 @@ export default function useSectionAgentProvider( sectionName: string, enabled: b
 			unregister = registerInlineProvider( provider );
 			setReadySection( sectionName );
 		};
+		const load = () => {
+			loadProvider( store )
+				.then( register )
+				.catch( () => {
+					if ( cancelled ) {
+						return;
+					}
+
+					retryTimeout = setTimeout( load, retryDelay );
+					retryDelay = Math.min( retryDelay * 2, 30000 );
+				} );
+		};
 
 		const cachedProvider = cachedProviders.current.get( sectionName );
 		if ( cachedProvider ) {
 			register( cachedProvider );
 		} else {
-			loadProvider( store ).then( register );
+			load();
 		}
 
 		return () => {
 			cancelled = true;
+			if ( retryTimeout ) {
+				clearTimeout( retryTimeout );
+			}
 			unregister?.();
 		};
 	}, [ enabled, loadProvider, sectionName, store ] );

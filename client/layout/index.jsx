@@ -151,7 +151,11 @@ const Omnibar = ( props ) => (
 );
 
 function CalypsoAgentsManagerLoader( { sectionName, currentRoute, siteId } ) {
-	const { routeIsEnabled, isInternalOnly } = useShouldLoadAgentsManager( currentRoute, siteId );
+	const { routeIsEnabled, isInternalOnly } = useShouldLoadAgentsManager(
+		currentRoute,
+		siteId,
+		sectionName === 'plugins'
+	);
 
 	if ( ! routeIsEnabled ) {
 		return null;

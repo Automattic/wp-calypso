@@ -3,8 +3,7 @@
  */
 import { bigSkyPluginQuery, queryClient } from '@automattic/api-queries';
 import { isEnabled } from '@automattic/calypso-config';
-import { renderHook, waitFor } from '@testing-library/react';
-import nock from 'nock';
+import { renderHook } from '@testing-library/react';
 import useShouldLoadAgentsManager, {
 	getAgentsManagerEligibility,
 } from '../use-should-load-agents-manager';
@@ -82,25 +81,8 @@ describe( 'useShouldLoadAgentsManager', () => {
 } );
 
 describe( 'marketplace eligibility', () => {
-	beforeEach( () => {
-		queryClient.clear();
-		mockedIsEnabled.mockReturnValue( false );
-	} );
-
-	it( 'enables the plugins route based on its path', () => {
-		expect( getAgentsManagerEligibility( '/plugins', true ).routeIsEnabled ).toBe( true );
-	} );
-
-	it( 'waits for the selected site setting before loading the marketplace agent', async () => {
-		const siteId = 123;
-		const scope = nock( 'https://public-api.wordpress.com' )
-			.get( `/rest/v1.1/sites/${ siteId }/big-sky-plugin` )
-			.reply( 200, { enabled: true } );
-		const { result } = renderHook( () => useShouldLoadAgentsManager( '/plugins', siteId ) );
-
-		expect( result.current.routeIsEnabled ).toBe( false );
-		await waitFor( () => expect( result.current.routeIsEnabled ).toBe( true ) );
-		expect( scope.isDone() ).toBe( true );
+	it( 'keeps the dashboard plugin management page disabled', () => {
+		expect( getAgentsManagerEligibility( '/plugins', true ).routeIsEnabled ).toBe( false );
 	} );
 
 	it.each( [
@@ -111,24 +93,11 @@ describe( 'marketplace eligibility', () => {
 		'/plugins/wordpress-seo/example.com',
 		'/plugins/browse/seo',
 		'/plugins/browse/seo/example.com',
-	] )( 'loads %s with WordPress Agent enabled on the selected site', ( route ) => {
-		const siteId = 123;
-		queryClient.setQueryData( bigSkyPluginQuery( siteId ).queryKey, { enabled: true } );
-		const { result } = renderHook( () => useShouldLoadAgentsManager( route, siteId ) );
+		'/plugins?search=seo',
+	] )( 'loads %s without Big Sky or a selected site', ( route ) => {
+		mockedIsEnabled.mockReturnValue( false );
+		const { result } = renderHook( () => useShouldLoadAgentsManager( route, null, true ) );
 		expect( result.current ).toEqual( { routeIsEnabled: true, isInternalOnly: false } );
-	} );
-	it( 'does not load without a selected site, even with cached plugin status', () => {
-		queryClient.setQueryData( bigSkyPluginQuery( 0 ).queryKey, { enabled: true } );
-		const { result } = renderHook( () => useShouldLoadAgentsManager( '/plugins', null ) );
-		expect( result.current.routeIsEnabled ).toBe( false );
-	} );
-
-	it( 'does not load when WordPress Agent is disabled on the selected site', () => {
-		const siteId = 123;
-		queryClient.setQueryData( bigSkyPluginQuery( siteId ).queryKey, { enabled: false } );
-		const { result } = renderHook( () => useShouldLoadAgentsManager( '/plugins', siteId ) );
-		expect( result.current.routeIsEnabled ).toBe( false );
-		expect( getAgentsManagerEligibility( '/plugins', false ).routeIsEnabled ).toBe( false );
 	} );
 
 	it.each( [
@@ -143,7 +112,7 @@ describe( 'marketplace eligibility', () => {
 	] )( 'excludes %s routes', ( route ) => {
 		for ( const suffix of [ '', '/example.com', '/edit/123' ] ) {
 			expect(
-				getAgentsManagerEligibility( `/plugins/${ route }${ suffix }`, true ).routeIsEnabled
+				getAgentsManagerEligibility( `/plugins/${ route }${ suffix }`, true, true ).routeIsEnabled
 			).toBe( false );
 		}
 	} );
