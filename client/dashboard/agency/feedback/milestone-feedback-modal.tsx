@@ -22,7 +22,7 @@ interface Props {
 
 export default function MilestoneFeedbackModal( { type, args, onClose }: Props ) {
 	const { submit, skip, isSubmitting } = useMilestoneFeedback( type );
-	const [ rating, setRating ] = useState< FeedbackRating >( 'good' );
+	const [ rating, setRating ] = useState< FeedbackRating >();
 	const [ comments, setComments ] = useState( '' );
 	const [ suggestions, setSuggestions ] = useState< string[] >( [] );
 	const suggestionLabelId = useId();
@@ -91,8 +91,12 @@ export default function MilestoneFeedbackModal( { type, args, onClose }: Props )
 						__next40pxDefaultSize
 						variant="primary"
 						isBusy={ isSubmitting }
-						disabled={ isSubmitting }
-						onClick={ () => submit( { rating, comments, suggestions }, { onSuccess: onClose } ) }
+						disabled={ ! rating || isSubmitting }
+						onClick={ () => {
+							if ( rating ) {
+								submit( { rating, comments, suggestions }, { onSuccess: onClose } );
+							}
+						} }
 					>
 						{ __( 'Send your feedback' ) }
 					</Button>

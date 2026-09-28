@@ -133,6 +133,21 @@ describe( '<MilestoneFeedbackModal>', () => {
 		expect( notice ).toBeVisible();
 	} );
 
+	test( 'waits for a rating before sending', async () => {
+		mockAgency();
+		mockPreferences();
+		const user = userEvent.setup();
+
+		renderModal();
+
+		const send = await screen.findByRole( 'button', { name: 'Send your feedback' } );
+		expect( send ).toBeDisabled();
+
+		await user.click( screen.getByRole( 'radio', { name: 'Neutral' } ) );
+
+		expect( send ).toBeEnabled();
+	} );
+
 	test( 'remembers the answer without discarding the other milestones', async () => {
 		mockAgency();
 		mockPreferences();
@@ -159,6 +174,7 @@ describe( '<MilestoneFeedbackModal>', () => {
 			{ queryClient }
 		);
 
+		await user.click( screen.getByRole( 'radio', { name: 'Good' } ) );
 		await user.click( screen.getByRole( 'button', { name: 'Send your feedback' } ) );
 
 		await waitFor( () => expect( preference.value ).toBeDefined() );
@@ -219,7 +235,8 @@ describe( '<MilestoneFeedbackModal>', () => {
 
 		const { onClose } = renderModal();
 
-		await user.type( await screen.findByRole( 'textbox' ), 'The invite email looked like spam.' );
+		await user.click( await screen.findByRole( 'radio', { name: 'Good' } ) );
+		await user.type( screen.getByRole( 'textbox' ), 'The invite email looked like spam.' );
 		await user.click( screen.getByRole( 'button', { name: 'Send your feedback' } ) );
 
 		await waitFor( () =>
@@ -260,7 +277,8 @@ describe( '<MilestoneFeedbackModal>', () => {
 		queryClient.setQueryData( rawUserPreferencesQuery().queryKey, {} );
 		render( <Host />, { queryClient } );
 
-		await user.click( await screen.findByRole( 'button', { name: 'Send your feedback' } ) );
+		await user.click( await screen.findByRole( 'radio', { name: 'Good' } ) );
+		await user.click( screen.getByRole( 'button', { name: 'Send your feedback' } ) );
 
 		await waitFor( () =>
 			expect(
