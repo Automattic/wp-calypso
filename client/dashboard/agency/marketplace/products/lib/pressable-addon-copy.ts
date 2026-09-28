@@ -95,21 +95,20 @@ export function getPressableAddonCopy( product: AgencyProduct ): PressableAddonC
 				),
 			};
 		case 'phpMemory': {
-			if ( ! metadata.php_memory ) {
+			const phpMemory = metadata.php_memory;
+			if ( ! phpMemory ) {
 				return getGenericCopy();
 			}
-			/* translators: %s is a memory size in megabytes. */
-			const phpMemory = sprintf( __( '%s MB' ), formatNumber( metadata.php_memory ) );
 			return {
 				callout: sprintf(
-					/* translators: %(phpMemory)s is a memory size such as "512 MB". */
+					/* translators: %(phpMemory)s is a memory size such as "512MB". */
 					__(
 						'PHP memory will be increased by %(phpMemory)s for each PHP worker/process on one Pressable site/domain.'
 					),
 					{ phpMemory }
 				),
 				limit: sprintf(
-					/* translators: %(phpMemory)s is a memory size such as "512 MB". */
+					/* translators: %(phpMemory)s is a memory size such as "512MB". */
 					__(
 						'This add-on increases PHP memory by %(phpMemory)s for each PHP worker/process on one Pressable site/domain while your Signature plan is active.'
 					),

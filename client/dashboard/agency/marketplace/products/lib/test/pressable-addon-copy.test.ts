@@ -32,9 +32,10 @@ describe( 'getPressableAddonCopy', () => {
 	} );
 
 	test( 'falls back to the generic copy when the server sends no PHP memory value', () => {
-		expect( getPressableAddonCopy( addon( 'pressable-addon-php-memory-512mb', {} ) ).callout ).toBe(
-			GENERIC_CALLOUT
-		);
+		expect(
+			getPressableAddonCopy( addon( 'pressable-addon-php-memory-512mb', { php_memory: null } ) )
+				.callout
+		).toBe( GENERIC_CALLOUT );
 	} );
 
 	test( 'falls back to the generic copy for an unknown add-on or missing metadata', () => {
