@@ -12,16 +12,20 @@ import BillingDragonCheckout from '../billing-dragon-checkout';
 import withMarketplaceProviders from '../hoc/with-marketplace-providers';
 import useProductsBySlug from '../hooks/use-products-by-slug';
 import useShoppingCart from '../hooks/use-shopping-cart';
+import PreparedCheckout from './prepared-checkout';
+import type { PreparedCheckoutRequestResult } from '../lib/prepared-checkout/get-prepared-checkout-request';
 
 import './style-v2.scss';
 
 interface CheckoutV2Props {
 	siteSlug?: string;
 	planSlug?: string;
+	preparedRequest?: PreparedCheckoutRequestResult;
 }
 
-function CheckoutV2( { siteSlug, planSlug }: CheckoutV2Props ) {
+function CheckoutV2( { siteSlug, planSlug, preparedRequest }: CheckoutV2Props ) {
 	const translate = useTranslate();
+	const isPreparedMode = !! preparedRequest && preparedRequest.status !== 'none';
 	const { selectedCartItems } = useShoppingCart();
 
 	// Fetch selected products by slug for site checkout
@@ -54,15 +58,19 @@ function CheckoutV2( { siteSlug, planSlug }: CheckoutV2Props ) {
 				</LayoutHeader>
 			</LayoutTop>
 			<LayoutBody>
-				<BillingDragonCheckout
-					withA8cLogo={ false }
-					cartItems={
-						selectedProductsBySlug.length > 0 ? selectedProductsBySlug : selectedCartItems
-					}
-					siteSlug={ siteSlug }
-					planSlug={ planSlug }
-					shouldClearCartOnSuccess={ selectedProductsBySlug.length === 0 }
-				/>
+				{ isPreparedMode && preparedRequest ? (
+					<PreparedCheckout request={ preparedRequest } />
+				) : (
+					<BillingDragonCheckout
+						withA8cLogo={ false }
+						cartItems={
+							selectedProductsBySlug.length > 0 ? selectedProductsBySlug : selectedCartItems
+						}
+						siteSlug={ siteSlug }
+						planSlug={ planSlug }
+						shouldClearCartOnSuccess={ selectedProductsBySlug.length === 0 }
+					/>
+				) }
 			</LayoutBody>
 		</Layout>
 	);

@@ -13,6 +13,7 @@ import CheckoutMain from 'calypso/my-sites/checkout/src/components/checkout-main
 import usePrepareProductsForCart from 'calypso/my-sites/checkout/src/hooks/use-prepare-products-for-cart';
 import { useDispatch, useSelector } from 'calypso/state';
 import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import hasLoadedSites from 'calypso/state/selectors/has-loaded-sites';
 import getSite from 'calypso/state/sites/selectors/get-site';
@@ -22,11 +23,34 @@ import ClientCheckoutError from './checkout-error';
 import ClientCheckoutPlaceholder from './checkout-placeholder';
 import getPurchasedWPCOMPlanSlug from './lib/get-purchased-wpcom-plan-slug';
 import getSuccessRedirectUrl from './lib/get-success-redirect-url';
+import { validatePreparedCart } from './lib/validate-prepared-cart';
 import type { ShoppingCartItem } from '../types';
+import type { PreparedCheckoutProduct } from 'calypso/a8c-for-agencies/data/marketplace/use-prepare-checkout';
 
 import './style.scss';
 
 const debug = debugFactory( 'a4a:bd-checkout' );
+
+export interface PreparedCartProps {
+	/** Products the prepare endpoint said it saved; absent on a reload of skip_active_cart=1. */
+	products?: PreparedCheckoutProduct[];
+	/** The `prepare` source id (or 'reload'), for tracks. */
+	source: string;
+}
+
+interface BillingDragonCheckoutProps {
+	cartItems: ShoppingCartItem[];
+	withA8cLogo?: boolean;
+	siteSlug?: string;
+	planSlug?: string;
+	shouldClearCartOnSuccess?: boolean;
+	/**
+	 * Prepared mode: a wpcom endpoint already saved the `no-site` cart. Load it
+	 * as is, never replace it with Marketplace selections, and error if it is
+	 * empty or not what was prepared.
+	 */
+	preparedCart?: PreparedCartProps;
+}
 
 /**
  * A4A-BD Checkout Component using the WordPress.com checkout
@@ -37,16 +61,12 @@ function BillingDragonCheckoutContent( {
 	siteSlug,
 	planSlug,
 	shouldClearCartOnSuccess = false,
-}: {
-	cartItems: ShoppingCartItem[];
-	withA8cLogo?: boolean;
-	siteSlug?: string;
-	planSlug?: string;
-	shouldClearCartOnSuccess?: boolean;
-} ) {
+	preparedCart,
+}: BillingDragonCheckoutProps ) {
 	const translate = useTranslate();
 	const [ isReady, setIsReady ] = useState( false );
 	const [ error, setError ] = useState< string | null >( null );
+	const isPreparedMode = !! preparedCart;
 
 	const dispatch = useDispatch();
 	const agency = useSelector( getActiveAgency );
@@ -67,7 +87,8 @@ function BillingDragonCheckoutContent( {
 
 	// Use site's cart key when site exists, otherwise use 'no-site' for siteless checkout
 	const cartKey = siteId || 'no-site';
-	const { replaceProductsInCart, responseCart } = useShoppingCart( cartKey );
+	const { replaceProductsInCart, responseCart, isLoading, isPendingUpdate } =
+		useShoppingCart( cartKey );
 
 	const {
 		productsForCart,
@@ -90,7 +111,7 @@ function BillingDragonCheckoutContent( {
 	// 2. Adding agency metadata to the products
 	// 3. Replacing the cart with the prepared products
 	useEffect( () => {
-		if ( ! isPlanCheckout || areProductsPreparing ) {
+		if ( isPreparedMode || ! isPlanCheckout || areProductsPreparing ) {
 			return;
 		}
 
@@ -133,6 +154,7 @@ function BillingDragonCheckoutContent( {
 		areProductsPreparing,
 		agency,
 		isPlanCheckout,
+		isPreparedMode,
 		productsError,
 		productsForCart,
 		replaceProductsInCart,
@@ -148,7 +170,7 @@ function BillingDragonCheckoutContent( {
 	// 3. Replacing the cart with the converted products
 	// This is the original flow used when users add items to their cart first, then navigate to checkout.
 	useEffect( () => {
-		if ( isPlanCheckout ) {
+		if ( isPreparedMode || isPlanCheckout ) {
 			return;
 		}
 
@@ -217,12 +239,21 @@ function BillingDragonCheckoutContent( {
 			debug( '[A4A Checkout] No matching products found to add to cart' );
 			setError( 'Could not find the requested products' );
 		}
-	}, [ isReady, error, replaceProductsInCart, responseCart, agency, cartItems, isPlanCheckout ] );
+	}, [
+		isReady,
+		error,
+		replaceProductsInCart,
+		responseCart,
+		agency,
+		cartItems,
+		isPlanCheckout,
+		isPreparedMode,
+	] );
 
 	// Debugging: Set a timeout to force showing the checkout after 2 seconds
 	// Todo: This was reduced from 10 seconds to 2 seconds to check if it works well. Better UX.
 	useEffect( () => {
-		if ( isReady || error ) {
+		if ( isReady || error || isPreparedMode ) {
 			return;
 		}
 
@@ -232,14 +263,59 @@ function BillingDragonCheckoutContent( {
 		}, 2000 );
 
 		return () => clearTimeout( timeoutId );
-	}, [ isReady, error ] );
+	}, [ isReady, error, isPreparedMode ] );
+
+	// Prepared mode: the server cart is the source of truth. Wait for it to load,
+	// then require it to be the cart the prepare endpoint saved.
+	useEffect( () => {
+		if ( ! isPreparedMode || isReady || error || isLoading || isPendingUpdate ) {
+			return;
+		}
+
+		const problem = validatePreparedCart( responseCart, preparedCart?.products );
+		if ( problem ) {
+			debug( '[A4A Checkout] Prepared cart invalid:', problem, responseCart );
+			dispatch(
+				recordTracksEvent( 'calypso_a4a_marketplace_prepared_checkout_cart_invalid', {
+					source: preparedCart?.source,
+					problem,
+				} )
+			);
+			setError(
+				translate( 'Please go back to where you started this purchase and try again.' ) as string
+			);
+			return;
+		}
+
+		debug( '[A4A Checkout] Prepared cart accepted', responseCart );
+		setIsReady( true );
+	}, [
+		isPreparedMode,
+		isReady,
+		error,
+		isLoading,
+		isPendingUpdate,
+		responseCart,
+		preparedCart,
+		dispatch,
+		translate,
+	] );
+
+	if ( error ) {
+		return (
+			<ClientCheckoutError
+				title={
+					isPreparedMode
+						? translate( 'This checkout is no longer available.' )
+						: translate( 'Error' )
+				}
+				message={ error }
+			/>
+		);
+	}
 
 	if ( ! isReady ) {
 		return <ClientCheckoutPlaceholder />;
-	}
-
-	if ( error ) {
-		return <ClientCheckoutError title={ translate( 'Error' ) } message={ error } />;
 	}
 
 	return (
@@ -255,8 +331,8 @@ function BillingDragonCheckoutContent( {
 				sitelessCheckoutType="a4a"
 				redirectTo={ getSuccessRedirectUrl(
 					window.location.origin,
-					shouldClearCartOnSuccess && ! isPlanCheckout,
-					isPlanCheckout ? null : getPurchasedWPCOMPlanSlug( cartItems )
+					! isPreparedMode && shouldClearCartOnSuccess && ! isPlanCheckout,
+					isPlanCheckout || isPreparedMode ? null : getPurchasedWPCOMPlanSlug( cartItems )
 				) }
 				customizedPreviousPath="/marketplace"
 				siteSlug={ siteSlug ?? '' }
@@ -272,13 +348,8 @@ export default function BillingDragonCheckout( {
 	siteSlug,
 	planSlug,
 	shouldClearCartOnSuccess = false,
-}: {
-	cartItems: ShoppingCartItem[];
-	withA8cLogo?: boolean;
-	siteSlug?: string;
-	planSlug?: string;
-	shouldClearCartOnSuccess?: boolean;
-} ) {
+	preparedCart,
+}: BillingDragonCheckoutProps ) {
 	const translate = useTranslate();
 	const locale = useSelector( getCurrentUserLocale );
 
@@ -295,6 +366,7 @@ export default function BillingDragonCheckout( {
 						siteSlug={ siteSlug }
 						planSlug={ planSlug }
 						shouldClearCartOnSuccess={ shouldClearCartOnSuccess }
+						preparedCart={ preparedCart }
 					/>
 				</StripeHookProvider>
 			</CalypsoShoppingCartProvider>
