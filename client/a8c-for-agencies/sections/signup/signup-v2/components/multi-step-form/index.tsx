@@ -230,7 +230,7 @@ const MultiStepForm = ( {
 					<ChoiceBlueprint
 						onContinue={ () => updateDataAndContinue( {}, 4 ) }
 						onSkip={ () => updateDataAndContinue( {}, 6 ) }
-						goBack={ () => setCurrentStep( 2 ) }
+						goBack={ () => updateDataAndGoBack( {}, 2 ) }
 					/>
 				);
 			case 4:
