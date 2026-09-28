@@ -10,7 +10,7 @@
  */
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { useDispatch } from 'calypso/state';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import NewBlogCard from './card';
@@ -35,57 +35,51 @@ export default function DiscoverNewBlogs( { recs, dismissBlog, hide }: Props ) {
 	const visible = recs.slice( start, start + DISPLAY_LIMIT );
 	const hasMore = recs.length > start + DISPLAY_LIMIT;
 
-	// One module impression per mount, fired when the FIRST card is actually on
-	// screen (not on mount — the block sits below the fold), so this count and
-	// the per-card TrainTracks renders measure the same thing.
 	const impressionTrackedRef = useRef( false );
-	const visibleCountRef = useRef( visible.length );
-	visibleCountRef.current = visible.length;
-	const handleImpression = useCallback( () => {
+
+	if ( visible.length === 0 ) {
+		return null;
+	}
+
+	// One module impression per mount, fired on the FIRST card impression (not on
+	// mount — the block sits below the fold), so this count and the per-card
+	// TrainTracks renders measure the same thing.
+	const handleImpression = () => {
 		if ( impressionTrackedRef.current ) {
 			return;
 		}
 		impressionTrackedRef.current = true;
 		dispatch(
 			recordReaderTracksEvent( 'calypso_reader_discover_new_blogs_render', {
-				count: visibleCountRef.current,
+				count: visible.length,
 			} )
 		);
-	}, [ dispatch ] );
+	};
 
-	if ( visible.length === 0 ) {
-		return null;
-	}
+	const recordCardEvent = (
+		name: string,
+		rec: NewBlogRec,
+		props: Record< string, unknown > = {}
+	) =>
+		dispatch(
+			recordReaderTracksEvent( name, { blog_id: rec.blogId, post_id: rec.postId, ...props } )
+		);
 
 	const handleDismiss = ( rec: NewBlogRec ) => {
-		dispatch(
-			recordReaderTracksEvent( 'calypso_reader_discover_new_blogs_dismiss', {
-				blog_id: rec.blogId,
-				post_id: rec.postId,
-			} )
-		);
+		recordCardEvent( 'calypso_reader_discover_new_blogs_dismiss', rec );
 		recordNewBlogInteract( rec, NEW_BLOGS_ACTIONS.SITE_DISMISSED );
 		dismissBlog( rec.blogId );
 	};
 
 	const handleOpen = ( rec: NewBlogRec ) => {
-		dispatch(
-			recordReaderTracksEvent( 'calypso_reader_discover_new_blogs_post_click', {
-				blog_id: rec.blogId,
-				post_id: rec.postId,
-			} )
-		);
+		recordCardEvent( 'calypso_reader_discover_new_blogs_post_click', rec );
 		recordNewBlogInteract( rec, NEW_BLOGS_ACTIONS.POST_CLICKED );
 	};
 
 	const handleFollowToggle = ( rec: NewBlogRec, isFollowing: boolean ) => {
-		dispatch(
-			recordReaderTracksEvent( 'calypso_reader_discover_new_blogs_follow_toggle', {
-				blog_id: rec.blogId,
-				post_id: rec.postId,
-				following: isFollowing,
-			} )
-		);
+		recordCardEvent( 'calypso_reader_discover_new_blogs_follow_toggle', rec, {
+			following: isFollowing,
+		} );
 		recordNewBlogInteract(
 			rec,
 			isFollowing ? NEW_BLOGS_ACTIONS.SITE_SUBSCRIBED : NEW_BLOGS_ACTIONS.SITE_UNSUBSCRIBED

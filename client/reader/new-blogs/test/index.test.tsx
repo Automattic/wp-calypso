@@ -29,11 +29,6 @@ jest.mock( '../tracks', () => ( {
 	...jest.requireActual( '../tracks' ),
 	recordNewBlogInteract: ( ...args: unknown[] ) => mockRecordNewBlogInteract( ...args ),
 } ) );
-jest.mock( '@automattic/calypso-analytics', () => ( {
-	getNewRailcarId: () => 'railcar-id',
-	recordTrainTracksRender: jest.fn(),
-	recordTrainTracksInteract: jest.fn(),
-} ) );
 jest.mock( 'i18n-calypso', () => ( {
 	useTranslate: () => ( str: string ) => str,
 } ) );

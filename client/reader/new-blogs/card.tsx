@@ -12,7 +12,8 @@
 import { Button } from '@wordpress/components';
 import { close } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useRef, useState, type MouseEvent } from 'react';
+import { useState, type MouseEvent } from 'react';
+import { useInView } from 'react-intersection-observer';
 import ReaderExcerpt from 'calypso/blocks/reader-excerpt';
 import { SiteIcon } from 'calypso/blocks/site-icon';
 import { useFeedQuery } from 'calypso/reader/data/feed';
@@ -37,40 +38,6 @@ interface Props {
 	onImpression: () => void;
 }
 
-/**
- * Callback ref that records one TrainTracks render when the card becomes
- * (60%) visible, once per railcar. Same approach as the stream's post view
- * tracking (reader/stream/post-lifecycle `useTrackPostView`).
- */
-function useTrackImpression( rec: NewBlogRec, uiPosition: number, onImpression: () => void ) {
-	const observerRef = useRef< IntersectionObserver | null >( null );
-	const trackedRailcarRef = useRef< string | null >( null );
-
-	return useCallback(
-		( element: HTMLElement | null ) => {
-			observerRef.current?.disconnect();
-			observerRef.current = null;
-			if ( ! element || typeof IntersectionObserver === 'undefined' ) {
-				return;
-			}
-			observerRef.current = new IntersectionObserver(
-				( [ entry ] ) => {
-					if ( ! entry.isIntersecting || trackedRailcarRef.current === rec.railcar.railcar ) {
-						return;
-					}
-					trackedRailcarRef.current = rec.railcar.railcar;
-					recordNewBlogRender( rec, uiPosition );
-					onImpression();
-					observerRef.current?.disconnect();
-				},
-				{ threshold: [ 0.6 ] }
-			);
-			observerRef.current.observe( element );
-		},
-		[ rec, uiPosition, onImpression ]
-	);
-}
-
 export default function NewBlogCard( {
 	rec,
 	uiPosition,
@@ -80,7 +47,18 @@ export default function NewBlogCard( {
 	onImpression,
 }: Props ) {
 	const translate = useTranslate();
-	const impressionRef = useTrackImpression( rec, uiPosition, onImpression );
+	// One TrainTracks render per card, once 60% of it is on screen (the same
+	// threshold as the stream's post view tracking).
+	const { ref: impressionRef } = useInView( {
+		threshold: 0.6,
+		triggerOnce: true,
+		onChange: ( inView ) => {
+			if ( inView ) {
+				recordNewBlogRender( rec, uiPosition );
+				onImpression();
+			}
+		},
+	} );
 	const postKey = { blogId: rec.blogId, postId: rec.postId };
 	const { data: post, isLoading } = usePost( postKey );
 	const siteId = post?.site_ID ? Number( post.site_ID ) : undefined;
