@@ -3,7 +3,7 @@
  */
 import { JetpackLicenseFilter, JetpackLicenseSortField } from '@automattic/api-core';
 import { render, screen } from '@testing-library/react';
-import { DEFAULT_VIEW, getLicenseFields, toFetchOptions } from '../dataviews';
+import { DEFAULT_VIEW, RenewalCell, toFetchOptions } from '../dataviews';
 import type { JetpackLicense } from '@automattic/api-core';
 import type { View } from '@wordpress/dataviews';
 
@@ -92,15 +92,8 @@ describe( 'Renewal/expiry field', () => {
 		},
 	};
 
-	const renderRenewal = ( item: JetpackLicense ) => {
-		const field = getLicenseFields( {
-			locale: 'en',
-			isAgencyOwner: true,
-			provisioningLicenseKeys: new Set(),
-		} ).find( ( { id } ) => id === 'renewal' );
-		const Render = field!.render!;
-		render( <Render item={ item } field={ field! } /> );
-	};
+	const renderRenewal = ( item: JetpackLicense ) =>
+		render( <RenewalCell license={ item } locale="en" /> );
 
 	it( 'is shown by default', () => {
 		expect( DEFAULT_VIEW.fields ).toContain( 'renewal' );

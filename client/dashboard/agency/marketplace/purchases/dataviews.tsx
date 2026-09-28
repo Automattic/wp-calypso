@@ -137,7 +137,7 @@ const RENEWAL_BADGE_INTENT: Record< RenewalBadge, ComponentProps< typeof Badge >
 	refundable: 'informational',
 };
 
-function RenewalCell( { license, locale }: { license: JetpackLicense; locale: string } ) {
+export function RenewalCell( { license, locale }: { license: JetpackLicense; locale: string } ) {
 	const expiry = getLicenseRenewalDate( license );
 	if ( ! expiry ) {
 		return <Text variant="muted">—</Text>;
