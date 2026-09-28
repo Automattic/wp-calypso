@@ -1,11 +1,9 @@
 import { activeAgencyQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
-import { __ } from '@wordpress/i18n';
 import { useAnalytics } from '../../app/analytics';
 import { useHelpCenter } from '../../app/help-center';
-import { PageHeader } from '../../components/page-header';
-import PageLayout from '../../components/page-layout';
 import PartnerDirectoryDashboardContent from './dashboard-content';
+import PartnerDirectoryPage from './partner-directory-page';
 import { PARTNER_DIRECTORY_DETAILS_ROUTE, PARTNER_DIRECTORY_EXPERTISE_ROUTE } from './paths';
 
 export default function AgencyPartnerDirectory() {
@@ -19,7 +17,7 @@ export default function AgencyPartnerDirectory() {
 	};
 
 	return (
-		<PageLayout size="small" header={ <PageHeader title={ __( 'Partner Directories' ) } /> }>
+		<PartnerDirectoryPage tab="overview">
 			{ agency && (
 				<PartnerDirectoryDashboardContent
 					agency={ agency }
@@ -27,8 +25,9 @@ export default function AgencyPartnerDirectory() {
 					expertiseUrl={ PARTNER_DIRECTORY_EXPERTISE_ROUTE }
 					profileUrl={ PARTNER_DIRECTORY_DETAILS_ROUTE }
 					openSupportGuide={ openSupportGuide }
+					showIntro={ false }
 				/>
 			) }
-		</PageLayout>
+		</PartnerDirectoryPage>
 	);
 }
