@@ -136,7 +136,7 @@ export default function NewBlogCard( {
 								? ( translate( 'Not interested in %(siteName)s', {
 										args: { siteName },
 										comment: 'Dismisses a recommended blog. %(siteName)s is the blog name.',
-								  } ) as string )
+									} ) as string )
 								: translate( 'Not interested' )
 						}
 						showTooltip
