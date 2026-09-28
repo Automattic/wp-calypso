@@ -1,27 +1,21 @@
-import {
-	Modal,
-	__experimentalSpacer as Spacer,
-	__experimentalText as Text,
-	__experimentalVStack as VStack,
-} from '@wordpress/components';
+import { Modal, __experimentalVStack as VStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useMemo, useState } from 'react';
 import BrowseAllResources from './browse-all-resources';
-import { formatAgencyResources } from './format-resources';
-import ResourceSection from './resource-section';
-import { useFilterResources } from './use-filter-resources';
 import { getYouTubeEmbedUrl } from './youtube-embed';
 import type { ResourceItem, RecordTracksEvent } from './types';
-import type { AgencyResourcesResponse } from '@automattic/api-core';
+
+export const getResourceCenterDescription = () =>
+	__( 'Resources to help you learn, win clients, and deliver great work.' );
 
 interface ResourceCenterProps {
-	data: AgencyResourcesResponse | undefined;
+	resources: ResourceItem[];
 	recordTracksEvent?: RecordTracksEvent;
 	onResourceClick?: ( resource: ResourceItem ) => void;
 }
 
 export default function ResourceCenter( {
-	data,
+	resources: unsortedResources,
 	recordTracksEvent = () => {},
 	onResourceClick,
 }: ResourceCenterProps ) {
@@ -33,57 +27,21 @@ export default function ResourceCenter( {
 		setShowVideoModal( true );
 	};
 
-	const resources = useMemo( () => {
-		if ( ! data?.results ) {
-			return [];
-		}
-		// Sort by created_at descending (newest first).
-		return formatAgencyResources( data.results ).sort(
-			( a, b ) => new Date( b.createdAt ).getTime() - new Date( a.createdAt ).getTime()
-		);
-	}, [ data ] );
-
-	const { topResources, artOfTheDealResources, browseAllResources } =
-		useFilterResources( resources );
+	const resources = useMemo(
+		() =>
+			// Featured first, then by created_at descending (newest first).
+			[ ...unsortedResources ].sort(
+				( a, b ) =>
+					Number( b.isFeatured ) - Number( a.isFeatured ) ||
+					new Date( b.createdAt ).getTime() - new Date( a.createdAt ).getTime()
+			),
+		[ unsortedResources ]
+	);
 
 	return (
 		<>
-			<Spacer marginBottom={ 8 } style={ { maxWidth: '650px' } }>
-				<Text size={ 15 }>
-					{ __(
-						'Browse our guides and articles for agencies, with exclusive materials designed to help you grow and run your agency more effectively. You will find practical guidance, playbooks, and training, including practical ways to recommend the right solutions for your clients.'
-					) }
-				</Text>
-			</Spacer>
-
-			<ResourceSection
-				title={ __( 'Top resources' ) }
-				resources={ topResources }
-				onOpenVideoModal={ handleOpenVideoModal }
-				recordTracksEvent={ recordTracksEvent }
-				onResourceClick={ onResourceClick }
-				maxResources={ 3 }
-				showLogo
-				columnMinWidth={ 320 }
-				tracksEventName="calypso_a4a_resource_center_top_resource_click"
-			/>
-
-			<ResourceSection
-				title={ __( 'Client conversations that work' ) }
-				description={ __(
-					'Learn practical ways to have better client conversations, build trust, and guide decisions that lead to new business and extended partnerships.'
-				) }
-				resources={ artOfTheDealResources }
-				onOpenVideoModal={ handleOpenVideoModal }
-				recordTracksEvent={ recordTracksEvent }
-				onResourceClick={ onResourceClick }
-				maxResources={ 2 }
-				columnMinWidth={ 380 }
-				tracksEventName="calypso_a4a_resource_center_art_of_deal_click"
-			/>
-
 			<BrowseAllResources
-				resources={ browseAllResources }
+				resources={ resources }
 				onOpenVideoModal={ handleOpenVideoModal }
 				recordTracksEvent={ recordTracksEvent }
 				onResourceClick={ onResourceClick }

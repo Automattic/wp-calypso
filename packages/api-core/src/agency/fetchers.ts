@@ -2,7 +2,7 @@ import { wpcom } from '../wpcom-fetcher';
 import type {
 	AgencyApiResponse,
 	AgencyBlog,
-	AgencyResourcesResponse,
+	AgencyEnablementResourcesResponse,
 	McpSettings,
 	McpSettingsUpdate,
 	TipaltiIFrameUrl,
@@ -16,9 +16,12 @@ export async function fetchAgency(): Promise< AgencyApiResponse > {
 	} );
 }
 
-export async function fetchAgencyResources(): Promise< AgencyResourcesResponse > {
+/**
+ * Fetches enablement resources with the v2 taxonomy.
+ */
+export async function fetchAgencyEnablementResources(): Promise< AgencyEnablementResourcesResponse > {
 	return wpcom.req.get( {
-		path: '/agency/resources',
+		path: '/agency/resources/v2',
 		apiNamespace: 'wpcom/v2',
 	} );
 }

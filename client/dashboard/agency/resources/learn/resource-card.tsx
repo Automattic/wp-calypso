@@ -1,11 +1,14 @@
 import {
-	Button,
+	VisuallyHidden,
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
 	__experimentalHStack as HStack,
 } from '@wordpress/components';
-import { Card, CardBody, CardMedia } from '../../../components/card';
-import { useResourceCtaLabel } from './use-resource-cta-label';
+import { __ } from '@wordpress/i18n';
+import { Badge } from '@wordpress/ui';
+import { Card, CardBody } from '../../../components/card';
+import { getAudienceLabel, getStageLabel } from './labels';
+import ResourceCardHeader from './resource-card-header';
 import type { ResourceItem, RecordTracksEvent } from './types';
 import type { MouseEvent } from 'react';
 
@@ -14,10 +17,7 @@ interface ResourceCardProps {
 	onOpenVideoModal: ( resource: ResourceItem ) => void;
 	recordTracksEvent: RecordTracksEvent;
 	onResourceClick?: ( resource: ResourceItem ) => void;
-	showLogo?: boolean;
-	showPreviewImage?: boolean;
 	tracksEventName: string;
-	isBorderless?: boolean;
 }
 
 export default function ResourceCard( {
@@ -25,13 +25,9 @@ export default function ResourceCard( {
 	onOpenVideoModal,
 	recordTracksEvent,
 	onResourceClick,
-	showLogo = false,
-	showPreviewImage = false,
 	tracksEventName,
-	isBorderless = false,
 }: ResourceCardProps ) {
-	const ctaLabel = useResourceCtaLabel( resource.format );
-	const isVideo = resource.format === 'Video';
+	const isVideo = resource.format === 'video';
 
 	const handleClick = ( event: MouseEvent ) => {
 		if ( isVideo ) {
@@ -48,33 +44,40 @@ export default function ResourceCard( {
 		onResourceClick?.( resource );
 	};
 
+	const link = (
+		// Its ::after covers the card, so the whole card is the link.
+		<a
+			className="dashboard-resources-learn__card-link"
+			href={ resource.externalUrl }
+			target="_blank"
+			rel="noopener noreferrer"
+			onClick={ handleClick }
+		>
+			{ resource.name }
+			{ ! isVideo && (
+				<VisuallyHidden as="span">
+					{
+						/* translators: accessibility text */
+						__( '(opens in a new tab)' )
+					}
+				</VisuallyHidden>
+			) }
+		</a>
+	);
+
 	return (
-		<Card isBorderless={ isBorderless } size={ isBorderless ? 'none' : undefined }>
-			<CardBody style={ { display: 'flex', flexDirection: 'column', height: '100%' } }>
-				<VStack spacing={ 4 } style={ { flex: 1, justifyContent: 'flex-start' } }>
-					{ showPreviewImage && resource.previewImage && (
-						<CardMedia style={ { borderRadius: '4px' } }>
-							<img src={ resource.previewImage } alt={ resource.name } />
-						</CardMedia>
-					) }
-					{ showLogo && <HStack>{ resource.logo }</HStack> }
-					<VStack spacing={ 1 }>
-						<Text size={ 13 } weight={ 500 }>
-							{ resource.name }
-						</Text>
-						<Text variant="muted" size={ 12 }>
-							{ resource.description }
-						</Text>
-					</VStack>
+		<Card className="dashboard-resources-learn__card">
+			<ResourceCardHeader resource={ resource } title={ link } />
+			<CardBody>
+				<VStack spacing={ 3 } justify="flex-start">
+					<Text variant="muted" className="dashboard-resources-learn__card-description">
+						{ resource.description }
+					</Text>
+					<HStack spacing={ 1 } justify="flex-start" wrap>
+						<Badge intent="draft">{ getAudienceLabel( resource.audience ) }</Badge>
+						<Badge intent="draft">{ getStageLabel( resource.stage ) }</Badge>
+					</HStack>
 				</VStack>
-				<Button
-					variant="secondary"
-					{ ...( ! isVideo && { href: resource.externalUrl, target: '_blank' } ) }
-					onClick={ handleClick }
-					style={ { marginTop: '24px', alignSelf: 'flex-start' } }
-				>
-					{ ctaLabel }
-				</Button>
 			</CardBody>
 		</Card>
 	);

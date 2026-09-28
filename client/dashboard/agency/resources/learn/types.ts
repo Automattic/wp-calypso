@@ -1,20 +1,24 @@
-import type { ReactNode } from 'react';
+import type {
+	AgencyResourceAudience,
+	AgencyResourceContentType,
+	AgencyResourceFormat,
+	AgencyResourceProduct,
+	AgencyResourceStage,
+} from '@automattic/api-core';
 
 export type ResourceItem = {
 	id: number;
 	name: string;
 	description: string;
 	externalUrl: string;
-	format: string;
-	relatedProduct: string;
-	relatedProductType: string;
-	resourceType: string;
-	previewImage: string;
-	section: string;
+	product: AgencyResourceProduct;
+	stage: AgencyResourceStage;
+	audience: AgencyResourceAudience;
+	contentType: AgencyResourceContentType;
+	format: AgencyResourceFormat;
+	isFeatured: boolean;
 	createdAt: string;
 	updatedAt: string;
-	// Computed field
-	logo: ReactNode | null;
 };
 
 /**
