@@ -1,14 +1,11 @@
-import { Button, __experimentalVStack as VStack } from '@wordpress/components';
+import { Button, VisuallyHidden, __experimentalVStack as VStack } from '@wordpress/components';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { Cart } from '../components/cart';
 import { useDomainSearch } from '../page/context';
-import { DomainSearchNotice } from '../ui';
+import { DomainSearchNotice, DomainSuggestion } from '../ui';
 import { NamePulseBundleCard } from './components/bundle-card';
-import {
-	NamePulseExactMatchCard,
-	NamePulseFeaturedCardSkeleton,
-} from './components/exact-match-card';
+import { NamePulseExactMatchCard } from './components/exact-match-card';
 import { NamePulseSearchNotice } from './components/notice';
 import { NamePulseResultsSection } from './components/results-section';
 import { NamePulseSearchInput } from './components/search-input';
@@ -77,13 +74,23 @@ export const NamePulseResults = () => {
 				{ /* A typed domain shares its row with the bundle; any other search, or a
 				     typed domain that is taken, gets the bundle under Top results. */ }
 				{ exactMatch && (
-					<div className="name-pulse-featured">
+					<div className="name-pulse-featured" aria-busy={ ! exactMatch.result }>
+						{ /* The card replaces its placeholder without moving focus, so the
+						     verdict is announced here. A taken name gets the notice instead. */ }
+						<VisuallyHidden aria-live="polite">
+							{ exactMatch.result &&
+								sprintf(
+									// translators: %(domain)s is the domain name the user searched for.
+									__( '%(domain)s is available.' ),
+									{ domain: exactMatch.domainName }
+								) }
+						</VisuallyHidden>
 						{ exactMatch.result ? (
 							<NamePulseExactMatchCard result={ exactMatch.result } />
 						) : (
-							<NamePulseFeaturedCardSkeleton label={ __( 'Checking…' ) } />
+							<DomainSuggestion.Featured.Placeholder />
 						) }
-						{ bundleCard ?? ( isLoadingBundle && <NamePulseFeaturedCardSkeleton /> ) }
+						{ bundleCard ?? ( isLoadingBundle && <DomainSuggestion.Featured.Placeholder /> ) }
 					</div>
 				) }
 				{ layout.top.show && ! hasTldsError && (

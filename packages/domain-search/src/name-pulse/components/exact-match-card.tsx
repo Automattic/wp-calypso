@@ -73,18 +73,3 @@ export const NamePulseExactMatchCard = ( { result }: { result: NamePulseDomainRe
 		</div>
 	);
 };
-
-/**
- * Holds the card's place in the featured row. Only the exact-match slot is
- * announced; the bundle beside it may never come.
- */
-export const NamePulseFeaturedCardSkeleton = ( { label }: { label?: string } ) => (
-	<div
-		className="name-pulse-exact-card name-pulse-exact-card--skeleton"
-		{ ...( label ? { role: 'img', 'aria-label': label } : { 'aria-hidden': true } ) }
-	>
-		<span className="name-pulse-row__skeleton" />
-		<span className="name-pulse-row__skeleton name-pulse-exact-card__skeleton-domain" />
-		<span className="name-pulse-row__skeleton" />
-	</div>
-);

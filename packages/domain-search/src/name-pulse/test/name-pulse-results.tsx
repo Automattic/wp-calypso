@@ -410,6 +410,11 @@ describe( 'NamePulseResults', () => {
 		expect( card.getByText( "It's available!" ) ).toBeVisible();
 		expect( card.getByText( '$24' ) ).toBeVisible();
 		expect( card.getByRole( 'button', { name: 'Add to cart' } ) ).toBeEnabled();
+		expect( screen.getByText( 'icecream.net is available.' ) ).toBeInTheDocument();
+		expect( document.querySelector( '.name-pulse-featured' ) ).toHaveAttribute(
+			'aria-busy',
+			'false'
+		);
 
 		expect(
 			await screen.findByRole( 'heading', { name: 'Exact match for “icecream”' } )
@@ -562,9 +567,10 @@ describe( 'NamePulseResults', () => {
 
 		// The bulk check offers the typed name, but its own check is still running:
 		// it waits in the card's slot rather than as a priced row.
-		expect( await screen.findByRole( 'img', { name: 'Checking…' } ) ).toHaveClass(
-			'name-pulse-exact-card--skeleton'
-		);
+		const placeholder = await screen.findByRole( 'status', {
+			name: 'Loading featured domain suggestion',
+		} );
+		expect( placeholder.closest( '.name-pulse-featured' ) ).toHaveAttribute( 'aria-busy', 'true' );
 		await findRow( 'icecream.org' );
 		expect( rowFor( 'icecream.net' ) ).toBeNull();
 

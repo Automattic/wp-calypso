@@ -277,7 +277,7 @@ export const useNamePulseSearch = ( query: string ) => {
 
 	// Anchors wait for every verdict they depend on, so an answer arriving late
 	// cannot slot in ahead of the bundle already shown.
-	const bundleAnchors = useMemo( () => {
+	const readyAnchors = useMemo( () => {
 		const isWaiting = ( result: NamePulseDomainResult ) =>
 			result.status === NamePulseDomainStatus.WAITING;
 
@@ -294,6 +294,45 @@ export const useNamePulseSearch = ( query: string ) => {
 			.filter( ( result ) => result.status === NamePulseDomainStatus.AVAILABLE )
 			.map( ( result ) => result.domain_name );
 	}, [ isSettled, isLoadingTop, exactMatch, topResults ] );
+
+	// Once known, the anchors hold for the rest of the search: a Top result that
+	// later leaves for an unchecked one must not take the bundle down with it.
+	// Only a name found taken since then is dropped.
+	const [ keptAnchors, setKeptAnchors ] = useState< { query: string; names: string[] } | null >(
+		null
+	);
+
+	if ( readyAnchors && keptAnchors?.query !== settledQuery ) {
+		setKeptAnchors( { query: settledQuery, names: readyAnchors } );
+	}
+
+	const bundleAnchors = useMemo( () => {
+		if ( ! isSettled || keptAnchors?.query !== settledQuery ) {
+			return readyAnchors;
+		}
+
+		const taken = new Set(
+			[
+				...( exactMatch?.result ? [ exactMatch.result ] : [] ),
+				...rawExactList,
+				...rawKeywordResults,
+				...rawCreativeResults,
+			]
+				.filter( ( result ) => result.status === NamePulseDomainStatus.TAKEN )
+				.map( ( result ) => result.domain_name )
+		);
+
+		return keptAnchors.names.filter( ( name ) => ! taken.has( name ) );
+	}, [
+		isSettled,
+		keptAnchors,
+		settledQuery,
+		readyAnchors,
+		exactMatch,
+		rawExactList,
+		rawKeywordResults,
+		rawCreativeResults,
+	] );
 
 	const revealExact = useCallback(
 		( rows: NamePulseDomainResult[] ) => requestNames( rows.map( ( row ) => row.domain_name ) ),

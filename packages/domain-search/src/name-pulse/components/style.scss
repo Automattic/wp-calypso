@@ -270,16 +270,6 @@
 			align-items: flex-start;
 		}
 	}
-
-	&--skeleton {
-		justify-content: center;
-		min-height: 12rem;
-	}
-
-	&__skeleton-domain {
-		width: 60%;
-		height: 1.5rem;
-	}
 }
 
 @keyframes name-pulse-skeleton {
