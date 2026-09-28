@@ -9,6 +9,8 @@ export interface AgencyProductMetadata {
 	visits: number;
 	storage: number;
 	php_worker_count: number;
+	/** In MB. Optional until the API sends it for every product. */
+	php_memory?: number;
 	category: string;
 }
 
