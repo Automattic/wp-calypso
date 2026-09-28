@@ -28,7 +28,7 @@ export default function WooPaymentsDetails() {
 
 	return (
 		<>
-			<Notice>{ __( 'This extension requires WooCommerce' ) }</Notice>
+			<Notice>{ __( 'This extension requires WooCommerce.' ) }</Notice>
 			<VStack spacing={ 2 }>
 				<Text weight={ 500 }>{ __( 'Revenue Share terms' ) }</Text>
 				<Text variant="muted">
