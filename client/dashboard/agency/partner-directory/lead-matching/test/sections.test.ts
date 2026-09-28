@@ -45,11 +45,7 @@ describe( 'lead matching sections', () => {
 	test( 'the optional hosting section is answered by any answer', () => {
 		expect( isSectionAnswered( 'hosting-and-platforms', complete ) ).toBe( false );
 		expect(
-			isSectionAnswered(
-				'hosting-and-platforms',
-				{ ...complete, migrationPlatforms: [ 'wix' ] },
-				true
-			)
+			isSectionAnswered( 'hosting-and-platforms', { ...complete, migrationPlatforms: [ 'wix' ] } )
 		).toBe( true );
 	} );
 
