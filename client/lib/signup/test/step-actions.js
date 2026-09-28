@@ -87,7 +87,7 @@ describe( 'createSiteWithCart()', () => {
 		);
 	} );
 
-	test( 'use username for blog_name if user data available and enable auto generated blog name', async () => {
+	test( 'send an empty blog_name, not the username, when siteUrl is empty and there is no site title', async () => {
 		expect.assertions( 1 );
 		const fakeStore = {
 			getState: () => ( {
@@ -96,31 +96,13 @@ describe( 'createSiteWithCart()', () => {
 						username: 'alex',
 					},
 				},
-				signup: { dependencyStore: { shouldHideFreePlan: true } },
-			} ),
-		};
-
-		await testCreateSite(
-			( response ) => {
-				expect( response.requestBody.blog_name ).toBe( 'alex' );
-			},
-			[],
-			{ siteUrl: undefined },
-			fakeStore
-		);
-	} );
-
-	test( "use username from dependency store for blog_name if user data isn't available and enable auto generated blog name", async () => {
-		expect.assertions( 1 );
-		const fakeStore = {
-			getState: () => ( {
 				signup: { dependencyStore: { username: 'alex', shouldHideFreePlan: true } },
 			} ),
 		};
 
 		await testCreateSite(
 			( response ) => {
-				expect( response.requestBody.blog_name ).toBe( 'alex' );
+				expect( response.requestBody.blog_name ).toBe( '' );
 			},
 			[],
 			{ siteUrl: undefined },
