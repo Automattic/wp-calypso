@@ -67,8 +67,8 @@ function SiteStorageStatInner( { site }: { site: Site } ) {
 			{ isSharedQuota && (
 				<Text variant="muted" lineHeight="16px" size={ 12 }>
 					{ sprintf(
-						// translators: %s is the plan's total storage quota (e.g., "6 GB")
-						__( 'Your plan’s %s of storage is split evenly between production and staging.' ),
+						// translators: %s is the total storage quota (e.g., "53 GB")
+						__( 'Production and staging share a total storage quota of %s.' ),
 						formatStorage( getSharedStorageTotal( mediaStorage ), locale )
 					) }
 				</Text>
