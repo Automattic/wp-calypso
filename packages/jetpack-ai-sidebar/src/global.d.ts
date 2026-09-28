@@ -40,6 +40,7 @@ declare const agentsManagerData:
 					optimizeTitleSuggestion?: boolean;
 					seoSuggestions?: boolean;
 					excerptSuggestion?: boolean;
+					draftAssist?: boolean;
 				};
 			};
 	  }
