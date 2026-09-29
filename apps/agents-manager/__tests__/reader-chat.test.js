@@ -71,11 +71,13 @@ const {
 	normalizeReaderSiteId,
 	decodeHtmlEntities,
 	getReaderEmptyViewHeading,
+	getAccessibleColor,
 	getReaderClientContext,
 	normalizeSuggestions,
 	parseSuggestionsResponse,
 	getSuggestionsFetchHeaders,
 	injectScopedReset,
+	injectBrandTokens,
 	watchFirstChatOpen,
 } = require( '../reader-chat' );
 
@@ -98,8 +100,15 @@ describe( 'injectScopedReset', () => {
 
 		const css = document.head.querySelector( '#jetpack-reader-chat-reset' ).textContent;
 
-		expect( css ).toContain( 'font-size: 16px !important;' );
+		expect( css ).toContain( 'font-size: var( --base-font-size, 16px ) !important;' );
 		expect( css ).toContain( '--base-font-size: 16px !important;' );
+		expect( css ).toContain( 'font-family: var( --reader-chat-font-family,' );
+		expect( css ).toContain( '.agents-manager-chat [data-slot="message"][data-role="user"]' );
+		expect( css ).toContain(
+			'--color-foreground: var( --reader-chat-user-message-foreground, #1f1f1f );'
+		);
+		expect( css ).toContain( '.agents-manager-chat [data-slot="message"][data-role="user"] a' );
+		expect( css ).toContain( 'text-decoration: underline !important;' );
 		expect( css ).toContain(
 			'.agents-manager-chat .components-button.has-icon:not(.components-dropdown-menu__menu-item)'
 		);
@@ -115,7 +124,7 @@ describe( 'injectScopedReset', () => {
 		expect( css ).toContain( 'background: transparent !important;' );
 		expect( css ).toContain( 'color: var( --color-foreground, #1e1e1e ) !important;' );
 		expect( css ).toContain(
-			'background: var( --color-muted, rgba( 0, 0, 0, 0.06 ) ) !important;'
+			'background: var( --reader-chat-control-hover, var( --color-muted, rgba( 0, 0, 0, 0.06 ) ) ) !important;'
 		);
 		expect( css ).toContain( ':not([aria-disabled="true"])' );
 		expect( css ).toContain( '.agents-manager-chat-header__menu-popover' );
@@ -128,6 +137,15 @@ describe( 'injectScopedReset', () => {
 		);
 		expect( css ).toContain( 'cursor: default !important;' );
 		expect( css ).toContain( 'opacity: 0.5 !important;' );
+		expect( css ).toContain(
+			'.agents-manager-chat-header__menu-popover .components-popover__content'
+		);
+		expect( css ).toContain(
+			'.agents-manager-chat-header__menu-popover .components-dropdown-menu__menu-item:focus-visible'
+		);
+		expect( css ).toContain( 'outline: 2px solid var( --reader-chat-menu-focus ) !important;' );
+		expect( css ).not.toMatch( /^\s*\.components-popover\s*\{/m );
+		expect( css ).not.toMatch( /--reader-chat-font-family\s*:/ );
 	} );
 
 	it( 'does not inject duplicate reset styles', () => {
@@ -296,6 +314,253 @@ describe( 'getReaderEmptyViewHeading', () => {
 				currentPost: { id: 1, title: 'Home', url: 'https://example.com/' },
 			} )
 		).toBe( 'Ask me anything about this blog.' );
+	} );
+
+	it( 'prefers an owner-set greeting over the contextual default', () => {
+		expect(
+			getReaderEmptyViewHeading( {
+				currentPost: { id: 1 },
+				brand: { greeting: 'What can I find for you?' },
+			} )
+		).toBe( 'What can I find for you?' );
+	} );
+
+	it( 'falls back to contextual copy when the brand carries no greeting', () => {
+		expect( getReaderEmptyViewHeading( { brand: {} } ) ).toBe( 'Ask me anything about this blog.' );
+	} );
+} );
+
+// ---------------------------------------------------------------------------
+// injectBrandTokens
+// ---------------------------------------------------------------------------
+
+describe( 'injectBrandTokens', () => {
+	beforeEach( () => {
+		document.head.querySelector( '#jetpack-reader-chat-brand' )?.remove();
+		getElementByIdSpy.mockImplementation( getElementById );
+	} );
+
+	afterEach( () => {
+		document.head.querySelector( '#agenttic-test-defaults' )?.remove();
+		document.body.querySelector( '.agents-manager-chat' )?.remove();
+		getElementByIdSpy.mockReturnValue( null );
+	} );
+
+	it( 'emits nothing when the site has no appearance overrides', () => {
+		injectBrandTokens( {} );
+		expect( document.head.querySelector( '#jetpack-reader-chat-brand' ) ).toBeNull();
+	} );
+
+	it( 'emits nothing when there is no brand at all', () => {
+		injectBrandTokens( undefined );
+		expect( document.head.querySelector( '#jetpack-reader-chat-brand' ) ).toBeNull();
+	} );
+
+	it( 'sets the accent tokens from the brand', () => {
+		injectBrandTokens( { accent: '#2271b1', accentForeground: '#ffffff' } );
+
+		const css = document.head.querySelector( '#jetpack-reader-chat-brand' ).textContent;
+		expect( css ).toContain( '--color-primary: #2271b1;' );
+		expect( css ).toContain( '--color-primary-foreground: #ffffff;' );
+	} );
+
+	it( 'sets background, accessible text, outline, and font tokens from the brand', () => {
+		injectBrandTokens( {
+			background: '#112233',
+			outline: '#f2eff6',
+			fontFamily: 'serif',
+		} );
+
+		const css = document.head.querySelector( '#jetpack-reader-chat-brand' ).textContent;
+		expect( css ).toContain( '--color-background: #112233;' );
+		expect( css ).toContain( '--color-popover: #112233;' );
+		expect( css ).toContain( '--color-popover-muted: color-mix(in srgb, #112233 80%, #f2eff6);' );
+		expect( css ).toContain( '--color-foreground: #ffffff;' );
+		expect( css ).toContain( '--color-muted-foreground: #d6d6d6;' );
+		expect( css ).toContain( '--color-muted: #f2eff6;' );
+		expect( css ).toContain( '--reader-chat-user-message-foreground: #1f1f1f;' );
+		expect( css ).toContain( '--reader-chat-font-family: Georgia' );
+		expect( css ).toContain( '--reader-chat-menu-background: #112233;' );
+		expect( css ).toContain( '--reader-chat-menu-foreground: #ffffff;' );
+		expect( css ).toContain(
+			'--reader-chat-control-hover: color-mix( in srgb, #ffffff 14%, #112233 );'
+		);
+	} );
+
+	it( 'uses the resolved host theme font when the site font is selected', () => {
+		injectBrandTokens( { fontFamily: 'site', siteFontFamily: 'Manrope, sans-serif' } );
+
+		const css = document.head.querySelector( '#jetpack-reader-chat-brand' ).textContent;
+		expect( css ).toContain( '--reader-chat-font-family: Manrope, sans-serif;' );
+		expect( css ).toContain( '.agents-manager-chat-header__menu-popover *' );
+		expect( css ).toContain( 'font-family: var( --reader-chat-font-family, inherit ) !important;' );
+	} );
+
+	it( 'keeps the Site Logo contained without a circular crop', () => {
+		injectBrandTokens( { accent: '#2271b1' } );
+
+		const css = document.head.querySelector( '#jetpack-reader-chat-brand' ).textContent;
+		expect( css ).toContain(
+			`.agents-manager-brand-logo {
+			object-fit: contain;
+		}`
+		);
+	} );
+
+	it( 'falls back to inheriting when the site font stack is unavailable', () => {
+		injectBrandTokens( { fontFamily: 'site' } );
+
+		const css = document.head.querySelector( '#jetpack-reader-chat-brand' ).textContent;
+		expect( css ).toContain( '#jetpack-reader-chat *' );
+		expect( css ).toContain( '.agents-manager-chat *' );
+		expect( css ).toContain( 'font-family: inherit !important;' );
+		expect( css ).not.toContain( '--reader-chat-font-family: inherit;' );
+	} );
+
+	it( 'keeps a selected preset ahead of an unrelated resolved site font', () => {
+		injectBrandTokens( { fontFamily: 'serif', siteFontFamily: 'Manrope, sans-serif' } );
+
+		const css = document.head.querySelector( '#jetpack-reader-chat-brand' ).textContent;
+		expect( css ).toContain( '--reader-chat-font-family: Georgia' );
+		expect( css ).not.toContain( '--reader-chat-font-family: Manrope' );
+	} );
+
+	it.each( [
+		[ 'extra declaration', 'Arial; color: red' ],
+		[ 'CSS comment', 'Arial/*' ],
+		[ 'CSS escape', 'Arial\\3b color: red' ],
+		[ 'oversized stack', 'A'.repeat( 201 ) ],
+	] )( 'rejects a resolved site font stack containing %s', ( _case, siteFontFamily ) => {
+		injectBrandTokens( { fontFamily: 'site', siteFontFamily } );
+
+		const css = document.head.querySelector( '#jetpack-reader-chat-brand' ).textContent;
+		expect( css ).toContain( 'font-family: inherit !important;' );
+		expect( css ).not.toContain( siteFontFamily );
+	} );
+
+	it( 'ignores malformed and unsupported appearance values', () => {
+		injectBrandTokens( {
+			background: 'url(javascript:alert(1))',
+			outline: false,
+			fontFamily: 'toString',
+			fontSize: 100,
+		} );
+
+		expect( document.head.querySelector( '#jetpack-reader-chat-brand' ) ).toBeNull();
+	} );
+
+	it( 'ignores removed text color and font size values', () => {
+		injectBrandTokens( { text: '#ff0000', fontSize: 15 } );
+
+		expect( document.head.querySelector( '#jetpack-reader-chat-brand' ) ).toBeNull();
+	} );
+
+	it( 'ignores the removed rounded font value', () => {
+		injectBrandTokens( { fontFamily: 'rounded' } );
+
+		expect( document.head.querySelector( '#jetpack-reader-chat-brand' ) ).toBeNull();
+	} );
+
+	it( 'keeps the selected outline separate from automatic text contrast', () => {
+		injectBrandTokens( { background: '#ffffff', outline: '#f2eff6' } );
+
+		const css = document.head.querySelector( '#jetpack-reader-chat-brand' ).textContent;
+		expect( css ).toContain( '--color-muted: #f2eff6;' );
+		expect( css ).toContain( '--color-foreground: #000000;' );
+		expect( css ).toContain( '--color-muted-foreground: #595959;' );
+	} );
+
+	it( 'uses light text on a dark outgoing message bubble', () => {
+		injectBrandTokens( { background: '#ffffff', outline: '#222222' } );
+
+		const css = document.head.querySelector( '#jetpack-reader-chat-brand' ).textContent;
+		expect( css ).toContain( '--reader-chat-user-message-foreground: #ffffff;' );
+	} );
+
+	it( 'keeps the default light outgoing bubble readable with a dark panel', () => {
+		injectBrandTokens( { background: '#112233' } );
+
+		const css = document.head.querySelector( '#jetpack-reader-chat-brand' ).textContent;
+		expect( css ).not.toContain( '--color-muted:' );
+		expect( css ).toContain( '--reader-chat-user-message-foreground: #1f1f1f;' );
+	} );
+
+	it( 'overrides the default token defined directly on the Agenttic widget', () => {
+		const defaults = document.createElement( 'style' );
+		defaults.id = 'agenttic-test-defaults';
+		defaults.textContent = '.agenttic { --color-primary: #2d5af2; }';
+		document.head.appendChild( defaults );
+
+		const portal = document.createElement( 'div' );
+		portal.className = 'agents-manager-chat';
+		portal.innerHTML = '<div class="agenttic"></div>';
+		document.body.appendChild( portal );
+
+		injectBrandTokens( { accent: '#2271b1', accentForeground: '#ffffff' } );
+
+		expect(
+			window
+				.getComputedStyle( portal.querySelector( '.agenttic' ) )
+				.getPropertyValue( '--color-primary' )
+		).toBe( '#2271b1' );
+	} );
+
+	it( 'targets the portalled selectors, since the panel mounts on body', () => {
+		injectBrandTokens( { accent: '#2271b1', accentForeground: '#ffffff' } );
+
+		const css = document.head.querySelector( '#jetpack-reader-chat-brand' ).textContent;
+		expect( css ).toContain( '.agents-manager-chat' );
+		expect( css ).toContain( '.agents-manager-chat .agenttic' );
+		expect( css ).toContain( '.agents-manager-sidebar-fab' );
+		expect( css ).toContain( '.agents-manager-chat-header__menu-popover' );
+		expect( css ).not.toContain( '.components-popover {' );
+	} );
+
+	it( 'never defines the tokens globally, which would restyle the host theme', () => {
+		injectBrandTokens( { accent: '#2271b1', accentForeground: '#ffffff' } );
+
+		const css = document.head.querySelector( '#jetpack-reader-chat-brand' ).textContent;
+		expect( css ).not.toMatch( /:root/ );
+		expect( css ).not.toMatch( /(^|[^-\w])html\s*[,{]/ );
+	} );
+
+	it( 'defaults the foreground when an older deploy sends an accent without one', () => {
+		injectBrandTokens( { accent: '#2271b1' } );
+
+		const css = document.head.querySelector( '#jetpack-reader-chat-brand' ).textContent;
+		expect( css ).toContain( '--color-primary-foreground: #ffffff;' );
+	} );
+
+	it( 'does not inject twice', () => {
+		injectBrandTokens( { accent: '#2271b1', accentForeground: '#ffffff' } );
+		injectBrandTokens( { accent: '#ff0000', accentForeground: '#000000' } );
+
+		expect( document.head.querySelectorAll( '#jetpack-reader-chat-brand' ) ).toHaveLength( 1 );
+		expect( document.head.querySelector( '#jetpack-reader-chat-brand' ).textContent ).toContain(
+			'#2271b1'
+		);
+	} );
+} );
+
+// ---------------------------------------------------------------------------
+// getAccessibleColor
+// ---------------------------------------------------------------------------
+
+describe( 'getAccessibleColor', () => {
+	it( 'chooses dark text for a light background', () => {
+		expect( getAccessibleColor( '#ffffff' ) ).toBe( '#000000' );
+	} );
+
+	it( 'chooses light text for a dark background', () => {
+		expect( getAccessibleColor( '#700f1b' ) ).toBe( '#ffffff' );
+	} );
+
+	it( 'keeps a preferred color when it meets the requested contrast', () => {
+		expect( getAccessibleColor( '#ffffff', '#3858e9', 3 ) ).toBe( '#3858e9' );
+	} );
+
+	it( 'replaces a preferred color that does not meet contrast', () => {
+		expect( getAccessibleColor( '#700f1b', '#8a101e', 3 ) ).toBe( '#ffffff' );
 	} );
 } );
 
