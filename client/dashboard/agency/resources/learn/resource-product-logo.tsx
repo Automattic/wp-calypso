@@ -3,7 +3,7 @@ import jetpackLogo from 'calypso/assets/images/a8c-for-agencies/product-wordmark
 import pressableLogo from 'calypso/assets/images/a8c-for-agencies/product-wordmarks/pressable.svg';
 import vipLogo from 'calypso/assets/images/a8c-for-agencies/product-wordmarks/vip.svg';
 import wooLogo from 'calypso/assets/images/a8c-for-agencies/product-wordmarks/woo.svg';
-import wordpressOrgLogo from 'calypso/assets/images/a8c-for-agencies/product-wordmarks/wordpress-org.png';
+import wordpressOrgLogo from 'calypso/assets/images/a8c-for-agencies/product-wordmarks/wordpress-org.svg';
 import wpcomLogo from 'calypso/assets/images/a8c-for-agencies/product-wordmarks/wpcom.svg';
 import { getProductLabel } from './labels';
 import type { CSSProperties } from 'react';
