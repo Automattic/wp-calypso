@@ -207,10 +207,13 @@ $lead-side-by-side: $pad-x * 2 + $words-min + $gap + $lead-object;
 	text-wrap: pretty;
 }
 
+.dashboard-showcase__description {
+	font-size: 15px;
+	line-height: 22px;
+}
+
 .is-lead .dashboard-showcase__description {
 	-webkit-line-clamp: 4;
-	font-size: 16px;
-	line-height: 24px;
 }
 
 .dashboard-showcase__meta {
