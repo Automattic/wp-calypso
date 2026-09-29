@@ -1396,6 +1396,11 @@
 			}
 		}
 
+		/* Links stay shown and sized even if a stack is still closed, e.g. mid-resize from mobile. */
+		.lp-footer-stack::details-content {
+			content-visibility: visible;
+		}
+
 		.lp-footer-bottom--without-language {
 			.lp-footer-bottom__downloads,
 			.lp-footer-bottom__copyright {
