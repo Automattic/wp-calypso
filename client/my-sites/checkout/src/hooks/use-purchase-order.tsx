@@ -1,6 +1,6 @@
+import { transactionOrderQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { useDebugValue } from 'react';
-import wp from 'calypso/lib/wp';
 import {
 	ERROR,
 	PROCESSING,
@@ -8,22 +8,10 @@ import {
 	FAILURE,
 	SUCCESS,
 	UNKNOWN,
-} from 'calypso/state/order-transactions/constants';
-import type { OrderTransaction } from 'calypso/state/selectors/get-order-transaction';
+} from '../types/order-transaction';
+import type { OrderTransaction } from '../types/order-transaction';
+import type { TransactionOrder, TransactionOrderStatus } from '@automattic/api-core';
 
-export async function fetchPurchaseOrder(
-	orderId: number | undefined
-): Promise< RawOrder | undefined > {
-	if ( ! orderId ) {
-		return undefined;
-	}
-	return wp.req.get( `/me/transactions/order/${ orderId }`, {
-		apiVersion: '1.1',
-	} );
-}
-
-export type PurchaseOrderStatus =
-	'error' | 'processing' | 'async-pending' | 'payment-confirmed' | 'payment-failure' | 'success';
 type OrderTransactionStatus =
 	| typeof ERROR
 	| typeof PROCESSING
@@ -32,23 +20,8 @@ type OrderTransactionStatus =
 	| typeof SUCCESS
 	| typeof UNKNOWN;
 
-export interface RawOrder {
-	order_id: number;
-	user_id: number;
-	receipt_id: number | undefined;
-	processing_status: PurchaseOrderStatus;
-	/**
-	 * On a Stripe `payment-failure`, the backend returns a customer-facing
-	 * failure code and an already-translated message, matching what synchronous
-	 * card failures return. Both are absent on non-Stripe or non-failure orders.
-	 * See SHILL-1811.
-	 */
-	error_code?: string;
-	error_message?: string;
-}
-
 function transformPurchaseOrderStatusToOrderTransactionStatus(
-	rawStatus: PurchaseOrderStatus
+	rawStatus: TransactionOrderStatus
 ): OrderTransactionStatus {
 	switch ( rawStatus ) {
 		case 'error':
@@ -73,10 +46,10 @@ function transformPurchaseOrderStatusToOrderTransactionStatus(
  * order data-layer.
  *
  * TODO: in the future it would be nice to get rid of OrderTransaction entirely
- * and replace it with RawOrder everywhere, but for now this will reduce the
+ * and replace it with TransactionOrder everywhere, but for now this will reduce the
  * refactoring needs as we migrate to this hook.
  */
-function transformRawOrderToOrderTransaction( rawOrder: RawOrder ): OrderTransaction {
+function transformRawOrderToOrderTransaction( rawOrder: TransactionOrder ): OrderTransaction {
 	const processingStatus = transformPurchaseOrderStatusToOrderTransactionStatus(
 		rawOrder.processing_status
 	);
@@ -123,17 +96,12 @@ function transformRawOrderToOrderTransaction( rawOrder: RawOrder ): OrderTransac
 	};
 }
 
-function isOrderComplete( order: undefined | OrderTransaction ): boolean {
+function isOrderComplete( order: undefined | TransactionOrder ): boolean {
 	if ( ! order ) {
 		return false;
 	}
-	if ( order.processingStatus === PROCESSING ) {
-		return false;
-	}
-	if ( order.processingStatus === ASYNC_PENDING ) {
-		return false;
-	}
-	return true;
+	const status = transformPurchaseOrderStatusToOrderTransactionStatus( order.processing_status );
+	return status !== PROCESSING && status !== ASYNC_PENDING;
 }
 
 /**
@@ -147,15 +115,11 @@ export default function usePurchaseOrder(
 	order: OrderTransaction | undefined;
 } {
 	const shouldFetch = Boolean( orderId );
-	const queryKey = [ 'purchase-order', orderId ];
 
-	const { data: order, isLoading } = useQuery< OrderTransaction | undefined, Error >( {
-		queryKey,
-		queryFn: async () => {
-			const rawOrder = await fetchPurchaseOrder( orderId );
-			return rawOrder ? transformRawOrderToOrderTransaction( rawOrder ) : undefined;
-		},
+	const { data: order, isLoading } = useQuery( {
+		...transactionOrderQuery( orderId ?? 0 ),
 		enabled: shouldFetch,
+		select: transformRawOrderToOrderTransaction,
 		refetchInterval: ( query ) => ( isOrderComplete( query.state.data ) ? false : pollInterval ),
 	} );
 
