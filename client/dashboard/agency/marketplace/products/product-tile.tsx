@@ -1,3 +1,4 @@
+import clsx from 'clsx';
 import { PRODUCT_ICONS } from './images/icons';
 import { getJetpackProductIcon } from './images/jetpack-icons';
 import moreGlyph from './images/more.svg';
@@ -22,7 +23,9 @@ export default function ProductTile( { slug }: { slug: string } ) {
 			aria-hidden="true"
 		>
 			<span
-				className="dashboard-marketplace-products__product-glyph"
+				className={ clsx( 'dashboard-marketplace-products__product-glyph', {
+					'is-more': ! jetpackIcon,
+				} ) }
 				style={ { '--product-glyph': `url(${ jetpackIcon ?? moreGlyph })` } as CSSProperties }
 			/>
 		</span>

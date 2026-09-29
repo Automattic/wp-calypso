@@ -1,3 +1,5 @@
+@import '@wordpress/base-styles/colors';
+
 // The DataViews wrapper paints its own surface; the filter bar sits on the page background.
 .dashboard-marketplace-products__filters {
 	--wp-dataviews-color-background: transparent;
@@ -21,6 +23,13 @@
 		object-fit: contain;
 		border-radius: 0;
 	}
+}
+
+// The count beside a picked category's heading: quiet, on the heading's line.
+.dashboard-marketplace-products__job-count {
+	font-size: 15px;
+	font-weight: 400;
+	color: $gray-700;
 }
 
 // The results keep at least a screen's height, so narrowing the list never
@@ -48,6 +57,12 @@
 	block-size: 22px;
 	background: currentColor;
 	mask: var( --product-glyph ) center / contain no-repeat;
+
+	// The "more" glyph carries its own air, so it fills the whole tile.
+	&.is-more {
+		inline-size: 100%;
+		block-size: 100%;
+	}
 }
 
 // The actions sit above the card's link layer, the price on its own line
@@ -67,7 +82,9 @@
 	padding: 16px;
 	border-radius: 8px;
 	background: #fff;
-	box-shadow: 0 12px 32px rgba( 0, 0, 0, 0.12 ), 0 2px 6px rgba( 0, 0, 0, 0.08 );
+	box-shadow:
+		0 12px 32px rgba( 0, 0, 0, 0.12 ),
+		0 2px 6px rgba( 0, 0, 0, 0.08 );
 	font-size: 13px;
 	font-weight: 600;
 	color: #1e1e1e;

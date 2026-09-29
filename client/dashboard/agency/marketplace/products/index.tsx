@@ -289,6 +289,17 @@ export default function MarketplaceProducts() {
 		() => ( isNarrowed ? getProductListItems( filteredProducts, locale ) : [] ),
 		[ isNarrowed, filteredProducts, locale ]
 	);
+	const resultCount = sprintf(
+		/* translators: %d: number of matching products */
+		_n( '%d product', '%d products', filteredItems.length ),
+		filteredItems.length
+	);
+	// One category picked, and nothing else narrowing the list, reads as that
+	// category's own section: its spot, its name, and the count beside it.
+	const pickedCategory =
+		selectedCategory && ! view.search && ( view.filters?.length ?? 0 ) === 1
+			? selectedCategory
+			: null;
 
 	const handleViewChange = ( nextView: View ) => {
 		if ( nextView.search !== view.search ) {
@@ -467,14 +478,21 @@ export default function MarketplaceProducts() {
 					justify="flex-start"
 					className="dashboard-marketplace-products__results"
 				>
-					<SectionHeader
-						level={ 2 }
-						title={ sprintf(
-							/* translators: %d: number of matching products */
-							_n( '%d product', '%d products', filteredItems.length ),
-							filteredItems.length
-						) }
-					/>
+					{ pickedCategory ? (
+						<SectionHeader
+							level={ 2 }
+							title={
+								<>
+									{ getSectionTitle( pickedCategory ) }{ ' ' }
+									<span className="dashboard-marketplace-products__job-count">{ resultCount }</span>
+								</>
+							}
+							className="dashboard-marketplace-products__section-header"
+							decoration={ <img src={ SPOTS[ pickedCategory ] } alt="" /> }
+						/>
+					) : (
+						<SectionHeader level={ 2 } title={ resultCount } />
+					) }
 					{ filteredItems.length === 0 ? (
 						<VStack spacing={ 1 }>
 							<Text weight={ 500 }>{ __( 'Sorry, no results found.' ) }</Text>
