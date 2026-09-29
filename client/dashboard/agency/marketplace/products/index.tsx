@@ -483,7 +483,7 @@ export default function MarketplaceProducts() {
 							level={ 2 }
 							title={
 								<>
-									{ getSectionTitle( pickedCategory ) }{ ' ' }
+									{ getSectionTitle( pickedCategory ) }
 									<span className="dashboard-marketplace-products__job-count">{ resultCount }</span>
 								</>
 							}

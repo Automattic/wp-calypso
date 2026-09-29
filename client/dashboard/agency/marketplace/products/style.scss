@@ -3,6 +3,8 @@
 // The DataViews wrapper paints its own surface; the filter bar sits on the page background.
 .dashboard-marketplace-products__filters {
 	--wp-dataviews-color-background: transparent;
+	// 40px from the featured showcase above, the same as the Library.
+	margin-block-start: 16px;
 }
 
 .dashboard-marketplace-products__toolbar {
@@ -25,8 +27,24 @@
 	}
 }
 
+// A job section heading: the spot 12px from the title, on a 28px line.
+.dashboard-marketplace-products__section-header .dashboard-section-header__heading-row {
+	gap: 12px;
+}
+
+.dashboard-section-header.dashboard-marketplace-products__section-header.is-level-2
+	.dashboard-section-header__heading {
+	line-height: 28px;
+}
+
+// The cart's checkout button: the label centred in the full-width button.
+.dashboard-marketplace-products__cart .components-button.is-primary {
+	justify-content: center;
+}
+
 // The count beside a picked category's heading: quiet, on the heading's line.
 .dashboard-marketplace-products__job-count {
+	margin-inline-start: 12px;
 	font-size: 15px;
 	font-weight: 400;
 	color: $gray-700;
@@ -159,4 +177,14 @@
 		flex-shrink: 0;
 		fill: var( --wp-components-color-accent, var( --wp-admin-theme-color ) );
 	}
+}
+
+// The loading card's tile, at the store card tile's size and radius.
+.dashboard-marketplace-products__skeleton-tile {
+	display: block;
+	flex: none;
+	inline-size: 40px;
+	block-size: 40px;
+	border-radius: 8px;
+	background: $gray-100;
 }
