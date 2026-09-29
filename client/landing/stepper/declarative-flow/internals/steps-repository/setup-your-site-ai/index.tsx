@@ -1,6 +1,8 @@
+import { isAutomatticianQuery } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
 import { BigSkyLogo, SummaryButton } from '@automattic/components';
 import { Step } from '@automattic/onboarding';
+import { useQuery as useDataQuery } from '@tanstack/react-query';
 import {
 	__experimentalVStack as VStack,
 	__experimentalHStack as HStack,
@@ -45,6 +47,15 @@ const SetupYourSiteAIStep: StepType = ( { navigation } ) => {
 	// legacy builder there.
 	const planSlug = boughtPlanSlug ?? site?.plan?.product_slug;
 	const offerBuildWow = config.isEnabled( 'site-spec' ) && planSupportsBuildWow( planSlug );
+	// Staging and development only, for Automatticians: a build on the blocks-first
+	// graph, to compare it with the DSL build the main card runs.
+	const canOfferBuildWowBlocksFirst =
+		offerBuildWow && config.isEnabled( 'site-spec/build-wow-blocks-first' );
+	const { data: isAutomattician = false } = useDataQuery( {
+		...isAutomatticianQuery(),
+		enabled: canOfferBuildWowBlocksFirst,
+	} );
+	const offerBuildWowBlocksFirst = canOfferBuildWowBlocksFirst && isAutomattician;
 
 	// One choice per visit: submitting navigates away, so the controls disable and
 	// later clicks are ignored. The ref covers clicks landing before the re-render.
@@ -139,6 +150,13 @@ const SetupYourSiteAIStep: StepType = ( { navigation } ) => {
 		submitBuildWithAI();
 	};
 
+	const handleCustomDesignBlocksFirstClick = () => {
+		if ( ! claimSubmit() ) {
+			return;
+		}
+		submitGenerateTheme( 'blocks-first' );
+	};
+
 	const buildWithAIPromptCard = (
 		<form className="setup-your-site-ai-step__build-with-ai" onSubmit={ handleBuildWithAISubmit }>
 			<HStack
@@ -200,6 +218,16 @@ const SetupYourSiteAIStep: StepType = ( { navigation } ) => {
 		/>
 	);
 
+	const buildWithAIBlocksFirstSummary = offerBuildWowBlocksFirst && (
+		<SummaryButton
+			title="Create a custom design (blocks-first)"
+			description="Staging only: build the site on the blocks-first graph."
+			decoration={ <BigSkyLogo.CentralLogo heartless /> }
+			onClick={ handleCustomDesignBlocksFirstClick }
+			disabled={ isSubmitting }
+		/>
+	);
+
 	const startWithTemplateCard = (
 		<SummaryButton
 			title={ i18n.fixMe( {
@@ -229,6 +257,7 @@ const SetupYourSiteAIStep: StepType = ( { navigation } ) => {
 				<>
 					{ buildWithAISummary }
 					{ startWithTemplateCard }
+					{ buildWithAIBlocksFirstSummary }
 				</>
 			) }
 		</VStack>
