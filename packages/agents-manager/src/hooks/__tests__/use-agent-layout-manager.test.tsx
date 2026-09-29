@@ -216,6 +216,20 @@ describe( 'useAgentLayoutManager — split-screen class', () => {
 	} );
 } );
 
+describe( 'useAgentLayoutManager — portal node', () => {
+	it( 'returns the node the chat renders into, without firing the lifecycle callbacks', () => {
+		const onDock = jest.fn();
+		const onUndock = jest.fn();
+
+		const { result } = render( { onDock, onUndock } );
+
+		expect( result.current.portalNode?.parentElement ).toBe( container );
+
+		expect( onDock ).not.toHaveBeenCalled();
+		expect( onUndock ).not.toHaveBeenCalled();
+	} );
+} );
+
 describe( 'useAgentLayoutManager — responsive undock', () => {
 	// Renders a docked chat and reads the context the portal provides to the chat
 	// components, alongside the same hook instance's state and controls.

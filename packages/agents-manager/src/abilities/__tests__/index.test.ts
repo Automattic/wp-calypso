@@ -7,7 +7,18 @@ jest.mock( '@wordpress/abilities', () => ( {
 	registerAbilityCategory: jest.fn(),
 	unregisterAbility: jest.fn(),
 } ) );
-jest.mock( '@wordpress/data', () => ( { select: () => undefined, dispatch: () => undefined } ) );
+jest.mock( '@wordpress/data', () => ( {
+	select: () => undefined,
+	dispatch: () => undefined,
+	resolveSelect: () => undefined,
+} ) );
+// Reached through the checkpoint engine's navigation domain, and it registers
+// a store on import — which the mocked `@wordpress/data` above cannot serve.
+jest.mock( '@wordpress/blocks', () => ( {
+	createBlock: jest.fn(),
+	parse: jest.fn( () => [] ),
+	serialize: jest.fn( () => '' ),
+} ) );
 jest.mock( '@wordpress/core-data', () => ( { store: 'core' } ) );
 jest.mock( '@automattic/agenttic-client', () => ( { getAgentManager: jest.fn() } ), {
 	virtual: true,
@@ -157,7 +168,9 @@ describe( 'abilities facade', () => {
 		// Registration runs fire-and-forget with the load — let it settle.
 		await new Promise( ( resolve ) => setTimeout( resolve, 0 ) );
 
-		// A migrated ability is handed back; one with no provider copy stays on.
+		// Named, not just derived from the list: an ability filed under the
+		// AM-only one by mistake would still satisfy a comparison against it.
+		expect( amOnlyNames ).not.toContain( 'big-sky/edit-entity-record' );
 		expect( amOnlyNames ).not.toContain( 'big-sky/show-component' );
 		expect( amOnlyNames ).toContain( 'big-sky/show-template' );
 		await expect( ownedAbilityNames( amToolProvider ) ).resolves.toEqual( [
@@ -199,11 +212,12 @@ describe( 'abilities facade', () => {
 		}
 	} );
 
-	it( 'never loads the editor abilities just to read the checkpoint context', async () => {
+	it( 'never loads the editor abilities just to read the checkpoint context or the page markup', async () => {
 		setEditorPage( true );
-		const { getAmCheckpointContext, registerAbility } = await load();
+		const { getAmCheckpointContext, getAmPageContentMarkup, registerAbility } = await load();
 
 		expect( getAmCheckpointContext() ).toEqual( [] );
+		expect( getAmPageContentMarkup() ).toBe( '' );
 		// A load would resolve and register in a later task — let it settle.
 		await new Promise( ( resolve ) => setTimeout( resolve, 0 ) );
 		expect( registerAbility ).not.toHaveBeenCalled();
