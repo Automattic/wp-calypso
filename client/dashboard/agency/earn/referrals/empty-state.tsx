@@ -6,6 +6,7 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { reusableBlock } from '@wordpress/icons';
 import { Badge } from '@wordpress/ui';
+import { useMemo } from 'react';
 import { useAnalytics } from '../../../app/analytics';
 import EmptyState from '../../../components/empty-state';
 import InlineSupportLink from '../../../components/inline-support-link';
@@ -19,10 +20,10 @@ const AGENCY_EARNINGS_LEARN_MORE_LINK =
 export default function ReferralsEmptyState( { agencyId }: { agencyId: number } ) {
 	const { recordTracksEvent } = useAnalytics();
 	const { data: payee } = useQuery( tipaltiPayeeQuery( agencyId ) );
-	const accountStatus = getAccountStatus( payee );
+	const accountStatus = useMemo( () => getAccountStatus( payee ), [ payee ] );
 	const hasPayeeAccount = !! accountStatus?.status;
 
-	const statusBadge = ( () => {
+	const statusBadge = useMemo( () => {
 		if ( ! accountStatus ) {
 			return null;
 		}
@@ -32,7 +33,7 @@ export default function ReferralsEmptyState( { agencyId }: { agencyId: number } 
 		) : (
 			badge
 		);
-	} )();
+	}, [ accountStatus ] );
 
 	return (
 		<EmptyState.Wrapper>
