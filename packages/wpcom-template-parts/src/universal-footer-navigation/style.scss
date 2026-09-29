@@ -1385,7 +1385,7 @@
 
 		/* Columns hug their content with 150px gaps; the gap tracks shrink evenly when space runs out. */
 		.lp-grid--type-footer.lp-grid--gutter-y-4 {
-			grid-template-columns: repeat( 4, auto minmax( 0, 150px ) ) auto;
+			grid-template-columns: repeat( 4, max-content minmax( 0, 150px ) ) max-content;
 			grid-column-gap: 0;
 			justify-content: start;
 
