@@ -1,7 +1,4 @@
-interface LaunchpadOptions {
-	wpcom_ai_launchpad_enabled?: boolean;
-	wpcom_ai_launchpad_no_guidance?: boolean;
-}
+import { isLaunchpadNoGuidance, type AiLaunchpadSiteOptions } from '@automattic/api-core';
 
 /**
  * The wp-admin landing for a site's launchpad state, or null when the caller keeps its own default.
@@ -9,10 +6,10 @@ interface LaunchpadOptions {
  * @param adminUrl Site admin URL ending in a slash, e.g. `https://x/wp-admin/`.
  */
 export function getLaunchpadDestination(
-	options: LaunchpadOptions | undefined,
+	options: AiLaunchpadSiteOptions | undefined,
 	adminUrl: string
 ): string | null {
-	if ( options?.wpcom_ai_launchpad_no_guidance ) {
+	if ( isLaunchpadNoGuidance( { options } ) ) {
 		return adminUrl;
 	}
 	if ( options?.wpcom_ai_launchpad_enabled ) {
