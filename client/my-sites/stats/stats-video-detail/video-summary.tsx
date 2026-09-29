@@ -134,17 +134,17 @@ export default function VideoSummary( {
 		() =>
 			visibleRows.map( ( row ) => {
 				const start = moment( row.period );
-				const isUnknownRetention = statType === 'retention_rate' && retentionValue( row ) === null;
-				const value = metricValue( row, statType );
+				const value =
+					statType === 'retention_rate' ? retentionValue( row ) : metricValue( row, statType );
 				// Views and impressions tooltips show the exact count; hours
 				// watched and retention rate reuse the metric-tab formatting
 				// (one decimal, % suffix) so the tooltip matches the card.
 				const record = {
 					startDate: row.period,
-					value,
+					value: value ?? 0,
 					formattedValue:
 						statType === 'watch_time' || statType === 'retention_rate'
-							? formatValue( statType, isUnknownRetention ? null : value )
+							? formatValue( statType, value )
 							: undefined,
 				};
 				switch ( uiPeriod ) {
