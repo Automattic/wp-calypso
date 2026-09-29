@@ -149,9 +149,11 @@ export function getWowFunnelKey(
  * have a site from another. Only the same run may pick that site up — a different one would carry
  * on over a site built for something else, and its own follow-up (a blueprint import, say) would
  * never run.
- * @param run        The run that built a site, as the server reports it.
- * @param funnelSlug The funnel being entered.
- * @param funnelArgs Args from the entry URL.
+ * @param run            The run that built a site, as the server reports it.
+ * @param run.funnelSlug That run's funnel slug.
+ * @param run.funnelArgs That run's args, as recorded on its site.
+ * @param funnelSlug     The funnel being entered.
+ * @param funnelArgs     Args from the entry URL.
  * @returns True when they are the same run.
  */
 export function isSameWowFunnelRun(

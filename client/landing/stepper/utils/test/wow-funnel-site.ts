@@ -6,6 +6,7 @@ import {
 	adoptWowFunnelSite,
 	discardPendingWowFunnelSite,
 	fetchPendingWowFunnelSite,
+	forgetWowFunnelRun,
 	startWowFunnelSite,
 	wowFunnelSiteHasCartItems,
 } from '../wow-funnel-site';
@@ -158,6 +159,9 @@ describe( 'startWowFunnelSite when the server holds a pending site', () => {
 	const mockCreateSite = createSite as jest.Mock;
 
 	beforeEach( () => {
+		// The module keeps a resolved start per run in memory, so an earlier test's site would be
+		// handed straight back without ever consulting the pending site.
+		forgetWowFunnelRun( 'blueprint', { blueprint_slug: 'coachava' } );
 		window.sessionStorage.clear();
 		mockGet.mockReset();
 		mockCreateSite.mockReset();
