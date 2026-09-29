@@ -49,7 +49,7 @@ export function getRenewalPricingText( {
 			args: { price: formattedMonthlyPrice },
 			comment:
 				'%(price)s is a formatted price like $10. "Excl. taxes" is short for excluding taxes',
-		} ) as TranslateResult;
+		} );
 	}
 
 	// Determine the billing period in months
@@ -73,5 +73,5 @@ export function getRenewalPricingText( {
 			comment:
 				'%(price)s is a formatted price like $10, %(months)s is the billing period in months (12, 24, or 36). "Excl. taxes" is short for excluding taxes',
 		}
-	) as TranslateResult;
+	);
 }

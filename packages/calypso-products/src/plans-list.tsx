@@ -564,15 +564,15 @@ function compact( elements: ( string | false | undefined | null )[] ): string[] 
 const WPComGetBillingTimeframe = (): TranslateResult =>
 	i18n.translate( 'per month, billed yearly, excl. taxes', {
 		comment: 'Excl. Taxes is short for excluding taxes',
-	} ) as TranslateResult;
+	} );
 const WPComGetBiennialBillingTimeframe = (): TranslateResult =>
 	i18n.translate( '/month, billed every two years, excl. taxes', {
 		comment: 'Excl. Taxes is short for excluding taxes',
-	} ) as TranslateResult;
+	} );
 const WPComGetTriennialBillingTimeframe = (): TranslateResult =>
 	i18n.translate( '/month, billed every three years, excl. taxes', {
 		comment: 'Excl. Taxes is short for excluding taxes',
-	} ) as TranslateResult;
+	} );
 
 const getBiAnnualTimeframe = (): BillingTerm => ( {
 	term: TERM_BIENNIALLY,
@@ -587,9 +587,9 @@ const getAnnualTimeframe = (): BillingTerm => ( {
 const getMonthlyTimeframe = (): BillingTerm => ( {
 	term: TERM_MONTHLY,
 	getBillingTimeFrame: () =>
-		i18n.translate( 'per month, billed monthly, excl. taxes', {
+		translate( 'per month, billed monthly, excl. taxes', {
 			comment: 'Excl. Taxes is short for excluding taxes',
-		} ) as TranslateResult,
+		} ),
 } );
 const getJetpackCommonPlanDetails = () => ( {
 	getRecommendedFor: () => [
