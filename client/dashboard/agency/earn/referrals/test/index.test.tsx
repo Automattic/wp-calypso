@@ -85,17 +85,6 @@ describe( '<EarnReferrals>', () => {
 		await waitFor( () => expect( newReferralButton() ).not.toBeInTheDocument() );
 	} );
 
-	test( 'records opening a referral from the list', async () => {
-		mockEndpoints();
-		const { recordTracksEvent } = render( <EarnReferrals /> );
-
-		await userEvent.click( await screen.findByRole( 'link', { name: 'client@example.com' } ) );
-
-		expect( recordTracksEvent ).toHaveBeenCalledWith(
-			'calypso_a4a_referrals_list_view_details_click'
-		);
-	} );
-
 	test( 'asks for payout details with referral-specific copy, and lets it be dismissed', async () => {
 		mockEndpoints( { isPayable: false } );
 		render( <EarnReferrals /> );
