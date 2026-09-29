@@ -117,7 +117,8 @@ export default function FeaturedShowcase( {
 			),
 			action: (
 				<Button
-					variant="link"
+					variant="secondary"
+					size="compact"
 					icon={ inCart ? check : undefined }
 					aria-pressed={ inCart }
 					onClick={ () => onToggleCart( product ) }
