@@ -7,7 +7,7 @@ import { sanitizeDomainInput } from '../helpers';
 import { NamePulseFilter } from './filter';
 import './search-input.scss';
 
-export const NamePulseSearchInput = () => {
+export const NamePulseSearchInput = ( { showFilter = false }: { showFilter?: boolean } ) => {
 	const { __ } = useI18n();
 	const { query, setQuery, events } = useDomainSearch();
 	const [ localQuery, setLocalQuery ] = useState( query );
@@ -46,7 +46,7 @@ export const NamePulseSearchInput = () => {
 					}
 				} }
 			/>
-			<NamePulseFilter />
+			{ showFilter && <NamePulseFilter /> }
 		</HStack>
 	);
 };

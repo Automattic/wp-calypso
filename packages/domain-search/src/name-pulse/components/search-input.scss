@@ -31,8 +31,6 @@
 	}
 
 	@media ( max-width: #{ $break-small - 1px } ) {
-		gap: 0.5rem;
-
 		.domain-search-controls__input
 			.components-input-control__container
 			input.components-input-control__input {

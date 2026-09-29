@@ -1,7 +1,6 @@
 import { QueryClientProvider } from '@tanstack/react-query';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import nock from 'nock';
 import { DomainSearchContext, useDomainSearchContextValue } from '../../../page/context';
 import { InitialState } from '../../../page/initial-state';
 import { buildCart } from '../../../test-helpers/factories/cart';
@@ -115,33 +114,14 @@ describe( 'NamePulseFilter', () => {
 		] );
 	} );
 
-	it( 'is only rendered when Name Pulse is on', async () => {
-		nock( 'https://public-api.wordpress.com' )
-			.get( '/wpcom/v2/domains/name-pulse/tlds' )
-			.query( true )
-			.reply( 200, { tlds: NAME_PULSE_TLDS_FIXTURE } );
-
-		const { unmount } = render(
-			<TestDomainSearch config={ { showNamePulseSearch: true } }>
-				<InitialState />
-			</TestDomainSearch>
-		);
-
-		await waitFor( () =>
-			expect( screen.getByRole( 'button', { name: /^Filter/ } ) ).toBeEnabled()
-		);
-		expect( document.querySelector( '.name-pulse-filter' ) ).not.toBeNull();
-
-		unmount();
-
+	it( 'is not shown on the empty initial state', () => {
 		render(
-			<TestDomainSearch>
+			<TestDomainSearch config={ { showNamePulseSearch: true } }>
 				<InitialState />
 			</TestDomainSearch>
 		);
 
 		expect( screen.getByRole( 'searchbox' ) ).toBeInTheDocument();
 		expect( screen.queryByRole( 'button', { name: /^Filter/ } ) ).not.toBeInTheDocument();
-		expect( document.querySelector( '.name-pulse-filter' ) ).toBeNull();
 	} );
 } );
