@@ -53,7 +53,7 @@ describe( 'createSiteWithCart()', () => {
 			};
 		} );
 
-	test( 'should find available url if siteUrl is empty and enable auto generated blog name', async () => {
+	test( 'sends an empty blog_name and finds an available url when siteUrl is empty', async () => {
 		expect.assertions( 1 );
 		const fakeStore = {
 			getState: () => ( {
@@ -63,7 +63,10 @@ describe( 'createSiteWithCart()', () => {
 
 		await testCreateSite(
 			( response ) => {
-				expect( response.requestBody.find_available_url ).toBe( true );
+				expect( response.requestBody ).toMatchObject( {
+					blog_name: '',
+					find_available_url: true,
+				} );
 			},
 			[],
 			{ siteUrl: undefined },
@@ -83,24 +86,6 @@ describe( 'createSiteWithCart()', () => {
 			},
 			[],
 			{ siteUrl: 'mysite' },
-			fakeStore
-		);
-	} );
-
-	test( 'send an empty blog_name when siteUrl is empty and there is no site title', async () => {
-		expect.assertions( 1 );
-		const fakeStore = {
-			getState: () => ( {
-				signup: { dependencyStore: { shouldHideFreePlan: true } },
-			} ),
-		};
-
-		await testCreateSite(
-			( response ) => {
-				expect( response.requestBody.blog_name ).toBe( '' );
-			},
-			[],
-			{ siteUrl: undefined },
 			fakeStore
 		);
 	} );
