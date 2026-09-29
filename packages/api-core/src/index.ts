@@ -82,6 +82,7 @@ export * from './me-stripe-configuration';
 export * from './me-stripe-setup-intent';
 export * from './me-tax-contact-information';
 export * from './me-tax-details';
+export * from './me-transactions-order';
 export * from './me-transactions-supported-countries';
 export * from './me-two-step';
 export * from './me-username';
