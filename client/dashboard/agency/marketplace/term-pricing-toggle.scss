@@ -1,0 +1,6 @@
+// isBlock draws the border and splits the width evenly between the two
+// options, so the wrapper sets a width that keeps "Billed monthly" on one line.
+.dashboard-marketplace-term-pricing {
+	flex: none;
+	inline-size: 280px;
+}

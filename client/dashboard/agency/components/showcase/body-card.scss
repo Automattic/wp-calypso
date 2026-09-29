@@ -1,0 +1,112 @@
+@use '@automattic/color-studio/dist/color-variables' as brand;
+
+.dashboard-body-card {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+	box-sizing: border-box;
+	padding: 20px;
+	border-radius: 8px;
+	background: #fff;
+	box-shadow: inset 0 0 0 1px #{rgba( brand.$studio-gray-100, 0.08 )};
+	transition: box-shadow 0.15s ease;
+
+	&:hover {
+		box-shadow: inset 0 0 0 1px #{rgba( brand.$studio-gray-100, 0.2 )};
+	}
+
+	@media ( prefers-reduced-motion: reduce ) {
+		transition: none;
+	}
+}
+
+.dashboard-body-card__head {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	min-inline-size: 0;
+}
+
+.dashboard-body-card__name {
+	display: flex;
+	flex-direction: column;
+	min-inline-size: 0;
+}
+
+// The title is the card's link: its ::after covers the card, the actions sit above.
+.dashboard-body-card__title {
+	all: unset;
+	cursor: pointer;
+	font-size: 15px;
+	font-weight: 600;
+	line-height: 20px;
+	color: #{brand.$studio-gray-100};
+	text-wrap: balance;
+
+	&::after {
+		content: '';
+		position: absolute;
+		inset: 0;
+		border-radius: 8px;
+	}
+
+	&:focus-visible::after {
+		outline: 2px solid var( --wpds-color-stroke-focus, var( --wp-admin-theme-color ) );
+		outline-offset: -2px;
+	}
+
+	&.is-static {
+		cursor: auto;
+
+		&::after {
+			content: none;
+		}
+	}
+}
+
+.dashboard-body-card__byline {
+	font-size: 13px;
+	line-height: 18px;
+	color: #{brand.$studio-gray-60};
+}
+
+.dashboard-body-card__description {
+	display: -webkit-box;
+	-webkit-line-clamp: 2;
+	-webkit-box-orient: vertical;
+	overflow: hidden;
+	max-block-size: 40px;
+	margin: 0;
+	font-size: 13px;
+	line-height: 20px;
+	color: #{brand.$studio-gray-70};
+	text-wrap: pretty;
+}
+
+.dashboard-body-card__foot {
+	position: relative;
+	z-index: 1;
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 12px;
+	margin-block-start: auto;
+	font-size: 13px;
+}
+
+// The tile: a glyph in the tile's text colour on the brand's colour.
+.dashboard-body-card__tile {
+	display: inline-grid;
+	flex: none;
+	place-items: center;
+	inline-size: 40px;
+	block-size: 40px;
+	border-radius: 8px;
+	background: var( --dashboard-accent );
+	color: var( --dashboard-accent-on, #fff );
+
+	svg {
+		fill: currentColor;
+	}
+}
