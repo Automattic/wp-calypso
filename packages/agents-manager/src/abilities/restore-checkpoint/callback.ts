@@ -9,12 +9,14 @@ import {
 	setReciprocalCheckpoint,
 } from '../../utils/checkpoints';
 import { isEditorPage } from '../../utils/is-editor-page';
+import { isRecord } from '../../utils/is-record';
 import {
 	getProviderCheckpoint,
 	getProviderCheckpointRecords,
 	getProviderCheckpoints,
 } from '../../utils/provider-checkpoints';
 import { getToolCallIdFromConversationHistory } from '../../utils/tool-call-history';
+import { recordBigSkyTracksEvent } from '../../utils/tracks';
 import { errorResult, successResult } from '../ability-result';
 import type { CheckpointMetadata, CheckpointRecord } from '../../utils/checkpoints';
 import type { UseCheckpointReturn } from '../../utils/load-external-providers';
@@ -174,12 +176,7 @@ function findRedoReciprocal( checkpointId: string ): CheckpointRecord | undefine
 		);
 }
 
-/**
- * The `restore-checkpoint` ability callback.
- */
-export async function restoreCheckpointCallback(
-	input: RestoreCheckpointInput
-): Promise< AbilityResult > {
+async function restore( input: RestoreCheckpointInput ): Promise< AbilityResult > {
 	const { checkpointId, summary, requestIntentType = 'restore' } = input;
 
 	if ( ! isEditorPage() ) {
@@ -201,9 +198,9 @@ export async function restoreCheckpointCallback(
 
 	const requestedCheckpoint = getCheckpoint( checkpointId );
 	if ( ! requestedCheckpoint ) {
-		// TODO (ability-migration): Delete the delegation once the last
-		// checkpoint-writing Big Sky ability migrates — every checkpoint then
-		// lives in AM's own store.
+		// TODO (ability-migration): Delete the delegation with the
+		// provider-checkpoints bridge (AM-72) — until Big Sky's copies go, an id
+		// written under `?am_abilities=0` still lives in its store.
 		const providerCheckpoints = getProviderCheckpoints();
 		if ( providerCheckpoints?.hasCheckpoint( checkpointId ) ) {
 			return restoreProviderCheckpoint( providerCheckpoints, input );
@@ -271,4 +268,33 @@ export async function restoreCheckpointCallback(
 	}
 
 	return successResult( summary, { checkpointId } );
+}
+
+/**
+ * Records every attempt, refused and failed ones too. The chat's Undo button
+ * records the same event without a `source`, and the id is the tool call the
+ * checkpoint is keyed by, which joins an undo to the edit it undid.
+ */
+export async function restoreCheckpointCallback( rawInput: unknown ): Promise< AbilityResult > {
+	const input = isRecord( rawInput ) ? rawInput : {};
+	const checkpointId = typeof input.checkpointId === 'string' ? input.checkpointId : '';
+	const requestIntentType =
+		input.requestIntentType === 'undo' || input.requestIntentType === 'redo'
+			? input.requestIntentType
+			: 'restore';
+
+	const result = await restore( {
+		checkpointId,
+		summary: typeof input.summary === 'string' ? input.summary : '',
+		requestIntentType,
+	} );
+
+	recordBigSkyTracksEvent( 'jetpack_big_sky_restore_checkpoint_action', {
+		action: requestIntentType,
+		id: checkpointId,
+		outcome: result.result.success ? 'success' : 'failed',
+		source: 'chat',
+	} );
+
+	return result;
 }

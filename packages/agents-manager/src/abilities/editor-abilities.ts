@@ -11,8 +11,17 @@ import {
 	registerAbilityCategory,
 	unregisterAbility,
 } from '@wordpress/abilities';
+import {
+	canSwapCheckpoint,
+	clearCheckpoint,
+	hasCheckpoint,
+	restoreCheckpoint,
+	swapCheckpoint,
+} from '../utils/checkpoints';
 import isAmAbilitiesDisabled from '../utils/is-am-abilities-disabled';
+import { applyBlockEditsAbility } from './apply-block-edits';
 import { applyUpdateThemeAbility } from './apply-update-theme';
+import { captureCanvasAbility } from './capture-canvas';
 import { BIG_SKY_ABILITY_CATEGORY } from './constants';
 import { editEntityRecordAbility } from './edit-entity-record';
 import { editorNavigateAbility } from './editor-navigate';
@@ -33,7 +42,9 @@ import type { Ability } from './types';
 // something to fall back to. Migrating one = add its folder under `abilities/`
 // and list it here.
 const MIGRATED_EDITOR_ABILITIES: Ability[] = [
+	applyBlockEditsAbility,
 	applyUpdateThemeAbility,
+	captureCanvasAbility,
 	editEntityRecordAbility,
 	editorNavigateAbility,
 	restoreCheckpointAbility,
@@ -114,7 +125,17 @@ export async function registerEditorAbilities(): Promise< void > {
 	}
 }
 
-// Re-exported for the facade's sync context views (`getAmCheckpointContext`,
-// `getAmPageContentMarkup`).
+// Re-exported for the facade's sync views (`getAmCheckpointContext`,
+// `getAmPageContentMarkup`, `getAmPageStructure`, `getAmCheckpointActions`).
 export { getAvailableCheckpoints } from '../utils/checkpoints';
 export { getPageContentMarkup } from '../utils/page-content-markup';
+export { getPageStructure } from '../utils/page-structure';
+
+/** What the chat's Undo needs of AM's checkpoint store. */
+export const checkpointActions = {
+	hasCheckpoint,
+	restoreCheckpoint,
+	canSwapCheckpoint,
+	swapCheckpoint,
+	clearCheckpoint,
+};

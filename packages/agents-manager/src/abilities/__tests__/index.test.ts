@@ -170,6 +170,8 @@ describe( 'abilities facade', () => {
 
 		// Named, not just derived from the list: an ability filed under the
 		// AM-only one by mistake would still satisfy a comparison against it.
+		expect( amOnlyNames ).not.toContain( 'big-sky/apply-block-edits' );
+		expect( amOnlyNames ).not.toContain( 'big-sky/capture-canvas' );
 		expect( amOnlyNames ).not.toContain( 'big-sky/edit-entity-record' );
 		expect( amOnlyNames ).not.toContain( 'big-sky/show-component' );
 		expect( amOnlyNames ).toContain( 'big-sky/show-template' );
@@ -212,12 +214,20 @@ describe( 'abilities facade', () => {
 		}
 	} );
 
-	it( 'never loads the editor abilities just to read the checkpoint context or the page markup', async () => {
+	it( 'never loads the editor abilities just to read the checkpoint or the page context', async () => {
 		setEditorPage( true );
-		const { getAmCheckpointContext, getAmPageContentMarkup, registerAbility } = await load();
+		const {
+			getAmCheckpointActions,
+			getAmCheckpointContext,
+			getAmPageContentMarkup,
+			getAmPageStructure,
+			registerAbility,
+		} = await load();
 
 		expect( getAmCheckpointContext() ).toEqual( [] );
+		expect( getAmCheckpointActions() ).toBeNull();
 		expect( getAmPageContentMarkup() ).toBe( '' );
+		expect( getAmPageStructure() ).toBeNull();
 		// A load would resolve and register in a later task — let it settle.
 		await new Promise( ( resolve ) => setTimeout( resolve, 0 ) );
 		expect( registerAbility ).not.toHaveBeenCalled();
@@ -327,7 +337,13 @@ describe( 'registerEditorAbilities', () => {
 
 		expect( registerAbility ).toHaveBeenCalledTimes( editorAbilities.getEditorAbilities().length );
 		expect( registerAbility ).toHaveBeenCalledWith(
+			expect.objectContaining( { name: 'big-sky/apply-block-edits' } )
+		);
+		expect( registerAbility ).toHaveBeenCalledWith(
 			expect.objectContaining( { name: 'big-sky/apply-update-theme' } )
+		);
+		expect( registerAbility ).toHaveBeenCalledWith(
+			expect.objectContaining( { name: 'big-sky/capture-canvas' } )
 		);
 		expect( registerAbility ).toHaveBeenCalledWith(
 			expect.objectContaining( { name: 'agents-manager/get-block-tree' } )
