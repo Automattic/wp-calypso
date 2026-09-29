@@ -113,8 +113,6 @@ export const agencyProgramStatsQuery = () =>
 	queryOptions( {
 		queryKey: [ 'agency', 'program-stats' ] as const,
 		queryFn: fetchAgencyProgramStats,
-		// Matches the server-side cache TTL.
-		staleTime: 60 * 60 * 1000,
 	} );
 
 export const tipaltiIFrameUrlQuery = ( agencyId: number ) =>
