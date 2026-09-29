@@ -70,7 +70,7 @@ The module renders `NewBlogRec` = `ReadNewBlogsRec` + `railcar`.
 
 | event                          | when                                | `action`                                                               |
 | ------------------------------ | ----------------------------------- | ---------------------------------------------------------------------- |
-| `calypso_traintracks_render`   | card 60% visible, once per card     | — (`ui_algo` `reader_recent_discover_new_blogs`, `ui_position` = slot) |
+| `calypso_traintracks_render`   | card on screen, once per card       | — (`ui_algo` `reader_recent_discover_new_blogs`, `ui_position` = slot) |
 | `calypso_traintracks_interact` | title click                         | `recommended_post_clicked`                                             |
 |                                | Subscribe / Unsubscribe             | `recommended_site_subscribed` / `recommended_site_unsubscribed`        |
 |                                | X                                   | `recommended_site_dismissed`                                           |

@@ -47,10 +47,8 @@ export default function NewBlogCard( {
 	onImpression,
 }: Props ) {
 	const translate = useTranslate();
-	// One TrainTracks render per card, once 60% of it is on screen (the same
-	// threshold as the stream's post view tracking).
+	// One TrainTracks render per card, the first time any of it is on screen.
 	const { ref: impressionRef } = useInView( {
-		threshold: 0.6,
 		triggerOnce: true,
 		onChange: ( inView ) => {
 			if ( inView ) {
