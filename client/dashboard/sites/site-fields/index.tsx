@@ -36,9 +36,10 @@ import { useAiLaunchpad } from '../hooks/use-ai-launchpad';
 import SitePreview from '../site-preview';
 import { JetpackLogo } from './jetpack-logo';
 import { PlanExpiryStatus } from './plan-expiry-status';
+import { SiteUnreachableBadge, useIsSiteUnreachable } from './site-unreachable-status';
 import type { SiteBadge, SiteBlockingStatus, SiteVisibility } from '../../types';
 import type { Site } from '@automattic/api-core';
-import type { ComponentProps } from 'react';
+import type { ComponentProps, ReactNode } from 'react';
 
 function IneligibleIndicator() {
 	return <Text color="#CCCCCC">-</Text>;
@@ -87,14 +88,32 @@ export function Name( { site, value }: { site: Site; value: string } ) {
 	return <NameRenderer badge={ getSiteBadge( site ) } muted={ site.is_deleted } value={ value } />;
 }
 
+export function NameWithStatus( { site, value }: { site: Site; value: string } ) {
+	const { ref, inView } = useInView( { triggerOnce: true, fallbackInView: true } );
+	const isUnreachable = useIsSiteUnreachable( site, inView );
+
+	return (
+		<div ref={ ref }>
+			<NameRenderer
+				badge={ getSiteBadge( site ) }
+				muted={ site.is_deleted }
+				value={ value }
+				statusBadge={ isUnreachable && <SiteUnreachableBadge site={ site } /> }
+			/>
+		</div>
+	);
+}
+
 export function NameRenderer( {
 	badge,
 	muted,
 	value,
+	statusBadge,
 }: {
 	badge: SiteBadge;
 	muted: boolean;
 	value: string;
+	statusBadge?: ReactNode;
 } ) {
 	const renderBadge = () => {
 		switch ( badge ) {
@@ -129,6 +148,7 @@ export function NameRenderer( {
 				<span style={ titleFieldTextOverflowStyles }>{ value }</span>
 			) }
 			{ badgeElement && <span style={ { flexShrink: 0 } }>{ badgeElement }</span> }
+			{ statusBadge && <span style={ { flexShrink: 0 } }>{ statusBadge }</span> }
 		</HStack>
 	);
 }

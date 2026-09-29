@@ -17,7 +17,7 @@ import {
 	AsyncEngagementStat,
 	LastBackup,
 	MediaStorage,
-	Name,
+	NameWithStatus,
 	PHPVersion,
 	Plan,
 	Preview,
@@ -46,7 +46,9 @@ function getDefaultFields( {
 			enableHiding: false,
 			enableGlobalSearch: true,
 			getValue: ( { item } ) => getSiteDisplayName( item ),
-			render: ( { field, item } ) => <Name site={ item } value={ field.getValue( { item } ) } />,
+			render: ( { field, item } ) => (
+				<NameWithStatus site={ item } value={ field.getValue( { item } ) } />
+			),
 		},
 		{
 			id: 'URL',
