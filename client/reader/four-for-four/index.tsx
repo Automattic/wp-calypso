@@ -106,7 +106,14 @@ export function FourForFour() {
 					</div>
 
 					{ isComplete && (
-						<HStack className="four-for-four-modal__complete" spacing={ 3 } role="status">
+						<HStack
+							className="four-for-four-modal__complete"
+							alignment="left"
+							// Not full width: the side margins would push it past the modal.
+							expanded={ false }
+							spacing={ 3 }
+							role="status"
+						>
 							<Icon icon={ check } size={ 28 } className="four-for-four-modal__complete-icon" />
 							<VStack spacing={ 1 } expanded={ false }>
 								<strong>{ translate( "You're in!" ) }</strong>
@@ -120,7 +127,13 @@ export function FourForFour() {
 					) }
 
 					{ hasSaveError && (
-						<HStack className="four-for-four-modal__save-error" spacing={ 3 } role="alert">
+						<HStack
+							className="four-for-four-modal__save-error"
+							alignment="left"
+							expanded={ false }
+							spacing={ 3 }
+							role="alert"
+						>
 							<span>{ translate( "We couldn't save your progress." ) }</span>
 							<Button variant="link" onClick={ retrySave }>
 								{ translate( 'Try again' ) }
