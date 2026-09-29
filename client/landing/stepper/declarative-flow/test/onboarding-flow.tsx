@@ -223,7 +223,7 @@ describe( 'Onboarding Flow', () => {
 			} );
 
 			it( 'redirects to the wp-admin root when the site has no guidance', async () => {
-				mockSiteOptions = { wpcom_launchpad_no_guidance: true };
+				mockSiteOptions = { wpcom_ai_launchpad_no_guidance: true };
 				const { runUseStepNavigationSubmit } = renderFlow( onboarding );
 
 				await runUseStepNavigationSubmit( {

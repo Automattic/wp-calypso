@@ -1,6 +1,6 @@
 interface LaunchpadOptions {
 	wpcom_ai_launchpad_enabled?: boolean;
-	wpcom_launchpad_no_guidance?: boolean;
+	wpcom_ai_launchpad_no_guidance?: boolean;
 }
 
 /**
@@ -12,7 +12,7 @@ export function getLaunchpadDestination(
 	options: LaunchpadOptions | undefined,
 	adminUrl: string
 ): string | null {
-	if ( options?.wpcom_launchpad_no_guidance ) {
+	if ( options?.wpcom_ai_launchpad_no_guidance ) {
 		return adminUrl;
 	}
 	if ( options?.wpcom_ai_launchpad_enabled ) {

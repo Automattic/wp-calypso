@@ -4,7 +4,7 @@ const admin = { manage_options: true };
 
 describe( 'isLaunchpadNoGuidance', () => {
 	it( 'is true when no_guidance option is set', () => {
-		expect( isLaunchpadNoGuidance( { options: { wpcom_launchpad_no_guidance: true } } ) ).toBe(
+		expect( isLaunchpadNoGuidance( { options: { wpcom_ai_launchpad_no_guidance: true } } ) ).toBe(
 			true
 		);
 	} );
@@ -46,7 +46,7 @@ describe( 'getAiLaunchpadStatus', () => {
 		expect(
 			getAiLaunchpadStatus( {
 				capabilities: admin,
-				options: { wpcom_ai_launchpad_enabled: true, wpcom_launchpad_no_guidance: true },
+				options: { wpcom_ai_launchpad_enabled: true, wpcom_ai_launchpad_no_guidance: true },
 			} )
 		).toBeNull();
 	} );

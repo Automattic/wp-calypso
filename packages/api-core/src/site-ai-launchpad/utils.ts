@@ -24,7 +24,7 @@ export function getAiLaunchpadStatus( site: {
 	if (
 		! options?.wpcom_ai_launchpad_enabled ||
 		options.wpcom_ai_launchpad_dismissed ||
-		options.wpcom_launchpad_no_guidance
+		options.wpcom_ai_launchpad_no_guidance
 	) {
 		return null;
 	}
@@ -38,7 +38,7 @@ export function getAiLaunchpadStatus( site: {
 export function isLaunchpadNoGuidance( site: { options?: AiLaunchpadSiteOptions } ): boolean {
 	const options = site.options;
 	return (
-		!! options?.wpcom_launchpad_no_guidance ||
+		!! options?.wpcom_ai_launchpad_no_guidance ||
 		( !! options?.wpcom_ai_launchpad_enabled && !! options?.wpcom_ai_launchpad_dismissed )
 	);
 }

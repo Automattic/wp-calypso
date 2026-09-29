@@ -274,7 +274,7 @@ describe( '<SiteOverview>', () => {
 		mockSite( {
 			...site,
 			launch_status: 'unlaunched',
-			options: { ...site.options, wpcom_launchpad_no_guidance: true },
+			options: { ...site.options, wpcom_ai_launchpad_no_guidance: true },
 		} as Site );
 		render( <SiteOverview siteSlug={ site.slug } /> );
 

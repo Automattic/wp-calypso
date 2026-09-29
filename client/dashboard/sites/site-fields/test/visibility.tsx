@@ -86,7 +86,7 @@ describe( '<Visibility>', () => {
 	test( 'for no-guidance sites, it hides the "Finish setup" link', async () => {
 		const noGuidanceSite = {
 			...aiLaunchpadSite,
-			options: { ...aiLaunchpadSite.options, wpcom_launchpad_no_guidance: true },
+			options: { ...aiLaunchpadSite.options, wpcom_ai_launchpad_no_guidance: true },
 		} as Site;
 		const { queryByRole } = render(
 			<Visibility

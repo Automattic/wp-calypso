@@ -71,7 +71,7 @@ export interface SiteOptions {
 	wpcom_ai_launchpad_enabled?: boolean;
 	wpcom_ai_launchpad_dismissed?: boolean;
 	wpcom_ai_launchpad_completed?: boolean;
-	wpcom_launchpad_no_guidance?: boolean;
+	wpcom_ai_launchpad_no_guidance?: boolean;
 	wpcom_production_blog_id?: number;
 	wpcom_staging_blog_ids?: number[];
 	import_engine?: string | null;

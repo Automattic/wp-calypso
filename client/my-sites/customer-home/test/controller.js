@@ -223,7 +223,7 @@ describe( 'maybeRedirect', () => {
 		getSelectedSite.mockReturnValueOnce( {
 			ID: 1,
 			launch_status: 'unlaunched',
-			options: { wpcom_launchpad_no_guidance: true },
+			options: { wpcom_ai_launchpad_no_guidance: true },
 		} );
 		const next = jest.fn();
 
