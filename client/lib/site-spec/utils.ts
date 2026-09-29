@@ -393,11 +393,13 @@ export function getBuildWowSiteSpecConfig( {
 	siteId,
 	ref,
 	source,
+	graph,
 }: {
 	siteSlug?: string | null;
 	siteId?: string | number | null;
 	ref?: string | null;
 	source?: string | null;
+	graph?: string | null;
 } = {} ): SiteSpecConfig {
 	const buildSiteUrl = addQueryArgs( '/setup/ai-site-builder-spec/site-spec', {
 		build_wow: '1',
@@ -405,6 +407,7 @@ export function getBuildWowSiteSpecConfig( {
 		...( siteId && String( siteId ) !== '0' ? { siteId } : {} ),
 		...( ref ? { ref } : {} ),
 		...( source ? { source } : {} ),
+		...( graph ? { graph } : {} ),
 	} );
 
 	const defaultConfig = getDefaultSiteSpecConfig();
