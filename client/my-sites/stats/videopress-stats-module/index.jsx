@@ -259,7 +259,9 @@ class VideoPressStatsModule extends Component {
 										tabIndex="0"
 										role="button"
 									>
-										{ 0 === row.value ? 'n/a' : `${ row.retention_rate }%` }
+										{ row.retention_rate === null || row.retention_rate === undefined
+											? 'n/a'
+											: `${ row.retention_rate }%` }
 									</span>
 								</div>
 								<div className="videopress-stats-module__grid-cell videopress-stats-module__grid-metric">

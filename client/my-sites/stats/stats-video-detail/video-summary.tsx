@@ -37,7 +37,7 @@ interface ChartRecord {
 // date plus one value per metric named in the response's `fields`.
 interface SeriesRow {
 	period: string;
-	[ metric: string ]: string | number;
+	[ metric: string ]: string | number | null;
 }
 
 interface VideoSummaryData {
@@ -64,6 +64,12 @@ function isVideoStatType( value: string | null ): value is VideoStatType {
 
 function metricValue( row: SeriesRow, type: VideoStatType ): number {
 	return Number( row[ METRIC_COLUMNS[ type ] ] ) || 0;
+}
+
+// Retention rate is `null` when the API cannot compute it (no video duration).
+function retentionValue( row: SeriesRow ): number | null {
+	const value = row[ METRIC_COLUMNS.retention_rate ];
+	return value === null || value === undefined ? null : Number( value ) || 0;
 }
 
 export default function VideoSummary( {
@@ -128,6 +134,7 @@ export default function VideoSummary( {
 		() =>
 			visibleRows.map( ( row ) => {
 				const start = moment( row.period );
+				const isUnknownRetention = statType === 'retention_rate' && retentionValue( row ) === null;
 				const value = metricValue( row, statType );
 				// Views and impressions tooltips show the exact count; hours
 				// watched and retention rate reuse the metric-tab formatting
@@ -137,7 +144,7 @@ export default function VideoSummary( {
 					value,
 					formattedValue:
 						statType === 'watch_time' || statType === 'retention_rate'
-							? formatValue( statType, value )
+							? formatValue( statType, isUnknownRetention ? null : value )
 							: undefined,
 				};
 				switch ( uiPeriod ) {
@@ -222,7 +229,7 @@ export default function VideoSummary( {
 			retention = calculatePlayWeightedRetention(
 				visibleRows.map( ( row ) => ( {
 					plays: metricValue( row, 'views' ),
-					retentionRate: metricValue( row, 'retention_rate' ),
+					retentionRate: retentionValue( row ),
 				} ) )
 			);
 		}

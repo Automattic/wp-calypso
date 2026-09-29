@@ -1550,6 +1550,41 @@ describe( 'utils', () => {
 					years: [],
 				} );
 			} );
+
+			test( 'should not surface null day or hour values when there are no views', () => {
+				expect(
+					normalizers.statsInsights( {
+						highest_hour: null,
+						highest_day_percent: null,
+						highest_day_of_week: null,
+						highest_hour_percent: null,
+						hourly_views: [],
+						years: [],
+					} )
+				).toEqual( { hourlyViews: [], years: [] } );
+			} );
+
+			test( 'should keep the day group when only the hour group is null', () => {
+				expect(
+					normalizers.statsInsights( {
+						highest_hour: null,
+						highest_day_percent: 10,
+						highest_day_of_week: 6,
+						highest_hour_percent: null,
+					} )
+				).toEqual( { day: 'Sunday', percent: 10 } );
+			} );
+
+			test( 'should keep the hour group when only the day group is null', () => {
+				expect(
+					normalizers.statsInsights( {
+						highest_hour: 11,
+						highest_day_percent: null,
+						highest_day_of_week: null,
+						highest_hour_percent: 5,
+					} )
+				).toEqual( { hour: '11:00 AM', hourPercent: 5 } );
+			} );
 		} );
 
 		describe( 'statsPublicize()', () => {
@@ -1788,6 +1823,17 @@ describe( 'utils', () => {
 					rows: [ { period: '2026-07-01', impressions: 7 } ],
 					total: null,
 				} );
+			} );
+
+			test( 'should keep an unknown metric as null instead of 0 in range-mode rows', () => {
+				const result = normalizers.statsVideo( {
+					fields: [ 'period', 'plays', 'retention_rate' ],
+					data: [ [ '2026-07-01', 3, null ] ],
+					pages: [],
+				} );
+				expect( result.rows ).toEqual( [
+					{ period: '2026-07-01', plays: 3, retention_rate: null },
+				] );
 			} );
 		} );
 
