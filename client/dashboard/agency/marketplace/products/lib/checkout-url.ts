@@ -1,8 +1,4 @@
-import {
-	AGENCY_CHECKOUT_PATH,
-	MARKETPLACE_PURCHASES_ROUTE,
-	MARKETPLACE_REFERRAL_CHECKOUT_ROUTE,
-} from '../../paths';
+import { AGENCY_CHECKOUT_PATH, MARKETPLACE_PURCHASES_ROUTE } from '../../paths';
 import type { TermPricing } from '../../use-term-pricing';
 import type { AgencyProduct } from '@automattic/api-core';
 
@@ -33,21 +29,24 @@ export function getCheckoutReturnUrl( {
 	return `${ window.location.origin }${ MARKETPLACE_PURCHASES_ROUTE }?${ filter }${ RECEIPT_ID_PARAM }=${ RECEIPT_ID_PLACEHOLDER }`;
 }
 
+/** The product of the chosen term, which is what a referral is made of. */
+export function getTermProductId( product: AgencyProduct, term: TermPricing ): number {
+	return (
+		( term === 'yearly' ? product.yearly_product_id : product.monthly_product_id ) ||
+		product.product_id
+	);
+}
+
 /**
- * The checkout link for a cart: the products, their quantities and the billing
- * term. The checkout works out the agency and the billing products from the
- * account of the user who is logged in.
+ * The checkout link for a regular cart: the products, their quantities and the
+ * billing term. The checkout works out the agency and the billing products
+ * from the account of the user who is logged in. Referral carts stay in the
+ * dashboard, on the referral checkout route.
  */
 export function getCheckoutUrl(
 	lines: CheckoutLine[],
-	isReferralMode: boolean,
 	{ term, hasWpcomHostingPlan = false }: { term: TermPricing; hasWpcomHostingPlan?: boolean }
 ): string {
-	// Referral carts stay in the dashboard, on the referral checkout route.
-	if ( isReferralMode ) {
-		return MARKETPLACE_REFERRAL_CHECKOUT_ROUTE;
-	}
-
 	const search = new URLSearchParams( {
 		products: lines
 			.map( ( { product, quantity } ) => `${ product.slug }:${ quantity }` )

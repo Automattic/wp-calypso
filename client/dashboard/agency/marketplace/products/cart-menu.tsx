@@ -1,4 +1,5 @@
 import { formatCurrency } from '@automattic/number-formatters';
+import { useLocation } from '@tanstack/react-router';
 import {
 	Button,
 	Dropdown,
@@ -11,9 +12,11 @@ import {
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { cart } from '@wordpress/icons';
 import { useAnalytics } from '../../../app/analytics';
+import RouterLinkButton from '../../../components/router-link-button';
 import { TextBlur } from '../../../components/text-blur';
 import { a4aLink } from '../../../utils/link';
 import { WPCOM_CREATOR_PLAN_SLUG, WPCOM_HOSTING_FAMILY_SLUG } from '../lib/wpcom-hosting';
+import { MARKETPLACE_REFERRAL_CHECKOUT_ROUTE } from '../paths';
 import { getCheckoutUrl } from './lib/checkout-url';
 import { getTermSuffix } from './lib/product-pricing';
 import { getProductShortTitle } from './lib/product-title';
@@ -57,6 +60,7 @@ export default function CartMenu( {
 	onCheckout,
 }: Props ) {
 	const { recordTracksEvent } = useAnalytics();
+	const location = useLocation();
 	const { lines, currency, total, commission, isTotalReady, hasWpcomHostingPlan } = useCartLines( {
 		items,
 		products,
@@ -69,32 +73,39 @@ export default function CartMenu( {
 	const legacyCheckoutUrl = a4aLink(
 		`/marketplace/checkout?product_slug=${ lines.map( ( { product } ) => product.slug ).join( ',' ) }`
 	);
-	const checkoutUrl =
-		isLegacyBilling && ! isReferralMode
-			? legacyCheckoutUrl
-			: getCheckoutUrl(
-					lines.map( ( { product, item } ) => ( { product, quantity: item.quantity } ) ),
-					isReferralMode,
-					{ term, hasWpcomHostingPlan }
-				);
 
-	const checkoutButton = (
+	const checkoutButtonProps = {
+		variant: 'primary' as const,
+		__next40pxDefaultSize: true,
+		disabled: ! isAgencyApproved || ! isTotalReady,
+		style: { justifyContent: 'center' },
+		onClick: () => {
+			recordTracksEvent( 'calypso_a4a_marketplace_checkout_click', {
+				purchase_mode: isReferralMode ? 'referral' : 'regular',
+				term_pricing: term,
+			} );
+			onCheckout?.();
+		},
+		children: __( 'Checkout' ),
+	};
+	const checkoutButton = isReferralMode ? (
+		<RouterLinkButton
+			{ ...checkoutButtonProps }
+			to={ MARKETPLACE_REFERRAL_CHECKOUT_ROUTE }
+			search={ { from: location.pathname + location.searchStr } }
+		/>
+	) : (
 		<Button
-			variant="primary"
-			__next40pxDefaultSize
-			href={ checkoutUrl }
-			disabled={ ! isAgencyApproved || ! isTotalReady }
-			style={ { justifyContent: 'center' } }
-			onClick={ () => {
-				recordTracksEvent( 'calypso_a4a_marketplace_checkout_click', {
-					purchase_mode: isReferralMode ? 'referral' : 'regular',
-					term_pricing: term,
-				} );
-				onCheckout?.();
-			} }
-		>
-			{ __( 'Checkout' ) }
-		</Button>
+			{ ...checkoutButtonProps }
+			href={
+				isLegacyBilling
+					? legacyCheckoutUrl
+					: getCheckoutUrl(
+							lines.map( ( { product, item } ) => ( { product, quantity: item.quantity } ) ),
+							{ term, hasWpcomHostingPlan }
+						)
+			}
+		/>
 	);
 
 	return (
