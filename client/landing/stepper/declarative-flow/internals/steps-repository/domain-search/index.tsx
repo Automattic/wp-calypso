@@ -228,6 +228,7 @@ const DomainSearchStep: StepType< {
 			hideFreeSubdomainSuggestion: isWowFunnel,
 			skipSuggestionPlacement:
 				resultsVariation === 'free_banner_top' ? ( 'top' as const ) : undefined,
+			showSelectCta: resultsVariation === 'tone_down_purchase',
 			includeDotBlogSubdomain:
 				! isHundredYearPlanFlow( flow ) &&
 				! isHundredYearDomainFlow( flow ) &&

@@ -1,6 +1,6 @@
 import { useIsMutating, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
-import { envelope } from '@wordpress/icons';
+import { envelope, plus } from '@wordpress/icons';
 import { useState } from 'react';
 import { useIsCurrentMutation } from '../../hooks/use-is-current-mutation';
 import { useSuggestion } from '../../hooks/use-suggestion';
@@ -17,7 +17,7 @@ export interface DomainSuggestionCTAProps {
 }
 
 export const DomainSuggestionCTA = ( { domainName }: DomainSuggestionCTAProps ) => {
-	const { cart, events, queries } = useDomainSearch();
+	const { cart, config, events, queries } = useDomainSearch();
 	const suggestion = useSuggestion( domainName );
 
 	const queryClient = useQueryClient();
@@ -111,6 +111,11 @@ export const DomainSuggestionCTA = ( { domainName }: DomainSuggestionCTAProps ) 
 					events.onSuggestionInteract( suggestion );
 					addToCart( { acceptedTrademarkClaim: false } );
 				} }
+				{ ...( config.showSelectCta && {
+					icon: plus,
+					label: __( 'Select' ),
+					children: __( 'Select' ),
+				} ) }
 			/>
 			{ availability?.trademark_claims_notice_info && trademarkClaimModalOpen && (
 				<DomainSearchTrademarkClaimsModal

@@ -161,6 +161,11 @@ export interface DomainSearchConfig {
 	 */
 	skipSuggestionPlacement?: 'results' | 'top';
 	/**
+	 * Label the add-to-cart button "Select" with a plus icon instead of "Add to cart" with a
+	 * cart icon, so picking a domain reads less like a purchase.
+	 */
+	showSelectCta?: boolean;
+	/**
 	 * Hide the free *.wordpress.com subdomain skip card and offer only a plain "skip / set up a
 	 * domain later" control. Used by flows whose site never keeps a free subdomain (e.g. the
 	 * atomic funnel, which always transfers to Atomic).
