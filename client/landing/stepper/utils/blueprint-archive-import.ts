@@ -119,6 +119,11 @@ export function getBlueprintArchiveSiteSpecUrl( {
 export type BlueprintArchiveLookup = {
 	exists: boolean;
 	/**
+	 * The blueprint's display name (e.g. "Punk"), as plain text, for naming it to the customer.
+	 * Empty when the server does not send one.
+	 */
+	title: string;
+	/**
 	 * The plans the blueprint suggests, as WordPress.com plan product slugs
 	 * (e.g. `value_bundle`, `business-bundle`). Empty when it suggests none, or
 	 * when the blueprint has no usable archive.
@@ -131,6 +136,8 @@ type BlueprintArchiveLookupResponse = {
 	exists?: boolean;
 	// Absent on a wpcom that predates the field.
 	suggested_plans?: unknown;
+	// Absent on a wpcom that predates the field.
+	title?: unknown;
 };
 
 /**
@@ -142,7 +149,7 @@ export async function lookupBlueprintArchive(
 	blueprintSlug: string
 ): Promise< BlueprintArchiveLookup > {
 	if ( ! blueprintSlug ) {
-		return { exists: false, suggestedPlans: [] };
+		return { exists: false, title: '', suggestedPlans: [] };
 	}
 
 	try {
@@ -157,9 +164,11 @@ export async function lookupBlueprintArchive(
 				)
 			: [];
 
-		return { exists: true, suggestedPlans };
+		const title = typeof response?.title === 'string' ? response.title.trim() : '';
+
+		return { exists: true, title, suggestedPlans };
 	} catch {
-		return { exists: false, suggestedPlans: [] };
+		return { exists: false, title: '', suggestedPlans: [] };
 	}
 }
 
