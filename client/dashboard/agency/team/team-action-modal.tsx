@@ -4,8 +4,10 @@ import {
 	agencyTeamTransferOwnershipMutation,
 } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
+import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
 import { sprintf, __ } from '@wordpress/i18n';
+import { store as noticesStore } from '@wordpress/notices';
 import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import ConfirmModal from '../../components/confirm-modal';
 import type { TeamActionRequest } from './dataviews/actions';
@@ -25,27 +27,28 @@ export default function TeamActionModal( {
 	request,
 	onClose,
 }: TeamActionModalProps ) {
+	const { createErrorNotice } = useDispatch( noticesStore );
 	const cancelInvite = useMutation(
 		withSnackbar( agencyTeamCancelInviteMutation( agencyId ), {
 			success: __( 'The invitation has been successfully cancelled.' ),
-			error: { source: 'server' },
 		} )
 	);
 	const removeMember = useMutation(
 		withSnackbar( agencyTeamRemoveMemberMutation( agencyId ), {
 			success: __( 'The member has been successfully removed.' ),
-			error: { source: 'server' },
 		} )
 	);
 	const transferOwnership = useMutation(
 		withSnackbar( agencyTeamTransferOwnershipMutation( agencyId ), {
 			success: __( 'Ownership has been successfully transferred.' ),
-			error: { source: 'server' },
 		} )
 	);
 
 	const member = request.member;
 	const memberName = member.displayName ?? member.email;
+
+	const notifyError = ( fallback: string ) => ( error: Error ) =>
+		createErrorNotice( error.message || fallback, { type: 'snackbar' } );
 
 	if ( request.kind === 'cancel-invite' ) {
 		return (
@@ -59,7 +62,12 @@ export default function TeamActionModal( {
 				} }
 				isOpen
 				onCancel={ onClose }
-				onConfirm={ () => cancelInvite.mutate( member.id, { onSuccess: onClose } ) }
+				onConfirm={ () =>
+					cancelInvite.mutate( member.id, {
+						onSuccess: onClose,
+						onError: notifyError( __( 'Failed to cancel the invitation.' ) ),
+					} )
+				}
 			>
 				{ createInterpolateElement(
 					__( 'Are you sure you want to cancel the invitation for <memberName />?' ),
@@ -80,7 +88,12 @@ export default function TeamActionModal( {
 				} }
 				isOpen
 				onCancel={ onClose }
-				onConfirm={ () => transferOwnership.mutate( member.id, { onSuccess: onClose } ) }
+				onConfirm={ () =>
+					transferOwnership.mutate( member.id, {
+						onSuccess: onClose,
+						onError: notifyError( __( 'Failed to transfer ownership.' ) ),
+					} )
+				}
 			>
 				{ createInterpolateElement(
 					__(
@@ -125,6 +138,7 @@ export default function TeamActionModal( {
 						}
 						onClose();
 					},
+					onError: notifyError( __( 'Failed to remove the member.' ) ),
 				} )
 			}
 		>
