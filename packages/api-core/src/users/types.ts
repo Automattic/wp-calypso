@@ -31,3 +31,12 @@ export type ReaderUser = Pick<
 	| 'avatar_URL'
 	| 'profile_URL'
 >;
+
+export interface NewUserResponse {
+	success: boolean;
+	bearer_token?: string;
+	username?: string;
+	blog_details?: {
+		blogid?: string;
+	};
+}

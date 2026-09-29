@@ -1,6 +1,6 @@
 import { addQueryArgs } from '@wordpress/url';
 import { wpcom } from '../wpcom-fetcher';
-import type { UserResponse } from './types';
+import type { NewUserResponse, UserResponse } from './types';
 
 type FetchUserParams = {
 	find_by_id?: boolean;
@@ -15,4 +15,12 @@ export const fetchUserProfile = (
 		apiVersion: '1.1',
 		method: 'GET',
 	} );
+};
+
+/**
+ * Creates a WordPress.com account. The body varies by signup flow (passwordless,
+ * social, etc.) and must include the signup client credentials.
+ */
+export const createUser = ( body: Record< string, unknown > ): Promise< NewUserResponse > => {
+	return wpcom.req.post( { path: '/users/new', body } );
 };
