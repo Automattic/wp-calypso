@@ -24,6 +24,7 @@ jest.mock( 'calypso/landing/stepper/utils/wow-funnel', () => ( {
 	getWowFunnelDest: () => 'editor',
 	getWowFunnelConfig: () => ( { interstitials: [] } ),
 	isKnownWowFunnel: ( slug: string | null ) => Boolean( slug ),
+	isSameWowFunnelRun: ( run: { funnelSlug: string }, slug: string ) => run.funnelSlug === slug,
 	getRememberedWowFunnelSite: () => null,
 	clearWowFunnelSite: jest.fn(),
 	wowFunnelSiteIsPaid: () => false,
@@ -165,6 +166,22 @@ describe( 'wow funnel resume', () => {
 
 		await expect( onboarding.initialize( store ) ).resolves.toBe( false );
 		expect( mockAssign.mock.calls[ 0 ][ 0 ] ).toContain( '/setup/onboarding/plans' );
+		expect( mockGoToCheckout ).not.toHaveBeenCalled();
+	} );
+
+	/**
+	 * Resuming a site another run built would carry this run's checkout over it, and this run's
+	 * own follow-up would never run. Tearing it down on entry would let a reloaded CTA churn sites,
+	 * so the customer is asked instead.
+	 */
+	it( 'asks the customer when the pending site was built by a different run', async () => {
+		mockFetchPending.mockResolvedValue( { ...PENDING, funnelSlug: 'blueprint' } );
+
+		await expect( onboarding.initialize( store ) ).resolves.toBe( false );
+		expect( mockAssign.mock.calls[ 0 ][ 0 ] ).toContain( '/setup/onboarding/wow-funnel-pending' );
+		expect( mockAssign.mock.calls[ 0 ][ 0 ] ).toContain( 'wow_funnel=default' );
+		expect( mockAdopt ).not.toHaveBeenCalled();
+		expect( mockHasCartItems ).not.toHaveBeenCalled();
 		expect( mockGoToCheckout ).not.toHaveBeenCalled();
 	} );
 

@@ -143,6 +143,45 @@ export function getWowFunnelKey(
 }
 
 /**
+ * Whether a run is the one being entered: same funnel, same args.
+ *
+ * The server allows one unpaid funnel site at a time, so a customer entering a funnel may already
+ * have a site from another. Only the same run may pick that site up — a different one would carry
+ * on over a site built for something else, and its own follow-up (a blueprint import, say) would
+ * never run.
+ * @param run        The run that built a site, as the server reports it.
+ * @param funnelSlug The funnel being entered.
+ * @param funnelArgs Args from the entry URL.
+ * @returns True when they are the same run.
+ */
+export function isSameWowFunnelRun(
+	run: { funnelSlug: string; funnelArgs: Record< string, string > },
+	funnelSlug: string,
+	funnelArgs: Record< string, string > = {}
+): boolean {
+	return getWowFunnelKey( run.funnelSlug, run.funnelArgs ) === getWowFunnelKey( funnelSlug, funnelArgs );
+}
+
+/**
+ * The entry URL query that starts a run — the inverse of getWowFunnelSlug() and getWowFunnelArgs().
+ *
+ * Used to send a customer back into the run that built their pending site, from what the server
+ * recorded about it.
+ * @param funnelSlug The funnel slug.
+ * @param funnelArgs The run's args, as recorded on its site.
+ * @returns Query args for the flow's entry URL.
+ */
+export function getWowFunnelEntryQueryArgs(
+	funnelSlug: string,
+	funnelArgs: Record< string, string > = {}
+): Record< string, string > {
+	return {
+		wow_funnel: funnelSlug,
+		...( funnelArgs.blueprint_slug ? { blueprint: funnelArgs.blueprint_slug } : {} ),
+	};
+}
+
+/**
  * Input the funnel's server-side follow-up needs, read off the entry URL.
  *
  * Sent as `wow_funnel_args` to /sites/new, where the registered funnel's follow-up consumes it —

@@ -70,6 +70,7 @@ import {
 	getWowFunnelFromWfm,
 	getWowFunnelSlug,
 	isKnownWowFunnel,
+	isSameWowFunnelRun,
 	logWowFunnelEvent,
 	wowFunnelSiteIsPaid,
 } from '../../../utils/wow-funnel';
@@ -193,6 +194,27 @@ async function resumeWowFunnelRun( reduxStore: Store ): Promise< boolean > {
 		return false;
 	}
 
+	const locale = getCurrentLocaleSlug( reduxStore.getState() ) || '';
+
+	// A different run. Carrying on over the pending site would build this run's checkout on a site
+	// built for another, and this run's follow-up (a blueprint import, say) would never run. Tearing
+	// that site down on entry would let anyone reloading the URL churn Atomic sites, so ask the
+	// customer instead: continue that run, or discard its site and start this one.
+	if ( ! isSameWowFunnelRun( pending, funnelSlug, funnelArgs ) ) {
+		logWowFunnelEvent( 'pending_run_mismatch', {
+			funnel: funnelSlug,
+			pending_funnel: pending.funnelSlug,
+			blog_id: pending.blogId,
+		} );
+		window.location.assign(
+			addQueryArgs(
+				withLocale( `/setup/${ ONBOARDING_FLOW }/${ STEPS.WOW_FUNNEL_PENDING.slug }`, locale ),
+				getQueryArgs( window.location.href )
+			)
+		);
+		return true;
+	}
+
 	// Adopt before redirecting, so create-site consumes this site rather than asking for one the
 	// server will refuse. When the adoption cannot be stored there is nowhere to record that the
 	// resume happened, and every entry would resume all over again — so let the flow start and let
@@ -204,18 +226,6 @@ async function resumeWowFunnelRun( reduxStore: Store ): Promise< boolean > {
 		} );
 		return false;
 	}
-
-	if ( pending.funnelSlug !== funnelSlug ) {
-		// A different CTA. The throttle holds regardless of which one, so the unpaid site still
-		// wins — worth seeing, since what gets resumed is not what this CTA asked to build.
-		logWowFunnelEvent( 'resumed_across_funnels', {
-			funnel: funnelSlug,
-			pending_funnel: pending.funnelSlug,
-			blog_id: pending.blogId,
-		} );
-	}
-
-	const locale = getCurrentLocaleSlug( reduxStore.getState() ) || '';
 	const [ , plansUrl ] = getOnboardingPostCheckoutDestination( {
 		flowName: ONBOARDING_FLOW,
 		locale,
@@ -279,6 +289,7 @@ async function initialize( reduxStore: Store ) {
 		STEPS.PROCESSING,
 		STEPS.POST_CHECKOUT_ONBOARDING,
 		STEPS.WOW_FUNNEL_HANDOFF,
+		STEPS.WOW_FUNNEL_PENDING,
 		STEPS.SETUP_YOUR_SITE_AI,
 	];
 

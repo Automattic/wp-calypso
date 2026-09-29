@@ -8,6 +8,7 @@ import {
 	getSiteEditorUrl,
 	getStandaloneBlueprintArchiveSlug,
 	waitForAtomicTransferComplete,
+	waitForBlueprintImportComplete,
 } from '../blueprint-archive-import';
 
 jest.mock( 'calypso/lib/wp', () => ( {
@@ -309,5 +310,56 @@ describe( 'waitForAtomicTransferComplete first-poll timing', () => {
 		await jest.advanceTimersByTimeAsync( 5000 );
 		await pending;
 		expect( mockGet ).toHaveBeenCalledTimes( 2 );
+	} );
+} );
+
+describe( 'waitForBlueprintImportComplete with no import record', () => {
+	beforeEach( () => {
+		jest.clearAllMocks();
+	} );
+
+	afterEach( () => {
+		jest.useRealTimers();
+	} );
+
+	/**
+	 * Every caller starts the import before polling, so a site with no record has nothing coming.
+	 * It used to hold the customer on the loading screen for the full fifteen minutes.
+	 */
+	it( 'gives up after a minute of empty answers', async () => {
+		jest.useFakeTimers();
+		mockGet.mockResolvedValue( [] );
+
+		const pending = waitForBlueprintImportComplete( 'site.example.com', {
+			pollIntervalMs: 5000,
+			initialDelayMs: 0,
+		} );
+		const outcome = expect( pending ).rejects.toThrow( 'no import record' );
+
+		await jest.advanceTimersByTimeAsync( 65000 );
+		await outcome;
+		expect( mockGet.mock.calls.length ).toBeLessThan( 20 );
+	} );
+
+	it( 'keeps waiting on an import that is running', async () => {
+		jest.useFakeTimers();
+		mockGet.mockResolvedValue( { importId: 'abc', importStatus: 'importing' } );
+
+		const pending = waitForBlueprintImportComplete( 'site.example.com', {
+			pollIntervalMs: 5000,
+			initialDelayMs: 0,
+		} );
+		let settled = false;
+		pending.then(
+			() => ( settled = true ),
+			() => ( settled = true )
+		);
+
+		await jest.advanceTimersByTimeAsync( 120000 );
+		expect( settled ).toBe( false );
+
+		mockGet.mockResolvedValue( { importId: 'abc', importStatus: 'importSuccess' } );
+		await jest.advanceTimersByTimeAsync( 5000 );
+		await expect( pending ).resolves.toBeUndefined();
 	} );
 } );
