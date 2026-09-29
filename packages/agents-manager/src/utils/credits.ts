@@ -28,7 +28,7 @@ export interface CreditsStatus {
 	remaining?: number;
 }
 
-/** Free-plan balance at or below this reads as low. */
+/** Low-balance threshold for the ring tone and credits notice. */
 export const CREDITS_LOW_THRESHOLD = 20;
 
 export function clampPercent( percent: number ): number {
@@ -68,18 +68,18 @@ export function isCreditsLow(
 }
 
 /**
- * Paid plans read as muted so the ring never competes with Send; free plans
- * switch to the error tone once low or exhausted.
+ * Low or exhausted balances use the error tone on every plan. Above the
+ * threshold, paid plans stay muted and free plans use the primary tone.
  */
 export function getCreditsTone(
 	status: CreditsStatus,
 	threshold: number = CREDITS_LOW_THRESHOLD
 ): ProgressRingTone {
-	if ( status.plan === 'paid' ) {
-		return 'muted';
+	if ( status.percent <= threshold || isCreditsExhausted( status ) ) {
+		return 'error';
 	}
 
-	return isCreditsLow( status, threshold ) || isCreditsExhausted( status ) ? 'error' : 'primary';
+	return status.plan === 'paid' ? 'muted' : 'primary';
 }
 
 /** Tooltip and screen-reader sentence for the ring. */

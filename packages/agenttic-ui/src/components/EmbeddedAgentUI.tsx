@@ -231,10 +231,16 @@ export function EmbeddedAgentUINotice( {
 				.join( ' ' ) }
 		>
 			<span>{ notice.message }</span>
-			{ notice.action && (
-				<button type="button" onClick={ notice.action.onClick }>
+			{ notice.action?.href !== undefined ? (
+				<a href={ notice.action.href } target={ notice.action.target } rel={ notice.action.rel }>
 					{ notice.action.label }
-				</button>
+				</a>
+			) : (
+				notice.action && (
+					<button type="button" onClick={ notice.action.onClick }>
+						{ notice.action.label }
+					</button>
+				)
 			) }
 		</div>
 	);

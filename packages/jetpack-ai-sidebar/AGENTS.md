@@ -36,11 +36,11 @@ All exports live in `src/index.ts`. This is intentionally a single-file provider
 
 ## Tools
 
-| Tool ID                      | Handler                     | UI Component           | Description                                              |
-| ---------------------------- | --------------------------- | ---------------------- | -------------------------------------------------------- |
-| `jetpack_ai__show_component` | `handleShowComponent`       | via `getChatComponent` | Renders Jetpack AI chat components                       |
-| `big_sky__show_component`    | `handleLegacyShowComponent` | Jetpack or Big Sky     | Temporary migration support; delegates non-Jetpack types |
-| `wpcom/update-block-content` | `handleUpdateBlockContent`  | _(chat text)_          | Updates block content with shimmer effect                |
+| Tool ID                      | Handler                     | UI Component           | Description                               |
+| ---------------------------- | --------------------------- | ---------------------- | ----------------------------------------- |
+| `jetpack_ai__show_component` | `handleShowComponent`       | via `getChatComponent` | Renders Jetpack AI chat components        |
+| `big_sky__show_component`    | `handleLegacyShowComponent` | Jetpack or Big Sky     | Legacy name; delegates non-Jetpack types  |
+| `wpcom/update-block-content` | `handleUpdateBlockContent`  | _(chat text)_          | Updates block content with shimmer effect |
 
 ### Show-component pattern
 
@@ -51,8 +51,7 @@ Used for Jetpack AI interactive components. The wpcom ability returns an `Input_
   type: '<component-type>',
   props: { ... },
   calypsoCheckpointId: '<id>',
-  isCurrent: true,
-  hideZoomAction: true
+  isCurrent: true
 }
 ```
 
@@ -63,9 +62,7 @@ On the client, `handleShowComponent`:
 3. Returns `{ agentMessage: JSON.stringify({ tool_id, data }), result, returnToAgent: true }`. agenttic-client re-emits the message as an `{ role: 'agent', parts: [text] }` message and returns the structured result to the backend.
 4. AM's `convert-tool-messages-to-components` matches the tool_id, calls `getChatComponent(data.type)`, and replaces the text content with a component render. Because the original message had text content, AgentChat renders its action bar (thumbs, Undo) on the resulting bubble.
 
-Jetpack show-component messages still send `hideZoomAction: true`, but AM's zoom action was removed — the flag is write-only legacy, kept only until the provider payload cleanup lands.
-
-The provider temporarily accepts legacy `big_sky__show_component` executions for Jetpack-owned component types during the migration, but new Jetpack AI component responses should use `jetpack_ai__show_component`. Unknown legacy component types should remain owned by the provider that registered them.
+The provider also accepts legacy `big_sky__show_component` executions for Jetpack-owned component types, but new Jetpack AI component responses should use `jetpack_ai__show_component`. Unknown legacy component types should remain owned by the provider that registered them.
 
 ### Adding a new component type
 

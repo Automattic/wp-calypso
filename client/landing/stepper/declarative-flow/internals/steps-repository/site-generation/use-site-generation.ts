@@ -25,6 +25,8 @@ export type SiteGenerationState = {
 };
 
 const GENERATION_TIMEOUT_MS = 30 * 60 * 1000;
+// The wait screen promises DSL builds in about 4 minutes; past 5, stop waiting.
+const DSL_GENERATION_TIMEOUT_MS = 5 * 60 * 1000;
 const STEP_TIMER_STORAGE_PREFIX = 'site-generation-step-timer-v1';
 
 type GenerationFailure = { reason: 'timed-out' } | { reason: 'build-failed'; ui: BuildWowUi };
@@ -111,6 +113,7 @@ export function useSiteGeneration( {
 	const [ isRetryingBuild, setIsRetryingBuild ] = useState( false );
 	const isRetryingRef = useRef( false );
 	const hasRequiredParameters = Boolean( siteIdentifier && editorUrl );
+	const generationTimeoutMs = graph === 'dsl' ? DSL_GENERATION_TIMEOUT_MS : GENERATION_TIMEOUT_MS;
 
 	useEffect( () => {
 		if ( ! siteIdentifier || ! editorUrl || failure ) {
@@ -119,7 +122,7 @@ export function useSiteGeneration( {
 
 		const generationTimeout = window.setTimeout(
 			() => setFailure( ( previous ) => previous ?? { reason: 'timed-out' } ),
-			GENERATION_TIMEOUT_MS
+			generationTimeoutMs
 		);
 		const stopStatusPolling = pollForBuildWowStatus( {
 			siteIdentifier,
@@ -159,7 +162,7 @@ export function useSiteGeneration( {
 			window.clearTimeout( generationTimeout );
 			stopStatusPolling();
 		};
-	}, [ buildAttempt, editorUrl, failure, fallbackStartedAt, siteIdentifier ] );
+	}, [ buildAttempt, editorUrl, failure, fallbackStartedAt, generationTimeoutMs, siteIdentifier ] );
 
 	const retryBuild = useCallback( async () => {
 		if ( ! siteIdentifier || ! specId || isRetryingRef.current ) {

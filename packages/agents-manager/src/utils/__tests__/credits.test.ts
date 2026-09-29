@@ -71,15 +71,26 @@ describe( 'credit states', () => {
 } );
 
 describe( 'getCreditsTone', () => {
-	it( 'is muted for paid plans regardless of balance', () => {
-		expect( getCreditsTone( paid( 100 ) ) ).toBe( 'muted' );
-		expect( getCreditsTone( paid( 0 ) ) ).toBe( 'muted' );
-	} );
+	it.each( [
+		[ 100, 'muted', 'primary' ],
+		[ 20.01, 'muted', 'primary' ],
+		[ 20, 'error', 'error' ],
+		[ 19.99, 'error', 'error' ],
+		[ 0.4, 'error', 'error' ],
+		[ 0, 'error', 'error' ],
+	] as const )(
+		'uses the unrounded balance at %s%% for both plans',
+		( percent, paidTone, freeTone ) => {
+			expect( getCreditsTone( paid( percent ) ) ).toBe( paidTone );
+			expect( getCreditsTone( free( percent ) ) ).toBe( freeTone );
+		}
+	);
 
-	it( 'turns to the error tone for low and exhausted free plans', () => {
-		expect( getCreditsTone( free( 55 ) ) ).toBe( 'primary' );
-		expect( getCreditsTone( free( 15 ) ) ).toBe( 'error' );
-		expect( getCreditsTone( free( 0 ) ) ).toBe( 'error' );
+	it( 'respects a custom threshold for both plans', () => {
+		expect( getCreditsTone( paid( 10 ), 10 ) ).toBe( 'error' );
+		expect( getCreditsTone( paid( 10.01 ), 10 ) ).toBe( 'muted' );
+		expect( getCreditsTone( free( 10 ), 10 ) ).toBe( 'error' );
+		expect( getCreditsTone( free( 10.01 ), 10 ) ).toBe( 'primary' );
 	} );
 } );
 

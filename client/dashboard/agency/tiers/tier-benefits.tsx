@@ -10,10 +10,11 @@ import { __, sprintf } from '@wordpress/i18n';
 import { Badge } from '@wordpress/ui';
 import { Fragment } from 'react';
 import { Card, CardBody, CardDivider, CardHeader } from '../../components/card';
+import RouterLinkButton from '../../components/router-link-button';
 import { SectionHeader } from '../../components/section-header';
 import { ALL_TIERS } from './constants';
 import getCurrentAgencyTier from './get-current-agency-tier';
-import type { AgencyTierType, Benefit, RecordTracksEvent } from './types';
+import type { AgencyTierType, Benefit, RecordTracksEvent, TierBenefitLinks } from './types';
 import type { Button as ButtonComponent } from '@wordpress/components';
 import type { ComponentProps, ReactNode } from 'react';
 
@@ -25,6 +26,8 @@ function BenefitRow( {
 	onScheduleCall,
 	isSchedulingCall,
 	currentAgencyTierId,
+	links,
+	shouldUseRouterLink,
 	renderDownloadBadges,
 }: {
 	benefit: Benefit;
@@ -34,6 +37,8 @@ function BenefitRow( {
 	onScheduleCall: () => void;
 	isSchedulingCall?: boolean;
 	currentAgencyTierId?: AgencyTierType;
+	links: TierBenefitLinks;
+	shouldUseRouterLink: boolean;
 	renderDownloadBadges?: ( buttonProps: ComponentProps< typeof ButtonComponent > ) => ReactNode;
 } ) {
 	const renderActions = () => {
@@ -70,24 +75,29 @@ function BenefitRow( {
 					</Button>
 				);
 			}
-			if ( action.href ) {
+			const href = links[ action.id ];
+			if ( ! href ) {
+				return null;
+			}
+			const onClick = () =>
+				recordTracksEvent( 'calypso_a4a_agency_tier_benefits_action_click', {
+					agency_tier: currentAgencyTierId,
+					action_id: action.id,
+				} );
+			// Only in-app paths go through the router; absolute URLs and hash
+			// links stay plain anchors.
+			if ( shouldUseRouterLink && href.startsWith( '/' ) ) {
 				return (
-					<Button
-						{ ...buttonProps }
-						key={ action.id }
-						href={ action.href }
-						onClick={ () =>
-							recordTracksEvent( 'calypso_a4a_agency_tier_benefits_action_click', {
-								agency_tier: currentAgencyTierId,
-								action_id: action.id,
-							} )
-						}
-					>
+					<RouterLinkButton { ...buttonProps } key={ action.id } to={ href } onClick={ onClick }>
 						{ action.label }
-					</Button>
+					</RouterLinkButton>
 				);
 			}
-			return null;
+			return (
+				<Button { ...buttonProps } key={ action.id } href={ href } onClick={ onClick }>
+					{ action.label }
+				</Button>
+			);
 		} );
 
 		if ( isSmallViewport ) {
@@ -146,12 +156,20 @@ export default function TierBenefits( {
 	recordTracksEvent = () => {},
 	onScheduleCall,
 	isSchedulingCall,
+	links = {},
+	shouldUseRouterLink = true,
 	renderDownloadBadges,
 }: {
 	currentAgencyTierId?: AgencyTierType;
 	recordTracksEvent?: RecordTracksEvent;
 	onScheduleCall: () => void;
 	isSchedulingCall?: boolean;
+	links?: TierBenefitLinks;
+	/**
+	 * Set to false in apps without the dashboard's TanStack Router, so the
+	 * buttons render plain anchors for the host app's own router to pick up.
+	 */
+	shouldUseRouterLink?: boolean;
 	renderDownloadBadges?: ( buttonProps: ComponentProps< typeof ButtonComponent > ) => ReactNode;
 } ) {
 	const currentTier = getCurrentAgencyTier( currentAgencyTierId );
@@ -220,6 +238,8 @@ export default function TierBenefits( {
 										onScheduleCall={ onScheduleCall }
 										isSchedulingCall={ isSchedulingCall }
 										currentAgencyTierId={ currentAgencyTierId }
+										links={ links }
+										shouldUseRouterLink={ shouldUseRouterLink }
 										renderDownloadBadges={ renderDownloadBadges }
 									/>
 								</CardBody>

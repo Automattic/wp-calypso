@@ -1,5 +1,5 @@
 import moment from 'moment';
-import { sameDay, sameSite, injectRecommendations } from '../utils';
+import { sameDay, sameSite, injectRecommendations, injectCustomBlock } from '../utils';
 
 describe( 'reader stream', () => {
 	const today = moment().toDate();
@@ -116,5 +116,39 @@ describe( 'reader stream', () => {
 				post(),
 			] );
 		} );
+	} );
+} );
+
+describe( 'injectCustomBlock', () => {
+	const posts = [ { postId: 1 }, { postId: 2 }, { postId: 3 } ];
+	const isBlock = ( item ) => item.isCustomBlock === true;
+
+	test( 'returns the input untouched when there are no posts', () => {
+		expect( injectCustomBlock( [], 0 ) ).toEqual( [] );
+		expect( injectCustomBlock( undefined, 0 ) ).toBeUndefined();
+	} );
+
+	test( 'inserts one block at the requested position', () => {
+		const result = injectCustomBlock( posts, 2 );
+		expect( result ).toHaveLength( 4 );
+		expect( result.filter( isBlock ) ).toHaveLength( 1 );
+		expect( result[ 2 ] ).toEqual( { isCustomBlock: true, index: 0 } );
+		expect( result.filter( ( item ) => ! isBlock( item ) ) ).toEqual( posts );
+	} );
+
+	test( 'position 0 puts the block first', () => {
+		expect( isBlock( injectCustomBlock( posts, 0 )[ 0 ] ) ).toBe( true );
+	} );
+
+	test( 'clamps a position past the end so the block is still shown', () => {
+		const result = injectCustomBlock( posts, 10 );
+		expect( result ).toHaveLength( 4 );
+		expect( isBlock( result[ 3 ] ) ).toBe( true );
+	} );
+
+	test( 'does not mutate the input', () => {
+		const copy = [ ...posts ];
+		injectCustomBlock( posts, 1 );
+		expect( posts ).toEqual( copy );
 	} );
 } );

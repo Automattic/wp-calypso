@@ -1316,6 +1316,7 @@ __metadata:
     "@wordpress/icons": "npm:^13.3.0"
     "@wordpress/primitives": "npm:^4.48.0"
     "@wordpress/react-i18n": "npm:^4.48.0"
+    "@wordpress/ui": "npm:^0.20.0"
     clsx: "npm:^2.1.1"
     copyfiles: "npm:^2.4.1"
     moment: "npm:^2.30.1"
@@ -2473,6 +2474,24 @@ __metadata:
   dependencies:
     "@automattic/calypso-analytics": "workspace:^"
     wpcom-proxy-request: "workspace:^"
+  languageName: unknown
+  linkType: soft
+
+"@automattic/survicate-app@workspace:apps/survicate":
+  version: 0.0.0-use.local
+  resolution: "@automattic/survicate-app@workspace:apps/survicate"
+  dependencies:
+    "@automattic/calypso-apps-builder": "workspace:^"
+    "@automattic/calypso-build": "workspace:^"
+    "@automattic/survicate": "workspace:^"
+    "@automattic/viewport": "workspace:^"
+    "@wordpress/data": "npm:^10.48.0"
+    "@wordpress/dependency-extraction-webpack-plugin": "npm:^6.24.0"
+    "@wordpress/readable-js-assets-webpack-plugin": "npm:^3.24.0"
+    webpack: "npm:^5.99.8"
+  peerDependencies:
+    postcss: "*"
+    react: ^18.2.0
   languageName: unknown
   linkType: soft
 

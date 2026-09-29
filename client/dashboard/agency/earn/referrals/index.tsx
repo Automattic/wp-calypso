@@ -49,7 +49,7 @@ export default function EarnReferrals() {
 					description={ __( 'Refer products and services and earn commissions.' ) }
 					actions={
 						hasReferrals ? (
-							<RouterLinkButton variant="primary" to="/marketplace/exclusive-offers">
+							<RouterLinkButton variant="primary" to="/exclusive-offers">
 								{ __( 'New referral' ) }
 							</RouterLinkButton>
 						) : undefined
@@ -79,7 +79,7 @@ export default function EarnReferrals() {
 							isLoading={ isLoading }
 							renderClient={ ( item ) => (
 								<Link
-									to="/earn/referrals/$referralId"
+									to="/referrals/$referralId"
 									params={ { referralId: String( item.id ) } }
 									style={ { color: 'inherit', textDecoration: 'none' } }
 								>

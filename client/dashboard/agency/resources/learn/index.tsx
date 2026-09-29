@@ -11,7 +11,7 @@ export default function Learn() {
 	const { data } = useSuspenseQuery( agencyResourcesQuery() );
 
 	return (
-		<PageLayout header={ <PageHeader title={ __( 'Learn' ) } /> }>
+		<PageLayout header={ <PageHeader title={ __( 'Library' ) } /> }>
 			{ /*
 			 * TODO: `onResourceClick` is not passed here, so the dashboard does not
 			 * record server-side resource engagement the way a8c-for-agencies does

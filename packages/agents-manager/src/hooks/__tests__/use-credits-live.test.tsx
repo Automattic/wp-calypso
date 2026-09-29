@@ -4,6 +4,7 @@
 import { act, renderHook } from '@testing-library/react';
 import { ORCHESTRATOR_AGENT_URL } from '../../constants';
 import { creditSnapshot } from '../../utils/__tests__/fixtures/credit-snapshot';
+import { getCreditsTone } from '../../utils/credits';
 import { useCredits } from '../use-credits';
 import type { AgentConfig } from '../../utils/create-agent-config';
 import type { CreditsStatus } from '../../utils/credits';
@@ -129,6 +130,12 @@ it.each( [ 'personal', 'premium', 'business' ] as const )(
 		expect( props( result.current ).upgradeUrl ).toBe(
 			'https://wordpress.com/plans/example.wordpress.com'
 		);
+		expect( result.current.notice?.action ).toEqual( {
+			label: 'Upgrade',
+			href: props( result.current ).upgradeUrl,
+			target: '_blank',
+			rel: 'noopener noreferrer',
+		} );
 		act( () => expect( result.current.beforeSubmit() ).toBe( false ) );
 	}
 );
@@ -223,6 +230,117 @@ it( 'refreshes an upgraded balance on return focus and removes the action at Com
 	await receive( creditSnapshot( { plan_tier: 'commerce' } ) );
 	expect( props( result.current ).upgradeUrl ).toBeUndefined();
 	expect( props( result.current ).status.remaining ).toBe( 2450 );
+} );
+
+it.each( [
+	[ 2001, undefined ],
+	[ 2000, '20% of site credits left.' ],
+	[ 1999, '19% of site credits left.' ],
+	[ 1, '<1% of site credits left.' ],
+	[ 0, '0% of site credits left.' ],
+] as const )(
+	'shows an initial live warning at %i of 10000 credits',
+	async ( remaining, message ) => {
+		fetchMock.mockResolvedValueOnce(
+			response(
+				creditSnapshot( {
+					credits_limit: 10000,
+					credits_remaining: remaining,
+					credits_used: 10000 - remaining,
+					exhausted: remaining === 0,
+				} )
+			)
+		);
+		const { result } = renderCredits();
+		await flush();
+		expect( result.current.notice?.message ).toBe( message );
+		expect( result.current.notice?.dismissible ).toBe( message ? true : undefined );
+		expect( props( result.current ).isOpen ).toBe( false );
+	}
+);
+
+it( 'updates the paid ring and warning together through live depletion and replenishment', async () => {
+	const balance = ( remaining: number ) =>
+		creditSnapshot( {
+			credits_remaining: remaining,
+			credits_used: 2500 - remaining,
+			exhausted: remaining === 0,
+		} );
+	fetchMock.mockResolvedValueOnce( response( balance( 525 ) ) );
+	const { result } = renderCredits();
+	await flush();
+	expect( getCreditsTone( props( result.current ).status ) ).toBe( 'muted' );
+	for ( const [ remaining, label ] of [
+		[ 500, '20' ],
+		[ 499, '19' ],
+		[ 1, '<1' ],
+		[ 0, '0' ],
+	] as const ) {
+		await receive( balance( remaining ) );
+		expect( props( result.current ).status.remaining ).toBe( remaining );
+		expect( getCreditsTone( props( result.current ).status ) ).toBe( 'error' );
+		expect( result.current.notice?.message ).toBe( `${ label }% of site credits left.` );
+	}
+	fetchMock.mockResolvedValueOnce( response( balance( 525 ) ) );
+	act( () => window.dispatchEvent( new Event( 'focus' ) ) );
+	await flush();
+	expect( getCreditsTone( props( result.current ).status ) ).toBe( 'muted' );
+	expect( result.current.notice ).toBeUndefined();
+} );
+
+it.each( [ 'commerce', undefined, 'unsupported' ] )(
+	'shows a low warning without an upgrade for tier %p',
+	async ( plan_tier ) => {
+		const { result } = renderCredits();
+		await receive( { ...exhausted(), plan_tier } );
+		expect( result.current.notice?.message ).toBe( '0% of site credits left.' );
+		expect( result.current.notice?.action ).toBeUndefined();
+	}
+);
+
+it( 'uses the meter destination as site details become available or change', async () => {
+	const view = renderCredits( { site: undefined } );
+	await receive( { ...exhausted(), plan_tier: 'personal' } );
+	expect( view.result.current.notice?.action ).toBeUndefined();
+	view.rerender( { ...defaultOptions, site: { ID: 456, domain: 'other.wordpress.com' } } );
+	expect( view.result.current.notice?.action ).toBeUndefined();
+	view.rerender( defaultOptions );
+	expect( view.result.current.notice?.action?.href ).toBe(
+		props( view.result.current ).upgradeUrl
+	);
+	view.rerender( { ...defaultOptions, site: { ID: 123, domain: 'mapped.example' } } );
+	expect( view.result.current.notice?.action?.href ).toBe(
+		'https://wordpress.com/plans/mapped.example'
+	);
+} );
+
+it( 'keeps dismissal within the current visit and ignores previous-site dismiss handlers', async () => {
+	const low = creditSnapshot( { credits_remaining: 500, credits_used: 2000 } );
+	const view = renderCredits();
+	await receive( low );
+	const oldDismiss = view.result.current.notice?.onDismiss;
+	act( () => oldDismiss?.() );
+	expect( view.result.current.notice ).toBeUndefined();
+	await receive( exhausted() );
+	expect( view.result.current.notice ).toBeUndefined();
+	expect( props( view.result.current ).isOpen ).toBe( true );
+	act( () => expect( view.result.current.beforeSubmit() ).toBe( false ) );
+	await receive( creditSnapshot() );
+	await receive( low );
+	expect( view.result.current.notice ).toBeUndefined();
+	view.rerender( {
+		...defaultOptions,
+		siteKey: '456',
+		agentConfig: { ...agentConfig, authenticationScope: { siteId: 456, userId: 1 } },
+	} );
+	expect( view.result.current.notice ).toBeUndefined();
+	await receive( { ...low, blog_id: 456 } );
+	act( () => oldDismiss?.() );
+	expect( view.result.current.notice?.message ).toBe( '20% of site credits left.' );
+	view.rerender( defaultOptions );
+	await receive( low );
+	act( () => oldDismiss?.() );
+	expect( view.result.current.notice?.message ).toBe( '20% of site credits left.' );
 } );
 
 it( 'reads the authenticated balance on opening without sending a prompt', async () => {
@@ -340,7 +458,8 @@ it.each( [ 'GET', 'terminal' ] )(
 			expect( props( result.current ).status ).not.toHaveProperty( 'planTier' );
 			expect( props( result.current ).status ).toMatchObject( { plan: 'paid', remaining: 0 } );
 			act( () => expect( result.current.beforeSubmit() ).toBe( false ) );
-			expect( result.current.notice ).toBeUndefined();
+			expect( result.current.notice?.message ).toBe( '0% of site credits left.' );
+			expect( result.current.notice?.action ).toBeUndefined();
 		}
 	}
 );
@@ -564,7 +683,8 @@ it.each( [ false, true ] )(
 		} );
 		expect( props( result.current ).isOpen ).toBe( true );
 		expect( props( result.current ).status.remaining ).toBe( 0 );
-		expect( result.current.notice ).toBeUndefined();
+		expect( result.current.notice?.message ).toBe( '0% of site credits left.' );
+		expect( result.current.notice?.dismissible ).toBe( true );
 	}
 );
 it.each( [ null, undefined, false, { broken: true }, creditSnapshot( { blog_id: 456 } ) ] )(

@@ -297,10 +297,7 @@ export default function MonetizeSubscriptionDetails() {
 								title={ __( 'Price' ) }
 								heading={ formatCurrency(
 									parseFloat( subscription.renewal_price ),
-									subscription.currency,
-									{
-										isSmallestUnit: true,
-									}
+									subscription.currency
 								) }
 								description={ __( 'Excludes taxes.' ) }
 							/>
@@ -312,10 +309,7 @@ export default function MonetizeSubscriptionDetails() {
 								title={ __( 'Renewal price' ) }
 								heading={ formatCurrency(
 									parseFloat( subscription.renewal_price ),
-									subscription.currency,
-									{
-										isSmallestUnit: true,
-									}
+									subscription.currency
 								) }
 							/>
 						) }

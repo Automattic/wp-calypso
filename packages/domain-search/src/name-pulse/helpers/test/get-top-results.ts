@@ -69,6 +69,15 @@ describe( 'getTopResults', () => {
 			'test.app',
 		] );
 	} );
+
+	it( 'features fewer rows when asked to', () => {
+		const rows = [ row( 'test.com' ), row( 'test.org' ), row( 'test.app' ) ];
+
+		expect( getTopResults( rows, 2 ).map( ( r ) => r.domain_name ) ).toEqual( [
+			'test.com',
+			'test.org',
+		] );
+	} );
 } );
 
 describe( 'getAiTopResults', () => {
@@ -84,18 +93,31 @@ describe( 'getAiTopResults', () => {
 			suggestion( 'middling.app', 20, 'ai' ),
 		];
 
-		expect( getAiTopResults( keyword, creative ).map( ( r ) => r.domain_name ) ).toEqual( [
+		expect( getAiTopResults( [ keyword, creative ] ).map( ( r ) => r.domain_name ) ).toEqual( [
 			'cheapest.dev',
 			'apple.blog',
 			'zebra.blog',
 		] );
 	} );
 
+	it( 'features fewer suggestions when asked to', () => {
+		const keyword = [
+			suggestion( 'zebra.blog', 12 ),
+			suggestion( 'apple.blog', 12 ),
+			suggestion( 'cheapest.dev', 4 ),
+		];
+
+		expect( getAiTopResults( [ keyword ], 2 ).map( ( r ) => r.domain_name ) ).toEqual( [
+			'cheapest.dev',
+			'apple.blog',
+		] );
+	} );
+
 	it( 'keeps the first copy of a domain both lists return', () => {
-		const shared = getAiTopResults(
+		const shared = getAiTopResults( [
 			[ suggestion( 'scoops.blog', 22 ) ],
-			[ suggestion( 'scoops.blog', 22, 'ai' ) ]
-		);
+			[ suggestion( 'scoops.blog', 22, 'ai' ) ],
+		] );
 
 		expect( shared ).toHaveLength( 1 );
 		expect( shared[ 0 ].source ).toBe( 'keyword' );
@@ -103,7 +125,7 @@ describe( 'getAiTopResults', () => {
 
 	it( 'sorts rows with no price last', () => {
 		expect(
-			getAiTopResults( [ row( 'unpriced.com' ), suggestion( 'priced.com', 30 ) ] ).map(
+			getAiTopResults( [ [ row( 'unpriced.com' ), suggestion( 'priced.com', 30 ) ] ] ).map(
 				( r ) => r.domain_name
 			)
 		).toEqual( [ 'priced.com', 'unpriced.com' ] );

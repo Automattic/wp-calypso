@@ -24,7 +24,7 @@ describe( 'getAgencyPlanLicenses', () => {
 	it( 'drops addon, referral, and non-Pressable licenses', () => {
 		const licenses = [
 			license( { license_key: 'pressable-addon-storage_abc' } ),
-			license( { referral: { id: 1 } } ),
+			license( { referral: { id: 1 } as JetpackLicense[ 'referral' ] } ),
 			license( { license_key: 'jetpack-backup_abc' } ),
 		];
 

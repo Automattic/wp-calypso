@@ -77,11 +77,11 @@ describe( '<McpOverview>', () => {
 
 		expect( screen.getByRole( 'link', { name: /^Read\b/ } ) ).toHaveAttribute(
 			'href',
-			'/resources/ai-mcp/read'
+			'/agency/ai/read'
 		);
 		expect(
 			screen.getByRole( 'link', { name: /^Connect external AI assistant/ } )
-		).toHaveAttribute( 'href', '/resources/ai-mcp/connect' );
+		).toHaveAttribute( 'href', '/agency/ai/connect' );
 	} );
 
 	test( 'hides the tool and connection rows until MCP access is enabled', () => {
@@ -109,7 +109,7 @@ describe( '<McpOverview>', () => {
 
 		expect( screen.getByRole( 'link', { name: /^Write\b/ } ) ).toHaveAttribute(
 			'href',
-			'/resources/ai-mcp/write'
+			'/agency/ai/write'
 		);
 	} );
 
@@ -152,7 +152,7 @@ describe( '<McpOverview>', () => {
 
 		expect( screen.getByRole( 'link', { name: /^Starter prompts/ } ) ).toHaveAttribute(
 			'href',
-			'/resources/ai-mcp/prompts'
+			'/agency/ai/prompts'
 		);
 	} );
 
@@ -168,6 +168,6 @@ describe( '<McpOverview>', () => {
 
 		await userEvent.click( screen.getByRole( 'link', { name: /^Read\b/ } ) );
 
-		expect( onNavigate ).toHaveBeenCalledWith( '/resources/ai-mcp/read' );
+		expect( onNavigate ).toHaveBeenCalledWith( '/agency/ai/read' );
 	} );
 } );
