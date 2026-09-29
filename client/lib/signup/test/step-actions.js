@@ -87,16 +87,11 @@ describe( 'createSiteWithCart()', () => {
 		);
 	} );
 
-	test( 'send an empty blog_name, not the username, when siteUrl is empty and there is no site title', async () => {
+	test( 'send an empty blog_name when siteUrl is empty and there is no site title', async () => {
 		expect.assertions( 1 );
 		const fakeStore = {
 			getState: () => ( {
-				currentUser: {
-					user: {
-						username: 'alex',
-					},
-				},
-				signup: { dependencyStore: { username: 'alex', shouldHideFreePlan: true } },
+				signup: { dependencyStore: { shouldHideFreePlan: true } },
 			} ),
 		};
 
