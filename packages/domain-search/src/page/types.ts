@@ -146,13 +146,14 @@ export interface DomainSearchConfig {
 	skippable: boolean;
 	/**
 	 * Optional copy overrides for the free-subdomain skip card. When omitted, the
-	 * card keeps its default "Start free with %(domain)s" title and "Start Free"
-	 * CTA. `title` may include the `%(domain)s` placeholder, interpolated with the
-	 * free subdomain (e.g. flows that require a paid plan can drop the "free"
-	 * framing).
+	 * card keeps its default "Start free with %(domain)s" title, "Upgrade to a custom
+	 * domain name anytime." subtitle and "Start Free" CTA. `title` and `subtitle` may
+	 * include the `%(domain)s` placeholder, interpolated with the free subdomain (e.g.
+	 * flows that require a paid plan can drop the "free" framing).
 	 */
 	skipSuggestionCopy?: {
 		title?: string;
+		subtitle?: string;
 		buttonText?: string;
 	};
 	/**

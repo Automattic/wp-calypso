@@ -36,4 +36,19 @@ describe( 'DomainSearchSkipSuggestion', () => {
 		expect( screen.queryByText( 'Start free with mysite.wordpress.com' ) ).not.toBeInTheDocument();
 		expect( screen.getByRole( 'button' ) ).toHaveTextContent( 'Choose a domain later' );
 	} );
+
+	it( 'renders the custom subtitle when an override is provided', () => {
+		render(
+			<DomainSearchSkipSuggestion
+				freeSuggestion="mysite.wordpress.com"
+				subtitle="Start with %(domain)s for free."
+				onSkip={ jest.fn() }
+			/>
+		);
+
+		expect( screen.getByText( 'Start with mysite.wordpress.com for free.' ) ).toBeInTheDocument();
+		expect(
+			screen.queryByText( 'Upgrade to a custom domain name anytime.' )
+		).not.toBeInTheDocument();
+	} );
 } );

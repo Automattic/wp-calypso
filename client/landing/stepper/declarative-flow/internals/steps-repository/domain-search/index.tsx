@@ -155,6 +155,7 @@ const DomainSearchStep: StepType< {
 	const stepCounter = useOnboardingStepCounter( flow, 'domains' );
 	const resultsVariation = getDomainSearchResultsVariation( flow );
 	const isCustomDomainBannerCopyVariation = resultsVariation === 'custom_domain_banner_copy';
+	const isFreeDomainBannerCopyVariation = resultsVariation === 'free_domain_banner_copy';
 
 	const storedSiteTitle = useSelect(
 		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedSiteTitle(),
@@ -221,9 +222,19 @@ const DomainSearchStep: StepType< {
 			// Free-subdomain skip card copy, in order of precedence: per-flow
 			// `freeSubdomainTitle` / `freeSubdomainButtonLabel` overrides, then the WoW
 			// funnel default (no free-subdomain option to offer, see `isWowFunnel` above),
-			// then the flow default resolved by `getSkipSuggestionCopy`.
+			// then the results experiment copy, then the flow default resolved by
+			// `getSkipSuggestionCopy`.
 			skipSuggestionCopy: getSkipSuggestionCopy( flow, __, {
-				title: freeSubdomainTitle ?? wowSkipCopy,
+				title:
+					freeSubdomainTitle ??
+					wowSkipCopy ??
+					( isFreeDomainBannerCopyVariation
+						? __( 'Not ready to choose a domain name yet?' )
+						: undefined ),
+				subtitle: isFreeDomainBannerCopyVariation
+					? // translators: %(domain)s is the free WordPress.com subdomain
+						__( 'Start with %(domain)s for free.' )
+					: undefined,
 				buttonText: freeSubdomainButtonLabel ?? wowSkipCopy,
 			} ),
 			// WoW funnel: hide the free *.wordpress.com subdomain card entirely and offer only
@@ -254,6 +265,7 @@ const DomainSearchStep: StepType< {
 		isWowFunnel,
 		wowSkipCopy,
 		resultsVariation,
+		isFreeDomainBannerCopyVariation,
 		tldQuery,
 		query,
 		allowedTldsProp,

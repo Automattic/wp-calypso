@@ -59,6 +59,7 @@ const SkipSuggestion = () => {
 				freeSuggestion={ suggestion.domain_name }
 				unavailableDomain={ isUnavailable ? query : undefined }
 				title={ config.skipSuggestionCopy?.title }
+				subtitle={ config.skipSuggestionCopy?.subtitle }
 				buttonText={ config.skipSuggestionCopy?.buttonText }
 				onSkip={ () => events.onSkip( suggestion ) }
 				onSuggestionClick={ () => setQuery( suggestion.domain_name, 'skip_suggestion' ) }

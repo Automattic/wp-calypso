@@ -36,6 +36,18 @@ describe( 'getSkipSuggestionCopy', () => {
 		} );
 	} );
 
+	it( 'passes a subtitle override through', () => {
+		expect(
+			getSkipSuggestionCopy( 'onboarding', identity, {
+				subtitle: 'Start with %(domain)s for free.',
+			} )
+		).toEqual( {
+			title: undefined,
+			subtitle: 'Start with %(domain)s for free.',
+			buttonText: undefined,
+		} );
+	} );
+
 	it( 'lets an override win over the flow default', () => {
 		expect(
 			getSkipSuggestionCopy( 'ai-site-builder-onboarding', identity, {
