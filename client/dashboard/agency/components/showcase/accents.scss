@@ -1,0 +1,26 @@
+@use '@automattic/color-studio/dist/color-variables' as brand;
+
+// Accents: each maker's Color Studio scale. `--dashboard-accent` is the brand
+// colour itself (50), `-ink` its text on light (70), `-tint` its pale field (5),
+// `-on` the colour of words on the full brand colour. Makers outside Automattic
+// (Stripe, PayPal, Klarna…) take the neutral grey scale.
+[data-accent='woo'] {
+	--dashboard-accent: #{brand.$studio-woocommerce-purple-50};
+	--dashboard-accent-ink: #{brand.$studio-woocommerce-purple-70};
+	--dashboard-accent-tint: #{brand.$studio-woocommerce-purple-5};
+	--dashboard-accent-on: #fff;
+}
+
+[data-accent='jetpack'] {
+	--dashboard-accent: #{brand.$studio-jetpack-green-50};
+	--dashboard-accent-ink: #{brand.$studio-jetpack-green-70};
+	--dashboard-accent-tint: #{brand.$studio-jetpack-green-5};
+	--dashboard-accent-on: #fff;
+}
+
+[data-accent='neutral'] {
+	--dashboard-accent: #{brand.$studio-gray-50};
+	--dashboard-accent-ink: #{brand.$studio-gray-90};
+	--dashboard-accent-tint: #{brand.$studio-gray-0};
+	--dashboard-accent-on: #fff;
+}
