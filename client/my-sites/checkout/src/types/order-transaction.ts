@@ -1,14 +1,9 @@
-import {
-	SUCCESS,
-	PROCESSING,
-	FAILURE,
-	ERROR,
-	UNKNOWN,
-	ASYNC_PENDING,
-} from 'calypso/state/order-transactions/constants';
-import type { AppState } from 'calypso/types';
-
-import 'calypso/state/order-transactions/init';
+export const SUCCESS = 'ORDER_TRANSACTION_STATUS_SUCCESS';
+export const PROCESSING = 'ORDER_TRANSACTION_STATUS_PROCESSING';
+export const FAILURE = 'ORDER_TRANSACTION_STATUS_FAILURE';
+export const ERROR = 'ORDER_TRANSACTION_STATUS_ERROR';
+export const UNKNOWN = 'ORDER_TRANSACTION_STATUS_UNKNOWN';
+export const ASYNC_PENDING = 'ORDER_TRANSACTION_STATUS_ASYNC_PENDING';
 
 interface OrderTransactionBase {
 	orderId: number;
@@ -40,8 +35,3 @@ export type OrderTransaction =
 	| OrderTransactionError
 	| OrderTransactionUnknown
 	| OrderTransactionAsyncPending;
-
-export const getOrderTransaction = ( state: AppState, orderId: number ): OrderTransaction | null =>
-	state?.orderTransactions?.items?.[ orderId ] ?? null;
-
-export default getOrderTransaction;
