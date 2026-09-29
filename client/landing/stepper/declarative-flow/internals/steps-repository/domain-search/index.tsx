@@ -228,14 +228,16 @@ const DomainSearchStep: StepType< {
 				title:
 					freeSubdomainTitle ??
 					wowSkipCopy ??
-					( isFreeDomainBannerCopyVariation
-						? __( 'Not ready to choose a domain name yet?' )
-						: undefined ),
+					( isFreeDomainBannerCopyVariation ? __( 'Skip the domain for now' ) : undefined ),
 				subtitle: isFreeDomainBannerCopyVariation
-					? // translators: %(domain)s is the free WordPress.com subdomain
-						__( 'Start with %(domain)s for free.' )
+					? __(
+							'You’ll get a WordPress.com branded domain. Upgrade to a custom domain name anytime.'
+						)
 					: undefined,
-				buttonText: freeSubdomainButtonLabel ?? wowSkipCopy,
+				buttonText:
+					freeSubdomainButtonLabel ??
+					wowSkipCopy ??
+					( isFreeDomainBannerCopyVariation ? __( 'Skip' ) : undefined ),
 			} ),
 			// WoW funnel: hide the free *.wordpress.com subdomain card entirely and offer only
 			// the skip control.

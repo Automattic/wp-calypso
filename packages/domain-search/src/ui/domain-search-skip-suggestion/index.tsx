@@ -21,10 +21,7 @@ interface Props {
 	 * free-subdomain card. May include the `%(domain)s` placeholder.
 	 */
 	title?: string;
-	/**
-	 * Overrides the default "Upgrade to a custom domain name anytime." subtitle of the
-	 * free-subdomain card. May include the `%(domain)s` placeholder.
-	 */
+	/** Overrides the default "Upgrade to a custom domain name anytime." subtitle of the free-subdomain card. */
 	subtitle?: string;
 	/** Overrides the default "Start Free" CTA of the free-subdomain card. */
 	buttonText?: string;
@@ -108,9 +105,7 @@ const DomainSearchSkipSuggestion = ( {
 					__( 'Start free with %(domain)s' ),
 					{ domain: freeSuggestion }
 				);
-		subtitle = subtitleOverride
-			? subtitleOverride.replace( '%(domain)s', freeSuggestion )
-			: __( 'Upgrade to a custom domain name anytime.' );
+		subtitle = subtitleOverride ?? __( 'Upgrade to a custom domain name anytime.' );
 		buttonText = buttonTextOverride ?? __( 'Start Free' );
 		chevronOnMobile = true;
 	}

@@ -6,9 +6,8 @@ import { isAIBuilderOnboardingFlow } from '@automattic/onboarding';
  * Two sources, in order of precedence:
  *   1. `overrides` — supplied by a flow via the domain-search step's
  *      `freeSubdomainTitle` / `freeSubdomainButtonLabel` accepts-props, or by the
- *      results experiment (already translated). A `title` or `subtitle` may contain
- *      the `%(domain)s` placeholder, which the package interpolates with the free
- *      subdomain.
+ *      results experiment (already translated). A `title` may contain the `%(domain)s`
+ *      placeholder, which the package interpolates with the free subdomain.
  *   2. The AI Website Builder onboarding default — that flow requires a paid plan,
  *      so skipping the domain doesn't start a free site; it drops the "start free"
  *      framing.

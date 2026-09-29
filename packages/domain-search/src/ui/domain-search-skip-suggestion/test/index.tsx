@@ -41,12 +41,12 @@ describe( 'DomainSearchSkipSuggestion', () => {
 		render(
 			<DomainSearchSkipSuggestion
 				freeSuggestion="mysite.wordpress.com"
-				subtitle="Start with %(domain)s for free."
+				subtitle="You’ll get a WordPress.com branded domain."
 				onSkip={ jest.fn() }
 			/>
 		);
 
-		expect( screen.getByText( 'Start with mysite.wordpress.com for free.' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'You’ll get a WordPress.com branded domain.' ) ).toBeInTheDocument();
 		expect(
 			screen.queryByText( 'Upgrade to a custom domain name anytime.' )
 		).not.toBeInTheDocument();

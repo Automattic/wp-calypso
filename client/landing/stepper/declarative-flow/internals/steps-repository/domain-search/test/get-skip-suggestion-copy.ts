@@ -39,11 +39,11 @@ describe( 'getSkipSuggestionCopy', () => {
 	it( 'passes a subtitle override through', () => {
 		expect(
 			getSkipSuggestionCopy( 'onboarding', identity, {
-				subtitle: 'Start with %(domain)s for free.',
+				subtitle: 'Upgrade anytime.',
 			} )
 		).toEqual( {
 			title: undefined,
-			subtitle: 'Start with %(domain)s for free.',
+			subtitle: 'Upgrade anytime.',
 			buttonText: undefined,
 		} );
 	} );
