@@ -11,11 +11,14 @@
 	--dashboard-accent-on: #fff;
 }
 
+// Jetpack takes its new palette, from Jetpack's brand board: a light neutral
+// field, near-black ink, and the bright green (hsl(123, 100%, 64%)) as its only
+// colour, with dark forest words on it. Color Studio has no scale for it yet.
 [data-accent='jetpack'] {
-	--dashboard-accent: #{brand.$studio-jetpack-green-50};
-	--dashboard-accent-ink: #{brand.$studio-jetpack-green-70};
-	--dashboard-accent-tint: #{brand.$studio-jetpack-green-5};
-	--dashboard-accent-on: #fff;
+	--dashboard-accent: #47ff51;
+	--dashboard-accent-ink: #1b1b1b;
+	--dashboard-accent-tint: #f1f2f2;
+	--dashboard-accent-on: #0b2d13;
 }
 
 [data-accent='neutral'] {
