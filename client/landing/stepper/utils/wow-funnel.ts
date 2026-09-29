@@ -161,7 +161,9 @@ export function isSameWowFunnelRun(
 	funnelSlug: string,
 	funnelArgs: Record< string, string > = {}
 ): boolean {
-	return getWowFunnelKey( run.funnelSlug, run.funnelArgs ) === getWowFunnelKey( funnelSlug, funnelArgs );
+	return (
+		getWowFunnelKey( run.funnelSlug, run.funnelArgs ) === getWowFunnelKey( funnelSlug, funnelArgs )
+	);
 }
 
 /**

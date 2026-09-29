@@ -138,12 +138,7 @@ export async function wowFunnelSiteHasCartItems( blogId: number ): Promise< bool
  * - `failed`: anything else.
  */
 export type DiscardPendingWowFunnelSiteResult =
-	| 'discarded'
-	| 'gone'
-	| 'rate_limited'
-	| 'not_ready'
-	| 'unavailable'
-	| 'failed';
+	'discarded' | 'gone' | 'rate_limited' | 'not_ready' | 'unavailable' | 'failed';
 
 /**
  * Discard the customer's unpaid funnel site, at their request, so they can start a different run.

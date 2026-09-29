@@ -138,7 +138,9 @@ describe( 'discardPendingWowFunnelSite', () => {
 		mockPost.mockResolvedValue( { discarded: true } );
 
 		await expect( discardPendingWowFunnelSite( 111 ) ).resolves.toBe( 'discarded' );
-		expect( mockPost.mock.calls[ 0 ][ 0 ] ).toMatchObject( { path: '/wow-funnel/pending/discard' } );
+		expect( mockPost.mock.calls[ 0 ][ 0 ] ).toMatchObject( {
+			path: '/wow-funnel/pending/discard',
+		} );
 		expect( mockPost.mock.calls[ 0 ][ 1 ] ).toEqual( { blog_id: 111 } );
 	} );
 
@@ -168,7 +170,7 @@ describe( 'startWowFunnelSite when the server holds a pending site', () => {
 		mockCreateSite.mockRejectedValue( new Error( 'wow_funnel_site_pending' ) );
 	} );
 
-	it( 'takes over the site when it is this run\'s own', async () => {
+	it( "takes over the site when it is this run's own", async () => {
 		mockGet.mockResolvedValue( {
 			pending: true,
 			blog_id: 111,

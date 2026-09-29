@@ -22,8 +22,8 @@ import {
 } from 'calypso/landing/stepper/utils/wow-funnel-site';
 import { shouldUseStepContainerV2 } from '../../../helpers/should-use-step-container-v2';
 import { withLocale } from '../../../helpers/with-locale';
-import type { PendingWowFunnelSite } from 'calypso/landing/stepper/utils/wow-funnel-site';
 import type { Step as StepType } from '../../types';
+import type { PendingWowFunnelSite } from 'calypso/landing/stepper/utils/wow-funnel-site';
 
 /**
  * Asks a customer who enters one funnel run while another's site is still unpaid which one they
@@ -137,7 +137,9 @@ const WowFunnelPending: StepType = function WowFunnelPending( { flow } ) {
 			case 'unavailable':
 				setCanStartOver( false );
 				setNotice(
-					__( "Starting over isn't available right now. You can carry on with your unfinished site." )
+					__(
+						"Starting over isn't available right now. You can carry on with your unfinished site."
+					)
 				);
 				return;
 			default:
