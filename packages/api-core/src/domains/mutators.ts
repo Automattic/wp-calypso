@@ -8,3 +8,11 @@ export function bulkDomainsAction( { type, ...params }: BulkDomainsAction ) {
 		body: params,
 	} );
 }
+
+export function setWwwPrimaryDomain( domain: string, enabled: boolean ) {
+	return wpcom.req.post( {
+		path: `/domains/www-primary/${ domain }`,
+		apiNamespace: 'wpcom/v2',
+		body: { enabled },
+	} );
+}

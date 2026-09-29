@@ -11,12 +11,14 @@ import {
 	fetchDomains,
 	fetchDomainSuggestions,
 	fetchFreeDomainSuggestion,
+	setWwwPrimaryDomain,
 	type BundleMetadata,
 	type JobStatus,
 	type DomainSuggestionQuery,
 } from '@automattic/api-core';
 import { mutationOptions, queryOptions } from '@tanstack/react-query';
 import { queryClient } from './query-client';
+import { siteQueryFilter } from './site';
 
 export const domainsQuery = () =>
 	queryOptions( {
@@ -164,5 +166,16 @@ export const bulkDomainsActionMutation = () =>
 		mutationFn: ( action: BulkDomainsAction ) => bulkDomainsAction( action ),
 		onSuccess: () => {
 			queryClient.refetchQueries( bulkDomainUpdateStatusQuery() );
+		},
+	} );
+
+export const setWwwPrimaryDomainMutation = () =>
+	mutationOptions( {
+		meta: { statId: 'domains-www-primary-set' },
+		mutationFn: ( { domain, enabled }: { siteId: number; domain: string; enabled: boolean } ) =>
+			setWwwPrimaryDomain( domain, enabled ),
+		onSuccess: ( data, { siteId } ) => {
+			queryClient.invalidateQueries( siteQueryFilter( siteId ) );
+			queryClient.invalidateQueries( { queryKey: [ 'domains' ] } );
 		},
 	} );
