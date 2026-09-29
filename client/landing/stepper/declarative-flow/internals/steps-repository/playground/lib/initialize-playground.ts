@@ -2,6 +2,7 @@ import config from '@automattic/calypso-config';
 import { logToLogstash } from 'calypso/lib/logstash';
 import { getBlueprint } from './blueprint';
 import { PLAYGROUND_HOST } from './constants';
+import { PlaygroundNotFoundError } from './playground-not-found-error';
 import type { Blueprint, BlueprintV1, MountDescriptor, PlaygroundClient } from './types';
 
 export async function initializeWordPressPlayground(
@@ -41,14 +42,22 @@ export async function initializeWordPressPlayground(
 			/* webpackIgnore: true */ PLAYGROUND_HOST + '/client/index.js'
 		);
 		onPlaygroundClientLoaded?.();
-		const client = await startPlaygroundWeb( {
-			iframe,
-			remoteUrl: PLAYGROUND_HOST + '/remote.html',
-			scope: playgroundSlug,
-			blueprint: blueprint as BlueprintV1,
-			shouldInstallWordPress: ! isWordPressInstalled,
-			mounts: isWordPressInstalled ? [ mountDescriptor ] : [],
-		} );
+		let client: PlaygroundClient;
+		try {
+			client = await startPlaygroundWeb( {
+				iframe,
+				remoteUrl: PLAYGROUND_HOST + '/remote.html',
+				scope: playgroundSlug,
+				blueprint: blueprint as BlueprintV1,
+				shouldInstallWordPress: ! isWordPressInstalled,
+				mounts: isWordPressInstalled ? [ mountDescriptor ] : [],
+			} );
+		} catch ( error ) {
+			if ( isWordPressInstalled ) {
+				throw new PlaygroundNotFoundError( playgroundId, error );
+			}
+			throw error;
+		}
 
 		if ( ! isWordPressInstalled ) {
 			const blueprintDeclaration = await getBlueprintDeclaration( blueprint );

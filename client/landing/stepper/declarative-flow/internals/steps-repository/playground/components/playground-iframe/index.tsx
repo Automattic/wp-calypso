@@ -7,6 +7,7 @@ import { getPHPVersions } from 'calypso/data/php-versions';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { getBlueprintID } from '../../lib/blueprint';
 import { initializeWordPressPlayground } from '../../lib/initialize-playground';
+import { PlaygroundNotFoundError } from '../../lib/playground-not-found-error';
 import { PlaygroundError } from '../playground-error';
 import type { PlaygroundClient } from '../../lib/types';
 
@@ -62,7 +63,7 @@ export function PlaygroundIframe( {
 			} )
 			.catch( ( error ) => {
 				setIsLoading( false );
-				if ( error.message === 'WordPress installation has failed.' ) {
+				if ( error instanceof PlaygroundNotFoundError ) {
 					setPlaygroundError( 'PLAYGROUND_NOT_FOUND' );
 				} else {
 					setPlaygroundError( 'UNKNOWN_ERROR' );

@@ -9,6 +9,7 @@ import PlaygroundStep from '..';
 import { StepProps } from '../../../types';
 import { mockStepProps, renderStep, RenderStepOptions } from '../../test/helpers';
 import { initializeWordPressPlayground } from '../lib/initialize-playground';
+import { PlaygroundNotFoundError } from '../lib/playground-not-found-error';
 
 // Mock the initializeWordPressPlayground function
 jest.mock( '../lib/initialize-playground' );
@@ -97,7 +98,10 @@ describe( 'Playground', () => {
 	describe( 'PlaygroundIframe error handling', () => {
 		it( 'should render PlaygroundError when initialization fails', async () => {
 			initializeWordPressPlayground.mockRejectedValue(
-				new Error( 'WordPress installation has failed.' )
+				new PlaygroundNotFoundError(
+					'missing-id',
+					new Error( 'Error connecting to the SQLite database.' )
+				)
 			);
 
 			await act( async () => renderPlaygroundStep() );
