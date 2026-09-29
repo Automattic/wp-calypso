@@ -430,17 +430,14 @@ export default function MarketplaceProducts() {
 				/>
 			) }
 			{ ! isLoading && featuredProducts.length > 0 && (
-				<VStack spacing={ 4 }>
-					<SectionHeader level={ 2 } title={ __( 'Featured products' ) } />
-					<FeaturedShowcase
-						products={ featuredProducts }
-						term={ termPricing }
-						isReferralMode={ isReferralMode }
-						isInCart={ hasItem }
-						onToggleCart={ toggleCart }
-						onViewDetails={ openDetails }
-					/>
-				</VStack>
+				<FeaturedShowcase
+					products={ featuredProducts }
+					term={ termPricing }
+					isReferralMode={ isReferralMode }
+					isInCart={ hasItem }
+					onToggleCart={ toggleCart }
+					onViewDetails={ openDetails }
+				/>
 			) }
 			<div className="dashboard-marketplace-products__filters">
 				<DataViews< AgencyProduct >

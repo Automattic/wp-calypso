@@ -1,10 +1,7 @@
-import { Button, __experimentalHStack as HStack } from '@wordpress/components';
-import { __ } from '@wordpress/i18n';
-import { chevronLeft, chevronRight } from '@wordpress/icons';
 import clsx from 'clsx';
-import { useEffect, useRef, useState } from 'react';
 import { Card, CardBody } from '../../../components/card';
 import { SectionHeader } from '../../../components/section-header';
+import { rowArrows, useRowScroll } from './row-arrows';
 
 import './spot-tiles.scss';
 
@@ -34,59 +31,11 @@ export default function SpotTiles< T extends string >( {
 	selected: T | null;
 	onSelect: ( value: T | null ) => void;
 } ) {
-	const rowRef = useRef< HTMLDivElement >( null );
-	const [ canScroll, setCanScroll ] = useState( { back: false, forward: false } );
-
-	useEffect( () => {
-		const row = rowRef.current;
-		if ( ! row ) {
-			return;
-		}
-		const update = () => {
-			const max = row.scrollWidth - row.clientWidth;
-			setCanScroll( { back: row.scrollLeft > 1, forward: row.scrollLeft < max - 1 } );
-		};
-		update();
-		row.addEventListener( 'scroll', update, { passive: true } );
-		const observer = new ResizeObserver( update );
-		observer.observe( row );
-		return () => {
-			row.removeEventListener( 'scroll', update );
-			observer.disconnect();
-		};
-	}, [] );
-
-	const page = ( direction: 1 | -1 ) => {
-		const row = rowRef.current;
-		row?.scrollBy( { left: direction * row.clientWidth * 0.8 } );
-	};
-
-	const arrows = ( canScroll.back || canScroll.forward ) && (
-		<HStack spacing={ 1 } expanded={ false }>
-			<Button
-				icon={ chevronLeft }
-				label={ __( 'Previous' ) }
-				size="compact"
-				variant="tertiary"
-				disabled={ ! canScroll.back }
-				accessibleWhenDisabled
-				onClick={ () => page( -1 ) }
-			/>
-			<Button
-				icon={ chevronRight }
-				label={ __( 'Next' ) }
-				size="compact"
-				variant="tertiary"
-				disabled={ ! canScroll.forward }
-				accessibleWhenDisabled
-				onClick={ () => page( 1 ) }
-			/>
-		</HStack>
-	);
+	const { rowRef, canScroll, page } = useRowScroll< HTMLDivElement >();
 
 	return (
 		<div className="dashboard-spot-tiles">
-			<SectionHeader level={ 2 } title={ title } actions={ arrows || undefined } />
+			<SectionHeader level={ 2 } title={ title } actions={ rowArrows( { canScroll, page } ) } />
 			<div
 				ref={ rowRef }
 				className={ clsx( 'dashboard-spot-tiles__row', {

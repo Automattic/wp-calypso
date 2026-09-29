@@ -136,5 +136,5 @@ export default function FeaturedShowcase( {
 		};
 	} );
 
-	return <Showcase items={ items } />;
+	return <Showcase title={ __( 'Featured products' ) } items={ items } />;
 }

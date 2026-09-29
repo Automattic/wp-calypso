@@ -1,5 +1,7 @@
-import { Icon } from '@wordpress/components';
+import { Icon, __experimentalVStack as VStack } from '@wordpress/components';
 import clsx from 'clsx';
+import { SectionHeader } from '../../../components/section-header';
+import { rowArrows, useRowScroll } from './row-arrows';
 import type { ReactNode } from 'react';
 
 import './accents.scss';
@@ -34,49 +36,67 @@ export interface ShowcaseItem {
  * colour; every other tile takes the maker's tint. Tiles pair up wide-narrow,
  * then narrow-wide, and a tile left alone on the last row takes the full width,
  * so any number of items lays out. See style.scss for the composition rules.
+ *
+ * For review only, `?showcase=row` puts the same tiles in one scrolling row,
+ * with previous and next beside the heading. To be removed once one layout is
+ * chosen.
  */
-export default function Showcase( { items }: { items: ShowcaseItem[] } ) {
+function isRowLayout(): boolean {
+	return new URLSearchParams( window.location.search ).get( 'showcase' ) === 'row';
+}
+
+export default function Showcase( { title, items }: { title: string; items: ShowcaseItem[] } ) {
+	const isRow = isRowLayout();
+	const { rowRef, canScroll, page } = useRowScroll< HTMLUListElement >();
+
 	return (
-		<ul className="dashboard-showcase">
-			{ items.map( ( item, index ) => (
-				<li
-					key={ item.id }
-					className={ clsx( 'dashboard-showcase__tile', { 'is-lead': index === 0 } ) }
-					data-accent={ item.accent }
-				>
-					<div className="dashboard-showcase__body">
-						<div className="dashboard-showcase__text">
-							<span className="dashboard-showcase__eyebrow">
-								<span className="dashboard-showcase__glyph">
-									<Icon icon={ item.glyph } size={ 16 } />
+		<VStack spacing={ 4 }>
+			<SectionHeader
+				level={ 2 }
+				title={ title }
+				actions={ isRow ? rowArrows( { canScroll, page } ) : undefined }
+			/>
+			<ul ref={ rowRef } className={ clsx( 'dashboard-showcase', { 'is-row': isRow } ) }>
+				{ items.map( ( item, index ) => (
+					<li
+						key={ item.id }
+						className={ clsx( 'dashboard-showcase__tile', { 'is-lead': index === 0 } ) }
+						data-accent={ item.accent }
+					>
+						<div className="dashboard-showcase__body">
+							<div className="dashboard-showcase__text">
+								<span className="dashboard-showcase__eyebrow">
+									<span className="dashboard-showcase__glyph">
+										<Icon icon={ item.glyph } size={ 16 } />
+									</span>
+									<span>{ item.eyebrow }</span>
 								</span>
-								<span>{ item.eyebrow }</span>
-							</span>
-							{ item.lockup && (
-								<span className="dashboard-showcase__lockup">
-									<img src={ item.lockup.src } alt={ item.lockup.alt } />
-								</span>
-							) }
-							<button type="button" className="dashboard-showcase__title" onClick={ item.onOpen }>
-								{ item.title }
-							</button>
-							{ item.description && (
-								<span className="dashboard-showcase__description">{ item.description }</span>
-							) }
-							{ item.meta && <span className="dashboard-showcase__meta">{ item.meta }</span> }
-						</div>
-						<div className="dashboard-showcase__art" aria-hidden="true">
-							<div className="dashboard-showcase__object">{ item.art }</div>
-						</div>
-						{ item.action && (
-							<div className="dashboard-showcase__action">
-								{ item.action }
-								{ item.secondaryAction }
+								{ item.lockup && (
+									<span className="dashboard-showcase__lockup">
+										<img src={ item.lockup.src } alt={ item.lockup.alt } />
+									</span>
+								) }
+								<button type="button" className="dashboard-showcase__title" onClick={ item.onOpen }>
+									{ item.title }
+								</button>
+								{ item.description && (
+									<span className="dashboard-showcase__description">{ item.description }</span>
+								) }
+								{ item.meta && <span className="dashboard-showcase__meta">{ item.meta }</span> }
 							</div>
-						) }
-					</div>
-				</li>
-			) ) }
-		</ul>
+							<div className="dashboard-showcase__art" aria-hidden="true">
+								<div className="dashboard-showcase__object">{ item.art }</div>
+							</div>
+							{ item.action && (
+								<div className="dashboard-showcase__action">
+									{ item.action }
+									{ item.secondaryAction }
+								</div>
+							) }
+						</div>
+					</li>
+				) ) }
+			</ul>
+		</VStack>
 	);
 }

@@ -341,3 +341,39 @@ $lead-side-by-side: $pad-x * 2 + $words-min + $gap + $lead-object;
 		}
 	}
 }
+
+// Row (?showcase=row, for review only): the same tiles in one scrolling row.
+// Wide tiles keep the bento's rhythm as widths, so the words and the drawing
+// still sit side by side (R4) and narrow tiles stack (R5). One height for the
+// row, 16px apart, snapping to a tile's start. On a phone, tiles are at most
+// 85% of the screen so the next one peeks in.
+.dashboard-showcase.is-row {
+	grid-template-columns: none;
+	grid-template-rows: 340px;
+	grid-auto-flow: column;
+	grid-auto-columns: max-content;
+	overflow-x: auto;
+	overscroll-behavior-x: contain;
+	scroll-behavior: smooth;
+	scroll-snap-type: x mandatory;
+	scrollbar-width: none;
+
+	&::-webkit-scrollbar {
+		display: none;
+	}
+
+	> .dashboard-showcase__tile:nth-child( n ):nth-last-child( n ) {
+		grid-column: auto;
+		inline-size: min( 368px, 85vw );
+		scroll-snap-align: start;
+	}
+
+	> .dashboard-showcase__tile:nth-child( 4n + 1 ):nth-last-child( n ),
+	> .dashboard-showcase__tile:nth-child( 4n ):nth-last-child( n ) {
+		inline-size: min( 720px, 85vw );
+	}
+
+	@media ( prefers-reduced-motion: reduce ) {
+		scroll-behavior: auto;
+	}
+}
