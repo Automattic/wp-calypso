@@ -13,12 +13,13 @@ import { closeSmall, Icon } from '@wordpress/icons';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { learnRoute } from '../../../app/router/agency';
 import { DataViews } from '../../../components/dataviews';
+import { hubRecommendationIds, hubResources } from './hub-resources';
 import ResourceCover from './resource-cover';
 import { getResourceTags, topResources } from './resource-presentation';
 import ResourcePreview from './resource-preview';
+import ResourceProductLogo from './resource-product-logo';
 import ResourceRecommendations from './resource-recommendations';
 import ResourceTags from './resource-tags';
-import { sampleRecommendationIds, sampleResources } from './sample-resources';
 import useResourceCoverHeight from './use-resource-cover-height';
 import useResourceLoadMore from './use-resource-load-more';
 import type { LibraryResource } from './types';
@@ -39,36 +40,53 @@ const initialView: View = {
 	filters: [],
 };
 
-const recommendedResources = sampleResources.filter( ( item ) =>
-	sampleRecommendationIds.includes( item.id )
+const recommendedResources = hubRecommendationIds.flatMap( ( id ) =>
+	hubResources.filter( ( item ) => item.id === id )
 );
 
 const createFields = (
 	onFilter: ( field: string, value: string ) => void,
-	onlyTopResources: boolean
+	onlyTopResources: boolean,
+	viewType: View[ 'type' ]
 ): Field< LibraryResource >[] => [
 	{
 		id: 'title',
 		label: __( 'Title' ),
 		getValue: ( { item } ) => item.title,
-		render: ( { item } ) => (
-			<ResourceCover resource={ item } featured={ topResources.includes( item.id ) } />
-		),
+		render: ( { item } ) =>
+			viewType === 'grid' ? (
+				<ResourceCover
+					resource={ item }
+					featured={ topResources.includes( item.id ) }
+					showType={ false }
+				/>
+			) : (
+				<span className="resource-list-title" data-product={ item.product }>
+					<span className="resource-list-title-text" dir="auto">
+						{ item.title }
+					</span>
+				</span>
+			),
 		enableGlobalSearch: true,
 	},
 	{
 		id: 'description',
 		label: __( 'Description' ),
 		getValue: ( { item } ) => item.description,
-		render: ( { item } ) => (
-			<VStack className="resource-card-details" spacing={ 3 }>
-				<Text className="resource-description">{ item.description }</Text>
-				<ResourceTags
-					onFilter={ onFilter }
-					tags={ getResourceTags( item, false ).filter( ( tag ) => tag.field !== 'featured' ) }
-				/>
-			</VStack>
-		),
+		render: ( { item } ) =>
+			viewType === 'table' ? (
+				<span className="resource-description resource-list-description" dir="auto">
+					{ item.description }
+				</span>
+			) : (
+				<VStack className="resource-card-details" spacing={ 3 }>
+					{ item.description && <Text className="resource-description">{ item.description }</Text> }
+					<ResourceTags
+						onFilter={ onFilter }
+						tags={ getResourceTags( item ).filter( ( tag ) => tag.field !== 'featured' ) }
+					/>
+				</VStack>
+			),
 		enableGlobalSearch: true,
 	},
 	{
@@ -82,14 +100,19 @@ const createFields = (
 	},
 	{
 		id: 'product',
-		label: __( 'Product' ),
-		type: 'text',
-		getValue: ( { item } ) => item.product,
-		enableGlobalSearch: true,
-		elements: Array.from( new Set( sampleResources.map( ( item ) => item.product ) ) ).map(
-			( value ) => ( { value, label: value } )
+		label: __( 'Brand' ),
+		type: 'array',
+		getValue: ( { item } ) => item.products ?? [ item.product ],
+		render: ( { item } ) => (
+			<span className="resource-list-brand" data-product={ item.product }>
+				<ResourceProductLogo product={ item.product } />
+			</span>
 		),
-		filterBy: { operators: [ 'is', 'isAny' ] },
+		enableGlobalSearch: true,
+		elements: Array.from(
+			new Set( hubResources.flatMap( ( item ) => item.products ?? [ item.product ] ) )
+		).map( ( value ) => ( { value, label: value } ) ),
+		filterBy: { operators: [ 'isAny' ] },
 	},
 	{
 		id: 'audience',
@@ -97,10 +120,12 @@ const createFields = (
 		type: 'text',
 		getValue: ( { item } ) => item.audience,
 		enableGlobalSearch: true,
-		elements: [ 'All audiences', 'Developer', 'Business', 'Client' ].map( ( value ) => ( {
-			value,
-			label: value,
-		} ) ),
+		elements: Array.from( new Set( hubResources.map( ( item ) => item.audience ) ) ).map(
+			( value ) => ( {
+				value,
+				label: value,
+			} )
+		),
 		filterBy: { operators: [ 'is', 'isAny' ] },
 	},
 
@@ -110,10 +135,18 @@ const createFields = (
 		type: 'text',
 		getValue: ( { item } ) => item.contentType,
 		enableGlobalSearch: true,
-		elements: Array.from( new Set( sampleResources.map( ( item ) => item.contentType ) ) ).map(
+		elements: Array.from( new Set( hubResources.map( ( item ) => item.contentType ) ) ).map(
 			( value ) => ( { value, label: value } )
 		),
 		filterBy: { operators: [ 'is', 'isAny' ] },
+	},
+	{
+		id: 'stage',
+		label: __( 'Stage' ),
+		type: 'text',
+		getValue: ( { item } ) => item.stage,
+		render: ( { item } ) => <span>{ item.stage || '—' }</span>,
+		filterBy: false,
 	},
 	{
 		id: 'format',
@@ -124,6 +157,9 @@ const createFields = (
 			{ value: 'PDF', label: __( 'PDF' ) },
 			{ value: 'Video', label: __( 'Video' ) },
 			{ value: 'Webpage', label: __( 'Webpage' ) },
+			{ value: 'Google Slides', label: __( 'Google Slides' ) },
+			{ value: 'Google Docs', label: __( 'Google Docs' ) },
+			{ value: 'Google Sheets', label: __( 'Google Sheets' ) },
 		],
 		filterBy: { operators: [ 'is', 'isAny' ] },
 	},
@@ -136,7 +172,7 @@ export default function SampleResourceGrid() {
 	const { resource: resourceId } = learnRoute.useSearch();
 	const navigate = learnRoute.useNavigate();
 	const [ origin, setOrigin ] = useState< DOMRect | null >( null );
-	const selectedResource = sampleResources.find( ( item ) => item.id === resourceId );
+	const selectedResource = hubResources.find( ( item ) => item.id === resourceId );
 	const onlyTopResources = view.filters?.some( ( filter ) => filter.field === 'featured' ) ?? false;
 	const applyTagFilter = useCallback( ( field: string, value: string ) => {
 		if ( field === 'stage' ) {
@@ -155,15 +191,15 @@ export default function SampleResourceGrid() {
 	}, [] );
 	const libraryRef = useResourceCoverHeight();
 	const fields = useMemo(
-		() => createFields( applyTagFilter, onlyTopResources ),
-		[ applyTagFilter, onlyTopResources ]
+		() => createFields( applyTagFilter, onlyTopResources, view.type ),
+		[ applyTagFilter, onlyTopResources, view.type ]
 	);
 
 	const filteredResources = useMemo(
 		() =>
 			filterSortAndPaginate(
-				sampleResources,
-				{ ...view, page: 1, perPage: sampleResources.length },
+				hubResources,
+				{ ...view, page: 1, perPage: hubResources.length },
 				fields
 			).data,
 		[ view, fields ]
@@ -213,7 +249,7 @@ export default function SampleResourceGrid() {
 			} }
 		>
 			<ResourceRecommendations
-				reason={ __( 'Because you have Pressable sites' ) }
+				reason={ __( 'Based on your Pressable sites' ) }
 				resources={ recommendedResources }
 				onOpen={ ( item, bounds ) => {
 					setPreviewFromRecommendations( true );
@@ -224,13 +260,22 @@ export default function SampleResourceGrid() {
 							resource: item.id,
 						} ),
 						resetScroll: false,
+						viewTransition: false,
 					} );
 				} }
 			/>
 			<DataViews< LibraryResource >
 				data={ data }
 				fields={ fields }
-				view={ view }
+				view={
+					view.type === 'table'
+						? {
+								...view,
+								descriptionField: 'description',
+								fields: [ 'product', 'contentType', 'stage' ],
+						  }
+						: view
+				}
 				onChangeView={ ( nextView ) =>
 					setView( {
 						...nextView,
@@ -240,7 +285,7 @@ export default function SampleResourceGrid() {
 					} )
 				}
 				paginationInfo={ { totalItems: navigationResources.length, totalPages: 1 } }
-				defaultLayouts={ { grid: { showMedia: false } } }
+				defaultLayouts={ { grid: { showMedia: false }, table: {} } }
 				getItemId={ ( item ) => item.id }
 				searchLabel={ __( 'Search resources' ) }
 				renderItemLink={ ( { item, ...props } ) => (
@@ -248,7 +293,7 @@ export default function SampleResourceGrid() {
 						{ ...props }
 						title={ undefined }
 						aria-label={ item.title }
-						tabIndex={ -1 }
+						tabIndex={ view.type === 'table' ? 0 : -1 }
 						href={ `?resource=${ item.id }` }
 						onClick={ ( event ) => {
 							if ( event.metaKey || event.ctrlKey || event.shiftKey || event.altKey ) {
@@ -256,7 +301,7 @@ export default function SampleResourceGrid() {
 							}
 							event.preventDefault();
 							setPreviewFromRecommendations( false );
-							const card = event.currentTarget.closest( '[role="gridcell"]' );
+							const card = event.currentTarget.closest( '[role="gridcell"], tr' );
 							setOrigin( card?.getBoundingClientRect() ?? null );
 
 							void navigate( {
@@ -265,6 +310,7 @@ export default function SampleResourceGrid() {
 									resource: item.id,
 								} ),
 								resetScroll: false,
+								viewTransition: false,
 							} );
 						} }
 					/>
@@ -273,6 +319,30 @@ export default function SampleResourceGrid() {
 				<HStack className="resource-toolbar" spacing={ 3 } alignment="top" wrap>
 					<HStack className="resource-toolbar-search" spacing={ 2 } expanded={ false }>
 						<WPDataViews.Search label={ __( 'Search resources' ) } />
+						<ToggleGroupControl
+							className="resource-view-toggle"
+							label={ __( 'Resource layout' ) }
+							hideLabelFromVision
+							value={ view.type }
+							onChange={ ( value ) => {
+								if ( value !== 'grid' && value !== 'table' ) {
+									return;
+								}
+								setView( ( current ) => ( {
+									...current,
+									type: value,
+									descriptionField: 'description',
+									fields: value === 'grid' ? [] : [ 'product', 'contentType', 'stage' ],
+									layout: value === 'grid' ? initialView.layout : { density: 'balanced' },
+								} ) );
+							} }
+							isBlock
+							__next40pxDefaultSize
+							__nextHasNoMarginBottom
+						>
+							<ToggleGroupControlOption value="grid" label={ __( 'Grid' ) } />
+							<ToggleGroupControlOption value="table" label={ __( 'List' ) } />
+						</ToggleGroupControl>
 						<WPDataViews.FiltersToggle />
 					</HStack>
 					<HStack className="resource-toolbar-options" spacing={ 2 } expanded={ false }>
@@ -416,6 +486,7 @@ export default function SampleResourceGrid() {
 							} ),
 							replace: true,
 							resetScroll: false,
+							viewTransition: false,
 						} );
 					} }
 					origin={ origin }
@@ -431,8 +502,9 @@ export default function SampleResourceGrid() {
 										} ),
 										replace: true,
 										resetScroll: false,
+										viewTransition: false,
 									} );
-								}
+							  }
 							: undefined
 					}
 					onNext={
@@ -445,8 +517,9 @@ export default function SampleResourceGrid() {
 										} ),
 										replace: true,
 										resetScroll: false,
+										viewTransition: false,
 									} );
-								}
+							  }
 							: undefined
 					}
 					onClose={ () => {
@@ -458,6 +531,7 @@ export default function SampleResourceGrid() {
 							} ),
 							replace: true,
 							resetScroll: false,
+							viewTransition: false,
 						} );
 					} }
 				/>

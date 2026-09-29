@@ -27,16 +27,22 @@ export type RecordTracksEvent = (
 	properties?: Record< string, unknown >
 ) => void;
 
-export type ResourceContentType =
-	'Guide' | 'Video' | 'Checklist' | 'Slide deck' | 'One-pager' | 'Talk track' | 'Case study';
+export type ResourceContentType = string;
 
-export type ResourceFormat = 'PDF' | 'Video' | 'Webpage';
+export type ResourceFormat =
+	| 'PDF'
+	| 'Video'
+	| 'Webpage'
+	| 'Google Slides'
+	| 'Google Docs'
+	| 'Google Sheets';
 
 export type LibraryResource = {
 	id: string;
 	title: string;
 	description: string;
 	product: string;
+	products?: string[];
 	stage: string;
 	audience: string;
 	contentType: ResourceContentType;

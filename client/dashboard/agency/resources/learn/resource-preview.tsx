@@ -1,6 +1,7 @@
 import {
 	Button,
 	Modal,
+	VisuallyHidden,
 	__experimentalHeading as Heading,
 	__experimentalHStack as HStack,
 	__experimentalText as Text,
@@ -8,12 +9,13 @@ import {
 import { __, sprintf } from '@wordpress/i18n';
 import { chevronLeft, chevronRight, closeSmall } from '@wordpress/icons';
 import { Badge } from '@wordpress/ui';
-import { useEffect, useLayoutEffect, useRef, useState, type MouseEvent } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import ResourceDetailArtwork from './resource-detail-artwork';
+import { getResourceDownload } from './resource-download';
 import { getResourceTags } from './resource-presentation';
-import ResourceProductLogo from './resource-product-logo';
-import ResourceWebpagePreview from './resource-webpage-preview';
-import { sampleDocuments } from './sample-documents';
 import type { LibraryResource } from './types';
+import type { MouseEvent } from 'react';
+import './resource-detail-artwork.scss';
 
 export default function ResourcePreview( {
 	resource,
@@ -35,19 +37,45 @@ export default function ResourcePreview( {
 	onFilter: ( field: string, value: string ) => void;
 } ) {
 	const [ copyState, setCopyState ] = useState( '' );
+	const [ hasNavigated, setHasNavigated ] = useState( false );
+	const navigateResource = ( navigate?: () => void ) => {
+		if ( navigate ) {
+			setHasNavigated( true );
+			navigate();
+		}
+	};
 	const [ downloadError, setDownloadError ] = useState( '' );
 	useEffect( () => {
 		setCopyState( '' );
 		setDownloadError( '' );
 	}, [ resource.id ] );
-	const [ page, setPage ] = useState( 0 );
-	useEffect( () => setPage( 0 ), [ resource.id ] );
-	const document = resource.format === 'PDF' ? sampleDocuments[ resource.id ] : undefined;
-	const pages = document?.pages ?? [];
-	const isWebpage = resource.format === 'Webpage';
-	const isVideo = resource.format === 'Video';
-	const documentUrl = isVideo ? resource.url : document?.url;
+	useEffect( () => {
+		if ( copyState !== __( 'Link copied' ) ) {
+			return;
+		}
+		const timeout = window.setTimeout( () => setCopyState( '' ), 2000 );
+		return () => window.clearTimeout( timeout );
+	}, [ copyState ] );
+	const download = getResourceDownload( resource );
+	const downloadLabel = download?.exportFormat
+		? { PDF: __( 'Download PDF' ), XLSX: __( 'Download spreadsheet' ) }[ download.exportFormat ]
+		: __( 'Download' );
 	const contentRef = useRef< HTMLDivElement >( null );
+	useLayoutEffect( () => {
+		const frame = contentRef.current?.closest< HTMLElement >( '.components-modal__frame' );
+		if ( ! frame ) {
+			return;
+		}
+		const openingHeight = frame.getBoundingClientRect().height;
+		const positionModal = () => {
+			const top = Math.max( 16, ( window.innerHeight - openingHeight ) / 2 );
+			frame.style.setProperty( '--resource-modal-top', `${ top }px` );
+		};
+		positionModal();
+		window.addEventListener( 'resize', positionModal );
+		return () => window.removeEventListener( 'resize', positionModal );
+	}, [] );
+
 	useLayoutEffect( () => {
 		const frame = contentRef.current?.closest( '.components-modal__frame' );
 		if ( ! frame || window.matchMedia( '(prefers-reduced-motion: reduce)' ).matches ) {
@@ -57,7 +85,7 @@ export default function ResourcePreview( {
 		const transform = origin
 			? `translate(${ origin.x + origin.width / 2 - bounds.x - bounds.width / 2 }px, ${
 					origin.y + origin.height / 2 - bounds.y - bounds.height / 2
-				}px) scale(${ origin.width / bounds.width }, ${ origin.height / bounds.height })`
+			  }px) scale(${ origin.width / bounds.width }, ${ origin.height / bounds.height })`
 			: 'scale(0.96)';
 		const animation = frame.animate(
 			[
@@ -70,7 +98,7 @@ export default function ResourcePreview( {
 	}, [ origin ] );
 	return (
 		<Modal
-			className="resource-preview"
+			className="resource-preview resource-preview-details"
 			overlayClassName="resource-preview-overlay"
 			contentLabel={ resource.title }
 			__experimentalHideHeader
@@ -93,21 +121,23 @@ export default function ResourcePreview( {
 				if ( event.key === 'ArrowLeft' || event.key === 'ArrowRight' ) {
 					event.preventDefault();
 					if ( event.key === 'ArrowLeft' ) {
-						onPrevious?.();
+						navigateResource( onPrevious );
 					} else {
-						onNext?.();
+						navigateResource( onNext );
 					}
 				}
 			} }
 		>
-			<div className="resource-preview-layout" ref={ contentRef }>
+			<div
+				className="resource-preview-layout"
+				data-product={ resource.product }
+				data-preview-transition={ hasNavigated ? 'fade' : 'enter' }
+				ref={ contentRef }
+			>
 				<div className="resource-preview-heading-scope">
 					<header className="resource-preview-header">
 						<div className="resource-preview-heading-row">
 							<div className="resource-preview-heading-copy">
-								<div className="resource-preview-brand" data-product={ resource.product }>
-									<ResourceProductLogo product={ resource.product } />
-								</div>
 								<Heading level={ 1 } className="resource-preview-title" dir="auto">
 									{ resource.title }
 								</Heading>
@@ -120,9 +150,11 @@ export default function ResourcePreview( {
 								onClick={ onClose }
 							/>
 						</div>
-						<HStack className="resource-preview-summary" spacing={ 4 } alignment="top" wrap>
-							<Text dir="auto">{ resource.description }</Text>
-						</HStack>
+						{ resource.description && (
+							<HStack className="resource-preview-summary" spacing={ 4 } alignment="top" wrap>
+								<Text dir="auto">{ resource.description }</Text>
+							</HStack>
+						) }
 						<HStack
 							className="resource-preview-action-row"
 							role="group"
@@ -138,54 +170,53 @@ export default function ResourcePreview( {
 								justify="start"
 								expanded={ false }
 							>
-								{ isWebpage ? (
+								{ download && (
 									<Button
 										variant="primary"
 										size="compact"
-										href={ resource.url }
+										href={ download.url }
 										target="_blank"
 										rel="noopener noreferrer"
-									>
-										{ __( 'Open in new tab' ) }
-									</Button>
-								) : (
-									<Button
-										variant="primary"
-										size="compact"
-										href={ documentUrl }
-										download={ `${ resource.title }.${ isVideo ? 'mp4' : 'pdf' }` }
-										onClick={ async (
-											event: MouseEvent< HTMLAnchorElement | HTMLButtonElement >
-										) => {
-											if ( ! isVideo ) {
+										download={ download.filename }
+										onClick={ async ( event: MouseEvent< HTMLAnchorElement > ) => {
+											if ( ! download.fetchFile ) {
 												return;
 											}
 											event.preventDefault();
 											setDownloadError( '' );
 											try {
-												// Cross-origin video links ignore the download attribute.
-												const response = await fetch( resource.url );
+												const response = await fetch( download.url );
 												if ( ! response.ok ) {
 													throw new Error( 'Download failed' );
 												}
 												const url = URL.createObjectURL( await response.blob() );
 												const anchor = window.document.createElement( 'a' );
 												anchor.href = url;
-												anchor.download = `${ resource.title }.mp4`;
-												window.document.body.appendChild( anchor );
+												anchor.download = download.filename ?? resource.title;
 												anchor.click();
-												anchor.remove();
 												window.setTimeout( () => URL.revokeObjectURL( url ), 1000 );
 											} catch {
-												setDownloadError( __( 'Download failed. Please try again.' ) );
+												setDownloadError(
+													__( 'Download failed. Open the resource in a new tab to save it.' )
+												);
 											}
 										} }
 									>
-										{ __( 'Download' ) }
+										{ downloadLabel }
 									</Button>
 								) }
 								<Button
+									variant={ download ? 'secondary' : 'primary' }
+									size="compact"
+									href={ resource.url }
+									target="_blank"
+									rel="noopener noreferrer"
+								>
+									{ __( 'Open in new tab' ) }
+								</Button>
+								<Button
 									variant="tertiary"
+									className="resource-preview-copy-link"
 									label={ copyState || __( 'Copy link' ) }
 									showTooltip={ false }
 									size="compact"
@@ -229,98 +260,40 @@ export default function ResourcePreview( {
 						</HStack>
 					</header>
 				</div>
-				{ downloadError && <p role="alert">{ downloadError }</p> }
-				<span role="status" className="screen-reader-text">
-					{ copyState }
-				</span>
-				<div className="resource-preview-media" key={ resource.id }>
-					{ isWebpage && (
-						<ResourceWebpagePreview
-							key={ resource.url }
-							url={ resource.url }
-							title={ resource.title }
-						/>
-					) }
-					{ isVideo && (
-						// The sample clip has no speech requiring captions.
-						// eslint-disable-next-line jsx-a11y/media-has-caption
-						<video
-							controls
-							playsInline
-							preload="metadata"
-							src={ resource.url }
-							aria-label={ resource.title }
-						/>
-					) }
-					{ resource.format === 'PDF' && (
-						<div className="resource-pdf-viewer">
-							<div className="resource-pdf-page" key={ `${ resource.id }-${ page }` }>
-								<img src={ pages[ page ] } alt={ `${ resource.title }, ${ page + 1 }` } />
-							</div>
-							{ pages.length > 1 && (
-								<nav className="resource-pdf-thumbnails" aria-label={ __( 'PDF pages' ) }>
-									{ pages.map( ( src, index ) => (
-										<Button
-											key={ src }
-											className="resource-pdf-thumbnail"
-											aria-current={ page === index ? 'page' : undefined }
-											aria-label={ sprintf(
-												/* translators: %d: PDF page number. */ __( 'Page %d' ),
-												index + 1
-											) }
-											onClick={ () => setPage( index ) }
-										>
-											<img src={ src } alt="" loading="lazy" />
-											<span>{ index + 1 }</span>
-										</Button>
-									) ) }
-								</nav>
-							) }
-						</div>
-					) }
-				</div>
-
-				{ ( previousResource || nextResource ) && (
-					<HStack className="resource-preview-navigation" spacing={ 3 }>
-						{ previousResource && (
-							<Button
-								size="compact"
-								icon={ chevronLeft }
-								aria-label={ __( 'Previous resource' ) }
-								onClick={ onPrevious }
-							>
-								<span className="resource-preview-neighbor">
-									<span className="resource-preview-neighbor-meta">
-										{ __( 'Previous' ) }
-										<span>{ ` · ${ previousResource.contentType }` }</span>
-									</span>
-									<span className="resource-preview-neighbor-title">
-										{ previousResource.title }
-									</span>
-								</span>
-							</Button>
-						) }
-						{ nextResource && (
-							<Button
-								className="resource-preview-next"
-								size="compact"
-								icon={ chevronRight }
-								aria-label={ __( 'Next resource' ) }
-								iconPosition="right"
-								onClick={ onNext }
-							>
-								<span className="resource-preview-neighbor">
-									<span className="resource-preview-neighbor-meta">
-										{ __( 'Next' ) }
-										<span>{ ` · ${ nextResource.contentType }` }</span>
-									</span>
-									<span className="resource-preview-neighbor-title">{ nextResource.title }</span>
-								</span>
-							</Button>
-						) }
-					</HStack>
+				<VisuallyHidden>
+					<span role="status">{ copyState }</span>
+				</VisuallyHidden>
+				{ downloadError && (
+					<p className="resource-detail-error" role="alert">
+						{ downloadError }
+					</p>
 				) }
+				<div className="resource-detail-visual" key={ resource.id }>
+					<ResourceDetailArtwork resource={ resource } />
+				</div>
 			</div>
+			{ ( previousResource || nextResource ) && (
+				<div
+					className="resource-preview-navigation"
+					role="group"
+					aria-label={ __( 'Resource navigation' ) }
+				>
+					<Button
+						size="compact"
+						icon={ chevronLeft }
+						label={ __( 'Previous resource' ) }
+						disabled={ ! previousResource }
+						onClick={ () => navigateResource( onPrevious ) }
+					/>
+					<Button
+						size="compact"
+						icon={ chevronRight }
+						label={ __( 'Next resource' ) }
+						disabled={ ! nextResource }
+						onClick={ () => navigateResource( onNext ) }
+					/>
+				</div>
+			) }
 		</Modal>
 	);
 }

@@ -231,6 +231,7 @@
 		"lodash": "^4.18.1",
 		"lottie-web": "^5.9.6",
 		"moment": "^2.30.1",
+		"pdfjs-dist": "^6.3.289",
 		"photon": "workspace:^",
 		"react": "19.2.7",
 		"react-dom": "19.2.7",

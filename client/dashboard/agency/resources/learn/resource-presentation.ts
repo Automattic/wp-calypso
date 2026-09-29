@@ -1,7 +1,8 @@
 import { __ } from '@wordpress/i18n';
+import { hubFeaturedIds } from './hub-resources';
 import type { LibraryResource } from './types';
 
-export const topResources = [ 'sample-01', 'sample-06', 'sample-11', 'sample-27', 'sample-42' ];
+export const topResources = hubFeaturedIds;
 
 export function getResourceTags( resource: LibraryResource, showType = true ) {
 	return [
@@ -10,6 +11,6 @@ export function getResourceTags( resource: LibraryResource, showType = true ) {
 			: [] ),
 		...( showType ? [ { field: 'contentType', value: resource.contentType } ] : [] ),
 		{ field: 'audience', value: resource.audience },
-		{ field: 'stage', value: resource.stage },
+		...( resource.stage ? [ { field: 'stage', value: resource.stage } ] : [] ),
 	];
 }
