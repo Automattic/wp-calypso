@@ -7,6 +7,7 @@
 import { fetchEbanxConfiguration, tokenizeEbanxCardWithVgs } from '@automattic/api-core';
 import debugFactory from 'debug';
 import paymentGatewayLoader from 'calypso/lib/payment-gateway-loader';
+import type { EbanxVgsTokenizeRequest } from '@automattic/api-core';
 
 const debug = debugFactory( 'calypso:ebanx-vgs-tokenization' );
 
@@ -119,7 +120,7 @@ export async function createEbanxTokenVgs(
 
 	try {
 		// Prepare request payload for the backend endpoint
-		const requestPayload: EbanxTokenizeRequest = {
+		const requestPayload: EbanxVgsTokenizeRequest = {
 			card_number: cardDetails.vgsTokens.card_number,
 			card_name: cardDetails.name,
 			card_due_date: cardDetails.vgsTokens.card_exp,

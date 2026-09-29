@@ -32,6 +32,37 @@ export type ReaderUser = Pick<
 	| 'profile_URL'
 >;
 
+/**
+ * The body for `/users/new`. Each signup flow (checkout, signup, invites,
+ * Jetpack Connect) sends a different subset of the optional fields.
+ */
+export interface NewUserRequest {
+	client_id: string;
+	client_secret: string;
+	email?: string;
+	username?: string;
+	password?: string;
+	is_passwordless?: boolean;
+	validate?: boolean;
+	locale?: string;
+	signup_flow_name?: string;
+	send_verification_email?: boolean;
+	anon_id?: string;
+	tos?: {
+		path: string;
+		locale: string;
+		viewport: string;
+	};
+	extra?: {
+		username_hint?: string;
+	};
+	new_site_params?: Record< string, unknown >;
+	should_create_site?: boolean;
+	'g-recaptcha-error'?: string;
+	'g-recaptcha-response'?: string;
+	blackbox_session_id?: string;
+}
+
 export interface NewUserResponse {
 	success: boolean;
 	bearer_token?: string;

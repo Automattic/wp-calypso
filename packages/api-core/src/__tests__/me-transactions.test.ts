@@ -86,9 +86,15 @@ describe( 'transaction submission', () => {
 			} )
 			.reply( 200, { success: true, username: 'ada' } );
 
-		const result = await createUser( { email: 'ada@example.com', is_passwordless: true } );
+		const request = {
+			client_id: 'client-id',
+			client_secret: 'client-secret',
+			email: 'ada@example.com',
+			is_passwordless: true,
+		};
+		const result = await createUser( request );
 
-		expect( body ).toEqual( { email: 'ada@example.com', is_passwordless: true } );
+		expect( body ).toEqual( request );
 		expect( result ).toEqual( { success: true, username: 'ada' } );
 	} );
 } );
