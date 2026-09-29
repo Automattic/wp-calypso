@@ -218,6 +218,13 @@ $lead-side-by-side: $pad-x * 2 + $words-min + $gap + $lead-object;
 }
 
 .dashboard-showcase__action {
+	// Core buttons draw their hover and focus rings in the admin accent (blue);
+	// here it is a soft grey, so no coloured edge lands on a tile.
+	--wp-components-color-accent: rgba( 0, 0, 0, 0.16 );
+	--wp-admin-theme-color: rgba( 0, 0, 0, 0.16 );
+	--wp-components-color-accent-darker-10: rgba( 0, 0, 0, 0.16 );
+	--wp-admin-theme-color-darker-10: rgba( 0, 0, 0, 0.16 );
+
 	position: relative;
 	z-index: 4;
 	grid-area: action;
@@ -241,20 +248,20 @@ $lead-side-by-side: $pad-x * 2 + $words-min + $gap + $lead-object;
 		}
 	}
 
-	// A white button with the action colour for its label: it reads as a button
-	// on the tints and on the lead's full colour. The doubled class beats the
-	// core secondary button's accent-blue border.
+	// The primary action is a white button with the tile's ink for its label:
+	// white sits apart from the drawings, where a filled accent competed with
+	// them. The doubled class beats the core secondary button's border.
 	.components-button.is-secondary.is-secondary {
 		color: var( --showcase-action );
 		background: #fff;
-		box-shadow: inset 0 0 0 1px var( --showcase-action ), 0 1px 2px rgba( 0, 0, 0, 0.08 );
+		box-shadow: 0 1px 2px rgba( 0, 0, 0, 0.1 );
 		font-weight: 500;
 
 		&:hover:not( :disabled ),
 		&:focus:not( :disabled ) {
 			color: var( --showcase-action );
 			background: #fff;
-			box-shadow: inset 0 0 0 1px var( --showcase-action ), 0 2px 6px rgba( 0, 0, 0, 0.12 );
+			box-shadow: 0 2px 6px rgba( 0, 0, 0, 0.14 );
 		}
 
 		svg {
@@ -268,12 +275,11 @@ $lead-side-by-side: $pad-x * 2 + $words-min + $gap + $lead-object;
 	}
 
 	// On the lead the action colour is white, so the white button takes the
-	// field's own colour for its label.
+	// field's colour for its label.
 	.is-lead & .components-button.is-secondary.is-secondary,
 	.is-lead & .components-button.is-secondary.is-secondary:hover:not( :disabled ),
 	.is-lead & .components-button.is-secondary.is-secondary:focus:not( :disabled ) {
-		color: var( --showcase-field );
-		box-shadow: 0 1px 2px rgba( 0, 0, 0, 0.12 );
+		color: var( --showcase-field, #1e1e1e );
 	}
 }
 
