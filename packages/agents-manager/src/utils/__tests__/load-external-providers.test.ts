@@ -190,17 +190,21 @@ describe( 'loadExternalProviders', () => {
 		expect( providers.toolProvider ).toBeUndefined();
 		expect( providers.contextProvider ).toBeUndefined();
 		expect( providers.useSuggestions ).toEqual( expect.any( Function ) );
+		expect( providers.markdownExtensions ).toEqual( { gfm: { enabled: true } } );
 	} );
 
 	// With nothing configured, even `amToolProvider` stays absent — picker
 	// surfaces always register at least one external provider.
 	it.each( [
+		[ 'undefined', undefined ],
 		[ 'not an array', 'not-an-array' ],
 		[ 'an empty array', [] ],
 	] )( 'resolves to no providers when agentProviders is %s', async ( _case, agentProviders ) => {
 		setAgentsManagerData( { agentProviders } );
 
-		await expect( loadExternalProviders() ).resolves.toEqual( {} );
+		await expect( loadExternalProviders() ).resolves.toEqual( {
+			markdownExtensions: { gfm: { enabled: true } },
+		} );
 		expect( getLoadedProviderIds() ).toEqual( [] );
 	} );
 
@@ -718,6 +722,37 @@ describe( 'loadExternalProviders', () => {
 		expect( providers.contextProvider?.getClientContext().availableCheckpoints ).toEqual(
 			providerCheckpoints
 		);
+	} );
+
+	it( 'enables GFM when a provider has no markdown extensions', async () => {
+		setAgentsManagerData( { agentProviders: [ {} ] } );
+
+		const providers = await loadExternalProviders();
+
+		expect( providers.markdownExtensions ).toEqual( { gfm: { enabled: true } } );
+	} );
+
+	it( 'preserves provider extensions alongside default GFM', async () => {
+		setAgentsManagerData( {
+			agentProviders: [ { markdownExtensions: { charts: { enabled: true } } } ],
+		} );
+
+		const providers = await loadExternalProviders();
+
+		expect( providers.markdownExtensions ).toEqual( {
+			gfm: { enabled: true },
+			charts: { enabled: true },
+		} );
+	} );
+
+	it( 'respects a provider disabling GFM', async () => {
+		setAgentsManagerData( {
+			agentProviders: [ { markdownExtensions: { gfm: { enabled: false } } } ],
+		} );
+
+		const providers = await loadExternalProviders();
+
+		expect( providers.markdownExtensions ).toEqual( { gfm: { enabled: false } } );
 	} );
 
 	it( 'merges markdown components and extensions from multiple providers', async () => {
