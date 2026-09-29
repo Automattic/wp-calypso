@@ -397,12 +397,13 @@ export default function MarketplaceProducts() {
 		<PageLayout
 			header={
 				<PageHeader
-					title={ __( 'Products' ) }
+					title={ __( 'Extend your clients’ sites' ) }
 					description={ __(
 						'Extensions, plans, and add-ons for your clients’ sites. Buy for your agency or refer them to a client.'
 					) }
 					actions={
 						<HStack spacing={ 4 } expanded={ false }>
+							<TermPricingToggle />
 							<ReferralToggle />
 							<CartMenu
 								items={ cartItems }
@@ -458,7 +459,6 @@ export default function MarketplaceProducts() {
 							<DataViews.Search />
 							<DataViews.FiltersToggle />
 						</HStack>
-						<TermPricingToggle />
 					</HStack>
 					<Spacer marginBottom={ 4 }>
 						<DataViews.FiltersToggled />
