@@ -1,11 +1,13 @@
+import { __experimentalHStack as HStack } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
 import { useEffect, useRef, useState } from 'react';
 import { useDomainSearch } from '../../page/context';
 import { DomainSearchControls } from '../../ui';
 import { sanitizeDomainInput } from '../helpers';
+import { NamePulseFilter } from './filter';
 import './search-input.scss';
 
-export const NamePulseSearchInput = () => {
+export const NamePulseSearchInput = ( { showFilter = false }: { showFilter?: boolean } ) => {
 	const { __ } = useI18n();
 	const { query, setQuery, events } = useDomainSearch();
 	const [ localQuery, setLocalQuery ] = useState( query );
@@ -27,7 +29,7 @@ export const NamePulseSearchInput = () => {
 	}, [ query ] );
 
 	return (
-		<div className="domain-search__search-bar name-pulse-search-input">
+		<HStack className="domain-search__search-bar name-pulse-search-input" spacing={ 4 }>
 			<DomainSearchControls.Input
 				ref={ inputRef }
 				value={ localQuery }
@@ -44,6 +46,7 @@ export const NamePulseSearchInput = () => {
 					}
 				} }
 			/>
-		</div>
+			{ showFilter && <NamePulseFilter /> }
+		</HStack>
 	);
 };
