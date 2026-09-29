@@ -7,6 +7,7 @@ import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { resolveSelect, useDispatch, useSelect } from '@wordpress/data';
 import { addQueryArgs, getQueryArg, getQueryArgs } from '@wordpress/url';
 import { useEffect, useMemo } from 'react';
+import { matchPath } from 'react-router';
 import { clearSessionStorageQuery } from 'calypso/components/domains/wpcom-domain-search/use-query-handler';
 import { dashboardLink } from 'calypso/dashboard/utils/link';
 import {
@@ -54,7 +55,6 @@ import {
 } from '../../../utils/build-wow';
 import { goToCheckout } from '../../../utils/checkout';
 import { getCurrentQueryParams } from '../../../utils/get-current-query-params';
-import { getStepFromURL } from '../../../utils/get-flow-from-url';
 import {
 	getPreselectedPlan,
 	getPreselectedStorageAddOn,
@@ -160,6 +160,23 @@ function getWowFunnelPostCheckoutDestination( {
 }
 
 /**
+ * The step in the flow's path, if any, allowing for a trailing locale.
+ *
+ * getStepFromURL() matches `/setup/:flow/:step` exactly, so it misses a step with a locale after it
+ * (`/setup/onboarding/wow-funnel-pending/fr`) and reads a bare locale as a step
+ * (`/setup/onboarding/fr`). Resume has to get both right: missing the first would send a
+ * non-English customer on the pending step back to it forever, and the second is the entry URL
+ * the pending step itself sends them to.
+ * @returns The step slug, or undefined when the path has none.
+ */
+function getEntryStepFromURL(): string | undefined {
+	const step = matchPath( { path: '/setup/:flow/:step/:lang?' }, window.location.pathname ?? '' )
+		?.params?.step;
+
+	return step && ! getLanguageSlugs().includes( step ) ? step : undefined;
+}
+
+/**
  * Put a customer who already has an unpaid funnel site back where they stopped.
  *
  * Runs in initialize, which is awaited before the flow renders anything, so a resumed customer
@@ -173,7 +190,7 @@ function getWowFunnelPostCheckoutDestination( {
  * @returns True when the customer is being redirected and the flow should not render.
  */
 async function resumeWowFunnelRun( reduxStore: Store ): Promise< boolean > {
-	if ( getStepFromURL() ) {
+	if ( getEntryStepFromURL() ) {
 		return false;
 	}
 

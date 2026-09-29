@@ -1,5 +1,6 @@
 import { Visibility } from '@automattic/data-stores/src/site/types';
 import { ONBOARDING_FLOW, createSite } from '@automattic/onboarding';
+import { __ } from '@wordpress/i18n';
 import wpcom from 'calypso/lib/wp';
 import {
 	clearWowFunnelSite,
@@ -286,7 +287,8 @@ async function createSiteOrAdoptPending( {
 			blog_id: pending.blogId,
 			pending_funnel: pending.funnelSlug,
 		} );
-		throw new Error( 'You already have an unfinished site from another setup.' );
+		// Shown to the customer on the error step, so a sentence, translated.
+		throw new Error( __( 'You already have an unfinished site from another setup.' ) );
 	}
 
 	if ( pending ) {

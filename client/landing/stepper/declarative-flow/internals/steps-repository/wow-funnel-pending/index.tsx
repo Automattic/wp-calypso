@@ -13,6 +13,7 @@ import {
 	getWowFunnelArgs,
 	getWowFunnelEntryQueryArgs,
 	getWowFunnelSlug,
+	isKnownWowFunnel,
 	isSameWowFunnelRun,
 	logWowFunnelEvent,
 } from 'calypso/landing/stepper/utils/wow-funnel';
@@ -155,15 +156,37 @@ const WowFunnelPending: StepType = function WowFunnelPending( { flow } ) {
 		return <Loading className="wpcom-loading__boot" title={ loadingTitle } />;
 	}
 
+	// Continue re-enters the pending run from its own entry URL, so offer it only when this client
+	// can: a funnel it does not know would fall back to plain onboarding (abandoning the site), and a
+	// run whose args the entry URL cannot carry would compute a different run and land back here.
+	const canContinue =
+		isKnownWowFunnel( pending.funnelSlug ) &&
+		isSameWowFunnelRun(
+			pending,
+			pending.funnelSlug,
+			getWowFunnelArgs(
+				new URLSearchParams( getWowFunnelEntryQueryArgs( pending.funnelSlug, pending.funnelArgs ) )
+			)
+		);
+
+	// Site slugs use `::` for subdirectory sites; show the address the customer would recognise.
+	const siteAddress = pending.siteSlug.replace( /::/g, '/' );
 	const heading = __( 'You have an unfinished site' );
-	const subText = sprintf(
-		/* translators: %s is the address of the customer's unfinished site, e.g. example.wordpress.com */
-		__(
-			'You started setting up %s but didn’t finish. Carry on with it, or discard it and start this one instead.'
-		),
-		// Site slugs use `::` for subdirectory sites; show the address the customer would recognise.
-		pending.siteSlug.replace( /::/g, '/' )
-	);
+	const subText = canContinue
+		? sprintf(
+				/* translators: %s is the address of the customer's unfinished site, e.g. example.wordpress.com */
+				__(
+					'You started setting up %s but didn’t finish. Carry on with it, or discard it and start this one instead.'
+				),
+				siteAddress
+			)
+		: sprintf(
+				/* translators: %s is the address of the customer's unfinished site, e.g. example.wordpress.com */
+				__(
+					'You started setting up %s but didn’t finish, and it can’t be continued from here. Discard it to start this one instead.'
+				),
+				siteAddress
+			);
 
 	return (
 		<>
@@ -179,9 +202,11 @@ const WowFunnelPending: StepType = function WowFunnelPending( { flow } ) {
 					</Notice>
 				) }
 				<HStack justify="center" spacing={ 4 }>
-					<Button variant="primary" onClick={ continuePendingRun } disabled={ isDiscarding }>
-						{ __( 'Continue that site' ) }
-					</Button>
+					{ canContinue && (
+						<Button variant="primary" onClick={ continuePendingRun } disabled={ isDiscarding }>
+							{ __( 'Continue that site' ) }
+						</Button>
+					) }
 					{ canStartOver && (
 						<Button
 							variant="secondary"
