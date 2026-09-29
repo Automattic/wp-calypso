@@ -81,7 +81,9 @@ function PoolRow( { pool, isExhausted }: { pool: CreditsPool; isExhausted: boole
 					style={ { width: `${ percent }%` } }
 				/>
 			</div>
-			{ detail && <div className="agents-manager-credits-meter__pool-detail">{ detail }</div> }
+			{ detail && ! isExhausted && (
+				<div className="agents-manager-credits-meter__pool-detail">{ detail }</div>
+			) }
 		</div>
 	);
 }
@@ -151,11 +153,13 @@ export default function CreditsMeter( {
 						) }
 					</div>
 					{ status.pools.map( ( pool ) => (
-						<PoolRow key={ pool.id } pool={ pool } isExhausted={ isFree && isExhausted } />
+						<PoolRow key={ pool.id } pool={ pool } isExhausted={ isExhausted } />
 					) ) }
-					{ isFree && isExhausted && (
+					{ isExhausted && (
 						<p className="agents-manager-credits-meter__message">
-							{ __( 'You’ve used all your free credits.', __i18n_text_domain__ ) }
+							{ isFree
+								? __( 'You’ve used all your free credits.', __i18n_text_domain__ )
+								: __( 'You’ve used all your site credits.', __i18n_text_domain__ ) }
 						</p>
 					) }
 					{ ( upgradeUrl || onAction ) && (

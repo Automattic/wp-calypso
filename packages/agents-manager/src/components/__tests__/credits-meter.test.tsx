@@ -43,6 +43,27 @@ const freeOut: CreditsStatus = {
 	pools: [ { id: 'free', label: 'Free credits', percent: 0 } ],
 };
 
+// Shaped like buildLiveCreditsStatus output for an 80,000-credit plan.
+const livePaid = ( remaining: number ): CreditsStatus => {
+	const percent = ( 100 * remaining ) / 80000;
+	return {
+		plan: 'paid',
+		planTier: 'business',
+		percent,
+		remaining,
+		pools: [
+			{
+				id: 'plan',
+				label: 'Monthly plan',
+				percent,
+				remaining,
+				total: 80000,
+				dateLabel: 'Resets Oct 8 (UTC)',
+			},
+		],
+	};
+};
+
 describe( 'CreditsMeter', () => {
 	it( 'uses a primary Upgrade CTA on paid plans while preserving the current editor', () => {
 		render(
@@ -170,6 +191,40 @@ describe( 'CreditsMeter', () => {
 		expect( screen.queryByText( 'Top-ups' ) ).not.toBeInTheDocument();
 	} );
 
+	it( 'replaces the detail with the used-all message on a paid plan at exactly zero', () => {
+		render(
+			<CreditsMeter
+				status={ livePaid( 0 ) }
+				isOpen
+				onToggle={ () => {} }
+				upgradeUrl="https://wordpress.com/plans/example.wordpress.com"
+			/>
+		);
+		expect( screen.getByText( '0% left' ) ).toHaveClass( 'is-exhausted' );
+		expect( screen.getByText( 'You’ve used all your site credits.' ) ).toHaveClass(
+			'agents-manager-credits-meter__message'
+		);
+		expect( screen.queryByText( /of 80,000 credits/ ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( /used all your free credits/ ) ).not.toBeInTheDocument();
+		expect( screen.getByText( 'Monthly plan' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Resets Oct 8 (UTC)' ) ).toBeInTheDocument();
+		expect( screen.getByRole( 'link', { name: 'Upgrade' } ) ).toHaveClass( 'is-primary' );
+	} );
+
+	it( 'keeps the detail and neutral percent on a paid plan with one credit left', () => {
+		render(
+			<CreditsMeter
+				status={ livePaid( 1 ) }
+				isOpen
+				onToggle={ () => {} }
+				upgradeUrl="https://wordpress.com/plans/example.wordpress.com"
+			/>
+		);
+		expect( screen.getByText( '<1%' ) ).not.toHaveClass( 'is-exhausted' );
+		expect( screen.getByText( '1 of 80,000 credits' ) ).toBeInTheDocument();
+		expect( screen.queryByText( /used all your/ ) ).not.toBeInTheDocument();
+	} );
+
 	it( 'labels a spendable fraction as under one percent, not exhausted', () => {
 		const freeFraction: CreditsStatus = {
 			plan: 'free',
@@ -194,8 +249,11 @@ describe( 'CreditsMeter', () => {
 				manageUrl="/credits"
 			/>
 		);
-		expect( screen.getByText( '0% left' ) ).toBeInTheDocument();
-		expect( screen.getByText( /used all your free credits/ ) ).toBeInTheDocument();
+		expect( screen.getByText( '0% left' ) ).toHaveClass( 'is-exhausted' );
+		expect( screen.getByText( 'You’ve used all your free credits.' ) ).toHaveClass(
+			'agents-manager-credits-meter__message'
+		);
+		expect( screen.queryByText( /used all your site credits/ ) ).not.toBeInTheDocument();
 		expect( screen.getByRole( 'button', { name: 'Upgrade' } ) ).toHaveClass( 'is-primary' );
 		expect( screen.getByRole( 'link', { name: 'Manage' } ) ).toHaveAttribute( 'href', '/credits' );
 	} );
