@@ -16,7 +16,6 @@ import {
 	isAutoRenewDisabled,
 	isBundleParent,
 	isChildLicense,
-	isDevSiteReadyForLaunch,
 	isJetpackCrmLicense,
 	isPartnerLicense,
 	isPressableAddonLicense,
@@ -140,7 +139,7 @@ export function getLicenseActions( {
 		{
 			id: 'prepare-for-launch',
 			label: __( 'Prepare for launch' ),
-			isEligible: isDevSiteReadyForLaunch,
+			isEligible: ( item ) => isAssignedWpcomSite( item ) && isDevSite( item ),
 			callback: ( items ) => {
 				recordTracksEvent( 'calypso_a4a_licenses_prepare_for_launch_click' );
 				onNavigate( siteRoute( items[ 0 ], '/settings/site-visibility' ) );
