@@ -62,12 +62,17 @@ function useSignupContext(): SignupContext | null {
 	return context;
 }
 
+const FALLBACK_AGENCY_COUNT = 10000;
+
 // Rounded down so the copy stays a stable "N,000+" instead of shifting on every refresh.
 function useAgencyCountLabel() {
 	const { data, isLoading } = useQuery( agencyProgramStatsQuery() );
-	const agencyCountLabel = data
-		? `${ formatNumber( Math.floor( data.active_agencies / 1000 ) * 1000 ) }+`
-		: null;
+	let agencyCountLabel: string | null = null;
+	if ( data ) {
+		agencyCountLabel = `${ formatNumber( Math.floor( data.active_agencies / 1000 ) * 1000 ) }+`;
+	} else if ( ! isLoading ) {
+		agencyCountLabel = `${ formatNumber( FALLBACK_AGENCY_COUNT ) }+`;
+	}
 	return { agencyCountLabel, isLoading };
 }
 
