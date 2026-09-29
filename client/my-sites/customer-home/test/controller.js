@@ -8,9 +8,9 @@ import { QueryClient } from '@tanstack/react-query';
 import configureStore from 'redux-mock-store';
 import { thunk } from 'redux-thunk';
 import { prefetchHomeLayout } from 'calypso/data/home/use-home-layout-query';
-import { loadExperimentAssignment } from 'calypso/lib/explat';
 import { getLoggedInLandingPage } from 'calypso/lib/landing-page';
 import { canCurrentUserUseCustomerHome } from 'calypso/state/sites/selectors';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { maybeRedirect, redirectToLandingPage } from '../controller';
 
 jest.mock( 'calypso/lib/landing-page', () => ( {
@@ -21,10 +21,6 @@ jest.mock( 'calypso/lib/landing-page', () => ( {
 jest.mock( '@automattic/launchpad', () => ( {
 	...jest.requireActual( '@automattic/launchpad' ),
 	fetchLaunchpad: jest.fn(),
-} ) );
-
-jest.mock( 'calypso/lib/explat', () => ( {
-	loadExperimentAssignment: jest.fn(),
 } ) );
 
 jest.mock( 'calypso/data/home/use-home-layout-query', () => ( {
@@ -200,43 +196,64 @@ describe( 'maybeRedirect', () => {
 		queryClient: new QueryClient(),
 	} );
 
+	const originalLocation = window.location;
+
 	beforeEach( () => {
 		jest.clearAllMocks();
 		canCurrentUserUseCustomerHome.mockReturnValue( true );
 		jest.spyOn( page, 'redirect' ).mockImplementation( () => {} );
 		jest.spyOn( page, 'replace' ).mockImplementation( () => {} );
+		Object.defineProperty( window, 'location', {
+			value: { assign: jest.fn(), replace: jest.fn() },
+			writable: true,
+			configurable: true,
+		} );
 	} );
 
 	afterEach( () => {
 		jest.restoreAllMocks();
+		Object.defineProperty( window, 'location', {
+			value: originalLocation,
+			writable: true,
+			configurable: true,
+		} );
 	} );
 
-	it( 'has the launchpad request in flight while the experiment assignment is still pending', async () => {
-		let resolveAssignment;
-		loadExperimentAssignment.mockReturnValue(
-			new Promise( ( resolve ) => {
-				resolveAssignment = resolve;
-			} )
-		);
-		fetchLaunchpad.mockResolvedValue( { launchpad_screen: 'off' } );
+	it( 'sends no-guidance sites to the wp-admin dashboard', async () => {
+		getSelectedSite.mockReturnValueOnce( {
+			ID: 1,
+			launch_status: 'unlaunched',
+			options: { wpcom_launchpad_no_guidance: true },
+		} );
 		const next = jest.fn();
 
-		maybeRedirect( buildSiteContext(), next );
-		await flushPromises();
+		await maybeRedirect( buildSiteContext(), next );
 
-		// The assignment has not resolved yet, so a serial implementation could not
-		// have issued this request.
-		expect( fetchLaunchpad ).toHaveBeenCalledWith( 'test.wordpress.com' );
+		expect( window.location.replace ).toHaveBeenCalledWith(
+			'https://example.wordpress.com/wp-admin/index.php'
+		);
+		expect( fetchLaunchpad ).not.toHaveBeenCalled();
 		expect( next ).not.toHaveBeenCalled();
+	} );
 
-		resolveAssignment( { variationName: null } );
-		await flushPromises();
+	it( 'sends sites with enabled+dismissed to the wp-admin dashboard', async () => {
+		getSelectedSite.mockReturnValueOnce( {
+			ID: 1,
+			launch_status: 'unlaunched',
+			options: { wpcom_ai_launchpad_enabled: true, wpcom_ai_launchpad_dismissed: true },
+		} );
+		const next = jest.fn();
 
-		expect( next ).toHaveBeenCalled();
+		await maybeRedirect( buildSiteContext(), next );
+
+		expect( window.location.replace ).toHaveBeenCalledWith(
+			'https://example.wordpress.com/wp-admin/index.php'
+		);
+		expect( fetchLaunchpad ).not.toHaveBeenCalled();
+		expect( next ).not.toHaveBeenCalled();
 	} );
 
 	it( 'renders the page when the launchpad request fails', async () => {
-		loadExperimentAssignment.mockResolvedValue( { variationName: null } );
 		fetchLaunchpad.mockRejectedValue( new Error( 'network' ) );
 		const next = jest.fn();
 
@@ -247,7 +264,6 @@ describe( 'maybeRedirect', () => {
 	} );
 
 	it( 'requests the card layout from the route rather than leaving it to the cards', async () => {
-		loadExperimentAssignment.mockResolvedValue( { variationName: null } );
 		fetchLaunchpad.mockResolvedValue( { launchpad_screen: 'off' } );
 		const next = jest.fn();
 
@@ -259,7 +275,6 @@ describe( 'maybeRedirect', () => {
 	} );
 
 	it( 'still renders the page when the card layout request fails', async () => {
-		loadExperimentAssignment.mockResolvedValue( { variationName: null } );
 		fetchLaunchpad.mockResolvedValue( { launchpad_screen: 'off' } );
 		prefetchHomeLayout.mockRejectedValueOnce( new Error( 'network' ) );
 		const next = jest.fn();
@@ -271,7 +286,6 @@ describe( 'maybeRedirect', () => {
 	} );
 
 	it( 'redirects to the launchpad when the checklist is unfinished', async () => {
-		loadExperimentAssignment.mockResolvedValue( { variationName: null } );
 		fetchLaunchpad.mockResolvedValue( {
 			launchpad_screen: 'full',
 			site_intent: 'build',

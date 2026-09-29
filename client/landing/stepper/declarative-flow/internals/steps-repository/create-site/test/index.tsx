@@ -9,6 +9,11 @@ import CreateSite from '../index';
 // The action the step hands to the processing step, captured as it is set.
 let pendingAction: ( () => Promise< unknown > ) | undefined;
 let flowStateStore: Record< string, unknown >;
+let mockBlueprint: string | null = null;
+let mockQueryParams = new URLSearchParams( '' );
+
+// createSite's aiLaunchpadEnabled parameter (see its call in ../index.tsx).
+const AI_LAUNCHPAD_ENABLED_ARG = 18;
 
 jest.mock( '@automattic/calypso-products', () => ( { isEcommerce: () => false } ) );
 
@@ -59,6 +64,7 @@ jest.mock( '@wordpress/data', () => ( {
 		partnerBundle: null,
 		gardenName: null,
 		gardenPartnerName: null,
+		blueprint: mockBlueprint,
 	} ),
 } ) );
 
@@ -70,7 +76,7 @@ jest.mock( 'calypso/data/ecommerce/use-add-ecommerce-trial-mutation', () => () =
 	mutateAsync: jest.fn(),
 } ) );
 jest.mock( 'calypso/landing/stepper/hooks/use-query', () => ( {
-	useQuery: () => new URLSearchParams( '' ),
+	useQuery: () => mockQueryParams,
 } ) );
 jest.mock( 'calypso/landing/stepper/stores', () => ( { ONBOARD_STORE: 'ONBOARD_STORE' } ) );
 jest.mock( 'calypso/landing/stepper/utils/wow-funnel', () => ( {
@@ -82,9 +88,6 @@ jest.mock( 'calypso/landing/stepper/utils/wow-funnel', () => ( {
 } ) );
 jest.mock( 'calypso/landing/stepper/utils/wow-funnel-site', () => ( {
 	startWowFunnelSite: jest.fn(),
-} ) );
-jest.mock( 'calypso/lib/ai-launchpad', () => ( {
-	resolveLaunchpadPersonalizationVariation: jest.fn( async () => 'control' ),
 } ) );
 jest.mock( 'calypso/lib/analytics/tracks', () => ( { recordTracksEvent: jest.fn() } ) );
 jest.mock( 'calypso/lib/wp', () => ( { req: { get: jest.fn(), post: jest.fn() } } ) );
@@ -113,9 +116,9 @@ jest.mock( '../early-provisioning', () => ( {
 } ) );
 
 // Mounts the step and hands back the action it registered, which is what the processing step runs.
-const runStep = async () => {
+const runStep = async ( { flow = 'onboarding' }: { flow?: string } = {} ) => {
 	const StepComponent = CreateSite as unknown as React.ComponentType< Record< string, unknown > >;
-	render( <StepComponent navigation={ { submit: jest.fn() } } flow="onboarding" /> );
+	render( <StepComponent navigation={ { submit: jest.fn() } } flow={ flow } /> );
 
 	await waitFor( () => expect( pendingAction ).toBeDefined() );
 
@@ -126,6 +129,9 @@ describe( 'create-site', () => {
 	beforeEach( () => {
 		pendingAction = undefined;
 		flowStateStore = {};
+		mockBlueprint = null;
+		mockQueryParams = new URLSearchParams( '' );
+		sessionStorage.clear();
 		jest.clearAllMocks();
 		( useFlowState as jest.Mock ).mockImplementation( () => ( {
 			get: ( key: string ) => flowStateStore[ key ],
@@ -239,5 +245,50 @@ describe( 'create-site', () => {
 		( createSite as jest.Mock ).mockResolvedValueOnce( undefined );
 
 		await expect( runStep() ).rejects.toThrow( 'Failed to create site' );
+	} );
+
+	describe( 'AI Launchpad enablement', () => {
+		it( 'enables the AI Launchpad for onboarding sites', async () => {
+			await runStep();
+			await waitFor( () => expect( createSite ).toHaveBeenCalled() );
+			expect( ( createSite as jest.Mock ).mock.calls[ 0 ][ AI_LAUNCHPAD_ENABLED_ARG ] ).toBe(
+				true
+			);
+		} );
+
+		it( 'does not enable it for other flows', async () => {
+			await runStep( { flow: 'newsletter' } );
+			await waitFor( () => expect( createSite ).toHaveBeenCalled() );
+			expect( ( createSite as jest.Mock ).mock.calls[ 0 ][ AI_LAUNCHPAD_ENABLED_ARG ] ).toBe(
+				false
+			);
+		} );
+
+		it( 'does not enable it for blueprint runs', async () => {
+			mockBlueprint = 'some-blueprint';
+			await runStep();
+			await waitFor( () => expect( createSite ).toHaveBeenCalled() );
+			expect( ( createSite as jest.Mock ).mock.calls[ 0 ][ AI_LAUNCHPAD_ENABLED_ARG ] ).toBe(
+				false
+			);
+		} );
+
+		it( 'does not enable it for a playground run', async () => {
+			mockQueryParams = new URLSearchParams( 'playground=some-playground' );
+			await runStep();
+			await waitFor( () => expect( createSite ).toHaveBeenCalled() );
+			expect( ( createSite as jest.Mock ).mock.calls[ 0 ][ AI_LAUNCHPAD_ENABLED_ARG ] ).toBe(
+				false
+			);
+		} );
+
+		it( 'does not enable it for a playground-publish run', async () => {
+			sessionStorage.setItem( 'from-playground-publish', '1' );
+			await runStep();
+			await waitFor( () => expect( createSite ).toHaveBeenCalled() );
+			expect( ( createSite as jest.Mock ).mock.calls[ 0 ][ AI_LAUNCHPAD_ENABLED_ARG ] ).toBe(
+				false
+			);
+		} );
 	} );
 } );

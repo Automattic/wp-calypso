@@ -14,11 +14,7 @@ import {
 	STEPPER_TRACKS_EVENT_SIGNUP_START,
 	WOO_HOSTING_SOLUTIONS_REF,
 } from 'calypso/landing/stepper/constants';
-import {
-	getLaunchpadPersonalizationDestination,
-	resolveLaunchpadPersonalizationVariation,
-	type LaunchpadPersonalizationVariation,
-} from 'calypso/lib/ai-launchpad';
+import { getLaunchpadDestination } from 'calypso/lib/ai-launchpad';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import { addSurvicate } from 'calypso/lib/analytics/survicate';
 import { loadExperimentAssignment } from 'calypso/lib/explat';
@@ -374,7 +370,6 @@ const onboarding: FlowV2< typeof initialize > = {
 		const shouldSkipPlans = shouldSkipPlansStep( queryParams, planCartItem );
 		const coupon = queryParams.get( 'coupon' );
 		const refParameter = queryParams.get( 'ref' );
-		const diyLaunchpad = queryParams.get( 'diy-launchpad' );
 		const siteSlugParam = queryParams.get( 'siteSlug' );
 
 		const { setShouldShowNotification } = usePurchasePlanNotification();
@@ -395,7 +390,6 @@ const onboarding: FlowV2< typeof initialize > = {
 		const getPostCheckoutDestination = async (
 			providedDependencies: ProvidedDependencies,
 			planCartItem: MinimalRequestCartProduct | null,
-			launchpadPersonalizationVariation: LaunchpadPersonalizationVariation,
 			defaultDestination: string
 		): Promise< string > => {
 			// Every funnel ends on the built site. A funnel with Calypso-side work hops to that
@@ -479,19 +473,12 @@ const onboarding: FlowV2< typeof initialize > = {
 				return `${ adminUrl }admin.php?page=wc-admin`;
 			}
 
-			// Launchpad-personalization treatments replace only the default My Home landing:
-			// ai_launchpad lands in Site Setup, no_guidance on the wp-admin dashboard. The
-			// functional handoffs above (plugin install, playground/blueprint import, Woo)
-			// keep their destinations regardless of the assigned variation.
-			if ( launchpadPersonalizationVariation !== 'control' && providedDependencies.siteSlug ) {
+			// AI Launchpad and no-guidance sites land in wp-admin instead of My Home.
+			if ( providedDependencies.siteSlug ) {
 				const siteSlug = providedDependencies.siteSlug as string;
 				const site = await resolveSelect( SITE_STORE ).getSite( siteSlug );
 				const adminUrl = site?.options?.admin_url ?? `https://${ siteSlug }/wp-admin/`;
-				const destination = getLaunchpadPersonalizationDestination( {
-					variation: launchpadPersonalizationVariation,
-					adminUrl,
-					enableAiLaunchpad: true,
-				} );
+				const destination = getLaunchpadDestination( site?.options, adminUrl );
 				if ( destination ) {
 					return destination;
 				}
@@ -680,31 +667,17 @@ const onboarding: FlowV2< typeof initialize > = {
 							return;
 						}
 						case 'blank-site': {
+							const site = await resolveSelect( SITE_STORE ).getSite( siteSlug );
+							const adminUrl = site?.options?.admin_url ?? `https://${ siteSlug }/wp-admin/`;
+
 							if ( refParameter === WOO_HOSTING_SOLUTIONS_REF ) {
-								const site = await resolveSelect( SITE_STORE ).getSite( siteSlug );
-								const adminUrl = site?.options?.admin_url ?? `https://${ siteSlug }/wp-admin/`;
 								window.location.assign( `${ adminUrl }admin.php?page=wc-admin` );
 								return;
 							}
 
-							// Launchpad-personalization treatments land in wp-admin instead of My Home
-							// (which would bounce them there anyway, one redirect later).
-							const variation = await resolveLaunchpadPersonalizationVariation( diyLaunchpad );
-							if ( variation !== 'control' ) {
-								const site = await resolveSelect( SITE_STORE ).getSite( siteSlug );
-								const adminUrl = site?.options?.admin_url ?? `https://${ siteSlug }/wp-admin/`;
-								const destination = getLaunchpadPersonalizationDestination( {
-									variation,
-									adminUrl,
-									enableAiLaunchpad: true,
-								} );
-								if ( destination ) {
-									window.location.assign( destination );
-									return;
-								}
-							}
-
-							window.location.assign( `/home/${ siteSlug }` );
+							window.location.assign(
+								getLaunchpadDestination( site?.options, adminUrl ) ?? `/home/${ siteSlug }`
+							);
 							return;
 						}
 						default:
@@ -724,16 +697,11 @@ const onboarding: FlowV2< typeof initialize > = {
 							addQueryArgs( withLocale( '/setup/onboarding/post-checkout-onboarding', locale ), {
 								siteSlug: siteSlugParam,
 								...( refParameter ? { ref: refParameter } : {} ),
-								...( diyLaunchpad ? { 'diy-launchpad': diyLaunchpad } : {} ),
 							} )
 						);
 						return;
 					}
 
-					const launchpadPersonalizationVariation =
-						playgroundId || blueprint
-							? 'control'
-							: await resolveLaunchpadPersonalizationVariation( diyLaunchpad );
 					// Widened because `siteSlug` is only typed on the success result, checked below.
 					const dependencies: ProvidedDependencies = providedDependencies;
 					const [ defaultDestination, backDestination, backDestinationDomains ] =
@@ -745,7 +713,6 @@ const onboarding: FlowV2< typeof initialize > = {
 					const destination = await getPostCheckoutDestination(
 						providedDependencies,
 						planCartItem,
-						launchpadPersonalizationVariation,
 						defaultDestination
 					);
 					if ( providedDependencies.processingResult === ProcessingResult.SUCCESS ) {
@@ -774,7 +741,6 @@ const onboarding: FlowV2< typeof initialize > = {
 											{
 												siteSlug,
 												...( refParameter ? { ref: refParameter } : {} ),
-												...( diyLaunchpad ? { 'diy-launchpad': diyLaunchpad } : {} ),
 											}
 										);
 
@@ -788,7 +754,6 @@ const onboarding: FlowV2< typeof initialize > = {
 										next: 'post-checkout-onboarding',
 										siteSlug,
 										...( refParameter ? { ref: refParameter } : {} ),
-										...( diyLaunchpad ? { 'diy-launchpad': diyLaunchpad } : {} ),
 									}
 								);
 							}

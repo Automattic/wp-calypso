@@ -97,6 +97,7 @@ export const SITE_REQUEST_OPTIONS = [
 	'wpcom_ai_launchpad_enabled',
 	'wpcom_ai_launchpad_dismissed',
 	'wpcom_ai_launchpad_completed',
+	'wpcom_launchpad_no_guidance',
 	'migration_source_site_domain',
 	'wpcom_production_blog_id',
 	'wpcom_staging_blog_ids',

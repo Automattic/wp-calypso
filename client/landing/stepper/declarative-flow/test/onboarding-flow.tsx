@@ -7,6 +7,7 @@ import { ONBOARDING_FLOW } from '@automattic/onboarding';
 import { dispatch } from '@wordpress/data';
 import React from 'react';
 import { MemoryRouter } from 'react-router';
+import { WOO_HOSTING_SOLUTIONS_REF } from 'calypso/landing/stepper/constants';
 import { addSurvicate } from 'calypso/lib/analytics/survicate';
 import { retrieveSignupDestination } from 'calypso/signup/storageUtils';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
@@ -15,6 +16,27 @@ import onboarding from '../flows/onboarding/onboarding';
 import { STEPS } from '../internals/steps';
 import { ProcessingResult } from '../internals/steps-repository/processing-step/constants';
 import { renderFlow } from './helpers';
+
+let mockSiteOptions: Record< string, unknown > = {};
+// A lazy Proxy, not a spread of requireActual: eagerly spreading '@wordpress/data' here recurses
+// into its own mock factory while the module is still initializing (via @wordpress/rich-text's
+// store, which the flow pulls in transitively) and crashes before any test runs.
+jest.mock( '@wordpress/data', () => {
+	const actualModule = jest.requireActual( '@wordpress/data' );
+
+	return new Proxy( actualModule, {
+		get: ( target, property ) => {
+			if ( property === 'resolveSelect' ) {
+				return () => ( {
+					getSite: async () => ( {
+						options: { admin_url: 'https://test-site.wordpress.com/wp-admin/', ...mockSiteOptions },
+					} ),
+				} );
+			}
+			return target[ property as keyof typeof target ];
+		},
+	} );
+} );
 
 const originalLocation = window.location;
 
@@ -37,9 +59,8 @@ jest.mock( 'calypso/lib/analytics/survicate', () => ( {
 	addSurvicate: jest.fn(),
 } ) );
 
-// The processing step awaits the launchpad-personalization ExPlat assignment before redirecting.
-// Resolve it synchronously to control (variationName: null) so the redirect fires within the test's
-// tick instead of waiting on a real network fetch.
+// Only the plans-page experiment still uses ExPlat here; stub it so the flow's unconditional
+// loadExperimentAssignment side effect never hits a real network fetch.
 jest.mock( 'calypso/lib/explat', () => ( {
 	loadExperimentAssignment: jest.fn( () => Promise.resolve( { variationName: null } ) ),
 	// A plain function, not jest.fn: the suite's beforeEach resetAllMocks would wipe a jest.fn's
@@ -67,6 +88,7 @@ describe( 'Onboarding Flow', () => {
 
 	beforeEach( () => {
 		jest.resetAllMocks();
+		mockSiteOptions = {};
 	} );
 
 	describe( 'Flow configuration', () => {
@@ -178,6 +200,86 @@ describe( 'Onboarding Flow', () => {
 					plans: DOMAINS_STEP,
 					domains: DOMAINS_STEP,
 				} );
+			} );
+		} );
+
+		describe( 'AI Launchpad and no-guidance destinations', () => {
+			it( 'redirects to Site Setup wp-admin when AI Launchpad is enabled', async () => {
+				mockSiteOptions = { wpcom_ai_launchpad_enabled: true };
+				const { runUseStepNavigationSubmit } = renderFlow( onboarding );
+
+				await runUseStepNavigationSubmit( {
+					currentStep: STEPS.PROCESSING.slug,
+					dependencies: {
+						siteSlug: 'test-site.wordpress.com',
+						processingResult: ProcessingResult.SUCCESS,
+					},
+				} );
+				await new Promise( ( resolve ) => setTimeout( resolve, 0 ) );
+
+				expect( window.location.replace ).toHaveBeenCalledWith(
+					'https://test-site.wordpress.com/wp-admin/admin.php?page=site-setup-wp-admin'
+				);
+			} );
+
+			it( 'redirects to the wp-admin root when the site has no guidance', async () => {
+				mockSiteOptions = { wpcom_launchpad_no_guidance: true };
+				const { runUseStepNavigationSubmit } = renderFlow( onboarding );
+
+				await runUseStepNavigationSubmit( {
+					currentStep: STEPS.PROCESSING.slug,
+					dependencies: {
+						siteSlug: 'test-site.wordpress.com',
+						processingResult: ProcessingResult.SUCCESS,
+					},
+				} );
+				await new Promise( ( resolve ) => setTimeout( resolve, 0 ) );
+
+				expect( window.location.replace ).toHaveBeenCalledWith(
+					'https://test-site.wordpress.com/wp-admin/'
+				);
+			} );
+
+			it( 'keeps a Woo Hosting Solutions referral on wc-admin even when AI Launchpad is enabled', async () => {
+				mockSiteOptions = { wpcom_ai_launchpad_enabled: true };
+				const { runUseStepNavigationSubmit } = renderFlow( onboarding );
+
+				await runUseStepNavigationSubmit( {
+					currentStep: STEPS.PROCESSING.slug,
+					currentURL: `/some-path?siteSlug=test-site.wordpress.com&ref=${ WOO_HOSTING_SOLUTIONS_REF }`,
+					dependencies: {
+						siteSlug: 'test-site.wordpress.com',
+						processingResult: ProcessingResult.SUCCESS,
+					},
+				} );
+				await new Promise( ( resolve ) => setTimeout( resolve, 0 ) );
+
+				expect( window.location.replace ).toHaveBeenCalledWith(
+					'https://test-site.wordpress.com/wp-admin/admin.php?page=wc-admin'
+				);
+			} );
+
+			it( 'keeps the plans-step checkout back URL for a paid order on an AI Launchpad site', async () => {
+				mockSiteOptions = { wpcom_ai_launchpad_enabled: true };
+				const { runUseStepNavigationSubmit } = renderFlow( onboarding );
+
+				await runUseStepNavigationSubmit( {
+					currentStep: STEPS.PROCESSING.slug,
+					dependencies: {
+						siteSlug: 'test-site.wordpress.com',
+						siteId: 123,
+						processingResult: ProcessingResult.SUCCESS,
+						goToCheckout: true,
+					},
+				} );
+				await new Promise( ( resolve ) => setTimeout( resolve, 0 ) );
+
+				const checkoutUrl = decodeURIComponent(
+					( window.location.replace as jest.Mock ).mock.calls[ 0 ][ 0 ]
+				);
+				expect( checkoutUrl ).toContain( '/checkout/test-site.wordpress.com' );
+				expect( checkoutUrl ).toContain( 'checkoutBackUrl=' );
+				expect( checkoutUrl ).toContain( '/setup/onboarding/plans' );
 			} );
 		} );
 

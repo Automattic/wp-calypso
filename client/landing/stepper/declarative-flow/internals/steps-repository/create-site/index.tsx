@@ -35,7 +35,6 @@ import {
 	wowFunnelSiteIsPaid,
 } from 'calypso/landing/stepper/utils/wow-funnel';
 import { startWowFunnelSite } from 'calypso/landing/stepper/utils/wow-funnel-site';
-import { resolveLaunchpadPersonalizationVariation } from 'calypso/lib/ai-launchpad';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import wpcom from 'calypso/lib/wp';
 import {
@@ -152,6 +151,7 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 		partnerBundle,
 		gardenName,
 		gardenPartnerName,
+		blueprint,
 	} = useSelect(
 		( select: ( arg: string ) => OnboardSelect ) => ( {
 			domainItem: select( ONBOARD_STORE ).getSelectedDomain(),
@@ -165,6 +165,7 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 			partnerBundle: select( ONBOARD_STORE ).getPartnerBundle(),
 			gardenName: select( ONBOARD_STORE ).getGardenName(),
 			gardenPartnerName: select( ONBOARD_STORE ).getGardenPartnerName(),
+			blueprint: select( ONBOARD_STORE ).getBlueprint(),
 		} ),
 		[]
 	);
@@ -340,13 +341,12 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 		const isPlaygroundPublish =
 			sessionStorage.getItem( SESSION_KEY_FROM_PLAYGROUND_PUBLISH ) === '1';
 
-		// Assignment point for the launchpad-personalization experiment. Resolving the
-		// variation before creation lets ai_launchpad sites start with the AI Launchpad
-		// enabled, so every post-checkout path (direct, chooser, Big Sky return)
-		// converges on it regardless of which URLs the user actually visits.
-		const launchpadPersonalizationVariation = isOnboardingFlow( flow )
-			? await resolveLaunchpadPersonalizationVariation( urlQueryParams.get( 'diy-launchpad' ) )
-			: 'control';
+		// Playground and blueprint runs import a prebuilt site, so they keep the regular landing.
+		const aiLaunchpadEnabled =
+			isOnboardingFlow( flow ) &&
+			! isPlaygroundPublish &&
+			! urlQueryParams.get( 'playground' ) &&
+			! blueprint;
 
 		// A run creates one site. Arriving here again — Back onto a step that advances by itself, a
 		// reload, a second tab landing on the flow — has to adopt the site this run already made
@@ -388,7 +388,7 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 						urlQueryParams.get( 'spec_id' ),
 						isPlaygroundPublish ? 'playground-publish' : undefined,
 						undefined, // provisionTarget
-						launchpadPersonalizationVariation === 'ai_launchpad'
+						aiLaunchpadEnabled
 					);
 
 			if ( ! site ) {
