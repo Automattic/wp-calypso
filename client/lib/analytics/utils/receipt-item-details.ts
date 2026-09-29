@@ -1,20 +1,9 @@
 import { isDomainMapping, isDomainTransfer } from '@automattic/calypso-products';
+import { getCurrencyObject } from '@automattic/number-formatters';
 import type { Receipt, ReceiptItem } from '@automattic/api-core';
 
-/**
- * Converts an integer amount in a currency's smallest unit (eg: cents) into
- * the currency's main unit (eg: dollars).
- */
 export function smallestUnitToAmount( amountInteger: number, currency: string ): number {
-	let precision = 2;
-	try {
-		precision =
-			new Intl.NumberFormat( 'en-US', { style: 'currency', currency } ).resolvedOptions()
-				.maximumFractionDigits ?? 2;
-	} catch {
-		// Unknown currency codes throw; assume a currency like USD.
-	}
-	return amountInteger / 10 ** precision;
+	return getCurrencyObject( amountInteger, currency, { isSmallestUnit: true } ).floatValue;
 }
 
 export function getReceiptTotal( receipt: Receipt ): number {

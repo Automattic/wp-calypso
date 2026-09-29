@@ -35,6 +35,10 @@ describe( 'smallestUnitToAmount', () => {
 		expect( smallestUnitToAmount( 1234, 'JPY' ) ).toBe( 1234 );
 	} );
 
+	it( 'uses the API encoding when it differs from the browser precision', () => {
+		expect( smallestUnitToAmount( 1234500, 'IDR' ) ).toBe( 12345 );
+	} );
+
 	it( 'assumes two decimal places for unknown currencies', () => {
 		expect( smallestUnitToAmount( 1234, 'NOTREAL' ) ).toBe( 12.34 );
 	} );
