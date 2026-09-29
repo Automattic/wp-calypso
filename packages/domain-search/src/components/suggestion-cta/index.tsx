@@ -1,6 +1,7 @@
+import { isDomainMoveInternal } from '@automattic/calypso-products';
 import { useIsMutating, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
-import { envelope } from '@wordpress/icons';
+import { arrowRight, envelope } from '@wordpress/icons';
 import { useState } from 'react';
 import { useIsCurrentMutation } from '../../hooks/use-is-current-mutation';
 import { useSuggestion } from '../../hooks/use-suggestion';
@@ -102,6 +103,8 @@ export const DomainSuggestionCTA = ( { domainName }: DomainSuggestionCTAProps ) 
 		);
 	}
 
+	const isDomainMove = isDomainMoveInternal( suggestion );
+
 	return (
 		<>
 			<DomainSuggestionPrimaryCTA
@@ -111,7 +114,10 @@ export const DomainSuggestionCTA = ( { domainName }: DomainSuggestionCTAProps ) 
 					events.onSuggestionInteract( suggestion );
 					addToCart( { acceptedTrademarkClaim: false } );
 				} }
-			/>
+				{ ...( isDomainMove && { label: __( 'Move' ), icon: arrowRight } ) }
+			>
+				{ isDomainMove ? __( 'Move' ) : undefined }
+			</DomainSuggestionPrimaryCTA>
 			{ availability?.trademark_claims_notice_info && trademarkClaimModalOpen && (
 				<DomainSearchTrademarkClaimsModal
 					domainName={ domainName }

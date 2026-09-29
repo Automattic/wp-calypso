@@ -623,6 +623,34 @@ describe( 'DomainSuggestionCTA', () => {
 		} );
 	} );
 
+	it( 'labels the cta "Move" for a domain the user already owns', async () => {
+		const suggestion = buildSuggestion( {
+			domain_name: 'owned-domain.com',
+			product_slug: 'domain_move_internal',
+		} );
+
+		mockGetSuggestionsQuery( {
+			params: { query: 'owned-domain' },
+			suggestions: [ suggestion ],
+		} );
+
+		mockGetAvailabilityQuery( {
+			params: { domainName: 'owned-domain.com' },
+			availability: buildAvailability( { domain_name: 'owned-domain.com' } ),
+		} );
+
+		render(
+			<TestDomainSearchWithSuggestions query="owned-domain">
+				<DomainSuggestionsList>
+					<DomainSuggestionCTA domainName="owned-domain.com" />
+				</DomainSuggestionsList>
+			</TestDomainSearchWithSuggestions>
+		);
+
+		expect( await screen.findByRole( 'button', { name: 'Move' } ) ).toBeInTheDocument();
+		expect( screen.queryByRole( 'button', { name: 'Add to cart' } ) ).not.toBeInTheDocument();
+	} );
+
 	it( 'allows contacting support if the premium domain is too expensive', async () => {
 		mockGetSuggestionsQuery( {
 			params: { query: 'test-expensive-premium.com' },
