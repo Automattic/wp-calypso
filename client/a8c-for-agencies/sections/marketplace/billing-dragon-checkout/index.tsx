@@ -9,6 +9,7 @@ import A4ALogo from 'calypso/a8c-for-agencies/components/a4a-logo';
 import { A4A_MARKETPLACE_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import { getStripeConfiguration } from 'calypso/lib/store-transactions';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
+import CheckoutQueryClientProvider from 'calypso/my-sites/checkout/checkout-query-client-provider';
 import CheckoutMain from 'calypso/my-sites/checkout/src/components/checkout-main';
 import usePrepareProductsForCart from 'calypso/my-sites/checkout/src/hooks/use-prepare-products-for-cart';
 import { useDispatch, useSelector } from 'calypso/state';
@@ -286,18 +287,20 @@ export default function BillingDragonCheckout( {
 		<CheckoutErrorBoundary
 			errorMessage={ translate( 'Sorry, there was an error loading the checkout page.' ) }
 		>
-			<CalypsoShoppingCartProvider shouldShowPersistentErrors>
-				<CartMessageCleanup />
-				<StripeHookProvider fetchStripeConfiguration={ getStripeConfiguration } locale={ locale }>
-					<BillingDragonCheckoutContent
-						cartItems={ cartItems }
-						withA8cLogo={ withA8cLogo }
-						siteSlug={ siteSlug }
-						planSlug={ planSlug }
-						shouldClearCartOnSuccess={ shouldClearCartOnSuccess }
-					/>
-				</StripeHookProvider>
-			</CalypsoShoppingCartProvider>
+			<CheckoutQueryClientProvider>
+				<CalypsoShoppingCartProvider shouldShowPersistentErrors>
+					<CartMessageCleanup />
+					<StripeHookProvider fetchStripeConfiguration={ getStripeConfiguration } locale={ locale }>
+						<BillingDragonCheckoutContent
+							cartItems={ cartItems }
+							withA8cLogo={ withA8cLogo }
+							siteSlug={ siteSlug }
+							planSlug={ planSlug }
+							shouldClearCartOnSuccess={ shouldClearCartOnSuccess }
+						/>
+					</StripeHookProvider>
+				</CalypsoShoppingCartProvider>
+			</CheckoutQueryClientProvider>
 		</CheckoutErrorBoundary>
 	);
 }

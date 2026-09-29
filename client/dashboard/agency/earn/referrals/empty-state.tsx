@@ -62,7 +62,7 @@ export default function ReferralsEmptyState( { agencyId }: { agencyId: number } 
 									variant={ hasPayeeAccount ? 'primary' : 'secondary' }
 									size="compact"
 									__next40pxDefaultSize
-									to="/marketplace/exclusive-offers"
+									to="/exclusive-offers"
 								>
 									{ __( 'Get started' ) }
 								</RouterLinkButton>
@@ -91,7 +91,7 @@ export default function ReferralsEmptyState( { agencyId }: { agencyId: number } 
 									variant={ hasPayeeAccount ? 'secondary' : 'primary' }
 									size="compact"
 									__next40pxDefaultSize
-									to="/earn/payout-settings"
+									to="/payout-settings"
 								>
 									{ hasPayeeAccount ? __( 'Edit my details' ) : __( 'Add my details' ) }
 								</RouterLinkButton>

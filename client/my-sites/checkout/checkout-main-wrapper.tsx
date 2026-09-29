@@ -10,6 +10,7 @@ import { useSelector } from 'calypso/state';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import CalypsoShoppingCartProvider from './calypso-shopping-cart-provider';
+import CheckoutQueryClientProvider from './checkout-query-client-provider';
 import CheckoutMain from './src/components/checkout-main';
 import { logStashLoadErrorEvent } from './src/lib/analytics';
 import type { SitelessCheckoutType } from '@automattic/wpcom-checkout';
@@ -106,32 +107,37 @@ export default function CheckoutMainWrapper( {
 				errorMessage={ translate( 'Sorry, there was an error loading this page.' ) }
 				onError={ logCheckoutError }
 			>
-				<CalypsoShoppingCartProvider shouldShowPersistentErrors>
-					<StripeHookProvider fetchStripeConfiguration={ getStripeConfiguration } locale={ locale }>
-						<CheckoutMain
-							siteSlug={ siteSlug }
-							siteId={ selectedSiteId }
-							productAliasFromUrl={ productAliasFromUrl }
-							productSourceFromUrl={ productSourceFromUrl }
-							purchaseId={ purchaseId }
-							couponCode={ couponCode }
-							redirectTo={ redirectTo }
-							feature={ selectedFeature }
-							plan={ plan }
-							isComingFromUpsell={ isComingFromUpsell }
-							sitelessCheckoutType={ sitelessCheckoutType }
-							isLoggedOutCart={ isLoggedOutCart }
-							isNoSiteCart={ isNoSiteCart }
-							isGiftPurchase={ isGiftPurchase }
-							jetpackSiteSlug={ jetpackSiteSlug }
-							jetpackPurchaseToken={ jetpackPurchaseToken }
-							isUserComingFromLoginForm={ isUserComingFromLoginForm }
-							connectAfterCheckout={ connectAfterCheckout }
-							fromSiteSlug={ fromSiteSlug }
-							adminUrl={ adminUrl }
-						/>
-					</StripeHookProvider>
-				</CalypsoShoppingCartProvider>
+				<CheckoutQueryClientProvider>
+					<CalypsoShoppingCartProvider shouldShowPersistentErrors>
+						<StripeHookProvider
+							fetchStripeConfiguration={ getStripeConfiguration }
+							locale={ locale }
+						>
+							<CheckoutMain
+								siteSlug={ siteSlug }
+								siteId={ selectedSiteId }
+								productAliasFromUrl={ productAliasFromUrl }
+								productSourceFromUrl={ productSourceFromUrl }
+								purchaseId={ purchaseId }
+								couponCode={ couponCode }
+								redirectTo={ redirectTo }
+								feature={ selectedFeature }
+								plan={ plan }
+								isComingFromUpsell={ isComingFromUpsell }
+								sitelessCheckoutType={ sitelessCheckoutType }
+								isLoggedOutCart={ isLoggedOutCart }
+								isNoSiteCart={ isNoSiteCart }
+								isGiftPurchase={ isGiftPurchase }
+								jetpackSiteSlug={ jetpackSiteSlug }
+								jetpackPurchaseToken={ jetpackPurchaseToken }
+								isUserComingFromLoginForm={ isUserComingFromLoginForm }
+								connectAfterCheckout={ connectAfterCheckout }
+								fromSiteSlug={ fromSiteSlug }
+								adminUrl={ adminUrl }
+							/>
+						</StripeHookProvider>
+					</CalypsoShoppingCartProvider>
+				</CheckoutQueryClientProvider>
 			</CheckoutErrorBoundary>
 			{ isLoggedOutCart && <Recaptcha badgePosition="bottomright" /> }
 		</>

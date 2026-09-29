@@ -1,7 +1,6 @@
 import { __experimentalText as Text, __experimentalHStack as HStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
-import { getMarketplaceReferHostingRoute } from '../paths';
 import AvalaraLogo from './images/avalara.svg';
 import JetpackLogo from './images/jetpack-descriptor.svg';
 import PressableLogo from './images/pressable-descriptor.svg';
@@ -9,7 +8,7 @@ import VIPLogo from './images/vip-descriptor.svg';
 import WooLogo from './images/woo-descriptor.svg';
 import WooPaymentsLogo from './images/woopayments.svg';
 import WordPressDotComLogo from './images/wordpressdotcom-descriptor.svg';
-import type { PartnerOffer } from './types';
+import type { PartnerOffer, PartnerOfferLinks } from './types';
 
 // Marketplace constant values inlined from client/a8c-for-agencies so the
 // dashboard has no dependency on the classic A4A app.
@@ -17,14 +16,6 @@ const MARKETPLACE_TYPE_REFERRAL = 'referral';
 const MARKETPLACE_TYPE_REGULAR = 'regular';
 const PRODUCT_BRAND_FILTER_WOOCOMMERCE = 'woocommerce';
 const PRODUCT_BRAND_FILTER_JETPACK = 'jetpack';
-const A4A_MARKETPLACE_HOSTING_WPCOM_LINK = '/marketplace/hosting/wpcom';
-const A4A_MARKETPLACE_HOSTING_PRESSABLE_LINK = '/marketplace/hosting/pressable';
-const A4A_MARKETPLACE_HOSTING_REFER_PRESSABLE_PREMIUM_PLAN_LINK =
-	getMarketplaceReferHostingRoute( 'premium' );
-const A4A_MARKETPLACE_HOSTING_REFER_ENTERPRISE_LINK =
-	getMarketplaceReferHostingRoute( 'enterprise' );
-const A4A_MARKETPLACE_PRODUCTS_LINK = '/marketplace/products';
-const A4A_WOOPAYMENTS_OVERVIEW_LINK = '/woopayments/overview';
 
 export const filterOptions = {
 	offerTypes: [
@@ -43,7 +34,7 @@ export const filterOptions = {
 	],
 };
 
-export const partnerOffers: PartnerOffer[] = [
+export const getPartnerOffers = ( links: PartnerOfferLinks ): PartnerOffer[] => [
 	{
 		id: 'wordpress-com-hosting-refer',
 		offerType: 'refer',
@@ -56,7 +47,7 @@ export const partnerOffers: PartnerOffer[] = [
 		),
 		cta: {
 			label: __( 'Refer WordPress.com' ),
-			url: A4A_MARKETPLACE_HOSTING_WPCOM_LINK,
+			url: links.hostingWpcom,
 			purchase_type: MARKETPLACE_TYPE_REFERRAL,
 		},
 	},
@@ -72,7 +63,7 @@ export const partnerOffers: PartnerOffer[] = [
 		),
 		cta: {
 			label: __( 'Refer Pressable' ),
-			url: A4A_MARKETPLACE_HOSTING_PRESSABLE_LINK,
+			url: links.hostingPressable,
 			purchase_type: MARKETPLACE_TYPE_REFERRAL,
 		},
 	},
@@ -100,7 +91,7 @@ export const partnerOffers: PartnerOffer[] = [
 		),
 		cta: {
 			label: __( 'Refer Pressable' ),
-			url: A4A_MARKETPLACE_HOSTING_REFER_PRESSABLE_PREMIUM_PLAN_LINK,
+			url: links.referPressablePremium,
 		},
 	},
 	{
@@ -115,7 +106,7 @@ export const partnerOffers: PartnerOffer[] = [
 		),
 		cta: {
 			label: __( 'Refer WordPress VIP' ),
-			url: A4A_MARKETPLACE_HOSTING_REFER_ENTERPRISE_LINK,
+			url: links.referEnterprise,
 		},
 	},
 	{
@@ -130,7 +121,7 @@ export const partnerOffers: PartnerOffer[] = [
 		),
 		cta: {
 			label: __( 'Refer Woo' ),
-			url: addQueryArgs( A4A_MARKETPLACE_PRODUCTS_LINK, {
+			url: addQueryArgs( links.products, {
 				category: PRODUCT_BRAND_FILTER_WOOCOMMERCE,
 			} ),
 			purchase_type: MARKETPLACE_TYPE_REFERRAL,
@@ -147,7 +138,7 @@ export const partnerOffers: PartnerOffer[] = [
 		),
 		cta: {
 			label: __( 'Refer Jetpack' ),
-			url: addQueryArgs( A4A_MARKETPLACE_PRODUCTS_LINK, {
+			url: addQueryArgs( links.products, {
 				category: PRODUCT_BRAND_FILTER_JETPACK,
 			} ),
 			purchase_type: MARKETPLACE_TYPE_REFERRAL,
@@ -180,7 +171,7 @@ export const partnerOffers: PartnerOffer[] = [
 		),
 		cta: {
 			label: __( 'Save on WordPress.com' ),
-			url: A4A_MARKETPLACE_HOSTING_WPCOM_LINK,
+			url: links.hostingWpcom,
 			purchase_type: MARKETPLACE_TYPE_REGULAR,
 		},
 	},
@@ -196,7 +187,7 @@ export const partnerOffers: PartnerOffer[] = [
 		),
 		cta: {
 			label: __( 'Save on Pressable' ),
-			url: A4A_MARKETPLACE_HOSTING_PRESSABLE_LINK,
+			url: links.hostingPressable,
 			purchase_type: MARKETPLACE_TYPE_REGULAR,
 		},
 	},
@@ -212,7 +203,7 @@ export const partnerOffers: PartnerOffer[] = [
 		),
 		cta: {
 			label: __( 'Save on Woo' ),
-			url: addQueryArgs( A4A_MARKETPLACE_PRODUCTS_LINK, {
+			url: addQueryArgs( links.products, {
 				category: PRODUCT_BRAND_FILTER_WOOCOMMERCE,
 			} ),
 			purchase_type: MARKETPLACE_TYPE_REGULAR,
@@ -236,7 +227,7 @@ export const partnerOffers: PartnerOffer[] = [
 		),
 		cta: {
 			label: __( 'Earn with WooPayments' ),
-			url: A4A_WOOPAYMENTS_OVERVIEW_LINK,
+			url: links.woopayments,
 		},
 	},
 ];

@@ -1,3 +1,5 @@
+import type { ReferralApiResponse } from '../agency-referrals/types';
+
 export interface JetpackLicenseMeta {
 	a4a_is_dev_site?: string;
 	a4a_was_dev_site?: string;
@@ -36,7 +38,8 @@ export interface JetpackLicense {
 	quantity: number | null;
 	parent_license_id: number | null;
 	meta: JetpackLicenseMeta | null;
-	referral: unknown;
+	/** Set when a client paid for this license through a referral. */
+	referral: ReferralApiResponse | null;
 	subscription?: JetpackLicenseSubscription | null;
 }
 

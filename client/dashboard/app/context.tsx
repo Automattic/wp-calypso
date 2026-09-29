@@ -29,6 +29,7 @@ export type AgencySupports = {
 	plugins: boolean;
 	team: boolean;
 	earn: boolean;
+	billing: boolean;
 };
 
 export type AgencyClientSupports = {
