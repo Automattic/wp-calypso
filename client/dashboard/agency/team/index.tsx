@@ -6,14 +6,13 @@ import {
 } from '@automattic/api-queries';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { Button } from '@wordpress/components';
-import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
-import { store as noticesStore } from '@wordpress/notices';
 import { useCallback, useMemo, useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { useAuth } from '../../app/auth';
 import { usePersistentView } from '../../app/hooks/use-persistent-view';
 import { agencyTeamRoute, hasAnyCapability } from '../../app/router/agency';
+import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { useTeamActions, type TeamActionRequest } from './dataviews/actions';
@@ -31,8 +30,6 @@ export default function AgencyTeam() {
 	const { user } = useAuth();
 	const { data: activeAgency } = useQuery( activeAgencyQuery() );
 	const agencyId = activeAgency?.id ?? 0;
-
-	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 
 	const searchParams = agencyTeamRoute.useSearch();
 	const { view, updateView, resetView } = usePersistentView( {
@@ -60,19 +57,19 @@ export default function AgencyTeam() {
 	const [ activeRequest, setActiveRequest ] = useState< TeamActionRequest | null >( null );
 	const [ isInviteOpen, setIsInviteOpen ] = useState( false );
 
-	const { mutate: resendInvite } = useMutation( agencyTeamResendInviteMutation( agencyId ) );
+	const { mutate: resendInvite } = useMutation(
+		withSnackbar( agencyTeamResendInviteMutation( agencyId ), {
+			success: __( 'The invitation has been resent.' ),
+			error: { source: 'server' },
+		} )
+	);
 
 	const onResendInvite = useCallback(
 		( member: TeamMember ) => {
 			recordTracksEvent( 'calypso_dashboard_team_resend_invite_click' );
-			resendInvite( member.id, {
-				onSuccess: () =>
-					createSuccessNotice( __( 'The invitation has been resent.' ), { type: 'snackbar' } ),
-				onError: () =>
-					createErrorNotice( __( 'Failed to resend the invitation.' ), { type: 'snackbar' } ),
-			} );
+			resendInvite( member.id );
 		},
-		[ recordTracksEvent, resendInvite, createSuccessNotice, createErrorNotice ]
+		[ recordTracksEvent, resendInvite ]
 	);
 
 	const actions = useTeamActions( {
