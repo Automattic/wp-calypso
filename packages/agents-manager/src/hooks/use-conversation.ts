@@ -1,8 +1,9 @@
 import { loadAllMessagesFromServer, type Message } from '@automattic/agenttic-client';
 import { useQuery } from '@tanstack/react-query';
-import { useEffect, useRef } from '@wordpress/element';
+import { useEffect, useMemo, useRef } from '@wordpress/element';
 import { API_BASE_URL } from '../constants';
 import { useAgentsManagerContext } from '../contexts';
+import { isUnsentSession } from '../utils/agent-session';
 import { getConversationBotId } from '../utils/conversation-bot-id';
 import { isReaderChatAgent } from '../utils/is-reader-chat-agent';
 
@@ -33,6 +34,11 @@ export default function useConversation( {
 	const onSuccessRef = useRef( onSuccess );
 	onSuccessRef.current = onSuccess;
 
+	// A session minted in this tab with nothing sent yet is unknown to the
+	// server. Decided once per session: the first send must not start a fetch
+	// that replaces the live stream; the next page load picks it up.
+	const isUnsent = useMemo( () => !! sessionId && isUnsentSession( sessionId ), [ sessionId ] );
+
 	const { data, isLoading, isError, error } = useQuery( {
 		// eslint-disable-next-line @tanstack/query/exhaustive-deps -- we only want to refetch when sessionId changes
 		queryKey: [ 'agents-manager-conversation', sessionId ],
@@ -55,7 +61,7 @@ export default function useConversation( {
 		// Public Reader Chat does not expose conversation history, and the
 		// server-side history endpoint requires permissions public readers
 		// usually do not have.
-		enabled: enabled && !! sessionId && ! isReaderChatAgent( agentId ),
+		enabled: enabled && !! sessionId && ! isUnsent && ! isReaderChatAgent( agentId ),
 		refetchOnWindowFocus: false,
 	} );
 

@@ -38,6 +38,7 @@ import useRegenerateAction from '../../hooks/use-regenerate-action';
 import useSourcesAction from '../../hooks/use-sources-action';
 import useSuggestionsRenderedTracking from '../../hooks/use-suggestions-rendered-tracking';
 import { markActionOrigin, takeActionOrigin } from '../../utils/action-origin';
+import { markSessionSent } from '../../utils/agent-session';
 import {
 	blockCurrentRequest,
 	buildCanvasKey,
@@ -771,6 +772,14 @@ export default function OrchestratorChat( {
 			} );
 		},
 	} );
+
+	// Every send path runs a turn, so a turn starting is when the server first
+	// hears of a client-minted session.
+	useEffect( () => {
+		if ( isProcessing && agentConfig?.sessionId ) {
+			markSessionSent( agentConfig.sessionId );
+		}
+	}, [ isProcessing, agentConfig?.sessionId ] );
 
 	const { isLoading: isLoadingConversation } = useConversation( {
 		maxPages: isReaderChat ? 1 : 10,
