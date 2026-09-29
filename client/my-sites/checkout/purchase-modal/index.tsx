@@ -24,6 +24,7 @@ import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { isJetpackSite, getSiteId } from 'calypso/state/sites/selectors';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import CheckoutQueryClientProvider from '../checkout-query-client-provider';
 import useCountryList from '../src/hooks/use-country-list';
 import { useStoredPaymentMethods } from '../src/hooks/use-stored-payment-methods';
 import { updateCartContactDetailsForCheckout } from '../src/lib/update-cart-contact-details-for-checkout';
@@ -291,8 +292,10 @@ function EnsureSelectedSite( { siteSlug, children }: PropsWithChildren< { siteSl
 
 export default function PurchaseModalWrapped( props: PurchaseModalProps ) {
 	return (
-		<EnsureSelectedSite siteSlug={ props.siteSlug }>
-			<PurchaseModalWrapper { ...props } />
-		</EnsureSelectedSite>
+		<CheckoutQueryClientProvider>
+			<EnsureSelectedSite siteSlug={ props.siteSlug }>
+				<PurchaseModalWrapper { ...props } />
+			</EnsureSelectedSite>
+		</CheckoutQueryClientProvider>
 	);
 }

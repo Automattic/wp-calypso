@@ -33,6 +33,7 @@ export function getLicenseActions( {
 	isProvisioning,
 	onCopyKey,
 	onDownload,
+	onNavigate,
 	onOpenHosting,
 	recordTracksEvent,
 }: {
@@ -43,6 +44,7 @@ export function getLicenseActions( {
 	isAgencyOwner: boolean;
 	onCopyKey: ( license: JetpackLicense ) => void;
 	onDownload: ( license: JetpackLicense ) => void;
+	onNavigate: ( to: string ) => void;
 	onOpenHosting: ( license: JetpackLicense ) => void;
 	recordTracksEvent: ( eventName: string ) => void;
 } ): Action< JetpackLicense >[] {
@@ -62,12 +64,12 @@ export function getLicenseActions( {
 	const isDevSite = ( item: JetpackLicense ) => item.meta?.a4a_is_dev_site === '1';
 	const openExternal = ( url: string ) => window.open( url, '_blank', 'noopener,noreferrer' );
 
+	const siteRoute = ( item: JetpackLicense, subPath = '' ) =>
+		`/sites/${ urlToSlug( item.siteurl ?? '' ) }${ subPath }`;
+
 	const openSitePage = ( item: JetpackLicense, getPath: ( siteSlug: string ) => string ) =>
 		openExternal( wpcomLink( getPath( urlToSlug( item.siteurl ?? '' ) ) ) );
 
-	// The site actions open the same WordPress.com pages as the classic license row.
-	// TODO: point each at its own screen once site details and settings land in
-	// MSD (A4A-3021).
 	return [
 		{
 			id: 'set-up-site',
@@ -75,9 +77,11 @@ export function getLicenseActions( {
 			isEligible: isAssignedWpcomSite,
 			callback: ( items ) => {
 				recordTracksEvent( 'calypso_a4a_licenses_site_set_up_click' );
-				openSitePage( items[ 0 ], ( siteSlug ) => `/overview/${ siteSlug }` );
+				onNavigate( siteRoute( items[ 0 ] ) );
 			},
 		},
+		// Stays on WordPress.com: the A4A app sets `supports.domains: false` and registers
+		// no domains routes (A4A-3443).
 		{
 			id: 'change-domain',
 			label: __( 'Change domain' ),
@@ -87,13 +91,15 @@ export function getLicenseActions( {
 				openSitePage( items[ 0 ], ( siteSlug ) => `/domains/manage/${ siteSlug }` );
 			},
 		},
+		// No capability check here: `/sites/$siteSlug/settings` redirects users without
+		// `manage_options` back to the site, which explains it with a flash message.
 		{
 			id: 'hosting-configuration',
 			label: __( 'Hosting configuration' ),
 			isEligible: isAssignedWpcomSite,
 			callback: ( items ) => {
 				recordTracksEvent( 'calypso_a4a_licenses_hosting_configuration_click' );
-				openSitePage( items[ 0 ], ( siteSlug ) => `/sites/${ siteSlug }/settings` );
+				onNavigate( siteRoute( items[ 0 ], '/settings' ) );
 			},
 		},
 		{
@@ -133,17 +139,16 @@ export function getLicenseActions( {
 		{
 			id: 'prepare-for-launch',
 			label: __( 'Prepare for launch' ),
-			// TODO: classic checks WP Admin access first and shows a permission modal
-			// when the user cannot launch the site.
 			isEligible: ( item ) => isAssignedWpcomSite( item ) && isDevSite( item ),
 			callback: ( items ) => {
 				recordTracksEvent( 'calypso_a4a_licenses_prepare_for_launch_click' );
-				openSitePage( items[ 0 ], ( siteSlug ) => `/sites/${ siteSlug }/settings/site-visibility` );
+				onNavigate( siteRoute( items[ 0 ], '/settings/site-visibility' ) );
 			},
 		},
 		{
 			id: 'create-site',
 			label: __( 'Create site' ),
+			isPrimary: true,
 			isEligible: ( item ) => isAssignable( item ) && isWpcomHostingLicense( item ),
 			disabled: isProvisioning,
 			modalHeader: __( 'Configure your new site' ),
@@ -155,6 +160,7 @@ export function getLicenseActions( {
 		{
 			id: 'assign-license',
 			label: __( 'Assign to site' ),
+			isPrimary: true,
 			isEligible: ( item ) => isAssignable( item ) && ! isWpcomHostingLicense( item ),
 			modalHeader: __( 'Which site would you like to assign this license to?' ),
 			modalSize: 'medium',
@@ -273,6 +279,8 @@ export function useLicenseActions( {
 		[ recordTracksEvent, fetchDownloadUrl, createErrorNotice ]
 	);
 
+	const onNavigate = useCallback( ( to: string ) => navigate( { to } ), [ navigate ] );
+
 	// Classic sends each hosting license to its own host's page.
 	const onOpenHosting = useCallback(
 		( license: JetpackLicense ) =>
@@ -292,6 +300,7 @@ export function useLicenseActions( {
 				isProvisioning,
 				onCopyKey,
 				onDownload,
+				onNavigate,
 				onOpenHosting,
 				recordTracksEvent,
 			} ),
@@ -301,6 +310,7 @@ export function useLicenseActions( {
 			isProvisioning,
 			onCopyKey,
 			onDownload,
+			onNavigate,
 			onOpenHosting,
 			recordTracksEvent,
 		]

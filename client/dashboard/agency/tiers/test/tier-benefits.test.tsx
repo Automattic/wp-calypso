@@ -21,7 +21,7 @@ describe( '<TierBenefits>', () => {
 				onScheduleCall={ jest.fn() }
 				links={ {
 					'manage-sites': '/sites',
-					'manage-purchases': '/marketplace/purchases',
+					'manage-purchases': '/purchases',
 					'create-client-reports': 'https://agencies.automattic.com/reports',
 					'contact-support': '#contact-support',
 				} }
@@ -35,7 +35,7 @@ describe( '<TierBenefits>', () => {
 		);
 		expect( card.getByRole( 'link', { name: 'Manage purchase' } ) ).toHaveAttribute(
 			'href',
-			'/marketplace/purchases'
+			'/purchases'
 		);
 		expect( card.getByRole( 'link', { name: 'Create Client Reports' } ) ).toHaveAttribute(
 			'href',
@@ -74,7 +74,7 @@ describe( '<TierBenefits>', () => {
 			<TierBenefits
 				currentAgencyTierId="agency-partner"
 				onScheduleCall={ jest.fn() }
-				links={ { 'manage-profile': '/agency/partner-directory' } }
+				links={ { 'manage-profile': '/partner-directory' } }
 				renderDownloadBadges={ ( buttonProps ) => (
 					<button { ...( buttonProps as object ) }>Badges here</button>
 				) }
@@ -84,7 +84,7 @@ describe( '<TierBenefits>', () => {
 		expect( screen.getByRole( 'button', { name: 'Badges here' } ) ).toBeVisible();
 		expect( screen.getByRole( 'link', { name: 'Manage your profile' } ) ).toHaveAttribute(
 			'href',
-			'/agency/partner-directory'
+			'/partner-directory'
 		);
 	} );
 
@@ -93,7 +93,7 @@ describe( '<TierBenefits>', () => {
 			<TierBenefits
 				currentAgencyTierId="agency-partner"
 				onScheduleCall={ jest.fn() }
-				links={ { 'manage-profile': '/agency/partner-directory' } }
+				links={ { 'manage-profile': '/partner-directory' } }
 			/>
 		);
 
