@@ -17,8 +17,6 @@ function mockAgency() {
 }
 
 describe( '<PartnerDirectoryLayout>', () => {
-	afterEach( () => nock.cleanAll() );
-
 	test( 'shows the tier upsell to agencies below Agency Partner', async () => {
 		mockAgency();
 
