@@ -9,7 +9,7 @@ import { useEffect, useState } from 'react';
 import { Notice } from '../../../components/notice';
 import { getAccountStatus } from '../payout-settings/get-account-status';
 
-// Shared with the classic A4A dashboard so the notice only shows once across both.
+// The preference is saved on the account, so the notice only ever shows once.
 const SEEN_PREFERENCE = 'a4a-referrals-bank-details-success-notice-seen';
 
 /**

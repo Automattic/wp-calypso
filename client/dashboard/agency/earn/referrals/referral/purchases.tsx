@@ -23,8 +23,8 @@ import type { Action, Field, View } from '@wordpress/dataviews';
 
 type PurchaseItem = ReferralPurchase & { _id: string };
 
-// Classic records one event for both flows, when the button that opens them is
-// clicked; the modal mounting is the same moment here.
+// One event covers both flows. It is recorded when the modal mounts, which is
+// the moment the action is chosen.
 function useRecordPlacementStart() {
 	const { recordTracksEvent } = useAnalytics();
 	useEffect( () => {
