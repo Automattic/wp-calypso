@@ -101,10 +101,8 @@ export async function initializeWordPressPlayground(
 
 		return { blueprint, client };
 	} catch ( error ) {
-		if ( needsUrlUpdate ) {
-			updateUrlWithPlaygroundId( playgroundId, url, setSearchParams );
-		}
-
+		// Don't persist a freshly generated ID in the URL: nothing was written to OPFS,
+		// so a retry would otherwise try to restore a playground that never existed.
 		logToLogstash( {
 			feature: 'calypso_client',
 			tags: [ 'playground-setup' ],

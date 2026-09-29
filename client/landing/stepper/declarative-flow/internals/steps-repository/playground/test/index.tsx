@@ -8,6 +8,7 @@ import userEvent from '@testing-library/user-event';
 import PlaygroundStep from '..';
 import { StepProps } from '../../../types';
 import { mockStepProps, renderStep, RenderStepOptions } from '../../test/helpers';
+import { BlueprintLoadError } from '../lib/blueprint-load-error';
 import { initializeWordPressPlayground } from '../lib/initialize-playground';
 import { PlaygroundNotFoundError } from '../lib/playground-not-found-error';
 
@@ -16,7 +17,12 @@ jest.mock( '../lib/initialize-playground' );
 
 // Mock the PlaygroundError component to simplify testing
 jest.mock( '../components/playground-error', () => ( {
-	PlaygroundError: () => <div data-testid="playground-error">Playground Error Component</div>,
+	PlaygroundError: ( { error, createNewPlayground } ) => (
+		<div data-testid="playground-error">
+			{ error.name }
+			<button onClick={ createNewPlayground }>Create new playground</button>
+		</div>
+	),
 } ) );
 
 let mockPlaygroundClientInstance;
@@ -110,6 +116,60 @@ describe( 'Playground', () => {
 			await waitFor( () => {
 				expect( screen.getByTestId( 'playground-error' ) ).toBeVisible();
 			} );
+		} );
+
+		it( 'should not retry initialization on its own when the blueprint cannot be loaded', async () => {
+			initializeWordPressPlayground.mockRejectedValue(
+				new BlueprintLoadError( 'https://wordpress.com/404', new Error( 'Not Found' ) )
+			);
+
+			await act( async () =>
+				renderPlaygroundStep(
+					{},
+					{
+						initialEntry:
+							'/setup/onboarding/playground?blueprint-url=https%3A%2F%2Fwordpress.com%2F404&playground=missing-id',
+					}
+				)
+			);
+
+			await waitFor( () => {
+				expect( screen.getByTestId( 'playground-error' ) ).toHaveTextContent(
+					'BlueprintLoadError'
+				);
+			} );
+			expect( initializeWordPressPlayground ).toHaveBeenCalledTimes( 1 );
+		} );
+
+		it( 'should initialize again only when a new playground is requested', async () => {
+			initializeWordPressPlayground
+				.mockRejectedValueOnce(
+					new PlaygroundNotFoundError( 'missing-id', new Error( 'boot failed' ) )
+				)
+				.mockResolvedValue( { blueprint: null, client: mockPlaygroundClientInstance } );
+
+			let container;
+			await act( async () => {
+				const result = renderPlaygroundStep(
+					{},
+					{ initialEntry: '/setup/onboarding/playground?playground=missing-id' }
+				);
+				container = result.container;
+			} );
+
+			await waitFor( () => {
+				expect( screen.getByTestId( 'playground-error' ) ).toHaveTextContent(
+					'PlaygroundNotFoundError'
+				);
+			} );
+			expect( initializeWordPressPlayground ).toHaveBeenCalledTimes( 1 );
+
+			await userEvent.click( screen.getByRole( 'button', { name: 'Create new playground' } ) );
+
+			await waitFor( () => {
+				expect( container.querySelector( 'iframe' ) ).toBeVisible();
+			} );
+			expect( initializeWordPressPlayground ).toHaveBeenCalledTimes( 2 );
 		} );
 	} );
 } );
