@@ -1,22 +1,18 @@
-// Plugin Compass Agent Provider
+// Plugin recommendations Agent Provider
 // Registers the `wpcom/render-plugin-recommendations` ability the LLM calls to surface
 // picks, validates incoming records, and hands them off to the host.
 
-import {
-	executeAbility,
-	getAbilities,
-	registerAbility,
-	registerAbilityCategory,
-} from '@wordpress/abilities';
+import { getAbilities, registerAbility, registerAbilityCategory } from '@wordpress/abilities';
 
 const ABILITY_NAME = 'wpcom/render-plugin-recommendations';
-const CATEGORY_SLUG = 'plugin-compass';
+const CATEGORY_SLUG = 'plugin-recommendations';
 
 type PickSource = 'wporg' | 'commercial';
 
 export interface Pick {
 	slug: string;
 	why: string;
+	url?: string;
 	// Optional — the hydrator queries the named catalog directly when set,
 	// or tries wp.org first with a commercial fallback when omitted.
 	source?: PickSource;
@@ -28,6 +24,7 @@ interface AbilityInput {
 	picks?: Array< {
 		slug?: string;
 		why?: string;
+		url?: string;
 		source?: string;
 	} >;
 }
@@ -59,9 +56,15 @@ function normalizeIncomingPicks( raw: AbilityInput[ 'picks' ] ): Pick[] {
 		const source = VALID_SOURCES.includes( rawSource as PickSource )
 			? ( rawSource as PickSource )
 			: undefined;
+		const url = typeof p.url === 'string' ? p.url.trim() : undefined;
 
 		seen.add( slug );
-		out.push( source ? { slug, why, source } : { slug, why } );
+		out.push( {
+			slug,
+			why,
+			...( source && { source } ),
+			...( url && { url } ),
+		} );
 	}
 
 	return out;
@@ -71,15 +74,21 @@ interface ToolProviderOptions {
 	onPicks: ( picks: Pick[] ) => void;
 }
 
+async function renderPluginRecommendations( input: AbilityInput ) {
+	const picks = normalizeIncomingPicks( input?.picks );
+
+	return { rendered: true, count: picks.length, picks };
+}
+
 // Shared registration promise so concurrent callers don't double-register.
 let registrationPromise: Promise< void > | null = null;
 
-function ensureRegistered( onPicks: ( picks: Pick[] ) => void ): Promise< void > {
+function ensureRegistered(): Promise< void > {
 	if ( ! registrationPromise ) {
 		registrationPromise = ( async () => {
 			await registerAbilityCategory( CATEGORY_SLUG, {
-				label: 'Plugin Compass',
-				description: 'Capabilities exposed by the Plugin Compass experience.',
+				label: 'Plugin recommendations',
+				description: 'Capabilities exposed by the Plugin recommendations experience.',
 			} );
 
 			await registerAbility( {
@@ -87,7 +96,7 @@ function ensureRegistered( onPicks: ( picks: Pick[] ) => void ): Promise< void >
 				label: 'Render Plugin Recommendations',
 				category: CATEGORY_SLUG,
 				description:
-					'Render plugin recommendation cards on the marketplace landing page. Pass the slug and a short personalized "why" for each pick; optionally include `source` ("wporg" or "commercial") when you know which catalog it came from to skip the wp.org-first lookup. Each slug must be one you saw in an earlier `plugin-marketplace-search` or `get-curated-plugins` call — invented slugs are dropped silently when they fail to hydrate.',
+					"First call `wpcom/plugin-search`. Render its results as ordered recommendation cards with personalized reasons. Pass each result's product URL as `url`, and format every plugin name in the chat reply as `[Plugin name](returned product URL)` using the exact URL from its search result.",
 				input_schema: {
 					type: 'object',
 					additionalProperties: false,
@@ -115,6 +124,11 @@ function ensureRegistered( onPicks: ( picks: Pick[] ) => void ): Promise< void >
 										description:
 											"Short personalized rationale (1–2 sentences) tying the pick to the user's expressed goal. Plain text; no markdown links. Do not paste the plugin's description here — write your own editorial framing.",
 									},
+									url: {
+										type: 'string',
+										description:
+											'Product URL from the search result. Preserve its query parameters; this URL is returned with the recommendation.',
+									},
 									source: {
 										type: 'string',
 										enum: VALID_SOURCES,
@@ -126,12 +140,28 @@ function ensureRegistered( onPicks: ( picks: Pick[] ) => void ): Promise< void >
 						},
 					},
 				},
-				callback: async ( input: AbilityInput ) => {
-					const picks = normalizeIncomingPicks( input?.picks );
-					onPicks( picks );
-
-					return { rendered: true, count: picks.length };
+				output_schema: {
+					type: 'object',
+					required: [ 'rendered', 'count', 'picks' ],
+					properties: {
+						rendered: { type: 'boolean' },
+						count: { type: 'integer' },
+						picks: {
+							type: 'array',
+							items: {
+								type: 'object',
+								required: [ 'slug', 'why' ],
+								properties: {
+									slug: { type: 'string' },
+									why: { type: 'string' },
+									source: { type: 'string', enum: VALID_SOURCES },
+									url: { type: 'string' },
+								},
+							},
+						},
+					},
 				},
+				callback: renderPluginRecommendations,
 			} );
 		} )().catch( ( error ) => {
 			// Don't leave a poisoned promise in place — clear so the next
@@ -145,20 +175,27 @@ function ensureRegistered( onPicks: ( picks: Pick[] ) => void ): Promise< void >
 }
 
 export function createToolProvider( { onPicks }: ToolProviderOptions ) {
+	const runAbility = async ( args: unknown ) => {
+		await ensureRegistered();
+		const result = await renderPluginRecommendations( args as AbilityInput );
+		onPicks( result.picks );
+		return result;
+	};
+
 	return {
 		getAbilities: async () => {
-			await ensureRegistered( onPicks );
+			await ensureRegistered();
 
-			return getAbilities().filter( ( a ) => a?.name === ABILITY_NAME );
+			return getAbilities()
+				.filter( ( ability ) => ability?.name === ABILITY_NAME )
+				.map( ( ability ) => ( { ...ability, callback: runAbility } ) );
 		},
 		executeAbility: async ( name: string, args: unknown ) => {
-			await ensureRegistered( onPicks );
-
 			if ( name !== ABILITY_NAME ) {
-				throw new Error( `[plugin-compass] Ability "${ name }" is not allowed here.` );
+				throw new Error( `[plugin-recommendations] Ability "${ name }" is not allowed here.` );
 			}
 
-			return executeAbility( name, args );
+			return runAbility( args );
 		},
 	};
 }
