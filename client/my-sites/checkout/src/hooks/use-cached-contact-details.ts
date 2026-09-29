@@ -1,31 +1,14 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import debugFactory from 'debug';
-import wpcom from 'calypso/lib/wp';
+import {
+	domainContactInformationMutation,
+	domainContactInformationQuery,
+} from '@automattic/api-queries';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import type {
 	RawCachedDomainContactDetails,
 	DomainContactValidationRequest,
 	ManagedContactDetailsTldExtraFieldsShape,
 	PossiblyCompleteDomainContactDetails,
 } from '@automattic/wpcom-checkout';
-
-const debug = debugFactory( 'calypso:user-cached-contact-details' );
-
-async function fetchCachedContactDetails(): Promise< PossiblyCompleteDomainContactDetails > {
-	try {
-		const rawData: RawCachedDomainContactDetails = await wpcom.req.get(
-			'/me/domain-contact-information'
-		);
-		debug( 'fetched cached contact details', rawData );
-		return convertSnakeCaseContactDetailsToCamelCase( rawData );
-	} catch ( error ) {
-		return Promise.reject( new Error( 'Error fetching cached contact details' ) );
-	}
-}
-
-async function setCachedContactDetails( rawData: DomainContactValidationRequest ): Promise< void > {
-	debug( 'updating cached contact details to', rawData );
-	wpcom.req.post( '/me/domain-contact-information', rawData );
-}
 
 function convertSnakeCaseContactDetailsToCamelCase(
 	rawData: RawCachedDomainContactDetails
@@ -89,19 +72,14 @@ function convertSnakeCaseContactDetailsExtraToCamelCase(
 	};
 }
 
-const cachedContactDetailsQueryKey = [ 'user-cached-contact-details' ];
-
 export function useCachedContactDetails( { isLoggedOut }: { isLoggedOut?: boolean } ): {
 	contactDetails: PossiblyCompleteDomainContactDetails | null;
 	isError: boolean;
 } {
 	const result = useQuery( {
-		queryKey: cachedContactDetailsQueryKey,
-		queryFn: fetchCachedContactDetails,
+		...domainContactInformationQuery(),
+		select: convertSnakeCaseContactDetailsToCamelCase,
 		enabled: ! isLoggedOut,
-		meta: {
-			persist: false,
-		},
 		refetchOnWindowFocus: false,
 	} );
 
@@ -114,14 +92,5 @@ export function useCachedContactDetails( { isLoggedOut }: { isLoggedOut?: boolea
 export function useUpdateCachedContactDetails(): (
 	updatedData: DomainContactValidationRequest
 ) => void {
-	const queryClient = useQueryClient();
-	const mutation = useMutation< void, Error, DomainContactValidationRequest >( {
-		mutationFn: setCachedContactDetails,
-		onSuccess: () => {
-			queryClient.invalidateQueries( {
-				queryKey: cachedContactDetailsQueryKey,
-			} );
-		},
-	} );
-	return mutation.mutate;
+	return useMutation( domainContactInformationMutation() ).mutate;
 }
