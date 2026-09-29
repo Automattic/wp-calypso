@@ -1383,6 +1383,19 @@
 			max-width: 1224px;
 		}
 
+		/* Columns hug their content with 150px gaps; the gap tracks shrink evenly when space runs out. */
+		.lp-grid--type-footer.lp-grid--gutter-y-4 {
+			grid-template-columns: repeat( 4, auto minmax( 0, 150px ) ) auto;
+			grid-column-gap: 0;
+			justify-content: start;
+
+			@for $i from 1 through 5 {
+				> :nth-child( #{$i} ) {
+					grid-column: #{$i * 2 - 1};
+				}
+			}
+		}
+
 		.lp-footer-bottom--without-language {
 			.lp-footer-bottom__downloads,
 			.lp-footer-bottom__copyright {
