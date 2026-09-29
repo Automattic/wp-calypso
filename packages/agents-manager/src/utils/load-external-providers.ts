@@ -567,11 +567,12 @@ export function mergeMarkdownExtensionsFromProviders(
  * Both shapes feed the same downstream merge: any of `toolProvider`,
  * `contextProvider`, `getChatComponent`, `useSuggestions`, etc. are picked
  * up from each entry and merged across all entries.
- * @returns Promise resolving to merged providers or empty object if none found.
+ * @returns Promise resolving to merged providers with default markdown extensions.
  */
 export async function loadExternalProviders(): Promise< LoadedProviders > {
 	const rawAgentProviders = getAgentsManagerInlineData()?.agentProviders;
 	const agentProviders = Array.isArray( rawAgentProviders ) ? rawAgentProviders : [];
+	const defaultMarkdownExtensions: MarkdownExtensions = { gfm: { enabled: true } };
 
 	// Only the public reader-chat entry registers the follow-up chip globals
 	// (`window.__jetpackReaderFollowupChips` / `reader-chat-followups-updated`).
@@ -583,12 +584,15 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 		// Reader Chat runs on the public frontend and should not inherit editor providers
 		// such as the Jetpack AI sidebar.
 		setLoadedProviderIds( [] );
-		return { useSuggestions: useReaderFollowupSuggestions };
+		return {
+			markdownExtensions: defaultMarkdownExtensions,
+			useSuggestions: useReaderFollowupSuggestions,
+		};
 	}
 
 	if ( agentProviders.length === 0 ) {
 		setLoadedProviderIds( [] );
-		return {};
+		return { markdownExtensions: defaultMarkdownExtensions };
 	}
 
 	let mergedToolProvider: ToolProvider | undefined;
@@ -851,7 +855,7 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 		contextProvider: mergedContextProvider,
 		getEmptyViewSuggestions: mergedGetEmptyViewSuggestions,
 		markdownComponents: mergedMarkdownComponents,
-		markdownExtensions: mergedMarkdownExtensions,
+		markdownExtensions: { ...defaultMarkdownExtensions, ...mergedMarkdownExtensions },
 		providerIds: allProviderIds.length ? allProviderIds : undefined,
 		useAbilitiesSetup: mergedAbilitiesSetup,
 		onTaskUpdate: mergedOnTaskUpdate,
