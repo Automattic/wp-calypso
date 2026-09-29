@@ -14,6 +14,7 @@ import { ButtonStack } from '../../../components/button-stack';
 import { Card, CardBody } from '../../../components/card';
 import Grid from '../../../components/grid';
 import RouterLinkButton from '../../../components/router-link-button';
+import { isDashboardPath } from '../../../utils/link';
 import { filterOptions, getPartnerOffers } from './constants';
 import type { PartnerOffer, PartnerOfferLinks, RecordTracksEvent } from './types';
 import type { View, Field } from '@wordpress/dataviews';
@@ -21,9 +22,6 @@ import type { View, Field } from '@wordpress/dataviews';
 import './style.scss';
 
 const VIEW_TERMS_URL = 'https://automattic.com/for-agencies/program-incentives';
-
-// Dashboard routes navigate in-app; classic and third-party URLs are absolute.
-const isDashboardPath = ( url: string ) => url.startsWith( '/' );
 
 const initialView: View = {
 	type: 'list',
@@ -38,10 +36,12 @@ function PartnerOfferCard( {
 	item,
 	recordTracksEvent,
 	onCtaClick,
+	shouldUseRouterLink,
 }: {
 	item: PartnerOffer;
 	recordTracksEvent: RecordTracksEvent;
 	onCtaClick?: ( offer: PartnerOffer ) => void;
+	shouldUseRouterLink: boolean;
 } ) {
 	const offerType = filterOptions.offerTypes.find( ( option ) => option.value === item.offerType );
 
@@ -88,7 +88,7 @@ function PartnerOfferCard( {
 							gap: '16px',
 						} }
 					>
-						{ isDashboardPath( item.cta.url ) ? (
+						{ shouldUseRouterLink && isDashboardPath( item.cta.url ) ? (
 							<RouterLinkButton
 								variant="secondary"
 								to={ item.cta.url.split( '?' )[ 0 ] }
@@ -130,10 +130,16 @@ export default function PartnerOffers( {
 	links,
 	recordTracksEvent = () => {},
 	onCtaClick,
+	shouldUseRouterLink = true,
 }: {
 	links: PartnerOfferLinks;
 	recordTracksEvent?: RecordTracksEvent;
 	onCtaClick?: ( offer: PartnerOffer ) => void;
+	/**
+	 * Set to false in apps without the dashboard's TanStack Router, so the CTAs
+	 * render plain anchors for the host app's own router to pick up.
+	 */
+	shouldUseRouterLink?: boolean;
 } ) {
 	const [ view, setView ] = useState< View >( initialView );
 	const partnerOffers = useMemo( () => getPartnerOffers( links ), [ links ] );
@@ -229,6 +235,7 @@ export default function PartnerOffers( {
 						item={ item }
 						recordTracksEvent={ recordTracksEvent }
 						onCtaClick={ onCtaClick }
+						shouldUseRouterLink={ shouldUseRouterLink }
 					/>
 				) ) }
 			</Grid>

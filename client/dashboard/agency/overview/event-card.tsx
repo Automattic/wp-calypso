@@ -9,6 +9,7 @@ import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody } from '../../components/card';
 import RouterLinkButton from '../../components/router-link-button';
 import { Text } from '../../components/text';
+import { isDashboardPath } from '../../utils/link';
 import {
 	FEATURED_EVENT,
 	getAiMcpAnnouncement,
@@ -24,14 +25,17 @@ interface EventCardProps {
 	isEligibleForPressableExpansionOffer?: boolean;
 	aiMcpHref: string;
 	pressableHostingHref: string;
+	shouldUseRouterLink?: boolean;
 	recordTracksEvent?: RecordTracksEvent;
 }
 
 function SingleEventCard( {
 	event,
+	shouldUseRouterLink,
 	recordTracksEvent,
 }: {
 	event: FeaturedEvent;
+	shouldUseRouterLink: boolean;
 	recordTracksEvent?: RecordTracksEvent;
 } ) {
 	const { id, logo, logoAlt, when, title, subtitle, description, ctas } = event;
@@ -78,8 +82,7 @@ function SingleEventCard( {
 									}
 								},
 							};
-							// Dashboard paths navigate in-app; external URLs open a new tab.
-							if ( ! cta.isExternal && cta.url.startsWith( '/' ) ) {
+							if ( shouldUseRouterLink && ! cta.isExternal && isDashboardPath( cta.url ) ) {
 								return (
 									<RouterLinkButton key={ cta.id } { ...buttonProps } to={ cta.url }>
 										{ cta.label }
@@ -110,6 +113,7 @@ export default function EventCard( {
 	isEligibleForPressableExpansionOffer,
 	aiMcpHref,
 	pressableHostingHref,
+	shouldUseRouterLink = true,
 	recordTracksEvent,
 }: EventCardProps ) {
 	const now = new Date();
@@ -129,7 +133,12 @@ export default function EventCard( {
 	return (
 		<>
 			{ events.map( ( event ) => (
-				<SingleEventCard key={ event.id } event={ event } recordTracksEvent={ recordTracksEvent } />
+				<SingleEventCard
+					key={ event.id }
+					event={ event }
+					shouldUseRouterLink={ shouldUseRouterLink }
+					recordTracksEvent={ recordTracksEvent }
+				/>
 			) ) }
 		</>
 	);
