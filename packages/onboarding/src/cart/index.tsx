@@ -83,7 +83,7 @@ const getBlogNameGenerationParams = ( { siteUrl, siteTitle }: GetNewSiteParams )
 		};
 	}
 
-	// With no name to work from, the server generates a word-label address.
+	// With no name to work from, the server generates the address.
 	return {
 		blog_name: '',
 		find_available_url: true,
