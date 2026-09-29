@@ -5,11 +5,7 @@ import { Badge } from '@wordpress/ui';
 import ComponentViewTracker from '../../components/component-view-tracker';
 import type { Site } from '@automattic/api-core';
 
-/**
- * Whether WordPress.com failed to reach the site on its last fetch. Only
- * Jetpack-connected sites (including Atomic) are proxied to the site itself,
- * so only they can be unreachable.
- */
+// Only Jetpack-connected sites (including Atomic) can be unreachable — Simple sites aren't proxied.
 export function useIsSiteUnreachable( site: Site, isInView: boolean ): boolean {
 	const isEligible = site.jetpack && ! site.is_deleted;
 
