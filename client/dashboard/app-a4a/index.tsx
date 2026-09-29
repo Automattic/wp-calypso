@@ -38,6 +38,7 @@ boot( {
 			plugins: true,
 			team: true,
 			earn: true,
+			billing: true,
 		},
 		agencyClient: { subscriptions: true },
 		sites: false,

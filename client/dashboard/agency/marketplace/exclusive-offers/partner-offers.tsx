@@ -12,8 +12,8 @@ import { useState, useMemo } from 'react';
 import { ButtonStack } from '../../../components/button-stack';
 import { Card, CardBody } from '../../../components/card';
 import Grid from '../../../components/grid';
-import { filterOptions, partnerOffers } from './constants';
-import type { PartnerOffer, RecordTracksEvent } from './types';
+import { filterOptions, getPartnerOffers } from './constants';
+import type { PartnerOffer, PartnerOfferLinks, RecordTracksEvent } from './types';
 import type { View, Field } from '@wordpress/dataviews';
 
 import './style.scss';
@@ -111,13 +111,16 @@ function PartnerOfferCard( {
 }
 
 export default function PartnerOffers( {
+	links,
 	recordTracksEvent = () => {},
 	onCtaClick,
 }: {
+	links: PartnerOfferLinks;
 	recordTracksEvent?: RecordTracksEvent;
 	onCtaClick?: ( offer: PartnerOffer ) => void;
 } ) {
 	const [ view, setView ] = useState< View >( initialView );
+	const partnerOffers = useMemo( () => getPartnerOffers( links ), [ links ] );
 
 	const fields: Field< PartnerOffer >[] = useMemo(
 		() => [
@@ -173,7 +176,7 @@ export default function PartnerOffers( {
 
 	const { data: filteredData } = useMemo(
 		() => filterSortAndPaginate( partnerOffers, view, fields ),
-		[ view, fields ]
+		[ partnerOffers, view, fields ]
 	);
 
 	return (
