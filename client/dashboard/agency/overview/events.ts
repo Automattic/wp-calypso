@@ -87,7 +87,7 @@ export const getPressableIntroOfferEvent = ( pressableHostingHref: string ): Fea
 	id: 'a4a-pressable-promo-offer-2026-q3',
 	logo: PressableLogo,
 	logoAlt: __( 'Pressable' ),
-	when: __( 'Limited time offer · Until September 30, 2026' ),
+	when: __( 'Limited time offer · Until October 13, 2026' ),
 	title: __( 'Get up to 6 months of free Pressable hosting on new plans!' ),
 	subtitle: __( 'Automattic for Agencies & Pressable' ),
 	description: [
@@ -122,7 +122,7 @@ export const getPressableExpansionOfferEvent = (
 	id: 'a4a-pressable-expansion-offer-2026-q3',
 	logo: PressableLogo,
 	logoAlt: __( 'Pressable' ),
-	when: __( 'Limited time offer · Until September 30, 2026' ),
+	when: __( 'Limited time offer · Until October 13, 2026' ),
 	title: __( 'Upgrade your Pressable plan and get up to 6 months of the upgrade free' ),
 	subtitle: __( 'Automattic for Agencies & Pressable' ),
 	description: [
