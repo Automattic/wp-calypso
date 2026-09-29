@@ -3,7 +3,6 @@ import { useSelect } from '@wordpress/data';
 import { useEffect, useState, useMemo } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useAgentsManagerContext } from '../contexts';
-import { isPluginCompassHost } from '../utils/is-plugin-compass-agent';
 import { isReaderChatHost } from '../utils/is-reader-chat-agent';
 import type { LoadedProviders } from '../utils/load-external-providers';
 
@@ -88,8 +87,8 @@ export const DEFAULT_EMPTY_VIEW_SUGGESTION_IDS = {
  */
 /**
  * Direct override path: a host that renders AgentsManager (e.g. reader-chat
- * on a blog frontend, Plugin Compass on the plugins marketplace) can set
- * `window.agentsManagerData.readerSuggestions` / `.compassSuggestions` to a
+ * on a blog frontend) can set
+ * `window.agentsManagerData.readerSuggestions` to a
  * Suggestion[] and this hook will return it verbatim, bypassing the provider
  * flow (and the Big Sky theme-readiness gate further below). Reassigning the
  * global and forcing a re-render causes the empty view to update with fresh
@@ -102,15 +101,13 @@ function readOverrideSuggestions(): Suggestion[] | null {
 
 	const data = (
 		window as unknown as {
-			agentsManagerData?: { readerSuggestions?: unknown; compassSuggestions?: unknown };
+			agentsManagerData?: { readerSuggestions?: unknown };
 		}
 	 ).agentsManagerData;
 
 	let override: unknown;
 	if ( isReaderChatHost() ) {
 		override = data?.readerSuggestions;
-	} else if ( isPluginCompassHost() ) {
-		override = data?.compassSuggestions;
 	} else {
 		return null;
 	}
@@ -189,8 +186,8 @@ export function isPageOrSiteEditorSurface(
 
 /**
  * Providers key suggestions on `isEditedPostEmpty`, so the effect below has to
- * re-run when it flips. Hosts with no editor store (Reader chat, Plugin
- * Compass) report false.
+ * re-run when it flips. Hosts with no editor store (Reader chat and
+ * other embedded hosts) report false.
  */
 export function usePageOrSiteEditorSurface() {
 	const { sectionName, currentRoute } = useAgentsManagerContext();

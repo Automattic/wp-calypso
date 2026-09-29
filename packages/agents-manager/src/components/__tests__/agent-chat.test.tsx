@@ -238,9 +238,6 @@ jest.mock( '../editor-history-bridge', () => ( {
 	__esModule: true,
 	default: mockEditorHistoryBridge,
 } ) );
-jest.mock( '../../utils/is-plugin-compass-agent', () => ( {
-	isPluginCompassHost: () => false,
-} ) );
 jest.mock( '../../utils/is-reader-chat-agent', () => ( {
 	isReaderChatHost: () => false,
 } ) );

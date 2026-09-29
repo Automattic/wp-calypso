@@ -22,6 +22,11 @@
 	max-width: var( --domain-search-content-max-width );
 }
 
+// Reserve scrollbar space so the layout doesn't shift when results appear.
+html:has( .name-pulse-search-input ) {
+	scrollbar-gutter: stable;
+}
+
 .name-pulse-grid {
 	display: grid;
 	grid-template-columns: repeat( 3, minmax( 0, 1fr ) );

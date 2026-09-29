@@ -729,6 +729,56 @@ describe( 'NamePulseResults', () => {
 		expect( cart.onAddItem ).not.toHaveBeenCalled();
 	} );
 
+	it( 'narrows every section to the chosen endings and restores them on clear', async () => {
+		const user = userEvent.setup();
+
+		render( <NamePulseTestSearch query="ice cream" /> );
+
+		await within( await findRow( 'icecream.net' ) ).findByText( '$24' );
+		await findRow( 'creamyice.com' );
+
+		await user.click( screen.getByRole( 'button', { name: 'Filter, no filters applied' } ) );
+		await user.click( await screen.findByRole( 'option', { name: '.com' } ) );
+		await user.click( screen.getByRole( 'button', { name: 'Apply' } ) );
+
+		await waitFor( () => expect( domainsIn( 'top' ) ).toEqual( [ 'icecream.com' ] ) );
+		expect( document.querySelector( '[data-section="exact"]' ) ).toBeNull();
+		expect( domainsIn( 'suggestions' ) ).toEqual( [
+			'creamyice.com',
+			'icecreamshop.com',
+			'frozentreats.com',
+		] );
+
+		await user.click( screen.getByRole( 'button', { name: 'Filter, 1 filter applied' } ) );
+		await user.click( await screen.findByRole( 'button', { name: 'Clear' } ) );
+
+		await waitFor( () =>
+			expect( domainsIn( 'top' ) ).toEqual( [ 'icecream.blog', 'icecream.com', 'icecream.org' ] )
+		);
+		expect( sectionRows( 'exact' ) ).toHaveLength( NAME_PULSE_PAGE_SIZE );
+		expect( sectionRows( 'suggestions' ) ).toHaveLength( NAME_PULSE_SUGGESTIONS_FIXTURE.length );
+		expect(
+			screen.getByRole( 'button', { name: 'Filter, no filters applied' } )
+		).toBeInTheDocument();
+	} );
+
+	it( 'keeps the ending of a typed domain when the filter leaves it out', async () => {
+		const user = userEvent.setup();
+
+		render( <NamePulseTestSearch query="icecream.net" /> );
+
+		expect( await within( await findExactMatchCard() ).findByText( '$24' ) ).toBeVisible();
+
+		await user.click( screen.getByRole( 'button', { name: 'Filter, no filters applied' } ) );
+		await user.click( await screen.findByRole( 'option', { name: '.com' } ) );
+		await user.click( screen.getByRole( 'button', { name: 'Apply' } ) );
+
+		// The typed domain keeps its own card; the lists below narrow to the filter.
+		await waitFor( () => expect( domainsIn( 'top' ) ).toEqual( [ 'icecream.com' ] ) );
+		expect( ( await findExactMatchCard() ).getAttribute( 'data-domain' ) ).toBe( 'icecream.net' );
+		expect( document.querySelector( '[data-section="exact"]' ) ).toBeNull();
+	} );
+
 	it( 'adds the exact-match card to the cart through the real-time check, then offers to continue', async () => {
 		const user = userEvent.setup();
 		const onContinue = jest.fn();
