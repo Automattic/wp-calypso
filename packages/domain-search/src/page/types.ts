@@ -156,6 +156,11 @@ export interface DomainSearchConfig {
 		buttonText?: string;
 	};
 	/**
+	 * Where the free-subdomain skip card renders. `results` (the default) puts it at the top of
+	 * the results list, below the `BeforeResults` slot; `top` puts it above that slot.
+	 */
+	skipSuggestionPlacement?: 'results' | 'top';
+	/**
 	 * Hide the free *.wordpress.com subdomain skip card and offer only a plain "skip / set up a
 	 * domain later" control. Used by flows whose site never keeps a free subdomain (e.g. the
 	 * atomic funnel, which always transfers to Atomic).
