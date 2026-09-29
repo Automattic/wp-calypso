@@ -102,7 +102,7 @@ export default function AllTimeHighlightsSection( {
 							? translate( '%(percent)d%% of views', {
 									args: { percent },
 									context: 'Stats: Percentage of views',
-							  } )
+								} )
 							: null,
 				},
 				{
@@ -114,7 +114,7 @@ export default function AllTimeHighlightsSection( {
 							? translate( '%(percent)d%% of views', {
 									args: { percent: hourPercent },
 									context: 'Stats: Percentage of views',
-							  } )
+								} )
 							: null,
 				},
 			],
