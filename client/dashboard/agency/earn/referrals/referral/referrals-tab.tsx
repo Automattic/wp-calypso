@@ -38,6 +38,11 @@ const DEFAULT_VIEW: View = {
 	fields: [ 'status' ],
 };
 
+// The server explains why a referral cannot be archived or its email resent
+// (an order already paid for, a bounced address), so its message wins.
+const getErrorMessage = ( error: unknown, fallback: string ) =>
+	( error instanceof Error && error.message ) || fallback;
+
 export default function ReferralReferralsTab() {
 	const { referral, agencyId } = useReferral();
 	const { data: products } = useQuery( agencyProductsQuery( agencyId ) );
@@ -45,18 +50,14 @@ export default function ReferralReferralsTab() {
 
 	const { recordTracksEvent } = useAnalytics();
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
-	// The server explains why a referral cannot be archived or its email resent
-	// (an order already paid for, a bounced address), so its message is shown.
 	const { mutate: archiveReferral, isPending: isArchiving } = useMutation(
 		withSnackbar( archiveReferralMutation( agencyId ), {
 			success: __( 'The referral has been archived.' ),
-			error: { source: 'server' },
 		} )
 	);
 	const { mutate: resendReferralEmail, isPending: isResending } = useMutation(
 		withSnackbar( resendReferralEmailMutation( agencyId ), {
 			success: __( 'The referral email has been resent.' ),
-			error: { source: 'server' },
 		} )
 	);
 
@@ -98,7 +99,13 @@ export default function ReferralReferralsTab() {
 						return;
 					}
 					recordTracksEvent( 'calypso_a4a_referrals_resend_email_button_click' );
-					resendReferralEmail( order.id );
+					resendReferralEmail( order.id, {
+						onError: ( error ) =>
+							createErrorNotice(
+								getErrorMessage( error, __( 'Failed to resend the referral email.' ) ),
+								{ type: 'snackbar' }
+							),
+					} );
 				},
 			},
 			{
@@ -137,7 +144,14 @@ export default function ReferralReferralsTab() {
 						recordTracksEvent( 'calypso_a4a_referrals_archive_referral_button_click' );
 						// The modal stays up until the request settles, so the confirm
 						// button can show that something is happening.
-						archiveReferral( order.id, { onSettled: () => closeModal?.() } );
+						archiveReferral( order.id, {
+							onError: ( error ) =>
+								createErrorNotice(
+									getErrorMessage( error, __( 'Failed to archive the referral.' ) ),
+									{ type: 'snackbar' }
+								),
+							onSettled: () => closeModal?.(),
+						} );
 					};
 					return (
 						<VStack spacing={ 4 }>
