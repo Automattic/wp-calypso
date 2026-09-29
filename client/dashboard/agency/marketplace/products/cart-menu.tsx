@@ -113,6 +113,7 @@ export default function CartMenu( {
 			__next40pxDefaultSize
 			href={ checkoutUrl }
 			disabled={ ! isAgencyApproved || ! isTotalReady }
+			style={ { justifyContent: 'center' } }
 			onClick={ () => {
 				recordTracksEvent( 'calypso_a4a_marketplace_checkout_click', {
 					purchase_mode: isReferralMode ? 'referral' : 'regular',
