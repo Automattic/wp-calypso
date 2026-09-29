@@ -1,3 +1,4 @@
+export * from './apply-filter';
 export * from './constants';
 export * from './detect-fqdn';
 export * from './exclude-domains';

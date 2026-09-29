@@ -54,6 +54,7 @@ import { OnboardingProgress } from '../components/onboarding-progress';
 import { useShowOnboardingProgress } from '../components/onboarding-progress/use-show-onboarding-progress';
 import HundredYearPlanStepWrapper from '../hundred-year-plan-step-wrapper';
 import { getSkipSuggestionCopy } from './get-skip-suggestion-copy';
+import { getDomainSearchResultsVariation } from './results-experiment';
 import type { Step as StepType } from '../../types';
 import type { FreeDomainSuggestion } from '@automattic/api-core';
 import type { HelpCenterSelect, OnboardSelect } from '@automattic/data-stores';
@@ -150,6 +151,7 @@ const DomainSearchStep: StepType< {
 	const isWowFunnel = !! queryParams.get( 'wow_funnel' );
 	const wowSkipCopy = isWowFunnel ? __( 'Set up a domain later' ) : undefined;
 	const stepCounter = useOnboardingStepCounter( flow, 'domains' );
+	const resultsVariation = getDomainSearchResultsVariation( flow );
 
 	const storedSiteTitle = useSelect(
 		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedSiteTitle(),
@@ -224,6 +226,8 @@ const DomainSearchStep: StepType< {
 			// WoW funnel: hide the free *.wordpress.com subdomain card entirely and offer only
 			// the skip control.
 			hideFreeSubdomainSuggestion: isWowFunnel,
+			skipSuggestionPlacement:
+				resultsVariation === 'free_banner_top' ? ( 'top' as const ) : undefined,
 			includeDotBlogSubdomain:
 				! isHundredYearPlanFlow( flow ) &&
 				! isHundredYearDomainFlow( flow ) &&
@@ -245,6 +249,7 @@ const DomainSearchStep: StepType< {
 		isWooHostingSolutions,
 		isWowFunnel,
 		wowSkipCopy,
+		resultsVariation,
 		tldQuery,
 		query,
 		allowedTldsProp,

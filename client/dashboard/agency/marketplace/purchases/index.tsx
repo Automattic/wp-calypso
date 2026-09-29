@@ -63,7 +63,7 @@ export default function MarketplacePurchases() {
 					) }
 					actions={
 						<RouterLinkButton
-							to="/marketplace/products"
+							to="/products"
 							variant="primary"
 							onClick={ () => recordTracksEvent( 'calypso_a4a_license_list_issue_license_click' ) }
 						>

@@ -17,7 +17,7 @@ $transition-timing: $transition-duration cubic-bezier( 0, 0, 0.2, 1 );
 // (packages/help-center/src/components/_variables.scss). A focused panel must
 // always beat an unfocused one, so they share one base + focused offset.
 $overlay-panel-z-index-base: 999990;
-$overlay-panel-z-index-focused: 999995;
+$overlay-panel-z-index-focused: 999994;
 $agents-manager-z-index-docked: $overlay-panel-z-index-base;
 $agents-manager-z-index-focused: $overlay-panel-z-index-focused;
 $agents-manager-z-index-sidebar: $overlay-panel-z-index-base - 1;

@@ -116,6 +116,19 @@ describe( 'AgentUIContainer beforeSubmit', () => {
 		).toBe( true );
 	} );
 
+	it( 'reports an auto-submit suggestion click without waiting for the send to settle', async () => {
+		const beforeSubmit = vi.fn( (): boolean => true );
+		const onSubmit = vi.fn( () => new Promise< void >( () => {} ) );
+		const onSuggestionClick = vi.fn();
+		const { suggestion } = await render( beforeSubmit, onSubmit, onSuggestionClick );
+		await act( async () => {
+			suggestion?.click();
+		} );
+		expect( onSubmit ).toHaveBeenCalledWith( 'Run it now' );
+		expect( onSuggestionClick ).toHaveBeenCalledOnce();
+		expect( onSuggestionClick ).toHaveBeenCalledWith( SUGGESTIONS[ 0 ], SUGGESTIONS );
+	} );
+
 	it( 'sends and clears the input when allowed', async () => {
 		const beforeSubmit = vi.fn( (): boolean => true );
 		const { onSubmit, textarea, send } = await render( beforeSubmit );

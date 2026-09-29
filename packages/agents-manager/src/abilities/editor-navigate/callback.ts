@@ -3,6 +3,7 @@ import { dispatch, resolveSelect, select } from '@wordpress/data';
 import { __, sprintf } from '@wordpress/i18n';
 import { getEditorHistory, type EditorHistory } from '../../utils/editor-history';
 import { isEditorPage } from '../../utils/is-editor-page';
+import { getRenderedMenuIds } from '../../utils/navigation-menu';
 import { waitForStore } from '../../utils/wait-for-store';
 import { errorResult, successResult } from '../ability-result';
 import { PAGE_PATH } from './page-path';
@@ -11,7 +12,7 @@ import type { AbilityResult } from '../types';
 // The two navigable targets: one page, or the pages list. The backend
 // documents both for this tool id — see `ability.editor-navigate.php`'s
 // model instructions.
-const PAGES_LIST_PATH = 'all-pages';
+export const PAGES_LIST_PATH = 'all-pages';
 const PAGES_LIST_ROUTE = '/page';
 
 // `history.navigate()` resolves on the route change, not on the editor loading
@@ -23,10 +24,6 @@ const NAVIGATION_REFS_TIMEOUT_MS = 1500;
 
 // Lets this turn's stream close before the page unloads.
 const UNLOAD_DELAY_MS = 1000;
-
-interface Block {
-	attributes?: Record< string, unknown >;
-}
 
 // `select`/`dispatch`/`resolveSelect` by store name are untyped, so each
 // store's shape is declared once here and every cast lives in one accessor.
@@ -55,7 +52,6 @@ interface CoreActions {
 	invalidateResolution?: ( selector: string, args: unknown[] ) => void;
 }
 interface BlockEditorSelectors {
-	getBlock?: ( clientId: string ) => Block | null;
 	getBlocksByName?: ( name: string ) => string[];
 	getBlockEditingMode?: ( clientId: string ) => string | undefined;
 }
@@ -179,12 +175,15 @@ export async function editorNavigate(
 		);
 	}
 
-	// Read after the save, not before: it awaits a round trip per dirty entity,
-	// and a page switch in that window would leave these naming a page the
-	// editor has already left — the restore compares them with the destination,
-	// so stale values skip it and the page stays uneditable.
+	// Read after the save: a page switch during it would leave these naming a
+	// page the editor has already left. The restore compares them with the
+	// destination, so stale values skip it and the page stays uneditable.
 	const departingPostContent = io.getPostContentClientId();
 	const departingPageId = io.getLoadedPageId();
+	// Once the route has changed, a failure must say so: a caller holding a
+	// canvas binding for the destination keeps it, or the arrival reads as a
+	// move.
+	let navigated = false;
 
 	try {
 		// Outside the site editor there is no router, so the browser loads it
@@ -208,6 +207,7 @@ export async function editorNavigate(
 		}
 
 		await history.navigate( routeQuery ? `${ editorPath }?${ routeQuery }` : editorPath );
+		navigated = true;
 		io.closeCommandPalette();
 
 		if ( isPagesList ) {
@@ -220,7 +220,7 @@ export async function editorNavigate(
 			return errorResult(
 				`Navigated to ${ editorPath }, but the editor did not finish loading that page in time. Do not edit content yet — the editor may still be showing the previous page. Tell the user the page did not open, and stop.`,
 				__( 'That page did not finish opening.', __i18n_text_domain__ ),
-				{ path: editorPath }
+				{ path: editorPath, navigated }
 			);
 		}
 
@@ -251,7 +251,7 @@ export async function editorNavigate(
 			isPagesList
 				? __( 'I could not open the pages list.', __i18n_text_domain__ )
 				: __( 'I could not open that page.', __i18n_text_domain__ ),
-			{ path: editorPath }
+			{ path: editorPath, ...( navigated && { navigated } ) }
 		);
 	}
 }
@@ -307,19 +307,6 @@ const getLoadedPageId = (): number | undefined => {
 const waitForPage = ( pageId: number ) =>
 	waitForStore( 'core/editor', () => getLoadedPageId() === pageId, EDITOR_LOAD_TIMEOUT_MS );
 
-/** The distinct menus referenced by every navigation block in the tree. */
-function getNavigationRefs(): unknown[] {
-	const blockEditor = blockEditorSelect();
-
-	return [
-		...new Set(
-			( blockEditor.getBlocksByName?.( 'core/navigation' ) ?? [] )
-				.map( ( clientId ) => blockEditor.getBlock?.( clientId )?.attributes?.ref )
-				.filter( Boolean )
-		),
-	];
-}
-
 /** Drops cached navigation records, so a page just added to a menu appears. */
 async function refreshNavigationBlocks(): Promise< number > {
 	const core = coreDispatch();
@@ -329,11 +316,11 @@ async function refreshNavigationBlocks(): Promise< number > {
 	// not in the tree on the first read.
 	await waitForStore(
 		'core/block-editor',
-		() => getNavigationRefs().length > 0,
+		() => getRenderedMenuIds().length > 0,
 		NAVIGATION_REFS_TIMEOUT_MS
 	);
 
-	const refs = getNavigationRefs();
+	const refs = getRenderedMenuIds();
 
 	let refreshed = 0;
 
@@ -399,6 +386,28 @@ async function restorePostContentEditing( departingClientId: string | undefined 
 	blockEditor.setBlockEditingMode?.( postContentClientId, 'default' );
 }
 
+const createIO = (): EditorNavigateIO => ( {
+	saveEverything,
+	getHistory: getEditorHistory,
+	waitForPage,
+	closeCommandPalette: () => commandsDispatch()?.close?.(),
+	getPostContentClientId,
+	getLoadedPageId,
+	restorePostContentEditing,
+	refreshNavigationBlocks,
+	navigateWholePage: ( destination ) => {
+		// After the turn's stream closes, so the result is delivered
+		// before the page unloads.
+		const startedAt = window.location.href;
+		setTimeout( () => {
+			// The user moved on during the delay; leave them there.
+			if ( window.location.href === startedAt ) {
+				window.location.href = destination;
+			}
+		}, UNLOAD_DELAY_MS );
+	},
+} );
+
 /**
  * The `editor-navigate` ability callback.
  */
@@ -414,28 +423,13 @@ export async function editorNavigateCallback(
 		);
 	}
 
-	return editorNavigate(
-		{
-			saveEverything,
-			getHistory: getEditorHistory,
-			waitForPage,
-			closeCommandPalette: () => commandsDispatch()?.close?.(),
-			getPostContentClientId,
-			getLoadedPageId,
-			restorePostContentEditing,
-			refreshNavigationBlocks,
-			navigateWholePage: ( destination ) => {
-				// After the turn's stream closes, so the result is delivered
-				// before the page unloads.
-				const startedAt = window.location.href;
-				setTimeout( () => {
-					// The user moved on during the delay; leave them there.
-					if ( window.location.href === startedAt ) {
-						window.location.href = destination;
-					}
-				}, UNLOAD_DELAY_MS );
-			},
-		},
-		input
-	);
+	return editorNavigate( createIO(), input );
 }
+
+/**
+ * Leaves for an editor path without saving first, for a caller whose write
+ * must not publish the user's pending work — `edit-entity-record` moving off
+ * a record it is about to delete.
+ */
+export const navigateEditorWithoutSaving = ( path: string ): Promise< AbilityResult > =>
+	editorNavigate( { ...createIO(), saveEverything: async () => {} }, { path } );

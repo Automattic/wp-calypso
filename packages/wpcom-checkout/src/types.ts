@@ -208,27 +208,6 @@ export type WPCOMTransactionEndpointPaymentDetails = {
 };
 
 /**
- * The data returned by the /me/domain-contact-information endpoint
- */
-export interface RawCachedDomainContactDetails {
-	first_name?: string;
-	last_name?: string;
-	organization?: string;
-	email?: string;
-	phone?: string;
-	phone_number_country?: string;
-	address_1?: string;
-	address_2?: string;
-	city?: string;
-	state?: string;
-	postal_code?: string;
-	country_code?: string;
-	fax?: string;
-	vat_id?: string;
-	extra?: DomainContactValidationRequestExtraFields;
-}
-
-/**
  * The data model used in ContactDetailsFormFields and related components.
  */
 export type PossiblyCompleteDomainContactDetails = {
@@ -301,6 +280,7 @@ export type EsDomainContactExtraDetailsErrors = {
 	registrantIdentificationNumber?: string | TranslateResult;
 	adminIdentificationNumber?: string | TranslateResult;
 	redEsAgreementAccepted?: string | TranslateResult;
+	redEsAgreementVersion?: string | TranslateResult;
 };
 
 export type PayPalExpressEndpoint = (
@@ -438,6 +418,7 @@ export type ManagedContactDetailsTldExtraFieldsShape< T > = {
 		registrantIdentificationNumber?: T;
 		adminIdentificationNumber?: T;
 		redEsAgreementAccepted?: T;
+		redEsAgreementVersion?: T;
 	};
 };
 
@@ -530,47 +511,6 @@ export type ManagedContactDetailsUpdaters = {
 	) => ManagedContactDetails;
 };
 
-/**
- * Request parameter expected by the domain contact validation endpoint.
- * @see WPCOM_JSON_API_Signups_Validation_User_Endpoint
- */
-export type SignupValidationResponse = {
-	success: boolean;
-	messages?: {
-		first_name?: string[];
-		last_name?: string[];
-		email?: Record< string, string >;
-		username?: string[];
-		password?: string[];
-	};
-};
-
-/**
- * Request parameter expected by the domain contact validation endpoint.
- * @see WPCOM_JSON_API_Domains_Validate_Contact_Information_Endpoint
- */
-export type ContactValidationRequestContactInformation = {
-	address_1?: string;
-	address_2?: string;
-	city?: string;
-	country_code?: string;
-	email?: string;
-	extra?: DomainContactValidationRequestExtraFields;
-	fax?: string;
-	first_name?: string;
-	last_name?: string;
-	organization?: string;
-	phone?: string;
-	phone_number_country?: string;
-	postal_code?: string;
-	state?: string;
-	vat_id?: string;
-};
-
-export type DomainContactValidationRequest = {
-	contact_information: ContactValidationRequestContactInformation;
-};
-
 export type GSuiteContactValidationRequest = {
 	contact_information: {
 		country_code: string;
@@ -590,103 +530,18 @@ export type GSuiteContactValidationRequest = {
 	};
 };
 
-export type DomainContactValidationRequestExtraFields = {
-	ca?: {
-		lang?: string;
-		legal_type?: string;
-		cira_agreement_accepted?: boolean;
-	};
-	uk?: {
-		registrant_type?: string;
-		registration_number?: string;
-		trading_name?: string;
-	};
-	fr?: {
-		registrant_type?: string;
-		registrant_vat_id?: string;
-		trademark_number?: string;
-		siren_siret?: string;
-	};
-	in?: {
-		nexus_declaration?: boolean;
-		nexus_connection_type?: string;
-	};
-	es?: {
-		registrant_entity_type?: string;
-		registrant_identification_number?: string;
-		admin_identification_number?: string;
-		red_es_agreement_accepted?: boolean;
-	};
-	is_for_business?: boolean;
-};
-
-export type ContactValidationResponseMessagesExtra = {
-	ca?: {
-		lang?: string[];
-		legal_type?: string[];
-		cira_agreement_accepted?: string[];
-	};
-	uk?: {
-		registrant_type?: string[];
-		registration_number?: string[];
-		trading_name?: string[];
-	};
-	fr?: {
-		registrant_type?: string[];
-		trademark_number?: string[];
-		siren_siret?: string[];
-	};
-	in?: {
-		nexus_declaration?: string[];
-		nexus_connection_type?: string[];
-	};
-	es?: {
-		registrant_entity_type?: string[];
-		registrant_identification_number?: string[];
-		admin_identification_number?: string[];
-		red_es_agreement_accepted?: string[];
-	};
-	is_for_business?: boolean;
-};
-
-/**
- * Response format of the domain contact validation endpoint.
- */
-export type ContactValidationResponseMessages = {
-	first_name?: string[];
-	last_name?: string[];
-	organization?: string[];
-	email?: string[];
-	phone?: string[];
-	phone_number_country?: string[];
-	address_1?: string[];
-	address_2?: string[];
-	city?: string[];
-	state?: string[];
-	postal_code?: string[];
-	country_code?: string[];
-	fax?: string[];
-	vat_id?: string[];
-	extra?: ContactValidationResponseMessagesExtra;
-};
-
-export type RawContactValidationResponseMessages = Record< string, string[] >;
-
-export type DomainContactValidationResponse =
-	| { success: true }
-	| {
-			success: false;
-			messages: ContactValidationResponseMessages;
-			messages_simple: string[];
-	  };
-
-export type RawDomainContactValidationResponse =
-	| { success: true }
-	| {
-			success: false;
-			messages: RawContactValidationResponseMessages;
-			messages_simple: string[];
-	  };
+export type {
+	ContactValidationRequestContactInformation,
+	ContactValidationResponseMessages,
+	ContactValidationResponseMessagesExtra,
+	DomainContactValidationRequest,
+	DomainContactValidationRequestExtraFields,
+	DomainContactValidationResponse,
+	RawCachedDomainContactDetails,
+	RawContactValidationResponseMessages,
+	RawDomainContactValidationResponse,
+	SignupValidationResponse,
+} from '@automattic/api-core';
 
 export type {
 	CountryListItemBase,

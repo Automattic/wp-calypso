@@ -24,7 +24,10 @@ const loadTrackResurrections = () =>
 		/* webpackChunkName: "async-load-calypso-lib-analytics-track-resurrections" */ 'calypso/lib/analytics/track-resurrections'
 	);
 
-function FollowingStream( { ...props } ) {
+function FollowingStream( {
+	suppressReaderOnboarding: forceSuppressReaderOnboarding = false,
+	...props
+} ) {
 	const { currentView } = useFollowingView();
 	const dispatch = useDispatch();
 	const [ isResurrectedModalVisible, setIsResurrectedModalVisible ] = useState( false );
@@ -51,7 +54,8 @@ function FollowingStream( { ...props } ) {
 	}, [ shouldDelayReaderOnboarding, isResurrectedModalVisible ] );
 
 	const suppressReaderOnboarding =
-		readerOnboardingShouldShow && ( isResurrectedModalVisible || shouldDelayReaderOnboarding );
+		forceSuppressReaderOnboarding ||
+		( readerOnboardingShouldShow && ( isResurrectedModalVisible || shouldDelayReaderOnboarding ) );
 
 	// "Discover new blogs" (READ-542): one bounded block in the Recent feed,
 	// in the third spot (after two recent posts), per the READ-542 thread. Only
