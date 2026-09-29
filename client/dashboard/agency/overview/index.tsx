@@ -6,6 +6,7 @@ import { useLocale } from '../../app/locale';
 import FlashMessage from '../../components/flash-message';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
+import { getMarketplaceHostingSectionRoute } from '../marketplace/paths';
 import { useScheduleCall } from '../tiers/use-schedule-call';
 import { PROGRAM_INCENTIVES_URL } from './constants';
 import AgencyOverviewContent from './overview-content';
@@ -64,14 +65,15 @@ export default function AgencyOverview() {
 				isEligibleForPressableIntroOffer={ isEligibleForPressableIntroOffer }
 				isEligibleForPressableExpansionOffer={ isEligibleForPressableExpansionOffer }
 				links={ {
-					tiers: '/agency/tiers',
+					tiers: '/tiers',
 					sites: '/sites',
-					referrals: '/earn/referrals',
-					woopayments: '/earn/woopayments',
+					referrals: '/referrals',
+					woopayments: '/woopayments',
 					marketplace: '/marketplace',
 					partnerDirectory: PARTNER_DIRECTORY_URL,
 					contactSupport: CONTACT_SUPPORT_URL,
-					aiMcp: '/resources/ai-mcp',
+					aiMcp: '/agency/ai',
+					pressableHosting: getMarketplaceHostingSectionRoute( 'pressable' ),
 					helpful: [
 						{
 							// TODO: wire up once the MSD dashboard has a contact-support entry

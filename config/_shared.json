@@ -226,7 +226,7 @@
 	"blackbox_api_key": "1b4f123e7dae4d83bbd18170c4358f8e",
 	"blackbox_signup_api_key": "ee892f3691e15bbc28b5cc1f18f05262",
 	"site_spec": {
-		"script_url": "https://widgets.wp.com/site-spec/v1.18.0/index.js",
-		"css_url": "https://widgets.wp.com/site-spec/v1.18.0/style.css"
+		"script_url": "https://widgets.wp.com/site-spec/v1.19.0/index.js",
+		"css_url": "https://widgets.wp.com/site-spec/v1.19.0/style.css"
 	}
 }

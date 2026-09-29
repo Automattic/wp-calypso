@@ -199,7 +199,12 @@ describe( 'getLicenseTags', () => {
 
 	it( 'tags referral and development licenses', () => {
 		expect(
-			getLicenseTags( license( { referral: { id: 1 }, meta: { a4a_is_dev_site: '1' } } ) )
+			getLicenseTags(
+				license( {
+					referral: { id: 1 } as JetpackLicense[ 'referral' ],
+					meta: { a4a_is_dev_site: '1' },
+				} )
+			)
 		).toEqual( [ 'Referral', 'Development' ] );
 	} );
 } );

@@ -2,11 +2,13 @@
  * Marketplace Hosting route paths, shared by the router and the screens that
  * link to them so the two can't drift apart.
  */
-export const MARKETPLACE_HOSTING_ROUTE = '/marketplace/hosting';
-export const MARKETPLACE_PRODUCTS_ROUTE = '/marketplace/products';
+export const MARKETPLACE_HOSTING_ROUTE = '/hosting';
+export const MARKETPLACE_PRODUCTS_ROUTE = '/products';
+export const MARKETPLACE_REFERRAL_CHECKOUT_ROUTE = '/referral-checkout';
 
-// The checkout still lives in the classic dashboard; link it through `a4aLink()`.
-export const CLASSIC_MARKETPLACE_CHECKOUT_PATH = '/marketplace/checkout';
+// The agency checkout lives on WordPress.com, next to the client referral
+// checkout; link it through `wpcomLink()`.
+export const WPCOM_AGENCY_CHECKOUT_PATH = '/checkout/agency/purchase';
 
 export type HostingSection = 'wpcom' | 'pressable' | 'vip';
 
