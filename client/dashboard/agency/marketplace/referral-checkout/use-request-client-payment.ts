@@ -14,7 +14,7 @@ import { useAnalytics } from '../../../app/analytics';
 import { isPressableAddonProduct } from '../hosting/lib/pressable-plans';
 import { MARKETPLACE_PURCHASES_ROUTE } from '../paths';
 import { getTermProductId } from '../products/lib/checkout-url';
-import { clearStoredCart } from '../products/use-shopping-cart';
+import { clearStoredCart, useShoppingCart } from '../products/use-shopping-cart';
 import { useMarketplaceType } from '../use-marketplace-type';
 import { hasActivePressablePlanForClient } from './lib/has-active-pressable-plan';
 import type { CartLine } from '../products/use-cart-lines';
@@ -32,6 +32,16 @@ interface ApiError {
 	message?: string;
 }
 
+// The copy runs after the network calls, when the browser may no longer allow it.
+async function copyToClipboard( text: string ): Promise< boolean > {
+	try {
+		await navigator.clipboard.writeText( text );
+		return true;
+	} catch {
+		return false;
+	}
+}
+
 /**
  * The state and actions of the request-payment form: the client's email and
  * message, and the send / copy / purchase actions. Sending
@@ -43,13 +53,16 @@ export function useRequestClientPayment( { agencyId, lines, term }: Options ) {
 	const { recordTracksEvent } = useAnalytics();
 	const { createErrorNotice } = useDispatch( noticesStore );
 	const { updateMarketplaceType } = useMarketplaceType();
+	const { removeItem } = useShoppingCart( 'referral' );
 
 	const [ email, setEmail ] = useState( '' );
 	const [ emailError, setEmailError ] = useState< string | null >( null );
 	const [ message, setMessage ] = useState( '' );
-	const { mutateAsync: createReferral, isPending: isCreating } = useMutation(
-		createReferralMutation( agencyId )
-	);
+	const { mutateAsync: createReferral, isPending: isCreating } = useMutation( {
+		...createReferralMutation( agencyId ),
+		onSuccess: () =>
+			queryClient.invalidateQueries( { queryKey: referralsQuery( agencyId ).queryKey } ),
+	} );
 	const { mutateAsync: issueLicenses, isPending: isIssuing } = useMutation(
 		jetpackAgencyLicensesIssueMutation( agencyId )
 	);
@@ -127,7 +140,7 @@ export function useRequestClientPayment( { agencyId, lines, term }: Options ) {
 				flow_type: flowType,
 			} );
 			// The link is copied for both flows.
-			navigator.clipboard?.writeText( referral.checkout_url ).catch( () => undefined );
+			const isLinkCopied = await copyToClipboard( referral.checkout_url );
 			clearStoredCart( 'referral' );
 			updateMarketplaceType( 'regular' );
 			navigate( {
@@ -136,6 +149,7 @@ export function useRequestClientPayment( { agencyId, lines, term }: Options ) {
 					new_referral_order_email: email,
 					new_referral_order_checkout_url: referral.checkout_url,
 					flow_type: flowType,
+					link_copied: isLinkCopied,
 				},
 			} );
 		} catch ( error ) {
@@ -156,17 +170,24 @@ export function useRequestClientPayment( { agencyId, lines, term }: Options ) {
 		recordTracksEvent( 'calypso_a4a_marketplace_referral_checkout_free_purchase_click', {
 			term_pricing: term,
 		} );
+		let issuedCount = 0;
 		try {
 			for ( const { product, item } of lines ) {
 				await issueLicenses( { product: product.slug, quantity: item.quantity } );
+				// Leaves only the failed lines for a retry, so none is issued twice.
+				removeItem( item.slug );
+				issuedCount++;
 			}
 			clearStoredCart( 'referral' );
 			updateMarketplaceType( 'regular' );
 			navigate( { to: MARKETPLACE_PURCHASES_ROUTE } );
 		} catch ( error ) {
-			createErrorNotice( ( error as ApiError )?.message || __( 'Failed to issue the licenses.' ), {
-				type: 'snackbar',
-			} );
+			createErrorNotice(
+				issuedCount > 0
+					? __( 'Failed to issue some licenses. The ones issued were removed from the cart.' )
+					: ( error as ApiError )?.message || __( 'Failed to issue the licenses.' ),
+				{ type: 'snackbar' }
+			);
 		}
 	};
 

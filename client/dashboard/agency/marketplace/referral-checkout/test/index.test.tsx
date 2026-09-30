@@ -45,6 +45,21 @@ const freeProducts = [
 			},
 		],
 	},
+	{
+		name: 'Jetpack Boost (Free)',
+		slug: 'jetpack-boost-free',
+		products: [
+			{
+				name: 'Jetpack Boost (Free)',
+				slug: 'jetpack-boost-free',
+				product_id: 2221,
+				currency: 'USD',
+				amount: '0',
+				monthly_price: 0,
+				yearly_price: 0,
+			},
+		],
+	},
 ];
 
 function mockApi( {
@@ -76,9 +91,9 @@ function mockApi( {
 }
 
 // The cart keeps its own copy of what is stored, so it is filled through the hook.
-function fillCart( slug: string ) {
+function fillCart( ...slugs: string[] ) {
 	const { result } = renderHook( () => useShoppingCart( 'referral' ) );
-	act( () => result.current.replaceItems( [ { slug, quantity: 1 } ] ) );
+	act( () => result.current.replaceItems( slugs.map( ( slug ) => ( { slug, quantity: 1 } ) ) ) );
 }
 
 describe( '<ReferralCheckout>', () => {
@@ -191,5 +206,37 @@ describe( '<ReferralCheckout>', () => {
 		render( <ReferralCheckout /> );
 
 		expect( await screen.findByRole( 'button', { name: 'Purchase' } ) ).toBeEnabled();
+	} );
+
+	test( 'keeps only the lines that failed after a partial free purchase', async () => {
+		fillCart( 'jetpack-stats-free', 'jetpack-boost-free' );
+		mockApi( { catalog: freeProducts } );
+		const issued: string[] = [];
+		nock( API )
+			.post(
+				'/wpcom/v2/jetpack-licensing/licenses',
+				( body ) => body.product === 'jetpack-stats-free'
+			)
+			.reply( 200, () => {
+				issued.push( 'jetpack-stats-free' );
+				return [];
+			} );
+		nock( API )
+			.post(
+				'/wpcom/v2/jetpack-licensing/licenses',
+				( body ) => body.product === 'jetpack-boost-free'
+			)
+			.reply( 500, { code: 'error', message: 'Nope' } );
+		const user = userEvent.setup();
+		render( <ReferralCheckout /> );
+
+		await user.click( await screen.findByRole( 'button', { name: 'Purchase' } ) );
+
+		await waitFor( () =>
+			expect( sessionStorage.getItem( 'referrals-shopping-card-selected-items' ) ).toBe(
+				'jetpack-boost-free:1'
+			)
+		);
+		expect( issued ).toEqual( [ 'jetpack-stats-free' ] );
 	} );
 } );

@@ -42,6 +42,7 @@ describe( 'NewReferralNotice', () => {
 			new_referral_order_email: 'client@example.com',
 			new_referral_order_checkout_url: CHECKOUT_URL,
 			flow_type: 'copy',
+			link_copied: true,
 		} );
 		render( <NewReferralNotice /> );
 
@@ -49,6 +50,20 @@ describe( 'NewReferralNotice', () => {
 			await screen.findByText( 'The referral link has been copied to your clipboard!' )
 		).toBeVisible();
 		expect( screen.getByRole( 'button', { name: 'Copy link again' } ) ).toBeVisible();
+	} );
+
+	it( 'offers to copy the link when the browser refused the copy', async () => {
+		mockUseSearch.mockReturnValue( {
+			new_referral_order_email: 'client@example.com',
+			new_referral_order_checkout_url: CHECKOUT_URL,
+			flow_type: 'copy',
+			link_copied: false,
+		} );
+		render( <NewReferralNotice /> );
+
+		expect( await screen.findByText( 'Your referral link is ready to share.' ) ).toBeVisible();
+		expect( screen.queryByText( /copied to your clipboard/ ) ).not.toBeInTheDocument();
+		expect( screen.getByRole( 'button', { name: 'Copy link' } ) ).toBeVisible();
 	} );
 
 	it( 'confirms a sent referral without the copy button when the link is missing', async () => {

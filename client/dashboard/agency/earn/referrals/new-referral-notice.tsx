@@ -16,7 +16,7 @@ import { Notice } from '../../../components/notice';
  * referral checkout link is dropped from the URL, so the notice shows without it.
  */
 export default function NewReferralNotice() {
-	const { new_referral_order_email, new_referral_order_checkout_url, flow_type } =
+	const { new_referral_order_email, new_referral_order_checkout_url, flow_type, link_copied } =
 		earnReferralsRoute.useSearch();
 	const navigate = useNavigate();
 	const { recordTracksEvent } = useAnalytics();
@@ -28,6 +28,21 @@ export default function NewReferralNotice() {
 
 	const checkoutUrl = new_referral_order_checkout_url;
 	const isSent = flow_type !== 'copy';
+	// The browser may refuse the copy the checkout attempts after creating the referral.
+	const isCopied = ! isSent && link_copied === true;
+
+	const getTitle = () => {
+		if ( isSent ) {
+			return sprintf(
+				/* translators: %s is the client's email address. */
+				__( 'Referral sent to %s' ),
+				new_referral_order_email
+			);
+		}
+		return isCopied
+			? __( 'The referral link has been copied to your clipboard!' )
+			: __( 'Your referral link is ready to share.' );
+	};
 
 	const onClose = () =>
 		navigate( {
@@ -47,15 +62,7 @@ export default function NewReferralNotice() {
 	return (
 		<Notice
 			variant="success"
-			title={
-				isSent
-					? sprintf(
-							/* translators: %s is the client's email address. */
-							__( 'Referral sent to %s' ),
-							new_referral_order_email
-						)
-					: __( 'The referral link has been copied to your clipboard!' )
-			}
+			title={ getTitle() }
 			onClose={ onClose }
 			actions={
 				checkoutUrl && (
@@ -64,7 +71,7 @@ export default function NewReferralNotice() {
 						icon={ customLink }
 						onClick={ () => onCopyLink( checkoutUrl ) }
 					>
-						{ isSent ? __( 'Copy link' ) : __( 'Copy link again' ) }
+						{ isCopied ? __( 'Copy link again' ) : __( 'Copy link' ) }
 					</Button>
 				)
 			}

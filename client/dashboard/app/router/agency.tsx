@@ -776,6 +776,7 @@ export const earnReferralsRoute = createRoute( {
 		new_referral_order_email?: string;
 		new_referral_order_checkout_url?: string;
 		flow_type?: 'send' | 'copy';
+		link_copied?: boolean;
 	} => ( {
 		new_referral_order_email:
 			typeof search.new_referral_order_email === 'string'
@@ -788,6 +789,7 @@ export const earnReferralsRoute = createRoute( {
 				: undefined,
 		flow_type:
 			search.flow_type === 'copy' || search.flow_type === 'send' ? search.flow_type : undefined,
+		link_copied: typeof search.link_copied === 'boolean' ? search.link_copied : undefined,
 	} ),
 } ).lazy( () =>
 	import( '../../agency/earn/referrals' ).then( ( d ) =>
