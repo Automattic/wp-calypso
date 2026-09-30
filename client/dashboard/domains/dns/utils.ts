@@ -118,3 +118,52 @@ export const getProcessedRecord = ( sourceRecord: DnsRecord ): DnsRecord => {
 
 	return record;
 };
+
+const getFullyQualifiedName = ( name: string, domainName: string ) => {
+	const fqdn = name.replace( /\.$/, '' ).toLowerCase();
+	const domain = domainName.toLowerCase();
+
+	if ( fqdn === '' || fqdn === '@' ) {
+		return domain;
+	}
+
+	if ( fqdn === domain || fqdn.endsWith( '.' + domain ) ) {
+		return fqdn;
+	}
+
+	return `${ fqdn }.${ domain }`;
+};
+
+const withLeadingUnderscore = ( value = '' ) => '_' + value.replace( /^_+/, '' ).toLowerCase();
+
+const getRRsetName = ( record: DnsRecord, domainName: string ) => {
+	const name = getFullyQualifiedName( record.name, domainName );
+
+	if ( record.type === 'SRV' ) {
+		return `${ withLeadingUnderscore( record.service ) }.${ withLeadingUnderscore(
+			record.protocol
+		) }.${ name }`;
+	}
+
+	return name;
+};
+
+/**
+ * Returns the TTL of the existing records with the same name and type (the RRset) as `record`
+ * @param records - The existing DNS records of the domain
+ * @param record - The DNS record to look up
+ * @param domainName - The domain name
+ * @returns The TTL of the RRset, or `undefined` if there are no records with the same name and type
+ */
+export const getRRsetTtl = (
+	records: DnsRecord[],
+	record: DnsRecord,
+	domainName: string
+): number | undefined => {
+	const rrsetName = getRRsetName( record, domainName );
+	return records.find(
+		( existingRecord ) =>
+			existingRecord.type === record.type &&
+			getRRsetName( existingRecord, domainName ) === rrsetName
+	)?.ttl;
+};
