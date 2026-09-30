@@ -30,6 +30,7 @@ import { isDashboardBackport } from '../../utils/is-dashboard-backport';
 import { wpcomLink } from '../../utils/link';
 import { getSiteBadge } from '../../utils/site-badge';
 import { hasHostingFeature, hasJetpackModule } from '../../utils/site-features';
+import { getStorageUsagePercent } from '../../utils/site-storage';
 import { getVisibilityLabels } from '../../utils/site-visibility';
 import { canManageSite } from '../features';
 import { useAiLaunchpad } from '../hooks/use-ai-launchpad';
@@ -342,8 +343,7 @@ export function MediaStorage( { site }: { site?: Site } ) {
 			return <IneligibleIndicator />;
 		}
 
-		const { storage_used_bytes, max_storage_bytes } = mediaStorage;
-		return `${ Math.round( ( storage_used_bytes / max_storage_bytes ) * 1000 ) / 10 }%`;
+		return `${ getStorageUsagePercent( mediaStorage ) }%`;
 	};
 
 	return (
