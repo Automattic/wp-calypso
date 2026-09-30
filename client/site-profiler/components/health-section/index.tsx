@@ -22,7 +22,7 @@ export const HealthSection: React.FC< HealthSectionProps > = ( props ) => {
 	const translate = useTranslate();
 	const { url, hash, hostingProvider, healthMetricsRef } = props;
 	const { data }: { data: any } = useUrlPerformanceMetricsQuery( url, hash );
-	const { truncated, diagnostic: healthData = {} } = data?.audits.health ?? {};
+	const { diagnostic: healthData = {} } = data?.audits.health ?? {};
 
 	const isWPcom = hostingProvider?.slug?.toLowerCase() === 'automattic';
 
@@ -74,11 +74,6 @@ export const HealthSection: React.FC< HealthSectionProps > = ( props ) => {
 					} }
 				/>
 			) ) }
-
-			{ truncated &&
-				Array( 10 )
-					.fill( {} )
-					.map( ( _, index ) => <MetricsInsight key={ `locked-${ index }` } locked /> ) }
 		</MetricsSection>
 	);
 };

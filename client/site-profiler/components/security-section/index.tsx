@@ -20,7 +20,7 @@ export const SecuritySection: React.FC< SecuritySectionProps > = ( props ) => {
 	const translate = useTranslate();
 	const { url, hash, hostingProvider, securityMetricsRef } = props;
 	const { data }: { data: any } = useUrlSecurityMetricsQuery( url, hash );
-	const { truncated, fail: securityData = {} } = data?.report?.audits ?? {};
+	const { fail: securityData = {} } = data?.report?.audits ?? {};
 	const overallVulnerabilities = data?.report?.ovc ?? 0;
 
 	const { errors = {} } = data ?? {};
@@ -79,11 +79,6 @@ export const SecuritySection: React.FC< SecuritySectionProps > = ( props ) => {
 					} }
 				/>
 			) ) }
-
-			{ truncated &&
-				Array( 10 )
-					.fill( {} )
-					.map( ( _, index ) => <MetricsInsight key={ `locked-${ index }` } locked /> ) }
 		</MetricsSection>
 	);
 };
