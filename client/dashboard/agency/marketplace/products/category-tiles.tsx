@@ -38,15 +38,18 @@ export function isProductCategory( value: unknown ): value is ProductCategory {
 }
 
 /**
- * "Browse by category": the jobs as illustrated tiles above the search. A
+ * The jobs as illustrated tiles, right under search and filter. A
  * tile sets the list's category filter, so the tile, the filter button and
  * the filter chip always show the same selection.
  */
 export default function CategoryTiles( {
 	selected,
 	onSelect,
+	lead,
 }: {
 	selected: ProductCategory | null;
+	/** Controls shown in place of the heading, such as search. */
+	lead?: React.ReactNode;
 	onSelect: ( category: ProductCategory | null ) => void;
 } ) {
 	const labels = getCategoryShortLabels();
@@ -56,6 +59,7 @@ export default function CategoryTiles( {
 			label={ __( 'Product categories' ) }
 			selected={ selected }
 			onSelect={ onSelect }
+			lead={ lead }
 			options={ ( Object.keys( CATEGORY_ICONS ) as ProductCategory[] ).map( ( category ) => ( {
 				value: category,
 				label: labels[ category ],

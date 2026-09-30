@@ -450,13 +450,16 @@ export default function MarketplaceProducts() {
 					defaultLayouts={ { list: {} } }
 					search
 				>
-					<CategoryTiles selected={ selectedCategory } onSelect={ handleTileSelect } />
-					<HStack justify="space-between" className="dashboard-marketplace-products__toolbar">
-						<HStack justify="flex-start" expanded={ false }>
-							<DataViews.Search />
-							<DataViews.FiltersToggle />
-						</HStack>
-					</HStack>
+					<CategoryTiles
+						selected={ selectedCategory }
+						onSelect={ handleTileSelect }
+						lead={
+							<HStack spacing={ 2 } expanded={ false }>
+								<DataViews.Search />
+								<DataViews.FiltersToggle />
+							</HStack>
+						}
+					/>
 					<Spacer marginBottom={ 4 }>
 						<DataViews.FiltersToggled />
 					</Spacer>

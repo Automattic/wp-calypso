@@ -1,3 +1,4 @@
+import { __experimentalHStack as HStack } from '@wordpress/components';
 import clsx from 'clsx';
 import { Card, CardBody } from '../../../components/card';
 import { SectionHeader } from '../../../components/section-header';
@@ -23,8 +24,11 @@ export default function SpotTiles< T extends string >( {
 	options,
 	selected,
 	onSelect,
+	lead,
 }: {
 	title: string;
+	/** Replaces the heading with these controls (search), previous and next beside them. */
+	lead?: React.ReactNode;
 	/** The accessible name of the group of tiles. */
 	label: string;
 	options: SpotTile< T >[];
@@ -35,7 +39,14 @@ export default function SpotTiles< T extends string >( {
 
 	return (
 		<div className="dashboard-spot-tiles">
-			<SectionHeader level={ 2 } title={ title } actions={ rowArrows( { canScroll, page } ) } />
+			{ lead ? (
+				<HStack justify="space-between" alignment="center">
+					{ lead }
+					{ rowArrows( { canScroll, page } ) }
+				</HStack>
+			) : (
+				<SectionHeader level={ 2 } title={ title } actions={ rowArrows( { canScroll, page } ) } />
+			) }
 			<div
 				ref={ rowRef }
 				className={ clsx( 'dashboard-spot-tiles__row', {
