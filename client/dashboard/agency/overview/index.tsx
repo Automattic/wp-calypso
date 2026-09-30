@@ -7,6 +7,7 @@ import FlashMessage from '../../components/flash-message';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { getMarketplaceHostingSectionRoute } from '../marketplace/paths';
+import { PARTNER_DIRECTORY_ROUTE } from '../partner-directory/paths';
 import { useScheduleCall } from '../tiers/use-schedule-call';
 import { PROGRAM_INCENTIVES_URL } from './constants';
 import AgencyOverviewContent from './overview-content';
@@ -16,10 +17,6 @@ import usePressableOfferEligibility from './use-pressable-offer-eligibility';
 // TODO: the MSD dashboard has no contact-support entry point yet (A4A-3422). This
 // matches the placeholder on the Tiers screen — wire both up together.
 const CONTACT_SUPPORT_URL = '#contact-support';
-
-// TODO: the MSD dashboard has no partner-directory screen yet — point the growth
-// card there once it exists.
-const PARTNER_DIRECTORY_URL = '#partner-directory';
 
 export default function AgencyOverview() {
 	const { data: agency } = useQuery( activeAgencyQuery() );
@@ -70,7 +67,7 @@ export default function AgencyOverview() {
 					referrals: '/referrals',
 					woopayments: '/woopayments',
 					marketplace: '/marketplace',
-					partnerDirectory: PARTNER_DIRECTORY_URL,
+					partnerDirectory: PARTNER_DIRECTORY_ROUTE,
 					contactSupport: CONTACT_SUPPORT_URL,
 					aiMcp: '/agency/ai',
 					pressableHosting: getMarketplaceHostingSectionRoute( 'pressable' ),

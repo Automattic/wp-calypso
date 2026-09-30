@@ -77,7 +77,7 @@ export default function ChatHeader( { onClose, options, title, onBack, isDocked 
 					controls={ options }
 					icon={ moreVertical }
 					label={ __( 'More Options', __i18n_text_domain__ ) }
-					// Render inside the panel node so opening the menu doesn't blur the panel
+					// Render inside the panel node so the menu stacks with the panel
 					popoverProps={ {
 						className: 'agents-manager-chat-header__menu-popover',
 						inline: true,

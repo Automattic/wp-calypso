@@ -12,7 +12,6 @@ import {
 } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { AI } from '../../components/icons';
-import observeEditorCanvasPointerDown from '../../utils/observe-editor-canvas-pointerdown';
 import { ResponsiveUndockContext } from './responsive-undock-context';
 
 // On Gutenberg editor screens, only dock when fullscreen mode is on —
@@ -82,6 +81,8 @@ interface ReturnValue {
 	undock: () => void;
 	openSidebar: () => void;
 	closeSidebar: () => void;
+	/** The node the chat renders into. `null` until it is created. */
+	portalNode: HTMLElement | null;
 	createAgentPortal: ( children: React.ReactNode ) => React.ReactNode | React.ReactPortal;
 }
 
@@ -98,7 +99,9 @@ export default function useAgentLayoutManager( {
 	isSplitScreen = false,
 }: Options = {} ): ReturnValue {
 	const portalRef = useRef< HTMLDivElement | undefined >( undefined );
-	const [ isPortalReady, setIsPortalReady ] = useState( false );
+	// The same node as `portalRef`, which the layout effect reads synchronously.
+	// As state, it re-renders the consumers once the node exists.
+	const [ portalNode, setPortalNode ] = useState< HTMLElement | null >( null );
 	const [ isDocked, setIsDocked ] = useState< boolean | null >( null );
 	const { canDock, isDesktop } = useCanDock( { desktopMediaQuery } );
 	const shouldRenderSidebar = canDock && isDocked;
@@ -161,7 +164,7 @@ export default function useAgentLayoutManager( {
 				portalRef.current.classList.add( 'agents-manager-chat--undocked' );
 			}
 
-			setIsPortalReady( true );
+			setPortalNode( portalRef.current );
 
 			return;
 		}
@@ -207,47 +210,6 @@ export default function useAgentLayoutManager( {
 		container?.classList.toggle( SIDEBAR_OPEN_CLASS, !! shouldRenderSidebar && isSidebarOpen );
 	}, [ container, isSidebarOpen, shouldRenderSidebar ] );
 
-	// Track focus on the chat panel so the floating chat can raise its z-index. `pointerdown` also
-	// covers clicks on non-focusable regions (e.g. scroll areas) that skip `focusin`
-	useEffect( () => {
-		const node = portalRef.current;
-
-		if ( ! isPortalReady || ! node || shouldRenderSidebar ) {
-			node?.classList.remove( 'is-focused' );
-			return;
-		}
-
-		const setFocused = () => {
-			node.classList.add( 'is-focused' );
-		};
-
-		const handleFocusOut = ( e: FocusEvent ) => {
-			if ( ! node.contains( e.relatedTarget as Node | null ) ) {
-				node.classList.remove( 'is-focused' );
-			}
-		};
-
-		const handleDocumentPointerDown = ( e: PointerEvent ) => {
-			if ( ! node.contains( e.target as Node | null ) ) {
-				node.classList.remove( 'is-focused' );
-			}
-		};
-
-		node.addEventListener( 'focusin', setFocused );
-		node.addEventListener( 'focusout', handleFocusOut );
-		node.addEventListener( 'pointerdown', setFocused );
-		document.addEventListener( 'pointerdown', handleDocumentPointerDown );
-		const stopCanvasObserver = observeEditorCanvasPointerDown( handleDocumentPointerDown );
-
-		return () => {
-			node.removeEventListener( 'focusin', setFocused );
-			node.removeEventListener( 'focusout', handleFocusOut );
-			node.removeEventListener( 'pointerdown', setFocused );
-			document.removeEventListener( 'pointerdown', handleDocumentPointerDown );
-			stopCanvasObserver();
-		};
-	}, [ isPortalReady, shouldRenderSidebar ] );
-
 	// Reflect split-screen state on the container as `is-split-screen`.
 	useLayoutEffect( () => {
 		if ( ! container ) {
@@ -262,7 +224,7 @@ export default function useAgentLayoutManager( {
 		() => () => {
 			clearTimeout( openSidebarTimeoutRef.current );
 			setIsDocked( null );
-			setIsPortalReady( false );
+			setPortalNode( null );
 
 			if ( container ) {
 				container.classList.remove(
@@ -330,7 +292,7 @@ export default function useAgentLayoutManager( {
 
 	const createAgentPortal = useCallback(
 		( children: React.ReactNode ) => {
-			if ( ! isPortalReady || ! portalRef.current ) {
+			if ( ! portalNode ) {
 				return null;
 			}
 
@@ -350,10 +312,10 @@ export default function useAgentLayoutManager( {
 						children
 					) }
 				</ResponsiveUndockContext.Provider>,
-				portalRef.current
+				portalNode
 			);
 		},
-		[ handleOpenSidebar, isPortalReady, responsiveUndock, shouldRenderSidebar ]
+		[ handleOpenSidebar, portalNode, responsiveUndock, shouldRenderSidebar ]
 	);
 
 	return {
@@ -364,6 +326,7 @@ export default function useAgentLayoutManager( {
 		undock,
 		openSidebar: handleOpenSidebar,
 		closeSidebar: handleCloseSidebar,
+		portalNode,
 		createAgentPortal,
 	};
 }

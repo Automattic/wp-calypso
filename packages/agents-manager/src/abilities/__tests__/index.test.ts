@@ -7,7 +7,18 @@ jest.mock( '@wordpress/abilities', () => ( {
 	registerAbilityCategory: jest.fn(),
 	unregisterAbility: jest.fn(),
 } ) );
-jest.mock( '@wordpress/data', () => ( { select: () => undefined, dispatch: () => undefined } ) );
+jest.mock( '@wordpress/data', () => ( {
+	select: () => undefined,
+	dispatch: () => undefined,
+	resolveSelect: () => undefined,
+} ) );
+// Reached through the checkpoint engine's navigation domain, and it registers
+// a store on import — which the mocked `@wordpress/data` above cannot serve.
+jest.mock( '@wordpress/blocks', () => ( {
+	createBlock: jest.fn(),
+	parse: jest.fn( () => [] ),
+	serialize: jest.fn( () => '' ),
+} ) );
 jest.mock( '@wordpress/core-data', () => ( { store: 'core' } ) );
 jest.mock( '@automattic/agenttic-client', () => ( { getAgentManager: jest.fn() } ), {
 	virtual: true,
@@ -54,7 +65,7 @@ async function ownedAbilityNames( provider: {
 }
 
 async function editorAbilityCount() {
-	return ( await import( '../editor-abilities' ) ).getEditorAbilities().length;
+	return ( await import( '../editor-abilities' ) ).EDITOR_ABILITIES.length;
 }
 
 async function ownedAbilityCount() {
@@ -69,7 +80,6 @@ function setEditorPage( isEditor: boolean ) {
 beforeEach( () => {
 	jest.clearAllMocks();
 	document.body.className = '';
-	window.history.replaceState( {}, '', '/' );
 } );
 
 describe( 'abilities facade', () => {
@@ -146,27 +156,6 @@ describe( 'abilities facade', () => {
 		);
 	} );
 
-	it( 'hands only the migrated editor abilities back with `?am_abilities=0`', async () => {
-		setEditorPage( true );
-		window.history.replaceState( {}, '', '/?am_abilities=0' );
-		const { registerAmAbilities, amToolProvider, registerAbility, editorAbilities } = await load();
-		const amOnlyNames = editorAbilities.getEditorAbilities().map( ( { name } ) => name );
-
-		await registerAmAbilities();
-
-		// Registration runs fire-and-forget with the load — let it settle.
-		await new Promise( ( resolve ) => setTimeout( resolve, 0 ) );
-
-		// A migrated ability is handed back; one with no provider copy stays on.
-		expect( amOnlyNames ).not.toContain( 'big-sky/show-component' );
-		expect( amOnlyNames ).toContain( 'big-sky/show-template' );
-		await expect( ownedAbilityNames( amToolProvider ) ).resolves.toEqual( [
-			...ALL_SURFACE_ABILITY_NAMES,
-			...amOnlyNames,
-		] );
-		expect( registerAbility.mock.calls.map( ( [ { name } ] ) => name ) ).toEqual( amOnlyNames );
-	} );
-
 	it( 'retries the load after a failed chunk fetch', async () => {
 		const error = jest.spyOn( console, 'error' ).mockImplementation( () => {} );
 		setEditorPage( true );
@@ -178,7 +167,7 @@ describe( 'abilities facade', () => {
 				throw new Error( 'Chunk failed.' );
 			}
 			return {
-				getEditorAbilities: () => [ { name: 'big-sky/show-component' } ],
+				EDITOR_ABILITIES: [ { name: 'big-sky/show-component' } ],
 				registerEditorAbilities: jest.fn().mockResolvedValue( undefined ),
 				getAvailableCheckpoints: () => [],
 			};
@@ -199,11 +188,20 @@ describe( 'abilities facade', () => {
 		}
 	} );
 
-	it( 'never loads the editor abilities just to read the checkpoint context', async () => {
+	it( 'never loads the editor abilities just to read the checkpoint or the page context', async () => {
 		setEditorPage( true );
-		const { getAmCheckpointContext, registerAbility } = await load();
+		const {
+			getAmCheckpointActions,
+			getAmCheckpointContext,
+			getAmPageContentMarkup,
+			getAmPageStructure,
+			registerAbility,
+		} = await load();
 
 		expect( getAmCheckpointContext() ).toEqual( [] );
+		expect( getAmCheckpointActions() ).toBeNull();
+		expect( getAmPageContentMarkup() ).toBe( '' );
+		expect( getAmPageStructure() ).toBeNull();
 		// A load would resolve and register in a later task — let it settle.
 		await new Promise( ( resolve ) => setTimeout( resolve, 0 ) );
 		expect( registerAbility ).not.toHaveBeenCalled();
@@ -214,7 +212,7 @@ describe( 'abilities facade', () => {
 		setEditorPage( true );
 		jest.resetModules();
 		jest.doMock( '../editor-abilities', () => ( {
-			getEditorAbilities: () => [],
+			EDITOR_ABILITIES: [],
 			registerEditorAbilities: jest.fn().mockRejectedValue( new Error( 'Registration exploded.' ) ),
 			getAvailableCheckpoints: () => [],
 		} ) );
@@ -311,9 +309,15 @@ describe( 'registerEditorAbilities', () => {
 		expect( registerAbilityCategory ).toHaveBeenCalledTimes( 1 );
 		expect( registerAbilityCategory ).toHaveBeenCalledWith( 'big-sky', expect.any( Object ) );
 
-		expect( registerAbility ).toHaveBeenCalledTimes( editorAbilities.getEditorAbilities().length );
+		expect( registerAbility ).toHaveBeenCalledTimes( editorAbilities.EDITOR_ABILITIES.length );
+		expect( registerAbility ).toHaveBeenCalledWith(
+			expect.objectContaining( { name: 'big-sky/apply-block-edits' } )
+		);
 		expect( registerAbility ).toHaveBeenCalledWith(
 			expect.objectContaining( { name: 'big-sky/apply-update-theme' } )
+		);
+		expect( registerAbility ).toHaveBeenCalledWith(
+			expect.objectContaining( { name: 'big-sky/capture-canvas' } )
 		);
 		expect( registerAbility ).toHaveBeenCalledWith(
 			expect.objectContaining( { name: 'agents-manager/get-block-tree' } )
@@ -339,7 +343,7 @@ describe( 'registerEditorAbilities', () => {
 	it( 'replaces a provider copy when the name is already registered', async () => {
 		const { editorAbilities, getAbility, registerAbility, unregisterAbility } = await load();
 		// The first registration is the one made to collide.
-		const { name } = editorAbilities.getEditorAbilities()[ 0 ];
+		const { name } = editorAbilities.EDITOR_ABILITIES[ 0 ];
 		registerAbility.mockRejectedValueOnce(
 			new Error( `Ability "${ name }" is already registered` )
 		);
@@ -349,9 +353,7 @@ describe( 'registerEditorAbilities', () => {
 
 		expect( unregisterAbility ).toHaveBeenCalledWith( name );
 		// One extra call: the collision is retried after unregistering.
-		expect( registerAbility ).toHaveBeenCalledTimes(
-			editorAbilities.getEditorAbilities().length + 1
-		);
+		expect( registerAbility ).toHaveBeenCalledTimes( editorAbilities.EDITOR_ABILITIES.length + 1 );
 	} );
 
 	it( 'does not unregister when the failure is not a collision', async () => {
@@ -363,7 +365,7 @@ describe( 'registerEditorAbilities', () => {
 		await editorAbilities.registerEditorAbilities();
 
 		expect( unregisterAbility ).not.toHaveBeenCalled();
-		expect( registerAbility ).toHaveBeenCalledTimes( editorAbilities.getEditorAbilities().length );
+		expect( registerAbility ).toHaveBeenCalledTimes( editorAbilities.EDITOR_ABILITIES.length );
 		expect( warn ).toHaveBeenCalled();
 		warn.mockRestore();
 	} );

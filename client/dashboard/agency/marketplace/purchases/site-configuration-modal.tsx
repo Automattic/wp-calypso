@@ -30,7 +30,7 @@ import Notice from '../../../components/notice';
 import { trackProvisioningSite } from '../../sites/provisioning-sites';
 import { useSiteAddress } from './use-site-address';
 import type { SiteAddress } from './use-site-address';
-import type { JetpackLicense, AgencyPendingSite } from '@automattic/api-core';
+import type { AgencyPendingSite } from '@automattic/api-core';
 import type { DataFormControlProps, Field } from '@wordpress/dataviews';
 import type { ReactNode } from 'react';
 
@@ -385,10 +385,10 @@ function NothingToConfigure( { closeModal }: { closeModal?: () => void } ) {
 }
 
 export default function SiteConfigurationModal( {
-	license,
+	licenseKey,
 	closeModal,
 }: {
-	license: JetpackLicense;
+	licenseKey: string;
 	closeModal?: () => void;
 } ) {
 	const { recordTracksEvent } = useAnalytics();
@@ -411,7 +411,7 @@ export default function SiteConfigurationModal( {
 		);
 	}
 
-	const pendingSite = findPendingSite( pendingSites, license.license_key );
+	const pendingSite = findPendingSite( pendingSites, licenseKey );
 
 	if ( ! pendingSite ) {
 		return <NothingToConfigure closeModal={ closeModal } />;

@@ -6,8 +6,10 @@ import { useDomainSearch } from '../../page/context';
 import {
 	applyNamePulseVerdict,
 	excludeDomains,
+	filterNamePulseSuggestions,
 	generateExactMatches,
 	getAiTopResults,
+	getNamePulseExactMatch,
 	getNamePulseNotice,
 	getResultsLayout,
 	getTopResults,
@@ -68,7 +70,7 @@ const useNamePulseSuggestions = ( {
 	show: boolean;
 	source: Extract< NamePulseSource, 'keyword' | 'ai' >;
 } ) => {
-	const { queries } = useDomainSearch();
+	const { queries, filter } = useDomainSearch();
 	const useAi = source === 'ai';
 	const active = show && isSettled;
 	const { data, isPending } = useQuery( {
@@ -81,8 +83,14 @@ const useNamePulseSuggestions = ( {
 	} );
 
 	const rows = useMemo(
-		() => ( active ? toSuggestionResults( data?.suggestions, source ) : EMPTY_RESULTS ),
-		[ active, data, source ]
+		() =>
+			active
+				? filterNamePulseSuggestions(
+						toSuggestionResults( data?.suggestions, source ),
+						filter.tlds
+					)
+				: EMPTY_RESULTS,
+		[ active, data, source, filter.tlds ]
 	);
 	const names = useMemo( () => rows.map( ( row ) => row.domain_name ), [ rows ] );
 	const verdicts = useNamePulseVerdicts( names, false );
@@ -101,7 +109,7 @@ const useNamePulseSuggestions = ( {
  * verdict. Until the TLD list arrives no rows are generated.
  */
 export const useNamePulseSearch = ( query: string ) => {
-	const { queries } = useDomainSearch();
+	const { queries, filter } = useDomainSearch();
 	const [ settledQuery, setSettledQuery ] = useState( query );
 	const isSettled = query === settledQuery;
 
@@ -139,11 +147,22 @@ export const useNamePulseSearch = ( query: string ) => {
 	const showExactGrid = layout.exactGrid.show;
 	const initialCheckCount =
 		wordCount > 1 ? NAME_PULSE_INITIAL_CHECK_MULTI_WORD : NAME_PULSE_INITIAL_CHECK_SINGLE_WORD;
+	// FQDN detection above uses the full list. A typed domain keeps its ending
+	// so its row stays next to the notice about it.
+	const typedTld = layout.fqdn?.tld;
+	const gridTlds = useMemo(
+		() =>
+			tlds && filter.tlds.length > 0
+				? tlds.filter( ( tld ) => filter.tlds.includes( tld ) || tld === typedTld )
+				: tlds,
+		[ tlds, filter.tlds, typedTld ]
+	);
 	const isLoadingTlds = isPendingTlds && showExactGrid;
 
 	const exactRows = useMemo(
-		() => ( showExactGrid && tlds ? generateExactMatches( baseName, tlds ) : EMPTY_RESULTS ),
-		[ showExactGrid, baseName, tlds ]
+		() =>
+			showExactGrid && gridTlds ? generateExactMatches( baseName, gridTlds ) : EMPTY_RESULTS,
+		[ showExactGrid, baseName, gridTlds ]
 	);
 
 	// Names asked for beyond the initial slice ("Show more", top-results
@@ -170,25 +189,28 @@ export const useNamePulseSearch = ( query: string ) => {
 	// The bulk check is zone-file based: it says a domain is taken, not why.
 	// Both wait for the query to settle, so half-typed input is not checked or flagged.
 	const typedDomain = isSettled ? ( layout.fqdn?.fullDomain ?? '' ) : '';
-	const { data: typedDomainAvailability, isPending: isCheckingTypedDomain } = useQuery( {
+	const { data: typedDomainAvailability, isError: isTypedDomainError } = useQuery( {
 		...queries.domainAvailability( typedDomain ),
 		enabled: Boolean( typedDomain ),
 	} );
 
-	// Its row waits on that verdict rather than quoting a bulk price and a cart
-	// button the notice is about to contradict.
-	const uncheckedTypedDomain = isCheckingTypedDomain ? typedDomain : '';
+	// The typed domain leaves the grid for its own card while it is checked, so
+	// neither its row nor Top results quote a bulk price and a cart button the
+	// notice may be about to contradict. A taken name comes back to the grid.
+	const exactMatch = useMemo(
+		() => getNamePulseExactMatch( layout.fqdn, typedDomainAvailability, isTypedDomainError ),
+		[ layout.fqdn, typedDomainAvailability, isTypedDomainError ]
+	);
+	const exactMatchName = exactMatch?.domainName;
 
 	// UNKNOWN rows (batch failed or timed out) stay in the grid so the rows
 	// behind them do not slide into view unchecked.
 	const rawExactList = useMemo(
 		() =>
-			exactRows.map( ( row ) =>
-				row.domain_name === uncheckedTypedDomain
-					? { ...row, status: NamePulseDomainStatus.WAITING }
-					: applyNamePulseVerdict( row, exactVerdicts[ row.domain_name ] )
-			),
-		[ exactRows, exactVerdicts, uncheckedTypedDomain ]
+			exactRows
+				.filter( ( row ) => row.domain_name !== exactMatchName )
+				.map( ( row ) => applyNamePulseVerdict( row, exactVerdicts[ row.domain_name ] ) ),
+		[ exactRows, exactVerdicts, exactMatchName ]
 	);
 
 	const { results: rawKeywordResults, isLoading: isLoadingKeyword } = useNamePulseSuggestions( {
@@ -271,6 +293,61 @@ export const useNamePulseSearch = ( query: string ) => {
 		[ rawCreativeResults, topResults, exactList, keywordResults ]
 	);
 
+	// Anchors wait for every verdict they depend on, so an answer arriving late
+	// cannot slot in ahead of the bundle already shown.
+	const readyAnchors = useMemo( () => {
+		const isWaiting = ( result: NamePulseDomainResult ) =>
+			result.status === NamePulseDomainStatus.WAITING;
+
+		if (
+			! isSettled ||
+			isLoadingTop ||
+			( exactMatch && ! exactMatch.availability ) ||
+			topResults.some( isWaiting )
+		) {
+			return null;
+		}
+
+		return [
+			...( exactMatch?.availability ? [ exactMatch.domainName ] : [] ),
+			...topResults
+				.filter( ( result ) => result.status === NamePulseDomainStatus.AVAILABLE )
+				.map( ( result ) => result.domain_name ),
+		];
+	}, [ isSettled, isLoadingTop, exactMatch, topResults ] );
+
+	// Once known, the anchors hold for the rest of the search: a Top result that
+	// later leaves for an unchecked one must not take the bundle down with it.
+	// Only a name found taken since then is dropped.
+	const [ keptAnchors, setKeptAnchors ] = useState< { query: string; names: string[] } | null >(
+		null
+	);
+
+	if ( readyAnchors && keptAnchors?.query !== settledQuery ) {
+		setKeptAnchors( { query: settledQuery, names: readyAnchors } );
+	}
+
+	const bundleAnchors = useMemo( () => {
+		if ( ! isSettled || keptAnchors?.query !== settledQuery ) {
+			return null;
+		}
+
+		const taken = new Set(
+			[ ...rawExactList, ...rawKeywordResults, ...rawCreativeResults ]
+				.filter( ( result ) => result.status === NamePulseDomainStatus.TAKEN )
+				.map( ( result ) => result.domain_name )
+		);
+
+		return keptAnchors.names.filter( ( name ) => ! taken.has( name ) );
+	}, [
+		isSettled,
+		keptAnchors,
+		settledQuery,
+		rawExactList,
+		rawKeywordResults,
+		rawCreativeResults,
+	] );
+
 	const revealExact = useCallback(
 		( rows: NamePulseDomainResult[] ) => requestNames( rows.map( ( row ) => row.domain_name ) ),
 		[ requestNames ]
@@ -279,6 +356,8 @@ export const useNamePulseSearch = ( query: string ) => {
 	return {
 		layout,
 		notice,
+		exactMatch,
+		bundleAnchors,
 		exactList,
 		keywordResults,
 		creativeResults,

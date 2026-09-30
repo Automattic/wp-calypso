@@ -1,4 +1,4 @@
-import { useCallback, useSyncExternalStore } from 'react';
+import { useCallback, useEffect, useState, useSyncExternalStore } from 'react';
 import { useMarketplaceType } from '../use-marketplace-type';
 import type { MarketplaceType } from '../use-marketplace-type';
 
@@ -113,4 +113,19 @@ export function useShoppingCart() {
 	const clearCart = useCallback( () => writeItems( marketplaceType, [] ), [ marketplaceType ] );
 
 	return { items, hasItem, addItem, removeItem, replaceItems, swapItems, clearCart };
+}
+
+// Classic links open the cart with a `#cart` hash, e.g. from a "View cart" notice.
+const CART_HASH = '#cart';
+
+export function useCartOpen() {
+	const [ isCartOpen, setIsCartOpen ] = useState( () => window.location.hash === CART_HASH );
+
+	useEffect( () => {
+		if ( window.location.hash === CART_HASH ) {
+			window.history.replaceState( null, '', window.location.pathname + window.location.search );
+		}
+	}, [] );
+
+	return [ isCartOpen, setIsCartOpen ] as const;
 }

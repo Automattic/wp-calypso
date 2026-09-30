@@ -55,7 +55,7 @@ function getBuildWowDestination( {
 	prompt: string;
 	specId: string | null;
 } ): string {
-	const specUrl = getBuildWowSiteSpecUrl( { siteSlug, siteId, ref, source, prompt } );
+	const specUrl = getBuildWowSiteSpecUrl( { siteSlug, siteId, ref, source, prompt, graph: 'dsl' } );
 
 	return specId ? addQueryArgs( specUrl, { spec_id: specId } ) : specUrl;
 }

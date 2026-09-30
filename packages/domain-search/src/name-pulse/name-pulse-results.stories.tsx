@@ -7,6 +7,7 @@ import { InitialState } from '../page/initial-state';
 import {
 	buildNamePulseAvailabilityEntry,
 	buildNamePulseAvailabilityResponse,
+	buildNamePulseBundle,
 	NAME_PULSE_AI_SUGGESTIONS_FIXTURE,
 	NAME_PULSE_AVAILABILITY_FIXTURE,
 	NAME_PULSE_SUGGESTIONS_FIXTURE,
@@ -59,6 +60,8 @@ const toRealtimeAvailability = ( domainName: string ): DomainAvailability => {
 		supports_privacy: true,
 		root_domain_provider: 'wpcom',
 		cost: isPremium ? `$${ PREMIUM_REALTIME_PRICE }.00` : ( entry.cost ?? '' ),
+		renew_cost: isPremium ? `$${ PREMIUM_REALTIME_PRICE }.00` : ( entry.cost ?? '' ),
+		match_reasons: [ 'exact-match', 'tld-exact', 'tld-common' ],
 		raw_price: isPremium ? PREMIUM_REALTIME_PRICE : entry.raw_price,
 		sale_cost: isPremium ? undefined : entry.sale_cost,
 		currency_code: 'USD',
@@ -94,6 +97,21 @@ const useStoryCart = (): DomainSearchCart => {
 				},
 			] );
 		},
+		onAddBundle: async ( bundle ) => {
+			setItems( ( current ) => [
+				...current,
+				...bundle.domains.map( ( { domain, cost } ) => {
+					const tld = getTld( domain );
+
+					return {
+						uuid: domain,
+						domain: domain.slice( 0, -( tld.length + 1 ) ),
+						tld,
+						price: cost,
+					};
+				} ),
+			] );
+		},
 		onRemoveItem: async ( uuid ) => {
 			setItems( ( current ) => current.filter( ( item ) => item.uuid !== uuid ) );
 		},
@@ -113,7 +131,7 @@ const StoryDomainSearch = ( {
 		cart,
 		query: currentQuery,
 		slots,
-		config: { showNamePulseSearch: true },
+		config: { showNamePulseSearch: true, showBundleSuggestions: true },
 		events: { onQueryChange: setCurrentQuery, onQueryClear: () => setCurrentQuery( '' ) },
 	} );
 
@@ -152,6 +170,11 @@ const StoryDomainSearch = ( {
 
 						return toRealtimeAvailability( domainName );
 					},
+					bundleForDomain: async ( fqdn ) => {
+						await delay( 700 );
+
+						return buildNamePulseBundle( fqdn );
+					},
 				} ) }
 			>
 				<div className="domain-search" style={ { padding: '2rem 1rem' } }>
@@ -170,6 +193,15 @@ const meta: Meta< typeof StoryDomainSearch > = {
 export default meta;
 
 export const SingleWord = () => <StoryDomainSearch query="icecream" />;
+
+// The typed `.com` anchors its own bundle, beside the exact-match card.
+export const Fqdn = () => <StoryDomainSearch query="icecream.com" />;
+
+// `.blog` anchors no bundle, so the first top result that does (`.com`) stands in.
+export const FqdnWithoutOwnBundle = () => <StoryDomainSearch query="icecream.blog" />;
+
+// No card for a taken name; the bundle moves under Top results.
+export const FqdnTaken = () => <StoryDomainSearch query="icecream.io" />;
 
 export const MultiWord = () => <StoryDomainSearch query="ice cream" />;
 

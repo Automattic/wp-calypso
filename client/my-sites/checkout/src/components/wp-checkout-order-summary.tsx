@@ -755,6 +755,11 @@ const CheckoutSummaryPayButtonSlot = styled.div`
 		height: 50px;
 		box-sizing: border-box;
 	}
+
+	/* The portaled wrapper keeps the form's 24px padding; the sidebar card already pads it. */
+	.checkout-steps__submit-button-wrapper {
+		padding: 0;
+	}
 `;
 const CheckoutSummaryFeatures = styled.div`
 	padding: 24px 0;

@@ -45,7 +45,6 @@
 		"notifications/view-settings": true,
 		"onboarding/interval-dropdown": true,
 		"performance/apm": false,
-		"plans/hosting-trial": true,
 		"plans/migration-trial": true,
 		"plans/updated-storage-labels": true,
 		"plans/upgradeable-storage": true,

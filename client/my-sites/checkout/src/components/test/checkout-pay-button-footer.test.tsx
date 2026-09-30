@@ -40,9 +40,12 @@ describe( 'CheckoutPayButtonFooter', () => {
 			product_slug: PLAN_PREMIUM,
 		} );
 
-		renderFooter( cart );
+		const { container } = renderFooter( cart );
 
 		expect( screen.getByText( /money back guarantee/i ) ).toBeInTheDocument();
+		// 4 direct children: SSL trust line, refund trust line, divider, legal notice.
+		const wrapper = container.querySelector( '.checkout-pay-button-footer' );
+		expect( wrapper?.childElementCount ).toBe( 4 );
 	} );
 
 	it( 'omits the entire refund row for a cart with no refund window', () => {

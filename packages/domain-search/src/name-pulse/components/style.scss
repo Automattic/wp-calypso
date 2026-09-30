@@ -22,6 +22,11 @@
 	max-width: var( --domain-search-content-max-width );
 }
 
+// Reserve scrollbar space so the layout doesn't shift when results appear.
+html:has( .name-pulse-search-input ) {
+	scrollbar-gutter: stable;
+}
+
 .name-pulse-grid {
 	display: grid;
 	grid-template-columns: repeat( 3, minmax( 0, 1fr ) );
@@ -217,6 +222,81 @@
 		&:focus:not( :focus-visible ) {
 			box-shadow: none;
 			outline: none;
+		}
+	}
+}
+
+// The exact-match card and the bundle card split the row; either one alone
+// takes the full width, and they stack once there is no room for two.
+.name-pulse-featured {
+	display: grid;
+	grid-template-columns: repeat( auto-fit, minmax( min( 100%, 24rem ), 1fr ) );
+	gap: 1rem;
+}
+
+// Matches the bundle card it sits beside: same frame, price row and footer.
+.name-pulse-exact-card {
+	box-sizing: border-box;
+	min-width: 0;
+	padding: 24px;
+	border-radius: 8px;
+	box-shadow:
+		0 0 0 1px rgba( 0, 0, 0, 0.1 ),
+		0 1px 2px rgba( 0, 0, 0, 0.05 );
+
+	// Stretch to the bundle card's height so both footers sit on the same line.
+	> .components-v-stack {
+		height: 100%;
+	}
+
+	&__icon {
+		display: inline-flex;
+
+		svg {
+			width: 20px;
+			height: 20px;
+		}
+	}
+
+	&__domain.components-text {
+		margin: 0;
+		line-height: 1.2;
+		overflow-wrap: anywhere;
+	}
+
+	&__tld {
+		white-space: nowrap;
+	}
+
+	&__price-row {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		justify-content: space-between;
+		gap: 1rem;
+		margin-block-start: auto;
+	}
+
+	&__cta {
+		flex-shrink: 0;
+	}
+
+	&__footer {
+		padding-top: 16px;
+		border-top: 1px solid rgba( 0, 0, 0, 0.08 );
+	}
+
+	// Same as the bundle card: the price sits above a full-width button.
+	@media ( max-width: #{ $break-small - 1px } ) {
+		&__price-row {
+			flex-direction: column;
+			align-items: flex-start;
+		}
+
+		&__cta,
+		&__cta .components-button {
+			width: 100%;
+			justify-content: center;
 		}
 	}
 }
