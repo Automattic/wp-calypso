@@ -173,7 +173,7 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 	);
 
 	const locale = useFlowLocale();
-	const shouldLinkLogo = flow === ONBOARDING_FLOW && ! hasCustomBranding;
+	const shouldLinkLogo = flow === ONBOARDING_FLOW && ! hasCustomBranding && ! isEditingEmail;
 
 	const loginLink = login( {
 		signupUrl,
