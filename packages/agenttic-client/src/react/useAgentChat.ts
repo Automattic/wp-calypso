@@ -718,6 +718,13 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 
 					// Handle incremental text updates during streaming
 					if ( ! update.final && update.text ) {
+						// Text on screen supersedes earlier progress, so a later pause shows the default label.
+						setState( ( prev ) =>
+							prev.progressMessage === null && prev.progressPhase === null
+								? prev
+								: { ...prev, progressMessage: null, progressPhase: null }
+						);
+
 						// Create or update the streaming message
 						if ( ! streamingMessageId ) {
 							streamingMessageId = `agent-streaming-${ Date.now() }`;
