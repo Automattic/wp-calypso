@@ -2,7 +2,7 @@ import { HelpCenter, HelpCenterSelect } from '@automattic/data-stores';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import apiFetch from '@wordpress/api-fetch';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
 import {
@@ -23,6 +23,7 @@ import { getBotSlug } from '../utils/get-bot-slug';
 import { getOpenLiveInteractions } from '../utils/get-open-live-interactions';
 import { getIsAgentsManagerAvailable } from '../utils/is-agents-manager-available';
 import { requestLoggedOutWpcomOdie } from './request-logged-out-wpcom-odie';
+import { requestOdieStreamToken, streamWpcomOdieMessage } from './stream-wpcom-odie-message';
 import { useCurrentSupportInteraction } from './use-current-support-interaction';
 import { useManageSupportInteraction } from '.';
 import type { Chat, Message, ReturnedChat, SupportInteraction } from '../types';
@@ -113,6 +114,7 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 		newLoggedOutInteractionsBotSlug,
 		externalChatProvider,
 		externalChatId,
+		isStreamingEnabled,
 	} = useOdieAssistantContext();
 
 	const botSlug = getBotSlug(
@@ -152,6 +154,42 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 	const hasTriedToEscalateToSupport = hasRecentEscalationAttempt( chat );
 
 	const interactionStatusByUuid = useOpenInteractionStatusMap();
+
+	const streamedMessageId = useRef< string | null >( null );
+
+	const appendStreamedText = ( messageId: string, content: string ) =>
+		setChat( ( prevChat ) => {
+			const streamed = prevChat.messages.find( ( m ) => m.internal_message_id === messageId );
+
+			return {
+				...prevChat,
+				messages: [
+					...prevChat.messages.filter( ( m ) => m !== streamed ),
+					{
+						content: `${ ( streamed?.content as string ) ?? '' }${ content }`,
+						internal_message_id: messageId,
+						role: 'bot',
+						type: 'message',
+						// Feedback and escalation need the stored message, which only arrives on completion.
+						context: { site_id: null, flags: { hide_disclaimer_content: true } },
+					},
+				],
+			};
+		} );
+
+	const discardStreamedMessage = () => {
+		const messageId = streamedMessageId.current;
+
+		if ( ! messageId ) {
+			return;
+		}
+
+		streamedMessageId.current = null;
+		setChat( ( prevChat ) => ( {
+			...prevChat,
+			messages: prevChat.messages.filter( ( m ) => m.internal_message_id !== messageId ),
+		} ) );
+	};
 
 	/*
 		Adds a message to the chat.
@@ -249,6 +287,28 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 			const isAgentsManagerAvailable = getIsAgentsManagerAvailable();
 			const context = { selectedSiteId, currentScreen, pathname, isAgentsManagerAvailable };
 
+			if ( isStreamingEnabled && ! isLoggedOutSession ) {
+				const token = await requestOdieStreamToken();
+
+				if ( token ) {
+					const messageId = generateUUID();
+					streamedMessageId.current = messageId;
+
+					return streamWpcomOdieMessage( `/odie/chat/${ botSlug }${ chatIdSegment }`, {
+						body: {
+							message: message.content,
+							...( version && { version } ),
+							...( externalChatProvider && { external_chat_provider: externalChatProvider } ),
+							...( externalChatId && { external_chat_id: externalChatId } ),
+							context,
+						},
+						token,
+						signal,
+						onDelta: ( content ) => appendStreamedText( messageId, content ),
+					} );
+				}
+			}
+
 			if ( canAccessWpcomApis() ) {
 				if ( isLoggedOutSession ) {
 					return requestLoggedOutWpcomOdie< ReturnedChat >(
@@ -303,6 +363,8 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 			setChatStatus( 'sending' );
 		},
 		onSuccess: async ( returnedChat ) => {
+			discardStreamedMessage();
+
 			if (
 				! returnedChat.messages ||
 				returnedChat.messages.length === 0 ||
@@ -387,7 +449,12 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 			} );
 		},
 		onError: ( error ) => {
-			if ( error instanceof Event && error.type === 'abort' ) {
+			discardStreamedMessage();
+
+			if (
+				( error instanceof Event && error.type === 'abort' ) ||
+				( error instanceof DOMException && error.name === 'AbortError' )
+			) {
 				return;
 			}
 

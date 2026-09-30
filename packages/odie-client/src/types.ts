@@ -27,6 +27,7 @@ export type OdieAssistantContextInterface = {
 	externalChatId?: string | null;
 	forceEmailSupport: boolean;
 	isChatRestricted: boolean;
+	isStreamingEnabled: boolean;
 	launcherContext?: string;
 	setExperimentVariationName: ( variationName: string | null | undefined ) => void;
 	setChat: ( chat: Chat | SetStateAction< Chat > ) => void;
@@ -54,6 +55,7 @@ export type OdieAssistantProviderProps = {
 	version?: string | null;
 	forceEmailSupport?: boolean;
 	isChatRestricted?: boolean;
+	isStreamingEnabled?: boolean;
 	launcherContext?: string;
 	children?: ReactNode;
 	setChatStatus?: ( status: ChatStatus ) => void;
