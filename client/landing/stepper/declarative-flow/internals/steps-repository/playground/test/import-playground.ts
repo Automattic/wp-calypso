@@ -3,7 +3,7 @@
  */
 import { updateImporter, uploadExportFile } from 'calypso/state/imports/actions';
 import { appStates } from 'calypso/state/imports/constants';
-import { SESSION_KEY_STATIC_SITE_IMPORT_SHARE } from '../lib/constants';
+import { STATIC_SITE_IMPORT_SHARE_KEY_PREFIX } from '../lib/constants';
 import { startPlaygroundImportIfReady, uploadPlaygroundSiteZip } from '../lib/import-playground';
 
 jest.mock( 'calypso/state/imports/actions', () => ( {
@@ -67,31 +67,35 @@ describe( 'startPlaygroundImportIfReady', () => {
 describe( 'uploadPlaygroundSiteZip', () => {
 	const siteId = 123;
 	const siteZip = new File( [ 'zip' ], 'site.zip', { type: 'application/zip' } );
+	const shareKey = STATIC_SITE_IMPORT_SHARE_KEY_PREFIX + 'playground-1';
 
 	beforeEach( () => {
 		jest.clearAllMocks();
-		sessionStorage.clear();
+		localStorage.clear();
 		uploadExportFileMock.mockResolvedValue( { importId: 'import-id' } );
 	} );
 
-	it( 'sends the static site import share token it was opened from, once', async () => {
-		sessionStorage.setItem( SESSION_KEY_STATIC_SITE_IMPORT_SHARE, 'a.b.c' );
+	it( 'sends the share token its Playground was booted from, once', async () => {
+		localStorage.setItem( shareKey, 'a.b.c' );
 
-		await uploadPlaygroundSiteZip( siteId, siteZip );
+		await uploadPlaygroundSiteZip( siteId, siteZip, 'playground-1' );
 
 		expect( uploadExportFileMock ).toHaveBeenCalledWith(
 			siteId,
 			expect.objectContaining( { file: siteZip, autoStart: true, staticSiteImportShare: 'a.b.c' } )
 		);
-		expect( sessionStorage.getItem( SESSION_KEY_STATIC_SITE_IMPORT_SHARE ) ).toBeNull();
+		expect( localStorage.getItem( shareKey ) ).toBeNull();
 	} );
 
-	it( 'sends no share token for a Playground that did not come from an import', async () => {
-		await uploadPlaygroundSiteZip( siteId, siteZip );
+	it( "does not send another Playground's share token", async () => {
+		localStorage.setItem( shareKey, 'a.b.c' );
+
+		await uploadPlaygroundSiteZip( siteId, siteZip, 'playground-2' );
 
 		expect( uploadExportFileMock ).toHaveBeenCalledWith(
 			siteId,
 			expect.objectContaining( { staticSiteImportShare: undefined } )
 		);
+		expect( localStorage.getItem( shareKey ) ).toBe( 'a.b.c' );
 	} );
 } );

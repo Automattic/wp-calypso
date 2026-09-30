@@ -6,11 +6,8 @@ import DocumentHead from 'calypso/components/data/document-head';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { PlaygroundIframe } from './components/playground-iframe';
 import { getBlueprintLabelForTracking, getStaticSiteImportShareToken } from './lib/blueprint';
-import {
-	DEFAULT_PLAN_INTENT,
-	SESSION_KEY_PLAYGROUND_WOO_INTENT,
-	SESSION_KEY_STATIC_SITE_IMPORT_SHARE,
-} from './lib/constants';
+import { DEFAULT_PLAN_INTENT, SESSION_KEY_PLAYGROUND_WOO_INTENT } from './lib/constants';
+import { rememberStaticSiteImportShare } from './lib/static-site-import-share';
 import type { Step as StepType } from '../../types';
 import type { PlaygroundClient } from './lib/types';
 import './style.scss';
@@ -31,19 +28,16 @@ export const PlaygroundStep: StepType = ( { navigation, flow } ) => {
 		}
 	}, [ query ] );
 
-	// Remember which static site import preview this session was opened from, so
-	// the launch can be recorded against it. Only a URL that names a blueprint
-	// decides this; a URL without one keeps what the tab already knows.
+	// Remember which static site import preview this Playground was booted from,
+	// so its launch can be recorded against it. The Playground ID reaches the URL
+	// once it has booted, next to the blueprint it booted from. A reopened
+	// Playground (no blueprint in the URL) keeps what was remembered.
 	useEffect( () => {
-		if ( ! query.has( 'blueprint-url' ) && ! query.has( 'blueprint' ) ) {
+		const playgroundId = query.get( 'playground' );
+		if ( ! playgroundId || ( ! query.has( 'blueprint-url' ) && ! query.has( 'blueprint' ) ) ) {
 			return;
 		}
-		const shareToken = getStaticSiteImportShareToken( query );
-		if ( shareToken ) {
-			sessionStorage.setItem( SESSION_KEY_STATIC_SITE_IMPORT_SHARE, shareToken );
-		} else {
-			sessionStorage.removeItem( SESSION_KEY_STATIC_SITE_IMPORT_SHARE );
-		}
+		rememberStaticSiteImportShare( playgroundId, getStaticSiteImportShareToken( query ) );
 	}, [ query ] );
 
 	const isWooCommerceIntent =
