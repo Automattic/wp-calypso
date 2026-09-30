@@ -7,6 +7,7 @@ import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { resolveSelect, useDispatch, useSelect } from '@wordpress/data';
 import { addQueryArgs, getQueryArg, getQueryArgs } from '@wordpress/url';
 import { useEffect, useMemo } from 'react';
+import { matchPath } from 'react-router';
 import { clearSessionStorageQuery } from 'calypso/components/domains/wpcom-domain-search/use-query-handler';
 import { dashboardLink } from 'calypso/dashboard/utils/link';
 import {
@@ -54,7 +55,6 @@ import {
 } from '../../../utils/build-wow';
 import { goToCheckout } from '../../../utils/checkout';
 import { getCurrentQueryParams } from '../../../utils/get-current-query-params';
-import { getStepFromURL } from '../../../utils/get-flow-from-url';
 import {
 	getPreselectedPlan,
 	getPreselectedStorageAddOn,
@@ -70,6 +70,7 @@ import {
 	getWowFunnelFromWfm,
 	getWowFunnelSlug,
 	isKnownWowFunnel,
+	isSameWowFunnelRun,
 	logWowFunnelEvent,
 	wowFunnelSiteIsPaid,
 } from '../../../utils/wow-funnel';
@@ -159,6 +160,23 @@ function getWowFunnelPostCheckoutDestination( {
 }
 
 /**
+ * The step in the flow's path, if any, allowing for a trailing locale.
+ *
+ * getStepFromURL() matches `/setup/:flow/:step` exactly, so it misses a step with a locale after it
+ * (`/setup/onboarding/wow-funnel-pending/fr`) and reads a bare locale as a step
+ * (`/setup/onboarding/fr`). Resume has to get both right: missing the first would send a
+ * non-English customer on the pending step back to it forever, and the second is the entry URL
+ * the pending step itself sends them to.
+ * @returns The step slug, or undefined when the path has none.
+ */
+function getEntryStepFromURL(): string | undefined {
+	const step = matchPath( { path: '/setup/:flow/:step/:lang?' }, window.location.pathname ?? '' )
+		?.params?.step;
+
+	return step && ! getLanguageSlugs().includes( step ) ? step : undefined;
+}
+
+/**
  * Put a customer who already has an unpaid funnel site back where they stopped.
  *
  * Runs in initialize, which is awaited before the flow renders anything, so a resumed customer
@@ -172,7 +190,7 @@ function getWowFunnelPostCheckoutDestination( {
  * @returns True when the customer is being redirected and the flow should not render.
  */
 async function resumeWowFunnelRun( reduxStore: Store ): Promise< boolean > {
-	if ( getStepFromURL() ) {
+	if ( getEntryStepFromURL() ) {
 		return false;
 	}
 
@@ -193,6 +211,27 @@ async function resumeWowFunnelRun( reduxStore: Store ): Promise< boolean > {
 		return false;
 	}
 
+	const locale = getCurrentLocaleSlug( reduxStore.getState() ) || '';
+
+	// A different run. Carrying on over the pending site would build this run's checkout on a site
+	// built for another, and this run's follow-up (a blueprint import, say) would never run. Tearing
+	// that site down on entry would let anyone reloading the URL churn Atomic sites, so ask the
+	// customer instead: continue that run, or discard its site and start this one.
+	if ( ! isSameWowFunnelRun( pending, funnelSlug, funnelArgs ) ) {
+		logWowFunnelEvent( 'pending_run_mismatch', {
+			funnel: funnelSlug,
+			pending_funnel: pending.funnelSlug,
+			blog_id: pending.blogId,
+		} );
+		window.location.assign(
+			addQueryArgs(
+				withLocale( `/setup/${ ONBOARDING_FLOW }/${ STEPS.WOW_FUNNEL_PENDING.slug }`, locale ),
+				getQueryArgs( window.location.href )
+			)
+		);
+		return true;
+	}
+
 	// Adopt before redirecting, so create-site consumes this site rather than asking for one the
 	// server will refuse. When the adoption cannot be stored there is nowhere to record that the
 	// resume happened, and every entry would resume all over again — so let the flow start and let
@@ -204,18 +243,6 @@ async function resumeWowFunnelRun( reduxStore: Store ): Promise< boolean > {
 		} );
 		return false;
 	}
-
-	if ( pending.funnelSlug !== funnelSlug ) {
-		// A different CTA. The throttle holds regardless of which one, so the unpaid site still
-		// wins — worth seeing, since what gets resumed is not what this CTA asked to build.
-		logWowFunnelEvent( 'resumed_across_funnels', {
-			funnel: funnelSlug,
-			pending_funnel: pending.funnelSlug,
-			blog_id: pending.blogId,
-		} );
-	}
-
-	const locale = getCurrentLocaleSlug( reduxStore.getState() ) || '';
 	const [ , plansUrl ] = getOnboardingPostCheckoutDestination( {
 		flowName: ONBOARDING_FLOW,
 		locale,
@@ -279,6 +306,7 @@ async function initialize( reduxStore: Store ) {
 		STEPS.PROCESSING,
 		STEPS.POST_CHECKOUT_ONBOARDING,
 		STEPS.WOW_FUNNEL_HANDOFF,
+		STEPS.WOW_FUNNEL_PENDING,
 		STEPS.SETUP_YOUR_SITE_AI,
 	];
 

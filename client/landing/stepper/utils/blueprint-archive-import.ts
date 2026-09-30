@@ -206,11 +206,25 @@ export async function waitForBlueprintImportComplete(
 		totalTimeoutSeconds = 900,
 		pollIntervalMs = 5000,
 		initialDelayMs = pollIntervalMs,
-	}: { totalTimeoutSeconds?: number; pollIntervalMs?: number; initialDelayMs?: number } = {}
+		missingRecordTimeoutSeconds = 60,
+	}: {
+		totalTimeoutSeconds?: number;
+		pollIntervalMs?: number;
+		initialDelayMs?: number;
+		/**
+		 * How long the site may answer with no import record at all before this gives up. Every
+		 * caller starts the import before polling — the funnel before checkout, a standalone run
+		 * just above its poll — so a missing record is not "not started yet": nothing is coming.
+		 * Without this, a run whose import was never queued sat on the loading screen for the full
+		 * timeout.
+		 */
+		missingRecordTimeoutSeconds?: number;
+	} = {}
 ): Promise< void > {
 	const maxFinishTime = Date.now() + totalTimeoutSeconds * 1000;
 	let lastStatus: string | null | undefined;
 	let delayMs = initialDelayMs;
+	let missingSince: number | null = null;
 
 	while ( Date.now() < maxFinishTime ) {
 		if ( delayMs > 0 ) {
@@ -228,6 +242,16 @@ export async function waitForBlueprintImportComplete(
 			if ( lastStatus === IMPORT_SUCCESS ) {
 				return;
 			}
+
+			// An empty body: the site has no import record.
+			if ( ! status?.importId && ! lastStatus ) {
+				missingSince ??= Date.now();
+				if ( Date.now() - missingSince >= missingRecordTimeoutSeconds * 1000 ) {
+					throw new Error( 'Blueprint import failed with status: no import record' );
+				}
+				continue;
+			}
+			missingSince = null;
 
 			if ( lastStatus && IMPORT_FAILURE_STATUSES.includes( lastStatus ) ) {
 				throw new Error( `Blueprint import failed with status: ${ lastStatus }` );
