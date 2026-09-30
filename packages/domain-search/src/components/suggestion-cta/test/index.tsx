@@ -561,6 +561,36 @@ describe( 'DomainSuggestionCTA', () => {
 			} );
 		} );
 
+		it( 'labels the error cta "Select" when the select cta is enabled', async () => {
+			const user = userEvent.setup();
+
+			mockGetSuggestionsQuery( {
+				params: { query: 'test-error' },
+				suggestions: [ buildSuggestion( { domain_name: 'test-error.com' } ) ],
+			} );
+
+			mockGetAvailabilityQuery( {
+				params: { domainName: 'test-error.com' },
+				availability: new Error( 'Failed to fetch the availability' ),
+			} );
+
+			render(
+				<TestDomainSearchWithSuggestions query="test-error" config={ { showSelectCta: true } }>
+					<DomainSuggestionsList>
+						<DomainSuggestionCTA domainName="test-error.com" />
+					</DomainSuggestionsList>
+				</TestDomainSearchWithSuggestions>
+			);
+
+			await user.click( await screen.findByRole( 'button', { name: 'Select' } ) );
+
+			await waitFor( () => {
+				expect( screen.getByRole( 'button', { name: 'Select' } ) ).toHaveClass( 'is-destructive' );
+			} );
+
+			expect( screen.queryByRole( 'button', { name: 'Add to cart' } ) ).not.toBeInTheDocument();
+		} );
+
 		it( 'allows retrying the operation', async () => {
 			const user = userEvent.setup();
 

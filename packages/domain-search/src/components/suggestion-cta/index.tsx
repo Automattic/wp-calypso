@@ -91,6 +91,8 @@ export const DomainSuggestionCTA = ( { domainName }: DomainSuggestionCTAProps ) 
 		return <DomainSuggestionContinueCTA disabled={ isMutating } onClick={ events.onContinue } />;
 	}
 
+	const selectLabel = config.showSelectCta ? __( 'Select' ) : undefined;
+
 	const errorMessage = isCurrentMutation && error?.message;
 
 	if ( errorMessage ) {
@@ -98,11 +100,10 @@ export const DomainSuggestionCTA = ( { domainName }: DomainSuggestionCTAProps ) 
 			<DomainSuggestionErrorCTA
 				errorMessage={ errorMessage }
 				callback={ () => addToCart( { acceptedTrademarkClaim: false } ) }
+				label={ selectLabel }
 			/>
 		);
 	}
-
-	const selectLabel = config.showSelectCta ? __( 'Select' ) : undefined;
 
 	return (
 		<>
