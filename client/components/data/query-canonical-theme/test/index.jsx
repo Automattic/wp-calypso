@@ -14,40 +14,60 @@ jest.mock( 'calypso/components/data/query-theme', () => ( { siteId, themeId } ) 
 
 const mockStore = configureStore();
 
-describe( 'QueryCanonicalTheme', () => {
-	test( 'queries the site theme when the WP.com theme is retired', () => {
-		const store = mockStore( {
-			themes: {
-				queries: {
-					wpcom: new ThemeQueryManager( {
-						items: {
-							'retired-theme': {
-								id: 'retired-theme',
-								retired: true,
-							},
-						},
-					} ),
-				},
+const retiredThemeQueries = {
+	wpcom: new ThemeQueryManager( {
+		items: {
+			'retired-theme': {
+				id: 'retired-theme',
+				retired: true,
 			},
-		} );
+		},
+	} ),
+};
 
-		render(
-			<Provider store={ store }>
-				<QueryCanonicalTheme siteId={ 2916284 } themeId="retired-theme" />
-			</Provider>
+const renderWithState = ( state, themeId ) => {
+	render(
+		<Provider store={ mockStore( state ) }>
+			<QueryCanonicalTheme siteId={ 2916284 } themeId={ themeId } />
+		</Provider>
+	);
+	return screen.getAllByTestId( 'query-theme' ).map( ( element ) => element.dataset.siteId );
+};
+
+describe( 'QueryCanonicalTheme', () => {
+	test( 'queries the site theme for a WP.com theme on a Jetpack or Atomic site', () => {
+		const queriedSites = renderWithState(
+			{
+				sites: { items: { 2916284: { ID: 2916284, jetpack: true } } },
+				themes: { queries: retiredThemeQueries },
+			},
+			'retired-theme'
 		);
 
-		expect( screen.getAllByTestId( 'query-theme' ).map( ( element ) => element.dataset ) ).toEqual(
-			expect.arrayContaining( [
-				expect.objectContaining( {
-					siteId: 'wpcom',
-					themeId: 'retired-theme',
-				} ),
-				expect.objectContaining( {
-					siteId: '2916284',
-					themeId: 'retired-theme',
-				} ),
-			] )
+		expect( queriedSites ).toEqual( [ 'wpcom', '2916284' ] );
+	} );
+
+	test( 'does not query the site theme for a WP.com theme on a Simple site', () => {
+		const queriedSites = renderWithState(
+			{
+				sites: { items: { 2916284: { ID: 2916284, jetpack: false } } },
+				themes: { queries: retiredThemeQueries },
+			},
+			'retired-theme'
 		);
+
+		expect( queriedSites ).toEqual( [ 'wpcom' ] );
+	} );
+
+	test( 'still falls back to the site theme when neither WP.com nor WP.org has it', () => {
+		const queriedSites = renderWithState(
+			{
+				sites: { items: { 2916284: { ID: 2916284, jetpack: false } } },
+				themes: { queries: {} },
+			},
+			'unknown-theme'
+		);
+
+		expect( queriedSites ).toEqual( [ 'wpcom', 'wporg', '2916284' ] );
 	} );
 } );
