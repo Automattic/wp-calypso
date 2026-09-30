@@ -16,27 +16,6 @@
 	padding: 8px;
 }
 
-// A job section's spot illustration, beside its heading.
-.dashboard-marketplace-products__section-header .dashboard-section-header__decoration {
-	inline-size: 45px;
-	block-size: 36px;
-
-	img {
-		object-fit: contain;
-		border-radius: 0;
-	}
-}
-
-// A job section heading: the spot 12px from the title, on a 28px line.
-.dashboard-marketplace-products__section-header .dashboard-section-header__heading-row {
-	gap: 12px;
-}
-
-.dashboard-section-header.dashboard-marketplace-products__section-header.is-level-2
-	.dashboard-section-header__heading {
-	line-height: 28px;
-}
-
 // The count beside a picked category's heading: quiet, on the heading's line.
 .dashboard-marketplace-products__job-count {
 	margin-inline-start: 12px;

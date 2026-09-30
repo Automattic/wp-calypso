@@ -484,7 +484,6 @@ export default function MarketplaceProducts() {
 									<span className="dashboard-marketplace-products__job-count">{ resultCount }</span>
 								</>
 							}
-							className="dashboard-marketplace-products__section-header"
 							decoration={ <img src={ SPOTS[ pickedCategory ] } alt="" /> }
 						/>
 					) : (
@@ -511,7 +510,6 @@ export default function MarketplaceProducts() {
 							<SectionHeader
 								level={ 2 }
 								title={ getSectionTitle( section.key ) }
-								className="dashboard-marketplace-products__section-header"
 								decoration={
 									<img src={ SPOTS[ section.key === 'other' ? 'more' : section.key ] } alt="" />
 								}
