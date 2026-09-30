@@ -127,12 +127,21 @@ const withoutUnderscore = ( value = '' ) => value.replace( /^_+/, '' ).toLowerCa
  * @param record - The DNS record to look up, with its `name` normalized by `getNormalizedName()`
  * @returns The TTL of the RRset, or `undefined` if there are no records with the same name and type
  */
-export const getRRsetTtl = ( records: DnsRecord[], record: DnsRecord ): number | undefined =>
-	records.find(
-		( existingRecord ) =>
-			existingRecord.type === record.type &&
-			existingRecord.name.toLowerCase() === record.name.toLowerCase() &&
-			( record.type !== 'SRV' ||
-				( withoutUnderscore( existingRecord.service ) === withoutUnderscore( record.service ) &&
-					withoutUnderscore( existingRecord.protocol ) === withoutUnderscore( record.protocol ) ) )
-	)?.ttl;
+export const getRRsetTtl = ( records: DnsRecord[], record: DnsRecord ): number | undefined => {
+	const rrsetRecord = records.find( ( existingRecord ) => {
+		const isSameType = existingRecord.type === record.type;
+		const isSameName = existingRecord.name.toLowerCase() === record.name.toLowerCase();
+		if ( record.type !== 'SRV' ) {
+			return isSameType && isSameName;
+		}
+
+		// SRV records keep the service and protocol out of `name`.
+		const isSameService =
+			withoutUnderscore( existingRecord.service ) === withoutUnderscore( record.service );
+		const isSameProtocol =
+			withoutUnderscore( existingRecord.protocol ) === withoutUnderscore( record.protocol );
+		return isSameType && isSameName && isSameService && isSameProtocol;
+	} );
+
+	return rrsetRecord?.ttl;
+};
