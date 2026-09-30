@@ -18,6 +18,7 @@ import {
 import { Button } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { useDispatch, useSelect } from '@wordpress/data';
+import { createInterpolateElement } from '@wordpress/element';
 import { help } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { useMemo } from 'react';
@@ -400,8 +401,11 @@ const DomainSearchStep: StepType< {
 					return (
 						<FreeDomainForAYearPromo
 							title={ __( 'Look professional for less' ) }
-							subtitle={ __(
-								'When you purchase an annual plan, the first year of domain name registration is on us. Discount automatically applied at checkout.'
+							subtitle={ createInterpolateElement(
+								__(
+									'When you purchase an annual plan, the first year of domain name registration is on us.<br />Discount automatically applied at checkout.'
+								),
+								{ br: <br /> }
 							) }
 							badge={
 								<DomainSuggestionBadge variation="success">
