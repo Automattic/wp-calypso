@@ -61,6 +61,8 @@ export function ProductsOverview( { siteId, suggestedProduct, productBrand, sear
 		selectedCartItems,
 		setSelectedCartItems,
 		onRemoveCartItem,
+		onIncrementCartItem,
+		onDecrementCartItem,
 		showCart,
 		setShowCart,
 		toggleCart,
@@ -178,6 +180,8 @@ export function ProductsOverview( { siteId, suggestedProduct, productBrand, sear
 									toggleCart={ toggleCart }
 									items={ selectedCartItems }
 									onRemoveItem={ onRemoveCartItem }
+									onIncrementItem={ isReferralMode ? undefined : onIncrementCartItem }
+									onDecrementItem={ isReferralMode ? undefined : onDecrementCartItem }
 									onCheckout={ () => {
 										page( A4A_MARKETPLACE_CHECKOUT_LINK );
 									} }
