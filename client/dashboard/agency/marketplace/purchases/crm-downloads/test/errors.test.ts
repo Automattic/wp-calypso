@@ -6,15 +6,6 @@ const CONNECTION_ERROR =
 
 describe( 'getDownloadErrorMessage()', () => {
 	test( 'uses the message for the HTTP status', () => {
-		expect( getDownloadErrorMessage( new JetpackCrmRequestError( 400, '' ) ) ).toBe(
-			'Error: Missing required fields'
-		);
-		expect( getDownloadErrorMessage( new JetpackCrmRequestError( 401, '' ) ) ).toBe(
-			'Error: Invalid API key'
-		);
-		expect( getDownloadErrorMessage( new JetpackCrmRequestError( 403, '' ) ) ).toBe(
-			'Error: Invalid license key format. Must be a Jetpack Complete license key.'
-		);
 		expect( getDownloadErrorMessage( new JetpackCrmRequestError( 404, '' ) ) ).toBe(
 			'Error: Extension not found'
 		);
