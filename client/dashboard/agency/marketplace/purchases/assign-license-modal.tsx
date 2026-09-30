@@ -44,7 +44,7 @@ interface Props {
 	licenseKey: string;
 	productName: string;
 	closeModal?: () => void;
-	onAssigned: () => void;
+	onAssigned?: () => void;
 }
 
 export default function AssignLicenseModal( {
@@ -123,7 +123,7 @@ export default function AssignLicenseModal( {
 						{ type: 'snackbar' }
 					);
 					closeModal?.();
-					onAssigned();
+					onAssigned?.();
 				},
 				onError: ( error: Error & { code?: string } ) => {
 					if ( error.code === 'partner_not_connected_to_site' ) {
