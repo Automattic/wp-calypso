@@ -1,61 +1,18 @@
+import type { WPCOMTransactionEndpointResponse } from '@automattic/api-core';
 import type { DomainContactDetails, RequestCart } from '@automattic/shopping-cart';
 import type { TranslateResult } from 'i18n-calypso';
 export type { SitelessCheckoutType } from '@automattic/shopping-cart';
 
-type PurchaseSiteId = number;
-
-export type WPCOMTransactionEndpointResponseSuccess = {
-	success: true;
-	purchases: Record< PurchaseSiteId, TransactionResponsePurchase[] >;
-	failed_purchases: Record< PurchaseSiteId, FailedPurchase[] >;
-	receipt_id: number;
-	order_id: number | '';
-	redirect_url?: string;
-	paypal_order_id?: string;
-	qr_code?: string;
-	is_gift_purchase: boolean;
-	display_price: string;
-	price_integer: number;
-	price_float: number;
-	currency: string;
-	is_gravatar_domain: boolean;
-};
-
-export type WPCOMTransactionEndpointResponseFailed = {
-	success: false;
-	purchases: Record< PurchaseSiteId, TransactionResponsePurchase[] >;
-	failed_purchases: Record< PurchaseSiteId, FailedPurchase[] >;
-	receipt_id: number;
-	order_id: number | '';
-	redirect_url?: string;
-	qr_code?: string;
-	is_gift_purchase: boolean;
-	display_price: string;
-	price_integer: number;
-	price_float: number;
-	currency: string;
-	is_gravatar_domain: boolean;
-};
-
-export type WPCOMTransactionEndpointResponseRedirect = {
-	message: { payment_intent_client_secret: string } | { setup_intent_client_secret: string } | '';
-	order_id: number | '';
-	redirect_url: string;
-	qr_code?: string;
-};
-
-export type WPCOMTransactionEndpointResponsePayPal = {
-	order_id: number | '';
-	paypal_order_id: string;
-	redirect_url?: string;
-	qr_code?: string;
-};
-
-export type WPCOMTransactionEndpointResponse =
-	| WPCOMTransactionEndpointResponseSuccess
-	| WPCOMTransactionEndpointResponseFailed
-	| WPCOMTransactionEndpointResponsePayPal
-	| WPCOMTransactionEndpointResponseRedirect;
+export type {
+	FailedPurchase,
+	TaxVendorInfo,
+	TransactionResponsePurchase,
+	WPCOMTransactionEndpointResponse,
+	WPCOMTransactionEndpointResponseFailed,
+	WPCOMTransactionEndpointResponsePayPal,
+	WPCOMTransactionEndpointResponseRedirect,
+	WPCOMTransactionEndpointResponseSuccess,
+} from '@automattic/api-core';
 
 export interface TaxBreakdownEntry {
 	label: string;
@@ -63,65 +20,6 @@ export interface TaxBreakdownEntry {
 	rate_display: string;
 	local_tax_collected: number;
 	local_tax_collected_integer: number;
-}
-
-export interface TaxVendorInfo {
-	/**
-	 * The country code for this info.
-	 */
-	country_code: string;
-
-	/**
-	 * The mailing address to display on receipts as a list of strings (each
-	 * string should be on its own line).
-	 */
-	address: string[];
-
-	/**
-	 * An object containing tax names and corresponding vendor ids that are used for the user's country
-	 *
-	 * This will deprecate the vat_id and tax_name properties
-	 * For now, those two properties will stay in place for backwards compatibility
-	 *
-	 * Key:   The localized name of the tax (eg: "VAT", "GST", etc.).
-	 * Value: A8c vendor id for that specific tax
-	 */
-	tax_name_and_vendor_id_array: Record< string, string >;
-
-	/**
-	 * The vendor's VAT id.
-	 * @deprecated This is still in place for backwards compability with cached clients
-	 */
-	vat_id: string;
-
-	/**
-	 * The localized name of the tax (eg: "VAT", "GST", etc.).
-	 * @deprecated This is still in place for backwards compability with cached clients
-	 */
-	tax_name: string;
-}
-
-export interface TransactionResponsePurchase {
-	delayed_provisioning?: boolean;
-	expiry?: string;
-	is_domain_registration: boolean;
-	is_email_verified?: boolean;
-	is_renewal: boolean;
-	is_root_domain_with_us?: boolean;
-	is_hundred_year_domain?: boolean;
-	meta: string | null;
-	new_quantity?: number;
-	product_id: string | number;
-	product_name: string;
-	product_name_short: string;
-	product_type: string;
-	product_slug: string;
-	registrar_support_url?: string;
-	user_email: string;
-	saas_redirect_url?: string;
-	tax_vendor_info?: TaxVendorInfo;
-	blog_id: number;
-	price_integer?: number;
 }
 
 export interface TransactionRequest {
@@ -457,14 +355,6 @@ export type WpcomStoreState = {
 	contactDetails: ManagedContactDetails;
 	vatDetails: VatDetails;
 };
-
-export interface FailedPurchase {
-	product_meta: string;
-	product_id: string | number;
-	product_slug: string;
-	product_cost: string | number;
-	product_name: string;
-}
 
 export interface VatDetails {
 	country?: string | null;
