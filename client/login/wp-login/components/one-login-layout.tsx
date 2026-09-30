@@ -164,7 +164,10 @@ const OneLoginLayout = ( {
 		! hasCustomBranding;
 
 	const handleLogoClick = () => {
-		recordTracksEvent( 'calypso_login_logo_click', { page: currentRoute } );
+		recordTracksEvent(
+			isSectionSignup ? 'calypso_signup_logo_click' : 'calypso_login_logo_click',
+			{ page: currentRoute }
+		);
 	};
 
 	const topBar = (): JSX.Element => {

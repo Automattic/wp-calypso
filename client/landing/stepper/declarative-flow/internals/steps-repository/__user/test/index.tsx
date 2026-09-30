@@ -45,43 +45,20 @@ describe( 'User email signup step', () => {
 
 	const renderUserStep = (
 		url = '/onboarding/user?user_email=test@example.com',
-		props: Partial< UserStepAccepts > = {},
-		flow = 'onboarding'
+		props: Partial< UserStepAccepts > = {}
 	) => {
 		return renderWithProvider(
 			<MemoryRouter initialEntries={ [ url ] }>
-				<UserStep flow={ flow } stepName="user" navigation={ { submit: jest.fn() } } { ...props } />
+				<UserStep
+					flow="onboarding"
+					stepName="user"
+					navigation={ { submit: jest.fn() } }
+					{ ...props }
+				/>
 			</MemoryRouter>,
 			{ reducers: { login: loginReducer, route: routeReducer } }
 		);
 	};
-
-	describe( 'top bar logo', () => {
-		it( 'links the logo to the homepage in the onboarding flow', () => {
-			renderUserStep();
-			expect( screen.getByRole( 'link', { name: 'WordPress.com home' } ) ).toHaveAttribute(
-				'href',
-				'https://wordpress.com/'
-			);
-		} );
-
-		it( 'does not link the logo in other flows', () => {
-			renderUserStep( '/site-setup/user', {}, 'site-setup' );
-			expect( screen.getByRole( 'link', { name: 'Log in' } ) ).toBeVisible();
-			expect(
-				screen.queryByRole( 'link', { name: 'WordPress.com home' } )
-			).not.toBeInTheDocument();
-		} );
-
-		it( 'does not link the logo with partner branding', () => {
-			mockUsePartnerBranding.mockReturnValue( { ...noPartnerBranding, hasCustomBranding: true } );
-			renderUserStep();
-			expect( screen.getByRole( 'link', { name: 'Log in' } ) ).toBeVisible();
-			expect(
-				screen.queryByRole( 'link', { name: 'WordPress.com home' } )
-			).not.toBeInTheDocument();
-		} );
-	} );
 
 	it( 'passes userEmail from user_email query param to SignupFormSocialFirst', () => {
 		renderUserStep( '/onboarding/user?user_email=hello@wp.com' );

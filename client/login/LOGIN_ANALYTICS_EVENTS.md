@@ -81,6 +81,12 @@ This document outlines all the analytics events tracked during the login process
 **Properties**:
 - `page` (string): The current route
 
+### `calypso_signup_logo_click`
+**Description**: Tracks when user clicks the WordPress.com logo in the top bar of the `/start/account` signup screen, which links to the homepage
+
+**Properties**:
+- `page` (string): The current route
+
 ## Event Flow
 
 1. **Email Request**: `calypso_login_email_link_submit` → `calypso_login_email_link_success`/`calypso_login_email_link_failure`

@@ -2,11 +2,17 @@
  * @jest-environment jsdom
  */
 
+jest.mock( '@automattic/calypso-analytics', () => ( {
+	...jest.requireActual( '@automattic/calypso-analytics' ),
+	recordTracksEvent: jest.fn(),
+} ) );
+
 jest.mock( 'calypso/lib/partner-branding', () => ( {
 	usePartnerBranding: jest.fn( () => ( { hasCustomBranding: false, topBarLogo: undefined } ) ),
 } ) );
 
-import { screen } from '@testing-library/react';
+import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { fireEvent, screen } from '@testing-library/react';
 import { usePartnerBranding } from 'calypso/lib/partner-branding';
 import LoginContextProvider from 'calypso/login/login-context';
 import oauth2ClientsReducer from 'calypso/state/oauth2-clients/reducer';
@@ -76,10 +82,29 @@ describe( 'OneLoginLayout logo link', () => {
 		);
 
 	afterEach( () => {
+		( recordTracksEvent as jest.Mock ).mockClear();
 		( usePartnerBranding as jest.Mock ).mockReturnValue( {
 			hasCustomBranding: false,
 			topBarLogo: undefined,
 		} );
+	} );
+
+	test( 'records a login event when the logo is clicked', () => {
+		renderLayout( { linkLogoToHome: true } );
+		fireEvent.click( screen.getByRole( 'link', { name: 'WordPress.com home' } ) );
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
+			'calypso_login_logo_click',
+			expect.any( Object )
+		);
+	} );
+
+	test( 'records a signup event when the logo is clicked on signup', () => {
+		renderLayout( { linkLogoToHome: true, isSectionSignup: true } );
+		fireEvent.click( screen.getByRole( 'link', { name: 'WordPress.com home' } ) );
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
+			'calypso_signup_logo_click',
+			expect.any( Object )
+		);
 	} );
 
 	test( 'links the logo to the homepage when linkLogoToHome is set', () => {
