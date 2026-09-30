@@ -1,0 +1,7 @@
+.site-favorite.components-button {
+	color: var(--color-text-subtle);
+
+	&.is-favorite {
+		color: var(--color-warning);
+	}
+}

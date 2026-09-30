@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import { useFields } from '../../../sites/dataviews';
 import { getHostField, getPhpVersionField, getWpVersionField } from './endpoint-fields';
+import { getFavoriteField } from './favorite';
 import { toAgencyField } from './hydrate';
 import {
 	getPreviewField,
@@ -13,6 +14,7 @@ import type { AgencySite, Site } from '@automattic/api-core';
 import type { Field } from '@wordpress/dataviews';
 
 export { getAgencyActions, useAgencyActions } from './actions';
+export { FAVORITE_FIELD } from './favorite';
 
 export function useAgencyFields( {
 	viewType,
@@ -34,6 +36,7 @@ export function useAgencyFields( {
 			getSiteNameField( onSiteClick ),
 			getSiteUrlField(),
 			getSiteIconField( viewType ),
+			getFavoriteField(),
 			shared( 'subscribers_count' ),
 			shared( 'backup' ),
 			shared( 'plan' ),

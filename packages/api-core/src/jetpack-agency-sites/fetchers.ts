@@ -10,6 +10,7 @@ export async function fetchAgencySites(
 		page,
 		per_page,
 		not_multisite,
+		show_only_favorites,
 	}: FetchAgencySitesOptions = {}
 ): Promise< FetchAgencySitesResponse > {
 	const data: FetchAgencySitesResponse = await wpcom.req.get(
@@ -25,6 +26,7 @@ export async function fetchAgencySites(
 			...( sort_field ? { sort_field } : {} ),
 			...( sort_direction ? { sort_direction } : {} ),
 			...( not_multisite ? { not_multisite: true } : {} ),
+			...( show_only_favorites ? { show_only_favorites: true } : {} ),
 		}
 	);
 
@@ -32,4 +34,17 @@ export async function fetchAgencySites(
 		sites: data.sites ?? [],
 		total: data.total ?? 0,
 	};
+}
+
+export async function setAgencySiteFavorite(
+	agencyId: number,
+	siteId: number,
+	isFavorite: boolean
+): Promise< void > {
+	await wpcom.req.post( {
+		method: isFavorite ? 'POST' : 'DELETE',
+		path: '/jetpack-agency/sites/favorite',
+		apiNamespace: 'wpcom/v2',
+		body: { site_id: siteId, agency_id: agencyId },
+	} );
 }

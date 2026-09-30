@@ -24,6 +24,7 @@ export interface AgencySite {
 	hosting_provider_guess?: string;
 	is_atomic?: boolean;
 	is_simple?: boolean;
+	is_favorite?: boolean;
 }
 
 export interface FetchAgencySitesOptions {
@@ -33,6 +34,7 @@ export interface FetchAgencySitesOptions {
 	page?: number;
 	per_page?: number;
 	not_multisite?: boolean;
+	show_only_favorites?: boolean;
 }
 
 export interface FetchAgencySitesResponse {

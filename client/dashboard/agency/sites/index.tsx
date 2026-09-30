@@ -26,7 +26,7 @@ import { DevSiteConfigurationModal } from '../marketplace/purchases/site-configu
 import AddNewSite from './add-new-site';
 import ConnectSiteModal from './add-new-site/connect-site-modal';
 import ImportFromWPCOMModal from './add-new-site/import-from-wpcom-modal';
-import { useAgencyFields, useAgencyActions } from './dataviews';
+import { FAVORITE_FIELD, useAgencyFields, useAgencyActions } from './dataviews';
 import { hasWpcomLicenseWithoutSite } from './lib';
 import ProvisioningSiteNotices from './provisioning-notice';
 import type { AddNewSiteAction } from './add-new-site/types';
@@ -57,7 +57,7 @@ const DEFAULT_VIEW = {
 	mediaField: 'site_icon',
 	titleField: 'name',
 	descriptionField: 'URL',
-	fields: [ 'visibility', 'plan' ],
+	fields: [ FAVORITE_FIELD, 'visibility', 'plan' ],
 	sort: { field: 'URL', direction: 'asc' },
 } as View;
 
@@ -76,6 +76,9 @@ function toAgencyFetchOptions( view: View ): FetchAgencySitesOptions {
 		sort_direction: view.sort?.direction,
 		page: view.page,
 		per_page: view.perPage,
+		show_only_favorites: view.filters?.some(
+			( filter ) => filter.field === FAVORITE_FIELD && filter.value === true
+		),
 	};
 }
 
