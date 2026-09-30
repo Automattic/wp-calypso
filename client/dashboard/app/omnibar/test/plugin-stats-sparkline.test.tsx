@@ -25,12 +25,12 @@ const simpleSite = {
 	capabilities: { view_stats: true, manage_options: true },
 } as unknown as Site;
 
-function mockQueries( { premiumAnalyticsEnabled = false } = {} ) {
+function mockQueries() {
 	mockUseQuery.mockImplementation( ( ( options: { queryKey: string[]; enabled?: boolean } ) => {
 		if ( options.queryKey[ 0 ] !== 'site-premium-analytics-enabled' ) {
 			return { data: [ 1, 2, 3 ] };
 		}
-		return { data: options.enabled === false ? undefined : premiumAnalyticsEnabled };
+		return { data: options.enabled === false ? undefined : false };
 	} ) as never );
 }
 
@@ -42,28 +42,6 @@ describe( 'useStatsSparklinePlugin', () => {
 
 	test( 'renders the sparkline on a Simple site', () => {
 		const { result } = renderHook( () => useStatsSparklinePlugin( { site: simpleSite } ) );
-
-		expect( result.current?.href ).toBe( 'https://example.com/wp-admin/admin.php?page=stats' );
-	} );
-
-	test( 'links to the Premium Analytics dashboard when the site has it switched on', () => {
-		mockQueries( { premiumAnalyticsEnabled: true } );
-
-		const { result } = renderHook( () => useStatsSparklinePlugin( { site: simpleSite } ) );
-
-		expect( result.current?.href ).toBe(
-			'https://example.com/wp-admin/admin.php?page=jetpack-premium-analytics-wp-admin'
-		);
-	} );
-
-	test( 'keeps the Stats link for a user who cannot read the site settings', () => {
-		mockQueries( { premiumAnalyticsEnabled: true } );
-		const site = {
-			...simpleSite,
-			capabilities: { view_stats: true, manage_options: false },
-		} as unknown as Site;
-
-		const { result } = renderHook( () => useStatsSparklinePlugin( { site } ) );
 
 		expect( result.current?.href ).toBe( 'https://example.com/wp-admin/admin.php?page=stats' );
 	} );
@@ -84,6 +62,19 @@ describe( 'useStatsSparklinePlugin', () => {
 		const { result } = renderHook( () => useStatsSparklinePlugin( { site } ) );
 
 		expect( result.current ).toBeUndefined();
+	} );
+
+	test( 'does not ask for the Premium Analytics setting when the sparkline cannot show', () => {
+		const site = { ...simpleSite, jetpack: true, jetpack_modules: [ 'monitor' ] } as Site;
+
+		renderHook( () => useStatsSparklinePlugin( { site } ) );
+
+		expect( mockUseQuery ).toHaveBeenCalledWith(
+			expect.objectContaining( {
+				queryKey: [ 'site-premium-analytics-enabled' ],
+				enabled: false,
+			} )
+		);
 	} );
 
 	test( 'renders nothing when the user cannot view stats', () => {
