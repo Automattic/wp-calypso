@@ -1,5 +1,5 @@
 import { JetpackModules } from '@automattic/api-core';
-import { siteHourlyViewsQuery } from '@automattic/api-queries';
+import { siteHourlyViewsQuery, sitePremiumAnalyticsEnabledQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
 import { StatsSparkline } from '../../components/stats-sparkline';
@@ -8,6 +8,9 @@ import type { Site } from '@automattic/api-core';
 import type { OmnibarNode } from '@automattic/omnibar';
 
 import './plugin-stats-sparkline.scss';
+
+const STATS_PATH = 'admin.php?page=stats';
+const PREMIUM_ANALYTICS_PATH = 'admin.php?page=jetpack-premium-analytics-wp-admin';
 
 export function useStatsSparklinePlugin( { site }: { site?: Site } ): OmnibarNode | undefined {
 	const adminUrl = site?.options?.admin_url;
@@ -22,6 +25,12 @@ export function useStatsSparklinePlugin( { site }: { site?: Site } ): OmnibarNod
 		enabled: canViewStats,
 	} );
 
+	// Core's settings route answers only to manage_options, so anyone else keeps the Stats link.
+	const { data: isPremiumAnalyticsEnabled } = useQuery( {
+		...sitePremiumAnalyticsEnabledQuery( site?.ID ?? 0 ),
+		enabled: canViewStats && !! site?.capabilities?.manage_options,
+	} );
+
 	if ( ! adminUrl || ! canViewStats || ! hourlyViews || hourlyViews.length === 0 ) {
 		return undefined;
 	}
@@ -30,7 +39,7 @@ export function useStatsSparklinePlugin( { site }: { site?: Site } ): OmnibarNod
 
 	return {
 		id: 'stats',
-		href: `${ adminUrl }admin.php?page=stats`,
+		href: `${ adminUrl }${ isPremiumAnalyticsEnabled ? PREMIUM_ANALYTICS_PATH : STATS_PATH }`,
 		label,
 		className: 'omnibar__stats-sparkline',
 		render: () => (

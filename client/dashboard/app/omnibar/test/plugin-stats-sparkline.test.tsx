@@ -12,6 +12,9 @@ jest.mock( '@tanstack/react-query', () => ( {
 
 jest.mock( '@automattic/api-queries', () => ( {
 	siteHourlyViewsQuery: jest.fn( () => ( { queryKey: [ 'site-hourly-views' ] } ) ),
+	sitePremiumAnalyticsEnabledQuery: jest.fn( () => ( {
+		queryKey: [ 'site-premium-analytics-enabled' ],
+	} ) ),
 } ) );
 
 const mockUseQuery = useQuery as jest.MockedFunction< typeof useQuery >;
@@ -19,17 +22,48 @@ const mockUseQuery = useQuery as jest.MockedFunction< typeof useQuery >;
 const simpleSite = {
 	ID: 1,
 	options: { admin_url: 'https://example.com/wp-admin/' },
-	capabilities: { view_stats: true },
+	capabilities: { view_stats: true, manage_options: true },
 } as unknown as Site;
+
+function mockQueries( { premiumAnalyticsEnabled = false } = {} ) {
+	mockUseQuery.mockImplementation( ( ( options: { queryKey: string[]; enabled?: boolean } ) => {
+		if ( options.queryKey[ 0 ] !== 'site-premium-analytics-enabled' ) {
+			return { data: [ 1, 2, 3 ] };
+		}
+		return { data: options.enabled === false ? undefined : premiumAnalyticsEnabled };
+	} ) as never );
+}
 
 describe( 'useStatsSparklinePlugin', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
-		mockUseQuery.mockReturnValue( { data: [ 1, 2, 3 ] } as never );
+		mockQueries();
 	} );
 
 	test( 'renders the sparkline on a Simple site', () => {
 		const { result } = renderHook( () => useStatsSparklinePlugin( { site: simpleSite } ) );
+
+		expect( result.current?.href ).toBe( 'https://example.com/wp-admin/admin.php?page=stats' );
+	} );
+
+	test( 'links to the Premium Analytics dashboard when the site has it switched on', () => {
+		mockQueries( { premiumAnalyticsEnabled: true } );
+
+		const { result } = renderHook( () => useStatsSparklinePlugin( { site: simpleSite } ) );
+
+		expect( result.current?.href ).toBe(
+			'https://example.com/wp-admin/admin.php?page=jetpack-premium-analytics-wp-admin'
+		);
+	} );
+
+	test( 'keeps the Stats link for a user who cannot read the site settings', () => {
+		mockQueries( { premiumAnalyticsEnabled: true } );
+		const site = {
+			...simpleSite,
+			capabilities: { view_stats: true, manage_options: false },
+		} as unknown as Site;
+
+		const { result } = renderHook( () => useStatsSparklinePlugin( { site } ) );
 
 		expect( result.current?.href ).toBe( 'https://example.com/wp-admin/admin.php?page=stats' );
 	} );
