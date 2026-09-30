@@ -24,6 +24,7 @@ import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { useDispatch } from 'calypso/state';
 import { fetchCurrentUser } from 'calypso/state/current-user/actions';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
+import { getCalypsoQueryClient } from 'calypso/state/query-client';
 import { requestSite } from 'calypso/state/sites/actions';
 import usePurchaseOrder from '../../src/hooks/use-purchase-order';
 import { logStashLoadErrorEvent } from '../../src/lib/analytics';
@@ -391,7 +392,9 @@ function useRedirectOnTransactionSuccess( {
 			reduxDispatch( requestSite( blogId ) );
 		}
 
+		// Help Center reads Calypso's client; this page renders under the api-queries one.
 		queryClient.invalidateQueries( { queryKey: SUPPORT_STATUS_QUERY_KEY } );
+		getCalypsoQueryClient()?.invalidateQueries( { queryKey: SUPPORT_STATUS_QUERY_KEY } );
 
 		// For plan + domain purchases the `domain-and-plan` flow sends the user to
 		// `/home/<site>` instead of the thank-you page. Tag the destination URL with
