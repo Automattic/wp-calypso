@@ -1,0 +1,16 @@
+@import "@wordpress/base-styles/breakpoints";
+
+.stats-post-detail__no-views {
+	p {
+		margin-bottom: 16px;
+		color: var(--color-text-subtle);
+		font-size: 1rem;
+	}
+
+	// The stats layout drops side padding on small screens; line up with the cards' inner padding.
+	@media (max-width: $break-small) {
+		> * {
+			margin-inline: 24px;
+		}
+	}
+}
