@@ -60,7 +60,8 @@ const MiniChart: FunctionComponent< MiniChartProps > = ( {
 
 		window.location.href = statsLink(
 			`${ statsBaseUrl }/stats/${ chartPeriod }/${ siteId }?chartStart=${ chartStart }&chartEnd=${ chartEnd }`,
-			'/'
+			'/',
+			{ from: chartStart, to: chartEnd, gmtOffset }
 		);
 	};
 
