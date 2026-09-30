@@ -773,8 +773,7 @@ export default function OrchestratorChat( {
 		},
 	} );
 
-	// Every send path runs a turn, so a turn starting is when the server first
-	// hears of a client-minted session.
+	// Every send path runs a turn.
 	useEffect( () => {
 		if ( isProcessing && agentConfig?.sessionId ) {
 			markSessionSent( agentConfig.sessionId );

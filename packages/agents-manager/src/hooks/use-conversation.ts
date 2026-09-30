@@ -34,9 +34,8 @@ export default function useConversation( {
 	const onSuccessRef = useRef( onSuccess );
 	onSuccessRef.current = onSuccess;
 
-	// A session minted in this tab with nothing sent yet is unknown to the
-	// server. Decided once per session: the first send must not start a fetch
-	// that replaces the live stream; the next page load picks it up.
+	// Unknown to the server until its first send. Read once per session, so that
+	// send does not start a fetch that replaces the live stream.
 	const isUnsent = useMemo( () => !! sessionId && isUnsentSession( sessionId ), [ sessionId ] );
 
 	const { data, isLoading, isError, error } = useQuery( {

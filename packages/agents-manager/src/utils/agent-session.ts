@@ -139,9 +139,7 @@ export function getOrCreateSessionId(
 	saveSessionId( sessionId, agentId, siteKey, userId );
 	try {
 		sessionStorage.setItem( UNSENT_SESSION_KEY_PREFIX + sessionId, '1' );
-	} catch {
-		// Without storage the id is not persisted either; nothing to mark.
-	}
+	} catch {}
 
 	// Read back so unavailable storage yields a stable '' instead of a fresh
 	// UUID per call, which would re-initialize the agent on every render.
@@ -164,7 +162,5 @@ export function isUnsentSession( sessionId: string ): boolean {
 export function markSessionSent( sessionId: string ): void {
 	try {
 		sessionStorage.removeItem( UNSENT_SESSION_KEY_PREFIX + sessionId );
-	} catch {
-		// Nothing was marked without storage.
-	}
+	} catch {}
 }

@@ -153,10 +153,9 @@ export default function AgentsManager( {
 /**
  * Resolve the session to resume from this tab's stored session, which
  * conversation switches save before navigating here.
- * Reader chat and the orchestrator pre-generate one, which the orchestrator
- * honors: a page change before the server's first status event then still
- * finds the session and its question. Other agents get theirs from the server
- * via `onSessionIdChange`.
+ * Reader chat and the orchestrator pre-generate one, so a page change before
+ * the first reply still finds the session; other agents get theirs from the
+ * server via `onSessionIdChange`.
  * Empty means a new chat.
  */
 function resolveTabSessionId(
