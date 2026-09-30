@@ -94,11 +94,11 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice, removeNotice } from 'calypso/state/notices/actions';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import { getIsOnboardingAffiliateFlow } from 'calypso/state/signup/flow/selectors';
-import { getWpComDomainBySiteId } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { useUpdateCachedContactDetails } from '../hooks/use-cached-contact-details';
 import { useCheckoutHelpCenter } from '../hooks/use-checkout-help-center';
 import useCouponFieldState from '../hooks/use-coupon-field-state';
+import useSiteDomains from '../hooks/use-site-domains';
 import { validateContactDetails } from '../lib/contact-validation';
 import { updateCartContactDetailsForCheckout } from '../lib/update-cart-contact-details-for-checkout';
 import { CHECKOUT_STORE } from '../lib/wpcom-store';
@@ -526,8 +526,8 @@ export default function CheckoutMainContent( {
 	const shouldHidePlansStep =
 		isOnboardingFlowCheckout && hasStepCount && stepsTotal < ONBOARDING_STEPPER_TOTAL;
 	const selectedSiteData = useSelector( getSelectedSite );
-	const wpcomDomain = useSelector( ( state ) =>
-		getWpComDomainBySiteId( state, selectedSiteData?.ID )
+	const wpcomDomain = useSiteDomains( selectedSiteData?.ID ).find(
+		( { isWPCOMDomain, isWpcomStagingDomain } ) => isWPCOMDomain || isWpcomStagingDomain
 	);
 
 	// Only show the site preview for WPCOM domains that have a site connected to the site id
