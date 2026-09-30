@@ -76,4 +76,30 @@ describe( 'aggregateVideoPerformance', () => {
 		const totals = aggregateVideoPerformance( [ row( { views: 0, retention_rate: 100 } ) ] );
 		expect( totals.retention_rate ).toBeNull();
 	} );
+
+	it( 'excludes unknown retention rows from the weighted average', () => {
+		// only the known row (views 10, retention 50) counts -> 50, not 500 / 40
+		const totals = aggregateVideoPerformance( [
+			row( { views: 10, retention_rate: 50 } ),
+			row( { views: 30, retention_rate: null } ),
+		] );
+		expect( totals.retention_rate ).toBe( 50 );
+		expect( totals.views ).toBe( 40 );
+	} );
+
+	it( 'returns null retention when every row is unknown', () => {
+		const totals = aggregateVideoPerformance( [
+			row( { views: 10, retention_rate: null } ),
+			row( { views: 30, retention_rate: null } ),
+		] );
+		expect( totals.retention_rate ).toBeNull();
+	} );
+
+	it( 'still counts a known zero retention rate', () => {
+		const totals = aggregateVideoPerformance( [
+			row( { views: 10, retention_rate: 0 } ),
+			row( { views: 10, retention_rate: 60 } ),
+		] );
+		expect( totals.retention_rate ).toBe( 30 );
+	} );
 } );
