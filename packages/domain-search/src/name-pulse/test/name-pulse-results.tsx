@@ -121,25 +121,19 @@ const findRow = async ( domainName: string ) => {
 const skeletonsIn = ( id: string ) =>
 	document.querySelectorAll( `[data-section="${ id }"] .name-pulse-row--skeleton` ).length;
 
-const findNotice = async () => {
-	await waitFor( () => expect( document.querySelector( '.name-pulse-notice' ) ).not.toBeNull() );
+const findElement = ( selector: string ) =>
+	waitFor( () => {
+		const element = document.querySelector< HTMLElement >( selector );
+		expect( element ).not.toBeNull();
 
-	return document.querySelector( '.name-pulse-notice' ) as HTMLElement;
-};
+		return element as HTMLElement;
+	} );
 
-const findExactMatchCard = async () => {
-	await waitFor( () =>
-		expect( document.querySelector( '.name-pulse-exact-card[data-domain]' ) ).not.toBeNull()
-	);
+const findNotice = () => findElement( '.name-pulse-notice' );
 
-	return document.querySelector( '.name-pulse-exact-card[data-domain]' ) as HTMLElement;
-};
+const findExactMatchCard = () => findElement( '.name-pulse-exact-card[data-domain]' );
 
-const findBundleCard = async () => {
-	await waitFor( () => expect( document.querySelector( '.bundle-card' ) ).not.toBeNull() );
-
-	return document.querySelector( '.bundle-card' ) as HTMLElement;
-};
+const findBundleCard = () => findElement( '.bundle-card' );
 
 const isAfterTopResults = ( element: HTMLElement ) =>
 	Boolean(

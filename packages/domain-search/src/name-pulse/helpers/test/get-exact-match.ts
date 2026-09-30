@@ -1,5 +1,5 @@
 import { DomainAvailabilityStatus } from '@automattic/api-core';
-import { getNamePulseExactMatch, NamePulseDomainStatus } from '..';
+import { getNamePulseExactMatch } from '..';
 import { buildAvailability } from '../../../test-helpers/factories/availability';
 
 const fqdn = { baseName: 'icecream', tld: 'blog', fullDomain: 'icecream.blog' };
@@ -12,6 +12,7 @@ describe( 'getNamePulseExactMatch', () => {
 	it( 'holds the card while the typed domain is being checked', () => {
 		expect( getNamePulseExactMatch( fqdn, undefined, false ) ).toEqual( {
 			domainName: 'icecream.blog',
+			tld: 'blog',
 		} );
 	} );
 
@@ -20,10 +21,11 @@ describe( 'getNamePulseExactMatch', () => {
 
 		expect( getNamePulseExactMatch( fqdn, availability, false ) ).toEqual( {
 			domainName: 'icecream.blog',
+			tld: 'blog',
 		} );
 	} );
 
-	it( 'fills the card with the real-time price of an available domain', () => {
+	it( 'fills the card with the real-time check of an available domain', () => {
 		const availability = buildAvailability( {
 			domain_name: 'icecream.blog',
 			tld: 'blog',
@@ -33,15 +35,8 @@ describe( 'getNamePulseExactMatch', () => {
 
 		expect( getNamePulseExactMatch( fqdn, availability, false ) ).toEqual( {
 			domainName: 'icecream.blog',
-			result: expect.objectContaining( {
-				domain_name: 'icecream.blog',
-				suffix: 'blog',
-				source: 'exact',
-				status: NamePulseDomainStatus.AVAILABLE,
-				cost: '$22.00',
-				raw_price: 22,
-				is_realtime: true,
-			} ),
+			tld: 'blog',
+			availability,
 		} );
 	} );
 
@@ -56,8 +51,8 @@ describe( 'getNamePulseExactMatch', () => {
 				fqdn,
 				buildAvailability( { ...premium, is_supported_premium_domain: true } ),
 				false
-			)?.result
-		).toEqual( expect.objectContaining( { is_premium: true } ) );
+			)?.availability
+		).toBeDefined();
 		expect( getNamePulseExactMatch( fqdn, buildAvailability( premium ), false ) ).toBeNull();
 	} );
 

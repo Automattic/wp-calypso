@@ -1,12 +1,12 @@
-import { isNamePulseAvailable, toNamePulseRealtimeVerdict } from './result-status';
+import { isNamePulseAvailable } from './result-status';
 import type { NamePulseResultsLayout } from './get-results-layout';
-import type { NamePulseDomainResult } from './types';
 import type { DomainAvailability } from '@automattic/api-core';
 
 export interface NamePulseExactMatch {
 	domainName: string;
+	tld: string;
 	/** Unset while the typed domain is still being checked. */
-	result?: NamePulseDomainResult;
+	availability?: DomainAvailability;
 }
 
 /**
@@ -26,20 +26,12 @@ export function getNamePulseExactMatch(
 	const { fullDomain: domainName, tld } = fqdn;
 
 	if ( availability?.domain_name !== domainName ) {
-		return { domainName };
+		return { domainName, tld };
 	}
 
 	if ( ! isNamePulseAvailable( availability ) ) {
 		return null;
 	}
 
-	return {
-		domainName,
-		result: {
-			domain_name: domainName,
-			suffix: tld,
-			source: 'exact',
-			...toNamePulseRealtimeVerdict( availability ),
-		},
-	};
+	return { domainName, tld, availability };
 }

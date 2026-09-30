@@ -1,4 +1,3 @@
-import { formatCurrency } from '@automattic/number-formatters';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Button, Tooltip, __experimentalText as Text } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
@@ -11,6 +10,8 @@ import { useEffect, useMemo } from 'react';
 import { useDomainSearch } from '../../page/context';
 import { DomainSearchTrademarkClaimsModal } from '../../ui';
 import {
+	formatNamePulsePrice,
+	getNamePulseSalePrice,
 	NamePulseDomainStatus,
 	toNamePulseRealtimeVerdict,
 	type NamePulseDomainResult,
@@ -23,31 +24,19 @@ interface NamePulseResultRowProps {
 	position: number;
 }
 
-const formatPrice = ( amount: number, currencyCode: string ) =>
-	formatCurrency( amount, currencyCode, { stripZeros: true } );
-
-/**
- * Only `sale_cost` is a bare number, so a sale needs a known currency to render.
- */
-const hasSalePrice = ( {
-	sale_cost: saleCost,
-	currency_code: currencyCode,
-}: NamePulseDomainResult ) => typeof saleCost === 'number' && !! currencyCode;
-
 const Price = ( { result }: { result: NamePulseDomainResult } ) => {
 	const { __ } = useI18n();
-	const { cost, raw_price: rawPrice, sale_cost: saleCost, currency_code: currencyCode } = result;
+	const { cost, raw_price: rawPrice, currency_code: currencyCode } = result;
 	const yearlyPrice =
-		typeof rawPrice === 'number' && currencyCode ? formatPrice( rawPrice, currencyCode ) : cost;
+		typeof rawPrice === 'number' && currencyCode
+			? formatNamePulsePrice( rawPrice, currencyCode )
+			: cost;
 
 	if ( ! yearlyPrice ) {
 		return null;
 	}
 
-	const salePrice =
-		typeof saleCost === 'number' && currencyCode
-			? formatPrice( saleCost, currencyCode )
-			: undefined;
+	const salePrice = getNamePulseSalePrice( result );
 	const isSale = !! salePrice;
 
 	return (
@@ -136,7 +125,7 @@ export const NamePulseResultRow = ( { result, position }: NamePulseResultRowProp
 	// waiting for one that is not coming.
 	const isPremiumPriceMissing = needsPremiumPrice && ! realtimeVerdict;
 	const showPremiumBadge = isAvailable && isPremium;
-	const showSaleBadge = isAvailable && hasSalePrice( row );
+	const showSaleBadge = isAvailable && !! getNamePulseSalePrice( row );
 	// One badge still fits beside the name; two leave it only a few characters,
 	// so the pair moves under it and the name keeps the full column width.
 	const stackBadges = showSaleBadge && showPremiumBadge;

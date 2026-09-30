@@ -1,5 +1,5 @@
-import { formatCurrency } from '@automattic/number-formatters';
-import { useIsMutating, useQuery } from '@tanstack/react-query';
+import { DomainAvailabilityStatus, type DomainAvailability } from '@automattic/api-core';
+import { useIsMutating } from '@tanstack/react-query';
 import {
 	__experimentalHStack as HStack,
 	__experimentalText as Text,
@@ -23,20 +23,26 @@ import {
 } from '../../ui';
 import { DomainSuggestionMatchReasons } from '../../ui/domain-suggestion-match-reasons';
 import { bullseyeIcon } from '../../ui/icons/bullseye-icon';
+import { getNamePulseSalePrice } from '../helpers';
 import { useNamePulseCartToggle } from '../hooks/use-name-pulse-cart-toggle';
-import type { NamePulseDomainResult } from '../helpers';
 
 /**
  * Laid out like the bundle card it sits beside, from the classic suggestion
  * pieces. The real-time check behind the notice supplies the sale price, the
  * renewal price and the match reasons.
  */
-export const NamePulseExactMatchCard = ( { result }: { result: NamePulseDomainResult } ) => {
+export const NamePulseExactMatchCard = ( {
+	domainName,
+	tld,
+	availability,
+}: {
+	domainName: string;
+	tld: string;
+	availability: DomainAvailability;
+} ) => {
 	const { __ } = useI18n();
-	const { events, queries } = useDomainSearch();
+	const { events } = useDomainSearch();
 	const { containerRef, activeQuery, currentWidth } = useDomainSuggestionContainer();
-	const { domain_name: domainName, suffix, is_premium: isPremium } = result;
-	const { data: availability } = useQuery( queries.domainAvailability( domainName ) );
 	const isMutating = !! useIsMutating();
 	const {
 		inCart,
@@ -66,15 +72,10 @@ export const NamePulseExactMatchCard = ( { result }: { result: NamePulseDomainRe
 		() =>
 			parseMatchReasons(
 				domainName,
-				( availability?.match_reasons ?? [] ).filter( ( reason ) => reason !== 'exact-match' )
+				( availability.match_reasons ?? [] ).filter( ( reason ) => reason !== 'exact-match' )
 			).slice( 0, 1 ),
-		[ domainName, availability?.match_reasons ]
+		[ domainName, availability.match_reasons ]
 	);
-
-	const saleCost =
-		typeof availability?.sale_cost === 'number' && availability.currency_code
-			? formatCurrency( availability.sale_cost, availability.currency_code, { stripZeros: true } )
-			: undefined;
 
 	let cta;
 
@@ -104,21 +105,21 @@ export const NamePulseExactMatchCard = ( { result }: { result: NamePulseDomainRe
 							</Text>
 						</HStack>
 						<DomainSuggestionBadge>{ __( "It's available!" ) }</DomainSuggestionBadge>
-						{ isPremium && (
+						{ availability.status === DomainAvailabilityStatus.AVAILABLE_PREMIUM && (
 							<DomainSuggestionBadge variation="premium">{ __( 'Premium' ) }</DomainSuggestionBadge>
 						) }
 					</HStack>
 
 					<Text as="p" size={ 32 } className="name-pulse-exact-card__domain">
-						{ domainName.slice( 0, -( suffix.length + 1 ) ) }
-						<span className="name-pulse-exact-card__tld">.{ suffix }</span>
+						{ domainName.slice( 0, -( tld.length + 1 ) ) }
+						<span className="name-pulse-exact-card__tld">.{ tld }</span>
 					</Text>
 
 					<div className="name-pulse-exact-card__price-row">
 						<DomainSuggestionPrice
-							price={ availability?.cost ?? result.cost ?? '' }
-							salePrice={ saleCost }
-							renewPrice={ availability?.renew_cost }
+							price={ availability.cost }
+							salePrice={ getNamePulseSalePrice( availability ) }
+							renewPrice={ availability.renew_cost }
 						/>
 						<div className="name-pulse-exact-card__cta">{ cta }</div>
 					</div>

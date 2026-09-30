@@ -302,15 +302,18 @@ export const useNamePulseSearch = ( query: string ) => {
 		if (
 			! isSettled ||
 			isLoadingTop ||
-			( exactMatch && ! exactMatch.result ) ||
+			( exactMatch && ! exactMatch.availability ) ||
 			topResults.some( isWaiting )
 		) {
 			return null;
 		}
 
-		return [ ...( exactMatch?.result ? [ exactMatch.result ] : [] ), ...topResults ]
-			.filter( ( result ) => result.status === NamePulseDomainStatus.AVAILABLE )
-			.map( ( result ) => result.domain_name );
+		return [
+			...( exactMatch?.availability ? [ exactMatch.domainName ] : [] ),
+			...topResults
+				.filter( ( result ) => result.status === NamePulseDomainStatus.AVAILABLE )
+				.map( ( result ) => result.domain_name ),
+		];
 	}, [ isSettled, isLoadingTop, exactMatch, topResults ] );
 
 	// Once known, the anchors hold for the rest of the search: a Top result that
@@ -326,16 +329,11 @@ export const useNamePulseSearch = ( query: string ) => {
 
 	const bundleAnchors = useMemo( () => {
 		if ( ! isSettled || keptAnchors?.query !== settledQuery ) {
-			return readyAnchors;
+			return null;
 		}
 
 		const taken = new Set(
-			[
-				...( exactMatch?.result ? [ exactMatch.result ] : [] ),
-				...rawExactList,
-				...rawKeywordResults,
-				...rawCreativeResults,
-			]
+			[ ...rawExactList, ...rawKeywordResults, ...rawCreativeResults ]
 				.filter( ( result ) => result.status === NamePulseDomainStatus.TAKEN )
 				.map( ( result ) => result.domain_name )
 		);
@@ -345,8 +343,6 @@ export const useNamePulseSearch = ( query: string ) => {
 		isSettled,
 		keptAnchors,
 		settledQuery,
-		readyAnchors,
-		exactMatch,
 		rawExactList,
 		rawKeywordResults,
 		rawCreativeResults,

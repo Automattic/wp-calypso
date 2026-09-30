@@ -74,19 +74,23 @@ export const NamePulseResults = () => {
 				{ /* A typed domain shares its row with the bundle; any other search, or a
 				     typed domain that is taken, gets the bundle under Top results. */ }
 				{ exactMatch && (
-					<div className="name-pulse-featured" aria-busy={ ! exactMatch.result }>
+					<div className="name-pulse-featured" aria-busy={ ! exactMatch.availability }>
 						{ /* The card replaces its placeholder without moving focus, so the
 						     verdict is announced here. A taken name gets the notice instead. */ }
 						<VisuallyHidden aria-live="polite">
-							{ exactMatch.result &&
+							{ exactMatch.availability &&
 								sprintf(
 									// translators: %(domain)s is the domain name the user searched for.
 									__( '%(domain)s is available.' ),
 									{ domain: exactMatch.domainName }
 								) }
 						</VisuallyHidden>
-						{ exactMatch.result ? (
-							<NamePulseExactMatchCard result={ exactMatch.result } />
+						{ exactMatch.availability ? (
+							<NamePulseExactMatchCard
+								domainName={ exactMatch.domainName }
+								tld={ exactMatch.tld }
+								availability={ exactMatch.availability }
+							/>
 						) : (
 							<DomainSuggestion.Featured.Placeholder />
 						) }
