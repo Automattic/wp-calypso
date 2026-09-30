@@ -5,7 +5,7 @@ import { getLocaleSlug, localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { getIntlLocale } from 'calypso/dashboard/utils/locale';
-import { formatStorage } from 'calypso/dashboard/utils/site-storage';
+import { formatStorage, getStorageUsagePercent } from 'calypso/dashboard/utils/site-storage';
 
 const ALERT_PERCENT = 80;
 const WARN_PERCENT = 60;
@@ -29,10 +29,10 @@ export class PlanStorageBar extends Component {
 			return null;
 		}
 
-		let percent = ( mediaStorage.storageUsedBytes / mediaStorage.maxStorageBytes ) * 100;
-
-		// Round percentage to 2dp for values under 1%, and whole numbers otherwise.
-		percent = percent < 1 ? percent.toFixed( 2 ) : Math.round( percent );
+		const percent = getStorageUsagePercent( {
+			storage_used_bytes: mediaStorage.storageUsedBytes,
+			max_storage_bytes: mediaStorage.maxStorageBytes,
+		} );
 
 		const classes = clsx( className, 'plan-storage__bar', {
 			'is-alert': percent > ALERT_PERCENT,

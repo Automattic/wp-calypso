@@ -4,7 +4,7 @@ import clsx from 'clsx';
 import { getLocaleSlug, useTranslate } from 'i18n-calypso';
 import { FC, PropsWithChildren } from 'react';
 import { getIntlLocale } from 'calypso/dashboard/utils/locale';
-import { formatStorage } from 'calypso/dashboard/utils/site-storage';
+import { formatStorage, getStorageUsagePercent } from 'calypso/dashboard/utils/site-storage';
 
 interface Props {
 	mediaStorage: SiteMediaStorage;
@@ -16,7 +16,10 @@ const PlanStorageBar: FC< PropsWithChildren< Props > > = ( { children, mediaStor
 	const translate = useTranslate();
 	const { storageUsedBytes, maxStorageBytes } = mediaStorage;
 
-	let usagePercent = Math.round( ( ( storageUsedBytes / maxStorageBytes ) * 1000 ) / 10 );
+	let usagePercent = getStorageUsagePercent( {
+		storage_used_bytes: storageUsedBytes,
+		max_storage_bytes: maxStorageBytes,
+	} );
 	// Ensure that the displayed usage is never fully empty to avoid a confusing UI
 	usagePercent = Math.max( MINIMUM_DISPLAYED_USAGE, usagePercent );
 	// Make sure displayed usage never exceeds 100%
