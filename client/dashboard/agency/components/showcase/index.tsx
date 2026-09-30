@@ -54,14 +54,7 @@ export default function Showcase( { title, items }: { title: string; items: Show
 				title={ title }
 				actions={ isRow ? rowArrows( { canScroll, page } ) : undefined }
 			/>
-			<ul
-				ref={ rowRef }
-				className={ clsx( 'dashboard-showcase', {
-					'is-row': isRow,
-					'can-back': isRow && canScroll.back,
-					'can-forward': isRow && canScroll.forward,
-				} ) }
-			>
+			<ul ref={ rowRef } className={ clsx( 'dashboard-showcase', { 'is-row': isRow } ) }>
 				{ items.map( ( item, index ) => (
 					<li
 						key={ item.id }

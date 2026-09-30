@@ -345,46 +345,25 @@ $lead-side-by-side: $pad-x * 2 + $words-min + $gap + $lead-object;
 // Row (the default; ?showcase=bento shows the bento): the tiles in one
 // scrolling row. Wide tiles keep the bento's rhythm as widths, so the words and
 // the drawing still sit side by side (R4) and narrow tiles stack (R5). One
-// height for the row, 16px apart, snapping to a tile's start. On a phone, tiles
-// are at most 85% of the screen so the next one peeks in. Each end fades only
-// while there is more that way, like the category row (spot-tiles.scss).
+// height for the row, 16px apart, snapping to a tile's start. The row runs
+// into the page's side padding, so tiles are cut by the page edge rather than
+// faded. On a phone, tiles are at most 85% of the screen so the next one peeks in.
 .dashboard-showcase.is-row {
-	--fade-start: 0%;
-	--fade-end: 0%;
-
 	grid-template-columns: none;
 	grid-template-rows: 340px;
 	grid-auto-flow: column;
 	grid-auto-columns: max-content;
+	margin-inline: calc( -1 * var( --page-layout-inline-padding ) );
+	padding-inline: var( --page-layout-inline-padding );
+	scroll-padding-inline: var( --page-layout-inline-padding );
 	overflow-x: auto;
 	overscroll-behavior-x: contain;
 	scroll-behavior: smooth;
 	scroll-snap-type: x mandatory;
 	scrollbar-width: none;
-	// Eased, and longer than the category row's, so it reads as more to come
-	// on a large coloured tile rather than as a cut.
-	mask-image: linear-gradient(
-		to right,
-		transparent,
-		rgba( 0, 0, 0, 0.3 ) calc( var( --fade-start ) * 0.35 ),
-		rgba( 0, 0, 0, 0.75 ) calc( var( --fade-start ) * 0.7 ),
-		#000 var( --fade-start ),
-		#000 calc( 100% - var( --fade-end ) ),
-		rgba( 0, 0, 0, 0.75 ) calc( 100% - var( --fade-end ) * 0.7 ),
-		rgba( 0, 0, 0, 0.3 ) calc( 100% - var( --fade-end ) * 0.35 ),
-		transparent
-	);
 
 	&::-webkit-scrollbar {
 		display: none;
-	}
-
-	&.can-back {
-		--fade-start: 96px;
-	}
-
-	&.can-forward {
-		--fade-end: 160px;
 	}
 
 	> .dashboard-showcase__tile:nth-child( n ):nth-last-child( n ) {
@@ -402,4 +381,3 @@ $lead-side-by-side: $pad-x * 2 + $words-min + $gap + $lead-object;
 		scroll-behavior: auto;
 	}
 }
-
