@@ -1,7 +1,7 @@
 import { privateApis } from '@wordpress/components';
 import { __dangerousOptInToUnstableAPIsOnlyForCoreModules } from '@wordpress/private-apis';
 import { Button } from '@wordpress/ui';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { OmnibarNodeContent } from './omnibar-node';
 import type { OmnibarNode } from '../types';
 
@@ -13,7 +13,21 @@ const { unlock } = __dangerousOptInToUnstableAPIsOnlyForCoreModules(
 );
 const { Menu } = unlock( privateApis );
 
+function useOnView( onView?: () => void ) {
+	const hasViewed = useRef( false );
+
+	useEffect( () => {
+		if ( hasViewed.current || ! onView ) {
+			return;
+		}
+		hasViewed.current = true;
+		onView();
+	}, [ onView ] );
+}
+
 function OmnibarMenuItem( { node }: { node: OmnibarNode } ) {
+	useOnView( node.onView );
+
 	if ( node.children?.length ) {
 		return (
 			<Menu>
@@ -39,7 +53,9 @@ function OmnibarMenuItem( { node }: { node: OmnibarNode } ) {
 		<Menu.Item
 			tabbable
 			render={
-				node.href ? <a href={ node.href } target={ node.target } rel={ node.rel } /> : undefined
+				node.href ? (
+					<a href={ node.href } target={ node.target } rel={ node.rel } title={ node.tooltip } />
+				) : undefined
 			}
 			onClick={ node.onClick }
 		>
@@ -89,6 +105,8 @@ function OmnibarMenuContent( { nodes }: { nodes: OmnibarNode[] } ) {
 }
 
 export function OmnibarMenu( { node, className }: { node: OmnibarNode; className?: string } ) {
+	useOnView( node.onView );
+
 	const label = node.title || node.label || '';
 	const menuClassName = [ 'omnibar__menu', className, node.className, node.active && 'is-active' ]
 		.filter( Boolean )
