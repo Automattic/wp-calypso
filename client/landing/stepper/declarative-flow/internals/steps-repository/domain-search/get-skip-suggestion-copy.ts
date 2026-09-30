@@ -17,8 +17,8 @@ import { isAIBuilderOnboardingFlow } from '@automattic/onboarding';
 export const getSkipSuggestionCopy = (
 	flow: string | null,
 	__: ( text: string ) => string,
-	overrides?: { title?: string; subtitle?: string; buttonText?: string }
-): { title?: string; subtitle?: string; buttonText?: string } | undefined => {
+	overrides?: { title?: string; subtitle?: string; buttonText?: string; skipLabel?: string }
+): { title?: string; subtitle?: string; buttonText?: string; skipLabel?: string } | undefined => {
 	const flowCopy = isAIBuilderOnboardingFlow( flow )
 		? {
 				// translators: %(domain)s is the free WordPress.com subdomain
@@ -30,10 +30,16 @@ export const getSkipSuggestionCopy = (
 	const title = overrides?.title ?? flowCopy?.title;
 	const subtitle = overrides?.subtitle;
 	const buttonText = overrides?.buttonText ?? flowCopy?.buttonText;
+	const skipLabel = overrides?.skipLabel;
 
-	if ( title === undefined && subtitle === undefined && buttonText === undefined ) {
+	if (
+		title === undefined &&
+		subtitle === undefined &&
+		buttonText === undefined &&
+		skipLabel === undefined
+	) {
 		return undefined;
 	}
 
-	return { title, subtitle, buttonText };
+	return { title, subtitle, buttonText, skipLabel };
 };

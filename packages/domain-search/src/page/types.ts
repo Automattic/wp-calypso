@@ -155,6 +155,8 @@ export interface DomainSearchConfig {
 		title?: string;
 		subtitle?: string;
 		buttonText?: string;
+		/** Accessible label of the skip button. Defaults to "Skip purchase and continue with %(domain)s". */
+		skipLabel?: string;
 	};
 	/**
 	 * Where the free-subdomain skip card renders. `results` (the default) puts it at the top of

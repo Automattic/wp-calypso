@@ -36,15 +36,17 @@ describe( 'getSkipSuggestionCopy', () => {
 		} );
 	} );
 
-	it( 'passes a subtitle override through', () => {
+	it( 'passes subtitle and skip label overrides through', () => {
 		expect(
 			getSkipSuggestionCopy( 'onboarding', identity, {
 				subtitle: 'Upgrade anytime.',
+				skipLabel: 'Skip the domain',
 			} )
 		).toEqual( {
 			title: undefined,
 			subtitle: 'Upgrade anytime.',
 			buttonText: undefined,
+			skipLabel: 'Skip the domain',
 		} );
 	} );
 

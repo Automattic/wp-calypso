@@ -51,4 +51,20 @@ describe( 'DomainSearchSkipSuggestion', () => {
 			screen.queryByText( 'Upgrade to a custom domain name anytime.' )
 		).not.toBeInTheDocument();
 	} );
+
+	it( 'uses the skip label override as the button accessible name', () => {
+		render(
+			<DomainSearchSkipSuggestion
+				freeSuggestion="mysite.wordpress.com"
+				buttonText="Skip"
+				skipLabel="Skip the domain for now"
+				onSkip={ jest.fn() }
+			/>
+		);
+
+		expect( screen.getByRole( 'button', { name: 'Skip the domain for now' } ) ).toBeVisible();
+		expect(
+			screen.queryByRole( 'button', { name: /mysite\.wordpress\.com/ } )
+		).not.toBeInTheDocument();
+	} );
 } );

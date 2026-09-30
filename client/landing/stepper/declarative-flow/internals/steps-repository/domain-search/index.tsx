@@ -184,6 +184,18 @@ const DomainSearchStep: StepType< {
 	} );
 
 	const config = useMemo( () => {
+		const experimentSkipCopy = isFreeDomainBannerCopyVariation
+			? {
+					title: __( 'Skip the domain for now' ),
+					subtitle: __(
+						'You’ll get a WordPress.com branded domain. Upgrade to a custom domain name anytime.'
+					),
+					buttonText: __( 'Skip' ),
+					// Keeps the free *.wordpress.com address out of the accessible label too.
+					skipLabel: __( 'Skip the domain for now' ),
+				}
+			: undefined;
+
 		const urlAllowedTlds = tldQuery?.split( ',' ) ?? [];
 
 		// Precedence for allowedTlds:
@@ -225,19 +237,10 @@ const DomainSearchStep: StepType< {
 			// then the results experiment copy, then the flow default resolved by
 			// `getSkipSuggestionCopy`.
 			skipSuggestionCopy: getSkipSuggestionCopy( flow, __, {
-				title:
-					freeSubdomainTitle ??
-					wowSkipCopy ??
-					( isFreeDomainBannerCopyVariation ? __( 'Skip the domain for now' ) : undefined ),
-				subtitle: isFreeDomainBannerCopyVariation
-					? __(
-							'You’ll get a WordPress.com branded domain. Upgrade to a custom domain name anytime.'
-						)
-					: undefined,
-				buttonText:
-					freeSubdomainButtonLabel ??
-					wowSkipCopy ??
-					( isFreeDomainBannerCopyVariation ? __( 'Skip' ) : undefined ),
+				title: freeSubdomainTitle ?? wowSkipCopy ?? experimentSkipCopy?.title,
+				subtitle: experimentSkipCopy?.subtitle,
+				buttonText: freeSubdomainButtonLabel ?? wowSkipCopy ?? experimentSkipCopy?.buttonText,
+				skipLabel: experimentSkipCopy?.skipLabel,
 			} ),
 			// WoW funnel: hide the free *.wordpress.com subdomain card entirely and offer only
 			// the skip control.

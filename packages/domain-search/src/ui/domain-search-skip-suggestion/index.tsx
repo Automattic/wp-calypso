@@ -26,6 +26,11 @@ interface Props {
 	/** Overrides the default "Start Free" CTA of the free-subdomain card. */
 	buttonText?: string;
 	/**
+	 * Overrides the default "Skip purchase and continue with %(domain)s" accessible label
+	 * of the skip button, which is also the only label of the mobile chevron.
+	 */
+	skipLabel?: string;
+	/**
 	 * Render a plain "set up a domain later" control with no domain shown, for flows that never
 	 * keep a free subdomain. `title`/`buttonText` still override the defaults.
 	 */
@@ -43,6 +48,7 @@ const DomainSearchSkipSuggestion = ( {
 	title: titleOverride,
 	subtitle: subtitleOverride,
 	buttonText: buttonTextOverride,
+	skipLabel: skipLabelOverride,
 	chooseLaterOnly,
 	onSkip,
 	onSuggestionClick,
@@ -116,13 +122,15 @@ const DomainSearchSkipSuggestion = ( {
 
 	const domain = existingSiteUrl ?? freeSuggestion;
 	const showChevron = chevronOnMobile && isSmall;
-	const skipLabel = chooseLaterOnly
-		? buttonText
-		: sprintf(
-				// translators: %(domain)s is the domain name
-				__( 'Skip purchase and continue with %(domain)s' ),
-				{ domain: domain ?? '' }
-			);
+	const skipLabel =
+		skipLabelOverride ??
+		( chooseLaterOnly
+			? buttonText
+			: sprintf(
+					// translators: %(domain)s is the domain name
+					__( 'Skip purchase and continue with %(domain)s' ),
+					{ domain: domain ?? '' }
+				) );
 
 	const renderRight = () => {
 		if ( ! showButton ) {
