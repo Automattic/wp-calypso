@@ -17,6 +17,12 @@ export const useAutoScroll = (
 		chat.status === 'sending' && lastMessage?.role === 'bot' ? lastMessage.content : null;
 
 	useEffect( () => {
+		if ( chat.status === 'loading' || lastMessage?.role !== 'bot' ) {
+			followedStreamedReply.current = false;
+		}
+	}, [ chat.status, lastMessage ] );
+
+	useEffect( () => {
 		if ( ! isEnabled || streamedText === null ) {
 			return;
 		}
@@ -42,9 +48,9 @@ export const useAutoScroll = (
 			return;
 		}
 
-		// The reader followed the streamed reply down; jumping back to its start would lose their place.
+		// The reader followed the streamed reply down. Scrolling to its start, on completion or when the
+		// chat reloads afterwards, would lose their place; the next message they send resets this.
 		if ( followedStreamedReply.current ) {
-			followedStreamedReply.current = false;
 			lastChatStatus.current = chat.status;
 			return;
 		}

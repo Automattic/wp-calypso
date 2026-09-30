@@ -363,13 +363,13 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 			setChatStatus( 'sending' );
 		},
 		onSuccess: async ( returnedChat ) => {
-			discardStreamedMessage();
-
 			if (
 				! returnedChat.messages ||
 				returnedChat.messages.length === 0 ||
 				! returnedChat.messages[ 0 ].content
 			) {
+				discardStreamedMessage();
+
 				// Handle empty/error response based on user eligibility
 				if ( isUserEligibleForPaidSupport && canConnectToZendesk ) {
 					// User is eligible for premium support - transfer to Zendesk
@@ -437,6 +437,8 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 				context: returnedChat.messages[ 0 ].context,
 			};
 			setExperimentVariationName( returnedChat.experiment_name );
+			// Swapped in the same tick as the stored reply, so no render goes without it.
+			discardStreamedMessage();
 			addMessage( {
 				message: botMessage,
 				props: { odieId: returnedChat.chat_id },

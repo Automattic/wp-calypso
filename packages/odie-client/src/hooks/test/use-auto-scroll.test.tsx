@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import { renderHook } from '@testing-library/react';
+import { act, renderHook } from '@testing-library/react';
 import { useOdieAssistantContext } from '../../context';
 import { useAutoScroll } from '../use-auto-scroll';
 import type { Chat, Message } from '../../types';
@@ -39,19 +39,52 @@ describe( 'useAutoScroll with a streamed reply', () => {
 	it( 'keeps the end of the reply in view as each chunk arrives, and stays there once it completes', () => {
 		render( { messages: [ question, reply( 'To change' ) ], status: 'sending' } );
 		const { rerender } = renderHook( () => useAutoScroll( { current: container }, true ) );
-		jest.runAllTimers();
+		act( () => jest.runAllTimers() );
 
 		render( { messages: [ question, reply( 'To change your theme' ) ], status: 'sending' } );
 		rerender();
-		jest.runAllTimers();
+		act( () => jest.runAllTimers() );
 
 		render( { messages: [ question, reply( 'To change your theme…' ) ], status: 'loaded' } );
 		rerender();
-		jest.runAllTimers();
+		act( () => jest.runAllTimers() );
 
 		expect( scrolled.mock.results.map( ( result ) => result.value ) ).toEqual( [
 			{ id: 'reply', block: 'end' },
 			{ id: 'reply', block: 'end' },
 		] );
+	} );
+
+	it( 'does not scroll back when the chat reloads after a streamed reply, but does for the next message', () => {
+		render( { messages: [ question, reply( 'To change your theme…' ) ], status: 'sending' } );
+		const { rerender } = renderHook( () => useAutoScroll( { current: container }, true ) );
+		render( { messages: [ question, reply( 'To change your theme…' ) ], status: 'loaded' } );
+		rerender();
+		act( () => jest.runAllTimers() );
+		scrolled.mockClear();
+
+		// A new chat reloads from the server once it is registered as a support interaction.
+		render( {
+			messages: [ reply( 'Earlier reply' ), question, reply( 'To change your theme…' ) ],
+			status: 'loaded',
+		} );
+		rerender();
+		act( () => jest.runAllTimers() );
+
+		expect( scrolled ).not.toHaveBeenCalled();
+
+		render( {
+			messages: [
+				reply( 'Earlier reply' ),
+				question,
+				reply( 'To change your theme…' ),
+				{ ...question, content: 'Thanks!' },
+			],
+			status: 'loaded',
+		} );
+		rerender();
+		act( () => jest.runAllTimers() );
+
+		expect( scrolled ).toHaveBeenCalled();
 	} );
 } );

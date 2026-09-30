@@ -41,20 +41,21 @@ jest.mock( '../../utils/get-bot-slug', () => ( {
 jest.mock( '../../utils/get-open-live-interactions', () => ( {
 	getOpenLiveInteractions: () => ( {} ),
 } ) );
+let mockCurrentInteraction: { uuid: string; bot_slug: string } | undefined;
+const mockStartNewInteraction = jest.fn();
+
 jest.mock( '../use-current-support-interaction', () => ( {
-	useCurrentSupportInteraction: () => ( {
-		data: { uuid: 'interaction-1', bot_slug: 'wpcom-workflow-support_chat' },
-	} ),
+	useCurrentSupportInteraction: () => ( { data: mockCurrentInteraction } ),
 } ) );
 jest.mock( '..', () => ( {
 	useManageSupportInteraction: () => ( {
 		addEventToInteraction: jest.fn(),
-		startNewInteraction: jest.fn(),
+		startNewInteraction: mockStartNewInteraction,
 	} ),
 } ) );
 jest.mock( '../../utils', () => ( {
 	...jest.requireActual( '../../utils' ),
-	getOdieIdFromInteraction: () => 7,
+	getOdieIdFromInteraction: ( interaction?: unknown ) => ( interaction ? 7 : undefined ),
 } ) );
 jest.mock( '../stream-wpcom-odie-message', () => ( {
 	requestOdieStreamToken: jest.fn(),
@@ -100,6 +101,7 @@ describe( 'useSendOdieMessage with streaming enabled', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
 		chat = { messages: [ userMessage ], odieId: 7 } as Chat;
+		mockCurrentInteraction = { uuid: 'interaction-1', bot_slug: 'wpcom-workflow-support_chat' };
 
 		jest.mocked( useOdieAssistantContext ).mockReturnValue( {
 			chat,
@@ -134,6 +136,25 @@ describe( 'useSendOdieMessage with streaming enabled', () => {
 		expect( botContents() ).toEqual( [ 'To change your theme…' ] );
 		expect( chat.messages.at( -1 ) ).toMatchObject( { message_id: 99, role: 'bot' } );
 		expect( wpcomRequest ).not.toHaveBeenCalled();
+	} );
+
+	it( 'keeps the streamed reply on screen while a new chat is registered as an interaction', async () => {
+		mockCurrentInteraction = undefined;
+		let shownWhileRegistering: unknown[] = [];
+		mockStartNewInteraction.mockImplementation( async () => {
+			shownWhileRegistering = botContents();
+			return { uuid: 'interaction-2', bot_slug: 'wpcom-workflow-support_chat' };
+		} );
+		jest.mocked( streamWpcomOdieMessage ).mockImplementation( async ( _path, { onDelta } ) => {
+			onDelta( 'To change your theme…' );
+			return returnedChat( 'To change your theme…' );
+		} );
+
+		await send();
+
+		expect( mockStartNewInteraction ).toHaveBeenCalled();
+		expect( shownWhileRegistering ).toEqual( [ 'To change your theme…' ] );
+		expect( botContents() ).toEqual( [ 'To change your theme…' ] );
 	} );
 
 	it( 'drops the partial reply when the stream fails', async () => {
