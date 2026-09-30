@@ -49,14 +49,14 @@ describe( 'VideoPressStatsModule retention rate', () => {
 		expect( screen.getByText( '0%' ) ).toBeVisible();
 	} );
 
-	it( 'renders n/a when the retention rate is null', () => {
+	it( 'renders a dash when the retention rate is null', () => {
 		renderModule( [ { ...baseRow, retention_rate: null } ] );
-		expect( screen.getByText( 'n/a' ) ).toBeVisible();
+		expect( screen.getByText( '-' ) ).toBeVisible();
 		expect( screen.queryByText( /null/ ) ).not.toBeInTheDocument();
 	} );
 
-	it( 'renders n/a when the retention rate is missing', () => {
+	it( 'renders a dash when the retention rate is missing', () => {
 		renderModule( [ { ...baseRow } ] );
-		expect( screen.getByText( 'n/a' ) ).toBeVisible();
+		expect( screen.getByText( '-' ) ).toBeVisible();
 	} );
 } );

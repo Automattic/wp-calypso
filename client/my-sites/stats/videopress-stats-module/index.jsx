@@ -260,7 +260,7 @@ class VideoPressStatsModule extends Component {
 										role="button"
 									>
 										{ row.retention_rate === null || row.retention_rate === undefined
-											? 'n/a'
+											? '-'
 											: `${ row.retention_rate }%` }
 									</span>
 								</div>
