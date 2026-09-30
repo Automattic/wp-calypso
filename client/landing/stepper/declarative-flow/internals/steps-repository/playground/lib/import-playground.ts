@@ -2,7 +2,8 @@ import wpcomRequest from 'wpcom-proxy-request';
 import { uploadExportFile, updateImporter } from 'calypso/state/imports/actions';
 import { fromApi, toApi } from 'calypso/state/imports/api';
 import { appStates } from 'calypso/state/imports/constants';
-import { PLAYGROUND_HOST, SESSION_KEY_STATIC_SITE_IMPORT_SHARE } from './constants';
+import { PLAYGROUND_HOST } from './constants';
+import { takeStaticSiteImportShare } from './static-site-import-share';
 import type { PlaygroundClient } from './types';
 
 const POLL_INTERVAL_MS = 5000;
@@ -117,23 +118,21 @@ foreach ( $plugins as $slug ) {
 /**
  * Upload an exported Playground site to a wp.com site and ask for it to start.
  *
- * When this Playground was opened from a WordPress.com static site import
+ * When this Playground was booted from a WordPress.com static site import
  * preview, its share token goes along so the launch is recorded against that
- * import. One preview, one launch: the token is cleared once sent.
+ * import. One preview, one launch: the token is taken, not just read.
  */
-export async function uploadPlaygroundSiteZip( siteId: number, siteZip: File ) {
-	const staticSiteImportShare =
-		sessionStorage.getItem( SESSION_KEY_STATIC_SITE_IMPORT_SHARE ) ?? undefined;
-
-	const importer = await uploadExportFile( siteId, {
+export async function uploadPlaygroundSiteZip(
+	siteId: number,
+	siteZip: File,
+	playgroundSlug: string
+) {
+	return uploadExportFile( siteId, {
 		importStatus: { importStatus: 'importer-ready-for-upload', siteId, type: 'wordpress' },
 		file: siteZip,
 		autoStart: true,
-		staticSiteImportShare,
+		staticSiteImportShare: takeStaticSiteImportShare( playgroundSlug ),
 	} );
-	sessionStorage.removeItem( SESSION_KEY_STATIC_SITE_IMPORT_SHARE );
-
-	return importer;
 }
 
 /**
@@ -150,7 +149,7 @@ export async function importPlaygroundSite(
 	{ waitForCompletion = false }: { waitForCompletion?: boolean } = {}
 ): Promise< string | undefined > {
 	const siteZip = await getSiteZip( playgroundSlug );
-	const importer = await uploadPlaygroundSiteZip( siteId, siteZip );
+	const importer = await uploadPlaygroundSiteZip( siteId, siteZip, playgroundSlug );
 	const importerStatus = fromApi( importer );
 	let started = false;
 
