@@ -13,15 +13,17 @@ describe( 'getSitePlanDisplayName', () => {
 		expect( getSitePlanDisplayName( site ) ).toBe( 'Staging Site' );
 	} );
 
-	test( 'for self-hosted, Jetpack-connected sites, active Jetpack plugin, it renders the plan name', () => {
+	test( 'for self-hosted, Jetpack-connected sites, active Jetpack plugin, it renders the full Jetpack plan name', () => {
 		const site = {
 			is_wpcom_atomic: false,
 			jetpack_connection: true,
 			jetpack: true,
 			plan: {
+				product_slug: 'jetpack_free',
+				product_name: 'Jetpack Free',
 				product_name_short: 'Free',
 			},
 		} as Site;
-		expect( getSitePlanDisplayName( site ) ).toBe( 'Free' );
+		expect( getSitePlanDisplayName( site ) ).toBe( 'Jetpack Free' );
 	} );
 } );

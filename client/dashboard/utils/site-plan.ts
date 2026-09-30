@@ -94,6 +94,10 @@ export function getSitePlanDisplayName( site: Site ) {
 		}
 	}
 
+	if ( ( Object.values( JetpackPlans ) as string[] ).includes( plan.product_slug ) ) {
+		return plan.product_name || plan.product_name_short;
+	}
+
 	// Display the short name for WP.com plans.
 	// Determine if the plan is a WP.com plan by checking if the license key is empty.
 	if ( ! plan.license_key ) {

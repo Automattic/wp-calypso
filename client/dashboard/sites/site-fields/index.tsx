@@ -35,7 +35,6 @@ import { getVisibilityLabels } from '../../utils/site-visibility';
 import { canManageSite } from '../features';
 import { useAiLaunchpad } from '../hooks/use-ai-launchpad';
 import SitePreview from '../site-preview';
-import { JetpackLogo } from './jetpack-logo';
 import { PlanExpiryStatus } from './plan-expiry-status';
 import { useIsSiteUnreachable } from './site-unreachable-status';
 import type { SiteBadge, SiteBlockingStatus, SiteVisibility } from '../../types';
@@ -441,12 +440,7 @@ export function Plan( {
 		if ( ! isJetpack ) {
 			return <IneligibleIndicator />;
 		}
-		return (
-			<HStack spacing={ 1 } expanded={ false } justify="flex-start">
-				<JetpackLogo size={ 16 } />
-				<span>{ value }</span>
-			</HStack>
-		);
+		return <span>{ value }</span>;
 	}
 
 	return (
