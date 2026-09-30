@@ -221,15 +221,18 @@ $lead-side-by-side: $pad-x * 2 + $words-min + $gap + $lead-object;
 }
 
 .dashboard-showcase__action {
-	// Theming only: core buttons take the admin accent for their border, label
-	// and rings; here the accent is the tile's own ink, so the core secondary
-	// button comes out in the tile's colour with nothing else overridden.
+	// Theming only, no core classes: core buttons take the admin accent for
+	// their border, label and rings; here the accent is the tile's own ink (white
+	// on the lead), so the core buttons come out in the tile's colour.
 	--wp-components-color-accent: var( --showcase-action );
 	--wp-admin-theme-color: var( --showcase-action );
 	--wp-components-color-accent-darker-10: var( --showcase-action );
 	--wp-admin-theme-color-darker-10: var( --showcase-action );
 	--wp-components-color-accent-darker-20: var( --showcase-action );
 	--wp-admin-theme-color-darker-20: var( --showcase-action );
+	// "Added to cart" is a pressed toggle; core fills it with the foreground.
+	--wp-components-color-foreground: var( --showcase-action );
+	--wp-components-color-foreground-inverted: var( --showcase-field );
 
 	position: relative;
 	z-index: 4;
@@ -241,38 +244,6 @@ $lead-side-by-side: $pad-x * 2 + $words-min + $gap + $lead-object;
 	align-items: center;
 	gap: 8px 20px;
 	margin-block-start: 16px;
-
-	// Flush with the words, even when the link carries an icon.
-	.components-button.is-link {
-		gap: 4px;
-		padding-inline: 0;
-		color: var( --showcase-action );
-		font-weight: 500;
-
-		&:hover:not( :disabled ) {
-			color: var( --showcase-action );
-		}
-	}
-
-	// A white fill so the core secondary button sits on the tint.
-	.components-button.is-secondary {
-		background: #fff;
-	}
-
-	.is-lead & .components-button.is-link {
-		text-decoration-thickness: 1px;
-		text-underline-offset: 3px;
-	}
-}
-
-// On the lead the action colour is white, so its buttons theme to the field's colour.
-.dashboard-showcase__tile.is-lead .dashboard-showcase__action .components-button.is-secondary {
-	--wp-components-color-accent: var( --showcase-field, #1e1e1e );
-	--wp-admin-theme-color: var( --showcase-field, #1e1e1e );
-	--wp-components-color-accent-darker-10: var( --showcase-field, #1e1e1e );
-	--wp-admin-theme-color-darker-10: var( --showcase-field, #1e1e1e );
-	--wp-components-color-accent-darker-20: var( --showcase-field, #1e1e1e );
-	--wp-admin-theme-color-darker-20: var( --showcase-field, #1e1e1e );
 }
 
 .dashboard-showcase__art {
