@@ -45,6 +45,11 @@ interface Snapshot {
 	newestServerId: number;
 	/** User turns this tab sent that were still in flight when it last persisted. */
 	pending: Message[];
+	/**
+	 * Full local transcript. Reconciliation counts copies of a prompt, so the
+	 * pending slice alone hides a repeat.
+	 */
+	localMessages: Message[];
 	/** The question being waited on, for the retry. */
 	text: string;
 }
@@ -70,12 +75,12 @@ const newestOf = ( messages: Message[] ): Message | undefined =>
 		undefined
 	);
 
-/** The pending turns `reconcileWithServer` finds missing from `serverMessages`. */
+/** Pending turns `reconcileWithServer` finds missing from `serverMessages`. */
 async function findMissingTurns(
-	pending: Message[],
+	messages: Message[],
 	serverMessages: Message[]
 ): Promise< Message[] > {
-	const reconciled = await reconcileWithServer( pending, async () => serverMessages );
+	const reconciled = await reconcileWithServer( messages, async () => serverMessages );
 	return reconciled.filter( ( message ) => message.metadata?.deliveryStatus === 'failed' );
 }
 
@@ -94,6 +99,7 @@ export default function useReplyRecovery( { hydratedMessages, enabled, sendRetry
 	const isFirstProbeRef = useRef( true );
 	const seenReplyIdRef = useRef< number | null >( null );
 	const latestProbeRef = useRef< Message[] | null >( null );
+	const localMessagesRef = useRef< Message[] >( [] );
 
 	// Read the local store before hydration lands: hydrating replaces it.
 	useEffect( () => {
@@ -102,14 +108,16 @@ export default function useReplyRecovery( { hydratedMessages, enabled, sendRetry
 		}
 		readStartedRef.current = true;
 		loadConversation( sessionId )
-			.then( ( { messages } ) =>
+			.then( ( { messages } ) => {
+				localMessagesRef.current = messages;
 				setPending(
 					getUnresolvedMessages( messages ).filter( ( message ) => message.role === 'user' )
-				)
-			)
+				);
+			} )
 			.catch( ( error ) => {
 				// eslint-disable-next-line no-console
 				console.error( '[useReplyRecovery] Error loading pending turns:', error );
+				localMessagesRef.current = [];
 				setPending( [] );
 			} );
 	}, [ enabled, sessionId ] );
@@ -131,6 +139,7 @@ export default function useReplyRecovery( { hydratedMessages, enabled, sendRetry
 				? serverIdOf( newestOf( hydratedMessages )! )
 				: 0,
 			pending,
+			localMessages: localMessagesRef.current,
 			text: messageTextContent( awaited ),
 		};
 		setPhase( 'waiting' );
@@ -195,16 +204,17 @@ export default function useReplyRecovery( { hydratedMessages, enabled, sendRetry
 				seenReplyIdRef.current = null;
 				return;
 			}
-			// The reply may have landed between the page change and mount, so the
-			// first hydration already holds it. A question the server has, with an
-			// agent row after it, is answered and needs no more polling.
+			// Stop only when the newest agent row is already in the first hydration.
+			// A higher id arrived after that fetch and still has to be confirmed.
 			if ( isFirstProbe && snapshot.pending.length > 0 ) {
-				if ( ( await findMissingTurns( snapshot.pending, probe.messages ) ).length === 0 ) {
-					if ( ! cancelled ) {
-						setPhase( 'idle' );
-					}
+				const missing = await findMissingTurns( snapshot.localMessages, probe.messages );
+				if ( cancelled || missing.length > 0 ) {
+					return;
 				}
-				return;
+				if ( serverIdOf( newest ) <= snapshot.newestServerId ) {
+					setPhase( 'idle' );
+					return;
+				}
 			}
 			const replyId = serverIdOf( newest );
 			if ( replyId <= snapshot.newestServerId ) {
@@ -244,7 +254,7 @@ export default function useReplyRecovery( { hydratedMessages, enabled, sendRetry
 			if ( snapshot.pending.length === 0 || ! serverMessages ) {
 				return;
 			}
-			const missing = await findMissingTurns( snapshot.pending, serverMessages );
+			const missing = await findMissingTurns( snapshot.localMessages, serverMessages );
 			if ( ! cancelled && missing.length > 0 ) {
 				setPhase( 'lost' );
 			}

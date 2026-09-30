@@ -17,16 +17,45 @@ jest.mock(
 		getUnresolvedMessages: jest.fn( ( messages: Message[] ) => messages.filter( isUnresolved ) ),
 		messageTextContent: ( message: Message ) =>
 			message.parts.map( ( part ) => ( part as { text: string } ).text ).join( '' ),
-		// Mimics the real primitive: a pending turn the server has no copy of
-		// (by text) comes back appended as failed.
+		// Mimics the real primitive: unresolved turns whose text occurs more
+		// often locally than on the server come back appended as failed.
 		reconcileWithServer: jest.fn( async ( messages: Message[], fetchServer ) => {
 			const server: Message[] | null = await fetchServer();
-			const serverTexts = ( server ?? [] ).filter( ( m ) => m.role === 'user' ).map( text );
-			const failed = messages
-				.filter( isUnresolved )
-				.filter( ( m ) => ! serverTexts.includes( text( m ) ) )
-				.map( ( m ) => ( { ...m, metadata: { ...m.metadata, deliveryStatus: 'failed' } } ) );
-			return [ ...( server ?? [] ), ...failed ];
+			const unresolved = messages.filter( isUnresolved );
+			const markFailed = ( message: Message ) => ( {
+				...message,
+				metadata: { ...message.metadata, deliveryStatus: 'failed' },
+			} );
+			if ( ! server || server.length === 0 ) {
+				return messages.map( ( message ) =>
+					isUnresolved( message ) ? markFailed( message ) : message
+				);
+			}
+			const counts = ( list: Message[] ) => {
+				const map = new Map< string, number >();
+				for ( const message of list ) {
+					if ( message.role !== 'user' ) {
+						continue;
+					}
+					map.set( text( message ), ( map.get( text( message ) ) ?? 0 ) + 1 );
+				}
+				return map;
+			};
+			const extras = new Map< string, number >();
+			const serverCounts = counts( server );
+			for ( const [ value, localCount ] of counts( messages ) ) {
+				extras.set( value, Math.max( 0, localCount - ( serverCounts.get( value ) ?? 0 ) ) );
+			}
+			const orphanedFailed: Message[] = [];
+			for ( let i = unresolved.length - 1; i >= 0; i-- ) {
+				const message = unresolved[ i ]!;
+				const extra = extras.get( text( message ) ) ?? 0;
+				if ( extra > 0 ) {
+					extras.set( text( message ), extra - 1 );
+					orphanedFailed.unshift( markFailed( message ) );
+				}
+			}
+			return orphanedFailed.length === 0 ? server : [ ...server, ...orphanedFailed ];
 		} ),
 		loadConversation: jest.fn(),
 		loadChatFromServer: jest.fn(),
@@ -203,6 +232,42 @@ describe( 'useReplyRecovery', () => {
 		expect( result.current.notice ).toBeUndefined();
 		expect( mockInvalidateQueries ).not.toHaveBeenCalled();
 		expect( mockQueryOptions.enabled ).toBe( false );
+	} );
+
+	it( 'rehydrates when the reply lands after hydration but before the first probe', async () => {
+		const reply = message( 'agent', 'You have 12.', 12 );
+		const { result, probeResult } = await setup( {
+			stored: [ pendingQuestion ],
+			hydrated: [ previousAnswer, questionOnServer ],
+		} );
+
+		await probeResult( [ previousAnswer, questionOnServer, reply ] );
+		expect( mockInvalidateQueries ).not.toHaveBeenCalled();
+		expect( result.current.notice?.message ).toBe( 'Waiting for the reply…' );
+
+		await probeResult( [ previousAnswer, questionOnServer, reply ] );
+		expect( mockInvalidateQueries ).toHaveBeenCalledTimes( 1 );
+		expect( result.current.notice ).toBeUndefined();
+	} );
+
+	it( 'treats a repeated question the server does not have as never arrived', async () => {
+		const earlierQuestion = message( 'user', 'How many orders?', 9 );
+		const { result, probeResult } = await setup( {
+			stored: [ earlierQuestion, previousAnswer, pendingQuestion ],
+			hydrated: [ earlierQuestion, previousAnswer ],
+		} );
+		await probeResult( [ earlierQuestion, previousAnswer ] );
+
+		expect( result.current.notice?.message ).toBe( 'Waiting for the reply…' );
+
+		await act( async () => {
+			jest.advanceTimersByTime( LOST_AFTER_MS );
+		} );
+		await flush();
+
+		expect( result.current.notice?.message ).toBe(
+			"Your last question didn't reach the assistant."
+		);
 	} );
 
 	it( 'gives up on a question the server never received and offers a retry', async () => {
