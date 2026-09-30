@@ -29,7 +29,7 @@ describe( 'useStatsAdminUrl', () => {
 		const { result } = renderHook( () => useStatsAdminUrl( site ) );
 
 		expect( result.current ).toBe(
-			'https://example.com/wp-admin/admin.php?page=jetpack-premium-analytics-wp-admin'
+			'https://example.com/wp-admin/admin.php?page=jetpack-premium-analytics-wp-admin&p=%2F'
 		);
 	} );
 
