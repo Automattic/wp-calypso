@@ -1,4 +1,8 @@
-import { BLUEPRINT_LIB_HOST, FALLBACK_PHP_VERSION } from './constants';
+import {
+	BLUEPRINT_LIB_HOST,
+	FALLBACK_PHP_VERSION,
+	STATIC_SITE_IMPORT_SHARE_BASE,
+} from './constants';
 import { ZipFilesystem, resolveRemoteBlueprint } from './resolve-remote-blueprint-standalone';
 import type {
 	Blueprint,
@@ -158,8 +162,29 @@ export function getBlueprintArchiveIdentifier( query: URLSearchParams ): string 
 	return /^[a-z0-9-]+$/i.test( raw ) ? raw : null;
 }
 
+/**
+ * The share token of a WordPress.com static site import preview, when
+ * `blueprint-url` is one: `<STATIC_SITE_IMPORT_SHARE_BASE><token>/blueprint`.
+ * The token is a JWT, so anything that is not three base64url segments is
+ * rejected rather than passed on.
+ */
+export function getStaticSiteImportShareToken( query: URLSearchParams ): string | null {
+	const blueprintUrl = query.get( 'blueprint-url' ) ?? '';
+	if ( ! blueprintUrl.startsWith( STATIC_SITE_IMPORT_SHARE_BASE ) ) {
+		return null;
+	}
+	const match = /^([A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+)\/blueprint$/.exec(
+		blueprintUrl.slice( STATIC_SITE_IMPORT_SHARE_BASE.length )
+	);
+	return match ? match[ 1 ] : null;
+}
+
 // Used in sending the Tracks event
 export function getBlueprintLabelForTracking( query: URLSearchParams ): string {
+	if ( getStaticSiteImportShareToken( query ) ) {
+		return 'static-site-import';
+	}
+
 	const blueprint = getBlueprintID( query );
 
 	if ( blueprint ) {

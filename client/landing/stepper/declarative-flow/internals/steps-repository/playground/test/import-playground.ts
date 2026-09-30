@@ -1,6 +1,10 @@
-import { updateImporter } from 'calypso/state/imports/actions';
+/**
+ * @jest-environment jsdom
+ */
+import { updateImporter, uploadExportFile } from 'calypso/state/imports/actions';
 import { appStates } from 'calypso/state/imports/constants';
-import { startPlaygroundImportIfReady } from '../lib/import-playground';
+import { SESSION_KEY_STATIC_SITE_IMPORT_SHARE } from '../lib/constants';
+import { startPlaygroundImportIfReady, uploadPlaygroundSiteZip } from '../lib/import-playground';
 
 jest.mock( 'calypso/state/imports/actions', () => ( {
 	uploadExportFile: jest.fn(),
@@ -8,6 +12,7 @@ jest.mock( 'calypso/state/imports/actions', () => ( {
 } ) );
 
 const updateImporterMock = updateImporter as jest.Mock;
+const uploadExportFileMock = uploadExportFile as jest.Mock;
 
 describe( 'startPlaygroundImportIfReady', () => {
 	const siteId = 123;
@@ -56,5 +61,37 @@ describe( 'startPlaygroundImportIfReady', () => {
 		).resolves.toBe( false );
 
 		expect( updateImporterMock ).not.toHaveBeenCalled();
+	} );
+} );
+
+describe( 'uploadPlaygroundSiteZip', () => {
+	const siteId = 123;
+	const siteZip = new File( [ 'zip' ], 'site.zip', { type: 'application/zip' } );
+
+	beforeEach( () => {
+		jest.clearAllMocks();
+		sessionStorage.clear();
+		uploadExportFileMock.mockResolvedValue( { importId: 'import-id' } );
+	} );
+
+	it( 'sends the static site import share token it was opened from, once', async () => {
+		sessionStorage.setItem( SESSION_KEY_STATIC_SITE_IMPORT_SHARE, 'a.b.c' );
+
+		await uploadPlaygroundSiteZip( siteId, siteZip );
+
+		expect( uploadExportFileMock ).toHaveBeenCalledWith(
+			siteId,
+			expect.objectContaining( { file: siteZip, autoStart: true, staticSiteImportShare: 'a.b.c' } )
+		);
+		expect( sessionStorage.getItem( SESSION_KEY_STATIC_SITE_IMPORT_SHARE ) ).toBeNull();
+	} );
+
+	it( 'sends no share token for a Playground that did not come from an import', async () => {
+		await uploadPlaygroundSiteZip( siteId, siteZip );
+
+		expect( uploadExportFileMock ).toHaveBeenCalledWith(
+			siteId,
+			expect.objectContaining( { staticSiteImportShare: undefined } )
+		);
 	} );
 } );
