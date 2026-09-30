@@ -117,10 +117,9 @@ describe( '#signupStep User', () => {
 	} );
 	describe( 'top bar logo', () => {
 		const renderUserStep = ( flowName ) =>
-			renderWithProvider(
-				createElement( User, { flowName, saveSignupStep: noop, translate } ),
-				{ initialPath: '/start/account' }
-			);
+			renderWithProvider( createElement( User, { flowName, saveSignupStep: noop, translate } ), {
+				initialPath: '/start/account',
+			} );
 
 		test( 'links the logo to the homepage in the account flow', () => {
 			const { getByRole } = renderUserStep( 'account' );

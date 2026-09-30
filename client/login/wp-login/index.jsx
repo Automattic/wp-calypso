@@ -413,7 +413,7 @@ export class Login extends Component {
 						noThanksRedirectUrl={ this.getNoThanksRedirectUrl() }
 						subHeadingProminent={ this.props.isFromJetpackConnector && ! isLostPasswordView }
 						notice={ notices }
-						linkLogoToHome={ ! this.props.isWooJPC }
+						linkLogoToHome
 					>
 						{ mainContent }
 					</OneLoginLayout>

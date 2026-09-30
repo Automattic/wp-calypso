@@ -7,6 +7,8 @@ jest.mock( '@automattic/calypso-analytics', () => ( {
 	recordTracksEvent: jest.fn(),
 } ) );
 
+jest.mock( 'calypso/state/selectors/is-woo-jpc-flow', () => jest.fn( () => false ) );
+
 jest.mock( 'calypso/lib/partner-branding', () => ( {
 	usePartnerBranding: jest.fn( () => ( { hasCustomBranding: false, topBarLogo: undefined } ) ),
 } ) );
@@ -16,6 +18,7 @@ import { fireEvent, screen } from '@testing-library/react';
 import { usePartnerBranding } from 'calypso/lib/partner-branding';
 import LoginContextProvider from 'calypso/login/login-context';
 import oauth2ClientsReducer from 'calypso/state/oauth2-clients/reducer';
+import isWooJPCFlow from 'calypso/state/selectors/is-woo-jpc-flow';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import OneLoginLayout, { ensureHeadingProvided } from '../one-login-layout';
 
@@ -83,6 +86,7 @@ describe( 'OneLoginLayout logo link', () => {
 
 	afterEach( () => {
 		( recordTracksEvent as jest.Mock ).mockClear();
+		( isWooJPCFlow as unknown as jest.Mock ).mockReturnValue( false );
 		( usePartnerBranding as jest.Mock ).mockReturnValue( {
 			hasCustomBranding: false,
 			topBarLogo: undefined,
@@ -127,6 +131,17 @@ describe( 'OneLoginLayout logo link', () => {
 
 	test( 'does not link the logo for Jetpack connector logins', () => {
 		renderLayout( { linkLogoToHome: true, isFromJetpackConnector: true } );
+		expect( screen.queryByRole( 'link', { name: 'WordPress.com home' } ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'does not link the logo for Jetpack onboarding and connector flows', () => {
+		renderLayout( { linkLogoToHome: true, isUnifiedConnectionFlow: true } );
+		expect( screen.queryByRole( 'link', { name: 'WordPress.com home' } ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'does not link the logo in the Woo JPC flow', () => {
+		( isWooJPCFlow as unknown as jest.Mock ).mockReturnValue( true );
+		renderLayout( { linkLogoToHome: true } );
 		expect( screen.queryByRole( 'link', { name: 'WordPress.com home' } ) ).not.toBeInTheDocument();
 	} );
 
