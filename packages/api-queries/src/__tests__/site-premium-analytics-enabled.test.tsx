@@ -1,7 +1,7 @@
 import { QueryClient, QueryClientProvider, useQuery } from '@tanstack/react-query';
 import { renderHook, waitFor } from '@testing-library/react';
 import nock from 'nock';
-import { sitePremiumAnalyticsEnabledQuery } from '../site-stats';
+import { sitePremiumAnalyticsEnabledQuery } from '../site-settings';
 
 const BASE = 'https://public-api.wordpress.com';
 

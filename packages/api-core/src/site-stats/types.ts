@@ -12,10 +12,3 @@ export interface SiteHourlyViewsResponse {
 	 */
 	data: Array< [ string, number ] >;
 }
-
-export interface SitePremiumAnalyticsSettings {
-	/**
-	 * Absent when the site does not register the setting, as on a Jetpack too old to ship it.
-	 */
-	jetpack_premium_analytics_enabled?: boolean;
-}
