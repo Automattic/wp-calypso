@@ -153,6 +153,10 @@ export interface Agency {
 	amplify?: {
 		allowed: boolean;
 	};
+	signup_meta?: {
+		/** The site count band chosen at signup, e.g. '1-5'. */
+		number_sites?: string;
+	};
 	created_at: string;
 	billing_system?: 'billingdragon' | 'legacy';
 	user?: {
@@ -264,6 +268,13 @@ export interface AgencyResourcesResponse {
 	status: string;
 	results: AgencyResource[];
 	total: number;
+}
+
+/**
+ * Response from GET /wpcom/v2/agency/stats. Public, program-wide counts.
+ */
+export interface AgencyProgramStats {
+	active_agencies: number;
 }
 
 export interface TipaltiIFrameUrl {

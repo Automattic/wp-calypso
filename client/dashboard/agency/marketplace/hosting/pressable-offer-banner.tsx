@@ -142,7 +142,7 @@ export default function PressableOffers( { agency }: { agency: Agency | null | u
 						isExternal: true,
 					},
 				] }
-				footnote={ __( '*Offer valid August 11 – October 13, 2026' ) }
+				footnote={ __( '*Offer valid August 11 – September 30, 2026' ) }
 				toggleEventName="calypso_a4a_pressable_promo_offer_q3_2026_toggle_view"
 			/>
 		);
@@ -196,7 +196,7 @@ export default function PressableOffers( { agency }: { agency: Agency | null | u
 					isExternal: true,
 				},
 			] }
-			footnote={ __( '*Offer valid August 11 – October 13, 2026' ) }
+			footnote={ __( '*Offer valid August 11 – September 30, 2026' ) }
 			toggleEventName="calypso_a4a_pressable_expansion_offer_toggle_view"
 		/>
 	);

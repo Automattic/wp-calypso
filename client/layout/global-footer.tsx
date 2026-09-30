@@ -84,12 +84,12 @@ const isDarkFooterPage = ( state: AppState ) => {
 
 export function GlobalFooter( props: FooterProps ) {
 	const isDarkEnding = useSelector( isDarkFooterPage );
+	// `footer/light` forces the white footer, even on dark-ending pages.
+	const isForcedLight = isEnabled( 'footer/light' );
+	const colorway = props.colorway === 'white' && isDarkEnding ? 'dark' : props.colorway;
 
 	return props.colorway ? (
-		<Footer2026Privacy
-			{ ...props }
-			colorway={ props.colorway === 'white' && isDarkEnding ? 'dark' : props.colorway }
-		/>
+		<Footer2026Privacy { ...props } colorway={ isForcedLight ? 'white' : colorway } />
 	) : (
 		<UniversalNavbarFooter { ...props } />
 	);

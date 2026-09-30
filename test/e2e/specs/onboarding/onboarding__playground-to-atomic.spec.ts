@@ -171,9 +171,17 @@ test.describe(
 						'Feel free to close this window. We’ll email you when your new site is ready.'
 					)
 				).toBeVisible( { timeout: 120 * 1000 } );
-				await expect( page.getByRole( 'heading', { name: 'Hooray!' } ) ).toBeVisible( {
+				// The importer renders an error screen when the import fails, so stop waiting
+				// as soon as either outcome shows up instead of burning the full timeout.
+				const successHeading = page.getByRole( 'heading', { name: 'Hooray!' } );
+				const errorHeading = page.getByRole( 'heading', { name: 'Oops, something went wrong' } );
+				await expect( successHeading.or( errorHeading ) ).toBeVisible( {
 					timeout: 10 * 60 * 1000,
 				} );
+				await expect( errorHeading, 'The Playground import failed on WordPress.com' ).toBeHidden( {
+					timeout: 1000,
+				} );
+				await expect( successHeading ).toBeVisible();
 				await expect(
 					page.getByText( 'Congratulations. Your content was successfully imported.' )
 				).toBeVisible();

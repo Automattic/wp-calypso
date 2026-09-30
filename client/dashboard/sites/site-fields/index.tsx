@@ -30,12 +30,14 @@ import { isDashboardBackport } from '../../utils/is-dashboard-backport';
 import { wpcomLink } from '../../utils/link';
 import { getSiteBadge } from '../../utils/site-badge';
 import { hasHostingFeature, hasJetpackModule } from '../../utils/site-features';
+import { getStorageUsagePercent } from '../../utils/site-storage';
 import { getVisibilityLabels } from '../../utils/site-visibility';
 import { canManageSite } from '../features';
 import { useAiLaunchpad } from '../hooks/use-ai-launchpad';
 import SitePreview from '../site-preview';
 import { JetpackLogo } from './jetpack-logo';
 import { PlanExpiryStatus } from './plan-expiry-status';
+import { useIsSiteUnreachable } from './site-unreachable-status';
 import type { SiteBadge, SiteBlockingStatus, SiteVisibility } from '../../types';
 import type { Site } from '@automattic/api-core';
 import type { ComponentProps } from 'react';
@@ -84,19 +86,30 @@ export function SiteLink( {
 }
 
 export function Name( { site, value }: { site: Site; value: string } ) {
-	return <NameRenderer badge={ getSiteBadge( site ) } muted={ site.is_deleted } value={ value } />;
+	const { ref, inView } = useInView( { triggerOnce: true, fallbackInView: true } );
+	const isUnreachable = useIsSiteUnreachable( site, inView );
+
+	return (
+		<div ref={ ref }>
+			<NameRenderer
+				badges={ [ getSiteBadge( site ), isUnreachable ? 'unreachable' : null ] }
+				muted={ site.is_deleted }
+				value={ value }
+			/>
+		</div>
+	);
 }
 
 export function NameRenderer( {
-	badge,
+	badges,
 	muted,
 	value,
 }: {
-	badge: SiteBadge;
+	badges: SiteBadge[];
 	muted: boolean;
 	value: string;
 } ) {
-	const renderBadge = () => {
+	const renderBadge = ( badge: SiteBadge ) => {
 		switch ( badge ) {
 			case 'redirect':
 				return <Badge intent="draft">{ __( 'Redirect' ) }</Badge>;
@@ -114,12 +127,12 @@ export function NameRenderer( {
 				return <Badge intent="low">{ __( 'Migration pending' ) }</Badge>;
 			case 'migration_started':
 				return <Badge intent="informational">{ __( 'Migration started' ) }</Badge>;
+			case 'unreachable':
+				return <Badge intent="high">{ __( 'Unreachable' ) }</Badge>;
 			default:
 				return null;
 		}
 	};
-
-	const badgeElement = renderBadge();
 
 	return (
 		<HStack justify="flex-start" alignment="center" spacing={ 1 }>
@@ -128,7 +141,14 @@ export function NameRenderer( {
 			) : (
 				<span style={ titleFieldTextOverflowStyles }>{ value }</span>
 			) }
-			{ badgeElement && <span style={ { flexShrink: 0 } }>{ badgeElement }</span> }
+			{ badges.map(
+				( badge ) =>
+					badge && (
+						<span key={ badge } style={ { flexShrink: 0 } }>
+							{ renderBadge( badge ) }
+						</span>
+					)
+			) }
 		</HStack>
 	);
 }
@@ -342,8 +362,7 @@ export function MediaStorage( { site }: { site?: Site } ) {
 			return <IneligibleIndicator />;
 		}
 
-		const { storage_used_bytes, max_storage_bytes } = mediaStorage;
-		return `${ Math.round( ( storage_used_bytes / max_storage_bytes ) * 1000 ) / 10 }%`;
+		return `${ getStorageUsagePercent( mediaStorage ) }%`;
 	};
 
 	return (

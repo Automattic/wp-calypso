@@ -32,6 +32,10 @@ jest.mock( '../../components/font-picker', () => ( {
 	__esModule: true,
 	default: jest.fn( () => null ),
 } ) );
+jest.mock( '../../components/open-help-center-button', () => ( {
+	__esModule: true,
+	default: jest.fn( () => null ),
+} ) );
 jest.mock( '../../components/chat-response-tracking', () => ( {
 	__esModule: true,
 	default: jest.fn( () => null ),
@@ -44,6 +48,7 @@ import ButtonPicker from '../../components/button-picker';
 import ChatResponseRenderedTracker from '../../components/chat-response-tracking';
 import ColorPicker from '../../components/color-picker';
 import FontPicker from '../../components/font-picker';
+import OpenHelpCenterButton from '../../components/open-help-center-button';
 import convertToolMessagesToComponents from '../convert-tool-messages-to-components';
 import {
 	BIG_SKY_SHOW_COMPONENT_TOOL_ID,
@@ -95,7 +100,6 @@ const createApplyBlockEditsMessage = (
 describe( 'convertToolMessagesToComponents', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
-		window.history.replaceState( {}, '', '/' );
 	} );
 
 	it( 'passes through user messages unchanged', () => {
@@ -217,28 +221,6 @@ describe( 'convertToolMessagesToComponents', () => {
 				toolCallId: 'tool-call-1',
 				responseTrackingProperties: { suggested_edit_count: 2 },
 			},
-		} );
-	} );
-
-	it( 'renders the provider component for a migrated type with `?am_abilities=0`', () => {
-		window.history.replaceState( {}, '', '/?am_abilities=0' );
-		const message = createToolMessage( LEGACY_SHOW_COMPONENT_TOOL_ID, {
-			type: 'color-picker',
-			props: { variations: [] },
-			isCurrent: true,
-		} );
-		const getChatComponent = jest.fn().mockReturnValue( MockComponent );
-
-		// The switch is read once per page load, so load the converter under it.
-		jest.isolateModules( () => {
-			const { default: convertUnderSwitch } = jest.requireActual<
-				typeof import( '../convert-tool-messages-to-components' )
-			>( '../convert-tool-messages-to-components' );
-
-			const result = convertUnderSwitch( { messages: [ message ], getChatComponent } );
-
-			expect( getChatComponent ).toHaveBeenCalledWith( 'color-picker' );
-			expect( result[ 0 ].content[ 0 ] ).toMatchObject( { component: MockComponent } );
 		} );
 	} );
 
@@ -1076,6 +1058,7 @@ describe( 'convertToolMessagesToComponents', () => {
 			[ 'button-picker', ButtonPicker ],
 			[ 'color-picker', ColorPicker ],
 			[ 'font-picker', FontPicker ],
+			[ 'open-help-center-button', OpenHelpCenterButton ],
 		] )( 'resolves %s to its AM component', async ( type, picker ) => {
 			const message = createToolMessage( SHOW_COMPONENT_TOOL_ID, {
 				type,

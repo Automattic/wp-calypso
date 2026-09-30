@@ -20,8 +20,7 @@ import { useAnalytics } from '../../../app/analytics';
 import { useAuth } from '../../../app/auth';
 import { ButtonStack } from '../../../components/button-stack';
 import { DataViews } from '../../../components/dataviews';
-import { getLicenseProductName } from './license-status';
-import type { AgencySite, JetpackLicense } from '@automattic/api-core';
+import type { AgencySite } from '@automattic/api-core';
 import type { Field, View } from '@wordpress/dataviews';
 
 import './style.scss';
@@ -42,11 +41,12 @@ const DEFAULT_SITES_VIEW: View = {
 };
 
 interface Props {
-	license: JetpackLicense;
+	licenseKey: string;
+	productName: string;
 	closeModal?: () => void;
 }
 
-export default function AssignLicenseModal( { license, closeModal }: Props ) {
+export default function AssignLicenseModal( { licenseKey, productName, closeModal }: Props ) {
 	const { recordTracksEvent } = useAnalytics();
 	const { user } = useAuth();
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
@@ -55,7 +55,7 @@ export default function AssignLicenseModal( { license, closeModal }: Props ) {
 	const [ view, setView ] = useState< View >( DEFAULT_SITES_VIEW );
 	const [ selectedSite, setSelectedSite ] = useState< AgencySite | null >( null );
 	// Jetpack Backup and Scan can't be assigned to a multisite.
-	const isMultisiteAssignable = ! /^jetpack-(backup|scan)/.test( license.license_key );
+	const isMultisiteAssignable = ! /^jetpack-(backup|scan)/.test( licenseKey );
 
 	const { data, isLoading, isPlaceholderData } = useQuery( {
 		...paginatedAgencySitesQuery(
@@ -104,14 +104,14 @@ export default function AssignLicenseModal( { license, closeModal }: Props ) {
 		}
 		recordTracksEvent( 'calypso_a4a_license_list_assign_license_click' );
 		assign.mutate(
-			{ licenseKey: license.license_key, siteId: selectedSite.blog_id },
+			{ licenseKey, siteId: selectedSite.blog_id },
 			{
 				onSuccess: () => {
 					createSuccessNotice(
 						sprintf(
 							/* translators: %1$s is the product name, %2$s is the site URL. */
 							__( '%1$s has been assigned to %2$s.' ),
-							getLicenseProductName( license ),
+							productName,
 							selectedSite.url
 						),
 						{ type: 'snackbar' }
