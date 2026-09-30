@@ -2,18 +2,47 @@ import { DNS_RECORD_TYPES } from '@automattic/api-core';
 import { __experimentalVStack as VStack, Button } from '@wordpress/components';
 import { DataForm, Field, useFormValidity } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody } from '../../components/card';
 import { DNS_RECORD_CONFIGS } from './records/dns-record-configs';
 import { getRRsetTtl } from './utils';
-import type { DnsRecordTypeFormData, DnsRecordFormData } from './records/dns-record-configs';
+import type {
+	DnsRecordConfig,
+	DnsRecordTypeFormData,
+	DnsRecordFormData,
+} from './records/dns-record-configs';
 import type { DnsRecord, DnsRecordType } from '@automattic/api-core';
 
 const typeForm = {
 	layout: { type: 'regular' as const },
 	fields: [ 'type' ],
 };
+
+interface RecordDataFormProps {
+	data: DnsRecordFormData;
+	config: DnsRecordConfig;
+	onChange: ( edits: Partial< DnsRecordFormData > ) => void;
+	onValidityChange: ( isValid: boolean ) => void;
+}
+
+function RecordDataForm( { data, config, onChange, onValidityChange }: RecordDataFormProps ) {
+	const { validity, isValid } = useFormValidity( data, config.fields, config.form );
+
+	useEffect( () => {
+		onValidityChange( isValid );
+	}, [ isValid, onValidityChange ] );
+
+	return (
+		<DataForm< DnsRecordFormData >
+			data={ data }
+			fields={ config.fields }
+			form={ config.form }
+			validity={ validity }
+			onChange={ onChange }
+		/>
+	);
+}
 
 interface DNSRecordFormProps {
 	domainName: string;
@@ -95,7 +124,7 @@ export default function DNSRecordForm( {
 	} );
 
 	const config = DNS_RECORD_CONFIGS[ typeFormData.type ];
-	const { validity, isValid } = useFormValidity( formData, config.fields, config.form );
+	const [ isValid, setIsValid ] = useState( true );
 
 	const typeFields: Field< DnsRecordTypeFormData >[] = [
 		{
@@ -137,14 +166,13 @@ export default function DNSRecordForm( {
 								setFormData( withRRsetTtl( { ...defaultFormData, type }, type ) );
 							} }
 						/>
-						<DataForm< DnsRecordFormData >
+						<RecordDataForm
 							// This key prop is used to force a form re-render when the record type is changed
 							// Othewise, the fields that have validation errors will not have validation reset
 							key={ typeFormData.type }
 							data={ formData }
-							fields={ config.fields }
-							form={ config.form }
-							validity={ validity }
+							config={ config }
+							onValidityChange={ setIsValid }
 							onChange={ ( edits: Partial< DnsRecordFormData > ) => {
 								const ttlEdited = isTtlEdited || 'ttl' in edits;
 								setIsTtlEdited( ttlEdited );

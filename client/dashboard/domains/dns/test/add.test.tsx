@@ -119,6 +119,22 @@ describe( '<DomainAddDNS>', () => {
 		expect( scope.isDone() ).toBe( false );
 	} );
 
+	test( 'adds a root MX record after an invalid name was cleared under another type', async () => {
+		const user = userEvent.setup();
+		mockApi();
+		const { scope } = mockUpdateDns();
+		render( <DomainAddDNS /> );
+
+		await selectType( 'CNAME' );
+		await user.type( getNameInput(), 'a' );
+		await user.clear( getNameInput() );
+		await selectType( 'MX' );
+		await user.type( screen.getByRole( 'textbox', { name: 'Handled by' } ), 'mx-c.example.net' );
+		await user.click( screen.getByRole( 'button', { name: 'Add DNS record' } ) );
+
+		await waitFor( () => expect( scope.isDone() ).toBe( true ) );
+	} );
+
 	test( 'adds a TXT record whose name starts with an underscore', async () => {
 		const user = userEvent.setup();
 		mockApi();
