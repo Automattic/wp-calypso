@@ -1,38 +1,66 @@
 import { agencyTeamInviteMutation } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
-import {
-	Button,
-	Modal,
-	TextControl,
-	TextareaControl,
-	__experimentalVStack as VStack,
-} from '@wordpress/components';
+import { Button, Modal, __experimentalVStack as VStack } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
+import { DataForm, useFormValidity } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
 import { ButtonStack } from '../../components/button-stack';
+import type { Field, Form } from '@wordpress/dataviews';
 
 interface InviteTeamMemberModalProps {
 	agencyId: number;
 	onClose: () => void;
 }
 
+interface InviteFormData {
+	login: string;
+	message: string;
+}
+
+const fields: Field< InviteFormData >[] = [
+	{
+		id: 'login',
+		type: 'text',
+		label: __( 'Email or WordPress.com username' ),
+		placeholder: __( 'team-member@example.com' ),
+		isValid: {
+			custom: ( item ) =>
+				item.login.trim() === ''
+					? __( 'Please enter a valid email or WordPress.com username.' )
+					: null,
+		},
+	},
+	{
+		id: 'message',
+		type: 'text',
+		Edit: 'textarea',
+		label: __( 'Message' ),
+		description: __(
+			'Optional: Include a custom message to provide more context to your team member.'
+		),
+	},
+];
+
+const form: Form = {
+	layout: { type: 'regular' },
+	fields: [ 'login', 'message' ],
+};
+
 export default function InviteTeamMemberModal( { agencyId, onClose }: InviteTeamMemberModalProps ) {
-	const [ login, setLogin ] = useState( '' );
-	const [ message, setMessage ] = useState( '' );
-	const [ error, setError ] = useState( '' );
+	const [ formData, setFormData ] = useState< InviteFormData >( { login: '', message: '' } );
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const invite = useMutation( agencyTeamInviteMutation( agencyId ) );
+	const { validity, isValid } = useFormValidity( formData, fields, form );
 
 	const onSubmit = ( event: React.FormEvent ) => {
 		event.preventDefault();
-		if ( ! login.trim() ) {
-			setError( __( 'Please enter a valid email or WordPress.com username.' ) );
+		if ( ! isValid || invite.isPending ) {
 			return;
 		}
 		invite.mutate(
-			{ login: login.trim(), message: message.trim() },
+			{ login: formData.login.trim(), message: formData.message.trim() },
 			{
 				onSuccess: () => {
 					createSuccessNotice( __( 'The invitation has been successfully sent.' ), {
@@ -55,26 +83,14 @@ export default function InviteTeamMemberModal( { agencyId, onClose }: InviteTeam
 		<Modal title={ __( 'Invite a team member' ) } onRequestClose={ onClose } size="medium">
 			<form onSubmit={ onSubmit }>
 				<VStack spacing={ 4 }>
-					<TextControl
-						__next40pxDefaultSize
-						__nextHasNoMarginBottom
-						label={ __( 'Email or WordPress.com username' ) }
-						placeholder={ __( 'team-member@example.com' ) }
-						value={ login }
-						help={ error || undefined }
-						onChange={ ( value ) => {
-							setLogin( value );
-							setError( '' );
-						} }
-					/>
-					<TextareaControl
-						__nextHasNoMarginBottom
-						label={ __( 'Message' ) }
-						help={ __(
-							'Optional: Include a custom message to provide more context to your team member.'
-						) }
-						value={ message }
-						onChange={ setMessage }
+					<DataForm< InviteFormData >
+						data={ formData }
+						fields={ fields }
+						form={ form }
+						validity={ validity }
+						onChange={ ( edits: Partial< InviteFormData > ) =>
+							setFormData( ( data ) => ( { ...data, ...edits } ) )
+						}
 					/>
 					<ButtonStack justify="flex-end">
 						<Button variant="tertiary" __next40pxDefaultSize onClick={ onClose }>
