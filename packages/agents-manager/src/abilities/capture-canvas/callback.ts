@@ -1,6 +1,6 @@
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { resolveClientId } from '../../utils/block-ids';
-import { captureCanvas } from '../../utils/canvas-capture';
+import { captureCanvas, describeCaptureShape } from '../../utils/canvas-capture';
 import { isRecord } from '../../utils/is-record';
 import { errorResult, successResult } from '../ability-result';
 import type { AbilityResult } from '../types';
@@ -28,19 +28,26 @@ export async function captureCanvasCallback( rawInput: unknown ): Promise< Abili
 		);
 	}
 
-	// What the capture did, not what was asked: an edit reaching past a
-	// screenful gets the whole page whether or not it was requested, and a
-	// block with no box on the canvas framed nothing.
-	const { fullPage: coveredPage, framed } = fileParts[ 0 ].metadata ?? {};
-	let message: string;
+	// What the capture did, not what was asked: blocks far apart get a picture
+	// each, blocks spread wider than bands can cover get the whole page, and a
+	// block with no box on the canvas framed nothing. Summed across the
+	// pictures, since each band counts only the blocks it holds.
+	const coveredPage = fileParts[ 0 ].metadata?.fullPage;
+	const framed = fileParts.reduce( ( total, part ) => {
+		const count = part.metadata?.framed;
+
+		return total + ( typeof count === 'number' ? count : 0 );
+	}, 0 );
+
+	let described: string;
 
 	if ( coveredPage ) {
-		message = __(
+		described = __(
 			'Here is the whole page, top to bottom. It is scaled down to fit, so body text will not be legible — read it for colour, type scale, spacing and section rhythm, and take an ordinary picture of a specific area when wording or fine detail matters. Photographs are shown as flat placeholder boxes at their real size.',
 			__i18n_text_domain__
 		);
-	} else if ( typeof framed === 'number' && framed > 0 ) {
-		message = sprintf(
+	} else if ( framed > 0 ) {
+		described = sprintf(
 			/* translators: %d: number of blocks framed in the screenshot. */
 			_n(
 				'Here is the canvas around %d block. Photographs are shown as flat placeholder boxes at their real size, so treat any grey rectangle as an image that is present, not as a missing one.',
@@ -51,11 +58,17 @@ export async function captureCanvasCallback( rawInput: unknown ): Promise< Abili
 			framed
 		);
 	} else {
-		message = __(
+		described = __(
 			'Here is the visible area of the canvas. Photographs are shown as flat placeholder boxes at their real size, so treat any grey rectangle as an image that is present, not as a missing one.',
 			__i18n_text_domain__
 		);
 	}
+
+	// Only the band count needs adding here: the whole-page branch already says
+	// it is scaled down, which is the other thing the shape reports.
+	const message = [ described, coveredPage ? '' : describeCaptureShape( fileParts ) ]
+		.filter( Boolean )
+		.join( ' ' );
 
 	return { ...successResult( message ), __file_parts: fileParts };
 }

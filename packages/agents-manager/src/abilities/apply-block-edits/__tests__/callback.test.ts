@@ -3,7 +3,12 @@ jest.mock( '../../../utils/block-ids', () => ( {
 	resolveClientId: jest.fn(),
 } ) );
 jest.mock( '../../../utils/canvas-binding', () => ( { getBlockingMove: jest.fn() } ) );
-jest.mock( '../../../utils/canvas-capture', () => ( { captureCanvas: jest.fn() } ) );
+// Only the capture itself is stubbed; the sentences describing what came back
+// are pure and stay real, so the assertions here exercise them.
+jest.mock( '../../../utils/canvas-capture', () => ( {
+	...jest.requireActual( '../../../utils/canvas-capture' ),
+	captureCanvas: jest.fn(),
+} ) );
 jest.mock( '../../../utils/checkpoints', () => ( {
 	checkpointKeys: { BLOCKS: 'blocks', CUSTOM_CSS: 'custom_css', NAVIGATION: 'navigation' },
 	sealCheckpointForSwap: jest.fn(),
@@ -458,6 +463,141 @@ describe( 'applyBlockEditsCallback', () => {
 		expect( result ).toEqual( expect.objectContaining( { success: false } ) );
 		expect( withCheckpoint ).not.toHaveBeenCalled();
 		expect( recordBigSkyTracksEvent ).not.toHaveBeenCalled();
+	} );
+
+	describe( 'a comparison against reference blocks', () => {
+		const band = ( metadata?: Record< string, unknown > ) => ( {
+			type: 'file' as const,
+			file: { name: 'canvas.webp', mimeType: 'image/webp', bytes: 'AAAA' },
+			...( metadata && { metadata } ),
+		} );
+
+		// `getUnframedClientIds` is real here, and it asks the canvas whether a
+		// block has a box. With no canvas every reference is unframed, which is
+		// the warning case; these tests mount one so the other branch is real too.
+		let unmountCanvas: () => void = () => undefined;
+
+		const mountCanvasWith = ( clientIds: string[] ) => {
+			const frame = document.createElement( 'iframe' );
+			frame.name = 'editor-canvas';
+			document.body.append( frame );
+
+			const canvasDocument = frame.contentDocument as Document;
+
+			clientIds.forEach( ( clientId ) => {
+				const element = canvasDocument.createElement( 'div' );
+				element.setAttribute( 'data-block', clientId );
+				element.getBoundingClientRect = () => ( { width: 900, height: 100 } ) as DOMRect;
+				canvasDocument.body.append( element );
+			} );
+
+			unmountCanvas = () => frame.remove();
+		};
+
+		afterEach( () => {
+			unmountCanvas();
+			unmountCanvas = () => undefined;
+		} );
+
+		it( 'frames the reference blocks as well as the changed ones', async () => {
+			await applyBlockEditsCallback( { ...input, visualCheckClientIds: [ 'ref1', 7, 'ref1' ] } );
+
+			// Both sides of the comparison, deduplicated. The rasterizer frames
+			// the union of every id it is given, so this is what puts the
+			// reference in a picture at all.
+			expect( captureCanvas ).toHaveBeenCalledWith( {
+				clientIds: [ 'resolved-a1', 'resolved-ref1' ],
+				fullPage: false,
+			} );
+		} );
+
+		it( 'does not count a changed block as a reference', async () => {
+			// Naming the block being edited would have the message claim a
+			// comparison against the very thing that moved.
+			jest.mocked( captureCanvas ).mockResolvedValue( [ band() ] );
+
+			const result = await applyBlockEditsCallback( {
+				...input,
+				visualCheckClientIds: [ 'a1' ],
+			} );
+
+			expect( captureCanvas ).toHaveBeenCalledWith( {
+				clientIds: [ 'resolved-a1' ],
+				fullPage: false,
+			} );
+			expect( result.result.message ).not.toContain( 'named for comparison' );
+		} );
+
+		it( 'tells the model the reference is in the picture', async () => {
+			mountCanvasWith( [ 'resolved-ref1' ] );
+			jest.mocked( captureCanvas ).mockResolvedValue( [ band() ] );
+
+			const result = await applyBlockEditsCallback( {
+				...input,
+				visualCheckClientIds: [ 'ref1' ],
+			} );
+
+			expect( result.result.message ).toContain( '1 block(s) named for comparison' );
+		} );
+
+		it( 'says when the two sides came back as separate pictures', async () => {
+			// The point of the change: distant sections get a full-size picture
+			// each instead of one scaled-down page.
+			mountCanvasWith( [ 'resolved-ref1' ] );
+			jest
+				.mocked( captureCanvas )
+				.mockResolvedValue( [
+					band( { regionIndex: 1, regionCount: 2 } ),
+					band( { regionIndex: 2, regionCount: 2 } ),
+				] );
+
+			const result = await applyBlockEditsCallback( {
+				...input,
+				visualCheckClientIds: [ 'ref1' ],
+			} );
+
+			expect( result.result.message ).toContain( '2 pictures' );
+			expect( result.result.message ).toContain( 'named for comparison' );
+		} );
+
+		it( 'warns when the pair was too spread out for bands', async () => {
+			// Past the cap the rasterizer falls back to the whole page, and the
+			// model has to know it is reading a scaled-down sheet.
+			mountCanvasWith( [ 'resolved-ref1' ] );
+			jest.mocked( captureCanvas ).mockResolvedValue( [ band( { fullPage: true } ) ] );
+
+			const result = await applyBlockEditsCallback( {
+				...input,
+				visualCheckClientIds: [ 'ref1' ],
+			} );
+
+			expect( result.result.message ).toContain( 'not be legible' );
+		} );
+
+		it( 'refuses to imply a comparison it cannot show', async () => {
+			// The failure this exists for: the reference does not resolve on the
+			// canvas, the capture quietly frames the changed side alone, and it
+			// looks exactly like a picture that contains both.
+			jest.mocked( captureCanvas ).mockResolvedValue( [ band() ] );
+
+			const result = await applyBlockEditsCallback( {
+				...input,
+				visualCheckClientIds: [ 'ref1' ],
+			} );
+
+			expect( result.result.message ).toContain(
+				'does not contain the blocks named for comparison'
+			);
+			expect( result.result.message ).toContain( 'cannot confirm a match' );
+		} );
+
+		it( 'leaves the message alone when no reference was named', async () => {
+			jest.mocked( captureCanvas ).mockResolvedValue( [ band() ] );
+
+			const result = await applyBlockEditsCallback( input );
+
+			expect( result.result.message ).not.toContain( 'named for comparison' );
+		} );
 	} );
 
 	// The flag ships only with an image: the chat withholds the summary on its
