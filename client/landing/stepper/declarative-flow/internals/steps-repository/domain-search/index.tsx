@@ -220,13 +220,9 @@ const DomainSearchStep: StepType< {
 			// Free-subdomain skip card copy, in order of precedence: per-flow
 			// `freeSubdomainTitle` / `freeSubdomainButtonLabel` overrides, then the WoW
 			// funnel default (no free-subdomain option to offer, see `isWowFunnel` above),
-			// then the results experiment copy (the bare subdomain as the title), then the
-			// flow default resolved by `getSkipSuggestionCopy`.
+			// then the flow default resolved by `getSkipSuggestionCopy`.
 			skipSuggestionCopy: getSkipSuggestionCopy( flow, __, {
-				title:
-					freeSubdomainTitle ??
-					wowSkipCopy ??
-					( isCustomDomainBannerCopyVariation ? '%(domain)s' : undefined ),
+				title: freeSubdomainTitle ?? wowSkipCopy,
 				buttonText: freeSubdomainButtonLabel ?? wowSkipCopy,
 			} ),
 			// WoW funnel: hide the free *.wordpress.com subdomain card entirely and offer only
@@ -257,7 +253,6 @@ const DomainSearchStep: StepType< {
 		isWowFunnel,
 		wowSkipCopy,
 		resultsVariation,
-		isCustomDomainBannerCopyVariation,
 		tldQuery,
 		query,
 		allowedTldsProp,
