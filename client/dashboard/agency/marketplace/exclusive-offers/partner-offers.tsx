@@ -8,10 +8,13 @@ import {
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { Badge } from '@wordpress/ui';
+import { getQueryArgs } from '@wordpress/url';
 import { useState, useMemo } from 'react';
 import { ButtonStack } from '../../../components/button-stack';
 import { Card, CardBody } from '../../../components/card';
 import Grid from '../../../components/grid';
+import RouterLinkButton from '../../../components/router-link-button';
+import { isDashboardPath } from '../../../utils/link';
 import { filterOptions, getPartnerOffers } from './constants';
 import type { PartnerOffer, PartnerOfferLinks, RecordTracksEvent } from './types';
 import type { View, Field } from '@wordpress/dataviews';
@@ -33,10 +36,12 @@ function PartnerOfferCard( {
 	item,
 	recordTracksEvent,
 	onCtaClick,
+	shouldUseRouterLink,
 }: {
 	item: PartnerOffer;
 	recordTracksEvent: RecordTracksEvent;
 	onCtaClick?: ( offer: PartnerOffer ) => void;
+	shouldUseRouterLink: boolean;
 } ) {
 	const offerType = filterOptions.offerTypes.find( ( option ) => option.value === item.offerType );
 
@@ -83,15 +88,26 @@ function PartnerOfferCard( {
 							gap: '16px',
 						} }
 					>
-						{ /* TODO: non-external URLs are classic A4A marketplace paths that 404 until the dashboard Marketplace exists. */ }
-						<Button
-							variant="secondary"
-							href={ item.cta.url }
-							target={ item.cta.external ? '_blank' : undefined }
-							onClick={ handleCTAClick }
-						>
-							{ item.cta.label }
-						</Button>
+						{ shouldUseRouterLink && isDashboardPath( item.cta.url ) ? (
+							<RouterLinkButton
+								variant="secondary"
+								to={ item.cta.url.split( '?' )[ 0 ] }
+								search={ getQueryArgs( item.cta.url ) }
+								onClick={ handleCTAClick }
+							>
+								{ item.cta.label }
+							</RouterLinkButton>
+						) : (
+							<Button
+								variant="secondary"
+								href={ item.cta.url }
+								target={ item.cta.external ? '_blank' : undefined }
+								rel={ item.cta.external ? 'noopener noreferrer' : undefined }
+								onClick={ handleCTAClick }
+							>
+								{ item.cta.label }
+							</Button>
+						) }
 						<Button
 							variant="link"
 							href={ item.termsUrl ?? VIEW_TERMS_URL }
@@ -114,10 +130,16 @@ export default function PartnerOffers( {
 	links,
 	recordTracksEvent = () => {},
 	onCtaClick,
+	shouldUseRouterLink = true,
 }: {
 	links: PartnerOfferLinks;
 	recordTracksEvent?: RecordTracksEvent;
 	onCtaClick?: ( offer: PartnerOffer ) => void;
+	/**
+	 * Set to false in apps without the dashboard's TanStack Router, so the CTAs
+	 * render plain anchors for the host app's own router to pick up.
+	 */
+	shouldUseRouterLink?: boolean;
 } ) {
 	const [ view, setView ] = useState< View >( initialView );
 	const partnerOffers = useMemo( () => getPartnerOffers( links ), [ links ] );
@@ -213,6 +235,7 @@ export default function PartnerOffers( {
 						item={ item }
 						recordTracksEvent={ recordTracksEvent }
 						onCtaClick={ onCtaClick }
+						shouldUseRouterLink={ shouldUseRouterLink }
 					/>
 				) ) }
 			</Grid>

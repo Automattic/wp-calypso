@@ -1,4 +1,10 @@
 import {
+	validateDomainContactInformation,
+	validateGoogleWorkspaceContactInformation,
+	validateSignupUser,
+	validateTaxContactInformation,
+} from '@automattic/api-core';
+import {
 	getDomain,
 	isDomainTransfer,
 	isDomainProduct,
@@ -11,7 +17,6 @@ import { useTranslate } from 'i18n-calypso';
 import { getLocaleSlug } from 'calypso/lib/i18n-utils';
 import { login } from 'calypso/lib/paths';
 import { addQueryArgs } from 'calypso/lib/route';
-import wp from 'calypso/lib/wp';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
 	isCompleteAndValid,
@@ -270,25 +275,16 @@ export const hydrateNestedObject = (
 	return { ...inputObj, [ path ]: childNode };
 };
 
-async function wpcomValidateSignupEmail( {
-	email,
-	is_from_registrationless_checkout,
-}: {
-	email: string;
-	is_from_registrationless_checkout: boolean;
-} ): Promise< SignupValidationResponse > {
-	return wp.req
-		.post( '/signups/validation/user/', null, {
-			locale: getLocaleSlug(),
-			email,
-			is_from_registrationless_checkout,
-		} )
-		.then( ( data: unknown ) => {
-			if ( ! isSignupValidationResponse( data ) ) {
-				throw new Error( 'Signup validation returned unknown response.' );
-			}
-			return data;
-		} );
+async function wpcomValidateSignupEmail( email: string ): Promise< SignupValidationResponse > {
+	const data = await validateSignupUser( {
+		email,
+		locale: getLocaleSlug() ?? undefined,
+		is_from_registrationless_checkout: true,
+	} );
+	if ( ! isSignupValidationResponse( data ) ) {
+		throw new Error( 'Signup validation returned unknown response.' );
+	}
+	return data;
 }
 
 function convertValidationMessages(
@@ -321,41 +317,27 @@ function convertValidationResponse( rawResponse: unknown ): DomainContactValidat
 async function wpcomValidateTaxContactInformation(
 	contactInformation: ContactValidationRequestContactInformation
 ): Promise< DomainContactValidationResponse > {
-	return wp.req
-		.post( { path: '/me/tax-contact-information/validate' }, undefined, {
-			contact_information: contactInformation,
-		} )
-		.then( convertValidationResponse );
+	return convertValidationResponse(
+		await validateTaxContactInformation( { contact_information: contactInformation } )
+	);
 }
 
 async function wpcomValidateDomainContactInformation(
 	contactInformation: ContactValidationRequestContactInformation,
 	domainNames: string[]
 ): Promise< DomainContactValidationResponse > {
-	return wp.req
-		.post(
-			{ path: '/me/domain-contact-information/validate' },
-			{
-				apiVersion: '1.2',
-			},
-			{
-				contact_information: contactInformation,
-				domain_names: domainNames,
-			}
-		)
-		.then( convertValidationResponse );
+	return convertValidationResponse(
+		await validateDomainContactInformation( contactInformation, domainNames )
+	);
 }
 
 async function wpcomValidateGSuiteContactInformation(
 	contactInformation: ContactValidationRequestContactInformation,
 	domainNames: string[]
 ): Promise< DomainContactValidationResponse > {
-	return wp.req
-		.post( { path: '/me/google-apps/validate' }, undefined, {
-			contact_information: contactInformation,
-			domain_names: domainNames,
-		} )
-		.then( convertValidationResponse );
+	return convertValidationResponse(
+		await validateGoogleWorkspaceContactInformation( contactInformation, domainNames )
+	);
 }
 
 export async function getTaxValidationResult(
@@ -436,10 +418,7 @@ async function getSignupEmailValidationResult(
 	email: string,
 	emailTakenLoginRedirect: ( email: string ) => TranslateResult
 ) {
-	const response = await wpcomValidateSignupEmail( {
-		email,
-		is_from_registrationless_checkout: true,
-	} );
+	const response = await wpcomValidateSignupEmail( email );
 	// Keep the raw messages from the endpoint before they are replaced below; they
 	// are keyed by error code, which is what makes a failure attributable.
 	const emailErrors = response.messages?.email ?? {};

@@ -1,6 +1,7 @@
 import { createBlock, parse, serialize } from '@wordpress/blocks';
 import { store as coreStore } from '@wordpress/core-data';
 import { dispatch, resolveSelect, select } from '@wordpress/data';
+import { getBlock, getBlockParents } from './editor-blocks';
 import { normalizeLabel } from './entity-title';
 import { readRecord } from './read-record';
 import { sameUrl } from './same-url';
@@ -22,7 +23,7 @@ export type NavigationBlock = Block< Record< string, unknown > >;
 /** A menu's post id, as block attributes and site metadata carry it. */
 export type MenuId = number | string;
 
-const isMenuId = ( value: unknown ): value is MenuId =>
+export const isMenuId = ( value: unknown ): value is MenuId =>
 	( typeof value === 'number' || typeof value === 'string' ) && !! value;
 
 /** Ids arrive from block attributes and from metadata, so a `19` can meet a `'19'`. */
@@ -42,7 +43,7 @@ interface NavigationItem {
 	parent?: number;
 }
 
-const NAVIGATION_BLOCK = 'core/navigation';
+export const NAVIGATION_BLOCK = 'core/navigation';
 export const NAVIGATION_LINK_BLOCK = 'core/navigation-link';
 export const NAVIGATION_SUBMENU_BLOCK = 'core/navigation-submenu';
 const PAGE_LIST_BLOCK = 'core/page-list';
@@ -102,8 +103,25 @@ const hasPendingEdits = ( id: MenuId ): boolean =>
 			| undefined
 	 )?.hasEditsForEntityRecord?.( 'postType', 'wp_navigation', id );
 
-const isMenuItem = ( item: NavigationBlock ) =>
-	item.name === NAVIGATION_LINK_BLOCK || item.name === NAVIGATION_SUBMENU_BLOCK;
+/** The saved menu the first navigation block in `chain` shows, by its `ref`. */
+export const getMenuIdOf = ( chain: string[] ): MenuId | undefined => {
+	const navigation = chain.map( getBlock ).find( ( block ) => block?.name === NAVIGATION_BLOCK );
+	const ref = navigation?.attributes.ref;
+
+	return isMenuId( ref ) ? ref : undefined;
+};
+
+/** The saved menu `clientId` sits in, or is. */
+export const getMenuIdAround = ( clientId: string ): MenuId | undefined =>
+	getMenuIdOf( [ clientId, ...getBlockParents( clientId ) ] );
+
+/** Whether the block is a menu item: a link, or a submenu holding more of them. */
+export const isMenuItem = ( block: { name?: string } ): boolean =>
+	block.name === NAVIGATION_LINK_BLOCK || block.name === NAVIGATION_SUBMENU_BLOCK;
+
+// Parsing mints new clientIds, so a record is parsed once: the items the page
+// structure showed the agent are then the ones a later read finds.
+const parsedItems = new WeakMap< NavigationRecord, NavigationBlock[] >();
 
 /**
  * A record's items: its blocks once the editor has touched it, otherwise parsed
@@ -115,11 +133,18 @@ const getItems = ( record: NavigationRecord ): NavigationBlock[] => {
 		return record.blocks;
 	}
 
-	const content = record.content;
-	const serialized =
-		typeof content === 'string' ? content : ( ( content as { raw?: string } )?.raw ?? '' );
+	let items = parsedItems.get( record );
 
-	return serialized ? ( parse( serialized ) as NavigationBlock[] ) : [];
+	if ( ! items ) {
+		const content = record.content;
+		const serialized =
+			typeof content === 'string' ? content : ( ( content as { raw?: string } )?.raw ?? '' );
+
+		items = serialized ? ( parse( serialized ) as NavigationBlock[] ) : [];
+		parsedItems.set( record, items );
+	}
+
+	return items;
 };
 
 /**
@@ -202,6 +227,17 @@ export async function readMenuItems( id: MenuId ): Promise< NavigationBlock[] | 
 	const menu = await readMenu( id );
 
 	return menu ? getItems( menu ) : null;
+}
+
+/** A menu's items as the store holds them now, or `undefined` while it has not loaded. */
+export function getLoadedMenuItems( id: MenuId ): NavigationBlock[] | undefined {
+	const menu = (
+		select( coreStore ) as unknown as
+			| { getEditedEntityRecord?: ( ...args: unknown[] ) => NavigationRecord | false | undefined }
+			| undefined
+	 )?.getEditedEntityRecord?.( 'postType', 'wp_navigation', id );
+
+	return menu ? getItems( menu ) : undefined;
 }
 
 /** Whether any item matches, however deeply nested. */
