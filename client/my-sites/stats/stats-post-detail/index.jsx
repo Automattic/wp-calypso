@@ -2,6 +2,7 @@ import config from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { Button as CoreButton } from '@wordpress/components';
+import { Stack, Text } from '@wordpress/ui';
 import clsx from 'clsx';
 import isEqual from 'fast-deep-equal/es6';
 import { localize } from 'i18n-calypso';
@@ -264,16 +265,21 @@ class StatsPostDetail extends Component {
 					<StatsPlaceholder isLoading={ isLoading } />
 
 					{ ! isLoading && countViews === 0 && (
-						<div className="stats-post-detail__no-views">
-							<p>
+						<Stack
+							className="stats-post-detail__no-views"
+							direction="column"
+							gap="md"
+							align="start"
+						>
+							<Text variant="body-lg" style={ { color: 'var(--color-text-subtle)' } }>
 								{ translate(
 									"You don't have any views yet. Learn some tips to attract more visitors."
 								) }
-							</p>
+							</Text>
 							<CoreButton variant="primary" onClick={ this.props.openSupportDoc }>
 								{ translate( 'View guide' ) }
 							</CoreButton>
-						</div>
+						</Stack>
 					) }
 
 					{ ! isLoading && countViews > 0 && (
