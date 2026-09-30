@@ -23,6 +23,8 @@ import type { AgencyProduct } from '@automattic/api-core';
 
 interface Props {
 	lines: CartLine[];
+	/** The development site whose plan the lines are, when there is one. */
+	siteUrl?: string;
 	currency: string;
 	term: TermPricing;
 	total: number;
@@ -58,6 +60,7 @@ const getLineName = ( product: AgencyProduct, quantity: number ) => {
 
 export default function ReferralSummary( {
 	lines,
+	siteUrl,
 	currency,
 	term,
 	total,
@@ -136,6 +139,15 @@ export default function ReferralSummary( {
 								</Text>
 							</HStack>
 						) ) }
+						{ siteUrl && (
+							<Text variant="muted" size={ 12 }>
+								{ sprintf(
+									/* translators: %s is the address of the site the plan is for. */
+									__( 'Site: %s' ),
+									siteUrl.replace( /^https?:\/\//, '' )
+								) }
+							</Text>
+						) }
 					</VStack>
 					<CardDivider />
 					{ ! isFreeOnly && (
