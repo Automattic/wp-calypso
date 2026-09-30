@@ -93,7 +93,7 @@ export function StorageWarningBanner( { site }: { site: Site } ) {
 					),
 					{
 						used: formatStorage( mediaStorage.storage_used_bytes, locale ),
-						available: formatStorage( mediaStorage.max_storage_bytes, locale, 0 ),
+						available: formatStorage( mediaStorage.max_storage_bytes, locale ),
 					}
 				) }
 			</Notice>
