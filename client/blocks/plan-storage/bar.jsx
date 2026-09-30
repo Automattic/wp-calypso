@@ -29,25 +29,22 @@ export class PlanStorageBar extends Component {
 			return null;
 		}
 
+		const usedPercent = ( mediaStorage.storageUsedBytes / mediaStorage.maxStorageBytes ) * 100;
 		const percent = getStorageUsagePercent( {
 			storage_used_bytes: mediaStorage.storageUsedBytes,
 			max_storage_bytes: mediaStorage.maxStorageBytes,
 		} );
 
 		const classes = clsx( className, 'plan-storage__bar', {
-			'is-alert': percent > ALERT_PERCENT,
-			'is-warn': percent > WARN_PERCENT && percent <= ALERT_PERCENT,
+			'is-alert': usedPercent > ALERT_PERCENT,
+			'is-warn': usedPercent > WARN_PERCENT && usedPercent <= ALERT_PERCENT,
 		} );
 
 		const max = formatStorage( mediaStorage.maxStorageBytes, getIntlLocale( getLocaleSlug() ) );
 
 		return (
 			<div className={ classes }>
-				<ProgressBar
-					value={ ( mediaStorage.storageUsedBytes / mediaStorage.maxStorageBytes ) * 100 }
-					total={ 100 }
-					compact
-				/>
+				<ProgressBar value={ usedPercent } total={ 100 } compact />
 
 				<span className="plan-storage__storage-label">
 					{ translate( '%(percent)f%% of %(max)s used', {
