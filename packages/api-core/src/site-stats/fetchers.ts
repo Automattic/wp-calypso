@@ -1,9 +1,5 @@
 import { wpcom } from '../wpcom-fetcher';
-import type {
-	SiteEngagementStatsResponse,
-	SiteHourlyViewsResponse,
-	SitePremiumAnalyticsSettings,
-} from './types';
+import type { SiteEngagementStatsResponse, SiteHourlyViewsResponse } from './types';
 
 export async function fetchSiteEngagementStats(
 	siteId: number
@@ -30,17 +26,5 @@ export async function fetchSiteHourlyViews( siteId: number ): Promise< SiteHourl
 		unit: 'hour',
 		quantity: 48,
 		stat_fields: 'views',
-	} );
-}
-
-/**
- * The site settings that say whether the Premium Analytics ("Stats v2") dashboard is switched on.
- */
-export async function fetchSitePremiumAnalyticsSettings(
-	siteId: number
-): Promise< SitePremiumAnalyticsSettings > {
-	return wpcom.req.get( {
-		path: `/sites/${ siteId }/settings`,
-		apiNamespace: 'wp/v2',
 	} );
 }

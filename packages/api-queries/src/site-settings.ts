@@ -1,4 +1,8 @@
-import { fetchSiteSettings, updateSiteSettings } from '@automattic/api-core';
+import {
+	fetchSitePremiumAnalyticsSettings,
+	fetchSiteSettings,
+	updateSiteSettings,
+} from '@automattic/api-core';
 import { queryOptions, mutationOptions } from '@tanstack/react-query';
 import { queryClient } from './query-client';
 import { siteQueryFilter } from './site';
@@ -50,4 +54,13 @@ export const siteSettingsMutation = ( siteId: number ) =>
 			} );
 			queryClient.invalidateQueries( siteQueryFilter( siteId ) );
 		},
+	} );
+
+export const sitePremiumAnalyticsEnabledQuery = ( siteId: number ) =>
+	queryOptions( {
+		queryKey: [ 'site', siteId, 'premium-analytics-enabled' ],
+		queryFn: () => fetchSitePremiumAnalyticsSettings( siteId ),
+		// Picked here rather than in queryFn: TanStack Query rejects `undefined` data, and a site
+		// that never registered the setting answers exactly that.
+		select: ( settings ) => settings.jetpack_premium_analytics_enabled,
 	} );
