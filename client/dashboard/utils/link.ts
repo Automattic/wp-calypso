@@ -105,6 +105,14 @@ export function a4aLink( path: string ) {
 }
 
 /**
+ * Whether a link is a path inside the current app, so a router link can open it.
+ * Absolute URLs point to other apps or third parties.
+ */
+export function isDashboardPath( url: string ) {
+	return url.startsWith( '/' );
+}
+
+/**
  * This function returns the link to the dashboard.
  */
 export function dashboardLink( path: string = '' ) {

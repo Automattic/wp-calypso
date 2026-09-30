@@ -50,6 +50,7 @@ export default function PartnerOffersOverviewContent() {
 			links={ LINKS }
 			recordTracksEvent={ recordTracks }
 			onCtaClick={ handleCtaClick }
+			shouldUseRouterLink={ false }
 		/>
 	);
 }
