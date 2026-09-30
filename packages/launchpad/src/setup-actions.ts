@@ -104,7 +104,9 @@ export const setUpActionsForTasks = ( {
 
 				case 'customize_welcome_message':
 					logMissingCalypsoPath = true;
-					task.calypso_path = `https://${ siteSlug }/wp-admin/admin.php?page=jetpack-newsletter`;
+					task.calypso_path = `https://${ siteSlug }/wp-admin/admin.php?page=jetpack-newsletter&p=${ encodeURIComponent(
+						'/?tab=settings'
+					) }`;
 					break;
 
 				case 'manage_subscribers':
