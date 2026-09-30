@@ -46,6 +46,15 @@ describe( 'FreeDomainForAYearPromo', () => {
 		} );
 	} );
 
+	describe( 'badge prop', () => {
+		it( 'renders the badge next to the title', () => {
+			render( <FreeDomainForAYearPromo title="Custom title" badge={ <span>New</span> } /> );
+
+			expect( screen.getByText( 'Custom title' ) ).toBeVisible();
+			expect( screen.getByText( 'New' ) ).toBeVisible();
+		} );
+	} );
+
 	describe( 'subtitle prop', () => {
 		it( 'overrides the subtitle when a string is passed', () => {
 			render(
