@@ -44,6 +44,7 @@ export const DomainStatus = {
 	TRANSFER_PENDING: 'transfer_pending',
 	TRANSFER_ERROR: 'transfer_error',
 	PENDING_REGISTRATION: 'pending_registration',
+	SUSPENDED: 'suspended',
 } as const;
 
 export type DomainStatus = ( typeof DomainStatus )[ keyof typeof DomainStatus ];

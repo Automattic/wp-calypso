@@ -132,7 +132,9 @@ export default function DomainOverview() {
 				{ domain.subtype.id === DomainSubtype.DOMAIN_TRANSFER && (
 					<TransferredDomainDetails domain={ domain } />
 				) }
-				{ domain.is_pending_icann_verification && <IcannSuspensionNotice domain={ domain } /> }
+				{ ( domain.is_pending_icann_verification || domain.is_icann_verification_suspended ) && (
+					<IcannSuspensionNotice domain={ domain } />
+				) }
 				<PendingPrimaryDomainNotice domainName={ domain.domain } />
 				{ domain.subtype.id !== DomainSubtype.DOMAIN_TRANSFER && (
 					<>

@@ -260,7 +260,7 @@ export function resolveDomainStatus(
 				};
 			}
 
-			if ( domain.isPendingIcannVerification && domain.isIcannVerificationSuspended ) {
+			if ( domain.isIcannVerificationSuspended ) {
 				return {
 					statusText: translate( 'Suspended' ),
 					statusClass: 'status-error',

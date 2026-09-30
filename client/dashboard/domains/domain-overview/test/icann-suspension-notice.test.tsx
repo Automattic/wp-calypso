@@ -106,6 +106,20 @@ describe( '<IcannSuspensionNotice>', () => {
 			expect( screen.getByText( 'registrant@example.com' ) ).toBeVisible();
 			expect( screen.queryByText( 'Email verification required' ) ).not.toBeInTheDocument();
 		} );
+
+		test( 'explains the suspension when the pending verification flag was cleared', () => {
+			render(
+				<IcannSuspensionNotice
+					domain={ getMockedDomain( {
+						is_pending_icann_verification: false,
+						is_icann_verification_suspended: true,
+					} ) }
+				/>
+			);
+
+			expect( screen.getByText( 'Domain suspended' ) ).toBeVisible();
+			expect( screen.getByRole( 'button', { name: 'Resend email' } ) ).toBeVisible();
+		} );
 	} );
 
 	test( 'links to the contact details page and offers to resend the email', () => {

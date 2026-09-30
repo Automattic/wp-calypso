@@ -171,6 +171,7 @@ export const useFields = ( {
 					{ value: DomainStatus.EXPIRED, label: __( 'Expired' ) },
 					{ value: DomainStatus.EXPIRING_SOON, label: __( 'Expiring soon' ) },
 					{ value: DomainStatus.EXPIRED_IN_AUCTION, label: __( 'Expired & in auction' ) },
+					{ value: DomainStatus.SUSPENDED, label: __( 'Suspended' ) },
 					{ value: DomainStatus.PENDING_RENEWAL, label: __( 'Pending renewal' ) },
 					{ value: DomainStatus.PENDING_REGISTRATION, label: __( 'Pending registration' ) },
 					{ value: DomainStatus.PENDING_TRANSFER, label: __( 'Outgoing transfer pending' ) },
