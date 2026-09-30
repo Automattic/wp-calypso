@@ -56,6 +56,8 @@
 		"marketplace-test": false,
 		"newsletter-categories": true,
 		"oauth": false,
+		"oauth/unified-experience": false,
+		"purchases/new-payment-methods": true,
 		"realtime-site-count": true,
 		"site-indicator": false,
 		"upgrades/redirect-payments": true
