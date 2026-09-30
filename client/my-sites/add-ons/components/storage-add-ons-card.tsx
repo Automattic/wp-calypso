@@ -140,7 +140,7 @@ export default function StorageAddOnCard( { siteId, actionPrimary }: Props ) {
 	} );
 
 	const used = filesize( mediaStorage?.storageUsedBytes || 0, { round: 1 } );
-	const max = filesize( mediaStorage?.maxStorageBytes || 0, { round: 0 } );
+	const max = filesize( mediaStorage?.maxStorageBytes || 0, { round: 1 } );
 
 	const purchasedStorageAddOn = useGetPurchasedStorageAddOn( { siteId } );
 	const purchasedStorageAddOnQuantity = purchasedStorageAddOn?.quantity ?? 0;

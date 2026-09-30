@@ -30,16 +30,14 @@ export function getStorageUsagePercent( {
 /**
  * Mirrors WordPress core's `size_format()` so storage figures match wp-admin, minus a trailing `.0`.
  */
-export function formatStorage( bytes: number, locale: string, decimals = 1 ): string {
+export function formatStorage( bytes: number, locale: string ): string {
 	let value = Math.max( bytes, 0 );
 	let unitIndex = 0;
 	while ( value >= 1024 && unitIndex < STORAGE_UNITS.length - 1 ) {
 		value /= 1024;
 		unitIndex++;
 	}
-	const number = new Intl.NumberFormat( locale, { maximumFractionDigits: decimals } ).format(
-		value
-	);
+	const number = new Intl.NumberFormat( locale, { maximumFractionDigits: 1 } ).format( value );
 	return `${ number } ${ STORAGE_UNITS[ unitIndex ] }`;
 }
 

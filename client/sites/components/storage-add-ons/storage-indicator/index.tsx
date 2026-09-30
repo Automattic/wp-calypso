@@ -29,10 +29,10 @@ const StorageAddOnIndicator: React.FC< Props > = ( {
 	const planStorageBytes = maxStorageBytes - maxStorageBytesFromAddOns;
 	const addOnStorageBytes = maxStorageBytesFromAddOns + selectedAddOnStorageBytes;
 
-	const newMaxStorage = filesize( newMaxStorageBytes, { round: 0 } );
-	const usedStorage = filesize( storageUsedBytes, { round: 0 } );
-	const planStorage = filesize( planStorageBytes, { round: 0 } );
-	const addOnStorage = filesize( addOnStorageBytes, { round: 0 } );
+	const newMaxStorage = filesize( newMaxStorageBytes, { round: 1 } );
+	const usedStorage = filesize( storageUsedBytes, { round: 1 } );
+	const planStorage = filesize( planStorageBytes, { round: 1 } );
+	const addOnStorage = filesize( addOnStorageBytes, { round: 1 } );
 
 	const planStorageRatio = planStorageBytes / newMaxStorageBytes;
 

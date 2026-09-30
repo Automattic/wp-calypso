@@ -24,7 +24,6 @@ describe( 'formatStorage', () => {
 		expect( formatStorage( 3 * GB, 'en' ) ).toBe( '3 GB' );
 		expect( formatStorage( 3.04 * GB, 'en' ) ).toBe( '3 GB' );
 		expect( formatStorage( 3.07 * GB, 'en' ) ).toBe( '3.1 GB' );
-		expect( formatStorage( 3.1 * GB, 'en', 0 ) ).toBe( '3 GB' );
 	} );
 
 	test( 'formats the number in the given locale', () => {
