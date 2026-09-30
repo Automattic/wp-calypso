@@ -1,4 +1,5 @@
 import { WordPressLogo, WordPressWordmark } from '@automattic/components';
+import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
 import { isValidElement, useLayoutEffect, useRef, type ReactElement, type ReactNode } from 'react';
 import { useStepContainerV2Context } from '../../contexts/StepContainerV2Context';
@@ -27,6 +28,14 @@ export interface TopBarProps {
 	 * Hide the logo entirely.
 	 */
 	hideLogo?: boolean;
+
+	/**
+	 * Makes the default WordPress logo a link. Ignored when a custom logo
+	 * (`logo` prop or context) is rendered.
+	 */
+	logoHref?: string;
+
+	onLogoClick?: () => void;
 }
 
 export const TopBar = ( {
@@ -35,7 +44,10 @@ export const TopBar = ( {
 	logo,
 	compactLogo,
 	hideLogo = false,
+	logoHref,
+	onLogoClick,
 }: TopBarProps ) => {
+	const { __ } = useI18n();
 	const context = useStepContainerV2Context();
 	const topBarRef = useRef< HTMLDivElement >( null );
 
@@ -74,14 +86,12 @@ export const TopBar = ( {
 		};
 	}, [] );
 
-	// Context logo takes precedence over default WordPress logo.
-	// The `logo` prop provides an explicit override for both.
-	const defaultWordPressLogo = (
-		<div
-			className={ clsx( 'step-container-v2__top-bar-wordpress-logo-wrapper', {
-				'is-compact': compactLogo,
-			} ) }
-		>
+	const defaultWordPressLogoClassName = clsx( 'step-container-v2__top-bar-wordpress-logo-wrapper', {
+		'is-compact': compactLogo,
+	} );
+
+	const defaultWordPressLogoContent = (
+		<>
 			{ ! compactLogo && (
 				<WordPressWordmark
 					className="step-container-v2__top-bar-wordpress-logo step-container-v2__top-bar-wordpress-logo--wordmark"
@@ -92,8 +102,24 @@ export const TopBar = ( {
 				size={ 21 }
 				className="step-container-v2__top-bar-wordpress-logo step-container-v2__top-bar-wordpress-logo--logo"
 			/>
-		</div>
+		</>
 	);
+
+	const defaultWordPressLogo = logoHref ? (
+		<a
+			className={ defaultWordPressLogoClassName }
+			href={ logoHref }
+			onClick={ onLogoClick }
+			aria-label={ __( 'WordPress.com home', __i18n_text_domain__ ) }
+		>
+			{ defaultWordPressLogoContent }
+		</a>
+	) : (
+		<div className={ defaultWordPressLogoClassName }>{ defaultWordPressLogoContent }</div>
+	);
+
+	// Context logo takes precedence over default WordPress logo.
+	// The `logo` prop provides an explicit override for both.
 
 	const resolvedLogo = logo ?? context.logo ?? defaultWordPressLogo;
 
