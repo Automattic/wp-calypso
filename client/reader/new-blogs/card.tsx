@@ -13,6 +13,7 @@ import { Button } from '@wordpress/components';
 import { close } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useState, type MouseEvent } from 'react';
+import { useInView } from 'react-intersection-observer';
 import ReaderExcerpt from 'calypso/blocks/reader-excerpt';
 import { SiteIcon } from 'calypso/blocks/site-icon';
 import { useFeedQuery } from 'calypso/reader/data/feed';
@@ -24,17 +25,38 @@ import { getSiteName, type ReaderPost } from 'calypso/reader/get-helpers';
 import { getStreamUrl } from 'calypso/reader/route';
 import { showSelectedPost } from 'calypso/reader/utils';
 import NewBlogCardPlaceholder from './placeholder';
-import type { ReadNewBlogsRec } from '@automattic/api-core';
+import { recordNewBlogRender, type NewBlogRec } from './tracks';
 
 interface Props {
-	rec: ReadNewBlogsRec;
+	rec: NewBlogRec;
+	/** 0-based slot within the module, for TrainTracks `ui_position`. */
+	uiPosition: number;
 	onDismiss: () => void;
 	onOpen: () => void;
 	onFollowToggle: ( isFollowing: boolean ) => void;
+	/** Called once, when the card is first actually on screen. */
+	onImpression: () => void;
 }
 
-export default function NewBlogCard( { rec, onDismiss, onOpen, onFollowToggle }: Props ) {
+export default function NewBlogCard( {
+	rec,
+	uiPosition,
+	onDismiss,
+	onOpen,
+	onFollowToggle,
+	onImpression,
+}: Props ) {
 	const translate = useTranslate();
+	// One TrainTracks render per card, the first time any of it is on screen.
+	const { ref: impressionRef } = useInView( {
+		triggerOnce: true,
+		onChange: ( inView ) => {
+			if ( inView ) {
+				recordNewBlogRender( rec, uiPosition );
+				onImpression();
+			}
+		},
+	} );
 	const postKey = { blogId: rec.blogId, postId: rec.postId };
 	const { data: post, isLoading } = usePost( postKey );
 	const siteId = post?.site_ID ? Number( post.site_ID ) : undefined;
@@ -66,7 +88,7 @@ export default function NewBlogCard( { rec, onDismiss, onOpen, onFollowToggle }:
 	};
 
 	return (
-		<li className="reader-discover-new-blogs__card">
+		<li className="reader-discover-new-blogs__card" ref={ impressionRef }>
 			<div className="reader-discover-new-blogs__card-head">
 				<a className="reader-discover-new-blogs__site" href={ streamUrl }>
 					<SiteIcon iconUrl={ siteIcon } size={ 24 } />
