@@ -18,6 +18,7 @@ import {
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import EmptyModuleCardVideo from '../features/modules/shared/stats-empty-module-video';
 import ErrorPanel from '../stats-error';
+import StatsListVideoThumbnail from '../stats-list/stats-list-video-thumbnail';
 import StatsModulePlaceholder from '../stats-module/placeholder';
 import '../stats-module/style.scss';
 import './style.scss';
@@ -83,7 +84,7 @@ class VideoPressStatsModule extends Component {
 		return Math.max( ...data.map( ( item ) => item[ field ] || 0 ) );
 	}
 
-	renderTitleCell( { title, views, maxViews, onClick, href } ) {
+	renderTitleCell( { title, poster, views, maxViews, onClick, href } ) {
 		const fillPercentage = maxViews > 0 ? ( views / maxViews ) * 100 : 0;
 		return (
 			<div className="videopress-stats-module__grid-cell videopress-stats-module__grid-link">
@@ -93,7 +94,8 @@ class VideoPressStatsModule extends Component {
 						style={ { '--bar-fill-percentage': `${ fillPercentage }%` } }
 					>
 						<a href={ href } onClick={ onClick }>
-							{ title }
+							<StatsListVideoThumbnail poster={ poster } />
+							<span className="videopress-stats-module__title">{ title }</span>
 						</a>
 					</div>
 				</div>
@@ -225,6 +227,7 @@ class VideoPressStatsModule extends Component {
 							>
 								{ this.renderTitleCell( {
 									title: row.title,
+									poster: row.poster,
 									views: row.views,
 									maxViews,
 									href: videoDetailsHref( row.post_id ),
