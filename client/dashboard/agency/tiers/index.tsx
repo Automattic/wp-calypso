@@ -23,9 +23,9 @@ const CONTACT_SUPPORT_URL = '#contact-support';
 const BENEFIT_LINKS: TierBenefitLinks = {
 	'manage-sites': '/sites',
 	'create-client-reports': a4aLink( '/reports' ),
-	'manage-purchases': '/marketplace/purchases',
-	'make-client-referral': '/earn/referrals',
-	'add-woopayments-to-store': '/earn/woopayments',
+	'manage-purchases': '/purchases',
+	'make-client-referral': '/referrals',
+	'add-woopayments-to-store': '/woopayments',
 	'contact-support': CONTACT_SUPPORT_URL,
 	'manage-profile': PARTNER_DIRECTORY_ROUTE,
 };

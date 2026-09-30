@@ -6,6 +6,7 @@ import { useDomainSearch } from '../../page/context';
 import {
 	applyNamePulseVerdict,
 	excludeDomains,
+	filterNamePulseSuggestions,
 	generateExactMatches,
 	getAiTopResults,
 	getNamePulseNotice,
@@ -68,7 +69,7 @@ const useNamePulseSuggestions = ( {
 	show: boolean;
 	source: Extract< NamePulseSource, 'keyword' | 'ai' >;
 } ) => {
-	const { queries } = useDomainSearch();
+	const { queries, filter } = useDomainSearch();
 	const useAi = source === 'ai';
 	const active = show && isSettled;
 	const { data, isPending } = useQuery( {
@@ -81,8 +82,14 @@ const useNamePulseSuggestions = ( {
 	} );
 
 	const rows = useMemo(
-		() => ( active ? toSuggestionResults( data?.suggestions, source ) : EMPTY_RESULTS ),
-		[ active, data, source ]
+		() =>
+			active
+				? filterNamePulseSuggestions(
+						toSuggestionResults( data?.suggestions, source ),
+						filter.tlds
+					)
+				: EMPTY_RESULTS,
+		[ active, data, source, filter.tlds ]
 	);
 	const names = useMemo( () => rows.map( ( row ) => row.domain_name ), [ rows ] );
 	const verdicts = useNamePulseVerdicts( names, false );
@@ -101,7 +108,7 @@ const useNamePulseSuggestions = ( {
  * verdict. Until the TLD list arrives no rows are generated.
  */
 export const useNamePulseSearch = ( query: string ) => {
-	const { queries } = useDomainSearch();
+	const { queries, filter } = useDomainSearch();
 	const [ settledQuery, setSettledQuery ] = useState( query );
 	const isSettled = query === settledQuery;
 
@@ -139,11 +146,22 @@ export const useNamePulseSearch = ( query: string ) => {
 	const showExactGrid = layout.exactGrid.show;
 	const initialCheckCount =
 		wordCount > 1 ? NAME_PULSE_INITIAL_CHECK_MULTI_WORD : NAME_PULSE_INITIAL_CHECK_SINGLE_WORD;
+	// FQDN detection above uses the full list. A typed domain keeps its ending
+	// so its row stays next to the notice about it.
+	const typedTld = layout.fqdn?.tld;
+	const gridTlds = useMemo(
+		() =>
+			tlds && filter.tlds.length > 0
+				? tlds.filter( ( tld ) => filter.tlds.includes( tld ) || tld === typedTld )
+				: tlds,
+		[ tlds, filter.tlds, typedTld ]
+	);
 	const isLoadingTlds = isPendingTlds && showExactGrid;
 
 	const exactRows = useMemo(
-		() => ( showExactGrid && tlds ? generateExactMatches( baseName, tlds ) : EMPTY_RESULTS ),
-		[ showExactGrid, baseName, tlds ]
+		() =>
+			showExactGrid && gridTlds ? generateExactMatches( baseName, gridTlds ) : EMPTY_RESULTS,
+		[ showExactGrid, baseName, gridTlds ]
 	);
 
 	// Names asked for beyond the initial slice ("Show more", top-results

@@ -320,8 +320,28 @@ export function isTransferredOwnership(
 	);
 }
 
+/**
+ * Subscription meta marker for purchases billed through Automattic for Agencies.
+ *
+ * The marker is either the bare value or the value followed by a separator and an instance key,
+ * such as `is-a4a:example.com`, for products that can be bought more than once on the same site.
+ */
+const A4A_SUBSCRIPTION_META = 'is-a4a';
+const A4A_SUBSCRIPTION_META_SEPARATOR = ':';
+
+export function isA4ASubscriptionMeta( meta: string | null | undefined ): boolean {
+	if ( ! meta ) {
+		return false;
+	}
+
+	return (
+		meta === A4A_SUBSCRIPTION_META ||
+		meta.startsWith( A4A_SUBSCRIPTION_META + A4A_SUBSCRIPTION_META_SEPARATOR )
+	);
+}
+
 export function isA4ABillingDragonPurchase( purchase: Purchase ): boolean {
-	return purchase.meta === 'is-a4a';
+	return isA4ASubscriptionMeta( purchase.meta );
 }
 
 export function isA4AHoldingSitePurchase( purchase: Purchase ): boolean {

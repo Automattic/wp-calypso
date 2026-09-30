@@ -1,20 +1,16 @@
-import { a4aLink } from '../../../../utils/link';
-import { CLASSIC_MARKETPLACE_CHECKOUT_PATH, MARKETPLACE_PRODUCTS_ROUTE } from '../../paths';
+import { wpcomLink } from '../../../../utils/link';
+import { MARKETPLACE_REFERRAL_CHECKOUT_ROUTE, WPCOM_AGENCY_CHECKOUT_PATH } from '../../paths';
 import type { ShoppingCartItem } from '../use-shopping-cart';
 
-// The classic checkout reads the products from the URL, but only takes the
-// purchase mode from its own session, so referral carts go through the
-// classic products page in referral mode instead.
+// Regular carts pay on the WordPress.com checkout. Referral carts stay in the
+// dashboard, on the referral checkout route.
 export function getCheckoutUrl( items: ShoppingCartItem[], isReferralMode: boolean ): string {
 	if ( isReferralMode ) {
-		const products = items
-			.map( ( item ) => `${ encodeURIComponent( item.slug ) }:${ item.quantity }` )
-			.join( ',' );
-		return a4aLink(
-			`${ MARKETPLACE_PRODUCTS_ROUTE }?products=${ products }&purchase_type=referral`
-		);
+		return MARKETPLACE_REFERRAL_CHECKOUT_ROUTE;
 	}
 
-	const productSlugs = items.map( ( item ) => encodeURIComponent( item.slug ) ).join( ',' );
-	return a4aLink( `${ CLASSIC_MARKETPLACE_CHECKOUT_PATH }?product_slug=${ productSlugs }` );
+	const products = items
+		.map( ( item ) => `${ encodeURIComponent( item.slug ) }:${ item.quantity }` )
+		.join( ',' );
+	return wpcomLink( `${ WPCOM_AGENCY_CHECKOUT_PATH }?products=${ products }` );
 }

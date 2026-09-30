@@ -22,7 +22,7 @@ export interface SessionHandoff {
 
 /**
  * Only the main chat hands its session across origins: the backend looks a
- * chat up by agent, and surface-bound agents (reader chat, Plugin Compass,
+ * chat up by agent, and surface-bound agents (reader chat,
  * host overrides) have no counterpart on the other origin.
  */
 export function isHandoffAgent( agentId?: string ): boolean {

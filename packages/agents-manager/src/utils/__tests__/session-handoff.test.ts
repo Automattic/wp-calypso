@@ -12,7 +12,7 @@ describe( 'isHandoffAgent', () => {
 		[ 'the orchestrator', 'wp-orchestrator', true ],
 		[ 'an unresolved agent', undefined, false ],
 		[ 'reader chat', 'reader-chat', false ],
-		[ 'Plugin Compass', 'wpcom-workflow-plugin_compass', false ],
+		[ 'Custom agent', 'custom-agent', false ],
 		[ 'a host override', 'wpcom-workflow-support_chat', false ],
 	] )( 'handles %s', ( _label, agentId, expected ) => {
 		expect( isHandoffAgent( agentId ) ).toBe( expected );

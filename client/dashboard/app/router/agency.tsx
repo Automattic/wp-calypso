@@ -190,7 +190,7 @@ export const agencyTiersRoute = createRoute( {
 		],
 	} ),
 	getParentRoute: () => agencyRoute,
-	path: 'agency/tiers',
+	path: 'tiers',
 	loader: () => queryClient.ensureQueryData( activeAgencyQuery() ),
 } ).lazy( () =>
 	import( '../../agency/tiers' ).then( ( d ) =>
@@ -200,7 +200,7 @@ export const agencyTiersRoute = createRoute( {
 	)
 );
 
-// `/agency/partner-directory` – layout that gates on the partner directory program
+// `/partner-directory` – layout that gates on the partner directory program
 export const agencyPartnerDirectoryRoute = createRoute( {
 	staticData: { requiresAgencyCapability: 'a4a_read_partner_directory' },
 	head: () => ( {
@@ -236,7 +236,7 @@ const agencyPartnerDirectoryIndexRoute = createRoute( {
 	)
 );
 
-// `/agency/partner-directory/expertise` – apply to or update the directory application
+// `/partner-directory/expertise` – apply to or update the directory application
 export const agencyPartnerDirectoryExpertiseRoute = createRoute( {
 	head: () => ( {
 		meta: [
@@ -256,7 +256,7 @@ export const agencyPartnerDirectoryExpertiseRoute = createRoute( {
 	)
 );
 
-// `/marketplace/hosting` – hosting plans an agency can buy or refer. Each host
+// `/hosting` – hosting plans an agency can buy or refer. Each host
 // has its own URL, as in the classic dashboard, so the section survives a refresh.
 export const marketplaceHostingRoute = createRoute( {
 	staticData: { requiresAgencyCapability: 'a4a_read_marketplace' },
@@ -268,7 +268,7 @@ export const marketplaceHostingRoute = createRoute( {
 		],
 	} ),
 	getParentRoute: () => agencyRoute,
-	path: 'marketplace/hosting',
+	path: 'hosting',
 	loader: async () => {
 		const [ agency ] = await Promise.all( [
 			queryClient.ensureQueryData( activeAgencyQuery() ),
@@ -302,7 +302,7 @@ const createMarketplaceHostingSectionRoute = ( section: HostingSection ) =>
 		)
 	);
 
-// `/marketplace/hosting` has no screen of its own; it opens the Pressable section.
+// `/hosting` has no screen of its own; it opens the Pressable section.
 export const marketplaceHostingIndexRoute = createRoute( {
 	getParentRoute: () => marketplaceHostingRoute,
 	path: '/',
@@ -317,7 +317,7 @@ export const marketplaceHostingWpcomRoute = createMarketplaceHostingSectionRoute
 export const marketplaceHostingPressableRoute = createMarketplaceHostingSectionRoute( 'pressable' );
 export const marketplaceHostingVipRoute = createMarketplaceHostingSectionRoute( 'vip' );
 
-// `/marketplace/hosting/refer-*` – one shared form to refer a client to
+// `/hosting/refer-*` – one shared form to refer a client to
 // WordPress VIP or to a Pressable Premium plan, as in the classic dashboard.
 const createReferHostingRoute = ( type: ReferHostingType, title: () => string ) =>
 	createRoute( {
@@ -346,7 +346,7 @@ export const marketplaceHostingReferPremiumRoute = createReferHostingRoute( 'pre
 	__( 'Refer Premium Plan' )
 );
 
-// `/agency/partner-directory/details` – the agency's public profile details
+// `/partner-directory/details` – the agency's public profile details
 export const agencyPartnerDirectoryDetailsRoute = createRoute( {
 	head: () => ( {
 		meta: [
@@ -382,7 +382,7 @@ export const agencyPartnerDirectoryDetailsRoute = createRoute( {
 	)
 );
 
-// `/marketplace/products` – à la carte products an agency can buy or refer
+// `/products` – à la carte products an agency can buy or refer
 export const marketplaceProductsRoute = createRoute( {
 	staticData: { requiresAgencyCapability: 'a4a_read_marketplace' },
 	head: () => ( {
@@ -393,7 +393,7 @@ export const marketplaceProductsRoute = createRoute( {
 		],
 	} ),
 	getParentRoute: () => agencyRoute,
-	path: 'marketplace/products',
+	path: 'products',
 	loader: async () => {
 		const [ agency ] = await Promise.all( [
 			queryClient.ensureQueryData( activeAgencyQuery() ),
@@ -418,7 +418,7 @@ export const marketplaceProductsRoute = createRoute( {
 	)
 );
 
-// `/marketplace/purchases` – licenses, invoices, and payment methods
+// `/purchases` – licenses, invoices, and payment methods
 export const marketplacePurchasesRoute = createRoute( {
 	staticData: { requiresAgencyCapability: 'a4a_jetpack_licensing' },
 	head: () => ( {
@@ -429,7 +429,7 @@ export const marketplacePurchasesRoute = createRoute( {
 		],
 	} ),
 	getParentRoute: () => agencyRoute,
-	path: 'marketplace/purchases',
+	path: 'purchases',
 	loader: async () => {
 		await Promise.all( [
 			queryClient.ensureQueryData( activeAgencyQuery() ),
@@ -444,7 +444,7 @@ export const marketplacePurchasesRoute = createRoute( {
 	)
 );
 
-// `/marketplace/exclusive-offers` – partner offers (Refer / Resell)
+// `/exclusive-offers` – partner offers (Refer / Resell)
 export const exclusiveOffersRoute = createRoute( {
 	staticData: { requiresAgencyCapability: 'a4a_read_exclusive_offers' },
 	head: () => ( {
@@ -455,7 +455,7 @@ export const exclusiveOffersRoute = createRoute( {
 		],
 	} ),
 	getParentRoute: () => agencyRoute,
-	path: 'marketplace/exclusive-offers',
+	path: 'exclusive-offers',
 } ).lazy( () =>
 	import( '../../agency/marketplace/exclusive-offers' ).then( ( d ) =>
 		createLazyRoute( 'exclusive-offers' )( {
@@ -477,12 +477,12 @@ export type MarketplaceSection = {
 export const marketplaceSections: MarketplaceSection[] = [
 	{ route: marketplaceHostingRoute, supports: 'marketplace', label: () => __( 'Hosting' ) },
 	{ route: marketplaceProductsRoute, supports: 'marketplace', label: () => __( 'Products' ) },
+	{ route: marketplacePurchasesRoute, supports: 'marketplace', label: () => __( 'Purchases' ) },
 	{
 		route: exclusiveOffersRoute,
 		supports: 'exclusiveOffers',
 		label: () => __( 'Exclusive offers' ),
 	},
-	{ route: marketplacePurchasesRoute, supports: 'marketplace', label: () => __( 'Purchases' ) },
 ];
 
 export function isMarketplaceSectionAvailable(
@@ -531,18 +531,18 @@ export const marketplaceRoute = createRoute( {
 	},
 } );
 
-// `/resources/learn` – guides, articles, and training for agencies
+// `/library` – guides, articles, and training for agencies
 export const learnRoute = createRoute( {
 	staticData: { requiresAgencyCapability: 'a4a_read_learn' },
 	head: () => ( {
 		meta: [
 			{
-				title: __( 'Learn' ),
+				title: __( 'Library' ),
 			},
 		],
 	} ),
 	getParentRoute: () => agencyRoute,
-	path: 'resources/learn',
+	path: 'library',
 	loader: () => queryClient.ensureQueryData( agencyResourcesQuery() ),
 } ).lazy( () =>
 	import( '../../agency/resources/learn' ).then( ( d ) =>
@@ -552,7 +552,7 @@ export const learnRoute = createRoute( {
 	)
 );
 
-// `/resources/dev-tools` – developer tools that help agencies build, test, and demo
+// `/dev-tools` – developer tools that help agencies build, test, and demo
 export const devToolsRoute = createRoute( {
 	staticData: { requiresAgencyCapability: 'a4a_read_learn' },
 	head: () => ( {
@@ -563,7 +563,7 @@ export const devToolsRoute = createRoute( {
 		],
 	} ),
 	getParentRoute: () => agencyRoute,
-	path: 'resources/dev-tools',
+	path: 'dev-tools',
 } ).lazy( () =>
 	import( '../../agency/resources/dev-tools' ).then( ( d ) =>
 		createLazyRoute( 'resources-dev-tools' )( {
@@ -585,7 +585,7 @@ export const mcpRoute = createRoute( {
 	staticData: { requiresAgencyCapability: 'a4a_read_learn' },
 	head: () => ( { meta: [ { title: __( 'AI and MCP' ) } ] } ),
 	getParentRoute: () => agencyRoute,
-	path: 'resources/ai-mcp',
+	path: 'agency/ai',
 } );
 
 const mcpOverviewRoute = createRoute( {
@@ -669,14 +669,14 @@ export const agencySitesRoute = createRoute( {
 	)
 );
 
-// `/team` – manage agency team members and invitations
+// `/agency/team` – manage agency team members and invitations
 export const agencyTeamRoute = createRoute( {
 	staticData: { requiresAgencyCapability: 'a4a_read_users' },
 	head: () => ( {
 		meta: [ { title: __( 'Team' ) } ],
 	} ),
 	getParentRoute: () => agencyRoute,
-	path: 'team',
+	path: 'agency/team',
 	loader: () => queryClient.ensureQueryData( rawUserPreferencesQuery() ),
 } ).lazy( () =>
 	import( '../../agency/team' ).then( ( d ) =>
@@ -686,25 +686,25 @@ export const agencyTeamRoute = createRoute( {
 	)
 );
 
-// `/earn/referrals` – referral commissions
+// `/referrals` – referral commissions
 export const earnReferralsRoute = createRoute( {
 	staticData: { requiresAgencyCapability: 'a4a_read_referrals' },
 	head: () => ( { meta: [ { title: __( 'Referrals' ) } ] } ),
 	getParentRoute: () => agencyRoute,
-	path: 'earn/referrals',
+	path: 'referrals',
 } ).lazy( () =>
 	import( '../../agency/earn/referrals' ).then( ( d ) =>
 		createLazyRoute( 'earn-referrals' )( { component: d.default } )
 	)
 );
 
-// `/earn/woopayments` – WooPayments revenue share
+// `/woopayments` – WooPayments revenue share
 export const earnWooPaymentsRoute = createRoute( {
 	// TODO: replace with a dedicated WooPayments capability when one exists.
 	staticData: { requiresAgencyCapability: 'a4a_read_referrals' },
 	head: () => ( { meta: [ { title: __( 'WooPayments' ) } ] } ),
 	getParentRoute: () => agencyRoute,
-	path: 'earn/woopayments',
+	path: 'woopayments',
 	loader: async () => {
 		const agency = await queryClient.ensureQueryData( activeAgencyQuery() );
 		if ( ! agency?.id ) {
@@ -753,21 +753,21 @@ async function isAgencyWooPaymentsSite( siteId: number ): Promise< boolean > {
 	return !! agencySite;
 }
 
-// `/earn/woopayments/setup/$siteId` – install + activate WooPayments on a managed site
+// `/woopayments/setup/$siteId` – install + activate WooPayments on a managed site
 export const earnWooPaymentsSetupRoute = createRoute( {
 	// TODO: replace with a dedicated WooPayments capability when one exists.
 	staticData: { requiresAgencyCapability: 'a4a_read_referrals' },
 	head: () => ( { meta: [ { title: __( 'Set up WooPayments' ) } ] } ),
 	getParentRoute: () => agencyRoute,
-	path: 'earn/woopayments/setup/$siteId',
+	path: 'woopayments/setup/$siteId',
 	beforeLoad: ( { params: { siteId } } ) => {
 		if ( parseSiteIdParam( siteId ) === null ) {
-			throw dashboardRedirect( { to: '/earn/woopayments' } );
+			throw dashboardRedirect( { to: '/woopayments' } );
 		}
 	},
 	loader: async ( { params: { siteId } } ) => {
 		if ( ! ( await isAgencyWooPaymentsSite( Number( siteId ) ) ) ) {
-			throw dashboardRedirect( { to: '/earn/woopayments' } );
+			throw dashboardRedirect( { to: '/woopayments' } );
 		}
 	},
 } ).lazy( () =>
@@ -776,71 +776,44 @@ export const earnWooPaymentsSetupRoute = createRoute( {
 	)
 );
 
-// `/earn/migrations` – migration commissions
+// `/migrations` – migration commissions
 export const earnMigrationsRoute = createRoute( {
 	staticData: { requiresAgencyCapability: 'a4a_read_migrations' },
 	head: () => ( { meta: [ { title: __( 'Migrations' ) } ] } ),
 	getParentRoute: () => agencyRoute,
-	path: 'earn/migrations',
+	path: 'migrations',
 } ).lazy( () =>
 	import( '../../agency/earn/migrations' ).then( ( d ) =>
 		createLazyRoute( 'earn-migrations' )( { component: d.default } )
 	)
 );
 
-// `/earn/payout-settings` – where and how the agency gets paid
+// `/payout-settings` – where and how the agency gets paid
 export const earnPayoutSettingsRoute = createRoute( {
 	// TODO: replace with a top-level `a4a_read_earnings` capability when one exists.
 	staticData: { requiresAgencyCapability: [ 'a4a_read_referrals', 'a4a_read_migrations' ] },
 	head: () => ( { meta: [ { title: __( 'Payout settings' ) } ] } ),
 	getParentRoute: () => agencyRoute,
-	path: 'earn/payout-settings',
+	path: 'payout-settings',
 } ).lazy( () =>
 	import( '../../agency/earn/payout-settings' ).then( ( d ) =>
 		createLazyRoute( 'earn-payout-settings' )( { component: d.default } )
 	)
 );
 
-// The Earn sections in sidebar order; `/earn` redirects to the first one allowed.
+// The Earn sections in sidebar order.
 export const earnSectionRoutes = [
 	earnReferralsRoute,
 	earnWooPaymentsRoute,
-	earnMigrationsRoute,
 	earnPayoutSettingsRoute,
 ];
 
-// `/earn` – no screen of its own; sends the user to the first Earn section their
-// capabilities allow, so stale `/earn` links keep working.
-export const earnRoute = createRoute( {
-	// Any-of: reaching the redirect only requires access to one of the sections.
-	staticData: { requiresAgencyCapability: [ 'a4a_read_referrals', 'a4a_read_migrations' ] },
-	getParentRoute: () => agencyRoute,
-	path: 'earn',
-	beforeLoad: async ( { cause } ) => {
-		if ( cause === 'preload' ) {
-			return;
-		}
-
-		const activeAgency = await queryClient.ensureQueryData( activeAgencyQuery() );
-		const capabilities = activeAgency?.user?.capabilities ?? [];
-		const destination = earnSectionRoutes.find( ( route ) =>
-			isRouteAllowedByCapabilities( route, capabilities )
-		);
-
-		if ( ! destination ) {
-			throw redirectAsNotAllowed( { to: '/overview' } );
-		}
-
-		throw dashboardRedirect( { to: destination.fullPath } );
-	},
-} );
-
-// `/earn/referrals/$referralId` – referral (client) detail view; hosts the tab routes
+// `/referrals/$referralId` – referral (client) detail view; hosts the tab routes
 export const earnReferralRoute = createRoute( {
 	staticData: { requiresAgencyCapability: 'a4a_read_referrals' },
 	head: () => ( { meta: [ { title: __( 'Referral details' ) } ] } ),
 	getParentRoute: () => agencyRoute,
-	path: 'earn/referrals/$referralId',
+	path: 'referrals/$referralId',
 	loader: async () => {
 		const agency = await queryClient.ensureQueryData( activeAgencyQuery() );
 		const agencyId = agency?.id ?? 0;
@@ -2003,7 +1976,6 @@ export const createAgencyRoutes = () => [
 		] ),
 		agencySitesRoute,
 		agencyTeamRoute,
-		earnRoute,
 		earnReferralsRoute,
 		earnWooPaymentsRoute,
 		earnWooPaymentsSetupRoute,

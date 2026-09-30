@@ -8,8 +8,13 @@ import { __, _n, sprintf } from '@wordpress/i18n';
 import { setUpMailboxRoute } from '../../app/router/emails';
 import { Notice } from '../../components/notice';
 
+export interface DomainWithUnusedMailboxes {
+	domain: string;
+	unusedCount: number;
+}
+
 interface UnusedMailboxNoticeProps {
-	domains: string[];
+	domains: DomainWithUnusedMailboxes[];
 }
 
 const UnusedMailboxNotice = ( { domains }: UnusedMailboxNoticeProps ) => {
@@ -17,7 +22,7 @@ const UnusedMailboxNotice = ( { domains }: UnusedMailboxNoticeProps ) => {
 		return null;
 	}
 
-	const count = domains.length;
+	const count = domains.reduce( ( total, { unusedCount } ) => total + unusedCount, 0 );
 	const title = sprintf(
 		/* translators: %d is the number of free mailboxes */
 		_n(
@@ -35,7 +40,7 @@ const UnusedMailboxNotice = ( { domains }: UnusedMailboxNoticeProps ) => {
 					{ __( 'Create your mailbox now and start using your custom email address.' ) }
 				</Text>
 				<VStack spacing={ 2 }>
-					{ domains.map( ( domain ) => (
+					{ domains.map( ( { domain } ) => (
 						<HStack key={ domain }>
 							<Link to={ setUpMailboxRoute.to } params={ { domain } }>
 								{ sprintf(

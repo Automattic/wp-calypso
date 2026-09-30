@@ -1,8 +1,8 @@
+import { fetchTransactionOrder } from '@automattic/api-core';
 import { makeErrorResponse, makeSuccessResponse } from '@automattic/composite-checkout';
 import { formatCurrency } from '@automattic/number-formatters';
 import { createElement } from 'react';
 import { Root, createRoot } from 'react-dom/client';
-import { RawOrder, fetchPurchaseOrder } from '../hooks/use-purchase-order';
 import { recordTransactionBeginAnalytics } from '../lib/analytics';
 import getDomainDetails from '../lib/get-domain-details';
 import getPostalCode from '../lib/get-postal-code';
@@ -11,6 +11,7 @@ import { BlikConfirmation } from './blik-confirmation';
 import { addUrlToPendingPageRedirect } from './pending-page';
 import submitWpcomTransaction from './submit-wpcom-transaction';
 import type { PaymentProcessorOptions } from '../types/payment-processors';
+import type { TransactionOrder } from '@automattic/api-core';
 import type { PaymentProcessorResponse } from '@automattic/composite-checkout';
 import type {
 	WPCOMTransactionEndpointResponse,
@@ -159,8 +160,8 @@ async function pollForOrderStatus(
 	orderId: number,
 	pollInterval: number,
 	genericErrorMessage: string
-): Promise< RawOrder > {
-	const orderData = await fetchPurchaseOrder( orderId );
+): Promise< TransactionOrder > {
+	const orderData = await fetchTransactionOrder( orderId );
 	if ( ! orderData ) {
 		// eslint-disable-next-line no-console
 		console.error( 'Order was not found.' );
