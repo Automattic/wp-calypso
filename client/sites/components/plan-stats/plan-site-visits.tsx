@@ -3,15 +3,15 @@ import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import moment from 'moment';
 import { useCallback, useLayoutEffect, useState } from 'react'; // eslint-disable-line no-unused-vars -- used in the jsdoc types
-import { untrailingslashit } from 'calypso/lib/route';
 import wpcom from 'calypso/lib/wp';
+import useStatsAdminUrl from 'calypso/my-sites/stats/hooks/use-stats-admin-url';
 import { useSelector, useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { activateModule } from 'calypso/state/jetpack/modules/actions';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import isActivatingJetpackModule from 'calypso/state/selectors/is-activating-jetpack-module';
 import { requestSite } from 'calypso/state/sites/actions';
-import { getSiteAdminUrl, isJetpackModuleActive } from 'calypso/state/sites/selectors';
+import { isJetpackModuleActive } from 'calypso/state/sites/selectors';
 
 interface PlanSiteVisitsProps {
 	siteId: number;
@@ -80,7 +80,7 @@ export function PlanSiteVisits( { siteId }: PlanSiteVisitsProps ) {
 		fetchVisits();
 	}, [ fetchVisits, hasModuleActive ] );
 
-	const siteAdminUrl = useSelector( ( state ) => getSiteAdminUrl( state, siteId ) ) as string;
+	const statsPageUrl = useStatsAdminUrl( siteId, `admin.php?page=stats#!/stats/month/${ siteId }` );
 
 	if ( ! canViewStat ) {
 		return null;
@@ -172,13 +172,9 @@ export function PlanSiteVisits( { siteId }: PlanSiteVisitsProps ) {
 			);
 		}
 
-		const statsPageUrl = `${ untrailingslashit(
-			siteAdminUrl
-		) }/admin.php?page=stats#!/stats/month/${ siteId }`;
-
 		return (
 			<a
-				href={ statsPageUrl }
+				href={ statsPageUrl ?? undefined }
 				onClick={ () => {
 					dispatch( recordTracksEvent( 'calypso_hosting_overview_visit_stats_click' ) );
 				} }
