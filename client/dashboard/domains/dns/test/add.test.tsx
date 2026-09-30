@@ -50,10 +50,6 @@ const getTtlInput = () => screen.getByRole( 'spinbutton', { name: /TTL/ } );
 const getNameInput = () => screen.getByRole( 'textbox', { name: /Name/ } );
 
 describe( '<DomainAddDNS>', () => {
-	afterEach( () => {
-		nock.cleanAll();
-	} );
-
 	test( 'pre-fills the TTL of the existing records with the same name and type', async () => {
 		mockApi();
 		render( <DomainAddDNS /> );
