@@ -1,9 +1,10 @@
 import { SiteMediaStorage } from '@automattic/data-stores';
 import { ProgressBar } from '@wordpress/components';
 import clsx from 'clsx';
-import { useTranslate } from 'i18n-calypso';
+import { getLocaleSlug, useTranslate } from 'i18n-calypso';
 import { FC, PropsWithChildren } from 'react';
-import { formatStorage } from 'calypso/lib/formatting';
+import { getIntlLocale } from 'calypso/dashboard/utils/locale';
+import { formatStorage } from 'calypso/dashboard/utils/site-storage';
 
 interface Props {
 	mediaStorage: SiteMediaStorage;
@@ -21,8 +22,9 @@ const PlanStorageBar: FC< PropsWithChildren< Props > > = ( { children, mediaStor
 	// Make sure displayed usage never exceeds 100%
 	usagePercent = Math.min( usagePercent, 100 );
 
-	const used = formatStorage( storageUsedBytes );
-	const max = formatStorage( maxStorageBytes );
+	const locale = getIntlLocale( getLocaleSlug() );
+	const used = formatStorage( storageUsedBytes, locale );
+	const max = formatStorage( maxStorageBytes, locale );
 
 	const classes = clsx( 'plan-storage__bar', {
 		'is-alert': usagePercent > ALERT_PERCENT,

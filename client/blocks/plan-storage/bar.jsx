@@ -1,10 +1,11 @@
 import { planHasFeature, FEATURE_UNLIMITED_STORAGE } from '@automattic/calypso-products';
 import { ProgressBar } from '@automattic/components';
 import clsx from 'clsx';
-import { localize } from 'i18n-calypso';
+import { getLocaleSlug, localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
-import { formatStorage } from 'calypso/lib/formatting';
+import { getIntlLocale } from 'calypso/dashboard/utils/locale';
+import { formatStorage } from 'calypso/dashboard/utils/site-storage';
 
 const ALERT_PERCENT = 80;
 const WARN_PERCENT = 60;
@@ -38,7 +39,7 @@ export class PlanStorageBar extends Component {
 			'is-warn': percent > WARN_PERCENT && percent <= ALERT_PERCENT,
 		} );
 
-		const max = formatStorage( mediaStorage.maxStorageBytes );
+		const max = formatStorage( mediaStorage.maxStorageBytes, getIntlLocale( getLocaleSlug() ) );
 
 		return (
 			<div className={ classes }>
