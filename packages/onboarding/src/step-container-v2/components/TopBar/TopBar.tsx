@@ -120,7 +120,6 @@ export const TopBar = ( {
 
 	// Context logo takes precedence over default WordPress logo.
 	// The `logo` prop provides an explicit override for both.
-
 	const resolvedLogo = logo ?? context.logo ?? defaultWordPressLogo;
 
 	return (
