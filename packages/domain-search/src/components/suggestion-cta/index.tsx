@@ -102,6 +102,8 @@ export const DomainSuggestionCTA = ( { domainName }: DomainSuggestionCTAProps ) 
 		);
 	}
 
+	const selectLabel = config.showSelectCta ? __( 'Select' ) : undefined;
+
 	return (
 		<>
 			<DomainSuggestionPrimaryCTA
@@ -111,12 +113,11 @@ export const DomainSuggestionCTA = ( { domainName }: DomainSuggestionCTAProps ) 
 					events.onSuggestionInteract( suggestion );
 					addToCart( { acceptedTrademarkClaim: false } );
 				} }
-				{ ...( config.showSelectCta && {
-					icon: plus,
-					label: __( 'Select' ),
-					children: __( 'Select' ),
-				} ) }
-			/>
+				icon={ config.showSelectCta ? plus : undefined }
+				label={ selectLabel }
+			>
+				{ selectLabel }
+			</DomainSuggestionPrimaryCTA>
 			{ availability?.trademark_claims_notice_info && trademarkClaimModalOpen && (
 				<DomainSearchTrademarkClaimsModal
 					domainName={ domainName }
