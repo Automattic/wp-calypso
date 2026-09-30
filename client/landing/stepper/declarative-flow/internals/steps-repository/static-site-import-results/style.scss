@@ -1,37 +1,13 @@
 .step-container-v2--static-site-import-results {
-	.static-site-import-results__frame {
+	.static-site-import-results__screenshot {
 		overflow: hidden;
-		border: 1px solid var( --color-border-subtle );
-		border-radius: 8px;
-		background-color: var( --color-surface );
+		aspect-ratio: 2 / 1;
 
 		img {
 			display: block;
 			width: 100%;
 			height: auto;
 		}
-	}
-
-	.static-site-import-results__frame-bar {
-		display: flex;
-		gap: 8px;
-		align-items: center;
-		padding: 12px 20px;
-		border-block-end: 1px solid var( --color-border-subtle );
-		background-color: var( --studio-gray-0 );
-		color: var( --color-text-subtle );
-		font-size: 0.875rem;
-
-		svg {
-			fill: currentColor;
-		}
-	}
-
-	.static-site-import-results__frame-url {
-		flex: 1;
-		overflow: hidden;
-		text-overflow: ellipsis;
-		white-space: nowrap;
 	}
 
 	.static-site-import-results__muted {
@@ -49,18 +25,6 @@
 		background-color: var( --studio-yellow-5 );
 		color: var( --studio-yellow-70 );
 		font-weight: 600;
-	}
-
-	.static-site-import-results__next {
-		display: flex;
-		flex-direction: column;
-		gap: 16px;
-		margin: 0;
-		padding-inline-start: 24px;
-
-		li::marker {
-			color: var( --color-text-subtle );
-		}
 	}
 
 	.static-site-import-results__choices {

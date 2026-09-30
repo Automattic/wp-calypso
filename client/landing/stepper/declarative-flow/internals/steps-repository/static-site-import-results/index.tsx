@@ -4,15 +4,16 @@ import { MShotsImage, Step } from '@automattic/onboarding';
 import { useQuery } from '@tanstack/react-query';
 import {
 	Button,
+	Card,
+	CardBody,
 	ExternalLink,
 	__experimentalHStack as HStack,
-	__experimentalHeading as Heading,
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { _n, sprintf } from '@wordpress/i18n';
-import { Icon, check, lock } from '@wordpress/icons';
+import { Icon, check } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { useSearchParams } from 'react-router-dom';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -245,31 +246,6 @@ const StaticSiteImportResults: StepType< { submits: StaticSiteImportResultsSubmi
 			),
 		}[ outcome ];
 
-		const nextSteps = [
-			{
-				title: __( 'Choose your address and a plan' ),
-				text: host
-					? sprintf(
-							/* translators: %s: the site's domain, e.g. example.com. */
-							__( 'Keep %s or pick a new one.' ),
-							host
-						)
-					: __( 'Keep your domain or pick a new one.' ),
-			},
-			{
-				title: __( 'We rebuild your site' ),
-				text: __( 'Your pages, images, and design. We’ll email you when it’s ready.' ),
-			},
-			{
-				title: __( 'You take a look, then switch your address' ),
-				text: sprintf(
-					/* translators: %s: the platform the site is hosted on today, e.g. Wix. */
-					__( '%s keeps running until you do.' ),
-					platformName ?? __( 'Your current site' )
-				),
-			},
-		];
-
 		const onTalkToExpert = async () => {
 			try {
 				await sendTicket( `Static site import: needs an expert for ${ blockers.join( ', ' ) }.` );
@@ -356,34 +332,30 @@ const StaticSiteImportResults: StepType< { submits: StaticSiteImportResultsSubmi
 					className="step-container-v2--static-site-import-results"
 					columnWidth={ 8 }
 					topBar={ <Step.TopBar /> }
-					heading={
-						<Step.Heading
-							text={ heading }
-							subText={ __( 'Here’s your homepage as it looks today.' ) }
-						/>
-					}
+					heading={ <Step.Heading text={ heading } /> }
 				>
-					<VStack spacing={ 8 }>
+					<VStack spacing={ 6 }>
 						{ host && (
-							<div className="static-site-import-results__frame">
-								<div className="static-site-import-results__frame-bar">
-									<Icon icon={ lock } size={ 18 } />
-									<span
-										id="static-site-import-results-host"
-										className="static-site-import-results__frame-url"
-									>
-										{ host }
-									</span>
-									{ platformName && (
-										<span>
-											{ sprintf(
-												/* translators: %s: the platform the site is hosted on today, e.g. Wix. */
-												__( 'Hosted with %s' ),
-												platformName
-											) }
-										</span>
-									) }
-								</div>
+							<Card>
+								<CardBody>
+									<HStack wrap>
+										<span id="static-site-import-results-host">{ host }</span>
+										<ExternalLink href={ sourceUrl }>
+											{ platformName
+												? sprintf(
+														/* translators: %s: the platform the site is hosted on today, e.g. Wix. */
+														__( '%s site' ),
+														platformName
+													)
+												: __( 'Current site' ) }
+										</ExternalLink>
+									</HStack>
+								</CardBody>
+							</Card>
+						) }
+
+						{ host && (
+							<Card className="static-site-import-results__screenshot">
 								<MShotsImage
 									url={ sourceUrl }
 									alt={ sprintf(
@@ -394,21 +366,18 @@ const StaticSiteImportResults: StepType< { submits: StaticSiteImportResultsSubmi
 									aria-labelledby="static-site-import-results-host"
 									options={ MSHOTS_OPTIONS }
 								/>
-							</div>
-						) }
-
-						{ hasPreview && (
-							<Notice variant={ outcome === 'everything' ? 'success' : 'warning' }>
-								{ confidenceNotice }
-							</Notice>
+							</Card>
 						) }
 
 						<ImportCard>
 							{ hasPreview && (
+								<Notice variant={ outcome === 'everything' ? 'success' : 'warning' }>
+									{ confidenceNotice }
+								</Notice>
+							) }
+
+							{ hasPreview && (
 								<VStack spacing={ 4 }>
-									<Heading level={ 2 } size={ 20 } weight={ 600 }>
-										{ __( 'What we found' ) }
-									</Heading>
 									{ foundRows.map( ( row, index ) => (
 										<FoundRow key={ `found-${ index }` } { ...row } />
 									) ) }
@@ -418,24 +387,6 @@ const StaticSiteImportResults: StepType< { submits: StaticSiteImportResultsSubmi
 									{ blockers.map( ( blocker ) => (
 										<FoundRow key={ blocker } { ...blockerRows[ blocker ] } isWarning />
 									) ) }
-								</VStack>
-							) }
-
-							{ hasPreview && outcome !== 'manual-work' && (
-								<VStack spacing={ 4 }>
-									<Heading level={ 2 } size={ 20 } weight={ 600 }>
-										{ __( 'What happens next' ) }
-									</Heading>
-									<ol className="static-site-import-results__next">
-										{ nextSteps.map( ( step ) => (
-											<li key={ step.title }>
-												<VStack spacing={ 1 }>
-													<span>{ step.title }</span>
-													<Text variant="muted">{ step.text }</Text>
-												</VStack>
-											</li>
-										) ) }
-									</ol>
 								</VStack>
 							) }
 
