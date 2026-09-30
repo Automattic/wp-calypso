@@ -45,6 +45,7 @@
 		"emails/titan-tiers": false,
 		"footer-redesign/2026": false,
 		"footer/dark": false,
+		"footer/light": false,
 		"google-my-business": false,
 		"help": true,
 		"help-center/logged-out-fab": true,

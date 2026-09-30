@@ -93,6 +93,7 @@
 		"entrepreneur/skip-trial-for-migration": true,
 		"footer-redesign/2026": false,
 		"footer/dark": false,
+		"footer/light": false,
 		"google-drive": true,
 		"google-my-business": true,
 		"help": true,
