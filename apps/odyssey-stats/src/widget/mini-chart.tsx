@@ -12,6 +12,7 @@ import { getChartRangeParams } from 'calypso/my-sites/stats/utils';
 import nothing from '../components/nothing';
 import useVisitsQuery from '../hooks/use-visits-query';
 import { Unit } from '../typings';
+import useStatsLink from './use-stats-link';
 
 import './mini-chart.scss';
 
@@ -34,6 +35,7 @@ const MiniChart: FunctionComponent< MiniChartProps > = ( {
 	quantity = 7,
 } ) => {
 	const translate = useTranslate();
+	const statsLink = useStatsLink( siteId );
 
 	const chartViews = {
 		attr: 'views',
@@ -56,7 +58,10 @@ const MiniChart: FunctionComponent< MiniChartProps > = ( {
 	const barClick = ( bar: { data: BarData } ) => {
 		const { chartStart, chartEnd, chartPeriod } = getChartRangeParams( bar.data.period, period );
 
-		window.location.href = `${ statsBaseUrl }/stats/${ chartPeriod }/${ siteId }?chartStart=${ chartStart }&chartEnd=${ chartEnd }`;
+		window.location.href = statsLink(
+			`${ statsBaseUrl }/stats/${ chartPeriod }/${ siteId }?chartStart=${ chartStart }&chartEnd=${ chartEnd }`,
+			'/'
+		);
 	};
 
 	const chartData = buildChartData(

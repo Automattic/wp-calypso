@@ -1,0 +1,59 @@
+/**
+ * @jest-environment jsdom
+ */
+import { renderHook } from '@testing-library/react';
+import usePremiumAnalyticsStatusQuery from 'calypso/my-sites/stats/hooks/use-premium-analytics-status-query';
+import canCurrentUser from '../../lib/selectors/can-current-user';
+import useStatsLink from '../use-stats-link';
+
+jest.mock( 'calypso/my-sites/stats/hooks/use-premium-analytics-status-query', () => jest.fn() );
+jest.mock( '../../lib/selectors/can-current-user', () => jest.fn() );
+jest.mock( '../../lib/selectors/get-site-admin-url', () => () => 'https://example.com/wp-admin/' );
+
+const STATS_URL = 'https://example.com/wp-admin/admin.php?page=stats#!/stats/post/12/1';
+
+/**
+ * @param enabled What the site reports, `undefined` for a Jetpack too old to register the setting.
+ * @param canManageOptions Whether the user may read the site settings.
+ */
+function mockSite( enabled: boolean | undefined, canManageOptions = true ) {
+	( canCurrentUser as jest.Mock ).mockReturnValue( canManageOptions );
+	( usePremiumAnalyticsStatusQuery as jest.Mock ).mockImplementation(
+		( _siteId, queryEnabled ) => ( {
+			data: queryEnabled ? enabled : undefined,
+		} )
+	);
+}
+
+function statsLink( statsUrl: string, route: string | null ) {
+	const { result } = renderHook( () => useStatsLink( 1 ) );
+	return result.current( statsUrl, route );
+}
+
+describe( 'useStatsLink', () => {
+	it( 'opens the dashboard route when the site has Premium Analytics switched on', () => {
+		mockSite( true );
+
+		expect( statsLink( STATS_URL, '/post/12' ) ).toBe(
+			'https://example.com/wp-admin/admin.php?page=jetpack-premium-analytics-wp-admin&p=%2Fpost%2F12'
+		);
+	} );
+
+	it( 'keeps the Stats URL on a Jetpack too old to report the setting', () => {
+		mockSite( undefined );
+
+		expect( statsLink( STATS_URL, '/post/12' ) ).toBe( STATS_URL );
+	} );
+
+	it( 'keeps the Stats URL for a link the dashboard has no page for', () => {
+		mockSite( true );
+
+		expect( statsLink( STATS_URL, null ) ).toBe( STATS_URL );
+	} );
+
+	it( 'keeps the Stats URL for a user who cannot read the site settings', () => {
+		mockSite( true, false );
+
+		expect( statsLink( STATS_URL, '/post/12' ) ).toBe( STATS_URL );
+	} );
+} );
