@@ -5,7 +5,7 @@ import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { render } from '../../../test-utils';
-import StaticSiteImportCard from '../index';
+import { StaticSiteImportNotice, StaticSiteImportProgress, useStaticSiteImport } from '../index';
 import type { Site } from '@automattic/api-core';
 
 const site = {
@@ -34,6 +34,18 @@ const session = ( state: string, extra = {} ) => ( {
 
 const mockApi = () => nock( 'https://public-api.wordpress.com' );
 
+function StaticSiteImport() {
+	const siteImport = useStaticSiteImport( site, search.importSessionId );
+	if ( ! siteImport ) {
+		return null;
+	}
+	return siteImport.status === 'moving' ? (
+		<StaticSiteImportProgress siteImport={ siteImport } search={ search } />
+	) : (
+		<StaticSiteImportNotice site={ site } siteImport={ siteImport } search={ search } />
+	);
+}
+
 describe( 'StaticSiteImportCard', () => {
 	it( 'starts the move the user asked for before checkout', async () => {
 		mockApi()
@@ -51,7 +63,7 @@ describe( 'StaticSiteImportCard', () => {
 			.query( true )
 			.reply( 200, session( 'queued' ) );
 
-		render( <StaticSiteImportCard site={ site } search={ search } /> );
+		render( <StaticSiteImport /> );
 
 		expect( screen.getByRole( 'heading', { name: 'We’re moving your site' } ) ).toBeVisible();
 		await waitFor( () => expect( approve.isDone() ).toBe( true ) );
@@ -63,9 +75,7 @@ describe( 'StaticSiteImportCard', () => {
 			.query( true )
 			.reply( 200, session( 'finished', { site_url: 'https://busybears.wordpress.com' } ) );
 
-		const { recordTracksEvent } = render(
-			<StaticSiteImportCard site={ site } search={ search } />
-		);
+		const { recordTracksEvent } = render( <StaticSiteImport /> );
 
 		expect( await screen.findByText( 'Your site is ready' ) ).toBeVisible();
 		expect( screen.getByRole( 'link', { name: 'Connect busybearscleaning.com' } ) ).toHaveAttribute(
@@ -87,7 +97,7 @@ describe( 'StaticSiteImportCard', () => {
 			.query( true )
 			.reply( 404, { code: 'static_site_import_preview_expired', message: 'Expired' } );
 
-		render( <StaticSiteImportCard site={ site } search={ search } /> );
+		render( <StaticSiteImport /> );
 
 		expect( await screen.findByRole( 'link', { name: 'Read my site again' } ) ).toHaveAttribute(
 			'href',

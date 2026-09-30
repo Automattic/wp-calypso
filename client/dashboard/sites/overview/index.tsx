@@ -36,7 +36,11 @@ import ScanCard from '../overview-scan-card';
 import SiteActionMenu from '../overview-site-action-menu';
 import SiteOverviewFields from '../overview-site-fields';
 import SitePreviewCard from '../overview-site-preview-card';
-import StaticSiteImportCard from '../overview-static-site-import';
+import {
+	StaticSiteImportNotice,
+	StaticSiteImportProgress,
+	useStaticSiteImport,
+} from '../overview-static-site-import';
 import SubscribersCard from '../overview-subscribers-card';
 import VisibilityCard from '../overview-visibility-card';
 import VisibilityCardCiab from '../overview-visibility-card-ciab';
@@ -205,7 +209,7 @@ function SiteOverview( {
 	const siteRequiresTwoStep = useSiteRequiresTwoStep( site );
 	const showTwoStepRequiredNotice = supports.me && siteRequiresTwoStep;
 	const importSearch: StaticSiteImportSearch = useSearch( { strict: false } );
-	const importSessionId = importSearch.importSessionId;
+	const siteImport = useStaticSiteImport( site, importSearch.importSessionId );
 
 	const renderActions = () => {
 		if ( ! site.options?.admin_url ) {
@@ -264,18 +268,30 @@ function SiteOverview( {
 				/>
 			}
 			notices={
-				<SitesNoticeArbiter>
-					{ site.__inaccessible_jetpack_error && (
-						<InaccessibleJetpackNotice error={ site.__inaccessible_jetpack_error } site={ site } />
+				<>
+					{ siteImport && siteImport.status !== 'moving' && (
+						<StaticSiteImportNotice
+							site={ site }
+							siteImport={ siteImport }
+							search={ importSearch }
+						/>
 					) }
-					{ showTwoStepRequiredNotice && <TwoStepRequiredNotice site={ site } /> }
-					{ !! getEmailBlock( site ) && <EmailBlockNotice site={ site } /> }
-					{ isStorageWarningVisible && <StorageWarningBanner site={ site } /> }
-				</SitesNoticeArbiter>
+					<SitesNoticeArbiter>
+						{ site.__inaccessible_jetpack_error && (
+							<InaccessibleJetpackNotice
+								error={ site.__inaccessible_jetpack_error }
+								site={ site }
+							/>
+						) }
+						{ showTwoStepRequiredNotice && <TwoStepRequiredNotice site={ site } /> }
+						{ !! getEmailBlock( site ) && <EmailBlockNotice site={ site } /> }
+						{ isStorageWarningVisible && <StorageWarningBanner site={ site } /> }
+					</SitesNoticeArbiter>
+				</>
 			}
 		>
-			{ importSessionId ? (
-				<StaticSiteImportCard site={ site } search={ { ...importSearch, importSessionId } } />
+			{ siteImport?.status === 'moving' ? (
+				<StaticSiteImportProgress siteImport={ siteImport } search={ importSearch } />
 			) : (
 				<VStack alignment="stretch" spacing={ isSmallViewport ? 5 : 10 }>
 					<Grid { ...gridLayout } gap={ gap }>
