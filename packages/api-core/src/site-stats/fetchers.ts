@@ -28,3 +28,17 @@ export async function fetchSiteHourlyViews( siteId: number ): Promise< SiteHourl
 		stat_fields: 'views',
 	} );
 }
+
+/**
+ * Whether the site has the Premium Analytics ("Stats v2") dashboard switched on. `undefined` when
+ * the site does not register the setting, as on a Jetpack too old to ship it.
+ */
+export async function fetchSitePremiumAnalyticsEnabled(
+	siteId: number
+): Promise< boolean | undefined > {
+	const settings = await wpcom.req.get( {
+		path: `/sites/${ siteId }/settings`,
+		apiNamespace: 'wp/v2',
+	} );
+	return settings?.jetpack_premium_analytics_enabled;
+}

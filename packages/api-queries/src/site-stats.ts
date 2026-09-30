@@ -2,6 +2,7 @@ import {
 	fetchSiteEngagementStats,
 	fetchSiteEngagementMonthlyStats,
 	fetchSiteHourlyViews,
+	fetchSitePremiumAnalyticsEnabled,
 } from '@automattic/api-core';
 import { queryOptions } from '@tanstack/react-query';
 
@@ -81,4 +82,10 @@ export const siteHourlyViewsQuery = ( siteId: number ) =>
 			const { data } = await fetchSiteHourlyViews( siteId );
 			return data.map( ( [ , views ] ) => views );
 		},
+	} );
+
+export const sitePremiumAnalyticsEnabledQuery = ( siteId: number ) =>
+	queryOptions( {
+		queryKey: [ 'site', siteId, 'premium-analytics-enabled' ],
+		queryFn: () => fetchSitePremiumAnalyticsEnabled( siteId ),
 	} );
