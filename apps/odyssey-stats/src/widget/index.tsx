@@ -12,6 +12,7 @@ import setLocale from '../lib/set-locale';
 import Highlights from './highlights';
 import MiniChart from './mini-chart';
 import Modules from './modules';
+import useStatsLink from './use-stats-link';
 import type { FunctionComponent } from 'react';
 
 import './index.scss';
@@ -37,6 +38,7 @@ export function init() {
 		const App: FunctionComponent = () => {
 			const translate = useTranslate();
 			const customTheme = useWPAdminTheme();
+			const statsLink = useStatsLink( currentSiteId );
 			return (
 				<div
 					id="stats-widget-content"
@@ -63,7 +65,7 @@ export function init() {
 							>
 								<JetpackLogo size={ 20 } monochrome full />
 							</a>
-							<a href={ `${ statsBaseUrl }/stats/day/${ currentSiteId }` }>
+							<a href={ statsLink( `${ statsBaseUrl }/stats/day/${ currentSiteId }`, '/' ) }>
 								{ translate( 'View all stats' ) }
 							</a>
 						</div>
