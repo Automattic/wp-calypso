@@ -29,15 +29,20 @@ export function rememberStaticSiteImportShare( playgroundId: string, shareToken:
 }
 
 /**
- * The share token a Playground was booted from, removed as it is read: one
- * preview, one launch.
+ * The share token a Playground was booted from, if any.
  */
-export function takeStaticSiteImportShare( playgroundId: string ): string | undefined {
+export function readStaticSiteImportShare( playgroundId: string ): string | undefined {
 	try {
-		const shareToken = window.localStorage.getItem( keyFor( playgroundId ) );
-		window.localStorage.removeItem( keyFor( playgroundId ) );
-		return shareToken ?? undefined;
+		return window.localStorage.getItem( keyFor( playgroundId ) ) ?? undefined;
 	} catch {
 		return undefined;
 	}
+}
+
+/**
+ * Forget a Playground's share token once its launch has been sent: one preview,
+ * one launch.
+ */
+export function forgetStaticSiteImportShare( playgroundId: string ) {
+	rememberStaticSiteImportShare( playgroundId, null );
 }

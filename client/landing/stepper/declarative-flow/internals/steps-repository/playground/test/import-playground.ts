@@ -87,6 +87,17 @@ describe( 'uploadPlaygroundSiteZip', () => {
 		expect( localStorage.getItem( shareKey ) ).toBeNull();
 	} );
 
+	it( 'keeps the share token when the upload fails, so a retried launch still sends it', async () => {
+		localStorage.setItem( shareKey, 'a.b.c' );
+		uploadExportFileMock.mockRejectedValueOnce( new Error( 'network' ) );
+
+		await expect( uploadPlaygroundSiteZip( siteId, siteZip, 'playground-1' ) ).rejects.toThrow(
+			'network'
+		);
+
+		expect( localStorage.getItem( shareKey ) ).toBe( 'a.b.c' );
+	} );
+
 	it( "does not send another Playground's share token", async () => {
 		localStorage.setItem( shareKey, 'a.b.c' );
 

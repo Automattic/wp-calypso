@@ -3,7 +3,7 @@ import { uploadExportFile, updateImporter } from 'calypso/state/imports/actions'
 import { fromApi, toApi } from 'calypso/state/imports/api';
 import { appStates } from 'calypso/state/imports/constants';
 import { PLAYGROUND_HOST } from './constants';
-import { takeStaticSiteImportShare } from './static-site-import-share';
+import { forgetStaticSiteImportShare, readStaticSiteImportShare } from './static-site-import-share';
 import type { PlaygroundClient } from './types';
 
 const POLL_INTERVAL_MS = 5000;
@@ -120,19 +120,23 @@ foreach ( $plugins as $slug ) {
  *
  * When this Playground was booted from a WordPress.com static site import
  * preview, its share token goes along so the launch is recorded against that
- * import. One preview, one launch: the token is taken, not just read.
+ * import. It is forgotten only once the upload succeeds, so a retried launch
+ * still carries it: one preview, one launch.
  */
 export async function uploadPlaygroundSiteZip(
 	siteId: number,
 	siteZip: File,
 	playgroundSlug: string
 ) {
-	return uploadExportFile( siteId, {
+	const importer = await uploadExportFile( siteId, {
 		importStatus: { importStatus: 'importer-ready-for-upload', siteId, type: 'wordpress' },
 		file: siteZip,
 		autoStart: true,
-		staticSiteImportShare: takeStaticSiteImportShare( playgroundSlug ),
+		staticSiteImportShare: readStaticSiteImportShare( playgroundSlug ),
 	} );
+	forgetStaticSiteImportShare( playgroundSlug );
+
+	return importer;
 }
 
 /**
