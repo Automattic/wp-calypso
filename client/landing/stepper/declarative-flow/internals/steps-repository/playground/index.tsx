@@ -5,8 +5,12 @@ import { useSearchParams } from 'react-router-dom';
 import DocumentHead from 'calypso/components/data/document-head';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { PlaygroundIframe } from './components/playground-iframe';
-import { getBlueprintLabelForTracking } from './lib/blueprint';
-import { DEFAULT_PLAN_INTENT, SESSION_KEY_PLAYGROUND_WOO_INTENT } from './lib/constants';
+import { getBlueprintLabelForTracking, getStaticSiteImportShareToken } from './lib/blueprint';
+import {
+	DEFAULT_PLAN_INTENT,
+	SESSION_KEY_PLAYGROUND_WOO_INTENT,
+	SESSION_KEY_STATIC_SITE_IMPORT_SHARE,
+} from './lib/constants';
 import type { Step as StepType } from '../../types';
 import type { PlaygroundClient } from './lib/types';
 import './style.scss';
@@ -24,6 +28,21 @@ export const PlaygroundStep: StepType = ( { navigation, flow } ) => {
 	useEffect( () => {
 		if ( query.get( 'intent' ) === 'woocommerce' ) {
 			sessionStorage.setItem( SESSION_KEY_PLAYGROUND_WOO_INTENT, '1' );
+		}
+	}, [ query ] );
+
+	// Remember which static site import preview this session was opened from, so
+	// the launch can be recorded against it. Only a URL that names a blueprint
+	// decides this; a URL without one keeps what the tab already knows.
+	useEffect( () => {
+		if ( ! query.has( 'blueprint-url' ) && ! query.has( 'blueprint' ) ) {
+			return;
+		}
+		const shareToken = getStaticSiteImportShareToken( query );
+		if ( shareToken ) {
+			sessionStorage.setItem( SESSION_KEY_STATIC_SITE_IMPORT_SHARE, shareToken );
+		} else {
+			sessionStorage.removeItem( SESSION_KEY_STATIC_SITE_IMPORT_SHARE );
 		}
 	}, [ query ] );
 

@@ -72,6 +72,9 @@ export const uploadExportFile = ( siteId, params ) =>
 		if ( params.autoStart ) {
 			formData.push( [ 'autoStart', '1' ] );
 		}
+		if ( params.staticSiteImportShare ) {
+			formData.push( [ 'staticSiteImportShare', params.staticSiteImportShare ] );
+		}
 
 		const req = wp.req.post(
 			{
