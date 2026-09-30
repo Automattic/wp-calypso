@@ -361,18 +361,30 @@ $lead-side-by-side: $pad-x * 2 + $words-min + $gap + $lead-object;
 	scroll-behavior: smooth;
 	scroll-snap-type: x mandatory;
 	scrollbar-width: none;
-	mask-image: linear-gradient( to right, transparent, #000 var( --fade-start ), #000 calc( 100% - var( --fade-end ) ), transparent );
+	// Eased, and longer than the category row's, so it reads as more to come
+	// on a large coloured tile rather than as a cut.
+	mask-image: linear-gradient(
+		to right,
+		transparent,
+		rgba( 0, 0, 0, 0.3 ) calc( var( --fade-start ) * 0.35 ),
+		rgba( 0, 0, 0, 0.75 ) calc( var( --fade-start ) * 0.7 ),
+		#000 var( --fade-start ),
+		#000 calc( 100% - var( --fade-end ) ),
+		rgba( 0, 0, 0, 0.75 ) calc( 100% - var( --fade-end ) * 0.7 ),
+		rgba( 0, 0, 0, 0.3 ) calc( 100% - var( --fade-end ) * 0.35 ),
+		transparent
+	);
 
 	&::-webkit-scrollbar {
 		display: none;
 	}
 
 	&.can-back {
-		--fade-start: 32px;
+		--fade-start: 96px;
 	}
 
 	&.can-forward {
-		--fade-end: 48px;
+		--fade-end: 160px;
 	}
 
 	> .dashboard-showcase__tile:nth-child( n ):nth-last-child( n ) {
@@ -390,3 +402,4 @@ $lead-side-by-side: $pad-x * 2 + $words-min + $gap + $lead-object;
 		scroll-behavior: auto;
 	}
 }
+
