@@ -1657,7 +1657,7 @@ __metadata:
     "@wordpress/primitives": "npm:^4.48.0"
     "@wordpress/url": "npm:^4.48.0"
     clsx: "npm:^2.1.1"
-    social-logos: "npm:^3.1.18"
+    social-logos: "npm:^3.4.0"
     typescript: "npm:^6.0.3"
     wpcom-proxy-request: "workspace:^"
   peerDependencies:
@@ -1833,7 +1833,7 @@ __metadata:
     postcss: "npm:^8.5.15"
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
-    social-logos: "npm:^3.1.18"
+    social-logos: "npm:^3.4.0"
     storybook: "npm:^9.1.20"
     tslib: "npm:^2.8.1"
     typescript: "npm:^6.0.3"
@@ -10879,13 +10879,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@vgs/collect-js-react@npm:^2.0.0":
-  version: 2.0.0
-  resolution: "@vgs/collect-js-react@npm:2.0.0"
+"@vgs/collect-js-react@npm:^2.1.1":
+  version: 2.1.1
+  resolution: "@vgs/collect-js-react@npm:2.1.1"
   peerDependencies:
-    react: ^16.0 || ^17.0 || ^18.0
-    react-dom: ^16.0 || ^17.0 || ^18.0
-  checksum: acd509593174d152a850d5483a8713631967b49f4a2c40bf6910bd7224a89bf1181e425b925261dbb2f817d29d73d00a9fb5e4e319bb4416e2c9200fb00e305f
+    react: ^16.0 || ^17.0 || ^18.0 || ^19.0
+    react-dom: ^16.0 || ^17.0 || ^18.0 || ^19.0
+  checksum: 0d4f5d9fad3ecc39039ede48d47f11ff15340633407a59b02b03a9ad7a34b3171d59dddbb44864a210ff96545da077912363138bd3533b85141ed4647bc8ea8f
   languageName: node
   linkType: hard
 
@@ -15398,7 +15398,7 @@ __metadata:
     redux-mock-store: "npm:^1.5.5"
     redux-thunk: "npm:^3.1.0"
     regenerator-runtime: "npm:^0.13.9"
-    social-logos: "npm:^3.1.18"
+    social-logos: "npm:^3.4.0"
     source-map-support: "npm:^0.5.21"
     store: "npm:^2.0.12"
     storybook: "npm:^9.1.20"
@@ -31530,17 +31530,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"social-logos@npm:^3.1.18":
-  version: 3.1.18
-  resolution: "social-logos@npm:3.1.18"
+"social-logos@npm:^3.4.0":
+  version: 3.4.0
+  resolution: "social-logos@npm:3.4.0"
   dependencies:
     prop-types: "npm:^15.8.1"
-    react: "npm:18.3.1"
-    react-dom: "npm:18.3.1"
   peerDependencies:
-    react: ^18.0.0
-    react-dom: ^18.0.0
-  checksum: 041f6b4c55e119e8114ebc33ce2af4710fcaa3336487978ea6650f2375c980716c61a5100e4f29f61c2925f0868f4f7d373caac1cf54b4df1b155dcc2eab9973
+    react: ^18.0.0 || ^19.0.0
+    react-dom: ^18.0.0 || ^19.0.0
+  checksum: 9e5c25607a02f2ff8fa2aabf89717b1bbc53896c35530c40bf559da0834701fdba35511c114f893c72ded8d762dd24b23a4b99cf8ba60a705505abda22cca2bd
   languageName: node
   linkType: hard
 
@@ -35172,7 +35170,7 @@ __metadata:
     "@typescript-eslint/eslint-plugin": "npm:^8.0.0"
     "@typescript-eslint/parser": "npm:^8.0.0"
     "@vgs/collect-js": "npm:^0.7.2"
-    "@vgs/collect-js-react": "npm:^2.0.0"
+    "@vgs/collect-js-react": "npm:^2.1.1"
     "@visx/glyph": "npm:^4.0.0"
     "@wordpress/admin-ui": "npm:^2.3.0"
     "@wordpress/base-styles": "npm:^9.1.0"
