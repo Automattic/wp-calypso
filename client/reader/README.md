@@ -22,6 +22,7 @@ These routes are served by the module:
 | `/reader/p2`                         | P2 posts                                                |
 | `/reader/search`                     | Redirects to `/discover/search`                         |
 | `/reader/notifications`              | Reader notifications                                    |
+| `/reader/four-for-four`              | 4 for 4: subscribe to four new writers (feature flag)   |
 | `/reader/feeds/lookup/*`             | Feed URL lookup (redirects to `/reader/feeds/:feed_id`) |
 | `/activities/likes`                  | Liked posts                                             |
 

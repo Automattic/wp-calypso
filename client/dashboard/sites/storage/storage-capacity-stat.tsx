@@ -1,6 +1,7 @@
 import { __experimentalHStack as HStack, __experimentalText as Text } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
-import filesize from 'filesize';
+import { useIntlLocale } from '../../app/locale';
+import { formatStorage } from '../../utils/site-storage';
 import './storage-capacity-stat.scss';
 
 const MINIMUM_SEGMENT_WIDTH = 0.5; // Minimum width in % to ensure visibility
@@ -27,9 +28,10 @@ export function StorageCapacityStat( {
 	currentCapacityBytes,
 	addOnCapacityBytes,
 }: StorageCapacityStatProps ) {
+	const locale = useIntlLocale();
 	// Calculate total and percentages
 	const totalBytes = currentCapacityBytes + addOnCapacityBytes;
-	const totalCapacity = filesize( totalBytes, { round: 0 } );
+	const totalCapacity = formatStorage( totalBytes, locale );
 	const currentCapacityPercent = ( currentCapacityBytes / totalBytes ) * 100;
 	const addOnCapacityPercent = ( addOnCapacityBytes / totalBytes ) * 100;
 
@@ -66,7 +68,7 @@ export function StorageCapacityStat( {
 					{ sprintf(
 						// translators: %s is the plan storage amount
 						__( '%s plan storage' ),
-						filesize( currentCapacityBytes, { round: 0 } )
+						formatStorage( currentCapacityBytes, locale )
 					) }
 				</Text>
 				<Text
@@ -77,7 +79,7 @@ export function StorageCapacityStat( {
 					{ sprintf(
 						// translators: %s is the storage add-on amount
 						__( '%s storage add-on' ),
-						filesize( addOnCapacityBytes, { round: 0 } )
+						formatStorage( addOnCapacityBytes, locale )
 					) }
 				</Text>
 			</HStack>

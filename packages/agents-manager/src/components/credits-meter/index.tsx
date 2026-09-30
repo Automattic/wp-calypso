@@ -112,7 +112,7 @@ export default function CreditsMeter( {
 			open={ isOpen }
 			onToggle={ onToggle }
 			focusOnMount
-			// Render inside the panel so opening the popover doesn't blur it
+			// Render inside the panel node so the popover stacks with the panel
 			popoverProps={ {
 				inline: true,
 				placement: 'top-end',

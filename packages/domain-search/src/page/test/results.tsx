@@ -856,6 +856,48 @@ describe( 'ResultsPage', () => {
 		} );
 	} );
 
+	describe( 'skip suggestion placement', () => {
+		const renderWithPlacement = async ( placement?: 'results' | 'top' ) => {
+			mockGetSuggestionsQuery( { params: { query: 'site' }, suggestions: [] } );
+
+			mockGetFreeSuggestionQuery( {
+				params: { query: 'site' },
+				freeSuggestion: buildFreeSuggestion( { domain_name: 'site.wordpress.com' } ),
+			} );
+
+			render(
+				<TestDomainSearch
+					config={ { skippable: true, skipSuggestionPlacement: placement } }
+					query="site"
+					slots={ { BeforeResults: () => <div>Before Results</div> } }
+				>
+					<ResultsPage />
+				</TestDomainSearch>
+			);
+
+			return {
+				skipSuggestion: await screen.findByText( 'Start free with site.wordpress.com' ),
+				beforeResults: screen.getByText( 'Before Results' ),
+			};
+		};
+
+		it( 'renders the skip suggestion below the BeforeResults slot by default', async () => {
+			const { skipSuggestion, beforeResults } = await renderWithPlacement();
+
+			expect(
+				beforeResults.compareDocumentPosition( skipSuggestion ) & Node.DOCUMENT_POSITION_FOLLOWING
+			).toBeTruthy();
+		} );
+
+		it( 'renders the skip suggestion above the BeforeResults slot when placed on top', async () => {
+			const { skipSuggestion, beforeResults } = await renderWithPlacement( 'top' );
+
+			expect(
+				beforeResults.compareDocumentPosition( skipSuggestion ) & Node.DOCUMENT_POSITION_PRECEDING
+			).toBeTruthy();
+		} );
+	} );
+
 	describe( 'free .blog subdomain suggestion', () => {
 		it( 'renders the skip suggestion when searching for an available .blog subdomain', async () => {
 			mockGetSuggestionsQuery( {

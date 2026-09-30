@@ -91,12 +91,14 @@ export const getFooterColorway = (
 const FooterStack = ( {
 	column,
 	open,
+	collapsible = true,
 	onToggle,
 	showLegalSlot = true,
 	additionalCompanyLinks,
 }: {
 	column: FooterColumn;
 	open: boolean;
+	collapsible?: boolean;
 	onToggle?: ( open: boolean ) => void;
 	showLegalSlot?: boolean;
 	additionalCompanyLinks?: React.ReactNode;
@@ -107,7 +109,8 @@ const FooterStack = ( {
 			open={ open }
 			onToggle={ ( event ) => onToggle?.( ( event.currentTarget as HTMLDetailsElement ).open ) }
 		>
-			<summary>
+			{ /* Desktop columns stay open, so the heading must not collapse them. */ }
+			<summary onClick={ collapsible ? undefined : ( event ) => event.preventDefault() }>
 				<div className="lp-footer-stack__summary lp-color-primary">
 					<div className="lp-footer-stack__summary__content lp-bold">{ column.title }</div>
 					<ChevronSvg className="lp-footer-stack__summary__marker lp-display-none@L" />
@@ -401,6 +404,7 @@ export const PureUniversalNavbarFooter = ( {
 									key={ column.id }
 									column={ column }
 									open={ ! collapseStacks || openStack === column.id }
+									collapsible={ collapseStacks }
 									onToggle={ ( open ) => {
 										if ( ! collapseStacks ) {
 											return;
