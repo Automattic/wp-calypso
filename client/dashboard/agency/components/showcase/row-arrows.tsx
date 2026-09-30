@@ -10,6 +10,8 @@ import { useEffect, useRef, useState } from 'react';
 export function useRowScroll< T extends HTMLElement >() {
 	const rowRef = useRef< T >( null );
 	const [ canScroll, setCanScroll ] = useState( { back: false, forward: false } );
+	// Whether the row ends inside the window, rather than running to its edge.
+	const [ isInset, setIsInset ] = useState( false );
 
 	useEffect( () => {
 		const row = rowRef.current;
@@ -19,13 +21,19 @@ export function useRowScroll< T extends HTMLElement >() {
 		const update = () => {
 			const max = row.scrollWidth - row.clientWidth;
 			setCanScroll( { back: row.scrollLeft > 1, forward: row.scrollLeft < max - 1 } );
+			// The page is centred, so when its right end stops short of the window,
+			// its left end stops short of the sidebar too.
+			setIsInset( row.getBoundingClientRect().right < document.documentElement.clientWidth - 1 );
 		};
 		update();
 		row.addEventListener( 'scroll', update, { passive: true } );
+		// A capped page keeps its width as the window grows, so watch the window too.
+		window.addEventListener( 'resize', update );
 		const observer = new ResizeObserver( update );
 		observer.observe( row );
 		return () => {
 			row.removeEventListener( 'scroll', update );
+			window.removeEventListener( 'resize', update );
 			observer.disconnect();
 		};
 	}, [] );
@@ -35,7 +43,7 @@ export function useRowScroll< T extends HTMLElement >() {
 		row?.scrollBy( { left: direction * row.clientWidth * 0.8 } );
 	};
 
-	return { rowRef, canScroll, page };
+	return { rowRef, canScroll, isInset, page };
 }
 
 /**

@@ -317,9 +317,14 @@ $lead-side-by-side: $pad-x * 2 + $words-min + $gap + $lead-object;
 // scrolling row. Wide tiles keep the bento's rhythm as widths, so the words and
 // the drawing still sit side by side (R4) and narrow tiles stack (R5). One
 // height for the row, 16px apart, snapping to a tile's start. The row runs
-// into the page's side padding, so tiles are cut by the page edge rather than
-// faded. On a phone, tiles are at most 85% of the screen so the next one peeks in.
+// into the page's side padding. Where that reaches the window's edge, the edge
+// cuts the tiles; where the page is narrower than the window, each end fades
+// instead, only while there is more that way. On a phone, tiles are at most 85%
+// of the screen so the next one peeks in.
 .dashboard-showcase.is-row {
+	--fade-start: 0%;
+	--fade-end: 0%;
+
 	grid-template-columns: none;
 	grid-template-rows: 340px;
 	grid-auto-flow: column;
@@ -332,9 +337,28 @@ $lead-side-by-side: $pad-x * 2 + $words-min + $gap + $lead-object;
 	scroll-behavior: smooth;
 	scroll-snap-type: x mandatory;
 	scrollbar-width: none;
+	mask-image: linear-gradient(
+		to right,
+		transparent,
+		rgba( 0, 0, 0, 0.3 ) calc( var( --fade-start ) * 0.35 ),
+		rgba( 0, 0, 0, 0.75 ) calc( var( --fade-start ) * 0.7 ),
+		#000 var( --fade-start ),
+		#000 calc( 100% - var( --fade-end ) ),
+		rgba( 0, 0, 0, 0.75 ) calc( 100% - var( --fade-end ) * 0.7 ),
+		rgba( 0, 0, 0, 0.3 ) calc( 100% - var( --fade-end ) * 0.35 ),
+		transparent
+	);
 
 	&::-webkit-scrollbar {
 		display: none;
+	}
+
+	&.can-back {
+		--fade-start: 40px;
+	}
+
+	&.can-forward {
+		--fade-end: 64px;
 	}
 
 	> .dashboard-showcase__tile:nth-child( n ):nth-last-child( n ) {

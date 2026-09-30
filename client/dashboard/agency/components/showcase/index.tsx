@@ -45,7 +45,7 @@ function isRowLayout(): boolean {
 
 export default function Showcase( { title, items }: { title: string; items: ShowcaseItem[] } ) {
 	const isRow = isRowLayout();
-	const { rowRef, canScroll, page } = useRowScroll< HTMLUListElement >();
+	const { rowRef, canScroll, isInset, page } = useRowScroll< HTMLUListElement >();
 
 	return (
 		<VStack spacing={ 4 }>
@@ -54,7 +54,14 @@ export default function Showcase( { title, items }: { title: string; items: Show
 				title={ title }
 				actions={ isRow ? rowArrows( { canScroll, page } ) : undefined }
 			/>
-			<ul ref={ rowRef } className={ clsx( 'dashboard-showcase', { 'is-row': isRow } ) }>
+			<ul
+				ref={ rowRef }
+				className={ clsx( 'dashboard-showcase', {
+					'is-row': isRow,
+					'can-back': isRow && isInset && canScroll.back,
+					'can-forward': isRow && isInset && canScroll.forward,
+				} ) }
+			>
 				{ items.map( ( item, index ) => (
 					<li
 						key={ item.id }
