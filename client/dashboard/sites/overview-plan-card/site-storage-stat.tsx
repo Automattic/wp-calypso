@@ -6,12 +6,17 @@ import {
 	__experimentalText as Text,
 } from '@wordpress/components';
 import { sprintf, __ } from '@wordpress/i18n';
-import filesize from 'filesize';
 import { useState } from 'react';
+import { useIntlLocale } from '../../app/locale';
 import { ErrorBoundary } from '../../components/error-boundary';
 import { Stat } from '../../components/stat';
 import { hasStagingSite } from '../../utils/site-staging-site';
-import { getStorageAlertLevel } from '../../utils/site-storage';
+import {
+	formatStorage,
+	getSharedStorageTotal,
+	getStorageAlertLevel,
+	getStorageUsagePercent,
+} from '../../utils/site-storage';
 import { isStagingSite } from '../../utils/site-types';
 import { AddStorageModal } from '../storage/add-storage-modal';
 import type { Site } from '@automattic/api-core';
@@ -27,10 +32,9 @@ function StorageStatUnavailable() {
 function SiteStorageStatInner( { site }: { site: Site } ) {
 	const { data: mediaStorage } = useSuspenseQuery( siteMediaStorageQuery( site.ID ) );
 	const [ isModalOpen, setIsModalOpen ] = useState( false );
+	const locale = useIntlLocale();
 
-	const storageUsagePercent = Math.round(
-		( ( mediaStorage.storage_used_bytes / mediaStorage.max_storage_bytes ) * 1000 ) / 10
-	);
+	const storageUsagePercent = getStorageUsagePercent( mediaStorage );
 
 	// Ensure that the displayed usage is never fully empty to avoid a confusing UI.
 	const progressBarValue = Math.max(
@@ -54,8 +58,8 @@ function SiteStorageStatInner( { site }: { site: Site } ) {
 			<Stat
 				density="high"
 				strapline={ __( 'Storage' ) }
-				metric={ filesize( mediaStorage.storage_used_bytes, { round: 0 } ) }
-				description={ filesize( mediaStorage.max_storage_bytes, { round: 0 } ) }
+				metric={ formatStorage( mediaStorage.storage_used_bytes, locale ) }
+				description={ formatStorage( mediaStorage.max_storage_bytes, locale ) }
 				progressValue={ progressBarValue }
 				progressColor={ storageWarningColor }
 				progressLabel={ `${ storageUsagePercent }%` }
@@ -65,7 +69,7 @@ function SiteStorageStatInner( { site }: { site: Site } ) {
 					{ sprintf(
 						// translators: %s is the total storage quota (e.g., "53 GB")
 						__( 'Production and staging share a total storage quota of %s.' ),
-						filesize( mediaStorage.max_storage_bytes * 2, { round: 0 } )
+						formatStorage( getSharedStorageTotal( mediaStorage ), locale )
 					) }
 				</Text>
 			) }

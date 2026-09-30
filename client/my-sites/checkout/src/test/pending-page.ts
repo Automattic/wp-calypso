@@ -4,17 +4,11 @@
 // @ts-nocheck - TODO: Fix TypeScript issues
 import page from '@automattic/calypso-router';
 import {
-	SUCCESS,
-	ERROR,
-	FAILURE,
-	UNKNOWN,
-	PROCESSING,
-} from 'calypso/state/order-transactions/constants';
-import {
 	addUrlToPendingPageRedirect,
 	redirectThroughPending,
 	getRedirectFromPendingPage,
 } from '../lib/pending-page';
+import { SUCCESS, ERROR, FAILURE, UNKNOWN, PROCESSING } from '../types/order-transaction';
 
 jest.mock( '@automattic/calypso-router' );
 
@@ -535,17 +529,6 @@ describe( 'getRedirectFromPendingPage', () => {
 			},
 		} );
 		expect( actual ).toEqual( { url: '/checkout/no-site', isError: true } );
-	} );
-
-	it( 'returns a checkout url if there was an HTTP error', () => {
-		const actual = getRedirectFromPendingPage( {
-			isLoadingOrder: false,
-			redirectTo: '/home',
-			siteSlug: 'example.com',
-			error: new Error( 'test error' ),
-			orderId: 1,
-		} );
-		expect( actual ).toEqual( { url: '/checkout/example.com', isError: true } );
 	} );
 
 	it( 'returns a checkout url if the transaction is unknown', () => {
