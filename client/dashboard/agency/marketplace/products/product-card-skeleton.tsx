@@ -2,6 +2,7 @@ import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
+import { Card } from '../../../components/card';
 import { TextSkeleton } from '../../../components/text-skeleton';
 
 import '../../components/showcase/body-card.scss';
@@ -11,23 +12,25 @@ import '../../components/showcase/body-card.scss';
 // once products load.
 export default function ProductCardSkeleton() {
 	return (
-		<div className="dashboard-body-card" aria-hidden="true">
-			<div className="dashboard-body-card__head">
-				<span className="dashboard-marketplace-products__skeleton-tile" />
+		<Card className="dashboard-body-card" aria-hidden="true">
+			<div className="dashboard-body-card__body">
+				<div className="dashboard-body-card__head">
+					<span className="dashboard-marketplace-products__skeleton-tile" />
+					<VStack spacing={ 1 }>
+						<TextSkeleton length={ 14 } />
+						<TextSkeleton length={ 8 } />
+					</VStack>
+				</div>
 				<VStack spacing={ 1 }>
-					<TextSkeleton length={ 14 } />
-					<TextSkeleton length={ 8 } />
+					<TextSkeleton length={ 30 } />
+					<TextSkeleton length={ 22 } />
 				</VStack>
+				<TextSkeleton length={ 12 } />
+				<HStack spacing={ 3 } justify="flex-start">
+					<TextSkeleton length={ 10 } />
+					<TextSkeleton length={ 10 } />
+				</HStack>
 			</div>
-			<VStack spacing={ 1 }>
-				<TextSkeleton length={ 30 } />
-				<TextSkeleton length={ 22 } />
-			</VStack>
-			<TextSkeleton length={ 12 } />
-			<HStack spacing={ 3 } justify="flex-start">
-				<TextSkeleton length={ 10 } />
-				<TextSkeleton length={ 10 } />
-			</HStack>
-		</div>
+		</Card>
 	);
 }

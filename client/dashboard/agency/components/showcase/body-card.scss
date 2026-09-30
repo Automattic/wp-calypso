@@ -1,24 +1,18 @@
 @use '@automattic/color-studio/dist/color-variables' as brand;
 
+// The core Card draws the card (fill, border, radius); this is only the layout inside it.
 .dashboard-body-card {
 	position: relative;
+	block-size: 100%;
+}
+
+.dashboard-body-card__body {
 	display: flex;
 	flex-direction: column;
 	gap: 12px;
 	box-sizing: border-box;
+	block-size: 100%;
 	padding: 20px;
-	border-radius: 8px;
-	background: #fff;
-	box-shadow: inset 0 0 0 1px #{rgba( brand.$studio-gray-100, 0.08 )};
-	transition: box-shadow 0.15s ease;
-
-	&:hover {
-		box-shadow: inset 0 0 0 1px #{rgba( brand.$studio-gray-100, 0.2 )};
-	}
-
-	@media ( prefers-reduced-motion: reduce ) {
-		transition: none;
-	}
 }
 
 .dashboard-body-card__head {

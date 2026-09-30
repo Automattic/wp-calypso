@@ -69,14 +69,15 @@ $lead-side-by-side: $pad-x * 2 + $words-min + $gap + $lead-object;
 	--showcase-title-size: 20px;
 	--showcase-object: #{$object};
 
+	// The core Card draws the tile: its fill and text colour come from these
+	// variables, so the maker's colour is set here, on our own wrapper.
+	--wpds-color-background-surface-neutral-strong: var( --showcase-field );
+	--wpds-color-foreground-content-neutral: var( --showcase-text );
+
 	container-type: inline-size;
 	position: relative;
 	box-sizing: border-box;
 	min-inline-size: 0;
-	overflow: hidden;
-	border-radius: 8px;
-	background: var( --showcase-field );
-	box-shadow: inset 0 0 0 1px #{rgba( brand.$studio-gray-100, 0.06 )};
 	color: var( --showcase-text );
 
 	&.is-lead {
@@ -92,7 +93,14 @@ $lead-side-by-side: $pad-x * 2 + $words-min + $gap + $lead-object;
 	}
 }
 
+.dashboard-showcase__card {
+	block-size: 100%;
+}
+
+// Crops a stacked drawing at the tile's bottom edge (R5).
 .dashboard-showcase__body {
+	overflow: hidden;
+	border-radius: 8px;
 	position: relative;
 	z-index: 1;
 	box-sizing: border-box;

@@ -1,5 +1,6 @@
 import { Icon, __experimentalVStack as VStack } from '@wordpress/components';
 import clsx from 'clsx';
+import { Card } from '../../../components/card';
 import { SectionHeader } from '../../../components/section-header';
 import { rowArrows, useRowScroll } from './row-arrows';
 import type { ReactNode } from 'react';
@@ -68,37 +69,43 @@ export default function Showcase( { title, items }: { title: string; items: Show
 						className={ clsx( 'dashboard-showcase__tile', { 'is-lead': index === 0 } ) }
 						data-accent={ item.accent }
 					>
-						<div className="dashboard-showcase__body">
-							<div className="dashboard-showcase__text">
-								<span className="dashboard-showcase__eyebrow">
-									<span className="dashboard-showcase__glyph">
-										<Icon icon={ item.glyph } size={ 16 } />
+						<Card className="dashboard-showcase__card">
+							<div className="dashboard-showcase__body">
+								<div className="dashboard-showcase__text">
+									<span className="dashboard-showcase__eyebrow">
+										<span className="dashboard-showcase__glyph">
+											<Icon icon={ item.glyph } size={ 16 } />
+										</span>
+										<span>{ item.eyebrow }</span>
 									</span>
-									<span>{ item.eyebrow }</span>
-								</span>
-								{ item.lockup && (
-									<span className="dashboard-showcase__lockup">
-										<img src={ item.lockup.src } alt={ item.lockup.alt } />
-									</span>
-								) }
-								<button type="button" className="dashboard-showcase__title" onClick={ item.onOpen }>
-									{ item.title }
-								</button>
-								{ item.description && (
-									<span className="dashboard-showcase__description">{ item.description }</span>
-								) }
-								{ item.meta && <span className="dashboard-showcase__meta">{ item.meta }</span> }
-							</div>
-							<div className="dashboard-showcase__art" aria-hidden="true">
-								<div className="dashboard-showcase__object">{ item.art }</div>
-							</div>
-							{ item.action && (
-								<div className="dashboard-showcase__action">
-									{ item.action }
-									{ item.secondaryAction }
+									{ item.lockup && (
+										<span className="dashboard-showcase__lockup">
+											<img src={ item.lockup.src } alt={ item.lockup.alt } />
+										</span>
+									) }
+									<button
+										type="button"
+										className="dashboard-showcase__title"
+										onClick={ item.onOpen }
+									>
+										{ item.title }
+									</button>
+									{ item.description && (
+										<span className="dashboard-showcase__description">{ item.description }</span>
+									) }
+									{ item.meta && <span className="dashboard-showcase__meta">{ item.meta }</span> }
 								</div>
-							) }
-						</div>
+								<div className="dashboard-showcase__art" aria-hidden="true">
+									<div className="dashboard-showcase__object">{ item.art }</div>
+								</div>
+								{ item.action && (
+									<div className="dashboard-showcase__action">
+										{ item.action }
+										{ item.secondaryAction }
+									</div>
+								) }
+							</div>
+						</Card>
 					</li>
 				) ) }
 			</ul>

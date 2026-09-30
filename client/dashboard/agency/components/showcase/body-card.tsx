@@ -1,3 +1,4 @@
+import { Card } from '../../../components/card';
 import type { ReactNode } from 'react';
 
 import './accents.scss';
@@ -27,22 +28,24 @@ export default function BodyCard( {
 	onOpen?: () => void;
 } ) {
 	return (
-		<div className="dashboard-body-card">
-			<div className="dashboard-body-card__head">
-				{ tile }
-				<span className="dashboard-body-card__name">
-					{ onOpen ? (
-						<button type="button" className="dashboard-body-card__title" onClick={ onOpen }>
-							{ title }
-						</button>
-					) : (
-						<span className="dashboard-body-card__title is-static">{ title }</span>
-					) }
-					<span className="dashboard-body-card__byline">{ byline }</span>
-				</span>
+		<Card className="dashboard-body-card">
+			<div className="dashboard-body-card__body">
+				<div className="dashboard-body-card__head">
+					{ tile }
+					<span className="dashboard-body-card__name">
+						{ onOpen ? (
+							<button type="button" className="dashboard-body-card__title" onClick={ onOpen }>
+								{ title }
+							</button>
+						) : (
+							<span className="dashboard-body-card__title is-static">{ title }</span>
+						) }
+						<span className="dashboard-body-card__byline">{ byline }</span>
+					</span>
+				</div>
+				{ description && <p className="dashboard-body-card__description">{ description }</p> }
+				{ actions && <div className="dashboard-body-card__foot">{ actions }</div> }
 			</div>
-			{ description && <p className="dashboard-body-card__description">{ description }</p> }
-			{ actions && <div className="dashboard-body-card__foot">{ actions }</div> }
-		</div>
+		</Card>
 	);
 }
