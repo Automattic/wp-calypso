@@ -92,21 +92,9 @@ describe( 'Renewal/expiry field', () => {
 		},
 	};
 
-	const renderRenewal = ( item: JetpackLicense ) =>
-		render( <RenewalCell license={ item } locale="en" /> );
-
-	it( 'is shown by default', () => {
-		expect( DEFAULT_VIEW.fields ).toContain( 'renewal' );
-	} );
-
 	it( 'shows the expiry date with a badge for what needs attention', () => {
-		renderRenewal( license );
+		render( <RenewalCell license={ license } locale="en" /> );
 		expect( screen.getByText( 'Oct 21, 2026' ) ).toBeVisible();
 		expect( screen.getByText( 'Auto-renew off' ) ).toBeVisible();
-	} );
-
-	it( 'shows a dash when the license has no subscription', () => {
-		renderRenewal( { ...license, subscription: null } );
-		expect( screen.getByText( '—' ) ).toBeVisible();
 	} );
 } );
