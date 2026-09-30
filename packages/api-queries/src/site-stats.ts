@@ -2,7 +2,7 @@ import {
 	fetchSiteEngagementStats,
 	fetchSiteEngagementMonthlyStats,
 	fetchSiteHourlyViews,
-	fetchSitePremiumAnalyticsEnabled,
+	fetchSitePremiumAnalyticsSettings,
 } from '@automattic/api-core';
 import { queryOptions } from '@tanstack/react-query';
 
@@ -87,5 +87,8 @@ export const siteHourlyViewsQuery = ( siteId: number ) =>
 export const sitePremiumAnalyticsEnabledQuery = ( siteId: number ) =>
 	queryOptions( {
 		queryKey: [ 'site', siteId, 'premium-analytics-enabled' ],
-		queryFn: () => fetchSitePremiumAnalyticsEnabled( siteId ),
+		queryFn: () => fetchSitePremiumAnalyticsSettings( siteId ),
+		// Picked here rather than in queryFn: TanStack Query rejects `undefined` data, and a site
+		// that never registered the setting answers exactly that.
+		select: ( settings ) => settings.jetpack_premium_analytics_enabled,
 	} );
