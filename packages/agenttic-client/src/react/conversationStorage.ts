@@ -315,7 +315,7 @@ export function getUnresolvedMessages( messages: Message[] ): Message[] {
  * Joined text parts — messageId is regenerated on restore, so text matches.
  * @param message - The message whose text parts to join.
  */
-function messageTextContent( message: Message ): string {
+export function messageTextContent( message: Message ): string {
 	return message.parts
 		.filter( ( part ): part is TextPart => part.type === 'text' )
 		.map( ( part ) => part.text )

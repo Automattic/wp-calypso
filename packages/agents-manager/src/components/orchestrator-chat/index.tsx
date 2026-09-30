@@ -35,6 +35,7 @@ import useFeedbackAction from '../../hooks/use-feedback-action';
 import { useImageUpload } from '../../hooks/use-image-upload';
 import { useNavigationContinuation } from '../../hooks/use-navigation-continuation';
 import useRegenerateAction from '../../hooks/use-regenerate-action';
+import useReplyRecovery from '../../hooks/use-reply-recovery';
 import useSourcesAction from '../../hooks/use-sources-action';
 import useSuggestionsRenderedTracking from '../../hooks/use-suggestions-rendered-tracking';
 import { markActionOrigin, takeActionOrigin } from '../../utils/action-origin';
@@ -779,7 +780,7 @@ export default function OrchestratorChat( {
 		}
 	}, [ isProcessing, agentConfig?.sessionId ] );
 
-	const { isLoading: isLoadingConversation } = useConversation( {
+	const { isLoading: isLoadingConversation, data: hydratedConversation } = useConversation( {
 		maxPages: isReaderChat ? 1 : 10,
 		enabled: shouldLoadConversation,
 		onSuccess: ( loadedMessages, serverSessionId ) => {
@@ -1439,6 +1440,25 @@ export default function OrchestratorChat( {
 		[ inputValue, onSubmitWithImages, credits.beforeSubmit ]
 	);
 
+	const sendRetry = useCallback(
+		async ( text: string ) => {
+			submitDispatchedRef.current = false;
+			markActionOrigin( 'send', 'retry' );
+			await submitChatMessage( text );
+			return submitDispatchedRef.current;
+		},
+		[ submitChatMessage ]
+	);
+
+	// A question asked before a page change whose reply has not landed yet
+	// (WOOAI-872). Off once the merchant sends or a turn runs, so its one
+	// rehydration can never replace a live stream.
+	const { notice: replyNotice } = useReplyRecovery( {
+		hydratedMessages: hydratedConversation?.messages,
+		enabled: ! isReaderChat && ! hasUserSentMessage && ! isProcessing,
+		sendRetry,
+	} );
+
 	const submitChatMessageFromHost = useCallback(
 		async ( message?: string ) => {
 			const submittedMessage = typeof message === 'string' ? message : inputValue;
@@ -1897,7 +1917,7 @@ export default function OrchestratorChat( {
 			isCompactMode={ isCompactMode }
 			groupWritingSuggestions={ groupWritingSuggestions }
 			imageUpload={ imageUpload }
-			notice={ credits.notice }
+			notice={ credits.notice ?? replyNotice }
 			trailingActions={ credits.trailingActions }
 			beforeSubmit={ credits.beforeSubmit }
 			isChatInputDisabled={ isChatInputDisabled }

@@ -385,6 +385,12 @@ jest.mock( '../../hooks/use-conversation', () => ( config: typeof mockConversati
 	mockConversationConfig = config;
 	return mockUseConversation( config );
 } );
+let mockReplyRecoveryOptions: Record< string, any > | undefined;
+let mockReplyNotice: { message: string } | undefined;
+jest.mock( '../../hooks/use-reply-recovery', () => ( options: Record< string, any > ) => {
+	mockReplyRecoveryOptions = options;
+	return { notice: mockReplyNotice };
+} );
 jest.mock( '../../hooks/use-checkpoint-action', () => ( {
 	__esModule: true,
 	default: ( ...args: unknown[] ) => mockUseCheckpointAction( ...args ),
@@ -719,6 +725,8 @@ describe( 'OrchestratorChat', () => {
 		mockRevertedCheckpointIds.clear();
 		mockAgentChatConfig = undefined;
 		mockConversationConfig = undefined;
+		mockReplyRecoveryOptions = undefined;
+		mockReplyNotice = undefined;
 	} );
 
 	it.each( [
@@ -4179,6 +4187,42 @@ describe( 'OrchestratorChat', () => {
 			} );
 
 			expect( getBlockingMove() ).toBeNull();
+		} );
+	} );
+	describe( 'recovering a reply lost to a page change', () => {
+		it( 'shows its notice in the notice slot without locking the composer', () => {
+			mockReplyNotice = { message: 'Waiting for the reply…' };
+
+			render( chat() );
+
+			const props = mockAgentChat.mock.calls[ mockAgentChat.mock.calls.length - 1 ][ 0 ] as {
+				notice?: unknown;
+				isProcessing?: boolean;
+			};
+			expect( props.notice ).toEqual( mockReplyNotice );
+			expect( props.isProcessing ).toBe( false );
+		} );
+
+		it( 'recovers only while nothing else is running in this tab', () => {
+			mockUseAgentChat.mockReturnValue( agentChatReturn( { isProcessing: true } ) );
+
+			render( chat() );
+
+			expect( mockReplyRecoveryOptions?.enabled ).toBe( false );
+		} );
+
+		it( 'retries through the normal send and reports that it went out', async () => {
+			const onSubmit = jest.fn().mockResolvedValue( undefined );
+			mockUseAgentChat.mockReturnValue( agentChatReturn( { onSubmit } ) );
+			render( chat() );
+
+			let sent: boolean | undefined;
+			await act( async () => {
+				sent = await mockReplyRecoveryOptions?.sendRetry( 'ship the sale banner' );
+			} );
+
+			expect( onSubmit ).toHaveBeenCalledWith( 'ship the sale banner' );
+			expect( sent ).toBe( true );
 		} );
 	} );
 } );
