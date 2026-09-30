@@ -1,5 +1,5 @@
+import { createTransaction } from '@automattic/api-core';
 import { mapRecordKeysRecursively, camelToSnakeCase } from '@automattic/js-utils';
-import wp from 'calypso/lib/wp';
 import { createWpcomAccountBeforeTransaction } from './create-wpcom-account-before-transaction';
 import type { PaymentProcessorOptions } from '../types/payment-processors';
 import type {
@@ -29,5 +29,5 @@ export default async function submitWpcomTransaction(
 		payload.cart = await createWpcomAccountBeforeTransaction( payload.cart, transactionOptions );
 	}
 
-	return wp.req.post( '/me/transactions', mapRecordKeysRecursively( payload, camelToSnakeCase ) );
+	return createTransaction( mapRecordKeysRecursively( payload, camelToSnakeCase ) );
 }

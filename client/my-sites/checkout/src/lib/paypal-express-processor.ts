@@ -1,9 +1,9 @@
+import { createPayPalExpressUrl } from '@automattic/api-core';
 import { makeRedirectResponse, makeErrorResponse } from '@automattic/composite-checkout';
 import { mapRecordKeysRecursively, camelToSnakeCase } from '@automattic/js-utils';
 import { tryToGuessPostalCodeFormat } from '@automattic/wpcom-checkout';
 import debugFactory from 'debug';
 import getToSAcceptancePayload from 'calypso/lib/tos-acceptance-tracking';
-import wp from 'calypso/lib/wp';
 import { recordTransactionBeginAnalytics } from '../lib/analytics';
 import getDomainDetails from '../lib/get-domain-details';
 import { addUrlToPendingPageRedirect } from '../lib/pending-page';
@@ -98,10 +98,7 @@ async function wpcomPayPalExpress(
 		payload.cart = await createWpcomAccountBeforeTransaction( payload.cart, transactionOptions );
 	}
 
-	const body = mapRecordKeysRecursively( payload, camelToSnakeCase );
-	const path = '/me/paypal-express-url';
-	const apiVersion = '1.2';
-	return wp.req.post( { path }, { apiVersion }, body );
+	return createPayPalExpressUrl( mapRecordKeysRecursively( payload, camelToSnakeCase ) );
 }
 
 function createPayPalExpressEndpointRequestPayloadFromLineItems( {
