@@ -15,11 +15,13 @@ export const DomainNameField = ( {
 	site,
 	value,
 	showPrimaryDomainBadge,
+	showWwwPrefix,
 }: {
 	domain: DomainSummary;
 	site?: Site;
 	value: string;
 	showPrimaryDomainBadge?: boolean;
+	showWwwPrefix?: boolean;
 } ) => {
 	const { recordTracksEvent } = useAnalytics();
 	const matches = useMatches();
@@ -35,7 +37,14 @@ export const DomainNameField = ( {
 
 	const content = (
 		<VStack spacing={ 1 }>
-			<span style={ textOverflowStyles }>{ value }</span>
+			<span style={ textOverflowStyles }>
+				{ showWwwPrefix && (
+					<Text variant="muted" weight="inherit">
+						www.
+					</Text>
+				) }
+				{ value }
+			</span>
 			{ showPrimaryDomainBadge && domain.primary_domain && (
 				<Tooltip text={ __( 'The address people see when visiting your site.' ) }>
 					<span
