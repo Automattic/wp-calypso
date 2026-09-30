@@ -18,9 +18,20 @@ describe( 'transaction submission', () => {
 			} )
 			.reply( 200, { success: true, receipt_id: 1234, order_id: 5678 } );
 
-		const result = await createTransaction( { cart: { blog_id: 1 }, payment: { name: 'Ada' } } );
+		const request = {
+			cart: { blog_id: 1, products: [], tax: null, coupon: '', temporary: false as const },
+			payment: {
+				payment_method: 'WPCOM_Billing_Stripe_Payment_Method',
+				name: 'Ada',
+				zip: '10001',
+				postal_code: '10001',
+				country: 'US',
+				country_code: 'US',
+			},
+		};
+		const result = await createTransaction( request );
 
-		expect( body ).toEqual( { cart: { blog_id: 1 }, payment: { name: 'Ada' } } );
+		expect( body ).toEqual( request );
 		expect( result ).toEqual( { success: true, receipt_id: 1234, order_id: 5678 } );
 	} );
 
@@ -33,9 +44,17 @@ describe( 'transaction submission', () => {
 			} )
 			.reply( 200, { redirect_url: 'https://paypal.example/redirect' } );
 
-		const result = await createPayPalExpressUrl( { success_url: 'https://example.com' } );
+		const request = {
+			success_url: 'https://example.com/success',
+			cancel_url: 'https://example.com/cancel',
+			cart: { blog_id: 1, products: [], tax: null, coupon: '', temporary: false as const },
+			domain_details: null,
+			country: 'US',
+			postal_code: '10001',
+		};
+		const result = await createPayPalExpressUrl( request );
 
-		expect( body ).toEqual( { success_url: 'https://example.com' } );
+		expect( body ).toEqual( request );
 		expect( result ).toEqual( { redirect_url: 'https://paypal.example/redirect' } );
 	} );
 

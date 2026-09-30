@@ -19,6 +19,7 @@ import type {
 	CartKey,
 } from '@automattic/shopping-cart';
 import type {
+	TransactionDomainContactDetails,
 	WPCOMTransactionEndpointRequestPayload,
 	TransactionRequest,
 	WPCOMCart,
@@ -181,33 +182,85 @@ export function createTransactionEndpointRequestPayload( {
 }: TransactionRequest ): WPCOMTransactionEndpointRequestPayload {
 	return {
 		cart,
-		domainDetails,
+		domain_details: domainDetails
+			? convertDomainContactDetailsForTransaction( domainDetails )
+			: undefined,
 		payment: {
-			paymentMethod: paymentMethodType,
-			paymentKey: paymentMethodToken,
-			paymentPartner: paymentPartnerProcessorId,
-			storedDetailsId,
+			payment_method: paymentMethodType,
+			payment_key: paymentMethodToken,
+			payment_partner: paymentPartnerProcessorId,
+			stored_details_id: storedDetailsId,
 			name,
 			email,
 			country,
-			countryCode: country,
+			country_code: country,
 			state,
-			postalCode,
+			postal_code: postalCode,
 			zip: postalCode, // TODO: do we need this in addition to postalCode?
 			city,
 			address,
-			streetNumber,
-			phoneNumber,
+			street_number: streetNumber,
+			phone_number: phoneNumber,
 			document,
-			deviceId,
-			successUrl,
-			cancelUrl,
-			idealBank,
+			device_id: deviceId,
+			success_url: successUrl,
+			cancel_url: cancelUrl,
+			ideal_bank: idealBank,
 			code,
-			useForAllSubscriptions,
-			eventSource,
+			use_for_all_subscriptions: useForAllSubscriptions,
+			event_source: eventSource,
 		},
 		tos: getToSAcceptancePayload(),
 		ad_conversion: getConversionValuesFromCookies(),
+	};
+}
+
+export function convertDomainContactDetailsForTransaction(
+	details: DomainContactDetails
+): TransactionDomainContactDetails {
+	const { extra } = details;
+	return {
+		first_name: details.firstName,
+		last_name: details.lastName,
+		organization: details.organization,
+		email: details.email,
+		phone: details.phone,
+		address_1: details.address1,
+		address_2: details.address2,
+		city: details.city,
+		state: details.state,
+		postal_code: details.postalCode,
+		country_code: details.countryCode,
+		fax: details.fax,
+		vat_id: details.vatId,
+		extra: extra && {
+			ca: extra.ca && {
+				lang: extra.ca.lang,
+				legal_type: extra.ca.legalType,
+				cira_agreement_accepted: extra.ca.ciraAgreementAccepted,
+			},
+			uk: extra.uk && {
+				registrant_type: extra.uk.registrantType,
+				registration_number: extra.uk.registrationNumber,
+				trading_name: extra.uk.tradingName,
+			},
+			fr: extra.fr && {
+				registrant_type: extra.fr.registrantType,
+				registrant_vat_id: extra.fr.registrantVatId,
+				trademark_number: extra.fr.trademarkNumber,
+				siren_siret: extra.fr.sirenSiret,
+			},
+			in: extra.in && {
+				nexus_declaration: extra.in.nexusDeclaration,
+				nexus_connection_type: extra.in.nexusConnectionType,
+			},
+			es: extra.es && {
+				registrant_entity_type: extra.es.registrantEntityType,
+				registrant_identification_number: extra.es.registrantIdentificationNumber,
+				admin_identification_number: extra.es.adminIdentificationNumber,
+				red_es_agreement_accepted: extra.es.redEsAgreementAccepted,
+				red_es_agreement_version: extra.es.redEsAgreementVersion,
+			},
+		},
 	};
 }
