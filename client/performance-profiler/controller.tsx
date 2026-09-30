@@ -4,15 +4,11 @@ import { getFooterColorway } from '@automattic/wpcom-template-parts';
 import { translate, fixMe } from 'i18n-calypso';
 import EmptyContent from 'calypso/components/empty-content';
 import Main from 'calypso/components/main';
-import { getLoginUrl } from 'calypso/landing/stepper/utils/path';
 import { GlobalFooter } from 'calypso/layout/global-footer';
 import { Nav2026UniversalHeader } from 'calypso/layout/nav-2026-universal-header';
-import { WeeklyReportUnsubscribe } from 'calypso/performance-profiler/pages/weekly-report/unsubscribe';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
-import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
 import { TabTypes } from './components/header';
 import { PerformanceProfilerDashboardWrapper } from './pages/dashboard';
-import { WeeklyReport } from './pages/weekly-report';
 import type { JSX } from 'react';
 
 import './style.scss';
@@ -63,57 +59,6 @@ export function PerformanceProfilerDashboardContext( context: Context, next: () 
 				hash={ context.query?.hash ?? '' }
 				filter={ context.query?.filter }
 			/>
-		</PerformanceProfilerWrapper>
-	);
-
-	next();
-}
-
-export function WeeklyReportContext( context: Context, next: () => void ): void {
-	const isLoggedIn = isUserLoggedIn( context.store.getState() );
-	const footerColorway = getFooterColorway(
-		isEnabled( 'footer-redesign/2026' ),
-		isEnabled( 'footer/dark' )
-	);
-
-	if ( ! isLoggedIn ) {
-		const logInUrl = getLoginUrl( {
-			variationName: 'performance-profiler-weekly-report-subscribe',
-			redirectTo: `${ window.location.protocol }//${ window.location.host }${ context.path }`,
-			locale: getCurrentLocaleSlug( context.store.getState() ),
-		} );
-
-		window.location.href = logInUrl;
-		return;
-	}
-
-	const url = context.query?.url?.startsWith( 'http' )
-		? context.query.url
-		: `https://${ context.query?.url ?? '' }`;
-
-	context.primary = (
-		<PerformanceProfilerWrapper isLoggedIn={ isLoggedIn } footerColorway={ footerColorway }>
-			<WeeklyReport url={ url } hash={ context.query?.hash ?? '' } />
-		</PerformanceProfilerWrapper>
-	);
-
-	next();
-}
-
-export function WeeklyReportUnsubscribeContext( context: Context, next: () => void ): void {
-	const isLoggedIn = isUserLoggedIn( context.store.getState() );
-	const footerColorway = getFooterColorway(
-		isEnabled( 'footer-redesign/2026' ),
-		isEnabled( 'footer/dark' )
-	);
-
-	const url = context.query?.url?.startsWith( 'http' )
-		? context.query.url
-		: `https://${ context.query?.url ?? '' }`;
-
-	context.primary = (
-		<PerformanceProfilerWrapper isLoggedIn={ isLoggedIn } footerColorway={ footerColorway }>
-			<WeeklyReportUnsubscribe url={ url } hash={ context.query?.hash ?? '' } />
 		</PerformanceProfilerWrapper>
 	);
 

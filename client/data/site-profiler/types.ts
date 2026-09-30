@@ -112,10 +112,6 @@ export interface UrlBasicMetricsQueryResponse {
 	token: string;
 }
 
-export interface LeadMutationResponse {
-	success: boolean;
-}
-
 export interface UrlSecurityMetricsQueryResponse {
 	wpscan: {
 		report: {
