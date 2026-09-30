@@ -8,6 +8,7 @@ import { recordBigSkyTracksEvent } from '../tracks';
 import type { CanvasCaptureOptions, FilePart } from './capture';
 
 export type { CanvasCaptureOptions, FilePart };
+export { describeCaptureShape, getUnframedClientIds } from './framing';
 
 type CaptureModule = typeof import( './capture' );
 
