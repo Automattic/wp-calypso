@@ -37,7 +37,11 @@ export function formatStorage( bytes: number, locale: string ): string {
 		value /= 1024;
 		unitIndex++;
 	}
-	const number = new Intl.NumberFormat( locale, { maximumFractionDigits: 1 } ).format( value );
+	// Latin digits like `size_format()` and Calypso's `formatNumber()`, even where the locale defaults to native ones.
+	const number = new Intl.NumberFormat( locale, {
+		maximumFractionDigits: 1,
+		numberingSystem: 'latn',
+	} ).format( value );
 	return `${ number } ${ STORAGE_UNITS[ unitIndex ] }`;
 }
 

@@ -28,6 +28,7 @@ describe( 'formatStorage', () => {
 
 	test( 'formats the number in the given locale', () => {
 		expect( formatStorage( 573_175_398, 'de' ) ).toBe( '546,6 MB' );
+		expect( formatStorage( 573_175_398, 'bn' ) ).toBe( '546.6 MB' );
 	} );
 } );
 
