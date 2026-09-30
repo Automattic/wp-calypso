@@ -1,4 +1,4 @@
-import { userPurchasesQuery } from '@automattic/api-queries';
+import { productsQuery, userPurchasesQuery } from '@automattic/api-queries';
 import { isAkismetProduct } from '@automattic/calypso-products';
 import { Button, Card } from '@automattic/components';
 import { useQuery } from '@tanstack/react-query';
@@ -7,16 +7,14 @@ import { sprintf, __ } from '@wordpress/i18n';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useMemo, useState } from 'react';
-import QueryProducts from 'calypso/components/data/query-products-list';
 import ClipboardButton from 'calypso/components/forms/clipboard-button';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import Main from 'calypso/components/main';
 import { isAkismetHoldingSitePurchase } from 'calypso/dashboard/utils/purchase';
 import useAkismetKeyQuery from 'calypso/data/akismet/use-akismet-key-query';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import { useSelector, useDispatch } from 'calypso/state';
+import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { isProductsListFetching, getProductName } from 'calypso/state/products-list/selectors';
 import type { FunctionComponent } from 'react';
 
 interface AkismetCheckoutThankYouProps {
@@ -28,11 +26,13 @@ const AkismetCheckoutThankYou: FunctionComponent< AkismetCheckoutThankYouProps >
 } ) => {
 	const dispatch = useDispatch();
 	const hasProduct = productSlug !== 'no_product';
-	const productName = useSelector( ( state ) =>
-		hasProduct ? getProductName( state, productSlug ) : null
-	);
+	// This product query takes a while to load, an improvment here would be to add a type filter on wpcom like jetpack has. See: 2f832-pb/
+	const { data: products, isLoading: isFetchingProducts } = useQuery( {
+		...productsQuery(),
+		enabled: hasProduct,
+	} );
+	const productName = hasProduct ? products?.[ productSlug ]?.product_name : null;
 	const { data: userPurchases, isLoading: isLoadingPurchases } = useQuery( userPurchasesQuery() );
-	const isFetchingProducts = useSelector( isProductsListFetching );
 	const isLoading = isFetchingProducts || isLoadingPurchases;
 
 	const onManagePurchaseClick = () => {
@@ -107,9 +107,6 @@ const AkismetCheckoutThankYou: FunctionComponent< AkismetCheckoutThankYouProps >
 			/>
 
 			<Card className="akismet-checkout-thank-you__card">
-				{ /* This product query takes a while to load, an improvment here would be to add a type filter on wpcom like jetpack has. See: 2f832-pb/ */ }
-				{ hasProduct && <QueryProducts /> }
-
 				<h2
 					className={
 						isLoading
