@@ -75,7 +75,10 @@ describe( '<RevokeLicenseModal> churn feedback', () => {
 		const user = userEvent.setup();
 		mockRevoke();
 		const { body } = captureSurvey();
-		const { closeModal } = renderModal( { ...baseLicense, referral: { id: 1 } } );
+		const { closeModal } = renderModal( {
+			...baseLicense,
+			referral: { id: 1 } as JetpackLicense[ 'referral' ],
+		} );
 
 		await user.click( screen.getByRole( 'checkbox', { name: 'It was the wrong product' } ) );
 		await user.click( screen.getByRole( 'checkbox', { name: 'I was just trying it out' } ) );
