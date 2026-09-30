@@ -47,6 +47,7 @@ export const useStepNavigationWithTracking = ( { flow, currentStepRoute, navigat
 	 * to flash briefly while navigating.
 	 */
 	const canUserGoBack =
+		history.state?.idx > 0 ||
 		( stepData?.previousStep &&
 			history.length > 1 &&
 			stepData.previousStep !== currentStepRoute ) ||
@@ -161,6 +162,6 @@ export const useStepNavigationWithTracking = ( { flow, currentStepRoute, navigat
 				},
 			} ),
 		} ),
-		[ handleRecordStepNavigation, stepNavigation ]
+		[ handleRecordStepNavigation, stepNavigation, canUserGoBack ]
 	);
 };

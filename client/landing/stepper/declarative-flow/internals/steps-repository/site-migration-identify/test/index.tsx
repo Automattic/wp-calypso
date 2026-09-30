@@ -4,6 +4,7 @@
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { MemoryRouter } from 'react-router';
 import { useSiteSlug } from 'calypso/landing/stepper/hooks/use-site-slug';
 import SiteMigrationIdentify from '..';
 import { UrlData } from '../../../../../../../blocks/import/types';
@@ -83,6 +84,93 @@ describe( 'SiteMigrationIdentify', () => {
 			);
 		} );
 	} );
+
+	it.each( [ 200, 500 ] )(
+		'submits once after re-rendering when hosting detection returns %s',
+		async ( hostingStatus ) => {
+			const submit = jest.fn();
+			const props = { ...mockStepProps( { navigation: { submit } } ) };
+			const { rerender } = renderStep( <SiteMigrationIdentify { ...props } /> );
+
+			mockApi()
+				.get( '/wpcom/v2/imports/analyze-url' )
+				.query( { site_url: 'https://example.com' } )
+				.reply( 200, API_RESPONSE_WORDPRESS_PLATFORM );
+			mockApi()
+				.get( '/wpcom/v2/site-profiler/hosting-provider/example.com' )
+				.reply( hostingStatus, {
+					domain: 'example.com',
+					hosting_provider: { slug: 'bluehost', name: 'Bluehost', is_cdn: false },
+				} );
+
+			await userEvent.type( getInput(), 'https://example.com' );
+			await userEvent.click( screen.getByRole( 'button', { name: /Check my site/ } ) );
+			await waitFor( () => expect( submit ).toHaveBeenCalledTimes( 1 ) );
+			expect( submit ).toHaveBeenCalledWith( {
+				action: 'continue',
+				platform: 'wordpress',
+				from: 'https://example.com',
+				host: hostingStatus === 200 ? 'bluehost' : undefined,
+			} );
+
+			const nextSubmit = jest.fn();
+			rerender(
+				<MemoryRouter>
+					<SiteMigrationIdentify { ...props } navigation={ { submit: nextSubmit } } />
+				</MemoryRouter>
+			);
+
+			expect( submit ).toHaveBeenCalledTimes( 1 );
+			expect( nextSubmit ).not.toHaveBeenCalled();
+		}
+	);
+
+	it.each( [ 'https://example.com', 'https://another-example.com' ] )(
+		'allows another site check after editing the address to %s',
+		async ( nextSiteURL ) => {
+			const submit = jest.fn();
+			render( { navigation: { submit } } );
+
+			mockApi()
+				.get( '/wpcom/v2/imports/analyze-url' )
+				.query( { site_url: 'https://example.com' } )
+				.reply( 200, API_RESPONSE_WORDPRESS_PLATFORM );
+			mockApi()
+				.get( '/wpcom/v2/site-profiler/hosting-provider/example.com' )
+				.reply( 200, {
+					domain: 'example.com',
+					hosting_provider: { slug: 'bluehost', name: 'Bluehost', is_cdn: false },
+				} );
+
+			await userEvent.type( getInput(), 'https://example.com' );
+			await userEvent.click( screen.getByRole( 'button', { name: /Check my site/ } ) );
+			await waitFor( () => expect( submit ).toHaveBeenCalledTimes( 1 ) );
+
+			if ( nextSiteURL !== 'https://example.com' ) {
+				mockApi()
+					.get( '/wpcom/v2/imports/analyze-url' )
+					.query( { site_url: nextSiteURL } )
+					.reply( 200, { ...API_RESPONSE_WORDPRESS_PLATFORM, url: nextSiteURL } );
+				mockApi()
+					.get( '/wpcom/v2/site-profiler/hosting-provider/another-example.com' )
+					.reply( 200, {
+						domain: 'another-example.com',
+						hosting_provider: { slug: 'bluehost', name: 'Bluehost', is_cdn: false },
+					} );
+			}
+
+			await userEvent.clear( getInput() );
+			await userEvent.type( getInput(), nextSiteURL );
+			await userEvent.click( screen.getByRole( 'button', { name: /Check my site/ } ) );
+			await waitFor( () => expect( submit ).toHaveBeenCalledTimes( 2 ) );
+			expect( submit ).toHaveBeenLastCalledWith( {
+				action: 'continue',
+				platform: 'wordpress',
+				from: nextSiteURL,
+				host: 'bluehost',
+			} );
+		}
+	);
 
 	it( 'continues the flow when the platform is unknown', async () => {
 		const submit = jest.fn();
