@@ -13,11 +13,11 @@ export class JetpackCrmRequestError extends Error {
 }
 
 // The CRM download server is separate from WordPress.com and needs no credentials.
-async function requestJetpackCrm< T >(
+async function requestJetpackCrm(
 	appUrl: string,
 	path: string,
 	init: RequestInit
-): Promise< T > {
+): Promise< Record< string, unknown > > {
 	const response = await fetch( `${ appUrl }${ path }`, {
 		...init,
 		credentials: 'omit',
@@ -39,15 +39,22 @@ async function requestJetpackCrm< T >(
 export async function fetchJetpackCrmExtensions(
 	appUrl: string
 ): Promise< JetpackCrmExtension[] > {
-	const data = await requestJetpackCrm< { extensions?: JetpackCrmExtension[] } >(
-		appUrl,
-		'/api/extensions',
-		{ method: 'GET' }
-	);
+	const data = await requestJetpackCrm( appUrl, '/api/extensions', { method: 'GET' } );
 	if ( ! Array.isArray( data.extensions ) ) {
 		throw new JetpackCrmRequestError( 200, '' );
 	}
 	return data.extensions;
+}
+
+function isHttpsUrl( value: unknown ): value is string {
+	if ( typeof value !== 'string' ) {
+		return false;
+	}
+	try {
+		return new URL( value ).protocol === 'https:';
+	} catch {
+		return false;
+	}
 }
 
 export async function fetchJetpackCrmExtensionDownload(
@@ -55,12 +62,14 @@ export async function fetchJetpackCrmExtensionDownload(
 	licenseKey: string,
 	extensionSlug: string
 ): Promise< JetpackCrmExtensionDownload > {
-	return requestJetpackCrm< JetpackCrmExtensionDownload >(
-		appUrl,
-		'/api/downloads/jetpack-complete',
-		{
-			method: 'POST',
-			body: JSON.stringify( { license_key: licenseKey, extension_slug: extensionSlug } ),
-		}
-	);
+	const data = await requestJetpackCrm( appUrl, '/api/downloads/jetpack-complete', {
+		method: 'POST',
+		body: JSON.stringify( { license_key: licenseKey, extension_slug: extensionSlug } ),
+	} );
+	// The link is opened with `location.assign`, so anything but an https URL
+	// (a `javascript:` URL, say) must never get that far.
+	if ( ! isHttpsUrl( data.download_url ) ) {
+		throw new JetpackCrmRequestError( 200, '' );
+	}
+	return { download_url: data.download_url };
 }

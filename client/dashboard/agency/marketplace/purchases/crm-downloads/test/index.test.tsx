@@ -47,6 +47,15 @@ describe( '<CrmDownloadsContent>', () => {
 		).toBeVisible();
 	} );
 
+	test( 'shows the error with a retry when the extensions fail to load', async () => {
+		global.fetch = jest.fn().mockResolvedValue( { ok: false, status: 404 } );
+
+		render( <CrmDownloadsContent licenseKey="jetpack-complete_abc" /> );
+
+		expect( await screen.findByText( 'Error: Extensions not found' ) ).toBeVisible();
+		expect( screen.getByRole( 'button', { name: 'Try again' } ) ).toBeVisible();
+	} );
+
 	test( 'lists each extension with its documentation and a download button', async () => {
 		mockExtensions( [
 			{

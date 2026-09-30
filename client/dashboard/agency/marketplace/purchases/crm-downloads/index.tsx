@@ -13,7 +13,7 @@ import {
 import { useDispatch } from '@wordpress/data';
 import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import Breadcrumbs from '../../../../app/breadcrumbs';
 import { marketplacePurchasesCrmDownloadsRoute } from '../../../../app/router/agency';
 import { ActionList } from '../../../../components/action-list';
@@ -68,7 +68,6 @@ function ExtensionsList( { licenseKey }: { licenseKey: string } ) {
 		data: extensions,
 		error,
 		isLoading,
-		isError,
 		refetch,
 		isFetching,
 	} = useQuery( jetpackCrmExtensionsQuery( JETPACK_CRM_APP_URL ) );
@@ -77,12 +76,6 @@ function ExtensionsList( { licenseKey }: { licenseKey: string } ) {
 	);
 	// Several downloads can be in flight at once, so pending state is tracked per extension.
 	const [ pendingSlugs, setPendingSlugs ] = useState< string[] >( [] );
-
-	useEffect( () => {
-		if ( error ) {
-			createErrorNotice( getExtensionsErrorMessage( error ), { type: 'snackbar' } );
-		}
-	}, [ error, createErrorNotice ] );
 
 	const download = ( extension: JetpackCrmExtension ) => {
 		setPendingSlugs( ( slugs ) => [ ...slugs, extension.slug ] );
@@ -119,18 +112,17 @@ function ExtensionsList( { licenseKey }: { licenseKey: string } ) {
 		);
 	}
 
-	// A failed request only shows the error notice; the retry is for a server
-	// that answers with an empty list.
-	if ( isError || ! extensions ) {
-		return null;
-	}
-
-	if ( ! extensions.length ) {
+	// A failed background refetch keeps the list already on screen.
+	if ( ! extensions?.length ) {
 		return (
 			<Card>
 				<CardBody>
 					<VStack spacing={ 4 } alignment="left">
-						<Text>{ getConnectionErrorMessage() }</Text>
+						<Text>
+							{ error && ! extensions
+								? getExtensionsErrorMessage( error )
+								: getConnectionErrorMessage() }
+						</Text>
 						<Button
 							variant="secondary"
 							__next40pxDefaultSize
