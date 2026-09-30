@@ -6,6 +6,7 @@ import { addQueryArgs } from '@wordpress/url';
 import { useEffect, useRef, useState } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import Loading from 'calypso/components/loading';
+import { useBlueprintTitle } from 'calypso/landing/stepper/hooks/use-blueprint-title';
 import { useFlowLocale } from 'calypso/landing/stepper/hooks/use-flow-locale';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import {
@@ -52,6 +53,16 @@ const WowFunnelPending: StepType = function WowFunnelPending( { flow } ) {
 
 	const funnelSlug = getWowFunnelSlug( queryParams ) ?? '';
 	const funnelArgs = getWowFunnelArgs( queryParams );
+
+	// Customers know a run by the blueprint they picked ("Punk"), not by the address of the site it
+	// builds on, so name both blueprints when there is one.
+	const { title: pendingBlueprintTitle, isLoading: isPendingTitleLoading } = useBlueprintTitle(
+		pending?.funnelArgs?.blueprint_slug
+	);
+	const { title: thisBlueprintTitle, isLoading: isThisTitleLoading } = useBlueprintTitle(
+		funnelArgs.blueprint_slug
+	);
+
 	const flowEntryUrl = withLocale( `/setup/${ flow }`, locale );
 	// Re-entering with this run's own URL: flow entry resumes or starts it as the server now sees fit.
 	const thisRunUrl = addQueryArgs( flowEntryUrl, Object.fromEntries( queryParams.entries() ) );
@@ -148,7 +159,8 @@ const WowFunnelPending: StepType = function WowFunnelPending( { flow } ) {
 		}
 	};
 
-	if ( ! pending ) {
+	// Held until the blueprint names are known too, so the copy never flashes a fallback first.
+	if ( ! pending || isPendingTitleLoading || isThisTitleLoading ) {
 		const loadingTitle = __( 'Checking your sites…' );
 		if ( shouldUseStepContainerV2( flow ) ) {
 			return <Step.Loading title={ loadingTitle } />;
@@ -169,24 +181,42 @@ const WowFunnelPending: StepType = function WowFunnelPending( { flow } ) {
 			)
 		);
 
-	// Site slugs use `::` for subdirectory sites; show the address the customer would recognise.
-	const siteAddress = pending.siteSlug.replace( /::/g, '/' );
 	const heading = __( 'You have an unfinished site' );
-	const subText = canContinue
+
+	// What they started: the blueprint when the run had one, else the site's address (a plain
+	// funnel run has no blueprint to name). Site slugs use `::` for subdirectory sites.
+	const startedSentence = pendingBlueprintTitle
 		? sprintf(
-				/* translators: %s is the address of the customer's unfinished site, e.g. example.wordpress.com */
-				__(
-					'You started setting up %s but didn’t finish. Carry on with it, or discard it and start this one instead.'
-				),
-				siteAddress
+				/* translators: %s is the name of a site blueprint the customer picked, e.g. "Punk" */
+				__( 'You started setting up the %s blueprint but didn’t finish.' ),
+				pendingBlueprintTitle
 			)
 		: sprintf(
 				/* translators: %s is the address of the customer's unfinished site, e.g. example.wordpress.com */
-				__(
-					'You started setting up %s but didn’t finish, and it can’t be continued from here. Discard it to start this one instead.'
-				),
-				siteAddress
+				__( 'You started setting up %s but didn’t finish.' ),
+				pending.siteSlug.replace( /::/g, '/' )
 			);
+
+	let choiceSentence: string;
+	if ( canContinue ) {
+		choiceSentence = thisBlueprintTitle
+			? sprintf(
+					/* translators: %s is the name of the site blueprint the customer just picked, e.g. "Annalee" */
+					__( 'Carry on with it, or discard it and start the %s blueprint instead.' ),
+					thisBlueprintTitle
+				)
+			: __( 'Carry on with it, or discard it and start this one instead.' );
+	} else {
+		choiceSentence = thisBlueprintTitle
+			? sprintf(
+					/* translators: %s is the name of the site blueprint the customer just picked, e.g. "Annalee" */
+					__( 'It can’t be continued from here. Discard it to start the %s blueprint instead.' ),
+					thisBlueprintTitle
+				)
+			: __( 'It can’t be continued from here. Discard it to start this one instead.' );
+	}
+
+	const subText = `${ startedSentence } ${ choiceSentence }`;
 
 	return (
 		<>

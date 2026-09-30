@@ -7,6 +7,7 @@ import {
 	getBlueprintArchiveSiteSpecUrl,
 	getSiteEditorUrl,
 	getStandaloneBlueprintArchiveSlug,
+	lookupBlueprintArchive,
 	waitForAtomicTransferComplete,
 	waitForBlueprintImportComplete,
 } from '../blueprint-archive-import';
@@ -361,5 +362,50 @@ describe( 'waitForBlueprintImportComplete with no import record', () => {
 		mockGet.mockResolvedValue( { importId: 'abc', importStatus: 'importSuccess' } );
 		await jest.advanceTimersByTimeAsync( 5000 );
 		await expect( pending ).resolves.toBeUndefined();
+	} );
+} );
+
+/**
+ * Onboarding names a blueprint to the customer by its title ("Punk"), so the lookup carries it —
+ * and a server that predates the field must not break the plans it already returns.
+ */
+describe( 'lookupBlueprintArchive title', () => {
+	beforeEach( () => {
+		mockGet.mockReset();
+	} );
+
+	it( 'returns the blueprint title alongside the suggested plans', async () => {
+		mockGet.mockResolvedValue( {
+			slug: 'punk',
+			exists: true,
+			title: ' Punk ',
+			suggested_plans: [ 'value_bundle' ],
+		} );
+
+		await expect( lookupBlueprintArchive( 'punk' ) ).resolves.toEqual( {
+			exists: true,
+			title: 'Punk',
+			suggestedPlans: [ 'value_bundle' ],
+		} );
+	} );
+
+	it( 'reads a missing title as empty', async () => {
+		mockGet.mockResolvedValue( { slug: 'punk', exists: true, suggested_plans: [] } );
+
+		await expect( lookupBlueprintArchive( 'punk' ) ).resolves.toEqual( {
+			exists: true,
+			title: '',
+			suggestedPlans: [],
+		} );
+	} );
+
+	it( 'has no title for a blueprint that does not resolve', async () => {
+		mockGet.mockRejectedValue( new Error( 'Not found' ) );
+
+		await expect( lookupBlueprintArchive( 'nope' ) ).resolves.toEqual( {
+			exists: false,
+			title: '',
+			suggestedPlans: [],
+		} );
 	} );
 } );
