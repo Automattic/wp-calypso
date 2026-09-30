@@ -31,18 +31,16 @@ export interface ShowcaseItem {
 }
 
 /**
- * The featured level of an A4A page (A4AD-237): a bento of tiles, each one the
- * item's words beside its drawing. The first tile leads on the maker's full
- * colour; every other tile takes the maker's tint. Tiles pair up wide-narrow,
- * then narrow-wide, and a tile left alone on the last row takes the full width,
- * so any number of items lays out. See style.scss for the composition rules.
- *
- * For review only, `?showcase=row` puts the same tiles in one scrolling row,
- * with previous and next beside the heading. To be removed once one layout is
- * chosen.
+ * The featured level of an A4A page (A4AD-237): tiles, each one the item's
+ * words beside its drawing. The first tile leads on the maker's full colour;
+ * every other tile takes the maker's tint. Tiles alternate wide-narrow, then
+ * narrow-wide. By default they sit in one scrolling row, with previous and next
+ * beside the heading (A4AD-251). For review, `?showcase=bento` lays them out as
+ * a bento instead, where a tile left alone on the last row takes the full width.
+ * See style.scss for the composition rules.
  */
 function isRowLayout(): boolean {
-	return new URLSearchParams( window.location.search ).get( 'showcase' ) === 'row';
+	return new URLSearchParams( window.location.search ).get( 'showcase' ) !== 'bento';
 }
 
 export default function Showcase( { title, items }: { title: string; items: ShowcaseItem[] } ) {
@@ -56,7 +54,14 @@ export default function Showcase( { title, items }: { title: string; items: Show
 				title={ title }
 				actions={ isRow ? rowArrows( { canScroll, page } ) : undefined }
 			/>
-			<ul ref={ rowRef } className={ clsx( 'dashboard-showcase', { 'is-row': isRow } ) }>
+			<ul
+				ref={ rowRef }
+				className={ clsx( 'dashboard-showcase', {
+					'is-row': isRow,
+					'can-back': isRow && canScroll.back,
+					'can-forward': isRow && canScroll.forward,
+				} ) }
+			>
 				{ items.map( ( item, index ) => (
 					<li
 						key={ item.id }

@@ -342,12 +342,16 @@ $lead-side-by-side: $pad-x * 2 + $words-min + $gap + $lead-object;
 	}
 }
 
-// Row (?showcase=row, for review only): the same tiles in one scrolling row.
-// Wide tiles keep the bento's rhythm as widths, so the words and the drawing
-// still sit side by side (R4) and narrow tiles stack (R5). One height for the
-// row, 16px apart, snapping to a tile's start. On a phone, tiles are at most
-// 85% of the screen so the next one peeks in.
+// Row (the default; ?showcase=bento shows the bento): the tiles in one
+// scrolling row. Wide tiles keep the bento's rhythm as widths, so the words and
+// the drawing still sit side by side (R4) and narrow tiles stack (R5). One
+// height for the row, 16px apart, snapping to a tile's start. On a phone, tiles
+// are at most 85% of the screen so the next one peeks in. Each end fades only
+// while there is more that way, like the category row (spot-tiles.scss).
 .dashboard-showcase.is-row {
+	--fade-start: 0%;
+	--fade-end: 0%;
+
 	grid-template-columns: none;
 	grid-template-rows: 340px;
 	grid-auto-flow: column;
@@ -357,9 +361,18 @@ $lead-side-by-side: $pad-x * 2 + $words-min + $gap + $lead-object;
 	scroll-behavior: smooth;
 	scroll-snap-type: x mandatory;
 	scrollbar-width: none;
+	mask-image: linear-gradient( to right, transparent, #000 var( --fade-start ), #000 calc( 100% - var( --fade-end ) ), transparent );
 
 	&::-webkit-scrollbar {
 		display: none;
+	}
+
+	&.can-back {
+		--fade-start: 32px;
+	}
+
+	&.can-forward {
+		--fade-end: 48px;
 	}
 
 	> .dashboard-showcase__tile:nth-child( n ):nth-last-child( n ) {
