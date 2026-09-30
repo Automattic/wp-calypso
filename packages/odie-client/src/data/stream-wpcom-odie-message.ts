@@ -6,6 +6,7 @@ interface StreamOptions {
 	body: Record< string, unknown >;
 	token: string;
 	onDelta: ( content: string ) => void;
+	onProgress?: ( summary: string ) => void;
 	signal?: AbortSignal;
 }
 
@@ -34,7 +35,7 @@ export const requestOdieStreamToken = async (): Promise< string | null > => {
 
 export const streamWpcomOdieMessage = async (
 	path: string,
-	{ body, token, onDelta, signal }: StreamOptions
+	{ body, token, onDelta, onProgress, signal }: StreamOptions
 ): Promise< ReturnedChat > => {
 	const response = await fetch( `https://public-api.wordpress.com/wpcom/v2${ path }`, {
 		body: JSON.stringify( { ...body, stream: true } ),
@@ -79,6 +80,8 @@ export const streamWpcomOdieMessage = async (
 
 			if ( name === 'delta' ) {
 				onDelta( data.content );
+			} else if ( name === 'progress' ) {
+				onProgress?.( data.summary );
 			} else if ( name === 'complete' ) {
 				return data;
 			} else if ( name === 'error' ) {

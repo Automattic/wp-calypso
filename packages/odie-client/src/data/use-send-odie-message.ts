@@ -305,6 +305,8 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 						token,
 						signal,
 						onDelta: ( content ) => appendStreamedText( messageId, content ),
+						onProgress: ( progressMessage ) =>
+							setChat( ( prevChat ) => ( { ...prevChat, progressMessage } ) ),
 					} );
 				}
 			}
@@ -361,6 +363,7 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 		},
 		onMutate: () => {
 			setChatStatus( 'sending' );
+			setChat( ( prevChat ) => ( { ...prevChat, progressMessage: undefined } ) );
 		},
 		onSuccess: async ( returnedChat ) => {
 			if (

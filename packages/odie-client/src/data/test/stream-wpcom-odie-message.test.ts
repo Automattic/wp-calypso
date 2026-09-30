@@ -95,6 +95,27 @@ describe( 'streamWpcomOdieMessage', () => {
 		expect( chat ).toEqual( { chat_id: 1, messages: [ { content: 'Hello' } ] } );
 	} );
 
+	it( 'passes on the summary of each progress update', async () => {
+		jest
+			.mocked( globalThis.fetch )
+			.mockResolvedValue(
+				eventStreamResponse( [
+					'event: progress\ndata: {"phase":"commentary","summary":"Checking your plugins."}\n\n',
+					'event: complete\ndata: {"chat_id":1}\n\n',
+				] )
+			);
+		const onProgress = jest.fn();
+
+		await streamWpcomOdieMessage( '/odie/chat/bot/1', {
+			body: {},
+			token: 'jwt',
+			onDelta: jest.fn(),
+			onProgress,
+		} );
+
+		expect( onProgress.mock.calls ).toEqual( [ [ 'Checking your plugins.' ] ] );
+	} );
+
 	it( 'throws the status and message of an error event', async () => {
 		jest
 			.mocked( globalThis.fetch )

@@ -157,6 +157,27 @@ describe( 'useSendOdieMessage with streaming enabled', () => {
 		expect( botContents() ).toEqual( [ 'To change your theme…' ] );
 	} );
 
+	it( 'keeps the latest progress update until the next message is sent', async () => {
+		let progressWhileStreaming: string | undefined;
+		jest.mocked( streamWpcomOdieMessage ).mockImplementation( async ( _path, { onProgress } ) => {
+			onProgress?.( 'Checking your theme settings.' );
+			progressWhileStreaming = chat.progressMessage;
+			return returnedChat( 'To change your theme…' );
+		} );
+
+		await send();
+
+		expect( progressWhileStreaming ).toBe( 'Checking your theme settings.' );
+
+		jest
+			.mocked( streamWpcomOdieMessage )
+			.mockImplementation( async () => returnedChat( 'Anything else?' ) );
+
+		await send();
+
+		expect( chat.progressMessage ).toBeUndefined();
+	} );
+
 	it( 'drops the partial reply when the stream fails', async () => {
 		jest.mocked( streamWpcomOdieMessage ).mockImplementation( async ( _path, { onDelta } ) => {
 			onDelta( 'To change ' );
