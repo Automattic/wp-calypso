@@ -62,7 +62,7 @@ export default function DNSRecordForm( {
 		const record = DNS_RECORD_CONFIGS[ type ].transformData( data, domainName, type );
 		return {
 			...data,
-			ttl: getRRsetTtl( existingRecords, record, domainName ) ?? defaultFormData.ttl,
+			ttl: getRRsetTtl( existingRecords, record ) ?? defaultFormData.ttl,
 		};
 	};
 
