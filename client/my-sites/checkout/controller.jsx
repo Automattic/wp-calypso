@@ -33,6 +33,7 @@ import {
 } from '../plans/jetpack-plans/plan-upgrade/constants';
 import CalypsoShoppingCartProvider from './calypso-shopping-cart-provider';
 import CheckoutMainWrapper from './checkout-main-wrapper';
+import CheckoutQueryClientProvider from './checkout-query-client-provider';
 import CheckoutThankYouComponent from './checkout-thank-you';
 import AkismetCheckoutThankYou from './checkout-thank-you/akismet-checkout-thank-you';
 import DomainTransferToAnyUser from './checkout-thank-you/domain-transfer-to-any-user';
@@ -88,7 +89,11 @@ function getStudioRedirectTo( context, siteSlug ) {
 }
 
 export function checkoutFailedPurchases( context, next ) {
-	context.primary = <FailedPurchasePage />;
+	context.primary = (
+		<CheckoutQueryClientProvider>
+			<FailedPurchasePage />
+		</CheckoutQueryClientProvider>
+	);
 
 	next();
 }
@@ -456,13 +461,15 @@ export function checkoutPending( context, next ) {
 	setSectionMiddleware( { name: 'checkout-pending' } )( context );
 
 	context.primary = (
-		<CheckoutPending
-			orderId={ orderId }
-			siteSlug={ siteSlug }
-			redirectTo={ redirectTo }
-			receiptId={ receiptId }
-			fromSiteSlug={ fromSiteSlug }
-		/>
+		<CheckoutQueryClientProvider>
+			<CheckoutPending
+				orderId={ orderId }
+				siteSlug={ siteSlug }
+				redirectTo={ redirectTo }
+				receiptId={ receiptId }
+				fromSiteSlug={ fromSiteSlug }
+			/>
+		</CheckoutQueryClientProvider>
 	);
 
 	next();
@@ -496,7 +503,7 @@ export function checkoutThankYou( context, next ) {
 	};
 
 	context.primary = (
-		<>
+		<CheckoutQueryClientProvider>
 			<CheckoutThankYouDocumentTitle />
 
 			<CheckoutThankYouComponent
@@ -511,7 +518,7 @@ export function checkoutThankYou( context, next ) {
 				selectedSite={ selectedSite }
 				upgradeIntent={ context.query.intent }
 			/>
-		</>
+		</CheckoutQueryClientProvider>
 	);
 
 	next();
@@ -608,14 +615,16 @@ export function licensingPendingAsyncActivation( context, next ) {
 		);
 	} else {
 		context.primary = (
-			<LicensingPendingAsyncActivation
-				productSlug={ productSlug }
-				receiptId={ receiptId }
-				source={ source }
-				jetpackTemporarySiteId={ siteId }
-				fromSiteSlug={ fromSiteSlug }
-				redirectTo={ redirect_to }
-			/>
+			<CheckoutQueryClientProvider>
+				<LicensingPendingAsyncActivation
+					productSlug={ productSlug }
+					receiptId={ receiptId }
+					source={ source }
+					jetpackTemporarySiteId={ siteId }
+					fromSiteSlug={ fromSiteSlug }
+					redirectTo={ redirect_to }
+				/>
+			</CheckoutQueryClientProvider>
 		);
 	}
 
@@ -627,10 +636,12 @@ export function licensingThankYouManualActivationInstructions( context, next ) {
 	const { receiptId } = context.query;
 
 	context.primary = (
-		<LicensingThankYouManualActivationInstructions
-			productSlug={ product }
-			receiptId={ receiptId }
-		/>
+		<CheckoutQueryClientProvider>
+			<LicensingThankYouManualActivationInstructions
+				productSlug={ product }
+				receiptId={ receiptId }
+			/>
+		</CheckoutQueryClientProvider>
 	);
 
 	next();
@@ -641,7 +652,12 @@ export function licensingThankYouManualActivationLicenseKey( context, next ) {
 	const { receiptId } = context.query;
 
 	context.primary = (
-		<LicensingThankYouManualActivationLicenseKey productSlug={ product } receiptId={ receiptId } />
+		<CheckoutQueryClientProvider>
+			<LicensingThankYouManualActivationLicenseKey
+				productSlug={ product }
+				receiptId={ receiptId }
+			/>
+		</CheckoutQueryClientProvider>
 	);
 
 	next();
@@ -664,15 +680,17 @@ export function licensingThankYouAutoActivation( context, next ) {
 		);
 	} else {
 		context.primary = (
-			<LicensingThankYouAutoActivation
-				userHasJetpackSites={ userHasJetpackSites }
-				productSlug={ context.params.product }
-				receiptId={ receiptId }
-				source={ source }
-				jetpackTemporarySiteId={ siteId }
-				fromSiteSlug={ fromSiteSlug }
-				redirectTo={ redirect_to }
-			/>
+			<CheckoutQueryClientProvider>
+				<LicensingThankYouAutoActivation
+					userHasJetpackSites={ userHasJetpackSites }
+					productSlug={ context.params.product }
+					receiptId={ receiptId }
+					source={ source }
+					jetpackTemporarySiteId={ siteId }
+					fromSiteSlug={ fromSiteSlug }
+					redirectTo={ redirect_to }
+				/>
+			</CheckoutQueryClientProvider>
 		);
 	}
 
@@ -683,11 +701,13 @@ export function licensingThankYouAutoActivationCompleted( context, next ) {
 	const { destinationSiteId, redirect_to } = context.query;
 
 	context.primary = (
-		<LicensingThankYouAutoActivationCompleted
-			productSlug={ context.params.product }
-			destinationSiteId={ destinationSiteId }
-			redirectTo={ redirect_to }
-		/>
+		<CheckoutQueryClientProvider>
+			<LicensingThankYouAutoActivationCompleted
+				productSlug={ context.params.product }
+				destinationSiteId={ destinationSiteId }
+				redirectTo={ redirect_to }
+			/>
+		</CheckoutQueryClientProvider>
 	);
 
 	next();
@@ -695,7 +715,12 @@ export function licensingThankYouAutoActivationCompleted( context, next ) {
 
 export function hundredYearCheckoutThankYou( context, next ) {
 	context.primary = (
-		<HundredYearThankYou siteSlug={ context.params.site } receiptId={ context.params.receiptId } />
+		<CheckoutQueryClientProvider>
+			<HundredYearThankYou
+				siteSlug={ context.params.site }
+				receiptId={ context.params.receiptId }
+			/>
+		</CheckoutQueryClientProvider>
 	);
 	next();
 }
@@ -704,18 +729,24 @@ export function jetpackCheckoutThankYou( context, next ) {
 	const isUserlessCheckoutFlow = context.path.includes( '/checkout/jetpack' );
 
 	context.primary = (
-		<JetpackCheckoutThankYou
-			site={ context.params.site }
-			productSlug={ context.params.product }
-			isUserlessCheckoutFlow={ isUserlessCheckoutFlow }
-		/>
+		<CheckoutQueryClientProvider>
+			<JetpackCheckoutThankYou
+				site={ context.params.site }
+				productSlug={ context.params.product }
+				isUserlessCheckoutFlow={ isUserlessCheckoutFlow }
+			/>
+		</CheckoutQueryClientProvider>
 	);
 
 	next();
 }
 
 export function akismetCheckoutThankYou( context, next ) {
-	context.primary = <AkismetCheckoutThankYou productSlug={ context.params.productSlug } />;
+	context.primary = (
+		<CheckoutQueryClientProvider>
+			<AkismetCheckoutThankYou productSlug={ context.params.productSlug } />
+		</CheckoutQueryClientProvider>
+	);
 
 	next();
 }
@@ -744,7 +775,11 @@ export function giftThankYou( context, next ) {
 	// Overriding section name here in order to apply a top level
 	// background via .is-section-checkout-gift-thank-you
 	context.section.name = 'checkout-gift-thank-you';
-	context.primary = <GiftThankYou site={ context.params.site } />;
+	context.primary = (
+		<CheckoutQueryClientProvider>
+			<GiftThankYou site={ context.params.site } />
+		</CheckoutQueryClientProvider>
+	);
 	next( context );
 }
 
@@ -752,7 +787,11 @@ export function transferDomainToAnyUser( context, next ) {
 	// Overriding section name here in order to apply a top level
 	// background via .is-section-checkout-thank-you
 	context.section.name = 'checkout-thank-you';
-	context.primary = <DomainTransferToAnyUser domain={ context.params.domain } />;
+	context.primary = (
+		<CheckoutQueryClientProvider>
+			<DomainTransferToAnyUser domain={ context.params.domain } />
+		</CheckoutQueryClientProvider>
+	);
 	next( context );
 }
 
