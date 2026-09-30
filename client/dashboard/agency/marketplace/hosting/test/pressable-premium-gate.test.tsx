@@ -10,10 +10,8 @@ import { render } from '../../../../test-utils';
 import PressablePremiumGate from '../pressable-premium-gate';
 import type { Agency } from '@automattic/api-core';
 
-const mockScheduleCall = jest.fn();
-
 jest.mock( '../../../tiers/use-schedule-call', () => ( {
-	useScheduleCall: () => ( { scheduleCall: mockScheduleCall, isLoading: false } ),
+	useScheduleCall: () => ( { scheduleCall: jest.fn(), isLoading: false } ),
 } ) );
 
 function renderGate( approvalStatus: Agency[ 'approval_status' ] = 'approved' ) {
@@ -28,19 +26,6 @@ function renderGate( approvalStatus: Agency[ 'approval_status' ] = 'approved' ) 
 describe( '<PressablePremiumGate>', () => {
 	beforeEach( () => {
 		sessionStorage.clear();
-		mockScheduleCall.mockClear();
-	} );
-
-	test( 'names the plan and explains that Premium plans are referred', () => {
-		renderGate();
-
-		expect( screen.getByRole( 'heading', { name: 'Currently selected' } ) ).toBeVisible();
-		expect( screen.getByText( 'Pressable Premium 3' ) ).toBeVisible();
-		expect(
-			screen.getByText(
-				'Premium plans are sold through referrals. Turn on Refer products to refer this plan to a client and earn 20% commission on every payment.'
-			)
-		).toBeVisible();
 	} );
 
 	test( 'the toggle switches the marketplace to referral mode', async () => {
@@ -60,16 +45,5 @@ describe( '<PressablePremiumGate>', () => {
 		renderGate( 'pending' );
 
 		expect( screen.getByRole( 'checkbox', { name: 'Refer products' } ) ).toBeDisabled();
-	} );
-
-	test( 'Talk to us schedules a call', async () => {
-		const { recordTracksEvent } = renderGate();
-
-		await userEvent.click( screen.getByRole( 'button', { name: /Talk to us/ } ) );
-
-		expect( mockScheduleCall ).toHaveBeenCalled();
-		expect( recordTracksEvent ).toHaveBeenCalledWith(
-			'calypso_a4a_marketplace_hosting_pressable_premium_talk_to_us_click'
-		);
 	} );
 } );

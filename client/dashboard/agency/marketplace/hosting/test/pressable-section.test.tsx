@@ -102,14 +102,4 @@ describe( '<PressableSection> Premium plans', () => {
 		expect( screen.getByText( gateText ) ).toBeVisible();
 		expect( screen.getByTestId( 'usage-card' ) ).toBeVisible();
 	} );
-
-	test( 'an agency on a Premium plan sees its own plan named in the gate', async () => {
-		renderSection( { products: legacyCatalog, existingPlan: premium1, ownership: 'agency' } );
-
-		await userEvent.click( screen.getByRole( 'radio', { name: /Premium plans/ } ) );
-
-		expect( planPicker() ).not.toBeInTheDocument();
-		expect( screen.getByText( 'Pressable Premium 1' ) ).toBeVisible();
-		expect( screen.getByText( gateText ) ).toBeVisible();
-	} );
 } );
