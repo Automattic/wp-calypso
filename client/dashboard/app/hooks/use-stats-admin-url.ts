@@ -1,8 +1,8 @@
 import { sitePremiumAnalyticsEnabledQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
+import { getPremiumAnalyticsPath } from '../../utils/premium-analytics-url';
 
 const STATS_PATH = 'admin.php?page=stats';
-const PREMIUM_ANALYTICS_PATH = 'admin.php?page=jetpack-premium-analytics-wp-admin';
 
 /**
  * The fields this hook reads, which both the dashboard's `Site` and classic Calypso's
@@ -16,7 +16,7 @@ export interface StatsAdminUrlSite {
 
 /**
  * The wp-admin address a "see your stats" link opens: the Premium Analytics dashboard when the
- * site has it switched on, `statsPath` otherwise. The one place that knows both addresses.
+ * site has it switched on, `statsPath` otherwise.
  * @todo UNI-832: return the dashboard unconditionally once Premium Analytics replaces Stats.
  * @param site      The site the link belongs to.
  * @param statsPath The classic Stats path, relative to wp-admin.
@@ -36,6 +36,6 @@ export function useStatsAdminUrl(
 		return undefined;
 	}
 
-	const path = isPremiumAnalyticsEnabled ? PREMIUM_ANALYTICS_PATH : statsPath;
+	const path = isPremiumAnalyticsEnabled ? getPremiumAnalyticsPath() : statsPath;
 	return `${ adminUrl.replace( /\/?$/, '/' ) }${ path }`;
 }
