@@ -131,8 +131,6 @@
 		"stats/archive-breakdown": true,
 		"stats/chart-library": true,
 		"stats/paid-wpcom-v2": true,
-		"stats/premium-analytics-preview": true,
-		"stats/premium-analytics-preview-atomic": true,
 		"stats/real-time-tab": false,
 		"subscriber-importer": true,
 		"themes/discovery": true,

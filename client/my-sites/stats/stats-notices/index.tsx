@@ -117,7 +117,6 @@ const NewStatsNotices = ( { siteId, isOdysseyStats, statsPurchaseSuccess }: Stat
 	const isSiteJetpack = useSelector(
 		( state ) => !! isJetpackSite( state, siteId, { treatAtomicAsJetpackSite: true } )
 	);
-	const isAtomic = isSiteJetpack && ! isSiteJetpackNotAtomic;
 	const isOwnedByTeam51 = useSelector(
 		( state ) => getSelectedSite( state )?.site_owner === TEAM51_OWNER_ID
 	);
@@ -190,7 +189,6 @@ const NewStatsNotices = ( { siteId, isOdysseyStats, statsPurchaseSuccess }: Stat
 		isPremiumAnalyticsEnabled,
 		premiumAnalyticsDashboardUrl,
 		isWpcom,
-		isAtomic,
 		isVip,
 		isP2,
 		isOwnedByTeam51,
@@ -236,7 +234,6 @@ const NewStatsNotices = ( { siteId, isOdysseyStats, statsPurchaseSuccess }: Stat
 
 	usePremiumAnalyticsPreviewNotShownEvent( {
 		siteId,
-		isAtomic,
 		isWpcom,
 		// The features are not among the notices' own inputs, so they are waited on here alone:
 		// reading the tier before they land answers "no" for every site.

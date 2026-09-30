@@ -195,7 +195,6 @@ describe( 'premium analytics preview "not shown" event', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
 		Object.keys( mockFlags() ).forEach( ( flag ) => delete mockFlags()[ flag ] );
-		mockFlags()[ 'stats/premium-analytics-preview' ] = true;
 		mockNoticesVisibility = {
 			isLoading: false,
 			isError: false,
@@ -259,13 +258,6 @@ describe( 'premium analytics preview "not shown" event', () => {
 			},
 		],
 		[
-			'atomic_hold',
-			() => {
-				mockIsAtomic = true;
-				mockPremiumAnalyticsStatus = { data: undefined, isLoading: true, isError: false };
-			},
-		],
-		[
 			'already_enabled',
 			() => {
 				mockPremiumAnalyticsStatus.data = true;
@@ -295,15 +287,6 @@ describe( 'premium analytics preview "not shown" event', () => {
 
 	const quietCases: Array< [ string, () => void ] > = [
 		[ 'the invitation is shown', () => {} ],
-		// The two rows that would otherwise pass every gate, so a missing guard would leave them
-		// silent for the wrong reason. Failing one gate gives each a reason to record.
-		[
-			'the flag is off',
-			() => {
-				mockCanManageOptions = false;
-				delete mockFlags()[ 'stats/premium-analytics-preview' ];
-			},
-		],
 		[
 			'the notices are still loading',
 			() => {
@@ -318,6 +301,7 @@ describe( 'premium analytics preview "not shown" event', () => {
 				mockHasLoadedSiteFeatures = false;
 			},
 		],
+		// Failing a gate too, so a missing guard would record a reason instead of staying quiet.
 		[
 			'the site is self-hosted Jetpack',
 			() => {
@@ -335,33 +319,10 @@ describe( 'premium analytics preview "not shown" event', () => {
 		expect( notShownEvents() ).toEqual( [] );
 	} );
 
-	it.each( [ true, false ] )( 'does not hold Simple with Atomic flag %s', ( flag ) => {
-		mockFlags()[ 'stats/premium-analytics-preview-atomic' ] = flag;
+	it( 'invites Atomic sites like Simple ones', () => {
+		mockIsAtomic = true;
 		renderNotices();
 		expect( notShownEvents() ).toEqual( [] );
-	} );
-
-	it( 'does not hold Atomic when its flag is on', () => {
-		mockIsAtomic = true;
-		mockFlags()[ 'stats/premium-analytics-preview-atomic' ] = true;
-		renderNotices();
-		expect( notShownEvents() ).toEqual( [] );
-	} );
-
-	it.each( [ true, undefined ] )( 'records atomic_hold before status %s', ( status ) => {
-		mockIsAtomic = true;
-		mockPremiumAnalyticsStatus.data = status;
-		renderNotices();
-		expect( notShownEvents() ).toEqual( [
-			[ EVENT_NAME, { blog_id: 123, reason: 'atomic_hold' } ],
-		] );
-	} );
-
-	it( 'records is_p2 before atomic_hold', () => {
-		mockIsAtomic = true;
-		mockIsP2 = true;
-		renderNotices();
-		expect( notShownEvents() ).toEqual( [ [ EVENT_NAME, { blog_id: 123, reason: 'is_p2' } ] ] );
 	} );
 
 	describe( 'with another notice in the conflict group', () => {
