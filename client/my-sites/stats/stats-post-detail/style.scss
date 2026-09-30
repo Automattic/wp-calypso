@@ -1,8 +1,8 @@
-@import "@wordpress/base-styles/breakpoints";
+@import "calypso/my-sites/stats/components/highlight-cards/variables";
 
-// The stats layout drops side padding on small screens; line up with the cards' inner padding.
-@media (max-width: $break-small) {
+// Line up with the section heading, which the highlight cards inset the same way on small screens.
+@media (max-width: $custom-mobile-breakpoint) {
 	.stats-post-detail__no-views {
-		margin-inline: 24px;
+		margin-inline: $font-body-small;
 	}
 }
