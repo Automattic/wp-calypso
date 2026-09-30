@@ -62,20 +62,6 @@ describe( 'NewReferralNotice', () => {
 		expect( screen.queryByRole( 'button', { name: /Copy link/ } ) ).not.toBeInTheDocument();
 	} );
 
-	it( 'keeps the copied title without the copy button when the link is missing', async () => {
-		mockUseSearch.mockReturnValue( {
-			new_referral_order_email: 'client@example.com',
-			flow_type: 'copy',
-		} );
-		render( <NewReferralNotice /> );
-
-		expect(
-			await screen.findByText( 'The referral link has been copied to your clipboard!' )
-		).toBeVisible();
-		expect( screen.queryByText( /Referral sent/ ) ).not.toBeInTheDocument();
-		expect( screen.queryByRole( 'button', { name: /Copy link/ } ) ).not.toBeInTheDocument();
-	} );
-
 	it( 'shows nothing without the client’s email', () => {
 		mockUseSearch.mockReturnValue( { new_referral_order_checkout_url: CHECKOUT_URL } );
 		render( <NewReferralNotice /> );

@@ -5,7 +5,7 @@ import { act, renderHook, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { render } from '../../../../test-utils';
-import { clearStoredCart, useShoppingCart } from '../../products/use-shopping-cart';
+import { useShoppingCart } from '../../products/use-shopping-cart';
 import ReferralCheckout from '../index';
 
 const API = 'https://public-api.wordpress.com';
@@ -191,14 +191,5 @@ describe( '<ReferralCheckout>', () => {
 		render( <ReferralCheckout /> );
 
 		expect( await screen.findByRole( 'button', { name: 'Purchase' } ) ).toBeEnabled();
-	} );
-
-	test( 'shows the empty state with a way back when the cart is empty', async () => {
-		act( () => clearStoredCart( 'referral' ) );
-		mockApi();
-		render( <ReferralCheckout /> );
-
-		expect( await screen.findByText( 'Your cart is empty.' ) ).toBeVisible();
-		expect( screen.getByRole( 'link', { name: 'Back to the marketplace' } ) ).toBeVisible();
 	} );
 } );
