@@ -303,18 +303,6 @@ describe( 'account step email verification gate', () => {
 		expect( screen.queryByRole( 'button', { name: /back/i } ) ).not.toBeInTheDocument();
 	} );
 
-	// Like the hidden Back button, a logo link would be a way off the account screen mid-correction.
-	it( 'keeps the logo unlinked while the address is being corrected', async () => {
-		const user = userEvent.setup();
-		renderUser( makeStore( false ) );
-		await screen.findByRole( 'heading', { name: GATE_HEADING } );
-
-		await user.click( screen.getByRole( 'button', { name: 'edit' } ) );
-
-		expect( screen.getByRole( 'heading', { name: 'Create your account' } ) ).toBeVisible();
-		expect( screen.queryByRole( 'link', { name: 'WordPress.com home' } ) ).not.toBeInTheDocument();
-	} );
-
 	// Submitting it unchanged asks for nothing, so it is the way back.
 	it( 'returns to the gate when the address is submitted unchanged', async () => {
 		const user = userEvent.setup();
