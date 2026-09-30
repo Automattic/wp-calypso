@@ -2,8 +2,14 @@
  * @jest-environment jsdom
  */
 
+jest.mock( 'calypso/lib/partner-branding', () => ( {
+	usePartnerBranding: jest.fn( () => ( { hasCustomBranding: false, topBarLogo: undefined } ) ),
+} ) );
+
 import { screen } from '@testing-library/react';
+import { usePartnerBranding } from 'calypso/lib/partner-branding';
 import LoginContextProvider from 'calypso/login/login-context';
+import oauth2ClientsReducer from 'calypso/state/oauth2-clients/reducer';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import OneLoginLayout, { ensureHeadingProvided } from '../one-login-layout';
 
@@ -52,5 +58,70 @@ describe( 'OneLoginLayout', () => {
 			'href',
 			'/log-in?email_address=someone%40example.com'
 		);
+	} );
+} );
+
+describe( 'OneLoginLayout logo link', () => {
+	const renderLayout = (
+		props: Partial< React.ComponentProps< typeof OneLoginLayout > > = {},
+		options = {}
+	) =>
+		renderWithProvider(
+			<LoginContextProvider initialHeading="Log in" initialSubHeading="Sub">
+				<OneLoginLayout isJetpack={ false } { ...props }>
+					<div>form</div>
+				</OneLoginLayout>
+			</LoginContextProvider>,
+			options
+		);
+
+	afterEach( () => {
+		( usePartnerBranding as jest.Mock ).mockReturnValue( {
+			hasCustomBranding: false,
+			topBarLogo: undefined,
+		} );
+	} );
+
+	test( 'links the logo to the homepage when linkLogoToHome is set', () => {
+		renderLayout( { linkLogoToHome: true } );
+		expect( screen.getByRole( 'link', { name: 'WordPress.com home' } ) ).toHaveAttribute(
+			'href',
+			'https://wordpress.com/'
+		);
+	} );
+
+	test( 'does not link the logo by default', () => {
+		renderLayout();
+		expect( screen.queryByRole( 'link', { name: 'WordPress.com home' } ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'does not link the logo for Jetpack logins', () => {
+		renderLayout( { linkLogoToHome: true, isJetpack: true } );
+		expect( screen.queryByRole( 'link', { name: 'WordPress.com home' } ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'does not link the logo for Jetpack connector logins', () => {
+		renderLayout( { linkLogoToHome: true, isFromJetpackConnector: true } );
+		expect( screen.queryByRole( 'link', { name: 'WordPress.com home' } ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'does not link the logo for OAuth2 client logins', () => {
+		renderLayout(
+			{ linkLogoToHome: true },
+			{
+				initialState: { oauth2Clients: { ui: { currentClientId: 930 } } },
+				reducers: { oauth2Clients: oauth2ClientsReducer },
+			}
+		);
+		expect( screen.queryByRole( 'link', { name: 'WordPress.com home' } ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'does not link the logo with partner branding', () => {
+		( usePartnerBranding as jest.Mock ).mockReturnValue( {
+			hasCustomBranding: true,
+			topBarLogo: undefined,
+		} );
+		renderLayout( { linkLogoToHome: true } );
+		expect( screen.queryByRole( 'link', { name: 'WordPress.com home' } ) ).not.toBeInTheDocument();
 	} );
 } );
