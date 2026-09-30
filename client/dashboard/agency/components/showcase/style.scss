@@ -91,6 +91,18 @@ $lead-side-by-side: $pad-x * 2 + $words-min + $gap + $lead-object;
 		--showcase-title-size: 24px;
 		--showcase-object: #{$lead-object};
 	}
+
+	// Jetpack's bright green is too loud for a whole field, so a Jetpack lead
+	// keeps the grey tile and leads on its size alone (A4AD-258).
+	&.is-lead[data-accent='jetpack'] {
+		--showcase-field: var( --dashboard-accent-tint );
+		--showcase-text: #{brand.$studio-gray-90};
+		--showcase-title: var( --dashboard-accent-ink );
+		--showcase-muted: #{brand.$studio-gray-70};
+		--showcase-action: var( --dashboard-accent-ink );
+		--showcase-glyph-bg: var( --dashboard-accent );
+		--showcase-glyph-fg: var( --dashboard-accent-on );
+	}
 }
 
 .dashboard-showcase__card {
