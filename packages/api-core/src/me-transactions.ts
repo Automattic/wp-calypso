@@ -1,5 +1,6 @@
 import { wpcom } from './wpcom-fetcher';
 import type { TaxVendorInfo } from './me-billing-history';
+import type { RequestCart } from '@automattic/shopping-cart';
 
 type PurchaseSiteId = number;
 
@@ -87,13 +88,105 @@ export type WPCOMTransactionEndpointResponse =
 	| WPCOMTransactionEndpointResponsePayPal
 	| WPCOMTransactionEndpointResponseRedirect;
 
+export interface ToSAcceptanceTrackingDetails {
+	path: string;
+	locale: string;
+	viewport: string;
+}
+
+export interface AdConversionDetails {
+	ad_details: string;
+	sensitive_pixel_options: string;
+}
+
+export interface TransactionDomainContactDetails {
+	first_name?: string;
+	last_name?: string;
+	organization?: string;
+	email?: string;
+	phone?: string;
+	address_1?: string;
+	address_2?: string;
+	city?: string;
+	state?: string;
+	postal_code?: string;
+	country_code?: string;
+	fax?: string;
+	vat_id?: string;
+	extra?: TransactionDomainContactExtraDetails;
+}
+
+export interface TransactionDomainContactExtraDetails {
+	ca?: {
+		lang?: string;
+		legal_type?: string;
+		cira_agreement_accepted?: boolean;
+	} | null;
+	uk?: {
+		registrant_type?: string;
+		registration_number?: string;
+		trading_name?: string;
+	} | null;
+	fr?: {
+		registrant_type?: string;
+		registrant_vat_id?: string;
+		trademark_number?: string;
+		siren_siret?: string;
+	} | null;
+	in?: {
+		nexus_declaration?: boolean;
+		nexus_connection_type?: string;
+	} | null;
+	es?: {
+		registrant_entity_type?: string;
+		registrant_identification_number?: string;
+		admin_identification_number?: string;
+		red_es_agreement_accepted?: boolean;
+		red_es_agreement_version?: string;
+	} | null;
+}
+
+export interface WPCOMTransactionEndpointPaymentDetails {
+	payment_method: string;
+	payment_key?: string;
+	payment_partner?: string;
+	stored_details_id?: string;
+	name: string;
+	email?: string;
+	zip: string;
+	postal_code: string;
+	country: string;
+	country_code: string;
+	state?: string;
+	city?: string;
+	address?: string;
+	street_number?: string;
+	phone_number?: string;
+	document?: string;
+	is_for_business?: boolean;
+	device_id?: string;
+	success_url?: string;
+	cancel_url?: string;
+	ideal_bank?: string;
+	// 6-digit BLIK code generated in the customer's banking app.
+	code?: string;
+	use_for_all_subscriptions?: boolean;
+	event_source?: string;
+}
+
 /**
- * @param body The request payload, already in the endpoint's snake_case shape.
- * Checkout builds it from `WPCOMTransactionEndpointRequestPayload` in
- * `@automattic/wpcom-checkout`.
+ * The request body for `/me/transactions` (`WPCOM_JSON_API_Transactions_Endpoint`).
  */
+export interface WPCOMTransactionEndpointRequestPayload {
+	cart: RequestCart;
+	payment: WPCOMTransactionEndpointPaymentDetails;
+	domain_details?: TransactionDomainContactDetails;
+	tos?: ToSAcceptanceTrackingDetails;
+	ad_conversion?: AdConversionDetails;
+}
+
 export async function createTransaction(
-	body: Record< string, unknown >
+	body: WPCOMTransactionEndpointRequestPayload
 ): Promise< WPCOMTransactionEndpointResponse > {
 	// The path must stay exactly `/me/transactions`: Calypso's fetcher adds the
 	// `X-Fingerprint` header by matching on it (see `client/lib/wp/handlers/fingerprint.js`).

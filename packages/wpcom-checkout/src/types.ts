@@ -4,9 +4,16 @@ import type { TranslateResult } from 'i18n-calypso';
 export type { SitelessCheckoutType } from '@automattic/shopping-cart';
 
 export type {
+	AdConversionDetails,
 	FailedPurchase,
+	PayPalExpressEndpointRequestPayload,
 	TaxVendorInfo,
+	ToSAcceptanceTrackingDetails,
+	TransactionDomainContactDetails,
+	TransactionDomainContactExtraDetails,
 	TransactionResponsePurchase,
+	WPCOMTransactionEndpointPaymentDetails,
+	WPCOMTransactionEndpointRequestPayload,
 	WPCOMTransactionEndpointResponse,
 	WPCOMTransactionEndpointResponseFailed,
 	WPCOMTransactionEndpointResponsePayPal,
@@ -51,59 +58,6 @@ export interface TransactionRequest {
 	useForAllSubscriptions?: boolean;
 	eventSource?: string;
 }
-
-export type WPCOMTransactionEndpoint = (
-	_: WPCOMTransactionEndpointRequestPayload
-) => Promise< WPCOMTransactionEndpointResponse >;
-
-// Request payload as expected by the WPCOM transactions endpoint
-// '/me/transactions/': WPCOM_JSON_API_Transactions_Endpoint
-export type WPCOMTransactionEndpointRequestPayload = {
-	cart: RequestCart;
-	payment: WPCOMTransactionEndpointPaymentDetails;
-	domainDetails?: DomainContactDetails;
-	tos?: ToSAcceptanceTrackingDetails;
-	ad_conversion?: AdConversionDetails;
-};
-
-export type ToSAcceptanceTrackingDetails = {
-	path: string;
-	locale: string;
-	viewport: string;
-};
-
-export type AdConversionDetails = {
-	ad_details: string;
-	sensitive_pixel_options: string; // sensitive_pixel_options
-};
-
-export type WPCOMTransactionEndpointPaymentDetails = {
-	paymentMethod: string;
-	paymentKey?: string;
-	paymentPartner?: string;
-	storedDetailsId?: string;
-	name: string;
-	email?: string;
-	zip: string;
-	postalCode: string;
-	country: string;
-	countryCode: string;
-	state?: string;
-	city?: string;
-	address?: string;
-	streetNumber?: string;
-	phoneNumber?: string;
-	document?: string;
-	isForBusiness?: boolean;
-	deviceId?: string;
-	successUrl?: string;
-	cancelUrl?: string;
-	idealBank?: string;
-	// 6-digit BLIK code generated in the customer's banking app.
-	code?: string;
-	useForAllSubscriptions?: boolean;
-	eventSource?: string;
-};
 
 /**
  * The data model used in ContactDetailsFormFields and related components.
@@ -180,23 +134,6 @@ export type EsDomainContactExtraDetailsErrors = {
 	redEsAgreementAccepted?: string | TranslateResult;
 	redEsAgreementVersion?: string | TranslateResult;
 };
-
-export type PayPalExpressEndpoint = (
-	_: PayPalExpressEndpointRequestPayload
-) => Promise< PayPalExpressEndpointResponse >;
-
-export type PayPalExpressEndpointRequestPayload = {
-	successUrl: string;
-	cancelUrl: string;
-	cart: RequestCart;
-	domainDetails: DomainContactDetails | null;
-	country: string;
-	postalCode: string;
-	tos?: ToSAcceptanceTrackingDetails;
-	ad_conversion?: AdConversionDetails;
-};
-
-export type PayPalExpressEndpointResponse = unknown;
 
 export interface LineItemType {
 	id: string;

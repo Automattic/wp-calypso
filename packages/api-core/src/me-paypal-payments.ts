@@ -1,16 +1,28 @@
 import { wpcom } from './wpcom-fetcher';
+import type {
+	AdConversionDetails,
+	ToSAcceptanceTrackingDetails,
+	TransactionDomainContactDetails,
+} from './me-transactions';
+import type { RequestCart } from '@automattic/shopping-cart';
 
 export interface PayPalExpressUrlResponse {
 	redirect_url?: string;
 }
 
-/**
- * @param body The request payload, already in the endpoint's snake_case shape.
- * Checkout builds it from `PayPalExpressEndpointRequestPayload` in
- * `@automattic/wpcom-checkout`.
- */
+export interface PayPalExpressEndpointRequestPayload {
+	success_url: string;
+	cancel_url: string;
+	cart: RequestCart;
+	domain_details: TransactionDomainContactDetails | null;
+	country: string;
+	postal_code: string;
+	tos?: ToSAcceptanceTrackingDetails;
+	ad_conversion?: AdConversionDetails;
+}
+
 export async function createPayPalExpressUrl(
-	body: Record< string, unknown >
+	body: PayPalExpressEndpointRequestPayload
 ): Promise< PayPalExpressUrlResponse > {
 	return await wpcom.req.post( { path: '/me/paypal-express-url', apiVersion: '1.2', body } );
 }

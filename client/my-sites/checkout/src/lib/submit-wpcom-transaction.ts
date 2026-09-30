@@ -1,5 +1,4 @@
 import { createTransaction } from '@automattic/api-core';
-import { mapRecordKeysRecursively, camelToSnakeCase } from '@automattic/js-utils';
 import { createWpcomAccountBeforeTransaction } from './create-wpcom-account-before-transaction';
 import type { PaymentProcessorOptions } from '../types/payment-processors';
 import type {
@@ -12,9 +11,6 @@ import type {
  *
  * This is one of two transactions endpoint functions; also see
  * `wpcomPayPalExpress`.
- *
- * Note that the payload property is (mostly) in camelCase but the actual
- * submitted data will be converted (mostly) to snake_case.
  *
  * Please do not alter payload inside this function if possible to retain type
  * safety. Instead, alter `createTransactionEndpointRequestPayload` or add a
@@ -29,5 +25,5 @@ export default async function submitWpcomTransaction(
 		payload.cart = await createWpcomAccountBeforeTransaction( payload.cart, transactionOptions );
 	}
 
-	return createTransaction( mapRecordKeysRecursively( payload, camelToSnakeCase ) );
+	return createTransaction( payload );
 }
