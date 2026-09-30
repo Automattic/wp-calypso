@@ -103,6 +103,10 @@ const SiteMigrationHowToMigrate: StepType< {
 		);
 	};
 
+	if ( ! site ) {
+		return <Step.Loading />;
+	}
+
 	return (
 		<>
 			<DocumentHead title={ translate( 'Let us migrate your site' ) } />

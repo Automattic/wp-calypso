@@ -5,6 +5,7 @@
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { ComponentProps } from 'react';
+import { MemoryRouter } from 'react-router';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import {
 	recordMigrationStartEvent,
@@ -45,6 +46,10 @@ jest.mock( 'calypso/data/site-migration/use-migration-sticker', () => ( {
 } ) );
 
 describe( 'SiteMigrationHowToMigrate', () => {
+	beforeEach( () => {
+		jest.mocked( useSite ).mockReturnValue( defaultSiteDetails );
+	} );
+
 	afterEach( () => {
 		jest.resetAllMocks();
 	} );
@@ -56,6 +61,38 @@ describe( 'SiteMigrationHowToMigrate', () => {
 		expect( recordMigrationStartEvent ).toHaveBeenCalledWith( 'SiteMigrationHowToMigrate' );
 		expect( recordMigrationStartFacebookEvent ).toHaveBeenCalledTimes( 1 );
 		expect( recordMigrationStartFacebookEvent ).toHaveBeenCalledWith( 'SiteMigrationHowToMigrate' );
+	} );
+
+	it.each( [
+		[ 'Get started', 'difm' ],
+		[ "I'll do it myself", 'myself' ],
+	] )( 'waits for the destination before allowing %s', async ( label, how ) => {
+		jest.mocked( useSite ).mockReturnValue( null );
+		const { rerender } = render( { navigation } );
+
+		expect( screen.queryByRole( 'button', { name: 'Get started' } ) ).not.toBeInTheDocument();
+		expect( screen.queryByRole( 'button', { name: "I'll do it myself" } ) ).not.toBeInTheDocument();
+		expect( navigation.submit ).not.toHaveBeenCalled();
+
+		jest.mocked( useSite ).mockReturnValue( {
+			...defaultSiteDetails,
+			plan: {
+				...defaultSiteDetails.plan,
+				product_slug: 'business-bundle',
+				features: { active: [ 'install-plugins' ] },
+			},
+		} );
+		rerender(
+			<MemoryRouter>
+				<SiteMigrationHowToMigrate { ...mockStepProps( { navigation } ) } />
+			</MemoryRouter>
+		);
+
+		const button = screen.getByRole( 'button', { name: label } );
+		expect( button ).toBeVisible();
+		await userEvent.click( button );
+
+		expect( navigation.submit ).toHaveBeenCalledWith( { how, destination: 'migrate' } );
 	} );
 
 	it.each( [
