@@ -19,6 +19,7 @@ import {
 	checkoutWpcomSiteless,
 	checkoutA4ASiteless,
 	checkoutA4AAgencySiteless,
+	checkoutA4AAgencySite,
 	checkoutRenewalBySubscriptionId,
 	checkoutThankYou,
 	licensingPendingAsyncActivation,
@@ -69,6 +70,18 @@ export default function () {
 		setLocaleMiddleware(),
 		noSite,
 		checkoutA4AAgencySiteless,
+		makeLayout,
+		clientRender
+	);
+
+	// An agency launching one of its development sites: the plan for that site,
+	// paid on the site's own cart.
+	page(
+		`/checkout/agency/purchase/:site/:product`,
+		redirectLoggedOut,
+		setLocaleMiddleware(),
+		siteSelection,
+		checkoutA4AAgencySite,
 		makeLayout,
 		clientRender
 	);

@@ -31,6 +31,7 @@ import {
 	COMPARE_PLANS_QUERY_PARAM,
 	LEGACY_TO_RECOMMENDED_MAP,
 } from '../plans/jetpack-plans/plan-upgrade/constants';
+import AgencySiteCheckout from './agency-site';
 import AgencySitelessCheckout from './agency-siteless';
 import CalypsoShoppingCartProvider from './calypso-shopping-cart-provider';
 import CheckoutMainWrapper from './checkout-main-wrapper';
@@ -254,6 +255,28 @@ export function checkoutA4AAgencySiteless( context, next ) {
 			<CheckoutSitelessDocumentTitle />
 
 			<AgencySitelessCheckout />
+		</>
+	);
+
+	next();
+}
+
+export function checkoutA4AAgencySite( context, next ) {
+	const selectedSite = getSelectedSite( context.store.getState() );
+	const CheckoutDocumentTitle = () => {
+		const translate = useTranslate();
+		return <DocumentHead title={ translate( 'Checkout' ) } />;
+	};
+
+	context.primary = (
+		<>
+			<CheckoutDocumentTitle />
+
+			<AgencySiteCheckout
+				siteId={ selectedSite.ID }
+				siteSlug={ selectedSite.slug }
+				productSlug={ context.params.product }
+			/>
 		</>
 	);
 

@@ -1,5 +1,6 @@
 import {
 	getAgencyCheckoutParams,
+	getAgencySiteCheckoutParams,
 	getAllowedA4ADashboardUrl,
 	parseAgencyCartEntries,
 } from '../agency-checkout-params';
@@ -89,6 +90,18 @@ describe( 'getAgencyCheckoutParams', () => {
 			'?products=jetpack-backup-t1%3A1&redirect_to=https%3A%2F%2Fexample.com%2F&cancel_to=https%3A%2F%2Fexample.com%2F'
 		);
 		expect( new URL( redirectTo ).pathname ).toBe( '/purchases' );
+		expect( cancelTo ).toBeUndefined();
+	} );
+} );
+
+describe( 'getAgencySiteCheckoutParams', () => {
+	it( 'lands on the site itself when the return page is missing or not a dashboard page', () => {
+		const { term, redirectTo, cancelTo } = getAgencySiteCheckoutParams(
+			'?redirect_to=https://evil.example/',
+			'example.wordpress.com'
+		);
+		expect( term ).toBe( 'yearly' );
+		expect( new URL( redirectTo ).pathname ).toBe( '/sites/example.wordpress.com' );
 		expect( cancelTo ).toBeUndefined();
 	} );
 } );
