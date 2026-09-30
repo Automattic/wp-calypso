@@ -408,7 +408,7 @@ describe( 'NamePulseResults', () => {
 		const card = within( await findExactMatchCard() );
 		expect( card.getByText( 'Exact match' ) ).toBeVisible();
 		expect( card.getByText( "It's available!" ) ).toBeVisible();
-		expect( card.getByText( '$24' ) ).toBeVisible();
+		expect( card.getByText( '$24.00' ) ).toBeVisible();
 		expect( card.getByRole( 'button', { name: 'Add to cart' } ) ).toBeEnabled();
 		expect( screen.getByText( 'icecream.net is available.' ) ).toBeInTheDocument();
 		expect( document.querySelector( '.name-pulse-featured' ) ).toHaveAttribute(
@@ -767,7 +767,7 @@ describe( 'NamePulseResults', () => {
 
 		render( <NamePulseTestSearch query="icecream.net" /> );
 
-		expect( await within( await findExactMatchCard() ).findByText( '$24' ) ).toBeVisible();
+		expect( await within( await findExactMatchCard() ).findByText( '$24.00' ) ).toBeVisible();
 
 		await user.click( screen.getByRole( 'button', { name: 'Filter, no filters applied' } ) );
 		await user.click( await screen.findByRole( 'option', { name: '.com' } ) );
@@ -777,6 +777,35 @@ describe( 'NamePulseResults', () => {
 		await waitFor( () => expect( domainsIn( 'top' ) ).toEqual( [ 'icecream.com' ] ) );
 		expect( ( await findExactMatchCard() ).getAttribute( 'data-domain' ) ).toBe( 'icecream.net' );
 		expect( document.querySelector( '[data-section="exact"]' ) ).toBeNull();
+	} );
+
+	it( 'shows the sale price and the match reasons of the real-time check on the exact-match card', async () => {
+		render(
+			<NamePulseTestSearch
+				query="icecream.blog"
+				domainAvailability={ async ( domainName ) =>
+					buildAvailability( {
+						domain_name: domainName,
+						tld: 'blog',
+						cost: '$33',
+						renew_cost: '$33',
+						sale_cost: 3.3,
+						currency_code: 'USD',
+						match_reasons: [ 'exact-match', 'tld-common', 'tld-exact' ],
+					} )
+				}
+			/>
+		);
+
+		const card = within( await findExactMatchCard() );
+
+		expect( card.getByLabelText( 'Original price: $33' ) ).toBeVisible();
+		expect( card.getByLabelText( 'Sale price: $3.30' ) ).toBeVisible();
+		expect( card.getByText( /For first year\./ ) ).toBeVisible();
+		expect( card.getByText( 'Extension ".blog" matches your query' ) ).toBeVisible();
+		expect( card.queryByText( '".blog" is a common extension' ) ).not.toBeInTheDocument();
+		// The badge already says it, so the reason list does not repeat it.
+		expect( card.getAllByText( 'Exact match' ) ).toHaveLength( 1 );
 	} );
 
 	it( 'adds the exact-match card to the cart through the real-time check, then offers to continue', async () => {

@@ -1,6 +1,8 @@
+import { formatCurrency } from '@automattic/number-formatters';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Button, Tooltip, __experimentalText as Text } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
+import { sprintf } from '@wordpress/i18n';
 import { cautionFilled, cart as cartIcon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { Badge } from '@wordpress/ui';
@@ -15,12 +17,64 @@ import {
 } from '../helpers';
 import { useNamePulseCartToggle } from '../hooks/use-name-pulse-cart-toggle';
 import { setNamePulseVerdict } from '../hooks/use-name-pulse-verdicts';
-import { hasNamePulseSalePrice, NamePulsePrice } from './price';
 
 interface NamePulseResultRowProps {
 	result: NamePulseDomainResult;
 	position: number;
 }
+
+const formatPrice = ( amount: number, currencyCode: string ) =>
+	formatCurrency( amount, currencyCode, { stripZeros: true } );
+
+/**
+ * Only `sale_cost` is a bare number, so a sale needs a known currency to render.
+ */
+const hasSalePrice = ( {
+	sale_cost: saleCost,
+	currency_code: currencyCode,
+}: NamePulseDomainResult ) => typeof saleCost === 'number' && !! currencyCode;
+
+const Price = ( { result }: { result: NamePulseDomainResult } ) => {
+	const { __ } = useI18n();
+	const { cost, raw_price: rawPrice, sale_cost: saleCost, currency_code: currencyCode } = result;
+	const yearlyPrice =
+		typeof rawPrice === 'number' && currencyCode ? formatPrice( rawPrice, currencyCode ) : cost;
+
+	if ( ! yearlyPrice ) {
+		return null;
+	}
+
+	const salePrice =
+		typeof saleCost === 'number' && currencyCode
+			? formatPrice( saleCost, currencyCode )
+			: undefined;
+	const isSale = !! salePrice;
+
+	return (
+		<span className={ clsx( 'name-pulse-row__price', isSale && 'name-pulse-row__price--sale' ) }>
+			<span className="name-pulse-row__price-line">
+				<Text
+					weight={ 600 }
+					color={ isSale ? 'var( --domain-search-promotional-price-color )' : undefined }
+				>
+					{ salePrice ?? yearlyPrice }
+				</Text>
+				<Text size={ 12 } variant="muted">
+					{ isSale ? __( '/first year' ) : __( '/year' ) }
+				</Text>
+			</span>
+			{ isSale && (
+				<Text size={ 12 } variant="muted">
+					{ sprintf(
+						// translators: %(price)s is the domain renewal price.
+						__( '%(price)s/year renewal' ),
+						{ price: yearlyPrice }
+					) }
+				</Text>
+			) }
+		</span>
+	);
+};
 
 export const NamePulseResultRow = ( { result, position }: NamePulseResultRowProps ) => {
 	const { __ } = useI18n();
@@ -82,7 +136,7 @@ export const NamePulseResultRow = ( { result, position }: NamePulseResultRowProp
 	// waiting for one that is not coming.
 	const isPremiumPriceMissing = needsPremiumPrice && ! realtimeVerdict;
 	const showPremiumBadge = isAvailable && isPremium;
-	const showSaleBadge = isAvailable && hasNamePulseSalePrice( row );
+	const showSaleBadge = isAvailable && hasSalePrice( row );
 	// One badge still fits beside the name; two leave it only a few characters,
 	// so the pair moves under it and the name keeps the full column width.
 	const stackBadges = showSaleBadge && showPremiumBadge;
@@ -146,7 +200,7 @@ export const NamePulseResultRow = ( { result, position }: NamePulseResultRowProp
 						aria-label={ __( 'Checking price…' ) }
 					/>
 				) }
-				{ isAvailable && ! isPremiumPriceMissing && <NamePulsePrice result={ row } /> }
+				{ isAvailable && ! isPremiumPriceMissing && <Price result={ row } /> }
 				{ error && (
 					<Tooltip delay={ 0 } text={ error.message } placement="top">
 						<Button

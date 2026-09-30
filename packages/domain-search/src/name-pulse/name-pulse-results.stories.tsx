@@ -60,6 +60,8 @@ const toRealtimeAvailability = ( domainName: string ): DomainAvailability => {
 		supports_privacy: true,
 		root_domain_provider: 'wpcom',
 		cost: isPremium ? `$${ PREMIUM_REALTIME_PRICE }.00` : ( entry.cost ?? '' ),
+		renew_cost: isPremium ? `$${ PREMIUM_REALTIME_PRICE }.00` : ( entry.cost ?? '' ),
+		match_reasons: [ 'exact-match', 'tld-exact', 'tld-common' ],
 		raw_price: isPremium ? PREMIUM_REALTIME_PRICE : entry.raw_price,
 		sale_cost: isPremium ? undefined : entry.sale_cost,
 		currency_code: 'USD',
