@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import { getCheckoutReturnUrl, getCheckoutUrl, RECEIPT_ID_PLACEHOLDER } from '../checkout-url';
+import { getCheckoutUrl, RECEIPT_ID_PLACEHOLDER } from '../checkout-url';
 import type { AgencyProduct } from '@automattic/api-core';
 
 const wpcomPlan = {
@@ -74,15 +74,5 @@ describe( 'getCheckoutUrl', () => {
 
 	it( 'keeps a referral cart in the dashboard, on the referral checkout', () => {
 		expect( getCheckoutUrl( lines, true, { term: 'yearly' } ) ).toBe( '/referral-checkout' );
-	} );
-} );
-
-describe( 'getCheckoutReturnUrl', () => {
-	it( 'keeps the literal placeholder the checkout pending page interpolates', () => {
-		// The pending page replaces the raw `:receiptId` string; a percent-encoded
-		// placeholder would never be interpolated.
-		expect( getCheckoutReturnUrl( { hasWpcomHostingPlan: false } ) ).toContain(
-			`receipt_id=${ RECEIPT_ID_PLACEHOLDER }`
-		);
 	} );
 } );

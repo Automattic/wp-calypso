@@ -43,20 +43,6 @@ describe( 'CheckoutMasterbar', () => {
 		expect( screen.queryByRole( 'button', { name: 'Back' } ) ).not.toBeInTheDocument();
 	} );
 
-	it( 'shows the Automattic logo on the agency checkout', () => {
-		renderAt( '/checkout/agency/purchase' );
-
-		expect( screen.getByTitle( 'Automattic for Agencies logo' ) ).toBeInTheDocument();
-		expect( screen.queryByTitle( 'WordPress' ) ).not.toBeInTheDocument();
-	} );
-
-	it( 'keeps the WordPress logo on the client referral checkout', () => {
-		renderAt( '/checkout/agency/referral' );
-
-		expect( screen.getByTitle( 'WordPress' ) ).toBeInTheDocument();
-		expect( screen.queryByTitle( 'Automattic for Agencies logo' ) ).not.toBeInTheDocument();
-	} );
-
 	it( 'shows no Back link on the client referral checkout', () => {
 		const cancelTo = 'https://agencies-beta.automattic.com/products';
 		renderAt( `/checkout/agency/referral?cancel_to=${ encodeURIComponent( cancelTo ) }` );

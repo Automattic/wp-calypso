@@ -85,29 +85,13 @@ describe( '<MarketplacePurchases>', () => {
 		window.history.replaceState(
 			{},
 			'',
-			'/purchases?status=unassigned&receipt_id=123&flash=checkout-success'
+			'/purchases?status=unassigned&receipt_id=123&flash=checkout-success&purchased_plan=a4a_jetpack_backup_t1_monthly'
 		);
 
 		render( <MarketplacePurchases /> );
 
 		await waitFor( () => expect( window.location.search ).toBe( '?status=unassigned' ) );
 		expect( sessionStorage.getItem( 'shopping-card-selected-items' ) ).toBeNull();
-	} );
-
-	test( 'drops the purchased plan the checkout adds to the return', async () => {
-		mockAgency();
-		mockPreferences();
-		mockLicenses();
-		mockPendingSites( 'pending' );
-		window.history.replaceState(
-			{},
-			'',
-			'/purchases?receipt_id=123&flash=checkout-success&purchased_plan=a4a_jetpack_backup_t1_monthly'
-		);
-
-		render( <MarketplacePurchases /> );
-
-		await waitFor( () => expect( window.location.search ).toBe( '' ) );
 	} );
 
 	test( 'leaves the cart alone without a receipt', async () => {

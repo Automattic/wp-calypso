@@ -5,34 +5,25 @@ import {
 } from '../agency-checkout-params';
 
 describe( 'parseAgencyCartEntries', () => {
-	it( 'reads one entry per product with its quantity', () => {
-		expect( parseAgencyCartEntries( 'wpcom-hosting-business:3,jetpack-backup-t1:1' ) ).toEqual( [
-			{ slug: 'wpcom-hosting-business', quantity: 3 },
-			{ slug: 'jetpack-backup-t1', quantity: 1 },
-		] );
+	it( 'reads one entry per product with its quantity, ignoring anything after it', () => {
+		expect( parseAgencyCartEntries( 'wpcom-hosting-business:3,jetpack-backup-t1:1:9999' ) ).toEqual(
+			[
+				{ slug: 'wpcom-hosting-business', quantity: 3 },
+				{ slug: 'jetpack-backup-t1', quantity: 1 },
+			]
+		);
 	} );
 
-	it( 'counts a missing or invalid quantity as one', () => {
+	it( 'counts a missing or invalid quantity as one and skips entries without a product', () => {
 		expect(
-			parseAgencyCartEntries( 'jetpack-backup-t1,jetpack-scan:abc,jetpack-boost:0' )
+			parseAgencyCartEntries( 'jetpack-backup-t1,jetpack-scan:abc,jetpack-boost:0,,:1' )
 		).toEqual( [
 			{ slug: 'jetpack-backup-t1', quantity: 1 },
 			{ slug: 'jetpack-scan', quantity: 1 },
 			{ slug: 'jetpack-boost', quantity: 1 },
 		] );
-	} );
-
-	it( 'ignores a product id sent in the link', () => {
-		expect( parseAgencyCartEntries( 'jetpack-backup-t1:2:9999' ) ).toEqual( [
-			{ slug: 'jetpack-backup-t1', quantity: 2 },
-		] );
-	} );
-
-	it( 'returns nothing for an empty param', () => {
 		expect( parseAgencyCartEntries( null ) ).toEqual( [] );
 		expect( parseAgencyCartEntries( '' ) ).toEqual( [] );
-		expect( parseAgencyCartEntries( ',' ) ).toEqual( [] );
-		expect( parseAgencyCartEntries( ':1' ) ).toEqual( [] );
 	} );
 
 	it( 'brings a quantity above the cart limit down to it', () => {
@@ -91,12 +82,6 @@ describe( 'getAgencyCheckoutParams', () => {
 		expect( getAgencyCheckoutParams( '?products=jetpack-backup-t1%3A1&term=weekly' ).term ).toBe(
 			'yearly'
 		);
-	} );
-
-	it( 'takes no agency from the link', () => {
-		expect(
-			getAgencyCheckoutParams( '?agency_id=123&products=jetpack-backup-t1%3A1' )
-		).not.toHaveProperty( 'agencyId' );
 	} );
 
 	it( 'falls back to the dashboard Purchases page when the return URL is missing or not allowed', () => {

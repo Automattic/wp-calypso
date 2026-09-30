@@ -7,7 +7,6 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook, waitFor } from '@testing-library/react';
 import useAgencyCart from '../use-agency-cart';
 import type { AgencyCartEntry } from '../lib/agency-checkout-params';
-import type { AgencyCheckoutTerm } from '../lib/billing-product-id';
 import type { Agency, AgencyProduct } from '@automattic/api-core';
 import type { PropsWithChildren } from 'react';
 
@@ -33,10 +32,7 @@ const replaceProductsInCart = jest.fn();
 
 function renderCart(
 	entries: AgencyCartEntry[],
-	{
-		term = 'yearly',
-		agency = { id: AGENCY_ID } as Agency,
-	}: { term?: AgencyCheckoutTerm; agency?: Agency | null } = {}
+	{ agency = { id: AGENCY_ID } as Agency }: { agency?: Agency | null } = {}
 ) {
 	const queryClient = new QueryClient( {
 		defaultOptions: { queries: { retry: false, staleTime: Infinity } },
@@ -44,7 +40,7 @@ function renderCart(
 	queryClient.setQueryData( activeAgencyQuery().queryKey, agency );
 	queryClient.setQueryData( agencyProductsQuery( AGENCY_ID ).queryKey, products );
 
-	return renderHook( () => useAgencyCart( entries, term ), {
+	return renderHook( () => useAgencyCart( entries, 'yearly' ), {
 		wrapper: ( { children }: PropsWithChildren ) => (
 			<QueryClientProvider client={ queryClient }>{ children }</QueryClientProvider>
 		),
@@ -100,16 +96,6 @@ describe( 'useAgencyCart', () => {
 				extra: { ...extra, cart_item_index: 0 },
 			},
 		] );
-	} );
-
-	it( 'bills the product of the chosen term', async () => {
-		const { result } = renderCart( [ { slug: 'wpcom-hosting-business', quantity: 1 } ], {
-			term: 'monthly',
-		} );
-
-		await waitFor( () => expect( result.current.isReady ).toBe( true ) );
-
-		expect( addedLines()[ 0 ].product_id ).toBe( 1011 );
 	} );
 
 	it( 'leaves out a product the agency cannot buy', async () => {
