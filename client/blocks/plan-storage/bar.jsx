@@ -44,8 +44,8 @@ export class PlanStorageBar extends Component {
 		return (
 			<div className={ classes }>
 				<ProgressBar
-					value={ mediaStorage.storageUsedBytes }
-					total={ mediaStorage.maxStorageBytes }
+					value={ ( mediaStorage.storageUsedBytes / mediaStorage.maxStorageBytes ) * 100 }
+					total={ 100 }
 					compact
 				/>
 
