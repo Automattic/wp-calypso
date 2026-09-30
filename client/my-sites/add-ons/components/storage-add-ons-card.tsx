@@ -11,9 +11,9 @@ import {
 	Button,
 } from '@wordpress/components';
 import { Icon } from '@wordpress/icons';
-import filesize from 'filesize';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
+import { formatStorage } from 'calypso/lib/formatting';
 import { SiteId } from 'calypso/types';
 
 export interface Props {
@@ -139,8 +139,8 @@ export default function StorageAddOnCard( { siteId, actionPrimary }: Props ) {
 		siteIdOrSlug: siteId,
 	} );
 
-	const used = filesize( mediaStorage?.storageUsedBytes || 0, { round: 1 } );
-	const max = filesize( mediaStorage?.maxStorageBytes || 0, { round: 1 } );
+	const used = formatStorage( mediaStorage?.storageUsedBytes || 0 );
+	const max = formatStorage( mediaStorage?.maxStorageBytes || 0 );
 
 	const purchasedStorageAddOn = useGetPurchasedStorageAddOn( { siteId } );
 	const purchasedStorageAddOnQuantity = purchasedStorageAddOn?.quantity ?? 0;
