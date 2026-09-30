@@ -1,8 +1,9 @@
-@import "calypso/my-sites/stats/components/highlight-cards/variables";
+@import "@automattic/typography/styles/variables";
+@import "calypso/assets/stylesheets/shared/mixins/breakpoints";
 
 // Line up with the section heading, which the highlight cards inset the same way on small screens.
-@media (max-width: $custom-mobile-breakpoint) {
-	.stats-post-detail__no-views {
+.stats-post-detail__no-views {
+	@include breakpoint-deprecated( "<660px" ) {
 		margin-inline: $font-body-small;
 	}
 }
