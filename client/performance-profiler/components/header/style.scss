@@ -221,62 +221,6 @@
 					}
 				}
 			}
-
-			.share-button {
-				cursor: pointer;
-				display: flex;
-				height: 40px;
-				justify-content: center;
-				align-items: center;
-				gap: 4px;
-
-				.share-icon {
-					fill: #fff;
-					margin-bottom: -1px;
-				}
-			}
-
-			.share-button.has-color {
-				.facebook {
-					fill: var( --color-facebook );
-				}
-
-				.x {
-					fill: var( --color-x );
-				}
-
-				.tumblr {
-					fill: var( --color-tumblr );
-				}
-
-				.linkedin {
-					fill: var( --color-linkedin );
-				}
-			}
 		}
-	}
-}
-
-#profiler-share-buttons-popover {
-	.popover__inner {
-		padding: 3px 10px 0;
-		border-radius: 8px;
-		border-width: 0;
-		display: flex;
-		align-items: center;
-
-		button {
-			padding-right: 4px;
-			padding-left: 4px;
-		}
-
-		.copy-link-button svg {
-			fill: var( --color-text );
-		}
-	}
-	.popover__arrow {
-		border-color: #fff;
-		border-left-color: transparent;
-		border-right-color: transparent;
 	}
 }

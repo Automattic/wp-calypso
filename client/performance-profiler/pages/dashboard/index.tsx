@@ -133,7 +133,6 @@ const PerformanceProfilerDashboard = ( props: PerformanceProfilerDashboardProps 
 						onTabChange={ getOnTabChange }
 						showWPcomBadge={ performanceReport?.is_wpcom }
 						showNavigationTabs
-						shareLink={ performanceReport?.share_link }
 					/>
 					<div
 						className={ clsx( 'loading-container', 'mobile-loading', {
