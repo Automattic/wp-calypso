@@ -57,10 +57,6 @@ async function getLinks() {
 }
 
 describe( '<LaunchAgencyDevelopmentSiteForm>', () => {
-	afterEach( () => {
-		nock.cleanAll();
-	} );
-
 	test( 'launches and refers a Billing Dragon site through the dashboard checkouts on the agency dashboard', async () => {
 		mockApi();
 		render( <LaunchAgencyDevelopmentSiteForm site={ site } />, { config: agencyDashboardConfig } );
