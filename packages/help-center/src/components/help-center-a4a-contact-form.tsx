@@ -329,6 +329,7 @@ export const HelpCenterA4AContactForm = () => {
 				/>
 
 				<Button
+					className="help-center-a4a-contact-form-submit"
 					variant="primary"
 					type="submit"
 					disabled={ ! isValidForm || isPending }
