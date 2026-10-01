@@ -23,6 +23,12 @@ describe( 'parseAgencyCartEntries', () => {
 		] );
 	} );
 
+	it( 'leaves out a site that cannot be decoded', () => {
+		expect( parseAgencyCartEntries( 'pressable-addon-php-memory-512:1:%zz' ) ).toEqual( [
+			{ slug: 'pressable-addon-php-memory-512', quantity: 1 },
+		] );
+	} );
+
 	it( 'counts a missing or invalid quantity as one and skips entries without a product', () => {
 		expect(
 			parseAgencyCartEntries( 'jetpack-backup-t1,jetpack-scan:abc,jetpack-boost:0,,:1' )

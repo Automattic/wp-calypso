@@ -16,6 +16,18 @@ export function getPressableMemoryTarget(
 	return product.site_domain?.trim() || undefined;
 }
 
+/** A cart entry's encoded site, or undefined when it is malformed (it may come from a URL). */
+export function decodeSiteDomain( value: string | undefined ): string | undefined {
+	if ( ! value ) {
+		return undefined;
+	}
+	try {
+		return decodeURIComponent( value );
+	} catch {
+		return undefined;
+	}
+}
+
 /**
  * Whether `product` is the one a cart entry names. The products API returns a
  * PHP memory add-on once per Pressable site under the same slug, so those also

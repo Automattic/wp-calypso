@@ -1,3 +1,4 @@
+import { decodeSiteDomain } from 'calypso/dashboard/agency/marketplace/products/lib/pressable-memory-addon';
 import { MAX_CART_ITEM_QUANTITY } from 'calypso/dashboard/agency/marketplace/products/use-shopping-cart';
 import {
 	buildA4ADashboardLink,
@@ -38,11 +39,12 @@ export function parseAgencyCartEntries( products: string | null | undefined ): A
 	return products
 		.split( ',' )
 		.map( ( entry ) => {
-			const [ slug = '', quantity, siteDomain ] = entry.split( ':' );
+			const [ slug = '', quantity, encodedSiteDomain ] = entry.split( ':' );
+			const siteDomain = decodeSiteDomain( encodedSiteDomain );
 			return {
 				slug: slug.trim(),
 				quantity: Math.min( MAX_CART_ITEM_QUANTITY, Math.max( 1, parseInt( quantity, 10 ) || 1 ) ),
-				...( siteDomain ? { siteDomain: decodeURIComponent( siteDomain ) } : {} ),
+				...( siteDomain ? { siteDomain } : {} ),
 			};
 		} )
 		.filter( ( entry ) => entry.slug !== '' );

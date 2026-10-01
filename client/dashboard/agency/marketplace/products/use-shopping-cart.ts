@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState, useSyncExternalStore } from 'react';
 import { useMarketplaceType } from '../use-marketplace-type';
-import { getPressableMemoryTarget } from './lib/pressable-memory-addon';
+import { decodeSiteDomain, getPressableMemoryTarget } from './lib/pressable-memory-addon';
 import type { MarketplaceType } from '../use-marketplace-type';
 import type { AgencyProduct } from '@automattic/api-core';
 
@@ -46,11 +46,12 @@ export function parseCartEntries( entries: string ): ShoppingCartItem[] {
 	return entries
 		.split( ',' )
 		.map( ( entry ) => {
-			const [ slug, quantity, , , siteDomain ] = entry.split( ':' );
+			const [ slug, quantity, , , encodedSiteDomain ] = entry.split( ':' );
+			const siteDomain = decodeSiteDomain( encodedSiteDomain );
 			return {
 				slug,
 				quantity: Math.min( MAX_CART_ITEM_QUANTITY, parseInt( quantity, 10 ) || 1 ),
-				...( siteDomain ? { siteDomain: decodeURIComponent( siteDomain ) } : {} ),
+				...( siteDomain ? { siteDomain } : {} ),
 				raw: entry,
 			};
 		} )
