@@ -42,7 +42,7 @@
 		"@jest/globals": "^29.7.0",
 		"@types/node": "^24.12.2",
 		"nock": "^14.0.15",
-		"typescript": "^6.0.3"
+		"typescript": "^7.0.2"
 	},
 	"scripts": {
 		"clean": "yarn build --clean && rm -rf dist",
