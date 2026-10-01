@@ -23,20 +23,10 @@ function routeOf( name: string ) {
 }
 
 describe( 'Highlights', () => {
-	beforeEach( () => {
-		jest.useFakeTimers().setSystemTime( new Date( '2026-09-30T12:00:00Z' ) );
-	} );
-
-	afterEach( () => {
-		jest.useRealTimers();
-	} );
-
-	it( 'opens both reports on the seven days the highlights cover', () => {
+	it( 'opens both reports on the last seven days preset', () => {
 		render( <Highlights siteId={ 1 } gmtOffset={ 0 } statsBaseUrl="https://example.com/stats" /> );
 
-		const sevenDays =
-			'from=2026-09-24T00%3A00%3A00.000%2B00%3A00&to=2026-09-30T23%3A59%3A59.999%2B00%3A00';
-		expect( routeOf( 'View all posts & pages stats' ) ).toBe( `/reports/posts?${ sevenDays }` );
-		expect( routeOf( 'View all referrer stats' ) ).toBe( `/reports/referrers?${ sevenDays }` );
+		expect( routeOf( 'View all posts & pages stats' ) ).toBe( '/reports/posts?preset=last-7-days' );
+		expect( routeOf( 'View all referrer stats' ) ).toBe( '/reports/referrers?preset=last-7-days' );
 	} );
 } );
