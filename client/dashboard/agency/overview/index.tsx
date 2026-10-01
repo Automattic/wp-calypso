@@ -66,6 +66,7 @@ export default function AgencyOverview() {
 					woopayments: '/woopayments',
 					marketplace: '/marketplace',
 					partnerDirectory: PARTNER_DIRECTORY_ROUTE,
+					contactSupport: () => openContactForm(),
 					aiMcp: '/agency/ai',
 					pressableHosting: getMarketplaceHostingSectionRoute( 'pressable' ),
 					helpful: [
@@ -84,7 +85,6 @@ export default function AgencyOverview() {
 				} }
 				onScheduleCall={ scheduleCall }
 				isSchedulingCall={ isSchedulingCall }
-				onContactSupport={ () => openContactForm() }
 				recordTracksEvent={ recordTracksEvent }
 			/>
 		</PageLayout>
