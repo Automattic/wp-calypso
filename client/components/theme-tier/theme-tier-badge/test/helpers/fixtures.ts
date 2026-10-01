@@ -2,6 +2,7 @@ import {
 	FEATURE_FREE_THEMES,
 	FEATURE_UPLOAD_THEMES,
 	WPCOM_FEATURES_PREMIUM_THEMES_LIMITED,
+	WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
 } from '@automattic/calypso-products';
 
 const themeTiers = {
@@ -12,6 +13,10 @@ const themeTiers = {
 	personal: {
 		slug: 'personal',
 		feature: WPCOM_FEATURES_PREMIUM_THEMES_LIMITED,
+	},
+	premium: {
+		slug: 'premium',
+		feature: WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
 	},
 	community: {
 		slug: 'community',
@@ -124,6 +129,20 @@ export const themes = {
 		screenshot: 'https://i0.wp.com/s2.wp.com/wp-content/themes/pub/nion/screenshot.png?ssl=1',
 		theme_type: 'hosted-internal',
 		theme_tier: themeTiers.personal,
+		soft_launched: false,
+	},
+	meraki: {
+		id: 'meraki',
+		description: 'Meraki is a blog theme with a bold, editorial layout.',
+		stylesheet: 'premium/meraki',
+		name: 'Meraki',
+		author: 'Automattic',
+		author_uri: 'https://automattic.com/',
+		demo_uri: 'https://merakidemo.wordpress.com/',
+		version: '1.0.0',
+		screenshot: 'https://i0.wp.com/s2.wp.com/wp-content/themes/premium/meraki/screenshot.png?ssl=1',
+		theme_type: 'hosted-internal',
+		theme_tier: themeTiers.premium,
 		soft_launched: false,
 	},
 };
