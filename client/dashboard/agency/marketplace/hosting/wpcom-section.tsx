@@ -417,6 +417,11 @@ export default function WpcomSection( {
 			<div className="dashboard-marketplace-hosting__rail">
 				<SelectedPlanCard
 					label={ siteCountLabel }
+					compactPrice={
+						isOwnedSitesReady
+							? formatCurrency( pricing.discountedCost, plan.currency ) + termSuffix
+							: undefined
+					}
 					price={
 						<Text size={ 24 } weight={ 600 } className="dashboard-marketplace-hosting__rail-price">
 							<TextBlur isBlurred={ ! isOwnedSitesReady } length={ 9 }>

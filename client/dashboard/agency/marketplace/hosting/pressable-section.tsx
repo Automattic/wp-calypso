@@ -346,6 +346,7 @@ export default function PressableSection( {
 		return (
 			<SelectedPlanCard
 				label={ selectedProduct.name }
+				compactPrice={ formatCurrency( priceInfo.price, selectedProduct.currency ) + termSuffix }
 				price={
 					<Text size={ 24 } weight={ 600 } className="dashboard-marketplace-hosting__rail-price">
 						<span>{ formatCurrency( priceInfo.price, selectedProduct.currency ) }</span>

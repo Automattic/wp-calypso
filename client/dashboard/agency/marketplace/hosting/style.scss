@@ -7,6 +7,12 @@
 	grid-template-columns: 1fr;
 	gap: 24px;
 	align-items: start;
+	// Phones: room under the last block so the buy bar never covers it.
+	padding-block-end: 88px;
+
+	@include break-small {
+		padding-block-end: 0;
+	}
 
 	@include break-xlarge {
 		grid-template-columns: minmax( 0, 2fr ) minmax( 0, 1fr );
@@ -470,5 +476,35 @@
 	.dashboard-marketplace-hosting__layout > .dashboard-marketplace-hosting__rail {
 		order: 1;
 		min-inline-size: 0;
+	}
+}
+
+// Phones: the selected plan, its price and the button stay in a bar at the
+// bottom of the screen until the summary card scrolls into view.
+.dashboard-marketplace-hosting__buy-bar {
+	position: fixed;
+	inset-inline: 0;
+	inset-block-end: 0;
+	z-index: 20;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 12px;
+	padding: 12px 16px calc( 12px + env( safe-area-inset-bottom ) );
+	background: var( --wp-components-color-background, #fff );
+	box-shadow: 0 -1px 0 rgba( 0, 0, 0, 0.1 ), 0 -4px 16px rgba( 0, 0, 0, 0.06 );
+
+	@include break-small {
+		display: none;
+	}
+}
+
+.dashboard-marketplace-hosting__buy-bar-text {
+	min-inline-size: 0;
+
+	> * {
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
 	}
 }
