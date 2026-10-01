@@ -71,19 +71,14 @@ export const WeeklyReportUnsubscribe = ( props: WeeklyReportProps ) => {
 					displayBadge
 					title={ translate( 'Farewell, friend' ) }
 					message={ translate(
-						'You’ll no longer receive performance reports for {{strong}}%s{{/strong}}{{br}}{{/br}}{{br}}{{/br}}{{subtitle}}If you ever change your mind, you can subscribe for {{br}}{{/br}}performance reports again from the results page.{{/subtitle}}',
+						'You’ll no longer receive performance reports for {{strong}}%s{{/strong}}',
 						{
 							args: [ siteUrl.host ],
 							components: {
 								strong: <strong />,
-								br: <br />,
-								subtitle: <span className="secondary-message" />,
 							},
 						}
 					) }
-					ctaText={ translate( 'Test a site' ) }
-					ctaHref="/speed-test"
-					ctaIcon="arrow-left"
 				/>
 			) }
 		</div>

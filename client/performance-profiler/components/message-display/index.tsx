@@ -12,7 +12,6 @@ type Props = {
 	message: string | ReactNode;
 	ctaText?: string;
 	ctaHref?: string;
-	secondaryMessage?: string;
 	displayBadge?: boolean;
 	ctaIcon?: string;
 	isErrorMessage?: boolean;
@@ -30,7 +29,6 @@ export const MessageDisplay = ( {
 	message,
 	ctaText,
 	ctaHref,
-	secondaryMessage,
 	ctaIcon = '',
 	isErrorMessage = false,
 }: Props ) => {
@@ -54,7 +52,6 @@ export const MessageDisplay = ( {
 							</Button>
 						) }
 					</div>
-					{ secondaryMessage && <p className="secondary-message">{ secondaryMessage }</p> }
 				</div>
 			</div>
 		</div>

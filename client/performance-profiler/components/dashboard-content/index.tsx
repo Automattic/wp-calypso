@@ -7,7 +7,6 @@ import { Disclaimer } from 'calypso/performance-profiler/components/disclaimer-s
 import { TabType, TabTypes } from 'calypso/performance-profiler/components/header';
 import { InsightsSection } from 'calypso/performance-profiler/components/insights-section';
 import { MigrationBanner } from 'calypso/performance-profiler/components/migration-banner';
-import { NewsletterBanner } from 'calypso/performance-profiler/components/newsletter-banner';
 import { PerformanceScore } from 'calypso/performance-profiler/components/performance-score';
 import { ScreenshotThumbnail } from 'calypso/performance-profiler/components/screenshot-thumbnail';
 import { ScreenshotTimeline } from 'calypso/performance-profiler/components/screenshot-timeline';
@@ -19,7 +18,6 @@ type PerformanceProfilerDashboardContentProps = {
 	hash: string;
 	filter?: string;
 	displayThumbnail?: boolean;
-	displayNewsletterBanner?: boolean;
 	displayMigrationBanner?: boolean;
 	activeTab?: TabType;
 	overallScoreIsTab?: boolean;
@@ -31,7 +29,6 @@ export const PerformanceProfilerDashboardContent = ( {
 	url,
 	hash,
 	filter,
-	displayNewsletterBanner = true,
 	displayMigrationBanner = true,
 	activeTab = TabTypes.mobile,
 	overallScoreIsTab = false,
@@ -85,17 +82,6 @@ export const PerformanceProfilerDashboardContent = ( {
 					recommendationsRef={ insightsRef }
 					onRecommendationsFilterChange={ onRecommendationsFilterChange }
 				/>
-
-				{ displayNewsletterBanner && (
-					<NewsletterBanner
-						link={ `/speed-test-tool/weekly-report?url=${ url }&hash=${ hash }` }
-						onClick={ () => {
-							recordTracksEvent( 'calypso_performance_profiler_weekly_report_cta_click', {
-								url,
-							} );
-						} }
-					/>
-				) }
 
 				<ScreenshotTimeline screenshots={ screenshots ?? [] } />
 				{ audits && (
