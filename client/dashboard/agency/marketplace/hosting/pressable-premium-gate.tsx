@@ -11,9 +11,7 @@ import { useAnalytics } from '../../../app/analytics';
 import { Card, CardBody, CardDivider, CardHeader } from '../../../components/card';
 import { SectionHeader } from '../../../components/section-header';
 import { useScheduleCall } from '../../tiers/use-schedule-call';
-import { isAgencyApproved } from '../is-agency-approved';
-import { useMarketplaceType } from '../use-marketplace-type';
-import { useTermPricing } from '../use-term-pricing';
+import { useReferralToggle } from '../use-referral-toggle';
 
 const PRESSABLE_PREMIUM_PLAN_COMMISSION_PERCENTAGE = 20;
 
@@ -25,18 +23,13 @@ interface Props {
 /** The purchase rail on the Premium tab with referrals off: Premium plans are only sold through referrals. */
 export default function PressablePremiumGate( { label }: Props ) {
 	const { recordTracksEvent } = useAnalytics();
-	const { updateMarketplaceType } = useMarketplaceType();
-	const { termPricing } = useTermPricing();
+	const { checked, disabled, onChange } = useReferralToggle();
 	const { data: agency } = useQuery( activeAgencyQuery() );
 	const { scheduleCall, isLoading } = useScheduleCall( agency?.id );
 
-	const onReferToggle = () => {
+	const onReferToggle = ( value: boolean ) => {
 		recordTracksEvent( 'calypso_a4a_marketplace_hosting_pressable_premium_refer_now_click' );
-		recordTracksEvent( 'calypso_a4a_marketplace_referral_toggle', {
-			purchase_mode: 'referral',
-			term_pricing: termPricing,
-		} );
-		updateMarketplaceType( 'referral' );
+		onChange( value );
 	};
 
 	const onTalkToUsClick = () => {
@@ -65,8 +58,8 @@ export default function PressablePremiumGate( { label }: Props ) {
 					</VStack>
 					<ToggleControl
 						__nextHasNoMarginBottom
-						checked={ false }
-						disabled={ ! isAgencyApproved( agency ) }
+						checked={ checked }
+						disabled={ disabled }
 						label={ __( 'Refer products' ) }
 						onChange={ onReferToggle }
 					/>

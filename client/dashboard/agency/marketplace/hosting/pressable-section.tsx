@@ -80,6 +80,23 @@ function getPlanOptionLabel( product: AgencyProduct, plan: PressablePlan ) {
 	);
 }
 
+/** What the Premium gate names when nothing is picked: Custom, or the agency's own Premium plan on the legacy catalog. */
+function getPremiumGateLabel(
+	selectedProduct: AgencyProduct | undefined,
+	hasPremiumPlans: boolean,
+	existingPlan: AgencyProduct | undefined
+) {
+	if ( selectedProduct ) {
+		return selectedProduct.name;
+	}
+	if ( hasPremiumPlans ) {
+		return __( 'Pressable Custom' );
+	}
+	return existingPlan && getPressablePlanInfo( existingPlan )?.category === PLAN_CATEGORY_PREMIUM
+		? existingPlan.name
+		: __( 'Pressable Premium' );
+}
+
 function ScheduleDemoCallout() {
 	const { recordTracksEvent } = useAnalytics();
 	return (
@@ -249,18 +266,7 @@ export default function PressableSection( {
 
 	const planName = selectedProduct ? getPressablePlanName( selectedProduct.name ) : __( 'Custom' );
 
-	const getGateLabel = () => {
-		if ( selectedProduct ) {
-			return selectedProduct.name;
-		}
-		if ( hasPremiumPlans ) {
-			return __( 'Pressable Custom' );
-		}
-		// An agency on a Premium plan sees the legacy catalog, which has no Premium plans to pick.
-		return existingPlanInfo?.category === PLAN_CATEGORY_PREMIUM && existingPlan
-			? existingPlan.name
-			: __( 'Pressable Premium' );
-	};
+	const gateLabel = getPremiumGateLabel( selectedProduct, hasPremiumPlans, existingPlan );
 
 	const getPlanDetailsIntro = () => {
 		if ( isReferralMode ) {
@@ -540,7 +546,7 @@ export default function PressableSection( {
 				<Testimonials brand="pressable" />
 			</VStack>
 			<VStack spacing={ 4 } justify="flex-start" className="dashboard-marketplace-hosting__rail">
-				{ showPremiumGate ? <PressablePremiumGate label={ getGateLabel() } /> : renderRail() }
+				{ showPremiumGate ? <PressablePremiumGate label={ gateLabel } /> : renderRail() }
 				{ showUsage && <PressableUsageCard existingPlan={ existingPlan } /> }
 			</VStack>
 		</div>
