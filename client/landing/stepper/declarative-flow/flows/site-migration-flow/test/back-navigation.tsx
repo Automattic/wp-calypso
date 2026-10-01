@@ -1,22 +1,48 @@
 /**
  * @jest-environment jsdom
  */
-import { screen, waitFor } from '@testing-library/react';
+import { act, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { dispatch, useSelect } from '@wordpress/data';
+import { dispatch } from '@wordpress/data';
 import { useState } from 'react';
 import { BrowserRouter } from 'react-router-dom';
 import { HOW_TO_MIGRATE_OPTIONS } from 'calypso/landing/stepper/constants';
 import { useFlowNavigation } from 'calypso/landing/stepper/declarative-flow/internals/hooks/use-flow-navigation';
 import { useStepNavigationWithTracking } from 'calypso/landing/stepper/declarative-flow/internals/hooks/use-step-navigation-with-tracking';
 import { STEPS } from 'calypso/landing/stepper/declarative-flow/internals/steps';
+import SiteMigrationIdentify from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/site-migration-identify';
 import { STEPPER_INTERNAL_STORE } from 'calypso/landing/stepper/stores';
 import { getCurrentUserSiteCount, isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import documentHeadReducer from 'calypso/state/document-head/reducer';
+import uiReducer from 'calypso/state/ui/reducer';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import siteMigrationFlow from '../site-migration-flow';
-import type { StepperInternalSelect } from '@automattic/data-stores';
 
 jest.mock( 'calypso/state/current-user/selectors' );
+jest.mock( 'calypso/landing/stepper/hooks/use-site-slug', () => ( {
+	useSiteSlug: () => 'example.wordpress.com',
+} ) );
+jest.mock( 'calypso/data/site-profiler/use-analyze-url-query', () => ( {
+	useAnalyzeUrlQuery: ( url: string ) => ( {
+		data: url ? { url, platform: 'wordpress' } : undefined,
+		isFetched: !! url,
+		isFetching: false,
+		isError: false,
+	} ),
+} ) );
+jest.mock( 'calypso/data/site-profiler/use-hosting-provider-query', () => ( {
+	useHostingProviderQuery: () => ( {
+		data: { hosting_provider: { slug: 'unknown' } },
+		isFetching: false,
+		isError: false,
+	} ),
+} ) );
+jest.mock(
+	'calypso/landing/stepper/declarative-flow/internals/steps-repository/site-migration-instructions/site-preview/hooks/use-site-preview-mshot-image-handler',
+	() => ( {
+		useSitePreviewMShotImageHandler: () => ( { createScreenshots: jest.fn() } ),
+	} )
+);
 jest.mock( 'calypso/landing/stepper/hooks/use-site-data', () => ( {
 	useSiteData: () => ( {
 		siteId: 123,
@@ -60,28 +86,18 @@ function MigrationNavigation() {
 		currentStepRoute,
 		navigate,
 	} );
-	const stepData = useSelect(
-		( select ) => ( select( STEPPER_INTERNAL_STORE ) as StepperInternalSelect ).getStepData(),
-		[]
-	);
 
 	return (
 		<>
 			<p data-testid="current-step">{ currentStepRoute }</p>
-			<p data-testid="previous-step">{ stepData?.previousStep }</p>
-			{ navigation.goBack && <button onClick={ navigation.goBack }>Back</button> }
-			{ currentStepRoute === STEPS.SITE_MIGRATION_IDENTIFY.slug && (
-				<button
-					onClick={ () =>
-						navigation.submit( {
-							action: 'continue',
-							from: 'https://source.com',
-							platform: 'wordpress',
-						} )
-					}
-				>
-					Check my site
-				</button>
+			{ currentStepRoute === STEPS.SITE_MIGRATION_IDENTIFY.slug ? (
+				<SiteMigrationIdentify
+					flow={ siteMigrationFlow.name }
+					stepName={ currentStepRoute }
+					navigation={ navigation }
+				/>
+			) : (
+				navigation.goBack && <button onClick={ navigation.goBack }>Back</button>
 			) }
 			{ currentStepRoute === STEPS.SITE_MIGRATION_HOW_TO_MIGRATE.slug && (
 				<button
@@ -108,7 +124,8 @@ function renderNavigation() {
 	return renderWithProvider(
 		<BrowserRouter basename="/setup">
 			<MigrationNavigation />
-		</BrowserRouter>
+		</BrowserRouter>,
+		{ reducers: { documentHead: documentHeadReducer, ui: uiReducer } }
 	);
 }
 
@@ -129,36 +146,67 @@ describe( 'Site migration Back navigation', () => {
 		window.history.replaceState( null, '', '/' );
 	} );
 
-	it( 'returns from credentials to the migration offer and then to identification', async () => {
-		renderNavigation();
-		await userEvent.click( screen.getByRole( 'button', { name: 'Check my site' } ) );
-		await userEvent.click( screen.getByRole( 'button', { name: 'Get started' } ) );
-		expect( screen.getByTestId( 'current-step' ) ).toHaveTextContent(
-			STEPS.SITE_MIGRATION_CREDENTIALS.slug
-		);
-
-		await userEvent.click( screen.getByRole( 'button', { name: 'Back' } ) );
-		await waitFor( () => {
-			expect( screen.getByTestId( 'current-step' ) ).toHaveTextContent(
-				STEPS.SITE_MIGRATION_HOW_TO_MIGRATE.slug
+	it.each( [ 'app', 'browser' ] )(
+		'hides Back when only forward history remains after using %s Back',
+		async ( backControl ) => {
+			const goBack = async () => {
+				if ( backControl === 'app' ) {
+					await userEvent.click( screen.getByRole( 'button', { name: 'Back' } ) );
+				} else {
+					act( () => window.history.back() );
+				}
+			};
+			renderNavigation();
+			await userEvent.type(
+				screen.getByRole( 'textbox', { name: 'Site address' } ),
+				'https://source.com'
 			);
-		} );
-		expect( screen.getByTestId( 'previous-step' ) ).toHaveTextContent(
-			STEPS.SITE_MIGRATION_HOW_TO_MIGRATE.slug
-		);
-
-		await userEvent.click( screen.getByRole( 'button', { name: 'Back' } ) );
-		await waitFor( () => {
+			await userEvent.click( screen.getByRole( 'button', { name: 'Check my site' } ) );
+			await userEvent.click( screen.getByRole( 'button', { name: 'Get started' } ) );
 			expect( screen.getByTestId( 'current-step' ) ).toHaveTextContent(
-				STEPS.SITE_MIGRATION_IDENTIFY.slug
+				STEPS.SITE_MIGRATION_CREDENTIALS.slug
 			);
-		} );
-		expect( window.history.state.idx ).toBe( 0 );
-	} );
+
+			await goBack();
+			await waitFor( () => {
+				expect( screen.getByTestId( 'current-step' ) ).toHaveTextContent(
+					STEPS.SITE_MIGRATION_HOW_TO_MIGRATE.slug
+				);
+			} );
+			await goBack();
+			await waitFor( () => {
+				expect( screen.getByTestId( 'current-step' ) ).toHaveTextContent(
+					STEPS.SITE_MIGRATION_IDENTIFY.slug
+				);
+			} );
+			expect( window.history.state.idx ).toBe( 0 );
+			expect( window.history.length ).toBeGreaterThan( 1 );
+			expect( screen.queryByRole( 'button', { name: 'Back' } ) ).not.toBeInTheDocument();
+		}
+	);
 
 	it( 'does not add Back on a direct first entry without a referrer', () => {
 		renderNavigation();
 
+		expect( screen.queryByRole( 'button', { name: 'Back' } ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'ignores stale previous-step data on entry with forward history', async () => {
+		window.history.pushState( null, '', '/forward-entry' );
+		const returned = new Promise( ( resolve ) => {
+			window.addEventListener( 'popstate', resolve, { once: true } );
+		} );
+		window.history.back();
+		await returned;
+
+		const { setStepData } = dispatch( STEPPER_INTERNAL_STORE ) as {
+			setStepData: ( data: { previousStep: string } ) => void;
+		};
+		setStepData( { previousStep: STEPS.SITE_MIGRATION_HOW_TO_MIGRATE.slug } );
+		renderNavigation();
+
+		expect( window.history.state.idx ).toBe( 0 );
+		expect( window.history.length ).toBeGreaterThan( 1 );
 		expect( screen.queryByRole( 'button', { name: 'Back' } ) ).not.toBeInTheDocument();
 	} );
 
