@@ -49,6 +49,26 @@ describe( 'getCheckoutUrl', () => {
 		expect( url.searchParams.get( 'term' ) ).toBe( 'yearly' );
 	} );
 
+	it( 'names the site a PHP memory add-on applies to', () => {
+		const memoryAddon = {
+			slug: 'pressable-addon-php-memory-512',
+			product_id: 4001,
+			family_slug: 'pressable-addon',
+		} as AgencyProduct;
+		const url = new URL(
+			getCheckoutUrl(
+				[
+					{ product: memoryAddon, quantity: 1, siteDomain: 'one.example.com' },
+					{ product: backup, quantity: 1 },
+				],
+				{ term: 'yearly' }
+			)
+		);
+		expect( url.searchParams.get( 'products' ) ).toBe(
+			'pressable-addon-php-memory-512:1:one.example.com,jetpack-backup-t1:1'
+		);
+	} );
+
 	it( 'leaves the agency and the billing products out of the link', () => {
 		const url = new URL( getCheckoutUrl( lines, { term: 'monthly' } ) );
 		expect( url.searchParams.has( 'agency_id' ) ).toBe( false );
