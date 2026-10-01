@@ -41,7 +41,7 @@ function usePressablePlanFeatures( license: JetpackLicense ): string[] {
 			_n( '%d WordPress install', '%d WordPress installs', plan.install ),
 			plan.install
 		),
-		// Classic gives each install its own staging site.
+		// Each install comes with its own staging site.
 		sprintf(
 			// translators: %d is the number of staging sites.
 			_n( '%d staging site', '%d staging sites', plan.install ),
@@ -96,7 +96,7 @@ export default function HostingPlanLoss( { license }: { license: JetpackLicense 
 
 	return (
 		<VStack spacing={ 2 }>
-			<Text weight={ 500 }>{ __( "When you cancel you'll immediately lose access to" ) }</Text>
+			<Text weight={ 500 }>{ __( 'When you cancel you’ll immediately lose access to' ) }</Text>
 			{ isPressable ? <PressablePlanLoss license={ license } /> : <WpcomPlanLoss /> }
 			<ExternalLink
 				href={ a4aLink(

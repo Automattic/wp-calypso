@@ -1,9 +1,9 @@
 import { __ } from '@wordpress/i18n';
 
-// The values are what the survey backend reports on, so they match classic's.
+// The values are what the survey backend reports on, so keep them stable.
 export const getChurnReasons = () => [
 	{
-		label: __( "It had bugs and didn't work for us" ),
+		label: __( 'It had bugs and didn’t work for us' ),
 		value: 'it-had-bugs-and-didnt-work-for-us',
 	},
 	{ label: __( 'It was the wrong product' ), value: 'it-was-the-wrong-product' },

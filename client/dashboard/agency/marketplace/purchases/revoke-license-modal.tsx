@@ -49,7 +49,7 @@ export default function RevokeLicenseModal( { license, closeModal }: Props ) {
 	// on the mutation rather than on the mutate() call.
 	const { mutate: fileChurnSurvey } = useMutation(
 		withSnackbar( a4aFeedbackSurveyMutation(), {
-			error: __( "We couldn't send your feedback, but the license was revoked." ),
+			error: __( 'We couldn’t send your feedback, but the license was revoked.' ),
 		} )
 	);
 	const { scheduleCall, isLoading: isFetchingScheduleCallLink } = useScheduleCall( agency?.id );
@@ -235,7 +235,7 @@ export default function RevokeLicenseModal( { license, closeModal }: Props ) {
 				<Text id={ reasonsLabelId } weight={ 500 }>
 					{ sprintf(
 						// translators: %s is the name of the product being revoked.
-						__( "Can you tell us why %s didn't meet your needs?" ),
+						__( 'Can you tell us why %s didn’t meet your needs?' ),
 						getLicenseProductName( license )
 					) }
 				</Text>
