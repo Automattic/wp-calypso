@@ -7,6 +7,7 @@ import { useI18n } from '@wordpress/react-i18n';
 import { Badge } from '@wordpress/ui';
 import clsx from 'clsx';
 import { useEffect, useMemo, type ReactNode } from 'react';
+import { PolicyNoticeBadge } from '../../components/policy-notice-badge';
 import { useDomainSearch } from '../../page/context';
 import { DomainSearchTrademarkClaimsModal } from '../../ui';
 import {
@@ -130,13 +131,7 @@ export const NamePulseResultRow = ( { result, position }: NamePulseResultRowProp
 	// in the first-year price.
 	let badge: ReactNode = null;
 	if ( policyNotices.length > 0 ) {
-		badge = (
-			<Tooltip text={ policyNotices.map( ( notice ) => notice.message ).join( ' ' ) }>
-				<Badge intent="low" tabIndex={ 0 }>
-					{ __( 'Restricted' ) }
-				</Badge>
-			</Tooltip>
-		);
+		badge = <PolicyNoticeBadge notice={ policyNotices[ 0 ] } />;
 	} else if ( isAvailable && isPremium ) {
 		badge = <Badge intent="informational">{ __( 'Premium' ) }</Badge>;
 	} else if ( isAvailable && getNamePulseSalePrice( row ) ) {

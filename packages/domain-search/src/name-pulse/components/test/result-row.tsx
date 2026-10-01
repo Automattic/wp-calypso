@@ -4,6 +4,7 @@
 import { DomainAvailabilityStatus } from '@automattic/api-core';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { useViewportMatch } from '@wordpress/compose';
 import { DomainSearchContext, useDomainSearchContextValue } from '../../../page/context';
 import { buildAvailability } from '../../../test-helpers/factories/availability';
@@ -221,15 +222,22 @@ describe( 'NamePulseResultRow', () => {
 			expect( screen.queryByText( 'Sale' ) ).not.toBeInTheDocument();
 		} );
 
-		it( 'shows only Restricted on a row with policy notices', () => {
+		it( 'shows only the policy notice on a row with policy notices', () => {
 			renderRow(
 				buildPremiumResult( { source: 'keyword', ...SALE, policy_notices: POLICY_NOTICES } )
 			);
 
-			expect( screen.getByText( 'Restricted' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Special requirements' ) ).toBeInTheDocument();
 			expect( screen.queryByText( 'Premium' ) ).not.toBeInTheDocument();
 			expect( screen.queryByText( 'Sale' ) ).not.toBeInTheDocument();
-			expect( screen.queryByText( 'Special requirements' ) ).not.toBeInTheDocument();
+		} );
+
+		it( 'shows the policy notice message in a popover', async () => {
+			renderRow( buildResult( { policy_notices: POLICY_NOTICES } ) );
+
+			await userEvent.click( screen.getByRole( 'button', { name: 'Learn more' } ) );
+
+			expect( await screen.findByText( POLICY_NOTICES[ 0 ].message ) ).toBeVisible();
 		} );
 
 		it( 'shows no badge on an unavailable row', () => {
@@ -237,7 +245,7 @@ describe( 'NamePulseResultRow', () => {
 				buildResult( { status: NamePulseDomainStatus.TAKEN, policy_notices: POLICY_NOTICES } )
 			);
 
-			expect( screen.queryByText( 'Restricted' ) ).not.toBeInTheDocument();
+			expect( screen.queryByText( 'Special requirements' ) ).not.toBeInTheDocument();
 		} );
 	} );
 } );
