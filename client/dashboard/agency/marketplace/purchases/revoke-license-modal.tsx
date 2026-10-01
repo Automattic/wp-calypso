@@ -217,7 +217,13 @@ export default function RevokeLicenseModal( { license, closeModal }: Props ) {
 					<VStack spacing={ 2 }>
 						{ license.siteurl && (
 							<Text>
-								<strong>{ __( 'Site:' ) }</strong> { getSiteHostname( license.siteurl ) }
+								<strong>{ __( 'Site:' ) }</strong>{ ' ' }
+								{ /* The span keeps Google Translate from crashing React (react/react#11538). */ }
+								<span>
+									{ isPressableLicense( license )
+										? __( 'Multiple sites use this license' )
+										: getSiteHostname( license.siteurl ) }
+								</span>
 							</Text>
 						) }
 						<Text>
