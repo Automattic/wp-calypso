@@ -399,7 +399,7 @@ export default function MarketplaceProducts() {
 				<PageHeader
 					title={ __( 'Extend your clients’ sites' ) }
 					description={ __(
-						'Extensions, plans, and add-ons for your clients’ sites. Buy for your agency or refer them to a client.'
+						'Buy extensions, plans, and add-ons directly, or refer them to clients and earn commission.'
 					) }
 					actions={
 						<HStack spacing={ 4 } expanded={ false }>
