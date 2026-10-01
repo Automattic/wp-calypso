@@ -9,7 +9,6 @@ import {
 } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { Button } from '@wordpress/components';
-import { useDebounce } from '@wordpress/compose';
 import { useI18n } from '@wordpress/react-i18n';
 import { addQueryArgs, getQueryArg, isURL } from '@wordpress/url';
 import { useMemo } from 'react';
@@ -48,20 +47,6 @@ const getThemeSlugWithRepo = ( themeSlug: string | undefined, isPurchasingTheme:
 	const repo = isPurchasingTheme ? 'premium' : 'pub';
 
 	return `${ repo }/${ themeSlug }`;
-};
-
-// replaceState keeps the history clean and doesn't re-run the page.js route. Debounced by callers:
-// browsers throttle it (Safari throws after 100 calls in 30s) and the input fires per keystroke.
-const syncNamePulseQueryToUrl = ( query?: string ) => {
-	const url = new URL( window.location.href );
-
-	if ( query ) {
-		url.searchParams.set( 'new', query );
-	} else {
-		url.searchParams.delete( 'new' );
-	}
-
-	window.history.replaceState( window.history.state, '', url.toString() );
 };
 
 const DomainSearchUI = (
@@ -110,23 +95,10 @@ const DomainSearchUI = (
 		persistQuery: ! showNamePulseSearch,
 	} );
 
-	const debouncedSyncNamePulseQueryToUrl = useDebounce( syncNamePulseQueryToUrl, 300 );
-
 	const events = useMemo( () => {
 		return {
-			...( showNamePulseSearch
-				? {
-						onQueryChange: ( newQuery: string ) => {
-							setQuery( newQuery );
-							debouncedSyncNamePulseQueryToUrl( newQuery );
-						},
-						onQueryClear: () => {
-							resetQuery();
-							debouncedSyncNamePulseQueryToUrl.cancel();
-							syncNamePulseQueryToUrl();
-						},
-					}
-				: { onQueryChange: setQuery, onQueryClear: clearQuery } ),
+			onQueryChange: setQuery,
+			onQueryClear: showNamePulseSearch ? resetQuery : clearQuery,
 			beforeAddDomainToCart: ( product: MinimalRequestCartProduct ) => {
 				if ( isDomainForGravatarFlow( flowName ) ) {
 					return {
@@ -302,7 +274,6 @@ const DomainSearchUI = (
 		setQuery,
 		clearQuery,
 		resetQuery,
-		debouncedSyncNamePulseQueryToUrl,
 		showNamePulseSearch,
 		submitSignupStep,
 		goToNextStep,

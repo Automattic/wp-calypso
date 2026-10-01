@@ -147,13 +147,9 @@ describe( 'DomainSearchStep — domain-only checkout simplification', () => {
 } );
 
 describe( 'DomainSearchStep — Name Pulse search', () => {
-	const START_URL = '/start/domain/domain-only?ref=calypso';
-	const currentUrl = () => window.location.pathname + window.location.search;
 	let isEnabledSpy: jest.SpyInstance;
 
 	beforeEach( () => {
-		jest.useFakeTimers();
-		window.history.replaceState( null, '', START_URL );
 		mockWPCOMDomainSearch.mockReturnValue( null );
 		isEnabledSpy = jest
 			.spyOn( config, 'isEnabled' )
@@ -162,32 +158,23 @@ describe( 'DomainSearchStep — Name Pulse search', () => {
 
 	afterEach( () => {
 		isEnabledSpy.mockRestore();
-		jest.useRealTimers();
 	} );
 
-	const namePulseWiring = ( events: {
-		onQueryChange: ( query: string ) => void;
-		onQueryClear: () => void;
-	} ) => {
-		events.onQueryChange( 'coffee' );
-		jest.runAllTimers();
-		const typedUrl = currentUrl();
+	const namePulseWiring = ( events: { onQueryClear: () => void } ) => {
 		events.onQueryClear();
 
 		return {
 			showNamePulseSearch: mockWPCOMDomainSearch.mock.calls[ 0 ][ 0 ].config.showNamePulseSearch,
 			persistQuery: mockUseQueryHandler.mock.calls[ 0 ][ 0 ].persistQuery,
 			clearedWith: mockQueryHandler.resetQuery.mock.calls.length ? 'resetQuery' : 'clearQuery',
-			typedUrl,
 		};
 	};
 
-	it( 'enables it for the domain-only flow when the flag is on: no persisted query, query in the URL, clearing resets', () => {
+	it( 'enables it for the domain-only flow when the flag is on: no persisted query, clearing resets', () => {
 		expect( namePulseWiring( renderStep() ) ).toEqual( {
 			showNamePulseSearch: true,
 			persistQuery: false,
 			clearedWith: 'resetQuery',
-			typedUrl: `${ START_URL }&new=coffee`,
 		} );
 	} );
 
@@ -196,7 +183,6 @@ describe( 'DomainSearchStep — Name Pulse search', () => {
 			showNamePulseSearch: false,
 			persistQuery: true,
 			clearedWith: 'clearQuery',
-			typedUrl: START_URL,
 		} );
 	} );
 
@@ -207,31 +193,7 @@ describe( 'DomainSearchStep — Name Pulse search', () => {
 			showNamePulseSearch: false,
 			persistQuery: true,
 			clearedWith: 'clearQuery',
-			typedUrl: START_URL,
 		} );
-	} );
-
-	it( 'writes the latest query to ?new= once typing pauses, without adding history entries', () => {
-		const events = renderStep();
-		const historyLength = window.history.length;
-
-		events.onQueryChange( 'coffee' );
-		events.onQueryChange( 'coffee shop' );
-		expect( currentUrl() ).toBe( START_URL );
-
-		jest.runAllTimers();
-		expect( currentUrl() ).toBe( `${ START_URL }&new=coffee+shop` );
-		expect( window.history.length ).toBe( historyLength );
-	} );
-
-	it( 'drops a pending URL write when the query is cleared', () => {
-		const events = renderStep();
-
-		events.onQueryChange( 'coffee' );
-		events.onQueryClear();
-		jest.runAllTimers();
-
-		expect( currentUrl() ).toBe( START_URL );
 	} );
 
 	it( 'lifts the domain-only exclusion on the free-first-year promo', () => {
