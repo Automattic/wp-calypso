@@ -9,9 +9,10 @@ import {
 } from '@wordpress/components';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { Icon, close } from '@wordpress/icons';
-import { a4aLink } from '../../../utils/link';
+import { dashboardLink } from '../../../utils/link';
 import { getPressablePlanInfo } from '../hosting/lib/pressable-plans';
 import { matchesProduct } from '../hosting/lib/pressable-products';
+import { getMarketplaceHostingSectionRoute } from '../paths';
 import { isPressableLicense } from './license-status';
 import type { JetpackLicense } from '@automattic/api-core';
 
@@ -99,8 +100,8 @@ export default function HostingPlanLoss( { license }: { license: JetpackLicense 
 			<Text weight={ 500 }>{ __( 'When you cancel you’ll immediately lose access to' ) }</Text>
 			{ isPressable ? <PressablePlanLoss license={ license } /> : <WpcomPlanLoss /> }
 			<ExternalLink
-				href={ a4aLink(
-					isPressable ? '/marketplace/hosting/pressable' : '/marketplace/hosting/wpcom'
+				href={ dashboardLink(
+					getMarketplaceHostingSectionRoute( isPressable ? 'pressable' : 'wpcom' )
 				) }
 			>
 				{ __( 'And more' ) }
