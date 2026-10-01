@@ -286,7 +286,7 @@ describe( '<MilestoneFeedbackModal>', () => {
 			).not.toBeInTheDocument()
 		);
 		const [ notice ] = await screen.findAllByText(
-			"We couldn't save your answer, so we may ask again later."
+			'We couldn’t save your answer, so we may ask again later.'
 		);
 		expect( notice ).toBeVisible();
 	} );

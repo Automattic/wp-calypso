@@ -32,7 +32,7 @@ export function useMilestoneFeedback( type: FeedbackType ) {
 	// write settles, and per-call callbacks are dropped on unmount.
 	const { mutate: rememberAnswer } = useMutation(
 		withSnackbar( userPreferenceMutation( PREFERENCE ), {
-			error: __( "We couldn't save your answer, so we may ask again later." ),
+			error: __( 'We couldn’t save your answer, so we may ask again later.' ),
 		} )
 	);
 

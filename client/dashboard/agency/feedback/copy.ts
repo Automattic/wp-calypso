@@ -13,7 +13,7 @@ export function getFeedbackCopy( type: FeedbackType, args: FeedbackCopyArgs = {}
 				description: sprintf(
 					// translators: %(email)s is the email address or username the invite was sent to.
 					__(
-						"We sent %(email)s an invite. After accepting, they'll become an active member in your Team section."
+						'We sent %(email)s an invite. After accepting, they’ll become an active member in your Team section.'
 					),
 					{ email: args.email ?? '' }
 				),
@@ -40,7 +40,7 @@ export function getFeedbackCopy( type: FeedbackType, args: FeedbackCopyArgs = {}
 			return {
 				title: __( 'Details successfully added!' ),
 				description: __(
-					"Well done! We've updated your agency's public profile with your information."
+					'Well done! We’ve updated your agency’s public profile with your information.'
 				),
 				suggestion: {
 					label: __(
@@ -68,7 +68,7 @@ export function getFeedbackCopy( type: FeedbackType, args: FeedbackCopyArgs = {}
 		case 'purchase-completed':
 			return {
 				title: __( 'Purchase complete!' ),
-				description: __( "Well done! You've made your first purchase on Automattic for Agencies." ),
+				description: __( 'Well done! You’ve made your first purchase on Automattic for Agencies.' ),
 				suggestion: {
 					label: __( 'What could have been better during your purchase process?' ),
 					options: [
