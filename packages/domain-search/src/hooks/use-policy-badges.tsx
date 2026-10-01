@@ -8,11 +8,13 @@ import { type ReactNode, useMemo } from 'react';
 import { DomainSuggestionBadge } from '../ui';
 import { useSuggestion } from './use-suggestion';
 
-export const usePolicyNoticeBadges = ( policyNotices: PolicyNotice[] | undefined ) => {
+export const usePolicyBadges = ( domainName: string ) => {
 	const { __ } = useI18n();
+	const suggestion = useSuggestion( domainName );
 
 	const badges = useMemo( () => {
 		const computedBadges: ReactNode[] = [];
+		const policyNotices = suggestion.policy_notices || [];
 
 		const getPolicyNoticeMessage = ( { type, message }: PolicyNotice ) => {
 			if ( type === 'hsts' ) {
@@ -44,7 +46,7 @@ export const usePolicyNoticeBadges = ( policyNotices: PolicyNotice[] | undefined
 			return message;
 		};
 
-		( policyNotices || [] ).forEach( ( notice ) => {
+		policyNotices.forEach( ( notice ) => {
 			computedBadges.push(
 				<DomainSuggestionBadge key={ notice.type } popover={ getPolicyNoticeMessage( notice ) }>
 					{ notice.label }
@@ -53,13 +55,7 @@ export const usePolicyNoticeBadges = ( policyNotices: PolicyNotice[] | undefined
 		} );
 
 		return computedBadges;
-	}, [ __, policyNotices ] );
+	}, [ __, suggestion.policy_notices ] );
 
 	return badges;
-};
-
-export const usePolicyBadges = ( domainName: string ) => {
-	const suggestion = useSuggestion( domainName );
-
-	return usePolicyNoticeBadges( suggestion.policy_notices );
 };

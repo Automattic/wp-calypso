@@ -4,10 +4,9 @@ import { useViewportMatch } from '@wordpress/compose';
 import { sprintf } from '@wordpress/i18n';
 import { cautionFilled, cart as cartIcon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
-import { Badge } from '@wordpress/ui';
+import { Badge, Tooltip as UiTooltip } from '@wordpress/ui';
 import clsx from 'clsx';
 import { useEffect, useMemo } from 'react';
-import { usePolicyNoticeBadges } from '../../hooks/use-policy-badges';
 import { useDomainSearch } from '../../page/context';
 import { DomainSearchTrademarkClaimsModal } from '../../ui';
 import {
@@ -125,13 +124,18 @@ export const NamePulseResultRow = ( { result, position }: NamePulseResultRowProp
 	// A failed check leaves the row on its badge alone: no price, and no skeleton
 	// waiting for one that is not coming.
 	const isPremiumPriceMissing = needsPremiumPrice && ! realtimeVerdict;
-	const policyBadges = usePolicyNoticeBadges( row.policy_notices );
+	const [ policyNotice ] = row.policy_notices ?? [];
 	// A second badge would leave the name only a few characters, so the row
 	// shows the first one. A sale on a premium name already shows in the
 	// first-year price.
 	const [ badge ] = isAvailable
 		? [
-				...policyBadges,
+				policyNotice && (
+					<UiTooltip.Root key="policy">
+						<UiTooltip.Trigger render={ <Badge tabIndex={ 0 }>{ policyNotice.label }</Badge> } />
+						<UiTooltip.Popup>{ policyNotice.message }</UiTooltip.Popup>
+					</UiTooltip.Root>
+				),
 				isPremium && (
 					<Badge key="premium" intent="informational">
 						{ __( 'Premium' ) }
