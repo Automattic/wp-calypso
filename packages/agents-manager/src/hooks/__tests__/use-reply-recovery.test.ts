@@ -407,6 +407,19 @@ describe( 'useReplyRecovery', () => {
 			],
 		} );
 
+		const seenLongEnough = async (
+			probeResult: (
+				messages: Message[],
+				pendingClientTools?: PendingClientTools
+			) => Promise< void >
+		) => {
+			await probeResult( [ previousAnswer, questionOnServer ], pendingTools( 'unanswered' ) );
+			await act( async () => {
+				jest.advanceTimersByTime( RESUME_AFTER_MS );
+			} );
+			await probeResult( [ previousAnswer, questionOnServer ], pendingTools( 'unanswered' ) );
+		};
+
 		it( 'resumes the turn with an interrupted result and the calls of the turn', async () => {
 			const { result, resumeToolCalls, probeResult } = await setup( {
 				stored: [ pendingQuestion ],
@@ -415,7 +428,7 @@ describe( 'useReplyRecovery', () => {
 			let finishResume: ( replied: boolean ) => void = () => {};
 			resumeToolCalls.mockReturnValue( new Promise( ( resolve ) => ( finishResume = resolve ) ) );
 
-			await probeResult( [ previousAnswer, questionOnServer ], pendingTools( 'unanswered' ) );
+			await seenLongEnough( probeResult );
 
 			expect( resumeToolCalls ).toHaveBeenCalledWith(
 				[
@@ -468,7 +481,7 @@ describe( 'useReplyRecovery', () => {
 				hydrated: [ previousAnswer, questionOnServer ],
 			} );
 
-			await probeResult( [ previousAnswer, questionOnServer ], pendingTools( 'unanswered' ) );
+			await seenLongEnough( probeResult );
 
 			expect( resumeToolCalls.mock.calls[ 0 ][ 0 ][ 0 ].result ).toEqual( { rows: 5 } );
 		} );
@@ -511,11 +524,25 @@ describe( 'useReplyRecovery', () => {
 			} );
 			resumeToolCalls.mockResolvedValue( false );
 
-			await probeResult( [ previousAnswer, questionOnServer ], pendingTools( 'unanswered' ) );
+			await seenLongEnough( probeResult );
 			expect( result.current.notice?.message ).toBe( 'Waiting for the reply…' );
 
 			await probeResult( [ previousAnswer, questionOnServer ], pendingTools( 'unanswered' ) );
 			expect( resumeToolCalls ).toHaveBeenCalledTimes( 1 );
+		} );
+
+		it( 'goes back to waiting when the resume loses the race', async () => {
+			const { result, resumeToolCalls, probeResult } = await setup( {
+				stored: [ pendingQuestion ],
+				hydrated: [ previousAnswer, questionOnServer ],
+			} );
+			resumeToolCalls.mockRejectedValue(
+				new Error( 'Streaming error: This tool result was already received.' )
+			);
+
+			await seenLongEnough( probeResult );
+
+			expect( result.current.notice?.message ).toBe( 'Waiting for the reply…' );
 		} );
 
 		it( 'leaves a parked wp-admin-navigate call to the navigation continuation', async () => {

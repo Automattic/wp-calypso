@@ -51,7 +51,7 @@ export const LOST_AFTER_MS = 20_000;
 // waiting longer only delays the Retry.
 export const UNANSWERED_AFTER_MS = 60_000;
 // The page that ran a browser tool often still sends its result while the new
-// page loads; give it this long before resuming the turn from here.
+// page loads; wait this long after this page first sees the pending call.
 export const RESUME_AFTER_MS = 10_000;
 
 type Phase = 'idle' | 'waiting' | 'resuming' | 'lost' | 'unanswered';
@@ -83,12 +83,6 @@ interface Options {
 		turnToolCalls: TurnToolCall[]
 	) => Promise< boolean >;
 }
-
-/** When the server stored a call (MySQL datetime, UTC), or now if unreadable. */
-const storedAt = ( createdAt: string ): number => {
-	const time = Date.parse( createdAt.replace( ' ', 'T' ) + 'Z' );
-	return Number.isNaN( time ) ? Date.now() : time;
-};
 
 const serverIdOf = ( message: Message ): number => {
 	const id = message.metadata?.serverId;
@@ -133,6 +127,7 @@ export default function useReplyRecovery( {
 	const latestProbeRef = useRef< Message[] | null >( null );
 	const localMessagesRef = useRef< Message[] >( [] );
 	const resumeAttemptedRef = useRef( false );
+	const pendingSeenAtRef = useRef< number | null >( null );
 
 	// Read the local store before hydration lands: hydrating replaces it.
 	useEffect( () => {
@@ -238,7 +233,13 @@ export default function useReplyRecovery( {
 				pendingTools,
 				snapshot.localMessages
 			);
-			const replied = await resumeToolCalls( results, turnToolCalls );
+			// A lost race rejects the send. That is still no reply here.
+			let replied = false;
+			try {
+				replied = await resumeToolCalls( results, turnToolCalls );
+			} catch {
+				// Lost race or failed send: keep waiting.
+			}
 			if ( cancelled ) {
 				return;
 			}
@@ -252,13 +253,11 @@ export default function useReplyRecovery( {
 			if ( pendingTools?.state === 'unanswered' && ! resumeAttemptedRef.current ) {
 				// A parked `wp-admin-navigate` is answered by `useNavigationContinuation`.
 				const parkedNavigation = getPendingNavigation()?.toolCallId;
-				const oldEnough = pendingTools.calls.every(
-					( call ) => Date.now() - storedAt( call.createdAt ) >= RESUME_AFTER_MS
-				);
-				if (
-					oldEnough &&
-					! pendingTools.calls.some( ( call ) => call.toolCallId === parkedNavigation )
-				) {
+				if ( pendingTools.calls.some( ( call ) => call.toolCallId === parkedNavigation ) ) {
+					return;
+				}
+				pendingSeenAtRef.current ??= Date.now();
+				if ( Date.now() - pendingSeenAtRef.current >= RESUME_AFTER_MS ) {
 					await resume( pendingTools );
 				}
 				return;
