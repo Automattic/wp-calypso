@@ -111,8 +111,6 @@
 		"ssr/prefetch-timebox": true,
 		"stats/archive-breakdown": true,
 		"stats/chart-library": true,
-		"stats/premium-analytics-preview": true,
-		"stats/premium-analytics-preview-atomic": true,
 		"themes/premium": true,
 		"themes/showcase-modern": true,
 		"upgrades/redirect-payments": true,
