@@ -78,19 +78,18 @@ export function CategoryMark( { section }: { section: TileValue | 'other' } ) {
 }
 
 /**
- * All, the brands, then the jobs, right under search and filter. A tile sets
- * the list's category filter, which holds brands and jobs alike, so the tile
- * and the filter button always agree.
+ * All, the brands, then the jobs, right under search and filter. One tile at
+ * a time narrows the list; All clears it.
  */
 export default function CategoryTiles( {
 	selected,
 	onSelect,
 	lead,
-	showPressable,
+	brands,
 }: {
 	selected: TileValue | null;
-	/** Pressable add-ons are only listed for agencies that own a Pressable plan, or when referring. */
-	showPressable: boolean;
+	/** The brands the list has products for; a brand with none gets no tile. */
+	brands: ProductBrand[];
 	/** Controls shown in place of the heading, such as search. */
 	lead?: React.ReactNode;
 	onSelect: ( value: TileValue | null ) => void;
@@ -106,13 +105,11 @@ export default function CategoryTiles( {
 			lead={ lead }
 			all={ { label: __( 'All categories' ), icon: allIcon } }
 			options={ [
-				...BRANDS.filter( ( brand ) => brand !== 'pressable' || showPressable ).map(
-					( brand ) => ( {
-						value: brand,
-						label: brandLabels[ brand ],
-						mark: brandMark( brand, 32 ),
-					} )
-				),
+				...BRANDS.filter( ( brand ) => brands.includes( brand ) ).map( ( brand ) => ( {
+					value: brand,
+					label: brandLabels[ brand ],
+					mark: brandMark( brand, 32 ),
+				} ) ),
 				...( Object.keys( CATEGORY_ICONS ) as ProductCategory[] ).map( ( category, index ) => ( {
 					value: category,
 					label: labels[ category ],

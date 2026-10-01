@@ -257,6 +257,10 @@ export default function MarketplaceProducts() {
 		];
 	}, [] );
 
+	const productBrands = useMemo(
+		() => [ ...new Set( products.map( getProductBrand ) ) ],
+		[ products ]
+	);
 	const tileProducts = useMemo(
 		() =>
 			selectedCategory
@@ -442,7 +446,7 @@ export default function MarketplaceProducts() {
 					<CategoryTiles
 						selected={ selectedCategory }
 						onSelect={ handleTileSelect }
-						showPressable={ showPressableAddons }
+						brands={ productBrands }
 						lead={
 							// The active filters sit beside the filter button, so the button and
 							// what it filters read as one control above the tiles.
