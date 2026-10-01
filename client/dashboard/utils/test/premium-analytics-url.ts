@@ -86,6 +86,32 @@ describe( 'getPremiumAnalyticsPath', () => {
 		);
 	} );
 
+	it( 'starts a day whose midnight is skipped at its first real time, not in the day before', () => {
+		expect(
+			route(
+				getPremiumAnalyticsPath( '/', {
+					from: '2026-03-08',
+					to: '2026-03-08',
+					gmtOffset: -4,
+					timezone: 'America/Havana',
+				} )
+			)
+		).toBe( '/?from=2026-03-08T01%3A00%3A00.000-04%3A00&to=2026-03-08T23%3A59%3A59.999-04%3A00' );
+	} );
+
+	// Havana repeats the first hour of 1 November, and Santiago the last hour of 4 April.
+	it( 'covers both runs of an hour the clock repeats at either end of a day', () => {
+		const days = ( day: string, timezone: string ) =>
+			route( getPremiumAnalyticsPath( '/', { from: day, to: day, gmtOffset: 0, timezone } ) );
+
+		expect( days( '2026-11-01', 'America/Havana' ) ).toBe(
+			'/?from=2026-11-01T00%3A00%3A00.000-04%3A00&to=2026-11-01T23%3A59%3A59.999-05%3A00'
+		);
+		expect( days( '2026-04-04', 'America/Santiago' ) ).toBe(
+			'/?from=2026-04-04T00%3A00%3A00.000-03%3A00&to=2026-04-04T23%3A59%3A59.999-04%3A00'
+		);
+	} );
+
 	it( 'falls back to the fixed offset for a timezone the browser does not know', () => {
 		expect(
 			route(
