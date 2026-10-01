@@ -75,7 +75,6 @@ export type SitePerformanceReport = {
 	screenshots?: Array< { data: string; timing: number } >;
 	history?: SitePerformanceHistory;
 	timestamp?: string;
-	share_link: string;
 } & Record< Metrics, number >;
 
 export interface SitePerformanceInsights {

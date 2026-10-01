@@ -85,12 +85,12 @@ afterEach( () => {
 } );
 
 describe( '<Plan>', () => {
-	test( 'for self-hosted, Jetpack-connected sites, active Jetpack plugin, it renders the Jetpack logo and plan name', () => {
+	test( 'for self-hosted, Jetpack-connected sites, active Jetpack plugin, it renders the plan name without a logo', () => {
 		const { container } = render(
-			<Plan site={ makeSite() } isJetpack isSelfHostedJetpackConnected value="Free" />
+			<Plan site={ makeSite() } isJetpack isSelfHostedJetpackConnected value="Jetpack Free" />
 		);
-		expect( container.querySelector( 'svg' ) ).toBeInTheDocument();
-		expect( container.textContent ).toBe( 'Free' );
+		expect( container.querySelector( 'svg' ) ).not.toBeInTheDocument();
+		expect( container.textContent ).toBe( 'Jetpack Free' );
 	} );
 
 	test( 'for self-hosted, Jetpack-connected sites, inactive Jetpack plugin, it renders dash', () => {

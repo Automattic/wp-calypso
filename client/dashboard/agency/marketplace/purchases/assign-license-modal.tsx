@@ -44,9 +44,15 @@ interface Props {
 	licenseKey: string;
 	productName: string;
 	closeModal?: () => void;
+	onAssigned?: () => void;
 }
 
-export default function AssignLicenseModal( { licenseKey, productName, closeModal }: Props ) {
+export default function AssignLicenseModal( {
+	licenseKey,
+	productName,
+	closeModal,
+	onAssigned,
+}: Props ) {
 	const { recordTracksEvent } = useAnalytics();
 	const { user } = useAuth();
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
@@ -117,6 +123,7 @@ export default function AssignLicenseModal( { licenseKey, productName, closeModa
 						{ type: 'snackbar' }
 					);
 					closeModal?.();
+					onAssigned?.();
 				},
 				onError: ( error: Error & { code?: string } ) => {
 					if ( error.code === 'partner_not_connected_to_site' ) {

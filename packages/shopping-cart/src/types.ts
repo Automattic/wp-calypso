@@ -953,6 +953,12 @@ export interface ResponseCartProductExtra {
 	agency_id?: number;
 
 	/**
+	 * Position of the line among identical A4A products, so the store keeps
+	 * one cart item per unit instead of merging them.
+	 */
+	cart_item_index?: number;
+
+	/**
 	 * A4A Pressable PHP Memory add-on target domain.
 	 * Sent with checkout cart items so WPCOM can provision the add-on for the selected Pressable site.
 	 */
