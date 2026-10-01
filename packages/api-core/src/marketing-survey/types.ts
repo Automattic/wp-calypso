@@ -19,8 +19,14 @@ export interface A4AFeedbackSurveyDetails {
 	site_id: number;
 	survey_id: string;
 	survey_responses: {
-		rating: string;
+		rating?: string;
 		comment: { text: string };
 		suggestions: { text: string };
+		cta?: string;
+		meta?: {
+			product_name: string;
+			license_key: string;
+			license_type: 'client' | 'agency';
+		};
 	};
 }
