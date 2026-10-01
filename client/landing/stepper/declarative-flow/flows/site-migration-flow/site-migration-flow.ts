@@ -816,7 +816,11 @@ const siteMigration: FlowV2< typeof initialize > = {
 			}
 		};
 
-		return { submit, exitFlow };
+		return {
+			submit,
+			exitFlow,
+			goBack: history.state?.idx > 0 ? () => history.back() : undefined,
+		};
 	},
 };
 

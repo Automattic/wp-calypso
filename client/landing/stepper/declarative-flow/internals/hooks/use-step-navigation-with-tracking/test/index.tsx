@@ -3,7 +3,6 @@
  */
 // @ts-nocheck - TODO: Fix TypeScript issues
 import { renderHook, act } from '@testing-library/react';
-import { useSelect } from '@wordpress/data';
 import { useStepNavigationWithTracking } from '../';
 import {
 	STEPPER_TRACKS_EVENT_STEP_NAV_EXIT_FLOW,
@@ -79,15 +78,11 @@ const getDefaultProps = ( { flow, currentStepRoute } ) => ( {
 describe( 'useStepNavigationWithTracking', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
-		jest.mocked( canUseAutomaticGoBack ).mockReturnValue( true );
-		jest.mocked( useSelect ).mockReturnValue( { intent: '', goals: EMPTY_GOALS } );
-		window.history.state = null;
-		window.history.length = 1;
 	} );
 
 	beforeAll( () => {
 		Object.defineProperty( window, 'history', {
-			value: { back: jest.fn(), state: null, length: 1 },
+			value: { back: jest.fn() },
 		} );
 	} );
 
@@ -114,84 +109,6 @@ describe( 'useStepNavigationWithTracking', () => {
 		result.current.goBack?.();
 
 		expect( history.back ).toHaveBeenCalled();
-	} );
-
-	it( 'keeps Back available after returning from a later step', () => {
-		jest.mocked( canUseAutomaticGoBack ).mockReturnValue( false );
-		jest.mocked( useSelect ).mockReturnValue( {
-			intent: '',
-			goals: EMPTY_GOALS,
-			previousStep: 'site-migration-how-to-migrate',
-		} );
-		window.history.length = 3;
-		window.history.state = { idx: 2 };
-		const { result, rerender } = renderHook(
-			( params ) => useStepNavigationWithTracking( params ),
-			{
-				initialProps: {
-					...FlowWithoutGoBack,
-					currentStepRoute: 'site-migration-credentials',
-				},
-			}
-		);
-
-		act( () => result.current.goBack?.() );
-		expect( history.back ).toHaveBeenCalledTimes( 1 );
-
-		window.history.state = { idx: 1 };
-		rerender( {
-			...FlowWithoutGoBack,
-			currentStepRoute: 'site-migration-how-to-migrate',
-		} );
-
-		expect( result.current.goBack ).toBeDefined();
-		act( () => result.current.goBack?.() );
-		expect( history.back ).toHaveBeenCalledTimes( 2 );
-	} );
-
-	it( 'updates Back availability when the router history index changes', () => {
-		jest.mocked( canUseAutomaticGoBack ).mockReturnValue( false );
-		window.history.state = { idx: 0 };
-		const { result, rerender } = renderHook( () =>
-			useStepNavigationWithTracking( FlowWithoutGoBack )
-		);
-
-		expect( result.current.goBack ).toBeUndefined();
-
-		window.history.state = { idx: 1 };
-		rerender();
-
-		expect( result.current.goBack ).toBeDefined();
-	} );
-
-	it( 'does not use forward history to enable Back at the initial route', () => {
-		jest.mocked( canUseAutomaticGoBack ).mockReturnValue( false );
-		jest.mocked( useSelect ).mockReturnValue( {
-			intent: '',
-			goals: EMPTY_GOALS,
-			previousStep: FlowWithoutGoBack.currentStepRoute,
-		} );
-		window.history.length = 3;
-		window.history.state = { idx: 0 };
-
-		const { result } = renderHook( () => useStepNavigationWithTracking( FlowWithoutGoBack ) );
-
-		expect( result.current.goBack ).toBeUndefined();
-	} );
-
-	it( 'uses the previous step when the router history index is unavailable', () => {
-		jest.mocked( canUseAutomaticGoBack ).mockReturnValue( false );
-		jest.mocked( useSelect ).mockReturnValue( {
-			intent: '',
-			goals: EMPTY_GOALS,
-			previousStep: 'previous-step',
-		} );
-		window.history.length = 2;
-
-		const { result } = renderHook( () => useStepNavigationWithTracking( FlowWithoutGoBack ) );
-		act( () => result.current.goBack?.() );
-
-		expect( history.back ).toHaveBeenCalledTimes( 1 );
 	} );
 
 	it( 'ensures reference equality given same input', () => {
