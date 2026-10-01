@@ -2,7 +2,6 @@ import { activeAgencyQuery, agencyProductsQuery } from '@automattic/api-queries'
 import { useQuery } from '@tanstack/react-query';
 import {
 	__experimentalHStack as HStack,
-	__experimentalSpacer as Spacer,
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
@@ -16,7 +15,6 @@ import Grid from '../../../components/grid';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
 import { SectionHeader } from '../../../components/section-header';
-import { SPOTS } from '../../components/showcase/spots';
 import { isPressablePlanLicense, pressableLicensesQuery } from '../hosting/lib/pressable-products';
 import { isAgencyApproved } from '../is-agency-approved';
 import ReferralToggle from '../referral-toggle';
@@ -24,7 +22,7 @@ import TermPricingToggle from '../term-pricing-toggle';
 import { useMarketplaceType } from '../use-marketplace-type';
 import { useTermPricing } from '../use-term-pricing';
 import CartMenu from './cart-menu';
-import CategoryTiles, { isProductCategory } from './category-tiles';
+import CategoryTiles, { CategoryMark, isProductCategory } from './category-tiles';
 import FeaturedShowcase from './featured-showcase';
 import {
 	getBrandLabels,
@@ -48,6 +46,7 @@ import ProductCardSkeleton from './product-card-skeleton';
 import ProductDetailsModal from './product-details-modal';
 import ProductStoreCard from './product-store-card';
 import { parseCartEntries, useShoppingCart } from './use-shopping-cart';
+import type { TileValue } from './category-tiles';
 import type { ProductBrand, ProductCategory } from './lib/product-categories';
 import type { ProductListItem, ProductSection } from './lib/product-groups';
 import type { AgencyProduct } from '@automattic/api-core';
@@ -86,8 +85,12 @@ const isCategoryFilterValue = ( value: unknown ): value is CategoryFilterValue =
 	isProductCategory( value ) ||
 	( typeof value === 'string' && Object.keys( getBrandLabels() ).includes( value ) );
 
-const getSectionTitle = ( key: ProductSection[ 'key' ] ) =>
-	key === 'other' ? __( 'Plans, add-ons and more' ) : getCategoryShortLabels()[ key ];
+const getSectionTitle = ( key: ProductSection[ 'key' ] | ProductBrand ) => {
+	if ( key === 'other' ) {
+		return __( 'Plans, add-ons and more' );
+	}
+	return isProductCategory( key ) ? getCategoryShortLabels()[ key ] : getBrandLabels()[ key ];
+};
 
 const PRODUCT_GRID_COLUMNS = 'repeat( auto-fill, minmax( 300px, 1fr ) )';
 
@@ -132,29 +135,19 @@ export default function MarketplaceProducts() {
 		replaceItems,
 		clearCart,
 	} = useShoppingCart();
-	const [ view, setView ] = useState< View >( () => {
+	const [ view, setView ] = useState< View >( () => ( {
+		...DEFAULT_VIEW,
+		search: searchParams.search_query != null ? String( searchParams.search_query ) : '',
+	} ) );
+	// The tiles keep their own selection and narrow the list before DataViews
+	// sees it, so picking a tile never opens the filter bar or adds a chip; the
+	// filter button stays for the finer filters (type, price, developer).
+	const [ selectedCategory, setSelectedCategory ] = useState< TileValue | null >( () => {
 		const category = searchParams.category
 			? ( CLASSIC_CATEGORY_KEYS[ searchParams.category ] ?? searchParams.category )
 			: null;
-		return {
-			...DEFAULT_VIEW,
-			search: searchParams.search_query != null ? String( searchParams.search_query ) : '',
-			filters: isCategoryFilterValue( category )
-				? [ { field: 'category', operator: 'isAny', value: [ category ] } ]
-				: [],
-		};
+		return isCategoryFilterValue( category ) ? category : null;
 	} );
-	// The category tiles read and write the list's own category filter, so a
-	// tile, the filter button and the filter chip always show the same
-	// selection, and the chip's remove button is a way back. A tile is selected
-	// when its job is the only category set.
-	const categoryFilter = view.filters?.find( ( filter ) => filter.field === 'category' );
-	const selectedCategory =
-		Array.isArray( categoryFilter?.value ) &&
-		categoryFilter.value.length === 1 &&
-		isProductCategory( categoryFilter.value[ 0 ] )
-			? categoryFilter.value[ 0 ]
-			: null;
 
 	// `?product_slug=a,b` and `?products=a:2,b:1` replace the cart with those
 	// products, as the classic products page does.
@@ -224,9 +217,9 @@ export default function MarketplaceProducts() {
 						label: categoryLabels[ category ],
 					} ) ),
 				],
-				// While a tile has set a category, the filter is primary, so DataViews
-				// shows its chip instead of only counting it on the filter button.
-				filterBy: { operators: [ 'isAny' ], isPrimary: selectedCategory !== null },
+				// The tiles are the category filter, so the filter button doesn't
+				// offer it a second time.
+				filterBy: false,
 				enableSorting: false,
 				getValue: ( { item } ) => [
 					getProductBrand( item ),
@@ -234,25 +227,17 @@ export default function MarketplaceProducts() {
 				],
 			},
 			{
-				id: 'vendor',
-				label: __( 'Developed by' ),
-				type: 'text',
-				elements: [ { value: 'woocommerce', label: __( 'WooCommerce' ) } ],
-				filterBy: { operators: [ 'is' ] },
-				enableSorting: false,
-				getValue: ( { item } ) =>
-					getProductBrand( item ) === 'woocommerce' ? 'woocommerce' : '',
-			},
-			{
 				id: 'type',
 				label: __( 'Type' ),
 				type: 'text',
-				elements: ( Object.keys( typeLabels ) as ( keyof typeof typeLabels )[] ).map(
-					( type ) => ( {
+				// Extension is every WooCommerce product, which the WooCommerce tile
+				// already picks, so the filter offers only the types the tiles don't.
+				elements: ( Object.keys( typeLabels ) as ( keyof typeof typeLabels )[] )
+					.filter( ( type ) => type !== 'extension' )
+					.map( ( type ) => ( {
 						value: type,
 						label: typeLabels[ type ],
-					} )
-				),
+					} ) ),
 				filterBy: { operators: [ 'is' ] },
 				enableSorting: false,
 				getValue: ( { item } ) => getProductType( item ),
@@ -270,15 +255,27 @@ export default function MarketplaceProducts() {
 				getValue: ( { item } ) => ( isFreeProduct( item ) ? 'free' : 'paid' ),
 			},
 		];
-	}, [ selectedCategory ] );
+	}, [] );
 
-	const { data: filteredProducts } = useMemo(
-		() => filterSortAndPaginate( products, view, fields ),
-		[ products, view, fields ]
+	const tileProducts = useMemo(
+		() =>
+			selectedCategory
+				? products.filter( ( product ) =>
+						[ getProductBrand( product ), ...getProductFilterCategories( product ) ].includes(
+							selectedCategory
+						)
+					)
+				: products,
+		[ products, selectedCategory ]
 	);
-	// With nothing searched or filtered, the products sit in one section per job;
-	// otherwise they sit in one grid with a count.
-	const isNarrowed = view.search !== '' || ( view.filters?.length ?? 0 ) > 0;
+	const { data: filteredProducts } = useMemo(
+		() => filterSortAndPaginate( tileProducts, view, fields ),
+		[ tileProducts, view, fields ]
+	);
+	// With nothing picked, searched or filtered, the products sit in one section
+	// per job; otherwise they sit in one grid with a count.
+	const isNarrowed =
+		selectedCategory !== null || view.search !== '' || ( view.filters?.length ?? 0 ) > 0;
 	const locale = useIntlLocale();
 	const featuredProducts = useMemo( () => getFeaturedProducts( products ), [ products ] );
 	const sections = useMemo(
@@ -297,7 +294,7 @@ export default function MarketplaceProducts() {
 	// One category picked, and nothing else narrowing the list, reads as that
 	// category's own section: its spot, its name, and the count beside it.
 	const pickedCategory =
-		selectedCategory && ! view.search && ( view.filters?.length ?? 0 ) === 1
+		selectedCategory && ! view.search && ( view.filters?.length ?? 0 ) === 0
 			? selectedCategory
 			: null;
 
@@ -326,20 +323,12 @@ export default function MarketplaceProducts() {
 		setView( nextView );
 	};
 
-	const handleTileSelect = ( category: ProductCategory | null ) => {
+	const handleTileSelect = ( category: TileValue | null ) => {
 		if ( category ) {
 			recordTracksEvent( 'calypso_a4a_marketplace_product_category_selected', { category } );
 		}
-		setView( ( current ) => ( {
-			...current,
-			page: 1,
-			filters: [
-				...( current.filters ?? [] ).filter( ( filter ) => filter.field !== 'category' ),
-				...( category
-					? [ { field: 'category', operator: 'isAny' as const, value: [ category ] } ]
-					: [] ),
-			],
-		} ) );
+		setSelectedCategory( category );
+		setView( ( current ) => ( { ...current, page: 1 } ) );
 	};
 
 	const toggleCart = useCallback(
@@ -453,16 +442,21 @@ export default function MarketplaceProducts() {
 					<CategoryTiles
 						selected={ selectedCategory }
 						onSelect={ handleTileSelect }
+						showPressable={ showPressableAddons }
 						lead={
-							<HStack spacing={ 2 } expanded={ false }>
+							// The active filters sit beside the filter button, so the button and
+							// what it filters read as one control above the tiles.
+							<HStack
+								spacing={ 2 }
+								justify="flex-start"
+								className="dashboard-marketplace-products__toolbar"
+							>
 								<DataViews.Search />
 								<DataViews.FiltersToggle />
+								<DataViews.FiltersToggled />
 							</HStack>
 						}
 					/>
-					<Spacer marginBottom={ 4 }>
-						<DataViews.FiltersToggled />
-					</Spacer>
 				</DataViews>
 			</div>
 			{ isLoading && (
@@ -487,7 +481,7 @@ export default function MarketplaceProducts() {
 									<span className="dashboard-marketplace-products__job-count">{ resultCount }</span>
 								</>
 							}
-							decoration={ <img src={ SPOTS[ pickedCategory ] } alt="" /> }
+							decoration={ <CategoryMark section={ pickedCategory } /> }
 						/>
 					) : (
 						<SectionHeader level={ 2 } title={ resultCount } />
@@ -513,9 +507,7 @@ export default function MarketplaceProducts() {
 							<SectionHeader
 								level={ 2 }
 								title={ getSectionTitle( section.key ) }
-								decoration={
-									<img src={ SPOTS[ section.key === 'other' ? 'more' : section.key ] } alt="" />
-								}
+								decoration={ <CategoryMark section={ section.key } /> }
 							/>
 							{ renderGrid( section.items ) }
 						</VStack>

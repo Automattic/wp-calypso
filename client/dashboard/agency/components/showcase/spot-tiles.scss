@@ -1,8 +1,9 @@
 @use '@automattic/color-studio/dist/color-variables' as brand;
 
-// Tiles 120px wide, the spot (80 by 64) over the name, 8px apart. The row
-// scrolls when it outgrows the page, each end fading only while there is more
-// that way.
+// The row behaves like the featured row above it: it runs into the page's
+// side padding, and where that reaches the window's edge, the edge cuts the
+// tiles. Where the page is narrower than the window, each end fades instead,
+// only while there is more that way.
 .dashboard-spot-tiles {
 	display: flex;
 	flex-direction: column;
@@ -18,22 +19,36 @@
 	display: flex;
 	gap: 8px;
 	min-inline-size: 0;
+	margin-inline: calc( -1 * var( --page-layout-inline-padding ) );
+	padding: 2px var( --page-layout-inline-padding );
+	scroll-padding-inline: var( --page-layout-inline-padding );
 	overflow-x: auto;
-	padding: 2px;
+	overscroll-behavior-x: contain;
 	scroll-behavior: smooth;
+	scroll-snap-type: x mandatory;
 	scrollbar-width: none;
-	mask-image: linear-gradient( to right, transparent, #000 var( --fade-start ), #000 calc( 100% - var( --fade-end ) ), transparent );
+	mask-image: linear-gradient(
+		to right,
+		transparent,
+		rgba( 0, 0, 0, 0.3 ) calc( var( --fade-start ) * 0.35 ),
+		rgba( 0, 0, 0, 0.75 ) calc( var( --fade-start ) * 0.7 ),
+		#000 var( --fade-start ),
+		#000 calc( 100% - var( --fade-end ) ),
+		rgba( 0, 0, 0, 0.75 ) calc( 100% - var( --fade-end ) * 0.7 ),
+		rgba( 0, 0, 0, 0.3 ) calc( 100% - var( --fade-end ) * 0.35 ),
+		transparent
+	);
 
 	&::-webkit-scrollbar {
 		display: none;
 	}
 
 	&.can-back {
-		--fade-start: 32px;
+		--fade-start: 40px;
 	}
 
 	&.can-forward {
-		--fade-end: 48px;
+		--fade-end: 64px;
 	}
 
 	@media ( prefers-reduced-motion: reduce ) {
@@ -42,7 +57,12 @@
 }
 
 .dashboard-spot-tiles__tile {
-	flex: 0 0 120px;
+	// At least 136px, so the longest names (Store management) stay on one
+	// line and every tile keeps the same width; a longer translation widens
+	// its own tile rather than wrapping.
+	flex: 0 0 auto;
+	min-inline-size: 136px;
+	scroll-snap-align: start;
 	cursor: pointer;
 
 	&:hover {
@@ -64,7 +84,7 @@
 	flex-direction: column;
 	align-items: center;
 	gap: 8px;
-	padding: 12px 8px;
+	padding: 20px 12px;
 	text-align: center;
 }
 
@@ -74,10 +94,25 @@
 	block-size: 64px;
 }
 
+.dashboard-spot-tiles__media {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	min-block-size: 32px;
+	fill: #{brand.$studio-gray-90};
+}
+
 .dashboard-spot-tiles__label {
 	font-size: 13px;
 	font-weight: 500;
 	line-height: 16px;
 	color: #{brand.$studio-gray-90};
-	text-wrap: balance;
+	white-space: nowrap;
+}
+
+.dashboard-spot-tiles__divider {
+	flex: 0 0 1px;
+	align-self: stretch;
+	margin-inline: 8px;
+	background: #{brand.$studio-gray-5};
 }

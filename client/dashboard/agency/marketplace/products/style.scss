@@ -158,3 +158,32 @@
 	border-radius: 8px;
 	background: $gray-100;
 }
+
+// A list heading's icon matches the tiles' icons, black rather than the
+// section header's grey decoration, and sits closer to the name: the header
+// centres it in a 32px box, so it shifts toward the name by that box's slack.
+.dashboard-marketplace-products__section-mark {
+	display: inline-flex;
+	translate: 4px 0;
+
+	svg {
+		fill: $gray-900;
+	}
+
+	// A brand's round mark, the same 24px as the icons.
+	img {
+		inline-size: 24px;
+		block-size: 24px;
+	}
+}
+
+// Search, the filter button and the active filters, in one line that takes the
+// row's width up to previous and next.
+.dashboard-marketplace-products__toolbar {
+	flex: 1;
+	min-inline-size: 0;
+
+	> * {
+		flex-shrink: 0;
+	}
+}
