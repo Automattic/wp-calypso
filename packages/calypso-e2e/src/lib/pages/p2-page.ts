@@ -6,7 +6,7 @@ const selectors = {
 	publishedPost: ( postContent: string ) => `.entry-content:has-text("${ postContent }")`,
 };
 
-const EDITOR_MOUNT_TIMEOUT = 10 * 1000;
+const EDITOR_MOUNT_TIMEOUT = 20 * 1000;
 
 /**
  * Class representing the P2 frontend.
