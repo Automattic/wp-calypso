@@ -101,17 +101,16 @@ html:has( .name-pulse-search-input ) {
 
 	&__policy-trigger {
 		display: inline-flex;
+		padding: 0;
+		border: 0;
+		background: none;
+		cursor: pointer;
+	}
+
+	&__policy-badge {
+		display: inline-flex;
 		align-items: center;
 		gap: 4px;
-		height: 24px;
-		box-sizing: border-box;
-		padding-inline: 8px;
-		border: 0;
-		border-radius: 2px;
-		box-shadow: 0 0 0 1px rgba( 0, 0, 0, 0.1 );
-		background: none;
-		color: inherit;
-		cursor: pointer;
 	}
 
 	&__policy-popup {
