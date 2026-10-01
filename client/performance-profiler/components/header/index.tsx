@@ -1,13 +1,10 @@
-import { Button as AutomatticButton, Popover } from '@automattic/components';
 import { Button } from '@wordpress/components';
-import { Icon, mobile, desktop, share, link, check } from '@wordpress/icons';
+import { Icon, mobile, desktop } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { useState, useRef, useEffect } from 'react';
 import WPcomBadge from 'calypso/assets/images/performance-profiler/wpcom-badge.svg';
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
-import ShareButton from 'calypso/components/share-button';
 import { Badge } from 'calypso/performance-profiler/components/badge';
 
 import './style.scss';
@@ -19,7 +16,6 @@ type HeaderProps = {
 	showNavigationTabs?: boolean;
 	timestamp?: string;
 	showWPcomBadge?: boolean;
-	shareLink?: string;
 };
 
 export const TabTypes = {
@@ -29,47 +25,10 @@ export const TabTypes = {
 
 export type TabType = ( typeof TabTypes )[ keyof typeof TabTypes ];
 
-const SocialServices = [
-	{
-		service: 'x',
-	},
-	{
-		service: 'linkedin',
-	},
-	{
-		service: 'facebook',
-	},
-	{
-		service: 'tumblr',
-	},
-];
-
 export const PerformanceProfilerHeader = ( props: HeaderProps ) => {
 	const translate = useTranslate();
-	const [ showPopoverMenu, setPopoverMenu ] = useState( false );
-	const [ linkCopied, setLinkCopied ] = useState( false );
-	const popoverButtonRef = useRef( null );
-	const { url, activeTab, onTabChange, showNavigationTabs, timestamp, showWPcomBadge, shareLink } =
-		props;
+	const { url, activeTab, onTabChange, showNavigationTabs, timestamp, showWPcomBadge } = props;
 	const urlParts = new URL( url );
-
-	useEffect( () => {
-		if ( ! linkCopied ) {
-			return;
-		}
-
-		const timeoutId = setTimeout( () => setLinkCopied( false ), 2000 );
-		return () => clearTimeout( timeoutId );
-	}, [ linkCopied ] );
-
-	const onCopyLink = () => {
-		if ( ! shareLink ) {
-			return;
-		}
-
-		navigator.clipboard.writeText( shareLink );
-		setLinkCopied( true );
-	};
 
 	const renderTimestampAndBadge = () => (
 		<>
@@ -139,47 +98,6 @@ export const PerformanceProfilerHeader = ( props: HeaderProps ) => {
 							<div className="report-site-details hide-on-mobile">
 								{ renderTimestampAndBadge() }
 							</div>
-							{ timestamp && (
-								<>
-									<div
-										className="share-button"
-										ref={ popoverButtonRef }
-										role="button"
-										tabIndex={ 0 }
-										onKeyDown={ ( e ) => e.key === 'Enter' && setPopoverMenu( true ) }
-										onClick={ () => setPopoverMenu( true ) }
-									>
-										<Icon className="share-icon" icon={ share } />
-										<span>{ translate( 'Share' ) }</span>
-									</div>
-									<Popover
-										id="profiler-share-buttons-popover"
-										isVisible={ showPopoverMenu }
-										context={ popoverButtonRef.current }
-										position="top"
-										onClose={ () => setPopoverMenu( false ) }
-									>
-										{ SocialServices.map( ( item ) => (
-											<ShareButton
-												key={ item.service }
-												size={ 28 }
-												url={ shareLink }
-												title=""
-												service={ item.service }
-											/>
-										) ) }
-										<AutomatticButton
-											className="copy-link-button"
-											onClick={ onCopyLink }
-											disabled={ ! shareLink }
-											title={ linkCopied ? translate( 'Copied!' ) : translate( 'Copy link' ) }
-											borderless
-										>
-											<Icon icon={ linkCopied ? check : link } size={ 28 } />
-										</AutomatticButton>
-									</Popover>
-								</>
-							) }
 						</div>
 					</SectionNav>
 				) }

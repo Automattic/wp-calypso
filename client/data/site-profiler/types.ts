@@ -160,7 +160,6 @@ export type PerformanceReport = {
 	screenshots?: ScreenShotsTimeLine[];
 	history: PerformanceMetricsHistory;
 	timestamp?: string;
-	share_link: string | '';
 } & BasicMetrics;
 
 export type ScreenshotNode = {
