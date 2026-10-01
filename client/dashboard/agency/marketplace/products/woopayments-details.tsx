@@ -65,7 +65,7 @@ export default function WooPaymentsDetails() {
 				<Text weight={ 500 }>{ __( 'About WooPayments' ) }</Text>
 				<Text variant="muted">
 					{ __(
-						"With WooPayments, you can collect payments, track cash flow, handle disputes, and manage recurring revenue directly from your store's dashboard — without needing to log into a third-party platform."
+						'With WooPayments, you can collect payments, track cash flow, handle disputes, and manage recurring revenue directly from your store’s dashboard — without needing to log into a third-party platform.'
 					) }
 				</Text>
 				<Text variant="muted">

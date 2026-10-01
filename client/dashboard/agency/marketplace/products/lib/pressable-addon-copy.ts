@@ -27,7 +27,7 @@ function getPressableAddonType( slug: string ): PressableAddonType {
 
 const getGenericCopy = (): PressableAddonCopy => ( {
 	callout: __( 'This add-on increases your Signature plan limits while your plan is active.' ),
-	limit: __( "Add-ons raise your plan's limits while your plan is active." ),
+	limit: __( 'Add-ons raise your plan’s limits while your plan is active.' ),
 } );
 
 /** How much the add-on raises the plan limits, from the limits the products API sends. */

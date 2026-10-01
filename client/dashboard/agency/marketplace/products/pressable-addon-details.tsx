@@ -25,7 +25,7 @@ export default function PressableAddonDetails( { product }: { product: AgencyPro
 		),
 		__( 'At checkout, you can choose monthly or yearly billing for each add-on.' ),
 		__(
-			"While add-ons are attached to a Pressable plan, they're currently invoiced separately from your plan invoice."
+			'While add-ons are attached to a Pressable plan, they’re currently invoiced separately from your plan invoice.'
 		),
 	];
 
