@@ -2,19 +2,51 @@
  * @jest-environment jsdom
  */
 import {
+	recordTracksEvent, // eslint-disable-line no-restricted-imports
+	recordTracksPageViewWithPageParams, // eslint-disable-line no-restricted-imports
+} from '@automattic/calypso-analytics';
+import {
 	createControlledPromise,
 	createMemoryHistory,
 	createRootRoute,
 	createRoute,
 	createRouter,
-	RouterProvider,
+	Outlet,
 } from '@tanstack/react-router';
-import { act, renderHook, waitFor } from '@testing-library/react';
+import { act, waitFor } from '@testing-library/react';
+import { PageViewTracker } from '../../components/page-view-tracker';
 import { render } from '../../test-utils';
-import { AnalyticsProvider } from '../analytics';
-import { useUnifiedAdminPageView } from '../analytics/use-unified-admin-page-view';
+import { APP_CONTEXT_DEFAULT_CONFIG } from '../context';
+import Layout from '../layout';
+import { getRouter } from '../router';
 import { dashboardRedirect } from '../router/redirect';
 import type { AppConfig } from '../context';
+import type { AnyRouter } from '@tanstack/react-router';
+import type { PropsWithChildren, ReactNode } from 'react';
+
+jest.mock( '@automattic/calypso-analytics', () => ( {
+	initializeAnalytics: jest.fn(),
+	recordTracksEvent: jest.fn(),
+	recordTracksPageViewWithPageParams: jest.fn(),
+} ) );
+jest.mock( '@automattic/charts', () => ( {
+	GlobalChartsProvider: ( { children }: PropsWithChildren ) => children,
+} ) );
+jest.mock( '../router', () => ( { getRouter: jest.fn() } ) );
+jest.mock( '../survicate', () => ( {
+	useSurvicate: jest.fn(),
+	useSurvicateVisitTraits: jest.fn(),
+} ) );
+jest.mock( '../auth', () => ( {
+	...jest.requireActual( '../auth' ),
+	AuthProvider: ( { children }: PropsWithChildren ) => children,
+} ) );
+jest.mock( '../i18n', () => ( {
+	I18nProvider: ( { children }: PropsWithChildren ) => children,
+} ) );
+jest.mock( 'calypso/lib/color-scheme', () => ( {
+	withColorScheme: ( element: ReactNode ) => element,
+} ) );
 
 async function renderTracker(
 	app: AppConfig[ 'unifiedAdminPageViewApp' ] | null = 'msd',
@@ -22,7 +54,19 @@ async function renderTracker(
 	basePath = ''
 ) {
 	const pendingLoad = createControlledPromise< void >();
-	const rootRoute = createRootRoute();
+	const appConfig = {
+		...APP_CONTEXT_DEFAULT_CONFIG,
+		basePath: basePath || '/',
+		unifiedAdminPageViewApp: app ?? undefined,
+	};
+	const rootRoute = createRootRoute( {
+		component: () => (
+			<>
+				<Outlet />
+				<PageViewTracker />
+			</>
+		),
+	} );
 	const redirectToSite = () => {
 		throw dashboardRedirect( { to: '/sites/$siteSlug', params: { siteSlug: 'first.example' } } );
 	};
@@ -52,49 +96,45 @@ async function renderTracker(
 		defaultPendingMinMs: 0,
 	} );
 
-	const analytics = render( <RouterProvider router={ router } /> );
+	jest.mocked< ( config: AppConfig ) => AnyRouter >( getRouter ).mockReturnValue( router );
+	render( <Layout config={ appConfig } /> );
 	await waitFor( () => {
 		expect( router.state.status ).toBe( 'idle' );
 		expect( router.state.matches.at( -1 )?.status ).toBe( 'success' );
 	} );
-	renderHook( () => useUnifiedAdminPageView( router, app ?? undefined ), {
-		wrapper: ( { children } ) => (
-			<AnalyticsProvider client={ analytics }>{ children }</AnalyticsProvider>
-		),
-	} );
-	const recordTracksEvent = jest.mocked( analytics.recordTracksEvent );
+	const tracksEvent = jest.mocked( recordTracksEvent );
 	return {
 		router,
 		pendingLoad,
-		recordTracksEvent,
-		recordedPaths: () =>
-			recordTracksEvent.mock.calls.map( ( [ , properties ] ) => properties?.path ),
+		recordTracksEvent: tracksEvent,
+		recordedPaths: () => tracksEvent.mock.calls.map( ( [ , properties ] ) => properties?.path ),
 		navigate: ( href: string ) => act( () => router.navigate( { href } ) ),
 	};
 }
 
 describe( 'Unified admin page views', () => {
+	beforeEach( () => {
+		jest.clearAllMocks();
+	} );
+
 	it.each( [
 		{ app: 'msd', basePath: '/dashboard' },
 		{ app: 'a4a', basePath: '' },
-	] as const )(
-		'records an already-resolved initial view for $app',
-		async ( { app, basePath } ) => {
-			const { recordTracksEvent } = await renderTracker(
-				app,
-				'/sites/first.example?tab=general#details',
-				basePath
-			);
+	] as const )( 'records an initial view for $app', async ( { app, basePath } ) => {
+		const { recordTracksEvent } = await renderTracker(
+			app,
+			'/sites/first.example?tab=general#details',
+			basePath
+		);
 
-			expect( recordTracksEvent ).toHaveBeenCalledTimes( 1 );
-			expect( recordTracksEvent ).toHaveBeenCalledWith( 'wpcom_unified_admin_page_view', {
-				source: 'msd',
-				app,
-				path: `${ basePath }/sites/first.example`,
-				route: `${ basePath }/sites/$siteSlug`,
-			} );
-		}
-	);
+		expect( recordTracksEvent ).toHaveBeenCalledTimes( 1 );
+		expect( recordTracksEvent ).toHaveBeenCalledWith( 'wpcom_unified_admin_page_view', {
+			source: 'msd',
+			app,
+			path: `${ basePath }/sites/first.example`,
+			route: `${ basePath }/sites/$siteSlug`,
+		} );
+	} );
 
 	it( 'counts pathname changes', async () => {
 		const { router, navigate, recordedPaths } = await renderTracker();
@@ -112,6 +152,7 @@ describe( 'Unified admin page views', () => {
 		await act( () => router.invalidate() );
 
 		expect( recordedPaths() ).toEqual( paths );
+		expect( recordTracksPageViewWithPageParams ).toHaveBeenCalledTimes( 3 );
 	} );
 
 	it.each( [ '/sites/pending.example', '/sites' ] )(
@@ -155,5 +196,6 @@ describe( 'Unified admin page views', () => {
 		const { recordTracksEvent } = await renderTracker( null );
 
 		expect( recordTracksEvent ).not.toHaveBeenCalled();
+		expect( recordTracksPageViewWithPageParams ).toHaveBeenCalledTimes( 1 );
 	} );
 } );
