@@ -3,6 +3,7 @@ import {
 	__experimentalToggleGroupControlOption as ToggleGroupControlOption,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+import clsx from 'clsx';
 import { useAnalytics } from '../../app/analytics';
 import { useMarketplaceType } from './use-marketplace-type';
 import { useTermPricing } from './use-term-pricing';
@@ -15,7 +16,7 @@ import './term-pricing-toggle.scss';
  * on the control changes when it is selected. The page's switch is Refer
  * products, a mode; the billing term is a choice between two options.
  */
-export default function TermPricingToggle() {
+export default function TermPricingToggle( { short = false }: { short?: boolean } ) {
 	const { recordTracksEvent } = useAnalytics();
 	const { marketplaceType } = useMarketplaceType();
 	const { termPricing, setTermPricing } = useTermPricing();
@@ -30,7 +31,7 @@ export default function TermPricingToggle() {
 	};
 
 	return (
-		<div className="dashboard-marketplace-term-pricing">
+		<div className={ clsx( 'dashboard-marketplace-term-pricing', { 'is-short': short } ) }>
 			<ToggleGroupControl
 				__nextHasNoMarginBottom
 				__next40pxDefaultSize={ false }
@@ -40,8 +41,14 @@ export default function TermPricingToggle() {
 				value={ termPricing }
 				onChange={ handleChange }
 			>
-				<ToggleGroupControlOption value="monthly" label={ __( 'Billed monthly' ) } />
-				<ToggleGroupControlOption value="yearly" label={ __( 'Billed yearly' ) } />
+				<ToggleGroupControlOption
+					value="monthly"
+					label={ short ? __( 'Monthly' ) : __( 'Billed monthly' ) }
+				/>
+				<ToggleGroupControlOption
+					value="yearly"
+					label={ short ? __( 'Yearly' ) : __( 'Billed yearly' ) }
+				/>
 			</ToggleGroupControl>
 		</div>
 	);

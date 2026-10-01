@@ -5,6 +5,7 @@ import {
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
+import { useViewportMatch } from '@wordpress/compose';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -101,6 +102,7 @@ const PRODUCT_GRID_COLUMNS = 'repeat( auto-fill, minmax( 300px, 1fr ) )';
 // - Pressable PHP memory add-ons targeting a specific site
 export default function MarketplaceProducts() {
 	const { recordTracksEvent } = useAnalytics();
+	const isSmallScreen = useViewportMatch( 'small', '<' );
 	const { marketplaceType, updateMarketplaceType } = useMarketplaceType();
 	const { termPricing } = useTermPricing();
 	const isReferralMode = marketplaceType === 'referral';
@@ -395,18 +397,27 @@ export default function MarketplaceProducts() {
 						'Buy extensions, plans, and add-ons directly, or refer them to clients and earn commission.'
 					) }
 					actions={
-						<HStack spacing={ 4 } expanded={ false }>
-							<TermPricingToggle />
-							<ReferralToggle />
-							<CartMenu
-								items={ cartItems }
-								products={ allProducts ?? [] }
-								term={ termPricing }
-								isReferralMode={ isReferralMode }
-								isAgencyApproved={ isAgencyApproved( agency ) }
-								onRemove={ removeItem }
-								onCheckout={ clearCart }
-							/>
+						<HStack
+							spacing={ 4 }
+							expanded={ false }
+							wrap
+							className="dashboard-marketplace-products__header-actions"
+						>
+							{ /* Below 600px the billing term drops "Billed" so the row still fits. */ }
+							<TermPricingToggle short={ isSmallScreen } />
+							{ /* Refer and the cart wrap together, so the cart never sits alone. */ }
+							<HStack spacing={ 4 } expanded={ false }>
+								<ReferralToggle />
+								<CartMenu
+									items={ cartItems }
+									products={ allProducts ?? [] }
+									term={ termPricing }
+									isReferralMode={ isReferralMode }
+									isAgencyApproved={ isAgencyApproved( agency ) }
+									onRemove={ removeItem }
+									onCheckout={ clearCart }
+								/>
+							</HStack>
 						</HStack>
 					}
 				/>

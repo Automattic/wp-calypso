@@ -4,3 +4,8 @@
 	flex: none;
 	inline-size: 280px;
 }
+
+// Monthly / Yearly: the same control at the width its shorter names need.
+.dashboard-marketplace-term-pricing.is-short {
+	inline-size: 180px;
+}
