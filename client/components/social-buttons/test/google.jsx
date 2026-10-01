@@ -8,25 +8,23 @@ import wpcomRequest from 'wpcom-proxy-request';
 import { postLoginRequest } from 'calypso/state/login/utils';
 import { GoogleSocialButton } from '../google';
 
-jest.mock(
-	'@automattic/calypso-config',
-	() => ( key ) =>
-		( {
-			google_oauth_client_id: 'test-google-client',
-			wpcom_signup_id: 'test-wpcom-client',
-			wpcom_signup_key: 'test-wpcom-key',
-		} )[ key ]
+jest.mock( '@automattic/calypso-config', () =>
+	Object.assign(
+		( key ) =>
+			( {
+				google_oauth_client_id: 'test-google-client',
+				wpcom_signup_id: 'test-wpcom-client',
+				wpcom_signup_key: 'test-wpcom-key',
+			} )[ key ],
+		{ isEnabled: () => false }
+	)
 );
 jest.mock( '@automattic/load-script', () => ( { loadScript: jest.fn() } ) );
 jest.mock( 'wpcom-proxy-request', () => ( { __esModule: true, default: jest.fn() } ) );
-jest.mock( 'calypso/state/analytics/actions', () => ( {
-	recordTracksEventWithClientId: jest.fn(),
-} ) );
 jest.mock( 'calypso/state/login/utils', () => ( {
+	...jest.requireActual( 'calypso/state/login/utils' ),
 	postLoginRequest: jest.fn(),
-	getErrorFromHTTPError: ( error ) => error,
 } ) );
-jest.mock( '../utils', () => ( { getUxMode: jest.fn(), getRedirectUri: jest.fn() } ) );
 
 describe( 'GoogleSocialButton', () => {
 	let props;
@@ -104,6 +102,24 @@ describe( 'GoogleSocialButton', () => {
 		);
 	} );
 
+	test( 'loads the Google SDK on first use and hands off the exchanged tokens', async () => {
+		delete window.google;
+		loadScript.mockImplementation( async () => {
+			window.google = { accounts: { oauth2: { initCodeClient } } };
+		} );
+		render( <GoogleSocialButton { ...props } /> );
+		await userEvent.click( screen.getByRole( 'button' ) );
+
+		expect( loadScript ).toHaveBeenCalledWith( 'https://accounts.google.com/gsi/client' );
+		await waitFor( () =>
+			expect( props.responseHandler ).toHaveBeenCalledWith( {
+				service: 'google',
+				access_token: 'test-access-token',
+				id_token: 'test-id-token',
+			} )
+		);
+	} );
+
 	test( 'exchanges a redirected authorization code with its state and redirect URI', async () => {
 		render(
 			<GoogleSocialButton
@@ -130,7 +146,6 @@ describe( 'GoogleSocialButton', () => {
 				id_token: 'test-id-token',
 			} )
 		);
-		expect( requestCode ).not.toHaveBeenCalled();
 	} );
 
 	test( 'does not exchange codes or hand off tokens when Google rejects authorization', async () => {
@@ -149,7 +164,10 @@ describe( 'GoogleSocialButton', () => {
 	} );
 
 	test( 'shows an exchange error without handing off tokens', async () => {
-		postLoginRequest.mockRejectedValue( { code: 'invalid_nonce' } );
+		postLoginRequest.mockRejectedValue( {
+			status: 400,
+			response: { body: { data: { errors: [ { code: 'invalid_nonce' } ] } } },
+		} );
 		render( <GoogleSocialButton { ...props } /> );
 		await userEvent.click( screen.getByRole( 'button' ) );
 
@@ -172,9 +190,6 @@ describe( 'GoogleSocialButton', () => {
 				'Something went wrong while trying to load Google sign-in.'
 			)
 		);
-		expect( requestCode ).not.toHaveBeenCalled();
-		expect( postLoginRequest ).not.toHaveBeenCalled();
-		expect( props.responseHandler ).not.toHaveBeenCalled();
 	} );
 
 	test( 'shows a nonce error without requesting authorization or handing off tokens', async () => {

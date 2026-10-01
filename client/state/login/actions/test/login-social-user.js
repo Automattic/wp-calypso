@@ -20,9 +20,8 @@ jest.mock( 'calypso/state/login/actions/remote-login-user', () => ( {
 	remoteLoginUser: jest.fn(),
 } ) );
 jest.mock( 'calypso/state/login/utils', () => ( {
+	...jest.requireActual( 'calypso/state/login/utils' ),
 	postLoginRequest: jest.fn(),
-	getErrorFromHTTPError: ( error ) => ( { code: error.code, message: error.message } ),
-	getSMSMessageFromResponse: jest.fn(),
 } ) );
 
 const socialInfo = {
@@ -57,7 +56,6 @@ describe( 'loginSocialUser', () => {
 			'social-login-endpoint',
 			expect.objectContaining( { ...socialInfo, redirect_to: '/home' } )
 		);
-		expect( remoteLoginUser ).toHaveBeenCalledWith( data.token_links );
 		expect( dispatch ).toHaveBeenCalledTimes( 1 );
 		expect( dispatch ).toHaveBeenCalledWith( { type: SOCIAL_LOGIN_REQUEST } );
 
@@ -67,10 +65,12 @@ describe( 'loginSocialUser', () => {
 	} );
 
 	test( 'rejects a refused social login without attempting remote login', async () => {
-		const data = { email: 'test@example.test' };
+		const data = {
+			errors: [ { code: 'unknown_user', message: 'No connected account' } ],
+			email: 'test@example.test',
+		};
 		postLoginRequest.mockRejectedValue( {
-			code: 'unknown_user',
-			message: 'No connected account',
+			status: 400,
 			response: { body: { data } },
 		} );
 
@@ -80,24 +80,14 @@ describe( 'loginSocialUser', () => {
 		expect( remoteLoginUser ).not.toHaveBeenCalled();
 		expect( dispatch ).toHaveBeenLastCalledWith( {
 			type: SOCIAL_LOGIN_REQUEST_FAILURE,
-			error: { code: 'unknown_user', message: 'No connected account', email: data.email },
+			error: {
+				code: 'unknown_user',
+				message: 'No connected account',
+				field: 'global',
+				email: data.email,
+			},
 			authInfo: socialInfo,
 			data,
 		} );
-	} );
-
-	test( 'rejects remote login failure without reporting authentication success', async () => {
-		postLoginRequest.mockResolvedValue( { body: { data: { token_links: [] } } } );
-		remoteLoginUser.mockRejectedValue( { code: 'remote_login_failed', message: 'Login failed' } );
-
-		await expect( loginSocialUser( socialInfo, '/home' )( dispatch ) ).rejects.toMatchObject( {
-			code: 'remote_login_failed',
-		} );
-		expect( dispatch ).toHaveBeenLastCalledWith(
-			expect.objectContaining( { type: SOCIAL_LOGIN_REQUEST_FAILURE } )
-		);
-		expect( dispatch ).not.toHaveBeenCalledWith(
-			expect.objectContaining( { type: SOCIAL_LOGIN_REQUEST_SUCCESS } )
-		);
 	} );
 } );

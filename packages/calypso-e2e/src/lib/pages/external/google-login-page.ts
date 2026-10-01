@@ -82,10 +82,13 @@ export class GoogleLoginPage {
 		} catch ( error ) {
 			const challengeVisible = await this.page
 				.getByText( /Confirm you[’']re not a robot/ )
+				.first()
 				.isVisible()
 				.catch( () => false );
 			if ( challengeVisible ) {
-				throw new Error( 'Google human verification required before password entry.' );
+				throw new Error( 'Google human verification required before password entry.', {
+					cause: error,
+				} );
 			}
 			throw error;
 		}
