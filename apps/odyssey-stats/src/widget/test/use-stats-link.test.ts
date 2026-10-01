@@ -68,7 +68,7 @@ describe( 'useStatsLink', () => {
 		( optionalConfig as jest.Mock ).mockReturnValue( 'America/New_York' );
 
 		const url = new URL(
-			statsLink( STATS_URL, '/reports/posts', {
+			statsLink( STATS_URL, '/', {
 				from: '2026-03-03',
 				to: '2026-03-09',
 				gmtOffset: -4,
@@ -76,7 +76,7 @@ describe( 'useStatsLink', () => {
 		);
 
 		expect( url.searchParams.get( 'p' ) ).toBe(
-			'/reports/posts?from=2026-03-03T00%3A00%3A00.000-05%3A00&to=2026-03-09T23%3A59%3A59.999-04%3A00'
+			'/?from=2026-03-03T00%3A00%3A00.000-05%3A00&to=2026-03-09T23%3A59%3A59.999-04%3A00'
 		);
 	} );
 } );
