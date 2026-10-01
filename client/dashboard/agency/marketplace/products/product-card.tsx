@@ -109,7 +109,7 @@ export default function ProductCard( {
 								{ memoryTarget
 									? sprintf(
 											/* translators: %(siteDomain)s is the Pressable site the add-on applies to. */
-											__( 'Applies to %(siteDomain)s' ),
+											__( 'Applies to %(siteDomain)s.' ),
 											{ siteDomain: memoryTarget }
 										)
 									: __( 'Applies to one Pressable site/domain.' ) }
