@@ -6,6 +6,7 @@ import EmptyContent from 'calypso/components/empty-content';
 import Main from 'calypso/components/main';
 import { GlobalFooter } from 'calypso/layout/global-footer';
 import { Nav2026UniversalHeader } from 'calypso/layout/nav-2026-universal-header';
+import { WeeklyReportUnsubscribe } from 'calypso/performance-profiler/pages/weekly-report/unsubscribe';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { TabTypes } from './components/header';
 import { PerformanceProfilerDashboardWrapper } from './pages/dashboard';
@@ -59,6 +60,26 @@ export function PerformanceProfilerDashboardContext( context: Context, next: () 
 				hash={ context.query?.hash ?? '' }
 				filter={ context.query?.filter }
 			/>
+		</PerformanceProfilerWrapper>
+	);
+
+	next();
+}
+
+export function WeeklyReportUnsubscribeContext( context: Context, next: () => void ): void {
+	const isLoggedIn = isUserLoggedIn( context.store.getState() );
+	const footerColorway = getFooterColorway(
+		isEnabled( 'footer-redesign/2026' ),
+		isEnabled( 'footer/dark' )
+	);
+
+	const url = context.query?.url?.startsWith( 'http' )
+		? context.query.url
+		: `https://${ context.query?.url ?? '' }`;
+
+	context.primary = (
+		<PerformanceProfilerWrapper isLoggedIn={ isLoggedIn } footerColorway={ footerColorway }>
+			<WeeklyReportUnsubscribe url={ url } hash={ context.query?.hash ?? '' } />
 		</PerformanceProfilerWrapper>
 	);
 
