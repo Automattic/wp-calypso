@@ -57,7 +57,7 @@ export const useActions = ( {
 } ) => {
 	const router = useRouter();
 	const { recordTracksEvent } = useAnalytics();
-	const { createSuccessNotice } = useDispatch( noticesStore );
+	const { createSuccessNotice, createInfoNotice, removeNotice } = useDispatch( noticesStore );
 	const { data: purchases } = useQuery( userPurchasesQuery() );
 
 	const { mutate: setPrimaryDomain, isPending: isSettingPrimaryDomain } = useMutation(
@@ -337,9 +337,20 @@ export const useActions = ( {
 						domain: domain.domain,
 					} );
 
+					const processingNoticeId = `unset-www-primary-${ domain.domain }`;
+
+					createInfoNotice( __( 'Updating primary site address…' ), {
+						id: processingNoticeId,
+						type: 'snackbar',
+						isDismissible: false,
+					} );
+
 					setWwwPrimaryDomain(
 						{ siteId: domain.blog_id, domain: domain.domain, enabled: false },
 						{
+							onSettled: () => {
+								removeNotice( processingNoticeId );
+							},
 							onSuccess: () => {
 								createSuccessNotice(
 									sprintf(
@@ -511,6 +522,8 @@ export const useActions = ( {
 			setWwwPrimaryDomain,
 			isSettingWwwPrimaryDomain,
 			createSuccessNotice,
+			createInfoNotice,
+			removeNotice,
 			sitesByBlogId,
 			sslActiveByDomain,
 			canToggleWwwPrimary,
