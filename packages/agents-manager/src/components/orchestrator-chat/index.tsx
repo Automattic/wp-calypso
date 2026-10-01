@@ -1459,23 +1459,30 @@ export default function OrchestratorChat( {
 	);
 
 	// Answers the browser tool calls a turn paused on before a page change, so the
-	// reply streams in here; resolves to whether one did.
+	// reply streams in here; resolves to whether one did. The send rewrites
+	// history (drops stale results), so a reply is a message it did not have.
+	const [ isResuming, setIsResuming ] = useState( false );
 	const resumeToolCalls = useCallback(
 		async ( toolResults: ToolResultInput[], turnToolCalls: TurnToolCall[] ) => {
 			const agentManager = getAgentManager();
 			const agentKey = agentConfig!.agentId;
-			const sentAt = agentManager.getConversationHistory( agentKey ).length;
+			const before = new Set(
+				agentManager.getConversationHistory( agentKey ).map( ( { messageId } ) => messageId )
+			);
+			setIsResuming( true );
 			try {
 				await onSubmit( '', { type: 'tool_results', toolResults, turnToolCalls } );
 			} catch {
 				// Another page answered the calls first, or the send failed: no reply here.
 				return false;
+			} finally {
+				setIsResuming( false );
 			}
 			return agentManager
 				.getConversationHistory( agentKey )
-				.slice( sentAt )
 				.some(
 					( message ) =>
+						! before.has( message.messageId ) &&
 						message.role === 'agent' &&
 						message.parts.some( ( part ) => part.type === 'text' && part.text.trim() )
 				);
@@ -1485,11 +1492,11 @@ export default function OrchestratorChat( {
 
 	// A question asked before a page change whose reply has not landed yet
 	// (WOOAI-872), or whose turn paused on a browser tool (WOOAI-1174). Off once
-	// the merchant sends or a turn runs, so its one rehydration can never replace
-	// a live stream.
+	// the merchant sends or a turn runs (other than its own resume), so its one
+	// rehydration can never replace a live stream.
 	const { notice: replyNotice } = useReplyRecovery( {
 		hydratedMessages: hydratedConversation?.messages,
-		enabled: ! isReaderChat && ! hasUserSentMessage && ! isProcessing,
+		enabled: ! isReaderChat && ! hasUserSentMessage && ( ! isProcessing || isResuming ),
 		sendRetry,
 		resumeToolCalls,
 	} );

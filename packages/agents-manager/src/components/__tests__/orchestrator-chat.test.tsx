@@ -305,8 +305,11 @@ const mockAgentChat = jest.fn(
 	)
 );
 
-let mockConversationHistory: Array< { role: string; parts: Array< Record< string, unknown > > } > =
-	[];
+let mockConversationHistory: Array< {
+	role: string;
+	messageId?: string;
+	parts: Array< Record< string, unknown > >;
+} > = [];
 jest.mock(
 	'@automattic/agenttic-client',
 	() => ( {
@@ -4230,10 +4233,20 @@ describe( 'OrchestratorChat', () => {
 		} );
 
 		it( 'resumes a turn paused on browser tools through the chat send and reports the reply', async () => {
+			// The old page's stored result, which the send drops before adding the reply:
+			// the history ends no longer than it started.
+			mockConversationHistory = [
+				{ role: 'user', messageId: 'm-question', parts: [ { type: 'text', text: 'Top 5?' } ] },
+				{ role: 'agent', messageId: 'm-result', parts: [ { type: 'data', data: {} } ] },
+			];
 			const onSubmit = jest.fn( async () => {
 				mockConversationHistory = [
-					...mockConversationHistory,
-					{ role: 'agent', parts: [ { type: 'text', text: 'Here are your top products.' } ] },
+					mockConversationHistory[ 0 ],
+					{
+						role: 'agent',
+						messageId: 'm-reply',
+						parts: [ { type: 'text', text: 'Here are your top products.' } ],
+					},
 				];
 			} );
 			mockUseAgentChat.mockReturnValue( agentChatReturn( { onSubmit } ) );

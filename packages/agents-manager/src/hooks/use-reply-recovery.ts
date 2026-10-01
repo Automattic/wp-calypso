@@ -47,8 +47,9 @@ const PROBE_INTERVAL_MS = 3000;
 // Both server paths persist a question before the model runs, so one missing
 // this long after the page change never arrived.
 export const LOST_AFTER_MS = 20_000;
-// A turn paused on a browser-run tool stays paused once that page is gone, so
-// waiting longer only delays the Retry.
+// A paused turn this page could not resume (another page claimed it, or the
+// resume failed) and that still has no reply is not coming back; waiting longer
+// only delays the Retry.
 export const UNANSWERED_AFTER_MS = 60_000;
 // The page that ran a browser tool often still sends its result while the new
 // page loads; wait this long after this page first sees the pending call.
@@ -245,7 +246,13 @@ export default function useReplyRecovery( {
 			}
 			// No reply: another page answered the calls first, or the send failed.
 			// Keep waiting for that page's reply; the deadlines still end in Retry.
-			setPhase( replied ? 'idle' : 'waiting' );
+			// Unless recovery was turned off meanwhile (the merchant sent).
+			setPhase( ( current ) => {
+				if ( current !== 'resuming' ) {
+					return current;
+				}
+				return replied ? 'idle' : 'waiting';
+			} );
 		};
 
 		( async () => {

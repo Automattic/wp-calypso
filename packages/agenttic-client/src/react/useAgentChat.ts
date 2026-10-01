@@ -914,7 +914,7 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 				}
 
 				const errorMessage = error instanceof Error ? error.message : 'Failed to send message';
-				const errorCode = ( error as { code?: string } ).code ?? null;
+				const errorCode = ( error as { code?: string } | null )?.code ?? null;
 				const restored = await restoreMessagesOnError( errorMessage, errorCode );
 				if ( ! restored ) {
 					setState( ( prev ) => ( {

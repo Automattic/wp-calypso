@@ -382,19 +382,14 @@ describe( 'useReplyRecovery', () => {
 	} );
 	describe( 'a turn paused on a browser tool', () => {
 		// MySQL datetime in UTC, as the server stores it.
-		const storedSecondsAgo = ( seconds: number ) =>
-			new Date( Date.now() - seconds * 1000 ).toISOString().slice( 0, 19 ).replace( 'T', ' ' );
-		const pendingTools = (
-			state: PendingClientTools[ 'state' ],
-			secondsAgo = 30
-		): PendingClientTools => ( {
+		const pendingTools = ( state: PendingClientTools[ 'state' ] ): PendingClientTools => ( {
 			state,
 			calls: [
 				{
 					toolCallId: 'call-top',
 					toolId: 'woocommerce__get_top_products',
 					arguments: { limit: 5 },
-					createdAt: storedSecondsAgo( secondsAgo ),
+					createdAt: '2026-10-01 10:00:00',
 				},
 			],
 		} );
@@ -445,6 +440,22 @@ describe( 'useReplyRecovery', () => {
 			expect( result.current.notice ).toBeUndefined();
 		} );
 
+		it( 'stays off when the merchant sends while the resume runs', async () => {
+			const { result, rerender, resumeToolCalls, probeResult } = await setup( {
+				stored: [ pendingQuestion ],
+				hydrated: [ previousAnswer, questionOnServer ],
+			} );
+			let finishResume: ( replied: boolean ) => void = () => {};
+			resumeToolCalls.mockReturnValue( new Promise( ( resolve ) => ( finishResume = resolve ) ) );
+			await seenLongEnough( probeResult );
+
+			rerender( { enabled: false } );
+			await act( async () => finishResume( false ) );
+
+			expect( result.current.notice ).toBeUndefined();
+			expect( mockQueryOptions.enabled ).toBe( false );
+		} );
+
 		it( 'sends the result the old page stored instead of an interrupted one', async () => {
 			const storedResult = {
 				role: 'agent',
@@ -478,13 +489,13 @@ describe( 'useReplyRecovery', () => {
 				hydrated: [ previousAnswer, questionOnServer ],
 			} );
 
-			await probeResult( [ previousAnswer, questionOnServer ], pendingTools( 'unanswered', 2 ) );
+			await probeResult( [ previousAnswer, questionOnServer ], pendingTools( 'unanswered' ) );
 			expect( resumeToolCalls ).not.toHaveBeenCalled();
 
 			await act( async () => {
 				jest.advanceTimersByTime( RESUME_AFTER_MS );
 			} );
-			await probeResult( [ previousAnswer, questionOnServer ], pendingTools( 'unanswered', 12 ) );
+			await probeResult( [ previousAnswer, questionOnServer ], pendingTools( 'unanswered' ) );
 			expect( resumeToolCalls ).toHaveBeenCalledTimes( 1 );
 		} );
 
