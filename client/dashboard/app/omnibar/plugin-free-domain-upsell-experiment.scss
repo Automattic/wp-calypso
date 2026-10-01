@@ -13,19 +13,23 @@
 	);
 	--free-domain-upsell-ring: color-mix(
 		in srgb,
-		color-mix( in srgb, var( --free-domain-upsell-color ) 75%, #fff ) 45%,
+		color-mix( in srgb, var( --free-domain-upsell-color ) 75%, var( --omnibar-text-color ) ) 45%,
 		transparent
 	);
 	--free-domain-upsell-ring-hover: color-mix(
 		in srgb,
-		color-mix( in srgb, var( --free-domain-upsell-color ) 60%, #fff ) 80%,
+		color-mix( in srgb, var( --free-domain-upsell-color ) 60%, var( --omnibar-text-color ) ) 80%,
 		transparent
 	);
-	--free-domain-upsell-icon: color-mix( in srgb, var( --free-domain-upsell-color ) 55%, #fff );
+	--free-domain-upsell-icon: color-mix(
+		in srgb,
+		var( --free-domain-upsell-color ) 55%,
+		var( --omnibar-text-color )
+	);
 	--free-domain-upsell-icon-hover: color-mix(
 		in srgb,
 		var( --free-domain-upsell-color ) 35%,
-		#fff
+		var( --omnibar-text-color )
 	);
 
 	padding-inline: 8px;
