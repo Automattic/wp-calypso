@@ -48,15 +48,22 @@ const MiniChart: FunctionComponent< MiniChartProps > = ( {
 	};
 	const charts = [ chartViews, chartVisitors ];
 
-	const queryDate = moment()
-		.utcOffset( Number.isFinite( gmtOffset ) ? gmtOffset : 0 )
-		.format( 'YYYY-MM-DD' );
+	const siteOffset = Number.isFinite( gmtOffset ) ? gmtOffset : 0;
+	const momentInSite = ( input?: moment.MomentInput ) =>
+		input === undefined
+			? moment().utcOffset( siteOffset )
+			: moment.utc( input ).utcOffset( siteOffset, true );
+	const queryDate = momentInSite().format( 'YYYY-MM-DD' );
 	const [ period, setPeriod ] = useState< Unit >( 'day' );
 
 	const { isLoading, data } = useVisitsQuery( siteId, period, quantity, queryDate );
 
 	const barClick = ( bar: { data: BarData } ) => {
-		const { chartStart, chartEnd, chartPeriod } = getChartRangeParams( bar.data.period, period );
+		const { chartStart, chartEnd, chartPeriod } = getChartRangeParams(
+			bar.data.period,
+			period,
+			momentInSite
+		);
 
 		window.location.href = statsLink(
 			`${ statsBaseUrl }/stats/${ chartPeriod }/${ siteId }?chartStart=${ chartStart }&chartEnd=${ chartEnd }`,
