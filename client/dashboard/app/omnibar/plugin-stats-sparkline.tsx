@@ -4,13 +4,13 @@ import { useQuery } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
 import { StatsSparkline } from '../../components/stats-sparkline';
 import { hasJetpackModule } from '../../utils/site-features';
-import { useStatsAdminUrl } from '../hooks/use-stats-admin-url';
 import type { Site } from '@automattic/api-core';
 import type { OmnibarNode } from '@automattic/omnibar';
 
 import './plugin-stats-sparkline.scss';
 
 export function useStatsSparklinePlugin( { site }: { site?: Site } ): OmnibarNode | undefined {
+	const adminUrl = site?.options?.admin_url;
 	// The sparkline links to admin.php?page=stats, which isn't registered for a user without
 	// view_stats, nor on a Jetpack site with the Stats module switched off.
 	const canViewStats =
@@ -22,9 +22,7 @@ export function useStatsSparklinePlugin( { site }: { site?: Site } ): OmnibarNod
 		enabled: canViewStats,
 	} );
 
-	const statsUrl = useStatsAdminUrl( canViewStats ? site : undefined );
-
-	if ( ! statsUrl || ! canViewStats || ! hourlyViews || hourlyViews.length === 0 ) {
+	if ( ! adminUrl || ! canViewStats || ! hourlyViews || hourlyViews.length === 0 ) {
 		return undefined;
 	}
 
@@ -32,7 +30,7 @@ export function useStatsSparklinePlugin( { site }: { site?: Site } ): OmnibarNod
 
 	return {
 		id: 'stats',
-		href: statsUrl,
+		href: `${ adminUrl }admin.php?page=stats`,
 		label,
 		className: 'omnibar__stats-sparkline',
 		render: () => (
