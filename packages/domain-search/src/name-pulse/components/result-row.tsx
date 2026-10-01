@@ -6,8 +6,8 @@ import { cautionFilled, cart as cartIcon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { Badge } from '@wordpress/ui';
 import clsx from 'clsx';
-import { useEffect, useMemo, type ReactNode } from 'react';
-import { PolicyNoticeBadge } from '../../components/policy-notice-badge';
+import { useEffect, useMemo } from 'react';
+import { usePolicyNoticeBadges } from '../../hooks/use-policy-badges';
 import { useDomainSearch } from '../../page/context';
 import { DomainSearchTrademarkClaimsModal } from '../../ui';
 import {
@@ -125,18 +125,25 @@ export const NamePulseResultRow = ( { result, position }: NamePulseResultRowProp
 	// A failed check leaves the row on its badge alone: no price, and no skeleton
 	// waiting for one that is not coming.
 	const isPremiumPriceMissing = needsPremiumPrice && ! realtimeVerdict;
-	const policyNotices = isAvailable ? ( row.policy_notices ?? [] ) : [];
+	const policyBadges = usePolicyNoticeBadges( row.policy_notices );
 	// A second badge would leave the name only a few characters, so the row
-	// shows the one that matters most. A sale on a premium name already shows
-	// in the first-year price.
-	let badge: ReactNode = null;
-	if ( policyNotices.length > 0 ) {
-		badge = <PolicyNoticeBadge notice={ policyNotices[ 0 ] } />;
-	} else if ( isAvailable && isPremium ) {
-		badge = <Badge intent="informational">{ __( 'Premium' ) }</Badge>;
-	} else if ( isAvailable && getNamePulseSalePrice( row ) ) {
-		badge = <Badge intent="medium">{ __( 'Sale' ) }</Badge>;
-	}
+	// shows the first one. A sale on a premium name already shows in the
+	// first-year price.
+	const [ badge ] = isAvailable
+		? [
+				...policyBadges,
+				isPremium && (
+					<Badge key="premium" intent="informational">
+						{ __( 'Premium' ) }
+					</Badge>
+				),
+				getNamePulseSalePrice( row ) && (
+					<Badge key="sale" intent="medium">
+						{ __( 'Sale' ) }
+					</Badge>
+				),
+			].filter( Boolean )
+		: [];
 	const labelTruncateLimit = badge ? 12 : 20;
 	const suffixText = (
 		<Text as="span" weight={ 600 } variant={ isUnavailable ? 'muted' : undefined }>
