@@ -120,7 +120,6 @@ export default function FeaturedShowcase( {
 					variant="secondary"
 					size="compact"
 					icon={ inCart ? check : undefined }
-					aria-pressed={ inCart }
 					onClick={ () => onToggleCart( product ) }
 				>
 					{ getCartActionLabel( isReferralMode, inCart ) }
