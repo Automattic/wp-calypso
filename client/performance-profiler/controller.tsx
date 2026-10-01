@@ -73,13 +73,9 @@ export function WeeklyReportUnsubscribeContext( context: Context, next: () => vo
 		isEnabled( 'footer/dark' )
 	);
 
-	const url = context.query?.url?.startsWith( 'http' )
-		? context.query.url
-		: `https://${ context.query?.url ?? '' }`;
-
 	context.primary = (
 		<PerformanceProfilerWrapper isLoggedIn={ isLoggedIn } footerColorway={ footerColorway }>
-			<WeeklyReportUnsubscribe url={ url } hash={ context.query?.hash ?? '' } />
+			<WeeklyReportUnsubscribe />
 		</PerformanceProfilerWrapper>
 	);
 
