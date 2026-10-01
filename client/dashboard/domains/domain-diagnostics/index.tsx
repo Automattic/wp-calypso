@@ -22,6 +22,8 @@ import { Text } from '../../components/text';
 
 import './style.scss';
 
+const RECORDS_TO_CHECK = [ 'spf', 'dkim1', 'dkim2', 'dmarc' ];
+
 export default function DomainDiagnostics() {
 	const { domainName } = domainRoute.useParams();
 	const navigate = useNavigate();
@@ -44,7 +46,7 @@ export default function DomainDiagnostics() {
 
 	const emailDnsDiagnostics = domainDiagnostics?.email_dns_records;
 
-	const hasNoIssues =
+	const hasNoReportableIssues =
 		! emailDnsDiagnostics ||
 		emailDnsDiagnostics.code === 'domain_not_mapped_to_atomic_site' ||
 		emailDnsDiagnostics.all_essential_email_dns_records_are_correct;
@@ -96,7 +98,7 @@ export default function DomainDiagnostics() {
 	};
 
 	const renderNotices = () => {
-		if ( hasNoIssues ) {
+		if ( hasNoReportableIssues ) {
 			return (
 				<Notice
 					variant="success"
@@ -122,18 +124,17 @@ export default function DomainDiagnostics() {
 	};
 
 	const renderDiagnostics = () => {
-		if ( hasNoIssues ) {
+		if ( hasNoReportableIssues ) {
 			return null;
 		}
-
-		const recordsToCheck = [ 'spf', 'dkim1', 'dkim2', 'dmarc' ];
 
 		return (
 			<Card className="domain-diagnostics-card">
 				<CardBody>
 					<VStack spacing={ 6 }>
-						<VStack as="ul" role="list" spacing={ 2 }>
-							{ recordsToCheck.map( renderDiagnosticForRecord ) }
+						{ /* Safari drops list semantics from a <ul> whose list-style is none. */ }
+						<VStack as="ul" role="list" className="domain-diagnostics__records" spacing={ 2 }>
+							{ RECORDS_TO_CHECK.map( renderDiagnosticForRecord ) }
 						</VStack>
 
 						{ ! emailDnsDiagnostics.is_using_wpcom_name_servers && (
