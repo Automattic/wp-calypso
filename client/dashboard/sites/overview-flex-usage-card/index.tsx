@@ -1,10 +1,11 @@
 import { __experimentalVStack as VStack } from '@wordpress/components';
 import { __, _n, sprintf } from '@wordpress/i18n';
-import filesize from 'filesize';
 import { useAnalytics } from '../../app/analytics';
+import { useIntlLocale } from '../../app/locale';
 import { Card, CardBody, CardHeader } from '../../components/card';
 import { SectionHeader } from '../../components/section-header';
 import { Stat } from '../../components/stat';
+import { formatStorage } from '../../utils/site-storage';
 import { useFlexUsage } from './use-flex-usage';
 import type { Site } from '@automattic/api-core';
 
@@ -12,30 +13,14 @@ type Props = {
 	site: Site;
 };
 
-function formatBytes( bytes: number ) {
-	return filesize( bytes, { round: 1 } );
-}
-
 function formatHours( hours: number ) {
 	const rounded = Math.round( hours * 10 ) / 10;
 	// translators: %s is the number of hours of compute used
 	return sprintf( _n( '%s hr', '%s hrs', rounded === 1 ? 1 : 2 ), String( rounded ) );
 }
 
-const symbolsBytesPerMonth = {
-	B: 'B-month',
-	KB: 'KB-month',
-	MB: 'MB-month',
-	GB: 'GB-month',
-	TB: 'TB-month',
-	PB: 'PB-month',
-	EB: 'EB-month',
-	ZB: 'ZB-month',
-	YB: 'YB-month',
-};
-
-function formatBytesPerMonth( bytes: number ) {
-	return filesize( bytes, { round: 1, symbols: symbolsBytesPerMonth } );
+function formatBytesPerMonth( bytes: number, locale: string ) {
+	return `${ formatStorage( bytes, locale ) }-month`;
 }
 
 export default function OverviewFlexUsageCard( { site }: Props ) {
@@ -70,14 +55,15 @@ export default function OverviewFlexUsageCard( { site }: Props ) {
 const MINIMUM_DISPLAYED_USAGE = 2.5;
 
 function StorageStat( { usedBytes, capBytes }: { usedBytes: number; capBytes: number } ) {
+	const locale = useIntlLocale();
 	const usagePercent = Math.round( ( ( usedBytes / capBytes ) * 1000 ) / 10 );
 	const progressBarValue = Math.max( MINIMUM_DISPLAYED_USAGE, Math.min( usagePercent, 100 ) );
 	return (
 		<Stat
 			density="high"
 			strapline={ __( 'Storage' ) }
-			metric={ formatBytesPerMonth( usedBytes ) }
-			description={ formatBytesPerMonth( capBytes ) }
+			metric={ formatBytesPerMonth( usedBytes, locale ) }
+			description={ formatBytesPerMonth( capBytes, locale ) }
 			progressValue={ progressBarValue }
 			progressLabel={ `${ usagePercent }%` }
 		/>
@@ -85,14 +71,15 @@ function StorageStat( { usedBytes, capBytes }: { usedBytes: number; capBytes: nu
 }
 
 function BandwidthStat( { usedBytes, capBytes }: { usedBytes: number; capBytes: number } ) {
+	const locale = useIntlLocale();
 	const usagePercent = Math.round( ( ( usedBytes / capBytes ) * 1000 ) / 10 );
 	const progressBarValue = Math.max( MINIMUM_DISPLAYED_USAGE, Math.min( usagePercent, 100 ) );
 	return (
 		<Stat
 			density="high"
 			strapline={ __( 'Bandwidth' ) }
-			metric={ formatBytes( usedBytes ) }
-			description={ formatBytes( capBytes ) }
+			metric={ formatStorage( usedBytes, locale ) }
+			description={ formatStorage( capBytes, locale ) }
 			progressValue={ progressBarValue }
 			progressLabel={ `${ usagePercent }%` }
 		/>

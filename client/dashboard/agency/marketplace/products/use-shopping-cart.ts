@@ -1,4 +1,4 @@
-import { useCallback, useSyncExternalStore } from 'react';
+import { useCallback, useEffect, useState, useSyncExternalStore } from 'react';
 import { useMarketplaceType } from '../use-marketplace-type';
 import type { MarketplaceType } from '../use-marketplace-type';
 
@@ -16,6 +16,9 @@ const STORAGE_KEYS: Record< MarketplaceType, string > = {
 	referral: 'referrals-shopping-card-selected-items',
 };
 
+/** The most units of one product a cart line can hold. */
+export const MAX_CART_ITEM_QUANTITY = 100;
+
 const listeners = new Set< () => void >();
 const snapshots = new Map< MarketplaceType, ShoppingCartItem[] >();
 
@@ -28,7 +31,11 @@ export function parseCartEntries( entries: string ): ShoppingCartItem[] {
 		.split( ',' )
 		.map( ( entry ) => {
 			const [ slug, quantity ] = entry.split( ':' );
-			return { slug, quantity: parseInt( quantity, 10 ) || 1, raw: entry };
+			return {
+				slug,
+				quantity: Math.min( MAX_CART_ITEM_QUANTITY, parseInt( quantity, 10 ) || 1 ),
+				raw: entry,
+			};
 		} )
 		.filter( ( item ) => item.slug );
 }
@@ -57,6 +64,11 @@ function writeItems( marketplaceType: MarketplaceType, items: ShoppingCartItem[]
 	listeners.forEach( ( listener ) => listener() );
 }
 
+/** Empties the stored cart outside React, for the page a finished checkout returns to. */
+export function clearStoredCart( marketplaceType: MarketplaceType ) {
+	writeItems( marketplaceType, [] );
+}
+
 function subscribe( listener: () => void ) {
 	listeners.add( listener );
 	return () => {
@@ -64,8 +76,13 @@ function subscribe( listener: () => void ) {
 	};
 }
 
-export function useShoppingCart() {
-	const { marketplaceType } = useMarketplaceType();
+/**
+ * The cart of the current marketplace mode, or of `type` for a page that
+ * belongs to one mode whatever the toggle says.
+ */
+export function useShoppingCart( type?: MarketplaceType ) {
+	const { marketplaceType: currentType } = useMarketplaceType();
+	const marketplaceType = type ?? currentType;
 	const items = useSyncExternalStore( subscribe, () => getSnapshot( marketplaceType ) );
 
 	const hasItem = useCallback(
@@ -113,4 +130,19 @@ export function useShoppingCart() {
 	const clearCart = useCallback( () => writeItems( marketplaceType, [] ), [ marketplaceType ] );
 
 	return { items, hasItem, addItem, removeItem, replaceItems, swapItems, clearCart };
+}
+
+// Classic links open the cart with a `#cart` hash, e.g. from a "View cart" notice.
+const CART_HASH = '#cart';
+
+export function useCartOpen() {
+	const [ isCartOpen, setIsCartOpen ] = useState( () => window.location.hash === CART_HASH );
+
+	useEffect( () => {
+		if ( window.location.hash === CART_HASH ) {
+			window.history.replaceState( null, '', window.location.pathname + window.location.search );
+		}
+	}, [] );
+
+	return [ isCartOpen, setIsCartOpen ] as const;
 }

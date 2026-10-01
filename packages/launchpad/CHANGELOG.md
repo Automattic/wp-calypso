@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.3.1
+
+- Update `social-logos` to 3.4.0, which supports React 19 (#114732).
+
 ## 1.3.0
 
 - Own the Launchpad data-fetching hooks (`useLaunchpad`, `useSortedLaunchpadTasks`, `updateLaunchpadSettings`, `useLaunchpadDismisser`, and their helpers), moved here from `@automattic/data-stores` ([#114328](https://github.com/Automattic/wp-calypso/pull/114328)).

@@ -62,7 +62,9 @@ export const CategoriesSection: React.FC< Props > = ( {
 		if ( ! siteUrl ) {
 			return '#';
 		}
-		return `${ siteUrl }/wp-admin/admin.php?page=jetpack-newsletter`;
+		return `${ siteUrl }/wp-admin/admin.php?page=jetpack-newsletter&p=${ encodeURIComponent(
+			'/?tab=settings'
+		) }`;
 	};
 
 	return (

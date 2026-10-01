@@ -100,6 +100,7 @@ function setup( { canRevoke = true, isAgencyOwner = true } = {} ) {
 function setupWithCallbacks( { canRevoke = true, isAgencyOwner = true } = {} ) {
 	const onOpenHosting = jest.fn();
 	const onNavigate = jest.fn();
+	const onLicenseAssigned = jest.fn();
 	const actions = getLicenseActions( {
 		canRevoke,
 		isAgencyOwner,
@@ -108,6 +109,7 @@ function setupWithCallbacks( { canRevoke = true, isAgencyOwner = true } = {} ) {
 		onDownload: () => {},
 		onNavigate,
 		onOpenHosting,
+		onLicenseAssigned,
 		recordTracksEvent: () => {},
 	} );
 	const run = ( id: string, item: JetpackLicense ) => {
@@ -125,7 +127,7 @@ function setupWithCallbacks( { canRevoke = true, isAgencyOwner = true } = {} ) {
 		return action.isEligible( item );
 	};
 	const getAction = ( id: string ) => actions.find( ( a ) => a.id === id );
-	return { isEligible, run, onOpenHosting, onNavigate, getAction };
+	return { isEligible, run, onOpenHosting, onNavigate, onLicenseAssigned, getAction };
 }
 
 const SITE_ACTIONS = [
@@ -222,6 +224,14 @@ describe( 'getLicenseActions eligibility', () => {
 			isEligible( 'download-crm-extensions', license( { license_key: 'jetpack-crm_x' } ) )
 		).toBe( false );
 		expect( isEligible( 'download-crm-extensions', assignedJetpack ) ).toBe( false );
+	} );
+
+	it( 'CRM extensions download opens the CRM downloads page', () => {
+		const { run, onNavigate } = setupWithCallbacks();
+		run( 'download-crm-extensions', assignedCrm );
+		expect( onNavigate ).toHaveBeenCalledWith(
+			`/purchases/crm-downloads/${ assignedCrm.license_key }`
+		);
 	} );
 
 	it( 'offers assignment only for unassigned partner licenses', () => {

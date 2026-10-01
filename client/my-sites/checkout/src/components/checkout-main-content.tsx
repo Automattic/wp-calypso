@@ -94,11 +94,11 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice, removeNotice } from 'calypso/state/notices/actions';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import { getIsOnboardingAffiliateFlow } from 'calypso/state/signup/flow/selectors';
-import { getWpComDomainBySiteId } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { useUpdateCachedContactDetails } from '../hooks/use-cached-contact-details';
 import { useCheckoutHelpCenter } from '../hooks/use-checkout-help-center';
 import useCouponFieldState from '../hooks/use-coupon-field-state';
+import useSiteDomains from '../hooks/use-site-domains';
 import { validateContactDetails } from '../lib/contact-validation';
 import { updateCartContactDetailsForCheckout } from '../lib/update-cart-contact-details-for-checkout';
 import { CHECKOUT_STORE } from '../lib/wpcom-store';
@@ -109,7 +109,6 @@ import badge7Src from './assets/icons/badge-7.svg';
 import badgeGenericSrc from './assets/icons/badge-generic.svg';
 import badgeSecurity from './assets/icons/security.svg';
 import CheckoutNextSteps from './checkout-next-steps';
-import CheckoutProcessorNotice from './checkout-processor-notice';
 import { CheckoutSidebarPlanUpsell } from './checkout-sidebar-plan-upsell';
 import CheckoutTrustCards from './checkout-trust-cards';
 import { EmptyCart, shouldShowEmptyCartPage } from './empty-cart';
@@ -527,8 +526,8 @@ export default function CheckoutMainContent( {
 	const shouldHidePlansStep =
 		isOnboardingFlowCheckout && hasStepCount && stepsTotal < ONBOARDING_STEPPER_TOTAL;
 	const selectedSiteData = useSelector( getSelectedSite );
-	const wpcomDomain = useSelector( ( state ) =>
-		getWpComDomainBySiteId( state, selectedSiteData?.ID )
+	const wpcomDomain = useSiteDomains( selectedSiteData?.ID ).find(
+		( { isWPCOMDomain, isWpcomStagingDomain } ) => isWPCOMDomain || isWpcomStagingDomain
 	);
 
 	// Only show the site preview for WPCOM domains that have a site connected to the site id
@@ -1207,12 +1206,7 @@ export default function CheckoutMainContent( {
 					) }
 					{ checkoutSummary }
 					{ checkoutMainContent }
-					{ isLargeViewport && (
-						<>
-							<CheckoutProcessorNotice />
-							<CheckoutTrustCards cart={ responseCart } />
-						</>
-					) }
+					{ isLargeViewport && <CheckoutTrustCards cart={ responseCart } /> }
 				</WPCheckoutWrapper>
 			</SubmitButtonSlotContext.Provider>
 		);
@@ -1302,7 +1296,6 @@ export default function CheckoutMainContent( {
 								<>
 									<div className="checkout-main-column">
 										{ checkoutMainContent }
-										<CheckoutProcessorNotice />
 										<CheckoutTrustCards cart={ responseCart } />
 									</div>
 									{ checkoutSummary }
@@ -2428,6 +2421,11 @@ const CheckoutTermsAndCheckboxesWrapper = styled.div`
 		padding-inline-start: 40px;
 		padding-inline-end: 0;
 	}
+
+	/* On desktop without a consent checkbox the terms live in the sidebar and nothing renders here. */
+	&:empty {
+		display: none;
+	}
 `;
 
 function CheckoutTermsAndCheckboxes( {
@@ -2642,7 +2640,6 @@ const WPCheckoutWrapper = styled.div< {
 	grid-template-areas:
 		'sidebar-content'
 		'main-content'
-		'processor-notice'
 		'trust-cards';
 	align-content: start;
 	justify-content: center;
@@ -2653,7 +2650,6 @@ const WPCheckoutWrapper = styled.div< {
 		grid-template-columns: 1fr minmax( 500px, 688px ) 475px 1fr;
 		grid-template-areas:
 			'main-content main-content sidebar-content sidebar-content'
-			'. processor-notice sidebar-content sidebar-content'
 			'. trust-cards sidebar-content sidebar-content';
 		justify-items: end;
 	}
@@ -2665,11 +2661,6 @@ const WPCheckoutWrapper = styled.div< {
 
 	& > .checkout-trust-cards {
 		grid-area: trust-cards;
-		justify-self: center;
-	}
-
-	& > .checkout-processor-notice {
-		grid-area: processor-notice;
 		justify-self: center;
 	}
 
@@ -2730,7 +2721,6 @@ const WPCheckoutWrapper = styled.div< {
 				'checkout-title-area'
 				'sidebar-content'
 				'main-content'
-				'processor-notice'
 				'trust-cards';
 			.checkout-sidebar-content {
 				background: ${ colorStudio.colors[ 'White' ] };
