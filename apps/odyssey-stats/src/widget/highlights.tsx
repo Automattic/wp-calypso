@@ -172,20 +172,13 @@ export default function Highlights( { siteId, gmtOffset, statsBaseUrl }: Highlig
 	const queryDate = moment()
 		.utcOffset( Number.isFinite( gmtOffset ) ? gmtOffset : 0 )
 		.format( 'YYYY-MM-DD' );
-	const highlightsRange = {
-		from: moment( queryDate ).subtract( 6, 'days' ).format( 'YYYY-MM-DD' ),
-		to: queryDate,
-		gmtOffset,
-	};
 	const viewAllPostsStatsUrl = statsLink(
 		`${ statsBaseUrl }/stats/day/posts/${ siteId }?startDate=${ queryDate }&summarize=1&num=7`,
-		'/reports/posts',
-		highlightsRange
+		'/reports/posts?preset=last-7-days'
 	);
 	const viewAllReferrerStatsUrl = statsLink(
 		`${ statsBaseUrl }/stats/day/referrers/${ siteId }?startDate=${ queryDate }&summarize=1&num=7`,
-		'/reports/referrers',
-		highlightsRange
+		'/reports/referrers?preset=last-7-days'
 	);
 
 	const { data: topPostsAndPages = [], isFetching: isFetchingPostsAndPages } = useTopPostsQuery(
