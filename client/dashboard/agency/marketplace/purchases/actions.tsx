@@ -35,6 +35,7 @@ export function getLicenseActions( {
 	onDownload,
 	onNavigate,
 	onOpenHosting,
+	onLicenseAssigned,
 	recordTracksEvent,
 }: {
 	canRevoke: boolean;
@@ -46,6 +47,7 @@ export function getLicenseActions( {
 	onDownload: ( license: JetpackLicense ) => void;
 	onNavigate: ( to: string ) => void;
 	onOpenHosting: ( license: JetpackLicense ) => void;
+	onLicenseAssigned: () => void;
 	recordTracksEvent: ( eventName: string ) => void;
 } ): Action< JetpackLicense >[] {
 	// Only the agency owner can act on Pressable licenses.
@@ -169,6 +171,7 @@ export function getLicenseActions( {
 					licenseKey={ items[ 0 ].license_key }
 					productName={ getLicenseProductName( items[ 0 ] ) }
 					closeModal={ closeModal }
+					onAssigned={ onLicenseAssigned }
 				/>
 			),
 		},
@@ -242,11 +245,13 @@ export function useLicenseActions( {
 	canRevoke,
 	isAgencyOwner,
 	isProvisioning,
+	onLicenseAssigned,
 }: {
 	agencyId: number;
 	canRevoke: boolean;
 	isAgencyOwner: boolean;
 	isProvisioning: boolean;
+	onLicenseAssigned: () => void;
 } ): Action< JetpackLicense >[] {
 	const navigate = useNavigate();
 	const { recordTracksEvent } = useAnalytics();
@@ -304,6 +309,7 @@ export function useLicenseActions( {
 				onDownload,
 				onNavigate,
 				onOpenHosting,
+				onLicenseAssigned,
 				recordTracksEvent,
 			} ),
 		[
@@ -314,6 +320,7 @@ export function useLicenseActions( {
 			onDownload,
 			onNavigate,
 			onOpenHosting,
+			onLicenseAssigned,
 			recordTracksEvent,
 		]
 	);

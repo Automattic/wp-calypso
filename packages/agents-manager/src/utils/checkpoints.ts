@@ -1072,11 +1072,6 @@ export function getAvailableCheckpoints(): CheckpointContextItem[] {
 			...( checkpoint.toolId && {
 				isLatestForTool: latestIndexByToolId[ checkpoint.toolId ] === index,
 			} ),
-			// The backend's redo rule reads the intent that created a restore; the
-			// store keeps the flipped one.
-			...( checkpoint.createdByRequestIntentType && {
-				requestIntentType: checkpoint.createdByRequestIntentType,
-			} ),
 		} )
 	);
 }
