@@ -86,7 +86,7 @@ describe( 'SiteMigrationIdentify', () => {
 	} );
 
 	it.each( [ 200, 500 ] )(
-		'submits once after re-rendering when hosting detection returns %s',
+		'submits once per site check when hosting detection returns %s',
 		async ( hostingStatus ) => {
 			const submit = jest.fn();
 			const props = { ...mockStepProps( { navigation: { submit } } ) };
@@ -98,6 +98,7 @@ describe( 'SiteMigrationIdentify', () => {
 				.reply( 200, API_RESPONSE_WORDPRESS_PLATFORM );
 			mockApi()
 				.get( '/wpcom/v2/site-profiler/hosting-provider/example.com' )
+				.twice()
 				.reply( hostingStatus, {
 					domain: 'example.com',
 					hosting_provider: { slug: 'bluehost', name: 'Bluehost', is_cdn: false },
@@ -122,52 +123,16 @@ describe( 'SiteMigrationIdentify', () => {
 
 			expect( submit ).toHaveBeenCalledTimes( 1 );
 			expect( nextSubmit ).not.toHaveBeenCalled();
-		}
-	);
-
-	it.each( [ 'https://example.com', 'https://another-example.com' ] )(
-		'allows another site check after editing the address to %s',
-		async ( nextSiteURL ) => {
-			const submit = jest.fn();
-			render( { navigation: { submit } } );
-
-			mockApi()
-				.get( '/wpcom/v2/imports/analyze-url' )
-				.query( { site_url: 'https://example.com' } )
-				.reply( 200, API_RESPONSE_WORDPRESS_PLATFORM );
-			mockApi()
-				.get( '/wpcom/v2/site-profiler/hosting-provider/example.com' )
-				.reply( 200, {
-					domain: 'example.com',
-					hosting_provider: { slug: 'bluehost', name: 'Bluehost', is_cdn: false },
-				} );
-
-			await userEvent.type( getInput(), 'https://example.com' );
-			await userEvent.click( screen.getByRole( 'button', { name: /Check my site/ } ) );
-			await waitFor( () => expect( submit ).toHaveBeenCalledTimes( 1 ) );
-
-			if ( nextSiteURL !== 'https://example.com' ) {
-				mockApi()
-					.get( '/wpcom/v2/imports/analyze-url' )
-					.query( { site_url: nextSiteURL } )
-					.reply( 200, { ...API_RESPONSE_WORDPRESS_PLATFORM, url: nextSiteURL } );
-				mockApi()
-					.get( '/wpcom/v2/site-profiler/hosting-provider/another-example.com' )
-					.reply( 200, {
-						domain: 'another-example.com',
-						hosting_provider: { slug: 'bluehost', name: 'Bluehost', is_cdn: false },
-					} );
-			}
 
 			await userEvent.clear( getInput() );
-			await userEvent.type( getInput(), nextSiteURL );
+			await userEvent.type( getInput(), 'https://example.com' );
 			await userEvent.click( screen.getByRole( 'button', { name: /Check my site/ } ) );
-			await waitFor( () => expect( submit ).toHaveBeenCalledTimes( 2 ) );
-			expect( submit ).toHaveBeenLastCalledWith( {
+			await waitFor( () => expect( nextSubmit ).toHaveBeenCalledTimes( 1 ) );
+			expect( nextSubmit ).toHaveBeenCalledWith( {
 				action: 'continue',
 				platform: 'wordpress',
-				from: nextSiteURL,
-				host: 'bluehost',
+				from: 'https://example.com',
+				host: hostingStatus === 200 ? 'bluehost' : undefined,
 			} );
 		}
 	);

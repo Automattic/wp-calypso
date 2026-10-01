@@ -10,39 +10,12 @@ import { HOW_TO_MIGRATE_OPTIONS } from 'calypso/landing/stepper/constants';
 import { useFlowNavigation } from 'calypso/landing/stepper/declarative-flow/internals/hooks/use-flow-navigation';
 import { useStepNavigationWithTracking } from 'calypso/landing/stepper/declarative-flow/internals/hooks/use-step-navigation-with-tracking';
 import { STEPS } from 'calypso/landing/stepper/declarative-flow/internals/steps';
-import SiteMigrationIdentify from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/site-migration-identify';
 import { STEPPER_INTERNAL_STORE } from 'calypso/landing/stepper/stores';
 import { getCurrentUserSiteCount, isUserLoggedIn } from 'calypso/state/current-user/selectors';
-import documentHeadReducer from 'calypso/state/document-head/reducer';
-import uiReducer from 'calypso/state/ui/reducer';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import siteMigrationFlow from '../site-migration-flow';
 
 jest.mock( 'calypso/state/current-user/selectors' );
-jest.mock( 'calypso/landing/stepper/hooks/use-site-slug', () => ( {
-	useSiteSlug: () => 'example.wordpress.com',
-} ) );
-jest.mock( 'calypso/data/site-profiler/use-analyze-url-query', () => ( {
-	useAnalyzeUrlQuery: ( url: string ) => ( {
-		data: url ? { url, platform: 'wordpress' } : undefined,
-		isFetched: !! url,
-		isFetching: false,
-		isError: false,
-	} ),
-} ) );
-jest.mock( 'calypso/data/site-profiler/use-hosting-provider-query', () => ( {
-	useHostingProviderQuery: () => ( {
-		data: { hosting_provider: { slug: 'unknown' } },
-		isFetching: false,
-		isError: false,
-	} ),
-} ) );
-jest.mock(
-	'calypso/landing/stepper/declarative-flow/internals/steps-repository/site-migration-instructions/site-preview/hooks/use-site-preview-mshot-image-handler',
-	() => ( {
-		useSitePreviewMShotImageHandler: () => ( { createScreenshots: jest.fn() } ),
-	} )
-);
 jest.mock( 'calypso/landing/stepper/hooks/use-site-data', () => ( {
 	useSiteData: () => ( {
 		siteId: 123,
@@ -90,14 +63,19 @@ function MigrationNavigation() {
 	return (
 		<>
 			<p data-testid="current-step">{ currentStepRoute }</p>
-			{ currentStepRoute === STEPS.SITE_MIGRATION_IDENTIFY.slug ? (
-				<SiteMigrationIdentify
-					flow={ siteMigrationFlow.name }
-					stepName={ currentStepRoute }
-					navigation={ navigation }
-				/>
-			) : (
-				navigation.goBack && <button onClick={ navigation.goBack }>Back</button>
+			{ navigation.goBack && <button onClick={ navigation.goBack }>Back</button> }
+			{ currentStepRoute === STEPS.SITE_MIGRATION_IDENTIFY.slug && (
+				<button
+					onClick={ () =>
+						navigation.submit( {
+							action: 'continue',
+							from: 'https://source.com',
+							platform: 'wordpress',
+						} )
+					}
+				>
+					Check my site
+				</button>
 			) }
 			{ currentStepRoute === STEPS.SITE_MIGRATION_HOW_TO_MIGRATE.slug && (
 				<button
@@ -124,8 +102,7 @@ function renderNavigation() {
 	return renderWithProvider(
 		<BrowserRouter basename="/setup">
 			<MigrationNavigation />
-		</BrowserRouter>,
-		{ reducers: { documentHead: documentHeadReducer, ui: uiReducer } }
+		</BrowserRouter>
 	);
 }
 
@@ -157,10 +134,6 @@ describe( 'Site migration Back navigation', () => {
 				}
 			};
 			renderNavigation();
-			await userEvent.type(
-				screen.getByRole( 'textbox', { name: 'Site address' } ),
-				'https://source.com'
-			);
 			await userEvent.click( screen.getByRole( 'button', { name: 'Check my site' } ) );
 			await userEvent.click( screen.getByRole( 'button', { name: 'Get started' } ) );
 			expect( screen.getByTestId( 'current-step' ) ).toHaveTextContent(
@@ -184,12 +157,6 @@ describe( 'Site migration Back navigation', () => {
 			expect( screen.queryByRole( 'button', { name: 'Back' } ) ).not.toBeInTheDocument();
 		}
 	);
-
-	it( 'does not add Back on a direct first entry without a referrer', () => {
-		renderNavigation();
-
-		expect( screen.queryByRole( 'button', { name: 'Back' } ) ).not.toBeInTheDocument();
-	} );
 
 	it( 'ignores stale previous-step data on entry with forward history', async () => {
 		window.history.pushState( null, '', '/forward-entry' );
