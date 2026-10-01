@@ -201,6 +201,26 @@ describe( 'NamePulseResults', () => {
 		] );
 	} );
 
+	it( 'moves the ending a bare word ends in to the second slot', async () => {
+		render( <NamePulseTestSearch query="myapp" /> );
+
+		await findRow( 'my.app' );
+
+		await waitFor( () =>
+			expect( domainsIn( 'top' ) ).toEqual( [ 'myapp.blog', 'my.app', 'myapp.com' ] )
+		);
+	} );
+
+	it( 'keeps the list order for a typed domain whose name ends in an ending', async () => {
+		render( <NamePulseTestSearch query="myapp.com" /> );
+
+		await findRow( 'my.app' );
+
+		await waitFor( () =>
+			expect( domainsIn( 'top' ) ).toEqual( [ 'myapp.blog', 'myapp.org', 'myapp.net' ] )
+		);
+	} );
+
 	it( 'shows a notice with retry when the TLD list fails to load', async () => {
 		const user = userEvent.setup();
 		const availabilityRequests: string[][] = [];
