@@ -1,0 +1,45 @@
+@import '@wordpress/base-styles/variables';
+
+.domain-diagnostics-card.components-card {
+	border-radius: $radius-large;
+
+	.components-card__body {
+		padding: #{$grid-unit-30};
+	}
+
+	// The records list is a plain <ul>, so it carries the browser's default
+	// block margins and 40px indent, which push it out of line with the rest
+	// of the card. Native markers can't be placed precisely, so the bullet is
+	// drawn at the item's leading edge instead: it lines up with the text and
+	// buttons below, while each record value stays indented under its sentence.
+	// The list keeps an explicit role="list" because Safari drops list
+	// semantics from a <ul> whose list-style is none.
+	ul {
+		margin-block: 0;
+		padding-inline-start: 0;
+		list-style: none;
+	}
+
+	li {
+		position: relative;
+		padding-inline-start: #{$grid-unit-30};
+	}
+
+	li::before {
+		content: '';
+		position: absolute;
+		inset-inline-start: 5px;
+		inset-block-start: 0.5em;
+		width: 5px;
+		height: 5px;
+		border-radius: 50%;
+		background: currentColor;
+	}
+
+	// Record values are longer than the card is wide, so they wrap rather than
+	// overflow. Continuation lines stay indented with the value's first line.
+	pre {
+		white-space: pre-wrap;
+		overflow-wrap: anywhere;
+	}
+}
