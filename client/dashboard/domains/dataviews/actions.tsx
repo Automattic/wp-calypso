@@ -46,10 +46,12 @@ const noop = () => {};
 
 export const useActions = ( {
 	user,
+	site,
 	sites,
 	domains,
 }: {
 	user: User;
+	site?: Site;
 	sites?: Site[];
 	domains?: DomainSummary[];
 } ) => {
@@ -122,15 +124,12 @@ export const useActions = ( {
 	}, [ primaryCandidateDomainNames, sslActiveKey ] );
 
 	const canToggleWwwPrimary = useCallback(
-		( item: DomainSummary ) => {
-			const site = sitesByBlogId[ item.blog_id ];
-			return (
-				!! site?.is_wpcom_atomic &&
-				item.primary_domain &&
-				item.subtype.id !== DomainSubtype.DEFAULT_ADDRESS
-			);
-		},
-		[ sitesByBlogId ]
+		( item: DomainSummary ) =>
+			!! site?.is_wpcom_atomic &&
+			item.blog_id === site.ID &&
+			item.primary_domain &&
+			item.subtype.id !== DomainSubtype.DEFAULT_ADDRESS,
+		[ site ]
 	);
 
 	const actions: Action< DomainSummary >[] = useMemo(
