@@ -1,30 +1,20 @@
-import { formatCurrency, formatNumberCompact } from '@automattic/number-formatters';
+import { formatCurrency } from '@automattic/number-formatters';
 import {
 	Button,
 	ExternalLink,
-	SelectControl,
-	__experimentalHeading as Heading,
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
-import { __, _n, sprintf } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useAnalytics } from '../../../app/analytics';
 import { Callout } from '../../../components/callout';
-import { Card, CardBody, CardDivider, CardHeader } from '../../../components/card';
+import { Card, CardBody } from '../../../components/card';
 import Divider from '../../../components/divider';
-import { SectionHeader } from '../../../components/section-header';
 import { a4aLink } from '../../../utils/link';
-import pressableDescriptor from '../exclusive-offers/images/pressable-descriptor.svg';
 import { getProductPriceInfo } from '../products/lib/product-pricing';
-import {
-	BrandMark,
-	CheckGrid,
-	HostingFeatures,
-	JetpackComplete,
-	Testimonials,
-} from './content-sections';
+import { CheckGrid, HostingFeatures, JetpackComplete, Testimonials } from './content-sections';
 import demoIllustration from './demo-callout-illustration.svg';
 import {
 	PLAN_CATEGORY_PREMIUM,
@@ -42,17 +32,19 @@ import {
 	sortPlansForCategory,
 } from './lib/pressable-plans';
 import OptionCards from './option-cards';
+import PressablePlanTable, { CUSTOM_PLAN_OPTION } from './pressable-plan-table';
 import PressablePremiumGate from './pressable-premium-gate';
 import PressableUsageCard from './pressable-usage-card';
 import SelectedPlanCard from './selected-plan-card';
+import StepHeading from './step-heading';
 import { useKeyedSessionState, useSessionState } from './use-session-state';
 import type { TermPricing } from '../use-term-pricing';
 import type { PressablePlan } from './lib/pressable-plans';
 import type { PressableOwnershipType } from './lib/pressable-products';
+import type { PlanRow } from './pressable-plan-table';
 import type { AgencyProduct } from '@automattic/api-core';
 
 const PRESSABLE_DEMO_URL = 'https://pressable.com/request-demo';
-const CUSTOM_PLAN_OPTION = 'custom';
 
 interface Props {
 	/** The Pressable hosting plans in the catalog. */
@@ -63,21 +55,6 @@ interface Props {
 	term: TermPricing;
 	isReferralMode: boolean;
 	onAddToCart: ( plan: AgencyProduct, quantity: number ) => void;
-}
-
-function getPlanOptionLabel( product: AgencyProduct, plan: PressablePlan ) {
-	return sprintf(
-		/* translators: %1$s is the plan name, %2$s the number of installs, %3$s the monthly visits, %4$d the storage in GB. */
-		__( '%1$s · %2$s · %3$s visits · %4$dGB' ),
-		getPressablePlanName( product.name ),
-		sprintf(
-			/* translators: %d is the number of WordPress installs. */
-			_n( '%d install', '%d installs', plan.install ),
-			plan.install
-		),
-		formatNumberCompact( plan.visits ),
-		plan.storage
-	);
 }
 
 /** What the Premium gate names when nothing is picked: Custom, or the agency's own Premium plan on the legacy catalog. */
@@ -95,6 +72,20 @@ function getPremiumGateLabel(
 	return existingPlan && getPressablePlanInfo( existingPlan )?.category === PLAN_CATEGORY_PREMIUM
 		? existingPlan.name
 		: __( 'Pressable Premium' );
+}
+
+// The first plan of a category the agency can move up to, as in the classic
+// plan picker. Premium is one dedicated site sold to a client, not a step up
+// from a pooled plan, so only a Premium plan sets a floor on it.
+function getPlanFloor(
+	category: string,
+	options: PressablePlan[],
+	existingPlan: PressablePlan | undefined
+) {
+	if ( category === PLAN_CATEGORY_PREMIUM && existingPlan?.category !== PLAN_CATEGORY_PREMIUM ) {
+		return 0;
+	}
+	return getMinimumSelectableIndex( category, options, existingPlan );
 }
 
 function ScheduleDemoCallout() {
@@ -185,7 +176,7 @@ export default function PressableSection( {
 		() => sortPlansForCategory( catalogPlans, selectedTab ),
 		[ catalogPlans, selectedTab ]
 	);
-	const minimumIndex = getMinimumSelectableIndex( selectedTab, tabOptions, existingPressablePlan );
+	const minimumIndex = getPlanFloor( selectedTab, tabOptions, existingPressablePlan );
 	const isLowTab = selectedTab === lowCategory;
 	const hasCustomOption = ! isLowTab;
 
@@ -245,7 +236,6 @@ export default function PressableSection( {
 	const selectedProduct = selectedSlug
 		? catalog.find( ( product ) => product.slug === selectedSlug )
 		: undefined;
-	const selectedPlanInfo = selectedProduct ? getPressablePlanInfo( selectedProduct ) : undefined;
 	const isCustomPlan = selectedSlug === null;
 	const isPremiumTab = selectedTab === PLAN_CATEGORY_PREMIUM;
 	// Agencies on a legacy plan have no Premium plans to pick from.
@@ -268,77 +258,40 @@ export default function PressableSection( {
 
 	const gateLabel = getPremiumGateLabel( selectedProduct, hasPremiumPlans, existingPlan );
 
-	const getPlanDetailsIntro = () => {
-		if ( isReferralMode ) {
-			return __(
-				'When you refer a Pressable plan to your client, they’ll pay and manage the billing. You’ll manage the site, and make a recurring commission.'
-			);
-		}
-		return __( 'Your traffic and storage limits are shared amongst your total sites.' );
-	};
+	// Plans below the agency's own can't be bought: they are left out, and the
+	// plan it owns stays in the list, marked as its current plan.
+	const planRows = tabOptions
+		.filter( ( plan, index ) => index >= minimumIndex || plan.slug === existingPressablePlan?.slug )
+		.map( ( plan ) => ( {
+			plan,
+			product: catalog.find( ( candidate ) => candidate.slug === plan.slug ),
+		} ) )
+		.filter( ( row ): row is PlanRow => !! row.product );
 
-	const renderPlanDetails = () => (
-		<VStack spacing={ 3 }>
-			<Text variant="muted">{ getPlanDetailsIntro() }</Text>
-			{ isCustomPlan || ! selectedPlanInfo ? (
-				<CheckGrid
-					items={ [
-						__( 'Custom WordPress installs' ),
-						__( 'Custom visits per month*' ),
-						__( 'Custom storage per month*' ),
-						__( 'Unmetered bandwidth' ),
-					] }
-				/>
-			) : (
-				<CheckGrid
-					columns={ 3 }
-					items={ [
-						sprintf(
-							/* translators: %d is the number of WordPress installs. */
-							_n(
-								'Up to %d WordPress install',
-								'Up to %d WordPress installs',
-								selectedPlanInfo.install
-							),
-							selectedPlanInfo.install
-						),
-						sprintf(
-							/* translators: %d is the number of staging sites. */
-							_n( 'Up to %d staging site', 'Up to %d staging sites', selectedPlanInfo.install ),
-							selectedPlanInfo.install
-						),
-						sprintf(
-							/* translators: %s is the number of visits. */
-							__( '%s visits per month*' ),
-							formatNumberCompact( selectedPlanInfo.visits )
-						),
-						sprintf(
-							/* translators: %d is the size of storage in GB. */
-							__( '%dGB of storage*' ),
-							selectedPlanInfo.storage
-						),
-						sprintf(
-							/* translators: %d is the number of PHP workers. */
-							__( '%d base PHP workers' ),
-							selectedPlanInfo.worker
-						),
-						__( 'Unmetered bandwidth' ),
-					] }
-				/>
-			) }
-			<Text variant="muted" size={ 12 }>
-				{ sprintf(
-					/* translators: %1$s is the charge per GB, %2$s the charge per %3$s visits. */
-					__(
-						'*If you exceed your plan’s storage or traffic limits, you will be charged %1$s per GB and %2$s per %3$s visits per month.'
-					),
-					formatCurrency( 0.5, 'USD' ),
-					formatCurrency( 8, 'USD' ),
-					formatNumberCompact( 10000 )
-				) }
-			</Text>
-		</VStack>
-	);
+	const premiumOptions = sortPlansForCategory( catalogPlans, PLAN_CATEGORY_PREMIUM );
+	const isPremiumTabBelowPlan =
+		existingPressablePlan?.category === PLAN_CATEGORY_PREMIUM &&
+		getPlanFloor( PLAN_CATEGORY_PREMIUM, premiumOptions, existingPressablePlan ) >=
+			premiumOptions.length;
+
+	const planTypeOptions = tabs.map( ( tab ) => {
+		const isBelowPlan =
+			( tab.key === lowCategory && disableLowTab ) ||
+			( tab.key === PLAN_CATEGORY_PREMIUM && isPremiumTabBelowPlan );
+		let tag;
+		if ( isBelowPlan ) {
+			tag = __( 'Below your plan' );
+		} else if ( tab.key === PLAN_CATEGORY_PREMIUM && ! isReferralMode ) {
+			tag = __( 'Referral only' );
+		}
+		return {
+			value: tab.key,
+			label: tab.label,
+			description: tab.description,
+			disabled: isBelowPlan,
+			tag,
+		};
+	} );
 
 	const renderRail = () => {
 		if ( isCustomPlan || ! selectedProduct || ! priceInfo ) {
@@ -465,75 +418,42 @@ export default function PressableSection( {
 
 	return (
 		<div className="dashboard-marketplace-hosting__layout">
-			<VStack spacing={ 8 } justify="flex-start">
+			<VStack spacing={ 8 } justify="flex-start" className="dashboard-marketplace-hosting__main">
 				<VStack spacing={ 4 }>
 					<Card>
-						<CardHeader>
-							<SectionHeader
-								className="dashboard-marketplace-hosting__card-header"
-								level={ 3 }
-								title={
-									existingPlan && ! isReferralMode
-										? __( 'Upgrade your plan' )
-										: __( 'Purchase Pressable' )
-								}
-								description={ __(
-									'One pooled plan shares installs, traffic, and storage across your whole portfolio.'
-								) }
-								decoration={ <BrandMark src={ pressableDescriptor } /> }
-							/>
-						</CardHeader>
 						<CardBody>
-							<VStack spacing={ 5 }>
-								<VStack spacing={ 3 }>
-									<Heading level={ 4 } size={ 13 }>
-										{ __( 'Choose a plan type' ) }
-									</Heading>
+							<VStack spacing={ 6 }>
+								<VStack spacing={ 4 }>
+									<StepHeading step={ 1 }>{ __( 'Choose a plan type' ) }</StepHeading>
 									<OptionCards
 										label={ __( 'Plan type' ) }
-										options={ tabs.map( ( tab ) => ( {
-											value: tab.key,
-											label: tab.label,
-											description: tab.description,
-											disabled: tab.key === lowCategory && disableLowTab,
-										} ) ) }
+										options={ planTypeOptions }
 										selected={ selectedTab }
 										onSelect={ setSelectedTab }
 									/>
 								</VStack>
 								{ hasPlanPicker && (
-									<>
-										<VStack spacing={ 3 }>
-											<Heading level={ 4 } size={ 13 }>
-												{ __( 'Select your plan' ) }
-											</Heading>
-											<SelectControl
-												__nextHasNoMarginBottom
-												__next40pxDefaultSize
-												label={ __( 'Select your plan' ) }
-												hideLabelFromVision
-												value={ isCustomPlan ? CUSTOM_PLAN_OPTION : ( selectedSlug ?? '' ) }
-												options={ [
-													...tabOptions.map( ( plan, index ) => {
-														const product = catalog.find(
-															( candidate ) => candidate.slug === plan.slug
-														);
-														return {
-															value: plan.slug,
-															label: product ? getPlanOptionLabel( product, plan ) : plan.slug,
-															disabled: index < minimumIndex,
-														};
-													} ),
-													...( hasCustomOption
-														? [ { value: CUSTOM_PLAN_OPTION, label: __( 'Custom' ) } ]
-														: [] ),
+									<VStack spacing={ 4 }>
+										<StepHeading step={ 2 }>{ __( 'Select your plan' ) }</StepHeading>
+										<PressablePlanTable
+											rows={ planRows }
+											withCustom={ hasCustomOption }
+											selected={ isCustomPlan ? CUSTOM_PLAN_OPTION : ( selectedSlug ?? '' ) }
+											currentSlug={ existingPressablePlan?.slug }
+											isPremium={ isPremiumTab }
+											onSelect={ selectPlan }
+										/>
+										{ isCustomPlan && (
+											<CheckGrid
+												items={ [
+													__( 'Custom WordPress installs' ),
+													__( 'Custom visits per month' ),
+													__( 'Custom storage per month' ),
+													__( 'Unmetered bandwidth' ),
 												] }
-												onChange={ selectPlan }
 											/>
-										</VStack>
-										<CardDivider />
-										{ renderPlanDetails() }
-									</>
+										) }
+									</VStack>
 								) }
 							</VStack>
 						</CardBody>
