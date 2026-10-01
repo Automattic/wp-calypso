@@ -1,4 +1,3 @@
-import { useViewportMatch } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
 import Grid from '../../../components/grid';
 import DevToolSection from './dev-tool-section';
@@ -7,15 +6,17 @@ import jurassicImage from './images/jurassic-ninja.webp';
 import studioImage from './images/studio.webp';
 import playgroundImage from './images/wordpress-playground.webp';
 
+// At most two per row, each at least 420px wide; one per row when that doesn't fit.
+const TWO_UP_COLUMNS =
+	'repeat( auto-fit, minmax( min( 100%, max( 420px, calc( ( 100% - var( --wpds-dimension-gap-xl, 24px ) ) / 2 ) ) ), 1fr ) )';
+
 interface DevToolsContentProps {
 	recordTracksEvent: ( eventName: string ) => void;
 }
 
 export default function DevToolsContent( { recordTracksEvent }: DevToolsContentProps ) {
-	const isLargeViewport = useViewportMatch( 'large' );
-
 	return (
-		<Grid columns={ isLargeViewport ? 2 : 1 } gap="xl">
+		<Grid templateColumns={ TWO_UP_COLUMNS } gap="xl">
 			<DevToolSection
 				name={ __( 'WordPress Studio' ) }
 				badge={ __( 'Build' ) }
