@@ -37,7 +37,7 @@ export function WwwPrimaryDomainModal( { domain, onClose }: WwwPrimaryDomainModa
 
 		mutate(
 			{ siteId: domain.blog_id, domain: domain.domain, enabled: true },
-			{ onSettled: onClose }
+			{ onSuccess: onClose }
 		);
 	};
 
@@ -46,15 +46,14 @@ export function WwwPrimaryDomainModal( { domain, onClose }: WwwPrimaryDomainModa
 			<VStack spacing={ 4 }>
 				<Text>
 					{ createInterpolateElement(
-						sprintf(
-							/* translators: %1$s is the www domain name, %2$s is the root domain name */
-							__(
-								'Visitors who go to <b>%1$s</b> are already redirected to <b>%2$s</b>, so your site works with and without “www” today.'
-							),
-							wwwDomain,
-							domain.domain
+						/* translators: <wwwDomain /> is the www domain name, <domain /> is the root domain name */
+						__(
+							'Visitors who go to <wwwDomain /> are already redirected to <domain />, so your site works with and without “www” today.'
 						),
-						{ b: <strong /> }
+						{
+							wwwDomain: <strong>{ wwwDomain }</strong>,
+							domain: <strong>{ domain.domain }</strong>,
+						}
 					) }
 				</Text>
 				<Text>
