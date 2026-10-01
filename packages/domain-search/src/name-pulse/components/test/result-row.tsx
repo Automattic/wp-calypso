@@ -197,4 +197,47 @@ describe( 'NamePulseResultRow', () => {
 		expect( screen.getByText( '$350' ) ).toBeInTheDocument();
 		expect( fetcher ).not.toHaveBeenCalled();
 	} );
+
+	describe( 'badge', () => {
+		const SALE = { sale_cost: 3.3, currency_code: 'USD' };
+		const POLICY_NOTICES = [
+			{
+				type: 'identity_verification',
+				label: 'Special requirements',
+				message: '.in domains may require identity verification by the registry.',
+			},
+		];
+
+		it( 'shows Sale on a sale-only row', () => {
+			renderRow( buildResult( SALE ) );
+
+			expect( screen.getByText( 'Sale' ) ).toBeInTheDocument();
+		} );
+
+		it( 'shows only Premium on a premium row on sale', () => {
+			renderRow( buildPremiumResult( { source: 'keyword', ...SALE } ) );
+
+			expect( screen.getByText( 'Premium' ) ).toBeInTheDocument();
+			expect( screen.queryByText( 'Sale' ) ).not.toBeInTheDocument();
+		} );
+
+		it( 'shows only Restricted on a row with policy notices', () => {
+			renderRow(
+				buildPremiumResult( { source: 'keyword', ...SALE, policy_notices: POLICY_NOTICES } )
+			);
+
+			expect( screen.getByText( 'Restricted' ) ).toBeInTheDocument();
+			expect( screen.queryByText( 'Premium' ) ).not.toBeInTheDocument();
+			expect( screen.queryByText( 'Sale' ) ).not.toBeInTheDocument();
+			expect( screen.queryByText( 'Special requirements' ) ).not.toBeInTheDocument();
+		} );
+
+		it( 'shows no badge on an unavailable row', () => {
+			renderRow(
+				buildResult( { status: NamePulseDomainStatus.TAKEN, policy_notices: POLICY_NOTICES } )
+			);
+
+			expect( screen.queryByText( 'Restricted' ) ).not.toBeInTheDocument();
+		} );
+	} );
 } );

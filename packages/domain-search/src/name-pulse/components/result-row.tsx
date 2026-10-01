@@ -6,7 +6,7 @@ import { cautionFilled, cart as cartIcon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { Badge } from '@wordpress/ui';
 import clsx from 'clsx';
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, type ReactNode } from 'react';
 import { useDomainSearch } from '../../page/context';
 import { DomainSearchTrademarkClaimsModal } from '../../ui';
 import {
@@ -124,12 +124,25 @@ export const NamePulseResultRow = ( { result, position }: NamePulseResultRowProp
 	// A failed check leaves the row on its badge alone: no price, and no skeleton
 	// waiting for one that is not coming.
 	const isPremiumPriceMissing = needsPremiumPrice && ! realtimeVerdict;
-	const showPremiumBadge = isAvailable && isPremium;
-	const showSaleBadge = isAvailable && !! getNamePulseSalePrice( row );
-	// One badge still fits beside the name; two leave it only a few characters,
-	// so the pair moves under it and the name keeps the full column width.
-	const stackBadges = showSaleBadge && showPremiumBadge;
-	const labelTruncateLimit = ( showSaleBadge || showPremiumBadge ) && ! stackBadges ? 12 : 20;
+	const policyNotices = isAvailable ? ( row.policy_notices ?? [] ) : [];
+	// A second badge would leave the name only a few characters, so the row
+	// shows the one that matters most. A sale on a premium name already shows
+	// in the first-year price.
+	let badge: ReactNode = null;
+	if ( policyNotices.length > 0 ) {
+		badge = (
+			<Tooltip text={ policyNotices.map( ( notice ) => notice.message ).join( ' ' ) }>
+				<Badge intent="low" tabIndex={ 0 }>
+					{ __( 'Restricted' ) }
+				</Badge>
+			</Tooltip>
+		);
+	} else if ( isAvailable && isPremium ) {
+		badge = <Badge intent="informational">{ __( 'Premium' ) }</Badge>;
+	} else if ( isAvailable && getNamePulseSalePrice( row ) ) {
+		badge = <Badge intent="medium">{ __( 'Sale' ) }</Badge>;
+	}
+	const labelTruncateLimit = badge ? 12 : 20;
 	const suffixText = (
 		<Text as="span" weight={ 600 } variant={ isUnavailable ? 'muted' : undefined }>
 			{ suffix ? `.${ suffix }` : '' }
@@ -142,9 +155,7 @@ export const NamePulseResultRow = ( { result, position }: NamePulseResultRowProp
 			data-domain={ domainName }
 			data-status={ NamePulseDomainStatus[ status ].toLowerCase() }
 		>
-			<span
-				className={ clsx( 'name-pulse-row__name', stackBadges && 'name-pulse-row__name--stacked' ) }
-			>
+			<span className="name-pulse-row__name">
 				{ wrapName ? (
 					<span className="name-pulse-row__domain name-pulse-row__domain--wrap">
 						<Text as="span" variant="muted">
@@ -169,12 +180,7 @@ export const NamePulseResultRow = ( { result, position }: NamePulseResultRowProp
 						</span>
 					</Tooltip>
 				) }
-				{ ( showSaleBadge || showPremiumBadge ) && (
-					<span className="name-pulse-row__badges">
-						{ showSaleBadge && <Badge intent="medium">{ __( 'Sale' ) }</Badge> }
-						{ showPremiumBadge && <Badge intent="informational">{ __( 'Premium' ) }</Badge> }
-					</span>
-				) }
+				{ badge && <span className="name-pulse-row__badges">{ badge }</span> }
 			</span>
 			<span className="name-pulse-row__status">
 				{ isWaiting && (

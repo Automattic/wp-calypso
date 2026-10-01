@@ -1,3 +1,5 @@
+import type { PolicyNotice } from '../domain-suggestions/types';
+
 /**
  * Parameters for `GET /wpcom/v2/domains/name-pulse/suggestions`.
  */
@@ -28,6 +30,7 @@ export interface NamePulseSuggestion {
 
 	currency_code?: string;
 	is_premium?: boolean;
+	policy_notices?: PolicyNotice[];
 }
 
 export interface NamePulseProviderError {
@@ -54,6 +57,7 @@ export interface NamePulseAvailabilityEntry {
 	raw_price?: number;
 	sale_cost?: number;
 	currency_code?: string;
+	policy_notices?: PolicyNotice[];
 }
 
 /**
