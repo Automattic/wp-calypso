@@ -57,12 +57,13 @@ const buildReturningPage = ( {
 			return locator( consentVisible );
 		},
 		getByText: ( name: string | RegExp, options?: { exact: boolean } ) => {
-			return typeof name === 'string'
-				? locator(
-						async () => name === 'person@example.test' && options?.exact === true && accountVisible,
-						accountClick
-				  )
-				: locator( async () => name.test( challengeText ) );
+			if ( typeof name === 'string' ) {
+				return locator(
+					async () => name === 'person@example.test' && options?.exact === true && accountVisible,
+					accountClick
+				);
+			}
+			return locator( async () => name.test( challengeText ) );
 		},
 	} as unknown as Page;
 	return { page, consentClick, accountClick, consentVisible };
@@ -157,13 +158,10 @@ describe( 'GoogleLoginPage', () => {
 					.continueWithSession( 'person@example.test' )
 					.catch( ( error ) => error );
 
-				expect( result ).toEqual(
-					closed
-						? undefined
-						: new Error(
-								'Google returning-session interaction failure; private details suppressed.'
-						  )
+				const expected = new Error(
+					'Google returning-session interaction failure; private details suppressed.'
 				);
+				expect( result ).toEqual( closed ? undefined : expected );
 			}
 		);
 	} );
