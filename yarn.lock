@@ -1890,6 +1890,15 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@automattic/newsletter-urls@workspace:packages/newsletter-urls":
+  version: 0.0.0-use.local
+  resolution: "@automattic/newsletter-urls@workspace:packages/newsletter-urls"
+  dependencies:
+    "@automattic/calypso-typescript-config": "workspace:^"
+    typescript: "npm:^6.0.3"
+  languageName: unknown
+  linkType: soft
+
 "@automattic/notifications@workspace:^, @automattic/notifications@workspace:apps/notifications":
   version: 0.0.0-use.local
   resolution: "@automattic/notifications@workspace:apps/notifications"
