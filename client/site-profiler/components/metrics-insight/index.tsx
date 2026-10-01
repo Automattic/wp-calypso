@@ -4,7 +4,7 @@ import { useTranslate } from 'i18n-calypso';
 import { ReactNode } from 'react';
 
 interface MetricsInsightProps {
-	insight?: Insight;
+	insight: Insight;
 }
 
 type Insight = {
@@ -40,7 +40,7 @@ const Content = styled.div`
 
 export const MetricsInsight: React.FC< MetricsInsightProps > = ( props ) => {
 	const translate = useTranslate();
-	const { insight = {} } = props;
+	const { insight } = props;
 
 	return (
 		<Card
