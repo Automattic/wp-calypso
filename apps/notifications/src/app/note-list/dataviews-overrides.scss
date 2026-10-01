@@ -87,6 +87,18 @@
 		display: none;
 	}
 
+	// DataViews top-aligns the text column with an inline style we can't set
+	// through props, so a note with no excerpt sits above the icon's center.
+	// The margin matches the media wrapper's offset below.
+	.dataviews-view-list__field-wrapper:has(> .dataviews-view-list__field:empty) {
+		align-self: center;
+		margin-block-start: 4px;
+
+		> .dataviews-view-list__fields:empty {
+			display: none;
+		}
+	}
+
 	// We override styles with the selected styles for unread items.
 	div[role="article"]:has(.is-unread),
 	div[role="article"]:has(.is-unread):focus-within {
