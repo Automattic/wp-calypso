@@ -69,7 +69,7 @@ export const THEME_TIERS = {
 		get label() {
 			return translate( 'WooCommerce' );
 		},
-		minimumUpsellPlan: PLAN_PREMIUM,
+		minimumUpsellPlan: PLAN_BUSINESS,
 		isFilterable: false,
 	},
 	sensei: {
