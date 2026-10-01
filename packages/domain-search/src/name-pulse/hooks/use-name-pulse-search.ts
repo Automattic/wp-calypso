@@ -144,6 +144,7 @@ export const useNamePulseSearch = ( query: string ) => {
 		return { ...typed, exactGrid: { show: typed.top.show && ! isAiMode } };
 	}, [ query, tlds, isAiMode ] );
 	const { baseName, wordCount } = layout;
+	const isBareWord = layout.mode === 'single';
 	const showExactGrid = layout.exactGrid.show;
 	const initialCheckCount =
 		wordCount > 1 ? NAME_PULSE_INITIAL_CHECK_MULTI_WORD : NAME_PULSE_INITIAL_CHECK_SINGLE_WORD;
@@ -161,8 +162,10 @@ export const useNamePulseSearch = ( query: string ) => {
 
 	const exactRows = useMemo(
 		() =>
-			showExactGrid && gridTlds ? generateExactMatches( baseName, gridTlds ) : EMPTY_RESULTS,
-		[ showExactGrid, baseName, gridTlds ]
+			showExactGrid && gridTlds
+				? generateExactMatches( baseName, gridTlds, { promoteMatchedTld: isBareWord } )
+				: EMPTY_RESULTS,
+		[ showExactGrid, baseName, gridTlds, isBareWord ]
 	);
 
 	// Names asked for beyond the initial slice ("Show more", top-results
