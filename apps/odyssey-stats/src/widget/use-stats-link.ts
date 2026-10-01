@@ -3,6 +3,7 @@ import {
 	type PremiumAnalyticsRange,
 } from 'calypso/dashboard/utils/premium-analytics-url';
 import usePremiumAnalyticsStatusQuery from 'calypso/my-sites/stats/hooks/use-premium-analytics-status-query';
+import { optionalConfig } from '../lib/config-api';
 import canCurrentUser from '../lib/selectors/can-current-user';
 import getSiteAdminUrl from '../lib/selectors/get-site-admin-url';
 
@@ -20,9 +21,14 @@ export default function useStatsLink( siteId: number ) {
 		!! canCurrentUser( siteId, 'manage_options' )
 	);
 	const adminUrl = getSiteAdminUrl( siteId );
+	// Absent before Jetpack sent it, and empty for a site set to a fixed UTC offset.
+	const timezone = optionalConfig( 'timezone' );
 
 	return ( statsUrl: string, route: string | null, range?: PremiumAnalyticsRange ): string =>
 		isPremiumAnalyticsEnabled && adminUrl && route !== null
-			? `${ adminUrl }${ getPremiumAnalyticsPath( route, range ) }`
+			? `${ adminUrl }${ getPremiumAnalyticsPath(
+					route,
+					range && { ...range, timezone: typeof timezone === 'string' ? timezone : undefined }
+				) }`
 			: statsUrl;
 }

@@ -3,10 +3,12 @@
  */
 import { renderHook } from '@testing-library/react';
 import usePremiumAnalyticsStatusQuery from 'calypso/my-sites/stats/hooks/use-premium-analytics-status-query';
+import { optionalConfig } from '../../lib/config-api';
 import canCurrentUser from '../../lib/selectors/can-current-user';
 import useStatsLink from '../use-stats-link';
 
 jest.mock( 'calypso/my-sites/stats/hooks/use-premium-analytics-status-query', () => jest.fn() );
+jest.mock( '../../lib/config-api', () => ( { optionalConfig: jest.fn() } ) );
 jest.mock( '../../lib/selectors/can-current-user', () => jest.fn() );
 jest.mock( '../../lib/selectors/get-site-admin-url', () => () => 'https://example.com/wp-admin/' );
 
@@ -25,9 +27,13 @@ function mockSite( enabled: boolean | undefined, canManageOptions = true ) {
 	);
 }
 
-function statsLink( statsUrl: string, route: string | null ) {
+function statsLink(
+	statsUrl: string,
+	route: string | null,
+	range?: Parameters< ReturnType< typeof useStatsLink > >[ 2 ]
+) {
 	const { result } = renderHook( () => useStatsLink( 1 ) );
-	return result.current( statsUrl, route );
+	return result.current( statsUrl, route, range );
 }
 
 describe( 'useStatsLink', () => {
@@ -55,5 +61,22 @@ describe( 'useStatsLink', () => {
 		mockSite( true, false );
 
 		expect( statsLink( STATS_URL, '/post/12' ) ).toBe( STATS_URL );
+	} );
+
+	it( 'dates a range in the site timezone from the config, not in today’s offset', () => {
+		mockSite( true );
+		( optionalConfig as jest.Mock ).mockReturnValue( 'America/New_York' );
+
+		const url = new URL(
+			statsLink( STATS_URL, '/reports/posts', {
+				from: '2026-03-03',
+				to: '2026-03-09',
+				gmtOffset: -4,
+			} )
+		);
+
+		expect( url.searchParams.get( 'p' ) ).toBe(
+			'/reports/posts?from=2026-03-03T00%3A00%3A00.000-05%3A00&to=2026-03-09T23%3A59%3A59.999-04%3A00'
+		);
 	} );
 } );
