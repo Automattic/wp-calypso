@@ -93,6 +93,38 @@ export function isAutoRenewDisabled( license: JetpackLicense ): boolean {
 	return subscription?.status === 'active' && ! subscription.is_auto_renew_enabled;
 }
 
+export type RenewalBadge = 'expired' | 'auto-renew-off' | 'refundable';
+
+export const getRenewalBadgeLabels = (): Record< RenewalBadge, string > => ( {
+	expired: __( 'Expired' ),
+	'auto-renew-off': __( 'Auto-renew off' ),
+	refundable: __( 'Refundable' ),
+} );
+
+// A revoked license no longer bills, so its subscription is not shown.
+export function getLicenseRenewalDate( license: JetpackLicense ): string | null {
+	return license.revoked_at ? null : ( license.subscription?.expiry ?? null );
+}
+
+export function getRenewalBadges( license: JetpackLicense ): RenewalBadge[] {
+	const subscription = license.subscription;
+	if ( ! subscription || license.revoked_at ) {
+		return [];
+	}
+	if ( subscription.status !== 'active' ) {
+		return [ 'expired' ];
+	}
+
+	const badges: RenewalBadge[] = [];
+	if ( ! subscription.is_auto_renew_enabled ) {
+		badges.push( 'auto-renew-off' );
+	}
+	if ( subscription.is_refundable ) {
+		badges.push( 'refundable' );
+	}
+	return badges;
+}
+
 // Child licenses of a bundle can only be revoked individually once assigned.
 export function isChildLicense( license: JetpackLicense ): boolean {
 	return license.parent_license_id !== null;
