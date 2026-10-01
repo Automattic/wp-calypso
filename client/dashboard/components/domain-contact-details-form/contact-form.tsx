@@ -26,7 +26,7 @@ import {
 	hasFrDomain,
 	validateFrOrganization,
 } from './fr-contact-fields';
-import { isStateFieldHidden, RegionAddressFieldsLayout } from './region-address-fieldsets';
+import { isEuOrUkAddressFormat, RegionAddressFieldsLayout } from './region-address-fieldsets';
 import {
 	getUkContactFormFields,
 	getUkContactFormLayout,
@@ -67,17 +67,12 @@ export default function ContactForm( {
 	const { data: statesList } = useQuery( statesListQuery( selectedCountryCode ) );
 
 	const normalizedFormData = useMemo( () => {
-		if ( ! statesList ) {
-			return formData;
-		}
-
-		// A stored state the user can't see would still be sent, and the registrar
-		// may reject it with no way for the user to fix it.
-		if ( isStateFieldHidden( selectedCountryCode, statesList ) ) {
-			return formData.state ? { ...formData, state: '' } : formData;
-		}
-
-		if ( statesList.length === 0 ) {
+		if ( ! statesList || statesList.length === 0 ) {
+			// The layout hides the state field for these countries. A stored state the
+			// user can't see would still be sent, and the registrar may reject it.
+			if ( formData.state && isEuOrUkAddressFormat( selectedCountryCode ) ) {
+				return { ...formData, state: '' };
+			}
 			return formData;
 		}
 
