@@ -397,14 +397,6 @@ describe( 'useReplyRecovery', () => {
 					createdAt: storedSecondsAgo( secondsAgo ),
 				},
 			],
-			completed: [
-				{
-					toolCallId: 'call-settings',
-					toolId: 'wpcom__site_settings',
-					arguments: {},
-					result: { currency: 'EUR' },
-				},
-			],
 		} );
 
 		const seenLongEnough = async (
@@ -439,12 +431,6 @@ describe( 'useReplyRecovery', () => {
 					},
 				],
 				[
-					{
-						toolCallId: 'call-settings',
-						toolId: 'wpcom__site_settings',
-						arguments: {},
-						result: { currency: 'EUR' },
-					},
 					{
 						toolCallId: 'call-top',
 						toolId: 'woocommerce__get_top_products',

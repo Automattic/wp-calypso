@@ -48,18 +48,10 @@ export function buildToolCallResume(
 				? storedResults.get( toolCallId )
 				: INTERRUPTED_TOOL_RESULT,
 		} ) ),
-		turnToolCalls: [
-			...pending.completed.map( ( { toolCallId, toolId, arguments: args, result } ) => ( {
-				toolCallId,
-				toolId,
-				arguments: args,
-				result,
-			} ) ),
-			...pending.calls.map( ( { toolCallId, toolId, arguments: args } ) => ( {
-				toolCallId,
-				toolId,
-				arguments: args,
-			} ) ),
-		],
+		turnToolCalls: pending.calls.map( ( { toolCallId, toolId, arguments: args } ) => ( {
+			toolCallId,
+			toolId,
+			arguments: args,
+		} ) ),
 	};
 }

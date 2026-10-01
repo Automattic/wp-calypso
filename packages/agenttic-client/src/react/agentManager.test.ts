@@ -508,15 +508,7 @@ describe( 'agentManager', () => {
 			for await ( const update of agentManager.sendToolResults(
 				'test-key',
 				[ { toolCallId: 'call-top', toolId: 'top_products', result: { error: 'interrupted' } } ],
-				[
-					{
-						toolCallId: 'call-settings',
-						toolId: 'site_settings',
-						arguments: {},
-						result: { currency: 'EUR' },
-					},
-					{ toolCallId: 'call-top', toolId: 'top_products', arguments: { limit: 5 } },
-				]
+				[ { toolCallId: 'call-top', toolId: 'top_products', arguments: { limit: 5 } } ]
 			) ) {
 				// Drain.
 			}
@@ -527,12 +519,10 @@ describe( 'agentManager', () => {
 			expect(
 				sent.map( ( part: any ) => [ part.data.toolCallId, 'result' in part.data ] )
 			).toEqual( [
-				[ 'call-settings', false ],
-				[ 'call-settings', true ],
 				[ 'call-top', false ],
 				[ 'call-top', true ],
 			] );
-			expect( sent[ 3 ].data.result ).toEqual( { error: 'interrupted' } );
+			expect( sent[ 1 ].data.result ).toEqual( { error: 'interrupted' } );
 		} );
 
 		it( 'sendToolResults leaves calls already in history alone and replaces their results', async () => {

@@ -82,13 +82,6 @@ export interface PendingClientTools {
 		/** When the server stored the call, MySQL datetime in UTC. */
 		createdAt: string;
 	} >;
-	/** Server-run calls of the same turn with their results, which a resume replays. */
-	completed: Array< {
-		toolCallId: string;
-		toolId: string;
-		arguments: unknown;
-		result: unknown;
-	} >;
 }
 
 /**

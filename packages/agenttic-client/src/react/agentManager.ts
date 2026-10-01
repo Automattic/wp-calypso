@@ -41,15 +41,11 @@ export interface ToolResultInput {
 	result: unknown;
 }
 
-/**
- * A tool call of the turn being answered, for `sendToolResults` to add to history
- * when this page never saw it. With `result`, it is a call the server already ran.
- */
+/** A tool call of the turn being answered, for `sendToolResults` to add to history when this page never saw it. */
 export interface TurnToolCall {
 	toolCallId: string;
 	toolId: string;
 	arguments: unknown;
-	result?: unknown;
 }
 
 /**
@@ -847,8 +843,8 @@ function createAgentManager(): AgentManager {
 		 *
 		 * A turn resumed on another page (after a page change) may have calls this
 		 * page never saw. `turnToolCalls` lists the turn's calls; those missing from
-		 * history are added as an agent message before sending, with the results of
-		 * the ones the server already ran, so the server sees each call paired.
+		 * history are added as an agent message before sending, so the server sees
+		 * each result paired with its call.
 		 * @param key           - The agent key
 		 * @param results       - One result per call being answered
 		 * @param turnToolCalls - The turn's calls, to add to history when missing
@@ -887,19 +883,14 @@ function createAgentManager(): AgentManager {
 			);
 			const missingParts = turnToolCalls
 				.filter( ( { toolCallId } ) => ! knownCallIds.has( toolCallId ) )
-				.flatMap( ( call ) => [
-					{
-						type: 'data' as const,
-						data: {
-							toolCallId: call.toolCallId,
-							toolId: call.toolId,
-							arguments: call.arguments as ToolCallDataPart[ 'data' ][ 'arguments' ],
-						},
+				.map( ( call ) => ( {
+					type: 'data' as const,
+					data: {
+						toolCallId: call.toolCallId,
+						toolId: call.toolId,
+						arguments: call.arguments as ToolCallDataPart[ 'data' ][ 'arguments' ],
 					},
-					...( call.result === undefined || answered.has( call.toolCallId )
-						? []
-						: [ createToolResultDataPart( call.toolCallId, call.toolId, call.result ) ] ),
-				] );
+				} ) );
 			if ( missingParts.length > 0 ) {
 				managedAgent.conversationHistory = [
 					...managedAgent.conversationHistory,

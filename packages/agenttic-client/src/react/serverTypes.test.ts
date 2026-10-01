@@ -23,7 +23,6 @@ describe( 'serverChatToLoadResult', () => {
 					createdAt: '2026-10-01 10:00:00',
 				},
 			],
-			completed: [],
 		};
 
 		expect(
