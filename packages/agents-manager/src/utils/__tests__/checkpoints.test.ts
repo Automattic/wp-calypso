@@ -278,7 +278,8 @@ describe( 'hasCheckpoint / clearCheckpoint / getCheckpoints', () => {
 } );
 
 describe( 'getAvailableCheckpoints', () => {
-	it( 'advertises a restore checkpoint under the intent of the request that created it', async () => {
+	// The backend reads `createdByRequestIntentType` to handle redo.
+	it( 'sends a restore checkpoint with its own intent and the one that created it', async () => {
 		const { setCheckpoint, getAvailableCheckpoints, checkpointKeys } = await loadCheckpoints();
 		setCheckpoint( 'call-1', [ checkpointKeys.COLOR ], {
 			toolId: 'big_sky__restore_checkpoint',
@@ -286,7 +287,10 @@ describe( 'getAvailableCheckpoints', () => {
 			createdByRequestIntentType: 'undo',
 		} );
 
-		expect( getAvailableCheckpoints()[ 0 ] ).toMatchObject( { requestIntentType: 'undo' } );
+		expect( getAvailableCheckpoints()[ 0 ] ).toMatchObject( {
+			requestIntentType: 'redo',
+			createdByRequestIntentType: 'undo',
+		} );
 	} );
 
 	// The list is re-sent to the agent every turn; snapshots carry whole
