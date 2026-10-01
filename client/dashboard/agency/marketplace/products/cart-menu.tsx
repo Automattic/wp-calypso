@@ -13,15 +13,11 @@ import { cart } from '@wordpress/icons';
 import { useAnalytics } from '../../../app/analytics';
 import { TextBlur } from '../../../components/text-blur';
 import { a4aLink } from '../../../utils/link';
-import { getProductCommissionPercentage } from '../../earn/referrals/lib/commissions';
-import { isPressableHostingProduct } from '../hosting/lib/pressable-plans';
-import { getEffectivePressableOwnership } from '../hosting/lib/pressable-products';
 import { WPCOM_CREATOR_PLAN_SLUG, WPCOM_HOSTING_FAMILY_SLUG } from '../lib/wpcom-hosting';
-import { useAgencyPressablePlan } from '../use-agency-pressable-plan';
-import { useOwnedWpcomSites } from '../use-owned-wpcom-sites';
 import { getCheckoutUrl } from './lib/checkout-url';
-import { getProductPriceInfo, getTermSuffix, getWpcomTieredPrice } from './lib/product-pricing';
+import { getTermSuffix } from './lib/product-pricing';
 import { getProductShortTitle } from './lib/product-title';
+import { useCartLines } from './use-cart-lines';
 import type { TermPricing } from '../use-term-pricing';
 import type { ShoppingCartItem } from './use-shopping-cart';
 import type { AgencyProduct } from '@automattic/api-core';
@@ -61,54 +57,12 @@ export default function CartMenu( {
 	onCheckout,
 }: Props ) {
 	const { recordTracksEvent } = useAnalytics();
-	// Owned WordPress.com sites raise the volume tier, so the total matches the
-	// Hosting page wherever the cart is shown.
-	const { ownedSites: ownedWpcomSites, isReady: isOwnedSitesReady } = useOwnedWpcomSites();
-	// Pressable's introductory price only applies to agencies without a plan,
-	// so the cart checks for one itself and matches the Hosting page everywhere.
-	const { plan: pressablePlan, ownership: pressableOwnership } = useAgencyPressablePlan();
-	const applyPressableIntroductoryPrice =
-		isReferralMode ||
-		getEffectivePressableOwnership( pressableOwnership, pressablePlan, isReferralMode ) !==
-			'agency';
-
-	const lines = items
-		.map( ( item ) => {
-			const product = products.find( ( candidate ) => candidate.slug === item.slug );
-			if ( ! product ) {
-				return null;
-			}
-			const applyIntroductoryPrice =
-				! isPressableHostingProduct( product.family_slug ) || applyPressableIntroductoryPrice;
-			const priceInfo = getProductPriceInfo( product, term, { applyIntroductoryPrice } );
-			const subtotal =
-				product.family_slug === WPCOM_HOSTING_FAMILY_SLUG
-					? getWpcomTieredPrice( product, item.quantity, term, ownedWpcomSites ).discountedCost
-					: priceInfo.price * item.quantity;
-			return {
-				item,
-				product,
-				priceInfo,
-				subtotal,
-				commission: subtotal * getProductCommissionPercentage( product.slug, product.family_slug ),
-			};
-		} )
-		.filter( ( line ): line is NonNullable< typeof line > => line !== null );
-
-	// A WordPress.com line's price depends on the owned sites, so hold the
-	// amounts until they are known rather than showing a total that then drops.
-	const isTotalReady =
-		isOwnedSitesReady ||
-		! lines.some( ( { product } ) => product.family_slug === WPCOM_HOSTING_FAMILY_SLUG );
-
-	const currency = lines[ 0 ]?.product.currency ?? 'USD';
-	const { total, commission } = lines.reduce(
-		( sums, line ) => ( {
-			total: sums.total + line.subtotal,
-			commission: sums.commission + line.commission,
-		} ),
-		{ total: 0, commission: 0 }
-	);
+	const { lines, currency, total, commission, isTotalReady, hasWpcomHostingPlan } = useCartLines( {
+		items,
+		products,
+		term,
+		isReferralMode,
+	} );
 	// TODO: The dashboard assumes every agency is on Billing Dragon. Until the
 	// last agencies move off the previous billing system, their carts go to the
 	// checkout that can charge them, with the products pre-selected.
@@ -121,12 +75,7 @@ export default function CartMenu( {
 			: getCheckoutUrl(
 					lines.map( ( { product, item } ) => ( { product, quantity: item.quantity } ) ),
 					isReferralMode,
-					{
-						term,
-						hasWpcomHostingPlan: lines.some(
-							( { product } ) => product.family_slug === WPCOM_HOSTING_FAMILY_SLUG
-						),
-					}
+					{ term, hasWpcomHostingPlan }
 				);
 
 	const checkoutButton = (
