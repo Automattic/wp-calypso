@@ -4,7 +4,10 @@
 import { render, screen } from '@testing-library/react';
 import Highlights from '../highlights';
 
-jest.mock( '../../hooks/use-top-posts-query', () => () => ( { data: [], isFetching: false } ) );
+jest.mock( '../../hooks/use-top-posts-query', () => () => ( {
+	data: [ { id: 328, title: 'Monitor a running process', views: 1 } ],
+	isFetching: false,
+} ) );
 jest.mock( '../../hooks/use-referrers-query', () => () => ( { data: [], isFetching: false } ) );
 jest.mock( 'calypso/my-sites/stats/hooks/use-premium-analytics-status-query', () => () => ( {
 	data: true,
@@ -28,5 +31,15 @@ describe( 'Highlights', () => {
 
 		expect( routeOf( 'View all posts & pages stats' ) ).toBe( '/reports/posts?preset=last-7-days' );
 		expect( routeOf( 'View all referrer stats' ) ).toBe( '/reports/referrers?preset=last-7-days' );
+	} );
+
+	it( 'opens a post row on the last seven days preset', () => {
+		render( <Highlights siteId={ 1 } gmtOffset={ 0 } statsBaseUrl="https://example.com/stats" /> );
+
+		const href = screen
+			.getByText( 'Monitor a running process' )
+			.closest( 'a' )
+			?.getAttribute( 'href' );
+		expect( new URL( href ?? '' ).searchParams.get( 'p' ) ).toBe( '/post/328?preset=last-7-days' );
 	} );
 } );
