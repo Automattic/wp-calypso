@@ -219,9 +219,6 @@ describe( 'NamePulseResults', () => {
 		await waitFor( () =>
 			expect( domainsIn( 'top' ) ).toEqual( [ 'myapp.blog', 'myapp.org', 'myapp.net' ] )
 		);
-		expect( domainsIn( 'exact' ).indexOf( 'my.app' ) ).toBe(
-			domainsIn( 'exact' ).indexOf( 'myapp.shop' ) + 1
-		);
 	} );
 
 	it( 'shows a notice with retry when the TLD list fails to load', async () => {

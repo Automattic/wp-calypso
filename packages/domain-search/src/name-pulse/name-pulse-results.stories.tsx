@@ -203,7 +203,7 @@ export const FqdnWithoutOwnBundle = () => <StoryDomainSearch query="icecream.blo
 // No card for a taken name; the bundle moves under Top results.
 export const FqdnTaken = () => <StoryDomainSearch query="icecream.io" />;
 
-// `my.app` moves to the second slot, so it is the second top result.
+// `my.app` is promoted to the second top result.
 export const LabelEndsInTld = () => <StoryDomainSearch query="myapp" />;
 
 export const MultiWord = () => <StoryDomainSearch query="ice cream" />;

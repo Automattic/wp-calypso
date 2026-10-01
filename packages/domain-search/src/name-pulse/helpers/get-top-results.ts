@@ -12,7 +12,7 @@ const isCandidate = ( result: NamePulseDomainResult ) =>
 	!! result.is_cart_check;
 
 /**
- * The backend owns the TLD order, so the first candidates in list order are featured.
+ * Features the first candidates in grid order.
  */
 export function getTopResults(
 	results: NamePulseDomainResult[],

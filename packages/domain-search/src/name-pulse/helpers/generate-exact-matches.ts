@@ -1,22 +1,24 @@
 import { NamePulseDomainStatus, type NamePulseDomainResult } from './types';
 
 /**
- * When the label ends with a TLD ("myapp") that TLD gets the shorter label
- * ("my.app"), as long as at least two characters remain. The longest such TLD
- * wins, so "mystudio" is "my.studio", not "mystud.io". With `promoteMatchedTld`
- * that row moves to the second slot.
+ * A label ending in a TLD is split on it: "myapp" gives "my.app". The longest
+ * TLD wins ("my.studio", not "mystud.io") and at least two characters must
+ * remain. `promoteMatchedTld` moves that row to second place.
  */
 export function generateExactMatches(
 	baseName: string,
 	tlds: readonly string[],
 	{ promoteMatchedTld = false }: { promoteMatchedTld?: boolean } = {}
 ): NamePulseDomainResult[] {
-	const matchedTld = tlds
-		.filter( ( tld ) => baseName.endsWith( tld ) && baseName.length - tld.length >= 2 )
-		.reduce< string | undefined >(
-			( longest, tld ) => ( ! longest || tld.length > longest.length ? tld : longest ),
-			undefined
-		);
+	const matchedTld = tlds.reduce< string | undefined >(
+		( longest, tld ) =>
+			baseName.endsWith( tld ) &&
+			baseName.length - tld.length >= 2 &&
+			tld.length > ( longest?.length ?? 0 )
+				? tld
+				: longest,
+		undefined
+	);
 
 	const ordered = [ ...tlds ];
 
