@@ -42,4 +42,62 @@ describe( 'getPremiumAnalyticsPath', () => {
 			route( getPremiumAnalyticsPath( '/', { from: '2026-09', to: '2026-09-30', gmtOffset: 0 } ) )
 		).toBe( '/' );
 	} );
+
+	// gmtOffset is the offset of today, after the change, so it is wrong for the earlier end.
+	it( 'gives each end the offset of its own day across a spring-forward change', () => {
+		expect(
+			route(
+				getPremiumAnalyticsPath( '/', {
+					from: '2026-03-03',
+					to: '2026-03-09',
+					gmtOffset: -4,
+					timezone: 'America/New_York',
+				} )
+			)
+		).toBe( '/?from=2026-03-03T00%3A00%3A00.000-05%3A00&to=2026-03-09T23%3A59%3A59.999-04%3A00' );
+	} );
+
+	it( 'gives each end the offset of its own time on a fall-back day', () => {
+		expect(
+			route(
+				getPremiumAnalyticsPath( '/', {
+					from: '2026-11-01',
+					to: '2026-11-01',
+					gmtOffset: -5,
+					timezone: 'America/New_York',
+				} )
+			)
+		).toBe( '/?from=2026-11-01T00%3A00%3A00.000-04%3A00&to=2026-11-01T23%3A59%3A59.999-05%3A00' );
+	} );
+
+	// The same clock digits read as UTC land on 5 April, after Sydney's switch to +10:00.
+	it( 'reads the offset at the site clock time, not at the same digits in UTC', () => {
+		expect(
+			route(
+				getPremiumAnalyticsPath( '/', {
+					from: '2026-04-04',
+					to: '2026-04-04',
+					gmtOffset: 10,
+					timezone: 'Australia/Sydney',
+				} )
+			)
+		).toBe(
+			'/?from=2026-04-04T00%3A00%3A00.000%2B11%3A00&to=2026-04-04T23%3A59%3A59.999%2B11%3A00'
+		);
+	} );
+
+	it( 'falls back to the fixed offset for a timezone the browser does not know', () => {
+		expect(
+			route(
+				getPremiumAnalyticsPath( '/', {
+					from: '2026-09-30',
+					to: '2026-09-30',
+					gmtOffset: 2,
+					timezone: 'Not/A_Zone',
+				} )
+			)
+		).toBe(
+			'/?from=2026-09-30T00%3A00%3A00.000%2B02%3A00&to=2026-09-30T23%3A59%3A59.999%2B02%3A00'
+		);
+	} );
 } );
