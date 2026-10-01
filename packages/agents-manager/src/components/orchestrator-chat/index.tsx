@@ -1,4 +1,10 @@
-import { getAgentManager, type TaskUpdate, type UIMessage } from '@automattic/agenttic-client';
+import {
+	getAgentManager,
+	type TaskUpdate,
+	type ToolResultInput,
+	type TurnToolCall,
+	type UIMessage,
+} from '@automattic/agenttic-client';
 import {
 	type Suggestion,
 	type MarkdownComponents,
@@ -1447,13 +1453,35 @@ export default function OrchestratorChat( {
 		[ submitChatMessage ]
 	);
 
+	// Answers the browser tool calls a turn paused on before a page change, so the
+	// reply streams in here; resolves to whether one did.
+	const resumeToolCalls = useCallback(
+		async ( toolResults: ToolResultInput[], turnToolCalls: TurnToolCall[] ) => {
+			const agentManager = getAgentManager();
+			const agentKey = agentConfig!.agentId;
+			const sentAt = agentManager.getConversationHistory( agentKey ).length;
+			await onSubmit( '', { type: 'tool_results', toolResults, turnToolCalls } );
+			return agentManager
+				.getConversationHistory( agentKey )
+				.slice( sentAt )
+				.some(
+					( message ) =>
+						message.role === 'agent' &&
+						message.parts.some( ( part ) => part.type === 'text' && part.text.trim() )
+				);
+		},
+		[ agentConfig, onSubmit ]
+	);
+
 	// A question asked before a page change whose reply has not landed yet
-	// (WOOAI-872). Off once the merchant sends or a turn runs, so its one
-	// rehydration can never replace a live stream.
+	// (WOOAI-872), or whose turn paused on a browser tool (WOOAI-1174). Off once
+	// the merchant sends or a turn runs, so its one rehydration can never replace
+	// a live stream.
 	const { notice: replyNotice } = useReplyRecovery( {
 		hydratedMessages: hydratedConversation?.messages,
 		enabled: ! isReaderChat && ! hasUserSentMessage && ! isProcessing,
 		sendRetry,
+		resumeToolCalls,
 	} );
 
 	const submitChatMessageFromHost = useCallback(

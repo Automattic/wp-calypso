@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 /* eslint-disable import/order -- jest.mock calls must precede imports */
-import type { Message } from '@automattic/agenttic-client';
+import type { Message, PendingClientTools } from '@automattic/agenttic-client';
 
 const mockIsTurnInFlight = jest.fn( () => false );
 const isUnresolved = ( message: Message ) =>
@@ -76,6 +76,12 @@ jest.mock( '@tanstack/react-query', () => ( {
 	useQueryClient: () => ( { invalidateQueries: mockInvalidateQueries } ),
 } ) );
 
+let mockParkedNavigationCallId: string | undefined;
+jest.mock( '../../utils/wp-admin-navigation-state', () => ( {
+	getPendingNavigation: () =>
+		mockParkedNavigationCallId ? { toolCallId: mockParkedNavigationCallId } : null,
+} ) );
+
 jest.mock( '../../utils/conversation-bot-id', () => ( {
 	getConversationBotId: ( agentId: string ) => agentId,
 } ) );
@@ -88,7 +94,12 @@ jest.mock( '../../contexts', () => ( {
 
 import { loadChatFromServer, loadConversation } from '@automattic/agenttic-client';
 import { act, renderHook } from '@testing-library/react';
-import useReplyRecovery, { LOST_AFTER_MS, UNANSWERED_AFTER_MS } from '../use-reply-recovery';
+import useReplyRecovery, {
+	LOST_AFTER_MS,
+	RESUME_AFTER_MS,
+	UNANSWERED_AFTER_MS,
+} from '../use-reply-recovery';
+import { INTERRUPTED_TOOL_RESULT } from '../../utils/tool-call-resume';
 
 const message = (
 	role: 'user' | 'agent',
@@ -124,25 +135,30 @@ async function setup( { stored, hydrated, enabled = true }: SetupOptions ) {
 	( loadConversation as jest.Mock ).mockResolvedValue( { messages: stored } );
 	mockProbe = { data: undefined, dataUpdatedAt: 0 };
 	const sendRetry = jest.fn().mockResolvedValue( true );
+	const resumeToolCalls = jest.fn().mockResolvedValue( true );
 	const hook = renderHook(
 		( props: { enabled: boolean } ) =>
 			useReplyRecovery( {
 				hydratedMessages: hydrated,
 				enabled: props.enabled,
 				sendRetry,
+				resumeToolCalls,
 			} ),
 		{ initialProps: { enabled } }
 	);
 	await flush();
 	await flush();
 	// Feeds the probe query one result, as its refetch would.
-	const probeResult = async ( messages: Message[] ) => {
-		mockProbe = { data: { messages }, dataUpdatedAt: mockProbe.dataUpdatedAt + 1 };
+	const probeResult = async ( messages: Message[], pendingClientTools?: PendingClientTools ) => {
+		mockProbe = {
+			data: { messages, ...( pendingClientTools && { pendingClientTools } ) },
+			dataUpdatedAt: mockProbe.dataUpdatedAt + 1,
+		};
 		hook.rerender( { enabled } );
 		await flush();
 		await flush();
 	};
-	return { ...hook, sendRetry, probeResult };
+	return { ...hook, sendRetry, resumeToolCalls, probeResult };
 }
 
 describe( 'useReplyRecovery', () => {
@@ -150,6 +166,7 @@ describe( 'useReplyRecovery', () => {
 		jest.useFakeTimers();
 		jest.clearAllMocks();
 		mockIsTurnInFlight.mockReturnValue( false );
+		mockParkedNavigationCallId = undefined;
 	} );
 
 	afterEach( () => {
@@ -362,5 +379,155 @@ describe( 'useReplyRecovery', () => {
 
 		expect( loadConversation ).not.toHaveBeenCalled();
 		expect( result.current.notice ).toBeUndefined();
+	} );
+	describe( 'a turn paused on a browser tool', () => {
+		// MySQL datetime in UTC, as the server stores it.
+		const storedSecondsAgo = ( seconds: number ) =>
+			new Date( Date.now() - seconds * 1000 ).toISOString().slice( 0, 19 ).replace( 'T', ' ' );
+		const pendingTools = (
+			state: PendingClientTools[ 'state' ],
+			secondsAgo = 30
+		): PendingClientTools => ( {
+			state,
+			calls: [
+				{
+					toolCallId: 'call-top',
+					toolId: 'woocommerce__get_top_products',
+					arguments: { limit: 5 },
+					createdAt: storedSecondsAgo( secondsAgo ),
+				},
+			],
+			completed: [
+				{
+					toolCallId: 'call-settings',
+					toolId: 'wpcom__site_settings',
+					arguments: {},
+					result: { currency: 'EUR' },
+				},
+			],
+		} );
+
+		it( 'resumes the turn with an interrupted result and the calls of the turn', async () => {
+			const { result, resumeToolCalls, probeResult } = await setup( {
+				stored: [ pendingQuestion ],
+				hydrated: [ previousAnswer, questionOnServer ],
+			} );
+			let finishResume: ( replied: boolean ) => void = () => {};
+			resumeToolCalls.mockReturnValue( new Promise( ( resolve ) => ( finishResume = resolve ) ) );
+
+			await probeResult( [ previousAnswer, questionOnServer ], pendingTools( 'unanswered' ) );
+
+			expect( resumeToolCalls ).toHaveBeenCalledWith(
+				[
+					{
+						toolCallId: 'call-top',
+						toolId: 'woocommerce__get_top_products',
+						result: INTERRUPTED_TOOL_RESULT,
+					},
+				],
+				[
+					{
+						toolCallId: 'call-settings',
+						toolId: 'wpcom__site_settings',
+						arguments: {},
+						result: { currency: 'EUR' },
+					},
+					{
+						toolCallId: 'call-top',
+						toolId: 'woocommerce__get_top_products',
+						arguments: { limit: 5 },
+					},
+				]
+			);
+			expect( result.current.notice?.message ).toBe( 'Picking up your last question…' );
+			expect( mockQueryOptions.enabled ).toBe( false );
+
+			await act( async () => finishResume( true ) );
+			expect( result.current.notice ).toBeUndefined();
+		} );
+
+		it( 'sends the result the old page stored instead of an interrupted one', async () => {
+			const storedResult = {
+				role: 'agent',
+				kind: 'message',
+				messageId: 'm-results',
+				parts: [
+					{
+						type: 'data',
+						data: {
+							toolCallId: 'call-top',
+							toolId: 'woocommerce__get_top_products',
+							result: { rows: 5 },
+						},
+					},
+				],
+				metadata: {},
+			} as unknown as Message;
+			const { resumeToolCalls, probeResult } = await setup( {
+				stored: [ pendingQuestion, storedResult ],
+				hydrated: [ previousAnswer, questionOnServer ],
+			} );
+
+			await probeResult( [ previousAnswer, questionOnServer ], pendingTools( 'unanswered' ) );
+
+			expect( resumeToolCalls.mock.calls[ 0 ][ 0 ][ 0 ].result ).toEqual( { rows: 5 } );
+		} );
+
+		it( 'gives the old page time to send its own result first', async () => {
+			const { resumeToolCalls, probeResult } = await setup( {
+				stored: [ pendingQuestion ],
+				hydrated: [ previousAnswer, questionOnServer ],
+			} );
+
+			await probeResult( [ previousAnswer, questionOnServer ], pendingTools( 'unanswered', 2 ) );
+			expect( resumeToolCalls ).not.toHaveBeenCalled();
+
+			await act( async () => {
+				jest.advanceTimersByTime( RESUME_AFTER_MS );
+			} );
+			await probeResult( [ previousAnswer, questionOnServer ], pendingTools( 'unanswered', 12 ) );
+			expect( resumeToolCalls ).toHaveBeenCalledTimes( 1 );
+		} );
+
+		it.each( [ 'claimed', 'running' ] as const )(
+			'keeps waiting while the turn is %s elsewhere',
+			async ( state ) => {
+				const { result, resumeToolCalls, probeResult } = await setup( {
+					stored: [ pendingQuestion ],
+					hydrated: [ previousAnswer, questionOnServer ],
+				} );
+
+				await probeResult( [ previousAnswer, questionOnServer ], pendingTools( state ) );
+
+				expect( resumeToolCalls ).not.toHaveBeenCalled();
+				expect( result.current.notice?.message ).toBe( 'Waiting for the reply…' );
+			}
+		);
+
+		it( 'goes back to waiting, once, when the resume brings no reply', async () => {
+			const { result, resumeToolCalls, probeResult } = await setup( {
+				stored: [ pendingQuestion ],
+				hydrated: [ previousAnswer, questionOnServer ],
+			} );
+			resumeToolCalls.mockResolvedValue( false );
+
+			await probeResult( [ previousAnswer, questionOnServer ], pendingTools( 'unanswered' ) );
+			expect( result.current.notice?.message ).toBe( 'Waiting for the reply…' );
+
+			await probeResult( [ previousAnswer, questionOnServer ], pendingTools( 'unanswered' ) );
+			expect( resumeToolCalls ).toHaveBeenCalledTimes( 1 );
+		} );
+
+		it( 'leaves a parked wp-admin-navigate call to the navigation continuation', async () => {
+			mockParkedNavigationCallId = 'call-top';
+			const { resumeToolCalls, probeResult } = await setup( {
+				stored: [ pendingQuestion ],
+				hydrated: [ previousAnswer, questionOnServer ],
+			} );
+
+			await probeResult( [ previousAnswer, questionOnServer ], pendingTools( 'unanswered' ) );
+
+			expect( resumeToolCalls ).not.toHaveBeenCalled();
+		} );
 	} );
 } );

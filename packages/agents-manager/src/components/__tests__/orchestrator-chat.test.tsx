@@ -305,6 +305,8 @@ const mockAgentChat = jest.fn(
 	)
 );
 
+let mockConversationHistory: Array< { role: string; parts: Array< Record< string, unknown > > } > =
+	[];
 jest.mock(
 	'@automattic/agenttic-client',
 	() => ( {
@@ -312,6 +314,7 @@ jest.mock(
 			updateSessionId: mockUpdateSessionId,
 			hasAgent: () => mockManagerHasAgent,
 			isTurnInFlight: () => mockManagerTurnInFlight,
+			getConversationHistory: () => mockConversationHistory,
 		} ),
 		useAgentChat: ( config: typeof mockAgentChatConfig ) => {
 			mockAgentChatConfig = config;
@@ -727,6 +730,7 @@ describe( 'OrchestratorChat', () => {
 		mockConversationConfig = undefined;
 		mockReplyRecoveryOptions = undefined;
 		mockReplyNotice = undefined;
+		mockConversationHistory = [];
 	} );
 
 	it.each( [
@@ -4206,6 +4210,44 @@ describe( 'OrchestratorChat', () => {
 
 			expect( onSubmit ).toHaveBeenCalledWith( 'ship the sale banner' );
 			expect( sent ).toBe( true );
+		} );
+
+		it( 'resumes a turn paused on browser tools through the chat send and reports the reply', async () => {
+			const onSubmit = jest.fn( async () => {
+				mockConversationHistory = [
+					...mockConversationHistory,
+					{ role: 'agent', parts: [ { type: 'text', text: 'Here are your top products.' } ] },
+				];
+			} );
+			mockUseAgentChat.mockReturnValue( agentChatReturn( { onSubmit } ) );
+			render( chat() );
+			const toolResults = [ { toolCallId: 'call-top', toolId: 'top_products', result: {} } ];
+			const turnToolCalls = [ { toolCallId: 'call-top', toolId: 'top_products', arguments: {} } ];
+
+			let replied: boolean | undefined;
+			await act( async () => {
+				replied = await mockReplyRecoveryOptions?.resumeToolCalls( toolResults, turnToolCalls );
+			} );
+
+			expect( onSubmit ).toHaveBeenCalledWith( '', {
+				type: 'tool_results',
+				toolResults,
+				turnToolCalls,
+			} );
+			expect( replied ).toBe( true );
+		} );
+
+		it( 'reports no reply when the resume lost to another page', async () => {
+			const onSubmit = jest.fn().mockResolvedValue( undefined );
+			mockUseAgentChat.mockReturnValue( agentChatReturn( { onSubmit } ) );
+			render( chat() );
+
+			let replied: boolean | undefined;
+			await act( async () => {
+				replied = await mockReplyRecoveryOptions?.resumeToolCalls( [], [] );
+			} );
+
+			expect( replied ).toBe( false );
 		} );
 	} );
 } );

@@ -1,5 +1,17 @@
 import { __ } from '@wordpress/i18n';
 
+/**
+ * The server answers a second result for the same browser tool call with this.
+ * After a page change, the page resuming a paused turn (WOOAI-1174) can lose that
+ * race to the page that ran the tool; the turn continues there, so it is not an
+ * error to show.
+ */
+export const TOOL_RESULT_ALREADY_RECEIVED = 'This tool result was already received.';
+
+function isToolResultAlreadyReceived( error: string ): boolean {
+	return error.includes( TOOL_RESULT_ALREADY_RECEIVED );
+}
+
 function isUsageLimitError( error: string ): boolean {
 	return error === 'ai_editorial_review_over_limit' || /jetpack ai usage limit/i.test( error );
 }
@@ -8,7 +20,7 @@ function isUsageLimitError( error: string ): boolean {
 // client-translated to a localized copy, mirroring reader-chat-error-message.
 // Non-matching errors pass through unchanged.
 export function getOrchestratorErrorMessage( error: string | null ): string | null {
-	if ( ! error ) {
+	if ( ! error || isToolResultAlreadyReceived( error ) ) {
 		return null;
 	}
 

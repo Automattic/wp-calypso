@@ -31,7 +31,26 @@ import type {
 	SendMessageParams,
 	Task,
 	TaskUpdate,
+	ToolCallDataPart,
 } from '../client/types/index';
+
+/** One result in a batch sent by `sendToolResults`. */
+export interface ToolResultInput {
+	toolCallId: string;
+	toolId: string;
+	result: unknown;
+}
+
+/**
+ * A tool call of the turn being answered, for `sendToolResults` to add to history
+ * when this page never saw it. With `result`, it is a call the server already ran.
+ */
+export interface TurnToolCall {
+	toolCallId: string;
+	toolId: string;
+	arguments: unknown;
+	result?: unknown;
+}
 
 /**
  * Update localStorage with new session ID when server returns a stable session ID
@@ -209,6 +228,13 @@ export interface AgentManager {
 		result: unknown,
 		options?: Partial< SendMessageParams >,
 		fileParts?: FilePart[]
+	) => AsyncIterable< TaskUpdate >;
+	// Used internally by `useAgentChat` — not intended for direct external use.
+	sendToolResults: (
+		key: string,
+		results: ToolResultInput[],
+		turnToolCalls?: TurnToolCall[],
+		options?: Partial< SendMessageParams >
 	) => AsyncIterable< TaskUpdate >;
 	resetConversation: ( key: string ) => Promise< void >;
 	replaceMessages: ( key: string, messages: Message[] ) => Promise< void >;
@@ -810,6 +836,90 @@ function createAgentManager(): AgentManager {
 					role: 'user',
 					kind: 'message',
 					parts: [ createToolResultDataPart( toolCallId, toolId, result, undefined, fileParts ) ],
+					messageId: generateMessageId(),
+				},
+			} );
+		},
+
+		/**
+		 * Send the results of several tool calls of one turn in one message: the
+		 * server only continues a turn whose every call has a result.
+		 *
+		 * A turn resumed on another page (after a page change) may have calls this
+		 * page never saw. `turnToolCalls` lists the turn's calls; those missing from
+		 * history are added as an agent message before sending, with the results of
+		 * the ones the server already ran, so the server sees each call paired.
+		 * @param key           - The agent key
+		 * @param results       - One result per call being answered
+		 * @param turnToolCalls - The turn's calls, to add to history when missing
+		 * @param options       - Optional send message params
+		 */
+		async *sendToolResults(
+			key: string,
+			results: ToolResultInput[],
+			turnToolCalls: TurnToolCall[] = [],
+			options: Partial< SendMessageParams > = {}
+		): AsyncIterable< TaskUpdate > {
+			const managedAgent = agents.get( key );
+			if ( ! managedAgent ) {
+				throw new Error( `Agent with key "${ key }" not found` );
+			}
+
+			const answered = new Set( results.map( ( { toolCallId } ) => toolCallId ) );
+			const isAnsweredResult = ( part: any ) =>
+				part.type === 'data' && answered.has( part.data?.toolCallId ) && 'result' in part.data;
+
+			// Drop earlier results for the answered calls; the server rejects a call
+			// with two results.
+			managedAgent.conversationHistory = managedAgent.conversationHistory
+				.map( ( msg ) => ( {
+					...msg,
+					parts: msg.parts.filter( ( p ) => ! isAnsweredResult( p ) ),
+				} ) )
+				.filter( ( msg ) => msg.parts.length > 0 );
+
+			const knownCallIds = new Set(
+				managedAgent.conversationHistory.flatMap( ( msg ) =>
+					msg.parts
+						.filter( ( p: any ) => p.type === 'data' && 'arguments' in ( p.data ?? {} ) )
+						.map( ( p: any ) => p.data.toolCallId )
+				)
+			);
+			const missingParts = turnToolCalls
+				.filter( ( { toolCallId } ) => ! knownCallIds.has( toolCallId ) )
+				.flatMap( ( call ) => [
+					{
+						type: 'data' as const,
+						data: {
+							toolCallId: call.toolCallId,
+							toolId: call.toolId,
+							arguments: call.arguments as ToolCallDataPart[ 'data' ][ 'arguments' ],
+						},
+					},
+					...( call.result === undefined || answered.has( call.toolCallId )
+						? []
+						: [ createToolResultDataPart( call.toolCallId, call.toolId, call.result ) ] ),
+				] );
+			if ( missingParts.length > 0 ) {
+				managedAgent.conversationHistory = [
+					...managedAgent.conversationHistory,
+					{
+						role: 'agent',
+						kind: 'message',
+						parts: missingParts,
+						messageId: generateMessageId(),
+					},
+				];
+			}
+
+			yield* this.sendMessageStream( key, '', {
+				...options,
+				message: {
+					role: 'user',
+					kind: 'message',
+					parts: results.map( ( { toolCallId, toolId, result } ) =>
+						createToolResultDataPart( toolCallId, toolId, result )
+					),
 					messageId: generateMessageId(),
 				},
 			} );
