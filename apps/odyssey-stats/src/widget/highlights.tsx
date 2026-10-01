@@ -82,7 +82,7 @@ const ItemWrapper: FunctionComponent< ItemWrapperProps > = ( {
 					? externalLink( item )
 					: statsLink(
 							postAndPageLink( statsBaseUrl, siteId, item.id ),
-							item.id > 0 ? `/post/${ item.id }` : null
+							item.id > 0 ? `/post/${ item.id }?preset=last-7-days` : null
 						)
 			}
 			target={ isItemLinkExternal ? '_blank' : '_self' }
