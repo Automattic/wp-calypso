@@ -48,35 +48,56 @@ function zoneOffsetAt( timezone: string, instant: number ): number {
 		: 0;
 }
 
+const MINUTE = 60000;
+const DAY_LENGTH = 24 * 60 * MINUTE;
+
 /**
- * The offset in effect at a wall-clock time in the site's timezone, which differs between the two
- * ends of a range that crosses a daylight-saving change.
+ * The timestamp, with its offset, at which a day starts or ends in the site's timezone.
  * @param day   The calendar day, `YYYY-MM-DD`.
- * @param time  Hours, minutes, seconds and milliseconds on that day.
+ * @param edge  Whether to give the first or the last millisecond of the day.
  * @param range The range, for its timezone or fixed offset.
- * @returns The offset in minutes, or null when neither the timezone nor the offset is usable.
+ * @returns The ISO timestamp, or null when neither the timezone nor the offset is usable.
  */
-function offsetOn( day: string, time: number[], range: PremiumAnalyticsRange ): number | null {
+function boundaryOf(
+	day: string,
+	edge: 'start' | 'end',
+	range: PremiumAnalyticsRange
+): string | null {
+	const [ year, month, date ] = day.split( '-' ).map( Number );
+	// The site clock time of the boundary, with its digits read as UTC.
+	const wallClock =
+		edge === 'start'
+			? Date.UTC( year, month - 1, date )
+			: Date.UTC( year, month - 1, date + 1 ) - 1;
+	const format = ( instant: number, offset: number ) =>
+		`${ new Date( instant + offset * MINUTE ).toISOString().slice( 0, 23 ) }${ formatOffset( offset ) }`;
+
 	if ( range.timezone ) {
+		const timezone = range.timezone;
 		try {
-			const [ year, month, date ] = day.split( '-' ).map( Number );
-			const wallClock = Date.UTC(
-				year,
-				month - 1,
-				date,
-				...( time as [ number, number, number, number ] )
+			// A zone changes its offset at most once a day, so the offsets a day either side are all the clock time can have.
+			const instants = [ -DAY_LENGTH, 0, DAY_LENGTH ].map(
+				( shift ) => wallClock - zoneOffsetAt( timezone, wallClock + shift ) * MINUTE
 			);
-			// The offset at the wall-clock instant read as UTC is off by that offset, so ask again from there.
-			return zoneOffsetAt(
-				range.timezone,
-				wallClock - zoneOffsetAt( range.timezone, wallClock ) * 60000
+			const real = instants.filter(
+				( instant ) => instant + zoneOffsetAt( timezone, instant ) * MINUTE === wallClock
 			);
+			// A repeated clock time has two instants, and the day takes the outer one. Only a midnight is ever skipped, and then the day starts after the gap.
+			let instant = Math.max( ...instants );
+			if ( real.length ) {
+				instant = edge === 'start' ? Math.min( ...real ) : Math.max( ...real );
+			}
+			return format( instant, zoneOffsetAt( timezone, instant ) );
 		} catch {
 			// An unknown timezone falls back to the fixed offset.
 		}
 	}
 
-	return Number.isFinite( range.gmtOffset ) ? Math.round( range.gmtOffset * 60 ) : null;
+	if ( ! Number.isFinite( range.gmtOffset ) ) {
+		return null;
+	}
+	const offset = Math.round( range.gmtOffset * 60 );
+	return format( wallClock - offset * MINUTE, offset );
 }
 
 /**
@@ -92,14 +113,11 @@ export function getPremiumAnalyticsPath( route = '/', range?: PremiumAnalyticsRa
 	let path = route;
 
 	if ( range && DAY.test( range.from ) && DAY.test( range.to ) ) {
-		const fromOffset = offsetOn( range.from, [ 0, 0, 0, 0 ], range );
-		const toOffset = offsetOn( range.to, [ 23, 59, 59, 999 ], range );
+		const from = boundaryOf( range.from, 'start', range );
+		const to = boundaryOf( range.to, 'end', range );
 
-		if ( fromOffset !== null && toOffset !== null ) {
-			const search = new URLSearchParams( {
-				from: `${ range.from }T00:00:00.000${ formatOffset( fromOffset ) }`,
-				to: `${ range.to }T23:59:59.999${ formatOffset( toOffset ) }`,
-			} );
+		if ( from !== null && to !== null ) {
+			const search = new URLSearchParams( { from, to } );
 			path = `${ route }?${ search }`;
 		}
 	}
