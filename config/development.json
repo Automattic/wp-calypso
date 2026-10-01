@@ -91,7 +91,7 @@
 		"email-accounts/enabled": true,
 		"emails/titan-tiers": true,
 		"entrepreneur/skip-trial-for-migration": true,
-		"footer-redesign/2026": false,
+		"footer-redesign/2026": true,
 		"footer/dark": false,
 		"footer/light": false,
 		"google-drive": true,
