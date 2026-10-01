@@ -24,7 +24,7 @@ export interface AgencyOverviewLinks {
 	woopayments: string;
 	marketplace: string;
 	partnerDirectory: string;
-	contactSupport: string;
+	contactSupport?: string;
 	aiMcp: string;
 	pressableHosting: string;
 	helpful: HelpfulLink[];
@@ -48,6 +48,8 @@ export interface AgencyOverviewContentProps {
 	shouldUseRouterLink?: boolean;
 	onScheduleCall?: () => void;
 	isSchedulingCall?: boolean;
+	/** Opens contact support in-app; without it, `links.contactSupport` is used. */
+	onContactSupport?: () => void;
 	onRelaunchTour?: () => void;
 	recordTracksEvent?: RecordTracksEvent;
 }
@@ -70,6 +72,7 @@ export default function AgencyOverviewContent( {
 	shouldUseRouterLink,
 	onScheduleCall,
 	isSchedulingCall,
+	onContactSupport,
 	onRelaunchTour,
 	recordTracksEvent,
 }: AgencyOverviewContentProps ) {
@@ -85,7 +88,12 @@ export default function AgencyOverviewContent( {
 	return (
 		<Grid columns={ isSmallViewport ? 1 : 2 } gap={ isSmallViewport ? 'lg' : 'xl' }>
 			<VStack spacing={ spacing } justify="flex-start">
-				{ isRejected && <RejectedTierCard contactSupportHref={ links.contactSupport } /> }
+				{ isRejected && (
+					<RejectedTierCard
+						contactSupportHref={ links.contactSupport }
+						onContactSupport={ onContactSupport }
+					/>
+				) }
 				{ isPending && (
 					<PendingTierCard
 						onRelaunchTour={ onRelaunchTour }
