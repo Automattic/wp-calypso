@@ -15,7 +15,7 @@ describe( '<InviteTeamMemberModal>', () => {
 		const user = userEvent.setup();
 		const request = nock( API ).post( '/wpcom/v2/agency/1/user-invites' ).reply( 200 );
 
-		render( <InviteTeamMemberModal agencyId={ 1 } onClose={ jest.fn() } /> );
+		render( <InviteTeamMemberModal agencyId={ 1 } onClose={ jest.fn() } onSent={ jest.fn() } /> );
 		await user.click( screen.getByRole( 'button', { name: 'Send invite' } ) );
 
 		const message = await screen.findByText(
@@ -31,9 +31,9 @@ describe( '<InviteTeamMemberModal>', () => {
 		expect( request.isDone() ).toBe( false );
 	} );
 
-	test( 'sends the invite and closes when the field is filled', async () => {
+	test( 'sends the invite with the trimmed login when the field is filled', async () => {
 		const user = userEvent.setup();
-		const onClose = jest.fn();
+		const onSent = jest.fn();
 		const request = nock( API )
 			.post( '/wpcom/v2/agency/1/user-invites', {
 				login: 'ada@example.com',
@@ -41,7 +41,7 @@ describe( '<InviteTeamMemberModal>', () => {
 			} )
 			.reply( 200, { success: true } );
 
-		render( <InviteTeamMemberModal agencyId={ 1 } onClose={ onClose } /> );
+		render( <InviteTeamMemberModal agencyId={ 1 } onClose={ jest.fn() } onSent={ onSent } /> );
 		await user.type(
 			screen.getByRole( 'textbox', { name: 'Email or WordPress.com username' } ),
 			' ada@example.com '
@@ -49,7 +49,7 @@ describe( '<InviteTeamMemberModal>', () => {
 		await user.type( screen.getByRole( 'textbox', { name: 'Message' } ), 'Welcome aboard' );
 		await user.click( screen.getByRole( 'button', { name: 'Send invite' } ) );
 
-		await waitFor( () => expect( onClose ).toHaveBeenCalled() );
+		await waitFor( () => expect( onSent ).toHaveBeenCalledWith( 'ada@example.com' ) );
 		expect( request.isDone() ).toBe( true );
 	} );
 } );
