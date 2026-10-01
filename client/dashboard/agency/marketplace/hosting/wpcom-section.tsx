@@ -14,17 +14,16 @@ import clsx from 'clsx';
 import { useState } from 'react';
 import { useAnalytics } from '../../../app/analytics';
 import { Callout } from '../../../components/callout';
-import { Card, CardBody, CardDivider, CardHeader } from '../../../components/card';
+import { Card, CardBody, CardDivider } from '../../../components/card';
 import Divider from '../../../components/divider';
-import { SectionHeader } from '../../../components/section-header';
 import { TextBlur } from '../../../components/text-blur';
 import { DomainUpsellIllustraction } from '../../../sites/overview-domain-upsell-card/upsell-illustration';
-import wpcomDescriptor from '../exclusive-offers/images/wordpressdotcom-descriptor.svg';
 import { getWpcomTieredPrice } from '../products/lib/product-pricing';
 import { MAX_CART_ITEM_QUANTITY } from '../products/use-shopping-cart';
 import { DevSiteConfigurationModal } from '../purchases/site-configuration-modal';
-import { BrandMark, CheckGrid, HostingFeatures, Testimonials } from './content-sections';
+import { CheckGrid, HostingFeatures, Testimonials } from './content-sections';
 import SelectedPlanCard from './selected-plan-card';
+import StepHeading from './step-heading';
 import { useSessionState } from './use-session-state';
 import type { TermPricing } from '../use-term-pricing';
 import type { AgencyProduct } from '@automattic/api-core';
@@ -245,27 +244,14 @@ export default function WpcomSection( {
 
 	return (
 		<div className="dashboard-marketplace-hosting__layout">
-			<VStack spacing={ 8 } justify="flex-start">
+			<VStack spacing={ 8 } justify="flex-start" className="dashboard-marketplace-hosting__main">
 				<VStack spacing={ 4 }>
 					<Card>
-						<CardHeader>
-							<SectionHeader
-								className="dashboard-marketplace-hosting__card-header"
-								level={ 3 }
-								title={ __( 'Purchase WordPress.com' ) }
-								description={ __(
-									'Managed WordPress priced per site, with volume discounts, staging, backups, and 24/7 expert support.'
-								) }
-								decoration={ <BrandMark src={ wpcomDescriptor } /> }
-							/>
-						</CardHeader>
 						<CardBody>
 							<VStack spacing={ 5 }>
 								<VStack spacing={ 3 }>
-									<HStack justify="space-between" alignment="center">
-										<Heading level={ 4 } size={ 13 }>
-											{ getQuantityHeading() }
-										</Heading>
+									<HStack justify="space-between" alignment="center" wrap>
+										<StepHeading step={ 1 }>{ getQuantityHeading() }</StepHeading>
 										{ ! isReferralMode && ownedSites > 0 && (
 											<Badge>
 												{ sprintf(

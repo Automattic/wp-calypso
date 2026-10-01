@@ -153,15 +153,21 @@
 	fill: var( --wpds-color-foreground-content-neutral-weak, currentColor );
 }
 
-// Plan types as selectable cards, like the tiles on the Products page.
+// Plan types as selectable cards, like the tiles on the Products page, all in one row.
 .dashboard-marketplace-hosting__option-grid {
 	display: grid;
 	grid-template-columns: 1fr;
 	gap: 16px;
 
-	@include break-small {
-		grid-template-columns: repeat( 2, minmax( 0, 1fr ) );
+	@include break-medium {
+		grid-auto-columns: minmax( 0, 1fr );
+		grid-auto-flow: column;
+		grid-template-columns: none;
 	}
+}
+
+.dashboard-marketplace-hosting__option-tag {
+	white-space: nowrap;
 }
 
 .dashboard-marketplace-hosting__option-card {
@@ -223,5 +229,244 @@
 		inline-size: auto;
 		block-size: auto;
 		opacity: 0.6;
+	}
+}
+
+// The billing term, then Refer hosting and the cart, which wrap together.
+.dashboard-marketplace-hosting__header-actions {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: flex-end;
+	gap: 8px 16px;
+
+	@media ( max-width: 660px ) {
+		justify-content: space-between;
+		inline-size: 100%;
+		column-gap: 12px;
+	}
+
+	// Phones: Monthly / Yearly at the width that keeps the row on one line.
+	.dashboard-marketplace-term-pricing.is-short {
+		inline-size: 156px;
+	}
+}
+
+// The three hosts side by side. Every card has the same five rows (host, who
+// it is for, price, action, what's included), and each level between the grid
+// and the rows passes them down with subgrid, so each row lines up across the cards.
+.dashboard-marketplace-hosting__hosts {
+	display: grid;
+	grid-template-columns: 1fr;
+	gap: 24px;
+
+	@include break-large {
+		grid-template-columns: repeat( 3, minmax( 0, 1fr ) );
+	}
+}
+
+.dashboard-marketplace-hosting__host,
+.dashboard-marketplace-hosting__host > div:first-child,
+.dashboard-marketplace-hosting__host .components-card__body,
+.dashboard-marketplace-hosting__host-rows {
+	display: grid;
+	grid-row: span 5;
+	grid-template-rows: subgrid;
+	row-gap: 16px;
+}
+
+.dashboard-marketplace-hosting__host-rows {
+	align-items: start;
+
+	// Full-width buttons carry their label centred.
+	.components-button {
+		justify-content: center;
+	}
+}
+
+.dashboard-marketplace-hosting__host-logo {
+	block-size: 32px;
+	inline-size: auto;
+	max-inline-size: 100%;
+	object-fit: contain;
+	object-position: left;
+}
+
+// Who the host is for leads the card; balanced so no word sits alone on the last line.
+.dashboard-marketplace-hosting__host-title.components-text {
+	font-size: 15px;
+	line-height: 22px;
+	text-wrap: balance;
+}
+
+// The price is the largest thing on the card.
+.dashboard-marketplace-hosting__host-figure.components-text {
+	font-size: 32px;
+	font-weight: 500;
+	line-height: 40px;
+}
+
+.dashboard-marketplace-hosting__host-includes {
+	padding-block-start: 16px;
+	border-block-start: 1px solid var( --dashboard-overview__divider-color );
+}
+
+// A numbered step heading on a host page, the number in the accent colour.
+.dashboard-marketplace-hosting__step-number {
+	display: inline-flex;
+	flex: none;
+	align-items: center;
+	justify-content: center;
+	inline-size: 24px;
+	block-size: 24px;
+	border-radius: 50%;
+	background: var( --wp-components-color-accent, var( --wp-admin-theme-color ) );
+	color: var( --wp-components-color-accent-inverted, #fff );
+	font-size: 12px;
+	font-weight: 500;
+}
+
+// The plan table scrolls sideways inside its card on small screens.
+.dashboard-marketplace-hosting__plan-table-scroll {
+	overflow-x: auto;
+}
+
+// Every plan of a type as a row, its limits in columns.
+.dashboard-marketplace-hosting__plan-table {
+	inline-size: 100%;
+	border-collapse: collapse;
+	font-size: 13px;
+
+	// Numbers scan best right-aligned in tight columns; Plan takes the rest.
+	th:not( :first-child ),
+	td:not( :first-child ) {
+		inline-size: 1%;
+		padding-inline-start: 32px;
+		text-align: end;
+		font-variant-numeric: tabular-nums;
+	}
+
+	th {
+		padding: 8px 12px;
+		border-block-end: 1px solid var( --dashboard-overview__divider-color );
+		color: var( --wpds-color-foreground-content-neutral-weak, currentColor );
+		font-weight: 500;
+		text-align: start;
+		white-space: nowrap;
+	}
+
+	td {
+		padding: 10px 12px;
+		border-block-end: 1px solid var( --dashboard-overview__divider-color );
+		white-space: nowrap;
+	}
+
+	tbody tr {
+		cursor: pointer;
+
+		&:hover {
+			background: color-mix( in srgb, currentColor 4%, transparent );
+		}
+
+		&.is-selected {
+			background: color-mix(
+				in srgb,
+				var( --wp-components-color-accent, var( --wp-admin-theme-color ) ) 6%,
+				transparent
+			);
+		}
+
+		&:last-child td {
+			border-block-end: 0;
+		}
+	}
+
+	// The plan the agency owns can't be bought again.
+	tbody tr.is-current {
+		cursor: default;
+
+		&:not( .is-selected ):hover {
+			background: none;
+		}
+
+		label {
+			cursor: default;
+			font-weight: 500;
+		}
+	}
+
+	label {
+		display: inline-flex;
+		align-items: center;
+		gap: 8px;
+		cursor: pointer;
+	}
+
+	input[type="radio"] {
+		margin: 0;
+		accent-color: var( --wp-components-color-accent, var( --wp-admin-theme-color ) );
+	}
+}
+
+// Phones: tighter cells, headers may wrap, and the Current plan badge drops
+// under the plan name, so the table fits the card.
+@media ( max-width: #{$break-small - 1px} ) {
+	.dashboard-marketplace-hosting__plan-table {
+		th,
+		td {
+			padding-inline-end: 8px;
+		}
+
+		th:not( :first-child ),
+		td:not( :first-child ) {
+			padding-inline-start: 12px;
+		}
+
+		th:not( :first-child ) {
+			white-space: normal;
+		}
+
+		tbody tr.is-current td:first-child label {
+			display: grid;
+			grid-template-columns: auto auto;
+			justify-content: start;
+			align-items: center;
+			row-gap: 4px;
+		}
+	}
+
+	.dashboard-marketplace-hosting__current-badge {
+		grid-column: 2;
+		justify-self: start;
+	}
+}
+
+// Narrow windows: the order summary comes right after the steps, before the
+// features and testimonials, so its button isn't a long scroll away. The main
+// column's parts become items of the layout so they can be reordered.
+@media ( max-width: #{$break-xlarge - 1px} ) {
+	.dashboard-marketplace-hosting__layout {
+		display: flex;
+		flex-direction: column;
+		align-items: stretch;
+	}
+
+	.dashboard-marketplace-hosting__layout > .dashboard-marketplace-hosting__main {
+		display: contents;
+
+		> :not( :first-child ) {
+			order: 2;
+		}
+
+		// Flex items default to their content's width; let them shrink so the
+		// plan table scrolls inside its card instead of widening the page.
+		> * {
+			min-inline-size: 0;
+		}
+	}
+
+	.dashboard-marketplace-hosting__layout > .dashboard-marketplace-hosting__rail {
+		order: 1;
+		min-inline-size: 0;
 	}
 }
