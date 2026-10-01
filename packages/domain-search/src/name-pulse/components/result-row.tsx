@@ -2,9 +2,9 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Button, Tooltip, __experimentalText as Text } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { sprintf } from '@wordpress/i18n';
-import { cautionFilled, cart as cartIcon, info } from '@wordpress/icons';
+import { cautionFilled, cart as cartIcon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
-import { Badge, Icon, Popover, VisuallyHidden } from '@wordpress/ui';
+import { Badge, Popover, VisuallyHidden } from '@wordpress/ui';
 import clsx from 'clsx';
 import { useEffect, useMemo } from 'react';
 import { useDomainSearch } from '../../page/context';
@@ -133,17 +133,7 @@ export const NamePulseResultRow = ( { result, position }: NamePulseResultRowProp
 				policyNotice && (
 					<Popover.Root key="policy">
 						<Popover.Trigger className="name-pulse-row__policy-trigger" openOnHover>
-							<Badge
-								className="name-pulse-row__policy-badge"
-								render={ ( { children, ...props } ) => (
-									<span { ...props }>
-										{ children }
-										<Icon icon={ info } size={ 16 } />
-									</span>
-								) }
-							>
-								{ policyNotice.label }
-							</Badge>
+							<Badge>{ policyNotice.label }</Badge>
 						</Popover.Trigger>
 						<Popover.Popup className="name-pulse-row__policy-popup">
 							<VisuallyHidden render={ <Popover.Title /> }>{ policyNotice.label }</VisuallyHidden>

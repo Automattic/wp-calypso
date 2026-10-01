@@ -107,12 +107,6 @@ html:has( .name-pulse-search-input ) {
 		cursor: pointer;
 	}
 
-	&__policy-badge {
-		display: inline-flex;
-		align-items: center;
-		gap: 4px;
-	}
-
 	&__policy-popup {
 		max-width: 20rem;
 	}
