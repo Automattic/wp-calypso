@@ -1,6 +1,5 @@
 /** @jest-environment jsdom */
-import { rawUserPreferencesQuery } from '@automattic/api-queries';
-import { QueryClient } from '@tanstack/react-query';
+import { queryClient, rawUserPreferencesQuery } from '@automattic/api-queries';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
@@ -10,9 +9,6 @@ import { SubscriberNotificationCard } from '../index';
 const key = 'notifications-subscriber-alerts-enabled';
 
 function setup( value?: boolean ) {
-	const queryClient = new QueryClient( {
-		defaultOptions: { queries: { staleTime: Infinity, retry: false }, mutations: { retry: false } },
-	} );
 	queryClient.setQueryData( rawUserPreferencesQuery().queryKey, {
 		...( value === undefined ? {} : { [ key ]: value } ),
 	} );
@@ -21,6 +17,14 @@ function setup( value?: boolean ) {
 }
 
 describe( 'SubscriberNotificationCard', () => {
+	beforeEach( () => {
+		queryClient.clear();
+		queryClient.setQueryDefaults( rawUserPreferencesQuery().queryKey, {
+			staleTime: Infinity,
+			retry: false,
+		} );
+	} );
+
 	it( 'defaults to off when the account has no saved preference', () => {
 		setup();
 		expect( screen.getByRole( 'checkbox', { name: 'Subscriber alerts' } ) ).not.toBeChecked();
@@ -44,9 +48,6 @@ describe( 'SubscriberNotificationCard', () => {
 	} );
 
 	it( 'stays off and disabled while loading and when the preference request fails', async () => {
-		const queryClient = new QueryClient( {
-			defaultOptions: { queries: { retry: false } },
-		} );
 		const scope = nock( 'https://public-api.wordpress.com' )
 			.get( '/rest/v1.1/me/preferences' )
 			.reply( 500, { error: 'server_error' } );
@@ -60,9 +61,7 @@ describe( 'SubscriberNotificationCard', () => {
 	} );
 
 	it( 'keeps the cached preference checked during a background refetch', async () => {
-		const queryClient = new QueryClient( {
-			defaultOptions: { queries: { retry: false } },
-		} );
+		queryClient.setQueryDefaults( rawUserPreferencesQuery().queryKey, { retry: false } );
 		queryClient.setQueryData( rawUserPreferencesQuery().queryKey, { [ key ]: true } );
 		const scope = nock( 'https://public-api.wordpress.com' )
 			.get( '/rest/v1.1/me/preferences' )
