@@ -13,11 +13,14 @@ import { PerformanceTrackerStop } from '../../app/performance-tracking';
 import { domainOverviewRoute, domainRoute } from '../../app/router/domains';
 import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import { ButtonStack } from '../../components/button-stack';
+import { Card, CardBody } from '../../components/card';
 import InlineSupportLink from '../../components/inline-support-link';
 import Notice from '../../components/notice';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { Text } from '../../components/text';
+
+import './style.scss';
 
 export default function DomainDiagnostics() {
 	const { domainName } = domainRoute.useParams();
@@ -41,9 +44,14 @@ export default function DomainDiagnostics() {
 
 	const emailDnsDiagnostics = domainDiagnostics?.email_dns_records;
 
+	const hasNoIssues =
+		! emailDnsDiagnostics ||
+		emailDnsDiagnostics.code === 'domain_not_mapped_to_atomic_site' ||
+		emailDnsDiagnostics.all_essential_email_dns_records_are_correct;
+
 	const renderDiagnosticForRecord = ( recordType: string ) => {
 		const uppercaseRecord = recordType.toUpperCase();
-		const record = emailDnsDiagnostics.records[ recordType ];
+		const record = emailDnsDiagnostics.records?.[ recordType ];
 
 		if ( ! record ) {
 			return null;
@@ -88,13 +96,7 @@ export default function DomainDiagnostics() {
 	};
 
 	const renderNotices = () => {
-		const emailDnsDiagnostics = domainDiagnostics?.email_dns_records;
-
-		if (
-			! emailDnsDiagnostics ||
-			emailDnsDiagnostics.code === 'domain_not_mapped_to_atomic_site' ||
-			emailDnsDiagnostics.all_essential_email_dns_records_are_correct
-		) {
+		if ( hasNoIssues ) {
 			return (
 				<Notice
 					variant="success"
@@ -120,63 +122,67 @@ export default function DomainDiagnostics() {
 	};
 
 	const renderDiagnostics = () => {
-		const emailDnsDiagnostics = domainDiagnostics?.email_dns_records;
+		if ( hasNoIssues ) {
+			return null;
+		}
 
 		const recordsToCheck = [ 'spf', 'dkim1', 'dkim2', 'dmarc' ];
 
 		return (
-			<VStack spacing={ 6 }>
-				<VStack as="ul" spacing={ 2 }>
-					{ recordsToCheck.map( renderDiagnosticForRecord ) }
-				</VStack>
+			<Card className="domain-diagnostics-card">
+				<CardBody>
+					<VStack spacing={ 6 }>
+						<VStack as="ul" role="list" spacing={ 2 }>
+							{ recordsToCheck.map( renderDiagnosticForRecord ) }
+						</VStack>
 
-				{ ! emailDnsDiagnostics.is_using_wpcom_name_servers && (
-					<Notice variant="warning" title={ __( 'Missing or invalid DNS records' ) }>
-						<Text>
-							{ __(
-								'To fix these issues, you should go to your domain’s DNS provider and add the records above to your domain’s DNS settings.'
+						{ ! emailDnsDiagnostics.is_using_wpcom_name_servers && (
+							<Text>
+								{ __(
+									'To fix these issues, you should go to your domain’s DNS provider and add the records above to your domain’s DNS settings.'
+								) }
+							</Text>
+						) }
+
+						<ButtonStack justify="start">
+							{ emailDnsDiagnostics.should_offer_automatic_fixes && (
+								<Button
+									variant="primary"
+									onClick={ () =>
+										fixDnsIssues( undefined, {
+											onSuccess: () => {
+												navigate( { to: domainOverviewRoute.fullPath, params: { domainName } } );
+											},
+										} )
+									}
+									isBusy={ isFixing }
+									disabled={ isFixing }
+									__next40pxDefaultSize
+								>
+									{ __( 'Fix DNS issues automatically' ) }
+								</Button>
 							) }
-						</Text>
-					</Notice>
-				) }
-
-				<ButtonStack justify="start">
-					{ emailDnsDiagnostics.should_offer_automatic_fixes && (
-						<Button
-							variant="primary"
-							onClick={ () =>
-								fixDnsIssues( undefined, {
-									onSuccess: () => {
-										navigate( { to: domainOverviewRoute.fullPath, params: { domainName } } );
-									},
-								} )
-							}
-							isBusy={ isFixing }
-							disabled={ isFixing }
-							__next40pxDefaultSize
-						>
-							{ __( 'Fix DNS issues automatically' ) }
-						</Button>
-					) }
-					{ ! emailDnsDiagnostics.dismissed_email_dns_issues_notice && (
-						<Button
-							variant="secondary"
-							onClick={ () =>
-								dismissNotice( 'ignored', {
-									onSuccess: () => {
-										navigate( { to: domainOverviewRoute.fullPath, params: { domainName } } );
-									},
-								} )
-							}
-							isBusy={ isDismissing }
-							disabled={ isDismissing }
-							__next40pxDefaultSize
-						>
-							{ __( 'Dismiss this notice' ) }
-						</Button>
-					) }
-				</ButtonStack>
-			</VStack>
+							{ ! emailDnsDiagnostics.dismissed_email_dns_issues_notice && (
+								<Button
+									variant="secondary"
+									onClick={ () =>
+										dismissNotice( 'ignored', {
+											onSuccess: () => {
+												navigate( { to: domainOverviewRoute.fullPath, params: { domainName } } );
+											},
+										} )
+									}
+									isBusy={ isDismissing }
+									disabled={ isDismissing }
+									__next40pxDefaultSize
+								>
+									{ __( 'Dismiss this notice' ) }
+								</Button>
+							) }
+						</ButtonStack>
+					</VStack>
+				</CardBody>
+			</Card>
 		);
 	};
 
