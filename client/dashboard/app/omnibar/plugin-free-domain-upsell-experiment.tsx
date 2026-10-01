@@ -23,7 +23,7 @@ export function createFreeDomainUpsellNodeBuilder( {
 		};
 
 		return {
-			icon: <Icon icon={ upsell } size={ 16 } />,
+			icon: <Icon icon={ upsell } size={ 16 } viewBox="4 5 16 14" />,
 			className: 'omnibar__free-domain-upsell',
 			onView: () => recordTracksEvent( 'calypso_omnibar_upsell_impression', eventProps ),
 			onClick: () => recordTracksEvent( 'calypso_omnibar_upsell_click', eventProps ),
