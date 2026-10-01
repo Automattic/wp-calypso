@@ -29,6 +29,7 @@ import {
 } from 'calypso/state/sites/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { recordCompositeCheckoutErrorDuringAnalytics } from '../lib/analytics';
+import { isExternalA4ACheckout } from '../lib/is-external-a4a-checkout';
 import normalizeTransactionResponse from '../lib/normalize-transaction-response';
 import { absoluteRedirectThroughPending, redirectThroughPending } from '../lib/pending-page';
 import type {
@@ -245,7 +246,7 @@ export default function useCreatePaymentSubmittedAndProcessingCallback( {
 					siteSlug,
 					orderId: 'order_id' in transactionResult ? transactionResult.order_id : undefined,
 					receiptId: 'receipt_id' in transactionResult ? transactionResult.receipt_id : undefined,
-					fromExternalCheckout: sitelessCheckoutType === 'a4a',
+					fromExternalCheckout: isExternalA4ACheckout( sitelessCheckoutType ),
 				} );
 				return;
 			}
@@ -263,7 +264,7 @@ export default function useCreatePaymentSubmittedAndProcessingCallback( {
 					orderId: 'order_id' in transactionResult ? transactionResult.order_id : undefined,
 					receiptId: 'receipt_id' in transactionResult ? transactionResult.receipt_id : undefined,
 					fromSiteSlug,
-					fromExternalCheckout: sitelessCheckoutType === 'a4a',
+					fromExternalCheckout: isExternalA4ACheckout( sitelessCheckoutType ),
 				} );
 				return;
 			}
@@ -275,7 +276,7 @@ export default function useCreatePaymentSubmittedAndProcessingCallback( {
 				siteSlug,
 				orderId: 'order_id' in transactionResult ? transactionResult.order_id : undefined,
 				receiptId: 'receipt_id' in transactionResult ? transactionResult.receipt_id : undefined,
-				fromExternalCheckout: sitelessCheckoutType === 'a4a',
+				fromExternalCheckout: isExternalA4ACheckout( sitelessCheckoutType ),
 				isGravatarDomain,
 			} );
 		},

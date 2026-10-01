@@ -1129,6 +1129,18 @@ describe( 'main app', () => {
 		} );
 	} );
 
+	describe( 'Route /speed-test-tool', () => {
+		it( 'redirects old report links to the localized site speed guide', async () => {
+			const { response } = await app.run( {
+				request: { url: '/es/speed-test-tool/weekly-report/unsubscribe?url=example.com' },
+			} );
+			expect( response.redirect ).toHaveBeenCalledWith(
+				301,
+				'https://wordpress.com/es/support/site-speed/'
+			);
+		} );
+	} );
+
 	describe( 'Route /menus', () => {
 		it( 'redirects to menus when there is a site', async () => {
 			const { response } = await app.run( { request: { url: '/menus/my-site' } } );

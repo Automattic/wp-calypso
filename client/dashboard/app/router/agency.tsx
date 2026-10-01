@@ -52,12 +52,15 @@ import {
 import { isEnabled } from '@automattic/calypso-config';
 import { createRoute, createLazyRoute, notFound, Outlet } from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
+import { isReferralCheckoutUrl } from '../../agency/earn/referrals/lib/referral-checkout-url';
 import {
 	getPressableOwnershipType,
 	pressableLicensesQuery,
 } from '../../agency/marketplace/hosting/lib/pressable-products';
+import { isAgencyApproved } from '../../agency/marketplace/is-agency-approved';
 import { agencyLicensesQuery } from '../../agency/marketplace/lib/wpcom-hosting';
 import {
+	CRM_DOWNLOADS_SEGMENT,
 	getMarketplaceHostingSectionRoute,
 	MARKETPLACE_HOSTING_REFER_SEGMENTS,
 } from '../../agency/marketplace/paths';
@@ -424,6 +427,46 @@ export const marketplaceProductsRoute = createRoute( {
 	)
 );
 
+// `/referral-checkout` – request a client's payment for the referral
+// cart. Takes the whole screen, like the WordPress.com checkout the paid cart
+// goes to; `from` is the marketplace page the Back link returns to. An agency
+// that is not approved yet is sent back to the marketplace.
+export const marketplaceReferralCheckoutRoute = createRoute( {
+	staticData: { requiresAgencyCapability: 'a4a_read_marketplace', isFullscreen: true },
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Referral checkout' ),
+			},
+		],
+	} ),
+	getParentRoute: () => agencyRoute,
+	path: 'referral-checkout',
+	validateSearch: ( search: Record< string, unknown > ): { from?: string } => ( {
+		from:
+			typeof search.from === 'string' && search.from.startsWith( '/' ) ? search.from : undefined,
+	} ),
+	loader: async () => {
+		const agency = await queryClient.ensureQueryData( activeAgencyQuery() );
+		if ( ! isAgencyApproved( agency ) ) {
+			throw dashboardRedirect( { to: '/marketplace' } );
+		}
+		if ( agency?.id ) {
+			queryClient.prefetchQuery( agencyLicensesQuery( agency.id ) );
+			await Promise.all( [
+				queryClient.ensureQueryData( agencyProductsQuery( agency.id ) ),
+				queryClient.ensureQueryData( pressableLicensesQuery( agency.id ) ).catch( () => undefined ),
+			] );
+		}
+	},
+} ).lazy( () =>
+	import( '../../agency/marketplace/referral-checkout' ).then( ( d ) =>
+		createLazyRoute( 'marketplace-referral-checkout' )( {
+			component: d.default,
+		} )
+	)
+);
+
 // `/purchases` – licenses, invoices, and payment methods
 export const marketplacePurchasesRoute = createRoute( {
 	staticData: { requiresAgencyCapability: 'a4a_jetpack_licensing' },
@@ -436,15 +479,62 @@ export const marketplacePurchasesRoute = createRoute( {
 	} ),
 	getParentRoute: () => agencyRoute,
 	path: 'purchases',
+	// The list's page, search and status filter, plus the one-time parameters a
+	// finished checkout returns with.
+	validateSearch: (
+		search: Record< string, unknown >
+	): {
+		page?: number;
+		search?: string;
+		status?: string;
+		receipt_id?: string;
+		flash?: string;
+		purchased_plan?: string;
+	} => {
+		const page = Number( search.page );
+		const asString = ( value: unknown ) => ( typeof value === 'string' ? value : undefined );
+		return {
+			page: Number.isInteger( page ) && page > 0 ? page : undefined,
+			search: asString( search.search ),
+			status: asString( search.status ),
+			receipt_id: asString( search.receipt_id ),
+			flash: asString( search.flash ),
+			purchased_plan: asString( search.purchased_plan ),
+		};
+	},
 	loader: async () => {
 		await Promise.all( [
 			queryClient.ensureQueryData( activeAgencyQuery() ),
 			queryClient.ensureQueryData( rawUserPreferencesQuery() ),
 		] );
 	},
+} );
+
+export const marketplacePurchasesIndexRoute = createRoute( {
+	getParentRoute: () => marketplacePurchasesRoute,
+	path: '/',
 } ).lazy( () =>
 	import( '../../agency/marketplace/purchases' ).then( ( d ) =>
 		createLazyRoute( 'marketplace-purchases' )( {
+			component: d.default,
+		} )
+	)
+);
+
+// `/purchases/crm-downloads/$licenseKey` – Jetpack CRM extension downloads
+export const marketplacePurchasesCrmDownloadsRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'CRM downloads' ),
+			},
+		],
+	} ),
+	getParentRoute: () => marketplacePurchasesRoute,
+	path: `${ CRM_DOWNLOADS_SEGMENT }/$licenseKey`,
+} ).lazy( () =>
+	import( '../../agency/marketplace/purchases/crm-downloads' ).then( ( d ) =>
+		createLazyRoute( 'marketplace-purchases-crm-downloads' )( {
 			component: d.default,
 		} )
 	)
@@ -704,6 +794,28 @@ export const earnReferralsRoute = createRoute( {
 	head: () => ( { meta: [ { title: __( 'Referrals' ) } ] } ),
 	getParentRoute: () => agencyRoute,
 	path: 'referrals',
+	// The referral checkout returns here with the request it just sent, for the banner.
+	validateSearch: (
+		search: Record< string, unknown >
+	): {
+		new_referral_order_email?: string;
+		new_referral_order_checkout_url?: string;
+		flow_type?: 'send' | 'copy';
+		link_copied?: boolean;
+	} => ( {
+		new_referral_order_email:
+			typeof search.new_referral_order_email === 'string'
+				? search.new_referral_order_email
+				: undefined,
+		new_referral_order_checkout_url:
+			typeof search.new_referral_order_checkout_url === 'string' &&
+			isReferralCheckoutUrl( search.new_referral_order_checkout_url )
+				? search.new_referral_order_checkout_url
+				: undefined,
+		flow_type:
+			search.flow_type === 'copy' || search.flow_type === 'send' ? search.flow_type : undefined,
+		link_copied: typeof search.link_copied === 'boolean' ? search.link_copied : undefined,
+	} ),
 } ).lazy( () =>
 	import( '../../agency/earn/referrals' ).then( ( d ) =>
 		createLazyRoute( 'earn-referrals' )( { component: d.default } )
@@ -1975,7 +2087,11 @@ export const createAgencyRoutes = () => [
 			marketplaceHostingReferPremiumRoute,
 		] ),
 		marketplaceProductsRoute,
-		marketplacePurchasesRoute,
+		marketplaceReferralCheckoutRoute,
+		marketplacePurchasesRoute.addChildren( [
+			marketplacePurchasesIndexRoute,
+			marketplacePurchasesCrmDownloadsRoute,
+		] ),
 		exclusiveOffersRoute,
 		learnRoute,
 		devToolsRoute,

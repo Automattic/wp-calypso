@@ -84,7 +84,6 @@ const HELP_CENTER_FAB_SECTIONS = [
 	'checkout',
 	'mailing-lists',
 	'patterns',
-	'performance-profiler',
 	'plugins',
 	'reader',
 	'site-profiler',
@@ -251,7 +250,6 @@ const LayoutLoggedOut = ( {
 	} else if (
 		[
 			'patterns',
-			'performance-profiler',
 			'plugins',
 			'reader',
 			'site-profiler',
