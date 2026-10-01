@@ -6,9 +6,9 @@ import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useCallback, useMemo } from 'react';
 import { useAnalytics } from '../../../app/analytics';
-import { a4aLink, wpcomLink } from '../../../utils/link';
+import { wpcomLink } from '../../../utils/link';
 import { urlToSlug } from '../../../utils/url';
-import { getMarketplaceHostingSectionRoute } from '../paths';
+import { getCrmDownloadsRoute, getMarketplaceHostingSectionRoute } from '../paths';
 import AssignLicenseModal from './assign-license-modal';
 import {
 	getLicenseProductName,
@@ -194,9 +194,7 @@ export function getLicenseActions( {
 			label: __( 'Download Jetpack CRM Extensions' ),
 			isEligible: ( item ) =>
 				canAct( item ) && isJetpackCrmLicense( item ) && getLicenseStatus( item ) === 'assigned',
-			// The CRM downloads page still lives in the classic dashboard.
-			callback: ( items ) =>
-				window.location.assign( a4aLink( `/purchases/crm-downloads/${ items[ 0 ].license_key }` ) ),
+			callback: ( items ) => onNavigate( getCrmDownloadsRoute( items[ 0 ].license_key ) ),
 		},
 		{
 			id: 'revoke-license',
