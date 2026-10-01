@@ -151,7 +151,7 @@ export function RenewalCell( { license, locale }: { license: JetpackLicense; loc
 				intent={ badges.includes( 'expired' ) ? 'error' : undefined }
 				style={ { whiteSpace: 'nowrap' } }
 			>
-				{ formatDate( parseDateAsUTC( expiry ), locale ) }
+				{ formatDate( parseDateAsUTC( expiry ), locale, { dateStyle: 'medium', timeZone: 'UTC' } ) }
 			</DashboardText>
 			{ badges.map( ( badge ) => (
 				<Badge key={ badge } intent={ RENEWAL_BADGE_INTENT[ badge ] }>
