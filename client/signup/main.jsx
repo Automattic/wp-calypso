@@ -979,7 +979,11 @@ class Signup extends Component {
 		if ( waitToRenderReturnValue && ! this.state.shouldShowLoadingScreen ) {
 			return this.props.siteId && waitToRenderReturnValue;
 		}
-		const showPageHeader = ! ( 0 === this.getPositionInFlow() && ! this.props.isLoggedIn );
+		// The domain-only search step renders its own Step.TopBar with the logo.
+		const isDomainOnlySearchStep =
+			this.props.flowName === 'domain' && this.props.stepName === 'domain-only';
+		const showPageHeader =
+			! ( 0 === this.getPositionInFlow() && ! this.props.isLoggedIn ) && ! isDomainOnlySearchStep;
 		const isGravatarDomain = isDomainForGravatarFlow( this.props.flowName );
 
 		return (

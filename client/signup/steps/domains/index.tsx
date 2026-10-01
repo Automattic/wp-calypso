@@ -6,9 +6,11 @@ import {
 	isEcommerceFlow,
 	isFreeFlow,
 	isWithThemeFlow,
+	Step,
 } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { Button } from '@wordpress/components';
+import { useViewportMatch } from '@wordpress/compose';
 import { useI18n } from '@wordpress/react-i18n';
 import { addQueryArgs, getQueryArg, isURL } from '@wordpress/url';
 import { useMemo } from 'react';
@@ -19,6 +21,7 @@ import { dashboardLink, dashboardOrigins } from 'calypso/dashboard/utils/link';
 import { isRelativeUrl } from 'calypso/dashboard/utils/url';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import { isMonthlyOrFreeFlow } from 'calypso/lib/cart-values/cart-items';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
 import {
 	domainMapping,
@@ -76,6 +79,7 @@ const DomainSearchUI = (
 
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const site = useSelector( getSelectedSite );
+	const isMobileViewport = useViewportMatch( 'small', '<' );
 
 	const siteSlug = queryObject.siteSlug;
 	const siteId = queryObject.siteId;
@@ -447,6 +451,69 @@ const DomainSearchUI = (
 		return true;
 	}, [ flowName, siteSlug, siteId, isDomainOnlyFlow ] );
 
+	const domainSearchElement = (
+		<WPCOMDomainSearch
+			className={
+				isDomainOnlyFlow ? 'domain-search--step-container-v2' : 'domain-search--step-wrapper'
+			}
+			flowName={ flowName }
+			query={ query }
+			currentSiteUrl={ currentSiteUrl }
+			currentSiteId={ currentSiteId }
+			events={ events }
+			config={ config }
+			flowAllowsMultipleDomainsInCart={ flowAllowsMultipleDomainsInCart }
+			slots={ slots }
+			isFirstDomainFreeForFirstYear={ isFirstDomainFreeForFirstYear }
+			analyticsSection={ isDomainOnlyFlow ? 'domain-first' : 'signup' }
+		/>
+	);
+
+	if ( isDomainOnlyFlow ) {
+		// The in-body "Already have a domain?" card is hidden on mobile, so the
+		// top bar carries the CTA there even before a search.
+		const showUseMyDomain = ( !! query || isMobileViewport ) && config.allowsUsingOwnDomain;
+
+		return (
+			<Step.CenteredColumnLayout
+				topBar={
+					<Step.TopBar
+						rightElement={
+							showUseMyDomain ? (
+								<Step.LinkButton
+									onClick={ () => {
+										if ( isMobileViewport && ! query ) {
+											recordTracksEvent(
+												'calypso_domain_search_results_use_my_domain_button_click',
+												{
+													section: 'domain-first',
+													source: 'top-bar-mobile',
+													flow_name: flowName,
+												}
+											);
+										}
+										events.onExternalDomainClick( query );
+									} }
+								>
+									{ __( 'Use a domain I own' ) }
+								</Step.LinkButton>
+							) : undefined
+						}
+					/>
+				}
+				columnWidth={ 10 }
+				className="step-container-v2--domain-search"
+				heading={
+					! ( isMobileViewport && query ) && (
+						<Step.Heading text={ headerText } subText={ subHeaderText } />
+					)
+				}
+			>
+				{ domainSearchElement }
+			</Step.CenteredColumnLayout>
+		);
+	}
+
 	return (
 		<StepWrapper
 			{ ...props }
@@ -461,21 +528,7 @@ const DomainSearchUI = (
 			backLabelText={ backLabelText }
 			isWideLayout={ ! config.showNamePulseSearch }
 			isFullLayout={ config.showNamePulseSearch }
-			stepContent={
-				<WPCOMDomainSearch
-					className="domain-search--step-wrapper"
-					flowName={ flowName }
-					query={ query }
-					currentSiteUrl={ currentSiteUrl }
-					currentSiteId={ currentSiteId }
-					events={ events }
-					config={ config }
-					flowAllowsMultipleDomainsInCart={ flowAllowsMultipleDomainsInCart }
-					slots={ slots }
-					isFirstDomainFreeForFirstYear={ isFirstDomainFreeForFirstYear }
-					analyticsSection={ isDomainOnlyFlow ? 'domain-first' : 'signup' }
-				/>
-			}
+			stepContent={ domainSearchElement }
 		/>
 	);
 };

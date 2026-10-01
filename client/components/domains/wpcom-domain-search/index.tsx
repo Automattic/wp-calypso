@@ -5,6 +5,8 @@ import {
 	useWPCOMDomainSearchProps,
 } from './use-wpcom-domain-search-props';
 
+import './style.scss';
+
 const DomainSearchWithCartAndAnalytics = ( props: WPCOMDomainSearchProps ) => {
 	const wpcomDomainSearchProps = useWPCOMDomainSearchProps( props );
 
