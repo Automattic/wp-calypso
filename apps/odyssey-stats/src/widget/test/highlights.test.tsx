@@ -9,6 +9,7 @@ jest.mock( '../../hooks/use-referrers-query', () => () => ( { data: [], isFetchi
 jest.mock( 'calypso/my-sites/stats/hooks/use-premium-analytics-status-query', () => () => ( {
 	data: true,
 } ) );
+jest.mock( '../../lib/config-api', () => ( { optionalConfig: () => undefined } ) );
 jest.mock( '../../lib/selectors/can-current-user', () => () => true );
 jest.mock( '../../lib/selectors/get-site-admin-url', () => () => 'https://example.com/wp-admin/' );
 
