@@ -38,6 +38,7 @@ const defaultValues: Required< UserPreferences > = {
 	'a4a-marketplace-term-pricing': 'yearly',
 	'notifications-layout-style': 'simplified',
 	'notifications-view-settings-seen': false,
+	'notifications-subscriber-alerts-enabled': false,
 	'pressable-limit-notification-dismissed': 0,
 	'a4a-agency-approval-notice-dismissed': false,
 };

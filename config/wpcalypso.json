@@ -110,6 +110,7 @@
 		"migration-flow/introductory-offer": true,
 		"migration/ssh-migration": false,
 		"notifications/redesign": true,
+		"notifications/subscriber-alerts": false,
 		"notifications/view-settings": true,
 		"oauth/unified-experience": true,
 		"onboarding/create-course": false,
