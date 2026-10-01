@@ -20,8 +20,8 @@ describe( 'getSitePlanDisplayName', () => {
 			jetpack: true,
 			plan: {
 				product_slug: 'jetpack_free',
-				product_name: 'Jetpack Free',
 				product_name_short: 'Free',
+				product_name_en: 'Jetpack Free',
 			},
 		} as Site;
 		expect( getSitePlanDisplayName( site ) ).toBe( 'Jetpack Free' );

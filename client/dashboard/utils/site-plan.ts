@@ -92,6 +92,7 @@ export function getSitePlanDisplayName( site: Site ) {
 		if ( products.length > 1 ) {
 			return __( 'Jetpack' );
 		}
+		return __( 'Jetpack Free' );
 	}
 
 	if ( ( Object.values( JetpackPlans ) as string[] ).includes( plan.product_slug ) ) {
