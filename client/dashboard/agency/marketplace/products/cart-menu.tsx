@@ -21,7 +21,7 @@ import { getTermSuffix } from './lib/product-pricing';
 import { getProductShortTitle } from './lib/product-title';
 import { useCartLines } from './use-cart-lines';
 import type { TermPricing } from '../use-term-pricing';
-import type { ShoppingCartItem } from './use-shopping-cart';
+import type { CartItemRef, ShoppingCartItem } from './use-shopping-cart';
 import type { AgencyProduct } from '@automattic/api-core';
 
 import './cart-menu.scss';
@@ -37,7 +37,7 @@ interface Props {
 	/** Controls the dropdown, for pages that open the cart after adding to it. */
 	open?: boolean;
 	onToggle?: ( willOpen: boolean ) => void;
-	onRemove: ( slug: string ) => void;
+	onRemove: ( item: CartItemRef ) => void;
 	onCheckout?: () => void;
 }
 
@@ -69,6 +69,7 @@ export default function CartMenu( {
 	const checkoutLines = lines.map( ( { product, item } ) => ( {
 		product,
 		quantity: item.quantity,
+		siteDomain: item.siteDomain,
 	} ) );
 
 	const checkoutButtonProps = {
@@ -140,7 +141,12 @@ export default function CartMenu( {
 					</Heading>
 					{ lines.length === 0 && <Text variant="muted">{ __( 'Your cart is empty.' ) }</Text> }
 					{ lines.map( ( { item, product, priceInfo, subtotal } ) => (
-						<HStack key={ item.slug } justify="space-between" spacing={ 4 } alignment="flex-start">
+						<HStack
+							key={ `${ item.slug }:${ item.siteDomain ?? '' }` }
+							justify="space-between"
+							spacing={ 4 }
+							alignment="flex-start"
+						>
 							<VStack spacing={ 0 }>
 								<Text>
 									{ item.quantity > 1
@@ -152,6 +158,11 @@ export default function CartMenu( {
 											)
 										: getCartProductName( product ) }
 								</Text>
+								{ item.siteDomain && (
+									<Text variant="muted" size={ 12 }>
+										{ item.siteDomain }
+									</Text>
+								) }
 								{ /* The spans keep Google Translate from crashing on sibling text nodes. */ }
 								<Text variant="muted" size={ 12 }>
 									<TextBlur
@@ -187,7 +198,7 @@ export default function CartMenu( {
 									__( 'Remove %s from the cart' ),
 									getCartProductName( product )
 								) }
-								onClick={ () => onRemove( item.slug ) }
+								onClick={ () => onRemove( item ) }
 							>
 								{ __( 'Remove' ) }
 							</Button>

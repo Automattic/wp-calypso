@@ -26,6 +26,8 @@ const products = [
 		yearly_alternative_product_id: 1010,
 	},
 	{ slug: 'jetpack-backup-t1', product_id: 2112, alternative_product_id: 2010 },
+	{ slug: 'pressable-addon-php-memory-512', product_id: 4001, site_domain: 'one.example.com' },
+	{ slug: 'pressable-addon-php-memory-512', product_id: 4001, site_domain: 'two.example.com' },
 ] as AgencyProduct[];
 
 const replaceProductsInCart = jest.fn();
@@ -96,6 +98,23 @@ describe( 'useAgencyCart', () => {
 				extra: { ...extra, cart_item_index: 0 },
 			},
 		] );
+	} );
+
+	it( 'sends each PHP memory add-on with the site it applies to', async () => {
+		const { result } = renderCart( [
+			{ slug: 'pressable-addon-php-memory-512', quantity: 1, siteDomain: 'one.example.com' },
+			{ slug: 'pressable-addon-php-memory-512', quantity: 1, siteDomain: 'two.example.com' },
+			{ slug: 'pressable-addon-php-memory-512', quantity: 1, siteDomain: 'not-owned.example.com' },
+		] );
+
+		await waitFor( () => expect( result.current.isReady ).toBe( true ) );
+
+		expect(
+			addedLines().map(
+				( line: { extra: { a4a_pressable_site_domain?: string } } ) =>
+					line.extra.a4a_pressable_site_domain
+			)
+		).toEqual( [ 'one.example.com', 'two.example.com' ] );
 	} );
 
 	it( 'leaves out a product the agency cannot buy', async () => {
