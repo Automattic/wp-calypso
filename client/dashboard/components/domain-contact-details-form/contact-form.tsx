@@ -26,7 +26,7 @@ import {
 	hasFrDomain,
 	validateFrOrganization,
 } from './fr-contact-fields';
-import { RegionAddressFieldsLayout } from './region-address-fieldsets';
+import { isStateFieldHidden, RegionAddressFieldsLayout } from './region-address-fieldsets';
 import {
 	getUkContactFormFields,
 	getUkContactFormLayout,
@@ -67,7 +67,17 @@ export default function ContactForm( {
 	const { data: statesList } = useQuery( statesListQuery( selectedCountryCode ) );
 
 	const normalizedFormData = useMemo( () => {
-		if ( ! statesList || statesList.length === 0 ) {
+		if ( ! statesList ) {
+			return formData;
+		}
+
+		// A stored state the user can't see would still be sent, and the registrar
+		// may reject it with no way for the user to fix it.
+		if ( isStateFieldHidden( selectedCountryCode, statesList ) ) {
+			return formData.state ? { ...formData, state: '' } : formData;
+		}
+
+		if ( statesList.length === 0 ) {
 			return formData;
 		}
 
@@ -79,7 +89,7 @@ export default function ContactForm( {
 		}
 
 		return formData;
-	}, [ formData, statesList ] );
+	}, [ formData, statesList, selectedCountryCode ] );
 
 	const isDirty = ! ( JSON.stringify( normalizedFormData ) === JSON.stringify( initialData ) );
 

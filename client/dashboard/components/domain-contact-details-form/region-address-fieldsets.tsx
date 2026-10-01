@@ -140,6 +140,20 @@ export function RegionAddressFieldsets(
 	return fields;
 }
 
+export function isStateFieldHidden(
+	countryCode: string,
+	statesList: StatesListItem[] | undefined
+): boolean {
+	if ( statesList?.length ) {
+		return false;
+	}
+
+	return (
+		CHECKOUT_EU_ADDRESS_FORMAT_COUNTRY_CODES.includes( countryCode ) ||
+		CHECKOUT_UK_ADDRESS_FORMAT_COUNTRY_CODES.includes( countryCode )
+	);
+}
+
 export function RegionAddressFieldsLayout( {
 	statesList,
 	countryList,
@@ -149,11 +163,10 @@ export function RegionAddressFieldsLayout( {
 	countryList: CountryListItem[] | undefined;
 	countryCode: string;
 } ) {
-	const hasCountryStates = countryCode ? !! statesList?.length : false;
 	const isMobileViewport = useViewportMatch( 'small', '<' );
 	const arePostalCodesSupported = getCountryPostalCodeSupport( countryList ?? [], countryCode );
 
-	if ( ! hasCountryStates ) {
+	if ( isStateFieldHidden( countryCode, statesList ) ) {
 		if ( CHECKOUT_EU_ADDRESS_FORMAT_COUNTRY_CODES.includes( countryCode ) ) {
 			return [
 				'address1',
