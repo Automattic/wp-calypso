@@ -12,7 +12,6 @@ import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import type { FeedbackAnswer, FeedbackType } from './types';
 
 const PREFERENCE = 'a4a-feedback';
-const SURVEY_ID_PREFIX = 'a4a-feedback-';
 
 export function useMilestoneFeedback( type: FeedbackType ) {
 	const { recordTracksEvent } = useAnalytics();
@@ -77,7 +76,7 @@ export function useMilestoneFeedback( type: FeedbackType ) {
 			fileSurvey(
 				{
 					site_id: agencyId,
-					survey_id: `${ SURVEY_ID_PREFIX }${ type }`,
+					survey_id: type,
 					survey_responses: surveyResponses,
 				},
 				{

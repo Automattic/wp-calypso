@@ -19,7 +19,7 @@ export async function submitA4AFeedbackSurvey( data: A4AFeedbackSurveyDetails ):
 	const response: A4AFeedbackSurveyResponse = await wpcom.req.post( {
 		apiNamespace: 'wpcom/v2',
 		path: '/marketing/survey',
-		body: data,
+		body: { ...data, survey_id: `a4a-feedback-${ data.survey_id }` },
 	} );
 	// A rejection arrives as a 200 with success: false, and must not count as filed.
 	if ( ! response.success ) {
