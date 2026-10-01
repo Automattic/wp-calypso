@@ -170,7 +170,7 @@ const NewStatsNotices = ( { siteId, isOdysseyStats, statsPurchaseSuccess }: Stat
 		config.isEnabled( 'is_odyssey' );
 
 	// Only sites that could actually accept the invitation pay for this round-trip, and the server
-	// decides the cohort on top. The same rule the registry uses, flag included: the request holds
+	// decides the cohort on top. The same rule the registry uses: the request holds
 	// every notice back while it is in flight, so a site that asks it needlessly sits on its own
 	// upsell waiting for an answer nothing will use.
 	const shouldAskStatus =

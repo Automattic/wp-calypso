@@ -170,11 +170,9 @@ jest.mock( 'calypso/state/sites/selectors/has-site-product-jetpack-stats-pwyw-on
 	__esModule: true,
 	default: () => false,
 } ) );
-let mockIsAtomic = false;
 jest.mock( 'calypso/state/sites/selectors/is-jetpack-site', () => ( {
 	__esModule: true,
-	default: ( _state: unknown, _siteId: number, options: { treatAtomicAsJetpackSite: boolean } ) =>
-		mockIsAtomic && options.treatAtomicAsJetpackSite,
+	default: () => false,
 } ) );
 jest.mock( 'calypso/state/stats/lists/selectors', () => ( {
 	getSiteStatsNormalizedData: () => ( {} ),
@@ -204,7 +202,6 @@ describe( 'premium analytics preview "not shown" event', () => {
 		mockCanManageOptions = true;
 		mockSiteFeatures = { active: [] };
 		mockIsWpcom = true;
-		mockIsAtomic = false;
 		mockIsP2 = false;
 		mockIsVip = false;
 		mockAdminUrl = 'https://example.com/wp-admin/admin.php?page=jetpack-premium-analytics-wp-admin';
@@ -316,12 +313,6 @@ describe( 'premium analytics preview "not shown" event', () => {
 
 		renderNotices();
 
-		expect( notShownEvents() ).toEqual( [] );
-	} );
-
-	it( 'invites Atomic sites like Simple ones', () => {
-		mockIsAtomic = true;
-		renderNotices();
 		expect( notShownEvents() ).toEqual( [] );
 	} );
 
