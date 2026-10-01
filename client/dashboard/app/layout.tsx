@@ -12,6 +12,7 @@ import { useMemo, useEffect } from 'react';
 import { withColorScheme } from 'calypso/lib/color-scheme';
 import { AnalyticsProvider, type AnalyticsClient } from './analytics';
 import { getNormalizedPath, getSuperProps } from './analytics/super-props';
+import { useUnifiedAdminPageView } from './analytics/use-unified-admin-page-view';
 import { AuthProvider, useAuth } from './auth';
 import { dashboardChartTheme } from './chart-theme';
 import { AppProvider, useAppContext } from './context';
@@ -19,6 +20,12 @@ import { I18nProvider } from './i18n';
 import { getRouter } from './router';
 import { useSurvicate, useSurvicateVisitTraits } from './survicate';
 import type { AppConfig } from './context';
+
+function UnifiedAdminPageViewTracker( { router }: { router: AnyRouter } ) {
+	const { unifiedAdminPageViewApp } = useAppContext();
+	useUnifiedAdminPageView( router, unifiedAdminPageViewApp );
+	return null;
+}
 
 function AnalyticsProviderWithClient( {
 	children,
@@ -28,7 +35,7 @@ function AnalyticsProviderWithClient( {
 	router: AnyRouter;
 } ) {
 	const { user } = useAuth();
-	const { posthog, unifiedAdminPageViewApp: app } = useAppContext();
+	const { posthog } = useAppContext();
 
 	useEffect( () => {
 		if ( user ) {
@@ -61,23 +68,20 @@ function AnalyticsProviderWithClient( {
 				recordTracksPageViewWithPageParams( url, {
 					device_type: resolveDeviceTypeByViewPort(),
 				} );
-				if ( app ) {
-					recordTracksEvent( 'wpcom_unified_admin_page_view', {
-						source: 'msd',
-						app,
-						path: router.state.location.pathname,
-						route: url,
-					} );
-				}
 			},
 		} ),
-		[ router, app ]
+		[ router ]
 	);
 
 	useSurvicate();
 	useSurvicateVisitTraits();
 
-	return <AnalyticsProvider client={ analyticsClient }>{ children }</AnalyticsProvider>;
+	return (
+		<AnalyticsProvider client={ analyticsClient }>
+			<UnifiedAdminPageViewTracker router={ router } />
+			{ children }
+		</AnalyticsProvider>
+	);
 }
 
 function Layout( { config }: { config: AppConfig } ) {
