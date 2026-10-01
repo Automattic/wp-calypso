@@ -1,12 +1,11 @@
-import { __ } from '@wordpress/i18n';
 import { PRESSABLE_HOSTING_FAMILY_SLUG, WPCOM_HOSTING_FAMILY_SLUG } from '../../lib/wpcom-hosting';
-import { isPressableAddon, isWooCommerceProduct } from './product-categories';
+import { getCategoryLabels, getProductCategories } from './product-categories';
 import {
 	BACKUP_STORAGE_FAMILY_SLUG,
 	EXCLUDED_PRODUCT_SLUGS,
 	FEATURED_PRODUCT_SLUGS,
-	JETPACK_PACKS_FAMILY_SLUG,
 } from './product-slugs';
+import type { ProductCategory } from './product-categories';
 import type { AgencyProduct } from '@automattic/api-core';
 
 // Some Jetpack products come in size tiers (10GB / 1TB) that the classic list
@@ -16,19 +15,9 @@ const MERGEABLE_SLUG_PREFIXES = [ 'jetpack-security', 'jetpack-backup' ];
 // One card: a single product, or a set of size variants of the same product.
 export type ProductListItem = AgencyProduct | AgencyProduct[];
 
-export type ProductSectionKey =
-	| 'featured'
-	| 'woocommerce'
-	| 'jetpack-plans'
-	| 'jetpack-products'
-	| 'backup-addons'
-	| 'pressable-addons';
-
+// A job section: the products in one category, or the products with none.
 export interface ProductSection {
-	key: ProductSectionKey;
-	title: string;
-	description?: string;
-	brand?: 'jetpack' | 'woocommerce' | 'pressable';
+	key: ProductCategory | 'other';
 	items: ProductListItem[];
 }
 
@@ -48,14 +37,19 @@ export const getItemProducts = ( item: ProductListItem ) =>
 
 export const getItemId = ( item: ProductListItem ) => getItemProducts( item )[ 0 ].slug;
 
+// The backup storage add-ons share the `jetpack-backup` prefix but are separate
+// products, each its own card.
+const isMergeable = ( product: AgencyProduct, prefix: string ) =>
+	product.slug.startsWith( prefix ) && product.family_slug !== BACKUP_STORAGE_FAMILY_SLUG;
+
 function mergeVariants( products: AgencyProduct[] ): ProductListItem[] {
 	const merged = MERGEABLE_SLUG_PREFIXES.map( ( prefix ) =>
-		products.filter( ( { slug } ) => slug.startsWith( prefix ) )
+		products.filter( ( product ) => isMergeable( product, prefix ) )
 	)
 		.filter( ( variants ) => variants.length > 0 )
 		.map( ( variants ) => ( variants.length === 1 ? variants[ 0 ] : variants ) );
 	const rest = products.filter(
-		( { slug } ) => ! MERGEABLE_SLUG_PREFIXES.some( ( prefix ) => slug.startsWith( prefix ) )
+		( product ) => ! MERGEABLE_SLUG_PREFIXES.some( ( prefix ) => isMergeable( product, prefix ) )
 	);
 	return [ ...merged, ...rest ];
 }
@@ -63,72 +57,35 @@ function mergeVariants( products: AgencyProduct[] ): ProductListItem[] {
 const byName = ( locale?: string ) => ( a: ProductListItem, b: ProductListItem ) =>
 	getItemProducts( a )[ 0 ].name.localeCompare( getItemProducts( b )[ 0 ].name, locale );
 
-const isJetpackProduct = ( product: AgencyProduct ) =>
-	! isWooCommerceProduct( product ) &&
-	! isPressableAddon( product ) &&
-	product.family_slug !== JETPACK_PACKS_FAMILY_SLUG &&
-	product.family_slug !== BACKUP_STORAGE_FAMILY_SLUG;
-
-// The classic dashboard's fixed section order and copy.
-// `locale` is the user's Intl language tag, so names sort by their language
-// rather than the browser's.
-export function getProductSections( products: AgencyProduct[], locale?: string ): ProductSection[] {
-	const featured = FEATURED_PRODUCT_SLUGS.map( ( slug ) =>
+export const getFeaturedProducts = ( products: AgencyProduct[] ) =>
+	FEATURED_PRODUCT_SLUGS.map( ( slug ) =>
 		products.find( ( product ) => product.slug === slug )
 	).filter( ( product ): product is AgencyProduct => !! product );
 
+// One card per product, size tiers folded into one, sorted by name.
+// `locale` is the user's Intl language tag, so names sort by their language
+// rather than the browser's.
+export const getProductListItems = ( products: AgencyProduct[], locale?: string ) =>
+	mergeVariants( products ).sort( byName( locale ) );
+
+// One section per job, in the category row's order, then the products with no
+// job category (A4AD-237). A product in two jobs shows in both.
+export function getProductSections( products: AgencyProduct[], locale?: string ): ProductSection[] {
+	const categories = Object.keys( getCategoryLabels() ) as ProductCategory[];
 	const sections: ProductSection[] = [
-		{
-			key: 'featured',
-			title: __( 'Featured products' ),
-			items: featured,
-		},
-		{
-			key: 'woocommerce',
-			title: __( 'WooCommerce extensions' ),
-			description: __(
-				'Explore the tools and integrations you need to grow your client’s Woo store.'
+		...categories.map( ( category ) => ( {
+			key: category,
+			items: getProductListItems(
+				products.filter( ( product ) => getProductCategories( product ).includes( category ) ),
+				locale
 			),
-			brand: 'woocommerce',
-			items: products.filter( isWooCommerceProduct ).sort( byName( locale ) ),
-		},
+		} ) ),
 		{
-			key: 'jetpack-plans',
-			title: __( 'Jetpack plans' ),
-			description: __(
-				'Save big with comprehensive bundles of Jetpack security, performance, and growth tools.'
+			key: 'other' as const,
+			items: getProductListItems(
+				products.filter( ( product ) => getProductCategories( product ).length === 0 ),
+				locale
 			),
-			brand: 'jetpack',
-			items: mergeVariants(
-				products.filter( ( product ) => product.family_slug === JETPACK_PACKS_FAMILY_SLUG )
-			),
-		},
-		{
-			key: 'jetpack-products',
-			title: __( 'Jetpack products' ),
-			description: __(
-				'Mix and match powerful security, performance, and growth tools for your sites.'
-			),
-			brand: 'jetpack',
-			items: mergeVariants( products.filter( isJetpackProduct ) ).sort( byName( locale ) ),
-		},
-		{
-			key: 'backup-addons',
-			title: __( 'Jetpack VaultPress Backup add-ons' ),
-			description: __( 'Add additional storage to your current VaultPress Backup plans.' ),
-			brand: 'jetpack',
-			items: products
-				.filter( ( product ) => product.family_slug === BACKUP_STORAGE_FAMILY_SLUG )
-				.sort( ( a, b ) => a.product_id - b.product_id ),
-		},
-		{
-			key: 'pressable-addons',
-			title: __( 'Pressable add-ons' ),
-			description: __( 'Increase your plan limits and features with plan add-ons.' ),
-			brand: 'pressable',
-			items: products
-				.filter( isPressableAddon )
-				.sort( ( a, b ) => a.name.localeCompare( b.name, locale, { numeric: true } ) ),
 		},
 	];
 

@@ -1,0 +1,115 @@
+@import '@wordpress/base-styles/colors';
+
+.dashboard-body-card {
+	position: relative;
+	block-size: 100%;
+	transition: box-shadow 0.15s ease;
+
+	&:hover {
+		box-shadow: 0 0 0 1px rgba( $gray-900, 0.2 );
+	}
+
+	@media ( prefers-reduced-motion: reduce ) {
+		transition: none;
+	}
+}
+
+.dashboard-body-card__body {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+	box-sizing: border-box;
+	block-size: 100%;
+}
+
+.dashboard-body-card__head {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	min-inline-size: 0;
+}
+
+.dashboard-body-card__name {
+	display: flex;
+	flex-direction: column;
+	min-inline-size: 0;
+}
+
+// The title is the card's link: a link Button in the text colour (the accent
+// variables it reads are scoped to it), whose ::after covers the card so the
+// whole card opens the item while the actions sit above it.
+.dashboard-body-card .dashboard-body-card__name .dashboard-body-card__title {
+	--wp-components-color-accent: #{$gray-900};
+	--wp-components-color-accent-darker-10: #{$gray-900};
+	--wp-components-color-accent-darker-20: #{$gray-900};
+
+	display: inline;
+	block-size: auto;
+	white-space: normal;
+	text-align: start;
+	font-size: 15px;
+	font-weight: 600;
+	line-height: 20px;
+	text-decoration: none;
+	text-wrap: balance;
+
+	&::after {
+		content: '';
+		position: absolute;
+		inset: 0;
+		border-radius: 8px;
+	}
+
+	&:hover,
+	&:focus {
+		text-decoration: none;
+		box-shadow: none;
+	}
+
+	// The ring goes around the whole card (the ::after), not the words.
+	&:focus-visible {
+		outline: none;
+	}
+
+	&:focus-visible::after {
+		outline: 2px solid var( --wpds-color-stroke-focus, var( --wp-admin-theme-color ) );
+		outline-offset: -2px;
+	}
+}
+
+.dashboard-body-card__description {
+	display: -webkit-box;
+	-webkit-line-clamp: 2;
+	-webkit-box-orient: vertical;
+	overflow: hidden;
+	max-block-size: 40px;
+	line-height: 20px;
+	text-wrap: pretty;
+}
+
+.dashboard-body-card__foot {
+	position: relative;
+	z-index: 1;
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 12px;
+	margin-block-start: auto;
+	font-size: 13px;
+}
+
+// The tile: a glyph in the tile's text colour on the maker's colour.
+.dashboard-body-card__tile {
+	display: inline-grid;
+	flex: none;
+	place-items: center;
+	inline-size: 40px;
+	block-size: 40px;
+	border-radius: 8px;
+	background: var( --dashboard-accent );
+	color: var( --dashboard-accent-on );
+
+	svg {
+		fill: currentColor;
+	}
+}

@@ -1,0 +1,365 @@
+@import '@wordpress/base-styles/colors';
+
+// Composition. Every tile obeys these rules, in order.
+// R1 Row: one scrolling row, 16px apart, snapping to a tile's start. The row
+//    runs into the page's side padding. Where that reaches the window's edge,
+//    the edge cuts the tiles; where the page is narrower than the window, each
+//    end fades instead, only while there is more that way. Tiles run wide,
+//    narrow, narrow, wide (720px and 368px). On a phone a tile is at most 85%
+//    of the screen so the next one peeks in. Every tile is 340px tall.
+// R2 Tile: 28px top and bottom, 32px sides. The lead's field is the maker's
+//    colour, every other field its tint.
+// R3 Words: top-left, always, with the actions 16px under them. A description
+//    shows only beside a drawing, three lines at most.
+// R4 Side by side when the tile holds both: its padding, 240px of words, the
+//    gap and the drawing. Words left, the drawing right, whole.
+// R5 Otherwise stacked: the words, then the drawing 24px under the actions,
+//    centred, its top in view and its bottom cropped by the tile's edge.
+// R6 Drawings are images at their own size (320px, the lead's 340px). They
+//    never scale on a desktop; only a tile narrower than the drawing shrinks it.
+// R7 The lead never stacks its drawing: when it cannot sit beside the words,
+//    the lead is words only.
+$pad-x: 32px;
+$pad-y: 28px;
+$gap: 32px;
+$words-min: 240px;
+$object: 320px;
+$lead-object: 340px;
+$side-by-side: $pad-x * 2 + $words-min + $gap + $object;
+$lead-side-by-side: $pad-x * 2 + $words-min + $gap + $lead-object;
+
+// R1
+.dashboard-showcase {
+	--fade-start: 0%;
+	--fade-end: 0%;
+
+	display: flex;
+	gap: 16px;
+	margin: 0 calc( -1 * var( --page-layout-inline-padding ) );
+	padding: 0 var( --page-layout-inline-padding );
+	scroll-padding-inline: var( --page-layout-inline-padding );
+	list-style: none;
+	overflow-x: auto;
+	overscroll-behavior-x: contain;
+	scroll-behavior: smooth;
+	scroll-snap-type: x mandatory;
+	scrollbar-width: none;
+	mask-image: linear-gradient(
+		to right,
+		transparent,
+		rgba( 0, 0, 0, 0.3 ) calc( var( --fade-start ) * 0.35 ),
+		rgba( 0, 0, 0, 0.75 ) calc( var( --fade-start ) * 0.7 ),
+		#000 var( --fade-start ),
+		#000 calc( 100% - var( --fade-end ) ),
+		rgba( 0, 0, 0, 0.75 ) calc( 100% - var( --fade-end ) * 0.7 ),
+		rgba( 0, 0, 0, 0.3 ) calc( 100% - var( --fade-end ) * 0.35 ),
+		transparent
+	);
+
+	&::-webkit-scrollbar {
+		display: none;
+	}
+
+	&.can-back {
+		--fade-start: 40px;
+	}
+
+	&.can-forward {
+		--fade-end: 64px;
+	}
+
+	@media ( prefers-reduced-motion: reduce ) {
+		scroll-behavior: auto;
+	}
+}
+
+.dashboard-showcase__item {
+	flex: none;
+	inline-size: min( 368px, 85vw );
+	block-size: 340px;
+	scroll-snap-align: start;
+
+	&:nth-child( 4n + 1 ),
+	&:nth-child( 4n ) {
+		inline-size: min( 720px, 85vw );
+	}
+}
+
+// R2. The Card paints its surface and its words from the two design-system
+// variables below, so the tile sets them to the maker's colours and touches
+// nothing else on the Card.
+.dashboard-showcase__tile {
+	--showcase-field: var( --dashboard-accent-tint );
+	--showcase-text: #{$gray-900};
+	--showcase-title: var( --dashboard-accent-ink );
+	--showcase-muted: #{$gray-700};
+	--showcase-action: var( --dashboard-accent-ink );
+	--showcase-glyph-bg: var( --dashboard-accent );
+	--showcase-glyph-fg: var( --dashboard-accent-on );
+	--showcase-title-size: 20px;
+	--showcase-object: #{$object};
+	--wpds-color-background-surface-neutral-strong: var( --showcase-field );
+	--wpds-color-foreground-content-neutral: var( --showcase-text );
+
+	container-type: inline-size;
+	box-sizing: border-box;
+	block-size: 100%;
+	min-inline-size: 0;
+	overflow: hidden;
+	box-shadow: inset 0 0 0 1px rgba( $gray-900, 0.06 );
+
+	&.is-lead {
+		--showcase-field: var( --dashboard-accent );
+		--showcase-text: var( --dashboard-accent-on );
+		--showcase-title: var( --dashboard-accent-on );
+		--showcase-muted: var( --dashboard-accent-on );
+		--showcase-action: var( --dashboard-accent-on );
+		--showcase-glyph-bg: var( --dashboard-accent-on );
+		--showcase-glyph-fg: var( --dashboard-accent );
+		--showcase-title-size: 24px;
+		--showcase-object: #{$lead-object};
+	}
+
+	// Jetpack's bright green is too loud for a whole field, so a Jetpack lead
+	// keeps the grey tile and leads on its size alone (A4AD-258).
+	&.is-lead[data-accent='jetpack'] {
+		--showcase-field: var( --dashboard-accent-tint );
+		--showcase-text: #{$gray-900};
+		--showcase-title: var( --dashboard-accent-ink );
+		--showcase-muted: #{$gray-700};
+		--showcase-action: var( --dashboard-accent-ink );
+		--showcase-glyph-bg: var( --dashboard-accent );
+		--showcase-glyph-fg: var( --dashboard-accent-on );
+	}
+}
+
+.dashboard-showcase__body {
+	position: relative;
+	z-index: 1;
+	box-sizing: border-box;
+	display: grid;
+	grid-template-columns: minmax( 0, 1fr ) var( --showcase-object );
+	grid-template-rows: auto minmax( 0, 1fr );
+	grid-template-areas:
+		'text art'
+		'action art';
+	column-gap: $gap;
+	block-size: 100%;
+	padding: $pad-y $pad-x;
+}
+
+.dashboard-showcase__text {
+	grid-area: text;
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 8px;
+	min-inline-size: 0;
+}
+
+.dashboard-showcase__eyebrow {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	margin-block-end: 4px;
+	font-size: 11px;
+	font-weight: 500;
+	line-height: 16px;
+	letter-spacing: 0.06em;
+	text-transform: uppercase;
+	color: var( --showcase-muted );
+
+	.is-lead & {
+		font-weight: 600;
+	}
+}
+
+// The glyph: the tile's one vibrant mark.
+.dashboard-showcase__glyph {
+	display: grid;
+	flex: none;
+	place-items: center;
+	inline-size: 20px;
+	block-size: 20px;
+	border-radius: 4px;
+	background: var( --showcase-glyph-bg );
+	color: var( --showcase-glyph-fg );
+
+	svg {
+		fill: currentColor;
+	}
+}
+
+// The lockup keeps its own colours, on white wherever the field is a colour.
+.dashboard-showcase__lockup {
+	display: inline-flex;
+	margin-block: -2px 2px;
+
+	img {
+		display: block;
+		block-size: 16px;
+	}
+
+	.is-lead & {
+		padding: 6px 8px;
+		border-radius: 4px;
+		background: #{$white};
+	}
+}
+
+// The title is the tile's link: a link Button in the tile's title colour (the
+// accent variables it reads are scoped to it), whose ::after covers the tile
+// (the body is the nearest positioned ancestor) so the whole tile opens the
+// item while the actions sit above it.
+.dashboard-showcase .dashboard-showcase__tile .dashboard-showcase__title {
+	--wp-components-color-accent: var( --showcase-title );
+	--wp-components-color-accent-darker-10: var( --showcase-title );
+	--wp-components-color-accent-darker-20: var( --showcase-title );
+
+	display: inline;
+	block-size: auto;
+	white-space: normal;
+	text-align: start;
+	font-size: var( --showcase-title-size );
+	font-weight: 600;
+	line-height: 1.25;
+	text-decoration: none;
+	text-wrap: balance;
+
+	&::after {
+		content: '';
+		position: absolute;
+		inset: 0;
+		z-index: 3;
+		border-radius: 8px;
+	}
+
+	&:hover,
+	&:focus {
+		text-decoration: none;
+		box-shadow: none;
+	}
+
+	// The ring goes around the whole tile (the ::after), not the words.
+	&:focus-visible {
+		outline: none;
+	}
+
+	&:focus-visible::after {
+		outline: 2px solid var( --wpds-color-stroke-focus, var( --wp-admin-theme-color ) );
+		outline-offset: -2px;
+	}
+}
+
+.dashboard-showcase__description,
+.dashboard-showcase__meta {
+	display: -webkit-box;
+	-webkit-line-clamp: 3;
+	-webkit-box-orient: vertical;
+	overflow: hidden;
+	max-inline-size: 440px;
+	font-size: 14px;
+	line-height: 20px;
+	color: var( --showcase-muted );
+	text-wrap: pretty;
+}
+
+.dashboard-showcase__description {
+	font-size: 15px;
+	line-height: 22px;
+}
+
+.is-lead .dashboard-showcase__description {
+	-webkit-line-clamp: 4;
+}
+
+.dashboard-showcase__meta {
+	margin-block-start: 2px;
+}
+
+// The actions read the accent variables core buttons are themed with, so a
+// secondary button draws its border and label in the tile's ink (or, on the
+// lead, in the words' colour) with nothing on the button itself overridden.
+.dashboard-showcase__action {
+	--wp-components-color-accent: var( --showcase-action );
+	--wp-components-color-accent-darker-10: var( --showcase-action );
+	--wp-components-color-accent-darker-20: var( --showcase-action );
+
+	position: relative;
+	z-index: 4;
+	grid-area: action;
+	align-self: start;
+	justify-self: start;
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 8px 20px;
+	margin-block-start: 16px;
+}
+
+.dashboard-showcase__art {
+	position: relative;
+	z-index: 1;
+	grid-area: art;
+	align-self: start;
+	min-block-size: 0;
+}
+
+.dashboard-showcase__object {
+	inline-size: min( var( --showcase-object ), 100% );
+}
+
+// A drawing is an image at its own size, with one shadow that follows its shape.
+.dashboard-showcase__image {
+	display: block;
+	inline-size: 100%;
+	block-size: auto;
+	filter: drop-shadow( 0 12px 16px rgba( 0, 0, 0, 0.12 ) )
+		drop-shadow( 0 2px 3px rgba( 0, 0, 0, 0.08 ) );
+}
+
+// R5
+@container ( max-width: #{$side-by-side - 1px} ) {
+	.dashboard-showcase__tile:not( .is-lead ) {
+		.dashboard-showcase__body {
+			grid-template-columns: minmax( 0, 1fr );
+			grid-template-rows: auto auto minmax( 160px, 1fr );
+			grid-template-areas:
+				'text'
+				'action'
+				'art';
+			padding-block-end: 0;
+		}
+
+		.dashboard-showcase__description {
+			display: none;
+		}
+
+		.dashboard-showcase__art {
+			contain: size;
+			align-self: stretch;
+			justify-self: stretch;
+			margin-block-start: 24px;
+		}
+
+		.dashboard-showcase__object {
+			margin-inline: auto;
+		}
+	}
+}
+
+// R7
+@container ( max-width: #{$lead-side-by-side - 1px} ) {
+	.dashboard-showcase__tile.is-lead {
+		.dashboard-showcase__body {
+			grid-template-columns: minmax( 0, 1fr );
+			grid-template-areas:
+				'text'
+				'action';
+		}
+
+		.dashboard-showcase__art {
+			display: none;
+		}
+	}
+}

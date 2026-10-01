@@ -1,0 +1,118 @@
+@import '@wordpress/base-styles/colors';
+
+// The row behaves like the featured row above it: it runs into the page's
+// side padding, and where that reaches the window's edge, the edge cuts the
+// tiles. Where the page is narrower than the window, each end fades instead,
+// only while there is more that way.
+.dashboard-spot-tiles {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+	min-inline-size: 0;
+	margin-block-end: 16px;
+}
+
+.dashboard-spot-tiles__row {
+	--fade-start: 0%;
+	--fade-end: 0%;
+
+	display: flex;
+	gap: 8px;
+	min-inline-size: 0;
+	margin-inline: calc( -1 * var( --page-layout-inline-padding ) );
+	padding: 2px var( --page-layout-inline-padding );
+	scroll-padding-inline: var( --page-layout-inline-padding );
+	overflow-x: auto;
+	overscroll-behavior-x: contain;
+	scroll-behavior: smooth;
+	scroll-snap-type: x mandatory;
+	scrollbar-width: none;
+	mask-image: linear-gradient(
+		to right,
+		transparent,
+		rgba( 0, 0, 0, 0.3 ) calc( var( --fade-start ) * 0.35 ),
+		rgba( 0, 0, 0, 0.75 ) calc( var( --fade-start ) * 0.7 ),
+		#000 var( --fade-start ),
+		#000 calc( 100% - var( --fade-end ) ),
+		rgba( 0, 0, 0, 0.75 ) calc( 100% - var( --fade-end ) * 0.7 ),
+		rgba( 0, 0, 0, 0.3 ) calc( 100% - var( --fade-end ) * 0.35 ),
+		transparent
+	);
+
+	&::-webkit-scrollbar {
+		display: none;
+	}
+
+	&.can-back {
+		--fade-start: 40px;
+	}
+
+	&.can-forward {
+		--fade-end: 64px;
+	}
+
+	@media ( prefers-reduced-motion: reduce ) {
+		scroll-behavior: auto;
+	}
+}
+
+.dashboard-spot-tiles__tile {
+	// At least 136px, so the longest names (Store management) stay on one
+	// line and every tile keeps the same width; a longer translation widens
+	// its own tile rather than wrapping.
+	flex: 0 0 auto;
+	min-inline-size: 136px;
+	scroll-snap-align: start;
+	cursor: pointer;
+
+	&:hover {
+		box-shadow: 0 0 0 1px var( --wp-components-color-accent, var( --wp-admin-theme-color ) ) inset;
+	}
+
+	&:focus-visible {
+		outline: 2px solid var( --wp-components-color-accent, var( --wp-admin-theme-color ) );
+		outline-offset: 2px;
+	}
+
+	&.is-selected {
+		box-shadow: 0 0 0 2px var( --wp-components-color-accent, var( --wp-admin-theme-color ) ) inset;
+	}
+}
+
+.dashboard-spot-tiles__body {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 8px;
+	padding: 20px 12px;
+	text-align: center;
+}
+
+.dashboard-spot-tiles__spot {
+	display: block;
+	inline-size: 80px;
+	block-size: 64px;
+}
+
+.dashboard-spot-tiles__media {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	min-block-size: 32px;
+	fill: $gray-900;
+}
+
+.dashboard-spot-tiles__label {
+	font-size: 13px;
+	font-weight: 500;
+	line-height: 16px;
+	color: $gray-900;
+	white-space: nowrap;
+}
+
+.dashboard-spot-tiles__divider {
+	flex: 0 0 1px;
+	align-self: stretch;
+	margin-inline: 8px;
+	background: $gray-200;
+}
