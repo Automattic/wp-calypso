@@ -3,7 +3,7 @@
  */
 import { DomainAvailabilityStatus } from '@automattic/api-core';
 import { QueryClientProvider } from '@tanstack/react-query';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useViewportMatch } from '@wordpress/compose';
 import { DomainSearchContext, useDomainSearchContextValue } from '../../../page/context';
@@ -199,8 +199,13 @@ describe( 'NamePulseResultRow', () => {
 		expect( fetcher ).not.toHaveBeenCalled();
 	} );
 
-	describe( 'badge', () => {
-		const SALE = { sale_cost: 3.3, currency_code: 'USD' };
+	it( 'shows no Sale badge on a sale', () => {
+		renderRow( buildResult( { sale_cost: 3.3, currency_code: 'USD' } ) );
+
+		expect( screen.queryByText( 'Sale' ) ).not.toBeInTheDocument();
+	} );
+
+	describe( 'policy notices', () => {
 		const POLICY_NOTICES = [
 			{
 				type: 'identity_verification',
@@ -209,43 +214,69 @@ describe( 'NamePulseResultRow', () => {
 			},
 		];
 
-		it( 'shows Sale on a sale-only row', () => {
-			renderRow( buildResult( SALE ) );
-
-			expect( screen.getByText( 'Sale' ) ).toBeInTheDocument();
-		} );
-
-		it( 'shows only Premium on a premium row on sale', () => {
-			renderRow( buildPremiumResult( { source: 'keyword', ...SALE } ) );
-
-			expect( screen.getByText( 'Premium' ) ).toBeInTheDocument();
-			expect( screen.queryByText( 'Sale' ) ).not.toBeInTheDocument();
-		} );
-
-		it( 'shows only the policy notice on a row with policy notices', () => {
-			renderRow(
-				buildPremiumResult( { source: 'keyword', ...SALE, policy_notices: POLICY_NOTICES } )
+		const available = () =>
+			Promise.resolve(
+				buildAvailability( {
+					domain_name: 'icecream.in',
+					tld: 'in',
+					status: DomainAvailabilityStatus.AVAILABLE,
+				} )
 			);
 
-			expect( screen.getByText( 'Special requirements' ) ).toBeInTheDocument();
-			expect( screen.queryByText( 'Premium' ) ).not.toBeInTheDocument();
-			expect( screen.queryByText( 'Sale' ) ).not.toBeInTheDocument();
+		const buildPolicyResult = () =>
+			buildResult( { domain_name: 'icecream.in', suffix: 'in', policy_notices: POLICY_NOTICES } );
+
+		it( 'keeps the notice off the row', () => {
+			renderRow( buildPolicyResult() );
+
+			expect( screen.queryByText( 'Special requirements' ) ).not.toBeInTheDocument();
+			expect( screen.queryByText( POLICY_NOTICES[ 0 ].message ) ).not.toBeInTheDocument();
 		} );
 
-		it( 'shows the policy notice message in a popover on hover', async () => {
-			renderRow( buildResult( { policy_notices: POLICY_NOTICES } ) );
+		it( 'shows the notice on hovering the cart button', async () => {
+			renderRow( buildPolicyResult() );
 
-			await userEvent.hover( screen.getByRole( 'button', { name: 'Special requirements' } ) );
+			await userEvent.hover( screen.getByRole( 'button', { name: 'Add to cart' } ) );
 
 			expect( await screen.findByText( POLICY_NOTICES[ 0 ].message ) ).toBeVisible();
 		} );
 
-		it( 'shows no badge on an unavailable row', () => {
-			renderRow(
-				buildResult( { status: NamePulseDomainStatus.TAKEN, policy_notices: POLICY_NOTICES } )
-			);
+		it( 'adds the name straight away on a mouse click', async () => {
+			const { fetcher } = renderRow( buildPolicyResult(), available );
 
-			expect( screen.queryByText( 'Special requirements' ) ).not.toBeInTheDocument();
+			await userEvent.click( screen.getByRole( 'button', { name: 'Add to cart' } ) );
+
+			await waitFor( () => expect( fetcher ).toHaveBeenCalled() );
+			expect( screen.queryByRole( 'alertdialog' ) ).not.toBeInTheDocument();
+		} );
+
+		it( 'confirms the notice in a dialog before adding the name on a tap', async () => {
+			const { fetcher } = renderRow( buildPolicyResult(), available );
+
+			await userEvent.pointer( {
+				keys: '[TouchA]',
+				target: screen.getByRole( 'button', { name: 'Add to cart' } ),
+			} );
+
+			const dialog = await screen.findByRole( 'alertdialog', { name: 'Special requirements' } );
+			expect( dialog ).toHaveTextContent( POLICY_NOTICES[ 0 ].message );
+			expect( fetcher ).not.toHaveBeenCalled();
+
+			await userEvent.click( within( dialog ).getByRole( 'button', { name: 'Add to cart' } ) );
+
+			await waitFor( () => expect( fetcher ).toHaveBeenCalled() );
+		} );
+
+		it( 'adds a name without notices straight away on a tap', async () => {
+			const { fetcher } = renderRow( buildResult( {} ), available );
+
+			await userEvent.pointer( {
+				keys: '[TouchA]',
+				target: screen.getByRole( 'button', { name: 'Add to cart' } ),
+			} );
+
+			await waitFor( () => expect( fetcher ).toHaveBeenCalled() );
+			expect( screen.queryByRole( 'alertdialog' ) ).not.toBeInTheDocument();
 		} );
 	} );
 } );

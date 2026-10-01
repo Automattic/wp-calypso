@@ -4,9 +4,9 @@ import { useViewportMatch } from '@wordpress/compose';
 import { sprintf } from '@wordpress/i18n';
 import { cautionFilled, cart as cartIcon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
-import { Badge, Popover, VisuallyHidden } from '@wordpress/ui';
+import { AlertDialog, Badge } from '@wordpress/ui';
 import clsx from 'clsx';
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useRef, useState, type PointerEvent } from 'react';
 import { useDomainSearch } from '../../page/context';
 import { DomainSearchTrademarkClaimsModal } from '../../ui';
 import {
@@ -81,6 +81,8 @@ export const NamePulseResultRow = ( { result, position }: NamePulseResultRowProp
 		acceptTrademarkClaim,
 		closeTrademarkClaims,
 	} = useNamePulseCartToggle( result.domain_name, position );
+	const [ isPolicyNoticeOpen, setIsPolicyNoticeOpen ] = useState( false );
+	const pointerTypeRef = useRef( '' );
 
 	const { domain_name: domainName, suffix, source } = result;
 	const label = suffix ? domainName.slice( 0, -( suffix.length + 1 ) ) : domainName;
@@ -124,36 +126,14 @@ export const NamePulseResultRow = ( { result, position }: NamePulseResultRowProp
 	// A failed check leaves the row on its badge alone: no price, and no skeleton
 	// waiting for one that is not coming.
 	const isPremiumPriceMissing = needsPremiumPrice && ! realtimeVerdict;
-	const [ policyNotice ] = row.policy_notices ?? [];
-	// A second badge would leave the name only a few characters, so the row
-	// shows the first one. A sale on a premium name already shows in the
-	// first-year price.
-	const [ badge ] = isAvailable
-		? [
-				policyNotice && (
-					<Popover.Root key="policy">
-						<Popover.Trigger className="name-pulse-row__policy-trigger" openOnHover>
-							<Badge>{ policyNotice.label }</Badge>
-						</Popover.Trigger>
-						<Popover.Popup className="name-pulse-row__policy-popup">
-							<VisuallyHidden render={ <Popover.Title /> }>{ policyNotice.label }</VisuallyHidden>
-							<Popover.Description>{ policyNotice.message }</Popover.Description>
-						</Popover.Popup>
-					</Popover.Root>
-				),
-				isPremium && (
-					<Badge key="premium" intent="informational">
-						{ __( 'Premium' ) }
-					</Badge>
-				),
-				getNamePulseSalePrice( row ) && (
-					<Badge key="sale" intent="medium">
-						{ __( 'Sale' ) }
-					</Badge>
-				),
-			].filter( Boolean )
-		: [];
-	const labelTruncateLimit = badge ? 12 : 20;
+	const showPremiumBadge = isAvailable && isPremium;
+	// TLDs with special requirements are rarely registered, so the requirements
+	// stay off the row: a mouse sees them on hovering the cart button, and a tap
+	// confirms them in a dialog before the name goes to the cart.
+	const policyNotices = isAvailable && ! inCart ? ( row.policy_notices ?? [] ) : [];
+	const policyNoticeMessage = policyNotices.map( ( notice ) => notice.message ).join( ' ' );
+	const cartLabel = inCart ? __( 'Remove from cart' ) : __( 'Add to cart' );
+	const labelTruncateLimit = showPremiumBadge ? 12 : 20;
 	const suffixText = (
 		<Text as="span" weight={ 600 } variant={ isUnavailable ? 'muted' : undefined }>
 			{ suffix ? `.${ suffix }` : '' }
@@ -191,7 +171,11 @@ export const NamePulseResultRow = ( { result, position }: NamePulseResultRowProp
 						</span>
 					</Tooltip>
 				) }
-				{ badge && <span className="name-pulse-row__badges">{ badge }</span> }
+				{ showPremiumBadge && (
+					<span className="name-pulse-row__badges">
+						<Badge intent="informational">{ __( 'Premium' ) }</Badge>
+					</span>
+				) }
 			</span>
 			<span className="name-pulse-row__status">
 				{ isWaiting && (
@@ -223,19 +207,46 @@ export const NamePulseResultRow = ( { result, position }: NamePulseResultRowProp
 					</Tooltip>
 				) }
 				{ isAvailable && ! error && (
-					<Button
-						className="name-pulse-row__cart"
-						icon={ cartIcon }
-						label={ inCart ? __( 'Remove from cart' ) : __( 'Add to cart' ) }
-						variant={ inCart ? 'primary' : undefined }
-						size="compact"
-						isBusy={ isPending }
-						disabled={ isPending }
-						aria-pressed={ inCart }
-						onClick={ toggleCart }
-					/>
+					<Tooltip text={ policyNoticeMessage || cartLabel } placement="top">
+						<Button
+							className="name-pulse-row__cart"
+							icon={ cartIcon }
+							label={ cartLabel }
+							showTooltip={ false }
+							variant={ inCart ? 'primary' : undefined }
+							size="compact"
+							isBusy={ isPending }
+							disabled={ isPending }
+							aria-pressed={ inCart }
+							onPointerDown={ ( event: PointerEvent ) => {
+								pointerTypeRef.current = event.pointerType;
+							} }
+							onClick={ () => {
+								const isTap = pointerTypeRef.current === 'touch';
+								pointerTypeRef.current = '';
+								if ( policyNoticeMessage && isTap ) {
+									setIsPolicyNoticeOpen( true );
+									return;
+								}
+								toggleCart();
+							} }
+						/>
+					</Tooltip>
 				) }
 			</span>
+			{ policyNotices.length > 0 && (
+				<AlertDialog.Root
+					open={ isPolicyNoticeOpen }
+					onOpenChange={ setIsPolicyNoticeOpen }
+					onConfirm={ toggleCart }
+				>
+					<AlertDialog.Popup
+						title={ policyNotices[ 0 ].label }
+						description={ policyNoticeMessage }
+						confirmButtonText={ __( 'Add to cart' ) }
+					/>
+				</AlertDialog.Root>
+			) }
 			{ trademarkClaimsNoticeInfo && (
 				<DomainSearchTrademarkClaimsModal
 					domainName={ domainName }
