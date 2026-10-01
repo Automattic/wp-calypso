@@ -12,6 +12,7 @@ import type { Field, Form } from '@wordpress/dataviews';
 interface InviteTeamMemberModalProps {
 	agencyId: number;
 	onClose: () => void;
+	onSent: ( login: string ) => void;
 }
 
 interface InviteFormData {
@@ -48,7 +49,11 @@ const form: Form = {
 	fields: [ 'login', 'message' ],
 };
 
-export default function InviteTeamMemberModal( { agencyId, onClose }: InviteTeamMemberModalProps ) {
+export default function InviteTeamMemberModal( {
+	agencyId,
+	onClose,
+	onSent,
+}: InviteTeamMemberModalProps ) {
 	const [ formData, setFormData ] = useState< InviteFormData >( { login: '', message: '' } );
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const invite = useMutation( agencyTeamInviteMutation( agencyId ) );
@@ -59,14 +64,15 @@ export default function InviteTeamMemberModal( { agencyId, onClose }: InviteTeam
 		if ( ! isValid || invite.isPending ) {
 			return;
 		}
+		const trimmedLogin = formData.login.trim();
 		invite.mutate(
-			{ login: formData.login.trim(), message: formData.message.trim() },
+			{ login: trimmedLogin, message: formData.message.trim() },
 			{
 				onSuccess: () => {
 					createSuccessNotice( __( 'The invitation has been successfully sent.' ), {
 						type: 'snackbar',
 					} );
-					onClose();
+					onSent( trimmedLogin );
 				},
 				onError: ( error: Error & { code?: string } ) =>
 					createErrorNotice(
