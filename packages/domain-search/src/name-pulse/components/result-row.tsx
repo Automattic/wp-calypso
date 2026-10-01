@@ -132,7 +132,7 @@ export const NamePulseResultRow = ( { result, position }: NamePulseResultRowProp
 		? [
 				policyNotice && (
 					<Popover.Root key="policy">
-						<Popover.Trigger className="name-pulse-row__policy-trigger">
+						<Popover.Trigger className="name-pulse-row__policy-trigger" openOnHover>
 							<Badge>{ policyNotice.label }</Badge>
 						</Popover.Trigger>
 						<Popover.Popup className="name-pulse-row__policy-popup">

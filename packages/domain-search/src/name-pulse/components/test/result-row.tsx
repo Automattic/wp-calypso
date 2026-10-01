@@ -232,10 +232,10 @@ describe( 'NamePulseResultRow', () => {
 			expect( screen.queryByText( 'Sale' ) ).not.toBeInTheDocument();
 		} );
 
-		it( 'shows the policy notice message in a popover', async () => {
+		it( 'shows the policy notice message in a popover on hover', async () => {
 			renderRow( buildResult( { policy_notices: POLICY_NOTICES } ) );
 
-			await userEvent.click( screen.getByRole( 'button', { name: 'Special requirements' } ) );
+			await userEvent.hover( screen.getByRole( 'button', { name: 'Special requirements' } ) );
 
 			expect( await screen.findByText( POLICY_NOTICES[ 0 ].message ) ).toBeVisible();
 		} );
