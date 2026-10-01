@@ -1,5 +1,5 @@
 import { wpcom } from '../wpcom-fetcher';
-import type { BulkDomainsAction } from './types';
+import type { BulkDomainsAction, WwwPrimaryDomainResponse } from './types';
 
 export function bulkDomainsAction( { type, ...params }: BulkDomainsAction ) {
 	return wpcom.req.post( {
@@ -9,9 +9,12 @@ export function bulkDomainsAction( { type, ...params }: BulkDomainsAction ) {
 	} );
 }
 
-export function setWwwPrimaryDomain( domain: string, enabled: boolean ) {
+export function setWwwPrimaryDomain(
+	domain: string,
+	enabled: boolean
+): Promise< WwwPrimaryDomainResponse > {
 	return wpcom.req.post( {
-		path: `/domains/www-primary/${ domain }`,
+		path: `/domains/www-primary/${ encodeURIComponent( domain ) }`,
 		apiNamespace: 'wpcom/v2',
 		body: { enabled },
 	} );

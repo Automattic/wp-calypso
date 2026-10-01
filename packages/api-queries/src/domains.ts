@@ -20,6 +20,8 @@ import {
 import { mutationOptions, queryOptions } from '@tanstack/react-query';
 import { queryClient } from './query-client';
 import { siteQueryFilter } from './site';
+import { siteDomainsQuery } from './site-domains';
+import { sitesQueryKey } from './sites';
 
 export const domainsQuery = ( options?: FetchDomainsOptions ) =>
 	queryOptions( {
@@ -170,11 +172,14 @@ export const bulkDomainsActionMutation = () =>
 
 export const setWwwPrimaryDomainMutation = () =>
 	mutationOptions( {
-		meta: { statId: 'domains-www-primary-set' },
+		meta: { statId: 'domain-www-primary-toggle' },
 		mutationFn: ( { domain, enabled }: { siteId: number; domain: string; enabled: boolean } ) =>
 			setWwwPrimaryDomain( domain, enabled ),
-		onSuccess: ( data, { siteId } ) => {
-			queryClient.invalidateQueries( siteQueryFilter( siteId ) );
-			queryClient.invalidateQueries( { queryKey: [ 'domains' ] } );
-		},
+		onSuccess: ( data, { siteId } ) =>
+			Promise.all( [
+				queryClient.invalidateQueries( siteQueryFilter( siteId ) ),
+				queryClient.invalidateQueries( { queryKey: sitesQueryKey } ),
+				queryClient.invalidateQueries( siteDomainsQuery( siteId ) ),
+				queryClient.invalidateQueries( { queryKey: [ 'domains' ] } ),
+			] ),
 	} );

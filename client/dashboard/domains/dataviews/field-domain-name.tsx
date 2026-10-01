@@ -38,11 +38,10 @@ export const DomainNameField = ( {
 	const content = (
 		<VStack spacing={ 1 }>
 			<span style={ textOverflowStyles }>
-				{ showWwwPrefix && (
-					<Text variant="muted" weight="inherit">
-						www.
-					</Text>
-				) }
+				{ /* Always mounted, even when empty, to dodge a Google Translate DOM crash (react/react#11538). */ }
+				<Text variant="muted" weight="inherit">
+					{ showWwwPrefix ? 'www.' : '' }
+				</Text>
 				{ value }
 			</span>
 			{ showPrimaryDomainBadge && domain.primary_domain && (

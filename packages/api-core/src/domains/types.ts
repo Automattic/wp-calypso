@@ -85,6 +85,11 @@ export interface DomainSummary {
 	tags: string[];
 }
 
+export interface WwwPrimaryDomainResponse {
+	enabled: boolean;
+	primary_domain: string | null;
+}
+
 export type BulkDomainsAction =
 	| {
 			type: 'set-auto-renew';
