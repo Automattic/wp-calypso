@@ -180,7 +180,7 @@
 		"resurrected-users/90-day-eligibility": true,
 		"reader/social": true,
 		"reader/shelves": true,
-		"reader/discover-new-blogs": false,
+		"reader/discover-new-blogs": true,
 		"reader/full-errors": true,
 		"reader/four-for-four": true,
 		"reader/msd-enabled": true,
