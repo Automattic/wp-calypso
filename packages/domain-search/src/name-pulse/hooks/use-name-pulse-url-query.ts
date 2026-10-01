@@ -17,15 +17,12 @@ const writeNamePulseUrlQuery = ( query?: string ) => {
 		url.searchParams.delete( NAME_PULSE_URL_QUERY_PARAM );
 	}
 
-	// replaceState adds no history entry and doesn't re-run the host router.
 	window.history.replaceState( window.history.state, '', url.toString() );
 };
 
 /**
- * Mirrors the query into `?new=`, which the domain-only signup step reads on load,
- * so a refresh or a shared link restores the search. Debounced because the input
- * fires per keystroke and browsers throttle replaceState (Safari throws after 100
- * calls in 30s); clearing applies at once.
+ * Keeps the search in `?new=` so a refresh or a shared link restores it.
+ * Debounced because browsers limit how often the URL can change.
  */
 export const useNamePulseUrlQuery = ( query?: string ) => {
 	const debouncedWrite = useDebounce( writeNamePulseUrlQuery, NAME_PULSE_URL_QUERY_DEBOUNCE_MS );
