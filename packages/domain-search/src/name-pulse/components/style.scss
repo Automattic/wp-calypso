@@ -99,6 +99,18 @@ html:has( .name-pulse-search-input ) {
 		flex: 1 1 0%;
 	}
 
+	&__policy-trigger {
+		display: inline-flex;
+		padding: 0;
+		border: 0;
+		background: none;
+		cursor: pointer;
+	}
+
+	&__policy-popup {
+		max-width: 20rem;
+	}
+
 	&__badges {
 		display: flex;
 		align-items: center;

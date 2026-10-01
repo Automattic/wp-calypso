@@ -4,7 +4,7 @@ import { useViewportMatch } from '@wordpress/compose';
 import { sprintf } from '@wordpress/i18n';
 import { cautionFilled, cart as cartIcon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
-import { Badge, Tooltip as UiTooltip } from '@wordpress/ui';
+import { Badge, Popover, VisuallyHidden } from '@wordpress/ui';
 import clsx from 'clsx';
 import { useEffect, useMemo } from 'react';
 import { useDomainSearch } from '../../page/context';
@@ -131,10 +131,15 @@ export const NamePulseResultRow = ( { result, position }: NamePulseResultRowProp
 	const [ badge ] = isAvailable
 		? [
 				policyNotice && (
-					<UiTooltip.Root key="policy">
-						<UiTooltip.Trigger render={ <Badge tabIndex={ 0 }>{ policyNotice.label }</Badge> } />
-						<UiTooltip.Popup>{ policyNotice.message }</UiTooltip.Popup>
-					</UiTooltip.Root>
+					<Popover.Root key="policy">
+						<Popover.Trigger className="name-pulse-row__policy-trigger">
+							<Badge>{ policyNotice.label }</Badge>
+						</Popover.Trigger>
+						<Popover.Popup className="name-pulse-row__policy-popup">
+							<VisuallyHidden render={ <Popover.Title /> }>{ policyNotice.label }</VisuallyHidden>
+							<Popover.Description>{ policyNotice.message }</Popover.Description>
+						</Popover.Popup>
+					</Popover.Root>
 				),
 				isPremium && (
 					<Badge key="premium" intent="informational">
