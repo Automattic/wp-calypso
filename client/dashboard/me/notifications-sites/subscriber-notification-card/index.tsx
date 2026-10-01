@@ -38,7 +38,7 @@ export function SubscriberNotificationCard() {
 			<CardBody>
 				<ToggleControl
 					__nextHasNoMarginBottom
-					checked={ isSuccess && ! isFetching && ! isError && enabled === true }
+					checked={ enabled === true }
 					disabled={ ! isSuccess || isFetching || isError || isPending }
 					label={ __( 'Subscriber alerts' ) }
 					help={ __(

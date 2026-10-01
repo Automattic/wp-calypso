@@ -59,6 +59,24 @@ describe( 'SubscriberNotificationCard', () => {
 		expect( toggle ).toBeDisabled();
 	} );
 
+	it( 'keeps the cached preference checked during a background refetch', async () => {
+		const queryClient = new QueryClient( {
+			defaultOptions: { queries: { retry: false } },
+		} );
+		queryClient.setQueryData( rawUserPreferencesQuery().queryKey, { [ key ]: true } );
+		const scope = nock( 'https://public-api.wordpress.com' )
+			.get( '/rest/v1.1/me/preferences' )
+			.delay( 50 )
+			.reply( 200, { calypso_preferences: { [ key ]: true } } );
+		render( <SubscriberNotificationCard />, { queryClient } );
+		const toggle = screen.getByRole( 'checkbox', { name: 'Subscriber alerts' } );
+		await waitFor( () => expect( toggle ).toBeDisabled() );
+		expect( toggle ).toBeChecked();
+		await waitFor( () => expect( scope.isDone() ).toBe( true ) );
+		await waitFor( () => expect( toggle ).toBeEnabled() );
+		expect( toggle ).toBeChecked();
+	} );
+
 	it( 'stays off when saving the preference fails', async () => {
 		const user = setup( false );
 		const scope = nock( 'https://public-api.wordpress.com' )
