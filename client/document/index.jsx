@@ -126,8 +126,8 @@ class Document extends Component {
 				sectionName === CIAB_DASHBOARD_SECTION_DEFINITION.name ||
 				sectionName === A4A_DASHBOARD_SECTION_DEFINITION.name );
 
-		let headTitle = head.title;
 		// Hostname overrides only reach the request's client data, not the base config.
+		let headTitle = isDashboardSection ? ( clientData?.site_name ?? head.title ) : head.title;
 		let headFaviconUrl = clientData?.favicon_url;
 		let isWCCOM = false;
 

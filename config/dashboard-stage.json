@@ -15,6 +15,7 @@
 		"agencies-beta.automattic.com": {
 			"favicon_url": "/calypso/images/favicons/favicon-a4a-stage.ico",
 			"favicon_brand": "a4a",
+			"site_name": "Automattic for Agencies",
 			"oauth_client_id": 95931,
 			"logout_url": "https://automattic.com/for/agencies",
 			"survicate_enabled": false,
