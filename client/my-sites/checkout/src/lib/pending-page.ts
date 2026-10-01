@@ -305,6 +305,7 @@ function isRedirectAllowed( url: string, siteSlug: string | undefined ): boolean
 		'gravatar.com',
 		'difmrequest.com',
 		'agencies.automattic.com',
+		'agencies-beta.automattic.com',
 		'agencies.localhost',
 		...( siteSlug ? [ siteSlug.includes( '::' ) ? siteSlug.split( '::' )[ 0 ] : siteSlug ] : [] ),
 	];

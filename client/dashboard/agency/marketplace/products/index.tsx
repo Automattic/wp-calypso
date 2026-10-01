@@ -118,14 +118,7 @@ export default function MarketplaceProducts() {
 	}, [ allProducts, showPressableAddons ] );
 
 	const searchParams = marketplaceProductsRoute.useSearch() as ProductsSearchParams;
-	const {
-		items: cartItems,
-		hasItem,
-		addItem,
-		removeItem,
-		replaceItems,
-		clearCart,
-	} = useShoppingCart();
+	const { items: cartItems, hasItem, addItem, removeItem, replaceItems } = useShoppingCart();
 	const [ isCartOpen, setIsCartOpen ] = useCartOpen();
 	const [ view, setView ] = useState< View >( () => ( {
 		...DEFAULT_VIEW,
@@ -410,10 +403,10 @@ export default function MarketplaceProducts() {
 								term={ termPricing }
 								isReferralMode={ isReferralMode }
 								isAgencyApproved={ isAgencyApproved( agency ) }
+								isLegacyBilling={ agency?.billing_system === 'legacy' }
 								open={ isCartOpen }
 								onToggle={ setIsCartOpen }
 								onRemove={ removeItem }
-								onCheckout={ clearCart }
 							/>
 						</HStack>
 					}

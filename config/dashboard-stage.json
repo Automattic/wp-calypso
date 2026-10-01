@@ -19,7 +19,13 @@
 			"logout_url": "https://automattic.com/for/agencies",
 			"survicate_enabled": false,
 			"wpcom_login_url": false,
-			"features": { "oauth": true, "always_use_logout_url": true, "wpcom-user-bootstrap": false }
+			"features": {
+				"oauth": true,
+				"always_use_logout_url": true,
+				"wpcom-user-bootstrap": false,
+				"checkout/stripe-upi": true,
+				"upgrades/redirect-payments": true
+			}
 		}
 	},
 	"i18n_default_locale_slug": "en",

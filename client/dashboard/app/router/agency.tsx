@@ -436,6 +436,29 @@ export const marketplacePurchasesRoute = createRoute( {
 	} ),
 	getParentRoute: () => agencyRoute,
 	path: 'purchases',
+	// The list's page, search and status filter, plus the one-time parameters a
+	// finished checkout returns with.
+	validateSearch: (
+		search: Record< string, unknown >
+	): {
+		page?: number;
+		search?: string;
+		status?: string;
+		receipt_id?: string;
+		flash?: string;
+		purchased_plan?: string;
+	} => {
+		const page = Number( search.page );
+		const asString = ( value: unknown ) => ( typeof value === 'string' ? value : undefined );
+		return {
+			page: Number.isInteger( page ) && page > 0 ? page : undefined,
+			search: asString( search.search ),
+			status: asString( search.status ),
+			receipt_id: asString( search.receipt_id ),
+			flash: asString( search.flash ),
+			purchased_plan: asString( search.purchased_plan ),
+		};
+	},
 	loader: async () => {
 		await Promise.all( [
 			queryClient.ensureQueryData( activeAgencyQuery() ),

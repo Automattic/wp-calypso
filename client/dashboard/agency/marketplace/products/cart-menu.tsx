@@ -12,6 +12,7 @@ import { __, _n, sprintf } from '@wordpress/i18n';
 import { cart } from '@wordpress/icons';
 import { useAnalytics } from '../../../app/analytics';
 import { TextBlur } from '../../../components/text-blur';
+import { a4aLink } from '../../../utils/link';
 import { getProductCommissionPercentage } from '../../earn/referrals/lib/commissions';
 import { isPressableHostingProduct } from '../hosting/lib/pressable-plans';
 import { getEffectivePressableOwnership } from '../hosting/lib/pressable-products';
@@ -33,11 +34,13 @@ interface Props {
 	term: TermPricing;
 	isReferralMode: boolean;
 	isAgencyApproved: boolean;
+	/** The agency still bills through the previous system, which this checkout cannot charge. */
+	isLegacyBilling?: boolean;
 	/** Controls the dropdown, for pages that open the cart after adding to it. */
 	open?: boolean;
 	onToggle?: ( willOpen: boolean ) => void;
 	onRemove: ( slug: string ) => void;
-	onCheckout: () => void;
+	onCheckout?: () => void;
 }
 
 const getCartProductName = ( product: AgencyProduct ) =>
@@ -51,6 +54,7 @@ export default function CartMenu( {
 	term,
 	isReferralMode,
 	isAgencyApproved,
+	isLegacyBilling = false,
 	open,
 	onToggle,
 	onRemove,
@@ -105,7 +109,25 @@ export default function CartMenu( {
 		} ),
 		{ total: 0, commission: 0 }
 	);
-	const checkoutUrl = getCheckoutUrl( items, isReferralMode );
+	// TODO: The dashboard assumes every agency is on Billing Dragon. Until the
+	// last agencies move off the previous billing system, their carts go to the
+	// checkout that can charge them, with the products pre-selected.
+	const legacyCheckoutUrl = a4aLink(
+		`/marketplace/checkout?product_slug=${ lines.map( ( { product } ) => product.slug ).join( ',' ) }`
+	);
+	const checkoutUrl =
+		isLegacyBilling && ! isReferralMode
+			? legacyCheckoutUrl
+			: getCheckoutUrl(
+					lines.map( ( { product, item } ) => ( { product, quantity: item.quantity } ) ),
+					isReferralMode,
+					{
+						term,
+						hasWpcomHostingPlan: lines.some(
+							( { product } ) => product.family_slug === WPCOM_HOSTING_FAMILY_SLUG
+						),
+					}
+				);
 
 	const checkoutButton = (
 		<Button
@@ -119,7 +141,7 @@ export default function CartMenu( {
 					purchase_mode: isReferralMode ? 'referral' : 'regular',
 					term_pricing: term,
 				} );
-				onCheckout();
+				onCheckout?.();
 			} }
 		>
 			{ __( 'Checkout' ) }

@@ -10,6 +10,7 @@ import { A4A_MARKETPLACE_LINK } from 'calypso/a8c-for-agencies/components/sideba
 import { getStripeConfiguration } from 'calypso/lib/store-transactions';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import CheckoutQueryClientProvider from 'calypso/my-sites/checkout/checkout-query-client-provider';
+import CartMessageCleanup from 'calypso/my-sites/checkout/src/components/cart-message-cleanup';
 import CheckoutMain from 'calypso/my-sites/checkout/src/components/checkout-main';
 import usePrepareProductsForCart from 'calypso/my-sites/checkout/src/hooks/use-prepare-products-for-cart';
 import { useDispatch, useSelector } from 'calypso/state';
@@ -18,7 +19,6 @@ import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import hasLoadedSites from 'calypso/state/selectors/has-loaded-sites';
 import getSite from 'calypso/state/sites/selectors/get-site';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
-import CartMessageCleanup from './cart-message-cleanup';
 import ClientCheckoutError from './checkout-error';
 import ClientCheckoutPlaceholder from './checkout-placeholder';
 import getPurchasedWPCOMPlanSlug from './lib/get-purchased-wpcom-plan-slug';

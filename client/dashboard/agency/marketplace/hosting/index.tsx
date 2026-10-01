@@ -103,7 +103,7 @@ export default function MarketplaceHosting( { section }: { section: HostingSecti
 		isReferralMode
 	);
 
-	const { items: cartItems, swapItems, removeItem, clearCart } = useShoppingCart();
+	const { items: cartItems, swapItems, removeItem } = useShoppingCart();
 	const [ isCartOpen, setIsCartOpen ] = useCartOpen();
 
 	// A hosting plan replaces the plan of the same family already in the cart.
@@ -184,10 +184,10 @@ export default function MarketplaceHosting( { section }: { section: HostingSecti
 								term={ termPricing }
 								isReferralMode={ isReferralMode }
 								isAgencyApproved={ agencyApproved }
+								isLegacyBilling={ agency?.billing_system === 'legacy' }
 								open={ isCartOpen }
 								onToggle={ setIsCartOpen }
 								onRemove={ removeItem }
-								onCheckout={ clearCart }
 							/>
 						</HStack>
 					}
