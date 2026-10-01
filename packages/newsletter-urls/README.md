@@ -19,8 +19,9 @@ newsletterAdminUrl( adminUrl, { tab: 'default' } );
 
 `tab` is required so that landing on whichever tab happens to be first is a decision rather
 than an oversight. `subscriber` and `user` are accepted only on the Subscribers tab, since the
-subscriber detail panel renders on no other.
+subscriber detail panel renders on no other. The panel opens on either id, so `user` works on
+its own for a subscriber with no subscription id to hand.
 
-This package builds strings and knows nothing about sites. Deciding *whether* a site uses the
+This package builds strings and knows nothing about sites. Deciding _whether_ a site uses the
 wp-admin page at all — a self-hosted Jetpack below 16.1 manages subscribers on Jetpack Cloud —
 belongs to the caller.

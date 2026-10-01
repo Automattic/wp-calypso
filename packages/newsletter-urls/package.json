@@ -4,6 +4,7 @@
 	"description": "Builders for the wp-admin Newsletter page URLs.",
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"license": "GPL-2.0-or-later",
+	"sideEffects": false,
 	"author": "Automattic Inc.",
 	"main": "dist/cjs/index.js",
 	"module": "dist/esm/index.js",

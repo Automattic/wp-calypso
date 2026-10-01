@@ -49,9 +49,9 @@ describe( 'newsletterAdminUrl()', () => {
 		).toBe( `${ PAGE_URL }&p=%2F%3Ftab%3Dsubscribers%26subscriber%3D944012532` );
 	} );
 
-	test( 'ignores a user id with no subscriber, which would open nothing', () => {
+	test( 'selects on the user id alone, which the details panel also opens on', () => {
 		expect( newsletterAdminUrl( ADMIN_URL, { tab: 'subscribers', user: 266514373 } ) ).toBe(
-			`${ PAGE_URL }&p=%2F%3Ftab%3Dsubscribers`
+			`${ PAGE_URL }&p=%2F%3Ftab%3Dsubscribers%26u%3D266514373`
 		);
 	} );
 

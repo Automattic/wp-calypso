@@ -18,7 +18,10 @@ export type NewsletterAdminUrlOptions =
 			tab: 'subscribers';
 			/** Opens this subscriber's details alongside the list. */
 			subscriber?: number;
-			/** The subscriber's WordPress.com user id, absent for email-only subscribers. */
+			/**
+			 * The subscriber's WordPress.com user id, absent for email-only subscribers. The
+			 * details panel opens on either id, so this works on its own.
+			 */
 			user?: number;
 	  }
 	| { tab: Exclude< NewsletterTab, 'subscribers' > | 'default' };
@@ -31,12 +34,12 @@ function newsletterRoute( options: NewsletterAdminUrlOptions ): string {
 	}
 
 	const { subscriber, user } = options;
+	const selection = [
+		subscriber ? `subscriber=${ subscriber }` : '',
+		user ? `u=${ user }` : '',
+	].filter( Boolean );
 
-	if ( ! subscriber ) {
-		return route;
-	}
-
-	return `${ route }&subscriber=${ subscriber }${ user ? `&u=${ user }` : '' }`;
+	return selection.length ? `${ route }&${ selection.join( '&' ) }` : route;
 }
 
 /**
