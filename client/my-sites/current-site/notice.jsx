@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { getUrlParts } from '@automattic/calypso-url';
 import { localize } from 'i18n-calypso';
 import moment from 'moment';
@@ -6,7 +5,6 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
-import AsyncLoad from 'calypso/components/async-load';
 import QueryActivePromotions from 'calypso/components/data/query-active-promotions';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import Notice from 'calypso/components/notice';
@@ -20,9 +18,7 @@ import isSiteMigrationInProgress from 'calypso/state/selectors/is-site-migration
 import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
-
-const loadJitm = () =>
-	import( /* webpackChunkName: "async-load-calypso-blocks-jitm" */ 'calypso/blocks/jitm' );
+import UpgradeSlideOverBanner from './upgrade-slide-over-banner';
 
 export class SiteNotice extends Component {
 	static propTypes = {
@@ -109,26 +105,18 @@ export class SiteNotice extends Component {
 			return <div className="current-site__notices" />;
 		}
 
-		const discountOrFreeToPaid = this.activeDiscountNotice();
 		const siteRedirectNotice = this.getSiteRedirectNotice( site );
 
-		const showJitms =
-			! this.props.isSiteWPForTeams &&
-			! this.props.isWpcomStagingSite &&
-			( discountOrFreeToPaid || config.isEnabled( 'jitms' ) );
+		// PROTOTYPE (dotcom-upsells): the JITM sidebar banner is disabled so it
+		// doesn't duplicate the prototype upgrade banner below. Restore the
+		// `showJitms` block from git history when removing the prototype.
 
 		return (
 			<div className="current-site__notices">
 				<QueryActivePromotions />
+				{ /* PROTOTYPE: slide-over checkout trigger (dotcom-upsells project) */ }
+				<UpgradeSlideOverBanner />
 				{ siteRedirectNotice }
-				{ showJitms && (
-					<AsyncLoad
-						require={ loadJitm }
-						placeholder={ null }
-						messagePath="calypso:sites:sidebar_notice"
-						template="sidebar-banner"
-					/>
-				) }
 				<QuerySitePlans siteId={ site.ID } />
 			</div>
 		);

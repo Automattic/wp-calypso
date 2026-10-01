@@ -1,0 +1,77 @@
+// Token aliases for the @wordpress/ui version in this repo.
+//
+// @wordpress/ui's CSS references the RENAMED tokens from @wordpress/theme
+// >= 0.17 (color-background-*, color-foreground-*, dimension-size-*), while
+// the theme package installed here is 0.15 (color-bg-*, color-fg-*, no size
+// scale). This shim defines the new names as aliases of the vendored 0.15
+// values in _wpds-tokens.scss, so @wordpress/ui components style correctly.
+// Delete once @wordpress/theme is bumped and _wpds-tokens.scss re-vendored.
+
+:root {
+	// ----- color-background-* → color-bg-* -----
+	--wpds-color-background-interactive-brand-strong: var( --wpds-color-bg-interactive-brand-strong );
+	--wpds-color-background-interactive-brand-strong-active: var( --wpds-color-bg-interactive-brand-strong-active );
+	--wpds-color-background-interactive-brand-strong-disabled: var( --wpds-color-bg-interactive-neutral-strong-disabled );
+	--wpds-color-background-interactive-brand-weak: var( --wpds-color-bg-interactive-brand-weak );
+	--wpds-color-background-interactive-brand-weak-active: var( --wpds-color-bg-interactive-brand-weak-active );
+	--wpds-color-background-interactive-brand-weak-disabled: var( --wpds-color-bg-interactive-neutral-weak-disabled );
+	--wpds-color-background-interactive-error-strong: var( --wpds-color-bg-interactive-error-strong );
+	--wpds-color-background-interactive-error-strong-active: var( --wpds-color-bg-interactive-error-strong-active );
+	--wpds-color-background-interactive-error-strong-disabled: var( --wpds-color-bg-interactive-neutral-strong-disabled );
+	--wpds-color-background-interactive-neutral-strong: var( --wpds-color-bg-interactive-neutral-strong );
+	--wpds-color-background-interactive-neutral-strong-active: var( --wpds-color-bg-interactive-neutral-strong-active );
+	--wpds-color-background-interactive-neutral-strong-disabled: var( --wpds-color-bg-interactive-neutral-strong-disabled );
+	--wpds-color-background-interactive-neutral-weak: var( --wpds-color-bg-interactive-neutral-weak );
+	--wpds-color-background-interactive-neutral-weak-active: var( --wpds-color-bg-interactive-neutral-weak-active );
+	--wpds-color-background-interactive-neutral-weak-disabled: var( --wpds-color-bg-interactive-neutral-weak-disabled );
+	--wpds-color-background-surface-caution: var( --wpds-color-bg-surface-caution );
+	--wpds-color-background-surface-error: var( --wpds-color-bg-surface-error );
+	--wpds-color-background-surface-error-weak: var( --wpds-color-bg-surface-error-weak );
+	--wpds-color-background-surface-info: var( --wpds-color-bg-surface-info );
+	--wpds-color-background-surface-info-weak: var( --wpds-color-bg-surface-info-weak );
+	--wpds-color-background-surface-neutral-strong: var( --wpds-color-bg-surface-neutral-strong );
+	--wpds-color-background-surface-neutral-weak: var( --wpds-color-bg-surface-neutral-weak );
+	--wpds-color-background-surface-success: var( --wpds-color-bg-surface-success );
+	--wpds-color-background-surface-success-weak: var( --wpds-color-bg-surface-success-weak );
+	--wpds-color-background-surface-warning: var( --wpds-color-bg-surface-warning );
+	--wpds-color-background-surface-warning-weak: var( --wpds-color-bg-surface-warning-weak );
+
+	// ----- color-foreground-* → color-fg-* -----
+	--wpds-color-foreground-content-caution: var( --wpds-color-fg-content-caution );
+	--wpds-color-foreground-content-error: var( --wpds-color-fg-content-error );
+	--wpds-color-foreground-content-error-weak: var( --wpds-color-fg-content-error-weak );
+	--wpds-color-foreground-content-info: var( --wpds-color-fg-content-info );
+	--wpds-color-foreground-content-info-weak: var( --wpds-color-fg-content-info-weak );
+	--wpds-color-foreground-content-neutral: var( --wpds-color-fg-content-neutral );
+	--wpds-color-foreground-content-neutral-weak: var( --wpds-color-fg-content-neutral-weak );
+	--wpds-color-foreground-content-success: var( --wpds-color-fg-content-success );
+	--wpds-color-foreground-content-success-weak: var( --wpds-color-fg-content-success-weak );
+	--wpds-color-foreground-content-warning: var( --wpds-color-fg-content-warning );
+	--wpds-color-foreground-content-warning-weak: var( --wpds-color-fg-content-warning-weak );
+	--wpds-color-foreground-interactive-brand: var( --wpds-color-fg-interactive-brand );
+	--wpds-color-foreground-interactive-brand-active: var( --wpds-color-fg-interactive-brand-active );
+	--wpds-color-foreground-interactive-brand-disabled: var( --wpds-color-fg-interactive-neutral-disabled );
+	--wpds-color-foreground-interactive-brand-strong: var( --wpds-color-fg-interactive-brand-strong );
+	--wpds-color-foreground-interactive-brand-strong-active: var( --wpds-color-fg-interactive-brand-strong-active );
+	--wpds-color-foreground-interactive-brand-strong-disabled: var( --wpds-color-fg-interactive-neutral-strong-disabled );
+	--wpds-color-foreground-interactive-error-strong: var( --wpds-color-fg-interactive-error-strong );
+	--wpds-color-foreground-interactive-error-strong-active: var( --wpds-color-fg-interactive-error-strong-active );
+	--wpds-color-foreground-interactive-error-strong-disabled: var( --wpds-color-fg-interactive-neutral-strong-disabled );
+	--wpds-color-foreground-interactive-neutral: var( --wpds-color-fg-interactive-neutral );
+	--wpds-color-foreground-interactive-neutral-active: var( --wpds-color-fg-interactive-neutral-active );
+	--wpds-color-foreground-interactive-neutral-disabled: var( --wpds-color-fg-interactive-neutral-disabled );
+	--wpds-color-foreground-interactive-neutral-strong: var( --wpds-color-fg-interactive-neutral-strong );
+	--wpds-color-foreground-interactive-neutral-strong-active: var( --wpds-color-fg-interactive-neutral-strong-active );
+	--wpds-color-foreground-interactive-neutral-strong-disabled: var( --wpds-color-fg-interactive-neutral-strong-disabled );
+
+	// ----- strokes -----
+	--wpds-color-stroke-focus: var( --wpds-color-stroke-focus-brand );
+	--wpds-color-stroke-interactive-brand-disabled: var( --wpds-color-stroke-interactive-neutral-disabled );
+
+	// ----- control size scale (not present in theme 0.15) -----
+	--wpds-dimension-size-2xs: 16px;
+	--wpds-dimension-size-xs: 20px;
+	--wpds-dimension-size-sm: 24px;
+	--wpds-dimension-size-md: 32px;
+	--wpds-dimension-size-lg: 40px;
+}
