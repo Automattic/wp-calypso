@@ -51,9 +51,7 @@ export const PerformanceReport = ( {
 			performanceReport={ performanceReport }
 			url={ url }
 			hash={ hash }
-			overallScoreIsTab
 			filter={ filter }
-			displayMigrationBanner={ false }
 			onRecommendationsFilterChange={ onFilterChange }
 		/>
 	);

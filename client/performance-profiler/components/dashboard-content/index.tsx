@@ -1,14 +1,8 @@
-import { translate } from 'i18n-calypso';
 import { useRef } from 'react';
 import { PerformanceReport } from 'calypso/data/site-profiler/types';
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { CoreWebVitalsDisplay } from 'calypso/performance-profiler/components/core-web-vitals-display';
 import { Disclaimer } from 'calypso/performance-profiler/components/disclaimer-section';
-import { TabType, TabTypes } from 'calypso/performance-profiler/components/header';
 import { InsightsSection } from 'calypso/performance-profiler/components/insights-section';
-import { MigrationBanner } from 'calypso/performance-profiler/components/migration-banner';
-import { PerformanceScore } from 'calypso/performance-profiler/components/performance-score';
-import { ScreenshotThumbnail } from 'calypso/performance-profiler/components/screenshot-thumbnail';
 import { ScreenshotTimeline } from 'calypso/performance-profiler/components/screenshot-timeline';
 import './style.scss';
 
@@ -17,10 +11,6 @@ type PerformanceProfilerDashboardContentProps = {
 	url: string;
 	hash: string;
 	filter?: string;
-	displayThumbnail?: boolean;
-	displayMigrationBanner?: boolean;
-	activeTab?: TabType;
-	overallScoreIsTab?: boolean;
 	onRecommendationsFilterChange?: ( filter: string ) => void;
 };
 
@@ -29,13 +19,9 @@ export const PerformanceProfilerDashboardContent = ( {
 	url,
 	hash,
 	filter,
-	displayMigrationBanner = true,
-	activeTab = TabTypes.mobile,
-	overallScoreIsTab = false,
 	onRecommendationsFilterChange,
 }: PerformanceProfilerDashboardContentProps ) => {
 	const {
-		crux_score,
 		overall_score,
 		fcp,
 		lcp,
@@ -54,20 +40,6 @@ export const PerformanceProfilerDashboardContent = ( {
 	return (
 		<div className="performance-profiler-content">
 			<div className="l-block-wrapper container">
-				{ ! overallScoreIsTab && (
-					<div className="top-section">
-						<PerformanceScore
-							value={ crux_score ? crux_score * 100 : overall_score * 100 }
-							recommendationsQuantity={ Object.keys( audits ).length }
-							recommendationsRef={ insightsRef }
-						/>
-						<ScreenshotThumbnail
-							alt={ translate( 'Website thumbnail' ) }
-							src={ screenshots?.[ screenshots.length - 1 ].data }
-							activeTab={ activeTab }
-						/>
-					</div>
-				) }
 				<CoreWebVitalsDisplay
 					fcp={ fcp }
 					lcp={ lcp }
@@ -76,7 +48,6 @@ export const PerformanceProfilerDashboardContent = ( {
 					ttfb={ ttfb }
 					tbt={ tbt }
 					overall={ overall_score * 100 }
-					overallScoreIsTab={ overallScoreIsTab }
 					history={ history }
 					audits={ audits }
 					recommendationsRef={ insightsRef }
@@ -99,16 +70,6 @@ export const PerformanceProfilerDashboardContent = ( {
 			</div>
 
 			<Disclaimer />
-			{ displayMigrationBanner && (
-				<MigrationBanner
-					url={ url }
-					onClick={ () => {
-						recordTracksEvent( 'calypso_performance_profiler_migration_banner_cta_click', {
-							url,
-						} );
-					} }
-				/>
-			) }
 		</div>
 	);
 };
