@@ -51,4 +51,10 @@ describe( 'useShoppingCart', () => {
 			{ slug: 'jetpack-scan', quantity: 1, raw: 'jetpack-scan:1' },
 		] );
 	} );
+
+	it( 'leaves out a site that cannot be decoded', () => {
+		expect( parseCartEntries( `${ MEMORY_ADDON }:1:::%zz` ) ).toEqual( [
+			{ slug: MEMORY_ADDON, quantity: 1, raw: `${ MEMORY_ADDON }:1:::%zz` },
+		] );
+	} );
 } );
