@@ -349,6 +349,8 @@ export interface UseAgentChatReturn {
 	messages: UIMessage[];
 	isProcessing: boolean;
 	error: string | null;
+	/** The server's machine-readable reason for `error`, when it sent one. */
+	errorCode: string | null;
 	onSubmit: ( message: string, options?: SubmitOptions ) => Promise< void >;
 	suggestions: Suggestion[];
 	progressMessage: string | null;
@@ -383,6 +385,7 @@ export interface AgentChatState {
 	uiMessages: UIMessage[];
 	isProcessing: boolean;
 	error: string | null;
+	errorCode: string | null;
 	suggestions: Suggestion[];
 	progressMessage: string | null;
 	progressPhase: string | null;
@@ -426,6 +429,7 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 		uiMessages: [],
 		isProcessing: false,
 		error: isValidConfig ? null : 'Invalid agent configuration',
+		errorCode: null,
 		suggestions: [],
 		progressMessage: null,
 		progressPhase: null,
@@ -587,7 +591,10 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 			const agentManager = getAgentManager();
 			const agentKey = agentConfig.agentId;
 			const preserveUiOnlyMessages = internalOptions?.preserveUiOnlyMessages ?? true;
-			const restoreMessagesOnError = async ( error: string | null ): Promise< boolean > => {
+			const restoreMessagesOnError = async (
+				error: string | null,
+				errorCode: string | null = null
+			): Promise< boolean > => {
 				const restoreOnError = internalOptions?.restoreOnError;
 
 				if ( ! restoreOnError ) {
@@ -611,6 +618,7 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 					progressMessage: null,
 					progressPhase: null,
 					error,
+					errorCode,
 				} ) );
 
 				return true;
@@ -648,12 +656,14 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 						: ( internalOptions?.initialUiMessages ?? prev.uiMessages ),
 					isProcessing: true,
 					error: null,
+					errorCode: null,
 				} ) );
 			} else {
 				setState( ( prev ) => ( {
 					...prev,
 					isProcessing: true,
 					error: null,
+					errorCode: null,
 				} ) );
 			}
 
@@ -897,13 +907,15 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 							progressMessage: null,
 							progressPhase: null,
 							error: null, // Don't show error for user-initiated abort
+							errorCode: null,
 						} ) );
 					}
 					return; // Don't re-throw AbortError
 				}
 
 				const errorMessage = error instanceof Error ? error.message : 'Failed to send message';
-				const restored = await restoreMessagesOnError( errorMessage );
+				const errorCode = ( error as { code?: string } ).code ?? null;
+				const restored = await restoreMessagesOnError( errorMessage, errorCode );
 				if ( ! restored ) {
 					setState( ( prev ) => ( {
 						...prev,
@@ -911,6 +923,7 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 						progressMessage: null,
 						progressPhase: null,
 						error: errorMessage,
+						errorCode,
 					} ) );
 				}
 				throw error;
@@ -1031,6 +1044,7 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 		messages: state.uiMessages,
 		isProcessing: state.isProcessing,
 		error: state.error,
+		errorCode: state.errorCode,
 		onSubmit,
 		suggestions: state.suggestions,
 		progressMessage: state.progressMessage,

@@ -1824,6 +1824,23 @@ describe( 'OrchestratorChat', () => {
 
 			expect( chatErrorCalls() ).toEqual( [] );
 		} );
+
+		it( 'neither shows nor records a resume that another page answered first', () => {
+			mockUseAgentChat.mockReturnValue(
+				agentChatReturn( {
+					error: 'Streaming error: This tool result was already received.',
+					errorCode: 'tool_result_already_received',
+				} )
+			);
+
+			render( chat() );
+
+			const props = mockAgentChat.mock.calls[ mockAgentChat.mock.calls.length - 1 ][ 0 ] as {
+				error?: string | null;
+			};
+			expect( props.error ).toBeFalsy();
+			expect( chatErrorCalls() ).toEqual( [] );
+		} );
 	} );
 
 	describe( 'response outcome tracking', () => {
@@ -4235,6 +4252,23 @@ describe( 'OrchestratorChat', () => {
 				turnToolCalls,
 			} );
 			expect( replied ).toBe( true );
+		} );
+
+		it( 'reports no reply when the resume send fails', async () => {
+			const onSubmit = jest.fn().mockRejectedValue(
+				Object.assign( new Error( 'Streaming error: This tool result was already received.' ), {
+					code: 'tool_result_already_received',
+				} )
+			);
+			mockUseAgentChat.mockReturnValue( agentChatReturn( { onSubmit } ) );
+			render( chat() );
+
+			let replied: boolean | undefined;
+			await act( async () => {
+				replied = await mockReplyRecoveryOptions?.resumeToolCalls( [], [] );
+			} );
+
+			expect( replied ).toBe( false );
 		} );
 
 		it( 'reports no reply when the resume lost to another page', async () => {

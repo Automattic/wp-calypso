@@ -1,7 +1,6 @@
 import {
 	getOrchestratorErrorMessage,
 	getOrchestratorErrorType,
-	TOOL_RESULT_ALREADY_RECEIVED,
 } from '../orchestrator-error-message';
 
 jest.mock( '@wordpress/i18n', () => ( {
@@ -30,10 +29,6 @@ describe( 'getOrchestratorErrorMessage', () => {
 		'prefix_ai_editorial_review_over_limit',
 	] )( 'passes the near-miss error code %s through unchanged', ( error ) => {
 		expect( getOrchestratorErrorMessage( error ) ).toBe( error );
-	} );
-
-	it( 'hides the duplicate tool result a resumed turn can lose the race with', () => {
-		expect( getOrchestratorErrorMessage( TOOL_RESULT_ALREADY_RECEIVED ) ).toBeNull();
 	} );
 
 	it( 'passes other errors through unchanged', () => {
