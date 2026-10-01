@@ -34,8 +34,8 @@ const PROBE_INTERVAL_MS = 3000;
 // Both server paths persist a question before the model runs, so one missing
 // this long after the page change never arrived.
 export const LOST_AFTER_MS = 20_000;
-// A run does not survive the page change that left it unanswered, so waiting
-// longer only delays the Retry.
+// A turn paused on a browser-run tool stays paused once that page is gone, so
+// waiting longer only delays the Retry.
 export const UNANSWERED_AFTER_MS = 60_000;
 
 type Phase = 'idle' | 'waiting' | 'lost' | 'unanswered';
