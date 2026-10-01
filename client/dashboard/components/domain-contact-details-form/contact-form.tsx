@@ -69,8 +69,8 @@ export default function ContactForm( {
 	const normalizedFormData = useMemo( () => {
 		if ( ! statesList || statesList.length === 0 ) {
 			if ( formData.state && isEuOrUkAddressFormat( selectedCountryCode ) ) {
-				// Clear the state field. The layout hides that field for countries in the EU
-				// and UK, and the registrar might reject it if sent.
+				// Clear the state field. The layout hides that field for countries that use
+				// the EU or UK address format, and the registrar might reject it if sent.
 				return { ...formData, state: '' };
 			}
 			return formData;
