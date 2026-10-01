@@ -5,6 +5,7 @@ import {
 	Button,
 	TextareaControl,
 	__experimentalVStack as VStack,
+	__experimentalHStack as HStack,
 	__experimentalHeading as Heading,
 	__experimentalText as Text,
 	Notice,
@@ -329,13 +330,12 @@ export const HelpCenterA4AContactForm = () => {
 				/>
 
 				<Button
-					className="help-center-a4a-contact-form-submit"
 					variant="primary"
 					type="submit"
 					disabled={ ! isValidForm || isPending }
 					isBusy={ isPending }
 				>
-					{ __( 'Send message', __i18n_text_domain__ ) }
+					<HStack justify="center">{ __( 'Send message', __i18n_text_domain__ ) }</HStack>
 				</Button>
 
 				{ hasSubmitError && (
