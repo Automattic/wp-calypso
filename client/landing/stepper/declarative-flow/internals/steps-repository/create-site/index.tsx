@@ -45,7 +45,6 @@ import {
 	getSignupCompleteSlug,
 } from 'calypso/signup/storageUtils';
 import { useSelector } from 'calypso/state';
-import { getCurrentUserName } from 'calypso/state/current-user/selectors';
 import { getUrlData } from 'calypso/state/imports/url-analyzer/selectors';
 import { useSimplifiedOnboarding } from '../../../../hooks/use-simplified-onboarding';
 import { shouldUseStepContainerV2 } from '../../../helpers/should-use-step-container-v2';
@@ -178,8 +177,6 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 	if ( domainCartItem ) {
 		mergedDomainCartItems.push( domainCartItem );
 	}
-
-	const username = useSelector( getCurrentUserName );
 
 	const { setPendingAction } = useDispatch( ONBOARD_STORE );
 	const flowState = useFlowState();
@@ -380,7 +377,6 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 						// Ideally should remove this and update code downstream to handle this.
 						'#113AF5',
 						useThemeHeadstart,
-						username,
 						partnerBundle,
 						siteUrl,
 						domainItem,
