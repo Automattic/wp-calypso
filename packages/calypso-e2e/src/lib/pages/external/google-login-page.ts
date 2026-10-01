@@ -77,7 +77,21 @@ export class GoogleLoginPage {
 	async enterPassword( password: string ): Promise< void > {
 		const locator = this.page.getByRole( 'textbox', { name: 'Enter your password' } );
 
-		await this.waitUntilStable( locator );
+		try {
+			await this.waitUntilStable( locator );
+		} catch ( error ) {
+			const challengeVisible = await this.page
+				.getByText( /Confirm you[’']re not a robot/ )
+				.first()
+				.isVisible()
+				.catch( () => false );
+			if ( challengeVisible ) {
+				throw new Error( 'Google human verification required before password entry.', {
+					cause: error,
+				} );
+			}
+			throw error;
+		}
 
 		await locator.type( password, { delay: 30 } );
 	}

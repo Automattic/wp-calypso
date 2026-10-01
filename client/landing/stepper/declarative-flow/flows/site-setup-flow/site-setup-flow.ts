@@ -384,7 +384,11 @@ const siteSetupFlow: Flow = {
 					// importer in the Subscribers screen) should return there, not to the
 					// importer list.
 					if ( entryPoint === 'wp-admin-newsletter-ui' ) {
-						return window.location.assign( `${ adminUrl }admin.php?page=jetpack-newsletter` );
+						return window.location.assign(
+							`${ adminUrl }admin.php?page=jetpack-newsletter&p=${ encodeURIComponent(
+								'/?tab=subscribers'
+							) }`
+						);
 					}
 
 					return navigate( addQueryArgs( { origin, siteSlug }, 'importList' ) );

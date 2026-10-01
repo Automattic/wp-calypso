@@ -25,8 +25,9 @@ import './style.scss';
 /**
  * Build the wp-admin URL that opens a single subscriber in the new Newsletter > Subscribers
  * inspector. That page is a router mounted on `admin.php?page=jetpack-newsletter`, and it
- * reads its route from the `p` query param, so the subscriber and user ids are nested inside
- * an encoded `/?subscriber=…&u=…` search string. `userId` is omitted for email-only subscribers.
+ * reads its route from the `p` query param. `tab=subscribers` keeps the inspector on
+ * the Subscribers tab once Overview is the default. The subscriber and user ids
+ * are nested in that encoded search string. `userId` is omitted for email-only subscribers.
  * @param {string} adminPhpUrl Absolute URL to the site's wp-admin `admin.php` (no query).
  * @param {number} subscriptionId The subscriber's subscription id.
  * @param {number} [userId] The subscriber's WordPress.com user id, when present.
@@ -34,8 +35,8 @@ import './style.scss';
  */
 export const getNewsletterSubscriberDetailUrl = ( adminPhpUrl, subscriptionId, userId ) => {
 	const inspectorRoute = userId
-		? `/?subscriber=${ subscriptionId }&u=${ userId }`
-		: `/?subscriber=${ subscriptionId }`;
+		? `/?tab=subscribers&subscriber=${ subscriptionId }&u=${ userId }`
+		: `/?tab=subscribers&subscriber=${ subscriptionId }`;
 	return `${ adminPhpUrl }?page=jetpack-newsletter&p=${ encodeURIComponent( inspectorRoute ) }`;
 };
 

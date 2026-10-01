@@ -68,7 +68,7 @@ describe( 'PureUniversalNavbarFooter', () => {
 		expect( document.querySelector( '.lp-footer-legal' ) ).toBeInTheDocument();
 		expect( screen.getByRole( 'link', { name: 'Download our app' } ) ).toHaveAttribute(
 			'href',
-			'https://apps.wordpress.com/get/?campaign=qrcode-apps'
+			'https://apps.wordpress.com/store?campaign=qrcode-apps'
 		);
 	} );
 } );

@@ -36,6 +36,20 @@ describe( 'getSkipSuggestionCopy', () => {
 		} );
 	} );
 
+	it( 'passes subtitle and skip label overrides through', () => {
+		expect(
+			getSkipSuggestionCopy( 'onboarding', identity, {
+				subtitle: 'Upgrade anytime.',
+				skipLabel: 'Skip the domain',
+			} )
+		).toEqual( {
+			title: undefined,
+			subtitle: 'Upgrade anytime.',
+			buttonText: undefined,
+			skipLabel: 'Skip the domain',
+		} );
+	} );
+
 	it( 'lets an override win over the flow default', () => {
 		expect(
 			getSkipSuggestionCopy( 'ai-site-builder-onboarding', identity, {

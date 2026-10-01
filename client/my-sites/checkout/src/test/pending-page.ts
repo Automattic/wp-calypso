@@ -286,6 +286,17 @@ describe( 'getRedirectFromPendingPage', () => {
 		expect( actual ).toEqual( { url: 'https://wordpress.com/home/12345' } );
 	} );
 
+	it( 'returns the agency dashboard url with the receipt interpolated if there is also a receipt', () => {
+		const actual = getRedirectFromPendingPage( {
+			isLoadingOrder: false,
+			redirectTo: 'https://agencies-beta.automattic.com/purchases?receipt_id=:receiptId',
+			receiptId: 12345,
+		} );
+		expect( actual ).toEqual( {
+			url: 'https://agencies-beta.automattic.com/purchases?receipt_id=12345',
+		} );
+	} );
+
 	it( 'returns a generic no-site url for an absolute url if it is not allowed and there is also a receipt', () => {
 		const actual = getRedirectFromPendingPage( {
 			isLoadingOrder: false,

@@ -635,6 +635,7 @@ const SiteSpec: StepType = function SiteSpec( { navigation } ) {
 					siteId: queryParams.get( 'siteId' ),
 					ref: queryParams.get( 'ref' ),
 					source: querySource,
+					graph: getBuildWowGraph( queryParams ),
 				} ) }
 				onSpecConfirm={ handleBuildWowSpecConfirm }
 			/>

@@ -119,6 +119,11 @@ export function getBlueprintArchiveSiteSpecUrl( {
 export type BlueprintArchiveLookup = {
 	exists: boolean;
 	/**
+	 * The blueprint's display name (e.g. "Punk"), as plain text, for naming it to the customer.
+	 * Empty when the server does not send one.
+	 */
+	title: string;
+	/**
 	 * The plans the blueprint suggests, as WordPress.com plan product slugs
 	 * (e.g. `value_bundle`, `business-bundle`). Empty when it suggests none, or
 	 * when the blueprint has no usable archive.
@@ -131,6 +136,8 @@ type BlueprintArchiveLookupResponse = {
 	exists?: boolean;
 	// Absent on a wpcom that predates the field.
 	suggested_plans?: unknown;
+	// Absent on a wpcom that predates the field.
+	title?: unknown;
 };
 
 /**
@@ -142,7 +149,7 @@ export async function lookupBlueprintArchive(
 	blueprintSlug: string
 ): Promise< BlueprintArchiveLookup > {
 	if ( ! blueprintSlug ) {
-		return { exists: false, suggestedPlans: [] };
+		return { exists: false, title: '', suggestedPlans: [] };
 	}
 
 	try {
@@ -157,9 +164,11 @@ export async function lookupBlueprintArchive(
 				)
 			: [];
 
-		return { exists: true, suggestedPlans };
+		const title = typeof response?.title === 'string' ? response.title.trim() : '';
+
+		return { exists: true, title, suggestedPlans };
 	} catch {
-		return { exists: false, suggestedPlans: [] };
+		return { exists: false, title: '', suggestedPlans: [] };
 	}
 }
 
@@ -206,11 +215,25 @@ export async function waitForBlueprintImportComplete(
 		totalTimeoutSeconds = 900,
 		pollIntervalMs = 5000,
 		initialDelayMs = pollIntervalMs,
-	}: { totalTimeoutSeconds?: number; pollIntervalMs?: number; initialDelayMs?: number } = {}
+		missingRecordTimeoutSeconds = 60,
+	}: {
+		totalTimeoutSeconds?: number;
+		pollIntervalMs?: number;
+		initialDelayMs?: number;
+		/**
+		 * How long the site may answer with no import record at all before this gives up. Every
+		 * caller starts the import before polling — the funnel before checkout, a standalone run
+		 * just above its poll — so a missing record is not "not started yet": nothing is coming.
+		 * Without this, a run whose import was never queued sat on the loading screen for the full
+		 * timeout.
+		 */
+		missingRecordTimeoutSeconds?: number;
+	} = {}
 ): Promise< void > {
 	const maxFinishTime = Date.now() + totalTimeoutSeconds * 1000;
 	let lastStatus: string | null | undefined;
 	let delayMs = initialDelayMs;
+	let missingSince: number | null = null;
 
 	while ( Date.now() < maxFinishTime ) {
 		if ( delayMs > 0 ) {
@@ -228,6 +251,16 @@ export async function waitForBlueprintImportComplete(
 			if ( lastStatus === IMPORT_SUCCESS ) {
 				return;
 			}
+
+			// An empty body: the site has no import record.
+			if ( ! status?.importId && ! lastStatus ) {
+				missingSince ??= Date.now();
+				if ( Date.now() - missingSince >= missingRecordTimeoutSeconds * 1000 ) {
+					throw new Error( 'Blueprint import failed with status: no import record' );
+				}
+				continue;
+			}
+			missingSince = null;
 
 			if ( lastStatus && IMPORT_FAILURE_STATUSES.includes( lastStatus ) ) {
 				throw new Error( `Blueprint import failed with status: ${ lastStatus }` );

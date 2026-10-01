@@ -63,7 +63,7 @@ const Footer2026Privacy = ( props: FooterProps ) => {
 };
 
 // Pages that end on a dark section, so the 2026 footer continues it; all others stay white.
-const DARK_FOOTER_ROUTES = [ '/themes', '/patterns', '/speed-test-tool/weekly-report' ];
+const DARK_FOOTER_ROUTES = [ '/themes', '/patterns' ];
 
 const isDarkFooterPage = ( state: AppState ) => {
 	const route = removeLocaleFromPathLocaleInFront( getCurrentRoute( state ) ?? '' );

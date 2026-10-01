@@ -18,6 +18,7 @@ import {
 	checkoutUnifiedSiteless,
 	checkoutWpcomSiteless,
 	checkoutA4ASiteless,
+	checkoutA4AAgencySiteless,
 	checkoutRenewalBySubscriptionId,
 	checkoutThankYou,
 	licensingPendingAsyncActivation,
@@ -57,6 +58,17 @@ export default function () {
 		setLocaleMiddleware(),
 		noSite,
 		checkoutA4ASiteless,
+		makeLayout,
+		clientRender
+	);
+
+	// An agency paying for its own cart from the Automattic for Agencies dashboard.
+	page(
+		`/checkout/agency/purchase`,
+		redirectLoggedOut,
+		setLocaleMiddleware(),
+		noSite,
+		checkoutA4AAgencySiteless,
 		makeLayout,
 		clientRender
 	);

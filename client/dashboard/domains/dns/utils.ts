@@ -118,3 +118,30 @@ export const getProcessedRecord = ( sourceRecord: DnsRecord ): DnsRecord => {
 
 	return record;
 };
+
+const isSameRRset = ( existingRecord: DnsRecord, record: DnsRecord ): boolean => {
+	if (
+		existingRecord.type !== record.type ||
+		existingRecord.name.toLowerCase() !== record.name.toLowerCase()
+	) {
+		return false;
+	}
+
+	// SRV records keep the service and protocol out of `name`. The API returns the service with a
+	// leading underscore, but the form accepts it with or without one.
+	if ( record.type === 'SRV' ) {
+		const service = '_' + ( record.service ?? '' ).replace( /^_/, '' );
+		return existingRecord.service === service && existingRecord.protocol === record.protocol;
+	}
+
+	return true;
+};
+
+/**
+ * Returns the TTL of the existing records with the same name and type (the RRset) as `record`
+ * @param records - The existing DNS records of the domain
+ * @param record - The DNS record to look up, with its `name` normalized by `getNormalizedName()`
+ * @returns The TTL of the RRset, or `undefined` if there are no records with the same name and type
+ */
+export const getRRsetTtl = ( records: DnsRecord[], record: DnsRecord ): number | undefined =>
+	records.find( ( existingRecord ) => isSameRRset( existingRecord, record ) )?.ttl;

@@ -121,8 +121,7 @@ export function getIsTest(): boolean {
  * plus the `surface` claim derived from the same editor-store read.
  */
 function getBigSkyPageProps(): TracksProps {
-	// `block_editor` only while the `core/editor` store is registered (unlike
-	// `isEditorPage()`, this includes custom post types and the site editor);
+	// `block_editor` only while the `core/editor` store is registered;
 	// preserved by the catch, omitted on plain wp-admin screens.
 	let surfaceProps: TracksProps = {};
 	try {

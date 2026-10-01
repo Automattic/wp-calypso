@@ -145,7 +145,11 @@ export interface Agency {
 	tier?: AgencyTier;
 	influenced_revenue?: number;
 	approval_status?: AgencyApprovalStatus | '';
+	/** False while an unpaid invoice or a missing payment method blocks new licenses. */
+	can_issue_licenses?: boolean;
 	profile?: AgencyProfile;
+	/** The logo the agency last uploaded for a referral email. */
+	referrals_logo?: string | null;
 	partner_directory?: {
 		allowed: boolean;
 		directories: AgencyPartnerDirectorySlug[];

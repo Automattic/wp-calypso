@@ -10,11 +10,15 @@ import {
 import {
 	clearWowFunnelSite,
 	getRememberedWowFunnelSite,
+	getWowFunnelArgs,
 	getWowFunnelConfig,
 	getWowFunnelDest,
+	getWowFunnelEntryQueryArgs,
 	getWowFunnelHandoffUrl,
 	getWowFunnelKey,
+	getWowFunnelSlug,
 	isKnownWowFunnel,
+	isSameWowFunnelRun,
 	waitForWowFunnelReady,
 	wowFunnelSiteIsPaid,
 } from '../wow-funnel';
@@ -63,6 +67,45 @@ describe( 'getWowFunnelKey', () => {
 		expect( getWowFunnelKey( 'blueprint', { a: '1', b: '2' } ) ).toBe(
 			getWowFunnelKey( 'blueprint', { b: '2', a: '1' } )
 		);
+	} );
+} );
+
+describe( 'isSameWowFunnelRun', () => {
+	const run = { funnelSlug: 'blueprint', funnelArgs: { blueprint_slug: 'coachava' } };
+
+	it( 'matches the run that built the site', () => {
+		expect( isSameWowFunnelRun( run, 'blueprint', { blueprint_slug: 'coachava' } ) ).toBe( true );
+	} );
+
+	it( 'does not match a different funnel', () => {
+		expect( isSameWowFunnelRun( run, 'default', {} ) ).toBe( false );
+	} );
+
+	it( 'does not match the same funnel building something else', () => {
+		expect( isSameWowFunnelRun( run, 'blueprint', { blueprint_slug: 'other' } ) ).toBe( false );
+	} );
+} );
+
+describe( 'getWowFunnelEntryQueryArgs', () => {
+	it( 'rebuilds the entry URL a run started from', () => {
+		expect( getWowFunnelEntryQueryArgs( 'blueprint', { blueprint_slug: 'coachava' } ) ).toEqual( {
+			wow_funnel: 'blueprint',
+			blueprint: 'coachava',
+		} );
+	} );
+
+	it( 'round-trips through the entry URL parsers', () => {
+		const params = new URLSearchParams(
+			getWowFunnelEntryQueryArgs( 'blueprint', { blueprint_slug: 'coachava' } )
+		);
+
+		expect(
+			isSameWowFunnelRun(
+				{ funnelSlug: 'blueprint', funnelArgs: { blueprint_slug: 'coachava' } },
+				getWowFunnelSlug( params ) ?? '',
+				getWowFunnelArgs( params )
+			)
+		).toBe( true );
 	} );
 } );
 
