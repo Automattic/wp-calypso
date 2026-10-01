@@ -66,22 +66,15 @@ export default function OptionCards( {
 							<VStack spacing={ 2 }>
 								<HStack justify="space-between" alignment="center">
 									<Text weight={ 600 }>{ option.label }</Text>
-									{ /* The tag sits top right, where the check goes, so the text lines up across the cards. */ }
-									<HStack spacing={ 2 } justify="flex-end" expanded={ false }>
-										{ option.tag && (
-											<Badge className="dashboard-marketplace-hosting__option-tag">
-												{ option.tag }
-											</Badge>
-										) }
-										{ ( isSelected || ! option.tag ) && (
-											<Icon
-												icon={ check }
-												className="dashboard-marketplace-hosting__option-check"
-											/>
-										) }
-									</HStack>
+									<Icon icon={ check } className="dashboard-marketplace-hosting__option-check" />
 								</HStack>
 								<Text variant="muted">{ option.description }</Text>
+								{ /* Why it can't be picked, under the description so the title never wraps. */ }
+								{ option.tag && (
+									<Badge className="dashboard-marketplace-hosting__option-tag">
+										{ option.tag }
+									</Badge>
+								) }
 							</VStack>
 						</CardBody>
 					</Card>
