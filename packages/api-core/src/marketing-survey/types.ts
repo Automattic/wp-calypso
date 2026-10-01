@@ -14,3 +14,13 @@ export interface MarketingSurveyDetails {
 	survey_id: string;
 	survey_responses: MarketingSurveyResponses;
 }
+
+export interface A4AFeedbackSurveyDetails {
+	site_id: number;
+	survey_id: string;
+	survey_responses: {
+		rating: string;
+		comment: { text: string };
+		suggestions: { text: string };
+	};
+}
