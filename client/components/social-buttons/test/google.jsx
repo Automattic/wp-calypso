@@ -176,6 +176,10 @@ describe( 'GoogleSocialButton', () => {
 				'Something went wrong when trying to connect with Google. Please try again.'
 			)
 		);
+		expect( props.recordTracksEvent ).toHaveBeenCalledWith(
+			'calypso_social_button_auth_code_exchange_failure',
+			expect.objectContaining( { error_code: 'invalid_nonce' } )
+		);
 		expect( props.responseHandler ).not.toHaveBeenCalled();
 	} );
 
@@ -189,6 +193,11 @@ describe( 'GoogleSocialButton', () => {
 			expect( props.showErrorNotice ).toHaveBeenCalledWith(
 				'Something went wrong while trying to load Google sign-in.'
 			)
+		);
+		expect( props.showErrorNotice ).toHaveBeenCalledTimes( 1 );
+		expect( props.recordTracksEvent ).toHaveBeenCalledWith(
+			'calypso_social_button_failure',
+			expect.objectContaining( { error_code: 'google_identity_services_api_not_loaded' } )
 		);
 	} );
 
