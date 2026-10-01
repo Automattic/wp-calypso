@@ -1459,6 +1459,18 @@ export default function pages() {
 		const redirectUrl = localizeUrl( `https://wordpress.com/support`, req.context.locale );
 		return res.redirect( 301, redirectUrl );
 	} );
+
+	// The logged-out Speed Test Tool was retired; old report links go to the site speed guide.
+	app.get(
+		[
+			'/:locale([a-z]{2,3}|[a-z]{2}-[a-z]{2})?/speed-test-tool',
+			'/:locale([a-z]{2,3}|[a-z]{2}-[a-z]{2})?/speed-test-tool/*',
+		],
+		( req, res ) => {
+			const locale = req.params.locale ?? config( 'i18n_default_locale_slug' );
+			res.redirect( 301, localizeUrl( 'https://wordpress.com/support/site-speed/', locale ) );
+		}
+	);
 	// catchall to render 404 for all routes not explicitly allowed in client/sections
 	app.use( render404() );
 
