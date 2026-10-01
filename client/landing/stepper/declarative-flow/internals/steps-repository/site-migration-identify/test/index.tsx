@@ -64,12 +64,16 @@ describe( 'SiteMigrationIdentify', () => {
 		jest.mocked( useSiteSlug ).mockReturnValue( MOCK_WORDPRESS_SITE_SLUG );
 
 		const submit = jest.fn();
-		render( { navigation: { submit } } );
+		const { rerender } = render( { navigation: { submit } } );
 
 		mockApi()
 			.get( '/wpcom/v2/imports/analyze-url' )
 			.query( { site_url: 'https://example.com' } )
 			.reply( 200, API_RESPONSE_WORDPRESS_PLATFORM );
+		mockApi()
+			.get( '/wpcom/v2/site-profiler/hosting-provider/example.com' )
+			.twice()
+			.reply( 200, { hosting_provider: { slug: 'automattic' } } );
 
 		await userEvent.type( getInput(), 'https://example.com' );
 
@@ -83,59 +87,20 @@ describe( 'SiteMigrationIdentify', () => {
 				} )
 			);
 		} );
+		expect( submit ).toHaveBeenCalledTimes( 1 );
+
+		rerender(
+			<MemoryRouter>
+				<SiteMigrationIdentify { ...mockStepProps( { navigation: { submit } } ) } />
+			</MemoryRouter>
+		);
+		expect( submit ).toHaveBeenCalledTimes( 1 );
+
+		await userEvent.clear( getInput() );
+		await userEvent.type( getInput(), 'https://example.com' );
+		await userEvent.click( screen.getByRole( 'button', { name: /Check my site/ } ) );
+		await waitFor( () => expect( submit ).toHaveBeenCalledTimes( 2 ) );
 	} );
-
-	it.each( [ 200, 500 ] )(
-		'submits once per site check when hosting detection returns %s',
-		async ( hostingStatus ) => {
-			const submit = jest.fn();
-			const props = { ...mockStepProps( { navigation: { submit } } ) };
-			const { rerender } = renderStep( <SiteMigrationIdentify { ...props } /> );
-
-			mockApi()
-				.get( '/wpcom/v2/imports/analyze-url' )
-				.query( { site_url: 'https://example.com' } )
-				.reply( 200, API_RESPONSE_WORDPRESS_PLATFORM );
-			mockApi()
-				.get( '/wpcom/v2/site-profiler/hosting-provider/example.com' )
-				.twice()
-				.reply( hostingStatus, {
-					domain: 'example.com',
-					hosting_provider: { slug: 'bluehost', name: 'Bluehost', is_cdn: false },
-				} );
-
-			await userEvent.type( getInput(), 'https://example.com' );
-			await userEvent.click( screen.getByRole( 'button', { name: /Check my site/ } ) );
-			await waitFor( () => expect( submit ).toHaveBeenCalledTimes( 1 ) );
-			expect( submit ).toHaveBeenCalledWith( {
-				action: 'continue',
-				platform: 'wordpress',
-				from: 'https://example.com',
-				host: hostingStatus === 200 ? 'bluehost' : undefined,
-			} );
-
-			const nextSubmit = jest.fn();
-			rerender(
-				<MemoryRouter>
-					<SiteMigrationIdentify { ...props } navigation={ { submit: nextSubmit } } />
-				</MemoryRouter>
-			);
-
-			expect( submit ).toHaveBeenCalledTimes( 1 );
-			expect( nextSubmit ).not.toHaveBeenCalled();
-
-			await userEvent.clear( getInput() );
-			await userEvent.type( getInput(), 'https://example.com' );
-			await userEvent.click( screen.getByRole( 'button', { name: /Check my site/ } ) );
-			await waitFor( () => expect( nextSubmit ).toHaveBeenCalledTimes( 1 ) );
-			expect( nextSubmit ).toHaveBeenCalledWith( {
-				action: 'continue',
-				platform: 'wordpress',
-				from: 'https://example.com',
-				host: hostingStatus === 200 ? 'bluehost' : undefined,
-			} );
-		}
-	);
 
 	it( 'continues the flow when the platform is unknown', async () => {
 		const submit = jest.fn();

@@ -4,7 +4,7 @@ import { Onboard } from '@automattic/data-stores';
 import { useLocale } from '@automattic/i18n-utils';
 import { SITE_MIGRATION_FLOW } from '@automattic/onboarding';
 import { SiteExcerptData } from '@automattic/sites';
-import { useDispatch, useSelect } from '@wordpress/data';
+import { useDispatch } from '@wordpress/data';
 import { useEffect } from 'react';
 import { matchPath } from 'react-router';
 import { HOW_TO_MIGRATE_OPTIONS } from 'calypso/landing/stepper/constants';
@@ -22,7 +22,7 @@ import { useIsSiteAdmin } from 'calypso/landing/stepper/hooks/use-is-site-admin'
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useRecordSignupComplete } from 'calypso/landing/stepper/hooks/use-record-signup-complete';
 import { useSiteData } from 'calypso/landing/stepper/hooks/use-site-data';
-import { ONBOARD_STORE, STEPPER_INTERNAL_STORE } from 'calypso/landing/stepper/stores';
+import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { goToCheckout } from 'calypso/landing/stepper/utils/checkout';
 import { stepsWithRequiredLogin } from 'calypso/landing/stepper/utils/steps-with-required-login';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -32,7 +32,6 @@ import { addQueryArgs } from 'calypso/lib/url';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
 import * as paths from './paths';
-import type { StepperInternalSelect } from '@automattic/data-stores';
 import type {
 	AssertConditionResult,
 	FlowV2,
@@ -140,11 +139,6 @@ const siteMigration: FlowV2< typeof initialize > = {
 
 	useStepNavigation( currentStep, navigate: NavigateV2< typeof BASE_STEPS > ) {
 		const flowName = this.name;
-		const { setStepData } = useDispatch( STEPPER_INTERNAL_STORE );
-		const stepData = useSelect(
-			( select ) => ( select( STEPPER_INTERNAL_STORE ) as StepperInternalSelect ).getStepData(),
-			[]
-		);
 		const { siteId, siteSlug, site } = useSiteData();
 		const variantSlug = this.variantSlug;
 		const flowPath = variantSlug ?? flowName;
@@ -179,23 +173,6 @@ const siteMigration: FlowV2< typeof initialize > = {
 		useEffect( () => {
 			triggerGuidesForStep( flowName, currentStep, siteId );
 		}, [ flowName, currentStep, siteId ] );
-
-		useEffect( () => {
-			if ( ! stepData?.previousStep ) {
-				return;
-			}
-
-			const clearPreviousStep = () => {
-				setStepData( { ...stepData, previousStep: undefined } );
-			};
-			if ( history.state?.idx === 0 ) {
-				clearPreviousStep();
-				return;
-			}
-
-			window.addEventListener( 'popstate', clearPreviousStep );
-			return () => window.removeEventListener( 'popstate', clearPreviousStep );
-		}, [ setStepData, stepData ] );
 
 		const submit: SubmitHandler< typeof initialize > = ( submittedStep ) => {
 			const { slug, providedDependencies } = submittedStep;
@@ -839,11 +816,7 @@ const siteMigration: FlowV2< typeof initialize > = {
 			}
 		};
 
-		return {
-			submit,
-			exitFlow,
-			goBack: history.state?.idx > 0 ? () => history.back() : undefined,
-		};
+		return { submit, exitFlow };
 	},
 };
 
