@@ -92,7 +92,7 @@ describe( '<RevokeLicenseModal> churn feedback', () => {
 		await waitFor( () => expect( body.value ).toBeDefined() );
 		expect( body.value ).toEqual( {
 			site_id: AGENCY_ID,
-			survey_id: 'license-cancel-product',
+			survey_id: 'a4a-feedback-license-cancel-product',
 			survey_responses: {
 				comment: { text: 'Too pricey' },
 				suggestions: { text: 'it-was-the-wrong-product, i-was-just-trying-it-out' },
@@ -135,7 +135,7 @@ describe( '<RevokeLicenseModal> churn feedback', () => {
 
 		await waitFor( () => expect( body.value ).toBeDefined() );
 		expect( body.value ).toMatchObject( {
-			survey_id: 'license-cancel-hosting',
+			survey_id: 'a4a-feedback-license-cancel-hosting',
 			survey_responses: {
 				suggestions: { text: 'my-client-no-longer-needs-it' },
 				meta: { license_type: 'agency' },
