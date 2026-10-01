@@ -17,7 +17,7 @@ set -o pipefail
 #   - no test/e2e or packages/calypso-e2e change -> keep TEST_GROUP
 #   - documentation and package unit-test files do not affect Playwright selection
 #   - a changed E2E file is not a Playwright spec (POM, util, config, fixtures,
-#     production packages/calypso-e2e code) -> clear the group, run all tests
+#     production packages/calypso-e2e code) -> run all tests except @p2
 #   - Playwright specs changed (test/e2e/specs/**/*.spec.ts) -> run TEST_GROUP plus those specs
 #     in a single pass. Playwright's `--grep` matches the spec path relative to test/e2e/specs/,
 #     so a test selected by both the tag and a changed path runs once.
@@ -44,8 +44,9 @@ compute_flag() {
 		return 0
 	fi
 
-	# Runtime helpers and configuration can affect any test, so run everything.
+	# Runtime helpers and configuration can affect any test, so run everything except the P2 suite, which has its own scheduled job.
 	if grep -qvE '^test/e2e/specs/.*\.spec\.ts$' <<<"$relevant_changed"; then
+		printf -- '--grep-invert=%s' '@p2'
 		return 0
 	fi
 
@@ -94,16 +95,16 @@ self_test() {
 	check "empty change keeps group"    "--grep=@calypso-pr" ""
 
 	# Single-kind changes.
-	check "POM/util clears group"       "" "$POM"
-	check "packages/calypso-e2e clears" "" "packages/calypso-e2e/src/lib/foo.ts"
-	check "pw-base clears group"        "" "test/e2e/pw-base.ts"
-	check "Playwright config clears"    "" "test/e2e/playwright.config.ts"
-	check "Playwright setup clears"     "" "test/e2e/setup/global.ts"
-	check "fixture clears group"        "" "test/e2e/fixtures/site.ts"
-	check "flow clears group"           "" "test/e2e/flows/signup.ts"
-	check "shared spec helper clears"   "" "$SHARED"
-	check "non-spec file clears group"   "" "test/e2e/specs/blocks/blocks__core.ts"
-	check "double-underscore helper clears group" "" "test/e2e/specs/shared/api__close-account.ts"
+	check "POM/util clears group"       "--grep-invert=@p2" "$POM"
+	check "packages/calypso-e2e clears" "--grep-invert=@p2" "packages/calypso-e2e/src/lib/foo.ts"
+	check "pw-base clears group"        "--grep-invert=@p2" "test/e2e/pw-base.ts"
+	check "Playwright config clears"    "--grep-invert=@p2" "test/e2e/playwright.config.ts"
+	check "Playwright setup clears"     "--grep-invert=@p2" "test/e2e/setup/global.ts"
+	check "fixture clears group"        "--grep-invert=@p2" "test/e2e/fixtures/site.ts"
+	check "flow clears group"           "--grep-invert=@p2" "test/e2e/flows/signup.ts"
+	check "shared spec helper clears"   "--grep-invert=@p2" "$SHARED"
+	check "non-spec file clears group"   "--grep-invert=@p2" "test/e2e/specs/blocks/blocks__core.ts"
+	check "double-underscore helper clears group" "--grep-invert=@p2" "test/e2e/specs/shared/api__close-account.ts"
 	check "single PW spec unions path"  "$PW_GREP" "$PW"
 	check "two PW specs union all" \
 		'--grep=@calypso-pr|(^|\s)tools/import__sites-squarespace\.spec\.ts|(^|\s)tools/import__sites-wordpress\.spec\.ts' \
@@ -118,9 +119,9 @@ self_test() {
 	check "ignored files + PW union path" "$PW_GREP" $'test/e2e/README.md\npackages/calypso-e2e/src/test/foo.test.ts\ntest/e2e/specs/tools/import__sites-squarespace.spec.ts'
 
 	# Mix-and-match.
-	check "PW + POM clears group"           "" $'test/e2e/specs/tools/import__sites-squarespace.spec.ts\ntest/e2e/lib/pages/some-page.ts'
-	check "PW + non-spec clears group"      "" $'test/e2e/specs/tools/import__sites-squarespace.spec.ts\ntest/e2e/specs/blocks/blocks__core.ts'
-	check "ignored + runtime clears group"  "" $'test/e2e/README.md\npackages/calypso-e2e/src/lib/foo.ts'
+	check "PW + POM clears group"           "--grep-invert=@p2" $'test/e2e/specs/tools/import__sites-squarespace.spec.ts\ntest/e2e/lib/pages/some-page.ts'
+	check "PW + non-spec clears group"      "--grep-invert=@p2" $'test/e2e/specs/tools/import__sites-squarespace.spec.ts\ntest/e2e/specs/blocks/blocks__core.ts'
+	check "ignored + runtime clears group"  "--grep-invert=@p2" $'test/e2e/README.md\npackages/calypso-e2e/src/lib/foo.ts'
 
 	# Group edge cases.
 	check "PW spec, empty group runs all" "" "$PW" ""
