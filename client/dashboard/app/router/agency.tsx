@@ -1,6 +1,7 @@
 import { DotcomFeatures, HostingFeatures, fetchTwoStep } from '@automattic/api-core';
 import {
 	activeAgencyQuery,
+	agencyDevSiteLicenseQuery,
 	agencyProductsQuery,
 	agencyQuery,
 	agencyResourcesQuery,
@@ -428,9 +429,10 @@ export const marketplaceProductsRoute = createRoute( {
 );
 
 // `/referral-checkout` – request a client's payment for the referral
-// cart. Takes the whole screen, like the WordPress.com checkout the paid cart
-// goes to; `from` is the marketplace page the Back link returns to. An agency
-// that is not approved yet is sent back to the marketplace.
+// cart, or for the plan of one development site when `referral_blog_id`
+// names it. Takes the whole screen, like the WordPress.com checkout the paid
+// cart goes to; `from` is the page the Back link returns to. An agency that is
+// not approved yet is sent back to the marketplace.
 export const marketplaceReferralCheckoutRoute = createRoute( {
 	staticData: { requiresAgencyCapability: 'a4a_read_marketplace', isFullscreen: true },
 	head: () => ( {
@@ -442,11 +444,19 @@ export const marketplaceReferralCheckoutRoute = createRoute( {
 	} ),
 	getParentRoute: () => agencyRoute,
 	path: 'referral-checkout',
-	validateSearch: ( search: Record< string, unknown > ): { from?: string } => ( {
-		from:
-			typeof search.from === 'string' && search.from.startsWith( '/' ) ? search.from : undefined,
-	} ),
-	loader: async () => {
+	validateSearch: (
+		search: Record< string, unknown >
+	): { from?: string; referral_blog_id?: number } => {
+		const referralBlogId = Number( search.referral_blog_id );
+		return {
+			from:
+				typeof search.from === 'string' && search.from.startsWith( '/' ) ? search.from : undefined,
+			referral_blog_id:
+				Number.isInteger( referralBlogId ) && referralBlogId > 0 ? referralBlogId : undefined,
+		};
+	},
+	loaderDeps: ( { search: { referral_blog_id } } ) => ( { referral_blog_id } ),
+	loader: async ( { deps: { referral_blog_id } } ) => {
 		const agency = await queryClient.ensureQueryData( activeAgencyQuery() );
 		if ( ! isAgencyApproved( agency ) ) {
 			throw dashboardRedirect( { to: '/marketplace' } );
@@ -456,6 +466,10 @@ export const marketplaceReferralCheckoutRoute = createRoute( {
 			await Promise.all( [
 				queryClient.ensureQueryData( agencyProductsQuery( agency.id ) ),
 				queryClient.ensureQueryData( pressableLicensesQuery( agency.id ) ).catch( () => undefined ),
+				referral_blog_id &&
+					queryClient
+						.ensureQueryData( agencyDevSiteLicenseQuery( agency.id, referral_blog_id ) )
+						.catch( () => undefined ),
 			] );
 		}
 	},

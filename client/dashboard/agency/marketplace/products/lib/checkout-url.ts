@@ -1,4 +1,9 @@
-import { AGENCY_CHECKOUT_PATH, MARKETPLACE_PURCHASES_ROUTE } from '../../paths';
+import { WPCOM_CREATOR_PLAN_SLUG } from '../../lib/wpcom-hosting';
+import {
+	AGENCY_CHECKOUT_PATH,
+	MARKETPLACE_PURCHASES_ROUTE,
+	getAgencySiteCheckoutPath,
+} from '../../paths';
 import type { TermPricing } from '../../use-term-pricing';
 import type { AgencyProduct } from '@automattic/api-core';
 
@@ -37,6 +42,11 @@ export function getTermProductId( product: AgencyProduct, term: TermPricing ): n
 	);
 }
 
+// Back on the checkout returns here, with the cart still in place.
+function getCurrentPageUrl(): string {
+	return `${ window.location.origin }${ window.location.pathname }${ window.location.search }`;
+}
+
 /**
  * The checkout link for a regular cart: the products, their quantities and the
  * billing term. The checkout works out the agency and the billing products
@@ -53,8 +63,21 @@ export function getCheckoutUrl(
 			.join( ',' ),
 		term,
 		redirect_to: getCheckoutReturnUrl( { hasWpcomHostingPlan } ),
-		// Back on the checkout returns here, with the cart still in place.
-		cancel_to: `${ window.location.origin }${ window.location.pathname }${ window.location.search }`,
+		cancel_to: getCurrentPageUrl(),
 	} );
 	return `${ window.location.origin }${ AGENCY_CHECKOUT_PATH }?${ search }`;
+}
+
+/**
+ * The checkout that launches one of the agency's development sites: the
+ * WordPress.com plan for that one site, paid on the site's own cart. Lands on
+ * the site once it is paid for.
+ */
+export function getSiteLaunchCheckoutUrl( siteSlug: string ): string {
+	const search = new URLSearchParams( {
+		redirect_to: `${ window.location.origin }/sites/${ siteSlug }`,
+		cancel_to: getCurrentPageUrl(),
+	} );
+	const path = getAgencySiteCheckoutPath( siteSlug, WPCOM_CREATOR_PLAN_SLUG );
+	return `${ window.location.origin }${ path }?${ search }`;
 }
