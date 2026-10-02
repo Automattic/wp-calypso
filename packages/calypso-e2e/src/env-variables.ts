@@ -264,9 +264,10 @@ function getAtomicVariationKey(): string {
 }
 
 // The spec file reading the variation, by name only so every agent checkout agrees. A spec on
-// the call stack covers its module load, hooks and test bodies, and is the direct evidence, so
-// it wins; the recorded file covers fixtures and tests declared in shared helpers. Hooks have
-// only the stack: a hook helper that loses it, through a timer say, throws.
+// the call stack covers its module load, hooks and test bodies; the recorded file covers
+// fixtures and tests declared in shared helpers. During a test both must name the same file,
+// or the test would read one site's variation while its fixtures log in to another. Hooks
+// have only the stack: a hook helper that loses it, through a timer say, throws.
 function getCurrentSpecFile(): string {
 	// V8 captures the frames on construction, so the limit can go back before `.stack` runs
 	// Playwright's stack rewriting.
@@ -276,7 +277,15 @@ function getCurrentSpecFile(): string {
 	Error.stackTraceLimit = stackTraceLimit;
 	const stack = error.stack ?? '';
 
-	const file = stack.match( SPEC_FRAME )?.[ 1 ] ?? runningSpecFile;
+	const stackFile = stack.match( SPEC_FRAME )?.[ 1 ];
+	const runningFile = runningSpecFile && path.basename( runningSpecFile );
+	if ( stackFile && runningFile && stackFile !== runningFile ) {
+		throw new Error(
+			`ATOMIC_VARIATION=mixed resolves a variation per spec file, but ${ stackFile } is read while a test of ${ runningFile } runs: its fixtures would pick another site. Move the shared code out of the spec file.`
+		);
+	}
+
+	const file = stackFile ?? runningFile;
 	if ( ! file ) {
 		throw new Error(
 			'ATOMIC_VARIATION=mixed resolves a variation per spec file, but none is loading or running: read it from a spec file, a test, or a test fixture.'
