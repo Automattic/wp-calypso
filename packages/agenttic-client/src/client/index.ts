@@ -40,18 +40,25 @@ import type {
 const DEFAULT_TIMEOUT = 120000;
 
 function getComponentPresentationParts( message: Message ): Message[ 'parts' ] {
-	if (
-		! message.parts.some(
-			( part ) => part.type === 'component-result' || part.type === 'component-reference'
+	const componentCalls = new Set(
+		message.parts.flatMap( ( part ) =>
+			part.type === 'component-result' || part.type === 'component-reference'
+				? [ part.toolCallId ]
+				: []
 		)
-	) {
+	);
+	if ( componentCalls.size === 0 ) {
 		return [];
 	}
 	return message.parts.filter(
 		( part ) =>
 			part.type === 'component-result' ||
 			part.type === 'component-reference' ||
-			part.type === 'text'
+			part.type === 'text' ||
+			( part.type === 'data' &&
+				'toolCallId' in part.data &&
+				typeof part.data.toolCallId === 'string' &&
+				componentCalls.has( part.data.toolCallId ) )
 	);
 }
 
@@ -1097,7 +1104,6 @@ async function* processAgentResponseStream(
 							...( enhancedUpdate.aiCredits !== undefined && {
 								aiCredits: enhancedUpdate.aiCredits,
 							} ),
-							...( enhancedUpdate.agentMessage && { agentMessage: enhancedUpdate.agentMessage } ),
 							final: true,
 							text: combinedAgentText,
 						};
@@ -1321,10 +1327,8 @@ export function createClient( config: ClientConfig ): Client {
 					...( currentTask.ai_credits !== undefined && { aiCredits: currentTask.ai_credits } ),
 					// Keep the enhanced message with tool results
 					// The agent message will be handled separately by the caller
-					text: currentTask.agentMessage
-						? extractTextFromMessage( currentTask.agentMessage )
-						: combinedAgentText,
-					agentMessage: currentTask.agentMessage ?? finalAgentMessage, // Add this for the caller to handle
+					text: combinedAgentText,
+					agentMessage: finalAgentMessage, // Add this for the caller to handle
 				};
 			}
 

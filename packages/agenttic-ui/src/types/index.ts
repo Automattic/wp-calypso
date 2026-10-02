@@ -96,7 +96,6 @@ export interface Message {
 	disabled?: boolean;
 	reactKey?: string; // Stable key for React rendering (prevents unmount/remount during updates)
 	sources?: AgentSource[]; // Agent message sources/citations rendered beneath the body
-	componentFallback?: { partVersion: 1; toolCallId: string };
 }
 
 /**

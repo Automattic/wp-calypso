@@ -264,7 +264,6 @@ export async function* parseSSEStream(
 					id: taskId ?? currentTaskId ?? '',
 					sessionId: event.result.sessionId,
 					status: event.result.status,
-					...( event.result.agentMessage && { agentMessage: event.result.agentMessage } ),
 					final: isFinalTaskUpdate( event.result ),
 					...( event.result.ai_credits !== undefined && {
 						aiCredits: event.result.ai_credits,
@@ -294,7 +293,6 @@ export async function* parseSSEStream(
 						id: taskId ?? currentTaskId ?? '',
 						sessionId: event.result.sessionId,
 						status: event.result.status,
-						...( event.result.agentMessage && { agentMessage: event.result.agentMessage } ),
 						final: isFinalTaskUpdate( event.result ),
 						...( event.result.ai_credits !== undefined && {
 							aiCredits: event.result.ai_credits,
@@ -363,7 +361,6 @@ export async function streamToTask( stream: AsyncIterable< TaskUpdate > ): Promi
 			finalTask = {
 				id: update.id,
 				status: update.status,
-				...( update.agentMessage && { agentMessage: update.agentMessage } ),
 				...( update.aiCredits !== undefined && { ai_credits: update.aiCredits } ),
 			};
 		}

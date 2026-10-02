@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
 	GENERIC_COMPONENT_HISTORY_TEXT,
-	getComponentFallbackMetadata,
 	normalizeComponentResultPart,
 } from '../client/utils/componentHistory';
 import { logger } from '../client/utils/logger';
@@ -18,7 +17,6 @@ import type {
 	TaskUpdate,
 	ToolProvider,
 	ComponentCapabilities,
-	ComponentFallbackMetadata,
 } from '../client/types/index';
 import type { ReactNode } from 'react';
 
@@ -126,7 +124,6 @@ export interface UIMessage {
 	icon?: string;
 	actions?: UIMessageAction[];
 	reactKey?: string; // Stable key for React rendering (prevents unmount/remount during updates)
-	componentFallback?: ComponentFallbackMetadata[ 'componentFallback' ];
 }
 
 // Mirrors `MessageAction.visibility` in agenttic-ui.
@@ -315,7 +312,6 @@ export const transformClientMessageToUI = (
 		archived: Boolean( clientMessage.metadata?.archived ),
 		showIcon: clientMessage.role === 'agent',
 		icon: clientMessage.role === 'agent' ? 'assistant' : undefined,
-		...getComponentFallbackMetadata( clientMessage.metadata ),
 	};
 
 	// Resolve actions for agent messages

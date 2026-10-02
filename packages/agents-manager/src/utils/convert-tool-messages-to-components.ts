@@ -1,7 +1,4 @@
-import {
-	getComponentFallbackMetadata,
-	normalizeComponentResultPart,
-} from '@automattic/agenttic-client';
+import { normalizeComponentResultPart } from '@automattic/agenttic-client';
 import { __ } from '@wordpress/i18n';
 import ChatResponseRenderedTracker, {
 	createChatResponseActionCallback,
@@ -115,23 +112,9 @@ function resolveComponentResultParts(
 			} )
 		)
 	);
-	const fallbacks = new Set(
-		visibleMessages.flatMap( ( message ) => {
-			const fallback = getComponentFallbackMetadata( {
-				componentFallback: message.componentFallback,
-			} );
-			return fallback ? [ fallback.componentFallback.toolCallId ] : [];
-		} )
-	);
 	const rendered = new Set< string >();
 	return visibleMessages.flatMap( ( message ) => {
 		if ( message.componentToolCallId && liveCalls.has( message.componentToolCallId ) ) {
-			return [];
-		}
-		const fallback = getComponentFallbackMetadata( {
-			componentFallback: message.componentFallback,
-		} );
-		if ( fallback && cards.get( fallback.componentFallback.toolCallId )?.componentResult ) {
 			return [];
 		}
 		const content = message.content.flatMap( ( part ): UIMessage[ 'content' ] => {
@@ -172,9 +155,7 @@ function resolveComponentResultParts(
 					},
 				];
 			}
-			return live && fallbacks.has( live.toolCallId )
-				? []
-				: [ { type: 'text', text: __( 'This action is unavailable.', __i18n_text_domain__ ) } ];
+			return [ { type: 'text', text: __( 'This action is unavailable.', __i18n_text_domain__ ) } ];
 		} );
 		return content.length ? [ { ...message, content } ] : [];
 	} );

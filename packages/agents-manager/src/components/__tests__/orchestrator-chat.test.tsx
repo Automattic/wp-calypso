@@ -317,10 +317,6 @@ jest.mock(
 			typeof import( '@automattic/agenttic-client' )
 		>( '../../../../agenttic-client/src/client/utils/componentHistory' )
 			.normalizeComponentResultPart,
-		getComponentFallbackMetadata: jest.requireActual<
-			typeof import( '@automattic/agenttic-client' )
-		>( '../../../../agenttic-client/src/client/utils/componentHistory' )
-			.getComponentFallbackMetadata,
 		redactComponentTaskUpdate: jest.requireActual< typeof import( '@automattic/agenttic-client' ) >(
 			'../../../../agenttic-client/src/client/utils/componentHistory'
 		).redactComponentTaskUpdate,

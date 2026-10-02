@@ -56,13 +56,6 @@ export interface ComponentReferencePart {
 	summary: string;
 }
 
-export interface ComponentFallbackMetadata {
-	componentFallback: {
-		partVersion: 1;
-		toolCallId: string;
-	};
-}
-
 export interface ComponentCapabilities {
 	supported: Array< {
 		partVersion: 1;

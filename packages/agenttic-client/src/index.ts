@@ -16,7 +16,6 @@ export { useAgentChat } from './react/useAgentChat';
 
 // Essential utilities for external consumers
 export {
-	getComponentFallbackMetadata,
 	normalizeComponentResultPart,
 	redactComponentTaskUpdate,
 } from './client/utils/componentHistory';
@@ -41,7 +40,6 @@ export type {
 	TextPart,
 	ComponentResultPart,
 	ComponentReferencePart,
-	ComponentFallbackMetadata,
 	ComponentCapabilities,
 	FilePart,
 	DataPart,

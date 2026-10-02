@@ -37,7 +37,7 @@ describe( 'Client', () => {
 	} );
 
 	it.each( [ 'send', 'stream' ] )(
-		'preserves component presentation and the backend fallback when %s tracks tool results',
+		'preserves component presentation when %s tracks tool results',
 		async ( method ) => {
 			const marker = {
 				type: 'component-result' as const,
@@ -50,13 +50,6 @@ describe( 'Client', () => {
 				marker,
 				{ type: 'text', text: 'After' },
 			];
-			const fallback: Message = {
-				role: 'agent',
-				kind: 'message',
-				messageId: 'fallback',
-				parts: [ { type: 'text', text: 'Approved fallback' } ],
-				metadata: { componentFallback: { partVersion: 1, toolCallId: 'component-call' } },
-			};
 			const task: Task = {
 				id: 'component-task',
 				status: {
@@ -69,29 +62,45 @@ describe( 'Client', () => {
 						parts: [
 							{
 								type: 'data',
-								data: { toolId: 'new/ability', toolCallId: 'component-call', arguments: {} },
+								data: { toolId: 'wpcom__render_components', toolCallId: 'component-call' },
 							},
 							...presentation,
 						],
 					},
 				},
-				agentMessage: fallback,
 			};
-			const envelope = { jsonrpc: '2.0', id: 'request', result: { ...task, final: true } };
-			mockFetch.mockResolvedValueOnce( {
-				ok: true,
-				status: 200,
-				headers: new Headers( { 'content-type': 'text/event-stream' } ),
-				json: async () => envelope,
-				body: new ReadableStream( {
-					start( controller ) {
-						controller.enqueue(
-							new TextEncoder().encode( `data: ${ JSON.stringify( envelope ) }\n\n` )
-						);
-						controller.close();
+			const toolTask: Task = {
+				id: task.id,
+				status: {
+					state: 'input-required',
+					message: {
+						role: 'agent',
+						parts: [
+							{
+								type: 'data',
+								data: { toolId: 'new/ability', toolCallId: 'tool-call', arguments: {} },
+							},
+						],
 					},
-				} ),
-			} );
+				},
+			};
+			for ( const response of [ toolTask, task ] ) {
+				const envelope = { jsonrpc: '2.0', id: 'request', result: { ...response, final: true } };
+				mockFetch.mockResolvedValueOnce( {
+					ok: true,
+					status: 200,
+					headers: new Headers( { 'content-type': 'text/event-stream' } ),
+					json: async () => envelope,
+					body: new ReadableStream( {
+						start( controller ) {
+							controller.enqueue(
+								new TextEncoder().encode( `data: ${ JSON.stringify( envelope ) }\n\n` )
+							);
+							controller.close();
+						},
+					} ),
+				} );
+			}
 			const client = createClient( {
 				agentId: 'test-agent',
 				agentUrl: 'https://example.com/agent',
@@ -106,8 +115,7 @@ describe( 'Client', () => {
 					],
 					executeTool: async () => ( {
 						result: {},
-						returnToAgent: false,
-						agentMessage: 'Tool presentation',
+						returnToAgent: true,
 					} ),
 				},
 			} );
@@ -127,14 +135,16 @@ describe( 'Client', () => {
 				expect( updates.filter( ( update ) => update.text.includes( 'Before' ) ) ).toHaveLength(
 					1
 				);
-				expect( updates.at( -1 )?.agentMessage ).toEqual( fallback );
 			}
 			expect( result.status.message?.parts.filter( ( part ) => part.type !== 'data' ) ).toEqual(
 				presentation
 			);
+			expect( result.status.message?.parts ).toContainEqual( {
+				type: 'data',
+				data: { toolId: 'wpcom__render_components', toolCallId: 'component-call' },
+			} );
 			expect( result.status.message?.metadata ).toEqual( { timestamp: 123 } );
-			expect( result.agentMessage ).toEqual( fallback );
-			expect( mockFetch ).toHaveBeenCalledTimes( 1 );
+			expect( mockFetch ).toHaveBeenCalledTimes( 2 );
 		}
 	);
 

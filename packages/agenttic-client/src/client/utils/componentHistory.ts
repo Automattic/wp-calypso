@@ -1,5 +1,4 @@
 import type {
-	ComponentFallbackMetadata,
 	ComponentCapabilities,
 	ComponentReferencePart,
 	ComponentResultPart,
@@ -36,23 +35,6 @@ function hasKeys( value: Record< string, unknown >, keys: string[] ): boolean {
 		Object.keys( value ).length === keys.length &&
 		keys.every( ( key ) => Object.hasOwn( value, key ) )
 	);
-}
-
-export function getComponentFallbackMetadata(
-	metadata: unknown
-): ComponentFallbackMetadata | undefined {
-	if ( ! isRecord( metadata ) || ! isRecord( metadata.componentFallback ) ) {
-		return undefined;
-	}
-	const fallback = metadata.componentFallback;
-	if (
-		! hasKeys( fallback, [ 'partVersion', 'toolCallId' ] ) ||
-		fallback.partVersion !== 1 ||
-		! isIdentifier( fallback.toolCallId, 128 )
-	) {
-		return undefined;
-	}
-	return { componentFallback: { partVersion: 1, toolCallId: fallback.toolCallId } };
 }
 
 export function getComponentCapabilities( value: unknown ): ComponentCapabilities | undefined {
@@ -299,40 +281,31 @@ export function redactComponentMessages( messages: Message[] ): Message[] {
 			}
 			parts.push( redactComponentData( part, toolIds ) as Part );
 		}
-		const fallback = getComponentFallbackMetadata( message.metadata );
-		if (
-			hasComponent ||
-			( message.metadata && Object.hasOwn( message.metadata, 'componentFallback' ) )
-		) {
+		if ( hasComponent ) {
 			parts = parts.filter( ( part ) => part.type !== 'text' );
 			parts.push( { type: 'text', text: HISTORY_TEXT } );
 		}
-		const { componentFallback, ...metadata } = message.metadata ?? {};
-		const safeMetadata =
-			hasComponent || ( message.metadata && Object.hasOwn( message.metadata, 'componentFallback' ) )
-				? Object.fromEntries(
-						Object.entries( metadata ).filter( ( [ key ] ) =>
-							[ 'timestamp', 'archived', 'deliveryStatus', 'serverId', 'chatId' ].includes( key )
-						)
+		const metadata = message.metadata ?? {};
+		const safeMetadata = hasComponent
+			? Object.fromEntries(
+					Object.entries( metadata ).filter( ( [ key ] ) =>
+						[ 'timestamp', 'archived', 'deliveryStatus', 'serverId', 'chatId' ].includes( key )
 					)
-				: metadata;
+				)
+			: metadata;
 		return {
 			...message,
 			parts,
-			...( message.metadata && { metadata: { ...safeMetadata, ...fallback } } ),
+			...( message.metadata && { metadata: safeMetadata } ),
 		};
 	} );
 }
 
 export function projectComponentMessagesForReplay( messages: Message[] ): Message[] {
-	return redactComponentMessages( messages ).map( ( message ) => {
-		const { componentFallback, ...metadata } = message.metadata ?? {};
-		return {
-			...message,
-			parts: message.parts.filter( ( part ) => part.type !== 'component-reference' ),
-			...( message.metadata && { metadata } ),
-		};
-	} );
+	return redactComponentMessages( messages ).map( ( message ) => ( {
+		...message,
+		parts: message.parts.filter( ( part ) => part.type !== 'component-reference' ),
+	} ) );
 }
 
 export function redactComponentTaskUpdate( update: TaskUpdate ): TaskUpdate {
@@ -352,12 +325,10 @@ export function redactComponentTaskUpdate( update: TaskUpdate ): TaskUpdate {
 		projected.agentMessage = messages.shift();
 	}
 	if (
-		[ update.status?.message, update.agentMessage ].some(
-			( message ) =>
-				message?.parts.some(
-					( part ) => part.type === 'component-result' || part.type === 'component-reference'
-				) ||
-				( message?.metadata && Object.hasOwn( message.metadata, 'componentFallback' ) )
+		[ update.status?.message, update.agentMessage ].some( ( message ) =>
+			message?.parts.some(
+				( part ) => part.type === 'component-result' || part.type === 'component-reference'
+			)
 		)
 	) {
 		projected.text = HISTORY_TEXT;

@@ -8,11 +8,9 @@ import {
 	conversationMessagesToDataParts,
 	extractNewContentFromMessage,
 } from '../../../react/conversationUtils';
-import { serverMessageToMessage } from '../../../react/serverTypes';
 import {
 	GENERIC_COMPONENT_HISTORY_TEXT,
 	getComponentCapabilities,
-	getComponentFallbackMetadata,
 	normalizeComponentResultPart,
 	redactComponentMessages,
 	redactComponentTaskUpdate,
@@ -66,12 +64,10 @@ describe( 'component history projection', () => {
 			toolCallId,
 			result,
 		};
-		const fallback = { componentFallback: { partVersion: 1, toolCallId } };
 		const project = ( value: ComponentResultPart ) =>
 			redactComponentMessages( [ { ...opening, parts: [ value ] } ] )[ 0 ].parts;
 
 		expect( normalizeComponentResultPart( part ) ).toEqual( part );
-		expect( getComponentFallbackMetadata( fallback ) ).toEqual( fallback );
 		expect( project( part ) ).toContainEqual( {
 			...reference,
 			toolCallId,
@@ -79,11 +75,6 @@ describe( 'component history projection', () => {
 		} );
 		expect(
 			normalizeComponentResultPart( { ...part, toolCallId: toolCallId + 't' } )
-		).toBeUndefined();
-		expect(
-			getComponentFallbackMetadata( {
-				componentFallback: { partVersion: 1, toolCallId: toolCallId + 't' },
-			} )
 		).toBeUndefined();
 		for ( const invalid of [
 			{ ...part, toolCallId: toolCallId + 't' },
@@ -287,15 +278,8 @@ describe( 'component history projection', () => {
 				},
 			],
 		};
-		const fallback: Message = {
-			...opening,
-			parts: [ { type: 'text', text: 'draft body' } ],
-			metadata: {
-				componentFallback: { partVersion: 1, toolCallId: 'generic-call' },
-				secret: 'arbitrary metadata',
-			},
-		};
-		await storeConversation( 'component-history-test', [ message, fallback ] );
+		message.metadata = { secret: 'arbitrary metadata' };
+		await storeConversation( 'component-history-test', [ message ] );
 		const stored = sessionStorage.getItem(
 			'a8c_agenttic_conversation_history_component-history-test'
 		)!;
@@ -303,26 +287,17 @@ describe( 'component history projection', () => {
 		expect( stored ).not.toContain( 'alice@example.com' );
 		expect( stored ).not.toContain( 'arbitrary metadata' );
 		expect( JSON.parse( stored ).messages[ 0 ].componentReferences ).toHaveLength( 1 );
-		expect( JSON.parse( stored ).messages[ 1 ].componentFallback ).toEqual( {
-			partVersion: 1,
-			toolCallId: 'generic-call',
-		} );
 		const loaded = await loadConversation( 'component-history-test' );
 		expect( loaded.messages[ 0 ].parts ).toEqual(
 			redactComponentMessages( [ message ] )[ 0 ].parts
 		);
-		expect( loaded.messages[ 1 ].metadata?.componentFallback ).toEqual( {
-			partVersion: 1,
-			toolCallId: 'generic-call',
-		} );
 		expect( JSON.stringify( loaded ) ).not.toContain( 'arbitrary metadata' );
-		const replay = JSON.stringify( conversationMessagesToDataParts( [ message, fallback ] ) );
+		const replay = JSON.stringify( conversationMessagesToDataParts( [ message ] ) );
 		for ( const forbidden of [
 			'draft body',
 			'alice@example.com',
 			'generic-call',
 			'instance-1',
-			'componentFallback',
 			'new/ability',
 		] ) {
 			expect( replay ).not.toContain( forbidden );
@@ -334,7 +309,7 @@ describe( 'component history projection', () => {
 		expect( normalizeComponentResultPart( { ...part, summary: 'draft body' } ) ).toBeUndefined();
 	} );
 
-	it( 'restores references and fallback metadata from session storage without raw snapshots', async () => {
+	it( 'restores references from session storage without raw snapshots', async () => {
 		sessionStorage.setItem(
 			'a8c_agenttic_conversation_history_component-history-test',
 			JSON.stringify( {
@@ -345,7 +320,6 @@ describe( 'component history projection', () => {
 						role: 'agent',
 						content: 'draft body',
 						timestamp: 1,
-						componentFallback: { partVersion: 1, toolCallId: 'generic-call' },
 						componentReferences: [
 							null,
 							{
@@ -364,10 +338,6 @@ describe( 'component history projection', () => {
 			} )
 		);
 		const restored = await loadConversation( 'component-history-test' );
-		expect( restored.messages[ 0 ].metadata?.componentFallback ).toEqual( {
-			partVersion: 1,
-			toolCallId: 'generic-call',
-		} );
 		expect( restored.messages[ 0 ].parts.find( ( part ) => part.type === 'text' ) ).toEqual( {
 			type: 'text',
 			text: GENERIC_COMPONENT_HISTORY_TEXT,
@@ -376,36 +346,6 @@ describe( 'component history projection', () => {
 			restored.messages[ 0 ].parts.filter( ( part ) => part.type === 'component-reference' )
 		).toHaveLength( 1 );
 		expect( JSON.stringify( restored ) ).not.toContain( 'draft body' );
-	} );
-
-	it( 'restores fallback identity independently of regenerated server message IDs', () => {
-		const serverMessage = {
-			message_id: 1,
-			role: 'bot' as const,
-			content: 'draft body',
-			created_at: '2026-09-30 12:00:00',
-			context: { componentFallback: { partVersion: 1, toolCallId: 'generic-call' } },
-		};
-		const restored = serverMessageToMessage( serverMessage );
-		const reconnected = serverMessageToMessage( serverMessage );
-		expect( restored.messageId ).not.toBe( reconnected.messageId );
-		expect( restored.metadata?.componentFallback ).toEqual(
-			reconnected.metadata?.componentFallback
-		);
-		expect( restored.parts ).toEqual( [ { type: 'text', text: GENERIC_COMPONENT_HISTORY_TEXT } ] );
-		const unsupported = serverMessageToMessage( {
-			...serverMessage,
-			context: { componentFallback: { partVersion: 2, toolCallId: 'generic-call' } },
-		} );
-		expect( unsupported.metadata ).not.toHaveProperty( 'componentFallback' );
-		expect( unsupported.parts ).toEqual( [
-			{ type: 'text', text: GENERIC_COMPONENT_HISTORY_TEXT },
-		] );
-		expect(
-			getComponentFallbackMetadata( {
-				componentFallback: { partVersion: 1, toolCallId: 'generic-call', secret: 'draft body' },
-			} )
-		).toBeUndefined();
 	} );
 
 	it( 'sends capability metadata outside the message only after bootstrap support', async () => {

@@ -102,7 +102,7 @@ describe( 'convertToolMessagesToComponents', () => {
 		window.history.replaceState( {}, '', '/' );
 	} );
 
-	it( 'renders a correlated live part in place and suppresses only its paired fallback', () => {
+	it( 'renders a correlated live part in place and preserves adjacent prose', () => {
 		const proposal = formOpening();
 		const options = {
 			result: proposal.result,
@@ -132,17 +132,12 @@ describe( 'convertToolMessagesToComponents', () => {
 				{ type: 'text', text: 'After the form.' },
 			],
 		} );
-		const fallback = createMessage( {
-			id: 'fallback',
-			componentFallback: { partVersion: 1, toolCallId: 'call-123' },
-			content: [ { type: 'text', text: proposal.result.summary } ],
-		} );
 		const prose = createMessage( {
 			id: 'prose',
 			content: [ { type: 'text', text: proposal.result.summary } ],
 		} );
 		const result = convertToolMessagesToComponents( {
-			messages: [ live, card, fallback, prose ],
+			messages: [ live, card, prose ],
 		} );
 		expect( result.map( ( message ) => message.id ) ).toEqual( [ 'live', 'prose' ] );
 		expect( result[ 0 ].content ).toEqual( [
@@ -157,11 +152,11 @@ describe( 'convertToolMessagesToComponents', () => {
 			content: [ { type: 'data' as const, data: { flags: { context_only: true } } }, marker ],
 		};
 		expect(
-			convertToolMessagesToComponents( { messages: [ hidden, live, card, fallback, prose ] } )
+			convertToolMessagesToComponents( { messages: [ hidden, live, card, prose ] } )
 		).toEqual( result );
 	} );
 
-	it( 'keeps the paired fallback and adjacent text when a live part has no authorized session', () => {
+	it( 'shows unavailable content and adjacent text when a live part has no authorized session', () => {
 		const marker = createMessage( {
 			id: 'live',
 			content: [
@@ -169,16 +164,11 @@ describe( 'convertToolMessagesToComponents', () => {
 				{ type: 'component-result', partVersion: 1, toolCallId: 'call-123', result: formOpening() },
 			],
 		} );
-		const fallback = createMessage( {
-			id: 'fallback',
-			componentFallback: { partVersion: 1, toolCallId: 'call-123' },
-			content: [ { type: 'text', text: 'This destination cannot edit the form.' } ],
-		} );
-		const result = convertToolMessagesToComponents( { messages: [ marker, fallback ] } );
+		const result = convertToolMessagesToComponents( { messages: [ marker ] } );
 		expect( result[ 0 ].content ).toEqual( [
 			{ type: 'text', text: 'An unsubmitted form follows.' },
+			{ type: 'text', text: 'This action is unavailable.' },
 		] );
-		expect( result[ 1 ] ).toEqual( fallback );
 		expect( result.some( ( message ) => message.componentResult ) ).toBe( false );
 	} );
 
