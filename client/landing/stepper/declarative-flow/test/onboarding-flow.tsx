@@ -2,11 +2,15 @@
  * @jest-environment jsdom
  */
 // @ts-nocheck - TODO: Fix TypeScript issues
+import { PLAN_PREMIUM } from '@automattic/calypso-products';
 import { ONBOARDING_FLOW } from '@automattic/onboarding';
+import { dispatch } from '@wordpress/data';
 import React from 'react';
 import { MemoryRouter } from 'react-router';
 import { addSurvicate } from 'calypso/lib/analytics/survicate';
+import { retrieveSignupDestination } from 'calypso/signup/storageUtils';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
+import { ONBOARD_STORE } from '../../stores';
 import onboarding from '../flows/onboarding/onboarding';
 import { STEPS } from '../internals/steps';
 import { ProcessingResult } from '../internals/steps-repository/processing-step/constants';
@@ -110,6 +114,71 @@ describe( 'Onboarding Flow', () => {
 			expect( window.location.replace ).toHaveBeenCalledWith(
 				'/home/test-site.wordpress.com?ref=onboarding'
 			);
+		} );
+
+		describe( 'checkout back URLs', () => {
+			const getCheckoutBackUrls = async ( currentURL?: string ) => {
+				const { runUseStepNavigationSubmit } = renderFlow( onboarding );
+
+				runUseStepNavigationSubmit( {
+					currentStep: STEPS.PROCESSING.slug,
+					currentURL,
+					dependencies: {
+						siteSlug: 'test-site.wordpress.com',
+						siteId: 123,
+						goToCheckout: true,
+						processingResult: ProcessingResult.SUCCESS,
+					},
+				} );
+
+				// Wait for the next tick to allow async operations to complete
+				await new Promise( ( resolve ) => setTimeout( resolve, 0 ) );
+
+				const checkoutUrl = new URL( window.location.replace.mock.calls[ 0 ][ 0 ], 'http://x' );
+				expect( checkoutUrl.pathname ).toBe( '/checkout/test-site.wordpress.com' );
+				const toPath = ( url: string | null ) => {
+					const { pathname, search } = new URL( url ?? '' );
+					return pathname + search;
+				};
+				return {
+					plans: toPath( checkoutUrl.searchParams.get( 'checkoutBackUrl' ) ),
+					domains: toPath( checkoutUrl.searchParams.get( 'checkoutBackUrlDomains' ) ),
+				};
+			};
+
+			const PLANS_STEP = '/setup/onboarding/plans?siteSlug=test-site.wordpress.com';
+			const DOMAINS_STEP = '/setup/onboarding/domains?siteSlug=test-site.wordpress.com';
+
+			beforeEach( () => {
+				dispatch( ONBOARD_STORE ).resetOnboardStore();
+				dispatch( ONBOARD_STORE ).setPlanCartItem( { product_slug: PLAN_PREMIUM } );
+			} );
+
+			it( 'goes back to the plans step', async () => {
+				expect( await getCheckoutBackUrls() ).toEqual( {
+					plans: PLANS_STEP,
+					domains: DOMAINS_STEP,
+				} );
+			} );
+
+			it( 'goes back to the plans step when the post-checkout destination is customised', async () => {
+				expect(
+					await getCheckoutBackUrls( '/setup/onboarding/processing?playground=abc' )
+				).toEqual( {
+					plans: PLANS_STEP,
+					domains: DOMAINS_STEP,
+				} );
+				expect( retrieveSignupDestination() ).toContain( '/setup/site-setup/importerPlayground' );
+			} );
+
+			it( 'goes back to the domains step when the plans step was skipped', async () => {
+				expect(
+					await getCheckoutBackUrls( `/setup/onboarding/processing?plan=${ PLAN_PREMIUM }` )
+				).toEqual( {
+					plans: DOMAINS_STEP,
+					domains: DOMAINS_STEP,
+				} );
+			} );
 		} );
 
 		describe( 'Survicate side effect', () => {
