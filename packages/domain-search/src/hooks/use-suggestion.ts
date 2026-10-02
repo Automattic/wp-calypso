@@ -78,15 +78,19 @@ export const useSuggestion = ( domainName: string ) => {
 		...queries.domainAvailability( domainName ),
 	} );
 
-	const { data: suggestions } = useQuery( {
+	const { data, isError } = useQuery( {
 		...queries.domainSuggestions( query ),
 	} );
 
-	if ( suggestions && fqdnAvailability ) {
-		addAvailabilityAsSuggestion( suggestions, fqdnAvailability );
-	}
+	// Match useSuggestionsList, which treats a failed request as an empty list: the
+	// FQDN card it renders from the availability result must still resolve here.
+	const cachedSuggestions = data ?? ( isError ? [] : undefined );
 
-	if ( suggestions ) {
+	if ( cachedSuggestions ) {
+		const suggestions = fqdnAvailability
+			? addAvailabilityAsSuggestion( cachedSuggestions, fqdnAvailability )
+			: cachedSuggestions;
+
 		const suggestionPosition = suggestions.findIndex(
 			( suggestion ) => suggestion.domain_name === domainName
 		);
