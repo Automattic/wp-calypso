@@ -114,6 +114,23 @@ function resolveComponentResultParts(
 	);
 	const rendered = new Set< string >();
 	return visibleMessages.flatMap( ( message ) => {
+		const references = message.content.filter( ( part ) => part.type === 'component-reference' );
+		if (
+			references.length > 0 &&
+			references.every(
+				( part ) =>
+					typeof part.instanceId === 'string' &&
+					cards.get( part.toolCallId ?? '' )?.componentResult?.result.instanceId === part.instanceId
+			) &&
+			message.content.every(
+				( part ) =>
+					part.type === 'component-reference' ||
+					( part.type === 'text' &&
+						part.text === 'Interactive component shown in this conversation.' )
+			)
+		) {
+			return [];
+		}
 		if ( message.componentToolCallId && liveCalls.has( message.componentToolCallId ) ) {
 			return [];
 		}

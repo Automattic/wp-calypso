@@ -154,6 +154,35 @@ describe( 'convertToolMessagesToComponents', () => {
 		expect(
 			convertToolMessagesToComponents( { messages: [ hidden, live, card, prose ] } )
 		).toEqual( result );
+
+		const projected = redactComponentMessage( {
+			kind: 'message',
+			messageId: 'projected',
+			role: 'agent',
+			parts: [
+				{ type: 'data', data: { toolCallId: 'call-123', toolId: 'wpcom__render_components' } },
+				marker,
+			],
+		} );
+		const history = createMessage( {
+			id: 'projected',
+			content: projected.parts.filter(
+				( part ) => part.type === 'text' || part.type === 'component-reference'
+			),
+		} );
+		expect( convertToolMessagesToComponents( { messages: [ history, card ] } ) ).toEqual(
+			convertToolMessagesToComponents( { messages: [ card ] } )
+		);
+		const mismatched = {
+			...card,
+			componentResult: {
+				...options,
+				result: { ...options.result, instanceId: 'another-instance' },
+			},
+		};
+		expect( convertToolMessagesToComponents( { messages: [ history, mismatched ] } ) ).toHaveLength(
+			2
+		);
 	} );
 
 	it( 'shows unavailable content and adjacent text when a live part has no authorized session', () => {
