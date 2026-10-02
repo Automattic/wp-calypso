@@ -223,7 +223,7 @@
 		"valid-url": "^1.0.9",
 		"webpack": "^5.99.8",
 		"webpack-bundle-analyzer": "^4.10.2",
-		"webpack-dev-middleware": "^5.3.4",
+		"webpack-dev-middleware": "^7.0.0",
 		"webpack-hot-middleware": "^2.26.1",
 		"webpack-node-externals": "^3.0.0",
 		"wpcom": "workspace:^",
