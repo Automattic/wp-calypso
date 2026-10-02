@@ -62,14 +62,23 @@ function isEligiblePlan( planSlug: string ): boolean {
 	);
 }
 
+function parseSiteCreatedAt( siteCreatedAt: string ): number {
+	// Site models can hand back a space-separated `YYYY-MM-DD HH:MM:SS` (GMT)
+	// string that not every engine parses as a date. Normalize that shape to
+	// ISO 8601 UTC; otherwise defer to the native parser for ISO 8601 inputs.
+	const wpDate = /^(\d{4}-\d{2}-\d{2}) (\d{2}:\d{2}:\d{2})$/.exec( siteCreatedAt );
+	return Date.parse( wpDate ? `${ wpDate[ 1 ] }T${ wpDate[ 2 ] }Z` : siteCreatedAt );
+}
+
 function isRecentSite( siteCreatedAt: string, now: number ): boolean {
-	const createdAt = Date.parse( siteCreatedAt );
+	const createdAt = parseSiteCreatedAt( siteCreatedAt );
 	if ( Number.isNaN( createdAt ) ) {
 		return false;
 	}
 
-	const ageMs = now - createdAt;
-	return ageMs >= 0 && ageMs <= DIFM_OFFER_MAX_SITE_AGE_DAYS * MS_PER_DAY;
+	// No lower bound: the server never emits a future created_at, and omitting it
+	// avoids rejecting a just-created site when the browser clock lags the server.
+	return now - createdAt <= DIFM_OFFER_MAX_SITE_AGE_DAYS * MS_PER_DAY;
 }
 
 function isEnglishLocale( localeSlug: string ): boolean {

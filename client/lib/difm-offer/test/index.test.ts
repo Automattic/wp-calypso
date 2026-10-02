@@ -86,12 +86,29 @@ describe( 'isEligibleForDifmOffer', () => {
 		).toBe( false );
 	} );
 
-	it( 'rejects a future or unparseable creation date', () => {
-		expect(
-			isEligibleForDifmOffer( { ...eligibleInput(), siteCreatedAt: isoDaysAgo( -1 ) }, NOW )
-		).toBe( false );
+	it( 'rejects an unparseable creation date', () => {
 		expect(
 			isEligibleForDifmOffer( { ...eligibleInput(), siteCreatedAt: 'not-a-date' }, NOW )
+		).toBe( false );
+	} );
+
+	it( 'accepts a just-created site even when it appears slightly in the future', () => {
+		const justCreated = new Date( NOW ).toISOString();
+		const slightlyFuture = new Date( NOW + 10 * 60 * 1000 ).toISOString();
+		expect(
+			isEligibleForDifmOffer( { ...eligibleInput(), siteCreatedAt: justCreated }, NOW )
+		).toBe( true );
+		expect(
+			isEligibleForDifmOffer( { ...eligibleInput(), siteCreatedAt: slightlyFuture }, NOW )
+		).toBe( true );
+	} );
+
+	it( 'parses a space-separated GMT creation date', () => {
+		expect(
+			isEligibleForDifmOffer( { ...eligibleInput(), siteCreatedAt: '2026-09-24 11:00:00' }, NOW )
+		).toBe( true );
+		expect(
+			isEligibleForDifmOffer( { ...eligibleInput(), siteCreatedAt: '2026-09-01 00:00:00' }, NOW )
 		).toBe( false );
 	} );
 
