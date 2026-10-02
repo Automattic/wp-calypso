@@ -102,6 +102,29 @@ describe( 'Signup Flows Configuration', () => {
 				} )
 			).toBe( 'https://test-site.wordpress.com/wp-admin?celebrate-launch=true' );
 		} );
+
+		test( 'lands a wp-admin launch on the screen its ref names', () => {
+			expect(
+				getDestination( {
+					siteSlug: 'test-site.wordpress.com',
+					refParameter: 'wp-admin/options-reading.php',
+					back_to: 'https://test-site.wordpress.com/wp-admin/options-reading.php',
+				} )
+			).toBe(
+				'https://test-site.wordpress.com/wp-admin/options-reading.php?celebrate-launch=true'
+			);
+		} );
+
+		test( 'lands a wp-admin launch without back_to on the screen its ref names', () => {
+			expect(
+				getDestination( {
+					siteSlug: 'test-site.wordpress.com',
+					refParameter: 'wp-admin/options-reading.php',
+				} )
+			).toBe(
+				'https://test-site.wordpress.com/wp-admin/options-reading.php?celebrate-launch=true'
+			);
+		} );
 	} );
 
 	describe( 'filterDestination with checkout URLs', () => {

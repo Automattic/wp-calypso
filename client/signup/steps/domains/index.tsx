@@ -49,6 +49,14 @@ const getThemeSlugWithRepo = ( themeSlug: string | undefined, isPurchasingTheme:
 	return `${ repo }/${ themeSlug }`;
 };
 
+function isDashboardUrl( url: string ) {
+	try {
+		return dashboardOrigins().includes( new URL( url ).origin );
+	} catch {
+		return false;
+	}
+}
+
 /**
  * Whether `url` points at the site the flow loaded, e.g. the wp-admin screen a launch started from.
  * The host comes from the loaded site rather than from query args, so `back_to` can't name an
@@ -419,9 +427,7 @@ const DomainSearchUI = (
 
 			const backTo = getQueryArg( window.location.href, 'back_to' )?.toString() ?? '';
 			const isSafeBackTo =
-				isRelativeUrl( backTo ) ||
-				dashboardOrigins().some( ( origin ) => backTo?.startsWith( origin ) ) ||
-				isOnSiteHost( backTo, site?.URL );
+				isRelativeUrl( backTo ) || isDashboardUrl( backTo ) || isOnSiteHost( backTo, site?.URL );
 
 			if ( isSafeBackTo ) {
 				backUrl = backTo;

@@ -124,10 +124,19 @@ function getSignupDestination( { siteSlug, redirect_to, localeSlug, flowName } )
 	return redirectTo;
 }
 
-function isWpAdminLaunch( dependencies ) {
+/**
+ * The wp-admin screen a launch started from, as named by its `ref`.
+ * @param {Object} dependencies the signup dependency store
+ * @returns {string|null} the screen's URL, or null when the launch didn't start in wp-admin
+ */
+function getWpAdminLaunchUrl( dependencies ) {
 	const ref = dependencies.refParameter?.trim() ?? '';
 
-	return ref === 'wp-admin' || ref.startsWith( 'wp-admin/' );
+	if ( ref !== 'wp-admin' && ! ref.startsWith( 'wp-admin/' ) ) {
+		return null;
+	}
+
+	return `https://${ dependencies.siteSlug }/${ ref }`;
 }
 
 function getLaunchReturnTarget( dependencies ) {
@@ -136,11 +145,10 @@ function getLaunchReturnTarget( dependencies ) {
 		return { url: dependencies.back_to, celebrateArgs: { celebrateLaunch: 'true' } };
 	}
 
-	if ( isWpAdminLaunch( dependencies ) ) {
-		return {
-			url: `https://${ dependencies.siteSlug }/${ dependencies.refParameter.trim() }`,
-			celebrateArgs: { 'celebrate-launch': 'true' },
-		};
+	const wpAdminUrl = getWpAdminLaunchUrl( dependencies );
+
+	if ( wpAdminUrl ) {
+		return { url: wpAdminUrl, celebrateArgs: { 'celebrate-launch': 'true' } };
 	}
 
 	return {
@@ -166,13 +174,12 @@ function getLaunchDestination( dependencies ) {
 		return addQueryArgs( { celebrateLaunch: 'true' }, dependencies.redirect_to );
 	}
 
-	// wp-admin celebrates a launch on its dashboard, so a launch started anywhere in wp-admin lands
-	// there; its `back_to` only drives the Back button.
-	if ( isWpAdminLaunch( dependencies ) ) {
-		return addQueryArgs(
-			{ 'celebrate-launch': 'true' },
-			`https://${ dependencies.siteSlug }/wp-admin`
-		);
+	// `ref` names a wp-admin screen that celebrates the launch. A wp-admin `back_to` can be any
+	// screen, so it only drives the Back button.
+	const wpAdminUrl = getWpAdminLaunchUrl( dependencies );
+
+	if ( wpAdminUrl ) {
+		return addQueryArgs( { 'celebrate-launch': 'true' }, wpAdminUrl );
 	}
 
 	const { url, celebrateArgs } = getLaunchReturnTarget( dependencies );

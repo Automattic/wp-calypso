@@ -266,6 +266,13 @@ describe( 'DomainSearchStep — launch-site Back button', () => {
 		expect( props?.backLabelText ).toBe( 'Back to sites' );
 	} );
 
+	it( 'ignores a back_to whose host only starts with a dashboard origin', () => {
+		const props = renderWithBackTo( 'https://my.wordpress.com.evil.example/' );
+
+		expect( props?.backUrl ).not.toContain( 'evil.example' );
+		expect( props?.backLabelText ).toBe( 'Back to sites' );
+	} );
+
 	it( 'ignores a site-host back_to when no site was loaded for the flow', () => {
 		const props = renderWithBackTo( 'https://real-site.wordpress.com/wp-admin/tools.php', null );
 
