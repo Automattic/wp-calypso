@@ -11,7 +11,6 @@ import { useState } from 'react';
 import { useAnalytics } from '../../../app/analytics';
 import { ButtonStack } from '../../../components/button-stack';
 import { Card, CardBody } from '../../../components/card';
-import { a4aLink } from '../../../utils/link';
 import {
 	PRESSABLE_EXPANSION_OFFER_TERMS_URL,
 	PRESSABLE_INTRODUCTORY_OFFER_TERMS_URL,
@@ -19,13 +18,15 @@ import {
 import usePressableOfferEligibility, {
 	isPressableOfferActive,
 } from '../../overview/use-pressable-offer-eligibility';
+import { useContactSupport } from '../../support/use-contact-support';
 import { CheckList } from './content-sections';
 import type { Agency } from '@automattic/api-core';
 import type { ReactNode } from 'react';
 
 interface BannerCta {
 	label: string;
-	url: string;
+	url?: string;
+	onClick?: () => void;
 	eventName: string;
 	variant?: 'primary' | 'secondary';
 	isExternal?: boolean;
@@ -73,7 +74,10 @@ function PressableOfferBanner( { title, items, ctas, footnote, toggleEventName }
 										size="compact"
 										href={ cta.url }
 										{ ...( cta.isExternal && { target: '_blank', rel: 'noreferrer' } ) }
-										onClick={ () => recordTracksEvent( cta.eventName ) }
+										onClick={ () => {
+											recordTracksEvent( cta.eventName );
+											cta.onClick?.();
+										} }
 									>
 										{ cta.label }
 									</Button>
@@ -98,6 +102,7 @@ const bold = ( text: string ) => createInterpolateElement( text, { b: <b /> } );
 export default function PressableOffers( { agency }: { agency: Agency | null | undefined } ) {
 	const { isEligibleForPressableIntroOffer, isEligibleForPressableExpansionOffer } =
 		usePressableOfferEligibility( agency );
+	const { openContactForm } = useContactSupport();
 	if ( ! isPressableOfferActive() ) {
 		return null;
 	}
@@ -183,9 +188,7 @@ export default function PressableOffers( { agency }: { agency: Agency | null | u
 			ctas={ [
 				{
 					label: __( 'Talk to us about the offer' ),
-					// TODO: The MSD has no contact-support widget yet; this opens the
-					// classic hosting page with the widget's hash fragment.
-					url: a4aLink( '/marketplace/hosting/pressable#contact-support-pressable-offer' ),
+					onClick: () => openContactForm( { isPressableOffer: true } ),
 					eventName: 'calypso_a4a_pressable_expansion_offer_talk_to_us_click',
 					variant: 'primary',
 				},
