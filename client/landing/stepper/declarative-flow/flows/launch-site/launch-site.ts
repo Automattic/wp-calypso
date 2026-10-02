@@ -40,7 +40,7 @@ import { getProductsList } from 'calypso/state/products-list/selectors/get-produ
 import { STEPS } from '../../internals/steps';
 import { getLaunchSiteSteps } from './get-launch-site-steps';
 import type { FlowV2, SubmitHandler } from '../../internals/types';
-import type { OnboardActions, OnboardSelect } from '@automattic/data-stores';
+import type { OnboardActions, OnboardSelect, SiteSelect } from '@automattic/data-stores';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import type { Store } from 'redux';
 
@@ -105,6 +105,14 @@ function getStepSlugs( flow: FlowV2< typeof initialize > ): string[] {
 	return Array.isArray( steps ) ? steps.map( ( step: { slug: string } ) => step.slug ) : [];
 }
 
+function getHostname( url: string | undefined ) {
+	try {
+		return url ? new URL( url ).hostname : undefined;
+	} catch {
+		return undefined;
+	}
+}
+
 function useLaunchParams(): LaunchParams {
 	const query = useQuery();
 
@@ -131,7 +139,13 @@ const launchSiteFlow: FlowV2< typeof initialize > = {
 	},
 
 	useSideEffect( currentStepSlug ) {
-		const { resetOnboardStore } = useDispatch( ONBOARD_STORE ) as OnboardActions;
+		const { resetOnboardStore, setSiteUrl } = useDispatch( ONBOARD_STORE ) as OnboardActions;
+		const { siteSlug } = useLaunchParams();
+		const siteUrl = useSelect(
+			( select ) =>
+				siteSlug ? ( select( SITE_STORE ) as SiteSelect ).getSite( siteSlug )?.URL : undefined,
+			[ siteSlug ]
+		);
 
 		useQueryProductsList();
 
@@ -146,6 +160,20 @@ const launchSiteFlow: FlowV2< typeof initialize > = {
 				clearSignupCompleteSiteID();
 			}
 		}, [ currentStepSlug, resetOnboardStore ] );
+
+		// The plans step names this address as the one a paid domain redirects to on the Free plan.
+		// Legacy signup took it from the site, not from the domain picked.
+		useEffect( () => {
+			if ( ! currentStepSlug || ! siteSlug ) {
+				return;
+			}
+
+			const siteHostname = getHostname( siteUrl ?? `https://${ siteSlug }` );
+
+			if ( siteHostname ) {
+				setSiteUrl( siteHostname );
+			}
+		}, [ currentStepSlug, siteSlug, siteUrl, setSiteUrl ] );
 	},
 
 	useStepsProps() {

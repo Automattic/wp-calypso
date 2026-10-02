@@ -22,6 +22,7 @@ let mockOnboard: {
 	domainCartItems?: MinimalRequestCartProduct[];
 	planCartItem?: MinimalRequestCartProduct | null;
 	signupDomainOrigin?: string;
+	siteUrl?: string;
 } = {};
 let mockProductsList: Record< string, unknown > = {};
 let mockSite: unknown = null;
@@ -60,6 +61,7 @@ jest.mock( '@wordpress/data', () => {
 		getDomainCartItem: () => mockOnboard.domainCartItem,
 		getDomainCartItems: () => mockOnboard.domainCartItems,
 		getPlanCartItem: () => mockOnboard.planCartItem,
+		getSite: () => mockSite,
 	};
 	const actions = {
 		setDomainCartItem: ( item: MinimalRequestCartProduct | undefined ) => {
@@ -73,6 +75,9 @@ jest.mock( '@wordpress/data', () => {
 		},
 		setSignupDomainOrigin: ( origin: string ) => {
 			mockOnboard.signupDomainOrigin = origin;
+		},
+		setSiteUrl: ( siteUrl: string ) => {
+			mockOnboard.siteUrl = siteUrl;
 		},
 		resetOnboardStore: () => mockResetOnboardStore(),
 	};
@@ -477,6 +482,35 @@ describe( 'launch-site flow', () => {
 			expect( clearStepPersistedState ).not.toHaveBeenCalled();
 			expect( clearSignupDestinationCookie ).not.toHaveBeenCalled();
 			expect( clearSignupCompleteSlug ).not.toHaveBeenCalled();
+		} );
+
+		it( "gives the plans step the site's own address", () => {
+			mockQuery = { siteSlug: 'launchcompare4murdmici.wordpress.com' };
+			mockSite = { ...freeSite, URL: 'https://launchcompare4murdmici.wordpress.com' };
+			mockOnboard = { domainCartItem: { product_slug: 'domain_reg', meta: 'launchcompare4.blog' } };
+
+			renderHook( () => launchSiteFlow.useSideEffect?.( STEPS.DOMAIN_SEARCH.slug, jest.fn() ) );
+
+			expect( mockOnboard.siteUrl ).toBe( 'launchcompare4murdmici.wordpress.com' );
+		} );
+
+		it( 'gives the plans step the site address when it is the first step, as after a refresh', () => {
+			mockQuery = { siteSlug: 'example.wordpress.com' };
+			mockSite = undefined;
+
+			renderHook( () => launchSiteFlow.useSideEffect?.( STEPS.UNIFIED_PLANS.slug, jest.fn() ) );
+
+			expect( mockOnboard.siteUrl ).toBe( 'example.wordpress.com' );
+		} );
+
+		it( 'leaves the site address unset at the flow root, which resets the store', () => {
+			mockSite = { ...freeSite, URL: 'https://example.wordpress.com' };
+
+			renderHook( () =>
+				launchSiteFlow.useSideEffect?.( undefined as unknown as SideEffectStep, jest.fn() )
+			);
+
+			expect( mockOnboard.siteUrl ).toBeUndefined();
 		} );
 	} );
 
