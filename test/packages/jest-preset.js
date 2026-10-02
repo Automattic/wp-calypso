@@ -15,7 +15,7 @@ module.exports = {
 	},
 	modulePathIgnorePatterns: [ '<rootDir>/dist' ],
 	transformIgnorePatterns: [
-		'node_modules[\\/\\\\](?!(@fnando[\\/\\\\]|@wordpress[\\/\\\\]theme[\\/\\\\]|(?:.*[\\/\\\\])?uuid[\\/\\\\])|.*\\.(?:gif|jpg|jpeg|png|svg|webp|scss|mp4|sass|css)$)',
+		'node_modules[\\/\\\\](?!(react-markdown|remark-.*|rehype-.*|unified|unist-.*|mdast-.*|hast-.*|micromark.*|decode-named-character-reference|character-entities.*|property-information|space-separated-tokens|comma-separated-tokens|trim-lines|bail|trough|vfile.*|is-plain-obj|devlop|estree-util-.*|ccount|escape-string-regexp|longest-streak|markdown-table|zwitch|html-url-attributes|@ungap/structured-clone|@fnando[\\/\\\\]|@wordpress[\\/\\\\]theme[\\/\\\\]|(?:.*[\\/\\\\])?uuid[\\/\\\\])|.*\\.(?:gif|jpg|jpeg|png|svg|webp|scss|mp4|sass|css)$)',
 	],
 	setupFilesAfterEnv: [ '<rootDir>../../test/packages/setup.js' ],
 };

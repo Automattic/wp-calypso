@@ -129,10 +129,62 @@ describe( 'SurfaceRenderer', () => {
 		expect( container.querySelector( 'p' )?.textContent ).toBe( text );
 	} );
 
-	it( 'keeps unsafe, malformed and credential-bearing URLs as plain text', () => {
+	it( 'renders Markdown images, formatting, and GFM content', () => {
+		const result = completed();
+		result.surface.components.proposal = {
+			id: 'proposal',
+			type: 'Text',
+			variant: 'body',
+			content: {
+				text: '**Preview**\n\n![Site preview](https://example.com/preview.png)\n\n[Edit site](https://example.com/edit)\n\n- First\n- ~~Second~~\n\n| Name | Status |\n| --- | --- |\n| Site | Ready |\n\n- [x] Reviewed\n\n```js\nconst ready = true;\n```',
+			},
+		};
+		const { container } = render(
+			<SurfaceRenderer surface={ result.surface } onAction={ jest.fn() } />
+		);
+		expect( screen.getByRole( 'img', { name: 'Site preview' } ) ).toHaveAttribute(
+			'src',
+			'https://example.com/preview.png'
+		);
+		expect( screen.getByText( 'Preview' ).tagName ).toBe( 'STRONG' );
+		expect( screen.getByRole( 'link', { name: 'Edit site' } ) ).toHaveAttribute(
+			'href',
+			'https://example.com/edit'
+		);
+		expect( screen.getByText( 'Second' ).tagName ).toBe( 'DEL' );
+		expect( screen.getByRole( 'table' ) ).toBeVisible();
+		expect( screen.getByRole( 'checkbox' ) ).toBeChecked();
+		expect( screen.getByRole( 'checkbox' ) ).toBeDisabled();
+		expect( container.querySelector( 'pre code' ) ).toHaveTextContent( 'const ready = true;' );
+		expect( container.querySelector( 'p p, p table, p ul' ) ).toBeNull();
+	} );
+
+	it.each( [
+		[ 'heading', 'heading' ],
+		[ 'body', null ],
+		[ 'caption', null ],
+		[ 'status', 'status' ],
+	] as const )( 'renders bound Markdown content for the %s variant', ( variant, role ) => {
+		const surface = completed().surface;
+		surface.components.proposal = {
+			id: 'proposal',
+			type: 'Text',
+			content: { path: '/preview' },
+			...( variant === 'status' ? { variant, tone: 'success' } : { variant } ),
+		};
+		surface.data = { preview: '**Preview** ![Screenshot](https://example.com/preview.png)' };
+		const { container } = render( <SurfaceRenderer surface={ surface } onAction={ jest.fn() } /> );
+		expect( screen.getByRole( 'img', { name: 'Screenshot' } ) ).toBeVisible();
+		expect( screen.getByText( 'Preview' ).tagName ).toBe( 'STRONG' );
+		const text = container.querySelector( '.agent-components-text' );
+		expect( text?.getAttribute( 'role' ) ).toBe( role );
+		expect( text?.getAttribute( 'aria-level' ) ).toBe( variant === 'heading' ? '3' : null );
+	} );
+
+	it( 'sanitizes unsafe Markdown URLs and escapes raw HTML', () => {
 		const result = completed();
 		const text =
-			'javascript:alert(1) data:text/html,<script>bad</script> javascript:https://example.com https://user:password@example.com https://[invalid https://example.com\\@other.com';
+			'[Unsafe](javascript:alert%281%29)\n\n![Unsafe image](data:image/svg+xml,example)\n\n<img src="x" onerror="alert(1)">';
 		result.surface.components.proposal = {
 			id: 'proposal',
 			type: 'Text',
@@ -143,8 +195,9 @@ describe( 'SurfaceRenderer', () => {
 			<SurfaceRenderer surface={ result.surface } onAction={ jest.fn() } />
 		);
 		expect( screen.queryByRole( 'link' ) ).not.toBeInTheDocument();
-		expect( container.querySelector( 'script' ) ).toBeNull();
-		expect( container.querySelector( 'p' )?.textContent ).toBe( text );
+		expect( screen.getByAltText( 'Unsafe image' ) ).not.toHaveAttribute( 'src' );
+		expect( container.querySelector( '[onerror]' ) ).toBeNull();
+		expect( screen.getByText( '<img src="x" onerror="alert(1)">' ) ).toBeVisible();
 	} );
 
 	it( 'renders proposal as plain text and emits only the named action', () => {

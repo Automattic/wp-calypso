@@ -24,7 +24,11 @@ await writeFile(
 			file,
 			bytes: html.length,
 			gzipBytes,
-			csp: { connectDomains: [], resourceDomains: [], frameDomains: [] },
+			csp: {
+				connectDomains: [],
+				resourceDomains: [ 'https://images.unsplash.com' ],
+				frameDomains: [],
+			},
 		},
 		null,
 		2

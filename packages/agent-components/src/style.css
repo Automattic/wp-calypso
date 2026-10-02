@@ -35,12 +35,37 @@
 
 .agent-components-text {
 	margin: 0;
-	white-space: pre-wrap;
+	min-width: 0;
+	max-width: 100%;
 	overflow-wrap: anywhere;
+}
+
+.agent-components-text > :first-child {
+	margin-top: 0;
+}
+
+.agent-components-text > :last-child {
+	margin-bottom: 0;
+}
+
+.agent-components-text img {
+	max-width: 100%;
+	height: auto;
+}
+
+.agent-components-text pre,
+.agent-components-text table {
+	max-width: 100%;
+	overflow-x: auto;
+}
+
+.agent-components-text table {
+	display: block;
 }
 
 .agent-components-text--heading {
 	font-size: 1.125em;
+	font-weight: 600;
 }
 
 .agent-components-text--caption {

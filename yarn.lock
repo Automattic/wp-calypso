@@ -287,6 +287,8 @@ __metadata:
     "@wordpress/element": "npm:^8.0.0"
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
+    react-markdown: "npm:^10.1.0"
+    remark-gfm: "npm:^4.0.1"
     tslib: "npm:^2.8.1"
     typescript: "npm:^6.0.3"
   peerDependencies:

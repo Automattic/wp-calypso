@@ -28,6 +28,7 @@ export interface RowComponent {
 export type TextComponent = {
 	id: string;
 	type: 'Text';
+	/** GitHub Flavored Markdown, including links, images, lists, and tables. */
 	content: { text: string } | { path: string };
 } & (
 	| { variant: 'heading' | 'body' | 'caption' }

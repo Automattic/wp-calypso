@@ -12,4 +12,6 @@ Deploy `dist/manifest.json` and its checksum-named HTML file to `wp-content/lib/
 
 The app applies host theme, style, locale, direction and container constraints. Shell messages use English; field labels, button labels and result text come from the server. After deploying a new resource, refresh the host's MCP tool inventory because open cards can retain the old template.
 
+Text components render GitHub Flavored Markdown. The resource policy currently allows external images from `https://images.unsplash.com`; additional image origins must be declared in `bin/create-manifest.mjs` before hosts can load them.
+
 For live acceptance, propose an action in an MCP conversation, click its confirmation, and verify the saved-site mutation, completed replacement and agent's next reply. A successful `sendMessage` response alone does not prove that the agent replied. An uncertain result disables the control; history reopening must not restore completed actions.

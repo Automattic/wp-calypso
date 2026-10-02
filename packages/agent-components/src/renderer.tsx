@@ -7,9 +7,10 @@ import {
 	TextControl,
 } from '@wordpress/components';
 import { Fragment, useId, useState } from '@wordpress/element';
+import ReactMarkdown, { defaultUrlTransform } from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 import { readBinding, scalarText, writeBinding } from './bindings';
 import { componentDefinitions } from './catalog';
-import { linkifyText } from './text-links';
 import type {
 	ActionEvent,
 	ButtonComponent,
@@ -44,13 +45,30 @@ export function Text( { component, value }: { component: TextComponent; value?: 
 	) {
 		content = scalarText( value );
 	}
-	if ( component.variant === 'heading' ) {
-		return <h3 className={ className }>{ linkifyText( content ) }</h3>;
-	}
 	return (
-		<p className={ className } role={ component.variant === 'status' ? 'status' : undefined }>
-			{ linkifyText( content ) }
-		</p>
+		<div
+			className={ className }
+			role={
+				component.variant === 'heading' || component.variant === 'status'
+					? component.variant
+					: undefined
+			}
+			aria-level={ component.variant === 'heading' ? 3 : undefined }
+		>
+			<ReactMarkdown
+				remarkPlugins={ [ remarkGfm ] }
+				urlTransform={ ( url ) => defaultUrlTransform( url ) || undefined }
+				components={ {
+					a: ( { href, children } ) => (
+						<a href={ href } target="_blank" rel="noopener noreferrer">
+							{ children }
+						</a>
+					),
+				} }
+			>
+				{ content }
+			</ReactMarkdown>
+		</div>
 	);
 }
 
