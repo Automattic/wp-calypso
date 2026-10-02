@@ -11,7 +11,6 @@ import { useCheckoutHelpCenter } from 'calypso/my-sites/checkout/src/hooks/use-c
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { isMarketplaceProduct } from 'calypso/state/products-list/selectors';
-import { getDomainsBySiteId, hasLoadedSiteDomains } from 'calypso/state/sites/domains/selectors';
 import { getPlansBySiteId } from 'calypso/state/sites/plans/selectors/get-plans-by-site';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { CHECKOUT_STORE } from '../lib/wpcom-store';
@@ -28,6 +27,7 @@ import {
 	countryList,
 	mockGetPaymentMethodsEndpoint,
 	mockLogStashEndpoint,
+	mockGetSiteDomainsEndpoint,
 	mockGetSupportedCountriesEndpoint,
 	mockUserSignupValidationEndpoint,
 	mockSetCachedContactDetailsEndpoint,
@@ -36,7 +36,6 @@ import { MockCheckout } from './util/mock-checkout';
 import type { CartKey } from '@automattic/shopping-cart';
 
 jest.mock( 'calypso/state/sites/selectors' );
-jest.mock( 'calypso/state/sites/domains/selectors' );
 jest.mock( 'calypso/state/selectors/is-site-automated-transfer' );
 jest.mock( 'calypso/state/sites/plans/selectors/get-plans-by-site' );
 jest.mock( 'calypso/my-sites/checkout/src/hooks/use-checkout-help-center' );
@@ -71,8 +70,7 @@ describe( 'Checkout contact step VAT form', () => {
 	getPlansBySiteId.mockImplementation( () => ( {
 		data: getActivePersonalPlanDataForType( 'yearly' ),
 	} ) );
-	hasLoadedSiteDomains.mockImplementation( () => true );
-	getDomainsBySiteId.mockImplementation( () => [] );
+	mockGetSiteDomainsEndpoint( [] );
 	isMarketplaceProduct.mockImplementation( () => false );
 	isJetpackSite.mockImplementation( () => false );
 	useCheckoutHelpCenter.mockImplementation( () => ( {

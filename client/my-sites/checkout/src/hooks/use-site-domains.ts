@@ -1,37 +1,20 @@
-import debugFactory from 'debug';
-import { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'calypso/state';
-import { fetchSiteDomains } from 'calypso/state/sites/domains/actions';
-import { getDomainsBySiteId, hasLoadedSiteDomains } from 'calypso/state/sites/domains/selectors';
+import { siteDomainsQuery } from '@automattic/api-queries';
+import { useQuery } from '@tanstack/react-query';
+import { createSiteDomainObject } from 'calypso/state/sites/domains/assembler';
+import type { Domain } from '@automattic/api-core';
 import type { ResponseDomain } from 'calypso/lib/domains/types';
 
-const debug = debugFactory( 'calypso:composite-checkout:use-site-domains' );
+const EMPTY_SITE_DOMAINS: ResponseDomain[] = [];
+
+const selectSiteDomains = ( domains: Domain[] ): ResponseDomain[] =>
+	domains.map( createSiteDomainObject );
 
 export default function useSiteDomains( siteId: number | undefined ): ResponseDomain[] {
-	const dispatch = useDispatch();
+	const { data } = useQuery( {
+		...siteDomainsQuery( siteId ?? 0 ),
+		enabled: !! siteId,
+		select: selectSiteDomains,
+	} );
 
-	const [ siteDomains, setSiteDomains ] = useState< ResponseDomain[] >( [] );
-
-	const areDomainsLoaded = useSelector( ( state ) =>
-		siteId ? hasLoadedSiteDomains( state, siteId ) : false
-	);
-	const domains: ResponseDomain[] = useSelector( ( state ) => getDomainsBySiteId( state, siteId ) );
-
-	useEffect( () => {
-		if ( areDomainsLoaded && domains.length > 0 ) {
-			setSiteDomains( domains );
-		}
-	}, [ areDomainsLoaded, domains ] );
-
-	useEffect( () => {
-		if ( areDomainsLoaded ) {
-			return;
-		}
-		if ( siteId ) {
-			debug( 'Fetching list of domains' );
-			dispatch( fetchSiteDomains( siteId ) );
-		}
-	}, [ areDomainsLoaded, dispatch, siteId ] );
-
-	return siteDomains;
+	return data ?? EMPTY_SITE_DOMAINS;
 }

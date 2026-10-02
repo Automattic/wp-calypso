@@ -1267,6 +1267,15 @@ export function mockGetVatInfoEndpoint( response ) {
 		.reply( 200, response );
 }
 
+export function mockGetSiteDomainsEndpoint( response: unknown[] ) {
+	nock( 'https://public-api.wordpress.com' )
+		.persist()
+		.get( `/rest/v1.2/sites/${ siteId }/domains` )
+		.query( true )
+		.optionally()
+		.reply( 200, { domains: response } );
+}
+
 export function mockLogStashEndpoint() {
 	const endpoint = jest.fn();
 	endpoint.mockReturnValue( true );

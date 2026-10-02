@@ -1080,6 +1080,8 @@
 	.lp-icon--custom-automattic-footer {
 		width: 150px;
 		height: auto;
+		margin: 0;
+		transform: translateY(-0.5px);
 		transition: color 0.15s ease-out;
 	}
 
@@ -1294,6 +1296,7 @@
 	}
 
 	.lp-footer-bottom__branding .lp-flex--inline {
+		align-items: center;
 		gap: 10px;
 		--lp-color: var(--lp-footer-secondary-color-rgb);
 		text-transform: uppercase;
