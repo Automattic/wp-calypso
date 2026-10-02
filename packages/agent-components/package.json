@@ -4,6 +4,12 @@
 	"private": true,
 	"description": "Portable button action components for agent hosts.",
 	"license": "GPL-2.0-or-later",
+	"author": "Automattic Inc.",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Automattic/wp-calypso.git",
+		"directory": "packages/agent-components"
+	},
 	"main": "dist/cjs/index.js",
 	"module": "dist/esm/index.js",
 	"types": "dist/types/index.d.ts",
