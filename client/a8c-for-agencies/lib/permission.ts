@@ -23,6 +23,7 @@ import {
 	A4A_SITES_LINK_ADD_NEW_SITE_TOUR,
 	A4A_SITES_CONNECT_URL_LINK,
 	A4A_PLUGINS_LINK,
+	A4A_THEMES_LINK,
 	A4A_MARKETPLACE_LINK,
 	A4A_MARKETPLACE_PRODUCTS_LINK,
 	A4A_MARKETPLACE_HOSTING_LINK,
@@ -119,6 +120,7 @@ const MEMBER_ACCESSIBLE_PATHS: Record< string, string[] > = {
 	[ A4A_TEAM_INVITE_LINK ]: [ 'a4a_edit_user_invites' ],
 	[ A4A_AGENCY_TIER_LINK ]: [ 'a4a_read_agency_tier' ],
 	[ A4A_PLUGINS_LINK ]: [ 'a4a_read_managed_sites' ],
+	[ A4A_THEMES_LINK ]: [ 'a4a_read_managed_sites' ],
 	// TODO: Add the correct capability for WooPayments
 	[ A4A_WOOPAYMENTS_LINK ]: [ 'a4a_read_referrals' ],
 	[ A4A_WOOPAYMENTS_DASHBOARD_LINK ]: [ 'a4a_read_referrals' ],
@@ -146,6 +148,7 @@ const MEMBER_ACCESSIBLE_DYNAMIC_PATHS: Record< string, string[] > = {
 	marketplace: [ 'a4a_read_marketplace' ],
 	licenses: [ 'a4a_jetpack_licensing' ],
 	plugins: [ 'a4a_read_managed_sites' ],
+	themes: [ 'a4a_read_managed_sites' ],
 	referrals: [ 'a4a_read_referrals' ],
 	'agent-studio': [ 'a4a_read_learn' ],
 };
@@ -156,6 +159,7 @@ const DYNAMIC_PATH_PATTERNS: Record< string, RegExp > = {
 	licenses: /^\/purchases\/licenses(\/.*)?$/,
 	team: /^\/team(\/.*)?$/,
 	plugins: /^\/plugins(\/.*)?$/,
+	themes: /^\/themes(\/.*)?$/,
 	referrals: /^\/referrals(\/.*)?$/,
 	'agent-studio': /^\/resources-and-tools\/agent-studio\/(projects|agents|outputs)\/[^/]+(\/.*)?$/,
 };
