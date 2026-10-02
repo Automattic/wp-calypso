@@ -1,4 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
+import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import { urlToSlug } from 'calypso/lib/url/http-utils';
 import { AllowedTypes } from '../../types';
 
@@ -67,11 +68,11 @@ const getLinks = (
 		case 'plugin': {
 			link = `${ siteUrlWithScheme }/wp-admin/plugins.php`;
 			isExternalLink = true;
-			if ( ! isAtomicSite ) {
-				link =
-					status === 'warning'
-						? `/plugins/updates/${ siteUrlWithMultiSiteSupport }`
-						: `/plugins/manage/${ siteUrlWithMultiSiteSupport }`;
+			if ( ! isAtomicSite && ! isA8CForAgencies() ) {
+				link = `/plugins/manage/${ siteUrlWithMultiSiteSupport }`;
+				if ( status === 'warning' ) {
+					link += '?updates=1';
+				}
 				isExternalLink = false;
 			}
 			break;

@@ -19,17 +19,26 @@ import { PLUGINS_STATUS } from 'calypso/state/plugins/installed/status/constants
 import { Plugin } from 'calypso/state/plugins/installed/types';
 import { useActions } from './use-actions';
 import { useFields } from './use-fields';
-import type { SupportedLayouts } from '@wordpress/dataviews';
+import type { Filter, SupportedLayouts } from '@wordpress/dataviews';
 import './style.scss';
 
 interface Props {
 	pluginSlug: string | null;
 	currentPlugins: Array< Plugin >;
 	initialSearch?: string;
+	initialFilterUpdates?: boolean;
 	isLoading: boolean;
 	onSearch?: ( search: string ) => void;
 	bulkActionDialog: ( action: string, plugins: Array< Plugin > ) => void;
 }
+
+const UPDATES_FILTERS: Filter[] = [
+	{
+		field: 'status',
+		operator: 'isAny',
+		value: [ PLUGINS_STATUS.UPDATE ],
+	},
+];
 
 const openPluginSitesPane = ( plugin: Plugin ) => {
 	recordTracksEvent( 'calypso_plugins_list_open_plugin_sites_pane', {
@@ -42,6 +51,7 @@ export default function PluginsListDataViews( {
 	pluginSlug,
 	currentPlugins,
 	initialSearch,
+	initialFilterUpdates,
 	isLoading,
 	onSearch,
 	bulkActionDialog,
@@ -69,6 +79,7 @@ export default function PluginsListDataViews( {
 			...initialDataViewsState,
 			perPage: 15,
 			search: initialSearch,
+			filters: initialFilterUpdates ? UPDATES_FILTERS : [],
 			fields: [ 'sites', 'update' ],
 			type: shouldUseListView ? DATAVIEWS_LIST : DATAVIEWS_TABLE,
 			titleField: 'plugins',
@@ -93,7 +104,7 @@ export default function PluginsListDataViews( {
 		};
 	} );
 
-	const [ isFilteringUpdates, setIsFilteringUpdates ] = useState( false );
+	const [ isFilteringUpdates, setIsFilteringUpdates ] = useState( !! initialFilterUpdates );
 
 	useEffect( () => {
 		// Sets the correct fields when route changes or viewport changes
@@ -130,13 +141,7 @@ export default function PluginsListDataViews( {
 						} else {
 							setDataViewsState( {
 								...dataViewsState,
-								filters: [
-									{
-										field: 'status',
-										operator: 'isAny',
-										value: [ PLUGINS_STATUS.UPDATE ],
-									},
-								],
+								filters: UPDATES_FILTERS,
 								page: 1,
 							} );
 						}
