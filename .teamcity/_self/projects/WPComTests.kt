@@ -316,7 +316,7 @@ fun jetpackAtomicBuildSmokeE2eBuildType( targetDevice: String, buildUuid: String
 		id("WPComTests_jetpack_atomic_build_smoke_e2e_$targetDevice")
 		uuid = buildUuid
 		name = "Jetpack Atomic Build Smoke E2E Tests ($targetDevice)"
-		description = "Runs E2E tests to smoke test the most recent Jetpack build on Atomic staging sites. The Atomic environment variation follows the calypso revision under test, so builds on the same revision repeat it."
+		description = "Runs E2E tests to smoke test the most recent Jetpack build on Atomic staging sites. Each spec file runs on one Atomic environment variation, picked from the spec file and the calypso revision under test, so builds on the same revision repeat it."
 
 		artifactRules = defaultE2eArtifactRules();
 
@@ -333,9 +333,10 @@ fun jetpackAtomicBuildSmokeE2eBuildType( targetDevice: String, buildUuid: String
 			param("env.JETPACK_TARGET", "wpcom-deployment")
 			param("env.TEST_ON_ATOMIC", "true")
 			param("env.ATOMIC_VARIATION", "mixed")
-			// What "mixed" resolves against. Keyed on the commit so a re-run of a failed build
-			// repeats the variation that failed. This build has no VCS trigger, so every build
-			// on an unchanged calypso revision repeats it too: reproducibility over coverage.
+			// What "mixed" resolves against, with each spec file's name. Keyed on the commit so a
+			// re-run of a failed build repeats the variations that failed. This build has no VCS
+			// trigger, so every build on an unchanged calypso revision repeats them too:
+			// reproducibility over coverage.
 			param("env.ATOMIC_VARIATION_KEY", "%build.vcs.number%")
 		}
 
@@ -345,8 +346,9 @@ fun jetpackAtomicBuildSmokeE2eBuildType( targetDevice: String, buildUuid: String
 			runTaggedPlaywrightSpecs(
 				tag = "@jetpack-wpcom-integration",
 				targetDevice = targetDevice,
-				// Every worker in this build shares one Atomic site and one account, so the
-				// count is bounded by what that single site serves, not by the agent's cores.
+				// The spec files spread over the seven Atomic sites, but every worker can still
+				// land on one of them at once: the private site fails at 14 concurrent workers
+				// and holds at 4, so the count stays bounded by what a single site serves.
 				additionalEnvVars = mapOf( "PW_WORKERS" to "4" ),
 			)
 		}
@@ -626,8 +628,8 @@ private object JetpackAtomicSmokeE2ETests : BuildType({
 		param("env.TEST_ON_ATOMIC", "true")
 		param("env.PW_WORKERS", "14")
 		param("env.ATOMIC_VARIATION", "mixed")
-		// What "mixed" resolves against. Keyed on the commit so a re-run of a failed build
-		// repeats the variation that failed.
+		// What "mixed" resolves against, with each spec file's name. Keyed on the commit so a
+		// re-run of a failed build repeats the variations that failed.
 		param("env.ATOMIC_VARIATION_KEY", "%build.vcs.number%")
 	}
 })
