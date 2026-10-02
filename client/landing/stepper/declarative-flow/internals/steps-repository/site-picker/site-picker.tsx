@@ -1,5 +1,9 @@
 import { SubTitle, Title } from '@automattic/onboarding';
-import { createSitesListComponent, GroupableSiteLaunchStatuses } from '@automattic/sites';
+import {
+	createSitesListComponent,
+	DEFAULT_SITE_LAUNCH_STATUS_GROUP_VALUE,
+	GroupableSiteLaunchStatuses,
+} from '@automattic/sites';
 import { Button } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
@@ -13,7 +17,6 @@ import {
 	SitesDashboardQueryParams,
 } from 'calypso/sites-dashboard/components/sites-content-controls';
 import { PageBodyBottomContainer } from 'calypso/sites-dashboard/components/sites-dashboard';
-import { SitesGrid } from 'calypso/sites-dashboard/components/sites-grid';
 import { useSitesSorting } from 'calypso/state/sites/hooks/use-sites-sorting';
 import type { SiteExcerptData } from '@automattic/sites';
 
@@ -24,6 +27,7 @@ interface Props {
 	perPage?: number;
 	search: string;
 	status: GroupableSiteLaunchStatuses;
+	hasSourceSite: boolean;
 	onCreateSite: () => void;
 	onSelectSite: ( site: SiteExcerptData ) => void;
 	onQueryParamChange: ( params: Partial< SitesDashboardQueryParams > ) => void;
@@ -35,12 +39,18 @@ const SitePicker = function SitePicker( props: Props ) {
 		perPage = 96,
 		search,
 		status,
+		hasSourceSite,
 		onSelectSite,
 		onCreateSite,
 		onQueryParamChange,
 	} = props;
 	const { sitesSorting, onSitesSortingChange } = useSitesSorting();
-	const { data: allSites = [], isLoading } = useSiteExcerptsQuery(
+	const {
+		data: allSites = [],
+		isLoading,
+		isError,
+		refetch,
+	} = useSiteExcerptsQuery(
 		SITE_PICKER_FILTER_CONFIG,
 		( site ) => ! site.is_wpcom_staging_site && ! site.is_deleted
 	);
@@ -48,12 +58,16 @@ const SitePicker = function SitePicker( props: Props ) {
 	return (
 		<div className="site-picker--container">
 			<div className="site-picker--title">
-				<Title>{ __( 'Pick your destination' ) }</Title>
+				<Title>{ __( 'Choose a destination site' ) }</Title>
 				<SubTitle>
 					{ createInterpolateElement(
-						__(
-							'Select the WordPress.com site where you’ll move your old site or <button>create a new one</button>'
-						),
+						hasSourceSite
+							? __(
+									'Choose the WordPress.com site where you want to move your old site, or <button>create a new site</button>'
+							  )
+							: __(
+									'This is where we’ll add the content you import. Choose an existing site or <button>create a new site</button>'
+							  ),
 						{
 							button: <Button onClick={ onCreateSite } />,
 						}
@@ -69,25 +83,77 @@ const SitePicker = function SitePicker( props: Props ) {
 				{ ( { sites, statuses } ) => {
 					const paginatedSites = sites.slice( ( page - 1 ) * perPage, page * perPage );
 					const selectedStatus = statuses.find( ( { name } ) => name === status ) || statuses[ 0 ];
+					const showControls =
+						allSites.length > 8 || !! search || status !== DEFAULT_SITE_LAUNCH_STATUS_GROUP_VALUE;
+
+					if ( isError ) {
+						return (
+							<div className="site-picker--error" role="alert">
+								<p>{ __( 'We couldn’t load your sites. Please try again.' ) }</p>
+								<Button variant="secondary" onClick={ () => refetch() }>
+									{ __( 'Try again' ) }
+								</Button>
+							</div>
+						);
+					}
 
 					return (
 						<>
-							<SitesContentControls
-								initialSearch={ search }
-								onQueryParamChange={ onQueryParamChange }
-								sitesSorting={ sitesSorting }
-								onSitesSortingChange={ onSitesSortingChange }
-								statuses={ statuses }
-								selectedStatus={ selectedStatus }
-								hasSitesSortingPreferenceLoaded
-							/>
+							{ showControls && (
+								<div className="site-picker--controls">
+									<SitesContentControls
+										initialSearch={ search }
+										onQueryParamChange={ onQueryParamChange }
+										sitesSorting={ sitesSorting }
+										onSitesSortingChange={ onSitesSortingChange }
+										statuses={ statuses }
+										selectedStatus={ selectedStatus }
+										hasSitesSortingPreferenceLoaded
+									/>
+								</div>
+							) }
 							{ paginatedSites.length > 0 || isLoading ? (
 								<>
-									<SitesGrid
-										isLoading={ isLoading }
-										sites={ paginatedSites }
-										onSiteSelectBtnClick={ onSelectSite }
-									/>
+									{ isLoading ? (
+										<div
+											className="site-picker--loading"
+											role="status"
+											aria-label={ __( 'Loading sites' ) }
+										/>
+									) : (
+										<ul className="site-picker--list">
+											{ paginatedSites.map( ( site ) => (
+												<li className="site-picker--site" key={ site.ID }>
+													<div className="site-picker--site-icon" aria-hidden="true">
+														{ site.icon?.img ? (
+															<img src={ site.icon.img } alt="" />
+														) : (
+															( site.title || site.name || '?' ).trim().charAt( 0 ).toUpperCase()
+														) }
+													</div>
+													<div className="site-picker--site-details">
+														<strong id={ `site-picker--site-name-${ site.ID }` }>
+															{ site.title || site.name }
+														</strong>
+														<span>{ formatSiteDomain( site.URL ) }</span>
+														{ ( site.is_coming_soon || site.is_private ) && (
+															<small>
+																{ site.is_coming_soon ? __( 'Coming soon' ) : __( 'Private' ) }
+															</small>
+														) }
+													</div>
+													<Button
+														id={ `site-picker--choose-${ site.ID }` }
+														aria-labelledby={ `site-picker--choose-${ site.ID } site-picker--site-name-${ site.ID }` }
+														variant="primary"
+														onClick={ () => onSelectSite( site ) }
+													>
+														{ __( 'Choose' ) }
+													</Button>
+												</li>
+											) ) }
+										</ul>
+									) }
 									{ ( selectedStatus.hiddenCount > 0 || sites.length > perPage ) && (
 										<PageBodyBottomContainer>
 											<Pagination
@@ -116,3 +182,11 @@ const SitePicker = function SitePicker( props: Props ) {
 };
 
 export default SitePicker;
+
+function formatSiteDomain( siteUrl: string ) {
+	try {
+		return new URL( siteUrl ).hostname;
+	} catch {
+		return siteUrl;
+	}
+}
