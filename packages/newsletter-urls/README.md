@@ -22,6 +22,14 @@ than an oversight. `subscriber` and `user` are accepted only on the Subscribers 
 subscriber detail panel renders on no other. The panel opens on either id, so `user` works on
 its own for a subscriber with no subscription id to hand.
 
-This package builds strings and knows nothing about sites. Deciding _whether_ a site uses the
-wp-admin page at all — a self-hosted Jetpack below 16.1 manages subscribers on Jetpack Cloud —
-belongs to the caller.
+`hasNewsletterSubscribersPage()` answers the other half of the question — whether a site uses the wp-admin page at all, or still manages subscribers on Jetpack Cloud:
+
+```js
+import { hasNewsletterSubscribersPage } from '@automattic/newsletter-urls';
+
+hasNewsletterSubscribersPage( { isSelfHostedJetpack, jetpackVersion } );
+```
+
+Newsletter > Subscribers shipped in Jetpack 16.1; self-hosted sites below that keep the Jetpack Cloud list, and Simple and Atomic sites always have the wp-admin page. The comparison follows the backend's `version_compare()` on the shapes Jetpack ships, so a prerelease of the minimum (`16.1-beta`) counts as below it.
+
+Callers supply those two facts from wherever they hold site data; the threshold and the comparison live here so they cannot drift apart.
