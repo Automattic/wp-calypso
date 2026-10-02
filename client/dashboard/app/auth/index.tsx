@@ -10,6 +10,7 @@ import {
 	useQueryClient,
 	type QueryCacheNotifyEvent,
 	type MutationCacheNotifyEvent,
+	type QueryFunctionContext,
 	QueryClient,
 } from '@tanstack/react-query';
 import { createContext, useContext, useMemo, useEffect, useRef, useCallback } from 'react';
@@ -22,15 +23,12 @@ import type { WPError } from '@automattic/api-core';
 export const AUTH_QUERY_KEY = [ 'auth', 'user' ];
 
 /**
- * Patches the current user so `useAuth()` consumers see a change without a reload. A
- * bootstrapped session refetches `window.currentUser` instead of `/me`, so the change has to
- * land there too or the next refetch undoes it.
+ * Patches the current user so `useAuth()` consumers see a change straight away, then
+ * refetches it from `/me` to confirm.
  */
 export function updateCurrentUser( queryClient: QueryClient, changes: Partial< User > ) {
-	if ( window.currentUser ) {
-		window.currentUser = { ...window.currentUser, ...changes };
-	}
 	queryClient.setQueryData< User >( AUTH_QUERY_KEY, ( user ) => user && { ...user, ...changes } );
+	queryClient.invalidateQueries( { queryKey: AUTH_QUERY_KEY } );
 }
 
 const BOOTSTRAP_ERROR_MESSAGE = 'Failed to bootstrap user object';
@@ -173,7 +171,7 @@ function shouldUseBootstrap(): boolean {
 	return ! isSupportUserSession() && config.isEnabled( 'wpcom-user-bootstrap' );
 }
 
-export async function initializeCurrentUser(): Promise< User > {
+export async function loadInitialUser(): Promise< User > {
 	if ( shouldUseBootstrap() ) {
 		if ( window.currentUser ) {
 			return window.currentUser;
@@ -182,6 +180,17 @@ export async function initializeCurrentUser(): Promise< User > {
 	}
 
 	return fetchUser();
+}
+
+/**
+ * The bootstrapped `window.currentUser` is only fresh on page load, so once the cache holds a
+ * user every later fetch goes to `/me`.
+ */
+export function authQueryFn( { client, queryKey }: QueryFunctionContext ): Promise< User > {
+	if ( client.getQueryData< User >( queryKey ) ) {
+		return fetchUser();
+	}
+	return loadInitialUser();
 }
 
 function getAuthErrorReason( error: unknown ): string {
@@ -215,7 +224,7 @@ export function AuthProvider( { children }: { children: React.ReactNode } ) {
 		error: userError,
 	} = useQuery( {
 		queryKey: AUTH_QUERY_KEY,
-		queryFn: initializeCurrentUser,
+		queryFn: authQueryFn,
 		staleTime: 30 * 60 * 1000, // Consider auth valid for 30 minutes
 		retry: false, // Don't retry on 401 errors
 		meta: {
