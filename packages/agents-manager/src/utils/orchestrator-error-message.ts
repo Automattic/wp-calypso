@@ -1,9 +1,8 @@
 import { __ } from '@wordpress/i18n';
 
 /**
- * The server's error code for a second result to the same browser tool call. After a
- * page change, the page resuming a paused turn (WOOAI-1174) can lose that race to the
- * page that ran the tool; the turn continues there, so it is not an error to show.
+ * The server's error code for a second result to the same browser tool call: another
+ * page answered first and the turn continues there, so it is not an error to show.
  */
 export const TOOL_RESULT_ALREADY_RECEIVED = 'tool_result_already_received';
 

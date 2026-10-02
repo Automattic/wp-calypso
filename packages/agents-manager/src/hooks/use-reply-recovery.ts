@@ -1,25 +1,13 @@
 /**
- * Recover the reply to a question the merchant asked before a page change
- * (WOOAI-872): the new page hydrates the conversation once, and if the server
- * was still answering that fetch has the question and nothing after it.
+ * Recovers the reply to a question asked before a page change. When the first
+ * hydration ends at that question, polls page 1 until the reply lands, then
+ * rehydrates once. A question the server never stored or never answers ends in
+ * a notice with Retry.
  *
- * Nothing here rehydrates on a timer. The transcript is read once at mount
- * (the snapshot), then a cheap page-1 probe on its own query key watches for a
- * newer agent row. Only when the reply is confirmed is the hydration query
- * invalidated, once. Every path ends: the merchant sending or a turn going in
- * flight stops it, and a question the server never received (after
- * `LOST_AFTER_MS`) or never answers (after `UNANSWERED_AFTER_MS`) ends in a
- * notice with a retry.
- *
- * A turn can also be paused on a browser-run tool (WOOAI-1174): the server asked
- * the old page to run it, and no page will send the result. The probe sees that
- * through `pendingClientTools`, and once the old page has had time to send its own
- * result, this page resumes the turn: with the results the old page stored, or an
- * "interrupted" result per call, so the assistant re-runs what it still needs. The
- * reply then streams in live. The server accepts one result per call, so a resume
- * racing the old page cannot continue the turn twice; the loser keeps waiting.
- *
- * Every state is a notice, never `isProcessing`, so the composer stays usable.
+ * A turn paused on a browser-run tool has no page left to send the result, so
+ * after a grace period this page resumes it with the stored or an "interrupted"
+ * result per call. The server takes one result per call; a losing resume keeps
+ * waiting.
  */
 import {
 	getAgentManager,

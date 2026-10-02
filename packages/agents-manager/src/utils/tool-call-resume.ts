@@ -18,12 +18,9 @@ export const INTERRUPTED_TOOL_RESULT = {
 };
 
 /**
- * Builds the message that resumes a turn paused on browser tool calls
- * (WOOAI-1174): one result per pending call, and the turn's calls to add to
- * history when this page never saw them.
- *
- * A result the old page already stored (the tool finished, but the send never
- * reached the server) is sent as is; every other call gets `INTERRUPTED_TOOL_RESULT`.
+ * Builds the message that resumes a turn paused on browser tool calls: one result
+ * per pending call (the one the old page stored, else `INTERRUPTED_TOOL_RESULT`),
+ * and the calls to add to history when this page never saw them.
  * @param pending       The calls the server reports the turn is waiting on.
  * @param localMessages The tab's stored transcript, read before hydration replaced it.
  */
