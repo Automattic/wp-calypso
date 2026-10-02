@@ -42,6 +42,7 @@ export interface Theme {
 	popularity_rank: string;
 	product_details?: MarketplaceThemeProductDetails[];
 	preview_url: string;
+	retired?: boolean;
 	screenshot: string;
 	screenshots: string[];
 	style_variations: StyleVariation[];

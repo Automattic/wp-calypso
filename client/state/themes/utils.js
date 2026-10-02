@@ -21,6 +21,34 @@ const DELISTED_TAXONOMY_TERM_SLUGS = [ 'auto-loading-homepage' ];
 // directly from wp.org, which is why they cannot be removed in the endpoint payload.
 const DELISTED_WPORG_THEMES = [ 'shopline', 'store-shopline' ];
 
+// Word forms used to spell out a year the way WordPress names its default themes:
+// `twenty` + a teens word for 2010-2019, `twentytwenty` + a ones word for 2020-2029.
+const YEAR_TEENS_WORDS = [
+	'ten',
+	'eleven',
+	'twelve',
+	'thirteen',
+	'fourteen',
+	'fifteen',
+	'sixteen',
+	'seventeen',
+	'eighteen',
+	'nineteen',
+];
+const YEAR_ONES_WORDS = [
+	'',
+	'one',
+	'two',
+	'three',
+	'four',
+	'five',
+	'six',
+	'seven',
+	'eight',
+	'nine',
+];
+const REGEXP_YEAR = /\b(20[12]\d)\b/g;
+
 /**
  * Utility
  */
@@ -125,6 +153,49 @@ export function normalizeWporgTheme( theme, tier ) {
 			} ) ),
 		},
 	};
+}
+
+/**
+ * Returns the slug of the WordPress default theme released in a given year,
+ * e.g. 2011 -> 'twentyeleven', 2024 -> 'twentytwentyfour'.
+ *
+ * Only the naming scheme is encoded here, not which themes exist: 2018 yields
+ * 'twentyeighteen' even though WordPress shipped no default theme that year, and
+ * years map ahead of a theme's release. Those simply find nothing, as today.
+ * @param  {number} year Four-digit year
+ * @returns {?string}     Theme slug, or null for years outside the naming scheme
+ */
+function getDefaultThemeSlugForYear( year ) {
+	if ( year >= 2010 && year <= 2019 ) {
+		return `twenty${ YEAR_TEENS_WORDS[ year - 2010 ] }`;
+	}
+
+	if ( year >= 2020 && year <= 2029 ) {
+		return `twentytwenty${ YEAR_ONES_WORDS[ year - 2020 ] }`;
+	}
+
+	return null;
+}
+
+/**
+ * Rewrites year terms in a theme search string to the slug of the default theme
+ * released that year, so that searching "2011" finds Twenty Eleven.
+ *
+ * The WPCOM theme search index holds no year keyword for the Twenty * themes, so
+ * every year term returns zero results on its own. This is applied to the outgoing
+ * request only; callers keep displaying and caching against what the user typed.
+ * @param  {string} search Search string
+ * @returns {string}        Search string with year terms replaced by theme slugs
+ */
+export function normalizeThemeSearchTerm( search ) {
+	if ( ! search ) {
+		return search;
+	}
+
+	return search.replace(
+		REGEXP_YEAR,
+		( year ) => getDefaultThemeSlugForYear( Number( year ) ) ?? year
+	);
 }
 
 /**
