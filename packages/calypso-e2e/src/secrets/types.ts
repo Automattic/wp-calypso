@@ -1,4 +1,5 @@
 import { TEST_ACCOUNT_NAMES } from '.';
+import type { Cookie } from 'playwright';
 
 type OtherTestSiteName = 'notifications';
 export type TestAccountName = ( typeof TEST_ACCOUNT_NAMES )[ number ];
@@ -20,6 +21,7 @@ export interface TestAccountCredentials {
 	primarySite?: string;
 	otherSites?: string[];
 	totpKey?: string;
+	googleSessionCookies?: Cookie[];
 	smsNumber?: {
 		number: string;
 		code: string;
