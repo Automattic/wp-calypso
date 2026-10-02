@@ -2,6 +2,9 @@ import { __ } from '@wordpress/i18n';
 import pressableDescriptor from '../exclusive-offers/images/pressable-descriptor.svg';
 import vipDescriptor from '../exclusive-offers/images/vip-descriptor.svg';
 import wpcomDescriptor from '../exclusive-offers/images/wordpressdotcom-descriptor.svg';
+import hostHighTrafficVip from './images/host-high-traffic-vip.svg';
+import hostPerSiteWpcom from './images/host-per-site-wpcom.svg';
+import hostSharedPlanPressable from './images/host-shared-plan-pressable.svg';
 import type { HostingSection } from '../paths';
 
 export interface Host {
@@ -13,6 +16,8 @@ export interface Host {
 	/** Who the host is for: the host card's lead line and the host page's description. */
 	bestFor: string;
 	tier: string;
+	/** The host drawn at its job, for its card. */
+	art: string;
 	/** What every plan includes, as the host card lists it. */
 	includes: string[];
 }
@@ -25,6 +30,7 @@ export const getHosts = (): Host[] => [
 		logo: wpcomDescriptor,
 		bestFor: __( 'Best for small businesses, nonprofits, and direct-to-consumer brands' ),
 		tier: __( 'Standard Agency Hosting' ),
+		art: hostPerSiteWpcom,
 		includes: [
 			__( '50GB of storage' ),
 			__( 'Free staging site' ),
@@ -40,10 +46,12 @@ export const getHosts = (): Host[] => [
 		logo: pressableDescriptor,
 		bestFor: __( 'Designed for top-tier performance, scalability, and reliability' ),
 		tier: __( 'Premier Agency Hosting' ),
+		art: hostSharedPlanPressable,
 		includes: [
-			__( 'From 1 to 150 installs' ),
-			__( 'A staging site for every install' ),
-			__( 'Traffic and storage pooled across your sites' ),
+			// Signature 1–17, with a custom plan above 500 installs.
+			__( 'From 1 to 500+ installs' ),
+			__( 'Free staging site' ),
+			__( 'Unmetered bandwidth' ),
 			__( 'Premium plans up to 10M visits per month' ),
 			__( 'Auto-scaling PHP workers' ),
 			__( 'Free managed migrations' ),
@@ -55,6 +63,7 @@ export const getHosts = (): Host[] => [
 		logo: vipDescriptor,
 		bestFor: __( 'Best for high-traffic sites and complex digital needs' ),
 		tier: __( 'Enterprise' ),
+		art: hostHighTrafficVip,
 		includes: [
 			__( 'Enterprise-grade security' ),
 			__( 'Scalable platform' ),

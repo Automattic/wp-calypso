@@ -15,7 +15,6 @@ import PageLayout from '../../../components/page-layout';
 import { isAgencyApproved } from '../is-agency-approved';
 import { getWpcomPlan } from '../lib/wpcom-hosting';
 import CartMenu from '../products/cart-menu';
-import { getProductPriceInfo } from '../products/lib/product-pricing';
 import { useCartOpen, useShoppingCart } from '../products/use-shopping-cart';
 import ReferralToggle from '../referral-toggle';
 import TermPricingToggle from '../term-pricing-toggle';
@@ -25,13 +24,7 @@ import { useOwnedWpcomSites } from '../use-owned-wpcom-sites';
 import { useTermPricing } from '../use-term-pricing';
 import HostCards from './host-cards';
 import { getHost } from './hosts';
-import {
-	PRESSABLE_ADDON_CATEGORY,
-	areSignaturePlansFor,
-	getPressablePlanInfo,
-	getPressablePlanName,
-	isSignatureCatalogPlan,
-} from './lib/pressable-plans';
+import { getPressablePlanName } from './lib/pressable-plans';
 import { getEffectivePressableOwnership } from './lib/pressable-products';
 import PressableOffers from './pressable-offer-banner';
 import PressableSection from './pressable-section';
@@ -39,45 +32,9 @@ import PressableUsageLimitNotice from './pressable-usage-limit-notice';
 import VipSection from './vip-section';
 import WpcomSection from './wpcom-section';
 import type { HostingSection } from '../paths';
-import type { TermPricing } from '../use-term-pricing';
-import type { HostPrice } from './host-cards';
-import type { PressableOwnershipType } from './lib/pressable-products';
 import type { AgencyProduct } from '@automattic/api-core';
 
 import './style.scss';
-
-// Where Pressable starts: its cheapest plan in the catalog the agency would
-// buy from, at the price the host page shows for it.
-function getPressableStartingPrice(
-	products: AgencyProduct[],
-	existingPlan: AgencyProduct | undefined,
-	ownership: PressableOwnershipType,
-	term: TermPricing,
-	isReferralMode: boolean
-): HostPrice | undefined {
-	const existingPlanInfo = existingPlan ? getPressablePlanInfo( existingPlan ) : undefined;
-	const areSignaturePlans = areSignaturePlansFor( existingPlanInfo, isReferralMode );
-	const prices = products
-		.filter( ( product ) => {
-			const plan = getPressablePlanInfo( product );
-			return (
-				!! plan &&
-				plan.category !== PRESSABLE_ADDON_CATEGORY &&
-				isSignatureCatalogPlan( plan ) === areSignaturePlans
-			);
-		} )
-		.map( ( product ) => ( {
-			amount: getProductPriceInfo( product, term, {
-				applyIntroductoryPrice: isReferralMode || ownership !== 'agency',
-			} ).price,
-			currency: product.currency,
-		} ) )
-		.filter( ( price ) => price.amount > 0 );
-	if ( prices.length === 0 ) {
-		return undefined;
-	}
-	return prices.reduce( ( lowest, price ) => ( price.amount < lowest.amount ? price : lowest ) );
-}
 
 /**
  * The Hosting page: the three hosts side by side, then, once one is picked,
@@ -141,34 +98,6 @@ export default function MarketplaceHosting( { section }: { section?: HostingSect
 			term_pricing: termPricing,
 		} );
 	};
-
-	const hostPrices = useMemo( () => {
-		const prices: Partial< Record< 'wpcom' | 'pressable', HostPrice > > = {};
-		if ( wpcomPlan ) {
-			const amount = termPricing === 'yearly' ? wpcomPlan.yearly_price : wpcomPlan.monthly_price;
-			if ( amount ) {
-				prices.wpcom = { amount, currency: wpcomPlan.currency };
-			}
-		}
-		const pressable = getPressableStartingPrice(
-			pressableProducts,
-			agencyPressablePlan,
-			effectivePressableOwnership,
-			termPricing,
-			isReferralMode
-		);
-		if ( pressable ) {
-			prices.pressable = pressable;
-		}
-		return prices;
-	}, [
-		wpcomPlan,
-		pressableProducts,
-		agencyPressablePlan,
-		effectivePressableOwnership,
-		termPricing,
-		isReferralMode,
-	] );
 
 	const ownedHosting: Partial< Record< HostingSection, string > > = {};
 	if ( allOwnedWpcomSites > 0 ) {
@@ -241,8 +170,9 @@ export default function MarketplaceHosting( { section }: { section?: HostingSect
 					}
 					actions={
 						<div className="dashboard-marketplace-hosting__header-actions">
-							{ /* Below 600px the billing term drops "Billed" so the row still fits. */ }
-							<TermPricingToggle short={ isSmallScreen } />
+							{ /* The host cards show no price, so the billing term waits for a host page.
+							   Below 600px it drops "Billed" so the row still fits. */ }
+							{ section && <TermPricingToggle short={ isSmallScreen } /> }
 							{ /* Refer and the cart wrap together, so the cart never sits alone. */ }
 							<HStack spacing={ isSmallScreen ? 2 : 4 } expanded={ false }>
 								<ReferralToggle label={ __( 'Refer hosting' ) } />
@@ -269,8 +199,6 @@ export default function MarketplaceHosting( { section }: { section?: HostingSect
 				renderSection( section )
 			) : (
 				<HostCards
-					term={ termPricing }
-					prices={ hostPrices }
 					owned={ ownedHosting }
 					isReferralMode={ isReferralMode }
 					onPick={ handleHostPick }

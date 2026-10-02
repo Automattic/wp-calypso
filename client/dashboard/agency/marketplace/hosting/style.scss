@@ -275,7 +275,7 @@
 
 .dashboard-marketplace-hosting__host,
 .dashboard-marketplace-hosting__host > div:first-child,
-.dashboard-marketplace-hosting__host .components-card__body,
+.dashboard-marketplace-hosting__host-body,
 .dashboard-marketplace-hosting__host-rows {
 	display: grid;
 	grid-row: span 5;
@@ -285,14 +285,15 @@
 
 .dashboard-marketplace-hosting__host-rows {
 	align-items: start;
+}
 
-	// Full-width buttons carry their label centred.
-	.components-button {
-		justify-content: center;
-	}
+// Full-width buttons carry their label centred.
+.dashboard-marketplace-hosting__host-action {
+	justify-content: center;
 }
 
 .dashboard-marketplace-hosting__host-logo {
+	align-self: flex-start;
 	block-size: 32px;
 	inline-size: auto;
 	max-inline-size: 100%;
@@ -300,18 +301,51 @@
 	object-position: left;
 }
 
-// Who the host is for leads the card; balanced so no word sits alone on the last line.
-.dashboard-marketplace-hosting__host-title.components-text {
-	font-size: 15px;
-	line-height: 22px;
+.dashboard-marketplace-hosting__host-badge {
+	align-self: flex-start;
+}
+
+// Who the host is for, on two balanced lines so the cards line up.
+.dashboard-marketplace-hosting__host-title {
+	max-inline-size: 280px;
+	min-block-size: 44px;
 	text-wrap: balance;
 }
 
-// The price is the largest thing on the card.
-.dashboard-marketplace-hosting__host-figure.components-text {
-	font-size: 32px;
-	font-weight: 500;
-	line-height: 40px;
+// The host at its job, a drawing on the host's own light field.
+.dashboard-marketplace-hosting__host-window {
+	padding: 8% 8% 0;
+	border-radius: 8px;
+	background: #f0f0f1;
+
+	&.is-wpcom {
+		background: #eef1fd;
+	}
+
+	&.is-pressable {
+		background: #fcf0eb;
+	}
+
+	&.is-vip {
+		background: #f8f2e8;
+	}
+}
+
+// The drawing is cropped by its own box, 214px down (of 264), so the crop
+// falls in the space between rows at any card width, never through text.
+.dashboard-marketplace-hosting__host-crop {
+	aspect-ratio: 320 / 214;
+	overflow: hidden;
+	border-radius: 8px 8px 0 0;
+	box-shadow:
+		0 1px 2px rgba( 0, 0, 0, 0.05 ),
+		0 8px 24px rgba( 0, 0, 0, 0.06 );
+
+	img {
+		display: block;
+		inline-size: 100%;
+		block-size: auto;
+	}
 }
 
 .dashboard-marketplace-hosting__host-includes {
@@ -410,7 +444,7 @@
 		cursor: pointer;
 	}
 
-	input[type="radio"] {
+	input[type='radio'] {
 		margin: 0;
 		accent-color: var( --wp-components-color-accent, var( --wp-admin-theme-color ) );
 	}
@@ -492,7 +526,9 @@
 	gap: 12px;
 	padding: 12px 16px calc( 12px + env( safe-area-inset-bottom ) );
 	background: var( --wp-components-color-background, #fff );
-	box-shadow: 0 -1px 0 rgba( 0, 0, 0, 0.1 ), 0 -4px 16px rgba( 0, 0, 0, 0.06 );
+	box-shadow:
+		0 -1px 0 rgba( 0, 0, 0, 0.1 ),
+		0 -4px 16px rgba( 0, 0, 0, 0.06 );
 
 	@include break-small {
 		display: none;
