@@ -9,7 +9,7 @@ import {
 	fixThreat,
 	fetchSiteScanCounts,
 } from '@automattic/api-core';
-import { mutationOptions, queryOptions } from '@tanstack/react-query';
+import { mutationOptions, queryOptions, skipToken } from '@tanstack/react-query';
 import { queryClient } from './query-client';
 
 export const fixThreatsStatusQuery = ( siteId: number, threatIds: number[] ) =>
@@ -28,6 +28,25 @@ export const siteScanHistoryQuery = ( siteId: number ) =>
 	queryOptions( {
 		queryKey: [ 'site', siteId, 'scan', 'history' ],
 		queryFn: () => fetchSiteScanHistory( siteId ),
+	} );
+
+export interface SiteScanEnqueued {
+	at: number;
+	confirmed: boolean;
+}
+
+// Client-only: the scan API reports nothing between enqueueing a scan and the
+// backend starting it, so the request is kept in the cache to survive remounts.
+// It is only persisted once the server has accepted it, so a reload that aborts
+// the request doesn't leave a scan that was never queued looking enqueued.
+export const siteScanEnqueuedQuery = ( siteId: number ) =>
+	queryOptions< SiteScanEnqueued | null >( {
+		queryKey: [ 'site', siteId, 'scan-enqueued' ],
+		queryFn: skipToken,
+		staleTime: Infinity,
+		meta: {
+			persist: ( data: SiteScanEnqueued | null ) => !! data?.confirmed,
+		},
 	} );
 
 export const siteScanEnqueueMutation = ( siteId: number ) =>

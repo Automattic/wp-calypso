@@ -14,15 +14,24 @@ interface ScanNowButtonProps {
 export function ScanNowButton( { site, scanState }: ScanNowButtonProps ) {
 	const { recordTracksEvent } = useAnalytics();
 
-	const { status, setIsEnqueued } = scanState;
+	const { status, setEnqueued } = scanState;
 	const isEnqueued = status === 'enqueued';
 	const isRunning = status === 'running';
 
 	// Enqueue a new scan
+	const enqueueMutation = siteScanEnqueueMutation( site.ID );
 	const { mutate: triggerScan, isPending } = useMutation( {
-		...siteScanEnqueueMutation( site.ID ),
+		...enqueueMutation,
 		onMutate: () => {
-			setIsEnqueued( true );
+			setEnqueued( 'requested' );
+		},
+		onSuccess: ( data, ...rest ) => {
+			enqueueMutation.onSuccess?.( data, ...rest );
+			// The endpoint reports a failure to queue the scan with a 200 response.
+			setEnqueued( data?.success ? 'confirmed' : null );
+		},
+		onError: () => {
+			setEnqueued( null );
 		},
 	} );
 

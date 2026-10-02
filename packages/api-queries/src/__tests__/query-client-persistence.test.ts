@@ -1,5 +1,6 @@
 import { QueryClient, dehydrate, onlineManager } from '@tanstack/react-query';
 import { dehydrateOptions } from '../dehydrate-options';
+import { siteScanEnqueuedQuery } from '../site-scan';
 
 describe( 'cache persistence', () => {
 	test( 'persists queries but not a mutation left paused by going offline', async () => {
@@ -26,5 +27,30 @@ describe( 'cache persistence', () => {
 		} finally {
 			onlineManager.setOnline( true );
 		}
+	} );
+} );
+
+describe( 'scan enqueued persistence', () => {
+	const siteId = 1;
+	const { queryKey } = siteScanEnqueuedQuery( siteId );
+
+	function persistedKeys( client: QueryClient ) {
+		return dehydrate( client, dehydrateOptions ).queries.map( ( query ) => query.queryKey );
+	}
+
+	test( 'does not persist a scan request the server has not accepted yet', () => {
+		const client = new QueryClient();
+		client.getQueryCache().build( client, siteScanEnqueuedQuery( siteId ) );
+		client.setQueryData( queryKey, { at: 1, confirmed: false } );
+
+		expect( persistedKeys( client ) ).not.toContainEqual( queryKey );
+	} );
+
+	test( 'persists a scan request once the server has accepted it', () => {
+		const client = new QueryClient();
+		client.getQueryCache().build( client, siteScanEnqueuedQuery( siteId ) );
+		client.setQueryData( queryKey, { at: 1, confirmed: true } );
+
+		expect( persistedKeys( client ) ).toContainEqual( queryKey );
 	} );
 } );
