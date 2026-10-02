@@ -14,6 +14,8 @@ import isAkismetCheckout from 'calypso/lib/akismet/is-akismet-checkout';
 import isJetpackCheckout from 'calypso/lib/jetpack/is-jetpack-checkout';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { useCheckoutUiRedesignExperiment } from '../hooks/use-checkout-ui-redesign-experiment';
+import { vatDetailsInFormStore } from '../lib/checkout-stores';
+import { useValueStore } from '../lib/value-store';
 import { CHECKOUT_STORE } from '../lib/wpcom-store';
 import {
 	prepareDomainContactDetails,
@@ -65,7 +67,7 @@ export default function ContactDetailsContainer( {
 		.filter( ( product ) => ! isDomainMapping( product ) )
 		.map( getDomain );
 
-	const vatDetails = useSelect( ( select ) => select( CHECKOUT_STORE ).getVatDetails(), [] );
+	const vatDetails = useValueStore( vatDetailsInFormStore );
 	const checkoutActions = useDispatch( CHECKOUT_STORE );
 	const { email } = useSelect( ( select ) => select( CHECKOUT_STORE ).getContactInfo(), [] );
 
@@ -73,10 +75,8 @@ export default function ContactDetailsContainer( {
 		return null;
 	}
 
-	const setVatDetails = checkoutActions?.setVatDetails;
-
 	const handleIsForBusinessChange = ( newValue: boolean ): void => {
-		setVatDetails( {
+		vatDetailsInFormStore.set( {
 			...vatDetails,
 			isForBusiness: newValue,
 		} );

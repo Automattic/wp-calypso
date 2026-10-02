@@ -1,4 +1,3 @@
-import type { WPCOMTransactionEndpointResponse } from '@automattic/api-core';
 import type { DomainContactDetails, RequestCart } from '@automattic/shopping-cart';
 import type { TranslateResult } from 'i18n-calypso';
 export type { SitelessCheckoutType } from '@automattic/shopping-cart';
@@ -287,10 +286,7 @@ export interface ManagedValue {
 }
 
 export type WpcomStoreState = {
-	recaptchaClientId: number;
-	transactionResult?: WPCOMTransactionEndpointResponse | undefined;
 	contactDetails: ManagedContactDetails;
-	vatDetails: VatDetails;
 };
 
 export interface VatDetails {

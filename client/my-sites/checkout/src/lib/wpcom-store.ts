@@ -10,7 +10,6 @@ import type {
 	WpcomStoreState,
 	ManagedContactDetails,
 	ManagedContactDetailsErrors,
-	VatDetails,
 } from '@automattic/wpcom-checkout';
 
 type WpcomStoreAction =
@@ -21,7 +20,6 @@ type WpcomStoreAction =
 	  }
 	| { type: 'UPDATE_TAX_FIELDS'; payload: ManagedContactDetails }
 	| { type: 'UPDATE_DOMAIN_CONTACT_FIELDS'; payload: DomainContactDetails }
-	| { type: 'SET_RECAPTCHA_CLIENT_ID'; payload: number }
 	| { type: 'UPDATE_VAT_ID'; payload: string }
 	| { type: 'UPDATE_EMAIL'; payload: string }
 	| { type: 'UPDATE_PHONE'; payload: string }
@@ -34,8 +32,7 @@ type WpcomStoreAction =
 	| {
 			type: 'LOAD_DOMAIN_CONTACT_DETAILS_FROM_CACHE';
 			payload: PossiblyCompleteDomainContactDetails;
-	  }
-	| { type: 'SET_VAT_DETAILS'; payload: VatDetails };
+	  };
 
 const CHECKOUT_STORE_KEY = 'wpcom-checkout';
 
@@ -50,10 +47,6 @@ const actions = {
 
 	clearDomainContactErrorMessages(): WpcomStoreAction {
 		return { type: 'CLEAR_DOMAIN_CONTACT_ERROR_MESSAGES' };
-	},
-
-	setRecaptchaClientId( payload: number ): WpcomStoreAction {
-		return { type: 'SET_RECAPTCHA_CLIENT_ID', payload };
 	},
 
 	updateTaxFields( payload: ManagedContactDetails ): WpcomStoreAction {
@@ -101,23 +94,11 @@ const actions = {
 	): WpcomStoreAction {
 		return { type: 'LOAD_DOMAIN_CONTACT_DETAILS_FROM_CACHE', payload };
 	},
-
-	setVatDetails( payload: VatDetails ): WpcomStoreAction {
-		return { type: 'SET_VAT_DETAILS', payload };
-	},
 };
 
 const selectors = {
 	getContactInfo( state: WpcomStoreState ): ManagedContactDetails {
 		return state.contactDetails;
-	},
-
-	getRecaptchaClientId( state: WpcomStoreState ): number {
-		return state.recaptchaClientId;
-	},
-
-	getVatDetails( state: WpcomStoreState ): VatDetails {
-		return state.vatDetails;
 	},
 };
 
@@ -158,24 +139,6 @@ function contactReducer(
 	}
 }
 
-function recaptchaClientIdReducer( state: number, action: WpcomStoreAction ): number {
-	switch ( action.type ) {
-		case 'SET_RECAPTCHA_CLIENT_ID':
-			return action.payload;
-		default:
-			return state;
-	}
-}
-
-function vatDetailsReducer( state: VatDetails, action: WpcomStoreAction ): VatDetails {
-	switch ( action.type ) {
-		case 'SET_VAT_DETAILS':
-			return action.payload;
-		default:
-			return state;
-	}
-}
-
 const store = createReduxStore( CHECKOUT_STORE_KEY, {
 	reducer( state: WpcomStoreState | undefined, action: WpcomStoreAction ): WpcomStoreState {
 		if ( action.type === 'RESET' || state === undefined ) {
@@ -183,8 +146,6 @@ const store = createReduxStore( CHECKOUT_STORE_KEY, {
 		}
 		return {
 			contactDetails: contactReducer( state.contactDetails, action ),
-			recaptchaClientId: recaptchaClientIdReducer( state.recaptchaClientId, action ),
-			vatDetails: vatDetailsReducer( state.vatDetails, action ),
 		};
 	},
 	actions,
