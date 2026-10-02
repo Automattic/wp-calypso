@@ -19,6 +19,9 @@ import { getResolvedAgentId } from './resolved-agent-id';
 /** Base storage key; `getTabSessionKey` scopes it per agent, site and user. */
 const SESSION_STORAGE_KEY = 'agents-manager-session-id';
 
+/** Marks a client-minted session no turn has been sent in yet. */
+const UNSENT_SESSION_KEY_PREFIX = 'agents-manager-unsent-session:';
+
 /** Scope placeholders for a chat with no selected site, or no logged-in user. */
 export const NO_SITE = 'no-site';
 const NO_USER = 'no-user';
@@ -132,9 +135,32 @@ export function getOrCreateSessionId(
 		return existing;
 	}
 
-	saveSessionId( generateUUID(), agentId, siteKey, userId );
+	const sessionId = generateUUID();
+	saveSessionId( sessionId, agentId, siteKey, userId );
+	try {
+		sessionStorage.setItem( UNSENT_SESSION_KEY_PREFIX + sessionId, '1' );
+	} catch {}
 
 	// Read back so unavailable storage yields a stable '' instead of a fresh
 	// UUID per call, which would re-initialize the agent on every render.
 	return getSessionId( agentId, siteKey, userId );
+}
+
+/**
+ * Whether `sessionId` was minted in this tab and has had no turn sent yet, so
+ * the server does not know it and there is no transcript to fetch.
+ */
+export function isUnsentSession( sessionId: string ): boolean {
+	try {
+		return sessionStorage.getItem( UNSENT_SESSION_KEY_PREFIX + sessionId ) === '1';
+	} catch {
+		return false;
+	}
+}
+
+/** Record that a turn was sent in `sessionId`, so later page loads fetch it. */
+export function markSessionSent( sessionId: string ): void {
+	try {
+		sessionStorage.removeItem( UNSENT_SESSION_KEY_PREFIX + sessionId );
+	} catch {}
 }
