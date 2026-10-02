@@ -96,6 +96,7 @@
 		"migration/non-wordpress-source": true,
 		"migration/ssh-migration": false,
 		"notifications/subscriber-alerts": true,
+		"migration/reprint-flow": false,
 		"notifications/view-settings": true,
 		"oauth/unified-experience": false,
 		"onboarding/create-course": false,

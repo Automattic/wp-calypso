@@ -256,14 +256,14 @@ const siteMigration: FlowV2< typeof initialize > = {
 							);
 						}
 
-						return navigate( paths.howToMigratePath( { from, siteSlug, siteId } ) );
+						return navigate( paths.howToMigratePath( { from, siteSlug, siteId, platform, host } ) );
 					}
 
 					if ( userHasOtherWPComSites ) {
-						return navigate( paths.sitePickerPath( { from, platform } ) );
+						return navigate( paths.sitePickerPath( { from, platform, host } ) );
 					}
 
-					return navigate( paths.siteCreationPath( { from, platform } ) );
+					return navigate( paths.siteCreationPath( { from, platform, host } ) );
 				}
 
 				case STEPS.PICK_SITE.slug: {
@@ -337,6 +337,8 @@ const siteMigration: FlowV2< typeof initialize > = {
 										siteSlug,
 										siteId,
 										from: fromQueryParam,
+										platform: platformQueryParam,
+										host,
 									} )
 								);
 							}
@@ -359,7 +361,15 @@ const siteMigration: FlowV2< typeof initialize > = {
 								);
 							}
 
-							return navigate( paths.howToMigratePath( { siteSlug, siteId } ) );
+							return navigate(
+								paths.howToMigratePath( {
+									siteSlug,
+									siteId,
+									from: fromQueryParam,
+									platform: platformQueryParam,
+									host,
+								} )
+							);
 						}
 						case 'create-site': {
 							const detectedHost = providedDependencies.host as string | undefined;
@@ -383,14 +393,12 @@ const siteMigration: FlowV2< typeof initialize > = {
 							} = {
 								from: fromQueryParam,
 								platform: platformQueryParam,
+								host,
 							};
 
 							// Add SSH params if applicable
 							if ( shouldUseSSH ) {
 								queryParams.ssh = 'true';
-								if ( host ) {
-									queryParams.host = host;
-								}
 							}
 
 							return navigate( paths.siteCreationPath( queryParams ) );
@@ -450,7 +458,15 @@ const siteMigration: FlowV2< typeof initialize > = {
 							);
 						}
 
-						return replace( paths.howToMigratePath( { siteId, siteSlug, from: fromQueryParam } ) );
+						return replace(
+							paths.howToMigratePath( {
+								siteId,
+								siteSlug,
+								from: fromQueryParam,
+								platform: platformQueryParam,
+								host: hostQueryParam,
+							} )
+						);
 					}
 
 					if (
@@ -480,7 +496,15 @@ const siteMigration: FlowV2< typeof initialize > = {
 						);
 					}
 
-					return replace( paths.howToMigratePath( { from: fromQueryParam, siteSlug, siteId } ) );
+					return replace(
+						paths.howToMigratePath( {
+							from: fromQueryParam,
+							siteSlug,
+							siteId,
+							platform: platformQueryParam,
+							host: hostQueryParam,
+						} )
+					);
 				}
 
 				case STEPS.SITE_MIGRATION_HOW_TO_MIGRATE.slug: {
@@ -490,6 +514,29 @@ const siteMigration: FlowV2< typeof initialize > = {
 								siteId,
 								siteSlug,
 								from: fromQueryParam,
+								backToFlow: `/${ flowPath }/${ STEPS.SITE_MIGRATION_HOW_TO_MIGRATE.slug }`,
+							} )
+						);
+					}
+
+					if (
+						config.isEnabled( 'migration/reprint-flow' ) &&
+						platformQueryParam === 'wordpress' &&
+						providedDependencies?.how === HOW_TO_MIGRATE_OPTIONS.DO_IT_MYSELF &&
+						fromQueryParam &&
+						hasSite( siteId, siteSlug )
+					) {
+						return window.location.assign(
+							paths.wordpressMigrationPath( {
+								from: fromQueryParam,
+								siteId,
+								siteSlug,
+								platform: platformQueryParam,
+								host: hostQueryParam,
+								ref: entryPoint || urlQueryParams.get( 'ref' ) || SITE_MIGRATION_FLOW,
+								source: urlQueryParams.get( 'source' ),
+								sessionId,
+								flags: urlQueryParams.get( 'flags' ),
 								backToFlow: `/${ flowPath }/${ STEPS.SITE_MIGRATION_HOW_TO_MIGRATE.slug }`,
 							} )
 						);

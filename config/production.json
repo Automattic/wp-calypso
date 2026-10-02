@@ -113,6 +113,7 @@
 		"migration/non-wordpress-source": false,
 		"migration/ssh-migration": false,
 		"notifications/subscriber-alerts": true,
+		"migration/reprint-flow": false,
 		"oauth/unified-experience": false,
 		"onboarding/create-course": false,
 		"onboarding/import-from-blogger": true,
