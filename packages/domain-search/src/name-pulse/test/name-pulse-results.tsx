@@ -372,15 +372,11 @@ describe( 'NamePulseResults', () => {
 			{ query: 'a blog about icecream', use_ai: true, timeout: NAME_PULSE_AI_TIMEOUT_MS },
 		] );
 
-		// Cheapest available across both lists, ties broken by name.
-		expect( domainsIn( 'top' ) ).toEqual( [
-			'brainfreeze.club',
-			'scoops.blog',
-			'thedailyscoop.blog',
-		] );
+		// Cheapest first-year price across both lists, ties broken by name.
+		expect( domainsIn( 'top' ) ).toEqual( [ 'icecream.best', 'brainfreeze.club', 'scoops.blog' ] );
 		// Featured rows, and the copy the keyword list already showed, are not repeated.
 		expect( domainsIn( 'suggestions' ) ).not.toContain( 'scoops.blog' );
-		expect( domainsIn( 'creative' ) ).toEqual( [ 'coldcomfort.cafe' ] );
+		expect( domainsIn( 'creative' ) ).toEqual( [ 'thedailyscoop.blog', 'coldcomfort.cafe' ] );
 	} );
 
 	it( 'keeps Top results loading until both suggestion lists settle', async () => {
@@ -409,11 +405,7 @@ describe( 'NamePulseResults', () => {
 		} );
 
 		await waitFor( () => expect( skeletonsIn( 'top' ) ).toBe( 0 ) );
-		expect( domainsIn( 'top' ) ).toEqual( [
-			'brainfreeze.club',
-			'scoops.blog',
-			'thedailyscoop.blog',
-		] );
+		expect( domainsIn( 'top' ) ).toEqual( [ 'icecream.best', 'brainfreeze.club', 'scoops.blog' ] );
 	} );
 
 	it( 'features an available typed FQDN in its own card, out of Top results and the grid', async () => {
@@ -443,7 +435,7 @@ describe( 'NamePulseResults', () => {
 		render( <NamePulseTestSearch query="icecream.d" /> );
 
 		expect( await findNotice() ).toHaveTextContent(
-			'We don’t recognize .d, so we’re showing results for “icecreamd”. Try .com or .blog instead.'
+			'We don’t recognize that ending. Try .com or .blog, or enter just the name and we’ll suggest the rest.'
 		);
 		expect(
 			await within( await findRow( 'icecreamd.net' ) ).findByText( '$24' )
@@ -493,7 +485,7 @@ describe( 'NamePulseResults', () => {
 		rerender( <NamePulseTestSearch query="sorbet.d" /> );
 
 		expect( await findNotice() ).toHaveTextContent(
-			'We don’t recognize .d, so we’re showing results for “sorbetd”. Try .com or .blog instead.'
+			'We don’t recognize that ending. Try .com or .blog, or enter just the name and we’ll suggest the rest.'
 		);
 	} );
 

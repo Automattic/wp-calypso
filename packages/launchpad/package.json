@@ -43,6 +43,7 @@
 	"dependencies": {
 		"@automattic/calypso-analytics": "workspace:^",
 		"@automattic/i18n-utils": "workspace:^",
+		"@automattic/newsletter-urls": "workspace:^",
 		"@automattic/oauth-token": "workspace:^",
 		"@automattic/typography": "workspace:^",
 		"@automattic/viewport": "workspace:^",
