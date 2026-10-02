@@ -1,0 +1,22 @@
+.card {
+	height: 100%;
+
+	// The WordPress Card renders an inner content wrapper around its children.
+	// Make that wrapper a flex column that fills the card so the footer CTA can
+	// pin to the bottom, keeping every card's button aligned across the row.
+	> div:first-child {
+		display: flex;
+		flex-direction: column;
+		flex: 1;
+	}
+}
+
+// Highlight for "top resource" items. Uses the theme accent (blue) tokens so it
+// stays theme-aware. Doubled class raises specificity above the WordPress Card
+// defaults (background + box-shadow border).
+.card.cardFeatured {
+	// The root paints the tint so it clips to the card's border-radius; the inner
+	// wrapper has square corners and would bleed past the rounded border.
+	background-color: var(--color-accent-5);
+	box-shadow: 0 0 0 1px var(--color-accent-40);
+}
