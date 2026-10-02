@@ -47,6 +47,18 @@ jest.mock( 'calypso/data/site-migration/use-migration-sticker', () => ( {
 describe( 'SiteMigrationHowToMigrate', () => {
 	afterEach( () => {
 		jest.resetAllMocks();
+		jest.restoreAllMocks();
+	} );
+
+	it( 'cancels and uses browser Back when the navigation handler is missing', async () => {
+		jest.spyOn( history, 'state', 'get' ).mockReturnValue( { idx: 1 } );
+		const back = jest.spyOn( history, 'back' ).mockImplementation( () => {} );
+		render( { navigation } );
+
+		await userEvent.click( screen.getByRole( 'button', { name: /Back/ } ) );
+
+		expect( mockCancelMigration ).toHaveBeenCalledTimes( 1 );
+		expect( back ).toHaveBeenCalledTimes( 1 );
 	} );
 
 	it( 'records migration-start conversions on arrival', () => {

@@ -2,7 +2,7 @@ import { formatNumber } from '@automattic/number-formatters';
 import { Step } from '@automattic/onboarding';
 import { next, published, shield } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { type FC, useEffect, useState, useCallback } from 'react';
+import { type FC, useEffect, useState, useCallback, useRef } from 'react';
 import CaptureInput from 'calypso/blocks/import/capture/capture-input';
 import ScanningStep from 'calypso/blocks/import/scanning';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -35,6 +35,7 @@ export const Analyzer: FC< Props > = ( {
 } ) => {
 	const translate = useTranslate();
 	const [ siteURL, setSiteURL ] = useState< string >( '' );
+	const hasCompleted = useRef( false );
 	const {
 		data: siteInfo,
 		isError: hasError,
@@ -57,11 +58,17 @@ export const Analyzer: FC< Props > = ( {
 		( isFetched && ! hasError && ! hostingProviderData && ! hasHostingError );
 
 	useEffect( () => {
+		if ( ! siteURL ) {
+			hasCompleted.current = false;
+			return;
+		}
+
 		// Only complete when we have both site info AND hosting info (or hosting check failed)
-		if ( siteInfo && ( hostingProviderData || hasHostingError ) ) {
+		if ( ! hasCompleted.current && siteInfo && ( hostingProviderData || hasHostingError ) ) {
+			hasCompleted.current = true;
 			onComplete( siteInfo, hostingProviderData?.hosting_provider?.slug );
 		}
-	}, [ onComplete, siteInfo, hostingProviderData, hasHostingError ] );
+	}, [ onComplete, siteURL, siteInfo, hostingProviderData, hasHostingError ] );
 
 	useEffect( () => {
 		onVisibilityChange?.( ! isScanning );
