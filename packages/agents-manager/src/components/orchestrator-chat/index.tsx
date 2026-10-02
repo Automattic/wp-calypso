@@ -1450,9 +1450,9 @@ export default function OrchestratorChat( {
 		[ submitChatMessage ]
 	);
 
-	// A question asked before a page change whose reply has not landed yet
-	// (WOOAI-872). Off once the merchant sends or a turn runs, so its one
-	// rehydration can never replace a live stream.
+	// A question asked before a page change whose reply has not landed yet. Off
+	// once the merchant sends or a turn runs, so its one rehydration can never
+	// replace a live stream.
 	const { notice: replyNotice } = useReplyRecovery( {
 		hydratedMessages: hydratedConversation?.messages,
 		enabled: ! isReaderChat && ! hasUserSentMessage && ! isProcessing,
