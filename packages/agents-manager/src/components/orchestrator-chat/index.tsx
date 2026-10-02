@@ -336,7 +336,6 @@ export default function OrchestratorChat( {
 	const [ isThinking, setIsThinking ] = useState( false );
 	const [ thinkingMessage, setThinkingMessage ] = useState< string | null >( null );
 	const [ isBuildingSite, setIsBuildingSite ] = useState( false );
-	const [ deletedMessageIds, setDeletedMessageIds ] = useState< Set< string > >( new Set() );
 	const [ sourceDriftInvalidatedCheckpointIds, setSourceDriftInvalidatedCheckpointIds ] = useState<
 		Set< string >
 	>( new Set() );
@@ -549,13 +548,11 @@ export default function OrchestratorChat( {
 		getRegenerateHandler,
 		progressMessage,
 	} = credits.chat;
-	const messagesRef = useRef( messages );
 	const getTraceIdForMessage = useAgentTraceIds( agentConfig );
 	const previousMessagesRef = useRef( messages );
 	const showComponentOrderRef = useRef< Map< string, number > >( new Map() );
 	const nextShowComponentOrderRef = useRef( 0 );
 	const wasProcessingRef = useRef( isProcessing );
-	messagesRef.current = messages;
 
 	// Stop a request the moment the canvas it was made for goes away. The guard in
 	// `load-external-providers` would refuse the eventual write anyway, but only
@@ -1512,10 +1509,8 @@ export default function OrchestratorChat( {
 	// Provides chat action handlers to the external providers' ability setups
 	// (Big Sky, jetpack-ai-sidebar) — permanent provider infrastructure. The hook
 	// is stable as `OrchestratorChat` only renders after providers have loaded.
-	// TODO (ability-migration): After Big Sky's abilities migrate, prune this object to
-	// the fields other providers consume (jetpack-ai-sidebar reads only
-	// `clearSuggestions` and `isProcessing`) and drop the `BigSkyMessage`
-	// conversion.
+	// Big Sky reads every handler but `isProcessing`; jetpack-ai-sidebar reads
+	// `clearSuggestions` and `isProcessing`.
 	useProviderAbilitiesSetup?.( {
 		addMessage: ( message: BigSkyMessage ) => {
 			// Transform Big Sky message format to `UIMessage` format and add to chat.
@@ -1526,35 +1521,6 @@ export default function OrchestratorChat( {
 		getAgentManager,
 		isProcessing,
 		setIsThinking,
-		deleteMarkedMessages: ( msgs ) => {
-			const deleteDecisions = msgs.map( ( msg ) => {
-				const messageFromRequest = msg as Pick< UIMessage, 'id' > &
-					Partial< Pick< UIMessage, 'content' > >;
-				const fullMessage = messageFromRequest.content
-					? ( messageFromRequest as UIMessage )
-					: messagesRef.current.find( ( message ) => message.id === msg.id );
-				const isShowComponent = !! fullMessage && isShowComponentMessage( fullMessage );
-
-				return {
-					id: msg.id,
-					foundMessage: !! fullMessage,
-					isShowComponent,
-					tool: fullMessage ? getToolMessageData( fullMessage ) : undefined,
-					shouldDelete: fullMessage ? ! isShowComponent : false,
-				};
-			} );
-
-			const deletableMessages = msgs.filter(
-				( msg ) => deleteDecisions.find( ( decision ) => decision.id === msg.id )?.shouldDelete
-			);
-			if ( deletableMessages.length === 0 ) {
-				return;
-			}
-
-			setDeletedMessageIds(
-				( prevIds ) => new Set( [ ...prevIds, ...deletableMessages.map( ( msg ) => msg.id ) ] )
-			);
-		},
 		// This ensures the same session ID is used between Big Sky and Calypso agents,
 		// so that messages will be stored in the same conversation.
 		getSessionId: getTabSessionId,
@@ -1582,7 +1548,6 @@ export default function OrchestratorChat( {
 
 		currentMessages = currentMessages.filter(
 			( message ) =>
-				! deletedMessageIds.has( message.id ) &&
 				! message.content?.some( ( content ) => content?.text === LOCAL_TOOL_RUNNING_MESSAGE )
 		);
 
@@ -1717,7 +1682,6 @@ export default function OrchestratorChat( {
 		checkpointActionRevision,
 		checkpointSessionIdentity,
 		currentPostId,
-		deletedMessageIds,
 		getChatComponent,
 		getCopyActionsForMessage,
 		getCheckpointActionsForMessage,

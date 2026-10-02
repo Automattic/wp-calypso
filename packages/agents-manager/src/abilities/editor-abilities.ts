@@ -5,12 +5,7 @@
  * chat code.
  */
 
-import {
-	getAbility,
-	registerAbility,
-	registerAbilityCategory,
-	unregisterAbility,
-} from '@wordpress/abilities';
+import { registerAbility, registerAbilityCategory } from '@wordpress/abilities';
 import {
 	canSwapCheckpoint,
 	clearCheckpoint,
@@ -33,7 +28,7 @@ import { showTemplateAbility } from './show-template';
 import { streamPageDesignAbility } from './stream-page-design';
 import type { Ability } from './types';
 
-// The editor abilities AM owns. Migrating an ability = add its folder under
+// The editor abilities AM owns. Adding an ability = add its folder under
 // `abilities/` and list it here.
 export const EDITOR_ABILITIES: Ability[] = [
 	applyBlockEditsAbility,
@@ -56,10 +51,8 @@ let hasRegistered = false;
 /**
  * Registers the editor abilities in the `@wordpress/abilities` registry.
  *
- * Registration only makes the abilities discoverable; execution ownership lives
- * in `amToolProvider`. The registry rejects duplicate names, so a collision with
- * a provider's own copy is resolved by replacing it. Providers delete their
- * copies once a migration lands.
+ * The chat runs them through `amToolProvider`; Big Sky's site build calls
+ * `apply-block-edits` from the registry.
  */
 export async function registerEditorAbilities(): Promise< void > {
 	if ( hasRegistered ) {
@@ -82,29 +75,8 @@ export async function registerEditorAbilities(): Promise< void > {
 		try {
 			await registerAbility( ability );
 		} catch ( error ) {
-			// TODO (ability-migration): Collapse this replace branch once Big Sky
-			// deletes its ability copies — with nothing left to collide, plain
-			// register plus the warning suffices.
-
-			// Only retry when another copy actually holds the name — without
-			// one, the failure is not a collision and re-registering would
-			// fail the same way.
-			if ( ! getAbility( ability.name ) ) {
-				// eslint-disable-next-line no-console
-				console.warn( `[AgentsManager] Failed to register ability: ${ ability.name }`, error );
-				continue;
-			}
-
-			try {
-				await unregisterAbility( ability.name );
-				await registerAbility( ability );
-			} catch ( replaceError ) {
-				// eslint-disable-next-line no-console
-				console.warn(
-					`[AgentsManager] Failed to register ability: ${ ability.name }`,
-					replaceError
-				);
-			}
+			// eslint-disable-next-line no-console
+			console.warn( `[AgentsManager] Failed to register ability: ${ ability.name }`, error );
 		}
 	}
 }
