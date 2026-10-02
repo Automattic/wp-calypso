@@ -409,10 +409,15 @@ const DomainSearchStep: StepType< {
 		return true;
 	}, [ flow, isCiab, site, sourceSlug, planCartItem ] );
 
+	// Launching an existing site keeps the promo, as legacy signup did, without the per-domain
+	// first-year-free pricing.
+	const showFreeDomainPromo =
+		! hideFreeDomainPromo && ( isFirstDomainFreeForFirstYear || flow === LAUNCH_SITE_FLOW );
+
 	const slots = useMemo( () => {
 		return {
 			BeforeResults: () => {
-				if ( hideFreeDomainPromo || ! isFirstDomainFreeForFirstYear ) {
+				if ( ! showFreeDomainPromo ) {
 					return null;
 				}
 
@@ -444,7 +449,7 @@ const DomainSearchStep: StepType< {
 				);
 			},
 			BeforeFullCartItems: () => {
-				if ( hideFreeDomainPromo || ! isFirstDomainFreeForFirstYear ) {
+				if ( ! showFreeDomainPromo ) {
 					return null;
 				}
 
@@ -454,9 +459,8 @@ const DomainSearchStep: StepType< {
 			},
 		};
 	}, [
-		isFirstDomainFreeForFirstYear,
+		showFreeDomainPromo,
 		isCiab,
-		hideFreeDomainPromo,
 		freeDomainPromoTitle,
 		freeDomainPromoSubtitle,
 		isCustomDomainBannerCopyVariation,
