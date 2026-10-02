@@ -1,4 +1,5 @@
 import {
+	activateAgencyTeamMember,
 	fetchAgencyTeamMembers,
 	fetchAgencyTeamInvites,
 	inviteAgencyTeamMember,
@@ -9,7 +10,11 @@ import {
 } from '@automattic/api-core';
 import { queryOptions, mutationOptions } from '@tanstack/react-query';
 import { queryClient } from './query-client';
-import type { AgencyTeamInviteInput, TeamMember } from '@automattic/api-core';
+import type {
+	AgencyTeamInviteActivationInput,
+	AgencyTeamInviteInput,
+	TeamMember,
+} from '@automattic/api-core';
 
 export const agencyTeamMembersQuery = ( agencyId: number ) =>
 	queryOptions( {
@@ -63,6 +68,18 @@ export const agencyTeamInviteMutation = ( agencyId: number ) =>
 		meta: { statId: 'agcy-team-invite' },
 		mutationFn: ( input: AgencyTeamInviteInput ) => inviteAgencyTeamMember( agencyId, input ),
 		onSuccess: () => invalidateAgencyTeam( agencyId ),
+	} );
+
+/**
+ * Accepts an invitation on behalf of the invited user. Takes the agency from
+ * the invite itself, since the user has no agency until this succeeds.
+ */
+export const agencyTeamActivateMemberMutation = () =>
+	mutationOptions( {
+		meta: { statId: 'agcy-team-invite-accept' },
+		mutationFn: ( input: AgencyTeamInviteActivationInput ) => activateAgencyTeamMember( input ),
+		// Reset, not invalidate: nothing here observes these queries, so a cached `hasAgency: false` would survive.
+		onSuccess: () => queryClient.resetQueries( { queryKey: [ 'agency' ] } ),
 	} );
 
 export const agencyTeamResendInviteMutation = ( agencyId: number ) =>

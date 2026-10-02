@@ -7,6 +7,7 @@ import {
 } from '@automattic/api-queries';
 /* eslint-enable no-restricted-imports */
 import boot from '../app/boot';
+import { A4ALoadingLogo } from './loading-logo';
 import { Logo } from './logo';
 import A4AOmnibar from './omnibar';
 import A4AOmnibarHelpCenter from './omnibar-help-center';
@@ -23,6 +24,7 @@ boot( {
 	basePath: '/',
 	mainRoute: '/overview',
 	Logo,
+	LoadingLogo: A4ALoadingLogo,
 	supports: {
 		agency: {
 			overview: true,
