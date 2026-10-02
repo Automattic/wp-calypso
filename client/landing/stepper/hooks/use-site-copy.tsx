@@ -9,6 +9,8 @@ import { ONBOARD_STORE, SITE_STORE } from 'calypso/landing/stepper/stores';
 import { clearSignupDestinationCookie } from 'calypso/signup/storageUtils';
 import { useDispatch as useReduxDispatch, useSelector } from 'calypso/state';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import getSiteFeaturesError from 'calypso/state/selectors/get-site-features-error';
+import hasLoadedSiteFeatures from 'calypso/state/selectors/has-loaded-site-features';
 import isRequestingSiteFeatures from 'calypso/state/selectors/is-requesting-site-features';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { fetchSiteFeatures } from 'calypso/state/sites/features/actions';
@@ -61,8 +63,12 @@ export const useSiteCopy = (
 		WPCOM_FEATURES_COPY_SITE,
 		options.enabled
 	);
-	const requestingSiteFeatures = useSelector( ( state ) =>
-		isRequestingSiteFeatures( state, site?.ID )
+	const requestingSiteFeatures = useSelector(
+		( state ) =>
+			isRequestingSiteFeatures( state, site?.ID ) ||
+			( !! site?.ID &&
+				! hasLoadedSiteFeatures( state, site.ID ) &&
+				! getSiteFeaturesError( state, site.ID ) )
 	);
 	const isAtomic = useSelect(
 		( select ) =>

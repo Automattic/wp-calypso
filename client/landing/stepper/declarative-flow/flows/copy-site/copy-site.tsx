@@ -4,7 +4,6 @@ import { COPY_SITE_FLOW } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { addQueryArgs, getQueryArgs } from '@wordpress/url';
-import { useEffect, useState } from 'react';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { ONBOARD_STORE, SITE_STORE } from 'calypso/landing/stepper/stores';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
@@ -29,44 +28,27 @@ import type { OnboardActions, SiteSelect } from '@automattic/data-stores';
 function useIsValidSite() {
 	const urlQueryParams = useQuery();
 	const sourceSlug = urlQueryParams.get( 'sourceSlug' );
-	const [ siteRequestStatus, setSiteRequestStatus ] = useState< 'init' | 'fetching' | 'finished' >(
-		'init'
-	);
-
-	const {
-		isFetchingSiteDetails,
-		isFetchingError,
-		site: sourceSite,
-	} = useSelect(
+	const { hasResolvedSourceSite, site: sourceSite } = useSelect(
 		( select ) => {
 			if ( ! sourceSlug ) {
 				return {};
 			}
+			const siteStore = select( SITE_STORE ) as SiteSelect & {
+				hasFinishedResolution: ( selectorName: string, args: unknown[] ) => boolean;
+			};
 			return {
-				isFetchingError: ( select( SITE_STORE ) as SiteSelect ).getFetchingSiteError(),
-				isFetchingSiteDetails: ( select( SITE_STORE ) as SiteSelect ).isFetchingSiteDetails(),
-				site: ( select( SITE_STORE ) as SiteSelect ).getSite( sourceSlug ),
+				hasResolvedSourceSite: siteStore.hasFinishedResolution( 'getSite', [ sourceSlug ] ),
+				site: siteStore.getSite( sourceSlug ),
 			};
 		},
 		[ sourceSlug ]
 	);
 
-	useEffect( () => {
-		if ( isFetchingSiteDetails && siteRequestStatus === 'init' ) {
-			setSiteRequestStatus( 'fetching' );
-		} else if (
-			( ! isFetchingSiteDetails && siteRequestStatus === 'fetching' ) ||
-			sourceSite?.ID
-		) {
-			setSiteRequestStatus( 'finished' );
-		}
-	}, [ isFetchingSiteDetails, siteRequestStatus, sourceSite?.ID ] );
-
 	const { shouldShowSiteCopyItem, isFetching: isFetchingSiteCopy } = useSiteCopy( sourceSite );
 	return {
 		isValidSite: shouldShowSiteCopyItem,
-		hasFetchedSiteDetails: siteRequestStatus === 'finished' && ! isFetchingSiteCopy,
-		isFetchingError,
+		hasFetchedSiteDetails: !! sourceSite?.ID && ! isFetchingSiteCopy,
+		isFetchingError: hasResolvedSourceSite && ! sourceSite,
 	};
 }
 
