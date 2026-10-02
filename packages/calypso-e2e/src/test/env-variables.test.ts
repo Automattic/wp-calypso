@@ -146,17 +146,23 @@ describe( 'EnvVariables Tests', function () {
 			);
 		} );
 
-		// The spec file on the stack is the one reading the variation, whatever a fixture recorded.
-		test( 'a spec file on the call stack wins over the running test', function () {
-			const other = Array.from(
-				{ length: 30 },
-				( _value, index ) => `/agent/specs/area/spec-${ index }.spec.ts`
-			).find( ( file ) => variationInTest( file ) !== variationInModule( SPEC_FILE ) );
+		// A test runs its own spec file's code, so the stack and the fixture name the same file
+		// even though the fixture records the path relative to the specs directory.
+		test( 'a spec file on the call stack agrees with its own running test', function () {
+			const expected = variationInTest( SPEC_FILE );
+			setRunningSpecFile( 'blocks/blocks__jetpack-other.spec.ts' );
 
-			expect( other ).toBeDefined();
-			setRunningSpecFile( other );
+			expect( variationInModule( SPEC_FILE ) ).toBe( expected );
+		} );
 
-			expect( variationInModule( SPEC_FILE ) ).toBe( variationInTest( SPEC_FILE ) );
+		// A spec calling code from another spec would resolve that spec's variation while the
+		// account fixture picks the running spec's site: one test on two sites.
+		test( 'a spec file on the call stack that is not the running test stops the run', function () {
+			setRunningSpecFile( 'area/unrelated.spec.ts' );
+
+			expect( () => variationInModule( SPEC_FILE ) ).toThrow(
+				'blocks__jetpack-other.spec.ts is read while a test of unrelated.spec.ts runs'
+			);
 		} );
 
 		// Falling back to one variation for the whole run would hide which spec file it was for.
