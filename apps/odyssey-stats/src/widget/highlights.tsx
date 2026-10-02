@@ -8,6 +8,7 @@ import { useState, FunctionComponent } from 'react';
 import useReferrersQuery from '../hooks/use-referrers-query';
 import useTopPostsQuery from '../hooks/use-top-posts-query';
 import { HighLightItem } from '../typings';
+import useStatsLink from './use-stats-link';
 
 import './highlights.scss';
 
@@ -59,6 +60,7 @@ const ItemWrapper: FunctionComponent< ItemWrapperProps > = ( {
 	isItemLinkExternal,
 } ) => {
 	const translate = useTranslate();
+	const statsLink = useStatsLink( siteId );
 
 	const renderedItem = (
 		<div>
@@ -76,7 +78,12 @@ const ItemWrapper: FunctionComponent< ItemWrapperProps > = ( {
 	return isItemLink ? (
 		<a
 			href={
-				isItemLinkExternal ? externalLink( item ) : postAndPageLink( statsBaseUrl, siteId, item.id )
+				isItemLinkExternal
+					? externalLink( item )
+					: statsLink(
+							postAndPageLink( statsBaseUrl, siteId, item.id ),
+							item.id > 0 ? `/post/${ item.id }?preset=last-7-days` : null
+						)
 			}
 			target={ isItemLinkExternal ? '_blank' : '_self' }
 			rel="noopener noreferrer"
@@ -142,6 +149,7 @@ const TopColumn: FunctionComponent< TopColumnProps > = ( {
 
 export default function Highlights( { siteId, gmtOffset, statsBaseUrl }: HighlightsProps ) {
 	const translate = useTranslate();
+	const statsLink = useStatsLink( siteId );
 
 	const headingTitle = translate( '7 Day Highlights' );
 	const topPostsAndPagesTitle = translate( 'Top Posts & Pages' );
@@ -164,8 +172,14 @@ export default function Highlights( { siteId, gmtOffset, statsBaseUrl }: Highlig
 	const queryDate = moment()
 		.utcOffset( Number.isFinite( gmtOffset ) ? gmtOffset : 0 )
 		.format( 'YYYY-MM-DD' );
-	const viewAllPostsStatsUrl = `${ statsBaseUrl }/stats/day/posts/${ siteId }?startDate=${ queryDate }&summarize=1&num=7`;
-	const viewAllReferrerStatsUrl = `${ statsBaseUrl }/stats/day/referrers/${ siteId }?startDate=${ queryDate }&summarize=1&num=7`;
+	const viewAllPostsStatsUrl = statsLink(
+		`${ statsBaseUrl }/stats/day/posts/${ siteId }?startDate=${ queryDate }&summarize=1&num=7`,
+		'/reports/posts?preset=last-7-days'
+	);
+	const viewAllReferrerStatsUrl = statsLink(
+		`${ statsBaseUrl }/stats/day/referrers/${ siteId }?startDate=${ queryDate }&summarize=1&num=7`,
+		'/reports/referrers?preset=last-7-days'
+	);
 
 	const { data: topPostsAndPages = [], isFetching: isFetchingPostsAndPages } = useTopPostsQuery(
 		siteId,
