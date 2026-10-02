@@ -9,7 +9,8 @@ export function getLaunchpadDestination(
 	options: AiLaunchpadSiteOptions | undefined,
 	adminUrl: string
 ): string | null {
-	if ( isLaunchpadNoGuidance( { options } ) ) {
+	// Only called right after signup, where the user is the site's administrator.
+	if ( isLaunchpadNoGuidance( { capabilities: { manage_options: true }, options } ) ) {
 		return adminUrl;
 	}
 	if ( options?.wpcom_ai_launchpad_enabled ) {

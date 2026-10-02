@@ -23,6 +23,12 @@ describe( 'getLaunchpadDestination', () => {
 		).toBe( 'https://example.com/wp-admin/' );
 	} );
 
+	it( 'sends no-guidance sites to the wp-admin dashboard', () => {
+		expect( getLaunchpadDestination( { wpcom_ai_launchpad_no_guidance: true }, adminUrl ) ).toBe(
+			'https://example.com/wp-admin/'
+		);
+	} );
+
 	it( 'sends no-guidance sites to the wp-admin dashboard, even when enabled is set', () => {
 		expect(
 			getLaunchpadDestination(

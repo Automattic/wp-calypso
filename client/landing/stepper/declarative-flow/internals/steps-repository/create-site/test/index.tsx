@@ -12,8 +12,8 @@ let flowStateStore: Record< string, unknown >;
 let mockBlueprint: string | null = null;
 let mockQueryParams = new URLSearchParams( '' );
 
-// createSite's aiLaunchpadEnabled parameter (see its call in ../index.tsx).
-const AI_LAUNCHPAD_ENABLED_ARG = 18;
+// The step passes createSite's aiLaunchpadEnabled parameter last (see its call in ../index.tsx).
+const getAiLaunchpadEnabledArg = () => ( createSite as jest.Mock ).mock.calls[ 0 ].at( -1 );
 
 jest.mock( '@automattic/calypso-products', () => ( { isEcommerce: () => false } ) );
 
@@ -251,44 +251,34 @@ describe( 'create-site', () => {
 		it( 'enables the AI Launchpad for onboarding sites', async () => {
 			await runStep();
 			await waitFor( () => expect( createSite ).toHaveBeenCalled() );
-			expect( ( createSite as jest.Mock ).mock.calls[ 0 ][ AI_LAUNCHPAD_ENABLED_ARG ] ).toBe(
-				true
-			);
+			expect( getAiLaunchpadEnabledArg() ).toBe( true );
 		} );
 
 		it( 'does not enable it for other flows', async () => {
 			await runStep( { flow: 'newsletter' } );
 			await waitFor( () => expect( createSite ).toHaveBeenCalled() );
-			expect( ( createSite as jest.Mock ).mock.calls[ 0 ][ AI_LAUNCHPAD_ENABLED_ARG ] ).toBe(
-				false
-			);
+			expect( getAiLaunchpadEnabledArg() ).toBe( false );
 		} );
 
 		it( 'does not enable it for blueprint runs', async () => {
 			mockBlueprint = 'some-blueprint';
 			await runStep();
 			await waitFor( () => expect( createSite ).toHaveBeenCalled() );
-			expect( ( createSite as jest.Mock ).mock.calls[ 0 ][ AI_LAUNCHPAD_ENABLED_ARG ] ).toBe(
-				false
-			);
+			expect( getAiLaunchpadEnabledArg() ).toBe( false );
 		} );
 
 		it( 'does not enable it for a playground run', async () => {
 			mockQueryParams = new URLSearchParams( 'playground=some-playground' );
 			await runStep();
 			await waitFor( () => expect( createSite ).toHaveBeenCalled() );
-			expect( ( createSite as jest.Mock ).mock.calls[ 0 ][ AI_LAUNCHPAD_ENABLED_ARG ] ).toBe(
-				false
-			);
+			expect( getAiLaunchpadEnabledArg() ).toBe( false );
 		} );
 
 		it( 'does not enable it for a playground-publish run', async () => {
 			sessionStorage.setItem( 'from-playground-publish', '1' );
 			await runStep();
 			await waitFor( () => expect( createSite ).toHaveBeenCalled() );
-			expect( ( createSite as jest.Mock ).mock.calls[ 0 ][ AI_LAUNCHPAD_ENABLED_ARG ] ).toBe(
-				false
-			);
+			expect( getAiLaunchpadEnabledArg() ).toBe( false );
 		} );
 	} );
 } );

@@ -34,8 +34,16 @@ export function getAiLaunchpadStatus( site: {
 
 /**
  * Whether the site gets no setup guidance: true if no_guidance option is set, or if AI Launchpad was enabled and dismissed.
+ * Like `getAiLaunchpadStatus()`, it only applies to administrators.
  */
-export function isLaunchpadNoGuidance( site: { options?: AiLaunchpadSiteOptions } ): boolean {
+export function isLaunchpadNoGuidance( site: {
+	capabilities?: { manage_options?: boolean };
+	options?: AiLaunchpadSiteOptions;
+} ): boolean {
+	if ( ! site.capabilities?.manage_options ) {
+		return false;
+	}
+
 	const options = site.options;
 	return (
 		!! options?.wpcom_ai_launchpad_no_guidance ||

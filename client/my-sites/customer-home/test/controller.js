@@ -223,6 +223,7 @@ describe( 'maybeRedirect', () => {
 		getSelectedSite.mockReturnValueOnce( {
 			ID: 1,
 			launch_status: 'unlaunched',
+			capabilities: { manage_options: true },
 			options: { wpcom_ai_launchpad_no_guidance: true },
 		} );
 		const next = jest.fn();
@@ -240,6 +241,7 @@ describe( 'maybeRedirect', () => {
 		getSelectedSite.mockReturnValueOnce( {
 			ID: 1,
 			launch_status: 'unlaunched',
+			capabilities: { manage_options: true },
 			options: { wpcom_ai_launchpad_enabled: true, wpcom_ai_launchpad_dismissed: true },
 		} );
 		const next = jest.fn();
@@ -251,6 +253,22 @@ describe( 'maybeRedirect', () => {
 		);
 		expect( fetchLaunchpad ).not.toHaveBeenCalled();
 		expect( next ).not.toHaveBeenCalled();
+	} );
+
+	it( 'keeps non-admins of no-guidance sites on My Home', async () => {
+		getSelectedSite.mockReturnValueOnce( {
+			ID: 1,
+			launch_status: 'unlaunched',
+			capabilities: { manage_options: false },
+			options: { wpcom_ai_launchpad_no_guidance: true },
+		} );
+		fetchLaunchpad.mockResolvedValue( { launchpad_screen: 'off' } );
+		const next = jest.fn();
+
+		await maybeRedirect( buildSiteContext(), next );
+
+		expect( window.location.replace ).not.toHaveBeenCalled();
+		expect( next ).toHaveBeenCalled();
 	} );
 
 	it( 'renders the page when the launchpad request fails', async () => {
