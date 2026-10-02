@@ -166,7 +166,8 @@ separate from DOM detection on purpose: the Help Center is a side panel without
 
 - `MODAL_SELECTOR` matches `[role="dialog"][aria-modal="true"]` (requiring
   `aria-modal` excludes generic `role="dialog"` widgets), native `dialog[open]`,
-  `.components-modal__screen-overlay` (older WP `Modal` versions), and
+  `.components-modal__screen-overlay` (older WP `Modal` versions),
+  `[data-wp-ui-overlay-modal]` (wp-admin UI overlay modals), and
   `.components-popover:not(.components-tooltip):not(.block-editor-block-popover)`
   (WP `Popover`; `Tooltip` reuses the popover class and must not suppress surveys
   on every hover, and the block editor's `BlockPopover` chrome — block toolbar,
