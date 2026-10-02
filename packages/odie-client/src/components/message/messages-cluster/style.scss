@@ -1,7 +1,7 @@
 @import '@wordpress/base-styles/colors';
 @import '@wordpress/base-styles/variables';
 
-.odie-chatbox-messages-cluster { 
+.odie-chatbox-messages-cluster {
 	width: 100%;
 	padding: 0;
 	box-sizing: border-box;
@@ -74,5 +74,15 @@
 		align-items: flex-end;
 		flex-direction: column;
 		gap: 8px;
+	}
+}
+
+.odie-chatbox-messages-cluster__history-loading {
+	display: flex;
+	justify-content: center;
+	padding: 8px 0;
+
+	.components-spinner {
+		margin: 0;
 	}
 }

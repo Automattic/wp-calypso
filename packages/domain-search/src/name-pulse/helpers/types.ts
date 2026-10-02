@@ -27,5 +27,10 @@ export interface NamePulseDomainResult {
 	is_premium?: boolean;
 	/** Set once a real-time check has run; bulk zone-file results never overwrite it. */
 	is_realtime?: boolean;
+	/**
+	 * Set by the check that runs when the reader adds the name to the cart, which is
+	 * the one check they are waiting on. Rows carrying it hold their Top results slot.
+	 */
+	is_cart_check?: boolean;
 	source: NamePulseSource;
 }

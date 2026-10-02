@@ -1,4 +1,5 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
+import type { TaskUpdate } from '@automattic/agenttic-client';
 import type { NoticeConfig, ProgressRingTone } from '@automattic/agenttic-ui';
 
 export type DemoCreditsPlan = 'free' | 'paid' | 'none';
@@ -21,7 +22,7 @@ function readInitialState(): { plan: DemoCreditsPlan; percent: number } {
 
 /**
  * Mocked credit state for the playground: a plan and a percentage, spent on
- * every submit, plus the composer pieces the library provides (ring tone,
+ * each completed task, plus the composer pieces the library provides (ring tone,
  * low/out notices, submit gating). The full credits meter with tooltip and
  * popover lives in the host (Agents Manager); the demo only shows the ring in
  * the trailing slot. Seed it from the URL with `?plan=free&credits=15`.
@@ -33,7 +34,8 @@ export function useDemoCredits() {
 	const [ isLowNoticeDismissed, setIsLowNoticeDismissed ] = useState( false );
 
 	const isFree = plan === 'free';
-	const isOut = isFree && percent <= 0;
+	const isOut = plan !== 'none' && percent <= 0;
+	const lastCompletedTask = useRef< string | undefined >( undefined );
 	const isLow = isFree && ! isOut && percent <= LOW_THRESHOLD;
 
 	const upgrade = useCallback( () => {
@@ -54,7 +56,7 @@ export function useDemoCredits() {
 			: `${ percent }% of free credits left`;
 
 	const notice = useMemo< NoticeConfig | undefined >( () => {
-		if ( isOut ) {
+		if ( isFree && isOut ) {
 			return {
 				icon: false,
 				message: 'You’re out of free credits.',
@@ -72,7 +74,7 @@ export function useDemoCredits() {
 			};
 		}
 		return undefined;
-	}, [ isOut, isLow, isLowNoticeDismissed, percent, upgrade ] );
+	}, [ isFree, isOut, isLow, isLowNoticeDismissed, percent, upgrade ] );
 
 	// Out of credits: Send and suggestions are blocked and the text stays put.
 	const beforeSubmit = useCallback( () => {
@@ -81,11 +83,24 @@ export function useDemoCredits() {
 			console.log( '[demo] Submit blocked: out of credits' );
 			return false;
 		}
-		if ( plan !== 'none' ) {
-			setPercent( ( current ) => Math.max( 0, current - COST_PER_MESSAGE ) );
-		}
 		return true;
-	}, [ isOut, plan ] );
+	}, [ isOut ] );
+
+	const onTaskUpdate = useCallback(
+		( update: TaskUpdate ) => {
+			if (
+				update.final &&
+				update.status.state === 'completed' &&
+				lastCompletedTask.current !== update.id
+			) {
+				lastCompletedTask.current = update.id;
+				if ( plan !== 'none' ) {
+					setPercent( ( current ) => Math.max( 0, current - COST_PER_MESSAGE ) );
+				}
+			}
+		},
+		[ plan ]
+	);
 
 	const changePlan = useCallback( ( next: DemoCreditsPlan ) => {
 		setPlan( next );
@@ -97,5 +112,15 @@ export function useDemoCredits() {
 		setIsLowNoticeDismissed( false );
 	}, [] );
 
-	return { plan, percent, tone, label, changePlan, changePercent, notice, beforeSubmit };
+	return {
+		plan,
+		percent,
+		tone,
+		label,
+		changePlan,
+		changePercent,
+		notice,
+		beforeSubmit,
+		onTaskUpdate,
+	};
 }

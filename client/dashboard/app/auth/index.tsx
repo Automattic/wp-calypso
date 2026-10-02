@@ -10,6 +10,7 @@ import {
 	useQueryClient,
 	type QueryCacheNotifyEvent,
 	type MutationCacheNotifyEvent,
+	QueryClient,
 } from '@tanstack/react-query';
 import { createContext, useContext, useMemo, useEffect, useRef, useCallback } from 'react';
 import { wpcomLink } from '../../utils/link';
@@ -19,6 +20,18 @@ import { OAUTH_CALLBACK_PATH } from './oauth-callback';
 import type { WPError } from '@automattic/api-core';
 
 export const AUTH_QUERY_KEY = [ 'auth', 'user' ];
+
+/**
+ * Patches the current user so `useAuth()` consumers see a change without a reload. A
+ * bootstrapped session refetches `window.currentUser` instead of `/me`, so the change has to
+ * land there too or the next refetch undoes it.
+ */
+export function updateCurrentUser( queryClient: QueryClient, changes: Partial< User > ) {
+	if ( window.currentUser ) {
+		window.currentUser = { ...window.currentUser, ...changes };
+	}
+	queryClient.setQueryData< User >( AUTH_QUERY_KEY, ( user ) => user && { ...user, ...changes } );
+}
 
 const BOOTSTRAP_ERROR_MESSAGE = 'Failed to bootstrap user object';
 

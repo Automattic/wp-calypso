@@ -119,12 +119,6 @@ export const SitesWithoutThisPlugin = ( {
 					/>
 				),
 				enableSorting: true,
-				sort: ( a, b, direction ) => {
-					const planA = getSitePlanDisplayName( a ) ?? '';
-					const planB = getSitePlanDisplayName( b ) ?? '';
-
-					return direction === 'asc' ? planA.localeCompare( planB ) : planB.localeCompare( planA );
-				},
 			},
 		],
 		[]

@@ -72,13 +72,12 @@ export function AgentUIInput( {
 		handleKeyDown( e );
 	};
 
-	// When imageUploaderRef is provided, a "+" button leads the actions row
-	const resolvedLeadingActions = useMemo( () => {
+	const uploadAction = useMemo< ActionButton | undefined >( () => {
 		if ( ! imageUploaderRef ) {
-			return hostLeadingActions;
+			return undefined;
 		}
 
-		const uploadAction: ActionButton = {
+		return {
 			id: 'image-upload',
 			icon: <PlusIcon />,
 			onClick: () => imageUploaderRef.current?.openFileDialog(),
@@ -86,14 +85,20 @@ export function AgentUIInput( {
 			disabled: imageUploadDisabled,
 			'aria-label': __( 'Upload image', 'a8c-agenttic' ),
 		};
-
-		return (
+	}, [ imageUploaderRef, imageUploadDisabled ] );
+	const uploadAfterSubmit = actionOrder === 'after-submit' && uploadAction;
+	const resolvedLeadingActions =
+		uploadAction && ! uploadAfterSubmit ? (
 			<>
 				<ActionButtons actions={ [ uploadAction ] } />
 				{ hostLeadingActions }
 			</>
+		) : (
+			hostLeadingActions
 		);
-	}, [ imageUploaderRef, hostLeadingActions, imageUploadDisabled ] );
+	const resolvedCustomActions = uploadAfterSubmit
+		? [ uploadAction, ...( customActions ?? [] ) ]
+		: customActions;
 
 	// Default to stacked layout when image uploader is connected
 	const resolvedLayout = layout ?? ( imageUploaderRef ? 'stacked' : 'inline' );
@@ -118,7 +123,7 @@ export function AgentUIInput( {
 			readOnly={ readOnly }
 			leadingActions={ resolvedLeadingActions }
 			trailingActions={ resolvedTrailingActions }
-			customActions={ customActions }
+			customActions={ resolvedCustomActions }
 			actionOrder={ actionOrder }
 			className={ className }
 			layout={ resolvedLayout }

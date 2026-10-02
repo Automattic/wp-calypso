@@ -2,8 +2,8 @@ import {
 	__experimentalHeading as Heading,
 	__experimentalSpacer as Spacer,
 	__experimentalText as Text,
-	__experimentalGrid as Grid,
 } from '@wordpress/components';
+import Grid from '../../../components/grid';
 import ResourceCard from './resource-card';
 import type { ResourceItem, RecordTracksEvent } from './types';
 
@@ -55,7 +55,7 @@ export default function ResourceSection( {
 
 			<Grid
 				templateColumns={ `repeat( auto-fit, minmax( ${ columnMinWidth }px, 1fr ) )` }
-				gap={ 8 }
+				gap="2xl"
 			>
 				{ displayResources.map( ( resource ) => (
 					<ResourceCard

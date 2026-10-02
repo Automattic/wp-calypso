@@ -8,7 +8,6 @@ import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { dispatch } from '@wordpress/data';
 import { isMarketplaceProduct } from 'calypso/state/products-list/selectors';
-import { getDomainsBySiteId, hasLoadedSiteDomains } from 'calypso/state/sites/domains/selectors';
 import { getPlansBySiteId } from 'calypso/state/sites/plans/selectors/get-plans-by-site';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import useCartKey from '../../use-cart-key';
@@ -26,6 +25,7 @@ import {
 	getPlanSubtitleTextForInterval,
 	mockGetPaymentMethodsEndpoint,
 	mockLogStashEndpoint,
+	mockGetSiteDomainsEndpoint,
 	mockGetSupportedCountriesEndpoint,
 	mockGetVatInfoEndpoint,
 	mockMatchMediaOnWindow,
@@ -39,7 +39,6 @@ jest.mock( 'calypso/my-sites/checkout/use-cart-key' );
 jest.mock( 'calypso/state/products-list/selectors' );
 jest.mock( 'calypso/state/selectors/get-intro-offer-price' );
 jest.mock( 'calypso/state/selectors/is-site-automated-transfer' );
-jest.mock( 'calypso/state/sites/domains/selectors' );
 jest.mock( 'calypso/state/sites/plans/selectors/get-plans-by-site' );
 jest.mock( 'calypso/state/sites/selectors' );
 
@@ -62,8 +61,7 @@ describe.skip( 'CheckoutMain with a variant picker', () => {
 		( getPlansBySiteId as jest.Mock ).mockImplementation( () => ( {
 			data: getActivePersonalPlanDataForType( 'yearly' ),
 		} ) );
-		( hasLoadedSiteDomains as unknown as jest.Mock ).mockImplementation( () => true );
-		( getDomainsBySiteId as unknown as jest.Mock ).mockImplementation( () => [] );
+		mockGetSiteDomainsEndpoint( [] );
 		( isMarketplaceProduct as unknown as jest.Mock ).mockImplementation( () => false );
 		( isJetpackSite as unknown as jest.Mock ).mockImplementation( () => false );
 		( useCartKey as unknown as jest.Mock ).mockImplementation( () => mainCartKey );

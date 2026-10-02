@@ -1,6 +1,5 @@
 import { SUPPORT_STATUS_QUERY_KEY } from '@automattic/help-center/src/data/use-support-status';
 import { useShoppingCart } from '@automattic/shopping-cart';
-import { useQueryClient } from '@tanstack/react-query';
 import { isURL } from '@wordpress/url';
 import debugFactory from 'debug';
 import { useCallback } from 'react';
@@ -16,6 +15,7 @@ import {
 import { useSelector, useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { clearPurchases } from 'calypso/state/purchases/actions';
+import { getCalypsoQueryClient } from 'calypso/state/query-client';
 import { fetchReceiptCompleted } from 'calypso/state/receipts/actions';
 import hasGravatarDomainQueryParam from 'calypso/state/selectors/has-gravatar-domain-query-param';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
@@ -29,6 +29,7 @@ import {
 } from 'calypso/state/sites/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { recordCompositeCheckoutErrorDuringAnalytics } from '../lib/analytics';
+import { isExternalA4ACheckout } from '../lib/is-external-a4a-checkout';
 import normalizeTransactionResponse from '../lib/normalize-transaction-response';
 import { absoluteRedirectThroughPending, redirectThroughPending } from '../lib/pending-page';
 import type {
@@ -110,7 +111,6 @@ export default function useCreatePaymentSubmittedAndProcessingCallback( {
 	);
 
 	const domains = useSiteDomains( siteId ?? undefined );
-	const queryClient = useQueryClient();
 
 	return useCallback(
 		async ( { transactionLastResponse }: PaymentEventCallbackArguments ) => {
@@ -182,7 +182,8 @@ export default function useCreatePaymentSubmittedAndProcessingCallback( {
 			debug( 'transactionResult was', transactionResult );
 
 			reduxDispatch( clearPurchases() );
-			queryClient.invalidateQueries( { queryKey: SUPPORT_STATUS_QUERY_KEY } );
+			// Help Center reads support status from Calypso's QueryClient, not checkout's.
+			getCalypsoQueryClient()?.invalidateQueries( { queryKey: SUPPORT_STATUS_QUERY_KEY } );
 
 			// Removes the destination cookie only if redirecting to the signup destination.
 			// (e.g. if the destination is an upsell nudge, it does not remove the cookie).
@@ -245,7 +246,7 @@ export default function useCreatePaymentSubmittedAndProcessingCallback( {
 					siteSlug,
 					orderId: 'order_id' in transactionResult ? transactionResult.order_id : undefined,
 					receiptId: 'receipt_id' in transactionResult ? transactionResult.receipt_id : undefined,
-					fromExternalCheckout: sitelessCheckoutType === 'a4a',
+					fromExternalCheckout: isExternalA4ACheckout( sitelessCheckoutType ),
 				} );
 				return;
 			}
@@ -263,7 +264,7 @@ export default function useCreatePaymentSubmittedAndProcessingCallback( {
 					orderId: 'order_id' in transactionResult ? transactionResult.order_id : undefined,
 					receiptId: 'receipt_id' in transactionResult ? transactionResult.receipt_id : undefined,
 					fromSiteSlug,
-					fromExternalCheckout: sitelessCheckoutType === 'a4a',
+					fromExternalCheckout: isExternalA4ACheckout( sitelessCheckoutType ),
 				} );
 				return;
 			}
@@ -275,7 +276,7 @@ export default function useCreatePaymentSubmittedAndProcessingCallback( {
 				siteSlug,
 				orderId: 'order_id' in transactionResult ? transactionResult.order_id : undefined,
 				receiptId: 'receipt_id' in transactionResult ? transactionResult.receipt_id : undefined,
-				fromExternalCheckout: sitelessCheckoutType === 'a4a',
+				fromExternalCheckout: isExternalA4ACheckout( sitelessCheckoutType ),
 				isGravatarDomain,
 			} );
 		},
@@ -292,7 +293,6 @@ export default function useCreatePaymentSubmittedAndProcessingCallback( {
 			isComingFromUpsell,
 			isInModal,
 			reduxDispatch,
-			queryClient,
 			siteId,
 			responseCart,
 			createUserAndSiteBeforeTransaction,

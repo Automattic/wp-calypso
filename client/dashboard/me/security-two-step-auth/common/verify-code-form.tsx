@@ -1,5 +1,5 @@
 import { validateTwoStepAuthCodeMutation } from '@automattic/api-queries';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import {
 	__experimentalVStack as VStack,
@@ -10,6 +10,7 @@ import { DataForm } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { useMemo, useState } from 'react';
 import { useAnalytics } from '../../../app/analytics';
+import { updateCurrentUser } from '../../../app/auth';
 import { ButtonStack } from '../../../components/button-stack';
 import { Notice } from '../../../components/notice';
 import type { Field } from '@wordpress/dataviews';
@@ -44,6 +45,7 @@ export default function VerifyCodeForm( {
 	resendButtonProps,
 }: VerifyCodeFormProps ) {
 	const router = useRouter();
+	const queryClient = useQueryClient();
 	const { recordTracksEvent } = useAnalytics();
 
 	const [ formData, setFormData ] = useState< TwoStepAuthAppFormData >( {
@@ -66,6 +68,9 @@ export default function VerifyCodeForm( {
 			},
 			{
 				onSuccess: () => {
+					if ( actionType === 'enable-two-step' ) {
+						updateCurrentUser( queryClient, { two_step_enabled: true } );
+					}
 					onSuccess?.();
 				},
 				onError: ( e: Error ) => {

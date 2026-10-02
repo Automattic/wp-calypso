@@ -1,3 +1,4 @@
+import { siteBySlugQuery } from '@automattic/api-queries';
 import { Button } from '@automattic/components';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
@@ -8,27 +9,13 @@ import Loading from 'calypso/components/loading';
 import Main from 'calypso/components/main';
 import { ThankYou } from 'calypso/components/thank-you';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import wpcom from 'calypso/lib/wp';
 
 import './style.scss';
 
-interface Site {
-	name: string;
-	URL: string;
-}
-
-function useSiteQuery( siteId: string | number ) {
-	return useQuery< Site >( {
-		queryKey: [ 'unauthorized-site', siteId ],
-		queryFn: () => wpcom.req.get( { path: `/sites/${ siteId }`, apiVersion: '1.2' } ),
-		meta: { persist: false },
-	} );
-}
-
-export default function GiftThankYou( { site }: { site: number | string } ) {
+export default function GiftThankYou( { site }: { site: string } ) {
 	const translate = useTranslate();
 
-	const siteRequest = useSiteQuery( site );
+	const siteRequest = useQuery( siteBySlugQuery( site ) );
 	const siteName = siteRequest.data?.name;
 	const siteUrl = siteRequest.data?.URL;
 	const siteUrlGifter = siteUrl + '#gift-thank-you';

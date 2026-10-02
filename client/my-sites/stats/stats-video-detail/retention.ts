@@ -1,6 +1,6 @@
 export interface RetentionBucket {
 	plays: number;
-	retentionRate: number;
+	retentionRate: number | null;
 }
 
 /**
@@ -14,13 +14,24 @@ export interface RetentionBucket {
  * from a single reference bucket, the rounding error the API bakes into a
  * low-traffic bucket's rate only contributes in proportion to that bucket's
  * plays instead of polluting the whole window.
+ *
+ * Buckets with an unknown (`null`) rate are skipped, plays included, and the
+ * result is `null` when no bucket has a known rate.
  */
-export function calculatePlayWeightedRetention( buckets: RetentionBucket[] ): number {
+export function calculatePlayWeightedRetention( buckets: RetentionBucket[] ): number | null {
 	let plays = 0;
 	let weightedRate = 0;
+	let knownBuckets = 0;
 	for ( const bucket of buckets ) {
+		if ( bucket.retentionRate === null ) {
+			continue;
+		}
+		knownBuckets++;
 		plays += bucket.plays;
 		weightedRate += bucket.retentionRate * bucket.plays;
+	}
+	if ( buckets.length > 0 && knownBuckets === 0 ) {
+		return null;
 	}
 	return plays > 0 ? weightedRate / plays : 0;
 }

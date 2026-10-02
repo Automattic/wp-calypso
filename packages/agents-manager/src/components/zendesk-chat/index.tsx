@@ -7,6 +7,7 @@ import {
 } from '@automattic/zendesk-client';
 import { useMemo } from '@wordpress/element';
 import { useAgentsManagerContext } from '../../contexts';
+import { getSiteUrl } from '../../utils/site-url';
 import AgentChat from '../agent-chat';
 import { type Options as ChatHeaderOptions } from '../chat-header';
 import ConcludedConversationFooter from '../concluded-conversation-footer';
@@ -28,22 +29,6 @@ interface Props {
 	markdownComponents?: MarkdownComponents;
 	/** Custom markdown extensions. */
 	markdownExtensions?: MarkdownExtensions;
-}
-
-function withHttpsProtocol( domain: string ) {
-	return /^https?:\/\//.test( domain ) ? domain : `https://${ domain }`;
-}
-
-function getSiteUrl( site: ReturnType< typeof useAgentsManagerContext >[ 'site' ] ) {
-	if ( site?.URL ) {
-		return site.URL;
-	}
-
-	if ( site?.domain ) {
-		return withHttpsProtocol( site.domain );
-	}
-
-	return window.location.href;
 }
 
 export default function ZendeskChat( {

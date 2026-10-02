@@ -1,8 +1,8 @@
 import {
 	userPaymentMethodsQuery,
-	userPaymentMethodSetBackupQuery,
-	userPaymentMethodDeleteQuery,
-	userPaymentMethodSetTaxInfoQuery,
+	userPaymentMethodSetBackupMutation,
+	userPaymentMethodDeleteMutation,
+	userPaymentMethodSetTaxInfoMutation,
 } from '@automattic/api-queries';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useQuery, useMutation } from '@tanstack/react-query';
@@ -110,12 +110,12 @@ export default function PaymentMethods() {
 	);
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const { mutate: setPaymentMethodBackup, isPending: isSettingPaymentMethodBackup } = useMutation(
-		userPaymentMethodSetBackupQuery()
+		userPaymentMethodSetBackupMutation()
 	);
 	const { mutate: deletePaymentMethod, isPending: isDeletingPaymentMethod } = useMutation(
-		userPaymentMethodDeleteQuery()
+		userPaymentMethodDeleteMutation()
 	);
-	const { mutate: setPaymentMethodTaxInfo } = useMutation( userPaymentMethodSetTaxInfoQuery() );
+	const { mutate: setPaymentMethodTaxInfo } = useMutation( userPaymentMethodSetTaxInfoMutation() );
 	const { recordTracksEvent } = useAnalytics();
 	const recordActionClick = (
 		paymentMethod: StoredPaymentMethod,

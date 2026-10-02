@@ -11,10 +11,11 @@ import {
 } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
-import filesize from 'filesize';
 import { useState } from 'react';
+import { useIntlLocale } from '../../app/locale';
 import { getCurrentDashboard } from '../../app/routing';
 import { redirectToDashboardLink, wpcomLink } from '../../utils/link';
+import { formatStorage } from '../../utils/site-storage';
 import { StorageCapacityStat } from './storage-capacity-stat';
 import {
 	getStorageAddOnProduct,
@@ -47,6 +48,7 @@ export function AddStorageModal( { site, isOpen, onClose }: AddStorageModalProps
 	);
 
 	const [ userSelectedTier, setUserSelectedTier ] = useState< StorageTierOption | null >( null );
+	const locale = useIntlLocale();
 
 	if ( ! isOpen ) {
 		return null;
@@ -156,7 +158,11 @@ export function AddStorageModal( { site, isOpen, onClose }: AddStorageModalProps
 				<VStack spacing={ 2 }>
 					<Text weight={ 600 }>{ __( 'New storage capacity' ) }</Text>
 					<StorageCapacityStat
-						description={ filesize( mediaStorage.storage_used_bytes, { round: 0 } ) + ' used' }
+						description={ sprintf(
+							// translators: %s is the amount of storage used, e.g. "546.6 MB"
+							__( '%s used' ),
+							formatStorage( mediaStorage.storage_used_bytes, locale )
+						) }
 						currentCapacityBytes={ planStorageBytes }
 						addOnCapacityBytes={ selectedAddOnStorageBytes }
 					/>

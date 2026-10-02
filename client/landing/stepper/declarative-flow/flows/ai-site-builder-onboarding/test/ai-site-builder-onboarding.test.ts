@@ -215,6 +215,7 @@ describe( 'ai-site-builder-onboarding flow', () => {
 					siteId: '123',
 					ref: 'new-site-popover',
 					source: 'sites-dashboard',
+					graph: 'dsl',
 				} );
 				expect( persistSignupDestination ).toHaveBeenCalledWith( getRedirectTo() );
 
@@ -252,7 +253,7 @@ describe( 'ai-site-builder-onboarding flow', () => {
 				expect( redirectTo.searchParams.get( 'spec_id' ) ).toBe( 'spec-42' );
 			} );
 
-			it.each( [ 'value_bundle', 'business-bundle-monthly' ] )(
+			it.each( [ 'personal-bundle', 'value_bundle', 'business-bundle-monthly' ] )(
 				'is used for the %s plan',
 				async ( productSlug ) => {
 					setPlan( productSlug );
@@ -265,7 +266,7 @@ describe( 'ai-site-builder-onboarding flow', () => {
 				}
 			);
 
-			it.each( [ 'personal-bundle', 'ecommerce-bundle-2y' ] )(
+			it.each( [ 'ecommerce-bundle-2y' ] )(
 				'is not used for the %s plan',
 				async ( productSlug ) => {
 					setPlan( productSlug );

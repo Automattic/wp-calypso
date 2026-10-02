@@ -2,6 +2,7 @@
  * @jest-environment jsdom
  */
 import config from '@automattic/calypso-config';
+import { useQuery as useDataQuery } from '@tanstack/react-query';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { WOO_HOSTING_SOLUTIONS_REF } from 'calypso/landing/stepper/constants';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -27,6 +28,11 @@ jest.mock( '@automattic/components', () => ( {
 			{ title }
 		</button>
 	),
+} ) );
+
+jest.mock( '@tanstack/react-query', () => ( {
+	...jest.requireActual( '@tanstack/react-query' ),
+	useQuery: jest.fn(),
 } ) );
 
 jest.mock( '@automattic/onboarding', () => ( {
@@ -55,7 +61,6 @@ jest.mock( 'calypso/signup/storageUtils', () => ( {
 
 jest.mock( 'calypso/landing/stepper/utils/build-wow-plans', () => ( {
 	planSupportsBuildWow: ( slug?: string ) => !! slug && slug !== 'pro-plan',
-	planSupportsBuildWowDsl: ( slug?: string ) => !! slug && slug !== 'pro-plan',
 } ) );
 
 jest.mock( '../../../../../hooks/use-plan-cart-item', () => ( {
@@ -100,6 +105,11 @@ describe( 'SetupYourSiteAIStep', () => {
 			siteId: 123,
 		} );
 
+	const setAutomattician = ( isAutomattician: boolean ) =>
+		( useDataQuery as jest.Mock ).mockImplementation( ( { enabled } ) => ( {
+			data: enabled ? isAutomattician : undefined,
+		} ) );
+
 	const setPlanCartItem = ( productSlug: string | null ) =>
 		( usePlanCartItem as jest.Mock ).mockReturnValue(
 			productSlug ? { product_slug: productSlug } : null
@@ -111,17 +121,18 @@ describe( 'SetupYourSiteAIStep', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
 		mockQueryParams = new URLSearchParams();
-		isEnabled.mockImplementation( ( flag: string ) => flag !== 'site-spec/build-wow-dsl' );
+		isEnabled.mockImplementation( ( flag: string ) => flag !== 'site-spec/build-wow-blocks-first' );
+		setAutomattician( true );
 		setSitePlan( 'business-bundle' );
 		setPlanCartItem( null );
 		( getSignupCompleteSlug as jest.Mock ).mockReturnValue( 'example.wordpress.com' );
 	} );
 
 	describe( 'card order', () => {
-		it( 'renders the template card before the custom design card by default', () => {
+		it( 'renders the custom design card before the template card by default', () => {
 			renderStep();
 
-			expect( getButtonNames() ).toEqual( [ 'Start with a template', 'Create a custom design' ] );
+			expect( getButtonNames() ).toEqual( [ 'Create a custom design', 'Start with a template' ] );
 		} );
 
 		it( 'keeps the AI prompt card before the template card for the Woo hosting solutions ref', () => {
@@ -156,12 +167,13 @@ describe( 'SetupYourSiteAIStep', () => {
 
 			expect( recordTracksEvent ).toHaveBeenCalledWith(
 				'calypso_onboarding_setup_your_site_with_ai_selection',
-				{ selection: 'generate-theme' }
+				{ selection: 'generate-theme', graph: 'dsl' }
 			);
 			expect( navigation.submit ).toHaveBeenCalledWith( {
 				setupChoice: 'generate-theme',
 				siteSlug: 'example.wordpress.com',
 				siteId: 123,
+				graph: 'dsl',
 			} );
 		} );
 
@@ -254,47 +266,57 @@ describe( 'SetupYourSiteAIStep', () => {
 		} );
 	} );
 
-	describe( 'with the build-wow DSL feature enabled', () => {
+	describe( 'with the build-wow blocks-first feature enabled', () => {
 		beforeEach( () => {
 			isEnabled.mockReturnValue( true );
 		} );
 
-		it( 'renders the DSL card after the custom design card', () => {
+		it( 'renders the blocks-first card last for an Automattician', () => {
 			renderStep();
 
 			expect( getButtonNames() ).toEqual( [
-				'Start with a template',
 				'Create a custom design',
-				'Create a custom design (DSL)',
+				'Start with a template',
+				'Create a custom design (blocks-first)',
 			] );
 		} );
 
-		it( 'submits the generate-theme choice on the DSL graph', () => {
+		it( 'submits the generate-theme choice on the blocks-first graph', () => {
 			renderStep();
 
-			fireEvent.click( screen.getByRole( 'button', { name: 'Create a custom design (DSL)' } ) );
+			fireEvent.click(
+				screen.getByRole( 'button', { name: 'Create a custom design (blocks-first)' } )
+			);
 
 			expect( recordTracksEvent ).toHaveBeenCalledWith(
 				'calypso_onboarding_setup_your_site_with_ai_selection',
-				{ selection: 'generate-theme', graph: 'dsl' }
+				{ selection: 'generate-theme', graph: 'blocks-first' }
 			);
 			expect( navigation.submit ).toHaveBeenCalledWith( {
 				setupChoice: 'generate-theme',
 				siteSlug: 'example.wordpress.com',
 				siteId: 123,
-				graph: 'dsl',
+				graph: 'blocks-first',
 			} );
 		} );
 
-		it( 'hides the DSL card on a plan that cannot take it', () => {
+		it( 'hides the blocks-first card from a non-Automattician', () => {
+			setAutomattician( false );
+
+			renderStep();
+
+			expect( getButtonNames() ).toEqual( [ 'Create a custom design', 'Start with a template' ] );
+		} );
+
+		it( 'hides the blocks-first card on a plan that cannot take build-wow', () => {
 			setSitePlan( 'pro-plan' );
 
 			renderStep();
 
-			expect( getButtonNames() ).toEqual( [ 'Start with a template', 'Create a custom design' ] );
+			expect( getButtonNames() ).toEqual( [ 'Create a custom design', 'Start with a template' ] );
 		} );
 
-		it( 'hides the DSL card for the Woo hosting solutions ref', () => {
+		it( 'hides the blocks-first card for the Woo hosting solutions ref', () => {
 			mockQueryParams = new URLSearchParams( { ref: WOO_HOSTING_SOLUTIONS_REF } );
 
 			renderStep();

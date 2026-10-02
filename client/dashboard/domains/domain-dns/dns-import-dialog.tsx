@@ -6,12 +6,12 @@ import {
 	__experimentalVStack as VStack,
 	__experimentalText as Text,
 	CheckboxControl,
-	__experimentalDivider as Divider,
 } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { useState, useEffect } from 'react';
 import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import { ButtonStack } from '../../components/button-stack';
+import Divider from '../../components/divider';
 import type { DnsRecord } from '@automattic/api-core';
 
 interface DnsImportDialogProps {

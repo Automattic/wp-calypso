@@ -15,6 +15,8 @@ interface SidebarExpandableMenuItemProps {
 	label: string;
 	icon?: React.JSX.Element;
 	to: string;
+	/** Other paths that mark the item active, for groups whose screens share no prefix. */
+	activePaths?: string[];
 	children: React.ReactNode;
 }
 
@@ -22,13 +24,14 @@ export function SidebarExpandableMenuItem( {
 	label,
 	icon,
 	to,
+	activePaths = [],
 	children,
 }: SidebarExpandableMenuItemProps ) {
 	const { recordTracksEvent } = useAnalytics();
 	const pathname = useRouterState( {
 		select: ( state ) => state.location.pathname,
 	} );
-	const isActive = pathname.startsWith( to );
+	const isActive = [ to, ...activePaths ].some( ( path ) => pathname.startsWith( path ) );
 	const [ isOpen, setIsOpen ] = useState( isActive );
 	const panelId = useId();
 

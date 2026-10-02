@@ -210,6 +210,7 @@ describe( 'SiteSpec Utils', () => {
 				siteId: 123,
 				ref: 'referrer',
 				source: 'vega',
+				graph: 'dsl',
 			} );
 			const buildSiteUrl = new URL( result.buildSiteUrl ?? '', 'https://wordpress.com' );
 
@@ -219,6 +220,7 @@ describe( 'SiteSpec Utils', () => {
 			expect( buildSiteUrl.searchParams.get( 'siteId' ) ).toBe( '123' );
 			expect( buildSiteUrl.searchParams.get( 'ref' ) ).toBe( 'referrer' );
 			expect( buildSiteUrl.searchParams.get( 'source' ) ).toBe( 'vega' );
+			expect( buildSiteUrl.searchParams.get( 'graph' ) ).toBe( 'dsl' );
 			expect( result.buildSiteUrl ).toContain( 'spec_id=' );
 		} );
 

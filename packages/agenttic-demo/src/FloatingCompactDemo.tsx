@@ -26,6 +26,8 @@ const FloatingCompactDemo: React.FC< { currentTheme: 'light' | 'dark' } > = ( {
 		{ x: number; y: number } | undefined
 	>( undefined );
 	const [ remountKey, setRemountKey ] = useState( 0 );
+	const demoCredits = useDemoCredits();
+
 	const {
 		messages,
 		isProcessing,
@@ -41,11 +43,10 @@ const FloatingCompactDemo: React.FC< { currentTheme: 'light' | 'dark' } > = ( {
 		handleSubmit,
 	} = useDemoChat( {
 		sessionId: 'dev-session-floating-compact',
+		onTaskUpdate: demoCredits.onTaskUpdate,
 	} );
 
 	useDemoFeedback( registerMessageActions );
-
-	const demoCredits = useDemoCredits();
 
 	// Register zoom action with `order: 1` so it appears before feedback actions.
 	useEffect( () => {

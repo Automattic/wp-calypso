@@ -65,6 +65,7 @@ module.exports = {
 							'!@automattic/components/src/breadcrumbs/types',
 							'!@automattic/components/src/logos',
 							'!@automattic/components/src/resurrected-welcome-modal',
+							'!@automattic/components/src/experience-control',
 							'!@automattic/date-range-picker',
 							'!@automattic/domain-search',
 							'!@automattic/domains-table',
@@ -108,6 +109,11 @@ module.exports = {
 				paths: [
 					{
 						name: '@automattic/calypso-analytics',
+						importNames: [
+							'recordTracksEvent',
+							'recordTracksPageView',
+							'recordTracksPageViewWithPageParams',
+						],
 						message: 'Please import { useAnalytics } from client/dashboard/app/analytics instead.',
 					},
 					{

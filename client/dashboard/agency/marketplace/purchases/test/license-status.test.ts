@@ -1,8 +1,10 @@
 import {
 	getLicenseDisplayStatus,
 	getLicenseProductName,
+	getLicenseRenewalDate,
 	getLicenseStatus,
 	getLicenseTags,
+	getRenewalBadges,
 	isAutoRenewDisabled,
 	isBundleParent,
 	isChildLicense,
@@ -192,6 +194,62 @@ describe( 'subscription and bundle helpers', () => {
 	} );
 } );
 
+describe( 'renewal details', () => {
+	const subscription = {
+		id: 'sub_1',
+		product_name: 'Jetpack Boost',
+		purchase_price: 10,
+		purchase_currency: 'USD',
+		billing_interval_unit: 'month',
+		status: 'active',
+		expiry: '2026-10-21T00:00:00+00:00',
+		is_auto_renew_enabled: true,
+		is_refundable: false,
+	};
+
+	it( 'shows the expiry date of the subscription', () => {
+		expect( getLicenseRenewalDate( license( { subscription } ) ) ).toBe( subscription.expiry );
+	} );
+
+	it( 'shows nothing without a subscription or once the license is revoked', () => {
+		expect( getLicenseRenewalDate( license() ) ).toBeNull();
+		expect( getRenewalBadges( license() ) ).toEqual( [] );
+
+		const revoked = license( { subscription, revoked_at: '2026-01-03 00:00:00' } );
+		expect( getLicenseRenewalDate( revoked ) ).toBeNull();
+		expect( getRenewalBadges( revoked ) ).toEqual( [] );
+	} );
+
+	it( 'adds no badge to a subscription that renews normally', () => {
+		expect( getRenewalBadges( license( { subscription } ) ) ).toEqual( [] );
+	} );
+
+	it( 'flags auto-renew off and refundable subscriptions', () => {
+		expect(
+			getRenewalBadges(
+				license( {
+					subscription: { ...subscription, is_auto_renew_enabled: false, is_refundable: true },
+				} )
+			)
+		).toEqual( [ 'auto-renew-off', 'refundable' ] );
+	} );
+
+	it( 'only flags an inactive subscription as expired', () => {
+		expect(
+			getRenewalBadges(
+				license( {
+					subscription: {
+						...subscription,
+						status: 'inactive',
+						is_auto_renew_enabled: false,
+						is_refundable: true,
+					},
+				} )
+			)
+		).toEqual( [ 'expired' ] );
+	} );
+} );
+
 describe( 'getLicenseTags', () => {
 	it( 'returns no tags for a plain license', () => {
 		expect( getLicenseTags( license() ) ).toEqual( [] );
@@ -199,7 +257,12 @@ describe( 'getLicenseTags', () => {
 
 	it( 'tags referral and development licenses', () => {
 		expect(
-			getLicenseTags( license( { referral: { id: 1 }, meta: { a4a_is_dev_site: '1' } } ) )
+			getLicenseTags(
+				license( {
+					referral: { id: 1 } as JetpackLicense[ 'referral' ],
+					meta: { a4a_is_dev_site: '1' },
+				} )
+			)
 		).toEqual( [ 'Referral', 'Development' ] );
 	} );
 } );

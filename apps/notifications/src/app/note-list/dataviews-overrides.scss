@@ -87,6 +87,18 @@
 		display: none;
 	}
 
+	// A note with no excerpt leaves its title at the top of the text column,
+	// which DataViews keeps at a two-line min-height. Center the title and the
+	// icon in the row instead.
+	.dataviews-view-list__field-wrapper:has(> .dataviews-view-list__field:empty) {
+		justify-content: center;
+	}
+
+	.dataviews-view-list__media-wrapper:has(+ .dataviews-view-list__field-wrapper > .dataviews-view-list__field:empty) {
+		align-self: center;
+		margin-block-start: 0;
+	}
+
 	// We override styles with the selected styles for unread items.
 	div[role="article"]:has(.is-unread),
 	div[role="article"]:has(.is-unread):focus-within {

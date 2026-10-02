@@ -103,6 +103,44 @@ describe( 'useSiteGeneration', () => {
 		expect( stopStatusPolling ).toHaveBeenCalled();
 	} );
 
+	it( 'gives up on a DSL build after 5 minutes', () => {
+		const { result } = renderHook( () =>
+			useSiteGeneration( {
+				siteIdentifier: '123',
+				editorUrl: 'https://example.wordpress.com/wp-admin/site-editor.php',
+				graph: 'dsl',
+				steps: STEPS,
+			} )
+		);
+
+		act( () => {
+			jest.advanceTimersByTime( 5 * 60 * 1000 - 1 );
+		} );
+		expect( result.current.status ).toBe( 'working' );
+
+		act( () => {
+			jest.advanceTimersByTime( 1 );
+		} );
+		expect( result.current.status ).toBe( 'failed' );
+		expect( result.current.failureReason ).toBe( 'timed-out' );
+	} );
+
+	it( 'keeps waiting past 5 minutes on other graphs', () => {
+		const { result } = renderHook( () =>
+			useSiteGeneration( {
+				siteIdentifier: '123',
+				editorUrl: 'https://example.wordpress.com/wp-admin/site-editor.php',
+				graph: 'blocks-first',
+				steps: STEPS,
+			} )
+		);
+
+		act( () => {
+			jest.advanceTimersByTime( 5 * 60 * 1000 );
+		} );
+		expect( result.current.status ).toBe( 'working' );
+	} );
+
 	it( 'shows the calm fallback when the backend reports a failed build without UI', () => {
 		const { result } = renderHook( () =>
 			useSiteGeneration( {

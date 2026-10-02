@@ -329,6 +329,11 @@ export const STEPS = {
 		asyncComponent: () => import( './steps-repository/wow-funnel-handoff' ),
 	},
 
+	WOW_FUNNEL_PENDING: {
+		slug: 'wow-funnel-pending',
+		asyncComponent: () => import( './steps-repository/wow-funnel-pending' ),
+	},
+
 	SETUP_YOUR_SITE_AI: {
 		slug: 'setup-your-site-ai',
 		asyncComponent: () => import( './steps-repository/setup-your-site-ai' ),

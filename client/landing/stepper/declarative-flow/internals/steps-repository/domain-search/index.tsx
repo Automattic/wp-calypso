@@ -1,5 +1,6 @@
 import { isMonthly } from '@automattic/calypso-products';
 import { HelpCenter } from '@automattic/data-stores';
+import { DomainSuggestionBadge } from '@automattic/domain-search';
 import {
 	isAIBuilderFlow,
 	isAIBuilderOnboardingFlow,
@@ -17,6 +18,7 @@ import {
 import { Button } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { useDispatch, useSelect } from '@wordpress/data';
+import { createInterpolateElement } from '@wordpress/element';
 import { help } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { useMemo } from 'react';
@@ -54,6 +56,7 @@ import { OnboardingProgress } from '../components/onboarding-progress';
 import { useShowOnboardingProgress } from '../components/onboarding-progress/use-show-onboarding-progress';
 import HundredYearPlanStepWrapper from '../hundred-year-plan-step-wrapper';
 import { getSkipSuggestionCopy } from './get-skip-suggestion-copy';
+import { getDomainSearchResultsVariation } from './results-experiment';
 import type { Step as StepType } from '../../types';
 import type { FreeDomainSuggestion } from '@automattic/api-core';
 import type { HelpCenterSelect, OnboardSelect } from '@automattic/data-stores';
@@ -150,6 +153,9 @@ const DomainSearchStep: StepType< {
 	const isWowFunnel = !! queryParams.get( 'wow_funnel' );
 	const wowSkipCopy = isWowFunnel ? __( 'Set up a domain later' ) : undefined;
 	const stepCounter = useOnboardingStepCounter( flow, 'domains' );
+	const resultsVariation = getDomainSearchResultsVariation( flow );
+	const isCustomDomainBannerCopyVariation = resultsVariation === 'custom_domain_banner_copy';
+	const isFreeDomainBannerCopyVariation = resultsVariation === 'free_domain_banner_copy';
 
 	const storedSiteTitle = useSelect(
 		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedSiteTitle(),
@@ -178,6 +184,18 @@ const DomainSearchStep: StepType< {
 	} );
 
 	const config = useMemo( () => {
+		const experimentSkipCopy = isFreeDomainBannerCopyVariation
+			? {
+					title: __( 'Skip the domain for now' ),
+					subtitle: __(
+						'You’ll get a WordPress.com branded domain. Upgrade to a custom domain name anytime.'
+					),
+					buttonText: __( 'Skip' ),
+					// Keeps the free *.wordpress.com address out of the accessible label too.
+					skipLabel: __( 'Skip the domain for now' ),
+				}
+			: undefined;
+
 		const urlAllowedTlds = tldQuery?.split( ',' ) ?? [];
 
 		// Precedence for allowedTlds:
@@ -216,14 +234,20 @@ const DomainSearchStep: StepType< {
 			// Free-subdomain skip card copy, in order of precedence: per-flow
 			// `freeSubdomainTitle` / `freeSubdomainButtonLabel` overrides, then the WoW
 			// funnel default (no free-subdomain option to offer, see `isWowFunnel` above),
-			// then the flow default resolved by `getSkipSuggestionCopy`.
+			// then the results experiment copy, then the flow default resolved by
+			// `getSkipSuggestionCopy`.
 			skipSuggestionCopy: getSkipSuggestionCopy( flow, __, {
-				title: freeSubdomainTitle ?? wowSkipCopy,
-				buttonText: freeSubdomainButtonLabel ?? wowSkipCopy,
+				title: freeSubdomainTitle ?? wowSkipCopy ?? experimentSkipCopy?.title,
+				subtitle: experimentSkipCopy?.subtitle,
+				buttonText: freeSubdomainButtonLabel ?? wowSkipCopy ?? experimentSkipCopy?.buttonText,
+				skipLabel: experimentSkipCopy?.skipLabel,
 			} ),
 			// WoW funnel: hide the free *.wordpress.com subdomain card entirely and offer only
 			// the skip control.
 			hideFreeSubdomainSuggestion: isWowFunnel,
+			skipSuggestionPlacement:
+				resultsVariation === 'free_banner_top' ? ( 'top' as const ) : undefined,
+			showSelectCta: resultsVariation === 'tone_down_purchase',
 			includeDotBlogSubdomain:
 				! isHundredYearPlanFlow( flow ) &&
 				! isHundredYearDomainFlow( flow ) &&
@@ -245,6 +269,8 @@ const DomainSearchStep: StepType< {
 		isWooHostingSolutions,
 		isWowFunnel,
 		wowSkipCopy,
+		resultsVariation,
+		isFreeDomainBannerCopyVariation,
 		tldQuery,
 		query,
 		allowedTldsProp,
@@ -388,6 +414,25 @@ const DomainSearchStep: StepType< {
 					return null;
 				}
 
+				if ( isCustomDomainBannerCopyVariation ) {
+					return (
+						<FreeDomainForAYearPromo
+							title={ __( 'Look professional for less' ) }
+							subtitle={ createInterpolateElement(
+								__(
+									'When you purchase an annual plan, the first year of domain name registration is on us.<br />Discount automatically applied at checkout.'
+								),
+								{ br: <br /> }
+							) }
+							badge={
+								<DomainSuggestionBadge variation="success">
+									{ __( 'First year free' ) }
+								</DomainSuggestionBadge>
+							}
+						/>
+					);
+				}
+
 				return (
 					<FreeDomainForAYearPromo
 						isCiab={ isCiab }
@@ -412,6 +457,8 @@ const DomainSearchStep: StepType< {
 		hideFreeDomainPromo,
 		freeDomainPromoTitle,
 		freeDomainPromoSubtitle,
+		isCustomDomainBannerCopyVariation,
+		__,
 	] );
 
 	const headerText = useMemo( () => {

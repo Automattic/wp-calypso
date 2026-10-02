@@ -26,7 +26,7 @@ import {
 	hasFrDomain,
 	validateFrOrganization,
 } from './fr-contact-fields';
-import { RegionAddressFieldsLayout } from './region-address-fieldsets';
+import { isEuOrUkAddressFormat, RegionAddressFieldsLayout } from './region-address-fieldsets';
 import {
 	getUkContactFormFields,
 	getUkContactFormLayout,
@@ -68,6 +68,11 @@ export default function ContactForm( {
 
 	const normalizedFormData = useMemo( () => {
 		if ( ! statesList || statesList.length === 0 ) {
+			if ( formData.state && isEuOrUkAddressFormat( selectedCountryCode ) ) {
+				// Clear the state field. The layout hides that field for countries that use
+				// the EU or UK address format, and the registrar might reject it if sent.
+				return { ...formData, state: '' };
+			}
 			return formData;
 		}
 
@@ -79,7 +84,7 @@ export default function ContactForm( {
 		}
 
 		return formData;
-	}, [ formData, statesList ] );
+	}, [ formData, statesList, selectedCountryCode ] );
 
 	const isDirty = ! ( JSON.stringify( normalizedFormData ) === JSON.stringify( initialData ) );
 

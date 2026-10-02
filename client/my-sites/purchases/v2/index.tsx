@@ -57,7 +57,7 @@ export default function DashboardBackportSitePurchases( {
 		if ( shouldSeedSiteFilter( { section, siteId, search } ) ) {
 			page.replace( addQueryArgs( pathname + search, { site: siteId } ) );
 		}
-	}, [ section, siteId ] );
+	}, [ path, section, siteId ] );
 
 	// Update the root instance upon dependency change.
 	useEffect( () => {

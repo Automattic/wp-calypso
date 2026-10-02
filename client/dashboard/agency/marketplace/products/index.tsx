@@ -2,7 +2,6 @@ import { activeAgencyQuery, agencyProductsQuery } from '@automattic/api-queries'
 import { useQuery } from '@tanstack/react-query';
 import {
 	Button,
-	__experimentalGrid as Grid,
 	__experimentalHStack as HStack,
 	__experimentalSpacer as Spacer,
 	__experimentalText as Text,
@@ -17,6 +16,7 @@ import { useIntlLocale } from '../../../app/locale';
 import { marketplaceProductsRoute } from '../../../app/router/agency';
 import { ButtonStack } from '../../../components/button-stack';
 import { Callout } from '../../../components/callout';
+import Grid from '../../../components/grid';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
 import { SectionHeader } from '../../../components/section-header';
@@ -51,7 +51,7 @@ import { WOOPAYMENTS_PRODUCT_SLUG } from './lib/product-slugs';
 import ProductCard, { getCartActionLabel, getWooPaymentsCardCopy } from './product-card';
 import ProductCardSkeleton from './product-card-skeleton';
 import ProductDetailsModal from './product-details-modal';
-import { parseCartEntries, useShoppingCart } from './use-shopping-cart';
+import { parseCartEntries, useCartOpen, useShoppingCart } from './use-shopping-cart';
 import type { CategoryTileValue } from './category-tiles';
 import type { ProductBrand, ProductCategory } from './lib/product-categories';
 import type { ProductListItem } from './lib/product-groups';
@@ -118,14 +118,8 @@ export default function MarketplaceProducts() {
 	}, [ allProducts, showPressableAddons ] );
 
 	const searchParams = marketplaceProductsRoute.useSearch() as ProductsSearchParams;
-	const {
-		items: cartItems,
-		hasItem,
-		addItem,
-		removeItem,
-		replaceItems,
-		clearCart,
-	} = useShoppingCart();
+	const { items: cartItems, hasItem, addItem, removeItem, replaceItems } = useShoppingCart();
+	const [ isCartOpen, setIsCartOpen ] = useCartOpen();
 	const [ view, setView ] = useState< View >( () => ( {
 		...DEFAULT_VIEW,
 		search: searchParams.search_query != null ? String( searchParams.search_query ) : '',
@@ -279,7 +273,7 @@ export default function MarketplaceProducts() {
 	const handleViewChange = ( nextView: View ) => {
 		if ( nextView.search !== view.search ) {
 			recordTracksEvent( 'calypso_a4a_marketplace_products_overview_input_search', {
-				searchQuery: nextView.search,
+				search_query: nextView.search,
 			} );
 		}
 		if ( nextView.filters !== view.filters ) {
@@ -339,7 +333,7 @@ export default function MarketplaceProducts() {
 	};
 
 	const renderGrid = ( items: ProductListItem[] ) => (
-		<Grid templateColumns="repeat( auto-fill, minmax( 280px, 1fr ) )" gap={ 6 }>
+		<Grid templateColumns="repeat( auto-fill, minmax( 280px, 1fr ) )" gap="xl">
 			{ items.map( ( item ) => (
 				<ProductCard
 					key={ getItemId( item ) }
@@ -409,8 +403,10 @@ export default function MarketplaceProducts() {
 								term={ termPricing }
 								isReferralMode={ isReferralMode }
 								isAgencyApproved={ isAgencyApproved( agency ) }
+								isLegacyBilling={ agency?.billing_system === 'legacy' }
+								open={ isCartOpen }
+								onToggle={ setIsCartOpen }
 								onRemove={ removeItem }
-								onCheckout={ clearCart }
 							/>
 						</HStack>
 					}
@@ -456,7 +452,7 @@ export default function MarketplaceProducts() {
 				</DataViews>
 			</div>
 			{ isLoading && (
-				<Grid templateColumns="repeat( auto-fill, minmax( 280px, 1fr ) )" gap={ 6 }>
+				<Grid templateColumns="repeat( auto-fill, minmax( 280px, 1fr ) )" gap="xl">
 					{ Array.from( { length: 4 }, ( _, index ) => (
 						<ProductCardSkeleton key={ index } />
 					) ) }

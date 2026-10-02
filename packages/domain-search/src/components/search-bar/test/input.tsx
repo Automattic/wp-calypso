@@ -18,9 +18,10 @@ describe( 'SearchBar#Input', () => {
 		const user = userEvent.setup();
 
 		const onQueryChange = jest.fn();
+		const onSearchStart = jest.fn();
 
 		render(
-			<TestDomainSearch query="test" events={ { onQueryChange } }>
+			<TestDomainSearch query="test" events={ { onQueryChange, onSearchStart } }>
 				<Input />
 			</TestDomainSearch>
 		);
@@ -30,10 +31,12 @@ describe( 'SearchBar#Input', () => {
 		expect( screen.getByRole( 'searchbox' ) ).toHaveValue( 'test2' );
 
 		expect( onQueryChange ).not.toHaveBeenCalled();
+		expect( onSearchStart ).not.toHaveBeenCalled();
 
 		await waitFor( () => {
 			expect( onQueryChange ).toHaveBeenCalledWith( 'test2' );
 		} );
+		expect( onSearchStart ).toHaveBeenCalledWith( 'test2', 'input_changed' );
 	} );
 
 	it( 'still dispatches the pending query when the context is rebuilt before the delay', async () => {

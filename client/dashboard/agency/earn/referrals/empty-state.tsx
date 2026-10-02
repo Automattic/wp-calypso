@@ -1,11 +1,13 @@
 import { tipaltiPayeeQuery } from '@automattic/api-queries';
 import { formatNumber } from '@automattic/number-formatters';
 import { useQuery } from '@tanstack/react-query';
-import { __experimentalHStack as HStack, ExternalLink, Icon } from '@wordpress/components';
+import { __experimentalHStack as HStack, ExternalLink, Icon, Tooltip } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { reusableBlock } from '@wordpress/icons';
 import { Badge } from '@wordpress/ui';
+import { useMemo } from 'react';
+import { useAnalytics } from '../../../app/analytics';
 import EmptyState from '../../../components/empty-state';
 import InlineSupportLink from '../../../components/inline-support-link';
 import RouterLinkButton from '../../../components/router-link-button';
@@ -16,9 +18,22 @@ const AGENCY_EARNINGS_LEARN_MORE_LINK =
 	'https://agencieshelp.automattic.com/knowledge-base/automattic-for-agencies-earnings/';
 
 export default function ReferralsEmptyState( { agencyId }: { agencyId: number } ) {
+	const { recordTracksEvent } = useAnalytics();
 	const { data: payee } = useQuery( tipaltiPayeeQuery( agencyId ) );
-	const accountStatus = getAccountStatus( payee );
+	const accountStatus = useMemo( () => getAccountStatus( payee ), [ payee ] );
 	const hasPayeeAccount = !! accountStatus?.status;
+
+	const statusBadge = useMemo( () => {
+		if ( ! accountStatus ) {
+			return null;
+		}
+		const badge = <Badge intent={ accountStatus.badgeIntent }>{ accountStatus.status }</Badge>;
+		return accountStatus.statusReason ? (
+			<Tooltip text={ accountStatus.statusReason }>{ badge }</Tooltip>
+		) : (
+			badge
+		);
+	}, [ accountStatus ] );
 
 	return (
 		<EmptyState.Wrapper>
@@ -62,7 +77,10 @@ export default function ReferralsEmptyState( { agencyId }: { agencyId: number } 
 									variant={ hasPayeeAccount ? 'primary' : 'secondary' }
 									size="compact"
 									__next40pxDefaultSize
-									to="/marketplace/exclusive-offers"
+									to="/exclusive-offers"
+									onClick={ () =>
+										recordTracksEvent( 'calypso_a4a_referrals_get_started_button_click' )
+									}
 								>
 									{ __( 'Get started' ) }
 								</RouterLinkButton>
@@ -72,9 +90,7 @@ export default function ReferralsEmptyState( { agencyId }: { agencyId: number } 
 							title={
 								<HStack as="span" spacing={ 2 } justify="flex-start" expanded={ false }>
 									<span>{ __( 'Prepare to get paid' ) }</span>
-									{ accountStatus && (
-										<Badge intent={ accountStatus.badgeIntent }>{ accountStatus.status }</Badge>
-									) }
+									{ statusBadge }
 								</HStack>
 							}
 							description={ createInterpolateElement(
@@ -91,7 +107,10 @@ export default function ReferralsEmptyState( { agencyId }: { agencyId: number } 
 									variant={ hasPayeeAccount ? 'secondary' : 'primary' }
 									size="compact"
 									__next40pxDefaultSize
-									to="/earn/payout-settings"
+									to="/payout-settings"
+									onClick={ () =>
+										recordTracksEvent( 'calypso_a4a_referrals_add_bank_details_button_click' )
+									}
 								>
 									{ hasPayeeAccount ? __( 'Edit my details' ) : __( 'Add my details' ) }
 								</RouterLinkButton>

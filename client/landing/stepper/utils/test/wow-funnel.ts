@@ -2,16 +2,23 @@
  * @jest-environment jsdom
  */
 import {
+	getSiteAdminUrl,
+	getSiteEditorUrl,
 	waitForAtomicTransferComplete,
 	waitForBlueprintImportComplete,
 } from '../blueprint-archive-import';
 import {
 	clearWowFunnelSite,
 	getRememberedWowFunnelSite,
+	getWowFunnelArgs,
 	getWowFunnelConfig,
 	getWowFunnelDest,
+	getWowFunnelEntryQueryArgs,
+	getWowFunnelHandoffUrl,
 	getWowFunnelKey,
+	getWowFunnelSlug,
 	isKnownWowFunnel,
+	isSameWowFunnelRun,
 	waitForWowFunnelReady,
 	wowFunnelSiteIsPaid,
 } from '../wow-funnel';
@@ -30,6 +37,8 @@ jest.mock( '../blueprint-archive-import', () => ( {
 
 const mockTransferWait = waitForAtomicTransferComplete as jest.Mock;
 const mockImportWait = waitForBlueprintImportComplete as jest.Mock;
+const mockGetSiteAdminUrl = getSiteAdminUrl as jest.Mock;
+const mockGetSiteEditorUrl = getSiteEditorUrl as jest.Mock;
 
 const never = () => new Promise< void >( () => {} );
 
@@ -58,6 +67,45 @@ describe( 'getWowFunnelKey', () => {
 		expect( getWowFunnelKey( 'blueprint', { a: '1', b: '2' } ) ).toBe(
 			getWowFunnelKey( 'blueprint', { b: '2', a: '1' } )
 		);
+	} );
+} );
+
+describe( 'isSameWowFunnelRun', () => {
+	const run = { funnelSlug: 'blueprint', funnelArgs: { blueprint_slug: 'coachava' } };
+
+	it( 'matches the run that built the site', () => {
+		expect( isSameWowFunnelRun( run, 'blueprint', { blueprint_slug: 'coachava' } ) ).toBe( true );
+	} );
+
+	it( 'does not match a different funnel', () => {
+		expect( isSameWowFunnelRun( run, 'default', {} ) ).toBe( false );
+	} );
+
+	it( 'does not match the same funnel building something else', () => {
+		expect( isSameWowFunnelRun( run, 'blueprint', { blueprint_slug: 'other' } ) ).toBe( false );
+	} );
+} );
+
+describe( 'getWowFunnelEntryQueryArgs', () => {
+	it( 'rebuilds the entry URL a run started from', () => {
+		expect( getWowFunnelEntryQueryArgs( 'blueprint', { blueprint_slug: 'coachava' } ) ).toEqual( {
+			wow_funnel: 'blueprint',
+			blueprint: 'coachava',
+		} );
+	} );
+
+	it( 'round-trips through the entry URL parsers', () => {
+		const params = new URLSearchParams(
+			getWowFunnelEntryQueryArgs( 'blueprint', { blueprint_slug: 'coachava' } )
+		);
+
+		expect(
+			isSameWowFunnelRun(
+				{ funnelSlug: 'blueprint', funnelArgs: { blueprint_slug: 'coachava' } },
+				getWowFunnelSlug( params ) ?? '',
+				getWowFunnelArgs( params )
+			)
+		).toBe( true );
 	} );
 } );
 
@@ -246,5 +294,67 @@ describe( 'waitForWowFunnelReady', () => {
 		await Promise.resolve();
 
 		jest.useRealTimers();
+	} );
+} );
+
+describe( 'getWowFunnelHandoffUrl', () => {
+	beforeEach( () => {
+		jest.clearAllMocks();
+		mockGetSiteAdminUrl.mockResolvedValue( 'https://fetched.example.com/wp-admin/' );
+		mockGetSiteEditorUrl.mockReturnValue( 'https://example.com/editor' );
+	} );
+
+	/**
+	 * The funnel lands in Big Sky's easy mode, where a build-wow build lands too. Easy mode
+	 * only runs on the edit canvas, so the hand-off has to force it.
+	 */
+	it( 'hands the customer to the site editor in easy mode on the edit canvas', async () => {
+		const url = await getWowFunnelHandoffUrl( {
+			dest: 'editor',
+			siteIdentifier: 'site.example.com',
+			adminUrl: 'https://site.example.com/wp-admin/',
+		} );
+
+		expect( url ).toBe( 'https://example.com/editor' );
+		expect( mockGetSiteEditorUrl ).toHaveBeenCalledWith(
+			'https://site.example.com/wp-admin/',
+			expect.objectContaining( { canvasEdit: true, easyMode: true } )
+		);
+	} );
+
+	/**
+	 * Easy mode always edits a page, and the plugin substitutes the site's own front page for
+	 * the route — but only when the URL names no route. A `p` here (even `p=/`, the home
+	 * template) would stop that substitution.
+	 */
+	it( 'names no route, so the plugin can pick the front page itself', async () => {
+		await getWowFunnelHandoffUrl( {
+			dest: 'editor',
+			siteIdentifier: 'site.example.com',
+			adminUrl: 'https://site.example.com/wp-admin/',
+		} );
+
+		const options = mockGetSiteEditorUrl.mock.calls[ 0 ][ 1 ];
+		expect( options ).not.toHaveProperty( 'path' );
+	} );
+
+	it( 'uses the admin URL it is handed rather than fetching one', async () => {
+		await getWowFunnelHandoffUrl( {
+			dest: 'editor',
+			siteIdentifier: 'site.example.com',
+			adminUrl: 'https://site.example.com/wp-admin/',
+		} );
+
+		expect( mockGetSiteAdminUrl ).not.toHaveBeenCalled();
+	} );
+
+	it( 'fetches the admin URL when it is not handed one', async () => {
+		await getWowFunnelHandoffUrl( { dest: 'editor', siteIdentifier: 'site.example.com' } );
+
+		expect( mockGetSiteAdminUrl ).toHaveBeenCalledWith( 'site.example.com' );
+		expect( mockGetSiteEditorUrl ).toHaveBeenCalledWith(
+			'https://fetched.example.com/wp-admin/',
+			expect.objectContaining( { canvasEdit: true, easyMode: true } )
+		);
 	} );
 } );

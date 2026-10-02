@@ -4,10 +4,10 @@
  * that uses VGS tokens for secure card data handling
  */
 
-import { fetchEbanxConfiguration } from '@automattic/api-core';
+import { fetchEbanxConfiguration, tokenizeEbanxCardWithVgs } from '@automattic/api-core';
 import debugFactory from 'debug';
 import paymentGatewayLoader from 'calypso/lib/payment-gateway-loader';
-import wpcom from 'calypso/lib/wp';
+import type { EbanxVgsTokenizeRequest } from '@automattic/api-core';
 
 const debug = debugFactory( 'calypso:ebanx-vgs-tokenization' );
 
@@ -20,19 +20,6 @@ export interface VgsTokens {
 	card_number: string; // VGS token for card number
 	card_exp: string; // VGS token for expiration date (MM/YY format)
 	card_cvc: string; // VGS token for CVV/CVC
-}
-
-/**
- * Request payload for the EBANX tokenization endpoint
- */
-interface EbanxTokenizeRequest {
-	card_number: string; // VGS token
-	card_name: string; // Plain text cardholder name (not tokenized)
-	card_due_date: string; // VGS token (MM/YY)
-	card_cvv: string; // VGS token
-	payment_type_code: string; // e.g., 'new_purchase', 'add_card', etc.
-	country: string; // ISO country code (e.g., 'BR', 'MX')
-	test_mode?: boolean; // Optional test mode flag
 }
 
 /**
@@ -133,7 +120,7 @@ export async function createEbanxTokenVgs(
 
 	try {
 		// Prepare request payload for the backend endpoint
-		const requestPayload: EbanxTokenizeRequest = {
+		const requestPayload: EbanxVgsTokenizeRequest = {
 			card_number: cardDetails.vgsTokens.card_number,
 			card_name: cardDetails.name,
 			card_due_date: cardDetails.vgsTokens.card_exp,
@@ -148,11 +135,7 @@ export async function createEbanxTokenVgs(
 		} );
 
 		// Call the backend endpoint to tokenize with EBANX
-		const apiResponse = await wpcom.req.post( {
-			path: '/transact/vgs/wpcom/ebanx/tokenize',
-			apiNamespace: 'wpcom/v2',
-			body: requestPayload,
-		} );
+		const apiResponse = await tokenizeEbanxCardWithVgs( requestPayload );
 
 		debug( 'ebanx tokenization successful', {
 			hasToken: !! apiResponse.token,

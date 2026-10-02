@@ -143,6 +143,49 @@ export function getWowFunnelKey(
 }
 
 /**
+ * Whether a run is the one being entered: same funnel, same args.
+ *
+ * The server allows one unpaid funnel site at a time, so a customer entering a funnel may already
+ * have a site from another. Only the same run may pick that site up — a different one would carry
+ * on over a site built for something else, and its own follow-up (a blueprint import, say) would
+ * never run.
+ * @param run            The run that built a site, as the server reports it.
+ * @param run.funnelSlug That run's funnel slug.
+ * @param run.funnelArgs That run's args, as recorded on its site.
+ * @param funnelSlug     The funnel being entered.
+ * @param funnelArgs     Args from the entry URL.
+ * @returns True when they are the same run.
+ */
+export function isSameWowFunnelRun(
+	run: { funnelSlug: string; funnelArgs: Record< string, string > },
+	funnelSlug: string,
+	funnelArgs: Record< string, string > = {}
+): boolean {
+	return (
+		getWowFunnelKey( run.funnelSlug, run.funnelArgs ) === getWowFunnelKey( funnelSlug, funnelArgs )
+	);
+}
+
+/**
+ * The entry URL query that starts a run — the inverse of getWowFunnelSlug() and getWowFunnelArgs().
+ *
+ * Used to send a customer back into the run that built their pending site, from what the server
+ * recorded about it.
+ * @param funnelSlug The funnel slug.
+ * @param funnelArgs The run's args, as recorded on its site.
+ * @returns Query args for the flow's entry URL.
+ */
+export function getWowFunnelEntryQueryArgs(
+	funnelSlug: string,
+	funnelArgs: Record< string, string > = {}
+): Record< string, string > {
+	return {
+		wow_funnel: funnelSlug,
+		...( funnelArgs.blueprint_slug ? { blueprint: funnelArgs.blueprint_slug } : {} ),
+	};
+}
+
+/**
  * Input the funnel's server-side follow-up needs, read off the entry URL.
  *
  * Sent as `wow_funnel_args` to /sites/new, where the registered funnel's follow-up consumes it —
@@ -368,9 +411,19 @@ export async function getWowFunnelHandoffUrl( {
 		case 'editor':
 		default: {
 			const adminUrl = knownAdminUrl ?? ( await getSiteAdminUrl( siteIdentifier ) );
-			// `p` opens the front page rather than whatever the editor last had; `canvasEdit`
-			// because a plain site-editor.php load stays in view mode.
-			return getSiteEditorUrl( adminUrl, { canvasEdit: true, path: '/' } );
+			// The funnel lands in Big Sky's easy mode, the same place a build-wow build lands.
+			// `canvasEdit` because easy mode only runs on the edit canvas, and a plain
+			// site-editor.php load stays in view mode.
+			//
+			// Deliberately no `p`. Easy mode always edits a page, so the plugin's
+			// load-site-editor.php redirect fills in `p=/page/{front page id}` from the site's
+			// own page_on_front — but only when `p` is empty. The `p=/` this used to send is the
+			// home *template* route, and would have stopped that substitution. Without `p`,
+			// core's site editor resolves the empty route to the front page too, so the landing
+			// is the same whether or not the plugin's redirect fires. Resolving the id here
+			// instead would mean trusting a Jetpack-synced option that may not have caught up
+			// with an import that finished seconds ago; the plugin reads it from the site itself.
+			return getSiteEditorUrl( adminUrl, { canvasEdit: true, easyMode: true } );
 		}
 	}
 }

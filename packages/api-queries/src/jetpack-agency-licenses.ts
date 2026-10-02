@@ -9,6 +9,7 @@ import {
 	revokeJetpackLicense,
 } from '@automattic/api-core';
 import { mutationOptions, queryOptions } from '@tanstack/react-query';
+import { referralsQuery } from './agency-referrals';
 import { agencySitesQueryKey } from './jetpack-agency-sites';
 import { queryClient } from './query-client';
 import type {
@@ -66,10 +67,14 @@ export const jetpackAgencyLicenseAssignMutation = ( agencyId: number | undefined
 		meta: { statId: 'agcy-license-assign' },
 		mutationFn: ( { licenseKey, siteId }: { licenseKey: string; siteId: number } ) =>
 			assignJetpackLicenseToSite( agencyId, licenseKey, siteId ),
-		// Assigning or revoking also changes which products the site has.
+		// Assigning or revoking also changes which products the site has, and a
+		// referred license can be assigned from the referral's own screen.
 		onSuccess: () => {
 			invalidateAgencyLicenses( agencyId );
 			queryClient.invalidateQueries( { queryKey: agencySitesQueryKey } );
+			if ( agencyId ) {
+				queryClient.invalidateQueries( { queryKey: referralsQuery( agencyId ).queryKey } );
+			}
 		},
 	} );
 

@@ -73,11 +73,11 @@ export default function Summary( {
 			!! isJetpackMinimumVersion( state, selectedSite.ID, '16.1' )
 	);
 	const newsletterUrl = `${ adminPhpUrl }?page=jetpack-newsletter`;
-	// The Newsletter page is a router that reads its route from `p`, and it opens on Subscribers,
-	// so settings has to be asked for as an encoded route rather than a plain query arg.
+	// The Newsletter page reads its route from `p`. Overview is the default once that tab
+	// exists, so both Settings and Subscribers have to be asked for explicitly.
 	const newsletterSettingsUrl = `${ newsletterUrl }&p=${ encodeURIComponent( '/?tab=settings' ) }`;
 	const subscribersUrl = hasNewsletterSubscribersTab
-		? newsletterUrl
+		? `${ newsletterUrl }&p=${ encodeURIComponent( '/?tab=subscribers' ) }`
 		: `https://cloud.jetpack.com/subscribers/${ selectedSite.slug }`;
 	const [ isImportCompleted, setIsImportCompleted ] = useState( false );
 	const [ importStepsResults, setImportStepsResults ] = useState< Steps | null >();

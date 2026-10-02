@@ -68,12 +68,6 @@
 		--color-sidebar-submenu-selected-hover-text: var( --color-sidebar-menu-selected-text );
 		--color-sidebar-gridicon-hover-fill: currentColor;
 		--color-sidebar-gridicon-selected-fill: var( --color-sidebar-menu-selected-text );
-
-		// The W-icon dropdown's second group hardcodes a light grey for the white
-		// menu; match the surrounding dark groups instead of that grey.
-		.masterbar__item-my-sites + .masterbar__item-subitems {
-			--color-masterbar-submenu-group-background: inherit;
-		}
 	}
 
 	.reader-onboarding-modal__footer {

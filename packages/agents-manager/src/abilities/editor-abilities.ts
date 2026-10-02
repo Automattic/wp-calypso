@@ -11,45 +11,44 @@ import {
 	registerAbilityCategory,
 	unregisterAbility,
 } from '@wordpress/abilities';
-import isAmAbilitiesDisabled from '../utils/is-am-abilities-disabled';
+import {
+	canSwapCheckpoint,
+	clearCheckpoint,
+	hasCheckpoint,
+	restoreCheckpoint,
+	swapCheckpoint,
+} from '../utils/checkpoints';
+import { applyBlockEditsAbility } from './apply-block-edits';
 import { applyUpdateThemeAbility } from './apply-update-theme';
+import { captureCanvasAbility } from './capture-canvas';
 import { BIG_SKY_ABILITY_CATEGORY } from './constants';
+import { editEntityRecordAbility } from './edit-entity-record';
 import { editorNavigateAbility } from './editor-navigate';
 import { getBlockTreeAbility } from './get-block-tree';
+import { openHelpCenterAbility } from './open-help-center';
 import { restoreCheckpointAbility } from './restore-checkpoint';
 import { setSiteLogoAbility } from './set-site-logo';
 import { showComponentAbility } from './show-component';
 import { showTemplateAbility } from './show-template';
+import { streamPageDesignAbility } from './stream-page-design';
 import type { Ability } from './types';
 
-// TODO (ability-migration): Fold both lists into one with the switch (see
-// `utils/is-am-abilities-disabled.ts`). Moving `show-component` to the AM-only
-// list before then must drop the converter's rendering gate with it, or the
-// switch would run AM's copy but render the provider's picker.
-
-// Editor abilities a provider still ships a copy of, so the switch below has
-// something to fall back to. Migrating one = add its folder under `abilities/`
-// and list it here.
-const MIGRATED_EDITOR_ABILITIES: Ability[] = [
+// The editor abilities AM owns. Migrating an ability = add its folder under
+// `abilities/` and list it here.
+export const EDITOR_ABILITIES: Ability[] = [
+	applyBlockEditsAbility,
 	applyUpdateThemeAbility,
+	captureCanvasAbility,
+	editEntityRecordAbility,
 	editorNavigateAbility,
+	openHelpCenterAbility,
 	restoreCheckpointAbility,
 	setSiteLogoAbility,
 	showComponentAbility,
+	streamPageDesignAbility,
+	getBlockTreeAbility,
+	showTemplateAbility,
 ];
-
-// Editor abilities with no copy anywhere else.
-const AM_ONLY_EDITOR_ABILITIES: Ability[] = [ getBlockTreeAbility, showTemplateAbility ];
-
-const EDITOR_ABILITIES: Ability[] = [ ...MIGRATED_EDITOR_ABILITIES, ...AM_ONLY_EDITOR_ABILITIES ];
-
-/**
- * The editor abilities AM owns. `?am_abilities=0` hands the migrated ones
- * back to the provider copies; the AM-only ones have nothing to fall back to
- * and stay on.
- */
-export const getEditorAbilities = (): Ability[] =>
-	isAmAbilitiesDisabled() ? AM_ONLY_EDITOR_ABILITIES : EDITOR_ABILITIES;
 
 // Registration is one-time per page load.
 let hasRegistered = false;
@@ -57,11 +56,10 @@ let hasRegistered = false;
 /**
  * Registers the editor abilities in the `@wordpress/abilities` registry.
  *
- * Registration keeps the abilities discoverable in the registry — execution
- * ownership lives in `amToolProvider`. The registry rejects duplicate
- * names, and providers may register their own copies first; a collision is
- * resolved by replacing the provider's copy. Providers delete their copies as
- * cleanup once a migration lands.
+ * Registration only makes the abilities discoverable; execution ownership lives
+ * in `amToolProvider`. The registry rejects duplicate names, so a collision with
+ * a provider's own copy is resolved by replacing it. Providers delete their
+ * copies once a migration lands.
  */
 export async function registerEditorAbilities(): Promise< void > {
 	if ( hasRegistered ) {
@@ -80,7 +78,7 @@ export async function registerEditorAbilities(): Promise< void > {
 		// Category may already be registered.
 	}
 
-	for ( const ability of getEditorAbilities() ) {
+	for ( const ability of EDITOR_ABILITIES ) {
 		try {
 			await registerAbility( ability );
 		} catch ( error ) {
@@ -111,5 +109,17 @@ export async function registerEditorAbilities(): Promise< void > {
 	}
 }
 
-// Re-exported for the facade's sync checkpoint view (`getAmCheckpointContext`).
+// Re-exported for the facade's sync views (`getAmCheckpointContext`,
+// `getAmPageContentMarkup`, `getAmPageStructure`, `getAmCheckpointActions`).
 export { getAvailableCheckpoints } from '../utils/checkpoints';
+export { getPageContentMarkup } from '../utils/page-content-markup';
+export { getPageStructure } from '../utils/page-structure';
+
+/** What the chat's Undo needs of AM's checkpoint store. */
+export const checkpointActions = {
+	hasCheckpoint,
+	restoreCheckpoint,
+	canSwapCheckpoint,
+	swapCheckpoint,
+	clearCheckpoint,
+};

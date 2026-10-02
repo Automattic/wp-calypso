@@ -1,9 +1,9 @@
 import {
-	__experimentalDivider as Divider,
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { Fragment } from 'react';
+import Divider from '../../components/divider';
 import { Text } from '../../components/text';
 import { TextBlur } from '../../components/text-blur';
 

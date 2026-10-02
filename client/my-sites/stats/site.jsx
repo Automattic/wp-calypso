@@ -228,7 +228,7 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 				? [
 						{
 							key: 'premium-analytics-preview',
-							label: translate( 'Try the new Traffic and Insights tabs' ),
+							label: translate( 'Try the new Stats' ),
 							description: translate(
 								'Clearer charts and movable widgets. Switch it off at any time.'
 							),
