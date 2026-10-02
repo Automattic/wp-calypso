@@ -30,6 +30,7 @@ import { useTermPricing } from '../use-term-pricing';
 import CartMenu from './cart-menu';
 import CategoryTiles, { isCategoryTileValue } from './category-tiles';
 import { BRAND_MARKS } from './lib/brand-marks';
+import { matchesCartEntry } from './lib/pressable-memory-addon';
 import {
 	getBrandLabels,
 	getCategoryShortLabels,
@@ -43,6 +44,7 @@ import {
 	getItemId,
 	getItemProducts,
 	getMarketplaceProducts,
+	getProductId,
 	getProductSections,
 } from './lib/product-groups';
 import { isFreeProduct } from './lib/product-pricing';
@@ -51,7 +53,12 @@ import { WOOPAYMENTS_PRODUCT_SLUG } from './lib/product-slugs';
 import ProductCard, { getCartActionLabel, getWooPaymentsCardCopy } from './product-card';
 import ProductCardSkeleton from './product-card-skeleton';
 import ProductDetailsModal from './product-details-modal';
-import { parseCartEntries, useCartOpen, useShoppingCart } from './use-shopping-cart';
+import {
+	getProductCartRef,
+	parseCartEntries,
+	useCartOpen,
+	useShoppingCart,
+} from './use-shopping-cart';
 import type { CategoryTileValue } from './category-tiles';
 import type { ProductBrand, ProductCategory } from './lib/product-categories';
 import type { ProductListItem } from './lib/product-groups';
@@ -89,7 +96,6 @@ const CLASSIC_CATEGORY_KEYS: Record< string, CategoryTileValue > = {
 // - the agency approval notice (pending / approved / rejected)
 // - the overdue invoice notice
 // - the guided tour
-// - Pressable PHP memory add-ons targeting a specific site
 export default function MarketplaceProducts() {
 	const { recordTracksEvent } = useAnalytics();
 	const { marketplaceType, updateMarketplaceType } = useMarketplaceType();
@@ -154,13 +160,17 @@ export default function MarketplaceProducts() {
 		}
 		const entries = productSlug
 			? productSlug.split( ',' ).map( ( slug ) => ( { slug, quantity: 1 } ) )
-			: parseCartEntries( productsParam ).map( ( { slug, quantity } ) => ( { slug, quantity } ) );
+			: parseCartEntries( productsParam ).map( ( { slug, quantity, siteDomain } ) => ( {
+					slug,
+					quantity,
+					...( siteDomain ? { siteDomain } : {} ),
+				} ) );
 		// Like classic, only WordPress.com hosting takes a quantity; bundles are not
 		// sold under Billing Dragon.
 		const known = entries.filter(
-			( { slug, quantity } ) =>
-				allProducts.some( ( product ) => product.slug === slug ) &&
-				( quantity === 1 || slug.startsWith( 'wpcom-hosting' ) )
+			( entry ) =>
+				allProducts.some( ( product ) => matchesCartEntry( product, entry ) ) &&
+				( entry.quantity === 1 || entry.slug.startsWith( 'wpcom-hosting' ) )
 		);
 		hasPreselected.current = true;
 		replaceItems( known );
@@ -304,11 +314,12 @@ export default function MarketplaceProducts() {
 
 	const toggleCart = useCallback(
 		( product: AgencyProduct ) => {
-			const wasInCart = hasItem( product.slug );
+			const cartRef = getProductCartRef( product );
+			const wasInCart = hasItem( cartRef );
 			if ( wasInCart ) {
-				removeItem( product.slug );
+				removeItem( cartRef );
 			} else {
-				addItem( product.slug );
+				addItem( cartRef );
 			}
 			recordTracksEvent(
 				wasInCart
@@ -323,6 +334,11 @@ export default function MarketplaceProducts() {
 			);
 		},
 		[ hasItem, addItem, removeItem, recordTracksEvent, marketplaceType, termPricing ]
+	);
+
+	const isProductInCart = useCallback(
+		( product: AgencyProduct ) => hasItem( getProductCartRef( product ) ),
+		[ hasItem ]
 	);
 
 	const openDetails = ( product: AgencyProduct ) => {
@@ -340,7 +356,7 @@ export default function MarketplaceProducts() {
 					item={ item }
 					term={ termPricing }
 					isReferralMode={ isReferralMode }
-					isInCart={ hasItem }
+					isInCart={ isProductInCart }
 					onToggleCart={ toggleCart }
 					onViewDetails={ openDetails }
 					onSelectVariant={ ( product ) =>
@@ -358,7 +374,7 @@ export default function MarketplaceProducts() {
 		if ( ! wooPayments ) {
 			return null;
 		}
-		const inCart = hasItem( wooPayments.slug );
+		const inCart = isProductInCart( wooPayments );
 		const copy = getWooPaymentsCardCopy();
 		return (
 			<Callout
@@ -418,7 +434,7 @@ export default function MarketplaceProducts() {
 					product={ detailsProduct }
 					term={ termPricing }
 					isReferralMode={ isReferralMode }
-					inCart={ hasItem( detailsProduct.slug ) }
+					inCart={ isProductInCart( detailsProduct ) }
 					onToggleCart={ () => toggleCart( detailsProduct ) }
 					onClose={ () => setDetailsProduct( null ) }
 				/>
@@ -431,7 +447,7 @@ export default function MarketplaceProducts() {
 			<div className="dashboard-marketplace-products__filters">
 				<DataViews< AgencyProduct >
 					data={ tileProducts }
-					getItemId={ ( item ) => item.slug }
+					getItemId={ getProductId }
 					fields={ fields }
 					view={ view }
 					onChangeView={ handleViewChange }

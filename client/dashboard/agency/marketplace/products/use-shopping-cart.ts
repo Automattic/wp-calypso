@@ -1,16 +1,32 @@
 import { useCallback, useEffect, useState, useSyncExternalStore } from 'react';
 import { useMarketplaceType } from '../use-marketplace-type';
+import { decodeSiteDomain, getPressableMemoryTarget } from './lib/pressable-memory-addon';
 import type { MarketplaceType } from '../use-marketplace-type';
+import type { AgencyProduct } from '@automattic/api-core';
 
 export interface ShoppingCartItem {
 	slug: string;
 	quantity: number;
+	/** The Pressable site a PHP memory add-on applies to. */
+	siteDomain?: string;
 	/** The stored entry, kept verbatim so classic's extra fields survive a rewrite. */
 	raw?: string;
 }
 
+/** What tells one cart line from another: the product, and for a PHP memory add-on its site. */
+export type CartItemRef = Pick< ShoppingCartItem, 'slug' | 'siteDomain' >;
+
+export function getProductCartRef( product: AgencyProduct ): CartItemRef {
+	return { slug: product.slug, siteDomain: getPressableMemoryTarget( product ) };
+}
+
+const isSameItem = ( a: CartItemRef, b: CartItemRef ) =>
+	a.slug === b.slug && ( a.siteDomain ?? '' ) === ( b.siteDomain ?? '' );
+
 // Same keys and `slug:quantity` format as the classic marketplace cart, which
-// may append a license id and site targets for its own flows.
+// may append a license id and site targets for its own flows. A PHP memory
+// add-on carries its site in the fifth field, `slug:quantity:::domain`, as
+// classic writes it.
 const STORAGE_KEYS: Record< MarketplaceType, string > = {
 	regular: 'shopping-card-selected-items',
 	referral: 'referrals-shopping-card-selected-items',
@@ -30,10 +46,12 @@ export function parseCartEntries( entries: string ): ShoppingCartItem[] {
 	return entries
 		.split( ',' )
 		.map( ( entry ) => {
-			const [ slug, quantity ] = entry.split( ':' );
+			const [ slug, quantity, , , encodedSiteDomain ] = entry.split( ':' );
+			const siteDomain = decodeSiteDomain( encodedSiteDomain );
 			return {
 				slug,
 				quantity: Math.min( MAX_CART_ITEM_QUANTITY, parseInt( quantity, 10 ) || 1 ),
+				...( siteDomain ? { siteDomain } : {} ),
 				raw: entry,
 			};
 		} )
@@ -51,13 +69,22 @@ function getSnapshot( marketplaceType: MarketplaceType ): ShoppingCartItem[] {
 	return snapshots.get( marketplaceType ) as ShoppingCartItem[];
 }
 
+function serializeItem( item: ShoppingCartItem ): string {
+	if ( item.raw ) {
+		return item.raw;
+	}
+	return item.siteDomain
+		? `${ item.slug }:${ item.quantity }:::${ encodeURIComponent( item.siteDomain ) }`
+		: `${ item.slug }:${ item.quantity }`;
+}
+
 function writeItems( marketplaceType: MarketplaceType, items: ShoppingCartItem[] ) {
 	if ( items.length === 0 ) {
 		sessionStorage.removeItem( STORAGE_KEYS[ marketplaceType ] );
 	} else {
 		sessionStorage.setItem(
 			STORAGE_KEYS[ marketplaceType ],
-			items.map( ( item ) => item.raw ?? `${ item.slug }:${ item.quantity }` ).join( ',' )
+			items.map( serializeItem ).join( ',' )
 		);
 	}
 	snapshots.set( marketplaceType, items );
@@ -86,25 +113,28 @@ export function useShoppingCart( type?: MarketplaceType ) {
 	const items = useSyncExternalStore( subscribe, () => getSnapshot( marketplaceType ) );
 
 	const hasItem = useCallback(
-		( slug: string ) => items.some( ( item ) => item.slug === slug ),
+		( ref: CartItemRef ) => items.some( ( item ) => isSameItem( item, ref ) ),
 		[ items ]
 	);
 
 	const addItem = useCallback(
-		( slug: string ) => {
+		( { slug, siteDomain }: CartItemRef ) => {
 			const current = getSnapshot( marketplaceType );
-			if ( ! current.some( ( item ) => item.slug === slug ) ) {
-				writeItems( marketplaceType, [ ...current, { slug, quantity: 1 } ] );
+			if ( ! current.some( ( item ) => isSameItem( item, { slug, siteDomain } ) ) ) {
+				writeItems( marketplaceType, [
+					...current,
+					{ slug, quantity: 1, ...( siteDomain ? { siteDomain } : {} ) },
+				] );
 			}
 		},
 		[ marketplaceType ]
 	);
 
 	const removeItem = useCallback(
-		( slug: string ) => {
+		( ref: CartItemRef ) => {
 			writeItems(
 				marketplaceType,
-				getSnapshot( marketplaceType ).filter( ( item ) => item.slug !== slug )
+				getSnapshot( marketplaceType ).filter( ( item ) => ! isSameItem( item, ref ) )
 			);
 		},
 		[ marketplaceType ]

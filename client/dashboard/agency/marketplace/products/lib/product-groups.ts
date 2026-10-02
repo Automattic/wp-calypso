@@ -46,7 +46,11 @@ export function getMarketplaceProducts( products: AgencyProduct[] ): AgencyProdu
 export const getItemProducts = ( item: ProductListItem ) =>
 	Array.isArray( item ) ? item : [ item ];
 
-export const getItemId = ( item: ProductListItem ) => getItemProducts( item )[ 0 ].slug;
+// A PHP memory add-on comes once per Pressable site under the same slug.
+export const getProductId = ( product: AgencyProduct ) =>
+	product.site_domain ? `${ product.slug }:${ product.site_domain }` : product.slug;
+
+export const getItemId = ( item: ProductListItem ) => getProductId( getItemProducts( item )[ 0 ] );
 
 function mergeVariants( products: AgencyProduct[] ): ProductListItem[] {
 	const merged = MERGEABLE_SLUG_PREFIXES.map( ( prefix ) =>
