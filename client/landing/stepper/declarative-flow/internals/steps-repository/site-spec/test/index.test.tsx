@@ -372,6 +372,8 @@ describe( 'SiteSpec blueprint archive import', () => {
 		mockQueryParams = new URLSearchParams(
 			'blueprint_archive_import=1&blueprint_slug=961&siteSlug=example.wordpress.com&wow_funnel=blueprint'
 		);
+		// The funnel's readiness wait ends by asking whether the customer can sign in to the site.
+		( wpcom.req.get as jest.Mock ).mockResolvedValue( { ready: true } );
 	} );
 
 	it( 'leaves the spec page for the waiting screen without waiting on the import first', async () => {

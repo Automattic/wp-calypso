@@ -1,7 +1,9 @@
 import { Step } from '@automattic/onboarding';
+import { Button, __experimentalHStack as HStack } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import DocumentHead from 'calypso/components/data/document-head';
 import Loading from 'calypso/components/loading';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { SITE_STORE } from 'calypso/landing/stepper/stores';
@@ -10,6 +12,7 @@ import {
 	getWowFunnelHandoffUrl,
 	getWowFunnelSlug,
 	isKnownWowFunnel,
+	isWowFunnelWaitTimeout,
 	logWowFunnelEvent,
 	waitForWowFunnelReady,
 } from 'calypso/landing/stepper/utils/wow-funnel';
@@ -46,15 +49,21 @@ const WowFunnelHandoff: StepType = function WowFunnelHandoff( { navigation, flow
 	const siteId = queryParams.get( 'siteId' );
 	const siteIdentifier = siteSlug || ( siteId && siteId !== '0' ? siteId : null );
 
+	// Each wait the customer asks for is one attempt. A wait that runs out of time stops here and
+	// offers another, rather than sending someone who has just paid to an error page: by then the
+	// build is nearly always still finishing, not broken.
+	const [ attempt, setAttempt ] = useState( 0 );
+	const [ hasTimedOut, setHasTimedOut ] = useState( false );
+
 	// Strict mode mounts effects twice, and this one navigates away; a second run would start a
-	// duplicate poll against the same site.
-	const hasStartedRef = useRef( false );
+	// duplicate poll against the same site. Keyed by attempt, so asking again does start one.
+	const startedAttemptRef = useRef( -1 );
 
 	useEffect( () => {
-		if ( hasStartedRef.current ) {
+		if ( startedAttemptRef.current === attempt ) {
 			return;
 		}
-		hasStartedRef.current = true;
+		startedAttemptRef.current = attempt;
 
 		const failToErrorStep = ( code: string, message: string ) => {
 			setSiteSetupError( code, message );
@@ -86,9 +95,13 @@ const WowFunnelHandoff: StepType = function WowFunnelHandoff( { navigation, flow
 				logWowFunnelEvent( 'handoff_redirect', { funnel: funnelSlug, dest } );
 				window.location.replace( handoffUrl );
 			} catch ( error ) {
+				if ( isWowFunnelWaitTimeout( error ) ) {
+					setHasTimedOut( true );
+					return;
+				}
+
 				// waitForWowFunnelReady already reported which outcome this was, and its message
-				// is written for the customer — a timeout reads as "taking longer than expected"
-				// rather than as a failure.
+				// is written for the customer.
 				failToErrorStep(
 					'wow_funnel_handoff',
 					error instanceof Error
@@ -97,7 +110,50 @@ const WowFunnelHandoff: StepType = function WowFunnelHandoff( { navigation, flow
 				);
 			}
 		} )();
-	}, [ __, dest, funnelSlug, requestedFunnelSlug, setSiteSetupError, siteIdentifier, submit ] );
+	}, [
+		__,
+		attempt,
+		dest,
+		funnelSlug,
+		requestedFunnelSlug,
+		setSiteSetupError,
+		siteIdentifier,
+		submit,
+	] );
+
+	if ( hasTimedOut ) {
+		const tryAgain = () => {
+			logWowFunnelEvent( 'handoff_retry', { funnel: funnelSlug, attempt: attempt + 1 } );
+			setHasTimedOut( false );
+			setAttempt( ( current ) => current + 1 );
+		};
+
+		const heading = __( 'Your site is almost ready' );
+
+		return (
+			<>
+				<DocumentHead title={ heading } />
+				<Step.CenteredColumnLayout
+					columnWidth={ 6 }
+					topBar={ <Step.TopBar /> }
+					heading={
+						<Step.Heading
+							text={ heading }
+							subText={ __(
+								'Setting it up is taking longer than usual. Your purchase went through, and nothing is lost.'
+							) }
+						/>
+					}
+				>
+					<HStack justify="center">
+						<Button variant="primary" onClick={ tryAgain }>
+							{ __( 'Try again' ) }
+						</Button>
+					</HStack>
+				</Step.CenteredColumnLayout>
+			</>
+		);
+	}
 
 	const title = __( 'Getting your site ready…' );
 

@@ -1,4 +1,5 @@
 import { logToLogstash } from 'calypso/lib/logstash';
+import wpcom from 'calypso/lib/wp';
 import { getTransferFailureMessage } from './atomic-transfer-outcome';
 import {
 	getSiteAdminUrl,
@@ -314,6 +315,84 @@ export function wowFunnelSiteIsPaid( site: { plan?: { is_free?: boolean } } | un
 
 const WAIT_TIMED_OUT = Symbol( 'wow-funnel-wait-timed-out' );
 
+const wait = ( ms: number ) => new Promise< void >( ( resolve ) => setTimeout( resolve, ms ) );
+
+/**
+ * Raised when the funnel's readiness wait runs out of time, as opposed to the build failing.
+ *
+ * The difference matters to the customer: a build that failed needs support, while one that is
+ * merely slow is very likely fine and worth waiting on again. Carries a `name` so the two can be
+ * told apart without relying on `instanceof` surviving transpilation.
+ */
+export class WowFunnelWaitTimeoutError extends Error {
+	constructor( message: string ) {
+		super( message );
+		this.name = 'WowFunnelWaitTimeoutError';
+	}
+}
+
+export function isWowFunnelWaitTimeout( error: unknown ): boolean {
+	return error instanceof Error && 'WowFunnelWaitTimeoutError' === error.name;
+}
+
+/**
+ * Wait until the customer can be handed to the site's own admin.
+ *
+ * The hand-off is a Jetpack SSO sign-in, which needs the customer's Jetpack user token on the
+ * Atomic site. A customer whose site the funnel built has one from the start. A customer who
+ * claimed a pre-built site does not: theirs is minted after the purchase, usually within half a
+ * minute. Redirected before then, they meet a sign-in screen on a site they have just paid for.
+ *
+ * A server that predates the status endpoint cannot say, and is treated as ready: that is what
+ * the flow did before this wait existed. Any other request failure is a blip to poll through.
+ * @param siteIdentifier Site slug or ID.
+ * @param options Polling options.
+ * @param options.totalTimeoutSeconds How long to keep asking before giving up.
+ * @param options.pollIntervalMs How long to leave between asks.
+ * @param options.initialDelayMs How long to wait before the first ask.
+ */
+export async function waitForWowFunnelHandoff(
+	siteIdentifier: string,
+	{
+		totalTimeoutSeconds = 600,
+		pollIntervalMs = 3000,
+		initialDelayMs = pollIntervalMs,
+	}: {
+		totalTimeoutSeconds?: number;
+		pollIntervalMs?: number;
+		initialDelayMs?: number;
+	} = {}
+): Promise< void > {
+	const maxFinishTime = Date.now() + totalTimeoutSeconds * 1000;
+	let delayMs = initialDelayMs;
+
+	while ( Date.now() < maxFinishTime ) {
+		if ( delayMs > 0 ) {
+			await wait( delayMs );
+		}
+		delayMs = pollIntervalMs;
+
+		try {
+			const status = ( await wpcom.req.get( {
+				path: `/sites/${ siteIdentifier }/wow-funnel/handoff`,
+				apiNamespace: 'wpcom/v2',
+			} ) ) as { ready?: boolean };
+
+			if ( status?.ready ) {
+				return;
+			}
+		} catch ( error ) {
+			const code = ( error as { error?: string; code?: string } )?.error;
+			if ( 'rest_no_route' === code || 'rest_no_route' === ( error as { code?: string } )?.code ) {
+				logWowFunnelEvent( 'handoff_status_unavailable', {} );
+				return;
+			}
+		}
+	}
+
+	throw new Error( 'WoW funnel hand-off was not ready in time' );
+}
+
 /**
  * Wait until the funnel's build is genuinely ready to be handed over.
  *
@@ -349,6 +428,18 @@ export async function waitForWowFunnelReady( {
 		if ( 'import' === readiness ) {
 			await waitForBlueprintImportComplete( siteIdentifier, pollNow );
 		}
+		// Last, and for every funnel: the site can be built and still not be one the customer can
+		// sign in to. Checked at once for the same reason as the waits above — by the time a
+		// customer has paid, and all the more once they have been through an interstitial, the
+		// answer is nearly always already yes.
+		//
+		// Given the funnel's whole budget, so that it is the funnel's own timeout that ends a slow
+		// wait — reported as "taking longer than expected" — and never this one, which would read
+		// as a failure.
+		await waitForWowFunnelHandoff( siteIdentifier, {
+			...pollNow,
+			totalTimeoutSeconds: waitTimeoutSeconds,
+		} );
 	} )();
 
 	let timer: ReturnType< typeof setTimeout > | undefined;
@@ -373,7 +464,7 @@ export async function waitForWowFunnelReady( {
 				readiness,
 				timeout_seconds: waitTimeoutSeconds,
 			} );
-			throw new Error( getTransferFailureMessage( 'timeout' ) );
+			throw new WowFunnelWaitTimeoutError( getTransferFailureMessage( 'timeout' ) );
 		}
 
 		if ( 'failed' === outcome ) {

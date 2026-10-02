@@ -1,6 +1,7 @@
 /**
  * @jest-environment jsdom
  */
+import wpcom from 'calypso/lib/wp';
 import {
 	getSiteAdminUrl,
 	getSiteEditorUrl,
@@ -19,9 +20,16 @@ import {
 	getWowFunnelSlug,
 	isKnownWowFunnel,
 	isSameWowFunnelRun,
+	isWowFunnelWaitTimeout,
+	waitForWowFunnelHandoff,
 	waitForWowFunnelReady,
 	wowFunnelSiteIsPaid,
 } from '../wow-funnel';
+
+jest.mock( 'calypso/lib/wp', () => ( {
+	__esModule: true,
+	default: { req: { get: jest.fn() } },
+} ) );
 
 jest.mock( 'calypso/lib/logstash', () => ( {
 	logToLogstash: jest.fn( () => Promise.resolve() ),
@@ -39,6 +47,7 @@ const mockTransferWait = waitForAtomicTransferComplete as jest.Mock;
 const mockImportWait = waitForBlueprintImportComplete as jest.Mock;
 const mockGetSiteAdminUrl = getSiteAdminUrl as jest.Mock;
 const mockGetSiteEditorUrl = getSiteEditorUrl as jest.Mock;
+const mockWpcomGet = wpcom.req.get as jest.Mock;
 
 const never = () => new Promise< void >( () => {} );
 
@@ -223,11 +232,114 @@ describe( 'getWowFunnelDest', () => {
 	} );
 } );
 
+describe( 'waitForWowFunnelHandoff', () => {
+	beforeEach( () => {
+		jest.clearAllMocks();
+	} );
+
+	it( 'returns as soon as the site says the customer can sign in', async () => {
+		mockWpcomGet.mockResolvedValue( { ready: true } );
+
+		await waitForWowFunnelHandoff( 'site.example.com', { initialDelayMs: 0 } );
+
+		expect( mockWpcomGet ).toHaveBeenCalledTimes( 1 );
+		expect( mockWpcomGet ).toHaveBeenCalledWith( {
+			path: '/sites/site.example.com/wow-funnel/handoff',
+			apiNamespace: 'wpcom/v2',
+		} );
+	} );
+
+	it( 'keeps asking until the token the customer needs exists', async () => {
+		mockWpcomGet
+			.mockResolvedValueOnce( { ready: false } )
+			.mockResolvedValueOnce( { ready: false } )
+			.mockResolvedValueOnce( { ready: true } );
+
+		await waitForWowFunnelHandoff( 'site.example.com', { initialDelayMs: 0, pollIntervalMs: 1 } );
+
+		expect( mockWpcomGet ).toHaveBeenCalledTimes( 3 );
+	} );
+
+	it( 'polls through a request that fails', async () => {
+		mockWpcomGet
+			.mockRejectedValueOnce( { error: 'http_request_failed', status: 504 } )
+			.mockResolvedValueOnce( { ready: true } );
+
+		await waitForWowFunnelHandoff( 'site.example.com', { initialDelayMs: 0, pollIntervalMs: 1 } );
+
+		expect( mockWpcomGet ).toHaveBeenCalledTimes( 2 );
+	} );
+
+	it( 'treats a server without the endpoint as ready, as before the wait existed', async () => {
+		mockWpcomGet.mockRejectedValue( { error: 'rest_no_route', status: 404 } );
+
+		await waitForWowFunnelHandoff( 'site.example.com', { initialDelayMs: 0 } );
+
+		expect( mockWpcomGet ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'gives up once its time is spent', async () => {
+		mockWpcomGet.mockResolvedValue( { ready: false } );
+
+		await expect(
+			waitForWowFunnelHandoff( 'site.example.com', {
+				initialDelayMs: 0,
+				pollIntervalMs: 1,
+				totalTimeoutSeconds: 0.02,
+			} )
+		).rejects.toThrow( /not ready in time/i );
+	} );
+} );
+
 describe( 'waitForWowFunnelReady', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
 		mockTransferWait.mockImplementation( () => Promise.resolve() );
 		mockImportWait.mockImplementation( () => Promise.resolve() );
+		mockWpcomGet.mockResolvedValue( { ready: true } );
+	} );
+
+	it( 'waits for the hand-off after the build, for every funnel', async () => {
+		await waitForWowFunnelReady( { funnelSlug: 'default', siteIdentifier: 'site.example.com' } );
+		await waitForWowFunnelReady( { funnelSlug: 'blueprint', siteIdentifier: 'site.example.com' } );
+
+		expect( mockWpcomGet ).toHaveBeenCalledTimes( 2 );
+		expect( mockWpcomGet ).toHaveBeenCalledWith( {
+			path: '/sites/site.example.com/wow-funnel/handoff',
+			apiNamespace: 'wpcom/v2',
+		} );
+	} );
+
+	it( 'reports a hand-off that never becomes ready as a timeout, not a failure', async () => {
+		jest.useFakeTimers();
+		mockWpcomGet.mockResolvedValue( { ready: false } );
+
+		const pending = waitForWowFunnelReady( {
+			funnelSlug: 'default',
+			siteIdentifier: 'site.example.com',
+		} );
+		const caught = pending.catch( ( error: unknown ) => error );
+
+		await jest.advanceTimersByTimeAsync( 180 * 1000 );
+		const error = await caught;
+
+		expect( isWowFunnelWaitTimeout( error ) ).toBe( true );
+		expect( ( error as Error ).message ).toMatch( /taking longer than expected/i );
+
+		jest.useRealTimers();
+	} );
+
+	it( 'does not report a failed build as a timeout', async () => {
+		mockTransferWait.mockImplementation( () =>
+			Promise.reject( new Error( 'Atomic transfer failed with status: reverted' ) )
+		);
+
+		const error = await waitForWowFunnelReady( {
+			funnelSlug: 'default',
+			siteIdentifier: 'site.example.com',
+		} ).catch( ( caught: unknown ) => caught );
+
+		expect( isWowFunnelWaitTimeout( error ) ).toBe( false );
 	} );
 
 	it( 'waits only on the transfer for a transfer-readiness funnel', async () => {
