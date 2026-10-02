@@ -390,6 +390,10 @@ function getReaderCurrentPost( config ) {
 }
 
 function getReaderEmptyViewHeading( config ) {
+	if ( config?.display?.emptyViewHeading ) {
+		return config.display.emptyViewHeading;
+	}
+
 	return getReaderCurrentPost( config )
 		? 'Ask me anything about this post.'
 		: 'Ask me anything about this blog.';
