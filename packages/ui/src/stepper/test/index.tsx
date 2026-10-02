@@ -531,7 +531,7 @@ describe( 'Stepper linear mode interaction', () => {
 } );
 
 describe( 'Stepper error status', () => {
-	it( 'shows "!" indicator and appends "error" to the accessible label', () => {
+	it( 'renders an icon indicator and appends "error" to the accessible label', () => {
 		render(
 			<Stepper.Root orientation="vertical" value="a" aria-label="Test">
 				<Stepper.Step value="a" status="error">
@@ -539,8 +539,10 @@ describe( 'Stepper error status', () => {
 				</Stepper.Step>
 			</Stepper.Root>
 		);
-		expect( screen.getByText( 'Step 1 of 1, error' ) ).toBeInTheDocument();
-		expect( screen.getByText( '!' ) ).toBeInTheDocument();
+		const label = screen.getByText( 'Step 1 of 1, error' );
+		const icon = label.closest( '[data-indicator-variant]' )?.querySelector( 'svg' );
+		expect( icon ).toHaveAttribute( 'fill', 'currentColor' );
+		expect( icon ).toHaveAttribute( 'aria-hidden', 'true' );
 	} );
 } );
 
@@ -732,11 +734,21 @@ describe( 'Stepper indicatorVariant', () => {
 				<Stepper.Step value="a">
 					<Stepper.Indicator />
 				</Stepper.Step>
+				<Stepper.Step value="b" status="completed">
+					<Stepper.Indicator />
+				</Stepper.Step>
 			</Stepper.Root>
 		);
 		// The number variant renders <span aria-hidden="true">1</span> inside the indicator
 		const numericLabel = screen.getByText( '1' );
 		expect( numericLabel ).toHaveAttribute( 'aria-hidden', 'true' );
+		// Steps with a status render an icon instead of the number.
+		expect( screen.queryByText( '2' ) ).not.toBeInTheDocument();
+		const completedIcon = screen
+			.getByText( 'Step 2 of 2, completed' )
+			.closest( '[data-indicator-variant]' )
+			?.querySelector( 'svg' );
+		expect( completedIcon ).toHaveAttribute( 'fill', 'currentColor' );
 	} );
 } );
 
