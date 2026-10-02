@@ -435,7 +435,7 @@ describe( 'NamePulseResults', () => {
 		render( <NamePulseTestSearch query="icecream.d" /> );
 
 		expect( await findNotice() ).toHaveTextContent(
-			'We don’t recognize .d, so we’re showing results for “icecreamd”. Try .com or .blog instead.'
+			'We don’t recognize that ending. Try .com or .blog, or enter just the name and we’ll suggest the rest.'
 		);
 		expect(
 			await within( await findRow( 'icecreamd.net' ) ).findByText( '$24' )
@@ -485,7 +485,7 @@ describe( 'NamePulseResults', () => {
 		rerender( <NamePulseTestSearch query="sorbet.d" /> );
 
 		expect( await findNotice() ).toHaveTextContent(
-			'We don’t recognize .d, so we’re showing results for “sorbetd”. Try .com or .blog instead.'
+			'We don’t recognize that ending. Try .com or .blog, or enter just the name and we’ll suggest the rest.'
 		);
 	} );
 
