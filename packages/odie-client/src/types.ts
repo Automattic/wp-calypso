@@ -27,6 +27,7 @@ export type OdieAssistantContextInterface = {
 	externalChatId?: string | null;
 	forceEmailSupport: boolean;
 	isChatRestricted: boolean;
+	isStreamingEnabled: boolean;
 	launcherContext?: string;
 	setExperimentVariationName: ( variationName: string | null | undefined ) => void;
 	setChat: ( chat: Chat | SetStateAction< Chat > ) => void;
@@ -54,6 +55,7 @@ export type OdieAssistantProviderProps = {
 	version?: string | null;
 	forceEmailSupport?: boolean;
 	isChatRestricted?: boolean;
+	isStreamingEnabled?: boolean;
 	launcherContext?: string;
 	children?: ReactNode;
 	setChatStatus?: ( status: ChatStatus ) => void;
@@ -200,6 +202,8 @@ export type Chat = OdieChat & {
 	clientId?: string;
 	provider: SupportProvider;
 	status: ChatStatus;
+	// What the bot says it is doing while a streamed reply is being prepared.
+	progressMessage?: string;
 };
 
 export type OdieAllowedBots = ( typeof ODIE_ALLOWED_BOTS )[ number ];
