@@ -50,6 +50,10 @@ let agencyBlogResponse: { status: number; body: unknown } = {
 
 let mediaStorageResponse: [ number, unknown ];
 
+// Default: a clean exact-match suggestion. Tests can override to exercise the
+// upsell card's no-good-suggestion fallback.
+let domainSuggestionsResponse: unknown;
+
 function mockSite( mockedSite: Site ) {
 	nock( 'https://public-api.wordpress.com' )
 		.get( `/rest/v1.1/sites/${ mockedSite.slug }` )
@@ -100,10 +104,12 @@ describe( '<SiteOverview>', () => {
 			.query( true )
 			.reply( 200, { domains: [] } );
 
+		domainSuggestionsResponse = [ { domain_name: 'test-site.com', product_slug: 'dotcom_domain' } ];
 		nock( 'https://public-api.wordpress.com' )
+			.persist()
 			.get( '/rest/v1.1/domains/suggestions' )
 			.query( true )
-			.reply( 200, [ { domain_name: 'test-site.com', product_slug: 'dotcom_domain' } ] );
+			.reply( () => [ 200, domainSuggestionsResponse ] );
 
 		nock( 'https://public-api.wordpress.com' )
 			.get( `/wpcom/v2/sites/${ site.ID }/activity` )
@@ -216,6 +222,38 @@ describe( '<SiteOverview>', () => {
 		expect( await getCard( 'Plan' ) ).toBeVisible();
 		expect( await getCard( 'Latest activity' ) ).toBeVisible();
 		expect( await getCard( 'The perfect domain awaits' ) ).toBeVisible();
+	} );
+
+	test( 'falls back to generic domain-upsell copy when the vendor returns no clean suggestion', async () => {
+		// "examplesite" is a clean query, so the hyphenated respelling is rejected.
+		domainSuggestionsResponse = [
+			{ domain_name: 'ex-ample-site.com', product_slug: 'dotcom_domain' },
+		];
+		const freeSite = {
+			...site,
+			slug: 'examplesite.wordpress.com',
+			plan: {
+				product_slug: 'free_plan',
+				product_name_short: 'Free',
+				is_free: true,
+				features: { active: [] },
+			},
+		} as unknown as Site;
+		mockSite( freeSite );
+
+		render( <SiteOverview siteSlug={ freeSite.slug } /> );
+		await screen.findByRole( 'heading', { name: 'Test Site' } );
+		await waitForFeatureGatedCards( 'Free' );
+
+		const domainCard = await getCard( 'The perfect domain awaits' );
+		// The suggestions query resolves after the card mounts; wait for the copy to
+		// settle on the no-suggestion fallback rather than the blurred placeholder.
+		await waitFor( () =>
+			expect( domainCard ).toHaveTextContent(
+				'Upgrade to an annual paid plan to get a custom domain free for one year. You can also choose your own domain name.'
+			)
+		);
+		expect( domainCard ).not.toHaveTextContent( 'ex-ample-site.com' );
 	} );
 
 	test( 'renders the overview of a site with a paid plan on Atomic', async () => {
