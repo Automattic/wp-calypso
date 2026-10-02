@@ -5,6 +5,11 @@ import { EditorComponent } from './editor-component';
 import type { EditorPreviewOptions, EditorToolbarSettingsButton } from './types';
 
 const panel = '[aria-label="Editor top bar"]';
+
+// Toggling the inserter next to a block insertion can find the renderer still
+// busy with it. See editor-sidebar-block-inserter-component.ts.
+const INSERTER_TOGGLE_TIMEOUT = 30 * 1000;
+
 const moreOptionsLabel = 'Options';
 const selectors = {
 	// Block Inserter
@@ -119,7 +124,7 @@ export class EditorToolbarComponent {
 		if ( ! ( await this.targetIsOpen( blockInserterButton ) ) ) {
 			const editorParent = await this.editor.parent();
 			const locator = editorParent.locator( selectors.blockInserterButton );
-			await locator.click();
+			await locator.click( { timeout: INSERTER_TOGGLE_TIMEOUT } );
 		}
 	}
 
@@ -143,7 +148,7 @@ export class EditorToolbarComponent {
 			( await blockInserterButton.count() ) > 0 &&
 			( await this.targetIsOpen( blockInserterButton ) )
 		) {
-			await blockInserterButton.click();
+			await blockInserterButton.click( { timeout: INSERTER_TOGGLE_TIMEOUT } );
 		}
 	}
 
