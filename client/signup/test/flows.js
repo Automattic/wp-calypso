@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import flows from 'calypso/signup/config/flows';
+import flows, { getLaunchReturnUrl } from 'calypso/signup/config/flows';
 import { generateFlows } from 'calypso/signup/config/flows-pure';
 import mockedFlows from './fixtures/flows';
 
@@ -93,7 +93,7 @@ describe( 'Signup Flows Configuration', () => {
 			).toBe( '/sites/test-site/settings/site-visibility?celebrateLaunch=true' );
 		} );
 
-		test( 'lands a wp-admin launch on the dashboard, where wp-admin celebrates it', () => {
+		test( 'lands a wp-admin launch on the wp-admin root, where wp-admin celebrates it', () => {
 			expect(
 				getDestination( {
 					siteSlug: 'test-site.wordpress.com',
@@ -124,6 +124,34 @@ describe( 'Signup Flows Configuration', () => {
 			).toBe(
 				'https://test-site.wordpress.com/wp-admin/options-reading.php?celebrate-launch=true'
 			);
+		} );
+	} );
+
+	describe( 'getLaunchReturnUrl', () => {
+		test( 'returns to the exact wp-admin screen back_to names', () => {
+			expect(
+				getLaunchReturnUrl( {
+					siteSlug: 'test-site.wordpress.com',
+					refParameter: 'wp-admin',
+					back_to: 'https://test-site.wordpress.com/wp-admin/post.php?post=1&action=edit',
+				} )
+			).toBe( 'https://test-site.wordpress.com/wp-admin/post.php?post=1&action=edit' );
+		} );
+
+		test( 'falls back to the screen ref names without back_to', () => {
+			expect(
+				getLaunchReturnUrl( {
+					siteSlug: 'test-site.wordpress.com',
+					refParameter: 'wp-admin/options-reading.php',
+					back_to: null,
+				} )
+			).toBe( 'https://test-site.wordpress.com/wp-admin/options-reading.php' );
+		} );
+
+		test( 'falls back to My Home without back_to or ref', () => {
+			expect(
+				getLaunchReturnUrl( { siteSlug: 'test-site', back_to: null, refParameter: null } )
+			).toBe( '/home/test-site' );
 		} );
 	} );
 
