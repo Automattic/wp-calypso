@@ -1,7 +1,11 @@
 import { __ } from '@wordpress/i18n';
 import { repointBlockId, resolveClientId } from '../../utils/block-ids';
 import { getBlockingMove } from '../../utils/canvas-binding';
-import { captureCanvas } from '../../utils/canvas-capture';
+import {
+	captureCanvas,
+	describeCaptureShape,
+	getUnframedClientIds,
+} from '../../utils/canvas-capture';
 import { checkpointKeys, sealCheckpointForSwap, withCheckpoint } from '../../utils/checkpoints';
 import { deepClone } from '../../utils/deep-clone';
 import { getPageBlocks, openUndoLevel } from '../../utils/editor-blocks';
@@ -46,11 +50,15 @@ interface ApplyBlockEditsInput extends RawBlockEdits {
 	reverseMap?: unknown;
 	/** Set by the server when it may hold its ack back for a look at the capture. */
 	visualCheckPending?: unknown;
+	/** Blocks this edit is being compared against, which the capture must also show. */
+	visualCheckClientIds?: unknown;
 }
 
 interface ApplyBlockEditsResultData {
 	success: boolean;
 	message: string;
+	/** What the attached pictures do and do not show, one sentence each. */
+	captureNotes?: string[];
 	error?: string;
 	details?: Record< string, unknown >;
 	outcome?: ApplyBlockEditsOutcome;
@@ -83,6 +91,36 @@ type Resolver = Pick< ApplyEditsOptions, 'resolve' | 'onReplaced' >;
 
 // A caller's own map is read first, as the WebMCP adapter's; the rest are the
 // page structure's. A replaced block keeps its id for the rest of the call.
+/**
+ * What to tell the model about the reference blocks it asked to see.
+ *
+ * Both halves matter. Saying nothing when they are in frame leaves the model to
+ * guess whether the picture contains the thing it is comparing against, which
+ * is how a check ends up confirming only that the edited section is internally
+ * consistent. Saying nothing when they are absent is worse: the capture then
+ * shows one side of a comparison and looks exactly like one that shows both.
+ * @param reference The reference blocks requested.
+ * @param unframed  Those the canvas cannot show.
+ * @returns A capture note, or empty when no reference was named.
+ */
+function describeReferenceFraming( reference: string[], unframed: string[] ): string {
+	if ( ! reference.length ) {
+		return '';
+	}
+
+	if ( ! unframed.length ) {
+		return `The picture also frames the ${ reference.length } block(s) named for comparison, so the two can be judged against each other in it.`;
+	}
+
+	if ( unframed.length === reference.length ) {
+		return 'The picture does not contain the blocks named for comparison — they are not laid out in the canvas — so it cannot confirm a match against them. Say so rather than reporting the comparison as checked.';
+	}
+
+	return `The picture contains only ${
+		reference.length - unframed.length
+	} of the ${ reference.length } blocks named for comparison, so any match against the rest is unconfirmed.`;
+}
+
 function createResolver( reverseMap: unknown ): Resolver {
 	const supplied = isRecord( reverseMap ) ? reverseMap : {};
 	const replaced = new Map< string, string >();
@@ -330,13 +368,48 @@ export async function applyBlockEditsCallback(
 	// failure ones most of all: there the block tree cannot say whether the
 	// user's problem is fixed. A CSS-only call gets the whole page; a request
 	// refused before any write, or a call stopped by a move, gets none.
+	//
+	// A relative request — "make this match Project details" — cannot be checked
+	// from a picture of the edited side alone, so the blocks it is being compared
+	// against join the crop hint. Ones already changed here are dropped: they are
+	// framed regardless, and counting them would have the message claim a
+	// comparison against the very thing that moved.
+	const changedClientIds = edits
+		? [ ...getEditedClientIds( edits, resolver.resolve ), ...insertedClientIds ]
+		: [];
+	const referenceClientIds = (
+		Array.isArray( input.visualCheckClientIds ) ? input.visualCheckClientIds : []
+	)
+		.filter( ( clientId ): clientId is string => typeof clientId === 'string' )
+		.map( resolver.resolve )
+		.filter(
+			( clientId, index, all ) =>
+				! changedClientIds.includes( clientId ) && all.indexOf( clientId ) === index
+		);
+
 	const fileParts =
 		! edits || getBlockingMove()
 			? null
 			: await captureCanvas( {
-					clientIds: [ ...getEditedClientIds( edits, resolver.resolve ), ...insertedClientIds ],
+					clientIds: [ ...changedClientIds, ...referenceClientIds ],
 					fullPage: isCssOnly( edits ),
 				} );
+
+	// Two separate facts about the pictures that came back. The shape says how
+	// many there are and what they cover, which the rasterizer decides from how
+	// far apart the blocks turned out to be; the reference note says whether a
+	// comparison can be judged from them at all. Kept out of `message`, which
+	// the user may see as the reply.
+	if ( fileParts ) {
+		const captureNotes = [
+			describeCaptureShape( fileParts ),
+			describeReferenceFraming( referenceClientIds, getUnframedClientIds( referenceClientIds ) ),
+		].filter( Boolean );
+
+		if ( captureNotes.length ) {
+			result = { ...result, captureNotes };
+		}
+	}
 
 	// `visualCheckPending` ships only with an image: the chat withholds the
 	// summary on the strength of it, and with nothing to look at the server's
