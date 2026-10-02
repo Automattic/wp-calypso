@@ -20,6 +20,11 @@ import { shouldUseStepContainerV2 } from '../../../helpers/should-use-step-conta
 import type { Step as StepType } from '../../types';
 
 /**
+ * How many times a customer whose site is slow is offered another wait before the error step.
+ */
+const MAX_RETRIES = 2;
+
+/**
  * The last hop of a WoW funnel: hold the customer on the loading screen until the build they
  * paid for is actually ready, then hand them to it.
  *
@@ -95,7 +100,9 @@ const WowFunnelHandoff: StepType = function WowFunnelHandoff( { navigation, flow
 				logWowFunnelEvent( 'handoff_redirect', { funnel: funnelSlug, dest } );
 				window.location.replace( handoffUrl );
 			} catch ( error ) {
-				if ( isWowFunnelWaitTimeout( error ) ) {
+				// Another wait is offered only so many times. A site still not ready after
+				// these is not merely slow, and the error step is where support is.
+				if ( isWowFunnelWaitTimeout( error ) && attempt < MAX_RETRIES ) {
 					setHasTimedOut( true );
 					return;
 				}

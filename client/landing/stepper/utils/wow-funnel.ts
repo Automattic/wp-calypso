@@ -343,13 +343,18 @@ export function isWowFunnelWaitTimeout( error: unknown ): boolean {
  * claimed a pre-built site does not: theirs is minted after the purchase, usually within half a
  * minute. Redirected before then, they meet a sign-in screen on a site they have just paid for.
  *
- * A server that predates the status endpoint cannot say, and is treated as ready: that is what
- * the flow did before this wait existed. Any other request failure is a blip to poll through.
+ * A server that cannot answer the question at all (the status endpoint is missing) is treated as
+ * ready: that is what the flow did before this wait existed, and holding every paying customer
+ * for the whole budget over a missing route would be far worse. Any other request failure is a
+ * blip to poll through.
+ *
+ * Running out of time is reported as a timeout, not a failure, whichever timer notices first.
  * @param siteIdentifier Site slug or ID.
  * @param options Polling options.
  * @param options.totalTimeoutSeconds How long to keep asking before giving up.
  * @param options.pollIntervalMs How long to leave between asks.
  * @param options.initialDelayMs How long to wait before the first ask.
+ * @param options.signal Stops the polling when the caller has stopped waiting.
  */
 export async function waitForWowFunnelHandoff(
 	siteIdentifier: string,
@@ -357,20 +362,27 @@ export async function waitForWowFunnelHandoff(
 		totalTimeoutSeconds = 600,
 		pollIntervalMs = 3000,
 		initialDelayMs = pollIntervalMs,
+		signal,
 	}: {
 		totalTimeoutSeconds?: number;
 		pollIntervalMs?: number;
 		initialDelayMs?: number;
+		signal?: AbortSignal;
 	} = {}
 ): Promise< void > {
 	const maxFinishTime = Date.now() + totalTimeoutSeconds * 1000;
 	let delayMs = initialDelayMs;
+	let lastError: string | number | null = null;
 
 	while ( Date.now() < maxFinishTime ) {
 		if ( delayMs > 0 ) {
 			await wait( delayMs );
 		}
 		delayMs = pollIntervalMs;
+
+		if ( signal?.aborted ) {
+			throw new Error( 'WoW funnel hand-off wait was abandoned' );
+		}
 
 		try {
 			const status = ( await wpcom.req.get( {
@@ -381,16 +393,40 @@ export async function waitForWowFunnelHandoff(
 			if ( status?.ready ) {
 				return;
 			}
+			lastError = null;
 		} catch ( error ) {
-			const code = ( error as { error?: string; code?: string } )?.error;
-			if ( 'rest_no_route' === code || 'rest_no_route' === ( error as { code?: string } )?.code ) {
-				logWowFunnelEvent( 'handoff_status_unavailable', {} );
+			const {
+				error: code,
+				code: restCode,
+				status,
+				statusCode,
+			} = ( error ?? {} ) as {
+				error?: string;
+				code?: string;
+				status?: number;
+				statusCode?: number;
+			};
+			const httpStatus = status ?? statusCode;
+
+			if ( 'rest_no_route' === code || 'rest_no_route' === restCode || 404 === httpStatus ) {
+				logWowFunnelEvent( 'handoff_status_unavailable', {
+					site_identifier: siteIdentifier,
+					code: code ?? restCode ?? null,
+					status: httpStatus ?? null,
+				} );
 				return;
 			}
+
+			lastError = code ?? restCode ?? httpStatus ?? 'unknown';
 		}
 	}
 
-	throw new Error( 'WoW funnel hand-off was not ready in time' );
+	logWowFunnelEvent( 'handoff_status_timeout', {
+		site_identifier: siteIdentifier,
+		timeout_seconds: totalTimeoutSeconds,
+		last_error: lastError,
+	} );
+	throw new WowFunnelWaitTimeoutError( getTransferFailureMessage( 'timeout' ) );
 }
 
 /**
@@ -401,9 +437,13 @@ export async function waitForWowFunnelHandoff(
  * had. When it had not, the customer landed on the pre-switcheroo Simple site — the site was
  * fine and finished moments later, but their first impression was the wrong site.
  *
- * Throws on failure or timeout, matching how every other Atomic wait in stepper reports (see
- * bundle-transfer, use-wait-for-atomic), so the flow's existing exception handling routes it to
- * the shared error step with a message that already reads correctly for a timeout.
+ * Throws either way, matching how every other Atomic wait in stepper reports (see
+ * bundle-transfer, use-wait-for-atomic), but the two outcomes are not the same to a customer:
+ *
+ * - a build that failed throws a plain Error, meant for the shared error step;
+ * - a wait that ran out of time throws a WowFunnelWaitTimeoutError (test with
+ *   isWowFunnelWaitTimeout()). The site is very likely still finishing, so a caller that can
+ *   offer another wait should; one that cannot still gets a message that reads correctly.
  */
 export async function waitForWowFunnelReady( {
 	funnelSlug,
@@ -421,13 +461,21 @@ export async function waitForWowFunnelReady( {
 	// there is no risk of reading a previous run's terminal state.
 	const pollNow = { initialDelayMs: 0 };
 
+	// Which wait the run is on, so a timeout can say what it was waiting for.
+	let stage: 'transfer' | 'import' | 'handoff' = 'transfer';
+	// Ends the hand-off poll once this wait is over. Without it a wait that timed out keeps
+	// polling in the background, and every "try again" would add another on top.
+	const abandon = new AbortController();
+
 	const work = ( async () => {
 		// Every readiness level starts with the transfer — the site cannot be ready before it is
 		// Atomic — and `import` simply waits for one more thing behind it.
 		await waitForAtomicTransferComplete( siteIdentifier, pollNow );
 		if ( 'import' === readiness ) {
+			stage = 'import';
 			await waitForBlueprintImportComplete( siteIdentifier, pollNow );
 		}
+		stage = 'handoff';
 		// Last, and for every funnel: the site can be built and still not be one the customer can
 		// sign in to. Checked at once for the same reason as the waits above — by the time a
 		// customer has paid, and all the more once they have been through an interstitial, the
@@ -439,6 +487,7 @@ export async function waitForWowFunnelReady( {
 		await waitForWowFunnelHandoff( siteIdentifier, {
 			...pollNow,
 			totalTimeoutSeconds: waitTimeoutSeconds,
+			signal: abandon.signal,
 		} );
 	} )();
 
@@ -453,7 +502,9 @@ export async function waitForWowFunnelReady( {
 		const outcome = await Promise.race( [
 			work.then(
 				() => 'ready' as const,
-				() => 'failed' as const
+				// The hand-off poll can notice its own time is up; that is still a timeout.
+				( error: unknown ) =>
+					isWowFunnelWaitTimeout( error ) ? WAIT_TIMED_OUT : ( 'failed' as const )
 			),
 			timeout,
 		] );
@@ -462,6 +513,7 @@ export async function waitForWowFunnelReady( {
 			logWowFunnelEvent( 'handoff_wait_timeout', {
 				funnel: funnelSlug,
 				readiness,
+				stage,
 				timeout_seconds: waitTimeoutSeconds,
 			} );
 			throw new WowFunnelWaitTimeoutError( getTransferFailureMessage( 'timeout' ) );
@@ -473,6 +525,7 @@ export async function waitForWowFunnelReady( {
 		}
 	} finally {
 		clearTimeout( timer );
+		abandon.abort();
 	}
 }
 

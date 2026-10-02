@@ -278,16 +278,47 @@ describe( 'waitForWowFunnelHandoff', () => {
 		expect( mockWpcomGet ).toHaveBeenCalledTimes( 1 );
 	} );
 
-	it( 'gives up once its time is spent', async () => {
+	it( 'treats any 404 as a server that cannot answer, whatever its body says', async () => {
+		mockWpcomGet.mockRejectedValue( { error: 'unknown_blog', status: 404 } );
+
+		await waitForWowFunnelHandoff( 'site.example.com', { initialDelayMs: 0 } );
+
+		expect( mockWpcomGet ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'reports running out of time as a timeout, not a failure', async () => {
 		mockWpcomGet.mockResolvedValue( { ready: false } );
 
-		await expect(
-			waitForWowFunnelHandoff( 'site.example.com', {
-				initialDelayMs: 0,
-				pollIntervalMs: 1,
-				totalTimeoutSeconds: 0.02,
-			} )
-		).rejects.toThrow( /not ready in time/i );
+		const error = await waitForWowFunnelHandoff( 'site.example.com', {
+			initialDelayMs: 0,
+			pollIntervalMs: 1,
+			totalTimeoutSeconds: 0.02,
+		} ).catch( ( caught: unknown ) => caught );
+
+		expect( isWowFunnelWaitTimeout( error ) ).toBe( true );
+		expect( ( error as Error ).message ).toMatch( /taking longer than expected/i );
+	} );
+
+	it( 'stops asking once the caller has stopped waiting', async () => {
+		mockWpcomGet.mockResolvedValue( { ready: false } );
+		const abandon = new AbortController();
+
+		const pending = waitForWowFunnelHandoff( 'site.example.com', {
+			initialDelayMs: 0,
+			pollIntervalMs: 5,
+			signal: abandon.signal,
+		} ).catch( ( caught: unknown ) => caught );
+
+		await new Promise( ( resolve ) => setTimeout( resolve, 20 ) );
+		abandon.abort();
+		const error = await pending;
+		const callsWhenAbandoned = mockWpcomGet.mock.calls.length;
+
+		await new Promise( ( resolve ) => setTimeout( resolve, 30 ) );
+
+		expect( error ).toBeInstanceOf( Error );
+		expect( isWowFunnelWaitTimeout( error ) ).toBe( false );
+		expect( mockWpcomGet.mock.calls.length ).toBe( callsWhenAbandoned );
 	} );
 } );
 

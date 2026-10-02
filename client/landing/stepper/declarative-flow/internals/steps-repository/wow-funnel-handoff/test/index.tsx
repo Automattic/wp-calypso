@@ -148,6 +148,29 @@ describe( 'WowFunnelHandoff', () => {
 		expect( mockWait ).toHaveBeenCalledTimes( 2 );
 	} );
 
+	it( 'stops offering another wait after a couple, and sends the customer to the error step', async () => {
+		const timeout = () =>
+			Object.assign( new Error( 'Setting up your site is taking longer than expected.' ), {
+				name: 'WowFunnelWaitTimeoutError',
+			} );
+		mockWait.mockImplementation( () => Promise.reject( timeout() ) );
+
+		renderStep();
+
+		// Two more waits are offered.
+		for ( let retry = 1; retry <= 2; retry++ ) {
+			await userEvent.click( await screen.findByRole( 'button', { name: 'Try again' } ) );
+			await waitFor( () => expect( mockWait ).toHaveBeenCalledTimes( retry + 1 ) );
+		}
+
+		// The third timeout is not "slow" any more.
+		await waitFor( () => expect( navigation.submit ).toHaveBeenCalledWith( { hasError: true } ) );
+		expect( mockSetSiteSetupError ).toHaveBeenCalledWith(
+			'wow_funnel_handoff',
+			'Setting up your site is taking longer than expected.'
+		);
+	} );
+
 	it( 'still sends a build that failed to the error step', async () => {
 		mockWait.mockRejectedValueOnce(
 			new Error( 'Something went wrong while setting up your site.' )
