@@ -88,4 +88,24 @@ describe( 'Message avatar gating', () => {
 
 		expect( container.querySelector( AVATAR_SELECTOR ) ).toBeNull();
 	} );
+
+	it( 'shows generic fallback for unresolved typed component content without reading its summary', async () => {
+		await renderMessage(
+			buildMessage( {
+				content: [
+					{
+						type: 'component-result',
+						partVersion: 1,
+						toolCallId: 'call-1',
+						result: { summary: 'draft body' },
+					},
+				],
+			} ),
+			false
+		);
+		expect( container.textContent ).toContain(
+			'Interactive component shown in this conversation.'
+		);
+		expect( container.textContent ).not.toContain( 'draft body' );
+	} );
 } );

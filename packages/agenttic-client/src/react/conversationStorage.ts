@@ -10,6 +10,7 @@ import type {
 	FilePart,
 	Message,
 	TextPart,
+	ComponentReferencePart,
 } from '../client/types/index';
 
 const STORAGE_KEY = 'a8c_agenttic_conversation_history';
@@ -56,6 +57,7 @@ interface StoredMessage {
 	timestamp: number;
 	archived?: boolean;
 	deliveryStatus?: DeliveryStatus;
+	componentReferences?: ComponentReferencePart[];
 	files?: Array< {
 		name: string;
 		mimeType?: string;
@@ -196,6 +198,11 @@ function extractStorableContent( message: Message ): StoredMessage {
 		...( archived !== undefined && { archived } ),
 		...( contentType && { contentType } ),
 		...( deliveryStatus && { deliveryStatus } ),
+		...( message.parts.some( ( part ) => part.type === 'component-reference' ) && {
+			componentReferences: message.parts.filter(
+				( part ): part is ComponentReferencePart => part.type === 'component-reference'
+			),
+		} ),
 		...( files.length > 0 && { files } ),
 		...( toolCalls.length > 0 && { toolCalls } ),
 		...( toolResults.length > 0 && { toolResults } ),
@@ -221,6 +228,14 @@ function restoreMessage( stored: StoredMessage ): Message {
 				},
 			} ),
 		} );
+	}
+	if ( Array.isArray( stored.componentReferences ) ) {
+		parts.push(
+			...stored.componentReferences.filter(
+				( reference ) =>
+					reference && typeof reference === 'object' && reference.type === 'component-reference'
+			)
+		);
 	}
 
 	// Add file parts (images, etc.)

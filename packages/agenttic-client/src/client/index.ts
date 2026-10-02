@@ -1,4 +1,7 @@
-import { redactComponentMessage, redactComponentMessages } from './utils/componentHistory';
+import {
+	projectComponentMessagesForReplay,
+	redactComponentToolResultMessage,
+} from './utils/componentHistory';
 import {
 	executeRequest,
 	executeStreamingRequest,
@@ -35,6 +38,29 @@ import type {
  * Default timeout for requests (2 minutes)
  */
 const DEFAULT_TIMEOUT = 120000;
+
+function getComponentPresentationParts( message: Message ): Message[ 'parts' ] {
+	const componentCalls = new Set(
+		message.parts.flatMap( ( part ) =>
+			part.type === 'component-result' || part.type === 'component-reference'
+				? [ part.toolCallId ]
+				: []
+		)
+	);
+	if ( componentCalls.size === 0 ) {
+		return [];
+	}
+	return message.parts.filter(
+		( part ) =>
+			part.type === 'component-result' ||
+			part.type === 'component-reference' ||
+			part.type === 'text' ||
+			( part.type === 'data' &&
+				'toolCallId' in part.data &&
+				typeof part.data.toolCallId === 'string' &&
+				componentCalls.has( part.data.toolCallId ) )
+	);
+}
 
 /**
  * Convert an ability name to the identifier used for OpenAI tool calls.
@@ -438,7 +464,7 @@ function conversationHistoryToDataParts(
 ): ( DataPart | FilePart )[] {
 	const historyParts: ( DataPart | FilePart )[] = [];
 
-	for ( const message of redactComponentMessages( conversationHistory ) ) {
+	for ( const message of projectComponentMessagesForReplay( conversationHistory ) ) {
 		for ( const part of message.parts ) {
 			if ( part.type === 'text' ) {
 				historyParts.push( {
@@ -955,7 +981,7 @@ async function* processAgentResponseStream(
 									? conversationHistoryToDataParts( newConversationParts )
 									: [];
 
-								const moreResultMessage = redactComponentMessage(
+								const moreResultMessage = redactComponentToolResultMessage(
 									createToolResultMessage( moreResults, moreHistoryDataParts )
 								);
 								// Continue with more tool results and stream the continuation
@@ -1042,10 +1068,9 @@ async function* processAgentResponseStream(
 					};
 				} else {
 					// Tools executed but don't want to return to agent
-					// Create message with tool results only (no agent text)
 					const enhancedMessage: Message = {
 						...update.status.message,
-						parts: toolParts,
+						parts: [ ...toolParts, ...getComponentPresentationParts( update.status.message ) ],
 					};
 
 					const enhancedUpdate = {
@@ -1055,7 +1080,7 @@ async function* processAgentResponseStream(
 							message: enhancedMessage,
 						},
 						final: agentMessages.length === 0, // Only final if no agent messages to follow
-						text: extractTextFromMessage( enhancedMessage ),
+						text: '',
 					};
 
 					// First yield the tool results
@@ -1135,6 +1160,8 @@ export function createClient( config: ClientConfig ): Client {
 		contextProvider,
 		enableStreaming = false,
 		credentials,
+		componentTransportVersion,
+		componentCapabilities,
 	} = config;
 
 	// Create request configuration
@@ -1144,6 +1171,8 @@ export function createClient( config: ClientConfig ): Client {
 		authProvider,
 		timeout,
 		credentials,
+		componentTransportVersion,
+		componentCapabilities,
 	};
 
 	return {
@@ -1241,7 +1270,7 @@ export function createClient( config: ClientConfig ): Client {
 				// Only continue with tool results if at least one tool wants to return to agent
 				if ( shouldReturnToAgent ) {
 					// Continue with tool results
-					const toolResultMessage = redactComponentMessage(
+					const toolResultMessage = redactComponentToolResultMessage(
 						createToolResultMessage( toolResults )
 					);
 
@@ -1265,10 +1294,12 @@ export function createClient( config: ClientConfig ): Client {
 			// This ensures useAgent can capture them in conversation history
 			if ( allToolParts.length > 0 ) {
 				if ( currentTask.status?.message ) {
-					// Create a new message with tool parts only (no agent text)
 					const enhancedMessage: Message = {
 						...currentTask.status.message,
-						parts: allToolParts,
+						parts: [
+							...allToolParts,
+							...getComponentPresentationParts( currentTask.status.message ),
+						],
 					};
 
 					currentTask = {
@@ -1407,7 +1438,7 @@ export function createClient( config: ClientConfig ): Client {
 				// Only continue with tool results if at least one tool wants to return to agent
 				if ( shouldReturnToAgent ) {
 					// Continue with tool results
-					const toolResultMessage = redactComponentMessage(
+					const toolResultMessage = redactComponentToolResultMessage(
 						createToolResultMessage( toolResults )
 					);
 

@@ -131,6 +131,36 @@ describe( 'useAgentChat', () => {
 			expect( toolResult ).toBeNull();
 		} );
 
+		it( 'preserves explicit component markers and adjacent text before tool filtering', () => {
+			const marker = {
+				type: 'component-result' as const,
+				partVersion: 1 as const,
+				toolCallId: 'tc-1',
+				result: { pendingValidation: true },
+			};
+			const result = transformClientMessageToUI(
+				buildMessage( [
+					{ type: 'text', text: 'Before' },
+					{
+						type: 'data',
+						data: { toolCallId: 'tc-1', toolId: 'unknown/ability', result: 'raw copy' },
+					},
+					marker,
+					{ type: 'text', text: 'After' },
+				] )
+			);
+			expect( result?.content ).toEqual( [
+				{ type: 'text', text: 'Before' },
+				marker,
+				{ type: 'text', text: 'After' },
+			] );
+			expect(
+				transformClientMessageToUI(
+					buildMessage( [ { type: 'text', text: JSON.stringify( marker ) } ] )
+				)?.content
+			).toEqual( [ { type: 'text', text: JSON.stringify( marker ) } ] );
+		} );
+
 		it( 'drops the entire message when only unknown `data` parts remain', () => {
 			// Internal metadata must never reach the UI. With nothing left to
 			// show, the whole message is dropped so it doesn't add an empty

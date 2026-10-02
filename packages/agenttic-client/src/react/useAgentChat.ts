@@ -1,4 +1,8 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
+import {
+	GENERIC_COMPONENT_HISTORY_TEXT,
+	normalizeComponentResultPart,
+} from '../client/utils/componentHistory';
 import { logger } from '../client/utils/logger';
 import { resolveActionsForMessage } from '../message-actions/resolver';
 import { useMessageActions } from '../message-actions/useMessageActions';
@@ -12,6 +16,7 @@ import type {
 	FilePart,
 	TaskUpdate,
 	ToolProvider,
+	ComponentCapabilities,
 } from '../client/types/index';
 import type { ReactNode } from 'react';
 
@@ -100,11 +105,18 @@ export interface UIMessage {
 	id: string;
 	role: 'user' | 'agent';
 	content: Array< {
-		type: 'text' | 'component' | 'context' | 'data';
+		type: 'text' | 'component' | 'context' | 'data' | 'component-result' | 'component-reference';
 		text?: string;
 		component?: React.ComponentType;
 		componentProps?: any;
 		data?: Record< string, unknown >;
+		partVersion?: 1;
+		toolCallId?: string;
+		result?: unknown;
+		instanceId?: string;
+		protocol?: 'agent-component/0.1';
+		catalog?: 'minimal-ai-ui/0.1';
+		summary?: string;
 	} >;
 	timestamp: number;
 	archived: boolean;
@@ -187,6 +199,9 @@ export const transformClientMessageToUI = (
 	clientMessage: ClientMessage,
 	messageActionsRegistrations: MessageActionsRegistration[] = []
 ): UIMessage | null => {
+	const hasComponentParts = clientMessage.parts.some(
+		( part ) => part.type === 'component-result' || part.type === 'component-reference'
+	);
 	// Filter out tool-related messages that shouldn't appear in UI
 	const hasToolContent = clientMessage.parts.some( ( part ) => {
 		if ( part.type === 'data' ) {
@@ -197,12 +212,23 @@ export const transformClientMessageToUI = (
 		return false;
 	} );
 
-	if ( hasToolContent ) {
+	if ( hasToolContent && ! hasComponentParts ) {
 		return null; // Don't show tool-related messages in UI
 	}
 
 	const content = clientMessage.parts
 		.map( ( part ) => {
+			if ( part.type === 'component-result' ) {
+				return (
+					normalizeComponentResultPart( part ) ?? {
+						type: 'text' as const,
+						text: GENERIC_COMPONENT_HISTORY_TEXT,
+					}
+				);
+			}
+			if ( part.type === 'component-reference' ) {
+				return { ...part, summary: GENERIC_COMPONENT_HISTORY_TEXT };
+			}
 			if ( part.type === 'text' ) {
 				// Check metadata for content type (e.g., `text`, `context`)
 				const contentType = ( part.metadata?.contentType as ContentType | undefined ) || 'text';
@@ -226,6 +252,9 @@ export const transformClientMessageToUI = (
 			if ( part.type === 'data' ) {
 				// Handle `data` parts that might contain `component` information
 				const data = part.data as any;
+				if ( hasComponentParts && ( data.toolCallId || data.toolId || data.result ) ) {
+					return null;
+				}
 				if ( data.component && data.componentProps ) {
 					return {
 						type: 'component' as const,
@@ -341,6 +370,8 @@ export interface UseAgentChatConfig {
 	onTaskUpdate?: ( update: TaskUpdate ) => void | Promise< void >;
 	odieBotId?: string; // Odie bot ID for server-based conversation storage (e.g., 'wpcom-agent-wp_orchestrator'). When set, enables server storage.
 	credentials?: RequestCredentials; // Set 'include' to send cookies with cross-origin requests.
+	componentTransportVersion?: number;
+	componentCapabilities?: ComponentCapabilities;
 }
 
 // Hook return interface
@@ -510,6 +541,8 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 					enableStreaming: config.enableStreaming,
 					odieBotId: config.odieBotId,
 					credentials: config.credentials,
+					componentTransportVersion: config.componentTransportVersion,
+					componentCapabilities: config.componentCapabilities,
 				} );
 
 				// Only load messages when creating a new agent (initial mount or after removeAgent)
@@ -567,6 +600,8 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 		config.enableStreaming,
 		config.odieBotId,
 		config.credentials,
+		config.componentTransportVersion,
+		config.componentCapabilities,
 		isValidConfig,
 		transformMessages,
 	] );

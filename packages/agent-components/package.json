@@ -2,7 +2,7 @@
 	"name": "@automattic/agent-components",
 	"version": "0.1.0",
 	"private": true,
-	"description": "Portable button action components for agent hosts.",
+	"description": "Portable agent action components with GitHub Flavored Markdown text and images.",
 	"license": "GPL-2.0-or-later",
 	"author": "Automattic Inc.",
 	"repository": {
@@ -53,7 +53,10 @@
 		"typescript": "^6.0.3"
 	},
 	"dependencies": {
+		"@wordpress/components": "^37.0.0",
 		"@wordpress/element": "^8.0.0",
+		"react-markdown": "^10.1.0",
+		"remark-gfm": "^4.0.1",
 		"tslib": "^2.8.1"
 	},
 	"peerDependencies": {

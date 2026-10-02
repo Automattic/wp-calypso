@@ -39,6 +39,31 @@ export interface TextPart {
 	metadata?: Record< string, unknown >;
 }
 
+export interface ComponentResultPart {
+	type: 'component-result';
+	partVersion: 1;
+	toolCallId: string;
+	result: unknown;
+}
+
+export interface ComponentReferencePart {
+	type: 'component-reference';
+	partVersion: 1;
+	toolCallId: string;
+	instanceId: string;
+	protocol: 'agent-component/0.1';
+	catalog: 'minimal-ai-ui/0.1';
+	summary: string;
+}
+
+export interface ComponentCapabilities {
+	supported: Array< {
+		partVersion: 1;
+		protocol: 'agent-component/0.1';
+		catalog: 'minimal-ai-ui/0.1';
+	} >;
+}
+
 export interface FilePart {
 	type: 'file';
 	file: {
@@ -210,6 +235,8 @@ export interface AbilityDataPart extends DataPart {
 
 export type Part =
 	| TextPart
+	| ComponentResultPart
+	| ComponentReferencePart
 	| FilePart
 	| DataPart
 	| ToolDataPart
@@ -250,6 +277,7 @@ export interface Task {
 	sessionId?: string;
 	status: TaskStatus;
 	artifacts?: Artifact[];
+	agentMessage?: Message;
 }
 
 // Request/Response for message/send method
@@ -258,6 +286,7 @@ export interface MessageSendParams {
 	sessionId?: string;
 	message: Message;
 	metadata?: Record< string, unknown >;
+	componentCapabilities?: ComponentCapabilities;
 }
 
 export interface SendMessageRequest extends JsonRpcRequest< MessageSendParams > {
@@ -305,6 +334,8 @@ export interface ClientConfig {
 	enableStreaming?: boolean; // Enable token-by-token streaming (requires server support)
 	odieBotId?: string; // Odie bot ID for server-based conversation storage (e.g., 'wpcom-agent-wp_orchestrator'). When set, enables server storage via WordPress.com public API.
 	credentials?: RequestCredentials; // Set 'include' to send cookies with cross-origin requests.
+	componentTransportVersion?: number;
+	componentCapabilities?: ComponentCapabilities;
 }
 
 // Image data with optional metadata (e.g., WordPress attachment ID)

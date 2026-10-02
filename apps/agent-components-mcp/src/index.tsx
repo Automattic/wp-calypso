@@ -69,10 +69,14 @@ function ComponentCard( { controller }: { controller: ComponentSession } ) {
 		<>
 			<SurfaceRenderer
 				surface={ snapshot.result.surface }
+				identity={ snapshot.result.instanceId }
+				locale={ hostLocale }
+				allowedActions={ snapshot.allowedActions }
+				actionBindings={ snapshot.actionBindings }
 				disabled={ snapshot.phase !== 'ready' }
+				pending={ snapshot.phase === 'pending' }
 				onAction={ controller.submit }
 			/>
-			{ snapshot.phase === 'pending' && <p role="status">Submitting…</p> }
 			{ snapshot.error && <p role="alert">{ snapshot.error }</p> }
 		</>
 	);

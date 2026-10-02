@@ -1,6 +1,110 @@
-import type { Message, TaskUpdate } from '../types/index';
+import type {
+	ComponentCapabilities,
+	ComponentReferencePart,
+	ComponentResultPart,
+	Message,
+	Part,
+	TaskUpdate,
+} from '../types/index';
 
-const HISTORY_TEXT = 'Interactive component shown in this conversation.';
+export const GENERIC_COMPONENT_HISTORY_TEXT = 'Interactive component shown in this conversation.';
+const HISTORY_TEXT = GENERIC_COMPONENT_HISTORY_TEXT;
+
+function isRecord( value: unknown ): value is Record< string, unknown > {
+	return (
+		!! value &&
+		typeof value === 'object' &&
+		! Array.isArray( value ) &&
+		( Object.getPrototypeOf( value ) === Object.prototype ||
+			Object.getPrototypeOf( value ) === null )
+	);
+}
+
+function isIdentifier( value: unknown, maxLength = 64 ): value is string {
+	return (
+		typeof value === 'string' &&
+		value.length > 0 &&
+		value.length <= maxLength &&
+		/^[a-zA-Z0-9_.:-]+$/.test( value ) &&
+		! [ '__proto__', 'constructor', 'prototype' ].includes( value )
+	);
+}
+
+function hasKeys( value: Record< string, unknown >, keys: string[] ): boolean {
+	return (
+		Object.keys( value ).length === keys.length &&
+		keys.every( ( key ) => Object.hasOwn( value, key ) )
+	);
+}
+
+export function getComponentCapabilities( value: unknown ): ComponentCapabilities | undefined {
+	if (
+		! isRecord( value ) ||
+		! hasKeys( value, [ 'supported' ] ) ||
+		! Array.isArray( value.supported ) ||
+		value.supported.length > 1 ||
+		! [ ...value.supported ].every(
+			( tuple ) =>
+				isRecord( tuple ) &&
+				hasKeys( tuple, [ 'partVersion', 'protocol', 'catalog' ] ) &&
+				tuple.partVersion === 1 &&
+				tuple.protocol === 'agent-component/0.1' &&
+				tuple.catalog === 'minimal-ai-ui/0.1'
+		)
+	) {
+		return undefined;
+	}
+	return {
+		supported: value.supported.map( () => ( {
+			partVersion: 1,
+			protocol: 'agent-component/0.1',
+			catalog: 'minimal-ai-ui/0.1',
+		} ) ),
+	};
+}
+
+export function normalizeComponentResultPart( part: unknown ): ComponentResultPart | undefined {
+	if (
+		! isRecord( part ) ||
+		part.type !== 'component-result' ||
+		part.partVersion !== 1 ||
+		! isIdentifier( part.toolCallId, 128 ) ||
+		! hasKeys( part, [ 'type', 'partVersion', 'toolCallId', 'result' ] )
+	) {
+		return undefined;
+	}
+	return {
+		type: 'component-result',
+		partVersion: 1,
+		toolCallId: part.toolCallId,
+		result: part.result,
+	};
+}
+
+function componentReference( part: unknown ): ComponentReferencePart | undefined {
+	if ( ! isRecord( part ) || ! isIdentifier( part.toolCallId, 128 ) || part.partVersion !== 1 ) {
+		return undefined;
+	}
+	const opening = part.type === 'component-result' ? part.result : part;
+	const result = isRecord( opening ) && isRecord( opening.result ) ? opening.result : opening;
+	if (
+		! isRecord( result ) ||
+		! isIdentifier( result.instanceId ) ||
+		result.protocol !== 'agent-component/0.1' ||
+		( part.type === 'component-reference' && result.catalog !== 'minimal-ai-ui/0.1' )
+	) {
+		return undefined;
+	}
+	return {
+		type: 'component-reference',
+		partVersion: 1,
+		toolCallId: part.toolCallId,
+		instanceId: result.instanceId,
+		protocol: 'agent-component/0.1',
+		catalog: 'minimal-ai-ui/0.1',
+		summary: HISTORY_TEXT,
+	};
+}
 
 function isComponentTool( toolId: unknown ): boolean {
 	return (
@@ -18,6 +122,15 @@ function isComponentPayload( value: Record< string, unknown > ): boolean {
 	return (
 		typeof value.protocol === 'string' &&
 		/^(agent-component|minimal-ai-ui)\//.test( value.protocol )
+	);
+}
+
+function isComponentJson( value: string ): boolean {
+	return (
+		/^\s*(?:\{\s*"|\[\s*\{)/.test( value ) &&
+		/agent-component\/|minimal-ai-ui\/|wpcom(?:\/|__)render[-_]components|wpcom(?:\/|__)component[-_]action|component-result|component-reference/.test(
+			value
+		)
 	);
 }
 
@@ -41,12 +154,7 @@ function redactComponentData( value: unknown, toolIds = new Map< string, string 
 				? value
 				: JSON.stringify( redacted );
 		} catch {
-			return /^\s*(?:\{\s*"|\[\s*\{)/.test( value ) &&
-				/agent-component\/|minimal-ai-ui\/|wpcom(?:\/|__)render[-_]components|wpcom(?:\/|__)component[-_]action/.test(
-					value
-				)
-				? HISTORY_TEXT
-				: value;
+			return isComponentJson( value ) ? HISTORY_TEXT : value;
 		}
 	}
 	if ( Array.isArray( value ) ) {
@@ -60,6 +168,24 @@ function redactComponentData( value: unknown, toolIds = new Map< string, string 
 		return value;
 	}
 	const data = value as Record< string, unknown >;
+	if (
+		Array.isArray( data.parts ) &&
+		data.parts.some(
+			( part ) =>
+				isRecord( part ) &&
+				( part.type === 'component-result' ||
+					part.type === 'component-reference' ||
+					( part.type === 'data' &&
+						isRecord( part.data ) &&
+						isComponentTool( part.data.toolId ?? toolIds.get( part.data.toolCallId as string ) ) &&
+						( 'arguments' in part.data || 'result' in part.data ) ) )
+		)
+	) {
+		return redactComponentMessage( data as unknown as Message );
+	}
+	if ( data.type === 'component-result' || data.type === 'component-reference' ) {
+		return componentReference( data ) ?? { message: HISTORY_TEXT };
+	}
 	if (
 		isComponentTool(
 			data.toolId ?? data.tool_id ?? data.name ?? toolIds.get( data.toolCallId as string )
@@ -87,10 +213,21 @@ export function redactComponentMessage( message: Message ): Message {
 	return redactComponentMessages( [ message ] )[ 0 ];
 }
 
+export function redactComponentToolResultMessage( message: Message ): Message {
+	return {
+		...( redactComponentData( { ...message, parts: [] } ) as Message ),
+		parts: message.parts.map( ( part ) => redactComponentData( part ) as Part ),
+	};
+}
+
 export function redactComponentMessages( messages: Message[] ): Message[] {
 	const toolIds = new Map< string, string >();
+	const componentCalls = new Set< string >();
 	for ( const message of messages ) {
 		for ( const part of message.parts ) {
+			if ( part.type === 'component-result' || part.type === 'component-reference' ) {
+				componentCalls.add( part.toolCallId );
+			}
 			if (
 				part.type === 'data' &&
 				'toolCallId' in part.data &&
@@ -102,7 +239,83 @@ export function redactComponentMessages( messages: Message[] ): Message[] {
 			}
 		}
 	}
-	return messages.map( ( message ) => redactComponentData( message, toolIds ) as Message );
+	return messages.map( ( message ) => {
+		let hasComponent = false;
+		let parts: Part[] = [];
+		const references = new Set< string >();
+		for ( const part of message.parts ) {
+			const data = part.type === 'data' ? ( part.data as Record< string, unknown > ) : {};
+			if ( part.type === 'component-result' || part.type === 'component-reference' ) {
+				hasComponent = true;
+				const reference = componentReference( part );
+				if ( reference && ! references.has( reference.toolCallId ) ) {
+					parts.push( reference );
+					references.add( reference.toolCallId );
+				}
+				continue;
+			}
+			if ( part.type === 'text' && isComponentJson( part.text ) ) {
+				hasComponent = true;
+				parts.push( { type: 'text', text: HISTORY_TEXT } );
+				continue;
+			}
+			if (
+				part.type === 'data' &&
+				( componentCalls.has( data.toolCallId as string ) ||
+					( isComponentTool( data.toolId ?? toolIds.get( data.toolCallId as string ) ) &&
+						( 'arguments' in data || 'result' in data ) ) )
+			) {
+				hasComponent = true;
+				let result = data.result ?? data.arguments;
+				if (
+					message.role === 'user' &&
+					isComponentTool( data.toolId ) &&
+					isRecord( data.result ) &&
+					hasKeys( data.result, [ 'success', 'message', 'instanceId' ] ) &&
+					data.result.success === true &&
+					typeof data.result.message === 'string'
+				) {
+					result = { protocol: 'agent-component/0.1', instanceId: data.result.instanceId };
+				}
+				const reference = componentReference( {
+					type: 'component-result',
+					partVersion: 1,
+					toolCallId: data.toolCallId,
+					result,
+				} );
+				if ( reference && ! references.has( reference.toolCallId ) ) {
+					parts.push( reference );
+					references.add( reference.toolCallId );
+				}
+				continue;
+			}
+			parts.push( redactComponentData( part, toolIds ) as Part );
+		}
+		if ( hasComponent ) {
+			parts = parts.filter( ( part ) => part.type !== 'text' );
+			parts.push( { type: 'text', text: HISTORY_TEXT } );
+		}
+		const metadata = message.metadata ?? {};
+		const safeMetadata = hasComponent
+			? Object.fromEntries(
+					Object.entries( metadata ).filter( ( [ key ] ) =>
+						[ 'timestamp', 'archived', 'deliveryStatus', 'serverId', 'chatId' ].includes( key )
+					)
+				)
+			: metadata;
+		return {
+			...message,
+			parts,
+			...( message.metadata && { metadata: safeMetadata } ),
+		};
+	} );
+}
+
+export function projectComponentMessagesForReplay( messages: Message[] ): Message[] {
+	return redactComponentMessages( messages ).map( ( message ) => ( {
+		...message,
+		parts: message.parts.filter( ( part ) => part.type !== 'component-reference' ),
+	} ) );
 }
 
 export function redactComponentTaskUpdate( update: TaskUpdate ): TaskUpdate {
@@ -120,6 +333,15 @@ export function redactComponentTaskUpdate( update: TaskUpdate ): TaskUpdate {
 	}
 	if ( update.agentMessage ) {
 		projected.agentMessage = messages.shift();
+	}
+	if (
+		[ update.status?.message, update.agentMessage ].some( ( message ) =>
+			message?.parts.some(
+				( part ) => part.type === 'component-result' || part.type === 'component-reference'
+			)
+		)
+	) {
+		projected.text = HISTORY_TEXT;
 	}
 	return projected;
 }

@@ -12,8 +12,9 @@ export const componentHandoffProvider: ToolProvider = {
 		if ( ! [ 'wpcom/render-components', 'wpcom__render_components' ].includes( toolId ) ) {
 			throw new Error( 'This component is unavailable.' );
 		}
-		const { validateComponentResult } = await import( '@automattic/agent-components/validation' );
-		const result = validateComponentResult( args );
+		const { validateLegacyButtonAction } =
+			await import( '@automattic/agent-components/validation' );
+		const result = validateLegacyButtonAction( args );
 		return {
 			returnToAgent: false,
 			result: {

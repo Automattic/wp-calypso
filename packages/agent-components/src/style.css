@@ -1,4 +1,25 @@
+@import '@wordpress/components/build-style/style.css';
+
 .agent-components {
+	--agent-components-link-color: var( --agent-components-link, var( --color-link, #3858e9 ) );
+	--wp-components-color-background: var(
+		--agent-components-background,
+		var( --color-background, #fff )
+	);
+	--wp-components-color-foreground: var(
+		--agent-components-foreground,
+		var( --color-foreground, #1e1e1e )
+	);
+	--wp-components-color-accent: var( --agent-components-accent, #3858e9 );
+	--wp-components-color-accent-inverted: var( --agent-components-accent-text, #fff );
+	--wp-components-color-gray-600: var(
+		--agent-components-foreground,
+		var( --color-muted-foreground, #757575 )
+	);
+	--wp-components-color-gray-700: var(
+		--agent-components-foreground,
+		var( --color-muted-foreground, #757575 )
+	);
 	color: inherit;
 	font: inherit;
 }
@@ -7,50 +28,195 @@
 	display: flex;
 	flex-direction: column;
 	align-items: flex-start;
-	gap: 12px;
+	gap: 16px;
+	width: 100%;
+	min-width: 0;
 }
 
 .agent-components-text {
 	margin: 0;
-	white-space: pre-wrap;
+	min-width: 0;
+	max-width: 100%;
 	overflow-wrap: anywhere;
+}
+
+.agent-components-text > p,
+.agent-components-text > p * {
+	font-size: inherit;
+}
+
+.agent-components-text > p,
+.agent-components-text > p :not( strong ) {
+	font-weight: inherit;
+}
+
+.agent-components-text > :first-child {
+	margin-top: 0;
+}
+
+.agent-components-text > :last-child {
+	margin-bottom: 0;
+}
+
+.agent-components-text img {
+	max-width: 100%;
+	height: auto;
+}
+
+.agent-components-text pre,
+.agent-components-text table {
+	max-width: 100%;
+	overflow-x: auto;
+}
+
+.agent-components-text table {
+	display: block;
 }
 
 .agent-components-text--heading {
 	font-size: 1.125em;
+	font-weight: 600;
+}
+
+.agent-components-text.agent-components-text--heading strong {
+	font-weight: 700;
 }
 
 .agent-components-text--caption {
 	font-size: 0.875em;
 }
 
-.agent-components-button {
-	padding: 8px 16px;
-	border: 1px solid currentColor;
-	border-radius: 4px;
-	background: transparent;
-	color: inherit;
-	font: inherit;
-	cursor: pointer;
-}
-
-.agent-components-button--primary {
-	background: var( --agent-components-accent, #3858e9 );
-	border-color: var( --agent-components-accent, #3858e9 );
-	color: var( --agent-components-accent-text, #fff );
-}
-
-.agent-components-button--link {
-	border-color: transparent;
+.agent-components-text a {
+	color: var( --agent-components-link-color );
 	text-decoration: underline;
+	text-underline-offset: 2px;
 }
 
-.agent-components-button:disabled {
-	opacity: 0.6;
-	cursor: default;
+.agent-components .agent-components-button {
+	box-sizing: border-box;
+	width: fit-content;
+	min-width: 0;
+	max-width: 100%;
+	justify-content: center;
+	height: auto;
+	min-height: 40px;
+	white-space: normal;
+	overflow-wrap: anywhere;
 }
 
-.agent-components-button:focus-visible {
-	outline: 2px solid var( --agent-components-focus, #3858e9 );
-	outline-offset: 3px;
+.agent-components .agent-components-button:is( .is-secondary, .is-link ) {
+	--wp-components-color-accent: var( --agent-components-link-color );
+	--wp-components-color-accent-darker-20: var( --agent-components-link-color );
+}
+
+.agent-components-row {
+	display: grid;
+	grid-template-columns: repeat( auto-fit, minmax( min( 100%, 160px ), 1fr ) );
+	align-items: center;
+	gap: 16px;
+	width: 100%;
+	min-width: 0;
+}
+
+.agent-components .agent-components-row > * {
+	min-width: 0;
+	max-width: none;
+}
+
+.agent-components-row:has( > .agent-components-field ) {
+	align-items: end;
+}
+
+.agent-components-row > .agent-components-column {
+	align-self: start;
+}
+
+.agent-components-row:has( > .agent-components-button ):not( :has( > .agent-components-field ) ) {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px 16px;
+}
+
+.agent-components-row:has( > .agent-components-button ) > .agent-components-text,
+.agent-components-row:has( > .agent-components-button ) > .agent-components-column {
+	flex: 1 1 160px;
+}
+
+.agent-components-row:has( > .agent-components-button ) > .agent-components-column {
+	gap: 4px;
+}
+
+.agent-components-row > .agent-components-button {
+	flex: 0 0 auto;
+	max-width: 100%;
+}
+
+.agent-components-field {
+	box-sizing: border-box;
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	width: 100%;
+	min-width: 0;
+	max-width: var( --agent-components-control-max-width, 320px );
+}
+
+.agent-components-field .components-base-control,
+.agent-components-field .components-base-control__field {
+	width: 100%;
+	min-width: 0;
+	margin-bottom: 0;
+}
+
+.agent-components-field .components-text-control__input,
+.agent-components-field .components-textarea-control__input,
+.agent-components-field .components-select-control__input {
+	box-sizing: border-box;
+	width: 100%;
+	max-width: 100%;
+}
+
+.agent-components-field .components-textarea-control__input {
+	resize: vertical;
+}
+
+.agent-components-field .components-checkbox-control__input-container {
+	margin-inline: 0 var( --checkbox-input-margin );
+}
+
+.agent-components-field .components-checkbox-control__input[type='checkbox'] {
+	margin-inline: 0 4px;
+}
+
+.agent-components-field .components-checkbox-control__input[type='checkbox']:not( :checked ) {
+	background: var( --wp-components-color-background );
+	border-color: var( --wp-components-color-gray-600 );
+}
+
+.agent-components-choices {
+	margin: 0;
+	padding: 0;
+	border: 0;
+}
+
+.agent-components-choices legend {
+	margin-bottom: 8px;
+	padding: 0;
+}
+
+.agent-components-validation {
+	margin: 0;
+	color: var( --agent-components-error, var( --color-error, #b32d2e ) );
+	font-size: 12px;
+}
+
+.agent-components-announcement {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	padding: 0;
+	overflow: hidden;
+	clip: rect( 0, 0, 0, 0 );
+	white-space: nowrap;
+	border: 0;
 }

@@ -1,4 +1,8 @@
-import { ComponentSession, validateComponentResult } from '@automattic/agent-components';
+import {
+	ComponentSession,
+	validateComponentOpening,
+	validateLegacyButtonAction,
+} from '@automattic/agent-components';
 import type { App } from '@modelcontextprotocol/ext-apps';
 
 type ComponentBridge = Pick< App, 'callServerTool' | 'sendMessage' | 'getHostCapabilities' >;
@@ -8,12 +12,18 @@ export function createMcpComponentSession(
 	bridge: ComponentBridge,
 	locale?: string
 ) {
-	const result = validateComponentResult( value );
+	const opening = validateComponentOpening( value );
+	const result = opening?.result ?? validateLegacyButtonAction( value );
 	if ( ! result || ! bridge.getHostCapabilities()?.serverTools ) {
 		throw new Error( 'This host cannot display this action.' );
 	}
 	return new ComponentSession( {
 		result,
+		...( opening && {
+			allowedActions: opening.allowedActions,
+			actionBindings: opening.actionBindings,
+			expiresAt: opening.expiresAt,
+		} ),
 		locale,
 		transport: async ( request ) => {
 			const response = await bridge.callServerTool( {

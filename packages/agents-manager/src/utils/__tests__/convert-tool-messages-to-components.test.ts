@@ -11,6 +11,7 @@ function mockCreateChatResponseActionCallback() {
 jest.mock(
 	'@automattic/agenttic-client',
 	() => ( {
+		...jest.requireActual( '../../../../agenttic-client/src/client/utils/componentHistory' ),
 		createOdieBotId: ( agentId: string ) => `odie-${ agentId }`,
 		isOdieBotId: () => false,
 		loadAllMessagesFromServer: jest.fn(),
@@ -40,6 +41,7 @@ jest.mock( '../../components/chat-response-tracking', () => ( {
 
 import { render, waitFor } from '@testing-library/react';
 import { createElement } from '@wordpress/element';
+import { redactComponentMessage } from '../../../../agenttic-client/src/client/utils/componentHistory';
 import ButtonPicker from '../../components/button-picker';
 import ChatResponseRenderedTracker from '../../components/chat-response-tracking';
 import ColorPicker from '../../components/color-picker';
@@ -49,6 +51,8 @@ import {
 	BIG_SKY_SHOW_COMPONENT_TOOL_ID,
 	JETPACK_AI_SHOW_COMPONENT_TOOL_ID,
 } from '../show-component-tools';
+import { formOpening } from './fixtures/component-opening';
+import type { AgentsManagerUIMessage } from '../convert-tool-messages-to-components';
 import type { UIMessage } from '@automattic/agenttic-client';
 
 const MockComponent = jest.fn();
@@ -96,6 +100,176 @@ describe( 'convertToolMessagesToComponents', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
 		window.history.replaceState( {}, '', '/' );
+	} );
+
+	it( 'renders a correlated live part in place and preserves adjacent prose', () => {
+		const proposal = formOpening();
+		const options = {
+			result: proposal.result,
+			allowedActions: proposal.allowedActions,
+			actionBindings: proposal.actionBindings,
+			expiresAt: proposal.expiresAt,
+			transport: jest.fn(),
+			onContinue: jest.fn(),
+		};
+		const card: AgentsManagerUIMessage = {
+			...createMessage( { id: 'component-call-123' } ),
+			componentToolCallId: 'call-123',
+			componentResult: options,
+		};
+		const marker = {
+			type: 'component-result' as const,
+			partVersion: 1 as const,
+			toolCallId: 'call-123',
+			result: proposal,
+		};
+		const live = createMessage( {
+			id: 'live',
+			content: [
+				{ type: 'text', text: 'Before the form.' },
+				marker,
+				marker,
+				{ type: 'text', text: 'After the form.' },
+			],
+		} );
+		const prose = createMessage( {
+			id: 'prose',
+			content: [ { type: 'text', text: proposal.result.summary } ],
+		} );
+		const result = convertToolMessagesToComponents( {
+			messages: [ live, card, prose ],
+		} );
+		expect( result.map( ( message ) => message.id ) ).toEqual( [ 'live', 'prose' ] );
+		expect( result[ 0 ].content ).toEqual( [
+			{ type: 'text', text: 'Before the form.' },
+			expect.objectContaining( { type: 'component', componentProps: { options } } ),
+			{ type: 'text', text: 'After the form.' },
+		] );
+		expect( result[ 1 ] ).toEqual( prose );
+		const hidden = {
+			...live,
+			id: 'context-only',
+			content: [ { type: 'data' as const, data: { flags: { context_only: true } } }, marker ],
+		};
+		expect(
+			convertToolMessagesToComponents( { messages: [ hidden, live, card, prose ] } )
+		).toEqual( result );
+
+		const projected = redactComponentMessage( {
+			kind: 'message',
+			messageId: 'projected',
+			role: 'agent',
+			parts: [
+				{ type: 'data', data: { toolCallId: 'call-123', toolId: 'wpcom__render_components' } },
+				marker,
+			],
+		} );
+		const history = createMessage( {
+			id: 'projected',
+			content: projected.parts.filter(
+				( part ) => part.type === 'text' || part.type === 'component-reference'
+			),
+		} );
+		const completed = redactComponentMessage( {
+			kind: 'message',
+			messageId: 'completed',
+			role: 'user',
+			parts: [
+				{
+					type: 'data',
+					data: {
+						toolCallId: 'call-123',
+						toolId: 'wpcom__render_components',
+						result: {
+							success: true,
+							message: 'The action completed.',
+							instanceId: proposal.result.instanceId,
+						},
+					},
+				},
+			],
+		} );
+		const completionHistory = createMessage( {
+			id: 'completed',
+			role: 'user',
+			content: completed.parts.filter(
+				( part ) => part.type === 'text' || part.type === 'component-reference'
+			),
+		} );
+		expect(
+			convertToolMessagesToComponents( { messages: [ history, card, completionHistory ] } )
+		).toEqual( convertToolMessagesToComponents( { messages: [ card ] } ) );
+		const mismatched = {
+			...card,
+			componentResult: {
+				...options,
+				result: { ...options.result, instanceId: 'another-instance' },
+			},
+		};
+		expect(
+			convertToolMessagesToComponents( { messages: [ history, mismatched, completionHistory ] } )
+		).toHaveLength( 3 );
+	} );
+
+	it( 'shows unavailable content and adjacent text when a live part has no authorized session', () => {
+		const marker = createMessage( {
+			id: 'live',
+			content: [
+				{ type: 'text', text: 'An unsubmitted form follows.' },
+				{ type: 'component-result', partVersion: 1, toolCallId: 'call-123', result: formOpening() },
+			],
+		} );
+		const result = convertToolMessagesToComponents( { messages: [ marker ] } );
+		expect( result[ 0 ].content ).toEqual( [
+			{ type: 'text', text: 'An unsubmitted form follows.' },
+			{ type: 'text', text: 'This action is unavailable.' },
+		] );
+		expect( result.some( ( message ) => message.componentResult ) ).toBe( false );
+	} );
+
+	it( 'keeps historical references readable and never promotes ordinary result JSON to a card', () => {
+		const projected = redactComponentMessage( {
+			kind: 'message',
+			messageId: 'history',
+			role: 'agent',
+			parts: [
+				{ type: 'component-result', partVersion: 1, toolCallId: 'call-123', result: formOpening() },
+			],
+		} );
+		const restored = createMessage( {
+			id: 'restored',
+			content: projected.parts.filter(
+				( part ) => part.type === 'text' || part.type === 'component-reference'
+			),
+		} );
+		const reference = createMessage( {
+			id: 'history',
+			content: [
+				{ type: 'text', text: 'Earlier interaction:' },
+				{
+					type: 'component-reference',
+					partVersion: 1,
+					toolCallId: 'call-123',
+					instanceId: 'instance-123',
+					protocol: 'agent-component/0.1',
+					catalog: 'minimal-ai-ui/0.1',
+					summary: 'Stored private field value.',
+				},
+			],
+		} );
+		const prose = createMessage( {
+			id: 'ordinary-json',
+			content: [ { type: 'text', text: JSON.stringify( formOpening() ) } ],
+		} );
+		const result = convertToolMessagesToComponents( { messages: [ reference, restored, prose ] } );
+		expect( result[ 0 ].content ).toEqual( [
+			{ type: 'text', text: 'Earlier interaction:' },
+			{ type: 'text', text: 'Interactive component shown in this conversation.' },
+		] );
+		expect( result[ 1 ].content ).toEqual( [
+			{ type: 'text', text: 'Interactive component shown in this conversation.' },
+		] );
+		expect( result[ 2 ] ).toEqual( prose );
 	} );
 
 	it( 'passes through user messages unchanged', () => {

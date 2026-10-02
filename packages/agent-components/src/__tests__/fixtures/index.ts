@@ -1,4 +1,4 @@
-import type { ComponentResult } from '../../types';
+import type { ComponentActionResponse, ComponentResult } from '../../types';
 
 export function opening(): ComponentResult {
 	return {
@@ -60,7 +60,7 @@ export function applied( requestId = 'request-123' ) {
 			result: completed(),
 			expiresAt: new Date( Date.now() + 30 * 60 * 1000 ).toISOString(),
 		},
-	};
+	} satisfies ComponentActionResponse;
 }
 
 export function negative( outcome: 'rejected' | 'stale' | 'indeterminate' ) {
