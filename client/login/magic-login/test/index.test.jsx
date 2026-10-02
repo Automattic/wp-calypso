@@ -2,6 +2,7 @@
 import React from 'react';
 import { getPartnerSignupTosElement } from 'calypso/lib/partner-branding';
 import { getConnectionFlowFromRedirectTo, getMagicLoginInitialHeaders, MagicLogin } from '../index';
+import SpacefastMagicLogin from '../spacefast';
 
 jest.mock( 'calypso/lib/partner-branding', () => ( {
 	detectPartnerConfig: jest.fn(),
@@ -124,6 +125,26 @@ describe( 'magic-login branding behavior', () => {
 				} ),
 			} )
 		);
+	} );
+
+	it( 'renders Spacefast login only for verified Spacefast client metadata', () => {
+		const instance = new MagicLogin( {
+			...baseProps,
+			query: { spacefast_flow: '1' },
+			oauth2Client: { id: 137504, source: 'spacefast', title: 'Spacefast' },
+		} );
+
+		expect( instance.render().type ).toBe( SpacefastMagicLogin );
+	} );
+
+	it( 'ignores a Spacefast-looking query flag without verified metadata', () => {
+		const instance = new MagicLogin( {
+			...baseProps,
+			query: { spacefast_flow: '1' },
+			oauth2Client: null,
+		} );
+
+		expect( instance.render().type ).not.toBe( SpacefastMagicLogin );
 	} );
 } );
 
