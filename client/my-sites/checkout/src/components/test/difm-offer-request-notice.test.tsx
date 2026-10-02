@@ -25,7 +25,7 @@ describe( 'DIFMOfferRequestNotice', () => {
 		);
 
 		// Scope to the container: the notice also announces its copy in an a11y-speak region.
-		expect( within( container ).getByText( NOTICE_COPY ) ).toBeInTheDocument();
+		expect( within( container ).getByText( NOTICE_COPY ) ).toBeVisible();
 	} );
 
 	it( 'renders nothing for an unflagged Business plan', () => {

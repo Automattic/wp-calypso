@@ -79,6 +79,6 @@ describe( 'CheckoutNextSteps', () => {
 		renderNextSteps( cart );
 
 		expect( getSteps() ).toHaveLength( 5 );
-		expect( screen.getByText( 'Submit business information' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Submit business information' ) ).toBeVisible();
 	} );
 } );
