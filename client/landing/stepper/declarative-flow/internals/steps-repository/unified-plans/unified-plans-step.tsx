@@ -14,6 +14,7 @@ import {
 	isNewHostedSiteCreationFlow,
 	isOnboardingFlow,
 	isTailoredSignupFlow,
+	LAUNCH_SITE_FLOW,
 	ONBOARDING_FLOW,
 	SITE_MIGRATION_FLOW,
 	Step,
@@ -491,8 +492,14 @@ function UnifiedPlansStep( {
 			( paidDomainName != null || isPaidTheme ) ) ||
 		deemphasizeFreePlanFromProps;
 
+	// Like legacy /start/launch-site, Free is only offered through Compare plans.
+	const hideV2FreePlanCta = flowName === LAUNCH_SITE_FLOW;
+
 	const shouldUseModalBackedFreePlanCTA =
-		useStepContainerV2 && deemphasizeFreePlan && ( paidDomainName != null || isPaidTheme );
+		useStepContainerV2 &&
+		deemphasizeFreePlan &&
+		! hideV2FreePlanCta &&
+		( paidDomainName != null || isPaidTheme );
 
 	const getSubheaderText = () => {
 		if ( subHeaderText ) {
@@ -589,7 +596,12 @@ function UnifiedPlansStep( {
 
 		// Keep the non-modal CTA in Step.Heading. Paid-domain/theme flows use
 		// <PlansPageSubheader> so the CTA can open PlanUpsellModal first.
-		if ( useStepContainerV2 && deemphasizeFreePlan && ! shouldUseModalBackedFreePlanCTA ) {
+		if (
+			useStepContainerV2 &&
+			deemphasizeFreePlan &&
+			! hideV2FreePlanCta &&
+			! shouldUseModalBackedFreePlanCTA
+		) {
 			return translate(
 				'Unlock a powerful bundle of features. Or {{link}}start with a free plan{{/link}}.',
 				{ components: { link: freePlanButton } }
