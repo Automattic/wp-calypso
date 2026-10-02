@@ -76,6 +76,15 @@ describe( 'getSiteSubscribersUrl()', () => {
 		);
 	} );
 
+	test( 'falls back to Jetpack Cloud for a site fetched without options', () => {
+		// The API strips `options` for non-members, so a site record can arrive with none.
+		const site = { slug: 'example.com', jetpack_connection: false } as unknown as Site;
+
+		expect( getSiteSubscribersUrl( site ) ).toBe(
+			'https://cloud.jetpack.com/subscribers/example.com'
+		);
+	} );
+
 	test( 'falls back to Jetpack Cloud when the admin URL is missing', () => {
 		expect( getSiteSubscribersUrl( makeSite( { adminUrl: null } ) ) ).toBe(
 			'https://cloud.jetpack.com/subscribers/example.com'
