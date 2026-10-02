@@ -24,6 +24,7 @@ jobs:
           MERGE_HEAD_REF: ${{ github.event.merge_group.head_ref }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GH_REPO: ${{ github.repository }}
+          SECRET_SET: ${{ secrets.CALYPSO_CHANNEL_STATUS_API_SECRET != '' }}
         run: |
           set -euo pipefail
 
@@ -66,12 +67,17 @@ jobs:
             fi
           fi
 
+          if [ "$SECRET_SET" != "true" ]; then
+            echo "Channel status secret is unavailable (likely a fork PR); the merge queue still runs this check."
+            bypass=true
+          fi
+
           echo "Bypass channel check: $bypass"
           echo "bypass=$bypass" >> "$GITHUB_OUTPUT"
 
-      - name: Pass for reverts / "Ignore Red Slack" PRs
+      - name: Pass for reverts, "Ignore Red Slack" PRs, and runs without the secret
         if: steps.bypass.outputs.bypass == 'true'
-        run: echo "Revert or \"Ignore Red Slack\" PR — skipping the red-channel gate."
+        run: echo "Skipping the red-channel gate."
 
       - name: Check channel status
         if: steps.bypass.outputs.bypass != 'true'
