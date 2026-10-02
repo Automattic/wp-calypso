@@ -243,6 +243,11 @@ export const STEPS = {
 		asyncComponent: () => import( './steps-repository/wait-for-atomic' ),
 	},
 
+	WAIT_FOR_COMMERCE_ATOMIC: {
+		slug: 'wait-for-commerce-atomic',
+		asyncComponent: () => import( './steps-repository/wait-for-commerce-atomic' ),
+	},
+
 	WAIT_FOR_PLUGIN_INSTALL: {
 		slug: 'waitForPluginInstall',
 		asyncComponent: () => import( './steps-repository/wait-for-plugin-install' ),
