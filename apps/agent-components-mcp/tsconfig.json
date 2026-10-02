@@ -1,0 +1,17 @@
+{
+	"compilerOptions": {
+		"target": "ES2022",
+		"lib": [ "ES2022", "DOM", "DOM.Iterable" ],
+		"module": "ESNext",
+		"moduleResolution": "Bundler",
+		"customConditions": [ "calypso:src" ],
+		"jsx": "react-jsx",
+		"strict": true,
+		"esModuleInterop": true,
+		"skipLibCheck": true,
+		"noEmit": true,
+		"types": [ "node", "vite/client" ]
+	},
+	"include": [ "src", "vite.config.ts" ],
+	"exclude": [ "src/__tests__" ]
+}

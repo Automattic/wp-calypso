@@ -1,0 +1,35 @@
+{
+	"name": "@automattic/agent-components-mcp",
+	"version": "0.1.0",
+	"private": true,
+	"description": "Standalone MCP App for shared agent action components.",
+	"license": "GPL-2.0-or-later",
+	"author": "Automattic Inc.",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Automattic/wp-calypso.git",
+		"directory": "apps/agent-components-mcp"
+	},
+	"scripts": {
+		"build": "vite build && node bin/create-manifest.mjs",
+		"test": "cd ../.. && yarn test-apps --selectProjects agent-components-mcp",
+		"type-check": "tsc --noEmit"
+	},
+	"dependencies": {
+		"@automattic/agent-components": "workspace:^",
+		"@modelcontextprotocol/client": "2.2.0",
+		"@modelcontextprotocol/core": "2.2.0",
+		"@modelcontextprotocol/ext-apps": "2.0.3",
+		"react": "^18.3.1",
+		"react-dom": "^18.3.1",
+		"zod": "4.4.3"
+	},
+	"devDependencies": {
+		"@types/react": "^18.3.1",
+		"@types/react-dom": "^18.3.1",
+		"rollup": "^4.44.1",
+		"typescript": "^6.0.3",
+		"vite": "5.4.21",
+		"vite-plugin-singlefile": "2.3.0"
+	}
+}

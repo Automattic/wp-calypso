@@ -1,0 +1,32 @@
+:root {
+	--agent-components-background: #fff;
+	--agent-components-foreground: #1e1e1e;
+	color-scheme: light dark;
+	font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+	color: var( --agent-components-foreground );
+	background: var( --agent-components-background ) !important;
+}
+
+:root[data-theme='dark'] {
+	--agent-components-background: #1e1e1e;
+	--agent-components-foreground: #f0f0f0;
+}
+
+body {
+	margin: 0;
+	background: var( --agent-components-background );
+	color: var( --agent-components-foreground );
+}
+
+.agent-components-app {
+	padding: 16px;
+	background: var( --agent-components-background );
+}
+
+[role='alert'] {
+	color: #b32d2e;
+}
+
+:root[data-theme='dark'] [role='alert'] {
+	color: #ff8085;
+}
