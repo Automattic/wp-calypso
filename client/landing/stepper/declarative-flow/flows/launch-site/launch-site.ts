@@ -9,6 +9,7 @@ import { addQueryArgs, getQueryArgs } from '@wordpress/url';
 import { useEffect } from 'react';
 import { useQueryProductsList } from 'calypso/components/data/query-products-list';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
+import { useRecordSignupComplete } from 'calypso/landing/stepper/hooks/use-record-signup-complete';
 import { ONBOARD_STORE, SITE_STORE } from 'calypso/landing/stepper/stores';
 import { getCurrentQueryParams } from 'calypso/landing/stepper/utils/get-current-query-params';
 import { stepsWithRequiredLogin } from 'calypso/landing/stepper/utils/steps-with-required-login';
@@ -52,22 +53,11 @@ function recordExcludedStep( step: 'domains-launch' | 'plans-launch', value: str
 	} );
 }
 
-// `initialize` runs once per page load; navigation needs to know which of the optional steps it kept.
-let flowStepSlugs: string[] = [];
-let isWaitingForLogin = false;
-
 async function initialize( reduxStore: Store ) {
-	// Stepper's login step comes first; signing in reloads the flow, and this runs again with a user.
+	// Logged-out users are sent to log in, which comes back with a page load that runs this again.
 	if ( ! isUserLoggedIn( reduxStore.getState() ) ) {
-		const steps = getLaunchSiteSteps( null, null );
-
-		isWaitingForLogin = true;
-		flowStepSlugs = steps.map( ( step ) => step.slug );
-
-		return stepsWithRequiredLogin( steps );
+		return stepsWithRequiredLogin( getLaunchSiteSteps( null, null ) );
 	}
-
-	isWaitingForLogin = false;
 
 	const siteSlug = getCurrentQueryParams().get( 'siteSlug' );
 	const site = siteSlug
@@ -81,14 +71,14 @@ async function initialize( reduxStore: Store ) {
 		return false;
 	}
 
-	const domains: { domain: string; wpcom_domain: boolean }[] | undefined = await resolveSelect(
-		SITE_STORE
-	).getSiteDomains( site.ID );
+	// Unknown domains keep the domain step.
+	const domains: { domain: string; wpcom_domain: boolean }[] | null | undefined =
+		await resolveSelect( SITE_STORE )
+			.getSiteDomains( site.ID )
+			.catch( () => null );
 	const steps = getLaunchSiteSteps( site, domains );
 
-	flowStepSlugs = steps.map( ( step ) => step.slug );
-
-	if ( ! flowStepSlugs.includes( STEPS.DOMAIN_SEARCH.slug ) ) {
+	if ( ! steps.includes( STEPS.DOMAIN_SEARCH ) ) {
 		recordExcludedStep(
 			'domains-launch',
 			( domains ?? [] )
@@ -98,11 +88,21 @@ async function initialize( reduxStore: Store ) {
 		);
 	}
 
-	if ( ! flowStepSlugs.includes( STEPS.UNIFIED_PLANS.slug ) ) {
+	if ( ! steps.includes( STEPS.UNIFIED_PLANS ) ) {
 		recordExcludedStep( 'plans-launch', site.plan?.product_slug ?? '' );
 	}
 
 	return stepsWithRequiredLogin( steps );
+}
+
+/**
+ * The slugs of the steps `initialize` kept. Stepper stores the resolved steps on the flow, although
+ * their type mirrors `initialize`'s promise.
+ */
+function getStepSlugs( flow: FlowV2< typeof initialize > ): string[] {
+	const steps: unknown = flow.getSteps?.();
+
+	return Array.isArray( steps ) ? steps.map( ( step: { slug: string } ) => step.slug ) : [];
 }
 
 function useLaunchParams(): LaunchParams {
@@ -121,22 +121,19 @@ function useLaunchParams(): LaunchParams {
 const launchSiteFlow: FlowV2< typeof initialize > = {
 	name: LAUNCH_SITE_FLOW,
 	title: __( 'Launch your site' ),
-	isSignupFlow: false,
-	__experimentalUseBuiltinAuth: true,
+	// Records `calypso_signup_start`, as legacy signup did for this flow.
+	isSignupFlow: true,
+	__experimentalUseBuiltinAuth: false,
 	initialize,
+
+	useLoginParams() {
+		return { customLoginPath: '/log-in' };
+	},
 
 	useSideEffect( currentStepSlug ) {
 		const { resetOnboardStore } = useDispatch( ONBOARD_STORE ) as OnboardActions;
-		const isLoggedIn = useSelector( isUserLoggedIn );
 
 		useQueryProductsList();
-
-		// A login that finishes without a page load leaves the steps unchecked against the site.
-		useEffect( () => {
-			if ( isLoggedIn && isWaitingForLogin && flowStepSlugs.includes( currentStepSlug ) ) {
-				window.location.reload();
-			}
-		}, [ isLoggedIn, currentStepSlug ] );
 
 		// Only at the flow root: a mid-flow refresh must keep the user's selections.
 		useEffect( () => {
@@ -153,7 +150,7 @@ const launchSiteFlow: FlowV2< typeof initialize > = {
 
 	useStepsProps() {
 		const launchParams = useLaunchParams();
-		const isPlansFirstStep = ! flowStepSlugs.includes( STEPS.DOMAIN_SEARCH.slug );
+		const isPlansFirstStep = ! getStepSlugs( this ).includes( STEPS.DOMAIN_SEARCH.slug );
 
 		return {
 			[ STEPS.UNIFIED_PLANS.slug ]: {
@@ -172,21 +169,23 @@ const launchSiteFlow: FlowV2< typeof initialize > = {
 
 	useStepNavigation( currentStepSlug, navigate ) {
 		const launchParams = useLaunchParams();
+		const stepSlugs = getStepSlugs( this );
 		const productsList = useSelector( getProductsList );
-		const { getDomainCartItems, getPlanCartItem } = useSelect(
+		const recordSignupComplete = useRecordSignupComplete( LAUNCH_SITE_FLOW );
+		const { getDomainCartItem, getDomainCartItems, getPlanCartItem } = useSelect(
 			( select ) => ( {
+				getDomainCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getDomainCartItem,
 				getDomainCartItems: ( select( ONBOARD_STORE ) as OnboardSelect ).getDomainCartItems,
 				getPlanCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getPlanCartItem,
 			} ),
 			[]
 		);
-		const { setDomainCartItems, setPlanCartItem, setSignupDomainOrigin } = useDispatch(
-			ONBOARD_STORE
-		) as OnboardActions;
+		const { setDomainCartItem, setDomainCartItems, setPlanCartItem, setSignupDomainOrigin } =
+			useDispatch( ONBOARD_STORE ) as OnboardActions;
 
 		const goPastDomains = () => {
 			return navigate(
-				flowStepSlugs.includes( STEPS.UNIFIED_PLANS.slug )
+				stepSlugs.includes( STEPS.UNIFIED_PLANS.slug )
 					? STEPS.UNIFIED_PLANS.slug
 					: STEPS.LAUNCH_SITE.slug
 			);
@@ -197,19 +196,43 @@ const launchSiteFlow: FlowV2< typeof initialize > = {
 				? updatePrivacyForDomain( item, true )
 				: item;
 
-		const finishLaunch = async () => {
+		const getDomainItems = () => {
+			const domainCartItems = getDomainCartItems() ?? [];
+			// Only the single domain item survives a refresh.
+			const domainCartItem = getDomainCartItem();
+
+			return domainCartItems.length > 0 || ! domainCartItem ? domainCartItems : [ domainCartItem ];
+		};
+
+		const addLaunchProductsToCart = async () => {
 			const planCartItem = getPlanCartItem();
-			const cartItems = [
-				...( getDomainCartItems() ?? [] ),
-				...( planCartItem ? [ planCartItem ] : [] ),
-			].map( addPrivacyIfSupported );
-			const destination = getLaunchDestination( launchParams );
+			const cartItems = [ ...getDomainItems(), ...( planCartItem ? [ planCartItem ] : [] ) ].map(
+				addPrivacyIfSupported
+			);
+
+			recordSignupComplete( {} );
 
 			if ( cartItems.length === 0 ) {
-				return window.location.assign( destination );
+				return false;
 			}
 
-			await addProductsToCart( launchParams.siteSlug, LAUNCH_SITE_FLOW, cartItems );
+			try {
+				await addProductsToCart( launchParams.siteSlug, LAUNCH_SITE_FLOW, cartItems );
+			} catch {
+				// Checkout opens on whatever made it into the cart.
+			}
+
+			return true;
+		};
+
+		// The site is already live, so nothing here may keep the user from moving on.
+		const finishLaunch = async () => {
+			const destination = getLaunchDestination( launchParams );
+			const goesToCheckout = await addLaunchProductsToCart().catch( () => true );
+
+			if ( ! goesToCheckout ) {
+				return window.location.assign( destination );
+			}
 
 			// Checkout reads these to send the user on once they have paid.
 			persistSignupDestination( destination );
@@ -236,6 +259,7 @@ const launchSiteFlow: FlowV2< typeof initialize > = {
 						return navigate( useMyDomainURL as typeof currentStepSlug );
 					}
 
+					setDomainCartItem( providedDependencies?.domainItem );
 					setDomainCartItems( providedDependencies?.domainCart ?? [] );
 					setSignupDomainOrigin( providedDependencies?.signupDomainOrigin );
 
@@ -256,6 +280,7 @@ const launchSiteFlow: FlowV2< typeof initialize > = {
 					setSignupDomainOrigin( SIGNUP_DOMAIN_ORIGIN.USE_YOUR_DOMAIN );
 
 					if ( providedDependencies && 'domainCartItem' in providedDependencies ) {
+						setDomainCartItem( providedDependencies.domainCartItem );
 						setDomainCartItems( [ providedDependencies.domainCartItem ] );
 					}
 

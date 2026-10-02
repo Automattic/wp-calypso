@@ -1,10 +1,16 @@
 /**
  * @jest-environment jsdom
  */
-import { addProductsToCart } from '@automattic/onboarding';
+import { addProductsToCart, clearStepPersistedState } from '@automattic/onboarding';
 import { renderHook } from '@testing-library/react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { persistSignupDestination } from 'calypso/signup/storageUtils';
+import {
+	clearSignupCompleteFlowName,
+	clearSignupCompleteSiteID,
+	clearSignupCompleteSlug,
+	clearSignupDestinationCookie,
+	persistSignupDestination,
+} from 'calypso/signup/storageUtils';
 import { STEPS } from '../../../internals/steps';
 import launchSiteFlow from '../launch-site';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
@@ -12,19 +18,36 @@ import type { Store } from 'redux';
 
 let mockQuery: Record< string, string > = {};
 let mockOnboard: {
+	domainCartItem?: MinimalRequestCartProduct;
 	domainCartItems?: MinimalRequestCartProduct[];
 	planCartItem?: MinimalRequestCartProduct | null;
 	signupDomainOrigin?: string;
 } = {};
 let mockProductsList: Record< string, unknown > = {};
 let mockSite: unknown = null;
-let mockDomains: unknown[] = [];
+let mockDomains: unknown[] | Error = [];
 let mockUserId: number | null = 1;
 
-jest.mock( '@automattic/onboarding', () => ( {
-	LAUNCH_SITE_FLOW: 'launch-site',
-	addProductsToCart: jest.fn( () => Promise.resolve() ),
-	clearStepPersistedState: jest.fn(),
+// Both packages import themselves while loading, so the real exports are read lazily rather than spread.
+const lazilyOverride = ( moduleName: string, overrides: Record< string, unknown > ) =>
+	new Proxy( overrides, {
+		get: ( target, key: string ) =>
+			key in target ? target[ key ] : jest.requireActual( moduleName )[ key ],
+	} );
+
+jest.mock( '@automattic/onboarding', () =>
+	lazilyOverride( '@automattic/onboarding', {
+		LAUNCH_SITE_FLOW: 'launch-site',
+		addProductsToCart: jest.fn( () => Promise.resolve() ),
+		clearStepPersistedState: jest.fn(),
+	} )
+);
+
+const mockResetOnboardStore = jest.fn();
+const mockRecordSignupComplete = jest.fn();
+
+jest.mock( 'calypso/landing/stepper/hooks/use-record-signup-complete', () => ( {
+	useRecordSignupComplete: () => mockRecordSignupComplete,
 } ) );
 
 jest.mock( 'calypso/landing/stepper/stores', () => ( {
@@ -34,10 +57,14 @@ jest.mock( 'calypso/landing/stepper/stores', () => ( {
 
 jest.mock( '@wordpress/data', () => {
 	const selectors = {
+		getDomainCartItem: () => mockOnboard.domainCartItem,
 		getDomainCartItems: () => mockOnboard.domainCartItems,
 		getPlanCartItem: () => mockOnboard.planCartItem,
 	};
 	const actions = {
+		setDomainCartItem: ( item: MinimalRequestCartProduct | undefined ) => {
+			mockOnboard.domainCartItem = item;
+		},
 		setDomainCartItems: ( items: MinimalRequestCartProduct[] ) => {
 			mockOnboard.domainCartItems = items;
 		},
@@ -47,7 +74,7 @@ jest.mock( '@wordpress/data', () => {
 		setSignupDomainOrigin: ( origin: string ) => {
 			mockOnboard.signupDomainOrigin = origin;
 		},
-		resetOnboardStore: jest.fn(),
+		resetOnboardStore: () => mockResetOnboardStore(),
 	};
 
 	const overrides: Record< string, unknown > = {
@@ -56,15 +83,14 @@ jest.mock( '@wordpress/data', () => {
 		useDispatch: () => actions,
 		resolveSelect: () => ( {
 			getSite: () => Promise.resolve( mockSite ),
-			getSiteDomains: () => Promise.resolve( mockDomains ),
+			getSiteDomains: () =>
+				mockDomains instanceof Error
+					? Promise.reject( mockDomains )
+					: Promise.resolve( mockDomains ),
 		} ),
 	};
 
-	// Read the real module lazily: @wordpress/data imports itself while loading.
-	return new Proxy( overrides, {
-		get: ( target, key: string ) =>
-			key in target ? target[ key ] : jest.requireActual( '@wordpress/data' )[ key ],
-	} );
+	return lazilyOverride( '@wordpress/data', overrides );
 } );
 
 jest.mock( 'calypso/state', () => ( {
@@ -122,6 +148,13 @@ const submit = ( currentStep: string, providedDependencies?: unknown, navigate =
 	};
 };
 
+// Stepper stores the resolved steps on the flow, although their type mirrors `initialize`'s promise.
+const setFlowSteps = ( steps: { slug: string }[] ) => {
+	launchSiteFlow.getSteps = ( () => steps ) as unknown as typeof launchSiteFlow.getSteps;
+};
+
+type SideEffectStep = Parameters< NonNullable< typeof launchSiteFlow.useSideEffect > >[ 0 ];
+
 const freeSite = { ID: 1, plan: { product_slug: 'free_plan', is_free: true } };
 const paidSite = { ID: 1, plan: { product_slug: 'personal-bundle', is_free: false } };
 const wpcomDomain = { domain: 'example.wordpress.com', wpcom_domain: true };
@@ -131,7 +164,7 @@ const reduxStore = {
 	getState: () => ( { currentUser: { id: mockUserId } } ),
 } as unknown as Store;
 
-const initializeWith = ( site: unknown, domains: unknown[] ) => {
+const initializeWith = ( site: unknown, domains: unknown[] | Error ) => {
 	mockSite = site;
 	mockDomains = domains;
 	return launchSiteFlow.initialize( reduxStore );
@@ -140,7 +173,8 @@ const initializeWith = ( site: unknown, domains: unknown[] ) => {
 const assigned = () => ( window.location.assign as jest.Mock ).mock.calls[ 0 ]?.[ 0 ];
 
 describe( 'launch-site flow', () => {
-	beforeEach( async () => {
+	beforeEach( () => {
+		jest.clearAllMocks();
 		mockQuery = { siteSlug: 'example.wordpress.com' };
 		mockUserId = 1;
 		mockOnboard = {};
@@ -162,10 +196,9 @@ describe( 'launch-site flow', () => {
 			},
 			writable: true,
 		} );
-		await initializeWith( freeSite, [ wpcomDomain ] );
 		mockSite = null;
 		mockDomains = [];
-		jest.clearAllMocks();
+		setFlowSteps( ALL_STEPS );
 	} );
 
 	describe( 'domains', () => {
@@ -176,19 +209,23 @@ describe( 'launch-site flow', () => {
 				signupDomainOrigin: 'custom',
 			} );
 
+			expect( mockOnboard.domainCartItem ).toEqual( domainItem );
 			expect( mockOnboard.domainCartItems ).toEqual( [ domainItem ] );
 			expect( mockOnboard.signupDomainOrigin ).toBe( 'custom' );
 			expect( navigate ).toHaveBeenCalledWith( STEPS.UNIFIED_PLANS.slug );
 		} );
 
 		it( 'clears the domains when the user skips', () => {
+			mockOnboard.domainCartItem = domainItem;
 			mockOnboard.domainCartItems = [ domainItem ];
 
 			const { navigate } = submit( STEPS.DOMAIN_SEARCH.slug, {
+				domainItem: undefined,
 				domainCart: [],
 				signupDomainOrigin: 'choose-later',
 			} );
 
+			expect( mockOnboard.domainCartItem ).toBeUndefined();
 			expect( mockOnboard.domainCartItems ).toEqual( [] );
 			expect( navigate ).toHaveBeenCalledWith( STEPS.UNIFIED_PLANS.slug );
 		} );
@@ -206,8 +243,8 @@ describe( 'launch-site flow', () => {
 			expect( url.searchParams.get( 'initialQuery' ) ).toBe( 'mine.com' );
 		} );
 
-		it( 'goes straight to the launch when the site already has a paid plan', async () => {
-			await initializeWith( paidSite, [ wpcomDomain ] );
+		it( 'goes straight to the launch when the site already has a paid plan', () => {
+			setFlowSteps( [ STEPS.DOMAIN_SEARCH, STEPS.USE_MY_DOMAIN, STEPS.LAUNCH_SITE ] );
 
 			const { navigate } = submit( STEPS.DOMAIN_SEARCH.slug, { domainCart: [ domainItem ] } );
 
@@ -219,6 +256,7 @@ describe( 'launch-site flow', () => {
 		it( 'stores the domain to connect or transfer and moves on to plans', () => {
 			const { navigate } = submit( STEPS.USE_MY_DOMAIN.slug, { domainCartItem: transferItem } );
 
+			expect( mockOnboard.domainCartItem ).toEqual( transferItem );
 			expect( mockOnboard.domainCartItems ).toEqual( [ transferItem ] );
 			expect( navigate ).toHaveBeenCalledWith( STEPS.UNIFIED_PLANS.slug );
 		} );
@@ -280,8 +318,8 @@ describe( 'launch-site flow', () => {
 			expect( props?.wrapperProps?.goBack ).toBeUndefined();
 		} );
 
-		it( 'returns to where the user came from on Back when plans is the first step', async () => {
-			await initializeWith( freeSite, [ wpcomDomain, customDomain ] );
+		it( 'returns to where the user came from on Back when plans is the first step', () => {
+			setFlowSteps( [ STEPS.UNIFIED_PLANS, STEPS.LAUNCH_SITE ] );
 			mockQuery.back_to = '/sites';
 
 			launchSiteFlow.useStepsProps?.()[ STEPS.UNIFIED_PLANS.slug ]?.wrapperProps?.goBack?.();
@@ -330,6 +368,38 @@ describe( 'launch-site flow', () => {
 			);
 		} );
 
+		it( 'keeps the chosen domain through a refresh, which only persists the single item', async () => {
+			mockOnboard.domainCartItem = domainItem;
+
+			await submit( STEPS.LAUNCH_SITE.slug ).result;
+
+			expect( addProductsToCart ).toHaveBeenCalledWith( 'example.wordpress.com', 'launch-site', [
+				{ ...domainItem, extra: { privacy: true } },
+			] );
+		} );
+
+		it( 'still goes to checkout when the cart cannot be updated', async () => {
+			mockOnboard.planCartItem = planItem;
+			( addProductsToCart as jest.Mock ).mockRejectedValueOnce( new Error( 'no cart key' ) );
+
+			await submit( STEPS.LAUNCH_SITE.slug ).result;
+
+			expect( new URL( assigned(), 'http://localhost/' ).pathname ).toBe(
+				'/checkout/example.wordpress.com'
+			);
+		} );
+
+		it( 'records the signup as complete before leaving', async () => {
+			mockRecordSignupComplete.mockImplementationOnce( () =>
+				expect( window.location.assign ).not.toHaveBeenCalled()
+			);
+
+			await submit( STEPS.LAUNCH_SITE.slug ).result;
+
+			expect( mockRecordSignupComplete ).toHaveBeenCalled();
+			expect( window.location.assign ).toHaveBeenCalled();
+		} );
+
 		it( 'only adds privacy to the products that support it', async () => {
 			mockOnboard.domainCartItems = [ transferItem ];
 
@@ -356,8 +426,39 @@ describe( 'launch-site flow', () => {
 		} );
 	} );
 
+	describe( 'entering the flow', () => {
+		it( 'starts from a clean slate at the flow root', () => {
+			renderHook( () =>
+				launchSiteFlow.useSideEffect?.( undefined as unknown as SideEffectStep, jest.fn() )
+			);
+
+			expect( mockResetOnboardStore ).toHaveBeenCalled();
+			expect( clearStepPersistedState ).toHaveBeenCalledWith( 'launch-site' );
+			expect( clearSignupDestinationCookie ).toHaveBeenCalled();
+			expect( clearSignupCompleteFlowName ).toHaveBeenCalled();
+			expect( clearSignupCompleteSlug ).toHaveBeenCalled();
+			expect( clearSignupCompleteSiteID ).toHaveBeenCalled();
+		} );
+
+		it( 'keeps the selections on a later step', () => {
+			renderHook( () => launchSiteFlow.useSideEffect?.( STEPS.UNIFIED_PLANS.slug, jest.fn() ) );
+
+			expect( mockResetOnboardStore ).not.toHaveBeenCalled();
+			expect( clearStepPersistedState ).not.toHaveBeenCalled();
+			expect( clearSignupDestinationCookie ).not.toHaveBeenCalled();
+			expect( clearSignupCompleteSlug ).not.toHaveBeenCalled();
+		} );
+	} );
+
+	describe( 'login', () => {
+		it( 'sends logged-out users to the log-in page', () => {
+			expect( launchSiteFlow.__experimentalUseBuiltinAuth ).toBe( false );
+			expect( launchSiteFlow.useLoginParams?.() ).toEqual( { customLoginPath: '/log-in' } );
+		} );
+	} );
+
 	describe( 'initialize', () => {
-		it( 'lets the user log in first, without looking the site up', async () => {
+		it( 'asks a logged-out user to log in, without looking the site up', async () => {
 			mockUserId = null;
 			mockSite = paidSite;
 			mockDomains = [ customDomain ];
@@ -373,39 +474,6 @@ describe( 'launch-site flow', () => {
 			).toBe( true );
 			expect( window.location.assign ).not.toHaveBeenCalled();
 			expect( recordTracksEvent ).not.toHaveBeenCalled();
-		} );
-
-		it( 'reloads to check the steps against the site when login finishes without a page load', async () => {
-			const reload = jest.fn();
-			window.location.reload = reload;
-			mockUserId = null;
-			await launchSiteFlow.initialize( reduxStore );
-
-			const { rerender } = renderHook(
-				( { step } ) => launchSiteFlow.useSideEffect?.( step, jest.fn() ),
-				{
-					initialProps: {
-						step: 'user' as Parameters< NonNullable< typeof launchSiteFlow.useSideEffect > >[ 0 ],
-					},
-				}
-			);
-			mockUserId = 1;
-			rerender( {
-				step: 'user' as Parameters< NonNullable< typeof launchSiteFlow.useSideEffect > >[ 0 ],
-			} );
-			expect( reload ).not.toHaveBeenCalled();
-
-			rerender( { step: STEPS.DOMAIN_SEARCH.slug } );
-			expect( reload ).toHaveBeenCalled();
-		} );
-
-		it( 'does not reload once the steps were checked against the site', async () => {
-			const reload = jest.fn();
-			window.location.reload = reload;
-
-			renderHook( () => launchSiteFlow.useSideEffect?.( STEPS.DOMAIN_SEARCH.slug, jest.fn() ) );
-
-			expect( reload ).not.toHaveBeenCalled();
 		} );
 
 		it( 'leaves for the sites list without a site', async () => {
@@ -427,6 +495,14 @@ describe( 'launch-site flow', () => {
 				ALL_STEPS.map( ( step ) => step.slug )
 			);
 			expect( recordTracksEvent ).not.toHaveBeenCalled();
+		} );
+
+		it( 'keeps the domain step when the domains cannot be loaded', async () => {
+			const steps = await initializeWith( freeSite, new Error( 'domains failed' ) );
+
+			expect( steps && steps.map( ( step ) => step.slug ) ).toEqual(
+				ALL_STEPS.map( ( step ) => step.slug )
+			);
 		} );
 
 		it( 'skips the steps the site has no use for, and records it', async () => {
