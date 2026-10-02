@@ -8,6 +8,7 @@ import {
 	HUNDRED_YEAR_DOMAIN_TRANSFER,
 	REBLOGGING_FLOW,
 	SITE_MIGRATION_FLOW,
+	WORDPRESS_MIGRATION_FLOW,
 	ENTREPRENEUR_FLOW,
 	ONBOARDING_FLOW,
 	HUNDRED_YEAR_DOMAIN_FLOW,
@@ -46,6 +47,11 @@ const availableFlows: Record< string, () => Promise< { default: FlowV2< any > } 
 	[ SITE_MIGRATION_FLOW ]: () =>
 		import(
 			/* webpackChunkName: "site-migration-flow" */ './flows/site-migration-flow/site-migration-flow'
+		),
+
+	[ WORDPRESS_MIGRATION_FLOW ]: () =>
+		import(
+			/* webpackChunkName: "wordpress-migration-flow" */ './flows/wordpress-migration/wordpress-migration'
 		),
 
 	[ EXAMPLE_FLOW ]: () =>
