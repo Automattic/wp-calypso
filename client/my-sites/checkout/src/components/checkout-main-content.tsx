@@ -99,8 +99,10 @@ import { useUpdateCachedContactDetails } from '../hooks/use-cached-contact-detai
 import { useCheckoutHelpCenter } from '../hooks/use-checkout-help-center';
 import useCouponFieldState from '../hooks/use-coupon-field-state';
 import useSiteDomains from '../hooks/use-site-domains';
+import { vatDetailsInFormStore } from '../lib/checkout-stores';
 import { validateContactDetails } from '../lib/contact-validation';
 import { updateCartContactDetailsForCheckout } from '../lib/update-cart-contact-details-for-checkout';
+import { useValueStore } from '../lib/value-store';
 import { CHECKOUT_STORE } from '../lib/wpcom-store';
 import { CheckoutMoneyBackGuarantee } from './CheckoutMoneyBackGuarantee';
 import AcceptTermsOfServiceCheckbox from './accept-terms-of-service-checkbox';
@@ -555,7 +557,7 @@ export default function CheckoutMainContent( {
 
 	const contactInfo = useSelect( ( select ) => select( CHECKOUT_STORE ).getContactInfo(), [] );
 
-	const vatDetailsInForm = useSelect( ( select ) => select( CHECKOUT_STORE ).getVatDetails(), [] );
+	const vatDetailsInForm = useValueStore( vatDetailsInFormStore );
 	const { setVatDetails, vatDetails: vatDetailsFromServer } = useVatDetails();
 
 	const checkoutActions = useDispatch( CHECKOUT_STORE );

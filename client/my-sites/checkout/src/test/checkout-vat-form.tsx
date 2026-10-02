@@ -13,6 +13,7 @@ import { errorNotice } from 'calypso/state/notices/actions';
 import { isMarketplaceProduct } from 'calypso/state/products-list/selectors';
 import { getPlansBySiteId } from 'calypso/state/sites/plans/selectors/get-plans-by-site';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { resetCheckoutStores } from '../lib/checkout-stores';
 import { CHECKOUT_STORE } from '../lib/wpcom-store';
 import {
 	planWithoutDomain,
@@ -87,6 +88,7 @@ describe( 'Checkout contact step VAT form', () => {
 
 	beforeEach( () => {
 		dispatch( CHECKOUT_STORE ).reset();
+		resetCheckoutStores();
 		( useCartKey as jest.Mock ).mockImplementation( () => mainCartKey );
 		nock.cleanAll();
 		mockGetPaymentMethodsEndpoint( [] );

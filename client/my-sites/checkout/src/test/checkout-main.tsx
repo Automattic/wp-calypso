@@ -15,6 +15,7 @@ import { isMarketplaceProduct } from 'calypso/state/products-list/selectors';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { getPlansBySiteId } from 'calypso/state/sites/plans/selectors/get-plans-by-site';
 import { isCommerceGardenSite, isJetpackSite } from 'calypso/state/sites/selectors';
+import { resetCheckoutStores } from '../lib/checkout-stores';
 import { CHECKOUT_STORE } from '../lib/wpcom-store';
 import {
 	domainProduct,
@@ -60,6 +61,7 @@ describe( 'CheckoutMain', () => {
 
 	beforeEach( () => {
 		dispatch( CHECKOUT_STORE ).reset();
+		resetCheckoutStores();
 		jest.clearAllMocks();
 		( getPlansBySiteId as jest.Mock ).mockImplementation( () => ( {
 			data: getActivePersonalPlanDataForType( 'yearly' ),

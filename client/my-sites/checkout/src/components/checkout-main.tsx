@@ -51,6 +51,7 @@ import useRemoveFromCartAndRedirect from '../hooks/use-remove-from-cart-and-redi
 import { useStoredPaymentMethods } from '../hooks/use-stored-payment-methods';
 import { logStashLoadErrorEvent, logStashEvent, convertErrorToString } from '../lib/analytics';
 import blikProcessor from '../lib/blik-processor';
+import { recaptchaClientIdStore } from '../lib/checkout-stores';
 import existingCardProcessor from '../lib/existing-card-processor';
 import existingPayPalPPCPProcessor from '../lib/existing-paypal-ppcp-processor';
 import freePurchaseProcessor from '../lib/free-purchase-processor';
@@ -63,6 +64,7 @@ import { pixAutomaticoProcessor } from '../lib/pix-automatico-processor';
 import { pixProcessor } from '../lib/pix-processor';
 import { translateResponseCartToWPCOMCart } from '../lib/translate-cart';
 import upiProcessor from '../lib/upi-processor';
+import { useValueStore } from '../lib/value-store';
 import weChatProcessor from '../lib/we-chat-processor';
 import webPayProcessor from '../lib/web-pay-processor';
 import { CHECKOUT_STORE } from '../lib/wpcom-store';
@@ -468,10 +470,7 @@ export default function CheckoutMain( {
 		( allowedPaymentMethods.includes( 'card' ) && isLoadingStoredCards );
 
 	const contactDetails = useSelect( ( select ) => select( CHECKOUT_STORE ).getContactInfo(), [] );
-	const recaptchaClientId = useSelect(
-		( select ) => select( CHECKOUT_STORE ).getRecaptchaClientId(),
-		[]
-	);
+	const recaptchaClientId = useValueStore( recaptchaClientIdStore );
 
 	const paymentMethods = arePaymentMethodsLoading
 		? []
