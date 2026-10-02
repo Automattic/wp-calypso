@@ -266,7 +266,17 @@ export function redactComponentMessages( messages: Message[] ): Message[] {
 						( 'arguments' in data || 'result' in data ) ) )
 			) {
 				hasComponent = true;
-				const result = data.result ?? data.arguments;
+				let result = data.result ?? data.arguments;
+				if (
+					message.role === 'user' &&
+					isComponentTool( data.toolId ) &&
+					isRecord( data.result ) &&
+					hasKeys( data.result, [ 'success', 'message', 'instanceId' ] ) &&
+					data.result.success === true &&
+					typeof data.result.message === 'string'
+				) {
+					result = { protocol: 'agent-component/0.1', instanceId: data.result.instanceId };
+				}
 				const reference = componentReference( {
 					type: 'component-result',
 					partVersion: 1,

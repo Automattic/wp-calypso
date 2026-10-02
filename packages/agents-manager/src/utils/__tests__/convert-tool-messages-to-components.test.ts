@@ -170,9 +170,35 @@ describe( 'convertToolMessagesToComponents', () => {
 				( part ) => part.type === 'text' || part.type === 'component-reference'
 			),
 		} );
-		expect( convertToolMessagesToComponents( { messages: [ history, card ] } ) ).toEqual(
-			convertToolMessagesToComponents( { messages: [ card ] } )
-		);
+		const completed = redactComponentMessage( {
+			kind: 'message',
+			messageId: 'completed',
+			role: 'user',
+			parts: [
+				{
+					type: 'data',
+					data: {
+						toolCallId: 'call-123',
+						toolId: 'wpcom__render_components',
+						result: {
+							success: true,
+							message: 'The action completed.',
+							instanceId: proposal.result.instanceId,
+						},
+					},
+				},
+			],
+		} );
+		const completionHistory = createMessage( {
+			id: 'completed',
+			role: 'user',
+			content: completed.parts.filter(
+				( part ) => part.type === 'text' || part.type === 'component-reference'
+			),
+		} );
+		expect(
+			convertToolMessagesToComponents( { messages: [ history, card, completionHistory ] } )
+		).toEqual( convertToolMessagesToComponents( { messages: [ card ] } ) );
 		const mismatched = {
 			...card,
 			componentResult: {
@@ -180,9 +206,9 @@ describe( 'convertToolMessagesToComponents', () => {
 				result: { ...options.result, instanceId: 'another-instance' },
 			},
 		};
-		expect( convertToolMessagesToComponents( { messages: [ history, mismatched ] } ) ).toHaveLength(
-			2
-		);
+		expect(
+			convertToolMessagesToComponents( { messages: [ history, mismatched, completionHistory ] } )
+		).toHaveLength( 3 );
 	} );
 
 	it( 'shows unavailable content and adjacent text when a live part has no authorized session', () => {
