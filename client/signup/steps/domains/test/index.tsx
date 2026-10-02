@@ -196,6 +196,12 @@ describe( 'DomainSearchStep — Name Pulse search', () => {
 		} );
 	} );
 
+	it( 'seeds the search from ?new= so Name Pulse can restore it after a refresh', () => {
+		renderStep( { ...baseProps, queryObject: { new: 'coffeeshop' } } );
+
+		expect( mockUseQueryHandler.mock.calls[ 0 ][ 0 ].initialQuery ).toBe( 'coffeeshop' );
+	} );
+
 	it( 'lifts the domain-only exclusion on the free-first-year promo', () => {
 		renderStep();
 

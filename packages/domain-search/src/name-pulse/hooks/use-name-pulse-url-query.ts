@@ -22,6 +22,7 @@ const writeNamePulseUrlQuery = ( query?: string ) => {
 
 /**
  * Keeps the search in `?new=` so a refresh or a shared link restores it.
+ * Read back on page load by the domain-only signup step.
  * Debounced because browsers limit how often the URL can change.
  */
 export const useNamePulseUrlQuery = ( query?: string ) => {
