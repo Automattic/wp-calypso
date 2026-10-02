@@ -163,6 +163,9 @@ function getLaunchReturnTarget( dependencies ) {
 	if ( wpAdminUrl ) {
 		return {
 			url: wpAdminUrl,
+			// Back returns to the exact screen, but a successful launch always lands on the dashboard,
+			// where wp-admin shows the launch celebration.
+			celebrateUrl: new URL( '/wp-admin', wpAdminUrl ).href,
 			celebrateArgs: { 'celebrate-launch': 'true' },
 		};
 	}
@@ -190,9 +193,9 @@ function getLaunchDestination( dependencies ) {
 		return addQueryArgs( { celebrateLaunch: 'true' }, dependencies.redirect_to );
 	}
 
-	const { url, celebrateArgs } = getLaunchReturnTarget( dependencies );
+	const { url, celebrateUrl = url, celebrateArgs } = getLaunchReturnTarget( dependencies );
 
-	return addQueryArgs( celebrateArgs, url );
+	return addQueryArgs( celebrateArgs, celebrateUrl );
 }
 
 function getDomainSignupFlowDestination( { designType, siteSlug, flowName } ) {

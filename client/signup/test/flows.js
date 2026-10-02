@@ -93,16 +93,17 @@ describe( 'Signup Flows Configuration', () => {
 			).toBe( '/sites/test-site/settings/site-visibility?celebrateLaunch=true' );
 		} );
 
-		test( 'returns the user to the wp-admin page the launch started from', () => {
-			expect(
-				getDestination( {
-					siteSlug: 'test-site.wordpress.com',
-					refParameter: 'wp-admin/admin.php?page=stats',
-				} )
-			).toBe(
-				'https://test-site.wordpress.com/wp-admin/admin.php?page=stats&celebrate-launch=true'
-			);
-		} );
+		test.each( [ 'wp-admin/admin.php?page=stats', 'wp-admin/options-reading.php' ] )(
+			'lands on the wp-admin dashboard after a launch started from %s',
+			( refParameter ) => {
+				expect(
+					getDestination( {
+						siteSlug: 'test-site.wordpress.com',
+						refParameter,
+					} )
+				).toBe( 'https://test-site.wordpress.com/wp-admin?celebrate-launch=true' );
+			}
+		);
 	} );
 
 	describe( 'getWpAdminLaunchReturnUrl', () => {
