@@ -7,21 +7,18 @@ import { ToggleControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
-import FormInput from 'calypso/components/forms/form-text-input';
 import { PanelCard, PanelCardHeading } from 'calypso/components/panel';
+import { dashboardLink } from 'calypso/dashboard/utils/link';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { useSelectedSiteSelector } from 'calypso/state/sites/hooks';
 
-// Add settings for enhanced ownership: ability to enable locked mode and add the name of a person who will inherit the site.
+// Add settings for enhanced ownership: a pointer to the account-level legacy contact, and the ability to enable locked mode.
 export default function EnhancedOwnershipForm( {
 	fields,
-	onChangeField,
 	handleToggle,
 	isSaving,
 	onSave,
 	disabled,
-	eventTracker,
-	uniqueEventTracker,
 } ) {
 	const translate = useTranslate();
 	const hasLockedMode = useSelectedSiteSelector( siteHasFeature, WPCOM_FEATURES_LOCKED_MODE );
@@ -37,34 +34,16 @@ export default function EnhancedOwnershipForm( {
 			<form>
 				{ hasLegacyContact && (
 					<FormFieldset className="site-settings__enhanced-ownership-content">
-						<FormFieldset>
-							<FormLabel htmlFor="legacycontact">{ translate( 'Legacy contact' ) }</FormLabel>
-							<FormInput
-								name="legacycontact"
-								id="legacycontact"
-								data-tip-target="legacy-contact-input"
-								value={ fields.wpcom_legacy_contact || '' }
-								onChange={ onChangeField( 'wpcom_legacy_contact' ) }
-								disabled={ disabled }
-								onClick={ eventTracker( 'Clicked Legacy Contact Field' ) }
-								onKeyPress={ uniqueEventTracker( 'Typed in Legacy Contact Field' ) }
-							/>
-						</FormFieldset>
+						<FormLabel>{ translate( 'Legacy contact' ) }</FormLabel>
 						<FormSettingExplanation>
-							{ translate( 'Choose someone to look after your site when you pass away.' ) }
+							{ translate( 'Choose someone to look after your sites when you pass away.' ) }
 						</FormSettingExplanation>
 						<FormSettingExplanation>
 							{ translate(
-								'To take ownership of the site, we ask that the person you designate contacts us at {{a}}wordpress.com/help{{/a}} with a copy of the death certificate.',
+								'Legacy contact is now set on your WordPress.com account and applies to all of your sites. {{a}}Manage your legacy contact{{/a}}',
 								{
 									components: {
-										a: (
-											<a
-												href="https://wordpress.com/help"
-												target="_blank"
-												rel="noopener noreferrer"
-											/>
-										),
+										a: <a href={ dashboardLink( '/me/security/legacy-contact' ) } />,
 									},
 								}
 							) }
@@ -96,9 +75,11 @@ export default function EnhancedOwnershipForm( {
 		<PanelCard>
 			<PanelCardHeading>{ translate( 'Control your legacy' ) }</PanelCardHeading>
 			{ renderForm() }
-			<Button busy={ isSaving } disabled={ disabled } onClick={ onSave }>
-				{ translate( 'Save' ) }
-			</Button>
+			{ hasLockedMode && (
+				<Button busy={ isSaving } disabled={ disabled } onClick={ onSave }>
+					{ translate( 'Save' ) }
+				</Button>
+			) }
 		</PanelCard>
 	);
 }
