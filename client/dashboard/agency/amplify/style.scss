@@ -385,11 +385,6 @@
 	z-index: 1;
 	clip-path: inset( -64px -160px 0 -160px );
 	text-align: start;
-	transition:
-		left 420ms cubic-bezier( 0.45, 0, 0.55, 1 ),
-		top 420ms cubic-bezier( 0.45, 0, 0.55, 1 ),
-		width 420ms cubic-bezier( 0.45, 0, 0.55, 1 ),
-		height 420ms cubic-bezier( 0.45, 0, 0.55, 1 );
 }
 
 .dashboard-amplify-score-preview__cards[data-mode='full'] {
@@ -414,6 +409,12 @@
 .dashboard-amplify-score-preview__cards[data-overlay='true'] {
 	z-index: 100000;
 	clip-path: none;
+	// Follow responsive reflow immediately; animate only the move into and out of the overlay.
+	transition:
+		left 420ms cubic-bezier( 0.45, 0, 0.55, 1 ),
+		top 420ms cubic-bezier( 0.45, 0, 0.55, 1 ),
+		width 420ms cubic-bezier( 0.45, 0, 0.55, 1 ),
+		height 420ms cubic-bezier( 0.45, 0, 0.55, 1 );
 }
 
 .dashboard-amplify-score-preview__scrim {
@@ -478,6 +479,8 @@
 	position: absolute;
 	inset-block-start: 10px;
 	inset-inline-start: 50%;
+	// The card transforms are physical X offsets, so their positioning axis must stay LTR.
+	direction: ltr;
 	width: 540px;
 	height: 340px;
 	min-width: 0;
@@ -541,6 +544,10 @@
 		transparent 1px,
 		transparent 6px
 	);
+}
+
+html[dir='rtl'] .dashboard-amplify-score-preview__card {
+	direction: rtl;
 }
 
 .dashboard-amplify-score-preview__card-header {
