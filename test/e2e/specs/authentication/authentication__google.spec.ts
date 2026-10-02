@@ -1,6 +1,11 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import { DataHelper, GoogleLoginPage } from '@automattic/calypso-e2e';
+import {
+	DataHelper,
+	GoogleLoginPage,
+	GoogleSessionError,
+	GoogleSessionRenewalError,
+} from '@automattic/calypso-e2e';
 import { expect, tags, test as base } from '../../lib/pw-base';
 import type { BrowserContext, Cookie } from 'playwright';
 
@@ -29,7 +34,8 @@ test.use( {
 	video: 'off',
 	screenshot: 'off',
 	storageState: { cookies: [], origins: [] },
-	launchOptions: { args: [], channel: 'chromium', slowMo: 0 },
+	// `env: {}` keeps E2E_SECRETS_KEY and other CI secrets out of the browser process.
+	launchOptions: { args: [], channel: 'chromium', slowMo: 0, env: {} },
 } );
 
 const googleDomains = new Set( [
@@ -39,9 +45,22 @@ const googleDomains = new Set( [
 	'www.google.com',
 ] );
 
+const Stage = {
+	Preparation: 'Google session preparation',
+	LoginPage: 'WordPress.com login page',
+	GoogleConsent: 'Google account selection or consent',
+	ProductionLogin: 'production login',
+} as const;
+type Stage = ( typeof Stage )[ keyof typeof Stage ];
+
+// Errors in these stages may carry Google page content or cookie data.
+const privateStages = new Set< Stage >( [ Stage.Preparation, Stage.GoogleConsent ] );
+
 function requireGoogleSession( cookies: Cookie[] | undefined ): Cookie[] {
 	if ( ! cookies?.length ) {
-		throw new Error( 'Google session is missing; renew googleLoginUser.googleSessionCookies.' );
+		throw new GoogleSessionRenewalError(
+			'Google session is missing; renew googleLoginUser.googleSessionCookies.'
+		);
 	}
 	if (
 		! cookies.every( ( cookie ) => googleDomains.has( cookie.domain.replace( /^\./, '' ) ) ) ||
@@ -50,25 +69,29 @@ function requireGoogleSession( cookies: Cookie[] | undefined ): Cookie[] {
 			( cookie ) => /^__Secure-[13]PSID$/.test( cookie.name ) && cookie.value.length > 0
 		)
 	) {
-		throw new Error( 'Google session is invalid; renew googleLoginUser.googleSessionCookies.' );
+		throw new GoogleSessionRenewalError(
+			'Google session is invalid; renew googleLoginUser.googleSessionCookies.'
+		);
 	}
 	return cookies;
 }
 
-function safeFailureReason( error: unknown ): string {
-	const messages = new Set( [
-		'Google session is missing; renew googleLoginUser.googleSessionCookies.',
-		'Google session is invalid; renew googleLoginUser.googleSessionCookies.',
-		'Google session requires renewal; complete account verification manually.',
-		'Google returning-session timeout failure; private details suppressed.',
-		'Google returning-session interaction failure; private details suppressed.',
-	] );
-	if ( ! ( error instanceof Error ) || ! messages.has( error.message ) ) {
+/**
+ * Keeps renewal guidance and WordPress.com assertion details, suppresses anything
+ * that may echo Google page content or cookies.
+ * E.g. a missing My Home heading reports the locator; a Google popup timeout does not.
+ */
+function failureReason( error: unknown, stage: Stage ): string {
+	if ( error instanceof GoogleSessionRenewalError ) {
+		return `${ error.message } See test/e2e/docs/google_authentication.md for session renewal.`;
+	}
+	if ( error instanceof GoogleSessionError ) {
+		return error.message;
+	}
+	if ( privateStages.has( stage ) || ! ( error instanceof Error ) ) {
 		return 'Private details suppressed.';
 	}
-	return error.message.startsWith( 'Google session' )
-		? `${ error.message } See test/e2e/docs/google_authentication.md for session renewal.`
-		: error.message;
+	return error.message;
 }
 
 function observeLogin( context: BrowserContext, email: string, clientID: string ) {
@@ -127,9 +150,10 @@ test.describe( 'Authentication: Google', { tag: [ tags.AUTHENTICATION ] }, () =>
 	}, workerInfo ) => {
 		test.skip(
 			workerInfo.project.name !== 'authentication',
-			'The authentication project is the only one that has the right browser settings for authentication tests'
+			'Only the authentication project is configured for authentication tests; this file sets its own launch options'
 		);
-		let stage = 'Google session preparation';
+		let stage: Stage = Stage.Preparation;
+		let failed = false;
 		try {
 			expect( ! process.env.DEBUG && ! process.env.PWDEBUG ).toBe( true );
 			const account = secrets.testAccounts.googleLoginUser;
@@ -144,12 +168,12 @@ test.describe( 'Authentication: Google', { tag: [ tags.AUTHENTICATION ] }, () =>
 			).google_oauth_client_id;
 			const observed = observeLogin( context, account.username, clientID );
 
-			stage = 'WordPress.com login page';
-			await page.goto( DataHelper.getCalypsoURL( 'log-in' ), { waitUntil: 'domcontentloaded' } );
+			stage = Stage.LoginPage;
+			await pageLogin.visit();
 			expect( /^https:\/\/wordpress\.com\/log-in(?:[?#]|$)/.test( page.url() ) ).toBe( true );
 			await expect( page.getByRole( 'button', { name: 'Continue with Google' } ) ).toBeVisible();
 
-			stage = 'Google account selection or consent';
+			stage = Stage.GoogleConsent;
 			const popup = await pageLogin.clickLoginWithGoogle();
 			await expect
 				.poll( () => popup.isClosed() || /^https:\/\/accounts\.google\.com\//.test( popup.url() ), {
@@ -174,7 +198,7 @@ test.describe( 'Authentication: Google', { tag: [ tags.AUTHENTICATION ] }, () =>
 				)
 				.toBe( true );
 
-			stage = 'production login';
+			stage = Stage.ProductionLogin;
 			await expect
 				.poll( () => /^https:\/\/wordpress\.com\/home\//.test( page.url() ), {
 					timeout: 10000,
@@ -185,17 +209,21 @@ test.describe( 'Authentication: Google', { tag: [ tags.AUTHENTICATION ] }, () =>
 			expect( ( await Promise.all( observed.pending ) ).every( Boolean ) ).toBe( true );
 			expect( observed.evidence ).toEqual( { exchange: true, identity: true, login: true } );
 		} catch ( error ) {
+			failed = true;
 			throw new Error(
-				`Google authentication failed at ${ stage }. ${ safeFailureReason( error ) }`
+				`Google authentication failed at ${ stage }. ${ failureReason( error, stage ) }`
 			);
 		} finally {
+			// A cleanup failure must not replace the test failure that is already in flight.
 			await page
 				.context()
 				.close()
 				.catch( () => {
-					throw new Error(
-						'Google authentication context cleanup failed; private details suppressed.'
-					);
+					if ( ! failed ) {
+						throw new Error(
+							'Google authentication context cleanup failed; private details suppressed.'
+						);
+					}
 				} );
 		}
 	} );

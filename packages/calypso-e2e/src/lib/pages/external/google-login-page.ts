@@ -7,6 +7,22 @@ const selectors = {
 };
 
 /**
+ * A returning-session failure whose message carries no private details,
+ * so callers can surface it as is.
+ */
+export class GoogleSessionError extends Error {
+	name = 'GoogleSessionError';
+}
+
+/**
+ * Google asked for credentials or human verification: the stored session
+ * must be renewed by a maintainer, retrying will not help.
+ */
+export class GoogleSessionRenewalError extends GoogleSessionError {
+	name = 'GoogleSessionRenewalError';
+}
+
+/**
  * Represents the login screens shown by Google.
  */
 export class GoogleLoginPage {
@@ -19,8 +35,6 @@ export class GoogleLoginPage {
 
 	/** Advances returning-account selection or consent without entering credentials. */
 	async continueWithSession( email: string ): Promise< void > {
-		const renewalMessage =
-			'Google session requires renewal; complete account verification manually.';
 		try {
 			const pathname = new URL( this.page.url() ).pathname;
 			if (
@@ -34,7 +48,9 @@ export class GoogleLoginPage {
 					.first()
 					.isVisible() )
 			) {
-				throw new Error( renewalMessage );
+				throw new GoogleSessionRenewalError(
+					'Google session requires renewal; complete account verification manually.'
+				);
 			}
 			const consent = this.page.getByRole( 'button', { name: /^(Continue|Allow)$/ } );
 			const account = this.page.getByText( email, { exact: true } ).first();
@@ -48,12 +64,12 @@ export class GoogleLoginPage {
 			if ( this.page.isClosed() ) {
 				return;
 			}
-			if ( error instanceof Error && error.message === renewalMessage ) {
+			if ( error instanceof GoogleSessionRenewalError ) {
 				throw error;
 			}
 			const category =
 				error instanceof Error && error.name === 'TimeoutError' ? 'timeout' : 'interaction';
-			throw new Error(
+			throw new GoogleSessionError(
 				`Google returning-session ${ category } failure; private details suppressed.`
 			);
 		}

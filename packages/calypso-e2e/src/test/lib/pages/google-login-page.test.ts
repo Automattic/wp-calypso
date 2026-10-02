@@ -1,5 +1,9 @@
 import { describe, expect, jest, test } from '@jest/globals';
-import { GoogleLoginPage } from '../../../lib/pages/external/google-login-page';
+import {
+	GoogleLoginPage,
+	GoogleSessionError,
+	GoogleSessionRenewalError,
+} from '../../../lib/pages/external/google-login-page';
 import type { Page } from 'playwright';
 
 const buildPage = ( challengeText = '' ) => {
@@ -69,6 +73,16 @@ const buildReturningPage = ( {
 	return { page, consentClick, accountClick, consentVisible };
 };
 
+// The class drives the spec's renewal guidance; the message is what operators read.
+const expectRenewal = async ( operation: Promise< void > ) => {
+	const error = await operation.catch( ( caught ) => caught );
+
+	expect( error ).toBeInstanceOf( GoogleSessionRenewalError );
+	expect( error.message ).toBe(
+		'Google session requires renewal; complete account verification manually.'
+	);
+};
+
 describe( 'GoogleLoginPage', () => {
 	describe( 'returning Google sessions', () => {
 		test.each( [ 'Continue', 'Allow' ] )( 'accepts exact %s consent', async ( buttonText ) => {
@@ -114,9 +128,9 @@ describe( 'GoogleLoginPage', () => {
 					buttonText: 'Continue',
 				} );
 
-				await expect(
+				await expectRenewal(
 					new GoogleLoginPage( page ).continueWithSession( 'person@example.test' )
-				).rejects.toThrow( 'Google session requires renewal' );
+				);
 				expect( consentClick ).not.toHaveBeenCalled();
 				expect( accountClick ).not.toHaveBeenCalled();
 			}
@@ -130,9 +144,9 @@ describe( 'GoogleLoginPage', () => {
 					buttonText: 'Continue',
 				} );
 
-				await expect(
+				await expectRenewal(
 					new GoogleLoginPage( page ).continueWithSession( 'person@example.test' )
-				).rejects.toThrow( 'Google session requires renewal' );
+				);
 				expect( consentClick ).not.toHaveBeenCalled();
 			}
 		);
@@ -142,28 +156,49 @@ describe( 'GoogleLoginPage', () => {
 			async ( pathname ) => {
 				const { page, consentClick } = buildReturningPage( { pathname, buttonText: 'Continue' } );
 
-				await expect(
+				await expectRenewal(
 					new GoogleLoginPage( page ).continueWithSession( 'person@example.test' )
-				).rejects.toThrow( 'Google session requires renewal' );
+				);
 				expect( consentClick ).not.toHaveBeenCalled();
 			}
 		);
 
-		test.each( [ true, false ] )(
-			'ignores a failed consent operation only after popup closure: %s',
-			async ( closed ) => {
-				const { page, consentClick } = buildReturningPage( { buttonText: 'Continue', closed } );
-				consentClick.mockRejectedValue( new Error( 'private browser details' ) );
-				const result = await new GoogleLoginPage( page )
-					.continueWithSession( 'person@example.test' )
-					.catch( ( error ) => error );
+		const failConsent = ( closed: boolean ) => {
+			const { page, consentClick } = buildReturningPage( { buttonText: 'Continue', closed } );
+			consentClick.mockRejectedValue( new Error( 'private browser details' ) );
+			return new GoogleLoginPage( page ).continueWithSession( 'person@example.test' );
+		};
 
-				const expected = new Error(
-					'Google returning-session interaction failure; private details suppressed.'
-				);
-				expect( result ).toEqual( closed ? undefined : expected );
-			}
-		);
+		test( 'ignores a failed consent operation after popup closure', async () => {
+			await expect( failConsent( true ) ).resolves.toBeUndefined();
+		} );
+
+		test( 'reports a timed-out consent operation as a session timeout', async () => {
+			const { page, consentClick } = buildReturningPage( { buttonText: 'Continue' } );
+			const timeout = new Error( 'private browser details' );
+			timeout.name = 'TimeoutError';
+			consentClick.mockRejectedValue( timeout );
+
+			const result = await new GoogleLoginPage( page )
+				.continueWithSession( 'person@example.test' )
+				.catch( ( error ) => error );
+
+			expect( result ).toBeInstanceOf( GoogleSessionError );
+			expect( result ).not.toBeInstanceOf( GoogleSessionRenewalError );
+			expect( result.message ).toBe(
+				'Google returning-session timeout failure; private details suppressed.'
+			);
+		} );
+
+		test( 'reports a failed consent operation as a private-safe session error', async () => {
+			const result = await failConsent( false ).catch( ( error ) => error );
+
+			expect( result ).toBeInstanceOf( GoogleSessionError );
+			expect( result ).not.toBeInstanceOf( GoogleSessionRenewalError );
+			expect( result.message ).toBe(
+				'Google returning-session interaction failure; private details suppressed.'
+			);
+		} );
 	} );
 
 	test.each( [ 'Confirm you’re not a robot', "Confirm you're not a robot" ] )(
