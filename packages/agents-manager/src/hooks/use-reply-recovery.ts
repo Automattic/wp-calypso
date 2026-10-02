@@ -1,17 +1,8 @@
 /**
- * Recover the reply to a question the merchant asked before a page change
- * (WOOAI-872): the new page hydrates the conversation once, and if the server
- * was still answering that fetch has the question and nothing after it.
- *
- * Nothing here rehydrates on a timer. The transcript is read once at mount
- * (the snapshot), then a cheap page-1 probe on its own query key watches for a
- * newer agent row. Only when the reply is confirmed is the hydration query
- * invalidated, once. Every path ends: the merchant sending or a turn going in
- * flight stops it, and a question the server never received (after
- * `LOST_AFTER_MS`) or never answers (after `UNANSWERED_AFTER_MS`) ends in a
- * notice with a retry.
- *
- * Every state is a notice, never `isProcessing`, so the composer stays usable.
+ * Recovers the reply to a question asked before a page change. When the first
+ * hydration ends at that question, polls page 1 until the reply lands, then
+ * rehydrates once. A question the server never stored or never answers ends in
+ * a notice with Retry.
  */
 import {
 	getAgentManager,
