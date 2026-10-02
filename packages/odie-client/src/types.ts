@@ -23,6 +23,7 @@ export type OdieAssistantContextInterface = {
 	selectedSiteURL?: string | null;
 	userFieldMessage?: string | null;
 	userFieldFlowName?: string | null;
+	zendeskConversationTags?: string[];
 	externalChatProvider?: string | null;
 	externalChatId?: string | null;
 	forceEmailSupport: boolean;
@@ -49,6 +50,7 @@ export type OdieAssistantProviderProps = {
 	selectedSiteURL?: string | null;
 	userFieldMessage?: string | null;
 	userFieldFlowName?: string | null;
+	zendeskConversationTags?: string[];
 	externalChatProvider?: string | null;
 	externalChatId?: string | null;
 	version?: string | null;
