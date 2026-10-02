@@ -12,6 +12,7 @@ import {
 	mockGetBundleTriggersQuery,
 	mockGetFreeSuggestionQuery,
 	mockGetSuggestionsQuery,
+	mockGetSuggestionsQueryEmptyResults,
 } from '../../test-helpers/queries/suggestions';
 import { TestDomainSearch } from '../../test-helpers/renderer';
 import { ResultsPage } from '../results';
@@ -145,6 +146,34 @@ describe( 'ResultsPage', () => {
 			expect( testOrg ).toBeInTheDocument();
 			expect( testOrg ).not.toHaveTextContent( 'Recommended' );
 			expect( testOrg ).not.toHaveTextContent( 'Best alternative' );
+		} );
+
+		it( 'renders the exact-match suggestion if the suggestions request fails for an available FQDN', async () => {
+			mockGetSuggestionsQueryEmptyResults( { params: { query: 'foo.live' } } );
+			mockGetAvailabilityQuery( {
+				params: { domainName: 'foo.live' },
+				availability: buildAvailability( {
+					domain_name: 'foo.live',
+					tld: 'live',
+					status: DomainAvailabilityStatus.AVAILABLE,
+					cost: '$25',
+				} ),
+			} );
+
+			render(
+				<TestDomainSearch query="foo.live">
+					<ResultsPage />
+				</TestDomainSearch>
+			);
+
+			const exactMatch = await screen.findByTitle( 'foo.live' );
+
+			expect( exactMatch ).toHaveTextContent( "It's available!" );
+			expect( exactMatch ).toHaveTextContent( '$25' );
+			expect( screen.getByRole( 'button', { name: 'Add to cart' } ) ).toBeInTheDocument();
+			expect(
+				screen.queryByText( 'No available domains for that search.' )
+			).not.toBeInTheDocument();
 		} );
 
 		it( 'renders the "show more results" button if there are more than config.numberOfDomainsResultsPerPage suggestions', async () => {
