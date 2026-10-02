@@ -3,6 +3,7 @@ export { getRootDomain } from './get-root-domain';
 export { getTld } from './get-tld';
 export { isFqdnQuery } from './is-fqdn-query';
 export { isSubdomain } from './is-subdomain';
+export { isSubdomainWithMappedRootDomain } from './is-subdomain-with-mapped-root-domain';
 export {
 	isBlogSubdomainQuery,
 	isFreeSubdomainQuery,

@@ -245,6 +245,38 @@ describe( 'UnavailableSearchResult', () => {
 		);
 	} );
 
+	it( 'renders nothing when the queried subdomain root domain is mapped to another account', async () => {
+		mockGetSuggestionsQuery( {
+			params: { query: 'cms.example.com' },
+			suggestions: [ buildSuggestion( { domain_name: 'cms.example.com' } ) ],
+		} );
+
+		const availabilityQuery = mockGetAvailabilityQuery( {
+			params: { domainName: 'cms.example.com' },
+			availability: buildAvailability( {
+				domain_name: 'cms.example.com',
+				tld: 'com',
+				status: DomainAvailabilityStatus.MAPPED,
+			} ),
+		} );
+
+		const { container } = render(
+			<TestDomainSearchWithSuggestions
+				query="cms.example.com"
+				config={ { allowsUsingOwnDomain: true } }
+			>
+				<UnavailableSearchResult />
+			</TestDomainSearchWithSuggestions>
+		);
+
+		await waitFor( () => expect( availabilityQuery.isDone() ).toBe( true ) );
+
+		await waitFor( () => expect( container ).toBeEmptyDOMElement() );
+
+		expect( screen.queryByText( 'Bring it over' ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( /is already registered./ ) ).not.toBeInTheDocument();
+	} );
+
 	describe( 'no unavailable search result message', () => {
 		it( 'renders nothing if the availability query was not retrieved', async () => {
 			const { container } = render(
