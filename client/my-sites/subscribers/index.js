@@ -5,7 +5,7 @@ import {
 	redirectIfCurrentUserCannot,
 } from 'calypso/controller';
 import { navigation, siteSelection, sites } from 'calypso/my-sites/controller';
-import { subscribers } from './controller';
+import { redirectToNewsletter, subscribers } from './controller';
 
 export default function () {
 	page( '/subscribers', siteSelection, sites, makeLayout, clientRender );
@@ -13,6 +13,7 @@ export default function () {
 	page(
 		'/subscribers/:domain',
 		siteSelection,
+		redirectToNewsletter,
 		navigation,
 		redirectIfCurrentUserCannot( 'list_users' ),
 		subscribers,
@@ -23,6 +24,7 @@ export default function () {
 	page(
 		'/subscribers/:domain/:subscriberId',
 		siteSelection,
+		redirectToNewsletter,
 		navigation,
 		redirectIfCurrentUserCannot( 'list_users' ),
 		subscribers,

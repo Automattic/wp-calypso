@@ -1,4 +1,5 @@
 import { Onboard } from '@automattic/data-stores';
+import { newsletterAdminUrl } from '@automattic/newsletter-urls';
 import { SITE_MIGRATION_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useFlowState } from 'calypso/landing/stepper/declarative-flow/internals/state-manager/store';
@@ -383,12 +384,8 @@ const siteSetupFlow: Flow = {
 					// Importers launched from the wp-admin Newsletter UI (e.g. the Substack
 					// importer in the Subscribers screen) should return there, not to the
 					// importer list.
-					if ( entryPoint === 'wp-admin-newsletter-ui' ) {
-						return window.location.assign(
-							`${ adminUrl }admin.php?page=jetpack-newsletter&p=${ encodeURIComponent(
-								'/?tab=subscribers'
-							) }`
-						);
+					if ( entryPoint === 'wp-admin-newsletter-ui' && adminUrl ) {
+						return window.location.assign( newsletterAdminUrl( adminUrl, { tab: 'subscribers' } ) );
 					}
 
 					return navigate( addQueryArgs( { origin, siteSlug }, 'importList' ) );

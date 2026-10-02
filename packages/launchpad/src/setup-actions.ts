@@ -112,7 +112,9 @@ export const setUpActionsForTasks = ( {
 
 				case 'manage_subscribers':
 					logMissingCalypsoPath = true;
-					task.calypso_path = `/subscribers/${ siteSlug }`;
+					task.calypso_path = newsletterAdminUrl( `https://${ siteSlug }/wp-admin/`, {
+						tab: 'subscribers',
+					} );
 					break;
 
 				case 'site_launched':
