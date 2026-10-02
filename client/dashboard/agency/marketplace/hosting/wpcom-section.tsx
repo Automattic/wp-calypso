@@ -22,6 +22,7 @@ import { getWpcomTieredPrice } from '../products/lib/product-pricing';
 import { MAX_CART_ITEM_QUANTITY } from '../products/use-shopping-cart';
 import { DevSiteConfigurationModal } from '../purchases/site-configuration-modal';
 import { CheckGrid, HostingFeatures, Testimonials } from './content-sections';
+import { getMonthlyUnitPrice, getTermPrice } from './lib/term-price';
 import SelectedPlanCard from './selected-plan-card';
 import StepHeading from './step-heading';
 import { useSessionState } from './use-session-state';
@@ -166,8 +167,9 @@ export default function WpcomSection( {
 	const quantity = isReferralMode ? 1 : persistedQuantity;
 
 	const pricing = getWpcomTieredPrice( plan, quantity, term, ownedSites );
-	const perSiteLabel = term === 'yearly' ? __( '/site per year' ) : __( '/site per month' );
-	const termSuffix = term === 'yearly' ? __( '/year' ) : __( '/month' );
+	// A4AD-268: prices read per month; with yearly billing, the yearly total is a note.
+	const perSiteLabel = __( '/site per month' );
+	const termPrice = getTermPrice( pricing.discountedCost, plan.currency, term );
 	const billedLabel = term === 'yearly' ? __( 'billed annually' ) : __( 'billed monthly' );
 
 	const allTiers = getVolumeTiers( plan, term );
@@ -299,7 +301,9 @@ export default function WpcomSection( {
 												</div>
 												<VStack spacing={ 1 } alignment="flex-start">
 													<Text weight={ 600 }>
-														<span>{ formatCurrency( pricing.pricePerUnit, plan.currency ) }</span>
+														<span>
+															{ getMonthlyUnitPrice( pricing.pricePerUnit, plan.currency, term ) }
+														</span>
 														<Text as="span" variant="muted">
 															{ perSiteLabel }
 														</Text>
@@ -312,7 +316,13 @@ export default function WpcomSection( {
 															expanded={ false }
 														>
 															<Text variant="muted">
-																<s>{ formatCurrency( pricing.basePricePerUnit, plan.currency ) }</s>
+																<s>
+																	{ getMonthlyUnitPrice(
+																		pricing.basePricePerUnit,
+																		plan.currency,
+																		term
+																	) }
+																</s>
 															</Text>
 															<Badge intent="stable">
 																{ sprintf(
@@ -361,7 +371,11 @@ export default function WpcomSection( {
 																			) }
 																		</Text>
 																		<Text variant="muted" size={ 12 }>
-																			{ formatCurrency( tier.pricePerUnit, plan.currency ) }
+																			{ getMonthlyUnitPrice(
+																				tier.pricePerUnit,
+																				plan.currency,
+																				term
+																			) }
 																		</Text>
 																		<Text
 																			size={ 12 }
@@ -417,38 +431,38 @@ export default function WpcomSection( {
 			<div className="dashboard-marketplace-hosting__rail">
 				<SelectedPlanCard
 					label={ siteCountLabel }
-					compactPrice={
-						isOwnedSitesReady
-							? formatCurrency( pricing.discountedCost, plan.currency ) + termSuffix
-							: undefined
-					}
+					compactPrice={ isOwnedSitesReady ? termPrice.figure + termPrice.suffix : undefined }
 					price={
 						<Text size={ 24 } weight={ 600 } className="dashboard-marketplace-hosting__rail-price">
 							<TextBlur isBlurred={ ! isOwnedSitesReady } length={ 9 }>
-								{ formatCurrency( pricing.discountedCost, plan.currency ) }
+								{ termPrice.figure }
 							</TextBlur>
 							<Text as="span" variant="muted" size={ 13 } weight={ 400 }>
-								{ termSuffix }
+								{ termPrice.suffix }
 							</Text>
 						</Text>
 					}
 					notes={
-						isOwnedSitesReady &&
-						pricing.discountPercentage > 0 && (
+						isOwnedSitesReady && (
 							<VStack spacing={ 1 }>
-								<Text variant="muted">
-									<s>{ formatCurrency( pricing.actualCost, plan.currency ) }</s>
-									<span>
-										{ ' · ' +
-											sprintf(
-												/* translators: %s is the amount saved, e.g. "US$300.00". */
-												__( 'Save %s' ),
-												formatCurrency( pricing.actualCost - pricing.discountedCost, plan.currency )
-											) +
-											' · ' +
-											billedLabel }
-									</span>
-								</Text>
+								{ termPrice.billed && <Text variant="muted">{ termPrice.billed }</Text> }
+								{ pricing.discountPercentage > 0 && (
+									<Text variant="muted">
+										<s>{ formatCurrency( pricing.actualCost, plan.currency ) }</s>
+										<span>
+											{ ' · ' +
+												sprintf(
+													/* translators: %s is the amount saved, e.g. "US$300.00". */
+													__( 'Save %s' ),
+													formatCurrency(
+														pricing.actualCost - pricing.discountedCost,
+														plan.currency
+													)
+												) +
+												( term === 'monthly' ? ' · ' + billedLabel : '' ) }
+										</span>
+									</Text>
+								) }
 								{ ownedSites > 0 && (
 									<Text variant="muted">
 										{ sprintf(

@@ -31,6 +31,7 @@ import {
 	isSignatureCatalogPlan,
 	sortPlansForCategory,
 } from './lib/pressable-plans';
+import { getTermPrice } from './lib/term-price';
 import OptionCards from './option-cards';
 import PressablePlanTable, { CUSTOM_PLAN_OPTION } from './pressable-plan-table';
 import PressablePremiumGate from './pressable-premium-gate';
@@ -341,22 +342,23 @@ export default function PressableSection( {
 			return sprintf( __( 'Add %s to cart' ), planName );
 		};
 		const ctaLabel = getCtaLabel();
-		const termSuffix = term === 'yearly' ? __( '/year' ) : __( '/month' );
+		const termPrice = getTermPrice( priceInfo.price, selectedProduct.currency, term );
 
 		return (
 			<SelectedPlanCard
 				label={ selectedProduct.name }
-				compactPrice={ formatCurrency( priceInfo.price, selectedProduct.currency ) + termSuffix }
+				compactPrice={ termPrice.figure + termPrice.suffix }
 				price={
 					<Text size={ 24 } weight={ 600 } className="dashboard-marketplace-hosting__rail-price">
-						<span>{ formatCurrency( priceInfo.price, selectedProduct.currency ) }</span>
+						<span>{ termPrice.figure }</span>
 						<Text as="span" variant="muted" size={ 13 } weight={ 400 }>
-							{ termSuffix }
+							{ termPrice.suffix }
 						</Text>
 					</Text>
 				}
 				notes={
 					<VStack spacing={ 1 }>
+						{ termPrice.billed && <Text variant="muted">{ termPrice.billed }</Text> }
 						{ hasIntroductoryDiscount && (
 							<Text variant="muted">
 								<s>{ formatCurrency( priceInfo.regularPrice ?? 0, selectedProduct.currency ) }</s>
