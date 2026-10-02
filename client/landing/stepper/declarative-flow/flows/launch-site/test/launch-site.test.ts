@@ -2,11 +2,13 @@
  * @jest-environment jsdom
  */
 import { addProductsToCart } from '@automattic/onboarding';
+import { renderHook } from '@testing-library/react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { persistSignupDestination } from 'calypso/signup/storageUtils';
 import { STEPS } from '../../../internals/steps';
 import launchSiteFlow from '../launch-site';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
+import type { Store } from 'redux';
 
 let mockQuery: Record< string, string > = {};
 let mockOnboard: {
@@ -17,6 +19,7 @@ let mockOnboard: {
 let mockProductsList: Record< string, unknown > = {};
 let mockSite: unknown = null;
 let mockDomains: unknown[] = [];
+let mockUserId: number | null = 1;
 
 jest.mock( '@automattic/onboarding', () => ( {
 	LAUNCH_SITE_FLOW: 'launch-site',
@@ -66,7 +69,7 @@ jest.mock( '@wordpress/data', () => {
 
 jest.mock( 'calypso/state', () => ( {
 	useSelector: ( selector: ( state: unknown ) => unknown ) =>
-		selector( { productsList: { items: mockProductsList } } ),
+		selector( { productsList: { items: mockProductsList }, currentUser: { id: mockUserId } } ),
 } ) );
 
 jest.mock( 'calypso/components/data/query-products-list', () => ( {
@@ -124,10 +127,14 @@ const paidSite = { ID: 1, plan: { product_slug: 'personal-bundle', is_free: fals
 const wpcomDomain = { domain: 'example.wordpress.com', wpcom_domain: true };
 const customDomain = { domain: 'example.com', wpcom_domain: false };
 
+const reduxStore = {
+	getState: () => ( { currentUser: { id: mockUserId } } ),
+} as unknown as Store;
+
 const initializeWith = ( site: unknown, domains: unknown[] ) => {
 	mockSite = site;
 	mockDomains = domains;
-	return launchSiteFlow.initialize();
+	return launchSiteFlow.initialize( reduxStore );
 };
 
 const assigned = () => ( window.location.assign as jest.Mock ).mock.calls[ 0 ]?.[ 0 ];
@@ -135,6 +142,7 @@ const assigned = () => ( window.location.assign as jest.Mock ).mock.calls[ 0 ]?.
 describe( 'launch-site flow', () => {
 	beforeEach( async () => {
 		mockQuery = { siteSlug: 'example.wordpress.com' };
+		mockUserId = 1;
 		mockOnboard = {};
 		mockProductsList = {
 			domain_reg: {
@@ -349,15 +357,66 @@ describe( 'launch-site flow', () => {
 	} );
 
 	describe( 'initialize', () => {
+		it( 'lets the user log in first, without looking the site up', async () => {
+			mockUserId = null;
+			mockSite = paidSite;
+			mockDomains = [ customDomain ];
+
+			const steps = await launchSiteFlow.initialize( reduxStore );
+
+			expect( steps && steps.map( ( step ) => step.slug ) ).toEqual(
+				ALL_STEPS.map( ( step ) => step.slug )
+			);
+			expect(
+				steps &&
+					steps.every( ( step ) => 'requiresLoggedInUser' in step && step.requiresLoggedInUser )
+			).toBe( true );
+			expect( window.location.assign ).not.toHaveBeenCalled();
+			expect( recordTracksEvent ).not.toHaveBeenCalled();
+		} );
+
+		it( 'reloads to check the steps against the site when login finishes without a page load', async () => {
+			const reload = jest.fn();
+			window.location.reload = reload;
+			mockUserId = null;
+			await launchSiteFlow.initialize( reduxStore );
+
+			const { rerender } = renderHook(
+				( { step } ) => launchSiteFlow.useSideEffect?.( step, jest.fn() ),
+				{
+					initialProps: {
+						step: 'user' as Parameters< NonNullable< typeof launchSiteFlow.useSideEffect > >[ 0 ],
+					},
+				}
+			);
+			mockUserId = 1;
+			rerender( {
+				step: 'user' as Parameters< NonNullable< typeof launchSiteFlow.useSideEffect > >[ 0 ],
+			} );
+			expect( reload ).not.toHaveBeenCalled();
+
+			rerender( { step: STEPS.DOMAIN_SEARCH.slug } );
+			expect( reload ).toHaveBeenCalled();
+		} );
+
+		it( 'does not reload once the steps were checked against the site', async () => {
+			const reload = jest.fn();
+			window.location.reload = reload;
+
+			renderHook( () => launchSiteFlow.useSideEffect?.( STEPS.DOMAIN_SEARCH.slug, jest.fn() ) );
+
+			expect( reload ).not.toHaveBeenCalled();
+		} );
+
 		it( 'leaves for the sites list without a site', async () => {
 			mockQuery = {};
 
-			expect( await launchSiteFlow.initialize() ).toBe( false );
+			expect( await launchSiteFlow.initialize( reduxStore ) ).toBe( false );
 			expect( assigned() ).toBe( '/sites' );
 		} );
 
 		it( 'leaves for the sites list when the site cannot be found', async () => {
-			expect( await launchSiteFlow.initialize() ).toBe( false );
+			expect( await launchSiteFlow.initialize( reduxStore ) ).toBe( false );
 			expect( assigned() ).toBe( '/sites' );
 		} );
 

@@ -34,12 +34,14 @@ import {
 	setSignupCompleteSlug,
 } from 'calypso/signup/storageUtils';
 import { useSelector } from 'calypso/state';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { getProductsList } from 'calypso/state/products-list/selectors/get-products-list';
 import { STEPS } from '../../internals/steps';
 import { getLaunchSiteSteps } from './get-launch-site-steps';
 import type { FlowV2, SubmitHandler } from '../../internals/types';
 import type { OnboardActions, OnboardSelect } from '@automattic/data-stores';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
+import type { Store } from 'redux';
 
 // Mirrors the event legacy signup records when it auto-skips a step, keyed by the legacy step names.
 function recordExcludedStep( step: 'domains-launch' | 'plans-launch', value: string ) {
@@ -52,8 +54,21 @@ function recordExcludedStep( step: 'domains-launch' | 'plans-launch', value: str
 
 // `initialize` runs once per page load; navigation needs to know which of the optional steps it kept.
 let flowStepSlugs: string[] = [];
+let isWaitingForLogin = false;
 
-async function initialize() {
+async function initialize( reduxStore: Store ) {
+	// Stepper's login step comes first; signing in reloads the flow, and this runs again with a user.
+	if ( ! isUserLoggedIn( reduxStore.getState() ) ) {
+		const steps = getLaunchSiteSteps( null, null );
+
+		isWaitingForLogin = true;
+		flowStepSlugs = steps.map( ( step ) => step.slug );
+
+		return stepsWithRequiredLogin( steps );
+	}
+
+	isWaitingForLogin = false;
+
 	const siteSlug = getCurrentQueryParams().get( 'siteSlug' );
 	const site = siteSlug
 		? await resolveSelect( SITE_STORE )
@@ -112,8 +127,16 @@ const launchSiteFlow: FlowV2< typeof initialize > = {
 
 	useSideEffect( currentStepSlug ) {
 		const { resetOnboardStore } = useDispatch( ONBOARD_STORE ) as OnboardActions;
+		const isLoggedIn = useSelector( isUserLoggedIn );
 
 		useQueryProductsList();
+
+		// A login that finishes without a page load leaves the steps unchecked against the site.
+		useEffect( () => {
+			if ( isLoggedIn && isWaitingForLogin && flowStepSlugs.includes( currentStepSlug ) ) {
+				window.location.reload();
+			}
+		}, [ isLoggedIn, currentStepSlug ] );
 
 		// Only at the flow root: a mid-flow refresh must keep the user's selections.
 		useEffect( () => {
