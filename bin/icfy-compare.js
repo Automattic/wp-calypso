@@ -44,7 +44,7 @@ function matchingProp( name ) {
 // only the handful of properties the comparison needs are kept.
 function parseStats( filename ) {
 	const inputStream = createReadStream( filename, { encoding: 'utf8' } );
-	const jsonStream = streamJson.parser();
+	const jsonStream = streamJson.parserStream();
 	inputStream.pipe( jsonStream );
 
 	const outputStack = [];
