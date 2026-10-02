@@ -62,12 +62,16 @@ function isEligiblePlan( planSlug: string ): boolean {
 	);
 }
 
-function parseSiteCreatedAt( siteCreatedAt: string ): number {
-	// Site models can hand back a space-separated `YYYY-MM-DD HH:MM:SS` (GMT)
-	// string that not every engine parses as a date. Normalize that shape to
-	// ISO 8601 UTC; otherwise defer to the native parser for ISO 8601 inputs.
+// Site models can hand back a space-separated `YYYY-MM-DD HH:MM:SS` (GMT) string
+// that not every engine parses, and that the native parser would read as local
+// time. Rewrite that shape to explicit ISO 8601 UTC; pass ISO 8601 inputs through.
+export function normalizeCreatedAt( siteCreatedAt: string ): string {
 	const wpDate = /^(\d{4}-\d{2}-\d{2}) (\d{2}:\d{2}:\d{2})$/.exec( siteCreatedAt );
-	return Date.parse( wpDate ? `${ wpDate[ 1 ] }T${ wpDate[ 2 ] }Z` : siteCreatedAt );
+	return wpDate ? `${ wpDate[ 1 ] }T${ wpDate[ 2 ] }Z` : siteCreatedAt;
+}
+
+function parseSiteCreatedAt( siteCreatedAt: string ): number {
+	return Date.parse( normalizeCreatedAt( siteCreatedAt ) );
 }
 
 function isRecentSite( siteCreatedAt: string, now: number ): boolean {

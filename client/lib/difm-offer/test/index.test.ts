@@ -18,6 +18,7 @@ import {
 	DIFM_OFFER_EXPERIMENT,
 	DIFM_OFFER_MAX_SITE_AGE_DAYS,
 	isEligibleForDifmOffer,
+	normalizeCreatedAt,
 	normalizeDifmOfferVariation,
 	useDifmOffer,
 } from '../index';
@@ -103,13 +104,10 @@ describe( 'isEligibleForDifmOffer', () => {
 		).toBe( true );
 	} );
 
-	it( 'parses a space-separated GMT creation date', () => {
+	it( 'accepts a space-separated GMT creation date within the window', () => {
 		expect(
 			isEligibleForDifmOffer( { ...eligibleInput(), siteCreatedAt: '2026-09-24 11:00:00' }, NOW )
 		).toBe( true );
-		expect(
-			isEligibleForDifmOffer( { ...eligibleInput(), siteCreatedAt: '2026-09-01 00:00:00' }, NOW )
-		).toBe( false );
 	} );
 
 	it( 'accepts en and en-gb and rejects en-us and fr', () => {
@@ -133,6 +131,17 @@ describe( 'isEligibleForDifmOffer', () => {
 		expect( isEligibleForDifmOffer( { ...eligibleInput(), localeSlug: undefined }, NOW ) ).toBe(
 			false
 		);
+	} );
+} );
+
+describe( 'normalizeCreatedAt', () => {
+	it( 'rewrites a space-separated date to explicit ISO 8601 UTC', () => {
+		expect( normalizeCreatedAt( '2026-09-24 11:00:00' ) ).toBe( '2026-09-24T11:00:00Z' );
+	} );
+
+	it( 'passes an ISO 8601 date through unchanged', () => {
+		expect( normalizeCreatedAt( '2026-09-24T11:00:00+00:00' ) ).toBe( '2026-09-24T11:00:00+00:00' );
+		expect( normalizeCreatedAt( '2026-09-24T11:00:00Z' ) ).toBe( '2026-09-24T11:00:00Z' );
 	} );
 } );
 
