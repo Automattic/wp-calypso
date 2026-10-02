@@ -22,10 +22,12 @@ export default class ChartBarContainer extends PureComponent {
 		hideXAxis: false,
 	};
 
+	clearTooltip = () => this.props.setTooltip( null );
+
 	render() {
 		return (
 			<>
-				<div className="chart__bars">
+				<div className="chart__bars" onMouseLeave={ this.clearTooltip }>
 					{ this.props.data.map( ( item, index ) => (
 						<Bar
 							index={ index }
