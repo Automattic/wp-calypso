@@ -292,6 +292,38 @@ Three consumers, all funnelled through `shouldLoadSurvicate()`:
   Ship a change to wp-admin with `install-plugin.sh survicate --release` on a
   sandbox followed by `deploy wpcom` — no Jetpack release needed.
 
+## Pull requests
+
+Any PR that changes `packages/survicate/` or `apps/survicate/` ships to wp-admin
+through a separate widgets.wp.com deploy, not just the Calypso deploy. Reviewers
+and whoever merges need those steps, so **always add the two sections below to the
+PR description** (after "Testing Instructions" in `.github/PULL_REQUEST_TEMPLATE.md`).
+Adapt the feature-specific checks; keep the deploy steps as they are.
+
+```markdown
+## Deployment
+
+Merging to trunk is not enough for wp-admin. After merge:
+
+1. Deploy Calypso as usual (covers Calypso and the Multi-site Dashboard).
+2. TeamCity's "Build Calypso Apps" builds `survicate.zip` and tags it `survicate-release-build`.
+3. On a sandbox: `install-plugin.sh survicate --release`, push to the WPCOM repository when prompted, merge the generated PR once checks pass, then `deploy wpcom`.
+4. Verify: the `version` in `https://widgets.wp.com/survicate/survicate.asset.json` changed, and the manifest still lists only `wp-data`.
+
+Simple sites pick up the new bundle immediately; Atomic sites within an hour (Jetpack caches the manifest).
+
+## Testing in wp-admin
+
+1. Sandbox your site and `widgets.wp.com`.
+2. Until Automattic/jetpack#52709 ships, also load the Jetpack branch that enqueues the bundle: `bin/jetpack-downloader test jetpack-mu-wpcom-plugin update/survicate-shared-bundle`.
+3. `cd apps/survicate && yarn dev --sync`, then open wp-admin as an English-locale user.
+4. Run `localStorage.debug = 'survicate'` and reload to see the package's debug log.
+5. <feature-specific checks, e.g. what should close a survey or set `window._sva.disableTargeting`>
+```
+
+Drop step 2 once Automattic/jetpack#52709 has shipped, and update this section
+to match.
+
 ## Conventions & gotchas
 
 - **Always guard `window._sva`** — it's `undefined` until the SDK loads.
