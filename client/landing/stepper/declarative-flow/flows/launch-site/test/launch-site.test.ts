@@ -274,10 +274,14 @@ describe( 'launch-site flow', () => {
 			expect( mockOnboard.domainCartItems ).toBeUndefined();
 		} );
 
-		it( 'moves on to plans without a domain when the domain needs a plan first', () => {
+		it( 'drops a domain picked earlier when the domain to connect needs a plan first', () => {
+			mockOnboard.domainCartItem = domainItem;
+			mockOnboard.domainCartItems = [ domainItem ];
+
 			const { navigate } = submit( STEPS.USE_MY_DOMAIN.slug, { skipToPlan: true } );
 
-			expect( mockOnboard.domainCartItems ).toBeUndefined();
+			expect( mockOnboard.domainCartItem ).toBeUndefined();
+			expect( mockOnboard.domainCartItems ).toEqual( [] );
 			expect( navigate ).toHaveBeenCalledWith( STEPS.UNIFIED_PLANS.slug );
 		} );
 	} );
@@ -398,6 +402,24 @@ describe( 'launch-site flow', () => {
 
 			expect( mockRecordSignupComplete ).toHaveBeenCalled();
 			expect( window.location.assign ).toHaveBeenCalled();
+		} );
+
+		it( 'goes where the cart says even when recording the signup fails', async () => {
+			mockRecordSignupComplete.mockImplementation( () => {
+				throw new Error( 'tracks failed' );
+			} );
+
+			await submit( STEPS.LAUNCH_SITE.slug ).result;
+			expect( assigned() ).toBe( '/home/example.wordpress.com?celebrateLaunch=true' );
+
+			( window.location.assign as jest.Mock ).mockClear();
+			mockOnboard.planCartItem = planItem;
+			await submit( STEPS.LAUNCH_SITE.slug ).result;
+			expect( new URL( assigned(), 'http://localhost/' ).pathname ).toBe(
+				'/checkout/example.wordpress.com'
+			);
+
+			mockRecordSignupComplete.mockReset();
 		} );
 
 		it( 'only adds privacy to the products that support it', async () => {

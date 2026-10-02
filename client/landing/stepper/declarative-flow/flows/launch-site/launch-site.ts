@@ -204,34 +204,42 @@ const launchSiteFlow: FlowV2< typeof initialize > = {
 			return domainCartItems.length > 0 || ! domainCartItem ? domainCartItems : [ domainCartItem ];
 		};
 
-		const addLaunchProductsToCart = async () => {
+		const getLaunchCartItems = () => {
 			const planCartItem = getPlanCartItem();
-			const cartItems = [ ...getDomainItems(), ...( planCartItem ? [ planCartItem ] : [] ) ].map(
+
+			return [ ...getDomainItems(), ...( planCartItem ? [ planCartItem ] : [] ) ].map(
 				addPrivacyIfSupported
 			);
-
-			recordSignupComplete( {} );
-
-			if ( cartItems.length === 0 ) {
-				return false;
-			}
-
-			try {
-				await addProductsToCart( launchParams.siteSlug, LAUNCH_SITE_FLOW, cartItems );
-			} catch {
-				// Checkout opens on whatever made it into the cart.
-			}
-
-			return true;
 		};
 
 		// The site is already live, so nothing here may keep the user from moving on.
 		const finishLaunch = async () => {
 			const destination = getLaunchDestination( launchParams );
-			const goesToCheckout = await addLaunchProductsToCart().catch( () => true );
+			let cartItems: MinimalRequestCartProduct[] | null;
 
-			if ( ! goesToCheckout ) {
+			try {
+				cartItems = getLaunchCartItems();
+			} catch {
+				// Unknown contents: let checkout show whatever the cart already holds.
+				cartItems = null;
+			}
+
+			try {
+				recordSignupComplete( {} );
+			} catch {
+				// Analytics must not change where the user goes.
+			}
+
+			if ( cartItems?.length === 0 ) {
 				return window.location.assign( destination );
+			}
+
+			try {
+				if ( cartItems ) {
+					await addProductsToCart( launchParams.siteSlug, LAUNCH_SITE_FLOW, cartItems );
+				}
+			} catch {
+				// Checkout opens on whatever made it into the cart.
 			}
 
 			// Checkout reads these to send the user on once they have paid.
@@ -279,10 +287,14 @@ const launchSiteFlow: FlowV2< typeof initialize > = {
 
 					setSignupDomainOrigin( SIGNUP_DOMAIN_ORIGIN.USE_YOUR_DOMAIN );
 
-					if ( providedDependencies && 'domainCartItem' in providedDependencies ) {
-						setDomainCartItem( providedDependencies.domainCartItem );
-						setDomainCartItems( [ providedDependencies.domainCartItem ] );
-					}
+					// Without a domain to buy, drop any picked earlier in the domain search.
+					const domainCartItem =
+						providedDependencies && 'domainCartItem' in providedDependencies
+							? providedDependencies.domainCartItem
+							: undefined;
+
+					setDomainCartItem( domainCartItem );
+					setDomainCartItems( domainCartItem ? [ domainCartItem ] : [] );
 
 					return goPastDomains();
 				}
