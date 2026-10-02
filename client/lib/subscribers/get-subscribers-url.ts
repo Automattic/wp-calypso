@@ -1,18 +1,15 @@
-import { newsletterAdminUrl } from '@automattic/newsletter-urls';
+import {
+	hasNewsletterSubscribersPage as siteHasNewsletterSubscribersPage,
+	newsletterAdminUrl,
+} from '@automattic/newsletter-urls';
 import {
 	getSiteAdminUrl,
+	getSiteOption,
 	getSiteSlug,
-	isJetpackMinimumVersion,
 	isJetpackSite,
 } from 'calypso/state/sites/selectors';
 import type { NewsletterAdminUrlOptions } from '@automattic/newsletter-urls';
 import type { AppState } from 'calypso/types';
-
-// Newsletter > Subscribers shipped in Jetpack 16.1. Below that, `page=jetpack-newsletter`
-// renders the legacy settings app and ignores the `p` route, so self-hosted sites below it
-// keep the Jetpack Cloud subscriber list. Simple and Atomic sites always have the wp-admin
-// page. Mirrors `get_jetpack_subscribers_url()` on the backend.
-const NEWSLETTER_SUBSCRIBERS_JETPACK_VERSION = '16.1';
 
 /** Both the wp-admin Newsletter page and the Jetpack Cloud list open their Add subscribers
  * modal from this hash. */
@@ -41,14 +38,10 @@ export function hasNewsletterSubscribersPage( state: AppState, siteId: number | 
 		return true;
 	}
 
-	const isSelfHostedJetpack = !! isJetpackSite( state, siteId, {
-		treatAtomicAsJetpackSite: false,
+	return siteHasNewsletterSubscribersPage( {
+		isSelfHostedJetpack: !! isJetpackSite( state, siteId, { treatAtomicAsJetpackSite: false } ),
+		jetpackVersion: getSiteOption( state, siteId, 'jetpack_version' ) as string | undefined,
 	} );
-
-	return (
-		! isSelfHostedJetpack ||
-		!! isJetpackMinimumVersion( state, siteId, NEWSLETTER_SUBSCRIBERS_JETPACK_VERSION )
-	);
 }
 
 /**
