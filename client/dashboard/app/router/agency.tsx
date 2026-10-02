@@ -200,6 +200,40 @@ export const agencyTiersRoute = createRoute( {
 	)
 );
 
+// `/amplify` – prospect-site analyses and reports.
+export const agencyAmplifyRoute = createRoute( {
+	staticData: { requiresAgencyCapability: 'a4a_read_amplify' },
+	head: () => ( { meta: [ { title: __( 'Amplify' ) } ] } ),
+	getParentRoute: () => agencyRoute,
+	path: 'amplify',
+	beforeLoad: async ( { cause } ) => {
+		if ( cause === 'preload' ) {
+			return;
+		}
+		const agency = await queryClient.ensureQueryData( activeAgencyQuery() );
+		if ( ! agency?.amplify?.allowed ) {
+			throw redirectAsNotAllowed( { to: '/overview' } );
+		}
+	},
+} );
+
+const agencyAmplifyOverviewRoute = createRoute( {
+	getParentRoute: () => agencyAmplifyRoute,
+	path: '/',
+} ).lazy( () =>
+	import( '../../agency/amplify' ).then( ( d ) =>
+		createLazyRoute( 'agency-amplify' )( { component: d.default } )
+	)
+);
+
+const agencyAmplifyReportsRoute = createRoute( {
+	getParentRoute: () => agencyAmplifyRoute,
+	path: 'reports',
+	beforeLoad: () => {
+		throw dashboardRedirect( { to: '/amplify' } );
+	},
+} );
+
 // `/partner-directory` – layout that gates on the partner directory program
 export const agencyPartnerDirectoryRoute = createRoute( {
 	staticData: { requiresAgencyCapability: 'a4a_read_partner_directory' },
@@ -1948,6 +1982,7 @@ export const createAgencyRoutes = () => [
 	agencyRoute.addChildren( [
 		agencyOverviewRoute,
 		agencyTiersRoute,
+		agencyAmplifyRoute.addChildren( [ agencyAmplifyOverviewRoute, agencyAmplifyReportsRoute ] ),
 		agencyPartnerDirectoryRoute.addChildren( [
 			agencyPartnerDirectoryIndexRoute,
 			agencyPartnerDirectoryExpertiseRoute,

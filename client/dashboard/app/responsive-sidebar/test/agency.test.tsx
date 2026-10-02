@@ -222,14 +222,14 @@ describe( '<AgencySidebar>', () => {
 		expect( screen.queryByRole( 'link', { name: 'AI and MCP' } ) ).not.toBeInTheDocument();
 	} );
 
-	test( 'shows Amplify under Clients as an external link when the agency and the user have access', async () => {
+	test( 'shows Amplify under Clients as an internal link when the agency and the user have access', async () => {
 		await renderSidebar( [ 'a4a_read_amplify' ] );
 
 		expect( screen.getByRole( 'button', { name: 'Clients' } ) ).toBeVisible();
 		const amplify = screen.getByRole( 'link', { name: /Amplify/ } );
 		expect( amplify ).toBeVisible();
 		expect( amplify ).toHaveAttribute( 'href', expect.stringMatching( /\/amplify$/ ) );
-		expect( amplify ).toHaveAttribute( 'target', '_blank' );
+		expect( amplify ).not.toHaveAttribute( 'target', '_blank' );
 	} );
 
 	test( 'hides Amplify when the user lacks the amplify capability', async () => {
