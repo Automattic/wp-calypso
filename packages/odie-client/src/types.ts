@@ -123,6 +123,37 @@ export type Context = {
 		hide_disclaimer_content?: boolean;
 		show_ai_avatar?: boolean;
 		is_error_message?: boolean;
+		wpcom_approval_required?: boolean;
+		wpcom_approval_executed?: boolean;
+		wpcom_approval_declined?: boolean;
+	};
+	/**
+	 * An action-approval outcome riding on the message (see flags.wpcom_approval_*): while
+	 * pending it carries the token the approve/decline endpoints consume; executed and
+	 * declined messages carry the decided outcome for rendering.
+	 */
+	approval?: {
+		status?: 'pending_approval' | 'executed' | 'declined' | 'failed';
+		/** Present only while the proposal is still pending; removed once decided. */
+		token?: string;
+		/** Unix seconds of the decision, set on the card when the server records it. */
+		decided_at?: number;
+		action?: string;
+		description?: string;
+		/**
+		 * The generic argument dump when `description` is an ability-authored headline —
+		 * what the approval actually binds, for a "view exact parameters" affordance.
+		 */
+		details?: string;
+		/**
+		 * The server's classification of the action when the proposal was minted
+		 * (e.g. 'require_approval', 'require_approval_if_supported'); opaque here.
+		 */
+		tier?: string | null;
+		/** Unix time (seconds) after which the server no longer accepts a decision on this token. */
+		expires_at?: number;
+		how_to_approve?: string;
+		reason?: string;
 	};
 };
 
