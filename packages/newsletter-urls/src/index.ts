@@ -72,11 +72,15 @@ const SUBSCRIBERS_JETPACK_VERSION = [ 16, 1 ];
  * the minimum itself (`16.1-beta`) is below it, and a prerelease of anything higher is not.
  */
 function isAtLeastVersion( jetpackVersion: string, minimum: number[] ): boolean {
-	const parts = jetpackVersion.match( /\d+/g )?.map( Number );
+	// Split the release number from any prerelease suffix before parsing: the digits inside
+	// `16.1-beta2` or `16.1-a.1` are part of the suffix, not a third release segment.
+	const [ , release, suffix ] = jetpackVersion.match( /^(\d+(?:\.\d+)*)(.*)$/ ) ?? [];
 
-	if ( ! parts?.length ) {
+	if ( ! release ) {
 		return false;
 	}
+
+	const parts = release.split( '.' ).map( Number );
 
 	for ( let index = 0; index < Math.max( parts.length, minimum.length ); index++ ) {
 		const part = parts[ index ] ?? 0;
@@ -87,8 +91,8 @@ function isAtLeastVersion( jetpackVersion: string, minimum: number[] ): boolean 
 		}
 	}
 
-	// Numerically identical, so only a prerelease suffix separates them.
-	return /^\d+(\.\d+)*$/.test( jetpackVersion );
+	// Releases are identical, so a prerelease of this version is below it.
+	return ! suffix;
 }
 
 /**

@@ -30,6 +30,8 @@ import { hasNewsletterSubscribersPage } from '@automattic/newsletter-urls';
 hasNewsletterSubscribersPage( { isSelfHostedJetpack, jetpackVersion } );
 ```
 
-Newsletter > Subscribers shipped in Jetpack 16.1; self-hosted sites below that keep the Jetpack Cloud list, and Simple and Atomic sites always have the wp-admin page. The comparison follows the backend's `version_compare()` on the shapes Jetpack ships, so a prerelease of the minimum (`16.1-beta`) counts as below it.
+Newsletter > Subscribers shipped in Jetpack 16.1; self-hosted sites below that keep the Jetpack Cloud list, and Simple and Atomic sites always have the wp-admin page.
+
+The comparison follows the backend's `version_compare()` on the shapes Jetpack ships: a prerelease of the minimum counts as below it (`16.1-beta`, `16.1-beta2`, `16.1-rc1`, `16.1-a.1`), while a prerelease of anything higher does not (`16.1.1-beta`, `17.0-beta2`). It is deliberately narrower than a general version comparator — `client/lib/version-compare` is the repo's full port of PHP's, but `packages/` cannot import from `client/`.
 
 Callers supply those two facts from wherever they hold site data; the threshold and the comparison live here so they cannot drift apart.

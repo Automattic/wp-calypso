@@ -91,15 +91,31 @@ describe( 'hasNewsletterSubscribersPage()', () => {
 		).toBe( false );
 	} );
 
-	test( 'a prerelease of the minimum is below it, as the backend reads it', () => {
-		expect(
-			hasNewsletterSubscribersPage( { isSelfHostedJetpack: true, jetpackVersion: '16.1-beta' } )
-		).toBe( false );
+	test( 'a prerelease of the minimum is below it, however it is numbered', () => {
+		for ( const jetpackVersion of [
+			'16.1-beta',
+			'16.1-beta2',
+			'16.1-rc1',
+			'16.1-a.1',
+			'16.1-alpha',
+		] ) {
+			expect( hasNewsletterSubscribersPage( { isSelfHostedJetpack: true, jetpackVersion } ) ).toBe(
+				false
+			);
+		}
 	} );
 
 	test( 'a prerelease of a later version is not', () => {
+		for ( const jetpackVersion of [ '17.0-beta', '17.0-beta2', '16.2-rc1' ] ) {
+			expect( hasNewsletterSubscribersPage( { isSelfHostedJetpack: true, jetpackVersion } ) ).toBe(
+				true
+			);
+		}
+	} );
+
+	test( 'a prerelease of a patch above the minimum is above it, as the backend reads it', () => {
 		expect(
-			hasNewsletterSubscribersPage( { isSelfHostedJetpack: true, jetpackVersion: '17.0-beta' } )
+			hasNewsletterSubscribersPage( { isSelfHostedJetpack: true, jetpackVersion: '16.1.1-beta' } )
 		).toBe( true );
 	} );
 
