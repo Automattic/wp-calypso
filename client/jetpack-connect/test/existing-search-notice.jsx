@@ -11,6 +11,12 @@ const API = 'https://public-api.wordpress.com:443';
 const USER_ID = 7;
 const NOTICE_PRODUCT = /This site already has a Jetpack Search subscription\./;
 const NOTICE_RENEWAL = /Continuing will renew it\./;
+const NOTICE_EXPIRED =
+	/This site's Jetpack Search subscription has expired\. Continuing will renew it\./;
+const NOTICE_EXPIRED_PRODUCT =
+	/This site already has a Jetpack Search subscription, but it has expired\./;
+const NOTICE_EXPIRED_PLAN =
+	/Jetpack Search is included in this site's plan, but the plan has expired\./;
 
 const simpleSite = ( ID ) => ( {
 	ID,
@@ -73,15 +79,55 @@ describe( 'ExistingSearchNotice with site purchases', () => {
 		expect( screen.queryByText( NOTICE_RENEWAL ) ).not.toBeInTheDocument();
 	} );
 
-	test( 'ignores expired and removed Search purchases', async () => {
-		const scope = sitePurchases( 14 ).reply( 200, [
-			purchase( 14, { expiry_status: 'expired' } ),
-			purchase( 14, { ID: '142', subscription_status: 'inactive' } ),
-		] );
+	test( 'promises a renewal for a Search purchase in its grace period', async () => {
+		sitePurchases( 14 ).reply( 200, [ purchase( 14, { expiry_status: 'expired' } ) ] );
 		render( simpleSite( 14 ) );
+
+		expect( await screen.findByText( NOTICE_EXPIRED ) ).toBeVisible();
+	} );
+
+	test( 'ignores removed Search purchases', async () => {
+		const scope = sitePurchases( 25 ).reply( 200, [
+			purchase( 25, { subscription_status: 'inactive' } ),
+		] );
+		render( simpleSite( 25 ) );
 		await waitFor( () => expect( scope.isDone() ).toBe( true ) );
 
 		expect( screen.queryByText( NOTICE_PRODUCT ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'names the expiry when the expired purchase belongs to another user', async () => {
+		sitePurchases( 28 ).reply( 200, [
+			purchase( 28, { user_id: '99', expiry_status: 'expired' } ),
+		] );
+		render( simpleSite( 28 ) );
+
+		expect( await screen.findByText( NOTICE_EXPIRED_PRODUCT ) ).toBeVisible();
+	} );
+
+	test( 'promises a renewal for an expired Search product on a self-hosted site', async () => {
+		render(
+			{
+				...simpleSite( 26 ),
+				jetpack: true,
+				jetpack_connection: true,
+				products: [ { product_slug: 'jetpack_search', user_is_owner: true, expired: true } ],
+			},
+			'jetpack_search'
+		);
+
+		expect( await screen.findByText( NOTICE_EXPIRED ) ).toBeVisible();
+	} );
+
+	test( 'points at the plan when the plan including Search has expired', async () => {
+		const scope = sitePurchases( 27 ).reply( 200, [] );
+		render( {
+			...simpleSite( 27 ),
+			plan: { product_slug: 'wp_p2_plus_monthly', expired: true },
+		} );
+		await waitFor( () => expect( scope.isDone() ).toBe( true ) );
+
+		expect( screen.getByText( NOTICE_EXPIRED_PLAN ) ).toBeVisible();
 	} );
 
 	test( 'keeps the existing notice when the purchases request fails', async () => {
