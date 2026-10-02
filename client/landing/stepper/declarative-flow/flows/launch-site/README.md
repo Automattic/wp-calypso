@@ -21,9 +21,11 @@ Logged-out users log in first; the steps are then worked out for their site.
 - `siteSlug` – **Required.** The site to launch. Without it, or for a site that can't be found, the user goes to `/sites`.
 - `back_to` – Where Back returns to. Also where the user lands after launch, when there is no `redirect_to`.
 - `redirect_to` – Where the user lands after launch (and after checkout).
+
+  `back_to` and `redirect_to` are only followed when they are a path on this site or a URL on one of the dashboards; anything else is ignored.
 - `ref` – Passed on to checkout. `wp-admin` (or `wp-admin/…`) returns the user to the site's wp-admin.
 - `coupon` – Applied at checkout.
-- `dashboard` – Passed on to checkout.
+- `dashboard` – Passed on to checkout when it is `a4a`, `ciab` or `dotcom`.
 - `new` – Pre-fills the domain search.
 - `source` – Picks the domains step's Back target (`site`, `my-home`, `general-settings`).
 

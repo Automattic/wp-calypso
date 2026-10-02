@@ -28,6 +28,24 @@ describe( 'getLaunchReturnUrl', () => {
 	it( 'falls back to My Home', () => {
 		expect( getLaunchReturnUrl( { siteSlug } ) ).toBe( '/home/test-site' );
 	} );
+
+	it( 'returns a back_to on the dashboard', () => {
+		expect(
+			getLaunchReturnUrl( { siteSlug, backTo: 'https://my.wordpress.com/sites/test-site' } )
+		).toBe( 'https://my.wordpress.com/sites/test-site' );
+	} );
+
+	it.each( [
+		'https://evil.example/',
+		'//evil.example/',
+		'/\\evil.example/',
+		'javascript:alert(1)',
+		'https://my.wordpress.com.evil.example/',
+	] )( 'ignores the unsafe back_to %s', ( backTo ) => {
+		expect( getLaunchReturnUrl( { siteSlug, backTo, ref: 'wp-admin' } ) ).toBe(
+			'https://test-site/wp-admin'
+		);
+	} );
 } );
 
 describe( 'getLaunchDestination', () => {
@@ -49,6 +67,26 @@ describe( 'getLaunchDestination', () => {
 				redirectTo: '/sites/test-site',
 			} )
 		).toBe( '/sites/test-site?celebrateLaunch=true' );
+	} );
+
+	it.each( [
+		'https://evil.example/',
+		'//evil.example/',
+		'javascript:alert(1)',
+		'https://my.wordpress.com.evil.example/',
+	] )( 'ignores the unsafe redirect_to %s', ( redirectTo ) => {
+		expect( getLaunchDestination( { siteSlug, redirectTo, backTo: '/sites' } ) ).toBe(
+			'/sites?celebrateLaunch=true'
+		);
+	} );
+
+	it( 'lands on a redirect_to on the dashboard', () => {
+		expect(
+			getLaunchDestination( {
+				siteSlug,
+				redirectTo: 'https://my.wordpress.com/sites/test-site',
+			} )
+		).toBe( 'https://my.wordpress.com/sites/test-site?celebrateLaunch=true' );
 	} );
 
 	it( 'uses wp-admin’s celebrate argument', () => {
@@ -98,5 +136,11 @@ describe( 'getLaunchCheckoutUrl', () => {
 		expect( url.searchParams.get( 'ref' ) ).toBe( 'my-home' );
 		expect( url.searchParams.get( 'coupon' ) ).toBe( 'SAVE' );
 		expect( url.searchParams.get( 'dashboard' ) ).toBe( 'ciab' );
+	} );
+
+	it( 'drops a dashboard it does not know', () => {
+		const url = parse( getLaunchCheckoutUrl( { siteSlug, dashboard: 'evil' } ) );
+
+		expect( url.searchParams.has( 'dashboard' ) ).toBe( false );
 	} );
 } );
