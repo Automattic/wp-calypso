@@ -8,7 +8,7 @@ const panel = '[aria-label="Editor top bar"]';
 
 // Toggling the inserter next to a block insertion can find the renderer still
 // busy with it. See editor-sidebar-block-inserter-component.ts.
-const INSERTER_TOGGLE_TIMEOUT = 30 * 1000;
+const INSERTER_TOGGLE_TIMEOUT = 20 * 1000;
 
 const moreOptionsLabel = 'Options';
 const selectors = {

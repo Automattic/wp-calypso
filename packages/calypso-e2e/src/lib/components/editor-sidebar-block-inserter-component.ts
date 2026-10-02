@@ -6,7 +6,7 @@ import { EditorComponent } from './editor-component';
 // mounts a preview iframe first. On contended CI agents that kept the renderer
 // busy past the default action timeout. A dispatched click cannot be retried
 // safely (it may insert the block twice), so give it more time instead.
-const INSERTER_CLICK_TIMEOUT = 30 * 1000;
+const INSERTER_CLICK_TIMEOUT = 20 * 1000;
 
 const sidebarParentSelector = '.block-editor-inserter__main-area';
 const selectors = {
