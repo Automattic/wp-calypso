@@ -1,4 +1,3 @@
-import { getValidatedComponentOpening } from './component-results';
 import type { ToolProvider } from '@automattic/agenttic-client';
 
 export const componentHandoffProvider: ToolProvider = {
@@ -13,8 +12,9 @@ export const componentHandoffProvider: ToolProvider = {
 		if ( ! [ 'wpcom/render-components', 'wpcom__render_components' ].includes( toolId ) ) {
 			throw new Error( 'This component is unavailable.' );
 		}
-		const validation = await import( '@automattic/agent-components/validation' );
-		const result = getValidatedComponentOpening( args, validation )?.result;
+		const { validateLegacyButtonAction } =
+			await import( '@automattic/agent-components/validation' );
+		const result = validateLegacyButtonAction( args );
 		return {
 			returnToAgent: false,
 			result: {

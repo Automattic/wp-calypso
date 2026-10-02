@@ -96,24 +96,6 @@ it( 'defers only a validated opening and never advertises a frontend replacement
 	expect( malformed.result.message ).toBe( 'This action is unavailable.' );
 } );
 
-it( 'defers an authenticated form and rejects a bare form without action metadata', async () => {
-	const result = await componentHandoffProvider.executeTool!(
-		'wpcom__render_components',
-		formOpening()
-	);
-	expect( result.result.message ).toContain( 'awaiting user confirmation' );
-	const bare = await componentHandoffProvider.executeTool!(
-		'wpcom__render_components',
-		formOpening().result
-	);
-	expect( bare.result.message ).toBe( 'This action is unavailable.' );
-	const expired = await componentHandoffProvider.executeTool!( 'wpcom__render_components', {
-		...formOpening(),
-		expiresAt: '2000-01-01T00:00:00+00:00',
-	} );
-	expect( expired.result.message ).toBe( 'This action is unavailable.' );
-} );
-
 it( 'recognizes only authenticated input-required tool data, never prose or running echoes', () => {
 	const update: TaskUpdate = {
 		id: 'task-123',

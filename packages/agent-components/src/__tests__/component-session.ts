@@ -347,12 +347,7 @@ describe( 'ComponentSession', () => {
 				components: {
 					...metadata.result.surface.components,
 					name: {
-						id: 'name',
-						type: 'TextField' as const,
-						label: 'Name',
-						path: '/name',
-						inputMode: 'shortText' as const,
-						required: true,
+						...metadata.result.surface.components.name,
 						validationMessage: 'Choose another name.',
 					},
 				},

@@ -245,8 +245,13 @@ it( 'submits authenticated form bindings and continues the original tool call af
 							data: {
 								toolId: 'wpcom__render_components',
 								toolCallId: 'call-123',
-								result: proposal,
 							},
+						},
+						{
+							type: 'component-result',
+							partVersion: 1,
+							toolCallId: 'call-123',
+							result: proposal,
 						},
 					],
 				},
