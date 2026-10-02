@@ -1,0 +1,56 @@
+.agent-components {
+	color: inherit;
+	font: inherit;
+}
+
+.agent-components-column {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 12px;
+}
+
+.agent-components-text {
+	margin: 0;
+	white-space: pre-wrap;
+	overflow-wrap: anywhere;
+}
+
+.agent-components-text--heading {
+	font-size: 1.125em;
+}
+
+.agent-components-text--caption {
+	font-size: 0.875em;
+}
+
+.agent-components-button {
+	padding: 8px 16px;
+	border: 1px solid currentColor;
+	border-radius: 4px;
+	background: transparent;
+	color: inherit;
+	font: inherit;
+	cursor: pointer;
+}
+
+.agent-components-button--primary {
+	background: var( --agent-components-accent, #3858e9 );
+	border-color: var( --agent-components-accent, #3858e9 );
+	color: var( --agent-components-accent-text, #fff );
+}
+
+.agent-components-button--link {
+	border-color: transparent;
+	text-decoration: underline;
+}
+
+.agent-components-button:disabled {
+	opacity: 0.6;
+	cursor: default;
+}
+
+.agent-components-button:focus-visible {
+	outline: 2px solid var( --agent-components-focus, #3858e9 );
+	outline-offset: 3px;
+}

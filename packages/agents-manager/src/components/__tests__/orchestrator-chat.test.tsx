@@ -3,6 +3,7 @@
  */
 /* eslint-disable import/order -- jest.mock calls must precede imports */
 import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { opening } from '../../utils/__tests__/fixtures/component-opening';
 import type { TaskUpdate } from '@automattic/agenttic-client';
 import type { Suggestion } from '@automattic/agenttic-ui';
 import type { ComponentProps } from 'react';
@@ -30,7 +31,11 @@ const mockUseCheckpointAction = jest.fn();
 const mockUseConversation = jest.fn();
 const mockUseImageUpload = jest.fn();
 const mockIsReaderChatAgent = jest.fn();
-let mockAgentConfig: { agentId: string; sessionId?: string } = {
+let mockAgentConfig: {
+	agentId: string;
+	sessionId?: string;
+	onTaskUpdate?: ( update: TaskUpdate ) => Promise< void >;
+} = {
 	agentId: 'wp-orchestrator',
 };
 let mockTabSessionId: string | undefined = 'session-id';
@@ -308,6 +313,9 @@ const mockAgentChat = jest.fn(
 jest.mock(
 	'@automattic/agenttic-client',
 	() => ( {
+		redactComponentTaskUpdate: jest.requireActual< typeof import( '@automattic/agenttic-client' ) >(
+			'../../../../agenttic-client/src/client/utils/componentHistory'
+		).redactComponentTaskUpdate,
 		getAgentManager: () => ( {
 			updateSessionId: mockUpdateSessionId,
 			hasAgent: () => mockManagerHasAgent,
@@ -718,6 +726,45 @@ describe( 'OrchestratorChat', () => {
 		mockRevertedCheckpointIds.clear();
 		mockAgentChatConfig = undefined;
 		mockConversationConfig = undefined;
+	} );
+
+	it( 'projects live component payloads before forwarding updates to external provider observers', async () => {
+		const observer = jest.fn().mockResolvedValue( undefined );
+		mockAgentConfig = { agentId: 'wp-orchestrator', onTaskUpdate: observer };
+		render( chat() );
+		await act( async () => {
+			await mockAgentChatConfig?.onTaskUpdate?.( {
+				id: 'task-component',
+				sessionId: 'session-123',
+				final: false,
+				text: '',
+				status: {
+					state: 'input-required',
+					message: {
+						role: 'agent',
+						kind: 'message',
+						messageId: 'message-component',
+						parts: [
+							{
+								type: 'data',
+								data: {
+									toolId: 'wpcom__render_components',
+									toolCallId: 'call-123',
+									arguments: opening(),
+								},
+							},
+						],
+					},
+				},
+			} );
+		} );
+		expect( observer ).toHaveBeenCalledTimes( 1 );
+		expect( observer.mock.calls[ 0 ][ 0 ].status.message.parts[ 0 ].data ).toEqual( {
+			toolId: 'wpcom__render_components',
+			toolCallId: 'call-123',
+			arguments: { instanceId: opening().instanceId },
+		} );
+		expect( JSON.stringify( observer.mock.calls ) ).not.toContain( 'surface' );
 	} );
 
 	it.each( [

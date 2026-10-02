@@ -1,3 +1,4 @@
+import { redactComponentMessages } from '../client/utils/componentHistory';
 import { generateMessageId } from '../client/utils/core';
 import { logger } from '../client/utils/logger';
 import { DEFAULT_API_BASE_URL, loadChatFromServer, type OdieServiceConfig } from './odieService';
@@ -67,6 +68,7 @@ interface StoredMessage {
 	} >;
 	toolResults?: Array< {
 		toolCallId: string;
+		toolId?: string;
 		result: any;
 		error?: string;
 	} >;
@@ -124,6 +126,7 @@ function extractStorableContent( message: Message ): StoredMessage {
 		)
 		.map( ( part ) => ( {
 			toolCallId: part.data.toolCallId as string,
+			...( typeof part.data.toolId === 'string' && { toolId: part.data.toolId } ),
 			result: part.data.result,
 			error: part.data.error as string | undefined,
 		} ) );
@@ -255,6 +258,7 @@ function restoreMessage( stored: StoredMessage ): Message {
 				type: 'data',
 				data: {
 					toolCallId: toolResult.toolCallId,
+					...( toolResult.toolId && { toolId: toolResult.toolId } ),
 					result: toolResult.result,
 					...( toolResult.error && { error: toolResult.error } ),
 				},
@@ -425,6 +429,7 @@ export async function storeConversation(
 	messages: Message[],
 	conversationStorageKey?: string
 ): Promise< void > {
+	messages = redactComponentMessages( messages );
 	// Determine effective storage key
 	const currentStorageKey = conversationStorageKey || sessionId;
 
@@ -520,7 +525,7 @@ async function loadConversationFromServer(
 		);
 
 		return {
-			messages: result.messages,
+			messages: redactComponentMessages( result.messages ),
 			pagination: result.pagination,
 		};
 	} catch ( error ) {
@@ -558,7 +563,7 @@ async function loadConversationFromSessionStorage(
 		const stored = sessionStorage.getItem( `${ STORAGE_KEY }_${ currentStorageKey }` );
 		if ( stored ) {
 			const conversation: StoredConversation = JSON.parse( stored );
-			const messages = conversation.messages.map( restoreMessage );
+			const messages = redactComponentMessages( conversation.messages.map( restoreMessage ) );
 
 			// Cache for future access
 			conversationCache.set( currentStorageKey, messages );
@@ -625,7 +630,7 @@ export async function loadMoreMessages(
 		);
 
 		return {
-			messages: result.messages,
+			messages: redactComponentMessages( result.messages ),
 			pagination: result.pagination,
 		};
 	} catch ( error ) {

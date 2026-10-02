@@ -91,6 +91,8 @@ export interface SubmitOptions {
 	toolCallId?: string; // Required when type is `tool_result`: the tool call ID to respond to
 	toolId?: string; // Required when type is `tool_result`: the tool ID
 	fileParts?: FilePart[]; // Optional when type is `tool_result`: files (typically images) produced by the tool
+	waitForIdle?: boolean;
+	componentInstanceId?: string;
 }
 
 // UI Message format (simplified for UI components)
@@ -439,6 +441,20 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 
 	// Guard against concurrent sends racing on `conversationHistory`
 	const isSendingRef = useRef( false );
+	const sendFinishedRef = useRef< Promise< void > | null >( null );
+	const mountedRef = useRef( true );
+	const scope = [ config.agentId, config.agentUrl, config.sessionId, config.credentials ];
+	const scopeRef = useRef( { values: scope, version: 0 } );
+	if ( scope.some( ( value, index ) => value !== scopeRef.current.values[ index ] ) ) {
+		scopeRef.current = { values: scope, version: scopeRef.current.version + 1 };
+	}
+	useEffect( () => {
+		mountedRef.current = true;
+		return () => {
+			mountedRef.current = false;
+			scopeRef.current.version += 1;
+		};
+	}, [] );
 
 	const stateRef = useRef( state );
 	useEffect( () => {
@@ -563,6 +579,20 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 			}
 
 			const isToolResult = options?.type === 'tool_result';
+			const waitForIdle = isToolResult && options?.waitForIdle;
+			const scopeVersion = scopeRef.current.version;
+			const assertScope = () => {
+				if (
+					! mountedRef.current ||
+					agentConfig.agentId !== scopeRef.current.values[ 0 ] ||
+					scopeVersion !== scopeRef.current.version ||
+					( options?.sessionId &&
+						scopeRef.current.values[ 2 ] &&
+						options.sessionId !== scopeRef.current.values[ 2 ] )
+				) {
+					throw new Error( 'The conversation changed before the tool result could be sent' );
+				}
+			};
 
 			// Validate before claiming the send lock — only the `finally` at
 			// the end of the send releases it, so a throw above that point
@@ -571,10 +601,20 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 				throw new Error( '`toolCallId` and `toolId` are required when type is `tool_result`' );
 			}
 
-			if ( isSendingRef.current ) {
+			if ( waitForIdle ) {
+				assertScope();
+				while ( isSendingRef.current ) {
+					await sendFinishedRef.current;
+					assertScope();
+				}
+			} else if ( isSendingRef.current ) {
 				return;
 			}
 			isSendingRef.current = true;
+			let finishSend: () => void = () => {};
+			sendFinishedRef.current = new Promise< void >( ( resolve ) => {
+				finishSend = resolve;
+			} );
 
 			// Keep in-flight updates attached to the site and agent that started the request.
 			const onTaskUpdate = onTaskUpdateRef.current;
@@ -661,6 +701,7 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 				// Track streaming message for incremental updates
 				let streamingMessageId: string | null = null;
 				let finalMessageAdded = false;
+				let sawContinuationTerminus = false;
 
 				// Pass metadata including archived flag and content type if provided
 				const messageOptions: any = {};
@@ -692,13 +733,24 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 							agentKey,
 							options!.toolCallId!,
 							options!.toolId!,
-							{ success: true, message },
+							{
+								success: true,
+								message,
+								...( options?.componentInstanceId && { instanceId: options.componentInstanceId } ),
+							},
 							messageOptions,
 							options?.fileParts
 						)
 					: agentManager.sendMessageStream( agentKey, message, messageOptions );
 
 				for await ( const update of stream ) {
+					if ( waitForIdle ) {
+						assertScope();
+						sawContinuationTerminus ||= update.final || update.status?.state === 'input-required';
+						if ( update.status?.state === 'failed' || update.status?.state === 'canceled' ) {
+							throw new Error( 'The agent could not continue after the tool result' );
+						}
+					}
 					if ( onTaskUpdate ) {
 						try {
 							await onTaskUpdate( update );
@@ -827,6 +879,13 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 					}
 				}
 
+				if ( waitForIdle ) {
+					assertScope();
+					if ( ! sawContinuationTerminus ) {
+						throw new Error( 'The agent continuation ended without a final response' );
+					}
+				}
+
 				// Only update from conversation history if we didn't already handle the final message
 				if ( ! finalMessageAdded ) {
 					// Update internal messages and transform for UI
@@ -883,6 +942,9 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 							error: null, // Don't show error for user-initiated abort
 						} ) );
 					}
+					if ( waitForIdle ) {
+						throw error;
+					}
 					return; // Don't re-throw AbortError
 				}
 
@@ -900,6 +962,7 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 				throw error;
 			} finally {
 				isSendingRef.current = false;
+				finishSend();
 			}
 		},
 		[ agentConfig.agentId, isValidConfig ]

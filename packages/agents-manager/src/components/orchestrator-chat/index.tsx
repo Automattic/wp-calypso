@@ -1,4 +1,9 @@
-import { getAgentManager, type TaskUpdate, type UIMessage } from '@automattic/agenttic-client';
+import {
+	getAgentManager,
+	redactComponentTaskUpdate,
+	type TaskUpdate,
+	type UIMessage,
+} from '@automattic/agenttic-client';
 import {
 	type Suggestion,
 	type MarkdownComponents,
@@ -27,6 +32,7 @@ import useCheckpointAction, {
 	isCheckpointActionInvalidated,
 	setCheckpointActionReverted,
 } from '../../hooks/use-checkpoint-action';
+import { useComponentResults } from '../../hooks/use-component-results';
 import useConversation from '../../hooks/use-conversation';
 import useCopyAction from '../../hooks/use-copy-action';
 import { useCredits } from '../../hooks/use-credits';
@@ -45,6 +51,7 @@ import {
 	isCanvasWritingAgent,
 	startNewUserRequest,
 } from '../../utils/canvas-binding';
+import { mergeComponentMessages } from '../../utils/component-results';
 import convertToolMessagesToComponents, {
 	type AgentsManagerUIMessage,
 	isContextOnlyMessage,
@@ -457,6 +464,11 @@ export default function OrchestratorChat( {
 	}, [ checkpointScopeIdentity, checkpointSessionId, checkpointSessionIdentity ] );
 	const checkpointStreamGeneration = streamedCheckpointMessagesRef.current.streamGeneration;
 	const reportedResponseTaskIdsRef = useRef( new Set< string >() );
+	const {
+		observe: observeComponentResults,
+		messages: componentMessages,
+		bindSubmit,
+	} = useComponentResults( agentConfig );
 	const agentChatConfig = useMemo( () => {
 		if ( ! agentConfig ) {
 			return null;
@@ -465,7 +477,9 @@ export default function OrchestratorChat( {
 		const { onTaskUpdate } = agentConfig;
 		return {
 			...agentConfig,
-			onTaskUpdate: async ( update: TaskUpdate ) => {
+			onTaskUpdate: async ( rawUpdate: TaskUpdate ) => {
+				await observeComponentResults( rawUpdate );
+				const update = redactComponentTaskUpdate( rawUpdate );
 				const streamedMessages = streamedCheckpointMessagesRef.current;
 				const isCurrentStreamGeneration =
 					streamedMessages.streamGeneration === checkpointStreamGeneration;
@@ -524,7 +538,7 @@ export default function OrchestratorChat( {
 				await onTaskUpdate?.( update );
 			},
 		};
-	}, [ agentConfig, checkpointStreamGeneration ] );
+	}, [ agentConfig, checkpointStreamGeneration, observeComponentResults ] );
 
 	const isReaderChat = isReaderChatAgent( agentConfig?.agentId );
 	const credits = useCredits( {
@@ -550,6 +564,7 @@ export default function OrchestratorChat( {
 		getRegenerateHandler,
 		progressMessage,
 	} = credits.chat;
+	bindSubmit( onSubmit );
 	const messagesRef = useRef( messages );
 	const getTraceIdForMessage = useAgentTraceIds( agentConfig );
 	const previousMessagesRef = useRef( messages );
@@ -1660,6 +1675,7 @@ export default function OrchestratorChat( {
 			);
 		}
 
+		currentMessages = mergeComponentMessages( currentMessages, componentMessages );
 		currentMessages = convertToolMessagesToComponents( {
 			messages: currentMessages,
 			getChatComponent,
@@ -1738,6 +1754,7 @@ export default function OrchestratorChat( {
 		isBuildingSite,
 		isProcessing,
 		messages,
+		componentMessages,
 		retainedShowComponentMessages,
 		siteBuildUtils,
 		sourceDriftInvalidatedCheckpointIds,

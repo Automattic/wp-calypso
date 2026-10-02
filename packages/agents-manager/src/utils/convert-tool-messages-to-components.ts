@@ -16,14 +16,26 @@ import {
 } from './tool-message-utils';
 import type { GetChatComponent } from './load-external-providers';
 import type { ShowComponentType } from '../abilities/show-component';
+import type { ComponentSessionOptions } from '@automattic/agent-components';
 import type { UIMessage } from '@automattic/agenttic-client';
 
 export interface AgentsManagerUIMessage extends UIMessage {
+	componentResult?: ComponentSessionOptions;
 	disabled?: boolean;
 	traceId?: string;
 	/** Suppress Agenttic's transient thinking indicator while this message is the latest one. */
 	suppressThinking?: boolean;
 }
+
+const ComponentCard = lazyComponent(
+	() => import( /* webpackChunkName: "am-component-card" */ '../components/component-card' ),
+	{
+		fallback: ( props ) =>
+			`${ ( props.options as ComponentSessionOptions ).result.summary } ${ __( 'This action is unavailable.', __i18n_text_domain__ ) }`,
+		loading: ( props ) =>
+			`${ ( props.options as ComponentSessionOptions ).result.summary } ${ __( 'Loading confirmation…', __i18n_text_domain__ ) }`,
+	}
+);
 
 // AM-owned components by `ShowComponentType`. These take precedence over
 // provider components — AM is the single source of truth for each migrated type.
@@ -50,7 +62,7 @@ function getAmComponent( type: string ): React.ComponentType | null {
 }
 
 interface Options {
-	messages: UIMessage[];
+	messages: AgentsManagerUIMessage[];
 	getChatComponent?: GetChatComponent;
 	currentPostId?: number | string;
 	/** Whether the agent's turn is still running, so a promised check may still land. */
@@ -267,6 +279,22 @@ export default function convertToolMessagesToComponents( {
 	return messages.flatMap( ( message, index, array ) => {
 		if ( isContextOnlyMessage( message ) ) {
 			return [];
+		}
+
+		if ( message.componentResult ) {
+			return [
+				{
+					...message,
+					content: [
+						{
+							type: 'component' as const,
+							component: ComponentCard,
+							componentProps: { options: message.componentResult },
+						},
+					],
+					suppressThinking: true,
+				},
+			];
 		}
 
 		const firstContentText = message.content?.[ 0 ]?.text;

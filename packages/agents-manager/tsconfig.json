@@ -10,6 +10,7 @@
 	},
 	"include": [ "src", "src/*.json", "types" ],
 	"references": [
+		{ "path": "../agent-components" },
 		{ "path": "../agenttic-client" },
 		{ "path": "../agenttic-ui" },
 		{ "path": "../viewport" },

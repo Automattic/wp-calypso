@@ -1,3 +1,4 @@
+import { redactComponentMessage, redactComponentMessages } from '../client/utils/componentHistory';
 import { generateMessageId } from '../client/utils/core';
 import type { DataPart, FilePart, Message, TextPart } from '../client/types/index';
 
@@ -8,6 +9,7 @@ import type { DataPart, FilePart, Message, TextPart } from '../client/types/inde
  * @returns A clean message with only new content parts
  */
 export function extractNewContentFromMessage( message: Message ): Message {
+	message = redactComponentMessage( message );
 	const newParts = message.parts.filter( ( part ) => {
 		// Keep text parts as they represent the actual message content
 		if ( part.type === 'text' ) {
@@ -75,7 +77,7 @@ export function conversationMessagesToDataParts(
 ): ( DataPart | FilePart )[] {
 	const historyParts: ( DataPart | FilePart )[] = [];
 
-	for ( const message of conversationMessages ) {
+	for ( const message of redactComponentMessages( conversationMessages ) ) {
 		for ( const part of message.parts ) {
 			if ( part.type === 'text' ) {
 				// Convert text parts to history data parts

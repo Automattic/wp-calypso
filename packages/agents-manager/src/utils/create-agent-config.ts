@@ -9,11 +9,16 @@ import { createCalypsoAuthProvider } from '../auth/calypso-auth-provider';
 import { ORCHESTRATOR_AGENT_ID, ORCHESTRATOR_AGENT_URL } from '../constants';
 import { saveSessionId } from './agent-session';
 import { canConnectToZendesk } from './can-connect-to-zendesk';
+import { componentHandoffProvider } from './component-tool-provider';
 import { getExternalContextEntries } from './external-context';
 import { isReaderChatAgent } from './is-reader-chat-agent';
 import { getClientConstructorArguments, getSiteEditorActions } from './site-editor-context';
 import type { ContextEntry, ToolProvider, ContextProvider } from '../extension-types';
-import type { UseAgentChatConfig, Ability as AgenticAbility } from '@automattic/agenttic-client';
+import type {
+	UseAgentChatConfig,
+	ToolProvider as AgenticToolProvider,
+	Ability as AgenticAbility,
+} from '@automattic/agenttic-client';
 
 export interface AgentConfig extends UseAgentChatConfig {
 	/** Scope captured by the authentication provider during initialization. */
@@ -83,11 +88,27 @@ function getContextSiteEditorActions(
  * WordPress Abilities API uses `null` for missing annotations,
  * but `agenttic-client` expects `undefined`.
  */
-function wrapToolProvider( toolProvider: ToolProvider ): UseAgentChatConfig[ 'toolProvider' ] {
+function wrapToolProvider( toolProvider?: ToolProvider ): UseAgentChatConfig[ 'toolProvider' ] {
+	const original = toolProvider as
+		| ( ToolProvider & Pick< AgenticToolProvider, 'getDispatchableTools' | 'executeTool' > )
+		| undefined;
 	return {
 		...toolProvider,
+		getDispatchableTools: async () => [
+			...( ( await original?.getDispatchableTools?.() ) ?? [] ),
+			...( ( await componentHandoffProvider.getDispatchableTools?.() ) ?? [] ),
+		],
+		executeTool: async ( toolId, args, messageId, toolCallId ) => {
+			if ( [ 'wpcom/render-components', 'wpcom__render_components' ].includes( toolId ) ) {
+				return componentHandoffProvider.executeTool!( toolId, args, messageId, toolCallId );
+			}
+			if ( original?.executeTool ) {
+				return original.executeTool( toolId, args, messageId, toolCallId );
+			}
+			throw new Error( `No handler found for tool: ${ toolId }` );
+		},
 		getAbilities: async (): Promise< AgenticAbility[] > => {
-			const abilities = await toolProvider.getAbilities();
+			const abilities = ( await toolProvider?.getAbilities() ) ?? [];
 			return abilities.map( ( ability ) => ( {
 				...ability,
 				meta: ability.meta?.annotations
@@ -284,7 +305,7 @@ export async function createAgentConfig(
 		config.onTaskUpdate = onTaskUpdate;
 	}
 
-	if ( toolProvider ) {
+	if ( toolProvider || ! isReaderChatAgent( agentId ) ) {
 		config.toolProvider = wrapToolProvider( toolProvider );
 	}
 

@@ -7,6 +7,7 @@
 	// Reference all TS packages
 	"references": [
 		{ "path": "./accessible-focus" },
+		{ "path": "./agent-components" },
 		{ "path": "./agents-manager" },
 		{ "path": "./agenttic-client" },
 		{ "path": "./agenttic-ui" },

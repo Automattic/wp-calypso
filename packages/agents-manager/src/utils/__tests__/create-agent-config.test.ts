@@ -286,3 +286,39 @@ describe( 'createAgentConfig', () => {
 		);
 	} );
 } );
+
+it( 'keeps Reader disconnected from component dispatch and preserves existing provider tools', async () => {
+	const reader = await createAgentConfig( {
+		sessionId: 'session-1',
+		sessionSiteKey: 'no-site',
+		agentId: 'reader-chat',
+	} );
+	expect( reader.toolProvider ).toBeUndefined();
+	const executeTool = jest.fn().mockResolvedValue( { legacy: true } );
+	const provider = {
+		getAbilities: async () => [],
+		executeAbility: jest.fn(),
+		executeTool,
+		getDispatchableTools: async () => [
+			{
+				id: 'legacy',
+				name: 'Legacy',
+				description: 'Existing tool',
+				input_schema: { type: 'object' as const, properties: {} },
+			},
+		],
+	};
+	const config = await createAgentConfig( {
+		sessionId: 'session-1',
+		sessionSiteKey: '123',
+		agentId: 'wp-orchestrator',
+		toolProvider: provider,
+	} );
+	expect(
+		( await config.toolProvider!.getDispatchableTools!() ).map( ( tool ) => tool.id )
+	).toEqual( [ 'legacy', 'wpcom/render-components', 'wpcom__render_components' ] );
+	await expect(
+		config.toolProvider!.executeTool!( 'legacy', { selected: true } )
+	).resolves.toEqual( { legacy: true } );
+	expect( executeTool ).toHaveBeenCalledWith( 'legacy', { selected: true }, undefined, undefined );
+} );

@@ -1,3 +1,4 @@
+import { redactComponentMessage, redactComponentMessages } from './utils/componentHistory';
 import {
 	executeRequest,
 	executeStreamingRequest,
@@ -437,7 +438,7 @@ function conversationHistoryToDataParts(
 ): ( DataPart | FilePart )[] {
 	const historyParts: ( DataPart | FilePart )[] = [];
 
-	for ( const message of conversationHistory ) {
+	for ( const message of redactComponentMessages( conversationHistory ) ) {
 		for ( const part of message.parts ) {
 			if ( part.type === 'text' ) {
 				historyParts.push( {
@@ -954,9 +955,8 @@ async function* processAgentResponseStream(
 									? conversationHistoryToDataParts( newConversationParts )
 									: [];
 
-								const moreResultMessage = createToolResultMessage(
-									moreResults,
-									moreHistoryDataParts
+								const moreResultMessage = redactComponentMessage(
+									createToolResultMessage( moreResults, moreHistoryDataParts )
 								);
 								// Continue with more tool results and stream the continuation
 								const moreTaskStream = await continueTaskStreamed(
@@ -1241,7 +1241,9 @@ export function createClient( config: ClientConfig ): Client {
 				// Only continue with tool results if at least one tool wants to return to agent
 				if ( shouldReturnToAgent ) {
 					// Continue with tool results
-					const toolResultMessage = createToolResultMessage( toolResults );
+					const toolResultMessage = redactComponentMessage(
+						createToolResultMessage( toolResults )
+					);
 
 					currentTask = await continueTask(
 						currentTask.id,
@@ -1405,7 +1407,9 @@ export function createClient( config: ClientConfig ): Client {
 				// Only continue with tool results if at least one tool wants to return to agent
 				if ( shouldReturnToAgent ) {
 					// Continue with tool results
-					const toolResultMessage = createToolResultMessage( toolResults );
+					const toolResultMessage = redactComponentMessage(
+						createToolResultMessage( toolResults )
+					);
 
 					currentTask = await continueTask(
 						currentTask.id,

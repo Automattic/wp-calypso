@@ -52,3 +52,23 @@ describe( 'lazyComponent', () => {
 		expect( container ).toBeEmptyDOMElement();
 	} );
 } );
+
+it( 'shows readable loading and failure feedback for a component proposal', async () => {
+	const error = jest.spyOn( console, 'error' ).mockImplementation( () => {} );
+	const load = jest.fn().mockRejectedValue( new Error( 'Chunk failed.' ) );
+	const Lazy = lazyComponent( load, {
+		loading: 'Approved proposal. Loading confirmation…',
+		fallback: () => 'Approved proposal. This action is unavailable.',
+	} );
+	render( <Lazy /> );
+	expect( screen.getByText( 'Approved proposal. Loading confirmation…' ) ).toBeVisible();
+	expect(
+		await screen.findByText(
+			'Approved proposal. This action is unavailable.',
+			undefined,
+			RETRY_TIMEOUT
+		)
+	).toBeVisible();
+	expect( load ).toHaveBeenCalledTimes( 2 );
+	error.mockRestore();
+} );

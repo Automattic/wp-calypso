@@ -15,6 +15,7 @@ export {
 export { useAgentChat } from './react/useAgentChat';
 
 // Essential utilities for external consumers
+export { redactComponentTaskUpdate } from './client/utils/componentHistory';
 export {
 	createRequestId,
 	createTaskId,

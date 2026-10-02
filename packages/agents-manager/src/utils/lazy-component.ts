@@ -2,8 +2,13 @@ import { Component, createElement, lazy, Suspense } from '@wordpress/element';
 
 const RETRY_DELAY_MS = 500;
 
+type Fallback = React.ReactNode | ( ( props: Record< string, unknown > ) => React.ReactNode );
+
 // Catching a render error needs a class — there is no hook equivalent.
-class LazyBoundary extends Component< { children: React.ReactNode }, { failed: boolean } > {
+class LazyBoundary extends Component<
+	{ children?: React.ReactNode; fallback?: React.ReactNode },
+	{ failed: boolean }
+> {
 	state = { failed: false };
 
 	static getDerivedStateFromError() {
@@ -16,7 +21,7 @@ class LazyBoundary extends Component< { children: React.ReactNode }, { failed: b
 	}
 
 	render() {
-		return this.state.failed ? null : this.props.children;
+		return this.state.failed ? ( this.props.fallback ?? null ) : this.props.children;
 	}
 }
 
@@ -28,7 +33,8 @@ class LazyBoundary extends Component< { children: React.ReactNode }, { failed: b
  * the boundary a failed picker would take the whole chat down with it.
  */
 export default function lazyComponent(
-	load: () => Promise< { default: React.ComponentType } >
+	load: () => Promise< { default: React.ComponentType } >,
+	options: { fallback?: Fallback; loading?: Fallback } = {}
 ): React.ComponentType {
 	// `lazy()` caches a rejected import, so one failed fetch would keep this
 	// component missing for the rest of the page. Retry inside the loader,
@@ -41,10 +47,18 @@ export default function lazyComponent(
 	);
 
 	return function LazyComponent( props: Record< string, unknown > ) {
+		const fallback =
+			typeof options.fallback === 'function' ? options.fallback( props ) : options.fallback;
+		const loading =
+			typeof options.loading === 'function' ? options.loading( props ) : options.loading;
 		return createElement(
 			LazyBoundary,
-			null,
-			createElement( Suspense, { fallback: null }, createElement( Inner, props ) )
+			{ fallback },
+			createElement(
+				Suspense,
+				{ fallback: loading ?? fallback ?? null },
+				createElement( Inner, props )
+			)
 		);
 	};
 }

@@ -3,6 +3,7 @@ import {
 	createClient,
 	updateToolResultsWithResolvedPromises,
 } from '../client/index';
+import { redactComponentMessages } from '../client/utils/componentHistory';
 import {
 	createTextMessage,
 	createToolResultDataPart,
@@ -450,7 +451,7 @@ function createAgentManager(): AgentManager {
 			}
 
 			// Track conversation history locally to avoid race conditions
-			let currentConversationHistory = [ ...managedAgent.conversationHistory ];
+			let currentConversationHistory = redactComponentMessages( managedAgent.conversationHistory );
 
 			// Track current tool call IDs to ensure we only capture matching tool results
 			let currentToolCallIds: string[] = [];
@@ -549,6 +550,7 @@ function createAgentManager(): AgentManager {
 			currentConversationHistory = [ ...currentConversationHistory, userMessage ];
 
 			// Update agent's conversation history immediately
+			currentConversationHistory = redactComponentMessages( currentConversationHistory );
 			managedAgent.conversationHistory = currentConversationHistory;
 
 			// Mint a temp session id so persist can run before the server id
@@ -636,6 +638,7 @@ function createAgentManager(): AgentManager {
 						currentConversationHistory = [ ...currentConversationHistory, toolMessage ];
 
 						// Update agent's conversation history immediately
+						currentConversationHistory = redactComponentMessages( currentConversationHistory );
 						managedAgent.conversationHistory = currentConversationHistory;
 						// Persist only if withHistory is true
 						if ( withHistory ) {
@@ -668,6 +671,7 @@ function createAgentManager(): AgentManager {
 							];
 
 							// Update agent's conversation history immediately
+							currentConversationHistory = redactComponentMessages( currentConversationHistory );
 							managedAgent.conversationHistory = currentConversationHistory;
 							// Persist only if withHistory is true
 							if ( withHistory ) {
@@ -685,6 +689,7 @@ function createAgentManager(): AgentManager {
 								extractNewContentFromMessage( update.status.message ),
 							];
 
+							currentConversationHistory = redactComponentMessages( currentConversationHistory );
 							managedAgent.conversationHistory = currentConversationHistory;
 							if ( withHistory ) {
 								await persistConversationHistory( key, currentConversationHistory );
@@ -731,6 +736,7 @@ function createAgentManager(): AgentManager {
 							currentConversationHistory = [ ...currentConversationHistory, finalAgentMessage ];
 						}
 
+						currentConversationHistory = redactComponentMessages( currentConversationHistory );
 						managedAgent.conversationHistory = currentConversationHistory;
 						if ( withHistory ) {
 							await persistConversationHistory( key, currentConversationHistory );
@@ -836,7 +842,7 @@ function createAgentManager(): AgentManager {
 			}
 
 			// Replace conversation history with new messages
-			managedAgent.conversationHistory = [ ...messages ];
+			managedAgent.conversationHistory = redactComponentMessages( messages );
 
 			// Persist to storage
 			if ( managedAgent.sessionId ) {
@@ -850,7 +856,7 @@ function createAgentManager(): AgentManager {
 				throw new Error( `Agent with key "${ key }" not found` );
 			}
 
-			return [ ...managedAgent.conversationHistory ];
+			return redactComponentMessages( managedAgent.conversationHistory );
 		},
 
 		updateSessionId( key: string, sessionId: string ): void {
