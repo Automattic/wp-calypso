@@ -119,6 +119,20 @@ export type Note = {
 	subject: Subject[];
 	header?: Subject[]; // present in some note types
 	body: Block[];
+	// Read by the simplified note; the API doesn't send either yet.
+	post?: NotePost;
+	parent_comment?: { date?: string; url?: string };
+};
+
+export type NotePost = {
+	title?: string;
+	excerpt?: string;
+	featured_image?: string;
+	date?: string;
+	url?: string;
+	author_name?: string;
+	site_name?: string;
+	site_icon?: string;
 };
 
 type Inbox = {

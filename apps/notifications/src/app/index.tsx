@@ -136,6 +136,7 @@ const NotificationApp = ( {
 	locale = 'en',
 	isDismissible = false,
 	isViewSettingsEnabled = false,
+	isSimplifiedNoteEnabled = false,
 	preferences,
 	onPreferenceChange,
 	customEnhancer,
@@ -145,6 +146,8 @@ const NotificationApp = ( {
 	locale?: string;
 	isDismissible?: boolean;
 	isViewSettingsEnabled?: boolean;
+	/** Lets the simplified layout also restyle the open note, not only the list rows. */
+	isSimplifiedNoteEnabled?: boolean;
 	preferences?: NotificationPreferences;
 	onPreferenceChange?: ( key: string, value: unknown ) => Promise< unknown >;
 	customEnhancer?: any;
@@ -260,6 +263,7 @@ const NotificationApp = ( {
 					client={ getClient() }
 					locale={ locale }
 					isViewSettingsEnabled={ isViewSettingsEnabled }
+					isSimplifiedNoteEnabled={ isSimplifiedNoteEnabled }
 					onPreferenceChange={ onPreferenceChange }
 				>
 					<NotificationContent isDismissible={ isDismissible } />
