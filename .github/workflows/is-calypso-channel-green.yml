@@ -67,7 +67,7 @@ jobs:
             fi
           fi
 
-          if [ "$SECRET_SET" != "true" ]; then
+          if [ "$EVENT_NAME" = "pull_request" ] && [ "$SECRET_SET" != "true" ]; then
             echo "Channel status secret is unavailable (likely a fork PR); the merge queue still runs this check."
             bypass=true
           fi
