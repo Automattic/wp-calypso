@@ -1,12 +1,24 @@
+import { getQueryArgs } from '@wordpress/url';
+import { getOAuth2RedirectUri, isMobileAppRedirectUri } from 'calypso/lib/oauth2-clients';
+
 /**
- * Returns whether user is using a WordPress mobile app.
- * @returns {boolean} Whether the user agent matches the ones used on the WordPress mobile apps.
+ * Returns whether the user is in a first-party mobile app (WordPress or Jetpack) — either the
+ * user agent carries the app token, or the page is the app's OAuth login webview, identified by
+ * a `jetpack://` / `wordpress://` redirect_uri. The login webview runs in a system auth session
+ * whose user agent carries no `wp-iphone`/`wp-android` token, so the scheme is the only signal.
+ * @returns {boolean}
  */
 export function isWpMobileApp() {
 	if ( typeof navigator === 'undefined' ) {
 		return false;
 	}
-	return navigator.userAgent && /wp-(android|iphone)/.test( navigator.userAgent );
+	if ( navigator.userAgent && /wp-(android|iphone)/.test( navigator.userAgent ) ) {
+		return true;
+	}
+	if ( typeof window === 'undefined' ) {
+		return false;
+	}
+	return isMobileAppRedirectUri( getOAuth2RedirectUri( getQueryArgs( window.location.href ) ) );
 }
 
 /**
