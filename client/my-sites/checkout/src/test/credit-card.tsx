@@ -13,7 +13,6 @@ import {
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { RegistryProvider, createRegistry, useDispatch, useRegistry } from '@wordpress/data';
 import { useState } from 'react';
 import { Provider as ReduxProvider } from 'react-redux';
 import GlobalNotices from 'calypso/components/global-notices';
@@ -46,16 +45,13 @@ jest.mock( '@stripe/react-stripe-js', () => {
 function TestWrapper( { paymentProcessors = undefined } ) {
 	const [ store ] = useState( () => createTestReduxStore() );
 	const [ queryClient ] = useState( () => new QueryClient() );
-	const [ testRegistry ] = useState( () => createRegistry( {} ) );
 
 	return (
-		<RegistryProvider value={ testRegistry }>
-			<ReduxProvider store={ store }>
-				<QueryClientProvider client={ queryClient }>
-					<TestWrapperInner paymentProcessors={ paymentProcessors } />
-				</QueryClientProvider>
-			</ReduxProvider>
-		</RegistryProvider>
+		<ReduxProvider store={ store }>
+			<QueryClientProvider client={ queryClient }>
+				<TestWrapperInner paymentProcessors={ paymentProcessors } />
+			</QueryClientProvider>
+		</ReduxProvider>
 	);
 }
 
@@ -72,7 +68,7 @@ function TestWrapperInner( { paymentProcessors = undefined } ) {
 					paymentProcessors={ paymentProcessors ?? {} }
 				>
 					<CheckoutStepGroup>
-						<CompleteCreditCardFields />
+						<CompleteCreditCardFields store={ creditCardStore } />
 						<PaymentMethodStep />
 						<CheckoutFormSubmit />
 					</CheckoutStepGroup>
@@ -99,20 +95,16 @@ function useCreateCreditCardMethod( store: CardStoreType, additionalArgs = {} ) 
 }
 
 function useCreateCreditCardStore() {
-	// NOTE: the return type of useRegistry is `Function` which is incorrect
-	// and causes a type error here, but it does actually return a registry.
-	const registry = useRegistry();
-	const [ store ] = useState( () => createCreditCardPaymentMethodStore( { registry } ) );
+	const [ store ] = useState( () => createCreditCardPaymentMethodStore( {} ) );
 	return store;
 }
 
-function CompleteCreditCardFields() {
-	const { setCardDataComplete } = useDispatch( 'wpcom-credit-card' );
+function CompleteCreditCardFields( { store }: { store: CardStoreType } ) {
 	const completeFields = () => {
 		// Stripe fields will not actually operate in this test so we have to pretend they are complete.
-		setCardDataComplete( 'cardNumber', true );
-		setCardDataComplete( 'cardExpiry', true );
-		setCardDataComplete( 'cardCvc', true );
+		store.setCardDataComplete( 'cardNumber', true );
+		store.setCardDataComplete( 'cardExpiry', true );
+		store.setCardDataComplete( 'cardCvc', true );
 	};
 	return <button onClick={ completeFields }>Mark credit fields as complete</button>;
 }
