@@ -1,7 +1,7 @@
 import { DomainAvailabilityStatus } from '@automattic/api-core';
 import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
-import { getRootDomain, isSubdomain } from '../../helpers';
+import { getRootDomain, isSubdomain, isSubdomainWithMappedRootDomain } from '../../helpers';
 import { useDomainSearch } from '../../page/context';
 import { DomainSuggestion } from '../../ui';
 import type { UnavailableProps } from '../../ui/domain-suggestion/unavailable';
@@ -29,6 +29,12 @@ export const UnavailableSearchResult = () => {
 
 	const props: UnavailableProps | null = useMemo( () => {
 		if ( ! availability || ! STATUSES_WITH_MESSAGES.includes( availability.status ) ) {
+			return null;
+		}
+
+		// A subdomain whose root domain connection is owned by a different account
+		// can't be transferred; the SearchNotice explains the ownership requirement.
+		if ( isSubdomainWithMappedRootDomain( availability ) ) {
 			return null;
 		}
 

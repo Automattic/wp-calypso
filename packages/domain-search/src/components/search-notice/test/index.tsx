@@ -1149,6 +1149,104 @@ describe( 'SearchNotice', () => {
 		);
 	} );
 
+	describe( 'subdomain with a mapped root domain', () => {
+		it( 'renders the root-vs-subdomain breakdown when the root domain is mapped (status)', async () => {
+			mockNoSuggestionsAndAvailability(
+				'cms.example.com',
+				buildAvailability( {
+					domain_name: 'cms.example.com',
+					tld: 'com',
+					status: DomainAvailabilityStatus.MAPPED,
+				} )
+			);
+
+			render(
+				<TestDomainSearchWithSuggestions query="cms.example.com">
+					<SearchNotice />
+				</TestDomainSearchWithSuggestions>
+			);
+
+			expect( await screen.findByText( 'Error notice' ) ).toBeInTheDocument();
+
+			expect( screen.getAllByText( /connected to another account/ )[ 0 ] ).toBeInTheDocument();
+			expect( screen.getAllByText( /not yet connected/ )[ 0 ] ).toBeInTheDocument();
+			expect(
+				screen.getAllByText(
+					/Subdomains must be added by the account that owns the root domain connection/
+				)[ 0 ]
+			).toBeInTheDocument();
+
+			expect( screen.getAllByText( 'example.com' )[ 0 ] ).toBeInTheDocument();
+			expect( screen.getAllByText( 'cms.example.com' )[ 0 ] ).toBeInTheDocument();
+
+			expect(
+				screen.queryByText( 'This domain is already connected to a WordPress.com site.' )
+			).not.toBeInTheDocument();
+		} );
+
+		it( 'renders the root-vs-subdomain breakdown when the root domain is mapped (mappable)', async () => {
+			mockNoSuggestionsAndAvailability(
+				'cms.example.com',
+				buildAvailability( {
+					domain_name: 'cms.example.com',
+					tld: 'com',
+					status: DomainAvailabilityStatus.REGISTERED,
+					mappable: DomainAvailabilityStatus.MAPPED,
+				} )
+			);
+
+			render(
+				<TestDomainSearchWithSuggestions query="cms.example.com">
+					<SearchNotice />
+				</TestDomainSearchWithSuggestions>
+			);
+
+			expect( await screen.findByText( 'Error notice' ) ).toBeInTheDocument();
+
+			expect(
+				screen.getAllByText(
+					/Subdomains must be added by the account that owns the root domain connection/
+				)[ 0 ]
+			).toBeInTheDocument();
+
+			expect(
+				screen.queryByText( 'This domain is already connected to a WordPress.com site.' )
+			).not.toBeInTheDocument();
+		} );
+
+		it( 'still renders the generic message for a mapped root domain', async () => {
+			mockNoSuggestionsAndAvailability(
+				'example.com',
+				buildAvailability( {
+					domain_name: 'example.com',
+					tld: 'com',
+					status: DomainAvailabilityStatus.MAPPED,
+					mappable: DomainAvailabilityStatus.MAPPED,
+				} )
+			);
+
+			render(
+				<TestDomainSearchWithSuggestions query="example.com">
+					<SearchNotice />
+				</TestDomainSearchWithSuggestions>
+			);
+
+			expect( await screen.findByText( 'Error notice' ) ).toBeInTheDocument();
+
+			const [ notice ] = screen.getAllByText(
+				'This domain is already connected to a WordPress.com site.'
+			);
+
+			expect( notice ).toBeInTheDocument();
+
+			expect(
+				screen.queryByText(
+					/Subdomains must be added by the account that owns the root domain connection/
+				)
+			).not.toBeInTheDocument();
+		} );
+	} );
+
 	describe( 'notice hidden scenarios', () => {
 		it( 'renders nothing if there is no availability result', async () => {
 			mockGetSuggestionsQuery( {
