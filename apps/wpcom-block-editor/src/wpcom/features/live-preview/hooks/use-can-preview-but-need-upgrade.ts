@@ -2,14 +2,13 @@ import {
 	FEATURE_WOOP,
 	WPCOM_FEATURES_ATOMIC,
 	WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
-	PLAN_PERSONAL,
-	PLAN_PREMIUM,
 	PLAN_BUSINESS,
 } from '@automattic/calypso-products';
 import { getCalypsoUrl } from '@automattic/calypso-url';
 import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { useEffect, useState, useCallback } from 'react';
+import { THEME_TIERS } from 'calypso/components/theme-tier/constants';
 import wpcom from 'calypso/lib/wp';
 import tracksRecordEvent from '../../tracking/track-record-event';
 import { UPGRADE_DONE_NOTICE_ID } from '../constants';
@@ -141,11 +140,13 @@ export const useCanPreviewButNeedUpgrade = (
 		// biannual plan if the site is on a biannual plan.
 		switch ( previewingTheme.type ) {
 			case WOOCOMMERCE_THEME:
+				// Not THEME_TIERS.woocommerce, which upsells Premium; bundled themes also need Atomic.
 				return PLAN_BUSINESS;
 			case PREMIUM_THEME:
-				return PLAN_PREMIUM;
 			case PERSONAL_THEME:
-				return PLAN_PERSONAL;
+				return (
+					THEME_TIERS[ previewingTheme.type as keyof typeof THEME_TIERS ]?.minimumUpsellPlan ?? ''
+				);
 			default:
 				return '';
 		}
