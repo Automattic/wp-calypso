@@ -1,8 +1,12 @@
 import { DomainAvailability, DomainAvailabilityStatus } from '@automattic/api-core';
 import { useQuery } from '@tanstack/react-query';
-import { __ } from '@wordpress/i18n';
+import { __experimentalVStack as VStack } from '@wordpress/components';
+import { createInterpolateElement } from '@wordpress/element';
+import { __, sprintf } from '@wordpress/i18n';
 import { useMemo } from 'react';
 import { getAvailabilityNotice } from '../../helpers/get-availability-notice';
+import { getRootDomain } from '../../helpers/get-root-domain';
+import { isSubdomainWithMappedRootDomain } from '../../helpers/is-subdomain-with-mapped-root-domain';
 import { isSupportedPremiumDomain } from '../../helpers/is-supported-premium-domain';
 import { useDomainSearch } from '../../page/context';
 import { DomainSearchNotice } from '../../ui';
@@ -89,6 +93,45 @@ export const SearchNotice = () => {
 			shouldHideAvailabilityNotice( availability, includeOwnedDomainInSuggestions )
 		) {
 			return null;
+		}
+
+		if ( isSubdomainWithMappedRootDomain( availability ) ) {
+			const rootDomain = getRootDomain( availability.domain_name );
+
+			return {
+				severity: 'error' as const,
+				message: (
+					<VStack spacing={ 2 }>
+						<span>
+							{ createInterpolateElement(
+								sprintf(
+									/* translators: %(rootDomain)s is the root domain, e.g. example.com */
+									__(
+										'Root domain (<strong>%(rootDomain)s</strong>): connected to another account'
+									),
+									{ rootDomain }
+								),
+								{ strong: <strong /> }
+							) }
+						</span>
+						<span>
+							{ createInterpolateElement(
+								sprintf(
+									/* translators: %(subdomain)s is the subdomain, e.g. cms.example.com */
+									__( 'Subdomain (<strong>%(subdomain)s</strong>): not yet connected' ),
+									{ subdomain: availability.domain_name }
+								),
+								{ strong: <strong /> }
+							) }
+						</span>
+						<span>
+							{ __(
+								'Subdomains must be added by the account that owns the root domain connection. Contact the owner of that account.'
+							) }
+						</span>
+					</VStack>
+				),
+			};
 		}
 
 		if ( shouldReturnGenericMappedMessage( availability ) ) {
