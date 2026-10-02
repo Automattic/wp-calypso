@@ -27,6 +27,7 @@ import { editorNavigateAbility } from './editor-navigate';
 import { getBlockTreeAbility } from './get-block-tree';
 import { openHelpCenterAbility } from './open-help-center';
 import { restoreCheckpointAbility } from './restore-checkpoint';
+import { saveChangesAbility } from './save-changes';
 import { setSiteLogoAbility } from './set-site-logo';
 import { showComponentAbility } from './show-component';
 import { showTemplateAbility } from './show-template';
@@ -43,6 +44,7 @@ export const EDITOR_ABILITIES: Ability[] = [
 	editorNavigateAbility,
 	openHelpCenterAbility,
 	restoreCheckpointAbility,
+	saveChangesAbility,
 	setSiteLogoAbility,
 	showComponentAbility,
 	streamPageDesignAbility,
