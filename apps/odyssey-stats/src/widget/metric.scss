@@ -1,0 +1,37 @@
+@import "../styles/typography";
+
+// The metric treatment shared by every figure in the widget — the Views/Visitors totals
+// in Overview and the blocked-attempt counts in Site protection. Kept in one place so the
+// two sections stay in step.
+
+// A row of metrics. Each takes an equal share, so the row spans the card rather than
+// bunching at the start. `flex-basis: 0` makes the split even regardless of how wide
+// the formatted numbers happen to be.
+.stats-widget-metrics {
+	display: flex;
+	gap: var(--wpds-dimension-gap-lg, 16px);
+}
+
+.stats-widget-metric {
+	flex: 1 1 0;
+	min-inline-size: 0;
+}
+
+.stats-widget-metric__title {
+	font-family: $font-sf-pro-text;
+	font-weight: var(--wpds-typography-font-weight-default, 400);
+	font-size: var(--wpds-typography-font-size-md, 13px);
+	line-height: var(--wpds-typography-line-height-sm, 20px);
+}
+
+.stats-widget-metric__value {
+	margin-top: var(--wpds-dimension-gap-xs, 4px);
+	font-family: $font-sf-pro-display;
+	font-weight: var(--wpds-typography-font-weight-default, 400);
+	font-size: $font-headline-small;
+	line-height: 1;
+	letter-spacing: -0.02em;
+	// Only as wide as the figure, so its tooltip opens over the number rather than
+	// anywhere across the column.
+	inline-size: fit-content;
+}

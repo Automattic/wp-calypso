@@ -1,143 +1,164 @@
+import { Notice } from '@wordpress/ui';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import moment from 'moment';
-import { useState, useEffect, useRef, FunctionComponent } from 'react';
-import Intervals from 'calypso/blocks/stats-navigation/intervals';
-import Chart from 'calypso/components/chart';
-import Legend from 'calypso/components/chart/legend';
-import { rectIsEqual, rectIsZero, NullableDOMRect } from 'calypso/lib/track-element-size';
+import { lazy, Suspense, useMemo, FunctionComponent } from 'react';
+import useCssVariable from 'calypso/my-sites/stats/hooks/use-css-variable';
 import { buildChartData } from 'calypso/my-sites/stats/stats-chart-tabs/utility';
-import StatsEmptyState from 'calypso/my-sites/stats/stats-empty-state';
 import StatsModulePlaceholder from 'calypso/my-sites/stats/stats-module/placeholder';
-import { getChartRangeParams } from 'calypso/my-sites/stats/utils';
-import nothing from '../components/nothing';
+import { parseLocalDate } from 'calypso/my-sites/stats/utils';
 import useVisitsQuery from '../hooks/use-visits-query';
-import { Unit } from '../typings';
+import { DATE_RANGE_LAST_7_DAYS, DateRange } from '../lib/date-ranges';
+import { deriveSeriesColors } from '../lib/series-colors';
+import MetricValue from './metric-value';
+
+const OverviewChart = lazy( () => import( './overview-chart' ) );
 
 import './mini-chart.scss';
 
 interface MiniChartProps {
 	siteId: number;
-	quantity?: number;
 	gmtOffset: number;
-	statsBaseUrl: string;
+	range: DateRange;
 }
 
-interface BarData {
+interface VisitRecord {
 	period: string;
-	value: number;
+	views?: number;
+	visitors?: number;
 }
 
-const MiniChart: FunctionComponent< MiniChartProps > = ( {
-	siteId,
-	gmtOffset,
-	statsBaseUrl,
-	quantity = 7,
-} ) => {
-	const translate = useTranslate();
+const CHART_HEIGHT = 160;
 
-	const chartViews = {
-		attr: 'views',
-		legendOptions: [ 'visitors' ],
-		label: translate( 'Views', { context: 'noun' } ),
-	};
-	const chartVisitors = {
-		attr: 'visitors',
-		label: translate( 'Visitors', { context: 'noun' } ),
-	};
-	const charts = [ chartViews, chartVisitors ];
+const MiniChart: FunctionComponent< MiniChartProps > = ( { siteId, gmtOffset, range } ) => {
+	const translate = useTranslate();
+	const { unit, quantity } = range;
+
+	// The chart follows the user's admin colour scheme. Read from `body`: the scheme sets
+	// the variable there, while `:root` only carries wp-admin's default blue.
+	const primaryColor = useCssVariable( '--wp-admin-theme-color', document.body );
+	const [ viewsColor, visitorsColor ] = deriveSeriesColors( primaryColor );
 
 	const queryDate = moment()
 		.utcOffset( Number.isFinite( gmtOffset ) ? gmtOffset : 0 )
 		.format( 'YYYY-MM-DD' );
-	const [ period, setPeriod ] = useState< Unit >( 'day' );
 
-	const { isLoading, data } = useVisitsQuery( siteId, period, quantity, queryDate );
+	const { isLoading, data } = useVisitsQuery( siteId, unit, quantity, queryDate );
 
-	const barClick = ( bar: { data: BarData } ) => {
-		const { chartStart, chartEnd, chartPeriod } = getChartRangeParams( bar.data.period, period );
+	const totals = useMemo( () => {
+		const records = ( data ?? [] ) as VisitRecord[];
+		return records.reduce(
+			( accumulator, record ) => ( {
+				views: accumulator.views + ( record.views ?? 0 ),
+				visitors: accumulator.visitors + ( record.visitors ?? 0 ),
+			} ),
+			{ views: 0, visitors: 0 }
+		);
+	}, [ data ] );
 
-		window.location.href = `${ statsBaseUrl }/stats/${ chartPeriod }/${ siteId }?chartStart=${ chartStart }&chartEnd=${ chartEnd }`;
-	};
+	const series = useMemo( () => {
+		const chartData = buildChartData( [ 'visitors' ], 'views', data, unit, queryDate );
+		const toPoints = ( attribute: 'views' | 'visitors' ) =>
+			chartData
+				.map( ( record: { data: VisitRecord } ) => ( {
+					// Periods are bare dates ("2026-09-20"), which `new Date()` reads as UTC
+					// midnight: behind UTC that lands each point on the previous evening.
+					date: parseLocalDate( record.data.period ),
+					value: record.data[ attribute ] ?? 0,
+				} ) )
+				.filter( ( point: { date: Date } ) => ! isNaN( point.date.getTime() ) );
 
-	const chartData = buildChartData(
-		chartViews.legendOptions,
-		chartViews.attr,
-		data,
-		period,
-		queryDate
-	);
+		return [
+			{
+				label: translate( 'Views', { context: 'noun' } ) as string,
+				data: toPoints( 'views' ),
+				options: { stroke: viewsColor },
+			},
+			{
+				label: translate( 'Visitors', { context: 'noun' } ) as string,
+				data: toPoints( 'visitors' ),
+				options: { stroke: visitorsColor },
+			},
+		];
+	}, [ data, unit, queryDate, viewsColor, visitorsColor, translate ] );
 
-	const chartWrapperRef = useRef< HTMLDivElement >( null );
-	const lastRect = useRef< NullableDOMRect >( null );
-	useEffect( () => {
-		if ( ! chartWrapperRef?.current ) {
-			return;
-		}
-		const observer = new ResizeObserver( () => {
-			const rect = chartWrapperRef.current ? chartWrapperRef.current.getBoundingClientRect() : null;
-			if ( ! rectIsEqual( lastRect.current, rect ) && ! rectIsZero( rect ) ) {
-				lastRect.current = rect;
-				// Trigger a resize event to force the chart to redraw.
-				window?.dispatchEvent( new Event( 'resize' ) );
-			}
-		} );
-
-		observer.observe( chartWrapperRef.current );
-
-		return () => observer.disconnect();
-	} );
-
-	const isEmptyChart = ! chartData.some( ( bar: BarData ) => bar.value > 0 );
-	const placeholderChartData = Array.from( { length: 7 }, () => ( {
-		value: Math.random(),
-	} ) );
+	const isEmpty = totals.views === 0 && totals.visitors === 0;
 
 	return (
-		<div
-			ref={ chartWrapperRef }
-			id="stats-widget-minichart"
-			className="stats-widget-minichart"
-			aria-hidden="true"
-		>
-			<div className="stats-widget-minichart__chart-head">
-				<Intervals selected={ period } compact={ false } onChange={ setPeriod } />
-			</div>
-			{ isLoading && <StatsModulePlaceholder className="is-chart" isLoading /> }
-			{ ! isLoading && (
-				<>
-					<Chart
-						barClick={ barClick }
-						data={ isEmptyChart ? placeholderChartData : chartData }
-						minBarWidth={ 35 }
-						isPlaceholder={ isEmptyChart }
-					>
-						<StatsEmptyState
-							headingText=""
-							infoText={ translate(
-								'Once stats become available, this chart will show you details about your views and visitors. {{a}}Learn more about stats{{/a}}',
-								{
-									components: {
-										a: (
-											<a
-												href="https://jetpack.com/stats/"
-												target="_blank"
-												rel="noopener noreferrer"
-											></a>
-										),
-									},
-								}
-							) }
+		<div className="stats-widget-minichart">
+			{ /* Hidden for an empty range, where zeros would read as "no traffic". */ }
+			{ ( isLoading || ! isEmpty ) && (
+				<div className="stats-widget-metrics">
+					<div className="stats-widget-metric">
+						<div className="stats-widget-metric__title">
+							{ translate( 'Views', { context: 'noun' } ) }
+							<span
+								className="stats-widget-metric__swatch"
+								style={ { backgroundColor: viewsColor } }
+								aria-hidden="true"
+							/>
+						</div>
+						<MetricValue
+							value={ totals.views }
+							describe={ ( count ) =>
+								translate( '%(count)s view', '%(count)s views', {
+									count: totals.views,
+									args: { count },
+								} ) as string
+							}
 						/>
-					</Chart>
-					<Legend
-						availableCharts={ [ 'visitors' ] }
-						activeCharts={ [ 'visitors' ] }
-						tabs={ charts }
-						activeTab={ chartViews }
-						clickHandler={ nothing }
-					/>
-				</>
+					</div>
+					<div className="stats-widget-metric">
+						<div className="stats-widget-metric__title">
+							{ translate( 'Visitors', { context: 'noun' } ) }
+							<span
+								className="stats-widget-metric__swatch"
+								style={ { backgroundColor: visitorsColor } }
+								aria-hidden="true"
+							/>
+						</div>
+						<MetricValue
+							value={ totals.visitors }
+							describe={ ( count ) =>
+								translate( '%(count)s visitor', '%(count)s visitors', {
+									count: totals.visitors,
+									args: { count },
+								} ) as string
+							}
+						/>
+					</div>
+				</div>
 			) }
+
+			{ /* A fixed height while loading and for the chart, so the card doesn't resize
+			   between them; the empty notice sizes to its content. */ }
+			<div
+				// Only the 7-day range labels every day, so only there does the last date
+				// land on the chart's right edge and need ending at its tick.
+				className={ clsx( 'stats-widget-chart', {
+					'has-edge-label': range.id === DATE_RANGE_LAST_7_DAYS,
+				} ) }
+				style={ isLoading || ! isEmpty ? { blockSize: `${ CHART_HEIGHT }px` } : undefined }
+			>
+				{ isLoading && <StatsModulePlaceholder isLoading /> }
+				{ ! isLoading && isEmpty && (
+					<Notice.Root intent="info" className="stats-widget-empty-notice">
+						<Notice.Description>
+							{ translate( 'We are collecting traffic data for your site' ) }
+						</Notice.Description>
+						<Notice.Actions>
+							<Notice.ActionLink href="https://jetpack.com/stats/" openInNewTab>
+								{ translate( 'Learn more about stats' ) }
+							</Notice.ActionLink>
+						</Notice.Actions>
+					</Notice.Root>
+				) }
+				{ ! isLoading && ! isEmpty && (
+					<Suspense fallback={ <StatsModulePlaceholder isLoading /> }>
+						<OverviewChart series={ series } height={ CHART_HEIGHT } unit={ unit } />
+					</Suspense>
+				) }
+			</div>
 		</div>
 	);
 };
