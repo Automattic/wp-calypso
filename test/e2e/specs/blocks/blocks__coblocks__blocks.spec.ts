@@ -32,10 +32,6 @@ test.describe( 'CoBlocks: Blocks', { tag: [ tags.GUTENBERG ] }, () => {
 	const clicktoTweetBlockTweet = 'Tweet text';
 
 	test( 'As a user, I can use CoBlocks in a post', async ( { page, pageEditor } ) => {
-		// Clean runs already reach ~90 s at p95 against the 120 s default; the extra minute is
-		// headroom for a few inserter clicks stalling on a contended agent.
-		test.setTimeout( 180_000 );
-
 		// Must resolve inside the test: a throw at describe scope aborts collection for the entire run.
 		const accountName = getTestAccountByFeature( features );
 		let pricingTableBlock: PricingTableBlock;
