@@ -129,12 +129,13 @@ export default myFlow;
 
 ### Site creation & processing
 
-| `STEPS.*` constant   | slug                 | Purpose                                                          |
-| -------------------- | -------------------- | ---------------------------------------------------------------- |
-| `PROCESSING`         | `processing`         | Runs `setPendingAction`, shows progress bar, then submits result |
-| `SITE_CREATION_STEP` | `create-site`        | Creates the site explicitly (use when you need a separate step)  |
-| `FLEX_SITE_CREATION` | `flex-site-creation` | Flexible site creation variant                                   |
-| `SITE_LAUNCH`        | `site-launch`        | Launches (un-privatizes) an existing site                        |
+| `STEPS.*` constant   | slug                 | Purpose                                                                                              |
+| -------------------- | -------------------- | ---------------------------------------------------------------------------------------------------- |
+| `PROCESSING`         | `processing`         | Runs `setPendingAction`, shows progress bar, then submits result                                     |
+| `SITE_CREATION_STEP` | `create-site`        | Creates the site explicitly (use when you need a separate step)                                      |
+| `FLEX_SITE_CREATION` | `flex-site-creation` | Flexible site creation variant                                                                       |
+| `SITE_LAUNCH`        | `site-launch`        | Launches (un-privatizes) an existing site                                                            |
+| `LAUNCH_SITE`        | `launch-site`        | V2 launch step for the `launch-site` flow; launches once, shows the legacy error screen with Go back |
 
 ### Post-signup
 
