@@ -14,7 +14,6 @@ let mockHasAiChatEntry = false;
 let mockIsStoreReady = true;
 let mockAgentDockCatchAll = false;
 let mockAgentConfig = { agentId: 'wp-orchestrator', isLoading: false };
-const mockUseAbilitiesSetup = jest.fn();
 const mockCreateAgentConfig = jest.fn(
 	async ( { sessionId, agentId }: { sessionId: string; agentId: string } ) => ( {
 		agentId,
@@ -55,7 +54,6 @@ jest.mock( '../../hooks/use-open-chat-url-param', () => ( {
 jest.mock( '../../utils/load-external-providers', () => ( {
 	loadExternalProviders: async () => ( {
 		providerIds: [],
-		useAbilitiesSetup: mockUseAbilitiesSetup,
 	} ),
 } ) );
 jest.mock( '../../hooks/use-empty-view-suggestions', () => ( {
@@ -126,39 +124,8 @@ describe( 'AgentSetup', () => {
 		document.body.className = '';
 		window.history.replaceState( {}, '', '/' );
 		delete ( globalThis as { agentsManagerData?: unknown } ).agentsManagerData;
-		Object.defineProperty( document, 'modelContext', { configurable: true, value: undefined } );
 		setSessionSiteKey( 'no-site' );
 		setSessionUserId( undefined );
-	} );
-
-	it( 'mounts provider ability setup for eligible WebMCP without opening chat', async () => {
-		mockIsOpen = false;
-		mockHasAiChatEntry = true;
-		document.body.className = 'site-editor-php';
-		( globalThis as { agentsManagerData?: unknown } ).agentsManagerData = {
-			isDevMode: true,
-		};
-		Object.defineProperty( document, 'modelContext', {
-			configurable: true,
-			value: { registerTool: jest.fn() },
-		} );
-
-		render( manager( 111 ) );
-
-		await waitFor( () => expect( mockUseAbilitiesSetup ).toHaveBeenCalled() );
-	} );
-
-	it( 'does not mount provider ability setup outside development mode', async () => {
-		document.body.className = 'site-editor-php';
-		Object.defineProperty( document, 'modelContext', {
-			configurable: true,
-			value: { registerTool: jest.fn() },
-		} );
-
-		render( manager( 111 ) );
-
-		await waitFor( () => expect( mockCreateAgentConfig ).toHaveBeenCalled() );
-		expect( mockUseAbilitiesSetup ).not.toHaveBeenCalled();
 	} );
 
 	it( 'does not re-initialize while the chat view stays shown', async () => {
