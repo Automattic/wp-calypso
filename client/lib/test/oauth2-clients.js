@@ -60,6 +60,15 @@ describe( 'oauth2-clients mobile app helpers', () => {
 			expect( getOAuth2RedirectUri( query ) ).toBe( 'jetpack://oauth2-callback' );
 		} );
 
+		test( 'extracts redirect_uri nested inside oauth2_redirect on signup pages', () => {
+			const query = {
+				oauth2_client_id: '11',
+				oauth2_redirect:
+					'https://public-api.wordpress.com/oauth2/authorize?client_id=11&response_type=code&redirect_uri=jetpack%3A%2F%2Foauth2-callback',
+			};
+			expect( getOAuth2RedirectUri( query ) ).toBe( 'jetpack://oauth2-callback' );
+		} );
+
 		test( 'prefers a direct redirect_uri query param when present', () => {
 			const query = { redirect_uri: 'wordpress://oauth2-callback', redirect_to: 'https://x/?y=1' };
 			expect( getOAuth2RedirectUri( query ) ).toBe( 'wordpress://oauth2-callback' );
