@@ -3,8 +3,9 @@ import { closeSurvicateSurvey } from './close-survey';
 import debug from './debug';
 import { getSuppressionReason, observeHelpCenter, shouldSuppressSurvey } from './invoke-event';
 import { isSurveyVisible, observeModals } from './modal-detection';
+import { observeSuppressors } from './suppressors';
 import { pauseSurvicateTargeting, resumeSurvicateTargeting } from './targeting';
-import { recordSurveySuppressed } from './track-suppression';
+import { recordSurveySuppressed, type SuppressionReason } from './track-suppression';
 
 /**
  * Checks whether the Survicate script is already loaded on the page.
@@ -60,6 +61,14 @@ export function loadSurvicateScript( workspaceId: string, signal?: AbortSignal )
 		closeSurvicateSurvey();
 	};
 
+	const onSuppressorActivated = ( reason: SuppressionReason ) => {
+		if ( isSurveyVisible() ) {
+			recordSurveySuppressed( reason, 'suppressor_activated' );
+		}
+		pauseSurvicateTargeting();
+		closeSurvicateSurvey();
+	};
+
 	// One suppressor going away is not enough to resume — the last modal can
 	// close while the Help Center is still open, and vice versa.
 	const resumeIfClear = () => {
@@ -77,6 +86,7 @@ export function loadSurvicateScript( workspaceId: string, signal?: AbortSignal )
 
 		const disconnectModalObserver = observeModals( onModalOpened, resumeIfClear );
 		const unsubscribeHelpCenter = observeHelpCenter( onHelpCenterOpened, resumeIfClear );
+		const stopObservingSuppressors = observeSuppressors( onSuppressorActivated, resumeIfClear );
 
 		// A modal or the Help Center already open when the SDK becomes ready
 		// (e.g. an onboarding modal shown at page load) pauses targeting up
@@ -91,6 +101,7 @@ export function loadSurvicateScript( workspaceId: string, signal?: AbortSignal )
 				window._sva?.removeEventListener?.( 'survey_displayed', onSurveyDisplayed );
 				disconnectModalObserver();
 				unsubscribeHelpCenter();
+				stopObservingSuppressors();
 				// Don't leave the SDK paused with nothing left to resume it.
 				resumeSurvicateTargeting();
 			},

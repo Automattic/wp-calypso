@@ -128,7 +128,8 @@ through `window.wpcomSurvicateConfig`. Tracked as a follow-up.
 Surveys must not cover the Help Center while a user is actively seeking support, nor
 draw over any other open modal dialog (onboarding modals, WP `Modal`, native
 `<dialog>`). The umbrella check is `shouldSuppressSurvey()` (`invoke-event.ts`):
-`isSupportSession() || isHelpCenterOpen() || isModalOpen()`. The touch points — keep all of them:
+`isSupportSession() || isHelpCenterOpen() || <a registered suppressor is active> || isModalOpen()`.
+The touch points — keep all of them:
 
 1. **Open HC while a survey is showing** → `packages/data-stores/src/help-center/actions.ts`
    (`setShowHelpCenter`) calls `window._sva?.closeSurvey?.()` on open. (Note: that file
@@ -155,6 +156,33 @@ draw over any other open modal dialog (onboarding modals, WP `Modal`, native
    `observeHelpCenter()` (`invoke-event.ts`), a store-change subscription that
    pauses targeting and closes any visible survey on open, and resumes (via the
    shared `resumeIfClear()`) on close. Torn down by the same `AbortSignal`.
+6. **A consumer-registered suppressor turns on/off** → `load-script.ts` starts
+   `observeSuppressors()` (`suppressors.ts`), which reports each suppressor's
+   inactive→active and active→inactive transitions: activation pauses targeting and
+   closes any visible survey (recorded with `trigger: 'suppressor_activated'`),
+   deactivation goes through `resumeIfClear()`. Torn down by the same `AbortSignal`.
+
+### Consumer-registered suppressors (`suppressors.ts`)
+
+For UI the package can't detect on its own, a consumer calls
+`registerSurveySuppressor( { reason, isActive, subscribe } )`. While `isActive()` is
+true, `getSuppressionReason()` returns its `reason` (after support session and Help
+Center, before the generic modal rule, so `modal` still means "modal was the only
+reason"), which covers the `survey_displayed` net, invoked events and resume. A
+throwing `isActive()` counts as inactive. Suppressors registered after
+`loadSurvicateScript()` wired suppression are picked up too.
+
+Current suppressors:
+
+- **wp-admin notifications panel** (`apps/survicate/survicate.js`, reason
+  `notifications`): wpcom's `mu-plugins/notes/admin-bar-v2.js` (also loaded on Atomic
+  by Jetpack's notes module) opens the panel by toggling `wpnt-show` on
+  `#wp-admin-bar-notes`. It emits no event and mounts no modal, so the entry watches
+  that element's `class` attribute with a dedicated `MutationObserver`.
+
+Classic Calypso's notifications panel (Redux `ui.isNotificationsOpen`, an always-mounted
+`#wpnc-panel`) is not covered yet. The Dashboard's panel is a `@wordpress/components`
+popover, which the modal rule already catches.
 
 `isHelpCenterOpen()` (exported from `invoke-event.ts`) reads the `automattic/help-center`
 `@wordpress/data` store by string and returns `false` if the store isn't registered, so
@@ -267,6 +295,8 @@ race where a survey is already mid-display as a modal or the Help Center appears
   `observeHelpCenter()`, `getSuppressionReason()`, and `shouldSuppressSurvey()`.
 - `modal-detection.ts` — `isModalOpen()`, `isSurveyVisible()`, `observeModals()`,
   `MODAL_SELECTOR`.
+- `suppressors.ts` — `registerSurveySuppressor()`, `getActiveSuppressorReason()`,
+  `observeSuppressors()`: consumer-registered suppressors.
 - `targeting.ts` — `pauseSurvicateTargeting()` / `resumeSurvicateTargeting()`:
   gate the SDK's auto-campaign targeting via the `disableTargeting` flag.
 - `track-suppression.ts` — `recordSurveySuppressed()`: the
