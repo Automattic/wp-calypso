@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { logger } from '../client/utils/logger';
 import { resolveActionsForMessage } from '../message-actions/resolver';
 import { useMessageActions } from '../message-actions/useMessageActions';
-import { getAgentManager } from './agentManager';
+import { getAgentManager, type ToolResultInput, type TurnToolCall } from './agentManager';
 import { useRegenerate } from './useRegenerate';
 import type {
 	AuthProvider,
@@ -84,13 +84,15 @@ export interface ImageData {
 
 // Extra options for submitting a message
 export interface SubmitOptions {
-	type?: ContentType | 'tool_result'; // `text` for normal visible text (default), `context` for hidden context, `tool_result` for tool result (hidden from UI)
+	type?: ContentType | 'tool_result' | 'tool_results'; // `text` for normal visible text (default), `context` for hidden context, `tool_result` for tool result (hidden from UI), `tool_results` for the results of several calls of one turn (hidden from UI)
 	archived?: boolean;
 	imageUrls?: ( string | ImageData )[]; // Array of image URLs or image objects with metadata
 	sessionId?: string; // Optional `sessionId` to use for this message (overrides agent's `sessionId`)
 	toolCallId?: string; // Required when type is `tool_result`: the tool call ID to respond to
 	toolId?: string; // Required when type is `tool_result`: the tool ID
 	fileParts?: FilePart[]; // Optional when type is `tool_result`: files (typically images) produced by the tool
+	toolResults?: ToolResultInput[]; // Required when type is `tool_results`: one result per call being answered
+	turnToolCalls?: TurnToolCall[]; // Optional with `tool_results`: the turn's calls, added to history when this page never saw them
 }
 
 // UI Message format (simplified for UI components)
@@ -347,6 +349,8 @@ export interface UseAgentChatReturn {
 	messages: UIMessage[];
 	isProcessing: boolean;
 	error: string | null;
+	/** The server's machine-readable reason for `error`, when it sent one. */
+	errorCode: string | null;
 	onSubmit: ( message: string, options?: SubmitOptions ) => Promise< void >;
 	suggestions: Suggestion[];
 	progressMessage: string | null;
@@ -381,6 +385,7 @@ export interface AgentChatState {
 	uiMessages: UIMessage[];
 	isProcessing: boolean;
 	error: string | null;
+	errorCode: string | null;
 	suggestions: Suggestion[];
 	progressMessage: string | null;
 	progressPhase: string | null;
@@ -424,6 +429,7 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 		uiMessages: [],
 		isProcessing: false,
 		error: isValidConfig ? null : 'Invalid agent configuration',
+		errorCode: null,
 		suggestions: [],
 		progressMessage: null,
 		progressPhase: null,
@@ -562,12 +568,16 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 				throw new Error( 'Invalid agent configuration' );
 			}
 
-			const isToolResult = options?.type === 'tool_result';
+			const isToolResults = options?.type === 'tool_results';
+			const isToolResult = options?.type === 'tool_result' || isToolResults;
 
 			// Validate before claiming the send lock — only the `finally` at
 			// the end of the send releases it, so a throw above that point
 			// would strand it and silently drop every later send.
-			if ( isToolResult && ( ! options?.toolCallId || ! options?.toolId ) ) {
+			if ( isToolResults && ! options?.toolResults?.length ) {
+				throw new Error( '`toolResults` is required when type is `tool_results`' );
+			}
+			if ( isToolResult && ! isToolResults && ( ! options?.toolCallId || ! options?.toolId ) ) {
 				throw new Error( '`toolCallId` and `toolId` are required when type is `tool_result`' );
 			}
 
@@ -581,7 +591,10 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 			const agentManager = getAgentManager();
 			const agentKey = agentConfig.agentId;
 			const preserveUiOnlyMessages = internalOptions?.preserveUiOnlyMessages ?? true;
-			const restoreMessagesOnError = async ( error: string | null ): Promise< boolean > => {
+			const restoreMessagesOnError = async (
+				error: string | null,
+				errorCode: string | null = null
+			): Promise< boolean > => {
 				const restoreOnError = internalOptions?.restoreOnError;
 
 				if ( ! restoreOnError ) {
@@ -605,6 +618,7 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 					progressMessage: null,
 					progressPhase: null,
 					error,
+					errorCode,
 				} ) );
 
 				return true;
@@ -642,12 +656,14 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 						: ( internalOptions?.initialUiMessages ?? prev.uiMessages ),
 					isProcessing: true,
 					error: null,
+					errorCode: null,
 				} ) );
 			} else {
 				setState( ( prev ) => ( {
 					...prev,
 					isProcessing: true,
 					error: null,
+					errorCode: null,
 				} ) );
 			}
 
@@ -684,19 +700,29 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 					messageOptions.message = internalOptions.messageOverride;
 				}
 
-				// Use `sendToolResult` for tool results (cleans up duplicate results
-				// from conversation history and sends a `ToolResultDataPart` message),
-				// otherwise use regular `sendMessageStream`.
-				const stream = isToolResult
-					? agentManager.sendToolResult(
-							agentKey,
-							options!.toolCallId!,
-							options!.toolId!,
-							{ success: true, message },
-							messageOptions,
-							options?.fileParts
-						)
-					: agentManager.sendMessageStream( agentKey, message, messageOptions );
+				// Use `sendToolResults` / `sendToolResult` for tool results (they clean
+				// up duplicate results from conversation history and send
+				// `ToolResultDataPart`s), otherwise use regular `sendMessageStream`.
+				let stream: AsyncIterable< TaskUpdate >;
+				if ( isToolResults ) {
+					stream = agentManager.sendToolResults(
+						agentKey,
+						options!.toolResults!,
+						options?.turnToolCalls,
+						messageOptions
+					);
+				} else if ( isToolResult ) {
+					stream = agentManager.sendToolResult(
+						agentKey,
+						options!.toolCallId!,
+						options!.toolId!,
+						{ success: true, message },
+						messageOptions,
+						options?.fileParts
+					);
+				} else {
+					stream = agentManager.sendMessageStream( agentKey, message, messageOptions );
+				}
 
 				for await ( const update of stream ) {
 					if ( onTaskUpdate ) {
@@ -881,13 +907,15 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 							progressMessage: null,
 							progressPhase: null,
 							error: null, // Don't show error for user-initiated abort
+							errorCode: null,
 						} ) );
 					}
 					return; // Don't re-throw AbortError
 				}
 
 				const errorMessage = error instanceof Error ? error.message : 'Failed to send message';
-				const restored = await restoreMessagesOnError( errorMessage );
+				const errorCode = ( error as { code?: string } | null )?.code ?? null;
+				const restored = await restoreMessagesOnError( errorMessage, errorCode );
 				if ( ! restored ) {
 					setState( ( prev ) => ( {
 						...prev,
@@ -895,6 +923,7 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 						progressMessage: null,
 						progressPhase: null,
 						error: errorMessage,
+						errorCode,
 					} ) );
 				}
 				throw error;
@@ -1015,6 +1044,7 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 		messages: state.uiMessages,
 		isProcessing: state.isProcessing,
 		error: state.error,
+		errorCode: state.errorCode,
 		onSubmit,
 		suggestions: state.suggestions,
 		progressMessage: state.progressMessage,

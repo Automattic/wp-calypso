@@ -305,6 +305,11 @@ const mockAgentChat = jest.fn(
 	)
 );
 
+let mockConversationHistory: Array< {
+	role: string;
+	messageId?: string;
+	parts: Array< Record< string, unknown > >;
+} > = [];
 jest.mock(
 	'@automattic/agenttic-client',
 	() => ( {
@@ -312,6 +317,7 @@ jest.mock(
 			updateSessionId: mockUpdateSessionId,
 			hasAgent: () => mockManagerHasAgent,
 			isTurnInFlight: () => mockManagerTurnInFlight,
+			getConversationHistory: () => mockConversationHistory,
 		} ),
 		useAgentChat: ( config: typeof mockAgentChatConfig ) => {
 			mockAgentChatConfig = config;
@@ -727,6 +733,7 @@ describe( 'OrchestratorChat', () => {
 		mockConversationConfig = undefined;
 		mockReplyRecoveryOptions = undefined;
 		mockReplyNotice = undefined;
+		mockConversationHistory = [];
 	} );
 
 	it.each( [
@@ -1818,6 +1825,23 @@ describe( 'OrchestratorChat', () => {
 		it( 'records nothing while there is no error', () => {
 			render( chat() );
 
+			expect( chatErrorCalls() ).toEqual( [] );
+		} );
+
+		it( 'neither shows nor records a resume that another page answered first', () => {
+			mockUseAgentChat.mockReturnValue(
+				agentChatReturn( {
+					error: 'Streaming error: This tool result was already received.',
+					errorCode: 'tool_result_already_received',
+				} )
+			);
+
+			render( chat() );
+
+			const props = mockAgentChat.mock.calls[ mockAgentChat.mock.calls.length - 1 ][ 0 ] as {
+				error?: string | null;
+			};
+			expect( props.error ).toBeFalsy();
 			expect( chatErrorCalls() ).toEqual( [] );
 		} );
 	} );
@@ -4206,6 +4230,71 @@ describe( 'OrchestratorChat', () => {
 
 			expect( onSubmit ).toHaveBeenCalledWith( 'ship the sale banner' );
 			expect( sent ).toBe( true );
+		} );
+
+		it( 'resumes a turn paused on browser tools through the chat send and reports the reply', async () => {
+			// The old page's stored result, which the send drops before adding the reply:
+			// the history ends no longer than it started.
+			mockConversationHistory = [
+				{ role: 'user', messageId: 'm-question', parts: [ { type: 'text', text: 'Top 5?' } ] },
+				{ role: 'agent', messageId: 'm-result', parts: [ { type: 'data', data: {} } ] },
+			];
+			const onSubmit = jest.fn( async () => {
+				mockConversationHistory = [
+					mockConversationHistory[ 0 ],
+					{
+						role: 'agent',
+						messageId: 'm-reply',
+						parts: [ { type: 'text', text: 'Here are your top products.' } ],
+					},
+				];
+			} );
+			mockUseAgentChat.mockReturnValue( agentChatReturn( { onSubmit } ) );
+			render( chat() );
+			const toolResults = [ { toolCallId: 'call-top', toolId: 'top_products', result: {} } ];
+			const turnToolCalls = [ { toolCallId: 'call-top', toolId: 'top_products', arguments: {} } ];
+
+			let replied: boolean | undefined;
+			await act( async () => {
+				replied = await mockReplyRecoveryOptions?.resumeToolCalls( toolResults, turnToolCalls );
+			} );
+
+			expect( onSubmit ).toHaveBeenCalledWith( '', {
+				type: 'tool_results',
+				toolResults,
+				turnToolCalls,
+			} );
+			expect( replied ).toBe( true );
+		} );
+
+		it( 'reports no reply when the resume send fails', async () => {
+			const onSubmit = jest.fn().mockRejectedValue(
+				Object.assign( new Error( 'Streaming error: This tool result was already received.' ), {
+					code: 'tool_result_already_received',
+				} )
+			);
+			mockUseAgentChat.mockReturnValue( agentChatReturn( { onSubmit } ) );
+			render( chat() );
+
+			let replied: boolean | undefined;
+			await act( async () => {
+				replied = await mockReplyRecoveryOptions?.resumeToolCalls( [], [] );
+			} );
+
+			expect( replied ).toBe( false );
+		} );
+
+		it( 'reports no reply when the resume lost to another page', async () => {
+			const onSubmit = jest.fn().mockResolvedValue( undefined );
+			mockUseAgentChat.mockReturnValue( agentChatReturn( { onSubmit } ) );
+			render( chat() );
+
+			let replied: boolean | undefined;
+			await act( async () => {
+				replied = await mockReplyRecoveryOptions?.resumeToolCalls( [], [] );
+			} );
+
+			expect( replied ).toBe( false );
 		} );
 	} );
 } );

@@ -3,6 +3,11 @@
  * hydration ends at that question, polls page 1 until the reply lands, then
  * rehydrates once. A question the server never stored or never answers ends in
  * a notice with Retry.
+ *
+ * A turn paused on a browser-run tool has no page left to send the result, so
+ * after a grace period this page resumes it with the stored or an "interrupted"
+ * result per call. The server takes one result per call; a losing resume keeps
+ * waiting.
  */
 import {
 	getAgentManager,
@@ -12,6 +17,9 @@ import {
 	messageTextContent,
 	reconcileWithServer,
 	type Message,
+	type PendingClientTools,
+	type ToolResultInput,
+	type TurnToolCall,
 } from '@automattic/agenttic-client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useCallback, useEffect, useRef, useState } from '@wordpress/element';
@@ -19,17 +27,23 @@ import { __ } from '@wordpress/i18n';
 import { API_BASE_URL } from '../constants';
 import { useAgentsManagerContext } from '../contexts';
 import { getConversationBotId } from '../utils/conversation-bot-id';
+import { buildToolCallResume } from '../utils/tool-call-resume';
+import { getPendingNavigation } from '../utils/wp-admin-navigation-state';
 import type { NoticeConfig } from '@automattic/agenttic-ui';
 
 const PROBE_INTERVAL_MS = 3000;
 // Both server paths persist a question before the model runs, so one missing
 // this long after the page change never arrived.
 export const LOST_AFTER_MS = 20_000;
-// A turn paused on a browser-run tool stays paused once that page is gone, so
-// waiting longer only delays the Retry.
+// A paused turn this page could not resume (another page claimed it, or the
+// resume failed) and that still has no reply is not coming back; waiting longer
+// only delays the Retry.
 export const UNANSWERED_AFTER_MS = 60_000;
+// The page that ran a browser tool often still sends its result while the new
+// page loads; wait this long after this page first sees the pending call.
+export const RESUME_AFTER_MS = 10_000;
 
-type Phase = 'idle' | 'waiting' | 'lost' | 'unanswered';
+type Phase = 'idle' | 'waiting' | 'resuming' | 'lost' | 'unanswered';
 
 interface Snapshot {
 	/** Newest server id the first hydration held; a reply has a higher one. */
@@ -52,6 +66,11 @@ interface Options {
 	enabled: boolean;
 	/** Sends the prompt; resolves to whether it actually dispatched. */
 	sendRetry: ( text: string ) => Promise< boolean >;
+	/** Answers a turn's browser tool calls; resolves to whether a reply arrived. */
+	resumeToolCalls: (
+		results: ToolResultInput[],
+		turnToolCalls: TurnToolCall[]
+	) => Promise< boolean >;
 }
 
 const serverIdOf = ( message: Message ): number => {
@@ -75,7 +94,12 @@ async function findMissingTurns(
 	return reconciled.filter( ( message ) => message.metadata?.deliveryStatus === 'failed' );
 }
 
-export default function useReplyRecovery( { hydratedMessages, enabled, sendRetry }: Options ): {
+export default function useReplyRecovery( {
+	hydratedMessages,
+	enabled,
+	sendRetry,
+	resumeToolCalls,
+}: Options ): {
 	notice: NoticeConfig | undefined;
 } {
 	const { agentConfig } = useAgentsManagerContext();
@@ -91,6 +115,8 @@ export default function useReplyRecovery( { hydratedMessages, enabled, sendRetry
 	const seenReplyIdRef = useRef< number | null >( null );
 	const latestProbeRef = useRef< Message[] | null >( null );
 	const localMessagesRef = useRef< Message[] >( [] );
+	const resumeAttemptedRef = useRef( false );
+	const pendingSeenAtRef = useRef< number | null >( null );
 
 	// Read the local store before hydration lands: hydrating replaces it.
 	useEffect( () => {
@@ -189,7 +215,49 @@ export default function useReplyRecovery( { hydratedMessages, enabled, sendRetry
 			}
 		};
 
+		const resume = async ( pendingTools: PendingClientTools ) => {
+			resumeAttemptedRef.current = true;
+			setPhase( 'resuming' );
+			const { results, turnToolCalls } = buildToolCallResume(
+				pendingTools,
+				snapshot.localMessages
+			);
+			// A lost race rejects the send. That is still no reply here.
+			let replied = false;
+			try {
+				replied = await resumeToolCalls( results, turnToolCalls );
+			} catch {
+				// Lost race or failed send: keep waiting.
+			}
+			if ( cancelled ) {
+				return;
+			}
+			// No reply: another page answered the calls first, or the send failed.
+			// Keep waiting for that page's reply; the deadlines still end in Retry.
+			// Unless recovery was turned off meanwhile (the merchant sent).
+			setPhase( ( current ) => {
+				if ( current !== 'resuming' ) {
+					return current;
+				}
+				return replied ? 'idle' : 'waiting';
+			} );
+		};
+
 		( async () => {
+			const pendingTools = probe.pendingClientTools;
+			if ( pendingTools?.state === 'unanswered' && ! resumeAttemptedRef.current ) {
+				// A parked `wp-admin-navigate` is answered by `useNavigationContinuation`.
+				const parkedNavigation = getPendingNavigation()?.toolCallId;
+				if ( pendingTools.calls.some( ( call ) => call.toolCallId === parkedNavigation ) ) {
+					return;
+				}
+				pendingSeenAtRef.current ??= Date.now();
+				if ( Date.now() - pendingSeenAtRef.current >= RESUME_AFTER_MS ) {
+					await resume( pendingTools );
+				}
+				return;
+			}
+
 			const newest = newestOf( probe.messages );
 			if ( newest?.role !== 'agent' ) {
 				seenReplyIdRef.current = null;
@@ -274,6 +342,14 @@ export default function useReplyRecovery( { hydratedMessages, enabled, sendRetry
 	if ( phase === 'waiting' ) {
 		return {
 			notice: { message: __( 'Waiting for the reply…', __i18n_text_domain__ ), dismissible: false },
+		};
+	}
+	if ( phase === 'resuming' ) {
+		return {
+			notice: {
+				message: __( 'Picking up your last question…', __i18n_text_domain__ ),
+				dismissible: false,
+			},
 		};
 	}
 	if ( phase === 'lost' || phase === 'unanswered' ) {

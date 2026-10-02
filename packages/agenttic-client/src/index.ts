@@ -90,7 +90,12 @@ export { createClient } from './client/index';
 
 // Agent Manager - Functional singleton for managing agent instances
 export { getAgentManager } from './react/agentManager';
-export type { AgentManager, AgentManagerConfig } from './react/agentManager';
+export type {
+	AgentManager,
+	AgentManagerConfig,
+	ToolResultInput,
+	TurnToolCall,
+} from './react/agentManager';
 
 // Message actions
 export { useMessageActions } from './message-actions';
@@ -129,6 +134,7 @@ export {
 export type { OdieServiceConfig } from './react/odieService';
 export type {
 	ServerLoadResult,
+	PendingClientTools,
 	PaginationMeta,
 	ServerConversationListItem,
 	ServerConversationListItemMessage,
