@@ -125,38 +125,32 @@ function getSignupDestination( { siteSlug, redirect_to, localeSlug, flowName } )
 }
 
 /**
+ * The wp-admin screen a launch started from, as named by its `ref`.
+ * @param {Object} dependencies the signup dependency store
+ * @returns {string|null} the screen's URL, or null when the launch didn't start in wp-admin
+ */
+function getWpAdminLaunchUrl( dependencies ) {
+	const ref = dependencies.refParameter?.trim() ?? '';
+
+	if ( ref !== 'wp-admin' && ! ref.startsWith( 'wp-admin/' ) ) {
+		return null;
+	}
+
+	return `https://${ dependencies.siteSlug }/${ ref }`;
+}
+
+/**
  * Where the user came from before entering the launch flow, without the arguments that celebrate a
  * successful launch. Use this when the launch did not happen.
  * @param {Object} dependencies the signup dependency store
  * @returns {string} the URL to send the user back to
  */
 export function getLaunchReturnUrl( dependencies ) {
-	if ( dependencies.back_to ) {
-		return dependencies.back_to;
-	}
-
-	const ref = dependencies.refParameter?.trim() ?? '';
-	const isWpAdminPath = ref === 'wp-admin' || ref.startsWith( 'wp-admin/' );
-
-	if ( isWpAdminPath ) {
-		return `https://${ dependencies.siteSlug }/${ ref }`;
-	}
-
-	return `/home/${ dependencies.siteSlug }`;
-}
-
-/**
- * The query argument that shows the launch celebration on the given page. wp-admin reads
- * `celebrate-launch`, while Calypso reads `celebrateLaunch`.
- * @param {string} url an absolute URL or a Calypso path
- * @returns {Object} the query argument to add
- */
-function getCelebrateLaunchArgs( url ) {
-	const { pathname } = new URL( url, 'https://wordpress.com' );
-
-	return /\/wp-admin(\/|$)/.test( pathname )
-		? { 'celebrate-launch': 'true' }
-		: { celebrateLaunch: 'true' };
+	return (
+		dependencies.back_to ||
+		getWpAdminLaunchUrl( dependencies ) ||
+		`/home/${ dependencies.siteSlug }`
+	);
 }
 
 function getLaunchDestination( dependencies ) {
@@ -164,7 +158,15 @@ function getLaunchDestination( dependencies ) {
 	// so `back_to` is free to keep meaning "the page the Back button returns to".
 	const url = dependencies.redirect_to || getLaunchReturnUrl( dependencies );
 
-	return addQueryArgs( getCelebrateLaunchArgs( url ), url );
+	// `ref` names a wp-admin screen that celebrates the launch. A wp-admin `back_to` can be any
+	// screen, so it only drives the Back button.
+	const wpAdminUrl = getWpAdminLaunchUrl( dependencies );
+
+	if ( wpAdminUrl ) {
+		return addQueryArgs( { 'celebrate-launch': 'true' }, wpAdminUrl );
+	}
+
+	return addQueryArgs( { celebrateLaunch: 'true' }, getLaunchReturnUrl( dependencies ) );
 }
 
 function getDomainSignupFlowDestination( { designType, siteSlug, flowName } ) {
