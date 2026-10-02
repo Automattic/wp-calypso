@@ -53,12 +53,20 @@ export function isPressableHostingProduct( keyOrSlug: string ) {
 
 /**
  * Check if a product slug corresponds to a Pressable addon product.
- *
  * @param product_slug string - The product slug to check.
  * @returns boolean - True if it's a Pressable addon product, false otherwise.
  */
 export function isPressableAddonProduct( product_slug: string ) {
 	return product_slug.startsWith( 'pressable-addon' );
+}
+
+/**
+ * Check if a license key or product slug corresponds to the Titan inbox addon.
+ * @param keyOrSlug string - The license key or product slug to check.
+ * @returns boolean - True if it's a Titan inbox product, false otherwise.
+ */
+export function isPressableTitanProduct( keyOrSlug: string ) {
+	return keyOrSlug.startsWith( 'pressable-addon-titan-inbox' );
 }
 
 /**

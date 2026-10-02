@@ -269,6 +269,8 @@ export interface LicenseMeta {
 	devSitePeriodEnd?: string;
 	transferredSubscriptionId?: string;
 	transferredSubscriptionExpiration?: string;
+	titanDomain?: string;
+	titanPlan?: string;
 }
 
 export interface LicenseSubscription {
