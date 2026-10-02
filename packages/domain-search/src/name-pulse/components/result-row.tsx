@@ -4,9 +4,9 @@ import { useViewportMatch } from '@wordpress/compose';
 import { sprintf } from '@wordpress/i18n';
 import { cautionFilled, cart as cartIcon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
-import { Badge } from '@wordpress/ui';
+import { AlertDialog, Badge } from '@wordpress/ui';
 import clsx from 'clsx';
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useRef, useState, type PointerEvent } from 'react';
 import { useDomainSearch } from '../../page/context';
 import { DomainSearchTrademarkClaimsModal } from '../../ui';
 import {
@@ -81,6 +81,8 @@ export const NamePulseResultRow = ( { result, position }: NamePulseResultRowProp
 		acceptTrademarkClaim,
 		closeTrademarkClaims,
 	} = useNamePulseCartToggle( result.domain_name, position );
+	const [ isPolicyNoticeOpen, setIsPolicyNoticeOpen ] = useState( false );
+	const pointerTypeRef = useRef( '' );
 
 	const { domain_name: domainName, suffix, source } = result;
 	const label = suffix ? domainName.slice( 0, -( suffix.length + 1 ) ) : domainName;
@@ -125,11 +127,13 @@ export const NamePulseResultRow = ( { result, position }: NamePulseResultRowProp
 	// waiting for one that is not coming.
 	const isPremiumPriceMissing = needsPremiumPrice && ! realtimeVerdict;
 	const showPremiumBadge = isAvailable && isPremium;
-	const showSaleBadge = isAvailable && !! getNamePulseSalePrice( row );
-	// One badge still fits beside the name; two leave it only a few characters,
-	// so the pair moves under it and the name keeps the full column width.
-	const stackBadges = showSaleBadge && showPremiumBadge;
-	const labelTruncateLimit = ( showSaleBadge || showPremiumBadge ) && ! stackBadges ? 12 : 20;
+	// TLDs with special requirements are rarely registered, so the requirements
+	// stay off the row: a mouse sees them on hovering the cart button, and a tap
+	// confirms them in a dialog before the name goes to the cart.
+	const policyNotices = isAvailable && ! inCart ? ( row.policy_notices ?? [] ) : [];
+	const policyNoticeMessage = policyNotices.map( ( notice ) => notice.message ).join( ' ' );
+	const cartLabel = inCart ? __( 'Remove from cart' ) : __( 'Add to cart' );
+	const labelTruncateLimit = showPremiumBadge ? 12 : 20;
 	const suffixText = (
 		<Text as="span" weight={ 600 } variant={ isUnavailable ? 'muted' : undefined }>
 			{ suffix ? `.${ suffix }` : '' }
@@ -142,9 +146,7 @@ export const NamePulseResultRow = ( { result, position }: NamePulseResultRowProp
 			data-domain={ domainName }
 			data-status={ NamePulseDomainStatus[ status ].toLowerCase() }
 		>
-			<span
-				className={ clsx( 'name-pulse-row__name', stackBadges && 'name-pulse-row__name--stacked' ) }
-			>
+			<span className="name-pulse-row__name">
 				{ wrapName ? (
 					<span className="name-pulse-row__domain name-pulse-row__domain--wrap">
 						<Text as="span" variant="muted">
@@ -169,10 +171,9 @@ export const NamePulseResultRow = ( { result, position }: NamePulseResultRowProp
 						</span>
 					</Tooltip>
 				) }
-				{ ( showSaleBadge || showPremiumBadge ) && (
+				{ showPremiumBadge && (
 					<span className="name-pulse-row__badges">
-						{ showSaleBadge && <Badge intent="medium">{ __( 'Sale' ) }</Badge> }
-						{ showPremiumBadge && <Badge intent="informational">{ __( 'Premium' ) }</Badge> }
+						<Badge intent="informational">{ __( 'Premium' ) }</Badge>
 					</span>
 				) }
 			</span>
@@ -206,19 +207,46 @@ export const NamePulseResultRow = ( { result, position }: NamePulseResultRowProp
 					</Tooltip>
 				) }
 				{ isAvailable && ! error && (
-					<Button
-						className="name-pulse-row__cart"
-						icon={ cartIcon }
-						label={ inCart ? __( 'Remove from cart' ) : __( 'Add to cart' ) }
-						variant={ inCart ? 'primary' : undefined }
-						size="compact"
-						isBusy={ isPending }
-						disabled={ isPending }
-						aria-pressed={ inCart }
-						onClick={ toggleCart }
-					/>
+					<Tooltip text={ policyNoticeMessage || cartLabel } placement="top">
+						<Button
+							className="name-pulse-row__cart"
+							icon={ cartIcon }
+							label={ cartLabel }
+							showTooltip={ false }
+							variant={ inCart ? 'primary' : undefined }
+							size="compact"
+							isBusy={ isPending }
+							disabled={ isPending }
+							aria-pressed={ inCart }
+							onPointerDown={ ( event: PointerEvent ) => {
+								pointerTypeRef.current = event.pointerType;
+							} }
+							onClick={ () => {
+								const isTap = pointerTypeRef.current === 'touch';
+								pointerTypeRef.current = '';
+								if ( policyNoticeMessage && isTap ) {
+									setIsPolicyNoticeOpen( true );
+									return;
+								}
+								toggleCart();
+							} }
+						/>
+					</Tooltip>
 				) }
 			</span>
+			{ policyNotices.length > 0 && (
+				<AlertDialog.Root
+					open={ isPolicyNoticeOpen }
+					onOpenChange={ setIsPolicyNoticeOpen }
+					onConfirm={ toggleCart }
+				>
+					<AlertDialog.Popup
+						title={ policyNotices[ 0 ].label }
+						description={ policyNoticeMessage }
+						confirmButtonText={ __( 'Add to cart' ) }
+					/>
+				</AlertDialog.Root>
+			) }
 			{ trademarkClaimsNoticeInfo && (
 				<DomainSearchTrademarkClaimsModal
 					domainName={ domainName }

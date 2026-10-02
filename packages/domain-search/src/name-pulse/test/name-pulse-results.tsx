@@ -271,8 +271,7 @@ describe( 'NamePulseResults', () => {
 		expect( within( premium ).getByRole( 'button', { name: 'Add to cart' } ) ).toBeInTheDocument();
 
 		const sale = await findRow( 'icecream.site' );
-		expect( await within( sale ).findByText( 'Sale' ) ).toBeInTheDocument();
-		expect( within( sale ).getByText( '$6' ) ).toBeInTheDocument();
+		expect( await within( sale ).findByText( '$6' ) ).toBeInTheDocument();
 		expect( within( sale ).getByText( '/first year' ) ).toBeInTheDocument();
 		expect( within( sale ).getByText( '$48/year renewal' ) ).toBeInTheDocument();
 
@@ -333,7 +332,7 @@ describe( 'NamePulseResults', () => {
 		).toBeInTheDocument();
 
 		await waitFor( () => expect( rowFor( 'icecream.best' ) ).not.toBeNull() );
-		expect( within( rowFor( 'icecream.best' ) ).getByText( 'Sale' ) ).toBeInTheDocument();
+		expect( within( rowFor( 'icecream.best' ) ).getByText( '/first year' ) ).toBeInTheDocument();
 		expect( within( rowFor( 'creamyice.com' ) ).getByText( '$24' ) ).toBeInTheDocument();
 		expect( sectionRows( 'suggestions' ) ).toHaveLength( NAME_PULSE_SUGGESTIONS_FIXTURE.length );
 	} );

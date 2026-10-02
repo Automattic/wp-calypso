@@ -1,3 +1,5 @@
+import type { PolicyNotice } from '../domain-suggestions/types';
+
 export interface DomainAvailabilityQuery {
 	blog_id?: number;
 	is_cart_pre_check?: boolean;
@@ -56,6 +58,11 @@ export interface DomainAvailability {
 	 * Whether the client should show the dot gay notice
 	 */
 	dot_gay_notice_required?: true;
+
+	/**
+	 * Policy notices associated with the domain
+	 */
+	policy_notices?: PolicyNotice[];
 
 	/**
 	 * Rendered formatted cost
