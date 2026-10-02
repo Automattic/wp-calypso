@@ -60,9 +60,8 @@ export default function Summary( {
 }: SummaryProps ) {
 	const { __ } = useI18n();
 	const prefersReducedMotion = useReducedMotion();
-	// The Newsletter page is a router that reads its route from `p`, and it opens on
-	// Subscribers, so settings has to be asked for as an encoded route rather than a plain
-	// query arg.
+	// The Newsletter page reads its route from `p`. Overview is the default once that tab
+	// exists, so both Settings and Subscribers have to be asked for explicitly.
 	const newsletterSettingsUrl = useSelector( ( state ) =>
 		getNewsletterPageUrl( state, selectedSite.ID, {
 			tab: 'settings',
