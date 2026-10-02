@@ -368,9 +368,14 @@
 	font-weight: 500;
 }
 
-// The plan table scrolls sideways inside its card on small screens.
+// The plan table scrolls sideways inside its card on small screens. While
+// columns are still hidden to the right, the edge fades out to say so.
 .dashboard-marketplace-hosting__plan-table-scroll {
 	overflow-x: auto;
+
+	&.has-more {
+		mask-image: linear-gradient( to right, #000 calc( 100% - 64px ), transparent );
+	}
 }
 
 // Every plan of a type as a row, its limits in columns.
@@ -403,14 +408,35 @@
 		white-space: nowrap;
 	}
 
+	// The Plan column stays put while the other columns scroll under it, so
+	// its cells carry the row's colour as an opaque fill (DataViews does the
+	// same for its first column).
+	tr {
+		--plan-row-bg: #fff;
+	}
+
+	th:first-child,
+	td:first-child {
+		position: sticky;
+		inset-inline-start: 0;
+		z-index: 1;
+		background: var( --plan-row-bg );
+	}
+
 	tbody tr {
 		cursor: pointer;
 
 		&:hover {
+			--plan-row-bg: color-mix( in srgb, currentColor 4%, #fff );
 			background: color-mix( in srgb, currentColor 4%, transparent );
 		}
 
 		&.is-selected {
+			--plan-row-bg: color-mix(
+				in srgb,
+				var( --wp-components-color-accent, var( --wp-admin-theme-color ) ) 6%,
+				#fff
+			);
 			background: color-mix(
 				in srgb,
 				var( --wp-components-color-accent, var( --wp-admin-theme-color ) ) 6%,
@@ -428,6 +454,7 @@
 		cursor: default;
 
 		&:not( .is-selected ):hover {
+			--plan-row-bg: #fff;
 			background: none;
 		}
 
@@ -447,6 +474,20 @@
 	input[type='radio'] {
 		margin: 0;
 		accent-color: var( --wp-components-color-accent, var( --wp-admin-theme-color ) );
+	}
+}
+
+// Once the table is scrolled, a line marks the Plan column's edge.
+.dashboard-marketplace-hosting__plan-table-scroll.is-scrolled
+	.dashboard-marketplace-hosting__plan-table {
+	th:first-child::after,
+	td:first-child::after {
+		content: '';
+		position: absolute;
+		inset-block: 0;
+		inset-inline-end: 0;
+		inline-size: 1px;
+		background: var( --dashboard-overview__divider-color );
 	}
 }
 
