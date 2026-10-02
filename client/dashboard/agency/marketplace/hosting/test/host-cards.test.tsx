@@ -8,17 +8,7 @@ import HostCards from '../host-cards';
 
 function renderCards( props: Partial< React.ComponentProps< typeof HostCards > > = {} ) {
 	return render(
-		<HostCards
-			term="yearly"
-			prices={ {
-				wpcom: { amount: 300, currency: 'USD' },
-				pressable: { amount: 250, currency: 'USD' },
-			} }
-			owned={ {} }
-			isReferralMode={ false }
-			onPick={ jest.fn() }
-			{ ...props }
-		/>
+		<HostCards owned={ {} } isReferralMode={ false } onPick={ jest.fn() } { ...props } />
 	);
 }
 
@@ -26,19 +16,20 @@ describe( '<HostCards>', () => {
 	test( 'leads each host to its own page', async () => {
 		renderCards();
 
-		expect(
-			await screen.findByRole( 'link', { name: 'Configure WordPress.com' } )
-		).toHaveAttribute( 'href', '/hosting/wpcom' );
-		expect( screen.getByRole( 'link', { name: 'Configure Pressable' } ) ).toHaveAttribute(
+		expect( await screen.findByRole( 'link', { name: 'Explore WordPress.com' } ) ).toHaveAttribute(
+			'href',
+			'/hosting/wpcom'
+		);
+		expect( screen.getByRole( 'link', { name: 'Explore Pressable' } ) ).toHaveAttribute(
 			'href',
 			'/hosting/pressable'
 		);
-		expect( screen.getByRole( 'link', { name: 'Learn more' } ) ).toHaveAttribute(
+		expect( screen.getByRole( 'link', { name: 'Explore VIP' } ) ).toHaveAttribute(
 			'href',
 			'/hosting/vip'
 		);
-		expect( screen.getByText( '$300' ) ).toBeVisible();
-		expect( screen.getByText( 'Custom' ) ).toBeVisible();
+		// The cards compare hosts by their job, never by price.
+		expect( screen.queryByText( /\$/ ) ).not.toBeInTheDocument();
 	} );
 
 	test( 'owners see what they own and go straight to more', async () => {
@@ -56,6 +47,6 @@ describe( '<HostCards>', () => {
 		renderCards( { owned: { wpcom: 'You own 4 sites' }, isReferralMode: true } );
 
 		expect( await screen.findByText( 'You own 4 sites' ) ).toBeVisible();
-		expect( screen.getByRole( 'link', { name: 'Configure WordPress.com' } ) ).toBeVisible();
+		expect( screen.getByRole( 'link', { name: 'Explore WordPress.com' } ) ).toBeVisible();
 	} );
 } );
