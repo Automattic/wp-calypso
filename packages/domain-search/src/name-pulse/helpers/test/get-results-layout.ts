@@ -106,6 +106,19 @@ describe( 'getResultsLayout', () => {
 		} );
 	} );
 
+	it( 'searches an unknown double ending as one name, not as a subdomain', () => {
+		expect( getResultsLayout( 'example.co.com', TLDS ) ).toEqual( {
+			mode: 'fqdn',
+			baseName: 'exampleco',
+			wordCount: 1,
+			fqdn: { baseName: 'exampleco', tld: 'com', fullDomain: 'exampleco.com' },
+			top: { show: true },
+			exactGrid: { show: true },
+			suggestions: { show: true },
+			creative: { show: false },
+		} );
+	} );
+
 	it( 'searches the label of a free subdomain and reports it', () => {
 		expect( getResultsLayout( 'mysite.wordpress.com', TLDS ) ).toEqual( {
 			mode: 'single',
