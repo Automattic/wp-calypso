@@ -1,0 +1,39 @@
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+@import '@wordpress/base-styles/variables';
+
+.domain-diagnostics-card .components-card__body {
+	@include break-medium {
+		padding: $grid-unit-30;
+	}
+}
+
+// A native marker can't be aligned to the card's content edge, and the list is
+// a flex container, so the bullet is drawn as a pseudo-element instead.
+.domain-diagnostics__records {
+	margin-block: 0;
+	padding-inline-start: 0;
+	list-style: none;
+
+	li {
+		position: relative;
+		padding-inline-start: $grid-unit-30;
+
+		&::before {
+			content: '';
+			position: absolute;
+			inset-inline-start: 0;
+			inset-block-start: 0.5em;
+			width: 5px;
+			height: 5px;
+			border-radius: 50%;
+			background: currentColor;
+		}
+	}
+
+	// DKIM values are a single unbroken token, so pre-wrap alone won't break them.
+	pre {
+		white-space: pre-wrap;
+		overflow-wrap: anywhere;
+	}
+}
