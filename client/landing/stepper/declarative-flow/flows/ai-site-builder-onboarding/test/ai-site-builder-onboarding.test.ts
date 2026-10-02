@@ -69,7 +69,7 @@ jest.mock( '../../../../utils/steps-with-required-login', () => ( {
 describe( 'ai-site-builder-onboarding flow', () => {
 	const isEnabled = jest.spyOn( config, 'isEnabled' );
 
-	it( 'initializes domain → plans → create-site → processing → error', async () => {
+	it( 'initializes domain → plans → create-site → processing → Commerce wait → error', async () => {
 		const reduxStore = { dispatch: jest.fn(), getState: jest.fn() } as never;
 		const steps = await aiSiteBuilderOnboarding.initialize( reduxStore );
 
@@ -78,6 +78,7 @@ describe( 'ai-site-builder-onboarding flow', () => {
 			STEPS.UNIFIED_PLANS.slug,
 			STEPS.SITE_CREATION_STEP.slug,
 			STEPS.PROCESSING.slug,
+			STEPS.WAIT_FOR_COMMERCE_ATOMIC.slug,
 			STEPS.ERROR.slug,
 		] );
 	} );
@@ -131,7 +132,7 @@ describe( 'ai-site-builder-onboarding flow', () => {
 			} );
 
 			Object.defineProperty( window, 'location', {
-				value: { assign: jest.fn() },
+				value: { assign: jest.fn(), replace: jest.fn() },
 				writable: true,
 			} );
 		} );
@@ -195,6 +196,34 @@ describe( 'ai-site-builder-onboarding flow', () => {
 
 				expect( new URL( getRedirectTo() ).pathname ).toBe( '/wp-admin/site-editor.php' );
 				expect( setStaticHomepageOnSite ).toHaveBeenCalledWith( 123, 7 );
+			} );
+
+			it( 'waits for Commerce readiness before opening the prepared editor', async () => {
+				setPlan( 'ecommerce-bundle-2y' );
+				await runProcessingSubmit();
+
+				const waitUrl = new URL( getRedirectTo(), 'https://wordpress.com' );
+				expect( waitUrl.pathname ).toBe(
+					'/setup/ai-site-builder-onboarding/wait-for-commerce-atomic'
+				);
+				expect( waitUrl.searchParams.get( 'siteId' ) ).toBe( '123' );
+				expect( waitUrl.searchParams.get( 'siteSlug' ) ).toBe( 'example.wordpress.com' );
+				expect( persistSignupDestination ).toHaveBeenCalledWith( getRedirectTo() );
+				const editorUrl = waitUrl.searchParams.get( 'redirect_to' ) as string;
+				expect( new URL( editorUrl ).pathname ).toBe( '/wp-admin/site-editor.php' );
+
+				mockQueryParams = waitUrl.searchParams;
+				const navigate = jest.fn();
+				const { submit } = aiSiteBuilderOnboarding.useStepNavigation(
+					STEPS.WAIT_FOR_COMMERCE_ATOMIC.slug,
+					navigate
+				);
+				await submit?.( {
+					slug: STEPS.WAIT_FOR_COMMERCE_ATOMIC.slug,
+					providedDependencies: { ready: true },
+				} as never );
+
+				expect( window.location.replace ).toHaveBeenCalledWith( editorUrl );
 			} );
 		} );
 
@@ -263,17 +292,6 @@ describe( 'ai-site-builder-onboarding flow', () => {
 					expect( new URL( getRedirectTo(), 'https://wordpress.com' ).pathname ).toBe(
 						'/setup/ai-site-builder-spec/site-spec'
 					);
-				}
-			);
-
-			it.each( [ 'ecommerce-bundle-2y' ] )(
-				'is not used for the %s plan',
-				async ( productSlug ) => {
-					setPlan( productSlug );
-
-					await runProcessingSubmit();
-
-					expect( new URL( getRedirectTo() ).pathname ).toBe( '/wp-admin/site-editor.php' );
 				}
 			);
 

@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import { isEcommercePlan } from '@automattic/calypso-products';
 import { Onboard } from '@automattic/data-stores';
 import { AI_SITE_BUILDER_ONBOARDING_FLOW, clearStepPersistedState } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
@@ -77,6 +78,7 @@ async function initialize( reduxStore: Store ) {
 		STEPS.UNIFIED_PLANS,
 		STEPS.SITE_CREATION_STEP,
 		STEPS.PROCESSING,
+		STEPS.WAIT_FOR_COMMERCE_ATOMIC,
 		STEPS.ERROR,
 	] );
 }
@@ -178,6 +180,35 @@ const aiSiteBuilderOnboarding: FlowV2< typeof initialize > = {
 			const { slug, providedDependencies } = submittedStep;
 
 			switch ( slug ) {
+				case STEPS.WAIT_FOR_COMMERCE_ATOMIC.slug: {
+					if ( ! providedDependencies.ready ) {
+						return navigate( STEPS.ERROR.slug );
+					}
+
+					const siteSlug = query.get( 'siteSlug' );
+					const destination = query.get( 'redirect_to' );
+					if ( ! siteSlug || ! destination ) {
+						return navigate( STEPS.ERROR.slug );
+					}
+
+					let editorUrl: URL;
+					try {
+						editorUrl = new URL( destination );
+					} catch {
+						return navigate( STEPS.ERROR.slug );
+					}
+					if (
+						! siteSlug.endsWith( '.wordpress.com' ) ||
+						editorUrl.protocol !== 'https:' ||
+						editorUrl.hostname !== siteSlug ||
+						editorUrl.pathname !== '/wp-admin/site-editor.php'
+					) {
+						return navigate( STEPS.ERROR.slug );
+					}
+
+					window.location.replace( editorUrl.toString() );
+					return;
+				}
 				case STEPS.DOMAIN_SEARCH.slug: {
 					if ( ! providedDependencies ) {
 						throw new Error( 'No provided dependencies found' );
@@ -290,14 +321,22 @@ const aiSiteBuilderOnboarding: FlowV2< typeof initialize > = {
 						)
 					);
 
-					persistSignupDestination( destination );
 					setSignupCompleteSlug( siteSlug );
 					setSignupCompleteFlowName( flowName );
 					setSignupCompleteSiteID( siteId );
 
+					const checkoutDestination =
+						planCartItem && isEcommercePlan( planCartItem.product_slug )
+							? addQueryArgs(
+									`/setup/${ AI_SITE_BUILDER_ONBOARDING_FLOW }/${ STEPS.WAIT_FOR_COMMERCE_ATOMIC.slug }`,
+									{ siteId, siteSlug, redirect_to: destination }
+								)
+							: destination;
+					persistSignupDestination( checkoutDestination );
+
 					return window.location.assign(
 						addQueryArgs( `/checkout/${ encodeURIComponent( siteSlug ) }`, {
-							redirect_to: destination,
+							redirect_to: checkoutDestination,
 							checkoutBackUrl,
 							checkoutBackUrlDomains,
 							signup: 1,

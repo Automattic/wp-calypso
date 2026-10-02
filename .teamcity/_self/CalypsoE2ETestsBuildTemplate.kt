@@ -189,7 +189,8 @@ object CalypsoE2ETestsBuildTemplate : Template({
 
 				# Resolve the Playwright grep flag. When IGNORE_TEST_GROUP_FOR_E2E_CHANGES is
 				# "true", adapt TEST_GROUP to the changed E2E files (union with changed specs,
-				# or clear to run all on a non-spec change); otherwise use TEST_GROUP as is.
+				# or run all but @p2 on a non-spec change; see bin/e2e-grep-flag.sh for the P2
+				# cases); otherwise use TEST_GROUP as is.
 				if [[ "%IGNORE_TEST_GROUP_FOR_E2E_CHANGES%" == "true" ]]; then
 					GREP_FLAG=${'$'}(TEST_GROUP="%TEST_GROUP%" ./bin/e2e-grep-flag.sh)
 				elif [[ -n "%TEST_GROUP%" ]]; then

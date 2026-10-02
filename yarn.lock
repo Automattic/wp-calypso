@@ -1816,6 +1816,7 @@ __metadata:
     "@automattic/calypso-storybook": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/i18n-utils": "workspace:^"
+    "@automattic/newsletter-urls": "workspace:^"
     "@automattic/oauth-token": "workspace:^"
     "@automattic/typography": "workspace:^"
     "@automattic/viewport": "workspace:^"
@@ -1890,7 +1891,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@automattic/newsletter-urls@workspace:packages/newsletter-urls":
+"@automattic/newsletter-urls@workspace:^, @automattic/newsletter-urls@workspace:packages/newsletter-urls":
   version: 0.0.0-use.local
   resolution: "@automattic/newsletter-urls@workspace:packages/newsletter-urls"
   dependencies:
@@ -2454,6 +2455,7 @@ __metadata:
     "@automattic/components": "workspace:^"
     "@automattic/data-stores": "workspace:^"
     "@automattic/i18n-utils": "workspace:^"
+    "@automattic/newsletter-urls": "workspace:^"
     "@automattic/onboarding": "workspace:^"
     "@automattic/viewport": "workspace:^"
     "@automattic/viewport-react": "workspace:^"

@@ -121,9 +121,11 @@ export default function DomainOverviewSettings( {
 		);
 	}
 
+	// `current_user_can_manage` is always false in a support session, but support can still
+	// manage glue records on the user's behalf.
 	if (
 		domain.subtype.id === DomainSubtype.DOMAIN_REGISTRATION &&
-		domain.current_user_can_manage &&
+		( domain.current_user_can_manage || isSupportSession() ) &&
 		domain.can_manage_dns_records
 		// TODO: Add property that shows or hides this option depending on the availability of the feature
 	) {

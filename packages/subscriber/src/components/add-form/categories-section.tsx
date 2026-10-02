@@ -1,5 +1,6 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { newsletterAdminUrl } from '@automattic/newsletter-urls';
 import { Button, Popover, ToggleControl, FormTokenField } from '@wordpress/components';
 import { TokenItem } from '@wordpress/components/build-types/form-token-field/types';
 import { createInterpolateElement, useRef, useState } from '@wordpress/element';
@@ -62,9 +63,7 @@ export const CategoriesSection: React.FC< Props > = ( {
 		if ( ! siteUrl ) {
 			return '#';
 		}
-		return `${ siteUrl }/wp-admin/admin.php?page=jetpack-newsletter&p=${ encodeURIComponent(
-			'/?tab=settings'
-		) }`;
+		return newsletterAdminUrl( `${ siteUrl }/wp-admin/`, { tab: 'settings' } );
 	};
 
 	return (
