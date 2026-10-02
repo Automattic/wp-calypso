@@ -17,6 +17,7 @@ import { withSnackbar } from '../../../app/snackbars/with-snackbar';
 import { ActionList } from '../../../components/action-list';
 import { Card, CardBody } from '../../../components/card';
 import ComponentViewTracker from '../../../components/component-view-tracker';
+import Notice from '../../../components/notice';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
 import RouterLinkButton from '../../../components/router-link-button';
@@ -154,6 +155,11 @@ export default function McpMcpSites() {
 				properties={ tracksAudienceProps }
 			/>
 			<VStack spacing={ 8 }>
+				<Notice variant="info" title={ __( 'Self-hosted WordPress site requirements' ) }>
+					{ __(
+						'To use MCP tools with a self-hosted WordPress site, the site must have Jetpack installed and connected to WordPress.com, a paid Jetpack AI or Jetpack Complete plan, and MCP access enabled in Jetpack AI settings. The free Jetpack plugin alone is not sufficient.'
+					) }
+				</Notice>
 				<Card>
 					<CardBody>
 						<VStack spacing={ 4 }>
