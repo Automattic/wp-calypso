@@ -57,6 +57,8 @@ interface ApplyBlockEditsInput extends RawBlockEdits {
 interface ApplyBlockEditsResultData {
 	success: boolean;
 	message: string;
+	/** What the attached pictures do and do not show, one sentence each. */
+	captureNotes?: string[];
 	error?: string;
 	details?: Record< string, unknown >;
 	outcome?: ApplyBlockEditsOutcome;
@@ -99,7 +101,7 @@ type Resolver = Pick< ApplyEditsOptions, 'resolve' | 'onReplaced' >;
  * shows one side of a comparison and looks exactly like one that shows both.
  * @param reference The reference blocks requested.
  * @param unframed  Those the canvas cannot show.
- * @returns A sentence to append, or nothing to append.
+ * @returns A capture note, or empty when no reference was named.
  */
 function describeReferenceFraming( reference: string[], unframed: string[] ): string {
 	if ( ! reference.length ) {
@@ -396,17 +398,16 @@ export async function applyBlockEditsCallback(
 	// Two separate facts about the pictures that came back. The shape says how
 	// many there are and what they cover, which the rasterizer decides from how
 	// far apart the blocks turned out to be; the reference note says whether a
-	// comparison can be judged from them at all.
+	// comparison can be judged from them at all. Kept out of `message`, which
+	// the user may see as the reply.
 	if ( fileParts ) {
-		const captureNote = [
+		const captureNotes = [
 			describeCaptureShape( fileParts ),
 			describeReferenceFraming( referenceClientIds, getUnframedClientIds( referenceClientIds ) ),
-		]
-			.filter( Boolean )
-			.join( ' ' );
+		].filter( Boolean );
 
-		if ( captureNote ) {
-			result = { ...result, message: `${ result.message } ${ captureNote }` };
+		if ( captureNotes.length ) {
+			result = { ...result, captureNotes };
 		}
 	}
 

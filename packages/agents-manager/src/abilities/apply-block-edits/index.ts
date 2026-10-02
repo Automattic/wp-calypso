@@ -78,6 +78,12 @@ export const applyBlockEditsAbility: Ability = {
 						type: 'string',
 						description: 'Human-readable success or error message.',
 					},
+					captureNotes: {
+						type: 'array',
+						items: { type: 'string' },
+						description:
+							'Sentences about what the attached screenshots do and do not show, kept apart from the message.',
+					},
 					outcome: {
 						type: 'string',
 						enum: [ 'updated', 'no-changes' ],

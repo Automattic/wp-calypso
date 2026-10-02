@@ -525,7 +525,7 @@ describe( 'applyBlockEditsCallback', () => {
 				clientIds: [ 'resolved-a1' ],
 				fullPage: false,
 			} );
-			expect( result.result.message ).not.toContain( 'named for comparison' );
+			expect( result.result.captureNotes ).toBeUndefined();
 		} );
 
 		it( 'tells the model the reference is in the picture', async () => {
@@ -537,7 +537,9 @@ describe( 'applyBlockEditsCallback', () => {
 				visualCheckClientIds: [ 'ref1' ],
 			} );
 
-			expect( result.result.message ).toContain( '1 block(s) named for comparison' );
+			expect( result.result.captureNotes ).toEqual( [
+				expect.stringContaining( '1 block(s) named for comparison' ),
+			] );
 		} );
 
 		it( 'says when the two sides came back as separate pictures', async () => {
@@ -556,8 +558,10 @@ describe( 'applyBlockEditsCallback', () => {
 				visualCheckClientIds: [ 'ref1' ],
 			} );
 
-			expect( result.result.message ).toContain( '2 pictures' );
-			expect( result.result.message ).toContain( 'named for comparison' );
+			expect( result.result.captureNotes ).toEqual( [
+				expect.stringContaining( '2 pictures' ),
+				expect.stringContaining( 'named for comparison' ),
+			] );
 		} );
 
 		it( 'warns when the pair was too spread out for bands', async () => {
@@ -571,7 +575,10 @@ describe( 'applyBlockEditsCallback', () => {
 				visualCheckClientIds: [ 'ref1' ],
 			} );
 
-			expect( result.result.message ).toContain( 'not be legible' );
+			expect( result.result.captureNotes ).toEqual( [
+				expect.stringContaining( 'not be legible' ),
+				expect.stringContaining( 'named for comparison' ),
+			] );
 		} );
 
 		it( 'refuses to imply a comparison it cannot show', async () => {
@@ -585,18 +592,31 @@ describe( 'applyBlockEditsCallback', () => {
 				visualCheckClientIds: [ 'ref1' ],
 			} );
 
-			expect( result.result.message ).toContain(
-				'does not contain the blocks named for comparison'
-			);
-			expect( result.result.message ).toContain( 'cannot confirm a match' );
+			expect( result.result.captureNotes ).toEqual( [
+				expect.stringContaining( 'does not contain the blocks named for comparison' ),
+			] );
+			expect( result.result.captureNotes?.[ 0 ] ).toContain( 'cannot confirm a match' );
 		} );
 
-		it( 'leaves the message alone when no reference was named', async () => {
+		it( 'adds no notes when no reference was named', async () => {
 			jest.mocked( captureCanvas ).mockResolvedValue( [ band() ] );
 
 			const result = await applyBlockEditsCallback( input );
 
-			expect( result.result.message ).not.toContain( 'named for comparison' );
+			expect( result.result.captureNotes ).toBeUndefined();
+		} );
+
+		it( 'keeps the notes out of the message', async () => {
+			// The user may see the message as the reply, so it is the summary alone.
+			jest.mocked( captureCanvas ).mockResolvedValue( [ band( { fullPage: true } ) ] );
+
+			const result = await applyBlockEditsCallback( {
+				...input,
+				visualCheckClientIds: [ 'ref1' ],
+			} );
+
+			expect( result.result.message ).toBe( 'Done.' );
+			expect( result.result.captureNotes ).toHaveLength( 2 );
 		} );
 	} );
 
