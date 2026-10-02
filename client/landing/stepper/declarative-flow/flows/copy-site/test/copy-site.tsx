@@ -10,6 +10,7 @@ import { MemoryRouter } from 'react-router';
 import AutomatedCopySite from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/automated-copy-site';
 import { AssertConditionState } from 'calypso/landing/stepper/declarative-flow/internals/types';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
+import { useSiteCopy } from 'calypso/landing/stepper/hooks/use-site-copy';
 import { ONBOARD_STORE, SITE_STORE } from 'calypso/landing/stepper/stores';
 import wpcom from 'calypso/lib/wp';
 import { initialSiteState } from 'calypso/state/sites/features/reducer';
@@ -42,10 +43,29 @@ const destinationSlug = 'destination.wordpress.com';
 const source = {
 	ID: 1,
 	URL: `https://${ sourceSlug }`,
+	description: '',
+	domain: sourceSlug,
+	jetpack: false,
+	launch_status: 'launched',
+	locale: 'en',
+	logo: { id: '', sizes: [], url: '' },
+	name: 'Source',
+	slug: sourceSlug,
+	title: 'Source',
 	site_owner: 123,
-	plan: { product_slug: 'business-bundle' },
+	plan: {
+		product_id: 1018,
+		product_slug: 'business-bundle',
+		product_name: 'Business',
+		product_name_short: 'Business',
+		expired: false,
+		billing_period: '365',
+		user_is_owner: true,
+		is_free: false,
+		features: { active: [], available: {} },
+	},
 	options: { is_wpcom_atomic: true },
-};
+} satisfies SiteDetails;
 const destination = { ID: 2, URL: `https://${ destinationSlug }` };
 const locationDescriptor = Object.getOwnPropertyDescriptor( window, 'location' )!;
 const navigate = jest.fn();
@@ -219,6 +239,60 @@ describe( 'copy site source validation', () => {
 } );
 
 describe( 'copy site failure handling', () => {
+	it( 'waits for the destination lookup and starts the copy when it succeeds', async () => {
+		const request = Promise.withResolvers< typeof destination >();
+		jest
+			.mocked( wpcomRequest )
+			.mockImplementation( ( { path } ) =>
+				path === `/sites/${ destinationSlug }` ? request.promise : Promise.resolve( source )
+			);
+		jest.mocked( wpcom.req.get ).mockResolvedValue( { active: [ WPCOM_FEATURES_COPY_SITE ] } );
+		renderEntry( {}, true );
+		await waitFor( () =>
+			expect( screen.getByTestId( 'validation' ) ).toHaveTextContent( AssertConditionState.SUCCESS )
+		);
+		expect( window.location.assign ).not.toHaveBeenCalled();
+		expect( wpcom.req.post ).not.toHaveBeenCalled();
+		await act( async () => request.resolve( destination ) );
+		await waitFor( () =>
+			expect( wpcom.req.post ).toHaveBeenCalledWith( {
+				path: '/sites/2/copy-from-site',
+				apiNamespace: 'wpcom/v2',
+				body: { source_blog_id: source.ID },
+			} )
+		);
+		expect( wpcom.req.post ).toHaveBeenCalledTimes( 1 );
+		expect( navigate ).toHaveBeenCalledWith( 'processing-copy' );
+		expect( window.location.assign ).not.toHaveBeenCalled();
+	} );
+
+	it( 'ignores completion of an older feature request after switching sites', async () => {
+		const firstRequest = Promise.withResolvers< { active: string[] } >();
+		const secondRequest = Promise.withResolvers< { active: string[] } >();
+		const secondSite = { ...source, ID: 2, URL: destination.URL };
+		jest
+			.mocked( wpcomRequest )
+			.mockImplementation( ( { path } ) =>
+				Promise.resolve( path === '/sites/2' ? secondSite : source )
+			);
+		jest
+			.mocked( wpcom.req.get )
+			.mockImplementation( ( path: string ) =>
+				path === '/sites/1/features' ? firstRequest.promise : secondRequest.promise
+			);
+		const { result, rerender } = renderHookWithProvider(
+			( { site }: { site: typeof source } ) => useSiteCopy( site ),
+			{ initialProps: { site: source }, initialState: { currentUser: { id: 123 } } }
+		);
+		await waitFor( () => expect( wpcom.req.get ).toHaveBeenCalledWith( '/sites/1/features' ) );
+		rerender( { site: secondSite } );
+		await waitFor( () => expect( wpcom.req.get ).toHaveBeenCalledWith( '/sites/2/features' ) );
+		await act( async () => secondRequest.resolve( { active: [ WPCOM_FEATURES_COPY_SITE ] } ) );
+		await waitFor( () => expect( result.current.isFetching ).toBe( false ) );
+		await act( async () => firstRequest.resolve( { active: [] } ) );
+		expect( result.current.isFetching ).toBe( false );
+	} );
+
 	it.each( [ 'negative features', 'failed feature request' ] )(
 		'waits for fresh eligibility without redirecting when entering with cached %s',
 		async ( cached ) => {
@@ -229,7 +303,7 @@ describe( 'copy site failure handling', () => {
 					Promise.resolve( path === `/sites/${ destinationSlug }` ? destination : source )
 				);
 			jest.mocked( wpcom.req.get ).mockReturnValue( request.promise );
-			( dispatch( SITE_STORE ) as SiteActions ).receiveSite( source.ID, source as SiteDetails );
+			( dispatch( SITE_STORE ) as SiteActions ).receiveSite( source.ID, source );
 			const features = {
 				[ source.ID ]: {
 					...initialSiteState,
