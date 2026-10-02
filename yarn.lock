@@ -15295,6 +15295,7 @@ __metadata:
     "@automattic/launchpad": "workspace:^"
     "@automattic/load-script": "workspace:^"
     "@automattic/mini-cart": "workspace:^"
+    "@automattic/newsletter-urls": "workspace:^"
     "@automattic/notifications": "workspace:^"
     "@automattic/oauth-token": "workspace:^"
     "@automattic/omnibar": "workspace:^"
