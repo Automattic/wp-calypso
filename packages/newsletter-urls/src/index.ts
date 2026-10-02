@@ -64,7 +64,7 @@ export function newsletterAdminUrl( adminUrl: string, options: NewsletterAdminUr
  * legacy settings app and ignores the route, so self-hosted sites below it still manage
  * subscribers on Jetpack Cloud. Simple and Atomic sites always have the wp-admin page.
  */
-const SUBSCRIBERS_JETPACK_VERSION = [ 16, 1 ];
+const MINIMUM_SUBSCRIBERS_JETPACK_VERSION = [ 16, 1 ];
 
 /**
  * Compares a Jetpack version string against `minimum`, following the backend's
@@ -113,5 +113,7 @@ export function hasNewsletterSubscribersPage( {
 		return true;
 	}
 
-	return !! jetpackVersion && isAtLeastVersion( jetpackVersion, SUBSCRIBERS_JETPACK_VERSION );
+	return (
+		!! jetpackVersion && isAtLeastVersion( jetpackVersion, MINIMUM_SUBSCRIBERS_JETPACK_VERSION )
+	);
 }
