@@ -124,18 +124,21 @@ function getSignupDestination( { siteSlug, redirect_to, localeSlug, flowName } )
 	return redirectTo;
 }
 
+function isWpAdminLaunch( dependencies ) {
+	const ref = dependencies.refParameter?.trim() ?? '';
+
+	return ref === 'wp-admin' || ref.startsWith( 'wp-admin/' );
+}
+
 function getLaunchReturnTarget( dependencies ) {
 	// If a back_to parameter is provided, use it as the destination
 	if ( dependencies.back_to ) {
 		return { url: dependencies.back_to, celebrateArgs: { celebrateLaunch: 'true' } };
 	}
 
-	const ref = dependencies.refParameter?.trim() ?? '';
-	const isWpAdminPath = ref === 'wp-admin' || ref.startsWith( 'wp-admin/' );
-
-	if ( isWpAdminPath ) {
+	if ( isWpAdminLaunch( dependencies ) ) {
 		return {
-			url: `https://${ dependencies.siteSlug }/${ ref }`,
+			url: `https://${ dependencies.siteSlug }/${ dependencies.refParameter.trim() }`,
 			celebrateArgs: { 'celebrate-launch': 'true' },
 		};
 	}
@@ -161,6 +164,15 @@ function getLaunchDestination( dependencies ) {
 	// so `back_to` is free to keep meaning "the page the Back button returns to".
 	if ( dependencies.redirect_to ) {
 		return addQueryArgs( { celebrateLaunch: 'true' }, dependencies.redirect_to );
+	}
+
+	// wp-admin celebrates a launch on its dashboard, so a launch started anywhere in wp-admin lands
+	// there; its `back_to` only drives the Back button.
+	if ( isWpAdminLaunch( dependencies ) ) {
+		return addQueryArgs(
+			{ 'celebrate-launch': 'true' },
+			`https://${ dependencies.siteSlug }/wp-admin`
+		);
 	}
 
 	const { url, celebrateArgs } = getLaunchReturnTarget( dependencies );

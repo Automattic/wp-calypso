@@ -49,6 +49,25 @@ const getThemeSlugWithRepo = ( themeSlug: string | undefined, isPurchasingTheme:
 	return `${ repo }/${ themeSlug }`;
 };
 
+/**
+ * Whether `url` points at the site the flow loaded, e.g. the wp-admin screen a launch started from.
+ * The host comes from the loaded site rather than from query args, so `back_to` can't name an
+ * arbitrary host.
+ */
+function isOnSiteHost( url: string, siteUrl?: string ) {
+	if ( ! url || ! siteUrl ) {
+		return false;
+	}
+
+	try {
+		const target = new URL( url );
+
+		return target.protocol === 'https:' && target.host === new URL( siteUrl ).host;
+	} catch {
+		return false;
+	}
+}
+
 const DomainSearchUI = (
 	props: StepProps & {
 		locale: string;
@@ -401,7 +420,8 @@ const DomainSearchUI = (
 			const backTo = getQueryArg( window.location.href, 'back_to' )?.toString() ?? '';
 			const isSafeBackTo =
 				isRelativeUrl( backTo ) ||
-				dashboardOrigins().some( ( origin ) => backTo?.startsWith( origin ) );
+				dashboardOrigins().some( ( origin ) => backTo?.startsWith( origin ) ) ||
+				isOnSiteHost( backTo, site?.URL );
 
 			if ( isSafeBackTo ) {
 				backUrl = backTo;
@@ -414,7 +434,7 @@ const DomainSearchUI = (
 			backUrl,
 			backLabelText,
 		};
-	}, [ dashboardOptIn, flowName, previousStepName, goBack, userSiteCount, __ ] );
+	}, [ dashboardOptIn, flowName, previousStepName, goBack, userSiteCount, site?.URL, __ ] );
 
 	const getUseDomainIOwnLink = () => {
 		if ( ! query || ! config.allowsUsingOwnDomain ) {
