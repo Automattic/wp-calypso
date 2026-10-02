@@ -16,6 +16,7 @@ import Form from 'calypso/a8c-for-agencies/components/form';
 import FormField from 'calypso/a8c-for-agencies/components/form/field';
 import FormFooter from 'calypso/a8c-for-agencies/components/form/footer';
 import {
+	extractRootDomain,
 	isDeniedNonUniqueDomain,
 	isAgencyUrlExists,
 } from 'calypso/a8c-for-agencies/components/form/utils';
@@ -188,7 +189,7 @@ const SignupContactForm = ( { onContinue, initialFormData, withEmail = false }: 
 			}
 
 			try {
-				const duplicateURL = await isAgencyUrlExists( agencyUrl );
+				const duplicateURL = await isAgencyUrlExists( extractRootDomain( agencyUrl ) );
 
 				if ( ! duplicateURL ) {
 					onContinue( dataToContinue );
