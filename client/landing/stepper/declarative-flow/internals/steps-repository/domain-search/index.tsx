@@ -576,6 +576,19 @@ const DomainSearchStep: StepType< {
 				return;
 			}
 
+			const isSafeBackTo =
+				isRelativeUrl( backTo ) ||
+				dashboardOrigins().some( ( origin ) => backTo?.startsWith( origin ) );
+
+			// Matches legacy /start/launch-site, which ignores `source`.
+			if ( flow === LAUNCH_SITE_FLOW ) {
+				return (
+					<Step.BackButton href={ isSafeBackTo ? backTo : defaultBackUrl }>
+						{ isSafeBackTo ? __( 'Back' ) : sitesBackLabelText }
+					</Step.BackButton>
+				);
+			}
+
 			let backDestination: string | typeof navigation.goBack = '';
 			let backLabelText = '';
 
@@ -588,24 +601,18 @@ const DomainSearchStep: StepType< {
 			} else if ( 'general-settings' === source && siteSlug ) {
 				backDestination = `/settings/general/${ siteSlug }`;
 				backLabelText = __( 'Back to General Settings' );
+			} else if ( isSafeBackTo ) {
+				backDestination = backTo;
+				backLabelText = __( 'Back' );
+			} else if ( ! isOnboardingFlow( flow ) && navigation.goBack ) {
+				backDestination = navigation.goBack;
+				backLabelText = __( 'Back' );
 			} else {
-				const isSafeBackTo =
-					isRelativeUrl( backTo ) ||
-					dashboardOrigins().some( ( origin ) => backTo?.startsWith( origin ) );
-
-				if ( isSafeBackTo ) {
-					backDestination = backTo;
-					backLabelText = __( 'Back' );
-				} else if ( ! isOnboardingFlow( flow ) && navigation.goBack ) {
-					backDestination = navigation.goBack;
-					backLabelText = __( 'Back' );
-				} else {
-					if ( ! isLoggedIn || ! userSiteCount ) {
-						return;
-					}
-					backDestination = defaultBackUrl;
-					backLabelText = __( 'Back' );
+				if ( ! isLoggedIn || ! userSiteCount ) {
+					return;
 				}
+				backDestination = defaultBackUrl;
+				backLabelText = __( 'Back' );
 			}
 
 			return (
