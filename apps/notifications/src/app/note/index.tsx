@@ -20,6 +20,7 @@ import getIsNoteRead from '../../panel/state/selectors/get-is-note-read';
 import { NoteBody, ActionBlock } from '../templates/body';
 import CloseButton from '../templates/close-button';
 import NoteSummary from '../templates/note-summary';
+import NoteMenu from './note-menu';
 import './style.scss';
 import type { NoteNavigation } from './hooks';
 import type { Note as NoteObject, Block } from '../types';
@@ -116,6 +117,7 @@ const Note = ( { isDismissible, noteId, setSelectedNoteId, noteNavigation }: Not
 						<Heading level={ 3 } size={ 15 } weight={ 500 }>
 							{ note.title }
 						</Heading>
+						<NoteMenu note={ note } />
 					</HStack>
 					<HStack justify="flex-end" style={ { width: 'auto', flexShrink: 0 } }>
 						{ ! isLargeScreen && (
