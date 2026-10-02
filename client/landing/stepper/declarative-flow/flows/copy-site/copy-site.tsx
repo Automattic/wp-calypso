@@ -24,6 +24,7 @@ import {
 	type StepperStep,
 } from '../../internals/types';
 import type { OnboardActions, SiteSelect } from '@automattic/data-stores';
+import type { CurriedSelectorsOf, StoreDescriptor } from '@wordpress/data';
 
 function useIsValidSite() {
 	const urlQueryParams = useQuery();
@@ -33,9 +34,8 @@ function useIsValidSite() {
 			if ( ! sourceSlug ) {
 				return {};
 			}
-			const siteStore = select( SITE_STORE ) as SiteSelect & {
-				hasFinishedResolution: ( selectorName: string, args: unknown[] ) => boolean;
-			};
+			const siteStore = select( SITE_STORE ) as SiteSelect &
+				Pick< CurriedSelectorsOf< StoreDescriptor >, 'hasFinishedResolution' >;
 			return {
 				hasResolvedSourceSite: siteStore.hasFinishedResolution( 'getSite', [ sourceSlug ] ),
 				site: siteStore.getSite( sourceSlug ),
