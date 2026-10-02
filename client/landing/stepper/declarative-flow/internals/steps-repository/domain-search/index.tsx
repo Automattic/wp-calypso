@@ -12,6 +12,7 @@ import {
 	isNewHostedSiteCreationFlow,
 	isNewsletterFlow,
 	isOnboardingFlow,
+	LAUNCH_SITE_FLOW,
 	Step,
 	StepContainer,
 } from '@automattic/onboarding';
@@ -252,7 +253,8 @@ const DomainSearchStep: StepType< {
 				! isHundredYearPlanFlow( flow ) &&
 				! isHundredYearDomainFlow( flow ) &&
 				! isDomainFlow( flow ) &&
-				! isDomainAndPlanFlow( flow ),
+				! isDomainAndPlanFlow( flow ) &&
+				flow !== LAUNCH_SITE_FLOW,
 			allowedTlds: resolvedAllowedTlds,
 			includeOwnedDomainInSuggestions: true,
 			allowsUsingOwnDomain:
