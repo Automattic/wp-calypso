@@ -5,6 +5,7 @@ export * from './error';
 export * from './admin-bar';
 export * from './admin-menu';
 export * from './agency';
+export * from './agency-amplify';
 export * from './agency-products';
 export * from './agency-referrals';
 export * from './agency-team';
