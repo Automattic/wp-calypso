@@ -67,7 +67,7 @@ async function initialize( reduxStore: Store ) {
 		: undefined;
 
 	if ( ! site ) {
-		window.location.assign( '/sites' );
+		window.location.replace( '/sites' );
 		return false;
 	}
 
@@ -231,7 +231,7 @@ const launchSiteFlow: FlowV2< typeof initialize > = {
 			}
 
 			if ( cartItems?.length === 0 ) {
-				return window.location.assign( destination );
+				return window.location.replace( destination );
 			}
 
 			try {
@@ -247,7 +247,7 @@ const launchSiteFlow: FlowV2< typeof initialize > = {
 			setSignupCompleteSlug( launchParams.siteSlug );
 			setSignupCompleteFlowName( LAUNCH_SITE_FLOW );
 
-			return window.location.assign( getLaunchCheckoutUrl( launchParams ) );
+			return window.location.replace( getLaunchCheckoutUrl( launchParams ) );
 		};
 
 		const submit: SubmitHandler< typeof initialize > = ( submittedStep ) => {

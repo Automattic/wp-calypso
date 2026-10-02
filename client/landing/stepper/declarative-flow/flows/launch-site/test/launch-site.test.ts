@@ -171,10 +171,13 @@ const initializeWith = ( site: unknown, domains: unknown[] | Error ) => {
 };
 
 const assigned = () => ( window.location.assign as jest.Mock ).mock.calls[ 0 ]?.[ 0 ];
+const replaced = () => ( window.location.replace as jest.Mock ).mock.calls[ 0 ]?.[ 0 ];
+const originalLocation = window.location;
 
 describe( 'launch-site flow', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
+		mockRecordSignupComplete.mockReset();
 		mockQuery = { siteSlug: 'example.wordpress.com' };
 		mockUserId = 1;
 		mockOnboard = {};
@@ -193,12 +196,17 @@ describe( 'launch-site flow', () => {
 				...window.location,
 				href: 'http://localhost/setup/launch-site/domains?siteSlug=example.wordpress.com',
 				assign: jest.fn(),
+				replace: jest.fn(),
 			},
 			writable: true,
 		} );
 		mockSite = null;
 		mockDomains = [];
 		setFlowSteps( ALL_STEPS );
+	} );
+
+	afterAll( () => {
+		Object.defineProperty( window, 'location', { value: originalLocation, writable: true } );
 	} );
 
 	describe( 'domains', () => {
@@ -329,6 +337,7 @@ describe( 'launch-site flow', () => {
 			launchSiteFlow.useStepsProps?.()[ STEPS.UNIFIED_PLANS.slug ]?.wrapperProps?.goBack?.();
 
 			expect( assigned() ).toBe( '/sites' );
+			expect( window.location.replace ).not.toHaveBeenCalled();
 		} );
 	} );
 
@@ -336,8 +345,9 @@ describe( 'launch-site flow', () => {
 		it( 'lands on the destination when there is nothing to buy', async () => {
 			await submit( STEPS.LAUNCH_SITE.slug ).result;
 
+			expect( window.location.assign ).not.toHaveBeenCalled();
 			expect( addProductsToCart ).not.toHaveBeenCalled();
-			expect( assigned() ).toBe( '/home/example.wordpress.com?celebrateLaunch=true' );
+			expect( replaced() ).toBe( '/home/example.wordpress.com?celebrateLaunch=true' );
 		} );
 
 		it( 'lands on redirect_to when there is nothing to buy', async () => {
@@ -346,7 +356,7 @@ describe( 'launch-site flow', () => {
 
 			await submit( STEPS.LAUNCH_SITE.slug ).result;
 
-			expect( assigned() ).toBe( '/plugins/example.wordpress.com?celebrateLaunch=true' );
+			expect( replaced() ).toBe( '/plugins/example.wordpress.com?celebrateLaunch=true' );
 		} );
 
 		it( 'adds the domain and plan to the cart, then goes to checkout', async () => {
@@ -361,7 +371,7 @@ describe( 'launch-site flow', () => {
 				planItem,
 			] );
 
-			const url = new URL( assigned(), 'http://localhost/' );
+			const url = new URL( replaced(), 'http://localhost/' );
 			expect( url.pathname ).toBe( '/checkout/example.wordpress.com' );
 			expect( url.searchParams.get( 'redirect_to' ) ).toBe(
 				'/plugins/example.wordpress.com?celebrateLaunch=true'
@@ -388,20 +398,20 @@ describe( 'launch-site flow', () => {
 
 			await submit( STEPS.LAUNCH_SITE.slug ).result;
 
-			expect( new URL( assigned(), 'http://localhost/' ).pathname ).toBe(
+			expect( new URL( replaced(), 'http://localhost/' ).pathname ).toBe(
 				'/checkout/example.wordpress.com'
 			);
 		} );
 
 		it( 'records the signup as complete before leaving', async () => {
 			mockRecordSignupComplete.mockImplementationOnce( () =>
-				expect( window.location.assign ).not.toHaveBeenCalled()
+				expect( window.location.replace ).not.toHaveBeenCalled()
 			);
 
 			await submit( STEPS.LAUNCH_SITE.slug ).result;
 
 			expect( mockRecordSignupComplete ).toHaveBeenCalled();
-			expect( window.location.assign ).toHaveBeenCalled();
+			expect( window.location.replace ).toHaveBeenCalled();
 		} );
 
 		it( 'goes where the cart says even when recording the signup fails', async () => {
@@ -410,16 +420,14 @@ describe( 'launch-site flow', () => {
 			} );
 
 			await submit( STEPS.LAUNCH_SITE.slug ).result;
-			expect( assigned() ).toBe( '/home/example.wordpress.com?celebrateLaunch=true' );
+			expect( replaced() ).toBe( '/home/example.wordpress.com?celebrateLaunch=true' );
 
-			( window.location.assign as jest.Mock ).mockClear();
+			( window.location.replace as jest.Mock ).mockClear();
 			mockOnboard.planCartItem = planItem;
 			await submit( STEPS.LAUNCH_SITE.slug ).result;
-			expect( new URL( assigned(), 'http://localhost/' ).pathname ).toBe(
+			expect( new URL( replaced(), 'http://localhost/' ).pathname ).toBe(
 				'/checkout/example.wordpress.com'
 			);
-
-			mockRecordSignupComplete.mockReset();
 		} );
 
 		it( 'only adds privacy to the products that support it', async () => {
@@ -441,10 +449,10 @@ describe( 'launch-site flow', () => {
 
 			const { result } = submit( STEPS.LAUNCH_SITE.slug );
 
-			expect( window.location.assign ).not.toHaveBeenCalled();
+			expect( window.location.replace ).not.toHaveBeenCalled();
 			finishAdding();
 			await result;
-			expect( window.location.assign ).toHaveBeenCalled();
+			expect( window.location.replace ).toHaveBeenCalled();
 		} );
 	} );
 
@@ -494,6 +502,7 @@ describe( 'launch-site flow', () => {
 				steps &&
 					steps.every( ( step ) => 'requiresLoggedInUser' in step && step.requiresLoggedInUser )
 			).toBe( true );
+			expect( window.location.replace ).not.toHaveBeenCalled();
 			expect( window.location.assign ).not.toHaveBeenCalled();
 			expect( recordTracksEvent ).not.toHaveBeenCalled();
 		} );
@@ -502,12 +511,12 @@ describe( 'launch-site flow', () => {
 			mockQuery = {};
 
 			expect( await launchSiteFlow.initialize( reduxStore ) ).toBe( false );
-			expect( assigned() ).toBe( '/sites' );
+			expect( replaced() ).toBe( '/sites' );
 		} );
 
 		it( 'leaves for the sites list when the site cannot be found', async () => {
 			expect( await launchSiteFlow.initialize( reduxStore ) ).toBe( false );
-			expect( assigned() ).toBe( '/sites' );
+			expect( replaced() ).toBe( '/sites' );
 		} );
 
 		it( 'asks for everything on a free site without a custom domain', async () => {
