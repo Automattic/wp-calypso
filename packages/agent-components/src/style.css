@@ -78,6 +78,10 @@
 	font-weight: 600;
 }
 
+.agent-components-text.agent-components-text--heading strong {
+	font-weight: 700;
+}
+
 .agent-components-text--caption {
 	font-size: 0.875em;
 }
