@@ -980,7 +980,7 @@ export default function CampaignItemDetails( props: Props ) {
 									components: {
 										wpcomTos: (
 											<a
-												href={ localizeUrl( 'https://wordpress.com/tos/' ) }
+												href={ localizeUrl( 'https://automattic.com/tos/' ) }
 												target="_blank"
 												rel="noopener noreferrer"
 											/>
