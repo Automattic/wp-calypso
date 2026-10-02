@@ -151,7 +151,7 @@ describe( 'SiteMigrationIdentify', () => {
 		async ( enteredUrl ) => {
 			const user = userEvent.setup();
 			const submit = jest.fn();
-			const resolvedUrl = 'https://redirected.example.com/blog/';
+			const resolvedUrl = 'https://redirected.example.com';
 			const { unmount } = render( { navigation: { submit } } );
 
 			mockApi()
@@ -166,7 +166,7 @@ describe( 'SiteMigrationIdentify', () => {
 			await user.click( screen.getByRole( 'button', { name: /Check my site/ } ) );
 			await waitFor( () =>
 				expect( submit ).toHaveBeenCalledWith(
-					expect.objectContaining( { from: resolvedUrl, platform: 'wordpress' } )
+					expect.objectContaining( { from: resolvedUrl, platform: 'wordpress', host: 'unknown' } )
 				)
 			);
 
