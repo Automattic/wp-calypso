@@ -116,9 +116,10 @@ jest.mock( '../step-counter-config', () => ( {
 	getOnboardingStepperPosition: () => ( { current: 3, total: 3 } ),
 } ) );
 
-// Runs the `processing` case for a successful order that has already been through checkout,
-// i.e. the return leg from post-checkout-onboarding. Returns the navigate spy and the URL
-// handed to `window.location.replace`, if any.
+// Runs the `processing` case for an order that has already been through checkout, i.e. the
+// return leg from post-checkout-onboarding. The order succeeds unless `providedDependencies`
+// overrides `processingResult`. Returns the navigate spy and the URL handed to
+// `window.location.replace`, if any.
 const submitPostCheckoutProcessing = async ( providedDependencies: Record< string, unknown > ) => {
 	const replace = jest.fn();
 	const originalLocation = Object.getOwnPropertyDescriptor( window, 'location' );
@@ -225,5 +226,20 @@ describe( 'onboarding post-checkout destination for a connected domain', () => {
 
 		expect( navigate ).toHaveBeenCalledWith( 'setup-your-site-ai' );
 		expect( replacedWith ).toBeUndefined();
+	} );
+} );
+
+describe( 'onboarding processing failure', () => {
+	beforeEach( () => {
+		mockDomainCartItem = undefined;
+		jest.clearAllMocks();
+	} );
+
+	it( 'replaces processing with the error step so Back does not re-run it', async () => {
+		const { navigate } = await submitPostCheckoutProcessing( {
+			processingResult: ProcessingResult.FAILURE,
+		} );
+
+		expect( navigate ).toHaveBeenCalledWith( 'error', undefined, true );
 	} );
 } );
