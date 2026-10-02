@@ -1,5 +1,8 @@
 import { isURL } from '@wordpress/url';
+import { dashboardOrigins } from 'calypso/dashboard/utils/link';
+import { isRelativeUrl } from 'calypso/dashboard/utils/url';
 import { addQueryArgs, pathToUrl } from 'calypso/lib/url';
+import type { DashboardType } from 'calypso/dashboard/app/types';
 
 export interface LaunchParams {
 	siteSlug: string;
@@ -10,7 +13,32 @@ export interface LaunchParams {
 	dashboard?: string | null;
 }
 
-function getLaunchReturnTarget( { siteSlug, backTo, ref }: LaunchParams ) {
+const DASHBOARDS: DashboardType[] = [ 'a4a', 'ciab', 'dotcom' ];
+
+function getOrigin( url: string ) {
+	try {
+		return new URL( url ).origin;
+	} catch {
+		return null;
+	}
+}
+
+// The query can point anywhere, so only same-origin paths and the dashboards are followed.
+function getSafeUrl( url: string | null | undefined ) {
+	if ( ! url ) {
+		return null;
+	}
+
+	if ( isRelativeUrl( url ) || dashboardOrigins().includes( getOrigin( url ) ?? '' ) ) {
+		return url;
+	}
+
+	return null;
+}
+
+function getLaunchReturnTarget( { siteSlug, backTo: unsafeBackTo, ref }: LaunchParams ) {
+	const backTo = getSafeUrl( unsafeBackTo );
+
 	if ( backTo ) {
 		return { url: backTo, celebrateArgs: { celebrateLaunch: 'true' } };
 	}
@@ -38,8 +66,10 @@ export function getLaunchReturnUrl( params: LaunchParams ): string {
 export function getLaunchDestination( params: LaunchParams ): string {
 	// `redirect_to` lands the user somewhere other than where they came from once the site is live,
 	// so `back_to` is free to keep meaning "the page the Back button returns to".
-	if ( params.redirectTo ) {
-		return addQueryArgs( { celebrateLaunch: 'true' }, params.redirectTo );
+	const redirectTo = getSafeUrl( params.redirectTo );
+
+	if ( redirectTo ) {
+		return addQueryArgs( { celebrateLaunch: 'true' }, redirectTo );
 	}
 
 	const { url, celebrateArgs } = getLaunchReturnTarget( params );
@@ -50,6 +80,7 @@ export function getLaunchDestination( params: LaunchParams ): string {
 export function getLaunchCheckoutUrl( params: LaunchParams ): string {
 	const destination = getLaunchDestination( params );
 	const backUrl = isURL( destination ) ? destination : pathToUrl( destination );
+	const dashboard = DASHBOARDS.find( ( type ) => type === params.dashboard );
 
 	return addQueryArgs(
 		{
@@ -58,7 +89,7 @@ export function getLaunchCheckoutUrl( params: LaunchParams ): string {
 			...( params.coupon && { coupon: params.coupon } ),
 			checkoutBackUrl: addQueryArgs( { skippedCheckout: 1, celebrateLaunch: 'true' }, backUrl ),
 			redirect_to: destination,
-			...( params.dashboard && { dashboard: params.dashboard } ),
+			...( dashboard && { dashboard } ),
 		},
 		`/checkout/${ params.siteSlug }`
 	);
