@@ -40,6 +40,16 @@
 	overflow-wrap: anywhere;
 }
 
+.agent-components-text > p,
+.agent-components-text > p * {
+	font-size: inherit;
+}
+
+.agent-components-text > p,
+.agent-components-text > p :not( strong ) {
+	font-weight: inherit;
+}
+
 .agent-components-text > :first-child {
 	margin-top: 0;
 }
@@ -164,6 +174,14 @@
 
 .agent-components-field .components-textarea-control__input {
 	resize: vertical;
+}
+
+.agent-components-field .components-checkbox-control__input-container {
+	margin-inline: 0 var( --checkbox-input-margin );
+}
+
+.agent-components-field .components-checkbox-control__input[type='checkbox'] {
+	margin-inline: 0 4px;
 }
 
 .agent-components-field .components-checkbox-control__input[type='checkbox']:not( :checked ) {
