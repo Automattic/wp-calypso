@@ -223,6 +223,7 @@ export default function Notifications( {
 						locale={ locale }
 						isDismissible={ isMobileViewport }
 						isViewSettingsEnabled={ isViewSettingsEnabled }
+						isSimplifiedNoteEnabled
 						preferences={ notificationPreferences }
 						onPreferenceChange={ handlePreferenceChange }
 						actionHandlers={ actionHandlers }

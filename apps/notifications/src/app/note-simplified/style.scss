@@ -1,0 +1,318 @@
+@import '@wordpress/base-styles/colors';
+@import '@wordpress/base-styles/variables';
+
+.wpnc-simplified__avatars {
+	display: flex;
+	flex-shrink: 0;
+
+	.wpnc__note-icon + .wpnc__note-icon {
+		margin-inline-start: -#{$grid-unit-15};
+
+		img {
+			box-shadow: 0 0 0 2px var(--color-surface, #{$white});
+		}
+	}
+}
+
+.wpnc-simplified__sentence {
+	line-height: 20px;
+	overflow-wrap: anywhere;
+
+	a,
+	a:visited {
+		color: inherit;
+		text-decoration: none;
+	}
+
+	a:hover {
+		text-decoration: underline;
+	}
+}
+
+// Text between ranges is bare, so the direct children are the people named.
+.wpnc-simplified__sentence > :is(a, span) {
+	font-weight: 600;
+}
+
+.wpnc-simplified__target {
+	line-height: 20px;
+	overflow-wrap: anywhere;
+
+	&,
+	&:visited {
+		color: inherit;
+		text-decoration: none;
+	}
+
+	&:hover {
+		text-decoration: underline;
+	}
+}
+
+.wpnc-simplified__meta {
+	margin-block-start: $grid-unit-05;
+	font-size: $font-size-small;
+	color: var(--wp-components-color-gray-700, #{$gray-700});
+
+	a,
+	a:visited {
+		color: inherit;
+		text-decoration: none;
+	}
+
+	a:hover {
+		text-decoration: underline;
+	}
+}
+
+.wpnc-simplified__origin {
+	overflow-wrap: anywhere;
+}
+
+.wpnc-simplified__thread {
+	display: flex;
+	flex-direction: column;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.wpnc-simplified__thread-item {
+	position: relative;
+	display: flex;
+	gap: $grid-unit-15;
+	padding-block: $grid-unit-10;
+
+	// Joins each marker to the next one down.
+	&:not(:last-child)::before {
+		content: "";
+		position: absolute;
+		inset-block: #{$grid-unit-10 + 24px + $grid-unit-05} -#{$grid-unit-10 - $grid-unit-05};
+		inset-inline-start: 11px;
+		width: 2px;
+		background: var(--wpnc-divider__color, #{$gray-200});
+	}
+}
+
+.wpnc-simplified__thread-marker {
+	flex-shrink: 0;
+	height: 24px;
+}
+
+.wpnc-simplified__thread-content {
+	display: flex;
+	flex-direction: column;
+	gap: $grid-unit-05;
+	min-width: 0;
+	flex: 1;
+	line-height: 20px;
+	overflow-wrap: anywhere;
+
+	> a,
+	> a:visited {
+		color: inherit;
+		text-decoration: none;
+	}
+}
+
+.wpnc-simplified__thread-header {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: baseline;
+	column-gap: $grid-unit-10;
+	line-height: 24px;
+
+	.wpnc-simplified__meta {
+		margin: 0;
+	}
+}
+
+.wpnc-simplified__thread-author {
+	font-weight: 600;
+}
+
+// The words are the note here, so they drop the bar that marks a comment in the
+// detailed layout. A comment awaiting approval keeps its warning bar.
+.wpnc-simplified .wpnc__note.wpnc__comment:not(.wpnc__comment-unapproved) .wpnc__body .wpnc__body-content {
+	padding: 0;
+	box-shadow: none;
+}
+
+.wpnc-simplified__card {
+	display: flex;
+	gap: $grid-unit-15;
+	padding: $grid-unit-15;
+	border: 1px solid var(--wpnc-divider__color, #{$gray-200});
+	border-radius: $radius-medium;
+	overflow: hidden;
+
+	&,
+	&:visited {
+		color: inherit;
+		text-decoration: none;
+	}
+
+	&:is(a):hover {
+		border-color: var(--wp-admin-theme-color);
+	}
+
+	&.is-featured {
+		flex-direction: column;
+		gap: 0;
+		padding: 0;
+
+		.wpnc-simplified__card-text {
+			padding: $grid-unit-15;
+		}
+
+		.wpnc-simplified__card-image {
+			width: 100%;
+			height: auto;
+			aspect-ratio: 2 / 1;
+			border-radius: 0;
+		}
+
+		.wpnc-simplified__card-excerpt {
+			-webkit-line-clamp: 3;
+		}
+	}
+}
+
+.wpnc-simplified__card-icon {
+	flex-shrink: 0;
+
+	img,
+	&::after {
+		border-radius: $radius-small;
+	}
+}
+
+.wpnc-simplified__card-image {
+	object-fit: cover;
+}
+
+.wpnc-simplified__card-source {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	column-gap: $grid-unit-10;
+	font-size: $font-size-small;
+	color: var(--wp-components-color-gray-700, #{$gray-700});
+}
+
+.wpnc-simplified__card-site-icon {
+	width: 20px;
+	height: 20px;
+	border-radius: $radius-small;
+}
+
+.wpnc-simplified__card-site {
+	font-weight: 600;
+	color: var(--color-text, #{$gray-900});
+}
+
+.wpnc-simplified__card-text {
+	position: relative;
+	display: flex;
+	flex: 1;
+	flex-direction: column;
+	gap: $grid-unit-10;
+	min-width: 0;
+}
+
+.wpnc-simplified__card-arrow {
+	position: absolute;
+	inset-block-start: 0;
+	inset-inline-end: 0;
+	line-height: 20px;
+	color: var(--wp-components-color-gray-700, #{$gray-700});
+
+	.wpnc-simplified__card:hover & {
+		color: var(--wp-admin-theme-color);
+	}
+
+	// Keeps the first line of the card clear of it.
+	& + * {
+		padding-inline-end: $grid-unit-30;
+	}
+}
+
+.wpnc-simplified__card-title {
+	font-size: 15px;
+	font-weight: 600;
+	line-height: 20px;
+	overflow-wrap: anywhere;
+}
+
+.wpnc-simplified__card-excerpt {
+	display: -webkit-box;
+	color: var(--wp-components-color-gray-700, #{$gray-700});
+	line-height: 20px;
+	overflow: hidden;
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: 2;
+}
+
+.wpnc-simplified__subscription {
+	display: flex;
+	flex-wrap: wrap;
+	column-gap: $grid-unit-05;
+	// Sits with the card it describes, not with what follows.
+	margin-block-start: -#{$grid-unit-10};
+	font-size: $font-size-small;
+	color: var(--wp-components-color-gray-700, #{$gray-700});
+
+	.components-external-link {
+		font-size: inherit;
+	}
+}
+
+.wpnc-simplified__heading {
+	padding-block-end: $grid-unit-15;
+	border-block-end: 1px solid var(--wpnc-divider__color, #{$gray-200});
+	font-size: 15px;
+	font-weight: 600;
+	line-height: 20px;
+}
+
+// Under a heading, each person reads as a byline: photo, name, then what else is
+// known about them on the same line. Scoped past the detailed layout's list rules.
+.wpnc-app .wpnc-simplified .wpnc__note .wpnc__body .wpnc__body-content .wpnc__user {
+	align-items: center;
+	margin: 0;
+	padding: $grid-unit-10 0;
+	border-block-end: 0;
+
+	&:first-child {
+		margin: 0;
+		padding-block-start: 0;
+	}
+
+	> .components-v-stack {
+		flex-direction: row;
+		flex-wrap: wrap;
+		align-items: baseline;
+		column-gap: $grid-unit-10;
+	}
+
+	.wpnc__note-icon {
+		margin-block: 0;
+	}
+
+	.wpnc__user-title {
+		color: inherit;
+		font-weight: 600;
+		text-decoration: none;
+	}
+
+	.wpnc__user-description {
+		width: auto;
+		font-size: $font-size-small;
+		color: var(--wp-components-color-gray-700, #{$gray-700});
+
+		a:not(.components-button) {
+			color: inherit;
+			text-decoration: none;
+		}
+	}
+}
