@@ -13,9 +13,9 @@ export default function () {
 	page(
 		'/subscribers/:domain',
 		siteSelection,
+		redirectIfCurrentUserCannot( 'list_users' ),
 		redirectToNewsletter,
 		navigation,
-		redirectIfCurrentUserCannot( 'list_users' ),
 		subscribers,
 		makeLayout,
 		clientRender
@@ -24,9 +24,9 @@ export default function () {
 	page(
 		'/subscribers/:domain/:subscriberId',
 		siteSelection,
+		redirectIfCurrentUserCannot( 'list_users' ),
 		redirectToNewsletter,
 		navigation,
-		redirectIfCurrentUserCannot( 'list_users' ),
 		subscribers,
 		makeLayout,
 		clientRender

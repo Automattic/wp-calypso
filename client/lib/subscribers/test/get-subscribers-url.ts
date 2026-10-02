@@ -1,3 +1,7 @@
+/**
+ * @jest-environment jsdom
+ */
+
 import { getNewsletterPageUrl, getSubscribersUrl } from '../get-subscribers-url';
 import type { AppState } from 'calypso/types';
 

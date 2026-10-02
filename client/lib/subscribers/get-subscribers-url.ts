@@ -1,3 +1,4 @@
+import { getCalypsoUrl } from '@automattic/calypso-url';
 import {
 	hasNewsletterSubscribersPage as siteHasNewsletterSubscribersPage,
 	newsletterAdminUrl,
@@ -84,7 +85,9 @@ export function getSubscribersUrl(
 
 		// Nothing in state says where this site's wp-admin lives. The Calypso route is kept
 		// as a redirect target for exactly this, and for links sent before the move.
-		return `https://wordpress.com/subscribers/${ getSiteSlug( state, siteId ) ?? '' }${ hash }`;
+		// `getCalypsoUrl` honours the `calypso_origin` query arg, so a link built from
+		// wp-admin in a dev or testing context goes back to the Calypso that sent the user.
+		return `${ getCalypsoUrl( `/subscribers/${ getSiteSlug( state, siteId ) ?? '' }` ) }${ hash }`;
 	}
 
 	const slug = getSiteSlug( state, siteId ) ?? '';
