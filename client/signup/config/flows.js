@@ -10,6 +10,10 @@ import { getDashboardFromQuery } from 'calypso/dashboard/app/routing';
 import { dashboardLink } from 'calypso/dashboard/utils/link';
 import { getOnboardingPostCheckoutDestination } from 'calypso/landing/stepper/declarative-flow/helpers/get-onboarding-post-checkout-destination';
 import { getQueryArgs } from 'calypso/lib/query-args';
+import {
+	getLaunchDestination as getSharedLaunchDestination,
+	getLaunchReturnUrl as getSharedLaunchReturnUrl,
+} from 'calypso/lib/site-launch/destination';
 import { addQueryArgs, pathToUrl } from 'calypso/lib/url';
 import { generateFlows } from 'calypso/signup/config/flows-pure';
 import stepConfig from './steps';
@@ -124,27 +128,12 @@ function getSignupDestination( { siteSlug, redirect_to, localeSlug, flowName } )
 	return redirectTo;
 }
 
-function getLaunchReturnTarget( dependencies ) {
-	// If a back_to parameter is provided, use it as the destination
-	if ( dependencies.back_to ) {
-		return { url: dependencies.back_to, celebrateArgs: { celebrateLaunch: 'true' } };
-	}
-
-	const ref = dependencies.refParameter?.trim() ?? '';
-	const isWpAdminPath = ref === 'wp-admin' || ref.startsWith( 'wp-admin/' );
-
-	if ( isWpAdminPath ) {
-		return {
-			url: `https://${ dependencies.siteSlug }/${ ref }`,
-			celebrateArgs: { 'celebrate-launch': 'true' },
-		};
-	}
-
-	return {
-		url: `/home/${ dependencies.siteSlug }`,
-		celebrateArgs: { celebrateLaunch: 'true' },
-	};
-}
+const toLaunchParams = ( dependencies ) => ( {
+	siteSlug: dependencies.siteSlug,
+	backTo: dependencies.back_to,
+	redirectTo: dependencies.redirect_to,
+	ref: dependencies.refParameter,
+} );
 
 /**
  * Where the user came from before entering the launch flow, without the arguments that celebrate a
@@ -153,19 +142,11 @@ function getLaunchReturnTarget( dependencies ) {
  * @returns {string} the URL to send the user back to
  */
 export function getLaunchReturnUrl( dependencies ) {
-	return getLaunchReturnTarget( dependencies ).url;
+	return getSharedLaunchReturnUrl( toLaunchParams( dependencies ) );
 }
 
 function getLaunchDestination( dependencies ) {
-	// `redirect_to` lands the user somewhere other than where they came from once the site is live,
-	// so `back_to` is free to keep meaning "the page the Back button returns to".
-	if ( dependencies.redirect_to ) {
-		return addQueryArgs( { celebrateLaunch: 'true' }, dependencies.redirect_to );
-	}
-
-	const { url, celebrateArgs } = getLaunchReturnTarget( dependencies );
-
-	return addQueryArgs( celebrateArgs, url );
+	return getSharedLaunchDestination( toLaunchParams( dependencies ) );
 }
 
 function getDomainSignupFlowDestination( { designType, siteSlug, flowName } ) {

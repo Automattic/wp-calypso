@@ -404,7 +404,9 @@ flows keep working unchanged:
   `titleBadge`, the pill next to the plan title, resolved in `useTitleBadges`; the second overrides
   a plan's `tagline`, the line under the title, winning over the computed and experiment copy in
   `useGridPlans`. Both are honored by the features grid only — the comparison grid renders neither
-  field). All optional and default-safe. See
+  field), plus the launch-page props `isLaunchPage` (launch-page CTAs — "Keep this plan" /
+  "Select X"), `isCustomDomainAllowedOnFreePlan` (picking Free keeps a paid domain via a dialog)
+  and `deemphasizeFreePlan` (de-emphasizes the Free plan). All optional and default-safe. See
   [`steps-repository/unified-plans/index.tsx`](/client/landing/stepper/declarative-flow/internals/steps-repository/unified-plans/index.tsx).
 - The `__user` (`user`) step exposes `headerText`, `subHeaderText`, `hideLoginLink` (hides the
   top-level "Log in" link in the V2 top bar / V1 footer — note the email-first account-step

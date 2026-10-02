@@ -9,6 +9,7 @@ import {
 	EDUCATION_FLOW,
 	PLAN_UPGRADE_FLOW,
 	WOO_HOSTED_PLANS_FLOW,
+	LAUNCH_SITE_FLOW,
 } from '@automattic/onboarding';
 
 const FLOWS_USING_STEP_CONTAINER_V2 = [
@@ -22,6 +23,7 @@ const FLOWS_USING_STEP_CONTAINER_V2 = [
 	EDUCATION_FLOW,
 	PLAN_UPGRADE_FLOW,
 	WOO_HOSTED_PLANS_FLOW,
+	LAUNCH_SITE_FLOW,
 ];
 
 export const shouldUseStepContainerV2 = ( flow: string ) => {
