@@ -66,6 +66,7 @@ import BodySectionCssClass from './body-section-css-class';
 import { getColorScheme, getColorSchemeFromCurrentQuery, refreshColorScheme } from './color-scheme';
 import HelpCenterLoader from './help-center-loader';
 import LayoutLoader from './loader';
+import { PublicMarketplaceFooter } from './public-marketplace-footer';
 import { shouldLoadInlineHelp, handleScroll, clearSidebarScrollStyles } from './utils';
 
 /*
@@ -492,6 +493,13 @@ class Layout extends Component {
 						</>
 					) }
 				</div>
+				<PublicMarketplaceFooter
+					sectionName={ this.props.sectionName }
+					currentRoute={ this.props.currentRoute }
+					isLoggedIn={ this.props.isLoggedIn }
+					hasSidebar={ Boolean( this.props.secondary ) }
+					hasSelectedSite={ Boolean( this.props.siteId ) }
+				/>
 				<AsyncLoad require={ loadCommunityTranslator } placeholder={ null } />
 				{ 'development' === process.env.NODE_ENV && (
 					<>
