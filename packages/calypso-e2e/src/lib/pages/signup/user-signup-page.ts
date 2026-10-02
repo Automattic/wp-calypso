@@ -29,6 +29,11 @@ const HTTP_POST = 'POST';
 // that is never coming.
 const NEW_USER_RESPONSE_TIMEOUT = 60_000;
 
+// Waits before each signup retry. A Calypso deploy rollout serves a stock 502
+// for a few seconds, so an immediate reload lands on the same 502. The 35s of
+// backoff leaves room in the 120s per-test budget for the attempts themselves.
+const SIGNUP_RETRY_DELAYS = [ 5_000, 10_000, 20_000 ];
+
 /**
  * Whether a `/users/new` response is the endpoint's answer to a signup.
  *
@@ -363,23 +368,28 @@ export class UserSignupPage {
 		// exception is a 504 where the backend created the user before the gateway
 		// timed out; the same-email retry then surfaces a "user exists" error
 		// instead of recovering, which is still preferable to masking the failure.
-		// Retry a bounded number of times before giving up.
+		// Retry with backoff (SIGNUP_RETRY_DELAYS) before giving up.
 		//
 		// Outside the loop: the policy skips or fails by throwing, and the catch
 		// below turns a throw met on a server-error page into a retry.
 		handleActiveThrottles( [ 'signup' ] );
-		const maxAttempts = 3;
+		const maxAttempts = SIGNUP_RETRY_DELAYS.length + 1;
 		for ( let attempt = 1; attempt <= maxAttempts; attempt++ ) {
 			try {
 				return await this.attemptSignupWithEmail( email );
 			} catch ( error ) {
 				// Only retry transient upstream failures; surface anything else so
 				// genuine bugs are not masked by reloads.
-				if ( attempt < maxAttempts && error instanceof TransientSignupError ) {
-					await this.page.reload( { waitUntil: 'domcontentloaded' } );
-					continue;
+				if ( attempt >= maxAttempts || ! ( error instanceof TransientSignupError ) ) {
+					throw error;
 				}
-				throw error;
+
+				const delay = SIGNUP_RETRY_DELAYS[ attempt - 1 ];
+				console.warn(
+					`Signup attempt ${ attempt }/${ maxAttempts } failed, reloading in ${ delay }ms: ${ error.message }`
+				);
+				await this.page.waitForTimeout( delay );
+				await this.page.reload( { waitUntil: 'domcontentloaded' } );
 			}
 		}
 
