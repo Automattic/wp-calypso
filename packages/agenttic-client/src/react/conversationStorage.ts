@@ -1,4 +1,8 @@
-import { redactComponentMessages } from '../client/utils/componentHistory';
+import {
+	getComponentFallbackMetadata,
+	GENERIC_COMPONENT_HISTORY_TEXT,
+	redactComponentMessages,
+} from '../client/utils/componentHistory';
 import { generateMessageId } from '../client/utils/core';
 import { logger } from '../client/utils/logger';
 import { DEFAULT_API_BASE_URL, loadChatFromServer, type OdieServiceConfig } from './odieService';
@@ -10,6 +14,8 @@ import type {
 	FilePart,
 	Message,
 	TextPart,
+	ComponentFallbackMetadata,
+	ComponentReferencePart,
 } from '../client/types/index';
 
 const STORAGE_KEY = 'a8c_agenttic_conversation_history';
@@ -56,6 +62,8 @@ interface StoredMessage {
 	timestamp: number;
 	archived?: boolean;
 	deliveryStatus?: DeliveryStatus;
+	componentFallback?: ComponentFallbackMetadata[ 'componentFallback' ];
+	componentReferences?: ComponentReferencePart[];
 	files?: Array< {
 		name: string;
 		mimeType?: string;
@@ -196,6 +204,12 @@ function extractStorableContent( message: Message ): StoredMessage {
 		...( archived !== undefined && { archived } ),
 		...( contentType && { contentType } ),
 		...( deliveryStatus && { deliveryStatus } ),
+		...getComponentFallbackMetadata( message.metadata ),
+		...( message.parts.some( ( part ) => part.type === 'component-reference' ) && {
+			componentReferences: message.parts.filter(
+				( part ): part is ComponentReferencePart => part.type === 'component-reference'
+			),
+		} ),
 		...( files.length > 0 && { files } ),
 		...( toolCalls.length > 0 && { toolCalls } ),
 		...( toolResults.length > 0 && { toolResults } ),
@@ -214,13 +228,23 @@ function restoreMessage( stored: StoredMessage ): Message {
 	if ( stored.content && stored.content !== '(No text content)' ) {
 		parts.push( {
 			type: 'text',
-			text: stored.content,
+			text: Object.hasOwn( stored, 'componentFallback' )
+				? GENERIC_COMPONENT_HISTORY_TEXT
+				: stored.content,
 			...( stored.contentType && {
 				metadata: {
 					contentType: stored.contentType,
 				},
 			} ),
 		} );
+	}
+	if ( Array.isArray( stored.componentReferences ) ) {
+		parts.push(
+			...stored.componentReferences.filter(
+				( reference ) =>
+					reference && typeof reference === 'object' && reference.type === 'component-reference'
+			)
+		);
 	}
 
 	// Add file parts (images, etc.)
@@ -287,6 +311,7 @@ function restoreMessage( stored: StoredMessage ): Message {
 		messageId: generateMessageId(),
 		metadata: {
 			timestamp: stored.timestamp,
+			...getComponentFallbackMetadata( stored ),
 			// only store archived if it was already present.
 			...( stored.archived !== undefined && {
 				archived: stored.archived,

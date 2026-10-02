@@ -10,6 +10,8 @@
 :root[data-theme='dark'] {
 	--agent-components-background: #1e1e1e;
 	--agent-components-foreground: #f0f0f0;
+	--agent-components-error: #ff8085;
+	--agent-components-link: #a8baff;
 }
 
 body {

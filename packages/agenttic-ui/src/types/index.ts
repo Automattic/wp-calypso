@@ -75,11 +75,18 @@ export interface Message {
 	id: string;
 	role: 'user' | 'agent';
 	content: Array< {
-		type: 'text' | 'component' | 'context' | 'data';
+		type: 'text' | 'component' | 'context' | 'data' | 'component-result' | 'component-reference';
 		text?: string;
 		component?: React.ComponentType;
 		componentProps?: any;
 		data?: Record< string, unknown >;
+		partVersion?: 1;
+		toolCallId?: string;
+		result?: unknown;
+		instanceId?: string;
+		protocol?: 'agent-component/0.1';
+		catalog?: 'minimal-ai-ui/0.1';
+		summary?: string;
 	} >;
 	timestamp: number;
 	archived: boolean;
@@ -89,6 +96,7 @@ export interface Message {
 	disabled?: boolean;
 	reactKey?: string; // Stable key for React rendering (prevents unmount/remount during updates)
 	sources?: AgentSource[]; // Agent message sources/citations rendered beneath the body
+	componentFallback?: { partVersion: 1; toolCallId: string };
 }
 
 /**

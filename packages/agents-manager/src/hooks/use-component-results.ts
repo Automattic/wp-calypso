@@ -1,14 +1,18 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { executeComponentAction } from '../utils/component-action-transport';
-import { getComponentOpenings } from '../utils/component-results';
+import {
+	getComponentOpenings,
+	getComponentOpeningSignature,
+	getValidatedComponentOpening,
+} from '../utils/component-results';
 import type { AgentsManagerUIMessage } from '../utils/convert-tool-messages-to-components';
 import type { AgentConfig } from '../utils/create-agent-config';
 import type { SubmitOptions, TaskUpdate } from '@automattic/agenttic-client';
 
 type Submit = ( message: string, options?: SubmitOptions ) => Promise< void >;
 
-/** Keeps live confirmation payloads in the current chat scope, outside persisted history. */
+/** Keeps live component payloads in the current chat scope, outside persisted history. */
 export function useComponentResults( config: AgentConfig | null | undefined ) {
 	const identity = JSON.stringify( [ config?.agentId, config?.authenticationScope ] );
 	const configuredSession = config?.sessionId ?? '';
@@ -34,7 +38,12 @@ export function useComponentResults( config: AgentConfig | null | undefined ) {
 	}, [] );
 	const submitRef = useRef< Submit | undefined >( undefined );
 	const [ entries, setEntries ] = useState<
-		Array< { scope: symbol; expiresAt: number; message: AgentsManagerUIMessage } >
+		Array< {
+			scope: symbol;
+			signature: string;
+			expiresAt: number;
+			message: AgentsManagerUIMessage;
+		} >
 	>( [] );
 	useEffect( () => {
 		setEntries( ( previous ) =>
@@ -52,7 +61,7 @@ export function useComponentResults( config: AgentConfig | null | undefined ) {
 			setEntries( ( previous ) =>
 				previous.map( ( entry ) =>
 					entry.scope === scope && entry.message.id === messageId
-						? { ...entry, message: { ...entry.message, componentResult: undefined } }
+						? { ...entry, signature: '', message: { ...entry.message, componentResult: undefined } }
 						: entry
 				)
 			);
@@ -84,34 +93,40 @@ export function useComponentResults( config: AgentConfig | null | undefined ) {
 			}
 			generation.liveSession = sessionId;
 			const siteId = config.authenticationScope?.siteId;
-			let validate: typeof import( '@automattic/agent-components/validation' ).validateComponentResult;
+			let validation: typeof import( '@automattic/agent-components/validation' ) | undefined;
 			try {
-				validate = ( await import( '@automattic/agent-components/validation' ) )
-					.validateComponentResult;
+				validation = await import( '@automattic/agent-components/validation' );
 			} catch {
-				validate = () => null;
+				validation = undefined;
 			}
 			if ( ! mountedRef.current || generationRef.current.scope !== scope ) {
 				return;
 			}
 			for ( const opening of openings ) {
 				const { toolCallId, toolId } = opening;
-				const result = validate( opening.result );
+				const options = validation
+					? getValidatedComponentOpening( opening.result, validation, opening.legacyOnly )
+					: null;
+				const result = options?.result;
 				const instanceId = result?.instanceId;
 				const messageId = `component-${ toolCallId }`;
 				const receivedAt = Date.now();
-				const expiresAt = receivedAt + 60 * 60 * 1000;
+				const expiresAt = Math.min(
+					receivedAt + 60 * 60 * 1000,
+					options?.expiresAt ? Date.parse( options.expiresAt ) : Infinity
+				);
 				const isCurrent = () =>
 					mountedRef.current && generationRef.current.scope === scope && Date.now() < expiresAt;
 				const usable =
-					result?.status === 'awaiting-input' &&
-					result.revision === 1 &&
+					!! result &&
+					!! opening.toolId &&
 					!! sessionId &&
 					!! siteId &&
 					Number.isSafeInteger( siteId ) &&
 					siteId > 0;
 				const message: AgentsManagerUIMessage = {
 					id: messageId,
+					componentToolCallId: toolCallId,
 					role: 'agent',
 					archived: false,
 					showIcon: true,
@@ -120,10 +135,10 @@ export function useComponentResults( config: AgentConfig | null | undefined ) {
 						{ type: 'text', text: __( 'This action is unavailable.', __i18n_text_domain__ ) },
 					],
 					suppressThinking: true,
-					...( usable && result
+					...( usable && result && options
 						? {
 								componentResult: {
-									result,
+									...options,
 									onExpire: () => expire( messageId ),
 									transport: async ( request ) => {
 										if ( ! isCurrent() ) {
@@ -148,14 +163,39 @@ export function useComponentResults( config: AgentConfig | null | undefined ) {
 							}
 						: {} ),
 				};
-				setEntries( ( previous ) =>
-					previous.some( ( entry ) => entry.scope === scope && entry.message.id === message.id )
-						? previous
-						: [
-								...previous.filter( ( entry ) => entry.scope === scope ),
-								{ scope, expiresAt, message },
-							]
-				);
+				const signature = getComponentOpeningSignature( {
+					toolId: opening.toolId,
+					legacyOnly: opening.legacyOnly,
+					...options,
+				} );
+				setEntries( ( previous ) => {
+					const existing = previous.find(
+						( entry ) => entry.scope === scope && entry.message.id === message.id
+					);
+					if ( existing ) {
+						if ( existing.signature === signature || ! existing.message.componentResult ) {
+							return previous;
+						}
+						return previous.map( ( entry ) =>
+							entry === existing
+								? {
+										...entry,
+										message: {
+											...entry.message,
+											componentResult: {
+												...entry.message.componentResult!,
+												presentationFailed: true,
+											},
+										},
+									}
+								: entry
+						);
+					}
+					return [
+						...previous.filter( ( entry ) => entry.scope === scope ),
+						{ scope, signature, expiresAt, message },
+					];
+				} );
 			}
 		},
 		[ config, generation, scope, expire ]

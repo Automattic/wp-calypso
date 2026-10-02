@@ -1,3 +1,4 @@
+import { getComponentCapabilities } from '../componentHistory';
 import { createSendMessageRequest } from '../core';
 import { formatObject, logger } from '../logger';
 import {
@@ -15,6 +16,7 @@ import type {
 	SendMessageParams,
 	Task,
 	TaskUpdate,
+	ComponentCapabilities,
 } from '../../types/index';
 
 /**
@@ -27,6 +29,8 @@ export interface RequestConfig {
 	timeout: number;
 	proxy?: string;
 	credentials?: RequestCredentials;
+	componentTransportVersion?: number;
+	componentCapabilities?: ComponentCapabilities;
 }
 
 /**
@@ -191,6 +195,10 @@ export async function prepareRequest(
 		message: enhancedMessage,
 		metadata,
 	};
+	const componentCapabilities = getComponentCapabilities( config.componentCapabilities );
+	if ( config.componentTransportVersion === 1 && componentCapabilities ) {
+		requestParams.componentCapabilities = componentCapabilities;
+	}
 
 	// Only include sessionId if it's defined and not null/empty
 	// This prevents sending null/undefined values which could have different server-side

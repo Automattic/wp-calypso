@@ -1,34 +1,32 @@
 import {
-	actionFailureMessage,
-	validateAppliedResponse,
+	validateActionEvent,
+	validateActionResponse,
+	validateComponentOpening,
 	validateComponentResult,
+	validateLegacyButtonAction,
 } from './validation';
-import type { ComponentActionRequest, ComponentResult } from './types';
+import { locale as validLocale } from './validation-utils';
+import type { ActionEvent, ComponentActionRequest, ComponentResult } from './types';
 
 export interface ComponentSessionMessages {
 	presentationFailure: string;
+	invalidInput: string;
 	unverifiedOutcome: string;
 	expired: string;
 	continuationFailure: string;
 }
 
-const defaultMessages: ComponentSessionMessages = {
-	presentationFailure:
-		'This confirmation could not be displayed. Check the site before requesting another proposal.',
-	unverifiedOutcome:
-		'The action outcome could not be verified. Check the site before requesting another proposal.',
-	expired: 'This action expired. Request a new proposal.',
-	continuationFailure:
-		'The action completed, but the agent could not continue. Check the completed result above.',
-};
-
 export interface ComponentSessionOptions {
 	result: ComponentResult;
+	allowedActions?: readonly string[];
+	actionBindings?: Readonly< Record< string, readonly string[] > >;
+	expiresAt?: string;
 	transport: ( request: ComponentActionRequest ) => Promise< unknown >;
 	onContinue: ( summary: string ) => Promise< void >;
 	locale?: string;
 	createRequestId?: () => string;
 	messages?: ComponentSessionMessages;
+	presentationFailed?: boolean;
 	onExpire?: () => void;
 }
 
@@ -36,7 +34,20 @@ export interface ComponentSessionSnapshot {
 	result: ComponentResult | null;
 	phase: 'ready' | 'pending' | 'completed' | 'failed';
 	error: string | null;
+	allowedActions: ReadonlySet< string >;
+	actionBindings: Readonly< Record< string, readonly string[] > >;
 }
+
+const defaultMessages: ComponentSessionMessages = {
+	presentationFailure:
+		'This confirmation could not be displayed. Check the site before requesting another proposal.',
+	invalidInput: 'Check the form values and try again.',
+	unverifiedOutcome:
+		'The action outcome could not be verified. Check the site before requesting another proposal.',
+	expired: 'This action expired. Request a new proposal.',
+	continuationFailure:
+		'The action completed, but the agent could not continue. Check the completed result above.',
+};
 
 export class ComponentSession {
 	private snapshot: ComponentSessionSnapshot;
@@ -44,39 +55,82 @@ export class ComponentSession {
 	private consumed = false;
 	private presentationFailed = false;
 	private disposed = false;
-	private expiresAt = Date.now() + 60 * 60 * 1000;
+	private sequence = 0;
+	private expiresAt: number;
 	private expiryTimer: ReturnType< typeof setTimeout > | undefined;
-	private transport: ComponentSessionOptions[ 'transport' ];
-	private onContinue: ComponentSessionOptions[ 'onContinue' ];
-	private createRequestId: ComponentSessionOptions[ 'createRequestId' ];
-	private onExpire: ComponentSessionOptions[ 'onExpire' ];
+	private readonly transport: ComponentSessionOptions[ 'transport' ];
+	private readonly onContinue: ComponentSessionOptions[ 'onContinue' ];
+	private readonly createRequestId: ComponentSessionOptions[ 'createRequestId' ];
 	private locale: string | undefined;
 	private messages: ComponentSessionMessages;
+	private readonly onExpire: ComponentSessionOptions[ 'onExpire' ];
 
 	constructor( options: ComponentSessionOptions ) {
 		const result = validateComponentResult( options.result );
-		if ( ! result ) {
+		const hasMetadata =
+			options.allowedActions !== undefined ||
+			options.actionBindings !== undefined ||
+			options.expiresAt !== undefined;
+		const opening = hasMetadata
+			? validateComponentOpening( {
+					protocol: 'agent-component/0.1',
+					result,
+					allowedActions: options.allowedActions,
+					actionBindings: options.actionBindings,
+					expiresAt: options.expiresAt,
+				} )
+			: null;
+		const legacy = ! hasMetadata ? validateLegacyButtonAction( result ) : null;
+		if ( ! result || ( ! opening && ! legacy ) ) {
 			throw new Error( 'This confirmation could not be displayed.' );
 		}
+		const allowedActions =
+			opening?.allowedActions ??
+			( result.status === 'awaiting-input'
+				? Object.values( result.surface.components ).flatMap( ( component ) =>
+						component.type === 'Button' && ! component.disabled && ! component.loading
+							? [ component.action ]
+							: []
+					)
+				: [] );
+		const actionBindings =
+			opening?.actionBindings ??
+			Object.fromEntries( allowedActions.map( ( name ) => [ name, [] ] ) );
 		this.snapshot = {
 			result: JSON.parse( JSON.stringify( result ) ),
 			phase: result.status === 'completed' ? 'completed' : 'ready',
 			error: null,
+			allowedActions: new Set( allowedActions ),
+			actionBindings: JSON.parse( JSON.stringify( actionBindings ) ),
 		};
-		this.consumed = result.status === 'completed';
 		this.transport = options.transport;
 		this.onContinue = options.onContinue;
 		this.createRequestId = options.createRequestId;
-		this.onExpire = options.onExpire;
-		this.locale = options.locale;
+		this.updateLocale( options.locale );
 		this.messages = options.messages ?? defaultMessages;
+		this.onExpire = options.onExpire;
+		this.consumed = result.status === 'completed';
+		this.expiresAt = Math.min(
+			opening ? Date.parse( opening.expiresAt ) : Infinity,
+			Date.now() + 60 * 60 * 1000
+		);
 		this.scheduleExpiry();
+		if ( options.presentationFailed ) {
+			this.failPresentation();
+		}
 	}
 
 	getSnapshot = (): ComponentSessionSnapshot => this.snapshot;
 
 	updateLocale = ( locale?: string ) => {
-		this.locale = locale;
+		if (
+			! this.disposed &&
+			locale !== this.locale &&
+			( locale === undefined || validLocale( locale ) )
+		) {
+			this.locale = locale;
+			this.update( { ...this.snapshot } );
+		}
 	};
 
 	updateMessages = ( messages: ComponentSessionMessages = defaultMessages ) => {
@@ -86,7 +140,10 @@ export class ComponentSession {
 		}
 		const error = names.find( ( name ) => this.messages[ name ] === this.snapshot.error );
 		this.messages = messages;
-		this.update( { ...this.snapshot, error: error ? messages[ error ] : this.snapshot.error } );
+		this.update( {
+			...this.snapshot,
+			error: error ? messages[ error ] : this.snapshot.error,
+		} );
 	};
 
 	subscribe = ( listener: () => void ): ( () => void ) => {
@@ -107,6 +164,8 @@ export class ComponentSession {
 				this.snapshot = {
 					...this.snapshot,
 					phase: this.snapshot.result?.status === 'completed' ? 'completed' : 'failed',
+					allowedActions: new Set(),
+					actionBindings: {},
 					error: this.messages.presentationFailure,
 				};
 			}
@@ -115,6 +174,9 @@ export class ComponentSession {
 
 	private scheduleExpiry() {
 		clearTimeout( this.expiryTimer );
+		if ( this.disposed ) {
+			return;
+		}
 		if ( this.expiresAt <= Date.now() ) {
 			this.expire();
 		} else {
@@ -126,10 +188,21 @@ export class ComponentSession {
 		if ( this.disposed || ! this.snapshot.result ) {
 			return;
 		}
+		this.sequence++;
 		this.consumed = true;
 		clearTimeout( this.expiryTimer );
-		this.update( { result: null, phase: 'failed', error: this.messages.expired } );
-		this.onExpire?.();
+		this.update( {
+			result: null,
+			phase: 'failed',
+			error: this.messages.expired,
+			allowedActions: new Set(),
+			actionBindings: {},
+		} );
+		try {
+			this.onExpire?.();
+		} catch {
+			this.presentationFailed = true;
+		}
 	}
 
 	dispose = () => {
@@ -137,9 +210,16 @@ export class ComponentSession {
 			return;
 		}
 		this.disposed = true;
+		this.sequence++;
 		this.consumed = true;
 		clearTimeout( this.expiryTimer );
-		this.update( { result: null, phase: 'failed', error: null } );
+		this.update( {
+			result: null,
+			phase: 'failed',
+			error: null,
+			allowedActions: new Set(),
+			actionBindings: {},
+		} );
 		this.listeners.clear();
 	};
 
@@ -151,12 +231,14 @@ export class ComponentSession {
 		this.presentationFailed = true;
 		this.update( {
 			...this.snapshot,
-			phase: this.snapshot.result?.status === 'completed' ? 'completed' : 'failed',
+			phase: this.snapshot.result.status === 'completed' ? 'completed' : 'failed',
+			allowedActions: new Set(),
+			actionBindings: {},
 			error: this.messages.presentationFailure,
 		} );
 	};
 
-	submit = async ( action: string ): Promise< void > => {
+	submit = async ( action: ActionEvent | string ): Promise< void > => {
 		if ( this.disposed || this.consumed || this.snapshot.phase !== 'ready' ) {
 			return;
 		}
@@ -168,15 +250,26 @@ export class ComponentSession {
 		if ( ! opening ) {
 			return;
 		}
-		const button = Object.values( opening.surface.components ).find(
-			( component ) => component.type === 'Button' && component.action === action
+		const event = validateActionEvent(
+			typeof action === 'string' ? { name: action, values: {} } : action,
+			opening.surface,
+			this.snapshot.allowedActions,
+			this.snapshot.actionBindings
 		);
-		if ( ! button ) {
+		if ( ! event ) {
+			this.update( { ...this.snapshot, error: this.messages.invalidInput } );
 			return;
 		}
 		this.consumed = true;
-		this.update( { ...this.snapshot, phase: 'pending', error: null } );
-		if ( this.disposed || ! this.snapshot.result ) {
+		const sequence = ++this.sequence;
+		this.update( {
+			...this.snapshot,
+			phase: 'pending',
+			error: null,
+			allowedActions: new Set(),
+			actionBindings: {},
+		} );
+		if ( this.disposed || sequence !== this.sequence ) {
 			return;
 		}
 		try {
@@ -186,7 +279,7 @@ export class ComponentSession {
 				expectedRevision: opening.revision,
 				requestId: this.createRequestId?.() ?? globalThis.crypto.randomUUID(),
 				...( this.locale ? { locale: this.locale } : {} ),
-				event: { name: action, values: {} },
+				event,
 			};
 			if (
 				typeof request.requestId !== 'string' ||
@@ -195,45 +288,74 @@ export class ComponentSession {
 			) {
 				throw new Error( 'Invalid request identifier.' );
 			}
-			const response = await this.transport( request );
-			if ( this.disposed || ! this.snapshot.result ) {
+			const value = await this.transport( request );
+			if ( this.disposed || sequence !== this.sequence ) {
 				return;
 			}
 			if ( this.expiresAt <= Date.now() ) {
 				this.expire();
 				return;
 			}
-			const replacement = validateAppliedResponse( response, request, opening );
-			if ( ! replacement ) {
+			const response = validateActionResponse( value, request, opening );
+			if ( ! response ) {
 				this.update( {
 					...this.snapshot,
 					phase: 'failed',
-					error: actionFailureMessage( response, request ) ?? this.messages.unverifiedOutcome,
+					error: this.messages.unverifiedOutcome,
 				} );
 				return;
 			}
-			this.expiresAt = Math.min( this.expiresAt, Date.parse( replacement.expiresAt ) );
-			this.update( {
-				result: JSON.parse( JSON.stringify( replacement.result ) ),
-				phase: 'completed',
-				error: this.presentationFailed ? this.snapshot.error : null,
-			} );
-			if ( this.disposed || ! this.snapshot.result ) {
+			const current = response.current;
+			if ( current.state === 'awaiting-input' ) {
+				this.expiresAt = Math.min( this.expiresAt, Date.parse( current.expiresAt ) );
+				this.consumed = this.presentationFailed;
+				this.update( {
+					result: JSON.parse( JSON.stringify( current.result ) ),
+					phase: this.presentationFailed ? 'failed' : 'ready',
+					error: this.presentationFailed ? this.snapshot.error : null,
+					allowedActions: new Set( this.presentationFailed ? [] : current.allowedActions ),
+					actionBindings: this.presentationFailed
+						? {}
+						: JSON.parse( JSON.stringify( current.actionBindings ) ),
+				} );
+				this.scheduleExpiry();
 				return;
 			}
+			if (
+				( response.outcome !== 'applied' && response.outcome !== 'failed' ) ||
+				current.state !== 'completed'
+			) {
+				this.update( {
+					...this.snapshot,
+					phase: 'failed',
+					error: this.messages.unverifiedOutcome,
+				} );
+				return;
+			}
+			this.expiresAt = Math.min( this.expiresAt, Date.parse( current.expiresAt ) );
+			this.update( {
+				result: JSON.parse( JSON.stringify( current.result ) ),
+				phase: 'completed',
+				error: this.presentationFailed ? this.snapshot.error : null,
+				allowedActions: new Set(),
+				actionBindings: {},
+			} );
 			this.scheduleExpiry();
-			if ( ! this.snapshot.result ) {
+			if ( this.disposed || sequence !== this.sequence ) {
 				return;
 			}
 			try {
-				await this.onContinue( replacement.result.summary );
+				await this.onContinue( current.result.summary );
 			} catch {
-				if ( ! this.disposed && this.snapshot.result ) {
-					this.update( { ...this.snapshot, error: this.messages.continuationFailure } );
+				if ( ! this.disposed && sequence === this.sequence ) {
+					this.update( {
+						...this.snapshot,
+						error: this.messages.continuationFailure,
+					} );
 				}
 			}
 		} catch {
-			if ( ! this.disposed && this.snapshot.result && ! this.presentationFailed ) {
+			if ( ! this.disposed && sequence === this.sequence && ! this.presentationFailed ) {
 				this.update( {
 					...this.snapshot,
 					phase: 'failed',

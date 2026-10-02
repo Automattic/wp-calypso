@@ -313,6 +313,14 @@ const mockAgentChat = jest.fn(
 jest.mock(
 	'@automattic/agenttic-client',
 	() => ( {
+		normalizeComponentResultPart: jest.requireActual<
+			typeof import( '@automattic/agenttic-client' )
+		>( '../../../../agenttic-client/src/client/utils/componentHistory' )
+			.normalizeComponentResultPart,
+		getComponentFallbackMetadata: jest.requireActual<
+			typeof import( '@automattic/agenttic-client' )
+		>( '../../../../agenttic-client/src/client/utils/componentHistory' )
+			.getComponentFallbackMetadata,
 		redactComponentTaskUpdate: jest.requireActual< typeof import( '@automattic/agenttic-client' ) >(
 			'../../../../agenttic-client/src/client/utils/componentHistory'
 		).redactComponentTaskUpdate,
@@ -759,12 +767,17 @@ describe( 'OrchestratorChat', () => {
 			} );
 		} );
 		expect( observer ).toHaveBeenCalledTimes( 1 );
-		expect( observer.mock.calls[ 0 ][ 0 ].status.message.parts[ 0 ].data ).toEqual( {
-			toolId: 'wpcom__render_components',
+		expect( observer.mock.calls[ 0 ][ 0 ].status.message.parts[ 0 ] ).toEqual( {
+			type: 'component-reference',
+			partVersion: 1,
 			toolCallId: 'call-123',
-			arguments: { instanceId: opening().instanceId },
+			instanceId: opening().instanceId,
+			protocol: 'agent-component/0.1',
+			catalog: 'minimal-ai-ui/0.1',
+			summary: 'Interactive component shown in this conversation.',
 		} );
 		expect( JSON.stringify( observer.mock.calls ) ).not.toContain( 'surface' );
+		expect( JSON.stringify( observer.mock.calls ) ).not.toContain( opening().summary );
 	} );
 
 	it.each( [

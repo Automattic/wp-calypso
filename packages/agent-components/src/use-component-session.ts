@@ -6,13 +6,15 @@ const emptySnapshot: ComponentSessionSnapshot = {
 	result: null,
 	phase: 'failed',
 	error: null,
+	allowedActions: new Set(),
+	actionBindings: {},
 };
 const getEmptySnapshot = () => emptySnapshot;
 const subscribeEmpty = () => () => {};
 const submitEmpty = async () => {};
 const failEmpty = () => {};
 
-/** Owns the live confirmation lifetime so replaced or unmounted cards cannot continue the chat. */
+/** Owns the live interaction lifetime so replaced or unmounted cards cannot continue the chat. */
 export function useComponentSession( options: ComponentSessionOptions ) {
 	const initialOptions = useRef( options );
 	initialOptions.current = options;
@@ -33,6 +35,11 @@ export function useComponentSession( options: ComponentSessionOptions ) {
 	useEffect( () => {
 		session?.updateMessages( options.messages );
 	}, [ session, options.messages ] );
+	useEffect( () => {
+		if ( options.presentationFailed ) {
+			session?.failPresentation();
+		}
+	}, [ session, options.presentationFailed ] );
 	const snapshot = useSyncExternalStore(
 		session?.subscribe ?? subscribeEmpty,
 		session?.getSnapshot ?? getEmptySnapshot,

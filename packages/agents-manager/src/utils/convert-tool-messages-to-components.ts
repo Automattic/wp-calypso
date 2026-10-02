@@ -1,3 +1,7 @@
+import {
+	getComponentFallbackMetadata,
+	normalizeComponentResultPart,
+} from '@automattic/agenttic-client';
 import { __ } from '@wordpress/i18n';
 import ChatResponseRenderedTracker, {
 	createChatResponseActionCallback,
@@ -21,6 +25,7 @@ import type { UIMessage } from '@automattic/agenttic-client';
 
 export interface AgentsManagerUIMessage extends UIMessage {
 	componentResult?: ComponentSessionOptions;
+	componentToolCallId?: string;
 	disabled?: boolean;
 	traceId?: string;
 	/** Suppress Agenttic's transient thinking indicator while this message is the latest one. */
@@ -91,6 +96,88 @@ export function isContextOnlyMessage( message: UIMessage ): boolean {
 			return flags?.context_only === true;
 		} )
 	);
+}
+
+function resolveComponentResultParts(
+	messages: AgentsManagerUIMessage[]
+): AgentsManagerUIMessage[] {
+	const visibleMessages = messages.filter( ( message ) => ! isContextOnlyMessage( message ) );
+	const cards = new Map(
+		visibleMessages.flatMap( ( message ) =>
+			message.componentToolCallId ? [ [ message.componentToolCallId, message ] as const ] : []
+		)
+	);
+	const liveCalls = new Set(
+		visibleMessages.flatMap( ( message ) =>
+			message.content.flatMap( ( content ) => {
+				const live = normalizeComponentResultPart( content );
+				return live ? [ live.toolCallId ] : [];
+			} )
+		)
+	);
+	const fallbacks = new Set(
+		visibleMessages.flatMap( ( message ) => {
+			const fallback = getComponentFallbackMetadata( {
+				componentFallback: message.componentFallback,
+			} );
+			return fallback ? [ fallback.componentFallback.toolCallId ] : [];
+		} )
+	);
+	const rendered = new Set< string >();
+	return visibleMessages.flatMap( ( message ) => {
+		if ( message.componentToolCallId && liveCalls.has( message.componentToolCallId ) ) {
+			return [];
+		}
+		const fallback = getComponentFallbackMetadata( {
+			componentFallback: message.componentFallback,
+		} );
+		if ( fallback && cards.get( fallback.componentFallback.toolCallId )?.componentResult ) {
+			return [];
+		}
+		const content = message.content.flatMap( ( part ): UIMessage[ 'content' ] => {
+			if ( part.type === 'component-reference' ) {
+				if (
+					message.content.some(
+						( content ) =>
+							content.type === 'text' &&
+							content.text === 'Interactive component shown in this conversation.'
+					)
+				) {
+					return [];
+				}
+				return [
+					{
+						type: 'text',
+						text: __( 'Interactive component shown in this conversation.', __i18n_text_domain__ ),
+					},
+				];
+			}
+			if ( part.type !== 'component-result' ) {
+				return [ part ];
+			}
+			const live = normalizeComponentResultPart( part );
+			const card = live ? cards.get( live.toolCallId ) : undefined;
+			if ( live && rendered.has( live.toolCallId ) ) {
+				return [];
+			}
+			if ( live ) {
+				rendered.add( live.toolCallId );
+			}
+			if ( card?.componentResult ) {
+				return [
+					{
+						type: 'component',
+						component: ComponentCard,
+						componentProps: { options: card.componentResult },
+					},
+				];
+			}
+			return live && fallbacks.has( live.toolCallId )
+				? []
+				: [ { type: 'text', text: __( 'This action is unavailable.', __i18n_text_domain__ ) } ];
+		} );
+		return content.length ? [ { ...message, content } ] : [];
+	} );
 }
 
 function getShowComponentSummary( message: UIMessage ): string | undefined {
@@ -276,11 +363,17 @@ export default function convertToolMessagesToComponents( {
 	isProcessing,
 	canEscalateToHuman = true,
 }: Options ): AgentsManagerUIMessage[] {
-	return messages.flatMap( ( message, index, array ) => {
-		if ( isContextOnlyMessage( message ) ) {
-			return [];
-		}
-
+	const componentMessageIds = new Set(
+		messages
+			.filter( ( message ) =>
+				message.content.some(
+					( content ) =>
+						content.type === 'component-result' || content.type === 'component-reference'
+				)
+			)
+			.map( ( message ) => message.id )
+	);
+	return resolveComponentResultParts( messages ).flatMap( ( message, index, array ) => {
 		if ( message.componentResult ) {
 			return [
 				{
@@ -295,6 +388,9 @@ export default function convertToolMessagesToComponents( {
 					suppressThinking: true,
 				},
 			];
+		}
+		if ( componentMessageIds.has( message.id ) ) {
+			return [ { ...message, suppressThinking: true } ];
 		}
 
 		const firstContentText = message.content?.[ 0 ]?.text;

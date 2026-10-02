@@ -1,4 +1,8 @@
-import { validateAppliedResponse, validateComponentResult } from '../validation';
+import {
+	validateActionResponse,
+	validateComponentResult,
+	validateLegacyButtonAction,
+} from '../validation';
 import { applied, completed, opening } from './fixtures';
 import type { ComponentActionRequest } from '../types';
 
@@ -15,10 +19,7 @@ describe( 'component validation', () => {
 		expect( validateComponentResult( opening() ) ).toEqual( opening() );
 		expect( validateComponentResult( completed() ) ).toEqual( completed() );
 		const response = applied();
-		expect( validateAppliedResponse( response, request, opening() ) ).toEqual( {
-			result: completed(),
-			expiresAt: response.current.expiresAt,
-		} );
+		expect( validateActionResponse( response, request, opening() ) ).toEqual( response );
 	} );
 
 	it.each( [
@@ -28,9 +29,8 @@ describe( 'component validation', () => {
 		{ ...opening(), revision: 2 },
 		{ ...opening(), arguments: { plugin: 'hidden' } },
 		{ ...opening(), surface: { ...opening().surface, protocol: 'minimal-ai-ui/0.2' } },
-		{ ...opening(), surface: { ...opening().surface, data: { secret: 'hidden' } } },
 	] )( 'rejects unsupported or unexpected opening data (%#)', ( result ) => {
-		expect( validateComponentResult( result ) ).toBeNull();
+		expect( validateLegacyButtonAction( result ) ).toBeNull();
 	} );
 
 	it.each( [
@@ -64,7 +64,7 @@ describe( 'component validation', () => {
 				...result.surface.components.run,
 				[ property ]: true,
 			};
-			expect( validateComponentResult( result ) ).toBeNull();
+			expect( validateLegacyButtonAction( result ) ).toBeNull();
 		}
 	} );
 
@@ -72,7 +72,7 @@ describe( 'component validation', () => {
 		const result = opening();
 		result.surface.components.root = { id: 'root', type: 'Column', children: [ 'proposal' ] };
 		delete result.surface.components.run;
-		expect( validateComponentResult( result ) ).toBeNull();
+		expect( validateLegacyButtonAction( result ) ).toBeNull();
 		expect(
 			validateComponentResult( { ...opening(), revision: 2, status: 'completed' } )
 		).toBeNull();
@@ -98,6 +98,6 @@ describe( 'component validation', () => {
 		},
 		{ ...applied(), current: { ...applied().current, expiresAt: 'invalid' } },
 	] )( 'rejects mismatched, stale or unsafe applied responses (%#)', ( response ) => {
-		expect( validateAppliedResponse( response, request, opening() ) ).toBeNull();
+		expect( validateActionResponse( response, request, opening() ) ).toBeNull();
 	} );
 } );

@@ -53,6 +53,19 @@ export const Message = React.forwardRef< HTMLDivElement, MessageProps >( functio
 		return (
 			<>
 				{ messageContent.map( ( contentBlock, index ) => {
+					if (
+						contentBlock.type === 'component-result' ||
+						contentBlock.type === 'component-reference'
+					) {
+						if ( messageContent.some( ( block ) => block.type === 'text' && block.text ) ) {
+							return null;
+						}
+						return (
+							<p key={ index }>
+								{ __( 'Interactive component shown in this conversation.', 'a8c-agenttic' ) }
+							</p>
+						);
+					}
 					if ( contentBlock.type === 'text' && contentBlock.text ) {
 						return <MessageRenderer key={ index }>{ contentBlock.text }</MessageRenderer>;
 					}

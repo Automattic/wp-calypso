@@ -300,6 +300,14 @@ export async function createAgentConfig(
 		} ),
 		enableStreaming: true,
 	};
+	if ( ! isReaderChatAgent( agentId ) ) {
+		config.componentTransportVersion = 1;
+		config.componentCapabilities = {
+			supported: [
+				{ partVersion: 1, protocol: 'agent-component/0.1', catalog: 'minimal-ai-ui/0.1' },
+			],
+		};
+	}
 
 	if ( onTaskUpdate ) {
 		config.onTaskUpdate = onTaskUpdate;

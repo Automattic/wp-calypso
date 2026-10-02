@@ -1,4 +1,7 @@
-import { redactComponentMessage, redactComponentMessages } from '../client/utils/componentHistory';
+import {
+	projectComponentMessagesForReplay,
+	redactComponentMessage,
+} from '../client/utils/componentHistory';
 import { generateMessageId } from '../client/utils/core';
 import type { DataPart, FilePart, Message, TextPart } from '../client/types/index';
 
@@ -77,7 +80,7 @@ export function conversationMessagesToDataParts(
 ): ( DataPart | FilePart )[] {
 	const historyParts: ( DataPart | FilePart )[] = [];
 
-	for ( const message of redactComponentMessages( conversationMessages ) ) {
+	for ( const message of projectComponentMessagesForReplay( conversationMessages ) ) {
 		for ( const part of message.parts ) {
 			if ( part.type === 'text' ) {
 				// Convert text parts to history data parts
@@ -206,6 +209,13 @@ export function extractToolResultsFromMessage( message?: Message ): DataPart[] {
  * @returns True when the first text part is a `{ tool_id, ... }` JSON payload.
  */
 export function messageCarriesToolPayload( message?: Message ): boolean {
+	if (
+		message?.parts?.some(
+			( part ) => part.type === 'component-result' || part.type === 'component-reference'
+		)
+	) {
+		return true;
+	}
 	const text = message?.parts?.find( ( part ): part is TextPart => part.type === 'text' )?.text;
 	if ( typeof text !== 'string' || text.trim() === '' ) {
 		return false;

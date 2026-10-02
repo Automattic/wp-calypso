@@ -4,6 +4,8 @@ import { opening } from '../../utils/__tests__/fixtures/component-opening';
 import ComponentCard from '../component-card';
 import type { SurfaceRendererProps } from '@automattic/agent-components';
 
+jest.mock( 'i18n-calypso', () => ( { getLocaleSlug: () => 'en' } ) );
+
 let mockFail = false;
 jest.mock( '@automattic/agent-components', () => {
 	const actual = jest.requireActual< typeof import( '@automattic/agent-components' ) >(
@@ -77,4 +79,19 @@ it( 'keeps the approved completion readable and continues once after a pending r
 	expect( onContinue ).toHaveBeenCalledTimes( 1 );
 	expect( onContinue ).toHaveBeenCalledWith( completed.summary );
 	consoleError.mockRestore();
+} );
+
+it( 'keeps the surface and disables its controls when the action outcome is unknown', async () => {
+	mockFail = false;
+	const transport = jest.fn().mockRejectedValue( new Error( 'Offline' ) );
+	const onContinue = jest.fn();
+	render( <ComponentCard options={ { result: opening(), transport, onContinue } } /> );
+	const button = screen.getByRole( 'button' );
+	fireEvent.click( button );
+	expect( await screen.findByText( /The action outcome could not be verified/ ) ).toBeVisible();
+	expect( screen.getByRole( 'button' ) ).toBe( button );
+	expect( button ).toBeDisabled();
+	fireEvent.click( button );
+	expect( transport ).toHaveBeenCalledTimes( 1 );
+	expect( onContinue ).not.toHaveBeenCalled();
 } );

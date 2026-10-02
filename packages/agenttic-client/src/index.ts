@@ -15,7 +15,11 @@ export {
 export { useAgentChat } from './react/useAgentChat';
 
 // Essential utilities for external consumers
-export { redactComponentTaskUpdate } from './client/utils/componentHistory';
+export {
+	getComponentFallbackMetadata,
+	normalizeComponentResultPart,
+	redactComponentTaskUpdate,
+} from './client/utils/componentHistory';
 export {
 	createRequestId,
 	createTaskId,
@@ -35,6 +39,10 @@ export type {
 	TaskState,
 	ContentType,
 	TextPart,
+	ComponentResultPart,
+	ComponentReferencePart,
+	ComponentFallbackMetadata,
+	ComponentCapabilities,
 	FilePart,
 	DataPart,
 	ToolDataPart,

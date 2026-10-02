@@ -1,4 +1,4 @@
-import type { ComponentResult } from '@automattic/agent-components';
+import type { ComponentOpening, ComponentResult } from '@automattic/agent-components';
 
 export function opening(): ComponentResult {
 	return {
@@ -28,6 +28,45 @@ export function opening(): ComponentResult {
 				},
 			},
 			data: {},
+		},
+	};
+}
+
+export function formOpening(): ComponentOpening {
+	return {
+		protocol: 'agent-component/0.1',
+		allowedActions: [ 'site.update' ],
+		actionBindings: { 'site.update': [ '/site/name' ] },
+		expiresAt: '2099-09-30T12:00:00+00:00',
+		result: {
+			protocol: 'agent-component/0.1',
+			component: 'ability-form',
+			instanceId: 'instance-123',
+			revision: 1,
+			status: 'awaiting-input',
+			summary: 'Update the name of Example Site.',
+			surface: {
+				protocol: 'minimal-ai-ui/0.1',
+				rootId: 'root',
+				components: {
+					root: { id: 'root', type: 'Column', children: [ 'name', 'save' ] },
+					name: {
+						id: 'name',
+						type: 'TextField',
+						label: 'Site name',
+						path: '/site/name',
+						inputMode: 'shortText',
+					},
+					save: {
+						id: 'save',
+						type: 'Button',
+						label: 'Save site name',
+						action: 'site.update',
+						variant: 'primary',
+					},
+				},
+				data: { site: { name: 'Example Site' } },
+			},
 		},
 	};
 }

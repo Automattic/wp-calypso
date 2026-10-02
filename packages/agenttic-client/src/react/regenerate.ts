@@ -8,6 +8,9 @@ export interface RegenerateRequest {
 }
 
 const clonePart = ( part: Part ): Part => {
+	if ( part.type === 'component-result' || part.type === 'component-reference' ) {
+		return { ...part };
+	}
 	if ( part.type === 'text' ) {
 		return {
 			...part,

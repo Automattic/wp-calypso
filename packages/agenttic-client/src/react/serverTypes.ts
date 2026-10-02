@@ -3,6 +3,10 @@
  * Maps to odie-assistant.php endpoints on WordPress.com
  */
 
+import {
+	GENERIC_COMPONENT_HISTORY_TEXT,
+	getComponentFallbackMetadata,
+} from '../client/utils/componentHistory';
 import { generateMessageId } from '../client/utils/core';
 import type { FilePart, Message, Part, TextPart } from '../client/types/index';
 
@@ -111,6 +115,9 @@ export interface ServerConversationListItem {
 export function serverMessageToMessage( serverMessage: ServerMessage ): Message {
 	const parts: Part[] = [];
 	const context = serverMessage.context;
+	const fallback = getComponentFallbackMetadata( context );
+	const hasComponentFallback =
+		!! context && ! Array.isArray( context ) && Object.hasOwn( context, 'componentFallback' );
 
 	// A message the server flagged as context-only is sent to the model but
 	// must not be shown in the UI (e.g. a tool turn-closing ack that would
@@ -128,7 +135,7 @@ export function serverMessageToMessage( serverMessage: ServerMessage ): Message 
 	if ( serverMessage.content ) {
 		const textPart: TextPart = {
 			type: 'text',
-			text: serverMessage.content,
+			text: hasComponentFallback ? GENERIC_COMPONENT_HISTORY_TEXT : serverMessage.content,
 			...( isContextOnly && {
 				metadata: { contentType: 'context' },
 			} ),
@@ -194,6 +201,7 @@ export function serverMessageToMessage( serverMessage: ServerMessage ): Message 
 		messageId: generateMessageId(),
 		metadata: {
 			timestamp,
+			...fallback,
 			serverId: serverMessage.message_id,
 			chatId: serverMessage.chat_id,
 		},

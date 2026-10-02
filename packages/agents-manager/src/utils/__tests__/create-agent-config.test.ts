@@ -2,6 +2,12 @@
  * @jest-environment jsdom
  */
 /* eslint-disable import/order -- jest.mock calls must precede imports */
+jest.mock(
+	'@automattic/agenttic-client',
+	() => jest.requireActual( '../../../../agenttic-client/src/client/utils/componentHistory' ),
+	{ virtual: true }
+);
+
 jest.mock( '../../auth/calypso-auth-provider', () => ( {
 	createCalypsoAuthProvider: jest.fn( () => ( { type: 'auth-provider' } ) ),
 } ) );
@@ -47,6 +53,12 @@ describe( 'createAgentConfig', () => {
 			siteId: 456,
 		} );
 		expect( config.authenticationScope ).toEqual( { siteId: 456, userId: 123 } );
+		expect( config.componentTransportVersion ).toBe( 1 );
+		expect( config.componentCapabilities ).toEqual( {
+			supported: [
+				{ partVersion: 1, protocol: 'agent-component/0.1', catalog: 'minimal-ai-ui/0.1' },
+			],
+		} );
 	} );
 
 	it( 'does not add reader page context for regular agents', async () => {
@@ -128,6 +140,8 @@ describe( 'createAgentConfig', () => {
 		const context = config.contextProvider?.getClientContext();
 
 		expect( mockCanConnectToZendesk ).not.toHaveBeenCalled();
+		expect( config.componentTransportVersion ).toBeUndefined();
+		expect( config.componentCapabilities ).toBeUndefined();
 		expect( mockCreateCalypsoAuthProvider ).toHaveBeenCalledWith( undefined, {
 			logWpcomJwtFailure: false,
 		} );

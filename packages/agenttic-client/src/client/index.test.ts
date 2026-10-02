@@ -2,7 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { createTextMessage } from './utils/index';
 import { validateJsonRpcResponse } from './utils/internal/errors';
 import { createClient, sendMessageAndWait } from './index';
-import type { JsonRpcResponse, ToolProvider } from './types/index';
+import type { JsonRpcResponse, Message, Task, TaskUpdate, ToolProvider } from './types/index';
 
 // Mock fetch globally
 const mockFetch = vi.fn();
@@ -35,6 +35,108 @@ describe( 'Client', () => {
 	afterEach( () => {
 		vi.restoreAllMocks();
 	} );
+
+	it.each( [ 'send', 'stream' ] )(
+		'preserves component presentation and the backend fallback when %s tracks tool results',
+		async ( method ) => {
+			const marker = {
+				type: 'component-result' as const,
+				partVersion: 1 as const,
+				toolCallId: 'component-call',
+				result: { awaitingValidation: true },
+			};
+			const presentation: Message[ 'parts' ] = [
+				{ type: 'text', text: 'Before' },
+				marker,
+				{ type: 'text', text: 'After' },
+			];
+			const fallback: Message = {
+				role: 'agent',
+				kind: 'message',
+				messageId: 'fallback',
+				parts: [ { type: 'text', text: 'Approved fallback' } ],
+				metadata: { componentFallback: { partVersion: 1, toolCallId: 'component-call' } },
+			};
+			const task: Task = {
+				id: 'component-task',
+				status: {
+					state: 'input-required',
+					message: {
+						role: 'agent',
+						kind: 'message',
+						messageId: 'opening',
+						metadata: { timestamp: 123 },
+						parts: [
+							{
+								type: 'data',
+								data: { toolId: 'new/ability', toolCallId: 'component-call', arguments: {} },
+							},
+							...presentation,
+						],
+					},
+				},
+				agentMessage: fallback,
+			};
+			const envelope = { jsonrpc: '2.0', id: 'request', result: { ...task, final: true } };
+			mockFetch.mockResolvedValueOnce( {
+				ok: true,
+				status: 200,
+				headers: new Headers( { 'content-type': 'text/event-stream' } ),
+				json: async () => envelope,
+				body: new ReadableStream( {
+					start( controller ) {
+						controller.enqueue(
+							new TextEncoder().encode( `data: ${ JSON.stringify( envelope ) }\n\n` )
+						);
+						controller.close();
+					},
+				} ),
+			} );
+			const client = createClient( {
+				agentId: 'test-agent',
+				agentUrl: 'https://example.com/agent',
+				toolProvider: {
+					getAvailableTools: async () => [
+						{
+							id: 'new/ability',
+							name: 'New ability',
+							description: 'New ability',
+							input_schema: { type: 'object', properties: {} },
+						},
+					],
+					executeTool: async () => ( {
+						result: {},
+						returnToAgent: false,
+						agentMessage: 'Tool presentation',
+					} ),
+				},
+			} );
+			let result: TaskUpdate;
+			if ( method === 'send' ) {
+				result = await client.sendMessage( { message: createTextMessage( 'Open a component' ) } );
+			} else {
+				const updates: TaskUpdate[] = [];
+				for await ( const update of client.sendMessageStream( {
+					message: createTextMessage( 'Open a component' ),
+				} ) ) {
+					updates.push( update );
+				}
+				result = updates.findLast( ( update ) =>
+					update.status.message?.parts.some( ( part ) => part.type === 'component-result' )
+				)!;
+				expect( updates.filter( ( update ) => update.text.includes( 'Before' ) ) ).toHaveLength(
+					1
+				);
+				expect( updates.at( -1 )?.agentMessage ).toEqual( fallback );
+			}
+			expect( result.status.message?.parts.filter( ( part ) => part.type !== 'data' ) ).toEqual(
+				presentation
+			);
+			expect( result.status.message?.metadata ).toEqual( { timestamp: 123 } );
+			expect( result.agentMessage ).toEqual( fallback );
+			expect( mockFetch ).toHaveBeenCalledTimes( 1 );
+		}
+	);
 
 	it.each( [ null, false, 42, 'invalid', [] ] )(
 		'preserves the original validation error for a malformed response: %j',
