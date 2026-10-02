@@ -1,6 +1,5 @@
 import { FormStatus, useFormStatus } from '@automattic/composite-checkout';
 import { CardCvcElement } from '@stripe/react-stripe-js';
-import { useSelect } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 import { LeftColumn, RightColumn } from 'calypso/my-sites/checkout/src/components/ie-fallback';
 import { useMobileCheckoutStickySummaryExperiment } from 'calypso/my-sites/checkout/src/hooks/use-mobile-checkout-sticky-summary-experiment';
@@ -13,11 +12,12 @@ import {
 	StripeFieldWrapper,
 	StripeErrorMessage,
 } from './form-layout-components';
-import type { WpcomCreditCardSelectors } from './store';
-import type { StripeFieldChangeInput } from './types';
+import { useCreditCardStoreState } from './store';
+import type { CardStoreType, StripeFieldChangeInput } from './types';
 import type { StripeElementStyle } from '@stripe/stripe-js';
 
 export default function CreditCardCvvField( {
+	store,
 	handleStripeFieldChange,
 	stripeElementStyle,
 	shouldUseEbanx,
@@ -25,6 +25,7 @@ export default function CreditCardCvvField( {
 	setFieldValue,
 	getFieldValue,
 }: {
+	store: CardStoreType;
 	handleStripeFieldChange: ( change: StripeFieldChangeInput ) => void;
 	stripeElementStyle: StripeElementStyle;
 	shouldUseEbanx?: boolean;
@@ -36,10 +37,7 @@ export default function CreditCardCvvField( {
 	const { formStatus } = useFormStatus();
 	const isDisabled = formStatus !== FormStatus.READY;
 	const { isMobileCheckoutStickySummary } = useMobileCheckoutStickySummaryExperiment();
-	const { cardCvc: cardCvcError } = useSelect(
-		( select ) => ( select( 'wpcom-credit-card' ) as WpcomCreditCardSelectors ).getCardDataErrors(),
-		[]
-	);
+	const cardCvcError = useCreditCardStoreState( store, ( state ) => state.cardDataErrors.cardCvc );
 	const errorMessages = getErrorMessagesForField( 'cvv' );
 	const errorMessage = errorMessages?.length > 0 ? errorMessages[ 0 ] : null;
 
