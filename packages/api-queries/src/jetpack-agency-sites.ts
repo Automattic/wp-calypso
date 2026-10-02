@@ -1,8 +1,12 @@
-import { fetchAgencySites } from '@automattic/api-core';
-import { queryOptions } from '@tanstack/react-query';
+import { fetchAgencySites, setAgencySiteFavorite } from '@automattic/api-core';
+import { mutationOptions, queryOptions } from '@tanstack/react-query';
 import { agencyQuery } from './agency';
 import { queryClient } from './query-client';
-import type { FetchAgencySitesOptions } from '@automattic/api-core';
+import type {
+	AgencySite,
+	FetchAgencySitesResponse,
+	FetchAgencySitesOptions,
+} from '@automattic/api-core';
 
 export const agencySitesQueryKey = [ 'agency-sites' ];
 
@@ -62,5 +66,37 @@ export const agencyManagedSiteIdsQuery = ( agencyId: number ) =>
 
 			const { sites } = await fetchAgencySites( agencyId, { per_page: total } );
 			return sites.map( ( site ) => site.blog_id );
+		},
+	} );
+
+export const agencySiteFavoriteMutation = ( siteId: number ) =>
+	mutationOptions( {
+		meta: { statId: 'agency-site-favorite' },
+		mutationFn: async ( isFavorite: boolean ) =>
+			setAgencySiteFavorite( await resolveAgencyId(), siteId, isFavorite ),
+		onMutate: async ( isFavorite: boolean ) => {
+			await queryClient.cancelQueries( { queryKey: agencySitesQueryKey } );
+
+			const updateSite = ( site: AgencySite ) =>
+				site.blog_id === siteId ? { ...site, is_favorite: isFavorite } : site;
+
+			queryClient.setQueriesData< AgencySite[] | FetchAgencySitesResponse | AgencySite | null >(
+				{ queryKey: agencySitesQueryKey },
+				( data ) => {
+					if ( ! data ) {
+						return data;
+					}
+					if ( Array.isArray( data ) ) {
+						return data.map( updateSite );
+					}
+					if ( 'sites' in data ) {
+						return { ...data, sites: data.sites.map( updateSite ) };
+					}
+					return 'blog_id' in data ? updateSite( data ) : data;
+				}
+			);
+		},
+		onSettled: () => {
+			queryClient.invalidateQueries( { queryKey: agencySitesQueryKey } );
 		},
 	} );

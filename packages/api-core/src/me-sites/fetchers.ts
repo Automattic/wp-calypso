@@ -21,6 +21,7 @@ export interface FetchPaginatedSitesOptions extends FetchSitesOptions {
 	search?: string;
 	plan?: string[];
 	visibility?: string[];
+	is_favorited?: boolean;
 	sort_field?: string;
 	sort_direction?: string;
 	page?: number;
@@ -66,6 +67,7 @@ export async function fetchPaginatedSites(
 		search,
 		plan,
 		visibility,
+		is_favorited,
 		sort_field,
 		sort_direction,
 		page,
@@ -90,6 +92,7 @@ export async function fetchPaginatedSites(
 			search,
 			plan,
 			visibility,
+			is_favorited,
 			sort_field,
 			sort_direction,
 			page,

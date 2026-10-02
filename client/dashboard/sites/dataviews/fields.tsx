@@ -1,7 +1,9 @@
-import { queryClient } from '@automattic/api-queries';
+import { queryClient, siteFavoriteMutation } from '@automattic/api-queries';
+import { useMutation } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
 import { useMemo } from 'react';
 import { useAppContext } from '../../app/context';
+import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import SiteIcon from '../../components/site-icon';
 import { Text } from '../../components/text';
 import TimeSince from '../../components/time-since';
@@ -25,11 +27,19 @@ import {
 	Uptime,
 	Visibility,
 } from '../site-fields';
+import { Favorite } from '../site-fields/favorite';
 import type { AppConfig } from '../../app/context';
 import type { Site } from '@automattic/api-core';
 import type { Field, Operator, View } from '@wordpress/dataviews';
 
 export const STAGING_FILTER_FIELD = 'staging';
+
+function SiteFavorite( { site }: { site: Site } ) {
+	const { mutate } = useMutation(
+		withSnackbar( siteFavoriteMutation( site.ID ), { error: __( 'Failed to update favorites.' ) } )
+	);
+	return <Favorite isFavorite={ !! site.is_favorited } onToggle={ mutate } />;
+}
 
 function getDefaultFields( {
 	viewType,
@@ -47,6 +57,20 @@ function getDefaultFields( {
 			enableGlobalSearch: true,
 			getValue: ( { item } ) => getSiteDisplayName( item ),
 			render: ( { field, item } ) => <Name site={ item } value={ field.getValue( { item } ) } />,
+		},
+		{
+			id: 'is_favorited',
+			type: 'boolean',
+			label: __( 'Favorite' ),
+			getValue: ( { item } ) => !! item.is_favorited,
+			render: ( { item } ) => <SiteFavorite site={ item } />,
+			elements: [
+				{ value: true, label: __( 'Yes' ) },
+				{ value: false, label: __( 'No' ) },
+			],
+			filterBy: {
+				operators: [ 'is' as Operator ],
+			},
 		},
 		{
 			id: 'URL',
