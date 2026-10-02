@@ -2,7 +2,7 @@ import styled from '@emotion/styled';
 import { Notice } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
-import { hasDIFMOfferPlan } from 'calypso/lib/cart-values/cart-items';
+import { hasDIFMOfferPlan, hasDIFMProduct } from 'calypso/lib/cart-values/cart-items';
 import type { ResponseCart } from '@automattic/shopping-cart';
 
 const RequestNotice = styled( Notice )`
@@ -13,7 +13,7 @@ export default function DIFMOfferRequestNotice( { responseCart }: { responseCart
 	const translate = useTranslate();
 	const [ isDismissed, setIsDismissed ] = useState( false );
 
-	if ( isDismissed || ! hasDIFMOfferPlan( responseCart ) ) {
+	if ( isDismissed || ! hasDIFMOfferPlan( responseCart ) || hasDIFMProduct( responseCart ) ) {
 		return null;
 	}
 
