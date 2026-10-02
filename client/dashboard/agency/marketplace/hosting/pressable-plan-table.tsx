@@ -4,6 +4,7 @@ import { useViewportMatch } from '@wordpress/compose';
 import { __, sprintf } from '@wordpress/i18n';
 import { Badge } from '@wordpress/ui';
 import clsx from 'clsx';
+import { useEffect, useRef, useState } from 'react';
 import { getPressablePlanName } from './lib/pressable-plans';
 import type { PressablePlan } from './lib/pressable-plans';
 import type { AgencyProduct } from '@automattic/api-core';
@@ -79,16 +80,22 @@ export default function PressablePlanTable( {
 	const showInstalls = new Set( rows.map( ( { plan } ) => plan.install ) ).size > 1;
 	// On phones the table keeps the columns that tell plans apart, so it fits the card.
 	const showMoreColumns = ! isSmallScreen;
+	const tableScroll = usePlanTableScroll();
 
 	return (
 		<VStack spacing={ 3 } alignment="stretch">
-			<div className="dashboard-marketplace-hosting__plan-table-scroll">
+			<div
+				ref={ tableScroll.ref }
+				className={ clsx( 'dashboard-marketplace-hosting__plan-table-scroll', {
+					'is-scrolled': tableScroll.scrolled,
+					'has-more': tableScroll.more,
+				} ) }
+			>
 				<table className="dashboard-marketplace-hosting__plan-table">
 					<thead>
 						<tr>
 							<th scope="col">{ __( 'Plan' ) }</th>
 							{ showInstalls && <th scope="col">{ __( 'Installs' ) }</th> }
-							{ showInstalls && showMoreColumns && <th scope="col">{ __( 'Staging sites' ) }</th> }
 							<th scope="col">
 								{ isSmallScreen ? __( 'Monthly visits' ) : __( 'Visits a month' ) }
 							</th>
@@ -130,7 +137,6 @@ export default function PressablePlanTable( {
 										</label>
 									</td>
 									{ showInstalls && <td>{ row.installs }</td> }
-									{ showInstalls && showMoreColumns && <td>{ row.installs }</td> }
 									<td>{ row.visits }</td>
 									<td>{ row.storage }</td>
 									{ showMoreColumns && <td>{ row.workers }</td> }
@@ -148,7 +154,7 @@ export default function PressablePlanTable( {
 					: sprintf(
 							/* translators: %1$s is the charge per GB of storage, %2$s the charge per %3$s visits. */
 							__(
-								'Every plan shares its limits across all your sites, with unmetered bandwidth. Over your limits, it’s %1$s per GB of storage and %2$s per %3$s visits.'
+								'Every plan shares its limits across all your sites, with a staging site per install and unmetered bandwidth. Over your limits, it’s %1$s per GB of storage and %2$s per %3$s visits.'
 							),
 							formatCurrency( 0.5, 'USD' ),
 							formatCurrency( 8, 'USD' ),
@@ -157,4 +163,35 @@ export default function PressablePlanTable( {
 			</Text>
 		</VStack>
 	);
+}
+
+/**
+ * Whether the table is scrolled sideways and whether columns are still hidden
+ * to the right, so the Plan column can mark its edge and the far edge can
+ * fade (DataViews does the same for its tables).
+ */
+function usePlanTableScroll() {
+	const ref = useRef< HTMLDivElement >( null );
+	const [ state, setState ] = useState( { scrolled: false, more: false } );
+	useEffect( () => {
+		const el = ref.current;
+		if ( ! el ) {
+			return;
+		}
+		const update = () => {
+			setState( {
+				scrolled: el.scrollLeft > 1,
+				more: el.scrollLeft + el.clientWidth < el.scrollWidth - 1,
+			} );
+		};
+		update();
+		el.addEventListener( 'scroll', update );
+		const observer = new ResizeObserver( update );
+		observer.observe( el );
+		return () => {
+			el.removeEventListener( 'scroll', update );
+			observer.disconnect();
+		};
+	}, [] );
+	return { ref, ...state };
 }
