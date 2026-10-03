@@ -1,10 +1,13 @@
-import { __experimentalVStack as VStack } from '@wordpress/components';
+import {
+	__experimentalHeading as Heading,
+	__experimentalText as Text,
+	__experimentalVStack as VStack,
+} from '@wordpress/components';
 import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import getIsNotePendingApproval from '../../panel/state/selectors/get-is-note-pending-approval';
 import { NoteBody } from '../templates/body';
-import FollowLink, { followStatTypes } from '../templates/follow-link';
-import ActorRow, { NoteTime } from './actor-row';
+import ActorRow, { NoteMeta, NoteTime } from './actor-row';
 import { getNoteView } from './note-view';
 import { ContextCard, PostCard } from './preview';
 import SubscriptionNotice from './subscription-notice';
@@ -45,33 +48,24 @@ export default function SimplifiedNote( { note, className }: { note: Note; class
 					follow={ view.follow }
 				/>
 			) }
-			{ view.post && <PostCard { ...view.post } /> }
-			{ view.isFromSubscription && <SubscriptionNotice /> }
+			{ view.post && (
+				<VStack spacing={ 2 }>
+					<PostCard { ...view.post } />
+					{ view.isFromSubscription && <SubscriptionNotice /> }
+				</VStack>
+			) }
 			{ thread && (
 				<Thread
 					thread={ thread }
-					meta={
-						<>
-							<NoteTime timestamp={ note.timestamp } url={ note.url } />
-							{ origin && ` · ${ origin }` }
-							{ view.follow && (
-								<>
-									{ ' · ' }
-									<FollowLink
-										site={ view.follow.siteId }
-										isFollowing={ view.follow.isFollowing }
-										noteType={ note.type as keyof typeof followStatTypes }
-									/>
-								</>
-							) }
-						</>
-					}
+					meta={ <NoteMeta note={ note } origin={ origin } follow={ view.follow } /> }
 					parentMeta={
 						parentDate && (
-							<NoteTime
-								timestamp={ parentDate }
-								url={ note.parent_comment?.url ?? thread.parent?.url ?? note.url }
-							/>
+							<Text className="wpnc-simplified__quiet-links" size={ 12 } variant="muted">
+								<NoteTime
+									timestamp={ parentDate }
+									url={ note.parent_comment?.url ?? thread.parent?.url ?? note.url }
+								/>
+							</Text>
 						)
 					}
 				>
@@ -80,7 +74,9 @@ export default function SimplifiedNote( { note, className }: { note: Note; class
 			) }
 			{ view.card && <ContextCard { ...view.card } /> }
 			{ view.peopleHeading && (
-				<div className="wpnc-simplified__heading">{ view.peopleHeading }</div>
+				<Heading className="wpnc-simplified__heading" level={ 3 } size={ 13 } weight={ 600 }>
+					{ view.peopleHeading }
+				</Heading>
 			) }
 			{ ! hasSpeaker && body }
 		</VStack>

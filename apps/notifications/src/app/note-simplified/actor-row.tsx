@@ -1,7 +1,9 @@
 import {
 	__experimentalHStack as HStack,
+	__experimentalText as Text,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
+import { Fragment } from 'react';
 import { html } from '../../panel/indices-to-html';
 import { useAppContext } from '../context';
 import NoteIcon from '../note-icon';
@@ -10,6 +12,7 @@ import { getHeaderLink } from '../templates/note-summary';
 import { formatFullTime, formatNoteTime } from './format-note-time';
 import type { NoteView } from './note-view';
 import type { Note, Subject } from '../types';
+import type { ReactNode } from 'react';
 
 const Avatars = ( { avatars, link }: { avatars: string[]; link?: string } ) => {
 	const icons = avatars.map( ( url, index ) => (
@@ -48,6 +51,42 @@ export const NoteTime = ( { timestamp, url }: { timestamp: string; url: string }
 	);
 };
 
+/** When it happened, then where and the author's Subscribe link if known. */
+export const NoteMeta = ( {
+	note,
+	origin,
+	follow,
+}: {
+	note: Note;
+	origin?: string;
+	follow?: NoteView[ 'follow' ];
+} ) => {
+	const parts: ReactNode[] = [
+		<NoteTime key="time" timestamp={ note.timestamp } url={ note.url } />,
+		origin,
+		follow && (
+			<FollowLink
+				key="follow"
+				site={ follow.siteId }
+				isFollowing={ follow.isFollowing }
+				noteType={ note.type as keyof typeof followStatTypes }
+			/>
+		),
+	].filter( Boolean );
+
+	return (
+		<Text className="wpnc-simplified__quiet-links" size={ 12 } variant="muted">
+			{ parts.map( ( part, index ) => (
+				// eslint-disable-next-line react/no-array-index-key -- the parts never reorder.
+				<Fragment key={ index }>
+					{ index > 0 && ' · ' }
+					{ part }
+				</Fragment>
+			) ) }
+		</Text>
+	);
+};
+
 export default function ActorRow( {
 	note,
 	sentence,
@@ -64,43 +103,22 @@ export default function ActorRow( {
 	follow?: NoteView[ 'follow' ];
 } ) {
 	return (
-		<HStack className="wpnc-simplified__actor" alignment="top" justify="flex-start" spacing={ 3 }>
+		<HStack alignment="top" justify="flex-start" spacing={ 3 }>
 			<Avatars avatars={ avatars } link={ getHeaderLink( sentence ) } />
-			<VStack spacing={ 0 }>
-				<div
-					className="wpnc-simplified__sentence"
-					// eslint-disable-next-line react/no-danger
-					dangerouslySetInnerHTML={ { __html: html( sentence ) } }
-				/>
-				{ target && (
-					<a
-						className="wpnc-simplified__target"
-						href={ target.url ?? note.url }
-						target="_blank"
-						rel="noreferrer"
-					>
-						{ target.title }
-					</a>
-				) }
-				<HStack className="wpnc-simplified__meta" justify="flex-start" spacing={ 1 } wrap>
-					<NoteTime timestamp={ note.timestamp } url={ note.url } />
-					{ origin && (
-						<>
-							<span aria-hidden="true">·</span>
-							<span className="wpnc-simplified__origin">{ origin }</span>
-						</>
+			<VStack className="wpnc-simplified__quiet-links" spacing={ 1 }>
+				<div>
+					<div
+						className="wpnc-simplified__sentence"
+						// eslint-disable-next-line react/no-danger
+						dangerouslySetInnerHTML={ { __html: html( sentence ) } }
+					/>
+					{ target && (
+						<a href={ target.url ?? note.url } target="_blank" rel="noreferrer">
+							{ target.title }
+						</a>
 					) }
-					{ follow && (
-						<>
-							<span aria-hidden="true">·</span>
-							<FollowLink
-								site={ follow.siteId }
-								isFollowing={ follow.isFollowing }
-								noteType={ note.type as keyof typeof followStatTypes }
-							/>
-						</>
-					) }
-				</HStack>
+				</div>
+				<NoteMeta note={ note } origin={ origin } follow={ follow } />
 			</VStack>
 		</HStack>
 	);

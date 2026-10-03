@@ -1,33 +1,54 @@
+import {
+	__experimentalHStack as HStack,
+	__experimentalText as Text,
+	__experimentalVStack as VStack,
+} from '@wordpress/components';
 import clsx from 'clsx';
 import { useAppContext } from '../context';
 import NoteIcon from '../note-icon';
 import { formatDate } from './format-note-time';
 import type { NoteView } from './note-view';
+import type { ReactNode } from 'react';
+
+const CardLink = ( {
+	url,
+	className,
+	children,
+}: {
+	url?: string;
+	className?: string;
+	children: ReactNode;
+} ) => {
+	const classes = clsx( 'wpnc-simplified__card', className );
+	return url ? (
+		<a className={ classes } href={ url } target="_blank" rel="noreferrer">
+			{ children }
+		</a>
+	) : (
+		<div className={ classes }>{ children }</div>
+	);
+};
 
 export const ContextCard = ( {
 	title,
 	description,
 	icon,
 	url,
-}: NonNullable< NoteView[ 'card' ] > ) => {
-	const content = (
-		<>
-			{ icon && <NoteIcon className="wpnc-simplified__card-icon" icon={ icon } size={ 40 } /> }
-			<div className="wpnc-simplified__card-text">
-				<div className="wpnc-simplified__card-title">{ title }</div>
-				{ description && <div className="wpnc-simplified__card-excerpt">{ description }</div> }
-			</div>
-		</>
-	);
-
-	return url ? (
-		<a className="wpnc-simplified__card" href={ url } target="_blank" rel="noreferrer">
-			{ content }
-		</a>
-	) : (
-		<div className="wpnc-simplified__card">{ content }</div>
-	);
-};
+}: NonNullable< NoteView[ 'card' ] > ) => (
+	<CardLink url={ url }>
+		<HStack alignment="top" justify="flex-start" spacing={ 3 }>
+			{ icon && <NoteIcon className="wpnc-simplified__site-icon" icon={ icon } size={ 40 } /> }
+			<VStack spacing={ 1 }>
+				<Text weight={ 600 }>{ title }</Text>
+				{ description && (
+					<Text variant="muted" truncate numberOfLines={ 2 }>
+						{ description }
+					</Text>
+				) }
+			</VStack>
+		</HStack>
+	</CardLink>
+);
 
 export const PostCard = ( {
 	title,
@@ -46,35 +67,52 @@ export const PostCard = ( {
 	// A post that is the news shows its image, under a row that already says who
 	// published it and when. Anywhere else it is a reference, introduced by its site.
 	return (
-		<a
-			className={ clsx( 'wpnc-simplified__card', { 'is-featured': isFeatured } ) }
-			href={ url }
-			target="_blank"
-			rel="noreferrer"
-		>
+		<CardLink url={ url } className={ clsx( { 'is-featured': isFeatured } ) }>
 			{ isFeatured && image && (
 				<img className="wpnc-simplified__card-image" src={ image } alt="" />
 			) }
-			<div className="wpnc-simplified__card-text">
+			<VStack className="wpnc-simplified__card-text" spacing={ 2 }>
 				{ ! isFeatured && (
 					<span className="wpnc-simplified__card-arrow" aria-hidden="true">
 						&#8599;
 					</span>
 				) }
 				{ ! isFeatured && ( siteName || byline ) && (
-					<div className="wpnc-simplified__card-source">
+					<HStack justify="flex-start" spacing={ 2 }>
 						{ siteIcon && (
-							<img className="wpnc-simplified__card-site-icon" src={ siteIcon } alt="" />
+							<img
+								className="wpnc-simplified__site-icon"
+								src={ siteIcon }
+								alt=""
+								width={ 32 }
+								height={ 32 }
+							/>
 						) }
-						<div className="wpnc-simplified__card-source-text">
-							{ siteName && <span className="wpnc-simplified__card-site">{ siteName }</span> }
-							{ byline && <span>{ byline }</span> }
-						</div>
-					</div>
+						<VStack spacing={ 0 }>
+							{ siteName && (
+								<Text size={ 12 } weight={ 600 }>
+									{ siteName }
+								</Text>
+							) }
+							{ byline && (
+								<Text size={ 12 } variant="muted">
+									{ byline }
+								</Text>
+							) }
+						</VStack>
+					</HStack>
 				) }
-				{ title && <div className="wpnc-simplified__card-title">{ title }</div> }
-				{ excerpt && <div className="wpnc-simplified__card-excerpt">{ excerpt }</div> }
-			</div>
-		</a>
+				{ title && (
+					<Text size={ 15 } weight={ 600 }>
+						{ title }
+					</Text>
+				) }
+				{ excerpt && (
+					<Text variant="muted" truncate numberOfLines={ isFeatured ? 3 : 2 }>
+						{ excerpt }
+					</Text>
+				) }
+			</VStack>
+		</CardLink>
 	);
 };

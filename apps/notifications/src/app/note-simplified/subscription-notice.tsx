@@ -1,4 +1,8 @@
-import { ExternalLink } from '@wordpress/components';
+import {
+	__experimentalHStack as HStack,
+	__experimentalText as Text,
+	ExternalLink,
+} from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 
 /**
@@ -7,11 +11,15 @@ import { __ } from '@wordpress/i18n';
  */
 export default function SubscriptionNotice() {
 	return (
-		<div className="wpnc-simplified__subscription">
-			<span>{ __( 'You’re subscribed to this site.' ) }</span>
-			<ExternalLink href="https://wordpress.com/reader/subscriptions">
-				{ __( 'Manage subscription' ) }
-			</ExternalLink>
-		</div>
+		<HStack justify="flex-start" spacing={ 1 } wrap>
+			<Text size={ 12 } variant="muted">
+				{ __( 'You’re subscribed to this site.' ) }
+			</Text>
+			<Text size={ 12 }>
+				<ExternalLink href="https://wordpress.com/reader/subscriptions">
+					{ __( 'Manage subscription' ) }
+				</ExternalLink>
+			</Text>
+		</HStack>
 	);
 }
