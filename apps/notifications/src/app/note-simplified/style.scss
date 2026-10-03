@@ -1,9 +1,6 @@
 @import '@wordpress/base-styles/colors';
 @import '@wordpress/base-styles/variables';
 
-// Matches the photo on each person in a list, so a thread and a list line up.
-$avatar-size: 32px;
-
 // Links in the note's own chrome read as text until hovered; links in the body keep
 // their colour.
 .wpnc-simplified__quiet-links a,
@@ -49,18 +46,7 @@ a.wpnc-simplified__quiet-links:visited {
 }
 
 .wpnc-simplified__thread-item {
-	position: relative;
 	padding-block: $grid-unit-10;
-
-	// Joins each photo to the next one down.
-	&:not(:last-child)::before {
-		content: "";
-		position: absolute;
-		inset-block: #{$grid-unit-10 + $avatar-size + $grid-unit-05} -#{$grid-unit-10 - $grid-unit-05};
-		inset-inline-start: #{$avatar-size * 0.5 - 1px};
-		width: 2px;
-		background: var(--wpnc-divider__color, #{$gray-200});
-	}
 }
 
 // Without this the text column squeezes the photo under the name.
