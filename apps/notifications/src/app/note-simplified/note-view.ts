@@ -1,5 +1,6 @@
 import { zipWithSignature } from '../../panel/templates/functions';
 import { splitSubject } from '../note-list/simplified-subject';
+import { getHeaderLink } from '../templates/note-summary';
 import type { BlockWithSignature, Note, Subject } from '../types';
 
 const MAX_AVATARS = 3;
@@ -21,8 +22,14 @@ export type NoteView = {
 	follow?: { siteId: number; isFollowing: boolean };
 	/** Oldest first. `parent` is the comment being answered or liked. */
 	thread?: {
-		parent?: { text: string; author?: string; avatar?: string; url?: string };
-		speaker?: { name?: string; avatar?: string };
+		parent?: {
+			text: string;
+			author?: string;
+			authorUrl?: string;
+			avatar?: string;
+			url?: string;
+		};
+		speaker?: { name?: string; url?: string; avatar?: string };
 	};
 	post?: {
 		title?: string;
@@ -94,6 +101,7 @@ export function getNoteView( note: Note, isPendingApproval = false ): NoteView {
 		? {
 				text: contextText,
 				author: getRangeText( header, 'user' ),
+				authorUrl: getHeaderLink( header ),
 				avatar: header.media?.[ 0 ]?.url,
 				url: context.ranges?.[ 0 ]?.url,
 			}
@@ -220,6 +228,9 @@ export function getNoteView( note: Note, isPendingApproval = false ): NoteView {
 					speaker: hasWords
 						? {
 								name: actor?.text ?? getRangeText( sentence, 'user' ),
+								url: actor?.meta?.ids?.user
+									? `https://wordpress.com/reader/users/id/${ actor.meta.ids.user }`
+									: ( actor?.meta?.links?.home ?? getHeaderLink( sentence ) ),
 								avatar: actor?.media?.[ 0 ]?.url ?? note.icon,
 							}
 						: undefined,
