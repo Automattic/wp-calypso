@@ -5,25 +5,50 @@ import type { ReactNode } from 'react';
 const ThreadItem = ( {
 	avatar,
 	author,
+	authorUrl,
 	meta,
 	children,
 }: {
 	avatar?: string;
 	author?: string;
+	authorUrl?: string;
 	meta?: ReactNode;
 	children: ReactNode;
-} ) => (
-	<li className="wpnc-simplified__thread-item">
-		<NoteIcon className="wpnc-simplified__thread-marker" icon={ avatar } size={ 32 } />
-		<div className="wpnc-simplified__thread-content">
-			<div className="wpnc-simplified__thread-header">
-				{ author && <span className="wpnc-simplified__thread-author">{ author }</span> }
-				{ meta && <span className="wpnc-simplified__meta">{ meta }</span> }
+} ) => {
+	const photo = <NoteIcon className="wpnc-simplified__thread-marker" icon={ avatar } size={ 32 } />;
+
+	return (
+		<li className="wpnc-simplified__thread-item">
+			{ authorUrl ? (
+				// The name beside it links to the same profile, so the photo stays out of the tab order.
+				<a href={ authorUrl } target="_blank" rel="noreferrer" tabIndex={ -1 } aria-hidden="true">
+					{ photo }
+				</a>
+			) : (
+				photo
+			) }
+			<div className="wpnc-simplified__thread-content">
+				<div className="wpnc-simplified__thread-header">
+					{ author && authorUrl && (
+						<a
+							className="wpnc-simplified__thread-author"
+							href={ authorUrl }
+							target="_blank"
+							rel="noreferrer"
+						>
+							{ author }
+						</a>
+					) }
+					{ author && ! authorUrl && (
+						<span className="wpnc-simplified__thread-author">{ author }</span>
+					) }
+					{ meta && <span className="wpnc-simplified__meta">{ meta }</span> }
+				</div>
+				{ children }
 			</div>
-			{ children }
-		</div>
-	</li>
-);
+		</li>
+	);
+};
 
 /**
  * The conversation a note belongs to, oldest first: the comment being answered or
@@ -44,7 +69,12 @@ export default function Thread( {
 	return (
 		<ol className="wpnc-simplified__thread">
 			{ parent && (
-				<ThreadItem avatar={ parent.avatar } author={ parent.author } meta={ parentMeta }>
+				<ThreadItem
+					avatar={ parent.avatar }
+					author={ parent.author }
+					authorUrl={ parent.authorUrl }
+					meta={ parentMeta }
+				>
 					{ parent.url ? (
 						<a href={ parent.url } target="_blank" rel="noreferrer">
 							{ parent.text }
@@ -55,7 +85,12 @@ export default function Thread( {
 				</ThreadItem>
 			) }
 			{ speaker && (
-				<ThreadItem avatar={ speaker.avatar } author={ speaker.name } meta={ meta }>
+				<ThreadItem
+					avatar={ speaker.avatar }
+					author={ speaker.name }
+					authorUrl={ speaker.url }
+					meta={ meta }
+				>
 					{ children }
 				</ThreadItem>
 			) }

@@ -132,6 +132,16 @@ $avatar-size: 32px;
 
 .wpnc-simplified__thread-author {
 	font-weight: 600;
+
+	&:is(a),
+	&:is(a):visited {
+		color: inherit;
+		text-decoration: none;
+	}
+
+	&:is(a):hover {
+		text-decoration: underline;
+	}
 }
 
 // The words are the note here, so they drop the bar that marks a comment in the
