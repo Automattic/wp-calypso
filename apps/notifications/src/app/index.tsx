@@ -157,9 +157,14 @@ const NotificationApp = ( {
 } ) => {
 	const [ isReady, setIsReady ] = useState( !! getClient() );
 
-	// Declared first so the setting is in place before the client's first fetch.
+	// Declared first so the setting is in place before this component starts the client.
+	// A host may have started it earlier (the dashboard does, for the unseen count), in
+	// which case the notes it already holds lack the details and are fetched again.
 	useEffect( () => {
-		setIncludePostDetails( isSimplifiedNoteEnabled && isViewSettingsEnabled );
+		const isEnabled = isSimplifiedNoteEnabled && isViewSettingsEnabled;
+		if ( setIncludePostDetails( isEnabled ) && isEnabled ) {
+			getClient()?.getNotes();
+		}
 	}, [ isSimplifiedNoteEnabled, isViewSettingsEnabled ] );
 
 	useEffect( () => {

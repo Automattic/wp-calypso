@@ -8,9 +8,13 @@ let includePostDetails = false;
 
 /**
  * The endpoint only sends post and parent-comment details on request, since they cost
- * extra lookups. Only the simplified note reads them.
+ * extra lookups. Only the simplified note reads them. Returns whether the setting changed.
  */
-export const setIncludePostDetails = ( value ) => ( includePostDetails = value );
+export const setIncludePostDetails = ( value ) => {
+	const hasChanged = value !== includePostDetails;
+	includePostDetails = value;
+	return hasChanged;
+};
 
 // Hash polls only compare ids, so they never ask for the details.
 const withPostDetails = ( query ) =>
