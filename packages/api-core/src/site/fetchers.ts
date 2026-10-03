@@ -73,6 +73,7 @@ export const SITE_OPTIONS = [
 	'wpcom_ai_launchpad_enabled',
 	'wpcom_ai_launchpad_dismissed',
 	'wpcom_ai_launchpad_completed',
+	'wpcom_ai_launchpad_no_guidance',
 	'wpcom_production_blog_id',
 ];
 

@@ -1,4 +1,4 @@
-import { getAiLaunchpadStatus } from '@automattic/api-core';
+import { getAiLaunchpadStatus, isLaunchpadNoGuidance } from '@automattic/api-core';
 import page from '@automattic/calypso-router';
 import { captureException } from '@automattic/calypso-sentry';
 import { fetchLaunchpad } from '@automattic/launchpad';
@@ -6,8 +6,6 @@ import { prefetchHomeLayout } from 'calypso/data/home/use-home-layout-query';
 import { getHomeLayoutQueryParams } from 'calypso/data/home/use-home-layout-query-params';
 import { areLaunchpadTasksCompleted } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/launchpad/task-helper';
 import { isRemovedFlow } from 'calypso/landing/stepper/utils/flow-redirect-handler';
-import { LAUNCHPAD_PERSONALIZATION_EXPERIMENT, normalizeVariation } from 'calypso/lib/ai-launchpad';
-import { loadExperimentAssignment } from 'calypso/lib/explat';
 import { getLoggedInLandingPage } from 'calypso/lib/landing-page';
 import { getQueryArgs } from 'calypso/lib/query-args';
 import { getSiteFragment } from 'calypso/lib/route';
@@ -122,9 +120,16 @@ export async function maybeRedirect( context, next ) {
 		}
 	}
 
-	// Started before the assignment below is awaited, not after it: nothing renders until
-	// this middleware calls `next()`, and the two requests are independent, so awaiting them
-	// in sequence adds a whole round trip to the time the boot placeholder stays on screen.
+	// No-guidance sites get no guidance surface at all, so they land on the plain wp-admin dashboard.
+	if ( site && isLaunchpadNoGuidance( site ) ) {
+		const redirectUrl = getSiteAdminUrl( state, siteId, 'index.php' );
+		if ( redirectUrl ) {
+			window.location.replace( redirectUrl );
+			return;
+		}
+	}
+
+	// Started before awaiting anything else so it overlaps the section's chunk load.
 	const launchpadPromise = fetchLaunchpad( slug ).catch( () => null );
 
 	// My Home renders a placeholder until the card layout arrives. Asking for it here puts
@@ -135,19 +140,6 @@ export async function maybeRedirect( context, next ) {
 		siteId,
 		getHomeLayoutQueryParams( context.query )
 	).catch( () => {} );
-
-	// The no_guidance launchpad-personalization variation gets no guidance surface at all:
-	// keep these sites off My Home, landing them on the plain wp-admin dashboard.
-	const personalizationAssignment = await loadExperimentAssignment(
-		LAUNCHPAD_PERSONALIZATION_EXPERIMENT
-	);
-	if ( normalizeVariation( personalizationAssignment?.variationName ) === 'no_guidance' ) {
-		const redirectUrl = getSiteAdminUrl( state, siteId, 'index.php' );
-		if ( redirectUrl ) {
-			window.location.replace( redirectUrl );
-			return;
-		}
-	}
 
 	try {
 		const isSiteLaunched = site?.launch_status === 'launched' || false;
