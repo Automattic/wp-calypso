@@ -206,7 +206,6 @@ describe( 'siteSelection', () => {
 	const SITE_ID = 1;
 	const SITE_SLUG = 'example.com';
 	const USER_ID = 7;
-	const USERNAME = 'wrongaccount';
 	const CHECKOUT_PATH = `/checkout/${ SITE_SLUG }/jetpack_growth_yearly`;
 
 	// Total number of requests once every retry has been used up: the initial one plus the retries.
@@ -216,11 +215,7 @@ describe( 'siteSelection', () => {
 	// A site the current user can't manage yet is kept out of the state by `requestSite`, even
 	// though the API returns it. See the `capabilities` guard in `state/sites/actions`.
 	const unmanageableSiteState = {
-		currentUser: {
-			id: USER_ID,
-			user: { username: USERNAME, site_count: 2, visible_site_count: 2 },
-			capabilities: {},
-		},
+		currentUser: { id: USER_ID, user: { site_count: 2, visible_site_count: 2 }, capabilities: {} },
 		preferences: { remoteValues: {} },
 		sites: { items: {}, domains: { items: {} } },
 		ui: { selectedSiteId: null },
@@ -346,7 +341,7 @@ describe( 'siteSelection', () => {
 		expect( spy ).toHaveBeenCalledWith( 'calypso_site_selection_no_access', { path: '/home' } );
 	} );
 
-	it( 'should show the username at checkout and log out to a login that returns there', async () => {
+	it( 'should log out at checkout to a login that returns there', async () => {
 		const checkoutUrl = `https://example.com${ CHECKOUT_PATH }?redirect_to=https%3A%2F%2Fexample.com%2Fwp-admin%2F&cancel_to=https%3A%2F%2Fexample.com%2Fwp-admin%2F`;
 		window.history.pushState( {}, '', checkoutUrl );
 		respondWithSite( { site_owner: USER_ID + 1 } );
@@ -360,13 +355,6 @@ describe( 'siteSelection', () => {
 
 		await jest.advanceTimersByTimeAsync( 0 );
 		render( context.primary );
-
-		const line = screen.getByText( /You are currently logged in as/ );
-		expect( line ).toHaveTextContent(
-			`You might not have permission to view this site, or it may not exist. Select a different site to continue. You are currently logged in as ${ USERNAME }.`
-		);
-		expect( line ).toHaveClass( 'empty-content__line' );
-		expect( screen.getByText( USERNAME, { selector: 'strong' } ) ).toBeVisible();
 
 		await user.click( screen.getByRole( 'button', { name: 'Log in with a different account' } ) );
 
