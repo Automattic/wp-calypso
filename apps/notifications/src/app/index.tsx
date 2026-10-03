@@ -5,6 +5,7 @@ import { Provider } from 'react-redux';
 import repliesCache from '../panel/comment-replies-cache';
 import { modifierKeyIsActive } from '../panel/helpers/input';
 import { logError } from '../panel/helpers/log-error';
+import { setIncludePostDetails } from '../panel/rest-client/wpcom';
 import { init as initStore, store } from '../panel/state';
 import { SET_IS_SHOWING } from '../panel/state/action-types';
 import actions from '../panel/state/actions';
@@ -155,6 +156,11 @@ const NotificationApp = ( {
 	wpcom: any;
 } ) => {
 	const [ isReady, setIsReady ] = useState( !! getClient() );
+
+	// Declared first so the setting is in place before the client's first fetch.
+	useEffect( () => {
+		setIncludePostDetails( isSimplifiedNoteEnabled && isViewSettingsEnabled );
+	}, [ isSimplifiedNoteEnabled, isViewSettingsEnabled ] );
 
 	useEffect( () => {
 		initClient( wpcom );

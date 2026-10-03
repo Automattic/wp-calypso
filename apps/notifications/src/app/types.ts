@@ -120,7 +120,7 @@ export type Note = {
 	subject: Subject[];
 	header?: Subject[]; // present in some note types
 	body: Block[];
-	// Read by the simplified note; the API doesn't send either yet.
+	// Sent only when the request asks for `include=post_details`.
 	post?: NotePost;
 	parent_comment?: { date?: string; url?: string };
 };
