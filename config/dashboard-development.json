@@ -57,7 +57,6 @@
 		"mcp-settings": true,
 		"me/legacy-contact": true,
 		"notifications/subscriber-alerts": true,
-		"notifications/simplified-note": true,
 		"notifications/view-settings": true,
 		"onboarding/interval-dropdown": true,
 		"performance/apm": true,
