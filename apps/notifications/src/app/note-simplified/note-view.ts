@@ -180,8 +180,14 @@ export function getNoteView( note: Note, isPendingApproval = false ): NoteView {
 		if ( post && ! post.isFeatured ) {
 			return undefined;
 		}
+		const isSiteNamed =
+			sentence.ranges?.some( ( { type } ) => type === 'site' ) ||
+			( !! post?.siteName && sentence.text.includes( post.siteName ) );
+		if ( isSiteNamed ) {
+			return undefined;
+		}
 		if ( post?.siteName ) {
-			return sentence.text.includes( post.siteName ) ? undefined : post.siteName;
+			return post.siteName;
 		}
 		return hasCard ? undefined : getDisplayUrl( target?.url );
 	};
