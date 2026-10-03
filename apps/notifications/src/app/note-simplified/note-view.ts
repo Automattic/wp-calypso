@@ -1,3 +1,4 @@
+import { __ } from '@wordpress/i18n';
 import { zipWithSignature } from '../../panel/templates/functions';
 import { splitSubject } from '../note-list/simplified-subject';
 import { getHeaderLink } from '../templates/note-summary';
@@ -12,6 +13,22 @@ const POST_MENTION_TYPE = 'automattcher';
 const NEW_POST_TYPE = 'new_post';
 
 const TARGET_RANGE_TYPES = [ 'post', 'comment', 'site' ];
+
+// The list below says how many, so the heading names only what they did. Other types
+// keep the API's own title.
+const getPeopleHeading = ( note: Note ) => {
+	switch ( note.type ) {
+		case 'like':
+		case 'comment_like':
+			return __( 'Likes' );
+		case 'reblog':
+			return __( 'Reblogs' );
+		case 'follow':
+			return __( 'Subscribers' );
+		default:
+			return note.title;
+	}
+};
 
 export type NoteView = {
 	/** System notes (orders, achievements, renewals) have no one acting; their body says it all. */
@@ -180,7 +197,9 @@ export function getNoteView( note: Note, isPendingApproval = false ): NoteView {
 
 	// Beneath a card or a comment, the list of people already says who acted.
 	const peopleHeading =
-		users.length > 0 && ! hasWords && ( hasCard || !! parent ) ? note.title : undefined;
+		users.length > 0 && ! hasWords && ( hasCard || !! parent )
+			? getPeopleHeading( note )
+			: undefined;
 	// A lone person is named by the actor row or the thread, so their block isn't repeated.
 	const isActorShown = users.length === 1 && ! peopleHeading;
 
