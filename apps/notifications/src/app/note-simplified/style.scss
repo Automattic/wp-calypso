@@ -120,6 +120,12 @@ a.wpnc-simplified__quiet-links:visited {
 	flex-shrink: 0;
 	border-radius: $radius-small;
 
+	&.is-placeholder {
+		padding: $grid-unit-05;
+		background: var(--wp-components-color-gray-100, #{$gray-100});
+		fill: var(--wp-components-color-gray-700, #{$gray-700});
+	}
+
 	img,
 	&::after {
 		border-radius: $radius-small;

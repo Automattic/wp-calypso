@@ -2,7 +2,9 @@ import {
 	__experimentalHStack as HStack,
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
+	Icon,
 } from '@wordpress/components';
+import { wordpress } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useAppContext } from '../context';
 import NoteIcon from '../note-icon';
@@ -79,13 +81,20 @@ export const PostCard = ( {
 				) }
 				{ ! isFeatured && ( siteName || byline ) && (
 					<HStack justify="flex-start" spacing={ 2 }>
-						{ siteIcon && (
+						{ siteIcon ? (
 							<img
 								className="wpnc-simplified__site-icon"
 								src={ siteIcon }
 								alt=""
 								width={ 32 }
 								height={ 32 }
+							/>
+						) : (
+							// The block editor's own stand-in for a site without an icon.
+							<Icon
+								className="wpnc-simplified__site-icon is-placeholder"
+								icon={ wordpress }
+								size={ 32 }
 							/>
 						) }
 						<VStack spacing={ 0 }>
