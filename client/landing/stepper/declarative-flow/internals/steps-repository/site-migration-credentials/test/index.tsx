@@ -13,6 +13,14 @@ import SiteMigrationCredentials from '..';
 import { StepProps } from '../../../types';
 import { RenderStepOptions, mockStepProps, renderStep } from '../../test/helpers';
 
+const mockFlowState = new Map< string, unknown >();
+
+jest.mock( 'calypso/landing/stepper/declarative-flow/internals/state-manager/store', () => ( {
+	useFlowState: jest.fn( () => ( {
+		get: jest.fn( ( key: string ) => mockFlowState.get( key ) ),
+		set: jest.fn( ( key: string, value: unknown ) => mockFlowState.set( key, value ) ),
+	} ) ),
+} ) );
 jest.mock( 'calypso/lib/wp', () => ( {
 	req: {
 		get: jest.fn(),
@@ -78,6 +86,7 @@ describe( 'SiteMigrationCredentials', () => {
 	beforeAll( () => nock.disableNetConnect() );
 	beforeEach( () => {
 		jest.clearAllMocks();
+		mockFlowState.clear();
 		( wp.req.get as jest.Mock ).mockResolvedValue( baseSiteInfo );
 	} );
 
@@ -103,6 +112,7 @@ describe( 'SiteMigrationCredentials', () => {
 
 	it( 'creates a credentials using backup file', async () => {
 		const submit = jest.fn();
+		mockFlowState.set( 'migrationSourceUrl', 'original.example.com' );
 		render( { navigation: { submit } } );
 
 		await userEvent.click( backupOption() );
@@ -131,6 +141,7 @@ describe( 'SiteMigrationCredentials', () => {
 				action: 'submit',
 			} );
 		} );
+		expect( mockFlowState.get( 'migrationSourceUrl' ) ).toBe( 'original.example.com' );
 	} );
 
 	it( 'sets a migration as pending automatically', async () => {
@@ -320,6 +331,88 @@ describe( 'SiteMigrationCredentials', () => {
 			action: 'site-is-not-using-wordpress',
 			from: 'https://site-url.tumblr.com',
 			platform: 'tumblr',
+		} );
+	} );
+
+	describe( 'saved source address', () => {
+		const initialEntry = '/site-migration-credentials?from=https%3A%2F%2Fredirected.example.com%2F';
+
+		beforeEach( () => {
+			mockFlowState.set( 'migrationSourceUrl', 'original.example.com' );
+			jest.mocked( wp.req.post ).mockResolvedValue( {
+				application_passwords_enabled: false,
+			} );
+		} );
+
+		it.each( [ 'edited.example.com', 'https://edited.example.com/blog/?tag=test#section' ] )(
+			'remembers the confirmed edit %s while submitting the analyzed address',
+			async ( enteredUrl ) => {
+				const user = userEvent.setup();
+				const submit = jest.fn();
+				render( { navigation: { submit } }, { initialEntry } );
+
+				await user.clear( siteAddressInput() );
+				await user.type( siteAddressInput(), enteredUrl );
+				await user.click( continueButton() );
+				await waitFor( () =>
+					expect( submit ).toHaveBeenCalledWith( {
+						action: 'credentials-required',
+						from: baseSiteInfo.url,
+						platform: 'wordpress',
+					} )
+				);
+
+				expect( mockFlowState.get( 'migrationSourceUrl' ) ).toBe( enteredUrl );
+			}
+		);
+
+		it( 'keeps the original entry when the redirected address is submitted unchanged', async () => {
+			const user = userEvent.setup();
+			const submit = jest.fn();
+			render( { navigation: { submit } }, { initialEntry } );
+
+			expect( siteAddressInput() ).toHaveValue( 'https://redirected.example.com' );
+			await user.click( continueButton() );
+			await waitFor( () => expect( submit ).toHaveBeenCalled() );
+
+			expect( mockFlowState.get( 'migrationSourceUrl' ) ).toBe( 'original.example.com' );
+		} );
+
+		it( 'keeps the last confirmed entry while an edit is unsubmitted or invalid', async () => {
+			const user = userEvent.setup();
+			const submit = jest.fn();
+			render( { navigation: { submit } }, { initialEntry } );
+
+			await user.clear( siteAddressInput() );
+			await user.type( siteAddressInput(), 'edited.example.com' );
+			expect( mockFlowState.get( 'migrationSourceUrl' ) ).toBe( 'original.example.com' );
+
+			await user.clear( siteAddressInput() );
+			await user.type( siteAddressInput(), 'invalid-site-address' );
+			await user.click( continueButton() );
+			expect( await screen.findByText( messages.noTLDError ) ).toBeVisible();
+
+			expect( submit ).not.toHaveBeenCalled();
+			expect( mockFlowState.get( 'migrationSourceUrl' ) ).toBe( 'original.example.com' );
+		} );
+
+		it( 'remembers a confirmed edit back to the initial credentials address', async () => {
+			const user = userEvent.setup();
+			const submit = jest.fn();
+			render( { navigation: { submit } }, { initialEntry } );
+
+			await user.clear( siteAddressInput() );
+			await user.type( siteAddressInput(), 'edited.example.com' );
+			await user.click( continueButton() );
+			await waitFor( () => expect( submit ).toHaveBeenCalledTimes( 1 ) );
+			await waitFor( () => expect( siteAddressInput() ).toBeEnabled() );
+
+			await user.clear( siteAddressInput() );
+			await user.type( siteAddressInput(), 'https://redirected.example.com' );
+			await user.click( continueButton() );
+			await waitFor( () => expect( submit ).toHaveBeenCalledTimes( 2 ) );
+
+			expect( mockFlowState.get( 'migrationSourceUrl' ) ).toBe( 'https://redirected.example.com' );
 		} );
 	} );
 } );
