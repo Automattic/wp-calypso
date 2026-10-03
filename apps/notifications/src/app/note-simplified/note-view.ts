@@ -8,6 +8,9 @@ const MAX_AVATARS = 3;
 // A mention inside a post arrives as plain text, with no comment block to recognise it by.
 const POST_MENTION_TYPE = 'automattcher';
 
+// Sent only to subscribers of the site the post was published on.
+const NEW_POST_TYPE = 'new_post';
+
 const TARGET_RANGE_TYPES = [ 'post', 'comment', 'site' ];
 
 export type NoteView = {
@@ -17,7 +20,6 @@ export type NoteView = {
 	target?: { title: string; url?: string };
 	/** Where it happened, or who is asking while a comment still awaits approval. */
 	origin?: string;
-	/** A new post only reaches someone subscribed to the site it was published on. */
 	isFromSubscription: boolean;
 	follow?: { siteId: number; isFollowing: boolean };
 	/** Oldest first. `parent` is the comment being answered or liked. */
@@ -176,8 +178,8 @@ export function getNoteView( note: Note, isPendingApproval = false ): NoteView {
 	// Beneath a card or a comment, the list of people already says who acted.
 	const peopleHeading =
 		users.length > 0 && ! hasWords && ( hasCard || !! parent ) ? note.title : undefined;
-	// One person named by the actor row needs no list of their own.
-	const isActorInRow = users.length === 1 && ! peopleHeading;
+	// A lone person is named by the actor row or the thread, so their block isn't repeated.
+	const isActorShown = users.length === 1 && ! peopleHeading;
 
 	const getOrigin = () => {
 		if ( isPendingApproval ) {
@@ -216,9 +218,9 @@ export function getNoteView( note: Note, isPendingApproval = false ): NoteView {
 		target:
 			split && ! hasCard && ! isConversation ? { title: split.title, url: target?.url } : undefined,
 		origin: getOrigin(),
-		isFromSubscription: !! postBlock,
+		isFromSubscription: note.type === NEW_POST_TYPE,
 		follow:
-			isActorInRow && ! hasComment && followSiteId && actor.actions && 'follow' in actor.actions
+			isActorShown && ! hasComment && followSiteId && actor.actions && 'follow' in actor.actions
 				? { siteId: followSiteId, isFollowing: !! actor.actions.follow }
 				: undefined,
 		thread: isConversation
@@ -239,7 +241,8 @@ export function getNoteView( note: Note, isPendingApproval = false ): NoteView {
 		card,
 		peopleHeading,
 		isBlockHidden: ( { signature } ) =>
-			( ( hasComment || isActorInRow ) && signature.type === 'user' ) ||
-			( hasPostCard && signature.type === 'post' ),
+			( ( hasComment || isActorShown ) && signature.type === 'user' ) ||
+			// Only a card that was built may stand in for the post it describes.
+			( hasPostCard && !! post && signature.type === 'post' ),
 	};
 }
