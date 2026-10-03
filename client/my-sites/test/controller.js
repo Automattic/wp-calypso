@@ -3,13 +3,17 @@
  */
 
 import page from '@automattic/calypso-router';
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import configureStore from 'redux-mock-store';
 import { thunk } from 'redux-thunk';
 import EmptyContent from 'calypso/components/empty-content';
 import * as pageView from 'calypso/lib/analytics/page-view';
 import * as tracks from 'calypso/lib/analytics/tracks';
 import { PREFERENCES_SET, SELECTED_SITE_SET } from 'calypso/state/action-types';
+import { redirectToLogout } from 'calypso/state/current-user/actions';
 import { requestSite } from 'calypso/state/sites/actions';
+import { SESSION_ACTIVE } from 'calypso/state/support/constants';
 import {
 	updateRecentSitesPreferences,
 	recordNoSitesPageView,
@@ -22,6 +26,11 @@ import {
 jest.mock( 'calypso/state/sites/actions', () => ( {
 	...jest.requireActual( 'calypso/state/sites/actions' ),
 	requestSite: jest.fn(),
+} ) );
+
+jest.mock( 'calypso/state/current-user/actions', () => ( {
+	...jest.requireActual( 'calypso/state/current-user/actions' ),
+	redirectToLogout: jest.fn( () => ( { type: 'REDIRECT_TO_LOGOUT_MOCK' } ) ),
 } ) );
 
 const middlewares = [ thunk ];
@@ -197,6 +206,8 @@ describe( 'siteSelection', () => {
 	const SITE_ID = 1;
 	const SITE_SLUG = 'example.com';
 	const USER_ID = 7;
+	const USERNAME = 'wrongaccount';
+	const CHECKOUT_PATH = `/checkout/${ SITE_SLUG }/jetpack_growth_yearly`;
 
 	// Total number of requests once every retry has been used up: the initial one plus the retries.
 	const REQUESTS_WHEN_EXHAUSTED = 4;
@@ -205,7 +216,11 @@ describe( 'siteSelection', () => {
 	// A site the current user can't manage yet is kept out of the state by `requestSite`, even
 	// though the API returns it. See the `capabilities` guard in `state/sites/actions`.
 	const unmanageableSiteState = {
-		currentUser: { id: USER_ID, user: { site_count: 2, visible_site_count: 2 }, capabilities: {} },
+		currentUser: {
+			id: USER_ID,
+			user: { username: USERNAME, site_count: 2, visible_site_count: 2 },
+			capabilities: {},
+		},
 		preferences: { remoteValues: {} },
 		sites: { items: {}, domains: { items: {} } },
 		ui: { selectedSiteId: null },
@@ -255,6 +270,7 @@ describe( 'siteSelection', () => {
 	beforeEach( () => {
 		jest.useFakeTimers();
 		requestSite.mockReset();
+		redirectToLogout.mockClear();
 		respondWithSite( { site_owner: USER_ID } );
 		// page.js builds a Context that reaches for the document, which this environment lacks.
 		jest.spyOn( page, 'redirect' ).mockImplementation( () => {} );
@@ -264,6 +280,7 @@ describe( 'siteSelection', () => {
 		jest.useRealTimers();
 		jest.restoreAllMocks();
 		page.current = '';
+		window.history.replaceState( {}, '', '/' );
 	} );
 
 	it( 'should retry when the current user owns a site that is not manageable yet', async () => {
@@ -327,6 +344,58 @@ describe( 'siteSelection', () => {
 			actionURL: '/sites',
 		} );
 		expect( spy ).toHaveBeenCalledWith( 'calypso_site_selection_no_access', { path: '/home' } );
+	} );
+
+	it( 'should show the username at checkout and log out to a login that returns there', async () => {
+		const checkoutUrl = `https://example.com${ CHECKOUT_PATH }?redirect_to=https%3A%2F%2Fexample.com%2Fwp-admin%2F&cancel_to=https%3A%2F%2Fexample.com%2Fwp-admin%2F`;
+		window.history.pushState( {}, '', checkoutUrl );
+		respondWithSite( { site_owner: USER_ID + 1 } );
+		const spy = jest.spyOn( tracks, 'recordTracksEvent' );
+		const user = userEvent.setup( { advanceTimers: jest.advanceTimersByTime } );
+
+		const { context } = selectSite( () => unmanageableSiteState, {
+			path: CHECKOUT_PATH,
+			pathname: CHECKOUT_PATH,
+		} );
+
+		await jest.advanceTimersByTimeAsync( 0 );
+		render( context.primary );
+
+		const line = screen.getByText( /You are currently logged in as/ );
+		expect( line ).toHaveTextContent(
+			`You might not have permission to view this site, or it may not exist. Select a different site to continue. You are currently logged in as ${ USERNAME }.`
+		);
+		expect( line ).toHaveClass( 'empty-content__line' );
+		expect( screen.getByText( USERNAME, { selector: 'strong' } ) ).toBeVisible();
+
+		await user.click( screen.getByRole( 'button', { name: 'Log in with a different account' } ) );
+
+		expect( spy ).toHaveBeenCalledWith( 'calypso_site_selection_no_access', {
+			path: '/checkout/jetpack_growth_yearly',
+		} );
+		expect( spy ).toHaveBeenCalledWith( 'calypso_site_selection_no_access_login_click' );
+		expect( redirectToLogout ).toHaveBeenCalledWith(
+			`/log-in?redirect_to=${ encodeURIComponent( checkoutUrl ) }`
+		);
+		expect( context.store.getActions() ).toContainEqual( { type: 'REDIRECT_TO_LOGOUT_MOCK' } );
+	} );
+
+	it( 'should keep the standard page at checkout in a support session', async () => {
+		respondWithSite( { site_owner: USER_ID + 1 } );
+
+		const { context } = selectSite(
+			() => ( { ...unmanageableSiteState, support: SESSION_ACTIVE } ),
+			{ path: CHECKOUT_PATH, pathname: CHECKOUT_PATH }
+		);
+
+		await jest.advanceTimersByTimeAsync( 0 );
+
+		expect( context.primary.props ).toEqual( {
+			title: "You don't have access to that site",
+			line: 'You might not have permission to view this site, or it may not exist. Select a different site to continue.',
+			action: 'Select a different site',
+			actionURL: '/sites',
+		} );
 	} );
 
 	it( 'should not retry an unlinked checkout, which ignores the site it finds', async () => {
