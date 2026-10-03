@@ -35,6 +35,38 @@ describe( 'CaptureInput', () => {
 		expect( onInputEnter ).toHaveBeenCalledWith( 'https://example.wordpress.com' );
 	} );
 
+	it( 'uses the initial address instead of the resolved address in the query string', async () => {
+		const user = userEvent.setup();
+		const onInputEnter = jest.fn();
+		render(
+			<MemoryRouter initialEntries={ [ '/?from=https://redirected.example.com' ] }>
+				<CaptureInput onInputEnter={ onInputEnter } initialUrl="example.com" skipInitialChecking />
+			</MemoryRouter>
+		);
+
+		expect( screen.getByRole( 'textbox' ) ).toHaveValue( 'example.com' );
+		expect( onInputEnter ).not.toHaveBeenCalled();
+
+		await user.click( screen.getByRole( 'button', { name: /Continue/ } ) );
+
+		expect( onInputEnter ).toHaveBeenCalledWith( 'example.com' );
+	} );
+
+	it( 'validates the initial address before submitting it', async () => {
+		const user = userEvent.setup();
+		const onInputEnter = jest.fn();
+		render(
+			<MemoryRouter>
+				<CaptureInput onInputEnter={ onInputEnter } initialUrl="invalid" skipInitialChecking />
+			</MemoryRouter>
+		);
+
+		await user.click( screen.getByRole( 'button', { name: /Continue/ } ) );
+
+		expect( onInputEnter ).not.toHaveBeenCalled();
+		expect( screen.getByText( /missing its domain extension/ ) ).toBeVisible();
+	} );
+
 	it( 'shows an custom input label', async () => {
 		render(
 			<MemoryRouter>

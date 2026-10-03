@@ -12,6 +12,7 @@ import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSiteSlug } from 'calypso/landing/stepper/hooks/use-site-slug';
 import { urlToDomain } from 'calypso/lib/url';
 import { ChecklistCard } from '../../components/checklist-card';
+import { useFlowState } from '../../state-manager/store';
 import { useSitePreviewMShotImageHandler } from '../site-migration-instructions/site-preview/hooks/use-site-preview-mshot-image-handler';
 import type { Step as StepType } from '../../types';
 import type { UrlData } from 'calypso/blocks/import/types';
@@ -34,6 +35,7 @@ export const Analyzer: FC< Props > = ( {
 	hideImporterListLink = false,
 } ) => {
 	const translate = useTranslate();
+	const { get, set } = useFlowState();
 	const [ siteURL, setSiteURL ] = useState< string >( '' );
 	const {
 		data: siteInfo,
@@ -102,7 +104,11 @@ export const Analyzer: FC< Props > = ( {
 		<>
 			<div className="import__capture-container">
 				<CaptureInput
-					onInputEnter={ setSiteURL }
+					onInputEnter={ ( url ) => {
+						set( 'migrationSourceUrl', url );
+						setSiteURL( url );
+					} }
+					initialUrl={ get( 'migrationSourceUrl' ) }
 					onInputChange={ () => setSiteURL( '' ) }
 					hasError={ hasError }
 					skipInitialChecking
