@@ -20,7 +20,7 @@ const ThreadItem = ( {
 	meta?: ReactNode;
 	children: ReactNode;
 } ) => {
-	const photo = <NoteIcon icon={ avatar } size={ 32 } />;
+	const photo = <NoteIcon className="wpnc-simplified__photo" icon={ avatar } size={ 32 } />;
 	const name = author && (
 		<Text weight={ 600 }>
 			{ authorUrl ? (
@@ -43,7 +43,14 @@ const ThreadItem = ( {
 		>
 			{ authorUrl ? (
 				// The name beside it links to the same profile, so the photo stays out of the tab order.
-				<a href={ authorUrl } target="_blank" rel="noreferrer" tabIndex={ -1 } aria-hidden="true">
+				<a
+					className="wpnc-simplified__photo"
+					href={ authorUrl }
+					target="_blank"
+					rel="noreferrer"
+					tabIndex={ -1 }
+					aria-hidden="true"
+				>
 					{ photo }
 				</a>
 			) : (

@@ -63,7 +63,14 @@ a.wpnc-simplified__quiet-links:visited {
 	}
 }
 
+// Without this the text column squeezes the photo under the name.
+.wpnc-simplified__photo {
+	display: flex;
+	flex-shrink: 0;
+}
+
 .wpnc-simplified__thread-content {
+	flex: 1;
 	min-width: 0;
 	overflow-wrap: anywhere;
 }
