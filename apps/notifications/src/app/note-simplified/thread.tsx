@@ -14,7 +14,7 @@ const ThreadItem = ( {
 	children: ReactNode;
 } ) => (
 	<li className="wpnc-simplified__thread-item">
-		<NoteIcon className="wpnc-simplified__thread-marker" icon={ avatar } size={ 24 } />
+		<NoteIcon className="wpnc-simplified__thread-marker" icon={ avatar } size={ 32 } />
 		<div className="wpnc-simplified__thread-content">
 			<div className="wpnc-simplified__thread-header">
 				{ author && <span className="wpnc-simplified__thread-author">{ author }</span> }

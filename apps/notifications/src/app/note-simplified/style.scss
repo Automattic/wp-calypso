@@ -1,6 +1,9 @@
 @import '@wordpress/base-styles/colors';
 @import '@wordpress/base-styles/variables';
 
+// Matches the photo on each person in a list, so a thread and a list line up.
+$avatar-size: 32px;
+
 .wpnc-simplified__avatars {
 	display: flex;
 	flex-shrink: 0;
@@ -80,15 +83,15 @@
 .wpnc-simplified__thread-item {
 	position: relative;
 	display: flex;
-	gap: $grid-unit-15;
+	gap: $grid-unit-20;
 	padding-block: $grid-unit-10;
 
 	// Joins each marker to the next one down.
 	&:not(:last-child)::before {
 		content: "";
 		position: absolute;
-		inset-block: #{$grid-unit-10 + 24px + $grid-unit-05} -#{$grid-unit-10 - $grid-unit-05};
-		inset-inline-start: 11px;
+		inset-block: #{$grid-unit-10 + $avatar-size + $grid-unit-05} -#{$grid-unit-10 - $grid-unit-05};
+		inset-inline-start: #{$avatar-size * 0.5 - 1px};
 		width: 2px;
 		background: var(--wpnc-divider__color, #{$gray-200});
 	}
@@ -96,7 +99,7 @@
 
 .wpnc-simplified__thread-marker {
 	flex-shrink: 0;
-	height: 24px;
+	height: $avatar-size;
 }
 
 .wpnc-simplified__thread-content {
@@ -120,7 +123,7 @@
 	flex-wrap: wrap;
 	align-items: baseline;
 	column-gap: $grid-unit-10;
-	line-height: 24px;
+	line-height: $avatar-size;
 
 	.wpnc-simplified__meta {
 		margin: 0;
@@ -193,16 +196,25 @@
 
 .wpnc-simplified__card-source {
 	display: flex;
-	flex-wrap: wrap;
 	align-items: center;
 	column-gap: $grid-unit-10;
+	margin-block-end: $grid-unit-05;
 	font-size: $font-size-small;
+	line-height: 16px;
 	color: var(--wp-components-color-gray-700, #{$gray-700});
 }
 
+.wpnc-simplified__card-source-text {
+	display: flex;
+	flex-direction: column;
+	min-width: 0;
+	overflow-wrap: anywhere;
+}
+
 .wpnc-simplified__card-site-icon {
-	width: 20px;
-	height: 20px;
+	flex-shrink: 0;
+	width: 32px;
+	height: 32px;
 	border-radius: $radius-small;
 }
 
@@ -268,15 +280,14 @@
 }
 
 .wpnc-simplified__heading {
-	padding-block-end: $grid-unit-15;
+	padding-block-end: $grid-unit-10;
 	border-block-end: 1px solid var(--wpnc-divider__color, #{$gray-200});
-	font-size: 15px;
 	font-weight: 600;
 	line-height: 20px;
 }
 
-// Under a heading, each person reads as a byline: photo, name, then what else is
-// known about them on the same line. Scoped past the detailed layout's list rules.
+// Under a heading, each person reads as a byline: photo, then their name over what
+// else is known about them. Scoped past the detailed layout's list rules.
 .wpnc-app .wpnc-simplified .wpnc__note .wpnc__body .wpnc__body-content .wpnc__user {
 	align-items: center;
 	margin: 0;
@@ -286,13 +297,6 @@
 	&:first-child {
 		margin: 0;
 		padding-block-start: 0;
-	}
-
-	> .components-v-stack {
-		flex-direction: row;
-		flex-wrap: wrap;
-		align-items: baseline;
-		column-gap: $grid-unit-10;
 	}
 
 	.wpnc__note-icon {

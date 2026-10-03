@@ -19,7 +19,15 @@ const Avatars = ( { avatars, link }: { avatars: string[]; link?: string } ) => {
 
 	if ( avatars.length === 1 && link ) {
 		return (
-			<a className="wpnc-simplified__avatars" href={ link } target="_blank" rel="noreferrer">
+			// The sentence beside it links to the same person, so the photo stays out of the tab order.
+			<a
+				className="wpnc-simplified__avatars"
+				href={ link }
+				target="_blank"
+				rel="noreferrer"
+				tabIndex={ -1 }
+				aria-hidden="true"
+			>
 				{ icons }
 			</a>
 		);

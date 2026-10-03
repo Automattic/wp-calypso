@@ -223,7 +223,7 @@ export default function Notifications( {
 						locale={ locale }
 						isDismissible={ isMobileViewport }
 						isViewSettingsEnabled={ isViewSettingsEnabled }
-						isSimplifiedNoteEnabled
+						isSimplifiedNoteEnabled={ config.isEnabled( 'notifications/simplified-note' ) }
 						preferences={ notificationPreferences }
 						onPreferenceChange={ handlePreferenceChange }
 						actionHandlers={ actionHandlers }

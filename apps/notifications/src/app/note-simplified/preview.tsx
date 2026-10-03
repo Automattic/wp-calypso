@@ -66,8 +66,10 @@ export const PostCard = ( {
 						{ siteIcon && (
 							<img className="wpnc-simplified__card-site-icon" src={ siteIcon } alt="" />
 						) }
-						{ siteName && <span className="wpnc-simplified__card-site">{ siteName }</span> }
-						{ byline && <span>{ byline }</span> }
+						<div className="wpnc-simplified__card-source-text">
+							{ siteName && <span className="wpnc-simplified__card-site">{ siteName }</span> }
+							{ byline && <span>{ byline }</span> }
+						</div>
 					</div>
 				) }
 				{ title && <div className="wpnc-simplified__card-title">{ title }</div> }
