@@ -51,7 +51,7 @@ export default function SimplifiedNote( { note, className }: { note: Note; class
 			{ view.post && (
 				<VStack spacing={ 2 }>
 					<PostCard { ...view.post } />
-					{ view.isFromSubscription && <SubscriptionNotice /> }
+					{ view.subscribedSiteId && <SubscriptionNotice siteId={ view.subscribedSiteId } /> }
 				</VStack>
 			) }
 			{ thread && (

@@ -20,7 +20,8 @@ export type NoteView = {
 	target?: { title: string; url?: string };
 	/** Where it happened, or who is asking while a comment still awaits approval. */
 	origin?: string;
-	isFromSubscription: boolean;
+	/** The site whose subscription sent the note. */
+	subscribedSiteId?: number;
 	follow?: { siteId: number; isFollowing: boolean };
 	/** Oldest first. `parent` is the comment being answered or liked. */
 	thread?: {
@@ -218,7 +219,7 @@ export function getNoteView( note: Note, isPendingApproval = false ): NoteView {
 		target:
 			split && ! hasCard && ! isConversation ? { title: split.title, url: target?.url } : undefined,
 		origin: getOrigin(),
-		isFromSubscription: note.type === NEW_POST_TYPE,
+		subscribedSiteId: note.type === NEW_POST_TYPE ? siteId : undefined,
 		follow:
 			isActorShown && ! hasComment && followSiteId && actor.actions && 'follow' in actor.actions
 				? { siteId: followSiteId, isFollowing: !! actor.actions.follow }
