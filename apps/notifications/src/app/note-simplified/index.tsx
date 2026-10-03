@@ -3,6 +3,7 @@ import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import getIsNotePendingApproval from '../../panel/state/selectors/get-is-note-pending-approval';
 import { NoteBody } from '../templates/body';
+import FollowLink, { followStatTypes } from '../templates/follow-link';
 import ActorRow, { NoteTime } from './actor-row';
 import { getNoteView } from './note-view';
 import { ContextCard, PostCard } from './preview';
@@ -53,6 +54,16 @@ export default function SimplifiedNote( { note, className }: { note: Note; class
 						<>
 							<NoteTime timestamp={ note.timestamp } url={ note.url } />
 							{ origin && ` · ${ origin }` }
+							{ view.follow && (
+								<>
+									{ ' · ' }
+									<FollowLink
+										site={ view.follow.siteId }
+										isFollowing={ view.follow.isFollowing }
+										noteType={ note.type as keyof typeof followStatTypes }
+									/>
+								</>
+							) }
 						</>
 					}
 					parentMeta={
