@@ -4,6 +4,20 @@
 // Matches the photo on each person in a list, so a thread and a list line up.
 $avatar-size: 32px;
 
+// Links in the note's own chrome read as text until hovered; links in the body keep
+// their colour.
+.wpnc-simplified__quiet-links a,
+.wpnc-simplified__quiet-links a:visited,
+a.wpnc-simplified__quiet-links,
+a.wpnc-simplified__quiet-links:visited {
+	color: inherit;
+	text-decoration: none;
+
+	&:hover {
+		text-decoration: underline;
+	}
+}
+
 .wpnc-simplified__avatars {
 	display: flex;
 	flex-shrink: 0;
@@ -17,64 +31,18 @@ $avatar-size: 32px;
 	}
 }
 
-.wpnc-simplified__sentence {
-	line-height: 20px;
-	overflow-wrap: anywhere;
-
-	a,
-	a:visited {
-		color: inherit;
-		text-decoration: none;
-	}
-
-	a:hover {
-		text-decoration: underline;
-	}
-}
-
-// Text between ranges is bare, so the direct children are the people named.
+// The sentence is markup from the API: text between ranges is bare, so its direct
+// children are the people and things it names.
 .wpnc-simplified__sentence > :is(a, span) {
 	font-weight: 600;
 }
 
-.wpnc-simplified__target {
-	line-height: 20px;
-	overflow-wrap: anywhere;
-
-	&,
-	&:visited {
-		color: inherit;
-		text-decoration: none;
-	}
-
-	&:hover {
-		text-decoration: underline;
-	}
-}
-
-.wpnc-simplified__meta {
-	margin-block-start: $grid-unit-05;
-	font-size: $font-size-small;
-	color: var(--wp-components-color-gray-700, #{$gray-700});
-
-	a,
-	a:visited {
-		color: inherit;
-		text-decoration: none;
-	}
-
-	a:hover {
-		text-decoration: underline;
-	}
-}
-
-.wpnc-simplified__origin {
-	overflow-wrap: anywhere;
+.wpnc-simplified__heading {
+	padding-block-end: $grid-unit-10;
+	border-block-end: 1px solid var(--wpnc-divider__color, #{$gray-200});
 }
 
 .wpnc-simplified__thread {
-	display: flex;
-	flex-direction: column;
 	margin: 0;
 	padding: 0;
 	list-style: none;
@@ -82,11 +50,9 @@ $avatar-size: 32px;
 
 .wpnc-simplified__thread-item {
 	position: relative;
-	display: flex;
-	gap: $grid-unit-20;
 	padding-block: $grid-unit-10;
 
-	// Joins each marker to the next one down.
+	// Joins each photo to the next one down.
 	&:not(:last-child)::before {
 		content: "";
 		position: absolute;
@@ -97,51 +63,9 @@ $avatar-size: 32px;
 	}
 }
 
-.wpnc-simplified__thread-marker {
-	flex-shrink: 0;
-	height: $avatar-size;
-}
-
 .wpnc-simplified__thread-content {
-	display: flex;
-	flex-direction: column;
-	gap: $grid-unit-05;
 	min-width: 0;
-	flex: 1;
-	line-height: 20px;
 	overflow-wrap: anywhere;
-
-	> a,
-	> a:visited {
-		color: inherit;
-		text-decoration: none;
-	}
-}
-
-.wpnc-simplified__thread-header {
-	display: flex;
-	flex-wrap: wrap;
-	align-items: baseline;
-	column-gap: $grid-unit-10;
-	line-height: $avatar-size;
-
-	.wpnc-simplified__meta {
-		margin: 0;
-	}
-}
-
-.wpnc-simplified__thread-author {
-	font-weight: 600;
-
-	&:is(a),
-	&:is(a):visited {
-		color: inherit;
-		text-decoration: none;
-	}
-
-	&:is(a):hover {
-		text-decoration: underline;
-	}
 }
 
 // The words are the note here, so they drop the bar that marks a comment in the
@@ -152,12 +76,12 @@ $avatar-size: 32px;
 }
 
 .wpnc-simplified__card {
-	display: flex;
-	gap: $grid-unit-15;
+	display: block;
 	padding: $grid-unit-15;
 	border: 1px solid var(--wpnc-divider__color, #{$gray-200});
 	border-radius: $radius-medium;
 	overflow: hidden;
+	overflow-wrap: anywhere;
 
 	&,
 	&:visited {
@@ -170,29 +94,24 @@ $avatar-size: 32px;
 	}
 
 	&.is-featured {
-		flex-direction: column;
-		gap: 0;
 		padding: 0;
 
 		.wpnc-simplified__card-text {
 			padding: $grid-unit-15;
 		}
-
-		.wpnc-simplified__card-image {
-			width: 100%;
-			height: auto;
-			aspect-ratio: 2 / 1;
-			border-radius: 0;
-		}
-
-		.wpnc-simplified__card-excerpt {
-			-webkit-line-clamp: 3;
-		}
 	}
 }
 
-.wpnc-simplified__card-icon {
+.wpnc-simplified__card-image {
+	display: block;
+	width: 100%;
+	aspect-ratio: 2 / 1;
+	object-fit: cover;
+}
+
+.wpnc-simplified__site-icon {
 	flex-shrink: 0;
+	border-radius: $radius-small;
 
 	img,
 	&::after {
@@ -200,53 +119,14 @@ $avatar-size: 32px;
 	}
 }
 
-.wpnc-simplified__card-image {
-	object-fit: cover;
-}
-
-.wpnc-simplified__card-source {
-	display: flex;
-	align-items: center;
-	column-gap: $grid-unit-10;
-	margin-block-end: $grid-unit-05;
-	font-size: $font-size-small;
-	line-height: 16px;
-	color: var(--wp-components-color-gray-700, #{$gray-700});
-}
-
-.wpnc-simplified__card-source-text {
-	display: flex;
-	flex-direction: column;
-	min-width: 0;
-	overflow-wrap: anywhere;
-}
-
-.wpnc-simplified__card-site-icon {
-	flex-shrink: 0;
-	width: 32px;
-	height: 32px;
-	border-radius: $radius-small;
-}
-
-.wpnc-simplified__card-site {
-	font-weight: 600;
-	color: var(--color-text, #{$gray-900});
-}
-
 .wpnc-simplified__card-text {
 	position: relative;
-	display: flex;
-	flex: 1;
-	flex-direction: column;
-	gap: $grid-unit-10;
-	min-width: 0;
 }
 
 .wpnc-simplified__card-arrow {
 	position: absolute;
 	inset-block-start: 0;
 	inset-inline-end: 0;
-	line-height: 20px;
 	color: var(--wp-components-color-gray-700, #{$gray-700});
 
 	.wpnc-simplified__card:hover & {
@@ -259,45 +139,9 @@ $avatar-size: 32px;
 	}
 }
 
-.wpnc-simplified__card-title {
-	font-size: 15px;
-	font-weight: 600;
-	line-height: 20px;
-	overflow-wrap: anywhere;
-}
-
-.wpnc-simplified__card-excerpt {
-	display: -webkit-box;
-	color: var(--wp-components-color-gray-700, #{$gray-700});
-	line-height: 20px;
-	overflow: hidden;
-	-webkit-box-orient: vertical;
-	-webkit-line-clamp: 2;
-}
-
-.wpnc-simplified__subscription {
-	display: flex;
-	flex-wrap: wrap;
-	column-gap: $grid-unit-05;
-	// Sits with the card it describes, not with what follows.
-	margin-block-start: -#{$grid-unit-10};
-	font-size: $font-size-small;
-	color: var(--wp-components-color-gray-700, #{$gray-700});
-
-	.components-external-link {
-		font-size: inherit;
-	}
-}
-
-.wpnc-simplified__heading {
-	padding-block-end: $grid-unit-10;
-	border-block-end: 1px solid var(--wpnc-divider__color, #{$gray-200});
-	font-weight: 600;
-	line-height: 20px;
-}
-
 // Under a heading, each person reads as a byline: photo, then their name over what
-// else is known about them. Scoped past the detailed layout's list rules.
+// else is known about them. The rows come from the detailed layout's person template,
+// so this is scoped past its list rules.
 .wpnc-app .wpnc-simplified .wpnc__note .wpnc__body .wpnc__body-content .wpnc__user {
 	align-items: center;
 	margin: 0;
