@@ -103,6 +103,7 @@ export type Note = {
 			post?: number;
 			comment?: number;
 			reply_comment?: number;
+			parent_comment?: number;
 			user?: number;
 		};
 		links?: {

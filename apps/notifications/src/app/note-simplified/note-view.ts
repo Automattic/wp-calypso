@@ -84,28 +84,27 @@ export function getNoteView( note: Note, isPendingApproval = false ): NoteView {
 	const [ actor ] = users;
 	const [ postBlock ] = ofType( 'post' );
 	const hasComment = ofType( 'comment' ).length > 0;
-	const { site: siteId, post: postId, comment: commentId } = note.meta?.ids ?? {};
+	const { site: siteId, post: postId, parent_comment: parentCommentId } = note.meta?.ids ?? {};
 	const [ sentence ] = note.subject;
 	const [ header, context ] = note.header ?? [];
 	const [ headerRange ] = header?.ranges ?? [];
 	const contextText = context?.text?.trim();
 
-	// The header's second line is the post title on most notes. Only when the note answers
-	// or likes a comment is it that comment's text, written by whoever the first line names.
-	const isParentComment =
-		!! commentId &&
-		!! contextText &&
-		contextText !== getRangeText( sentence, 'post' ) &&
-		! context.ranges?.some( ( { type } ) => type === 'post' );
-	const parent = isParentComment
-		? {
-				text: contextText,
-				author: getRangeText( header, 'user' ),
-				authorUrl: getHeaderLink( header ),
-				avatar: header.media?.[ 0 ]?.url,
-				url: context.ranges?.[ 0 ]?.url,
-			}
-		: undefined;
+	// On a reply or a comment like, the header is the comment answered or liked: its
+	// author, then its text. Everywhere else its second line is the post title.
+	const isReply = note.type === 'comment' && !! parentCommentId;
+	const parent =
+		contextText && ( isReply || note.type === 'comment_like' )
+			? {
+					text: contextText,
+					author: getRangeText( header, 'user' ),
+					authorUrl: getHeaderLink( header ),
+					avatar: header.media?.[ 0 ]?.url,
+					url: isReply
+						? `${ note.url.split( '#' )[ 0 ] }#comment-${ parentCommentId }`
+						: context.ranges?.[ 0 ]?.url,
+				}
+			: undefined;
 
 	const hasWords = hasComment || note.type === POST_MENTION_TYPE;
 	const isConversation = hasWords || !! parent;
