@@ -14,6 +14,8 @@ const NEW_POST_TYPE = 'new_post';
 const TARGET_RANGE_TYPES = [ 'post', 'comment', 'site' ];
 
 export type NoteView = {
+	/** System notes (orders, achievements, renewals) have no one acting; their body says it all. */
+	hasActor: boolean;
 	avatars: string[];
 	/** What happened, without the thing it happened to when the two can be told apart. */
 	sentence: Subject;
@@ -210,6 +212,7 @@ export function getNoteView( note: Note, isPendingApproval = false ): NoteView {
 	const followSiteId = actor?.meta?.ids?.site;
 
 	return {
+		hasActor: users.length > 0 || !! header,
 		avatars: groupAvatars.length > 1 ? groupAvatars : [ note.icon ],
 		sentence: {
 			...action,

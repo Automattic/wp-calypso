@@ -96,6 +96,20 @@ describe( 'SimplifiedNote', () => {
 		expect( screen.queryByText( 'You’re subscribed to this site.' ) ).not.toBeInTheDocument();
 	} );
 
+	it( 'opens a system note straight on its body, without repeating the subject', () => {
+		renderNote(
+			makeNote( {
+				type: 'achievement',
+				meta: { ids: {} },
+				subject: [ text( 'Achievement unlocked: The Headliner' ) ],
+				body: [ text( 'Change a post title five times before publishing it.' ) ],
+			} )
+		);
+
+		expect( screen.getByText( /Change a post title/ ) ).toBeInTheDocument();
+		expect( screen.queryByText( 'Achievement unlocked: The Headliner' ) ).not.toBeInTheDocument();
+	} );
+
 	it( 'keeps the post block when there is nothing to build a card from', () => {
 		const { container } = renderNote(
 			makeNote( {

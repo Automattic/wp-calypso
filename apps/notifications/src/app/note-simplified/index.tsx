@@ -28,7 +28,7 @@ export default function SimplifiedNote( { note, className }: { note: Note; class
 	// The thread pictures and dates whoever is speaking, and a headed list names
 	// whoever acted, so neither needs the actor row above it.
 	const hasSpeaker = !! thread?.speaker;
-	const hasActorRow = ! hasSpeaker && ! view.peopleHeading;
+	const hasActorRow = view.hasActor && ! hasSpeaker && ! view.peopleHeading;
 
 	const body = (
 		<div className={ className }>
