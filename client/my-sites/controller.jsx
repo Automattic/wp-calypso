@@ -59,7 +59,6 @@ import { redirectToLogout } from 'calypso/state/current-user/actions';
 import {
 	getCurrentUser,
 	getCurrentUserId,
-	getCurrentUserName,
 	isUserLoggedIn,
 	getCurrentUserSiteCount,
 } from 'calypso/state/current-user/selectors';
@@ -201,11 +200,9 @@ export function renderNoVisibleSites( context ) {
 
 function renderSelectedSiteNotFound( context ) {
 	const { getState, dispatch } = getStore( context );
-	const state = getState();
-	const username = getCurrentUserName( state );
 	// Checkout only. Support staff see this page on every route, and logging out ends their session.
 	const canSwitchAccount =
-		context.pathname.startsWith( '/checkout/' ) && ! isSupportSession( state );
+		context.pathname.startsWith( '/checkout/' ) && ! isSupportSession( getState() );
 
 	setSectionMiddleware( { group: 'sites' } )( context );
 
@@ -213,25 +210,11 @@ function renderSelectedSiteNotFound( context ) {
 		path: sectionify( context.path ),
 	} );
 
-	let line = i18n.translate(
-		'You might not have permission to view this site, or it may not exist. Select a different site to continue.'
-	);
-
-	if ( canSwitchAccount && username ) {
-		line = (
-			<>
-				{ line }{ ' ' }
-				{ i18n.translate( 'You are currently logged in as {{strong}}%(username)s{{/strong}}.', {
-					args: { username },
-					components: { strong: <strong /> },
-				} ) }
-			</>
-		);
-	}
-
 	context.primary = createElement( EmptyContentComponent, {
 		title: i18n.translate( "You don't have access to that site" ),
-		line,
+		line: i18n.translate(
+			'You might not have permission to view this site, or it may not exist. Select a different site to continue.'
+		),
 		action: i18n.translate( 'Select a different site' ),
 		actionURL: '/sites',
 		...( canSwitchAccount && {
