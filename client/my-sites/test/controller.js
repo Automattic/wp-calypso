@@ -5,7 +5,9 @@
 import page from '@automattic/calypso-router';
 import configureStore from 'redux-mock-store';
 import { thunk } from 'redux-thunk';
+import EmptyContent from 'calypso/components/empty-content';
 import * as pageView from 'calypso/lib/analytics/page-view';
+import * as tracks from 'calypso/lib/analytics/tracks';
 import { PREFERENCES_SET, SELECTED_SITE_SET } from 'calypso/state/action-types';
 import { requestSite } from 'calypso/state/sites/actions';
 import {
@@ -307,6 +309,24 @@ describe( 'siteSelection', () => {
 
 		expect( requestSite ).toHaveBeenCalledTimes( 1 );
 		expect( next ).not.toHaveBeenCalled();
+	} );
+
+	it( 'should offer to select a different site when the user lacks access', async () => {
+		respondWithSite( { site_owner: USER_ID + 1 } );
+		const spy = jest.spyOn( tracks, 'recordTracksEvent' );
+
+		const { context } = selectSite( () => unmanageableSiteState );
+
+		await jest.advanceTimersByTimeAsync( 0 );
+
+		expect( context.primary.type ).toBe( EmptyContent );
+		expect( context.primary.props ).toEqual( {
+			title: "You don't have access to that site",
+			line: 'You might not have permission to view this site, or it may not exist. Select a different site to continue.',
+			action: 'Select a different site',
+			actionURL: '/sites',
+		} );
+		expect( spy ).toHaveBeenCalledWith( 'calypso_site_selection_no_access', { path: '/home' } );
 	} );
 
 	it( 'should not retry an unlinked checkout, which ignores the site it finds', async () => {
