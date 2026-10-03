@@ -8,7 +8,7 @@ const MAX_AVATARS = 3;
 // A mention inside a post arrives as plain text, with no comment block to recognise it by.
 const POST_MENTION_TYPE = 'automattcher';
 
-// Sent only to subscribers of the site the post was published on.
+// The one note where the post is the news, sent to subscribers of its site.
 const NEW_POST_TYPE = 'new_post';
 
 const TARGET_RANGE_TYPES = [ 'post', 'comment', 'site' ];
@@ -146,7 +146,7 @@ export function getNoteView( note: Note, isPendingApproval = false ): NoteView {
 			title,
 			excerpt,
 			url: details?.url ?? ( hasPostCard ? undefined : postRange?.url ) ?? note.url,
-			isFeatured: hasPostCard && !! postBlock,
+			isFeatured: note.type === NEW_POST_TYPE,
 			image: details?.featured_image,
 			siteName: toPlainText( details?.site_name ),
 			siteIcon: details?.site_icon,
