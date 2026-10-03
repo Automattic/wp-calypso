@@ -117,7 +117,13 @@ export const ActionBlock = ( { note, goBack }: { note: Note; goBack: () => void 
 	);
 };
 
-export const NoteBody = ( { note }: { note: Note } ) => {
+export const NoteBody = ( {
+	note,
+	isBlockHidden,
+}: {
+	note: Note;
+	isBlockHidden?: ( block: BlockWithSignature ) => boolean;
+} ) => {
 	const blocks: BlockWithSignature[] = zipWithSignature( note.body, note );
 	const showPendingApprovalBadge = useSelector( ( state ) =>
 		getIsNotePendingApproval( state, note )
@@ -135,7 +141,7 @@ export const NoteBody = ( { note }: { note: Note } ) => {
 		firstNonTextBlockIndex !== -1 ? blocks.slice( firstNonTextBlockIndex ) : blocks;
 
 	const body = restBlocks
-		.filter( ( block ) => ! isReplyBlock( note, block.block ) )
+		.filter( ( block ) => ! isReplyBlock( note, block.block ) && ! isBlockHidden?.( block ) )
 		.map( ( block, i ) => {
 			const key = 'block-' + note.id + '-' + i;
 
