@@ -1,5 +1,5 @@
 import RestClient from '../panel/rest-client';
-import { init as initAPI } from '../panel/rest-client/wpcom';
+import { init as initAPI, setIncludePostDetails } from '../panel/rest-client/wpcom';
 import { store } from '../panel/state';
 import { addListeners, removeListeners } from '../panel/state/create-listener-middleware';
 
@@ -24,7 +24,17 @@ export function getClient() {
 	return client;
 }
 
-export function subscribeUnseenCount( wpcom: any, onCount: ( count: number ) => void ): () => void {
+/**
+ * Starts the client ahead of the panel to keep the unseen count fresh. A host that
+ * shows the simplified note passes `includePostDetails`, so the notes loaded now
+ * already carry what the panel will show.
+ */
+export function subscribeUnseenCount(
+	wpcom: any,
+	onCount: ( count: number ) => void,
+	{ includePostDetails = false }: { includePostDetails?: boolean } = {}
+): () => void {
+	setIncludePostDetails( includePostDetails );
 	initClient( wpcom );
 
 	const handlers = {

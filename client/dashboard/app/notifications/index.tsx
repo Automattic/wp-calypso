@@ -92,10 +92,15 @@ export default function Notifications( {
 
 		import( '@automattic/notifications/src/app/client' ).then( ( { subscribeUnseenCount } ) => {
 			if ( ! cancelled ) {
-				unsubscribe = subscribeUnseenCount( wpcom, ( count ) => {
-					setHasUnseenNotifications( count > 0 );
-					omnibarEvents.notificationsUnseenCount.emit( count );
-				} );
+				unsubscribe = subscribeUnseenCount(
+					wpcom,
+					( count ) => {
+						setHasUnseenNotifications( count > 0 );
+						omnibarEvents.notificationsUnseenCount.emit( count );
+					},
+					// Matches the panel below, so its first notes already carry post details.
+					{ includePostDetails: config.isEnabled( 'notifications/view-settings' ) }
+				);
 			}
 		} );
 
