@@ -39,8 +39,6 @@ export type NoteView = {
 	target?: { title: string; url?: string };
 	/** Where it happened, or who is asking while a comment still awaits approval. */
 	origin?: string;
-	/** The site whose subscription sent the note. */
-	subscribedSiteId?: number;
 	follow?: { siteId: number; isFollowing: boolean };
 	/** Oldest first. `parent` is the comment being answered or liked. */
 	thread?: {
@@ -64,6 +62,8 @@ export type NoteView = {
 		siteIcon?: string;
 		author?: string;
 		date?: string;
+		/** Where the subscription that sent the note is managed. */
+		subscriptionUrl?: string;
 	};
 	card?: { title: string; description?: string; icon?: string; url?: string };
 	/** Titles the list of people who acted, which then stands in for the actor row. */
@@ -169,6 +169,10 @@ export function getNoteView( note: Note, isPendingApproval = false ): NoteView {
 			siteIcon: details?.site_icon,
 			author: details?.author_name,
 			date: details?.date,
+			subscriptionUrl:
+				note.type === NEW_POST_TYPE && siteId
+					? `https://wordpress.com/reader/site/subscription/${ siteId }`
+					: undefined,
 		};
 	};
 	const post = getPost();
@@ -241,7 +245,6 @@ export function getNoteView( note: Note, isPendingApproval = false ): NoteView {
 		target:
 			split && ! hasCard && ! isConversation ? { title: split.title, url: target?.url } : undefined,
 		origin: getOrigin(),
-		subscribedSiteId: note.type === NEW_POST_TYPE ? siteId : undefined,
 		follow:
 			isActorShown && ! hasComment && followSiteId && actor.actions && 'follow' in actor.actions
 				? { siteId: followSiteId, isFollowing: !! actor.actions.follow }

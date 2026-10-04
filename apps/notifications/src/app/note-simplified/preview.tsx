@@ -2,9 +2,13 @@ import {
 	__experimentalHStack as HStack,
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
+	DropdownMenu,
 	Icon,
+	MenuGroup,
+	MenuItem,
 } from '@wordpress/components';
-import { wordpress } from '@wordpress/icons';
+import { __ } from '@wordpress/i18n';
+import { external, moreVertical, wordpress } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useAppContext } from '../context';
 import NoteIcon from '../note-icon';
@@ -12,24 +16,54 @@ import { formatDate } from './format-note-time';
 import type { NoteView } from './note-view';
 import type { ReactNode } from 'react';
 
+// The menu sits beside the link, not inside it, since a link can't contain a button.
 const CardLink = ( {
 	url,
 	className,
+	menu,
 	children,
 }: {
 	url?: string;
 	className?: string;
+	menu?: ReactNode;
 	children: ReactNode;
-} ) => {
-	const classes = clsx( 'wpnc-simplified__card', className );
-	return url ? (
-		<a className={ classes } href={ url } target="_blank" rel="noreferrer">
-			{ children }
-		</a>
-	) : (
-		<div className={ classes }>{ children }</div>
-	);
-};
+} ) => (
+	<div className={ clsx( 'wpnc-simplified__card', className ) }>
+		{ url ? (
+			<a className="wpnc-simplified__card-body" href={ url } target="_blank" rel="noreferrer">
+				{ children }
+			</a>
+		) : (
+			<div className="wpnc-simplified__card-body">{ children }</div>
+		) }
+		{ menu && <div className="wpnc-simplified__card-menu">{ menu }</div> }
+	</div>
+);
+
+const SubscriptionMenu = ( { url }: { url: string } ) => (
+	<DropdownMenu
+		icon={ moreVertical }
+		label={ __( 'More options' ) }
+		toggleProps={ { size: 'small' } }
+		// Rendered in place, like the panel's other menus, so it stays with the flyout.
+		popoverProps={ { inline: true, placement: 'bottom-end' } }
+	>
+		{ ( { onClose } ) => (
+			<MenuGroup>
+				<MenuItem
+					icon={ external }
+					iconPosition="right"
+					onClick={ () => {
+						window.open( url, '_blank', 'noopener' );
+						onClose();
+					} }
+				>
+					{ __( 'Manage subscription' ) }
+				</MenuItem>
+			</MenuGroup>
+		) }
+	</DropdownMenu>
+);
 
 export const ContextCard = ( {
 	title,
@@ -62,6 +96,7 @@ export const PostCard = ( {
 	siteIcon,
 	author,
 	date,
+	subscriptionUrl,
 }: NonNullable< NoteView[ 'post' ] > ) => {
 	const { locale } = useAppContext();
 	const byline = [ author, date && formatDate( date, locale ) ].filter( Boolean ).join( ' · ' );
@@ -69,7 +104,11 @@ export const PostCard = ( {
 	// A post that is the news shows its image, under a row that already says who
 	// published it and when. Anywhere else it is a reference, introduced by its site.
 	return (
-		<CardLink url={ url } className={ clsx( { 'is-featured': isFeatured } ) }>
+		<CardLink
+			url={ url }
+			className={ clsx( { 'is-featured': isFeatured } ) }
+			menu={ subscriptionUrl && <SubscriptionMenu url={ subscriptionUrl } /> }
+		>
 			{ isFeatured && image && (
 				<img className="wpnc-simplified__card-image" src={ image } alt="" />
 			) }

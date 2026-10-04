@@ -85,15 +85,15 @@ describe( 'SimplifiedNote', () => {
 		expect( screen.getByRole( 'button', { name: 'Subscribe' } ) ).toBeInTheDocument();
 	} );
 
-	it( 'only says the reader is subscribed on new-post notes', () => {
+	it( 'only offers to manage the subscription on new-post notes', () => {
 		const postBlock = text( 'Post excerpt', { meta: { ids: { site: SITE, post: POST } } } );
 
 		const { unmount } = renderNote( makeNote( { type: 'new_post', body: [ postBlock ] } ) );
-		expect( screen.getByText( 'You’re subscribed to this site.' ) ).toBeInTheDocument();
+		expect( screen.getByRole( 'button', { name: 'More options' } ) ).toBeInTheDocument();
 		unmount();
 
 		renderNote( makeNote( { type: 'reblog', body: [ postBlock ] } ) );
-		expect( screen.queryByText( 'You’re subscribed to this site.' ) ).not.toBeInTheDocument();
+		expect( screen.queryByRole( 'button', { name: 'More options' } ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'opens a system note straight on its body, without repeating the subject', () => {

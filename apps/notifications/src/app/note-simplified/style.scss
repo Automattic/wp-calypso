@@ -69,29 +69,44 @@ a.wpnc-simplified__quiet-links:visited {
 }
 
 .wpnc-simplified__card {
-	display: block;
-	padding: $grid-unit-15;
+	position: relative;
 	border: 1px solid var(--wpnc-divider__color, #{$gray-200});
 	border-radius: $radius-medium;
 	overflow: hidden;
 	overflow-wrap: anywhere;
+
+	&:has(> a.wpnc-simplified__card-body:hover) {
+		border-color: var(--wp-admin-theme-color);
+	}
+
+	&.is-featured .wpnc-simplified__card-body {
+		padding: 0;
+
+		.wpnc-simplified__card-text {
+			padding: $grid-unit-15;
+		}
+	}
+}
+
+.wpnc-simplified__card-body {
+	display: block;
+	padding: $grid-unit-15;
 
 	&,
 	&:visited {
 		color: inherit;
 		text-decoration: none;
 	}
+}
 
-	&:is(a):hover {
-		border-color: var(--wp-admin-theme-color);
-	}
+.wpnc-simplified__card-menu {
+	position: absolute;
+	inset-block-start: $grid-unit-10;
+	inset-inline-end: $grid-unit-10;
 
-	&.is-featured {
-		padding: 0;
-
-		.wpnc-simplified__card-text {
-			padding: $grid-unit-15;
-		}
+	// Stays legible over the post's image.
+	.components-dropdown-menu__toggle {
+		background: var(--color-surface, #{$white});
 	}
 }
 
@@ -128,7 +143,7 @@ a.wpnc-simplified__quiet-links:visited {
 	inset-inline-end: 0;
 	color: var(--wp-components-color-gray-700, #{$gray-700});
 
-	.wpnc-simplified__card:hover & {
+	.wpnc-simplified__card:has(> a.wpnc-simplified__card-body:hover) & {
 		color: var(--wp-admin-theme-color);
 	}
 
