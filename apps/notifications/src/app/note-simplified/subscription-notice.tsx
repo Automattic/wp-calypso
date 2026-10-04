@@ -12,10 +12,10 @@ import { __ } from '@wordpress/i18n';
 export default function SubscriptionNotice( { siteId }: { siteId: number } ) {
 	return (
 		<HStack justify="flex-start" spacing={ 1 } wrap>
-			<Text size={ 12 } variant="muted">
+			<Text size={ 11 } variant="muted">
 				{ __( 'You’re subscribed to this site.' ) }
 			</Text>
-			<Text size={ 12 }>
+			<Text size={ 11 }>
 				<ExternalLink href={ `https://wordpress.com/reader/site/subscription/${ siteId }` }>
 					{ __( 'Manage subscription' ) }
 				</ExternalLink>
