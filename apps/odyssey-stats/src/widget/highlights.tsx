@@ -187,19 +187,17 @@ export default function Highlights( { siteId, gmtOffset, statsBaseUrl, range }: 
 	const viewAllPostsStatsUrl = `${ statsBaseUrl }/stats/${ unit }/posts/${ siteId }?startDate=${ queryDate }&summarize=1&num=${ quantity }`;
 	const viewAllReferrerStatsUrl = `${ statsBaseUrl }/stats/${ unit }/referrers/${ siteId }?startDate=${ queryDate }&summarize=1&num=${ quantity }`;
 
-	const { data: topPostsAndPages = [], isFetching: isFetchingPostsAndPages } = useTopPostsQuery(
-		siteId,
-		unit,
-		quantity,
-		queryDate
-	);
+	const {
+		data: topPostsAndPages = [],
+		isFetching: isFetchingPostsAndPages,
+		isError: isPostsAndPagesError,
+	} = useTopPostsQuery( siteId, unit, quantity, queryDate );
 
-	const { data: topReferrers = [], isFetching: isFetchingReferrers } = useReferrersQuery(
-		siteId,
-		unit,
-		quantity,
-		queryDate
-	);
+	const {
+		data: topReferrers = [],
+		isFetching: isFetchingReferrers,
+		isError: isReferrersError,
+	} = useReferrersQuery( siteId, unit, quantity, queryDate );
 
 	// TabPanel also reports the initial tab on mount; only a change is a user's click.
 	const selectedTabRef = useRef< string >( HIGHLIGHT_TAB_TOP_POSTS_PAGES );
@@ -207,9 +205,15 @@ export default function Highlights( { siteId, gmtOffset, statsBaseUrl, range }: 
 	// Nothing to show in either list, once both have answered: drop the section rather
 	// than leave a card of two empty tabs. While either is loading it stays, showing its
 	// skeleton. A single empty list keeps its tab and says so.
+	//
+	// A failed request is not an empty one. Both fall back to `[]`, so without this a
+	// request that errored would read as a range with no traffic and take the section and
+	// its "See more" links with it; the lists say "No data to show" instead.
 	const isEmpty =
 		! isFetchingPostsAndPages &&
 		! isFetchingReferrers &&
+		! isPostsAndPagesError &&
+		! isReferrersError &&
 		topPostsAndPages.length === 0 &&
 		topReferrers.length === 0;
 
