@@ -132,7 +132,6 @@
 		"circular-dependency-plugin": "^5.2.2",
 		"clipboard": "^2.0.11",
 		"clsx": "^2.1.1",
-		"component-closest": "^1.0.1",
 		"cookie": "^0.7.2",
 		"cookie-parser": "^1.4.7",
 		"core-js-bundle": "^3.6.4",
