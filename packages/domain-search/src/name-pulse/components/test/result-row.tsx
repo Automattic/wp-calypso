@@ -65,13 +65,14 @@ const notUsed = () => Promise.reject( new Error( 'not used' ) );
 
 const renderRow = (
 	result: NamePulseDomainResult,
-	domainAvailability: ( domainName: string ) => Promise< DomainAvailability > = notUsed
+	domainAvailability: ( domainName: string ) => Promise< DomainAvailability > = notUsed,
+	cart = buildCart()
 ) => {
 	const fetcher = jest.fn( domainAvailability );
 
 	const Wrapper = () => {
 		const contextValue = useDomainSearchContextValue( {
-			cart: buildCart(),
+			cart,
 			config: { showNamePulseSearch: true },
 		} );
 
@@ -233,33 +234,14 @@ describe( 'NamePulseResultRow', () => {
 			expect( screen.queryByText( POLICY_NOTICES[ 0 ].message ) ).not.toBeInTheDocument();
 		} );
 
-		it( 'shows the notice on hovering the cart button', async () => {
-			renderRow( buildPolicyResult() );
-
-			await userEvent.hover( screen.getByRole( 'button', { name: 'Add to cart' } ) );
-
-			expect( await screen.findByText( POLICY_NOTICES[ 0 ].message ) ).toBeVisible();
-		} );
-
-		it( 'adds the name straight away on a mouse click', async () => {
+		it( 'confirms the notice in a dialog before adding the name', async () => {
 			const { fetcher } = renderRow( buildPolicyResult(), available );
 
 			await userEvent.click( screen.getByRole( 'button', { name: 'Add to cart' } ) );
 
-			await waitFor( () => expect( fetcher ).toHaveBeenCalled() );
-			expect( screen.queryByRole( 'alertdialog' ) ).not.toBeInTheDocument();
-		} );
-
-		it( 'confirms the notice in a dialog before adding the name on a tap', async () => {
-			const { fetcher } = renderRow( buildPolicyResult(), available );
-
-			await userEvent.pointer( {
-				keys: '[TouchA]',
-				target: screen.getByRole( 'button', { name: 'Add to cart' } ),
-			} );
-
-			const dialog = await screen.findByRole( 'alertdialog', { name: 'Special requirements' } );
+			const dialog = await screen.findByRole( 'dialog', { name: 'Special requirements' } );
 			expect( dialog ).toHaveTextContent( POLICY_NOTICES[ 0 ].message );
+			await waitFor( () => expect( dialog ).toHaveFocus() );
 			expect( fetcher ).not.toHaveBeenCalled();
 
 			await userEvent.click( within( dialog ).getByRole( 'button', { name: 'Add to cart' } ) );
@@ -267,16 +249,49 @@ describe( 'NamePulseResultRow', () => {
 			await waitFor( () => expect( fetcher ).toHaveBeenCalled() );
 		} );
 
-		it( 'adds a name without notices straight away on a tap', async () => {
+		it( 'keeps the dialog open until the name is in the cart', async () => {
+			let finishAdding = () => {};
+			const cart = buildCart( {
+				onAddItem: jest.fn(
+					() => new Promise< void >( ( resolve ) => ( finishAdding = resolve ) )
+				),
+			} );
+			renderRow( buildPolicyResult(), available, cart );
+
+			await userEvent.click( screen.getByRole( 'button', { name: 'Add to cart' } ) );
+			const dialog = await screen.findByRole( 'dialog', { name: 'Special requirements' } );
+			await userEvent.click( within( dialog ).getByRole( 'button', { name: 'Add to cart' } ) );
+
+			await waitFor( () => expect( cart.onAddItem ).toHaveBeenCalled() );
+			expect( dialog ).toBeInTheDocument();
+			expect( within( dialog ).getByRole( 'button', { name: 'Cancel' } ) ).toHaveAttribute(
+				'aria-disabled',
+				'true'
+			);
+
+			finishAdding();
+
+			await waitFor( () => expect( screen.queryByRole( 'dialog' ) ).not.toBeInTheDocument() );
+		} );
+
+		it( 'keeps the name out of the cart when the dialog is canceled', async () => {
+			const { fetcher } = renderRow( buildPolicyResult(), available );
+
+			await userEvent.click( screen.getByRole( 'button', { name: 'Add to cart' } ) );
+			const dialog = await screen.findByRole( 'dialog', { name: 'Special requirements' } );
+			await userEvent.click( within( dialog ).getByRole( 'button', { name: 'Cancel' } ) );
+
+			await waitFor( () => expect( screen.queryByRole( 'dialog' ) ).not.toBeInTheDocument() );
+			expect( fetcher ).not.toHaveBeenCalled();
+		} );
+
+		it( 'adds a name without notices straight away', async () => {
 			const { fetcher } = renderRow( buildResult( {} ), available );
 
-			await userEvent.pointer( {
-				keys: '[TouchA]',
-				target: screen.getByRole( 'button', { name: 'Add to cart' } ),
-			} );
+			await userEvent.click( screen.getByRole( 'button', { name: 'Add to cart' } ) );
 
 			await waitFor( () => expect( fetcher ).toHaveBeenCalled() );
-			expect( screen.queryByRole( 'alertdialog' ) ).not.toBeInTheDocument();
+			expect( screen.queryByRole( 'dialog' ) ).not.toBeInTheDocument();
 		} );
 	} );
 } );

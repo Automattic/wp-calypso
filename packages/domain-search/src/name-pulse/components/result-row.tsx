@@ -4,9 +4,9 @@ import { useViewportMatch } from '@wordpress/compose';
 import { sprintf } from '@wordpress/i18n';
 import { cautionFilled, cart as cartIcon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
-import { AlertDialog, Badge } from '@wordpress/ui';
+import { Badge, Dialog, Button as DialogButton } from '@wordpress/ui';
 import clsx from 'clsx';
-import { useEffect, useMemo, useRef, useState, type PointerEvent } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useDomainSearch } from '../../page/context';
 import { DomainSearchTrademarkClaimsModal } from '../../ui';
 import {
@@ -82,7 +82,10 @@ export const NamePulseResultRow = ( { result, position }: NamePulseResultRowProp
 		closeTrademarkClaims,
 	} = useNamePulseCartToggle( result.domain_name, position );
 	const [ isPolicyNoticeOpen, setIsPolicyNoticeOpen ] = useState( false );
-	const pointerTypeRef = useRef( '' );
+	// Held from the moment the dialog opens: the real-time check that runs on
+	// confirming can update the row's notices while the dialog is still showing.
+	const [ policyNotice, setPolicyNotice ] = useState< { title: string; message: string } >();
+	const policyNoticeRef = useRef< HTMLDivElement >( null );
 
 	const { domain_name: domainName, suffix, source } = result;
 	const label = suffix ? domainName.slice( 0, -( suffix.length + 1 ) ) : domainName;
@@ -128,11 +131,8 @@ export const NamePulseResultRow = ( { result, position }: NamePulseResultRowProp
 	const isPremiumPriceMissing = needsPremiumPrice && ! realtimeVerdict;
 	const showPremiumBadge = isAvailable && isPremium;
 	// TLDs with special requirements are rarely registered, so the requirements
-	// stay off the row: a mouse sees them on hovering the cart button, and a tap
-	// confirms them in a dialog before the name goes to the cart.
+	// stay off the row and are confirmed in a dialog before the name goes to the cart.
 	const policyNotices = isAvailable && ! inCart ? ( row.policy_notices ?? [] ) : [];
-	const policyNoticeMessage = policyNotices.map( ( notice ) => notice.message ).join( ' ' );
-	const cartLabel = inCart ? __( 'Remove from cart' ) : __( 'Add to cart' );
 	const labelTruncateLimit = showPremiumBadge ? 12 : 20;
 	const suffixText = (
 		<Text as="span" weight={ 600 } variant={ isUnavailable ? 'muted' : undefined }>
@@ -207,45 +207,55 @@ export const NamePulseResultRow = ( { result, position }: NamePulseResultRowProp
 					</Tooltip>
 				) }
 				{ isAvailable && ! error && (
-					<Tooltip text={ policyNoticeMessage || cartLabel } placement="top">
-						<Button
-							className="name-pulse-row__cart"
-							icon={ cartIcon }
-							label={ cartLabel }
-							showTooltip={ false }
-							variant={ inCart ? 'primary' : undefined }
-							size="compact"
-							isBusy={ isPending }
-							disabled={ isPending }
-							aria-pressed={ inCart }
-							onPointerDown={ ( event: PointerEvent ) => {
-								pointerTypeRef.current = event.pointerType;
-							} }
-							onClick={ () => {
-								const isTap = pointerTypeRef.current === 'touch';
-								pointerTypeRef.current = '';
-								if ( policyNoticeMessage && isTap ) {
-									setIsPolicyNoticeOpen( true );
-									return;
-								}
+					<Button
+						className="name-pulse-row__cart"
+						icon={ cartIcon }
+						label={ inCart ? __( 'Remove from cart' ) : __( 'Add to cart' ) }
+						variant={ inCart ? 'primary' : undefined }
+						size="compact"
+						isBusy={ isPending }
+						disabled={ isPending }
+						aria-pressed={ inCart }
+						onClick={ () => {
+							if ( policyNotices.length === 0 ) {
 								toggleCart();
-							} }
-						/>
-					</Tooltip>
+								return;
+							}
+							setPolicyNotice( {
+								title: policyNotices[ 0 ].label,
+								message: policyNotices.map( ( notice ) => notice.message ).join( ' ' ),
+							} );
+							setIsPolicyNoticeOpen( true );
+						} }
+					/>
 				) }
 			</span>
-			{ policyNotices.length > 0 && (
-				<AlertDialog.Root
+			{ policyNotice && (
+				<Dialog.Root
 					open={ isPolicyNoticeOpen }
-					onOpenChange={ setIsPolicyNoticeOpen }
-					onConfirm={ toggleCart }
+					onOpenChange={ ( open ) => ! isPending && setIsPolicyNoticeOpen( open ) }
 				>
-					<AlertDialog.Popup
-						title={ policyNotices[ 0 ].label }
-						description={ policyNoticeMessage }
-						confirmButtonText={ __( 'Add to cart' ) }
-					/>
-				</AlertDialog.Root>
+					<Dialog.Popup size="small" ref={ policyNoticeRef } initialFocus={ policyNoticeRef }>
+						<Dialog.Header>
+							<Dialog.Title>{ policyNotice.title }</Dialog.Title>
+							<Dialog.CloseIcon />
+						</Dialog.Header>
+						<Dialog.Content>
+							<Dialog.Description>{ policyNotice.message }</Dialog.Description>
+						</Dialog.Content>
+						<Dialog.Footer>
+							<Dialog.Action variant="minimal" disabled={ isPending }>
+								{ __( 'Cancel' ) }
+							</Dialog.Action>
+							<DialogButton
+								loading={ isPending }
+								onClick={ () => toggleCart( { onSettled: () => setIsPolicyNoticeOpen( false ) } ) }
+							>
+								{ __( 'Add to cart' ) }
+							</DialogButton>
+						</Dialog.Footer>
+					</Dialog.Popup>
+				</Dialog.Root>
 			) }
 			{ trademarkClaimsNoticeInfo && (
 				<DomainSearchTrademarkClaimsModal
