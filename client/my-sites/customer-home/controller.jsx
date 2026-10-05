@@ -1,4 +1,4 @@
-import { getAiLaunchpadStatus, isLaunchpadNoGuidance } from '@automattic/api-core';
+import { getAiLaunchpadStatus } from '@automattic/api-core';
 import page from '@automattic/calypso-router';
 import { captureException } from '@automattic/calypso-sentry';
 import { fetchLaunchpad } from '@automattic/launchpad';
@@ -120,8 +120,12 @@ export async function maybeRedirect( context, next ) {
 		}
 	}
 
-	// No-guidance sites get no guidance surface at all, so they land on the plain wp-admin dashboard.
-	if ( site && isLaunchpadNoGuidance( site ) ) {
+	// My Home only goes with the legacy launchpad. Everyone else on AI Launchpad and no-guidance
+	// sites, including users who can't open Site Setup, lands on the plain wp-admin dashboard.
+	if (
+		site?.options?.wpcom_ai_launchpad_enabled ||
+		site?.options?.wpcom_ai_launchpad_no_guidance
+	) {
 		const redirectUrl = getSiteAdminUrl( state, siteId, 'index.php' );
 		if ( redirectUrl ) {
 			window.location.replace( redirectUrl );
