@@ -1,4 +1,8 @@
-import { getPlanBusinessTitle, getPlanEcommerceTitle } from '@automattic/calypso-products';
+import {
+	WPCOM_FEATURES_BACKUPS_SELF_SERVE,
+	getPlanBusinessTitle,
+	getPlanEcommerceTitle,
+} from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Button } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
@@ -79,6 +83,7 @@ import getSelectedOrAllSites from 'calypso/state/selectors/get-selected-or-all-s
 import getSelectedOrAllSitesWithPlugins from 'calypso/state/selectors/get-selected-or-all-sites-with-plugins';
 import getSiteConnectionStatus from 'calypso/state/selectors/get-site-connection-status';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import {
 	isJetpackSite,
 	isRequestingSites as checkRequestingSites,
@@ -168,6 +173,12 @@ function PluginDetails( props ) {
 
 	// WordPress.com provides backups itself, so point to the plans that include them instead.
 	const isBuiltInBackupPlugin = isIncompatiblePlugin && 'jetpack-backup' === props.pluginSlug;
+	// The backups page upsells sites without self-serve backups, so only those sites get the shortcut.
+	const canViewBackups = useSelector( ( state ) =>
+		siteHasFeature( state, selectedSite?.ID, WPCOM_FEATURES_BACKUPS_SELF_SERVE )
+	);
+	const showBackupShortcut =
+		isIncompatibleBackupPlugin || ( isBuiltInBackupPlugin && canViewBackups );
 
 	// Fetch WPorg plugin data if needed
 	useEffect( () => {
@@ -568,10 +579,10 @@ function PluginDetails( props ) {
 											</Notice>
 										) }
 
-									{ isIncompatibleBackupPlugin && (
+									{ showBackupShortcut && (
 										<Notice
 											text={ translate(
-												'Incompatible plugin: You site plan already includes Jetpack VaultPress Backup.'
+												'Incompatible plugin: Your site plan already includes Jetpack VaultPress Backup.'
 											) }
 											status="is-warning"
 											showDismiss={ false }
@@ -582,7 +593,7 @@ function PluginDetails( props ) {
 										</Notice>
 									) }
 
-									{ isBuiltInBackupPlugin && (
+									{ isBuiltInBackupPlugin && ! canViewBackups && (
 										<Notice
 											text={ translate(
 												// translators: %(businessPlanName)s is the Business plan name, %(commercePlanName)s is the Commerce plan name

@@ -1,4 +1,5 @@
 import {
+	WPCOM_FEATURES_BACKUPS_SELF_SERVE,
 	WPCOM_FEATURES_INSTALL_PLUGINS,
 	getPlanBusinessTitle,
 	getPlanEcommerceTitle,
@@ -208,6 +209,14 @@ const PluginsBrowserListElement = ( props ) => {
 			siteHasFeature( state, selectedSite?.ID, WPCOM_FEATURES_INSTALL_PLUGINS )
 		) || jetpackNonAtomic;
 
+	// The backups page upsells sites without self-serve backups, so only those sites get the shortcut.
+	const canViewBackups =
+		useSelector( ( state ) =>
+			siteHasFeature( state, selectedSite?.ID, WPCOM_FEATURES_BACKUPS_SELF_SERVE )
+		) && !! site;
+	const showBackupShortcut =
+		isIncompatibleBackupPlugin || ( isBuiltInBackupPlugin && canViewBackups );
+
 	if ( isPlaceholder ) {
 		return <Placeholder variant={ variant } />;
 	}
@@ -285,7 +294,7 @@ const PluginsBrowserListElement = ( props ) => {
 						{ translate( 'Why is this plugin not compatible with WordPress.com?' ) }
 					</span>
 				) }
-				{ isIncompatibleBackupPlugin && (
+				{ showBackupShortcut && (
 					<span
 						role="link"
 						tabIndex="-1"
@@ -296,7 +305,7 @@ const PluginsBrowserListElement = ( props ) => {
 						{ translate( 'Your site plan already includes Jetpack VaultPress Backup.' ) }
 					</span>
 				) }
-				{ isBuiltInBackupPlugin && (
+				{ isBuiltInBackupPlugin && ! canViewBackups && (
 					<span className="plugins-browser-item__incompatible">
 						{ translate(
 							// translators: %(businessPlanName)s is the Business plan name, %(commercePlanName)s is the Commerce plan name
