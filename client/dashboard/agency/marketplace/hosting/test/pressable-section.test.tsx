@@ -77,7 +77,9 @@ describe( '<PressableSection> Premium plans', () => {
 	test( 'with referrals off, the picker stays and the rail shows the gate', async () => {
 		renderSection();
 
-		await userEvent.click( screen.getByRole( 'radio', { name: /Premium plans 1–11/ } ) );
+		await userEvent.click(
+			screen.getByRole( 'radio', { name: /Premium plans\s1\u2060?–\u2060?11/ } )
+		);
 
 		expect( planRadio( 'Premium 1' ) ).toBeChecked();
 		expect( screen.getByText( 'Pressable Premium 1' ) ).toBeVisible();
@@ -88,7 +90,9 @@ describe( '<PressableSection> Premium plans', () => {
 	test( 'with referrals on, the rail shows the price card', async () => {
 		renderSection( { isReferralMode: true } );
 
-		await userEvent.click( screen.getByRole( 'radio', { name: /Premium plans 1–11/ } ) );
+		await userEvent.click(
+			screen.getByRole( 'radio', { name: /Premium plans\s1\u2060?–\u2060?11/ } )
+		);
 
 		expect( planRadio( 'Premium 1' ) ).toBeChecked();
 		expect( screen.getByRole( 'button', { name: 'Add Premium 1 to referral' } ) ).toBeVisible();
@@ -122,8 +126,11 @@ describe( '<PressableSection> plan picker', () => {
 	test( 'tags Premium as referral only while referrals are off', () => {
 		renderSection();
 
-		expect( planRadio( /Premium plans 1–11/ ) ).toHaveTextContent( 'Referral only' );
-		expect( planRadio( /Premium plans 1–11/ ) ).not.toHaveAttribute( 'aria-disabled', 'true' );
+		expect( planRadio( /Premium plans\s1\u2060?–\u2060?11/ ) ).toHaveTextContent( 'Referral only' );
+		expect( planRadio( /Premium plans\s1\u2060?–\u2060?11/ ) ).not.toHaveAttribute(
+			'aria-disabled',
+			'true'
+		);
 	} );
 
 	test( 'hides the plans below the agency’s own and marks its current plan', () => {
@@ -146,7 +153,7 @@ describe( '<PressableSection> plan picker', () => {
 			ownership: 'agency',
 		} );
 
-		const lowType = planRadio( /Signature plans 1–10/ );
+		const lowType = planRadio( /Signature plans\s1\u2060?–\u2060?10/ );
 		expect( lowType ).toHaveAttribute( 'aria-disabled', 'true' );
 		expect( lowType ).toHaveTextContent( 'Below your plan' );
 	} );
