@@ -77,7 +77,8 @@ class StatsDownloadCsv extends Component {
 			} )
 			.join( '\n' );
 
-		downloadBlob( fileName, csvString, 'text/csv;charset=utf-8' );
+		// Excel decodes a CSV without a BOM using the local code page, garbling non-ASCII text.
+		downloadBlob( fileName, `\uFEFF${ csvString }`, 'text/csv;charset=utf-8' );
 	};
 
 	render() {

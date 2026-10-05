@@ -4,7 +4,7 @@ import { uniqBy } from '@automattic/js-utils';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import { createRef, PureComponent } from 'react';
+import { PureComponent } from 'react';
 import UserAvatar from 'calypso/blocks/user-avatar';
 import { useFeedQuery } from 'calypso/reader/data/feed';
 import {
@@ -29,20 +29,6 @@ export class CrossPost extends PureComponent {
 		canMarkSeen: PropTypes.bool,
 		isSeenVisible: PropTypes.bool,
 		requestMarkAsSeen: PropTypes.func.isRequired,
-	};
-
-	cardRef = createRef();
-
-	// Merge the internal card ref with an optional `itemRef` from InfiniteList so the
-	// parent list can measure this item's DOM node without `findDOMNode`.
-	setCardRef = ( node ) => {
-		this.cardRef.current = node;
-		const { itemRef } = this.props;
-		if ( typeof itemRef === 'function' ) {
-			itemRef( node );
-		} else if ( itemRef ) {
-			itemRef.current = node;
-		}
 	};
 
 	handleCardClick = ( event ) => {
@@ -190,7 +176,7 @@ export class CrossPost extends PureComponent {
 
 		return (
 			<Card
-				ref={ this.setCardRef }
+				ref={ this.props.itemRef }
 				tagName="article"
 				onClick={ this.handleCardClick }
 				className={ articleClasses }
