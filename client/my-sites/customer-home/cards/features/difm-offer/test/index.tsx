@@ -22,6 +22,7 @@ const initialState = {
 				URL: 'example.wordpress.com',
 				plan: { product_slug: 'free_plan' },
 				options: { created_at: '2026-10-01T00:00:00+00:00' },
+				is_a4a_dev_site: false,
 			},
 		},
 	},
@@ -49,6 +50,7 @@ describe( 'DifmOffer', () => {
 			expect.objectContaining( {
 				planSlug: 'free_plan',
 				siteCreatedAt: '2026-10-01T00:00:00+00:00',
+				isA4ADevSite: false,
 			} )
 		);
 		expect( screen.getByRole( 'heading', { name: 'No time to build your site?' } ) ).toBeVisible();
