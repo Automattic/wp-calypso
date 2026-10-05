@@ -12,6 +12,8 @@ export const RECEIPT_ID_PARAM = 'receipt_id';
 export interface CheckoutLine {
 	product: AgencyProduct;
 	quantity: number;
+	/** The Pressable site a PHP memory add-on applies to. */
+	siteDomain?: string;
 }
 
 /**
@@ -38,8 +40,8 @@ export function getTermProductId( product: AgencyProduct, term: TermPricing ): n
 }
 
 /**
- * The checkout link for a regular cart: the products, their quantities and the
- * billing term. The checkout works out the agency and the billing products
+ * The checkout link for a regular cart: the products, their quantities (and a
+ * PHP memory add-on's site, as `slug:quantity:domain`) and the billing term. The checkout works out the agency and the billing products
  * from the account of the user who is logged in. Referral carts stay in the
  * dashboard, on the referral checkout route.
  */
@@ -49,7 +51,11 @@ export function getCheckoutUrl(
 ): string {
 	const search = new URLSearchParams( {
 		products: lines
-			.map( ( { product, quantity } ) => `${ product.slug }:${ quantity }` )
+			.map( ( { product, quantity, siteDomain } ) =>
+				siteDomain
+					? `${ product.slug }:${ quantity }:${ encodeURIComponent( siteDomain ) }`
+					: `${ product.slug }:${ quantity }`
+			)
 			.join( ',' ),
 		term,
 		redirect_to: getCheckoutReturnUrl( { hasWpcomHostingPlan } ),

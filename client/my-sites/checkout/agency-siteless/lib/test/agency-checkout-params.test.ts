@@ -5,13 +5,28 @@ import {
 } from '../agency-checkout-params';
 
 describe( 'parseAgencyCartEntries', () => {
-	it( 'reads one entry per product with its quantity, ignoring anything after it', () => {
-		expect( parseAgencyCartEntries( 'wpcom-hosting-business:3,jetpack-backup-t1:1:9999' ) ).toEqual(
-			[
-				{ slug: 'wpcom-hosting-business', quantity: 3 },
-				{ slug: 'jetpack-backup-t1', quantity: 1 },
-			]
-		);
+	it( 'reads one entry per product with its quantity', () => {
+		expect( parseAgencyCartEntries( 'wpcom-hosting-business:3,jetpack-backup-t1:1' ) ).toEqual( [
+			{ slug: 'wpcom-hosting-business', quantity: 3 },
+			{ slug: 'jetpack-backup-t1', quantity: 1 },
+		] );
+	} );
+
+	it( 'reads the site a PHP memory add-on applies to', () => {
+		expect(
+			parseAgencyCartEntries(
+				'pressable-addon-php-memory-512:1:one.example.com,pressable-addon-php-memory-512:1:two%2Eexample.com'
+			)
+		).toEqual( [
+			{ slug: 'pressable-addon-php-memory-512', quantity: 1, siteDomain: 'one.example.com' },
+			{ slug: 'pressable-addon-php-memory-512', quantity: 1, siteDomain: 'two.example.com' },
+		] );
+	} );
+
+	it( 'leaves out a site that cannot be decoded', () => {
+		expect( parseAgencyCartEntries( 'pressable-addon-php-memory-512:1:%zz' ) ).toEqual( [
+			{ slug: 'pressable-addon-php-memory-512', quantity: 1 },
+		] );
 	} );
 
 	it( 'counts a missing or invalid quantity as one and skips entries without a product', () => {

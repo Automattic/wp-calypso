@@ -5,7 +5,7 @@ import {
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import { check } from '@wordpress/icons';
 import { Badge } from '@wordpress/ui';
 import { useState } from 'react';
@@ -13,6 +13,7 @@ import { ButtonStack } from '../../../components/button-stack';
 import { Card, CardBody } from '../../../components/card';
 import woopaymentsLogo from '../exclusive-offers/images/woopayments.svg';
 import { BRAND_MARKS } from './lib/brand-marks';
+import { getPressableMemoryTarget, isPressablePhpMemoryAddon } from './lib/pressable-memory-addon';
 import { getProductBadgeLabels, getProductBrand } from './lib/product-categories';
 import { getProductDescription } from './lib/product-descriptions';
 import { getItemProducts } from './lib/product-groups';
@@ -42,7 +43,7 @@ interface Props {
 	item: ProductListItem;
 	term: TermPricing;
 	isReferralMode: boolean;
-	isInCart: ( slug: string ) => boolean;
+	isInCart: ( product: AgencyProduct ) => boolean;
 	onToggleCart: ( product: AgencyProduct ) => void;
 	onViewDetails: ( product: AgencyProduct ) => void;
 	onSelectVariant?: ( product: AgencyProduct ) => void;
@@ -62,7 +63,8 @@ export default function ProductCard( {
 	const product = variants.find( ( variant ) => variant.slug === selectedSlug ) ?? variants[ 0 ];
 
 	const isWooPayments = product.slug === WOOPAYMENTS_PRODUCT_SLUG;
-	const inCart = isInCart( product.slug );
+	const inCart = isInCart( product );
+	const memoryTarget = getPressableMemoryTarget( product );
 	const priceInfo = getProductPriceInfo( product, term );
 	const termNote = getTermAvailabilityNote( product, term );
 	const { description } = getProductDescription( product.slug );
@@ -102,6 +104,17 @@ export default function ProductCard( {
 						<Text variant="muted">
 							{ isWooPayments ? wooPaymentsCopy.description : description }
 						</Text>
+						{ isPressablePhpMemoryAddon( product ) && (
+							<Text variant="muted">
+								{ memoryTarget
+									? sprintf(
+											/* translators: %(siteDomain)s is the Pressable site the add-on applies to. */
+											__( 'Applies to %(siteDomain)s.' ),
+											{ siteDomain: memoryTarget }
+										)
+									: __( 'Applies to one Pressable site/domain.' ) }
+							</Text>
+						) }
 					</VStack>
 					{ variants.length > 1 && (
 						<SelectControl

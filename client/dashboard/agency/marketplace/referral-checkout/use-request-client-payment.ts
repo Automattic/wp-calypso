@@ -175,7 +175,7 @@ export function useRequestClientPayment( { agencyId, lines, term }: Options ) {
 			for ( const { product, item } of lines ) {
 				await issueLicenses( { product: product.slug, quantity: item.quantity } );
 				// Leaves only the failed lines for a retry, so none is issued twice.
-				removeItem( item.slug );
+				removeItem( item );
 				issuedCount++;
 			}
 			clearStoredCart( 'referral' );

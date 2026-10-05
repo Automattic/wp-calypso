@@ -4,6 +4,10 @@ import { useQuery } from '@tanstack/react-query';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
+import {
+	getPressableMemoryTarget,
+	matchesCartEntry,
+} from 'calypso/dashboard/agency/marketplace/products/lib/pressable-memory-addon';
 import { getBillingProductId } from './lib/billing-product-id';
 import type { AgencyCartEntry } from './lib/agency-checkout-params';
 import type { AgencyCheckoutTerm } from './lib/billing-product-id';
@@ -51,10 +55,11 @@ export default function useAgencyCart( entries: AgencyCartEntry[], term: AgencyC
 		}
 
 		const productsToAdd = entries.flatMap( ( entry ) => {
-			const product = products.find( ( candidate ) => candidate.slug === entry.slug );
+			const product = products.find( ( candidate ) => matchesCartEntry( candidate, entry ) );
 			if ( ! product ) {
 				return [];
 			}
+			const siteDomain = getPressableMemoryTarget( product );
 			return Array.from( { length: entry.quantity }, ( _, cartItemIndex ) =>
 				createRequestCartProduct( {
 					product_id: getBillingProductId( product, term ),
@@ -63,6 +68,7 @@ export default function useAgencyCart( entries: AgencyCartEntry[], term: AgencyC
 						isA4ASitelessCheckout: true,
 						agency_id: agencyId,
 						cart_item_index: cartItemIndex,
+						...( siteDomain ? { a4a_pressable_site_domain: siteDomain } : {} ),
 					},
 				} )
 			);

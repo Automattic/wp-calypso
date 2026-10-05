@@ -122,7 +122,11 @@ export default function ReferralSummary( {
 				<VStack spacing={ 4 }>
 					<VStack spacing={ 2 }>
 						{ lines.map( ( { item, product, priceInfo, subtotal } ) => (
-							<HStack key={ item.slug } justify="space-between" spacing={ 3 }>
+							<HStack
+								key={ `${ item.slug }:${ item.siteDomain ?? '' }` }
+								justify="space-between"
+								spacing={ 3 }
+							>
 								<HStack spacing={ 1 } justify="flex-start" expanded={ false }>
 									<Icon icon={ check } size={ 16 } className="referral-checkout__line-check" />
 									<Text>{ getLineName( product, item.quantity ) }</Text>
