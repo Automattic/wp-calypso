@@ -33,6 +33,7 @@ const mockSite = {
 	slug: 'example.wordpress.com',
 	launch_status: 'unlaunched',
 	is_wpcom_atomic: false,
+	is_a4a_dev_site: false,
 	plan: { product_slug: 'free_plan' },
 	options: { created_at: FIVE_DAYS_AGO },
 } as Site;
@@ -97,6 +98,7 @@ describe( 'DIFMOfferCard', () => {
 			planSlug: 'free_plan',
 			siteCreatedAt: FIVE_DAYS_AGO,
 			localeSlug: 'en',
+			isA4ADevSite: false,
 		} );
 	} );
 } );
