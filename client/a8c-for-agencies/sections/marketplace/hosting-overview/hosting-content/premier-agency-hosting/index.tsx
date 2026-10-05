@@ -6,8 +6,8 @@ import { useContext, useMemo } from 'react';
 import { BackgroundType10 } from 'calypso/a8c-for-agencies/components/page-section/backgrounds';
 import useFetchLicenses from 'calypso/a8c-for-agencies/data/purchases/use-fetch-licenses';
 import {
-	PLAN_CATEGORY_SIGNATURE,
-	PLAN_CATEGORY_SIGNATURE_HIGH,
+	PLAN_CATEGORY_STANDARD_TIER,
+	PLAN_CATEGORY_AGENCY_TIER,
 } from 'calypso/a8c-for-agencies/sections/marketplace/pressable-overview/constants';
 import ProfileAvatar1 from 'calypso/assets/images/a8c-for-agencies/hosting/premier-testimonial-1.webp';
 import ProfileAvatar2 from 'calypso/assets/images/a8c-for-agencies/hosting/premier-testimonial-2.webp';
@@ -77,12 +77,12 @@ export default function PremierAgencyHosting( { onAddToCart }: Props ) {
 
 	const existingPlanInfo = getPressablePlan( agencyPressablePlan?.slug ?? '' );
 
-	const areSignaturePlans = useMemo( () => {
+	const isCurrentCatalog = useMemo( () => {
 		return (
 			isReferralMode ||
 			! existingPlanInfo ||
-			existingPlanInfo?.category === PLAN_CATEGORY_SIGNATURE ||
-			existingPlanInfo?.category === PLAN_CATEGORY_SIGNATURE_HIGH
+			existingPlanInfo?.category === PLAN_CATEGORY_STANDARD_TIER ||
+			existingPlanInfo?.category === PLAN_CATEGORY_AGENCY_TIER
 		);
 	}, [ existingPlanInfo, isReferralMode ] );
 
@@ -117,7 +117,7 @@ export default function PremierAgencyHosting( { onAddToCart }: Props ) {
 			<HostingFeatures
 				heading={ translate( 'Included with every Pressable site' ) }
 				isPressable
-				areSignaturePlans={ areSignaturePlans }
+				isCurrentCatalog={ isCurrentCatalog }
 			/>
 
 			<HostingAdditionalFeaturesSection

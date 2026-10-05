@@ -7,11 +7,11 @@ import useKeyedPersistence from 'calypso/a8c-for-agencies/sections/marketplace/h
 import useProductAndPlans from 'calypso/a8c-for-agencies/sections/marketplace/hooks/use-product-and-plans';
 import useSliderPersistence from 'calypso/a8c-for-agencies/sections/marketplace/hooks/use-slider-persistence';
 import {
-	PLAN_CATEGORY_SIGNATURE,
-	PLAN_CATEGORY_SIGNATURE_HIGH,
-	PLAN_CATEGORY_STANDARD,
-	PLAN_CATEGORY_PREMIUM,
-	PLAN_CATEGORY_ENTERPRISE,
+	PLAN_CATEGORY_STANDARD_TIER,
+	PLAN_CATEGORY_AGENCY_TIER,
+	PLAN_CATEGORY_LEGACY_STANDARD,
+	PLAN_CATEGORY_PERFORMANCE_TIER,
+	PLAN_CATEGORY_LEGACY_ENTERPRISE,
 } from 'calypso/a8c-for-agencies/sections/marketplace/pressable-overview/constants';
 import getPressablePlan, {
 	PressablePlan,
@@ -40,25 +40,25 @@ type Props = {
 
 const getSelectedTab = (
 	existingPressablePlan: PressablePlan | null,
-	areSignaturePlans: boolean
+	isCurrentCatalog: boolean
 ) => {
 	if ( ! existingPressablePlan ) {
-		return areSignaturePlans ? PLAN_CATEGORY_SIGNATURE : PLAN_CATEGORY_STANDARD;
+		return isCurrentCatalog ? PLAN_CATEGORY_STANDARD_TIER : PLAN_CATEGORY_LEGACY_STANDARD;
 	}
 
 	// If there is an existing plan, map its category to the appropriate tab
 	let tabCategory = existingPressablePlan.category;
-	if ( areSignaturePlans ) {
-		if ( existingPressablePlan.category === PLAN_CATEGORY_STANDARD ) {
-			tabCategory = PLAN_CATEGORY_SIGNATURE;
-		} else if ( existingPressablePlan.category === PLAN_CATEGORY_ENTERPRISE ) {
-			tabCategory = PLAN_CATEGORY_SIGNATURE_HIGH;
+	if ( isCurrentCatalog ) {
+		if ( existingPressablePlan.category === PLAN_CATEGORY_LEGACY_STANDARD ) {
+			tabCategory = PLAN_CATEGORY_STANDARD_TIER;
+		} else if ( existingPressablePlan.category === PLAN_CATEGORY_LEGACY_ENTERPRISE ) {
+			tabCategory = PLAN_CATEGORY_AGENCY_TIER;
 		}
-	} else if ( existingPressablePlan.category === PLAN_CATEGORY_SIGNATURE ) {
-		// If not using signature plans, map signature categories back to standard/enterprise
-		tabCategory = PLAN_CATEGORY_STANDARD;
-	} else if ( existingPressablePlan.category === PLAN_CATEGORY_SIGNATURE_HIGH ) {
-		tabCategory = PLAN_CATEGORY_ENTERPRISE;
+	} else if ( existingPressablePlan.category === PLAN_CATEGORY_STANDARD_TIER ) {
+		// On the legacy catalog, map current-catalog categories back to legacy Standard/Enterprise
+		tabCategory = PLAN_CATEGORY_LEGACY_STANDARD;
+	} else if ( existingPressablePlan.category === PLAN_CATEGORY_AGENCY_TIER ) {
+		tabCategory = PLAN_CATEGORY_LEGACY_ENTERPRISE;
 	}
 
 	return tabCategory;
@@ -75,12 +75,12 @@ export default function PressablePlanSection( {
 }: Props ) {
 	const translate = useTranslate();
 
-	const areSignaturePlans = useMemo( () => {
+	const isCurrentCatalog = useMemo( () => {
 		return (
 			isReferralMode ||
 			! existingPlanInfo ||
-			existingPlanInfo?.category === PLAN_CATEGORY_SIGNATURE ||
-			existingPlanInfo?.category === PLAN_CATEGORY_SIGNATURE_HIGH
+			existingPlanInfo?.category === PLAN_CATEGORY_STANDARD_TIER ||
+			existingPlanInfo?.category === PLAN_CATEGORY_AGENCY_TIER
 		);
 	}, [ existingPlanInfo, isReferralMode ] );
 
@@ -88,7 +88,7 @@ export default function PressablePlanSection( {
 
 	const [ selectedTab, setSelectedTab ] = useSliderPersistence( {
 		key: 'pressable-tab',
-		defaultValue: getSelectedTab( existingPressablePlan, areSignaturePlans ),
+		defaultValue: getSelectedTab( existingPressablePlan, isCurrentCatalog ),
 	} );
 
 	// Persist the selected plan slug per-tab
@@ -114,7 +114,7 @@ export default function PressablePlanSection( {
 			return [];
 		}
 
-		if ( areSignaturePlans ) {
+		if ( isCurrentCatalog ) {
 			return pressablePlans.filter(
 				( plan ) =>
 					plan.slug.startsWith( 'pressable-signature-' ) ||
@@ -127,7 +127,7 @@ export default function PressablePlanSection( {
 				! plan.slug.startsWith( 'pressable-signature-' ) &&
 				! plan.slug.startsWith( 'pressable-premium-' ) // We do not want to offer the new premium plans for agency with Legacy plans to reduce complexity in the UI
 		);
-	}, [ pressablePlans, areSignaturePlans ] );
+	}, [ pressablePlans, isCurrentCatalog ] );
 
 	// Track initialization to prevent effects from fighting each other
 	const isInitialized = useRef( false );
@@ -163,13 +163,13 @@ export default function PressablePlanSection( {
 		// Fall back to default plan for this tab
 		let defaultSlug = 'pressable-signature-1';
 		if (
-			selectedTab === PLAN_CATEGORY_SIGNATURE_HIGH ||
-			selectedTab === PLAN_CATEGORY_ENTERPRISE
+			selectedTab === PLAN_CATEGORY_AGENCY_TIER ||
+			selectedTab === PLAN_CATEGORY_LEGACY_ENTERPRISE
 		) {
-			defaultSlug = areSignaturePlans ? 'pressable-signature-11' : 'pressable-enterprise-1';
-		} else if ( selectedTab === PLAN_CATEGORY_PREMIUM ) {
+			defaultSlug = isCurrentCatalog ? 'pressable-signature-5' : 'pressable-enterprise-1';
+		} else if ( selectedTab === PLAN_CATEGORY_PERFORMANCE_TIER ) {
 			defaultSlug = 'pressable-premium-1';
-		} else if ( ! areSignaturePlans ) {
+		} else if ( ! isCurrentCatalog ) {
 			defaultSlug = 'pressable-build';
 		}
 
@@ -184,7 +184,7 @@ export default function PressablePlanSection( {
 		setPersistedPlanSlug,
 		isReferralMode,
 		existingPlan,
-		areSignaturePlans,
+		isCurrentCatalog,
 	] );
 
 	// Handle tab changes - just persist the tab, don't reset the plan
@@ -231,7 +231,7 @@ export default function PressablePlanSection( {
 					pressablePlan={ existingPressablePlan }
 					isLoading={ ! isFetching }
 					isReferralMode={ !! isReferralMode }
-					areSignaturePlans={ areSignaturePlans }
+					isCurrentCatalog={ isCurrentCatalog }
 					selectedTab={ selectedTab }
 					setSelectedTab={ handleTabChange }
 				/>
@@ -244,7 +244,7 @@ export default function PressablePlanSection( {
 		existingPressablePlan,
 		isFetching,
 		isReferralMode,
-		areSignaturePlans,
+		isCurrentCatalog,
 		selectedTab,
 		handleTabChange,
 		handlePlanSelect,
@@ -263,7 +263,7 @@ export default function PressablePlanSection( {
 	}, [ existingPlan, isReferralMode, pressableOwnership, translate ] );
 
 	const isStandardPlan =
-		! areSignaturePlans && selectedPlanInfo?.category === PLAN_CATEGORY_STANDARD;
+		! isCurrentCatalog && selectedPlanInfo?.category === PLAN_CATEGORY_LEGACY_STANDARD;
 
 	const onScheduleDemo = useCallback( () => {
 		dispatch(
@@ -275,12 +275,15 @@ export default function PressablePlanSection( {
 
 	const isCustomPlan = ! selectedPlan;
 
-	const hasNewPremiumPlans =
+	const canReferPerformancePlans =
 		isReferralMode &&
 		filteredPressablePlans.some( ( plan ) => plan.slug.startsWith( 'pressable-premium-' ) );
 
-	// Show premium plan section if the selected tab is premium and there are no new premium plans
-	if ( selectedTab === PLAN_CATEGORY_PREMIUM && ( ! hasNewPremiumPlans || isCustomPlan ) ) {
+	// Show the Performance referral promo on the Performance tab unless there are Performance plans to refer
+	if (
+		selectedTab === PLAN_CATEGORY_PERFORMANCE_TIER &&
+		( ! canReferPerformancePlans || isCustomPlan )
+	) {
 		return <PremiumPlanSection heading={ heading } banner={ banner } />;
 	}
 
@@ -313,10 +316,8 @@ export default function PressablePlanSection( {
 					</p>
 				) : (
 					<p>
-						{ areSignaturePlans || isStandardPlan
-							? translate(
-									'With Signature plans, your traffic & storage limits are shared amongst your total sites.'
-								)
+						{ isCurrentCatalog || isStandardPlan
+							? translate( 'Your traffic and storage limits are shared amongst your total sites.' )
 							: translate(
 									'With Enterprise plans, your traffic & storage limits are shared amongst your total sites.'
 								) }

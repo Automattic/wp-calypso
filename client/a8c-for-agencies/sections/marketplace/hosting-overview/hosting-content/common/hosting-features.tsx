@@ -8,14 +8,14 @@ import HostingFeaturesSectionV2 from '../../../common/hosting-features-section-v
 type Props = {
 	heading: string;
 	isPressable?: boolean;
-	areSignaturePlans?: boolean;
+	isCurrentCatalog?: boolean;
 	showFreeDomain?: boolean;
 };
 
 export default function HostingFeatures( {
 	heading,
 	isPressable,
-	areSignaturePlans,
+	isCurrentCatalog,
 	showFreeDomain = true,
 }: Props ) {
 	const translate = useTranslate();
@@ -40,7 +40,7 @@ export default function HostingFeatures( {
 						sprintf(
 							/* translators: %s is the number of PHP workers */
 							__( '%s PHP workers w/ auto-scaling' ),
-							areSignaturePlans ? '5' : '10'
+							isCurrentCatalog ? '5' : '10'
 						),
 						translate( 'Uptime monitoring' ),
 					],

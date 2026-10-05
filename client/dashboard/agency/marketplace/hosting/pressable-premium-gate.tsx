@@ -20,7 +20,7 @@ interface Props {
 	label: string;
 }
 
-/** The purchase rail on the Premium tab with referrals off: Premium plans are only sold through referrals. */
+/** The purchase rail on the Performance tab with referrals off: Performance plans are only sold through referrals. */
 export default function PressablePremiumGate( { label }: Props ) {
 	const { recordTracksEvent } = useAnalytics();
 	const { checked, disabled, onChange } = useReferralToggle();
@@ -50,7 +50,7 @@ export default function PressablePremiumGate( { label }: Props ) {
 							{ sprintf(
 								/* translators: %d is the commission percentage. */
 								__(
-									'Premium plans are sold through referrals. Turn on Refer products to refer this plan to a client and earn %d%% commission on every payment.'
+									'Performance plans are sold through referrals. Turn on Refer products to refer this plan to a client and earn %d%% commission on every payment.'
 								),
 								PRESSABLE_PREMIUM_PLAN_COMMISSION_PERCENTAGE
 							) }
