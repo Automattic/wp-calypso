@@ -1,5 +1,6 @@
 import { Button, Gridicon, FormLabel, Tooltip } from '@automattic/components';
 import { downloadBlob } from '@wordpress/blob';
+import Clipboard from 'clipboard';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { createRef, Component } from 'react';
@@ -39,6 +40,22 @@ class Security2faBackupCodesList extends Component {
 	printCodesButtonRef = createRef();
 	downloadCodesButtonRef = createRef();
 
+	componentDidMount() {
+		// Configure clipboard to be triggered on clipboard button press.
+		// `Button` forwards its ref to the underlying DOM element, so the ref's
+		// current value is already the node (no `findDOMNode`, removed in React 19).
+		const button = this.copyCodesButtonRef.current;
+		this.clipboard = new Clipboard( button, {
+			text: () => this.getBackupCodePlainText( this.props.backupCodes ),
+		} );
+		this.clipboard.on( 'success', this.onCopy );
+	}
+
+	componentWillUnmount() {
+		// Cleanup clipboard object
+		this.clipboard.destroy();
+	}
+
 	openPopup = () => {
 		this.popup = window.open();
 
@@ -62,11 +79,7 @@ class Security2faBackupCodesList extends Component {
 	};
 
 	onCopy = () => {
-		navigator.clipboard
-			.writeText( this.getBackupCodePlainText( this.props.backupCodes ) )
-			.then( () => {
-				this.props.recordGoogleEvent( 'Me', 'Clicked On 2fa Copy to clipboard Button' );
-			} );
+		this.props.recordGoogleEvent( 'Me', 'Clicked On 2fa Copy to clipboard Button' );
 	};
 
 	saveCodesToFile = () => {
@@ -259,7 +272,6 @@ class Security2faBackupCodesList extends Component {
 							<Button
 								className="security-2fa-backup-codes-list__copy"
 								disabled={ ! this.props.backupCodes.length }
-								onClick={ this.onCopy }
 								onMouseEnter={ this.enableCopyCodesTooltip }
 								onMouseLeave={ this.disableCopyCodesTooltip }
 								ref={ this.copyCodesButtonRef }
