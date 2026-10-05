@@ -2000,7 +2000,6 @@ __metadata:
     "@wordpress/react-i18n": "npm:^4.48.0"
     "@wordpress/url": "npm:^4.48.0"
     autosize: "npm:^6.0.1"
-    classnames: "npm:^2.5.1"
     clsx: "npm:^2.1.1"
     dompurify: "npm:3.4.13"
     framer-motion: "npm:^12.23.12"
@@ -15347,7 +15346,6 @@ __metadata:
     clipboard: "npm:^2.0.11"
     clsx: "npm:^2.1.1"
     component-closest: "npm:^1.0.1"
-    component-event: "npm:^0.2.1"
     component-query: "npm:^0.0.3"
     cookie: "npm:^0.7.2"
     cookie-parser: "npm:^1.4.7"
@@ -15385,7 +15383,6 @@ __metadata:
     html-loader: "npm:^5.1.0"
     i18n-calypso: "workspace:^"
     ignore-loader: "npm:^0.1.2"
-    inherits: "npm:^2.0.4"
     is-my-json-valid: "npm:^2.20.6"
     jest: "npm:^29.7.0"
     jest-fetch-mock: "npm:^3.0.3"
@@ -15857,7 +15854,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"classnames@npm:^2.3.1, classnames@npm:^2.5.1":
+"classnames@npm:^2.3.1":
   version: 2.5.1
   resolution: "classnames@npm:2.5.1"
   checksum: afff4f77e62cea2d79c39962980bf316bacb0d7c49e13a21adaadb9221e1c6b9d3cdb829d8bb1b23c406f4e740507f37e1dcf506f7e3b7113d17c5bab787aa69
@@ -16289,13 +16286,6 @@ __metadata:
   version: 1.3.1
   resolution: "component-emitter@npm:1.3.1"
   checksum: e4900b1b790b5e76b8d71b328da41482118c0f3523a516a41be598dc2785a07fd721098d9bf6e22d89b19f4fa4e1025160dc00317ea111633a3e4f75c2b86032
-  languageName: node
-  linkType: hard
-
-"component-event@npm:^0.2.1":
-  version: 0.2.1
-  resolution: "component-event@npm:0.2.1"
-  checksum: f49c8d00dc5d2b5540adfd2b29273191d74654ccd1ce3dda5fd82e33211d85a5b3d40469ee225f7a35ce7687929a98be440b7b8d0c2ac05eee208b5d0f2d9e3b
   languageName: node
   linkType: hard
 
