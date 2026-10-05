@@ -28,6 +28,7 @@ import { getCalypsoQueryClient } from 'calypso/state/query-client';
 import { requestSite } from 'calypso/state/sites/actions';
 import usePurchaseOrder from '../../src/hooks/use-purchase-order';
 import { logStashLoadErrorEvent } from '../../src/lib/analytics';
+import { recordCompletedPurchaseAnalytics } from '../../src/lib/record-completed-purchase-analytics';
 import { SUCCESS } from '../../src/types/order-transaction';
 import {
 	PLAN_AND_DOMAIN_NOTICE_QUERY_VALUE,
@@ -412,6 +413,15 @@ function useRedirectOnTransactionSuccess( {
 		}
 
 		const finalRedirectInstructions = { ...redirectInstructions, url: finalUrl };
+
+		// This is the first point where we know the purchase is complete, so
+		// record it before leaving the page.
+		if ( receipt && ! redirectInstructions.isError && ! redirectInstructions.isUnknown ) {
+			recordCompletedPurchaseAnalytics( receipt, reduxDispatch ).then( () =>
+				notifyAndPerformRedirect( siteSlug, finalRedirectInstructions )
+			);
+			return;
+		}
 
 		notifyAndPerformRedirect( siteSlug, finalRedirectInstructions );
 	}, [
