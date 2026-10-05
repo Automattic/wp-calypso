@@ -1190,7 +1190,7 @@ describe( 'SearchNotice', () => {
 		);
 	} );
 
-	describe( 'subdomain with a mapped root domain', () => {
+	describe( 'subdomain with an unavailable root domain', () => {
 		it( 'renders the ownership message when the root domain is mapped (status)', async () => {
 			mockNoSuggestionsAndAvailability(
 				'cms.example.com',

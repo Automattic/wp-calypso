@@ -1,5 +1,4 @@
 import { DomainAvailability, DomainAvailabilityStatus } from '@automattic/api-core';
-import { getRootDomain } from './get-root-domain';
 import { isSubdomain } from './is-subdomain';
 
 /**
@@ -15,11 +14,12 @@ import { isSubdomain } from './is-subdomain';
  * 1. The backend reports on the ROOT. For a subdomain query it swaps the response
  *    `domain_name` to the root only when the root itself has a WordPress.com
  *    registration or mapping; otherwise it leaves `domain_name` as the searched
- *    subdomain and `status` describes the subdomain itself. Requiring
- *    `domain_name === getRootDomain( searchedDomainName )` keeps us to the former,
- *    which is the only case that is actually about the root's owner. This excludes
- *    the user's own already-mapped subdomain of an externally-registered root (the
- *    root is not on WordPress.com, so the response carries the subdomain).
+ *    subdomain and `status` describes the subdomain itself. We detect the former by
+ *    `domain_name !== searchedDomainName` (the backend returned the root rather than
+ *    echoing the query), which excludes the user's own already-mapped subdomain of
+ *    an externally-registered root. Comparing to the returned `domain_name` directly
+ *    avoids re-deriving the root from the query, which `getRootDomain` only
+ *    approximates for multi-level public suffixes.
  * 2. REGISTERED means another user registered the root; MAPPED means the root is
  *    mapped elsewhere. The `mappable` field is intentionally not used: it describes
  *    the subdomain itself and is set for the user's own mappings too, so it yields
@@ -33,7 +33,7 @@ export function isSubdomainWithUnavailableRootDomain(
 		return false;
 	}
 
-	if ( availability.domain_name !== getRootDomain( searchedDomainName ) ) {
+	if ( availability.domain_name === searchedDomainName ) {
 		return false;
 	}
 
