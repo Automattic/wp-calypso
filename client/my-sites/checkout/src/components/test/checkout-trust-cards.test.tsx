@@ -25,6 +25,13 @@ function premiumCart(): ResponseCart {
 		item_subtotal_integer: 5,
 		product_slug: PLAN_PREMIUM,
 	} );
+	cart.total_cost_integer = 5;
+	return cart;
+}
+
+function paidEmptyCart(): ResponseCart {
+	const cart = getEmptyResponseCart();
+	cart.total_cost_integer = 5;
 	return cart;
 }
 
@@ -37,10 +44,16 @@ describe( 'CheckoutTrustCards', () => {
 	} );
 
 	it( 'omits the refund card for a cart with no refund window', () => {
-		renderTrustCards( getEmptyResponseCart() );
+		renderTrustCards( paidEmptyCart() );
 
 		expect( screen.queryByText( /day money back/i ) ).not.toBeInTheDocument();
 		expect( screen.getByText( 'SSL secure payment' ) ).toBeVisible();
+	} );
+
+	it( 'omits the SSL card for a free purchase', () => {
+		renderTrustCards( getEmptyResponseCart() );
+
+		expect( screen.queryByText( 'SSL secure payment' ) ).not.toBeInTheDocument();
 	} );
 
 	it.each( [

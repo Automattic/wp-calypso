@@ -115,11 +115,13 @@ export default function CheckoutTrustCards( { cart }: { cart: ResponseCart } ) {
 				</TrustCard>
 			) }
 
-			<TrustCard>
-				<Icon icon={ lock } size={ 20 } />
-				<TrustCardHeader>{ translate( 'SSL secure payment' ) }</TrustCardHeader>
-				<TrustCardBody>{ translate( 'Encrypted with 256-bit SSL.' ) }</TrustCardBody>
-			</TrustCard>
+			{ cart.total_cost_integer > 0 && (
+				<TrustCard>
+					<Icon icon={ lock } size={ 20 } />
+					<TrustCardHeader>{ translate( 'SSL secure payment' ) }</TrustCardHeader>
+					<TrustCardBody>{ translate( 'Encrypted with 256-bit SSL.' ) }</TrustCardBody>
+				</TrustCard>
+			) }
 
 			<CheckoutProcessorNotice />
 		</TrustCardsRow>
