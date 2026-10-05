@@ -4,31 +4,13 @@ export const wpcom = () => wpcomInstance;
 
 export const init = ( provider ) => ( wpcomInstance = provider );
 
-let includePostDetails = false;
-
-/**
- * The endpoint only sends post and parent-comment details on request, since they cost
- * extra lookups. Only the simplified note reads them. Returns whether the setting changed.
- */
-export const setIncludePostDetails = ( value ) => {
-	const hasChanged = value !== includePostDetails;
-	includePostDetails = value;
-	return hasChanged;
-};
-
-// Hash polls only compare ids, so they never ask for the details.
-const withPostDetails = ( query ) =>
-	includePostDetails && query?.fields !== 'id,note_hash'
-		? { ...query, include: 'post_details' }
-		: query;
-
 export const fetchNote = ( noteId, query, callback ) =>
 	wpcom().req.get(
 		{
 			path: `/notifications/${ noteId }`,
 			apiVersion: '1.1',
 		},
-		withPostDetails( query ),
+		query,
 		callback
 	);
 
@@ -48,7 +30,7 @@ export const listNotes = ( query, callback ) =>
 			path: '/notifications/',
 			apiVersion: '1.1',
 		},
-		withPostDetails( query ),
+		query,
 		callback
 	);
 

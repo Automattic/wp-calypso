@@ -5,7 +5,6 @@ import { Provider } from 'react-redux';
 import repliesCache from '../panel/comment-replies-cache';
 import { modifierKeyIsActive } from '../panel/helpers/input';
 import { logError } from '../panel/helpers/log-error';
-import { setIncludePostDetails } from '../panel/rest-client/wpcom';
 import { init as initStore, store } from '../panel/state';
 import { SET_IS_SHOWING } from '../panel/state/action-types';
 import actions from '../panel/state/actions';
@@ -157,18 +156,10 @@ const NotificationApp = ( {
 } ) => {
 	const [ isReady, setIsReady ] = useState( !! getClient() );
 
-	// Declared first so the setting is in place before this component starts the client.
-	// A host may have started it earlier (the dashboard does, for the unseen count), in
-	// which case the notes it already holds lack the details and are fetched again.
 	useEffect( () => {
-		const isEnabled = isSimplifiedNoteEnabled && isViewSettingsEnabled;
-		if ( setIncludePostDetails( isEnabled ) && isEnabled ) {
-			getClient()?.getNotes();
-		}
-	}, [ isSimplifiedNoteEnabled, isViewSettingsEnabled ] );
-
-	useEffect( () => {
-		initClient( wpcom );
+		initClient( wpcom, {
+			includePostDetails: isSimplifiedNoteEnabled && isViewSettingsEnabled,
+		} );
 		setIsReady( true );
 
 		store.dispatch( { type: 'APP_IS_READY' } );
@@ -179,7 +170,7 @@ const NotificationApp = ( {
 			store.dispatch( { type: SET_IS_SHOWING, isShowing: false } );
 			getClient()?.setVisibility( { isShowing: false, isVisible: ! document.hidden } );
 		};
-	}, [ wpcom ] );
+	}, [ wpcom, isSimplifiedNoteEnabled, isViewSettingsEnabled ] );
 
 	// Seeded once, whenever the host resolves them. A later value would overwrite
 	// whatever the picker has since saved.

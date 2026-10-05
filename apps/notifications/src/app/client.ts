@@ -1,15 +1,21 @@
 import RestClient from '../panel/rest-client';
-import { init as initAPI, setIncludePostDetails } from '../panel/rest-client/wpcom';
+import { init as initAPI } from '../panel/rest-client/wpcom';
 import { store } from '../panel/state';
 import { addListeners, removeListeners } from '../panel/state/create-listener-middleware';
 
 let client: any;
 
-export function initClient( wpcom: any ) {
+export type ClientOptions = {
+	/** Ask for post and parent-comment details, which only the simplified note shows. */
+	includePostDetails?: boolean;
+};
+
+// There is one client per page, so whichever caller starts it sets its options.
+export function initClient( wpcom: any, options: ClientOptions = {} ) {
 	initAPI( wpcom );
 
 	if ( ! client ) {
-		client = new RestClient();
+		client = new RestClient( options );
 		client.setVisibility( { isShowing: false, isVisible: ! document.hidden } );
 		document.addEventListener( 'visibilitychange', () => {
 			client.setVisibility( { isShowing: client.isShowing, isVisible: ! document.hidden } );
@@ -25,17 +31,15 @@ export function getClient() {
 }
 
 /**
- * Starts the client ahead of the panel to keep the unseen count fresh. A host that
- * shows the simplified note passes `includePostDetails`, so the notes loaded now
- * already carry what the panel will show.
+ * Starts the client ahead of the panel to keep the unseen count fresh, so it takes
+ * the same options the panel would pass.
  */
 export function subscribeUnseenCount(
 	wpcom: any,
 	onCount: ( count: number ) => void,
-	{ includePostDetails = false }: { includePostDetails?: boolean } = {}
+	options: ClientOptions = {}
 ): () => void {
-	setIncludePostDetails( includePostDetails );
-	initClient( wpcom );
+	initClient( wpcom, options );
 
 	const handlers = {
 		APP_RENDER_NOTES: [
