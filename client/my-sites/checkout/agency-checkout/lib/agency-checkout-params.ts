@@ -63,14 +63,50 @@ export function getAllowedA4ADashboardUrl( url: string | null | undefined ): str
 	return undefined;
 }
 
+function parseAgencyCheckoutTerm( term: string | null ): AgencyCheckoutTerm {
+	return term === 'monthly' ? 'monthly' : 'yearly';
+}
+
 export function getAgencyCheckoutParams( search: string ): AgencyCheckoutParams {
 	const params = new URLSearchParams( search );
 	return {
 		entries: parseAgencyCartEntries( params.get( 'products' ) ),
-		term: params.get( 'term' ) === 'monthly' ? 'monthly' : 'yearly',
+		term: parseAgencyCheckoutTerm( params.get( 'term' ) ),
 		redirectTo:
 			getAllowedA4ADashboardUrl( params.get( 'redirect_to' ) ) ??
 			buildA4ADashboardLink( DEFAULT_RETURN_PATH ),
+		cancelTo: getAllowedA4ADashboardUrl( params.get( 'cancel_to' ) ),
+	};
+}
+
+export type AgencySiteCheckoutParams = Omit< AgencyCheckoutParams, 'entries' >;
+
+/**
+ * Where a site checkout sends the user when its site cannot be loaded: the
+ * page it was opened from, or the dashboard's sites list.
+ */
+export function getAgencySiteCheckoutExitUrl( search: string ): string {
+	const params = new URLSearchParams( search );
+	return (
+		getAllowedA4ADashboardUrl( params.get( 'cancel_to' ) ) ?? buildA4ADashboardLink( '/sites' )
+	);
+}
+
+/**
+ * The query string of the checkout for one of the agency's sites, whose plan
+ * comes from the path instead. A paid site lands on itself unless the
+ * dashboard asked for another page.
+ */
+export function getAgencySiteCheckoutParams(
+	search: string,
+	siteSlug: string
+): AgencySiteCheckoutParams {
+	const params = new URLSearchParams( search );
+	return {
+		term: parseAgencyCheckoutTerm( params.get( 'term' ) ),
+		redirectTo:
+			getAllowedA4ADashboardUrl( params.get( 'redirect_to' ) ) ??
+			buildA4ADashboardLink( `/sites/${ siteSlug }` ),
 		cancelTo: getAllowedA4ADashboardUrl( params.get( 'cancel_to' ) ),
 	};
 }

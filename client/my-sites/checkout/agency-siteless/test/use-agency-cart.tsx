@@ -6,7 +6,7 @@ import { useShoppingCart } from '@automattic/shopping-cart';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook, waitFor } from '@testing-library/react';
 import useAgencyCart from '../use-agency-cart';
-import type { AgencyCartEntry } from '../lib/agency-checkout-params';
+import type { AgencyCartEntry } from '../../agency-checkout/lib/agency-checkout-params';
 import type { Agency, AgencyProduct } from '@automattic/api-core';
 import type { PropsWithChildren } from 'react';
 

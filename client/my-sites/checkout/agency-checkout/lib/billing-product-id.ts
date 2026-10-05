@@ -5,7 +5,7 @@ export type AgencyCheckoutTerm = 'monthly' | 'yearly';
 /**
  * The product WordPress.com bills for a line: the variant of the chosen term,
  * and for WordPress.com and Jetpack products the agency-specific id the store
- * accepts on a siteless cart.
+ * accepts on an agency cart.
  */
 export function getBillingProductId( product: AgencyProduct, term: AgencyCheckoutTerm ): number {
 	const termProductId =

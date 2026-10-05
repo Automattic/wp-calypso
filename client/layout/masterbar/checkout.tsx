@@ -9,7 +9,7 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import {
 	AGENCY_CHECKOUT_PATH,
 	getAllowedA4ADashboardUrl,
-} from 'calypso/my-sites/checkout/agency-siteless/lib/agency-checkout-params';
+} from 'calypso/my-sites/checkout/agency-checkout/lib/agency-checkout-params';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import {
 	LeaveCheckoutModal,

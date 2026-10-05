@@ -1,5 +1,7 @@
 import {
 	getAgencyCheckoutParams,
+	getAgencySiteCheckoutExitUrl,
+	getAgencySiteCheckoutParams,
 	getAllowedA4ADashboardUrl,
 	parseAgencyCartEntries,
 } from '../agency-checkout-params';
@@ -90,5 +92,32 @@ describe( 'getAgencyCheckoutParams', () => {
 		);
 		expect( new URL( redirectTo ).pathname ).toBe( '/purchases' );
 		expect( cancelTo ).toBeUndefined();
+	} );
+} );
+
+describe( 'getAgencySiteCheckoutParams', () => {
+	it( 'lands on the site itself when the return page is missing or not a dashboard page', () => {
+		const { term, redirectTo, cancelTo } = getAgencySiteCheckoutParams(
+			'?redirect_to=https://evil.example/',
+			'example.wordpress.com'
+		);
+		expect( term ).toBe( 'yearly' );
+		expect( new URL( redirectTo ).pathname ).toBe( '/sites/example.wordpress.com' );
+		expect( cancelTo ).toBeUndefined();
+	} );
+} );
+
+describe( 'getAgencySiteCheckoutExitUrl', () => {
+	it( 'returns to the page the checkout came from, or to the sites list', () => {
+		expect(
+			getAgencySiteCheckoutExitUrl(
+				'?cancel_to=https://agencies-beta.automattic.com/sites/example.wordpress.com/settings/site-visibility'
+			)
+		).toBe(
+			'https://agencies-beta.automattic.com/sites/example.wordpress.com/settings/site-visibility'
+		);
+		expect(
+			new URL( getAgencySiteCheckoutExitUrl( '?cancel_to=https://evil.example/' ) ).pathname
+		).toBe( '/sites' );
 	} );
 } );
