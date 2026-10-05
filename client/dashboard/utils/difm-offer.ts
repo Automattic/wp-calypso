@@ -24,6 +24,12 @@ export interface DifmOfferEligibilityInput {
 	planSlug?: string;
 	siteCreatedAt?: string;
 	localeSlug?: string;
+	/**
+	 * An agency builds an A4A dev site for a client, so the offer does not apply. Only an
+	 * explicit `false` is eligible, like the other inputs. Agency-managed Atomic sites need
+	 * no check: Atomic requires a Business plan or higher, which is already ineligible.
+	 */
+	isA4ADevSite?: boolean;
 }
 
 export interface DifmOfferResult {
@@ -99,10 +105,10 @@ function isEnglishLocale( localeSlug: string ): boolean {
 }
 
 export function isEligibleForDifmOffer(
-	{ planSlug, siteCreatedAt, localeSlug }: DifmOfferEligibilityInput,
+	{ planSlug, siteCreatedAt, localeSlug, isA4ADevSite }: DifmOfferEligibilityInput,
 	now: number = Date.now()
 ): boolean {
-	if ( ! planSlug || ! siteCreatedAt || ! localeSlug ) {
+	if ( ! planSlug || ! siteCreatedAt || ! localeSlug || isA4ADevSite !== false ) {
 		return false;
 	}
 

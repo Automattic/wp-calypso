@@ -41,6 +41,7 @@ function eligibleInput( now: number = NOW ) {
 		planSlug: PLAN_FREE,
 		siteCreatedAt: isoDaysAgo( 1, now ),
 		localeSlug: 'en',
+		isA4ADevSite: false,
 	};
 }
 
@@ -139,6 +140,15 @@ describe( 'isEligibleForDifmOffer', () => {
 			false
 		);
 		expect( isEligibleForDifmOffer( { ...eligibleInput(), localeSlug: 'fr' }, NOW ) ).toBe( false );
+	} );
+
+	it( 'rejects an A4A dev site, and a site whose A4A status is unknown', () => {
+		expect( isEligibleForDifmOffer( { ...eligibleInput(), isA4ADevSite: true }, NOW ) ).toBe(
+			false
+		);
+		expect( isEligibleForDifmOffer( { ...eligibleInput(), isA4ADevSite: undefined }, NOW ) ).toBe(
+			false
+		);
 	} );
 
 	it( 'rejects input with a missing planSlug, siteCreatedAt or localeSlug', () => {
