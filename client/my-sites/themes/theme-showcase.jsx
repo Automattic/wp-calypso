@@ -866,7 +866,9 @@ class ThemeShowcase extends Component {
 					) }
 					<div className="themes__showcase">
 						{ showThemeErrors && <ThemeErrors siteId={ siteId } /> }
-						{ siteId && <DifmOfferBanner siteId={ siteId } /> }
+						{ siteId && ! this.props.isUpsellCardDisplayed && (
+							<DifmOfferBanner siteId={ siteId } />
+						) }
 						{ ! isSiteWooExpressOrEcomFreeTrial && this.renderBanner() }
 						{ this.renderThemes( themeProps ) }
 					</div>

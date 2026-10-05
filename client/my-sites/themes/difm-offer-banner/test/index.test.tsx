@@ -2,7 +2,9 @@
  * @jest-environment jsdom
  */
 import { screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { useDifmOffer } from 'calypso/dashboard/utils/difm-offer';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import uiReducer from 'calypso/state/ui/reducer';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import DifmOfferBanner from '../index';
@@ -12,20 +14,32 @@ jest.mock( 'calypso/dashboard/utils/difm-offer', () => ( {
 	useDifmOffer: jest.fn(),
 } ) );
 
+jest.mock( 'calypso/state/analytics/actions', () => ( {
+	recordTracksEvent: jest.fn( () => ( {
+		type: 'ANALYTICS_EVENT_RECORD',
+	} ) ),
+} ) );
+
 const SITE_ID = 123;
 
+// A selected site that the user can upgrade lets Banner build a /plans/ href
+// unless `disableHref` is set, so the fixture exercises that guard.
 const initialState = {
 	sites: {
 		items: {
 			[ SITE_ID ]: {
 				ID: SITE_ID,
+				URL: 'https://example.wordpress.com',
 				plan: { product_slug: 'free_plan' },
 				options: { created_at: '2026-10-01T00:00:00+00:00' },
 				is_a4a_dev_site: false,
 			},
 		},
 	},
-	ui: { language: { localeSlug: 'en' } },
+	currentUser: {
+		capabilities: { [ SITE_ID ]: { manage_options: true } },
+	},
+	ui: { language: { localeSlug: 'en' }, selectedSiteId: SITE_ID },
 };
 
 function renderBanner( siteId: number | null = SITE_ID ) {
@@ -40,6 +54,10 @@ function mockOffer( result: ReturnType< typeof useDifmOffer > ) {
 }
 
 describe( 'DifmOfferBanner', () => {
+	beforeEach( () => {
+		jest.clearAllMocks();
+	} );
+
 	test( 'renders the variation copy for an eligible assigned user', () => {
 		mockOffer( { isEligible: true, isLoading: false, variation: 'no_time' } );
 		renderBanner();
@@ -55,6 +73,38 @@ describe( 'DifmOfferBanner', () => {
 		} );
 	} );
 
+	test( 'gives the CTA no destination', () => {
+		mockOffer( { isEligible: true, isLoading: false, variation: 'no_time' } );
+		renderBanner();
+
+		const cta = screen.getByRole( 'button', { name: 'See the offer' } );
+		expect( cta ).not.toHaveAttribute( 'href' );
+	} );
+
+	test( 'records the impression and click with the variation', async () => {
+		mockOffer( { isEligible: true, isLoading: false, variation: 'no_time' } );
+		renderBanner();
+
+		const expectedProperties = expect.objectContaining( {
+			cta_name: 'themes-difm-offer',
+			upsell_id: 'themes-difm-offer',
+			upsell_feature_id: 'difm-offer',
+			variation: 'no_time',
+		} );
+
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
+			'calypso_banner_cta_impression',
+			expectedProperties
+		);
+
+		await userEvent.click( screen.getByRole( 'button', { name: 'See the offer' } ) );
+
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
+			'calypso_banner_cta_click',
+			expectedProperties
+		);
+	} );
+
 	test( 'renders nothing for control', () => {
 		mockOffer( { isEligible: true, isLoading: false, variation: 'control' } );
 		const { container } = renderBanner();
@@ -62,7 +112,7 @@ describe( 'DifmOfferBanner', () => {
 	} );
 
 	test( 'renders nothing for an ineligible user', () => {
-		mockOffer( { isEligible: false, isLoading: false, variation: 'control' } );
+		mockOffer( { isEligible: false, isLoading: false, variation: 'no_time' } );
 		const { container } = renderBanner();
 		expect( container ).toBeEmptyDOMElement();
 	} );
