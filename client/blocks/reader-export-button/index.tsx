@@ -1,6 +1,6 @@
+import { downloadBlob } from '@wordpress/blob';
 import { Button } from '@wordpress/components';
 import { download } from '@wordpress/icons';
-import { saveAs } from 'browser-filesaver';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useEffect, useRef, useCallback, ComponentPropsWithoutRef } from 'react';
 import {
@@ -68,8 +68,7 @@ const ReaderExportButton = ( {
 				return;
 			}
 
-			const blob = new Blob( [ data.opml ], { type: 'text/xml;charset=utf-8' } );
-			saveAs( blob, filename );
+			downloadBlob( filename, data.opml, 'text/xml;charset=utf-8' );
 
 			if ( isMounted.current ) {
 				setExportInProgress( false );

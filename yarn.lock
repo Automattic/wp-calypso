@@ -14912,13 +14912,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"browser-filesaver@npm:^1.1.1":
-  version: 1.1.1
-  resolution: "browser-filesaver@npm:1.1.1"
-  checksum: 7c5cd0548d712fdb2682cc9b92ab96d87b37b5e0af91f1834b0ca6e233b7e8c2473471f99f7d73db04f044743b9915d29c99959cf9aafe2c5db169d449fbafd3
-  languageName: node
-  linkType: hard
-
 "browserslist@npm:^4.0.0, browserslist@npm:^4.16.0, browserslist@npm:^4.16.6, browserslist@npm:^4.21.10, browserslist@npm:^4.24.0, browserslist@npm:^4.24.4, browserslist@npm:^4.24.5, browserslist@npm:^4.28.1, browserslist@npm:^4.28.6":
   version: 4.28.8
   resolution: "browserslist@npm:4.28.8"
@@ -15316,6 +15309,7 @@ __metadata:
     "@wordpress/abilities": "npm:^0.14.0"
     "@wordpress/api-fetch": "npm:^7.48.0"
     "@wordpress/base-styles": "npm:^9.1.0"
+    "@wordpress/blob": "npm:^4.48.0"
     "@wordpress/commands": "npm:^1.48.0"
     "@wordpress/components": "npm:^37.0.0"
     "@wordpress/compose": "npm:^8.2.0"
@@ -15339,7 +15333,6 @@ __metadata:
     autoprefixer: "npm:^10.4.21"
     autosize: "npm:^4.0.4"
     body-parser: "npm:^1.20.3"
-    browser-filesaver: "npm:^1.1.1"
     bunyan: "npm:^1.8.15"
     chalk: "npm:^4.1.2"
     circular-dependency-plugin: "npm:^5.2.2"
