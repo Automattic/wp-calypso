@@ -1,7 +1,7 @@
 import { useMobileBreakpoint } from '@automattic/viewport-react';
-import { downloadBlob } from '@wordpress/blob';
 import { Button } from '@wordpress/components';
 import { download } from '@wordpress/icons';
+import { saveAs } from 'browser-filesaver';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -77,8 +77,9 @@ class StatsDownloadCsv extends Component {
 			} )
 			.join( '\n' );
 
-		// Excel decodes a CSV without a BOM using the local code page, garbling non-ASCII text.
-		downloadBlob( fileName, `\uFEFF${ csvString }`, 'text/csv;charset=utf-8' );
+		const blob = new Blob( [ csvString ], { type: 'text/csv;charset=utf-8' } );
+
+		saveAs( blob, fileName );
 	};
 
 	render() {

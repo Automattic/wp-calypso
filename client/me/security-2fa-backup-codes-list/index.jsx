@@ -1,5 +1,5 @@
 import { Button, Gridicon, FormLabel, Tooltip } from '@automattic/components';
-import { downloadBlob } from '@wordpress/blob';
+import { saveAs } from 'browser-filesaver';
 import Clipboard from 'clipboard';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -85,11 +85,9 @@ class Security2faBackupCodesList extends Component {
 	saveCodesToFile = () => {
 		this.props.recordGoogleEvent( 'Me', 'Clicked On 2fa Save Backup Codes Button' );
 
-		downloadBlob(
-			`${ this.props.username }-backup-codes.txt`,
-			this.props.backupCodes.join( '\n' ),
-			'text/plain;charset=utf-8'
-		);
+		const backupCodes = this.props.backupCodes.join( '\n' );
+		const toSave = new globalThis.Blob( [ backupCodes ], { type: 'text/plain;charset=utf-8' } );
+		saveAs( toSave, `${ this.props.username }-backup-codes.txt` );
 	};
 
 	getBackupCodePlainText( backupCodes ) {

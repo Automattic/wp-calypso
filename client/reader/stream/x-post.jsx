@@ -2,9 +2,10 @@ import { getUrlParts } from '@automattic/calypso-url';
 import { Card } from '@automattic/components';
 import { uniqBy } from '@automattic/js-utils';
 import clsx from 'clsx';
+import closest from 'component-closest';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import { PureComponent } from 'react';
+import { createRef, PureComponent } from 'react';
 import UserAvatar from 'calypso/blocks/user-avatar';
 import { useFeedQuery } from 'calypso/reader/data/feed';
 import {
@@ -31,19 +32,38 @@ export class CrossPost extends PureComponent {
 		requestMarkAsSeen: PropTypes.func.isRequired,
 	};
 
+	cardRef = createRef();
+
+	// Merge the internal card ref with an optional `itemRef` from InfiniteList so the
+	// parent list can measure this item's DOM node without `findDOMNode`.
+	setCardRef = ( node ) => {
+		this.cardRef.current = node;
+		const { itemRef } = this.props;
+		if ( typeof itemRef === 'function' ) {
+			itemRef( node );
+		} else if ( itemRef ) {
+			itemRef.current = node;
+		}
+	};
+
 	handleCardClick = ( event ) => {
-		if ( event.target.closest( '.should-scroll' ) ) {
+		const rootNode = this.cardRef.current;
+
+		if ( closest( event.target, '.should-scroll', rootNode ) ) {
 			setTimeout( function () {
 				window.scrollTo( 0, 0 );
 			}, 100 );
 		}
 
-		if ( event.target.closest( '.ignore-click' ) ) {
+		if ( closest( event.target, '.ignore-click', rootNode ) ) {
 			return;
 		}
 
 		// ignore clicks on anchors inside inline content
-		if ( event.target.closest( 'a' ) && event.target.closest( '.reader__x-post' ) ) {
+		if (
+			closest( event.target, 'a', rootNode ) &&
+			closest( event.target, '.reader__x-post', rootNode )
+		) {
 			return;
 		}
 
@@ -176,7 +196,7 @@ export class CrossPost extends PureComponent {
 
 		return (
 			<Card
-				ref={ this.props.itemRef }
+				ref={ this.setCardRef }
 				tagName="article"
 				onClick={ this.handleCardClick }
 				className={ articleClasses }
