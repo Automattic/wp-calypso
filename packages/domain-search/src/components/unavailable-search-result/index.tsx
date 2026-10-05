@@ -32,8 +32,8 @@ export const UnavailableSearchResult = () => {
 			return null;
 		}
 
-		// A subdomain whose root domain is registered or mapped by a different account
-		// can't be transferred; the SearchNotice explains the ownership requirement.
+		// A mapped-root subdomain can't be transferred; the SearchNotice explains why.
+		// (REGISTERED never reaches here: not in STATUSES_WITH_MESSAGES.)
 		if ( isSubdomainWithUnavailableRootDomain( availability ) ) {
 			return null;
 		}
