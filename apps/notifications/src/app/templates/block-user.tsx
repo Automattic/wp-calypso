@@ -4,6 +4,7 @@ import {
 	__experimentalVStack as VStack,
 	__experimentalText as Text,
 } from '@wordpress/components';
+import clsx from 'clsx';
 import { Fragment } from 'react';
 import { useSelector } from 'react-redux';
 import getIsNoteApproved from '../../panel/state/selectors/get-is-note-approved';
@@ -47,7 +48,15 @@ function formatDate( timestamp: string, locale: string ) {
 	} ).format( date );
 }
 
-export default function UserBlock( { note, block }: { note: Note; block: Block } ) {
+export default function UserBlock( {
+	note,
+	block,
+	isCompact = false,
+}: {
+	note: Note;
+	block: Block;
+	isCompact?: boolean;
+} ) {
 	const { locale } = useAppContext();
 	const isApproved = useSelector( ( state ) => getIsNoteApproved( state, note ) );
 	const homeLink = block.meta?.links?.home || '';
@@ -97,7 +106,12 @@ export default function UserBlock( { note, block }: { note: Note; block: Block }
 	].filter( ( part ): part is ReactElement => Boolean( part ) );
 
 	return (
-		<HStack className="wpnc__user" justify="flex-start" alignment="flex-start" spacing={ 4 }>
+		<HStack
+			className={ clsx( 'wpnc__user', { 'is-compact': isCompact } ) }
+			justify="flex-start"
+			alignment={ isCompact ? 'center' : 'flex-start' }
+			spacing={ 4 }
+		>
 			<a
 				href={ readerProfileUrl }
 				target="_blank"

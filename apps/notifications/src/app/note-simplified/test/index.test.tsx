@@ -44,7 +44,7 @@ const renderNote = ( note: Note ) =>
 	render(
 		<Provider store={ initStore() }>
 			<AppProvider client={ null } locale="en">
-				<SimplifiedNote note={ note } className="wpnc__note" />
+				<SimplifiedNote note={ note } />
 			</AppProvider>
 		</Provider>
 	);

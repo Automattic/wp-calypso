@@ -151,12 +151,7 @@ const Note = ( { isDismissible, noteId, setSelectedNoteId, noteNavigation }: Not
 			</CardHeader>
 			<CardBody size="small" style={ { maxHeight: 'unset' } }>
 				<VStack justify="flex-start" spacing={ 4 }>
-					{ isSimplified && (
-						<SimplifiedNote
-							note={ note }
-							className={ getClasses( { note, isPendingApproval, isRead } ) }
-						/>
-					) }
+					{ isSimplified && <SimplifiedNote note={ note } /> }
 					{ ! isSimplified && !! note.header?.length && (
 						<>
 							<NoteSummary header={ note.header } url={ note.url } />

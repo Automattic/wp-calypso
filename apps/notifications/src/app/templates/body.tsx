@@ -119,10 +119,11 @@ export const ActionBlock = ( { note, goBack }: { note: Note; goBack: () => void 
 
 export const NoteBody = ( {
 	note,
-	isBlockHidden,
+	isCompact = false,
 }: {
 	note: Note;
-	isBlockHidden?: ( block: BlockWithSignature ) => boolean;
+	/** Renders people as bylines, for layouts where they aren't the focus. */
+	isCompact?: boolean;
 } ) => {
 	const blocks: BlockWithSignature[] = zipWithSignature( note.body, note );
 	const showPendingApprovalBadge = useSelector( ( state ) =>
@@ -141,13 +142,13 @@ export const NoteBody = ( {
 		firstNonTextBlockIndex !== -1 ? blocks.slice( firstNonTextBlockIndex ) : blocks;
 
 	const body = restBlocks
-		.filter( ( block ) => ! isReplyBlock( note, block.block ) && ! isBlockHidden?.( block ) )
+		.filter( ( block ) => ! isReplyBlock( note, block.block ) )
 		.map( ( block, i ) => {
 			const key = 'block-' + note.id + '-' + i;
 
 			switch ( block.signature.type ) {
 				case 'user':
-					return <User key={ key } block={ block.block } note={ note } />;
+					return <User key={ key } block={ block.block } note={ note } isCompact={ isCompact } />;
 				case 'comment':
 					return <Comment key={ key } block={ block.block } meta={ note.meta } />;
 				case 'post':

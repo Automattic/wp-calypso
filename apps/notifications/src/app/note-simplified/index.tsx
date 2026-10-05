@@ -3,6 +3,7 @@ import {
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
+import clsx from 'clsx';
 import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import getIsNotePendingApproval from '../../panel/state/selectors/get-is-note-pending-approval';
@@ -19,10 +20,12 @@ import './style.scss';
  * The open note, led by whatever it concerns: a card for the post or site, the
  * conversation when someone is speaking, then the note's own body.
  */
-export default function SimplifiedNote( { note, className }: { note: Note; className: string } ) {
+export default function SimplifiedNote( { note }: { note: Note } ) {
 	const isPendingApproval = useSelector( ( state ) => getIsNotePendingApproval( state, note ) );
 	const view = useMemo( () => getNoteView( note, isPendingApproval ), [ note, isPendingApproval ] );
 	const { thread, origin } = view;
+	// Stable, since the body's effects (the reply lookup among them) depend on the note.
+	const bodyNote = useMemo( () => ( { ...note, body: view.bodyBlocks } ), [ note, view ] );
 	const parentDate = note.parent_comment?.date;
 
 	// The thread pictures and dates whoever is speaking, and a headed list names
@@ -30,9 +33,11 @@ export default function SimplifiedNote( { note, className }: { note: Note; class
 	const hasSpeaker = !! thread?.speaker;
 	const hasActorRow = view.hasActor && ! hasSpeaker && ! view.peopleHeading;
 
+	// Only the classes the body's own styles need: the type classes would bring in the
+	// detailed layout's comment bar and list dividers.
 	const body = (
-		<div className={ className }>
-			<NoteBody note={ note } isBlockHidden={ view.isBlockHidden } />
+		<div className={ clsx( 'wpnc__note', { 'wpnc__comment-unapproved': isPendingApproval } ) }>
+			<NoteBody note={ bodyNote } isCompact />
 		</div>
 	);
 

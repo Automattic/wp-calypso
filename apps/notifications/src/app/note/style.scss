@@ -329,6 +329,31 @@
 	a {
 		text-decoration: none;
 	}
+
+	// A byline: the name, then what else is known about them in small muted text.
+	&.is-compact {
+		.wpnc__note & {
+			padding-block: $grid-unit-10;
+		}
+
+		.wpnc__note-icon {
+			margin-block: 0;
+		}
+
+		.wpnc__user-title {
+			color: inherit;
+			font-weight: 600;
+		}
+
+		.wpnc__user-description {
+			font-size: $font-size-small;
+			color: var(--wp-components-color-gray-700, #{$gray-700});
+
+			a:not(.components-button) {
+				color: inherit;
+			}
+		}
+	}
 }
 
 /**

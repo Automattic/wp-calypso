@@ -61,13 +61,6 @@ a.wpnc-simplified__quiet-links:visited {
 	overflow-wrap: anywhere;
 }
 
-// The words are the note here, so they drop the bar that marks a comment in the
-// detailed layout. A comment awaiting approval keeps its warning bar.
-.wpnc-simplified .wpnc__note.wpnc__comment:not(.wpnc__comment-unapproved) .wpnc__body .wpnc__body-content {
-	padding: 0;
-	box-shadow: none;
-}
-
 .wpnc-simplified__card {
 	display: block;
 	padding: $grid-unit-15;
@@ -135,41 +128,5 @@ a.wpnc-simplified__quiet-links:visited {
 	// Keeps the first line of the card clear of it.
 	& + * {
 		padding-inline-end: $grid-unit-30;
-	}
-}
-
-// Under a heading, each person reads as a byline: photo, then their name over what
-// else is known about them. The rows come from the detailed layout's person template,
-// so this is scoped past its list rules.
-.wpnc-app .wpnc-simplified .wpnc__note .wpnc__body .wpnc__body-content .wpnc__user {
-	align-items: center;
-	margin: 0;
-	padding: $grid-unit-10 0;
-	border-block-end: 0;
-
-	&:first-child {
-		margin: 0;
-		padding-block-start: 0;
-	}
-
-	.wpnc__note-icon {
-		margin-block: 0;
-	}
-
-	.wpnc__user-title {
-		color: inherit;
-		font-weight: 600;
-		text-decoration: none;
-	}
-
-	.wpnc__user-description {
-		width: auto;
-		font-size: $font-size-small;
-		color: var(--wp-components-color-gray-700, #{$gray-700});
-
-		a:not(.components-button) {
-			color: inherit;
-			text-decoration: none;
-		}
 	}
 }

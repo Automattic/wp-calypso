@@ -2,7 +2,7 @@ import { __ } from '@wordpress/i18n';
 import { zipWithSignature } from '../../panel/templates/functions';
 import { splitSubject } from '../note-list/simplified-subject';
 import { getHeaderLink } from '../templates/note-summary';
-import type { BlockWithSignature, Note, Subject } from '../types';
+import type { Block, BlockWithSignature, Note, Subject } from '../types';
 
 const MAX_AVATARS = 3;
 
@@ -68,7 +68,8 @@ export type NoteView = {
 	card?: { title: string; description?: string; icon?: string; url?: string };
 	/** Titles the list of people who acted, which then stands in for the actor row. */
 	peopleHeading?: string;
-	isBlockHidden: ( block: BlockWithSignature ) => boolean;
+	/** The note's own blocks, minus those the layout above already shows. */
+	bodyBlocks: Block[];
 };
 
 const toPlainText = ( markup?: string ) =>
@@ -263,9 +264,13 @@ export function getNoteView( note: Note, isPendingApproval = false ): NoteView {
 		post,
 		card,
 		peopleHeading,
-		isBlockHidden: ( { signature } ) =>
-			( ( hasComment || isActorShown ) && signature.type === 'user' ) ||
-			// Only a card that was built may stand in for the post it describes.
-			( hasPostCard && !! post && signature.type === 'post' ),
+		bodyBlocks: blocks
+			.filter(
+				( { signature } ) =>
+					! ( ( hasComment || isActorShown ) && signature.type === 'user' ) &&
+					// Only a card that was built may stand in for the post it describes.
+					! ( hasPostCard && !! post && signature.type === 'post' )
+			)
+			.map( ( { block } ) => block ),
 	};
 }
