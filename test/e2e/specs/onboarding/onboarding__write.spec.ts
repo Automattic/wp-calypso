@@ -1,16 +1,14 @@
 import {
 	DataHelper,
 	DomainSearchComponent,
-	EditorPage,
 	LoginPage,
 	NewUserResponse,
 	RestAPIClient,
 	SignupPickPlanPage,
-	StartSiteFlow,
 	UserSignupPage,
 } from '@automattic/calypso-e2e';
 import { expect, tags, test } from '../../lib/pw-base';
-import { apiCloseAccount, fixme_retry } from '../shared';
+import { apiCloseAccount } from '../shared';
 
 test.describe(
 	DataHelper.createSuiteTitle( 'Onboarding: Write Focus' ),
@@ -38,12 +36,9 @@ test.describe(
 		} );
 
 		test( 'As a new user, I can complete the write onboarding flow', async ( { page } ) => {
-			// Full signup-to-first-publish flow: 60s home redirect + fixme_retry
-			// home wait + 30s launchpad on top of editor load and publish; the
-			// 120s default is not enough.
-			test.setTimeout( 240 * 1000 );
+			// Signup plus the 90s wait for site creation to redirect can exceed the 120s default.
+			test.setTimeout( 180 * 1000 );
 
-			let editorOpened = false;
 			let selectedFreeDomain: string;
 
 			await test.step( 'When I navigate to the Login page', async () => {
@@ -69,76 +64,12 @@ test.describe(
 
 			await test.step( 'When I select WordPress.com Free plan', async () => {
 				const signupPickPlanPage = new SignupPickPlanPage( page );
-				const redirectUrl = new RegExp( 'home/.+\\?ref=onboarding' );
+				const redirectUrl = /wp-admin\/admin\.php\?page=site-setup-wp-admin/;
 				await signupPickPlanPage.selectPlan( 'Free', redirectUrl );
 			} );
 
-			await test.step( 'Then I enter the onboarding flow for the selected domain', async () => {
-				await page.waitForURL( /home\/.*ref=onboarding/, { timeout: 60 * 1000 } );
+			await test.step( 'Then I land on Site Setup for the selected domain', async () => {
 				expect( page.url() ).toContain( selectedFreeDomain );
-			} );
-
-			await test.step( 'When I select theme', async () => {
-				const startSiteFlow = new StartSiteFlow( page );
-				const showThemesButton = page.getByRole( 'button', { name: 'Show all Blog themes' } );
-				if ( ! ( await showThemesButton.isVisible() ) ) {
-					return;
-				}
-				await showThemesButton.click();
-				await startSiteFlow.selectTheme( 'Retrospect' );
-				await startSiteFlow.clickButton( 'Continue' );
-			} );
-
-			await test.step( 'Then Launchpad is shown', async () => {
-				await fixme_retry( () => page.waitForURL( /home/ ) );
-			} );
-
-			await test.step( 'When I write first post', async () => {
-				const writeFirstPostLink = page.getByRole( 'link', { name: 'Write your first post' } );
-				if ( ! ( await writeFirstPostLink.isVisible() ) ) {
-					return;
-				}
-				editorOpened = true;
-				await writeFirstPostLink.click();
-			} );
-
-			if ( editorOpened ) {
-				const postTitle = DataHelper.getRandomPhrase();
-				let editorPage: EditorPage;
-
-				await test.step( 'Then editor loads', async () => {
-					editorPage = new EditorPage( page );
-					await editorPage.waitUntilLoaded();
-					await editorPage.closeWelcomeGuideIfNeeded();
-				} );
-
-				await test.step( 'When I enter blog title', async () => {
-					await editorPage!.enterTitle( postTitle );
-				} );
-
-				await test.step( 'When I publish post', async () => {
-					await editorPage!.publish();
-				} );
-
-				await test.step( 'Then first post congratulatory message is shown', async () => {
-					const editorParent = await editorPage!.getEditorParent();
-					await editorParent
-						.getByRole( 'heading', { name: 'Your first post is published!' } )
-						.waitFor();
-				} );
-
-				await test.step( 'When I click View Next Steps', async () => {
-					const editorParent = await editorPage!.getEditorParent();
-					await editorParent.getByRole( 'button', { name: 'Next steps' } ).click();
-				} );
-			}
-
-			await test.step( 'Then Launchpad is shown (if applicable)', async () => {
-				const title = page.getByText( "Let's get started!" );
-				if ( ! ( await title.isVisible() ) ) {
-					return;
-				}
-				await title.waitFor( { timeout: 30 * 1000 } );
 			} );
 		} );
 	}
