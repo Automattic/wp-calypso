@@ -1,6 +1,5 @@
 import { DomainAvailability, DomainAvailabilityStatus } from '@automattic/api-core';
 import { useQuery } from '@tanstack/react-query';
-import { __experimentalVStack as VStack } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { useMemo } from 'react';
@@ -96,39 +95,20 @@ export const SearchNotice = () => {
 			return null;
 		}
 
-		if ( isSubdomainWithUnavailableRootDomain( availability ) ) {
-			const rootDomain = getRootDomain( availability.domain_name );
+		if ( isSubdomainWithUnavailableRootDomain( availability, query ) ) {
+			const rootDomain = getRootDomain( query );
 
 			return {
 				severity: 'error' as const,
-				message: (
-					<VStack spacing={ 2 }>
-						<span>
-							{ createInterpolateElement(
-								sprintf(
-									/* translators: %(rootDomain)s is the root domain, e.g. example.com */
-									__( 'Root domain (<strong>%(rootDomain)s</strong>): owned by another account' ),
-									{ rootDomain }
-								),
-								{ strong: <strong /> }
-							) }
-						</span>
-						<span>
-							{ createInterpolateElement(
-								sprintf(
-									/* translators: %(subdomain)s is the subdomain, e.g. cms.example.com */
-									__( 'Subdomain (<strong>%(subdomain)s</strong>): not yet connected' ),
-									{ subdomain: availability.domain_name }
-								),
-								{ strong: <strong /> }
-							) }
-						</span>
-						<span>
-							{ __(
-								'Subdomains must be added by the account that owns the root domain. Contact the owner of that account.'
-							) }
-						</span>
-					</VStack>
+				message: createInterpolateElement(
+					sprintf(
+						/* translators: %(rootDomain)s is the root domain (e.g. example.com), %(subdomain)s is the searched subdomain (e.g. cms.example.com) */
+						__(
+							'The root domain <strong>%(rootDomain)s</strong> is owned by another account, so only its owner can add <strong>%(subdomain)s</strong>.'
+						),
+						{ rootDomain, subdomain: query }
+					),
+					{ strong: <strong /> }
 				),
 			};
 		}

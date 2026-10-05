@@ -34,7 +34,7 @@ export const UnavailableSearchResult = () => {
 
 		// A mapped-root subdomain can't be transferred; the SearchNotice explains why.
 		// (REGISTERED never reaches here: not in STATUSES_WITH_MESSAGES.)
-		if ( isSubdomainWithUnavailableRootDomain( availability ) ) {
+		if ( isSubdomainWithUnavailableRootDomain( availability, query ) ) {
 			return null;
 		}
 
@@ -70,7 +70,7 @@ export const UnavailableSearchResult = () => {
 			reason: 'already-registered',
 			onTransferClick,
 		};
-	}, [ availability, onExternalDomainClick, allowsUsingOwnDomain ] );
+	}, [ availability, query, onExternalDomainClick, allowsUsingOwnDomain ] );
 
 	if ( ! props ) {
 		return null;

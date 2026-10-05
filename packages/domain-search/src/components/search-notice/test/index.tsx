@@ -1191,11 +1191,11 @@ describe( 'SearchNotice', () => {
 	} );
 
 	describe( 'subdomain with a mapped root domain', () => {
-		it( 'renders the root-vs-subdomain breakdown when the root domain is mapped (status)', async () => {
+		it( 'renders the ownership message when the root domain is mapped (status)', async () => {
 			mockNoSuggestionsAndAvailability(
 				'cms.example.com',
 				buildAvailability( {
-					domain_name: 'cms.example.com',
+					domain_name: 'example.com',
 					tld: 'com',
 					status: DomainAvailabilityStatus.MAPPED,
 				} )
@@ -1210,12 +1210,7 @@ describe( 'SearchNotice', () => {
 			expect( await screen.findByText( 'Error notice' ) ).toBeInTheDocument();
 
 			expect( screen.getAllByText( /owned by another account/ )[ 0 ] ).toBeInTheDocument();
-			expect( screen.getAllByText( /not yet connected/ )[ 0 ] ).toBeInTheDocument();
-			expect(
-				screen.getAllByText(
-					/Subdomains must be added by the account that owns the root domain/
-				)[ 0 ]
-			).toBeInTheDocument();
+			expect( screen.getAllByText( /only its owner can add/ )[ 0 ] ).toBeInTheDocument();
 
 			expect( screen.getAllByText( 'example.com' )[ 0 ] ).toBeInTheDocument();
 			expect( screen.getAllByText( 'cms.example.com' )[ 0 ] ).toBeInTheDocument();
@@ -1225,11 +1220,11 @@ describe( 'SearchNotice', () => {
 			).not.toBeInTheDocument();
 		} );
 
-		it( 'renders the root-vs-subdomain breakdown when the root domain is registered by another user', async () => {
+		it( 'renders the ownership message when the root domain is registered by another user', async () => {
 			mockNoSuggestionsAndAvailability(
 				'cms.example.com',
 				buildAvailability( {
-					domain_name: 'cms.example.com',
+					domain_name: 'example.com',
 					tld: 'com',
 					status: DomainAvailabilityStatus.REGISTERED,
 				} )
@@ -1243,15 +1238,37 @@ describe( 'SearchNotice', () => {
 
 			expect( await screen.findByText( 'Error notice' ) ).toBeInTheDocument();
 
-			expect(
-				screen.getAllByText(
-					/Subdomains must be added by the account that owns the root domain/
-				)[ 0 ]
-			).toBeInTheDocument();
+			expect( screen.getAllByText( /owned by another account/ )[ 0 ] ).toBeInTheDocument();
 
 			expect(
 				screen.queryByText( 'This domain is already connected to a WordPress.com site.' )
 			).not.toBeInTheDocument();
+		} );
+
+		it( 'does not show the ownership message when only the subdomain is mapped (root not on WordPress.com)', async () => {
+			// The backend leaves `domain_name` as the searched subdomain here (rather than
+			// swapping it to the root), so this is the user's own already-mapped subdomain
+			// of an externally-registered root, not a root owned by another account.
+			mockNoSuggestionsAndAvailability(
+				'cms.example.com',
+				buildAvailability( {
+					domain_name: 'cms.example.com',
+					tld: 'com',
+					status: DomainAvailabilityStatus.MAPPED,
+					mappable: DomainAvailabilityStatus.FORBIDDEN,
+					root_domain_provider: 'unknown',
+				} )
+			);
+
+			const { container } = render(
+				<TestDomainSearchWithSuggestions query="cms.example.com">
+					<SearchNotice />
+				</TestDomainSearchWithSuggestions>
+			);
+
+			await waitForElementToBeRemoved( () => screen.getByText( 'LOADING_TEST_CONTENT' ) );
+
+			expect( container ).toBeEmptyDOMElement();
 		} );
 
 		it( "shows the generic already-connected message, not the breakdown, for the user's own already-mapped subdomain", async () => {
@@ -1262,7 +1279,7 @@ describe( 'SearchNotice', () => {
 			mockNoSuggestionsAndAvailability(
 				'cms.example.com',
 				buildAvailability( {
-					domain_name: 'cms.example.com',
+					domain_name: 'example.com',
 					tld: 'com',
 					status: DomainAvailabilityStatus.MAPPABLE,
 					mappable: DomainAvailabilityStatus.MAPPED,
@@ -1280,10 +1297,6 @@ describe( 'SearchNotice', () => {
 			expect(
 				screen.getAllByText( 'This domain is already connected to a WordPress.com site.' )[ 0 ]
 			).toBeInTheDocument();
-
-			expect(
-				screen.queryByText( /Subdomains must be added by the account that owns the root domain/ )
-			).not.toBeInTheDocument();
 
 			expect( screen.queryByText( /owned by another account/ ) ).not.toBeInTheDocument();
 		} );
@@ -1313,9 +1326,7 @@ describe( 'SearchNotice', () => {
 
 			expect( notice ).toBeInTheDocument();
 
-			expect(
-				screen.queryByText( /Subdomains must be added by the account that owns the root domain/ )
-			).not.toBeInTheDocument();
+			expect( screen.queryByText( /owned by another account/ ) ).not.toBeInTheDocument();
 		} );
 	} );
 

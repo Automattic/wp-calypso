@@ -1,4 +1,5 @@
 import { DomainAvailability, DomainAvailabilityStatus } from '@automattic/api-core';
+import { getRootDomain } from './get-root-domain';
 import { isSubdomain } from './is-subdomain';
 
 /**
@@ -8,18 +9,31 @@ import { isSubdomain } from './is-subdomain';
  * owns the root domain can add it, so a "transfer domain" CTA is not an appropriate
  * resolution here.
  *
- * For a subdomain query the backend computes `status` against the ROOT domain:
- * REGISTERED reliably means another user registered the root, and MAPPED means the
- * root is mapped elsewhere. The `mappable` field is intentionally not used here: it
- * describes the subdomain itself and is set whenever the subdomain has any mapping
- * record (including the current user's own), so it yields false positives on a
- * user's own domains. The one residual ambiguity is that when the root is not on
- * WordPress.com at all, the backend copies the subdomain's own mapped state into
- * `status`, so MAPPED can occasionally reflect the current user's own subdomain
- * mapping; there is no response field that distinguishes that case.
+ * `searchedDomainName` is the name the user actually queried. Detection then relies
+ * on two things from the availability response:
+ *
+ * 1. The backend reports on the ROOT. For a subdomain query it swaps the response
+ *    `domain_name` to the root only when the root itself has a WordPress.com
+ *    registration or mapping; otherwise it leaves `domain_name` as the searched
+ *    subdomain and `status` describes the subdomain itself. Requiring
+ *    `domain_name === getRootDomain( searchedDomainName )` keeps us to the former,
+ *    which is the only case that is actually about the root's owner. This excludes
+ *    the user's own already-mapped subdomain of an externally-registered root (the
+ *    root is not on WordPress.com, so the response carries the subdomain).
+ * 2. REGISTERED means another user registered the root; MAPPED means the root is
+ *    mapped elsewhere. The `mappable` field is intentionally not used: it describes
+ *    the subdomain itself and is set for the user's own mappings too, so it yields
+ *    false positives.
  */
-export function isSubdomainWithUnavailableRootDomain( availability: DomainAvailability ): boolean {
-	if ( ! isSubdomain( availability.domain_name ) ) {
+export function isSubdomainWithUnavailableRootDomain(
+	availability: DomainAvailability,
+	searchedDomainName: string
+): boolean {
+	if ( ! isSubdomain( searchedDomainName ) ) {
+		return false;
+	}
+
+	if ( availability.domain_name !== getRootDomain( searchedDomainName ) ) {
 		return false;
 	}
 
