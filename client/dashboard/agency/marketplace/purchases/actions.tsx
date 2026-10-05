@@ -6,9 +6,9 @@ import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useCallback, useMemo } from 'react';
 import { useAnalytics } from '../../../app/analytics';
-import { a4aLink, wpcomLink } from '../../../utils/link';
+import { wpcomLink } from '../../../utils/link';
 import { urlToSlug } from '../../../utils/url';
-import { getMarketplaceHostingSectionRoute } from '../paths';
+import { getCrmDownloadsRoute, getMarketplaceHostingSectionRoute } from '../paths';
 import AssignLicenseModal from './assign-license-modal';
 import {
 	getLicenseProductName,
@@ -35,6 +35,7 @@ export function getLicenseActions( {
 	onDownload,
 	onNavigate,
 	onOpenHosting,
+	onLicenseAssigned,
 	recordTracksEvent,
 }: {
 	canRevoke: boolean;
@@ -46,6 +47,7 @@ export function getLicenseActions( {
 	onDownload: ( license: JetpackLicense ) => void;
 	onNavigate: ( to: string ) => void;
 	onOpenHosting: ( license: JetpackLicense ) => void;
+	onLicenseAssigned: () => void;
 	recordTracksEvent: ( eventName: string ) => void;
 } ): Action< JetpackLicense >[] {
 	// Only the agency owner can act on Pressable licenses.
@@ -169,6 +171,7 @@ export function getLicenseActions( {
 					licenseKey={ items[ 0 ].license_key }
 					productName={ getLicenseProductName( items[ 0 ] ) }
 					closeModal={ closeModal }
+					onAssigned={ onLicenseAssigned }
 				/>
 			),
 		},
@@ -194,9 +197,7 @@ export function getLicenseActions( {
 			label: __( 'Download Jetpack CRM Extensions' ),
 			isEligible: ( item ) =>
 				canAct( item ) && isJetpackCrmLicense( item ) && getLicenseStatus( item ) === 'assigned',
-			// The CRM downloads page still lives in the classic dashboard.
-			callback: ( items ) =>
-				window.location.assign( a4aLink( `/purchases/crm-downloads/${ items[ 0 ].license_key }` ) ),
+			callback: ( items ) => onNavigate( getCrmDownloadsRoute( items[ 0 ].license_key ) ),
 		},
 		{
 			id: 'revoke-license',
@@ -244,11 +245,13 @@ export function useLicenseActions( {
 	canRevoke,
 	isAgencyOwner,
 	isProvisioning,
+	onLicenseAssigned,
 }: {
 	agencyId: number;
 	canRevoke: boolean;
 	isAgencyOwner: boolean;
 	isProvisioning: boolean;
+	onLicenseAssigned: () => void;
 } ): Action< JetpackLicense >[] {
 	const navigate = useNavigate();
 	const { recordTracksEvent } = useAnalytics();
@@ -306,6 +309,7 @@ export function useLicenseActions( {
 				onDownload,
 				onNavigate,
 				onOpenHosting,
+				onLicenseAssigned,
 				recordTracksEvent,
 			} ),
 		[
@@ -316,6 +320,7 @@ export function useLicenseActions( {
 			onDownload,
 			onNavigate,
 			onOpenHosting,
+			onLicenseAssigned,
 			recordTracksEvent,
 		]
 	);

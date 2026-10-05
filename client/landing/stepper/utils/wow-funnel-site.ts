@@ -248,9 +248,6 @@ async function createSiteOrAdoptPending( {
 			siteTitle ?? '',
 			'#113AF5', // accent — backend requires a value.
 			false, // useThemeHeadstart.
-			// username: only ever a last-resort blog_name seed, and the server generates the
-			// funnel's arbitrary subdomain regardless — see /sites/new's wow-funnel block.
-			'',
 			null, // partnerBundle.
 			undefined, // storedSiteUrl — empty so the server generates an arbitrary subdomain.
 			undefined, // domainItem.

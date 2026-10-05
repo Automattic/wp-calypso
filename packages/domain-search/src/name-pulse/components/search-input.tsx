@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useDomainSearch } from '../../page/context';
 import { DomainSearchControls } from '../../ui';
 import { sanitizeDomainInput } from '../helpers';
+import { useNamePulseUrlQuery } from '../hooks/use-name-pulse-url-query';
 import { NamePulseFilter } from './filter';
 import './search-input.scss';
 
@@ -12,6 +13,8 @@ export const NamePulseSearchInput = ( { showFilter = false }: { showFilter?: boo
 	const { query, setQuery, events } = useDomainSearch();
 	const [ localQuery, setLocalQuery ] = useState( query );
 	const inputRef = useRef< HTMLInputElement >( null );
+
+	useNamePulseUrlQuery( query );
 
 	// The page swaps InitialState for NamePulseResults on the first query, which
 	// remounts this input; keep the caret where the user left it.

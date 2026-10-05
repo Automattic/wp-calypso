@@ -1,9 +1,10 @@
 /**
  * @jest-environment jsdom
  */
-import { screen } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import Snackbars from '../../../../app/snackbars';
 import { render } from '../../../../test-utils';
 import MarketplacePurchases from '../index';
 
@@ -40,11 +41,13 @@ function mockAgency() {
 }
 
 // The view is persisted to user preferences, which the page reads on mount.
-function mockPreferences() {
+function mockPreferences( feedback?: Record< string, unknown > ) {
 	nock( API )
 		.get( '/rest/v1.1/me/preferences' )
 		.query( true )
-		.reply( 200, { calypso_preferences: {} } )
+		.reply( 200, {
+			calypso_preferences: feedback ? { 'a4a-feedback': feedback } : {},
+		} )
 		.persist();
 }
 
@@ -53,6 +56,39 @@ function mockLicenses( items: unknown[] = [ unassignedWpcomLicense ] ) {
 		.get( '/wpcom/v2/jetpack-licensing/licenses' )
 		.query( true )
 		.reply( 200, { items, total_items: items.length, total_pages: 1 } )
+		.persist();
+}
+
+// A WordPress.com hosting license (like unassignedWpcomLicense) is only ever
+// offered "Create site", never "Assign to site", so the assign flow needs its
+// own, otherwise-assignable license.
+const ASSIGNABLE_LICENSE_KEY = 'jetpack-backup-t1_xyz';
+
+const unassignedJetpackLicense = {
+	license_id: 2,
+	license_key: ASSIGNABLE_LICENSE_KEY,
+	product_id: 2,
+	product: 'Jetpack VaultPress Backup',
+	user_id: null,
+	username: null,
+	blog_id: null,
+	siteurl: null,
+	has_downloads: true,
+	issued_at: '2026-01-01 00:00:00',
+	attached_at: null,
+	revoked_at: null,
+	owner_type: 'jetpack_partner_key',
+	quantity: null,
+	parent_license_id: null,
+	meta: null,
+	referral: null,
+};
+
+function mockAssignableLicense() {
+	nock( API )
+		.get( '/wpcom/v2/jetpack-licensing/licenses' )
+		.query( true )
+		.reply( 200, { items: [ unassignedJetpackLicense ], total_items: 1, total_pages: 1 } )
 		.persist();
 }
 
@@ -69,8 +105,67 @@ async function openRowActions() {
 	return user;
 }
 
+function mockAssignableSites() {
+	nock( API )
+		.get( '/wpcom/v2/jetpack-agency/sites' )
+		.query( true )
+		.reply( 200, { sites: [ { blog_id: 55, url: 'https://client.example.com' } ], total: 1 } )
+		.persist();
+}
+
+function mockAssign() {
+	nock( API )
+		.post( `/wpcom/v2/jetpack-licensing/license/${ ASSIGNABLE_LICENSE_KEY }/site` )
+		.reply( 200, {} );
+}
+
+async function assignLicense() {
+	const user = await openRowActions();
+	await user.click( await screen.findByRole( 'menuitem', { name: 'Assign to site' } ) );
+	await user.click( await screen.findByRole( 'radio', { name: 'https://client.example.com' } ) );
+	await user.click( screen.getByRole( 'button', { name: 'Assign to selected site' } ) );
+	return user;
+}
+
 describe( '<MarketplacePurchases>', () => {
-	afterEach( () => nock.cleanAll() );
+	afterEach( () => {
+		nock.cleanAll();
+		sessionStorage.clear();
+		window.history.replaceState( {}, '', '/purchases' );
+	} );
+
+	test( 'empties the cart and drops the receipt when a checkout returns here', async () => {
+		mockAgency();
+		mockPreferences();
+		mockLicenses();
+		mockPendingSites( 'pending' );
+		sessionStorage.setItem( 'shopping-card-selected-items', 'jetpack-backup-t1:1' );
+		window.history.replaceState(
+			{},
+			'',
+			'/purchases?status=unassigned&receipt_id=123&flash=checkout-success&purchased_plan=a4a_jetpack_backup_t1_monthly'
+		);
+
+		render( <MarketplacePurchases /> );
+
+		await waitFor( () => expect( window.location.search ).toBe( '?status=unassigned' ) );
+		expect( sessionStorage.getItem( 'shopping-card-selected-items' ) ).toBeNull();
+	} );
+
+	test( 'leaves the cart alone without a receipt', async () => {
+		mockAgency();
+		mockPreferences();
+		mockLicenses();
+		mockPendingSites( 'pending' );
+		sessionStorage.setItem( 'shopping-card-selected-items', 'jetpack-backup-t1:1' );
+
+		render( <MarketplacePurchases /> );
+		await screen.findByText( 'Not assigned' );
+
+		expect( sessionStorage.getItem( 'shopping-card-selected-items' ) ).toBe(
+			'jetpack-backup-t1:1'
+		);
+	} );
 
 	test( 'reports a license whose site is being created', async () => {
 		mockAgency();
@@ -146,5 +241,37 @@ describe( '<MarketplacePurchases>', () => {
 		await screen.findByText( 'Not assigned' );
 
 		expect( screen.queryByText( /owns this/ ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'does not ask a partner who already answered', async () => {
+		// SnackbarList reaches for window.scrollTo, which jsdom does not implement.
+		window.scrollTo = jest.fn();
+		mockAgency();
+		mockPreferences( { 'purchase-completed': { lastSubmittedAt: 1757000000000 } } );
+		mockAssignableLicense();
+		mockPendingSites( 'pending' );
+		mockAssignableSites();
+		mockAssign();
+
+		render(
+			<>
+				<MarketplacePurchases />
+				<Snackbars />
+			</>
+		);
+		await screen.findByText( 'Not assigned' );
+		await assignLicense();
+
+		await waitFor( () =>
+			expect(
+				screen.queryByRole( 'button', { name: 'Assign to selected site' } )
+			).not.toBeInTheDocument()
+		);
+		expect( screen.queryByText( 'Purchase complete!' ) ).not.toBeInTheDocument();
+		// The notice text also lands in the a11y live region, so this matches twice.
+		const [ notice ] = await screen.findAllByText(
+			'Jetpack VaultPress Backup has been assigned to https://client.example.com.'
+		);
+		expect( notice ).toBeVisible();
 	} );
 } );

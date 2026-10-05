@@ -12,7 +12,7 @@ const isCandidate = ( result: NamePulseDomainResult ) =>
 	!! result.is_cart_check;
 
 /**
- * The backend owns the TLD order, so the first candidates in list order are featured.
+ * Features the first candidates in grid order.
  */
 export function getTopResults(
 	results: NamePulseDomainResult[],
@@ -20,6 +20,12 @@ export function getTopResults(
 ): NamePulseDomainResult[] {
 	return results.filter( isCandidate ).slice( 0, count );
 }
+
+/**
+ * A row on sale leads with its first-year price, so that is the price it ranks by.
+ */
+const getFirstYearPrice = ( result: NamePulseDomainResult ) =>
+	result.sale_cost ?? result.raw_price ?? Infinity;
 
 /**
  * AI mode has no exact matches to feature, so the cheapest available
@@ -40,7 +46,7 @@ export function getAiTopResults(
 	return Array.from( byName.values() )
 		.sort(
 			( a, b ) =>
-				( a.raw_price ?? Infinity ) - ( b.raw_price ?? Infinity ) ||
+				getFirstYearPrice( a ) - getFirstYearPrice( b ) ||
 				a.domain_name.localeCompare( b.domain_name )
 		)
 		.slice( 0, count );

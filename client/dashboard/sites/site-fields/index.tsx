@@ -17,8 +17,6 @@ import { useResizeObserver } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
 import { Badge } from '@wordpress/ui';
 import { useInView } from 'react-intersection-observer';
-import { LAUNCHPAD_PERSONALIZATION_EXPERIMENT, normalizeVariation } from 'calypso/lib/ai-launchpad';
-import { useExperiment } from 'calypso/lib/explat';
 import { useAnalytics } from '../../app/analytics';
 import ComponentViewTracker from '../../components/component-view-tracker';
 import SiteIcon from '../../components/site-icon';
@@ -35,7 +33,6 @@ import { getVisibilityLabels } from '../../utils/site-visibility';
 import { canManageSite } from '../features';
 import { useAiLaunchpad } from '../hooks/use-ai-launchpad';
 import SitePreview from '../site-preview';
-import { JetpackLogo } from './jetpack-logo';
 import { PlanExpiryStatus } from './plan-expiry-status';
 import { useIsSiteUnreachable } from './site-unreachable-status';
 import type { SiteBadge, SiteBlockingStatus, SiteVisibility } from '../../types';
@@ -374,15 +371,9 @@ export function MediaStorage( { site }: { site?: Site } ) {
 
 function SiteLaunchNag( { siteSlug }: { siteSlug: string } ) {
 	const { recordTracksEvent } = useAnalytics();
-	const { isCompleted, setupUrl } = useAiLaunchpad( siteSlug );
-	const [ , personalizationAssignment ] = useExperiment( LAUNCHPAD_PERSONALIZATION_EXPERIMENT );
+	const { isCompleted, isNoGuidance, setupUrl } = useAiLaunchpad( siteSlug );
 
-	if ( isCompleted ) {
-		return null;
-	}
-
-	// The no_guidance launchpad-personalization variation shows no launchpad mention at all.
-	if ( normalizeVariation( personalizationAssignment?.variationName ) === 'no_guidance' ) {
+	if ( isCompleted || isNoGuidance ) {
 		return null;
 	}
 
@@ -441,12 +432,7 @@ export function Plan( {
 		if ( ! isJetpack ) {
 			return <IneligibleIndicator />;
 		}
-		return (
-			<HStack spacing={ 1 } expanded={ false } justify="flex-start">
-				<JetpackLogo size={ 16 } />
-				<span>{ value }</span>
-			</HStack>
-		);
+		return <span>{ value }</span>;
 	}
 
 	return (

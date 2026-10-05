@@ -1082,9 +1082,6 @@ export function getInitialWpcomStoreState(
 	contactDetails: ManagedContactDetails
 ): WpcomStoreState {
 	return {
-		recaptchaClientId: -1,
-		transactionResult: undefined,
 		contactDetails,
-		vatDetails: {},
 	};
 }

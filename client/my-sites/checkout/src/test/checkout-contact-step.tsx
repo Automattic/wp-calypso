@@ -9,9 +9,9 @@ import { dispatch } from '@wordpress/data';
 import nock from 'nock';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { isMarketplaceProduct } from 'calypso/state/products-list/selectors';
-import { getDomainsBySiteId, hasLoadedSiteDomains } from 'calypso/state/sites/domains/selectors';
 import { getPlansBySiteId } from 'calypso/state/sites/plans/selectors/get-plans-by-site';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { resetCheckoutStores } from '../lib/checkout-stores';
 import { CHECKOUT_STORE } from '../lib/wpcom-store';
 import {
 	domainProduct,
@@ -26,6 +26,7 @@ import {
 	mockCachedContactDetailsEndpoint,
 	mockGetPaymentMethodsEndpoint,
 	mockLogStashEndpoint,
+	mockGetSiteDomainsEndpoint,
 	mockGetSupportedCountriesEndpoint,
 	oneTimePurchase,
 } from './util';
@@ -33,7 +34,6 @@ import { MockCheckout } from './util/mock-checkout';
 import type { CartKey, ResponseCart } from '@automattic/shopping-cart';
 
 jest.mock( 'calypso/state/sites/selectors' );
-jest.mock( 'calypso/state/sites/domains/selectors' );
 jest.mock( 'calypso/state/selectors/is-site-automated-transfer' );
 jest.mock( 'calypso/state/sites/plans/selectors/get-plans-by-site' );
 jest.mock( 'calypso/my-sites/checkout/use-cart-key' );
@@ -56,8 +56,7 @@ describe( 'Checkout contact step', () => {
 	getPlansBySiteId.mockImplementation( () => ( {
 		data: getActivePersonalPlanDataForType( 'yearly' ),
 	} ) );
-	hasLoadedSiteDomains.mockImplementation( () => true );
-	getDomainsBySiteId.mockImplementation( () => [] );
+	mockGetSiteDomainsEndpoint( [] );
 	isMarketplaceProduct.mockImplementation( () => false );
 	isJetpackSite.mockImplementation( () => false );
 	( useCartKey as jest.Mock ).mockImplementation( () => mainCartKey );
@@ -66,6 +65,7 @@ describe( 'Checkout contact step', () => {
 	beforeEach( () => {
 		( useViewportMatch as jest.Mock ).mockReturnValue( false );
 		dispatch( CHECKOUT_STORE ).reset();
+		resetCheckoutStores();
 		nock.cleanAll();
 		mockGetVatInfoEndpoint( {} );
 		mockGetPaymentMethodsEndpoint( [] );

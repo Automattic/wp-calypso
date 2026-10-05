@@ -82,6 +82,52 @@ describe( 'DomainSuggestionCTA', () => {
 			} );
 		} );
 
+		it( 'labels the cta "Select" when the select cta is enabled', async () => {
+			const user = userEvent.setup();
+
+			mockGetSuggestionsQuery( {
+				params: { query: 'test-select' },
+				suggestions: [ buildSuggestion( { domain_name: 'test-select.com' } ) ],
+			} );
+
+			mockGetAvailabilityQuery( {
+				params: { domainName: 'test-select.com' },
+				availability: buildAvailability( {
+					domain_name: 'test-select.com',
+					status: DomainAvailabilityStatus.AVAILABLE,
+				} ),
+			} );
+
+			const onAddDomainToCart = jest.fn();
+
+			render(
+				<TestDomainSearchWithSuggestions
+					query="test-select"
+					config={ { showSelectCta: true } }
+					events={ { onAddDomainToCart } }
+				>
+					<DomainSuggestionsList>
+						<DomainSuggestionCTA domainName="test-select.com" />
+					</DomainSuggestionsList>
+				</TestDomainSearchWithSuggestions>
+			);
+
+			const selectCta = await screen.findByRole( 'button', { name: 'Select' } );
+
+			expect( screen.queryByRole( 'button', { name: 'Add to cart' } ) ).not.toBeInTheDocument();
+
+			await user.click( selectCta );
+
+			await waitFor( () => {
+				expect( onAddDomainToCart ).toHaveBeenCalledWith(
+					'test-select.com',
+					0,
+					false,
+					expect.any( String )
+				);
+			} );
+		} );
+
 		/**
 		 * The scenario in this test case can happen when the user searches for a FQDN with a
 		 * TLD that's not present in the TLDs filter
@@ -513,6 +559,36 @@ describe( 'DomainSuggestionCTA', () => {
 			await waitFor( () => {
 				expect( screen.getByText( 'Failed to fetch the availability' ) ).toBeInTheDocument();
 			} );
+		} );
+
+		it( 'labels the error cta "Select" when the select cta is enabled', async () => {
+			const user = userEvent.setup();
+
+			mockGetSuggestionsQuery( {
+				params: { query: 'test-error' },
+				suggestions: [ buildSuggestion( { domain_name: 'test-error.com' } ) ],
+			} );
+
+			mockGetAvailabilityQuery( {
+				params: { domainName: 'test-error.com' },
+				availability: new Error( 'Failed to fetch the availability' ),
+			} );
+
+			render(
+				<TestDomainSearchWithSuggestions query="test-error" config={ { showSelectCta: true } }>
+					<DomainSuggestionsList>
+						<DomainSuggestionCTA domainName="test-error.com" />
+					</DomainSuggestionsList>
+				</TestDomainSearchWithSuggestions>
+			);
+
+			await user.click( await screen.findByRole( 'button', { name: 'Select' } ) );
+
+			await waitFor( () => {
+				expect( screen.getByRole( 'button', { name: 'Select' } ) ).toHaveClass( 'is-destructive' );
+			} );
+
+			expect( screen.queryByRole( 'button', { name: 'Add to cart' } ) ).not.toBeInTheDocument();
 		} );
 
 		it( 'allows retrying the operation', async () => {

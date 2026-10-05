@@ -51,10 +51,12 @@ import useRemoveFromCartAndRedirect from '../hooks/use-remove-from-cart-and-redi
 import { useStoredPaymentMethods } from '../hooks/use-stored-payment-methods';
 import { logStashLoadErrorEvent, logStashEvent, convertErrorToString } from '../lib/analytics';
 import blikProcessor from '../lib/blik-processor';
+import { recaptchaClientIdStore } from '../lib/checkout-stores';
 import existingCardProcessor from '../lib/existing-card-processor';
 import existingPayPalPPCPProcessor from '../lib/existing-paypal-ppcp-processor';
 import freePurchaseProcessor from '../lib/free-purchase-processor';
 import genericRedirectProcessor from '../lib/generic-redirect-processor';
+import { isExternalA4ACheckout } from '../lib/is-external-a4a-checkout';
 import multiPartnerCardProcessor from '../lib/multi-partner-card-processor';
 import payPalProcessor from '../lib/paypal-express-processor';
 import { payPalJsProcessor } from '../lib/paypal-js-processor';
@@ -62,6 +64,7 @@ import { pixAutomaticoProcessor } from '../lib/pix-automatico-processor';
 import { pixProcessor } from '../lib/pix-processor';
 import { translateResponseCartToWPCOMCart } from '../lib/translate-cart';
 import upiProcessor from '../lib/upi-processor';
+import { useValueStore } from '../lib/value-store';
 import weChatProcessor from '../lib/we-chat-processor';
 import webPayProcessor from '../lib/web-pay-processor';
 import { CHECKOUT_STORE } from '../lib/wpcom-store';
@@ -467,10 +470,7 @@ export default function CheckoutMain( {
 		( allowedPaymentMethods.includes( 'card' ) && isLoadingStoredCards );
 
 	const contactDetails = useSelect( ( select ) => select( CHECKOUT_STORE ).getContactInfo(), [] );
-	const recaptchaClientId = useSelect(
-		( select ) => select( CHECKOUT_STORE ).getRecaptchaClientId(),
-		[]
-	);
+	const recaptchaClientId = useValueStore( recaptchaClientIdStore );
 
 	const paymentMethods = arePaymentMethodsLoading
 		? []
@@ -603,7 +603,7 @@ export default function CheckoutMain( {
 					transactionData,
 					dataForProcessor,
 					translate,
-					sitelessCheckoutType === 'a4a'
+					isExternalA4ACheckout( sitelessCheckoutType )
 				),
 			'stripe-blik': ( transactionData: unknown ) =>
 				blikProcessor( transactionData, dataForProcessor, translate ),

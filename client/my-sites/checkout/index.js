@@ -18,6 +18,9 @@ import {
 	checkoutUnifiedSiteless,
 	checkoutWpcomSiteless,
 	checkoutA4ASiteless,
+	checkoutA4AAgencySiteless,
+	checkoutA4AAgencySite,
+	selectA4AAgencySite,
 	checkoutRenewalBySubscriptionId,
 	checkoutThankYou,
 	licensingPendingAsyncActivation,
@@ -57,6 +60,29 @@ export default function () {
 		setLocaleMiddleware(),
 		noSite,
 		checkoutA4ASiteless,
+		makeLayout,
+		clientRender
+	);
+
+	// An agency paying for its own cart from the Automattic for Agencies dashboard.
+	page(
+		`/checkout/agency/purchase`,
+		redirectLoggedOut,
+		setLocaleMiddleware(),
+		noSite,
+		checkoutA4AAgencySiteless,
+		makeLayout,
+		clientRender
+	);
+
+	// An agency launching one of its development sites: the plan for that site,
+	// paid on the site's own cart.
+	page(
+		`/checkout/agency/purchase/:site/:product`,
+		redirectLoggedOut,
+		setLocaleMiddleware(),
+		selectA4AAgencySite,
+		checkoutA4AAgencySite,
 		makeLayout,
 		clientRender
 	);

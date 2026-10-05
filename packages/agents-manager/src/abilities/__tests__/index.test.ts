@@ -125,7 +125,7 @@ describe( 'abilities facade', () => {
 		);
 	} );
 
-	it( 'stays closed on a custom-post-type editor screen', async () => {
+	it( 'stays closed on a custom-post-type classic editor', async () => {
 		document.body.classList.add( 'post-php', 'post-type-product' );
 		const { amToolProvider } = await load();
 

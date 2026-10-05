@@ -92,6 +92,7 @@ export function getSitePlanDisplayName( site: Site ) {
 		if ( products.length > 1 ) {
 			return __( 'Jetpack' );
 		}
+		return __( 'Jetpack Free' );
 	}
 
 	// Display the short name for WP.com plans.

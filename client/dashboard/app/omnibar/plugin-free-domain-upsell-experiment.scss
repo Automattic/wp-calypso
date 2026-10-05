@@ -1,0 +1,84 @@
+// Keep in sync with the chip in jetpack-mu-wpcom's `wpcom-admin-bar.scss`.
+.omnibar .omnibar__menu.omnibar__free-domain-upsell {
+	--free-domain-upsell-color: var( --wp-admin-theme-color, #3858e9 );
+	--free-domain-upsell-background: color-mix(
+		in srgb,
+		var( --free-domain-upsell-color ) 22%,
+		transparent
+	);
+	--free-domain-upsell-background-hover: color-mix(
+		in srgb,
+		var( --free-domain-upsell-color ) 42%,
+		transparent
+	);
+	--free-domain-upsell-ring: color-mix(
+		in srgb,
+		color-mix( in srgb, var( --free-domain-upsell-color ) 75%, var( --omnibar-text-color ) ) 45%,
+		transparent
+	);
+	--free-domain-upsell-ring-hover: color-mix(
+		in srgb,
+		color-mix( in srgb, var( --free-domain-upsell-color ) 60%, var( --omnibar-text-color ) ) 80%,
+		transparent
+	);
+	--free-domain-upsell-icon: color-mix(
+		in srgb,
+		var( --free-domain-upsell-color ) 55%,
+		var( --omnibar-text-color )
+	);
+	--free-domain-upsell-icon-hover: color-mix(
+		in srgb,
+		var( --free-domain-upsell-color ) 35%,
+		var( --omnibar-text-color )
+	);
+
+	padding-inline: 8px;
+
+	&:hover,
+	&:focus-visible,
+	&:active {
+		background-color: transparent;
+	}
+
+	.omnibar__site-action {
+		gap: 4px;
+		height: 36px;
+		padding-inline: 2px;
+		border-radius: 4px;
+		background: var( --free-domain-upsell-background );
+		box-shadow: inset 0 0 0 1px var( --free-domain-upsell-ring );
+		color: var( --omnibar-text-color );
+		line-height: 24px;
+		transition:
+			background 0.12s linear,
+			box-shadow 0.12s linear;
+
+		@media ( min-width: 782px ) {
+			height: 24px;
+			padding-inline: 6px 8px;
+		}
+	}
+
+	svg {
+		width: 32px;
+		height: 32px;
+		color: var( --free-domain-upsell-icon );
+		transition: color 0.12s linear;
+
+		@media ( min-width: 782px ) {
+			width: 16px;
+			height: 16px;
+		}
+	}
+
+	&:hover .omnibar__site-action,
+	&:focus-visible .omnibar__site-action {
+		background: var( --free-domain-upsell-background-hover );
+		box-shadow: inset 0 0 0 1px var( --free-domain-upsell-ring-hover );
+	}
+
+	&:hover svg,
+	&:focus-visible svg {
+		color: var( --free-domain-upsell-icon-hover );
+	}
+}
