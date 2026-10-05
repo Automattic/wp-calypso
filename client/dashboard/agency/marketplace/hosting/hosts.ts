@@ -49,7 +49,7 @@ export const getHosts = (): Host[] => [
 		art: hostSharedPlanPressable,
 		includes: [
 			// Signature 1–17, with a custom plan above 500 installs.
-			__( 'From 1 to 500+ installs' ),
+			__( 'From 1 to 500+ WordPress installs' ),
 			__( 'Free staging site' ),
 			__( 'Unmetered bandwidth' ),
 			__( 'Premium plans up to 10M visits per month' ),
