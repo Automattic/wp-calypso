@@ -66,6 +66,8 @@ const mockSite: Site = {
 	plan: {},
 } as Site;
 
+const originalLocation = window.location;
+
 beforeEach( () => {
 	jest.clearAllMocks();
 	mockShoppingCartImportError = null;
@@ -75,6 +77,15 @@ beforeEach( () => {
 	mockFetchDomainSuggestions.mockResolvedValue( [
 		{ domain_name: 'example.com', product_slug: 'domain_reg' },
 	] );
+	mockReplaceProductsInCart.mockResolvedValue( undefined );
+	Object.defineProperty( window, 'location', {
+		value: { href: '', hostname: 'wordpress.com', search: '' },
+		writable: true,
+	} );
+} );
+
+afterEach( () => {
+	Object.defineProperty( window, 'location', { value: originalLocation, writable: true } );
 } );
 
 describe( 'DomainUpsellCard', () => {
@@ -195,5 +206,44 @@ describe( 'DomainUpsellCard', () => {
 
 		// The button should no longer be busy after the failure.
 		expect( button ).not.toHaveClass( 'is-busy' );
+	} );
+
+	test( 'claims the suggested domain and continues to checkout', async () => {
+		const user = userEvent.setup();
+
+		render( <DomainUpsellCard site={ mockSite } /> );
+
+		const button = await screen.findByRole( 'button', { name: 'Claim this domain' } );
+		await user.click( button );
+
+		await waitFor( () => {
+			expect( mockReplaceProductsInCart ).toHaveBeenCalledWith( [
+				{ product_slug: 'domain_reg', meta: 'example.com' },
+			] );
+		} );
+		await waitFor( () => {
+			expect( window.location.href ).toContain( '/checkout/' );
+		} );
+	} );
+
+	test( 'sends the user to pick a domain instead of an empty checkout when there is no trustworthy suggestion', async () => {
+		const user = userEvent.setup();
+		mockFetchDomainSuggestions.mockResolvedValue( [] );
+
+		render(
+			<DomainUpsellCard
+				site={ { ...mockSite, plan: { is_free: false, billing_period: 'Yearly' } } as Site }
+			/>
+		);
+
+		const button = await screen.findByRole( 'button', { name: 'Claim this domain' } );
+		await user.click( button );
+
+		await waitFor( () => {
+			expect( window.location.href ).toContain( 'upsell-url' );
+		} );
+		// No domain to claim, so nothing is added to the cart and we never land on checkout.
+		expect( mockReplaceProductsInCart ).not.toHaveBeenCalled();
+		expect( window.location.href ).not.toContain( '/checkout/' );
 	} );
 } );

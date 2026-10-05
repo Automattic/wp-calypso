@@ -72,6 +72,14 @@ const DomainUpsellCardContent = ( {
 	}
 
 	const backUrl = redirectToDashboardLink( { supportBackport: true } );
+	const chooseYourOwnUrl = wpcomLink(
+		getDomainAndPlanUpsellUrl( {
+			siteSlug: site.slug,
+			backUrl,
+			// Literal template to avoid pulling the dashboard router into tests.
+			domainConnectionSetupUrl: dashboardLink( '/domains/%s/domain-connection-setup' ),
+		} )
+	);
 	const handleUpsell = async () => {
 		if ( suggestedDomain ) {
 			setIsSubmitting( true );
@@ -104,6 +112,10 @@ const DomainUpsellCardContent = ( {
 					step: 'plans',
 				} )
 			);
+		} else if ( ! suggestedDomain ) {
+			// Nothing to add to the cart, so send the user to pick a domain
+			// instead of landing on an empty checkout.
+			window.location.href = chooseYourOwnUrl;
 		} else {
 			window.location.href = addQueryArgs( wpcomLink( `/checkout/${ site.slug }` ), {
 				cancel_to: backUrl,
@@ -112,15 +124,6 @@ const DomainUpsellCardContent = ( {
 			} );
 		}
 	};
-
-	const chooseYourOwnUrl = wpcomLink(
-		getDomainAndPlanUpsellUrl( {
-			siteSlug: site.slug,
-			backUrl,
-			// Literal template to avoid pulling the dashboard router into tests.
-			domainConnectionSetupUrl: dashboardLink( '/domains/%s/domain-connection-setup' ),
-		} )
-	);
 
 	return (
 		<Callout
