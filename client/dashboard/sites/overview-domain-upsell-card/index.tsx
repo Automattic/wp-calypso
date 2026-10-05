@@ -150,6 +150,7 @@ const DomainUpsellCardContent = ( {
 					title={ __( 'Responsive website design' ) }
 					domain={ suggestedDomain?.domain_name }
 					search={ search }
+					isLoading={ isLoading }
 				/>
 			}
 			imageVariant="full-bleed"

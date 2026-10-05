@@ -246,4 +246,17 @@ describe( 'DomainUpsellCard', () => {
 		expect( mockReplaceProductsInCart ).not.toHaveBeenCalled();
 		expect( window.location.href ).not.toContain( '/checkout/' );
 	} );
+
+	test( 'stops blurring the illustration once the query resolves without a suggestion', async () => {
+		mockFetchDomainSuggestions.mockResolvedValue( [] );
+
+		render( <DomainUpsellCard site={ mockSite } /> );
+
+		// The illustration renders the search term in its address bar. Once the
+		// query resolves without a suggestion it must drop the loading blur
+		// instead of leaving a permanently blurred placeholder.
+		await waitFor( () => {
+			expect( screen.getByText( 'example' ) ).not.toHaveAttribute( 'filter' );
+		} );
+	} );
 } );
