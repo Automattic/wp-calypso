@@ -76,8 +76,6 @@ export default function PressablePlanTable( {
 			: [] ),
 	];
 	const isSmallScreen = useViewportMatch( 'small', '<' );
-	// Premium plans are all one site: a column of 1s says nothing.
-	const showInstalls = new Set( rows.map( ( { plan } ) => plan.install ) ).size > 1;
 	// On phones the table keeps the columns that tell plans apart, so it fits the card.
 	const showMoreColumns = ! isSmallScreen;
 	const tableScroll = usePlanTableScroll();
@@ -95,7 +93,7 @@ export default function PressablePlanTable( {
 					<thead>
 						<tr>
 							<th scope="col">{ __( 'Plan' ) }</th>
-							{ showInstalls && <th scope="col">{ __( 'Installs' ) }</th> }
+							<th scope="col">{ __( 'Installs' ) }</th>
 							<th scope="col">
 								{ isSmallScreen ? __( 'Monthly visits' ) : __( 'Visits a month' ) }
 							</th>
@@ -136,7 +134,7 @@ export default function PressablePlanTable( {
 											) }
 										</label>
 									</td>
-									{ showInstalls && <td>{ row.installs }</td> }
+									<td>{ row.installs }</td>
 									<td>{ row.visits }</td>
 									<td>{ row.storage }</td>
 									{ showMoreColumns && <td>{ row.workers }</td> }
