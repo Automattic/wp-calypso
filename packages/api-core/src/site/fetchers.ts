@@ -60,6 +60,7 @@ export const SITE_OPTIONS = [
 	'is_domain_only',
 	'is_redirect',
 	'is_wpforteams_site',
+	'jetpack_connection_active_plugins',
 	'jetpack_recovery_mode_status',
 	'jetpack_sso_require_two_step',
 	'jetpack_version',

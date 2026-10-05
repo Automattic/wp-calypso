@@ -51,6 +51,8 @@ export interface SiteOptions {
 	/** Whether a plan change would move the site off the pre-2026 feature gating. */
 	is_legacy_gating_site?: boolean;
 	is_wpforteams_site?: boolean;
+	/** Slugs of the active plugins that use the Jetpack connection, e.g. `jetpack-backup`. */
+	jetpack_connection_active_plugins?: string[];
 	jetpack_recovery_mode_status?: {
 		recovery_mode_email_last_sent?: number;
 		recovery_session_entered_at?: number;
