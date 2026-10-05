@@ -582,7 +582,7 @@ function PluginDetails( props ) {
 									{ showBackupShortcut && (
 										<Notice
 											text={ translate(
-												'Incompatible plugin: Your site plan already includes Jetpack VaultPress Backup.'
+												'Your site plan already includes Jetpack VaultPress Backup.'
 											) }
 											status="is-warning"
 											showDismiss={ false }
