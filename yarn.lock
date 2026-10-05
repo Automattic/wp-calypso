@@ -15385,7 +15385,6 @@ __metadata:
     is-my-json-valid: "npm:^2.20.6"
     jest: "npm:^29.7.0"
     jest-fetch-mock: "npm:^3.0.3"
-    jest-mock-process: "npm:^2.0.0"
     jest-when: "npm:^3.7.0"
     lodash-es: "npm:^4.18.1"
     lru: "npm:^3.1.0"
@@ -15396,7 +15395,6 @@ __metadata:
     moment-timezone-data-webpack-plugin: "npm:^1.5.1"
     nock: "npm:^13.5.6"
     path-browserify: "npm:^1.0.1"
-    percentage-regex: "npm:^3.0.0"
     phone: "npm:^3.1.71"
     photon: "workspace:^"
     pkg-dir: "npm:^5.0.0"
@@ -22950,15 +22948,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jest-mock-process@npm:^2.0.0":
-  version: 2.0.0
-  resolution: "jest-mock-process@npm:2.0.0"
-  peerDependencies:
-    jest: ">=23.4"
-  checksum: 5c9d456e70d7f14f0667306c9fb7f1a91a53a158a55df4d400bf89a243cf7a894dcea036eabacf3a7244cdcc5ce214a37d5d8beeebc68c7a6df39fd210c1ecce
-  languageName: node
-  linkType: hard
-
 "jest-mock@npm:^29.7.0":
   version: 29.7.0
   resolution: "jest-mock@npm:29.7.0"
@@ -27093,13 +27082,6 @@ __metadata:
   version: 0.4.1
   resolution: "pe-library@npm:0.4.1"
   checksum: 75c772e74c75d9710a2bf6b7e88fb57e4c26788422abd3b38c8100c796e311c72102ef71159b9e0b56f05f616a968e11b8ec218bcd625c896df067235af8da77
-  languageName: node
-  linkType: hard
-
-"percentage-regex@npm:^3.0.0":
-  version: 3.0.0
-  resolution: "percentage-regex@npm:3.0.0"
-  checksum: ad8767652cdde962533a2537508f74a085fdee195a4eb86ba4bae50c4adde3c5a7fd46a9889e1335258a703d946da5e374142d7dac82a4b68b288822995d5e2c
   languageName: node
   linkType: hard
 
