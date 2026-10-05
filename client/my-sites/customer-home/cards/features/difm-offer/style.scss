@@ -1,0 +1,23 @@
+@import "@automattic/typography/styles/variables";
+@import "@automattic/typography/styles/fonts";
+
+.difm-offer__card {
+	h3 {
+		font-family: $brand-serif;
+		font-style: normal;
+		font-weight: 400;
+		font-size: rem(32px);
+		line-height: 40px;
+		color: var(--studio-gray-100);
+	}
+
+	.difm-offer__description {
+		margin-top: 8px;
+		font-size: $font-body;
+		color: var(--color-text-subtle);
+	}
+
+	.difm-offer__actions {
+		padding-top: 16px;
+	}
+}

@@ -1,10 +1,21 @@
 import { WordPressLogo } from '@automattic/components';
 import { TASK_USE_BUILT_BY } from 'calypso/my-sites/customer-home/cards/constants';
+import useMyHomeDifmOffer from 'calypso/my-sites/customer-home/cards/features/difm-offer/use-my-home-difm-offer';
 import Task from 'calypso/my-sites/customer-home/cards/tasks/task';
 
 import './style.scss';
 
 const UseBuiltBy = () => {
+	// The free DIFM offer card replaces this paid DIFM promotion when it shows.
+	const { copy: difmOfferCopy } = useMyHomeDifmOffer();
+	const isReplacedByDifmOffer = !! difmOfferCopy;
+
+	UseBuiltBy.isDisabled = isReplacedByDifmOffer;
+
+	if ( isReplacedByDifmOffer ) {
+		return null;
+	}
+
 	return (
 		<Task
 			title="Get expert help for your website"

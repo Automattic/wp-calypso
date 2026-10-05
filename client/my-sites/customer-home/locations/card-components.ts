@@ -1,5 +1,6 @@
 import BloggingPrompt from 'calypso/components/blogging-prompt-card';
 import {
+	FEATURE_DIFM_OFFER,
 	FEATURE_DOMAIN_UPSELL,
 	FEATURE_READER,
 	FEATURE_STATS,
@@ -48,6 +49,7 @@ import {
 	TASK_WEBINARS,
 	LAUNCHPAD_INTENT_NEWSLETTER_GOAL,
 } from 'calypso/my-sites/customer-home/cards/constants';
+import DifmOfferFeature from 'calypso/my-sites/customer-home/cards/features/difm-offer';
 import DomainUpsellFeature from 'calypso/my-sites/customer-home/cards/features/domain-upsell';
 import HelpSearch from 'calypso/my-sites/customer-home/cards/features/help-search';
 import ReaderCard from 'calypso/my-sites/customer-home/cards/features/reader';
@@ -135,6 +137,7 @@ const PRIMARY_CARD_COMPONENTS: CardComponentMap = {
 
 const CARD_COMPONENTS: CardComponentMap = {
 	...PRIMARY_CARD_COMPONENTS,
+	[ FEATURE_DIFM_OFFER ]: DifmOfferFeature,
 	[ FEATURE_DOMAIN_UPSELL ]: DomainUpsellFeature,
 	[ FEATURE_READER ]: ReaderCard,
 	[ FEATURE_SUPPORT ]: HelpSearch,
