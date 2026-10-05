@@ -75,4 +75,23 @@ describe( 'PluginsBrowserItem Incompatible Plugins Message', () => {
 		const message = screen.queryByText( 'Why is this plugin not compatible with WordPress.com?' );
 		expect( message ).not.toBeInTheDocument();
 	} );
+
+	test( 'should render the backup message instead of the generic one for Jetpack Backup when logged out', () => {
+		isJetpackSite.mockImplementation( () => false );
+		isAtomicSite.mockImplementation( () => false );
+
+		const props = {
+			plugin: { name: 'Jetpack VaultPress Backup', slug: 'jetpack-backup' },
+		};
+
+		render( <PluginsBrowserListElement { ...props } /> );
+		expect(
+			screen.getByText(
+				'WordPress.com plans that support plugins already include Jetpack VaultPress Backup.'
+			)
+		).toBeInTheDocument();
+		expect(
+			screen.queryByText( 'Why is this plugin not compatible with WordPress.com?' )
+		).not.toBeInTheDocument();
+	} );
 } );

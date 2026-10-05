@@ -30,7 +30,7 @@ import { getSoftwareSlug } from 'calypso/lib/plugins/utils';
 import { MarketplaceReviewsCards } from 'calypso/my-sites/marketplace/components/reviews-cards';
 import { ReviewsModal } from 'calypso/my-sites/marketplace/components/reviews-modal';
 import PluginNotices from 'calypso/my-sites/plugins/notices';
-import { isCompatiblePlugin } from 'calypso/my-sites/plugins/plugin-compatibility';
+import { isBackupPlugin, isCompatiblePlugin } from 'calypso/my-sites/plugins/plugin-compatibility';
 import PluginDetailsCTA from 'calypso/my-sites/plugins/plugin-details-CTA';
 import PluginDetailsHeader from 'calypso/my-sites/plugins/plugin-details-header';
 import PluginDetailsNotices from 'calypso/my-sites/plugins/plugin-details-notices';
@@ -162,7 +162,7 @@ function PluginDetails( props ) {
 	}, [ isJetpackSelfHosted, props.pluginSlug ] );
 
 	const isIncompatibleBackupPlugin = useMemo( () => {
-		return 'vaultpress' === props.pluginSlug && ! isJetpackSelfHosted;
+		return isBackupPlugin( props.pluginSlug ) && ! isJetpackSelfHosted;
 	}, [ isJetpackSelfHosted, props.pluginSlug ] );
 
 	// Fetch WPorg plugin data if needed
@@ -565,15 +565,23 @@ function PluginDetails( props ) {
 
 									{ isIncompatibleBackupPlugin && (
 										<Notice
-											text={ translate(
-												'Incompatible plugin: You site plan already includes Jetpack VaultPress Backup.'
-											) }
+											text={
+												selectedSite
+													? translate(
+															'Incompatible plugin: Your site plan already includes Jetpack VaultPress Backup.'
+														)
+													: translate(
+															'Incompatible plugin: WordPress.com plans that support plugins already include Jetpack VaultPress Backup.'
+														)
+											}
 											status="is-warning"
 											showDismiss={ false }
 										>
-											<NoticeAction href={ `/backup/${ selectedSite.slug }` }>
-												{ translate( 'View backups' ) }
-											</NoticeAction>
+											{ selectedSite && (
+												<NoticeAction href={ `/backup/${ selectedSite.slug }` }>
+													{ translate( 'View backups' ) }
+												</NoticeAction>
+											) }
 										</Notice>
 									) }
 

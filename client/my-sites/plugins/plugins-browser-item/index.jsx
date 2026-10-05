@@ -14,7 +14,7 @@ import version_compare from 'calypso/lib/version-compare';
 import { IntervalLength } from 'calypso/my-sites/marketplace/components/billing-interval-switcher/constants';
 import { useIsMarketplaceRedesignEnabled } from 'calypso/my-sites/plugins/hooks/use-is-marketplace-redesign-enabled';
 import { sparkleFilled } from 'calypso/my-sites/plugins/marketplace-ai-experience/sparkle-icon';
-import { isCompatiblePlugin } from 'calypso/my-sites/plugins/plugin-compatibility';
+import { isBackupPlugin, isCompatiblePlugin } from 'calypso/my-sites/plugins/plugin-compatibility';
 import PluginIcon from 'calypso/my-sites/plugins/plugin-icon/plugin-icon';
 import { PluginPrice } from 'calypso/my-sites/plugins/plugin-price';
 import useAtomicSiteHasEquivalentFeatureToPlugin from 'calypso/my-sites/plugins/use-atomic-site-has-equivalent-feature-to-plugin';
@@ -191,7 +191,7 @@ const PluginsBrowserListElement = ( props ) => {
 	}, [ jetpackNonAtomic, plugin.slug ] );
 
 	const isIncompatibleBackupPlugin = useMemo( () => {
-		return 'vaultpress' === plugin.slug && ! jetpackNonAtomic;
+		return isBackupPlugin( plugin.slug ) && ! jetpackNonAtomic;
 	}, [ jetpackNonAtomic, plugin.slug ] );
 
 	const shouldUpgrade = useSelector( ( state ) => shouldUpgradeCheck( state, selectedSite?.ID ) );
@@ -278,7 +278,7 @@ const PluginsBrowserListElement = ( props ) => {
 						{ translate( 'Why is this plugin not compatible with WordPress.com?' ) }
 					</span>
 				) }
-				{ isIncompatibleBackupPlugin && (
+				{ isIncompatibleBackupPlugin && site && (
 					<span
 						role="link"
 						tabIndex="-1"
@@ -287,6 +287,13 @@ const PluginsBrowserListElement = ( props ) => {
 						className="plugins-browser-item__incompatible"
 					>
 						{ translate( 'Your site plan already includes Jetpack VaultPress Backup.' ) }
+					</span>
+				) }
+				{ isIncompatibleBackupPlugin && ! site && (
+					<span className="plugins-browser-item__incompatible">
+						{ translate(
+							'WordPress.com plans that support plugins already include Jetpack VaultPress Backup.'
+						) }
 					</span>
 				) }
 				<div className="plugins-browser-item__footer">
