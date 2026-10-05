@@ -11,11 +11,6 @@ import type { TermPricing } from './use-term-pricing';
 
 import './term-pricing-toggle.scss';
 
-/**
- * The billing term as a segmented control with both options named, so nothing
- * on the control changes when it is selected. The page's switch is Refer
- * products, a mode; the billing term is a choice between two options.
- */
 export default function TermPricingToggle( { short = false }: { short?: boolean } ) {
 	const { recordTracksEvent } = useAnalytics();
 	const { marketplaceType } = useMarketplaceType();

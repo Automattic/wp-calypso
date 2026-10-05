@@ -128,22 +128,3 @@ export function getProductFilterCategories( product: AgencyProduct ): ProductCat
 	}
 	return getProductCategories( product );
 }
-
-// The labels the classic dashboard shows as badges on a product card.
-export function getProductBadgeLabels( product: AgencyProduct ): string[] {
-	const categoryLabels = getCategoryShortLabels();
-	const labels: string[] = isWooCommerceProduct( product ) ? [ __( 'E-commerce' ) ] : [];
-	labels.push(
-		...getProductCategories( product ).map( ( category ) => categoryLabels[ category ] )
-	);
-
-	if ( product.family_slug === JETPACK_PACKS_FAMILY_SLUG ) {
-		labels.push( __( 'Bundle' ), __( 'Plan' ) );
-	} else if ( isPressableAddon( product ) ) {
-		labels.push( __( 'Hosting' ), __( 'Add-on' ) );
-	} else {
-		labels.push( getTypeLabels()[ getProductType( product ) ] );
-	}
-
-	return labels;
-}
