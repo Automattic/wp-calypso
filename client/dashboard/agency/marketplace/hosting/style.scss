@@ -509,7 +509,7 @@
 	}
 }
 
-// Phones: tighter cells, headers may wrap, and the Current plan badge drops
+// Phones: tighter cells, and the Current plan badge drops
 // under the plan name, so the table fits the card.
 @media ( max-width: #{$break-small - 1px} ) {
 	.dashboard-marketplace-hosting__plan-table {
@@ -521,10 +521,6 @@
 		th:not( :first-child ),
 		td:not( :first-child ) {
 			padding-inline-start: 12px;
-		}
-
-		th:not( :first-child ) {
-			white-space: normal;
 		}
 
 		tbody tr.is-current td:first-child label {
