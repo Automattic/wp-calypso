@@ -114,9 +114,3 @@ const incompatiblePlugins = new Set( [
 export function isCompatiblePlugin( pluginSlug ) {
 	return ! incompatiblePlugins.has( pluginSlug );
 }
-
-const pluginsWithBundledBackupNotice = new Set( [ 'jetpack-backup', 'vaultpress' ] );
-
-export function hasBundledBackupNotice( pluginSlug ) {
-	return pluginsWithBundledBackupNotice.has( pluginSlug );
-}

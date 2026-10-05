@@ -1,7 +1,4 @@
-import {
-	WPCOM_FEATURES_BACKUPS,
-	WPCOM_FEATURES_BACKUPS_SELF_SERVE,
-} from '@automattic/calypso-products';
+import { PLAN_BUSINESS, PLAN_ECOMMERCE, getPlan } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Button } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
@@ -34,10 +31,7 @@ import { getSoftwareSlug } from 'calypso/lib/plugins/utils';
 import { MarketplaceReviewsCards } from 'calypso/my-sites/marketplace/components/reviews-cards';
 import { ReviewsModal } from 'calypso/my-sites/marketplace/components/reviews-modal';
 import PluginNotices from 'calypso/my-sites/plugins/notices';
-import {
-	hasBundledBackupNotice,
-	isCompatiblePlugin,
-} from 'calypso/my-sites/plugins/plugin-compatibility';
+import { isCompatiblePlugin } from 'calypso/my-sites/plugins/plugin-compatibility';
 import PluginDetailsCTA from 'calypso/my-sites/plugins/plugin-details-CTA';
 import PluginDetailsHeader from 'calypso/my-sites/plugins/plugin-details-header';
 import PluginDetailsNotices from 'calypso/my-sites/plugins/plugin-details-notices';
@@ -84,9 +78,7 @@ import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import getSelectedOrAllSites from 'calypso/state/selectors/get-selected-or-all-sites';
 import getSelectedOrAllSitesWithPlugins from 'calypso/state/selectors/get-selected-or-all-sites-with-plugins';
 import getSiteConnectionStatus from 'calypso/state/selectors/get-site-connection-status';
-import hasLoadedSiteFeatures from 'calypso/state/selectors/has-loaded-site-features';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
-import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import {
 	isJetpackSite,
 	isRequestingSites as checkRequestingSites,
@@ -171,21 +163,11 @@ function PluginDetails( props ) {
 	}, [ isJetpackSelfHosted, props.pluginSlug ] );
 
 	const isIncompatibleBackupPlugin = useMemo( () => {
-		return hasBundledBackupNotice( props.pluginSlug ) && ! isJetpackSelfHosted;
+		return 'vaultpress' === props.pluginSlug && ! isJetpackSelfHosted;
 	}, [ isJetpackSelfHosted, props.pluginSlug ] );
 
-	const hasLoadedFeatures = useSelector( ( state ) =>
-		hasLoadedSiteFeatures( state, selectedSite?.ID )
-	);
-	const siteHasBackups = useSelector( ( state ) =>
-		siteHasFeature( state, selectedSite?.ID, WPCOM_FEATURES_BACKUPS )
-	);
-	// The backups page upsells sites without self-serve backups (Personal and Premium have daily backups only).
-	const canViewBackups = useSelector( ( state ) =>
-		siteHasFeature( state, selectedSite?.ID, WPCOM_FEATURES_BACKUPS_SELF_SERVE )
-	);
-	// Until a selected site's features load, we can't tell whether its plan includes backups.
-	const showBackupNotice = isIncompatibleBackupPlugin && ( ! selectedSite || hasLoadedFeatures );
+	// WordPress.com provides backups itself, so point to the plans that include them instead.
+	const isBuiltInBackupPlugin = isIncompatiblePlugin && 'jetpack-backup' === props.pluginSlug;
 
 	// Fetch WPorg plugin data if needed
 	useEffect( () => {
@@ -567,7 +549,8 @@ function PluginDetails( props ) {
 								<div className="plugin-details__body">
 									{ ! isJetpackSelfHosted &&
 										isIncompatiblePlugin &&
-										! isIncompatibleBackupPlugin && (
+										! isIncompatibleBackupPlugin &&
+										! isBuiltInBackupPlugin && (
 											<Notice
 												text={ translate(
 													'Incompatible plugin: This plugin is not supported on WordPress.com.'
@@ -585,26 +568,35 @@ function PluginDetails( props ) {
 											</Notice>
 										) }
 
-									{ showBackupNotice && (
+									{ isIncompatibleBackupPlugin && (
 										<Notice
-											text={
-												siteHasBackups
-													? translate(
-															'Incompatible plugin: Your site plan already includes Jetpack VaultPress Backup.'
-														)
-													: translate(
-															'Incompatible plugin: WordPress.com plans that support plugins already include Jetpack VaultPress Backup.'
-														)
-											}
+											text={ translate(
+												'Incompatible plugin: You site plan already includes Jetpack VaultPress Backup.'
+											) }
 											status="is-warning"
 											showDismiss={ false }
 										>
-											{ canViewBackups && (
-												<NoticeAction href={ `/backup/${ selectedSite.slug }` }>
-													{ translate( 'View backups' ) }
-												</NoticeAction>
-											) }
+											<NoticeAction href={ `/backup/${ selectedSite.slug }` }>
+												{ translate( 'View backups' ) }
+											</NoticeAction>
 										</Notice>
+									) }
+
+									{ isBuiltInBackupPlugin && (
+										<Notice
+											text={ translate(
+												// translators: %(businessPlanName)s is the Business plan name, %(commercePlanName)s is the Commerce plan name
+												'Jetpack VaultPress Backup is included with the WordPress.com %(businessPlanName)s and %(commercePlanName)s plans.',
+												{
+													args: {
+														businessPlanName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '',
+														commercePlanName: getPlan( PLAN_ECOMMERCE )?.getTitle() ?? '',
+													},
+												}
+											) }
+											status="is-warning"
+											showDismiss={ false }
+										/>
 									) }
 
 									{ ! isMaintained && (
