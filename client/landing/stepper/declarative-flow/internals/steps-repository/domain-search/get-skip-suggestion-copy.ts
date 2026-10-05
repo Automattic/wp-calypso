@@ -15,11 +15,9 @@ type SkipSuggestionCopy = {
  *      `freeSubdomainTitle` / `freeSubdomainButtonLabel` accepts-props (already
  *      translated). A `title` may contain the `%(domain)s` placeholder, which the
  *      package interpolates with the free subdomain.
- *   2. The flow default:
- *      - AI Website Builder onboarding requires a paid plan, so skipping the domain
- *        doesn't start a free site; it drops the "start free" framing.
- *      - Onboarding frames the card as skipping the domain. It doesn't name the free
- *        WordPress.com address, since some sites end up on a different one.
+ *   2. The onboarding and AI Website Builder onboarding default, which frames the card
+ *      as skipping the domain. It doesn't name the free WordPress.com address, since
+ *      sites moved to Atomic end up on a *.wpcomstaging.com one.
  *
  * Returns `undefined` when neither applies, so the package renders its own defaults.
  */
@@ -28,24 +26,17 @@ export const getSkipSuggestionCopy = (
 	__: ( text: string ) => string,
 	overrides?: SkipSuggestionCopy
 ): SkipSuggestionCopy | undefined => {
-	let flowCopy: SkipSuggestionCopy | undefined;
-
-	if ( isAIBuilderOnboardingFlow( flow ) ) {
-		flowCopy = {
-			// translators: %(domain)s is the free WordPress.com subdomain
-			title: __( 'Start with %(domain)s' ),
-			buttonText: __( 'Choose a domain later' ),
-		};
-	} else if ( isOnboardingFlow( flow ) ) {
-		flowCopy = {
-			title: __( 'Skip the domain for now' ),
-			subtitle: __(
-				'You’ll get a WordPress.com branded domain. Upgrade to a custom domain name anytime.'
-			),
-			buttonText: __( 'Skip' ),
-			skipLabel: __( 'Skip the domain for now' ),
-		};
-	}
+	const flowCopy: SkipSuggestionCopy | undefined =
+		isOnboardingFlow( flow ) || isAIBuilderOnboardingFlow( flow )
+			? {
+					title: __( 'Skip the domain for now' ),
+					subtitle: __(
+						'You’ll get a WordPress.com branded domain. Upgrade to a custom domain name anytime.'
+					),
+					buttonText: __( 'Skip' ),
+					skipLabel: __( 'Skip the domain for now' ),
+				}
+			: undefined;
 
 	const title = overrides?.title ?? flowCopy?.title;
 	const subtitle = overrides?.subtitle ?? flowCopy?.subtitle;

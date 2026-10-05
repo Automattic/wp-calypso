@@ -3,22 +3,18 @@ import { getSkipSuggestionCopy } from '../get-skip-suggestion-copy';
 const identity = ( text: string ) => text;
 
 describe( 'getSkipSuggestionCopy', () => {
-	it( 'drops the "start free" framing for the AI Website Builder onboarding flow', () => {
-		expect( getSkipSuggestionCopy( 'ai-site-builder-onboarding', identity ) ).toEqual( {
-			title: 'Start with %(domain)s',
-			buttonText: 'Choose a domain later',
-		} );
-	} );
-
-	it( 'frames the card as skipping the domain for the onboarding flow', () => {
-		expect( getSkipSuggestionCopy( 'onboarding', identity ) ).toEqual( {
-			title: 'Skip the domain for now',
-			subtitle:
-				'You’ll get a WordPress.com branded domain. Upgrade to a custom domain name anytime.',
-			buttonText: 'Skip',
-			skipLabel: 'Skip the domain for now',
-		} );
-	} );
+	it.each( [ 'onboarding', 'ai-site-builder-onboarding' ] )(
+		'frames the card as skipping the domain for the %s flow',
+		( flow ) => {
+			expect( getSkipSuggestionCopy( flow, identity ) ).toEqual( {
+				title: 'Skip the domain for now',
+				subtitle:
+					'You’ll get a WordPress.com branded domain. Upgrade to a custom domain name anytime.',
+				buttonText: 'Skip',
+				skipLabel: 'Skip the domain for now',
+			} );
+		}
+	);
 
 	it( 'keeps the default copy for flows without their own copy', () => {
 		expect( getSkipSuggestionCopy( 'domain', identity ) ).toBeUndefined();
@@ -66,8 +62,11 @@ describe( 'getSkipSuggestionCopy', () => {
 				buttonText: 'Skip for now',
 			} )
 		).toEqual( {
-			title: 'Start with %(domain)s',
+			title: 'Skip the domain for now',
+			subtitle:
+				'You’ll get a WordPress.com branded domain. Upgrade to a custom domain name anytime.',
 			buttonText: 'Skip for now',
+			skipLabel: 'Skip the domain for now',
 		} );
 	} );
 } );
