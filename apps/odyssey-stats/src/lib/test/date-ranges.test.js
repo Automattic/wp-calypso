@@ -8,6 +8,7 @@ import {
 	getDateRange,
 	getRangeStartDate,
 	isDateRangeId,
+	labelsLastPoint,
 } from '../date-ranges';
 
 describe( 'getDateRange', () => {
@@ -87,5 +88,18 @@ describe( 'getRangeStartDate', () => {
 	it( 'covers a year of months rather than a year of days', () => {
 		const start = getRangeStartDate( getDateRange( DATE_RANGE_LAST_12_MONTHS ), '2026-01-15' );
 		expect( start ).toBe( '2025-02-01' );
+	} );
+} );
+
+describe( 'labelsLastPoint', () => {
+	// Where the axis ticks the last point, that label lands on the chart's right edge and
+	// has to end at its tick; the longer ranges stop short of theirs, so it has room.
+	it.each( [
+		[ DATE_RANGE_LAST_7_DAYS, true ],
+		[ DATE_RANGE_LAST_12_MONTHS, true ],
+		[ DATE_RANGE_LAST_30_DAYS, false ],
+		[ DATE_RANGE_LAST_90_DAYS, false ],
+	] )( 'says %s ticks its last point: %s', ( id, expected ) => {
+		expect( labelsLastPoint( getDateRange( id ) ) ).toBe( expected );
 	} );
 } );

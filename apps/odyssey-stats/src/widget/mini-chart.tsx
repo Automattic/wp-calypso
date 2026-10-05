@@ -8,7 +8,7 @@ import { buildChartData } from 'calypso/my-sites/stats/stats-chart-tabs/utility'
 import StatsModulePlaceholder from 'calypso/my-sites/stats/stats-module/placeholder';
 import { parseLocalDate } from 'calypso/my-sites/stats/utils';
 import useVisitsQuery from '../hooks/use-visits-query';
-import { DATE_RANGE_LAST_7_DAYS, DateRange } from '../lib/date-ranges';
+import { DateRange, labelsLastPoint } from '../lib/date-ranges';
 import { deriveSeriesColors } from '../lib/series-colors';
 import ChartBoundary from './chart-boundary';
 import MetricValue from './metric-value';
@@ -137,10 +137,10 @@ const MiniChart: FunctionComponent< MiniChartProps > = ( { siteId, gmtOffset, ra
 			   behind — the totals above it stay either way. */ }
 			<ChartBoundary fallback={ null }>
 				<div
-					// Only the 7-day range labels every day, so only there does the last date
-					// land on the chart's right edge and need ending at its tick.
+					// A range whose last point gets a tick puts that label on the chart's right
+					// edge, where it needs ending at the tick rather than centring on it.
 					className={ clsx( 'stats-widget-chart', {
-						'has-edge-label': range.id === DATE_RANGE_LAST_7_DAYS,
+						'has-edge-label': labelsLastPoint( range ),
 					} ) }
 					style={ isLoading || ! isEmpty ? { blockSize: `${ CHART_HEIGHT }px` } : undefined }
 				>

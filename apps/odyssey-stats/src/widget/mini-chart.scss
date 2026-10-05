@@ -44,8 +44,9 @@
 		inline-size: 100%;
 		overflow: hidden;
 
-		// On the 7-day chart the last date sits on the right edge, so end it at its tick
-		// instead of centring it. CSS because the package doesn't expose `tickLabelProps`.
+		// Where the axis ticks the last point, that label sits on the right edge, so end it
+		// at its tick instead of centring it, which would overflow into the clip above. CSS
+		// because the package doesn't expose `tickLabelProps`.
 		&.has-edge-label .stats-widget-chart__x-axis .visx-axis-tick:last-of-type text {
 			text-anchor: end;
 		}

@@ -80,6 +80,20 @@ export function getRangeStartDate( range: DateRange, endDate: string ): string {
 	return start.format( 'YYYY-MM-DD' );
 }
 
+/**
+ * Whether the chart puts a tick on a range's last point.
+ *
+ * The axis chooses its ticks from the number of points it is given, and for these two
+ * ranges the choice lands on the last one — all seven days, and four of the twelve
+ * months. That label then sits on the chart's right edge, where centring it on the tick
+ * runs past the edge and the chart's `overflow: hidden` clips it. The longer ranges stop
+ * short of their last point, so theirs has room.
+ * @param range The selected range.
+ */
+export function labelsLastPoint( range: DateRange ): boolean {
+	return DATE_RANGE_LAST_7_DAYS === range.id || DATE_RANGE_LAST_12_MONTHS === range.id;
+}
+
 export function getDateRange( id: unknown ): DateRange {
 	return (
 		DATE_RANGES.find( ( range ) => range.id === id ) ??
