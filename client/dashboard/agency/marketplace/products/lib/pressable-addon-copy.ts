@@ -26,7 +26,7 @@ function getPressableAddonType( slug: string ): PressableAddonType {
 }
 
 const getGenericCopy = (): PressableAddonCopy => ( {
-	callout: __( 'This add-on increases your Signature plan limits while your plan is active.' ),
+	callout: __( 'This add-on increases your Pressable plan limits while your plan is active.' ),
 	limit: __( 'Add-ons raise your plan’s limits while your plan is active.' ),
 } );
 
@@ -48,15 +48,15 @@ export function getPressableAddonCopy( product: AgencyProduct ): PressableAddonC
 				callout: sprintf(
 					/* translators: %(installs)s is a number of sites, %(storage)s a storage size such as "10 GB", %(visits)s a number of visits. */
 					__(
-						'Site limit will be increased by %(installs)s, storage by %(storage)s, and visits by %(visits)s on your Signature plan.'
+						'Site limit will be increased by %(installs)s, storage by %(storage)s, and visits by %(visits)s on your Pressable plan.'
 					),
 					{ installs, storage, visits }
 				),
 				limit: sprintf(
 					/* translators: %(installs)s is a number of sites, %(storage)s a storage size such as "10 GB", %(visits)s a number of visits. */
 					_n(
-						'This add-on increases your Signature plan by %(installs)s site, %(storage)s of storage, and %(visits)s monthly visits while your plan is active.',
-						'This add-on increases your Signature plan by %(installs)s sites, %(storage)s of storage, and %(visits)s monthly visits while your plan is active.',
+						'This add-on increases your Pressable plan by %(installs)s site, %(storage)s of storage, and %(visits)s monthly visits while your plan is active.',
+						'This add-on increases your Pressable plan by %(installs)s sites, %(storage)s of storage, and %(visits)s monthly visits while your plan is active.',
 						metadata.sites
 					),
 					{ installs, storage, visits }
@@ -66,13 +66,13 @@ export function getPressableAddonCopy( product: AgencyProduct ): PressableAddonC
 			return {
 				callout: sprintf(
 					/* translators: %(storage)s is a storage size such as "10 GB". */
-					__( 'Storage limit will be increased by %(storage)s on your Signature plan.' ),
+					__( 'Storage limit will be increased by %(storage)s on your Pressable plan.' ),
 					{ storage }
 				),
 				limit: sprintf(
 					/* translators: %(storage)s is a storage size such as "10 GB". */
 					__(
-						'This add-on increases your Signature plan by %(storage)s of storage while your plan is active.'
+						'This add-on increases your Pressable plan by %(storage)s of storage while your plan is active.'
 					),
 					{ storage }
 				),
@@ -82,14 +82,14 @@ export function getPressableAddonCopy( product: AgencyProduct ): PressableAddonC
 				callout: sprintf(
 					/* translators: %(visits)s is a number of visits. */
 					__(
-						'Visits limit will be increased by %(visits)s monthly visits on your Signature plan.'
+						'Visits limit will be increased by %(visits)s monthly visits on your Pressable plan.'
 					),
 					{ visits }
 				),
 				limit: sprintf(
 					/* translators: %(visits)s is a number of visits. */
 					__(
-						'This add-on increases your Signature plan by %(visits)s monthly visits while your plan is active.'
+						'This add-on increases your Pressable plan by %(visits)s monthly visits while your plan is active.'
 					),
 					{ visits }
 				),
@@ -110,7 +110,7 @@ export function getPressableAddonCopy( product: AgencyProduct ): PressableAddonC
 				limit: sprintf(
 					/* translators: %(phpMemory)s is a memory size such as "512MB". */
 					__(
-						'This add-on increases PHP memory by %(phpMemory)s for each PHP worker/process on one Pressable site/domain while your Signature plan is active.'
+						'This add-on increases PHP memory by %(phpMemory)s for each PHP worker/process on one Pressable site/domain while your Pressable plan is active.'
 					),
 					{ phpMemory }
 				),

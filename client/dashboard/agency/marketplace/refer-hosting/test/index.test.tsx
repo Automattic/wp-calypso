@@ -75,13 +75,13 @@ describe( '<ReferHosting>', () => {
 		fillText( 'Email', 'ada@example.com' );
 		fillText( 'Website', 'example.com' );
 		fillText( 'Tell us more about this opportunity', 'A big site.' );
-		await user.click( screen.getByRole( 'button', { name: 'Submit Premium plan referral' } ) );
+		await user.click( screen.getByRole( 'button', { name: 'Submit Performance plan referral' } ) );
 
 		expect(
-			await screen.findByRole( 'heading', { name: 'Thank you for your Premium plan referral' } )
+			await screen.findByRole( 'heading', { name: 'Thank you for your Performance plan referral' } )
 		).toBeVisible();
 		expect(
-			screen.queryByRole( 'button', { name: 'Submit Premium plan referral' } )
+			screen.queryByRole( 'button', { name: 'Submit Performance plan referral' } )
 		).not.toBeInTheDocument();
 
 		const backLink = screen.getByRole( 'link', { name: 'Back to the marketplace' } );
