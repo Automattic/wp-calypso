@@ -2000,7 +2000,6 @@ __metadata:
     "@wordpress/react-i18n": "npm:^4.48.0"
     "@wordpress/url": "npm:^4.48.0"
     autosize: "npm:^6.0.1"
-    classnames: "npm:^2.5.1"
     clsx: "npm:^2.1.1"
     dompurify: "npm:3.4.13"
     framer-motion: "npm:^12.23.12"
@@ -14913,13 +14912,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"browser-filesaver@npm:^1.1.1":
-  version: 1.1.1
-  resolution: "browser-filesaver@npm:1.1.1"
-  checksum: 7c5cd0548d712fdb2682cc9b92ab96d87b37b5e0af91f1834b0ca6e233b7e8c2473471f99f7d73db04f044743b9915d29c99959cf9aafe2c5db169d449fbafd3
-  languageName: node
-  linkType: hard
-
 "browserslist@npm:^4.0.0, browserslist@npm:^4.16.0, browserslist@npm:^4.16.6, browserslist@npm:^4.21.10, browserslist@npm:^4.24.0, browserslist@npm:^4.24.4, browserslist@npm:^4.24.5, browserslist@npm:^4.28.1, browserslist@npm:^4.28.6":
   version: 4.28.8
   resolution: "browserslist@npm:4.28.8"
@@ -15317,6 +15309,7 @@ __metadata:
     "@wordpress/abilities": "npm:^0.14.0"
     "@wordpress/api-fetch": "npm:^7.48.0"
     "@wordpress/base-styles": "npm:^9.1.0"
+    "@wordpress/blob": "npm:^4.48.0"
     "@wordpress/commands": "npm:^1.48.0"
     "@wordpress/components": "npm:^37.0.0"
     "@wordpress/compose": "npm:^8.2.0"
@@ -15340,14 +15333,10 @@ __metadata:
     autoprefixer: "npm:^10.4.21"
     autosize: "npm:^4.0.4"
     body-parser: "npm:^1.20.3"
-    browser-filesaver: "npm:^1.1.1"
     bunyan: "npm:^1.8.15"
     chalk: "npm:^4.1.2"
     circular-dependency-plugin: "npm:^5.2.2"
-    clipboard: "npm:^2.0.11"
     clsx: "npm:^2.1.1"
-    component-closest: "npm:^1.0.1"
-    component-event: "npm:^0.2.1"
     component-query: "npm:^0.0.3"
     cookie: "npm:^0.7.2"
     cookie-parser: "npm:^1.4.7"
@@ -15385,7 +15374,6 @@ __metadata:
     html-loader: "npm:^5.1.0"
     i18n-calypso: "workspace:^"
     ignore-loader: "npm:^0.1.2"
-    inherits: "npm:^2.0.4"
     is-my-json-valid: "npm:^2.20.6"
     jest: "npm:^29.7.0"
     jest-fetch-mock: "npm:^3.0.3"
@@ -15857,7 +15845,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"classnames@npm:^2.3.1, classnames@npm:^2.5.1":
+"classnames@npm:^2.3.1":
   version: 2.5.1
   resolution: "classnames@npm:2.5.1"
   checksum: afff4f77e62cea2d79c39962980bf316bacb0d7c49e13a21adaadb9221e1c6b9d3cdb829d8bb1b23c406f4e740507f37e1dcf506f7e3b7113d17c5bab787aa69
@@ -15923,17 +15911,6 @@ __metadata:
   version: 2.4.5
   resolution: "client-zip@npm:2.4.5"
   checksum: b3ec15c8487575a992f86ced6f66a9905ef1955675e431bbe1a74e780448fff284904b2c9565678f97e31ae4f2b128fbc55f84af1b5a89f3d52c9225b8d7c14a
-  languageName: node
-  linkType: hard
-
-"clipboard@npm:^2.0.11":
-  version: 2.0.11
-  resolution: "clipboard@npm:2.0.11"
-  dependencies:
-    good-listener: "npm:^1.2.2"
-    select: "npm:^1.1.2"
-    tiny-emitter: "npm:^2.0.0"
-  checksum: 23bdf16b875bd2dd101eeefae3c25a2fbd990b613fad3d227ca6719d1b81a3c6f69701b494393fdecd07d98380024f82d045f464124dbbafbcf0557f2921978f
   languageName: node
   linkType: hard
 
@@ -16276,15 +16253,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"component-closest@npm:^1.0.1":
-  version: 1.0.1
-  resolution: "component-closest@npm:1.0.1"
-  dependencies:
-    component-matches-selector: "npm:~0.1.6"
-  checksum: 7d4393ef29feb0f9b425e2e96ef399cedbfb172f1e06e3e48f784d150d4afa4c3a04f2cae5e66f4b7488574cf90f55b820218116fb0ab04d0c734be3b21ab40e
-  languageName: node
-  linkType: hard
-
 "component-emitter@npm:^1.2.0, component-emitter@npm:^1.3.1":
   version: 1.3.1
   resolution: "component-emitter@npm:1.3.1"
@@ -16292,24 +16260,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"component-event@npm:^0.2.1":
-  version: 0.2.1
-  resolution: "component-event@npm:0.2.1"
-  checksum: f49c8d00dc5d2b5540adfd2b29273191d74654ccd1ce3dda5fd82e33211d85a5b3d40469ee225f7a35ce7687929a98be440b7b8d0c2ac05eee208b5d0f2d9e3b
-  languageName: node
-  linkType: hard
-
-"component-matches-selector@npm:~0.1.6":
-  version: 0.1.7
-  resolution: "component-matches-selector@npm:0.1.7"
-  dependencies:
-    component-query: "npm:*"
-    global-object: "npm:^1.0.0"
-  checksum: 1897d0f82f4cd9b9c4f01169c1b684426080b264bceed90dd4ced66e0e422bad67235ab53303ed5ceb25d500db7684b36cafa8761f5afd2c969d304b8d51c06e
-  languageName: node
-  linkType: hard
-
-"component-query@npm:*, component-query@npm:^0.0.3":
+"component-query@npm:^0.0.3":
   version: 0.0.3
   resolution: "component-query@npm:0.0.3"
   checksum: cc0ba1450c3a43b546c22e02ec00681b86f3ab53c9f1220f3f5e1e17a95351d2fcff94d69c620348e0cd5349c686e3e032ce57e8a4d01455f23e0511129a6136
@@ -17525,13 +17476,6 @@ __metadata:
   version: 1.0.0
   resolution: "delayed-stream@npm:1.0.0"
   checksum: d758899da03392e6712f042bec80aa293bbe9e9ff1b2634baae6a360113e708b91326594c8a486d475c69d6259afb7efacdc3537bfcda1c6c648e390ce601b19
-  languageName: node
-  linkType: hard
-
-"delegate@npm:^3.1.2":
-  version: 3.2.0
-  resolution: "delegate@npm:3.2.0"
-  checksum: f8512633514f375b8675018088fdd679d92b84246ad6ba1de9fbc4ea7630f7fb0ff8772ac86c37a68233885f58c6b8b70676d7366f38cb2dcbf7baa474e2362d
   languageName: node
   linkType: hard
 
@@ -20712,13 +20656,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"global-object@npm:^1.0.0":
-  version: 1.0.0
-  resolution: "global-object@npm:1.0.0"
-  checksum: b247db454095c21829ac80395775ab9d706d7639bc8792aada64a380b7fcee7b368924610a7bf16e52c19548cbb69118fd0608e339c6313651cc3e67a6cbaca7
-  languageName: node
-  linkType: hard
-
 "global-prefix@npm:^1.0.1":
   version: 1.0.2
   resolution: "global-prefix@npm:1.0.2"
@@ -20873,15 +20810,6 @@ __metadata:
   version: 0.1.4
   resolution: "globjoin@npm:0.1.4"
   checksum: 236e991b48f1a9869fe2aa7bb5141fb1f32973940567a3c012f8ccb58c3c85ab78ce594d374fa819410fff3b48cfd24584d7ef726939f8a3c3772890e62ea16b
-  languageName: node
-  linkType: hard
-
-"good-listener@npm:^1.2.2":
-  version: 1.2.2
-  resolution: "good-listener@npm:1.2.2"
-  dependencies:
-    delegate: "npm:^3.1.2"
-  checksum: 5c532f2e223f1f3a12504077d6d960986979a7923fb428a26bde012b88ac57ffba1b28507f95bd16a73c1ae805fdb38d26d9442d538dd559fad159a7f58243fe
   languageName: node
   linkType: hard
 
@@ -30957,13 +30885,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"select@npm:^1.1.2":
-  version: 1.1.2
-  resolution: "select@npm:1.1.2"
-  checksum: 5dbd871c03a52aa70ce29ab46e9115d26cb34404717e7e705e678b3b4d535bacfa0a4c4c2d32262acec7b6fdfb6827e8980ea4ef969a8681f8a0b752331a0a02
-  languageName: node
-  linkType: hard
-
 "semver-compare@npm:^1.0.0":
   version: 1.0.0
   resolution: "semver-compare@npm:1.0.0"
@@ -32657,13 +32578,6 @@ __metadata:
   dependencies:
     semver: "npm:^5.5.0"
   checksum: bbdece69f596f16d1a7b0df7fe451fe959c6f26af283d8919154f59abf8a853b3da1aea8d10e49e7af5b039a38a3d8b4ca0c044b59dcf19a93d63c6ee7e36507
-  languageName: node
-  linkType: hard
-
-"tiny-emitter@npm:^2.0.0":
-  version: 2.1.0
-  resolution: "tiny-emitter@npm:2.1.0"
-  checksum: 459c0bd6e636e80909898220eb390e1cba2b15c430b7b06cec6ac29d87acd29ef618b9b32532283af749f5d37af3534d0e3bde29fdf6bcefbf122784333c953d
   languageName: node
   linkType: hard
 

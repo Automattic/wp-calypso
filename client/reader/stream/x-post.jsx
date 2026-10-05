@@ -2,7 +2,6 @@ import { getUrlParts } from '@automattic/calypso-url';
 import { Card } from '@automattic/components';
 import { uniqBy } from '@automattic/js-utils';
 import clsx from 'clsx';
-import closest from 'component-closest';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { createRef, PureComponent } from 'react';
@@ -47,23 +46,18 @@ export class CrossPost extends PureComponent {
 	};
 
 	handleCardClick = ( event ) => {
-		const rootNode = this.cardRef.current;
-
-		if ( closest( event.target, '.should-scroll', rootNode ) ) {
+		if ( event.target.closest( '.should-scroll' ) ) {
 			setTimeout( function () {
 				window.scrollTo( 0, 0 );
 			}, 100 );
 		}
 
-		if ( closest( event.target, '.ignore-click', rootNode ) ) {
+		if ( event.target.closest( '.ignore-click' ) ) {
 			return;
 		}
 
 		// ignore clicks on anchors inside inline content
-		if (
-			closest( event.target, 'a', rootNode ) &&
-			closest( event.target, '.reader__x-post', rootNode )
-		) {
+		if ( event.target.closest( 'a' ) && event.target.closest( '.reader__x-post' ) ) {
 			return;
 		}
 
