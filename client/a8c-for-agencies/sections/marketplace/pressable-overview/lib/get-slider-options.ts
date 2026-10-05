@@ -3,7 +3,7 @@ import {
 	FILTER_TYPE_INSTALL,
 	FILTER_TYPE_STORAGE,
 	FILTER_TYPE_VISITS,
-	PLAN_CATEGORY_PREMIUM,
+	PLAN_CATEGORY_PERFORMANCE_TIER,
 } from '../constants';
 import { FilterType } from '../types';
 import { PressablePlan } from './get-pressable-plan';
@@ -18,7 +18,7 @@ export default function getSliderOptions(
 		.filter( ( plan ) => plan !== undefined )
 		.filter( ( plan ) => category === undefined || plan.category === category ) // Maybe only return plans of a specific category
 		.sort( ( planA, planB ) =>
-			category === PLAN_CATEGORY_PREMIUM
+			category === PLAN_CATEGORY_PERFORMANCE_TIER
 				? planA.visits - planB.visits
 				: planA.install - planB.install
 		) // Ensure our options are sorted by install count

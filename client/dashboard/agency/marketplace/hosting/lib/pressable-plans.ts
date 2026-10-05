@@ -3,19 +3,19 @@ import type { AgencyProduct } from '@automattic/api-core';
 
 export const PRESSABLE_AGENCY_URL = 'https://my.pressable.com/agency/auth';
 
-export const PLAN_CATEGORY_STANDARD = 'standard';
-export const PLAN_CATEGORY_ENTERPRISE = 'enterprise';
-export const PLAN_CATEGORY_SIGNATURE = 'signature';
-export const PLAN_CATEGORY_SIGNATURE_HIGH = 'signature-high';
-export const PLAN_CATEGORY_PREMIUM = 'premium';
+export const PLAN_CATEGORY_LEGACY_STANDARD = 'standard';
+export const PLAN_CATEGORY_LEGACY_ENTERPRISE = 'enterprise';
+export const PLAN_CATEGORY_STANDARD_TIER = 'signature';
+export const PLAN_CATEGORY_AGENCY_TIER = 'signature-high';
+export const PLAN_CATEGORY_PERFORMANCE_TIER = 'premium';
 export const PRESSABLE_ADDON_CATEGORY = 'pressable-addon';
 
 export type PressablePlanCategory =
-	| typeof PLAN_CATEGORY_STANDARD
-	| typeof PLAN_CATEGORY_ENTERPRISE
-	| typeof PLAN_CATEGORY_SIGNATURE
-	| typeof PLAN_CATEGORY_SIGNATURE_HIGH
-	| typeof PLAN_CATEGORY_PREMIUM
+	| typeof PLAN_CATEGORY_LEGACY_STANDARD
+	| typeof PLAN_CATEGORY_LEGACY_ENTERPRISE
+	| typeof PLAN_CATEGORY_STANDARD_TIER
+	| typeof PLAN_CATEGORY_AGENCY_TIER
+	| typeof PLAN_CATEGORY_PERFORMANCE_TIER
 	| typeof PRESSABLE_ADDON_CATEGORY;
 
 export interface PressablePlan {
@@ -28,11 +28,11 @@ export interface PressablePlan {
 }
 
 const PLAN_CATEGORIES: string[] = [
-	PLAN_CATEGORY_STANDARD,
-	PLAN_CATEGORY_ENTERPRISE,
-	PLAN_CATEGORY_SIGNATURE,
-	PLAN_CATEGORY_SIGNATURE_HIGH,
-	PLAN_CATEGORY_PREMIUM,
+	PLAN_CATEGORY_LEGACY_STANDARD,
+	PLAN_CATEGORY_LEGACY_ENTERPRISE,
+	PLAN_CATEGORY_STANDARD_TIER,
+	PLAN_CATEGORY_AGENCY_TIER,
+	PLAN_CATEGORY_PERFORMANCE_TIER,
 	PRESSABLE_ADDON_CATEGORY,
 ];
 
@@ -58,58 +58,66 @@ export const isPressableHostingProduct = ( keyOrSlug: string ) =>
 export const isPressableAddonProduct = ( keyOrSlug: string ) =>
 	keyOrSlug.startsWith( 'pressable-addon' );
 
-// The Signature catalog: Signature and Premium plans, as opposed to the legacy one.
-export const isSignatureCatalogPlan = ( plan: PressablePlan ) =>
-	plan.category === PLAN_CATEGORY_SIGNATURE ||
-	plan.category === PLAN_CATEGORY_SIGNATURE_HIGH ||
-	plan.category === PLAN_CATEGORY_PREMIUM;
+// The current catalog: Standard, Agency and Performance plans, as opposed to the legacy one.
+export const isCurrentCatalogPlan = ( plan: PressablePlan ) =>
+	plan.category === PLAN_CATEGORY_STANDARD_TIER ||
+	plan.category === PLAN_CATEGORY_AGENCY_TIER ||
+	plan.category === PLAN_CATEGORY_PERFORMANCE_TIER;
 
 /** The plan name as shown on the page: "Pressable Signature 3" -> "Signature 3". */
 export const getPressablePlanName = ( name: string ) => name.replace( /Pressable/g, '' ).trim();
 
-export const isLowPlanCategory = ( category?: string ) =>
-	category === PLAN_CATEGORY_STANDARD || category === PLAN_CATEGORY_SIGNATURE;
+export const isStandardTabCategory = ( category?: string ) =>
+	category === PLAN_CATEGORY_LEGACY_STANDARD || category === PLAN_CATEGORY_STANDARD_TIER;
 
-export const isHighPlanCategory = ( category?: string ) =>
-	category === PLAN_CATEGORY_ENTERPRISE || category === PLAN_CATEGORY_SIGNATURE_HIGH;
+export const isAgencyTabCategory = ( category?: string ) =>
+	category === PLAN_CATEGORY_LEGACY_ENTERPRISE || category === PLAN_CATEGORY_AGENCY_TIER;
 
 // Agencies on a legacy plan keep seeing the legacy catalog; everyone else
-// (including referrals) gets the Signature and Premium plans.
-export const areSignaturePlansFor = (
+// (including referrals) gets the current Standard, Agency and Performance plans.
+export const isCurrentCatalogFor = (
 	existingPlan: PressablePlan | undefined,
 	isReferralMode: boolean
 ) =>
 	isReferralMode ||
 	! existingPlan ||
-	existingPlan.category === PLAN_CATEGORY_SIGNATURE ||
-	existingPlan.category === PLAN_CATEGORY_SIGNATURE_HIGH;
+	existingPlan.category === PLAN_CATEGORY_STANDARD_TIER ||
+	existingPlan.category === PLAN_CATEGORY_AGENCY_TIER;
 
-export function getPlanCategoryTabs( areSignaturePlans: boolean, hasNewPremiumPlans: boolean ) {
-	const pooled = __(
-		'Traffic and storage pooled across all your client sites, from 1 to 150 WordPress installs.'
-	);
-	const large = __( 'For large portfolios of 200 to 500 WordPress installs.' );
+export function getPlanCategoryTabs( isCurrentCatalog: boolean ) {
 	return [
-		...( areSignaturePlans
+		...( isCurrentCatalog
 			? [
 					{
-						key: PLAN_CATEGORY_SIGNATURE,
-						label: __( 'Signature plans 1–10' ),
-						description: pooled,
+						key: PLAN_CATEGORY_STANDARD_TIER,
+						label: __( 'Standard plans' ),
+						description: __(
+							'Traffic and storage pooled across all your client sites, from 1 to 10 WordPress installs.'
+						),
 					},
 					{
-						key: PLAN_CATEGORY_SIGNATURE_HIGH,
-						label: __( 'Signature plans 11–17' ),
-						description: large,
+						key: PLAN_CATEGORY_AGENCY_TIER,
+						label: __( 'Agency plans' ),
+						description: __( 'For growing portfolios of 20 to 500 WordPress installs.' ),
 					},
 				]
 			: [
-					{ key: PLAN_CATEGORY_STANDARD, label: __( 'Signature plans' ), description: pooled },
-					{ key: PLAN_CATEGORY_ENTERPRISE, label: __( 'Enterprise plans' ), description: large },
+					{
+						key: PLAN_CATEGORY_LEGACY_STANDARD,
+						label: __( 'Signature plans' ),
+						description: __(
+							'Traffic and storage pooled across all your client sites, from 1 to 150 WordPress installs.'
+						),
+					},
+					{
+						key: PLAN_CATEGORY_LEGACY_ENTERPRISE,
+						label: __( 'Enterprise plans' ),
+						description: __( 'For large portfolios of 200 to 500 WordPress installs.' ),
+					},
 				] ),
 		{
-			key: PLAN_CATEGORY_PREMIUM,
-			label: hasNewPremiumPlans ? __( 'Premium plans 1–11' ) : __( 'Premium plans' ),
+			key: PLAN_CATEGORY_PERFORMANCE_TIER,
+			label: __( 'Performance plans' ),
 			description: __(
 				'Dedicated resources for one high-traffic WordPress site, from 150K to 10M visits per month.'
 			),
@@ -117,25 +125,25 @@ export function getPlanCategoryTabs( areSignaturePlans: boolean, hasNewPremiumPl
 	];
 }
 
-// The tab an existing plan belongs to, mapped across the legacy/Signature catalogs.
+// The tab an existing plan belongs to, mapped across the legacy and current catalogs.
 export function getDefaultPlanCategoryTab(
 	existingPlan: PressablePlan | undefined,
-	areSignaturePlans: boolean
+	isCurrentCatalog: boolean
 ): string {
 	if ( ! existingPlan ) {
-		return areSignaturePlans ? PLAN_CATEGORY_SIGNATURE : PLAN_CATEGORY_STANDARD;
+		return isCurrentCatalog ? PLAN_CATEGORY_STANDARD_TIER : PLAN_CATEGORY_LEGACY_STANDARD;
 	}
-	if ( areSignaturePlans ) {
-		if ( existingPlan.category === PLAN_CATEGORY_STANDARD ) {
-			return PLAN_CATEGORY_SIGNATURE;
+	if ( isCurrentCatalog ) {
+		if ( existingPlan.category === PLAN_CATEGORY_LEGACY_STANDARD ) {
+			return PLAN_CATEGORY_STANDARD_TIER;
 		}
-		if ( existingPlan.category === PLAN_CATEGORY_ENTERPRISE ) {
-			return PLAN_CATEGORY_SIGNATURE_HIGH;
+		if ( existingPlan.category === PLAN_CATEGORY_LEGACY_ENTERPRISE ) {
+			return PLAN_CATEGORY_AGENCY_TIER;
 		}
-	} else if ( existingPlan.category === PLAN_CATEGORY_SIGNATURE ) {
-		return PLAN_CATEGORY_STANDARD;
-	} else if ( existingPlan.category === PLAN_CATEGORY_SIGNATURE_HIGH ) {
-		return PLAN_CATEGORY_ENTERPRISE;
+	} else if ( existingPlan.category === PLAN_CATEGORY_STANDARD_TIER ) {
+		return PLAN_CATEGORY_LEGACY_STANDARD;
+	} else if ( existingPlan.category === PLAN_CATEGORY_AGENCY_TIER ) {
+		return PLAN_CATEGORY_LEGACY_ENTERPRISE;
 	}
 	return existingPlan.category;
 }
@@ -145,7 +153,7 @@ export function sortPlansForCategory( plans: PressablePlan[], category: string )
 	return plans
 		.filter( ( entry ) => entry.category === category )
 		.sort( ( a, b ) =>
-			category === PLAN_CATEGORY_PREMIUM ? a.visits - b.visits : a.install - b.install
+			category === PLAN_CATEGORY_PERFORMANCE_TIER ? a.visits - b.visits : a.install - b.install
 		);
 }
 
@@ -159,13 +167,13 @@ export function getMinimumSelectableIndex(
 	if ( ! existingPlan ) {
 		return 0;
 	}
-	if ( isLowPlanCategory( category ) && ! isLowPlanCategory( existingPlan.category ) ) {
+	if ( isStandardTabCategory( category ) && ! isStandardTabCategory( existingPlan.category ) ) {
 		return options.length - 1;
 	}
-	if ( isHighPlanCategory( category ) && ! isHighPlanCategory( existingPlan.category ) ) {
+	if ( isAgencyTabCategory( category ) && ! isAgencyTabCategory( existingPlan.category ) ) {
 		return 0;
 	}
-	if ( existingPlan.category === PLAN_CATEGORY_PREMIUM ) {
+	if ( existingPlan.category === PLAN_CATEGORY_PERFORMANCE_TIER ) {
 		const index = options.findIndex( ( option ) => existingPlan.storage < option.storage );
 		return index >= 0 ? index : options.length;
 	}
@@ -173,45 +181,53 @@ export function getMinimumSelectableIndex(
 	return index >= 0 ? index : options.length;
 }
 
-// The low tab is closed once the agency is already on its highest plan or above.
-export function isLowTabDisabled(
+// The Standard tab is closed once the agency is already on its highest plan or above.
+export function isStandardTabClosed(
 	existingPlan: PressablePlan | undefined,
-	lowOptions: PressablePlan[]
+	standardTabOptions: PressablePlan[]
 ): boolean {
 	if ( ! existingPlan ) {
 		return false;
 	}
 	return (
-		! isLowPlanCategory( existingPlan.category ) ||
-		existingPlan.slug === lowOptions[ lowOptions.length - 1 ]?.slug
+		! isStandardTabCategory( existingPlan.category ) ||
+		existingPlan.slug === standardTabOptions[ standardTabOptions.length - 1 ]?.slug
 	);
 }
 
-/** The pooled plan types of a catalog: the smaller plans and the larger ones. */
-export const getPlanCategories = ( areSignaturePlans: boolean ) =>
-	areSignaturePlans
-		? { lowCategory: PLAN_CATEGORY_SIGNATURE, highCategory: PLAN_CATEGORY_SIGNATURE_HIGH }
-		: { lowCategory: PLAN_CATEGORY_STANDARD, highCategory: PLAN_CATEGORY_ENTERPRISE };
+/** The pooled plan types of a catalog: the Standard tab's and the Agency tab's. */
+export const getPlanCategories = ( isCurrentCatalog: boolean ) =>
+	isCurrentCatalog
+		? {
+				standardTabCategory: PLAN_CATEGORY_STANDARD_TIER,
+				agencyTabCategory: PLAN_CATEGORY_AGENCY_TIER,
+			}
+		: {
+				standardTabCategory: PLAN_CATEGORY_LEGACY_STANDARD,
+				agencyTabCategory: PLAN_CATEGORY_LEGACY_ENTERPRISE,
+			};
 
 // Whether the agency can buy a bigger pooled plan than the one it owns, as the
-// plan picker offers it. Premium plans are left out: they are sold through referrals.
+// plan picker offers it. Performance plans are left out: they are sold through referrals.
 export function hasPressableUpgrade(
 	existingPlan: PressablePlan,
 	catalogPlans: PressablePlan[]
 ): boolean {
-	const areSignaturePlans = areSignaturePlansFor( existingPlan, false );
+	const isCurrentCatalog = isCurrentCatalogFor( existingPlan, false );
 	const plans = catalogPlans.filter(
-		( plan ) => isSignatureCatalogPlan( plan ) === areSignaturePlans
+		( plan ) => isCurrentCatalogPlan( plan ) === isCurrentCatalog
 	);
-	const { lowCategory, highCategory } = getPlanCategories( areSignaturePlans );
-	const lowOptions = sortPlansForCategory( plans, lowCategory );
-	const highOptions = sortPlansForCategory( plans, highCategory );
-	const canMoveUpLow =
-		! isLowTabDisabled( existingPlan, lowOptions ) &&
-		getMinimumSelectableIndex( lowCategory, lowOptions, existingPlan ) < lowOptions.length;
+	const { standardTabCategory, agencyTabCategory } = getPlanCategories( isCurrentCatalog );
+	const standardTabOptions = sortPlansForCategory( plans, standardTabCategory );
+	const agencyTabOptions = sortPlansForCategory( plans, agencyTabCategory );
+	const canMoveUpStandardTab =
+		! isStandardTabClosed( existingPlan, standardTabOptions ) &&
+		getMinimumSelectableIndex( standardTabCategory, standardTabOptions, existingPlan ) <
+			standardTabOptions.length;
 	return (
-		canMoveUpLow ||
-		getMinimumSelectableIndex( highCategory, highOptions, existingPlan ) < highOptions.length
+		canMoveUpStandardTab ||
+		getMinimumSelectableIndex( agencyTabCategory, agencyTabOptions, existingPlan ) <
+			agencyTabOptions.length
 	);
 }
 

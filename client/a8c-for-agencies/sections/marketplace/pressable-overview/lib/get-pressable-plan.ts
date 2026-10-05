@@ -1,10 +1,10 @@
 import { PRODUCT_CATEGORY_PRESSABLE_ADDON } from '../../constants';
 import {
-	PLAN_CATEGORY_STANDARD,
-	PLAN_CATEGORY_ENTERPRISE,
-	PLAN_CATEGORY_SIGNATURE,
-	PLAN_CATEGORY_SIGNATURE_HIGH,
-	PLAN_CATEGORY_PREMIUM,
+	PLAN_CATEGORY_LEGACY_STANDARD,
+	PLAN_CATEGORY_LEGACY_ENTERPRISE,
+	PLAN_CATEGORY_STANDARD_TIER,
+	PLAN_CATEGORY_AGENCY_TIER,
+	PLAN_CATEGORY_PERFORMANCE_TIER,
 } from '../constants';
 
 export type PressablePlan = {
@@ -26,7 +26,7 @@ const PLAN_DATA: Record< string, PressablePlan > = {
 		visits: 50000,
 		storage: 20,
 		worker: 10,
-		category: PLAN_CATEGORY_STANDARD,
+		category: PLAN_CATEGORY_LEGACY_STANDARD,
 	},
 	'pressable-wp-2': {
 		slug: 'pressable-wp-2',
@@ -34,7 +34,7 @@ const PLAN_DATA: Record< string, PressablePlan > = {
 		visits: 100000,
 		storage: 50,
 		worker: 10,
-		category: PLAN_CATEGORY_STANDARD,
+		category: PLAN_CATEGORY_LEGACY_STANDARD,
 	},
 	'pressable-wp-3': {
 		slug: 'pressable-wp-3',
@@ -42,7 +42,7 @@ const PLAN_DATA: Record< string, PressablePlan > = {
 		visits: 250000,
 		storage: 80,
 		worker: 10,
-		category: PLAN_CATEGORY_STANDARD,
+		category: PLAN_CATEGORY_LEGACY_STANDARD,
 	},
 	'pressable-wp-4': {
 		slug: 'pressable-wp-4',
@@ -50,7 +50,7 @@ const PLAN_DATA: Record< string, PressablePlan > = {
 		visits: 500000,
 		storage: 175,
 		worker: 10,
-		category: PLAN_CATEGORY_STANDARD,
+		category: PLAN_CATEGORY_LEGACY_STANDARD,
 	},
 	'pressable-wp-5': {
 		slug: 'pressable-wp-5',
@@ -58,7 +58,7 @@ const PLAN_DATA: Record< string, PressablePlan > = {
 		visits: 1000000,
 		storage: 250,
 		worker: 10,
-		category: PLAN_CATEGORY_STANDARD,
+		category: PLAN_CATEGORY_LEGACY_STANDARD,
 	},
 	'pressable-wp-6': {
 		slug: 'pressable-wp-6',
@@ -66,7 +66,7 @@ const PLAN_DATA: Record< string, PressablePlan > = {
 		visits: 1500000,
 		storage: 350,
 		worker: 10,
-		category: PLAN_CATEGORY_STANDARD,
+		category: PLAN_CATEGORY_LEGACY_STANDARD,
 	},
 	'pressable-wp-7': {
 		slug: 'pressable-wp-7',
@@ -74,7 +74,7 @@ const PLAN_DATA: Record< string, PressablePlan > = {
 		visits: 2000000,
 		storage: 500,
 		worker: 10,
-		category: PLAN_CATEGORY_STANDARD,
+		category: PLAN_CATEGORY_LEGACY_STANDARD,
 	},
 
 	// [Legacy] Pressable Plans 2024-08
@@ -84,7 +84,7 @@ const PLAN_DATA: Record< string, PressablePlan > = {
 		visits: 30000,
 		storage: 20,
 		worker: 10,
-		category: PLAN_CATEGORY_STANDARD,
+		category: PLAN_CATEGORY_LEGACY_STANDARD,
 	},
 	'pressable-growth': {
 		slug: 'pressable-growth',
@@ -92,7 +92,7 @@ const PLAN_DATA: Record< string, PressablePlan > = {
 		visits: 50000,
 		storage: 30,
 		worker: 10,
-		category: PLAN_CATEGORY_STANDARD,
+		category: PLAN_CATEGORY_LEGACY_STANDARD,
 	},
 	'pressable-advanced': {
 		slug: 'pressable-advanced',
@@ -100,7 +100,7 @@ const PLAN_DATA: Record< string, PressablePlan > = {
 		visits: 75000,
 		storage: 35,
 		worker: 10,
-		category: PLAN_CATEGORY_STANDARD,
+		category: PLAN_CATEGORY_LEGACY_STANDARD,
 	},
 	'pressable-pro': {
 		slug: 'pressable-pro',
@@ -108,7 +108,7 @@ const PLAN_DATA: Record< string, PressablePlan > = {
 		visits: 150000,
 		storage: 50,
 		worker: 10,
-		category: PLAN_CATEGORY_STANDARD,
+		category: PLAN_CATEGORY_LEGACY_STANDARD,
 	},
 	'pressable-premium': {
 		slug: 'pressable-premium',
@@ -116,7 +116,7 @@ const PLAN_DATA: Record< string, PressablePlan > = {
 		visits: 400000,
 		storage: 80,
 		worker: 10,
-		category: PLAN_CATEGORY_STANDARD,
+		category: PLAN_CATEGORY_LEGACY_STANDARD,
 	},
 	'pressable-business': {
 		slug: 'pressable-business',
@@ -124,7 +124,7 @@ const PLAN_DATA: Record< string, PressablePlan > = {
 		visits: 1000000,
 		storage: 200,
 		worker: 10,
-		category: PLAN_CATEGORY_STANDARD,
+		category: PLAN_CATEGORY_LEGACY_STANDARD,
 	},
 	'pressable-business-80': {
 		slug: 'pressable-business-80',
@@ -132,7 +132,7 @@ const PLAN_DATA: Record< string, PressablePlan > = {
 		visits: 1600000,
 		storage: 275,
 		worker: 10,
-		category: PLAN_CATEGORY_STANDARD,
+		category: PLAN_CATEGORY_LEGACY_STANDARD,
 	},
 	'pressable-business-100': {
 		slug: 'pressable-business-100',
@@ -140,7 +140,7 @@ const PLAN_DATA: Record< string, PressablePlan > = {
 		visits: 2000000,
 		storage: 325,
 		worker: 10,
-		category: PLAN_CATEGORY_STANDARD,
+		category: PLAN_CATEGORY_LEGACY_STANDARD,
 	},
 	'pressable-business-120': {
 		slug: 'pressable-business-120',
@@ -148,7 +148,7 @@ const PLAN_DATA: Record< string, PressablePlan > = {
 		visits: 2400000,
 		storage: 375,
 		worker: 10,
-		category: PLAN_CATEGORY_STANDARD,
+		category: PLAN_CATEGORY_LEGACY_STANDARD,
 	},
 	'pressable-business-150': {
 		slug: 'pressable-business-150',
@@ -156,7 +156,7 @@ const PLAN_DATA: Record< string, PressablePlan > = {
 		visits: 3000000,
 		storage: 450,
 		worker: 10,
-		category: PLAN_CATEGORY_STANDARD,
+		category: PLAN_CATEGORY_LEGACY_STANDARD,
 	},
 
 	// [Legacy] Pressable Enterprise plans 2024-08
@@ -166,7 +166,7 @@ const PLAN_DATA: Record< string, PressablePlan > = {
 		visits: 4000000,
 		storage: 500,
 		worker: 10,
-		category: PLAN_CATEGORY_ENTERPRISE,
+		category: PLAN_CATEGORY_LEGACY_ENTERPRISE,
 	},
 	'pressable-enterprise-5': {
 		slug: 'pressable-enterprise-5',
@@ -174,7 +174,7 @@ const PLAN_DATA: Record< string, PressablePlan > = {
 		visits: 5000000,
 		storage: 550,
 		worker: 10,
-		category: PLAN_CATEGORY_ENTERPRISE,
+		category: PLAN_CATEGORY_LEGACY_ENTERPRISE,
 	},
 	'pressable-enterprise-6': {
 		slug: 'pressable-enterprise-6',
@@ -182,7 +182,7 @@ const PLAN_DATA: Record< string, PressablePlan > = {
 		visits: 6000000,
 		storage: 600,
 		worker: 10,
-		category: PLAN_CATEGORY_ENTERPRISE,
+		category: PLAN_CATEGORY_LEGACY_ENTERPRISE,
 	},
 	'pressable-enterprise-7': {
 		slug: 'pressable-enterprise-7',
@@ -190,7 +190,7 @@ const PLAN_DATA: Record< string, PressablePlan > = {
 		visits: 7000000,
 		storage: 700,
 		worker: 10,
-		category: PLAN_CATEGORY_ENTERPRISE,
+		category: PLAN_CATEGORY_LEGACY_ENTERPRISE,
 	},
 	'pressable-enterprise-8': {
 		slug: 'pressable-enterprise-8',
@@ -198,7 +198,7 @@ const PLAN_DATA: Record< string, PressablePlan > = {
 		visits: 8000000,
 		storage: 800,
 		worker: 10,
-		category: PLAN_CATEGORY_ENTERPRISE,
+		category: PLAN_CATEGORY_LEGACY_ENTERPRISE,
 	},
 	'pressable-enterprise-9': {
 		slug: 'pressable-enterprise-9',
@@ -206,7 +206,7 @@ const PLAN_DATA: Record< string, PressablePlan > = {
 		visits: 9000000,
 		storage: 900,
 		worker: 10,
-		category: PLAN_CATEGORY_ENTERPRISE,
+		category: PLAN_CATEGORY_LEGACY_ENTERPRISE,
 	},
 	'pressable-enterprise-10': {
 		slug: 'pressable-enterprise-10',
@@ -214,7 +214,7 @@ const PLAN_DATA: Record< string, PressablePlan > = {
 		visits: 10000000,
 		storage: 1000,
 		worker: 10,
-		category: PLAN_CATEGORY_ENTERPRISE,
+		category: PLAN_CATEGORY_LEGACY_ENTERPRISE,
 	},
 	// [New] Pressable Signature Plans 2025-06
 	'pressable-signature-1': {
@@ -223,7 +223,7 @@ const PLAN_DATA: Record< string, PressablePlan > = {
 		visits: 30000,
 		storage: 20,
 		worker: 5,
-		category: PLAN_CATEGORY_SIGNATURE,
+		category: PLAN_CATEGORY_STANDARD_TIER,
 	},
 	'pressable-signature-2': {
 		slug: 'pressable-signature-2',
@@ -231,7 +231,7 @@ const PLAN_DATA: Record< string, PressablePlan > = {
 		visits: 50000,
 		storage: 30,
 		worker: 5,
-		category: PLAN_CATEGORY_SIGNATURE,
+		category: PLAN_CATEGORY_STANDARD_TIER,
 	},
 	'pressable-signature-3': {
 		slug: 'pressable-signature-3',
@@ -239,7 +239,7 @@ const PLAN_DATA: Record< string, PressablePlan > = {
 		visits: 75000,
 		storage: 35,
 		worker: 5,
-		category: PLAN_CATEGORY_SIGNATURE,
+		category: PLAN_CATEGORY_STANDARD_TIER,
 	},
 	'pressable-signature-4': {
 		slug: 'pressable-signature-4',
@@ -247,7 +247,7 @@ const PLAN_DATA: Record< string, PressablePlan > = {
 		visits: 150000,
 		storage: 50,
 		worker: 5,
-		category: PLAN_CATEGORY_SIGNATURE,
+		category: PLAN_CATEGORY_STANDARD_TIER,
 	},
 	'pressable-signature-5': {
 		slug: 'pressable-signature-5',
@@ -255,7 +255,7 @@ const PLAN_DATA: Record< string, PressablePlan > = {
 		visits: 400000,
 		storage: 80,
 		worker: 5,
-		category: PLAN_CATEGORY_SIGNATURE,
+		category: PLAN_CATEGORY_AGENCY_TIER,
 	},
 	'pressable-signature-6': {
 		slug: 'pressable-signature-6',
@@ -263,7 +263,7 @@ const PLAN_DATA: Record< string, PressablePlan > = {
 		visits: 1000000,
 		storage: 200,
 		worker: 5,
-		category: PLAN_CATEGORY_SIGNATURE,
+		category: PLAN_CATEGORY_AGENCY_TIER,
 	},
 	'pressable-signature-7': {
 		slug: 'pressable-signature-7',
@@ -271,7 +271,7 @@ const PLAN_DATA: Record< string, PressablePlan > = {
 		visits: 1600000,
 		storage: 275,
 		worker: 5,
-		category: PLAN_CATEGORY_SIGNATURE,
+		category: PLAN_CATEGORY_AGENCY_TIER,
 	},
 	'pressable-signature-8': {
 		slug: 'pressable-signature-8',
@@ -279,7 +279,7 @@ const PLAN_DATA: Record< string, PressablePlan > = {
 		visits: 2000000,
 		storage: 325,
 		worker: 5,
-		category: PLAN_CATEGORY_SIGNATURE,
+		category: PLAN_CATEGORY_AGENCY_TIER,
 	},
 	'pressable-signature-9': {
 		slug: 'pressable-signature-9',
@@ -287,7 +287,7 @@ const PLAN_DATA: Record< string, PressablePlan > = {
 		visits: 2400000,
 		storage: 375,
 		worker: 5,
-		category: PLAN_CATEGORY_SIGNATURE,
+		category: PLAN_CATEGORY_AGENCY_TIER,
 	},
 	'pressable-signature-10': {
 		slug: 'pressable-signature-10',
@@ -295,7 +295,7 @@ const PLAN_DATA: Record< string, PressablePlan > = {
 		visits: 3000000,
 		storage: 450,
 		worker: 5,
-		category: PLAN_CATEGORY_SIGNATURE,
+		category: PLAN_CATEGORY_AGENCY_TIER,
 	},
 	'pressable-signature-11': {
 		slug: 'pressable-signature-11',
@@ -303,7 +303,7 @@ const PLAN_DATA: Record< string, PressablePlan > = {
 		visits: 4000000,
 		storage: 500,
 		worker: 5,
-		category: PLAN_CATEGORY_SIGNATURE_HIGH,
+		category: PLAN_CATEGORY_AGENCY_TIER,
 	},
 	'pressable-signature-12': {
 		slug: 'pressable-signature-12',
@@ -311,7 +311,7 @@ const PLAN_DATA: Record< string, PressablePlan > = {
 		visits: 5000000,
 		storage: 550,
 		worker: 5,
-		category: PLAN_CATEGORY_SIGNATURE_HIGH,
+		category: PLAN_CATEGORY_AGENCY_TIER,
 	},
 	'pressable-signature-13': {
 		slug: 'pressable-signature-13',
@@ -319,7 +319,7 @@ const PLAN_DATA: Record< string, PressablePlan > = {
 		visits: 6000000,
 		storage: 600,
 		worker: 5,
-		category: PLAN_CATEGORY_SIGNATURE_HIGH,
+		category: PLAN_CATEGORY_AGENCY_TIER,
 	},
 	'pressable-signature-14': {
 		slug: 'pressable-signature-14',
@@ -327,7 +327,7 @@ const PLAN_DATA: Record< string, PressablePlan > = {
 		visits: 7000000,
 		storage: 700,
 		worker: 5,
-		category: PLAN_CATEGORY_SIGNATURE_HIGH,
+		category: PLAN_CATEGORY_AGENCY_TIER,
 	},
 	'pressable-signature-15': {
 		slug: 'pressable-signature-15',
@@ -335,7 +335,7 @@ const PLAN_DATA: Record< string, PressablePlan > = {
 		visits: 8000000,
 		storage: 800,
 		worker: 5,
-		category: PLAN_CATEGORY_SIGNATURE_HIGH,
+		category: PLAN_CATEGORY_AGENCY_TIER,
 	},
 	'pressable-signature-16': {
 		slug: 'pressable-signature-16',
@@ -343,7 +343,7 @@ const PLAN_DATA: Record< string, PressablePlan > = {
 		visits: 9000000,
 		storage: 900,
 		worker: 5,
-		category: PLAN_CATEGORY_SIGNATURE_HIGH,
+		category: PLAN_CATEGORY_AGENCY_TIER,
 	},
 	'pressable-signature-17': {
 		slug: 'pressable-signature-17',
@@ -351,7 +351,7 @@ const PLAN_DATA: Record< string, PressablePlan > = {
 		visits: 10000000,
 		storage: 1000,
 		worker: 5,
-		category: PLAN_CATEGORY_SIGNATURE_HIGH,
+		category: PLAN_CATEGORY_AGENCY_TIER,
 	},
 
 	// [New] Pressable Premium Plans 2026-02
@@ -361,7 +361,7 @@ const PLAN_DATA: Record< string, PressablePlan > = {
 		visits: 150000,
 		storage: 30,
 		worker: 10,
-		category: PLAN_CATEGORY_PREMIUM,
+		category: PLAN_CATEGORY_PERFORMANCE_TIER,
 	},
 	'pressable-premium-2': {
 		slug: 'pressable-premium-2',
@@ -369,7 +369,7 @@ const PLAN_DATA: Record< string, PressablePlan > = {
 		visits: 250000,
 		storage: 40,
 		worker: 10,
-		category: PLAN_CATEGORY_PREMIUM,
+		category: PLAN_CATEGORY_PERFORMANCE_TIER,
 	},
 	'pressable-premium-3': {
 		slug: 'pressable-premium-3',
@@ -377,7 +377,7 @@ const PLAN_DATA: Record< string, PressablePlan > = {
 		visits: 350000,
 		storage: 50,
 		worker: 13,
-		category: PLAN_CATEGORY_PREMIUM,
+		category: PLAN_CATEGORY_PERFORMANCE_TIER,
 	},
 	'pressable-premium-4': {
 		slug: 'pressable-premium-4',
@@ -385,7 +385,7 @@ const PLAN_DATA: Record< string, PressablePlan > = {
 		visits: 500000,
 		storage: 60,
 		worker: 15,
-		category: PLAN_CATEGORY_PREMIUM,
+		category: PLAN_CATEGORY_PERFORMANCE_TIER,
 	},
 	'pressable-premium-5': {
 		slug: 'pressable-premium-5',
@@ -393,7 +393,7 @@ const PLAN_DATA: Record< string, PressablePlan > = {
 		visits: 750000,
 		storage: 70,
 		worker: 15,
-		category: PLAN_CATEGORY_PREMIUM,
+		category: PLAN_CATEGORY_PERFORMANCE_TIER,
 	},
 	'pressable-premium-6': {
 		slug: 'pressable-premium-6',
@@ -401,7 +401,7 @@ const PLAN_DATA: Record< string, PressablePlan > = {
 		visits: 1000000,
 		storage: 80,
 		worker: 17,
-		category: PLAN_CATEGORY_PREMIUM,
+		category: PLAN_CATEGORY_PERFORMANCE_TIER,
 	},
 	'pressable-premium-7': {
 		slug: 'pressable-premium-7',
@@ -409,7 +409,7 @@ const PLAN_DATA: Record< string, PressablePlan > = {
 		visits: 2000000,
 		storage: 90,
 		worker: 17,
-		category: PLAN_CATEGORY_PREMIUM,
+		category: PLAN_CATEGORY_PERFORMANCE_TIER,
 	},
 	'pressable-premium-8': {
 		slug: 'pressable-premium-8',
@@ -417,7 +417,7 @@ const PLAN_DATA: Record< string, PressablePlan > = {
 		visits: 3000000,
 		storage: 100,
 		worker: 20,
-		category: PLAN_CATEGORY_PREMIUM,
+		category: PLAN_CATEGORY_PERFORMANCE_TIER,
 	},
 	'pressable-premium-9': {
 		slug: 'pressable-premium-9',
@@ -425,7 +425,7 @@ const PLAN_DATA: Record< string, PressablePlan > = {
 		visits: 5000000,
 		storage: 125,
 		worker: 20,
-		category: PLAN_CATEGORY_PREMIUM,
+		category: PLAN_CATEGORY_PERFORMANCE_TIER,
 	},
 	'pressable-premium-10': {
 		slug: 'pressable-premium-10',
@@ -433,7 +433,7 @@ const PLAN_DATA: Record< string, PressablePlan > = {
 		visits: 7000000,
 		storage: 150,
 		worker: 25,
-		category: PLAN_CATEGORY_PREMIUM,
+		category: PLAN_CATEGORY_PERFORMANCE_TIER,
 	},
 	'pressable-premium-11': {
 		slug: 'pressable-premium-11',
@@ -441,7 +441,7 @@ const PLAN_DATA: Record< string, PressablePlan > = {
 		visits: 10000000,
 		storage: 175,
 		worker: 25,
-		category: PLAN_CATEGORY_PREMIUM,
+		category: PLAN_CATEGORY_PERFORMANCE_TIER,
 	},
 
 	// [Add-ons] Pressable add-ons capacity values.
