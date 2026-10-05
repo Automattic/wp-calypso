@@ -76,7 +76,7 @@ export default function PressablePremiumPlanMigrationCard() {
 				<div className="pressable-premium-plan-migration-card__description">
 					{ preventWidows(
 						translate(
-							"Move your client's store to Pressable's Performance WordPress hosting and unlock up to %(price)s—plus free, expert-led migration.",
+							"Move your client's store to Pressable's Premium WordPress hosting and unlock up to %(price)s—plus free, expert-led migration.",
 							{
 								args: {
 									price: formatCurrency( PRESSABLE_PREMIUM_PLAN_COMMISSION_AMOUNT, 'USD', {
