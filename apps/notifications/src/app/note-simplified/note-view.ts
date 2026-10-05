@@ -6,27 +6,39 @@ import type { Block, BlockWithSignature, Note, Subject } from '../types';
 
 const MAX_AVATARS = 3;
 
-// A mention inside a post arrives as plain text, with no comment block to recognise it by.
-const POST_MENTION_TYPE = 'automattcher';
-
-// The one note where the post is the news, sent to subscribers of its site.
-const NEW_POST_TYPE = 'new_post';
-
 const TARGET_RANGE_TYPES = [ 'post', 'comment', 'site' ];
 
-// The list below says how many, so the heading names only what they did. Other types
-// keep the API's own title.
-const getPeopleHeading = ( note: Note ) => {
-	switch ( note.type ) {
-		case 'like':
+type TypeTraits = {
+	/** Someone's words are the news. */
+	isConversation?: boolean;
+	/** The post itself is the news. */
+	isPostNews?: boolean;
+	/** The note is about a comment the reader wrote. */
+	isAboutComment?: boolean;
+	/** Heads the list of people who acted; the list itself says how many. */
+	peopleHeading?: string;
+};
+
+// What each note type means, in one place. Types not listed fall back to the shape of
+// their blocks.
+const getTypeTraits = ( type: string ): TypeTraits => {
+	switch ( type ) {
+		case 'comment':
+		// A mention inside a post arrives as plain text, with no comment block.
+		case 'automattcher':
+			return { isConversation: true };
+		case 'new_post':
+			return { isPostNews: true };
 		case 'comment_like':
-			return __( 'Likes' );
+			return { isAboutComment: true, peopleHeading: __( 'Likes' ) };
+		case 'like':
+			return { peopleHeading: __( 'Likes' ) };
 		case 'reblog':
-			return __( 'Reblogs' );
+			return { peopleHeading: __( 'Reblogs' ) };
 		case 'follow':
-			return __( 'Subscribers' );
+			return { peopleHeading: __( 'Subscribers' ) };
 		default:
-			return note.title;
+			return {};
 	}
 };
 
@@ -110,26 +122,37 @@ export function getNoteView( note: Note, isPendingApproval = false ): NoteView {
 	const { site: siteId, post: postId, parent_comment: parentCommentId } = note.meta?.ids ?? {};
 	const [ sentence ] = note.subject;
 	const [ header, context ] = note.header ?? [];
+	const traits = getTypeTraits( note.type );
 	const [ headerRange ] = header?.ranges ?? [];
 	const contextText = context?.text?.trim();
 
-	// On a reply or a comment like, the header is the comment answered or liked: its
-	// author, then its text. Everywhere else its second line is the post title.
-	const isReply = note.type === 'comment' && !! parentCommentId;
-	const parent =
-		contextText && ( isReply || note.type === 'comment_like' )
-			? {
-					text: contextText,
-					author: getRangeText( header, 'user' ),
-					authorUrl: getHeaderLink( header ),
-					avatar: header.media?.[ 0 ]?.url,
-					url: isReply
-						? `${ note.url.split( '#' )[ 0 ] }#comment-${ parentCommentId }`
-						: context.ranges?.[ 0 ]?.url,
-				}
-			: undefined;
+	// The comment a reply answers or a like is for. Without details from the endpoint,
+	// the header holds it: its author, then its text.
+	const isReply = traits.isConversation && !! parentCommentId;
+	const getParent = (): NonNullable< NoteView[ 'thread' ] >[ 'parent' ] => {
+		if ( ! isReply && ! traits.isAboutComment ) {
+			return undefined;
+		}
+		const details = note.parent_comment;
+		const text = details?.text ?? contextText;
+		if ( ! text ) {
+			return undefined;
+		}
+		return {
+			text,
+			author: details?.author_name ?? getRangeText( header, 'user' ),
+			authorUrl: getHeaderLink( header ),
+			avatar: details?.author_avatar ?? header.media?.[ 0 ]?.url,
+			url:
+				details?.url ??
+				( isReply
+					? `${ note.url.split( '#' )[ 0 ] }#comment-${ parentCommentId }`
+					: context?.ranges?.[ 0 ]?.url ),
+		};
+	};
+	const parent = getParent();
 
-	const hasWords = hasComment || note.type === POST_MENTION_TYPE;
+	const hasWords = !! traits.isConversation || hasComment;
 	const isConversation = hasWords || !! parent;
 	const hasPostCard = ! isConversation && !! siteId && !! postId;
 
@@ -150,9 +173,11 @@ export function getNoteView( note: Note, isPendingApproval = false ): NoteView {
 		const noteTitle = hasPostCard
 			? split?.title
 			: ( getRangeText( sentence, 'post' ) ?? getRangeText( header, 'post' ) );
-		const title = [ toPlainText( details?.title ), noteTitle ].find(
-			( candidate ) => candidate && ! isRestating( candidate, parent?.text )
-		);
+		// The endpoint's title is the real one; only a title read from the note's own text
+		// can turn out to be the start of the comment it answers.
+		const title =
+			toPlainText( details?.title ) ||
+			( noteTitle && ! isRestating( noteTitle, parent?.text ) ? noteTitle : undefined );
 		const excerpt =
 			toPlainText( details?.excerpt ) || ( hasPostCard ? postBlock?.text : undefined );
 
@@ -164,7 +189,7 @@ export function getNoteView( note: Note, isPendingApproval = false ): NoteView {
 			title,
 			excerpt,
 			url: details?.url ?? ( hasPostCard ? undefined : postRange?.url ) ?? note.url,
-			isFeatured: note.type === NEW_POST_TYPE,
+			isFeatured: !! traits.isPostNews,
 			image: details?.featured_image,
 			siteName: toPlainText( details?.site_name ),
 			siteIcon: details?.site_icon,
@@ -199,7 +224,7 @@ export function getNoteView( note: Note, isPendingApproval = false ): NoteView {
 	// Beneath a card or a comment, the list of people already says who acted.
 	const peopleHeading =
 		users.length > 0 && ! hasWords && ( hasCard || !! parent )
-			? getPeopleHeading( note )
+			? ( traits.peopleHeading ?? note.title )
 			: undefined;
 	// A lone person is named by the actor row or the thread, so their block isn't repeated.
 	const isActorShown = users.length === 1 && ! peopleHeading;
@@ -242,7 +267,7 @@ export function getNoteView( note: Note, isPendingApproval = false ): NoteView {
 		target:
 			split && ! hasCard && ! isConversation ? { title: split.title, url: target?.url } : undefined,
 		origin: getOrigin(),
-		subscribedSiteId: note.type === NEW_POST_TYPE ? siteId : undefined,
+		subscribedSiteId: traits.isPostNews ? siteId : undefined,
 		follow:
 			isActorShown && ! hasComment && followSiteId && actor.actions && 'follow' in actor.actions
 				? { siteId: followSiteId, isFollowing: !! actor.actions.follow }

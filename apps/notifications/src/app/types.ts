@@ -122,7 +122,13 @@ export type Note = {
 	body: Block[];
 	// Sent only when the request asks for `include=post_details`.
 	post?: NotePost;
-	parent_comment?: { date?: string; url?: string };
+	parent_comment?: {
+		date?: string;
+		url?: string;
+		text?: string;
+		author_name?: string;
+		author_avatar?: string;
+	};
 };
 
 export type NotePost = {
