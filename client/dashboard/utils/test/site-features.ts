@@ -1,5 +1,10 @@
 import { DotcomFeatures, HostingFeatures } from '@automattic/api-core';
-import { getActivityLogHiddenGroups, hasHostingFeature, hasPlanFeature } from '../site-features';
+import {
+	canAccessSftpSettings,
+	getActivityLogHiddenGroups,
+	hasHostingFeature,
+	hasPlanFeature,
+} from '../site-features';
 import type { Site } from '@automattic/api-core';
 
 describe( 'hasPlanFeature', () => {
@@ -82,6 +87,45 @@ describe( 'hasHostingFeature', () => {
 			},
 		} as Site;
 		expect( hasHostingFeature( site, HostingFeatures.BACKUPS ) ).toBe( true );
+	} );
+} );
+
+describe( 'canAccessSftpSettings', () => {
+	const atomicSite = {
+		jetpack: true,
+		is_wpcom_atomic: true,
+		capabilities: { manage_options: true },
+		plan: {
+			features: {
+				active: [ DotcomFeatures.ATOMIC, HostingFeatures.SFTP ],
+			},
+		},
+	} as Site;
+
+	it( 'should return true for an admin of a site whose plan includes SFTP', () => {
+		expect( canAccessSftpSettings( atomicSite ) ).toBe( true );
+	} );
+
+	it( 'should return true for an admin of a site whose plan does not include SFTP, so the page can upsell it', () => {
+		const site = {
+			...atomicSite,
+			plan: { features: { active: [ DotcomFeatures.ATOMIC ] } },
+		} as Site;
+		expect( canAccessSftpSettings( site ) ).toBe( true );
+	} );
+
+	it( 'should return false if the user cannot manage the site', () => {
+		const site = { ...atomicSite, capabilities: { manage_options: false } } as Site;
+		expect( canAccessSftpSettings( site ) ).toBe( false );
+	} );
+
+	it( 'should return false for a self-hosted Jetpack site', () => {
+		const site = {
+			...atomicSite,
+			is_wpcom_atomic: false,
+			jetpack_connection: true,
+		} as Site;
+		expect( canAccessSftpSettings( site ) ).toBe( false );
 	} );
 } );
 

@@ -150,7 +150,11 @@ const SiteCriticalError = ( { siteSlug }: { siteSlug: string } ) => {
 					sftpLink: (
 						<Link
 							to={ `/sites/${ siteSlug }/settings/sftp-ssh` }
-							onClick={ () => recordTracksEvent( 'calypso_dashboard_critical_error_sftp_click' ) }
+							onClick={ () =>
+								recordTracksEvent( 'calypso_dashboard_critical_error_sftp_click', {
+									has_sftp_feature: hasHostingFeature( site, HostingFeatures.SFTP ),
+								} )
+							}
 						>
 							{ __( 'Connect over SFTP/SSH' ) }
 						</Link>

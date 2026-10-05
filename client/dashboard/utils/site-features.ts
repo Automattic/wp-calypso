@@ -1,4 +1,4 @@
-import { DotcomFeatures, HostingFeatures } from '@automattic/api-core';
+import { DotcomFeatures } from '@automattic/api-core';
 import { siteTypeSupportsFeature } from './site-type-feature-support';
 import type {
 	DotcomFeatureSlug,
@@ -33,12 +33,9 @@ export function hasHostingFeature( site: Site, feature: HostingFeatureSlug ) {
 	return hasPlanFeature( site, feature );
 }
 
+// Deliberately ignores the plan: the SFTP/SSH settings page upsells sites that lack the feature.
 export function canAccessSftpSettings( site: Site ) {
-	return (
-		!! site.capabilities?.manage_options &&
-		siteTypeSupportsFeature( site, 'settingsServer' ) &&
-		hasHostingFeature( site, HostingFeatures.SFTP )
-	);
+	return !! site.capabilities?.manage_options && siteTypeSupportsFeature( site, 'settingsServer' );
 }
 
 export function hasJetpackModule( site: Site, module: `${ JetpackModuleSlug }` ) {
