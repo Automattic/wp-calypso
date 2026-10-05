@@ -13,7 +13,7 @@ type Site = {
 };
 
 type Props = {
-	plan: NonNullable< ApiSite[ 'plan' ] >;
+	plan: Pick< NonNullable< ApiSite[ 'plan' ] >, 'product_slug' | 'product_name_short' >;
 	product: ResponseCartProduct;
 	selectedSite: Site;
 };

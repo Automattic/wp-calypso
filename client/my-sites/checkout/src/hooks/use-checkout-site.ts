@@ -40,12 +40,12 @@ const JETPACK_PLUGIN_ADMIN_PAGES: Record< string, string > = {
  * Returns the wp-admin page of the site's Jetpack plugin, preferring the full
  * Jetpack plugin over standalone ones.
  */
-export function getJetpackCheckoutRedirectUrl( site: Site | undefined ): string | null {
+export function getJetpackCheckoutRedirectUrl( site: Site | undefined ): string | undefined {
 	const plugins = getJetpackConnectionActivePlugins( site );
 	const plugin = plugins.includes( 'jetpack' )
 		? 'jetpack'
 		: plugins.find( ( slug ) => slug in JETPACK_PLUGIN_ADMIN_PAGES );
-	return plugin ? JETPACK_PLUGIN_ADMIN_PAGES[ plugin ] : null;
+	return plugin ? JETPACK_PLUGIN_ADMIN_PAGES[ plugin ] : undefined;
 }
 
 /**

@@ -44,8 +44,8 @@ describe( 'isJetpackNotAtomicSite', () => {
 } );
 
 describe( 'getJetpackCheckoutRedirectUrl', () => {
-	it( 'returns null when no known plugin is active', () => {
-		expect( getJetpackCheckoutRedirectUrl( withPlugins( [ 'jetpack-search' ] ) ) ).toBeNull();
+	it( 'returns undefined when no known plugin is active', () => {
+		expect( getJetpackCheckoutRedirectUrl( withPlugins( [ 'jetpack-search' ] ) ) ).toBeUndefined();
 	} );
 
 	it( 'prefers the full Jetpack plugin', () => {
