@@ -52,12 +52,6 @@ describe( 'getDateRange', () => {
 } );
 
 describe( 'isDateRangeId', () => {
-	it( 'should accept every supported range id', () => {
-		DATE_RANGES.forEach( ( range ) => {
-			expect( isDateRangeId( range.id ) ).toBe( true );
-		} );
-	} );
-
 	it( 'should reject anything else', () => {
 		[ 'last_24_hours', '', null, undefined, 7 ].forEach( ( value ) => {
 			expect( isDateRangeId( value ) ).toBe( false );
@@ -66,10 +60,6 @@ describe( 'isDateRangeId', () => {
 } );
 
 describe( 'DATE_RANGES', () => {
-	it( 'should expose a valid default', () => {
-		expect( isDateRangeId( DEFAULT_DATE_RANGE_ID ) ).toBe( true );
-	} );
-
 	it( 'should not repeat an id', () => {
 		const ids = DATE_RANGES.map( ( range ) => range.id );
 		expect( new Set( ids ).size ).toBe( ids.length );

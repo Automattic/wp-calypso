@@ -25,8 +25,8 @@
 
 		// An outset ring instead of the Button's focus shadow.
 		&:focus:not(:active) {
-			outline: var(--wpds-border-width-focus, 1.5px) solid var(--wpds-color-stroke-focus, var(--wp-admin-theme-color, #3858e9));
-			outline-offset: var(--wpds-border-width-focus, 1.5px);
+			outline: var(--wpds-border-width-focus, 2px) solid var(--wpds-color-stroke-focus, var(--wp-admin-theme-color, #3858e9));
+			outline-offset: var(--wpds-border-width-focus, 2px);
 			box-shadow: none;
 		}
 	}

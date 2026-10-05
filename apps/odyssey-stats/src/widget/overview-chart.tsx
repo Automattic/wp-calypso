@@ -5,13 +5,7 @@ import { formatNumber, formatNumberCompact } from '@automattic/number-formatters
 import moment from 'moment';
 import { FunctionComponent } from 'react';
 import { Unit } from '../typings';
-import type { DataPointDate, RenderTooltipParams } from '@automattic/charts';
-
-export interface ChartSeries {
-	label: string;
-	data: Array< { date: Date; value: number } >;
-	options: { stroke?: string };
-}
+import type { DataPointDate, RenderTooltipParams, SeriesData } from '@automattic/charts';
 
 // The tooltip renders through @visx/tooltip's portal, which appends to `document.body` —
 // outside the roots our stylesheets are scoped to — so these few rules travel with it.
@@ -54,7 +48,7 @@ function renderTooltip( unit: Unit, { tooltipData }: RenderTooltipParams< DataPo
 }
 
 interface OverviewChartProps {
-	series: ChartSeries[];
+	series: SeriesData[];
 	height: number;
 	/** The range's bucket, so monthly points are labelled by month rather than by date. */
 	unit: Unit;
