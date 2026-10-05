@@ -10,6 +10,7 @@ import { parseLocalDate } from 'calypso/my-sites/stats/utils';
 import useVisitsQuery from '../hooks/use-visits-query';
 import { DATE_RANGE_LAST_7_DAYS, DateRange } from '../lib/date-ranges';
 import { deriveSeriesColors } from '../lib/series-colors';
+import ChartBoundary from './chart-boundary';
 import MetricValue from './metric-value';
 
 const OverviewChart = lazy( () => import( './overview-chart' ) );
@@ -131,34 +132,38 @@ const MiniChart: FunctionComponent< MiniChartProps > = ( { siteId, gmtOffset, ra
 			) }
 
 			{ /* A fixed height while loading and for the chart, so the card doesn't resize
-			   between them; the empty notice sizes to its content. */ }
-			<div
-				// Only the 7-day range labels every day, so only there does the last date
-				// land on the chart's right edge and need ending at its tick.
-				className={ clsx( 'stats-widget-chart', {
-					'has-edge-label': range.id === DATE_RANGE_LAST_7_DAYS,
-				} ) }
-				style={ isLoading || ! isEmpty ? { blockSize: `${ CHART_HEIGHT }px` } : undefined }
-			>
-				{ isLoading && <StatsModulePlaceholder isLoading /> }
-				{ ! isLoading && isEmpty && (
-					<Notice.Root intent="info" className="stats-widget-empty-notice">
-						<Notice.Description>
-							{ translate( 'We are collecting traffic data for your site' ) }
-						</Notice.Description>
-						<Notice.Actions>
-							<Notice.ActionLink href="https://jetpack.com/stats/" openInNewTab>
-								{ translate( 'Learn more about stats' ) }
-							</Notice.ActionLink>
-						</Notice.Actions>
-					</Notice.Root>
-				) }
-				{ ! isLoading && ! isEmpty && (
-					<Suspense fallback={ <StatsModulePlaceholder isLoading /> }>
-						<OverviewChart series={ series } height={ CHART_HEIGHT } unit={ unit } />
-					</Suspense>
-				) }
-			</div>
+			   between them; the empty notice sizes to its content. The boundary wraps the
+			   box rather than the chart alone, so a chart that fails leaves no empty space
+			   behind — the totals above it stay either way. */ }
+			<ChartBoundary fallback={ null }>
+				<div
+					// Only the 7-day range labels every day, so only there does the last date
+					// land on the chart's right edge and need ending at its tick.
+					className={ clsx( 'stats-widget-chart', {
+						'has-edge-label': range.id === DATE_RANGE_LAST_7_DAYS,
+					} ) }
+					style={ isLoading || ! isEmpty ? { blockSize: `${ CHART_HEIGHT }px` } : undefined }
+				>
+					{ isLoading && <StatsModulePlaceholder isLoading /> }
+					{ ! isLoading && isEmpty && (
+						<Notice.Root intent="info" className="stats-widget-empty-notice">
+							<Notice.Description>
+								{ translate( 'We are collecting traffic data for your site' ) }
+							</Notice.Description>
+							<Notice.Actions>
+								<Notice.ActionLink href="https://jetpack.com/stats/" openInNewTab>
+									{ translate( 'Learn more about stats' ) }
+								</Notice.ActionLink>
+							</Notice.Actions>
+						</Notice.Root>
+					) }
+					{ ! isLoading && ! isEmpty && (
+						<Suspense fallback={ <StatsModulePlaceholder isLoading /> }>
+							<OverviewChart series={ series } height={ CHART_HEIGHT } unit={ unit } />
+						</Suspense>
+					) }
+				</div>
+			</ChartBoundary>
 		</div>
 	);
 };
