@@ -55,6 +55,28 @@ describe( 'fetchNamePulseSuggestions', () => {
 		expect( response.suggestions ).toHaveLength( 1 );
 		expect( response.errors ).toEqual( [] );
 	} );
+
+	it( 'sends the chosen endings as a comma-separated tlds parameter', async () => {
+		const scope = nock( BASE )
+			.get( '/wpcom/v2/domains/name-pulse/suggestions' )
+			.query( ( query ) => query.query === 'coffee' && query.tlds === 'blog,com' )
+			.reply( 200, { suggestions: [] } );
+
+		await fetchNamePulseSuggestions( { query: 'coffee', tlds: [ 'blog', 'com' ] } );
+
+		expect( scope.isDone() ).toBe( true );
+	} );
+
+	it( 'leaves tlds out when no ending is chosen', async () => {
+		const scope = nock( BASE )
+			.get( '/wpcom/v2/domains/name-pulse/suggestions' )
+			.query( ( query ) => query.query === 'coffee' && query.tlds === undefined )
+			.reply( 200, { suggestions: [] } );
+
+		await fetchNamePulseSuggestions( { query: 'coffee', tlds: [] } );
+
+		expect( scope.isDone() ).toBe( true );
+	} );
 } );
 
 describe( 'fetchNamePulseAvailability', () => {
