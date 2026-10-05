@@ -1,9 +1,10 @@
+import { receiptQuery } from '@automattic/api-queries';
 import { SUPPORT_STATUS_QUERY_KEY } from '@automattic/help-center/src/data/use-support-status';
 import { useShoppingCart } from '@automattic/shopping-cart';
+import { useQueryClient } from '@tanstack/react-query';
 import { isURL } from '@wordpress/url';
 import debugFactory from 'debug';
 import { useCallback } from 'react';
-import { recordPurchase } from 'calypso/lib/analytics/record-purchase';
 import { hasEcommercePlan } from 'calypso/lib/cart-values/cart-items';
 import getThankYouPageUrl from 'calypso/my-sites/checkout/get-thank-you-page-url';
 import useSiteDomains from 'calypso/my-sites/checkout/src/hooks/use-site-domains';
@@ -13,7 +14,6 @@ import {
 	clearSignupDestinationCookie,
 } from 'calypso/signup/storageUtils';
 import { useSelector, useDispatch } from 'calypso/state';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { clearPurchases } from 'calypso/state/purchases/actions';
 import { getCalypsoQueryClient } from 'calypso/state/query-client';
 import { fetchReceiptCompleted } from 'calypso/state/receipts/actions';
@@ -28,21 +28,16 @@ import {
 	isSearchPluginActive,
 } from 'calypso/state/sites/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { recordCompositeCheckoutErrorDuringAnalytics } from '../lib/analytics';
 import { isExternalA4ACheckout } from '../lib/is-external-a4a-checkout';
 import normalizeTransactionResponse from '../lib/normalize-transaction-response';
 import { absoluteRedirectThroughPending, redirectThroughPending } from '../lib/pending-page';
+import { recordCompletedPurchaseAnalytics } from '../lib/record-completed-purchase-analytics';
 import type {
 	PaymentEventCallback,
 	PaymentEventCallbackArguments,
 } from '@automattic/composite-checkout';
-import type { ResponseCart } from '@automattic/shopping-cart';
-import type {
-	WPCOMTransactionEndpointResponse,
-	SitelessCheckoutType,
-} from '@automattic/wpcom-checkout';
+import type { SitelessCheckoutType } from '@automattic/wpcom-checkout';
 import type { PostCheckoutUrlArguments } from 'calypso/my-sites/checkout/get-thank-you-page-url';
-import type { CalypsoDispatch } from 'calypso/state/types';
 
 const debug = debugFactory( 'calypso:composite-checkout:use-on-payment-complete' );
 
@@ -95,7 +90,6 @@ export default function useCreatePaymentSubmittedAndProcessingCallback( {
 	const siteId = useSelector( getSelectedSiteId );
 	const selectedSiteData = useSelector( getSelectedSite );
 	const adminUrl = selectedSiteData?.options?.admin_url || wpAdminUrl;
-	const sitePlanSlug = selectedSiteData?.plan?.product_slug;
 	const isJetpackNotAtomic =
 		useSelector(
 			( state ) =>
@@ -111,6 +105,7 @@ export default function useCreatePaymentSubmittedAndProcessingCallback( {
 	);
 
 	const domains = useSiteDomains( siteId ?? undefined );
+	const queryClient = useQueryClient();
 
 	return useCallback(
 		async ( { transactionLastResponse }: PaymentEventCallbackArguments ) => {
@@ -157,24 +152,6 @@ export default function useCreatePaymentSubmittedAndProcessingCallback( {
 			const url = getThankYouPageUrl( getThankYouPageUrlArguments );
 			debug( 'getThankYouUrl returned', url );
 
-			try {
-				await recordPaymentCompleteAnalytics( {
-					transactionResult,
-					responseCart,
-					reduxDispatch,
-					sitePlanSlug,
-				} );
-			} catch ( err ) {
-				// eslint-disable-next-line no-console
-				console.error( err );
-				reduxDispatch(
-					recordCompositeCheckoutErrorDuringAnalytics( {
-						errorObject: err as Error,
-						failureDescription: 'useCreatePaymentSubmittedAndProcessingCallback',
-					} )
-				);
-			}
-
 			const receiptId =
 				transactionResult && 'receipt_id' in transactionResult
 					? transactionResult.receipt_id
@@ -202,7 +179,6 @@ export default function useCreatePaymentSubmittedAndProcessingCallback( {
 			) {
 				debug( 'fetching receipt' );
 				reduxDispatch( fetchReceiptCompleted( receiptId, transactionResult ) );
-				recordDomainBundlePurchasedEvents( responseCart, reduxDispatch );
 			}
 
 			if ( siteId ) {
@@ -214,6 +190,15 @@ export default function useCreatePaymentSubmittedAndProcessingCallback( {
 			// For example, Focused Launch is showing a success dialog directly in editor instead of a thank you page.
 			// See https://github.com/Automattic/wp-calypso/pull/47808#issuecomment-755196691
 			if ( isInModal && disabledThankYouPage && ! hasEcommercePlan( responseCart ) ) {
+				// Purchases in the modal only use saved cards, which complete
+				// immediately, and this path skips the pending page that would
+				// otherwise record the purchase.
+				if ( receiptId ) {
+					queryClient
+						.fetchQuery( receiptQuery( receiptId, { includeFailedPurchases: true } ) )
+						.then( ( receipt ) => recordCompletedPurchaseAnalytics( receipt, reduxDispatch ) )
+						.catch( ( error ) => debug( 'could not fetch receipt for analytics', error ) );
+				}
 				return;
 			}
 
@@ -293,6 +278,7 @@ export default function useCreatePaymentSubmittedAndProcessingCallback( {
 			isComingFromUpsell,
 			isInModal,
 			reduxDispatch,
+			queryClient,
 			siteId,
 			responseCart,
 			createUserAndSiteBeforeTransaction,
@@ -300,81 +286,8 @@ export default function useCreatePaymentSubmittedAndProcessingCallback( {
 			sitelessCheckoutType,
 			adminPageRedirect,
 			domains,
-			sitePlanSlug,
 			connectAfterCheckout,
 			fromSiteSlug,
 		]
 	);
-}
-
-async function recordPaymentCompleteAnalytics( {
-	transactionResult,
-	responseCart,
-	reduxDispatch,
-	sitePlanSlug,
-}: {
-	transactionResult: WPCOMTransactionEndpointResponse | undefined;
-	responseCart: ResponseCart;
-	reduxDispatch: CalypsoDispatch;
-	sitePlanSlug?: string | null;
-} ) {
-	/**
-	 * IMPORTANT
-	 *
-	 * Do not rely on analytics recorded in this function because these are
-	 * only recorded for purchases which use specific payment methods. Redirect
-	 * payment methods like PayPal or Bancontact or some 3DS credit cards will
-	 * not trigger this function. Events triggered on the "pending" page will
-	 * be more accurate and will capture most flows, but not purchases made
-	 * through the one-click checkout modal. Prefer backend events which are
-	 * much more accurate.
-	 */
-
-	try {
-		await recordPurchase( {
-			cart: responseCart,
-			orderId:
-				transactionResult && 'receipt_id' in transactionResult
-					? transactionResult.receipt_id
-					: undefined,
-			sitePlanSlug,
-		} );
-	} catch ( err ) {
-		// eslint-disable-next-line no-console
-		console.error( err );
-		reduxDispatch(
-			recordCompositeCheckoutErrorDuringAnalytics( {
-				errorObject: err as Error,
-				failureDescription: 'useCreatePaymentSubmittedAndProcessingCallback',
-			} )
-		);
-	}
-}
-
-/**
- * Completes the domain bundle funnel (shown -> accepted -> purchased) by firing one
- * `calypso_domain_bundle_purchased` Tracks event per distinct bundle in the purchased cart.
- * Matches the shape of the `shown`/`accepted` events emitted during domain search.
- */
-function recordDomainBundlePurchasedEvents(
-	responseCart: ResponseCart,
-	reduxDispatch: CalypsoDispatch
-) {
-	const domainCountByBundle = new Map< string, number >();
-	for ( const product of responseCart.products ) {
-		const groupId = product.extra?.domain_bundle_group_id;
-		if ( ! groupId ) {
-			continue;
-		}
-		domainCountByBundle.set( groupId, ( domainCountByBundle.get( groupId ) ?? 0 ) + 1 );
-	}
-
-	for ( const [ groupId, domainCount ] of domainCountByBundle ) {
-		reduxDispatch(
-			recordTracksEvent( 'calypso_domain_bundle_purchased', {
-				domain_bundle_group_id: groupId,
-				domain_count: domainCount,
-			} )
-		);
-	}
 }

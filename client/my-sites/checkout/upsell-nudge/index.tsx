@@ -1,3 +1,4 @@
+import { fetchStripeConfiguration } from '@automattic/api-core';
 import { plansQuery } from '@automattic/api-queries';
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { TERM_MONTHLY, isPlan, PlanSlug } from '@automattic/calypso-products';
@@ -16,7 +17,6 @@ import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import QuerySites from 'calypso/components/data/query-sites';
 import Main from 'calypso/components/main';
-import { getStripeConfiguration } from 'calypso/lib/store-transactions';
 import { TITAN_MAIL_MONTHLY_SLUG, TITAN_MAIL_YEARLY_SLUG } from 'calypso/lib/titan/constants';
 import getThankYouPageUrl from 'calypso/my-sites/checkout/get-thank-you-page-url';
 import ProfessionalEmailUpsell from 'calypso/my-sites/checkout/upsell-nudge/professional-email-upsell';
@@ -378,7 +378,7 @@ export class UpsellNudge extends Component< UpsellNudgeProps, UpsellNudgeState >
 		}
 
 		return (
-			<StripeHookProvider fetchStripeConfiguration={ getStripeConfiguration }>
+			<StripeHookProvider fetchStripeConfiguration={ fetchStripeConfiguration }>
 				<PurchaseModal
 					productToAdd={ productToAdd }
 					onClose={ onCloseModal }

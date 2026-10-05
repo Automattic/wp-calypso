@@ -77,6 +77,7 @@ module.exports = {
 							'!@automattic/load-script',
 							'!@automattic/mini-cart',
 							'!@automattic/number-formatters',
+							'!@automattic/newsletter-urls',
 							'!@automattic/onboarding',
 							'@automattic/onboarding/*',
 							'!@automattic/onboarding/src',

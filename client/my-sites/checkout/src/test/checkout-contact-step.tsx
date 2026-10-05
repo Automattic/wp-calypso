@@ -5,14 +5,12 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useViewportMatch } from '@wordpress/compose';
-import { dispatch } from '@wordpress/data';
 import nock from 'nock';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { isMarketplaceProduct } from 'calypso/state/products-list/selectors';
 import { getPlansBySiteId } from 'calypso/state/sites/plans/selectors/get-plans-by-site';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { resetCheckoutStores } from '../lib/checkout-stores';
-import { CHECKOUT_STORE } from '../lib/wpcom-store';
 import {
 	domainProduct,
 	domainTransferProduct,
@@ -64,7 +62,6 @@ describe( 'Checkout contact step', () => {
 
 	beforeEach( () => {
 		( useViewportMatch as jest.Mock ).mockReturnValue( false );
-		dispatch( CHECKOUT_STORE ).reset();
 		resetCheckoutStores();
 		nock.cleanAll();
 		mockGetVatInfoEndpoint( {} );
@@ -149,7 +146,7 @@ describe( 'Checkout contact step', () => {
 		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } /> );
 
 		expect( await screen.findByText( 'Enter your contact information' ) ).toBeInTheDocument();
-		expect( screen.getByRole( 'link', { name: 'Learn more' } ) ).toHaveAttribute(
+		expect( await screen.findByRole( 'link', { name: 'Learn more' } ) ).toHaveAttribute(
 			'href',
 			'https://wordpress.com/support/domains/private-domain-registration/#information-we-collect-and-why'
 		);
