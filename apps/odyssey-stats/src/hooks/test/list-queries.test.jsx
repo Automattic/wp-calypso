@@ -52,3 +52,70 @@ describe( 'the widget list queries', () => {
 		expect( params ).not.toHaveProperty( 'num' );
 	} );
 } );
+
+describe( 'the referrers list', () => {
+	/**
+	 * @param {Array} groups The groups the API returns.
+	 */
+	async function rowsFor( groups ) {
+		wpcom.req.get.mockResolvedValueOnce( { summary: { groups } } );
+		const { result } = renderHook( () => useReferrersQuery( SITE_ID, '2026-09-06', '2026-10-05' ), {
+			wrapper,
+		} );
+		await waitFor( () => expect( result.current.data ).toBeDefined() );
+		return result.current.data;
+	}
+
+	beforeEach( () => {
+		wpcom.req.get.mockClear();
+	} );
+
+	it( 'counts a group by its own total, not by its first child', async () => {
+		const [ row ] = await rowsFor( [
+			{
+				name: 'X',
+				total: 25,
+				results: [
+					{ name: 'x.com', views: 20, url: 'https://x.com/' },
+					{ name: 'x.com/status', views: 5 },
+				],
+			},
+		] );
+
+		expect( row.title ).toBe( 'X' );
+		expect( row.views ).toBe( 25 );
+		expect( row.url ).toBe( 'https://x.com/' );
+	} );
+
+	it( 'keeps the order the API sorted the groups into', async () => {
+		const rows = await rowsFor( [
+			{ name: 'X', total: 25, results: [ { name: 'x.com', views: 20 } ] },
+			{ name: 'Search', results: { views: 22 } },
+		] );
+
+		expect( rows.map( ( row ) => row.views ) ).toEqual( [ 25, 22 ] );
+	} );
+
+	it( 'adds the children up when a group states no total', async () => {
+		const [ row ] = await rowsFor( [
+			{
+				name: 'Reddit',
+				results: [
+					{ name: 'reddit.com', views: 7 },
+					{ name: 'old.reddit.com', views: 3 },
+				],
+			},
+		] );
+
+		expect( row.views ).toBe( 10 );
+	} );
+
+	it( 'reads a plain referrer from its own results', async () => {
+		const [ row ] = await rowsFor( [
+			{ name: 'Search Engines', url: 'https://wordpress.com/', results: { views: 12 } },
+		] );
+
+		expect( row.title ).toBe( 'Search Engines' );
+		expect( row.views ).toBe( 12 );
+	} );
+} );

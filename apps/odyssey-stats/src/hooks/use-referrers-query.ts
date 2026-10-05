@@ -16,14 +16,19 @@ interface ReferresResponse {
 
 interface GroupWithChildren {
 	name: string;
+	/** The group's own figure, which the API orders the groups by. */
+	total?: number;
+	url?: string;
 	results: Array< {
 		name: string;
 		views: number;
+		url?: string;
 	} >;
 }
 
 interface GroupWithoutChildren {
 	name: string;
+	url?: string;
 	results: {
 		views: number;
 	};
@@ -56,24 +61,24 @@ export default function useReferrersQuery(
 		queryFn: () =>
 			queryReferrers( siteId, { period: 'day', start_date: startDate, date, summarize, max } ),
 		select: ( data ) => {
-			// The groups' views count may not be in descending order
-			// since we use the first result for nest groups.
 			return data?.summary?.groups.map( ( group: GroupWithChildren & GroupWithoutChildren ) => {
-				// Get the first result as the nested group's data.
-				if ( Array.isArray( group.results ) && group.results.length > 0 ) {
-					const subGroup = group.results[ 0 ];
+				const children = Array.isArray( group.results ) ? group.results : [];
 
-					return {
-						...subGroup,
-						title: subGroup.name,
-						views: subGroup.views,
-					};
-				}
+				// A group — "X", say, holding x.com and a status URL — is named and counted
+				// by the group itself. Reading its first child instead both understated the
+				// figure and could leave the list out of order, since the API sorts groups by
+				// their totals.
+				const views = children.length
+					? ( group.total ??
+						children.reduce( ( total, child ) => total + ( child.views ?? 0 ), 0 ) )
+					: group.results.views;
 
 				return {
 					...group,
 					title: group.name,
-					views: group.results.views,
+					views,
+					// A group carries no link of its own; its first child is where it leads.
+					url: group.url ?? children[ 0 ]?.url,
 				};
 			} );
 		},
