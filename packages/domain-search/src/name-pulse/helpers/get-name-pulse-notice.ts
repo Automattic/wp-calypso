@@ -94,12 +94,8 @@ function fromQueryShape( layout: NamePulseResultsLayout ): NamePulseNotice | nul
 		return {
 			status: 'warning',
 			dismissible: true,
-			message: sprintf(
-				// translators: %(ending)s is the domain ending the user typed, such as "d". %(name)s is the name searched instead.
-				__(
-					'We don’t recognize .%(ending)s, so we’re showing results for “%(name)s”. Try .com or .blog instead.'
-				),
-				{ ending: layout.unknownEnding, name: layout.baseName }
+			message: __(
+				'We don’t recognize that ending. Try .com or .blog, or enter just the name and we’ll suggest the rest.'
 			),
 		};
 	}

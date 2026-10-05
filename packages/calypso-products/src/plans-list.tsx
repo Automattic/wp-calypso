@@ -885,7 +885,7 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 	getSignupFeatures: () => [
 		FEATURE_FREE_DOMAIN,
 		FEATURE_FAST_SUPPORT_FROM_EXPERTS,
-		FEATURE_FREE_THEMES,
+		WPCOM_FEATURES_PREMIUM_THEMES_LIMITED,
 		FEATURE_STYLE_CUSTOMIZATION,
 	],
 	getBlogSignupFeatures: () => [

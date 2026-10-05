@@ -19,6 +19,7 @@ import {
 import { useMemo } from 'react';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { CheckoutSubmitButtonContent } from '../../components/checkout-submit-button-content';
+import { contactDetailsStore } from '../../lib/checkout-stores';
 import {
 	createCreditCardPaymentMethodStore,
 	createCreditCardMethod,
@@ -357,6 +358,7 @@ function useCreateStripeUpi( {
 			shouldLoad
 				? createStripeUpiMethod( {
 						submitButtonContent: <CheckoutSubmitButtonContent />,
+						contactDetails: contactDetailsStore,
 					} )
 				: null,
 		[ shouldLoad ]

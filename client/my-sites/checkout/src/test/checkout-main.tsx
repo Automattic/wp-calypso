@@ -6,17 +6,15 @@ import { GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY } from '@automattic/calypso-pr
 import { ResponseCart } from '@automattic/shopping-cart';
 import { render, screen, within, waitFor, act } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { dispatch } from '@wordpress/data';
 import React from 'react';
 import { navigate } from 'calypso/lib/navigate';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { isMarketplaceProduct } from 'calypso/state/products-list/selectors';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
-import { getDomainsBySiteId, hasLoadedSiteDomains } from 'calypso/state/sites/domains/selectors';
 import { getPlansBySiteId } from 'calypso/state/sites/plans/selectors/get-plans-by-site';
 import { isCommerceGardenSite, isJetpackSite } from 'calypso/state/sites/selectors';
-import { CHECKOUT_STORE } from '../lib/wpcom-store';
+import { contactDetailsActions, resetCheckoutStores } from '../lib/checkout-stores';
 import {
 	domainProduct,
 	planWithoutDomain,
@@ -27,6 +25,7 @@ import {
 	mockMatchMediaOnWindow,
 	mockGetPaymentMethodsEndpoint,
 	mockGetVatInfoEndpoint,
+	mockGetSiteDomainsEndpoint,
 	mockGetSupportedCountriesEndpoint,
 	mockLogStashEndpoint,
 } from './util';
@@ -34,7 +33,6 @@ import { MockCheckout } from './util/mock-checkout';
 import type { SitelessCheckoutType } from '@automattic/wpcom-checkout';
 
 jest.mock( 'calypso/state/sites/selectors' );
-jest.mock( 'calypso/state/sites/domains/selectors' );
 jest.mock( 'calypso/state/selectors/is-site-automated-transfer' );
 jest.mock( 'calypso/state/sites/plans/selectors/get-plans-by-site' );
 jest.mock( 'calypso/my-sites/checkout/use-cart-key' );
@@ -60,7 +58,7 @@ describe( 'CheckoutMain', () => {
 	} );
 
 	beforeEach( () => {
-		dispatch( CHECKOUT_STORE ).reset();
+		resetCheckoutStores();
 		jest.clearAllMocks();
 		( getPlansBySiteId as jest.Mock ).mockImplementation( () => ( {
 			data: getActivePersonalPlanDataForType( 'yearly' ),
@@ -71,8 +69,7 @@ describe( 'CheckoutMain', () => {
 				value,
 			};
 		} );
-		( hasLoadedSiteDomains as jest.Mock ).mockImplementation( () => true );
-		( getDomainsBySiteId as jest.Mock ).mockImplementation( () => [] );
+		mockGetSiteDomainsEndpoint( [] );
 		( isMarketplaceProduct as jest.Mock ).mockImplementation( () => false );
 		( isJetpackSite as jest.Mock ).mockImplementation( () => false );
 		( isCommerceGardenSite as jest.Mock ).mockImplementation( () => false );
@@ -828,7 +825,7 @@ describe( 'CheckoutMain', () => {
 		};
 
 		// For A4A, we supply email during pre-load.
-		dispatch( CHECKOUT_STORE ).updateEmail( 'test@example.com' );
+		contactDetailsActions.updateEmail( 'test@example.com' );
 
 		render(
 			<MockCheckout

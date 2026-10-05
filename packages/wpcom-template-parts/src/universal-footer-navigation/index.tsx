@@ -65,8 +65,8 @@ export const languageEntries: [ string, string ][] = [
 	[ 'en', 'English' ],
 ];
 
-// eslint-disable-next-line wpcalypso/i18n-unlocalized-url -- Must match the shared QR code; localized /get/ routes are not part of this destination.
-const APP_DOWNLOAD_URL = 'https://apps.wordpress.com/get/?campaign=qrcode-apps';
+// eslint-disable-next-line wpcalypso/i18n-unlocalized-url -- Must match the shared QR code; localized /store routes are not part of this destination.
+const APP_DOWNLOAD_URL = 'https://apps.wordpress.com/store?campaign=qrcode-apps';
 const APP_STORE_URL =
 	'https://apps.apple.com/app/apple-store/id1565481562?ct=wp.com--footer&mt=8&pt=299112';
 const GOOGLE_PLAY_URL =

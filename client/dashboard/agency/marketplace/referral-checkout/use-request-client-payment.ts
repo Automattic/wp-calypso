@@ -1,4 +1,6 @@
 import {
+	activeAgencyQuery,
+	agencyPartnerDirectoryLogoMutation,
 	createReferralMutation,
 	jetpackAgencyLicensesIssueMutation,
 	referralsQuery,
@@ -9,7 +11,7 @@ import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import emailValidator from 'email-validator';
-import { useRef, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { useAnalytics } from '../../../app/analytics';
 import { isPressableAddonProduct } from '../hosting/lib/pressable-plans';
 import { MARKETPLACE_PURCHASES_ROUTE } from '../paths';
@@ -17,6 +19,8 @@ import { getTermProductId } from '../products/lib/checkout-url';
 import { clearStoredCart, useShoppingCart } from '../products/use-shopping-cart';
 import { useMarketplaceType } from '../use-marketplace-type';
 import { hasActivePressablePlanForClient } from './lib/has-active-pressable-plan';
+import { getInitialReferralLogo, getReferralLogoOption, getReferralLogoPayload } from './lib/logo';
+import type { ReferralLogo } from './lib/logo';
 import type { CartLine } from '../products/use-cart-lines';
 import type { TermPricing } from '../use-term-pricing';
 import type { ReferralFlowType } from '@automattic/api-core';
@@ -25,6 +29,8 @@ interface Options {
 	agencyId: number;
 	lines: CartLine[];
 	term: TermPricing;
+	profileLogoUrl: string | null;
+	lastReferralLogoUrl: string | null;
 }
 
 interface ApiError {
@@ -44,10 +50,16 @@ async function copyToClipboard( text: string ): Promise< boolean > {
 
 /**
  * The state and actions of the request-payment form: the client's email and
- * message, and the send / copy / purchase actions. Sending
+ * message, the logo choice, and the send / copy / purchase actions. Sending
  * creates the referral and returns to Referrals with the link in the URL.
  */
-export function useRequestClientPayment( { agencyId, lines, term }: Options ) {
+export function useRequestClientPayment( {
+	agencyId,
+	lines,
+	term,
+	profileLogoUrl,
+	lastReferralLogoUrl,
+}: Options ) {
 	const navigate = useNavigate();
 	const queryClient = useQueryClient();
 	const { recordTracksEvent } = useAnalytics();
@@ -58,10 +70,24 @@ export function useRequestClientPayment( { agencyId, lines, term }: Options ) {
 	const [ email, setEmail ] = useState( '' );
 	const [ emailError, setEmailError ] = useState< string | null >( null );
 	const [ message, setMessage ] = useState( '' );
+	// Until the user picks one, the logo follows the agency's logos, which
+	// arrive after the first render.
+	const [ chosenLogo, setChosenLogo ] = useState< ReferralLogo | null >( null );
+	const logo = useMemo(
+		() => chosenLogo ?? getInitialReferralLogo( profileLogoUrl, lastReferralLogoUrl ),
+		[ chosenLogo, profileLogoUrl, lastReferralLogoUrl ]
+	);
+
+	const { mutateAsync: uploadLogo, isPending: isUploadingLogo } = useMutation(
+		agencyPartnerDirectoryLogoMutation( agencyId )
+	);
 	const { mutateAsync: createReferral, isPending: isCreating } = useMutation( {
 		...createReferralMutation( agencyId ),
-		onSuccess: () =>
-			queryClient.invalidateQueries( { queryKey: referralsQuery( agencyId ).queryKey } ),
+		onSuccess: () => {
+			queryClient.invalidateQueries( { queryKey: referralsQuery( agencyId ).queryKey } );
+			// A custom logo becomes the agency's last referral logo.
+			queryClient.invalidateQueries( { queryKey: activeAgencyQuery().queryKey } );
+		},
 	} );
 	const { mutateAsync: issueLicenses, isPending: isIssuing } = useMutation(
 		jetpackAgencyLicensesIssueMutation( agencyId )
@@ -88,6 +114,15 @@ export function useRequestClientPayment( { agencyId, lines, term }: Options ) {
 			isSubmittingRef.current = false;
 			setIsSubmitting( false );
 		}
+	};
+
+	// A retry after a failed request reuses the upload of the same file.
+	const uploadedLogoRef = useRef< { file: File; url: string } | null >( null );
+	const getUploadedLogoUrl = async ( file: File ) => {
+		if ( uploadedLogoRef.current?.file !== file ) {
+			uploadedLogoRef.current = { file, url: ( await uploadLogo( file ) ).url };
+		}
+		return uploadedLogoRef.current.url;
 	};
 
 	const productIds = lines.map( ( { product } ) => getTermProductId( product, term ) );
@@ -129,15 +164,17 @@ export function useRequestClientPayment( { agencyId, lines, term }: Options ) {
 			flowType === 'send'
 				? 'calypso_a4a_marketplace_referral_checkout_request_payment_click'
 				: 'calypso_a4a_marketplace_referral_checkout_request_payment_copy_click',
-			{ term_pricing: term }
+			{ term_pricing: term, logo_type: getReferralLogoOption( logo ) }
 		);
 
 		try {
+			const uploadedUrl = logo.type === 'file' ? await getUploadedLogoUrl( logo.file ) : undefined;
 			const referral = await createReferral( {
 				client_email: email,
 				client_message: message,
 				product_ids: productIds.join( ',' ),
 				flow_type: flowType,
+				logo: getReferralLogoPayload( logo, uploadedUrl ),
 			} );
 			// The link is copied for both flows.
 			const isLinkCopied = await copyToClipboard( referral.checkout_url );
@@ -195,11 +232,14 @@ export function useRequestClientPayment( { agencyId, lines, term }: Options ) {
 		email,
 		emailError,
 		message,
+		logo,
+		productIds,
 		onEmailChange,
 		onMessageChange: setMessage,
+		onLogoChange: setChosenLogo,
 		canSend: email !== '',
 		canCopy: email !== '',
-		isBusy: isSubmitting || isCreating || isIssuing,
+		isBusy: isSubmitting || isUploadingLogo || isCreating || isIssuing,
 		send: () => runOnce( () => submit( 'send' ) ),
 		copy: () => runOnce( () => submit( 'copy' ) ),
 		purchase: () => runOnce( purchase ),

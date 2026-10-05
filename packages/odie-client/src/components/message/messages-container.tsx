@@ -2,7 +2,7 @@ import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { isTestModeEnvironment } from '@automattic/zendesk-client';
 import { Spinner } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import clx from 'classnames';
+import clsx from 'clsx';
 import { useEffect, useRef, useState } from 'react';
 import { NavigationType, useNavigate, useNavigationType, useSearchParams } from 'react-router-dom';
 import { getOdieInitialMessage, ODIE_DEFAULT_BOT_SLUG_LEGACY } from '../../constants';
@@ -126,7 +126,7 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 
 	return (
 		<div
-			className={ clx( 'chatbox-messages', {
+			className={ clsx( 'chatbox-messages', {
 				'force-email-support': forceEmailSupport && chat.provider === 'zendesk',
 			} ) }
 			ref={ messagesContainerRef }
@@ -145,7 +145,7 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 			</div>
 			<>
 				<div
-					className={ clx( 'chatbox-loading-chat__spinner', {
+					className={ clsx( 'chatbox-loading-chat__spinner', {
 						'is-visible': chat.status === 'loading' || ( isScrolling && chat.status !== 'sending' ),
 					} ) }
 				>
