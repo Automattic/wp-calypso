@@ -242,6 +242,31 @@ describe( 'useConversation', () => {
 			} );
 		} );
 
+		it.each( [
+			[ 'an image only', [] ],
+			[ 'an image and text', [ { type: 'text', text: 'What is in this photo?' } ] ],
+		] )(
+			'waits for a question with %s but asks it again by hand instead of Retry',
+			( _case, textParts ) => {
+				jest.useFakeTimers();
+				const withImage = {
+					...question,
+					parts: [ ...textParts, { type: 'file', file: { uri: 'https://example.test/a.png' } } ],
+				};
+				mockLoadedConversation( [ withImage ] );
+				const { result } = renderWaitingConversation();
+
+				expect( lastQueryOptions().refetchInterval ).toBe( 3000 );
+
+				act( () => jest.advanceTimersByTime( MAX_REPLY_WAIT_MS ) );
+
+				expect( result.current.notice?.message ).toBe( 'No reply arrived for your last question.' );
+				expect( result.current.notice?.action ).toBeUndefined();
+
+				jest.useRealTimers();
+			}
+		);
+
 		it( 'stops for good and offers Retry with the question when no reply arrives in time', () => {
 			jest.useFakeTimers();
 			const onRetry = jest.fn();

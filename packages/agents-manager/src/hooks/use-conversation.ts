@@ -182,13 +182,17 @@ export default function useConversation( {
 		notice = {
 			message: __( 'No reply arrived for your last question.', __i18n_text_domain__ ),
 			status: 'warning',
-			action: {
-				label: __( 'Retry', __i18n_text_domain__ ),
-				onClick: () => {
-					setReplyWait( 'idle' );
-					onRetry?.( question.text );
-				},
-			},
+			// Retry resends text only, so a question with attachments is asked again by hand.
+			...( question.text &&
+				! question.hasFiles && {
+					action: {
+						label: __( 'Retry', __i18n_text_domain__ ),
+						onClick: () => {
+							setReplyWait( 'idle' );
+							onRetry?.( question.text );
+						},
+					},
+				} ),
 			onDismiss: () => setReplyWait( 'idle' ),
 		};
 	}

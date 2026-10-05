@@ -39,11 +39,12 @@ export function getNewestServerId( messages: Message[] ): number {
 /**
  * The user's last question, while the conversation has no reply to it yet.
  * @param messages The loaded conversation.
- * @returns The question and when the conversation last changed, or `undefined`.
+ * @returns The question, whether it had attachments, and when the conversation last
+ * changed, or `undefined`.
  */
 export function getUnansweredQuestion(
 	messages: Message[]
-): { text: string; lastActivityAt: number } | undefined {
+): { text: string; hasFiles: boolean; lastActivityAt: number } | undefined {
 	const newest = newestOf( messages );
 	if ( ! newest || ( newest.role !== 'user' && ! isToolResult( newest ) ) ) {
 		return undefined;
@@ -51,11 +52,16 @@ export function getUnansweredQuestion(
 
 	const question = newestOf( messages.filter( ( message ) => message.role === 'user' ) );
 	const text = question ? textOf( question ) : '';
-	if ( ! text ) {
+	const hasFiles = !! question?.parts.some( ( part ) => part.type === 'file' );
+	if ( ! text && ! hasFiles ) {
 		return undefined;
 	}
 
 	const lastActivityAt = newest.metadata?.timestamp;
 
-	return { text, lastActivityAt: typeof lastActivityAt === 'number' ? lastActivityAt : 0 };
+	return {
+		text,
+		hasFiles,
+		lastActivityAt: typeof lastActivityAt === 'number' ? lastActivityAt : 0,
+	};
 }
