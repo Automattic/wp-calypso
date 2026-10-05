@@ -114,7 +114,7 @@ export default function PressablePremiumPlanMigrationBanner( {
 			<div className="pressable-premium-plan-migration__main">
 				<h3 className="pressable-premium-plan-migration__title">
 					{ translate(
-						"Get up to %(price)s when you migrate your client's Woo store to Pressable Premium",
+						"Get up to %(price)s when you migrate your client's Woo store to Pressable Performance",
 						{
 							args: {
 								price: formatCurrency( 2500, 'USD', {
@@ -139,7 +139,7 @@ export default function PressablePremiumPlanMigrationBanner( {
 							<p className="pressable-premium-plan-migration__description">
 								<span>
 									{ translate(
-										"Switch your client's Woo store to scalable, high-performance Pressable Premium hosting, and we'll give you up to %(price)s or %(commission)s%% commission. We'll also optimize your site's performance and provide a white glove migration, ensuring a seamless and stress-free transition.",
+										"Switch your client's Woo store to scalable Pressable Performance hosting, and we'll give you up to %(price)s or %(commission)s%% commission. We'll also optimize your site's performance and provide a white glove migration, ensuring a seamless and stress-free transition.",
 										{
 											args: {
 												price: formatCurrency( PRESSABLE_PREMIUM_PLAN_COMMISSION_AMOUNT, 'USD', {
