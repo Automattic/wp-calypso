@@ -1,9 +1,5 @@
-import {
-	isWpComFreePlan,
-	isWpComPersonalPlan,
-	isWpComPremiumPlan,
-} from '@automattic/calypso-products';
 import { englishLocales } from '@automattic/i18n-utils';
+import { __ } from '@wordpress/i18n';
 import { useExperiment } from 'calypso/lib/explat';
 
 /**
@@ -56,10 +52,23 @@ export function normalizeDifmOfferVariation(
 	}
 }
 
+// The dashboard cannot import `@automattic/calypso-products`, so these slugs
+// mirror the WordPress.com Free, Personal and Premium plans in
+// packages/calypso-products/src/constants/wpcom.ts.
+const ELIGIBLE_PLAN_SLUGS = new Set( [
+	'free_plan',
+	'personal-bundle-monthly',
+	'personal-bundle',
+	'personal-bundle-2y',
+	'personal-bundle-3y',
+	'value_bundle_monthly',
+	'value_bundle',
+	'value_bundle-2y',
+	'value_bundle-3y',
+] );
+
 function isEligiblePlan( planSlug: string ): boolean {
-	return (
-		isWpComFreePlan( planSlug ) || isWpComPersonalPlan( planSlug ) || isWpComPremiumPlan( planSlug )
-	);
+	return ELIGIBLE_PLAN_SLUGS.has( planSlug );
 }
 
 // Site models can hand back a space-separated `YYYY-MM-DD HH:MM:SS` (GMT) string
@@ -125,4 +134,46 @@ export function useDifmOffer( input: DifmOfferEligibilityInput ): DifmOfferResul
 		isLoading,
 		variation: normalizeDifmOfferVariation( experimentAssignment?.variationName ),
 	};
+}
+
+export interface DifmOfferCopy {
+	title: string;
+	description: string;
+	ctaText: string;
+}
+
+/**
+ * Banner copy for each variation, from the copy review on the design post. Every
+ * placement renders this copy with its own surface's components, so the variations
+ * differ only in copy. `control` gets no banner.
+ */
+export function getDifmOfferCopy( variation: DifmOfferVariation ): DifmOfferCopy | null {
+	const ctaText = __( 'See the offer' );
+
+	switch ( variation ) {
+		case 'skip_setup':
+			return {
+				title: __( 'Skip the setup' ),
+				description: __(
+					'For a limited time, our experts will bring your vision to life. Free with Business.'
+				),
+				ctaText,
+			};
+		case 'expert_help':
+			return {
+				title: __( 'Expert help to get you started' ),
+				description: __( 'A human builds your site based on your needs — free with Business.' ),
+				ctaText,
+			};
+		case 'no_time':
+			return {
+				title: __( 'No time to build your site?' ),
+				description: __(
+					'Let us take that off your plate. Ready in 4 days and free with Business.'
+				),
+				ctaText,
+			};
+		default:
+			return null;
+	}
 }

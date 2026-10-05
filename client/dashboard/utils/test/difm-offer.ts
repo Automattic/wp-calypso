@@ -2,32 +2,33 @@
  * @jest-environment jsdom
  */
 
-import {
-	PLAN_BUSINESS,
-	PLAN_ECOMMERCE,
-	PLAN_FREE,
-	PLAN_JETPACK_FREE,
-	PLAN_JETPACK_PERSONAL,
-	PLAN_JETPACK_PREMIUM,
-	PLAN_PERSONAL,
-	PLAN_PREMIUM,
-} from '@automattic/calypso-products';
 import { renderHook } from '@testing-library/react';
 import { useExperiment } from 'calypso/lib/explat';
 import {
 	DIFM_OFFER_EXPERIMENT,
 	DIFM_OFFER_MAX_SITE_AGE_DAYS,
+	getDifmOfferCopy,
 	isEligibleForDifmOffer,
 	normalizeCreatedAt,
 	normalizeDifmOfferVariation,
 	useDifmOffer,
-} from '../index';
+} from '../difm-offer';
 
 jest.mock( 'calypso/lib/explat', () => ( {
 	useExperiment: jest.fn(),
 } ) );
 
 const mockUseExperiment = jest.mocked( useExperiment );
+
+// Plan slugs from packages/calypso-products/src/constants, which the dashboard cannot import.
+const PLAN_FREE = 'free_plan';
+const PLAN_PERSONAL = 'personal-bundle';
+const PLAN_PREMIUM = 'value_bundle';
+const PLAN_BUSINESS = 'business-bundle';
+const PLAN_ECOMMERCE = 'ecommerce-bundle';
+const PLAN_JETPACK_FREE = 'jetpack_free';
+const PLAN_JETPACK_PERSONAL = 'jetpack_personal';
+const PLAN_JETPACK_PREMIUM = 'jetpack_premium';
 const MS_PER_DAY = 24 * 60 * 60 * 1000;
 const NOW = Date.parse( '2026-09-24T12:00:00Z' );
 
@@ -56,6 +57,25 @@ describe( 'isEligibleForDifmOffer', () => {
 	it( 'accepts free, personal and premium plans', () => {
 		for ( const planSlug of [ PLAN_FREE, PLAN_PERSONAL, PLAN_PREMIUM ] ) {
 			expect( isEligibleForDifmOffer( { ...eligibleInput(), planSlug }, NOW ) ).toBe( true );
+		}
+	} );
+
+	it( 'accepts the monthly, 2-year and 3-year terms of personal and premium', () => {
+		for ( const planSlug of [
+			'personal-bundle-monthly',
+			'personal-bundle-2y',
+			'personal-bundle-3y',
+			'value_bundle_monthly',
+			'value_bundle-2y',
+			'value_bundle-3y',
+		] ) {
+			expect( isEligibleForDifmOffer( { ...eligibleInput(), planSlug }, NOW ) ).toBe( true );
+		}
+	} );
+
+	it( 'rejects the Woo hosted free plans', () => {
+		for ( const planSlug of [ 'woo_hosted_free_plan', 'woo_hosted_free_trial_plan_monthly' ] ) {
+			expect( isEligibleForDifmOffer( { ...eligibleInput(), planSlug }, NOW ) ).toBe( false );
 		}
 	} );
 
@@ -222,5 +242,21 @@ describe( 'useDifmOffer', () => {
 			isLoading: true,
 			variation: 'control',
 		} );
+	} );
+} );
+
+describe( 'getDifmOfferCopy', () => {
+	it( 'returns no copy for control', () => {
+		expect( getDifmOfferCopy( 'control' ) ).toBeNull();
+	} );
+
+	it( 'returns a distinct title for each copy variation, with the same CTA', () => {
+		const copies = ( [ 'skip_setup', 'expert_help', 'no_time' ] as const ).map( getDifmOfferCopy );
+		const titles = copies.map( ( copy ) => copy?.title );
+
+		expect( new Set( titles ).size ).toBe( 3 );
+		for ( const copy of copies ) {
+			expect( copy?.ctaText ).toBe( 'See the offer' );
+		}
 	} );
 } );
