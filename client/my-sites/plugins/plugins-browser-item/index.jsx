@@ -14,7 +14,10 @@ import version_compare from 'calypso/lib/version-compare';
 import { IntervalLength } from 'calypso/my-sites/marketplace/components/billing-interval-switcher/constants';
 import { useIsMarketplaceRedesignEnabled } from 'calypso/my-sites/plugins/hooks/use-is-marketplace-redesign-enabled';
 import { sparkleFilled } from 'calypso/my-sites/plugins/marketplace-ai-experience/sparkle-icon';
-import { isBackupPlugin, isCompatiblePlugin } from 'calypso/my-sites/plugins/plugin-compatibility';
+import {
+	hasBundledBackupNotice,
+	isCompatiblePlugin,
+} from 'calypso/my-sites/plugins/plugin-compatibility';
 import PluginIcon from 'calypso/my-sites/plugins/plugin-icon/plugin-icon';
 import { PluginPrice } from 'calypso/my-sites/plugins/plugin-price';
 import useAtomicSiteHasEquivalentFeatureToPlugin from 'calypso/my-sites/plugins/use-atomic-site-has-equivalent-feature-to-plugin';
@@ -191,7 +194,7 @@ const PluginsBrowserListElement = ( props ) => {
 	}, [ jetpackNonAtomic, plugin.slug ] );
 
 	const isIncompatibleBackupPlugin = useMemo( () => {
-		return isBackupPlugin( plugin.slug ) && ! jetpackNonAtomic;
+		return hasBundledBackupNotice( plugin.slug ) && ! jetpackNonAtomic;
 	}, [ jetpackNonAtomic, plugin.slug ] );
 
 	const shouldUpgrade = useSelector( ( state ) => shouldUpgradeCheck( state, selectedSite?.ID ) );

@@ -30,7 +30,10 @@ import { getSoftwareSlug } from 'calypso/lib/plugins/utils';
 import { MarketplaceReviewsCards } from 'calypso/my-sites/marketplace/components/reviews-cards';
 import { ReviewsModal } from 'calypso/my-sites/marketplace/components/reviews-modal';
 import PluginNotices from 'calypso/my-sites/plugins/notices';
-import { isBackupPlugin, isCompatiblePlugin } from 'calypso/my-sites/plugins/plugin-compatibility';
+import {
+	hasBundledBackupNotice,
+	isCompatiblePlugin,
+} from 'calypso/my-sites/plugins/plugin-compatibility';
 import PluginDetailsCTA from 'calypso/my-sites/plugins/plugin-details-CTA';
 import PluginDetailsHeader from 'calypso/my-sites/plugins/plugin-details-header';
 import PluginDetailsNotices from 'calypso/my-sites/plugins/plugin-details-notices';
@@ -162,7 +165,7 @@ function PluginDetails( props ) {
 	}, [ isJetpackSelfHosted, props.pluginSlug ] );
 
 	const isIncompatibleBackupPlugin = useMemo( () => {
-		return isBackupPlugin( props.pluginSlug ) && ! isJetpackSelfHosted;
+		return hasBundledBackupNotice( props.pluginSlug ) && ! isJetpackSelfHosted;
 	}, [ isJetpackSelfHosted, props.pluginSlug ] );
 
 	// Fetch WPorg plugin data if needed

@@ -116,8 +116,8 @@ export function isCompatiblePlugin( pluginSlug ) {
 }
 
 // Backups are built into WordPress.com, so these get a "plan includes backups" message instead of the generic one.
-const backupPlugins = new Set( [ 'jetpack-backup', 'vaultpress' ] );
+const pluginsWithBundledBackupNotice = new Set( [ 'jetpack-backup', 'vaultpress' ] );
 
-export function isBackupPlugin( pluginSlug ) {
-	return backupPlugins.has( pluginSlug );
+export function hasBundledBackupNotice( pluginSlug ) {
+	return pluginsWithBundledBackupNotice.has( pluginSlug );
 }
