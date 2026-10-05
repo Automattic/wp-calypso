@@ -17,7 +17,6 @@ test.describe(
 		test( `As an existing WordPress.com user, I can purchase a ${ planName } plan during signup`, async ( {
 			accountPreRelease,
 			componentDomainSearch,
-			componentSidebar,
 			helperData,
 			page,
 			pageCartCheckout,
@@ -71,12 +70,19 @@ test.describe(
 				await pagePostCheckoutSetupSite.waitUntilLoaded();
 			} );
 
-			await test.step( `And the sidebar shows I am on the ${ planName } plan`, async function () {
-				await page.goto(
-					helperData.getCalypsoURL( `home/${ newSiteDetails?.blog_details.site_slug as string }` )
+			await test.step( `And the site has the ${ planName } plan`, async function () {
+				// New sites land on wp-admin Site Setup instead of My Home, so the Calypso
+				// sidebar isn't there to show the plan; read it from the site's purchases.
+				const restAPIClient = new RestAPIClient( {
+					username: accountPreRelease.credentials.username,
+					password: accountPreRelease.credentials.password,
+				} );
+				const purchases = await restAPIClient.getAllPurchases(
+					newSiteDetails!.blog_details.blogid
 				);
-				const currentPlan = await componentSidebar.getCurrentPlanName();
-				expect( currentPlan ).toBe( planName );
+				expect( purchases.map( ( purchase ) => purchase.product_slug ) ).toContain(
+					'business-bundle'
+				);
 			} );
 		} );
 
