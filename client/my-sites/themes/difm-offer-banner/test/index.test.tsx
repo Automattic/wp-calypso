@@ -21,6 +21,7 @@ const initialState = {
 				ID: SITE_ID,
 				plan: { product_slug: 'free_plan' },
 				options: { created_at: '2026-10-01T00:00:00+00:00' },
+				is_a4a_dev_site: false,
 			},
 		},
 	},
@@ -50,6 +51,7 @@ describe( 'DifmOfferBanner', () => {
 			planSlug: 'free_plan',
 			siteCreatedAt: '2026-10-01T00:00:00+00:00',
 			localeSlug: 'en',
+			isA4ADevSite: false,
 		} );
 	} );
 

@@ -19,6 +19,7 @@ export default function DifmOfferBanner( { siteId }: DifmOfferBannerProps ) {
 		planSlug: site?.plan?.product_slug,
 		siteCreatedAt: site?.options?.created_at,
 		localeSlug,
+		isA4ADevSite: site?.is_a4a_dev_site,
 	} );
 
 	const copy = getDifmOfferCopy( variation );
