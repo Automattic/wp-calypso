@@ -67,7 +67,7 @@ export class SubscribersPage {
 			.click();
 
 		// Click on the remove menu item.
-		await this.page.getByRole( 'menuitem', { name: 'Remove' } ).click();
+		await this.page.getByRole( 'menuitem', { name: 'Remove subscriber', exact: true } ).click();
 
 		// Confirm.
 		await this.page
