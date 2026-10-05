@@ -2,7 +2,7 @@ import { activeAgencyQuery, amplifyReportsQuery } from '@automattic/api-queries'
 import { useQuery } from '@tanstack/react-query';
 import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import EmptyState from '../../components/empty-state';
 import { PageHeader } from '../../components/page-header';
@@ -10,9 +10,11 @@ import PageLayout from '../../components/page-layout';
 import { Text } from '../../components/text';
 import AmplifyDevStateControls, {
 	DEFAULT_HERO_TWEAKS,
+	type AmplifyHero,
 	makePreviewReports,
 	useAmplifyDevSettings,
 } from './dev-state-controls';
+import { isDrawnHero } from './hero-directions';
 import AmplifyNewReportModal from './new-report-modal';
 import AmplifyReportCreator from './report-creator';
 import AmplifyReportsList from './reports';
@@ -31,7 +33,29 @@ export default function AgencyAmplify() {
 		() => makePreviewReports( devSettings.mode === 'one' ? 1 : 24 ),
 		[ devSettings.mode ]
 	);
-	const mode = isDevelopment && areDevSettingsReady ? devSettings.mode : 'live';
+	// Review links: ?hero=findings-a1..a4|report-tile and
+	// ?state=first|one set the panel once on load.
+	useEffect( () => {
+		if ( ! isDevelopment || ! areDevSettingsReady ) {
+			return;
+		}
+		const searchParams = new URLSearchParams( window.location.search );
+		const urlHero = searchParams.get( 'hero' );
+		const urlState = searchParams.get( 'state' );
+		const hasHero = !! urlHero && isDrawnHero( urlHero );
+		if ( ! hasHero && urlState !== 'first' && urlState !== 'one' ) {
+			return;
+		}
+		setDevSettings( ( previous ) => ( {
+			...previous,
+			hero: hasHero ? ( urlHero as AmplifyHero ) : previous.hero,
+			mode: urlState === 'first' || urlState === 'one' ? urlState : previous.mode,
+		} ) );
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ areDevSettingsReady ] );
+	const hero = devSettings.hero;
+	const devMode = devSettings.mode;
+	const mode = isDevelopment && areDevSettingsReady ? devMode : 'live';
 	const liveReports = reportsQuery.data?.reports ?? [];
 	const reports = mode === 'one' || mode === 'dozens' ? previewReports : liveReports;
 	let state: 'empty' | 'reports' | 'loading' | 'error' = 'empty';
@@ -60,7 +84,7 @@ export default function AgencyAmplify() {
 			header={
 				<PageHeader
 					title={ __( 'Amplify' ) }
-					description={ __( 'Create and manage homepage analysis reports.' ) }
+					description={ __( 'Homepage reports for pitches and client check-ins.' ) }
 					actions={
 						state !== 'empty' ? (
 							<Button variant="primary" onClick={ openNewReport }>
@@ -77,7 +101,7 @@ export default function AgencyAmplify() {
 						<EmptyState>
 							<AmplifyReportCreator
 								agencyId={ agencyId }
-								hero={ isDevelopment ? devSettings.hero : 'audit' }
+								hero={ isDevelopment ? hero : 'before-after' }
 								heroTweaks={ isDevelopment ? devSettings.heroTweaks : DEFAULT_HERO_TWEAKS }
 								usage={ reportsQuery.data?.usage }
 								onCreated={ () => {
@@ -111,7 +135,7 @@ export default function AgencyAmplify() {
 			{ isNewReportOpen && (
 				<AmplifyNewReportModal
 					agencyId={ agencyId }
-					hero={ isDevelopment ? devSettings.hero : 'audit' }
+					hero={ isDevelopment ? hero : 'before-after' }
 					heroTweaks={ isDevelopment ? devSettings.heroTweaks : DEFAULT_HERO_TWEAKS }
 					usage={ reportsQuery.data?.usage }
 					onClose={ () => setIsNewReportOpen( false ) }

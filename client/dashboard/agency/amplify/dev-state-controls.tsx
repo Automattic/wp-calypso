@@ -4,7 +4,19 @@ import type { AmplifyMode, AmplifyReport } from '@automattic/api-core';
 import './dev-state-controls.scss';
 
 export type AmplifyPreviewMode = 'live' | 'first' | 'one' | 'dozens' | 'loading' | 'error';
-export type AmplifyHero = 'tracing' | 'audit' | 'improve' | 'layers';
+export type AmplifyHero =
+	| 'tracing'
+	| 'audit'
+	| 'improve'
+	| 'layers'
+	| 'findings-a1'
+	| 'findings-a2'
+	| 'findings-a3'
+	| 'findings-a4'
+	| 'findings-a5'
+	| 'findings-a6'
+	| 'before-after'
+	| 'report-tile';
 type HeroTone = 'original' | 'warm' | 'cool' | 'mono' | 'vivid' | 'custom';
 export type AmplifyHeroTweaks = {
 	tone: HeroTone;
@@ -66,7 +78,7 @@ const TONES: { value: HeroTone; label: string }[] = [
 ];
 const DEFAULT_SETTINGS: Settings = {
 	mode: 'live',
-	hero: 'audit',
+	hero: 'before-after',
 	heroTweaks: DEFAULT_HERO_TWEAKS,
 	x: 16,
 	y: 16,
@@ -79,6 +91,14 @@ const HEROES: { value: AmplifyHero; label: string }[] = [
 	{ value: 'audit', label: __( 'Precision audit' ) },
 	{ value: 'improve', label: __( 'Before / after' ) },
 	{ value: 'layers', label: __( 'Exploded view' ) },
+	{ value: 'findings-a1', label: __( 'A1: Findings with lines' ) },
+	{ value: 'findings-a2', label: __( 'A2: Close-up' ) },
+	{ value: 'findings-a3', label: __( 'A3: Findings list' ) },
+	{ value: 'findings-a4', label: __( 'A4: Visitors and AI' ) },
+	{ value: 'findings-a5', label: __( 'A5: Findings, one AI' ) },
+	{ value: 'findings-a6', label: __( 'A6: Abstract' ) },
+	{ value: 'before-after', label: __( 'C: Before and after' ) },
+	{ value: 'report-tile', label: __( 'B: Report on homepage' ) },
 ];
 
 function clamp( value: number, max: number ) {
@@ -384,9 +404,11 @@ export default function AmplifyDevStateControls( {
 				</button>
 				<details
 					open={ settings.advanced }
-					onToggle={ ( event ) =>
-						onChange( ( previous ) => ( { ...previous, advanced: event.currentTarget.open } ) )
-					}
+					onToggle={ ( event ) => {
+						// Read it now: the updater runs after React clears currentTarget.
+						const isOpen = event.currentTarget.open;
+						onChange( ( previous ) => ( { ...previous, advanced: isOpen } ) );
+					} }
 				>
 					<summary>{ __( 'Advanced image tweaks' ) }</summary>
 					<fieldset className="dashboard-amplify-dev-controls__image-group">
