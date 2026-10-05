@@ -65,6 +65,13 @@ beforeAll( async () => {
 	await amToolProvider.getAbilities();
 } );
 
+const unavailablePageContext = {
+	currentPageContent: [],
+	selectedBlockClientId: '',
+	currentPageContentMarkup: '',
+	pageContentStatus: 'unavailable',
+};
+
 function setAgentsManagerData( data: Record< string, unknown > ) {
 	( globalThis as typeof globalThis & { agentsManagerData?: unknown } ).agentsManagerData = data;
 	( window as typeof window & { agentsManagerData?: unknown } ).agentsManagerData = data;
@@ -475,6 +482,7 @@ describe( 'loadExternalProviders', () => {
 		const providers = await loadExternalProviders();
 
 		expect( providers.contextProvider?.getClientContext() ).toEqual( {
+			...unavailablePageContext,
 			url: 'https://example.com/wp-admin/site-editor.php',
 			pathname: '/wp-admin/site-editor.php',
 			search: '',
@@ -532,6 +540,7 @@ describe( 'loadExternalProviders', () => {
 		const providers = await loadExternalProviders();
 
 		expect( providers.contextProvider?.getClientContext() ).toEqual( {
+			...unavailablePageContext,
 			url: 'https://example.com/wp-admin/site-editor.php',
 			pathname: '/wp-admin/site-editor.php',
 			search: '',
@@ -570,6 +579,7 @@ describe( 'loadExternalProviders', () => {
 		const providers = await loadExternalProviders();
 
 		expect( providers.contextProvider?.getClientContext() ).toEqual( {
+			...unavailablePageContext,
 			url: window.location.href,
 			pathname: window.location.pathname,
 			search: window.location.search,
@@ -801,6 +811,7 @@ describe( 'loadExternalProviders', () => {
 		afterEach( () => jest.mocked( getPageStructure ).mockReturnValue( null ) );
 
 		it( 'adds the page body the editor holds to the client context', async () => {
+			jest.mocked( getPageStructure ).mockReturnValue( pageStructure );
 			jest.mocked( getPageContentMarkup ).mockReturnValueOnce( '<!-- wp:paragraph /-->' );
 			setAgentsManagerData( {
 				agentProviders: [ { contextProvider: { getClientContext: () => providerContext } } ],
@@ -810,6 +821,8 @@ describe( 'loadExternalProviders', () => {
 
 			expect( providers.contextProvider?.getClientContext() ).toEqual( {
 				...providerContext,
+				...pageStructure,
+				pageContentStatus: 'ready',
 				currentPageContentMarkup: '<!-- wp:paragraph /-->',
 			} );
 		} );
@@ -838,18 +851,60 @@ describe( 'loadExternalProviders', () => {
 
 			expect( providers.contextProvider?.getClientContext() ).toEqual( {
 				...providerContext,
+				...unavailablePageContext,
 				availableCheckpoints: expected,
 			} );
 		} );
 
-		it( 'adds nothing where the view has no page body', async () => {
+		it( 'marks an unresolved editor unavailable', async () => {
 			setAgentsManagerData( {
 				agentProviders: [ { contextProvider: { getClientContext: () => providerContext } } ],
 			} );
 
 			const providers = await loadExternalProviders();
 
-			expect( providers.contextProvider?.getClientContext() ).toEqual( providerContext );
+			expect( providers.contextProvider?.getClientContext() ).toEqual( {
+				...providerContext,
+				...unavailablePageContext,
+			} );
+		} );
+
+		it( 'clears stale provider content and markup when the editor is unavailable', async () => {
+			jest.mocked( getPageStructure ).mockReturnValue( null );
+			jest.mocked( getPageContentMarkup ).mockReturnValueOnce( 'stale AM markup' );
+			const context = {
+				...providerContext,
+				...providerStructure,
+				currentPageContentMarkup: 'stale provider markup',
+				pageContentStatus: 'ready',
+			};
+			setAgentsManagerData( {
+				agentProviders: [ { contextProvider: { getClientContext: () => context } } ],
+			} );
+
+			const providers = await loadExternalProviders();
+
+			expect( providers.contextProvider?.getClientContext() ).toEqual( {
+				...context,
+				...unavailablePageContext,
+			} );
+		} );
+
+		it( 'keeps a loaded empty document ready instead of restoring provider blocks', async () => {
+			jest.mocked( getPageStructure ).mockReturnValue( {
+				currentPageContent: [],
+				selectedBlockClientId: '',
+			} );
+			setAgentsManagerData( {
+				agentProviders: [ { contextProvider: { getClientContext: () => providerStructure } } ],
+			} );
+
+			const providers = await loadExternalProviders();
+
+			expect( providers.contextProvider?.getClientContext() ).toEqual( {
+				...unavailablePageContext,
+				pageContentStatus: 'ready',
+			} );
 		} );
 
 		// The ids the agent sends back have to be the ones AM's abilities resolve.
@@ -857,7 +912,7 @@ describe( 'loadExternalProviders', () => {
 			{
 				case: "sends its own structure, over a provider's",
 				environment: 'wp-admin',
-				expected: pageStructure,
+				expected: { ...pageStructure, pageContentStatus: 'ready', currentPageContentMarkup: '' },
 			},
 			{
 				case: "leaves the Jetpack AI sidebar's structure, whose tools take clientIds as they are",
@@ -1187,7 +1242,7 @@ describe( 'canvas guard wiring', () => {
 
 		expect( mockedBinding.bindToOpenCanvas ).toHaveBeenCalled();
 		// The binding adds nothing to the wire: it reads the canvas from the editor
-		// store, so what the server receives is exactly what the provider built.
-		expect( context ).toEqual( providerContext );
+		// store; only the page-context overlay changes the provider payload.
+		expect( context ).toEqual( { ...providerContext, ...unavailablePageContext } );
 	} );
 } );

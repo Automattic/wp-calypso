@@ -348,3 +348,34 @@ it( 'is null when the editor cannot be read', () => {
 	expect( getPageStructure() ).toBeNull();
 	expect( setMenuItemAttributes ).toHaveBeenCalledWith( new Map() );
 } );
+
+it( 'refuses a stale section root even when the post entity is loaded', () => {
+	withEditor( { blocks: [], sectionRoot: 'departed-root' } );
+	// Match Gutenberg: an unresolved root has no children, rather than throwing.
+	editor.getBlocks.mockReturnValue( [] );
+
+	expect( getPageStructure() ).toBeNull();
+	expect( setMenuItemAttributes ).toHaveBeenLastCalledWith( new Map() );
+} );
+
+it( 'keeps a loaded blank document available', () => {
+	withEditor( { blocks: [] } );
+
+	expect( getPageStructure() ).toEqual( {
+		currentPageContent: [],
+		selectedBlockClientId: '',
+	} );
+} );
+
+it( 'keeps a resolved content root with no children', () => {
+	withEditor( { blocks: [ block( 'main', 'core/post-content' ) ], sectionRoot: 'main' } );
+
+	expect( getPageStructure()?.currentPageContent ).toEqual( [
+		{
+			name: 'core/post-content',
+			type: 'content',
+			clientId: 's:main',
+			innerBlocks: [],
+		},
+	] );
+} );

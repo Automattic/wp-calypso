@@ -15,7 +15,7 @@ import type { Ability } from './types';
 import type { CheckpointContextItem } from '../utils/checkpoints';
 import type { PageStructure } from '../utils/page-structure';
 
-type EditorAbilitiesModule = typeof import( './editor-abilities' );
+type EditorAbilitiesModule = typeof import('./editor-abilities');
 
 type CheckpointActions = EditorAbilitiesModule[ 'checkpointActions' ];
 
@@ -122,8 +122,8 @@ export function getAmPageContentMarkup(): string {
 
 /**
  * The page's blocks and the selected one for the client context, under the
- * short ids the editor abilities resolve. `null` until they have loaded,
- * which leaves the context as the providers built it.
+ * short ids the editor abilities resolve. `null` until they have loaded
+ * or the editor cannot be read; the context merger marks it unavailable.
  */
 export function getAmPageStructure(): PageStructure | null {
 	return loadedEditorAbilities?.getPageStructure() ?? null;
