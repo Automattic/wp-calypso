@@ -81,13 +81,13 @@ export const getPartnerOffers = ( links: PartnerOfferLinks ): PartnerOffer[] => 
 			>
 				<img src={ PressableLogo } alt="Pressable" />
 				<Text weight={ 500 } size={ 13 }>
-					{ __( 'Premium' ) }
+					{ __( 'Performance' ) }
 				</Text>
 			</HStack>
 		),
 		title: __( 'Earn a 20% recurring commission' ),
 		description: __(
-			'For mission-critical sites that demand extra attention and resources. Earn a 20% recurring commission when you refer Pressable Premium to your clients.'
+			'For mission-critical sites that demand extra attention and resources. Earn a 20% recurring commission when you refer Pressable Performance to your clients.'
 		),
 		cta: {
 			label: __( 'Refer Pressable' ),
