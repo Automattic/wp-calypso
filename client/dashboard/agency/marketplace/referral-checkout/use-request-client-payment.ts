@@ -11,7 +11,7 @@ import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import emailValidator from 'email-validator';
-import { useEffect, useRef, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { useAnalytics } from '../../../app/analytics';
 import { isPressableAddonProduct } from '../hosting/lib/pressable-plans';
 import { MARKETPLACE_PURCHASES_ROUTE } from '../paths';
@@ -70,23 +70,13 @@ export function useRequestClientPayment( {
 	const [ email, setEmail ] = useState( '' );
 	const [ emailError, setEmailError ] = useState< string | null >( null );
 	const [ message, setMessage ] = useState( '' );
-	const [ logo, setLogo ] = useState< ReferralLogo >( () =>
-		getInitialReferralLogo( profileLogoUrl, lastReferralLogoUrl )
+	// Until the user picks one, the logo follows the agency's logos, which
+	// arrive after the first render.
+	const [ chosenLogo, setChosenLogo ] = useState< ReferralLogo | null >( null );
+	const logo = useMemo(
+		() => chosenLogo ?? getInitialReferralLogo( profileLogoUrl, lastReferralLogoUrl ),
+		[ chosenLogo, profileLogoUrl, lastReferralLogoUrl ]
 	);
-	const [ hasChosenLogo, setHasChosenLogo ] = useState( false );
-
-	// The agency's logos arrive after the first render; adopt the default from
-	// them until the user picks one.
-	useEffect( () => {
-		if ( ! hasChosenLogo ) {
-			setLogo( getInitialReferralLogo( profileLogoUrl, lastReferralLogoUrl ) );
-		}
-	}, [ hasChosenLogo, profileLogoUrl, lastReferralLogoUrl ] );
-
-	const onLogoChange = ( next: ReferralLogo ) => {
-		setHasChosenLogo( true );
-		setLogo( next );
-	};
 
 	const { mutateAsync: uploadLogo, isPending: isUploadingLogo } = useMutation(
 		agencyPartnerDirectoryLogoMutation( agencyId )
@@ -246,7 +236,7 @@ export function useRequestClientPayment( {
 		productIds,
 		onEmailChange,
 		onMessageChange: setMessage,
-		onLogoChange,
+		onLogoChange: setChosenLogo,
 		canSend: email !== '',
 		canCopy: email !== '',
 		isBusy: isSubmitting || isUploadingLogo || isCreating || isIssuing,
