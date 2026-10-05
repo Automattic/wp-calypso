@@ -153,20 +153,31 @@ export function getLaunchReturnUrl( dependencies ) {
 	);
 }
 
+/**
+ * The query argument that shows the launch celebration on the given page. wp-admin reads
+ * `celebrate-launch`, while Calypso reads `celebrateLaunch`.
+ * @param {string} url an absolute URL or a Calypso path
+ * @returns {Object} the query argument to add
+ */
+function getCelebrateLaunchArgs( url ) {
+	const { pathname } = new URL( url, 'https://wordpress.com' );
+
+	return /\/wp-admin(\/|$)/.test( pathname )
+		? { 'celebrate-launch': 'true' }
+		: { celebrateLaunch: 'true' };
+}
+
 function getLaunchDestination( dependencies ) {
 	// `redirect_to` lands the user somewhere other than where they came from once the site is live,
-	// so `back_to` is free to keep meaning "the page the Back button returns to".
-	const url = dependencies.redirect_to || getLaunchReturnUrl( dependencies );
+	// so `back_to` is free to keep meaning "the page the Back button returns to". Likewise, `ref`
+	// names a wp-admin screen that celebrates the launch, while a wp-admin `back_to` can be any
+	// screen.
+	const url =
+		dependencies.redirect_to ||
+		getWpAdminLaunchUrl( dependencies ) ||
+		getLaunchReturnUrl( dependencies );
 
-	// `ref` names a wp-admin screen that celebrates the launch. A wp-admin `back_to` can be any
-	// screen, so it only drives the Back button.
-	const wpAdminUrl = getWpAdminLaunchUrl( dependencies );
-
-	if ( wpAdminUrl ) {
-		return addQueryArgs( { 'celebrate-launch': 'true' }, wpAdminUrl );
-	}
-
-	return addQueryArgs( { celebrateLaunch: 'true' }, getLaunchReturnUrl( dependencies ) );
+	return addQueryArgs( getCelebrateLaunchArgs( url ), url );
 }
 
 function getDomainSignupFlowDestination( { designType, siteSlug, flowName } ) {

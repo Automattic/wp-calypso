@@ -115,6 +115,17 @@ describe( 'Signup Flows Configuration', () => {
 			);
 		} );
 
+		test( 'uses the wp-admin celebration argument for a wp-admin back_to without ref', () => {
+			expect(
+				getDestination( {
+					siteSlug: 'test-site.wordpress.com',
+					back_to: 'https://test-site.wordpress.com/wp-admin/options-reading.php',
+				} )
+			).toBe(
+				'https://test-site.wordpress.com/wp-admin/options-reading.php?celebrate-launch=true'
+			);
+		} );
+
 		test( 'lands a wp-admin launch without back_to on the screen its ref names', () => {
 			expect(
 				getDestination( {
