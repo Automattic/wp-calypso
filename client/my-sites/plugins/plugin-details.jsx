@@ -584,7 +584,7 @@ function PluginDetails( props ) {
 											text={ translate(
 												'Your site plan already includes Jetpack VaultPress Backup.'
 											) }
-											status="is-warning"
+											status="is-info"
 											showDismiss={ false }
 										>
 											<NoticeAction href={ `/backup/${ selectedSite.slug }` }>
@@ -605,7 +605,7 @@ function PluginDetails( props ) {
 													},
 												}
 											) }
-											status="is-warning"
+											status="is-info"
 											showDismiss={ false }
 										/>
 									) }
