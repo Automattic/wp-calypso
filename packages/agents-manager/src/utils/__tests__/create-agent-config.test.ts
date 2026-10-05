@@ -291,7 +291,7 @@ describe( 'createAgentConfig', () => {
 			} )
 		);
 	} );
-	it.each( [
+	const clientContexts = [
 		[ 'default', undefined ],
 		[
 			'provider',
@@ -304,7 +304,9 @@ describe( 'createAgentConfig', () => {
 				} ),
 			},
 		],
-	] )(
+	] as const;
+
+	it.each( clientContexts )(
 		'sends the host tracking opt-in, the turn id and the traffic flags in the %s client context',
 		async ( _, contextProvider ) => {
 			setAgentsManagerData( { isTrackingAllowed: true, isDevMode: true, isA11n: true } );
@@ -324,6 +326,25 @@ describe( 'createAgentConfig', () => {
 					isTest: true,
 					isA11n: true,
 				} )
+			);
+		}
+	);
+
+	it.each( clientContexts )(
+		'sends the host tracking opt-out in the %s client context',
+		async ( _, contextProvider ) => {
+			setAgentsManagerData( { isTrackingAllowed: false } );
+
+			const config = await createAgentConfig( {
+				sessionId: 'session-1',
+				sessionSiteKey: 'no-site',
+				agentId: DOLLY_AGENT_ID,
+				contextProvider,
+			} );
+
+			expect( config.contextProvider?.getClientContext() ).toHaveProperty(
+				'isTrackingAllowed',
+				false
 			);
 		}
 	);
