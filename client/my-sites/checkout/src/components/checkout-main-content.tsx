@@ -36,7 +36,6 @@ import {
 import { css, keyframes } from '@emotion/react';
 import { Icon } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
-import { useSelect, useDispatch } from '@wordpress/data';
 import { help, pencil } from '@wordpress/icons';
 import clsx from 'clsx';
 import debugFactory from 'debug';
@@ -99,11 +98,14 @@ import { useUpdateCachedContactDetails } from '../hooks/use-cached-contact-detai
 import { useCheckoutHelpCenter } from '../hooks/use-checkout-help-center';
 import useCouponFieldState from '../hooks/use-coupon-field-state';
 import useSiteDomains from '../hooks/use-site-domains';
-import { vatDetailsInFormStore } from '../lib/checkout-stores';
+import {
+	contactDetailsActions,
+	useContactDetails,
+	vatDetailsInFormStore,
+} from '../lib/checkout-stores';
 import { validateContactDetails } from '../lib/contact-validation';
 import { updateCartContactDetailsForCheckout } from '../lib/update-cart-contact-details-for-checkout';
 import { useValueStore } from '../lib/value-store';
-import { CHECKOUT_STORE } from '../lib/wpcom-store';
 import { CheckoutMoneyBackGuarantee } from './CheckoutMoneyBackGuarantee';
 import AcceptTermsOfServiceCheckbox from './accept-terms-of-service-checkbox';
 import badge14Src from './assets/icons/badge-14.svg';
@@ -555,12 +557,10 @@ export default function CheckoutMainContent( {
 
 	const contactDetailsType = getContactDetailsType( responseCart );
 
-	const contactInfo = useSelect( ( select ) => select( CHECKOUT_STORE ).getContactInfo(), [] );
+	const contactInfo = useContactDetails();
 
 	const vatDetailsInForm = useValueStore( vatDetailsInFormStore );
 	const { setVatDetails, vatDetails: vatDetailsFromServer } = useVatDetails();
-
-	const checkoutActions = useDispatch( CHECKOUT_STORE );
 
 	const [
 		shouldShowContactDetailsValidationErrors,
@@ -676,15 +676,11 @@ export default function CheckoutMainContent( {
 	const { helpCenterButtonCopy, helpCenterButtonLink, toggleHelpCenter, showHelpIcon } =
 		useCheckoutHelpCenter();
 
-	if ( ! checkoutActions ) {
-		return null;
-	}
-
 	const {
 		touchContactFields,
 		applyDomainContactValidationResults,
 		clearDomainContactErrorMessages,
-	} = checkoutActions;
+	} = contactDetailsActions;
 
 	if ( transactionStatus === TransactionStatus.COMPLETE ) {
 		if ( isStepContainerV2 ) {

@@ -1,12 +1,11 @@
 import { createRequestCartProduct, useShoppingCart } from '@automattic/shopping-cart';
-import { useDispatch } from '@wordpress/data';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import useProductsById from 'calypso/a8c-for-agencies/sections/marketplace/hooks/use-products-by-id';
 import { getClientReferralQueryArgs } from 'calypso/a8c-for-agencies/sections/marketplace/lib/get-client-referral-query-args';
 import { isWPCOMHostingProduct } from 'calypso/a8c-for-agencies/sections/marketplace/lib/hosting';
-import { CHECKOUT_STORE } from 'calypso/my-sites/checkout/src/lib/wpcom-store';
+import { contactDetailsActions } from 'calypso/my-sites/checkout/src/lib/checkout-stores';
 import { useSelector } from 'calypso/state';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import useFetchClientReferral from './use-fetch-client-referral';
@@ -32,9 +31,6 @@ export default function useClientCheckout( { expressMode = false }: Props ) {
 	);
 
 	const userEmail = useSelector( ( state ) => getCurrentUser( state )?.email );
-
-	// Access checkout store to set email for express checkout
-	const checkoutStoreDispatch = useDispatch( CHECKOUT_STORE );
 
 	const emailMismatchWithReferralClient = referral?.client?.email !== userEmail;
 
@@ -104,14 +100,14 @@ export default function useClientCheckout( { expressMode = false }: Props ) {
 
 	// Set referral client email in checkout store for express checkout
 	useEffect( () => {
-		if ( expressMode && referral?.client?.email && checkoutStoreDispatch ) {
+		if ( expressMode && referral?.client?.email ) {
 			debug(
 				'[A4A Checkout] Setting referral client email in checkout store:',
 				referral.client.email
 			);
-			checkoutStoreDispatch.updateEmail( referral.client.email );
+			contactDetailsActions.updateEmail( referral.client.email );
 		}
-	}, [ expressMode, referral?.client?.email, checkoutStoreDispatch ] );
+	}, [ expressMode, referral?.client?.email ] );
 
 	// Debugging: Set a timeout after 30 seconds
 	useEffect( () => {
