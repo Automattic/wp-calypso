@@ -10,14 +10,24 @@ describe( 'getSkipSuggestionCopy', () => {
 		} );
 	} );
 
-	it( 'keeps the default copy for flows that can start free', () => {
-		expect( getSkipSuggestionCopy( 'onboarding', identity ) ).toBeUndefined();
+	it( 'frames the card as skipping the domain for the onboarding flow', () => {
+		expect( getSkipSuggestionCopy( 'onboarding', identity ) ).toEqual( {
+			title: 'Skip the domain for now',
+			subtitle:
+				'You’ll get a WordPress.com branded domain. Upgrade to a custom domain name anytime.',
+			buttonText: 'Skip',
+			skipLabel: 'Skip the domain for now',
+		} );
+	} );
+
+	it( 'keeps the default copy for flows without their own copy', () => {
+		expect( getSkipSuggestionCopy( 'domain', identity ) ).toBeUndefined();
 		expect( getSkipSuggestionCopy( null, identity ) ).toBeUndefined();
 	} );
 
 	it( 'applies per-flow title/button overrides on a flow that has no default copy', () => {
 		expect(
-			getSkipSuggestionCopy( 'onboarding', identity, {
+			getSkipSuggestionCopy( 'domain', identity, {
 				title: 'Grab %(domain)s for free',
 				buttonText: 'Use a free address',
 			} )
@@ -29,7 +39,7 @@ describe( 'getSkipSuggestionCopy', () => {
 
 	it( 'applies a partial override, leaving the other value undefined', () => {
 		expect(
-			getSkipSuggestionCopy( 'onboarding', identity, { title: 'Grab %(domain)s for free' } )
+			getSkipSuggestionCopy( 'domain', identity, { title: 'Grab %(domain)s for free' } )
 		).toEqual( {
 			title: 'Grab %(domain)s for free',
 			buttonText: undefined,
@@ -38,7 +48,7 @@ describe( 'getSkipSuggestionCopy', () => {
 
 	it( 'passes subtitle and skip label overrides through', () => {
 		expect(
-			getSkipSuggestionCopy( 'onboarding', identity, {
+			getSkipSuggestionCopy( 'domain', identity, {
 				subtitle: 'Upgrade anytime.',
 				skipLabel: 'Skip the domain',
 			} )
