@@ -1,10 +1,9 @@
-@import "@wordpress/base-styles/mixins";
-@import "@wordpress/base-styles/variables";
+@import '@wordpress/base-styles/mixins';
+@import '@wordpress/base-styles/variables';
 
 .pressable-usage-section {
 	border-block-end: 1px solid var( --color-neutral-5 );
 	padding-block: 32px;
-
 
 	.page-section__header-title {
 		@include heading-x-large;
@@ -27,4 +26,20 @@
 	justify-content: space-between;
 	margin-block-end: 16px;
 	align-items: center;
+}
+
+.pressable-usage-card__name {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+}
+
+.pressable-usage-card__rename-info {
+	display: inline-flex;
+	color: var( --color-neutral-50 );
+	cursor: pointer;
+
+	svg {
+		fill: currentColor;
+	}
 }

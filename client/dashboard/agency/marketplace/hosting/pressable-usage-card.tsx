@@ -13,7 +13,12 @@ import { SectionHeader } from '../../../components/section-header';
 import { OWNER_ROLE } from '../../team/constants';
 import { useAgencyPressablePlan } from '../use-agency-pressable-plan';
 import { calculateEffectiveCapacity } from './lib/pressable-capacity';
-import { PRESSABLE_AGENCY_URL, getPressablePlanInfo } from './lib/pressable-plans';
+import {
+	PRESSABLE_AGENCY_URL,
+	getPressablePlanInfo,
+	getPressablePlanRenameNote,
+} from './lib/pressable-plans';
+import PressableRenamedPlanNote from './pressable-renamed-plan-note';
 import PressableUsageStats from './pressable-usage-stats';
 import type { AgencyProduct } from '@automattic/api-core';
 
@@ -35,6 +40,7 @@ export default function PressableUsageCard( { existingPlan }: { existingPlan: Ag
 	const { data: agency } = useQuery( activeAgencyQuery() );
 	const { licenses, products } = useAgencyPressablePlan();
 	const planInfo = getPressablePlanInfo( existingPlan );
+	const formerName = getPressablePlanRenameNote( existingPlan );
 	if ( ! planInfo ) {
 		return null;
 	}
@@ -59,11 +65,18 @@ export default function PressableUsageCard( { existingPlan }: { existingPlan: Ag
 			<CardHeader>
 				<SectionHeader
 					level={ 3 }
-					title={ sprintf(
-						/* translators: %s is the plan name, e.g. "Pressable Signature 4". */
-						__( 'Your %s plan' ),
-						existingPlan.name
-					) }
+					title={
+						<HStack as="span" spacing={ 1 } justify="flex-start" expanded={ false }>
+							<span>
+								{ sprintf(
+									/* translators: %s is the plan name, e.g. "Pressable Standard 3". */
+									__( 'Your %s plan' ),
+									existingPlan.name
+								) }
+							</span>
+							{ formerName && <PressableRenamedPlanNote formerName={ formerName } /> }
+						</HStack>
+					}
 				/>
 			</CardHeader>
 			<CardBody>
