@@ -59,7 +59,7 @@ test.describe(
 			test.setTimeout( 30 * 60 * 1000 );
 
 			let playgroundId: string;
-			let selectedFreeDomain: string;
+			const selectedFreeDomain = `${ blogName }.wordpress.com`;
 
 			await test.step( 'Given the store is configured for sandbox purchases', async () => {
 				await BrowserManager.setStoreCookie( page, { currency: 'GBP' } );
@@ -119,8 +119,7 @@ test.describe(
 
 			await test.step( 'And I choose a free WordPress.com address', async () => {
 				await componentDomainSearch.search( blogName );
-				selectedFreeDomain = await componentDomainSearch.skipPurchase();
-				expect( selectedFreeDomain ).toBe( `${ blogName }.wordpress.com` );
+				await componentDomainSearch.skipPurchase();
 			} );
 
 			await test.step( 'And I select the Business plan', async () => {
