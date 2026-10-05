@@ -1,3 +1,7 @@
+import {
+	WPCOM_FEATURES_BACKUPS,
+	WPCOM_FEATURES_BACKUPS_SELF_SERVE,
+} from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Button } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
@@ -80,7 +84,9 @@ import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import getSelectedOrAllSites from 'calypso/state/selectors/get-selected-or-all-sites';
 import getSelectedOrAllSitesWithPlugins from 'calypso/state/selectors/get-selected-or-all-sites-with-plugins';
 import getSiteConnectionStatus from 'calypso/state/selectors/get-site-connection-status';
+import hasLoadedSiteFeatures from 'calypso/state/selectors/has-loaded-site-features';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import {
 	isJetpackSite,
 	isRequestingSites as checkRequestingSites,
@@ -167,6 +173,19 @@ function PluginDetails( props ) {
 	const isIncompatibleBackupPlugin = useMemo( () => {
 		return hasBundledBackupNotice( props.pluginSlug ) && ! isJetpackSelfHosted;
 	}, [ isJetpackSelfHosted, props.pluginSlug ] );
+
+	const hasLoadedFeatures = useSelector( ( state ) =>
+		hasLoadedSiteFeatures( state, selectedSite?.ID )
+	);
+	const siteHasBackups = useSelector( ( state ) =>
+		siteHasFeature( state, selectedSite?.ID, WPCOM_FEATURES_BACKUPS )
+	);
+	// The backups page upsells sites without self-serve backups (Personal and Premium have daily backups only).
+	const canViewBackups = useSelector( ( state ) =>
+		siteHasFeature( state, selectedSite?.ID, WPCOM_FEATURES_BACKUPS_SELF_SERVE )
+	);
+	// Until a selected site's features load, we can't tell whether its plan includes backups.
+	const showBackupNotice = isIncompatibleBackupPlugin && ( ! selectedSite || hasLoadedFeatures );
 
 	// Fetch WPorg plugin data if needed
 	useEffect( () => {
@@ -566,10 +585,10 @@ function PluginDetails( props ) {
 											</Notice>
 										) }
 
-									{ isIncompatibleBackupPlugin && (
+									{ showBackupNotice && (
 										<Notice
 											text={
-												selectedSite
+												siteHasBackups
 													? translate(
 															'Incompatible plugin: Your site plan already includes Jetpack VaultPress Backup.'
 														)
@@ -580,7 +599,7 @@ function PluginDetails( props ) {
 											status="is-warning"
 											showDismiss={ false }
 										>
-											{ selectedSite && (
+											{ canViewBackups && (
 												<NoticeAction href={ `/backup/${ selectedSite.slug }` }>
 													{ translate( 'View backups' ) }
 												</NoticeAction>

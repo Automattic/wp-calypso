@@ -1,6 +1,8 @@
 /** @jest-environment jsdom */
 import { render, screen } from '@testing-library/react';
+import hasLoadedSiteFeatures from 'calypso/state/selectors/has-loaded-site-features';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import PluginsBrowserListElement from '../';
 
@@ -10,7 +12,9 @@ jest.mock( 'calypso/state/ui/selectors' );
 jest.mock( 'calypso/state/plugins/installed/selectors' );
 jest.mock( 'calypso/state/products-list/selectors' );
 jest.mock( 'calypso/state/sites/selectors' );
+jest.mock( 'calypso/state/selectors/has-loaded-site-features' );
 jest.mock( 'calypso/state/selectors/is-site-automated-transfer' );
+jest.mock( 'calypso/state/selectors/site-has-feature' );
 jest.mock( 'react-redux', () => ( {
 	...jest.requireActual( 'react-redux' ),
 	useDispatch: jest.fn().mockImplementation( () => {} ),
@@ -76,22 +80,60 @@ describe( 'PluginsBrowserItem Incompatible Plugins Message', () => {
 		expect( message ).not.toBeInTheDocument();
 	} );
 
-	test( 'should render the backup message instead of the generic one for Jetpack Backup when logged out', () => {
-		isJetpackSite.mockImplementation( () => false );
-		isAtomicSite.mockImplementation( () => false );
+	describe( 'Jetpack VaultPress Backup', () => {
+		const plugin = { name: 'Jetpack VaultPress Backup', slug: 'jetpack-backup' };
+		const included = 'Your site plan already includes Jetpack VaultPress Backup.';
+		const neutral =
+			'WordPress.com plans that support plugins already include Jetpack VaultPress Backup.';
+		const withFeatures = ( ...features ) =>
+			siteHasFeature.mockImplementation( ( state, siteId, feature ) =>
+				features.includes( feature )
+			);
 
-		const props = {
-			plugin: { name: 'Jetpack VaultPress Backup', slug: 'jetpack-backup' },
-		};
+		beforeEach( () => {
+			isJetpackSite.mockImplementation( () => true );
+			isAtomicSite.mockImplementation( () => true );
+			hasLoadedSiteFeatures.mockImplementation( () => true );
+		} );
 
-		render( <PluginsBrowserListElement { ...props } /> );
-		expect(
-			screen.getByText(
-				'WordPress.com plans that support plugins already include Jetpack VaultPress Backup.'
-			)
-		).toBeInTheDocument();
-		expect(
-			screen.queryByText( 'Why is this plugin not compatible with WordPress.com?' )
-		).not.toBeInTheDocument();
+		test( 'links to backups when the plan can self-serve backups', () => {
+			withFeatures( 'backups', 'backups-self-serve' );
+			render( <PluginsBrowserListElement site="example.com" plugin={ plugin } /> );
+			expect( screen.getByRole( 'link', { name: included } ) ).toBeInTheDocument();
+		} );
+
+		test( 'says backups are included without a link when the plan has daily backups only', () => {
+			withFeatures( 'backups' );
+			render( <PluginsBrowserListElement site="example.com" plugin={ plugin } /> );
+			expect( screen.getByText( included ) ).toBeInTheDocument();
+			expect( screen.queryByRole( 'link', { name: included } ) ).not.toBeInTheDocument();
+		} );
+
+		test( 'uses the neutral message when the plan has no backups', () => {
+			withFeatures();
+			render( <PluginsBrowserListElement site="example.com" plugin={ plugin } /> );
+			expect( screen.getByText( neutral ) ).toBeInTheDocument();
+			expect( screen.queryByText( included ) ).not.toBeInTheDocument();
+		} );
+
+		test( 'shows no backup message while the site features are loading', () => {
+			hasLoadedSiteFeatures.mockImplementation( () => false );
+			withFeatures();
+			render( <PluginsBrowserListElement site="example.com" plugin={ plugin } /> );
+			expect( screen.queryByText( neutral ) ).not.toBeInTheDocument();
+			expect( screen.queryByText( included ) ).not.toBeInTheDocument();
+		} );
+
+		test( 'uses the neutral message when no site is selected', () => {
+			isJetpackSite.mockImplementation( () => false );
+			isAtomicSite.mockImplementation( () => false );
+			hasLoadedSiteFeatures.mockImplementation( () => false );
+			withFeatures();
+			render( <PluginsBrowserListElement plugin={ plugin } /> );
+			expect( screen.getByText( neutral ) ).toBeInTheDocument();
+			expect(
+				screen.queryByText( 'Why is this plugin not compatible with WordPress.com?' )
+			).not.toBeInTheDocument();
+		} );
 	} );
 } );

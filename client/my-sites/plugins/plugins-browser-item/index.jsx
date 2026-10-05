@@ -1,4 +1,8 @@
-import { WPCOM_FEATURES_INSTALL_PLUGINS } from '@automattic/calypso-products';
+import {
+	WPCOM_FEATURES_BACKUPS,
+	WPCOM_FEATURES_BACKUPS_SELF_SERVE,
+	WPCOM_FEATURES_INSTALL_PLUGINS,
+} from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Badge, Gridicon } from '@automattic/components';
 import { useLocalizeUrl } from '@automattic/i18n-utils';
@@ -35,6 +39,7 @@ import {
 	isMarketplaceProduct as isMarketplaceProductSelector,
 	isSaasProduct as isSaasProductSelector,
 } from 'calypso/state/products-list/selectors';
+import hasLoadedSiteFeatures from 'calypso/state/selectors/has-loaded-site-features';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
@@ -204,6 +209,20 @@ const PluginsBrowserListElement = ( props ) => {
 			siteHasFeature( state, selectedSite?.ID, WPCOM_FEATURES_INSTALL_PLUGINS )
 		) || jetpackNonAtomic;
 
+	const hasLoadedFeatures = useSelector( ( state ) =>
+		hasLoadedSiteFeatures( state, selectedSite?.ID )
+	);
+	const siteHasBackups = useSelector( ( state ) =>
+		siteHasFeature( state, selectedSite?.ID, WPCOM_FEATURES_BACKUPS )
+	);
+	// The backups page upsells sites without self-serve backups (Personal and Premium have daily backups only).
+	const canViewBackups =
+		useSelector( ( state ) =>
+			siteHasFeature( state, selectedSite?.ID, WPCOM_FEATURES_BACKUPS_SELF_SERVE )
+		) && !! site;
+	// Until a selected site's features load, we can't tell whether its plan includes backups.
+	const showBackupNotice = isIncompatibleBackupPlugin && ( ! site || hasLoadedFeatures );
+
 	if ( isPlaceholder ) {
 		return <Placeholder variant={ variant } />;
 	}
@@ -281,7 +300,7 @@ const PluginsBrowserListElement = ( props ) => {
 						{ translate( 'Why is this plugin not compatible with WordPress.com?' ) }
 					</span>
 				) }
-				{ isIncompatibleBackupPlugin && site && (
+				{ showBackupNotice && canViewBackups && (
 					<span
 						role="link"
 						tabIndex="-1"
@@ -292,11 +311,13 @@ const PluginsBrowserListElement = ( props ) => {
 						{ translate( 'Your site plan already includes Jetpack VaultPress Backup.' ) }
 					</span>
 				) }
-				{ isIncompatibleBackupPlugin && ! site && (
+				{ showBackupNotice && ! canViewBackups && (
 					<span className="plugins-browser-item__incompatible">
-						{ translate(
-							'WordPress.com plans that support plugins already include Jetpack VaultPress Backup.'
-						) }
+						{ siteHasBackups
+							? translate( 'Your site plan already includes Jetpack VaultPress Backup.' )
+							: translate(
+									'WordPress.com plans that support plugins already include Jetpack VaultPress Backup.'
+								) }
 					</span>
 				) }
 				<div className="plugins-browser-item__footer">
