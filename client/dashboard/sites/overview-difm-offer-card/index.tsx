@@ -14,13 +14,13 @@ import type { Site } from '@automattic/api-core';
  */
 export default function DIFMOfferCard( { site }: { site: Site } ) {
 	const localeSlug = useLocale();
-	const { isEligible, isLoading, variation } = useDifmOffer( {
+	const { isLoading, variation } = useDifmOffer( {
 		planSlug: site.plan?.product_slug,
 		siteCreatedAt: site.options?.created_at,
 		localeSlug,
 		isA4ADevSite: site.is_a4a_dev_site,
 	} );
-	const copy = isEligible && ! isLoading ? getDifmOfferCopy( variation ) : null;
+	const copy = ! isLoading ? getDifmOfferCopy( variation ) : null;
 
 	if ( ! copy ) {
 		return <DIFMUpsellCard site={ site } />;

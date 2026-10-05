@@ -3,27 +3,16 @@
  */
 import '@testing-library/jest-dom';
 import { screen } from '@testing-library/react';
+import nock from 'nock';
 import { render } from '../../../test-utils';
-import { useDifmOffer } from '../../../utils/difm-offer';
+import { DIFM_OFFER_EXPERIMENT } from '../../../utils/difm-offer';
 import DIFMOfferCard from '../index';
 import type { Site } from '@automattic/api-core';
-
-jest.mock( '../../../utils/difm-offer', () => ( {
-	...jest.requireActual( '../../../utils/difm-offer' ),
-	useDifmOffer: jest.fn(),
-} ) );
 
 jest.mock( '../../../app/locale', () => ( {
 	useLocale: () => 'en',
 	useIntlLocale: () => 'en',
 } ) );
-
-jest.mock( '@wordpress/i18n', () => ( {
-	...jest.requireActual( '@wordpress/i18n' ),
-	__: ( text: string ) => text,
-} ) );
-
-const mockUseDifmOffer = useDifmOffer as jest.MockedFunction< typeof useDifmOffer >;
 
 const FIVE_DAYS_AGO = new Date( Date.now() - 5 * 24 * 60 * 60 * 1000 ).toISOString();
 
@@ -38,17 +27,34 @@ const mockSite = {
 	options: { created_at: FIVE_DAYS_AGO },
 } as Site;
 
+// Seed a live assignment into the storage ExPlat reads from, so the real `useExperiment`
+// hook resolves to the given variation without a network call.
+function assignExperiment( variationName: string | null ) {
+	window.localStorage.setItem(
+		`explat-experiment--${ DIFM_OFFER_EXPERIMENT }`,
+		JSON.stringify( {
+			experimentName: DIFM_OFFER_EXPERIMENT,
+			variationName,
+			retrievedTimestamp: Date.now(),
+			ttl: 3600,
+		} )
+	);
+}
+
 describe( 'DIFMOfferCard', () => {
-	test( 'shows the offer copy, and not the DIFM upsell, to an eligible user in a treatment', () => {
-		mockUseDifmOffer.mockReturnValue( {
-			isEligible: true,
-			isLoading: false,
-			variation: 'no_time',
-		} );
+	afterEach( () => {
+		window.localStorage.clear();
+		nock.cleanAll();
+	} );
+
+	test( 'shows the offer copy, and not the DIFM upsell, to an eligible user in a treatment', async () => {
+		assignExperiment( 'no_time' );
 
 		render( <DIFMOfferCard site={ mockSite } /> );
 
-		expect( screen.getByRole( 'heading', { name: 'No time to build your site?' } ) ).toBeVisible();
+		expect(
+			await screen.findByRole( 'heading', { name: 'No time to build your site?' } )
+		).toBeVisible();
 		expect(
 			screen.getByText( 'Let us take that off your plate. Ready in 4 days and free with Business.' )
 		).toBeVisible();
@@ -56,27 +62,21 @@ describe( 'DIFMOfferCard', () => {
 		expect( screen.queryByText( 'We’ll bring your vision to life' ) ).not.toBeInTheDocument();
 	} );
 
-	test( 'shows the DIFM upsell to a user in control', () => {
-		mockUseDifmOffer.mockReturnValue( {
-			isEligible: true,
-			isLoading: false,
-			variation: 'control',
-		} );
+	test( 'shows the DIFM upsell to a user in control', async () => {
+		assignExperiment( 'control' );
 
 		render( <DIFMOfferCard site={ mockSite } /> );
 
 		expect(
-			screen.getByRole( 'heading', { name: 'We’ll bring your vision to life' } )
+			await screen.findByRole( 'heading', { name: 'We’ll bring your vision to life' } )
 		).toBeVisible();
 		expect( screen.queryByRole( 'button', { name: 'See the offer' } ) ).not.toBeInTheDocument();
 	} );
 
 	test( 'shows the DIFM upsell while the experiment assignment loads', () => {
-		mockUseDifmOffer.mockReturnValue( {
-			isEligible: true,
-			isLoading: true,
-			variation: 'no_time',
-		} );
+		nock( 'https://public-api.wordpress.com' )
+			.get( /experiments\/0\.1\.0\/assignments\/calypso/ )
+			.reply( 200, { variations: {}, ttl: 3600 } );
 
 		render( <DIFMOfferCard site={ mockSite } /> );
 
@@ -85,20 +85,29 @@ describe( 'DIFMOfferCard', () => {
 		).toBeVisible();
 	} );
 
-	test( 'passes the site plan, creation date and user locale to the eligibility hook', () => {
-		mockUseDifmOffer.mockReturnValue( {
-			isEligible: false,
-			isLoading: false,
-			variation: 'control',
-		} );
+	test( 'does not show the offer on an A4A dev site in a treatment', () => {
+		assignExperiment( 'no_time' );
 
-		render( <DIFMOfferCard site={ mockSite } /> );
+		render( <DIFMOfferCard site={ { ...mockSite, is_a4a_dev_site: true } } /> );
 
-		expect( mockUseDifmOffer ).toHaveBeenCalledWith( {
-			planSlug: 'free_plan',
-			siteCreatedAt: FIVE_DAYS_AGO,
-			localeSlug: 'en',
-			isA4ADevSite: false,
-		} );
+		expect(
+			screen.queryByRole( 'heading', { name: 'No time to build your site?' } )
+		).not.toBeInTheDocument();
+	} );
+
+	test( 'shows the DIFM upsell, and not the offer, on a site past the offer age limit in a treatment', () => {
+		assignExperiment( 'no_time' );
+		const thirtyDaysAgo = new Date( Date.now() - 30 * 24 * 60 * 60 * 1000 ).toISOString();
+
+		render(
+			<DIFMOfferCard site={ { ...mockSite, options: { created_at: thirtyDaysAgo } } as Site } />
+		);
+
+		expect(
+			screen.getByRole( 'heading', { name: 'We’ll bring your vision to life' } )
+		).toBeVisible();
+		expect(
+			screen.queryByRole( 'heading', { name: 'No time to build your site?' } )
+		).not.toBeInTheDocument();
 	} );
 } );
