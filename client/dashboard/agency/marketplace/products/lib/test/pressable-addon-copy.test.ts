@@ -18,7 +18,7 @@ const addon = ( slug: string, metadata?: Partial< AgencyProductMetadata > ): Age
 } );
 
 const GENERIC_CALLOUT =
-	'This add-on increases your Signature plan limits while your plan is active.';
+	'This add-on increases your Pressable plan limits while your plan is active.';
 
 describe( 'getPressableAddonCopy', () => {
 	test( 'reads the site, storage, and visits increase from the server metadata', () => {
@@ -27,7 +27,7 @@ describe( 'getPressableAddonCopy', () => {
 				addon( 'pressable-addon-sites-5', { sites: 5, storage: 10, visits: 50000 } )
 			).callout
 		).toBe(
-			'Site limit will be increased by 5, storage by 10 GB, and visits by 50,000 on your Signature plan.'
+			'Site limit will be increased by 5, storage by 10 GB, and visits by 50,000 on your Pressable plan.'
 		);
 	} );
 

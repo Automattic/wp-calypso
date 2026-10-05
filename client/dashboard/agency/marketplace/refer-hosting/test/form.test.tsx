@@ -187,7 +187,9 @@ describe( '<ReferHostingForm>', () => {
 				</>
 			);
 			await fillSharedFields( user );
-			await user.click( screen.getByRole( 'button', { name: 'Submit Premium plan referral' } ) );
+			await user.click(
+				screen.getByRole( 'button', { name: 'Submit Performance plan referral' } )
+			);
 
 			// The message is also announced in the a11y live region, so read the snackbar itself.
 			expect(
@@ -197,7 +199,7 @@ describe( '<ReferHostingForm>', () => {
 			).toBeInTheDocument();
 			expect( onSubmitted ).not.toHaveBeenCalled();
 			expect(
-				screen.getByRole( 'button', { name: 'Submit Premium plan referral' } )
+				screen.getByRole( 'button', { name: 'Submit Performance plan referral' } )
 			).toBeEnabled();
 		},
 		FULL_FORM_TIMEOUT
@@ -240,7 +242,7 @@ describe( '<ReferHostingForm>', () => {
 	);
 
 	test(
-		'sends the Premium referral without the Enterprise-only fields',
+		'sends the Performance referral without the Enterprise-only fields',
 		async () => {
 			const user = userEvent.setup();
 			const onSubmitted = jest.fn();
@@ -263,7 +265,9 @@ describe( '<ReferHostingForm>', () => {
 			expect( screen.queryByRole( 'radio', { name: 'Yes' } ) ).not.toBeInTheDocument();
 
 			await fillSharedFields( user );
-			await user.click( screen.getByRole( 'button', { name: 'Submit Premium plan referral' } ) );
+			await user.click(
+				screen.getByRole( 'button', { name: 'Submit Performance plan referral' } )
+			);
 
 			await waitFor( () => expect( onSubmitted ).toHaveBeenCalled() );
 			expect( request.isDone() ).toBe( true );
