@@ -63,6 +63,7 @@ import {
 	hasDomainRegistration,
 	hasTransferProduct,
 	hasDIFMProduct,
+	hasDIFMOfferPlan,
 	has100YearPlan as cartHas100YearPlan,
 	ObjectWithProducts,
 	hasPlan,
@@ -115,6 +116,7 @@ import badgeSecurity from './assets/icons/security.svg';
 import CheckoutNextSteps from './checkout-next-steps';
 import { CheckoutSidebarPlanUpsell } from './checkout-sidebar-plan-upsell';
 import CheckoutTrustCards from './checkout-trust-cards';
+import DIFMOfferRequestNotice from './difm-offer-request-notice';
 import { EmptyCart, shouldShowEmptyCartPage } from './empty-cart';
 import { handleProgressStepSelect } from './handle-progress-step-select';
 import JetpackAkismetCheckoutSidebarPlanUpsell from './jetpack-akismet-checkout-sidebar-plan-upsell';
@@ -359,7 +361,7 @@ function CheckoutSidebarNudge( {
 		return null;
 	}
 
-	if ( isDIFMInCart ) {
+	if ( isDIFMInCart || hasDIFMOfferPlan( responseCart ) ) {
 		return (
 			<CheckoutSidebarNudgeWrapper>
 				<CheckoutNextSteps responseCart={ responseCart } />
@@ -929,6 +931,7 @@ export default function CheckoutMainContent( {
 				isMobileCheckoutStickySummary={ isMobileCheckoutStickySummary }
 			>
 				<CheckoutOrderBanner />
+				<DIFMOfferRequestNotice responseCart={ responseCart } />
 				{ isStepContainerV2 ? (
 					<Step.Heading
 						text={ translate( 'Checkout' ) }

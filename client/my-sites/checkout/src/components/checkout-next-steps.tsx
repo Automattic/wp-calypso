@@ -2,7 +2,7 @@ import { Gridicon } from '@automattic/components';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo, type JSX } from 'react';
-import { hasDIFMProduct } from 'calypso/lib/cart-values/cart-items';
+import { hasDIFMOfferPlan, hasDIFMProduct } from 'calypso/lib/cart-values/cart-items';
 import type { ResponseCart } from '@automattic/shopping-cart';
 import type { TranslateResult } from 'i18n-calypso';
 interface Props {
@@ -59,19 +59,25 @@ const BaseIcon = styled.div`
 `;
 
 const CompletedStepIcon = () => (
-	<BaseIcon>
+	<BaseIcon className="checkout-next-steps__icon is-completed">
 		<Gridicon icon="checkmark" size={ 12 } />
 	</BaseIcon>
 );
 
-const CurrentStepIcon = styled( BaseIcon )`
+const CurrentStepIconBase = styled( BaseIcon )`
 	background: ${ ( props ) =>
 		`linear-gradient(0, ${ props.theme.colors.success } 50%, ${ props.theme.colors.surface } 50%)` };
 `;
 
-const NextStepIcon = styled( BaseIcon )`
+const CurrentStepIcon = () => (
+	<CurrentStepIconBase className="checkout-next-steps__icon is-current" />
+);
+
+const NextStepIconBase = styled( BaseIcon )`
 	background-color: ${ ( props ) => props.theme.colors.surface };
 `;
+
+const NextStepIcon = () => <NextStepIconBase className="checkout-next-steps__icon is-next" />;
 
 export default function CheckoutNextSteps( { responseCart, headerText }: Props ) {
 	const translate = useTranslate();
@@ -93,6 +99,28 @@ export default function CheckoutNextSteps( { responseCart, headerText }: Props )
 				},
 				{
 					text: translate( 'Submit content for new site' ),
+					icon: <NextStepIcon />,
+				},
+				{
+					text: translate( 'Receive your finished site in %d business days or less!', {
+						args: [ 4 ],
+					} ),
+					icon: <NextStepIcon />,
+				},
+			];
+		}
+		if ( hasDIFMOfferPlan( responseCart ) ) {
+			return [
+				{
+					text: translate( 'Submit build request' ),
+					icon: <CompletedStepIcon />,
+				},
+				{
+					text: <b>{ translate( 'Upgrade to Business' ) }</b>,
+					icon: <CurrentStepIcon />,
+				},
+				{
+					text: translate( 'Get in touch with the team with final details' ),
 					icon: <NextStepIcon />,
 				},
 				{
