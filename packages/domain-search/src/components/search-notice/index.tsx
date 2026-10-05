@@ -7,7 +7,7 @@ import { useMemo } from 'react';
 import { getAvailabilityNotice } from '../../helpers/get-availability-notice';
 import { getRootDomain } from '../../helpers/get-root-domain';
 import { isFqdnShownAsSuggestion } from '../../helpers/is-fqdn-shown-as-suggestion';
-import { isSubdomainWithMappedRootDomain } from '../../helpers/is-subdomain-with-mapped-root-domain';
+import { isSubdomainWithUnavailableRootDomain } from '../../helpers/is-subdomain-with-unavailable-root-domain';
 import { isSupportedPremiumDomain } from '../../helpers/is-supported-premium-domain';
 import { useDomainSearch } from '../../page/context';
 import { DomainSearchNotice } from '../../ui';
@@ -96,7 +96,7 @@ export const SearchNotice = () => {
 			return null;
 		}
 
-		if ( isSubdomainWithMappedRootDomain( availability ) ) {
+		if ( isSubdomainWithUnavailableRootDomain( availability ) ) {
 			const rootDomain = getRootDomain( availability.domain_name );
 
 			return {
@@ -107,9 +107,7 @@ export const SearchNotice = () => {
 							{ createInterpolateElement(
 								sprintf(
 									/* translators: %(rootDomain)s is the root domain, e.g. example.com */
-									__(
-										'Root domain (<strong>%(rootDomain)s</strong>): connected to another account'
-									),
+									__( 'Root domain (<strong>%(rootDomain)s</strong>): owned by another account' ),
 									{ rootDomain }
 								),
 								{ strong: <strong /> }
@@ -127,7 +125,7 @@ export const SearchNotice = () => {
 						</span>
 						<span>
 							{ __(
-								'Subdomains must be added by the account that owns the root domain connection. Contact the owner of that account.'
+								'Subdomains must be added by the account that owns the root domain. Contact the owner of that account.'
 							) }
 						</span>
 					</VStack>

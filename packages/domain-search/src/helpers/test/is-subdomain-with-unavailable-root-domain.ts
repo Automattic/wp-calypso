@@ -1,11 +1,11 @@
 import { DomainAvailabilityStatus } from '@automattic/api-core';
 import { buildAvailability } from '../../test-helpers/factories/availability';
-import { isSubdomainWithMappedRootDomain } from '../is-subdomain-with-mapped-root-domain';
+import { isSubdomainWithUnavailableRootDomain } from '../is-subdomain-with-unavailable-root-domain';
 
-describe( 'isSubdomainWithMappedRootDomain', () => {
+describe( 'isSubdomainWithUnavailableRootDomain', () => {
 	test( 'returns true for a subdomain whose root domain is mapped', () => {
 		expect(
-			isSubdomainWithMappedRootDomain(
+			isSubdomainWithUnavailableRootDomain(
 				buildAvailability( {
 					domain_name: 'cms.example.com',
 					status: DomainAvailabilityStatus.MAPPED,
@@ -16,7 +16,7 @@ describe( 'isSubdomainWithMappedRootDomain', () => {
 
 	test( 'returns true for a subdomain whose root domain is registered by another user', () => {
 		expect(
-			isSubdomainWithMappedRootDomain(
+			isSubdomainWithUnavailableRootDomain(
 				buildAvailability( {
 					domain_name: 'cms.example.com',
 					status: DomainAvailabilityStatus.REGISTERED,
@@ -27,7 +27,7 @@ describe( 'isSubdomainWithMappedRootDomain', () => {
 
 	test( "returns false for the user's own already-mapped subdomain (mappable is ignored)", () => {
 		expect(
-			isSubdomainWithMappedRootDomain(
+			isSubdomainWithUnavailableRootDomain(
 				buildAvailability( {
 					domain_name: 'cms.example.com',
 					status: DomainAvailabilityStatus.MAPPABLE,
@@ -39,7 +39,7 @@ describe( 'isSubdomainWithMappedRootDomain', () => {
 
 	test( 'returns false for a root domain that is mapped', () => {
 		expect(
-			isSubdomainWithMappedRootDomain(
+			isSubdomainWithUnavailableRootDomain(
 				buildAvailability( {
 					domain_name: 'example.com',
 					status: DomainAvailabilityStatus.MAPPED,
@@ -50,7 +50,7 @@ describe( 'isSubdomainWithMappedRootDomain', () => {
 
 	test( 'returns false for a subdomain connected under the same account', () => {
 		expect(
-			isSubdomainWithMappedRootDomain(
+			isSubdomainWithUnavailableRootDomain(
 				buildAvailability( {
 					domain_name: 'cms.example.com',
 					status: DomainAvailabilityStatus.MAPPED_SAME_SITE_REGISTRABLE,
@@ -61,7 +61,7 @@ describe( 'isSubdomainWithMappedRootDomain', () => {
 
 	test( 'returns false for a subdomain that is not mapped', () => {
 		expect(
-			isSubdomainWithMappedRootDomain(
+			isSubdomainWithUnavailableRootDomain(
 				buildAvailability( {
 					domain_name: 'cms.example.com',
 					status: DomainAvailabilityStatus.MAPPABLE,

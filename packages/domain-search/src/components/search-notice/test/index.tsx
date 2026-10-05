@@ -1209,11 +1209,11 @@ describe( 'SearchNotice', () => {
 
 			expect( await screen.findByText( 'Error notice' ) ).toBeInTheDocument();
 
-			expect( screen.getAllByText( /connected to another account/ )[ 0 ] ).toBeInTheDocument();
+			expect( screen.getAllByText( /owned by another account/ )[ 0 ] ).toBeInTheDocument();
 			expect( screen.getAllByText( /not yet connected/ )[ 0 ] ).toBeInTheDocument();
 			expect(
 				screen.getAllByText(
-					/Subdomains must be added by the account that owns the root domain connection/
+					/Subdomains must be added by the account that owns the root domain/
 				)[ 0 ]
 			).toBeInTheDocument();
 
@@ -1245,7 +1245,7 @@ describe( 'SearchNotice', () => {
 
 			expect(
 				screen.getAllByText(
-					/Subdomains must be added by the account that owns the root domain connection/
+					/Subdomains must be added by the account that owns the root domain/
 				)[ 0 ]
 			).toBeInTheDocument();
 
@@ -1274,12 +1274,10 @@ describe( 'SearchNotice', () => {
 			await waitForElementToBeRemoved( () => screen.getByText( 'LOADING_TEST_CONTENT' ) );
 
 			expect(
-				screen.queryByText(
-					/Subdomains must be added by the account that owns the root domain connection/
-				)
+				screen.queryByText( /Subdomains must be added by the account that owns the root domain/ )
 			).not.toBeInTheDocument();
 
-			expect( screen.queryByText( /connected to another account/ ) ).not.toBeInTheDocument();
+			expect( screen.queryByText( /owned by another account/ ) ).not.toBeInTheDocument();
 		} );
 
 		it( 'still renders the generic message for a mapped root domain', async () => {
@@ -1308,9 +1306,7 @@ describe( 'SearchNotice', () => {
 			expect( notice ).toBeInTheDocument();
 
 			expect(
-				screen.queryByText(
-					/Subdomains must be added by the account that owns the root domain connection/
-				)
+				screen.queryByText( /Subdomains must be added by the account that owns the root domain/ )
 			).not.toBeInTheDocument();
 		} );
 	} );

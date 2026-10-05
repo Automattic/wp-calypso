@@ -5,8 +5,8 @@ import { isSubdomain } from './is-subdomain';
  * Detects a subdomain (e.g. cms.example.com) that can't be connected because its
  * root domain (example.com) is already registered or mapped on WordPress.com by a
  * different account. The subdomain itself is unclaimed, but only the account that
- * owns the root domain connection can add it, so a "transfer domain" CTA is not an
- * appropriate resolution here.
+ * owns the root domain can add it, so a "transfer domain" CTA is not an appropriate
+ * resolution here.
  *
  * For a subdomain query the backend computes `status` against the ROOT domain:
  * REGISTERED reliably means another user registered the root, and MAPPED means the
@@ -18,7 +18,7 @@ import { isSubdomain } from './is-subdomain';
  * `status`, so MAPPED can occasionally reflect the current user's own subdomain
  * mapping; there is no response field that distinguishes that case.
  */
-export function isSubdomainWithMappedRootDomain( availability: DomainAvailability ): boolean {
+export function isSubdomainWithUnavailableRootDomain( availability: DomainAvailability ): boolean {
 	if ( ! isSubdomain( availability.domain_name ) ) {
 		return false;
 	}
