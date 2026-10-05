@@ -87,7 +87,11 @@ export function getSubscribersUrl(
 		// as a redirect target for exactly this, and for links sent before the move.
 		// `getCalypsoUrl` honours the `calypso_origin` query arg, so a link built from
 		// wp-admin in a dev or testing context goes back to the Calypso that sent the user.
-		return `${ getCalypsoUrl( `/subscribers/${ getSiteSlug( state, siteId ) ?? '' }` ) }${ hash }`;
+		return `${ getCalypsoUrl(
+			`/subscribers/${ getSiteSlug( state, siteId ) ?? '' }${
+				subscriptionId ? `/${ subscriptionId }` : ''
+			}`
+		) }${ hash }`;
 	}
 
 	const slug = getSiteSlug( state, siteId ) ?? '';

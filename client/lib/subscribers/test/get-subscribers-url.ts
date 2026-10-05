@@ -123,6 +123,14 @@ describe( 'getSubscribersUrl()', () => {
 			'https://wordpress.com/subscribers/example.com'
 		);
 	} );
+
+	test( 'keeps the subscriber id on the Calypso fallback when wp-admin is unknown', () => {
+		expect(
+			getSubscribersUrl( makeState( { adminUrl: null } ), SITE_ID, {
+				subscriptionId: 944012532,
+			} )
+		).toBe( 'https://wordpress.com/subscribers/example.com/944012532' );
+	} );
 } );
 
 describe( 'getNewsletterPageUrl()', () => {
