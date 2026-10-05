@@ -1254,7 +1254,11 @@ describe( 'SearchNotice', () => {
 			).not.toBeInTheDocument();
 		} );
 
-		it( "does not render the breakdown for the user's own already-mapped subdomain", async () => {
+		it( "shows the generic already-connected message, not the breakdown, for the user's own already-mapped subdomain", async () => {
+			// A subdomain the current user has already mapped comes back (after the
+			// backend rewrite) as status=mappable, mappable=mapped_domain. It must fall
+			// through to the generic "already connected" message, not the breakdown that
+			// would wrongly blame another account.
 			mockNoSuggestionsAndAvailability(
 				'cms.example.com',
 				buildAvailability( {
@@ -1271,7 +1275,11 @@ describe( 'SearchNotice', () => {
 				</TestDomainSearchWithSuggestions>
 			);
 
-			await waitForElementToBeRemoved( () => screen.getByText( 'LOADING_TEST_CONTENT' ) );
+			expect( await screen.findByText( 'Error notice' ) ).toBeInTheDocument();
+
+			expect(
+				screen.getAllByText( 'This domain is already connected to a WordPress.com site.' )[ 0 ]
+			).toBeInTheDocument();
 
 			expect(
 				screen.queryByText( /Subdomains must be added by the account that owns the root domain/ )
