@@ -323,11 +323,12 @@ export function AuthProvider( { children }: { children: React.ReactNode } ) {
 		}
 	}, [ user ] );
 
-	// Handles _all_ errors fetching the user object, regardless of whether they are
-	// `authorization_required` errors or not.
-	if ( userIsError ) {
+	// Before the user has loaded, any error fetching it is fatal. After that, a failed refetch
+	// keeps the cached user unless the session is no longer authorized.
+	const authErrorReason = userIsError ? getAuthErrorReason( userError ) : null;
+	if ( authErrorReason && ( ! user || authErrorReason === 'unauthorized' ) ) {
 		if ( typeof window !== 'undefined' ) {
-			handleAuthError( getAuthErrorReason( userError ) );
+			handleAuthError( authErrorReason );
 		}
 		return null;
 	}
