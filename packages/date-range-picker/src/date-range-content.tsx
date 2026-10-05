@@ -1,4 +1,4 @@
-import { DateRangeCalendar, TZDate } from '@automattic/ui';
+import { TZDate } from '@date-fns/tz';
 import {
 	__experimentalText as Text,
 	Button,
@@ -6,6 +6,7 @@ import {
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
+import { RangeCalendar } from '@wordpress/ui';
 import { startOfMonth, subMonths } from 'date-fns';
 import { useState } from 'react';
 import { ButtonStack } from './button-stack';
@@ -173,7 +174,7 @@ export function DateRangeContent( props: DateRangeContentProps ) {
 	const endMonth = makeTZMonthFromDate( siteMonthStart );
 
 	// Use TZDate for calendar selection when a valid IANA time zone is available
-	const selected =
+	const value =
 		timeZoneForCalendar && ( fromDraft || toDraft )
 			? {
 					from: fromDraft ? new TZDate( +fromDraft, timeZoneForCalendar ) : undefined,
@@ -325,30 +326,22 @@ export function DateRangeContent( props: DateRangeContentProps ) {
 				) }
 
 				<div className="daterange-calendar">
-					<DateRangeCalendar
+					<RangeCalendar
 						timeZone={ timeZoneForCalendar }
 						numberOfMonths={ isSmall ? 1 : 2 }
 						defaultMonth={ defaultMonth }
 						endMonth={ endMonth }
 						disabled={ disabledMatcher }
 						excludeDisabled
-						selected={ selected }
-						onSelect={ ( range ) => {
-							const toNative = ( d?: Date ) => ( d ? new Date( d.getTime() ) : undefined );
-							if ( range?.from ) {
-								const from = toNative( range.from );
-								setFromDraft( from );
-								if ( from ) {
-									setFromStr( formatYmd( from, timezoneString, gmtOffset ) );
-								}
-							}
-							if ( range?.to ) {
-								const to = toNative( range.to );
-								setToDraft( to );
-								if ( to ) {
-									setToStr( formatYmd( to, timezoneString, gmtOffset ) );
-								}
-							}
+						value={ value }
+						onValueChange={ ( range ) => {
+							// A click after a complete range starts a new one with no end, so `to` must be cleared too.
+							const from = range?.from ? new Date( range.from.getTime() ) : undefined;
+							const to = range?.to ? new Date( range.to.getTime() ) : undefined;
+							setFromDraft( from );
+							setToDraft( to );
+							setFromStr( from ? formatYmd( from, timezoneString, gmtOffset ) : '' );
+							setToStr( to ? formatYmd( to, timezoneString, gmtOffset ) : '' );
 							setIsTyping( false );
 						} }
 					/>

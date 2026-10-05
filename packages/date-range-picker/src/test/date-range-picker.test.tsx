@@ -78,6 +78,18 @@ describe( 'DateRangePicker (new)', () => {
 		expect( span ).toBeVisible();
 	} );
 
+	test( 'clicking a day after a complete range starts a new range without the old end', async () => {
+		const { getByRole, findByRole, getByLabelText } = renderDateRangePicker();
+		await userEvent.click( getByRole( 'button', { name: /Date range:/i } ) );
+
+		const augGrid = await findByRole( 'grid', { name: /August 2025/i } );
+		await userEvent.click( within( augGrid ).getByRole( 'button', { name: /August 6, 2025/i } ) );
+
+		expect( getByLabelText( 'Start date' ) ).toHaveValue( '2025-08-06' );
+		expect( getByLabelText( 'End date' ) ).toHaveValue( '' );
+		expect( getByRole( 'button', { name: /^Apply$/i } ) ).toBeDisabled();
+	} );
+
 	test( 'Clear → shows “Apply last 7 days”; click applies and closes', async () => {
 		const { getByRole, findByRole, getByLabelText } = renderDateRangePicker( {
 			start: new Date( 2025, 7, 1 ),
