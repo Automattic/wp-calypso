@@ -28,6 +28,7 @@ import StepHeading from './step-heading';
 import { useSessionState } from './use-session-state';
 import type { TermPricing } from '../use-term-pricing';
 import type { AgencyProduct } from '@automattic/api-core';
+import type { CSSProperties } from 'react';
 
 // Past this many owned sites the volume tiers are all reached; the picker goes away.
 const MAX_SITES_FOR_TIER_PICKER = 10;
@@ -337,63 +338,66 @@ export default function WpcomSection( {
 											</HStack>
 											{ nudge && <Text variant="muted">{ nudge }</Text> }
 											{ showTierPicker && tiers.length > 0 && (
-												<div
-													className="dashboard-marketplace-hosting__tiers"
-													role="group"
-													aria-label={ __( 'Volume tiers' ) }
-												>
-													{ tiers.map( ( tier ) => {
-														const isSelected = tier.units === selectedTierUnits;
-														return (
-															<Card
-																key={ tier.units }
-																className={ clsx( 'dashboard-marketplace-hosting__tier', {
-																	'is-selected': isSelected,
-																} ) }
-																role="button"
-																aria-pressed={ isSelected }
-																tabIndex={ 0 }
-																onClick={ () => selectTier( tier.units ) }
-																onKeyDown={ ( event: React.KeyboardEvent ) => {
-																	if ( event.key === 'Enter' || event.key === ' ' ) {
-																		event.preventDefault();
-																		selectTier( tier.units );
-																	}
-																} }
-															>
-																<CardBody>
-																	<VStack spacing={ 1 }>
-																		<Text weight={ 600 }>
-																			{ sprintf(
-																				/* translators: %d is the number of sites. */
-																				_n( '%d site', '%d sites', tier.units ),
-																				tier.units
-																			) }
-																		</Text>
-																		<Text variant="muted" size={ 12 }>
-																			{ getMonthlyUnitPrice(
-																				tier.pricePerUnit,
-																				plan.currency,
-																				term
-																			) }
-																		</Text>
-																		<Text
-																			size={ 12 }
-																			className="dashboard-marketplace-hosting__tier-discount"
-																		>
-																			{ tier.discountPercentage > 0
-																				? sprintf(
-																						/* translators: %d is the discount percentage. */
-																						__( '%d%% off' ),
-																						tier.discountPercentage
-																					)
-																				: '' }
-																		</Text>
-																	</VStack>
-																</CardBody>
-															</Card>
-														);
-													} ) }
+												<div className="dashboard-marketplace-hosting__tiers-frame">
+													<div
+														className="dashboard-marketplace-hosting__tiers"
+														role="group"
+														aria-label={ __( 'Volume tiers' ) }
+														style={ { '--tier-count': tiers.length } as CSSProperties }
+													>
+														{ tiers.map( ( tier ) => {
+															const isSelected = tier.units === selectedTierUnits;
+															return (
+																<Card
+																	key={ tier.units }
+																	className={ clsx( 'dashboard-marketplace-hosting__tier', {
+																		'is-selected': isSelected,
+																	} ) }
+																	role="button"
+																	aria-pressed={ isSelected }
+																	tabIndex={ 0 }
+																	onClick={ () => selectTier( tier.units ) }
+																	onKeyDown={ ( event: React.KeyboardEvent ) => {
+																		if ( event.key === 'Enter' || event.key === ' ' ) {
+																			event.preventDefault();
+																			selectTier( tier.units );
+																		}
+																	} }
+																>
+																	<CardBody>
+																		<VStack spacing={ 1 }>
+																			<Text weight={ 600 }>
+																				{ sprintf(
+																					/* translators: %d is the number of sites. */
+																					_n( '%d site', '%d sites', tier.units ),
+																					tier.units
+																				) }
+																			</Text>
+																			<Text variant="muted" size={ 12 }>
+																				{ getMonthlyUnitPrice(
+																					tier.pricePerUnit,
+																					plan.currency,
+																					term
+																				) }
+																			</Text>
+																			<Text
+																				size={ 12 }
+																				className="dashboard-marketplace-hosting__tier-discount"
+																			>
+																				{ tier.discountPercentage > 0
+																					? sprintf(
+																							/* translators: %d is the discount percentage. */
+																							__( '%d%% off' ),
+																							tier.discountPercentage
+																						)
+																					: '' }
+																			</Text>
+																		</VStack>
+																	</CardBody>
+																</Card>
+															);
+														} ) }
+													</div>
 												</div>
 											) }
 										</VStack>

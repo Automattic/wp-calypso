@@ -126,10 +126,28 @@
 }
 
 // The WordPress.com volume tiers: total sites on top, the discount below.
+// Tier cards sit in one row when they fit, otherwise two by two, so no card
+// is ever left alone on a row. An odd count stacks instead.
+.dashboard-marketplace-hosting__tiers-frame {
+	container-type: inline-size;
+}
+
 .dashboard-marketplace-hosting__tiers {
 	display: grid;
-	grid-template-columns: repeat( auto-fit, minmax( 120px, 1fr ) );
+	grid-template-columns: repeat( 2, minmax( 0, 1fr ) );
 	gap: 8px;
+
+	&:has( > :only-child ),
+	&:has( > :nth-child( 3 ):last-child ) {
+		grid-template-columns: minmax( 0, 1fr );
+	}
+
+	@container ( min-width: 520px ) {
+		&,
+		&:has( > :nth-child( 3 ):last-child ) {
+			grid-template-columns: repeat( var( --tier-count, 4 ), minmax( 0, 1fr ) );
+		}
+	}
 }
 
 .dashboard-marketplace-hosting__tier {
