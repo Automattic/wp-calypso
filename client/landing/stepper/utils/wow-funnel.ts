@@ -444,6 +444,10 @@ export async function waitForWowFunnelHandoff(
  * - a wait that ran out of time throws a WowFunnelWaitTimeoutError (test with
  *   isWowFunnelWaitTimeout()). The site is very likely still finishing, so a caller that can
  *   offer another wait should; one that cannot still gets a message that reads correctly.
+ *
+ * The hand-off step offers that second wait. The site-spec step does not yet: its wait comes
+ * before the spec is applied, so it cannot simply pass the customer on to the hand-off step, and
+ * a timeout there still reaches the error step.
  */
 export async function waitForWowFunnelReady( {
 	funnelSlug,
@@ -463,8 +467,9 @@ export async function waitForWowFunnelReady( {
 
 	// Which wait the run is on, so a timeout can say what it was waiting for.
 	let stage: 'transfer' | 'import' | 'handoff' = 'transfer';
-	// Ends the hand-off poll once this wait is over. Without it a wait that timed out keeps
-	// polling in the background, and every "try again" would add another on top.
+	// Ends the hand-off poll once this wait is over, so a wait that timed out there does not
+	// keep asking in the background while the customer tries again. Only that poll: the transfer
+	// and import waits take no signal, and run on to their own deadlines.
 	const abandon = new AbortController();
 
 	const work = ( async () => {

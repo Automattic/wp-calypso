@@ -420,8 +420,11 @@ export function Visibility( {
 
 /**
  * The line under the plan name: where to finish buying a site held for checkout, or else how the
- * plan's expiry stands. One element at this level whichever it is, so the plan cell's own children
- * do not change when the held-site lookup answers.
+ * plan's expiry stands. One place that decides which, so the plan cell does not.
+ *
+ * This does not keep the page's own elements stable when the held-site lookup answers: one of the
+ * two is still unmounted for the other, as the expiry status already mounts once its purchase
+ * loads. The span above is what stays put.
  */
 function PlanSubStatus( {
 	site,
