@@ -35,7 +35,6 @@ import useFeedbackAction from '../../hooks/use-feedback-action';
 import { useImageUpload } from '../../hooks/use-image-upload';
 import { useNavigationContinuation } from '../../hooks/use-navigation-continuation';
 import useRegenerateAction from '../../hooks/use-regenerate-action';
-import useReplyRecovery from '../../hooks/use-reply-recovery';
 import useSourcesAction from '../../hooks/use-sources-action';
 import useSuggestionsRenderedTracking from '../../hooks/use-suggestions-rendered-tracking';
 import { markActionOrigin, takeActionOrigin } from '../../utils/action-origin';
@@ -780,9 +779,13 @@ export default function OrchestratorChat( {
 		}
 	}, [ isProcessing, agentConfig?.sessionId ] );
 
-	const { isLoading: isLoadingConversation, data: hydratedConversation } = useConversation( {
+	// Retry sends through `submitChatMessage`, declared below.
+	const retryQuestionRef = useRef< ( question: string ) => void >( undefined );
+	const { isLoading: isLoadingConversation, notice: replyNotice } = useConversation( {
 		maxPages: isReaderChat ? 1 : 10,
 		enabled: shouldLoadConversation,
+		waitForReply: ! isProcessing,
+		onRetry: ( question ) => retryQuestionRef.current?.( question ),
 		onSuccess: ( loadedMessages, serverSessionId ) => {
 			if ( isReaderChat && ( hasUserSentMessage || messages.length > 0 || isProcessing ) ) {
 				return;
@@ -1440,24 +1443,10 @@ export default function OrchestratorChat( {
 		[ inputValue, onSubmitWithImages, credits.beforeSubmit ]
 	);
 
-	const sendRetry = useCallback(
-		async ( text: string ) => {
-			submitDispatchedRef.current = false;
-			markActionOrigin( 'send', 'retry' );
-			await submitChatMessage( text );
-			return submitDispatchedRef.current;
-		},
-		[ submitChatMessage ]
-	);
-
-	// A question asked before a page change whose reply has not landed yet. Off
-	// once the merchant sends or a turn runs, so its one rehydration can never
-	// replace a live stream.
-	const { notice: replyNotice } = useReplyRecovery( {
-		hydratedMessages: hydratedConversation?.messages,
-		enabled: ! isReaderChat && ! hasUserSentMessage && ! isProcessing,
-		sendRetry,
-	} );
+	retryQuestionRef.current = ( question ) => {
+		markActionOrigin( 'send', 'retry' );
+		submitChatMessage( question );
+	};
 
 	const submitChatMessageFromHost = useCallback(
 		async ( message?: string ) => {
