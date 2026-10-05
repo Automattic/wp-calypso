@@ -817,9 +817,12 @@ export default function OrchestratorChat( {
 			// the parked call lives in — hydrate only if its restore came up
 			// empty (e.g. a quota-failed persist). Read the manager, not React
 			// state: `messages` stays empty until the async agent init lands.
+			// A remount mid-turn (History and back, reopening the panel) fetches a
+			// transcript without the reply yet, so the live history stays.
 			if (
-				! hadParkedNavigation ||
-				agentManager.getConversationHistory( agentConfig!.agentId ).length === 0
+				! agentManager.isTurnInFlight( agentConfig!.agentId ) &&
+				( ! hadParkedNavigation ||
+					agentManager.getConversationHistory( agentConfig!.agentId ).length === 0 )
 			) {
 				loadMessages( loadedMessages );
 			}
