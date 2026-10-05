@@ -1225,14 +1225,13 @@ describe( 'SearchNotice', () => {
 			).not.toBeInTheDocument();
 		} );
 
-		it( 'renders the root-vs-subdomain breakdown when the root domain is mapped (mappable)', async () => {
+		it( 'renders the root-vs-subdomain breakdown when the root domain is registered by another user', async () => {
 			mockNoSuggestionsAndAvailability(
 				'cms.example.com',
 				buildAvailability( {
 					domain_name: 'cms.example.com',
 					tld: 'com',
 					status: DomainAvailabilityStatus.REGISTERED,
-					mappable: DomainAvailabilityStatus.MAPPED,
 				} )
 			);
 
@@ -1253,6 +1252,34 @@ describe( 'SearchNotice', () => {
 			expect(
 				screen.queryByText( 'This domain is already connected to a WordPress.com site.' )
 			).not.toBeInTheDocument();
+		} );
+
+		it( "does not render the breakdown for the user's own already-mapped subdomain", async () => {
+			mockNoSuggestionsAndAvailability(
+				'cms.example.com',
+				buildAvailability( {
+					domain_name: 'cms.example.com',
+					tld: 'com',
+					status: DomainAvailabilityStatus.MAPPABLE,
+					mappable: DomainAvailabilityStatus.MAPPED,
+				} )
+			);
+
+			render(
+				<TestDomainSearchWithSuggestions query="cms.example.com">
+					<SearchNotice />
+				</TestDomainSearchWithSuggestions>
+			);
+
+			await waitForElementToBeRemoved( () => screen.getByText( 'LOADING_TEST_CONTENT' ) );
+
+			expect(
+				screen.queryByText(
+					/Subdomains must be added by the account that owns the root domain connection/
+				)
+			).not.toBeInTheDocument();
+
+			expect( screen.queryByText( /connected to another account/ ) ).not.toBeInTheDocument();
 		} );
 
 		it( 'still renders the generic message for a mapped root domain', async () => {
