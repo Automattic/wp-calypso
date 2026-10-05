@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import { dispatch, select, subscribe } from '@wordpress/data';
+import { dispatch, resolveSelect, select, subscribe } from '@wordpress/data';
 import { getEditorHistory } from '../../../utils/editor-history';
 import { isEditorPage } from '../../../utils/is-editor-page';
 import { editorNavigate, editorNavigateCallback } from '../callback';
@@ -23,6 +23,7 @@ const navigate = jest.fn().mockResolvedValue( undefined );
 
 function createIO( overrides: Partial< EditorNavigateIO > = {} ) {
 	return {
+		isPage: jest.fn().mockResolvedValue( true ),
 		saveEverything: jest.fn().mockResolvedValue( undefined ),
 		getHistory: jest.fn().mockReturnValue( { navigate } ),
 		waitForPage: jest.fn().mockResolvedValue( true ),
@@ -44,6 +45,45 @@ beforeEach( () => {
 } );
 
 describe( 'editorNavigate', () => {
+	it.each( [ false, new Error( 'Page lookup failed' ) ] )(
+		'refuses an unverified target before saving or navigating: %s',
+		async ( outcome ) => {
+			const io = createIO( {
+				isPage:
+					outcome instanceof Error
+						? jest.fn().mockRejectedValue( outcome )
+						: jest.fn().mockResolvedValue( outcome ),
+			} );
+
+			const result = await editorNavigate( io, { path: '/page/967' } );
+
+			expect( result.result.success ).toBe( false );
+			expect( io.isPage ).toHaveBeenCalledWith( 967 );
+			expect( io.saveEverything ).not.toHaveBeenCalled();
+			expect( navigate ).not.toHaveBeenCalled();
+			expect( io.navigateWholePage ).not.toHaveBeenCalled();
+		}
+	);
+
+	it( 'opens the pages list without resolving an entity', async () => {
+		const io = createIO();
+		await editorNavigate( io, { path: 'all-pages' } );
+		expect( io.isPage ).not.toHaveBeenCalled();
+		expect( navigate ).toHaveBeenCalledWith( '/page' );
+	} );
+
+	it( 'rejects a post returned for a page route through the real resolver', async () => {
+		jest.mocked( isEditorPage ).mockReturnValue( true );
+		const getEntityRecord = jest.fn().mockResolvedValue( { id: 967, type: 'post' } );
+		( resolveSelect as jest.Mock ).mockReturnValue( { getEntityRecord } );
+
+		const result = await editorNavigateCallback( { path: '/page/967' } );
+
+		expect( getEntityRecord ).toHaveBeenCalledWith( 'postType', 'page', 967 );
+		expect( result.result.success ).toBe( false );
+		expect( navigate ).not.toHaveBeenCalled();
+	} );
+
 	it( 'saves, navigates, and reports the arrival once the editor has the page', async () => {
 		const io = createIO();
 
@@ -391,6 +431,10 @@ describe( 'editorNavigateCallback', () => {
 						__unstableMarkNextChangeAsNotPersistent: jest.fn(),
 					};
 			}
+		} );
+
+		( resolveSelect as jest.Mock ).mockReturnValue( {
+			getEntityRecord: jest.fn().mockResolvedValue( { id: 123, type: 'page' } ),
 		} );
 
 		const pending = editorNavigateCallback( { path: '/page/123' } );

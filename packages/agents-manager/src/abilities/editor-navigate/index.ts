@@ -6,7 +6,7 @@ import type { Ability } from '../types';
 /**
  * The `editor-navigate` ability definition.
  *
- * Saves pending edits, then moves the site editor to another page. The
+ * Verifies the target is a page, saves pending edits, then moves the editor. The
  * callback reports success only once the editor has actually loaded that
  * page, so the agent never reads or edits the departed page's blocks.
  */
@@ -15,7 +15,7 @@ export const editorNavigateAbility: Ability = {
 	label: __( 'Navigate', __i18n_text_domain__ ),
 	category: BIG_SKY_ABILITY_CATEGORY,
 	description:
-		'Saves everything and navigates in the editor. Use "page/{id}" with the numeric id from <site_pages> to open one page, or "all-pages" to open the pages list. Full URLs, slugs and paths like "/visit" are invalid — if the user names a page, look up its numeric id first.',
+		'Saves everything and navigates in the editor. Use "page/{id}" with the numeric id from <site_pages> to open one page (not a post or another post type), or "all-pages" to open the pages list. Full URLs, slugs and paths like "/visit" are invalid — if the user names a page, look up its numeric id first.',
 	input_schema: {
 		type: 'object',
 		properties: {
