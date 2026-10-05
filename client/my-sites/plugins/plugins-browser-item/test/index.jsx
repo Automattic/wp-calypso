@@ -1,7 +1,6 @@
 /** @jest-environment jsdom */
 import { render, screen } from '@testing-library/react';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
-import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import PluginsBrowserListElement from '../';
 
@@ -12,7 +11,6 @@ jest.mock( 'calypso/state/plugins/installed/selectors' );
 jest.mock( 'calypso/state/products-list/selectors' );
 jest.mock( 'calypso/state/sites/selectors' );
 jest.mock( 'calypso/state/selectors/is-site-automated-transfer' );
-jest.mock( 'calypso/state/selectors/site-has-feature' );
 jest.mock( 'react-redux', () => ( {
 	...jest.requireActual( 'react-redux' ),
 	useDispatch: jest.fn().mockImplementation( () => {} ),
@@ -78,42 +76,22 @@ describe( 'PluginsBrowserItem Incompatible Plugins Message', () => {
 		expect( message ).not.toBeInTheDocument();
 	} );
 
-	describe( 'Jetpack VaultPress Backup', () => {
+	test( 'should render the backup message instead of the generic one for Jetpack Backup when logged out', () => {
+		isJetpackSite.mockImplementation( () => false );
+		isAtomicSite.mockImplementation( () => false );
+
 		const props = {
-			site: 'example.wordpress.com',
 			plugin: { name: 'Jetpack VaultPress Backup', slug: 'jetpack-backup' },
 		};
 
-		beforeEach( () => {
-			isJetpackSite.mockImplementation( () => true );
-			isAtomicSite.mockImplementation( () => true );
-		} );
-
-		test( 'should say the plan includes backups when the site has real-time backups', () => {
-			siteHasFeature.mockImplementation(
-				( state, siteId, feature ) => feature === 'real-time-backups'
-			);
-
-			render( <PluginsBrowserListElement { ...props } /> );
-			expect(
-				screen.getByText( 'Your site plan already includes Jetpack VaultPress Backup.' )
-			).toBeInTheDocument();
-			expect(
-				screen.queryByText( 'Why is this plugin not compatible with WordPress.com?' )
-			).not.toBeInTheDocument();
-		} );
-
-		// Personal and Premium can install plugins but don't include backups.
-		test( 'should not claim the plan includes backups when the site lacks them', () => {
-			siteHasFeature.mockImplementation( () => false );
-
-			render( <PluginsBrowserListElement { ...props } /> );
-			expect(
-				screen.getByText( 'Jetpack VaultPress Backup is built into eligible WordPress.com plans.' )
-			).toBeInTheDocument();
-			expect(
-				screen.queryByText( 'Your site plan already includes Jetpack VaultPress Backup.' )
-			).not.toBeInTheDocument();
-		} );
+		render( <PluginsBrowserListElement { ...props } /> );
+		expect(
+			screen.getByText(
+				'WordPress.com plans that support plugins already include Jetpack VaultPress Backup.'
+			)
+		).toBeInTheDocument();
+		expect(
+			screen.queryByText( 'Why is this plugin not compatible with WordPress.com?' )
+		).not.toBeInTheDocument();
 	} );
 } );
