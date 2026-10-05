@@ -34,7 +34,7 @@ const moduleStates = ( { protect, akismet } ) => {
 		const state = module === 'protect' ? protect : akismet;
 		return {
 			data: state.data,
-			isLoading: false,
+			isLoading: !! state.loading,
 			isError: !! state.error,
 			error: state.error ? new Error( state.error ) : null,
 			refetch: jest.fn(),
@@ -44,6 +44,7 @@ const moduleStates = ( { protect, akismet } ) => {
 
 const ok = ( data ) => ( { data } );
 const failed = ( error = 'not_active' ) => ( { error } );
+const pending = () => ( { loading: true } );
 
 function renderModules() {
 	return render( <Modules siteId={ SITE_ID } adminBaseUrl="https://example.com/wp-admin/" /> );
@@ -114,12 +115,20 @@ describe( 'Modules', () => {
 			expect( container ).toBeEmptyDOMElement();
 		} );
 
-		it( 'shows both metrics and the link when the data loads', () => {
+		it( 'shows both metrics when the data loads', () => {
 			renderModules();
 
 			expect( screen.getByText( 'Blocked login attempts' ) ).toBeInTheDocument();
 			expect( screen.getByText( 'Blocked spam comments' ) ).toBeInTheDocument();
-			expect( screen.getByRole( 'link', { name: 'Anti-spam insights' } ) ).toBeInTheDocument();
+		} );
+
+		it( 'withholds the Anti-spam link, whose page asks for more than the figure does', () => {
+			renderModules();
+
+			expect( screen.getByText( 'Blocked spam comments' ) ).toBeInTheDocument();
+			expect(
+				screen.queryByRole( 'link', { name: 'Anti-spam insights' } )
+			).not.toBeInTheDocument();
 		} );
 	} );
 
@@ -143,6 +152,21 @@ describe( 'Modules', () => {
 				).not.toBeInTheDocument();
 			}
 		);
+
+		it( 'waits for the figure before offering the link, so it does not flash', () => {
+			moduleStates( { protect: ok( 12345 ), akismet: pending() } );
+			renderModules();
+
+			expect(
+				screen.queryByRole( 'link', { name: 'Anti-spam insights' } )
+			).not.toBeInTheDocument();
+		} );
+
+		it( 'offers the link once Akismet reports a figure', () => {
+			renderModules();
+
+			expect( screen.getByRole( 'link', { name: 'Anti-spam insights' } ) ).toBeInTheDocument();
+		} );
 
 		it( 'points an invalid key at the page that fixes it, from the card rather than the footer', () => {
 			moduleStates( { protect: ok( 12345 ), akismet: failed( 'invalid_key' ) } );

@@ -200,7 +200,7 @@ const SiteProtection: FunctionComponent< ModulesProps > = ( { siteId, adminBaseU
 	// Both cards query through these keys too, so this reads their cached state rather
 	// than fetching again.
 	const { isError: isProtectError } = useModuleDataQuery( 'protect' );
-	const { isError: isAkismetError } = useModuleDataQuery( 'akismet' );
+	const { isError: isAkismetError, isLoading: isAkismetLoading } = useModuleDataQuery( 'akismet' );
 
 	// A card hides itself when its figure failed and the viewer cannot act on it; with
 	// both hidden the section would be an empty card.
@@ -216,6 +216,12 @@ const SiteProtection: FunctionComponent< ModulesProps > = ( { siteId, adminBaseU
 	// which is the one error state where the page is there to fix it.
 	const akismetUrl = adminBaseUrl + 'admin.php?page=akismet-key-config';
 
+	// The page itself needs `manage_options`, which the figure beside it does not: the module
+	// data endpoint asks for `jetpack_admin_page`, which maps to `edit_posts` on a connected
+	// site. So an editor reads the count and would be turned away from the page behind the
+	// link. Waiting for the figure also keeps the link from flashing while the query runs.
+	const hasAkismetInsights = canManageModules && ! isAkismetError && ! isAkismetLoading;
+
 	return (
 		<WidgetSection
 			title={ translate( 'All-time site protection' ) }
@@ -230,7 +236,7 @@ const SiteProtection: FunctionComponent< ModulesProps > = ( { siteId, adminBaseU
 					manageUrl={ akismetUrl }
 				/>
 			</div>
-			{ ! isAkismetError && (
+			{ hasAkismetInsights && (
 				<div className="stats-widget-modules__footer">
 					<a
 						href={ akismetUrl }
