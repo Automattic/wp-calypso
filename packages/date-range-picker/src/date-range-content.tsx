@@ -328,11 +328,12 @@ export function DateRangeContent( props: DateRangeContentProps ) {
 				<div className="daterange-calendar">
 					<RangeCalendar
 						timeZone={ timeZoneForCalendar }
-						numberOfMonths={ isSmall ? 1 : 2 }
+						numberOfMonths={ showTwoMonths ? 2 : 1 }
 						defaultMonth={ defaultMonth }
 						endMonth={ endMonth }
 						disabled={ disabledMatcher }
 						excludeDisabled
+						required
 						value={ value }
 						onValueChange={ ( range ) => {
 							// A click after a complete range starts a new one with no end, so `to` must be cleared too.
