@@ -2,7 +2,7 @@ import { Locator, Page } from 'playwright';
 import { getCalypsoURL } from '../../data-helper';
 
 /**
- * Represents the Users > Subscribers page.
+ * Represents the Subscribers tab of the wp-admin Newsletter page, which Calypso's `/subscribers` route redirects to.
  */
 export class SubscribersPage {
 	private page: Page;
@@ -71,8 +71,8 @@ export class SubscribersPage {
 
 		// Confirm.
 		await this.page
-			.getByRole( 'dialog' )
-			.getByRole( 'button', { name: 'Remove subscriber' } )
+			.getByRole( 'alertdialog' )
+			.getByRole( 'button', { name: 'Remove', exact: true } )
 			.click();
 
 		// Ensure the subscriber is no longer present.
