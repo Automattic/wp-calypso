@@ -163,7 +163,8 @@ export default function WPCheckoutOrderReview( {
 	const domainUrl = getDomainToDisplayInCheckoutHeader(
 		responseCart,
 		selectedSiteData,
-		siteUrl ?? cartSite?.slug
+		siteUrl,
+		cartSite?.slug
 	);
 
 	const planIsP2Plus = hasP2PlusPlan( responseCart );
@@ -310,7 +311,8 @@ export function CouponFieldArea( {
 function getDomainToDisplayInCheckoutHeader(
 	responseCart: ResponseCart,
 	selectedSiteData: SiteDetails | undefined | null,
-	sitelessCheckoutSlug: string | undefined
+	sitelessCheckoutSlug: string | undefined,
+	cartSiteSlug: string | undefined
 ): string | undefined {
 	if ( hasP2PlusPlan( responseCart ) ) {
 		return undefined;
@@ -340,7 +342,7 @@ function getDomainToDisplayInCheckoutHeader(
 		return sitelessCheckoutSlug;
 	}
 
-	return undefined;
+	return cartSiteSlug;
 }
 
 function getDomainProductUrlToDisplayInCheckoutHeader(

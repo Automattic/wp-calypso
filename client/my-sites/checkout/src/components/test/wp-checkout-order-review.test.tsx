@@ -39,6 +39,8 @@ function renderOrderReview( cart: ResponseCart, queryClient: QueryClient ) {
 				removeCouponAndClearField={ jest.fn() }
 				isCouponFieldVisible={ false }
 				setCouponFieldVisible={ jest.fn() }
+				// What `CheckoutMainWrapper` passes when no site is selected.
+				siteUrl="no-site"
 			/>
 		</CheckoutProvider>,
 		{
