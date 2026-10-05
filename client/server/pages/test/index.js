@@ -141,10 +141,19 @@ const buildApp = ( environment ) => {
 			attachBuildTimestamp,
 			attachI18n,
 			attachHead,
+			bumpStat,
 			renderJsx,
 			serverRender,
 		} = require( 'calypso/server/render' );
-		mocks = { ...mocks, attachBuildTimestamp, attachI18n, attachHead, renderJsx, serverRender };
+		mocks = {
+			...mocks,
+			attachBuildTimestamp,
+			attachI18n,
+			attachHead,
+			bumpStat,
+			renderJsx,
+			serverRender,
+		};
 		mocks.sanitize = require( 'calypso/server/sanitize' );
 		mocks.createReduxStore = require( 'calypso/state' ).createReduxStore;
 		mocks.createReduxStore.mockImplementation( createMockStore );
@@ -1642,6 +1651,51 @@ describe( 'dashboard app', () => {
 		expect( request.context.sectionName ).toBe( 'dashboard-dotcom' );
 		expect( response.statusCode ).not.toBe( 404 );
 		expect( app.getMocks().serverRender ).toHaveBeenCalled();
+	} );
+
+	it( 'logs wp-login.php 404s with what is needed to identify their source', async () => {
+		const headers = {
+			referer: 'https://wordpress.com/me',
+			'user-agent': 'Mozilla/5.0',
+			'sec-fetch-site': 'cross-site',
+			'sec-fetch-mode': 'navigate',
+		};
+		const { response } = await app.run( {
+			request: {
+				url: '/wp-login.php?action=logout&_wpnonce=secret',
+				path: '/wp-login.php',
+				hostname: 'my.wordpress.com',
+				query: { action: 'logout', _wpnonce: 'secret' },
+				cookies: { wordpress_logged_in: 'cookie' },
+				get: ( name ) => headers[ name.toLowerCase() ],
+			},
+		} );
+
+		expect( response.statusCode ).toBe( 404 );
+		expect( app.getMocks().bumpStat ).toHaveBeenCalledWith(
+			'dashboard-404-wp-login',
+			'cookie:cross-site'
+		);
+		const [ [ entry ] ] = app.getMocks().analytics.logstash.log.mock.calls;
+		expect( entry.properties ).toMatchObject( {
+			hostname: 'my.wordpress.com',
+			query_keys: [ 'action', '_wpnonce' ],
+			action: 'logout',
+			referer: 'https://wordpress.com/me',
+			has_logged_in_cookie: true,
+			sec_fetch_site: 'cross-site',
+			sec_fetch_mode: 'navigate',
+		} );
+		expect( JSON.stringify( entry ) ).not.toContain( 'secret' );
+	} );
+
+	it( 'does not log other 404s to logstash', async () => {
+		await app.run( {
+			request: { url: '/does-not-exist', hostname: 'my.wordpress.com' },
+		} );
+
+		expect( app.getMocks().bumpStat ).toHaveBeenCalledWith( 'dashboard-404', '/does-not-exist' );
+		expect( app.getMocks().analytics.logstash.log ).not.toHaveBeenCalled();
 	} );
 
 	it( 'serves robots.txt that disallows all paths', async () => {

@@ -54,6 +54,7 @@ import loginRouter, { LOGIN_SECTION_DEFINITION } from 'calypso/login';
 import sections from 'calypso/sections';
 import isSectionEnabled from 'calypso/sections-filter';
 import { serverRouter, getCacheKey } from 'calypso/server/isomorphic-routing';
+import analytics from 'calypso/server/lib/analytics';
 import { isWpMobileApp, isWcMobileApp } from 'calypso/server/lib/is-mobile-app';
 import performanceMark from 'calypso/server/lib/performance-mark/index';
 import {
@@ -889,10 +890,55 @@ const setUpSectionContext = ( section, entrypoint ) => ( req, res, next ) => {
 	next();
 };
 
+const getStringQueryArg = ( req, name ) =>
+	typeof req.query[ name ] === 'string' ? req.query[ name ].slice( 0, 500 ) : undefined;
+
+// The dashboard host has no wp-login.php, so these 404s are either scanners or a
+// redirect of ours built against the wrong host. Collect enough to tell them apart.
+const logWpLoginNotFound = ( req ) => {
+	const hasLoggedInCookie = !! req.cookies.wordpress_logged_in;
+	// Browsers send Sec-Fetch-* on every request; most scanners don't.
+	const secFetchSite = req.get( 'sec-fetch-site' );
+
+	bumpStat(
+		'dashboard-404-wp-login',
+		`${ hasLoggedInCookie ? 'cookie' : 'no-cookie' }:${ secFetchSite ?? 'unset' }`
+	);
+
+	analytics.logstash.log( {
+		feature: 'calypso_ssr',
+		message: 'Dashboard wp-login.php 404',
+		severity: 'info',
+		tags: [ 'dashboard', 'dashboard-404-wp-login' ],
+		properties: {
+			env: calypsoEnv,
+			app_version: process.env.COMMIT_SHA,
+			hostname: req.hostname,
+			path: req.path,
+			// Values are omitted since they can carry nonces and auth codes.
+			query_keys: Object.keys( req.query ),
+			action: getStringQueryArg( req, 'action' ),
+			redirect_to: getStringQueryArg( req, 'redirect_to' ),
+			referer: req.get( 'referer' ),
+			user_agent: req.get( 'user-agent' ),
+			accept: req.get( 'accept' )?.slice( 0, 200 ),
+			has_logged_in_cookie: hasLoggedInCookie,
+			sec_fetch_site: secFetchSite,
+			sec_fetch_mode: req.get( 'sec-fetch-mode' ),
+			sec_fetch_dest: req.get( 'sec-fetch-dest' ),
+			sec_fetch_user: req.get( 'sec-fetch-user' ),
+			country_code: req.get( 'x-geoip-country-code' ),
+		},
+	} );
+};
+
 const setNotFoundStatus = ( req, res, next ) => {
 	res.status( 404 );
 	// bumpStat only accepts 32 chars max for the value
 	bumpStat( 'dashboard-404', req.path.slice( 0, 32 ) );
+	if ( req.path === '/wp-login.php' ) {
+		logWpLoginNotFound( req );
+	}
 	next();
 };
 
