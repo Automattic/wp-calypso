@@ -262,13 +262,14 @@
 	min-width: 0;
 }
 
-.dashboard-amplify-overview__url-row .components-button {
+.dashboard-amplify-overview__url-row .dashboard-amplify-overview__submit {
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
 	flex: none;
-	width: 40px;
 	height: 40px;
+	padding-inline: 16px;
+	white-space: nowrap;
 }
 
 .dashboard-amplify-overview__url-error {
@@ -500,8 +501,10 @@
 .dashboard-amplify-score-preview__cards[data-mode='ai']
 	.dashboard-amplify-score-preview__sheet[data-perspective='ai'] {
 	z-index: 2;
-	transform: translateX( -50% ) rotate( -1deg );
-	box-shadow: 0 12px 32px rgba( 0, 0, 0, 0.12 );
+	transform: translateX( -50% );
+	box-shadow:
+		0 12px 32px rgba( 0, 0, 0, 0.12 ),
+		0 2px 6px rgba( 0, 0, 0, 0.08 );
 }
 
 .dashboard-amplify-score-preview__cards[data-mode='human']
@@ -509,8 +512,8 @@
 .dashboard-amplify-score-preview__cards[data-mode='ai']
 	.dashboard-amplify-score-preview__sheet[data-perspective='human'] {
 	z-index: 1;
-	transform: translate( calc( -50% + 26px ), -10px ) rotate( 2deg );
-	box-shadow: 0 8px 24px rgba( 0, 0, 0, 0.08 );
+	transform: translate( calc( -50% + 16px ), -12px ) scale( 0.97 );
+	box-shadow: 0 8px 24px rgba( 0, 0, 0, 0.06 );
 }
 
 .dashboard-amplify-score-preview__cards[data-mode='full']
@@ -534,16 +537,9 @@
 	height: 100%;
 	box-sizing: border-box;
 	overflow: hidden;
-	border: 1px solid var( --color-border-subtle );
+	border: 0;
 	border-radius: 8px;
-	background: var( --color-surface );
-	background-image: repeating-linear-gradient(
-		-12deg,
-		rgba( 0, 0, 0, 0.008 ) 0,
-		rgba( 0, 0, 0, 0.008 ) 1px,
-		transparent 1px,
-		transparent 6px
-	);
+	background: #fff;
 }
 
 html[dir='rtl'] .dashboard-amplify-score-preview__card {
@@ -554,22 +550,16 @@ html[dir='rtl'] .dashboard-amplify-score-preview__card {
 	display: flex;
 	align-items: center;
 	gap: 12px;
-	padding: 16px 18px;
-	border-block-end: 0.5px solid var( --color-border-subtle );
-	background-color: color-mix(
-		in srgb,
-		var( --color-surface ) 90%,
-		var( --color-surface-backdrop )
-	);
-	background-image: url( ./paper-grain.svg );
-	background-size: 160px 160px;
+	padding: 18px 20px 14px;
+	border-block-end: 1px solid #dcdcde;
+	background: #fff;
 }
 
 .dashboard-amplify-score-preview__illustration {
 	flex: none;
-	width: 36px;
-	height: 36px;
-	color: var( --color-text );
+	width: 32px;
+	height: 32px;
+	color: #a7aaad;
 }
 
 .dashboard-amplify-score-preview__heading {
@@ -597,6 +587,8 @@ html[dir='rtl'] .dashboard-amplify-score-preview__card {
 	align-self: flex-end;
 	font-size: 16px;
 	white-space: nowrap;
+	font-weight: 600;
+	font-variant-numeric: tabular-nums;
 }
 
 .dashboard-amplify-score-preview__score[data-severity='good'] {
@@ -613,8 +605,8 @@ html[dir='rtl'] .dashboard-amplify-score-preview__card {
 
 .dashboard-amplify-score-preview__metrics {
 	display: grid;
-	gap: 8px;
-	padding: 12px 18px 18px;
+	gap: 10px;
+	padding: 14px 20px 20px;
 }
 
 .dashboard-amplify-score-preview__metric {
@@ -626,13 +618,15 @@ html[dir='rtl'] .dashboard-amplify-score-preview__card {
 }
 
 .dashboard-amplify-score-preview__metric > span:first-child {
-	color: var( --color-text );
+	color: #50575e;
 }
 
 .dashboard-amplify-score-preview__metric > strong {
 	font-size: 12px;
 	text-align: end;
 	white-space: nowrap;
+	font-weight: 500;
+	font-variant-numeric: tabular-nums;
 }
 
 .dashboard-amplify-score-preview__metric > strong[data-severity='good'] {
@@ -648,10 +642,10 @@ html[dir='rtl'] .dashboard-amplify-score-preview__card {
 }
 
 .dashboard-amplify-score-preview__bar {
-	height: 6px;
+	height: 4px;
 	overflow: hidden;
-	border-radius: 3px;
-	background: var( --color-neutral-5 );
+	border-radius: 2px;
+	background: #f0f0f1;
 }
 
 .dashboard-amplify-score-preview__bar > span {
@@ -690,7 +684,12 @@ html[dir='rtl'] .dashboard-amplify-score-preview__card {
 	background: transparent;
 }
 
-.dashboard-amplify-new-report-modal .components-modal__header::before {
+// Frost over whichever art sits behind the header.
+.dashboard-amplify-new-report-modal:is(
+		:has( > .dashboard-amplify-overview__hero-art ),
+		:has( .amplify-modal-art )
+	)
+	.components-modal__header::before {
 	position: absolute;
 	z-index: -1;
 	inset-block: 0 -56px;
@@ -1113,4 +1112,408 @@ html[dir='rtl'] .dashboard-amplify-score-preview__card {
 		animation: none !important;
 		transition: none;
 	}
+}
+
+// Art directions A and B (hero-directions.tsx), drawn like the A4A Products
+// and Library showcase drawings. Checked in a replica at 1180px and 720px.
+.dashboard-amplify-overview__hero-art[data-direction] {
+	filter: none;
+	mask-image: none;
+	height: 230px;
+}
+
+.dashboard-amplify-overview__hero-art[data-direction]::after {
+	content: none;
+}
+
+.amplify-hero {
+	--amplify-hero-ink: #1d2327;
+	--amplify-hero-muted: #50575e;
+	--amplify-hero-edge: rgba( 16, 21, 23, 0.06 );
+	--amplify-hero-shadow: 0 12px 32px rgba( 0, 0, 0, 0.12 ), 0 2px 6px rgba( 0, 0, 0, 0.08 );
+	--amplify-hero-accent: #3858e9;
+
+	position: absolute;
+	inset: 0;
+	overflow: hidden;
+	font-size: 13px;
+	line-height: 1.35;
+	color: var( --amplify-hero-ink );
+	text-align: start;
+}
+
+.amplify-hero__canvas {
+	position: absolute;
+	inset: 0;
+	width: 100%;
+	height: 100%;
+}
+
+.amplify-hero__stage {
+	position: absolute;
+	inset-block-start: 56px;
+	inset-inline-start: 50%;
+	transform: translateX( -50% );
+}
+
+.amplify-hero__card {
+	box-sizing: border-box;
+	border-radius: 8px;
+	background: #fff;
+	box-shadow: var( --amplify-hero-shadow );
+}
+
+.amplify-hero__score {
+	font-size: 15px;
+	font-weight: 600;
+	font-variant-numeric: tabular-nums;
+	color: #d63638;
+}
+
+// A
+.amplify-hero__report {
+	width: 360px;
+	padding: 16px 18px 18px;
+}
+
+.amplify-hero__report-head {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+}
+
+.amplify-hero__favicon {
+	flex: none;
+	width: 20px;
+	height: 20px;
+	border-radius: 4px;
+	background: #b8e6bf;
+}
+
+.amplify-hero__site {
+	flex: 1;
+	font-size: 14px;
+	font-weight: 500;
+}
+
+.amplify-hero__report-sub {
+	margin: 2px 0 14px;
+	padding-inline-start: 30px;
+	font-size: 12px;
+	color: var( --amplify-hero-muted );
+}
+
+.amplify-hero__rows {
+	display: grid;
+	gap: 10px;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.amplify-hero__rows li {
+	display: grid;
+	grid-template-columns: 140px 1fr 38px;
+	align-items: center;
+	gap: 12px;
+	color: var( --amplify-hero-muted );
+}
+
+.amplify-hero__rows li[data-severity='danger'] {
+	--amplify-hero-tone: #d63638;
+}
+
+.amplify-hero__rows li[data-severity='good'] {
+	--amplify-hero-tone: #008a20;
+}
+
+.amplify-hero__rows strong {
+	font-weight: 500;
+	font-variant-numeric: tabular-nums;
+	text-align: end;
+	color: var( --amplify-hero-ink );
+}
+
+.amplify-hero__bar {
+	height: 4px;
+	overflow: hidden;
+	border-radius: 2px;
+	background: #f0f0f1;
+}
+
+.amplify-hero__bar span {
+	display: block;
+	height: 100%;
+	border-radius: inherit;
+	background: var( --amplify-hero-tone );
+}
+
+// B
+.amplify-hero--findings {
+	background: #f6f7f7;
+}
+
+.amplify-hero--findings .amplify-hero__stage {
+	inset-block-start: 40px;
+	width: 660px;
+	height: 200px;
+}
+
+.amplify-hero__page {
+	position: absolute;
+	inset-block-start: 0;
+	inset-inline-start: 0;
+	width: 400px;
+}
+
+.amplify-hero__page-bar {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	padding: 8px 12px;
+	border-block-end: 1px solid var( --amplify-hero-edge );
+	border-start-start-radius: 8px;
+	border-start-end-radius: 8px;
+	background: #fbfbfb;
+}
+
+.amplify-hero__dot {
+	width: 7px;
+	height: 7px;
+	border-radius: 50%;
+	background: #dcdcde;
+}
+
+.amplify-hero__page-tab {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	margin-inline-start: 10px;
+	font-size: 11px;
+	color: var( --amplify-hero-muted );
+}
+
+.amplify-hero__page-nav {
+	display: flex;
+	align-items: baseline;
+	gap: 14px;
+	padding: 10px 20px 4px;
+	font-size: 11px;
+	color: var( --amplify-hero-muted );
+}
+
+.amplify-hero__page-nav strong {
+	margin-inline-end: 8px;
+	font-size: 12px;
+	font-weight: 600;
+	color: var( --amplify-hero-ink );
+}
+
+.amplify-hero__page-body {
+	display: grid;
+	grid-template-columns: 1fr 120px;
+	gap: 16px;
+	padding: 10px 20px 20px;
+}
+
+.amplify-hero__page-title {
+	display: flex;
+	align-items: flex-start;
+	gap: 8px;
+	margin: 0 0 6px;
+	font-size: 17px;
+	font-weight: 600;
+	line-height: 1.2;
+	letter-spacing: -0.01em;
+}
+
+.amplify-hero__page-title .amplify-hero__pin {
+	margin-block-start: 1px;
+}
+
+.amplify-hero__page-text {
+	margin: 0 0 12px;
+	font-size: 11px;
+	color: var( --amplify-hero-muted );
+}
+
+.amplify-hero__page-button {
+	position: relative;
+	display: inline-block;
+	padding: 6px 12px;
+	border-radius: 2px;
+	background: #1d2327;
+	color: #fff;
+	font-size: 11px;
+}
+
+.amplify-hero__page-button .amplify-hero__pin {
+	position: absolute;
+	inset-block-start: -9px;
+	inset-inline-end: -9px;
+}
+
+.amplify-hero__page-image {
+	border-radius: 4px;
+	background:
+		radial-gradient( 60% 50% at 35% 70%, #68de86 0%, transparent 70% ),
+		radial-gradient( 50% 60% at 70% 30%, #b8e6bf 0%, transparent 70% ), #e6f2e8;
+}
+
+.amplify-hero__pin {
+	display: inline-grid;
+	flex: none;
+	place-items: center;
+	width: 18px;
+	height: 18px;
+	border-radius: 50%;
+	background: var( --amplify-hero-accent );
+	box-shadow: 0 0 0 3px rgba( 56, 88, 233, 0.18 );
+	color: #fff;
+	font-size: 10px;
+	font-weight: 600;
+	line-height: 1;
+}
+
+.amplify-hero__findings {
+	position: absolute;
+	inset-block-start: 20px;
+	inset-inline-end: 0;
+	width: 272px;
+	padding: 14px 16px 16px;
+}
+
+.amplify-hero__findings-head {
+	display: flex;
+	align-items: baseline;
+	justify-content: space-between;
+	margin-block-end: 12px;
+	font-size: 13px;
+	font-weight: 500;
+}
+
+.amplify-hero__findings ol {
+	display: grid;
+	gap: 10px;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.amplify-hero__findings li {
+	display: flex;
+	align-items: flex-start;
+	gap: 10px;
+	font-size: 12px;
+	color: var( --amplify-hero-muted );
+}
+
+.amplify-hero__findings li strong {
+	display: block;
+	font-weight: 500;
+	color: var( --amplify-hero-ink );
+}
+
+.dashboard-amplify-overview:has( > [data-direction] ) {
+	// Shaun's height: tile (230px, starting 16px above) plus 32px of white.
+	padding-block-start: 246px;
+}
+
+.amplify-hero--tile .amplify-hero__stage {
+	// The art starts 16px above the card's edge; keep the drawing below it.
+	inset-block-start: 16px;
+	inset-inline-start: 50%;
+	// The drawing scales as one piece, at most 760px, with 80px of field each side.
+	width: min( 760px, 100% - 160px );
+	height: auto;
+	aspect-ratio: 1100 / 296;
+	transform: translateX( -50% );
+}
+
+// A6 is abstract, so it can fade into the page as Shaun's art does: the
+// heading sits where the colour ends.
+.dashboard-amplify-overview__hero-art:is(
+	[data-direction='findings-a6'],
+	[data-direction='before-after']
+) {
+	height: 290px;
+	mask-image: linear-gradient( to bottom, currentColor 45%, transparent 88% );
+}
+
+.dashboard-amplify-overview:has(
+	> :is( [data-direction='findings-a6'], [data-direction='before-after'] )
+) {
+	padding-block-start: 290px;
+}
+
+// The showcase shadow, as on the Products featured tiles.
+.amplify-hero__object {
+	position: absolute;
+	display: block;
+	max-width: none;
+	height: auto;
+	filter: drop-shadow( 0 12px 16px rgba( 0, 0, 0, 0.12 ) )
+		drop-shadow( 0 2px 3px rgba( 0, 0, 0, 0.08 ) );
+}
+
+.amplify-hero__object[data-flat] {
+	filter: none;
+}
+
+// New report modal (520px wide at most): the tile scales to the modal's
+// width under its 72px header, and the heading starts below it.
+.dashboard-amplify-new-report-modal > .dashboard-amplify-overview__hero-art[data-direction] {
+	height: calc( 72px + min( 520px, 100vw - 32px ) * 340 / 1100 );
+}
+
+.dashboard-amplify-new-report-modal > [data-direction] .amplify-hero__stage {
+	inset-block-start: 72px;
+	inset-inline: 0;
+	width: 100%;
+	height: auto;
+	aspect-ratio: 1100 / 296;
+	transform: none;
+}
+
+.dashboard-amplify-new-report-modal:has( > [data-direction] )
+	.dashboard-amplify-overview[data-context='modal'] {
+	padding-block-start: calc( min( 520px, 100vw - 32px ) * 340 / 1100 + 16px );
+}
+
+// The modal's art, as Shaun had it: full bleed behind the header, fading into
+// the form. An image drawn for the modal (520 x 220) over the blue field.
+.amplify-modal-art {
+	position: relative;
+	z-index: 0;
+	flex: none;
+	align-self: stretch;
+	// Full modal width: the column is 28px in from each side.
+	width: calc( 100% + 56px );
+	max-width: none;
+	height: 220px;
+	margin: -80px -28px 0;
+	overflow: hidden;
+	mask-image: linear-gradient( to bottom, currentColor 60%, transparent 100% );
+}
+
+.amplify-modal-art__image {
+	position: absolute;
+	inset: 0;
+	width: 100%;
+	height: 100%;
+}
+
+// Heroes without a modal image fall back to their page drawing, below the header.
+.amplify-modal-art .amplify-hero__stage {
+	inset-block-start: 84px;
+	inset-inline-start: 50%;
+	width: calc( 100% - 64px );
+	height: auto;
+	aspect-ratio: 1100 / 296;
+	transform: translateX( -50% );
+}
+
+// The modal without art: the form starts right under the header.
+.dashboard-amplify-overview[data-context='modal'][data-hero-art='none'] {
+	padding-block-start: 8px;
 }

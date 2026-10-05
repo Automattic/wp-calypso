@@ -2,14 +2,14 @@ import { startAmplifyReportMutation } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
 import { RadioControl, Spinner, __experimentalHeading as Heading } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
-import { __, isRTL } from '@wordpress/i18n';
-import { Icon, arrowLeft, arrowRight } from '@wordpress/icons';
+import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useCallback, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useAnalytics } from '../../app/analytics';
 import { Text } from '../../components/text';
 import heroBeforeAfter from './hero-before-after.webp';
+import AmplifyDrawnHeroArt, { AmplifyModalArt, isDrawnHero } from './hero-directions';
 import heroExplodedSite from './hero-exploded-site.webp';
 import heroPrecisionAudit from './hero-precision-audit.webp';
 import AmplifyHeroShader from './hero-shader';
@@ -30,21 +30,21 @@ const REPORT_MODES: {
 	{
 		value: 'human',
 		label: __( 'First-time visitors' ),
-		description: __( 'Clarity, trust, and usability for new visitors.' ),
+		description: __( 'How the site comes across to someone seeing it for the first time.' ),
 	},
 	{
 		value: 'ai',
 		label: __( 'AI systems' ),
-		description: __( 'How clearly AI systems understand the homepage.' ),
+		description: __( 'How AI tools like ChatGPT and Perplexity read and rank the site.' ),
 	},
 	{
 		value: 'full',
 		label: __( 'Both' ),
-		description: __( 'Both perspectives in one report.' ),
+		description: __( 'Visitors and AI in one report.' ),
 	},
 ];
 
-const HERO_IMAGES: Record< AmplifyHero, string > = {
+const HERO_IMAGES: Partial< Record< AmplifyHero, string > > = {
 	tracing: tracingPaperAudit,
 	audit: heroPrecisionAudit,
 	improve: heroBeforeAfter,
@@ -87,7 +87,8 @@ export default function AmplifyReportCreator( {
 		},
 		[ isModal ]
 	);
-	const heroImage = HERO_IMAGES[ hero ];
+	const drawnHero = isDrawnHero( hero ) ? hero : null;
+	const heroImage = HERO_IMAGES[ hero ] ?? '';
 	const heroZoom = heroTweaks.zoom * ( isModal ? 0.88 : 1 );
 	const heroStyle = {
 		backgroundImage: `url(${ heroImage })`,
@@ -101,7 +102,16 @@ export default function AmplifyReportCreator( {
 		'--amplify-hero-fade-start': `${ heroTweaks.fadeStart }%`,
 		'--amplify-hero-fade-end': `${ heroTweaks.fadeEnd }%`,
 	} as CSSProperties;
-	const heroArt = (
+	const heroArt = drawnHero ? (
+		<div
+			className="dashboard-amplify-overview__hero-art"
+			data-direction={ hero }
+			style={ { '--amplify-hero-height-scale': heroTweaks.height / 100 } as CSSProperties }
+			aria-hidden="true"
+		>
+			<AmplifyDrawnHeroArt hero={ drawnHero } />
+		</div>
+	) : (
 		<div className="dashboard-amplify-overview__hero-art" style={ heroStyle } aria-hidden="true">
 			<AmplifyHeroShader
 				image={ heroImage }
@@ -148,28 +158,39 @@ export default function AmplifyReportCreator( {
 		<section
 			className="dashboard-amplify-overview"
 			data-context={ isModal ? 'modal' : 'empty' }
-			aria-labelledby="dashboard-amplify-title"
+			data-hero-art={ isModal && drawnHero ? 'none' : undefined }
+			aria-labelledby={ isModal ? undefined : 'dashboard-amplify-title' }
 			ref={ setOverviewNode }
 		>
-			{ isModal && modalFrame ? createPortal( heroArt, modalFrame ) : ! isModal && heroArt }
-			<div className="dashboard-amplify-overview__intro">
-				<Heading id="dashboard-amplify-title" level={ 2 }>
-					{ __( 'Give your clients a stronger first impression' ) }
-				</Heading>
-				<div className="dashboard-amplify-overview__summary">
-					<Text>
-						{ __(
-							'See how any public homepage serves first-time visitors and AI systems, with a report highlighting its strengths, gaps, and practical next steps.'
-						) }
-					</Text>
+			{ /* Returning users get the form alone: the drawn art stays on the first visit. */ }
+			{ isModal && modalFrame && ! drawnHero
+				? createPortal( heroArt, modalFrame )
+				: ! isModal && heroArt }
+			{ ! isModal && (
+				<div className="dashboard-amplify-overview__intro">
+					<Heading id="dashboard-amplify-title" level={ 2 }>
+						{ __( 'Win your next client with a report on their homepage' ) }
+					</Heading>
+					<div className="dashboard-amplify-overview__summary">
+						<Text>
+							{ __(
+								'Enter a prospect’s homepage. You get a branded report on what’s holding it back and how you’d fix it, ready for the pitch.'
+							) }
+						</Text>
+					</div>
 				</div>
-			</div>
+			) }
+			{ isModal && drawnHero && (
+				<div className="amplify-modal-art" aria-hidden="true">
+					<AmplifyModalArt hero={ drawnHero } />
+				</div>
+			) }
 			<form className="dashboard-amplify-overview__url-form" onSubmit={ handleSubmit }>
 				<div className="dashboard-amplify-overview__url-row">
 					<WebsiteAddressPicker
 						agencyId={ agencyId }
-						label={ __( 'Enter any public URL' ) }
-						placeholder={ __( 'Enter a URL or site name' ) }
+						label={ __( 'Homepage' ) }
+						placeholder={ __( 'prospect.com, or one of your client sites' ) }
 						idPrefix="amplify-report-connected-site"
 						value={ urlInput }
 						selectedSite={ selectedSite }
@@ -194,15 +215,10 @@ export default function AmplifyReportCreator( {
 					<button
 						type="submit"
 						className="components-button is-primary dashboard-amplify-overview__submit"
-						aria-label={ __( 'Create report' ) }
 						aria-busy={ start.isPending }
 						disabled={ start.isPending || ! agencyId || atLimit }
 					>
-						{ start.isPending ? (
-							<Spinner />
-						) : (
-							<Icon icon={ isRTL() ? arrowLeft : arrowRight } size={ 24 } />
-						) }
+						{ start.isPending ? <Spinner /> : __( 'Create report' ) }
 					</button>
 				</div>
 				{ urlError && (
@@ -231,9 +247,11 @@ export default function AmplifyReportCreator( {
 			/>
 			{ ! isModal && (
 				<div className="dashboard-amplify-overview__example">
-					<Heading level={ 3 }>{ __( 'Get a report like this' ) }</Heading>
+					<Heading level={ 3 }>{ __( 'What you’ll bring to the pitch' ) }</Heading>
 					<p>
-						{ __( 'Improve client sites and impress prospects with specific, actionable ideas.' ) }
+						{ __(
+							'Scores by category, what’s holding the site back, and an AI-ready prompt to fix each issue.'
+						) }
 					</p>
 					<AmplifyScorePreview mode={ mode } />
 				</div>
