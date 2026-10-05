@@ -1,4 +1,4 @@
-import { PLAN_BUSINESS, PLAN_ECOMMERCE, getPlan } from '@automattic/calypso-products';
+import { getPlanBusinessTitle, getPlanEcommerceTitle } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Button } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
@@ -589,8 +589,8 @@ function PluginDetails( props ) {
 												'Jetpack VaultPress Backup is included with the WordPress.com %(businessPlanName)s and %(commercePlanName)s plans.',
 												{
 													args: {
-														businessPlanName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '',
-														commercePlanName: getPlan( PLAN_ECOMMERCE )?.getTitle() ?? '',
+														businessPlanName: getPlanBusinessTitle(),
+														commercePlanName: getPlanEcommerceTitle(),
 													},
 												}
 											) }
