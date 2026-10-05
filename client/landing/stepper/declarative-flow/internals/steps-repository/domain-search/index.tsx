@@ -12,6 +12,7 @@ import {
 	isNewHostedSiteCreationFlow,
 	isNewsletterFlow,
 	isOnboardingFlow,
+	LAUNCH_SITE_FLOW,
 	Step,
 	StepContainer,
 } from '@automattic/onboarding';
@@ -252,7 +253,8 @@ const DomainSearchStep: StepType< {
 				! isHundredYearPlanFlow( flow ) &&
 				! isHundredYearDomainFlow( flow ) &&
 				! isDomainFlow( flow ) &&
-				! isDomainAndPlanFlow( flow ),
+				! isDomainAndPlanFlow( flow ) &&
+				flow !== LAUNCH_SITE_FLOW,
 			allowedTlds: resolvedAllowedTlds,
 			includeOwnedDomainInSuggestions: true,
 			allowsUsingOwnDomain:
@@ -407,10 +409,15 @@ const DomainSearchStep: StepType< {
 		return true;
 	}, [ flow, isCiab, site, sourceSlug, planCartItem ] );
 
+	// Launching an existing site keeps the promo, as legacy signup did, without the per-domain
+	// first-year-free pricing.
+	const showFreeDomainPromo =
+		! hideFreeDomainPromo && ( isFirstDomainFreeForFirstYear || flow === LAUNCH_SITE_FLOW );
+
 	const slots = useMemo( () => {
 		return {
 			BeforeResults: () => {
-				if ( hideFreeDomainPromo || ! isFirstDomainFreeForFirstYear ) {
+				if ( ! showFreeDomainPromo ) {
 					return null;
 				}
 
@@ -442,7 +449,7 @@ const DomainSearchStep: StepType< {
 				);
 			},
 			BeforeFullCartItems: () => {
-				if ( hideFreeDomainPromo || ! isFirstDomainFreeForFirstYear ) {
+				if ( ! showFreeDomainPromo ) {
 					return null;
 				}
 
@@ -452,9 +459,8 @@ const DomainSearchStep: StepType< {
 			},
 		};
 	}, [
-		isFirstDomainFreeForFirstYear,
+		showFreeDomainPromo,
 		isCiab,
-		hideFreeDomainPromo,
 		freeDomainPromoTitle,
 		freeDomainPromoSubtitle,
 		isCustomDomainBannerCopyVariation,
@@ -570,6 +576,19 @@ const DomainSearchStep: StepType< {
 				return;
 			}
 
+			const isSafeBackTo =
+				isRelativeUrl( backTo ) ||
+				dashboardOrigins().some( ( origin ) => backTo?.startsWith( origin ) );
+
+			// Matches legacy /start/launch-site, which ignores `source`.
+			if ( flow === LAUNCH_SITE_FLOW ) {
+				return (
+					<Step.BackButton href={ isSafeBackTo ? backTo : defaultBackUrl }>
+						{ isSafeBackTo ? __( 'Back' ) : sitesBackLabelText }
+					</Step.BackButton>
+				);
+			}
+
 			let backDestination: string | typeof navigation.goBack = '';
 			let backLabelText = '';
 
@@ -582,24 +601,18 @@ const DomainSearchStep: StepType< {
 			} else if ( 'general-settings' === source && siteSlug ) {
 				backDestination = `/settings/general/${ siteSlug }`;
 				backLabelText = __( 'Back to General Settings' );
+			} else if ( isSafeBackTo ) {
+				backDestination = backTo;
+				backLabelText = __( 'Back' );
+			} else if ( ! isOnboardingFlow( flow ) && navigation.goBack ) {
+				backDestination = navigation.goBack;
+				backLabelText = __( 'Back' );
 			} else {
-				const isSafeBackTo =
-					isRelativeUrl( backTo ) ||
-					dashboardOrigins().some( ( origin ) => backTo?.startsWith( origin ) );
-
-				if ( isSafeBackTo ) {
-					backDestination = backTo;
-					backLabelText = __( 'Back' );
-				} else if ( ! isOnboardingFlow( flow ) && navigation.goBack ) {
-					backDestination = navigation.goBack;
-					backLabelText = __( 'Back' );
-				} else {
-					if ( ! isLoggedIn || ! userSiteCount ) {
-						return;
-					}
-					backDestination = defaultBackUrl;
-					backLabelText = __( 'Back' );
+				if ( ! isLoggedIn || ! userSiteCount ) {
+					return;
 				}
+				backDestination = defaultBackUrl;
+				backLabelText = __( 'Back' );
 			}
 
 			return (

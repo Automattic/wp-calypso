@@ -56,6 +56,9 @@ const PlansStepAdaptor: StepType< {
 		highlightLabelOverrides?: { [ K in PlanSlug ]?: TranslateResult };
 		titleBadgeOverrides?: { [ K in PlanSlug ]?: TranslateResult };
 		taglineOverrides?: { [ K in PlanSlug ]?: TranslateResult };
+		isLaunchPage?: boolean;
+		isCustomDomainAllowedOnFreePlan?: boolean;
+		deemphasizeFreePlan?: boolean;
 		wrapperProps?: {
 			hideBack?: boolean;
 			goBack?: () => void;
@@ -82,6 +85,9 @@ const PlansStepAdaptor: StepType< {
 		highlightLabelOverrides,
 		titleBadgeOverrides,
 		taglineOverrides,
+		isLaunchPage,
+		isCustomDomainAllowedOnFreePlan,
+		deemphasizeFreePlan,
 	} = props;
 	const [ stepState, setStepState ] = useStepPersistedState< ProvidedDependencies >( 'plans-step' );
 	const siteSlug = useSiteSlug();
@@ -280,6 +286,9 @@ const PlansStepAdaptor: StepType< {
 			isInSignup={ isInSignup }
 			isStepperUpgradeFlow={ isStepperUpgradeFlow }
 			selectedFeature={ selectedFeature }
+			isLaunchPage={ isLaunchPage }
+			isCustomDomainAllowedOnFreePlan={ isCustomDomainAllowedOnFreePlan }
+			deemphasizeFreePlan={ deemphasizeFreePlan }
 		/>
 	);
 };

@@ -129,12 +129,13 @@ export default myFlow;
 
 ### Site creation & processing
 
-| `STEPS.*` constant   | slug                 | Purpose                                                          |
-| -------------------- | -------------------- | ---------------------------------------------------------------- |
-| `PROCESSING`         | `processing`         | Runs `setPendingAction`, shows progress bar, then submits result |
-| `SITE_CREATION_STEP` | `create-site`        | Creates the site explicitly (use when you need a separate step)  |
-| `FLEX_SITE_CREATION` | `flex-site-creation` | Flexible site creation variant                                   |
-| `SITE_LAUNCH`        | `site-launch`        | Launches (un-privatizes) an existing site                        |
+| `STEPS.*` constant   | slug                 | Purpose                                                                                              |
+| -------------------- | -------------------- | ---------------------------------------------------------------------------------------------------- |
+| `PROCESSING`         | `processing`         | Runs `setPendingAction`, shows progress bar, then submits result                                     |
+| `SITE_CREATION_STEP` | `create-site`        | Creates the site explicitly (use when you need a separate step)                                      |
+| `FLEX_SITE_CREATION` | `flex-site-creation` | Flexible site creation variant                                                                       |
+| `SITE_LAUNCH`        | `site-launch`        | Launches (un-privatizes) an existing site                                                            |
+| `LAUNCH_SITE`        | `launch-site`        | V2 launch step for the `launch-site` flow; launches once, shows the legacy error screen with Go back |
 
 ### Post-signup
 
@@ -234,6 +235,9 @@ step" → Worked example** section of [`README.md`](README.md); the tables below
 | `highlightLabelOverrides`                                                                                                | `{ [PlanSlug]?: TranslateResult }`              | Re-labels a plan's highlight tag (top pill)                                                |
 | `titleBadgeOverrides`                                                                                                    | `{ [PlanSlug]?: TranslateResult }`              | Re-labels the badge next to a plan's title (features grid only)                            |
 | `taglineOverrides`                                                                                                       | `{ [PlanSlug]?: TranslateResult }`              | Overrides a plan's tagline, winning over computed and experiment copy (features grid only) |
+| `isLaunchPage`                                                                                                           | `boolean`                                       | Launch-page CTAs ("Keep this plan" / "Select X")                                           |
+| `isCustomDomainAllowedOnFreePlan`                                                                                        | `boolean`                                       | Picking Free keeps a paid domain via a dialog                                              |
+| `deemphasizeFreePlan`                                                                                                    | `boolean`                                       | De-emphasizes the Free plan                                                                |
 | `wrapperProps.hideBack`                                                                                                  | `boolean`                                       | Hides the back button                                                                      |
 | `wrapperProps.goBack`                                                                                                    | `() => void`                                    | Custom back button handler                                                                 |
 

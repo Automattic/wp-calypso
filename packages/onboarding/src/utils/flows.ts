@@ -45,6 +45,7 @@ export const AI_SITE_BUILDER_ONBOARDING_FLOW = 'ai-site-builder-onboarding';
 export const AI_SITE_BUILDER_SPEC_FLOW = 'ai-site-builder-spec';
 export const PLAYGROUND_FLOW = 'playground';
 export const PLAN_UPGRADE_FLOW = 'plan-upgrade';
+export const LAUNCH_SITE_FLOW = 'launch-site';
 export const FLEX_SITE_FLOW = 'flex-site';
 export const WOO_HOSTED_PLANS_FLOW = 'woo-hosted-plans';
 export const ART_PROMO_FLOW = 'art-domain';
