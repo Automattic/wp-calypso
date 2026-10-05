@@ -24,7 +24,7 @@ import { isSelfHostedJetpackConnected, isCommerceGarden } from '../../utils/site
 import { SitesNoticeArbiter } from '../notice-arbiter';
 import AgencySiteShareCard from '../overview-agency-site-share-card';
 import BackupCard from '../overview-backup-card';
-import DIFMUpsellCard from '../overview-difm-upsell-card';
+import DIFMOfferCard from '../overview-difm-offer-card';
 import DomainsCard from '../overview-domains-card';
 import LatestActivityCard from '../overview-latest-activity-card';
 import MigrateSiteCard from '../overview-migrate-site-card';
@@ -149,7 +149,7 @@ function SiteOverviewSecondaryCards( {
 						<VStack spacing={ spacing } justify="start">
 							{ ! isSelfHostedJetpackConnectedSite && ! site.is_wpcom_staging_site && (
 								<>
-									<DIFMUpsellCard site={ site } />
+									<DIFMOfferCard site={ site } />
 									<DomainsCard site={ site } />
 								</>
 							) }
