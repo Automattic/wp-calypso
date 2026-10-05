@@ -328,7 +328,7 @@
 		"webpack": "^5.99.8",
 		"webpack-bundle-analyzer": "^4.10.2",
 		"webpack-cli": "^4.10.0",
-		"webpack-dev-middleware": "^5.3.4",
+		"webpack-dev-middleware": "^7.4.5",
 		"whybundled": "^2.0.0",
 		"yargs": "^17.0.1"
 	},
