@@ -13,6 +13,7 @@ import { getExternalContextEntries } from './external-context';
 import { getAgentsManagerInlineData } from './get-agents-manager-inline-data';
 import { isReaderChatAgent } from './is-reader-chat-agent';
 import { getClientConstructorArguments, getSiteEditorActions } from './site-editor-context';
+import { getIsA11n, getIsTest } from './tracks';
 import { getTurnId } from './turn-id';
 import type { ContextEntry, ToolProvider, ContextProvider } from '../extension-types';
 import type { UseAgentChatConfig, Ability as AgenticAbility } from '@automattic/agenttic-client';
@@ -125,12 +126,20 @@ function getProviderIdsContext( providerIds?: string[] ): { loadedProviderIds?: 
 }
 
 /** Only the host's explicit opt-in is sent: the server records nothing without it. */
-function getTrackingContext(): { isTrackingAllowed?: boolean; turnId?: string } {
+function getTrackingContext(): {
+	isTrackingAllowed?: boolean;
+	turnId?: string;
+	isTest: boolean;
+	isA11n?: boolean;
+} {
 	const isTrackingAllowed = getAgentsManagerInlineData()?.isTrackingAllowed;
 	const turnId = getTurnId();
+	const isA11n = getIsA11n();
 	return {
 		...( typeof isTrackingAllowed === 'boolean' && { isTrackingAllowed } ),
 		...( turnId && { turnId } ),
+		isTest: getIsTest(),
+		...( isA11n !== undefined && { isA11n } ),
 	};
 }
 

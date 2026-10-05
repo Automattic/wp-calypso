@@ -305,9 +305,9 @@ describe( 'createAgentConfig', () => {
 			},
 		],
 	] )(
-		'sends the host tracking opt-in and the turn id in the %s client context',
+		'sends the host tracking opt-in, the turn id and the traffic flags in the %s client context',
 		async ( _, contextProvider ) => {
-			setAgentsManagerData( { isTrackingAllowed: true } );
+			setAgentsManagerData( { isTrackingAllowed: true, isDevMode: true, isA11n: true } );
 			mockGetTurnId.mockReturnValueOnce( 'turn-1' );
 
 			const config = await createAgentConfig( {
@@ -318,12 +318,17 @@ describe( 'createAgentConfig', () => {
 			} );
 
 			expect( config.contextProvider?.getClientContext() ).toEqual(
-				expect.objectContaining( { isTrackingAllowed: true, turnId: 'turn-1' } )
+				expect.objectContaining( {
+					isTrackingAllowed: true,
+					turnId: 'turn-1',
+					isTest: true,
+					isA11n: true,
+				} )
 			);
 		}
 	);
 
-	it( 'omits the tracking opt-in when the host does not set it, and the turn id before a send', async () => {
+	it( 'omits the tracking opt-in and the Automattician flag when the host does not set them, and the turn id before a send', async () => {
 		const config = await createAgentConfig( {
 			sessionId: 'session-1',
 			sessionSiteKey: 'no-site',
@@ -333,5 +338,7 @@ describe( 'createAgentConfig', () => {
 
 		expect( context ).not.toHaveProperty( 'isTrackingAllowed' );
 		expect( context ).not.toHaveProperty( 'turnId' );
+		expect( context ).not.toHaveProperty( 'isA11n' );
+		expect( context ).toHaveProperty( 'isTest', false );
 	} );
 } );
