@@ -255,12 +255,32 @@ describe( 'maybeRedirect', () => {
 		expect( next ).not.toHaveBeenCalled();
 	} );
 
-	it( 'keeps non-admins of no-guidance sites on My Home', async () => {
+	it.each( [
+		[ 'no-guidance', { wpcom_ai_launchpad_no_guidance: true } ],
+		[ 'AI Launchpad', { wpcom_ai_launchpad_enabled: true } ],
+	] )( 'sends non-admins of %s sites to the wp-admin dashboard', async ( _, options ) => {
 		getSelectedSite.mockReturnValueOnce( {
 			ID: 1,
 			launch_status: 'unlaunched',
 			capabilities: { manage_options: false },
-			options: { wpcom_ai_launchpad_no_guidance: true },
+			options,
+		} );
+		const next = jest.fn();
+
+		await maybeRedirect( buildSiteContext(), next );
+
+		expect( window.location.replace ).toHaveBeenCalledWith(
+			'https://example.wordpress.com/wp-admin/index.php'
+		);
+		expect( next ).not.toHaveBeenCalled();
+	} );
+
+	it( 'keeps non-admins of legacy launchpad sites on My Home', async () => {
+		getSelectedSite.mockReturnValueOnce( {
+			ID: 1,
+			launch_status: 'unlaunched',
+			capabilities: { manage_options: false },
+			options: {},
 		} );
 		fetchLaunchpad.mockResolvedValue( { launchpad_screen: 'off' } );
 		const next = jest.fn();
