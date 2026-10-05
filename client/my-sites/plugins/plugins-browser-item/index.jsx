@@ -1,4 +1,7 @@
-import { WPCOM_FEATURES_INSTALL_PLUGINS } from '@automattic/calypso-products';
+import {
+	WPCOM_FEATURES_INSTALL_PLUGINS,
+	WPCOM_FEATURES_REAL_TIME_BACKUPS,
+} from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Badge, Gridicon } from '@automattic/components';
 import { useLocalizeUrl } from '@automattic/i18n-utils';
@@ -204,6 +207,10 @@ const PluginsBrowserListElement = ( props ) => {
 			siteHasFeature( state, selectedSite?.ID, WPCOM_FEATURES_INSTALL_PLUGINS )
 		) || jetpackNonAtomic;
 
+	const siteHasRealTimeBackups = useSelector( ( state ) =>
+		siteHasFeature( state, selectedSite?.ID, WPCOM_FEATURES_REAL_TIME_BACKUPS )
+	);
+
 	if ( isPlaceholder ) {
 		return <Placeholder variant={ variant } />;
 	}
@@ -281,7 +288,7 @@ const PluginsBrowserListElement = ( props ) => {
 						{ translate( 'Why is this plugin not compatible with WordPress.com?' ) }
 					</span>
 				) }
-				{ isIncompatibleBackupPlugin && site && (
+				{ isIncompatibleBackupPlugin && siteHasRealTimeBackups && site && (
 					<span
 						role="link"
 						tabIndex="-1"
@@ -292,11 +299,9 @@ const PluginsBrowserListElement = ( props ) => {
 						{ translate( 'Your site plan already includes Jetpack VaultPress Backup.' ) }
 					</span>
 				) }
-				{ isIncompatibleBackupPlugin && ! site && (
+				{ isIncompatibleBackupPlugin && ! ( siteHasRealTimeBackups && site ) && (
 					<span className="plugins-browser-item__incompatible">
-						{ translate(
-							'WordPress.com plans that support plugins already include Jetpack VaultPress Backup.'
-						) }
+						{ translate( 'Jetpack VaultPress Backup is built into eligible WordPress.com plans.' ) }
 					</span>
 				) }
 				<div className="plugins-browser-item__footer">

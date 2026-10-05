@@ -1,3 +1,4 @@
+import { WPCOM_FEATURES_REAL_TIME_BACKUPS } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Button } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
@@ -81,6 +82,7 @@ import getSelectedOrAllSites from 'calypso/state/selectors/get-selected-or-all-s
 import getSelectedOrAllSitesWithPlugins from 'calypso/state/selectors/get-selected-or-all-sites-with-plugins';
 import getSiteConnectionStatus from 'calypso/state/selectors/get-site-connection-status';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import {
 	isJetpackSite,
 	isRequestingSites as checkRequestingSites,
@@ -167,6 +169,10 @@ function PluginDetails( props ) {
 	const isIncompatibleBackupPlugin = useMemo( () => {
 		return hasBundledBackupNotice( props.pluginSlug ) && ! isJetpackSelfHosted;
 	}, [ isJetpackSelfHosted, props.pluginSlug ] );
+
+	const siteHasRealTimeBackups = useSelector( ( state ) =>
+		siteHasFeature( state, selectedSite?.ID, WPCOM_FEATURES_REAL_TIME_BACKUPS )
+	);
 
 	// Fetch WPorg plugin data if needed
 	useEffect( () => {
@@ -569,18 +575,18 @@ function PluginDetails( props ) {
 									{ isIncompatibleBackupPlugin && (
 										<Notice
 											text={
-												selectedSite
+												siteHasRealTimeBackups
 													? translate(
 															'Incompatible plugin: Your site plan already includes Jetpack VaultPress Backup.'
 														)
 													: translate(
-															'Incompatible plugin: WordPress.com plans that support plugins already include Jetpack VaultPress Backup.'
+															'Incompatible plugin: Jetpack VaultPress Backup is built into eligible WordPress.com plans.'
 														)
 											}
 											status="is-warning"
 											showDismiss={ false }
 										>
-											{ selectedSite && (
+											{ siteHasRealTimeBackups && (
 												<NoticeAction href={ `/backup/${ selectedSite.slug }` }>
 													{ translate( 'View backups' ) }
 												</NoticeAction>
