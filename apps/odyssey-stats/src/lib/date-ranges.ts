@@ -1,14 +1,14 @@
+import moment from 'moment';
 import { Unit } from '../typings';
 
 /**
  * The date ranges offered by the Stats widget's range control.
  *
  * A single range drives both halves of the widget: the visits chart and the
- * Top Posts / Top Referrers lists. `unit` and `quantity` therefore feed two
- * different APIs under different parameter names — `unit`/`quantity` for
- * `/stats/visits`, `period`/`num` for `/stats/top-posts` and `/stats/referrers`
- * — but they are deliberately the same values, so the two halves can never
- * describe different windows.
+ * Top Posts / Top Referrers lists. `unit` and `quantity` feed `/stats/visits`,
+ * which buckets by them. The lists ask for the same window a different way —
+ * see `getRangeStartDate` — because a summarized list counts in days whatever
+ * period it is given.
  *
  * `unit` doubles as the period segment of a Stats deep link
  * (`/stats/<unit>/posts/<siteId>`); both `day` and `month` are valid there.
@@ -57,6 +57,29 @@ export function isDateRangeId( value: unknown ): value is DateRangeId {
  * should degrade to the default view rather than break the widget.
  * @param id The range id to resolve.
  */
+/**
+ * The first day a range covers, as `YYYY-MM-DD`.
+ *
+ * The lists are fetched with `summarize=1`, where the API counts back in days from
+ * `date` and ignores the period it was given: `period=month&num=12` summarizes twelve
+ * days rather than twelve months. So the lists state the window as `period=day` plus
+ * an explicit `start_date`, as the Stats page does, and this works that date out.
+ * @param range   The selected range.
+ * @param endDate The last day it covers, as `YYYY-MM-DD`.
+ */
+export function getRangeStartDate( range: DateRange, endDate: string ): string {
+	const end = moment( endDate, 'YYYY-MM-DD' );
+
+	// A month range runs from the first of its earliest month, so the window matches the
+	// chart's buckets rather than ending mid-month.
+	const start =
+		'month' === range.unit
+			? end.startOf( 'month' ).subtract( range.quantity - 1, 'months' )
+			: end.subtract( range.quantity - 1, 'days' );
+
+	return start.format( 'YYYY-MM-DD' );
+}
+
 export function getDateRange( id: unknown ): DateRange {
 	return (
 		DATE_RANGES.find( ( range ) => range.id === id ) ??

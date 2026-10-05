@@ -6,6 +6,7 @@ import {
 	DATE_RANGE_LAST_12_MONTHS,
 	DEFAULT_DATE_RANGE_ID,
 	getDateRange,
+	getRangeStartDate,
 	isDateRangeId,
 } from '../date-ranges';
 
@@ -63,5 +64,28 @@ describe( 'DATE_RANGES', () => {
 	it( 'should not repeat an id', () => {
 		const ids = DATE_RANGES.map( ( range ) => range.id );
 		expect( new Set( ids ).size ).toBe( ids.length );
+	} );
+} );
+
+describe( 'getRangeStartDate', () => {
+	// The lists are summarized, where the API counts days whatever period it is given, so
+	// each range has to state its own first day.
+	it.each( [
+		[ DATE_RANGE_LAST_7_DAYS, '2026-09-29' ],
+		[ DATE_RANGE_LAST_30_DAYS, '2026-09-06' ],
+		[ DATE_RANGE_LAST_90_DAYS, '2026-07-08' ],
+	] )( 'counts %s back in whole days, today included', ( id, expected ) => {
+		expect( getRangeStartDate( getDateRange( id ), '2026-10-05' ) ).toBe( expected );
+	} );
+
+	it( 'starts the 12 month range at the first of its earliest month', () => {
+		expect( getRangeStartDate( getDateRange( DATE_RANGE_LAST_12_MONTHS ), '2026-10-05' ) ).toBe(
+			'2025-11-01'
+		);
+	} );
+
+	it( 'covers a year of months rather than a year of days', () => {
+		const start = getRangeStartDate( getDateRange( DATE_RANGE_LAST_12_MONTHS ), '2026-01-15' );
+		expect( start ).toBe( '2025-02-01' );
 	} );
 } );

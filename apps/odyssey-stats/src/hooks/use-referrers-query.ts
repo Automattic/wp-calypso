@@ -4,7 +4,7 @@ import getDefaultQueryParams from 'calypso/my-sites/stats/hooks/default-query-pa
 
 interface QueryReferrersParams {
 	period: string;
-	num: number;
+	start_date: string;
 	date: string;
 	summarize?: number;
 	max?: number;
@@ -33,18 +33,28 @@ function queryReferrers( siteId: number, params: QueryReferrersParams ) {
 	return wpcom.req.get( `/sites/${ siteId }/stats/referrers`, params );
 }
 
+/**
+ * The range's top referrers.
+ *
+ * Takes the window as whole days, for the reason given in `use-top-posts-query`.
+ * @param siteId    The site to query.
+ * @param startDate First day of the range, as `YYYY-MM-DD`.
+ * @param date      Last day of the range, as `YYYY-MM-DD`.
+ * @param summarize Whether to total the window rather than break it down by day.
+ * @param max       How many rows to return; 0 for the API's own limit.
+ */
 export default function useReferrersQuery(
 	siteId: number,
-	period: string,
-	num: number,
+	startDate: string,
 	date: string,
 	summarize = 1,
 	max = 0
 ) {
 	return useQuery( {
 		...getDefaultQueryParams< ReferresResponse >(),
-		queryKey: [ 'stats-widget', 'referrers', siteId, period, num, date, summarize, max ],
-		queryFn: () => queryReferrers( siteId, { period, num, date, summarize, max } ),
+		queryKey: [ 'stats-widget', 'referrers', siteId, startDate, date, summarize, max ],
+		queryFn: () =>
+			queryReferrers( siteId, { period: 'day', start_date: startDate, date, summarize, max } ),
 		select: ( data ) => {
 			// The groups' views count may not be in descending order
 			// since we use the first result for nest groups.

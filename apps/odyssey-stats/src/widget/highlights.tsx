@@ -6,7 +6,7 @@ import moment from 'moment';
 import { FunctionComponent, useRef } from 'react';
 import useReferrersQuery from '../hooks/use-referrers-query';
 import useTopPostsQuery from '../hooks/use-top-posts-query';
-import { DateRange } from '../lib/date-ranges';
+import { DateRange, getRangeStartDate } from '../lib/date-ranges';
 import { HighLightItem } from '../typings';
 import GrowHeight from './grow-height';
 import recordWidgetEvent, { recordWidgetEventThenFollow } from './record-widget-event';
@@ -187,17 +187,21 @@ export default function Highlights( { siteId, gmtOffset, statsBaseUrl, range }: 
 	const viewAllPostsStatsUrl = `${ statsBaseUrl }/stats/${ unit }/posts/${ siteId }?startDate=${ queryDate }&summarize=1&num=${ quantity }`;
 	const viewAllReferrerStatsUrl = `${ statsBaseUrl }/stats/${ unit }/referrers/${ siteId }?startDate=${ queryDate }&summarize=1&num=${ quantity }`;
 
+	// Both lists are summarized, which counts in days whatever period it is handed, so the
+	// window is stated as its first and last day rather than as the range's own buckets.
+	const startDate = getRangeStartDate( range, queryDate );
+
 	const {
 		data: topPostsAndPages = [],
 		isFetching: isFetchingPostsAndPages,
 		isError: isPostsAndPagesError,
-	} = useTopPostsQuery( siteId, unit, quantity, queryDate );
+	} = useTopPostsQuery( siteId, startDate, queryDate );
 
 	const {
 		data: topReferrers = [],
 		isFetching: isFetchingReferrers,
 		isError: isReferrersError,
-	} = useReferrersQuery( siteId, unit, quantity, queryDate );
+	} = useReferrersQuery( siteId, startDate, queryDate );
 
 	// TabPanel also reports the initial tab on mount; only a change is a user's click.
 	const selectedTabRef = useRef< string >( HIGHLIGHT_TAB_TOP_POSTS_PAGES );
