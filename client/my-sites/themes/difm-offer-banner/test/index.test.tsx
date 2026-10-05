@@ -5,6 +5,7 @@ import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useDifmOffer } from 'calypso/dashboard/utils/difm-offer';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import themesReducer from 'calypso/state/themes/reducer';
 import uiReducer from 'calypso/state/ui/reducer';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import DifmOfferBanner from '../index';
@@ -42,10 +43,10 @@ const initialState = {
 	ui: { language: { localeSlug: 'en' }, selectedSiteId: SITE_ID },
 };
 
-function renderBanner( siteId: number | null = SITE_ID ) {
+function renderBanner( siteId: number | null = SITE_ID, { upsellCardDisplayed = false } = {} ) {
 	return renderWithProvider( <DifmOfferBanner siteId={ siteId } />, {
-		initialState,
-		reducers: { ui: uiReducer },
+		initialState: { ...initialState, themes: { upsellCardDisplayed } },
+		reducers: { ui: uiReducer, themes: themesReducer },
 	} );
 }
 
@@ -120,6 +121,12 @@ describe( 'DifmOfferBanner', () => {
 	test( 'renders nothing while the assignment loads', () => {
 		mockOffer( { isEligible: true, isLoading: true, variation: 'no_time' } );
 		const { container } = renderBanner();
+		expect( container ).toBeEmptyDOMElement();
+	} );
+
+	test( 'renders nothing while the upsell card shows', () => {
+		mockOffer( { isEligible: true, isLoading: false, variation: 'no_time' } );
+		const { container } = renderBanner( SITE_ID, { upsellCardDisplayed: true } );
 		expect( container ).toBeEmptyDOMElement();
 	} );
 
