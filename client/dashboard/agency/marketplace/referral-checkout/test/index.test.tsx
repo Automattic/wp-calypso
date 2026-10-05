@@ -73,6 +73,7 @@ function mockApi( {
 			{
 				id: AGENCY_ID,
 				approval_status: 'approved',
+				profile: { company_details: { logo_url: 'https://a/logo.png' } },
 				...agency,
 			},
 		] )
@@ -130,7 +131,7 @@ describe( '<ReferralCheckout>', () => {
 		);
 	} );
 
-	test( 'sends the payment request with the term product', async () => {
+	test( 'sends the payment request with the term product and the profile logo', async () => {
 		mockApi();
 		let body: Record< string, unknown > | undefined;
 		nock( API )
@@ -157,6 +158,7 @@ describe( '<ReferralCheckout>', () => {
 			client_email: 'client@example.com',
 			product_ids: '2113',
 			flow_type: 'send',
+			logo: { type: 'profile' },
 		} );
 		await waitFor( () =>
 			expect( sessionStorage.getItem( 'referrals-shopping-card-selected-items' ) ).toBeNull()
