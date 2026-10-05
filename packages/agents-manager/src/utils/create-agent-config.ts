@@ -10,8 +10,10 @@ import { ORCHESTRATOR_AGENT_ID, ORCHESTRATOR_AGENT_URL } from '../constants';
 import { saveSessionId } from './agent-session';
 import { canConnectToZendesk } from './can-connect-to-zendesk';
 import { getExternalContextEntries } from './external-context';
+import { getAgentsManagerInlineData } from './get-agents-manager-inline-data';
 import { isReaderChatAgent } from './is-reader-chat-agent';
 import { getClientConstructorArguments, getSiteEditorActions } from './site-editor-context';
+import { getTurnId } from './turn-id';
 import type { ContextEntry, ToolProvider, ContextProvider } from '../extension-types';
 import type { UseAgentChatConfig, Ability as AgenticAbility } from '@automattic/agenttic-client';
 
@@ -122,6 +124,16 @@ function getProviderIdsContext( providerIds?: string[] ): { loadedProviderIds?: 
 	return providerIds?.length ? { loadedProviderIds: providerIds } : {};
 }
 
+/** Only the host's explicit opt-in is sent: the server records nothing without it. */
+function getTrackingContext(): { isTrackingAllowed?: boolean; turnId?: string } {
+	const isTrackingAllowed = getAgentsManagerInlineData()?.isTrackingAllowed;
+	const turnId = getTurnId();
+	return {
+		...( typeof isTrackingAllowed === 'boolean' && { isTrackingAllowed } ),
+		...( turnId && { turnId } ),
+	};
+}
+
 /**
  * Create a context provider that resolves context entries.
  */
@@ -175,6 +187,7 @@ async function createWrappedContextProvider(
 					siteEditorActions: mergedSiteEditorActions,
 				} ),
 				...getProviderIdsContext( providerIds ),
+				...getTrackingContext(),
 				constructorArguments: {
 					...( resolvedContext.constructorArguments || {} ),
 					...getClientConstructorArguments( environment, currentRoute ),
@@ -235,6 +248,7 @@ async function createDefaultContextProvider(
 				...( hostData.siteUrl ? { siteUrl: hostData.siteUrl } : {} ),
 				...( contextEntries ? { contextEntries } : {} ),
 				...getProviderIdsContext( providerIds ),
+				...getTrackingContext(),
 				// TODO: Remove once agenttic-client supports top-level constructorArguments
 				...( Object.keys( constructorArguments ).length && { constructorArguments } ),
 			};
