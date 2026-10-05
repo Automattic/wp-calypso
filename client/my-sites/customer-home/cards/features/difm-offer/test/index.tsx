@@ -79,14 +79,17 @@ describe( 'DifmOffer', () => {
 		expect( container ).toBeEmptyDOMElement();
 	} );
 
-	test( 'renders nothing when the home layout does not list the card', () => {
+	test.each( [
+		[ 'does not list the card', { primary: [], secondary: [] } ],
+		[ 'lists the card outside secondary', { primary: [ FEATURE_DIFM_OFFER ], secondary: [] } ],
+	] )( 'renders nothing when the home layout %s', ( _, layout ) => {
 		mockUseDifmOffer.mockReturnValue( {
 			isEligible: true,
 			isLoading: false,
 			variation: 'no_time',
 		} );
 
-		const { container } = renderCard( { primary: [], secondary: [] } );
+		const { container } = renderCard( layout );
 
 		expect( container ).toBeEmptyDOMElement();
 	} );

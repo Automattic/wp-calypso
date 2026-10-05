@@ -35,10 +35,9 @@ export default function useMyHomeDifmOffer(): MyHomeDifmOffer {
 	} );
 
 	// The paid task hides on a non-null `copy`, so the card must also be in the layout,
-	// or the user sees neither.
-	const isInLayout = Object.values( ( layout ?? {} ) as Record< string, unknown > ).some(
-		( cards ) => Array.isArray( cards ) && cards.includes( FEATURE_DIFM_OFFER )
-	);
+	// or the user sees neither. Only the secondary location renders this card.
+	const secondaryCards = ( layout as { secondary?: string[] } | undefined )?.secondary;
+	const isInLayout = !! secondaryCards?.includes( FEATURE_DIFM_OFFER );
 
 	if ( ! isEligible || isLoading || ! isInLayout ) {
 		return { copy: null, variation };
