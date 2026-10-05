@@ -3,18 +3,32 @@
  */
 
 import { PLAN_PREMIUM } from '@automattic/calypso-products';
-import { checkoutTheme } from '@automattic/composite-checkout';
+import { CheckoutProvider } from '@automattic/composite-checkout';
 import { getEmptyResponseCart, getEmptyResponseCartProduct } from '@automattic/shopping-cart';
-import { ThemeProvider } from '@emotion/react';
 import { render, screen } from '@testing-library/react';
 import CheckoutTrustCards from '../checkout-trust-cards';
+import type { PaymentMethod } from '@automattic/composite-checkout';
 import type { ResponseCart } from '@automattic/shopping-cart';
 
-function renderTrustCards( cart: ResponseCart ) {
+function makePaymentMethod( id: string ): PaymentMethod {
+	return {
+		id,
+		paymentProcessorId: id,
+		label: id,
+		submitButton: <button />,
+		getAriaLabel: () => id,
+	};
+}
+
+function renderTrustCards( cart: ResponseCart, selectedPaymentMethodId = 'card' ) {
 	return render(
-		<ThemeProvider theme={ checkoutTheme }>
+		<CheckoutProvider
+			paymentMethods={ [ makePaymentMethod( 'card' ), makePaymentMethod( 'free-purchase' ) ] }
+			paymentProcessors={ {} }
+			initiallySelectedPaymentMethodId={ selectedPaymentMethodId }
+		>
 			<CheckoutTrustCards cart={ cart } />
-		</ThemeProvider>
+		</CheckoutProvider>
 	);
 }
 
@@ -25,13 +39,6 @@ function premiumCart(): ResponseCart {
 		item_subtotal_integer: 5,
 		product_slug: PLAN_PREMIUM,
 	} );
-	cart.total_cost_integer = 5;
-	return cart;
-}
-
-function paidEmptyCart(): ResponseCart {
-	const cart = getEmptyResponseCart();
-	cart.total_cost_integer = 5;
 	return cart;
 }
 
@@ -44,16 +51,22 @@ describe( 'CheckoutTrustCards', () => {
 	} );
 
 	it( 'omits the refund card for a cart with no refund window', () => {
-		renderTrustCards( paidEmptyCart() );
+		renderTrustCards( getEmptyResponseCart() );
 
 		expect( screen.queryByText( /day money back/i ) ).not.toBeInTheDocument();
 		expect( screen.getByText( 'SSL secure payment' ) ).toBeVisible();
 	} );
 
-	it( 'omits the SSL card for a free purchase', () => {
-		renderTrustCards( getEmptyResponseCart() );
+	it( 'omits the SSL card when the free purchase method is selected', () => {
+		renderTrustCards( getEmptyResponseCart(), 'free-purchase' );
 
 		expect( screen.queryByText( 'SSL secure payment' ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'renders the SSL card on a free cart when a card is selected', () => {
+		renderTrustCards( getEmptyResponseCart(), 'card' );
+
+		expect( screen.getByText( 'SSL secure payment' ) ).toBeVisible();
 	} );
 
 	it.each( [
