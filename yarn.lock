@@ -792,17 +792,6 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@automattic/calypso-mp-data-analysis@workspace:packages/calypso-mp-data-analysis":
-  version: 0.0.0-use.local
-  resolution: "@automattic/calypso-mp-data-analysis@workspace:packages/calypso-mp-data-analysis"
-  dependencies:
-    "@automattic/calypso-eslint-overrides": "workspace:^"
-    csv-parse: "npm:^5.1.0"
-    csv-stringify: "npm:^6.1.0"
-    fs-extra: "npm:^10.1.0"
-  languageName: unknown
-  linkType: soft
-
 "@automattic/calypso-package-generator@workspace:^, @automattic/calypso-package-generator@workspace:packages/calypso-package-generator":
   version: 0.0.0-use.local
   resolution: "@automattic/calypso-package-generator@workspace:packages/calypso-package-generator"
@@ -1371,20 +1360,6 @@ __metadata:
     "@wordpress/i18n": ^6.21.0
     react: ^18.3.1 || ^19.0.0
     react-dom: ^18.3.1 || ^19.0.0
-  languageName: unknown
-  linkType: soft
-
-"@automattic/effective-module-tree@workspace:packages/effective-module-tree":
-  version: 0.0.0-use.local
-  resolution: "@automattic/effective-module-tree@workspace:packages/effective-module-tree"
-  dependencies:
-    "@automattic/calypso-eslint-overrides": "workspace:^"
-    "@automattic/calypso-typescript-config": "workspace:^"
-    debug: "npm:^4.4.1"
-    object-treeify: "npm:^1.1.33"
-    yargs: "npm:^17.0.1"
-  bin:
-    effective-module-tree: ./cli.js
   languageName: unknown
   linkType: soft
 
@@ -2657,17 +2632,6 @@ __metadata:
     typescript: "npm:^6.0.3"
   peerDependencies:
     react: ^18.3.1 || ^19.0.0
-  languageName: unknown
-  linkType: soft
-
-"@automattic/webpack-config-flag-plugin@workspace:packages/webpack-config-flag-plugin":
-  version: 0.0.0-use.local
-  resolution: "@automattic/webpack-config-flag-plugin@workspace:packages/webpack-config-flag-plugin"
-  dependencies:
-    "@automattic/calypso-typescript-config": "workspace:^"
-    rimraf: "npm:^3.0.2"
-  peerDependencies:
-    webpack: ^5.99.8
   languageName: unknown
   linkType: soft
 
@@ -17095,13 +17059,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"csv-stringify@npm:^6.1.0":
-  version: 6.1.0
-  resolution: "csv-stringify@npm:6.1.0"
-  checksum: 111ae51c5ecf9aab17f36775d18b1b2db64fb5593c195a69538a95459fee1a53ca67f0d0b37a1f763d76fdeb7e10991e1b6509b0511d9159d7dad4ff9d60718c
-  languageName: node
-  linkType: hard
-
 "custom-error-instance@npm:2.1.1":
   version: 2.1.1
   resolution: "custom-error-instance@npm:2.1.1"
@@ -26491,13 +26448,6 @@ __metadata:
   version: 1.1.1
   resolution: "object-keys@npm:1.1.1"
   checksum: b11f7ccdbc6d406d1f186cdadb9d54738e347b2692a14439ca5ac70c225fa6db46db809711b78589866d47b25fc3e8dee0b4c722ac751e11180f9380e3d8601d
-  languageName: node
-  linkType: hard
-
-"object-treeify@npm:^1.1.33":
-  version: 1.1.33
-  resolution: "object-treeify@npm:1.1.33"
-  checksum: 5b735ac552200bf14f9892ce58295303e8d15a8cc7a0fd4fe6ff99923ab0c196fb70a870ab2a0eefc6820c4acb49e614b88c72d344b9c6bd22584a3efbd386fe
   languageName: node
   linkType: hard
 
