@@ -37,7 +37,7 @@ import { PlanAwaitingCheckout, useSiteAwaitingCheckout } from './plan-awaiting-c
 import { PlanExpiryStatus } from './plan-expiry-status';
 import { useIsSiteUnreachable } from './site-unreachable-status';
 import type { SiteBadge, SiteBlockingStatus, SiteVisibility } from '../../types';
-import type { Site } from '@automattic/api-core';
+import type { Site, WowFunnelPendingSite } from '@automattic/api-core';
 import type { ComponentProps } from 'react';
 
 function IneligibleIndicator() {
@@ -418,6 +418,25 @@ export function Visibility( {
 	);
 }
 
+/**
+ * The line under the plan name: where to finish buying a site held for checkout, or else how the
+ * plan's expiry stands. One element at this level whichever it is, so the plan cell's own children
+ * do not change when the held-site lookup answers.
+ */
+function PlanSubStatus( {
+	site,
+	awaitingCheckout,
+}: {
+	site: Site;
+	awaitingCheckout: WowFunnelPendingSite | undefined;
+} ) {
+	if ( awaitingCheckout ) {
+		return <PlanAwaitingCheckout pending={ awaitingCheckout } />;
+	}
+
+	return <PlanExpiryStatus site={ site } />;
+}
+
 export function Plan( {
 	site,
 	isSelfHostedJetpackConnected,
@@ -444,11 +463,7 @@ export function Plan( {
 			     first paint, and swapping elements across that boundary crashes under Google
 			     Translate (react/react#11538). */ }
 			<span>{ awaitingCheckout ? __( 'Awaiting checkout' ) : value }</span>
-			{ awaitingCheckout ? (
-				<PlanAwaitingCheckout pending={ awaitingCheckout } />
-			) : (
-				<PlanExpiryStatus site={ site } />
-			) }
+			<PlanSubStatus site={ site } awaitingCheckout={ awaitingCheckout } />
 		</VStack>
 	);
 }
