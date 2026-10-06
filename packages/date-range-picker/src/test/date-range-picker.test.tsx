@@ -101,6 +101,22 @@ describe( 'DateRangePicker (new)', () => {
 		expect( getByRole( 'button', { name: /^Apply$/i } ) ).toBeDisabled();
 	} );
 
+	// The test environment runs in UTC, so a New York site is a day behind at site midnight.
+	test( 'today and disabledBefore follow site days when the site is behind the browser', async () => {
+		const { getByRole, findByRole } = renderDateRangePicker( {
+			timezoneString: 'America/New_York',
+			disabledBefore: new Date( 2025, 7, 15 ),
+		} );
+		await userEvent.click( getByRole( 'button', { name: /Date range:/i } ) );
+
+		const grid = within( await findByRole( 'grid', { name: /August 2025/i } ) );
+		const day = ( d: number ) =>
+			grid.getByRole( 'button', { name: new RegExp( `August ${ d }, 2025` ) } );
+		expect( day( 14 ) ).toBeDisabled();
+		expect( day( 15 ) ).toBeEnabled();
+		expect( day( 25 ) ).toBeEnabled();
+	} );
+
 	test( 'shows one month below the two-month breakpoint', async () => {
 		const { getByRole, findAllByRole } = renderDateRangePicker();
 		await userEvent.click( getByRole( 'button', { name: /Date range:/i } ) );

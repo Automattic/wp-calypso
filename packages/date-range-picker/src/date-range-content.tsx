@@ -182,13 +182,20 @@ export function DateRangeContent( props: DateRangeContentProps ) {
 				}
 			: { from: fromDraft ?? undefined, to: toDraft ?? undefined };
 
+	// `today` and `disabledBefore` are site days held as browser-local midnights, but the calendar
+	// matches days in `timeZoneForCalendar`, so rebuild them as that day's midnight in the site zone.
+	const toCalendarDay = ( d: Date ) =>
+		timeZoneForCalendar
+			? new TZDate( d.getFullYear(), d.getMonth(), d.getDate(), timeZoneForCalendar )
+			: d;
+
 	const disabledMatcher = ( () => {
 		const matchers: Array< { after: Date } | { before: Date } > = [];
 		if ( disableFuture ) {
-			matchers.push( { after: today } );
+			matchers.push( { after: toCalendarDay( today ) } );
 		}
 		if ( disabledBefore ) {
-			matchers.push( { before: disabledBefore } );
+			matchers.push( { before: toCalendarDay( disabledBefore ) } );
 		}
 		if ( matchers.length === 0 ) {
 			return undefined;

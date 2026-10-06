@@ -4,6 +4,7 @@
 
 - Breaking: render the calendar with `@wordpress/ui`'s `RangeCalendar` instead of `@automattic/ui`'s `DateRangeCalendar`. `@wordpress/ui` (`>=0.22.0`) is now a required peer dependency, and the `@automattic/ui/style.css` import is no longer needed.
 - Clicking a day after a complete range is selected now starts a new range from that day, instead of extending or shrinking the existing range.
+- Fix: for sites in a different time zone from the browser, today stays selectable and `disabledBefore` disables the right days. Previously each could be off by a day.
 
 ## 1.0.6
 
