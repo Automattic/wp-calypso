@@ -6,15 +6,13 @@ import wpcomRequest from '@automattic/data-stores/src/wpcom-request';
 import { act, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { dispatch } from '@wordpress/data';
-import nock from 'nock';
 import { ComponentProps } from 'react';
-import { MemoryRouter } from 'react-router';
-import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { SITE_STORE } from 'calypso/landing/stepper/stores';
 import {
 	recordMigrationStartEvent,
 	recordMigrationStartFacebookEvent,
 } from 'calypso/lib/analytics/ad-tracking/record-migration-events';
+import { requestSite } from 'calypso/state/sites/actions';
 import SiteMigrationHowToMigrate from '../';
 import { defaultSiteDetails } from '../../launchpad/test/lib/fixtures';
 import { mockStepProps, renderStep, RenderStepOptions } from '../../test/helpers';
@@ -31,8 +29,8 @@ const render = ( props?: Partial< Props >, renderOptions?: RenderStepOptions ) =
 	return renderStep( <SiteMigrationHowToMigrate { ...combinedProps } />, renderOptions );
 };
 
-jest.mock( 'calypso/landing/stepper/hooks/use-site', () => ( {
-	useSite: jest.fn(),
+jest.mock( 'calypso/state/sites/actions', () => ( {
+	requestSite: jest.fn(),
 } ) );
 
 jest.mock( '@automattic/data-stores/src/wpcom-request', () => ( {
@@ -55,12 +53,25 @@ jest.mock( 'calypso/data/site-migration/use-migration-sticker', () => ( {
 	useMigrationStickerMutation: () => ( { deleteMigrationSticker: mockDeleteMigrationSticker } ),
 } ) );
 
+const setSite = ( site ) => {
+	act( () => {
+		if ( site ) {
+			dispatch( SITE_STORE ).receiveSite( 123, { ...site, ID: 123 } );
+			dispatch( SITE_STORE ).finishResolution( 'getSite', [ '123' ] );
+		} else {
+			dispatch( SITE_STORE ).reset();
+			dispatch( SITE_STORE ).invalidateResolutionForStore();
+		}
+	} );
+};
+
 describe( 'SiteMigrationHowToMigrate', () => {
 	beforeEach( () => {
+		jest.mocked( requestSite ).mockImplementation( () => jest.fn() );
 		dispatch( SITE_STORE ).reset();
 		dispatch( SITE_STORE ).invalidateResolutionForStore();
-		nock.cleanAll();
-		jest.mocked( useSite ).mockReturnValue( defaultSiteDetails );
+		jest.mocked( wpcomRequest ).mockResolvedValue( undefined );
+		setSite( defaultSiteDetails );
 	} );
 
 	afterEach( () => {
@@ -90,13 +101,7 @@ describe( 'SiteMigrationHowToMigrate', () => {
 				features: { active: [ 'install-plugins' ] },
 			},
 		};
-		nock( 'https://public-api.wordpress.com' )
-			.get( `/rest/v1.2/sites/${ destination }` )
-			.query( true )
-			.reply( 200, destinationSite );
-		jest
-			.mocked( useSite )
-			.mockImplementation( jest.requireActual( 'calypso/landing/stepper/hooks/use-site' ).useSite );
+		setSite( null );
 		let resolveRetry;
 		const retryResponse = new Promise( ( resolve ) => {
 			resolveRetry = resolve;
@@ -132,7 +137,7 @@ describe( 'SiteMigrationHowToMigrate', () => {
 	} );
 
 	it( 'ignores lookup failures for another destination while this site is loading', () => {
-		jest.mocked( useSite ).mockReturnValue( null );
+		setSite( null );
 		dispatch( SITE_STORE ).receiveSiteFailed( 456, {
 			error: 'unknown_blog',
 			message: 'Unknown blog',
@@ -148,9 +153,13 @@ describe( 'SiteMigrationHowToMigrate', () => {
 	} );
 
 	it( 'offers a way back when the destination lookup fails without cancelling a migration', async () => {
-		jest.mocked( useSite ).mockReturnValue( null );
-		dispatch( SITE_STORE ).finishResolution( 'getSite', [ '123' ] );
+		setSite( null );
+		jest.mocked( wpcomRequest ).mockRejectedValue( {
+			error: 'http_request_failed',
+			message: 'Request failed',
+		} );
 		render( { navigation } );
+		await screen.findByRole( 'heading', { name: "We couldn't load your site" } );
 
 		await userEvent.click( screen.getByRole( 'button', { name: 'Back' } ) );
 
@@ -160,7 +169,7 @@ describe( 'SiteMigrationHowToMigrate', () => {
 	} );
 
 	it( 'offers a way back instead of loading indefinitely when the destination is missing', async () => {
-		jest.mocked( useSite ).mockReturnValue( null );
+		setSite( null );
 		render( { navigation }, { initialEntry: '/some-path' } );
 
 		expect( screen.getByRole( 'heading', { name: "We couldn't load your site" } ) ).toBeVisible();
@@ -174,14 +183,14 @@ describe( 'SiteMigrationHowToMigrate', () => {
 		[ 'Get started', 'difm' ],
 		[ "I'll do it myself", 'myself' ],
 	] )( 'waits for the destination before allowing %s', async ( label, how ) => {
-		jest.mocked( useSite ).mockReturnValue( null );
-		const { rerender } = render( { navigation } );
+		setSite( null );
+		render( { navigation } );
 
 		expect( screen.queryByRole( 'button', { name: 'Get started' } ) ).not.toBeInTheDocument();
 		expect( screen.queryByRole( 'button', { name: "I'll do it myself" } ) ).not.toBeInTheDocument();
 		expect( navigation.submit ).not.toHaveBeenCalled();
 
-		jest.mocked( useSite ).mockReturnValue( {
+		setSite( {
 			...defaultSiteDetails,
 			plan: {
 				...defaultSiteDetails.plan,
@@ -189,11 +198,6 @@ describe( 'SiteMigrationHowToMigrate', () => {
 				features: { active: [ 'install-plugins' ] },
 			},
 		} );
-		rerender(
-			<MemoryRouter>
-				<SiteMigrationHowToMigrate { ...mockStepProps( { navigation } ) } />
-			</MemoryRouter>
-		);
 
 		const button = screen.getByRole( 'button', { name: label } );
 		expect( button ).toBeVisible();
@@ -210,7 +214,7 @@ describe( 'SiteMigrationHowToMigrate', () => {
 	] )(
 		'submits %s (%s), plugin eligibility %s, destination %s',
 		async ( label, how, canInstallPlugins, destination ) => {
-			jest.mocked( useSite ).mockReturnValue( {
+			setSite( {
 				...defaultSiteDetails,
 				plan: {
 					...defaultSiteDetails.plan,
@@ -230,7 +234,7 @@ describe( 'SiteMigrationHowToMigrate', () => {
 	it.each( [ false, true ] )(
 		'offers file import without a plan gate when plugin eligibility is %s',
 		async ( canInstallPlugins ) => {
-			jest.mocked( useSite ).mockReturnValue( {
+			setSite( {
 				...defaultSiteDetails,
 				ID: 123,
 				plan: {
@@ -255,7 +259,7 @@ describe( 'SiteMigrationHowToMigrate', () => {
 			...defaultSiteDetails,
 		};
 
-		( useSite as jest.Mock ).mockReturnValue( mockSite );
+		setSite( mockSite );
 
 		render( { navigation } );
 
@@ -276,7 +280,7 @@ describe( 'SiteMigrationHowToMigrate', () => {
 			},
 		};
 
-		( useSite as jest.Mock ).mockReturnValue( mockSite );
+		setSite( mockSite );
 
 		render( { navigation } );
 

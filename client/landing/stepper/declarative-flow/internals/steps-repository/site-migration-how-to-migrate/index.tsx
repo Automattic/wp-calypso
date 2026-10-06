@@ -1,7 +1,6 @@
 import { NextButton, Step } from '@automattic/onboarding';
 import { canInstallPlugins } from '@automattic/sites';
 import { Button } from '@wordpress/components';
-import { useDispatch, useSelect } from '@wordpress/data';
 import { copy, lockOutline } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useMemo } from 'react';
@@ -9,9 +8,7 @@ import DocumentHead from 'calypso/components/data/document-head';
 import { useMigrationCancellation } from 'calypso/data/site-migration/landing/use-migration-cancellation';
 import { useMigrationStickerMutation } from 'calypso/data/site-migration/use-migration-sticker';
 import { HOW_TO_MIGRATE_OPTIONS } from 'calypso/landing/stepper/constants';
-import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
-import { useSite } from 'calypso/landing/stepper/hooks/use-site';
-import { SITE_STORE } from 'calypso/landing/stepper/stores';
+import { useSiteDetails } from 'calypso/landing/stepper/hooks/use-site';
 import {
 	recordMigrationStartEvent,
 	recordMigrationStartFacebookEvent,
@@ -19,10 +16,6 @@ import {
 import { ChecklistCard } from '../../components/checklist-card';
 import type { Step as StepType } from '../../types';
 import './style.scss';
-
-type SiteResolutionSelectors = {
-	hasFinishedResolution: ( selectorName: 'getSite', args: [ string ] ) => boolean;
-};
 
 const SiteMigrationHowToMigrate: StepType< {
 	accepts: {
@@ -36,18 +29,7 @@ const SiteMigrationHowToMigrate: StepType< {
 } > = ( props ) => {
 	const { navigation, headerText, subHeaderText } = props;
 	const translate = useTranslate();
-	const site = useSite();
-	const query = useQuery();
-	const siteIdOrSlug = query.get( 'siteId' ) || query.get( 'siteSlug' );
-	const hasFinishedSiteRequest = useSelect(
-		( select ) =>
-			!! siteIdOrSlug &&
-			( select( SITE_STORE ) as SiteResolutionSelectors ).hasFinishedResolution( 'getSite', [
-				siteIdOrSlug,
-			] ),
-		[ siteIdOrSlug ]
-	);
-	const { invalidateResolution } = useDispatch( SITE_STORE );
+	const { data: site, isLoading, isError, refetch } = useSiteDetails();
 	const { mutate: cancelMigration } = useMigrationCancellation( site?.ID );
 	const { deleteMigrationSticker } = useMigrationStickerMutation();
 
@@ -121,7 +103,11 @@ const SiteMigrationHowToMigrate: StepType< {
 		);
 	};
 
-	if ( ! site && ( ! siteIdOrSlug || hasFinishedSiteRequest ) ) {
+	if ( isLoading ) {
+		return <Step.Loading />;
+	}
+
+	if ( isError || ! site ) {
 		const errorTitle = translate( "We couldn't load your site" );
 
 		return (
@@ -138,25 +124,21 @@ const SiteMigrationHowToMigrate: StepType< {
 						<Step.Heading
 							text={ errorTitle }
 							subText={
-								siteIdOrSlug
+								refetch
 									? translate( 'Please try again, or go back to choose another site.' )
 									: translate( 'Go back to choose a destination site.' )
 							}
 						/>
 					}
 				>
-					{ siteIdOrSlug && (
-						<NextButton onClick={ () => invalidateResolution( 'getSite', [ siteIdOrSlug ] ) }>
-							{ translate( 'Try again' ) }
-						</NextButton>
+					{ refetch && (
+						<div className="how-to-migrate__experiment-expectations">
+							<NextButton onClick={ refetch }>{ translate( 'Try again' ) }</NextButton>
+						</div>
 					) }
 				</Step.CenteredColumnLayout>
 			</>
 		);
-	}
-
-	if ( ! site ) {
-		return <Step.Loading />;
 	}
 
 	return (
