@@ -91,8 +91,8 @@ function PoolRow( { pool, isExhausted }: { pool: CreditsPool; isExhausted: boole
 /**
  * The composer's credits indicator: a ring in the trailing slot, a tooltip
  * on hover or focus, and a popover on click listing each credit pool with a
- * single CTA. Percent stays the primary figure everywhere; exact credits are
- * popover detail only.
+ * single CTA. The tooltip gives a paid site's credits left as an amount and a
+ * free plan's as a percentage. Each pool row leads with its percentage.
  */
 export default function CreditsMeter( {
 	status,

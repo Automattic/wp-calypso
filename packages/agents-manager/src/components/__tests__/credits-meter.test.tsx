@@ -19,11 +19,13 @@ jest.mock(
 jest.mock( 'i18n-calypso', () => ( { getBrowserSafeLocale: () => 'en' } ) );
 
 import CreditsMeter from '../credits-meter';
+import { localNumber } from '../../utils/__tests__/fixtures/local-number';
 import type { CreditsStatus } from '../../utils/credits';
 
 const paid: CreditsStatus = {
 	plan: 'paid',
 	percent: 72,
+	remaining: 11600,
 	pools: [
 		{
 			id: 'plan',
@@ -99,7 +101,9 @@ describe( 'CreditsMeter', () => {
 				);
 			}
 			render( <Meter /> );
-			const toggle = screen.getByRole( 'button', { name: '72% of site credits left' } );
+			const toggle = screen.getByRole( 'button', {
+				name: `${ localNumber( 11.6 ) }k credits left`,
+			} );
 			if ( input === 'click' ) {
 				await user.click( toggle );
 			} else {
@@ -121,7 +125,7 @@ describe( 'CreditsMeter', () => {
 	it( 'labels the ring with the balance sentence and toggles the popover', () => {
 		const onToggle = jest.fn();
 		render( <CreditsMeter status={ paid } isOpen={ false } onToggle={ onToggle } /> );
-		const toggle = screen.getByRole( 'button', { name: '72% of site credits left' } );
+		const toggle = screen.getByRole( 'button', { name: `${ localNumber( 11.6 ) }k credits left` } );
 		expect( screen.getByTestId( 'ring' ) ).toHaveAttribute( 'data-tone', 'muted' );
 		fireEvent.click( toggle );
 		expect( onToggle ).toHaveBeenCalledWith( true );
@@ -133,7 +137,12 @@ describe( 'CreditsMeter', () => {
 		expect( screen.getByText( 'Site credits' ) ).toBeInTheDocument();
 		expect( screen.getByText( 'Monthly plan' ) ).toBeInTheDocument();
 		expect( screen.getByText( 'Resets 17 Oct' ) ).toBeInTheDocument();
-		expect( screen.getByText( '10,800 of 15,000 credits' ) ).toBeInTheDocument();
+		expect(
+			screen.getByText( `${ localNumber( 10.8 ) }k of ${ localNumber( 15 ) }k credits left` )
+		).toBeInTheDocument();
+		expect(
+			screen.getByText( `${ localNumber( 800 ) } of ${ localNumber( 1 ) }k credits left` )
+		).toBeInTheDocument();
 		expect( screen.getByText( 'Top-ups' ) ).toBeInTheDocument();
 		expect( screen.queryByRole( 'button', { name: 'Manage' } ) ).not.toBeInTheDocument();
 		expect( screen.getByRole( 'button', { name: 'Add credits' } ) ).toHaveClass( 'is-secondary' );
@@ -141,7 +150,7 @@ describe( 'CreditsMeter', () => {
 		expect( onAction ).toHaveBeenCalled();
 	} );
 
-	it( 'updates the paid ring tone at the exact threshold independently of its rounded label', () => {
+	it( 'updates the paid ring tone at the exact plan threshold independently of its amount label', () => {
 		const { rerender } = render(
 			<CreditsMeter status={ paid } isOpen={ false } onToggle={ () => {} } />
 		);
@@ -154,7 +163,7 @@ describe( 'CreditsMeter', () => {
 				<CreditsMeter status={ { ...paid, percent } } isOpen={ false } onToggle={ () => {} } />
 			);
 			expect(
-				screen.getByRole( 'button', { name: '20% of site credits left' } )
+				screen.getByRole( 'button', { name: `${ localNumber( 11.6 ) }k credits left` } )
 			).toBeInTheDocument();
 			expect( screen.getByTestId( 'ring' ) ).toHaveAttribute( 'data-tone', tone );
 			expect( screen.getByTestId( 'ring' ) ).toHaveAttribute( 'data-percent', String( percent ) );
@@ -179,10 +188,12 @@ describe( 'CreditsMeter', () => {
 		};
 		render( <CreditsMeter status={ status } isOpen onToggle={ () => {} } /> );
 		expect(
-			screen.getByRole( 'button', { name: '<1% of site credits left' } )
+			screen.getByRole( 'button', { name: `${ localNumber( 1 ) } credits left` } )
 		).toBeInTheDocument();
 		expect( screen.getByText( '<1%' ) ).toBeInTheDocument();
-		expect( screen.getByText( '1 of 2,500 credits' ) ).toBeInTheDocument();
+		expect(
+			screen.getByText( `${ localNumber( 1 ) } of ${ localNumber( 2.5 ) }k credits left` )
+		).toBeInTheDocument();
 		expect(
 			screen.getByRole( 'group', { name: 'Monthly plan, <1% left, Resets Oct 1 (UTC)' } )
 		).toBeInTheDocument();
@@ -204,7 +215,9 @@ describe( 'CreditsMeter', () => {
 		expect( screen.getByText( 'You’ve used all your site credits.' ) ).toHaveClass(
 			'agents-manager-credits-meter__message'
 		);
-		expect( screen.queryByText( /of 80,000 credits/ ) ).not.toBeInTheDocument();
+		expect(
+			screen.queryByText( `of ${ localNumber( 80 ) }k credits left`, { exact: false } )
+		).not.toBeInTheDocument();
 		expect( screen.queryByText( /used all your free credits/ ) ).not.toBeInTheDocument();
 		expect( screen.getByText( 'Monthly plan' ) ).toBeInTheDocument();
 		expect( screen.getByText( 'Resets Oct 8 (UTC)' ) ).toBeInTheDocument();
@@ -221,7 +234,28 @@ describe( 'CreditsMeter', () => {
 			/>
 		);
 		expect( screen.getByText( '<1%' ) ).not.toHaveClass( 'is-exhausted' );
-		expect( screen.getByText( '1 of 80,000 credits' ) ).toBeInTheDocument();
+		expect(
+			screen.getByText( `${ localNumber( 1 ) } of ${ localNumber( 80 ) }k credits left` )
+		).toBeInTheDocument();
+		expect( screen.queryByText( /used all your/ ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'gives the combined balance in the tooltip when only top-ups are left', () => {
+		render(
+			<CreditsMeter
+				status={ { ...livePaid( 0 ), remaining: 67000 } }
+				isOpen
+				onToggle={ () => {} }
+			/>
+		);
+		expect(
+			screen.getByRole( 'button', { name: `${ localNumber( 67 ) }k credits left` } )
+		).toBeInTheDocument();
+		expect( screen.getByTestId( 'ring' ) ).toHaveAttribute( 'data-percent', '0' );
+		expect( screen.getByText( '0%' ) ).not.toHaveClass( 'is-exhausted' );
+		expect(
+			screen.getByText( `${ localNumber( 0 ) } of ${ localNumber( 80 ) }k credits left` )
+		).toBeInTheDocument();
 		expect( screen.queryByText( /used all your/ ) ).not.toBeInTheDocument();
 	} );
 

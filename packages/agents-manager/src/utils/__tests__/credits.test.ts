@@ -3,15 +3,15 @@ import {
 	buildMockCreditsStatus,
 	clampPercent,
 	formatCreditsDetail,
+	formatCreditsShort,
 	formatPercent,
 	getCreditsLabel,
 	getCreditsTone,
 	isCreditsExhausted,
 	isCreditsLow,
 } from '../credits';
+import { localNumber } from './fixtures/local-number';
 
-const mockLocale = { slug: 'en' as string | undefined };
-jest.mock( 'i18n-calypso', () => ( { getBrowserSafeLocale: () => mockLocale.slug } ) );
 jest.mock( '@wordpress/i18n', () => ( {
 	__: ( text: string ) => text,
 	sprintf: ( format: string, ...args: unknown[] ) => {
@@ -28,9 +28,11 @@ const free = ( percent: number ): CreditsStatus => ( {
 	pools: [ { id: 'free', label: 'Free credits', percent } ],
 } );
 
-const paid = ( percent: number ): CreditsStatus => ( {
+// A 15,000-credit plan; `remaining` adds any top-ups.
+const paid = ( percent: number, remaining = Math.round( 150 * percent ) ): CreditsStatus => ( {
 	plan: 'paid',
 	percent,
+	remaining,
 	pools: [ { id: 'plan', label: 'Monthly plan', percent } ],
 } );
 
@@ -94,11 +96,34 @@ describe( 'getCreditsTone', () => {
 	} );
 } );
 
+describe( 'formatCreditsShort', () => {
+	it.each( [
+		[ 0, localNumber( 0 ) ],
+		[ 800, localNumber( 800 ) ],
+		[ 999, localNumber( 999 ) ],
+		[ 1000, `${ localNumber( 1 ) }k` ],
+		[ 1050, `${ localNumber( 1 ) }k` ],
+		[ 8500, `${ localNumber( 8.5 ) }k` ],
+		[ 10850, `${ localNumber( 10.8 ) }k` ],
+		[ 19999, `${ localNumber( 19.9 ) }k` ],
+		[ 20000, `${ localNumber( 20 ) }k` ],
+		[ 67000, `${ localNumber( 67 ) }k` ],
+		[ 100000, `${ localNumber( 100 ) }k` ],
+	] )( 'reads %i credits as "%s", rounding down', ( credits, short ) => {
+		expect( formatCreditsShort( credits ) ).toBe( short );
+	} );
+} );
+
 describe( 'getCreditsLabel', () => {
-	it( 'names the pool by plan', () => {
+	it( 'gives free plans a percentage', () => {
 		expect( getCreditsLabel( free( 55 ) ) ).toBe( '55% of free credits left' );
-		expect( getCreditsLabel( paid( 72 ) ) ).toBe( '72% of site credits left' );
 		expect( getCreditsLabel( free( 0.4 ) ) ).toBe( '<1% of free credits left' );
+	} );
+
+	it( 'gives paid plans the combined balance as an amount, not the plan percentage', () => {
+		expect( getCreditsLabel( paid( 72 ) ) ).toBe( `${ localNumber( 10.8 ) }k credits left` );
+		expect( getCreditsLabel( paid( 0.4, 800 ) ) ).toBe( `${ localNumber( 800 ) } credits left` );
+		expect( getCreditsLabel( paid( 0, 67000 ) ) ).toBe( `${ localNumber( 67 ) }k credits left` );
 	} );
 } );
 
@@ -107,36 +132,25 @@ describe( 'formatCreditsDetail', () => {
 		expect( formatCreditsDetail( { id: 'free', label: 'Free', percent: 10 } ) ).toBeUndefined();
 	} );
 
-	it( 'formats remaining of total', () => {
+	it( 'formats credits left of total in short form', () => {
 		expect(
 			formatCreditsDetail( {
 				id: 'plan',
 				label: 'Monthly plan',
 				percent: 72,
-				remaining: 10800,
+				remaining: 10850,
 				total: 15000,
 			} )
-		).toBe( '10,800 of 15,000 credits' );
-	} );
-
-	it( 'formats the figures in the interface locale, not the browser one', () => {
-		const pool = {
-			id: 'plan' as const,
-			label: 'Monthly plan',
-			percent: 72,
-			remaining: 10800,
-			total: 15000,
-		};
-		mockLocale.slug = 'de';
-		expect( formatCreditsDetail( pool ) ).toBe( '10.800 of 15.000 credits' );
-		// A regional variant with different grouping from its base locale.
-		mockLocale.slug = 'es';
-		expect( formatCreditsDetail( pool ) ).toBe( '10.800 of 15.000 credits' );
-		mockLocale.slug = 'es-mx';
-		expect( formatCreditsDetail( pool ) ).toBe( '10,800 of 15,000 credits' );
-		mockLocale.slug = 'not a locale';
-		expect( formatCreditsDetail( pool ) ).toBe( '10,800 of 15,000 credits' );
-		mockLocale.slug = 'en';
+		).toBe( `${ localNumber( 10.8 ) }k of ${ localNumber( 15 ) }k credits left` );
+		expect(
+			formatCreditsDetail( {
+				id: 'plan',
+				label: 'Monthly plan',
+				percent: 0.04,
+				remaining: 1,
+				total: 2500,
+			} )
+		).toBe( `${ localNumber( 1 ) } of ${ localNumber( 2.5 ) }k credits left` );
 	} );
 } );
 
@@ -152,6 +166,14 @@ describe( 'buildMockCreditsStatus', () => {
 			percent: 15,
 			pools: [ { id: 'free', label: 'Free credits', percent: 15 } ],
 		} );
+	} );
+
+	it( 'gives paid plans the combined balance and top-ups without an expiry date', () => {
+		expect( buildMockCreditsStatus( 'paid', 100 ).remaining ).toBe( 16000 );
+		expect( buildMockCreditsStatus( 'paid', 5 ).remaining ).toBe( 800 );
+		expect( buildMockCreditsStatus( 'paid', 0 ).remaining ).toBe( 0 );
+		expect( pools( 100 ).plan.dateLabel ).toBe( 'Resets 17 Oct' );
+		expect( pools( 100 ).topups ).not.toHaveProperty( 'dateLabel' );
 	} );
 
 	it( 'drains the paid plan pool before top-ups, consistently with the aggregate', () => {

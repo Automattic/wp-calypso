@@ -1,5 +1,4 @@
 import { __, sprintf } from '@wordpress/i18n';
-import { getBrowserSafeLocale } from 'i18n-calypso';
 import type { ProgressRingTone } from '@automattic/agenttic-ui';
 
 export type CreditsPlan = 'free' | 'paid';
@@ -17,19 +16,27 @@ export interface CreditsPool {
 	total?: number;
 }
 
-export interface CreditsStatus {
-	plan: CreditsPlan;
+interface CreditsStatusBase {
 	/** Known paid tier supplied by the server; absent for older or unsupported metadata. */
 	planTier?: CreditsPlanTier;
-	/** Overall remaining share, 0–100; drives the ring and tooltip. */
+	/** Overall remaining share, 0–100; drives the ring and the free-plan tooltip. */
 	percent: number;
 	pools: CreditsPool[];
-	/** Exact balance when supplied by the server; display rounding never drives gating. */
-	remaining?: number;
 }
 
-/** Low-balance threshold for the ring tone and credits notice. */
+export type CreditsStatus =
+	| ( CreditsStatusBase & { plan: 'free'; remaining?: number } )
+	| ( CreditsStatusBase & {
+			plan: 'paid';
+			/** Exact balance across the plan and top-ups; display rounding never drives gating. */
+			remaining: number;
+	  } );
+
+/** Low-balance percentage for the ring tone and the free-plan notice. */
 export const CREDITS_LOW_THRESHOLD = 20;
+
+/** Paid balance, in credits, below which the low-balance notice shows. */
+export const CREDITS_LOW_BALANCE = 20000;
 
 export function clampPercent( percent: number ): number {
 	if ( ! Number.isFinite( percent ) ) {
@@ -82,37 +89,39 @@ export function getCreditsTone(
 	return status.plan === 'paid' ? 'muted' : 'primary';
 }
 
+/**
+ * Credits in short form: in full under 1,000, then in thousands with one
+ * decimal and a "k", rounded down so it never shows more than the site has.
+ * The number follows the browser's language.
+ */
+export function formatCreditsShort( credits: number ): string {
+	if ( credits < 1000 ) {
+		return credits.toLocaleString();
+	}
+
+	return sprintf(
+		/* translators: %s: thousands of credits, e.g. "8.5" or "67"; "k" abbreviates thousands */
+		__( '%sk', __i18n_text_domain__ ),
+		( Math.floor( credits / 100 ) / 10 ).toLocaleString( undefined, { maximumFractionDigits: 1 } )
+	);
+}
+
 /** Tooltip and screen-reader sentence for the ring. */
 export function getCreditsLabel( status: CreditsStatus ): string {
-	const percent = formatPercent( status.percent );
-
 	if ( status.plan === 'paid' ) {
-		// The aggregate across the plan and top-up pools, hence "site credits"
-		// (the popover's heading), not the monthly allowance alone.
+		// The combined balance across the plan and top-ups, not the monthly allowance alone.
 		return sprintf(
-			/* translators: %s: percentage of the site's credits left, e.g. "72" or "<1" */
-			__( '%s%% of site credits left', __i18n_text_domain__ ),
-			percent
+			/* translators: %s: site credits left in short form, e.g. "800" or "10.8k" */
+			__( '%s credits left', __i18n_text_domain__ ),
+			formatCreditsShort( status.remaining )
 		);
 	}
 
 	return sprintf(
 		/* translators: %s: percentage of free credits left, e.g. "15" or "<1" */
 		__( '%s%% of free credits left', __i18n_text_domain__ ),
-		percent
+		formatPercent( status.percent )
 	);
-}
-
-// The interface locale, not the browser's, so the figures match the
-// translated sentence around them. The browser-safe accessor keeps the
-// regional variant (`de-ch`) in a form `Intl` accepts.
-function formatCredits( value: number ): string {
-	const locale = getBrowserSafeLocale() ?? 'en';
-	try {
-		return value.toLocaleString( locale );
-	} catch {
-		return value.toLocaleString( 'en' );
-	}
 }
 
 export function formatCreditsDetail( pool: CreditsPool ): string | undefined {
@@ -121,10 +130,10 @@ export function formatCreditsDetail( pool: CreditsPool ): string | undefined {
 	}
 
 	return sprintf(
-		/* translators: 1: credits remaining, 2: credits in the pool */
-		__( '%1$s of %2$s credits', __i18n_text_domain__ ),
-		formatCredits( pool.remaining ),
-		formatCredits( pool.total )
+		/* translators: 1: credits left in the pool, 2: credits in the pool, both in short form, e.g. "10.8k" and "15k" */
+		__( '%1$s of %2$s credits left', __i18n_text_domain__ ),
+		formatCreditsShort( pool.remaining ),
+		formatCreditsShort( pool.total )
 	);
 }
 
@@ -143,6 +152,7 @@ export function buildMockCreditsStatus( plan: CreditsPlan, percent: number ): Cr
 		return {
 			plan,
 			percent,
+			remaining,
 			pools: [
 				{
 					id: 'plan',
@@ -156,7 +166,6 @@ export function buildMockCreditsStatus( plan: CreditsPlan, percent: number ): Cr
 					id: 'topups',
 					label: __( 'Top-ups', __i18n_text_domain__ ),
 					percent: ( 100 * topupsRemaining ) / MOCK_TOPUPS_TOTAL,
-					dateLabel: __( 'Expires 15 Sep 2027', __i18n_text_domain__ ),
 					remaining: topupsRemaining,
 					total: MOCK_TOPUPS_TOTAL,
 				},

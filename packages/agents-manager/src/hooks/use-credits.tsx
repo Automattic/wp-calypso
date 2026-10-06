@@ -6,9 +6,10 @@ import { API_BASE_URL } from '../constants';
 import { NO_SITE } from '../utils/agent-session';
 import {
 	type CreditsPlan,
-	CREDITS_LOW_THRESHOLD,
+	CREDITS_LOW_BALANCE,
 	buildMockCreditsStatus,
 	clampPercent,
+	formatCreditsShort,
 	formatPercent,
 	isCreditsExhausted,
 	isCreditsLow,
@@ -368,13 +369,13 @@ export function useCredits( {
 					dismissible: false,
 				};
 			}
-			if ( status.percent <= CREDITS_LOW_THRESHOLD && ! isLowNoticeDismissed ) {
+			if ( status.remaining < CREDITS_LOW_BALANCE && ! isLowNoticeDismissed ) {
 				return {
 					icon: false,
 					message: sprintf(
-						/* translators: %s: percentage of site credits left, e.g. "20" or "<1" */
-						__( '%s%% of site credits left.', __i18n_text_domain__ ),
-						formatPercent( status.percent )
+						/* translators: %s: site credits left in short form, e.g. "800" or "8.5k" */
+						__( '%s credits left.', __i18n_text_domain__ ),
+						formatCreditsShort( status.remaining )
 					),
 					action,
 					dismissible: true,
