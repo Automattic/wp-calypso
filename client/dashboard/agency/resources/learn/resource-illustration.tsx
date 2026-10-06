@@ -1,6 +1,5 @@
 import { useId } from 'react';
-import type { ResourceItem } from './types';
-import type { AgencyResourceContentType } from '@automattic/api-core';
+import type { AgencyEnablementResource, AgencyResourceContentType } from '@automattic/api-core';
 import type { ComponentType } from 'react';
 
 import './resource-illustration.scss';
@@ -266,13 +265,17 @@ const CONTENT_TYPE_ILLUSTRATIONS: Record< AgencyResourceContentType, Illustratio
  * prototype. It inherits `currentColor`, and plays while its card is hovered or
  * focused.
  */
-export default function ResourceIllustration( { resource }: { resource: ResourceItem } ) {
+export default function ResourceIllustration( {
+	resource,
+}: {
+	resource: AgencyEnablementResource;
+} ) {
 	const Illustration =
 		ILLUSTRATIONS[
 			resource.format === 'video'
 				? 'video'
 				: // The API isn't validated against the union, so fall back for new types.
-					( CONTENT_TYPE_ILLUSTRATIONS[ resource.contentType ] ?? 'one-pager' )
+					( CONTENT_TYPE_ILLUSTRATIONS[ resource.content_type ] ?? 'one-pager' )
 		];
 
 	return (

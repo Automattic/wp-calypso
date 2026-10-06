@@ -21,9 +21,9 @@ import ResourceCard from './resource-card';
 import ResourceLink from './resource-link';
 import ResourceProductLogo from './resource-product-logo';
 import { LAYOUT_FIELDS } from './views';
-import type { OpenResource, ResourceItem } from './types';
+import type { OpenResource } from './types';
 import type { LayoutType } from './views';
-import type { AgencyResourceStage } from '@automattic/api-core';
+import type { AgencyEnablementResource, AgencyResourceStage } from '@automattic/api-core';
 import type { View, Field } from '@wordpress/dataviews';
 
 import './style.scss';
@@ -31,7 +31,7 @@ import './style.scss';
 type StageFilter = AgencyResourceStage | 'all';
 
 interface BrowseAllResourcesProps {
-	resources: ResourceItem[];
+	resources: AgencyEnablementResource[];
 	view: View;
 	onChangeView: ( view: View ) => void;
 	onOpenResource: OpenResource;
@@ -64,10 +64,10 @@ export default function BrowseAllResources( {
 		} ) ),
 	];
 
-	const fields: Field< ResourceItem >[] = useMemo( () => {
+	const fields: Field< AgencyEnablementResource >[] = useMemo( () => {
 		// Only offer values that occur in the data, per the v2 contract.
 		const toElements = (
-			getValue: ( resource: ResourceItem ) => string,
+			getValue: ( resource: AgencyEnablementResource ) => string,
 			getLabel: ( value: string ) => string
 		) =>
 			Array.from( new Set( resources.map( getValue ) ) ).map( ( value ) => ( {
@@ -78,9 +78,9 @@ export default function BrowseAllResources( {
 		const filterField = (
 			id: string,
 			label: string,
-			getValue: ( resource: ResourceItem ) => string,
+			getValue: ( resource: AgencyEnablementResource ) => string,
 			getLabel: ( value: string ) => string
-		): Field< ResourceItem > => ( {
+		): Field< AgencyEnablementResource > => ( {
 			id,
 			label,
 			type: 'text',
@@ -120,7 +120,7 @@ export default function BrowseAllResources( {
 				id: 'featured',
 				label: __( 'Top resources' ),
 				type: 'text',
-				getValue: ( { item } ) => ( item.isFeatured ? 'featured' : '' ),
+				getValue: ( { item } ) => ( item.is_featured ? 'featured' : '' ),
 				elements: [ { value: 'featured', label: __( 'Top resource' ) } ],
 				filterBy: { operators: [ 'is' ] },
 				enableSorting: false,
@@ -136,9 +136,9 @@ export default function BrowseAllResources( {
 			},
 			filterField( 'audience', __( 'Audience' ), ( item ) => item.audience, getAudienceLabel ),
 			filterField(
-				'contentType',
+				'content_type',
 				__( 'Content type' ),
-				( item ) => item.contentType,
+				( item ) => item.content_type,
 				getContentTypeLabel
 			),
 			filterField( 'format', __( 'Format' ), ( item ) => item.format, getFormatLabel ),
@@ -166,7 +166,7 @@ export default function BrowseAllResources( {
 	return (
 		<>
 			<div className="dashboard-resources-learn__filters">
-				<DataViews< ResourceItem >
+				<DataViews< AgencyEnablementResource >
 					data={ filteredData }
 					fields={ fields }
 					view={ view }
