@@ -217,6 +217,8 @@ export function useCredits( {
 			if ( ! isCurrent() ) {
 				return;
 			}
+			// A failed read keeps the visit's last answer on purpose: checkout enforces who may
+			// buy, and clearing it on a transient error would hide Upgrade from an admin.
 			if ( data ) {
 				setUpgradeAccess( {
 					scope,

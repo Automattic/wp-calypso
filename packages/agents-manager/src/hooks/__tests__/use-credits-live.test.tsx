@@ -301,14 +301,93 @@ describe( 'purchase access', () => {
 		expect( result.current.notice?.message ).toBe( 'You’ve used all your site credits.' );
 	} );
 
-	it( 'drops the answer when the visit changes', async () => {
+	it.each( [
+		[
+			'user',
+			{
+				userId: 2,
+				agentConfig: { ...agentConfig, authenticationScope: { siteId: 123, userId: 2 } },
+			},
+		],
+		[
+			'auth provider',
+			{
+				agentConfig: {
+					...agentConfig,
+					authProvider: jest.fn().mockResolvedValue( { Authorization: 'Bearer other' } ),
+				},
+			},
+		],
+	] )( 'drops the answer when the visit changes its %s', async ( _case, next ) => {
 		fetchMock.mockResolvedValueOnce( response( creditSnapshot( { plan_tier: 'personal' } ) ) );
 		const view = renderCredits();
 		await flush();
 		expect( props( view.result.current ).upgradeUrl ).toBeDefined();
-		view.rerender( { ...defaultOptions, userId: 2 } );
-		await receive( creditSnapshot() );
-		expect( props( view.result.current )?.upgradeUrl ).toBeUndefined();
+		// The new visit's read hangs, so a task delivers its balance before anyone says who may buy.
+		view.rerender( { ...defaultOptions, ...next } );
+		await flush();
+		await receive( creditSnapshot( { plan_tier: 'personal' } ) );
+		expect( props( view.result.current ).status.remaining ).toBe( 2450 );
+		expect( props( view.result.current ).upgradeUrl ).toBeUndefined();
+		expect( purchaseHint( view.result.current ) ).toBeUndefined();
+	} );
+
+	it( 'reads who may buy again on returning to a site', async () => {
+		fetchMock.mockResolvedValueOnce( response( creditSnapshot( { plan_tier: 'personal' } ) ) );
+		const view = renderCredits();
+		await flush();
+		expect( props( view.result.current ).upgradeUrl ).toBe(
+			'https://wordpress.com/plans/example.wordpress.com'
+		);
+		fetchMock.mockResolvedValueOnce(
+			response( creditSnapshot( { blog_id: 456, plan_tier: 'personal' } ), false )
+		);
+		view.rerender( {
+			...defaultOptions,
+			siteKey: '456',
+			site: { ID: 456, domain: 'second.wordpress.com' },
+			agentConfig: { ...agentConfig, authenticationScope: { siteId: 456, userId: 1 } },
+		} );
+		await flush();
+		expect( props( view.result.current ).upgradeUrl ).toBeUndefined();
+		expect( purchaseHint( view.result.current ) ).toBe( 'Ask a site admin to upgrade.' );
+		// Back on A, its new read hangs: neither the old answer for A nor B's applies.
+		view.rerender( defaultOptions );
+		await flush();
+		expect( view.result.current.trailingActions ).toBeUndefined();
+		await receive( creditSnapshot( { plan_tier: 'personal' } ) );
+		expect( props( view.result.current ).status.remaining ).toBe( 2450 );
+		expect( props( view.result.current ).upgradeUrl ).toBeUndefined();
+		expect( purchaseHint( view.result.current ) ).toBeUndefined();
+		fetchMock.mockResolvedValueOnce( response( creditSnapshot( { plan_tier: 'personal' } ) ) );
+		act( () => window.dispatchEvent( new Event( 'focus' ) ) );
+		await flush();
+		expect( props( view.result.current ).upgradeUrl ).toBe(
+			'https://wordpress.com/plans/example.wordpress.com'
+		);
+		expect( purchaseHint( view.result.current ) ).toBeUndefined();
+	} );
+
+	it.each( [
+		[ 'a failed read', () => Promise.resolve( { ok: false, status: 503 } ) ],
+		[ 'a network error', () => Promise.reject( new Error( 'Offline' ) ) ],
+	] )( 'keeps the answer for the visit through %s', async ( _case, read ) => {
+		fetchMock.mockResolvedValueOnce( response( creditSnapshot( { plan_tier: 'personal' } ) ) );
+		const { result } = renderCredits();
+		await flush();
+		expect( props( result.current ).upgradeUrl ).toBeDefined();
+		fetchMock.mockImplementationOnce( read );
+		act( () => window.dispatchEvent( new Event( 'focus' ) ) );
+		await flush();
+		expect( result.current.trailingActions ).toBeUndefined();
+		await receive( { ...exhausted(), plan_tier: 'personal' } );
+		expect( props( result.current ).upgradeUrl ).toBe(
+			'https://wordpress.com/plans/example.wordpress.com'
+		);
+		expect( purchaseHint( result.current ) ).toBeUndefined();
+		expect( result.current.notice?.action?.href ).toBe(
+			'https://wordpress.com/plans/example.wordpress.com'
+		);
 	} );
 } );
 
