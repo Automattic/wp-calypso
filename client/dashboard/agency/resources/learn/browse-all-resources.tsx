@@ -8,7 +8,7 @@ import {
 } from '@wordpress/components';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
-import { useState, useMemo } from 'react';
+import { useMemo } from 'react';
 import Grid from '../../../components/grid';
 import {
 	getAudienceLabel,
@@ -20,7 +20,9 @@ import {
 import ResourceCard from './resource-card';
 import ResourceLink from './resource-link';
 import ResourceProductLogo from './resource-product-logo';
+import { LAYOUT_FIELDS } from './views';
 import type { ResourceItem, RecordTracksEvent } from './types';
+import type { LayoutType } from './views';
 import type { AgencyResourceStage } from '@automattic/api-core';
 import type { View, Field } from '@wordpress/dataviews';
 
@@ -28,27 +30,12 @@ import './style.scss';
 
 const TRACKS_EVENT_NAME = 'calypso_a4a_resource_center_browse_cta_click';
 
-// The grid renders its own cards, so DataViews only lays out the list.
-const LAYOUT_FIELDS = {
-	grid: [],
-	table: [ 'product', 'contentType', 'stage' ],
-};
-
-type LayoutType = keyof typeof LAYOUT_FIELDS;
-
-const initialView: View = {
-	type: 'grid',
-	titleField: 'name',
-	descriptionField: 'description',
-	fields: LAYOUT_FIELDS.grid,
-	search: '',
-	filters: [],
-};
-
 type StageFilter = AgencyResourceStage | 'all';
 
 interface BrowseAllResourcesProps {
 	resources: ResourceItem[];
+	view: View;
+	onChangeView: ( view: View ) => void;
 	onOpenVideoModal: ( resource: ResourceItem ) => void;
 	recordTracksEvent: RecordTracksEvent;
 	onResourceClick?: ( resource: ResourceItem ) => void;
@@ -56,18 +43,24 @@ interface BrowseAllResourcesProps {
 
 export default function BrowseAllResources( {
 	resources,
+	view,
+	onChangeView,
 	onOpenVideoModal,
 	recordTracksEvent,
 	onResourceClick,
 }: BrowseAllResourcesProps ) {
-	const [ view, setView ] = useState< View >( initialView );
-	const [ stage, setStage ] = useState< StageFilter >( 'all' );
+	// The stage toggle drives an ordinary filter, so it's saved with the rest of the view.
+	const stage = ( view.filters?.find( ( filter ) => filter.field === 'stage' )?.value ??
+		'all' ) as StageFilter;
 
-	const stageResources = useMemo(
-		() =>
-			stage === 'all' ? resources : resources.filter( ( resource ) => resource.stage === stage ),
-		[ resources, stage ]
-	);
+	const setStage = ( value: StageFilter ) =>
+		onChangeView( {
+			...view,
+			filters: [
+				...( view.filters ?? [] ).filter( ( filter ) => filter.field !== 'stage' ),
+				...( value === 'all' ? [] : [ { field: 'stage', operator: 'is' as const, value } ] ),
+			],
+		} );
 
 	const stageOptions: { value: StageFilter; label: string }[] = [
 		{ value: 'all', label: __( 'All' ) },
@@ -160,7 +153,7 @@ export default function BrowseAllResources( {
 			filterField( 'format', __( 'Format' ), ( item ) => item.format, getFormatLabel ),
 			{
 				...filterField( 'stage', __( 'Stage' ), ( item ) => item.stage, getStageLabel ),
-				// Filtered by the stage toggle instead.
+				// Set by the stage toggle rather than the filters menu.
 				filterBy: false,
 			},
 		];
@@ -170,11 +163,11 @@ export default function BrowseAllResources( {
 	const { data: filteredData, paginationInfo } = useMemo(
 		() =>
 			filterSortAndPaginate(
-				stageResources,
-				{ ...view, page: 1, perPage: Math.max( stageResources.length, 1 ) },
+				resources,
+				{ ...view, page: 1, perPage: Math.max( resources.length, 1 ) },
 				fields
 			),
-		[ stageResources, view, fields ]
+		[ resources, view, fields ]
 	);
 
 	const isList = view.type === 'table';
@@ -186,7 +179,7 @@ export default function BrowseAllResources( {
 					data={ filteredData }
 					fields={ fields }
 					view={ view }
-					onChangeView={ setView }
+					onChangeView={ onChangeView }
 					paginationInfo={ paginationInfo }
 					defaultLayouts={ { grid: {}, table: {} } }
 					getItemId={ ( item ) => String( item.id ) }
@@ -204,7 +197,7 @@ export default function BrowseAllResources( {
 								__nextHasNoMarginBottom
 								onChange={ ( value ) => {
 									const type = ( value ?? 'grid' ) as LayoutType;
-									setView( { ...view, type, fields: LAYOUT_FIELDS[ type ] } as View );
+									onChangeView( { ...view, type, fields: LAYOUT_FIELDS[ type ] } as View );
 								} }
 							>
 								<ToggleGroupControlOption value="grid" label={ __( 'Grid' ) } />
