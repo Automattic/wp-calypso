@@ -11,7 +11,7 @@ const TARGET_RANGE_TYPES = [ 'post', 'comment', 'site' ];
 type TypeTraits = {
 	/** Someone's words are the news. */
 	isConversation?: boolean;
-	/** The post itself is the news. */
+	/** The post itself is the news, so its own content is the note, without a card. */
 	isPostNews?: boolean;
 	/** The note is about a comment the reader wrote. */
 	isAboutComment?: boolean;
@@ -49,10 +49,10 @@ export type NoteView = {
 	/** What happened, without the thing it happened to when the two can be told apart. */
 	sentence: Subject;
 	target?: { title: string; url?: string };
+	/** A new post's title, which heads its content rather than ending the sentence. */
+	postTitle?: { title: string; url: string };
 	/** Where it happened, or who is asking while a comment still awaits approval. */
 	origin?: string;
-	/** The site whose subscription sent the note. */
-	subscribedSiteId?: number;
 	follow?: { siteId: number; isFollowing: boolean };
 	/** Oldest first. `parent` is the comment being answered or liked. */
 	thread?: {
@@ -69,9 +69,6 @@ export type NoteView = {
 		title?: string;
 		excerpt?: string;
 		url: string;
-		/** The post is the news itself, not the setting for something else. */
-		isFeatured: boolean;
-		image?: string;
 		siteName?: string;
 		siteIcon?: string;
 		author?: string;
@@ -154,7 +151,7 @@ export function getNoteView( note: Note, isPendingApproval = false ): NoteView {
 
 	const hasWords = !! traits.isConversation || hasComment;
 	const isConversation = hasWords || !! parent;
-	const hasPostCard = ! isConversation && !! siteId && !! postId;
+	const hasPostCard = ! isConversation && ! traits.isPostNews && !! siteId && !! postId;
 
 	const split = splitSubject( sentence );
 	const target = sentence?.ranges?.find(
@@ -189,8 +186,6 @@ export function getNoteView( note: Note, isPendingApproval = false ): NoteView {
 			title,
 			excerpt,
 			url: details?.url ?? ( hasPostCard ? undefined : postRange?.url ) ?? note.url,
-			isFeatured: !! traits.isPostNews,
-			image: details?.featured_image,
 			siteName: toPlainText( details?.site_name ),
 			siteIcon: details?.site_icon,
 			author: details?.author_name,
@@ -203,7 +198,7 @@ export function getNoteView( note: Note, isPendingApproval = false ): NoteView {
 	// with a person, the thing is its second line; otherwise it is the header itself, such
 	// as a site and its tagline.
 	const getCard = (): NoteView[ 'card' ] => {
-		if ( isConversation || hasPostCard || ! header?.text ) {
+		if ( isConversation || hasPostCard || traits.isPostNews || ! header?.text ) {
 			return undefined;
 		}
 		if ( headerRange?.type !== 'user' || headerRange.id === headerRange.site_id ) {
@@ -233,20 +228,12 @@ export function getNoteView( note: Note, isPendingApproval = false ): NoteView {
 		if ( isPendingApproval ) {
 			return getDisplayUrl( actor?.meta?.links?.home, true );
 		}
-		// A card that isn't the news names its own site.
-		if ( post && ! post.isFeatured ) {
+		// A card names its own site, and so may the sentence.
+		const isSiteNamed = sentence.ranges?.some( ( { type } ) => type === 'site' );
+		if ( post || hasCard || isSiteNamed ) {
 			return undefined;
 		}
-		const isSiteNamed =
-			sentence.ranges?.some( ( { type } ) => type === 'site' ) ||
-			( !! post?.siteName && sentence.text.includes( post.siteName ) );
-		if ( isSiteNamed ) {
-			return undefined;
-		}
-		if ( post?.siteName ) {
-			return post.siteName;
-		}
-		return hasCard ? undefined : getDisplayUrl( target?.url );
+		return getDisplayUrl( target?.url );
 	};
 
 	const groupAvatars = users
@@ -255,6 +242,9 @@ export function getNoteView( note: Note, isPendingApproval = false ): NoteView {
 		.slice( 0, MAX_AVATARS );
 	const action = split?.action ?? sentence;
 	const followSiteId = actor?.meta?.ids?.site;
+	const newPostTitle = traits.isPostNews
+		? toPlainText( note.post?.title ) || split?.title
+		: undefined;
 
 	return {
 		hasActor: users.length > 0 || !! header,
@@ -265,9 +255,11 @@ export function getNoteView( note: Note, isPendingApproval = false ): NoteView {
 			ranges: action?.ranges?.filter( ( { type } ) => type !== 'noticon' ),
 		},
 		target:
-			split && ! hasCard && ! isConversation ? { title: split.title, url: target?.url } : undefined,
+			split && ! hasCard && ! isConversation && ! traits.isPostNews
+				? { title: split.title, url: target?.url }
+				: undefined,
+		postTitle: newPostTitle ? { title: newPostTitle, url: note.post?.url ?? note.url } : undefined,
 		origin: getOrigin(),
-		subscribedSiteId: traits.isPostNews ? siteId : undefined,
 		follow:
 			isActorShown && ! hasComment && followSiteId && actor.actions && 'follow' in actor.actions
 				? { siteId: followSiteId, isFollowing: !! actor.actions.follow }

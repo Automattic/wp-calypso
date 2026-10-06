@@ -5,31 +5,20 @@ import {
 	Icon,
 } from '@wordpress/components';
 import { wordpress } from '@wordpress/icons';
-import clsx from 'clsx';
 import { useAppContext } from '../context';
 import NoteIcon from '../note-icon';
 import { formatDate } from './format-note-time';
 import type { NoteView } from './note-view';
 import type { ReactNode } from 'react';
 
-const CardLink = ( {
-	url,
-	className,
-	children,
-}: {
-	url?: string;
-	className?: string;
-	children: ReactNode;
-} ) => {
-	const classes = clsx( 'wpnc-simplified__card', className );
-	return url ? (
-		<a className={ classes } href={ url } target="_blank" rel="noreferrer">
+const CardLink = ( { url, children }: { url?: string; children: ReactNode } ) =>
+	url ? (
+		<a className="wpnc-simplified__card" href={ url } target="_blank" rel="noreferrer">
 			{ children }
 		</a>
 	) : (
-		<div className={ classes }>{ children }</div>
+		<div className="wpnc-simplified__card">{ children }</div>
 	);
-};
 
 export const ContextCard = ( {
 	title,
@@ -56,8 +45,6 @@ export const PostCard = ( {
 	title,
 	excerpt,
 	url,
-	isFeatured,
-	image,
 	siteName,
 	siteIcon,
 	author,
@@ -66,20 +53,13 @@ export const PostCard = ( {
 	const { locale } = useAppContext();
 	const byline = [ author, date && formatDate( date, locale ) ].filter( Boolean ).join( ' · ' );
 
-	// A post that is the news shows its image, under a row that already says who
-	// published it and when. Anywhere else it is a reference, introduced by its site.
 	return (
-		<CardLink url={ url } className={ clsx( { 'is-featured': isFeatured } ) }>
-			{ isFeatured && image && (
-				<img className="wpnc-simplified__card-image" src={ image } alt="" />
-			) }
+		<CardLink url={ url }>
 			<VStack className="wpnc-simplified__card-text" spacing={ 2 }>
-				{ ! isFeatured && (
-					<span className="wpnc-simplified__card-arrow" aria-hidden="true">
-						&#8599;
-					</span>
-				) }
-				{ ! isFeatured && ( siteName || byline ) && (
+				<span className="wpnc-simplified__card-arrow" aria-hidden="true">
+					&#8599;
+				</span>
+				{ ( siteName || byline ) && (
 					<HStack justify="flex-start" spacing={ 2 }>
 						{ siteIcon ? (
 							<img
@@ -117,7 +97,7 @@ export const PostCard = ( {
 					</Text>
 				) }
 				{ excerpt && (
-					<Text variant="muted" truncate numberOfLines={ isFeatured ? 3 : 2 }>
+					<Text variant="muted" truncate numberOfLines={ 2 }>
 						{ excerpt }
 					</Text>
 				) }

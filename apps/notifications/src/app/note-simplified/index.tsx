@@ -11,7 +11,6 @@ import { NoteBody } from '../templates/body';
 import ActorRow, { NoteMeta, NoteTime } from './actor-row';
 import { getNoteView } from './note-view';
 import { ContextCard, PostCard } from './preview';
-import SubscriptionNotice from './subscription-notice';
 import Thread from './thread';
 import type { Note } from '../types';
 import './style.scss';
@@ -53,12 +52,7 @@ export default function SimplifiedNote( { note }: { note: Note } ) {
 					follow={ view.follow }
 				/>
 			) }
-			{ view.post && (
-				<VStack spacing={ 3 }>
-					<PostCard { ...view.post } />
-					{ view.subscribedSiteId && <SubscriptionNotice siteId={ view.subscribedSiteId } /> }
-				</VStack>
-			) }
+			{ view.post && <PostCard { ...view.post } /> }
 			{ thread && (
 				<Thread
 					thread={ thread }
@@ -82,6 +76,13 @@ export default function SimplifiedNote( { note }: { note: Note } ) {
 				<Heading className="wpnc-simplified__heading" level={ 3 } size={ 13 } weight={ 600 }>
 					{ view.peopleHeading }
 				</Heading>
+			) }
+			{ view.postTitle && (
+				<Text className="wpnc-simplified__quiet-links" size={ 15 } weight={ 600 }>
+					<a href={ view.postTitle.url } target="_blank" rel="noreferrer">
+						{ view.postTitle.title }
+					</a>
+				</Text>
 			) }
 			{ ! hasSpeaker && body }
 		</VStack>
