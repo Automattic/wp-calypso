@@ -5,7 +5,7 @@ import { render, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import MockDate from 'mockdate';
 import { useState } from 'react';
-import { DateRangePicker } from '../date-range-picker';
+import { DateRangePicker } from '..';
 import type { ComponentProps } from 'react';
 
 function renderDateRangePicker( {
@@ -38,7 +38,7 @@ function renderDateRangePicker( {
 
 describe( 'DateRangePicker (new)', () => {
 	// Ensure we 'freeze' the time and date so we don't get test flakiness depending on when they are run,
-	// and when testing presets as well as disableFuture.
+	// and when testing presets as well as disabled future dates.
 	beforeEach( () => {
 		MockDate.set( '2025-08-25T12:00:00Z' );
 	} );
@@ -102,19 +102,14 @@ describe( 'DateRangePicker (new)', () => {
 	} );
 
 	// The test environment runs in UTC, so a New York site is a day behind at site midnight.
-	test( 'today and disabledBefore follow site days when the site is behind the browser', async () => {
+	test( 'today follows the site day when the site is behind the browser', async () => {
 		const { getByRole, findByRole } = renderDateRangePicker( {
 			timezoneString: 'America/New_York',
-			disabledBefore: new Date( 2025, 7, 15 ),
 		} );
 		await userEvent.click( getByRole( 'button', { name: /Date range:/i } ) );
 
 		const grid = within( await findByRole( 'grid', { name: /August 2025/i } ) );
-		const day = ( d: number ) =>
-			grid.getByRole( 'button', { name: new RegExp( `August ${ d }, 2025` ) } );
-		expect( day( 14 ) ).toBeDisabled();
-		expect( day( 15 ) ).toBeEnabled();
-		expect( day( 25 ) ).toBeEnabled();
+		expect( grid.getByRole( 'button', { name: /August 25, 2025/i } ) ).toBeEnabled();
 	} );
 
 	test( 'shows one month below the two-month breakpoint', async () => {
@@ -214,8 +209,8 @@ describe( 'DateRangePicker (new)', () => {
 		expect( applyDefault ).toBeEnabled();
 	} );
 
-	test( 'disableFuture prevents selecting a future date', async () => {
-		const { getByRole, findByRole } = renderDateRangePicker( { disableFuture: true } );
+	test( 'future dates cannot be selected', async () => {
+		const { getByRole, findByRole } = renderDateRangePicker();
 
 		// Open
 		await userEvent.click( getByRole( 'button', { name: /Date range:/i } ) );
@@ -244,35 +239,6 @@ describe( 'DateRangePicker (new)', () => {
 		expect( pastBtn ).toBeEnabled();
 	} );
 
-	test( 'disabledBefore disables dates before the boundary', async () => {
-		const { getByRole, findByRole } = renderDateRangePicker( {
-			disabledBefore: new Date( 2025, 7, 15 ),
-		} );
-
-		await userEvent.click( getByRole( 'button', { name: /Date range:/i } ) );
-
-		const augGrid = await findByRole( 'grid', { name: /August 2025/i } );
-
-		// Day before the boundary is disabled
-		const earlyBtn = within( augGrid ).getByRole( 'button', { name: /August 10, 2025/i } );
-		expect( earlyBtn ).toBeDisabled();
-
-		// Day on/after the boundary is enabled
-		const okBtn = within( augGrid ).getByRole( 'button', { name: /August 20, 2025/i } );
-		expect( okBtn ).toBeEnabled();
-	} );
-
-	test( 'disabledBefore sets the start input min so native pickers cannot offer earlier days', async () => {
-		const { getByRole, getByLabelText } = renderDateRangePicker( {
-			disabledBefore: new Date( 2025, 7, 15 ),
-		} );
-
-		await userEvent.click( getByRole( 'button', { name: /Date range:/i } ) );
-
-		const startInput = getByLabelText( 'Start date' ) as HTMLInputElement;
-		expect( startInput.min ).toBe( '2025-08-15' );
-	} );
-
 	test( 'preset selection updates label (Yesterday)', async () => {
 		const { getByRole, findByRole } = renderDateRangePicker();
 		// Open
@@ -287,18 +253,6 @@ describe( 'DateRangePicker (new)', () => {
 			name: /Date range:.*Aug 24, 2025.*Aug 24, 2025/i,
 		} );
 		expect( updated ).toBeVisible();
-	} );
-
-	test( 'hiddenPresets removes presets from the listbox', async () => {
-		const { getByRole, findByRole } = renderDateRangePicker( {
-			hiddenPresets: [ 'yesterday', 'last-3-years' ],
-		} );
-		await userEvent.click( getByRole( 'button', { name: /Date range:/i } ) );
-
-		const listbox = await findByRole( 'listbox', { name: /Date range presets/i } );
-		expect( within( listbox ).queryByRole( 'option', { name: /yesterday/i } ) ).toBeNull();
-		expect( within( listbox ).queryByRole( 'option', { name: /last 3 years/i } ) ).toBeNull();
-		expect( within( listbox ).getByRole( 'option', { name: /last 7 days/i } ) ).toBeInTheDocument();
 	} );
 
 	test( 'last-90-days preset applies a 90-day window', async () => {

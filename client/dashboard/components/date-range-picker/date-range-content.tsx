@@ -9,9 +9,9 @@ import { __, sprintf } from '@wordpress/i18n';
 import { RangeCalendar } from '@wordpress/ui';
 import { startOfMonth, subMonths } from 'date-fns';
 import { useState } from 'react';
-import { ButtonStack } from './button-stack';
+import { formatYmd, parseYmdLocal } from '../../utils/datetime';
+import { ButtonStack } from '../button-stack';
 import { DateInputs } from './date-inputs';
-import { formatYmd, formatSiteYmd, parseYmdLocal } from './datetime';
 import { PresetsListbox } from './presets-listbox';
 import { computePresetRange, getActivePresetId, PresetId, presetDefs } from './utils';
 
@@ -36,16 +36,7 @@ type DateRangeContentProps = {
 	todayStr: string;
 	mobileLabelId: string;
 	desktopLabelId: string;
-	disableFuture?: boolean;
-	disabledBefore?: Date;
 	defaultFallbackPreset?: PresetId;
-	hiddenPresets?: PresetId[];
-	inputsProps?: {
-		onStartFocus?: ( e: React.FocusEvent< HTMLInputElement > ) => void;
-		onEndFocus?: ( e: React.FocusEvent< HTMLInputElement > ) => void;
-		onStartBlur?: ( e: React.FocusEvent< HTMLInputElement > ) => void;
-		onEndBlur?: ( e: React.FocusEvent< HTMLInputElement > ) => void;
-	};
 };
 
 export function DateRangeContent( props: DateRangeContentProps ) {
@@ -70,11 +61,7 @@ export function DateRangeContent( props: DateRangeContentProps ) {
 		todayStr,
 		mobileLabelId,
 		desktopLabelId,
-		disableFuture = true,
-		disabledBefore,
 		defaultFallbackPreset = 'last-7-days',
-		hiddenPresets,
-		inputsProps,
 	} = props;
 
 	// Avoid passing invalid or empty time zones to Intl consumers
@@ -182,28 +169,13 @@ export function DateRangeContent( props: DateRangeContentProps ) {
 				}
 			: { from: fromDraft ?? undefined, to: toDraft ?? undefined };
 
-	// `today` and `disabledBefore` are site days held as browser-local midnights, but the calendar
-	// matches days in `timeZoneForCalendar`, so rebuild them as that day's midnight in the site zone.
-	const toCalendarDay = ( d: Date ) =>
-		timeZoneForCalendar
-			? new TZDate( d.getFullYear(), d.getMonth(), d.getDate(), timeZoneForCalendar )
-			: d;
-
-	const disabledMatcher = ( () => {
-		const matchers: Array< { after: Date } | { before: Date } > = [];
-		if ( disableFuture ) {
-			matchers.push( { after: toCalendarDay( today ) } );
-		}
-		if ( disabledBefore ) {
-			matchers.push( { before: toCalendarDay( disabledBefore ) } );
-		}
-		if ( matchers.length === 0 ) {
-			return undefined;
-		}
-		return matchers.length === 1 ? matchers[ 0 ] : matchers;
-	} )();
-
-	const minInputStr = disabledBefore ? formatSiteYmd( disabledBefore ) : undefined;
+	// `today` is a site day held as a browser-local midnight, but the calendar matches days in
+	// `timeZoneForCalendar`, so rebuild it as that day's midnight in the site zone.
+	const disabledMatcher = {
+		after: timeZoneForCalendar
+			? new TZDate( today.getFullYear(), today.getMonth(), today.getDate(), timeZoneForCalendar )
+			: today,
+	};
 
 	return (
 		<VStack as="div" spacing={ 3 } style={ { padding: 12 } }>
@@ -219,7 +191,6 @@ export function DateRangeContent( props: DateRangeContentProps ) {
 						onSelect={ setPreset }
 						compositeActiveId={ compositeActiveId }
 						setCompositeActiveId={ setCompositeActiveId }
-						hiddenPresets={ hiddenPresets }
 					/>
 
 					<DateInputs
@@ -239,26 +210,21 @@ export function DateRangeContent( props: DateRangeContentProps ) {
 							setIsTyping( Boolean( fromStr || value ) );
 						} }
 						todayStr={ todayStr }
-						minStr={ minInputStr }
-						onFromFocus={ ( e ) => {
+						onFromFocus={ () => {
 							setIsTyping( true );
-							inputsProps?.onStartFocus?.( e );
 						} }
-						onToFocus={ ( e ) => {
+						onToFocus={ () => {
 							setIsTyping( true );
-							inputsProps?.onEndFocus?.( e );
 						} }
-						onFromBlur={ ( e ) => {
+						onFromBlur={ () => {
 							if ( ! fromStr && ! toStr ) {
 								setIsTyping( false );
 							}
-							inputsProps?.onStartBlur?.( e );
 						} }
-						onToBlur={ ( e ) => {
+						onToBlur={ () => {
 							if ( ! fromStr && ! toStr ) {
 								setIsTyping( false );
 							}
-							inputsProps?.onEndBlur?.( e );
 						} }
 						stack
 						fromStyle={ { minWidth: 140 } }
@@ -291,26 +257,21 @@ export function DateRangeContent( props: DateRangeContentProps ) {
 							setIsTyping( Boolean( fromStr || value ) );
 						} }
 						todayStr={ todayStr }
-						minStr={ minInputStr }
-						onFromFocus={ ( e ) => {
+						onFromFocus={ () => {
 							setIsTyping( true );
-							inputsProps?.onStartFocus?.( e );
 						} }
-						onToFocus={ ( e ) => {
+						onToFocus={ () => {
 							setIsTyping( true );
-							inputsProps?.onEndFocus?.( e );
 						} }
-						onFromBlur={ ( e ) => {
+						onFromBlur={ () => {
 							if ( ! fromStr && ! toStr ) {
 								setIsTyping( false );
 							}
-							inputsProps?.onStartBlur?.( e );
 						} }
-						onToBlur={ ( e ) => {
+						onToBlur={ () => {
 							if ( ! fromStr && ! toStr ) {
 								setIsTyping( false );
 							}
-							inputsProps?.onEndBlur?.( e );
 						} }
 						fromStyle={ { minWidth: 220, flex: '0 0 auto' } }
 						toStyle={ { minWidth: 220, flex: '0 0 auto' } }
@@ -328,7 +289,6 @@ export function DateRangeContent( props: DateRangeContentProps ) {
 						onSelect={ setPreset }
 						compositeActiveId={ compositeActiveId }
 						setCompositeActiveId={ setCompositeActiveId }
-						hiddenPresets={ hiddenPresets }
 					/>
 				) }
 

@@ -3,8 +3,8 @@ import { useMediaQuery, useInstanceId } from '@wordpress/compose';
 import { __, sprintf } from '@wordpress/i18n';
 import { calendar } from '@wordpress/icons';
 import { useMemo, useState } from 'react';
+import { parseYmdLocal, formatYmd, formatSiteYmd } from '../../utils/datetime';
 import { DateRangeContent } from './date-range-content';
-import { parseYmdLocal, formatYmd, formatSiteYmd } from './datetime';
 import { formatLabel } from './utils';
 import type { PresetId } from './utils';
 import './style.scss';
@@ -16,16 +16,7 @@ export type DateRangePickerProps = {
 	timezoneString?: string;
 	gmtOffset?: number;
 	locale: string;
-	disableFuture?: boolean;
-	disabledBefore?: Date;
 	defaultFallbackPreset?: PresetId; // preset to apply when inputs are empty and user presses Apply
-	hiddenPresets?: PresetId[];
-	inputsProps?: {
-		onStartFocus?: ( e: React.FocusEvent< HTMLInputElement > ) => void;
-		onEndFocus?: ( e: React.FocusEvent< HTMLInputElement > ) => void;
-		onStartBlur?: ( e: React.FocusEvent< HTMLInputElement > ) => void;
-		onEndBlur?: ( e: React.FocusEvent< HTMLInputElement > ) => void;
-	};
 };
 
 export function DateRangePicker( {
@@ -35,11 +26,7 @@ export function DateRangePicker( {
 	gmtOffset,
 	timezoneString,
 	locale,
-	disableFuture = true,
-	disabledBefore,
 	defaultFallbackPreset = 'last-7-days',
-	hiddenPresets,
-	inputsProps,
 }: DateRangePickerProps ) {
 	const isSmall = useMediaQuery( '(max-width: 600px)' );
 	// Use a wider breakpoint to decide when two calendars can fit comfortably
@@ -99,11 +86,7 @@ export function DateRangePicker( {
 					onClose={ onClose }
 					mobileLabelId={ mobileLabelId }
 					desktopLabelId={ desktopLabelId }
-					disableFuture={ disableFuture }
-					disabledBefore={ disabledBefore }
 					defaultFallbackPreset={ defaultFallbackPreset }
-					hiddenPresets={ hiddenPresets }
-					inputsProps={ inputsProps }
 				/>
 			) }
 		/>
@@ -121,11 +104,7 @@ function DateRangePickerInner( {
 	onClose,
 	mobileLabelId,
 	desktopLabelId,
-	disableFuture,
-	disabledBefore,
 	defaultFallbackPreset,
-	hiddenPresets,
-	inputsProps,
 }: {
 	isSmall: boolean;
 	showTwoMonths: boolean;
@@ -137,16 +116,7 @@ function DateRangePickerInner( {
 	onClose: () => void;
 	mobileLabelId: string;
 	desktopLabelId: string;
-	disableFuture: boolean;
-	disabledBefore?: Date;
 	defaultFallbackPreset: PresetId;
-	hiddenPresets?: PresetId[];
-	inputsProps?: {
-		onStartFocus?: ( e: React.FocusEvent< HTMLInputElement > ) => void;
-		onEndFocus?: ( e: React.FocusEvent< HTMLInputElement > ) => void;
-		onStartBlur?: ( e: React.FocusEvent< HTMLInputElement > ) => void;
-		onEndBlur?: ( e: React.FocusEvent< HTMLInputElement > ) => void;
-	};
 } ) {
 	const [ fromDraft, setFromDraft ] = useState< Date | undefined >( () => start );
 	const [ toDraft, setToDraft ] = useState< Date | undefined >( () => end );
@@ -186,12 +156,8 @@ function DateRangePickerInner( {
 			todayStr={ todayStr }
 			mobileLabelId={ mobileLabelId }
 			desktopLabelId={ desktopLabelId }
-			disableFuture={ disableFuture }
-			disabledBefore={ disabledBefore }
 			showTwoMonths={ showTwoMonths }
 			defaultFallbackPreset={ defaultFallbackPreset }
-			hiddenPresets={ hiddenPresets }
-			inputsProps={ inputsProps }
 		/>
 	);
 }

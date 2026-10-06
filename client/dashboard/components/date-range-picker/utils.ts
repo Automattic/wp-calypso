@@ -8,7 +8,7 @@ import {
 	startOfYear,
 	differenceInCalendarDays,
 } from 'date-fns';
-import { formatDate, parseYmdLocal, formatYmd } from './datetime';
+import { formatDate, parseYmdLocal, formatYmd } from '../../utils/datetime';
 
 // Range helpers (inclusive)
 const lastNDays = ( date: Date, number: number ) => ( {

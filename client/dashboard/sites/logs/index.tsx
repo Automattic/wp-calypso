@@ -1,6 +1,5 @@
 import { HostingFeatures, LogType, type Site, type SiteSettings } from '@automattic/api-core';
 import { siteBySlugQuery, siteSettingsQuery } from '@automattic/api-queries';
-import { DateRangePicker, isLast7Days } from '@automattic/date-range-picker';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { useSearch } from '@tanstack/react-router';
 import { createInterpolateElement } from '@wordpress/element';
@@ -9,6 +8,8 @@ import { useEffect, useState } from 'react';
 import { useDateRange } from '../../app/hooks/use-date-range';
 import { useIntlLocale } from '../../app/locale';
 import { Card, CardBody } from '../../components/card';
+import { DateRangePicker } from '../../components/date-range-picker';
+import { isLast7Days } from '../../components/date-range-picker/utils';
 import InlineSupportLink from '../../components/inline-support-link';
 import Notice from '../../components/notice';
 import { PageHeader } from '../../components/page-header';
