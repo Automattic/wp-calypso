@@ -13,6 +13,13 @@ import Highlights from '../highlights';
 
 jest.mock( '../../hooks/use-top-posts-query' );
 jest.mock( '../../hooks/use-referrers-query' );
+// Premium Analytics off, so the links are the classic Stats ones; highlights.test.tsx covers it on.
+jest.mock( 'calypso/my-sites/stats/hooks/use-premium-analytics-status-query', () => () => ( {
+	data: false,
+} ) );
+jest.mock( '../../lib/config-api', () => ( { optionalConfig: () => undefined } ) );
+jest.mock( '../../lib/selectors/can-current-user', () => () => true );
+jest.mock( '../../lib/selectors/get-site-admin-url', () => () => 'https://example.com/wp-admin/' );
 
 const SITE_ID = 123;
 

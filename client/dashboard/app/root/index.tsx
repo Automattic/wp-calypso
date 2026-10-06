@@ -2,6 +2,7 @@ import { isEnabled } from '@automattic/calypso-config';
 import { WordPressLogo } from '@automattic/components/src/logos/wordpress-logo';
 import { useQueryClient, useIsFetching, useIsMutating } from '@tanstack/react-query';
 import { CatchNotFound, Outlet, useRouterState, useRouter } from '@tanstack/react-router';
+import clsx from 'clsx';
 import {
 	Suspense,
 	lazy,
@@ -27,7 +28,6 @@ import Notifications from '../notifications';
 import { useOmnibarEvent } from '../omnibar/events';
 import OmnibarAgentsManager from '../omnibar/omnibar-agents-manager';
 import OmnibarHelpCenter from '../omnibar/omnibar-help-center';
-import OmnibarSiteSwitcher from '../omnibar/omnibar-site-switcher';
 import { useSyncOmnibarSite } from '../omnibar/site';
 import ResponsiveSidebar from '../responsive-sidebar';
 import { ResurrectedWelcomeModalGate } from '../resurrected-welcome-modal';
@@ -55,7 +55,8 @@ function Root() {
 	const isAccountRecoveryInterstitialEnabled = isEnabled(
 		'dashboard/account-recovery-interstitial'
 	);
-	const { name, supports, LoadingLogo = WordPressLogo } = useAppContext();
+	const { name, supports, components, LoadingLogo = WordPressLogo } = useAppContext();
+	const HelpCenter = components.helpCenter ?? OmnibarHelpCenter;
 	const isResurrectedWelcomeModalEnabled =
 		supports.resurrectedWelcomeModal && ! isDashboardBackport() && ! isE2ETest();
 	const isFetching = useIsFetching();
@@ -92,11 +93,12 @@ function Root() {
 		}
 	);
 
-	const { routeMeta, isNavigating, isInitialLoad, pathname } = useRouterState( {
+	const { routeMeta, isNavigating, isInitialLoad, pathname, isFullscreen } = useRouterState( {
 		select: ( state ) => ( {
 			routeMeta: state.matches.map( ( match ) => match.meta! ).filter( Boolean ),
 			isNavigating: state.status === 'pending',
 			pathname: state.location.pathname,
+			isFullscreen: state.matches.some( ( match ) => match.staticData?.isFullscreen ),
 
 			// A little trick after investigation router state: it will initially be
 			// empty, but remain set after subsequent navigations.
@@ -154,7 +156,9 @@ function Root() {
 
 		return (
 			<div className="dashboard-root__body">
-				<ResponsiveSidebar isOpen={ isSidebarOpen } onClose={ closeSidebar } />
+				{ ! isFullscreen && (
+					<ResponsiveSidebar isOpen={ isSidebarOpen } onClose={ closeSidebar } />
+				) }
 				<div className="dashboard-root__content">
 					<main>
 						<CatchNotFound fallback={ NotFound }>
@@ -171,7 +175,7 @@ function Root() {
 	}, [ name, title ] );
 
 	return (
-		<div className="dashboard-root__layout">
+		<div className={ clsx( 'dashboard-root__layout', { 'is-fullscreen': isFullscreen } ) }>
 			{ ( isFetching > 0 || isMutating > 0 || isSlowNavigation ) && (
 				<LoadingLine
 					variant={
@@ -184,9 +188,8 @@ function Root() {
 			{ renderBody() }
 			{ supports.commandPalette && <CommandPalette /> }
 			{ supports.notifications && <Notifications anchor /> }
-			{ supports.help && <OmnibarHelpCenter /> }
+			{ supports.help && <HelpCenter /> }
 			<OmnibarAgentsManager pathname={ pathname } />
-			<OmnibarSiteSwitcher />
 			<Snackbars />
 			<CheckoutSuccessFlashMessage />
 			{ isResurrectedWelcomeModalEnabled && (

@@ -1550,6 +1550,41 @@ describe( 'utils', () => {
 					years: [],
 				} );
 			} );
+
+			test( 'should not surface null day or hour values when there are no views', () => {
+				expect(
+					normalizers.statsInsights( {
+						highest_hour: null,
+						highest_day_percent: null,
+						highest_day_of_week: null,
+						highest_hour_percent: null,
+						hourly_views: [],
+						years: [],
+					} )
+				).toEqual( { hourlyViews: [], years: [] } );
+			} );
+
+			test( 'should keep the day group when only the hour group is null', () => {
+				expect(
+					normalizers.statsInsights( {
+						highest_hour: null,
+						highest_day_percent: 10,
+						highest_day_of_week: 6,
+						highest_hour_percent: null,
+					} )
+				).toEqual( { day: 'Sunday', percent: 10 } );
+			} );
+
+			test( 'should keep the hour group when only the day group is null', () => {
+				expect(
+					normalizers.statsInsights( {
+						highest_hour: 11,
+						highest_day_percent: null,
+						highest_day_of_week: null,
+						highest_hour_percent: 5,
+					} )
+				).toEqual( { hour: '11:00 AM', hourPercent: 5 } );
+			} );
 		} );
 
 		describe( 'statsPublicize()', () => {
@@ -1638,11 +1673,86 @@ describe( 'utils', () => {
 								type: 'link',
 							},
 						],
+						poster: '',
 						label: 'Press This!',
 						page: '/stats/day/videodetails/en.blog.wordpress.com?post=111111111',
 						value: 32,
 					},
 				] );
+			} );
+
+			test( 'should pass the API poster through', () => {
+				expect(
+					normalizers.statsVideoPlays(
+						{
+							date: '2017-01-12',
+							days: {
+								'2017-01-12': {
+									plays: [
+										{
+											plays: 32,
+											post_id: 111111111,
+											title: 'Press This!',
+											url: 'http://en.blog.wordpress.com/wp-admin/media.php?action=edit&attachment_id=111111111',
+											poster: 'https://videos.files.wordpress.com/abc123/poster.jpg',
+										},
+									],
+								},
+							},
+						},
+						{
+							period: 'day',
+							date: '2017-01-12',
+						},
+						10,
+						{
+							slug: 'en.blog.wordpress.com',
+						}
+					)
+				).toEqual( [
+					{
+						actions: [
+							{
+								data: 'http://en.blog.wordpress.com/wp-admin/media.php?action=edit&attachment_id=111111111',
+								type: 'link',
+							},
+						],
+						poster: 'https://videos.files.wordpress.com/abc123/poster.jpg',
+						label: 'Press This!',
+						page: '/stats/day/videodetails/en.blog.wordpress.com?post=111111111',
+						value: 32,
+					},
+				] );
+			} );
+
+			test( 'should fall back to an empty poster when the API sends none', () => {
+				const [ item ] = normalizers.statsVideoPlays(
+					{
+						date: '2017-01-12',
+						days: {
+							'2017-01-12': {
+								plays: [
+									{
+										plays: 32,
+										post_id: 111111111,
+										title: 'Press This!',
+										url: 'http://en.blog.wordpress.com/wp-admin/media.php?action=edit&attachment_id=111111111',
+									},
+								],
+							},
+						},
+					},
+					{
+						period: 'day',
+						date: '2017-01-12',
+					},
+					10,
+					{
+						slug: 'en.blog.wordpress.com',
+					}
+				);
+
+				expect( item.poster ).toBe( '' );
 			} );
 		} );
 
@@ -1788,6 +1898,17 @@ describe( 'utils', () => {
 					rows: [ { period: '2026-07-01', impressions: 7 } ],
 					total: null,
 				} );
+			} );
+
+			test( 'should keep an unknown metric as null instead of 0 in range-mode rows', () => {
+				const result = normalizers.statsVideo( {
+					fields: [ 'period', 'plays', 'retention_rate' ],
+					data: [ [ '2026-07-01', 3, null ] ],
+					pages: [],
+				} );
+				expect( result.rows ).toEqual( [
+					{ period: '2026-07-01', plays: 3, retention_rate: null },
+				] );
 			} );
 		} );
 

@@ -4,7 +4,6 @@ const useQueryKeysFactory = () => ( {
 	// long-lived sessions spanning that deploy served stale assembled data to new readers.
 	// Bump this whenever the stored shape changes so old and new code never share an entry.
 	sitePurchases: ( siteId?: string | number | null ) => [ 'site-purchases', 2, siteId ],
-	transferredPurchases: ( userId?: string | number | null ) => [ 'transferred-purchases', userId ],
 } );
 
 export default useQueryKeysFactory;

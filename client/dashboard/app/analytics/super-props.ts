@@ -1,5 +1,4 @@
 import { siteByIdQuery, siteBySlugQuery, sitesQueryKey } from '@automattic/api-queries';
-// eslint-disable-next-line no-restricted-imports -- Explicit event site attribution must precede dashboard super props.
 import { getValidBlogId, NO_SITE_CONTEXT } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import type { User, Site } from '@automattic/api-core';

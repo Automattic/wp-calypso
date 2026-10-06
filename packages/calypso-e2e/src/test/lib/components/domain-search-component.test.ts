@@ -1,6 +1,12 @@
 import { afterEach, beforeEach, describe, expect, jest, test } from '@jest/globals';
 import { DomainSearchComponent } from '../../../lib/components/domain-search-component';
 import * as teamcity from '../../../lib/teamcity';
+import {
+	raiseFlag,
+	registerThrottleActionHandler,
+	resetThrottleState,
+} from '../../../lib/throttle-flags';
+import type { ThrottleActionHandler } from '../../../lib/throttle-flags';
 import type { Page, Response } from 'playwright';
 
 const SUGGESTIONS_URL = 'https://public-api.wordpress.com/rest/v1.1/domains/suggestions';
@@ -90,6 +96,7 @@ beforeEach( () => {
 
 afterEach( () => {
 	jest.restoreAllMocks();
+	resetThrottleState();
 } );
 
 describe( 'DomainSearchComponent.search', () => {
@@ -172,6 +179,25 @@ describe( 'DomainSearchComponent.search', () => {
 			`Search for "${ KEYWORD }" exceeded its 60s budget`
 		);
 		expect( reload ).toHaveBeenCalledTimes( 2 );
+	} );
+
+	test( 'answers for a ban met during the search once that ban has lapsed', async () => {
+		// The ban lasts as long as the budget does, so one met as the search starts
+		// is over by the time the budget is spent.
+		const { page, searchbox, clock } = searchPage( { responses: [] } );
+		const start = Date.now();
+		jest.spyOn( Date, 'now' ).mockImplementation( () => start + clock.elapsed );
+		searchbox.inputValue.mockImplementationOnce( async () => {
+			void raiseFlag( 'domain-suggestions' );
+			return '';
+		} );
+		const handler = jest.fn< ThrottleActionHandler >();
+		registerThrottleActionHandler( handler );
+
+		await expect( new DomainSearchComponent( page ).search( KEYWORD ) ).rejects.toThrow(
+			'exceeded its 60s budget'
+		);
+		expect( handler ).toHaveBeenCalledWith( 'skip', [ 'domain-suggestions' ] );
 	} );
 
 	test( 'reads a suggestion title through the punctuation a keyword loses', async () => {

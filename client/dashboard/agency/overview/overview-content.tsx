@@ -1,6 +1,7 @@
-import { __experimentalGrid as Grid, __experimentalVStack as VStack } from '@wordpress/components';
+import { __experimentalVStack as VStack } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
+import Grid from '../../components/grid';
 import { PendingTierCard, RejectedTierCard } from './application-status-cards';
 import EventCard from './event-card';
 import GrowthCard from './growth-card';
@@ -25,6 +26,7 @@ export interface AgencyOverviewLinks {
 	partnerDirectory: string;
 	contactSupport: string;
 	aiMcp: string;
+	pressableHosting: string;
 	helpful: HelpfulLink[];
 }
 
@@ -81,7 +83,7 @@ export default function AgencyOverviewContent( {
 	const lockedNote = isPending ? __( 'Unlocks when your account is activated' ) : undefined;
 
 	return (
-		<Grid columns={ isSmallViewport ? 1 : 2 } gap={ spacing }>
+		<Grid columns={ isSmallViewport ? 1 : 2 } gap={ isSmallViewport ? 'lg' : 'xl' }>
 			<VStack spacing={ spacing } justify="flex-start">
 				{ isRejected && <RejectedTierCard contactSupportHref={ links.contactSupport } /> }
 				{ isPending && (
@@ -135,6 +137,8 @@ export default function AgencyOverviewContent( {
 					isEligibleForPressableIntroOffer={ isEligibleForPressableIntroOffer }
 					isEligibleForPressableExpansionOffer={ isEligibleForPressableExpansionOffer }
 					aiMcpHref={ links.aiMcp }
+					pressableHostingHref={ links.pressableHosting }
+					shouldUseRouterLink={ shouldUseRouterLink }
 					recordTracksEvent={ recordTracksEvent }
 				/>
 			</VStack>

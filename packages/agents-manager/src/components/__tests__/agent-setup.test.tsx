@@ -253,8 +253,7 @@ describe( 'AgentSetup', () => {
 
 		fireEvent.click( screen.getByText( 'go-new-chat' ) );
 
-		await waitFor( () => expect( getSessionId( undefined, '111' ) ).toBe( '' ) );
-		expect( mockCreateAgentConfig ).toHaveBeenCalledTimes( 1 );
+		await waitFor( () => expect( getSessionId( undefined, '111' ) ).toBe( 'fake-uuid' ) );
 	} );
 
 	it( 'resumes a session handed off for this site', async () => {
@@ -276,9 +275,10 @@ describe( 'AgentSetup', () => {
 
 		const { rerender } = render( manager( 111 ) );
 
+		// Site 111 starts its own chat rather than the one handed off for 222.
 		await waitFor( () =>
 			expect( mockCreateAgentConfig ).toHaveBeenCalledWith(
-				expect.objectContaining( { sessionId: '' } )
+				expect.objectContaining( { sessionId: 'fake-uuid' } )
 			)
 		);
 		expect( getSessionId( undefined, '222' ) ).toBe( 'url-session' );
@@ -295,7 +295,7 @@ describe( 'AgentSetup', () => {
 	} );
 
 	it( 'ignores a handed-off session for a surface-bound agent', async () => {
-		mockAgentConfig = { agentId: 'wpcom-workflow-plugin_compass', isLoading: false };
+		mockAgentConfig = { agentId: 'custom-agent', isLoading: false };
 		window.history.replaceState( {}, '', '/?wp-agent-chat=url-session&wp-agent-site=111' );
 
 		render( manager( 111 ) );
@@ -304,7 +304,7 @@ describe( 'AgentSetup', () => {
 		expect( mockCreateAgentConfig ).toHaveBeenCalledWith(
 			expect.objectContaining( { sessionId: '' } )
 		);
-		expect( getSessionId( 'wpcom-workflow-plugin_compass', '111' ) ).toBe( '' );
+		expect( getSessionId( 'custom-agent', '111' ) ).toBe( '' );
 		expect( window.location.search ).toBe( '' );
 	} );
 
@@ -356,13 +356,14 @@ describe( 'AgentSetup', () => {
 
 		await waitFor( () => expect( mockAgentManager.removeAgent ).toHaveBeenCalled() );
 		expect( mockAgentManager.abortCurrentRequest ).toHaveBeenCalled();
-		expect( getSessionId() ).toBe( '' );
+		// The orchestrator mints the new chat's session id up front.
+		await waitFor( () => expect( getSessionId() ).toBe( 'fake-uuid' ) );
 
-		// A fresh config must publish even though it matches the cleared session,
+		// A fresh config must publish even though it matches the new session,
 		// or `useAgentChat` never recreates the removed agent.
 		await waitFor( () => expect( mockCreateAgentConfig ).toHaveBeenCalledTimes( 2 ) );
 		expect( mockCreateAgentConfig ).toHaveBeenLastCalledWith(
-			expect.objectContaining( { sessionId: '' } )
+			expect.objectContaining( { sessionId: 'fake-uuid' } )
 		);
 	} );
 

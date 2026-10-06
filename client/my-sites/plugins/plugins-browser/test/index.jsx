@@ -1,6 +1,9 @@
 /** @jest-environment jsdom */
 
 jest.mock( '@automattic/calypso-router' );
+jest.mock( 'calypso/components/async-load', () => ( { require } ) => (
+	<div data-testid="async-load" data-loader={ require.name } />
+) );
 jest.mock( 'calypso/lib/wporg', () => ( {
 	getWporgLocaleCode: () => 'it_US',
 	fetchPluginsList: () => Promise.resolve( [] ),
@@ -49,7 +52,6 @@ jest.mock( '@automattic/languages', () => [
 ] );
 
 jest.mock( 'calypso/state/purchases/selectors', () => ( {
-	getUserPurchases: jest.fn(),
 	isFetchingSitePurchases: jest.fn( () => false ),
 } ) );
 
@@ -178,6 +180,25 @@ describe( 'Upsell Nudge should get appropriate plan constant', () => {
 } );
 
 describe( 'PluginsBrowser basic tests', () => {
+	test( 'shows Describe for logged-in users', () => {
+		render( <PluginsBrowser category="describe" />, {
+			initialState: { currentUser: { id: 1 } },
+		} );
+		expect( screen.getByTestId( 'async-load' ) ).toHaveAttribute(
+			'data-loader',
+			'loadMarketplaceAIExperience'
+		);
+	} );
+
+	test( 'does not show Describe for logged-out users', () => {
+		render( <PluginsBrowser category="describe" />, {
+			initialState: { currentUser: { id: null } },
+		} );
+		expect(
+			document.querySelector( '[data-loader="loadMarketplaceAIExperience"]' )
+		).not.toBeInTheDocument();
+	} );
+
 	test( 'should not blow up and have proper CSS class', () => {
 		render( <PluginsBrowser /> );
 		const main = screen.getByRole( 'main' );

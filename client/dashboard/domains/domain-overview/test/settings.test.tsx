@@ -173,7 +173,7 @@ describe( 'DomainOverviewSettings', () => {
 			expect( screen.queryByText( 'Glue records' ) ).not.toBeInTheDocument();
 		} );
 
-		test( 'shows contact details in a support session even when user cannot manage', async () => {
+		test( 'shows contact details and glue records in a support session even when user cannot manage', async () => {
 			( isSupportSession as jest.Mock ).mockReturnValue( true );
 
 			renderDomainSettings( {
@@ -190,9 +190,7 @@ describe( 'DomainOverviewSettings', () => {
 			} );
 
 			expect( screen.getByText( 'Contact details & privacy' ) ).toBeVisible();
-
-			// Glue records still depend on the user being able to manage the domain
-			expect( screen.queryByText( 'Glue records' ) ).not.toBeInTheDocument();
+			expect( screen.getByText( 'Glue records' ) ).toBeVisible();
 		} );
 
 		test( 'hides contact details for expired domain', async () => {

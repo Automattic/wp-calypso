@@ -20,7 +20,7 @@ import { isWithinLast, isWithinNext, getDateFromCreditCardExpiry } from './datet
 import { isGSuiteProductSlug } from './gsuite';
 import { redirectToDashboardLink, wpcomLink } from './link';
 import { getStudioCodeAiCreditsTitle } from './studio-code-ai-credits';
-import type { Product, Purchase } from '@automattic/api-core';
+import type { MonetizeSubscription, Product, Purchase } from '@automattic/api-core';
 
 export const CANCEL_FLOW_TYPE = {
 	REMOVE: 'remove',
@@ -91,6 +91,35 @@ export function isExpiredAndInGracePeriod( purchase: Purchase ): boolean {
  */
 export function isRemoved( purchase: Purchase ): boolean {
 	return 'active' !== purchase.subscription_status;
+}
+
+/**
+ * Returns true if any purchase still needs to be canceled before the account can be closed.
+ */
+export function hasCancelablePurchases( purchases: Purchase[] ): boolean {
+	return purchases.some( ( purchase ) => {
+		// Skip only fully-removed purchases. An expired-but-still-active purchase
+		// (in its grace period) can still be renewed, so it should require action
+		// before the account is deleted.
+		if ( isRemoved( purchase ) ) {
+			return false;
+		}
+		if ( purchase.product_slug === 'premium_theme' && ! purchase.is_refundable ) {
+			return false;
+		}
+		return Boolean( purchase.is_cancelable );
+	} );
+}
+
+/**
+ * Returns true if any newsletter subscription still needs to be canceled before the account can be closed.
+ */
+export function hasRenewableMonetizeSubscriptions(
+	subscriptions: MonetizeSubscription[]
+): boolean {
+	return subscriptions.some(
+		( subscription ) => subscription.status === 'active' && Boolean( subscription.is_renewable )
+	);
 }
 
 /**
@@ -291,8 +320,28 @@ export function isTransferredOwnership(
 	);
 }
 
+/**
+ * Subscription meta marker for purchases billed through Automattic for Agencies.
+ *
+ * The marker is either the bare value or the value followed by a separator and an instance key,
+ * such as `is-a4a:example.com`, for products that can be bought more than once on the same site.
+ */
+const A4A_SUBSCRIPTION_META = 'is-a4a';
+const A4A_SUBSCRIPTION_META_SEPARATOR = ':';
+
+export function isA4ASubscriptionMeta( meta: string | null | undefined ): boolean {
+	if ( ! meta ) {
+		return false;
+	}
+
+	return (
+		meta === A4A_SUBSCRIPTION_META ||
+		meta.startsWith( A4A_SUBSCRIPTION_META + A4A_SUBSCRIPTION_META_SEPARATOR )
+	);
+}
+
 export function isA4ABillingDragonPurchase( purchase: Purchase ): boolean {
-	return purchase.meta === 'is-a4a';
+	return isA4ASubscriptionMeta( purchase.meta );
 }
 
 export function isA4AHoldingSitePurchase( purchase: Purchase ): boolean {
@@ -685,7 +734,7 @@ export function getRenewalUrlFromPurchase( purchase: Purchase, backUrl?: string 
  */
 export function getRenewUrlForPurchases(
 	purchases: Purchase[],
-	backUrl: string = redirectToDashboardLink()
+	backUrl: string = redirectToDashboardLink( { supportBackport: true } )
 ): string {
 	if ( purchases.length < 1 ) {
 		throw new Error( 'Could not find product slug or purchase id for renewal.' );

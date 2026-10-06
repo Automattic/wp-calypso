@@ -1,5 +1,6 @@
 import { Site } from '@automattic/api-core';
-import { __experimentalGrid as Grid, __experimentalHStack as HStack } from '@wordpress/components';
+import { __experimentalHStack as HStack } from '@wordpress/components';
+import Grid from '../../../components/grid';
 import { SiteLink, SiteIconLink, Name, URL } from '../../../sites/site-fields';
 import { getSiteDisplayName } from '../../../utils/site-name';
 
@@ -16,7 +17,6 @@ export const SitePreview = ( { site }: Props ) => {
 			<Grid
 				columns={ 1 }
 				templateRows="24px 1fr"
-				gap={ 0 }
 				style={ { width: '100%', justifyItems: 'start' } }
 			>
 				<div className="site-preview__name">

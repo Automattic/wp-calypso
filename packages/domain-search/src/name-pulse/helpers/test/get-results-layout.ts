@@ -18,7 +18,7 @@ const SINGLE: NamePulseResultsLayout = {
 	wordCount: 1,
 	top: { show: true },
 	exactGrid: { show: true },
-	suggestions: { show: false },
+	suggestions: { show: true },
 	creative: { show: false },
 };
 
@@ -48,7 +48,7 @@ describe( 'getResultsLayout', () => {
 			fqdn: { baseName: 'coffee', tld: 'com', fullDomain: 'coffee.com' },
 			top: { show: true },
 			exactGrid: { show: true },
-			suggestions: { show: false },
+			suggestions: { show: true },
 			creative: { show: false },
 		} );
 	} );
@@ -87,7 +87,7 @@ describe( 'getResultsLayout', () => {
 			unknownEnding: 'd',
 			top: { show: true },
 			exactGrid: { show: true },
-			suggestions: { show: false },
+			suggestions: { show: true },
 			creative: { show: false },
 		} );
 	} );
@@ -101,7 +101,20 @@ describe( 'getResultsLayout', () => {
 			subdomain: 'shop',
 			top: { show: true },
 			exactGrid: { show: true },
-			suggestions: { show: false },
+			suggestions: { show: true },
+			creative: { show: false },
+		} );
+	} );
+
+	it( 'searches an unknown double ending as one name, not as a subdomain', () => {
+		expect( getResultsLayout( 'example.co.com', TLDS ) ).toEqual( {
+			mode: 'fqdn',
+			baseName: 'exampleco',
+			wordCount: 1,
+			fqdn: { baseName: 'exampleco', tld: 'com', fullDomain: 'exampleco.com' },
+			top: { show: true },
+			exactGrid: { show: true },
+			suggestions: { show: true },
 			creative: { show: false },
 		} );
 	} );
@@ -114,7 +127,7 @@ describe( 'getResultsLayout', () => {
 			isFreeSubdomain: true,
 			top: { show: true },
 			exactGrid: { show: true },
-			suggestions: { show: false },
+			suggestions: { show: true },
 			creative: { show: false },
 		} );
 	} );

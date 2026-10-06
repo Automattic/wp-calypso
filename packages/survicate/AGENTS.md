@@ -104,8 +104,9 @@ It already does the job; don't wrap it or read `window.isSupportSession` directl
 Guarded at two layers:
 
 1. **Load gate** — `shouldLoadSurvicate()` returns `false`, so the SDK script is never
-   injected. This is the real fix: no script, no auto-campaigns, no events. Both
-   consumers (`useSurvicate`, `addSurvicate`) already funnel through it.
+   injected. This is the real fix: no script, no auto-campaigns, no events. Every
+   consumer (`useSurvicate`, `addSurvicate`, the wp-admin bundle) funnels through it,
+   though the check is inert in wp-admin (see below).
 2. **Suppression** — `getSuppressionReason()` returns `'support_session'` first, covering
    the `invokeSurvicateEvent()` call sites that fire without consulting the load gate.
 
@@ -115,8 +116,12 @@ support-session handling of its own: it only ever runs once the load gate has pa
 which means there is no support session. Its tests mock `isSupportSession()` to a
 constant `false` to keep that invariant explicit — don't add support-session cases there.
 
-**The wp-admin Survicate loader is a separate integration** (`class-survicate.php` in the
-Jetpack monorepo) and is not covered here — it needs its own guard.
+**wp-admin runs this same package** (built by `apps/survicate/`, enqueued by
+`class-survicate.php` in the Jetpack monorepo), but `isSupportSession()` reads
+browser state Calypso sets (`sessionStorage.boot_support_user`,
+`window.isSupportSession`) that does not exist in wp-admin, so the gate is
+inert there. A wp-admin support-session signal would have to come from PHP
+through `window.wpcomSurvicateConfig`. Tracked as a follow-up.
 
 ## Modal & Help Center coordination (defense-in-depth)
 
@@ -161,9 +166,14 @@ separate from DOM detection on purpose: the Help Center is a side panel without
 
 - `MODAL_SELECTOR` matches `[role="dialog"][aria-modal="true"]` (requiring
   `aria-modal` excludes generic `role="dialog"` widgets), native `dialog[open]`,
-  `.components-modal__screen-overlay` (older WP `Modal` versions), and
-  `.components-popover:not(.components-tooltip)` (WP `Popover`; `Tooltip` reuses
-  the popover class and must not suppress surveys on every hover).
+  `.components-modal__screen-overlay` (older WP `Modal` versions),
+  `[data-wp-ui-overlay-modal]` (wp-admin UI overlay modals), and
+  `.components-popover:not(.components-tooltip):not(.block-editor-block-popover)`
+  (WP `Popover`; `Tooltip` reuses the popover class and must not suppress surveys
+  on every hover, and the block editor's `BlockPopover` chrome — block toolbar,
+  in-between inserter, drop zone — mounts and unmounts as the user types or
+  selects blocks, so counting it would pause and `retarget()` Survicate
+  constantly in the editors that wp-admin surveys target).
 - **Self-exclusion is load-bearing**: the Survicate widget itself renders
   `role="dialog"`/`aria-modal="true"` elements inside
   `<div id="survicate-box" class="survicate-box-<type>">` (verified in
@@ -231,12 +241,15 @@ rule. Properties:
   explicit `invokeSurvicateEvent()` was skipped, plus an `event_name` property).
 
 Recording is best-effort and wrapped in `try/catch` — a failing analytics call
-never interferes with suppression. The wp-admin loader (PHP) uses its own
-analytics path and does not emit this event yet.
+never interferes with suppression. The wp-admin bundle does **not** emit it:
+`apps/survicate` swaps `@automattic/calypso-analytics` for a no-op stub, because on
+Atomic custom domains the wordpress.com consent cookies are absent and the real
+module would record events for users who opted out.
 
-The wp-admin loader (`jetpack-mu-wpcom/src/features/survicate/class-survicate.php`,
-Jetpack monorepo) inlines the same logic in its emitted script; keep the two in sync
-when changing selectors or behavior.
+**Until Jetpack #52709 ships**, wp-admin still runs the older inline copy of this
+logic emitted by `jetpack-mu-wpcom/src/features/survicate/class-survicate.php`
+(Jetpack monorepo), not this package. Keep the two in sync when changing selectors
+or behavior; remove this note once wp-admin loads the `apps/survicate` bundle.
 
 **Known caveat — the display flash**: `survey_displayed` fires _after_ the survey
 renders, so closing it produces a brief show-then-hide flicker. The SDK exposes no
@@ -267,9 +280,50 @@ race where a survey is already mid-display as a modal or the Help Center appears
 
 ## Consumers
 
-The package's entry point is `client/dashboard/app/survicate/index.tsx` (`useSurvicate`
-hook), gated behind the `survicate_enabled` config flag. `invokeSurvicateEvent` is also
-called from classic Calypso purchase/cancel and checkout flows.
+Three consumers, all funnelled through `shouldLoadSurvicate()`:
+
+- **Multi-site Dashboard** — `client/dashboard/app/survicate/index.tsx` (`useSurvicate`),
+  gated behind the `survicate_enabled` config flag. Pushes identity and visit-count traits.
+- **Classic Calypso** — `client/lib/analytics/survicate.js` (`addSurvicate`), and
+  `invokeSurvicateEvent` from purchase/cancel and checkout flows.
+- **wp-admin on Simple and Atomic** — `apps/survicate/survicate.js`, bundled to
+  `https://widgets.wp.com/survicate/survicate.min.js` and enqueued by
+  `class-survicate.php` in `jetpack-mu-wpcom`. PHP decides eligibility and emits
+  site-level traits on `window.wpcomSurvicateConfig`; the bundle does the rest.
+  Ship a change to wp-admin with `install-plugin.sh survicate --release` on a
+  sandbox followed by `deploy wpcom` — no Jetpack release needed.
+
+## Pull requests
+
+Any PR that changes `packages/survicate/` or `apps/survicate/` ships to wp-admin
+through a separate widgets.wp.com deploy, not just the Calypso deploy. Reviewers
+and whoever merges need those steps, so **always add the two sections below to the
+PR description** (after "Testing Instructions" in `.github/PULL_REQUEST_TEMPLATE.md`).
+Adapt the feature-specific checks; keep the deploy steps as they are.
+
+```markdown
+## Deployment
+
+Merging to trunk is not enough for wp-admin. After merge:
+
+1. Deploy Calypso as usual (covers Calypso and the Multi-site Dashboard).
+2. TeamCity's "Build Calypso Apps" builds `survicate.zip` and tags it `survicate-release-build`.
+3. On a sandbox: `install-plugin.sh survicate --release`, push to the WPCOM repository when prompted, merge the generated PR once checks pass, then `deploy wpcom`.
+4. Verify: the `version` in `https://widgets.wp.com/survicate/survicate.asset.json` changed, and the manifest still lists only `wp-data`.
+
+Simple sites pick up the new bundle immediately; Atomic sites within an hour (Jetpack caches the manifest).
+
+## Testing in wp-admin
+
+1. Sandbox your site and `widgets.wp.com`.
+2. Until Automattic/jetpack#52709 ships, also load the Jetpack branch that enqueues the bundle: `bin/jetpack-downloader test jetpack-mu-wpcom-plugin update/survicate-shared-bundle`.
+3. `cd apps/survicate && yarn dev --sync`, then open wp-admin as an English-locale user.
+4. Run `localStorage.debug = 'survicate'` and reload to see the package's debug log.
+5. <feature-specific checks, e.g. what should close a survey or set `window._sva.disableTargeting`>
+```
+
+Drop step 2 once Automattic/jetpack#52709 has shipped, and update this section
+to match.
 
 ## Conventions & gotchas
 

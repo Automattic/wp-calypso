@@ -34,9 +34,12 @@ const defaultValues: Required< UserPreferences > = {
 	two_step_security_key_reregister_required: false,
 	'a4a-dashboard-pd-not-approved-popover': false,
 	'a4a-marketplace-referral-guide-seen': false,
+	'a4a-referrals-bank-details-success-notice-seen': false,
 	'a4a-marketplace-term-pricing': 'yearly',
+	'a4a-feedback': {},
 	'notifications-layout-style': 'simplified',
 	'notifications-view-settings-seen': false,
+	'notifications-subscriber-alerts-enabled': false,
 	'pressable-limit-notification-dismissed': 0,
 	'a4a-agency-approval-notice-dismissed': false,
 };
@@ -63,7 +66,9 @@ const staticPreferenceStatIds: Record< string, string > = {
 	two_step_security_key_reregister_required: '2fakey',
 	'a4a-dashboard-pd-not-approved-popover': 'a4apd',
 	'a4a-marketplace-referral-guide-seen': 'a4agde',
+	'a4a-referrals-bank-details-success-notice-seen': 'a4abank',
 	'a4a-marketplace-term-pricing': 'a4aterm',
+	'a4a-feedback': 'a4afb',
 	'pressable-limit-notification-dismissed': 'prslim',
 	'a4a-agency-approval-notice-dismissed': 'a4aappr',
 };

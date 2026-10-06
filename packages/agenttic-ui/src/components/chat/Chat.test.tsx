@@ -577,3 +577,74 @@ describe( 'Chat drag-end side persistence', () => {
 		expect( onChatPositionChange ).not.toHaveBeenCalled();
 	} );
 } );
+
+describe( 'legacy Chat composer props', () => {
+	let container: HTMLDivElement;
+	let root: Root;
+	beforeEach( () => {
+		container = document.createElement( 'div' );
+		document.body.appendChild( container );
+		root = createRoot( container );
+	} );
+	afterEach( async () => {
+		await act( async () => root.unmount() );
+		container.remove();
+	} );
+
+	it.each( [ 'embedded', 'compact', 'expanded' ] as const )(
+		'forwards slots and gates both Send and Enter in %s',
+		async ( view ) => {
+			const beforeSubmit = vi.fn( () => false );
+			const onSubmit = vi.fn();
+			await act( async () =>
+				root.render(
+					<AgentUIProvider value={ contextValue }>
+						<Chat
+							messages={ [] }
+							isProcessing={ false }
+							onSubmit={ onSubmit }
+							beforeSubmit={ beforeSubmit }
+							variant={ view === 'embedded' ? 'embedded' : 'floating' }
+							floatingChatState={ view === 'embedded' ? 'expanded' : view }
+							leadingActions={ <span data-testid="lead" /> }
+							trailingActions={ <span data-testid="trail" /> }
+						/>
+					</AgentUIProvider>
+				)
+			);
+			expect(
+				container.querySelector( '[data-slot="chat-input-leading-actions"] [data-testid="lead"]' )
+			).not.toBeNull();
+			expect(
+				container.querySelector( '[data-slot="chat-input-trailing-actions"] [data-testid="trail"]' )
+			).not.toBeNull();
+			const textarea = container.querySelector( 'textarea' )!;
+			await act( async () => {
+				Object.getOwnPropertyDescriptor( HTMLTextAreaElement.prototype, 'value' )!.set!.call(
+					textarea,
+					'keep my draft'
+				);
+				textarea.dispatchEvent( new Event( 'input', { bubbles: true } ) );
+			} );
+			await act( async () =>
+				container.querySelector< HTMLButtonElement >( 'button[aria-label="Send message"]' )?.click()
+			);
+			expect( beforeSubmit ).toHaveBeenCalledWith( 'keep my draft', 'input' );
+			expect( onSubmit ).not.toHaveBeenCalled();
+			expect( textarea.value ).toBe( 'keep my draft' );
+			beforeSubmit.mockClear();
+			await act( async () =>
+				textarea.dispatchEvent( new KeyboardEvent( 'keydown', { key: 'Enter', bubbles: true } ) )
+			);
+			expect( beforeSubmit ).toHaveBeenCalledWith( 'keep my draft', 'input' );
+			expect( onSubmit ).not.toHaveBeenCalled();
+			expect( textarea.value ).toBe( 'keep my draft' );
+			beforeSubmit.mockReturnValue( true );
+			await act( async () =>
+				container.querySelector< HTMLButtonElement >( 'button[aria-label="Send message"]' )?.click()
+			);
+			expect( onSubmit ).toHaveBeenCalledOnce();
+			expect( onSubmit ).toHaveBeenCalledWith( 'keep my draft' );
+		}
+	);
+} );

@@ -12,7 +12,7 @@ import { __ } from '@wordpress/i18n';
 import { check, closeSmall, store } from '@wordpress/icons';
 import { Card, CardBody } from '../../../components/card';
 import { BRAND_MARKS } from './lib/brand-marks';
-import { getProductBrand, isWooCommerceProduct } from './lib/product-categories';
+import { getProductBrand, isPressableAddon, isWooCommerceProduct } from './lib/product-categories';
 import { getProductDescription } from './lib/product-descriptions';
 import { getProductBenefits, getProductRecommendedFor } from './lib/product-info';
 import { getProductPriceInfo, getTermAvailabilityNote } from './lib/product-pricing';
@@ -20,8 +20,10 @@ import { WOOPAYMENTS_PRODUCT_SLUG } from './lib/product-slugs';
 import { getProductTitle } from './lib/product-title';
 import { getVendorInfo } from './lib/vendor-info';
 import { getWooProductUrl } from './lib/woo-product-url';
+import PressableAddonDetails from './pressable-addon-details';
 import { getWooPaymentsCardCopy } from './product-card';
 import ProductPrice from './product-price';
+import WooPaymentsDetails from './woopayments-details';
 import type { TermPricing } from '../use-term-pricing';
 import type { AgencyProduct } from '@automattic/api-core';
 
@@ -107,6 +109,9 @@ export default function ProductDetailsModal( {
 							<Text>{ isWooPayments ? getWooPaymentsCardCopy().description : description }</Text>
 						) }
 					</VStack>
+
+					{ isPressableAddon( product ) && <PressableAddonDetails product={ product } /> }
+					{ isWooPayments && <WooPaymentsDetails /> }
 
 					{ recommendedFor.length > 0 && (
 						<Card>

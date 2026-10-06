@@ -23,6 +23,7 @@ import Highlights from './highlights';
 import MiniChart from './mini-chart';
 import Modules from './modules';
 import recordWidgetEvent, { recordWidgetEventThenFollow } from './record-widget-event';
+import useStatsLink from './use-stats-link';
 import WidgetSection from './widget-section';
 import type { FunctionComponent } from 'react';
 
@@ -81,6 +82,7 @@ export function init() {
 		const App: FunctionComponent = () => {
 			const translate = useTranslate();
 			const customTheme = useWPAdminTheme();
+			const statsLink = useStatsLink( currentSiteId );
 			// One range drives both the chart and the highlights, so they can never
 			// describe different windows.
 			const [ rangeId, setRangeId ] = useState< DateRangeId >( () =>
@@ -130,7 +132,13 @@ export function init() {
 								<JetpackLogo size={ 20 } monochrome full />
 							</a>
 							<a
-								href={ exploreMore.url }
+								href={
+									// Without a Jetpack menu to point at, the link falls back to Stats, which
+									// opens Premium Analytics instead where the site has it switched on.
+									'stats' === exploreMore.destination
+										? statsLink( exploreMore.url, '/' )
+										: exploreMore.url
+								}
 								onClick={ recordWidgetEventThenFollow( 'explore_more_clicked', {
 									destination: exploreMore.destination,
 								} ) }

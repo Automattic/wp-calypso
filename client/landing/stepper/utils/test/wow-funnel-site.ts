@@ -1,17 +1,27 @@
 /**
  * @jest-environment jsdom
  */
+import { createSite } from '@automattic/onboarding';
 import {
 	adoptWowFunnelSite,
+	discardPendingWowFunnelSite,
 	fetchPendingWowFunnelSite,
+	forgetWowFunnelRun,
+	startWowFunnelSite,
 	wowFunnelSiteHasCartItems,
 } from '../wow-funnel-site';
 
 const mockGet = jest.fn();
+const mockPost = jest.fn();
 
 jest.mock( 'calypso/lib/wp', () => ( {
 	__esModule: true,
-	default: { req: { get: ( ...args: unknown[] ) => mockGet( ...args ) } },
+	default: {
+		req: {
+			get: ( ...args: unknown[] ) => mockGet( ...args ),
+			post: ( ...args: unknown[] ) => mockPost( ...args ),
+		},
+	},
 } ) );
 
 // The barrels this module pulls in for site creation are irrelevant to the throttle helpers, and
@@ -97,11 +107,10 @@ describe( 'adoptWowFunnelSite', () => {
 	} );
 
 	/**
-	 * One unpaid site is allowed at a time, so a different CTA cannot build its own. Remembering
-	 * the pending site under the run being entered is what stops create-site from asking for a
-	 * second site the server will refuse.
+	 * Remembering the pending site for the run being resumed is what stops create-site from asking
+	 * for a second site the server will refuse.
 	 */
-	it( 'remembers the pending site under the run being entered, not the one that built it', () => {
+	it( 'remembers the pending site for the run being resumed', () => {
 		const adopted = adoptWowFunnelSite(
 			{
 				blogId: 111,
@@ -110,12 +119,87 @@ describe( 'adoptWowFunnelSite', () => {
 				funnelArgs: { blueprint_slug: 'coachava' },
 			},
 			'blueprint',
-			{ blueprint_slug: 'other' }
+			{ blueprint_slug: 'coachava' }
 		);
 
 		expect( adopted ).toMatchObject( { blogId: 111, funnelSlug: 'blueprint' } );
 		expect(
 			JSON.parse( window.sessionStorage.getItem( 'wow-funnel-created-site' ) ?? '{}' )
 		).toMatchObject( { blogId: 111 } );
+	} );
+} );
+
+describe( 'discardPendingWowFunnelSite', () => {
+	beforeEach( () => {
+		mockPost.mockReset();
+	} );
+
+	it( 'names the site the customer was shown, so the server can refuse any other', async () => {
+		mockPost.mockResolvedValue( { discarded: true } );
+
+		await expect( discardPendingWowFunnelSite( 111 ) ).resolves.toBe( 'discarded' );
+		expect( mockPost.mock.calls[ 0 ][ 0 ] ).toMatchObject( {
+			path: '/wow-funnel/pending/discard',
+		} );
+		expect( mockPost.mock.calls[ 0 ][ 1 ] ).toEqual( { blog_id: 111 } );
+	} );
+
+	it.each( [
+		[ 'wow_funnel_discard_not_pending', 'gone' ],
+		[ 'wow_funnel_discard_rate_limited', 'rate_limited' ],
+		[ 'wow_funnel_discard_not_ready', 'not_ready' ],
+		[ 'rest_no_route', 'unavailable' ],
+		[ 'something_else', 'failed' ],
+	] )( 'reads a %s refusal as %s', async ( code, expected ) => {
+		mockPost.mockRejectedValue( { error: code, statusCode: 400 } );
+
+		await expect( discardPendingWowFunnelSite( 111 ) ).resolves.toBe( expected );
+	} );
+} );
+
+describe( 'startWowFunnelSite when the server holds a pending site', () => {
+	const mockCreateSite = createSite as jest.Mock;
+
+	beforeEach( () => {
+		// The module keeps a resolved start per run in memory, so an earlier test's site would be
+		// handed straight back without ever consulting the pending site.
+		forgetWowFunnelRun( 'blueprint', { blueprint_slug: 'coachava' } );
+		window.sessionStorage.clear();
+		mockGet.mockReset();
+		mockCreateSite.mockReset();
+		mockCreateSite.mockRejectedValue( new Error( 'wow_funnel_site_pending' ) );
+	} );
+
+	it( "takes over the site when it is this run's own", async () => {
+		mockGet.mockResolvedValue( {
+			pending: true,
+			blog_id: 111,
+			site_slug: 'site-111.wordpress.com',
+			funnel_slug: 'blueprint',
+			funnel_args: { blueprint_slug: 'coachava' },
+		} );
+
+		await expect(
+			startWowFunnelSite( { funnelSlug: 'blueprint', funnelArgs: { blueprint_slug: 'coachava' } } )
+		).resolves.toMatchObject( { blogId: 111 } );
+	} );
+
+	/**
+	 * A different run carrying on over the site would never run its own follow-up — a blueprint
+	 * run on a default site waits forever for an import nobody queued.
+	 */
+	it( 'refuses a site built by a different run', async () => {
+		mockGet.mockResolvedValue( {
+			pending: true,
+			blog_id: 111,
+			site_slug: 'site-111.wordpress.com',
+			funnel_slug: 'default',
+			funnel_args: {},
+		} );
+
+		await expect(
+			startWowFunnelSite( { funnelSlug: 'blueprint', funnelArgs: { blueprint_slug: 'coachava' } } )
+		).rejects.toThrow( 'another setup' );
+		expect( window.sessionStorage.getItem( 'wow-funnel-created-site' ) ).toBeNull();
 	} );
 } );

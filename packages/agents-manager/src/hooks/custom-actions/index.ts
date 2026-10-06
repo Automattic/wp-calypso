@@ -19,6 +19,7 @@ import {
 	recordBigSkyTracksEvent,
 	type BigSkyEventName,
 } from '../../utils/tracks';
+import { getTurnId } from '../../utils/turn-id';
 import type { AgentsManagerSelect } from '@automattic/data-stores';
 
 /** Bridge-facing recorder: drops malformed calls instead of emitting `jetpack_big_sky_undefined`. */
@@ -280,6 +281,7 @@ export function useSetupCustomActions( {
 		getCurrentRoute,
 		getSessionId: getTabSessionId,
 		getTabId,
+		getTurnId,
 		recordBigSkyTracksEvent: recordGuardedBigSkyTracksEvent,
 		setChatOpen,
 		setChatDocked,

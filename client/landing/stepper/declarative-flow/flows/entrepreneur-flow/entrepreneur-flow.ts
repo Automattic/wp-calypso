@@ -165,9 +165,11 @@ const entrepreneurFlow: Flow = {
 
 					if ( providedDependencies?.pluginsInstalled ) {
 						if ( isMigrationFlow ) {
-							// If the user is migrating a site, send them to the DIFM credentials step in the site migration flow.
+							// The trial site already exists, so skip the migration flow's site creation step.
+							// The trial plan has no `install-plugins` feature, so send the user to the
+							// upgrade step. After checkout, `how=difm` routes them to the credentials step.
 							const migrationFlowUrl = addQueryArgs(
-								`/setup/${ SITE_MIGRATION_FLOW }/${ STEPS.SITE_CREATION_STEP.slug }`,
+								`/setup/${ SITE_MIGRATION_FLOW }/${ STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug }`,
 								{
 									siteSlug: siteSlug || siteSlugDependency,
 									siteId: siteId || siteIdDependency,

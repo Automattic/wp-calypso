@@ -73,6 +73,7 @@ class Document extends Component {
 			sectionName,
 			storeSandboxHelper,
 			blackboxHelper,
+			subscriptionManagementSubkey,
 			target,
 			user,
 			useTranslationChunks,
@@ -95,6 +96,11 @@ class Document extends Component {
 			`var BUILD_TIMESTAMP = ${ jsonStringifyForHtml( buildTimestamp ) };\n` +
 			`var BUILD_TARGET = ${ jsonStringifyForHtml( target ) };\n` +
 			( user ? `var currentUser = ${ jsonStringifyForHtml( user ) };\n` : '' ) +
+			( subscriptionManagementSubkey
+				? `var subscriptionManagementSubkey = ${ jsonStringifyForHtml(
+						subscriptionManagementSubkey
+					) };\n`
+				: '' ) +
 			( isSupportSession ? 'var isSupportSession = true;\n' : '' ) +
 			( isSSP ? 'var isSSP = true;\n' : '' ) +
 			( app ? `var app = ${ jsonStringifyForHtml( app ) };\n` : '' ) +
@@ -126,8 +132,8 @@ class Document extends Component {
 				sectionName === CIAB_DASHBOARD_SECTION_DEFINITION.name ||
 				sectionName === A4A_DASHBOARD_SECTION_DEFINITION.name );
 
-		let headTitle = head.title;
 		// Hostname overrides only reach the request's client data, not the base config.
+		let headTitle = isDashboardSection ? ( clientData?.site_name ?? head.title ) : head.title;
 		let headFaviconUrl = clientData?.favicon_url;
 		let isWCCOM = false;
 

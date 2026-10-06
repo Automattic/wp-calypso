@@ -1,9 +1,4 @@
-import {
-	getAgentManager,
-	useAgentChat,
-	type TaskUpdate,
-	type UIMessage,
-} from '@automattic/agenttic-client';
+import { getAgentManager, type TaskUpdate, type UIMessage } from '@automattic/agenttic-client';
 import {
 	type Suggestion,
 	type MarkdownComponents,
@@ -34,6 +29,7 @@ import useCheckpointAction, {
 } from '../../hooks/use-checkpoint-action';
 import useConversation from '../../hooks/use-conversation';
 import useCopyAction from '../../hooks/use-copy-action';
+import { useCredits } from '../../hooks/use-credits';
 import { usePageOrSiteEditorSurface } from '../../hooks/use-empty-view-suggestions';
 import useFeedbackAction from '../../hooks/use-feedback-action';
 import { useImageUpload } from '../../hooks/use-image-upload';
@@ -42,6 +38,7 @@ import useRegenerateAction from '../../hooks/use-regenerate-action';
 import useSourcesAction from '../../hooks/use-sources-action';
 import useSuggestionsRenderedTracking from '../../hooks/use-suggestions-rendered-tracking';
 import { markActionOrigin, takeActionOrigin } from '../../utils/action-origin';
+import { markSessionSent } from '../../utils/agent-session';
 import {
 	blockCurrentRequest,
 	buildCanvasKey,
@@ -69,11 +66,11 @@ import {
 	getOrchestratorErrorMessage,
 	getOrchestratorErrorType,
 } from '../../utils/orchestrator-error-message';
-import { setProviderCheckpoints } from '../../utils/provider-checkpoints';
 import { getReaderChatErrorMessage } from '../../utils/reader-chat-error-message';
 import { isShowComponentTool } from '../../utils/show-component-tools';
 import { isBlockEditToolId } from '../../utils/tool-message-utils';
 import { recordAgentsManagerTracksEvent, recordBigSkyTracksEvent } from '../../utils/tracks';
+import { startTurn } from '../../utils/turn-id';
 import AgentChat from '../agent-chat';
 import { type Options as ChatHeaderOptions } from '../chat-header';
 import type { BigSkyMessage } from '../../types';
@@ -334,7 +331,7 @@ export default function OrchestratorChat( {
 	isChatInputDisabled,
 	onHasMessagesChange,
 }: Props ) {
-	const { agentConfig, getTabSessionId, siteKey, currentUser } = useAgentsManagerContext();
+	const { agentConfig, getTabSessionId, siteKey, site, currentUser } = useAgentsManagerContext();
 
 	const [ inputValue, setInputValue ] = useState( '' );
 	const [ isThinking, setIsThinking ] = useState( false );
@@ -529,6 +526,15 @@ export default function OrchestratorChat( {
 		};
 	}, [ agentConfig, checkpointStreamGeneration ] );
 
+	const isReaderChat = isReaderChatAgent( agentConfig?.agentId );
+	const credits = useCredits( {
+		enabled: ! isReaderChat,
+		agentConfig: agentChatConfig!,
+		siteKey,
+		userId: currentUser?.ID,
+		site,
+		isOpen: isOpen || ( ! isDocked && isCompactMode ),
+	} );
 	const {
 		addMessage,
 		messages,
@@ -543,7 +549,7 @@ export default function OrchestratorChat( {
 		registerMessageActions,
 		getRegenerateHandler,
 		progressMessage,
-	} = useAgentChat( agentChatConfig! );
+	} = credits.chat;
 	const messagesRef = useRef( messages );
 	const getTraceIdForMessage = useAgentTraceIds( agentConfig );
 	const previousMessagesRef = useRef( messages );
@@ -629,6 +635,11 @@ export default function OrchestratorChat( {
 			}
 
 			return async () => {
+				// A regeneration is a new agent request, so it takes the same
+				// credits gate as a send.
+				if ( ! credits.beforeSubmit() ) {
+					return;
+				}
 				// A regenerate says the reply was not good enough: the clearest
 				// quality signal the chat has after a thumbs down.
 				recordAgentsManagerTracksEvent( 'calypso_agents_manager_response_action_regenerate', {
@@ -653,7 +664,7 @@ export default function OrchestratorChat( {
 				}
 			};
 		},
-		[ clearRetainedShowComponentMessages, getRegenerateHandler ]
+		[ clearRetainedShowComponentMessages, getRegenerateHandler, credits.beforeSubmit ]
 	);
 
 	const getShowComponentOrder = useCallback( ( message: UIMessage ): number | undefined => {
@@ -730,7 +741,6 @@ export default function OrchestratorChat( {
 
 	// Reader-chat sessions are short (usually < 50 messages) — don't waste
 	// time paginating 10 pages deep. One page covers typical use.
-	const isReaderChat = isReaderChatAgent( agentConfig?.agentId );
 	const shouldLoadConversation =
 		! isReaderChat || ( ! hasUserSentMessage && messages.length === 0 && ! isProcessing );
 	const chatError = isReaderChat
@@ -761,6 +771,13 @@ export default function OrchestratorChat( {
 			} );
 		},
 	} );
+
+	// Every send path runs a turn.
+	useEffect( () => {
+		if ( isProcessing && agentConfig?.sessionId ) {
+			markSessionSent( agentConfig.sessionId );
+		}
+	}, [ isProcessing, agentConfig?.sessionId ] );
 
 	const { isLoading: isLoadingConversation } = useConversation( {
 		maxPages: isReaderChat ? 1 : 10,
@@ -800,9 +817,12 @@ export default function OrchestratorChat( {
 			// the parked call lives in — hydrate only if its restore came up
 			// empty (e.g. a quota-failed persist). Read the manager, not React
 			// state: `messages` stays empty until the async agent init lands.
+			// A remount mid-turn (History and back, reopening the panel) fetches a
+			// transcript without the reply yet, so the live history stays.
 			if (
-				! hadParkedNavigation ||
-				agentManager.getConversationHistory( agentConfig!.agentId ).length === 0
+				! agentManager.isTurnInFlight( agentConfig!.agentId ) &&
+				( ! hadParkedNavigation ||
+					agentManager.getConversationHistory( agentConfig!.agentId ).length === 0 )
 			) {
 				loadMessages( loadedMessages );
 			}
@@ -1189,14 +1209,6 @@ export default function OrchestratorChat( {
 		sourceDriftInvalidatedCheckpointIds,
 	] );
 
-	// TODO (ability-migration): Remove once the last checkpoint-writing Big Sky
-	// ability migrates. Keeps the provider checkpoint store reachable for the
-	// `restore-checkpoint` delegation while Big Sky still writes checkpoints.
-	useEffect( () => {
-		setProviderCheckpoints( checkpoint );
-		return () => setProviderCheckpoints( undefined );
-	}, [ checkpoint ] );
-
 	// Register thumbs-up/down feedback actions on agent messages.
 	const { showFeedbackInput, submitFeedbackText, resetFeedback, getFeedbackActionsForMessage } =
 		useFeedbackAction( {
@@ -1274,6 +1286,7 @@ export default function OrchestratorChat( {
 			setHasUserSentMessage( true );
 			setUploadError( null );
 
+			startTurn();
 			recordBigSkyTracksEvent( 'jetpack_big_sky_chat_input_send_message', {
 				message_length: message?.length || 0,
 				has_images: pendingImages.length > 0,
@@ -1405,6 +1418,15 @@ export default function OrchestratorChat( {
 				return;
 			}
 
+			// Composer sends are gated by Agenttic before reaching `onSubmitWithImages`;
+			// context cards and the host bridge arrive here instead, so gate them too.
+			// A blocked send consumes any origin the bridge marked for it, so it
+			// can't label the next successful send.
+			if ( ! credits.beforeSubmit() ) {
+				takeActionOrigin( 'send' );
+				return;
+			}
+
 			await onSubmitWithImages( submittedMessage );
 			// Clear only a dispatched message — an aborted or failed send keeps
 			// the composer intact, and the user may have typed a new draft.
@@ -1414,7 +1436,7 @@ export default function OrchestratorChat( {
 				);
 			}
 		},
-		[ inputValue, onSubmitWithImages ]
+		[ inputValue, onSubmitWithImages, credits.beforeSubmit ]
 	);
 
 	const submitChatMessageFromHost = useCallback(
@@ -1441,6 +1463,12 @@ export default function OrchestratorChat( {
 				return;
 			}
 
+			// A send blocked on credits keeps the card, so it can be retried once
+			// credits are back; the gate opens the popover itself.
+			if ( action.type === 'submit' && ! credits.beforeSubmit() ) {
+				return;
+			}
+
 			// Remove the card immediately so the user gets instant collapse feedback.
 			// For 'submit' actions the linked context entry stays until the request
 			// is sent — `consumeNextMessageExternalContextEntries` runs after the
@@ -1454,7 +1482,7 @@ export default function OrchestratorChat( {
 
 			setChatInput( action.prompt );
 		},
-		[ setChatInput, submitChatMessage ]
+		[ setChatInput, submitChatMessage, credits.beforeSubmit ]
 	);
 
 	const dismissContextCard = useCallback( ( card: ExternalContextCard ) => {
@@ -1670,7 +1698,6 @@ export default function OrchestratorChat( {
 				...getCopyActionsForMessage( message ),
 				...getRegenerateActionsForMessage( message, {
 					isLatestAgentMessage: message.id === latestAgentMessageId,
-					isStreaming: isProcessing,
 				} ),
 			];
 			const hasRegisteredCheckpointAction = message.actions?.some(
@@ -1845,6 +1872,9 @@ export default function OrchestratorChat( {
 			suggestions={ suggestionsVisible ? suggestions : [] }
 			emptyViewSuggestions={ displayedEmptyViewSuggestions }
 			isProcessing={ showProcessingIndicator || isUploadingImages }
+			// The indicator above hides mid-reply and covers uploads; response actions
+			// follow the raw streaming state.
+			isStreaming={ isProcessing }
 			thinkingMessage={
 				isUploadingImages ? __( 'Uploading images…', __i18n_text_domain__ ) : progressMessage
 			}
@@ -1867,6 +1897,9 @@ export default function OrchestratorChat( {
 			isCompactMode={ isCompactMode }
 			groupWritingSuggestions={ groupWritingSuggestions }
 			imageUpload={ imageUpload }
+			notice={ credits.notice }
+			trailingActions={ credits.trailingActions }
+			beforeSubmit={ credits.beforeSubmit }
 			isChatInputDisabled={ isChatInputDisabled }
 			showFeedbackInput={ showFeedbackInput }
 			onSubmitFeedbackText={ submitFeedbackText }

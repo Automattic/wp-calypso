@@ -1,15 +1,20 @@
+import { __experimentalHStack as HStack } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
 import { useEffect, useRef, useState } from 'react';
 import { useDomainSearch } from '../../page/context';
 import { DomainSearchControls } from '../../ui';
 import { sanitizeDomainInput } from '../helpers';
+import { useNamePulseUrlQuery } from '../hooks/use-name-pulse-url-query';
+import { NamePulseFilter } from './filter';
 import './search-input.scss';
 
-export const NamePulseSearchInput = () => {
+export const NamePulseSearchInput = ( { showFilter = false }: { showFilter?: boolean } ) => {
 	const { __ } = useI18n();
 	const { query, setQuery, events } = useDomainSearch();
 	const [ localQuery, setLocalQuery ] = useState( query );
 	const inputRef = useRef< HTMLInputElement >( null );
+
+	useNamePulseUrlQuery( query );
 
 	// The page swaps InitialState for NamePulseResults on the first query, which
 	// remounts this input; keep the caret where the user left it.
@@ -27,7 +32,7 @@ export const NamePulseSearchInput = () => {
 	}, [ query ] );
 
 	return (
-		<div className="domain-search__search-bar name-pulse-search-input">
+		<HStack className="domain-search__search-bar name-pulse-search-input" spacing={ 4 }>
 			<DomainSearchControls.Input
 				ref={ inputRef }
 				value={ localQuery }
@@ -38,12 +43,13 @@ export const NamePulseSearchInput = () => {
 					setLocalQuery( value );
 
 					if ( trimmedValue ) {
-						setQuery( trimmedValue );
+						setQuery( trimmedValue, 'input_changed' );
 					} else {
 						events.onQueryClear();
 					}
 				} }
 			/>
-		</div>
+			{ showFilter && <NamePulseFilter /> }
+		</HStack>
 	);
 };

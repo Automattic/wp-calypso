@@ -4,7 +4,7 @@
 
 import {
 	createAgencyRoutes,
-	earnMigrationsRoute,
+	earnPayoutSettingsRoute,
 	earnReferralsRoute,
 	earnSectionRoutes,
 	hasAnyCapability,
@@ -132,7 +132,7 @@ describe( 'earnSectionRoutes', () => {
 		expect( firstAllowed( [ 'a4a_read_referrals' ] ) ).toBe( earnReferralsRoute );
 	} );
 
-	test( 'sends migrations-only users to Migrations', () => {
-		expect( firstAllowed( [ 'a4a_read_migrations' ] ) ).toBe( earnMigrationsRoute );
+	test( 'lets migrations-only users reach Payout settings', () => {
+		expect( firstAllowed( [ 'a4a_read_migrations' ] ) ).toBe( earnPayoutSettingsRoute );
 	} );
 } );

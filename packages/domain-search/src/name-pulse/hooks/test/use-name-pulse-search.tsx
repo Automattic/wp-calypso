@@ -4,6 +4,7 @@
 import { namePulseTldsQuery } from '@automattic/api-queries';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { act, renderHook, waitFor } from '@testing-library/react';
+import { useViewportMatch } from '@wordpress/compose';
 import nock from 'nock';
 import { DomainSearchContext, useDomainSearchContextValue } from '../../../page/context';
 import { buildAvailability } from '../../../test-helpers/factories/availability';
@@ -22,12 +23,20 @@ import {
 	NamePulseDomainStatus,
 } from '../../helpers';
 import { useNamePulseSearch } from '../use-name-pulse-search';
+import { namePulseVerdictQueryKey, setNamePulseVerdict } from '../use-name-pulse-verdicts';
 import type {
 	DomainAvailability,
 	NamePulseAvailabilityResponse,
 	NamePulseSuggestionsQuery,
 	NamePulseSuggestionsResponse,
 } from '@automattic/api-core';
+
+jest.mock( '@wordpress/compose', () => ( {
+	...jest.requireActual( '@wordpress/compose' ),
+	useViewportMatch: jest.fn(),
+} ) );
+
+const mockUseViewportMatch = jest.mocked( useViewportMatch );
 
 const API = 'https://public-api.wordpress.com';
 const AVAILABILITY_PATH = '/wpcom/v2/domains/name-pulse/availability-check';
@@ -118,6 +127,7 @@ const statusOf = ( result: ReturnType< typeof renderSearch >[ 'result' ], name: 
 
 describe( 'useNamePulseSearch', () => {
 	beforeEach( () => {
+		mockUseViewportMatch.mockReturnValue( false );
 		nock.disableNetConnect();
 		queryClient.clear();
 		queryClient.setQueryData( namePulseTldsQuery().queryKey, NAME_PULSE_TLDS_FIXTURE );
@@ -163,6 +173,87 @@ describe( 'useNamePulseSearch', () => {
 		await waitFor( () =>
 			expect( statusOf( result, 'testcom.blog' ) ).toBe( NamePulseDomainStatus.AVAILABLE )
 		);
+	} );
+
+	it( 'features two top results below the large breakpoint and hands the third back to the exact matches', async () => {
+		stubBulkAvailability();
+		const { result, rerender } = renderSearch( 'test' );
+
+		await waitFor( () => expect( result.current.topResults ).toHaveLength( 3 ) );
+		const [ , , third ] = result.current.topResults;
+		expect( result.current.topResultsCount ).toBe( 3 );
+
+		mockUseViewportMatch.mockImplementation( ( breakpoint ) => breakpoint === 'small' );
+		rerender( { q: 'test' } );
+
+		expect( result.current.topResultsCount ).toBe( 2 );
+		expect( result.current.topResults ).toHaveLength( 2 );
+		expect( result.current.exactList.map( ( row ) => row.domain_name ) ).toContain(
+			third.domain_name
+		);
+
+		mockUseViewportMatch.mockImplementation( ( breakpoint ) => breakpoint !== 'large' );
+		rerender( { q: 'test' } );
+
+		expect( result.current.topResultsCount ).toBe( 2 );
+
+		mockUseViewportMatch.mockReturnValue( true );
+		rerender( { q: 'test' } );
+
+		expect( result.current.topResultsCount ).toBe( 3 );
+	} );
+
+	it( 'keeps the bundle anchors once known, dropping only a name that turns out taken', async () => {
+		let calls = 0;
+		const availability = jest.fn( ( domainNames: string[] ) => {
+			calls += 1;
+
+			// Later checks never answer, so a name that has to be checked again stays WAITING.
+			return calls === 1
+				? Promise.resolve( buildNamePulseAvailabilityResponse( domainNames ) )
+				: new Promise< NamePulseAvailabilityResponse >( () => {} );
+		} );
+		const { result } = renderHook( () => useNamePulseSearch( 'icecream' ), {
+			wrapper: ( { children } ) => (
+				<FetcherSearch
+					availability={ availability }
+					suggestions={ async () => ( { suggestions: [], errors: [] } ) }
+					domainAvailability={ async ( domainName ) =>
+						buildAvailability( { domain_name: domainName } )
+					}
+				>
+					{ children }
+				</FetcherSearch>
+			),
+		} );
+
+		await waitFor( () =>
+			expect( result.current.bundleAnchors ).toEqual( [
+				'icecream.blog',
+				'icecream.com',
+				'icecream.org',
+			] )
+		);
+
+		// The first top result is found taken and the row that replaces it has
+		// no verdict yet.
+		act( () => {
+			void queryClient.resetQueries( { queryKey: namePulseVerdictQueryKey( 'icecream.net' ) } );
+			setNamePulseVerdict( queryClient, 'icecream.blog', {
+				status: NamePulseDomainStatus.TAKEN,
+				is_realtime: true,
+			} );
+		} );
+
+		await waitFor( () =>
+			expect( result.current.topResults.map( ( row ) => row.domain_name ) ).toEqual( [
+				'icecream.com',
+				'icecream.org',
+				'icecream.net',
+			] )
+		);
+		expect( statusOf( result, 'icecream.net' ) ).toBe( NamePulseDomainStatus.WAITING );
+		expect( result.current.bundleAnchors ).toEqual( [ 'icecream.com', 'icecream.org' ] );
 	} );
 
 	it( 'regenerates the rows on every keystroke and checks availability once the query settles', async () => {
@@ -226,7 +317,7 @@ describe( 'useNamePulseSearch', () => {
 		jest.useFakeTimers();
 		const { result, rerender, suggestions } = renderTypedSearch( 'ice' );
 
-		expect( result.current.isLoadingKeyword ).toBe( false );
+		await waitFor( () => expect( suggestions ).toHaveBeenCalledTimes( 1 ) );
 
 		rerender( { q: 'ice c' } );
 		rerender( { q: 'ice cr' } );
@@ -235,10 +326,10 @@ describe( 'useNamePulseSearch', () => {
 		expect( result.current.keywordResults ).toHaveLength( 0 );
 
 		await advance( NAME_PULSE_QUERY_SETTLE_MS - 1 );
-		expect( suggestions ).not.toHaveBeenCalled();
+		expect( suggestions ).toHaveBeenCalledTimes( 1 );
 
 		await advance( 1 );
-		expect( suggestions ).toHaveBeenCalledTimes( 1 );
+		expect( suggestions ).toHaveBeenCalledTimes( 2 );
 
 		await waitFor( () =>
 			expect( result.current.keywordResults.map( ( row ) => row.domain_name ) ).toContain(
@@ -246,7 +337,19 @@ describe( 'useNamePulseSearch', () => {
 			)
 		);
 		expect( result.current.isLoadingKeyword ).toBe( false );
-		expect( suggestions ).toHaveBeenCalledTimes( 1 );
+		expect( suggestions ).toHaveBeenCalledTimes( 2 );
+	} );
+
+	it( 'asks for related matches without the ending of a typed domain', async () => {
+		jest.useFakeTimers();
+		const { result, suggestions } = renderTypedSearch( 'icecream.com' );
+
+		await advance( NAME_PULSE_QUERY_SETTLE_MS );
+
+		expect( result.current.layout.suggestions.show ).toBe( true );
+		expect( suggestions ).toHaveBeenCalledWith(
+			expect.objectContaining( { query: 'icecream', use_ai: false } )
+		);
 	} );
 
 	it( 'mounts Creative matches on the fourth word but collapses the exact grid only once the query settles', async () => {
@@ -341,7 +444,7 @@ describe( 'useNamePulseSearch', () => {
 
 		await waitFor( () =>
 			expect( result.current.notice?.message ).toBe(
-				'We don’t recognize .d, so we’re showing results for “icecreamd”. Try .com or .blog instead.'
+				'We don’t recognize that ending. Try .com or .blog, or enter just the name and we’ll suggest the rest.'
 			)
 		);
 		await waitFor( () =>

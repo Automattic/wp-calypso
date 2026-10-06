@@ -10,15 +10,21 @@ jest.mock( '../can-connect-to-zendesk', () => ( {
 	canConnectToZendesk: jest.fn( () => Promise.resolve( false ) ),
 } ) );
 
+jest.mock( '../turn-id', () => ( {
+	getTurnId: jest.fn( () => '' ),
+} ) );
+
 import { DOLLY_AGENT_ID } from '../../constants';
 import { createAgentConfig } from '../create-agent-config';
 import { canConnectToZendesk } from '../can-connect-to-zendesk';
 import { clearSiteEditorActions, setSiteEditorAction } from '../site-editor-context';
 import { createCalypsoAuthProvider } from '../../auth/calypso-auth-provider';
 import { getSessionId } from '../agent-session';
+import { getTurnId } from '../turn-id';
 
 const mockCanConnectToZendesk = canConnectToZendesk as jest.Mock;
 const mockCreateCalypsoAuthProvider = createCalypsoAuthProvider as jest.Mock;
+const mockGetTurnId = getTurnId as jest.Mock;
 
 function setAgentsManagerData( data: Record< string, unknown > ) {
 	( window as unknown as { agentsManagerData?: Record< string, unknown > } ).agentsManagerData =
@@ -37,6 +43,16 @@ describe( 'createAgentConfig', () => {
 		document.body.className = '';
 		clearSiteEditorActions();
 		sessionStorage.clear();
+	} );
+
+	it( 'records the site and user captured by its authentication provider', async () => {
+		const config = await createAgentConfig( {
+			sessionId: '',
+			sessionSiteKey: '456',
+			sessionUserId: 123,
+			siteId: 456,
+		} );
+		expect( config.authenticationScope ).toEqual( { siteId: 456, userId: 123 } );
 	} );
 
 	it( 'does not add reader page context for regular agents', async () => {
@@ -274,5 +290,76 @@ describe( 'createAgentConfig', () => {
 				},
 			} )
 		);
+	} );
+	const clientContexts = [
+		[ 'default', undefined ],
+		[
+			'provider',
+			{
+				getClientContext: () => ( {
+					url: 'https://example.com/wp-admin/',
+					pathname: '/wp-admin/',
+					search: '',
+					environment: 'wp-admin',
+				} ),
+			},
+		],
+	] as const;
+
+	it.each( clientContexts )(
+		'sends the host tracking opt-in, the turn id and the traffic flags in the %s client context',
+		async ( _, contextProvider ) => {
+			setAgentsManagerData( { isTrackingAllowed: true, isDevMode: true, isA11n: true } );
+			mockGetTurnId.mockReturnValueOnce( 'turn-1' );
+
+			const config = await createAgentConfig( {
+				sessionId: 'session-1',
+				sessionSiteKey: 'no-site',
+				agentId: DOLLY_AGENT_ID,
+				contextProvider,
+			} );
+
+			expect( config.contextProvider?.getClientContext() ).toEqual(
+				expect.objectContaining( {
+					isTrackingAllowed: true,
+					turnId: 'turn-1',
+					isTest: true,
+					isA11n: true,
+				} )
+			);
+		}
+	);
+
+	it.each( clientContexts )(
+		'sends the host tracking opt-out in the %s client context',
+		async ( _, contextProvider ) => {
+			setAgentsManagerData( { isTrackingAllowed: false } );
+
+			const config = await createAgentConfig( {
+				sessionId: 'session-1',
+				sessionSiteKey: 'no-site',
+				agentId: DOLLY_AGENT_ID,
+				contextProvider,
+			} );
+
+			expect( config.contextProvider?.getClientContext() ).toHaveProperty(
+				'isTrackingAllowed',
+				false
+			);
+		}
+	);
+
+	it( 'omits the tracking opt-in and the Automattician flag when the host does not set them, and the turn id before a send', async () => {
+		const config = await createAgentConfig( {
+			sessionId: 'session-1',
+			sessionSiteKey: 'no-site',
+			agentId: DOLLY_AGENT_ID,
+		} );
+		const context = config.contextProvider?.getClientContext();
+
+		expect( context ).not.toHaveProperty( 'isTrackingAllowed' );
+		expect( context ).not.toHaveProperty( 'turnId' );
+		expect( context ).not.toHaveProperty( 'isA11n' );
+		expect( context ).toHaveProperty( 'isTest', false );
 	} );
 } );

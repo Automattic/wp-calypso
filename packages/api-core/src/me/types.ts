@@ -49,6 +49,7 @@ export interface User {
 	primary_blog_url: string;
 	profile_URL: string;
 	recovery_email_matches_account_email?: boolean;
+	two_step_enabled?: boolean;
 	site_count: number;
 	social_login_connections: SocialLoginConnection[];
 	use_fallback_for_incomplete_languages: boolean;
@@ -74,11 +75,6 @@ export interface User {
 	 * @deprecated Use `locale_variant` instead.
 	 */
 	localeVariant?: string;
-
-	/**
-	 * The subkey for Subscription Management.
-	 */
-	subscriptionManagementSubkey?: string;
 
 	/**
 	 * Whether the user was bootstrapped (injected server-side).

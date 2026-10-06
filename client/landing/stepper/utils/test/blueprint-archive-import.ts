@@ -7,7 +7,9 @@ import {
 	getBlueprintArchiveSiteSpecUrl,
 	getSiteEditorUrl,
 	getStandaloneBlueprintArchiveSlug,
+	lookupBlueprintArchive,
 	waitForAtomicTransferComplete,
+	waitForBlueprintImportComplete,
 } from '../blueprint-archive-import';
 
 jest.mock( 'calypso/lib/wp', () => ( {
@@ -183,6 +185,26 @@ describe( 'getSiteEditorUrl', () => {
 	} );
 
 	/**
+	 * Easy mode is an opt-in the Big Sky plugin reads from the URL once and
+	 * then remembers in a cookie, so the hand-off has to carry it.
+	 */
+	it( 'opts into easy mode when asked', () => {
+		const url = getSiteEditorUrl( 'https://example.com/wp-admin/', {
+			canvasEdit: true,
+			easyMode: true,
+		} );
+		const redirect = new URL( url ).searchParams.get( 'redirect_to' );
+
+		expect( redirect ).toBe( '/wp-admin/site-editor.php?canvas=edit&easy-mode=true' );
+	} );
+
+	it( 'says nothing about easy mode unless asked', () => {
+		expect(
+			getSiteEditorUrl( 'https://example.com/wp-admin/', { canvasEdit: true } )
+		).not.toContain( 'easy-mode' );
+	} );
+
+	/**
 	 * The copy walkthrough is rolled back: the editor opens quietly and the
 	 * customer speaks first. Nothing on the hand-off may start it.
 	 */
@@ -289,5 +311,101 @@ describe( 'waitForAtomicTransferComplete first-poll timing', () => {
 		await jest.advanceTimersByTimeAsync( 5000 );
 		await pending;
 		expect( mockGet ).toHaveBeenCalledTimes( 2 );
+	} );
+} );
+
+describe( 'waitForBlueprintImportComplete with no import record', () => {
+	beforeEach( () => {
+		jest.clearAllMocks();
+	} );
+
+	afterEach( () => {
+		jest.useRealTimers();
+	} );
+
+	/**
+	 * Every caller starts the import before polling, so a site with no record has nothing coming.
+	 * It used to hold the customer on the loading screen for the full fifteen minutes.
+	 */
+	it( 'gives up after a minute of empty answers', async () => {
+		jest.useFakeTimers();
+		mockGet.mockResolvedValue( [] );
+
+		const pending = waitForBlueprintImportComplete( 'site.example.com', {
+			pollIntervalMs: 5000,
+			initialDelayMs: 0,
+		} );
+		const outcome = expect( pending ).rejects.toThrow( 'no import record' );
+
+		await jest.advanceTimersByTimeAsync( 65000 );
+		await outcome;
+		expect( mockGet.mock.calls.length ).toBeLessThan( 20 );
+	} );
+
+	it( 'keeps waiting on an import that is running', async () => {
+		jest.useFakeTimers();
+		mockGet.mockResolvedValue( { importId: 'abc', importStatus: 'importing' } );
+
+		const pending = waitForBlueprintImportComplete( 'site.example.com', {
+			pollIntervalMs: 5000,
+			initialDelayMs: 0,
+		} );
+		let settled = false;
+		pending.then(
+			() => ( settled = true ),
+			() => ( settled = true )
+		);
+
+		await jest.advanceTimersByTimeAsync( 120000 );
+		expect( settled ).toBe( false );
+
+		mockGet.mockResolvedValue( { importId: 'abc', importStatus: 'importSuccess' } );
+		await jest.advanceTimersByTimeAsync( 5000 );
+		await expect( pending ).resolves.toBeUndefined();
+	} );
+} );
+
+/**
+ * Onboarding names a blueprint to the customer by its title ("Punk"), so the lookup carries it —
+ * and a server that predates the field must not break the plans it already returns.
+ */
+describe( 'lookupBlueprintArchive title', () => {
+	beforeEach( () => {
+		mockGet.mockReset();
+	} );
+
+	it( 'returns the blueprint title alongside the suggested plans', async () => {
+		mockGet.mockResolvedValue( {
+			slug: 'punk',
+			exists: true,
+			title: ' Punk ',
+			suggested_plans: [ 'value_bundle' ],
+		} );
+
+		await expect( lookupBlueprintArchive( 'punk' ) ).resolves.toEqual( {
+			exists: true,
+			title: 'Punk',
+			suggestedPlans: [ 'value_bundle' ],
+		} );
+	} );
+
+	it( 'reads a missing title as empty', async () => {
+		mockGet.mockResolvedValue( { slug: 'punk', exists: true, suggested_plans: [] } );
+
+		await expect( lookupBlueprintArchive( 'punk' ) ).resolves.toEqual( {
+			exists: true,
+			title: '',
+			suggestedPlans: [],
+		} );
+	} );
+
+	it( 'has no title for a blueprint that does not resolve', async () => {
+		mockGet.mockRejectedValue( new Error( 'Not found' ) );
+
+		await expect( lookupBlueprintArchive( 'nope' ) ).resolves.toEqual( {
+			exists: false,
+			title: '',
+			suggestedPlans: [],
+		} );
 	} );
 } );

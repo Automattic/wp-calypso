@@ -4,13 +4,12 @@ import { Button } from '@wordpress/components';
 import { useDispatch as useWPDispatch } from '@wordpress/data';
 import { translate } from 'i18n-calypso';
 import moment from 'moment';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import ThankYouProduct from 'calypso/components/thank-you-v2/product';
 import { SITE_STORE } from 'calypso/landing/stepper/stores';
-import { getPurchaseByProductSlug } from 'calypso/lib/purchases/utils';
 import { useSelector } from 'calypso/state';
 import {
-	getSitePurchases,
+	getRawSitePurchases,
 	hasLoadedSitePurchasesFromServer,
 	isFetchingSitePurchases,
 } from 'calypso/state/purchases/selectors';
@@ -33,16 +32,15 @@ export default function ThankYouPlanProduct( {
 		( state ) => isFetchingSitePurchases( state ) || ! hasLoadedSitePurchasesFromServer( state )
 	);
 
-	const purchases = useSelector( ( state ) => getSitePurchases( state, siteId ) );
-
-	const productPurchase = useMemo(
-		() => getPurchaseByProductSlug( purchases, purchase.productSlug ),
-		[ purchase.productSlug, purchases ]
+	const productPurchase = useSelector( ( state ) =>
+		getRawSitePurchases( state, siteId ).find(
+			( sitePurchase ) => sitePurchase.product_slug === purchase.productSlug
+		)
 	);
 
 	const expirationDate =
 		! isLoadingPurchases && productPurchase
-			? translate( 'Expires on %s', { args: moment( productPurchase.expiryDate ).format( 'LL' ) } )
+			? translate( 'Expires on %s', { args: moment( productPurchase.expiry_date ).format( 'LL' ) } )
 			: '';
 
 	const [ letsWorkButtonBusy, setLetsWorkButtonBusy ] = useState< boolean >( false );

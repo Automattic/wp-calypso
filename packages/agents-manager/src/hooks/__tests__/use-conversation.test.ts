@@ -21,6 +21,7 @@ jest.mock( '../../contexts', () => ( {
 import { useQuery } from '@tanstack/react-query';
 import { renderHook } from '@testing-library/react';
 import { useAgentsManagerContext } from '../../contexts';
+import { getOrCreateSessionId, markSessionSent } from '../../utils/agent-session';
 import useConversation from '../use-conversation';
 
 const mockUseQuery = useQuery as jest.Mock;
@@ -74,5 +75,28 @@ describe( 'useConversation', () => {
 				enabled: true,
 			} )
 		);
+	} );
+
+	it( 'does not fetch a session minted in this tab before a turn is sent in it', () => {
+		const sessionId = getOrCreateSessionId( 'wp-orchestrator' );
+		mockUseAgentsManagerContext.mockReturnValue( {
+			agentConfig: { agentId: 'wp-orchestrator', sessionId, authProvider: {} },
+		} );
+
+		const { rerender } = renderHook( () => useConversation( {} ) );
+		expect( mockUseQuery ).toHaveBeenLastCalledWith(
+			expect.objectContaining( { enabled: false } )
+		);
+
+		// Sending does not start a fetch that would replace the live stream.
+		markSessionSent( sessionId );
+		rerender();
+		expect( mockUseQuery ).toHaveBeenLastCalledWith(
+			expect.objectContaining( { enabled: false } )
+		);
+
+		// The next page load fetches it.
+		renderHook( () => useConversation( {} ) );
+		expect( mockUseQuery ).toHaveBeenLastCalledWith( expect.objectContaining( { enabled: true } ) );
 	} );
 } );

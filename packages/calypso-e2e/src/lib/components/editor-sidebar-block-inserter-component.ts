@@ -2,6 +2,12 @@ import { Page, Locator } from 'playwright';
 import envVariables from '../../env-variables';
 import { EditorComponent } from './editor-component';
 
+// Choosing a result inserts the block synchronously, and on desktop hovering it
+// mounts a preview iframe first. On contended CI agents that kept the renderer
+// busy past the default action timeout. A dispatched click cannot be retried
+// safely (it may insert the block twice), so give it more time instead.
+const INSERTER_CLICK_TIMEOUT = 20 * 1000;
+
 const sidebarParentSelector = '.block-editor-inserter__main-area';
 const selectors = {
 	closeBlockInserterButton: 'button[aria-label="Close Block Inserter"]',
@@ -159,7 +165,10 @@ export class EditorSidebarBlockInserterComponent {
 		// never retried. Patterns can afford that (they assert on a block-count
 		// delta); blocks assert on ".is-selected", which a block of the same type
 		// left selected by an earlier step can satisfy.
-		await locator.click( type === 'pattern' ? { noWaitAfter: true } : undefined );
+		await locator.click( {
+			timeout: INSERTER_CLICK_TIMEOUT,
+			...( type === 'pattern' && { noWaitAfter: true } ),
+		} );
 
 		return locator;
 	}

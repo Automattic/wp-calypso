@@ -4,12 +4,16 @@ import debug from './debug';
  * Selects open modal dialogs and popovers: a11y-correct modals (requiring
  * `aria-modal` excludes generic `role="dialog"` widgets), native
  * `<dialog open>`, older `@wordpress/components` Modal versions whose
- * `aria-modal` attribute sat on an inner node, and `@wordpress/components`
+ * `aria-modal` attribute sat on an inner node, wp-admin UI overlays marked
+ * with `data-wp-ui-overlay-modal`, and `@wordpress/components`
  * Popover — excluding Tooltip, which reuses the popover class and would
- * otherwise suppress surveys on every hover.
+ * otherwise suppress surveys on every hover, and the block editor's own
+ * chrome (`BlockPopover`: block toolbar, in-between inserter, drop zone),
+ * which mounts and unmounts as the user types or selects blocks and would
+ * pause and retarget Survicate on every change.
  */
 export const MODAL_SELECTOR =
-	'[role="dialog"][aria-modal="true"], dialog[open], .components-modal__screen-overlay, .components-popover:not(.components-tooltip)';
+	'[role="dialog"][aria-modal="true"], dialog[open], .components-modal__screen-overlay, [data-wp-ui-overlay-modal], .components-popover:not(.components-tooltip):not(.block-editor-block-popover)';
 
 /**
  * The Survicate widget renders `role="dialog"`/`aria-modal` elements inside

@@ -20,6 +20,7 @@ export async function fetchNamePulseSuggestions( {
 	query,
 	use_ai = false,
 	timeout,
+	tlds,
 }: NamePulseSuggestionsQuery ): Promise< NamePulseSuggestionsResponse > {
 	const response: Partial< NamePulseSuggestionsResponse > = await wpcom.req.get(
 		{
@@ -32,6 +33,7 @@ export async function fetchNamePulseSuggestions( {
 			allow_premium: 'true',
 			providers: use_ai ? AI_PROVIDERS : KEYWORD_PROVIDERS,
 			...( timeout ? { timeout } : {} ),
+			...( tlds?.length ? { tlds: tlds.join( ',' ) } : {} ),
 		}
 	);
 

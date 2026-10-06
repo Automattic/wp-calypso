@@ -7,6 +7,7 @@ import { InitialState } from '../page/initial-state';
 import {
 	buildNamePulseAvailabilityEntry,
 	buildNamePulseAvailabilityResponse,
+	buildNamePulseBundle,
 	NAME_PULSE_AI_SUGGESTIONS_FIXTURE,
 	NAME_PULSE_AVAILABILITY_FIXTURE,
 	NAME_PULSE_SUGGESTIONS_FIXTURE,
@@ -33,6 +34,12 @@ const FAILING = 'icecream.app';
 
 const delay = ( ms: number ) => new Promise( ( resolve ) => setTimeout( resolve, ms ) );
 
+/**
+ * The bulk check prices premium names at the standard TLD rate; only this
+ * per-domain check knows the registry price, so it quotes a much higher one.
+ */
+const PREMIUM_REALTIME_PRICE = 3500;
+
 const toRealtimeAvailability = ( domainName: string ): DomainAvailability => {
 	const entry = NAME_PULSE_AVAILABILITY_FIXTURE[ domainName ] ?? buildNamePulseAvailabilityEntry();
 	let status = DomainAvailabilityStatus.NOT_AVAILABLE;
@@ -43,6 +50,8 @@ const toRealtimeAvailability = ( domainName: string ): DomainAvailability => {
 			: DomainAvailabilityStatus.AVAILABLE;
 	}
 
+	const isPremium = status === DomainAvailabilityStatus.AVAILABLE_PREMIUM;
+
 	return {
 		domain_name: domainName,
 		tld: getTld( domainName ),
@@ -50,12 +59,15 @@ const toRealtimeAvailability = ( domainName: string ): DomainAvailability => {
 		mappable: 'mappable',
 		supports_privacy: true,
 		root_domain_provider: 'wpcom',
-		cost: entry.cost ?? '',
-		raw_price: entry.raw_price,
-		sale_cost: entry.sale_cost,
+		cost: isPremium ? `$${ PREMIUM_REALTIME_PRICE }.00` : ( entry.cost ?? '' ),
+		renew_cost: isPremium ? `$${ PREMIUM_REALTIME_PRICE }.00` : ( entry.cost ?? '' ),
+		match_reasons: [ 'exact-match', 'tld-exact', 'tld-common' ],
+		raw_price: isPremium ? PREMIUM_REALTIME_PRICE : entry.raw_price,
+		sale_cost: isPremium ? undefined : entry.sale_cost,
 		currency_code: 'USD',
 		product_slug: 'domain_reg',
 		product_id: 6,
+		...( isPremium ? { is_supported_premium_domain: true } : {} ),
 	};
 };
 
@@ -85,6 +97,21 @@ const useStoryCart = (): DomainSearchCart => {
 				},
 			] );
 		},
+		onAddBundle: async ( bundle ) => {
+			setItems( ( current ) => [
+				...current,
+				...bundle.domains.map( ( { domain, cost } ) => {
+					const tld = getTld( domain );
+
+					return {
+						uuid: domain,
+						domain: domain.slice( 0, -( tld.length + 1 ) ),
+						tld,
+						price: cost,
+					};
+				} ),
+			] );
+		},
 		onRemoveItem: async ( uuid ) => {
 			setItems( ( current ) => current.filter( ( item ) => item.uuid !== uuid ) );
 		},
@@ -104,7 +131,7 @@ const StoryDomainSearch = ( {
 		cart,
 		query: currentQuery,
 		slots,
-		config: { showNamePulseSearch: true },
+		config: { showNamePulseSearch: true, showBundleSuggestions: true },
 		events: { onQueryChange: setCurrentQuery, onQueryClear: () => setCurrentQuery( '' ) },
 	} );
 
@@ -138,7 +165,16 @@ const StoryDomainSearch = ( {
 
 						return NAME_PULSE_TLDS_FIXTURE;
 					},
-					domainAvailability: async ( domainName ) => toRealtimeAvailability( domainName ),
+					domainAvailability: async ( domainName ) => {
+						await delay( 900 );
+
+						return toRealtimeAvailability( domainName );
+					},
+					bundleForDomain: async ( fqdn ) => {
+						await delay( 700 );
+
+						return buildNamePulseBundle( fqdn );
+					},
 				} ) }
 			>
 				<div className="domain-search" style={ { padding: '2rem 1rem' } }>
@@ -158,9 +194,24 @@ export default meta;
 
 export const SingleWord = () => <StoryDomainSearch query="icecream" />;
 
+// The typed `.com` anchors its own bundle, beside the exact-match card.
+export const Fqdn = () => <StoryDomainSearch query="icecream.com" />;
+
+// `.blog` anchors no bundle, so the first top result that does (`.com`) stands in.
+export const FqdnWithoutOwnBundle = () => <StoryDomainSearch query="icecream.blog" />;
+
+// No card for a taken name; the bundle moves under Top results.
+export const FqdnTaken = () => <StoryDomainSearch query="icecream.io" />;
+
+// `my.app` is promoted to the second top result.
+export const LabelEndsInTld = () => <StoryDomainSearch query="myapp" />;
+
 export const MultiWord = () => <StoryDomainSearch query="ice cream" />;
 
 export const AiMode = () => <StoryDomainSearch query="a blog about ice cream" />;
+
+// Truncated on desktop, wrapped onto a second line below it.
+export const LongName = () => <StoryDomainSearch query="icecreamshopnearsuratairport" />;
 
 // Starts on the initial state so the swap to the results page can be checked
 // for layout shifts.

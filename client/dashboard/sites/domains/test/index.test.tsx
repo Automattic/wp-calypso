@@ -2,9 +2,10 @@
  * @jest-environment jsdom
  */
 
-import { screen } from '@testing-library/react';
+import { screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { SITE_CONTEXT_VIEW } from '../../../domains/dataviews/views';
 import { render } from '../../../test-utils';
 import SiteDomains from '../index';
 import type { Site, User } from '@automattic/api-core';
@@ -103,9 +104,11 @@ const nonOwnerUser = {
 function mockApis( {
 	domains = [ domain, defaultAddressDomain ],
 	ssl,
+	preferences = {},
 }: {
 	domains?: unknown[];
 	ssl?: { domain: string; certificate_provisioned: boolean };
+	preferences?: Record< string, unknown >;
 } = {} ) {
 	nock( 'https://public-api.wordpress.com' )
 		.get( `/rest/v1.1/sites/${ site.slug }` )
@@ -125,7 +128,7 @@ function mockApis( {
 	nock( 'https://public-api.wordpress.com' )
 		.get( '/rest/v1.1/me/preferences' )
 		.query( true )
-		.reply( 200, { calypso_preferences: {} } );
+		.reply( 200, { calypso_preferences: preferences } );
 
 	if ( ssl ) {
 		nock( 'https://public-api.wordpress.com' )
@@ -174,6 +177,27 @@ describe( '<SiteDomains>', () => {
 		render( <SiteDomains />, { user: ownerUser } );
 
 		expect( await screen.findByRole( 'dialog', { name: 'Change site address' } ) ).toBeVisible();
+	} );
+
+	test( 'sorts domains by whether they are primary', async () => {
+		nock.cleanAll();
+		mockApis( {
+			preferences: {
+				'hosting-dashboard-dataviews-view-site-domains': {
+					...SITE_CONTEXT_VIEW,
+					sort: { field: 'is_primary_domain', direction: 'desc' },
+				},
+			},
+		} );
+
+		render( <SiteDomains />, { user: ownerUser } );
+
+		const table = await screen.findByRole( 'table' );
+		expect(
+			within( table )
+				.getAllByText( /^test-site\./ )
+				.map( ( element ) => element.textContent )
+		).toEqual( [ 'test-site.wordpress.com', 'test-site.com' ] );
 	} );
 
 	test( 'does not open a modal without the deep link', async () => {

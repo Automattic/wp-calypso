@@ -10,7 +10,9 @@ import { DateRange, getRangeStartDate } from '../lib/date-ranges';
 import { HighLightItem } from '../typings';
 import GrowHeight from './grow-height';
 import recordWidgetEvent, { recordWidgetEventThenFollow } from './record-widget-event';
+import useStatsLink from './use-stats-link';
 import WidgetSection from './widget-section';
+import type { PremiumAnalyticsRange } from 'calypso/dashboard/utils/premium-analytics-url';
 import type { MouseEvent } from 'react';
 
 import './highlights.scss';
@@ -21,6 +23,8 @@ interface ItemWrapperProps {
 	isItemLink: boolean;
 	item: HighLightItem;
 	isItemLinkExternal: boolean;
+	/** The days the list covers, so a post's link opens on them. */
+	linkRange: PremiumAnalyticsRange;
 	onClick?: ( event: MouseEvent< HTMLAnchorElement > ) => void;
 }
 
@@ -33,6 +37,7 @@ interface TopColumnProps {
 	siteId: number;
 	isItemLinkExternal?: boolean;
 	isItemLink?: boolean;
+	linkRange: PremiumAnalyticsRange;
 	onItemClick?: ( event: MouseEvent< HTMLAnchorElement > ) => void;
 	onViewAllClick?: ( event: MouseEvent< HTMLAnchorElement > ) => void;
 }
@@ -63,9 +68,11 @@ const ItemWrapper: FunctionComponent< ItemWrapperProps > = ( {
 	isItemLink,
 	item,
 	isItemLinkExternal,
+	linkRange,
 	onClick,
 } ) => {
 	const translate = useTranslate();
+	const statsLink = useStatsLink( siteId );
 
 	// The bare figure is what the design shows; screen readers get the worded version so
 	// the number is not announced without its unit.
@@ -95,7 +102,13 @@ const ItemWrapper: FunctionComponent< ItemWrapperProps > = ( {
 		<a
 			className="stats-widget-highlights-card__item"
 			href={
-				isItemLinkExternal ? externalLink( item ) : postAndPageLink( statsBaseUrl, siteId, item.id )
+				isItemLinkExternal
+					? externalLink( item )
+					: statsLink(
+							postAndPageLink( statsBaseUrl, siteId, item.id ),
+							item.id > 0 ? `/post/${ item.id }` : null,
+							linkRange
+						)
 			}
 			target={ isItemLinkExternal ? '_blank' : '_self' }
 			onClick={ onClick }
@@ -124,6 +137,7 @@ const TopColumn: FunctionComponent< TopColumnProps > = ( {
 	siteId,
 	isItemLink = false,
 	isItemLinkExternal = false,
+	linkRange,
 	onItemClick,
 	onViewAllClick,
 } ) => {
@@ -156,6 +170,7 @@ const TopColumn: FunctionComponent< TopColumnProps > = ( {
 									siteId={ siteId }
 									isItemLink={ isItemLink }
 									isItemLinkExternal={ isItemLinkExternal }
+									linkRange={ linkRange }
 									onClick={ onItemClick }
 								/>
 							</li>
@@ -174,6 +189,7 @@ const TopColumn: FunctionComponent< TopColumnProps > = ( {
 
 export default function Highlights( { siteId, gmtOffset, statsBaseUrl, range }: HighlightsProps ) {
 	const translate = useTranslate();
+	const statsLink = useStatsLink( siteId );
 
 	const topPostsAndPagesTitle = translate( 'Top Posts & Pages' );
 	const topReferrersTitle = translate( 'Top Referrers' );
@@ -183,10 +199,19 @@ export default function Highlights( { siteId, gmtOffset, statsBaseUrl, range }: 
 		.format( 'YYYY-MM-DD' );
 	// Both lists are summarized, which counts in days whatever period it is handed, so the
 	// window is stated as its first and last day rather than as the range's own buckets.
-	// "See more" opens that same window.
+	// "See more" and the item links open that same window, on Stats or Premium Analytics.
 	const startDate = getRangeStartDate( range, queryDate );
-	const viewAllPostsStatsUrl = `${ statsBaseUrl }/stats/day/posts/${ siteId }?chartStart=${ startDate }&chartEnd=${ queryDate }`;
-	const viewAllReferrerStatsUrl = `${ statsBaseUrl }/stats/day/referrers/${ siteId }?chartStart=${ startDate }&chartEnd=${ queryDate }`;
+	const linkRange = { from: startDate, to: queryDate, gmtOffset };
+	const viewAllPostsStatsUrl = statsLink(
+		`${ statsBaseUrl }/stats/day/posts/${ siteId }?chartStart=${ startDate }&chartEnd=${ queryDate }`,
+		'/reports/posts',
+		linkRange
+	);
+	const viewAllReferrerStatsUrl = statsLink(
+		`${ statsBaseUrl }/stats/day/referrers/${ siteId }?chartStart=${ startDate }&chartEnd=${ queryDate }`,
+		'/reports/referrers',
+		linkRange
+	);
 
 	const {
 		data: topPostsAndPages = [],
@@ -278,6 +303,7 @@ export default function Highlights( { siteId, gmtOffset, statsBaseUrl, range }: 
 							siteId={ siteId }
 							isItemLink
 							isItemLinkExternal={ active.isItemLinkExternal }
+							linkRange={ linkRange }
 							onItemClick={ recordWidgetEventThenFollow( active.itemEvent ) }
 							onViewAllClick={ recordWidgetEventThenFollow( 'see_more_clicked', {
 								tab: active.trackingName,

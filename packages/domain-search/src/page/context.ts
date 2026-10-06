@@ -14,7 +14,7 @@ import { useEvent } from '@wordpress/compose';
 import { createContext, useCallback, useContext, useMemo, useState } from 'react';
 import { isBlogSubdomainQuery } from '../helpers';
 import { DEFAULT_FILTER } from './constants';
-import { type DomainSearchProps, type DomainSearchContextType } from './types';
+import { type DomainSearchProps, type DomainSearchContextType, type SearchTrigger } from './types';
 
 const noop = () => {};
 
@@ -30,6 +30,7 @@ export const DEFAULT_CONTEXT_VALUE: DomainSearchContextType = {
 		onMapDomainClick: noop,
 		onSubmitButtonClick: noop,
 		onQueryChange: noop,
+		onSearchStart: noop,
 		onQueryClear: noop,
 		onAddDomainToCart: noop,
 		onQueryAvailabilityCheck: noop,
@@ -152,7 +153,7 @@ export const useDomainSearchContextValue = ( {
 	// call whenever the callback identity changes. Consumers rebuild `events`
 	// and `cart` on every render, so a setQuery recreated with the memo below
 	// would drop the query typed just before an unrelated re-render.
-	const setQuery = useEvent( ( query: string ) => {
+	const setQuery = useEvent( ( query: string, trigger: SearchTrigger ) => {
 		const normalizedQuery = query
 			.trim()
 			.toLowerCase()
@@ -161,6 +162,7 @@ export const useDomainSearchContextValue = ( {
 
 		if ( normalizedQuery ) {
 			normalizedEvents.onQueryChange( normalizedQuery );
+			normalizedEvents.onSearchStart( normalizedQuery, trigger );
 		}
 	} );
 
@@ -273,10 +275,12 @@ export const useDomainSearchContextValue = ( {
 			setFilter: ( filter ) => {
 				setFilter( filter );
 				normalizedEvents.onFilterApplied( filter );
+				normalizedEvents.onSearchStart( externalQuery ?? '', 'filter_apply' );
 			},
 			resetFilter: () => {
 				setFilter( DEFAULT_FILTER );
 				normalizedEvents.onFilterReset( DEFAULT_FILTER, [ 'tlds', 'exactSldMatchesOnly' ] );
+				normalizedEvents.onSearchStart( externalQuery ?? '', 'filter_reset' );
 			},
 		};
 	}, [

@@ -1,71 +1,43 @@
-import { DomainAvailabilityStatus } from '@automattic/api-core';
-import { formatCurrency } from '@automattic/number-formatters';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Button, Tooltip, __experimentalText as Text } from '@wordpress/components';
+import { useViewportMatch } from '@wordpress/compose';
 import { sprintf } from '@wordpress/i18n';
 import { cautionFilled, cart as cartIcon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
+import { Badge } from '@wordpress/ui';
 import clsx from 'clsx';
-import { useState } from 'react';
-import { convertAvailabilityToSuggestion } from '../../helpers/convert-availability-to-suggestion';
-import { DomainPriceRule } from '../../hooks/use-suggestion';
+import { useEffect, useMemo } from 'react';
 import { useDomainSearch } from '../../page/context';
-import { DomainSearchTrademarkClaimsModal, DomainSuggestionBadge } from '../../ui';
+import { DomainSearchTrademarkClaimsModal } from '../../ui';
 import {
+	formatNamePulsePrice,
+	getNamePulseSalePrice,
 	NamePulseDomainStatus,
-	pickPricing,
+	toNamePulseRealtimeVerdict,
 	type NamePulseDomainResult,
-	type NamePulseVerdict,
 } from '../helpers';
+import { useNamePulseCartToggle } from '../hooks/use-name-pulse-cart-toggle';
 import { setNamePulseVerdict } from '../hooks/use-name-pulse-verdicts';
-import type { DomainAvailability } from '@automattic/api-core';
+import { NamePulsePolicyNoticeDialog } from './policy-notice-dialog';
 
 interface NamePulseResultRowProps {
 	result: NamePulseDomainResult;
 	position: number;
 }
 
-const isAvailableStatus = ( status: DomainAvailabilityStatus ) =>
-	status === DomainAvailabilityStatus.AVAILABLE ||
-	status === DomainAvailabilityStatus.AVAILABLE_PREMIUM;
-
-const toRealtimeVerdict = ( availability: DomainAvailability ): NamePulseVerdict => {
-	const available = isAvailableStatus( availability.status );
-
-	return {
-		status: available ? NamePulseDomainStatus.AVAILABLE : NamePulseDomainStatus.TAKEN,
-		...pickPricing( availability ),
-		cost: available ? availability.cost : undefined,
-		is_premium: availability.status === DomainAvailabilityStatus.AVAILABLE_PREMIUM,
-		is_realtime: true,
-	};
-};
-
-const formatPrice = ( amount: number, currencyCode: string ) =>
-	formatCurrency( amount, currencyCode, { stripZeros: true } );
-
-/**
- * Only `sale_cost` is a bare number, so a sale needs a known currency to render.
- */
-const hasSalePrice = ( {
-	sale_cost: saleCost,
-	currency_code: currencyCode,
-}: NamePulseDomainResult ) => typeof saleCost === 'number' && !! currencyCode;
-
 const Price = ( { result }: { result: NamePulseDomainResult } ) => {
 	const { __ } = useI18n();
-	const { cost, raw_price: rawPrice, sale_cost: saleCost, currency_code: currencyCode } = result;
+	const { cost, raw_price: rawPrice, currency_code: currencyCode } = result;
 	const yearlyPrice =
-		typeof rawPrice === 'number' && currencyCode ? formatPrice( rawPrice, currencyCode ) : cost;
+		typeof rawPrice === 'number' && currencyCode
+			? formatNamePulsePrice( rawPrice, currencyCode )
+			: cost;
 
 	if ( ! yearlyPrice ) {
 		return null;
 	}
 
-	const salePrice =
-		typeof saleCost === 'number' && currencyCode
-			? formatPrice( saleCost, currencyCode )
-			: undefined;
+	const salePrice = getNamePulseSalePrice( result );
 	const isSale = !! salePrice;
 
 	return (
@@ -96,87 +68,76 @@ const Price = ( { result }: { result: NamePulseDomainResult } ) => {
 
 export const NamePulseResultRow = ( { result, position }: NamePulseResultRowProps ) => {
 	const { __ } = useI18n();
-	const { cart, events, queries } = useDomainSearch();
+	const { queries } = useDomainSearch();
 	const queryClient = useQueryClient();
-	const [ trademarkClaimsNoticeInfo, setTrademarkClaimsNoticeInfo ] =
-		useState< DomainAvailability[ 'trademark_claims_notice_info' ] >();
+	// Below wide desktop the row is too narrow to truncate without losing most of
+	// the name, so the name wraps onto a second line instead.
+	const wrapName = useViewportMatch( 'large', '<' );
 
-	const {
-		domain_name: domainName,
-		suffix,
-		status,
-		is_premium: isPremium,
-		is_realtime: isRealtime,
-	} = result;
+	const { domain_name: domainName, suffix, source } = result;
 	const label = suffix ? domainName.slice( 0, -( suffix.length + 1 ) ) : domainName;
+
+	// The bulk check prices a premium name at its TLD's standard rate, so the row
+	// asks for a per-domain check rather than quoting a price we cannot honor.
+	// Suggestions are priced by the registry already, so they render straight away.
+	const needsPremiumPrice =
+		result.status === NamePulseDomainStatus.AVAILABLE &&
+		!! result.is_premium &&
+		! result.is_realtime &&
+		source === 'exact';
+
+	// The key is shared with the pre-cart check and the typed-domain notice, so
+	// clicking the row afterwards costs no second request, and even while disabled
+	// the query reports whatever verdict those two already fetched for the name.
+	const { data: realtimeAvailability, isError: isPremiumPriceError } = useQuery( {
+		...queries.domainAvailability( domainName ),
+		enabled: needsPremiumPrice,
+	} );
+
+	const realtimeVerdict = useMemo(
+		() => ( realtimeAvailability ? toNamePulseRealtimeVerdict( realtimeAvailability ) : undefined ),
+		[ realtimeAvailability ]
+	);
+
+	// Every other row listing this name reads the verdict from the shared cache.
+	useEffect( () => {
+		if ( realtimeVerdict ) {
+			setNamePulseVerdict( queryClient, domainName, realtimeVerdict );
+		}
+	}, [ realtimeVerdict, domainName, queryClient ] );
+
+	const row = realtimeVerdict ? { ...result, ...realtimeVerdict } : result;
+	const { status, is_premium: isPremium } = row;
 
 	const isWaiting = status === NamePulseDomainStatus.WAITING;
 	const isUnknown = status === NamePulseDomainStatus.UNKNOWN;
 	const isAvailable = status === NamePulseDomainStatus.AVAILABLE;
 	const isUnavailable = ! isWaiting && ! isUnknown && ! isAvailable;
-	// Bulk results carry no premium pricing; the badge stands in for the price
-	// until the real-time check on click fills it in.
-	const showPremiumBadge = isAvailable && isPremium && ! isRealtime;
-	const showSaleBadge = isAvailable && hasSalePrice( result );
-	// A badge eats into the name column's width, so it gets a tighter label
-	// truncation budget than a row with the space to spare.
-	const labelTruncateLimit = showSaleBadge || showPremiumBadge ? 12 : 20;
-	const inCart = cart.hasItem( domainName );
-
+	// A failed check leaves the row on its badge alone: no price, and no skeleton
+	// waiting for one that is not coming.
+	const isPremiumPriceMissing = needsPremiumPrice && ! realtimeVerdict;
+	const showPremiumBadge = isAvailable && isPremium;
+	// TLDs with special requirements are rarely registered, so the requirements
+	// stay off the row and are confirmed in a dialog before the name goes to the cart.
 	const {
-		mutate: toggleCart,
+		inCart,
 		isPending,
 		error,
-	} = useMutation( {
-		mutationFn: async ( { acceptedTrademarkClaim }: { acceptedTrademarkClaim: boolean } ) => {
-			if ( inCart ) {
-				const item = cart.items.find( ( i ) => `${ i.domain }.${ i.tld }` === domainName );
-				if ( item ) {
-					await cart.onRemoveItem( item.uuid );
-				}
-				return { addedToCart: false };
-			}
-
-			// Bulk results are zone-file based and approximate; the real-time check runs
-			// before anything reaches the cart, and every row listing the name reads it.
-			const availability = await queryClient.ensureQueryData(
-				queries.domainAvailability( domainName )
-			);
-			const suggestion = convertAvailabilityToSuggestion( availability );
-
-			events.onDomainAddAvailabilityPreCheck( availability, domainName, suggestion.vendor );
-			setNamePulseVerdict( queryClient, domainName, toRealtimeVerdict( availability ) );
-
-			if ( ! isAvailableStatus( availability.status ) ) {
-				throw new Error( __( 'Sorry, this domain is no longer available.' ) );
-			}
-
-			if ( availability.trademark_claims_notice_info && ! acceptedTrademarkClaim ) {
-				events.onTrademarkClaimsNoticeShown( {
-					...suggestion,
-					position,
-					price_rule: DomainPriceRule.PRICE,
-				} );
-				setTrademarkClaimsNoticeInfo( availability.trademark_claims_notice_info );
-				return { addedToCart: false };
-			}
-
-			await cart.onAddItem( suggestion );
-			return { addedToCart: true, suggestion };
-		},
-		onSuccess: ( data ) => {
-			if ( data.addedToCart && data.suggestion ) {
-				events.onAddDomainToCart(
-					domainName,
-					position,
-					data.suggestion.is_premium ?? false,
-					data.suggestion.vendor
-				);
-			}
-		},
-		networkMode: 'always',
-		retry: false,
-	} );
+		toggleCart,
+		trademarkClaimsNoticeInfo,
+		acceptTrademarkClaim,
+		closeTrademarkClaims,
+		policyNotice,
+		isPolicyNoticeOpen,
+		confirmPolicyNotice,
+		closePolicyNotice,
+	} = useNamePulseCartToggle( domainName, position, row.policy_notices );
+	const labelTruncateLimit = showPremiumBadge ? 12 : 20;
+	const suffixText = (
+		<Text as="span" weight={ 600 } variant={ isUnavailable ? 'muted' : undefined }>
+			{ suffix ? `.${ suffix }` : '' }
+		</Text>
+	);
 
 	return (
 		<div
@@ -185,27 +146,34 @@ export const NamePulseResultRow = ( { result, position }: NamePulseResultRowProp
 			data-status={ NamePulseDomainStatus[ status ].toLowerCase() }
 		>
 			<span className="name-pulse-row__name">
-				<Tooltip text={ domainName }>
-					<span className="name-pulse-row__domain">
-						<Text
-							as="span"
-							variant="muted"
-							truncate
-							ellipsizeMode="middle"
-							limit={ labelTruncateLimit }
-						>
+				{ wrapName ? (
+					<span className="name-pulse-row__domain name-pulse-row__domain--wrap">
+						<Text as="span" variant="muted">
 							{ label }
 						</Text>
-						<Text as="span" weight={ 600 } variant={ isUnavailable ? 'muted' : undefined }>
-							{ suffix ? `.${ suffix }` : '' }
-						</Text>
+						<wbr />
+						{ suffixText }
 					</span>
-				</Tooltip>
-				{ showSaleBadge && (
-					<DomainSuggestionBadge variation="warning">{ __( 'Sale' ) }</DomainSuggestionBadge>
+				) : (
+					<Tooltip text={ domainName }>
+						<span className="name-pulse-row__domain">
+							<Text
+								as="span"
+								variant="muted"
+								truncate
+								ellipsizeMode="middle"
+								limit={ labelTruncateLimit }
+							>
+								{ label }
+							</Text>
+							{ suffixText }
+						</span>
+					</Tooltip>
 				) }
 				{ showPremiumBadge && (
-					<DomainSuggestionBadge variation="premium">{ __( 'Premium' ) }</DomainSuggestionBadge>
+					<span className="name-pulse-row__badges">
+						<Badge intent="informational">{ __( 'Premium' ) }</Badge>
+					</span>
 				) }
 			</span>
 			<span className="name-pulse-row__status">
@@ -214,7 +182,14 @@ export const NamePulseResultRow = ( { result, position }: NamePulseResultRowProp
 				) }
 				{ isUnknown && <Text variant="muted">{ __( 'Couldn’t check' ) }</Text> }
 				{ isUnavailable && <Text variant="muted">{ __( 'Unavailable' ) }</Text> }
-				{ isAvailable && ! showPremiumBadge && <Price result={ result } /> }
+				{ isPremiumPriceMissing && ! isPremiumPriceError && (
+					<span
+						className="name-pulse-row__skeleton"
+						role="img"
+						aria-label={ __( 'Checking price…' ) }
+					/>
+				) }
+				{ isAvailable && ! isPremiumPriceMissing && <Price result={ row } /> }
 				{ error && (
 					<Tooltip delay={ 0 } text={ error.message } placement="top">
 						<Button
@@ -240,19 +215,25 @@ export const NamePulseResultRow = ( { result, position }: NamePulseResultRowProp
 						isBusy={ isPending }
 						disabled={ isPending }
 						aria-pressed={ inCart }
-						onClick={ () => toggleCart( { acceptedTrademarkClaim: false } ) }
+						onClick={ toggleCart }
 					/>
 				) }
 			</span>
+			{ policyNotice && (
+				<NamePulsePolicyNoticeDialog
+					notice={ policyNotice }
+					open={ isPolicyNoticeOpen }
+					isPending={ isPending }
+					onConfirm={ confirmPolicyNotice }
+					onClose={ closePolicyNotice }
+				/>
+			) }
 			{ trademarkClaimsNoticeInfo && (
 				<DomainSearchTrademarkClaimsModal
 					domainName={ domainName }
 					trademarkClaimsNoticeInfo={ trademarkClaimsNoticeInfo }
-					onAccept={ () => {
-						setTrademarkClaimsNoticeInfo( undefined );
-						toggleCart( { acceptedTrademarkClaim: true } );
-					} }
-					onClose={ () => setTrademarkClaimsNoticeInfo( undefined ) }
+					onAccept={ acceptTrademarkClaim }
+					onClose={ closeTrademarkClaims }
 				/>
 			) }
 		</div>

@@ -65,11 +65,10 @@ describe( 'useSiteGeneration', () => {
 		jest.useRealTimers();
 	} );
 
-	it( 'fails with missing-parameters when the editor URL is absent', () => {
+	it( 'fails with missing-parameters when the site identifier is absent', () => {
 		const { result } = renderHook( () =>
 			useSiteGeneration( {
-				siteIdentifier: '123',
-				editorUrl: null,
+				siteIdentifier: null,
 				steps: STEPS,
 			} )
 		);
@@ -79,6 +78,29 @@ describe( 'useSiteGeneration', () => {
 		expect( statusPollMock ).not.toHaveBeenCalled();
 	} );
 
+	it.each( [ undefined, '', 'not a URL', 'data:text/html,untrusted' ] )(
+		'offers recovery when the API destination is %p',
+		( siteEditorUrl ) => {
+			const { result } = renderHook( () =>
+				useSiteGeneration( { siteIdentifier: '123', specId: 'spec-1', steps: STEPS } )
+			);
+			expect( result.current.status ).toBe( 'working' );
+			expect( statusPollMock ).toHaveBeenCalledTimes( 1 );
+
+			act( () =>
+				statusPollMock.mock.calls[ 0 ][ 0 ].onReady( {
+					build_status: 'live',
+					site_editor_url: siteEditorUrl,
+				} )
+			);
+			expect( result.current.failureReason ).toBe( 'editor-unavailable' );
+			expect( result.current.retryBuild ).toBeNull();
+			expect( requestBuildWowSiteMock ).not.toHaveBeenCalled();
+			act( () => jest.advanceTimersByTime( 30 * 60 * 1000 ) );
+			expect( result.current.failureReason ).toBe( 'editor-unavailable' );
+		}
+	);
+
 	it( 'polls while working and fails with timed-out after the generation deadline', () => {
 		const stopStatusPolling = jest.fn();
 		statusPollMock.mockReturnValue( stopStatusPolling );
@@ -86,7 +108,6 @@ describe( 'useSiteGeneration', () => {
 		const { result } = renderHook( () =>
 			useSiteGeneration( {
 				siteIdentifier: '123',
-				editorUrl: 'https://example.wordpress.com/wp-admin/site-editor.php',
 				steps: STEPS,
 			} )
 		);
@@ -103,11 +124,46 @@ describe( 'useSiteGeneration', () => {
 		expect( stopStatusPolling ).toHaveBeenCalled();
 	} );
 
+	it( 'gives up on a DSL build after 5 minutes', () => {
+		const { result } = renderHook( () =>
+			useSiteGeneration( {
+				siteIdentifier: '123',
+				graph: 'dsl',
+				steps: STEPS,
+			} )
+		);
+
+		act( () => {
+			jest.advanceTimersByTime( 5 * 60 * 1000 - 1 );
+		} );
+		expect( result.current.status ).toBe( 'working' );
+
+		act( () => {
+			jest.advanceTimersByTime( 1 );
+		} );
+		expect( result.current.status ).toBe( 'failed' );
+		expect( result.current.failureReason ).toBe( 'timed-out' );
+	} );
+
+	it( 'keeps waiting past 5 minutes on other graphs', () => {
+		const { result } = renderHook( () =>
+			useSiteGeneration( {
+				siteIdentifier: '123',
+				graph: 'blocks-first',
+				steps: STEPS,
+			} )
+		);
+
+		act( () => {
+			jest.advanceTimersByTime( 5 * 60 * 1000 );
+		} );
+		expect( result.current.status ).toBe( 'working' );
+	} );
+
 	it( 'shows the calm fallback when the backend reports a failed build without UI', () => {
 		const { result } = renderHook( () =>
 			useSiteGeneration( {
 				siteIdentifier: '123',
-				editorUrl: 'https://example.wordpress.com/wp-admin/site-editor.php',
 				steps: STEPS,
 			} )
 		);
@@ -125,7 +181,7 @@ describe( 'useSiteGeneration', () => {
 		} );
 	} );
 
-	it( 'redirects only when the build status poller reports that the site is ready', () => {
+	it( 'preserves source when redirecting to the custom domain returned by the API', () => {
 		// The stub is scoped here because this is the only test that asserts on
 		// window.location.assign.
 		Object.defineProperty( window, 'location', {
@@ -137,18 +193,20 @@ describe( 'useSiteGeneration', () => {
 			renderHook( () =>
 				useSiteGeneration( {
 					siteIdentifier: '123',
-					editorUrl: 'https://example.wordpress.com/wp-admin/site-editor.php',
+					source: 'sites-dashboard',
 					steps: STEPS,
 				} )
 			);
 
 			const { onReady } = statusPollMock.mock.calls[ 0 ][ 0 ];
 			act( () => {
-				// A live response with no site_editor_url: the captured URL stands.
-				onReady( { build_status: 'live' } );
+				onReady( {
+					build_status: 'live',
+					site_editor_url: 'https://custom-domain.com/wp-admin/site-editor.php',
+				} );
 			} );
 			expect( window.location.assign ).toHaveBeenCalledWith(
-				'https://example.wordpress.com/wp-admin/site-editor.php'
+				'https://custom-domain.com/wp-admin/site-editor.php?source=sites-dashboard'
 			);
 		} finally {
 			Object.defineProperty( window, 'location', {
@@ -158,7 +216,7 @@ describe( 'useSiteGeneration', () => {
 		}
 	} );
 
-	it( 'redirects to the live editor URL, keeping the args the flow added to the captured one', () => {
+	it( 'redirects to the generated page with the separately supplied source', () => {
 		Object.defineProperty( window, 'location', {
 			value: { ...originalLocation, assign: jest.fn() },
 			configurable: true,
@@ -168,8 +226,7 @@ describe( 'useSiteGeneration', () => {
 			renderHook( () =>
 				useSiteGeneration( {
 					siteIdentifier: '123',
-					editorUrl:
-						'https://example.wordpress.com/wp-admin/site-editor.php?easy-mode=true&source=dashboard',
+					source: 'dashboard',
 					steps: STEPS,
 				} )
 			);
@@ -197,7 +254,6 @@ describe( 'useSiteGeneration', () => {
 		const { result } = renderHook( () =>
 			useSiteGeneration( {
 				siteIdentifier: '123',
-				editorUrl: 'https://example.wordpress.com/wp-admin/site-editor.php',
 				steps: STEPS,
 			} )
 		);
@@ -218,7 +274,6 @@ describe( 'useSiteGeneration', () => {
 		const { result } = renderHook( () =>
 			useSiteGeneration( {
 				siteIdentifier: '123',
-				editorUrl: 'https://example.wordpress.com/wp-admin/site-editor.php',
 				steps: STEPS,
 			} )
 		);
@@ -250,7 +305,6 @@ describe( 'useSiteGeneration', () => {
 		const { result } = renderHook( () =>
 			useSiteGeneration( {
 				siteIdentifier: '123',
-				editorUrl: 'https://example.wordpress.com/wp-admin/site-editor.php',
 				steps: STEPS,
 			} )
 		);
@@ -274,7 +328,6 @@ describe( 'useSiteGeneration', () => {
 		const firstRender = renderHook( () =>
 			useSiteGeneration( {
 				siteIdentifier: '123',
-				editorUrl: 'https://example.wordpress.com/wp-admin/site-editor.php',
 				steps: STEPS,
 			} )
 		);
@@ -293,7 +346,6 @@ describe( 'useSiteGeneration', () => {
 		const secondRender = renderHook( () =>
 			useSiteGeneration( {
 				siteIdentifier: '123',
-				editorUrl: 'https://example.wordpress.com/wp-admin/site-editor.php',
 				steps: STEPS,
 			} )
 		);
@@ -312,7 +364,6 @@ describe( 'useSiteGeneration', () => {
 		const { result } = renderHook( () =>
 			useSiteGeneration( {
 				siteIdentifier: '123',
-				editorUrl: 'https://example.wordpress.com/wp-admin/site-editor.php',
 				steps: STEPS,
 			} )
 		);
@@ -340,7 +391,6 @@ describe( 'useSiteGeneration', () => {
 		const { result } = renderHook( () =>
 			useSiteGeneration( {
 				siteIdentifier: '123',
-				editorUrl: 'https://example.wordpress.com/wp-admin/site-editor.php',
 				steps: STEPS,
 			} )
 		);
@@ -359,7 +409,6 @@ describe( 'useSiteGeneration', () => {
 		const { result } = renderHook( () =>
 			useSiteGeneration( {
 				siteIdentifier: '123',
-				editorUrl: 'https://example.wordpress.com/wp-admin/site-editor.php',
 				specId: 'spec-1',
 				steps: STEPS,
 			} )
@@ -386,7 +435,6 @@ describe( 'useSiteGeneration', () => {
 		const { result: withoutSpec } = renderHook( () =>
 			useSiteGeneration( {
 				siteIdentifier: '123',
-				editorUrl: 'https://example.wordpress.com/wp-admin/site-editor.php',
 				steps: STEPS,
 			} )
 		);
@@ -402,7 +450,6 @@ describe( 'useSiteGeneration', () => {
 		const { result: withoutRetry } = renderHook( () =>
 			useSiteGeneration( {
 				siteIdentifier: '123',
-				editorUrl: 'https://example.wordpress.com/wp-admin/site-editor.php',
 				specId: 'spec-1',
 				steps: STEPS,
 			} )
@@ -421,7 +468,6 @@ describe( 'useSiteGeneration', () => {
 		const { result } = renderHook( () =>
 			useSiteGeneration( {
 				siteIdentifier: '123',
-				editorUrl: 'https://example.wordpress.com/wp-admin/site-editor.php',
 				specId: 'spec-1',
 				steps: STEPS,
 			} )
@@ -469,7 +515,6 @@ describe( 'useSiteGeneration', () => {
 		const { result } = renderHook( () =>
 			useSiteGeneration( {
 				siteIdentifier: '123',
-				editorUrl: 'https://example.wordpress.com/wp-admin/site-editor.php',
 				specId: 'spec-1',
 				steps: STEPS,
 			} )
@@ -502,7 +547,6 @@ describe( 'useSiteGeneration', () => {
 		const { result } = renderHook( () =>
 			useSiteGeneration( {
 				siteIdentifier: '123',
-				editorUrl: 'https://example.wordpress.com/wp-admin/site-editor.php',
 				specId: 'spec-1',
 				steps: STEPS,
 			} )

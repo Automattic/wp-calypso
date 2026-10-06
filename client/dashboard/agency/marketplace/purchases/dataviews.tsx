@@ -8,18 +8,24 @@ import {
 	ExternalLink,
 	__experimentalHStack as HStack,
 	__experimentalText as Text,
+	__experimentalVStack as VStack,
 } from '@wordpress/components';
+import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { Badge } from '@wordpress/ui';
+import { Text as DashboardText } from '../../../components/text';
 import { DEFAULT_PER_PAGE } from '../../../sites/dataviews/views';
 import { formatDate, parseDateAsUTC } from '../../../utils/datetime';
 import {
 	LICENSE_STATUS_FILTERS,
 	getLicenseDisplayStatus,
+	getLicenseRenewalDate,
 	getLicenseStatus,
 	getLicenseProductName,
 	getLicenseStatusLabels,
 	getLicenseTags,
+	getRenewalBadgeLabels,
+	getRenewalBadges,
 	getSiteHostname,
 	isBundleParent,
 	isLicenseStatus,
@@ -28,16 +34,17 @@ import {
 } from './license-status';
 import LicenseStatusBadge from './status-badge';
 import TransferredBadge from './transferred-badge';
-import type { LicenseStatus } from './license-status';
+import type { LicenseStatus, RenewalBadge } from './license-status';
 import type { FetchJetpackLicensesPageOptions, JetpackLicense } from '@automattic/api-core';
 import type { Field, View } from '@wordpress/dataviews';
+import type { ComponentProps } from 'react';
 
 export const DEFAULT_VIEW: View = {
 	type: 'table',
 	perPage: DEFAULT_PER_PAGE,
 	page: 1,
 	titleField: 'product',
-	fields: [ 'status', 'site', 'issued_at', 'cost' ],
+	fields: [ 'status', 'site', 'issued_at', 'renewal', 'cost' ],
 	sort: { field: 'issued_at', direction: 'desc' },
 };
 
@@ -124,21 +131,60 @@ function CostCell( { license }: { license: JetpackLicense } ) {
 	);
 }
 
-// TODO: classic shows the referring client's email under the product name. Port
-// it once the `referral` field on JetpackLicense is typed.
+const RENEWAL_BADGE_INTENT: Record< RenewalBadge, ComponentProps< typeof Badge >[ 'intent' ] > = {
+	expired: 'high',
+	'auto-renew-off': 'medium',
+	refundable: 'informational',
+};
+
+export function RenewalCell( { license, locale }: { license: JetpackLicense; locale: string } ) {
+	const expiry = getLicenseRenewalDate( license );
+	if ( ! expiry ) {
+		return <Text variant="muted">—</Text>;
+	}
+
+	const badges = getRenewalBadges( license );
+	const labels = getRenewalBadgeLabels();
+	return (
+		<HStack justify="flex-start" spacing={ 2 } expanded={ false }>
+			<DashboardText
+				intent={ badges.includes( 'expired' ) ? 'error' : undefined }
+				style={ { whiteSpace: 'nowrap' } }
+			>
+				{ formatDate( parseDateAsUTC( expiry ), locale, { dateStyle: 'medium', timeZone: 'UTC' } ) }
+			</DashboardText>
+			{ badges.map( ( badge ) => (
+				<Badge key={ badge } intent={ RENEWAL_BADGE_INTENT[ badge ] }>
+					{ labels[ badge ] }
+				</Badge>
+			) ) }
+		</HStack>
+	);
+}
+
 function ProductCell( { license, locale }: { license: JetpackLicense; locale: string } ) {
 	const transferredUntil = license.meta?.a4a_transferred_subscription_expiration;
+	const clientEmail = license.referral?.client?.email;
 	return (
-		<HStack justify="flex-start" spacing={ 2 } expanded={ false } wrap>
-			<Text weight={ 500 }>{ getLicenseProductName( license ) }</Text>
-			{ isBundleParent( license ) && <Text variant="muted">×{ license.quantity }</Text> }
-			{ getLicenseTags( license ).map( ( tag ) => (
-				<Badge key={ tag }>{ tag }</Badge>
-			) ) }
-			{ transferredUntil && isRecentlyTransferred( license ) && (
-				<TransferredBadge billedFrom={ transferredUntil } locale={ locale } />
+		<VStack spacing={ 0 }>
+			<HStack justify="flex-start" spacing={ 2 } expanded={ false } wrap>
+				<Text weight={ 500 }>{ getLicenseProductName( license ) }</Text>
+				{ isBundleParent( license ) && <Text variant="muted">×{ license.quantity }</Text> }
+				{ getLicenseTags( license ).map( ( tag ) => (
+					<Badge key={ tag }>{ tag }</Badge>
+				) ) }
+				{ transferredUntil && isRecentlyTransferred( license ) && (
+					<TransferredBadge billedFrom={ transferredUntil } locale={ locale } />
+				) }
+			</HStack>
+			{ clientEmail && (
+				<Text variant="muted" title={ clientEmail }>
+					{ createInterpolateElement( __( '<email /> owns this' ), {
+						email: <strong>{ clientEmail }</strong>,
+					} ) }
+				</Text>
 			) }
-		</HStack>
+		</VStack>
 	);
 }
 
@@ -226,6 +272,15 @@ export function getLicenseFields( {
 			enableSorting: true,
 			getValue: ( { item } ) => item.revoked_at ?? '',
 			render: ( { item } ) => renderDate( item.revoked_at ),
+		},
+		{
+			id: 'renewal',
+			label: __( 'Renewal/expiry' ),
+			type: 'text',
+			filterBy: false,
+			enableSorting: false,
+			getValue: ( { item } ) => getLicenseRenewalDate( item ) ?? '',
+			render: ( { item } ) => <RenewalCell license={ item } locale={ locale } />,
 		},
 		{
 			id: 'cost',

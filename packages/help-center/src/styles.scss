@@ -26,9 +26,10 @@ a[href^='https://smooch.io/live-web-chat'] {
 		outline: none;
 	}
 
-	// Raise above the Agents Manager panel while focused, so the last-clicked
-	// panel wins. Both panels share one base/focused scale.
-	&.is-focused {
+	// Raise above the Agents Manager panel while focused, so the last-touched
+	// panel wins. `useRaiseOnFocus` sets the attribute, and both panels share
+	// one base/focused scale.
+	&[data-overlay-panel-focused] {
 		z-index: $help-center-z-index-focused;
 	}
 	transition: max-height 0.5s;

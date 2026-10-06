@@ -10,10 +10,18 @@ import { ORCHESTRATOR_AGENT_ID, ORCHESTRATOR_AGENT_URL } from '../constants';
 import { saveSessionId } from './agent-session';
 import { canConnectToZendesk } from './can-connect-to-zendesk';
 import { getExternalContextEntries } from './external-context';
+import { getAgentsManagerInlineData } from './get-agents-manager-inline-data';
 import { isReaderChatAgent } from './is-reader-chat-agent';
 import { getClientConstructorArguments, getSiteEditorActions } from './site-editor-context';
+import { getIsA11n, getIsTest } from './tracks';
+import { getTurnId } from './turn-id';
 import type { ContextEntry, ToolProvider, ContextProvider } from '../extension-types';
 import type { UseAgentChatConfig, Ability as AgenticAbility } from '@automattic/agenttic-client';
+
+export interface AgentConfig extends UseAgentChatConfig {
+	/** Scope captured by the authentication provider during initialization. */
+	authenticationScope?: { siteId?: number; userId?: number };
+}
 
 export interface CreateAgentConfigOptions {
 	sessionId: string;
@@ -117,6 +125,24 @@ function getProviderIdsContext( providerIds?: string[] ): { loadedProviderIds?: 
 	return providerIds?.length ? { loadedProviderIds: providerIds } : {};
 }
 
+/** Only the host's explicit opt-in is sent: the server records nothing without it. */
+function getTrackingContext(): {
+	isTrackingAllowed?: boolean;
+	turnId?: string;
+	isTest: boolean;
+	isA11n?: boolean;
+} {
+	const isTrackingAllowed = getAgentsManagerInlineData()?.isTrackingAllowed;
+	const turnId = getTurnId();
+	const isA11n = getIsA11n();
+	return {
+		...( typeof isTrackingAllowed === 'boolean' && { isTrackingAllowed } ),
+		...( turnId && { turnId } ),
+		isTest: getIsTest(),
+		...( isA11n !== undefined && { isA11n } ),
+	};
+}
+
 /**
  * Create a context provider that resolves context entries.
  */
@@ -170,6 +196,7 @@ async function createWrappedContextProvider(
 					siteEditorActions: mergedSiteEditorActions,
 				} ),
 				...getProviderIdsContext( providerIds ),
+				...getTrackingContext(),
 				constructorArguments: {
 					...( resolvedContext.constructorArguments || {} ),
 					...getClientConstructorArguments( environment, currentRoute ),
@@ -230,6 +257,7 @@ async function createDefaultContextProvider(
 				...( hostData.siteUrl ? { siteUrl: hostData.siteUrl } : {} ),
 				...( contextEntries ? { contextEntries } : {} ),
 				...getProviderIdsContext( providerIds ),
+				...getTrackingContext(),
 				// TODO: Remove once agenttic-client supports top-level constructorArguments
 				...( Object.keys( constructorArguments ).length && { constructorArguments } ),
 			};
@@ -242,7 +270,7 @@ async function createDefaultContextProvider(
  */
 export async function createAgentConfig(
 	options: CreateAgentConfigOptions
-): Promise< UseAgentChatConfig > {
+): Promise< AgentConfig > {
 	const {
 		sessionId,
 		// The callback below can fire while a response is still streaming, after
@@ -260,7 +288,8 @@ export async function createAgentConfig(
 		onTaskUpdate,
 	} = options;
 
-	const config: UseAgentChatConfig = {
+	const config: AgentConfig = {
+		authenticationScope: { siteId, userId: sessionUserId },
 		agentId,
 		agentUrl: ORCHESTRATOR_AGENT_URL,
 		sessionId,

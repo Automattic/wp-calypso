@@ -13,7 +13,6 @@ import {
 	Button,
 	Flex,
 	TextareaControl,
-	__experimentalDivider as Divider,
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
 	__experimentalHStack as HStack,
@@ -27,6 +26,7 @@ import { useIntlLocale } from '../../app/locale';
 import { receiptRoute, taxDetailsRoute } from '../../app/router/me';
 import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import { Card, CardBody } from '../../components/card';
+import Divider from '../../components/divider';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { isAkismetPro500Plan } from '../../utils/akismet';

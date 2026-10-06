@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { logBuildWowEvent, requestBuildWowSite } from 'calypso/landing/stepper/utils/build-wow';
 import { pollForBuildWowStatus } from './build-status-poller';
-import { getLiveEditorUrl } from './editor-url';
+import { getEditorUrlFromStatus } from './editor-url';
 import type { BuildWowUi } from './build-status-poller';
 import type { BuildWowGraph } from 'calypso/landing/stepper/utils/build-wow';
 
@@ -12,7 +12,8 @@ export type SiteGenerationStep = {
 	startedAt?: number;
 };
 
-export type SiteGenerationFailureReason = 'missing-parameters' | 'timed-out' | 'build-failed';
+export type SiteGenerationFailureReason =
+	'missing-parameters' | 'timed-out' | 'build-failed' | 'editor-unavailable';
 
 export type SiteGenerationState = {
 	status: 'working' | 'failed';
@@ -25,9 +26,12 @@ export type SiteGenerationState = {
 };
 
 const GENERATION_TIMEOUT_MS = 30 * 60 * 1000;
+// The wait screen promises DSL builds in about 4 minutes; past 5, stop waiting.
+const DSL_GENERATION_TIMEOUT_MS = 5 * 60 * 1000;
 const STEP_TIMER_STORAGE_PREFIX = 'site-generation-step-timer-v1';
 
-type GenerationFailure = { reason: 'timed-out' } | { reason: 'build-failed'; ui: BuildWowUi };
+type GenerationFailure =
+	{ reason: 'timed-out' | 'editor-unavailable' } | { reason: 'build-failed'; ui: BuildWowUi };
 
 function getStoredObservedAt(
 	siteIdentifier: string,
@@ -92,13 +96,13 @@ function getStepsFromServer(
 
 export function useSiteGeneration( {
 	siteIdentifier,
-	editorUrl,
+	source,
 	specId,
 	graph,
 	steps,
 }: {
 	siteIdentifier: string | null;
-	editorUrl: string | null;
+	source?: string | null;
 	specId?: string | null;
 	/** Graph the build was queued with, so a retry rebuilds on the same one. */
 	graph?: BuildWowGraph;
@@ -110,22 +114,28 @@ export function useSiteGeneration( {
 	const [ buildAttempt, setBuildAttempt ] = useState( 0 );
 	const [ isRetryingBuild, setIsRetryingBuild ] = useState( false );
 	const isRetryingRef = useRef( false );
-	const hasRequiredParameters = Boolean( siteIdentifier && editorUrl );
+	const hasRequiredParameters = Boolean( siteIdentifier );
+	const generationTimeoutMs = graph === 'dsl' ? DSL_GENERATION_TIMEOUT_MS : GENERATION_TIMEOUT_MS;
 
 	useEffect( () => {
-		if ( ! siteIdentifier || ! editorUrl || failure ) {
+		if ( ! siteIdentifier || failure ) {
 			return;
 		}
 
 		const generationTimeout = window.setTimeout(
 			() => setFailure( ( previous ) => previous ?? { reason: 'timed-out' } ),
-			GENERATION_TIMEOUT_MS
+			generationTimeoutMs
 		);
 		const stopStatusPolling = pollForBuildWowStatus( {
 			siteIdentifier,
 			onReady: ( response ) => {
 				clearStoredStepTimer( siteIdentifier );
-				window.location.assign( getLiveEditorUrl( editorUrl, response.site_editor_url ) );
+				const destination = getEditorUrlFromStatus( response.site_editor_url, source );
+				if ( ! destination ) {
+					setFailure( { reason: 'editor-unavailable' } );
+					return;
+				}
+				window.location.assign( destination );
 			},
 			onFailed: ( status, ui ) => {
 				clearStoredStepTimer( siteIdentifier );
@@ -159,7 +169,7 @@ export function useSiteGeneration( {
 			window.clearTimeout( generationTimeout );
 			stopStatusPolling();
 		};
-	}, [ buildAttempt, editorUrl, failure, fallbackStartedAt, siteIdentifier ] );
+	}, [ buildAttempt, source, failure, fallbackStartedAt, generationTimeoutMs, siteIdentifier ] );
 
 	const retryBuild = useCallback( async () => {
 		if ( ! siteIdentifier || ! specId || isRetryingRef.current ) {

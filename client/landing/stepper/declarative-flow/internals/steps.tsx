@@ -243,6 +243,11 @@ export const STEPS = {
 		asyncComponent: () => import( './steps-repository/wait-for-atomic' ),
 	},
 
+	WAIT_FOR_COMMERCE_ATOMIC: {
+		slug: 'wait-for-commerce-atomic',
+		asyncComponent: () => import( './steps-repository/wait-for-commerce-atomic' ),
+	},
+
 	WAIT_FOR_PLUGIN_INSTALL: {
 		slug: 'waitForPluginInstall',
 		asyncComponent: () => import( './steps-repository/wait-for-plugin-install' ),
@@ -327,6 +332,11 @@ export const STEPS = {
 	WOW_FUNNEL_HANDOFF: {
 		slug: 'wow-funnel-handoff',
 		asyncComponent: () => import( './steps-repository/wow-funnel-handoff' ),
+	},
+
+	WOW_FUNNEL_PENDING: {
+		slug: 'wow-funnel-pending',
+		asyncComponent: () => import( './steps-repository/wow-funnel-pending' ),
 	},
 
 	SETUP_YOUR_SITE_AI: {

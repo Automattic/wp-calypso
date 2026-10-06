@@ -1,3 +1,5 @@
+import type { PolicyNotice } from '@automattic/api-core';
+
 /**
  * Availability status of a Name Pulse row. UNKNOWN (check failed or timed out)
  * rows stay visible without a verdict and are re-requested on the next search
@@ -25,7 +27,13 @@ export interface NamePulseDomainResult {
 	sale_cost?: number;
 	currency_code?: string;
 	is_premium?: boolean;
+	policy_notices?: PolicyNotice[];
 	/** Set once a real-time check has run; bulk zone-file results never overwrite it. */
 	is_realtime?: boolean;
+	/**
+	 * Set by the check that runs when the reader adds the name to the cart, which is
+	 * the one check they are waiting on. Rows carrying it hold their Top results slot.
+	 */
+	is_cart_check?: boolean;
 	source: NamePulseSource;
 }
