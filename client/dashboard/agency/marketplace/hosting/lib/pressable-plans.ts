@@ -84,7 +84,7 @@ export const areSignaturePlansFor = (
 
 export function getPlanCategoryTabs( areSignaturePlans: boolean, hasNewPremiumPlans: boolean ) {
 	const pooled = __(
-		'Traffic and storage pooled across all your client sites, from 1 to 150 installs.'
+		'Traffic and storage pooled across all your client sites, from 1 to 150 WordPress installs.'
 	);
 	const large = __( 'For large portfolios of 200 to 500 WordPress installs.' );
 	return [
@@ -109,7 +109,7 @@ export function getPlanCategoryTabs( areSignaturePlans: boolean, hasNewPremiumPl
 			key: PLAN_CATEGORY_PREMIUM,
 			label: hasNewPremiumPlans ? __( 'Premium plans 1–11' ) : __( 'Premium plans' ),
 			description: __(
-				'Dedicated resources for one high-traffic site, from 150K to 10M visits per month.'
+				'Dedicated resources for one high-traffic WordPress site, from 150K to 10M visits per month.'
 			),
 		},
 	];
@@ -182,6 +182,29 @@ export function isLowTabDisabled(
 	return (
 		! isLowPlanCategory( existingPlan.category ) ||
 		existingPlan.slug === lowOptions[ lowOptions.length - 1 ]?.slug
+	);
+}
+
+// Whether the agency can buy a bigger pooled plan than the one it owns, as the
+// plan picker offers it. Premium plans are left out: they are sold through referrals.
+export function hasPressableUpgrade(
+	existingPlan: PressablePlan,
+	catalogPlans: PressablePlan[]
+): boolean {
+	const areSignaturePlans = areSignaturePlansFor( existingPlan, false );
+	const plans = catalogPlans.filter(
+		( plan ) => isSignatureCatalogPlan( plan ) === areSignaturePlans
+	);
+	const lowCategory = areSignaturePlans ? PLAN_CATEGORY_SIGNATURE : PLAN_CATEGORY_STANDARD;
+	const highCategory = areSignaturePlans ? PLAN_CATEGORY_SIGNATURE_HIGH : PLAN_CATEGORY_ENTERPRISE;
+	const lowOptions = sortPlansForCategory( plans, lowCategory );
+	const highOptions = sortPlansForCategory( plans, highCategory );
+	const canMoveUpLow =
+		! isLowTabDisabled( existingPlan, lowOptions ) &&
+		getMinimumSelectableIndex( lowCategory, lowOptions, existingPlan ) < lowOptions.length;
+	return (
+		canMoveUpLow ||
+		getMinimumSelectableIndex( highCategory, highOptions, existingPlan ) < highOptions.length
 	);
 }
 

@@ -10,7 +10,8 @@ import useReferralsGuide from './use-referrals-guide';
 // Shared with the classic A4A marketplace so the guide only shows once across dashboards.
 const GUIDE_SEEN_PREFERENCE = 'a4a-marketplace-referral-guide-seen';
 
-export default function ReferralToggle() {
+/** The referral mode switch, named after what the page sells. */
+export default function ReferralToggle( { label = __( 'Refer products' ) }: { label?: string } ) {
 	const { checked, disabled, onChange } = useReferralToggle();
 	const { openGuide, guideModal } = useReferralsGuide();
 
@@ -32,7 +33,7 @@ export default function ReferralToggle() {
 					__nextHasNoMarginBottom
 					checked={ checked }
 					disabled={ disabled }
-					label={ __( 'Refer products' ) }
+					label={ label }
 					onChange={ onChange }
 				/>
 				<Button
