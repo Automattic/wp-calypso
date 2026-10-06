@@ -217,6 +217,11 @@
 		margin: auto;
 	}
 
+	// Only between items, so the list's own top and bottom spacing is unchanged.
+	li + li {
+		margin-top: $grid-unit-05;
+	}
+
 	// Monospaced, boxed styling for inline code and code blocks.
 	code,
 	pre {
