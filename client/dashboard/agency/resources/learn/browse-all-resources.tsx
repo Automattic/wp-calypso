@@ -186,8 +186,8 @@ export default function BrowseAllResources( {
 								__next40pxDefaultSize
 								__nextHasNoMarginBottom
 								onChange={ ( value ) => {
-									const type = ( value ?? 'grid' ) as LayoutType;
-									onChangeView( { ...view, type, fields: LAYOUT_FIELDS[ type ] } as View );
+									const type: LayoutType = value === 'table' ? 'table' : 'grid';
+									onChangeView( { ...view, type, fields: LAYOUT_FIELDS[ type ] } );
 								} }
 							>
 								<ToggleGroupControlOption value="grid" label={ __( 'Grid' ) } />
