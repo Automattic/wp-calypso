@@ -36,7 +36,7 @@
 	:is(h1, h2, h3, h4, h5, h6, .wpnc__h1, .wpnc__h2, .wpnc__h3) {
 		margin: $grid-unit-10 0 $grid-unit-05;
 		font-size: $font-size-large;
-		font-weight: 600;
+		font-weight: $font-weight-medium;
 		line-height: 20px;
 		text-wrap: balance;
 
@@ -47,6 +47,11 @@
 
 	:is(h3, h4, h5, h6, .wpnc__h3) {
 		font-size: $default-font-size;
+	}
+
+	// Matches the dashboard's emphasis, which is lighter than the browser's bold.
+	:is(strong, b) {
+		font-weight: 600;
 	}
 
 	.uppercase {

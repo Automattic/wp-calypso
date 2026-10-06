@@ -6,7 +6,7 @@ import {
 } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import { getModerateCommentsLink } from '../../panel/helpers/notes';
 import { html } from '../../panel/indices-to-html';
@@ -157,8 +157,32 @@ export const NoteBody = ( { note }: { note: Note } ) => {
 		bumpStat( 'notes-click-type', note.type );
 	}, [ note.type ] );
 
+	// Content images arrive as markup, so React can't catch one that fails to load (a
+	// blocked or cross-origin source). Hide it rather than leave a broken icon and its
+	// reserved space. `error` doesn't bubble, so listen in the capture phase.
+	const bodyRef = useRef< HTMLDivElement >( null );
+	useEffect( () => {
+		const element = bodyRef.current;
+		if ( ! element ) {
+			return;
+		}
+		const hide = ( image: HTMLImageElement ) => ( image.style.display = 'none' );
+		element.querySelectorAll( 'img' ).forEach( ( image ) => {
+			if ( image.complete && image.naturalWidth === 0 ) {
+				hide( image );
+			}
+		} );
+		const handleError = ( event: Event ) => {
+			if ( event.target instanceof HTMLImageElement ) {
+				hide( event.target );
+			}
+		};
+		element.addEventListener( 'error', handleError, true );
+		return () => element.removeEventListener( 'error', handleError, true );
+	}, [ note ] );
+
 	return (
-		<VStack className="wpnc__body">
+		<VStack className="wpnc__body" ref={ bodyRef }>
 			{ preface }
 			{ showPendingApprovalBadge && (
 				<div className="wpnc__pending-approval-section">
