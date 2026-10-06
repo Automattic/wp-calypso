@@ -1,6 +1,7 @@
+import { agencyResourceEventMutation } from '@automattic/api-queries';
+import { useMutation } from '@tanstack/react-query';
 import { __experimentalSpacer as Spacer, __experimentalText as Text } from '@wordpress/components';
 import { useCallback, useMemo } from 'react';
-import useRecordResourceEventMutation from 'calypso/a8c-for-agencies/data/learn/use-record-resource-event-mutation';
 import { formatAgencyResources } from 'calypso/dashboard/agency/resources/learn/format-resources';
 import ResourceCenter, {
 	getResourceCenterDescription,
@@ -22,7 +23,7 @@ export default function ResourceCenterOverviewContent( {
 }: ResourceCenterOverviewContentProps ) {
 	const dispatch = useDispatch();
 	const agencyId = useSelector( getActiveAgencyId );
-	const { mutate: recordResourceEvent } = useRecordResourceEventMutation();
+	const { mutate: recordResourceEvent } = useMutation( agencyResourceEventMutation() );
 
 	const resources = useMemo( () => formatAgencyResources( data?.results ?? [] ), [ data ] );
 
@@ -38,9 +39,9 @@ export default function ResourceCenterOverviewContent( {
 		( resource: ResourceItem ) => {
 			if ( agencyId ) {
 				recordResourceEvent( {
-					resourceId: resource.id,
-					resourceName: resource.name,
-					agencyId,
+					resource_id: resource.id,
+					resource_name: resource.name,
+					agency_id: agencyId,
 				} );
 			}
 		},
