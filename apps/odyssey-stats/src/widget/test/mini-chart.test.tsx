@@ -19,8 +19,9 @@ jest.mock(
 );
 jest.mock( 'calypso/components/chart/legend', () => () => null );
 jest.mock( 'calypso/blocks/stats-navigation/intervals', () => () => null );
+let mockPremiumAnalyticsEnabled = true;
 jest.mock( 'calypso/my-sites/stats/hooks/use-premium-analytics-status-query', () => () => ( {
-	data: true,
+	data: mockPremiumAnalyticsEnabled,
 } ) );
 jest.mock( '../../lib/config-api', () => ( { optionalConfig: () => undefined } ) );
 jest.mock( '../../lib/selectors/can-current-user', () => () => true );
@@ -28,6 +29,7 @@ jest.mock( '../../lib/selectors/get-site-admin-url', () => () => 'https://exampl
 
 describe( 'MiniChart', () => {
 	beforeEach( () => {
+		mockPremiumAnalyticsEnabled = true;
 		Object.defineProperty( window, 'location', { value: { href: '' }, writable: true } );
 	} );
 
@@ -44,6 +46,18 @@ describe( 'MiniChart', () => {
 
 		expect( new URL( window.location.href ).searchParams.get( 'p' ) ).toBe(
 			'/?from=2026-10-02T00%3A00%3A00.000%2B14%3A00&to=2026-10-02T23%3A59%3A59.999%2B14%3A00'
+		);
+	} );
+
+	it( 'opens classic Stats on the site’s today, not the browser’s, when Premium Analytics is off', () => {
+		mockPremiumAnalyticsEnabled = false;
+		jest.useFakeTimers().setSystemTime( new Date( '2026-10-01T11:00:00Z' ) );
+		render( <MiniChart siteId={ 1 } gmtOffset={ 14 } statsBaseUrl="https://example.com/stats" /> );
+
+		fireEvent.click( screen.getByText( 'bar' ) );
+
+		expect( window.location.href ).toBe(
+			'https://example.com/stats/stats/hour/1?chartStart=2026-10-02&chartEnd=2026-10-02'
 		);
 	} );
 } );
