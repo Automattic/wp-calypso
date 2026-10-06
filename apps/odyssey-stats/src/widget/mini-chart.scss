@@ -39,6 +39,13 @@
 		}
 	}
 
+	// As the lists word and style a request that failed.
+	.stats-widget-minichart__error {
+		margin: 0;
+		padding-block: var(--wpds-dimension-padding-lg, 16px);
+		color: var(--wpds-color-foreground-content-neutral-weak, #707070);
+	}
+
 	// A fixed box for the responsive chart to measure; without it the two grow unbounded.
 	.stats-widget-chart {
 		inline-size: 100%;

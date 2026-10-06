@@ -44,7 +44,7 @@ const MiniChart: FunctionComponent< MiniChartProps > = ( { siteId, gmtOffset, ra
 		.utcOffset( Number.isFinite( gmtOffset ) ? gmtOffset : 0 )
 		.format( 'YYYY-MM-DD' );
 
-	const { isLoading, data } = useVisitsQuery( siteId, unit, quantity, queryDate );
+	const { isLoading, isError, data } = useVisitsQuery( siteId, unit, quantity, queryDate );
 
 	const totals = useMemo( () => {
 		const records = ( data ?? [] ) as VisitRecord[];
@@ -83,12 +83,15 @@ const MiniChart: FunctionComponent< MiniChartProps > = ( { siteId, gmtOffset, ra
 		];
 	}, [ data, unit, queryDate, viewsColor, visitorsColor, translate ] );
 
-	const isEmpty = totals.views === 0 && totals.visitors === 0;
+	// A failed request is not an empty range: its zeros would read as "no traffic" while
+	// the lists below may still show views, so it gets its own message instead.
+	const isEmpty = ! isError && totals.views === 0 && totals.visitors === 0;
+	const hasChart = ! isLoading && ! isError && ! isEmpty;
 
 	return (
 		<div className="stats-widget-minichart">
-			{ /* Hidden for an empty range, where zeros would read as "no traffic". */ }
-			{ ( isLoading || ! isEmpty ) && (
+			{ /* Hidden for an empty range or a failed request, where zeros would read as "no traffic". */ }
+			{ ( isLoading || hasChart ) && (
 				<div className="stats-widget-metrics">
 					<div className="stats-widget-metric">
 						<div className="stats-widget-metric__title">
@@ -142,7 +145,7 @@ const MiniChart: FunctionComponent< MiniChartProps > = ( { siteId, gmtOffset, ra
 					className={ clsx( 'stats-widget-chart', {
 						'has-edge-label': labelsLastPoint( range ),
 					} ) }
-					style={ isLoading || ! isEmpty ? { blockSize: `${ CHART_HEIGHT }px` } : undefined }
+					style={ isLoading || hasChart ? { blockSize: `${ CHART_HEIGHT }px` } : undefined }
 				>
 					{ isLoading && <StatsModulePlaceholder isLoading /> }
 					{ ! isLoading && isEmpty && (
@@ -157,7 +160,10 @@ const MiniChart: FunctionComponent< MiniChartProps > = ( { siteId, gmtOffset, ra
 							</Notice.Actions>
 						</Notice.Root>
 					) }
-					{ ! isLoading && ! isEmpty && (
+					{ ! isLoading && isError && (
+						<p className="stats-widget-minichart__error">{ translate( 'No data to show' ) }</p>
+					) }
+					{ hasChart && (
 						<Suspense fallback={ <StatsModulePlaceholder isLoading /> }>
 							<OverviewChart series={ series } height={ CHART_HEIGHT } unit={ unit } />
 						</Suspense>
