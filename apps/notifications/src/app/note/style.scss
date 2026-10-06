@@ -35,9 +35,9 @@
 	// than title a page: close to body size, with room above to separate them.
 	:is(h1, h2, h3, h4, h5, h6, .wpnc__h1, .wpnc__h2, .wpnc__h3) {
 		margin: $grid-unit-10 0 $grid-unit-05;
-		font-size: $font-size-large;
+		font-size: 17px;
 		font-weight: $font-weight-medium;
-		line-height: 20px;
+		line-height: 24px;
 		text-wrap: balance;
 
 		&:first-child {
@@ -46,7 +46,8 @@
 	}
 
 	:is(h3, h4, h5, h6, .wpnc__h3) {
-		font-size: $default-font-size;
+		font-size: $font-size-large;
+		line-height: 20px;
 	}
 
 	// Matches the dashboard's emphasis, which is lighter than the browser's bold.
