@@ -19,6 +19,7 @@ import { wpAdminNavigateAbility } from '../../abilities/wp-admin-navigate';
 import * as canvasBinding from '../canvas-binding';
 import { getAvailableCheckpoints } from '../checkpoints';
 import { getEditorPostContext } from '../editor-post-context';
+import { waitForEditedGlobalStyles } from '../global-styles';
 import {
 	loadExternalProviders,
 	mergeCapabilitiesInto,
@@ -44,6 +45,10 @@ jest.mock( '../canvas-binding', () => ( {
 	getBlockingMove: jest.fn( () => null ),
 } ) );
 jest.mock( '../editor-post-context', () => ( { getEditorPostContext: jest.fn( () => ( {} ) ) } ) );
+jest.mock( '../global-styles', () => ( {
+	...jest.requireActual( '../global-styles' ),
+	waitForEditedGlobalStyles: jest.fn( async () => undefined ),
+} ) );
 jest.mock( '../page-content-markup', () => ( { getPageContentMarkup: jest.fn( () => '' ) } ) );
 jest.mock( '../page-structure', () => ( { getPageStructure: jest.fn( () => null ) } ) );
 jest.mock( '../checkpoints', () => ( {
@@ -899,7 +904,10 @@ describe( 'loadExternalProviders', () => {
 			...postContext,
 		} );
 
-		beforeEach( () => jest.mocked( getEditorPostContext ).mockReturnValue( postContext ) );
+		beforeEach( () => {
+			jest.mocked( getEditorPostContext ).mockReturnValue( postContext );
+			jest.mocked( waitForEditedGlobalStyles ).mockClear();
+		} );
 
 		afterEach( () => jest.mocked( getEditorPostContext ).mockReturnValue( {} ) );
 
@@ -926,6 +934,18 @@ describe( 'loadExternalProviders', () => {
 			expect( providers.contextProvider?.getClientContext() ).toEqual( pageContext() );
 		} );
 
+		// The post editor fetches them only when asked, and the first message needs them.
+		it( 'starts loading the global styles where Big Sky is enabled', async () => {
+			setAgentsManagerData( { bigSkyEnabled: true, agentProviders: [] } );
+
+			await loadExternalProviders();
+
+			// The editor chunk resolves in a later task — let it settle.
+			await new Promise( ( resolve ) => setTimeout( resolve, 0 ) );
+
+			expect( waitForEditedGlobalStyles ).toHaveBeenCalled();
+		} );
+
 		it( 'is not sent where Big Sky is off', async () => {
 			const context = { url: 'https://example.com/woo' };
 			setAgentsManagerData( {
@@ -935,6 +955,7 @@ describe( 'loadExternalProviders', () => {
 			const providers = await loadExternalProviders();
 
 			expect( providers.contextProvider?.getClientContext() ).toEqual( context );
+			expect( waitForEditedGlobalStyles ).not.toHaveBeenCalled();
 		} );
 	} );
 

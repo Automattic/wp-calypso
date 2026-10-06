@@ -109,10 +109,13 @@ export async function registerEditorAbilities(): Promise< void > {
 	}
 }
 
-// Re-exported for the facade's sync views.
+// Re-exported for the facade.
 export { getAgentBlockId } from '../utils/block-ids';
 export { getAvailableCheckpoints } from '../utils/checkpoints';
-export { getEditorContentContext } from '../utils/editor-content-context';
+export {
+	getEditorContentContext,
+	preloadEditorContentContext,
+} from '../utils/editor-content-context';
 export { getEditorPostContext } from '../utils/editor-post-context';
 export { getPageContentMarkup } from '../utils/page-content-markup';
 export { getPageStructure } from '../utils/page-structure';

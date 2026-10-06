@@ -146,6 +146,18 @@ export function getAmEditorContentContext(): Record< string, unknown > {
 }
 
 /**
+ * Starts loading what the editor content context reads, so the first message
+ * carries it: the post editor fetches the global styles only once asked.
+ */
+export async function preloadAmEditorContentContext(): Promise< void > {
+	try {
+		( await loadEditorAbilities() )?.preloadEditorContentContext();
+	} catch {
+		// Already logged; the next facade call retries the load.
+	}
+}
+
+/**
  * The id the agent knows a block by, so a host can name the block to it. The
  * clientId itself until the editor abilities have loaded: the agent's tools
  * take that too.
