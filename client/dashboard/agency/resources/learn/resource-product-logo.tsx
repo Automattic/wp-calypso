@@ -8,8 +8,6 @@ import wpcomLogo from 'calypso/assets/images/a8c-for-agencies/product-wordmarks/
 import { getProductLabel } from './lib/labels';
 import type { CSSProperties } from 'react';
 
-import './resource-product-logo.scss';
-
 const LOGOS: Record< string, { src: string; inlineSize: number } > = {
 	'automattic-for-agencies': { src: a4aLogo, inlineSize: 100 },
 	jetpack: { src: jetpackLogo, inlineSize: 72 },
