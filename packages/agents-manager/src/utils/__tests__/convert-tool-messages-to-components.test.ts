@@ -102,6 +102,76 @@ describe( 'convertToolMessagesToComponents', () => {
 		jest.clearAllMocks();
 	} );
 
+	describe( 'provider tool components', () => {
+		const ProductCard = () => null;
+		const getToolComponent = ( toolId: string ) =>
+			toolId === 'woocommerce_ai__render_product_card'
+				? ( ProductCard as React.ComponentType )
+				: null;
+
+		it( 'renders the component a provider registered for the tool, with the tool data as props', () => {
+			const result = convertToolMessagesToComponents( {
+				messages: [
+					createToolMessage( 'woocommerce_ai__render_product_card', { product_id: 42 } ),
+				],
+				getToolComponent,
+			} );
+
+			expect( result ).toHaveLength( 1 );
+			expect( result[ 0 ].content ).toEqual( [
+				{ type: 'component', component: ProductCard, componentProps: { product_id: 42 } },
+			] );
+		} );
+
+		it( 'keeps the text around the component in one message', () => {
+			const result = convertToolMessagesToComponents( {
+				messages: [
+					createMessage( {
+						id: 'user-1',
+						role: 'user',
+						content: [ { type: 'text', text: 'Show me the beanie' } ],
+					} ),
+					createMessage( { id: 'pre', content: [ { type: 'text', text: 'Here it is:' } ] } ),
+					createToolMessage(
+						'woocommerce_ai__render_product_card',
+						{ product_id: 42 },
+						{ id: 'card' }
+					),
+					createMessage( { id: 'post', content: [ { type: 'text', text: 'It is on sale.' } ] } ),
+				],
+				getToolComponent,
+			} );
+
+			expect( result.map( ( message ) => message.id ) ).toEqual( [ 'user-1', 'post' ] );
+			expect( result[ 1 ].content ).toEqual( [
+				{ type: 'text', text: 'Here it is:' },
+				{ type: 'component', component: ProductCard, componentProps: { product_id: 42 } },
+				{ type: 'text', text: 'It is on sale.' },
+			] );
+		} );
+
+		it( 'does not merge replies to different user messages', () => {
+			const result = convertToolMessagesToComponents( {
+				messages: [
+					createMessage( { id: 'earlier', content: [ { type: 'text', text: 'Earlier reply' } ] } ),
+					createMessage( {
+						id: 'user-1',
+						role: 'user',
+						content: [ { type: 'text', text: 'Show me the beanie' } ],
+					} ),
+					createToolMessage(
+						'woocommerce_ai__render_product_card',
+						{ product_id: 42 },
+						{ id: 'card' }
+					),
+				],
+				getToolComponent,
+			} );
+
+			expect( result.map( ( message ) => message.id ) ).toEqual( [ 'earlier', 'user-1', 'card' ] );
+		} );
+	} );
+
 	it( 'passes through user messages unchanged', () => {
 		const message = createMessage( { role: 'user' } );
 

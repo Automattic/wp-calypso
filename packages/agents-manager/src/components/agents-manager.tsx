@@ -392,6 +392,7 @@ function AgentSetup( {
 				useProviderAbilitiesSetup={ loadedProviders.useAbilitiesSetup }
 				useSuggestions={ loadedProviders.useSuggestions }
 				getChatComponent={ loadedProviders.getChatComponent }
+				getToolComponent={ loadedProviders.getToolComponent }
 				siteBuildUtils={ loadedProviders.siteBuildUtils }
 				transformMessages={ loadedProviders.transformMessages }
 				useCheckpoint={ loadedProviders.useCheckpoint }

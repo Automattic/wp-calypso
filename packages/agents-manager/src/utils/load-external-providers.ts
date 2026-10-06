@@ -95,6 +95,14 @@ type ChatComponentType =
 export type GetChatComponent = ( type: ChatComponentType ) => React.ComponentType< unknown > | null;
 
 /**
+ * Resolves the component a provider renders for one of its own tools, by tool id.
+ * The component receives the tool's data as props.
+ */
+export type GetToolComponent = (
+	toolId: string
+) => React.ComponentType< Record< string, unknown > > | null;
+
+/**
  * Rewrite the visible transcript.
  *
  * Applied to the whole message list on every render — including messages
@@ -184,6 +192,7 @@ export interface LoadedProviders {
 	useAbilitiesSetup?: AbilitiesSetupHook;
 	useSuggestions?: UseSuggestionsHook;
 	getChatComponent?: GetChatComponent;
+	getToolComponent?: GetToolComponent;
 	transformMessages?: TransformMessages;
 	siteBuildUtils?: SiteBuildUtils;
 	useCheckpoint?: UseCheckpointHook;
@@ -625,6 +634,7 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 	let mergedGetEmptyViewSuggestions: ( () => Suggestion[] ) | undefined;
 	let mergedAbilitiesSetup: AbilitiesSetupHook | undefined;
 	let mergedGetChatComponent: GetChatComponent | undefined;
+	let mergedGetToolComponent: GetToolComponent | undefined;
 	let mergedSiteBuildUtils: SiteBuildUtils | undefined;
 	let mergedOnTaskUpdate: LoadedProviders[ 'onTaskUpdate' ] | undefined;
 	// OR-merged across all providers.
@@ -640,6 +650,7 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 	const allMarkdownComponents: MarkdownComponents[] = [];
 	const allMarkdownExtensions: MarkdownExtensions[] = [];
 	const allGetChatComponents: GetChatComponent[] = [];
+	const allGetToolComponents: GetToolComponent[] = [];
 	const allTransformMessages: TransformMessages[] = [];
 	const allAbilitiesSetups: AbilitiesSetupHook[] = [];
 	const allUseSuggestions: UseSuggestionsHook[] = [];
@@ -691,6 +702,9 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 		}
 		if ( module.getChatComponent ) {
 			allGetChatComponents.push( module.getChatComponent );
+		}
+		if ( module.getToolComponent ) {
+			allGetToolComponents.push( module.getToolComponent );
 		}
 		if ( module.transformMessages ) {
 			allTransformMessages.push( module.transformMessages );
@@ -817,6 +831,19 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 			allTransformMessages.reduce( ( current, transform ) => transform( current ), messages );
 	}
 
+	// Merge getToolComponent: try each provider, return first non-null.
+	if ( allGetToolComponents.length > 0 ) {
+		mergedGetToolComponent = ( toolId: string ) => {
+			for ( const fn of allGetToolComponents ) {
+				const result = fn( toolId );
+				if ( result ) {
+					return result;
+				}
+			}
+			return null;
+		};
+	}
+
 	// Merge getChatComponent: try each provider, return first non-null.
 	if ( allGetChatComponents.length === 1 ) {
 		mergedGetChatComponent = allGetChatComponents[ 0 ];
@@ -886,6 +913,7 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 		onTaskUpdate: isEditor ? withPageDesignStream( mergedOnTaskUpdate ) : mergedOnTaskUpdate,
 		useSuggestions: mergedUseSuggestions,
 		getChatComponent: mergedGetChatComponent,
+		getToolComponent: mergedGetToolComponent,
 		transformMessages: mergedTransformMessages,
 		siteBuildUtils: mergedSiteBuildUtils,
 		useCheckpoint: mergedUseCheckpoint,

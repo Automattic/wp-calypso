@@ -14,7 +14,7 @@ import {
 	isDisplayableToolMessageTool,
 	isVisualCheckPending,
 } from './tool-message-utils';
-import type { GetChatComponent } from './load-external-providers';
+import type { GetChatComponent, GetToolComponent } from './load-external-providers';
 import type { OPEN_HELP_CENTER_BUTTON_TYPE } from '../abilities/open-help-center';
 import type { ShowComponentType } from '../abilities/show-component';
 import type { UIMessage } from '@automattic/agenttic-client';
@@ -56,6 +56,8 @@ function getAmComponent( type: string ): React.ComponentType | null {
 interface Options {
 	messages: UIMessage[];
 	getChatComponent?: GetChatComponent;
+	/** Components providers render for their own tools, from the tool's data. */
+	getToolComponent?: GetToolComponent;
 	currentPostId?: number | string;
 	/** Whether the agent's turn is still running, so a promised check may still land. */
 	isProcessing?: boolean;
@@ -264,11 +266,13 @@ function followsTerminalApplyBlockEditsOutcome(
 export default function convertToolMessagesToComponents( {
 	messages,
 	getChatComponent,
+	getToolComponent,
 	currentPostId,
 	isProcessing,
 	canEscalateToHuman = true,
 }: Options ): AgentsManagerUIMessage[] {
-	return messages.flatMap( ( message, index, array ) => {
+	const toolComponentMessages = new WeakSet< AgentsManagerUIMessage >();
+	const converted = messages.flatMap< AgentsManagerUIMessage >( ( message, index, array ) => {
 		if ( isContextOnlyMessage( message ) ) {
 			return [];
 		}
@@ -329,6 +333,25 @@ export default function convertToolMessagesToComponents( {
 			typeof textData.tool_id !== 'string'
 		) {
 			return followsTerminalApplyBlockEditsOutcome( array, index ) ? [] : [ message ];
+		}
+
+		// A provider's own tool renders from the tool's data: the arguments the agent
+		// called it with, which is also what conversation history keeps for it.
+		const ToolComponent = getToolComponent?.( textData.tool_id );
+		if ( ToolComponent ) {
+			const componentMessage: AgentsManagerUIMessage = {
+				...message,
+				content: [
+					{
+						type: 'component' as const,
+						component: ToolComponent,
+						componentProps:
+							typeof textData.data === 'object' && textData.data !== null ? textData.data : {},
+					},
+				],
+			};
+			toolComponentMessages.add( componentMessage );
+			return [ componentMessage ];
 		}
 
 		// Handle `show-component` tool message
@@ -547,4 +570,44 @@ export default function convertToolMessagesToComponents( {
 		console.warn( `[AgentsManager] Unhandled tool message with tool_id: ${ textData.tool_id }` );
 		return [];
 	} );
+
+	return mergeTurnsAroundToolComponents( converted, toolComponentMessages );
+}
+
+/**
+ * Joins a reply that shows a provider tool component into one message, so the
+ * text the agent wrote before and after the component reads as one answer.
+ * The merged message keeps the id of the turn's last message, which is the one
+ * feedback and trace lookups know.
+ */
+function mergeTurnsAroundToolComponents(
+	messages: AgentsManagerUIMessage[],
+	toolComponentMessages: WeakSet< AgentsManagerUIMessage >
+): AgentsManagerUIMessage[] {
+	const merged: AgentsManagerUIMessage[] = [];
+	let turn: AgentsManagerUIMessage[] = [];
+
+	const flushTurn = () => {
+		if ( turn.some( ( message ) => toolComponentMessages.has( message ) ) ) {
+			merged.push( {
+				...turn[ turn.length - 1 ],
+				content: turn.flatMap( ( message ) => message.content ?? [] ),
+			} );
+		} else {
+			merged.push( ...turn );
+		}
+		turn = [];
+	};
+
+	for ( const message of messages ) {
+		if ( hasAgentRole( message ) ) {
+			turn.push( message );
+			continue;
+		}
+		flushTurn();
+		merged.push( message );
+	}
+	flushTurn();
+
+	return merged;
 }

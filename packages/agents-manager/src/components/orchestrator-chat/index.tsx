@@ -77,6 +77,7 @@ import type { BigSkyMessage } from '../../types';
 import type {
 	AbilitiesSetupHook,
 	GetChatComponent,
+	GetToolComponent,
 	UseSuggestionsHook,
 	SiteBuildUtils,
 	TransformMessages,
@@ -296,6 +297,7 @@ interface Props {
 	useSuggestions?: UseSuggestionsHook;
 	/** Get a chat component by type for rendering in agent messages. */
 	getChatComponent?: GetChatComponent;
+	getToolComponent?: GetToolComponent;
 	/** Utilities for site building flow (e.g., progress tracking, site preview). */
 	siteBuildUtils?: SiteBuildUtils;
 	/** Rewrite the transcript before it is displayed. See `TransformMessages`. */
@@ -324,6 +326,7 @@ export default function OrchestratorChat( {
 	useProviderAbilitiesSetup,
 	useSuggestions,
 	getChatComponent,
+	getToolComponent,
 	siteBuildUtils,
 	transformMessages,
 	useCheckpoint,
@@ -1665,6 +1668,7 @@ export default function OrchestratorChat( {
 		currentMessages = convertToolMessagesToComponents( {
 			messages: currentMessages,
 			getChatComponent,
+			getToolComponent,
 			currentPostId,
 			isProcessing,
 			canEscalateToHuman: isWooAiProvider(),
@@ -1730,6 +1734,7 @@ export default function OrchestratorChat( {
 		currentPostId,
 		deletedMessageIds,
 		getChatComponent,
+		getToolComponent,
 		getCopyActionsForMessage,
 		getCheckpointActionsForMessage,
 		getShowComponentOrder,
