@@ -64,3 +64,11 @@ This will deploy the Agents Manager app for Jetpack consumption. Along with the 
 
 > [!IMPORTANT]
 > If you add new phrases to the Agents Manager. They will only be translated in Atomic sites after `jetpack-mu-plugin` is released. Which happens twice a day.
+
+### Host presentation
+
+Embedded experiences such as Big Sky's AI Editor can keep the agent open and
+hide its entry toggles using the document-scoped
+[`chatPresentation` bootstrap configuration](../../packages/agents-manager/src/hooks/custom-actions/README.md#document-scoped-presentation).
+Deploy support in Agents Manager before enabling it in the host. Ordinary Site
+Editor and Calypso visits keep the default dismissible chat.

@@ -13,31 +13,31 @@ Consuming the API? See [Public API](#public-api). Adding a new action? See [Addi
 
 ## Public API
 
-| Method                     | Signature                                               | Description                                                               |
-| -------------------------- | ------------------------------------------------------- | ------------------------------------------------------------------------- |
-| `getChatState`             | `() => Promise<{ isOpen, isDocked, floatingPosition }>` | Current chat state. Waits for the store to load before resolving.         |
-| `getSessionId`             | `() => string`                                          | Active session ID.                                                        |
-| `getTabId`                 | `() => string`                                          | The `tab_id` on the chat's Tracks events, so host events can join on it.  |
-| `getTurnId`                | `() => string`                                          | The current `turn_id` (the last send's), or `''` before the first send.   |
-| `recordBigSkyTracksEvent`  | `(eventName: BigSkyEventName, props?) => void`          | Record a full `jetpack_big_sky_*` event name with family base props.      |
-| `isChatVisible`            | `() => boolean`                                         | Whether the chat is visible (open and not minimized).                     |
-| `getCurrentRoute`          | `() => string`                                          | The chat's current route, e.g. `/chat`, `/history`, `/support-guides`.    |
-| `setChatOpen`              | `(isOpen: boolean) => void`                             | Open or close the chat. Opening also expands it from the minimized bar.   |
-| `setChatDocked`            | `(isDocked: boolean) => void`                           | Dock or undock the chat.                                                  |
-| `setChatEnabled`           | `(isEnabled: boolean) => void`                          | Enable the chat, or disable its input while leaving the chat visible.     |
-| `setChatCompactMode`       | `(isCompact: boolean) => void`                          | Toggle compact mode (undocked only).                                      |
-| `setChatDesktopMediaQuery` | `(query: string) => void`                               | Media query used to decide whether the chat can dock into the sidebar.    |
-| `setChatInput` \*          | `(value: string) => void`                               | Set the chat input value and focus it.                                    |
-| `submitChatMessage` \*     | `(message?: string) => Promise<void>`                   | Submit a message programmatically. If omitted, submits the current input. |
-| `setContextEntry`          | `(entry) => void`                                       | Add or replace a context entry sent with the next chat message.           |
-| `removeContextEntry`       | `(id: string) => void`                                  | Remove a context entry. Linked cards (`contextEntryIds`) are removed too. |
-| `setContextCard`           | `(card) => void`                                        | Add or replace a card shown inside the chat.                              |
-| `removeContextCard`        | `(id: string) => void`                                  | Remove a card.                                                            |
-| `setSiteEditorAction`      | `(name, value) => void`                                 | Record a Site Editor action (name → value) for the chat to read.          |
-| `chatNavigate`             | `NavigateFunction`                                      | The `react-router-dom` navigate function (path with options, or delta).   |
-| `resumeChat`               | `() => void`                                            | Reopen the chat, resuming this tab's conversation (not a new one).        |
-| `isReady`                  | `boolean`                                               | `true` once the API is fully populated and safe to call.                  |
-| `broadcastsAgentActivity`  | `boolean`                                               | Whether this build fires the [agent activity](#agent-activity) events.    |
+| Method                     | Signature                                               | Description                                                                                                       |
+| -------------------------- | ------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| `getChatState`             | `() => Promise<{ isOpen, isDocked, floatingPosition }>` | Current chat state. Waits for the store to load before resolving.                                                 |
+| `getSessionId`             | `() => string`                                          | Active session ID.                                                                                                |
+| `getTabId`                 | `() => string`                                          | The `tab_id` on the chat's Tracks events, so host events can join on it.                                          |
+| `getTurnId`                | `() => string`                                          | The current `turn_id` (the last send's), or `''` before the first send.                                           |
+| `recordBigSkyTracksEvent`  | `(eventName: BigSkyEventName, props?) => void`          | Record a full `jetpack_big_sky_*` event name with family base props.                                              |
+| `isChatVisible`            | `() => boolean`                                         | Whether the chat is visible (open and not minimized).                                                             |
+| `getCurrentRoute`          | `() => string`                                          | The chat's current route, e.g. `/chat`, `/history`, `/support-guides`.                                            |
+| `setChatOpen`              | `(isOpen: boolean) => void`                             | Open or close the chat (closing is ignored when non-dismissible). Opening also expands it from the minimized bar. |
+| `setChatDocked`            | `(isDocked: boolean) => void`                           | Dock or undock the chat.                                                                                          |
+| `setChatEnabled`           | `(isEnabled: boolean) => void`                          | Enable the chat, or disable its input while leaving the chat visible.                                             |
+| `setChatCompactMode`       | `(isCompact: boolean) => void`                          | Toggle compact mode (undocked only).                                                                              |
+| `setChatDesktopMediaQuery` | `(query: string) => void`                               | Media query used to decide whether the chat can dock into the sidebar.                                            |
+| `setChatInput` \*          | `(value: string) => void`                               | Set the chat input value and focus it.                                                                            |
+| `submitChatMessage` \*     | `(message?: string) => Promise<void>`                   | Submit a message programmatically. If omitted, submits the current input.                                         |
+| `setContextEntry`          | `(entry) => void`                                       | Add or replace a context entry sent with the next chat message.                                                   |
+| `removeContextEntry`       | `(id: string) => void`                                  | Remove a context entry. Linked cards (`contextEntryIds`) are removed too.                                         |
+| `setContextCard`           | `(card) => void`                                        | Add or replace a card shown inside the chat.                                                                      |
+| `removeContextCard`        | `(id: string) => void`                                  | Remove a card.                                                                                                    |
+| `setSiteEditorAction`      | `(name, value) => void`                                 | Record a Site Editor action (name → value) for the chat to read.                                                  |
+| `chatNavigate`             | `NavigateFunction`                                      | The `react-router-dom` navigate function (path with options, or delta).                                           |
+| `resumeChat`               | `() => void`                                            | Reopen the chat, resuming this tab's conversation (not a new one).                                                |
+| `isReady`                  | `boolean`                                               | `true` once the API is fully populated and safe to call.                                                          |
+| `broadcastsAgentActivity`  | `boolean`                                               | Whether this build fires the [agent activity](#agent-activity) events.                                            |
 
 \* Available only while the chat panel is mounted. Always optional-chain these calls — they can be `undefined` even after `isReady` is `true`.
 
@@ -204,3 +204,28 @@ function MyComponent() {
 
 - The global is reachable by any script on the page — don't expose privileged operations or carry secret data.
 - External callers should re-read `window.__agentsManagerActions.foo` on each call rather than caching the function — references can change when the owner re-registers.
+
+## Document-scoped presentation
+
+Hosts can set `window.__agentsManagerConfig.chatPresentation` **before loading
+Agents Manager**:
+
+```js
+window.__agentsManagerConfig = {
+	...window.__agentsManagerConfig,
+	chatPresentation: { dismissible: false, showEntryPoints: false },
+};
+```
+
+Both flags default to `true`. `dismissible: false` keeps the chat expanded even
+when the saved preference is closed or minimized, removes Close and Minimize on
+all chat routes, and ignores close requests (including `setChatOpen(false)`).
+`showEntryPoints: false` hides the wp-admin/omnibar and editor toolbar Agent
+toggles. Help menu links still navigate between chat and history, without closing
+a non-dismissible chat. Docking and responsive floating layout remain available.
+
+This configuration lasts only for the current document and is not a user
+preference. It is a bootstrap contract, not a reactive settings API. The host
+must provide an accessible exit from its experience and hide server-rendered
+entry controls before first paint if needed. Calypso, Reader and other hosts
+that omit the configuration retain their existing behavior.
