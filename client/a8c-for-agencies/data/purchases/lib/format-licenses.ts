@@ -41,6 +41,8 @@ interface APILicenseSubscription {
 	billing_interval_unit: string;
 	status: string;
 	expiry: string | null;
+	trial_end: string | null;
+	is_active_trial: boolean;
 	is_auto_renew_enabled: boolean;
 	is_refundable: boolean;
 }
@@ -111,6 +113,8 @@ function formatLicenseSubscription(
 		billingIntervalUnit: subscription.billing_interval_unit,
 		status: subscription.status,
 		expiry: subscription.expiry,
+		trialEnd: subscription.trial_end,
+		isActiveTrial: subscription.is_active_trial,
 		isAutoRenewEnabled: subscription.is_auto_renew_enabled,
 		isRefundable: subscription.is_refundable,
 	};

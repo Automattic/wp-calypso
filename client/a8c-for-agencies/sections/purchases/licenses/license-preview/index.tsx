@@ -189,6 +189,12 @@ export default function LicensePreview( {
 
 	const titanDomain = isTitanLicense ? meta?.titanDomain : undefined;
 
+	// Set whenever the product carries an introductory offer, whether or not that offer is
+	// still running. The backend reports no trial rather than a guessed date when the
+	// subscription cannot be resolved.
+	const trialEnd = license.subscription?.trialEnd;
+	const isActiveTrial = Boolean( license.subscription?.isActiveTrial );
+
 	const bundleCountContent = quantity && (
 		<Badge className="license-preview__license-count" intent="draft">
 			{ isTitanLicense
@@ -307,6 +313,21 @@ export default function LicensePreview( {
 								</Badge>
 							) }
 						</div>
+						{ trialEnd && (
+							<div className="license-preview__trial-notice">
+								{ isActiveTrial
+									? translate( '90-day trial ends {{date/}}', {
+											components: {
+												date: <FormattedDate date={ trialEnd } format="YYYY-MM-DD" />,
+											},
+										} )
+									: translate( '90-day trial expired {{date/}}', {
+											components: {
+												date: <FormattedDate date={ trialEnd } format="YYYY-MM-DD" />,
+											},
+										} ) }
+							</div>
+						) }
 						{ referral && (
 							<div className="license-preview__client-email">
 								<ClientSite referral={ referral } />

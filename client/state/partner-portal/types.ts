@@ -281,6 +281,8 @@ export interface LicenseSubscription {
 	billingIntervalUnit: string;
 	status: string;
 	expiry: string | null;
+	trialEnd: string | null;
+	isActiveTrial: boolean;
 	isAutoRenewEnabled: boolean;
 	isRefundable: boolean;
 }
