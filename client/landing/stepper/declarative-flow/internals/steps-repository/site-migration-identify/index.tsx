@@ -1,6 +1,8 @@
+import config from '@automattic/calypso-config';
 import { formatNumber } from '@automattic/number-formatters';
 import { Step } from '@automattic/onboarding';
 import { next, published, shield } from '@wordpress/icons';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { type FC, useEffect, useState, useCallback } from 'react';
 import CaptureInput from 'calypso/blocks/import/capture/capture-input';
@@ -25,6 +27,7 @@ interface Props {
 	hideImporterListLink: boolean;
 	flowName: string;
 	onVisibilityChange: ( isVisible: boolean ) => void;
+	isReprintFlow?: boolean;
 }
 
 export const Analyzer: FC< Props > = ( {
@@ -32,6 +35,7 @@ export const Analyzer: FC< Props > = ( {
 	onSkip,
 	onVisibilityChange,
 	hideImporterListLink = false,
+	isReprintFlow = false,
 } ) => {
 	const translate = useTranslate();
 	const [ siteURL, setSiteURL ] = useState< string >( '' );
@@ -109,22 +113,27 @@ export const Analyzer: FC< Props > = ( {
 					onDontHaveSiteAddressClick={ onSkip }
 					placeholder={ translate( 'mygreatnewblog.com' ) }
 					label={ translate( 'Site address' ) }
-					dontHaveSiteAddressLabel={ translate(
-						'Or <button>pick your current platform from a list</button>'
-					) }
-					hideImporterListLink={ hideImporterListLink }
-					nextLabelText={ translate( 'Check my site' ) }
+					dontHaveSiteAddressLabel={
+						isReprintFlow
+							? translate( '<button>Only have a backup file? Our team will help you</button>' )
+							: translate( 'Or <button>pick your current platform from a list</button>' )
+					}
+					hideImporterListLink={ ! isReprintFlow && hideImporterListLink }
+					nextLabelText={ isReprintFlow ? translate( 'Continue' ) : translate( 'Check my site' ) }
 				/>
 			</div>
-			<ChecklistCard
-				title={ translate( 'Why should you host with us?' ) }
-				items={ hostingDetailItems }
-			/>
+			{ ! isReprintFlow && (
+				<ChecklistCard
+					title={ translate( 'Why should you host with us?' ) }
+					items={ hostingDetailItems }
+				/>
+			) }
 		</>
 	);
 };
 
-export type SiteMigrationIdentifyAction = 'continue' | 'skip_platform_identification';
+export type SiteMigrationIdentifyAction =
+	'continue' | 'skip_platform_identification' | 'backup_file';
 
 const SiteMigrationIdentify: StepType< {
 	submits:
@@ -138,6 +147,7 @@ const SiteMigrationIdentify: StepType< {
 } > = function ( { navigation, flow } ) {
 	const siteSlug = useSiteSlug();
 	const translate = useTranslate();
+	const isReprintFlow = config.isEnabled( 'migration/reprint-flow' );
 	const { createScreenshots } = useSitePreviewMShotImageHandler();
 
 	const handleSubmit = useCallback(
@@ -168,8 +178,9 @@ const SiteMigrationIdentify: StepType< {
 			}
 			hideImporterListLink={ urlQueryParams.get( 'hide_importer_link' ) === 'true' }
 			onSkip={ () => {
-				handleSubmit( 'skip_platform_identification' );
+				handleSubmit( isReprintFlow ? 'backup_file' : 'skip_platform_identification' );
 			} }
+			isReprintFlow={ isReprintFlow }
 			flowName={ flow }
 			onVisibilityChange={ ( isVisible ) => {
 				setIsVisible( isVisible );
@@ -181,7 +192,9 @@ const SiteMigrationIdentify: StepType< {
 		<>
 			<DocumentHead title={ translate( 'Import your site content' ) } />
 			<Step.CenteredColumnLayout
-				className="step-container-v2--site-migration-identify"
+				className={ clsx( 'step-container-v2--site-migration-identify', {
+					'site-migration-identify--reprint': isReprintFlow,
+				} ) }
 				columnWidth={ 4 }
 				topBar={
 					<Step.TopBar

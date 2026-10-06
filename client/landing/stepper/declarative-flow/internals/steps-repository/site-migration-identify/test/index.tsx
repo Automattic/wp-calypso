@@ -1,6 +1,7 @@
 /**
  * @jest-environment jsdom
  */
+import config from '@automattic/calypso-config';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
@@ -52,12 +53,19 @@ const API_RESPONSE_WITH_OTHER_PLATFORM: UrlData = {
 
 const MOCK_WORDPRESS_SITE_SLUG = 'test-example.wordpress.com';
 const getInput = () => screen.getByLabelText( /Site address/ );
+const originalIsEnabled = config.isEnabled;
 
 describe( 'SiteMigrationIdentify', () => {
 	beforeAll( () => nock.disableNetConnect() );
 	beforeEach( () => {
 		jest.clearAllMocks();
+		jest
+			.spyOn( config, 'isEnabled' )
+			.mockImplementation(
+				( flag ) => flag !== 'migration/reprint-flow' && originalIsEnabled( flag )
+			);
 	} );
+	afterEach( () => jest.restoreAllMocks() );
 
 	it( 'continues the flow when the platform is wordpress', async () => {
 		jest.mocked( useSiteSlug ).mockReturnValue( MOCK_WORDPRESS_SITE_SLUG );
@@ -189,6 +197,71 @@ describe( 'SiteMigrationIdentify', () => {
 		);
 
 		expect( screen.getByRole( 'button', { name: /Back/ } ) ).toBeVisible();
+	} );
+
+	describe( 'with migration/reprint-flow enabled', () => {
+		beforeEach( () => {
+			jest
+				.spyOn( config, 'isEnabled' )
+				.mockImplementation(
+					( flag ) => flag === 'migration/reprint-flow' || originalIsEnabled( flag )
+				);
+		} );
+
+		it( 'shows the simplified address screen and submits the backup choice', async () => {
+			const submit = jest.fn();
+			render( { navigation: { submit } } );
+
+			expect( screen.getByRole( 'button', { name: 'Continue' } ) ).toBeVisible();
+			expect( screen.queryByText( /Why should you host with us/ ) ).not.toBeInTheDocument();
+			expect(
+				screen.queryByRole( 'button', { name: /pick your current platform/ } )
+			).not.toBeInTheDocument();
+
+			await userEvent.click(
+				screen.getByRole( 'button', { name: 'Only have a backup file? Our team will help you' } )
+			);
+			expect( submit ).toHaveBeenCalledWith( { action: 'backup_file' } );
+		} );
+
+		it( 'keeps the supplied address editable and submits the detected source and host', async () => {
+			const submit = jest.fn();
+			render(
+				{ navigation: { submit } },
+				{ initialEntry: '/some-path?from=https://old.example.com' }
+			);
+			expect( getInput() ).toHaveValue( 'https://old.example.com' );
+
+			mockApi()
+				.get( '/wpcom/v2/imports/analyze-url' )
+				.query( { site_url: 'https://example.com' } )
+				.reply( 200, API_RESPONSE_WORDPRESS_PLATFORM );
+			mockApi()
+				.get( '/wpcom/v2/site-profiler/hosting-provider/example.com' )
+				.reply( 200, { hosting_provider: { slug: 'bluehost' } } );
+
+			await userEvent.clear( getInput() );
+			await userEvent.type( getInput(), 'https://example.com' );
+			await userEvent.click( screen.getByRole( 'button', { name: 'Continue' } ) );
+			await waitFor( () =>
+				expect( submit ).toHaveBeenCalledWith( {
+					action: 'continue',
+					platform: 'wordpress',
+					from: 'https://example.com',
+					host: 'bluehost',
+				} )
+			);
+		} );
+
+		it( 'shows validation feedback without submitting an invalid address', async () => {
+			const submit = jest.fn();
+			render( { navigation: { submit } } );
+			await userEvent.type( getInput(), 'invalid' );
+			await userEvent.click( screen.getByRole( 'button', { name: 'Continue' } ) );
+
+			expect( screen.getByText( /site address is missing its domain extension/ ) ).toBeVisible();
+			expect( submit ).not.toHaveBeenCalled();
+		} );
 	} );
 
 	it( 'hides the back button and link by default', async () => {

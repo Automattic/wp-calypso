@@ -41,6 +41,7 @@ import type {
 
 const BASE_STEPS = [
 	STEPS.SITE_MIGRATION_IDENTIFY,
+	STEPS.SITE_MIGRATION_BACKUP,
 	STEPS.SITE_MIGRATION_HOW_TO_MIGRATE,
 	STEPS.SITE_MIGRATION_UPGRADE_PLAN,
 	STEPS.SITE_MIGRATION_INSTRUCTIONS,
@@ -73,7 +74,13 @@ function initialize() {
 		return false as const;
 	}
 
-	return stepsWithRequiredLogin( BASE_STEPS );
+	return stepsWithRequiredLogin(
+		BASE_STEPS.filter(
+			( step ) =>
+				step.slug !== STEPS.SITE_MIGRATION_BACKUP.slug ||
+				config.isEnabled( 'migration/reprint-flow' )
+		)
+	);
 }
 
 const hasSite = ( siteId: number, siteSlug: string ) => {
@@ -185,6 +192,13 @@ const siteMigration: FlowV2< typeof initialize > = {
 						host?: string;
 					};
 					const hasDestinationSite = hasSite( siteId, siteSlug );
+					if ( action === 'backup_file' ) {
+						return navigate(
+							config.isEnabled( 'migration/reprint-flow' )
+								? STEPS.SITE_MIGRATION_BACKUP.slug
+								: STEPS.SITE_MIGRATION_IDENTIFY.slug
+						);
+					}
 					const isSSHMigrationAvailable = config.isEnabled( 'migration/ssh-migration' );
 
 					// Check if hosting provider is supported for SSH migration
@@ -247,6 +261,9 @@ const siteMigration: FlowV2< typeof initialize > = {
 
 					return navigate( paths.siteCreationPath( { from, platform, host } ) );
 				}
+
+				case STEPS.SITE_MIGRATION_BACKUP.slug:
+					return navigate( STEPS.SITE_MIGRATION_IDENTIFY.slug );
 
 				case STEPS.PICK_SITE.slug: {
 					switch ( providedDependencies?.action ) {

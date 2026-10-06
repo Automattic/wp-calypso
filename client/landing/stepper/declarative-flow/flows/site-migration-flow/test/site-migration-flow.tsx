@@ -362,6 +362,40 @@ describe( 'Site Migration Flow', () => {
 			} );
 		} );
 
+		describe( 'Reprint address routes', () => {
+			it.each( [ true, false ] )( 'gates the backup route when the flag is %s', ( enabled ) => {
+				jest
+					.spyOn( config, 'isEnabled' )
+					.mockImplementation( ( flag ) => enabled && flag === 'migration/reprint-flow' );
+				const destination = runNavigation( {
+					from: STEPS.SITE_MIGRATION_IDENTIFY,
+					dependencies: { action: 'backup_file' },
+					query: { from: 'https://example.com', ref: 'move-lp' },
+				} );
+
+				expect( destination ).toMatchDestination( {
+					step: enabled ? STEPS.SITE_MIGRATION_BACKUP : STEPS.SITE_MIGRATION_IDENTIFY,
+				} );
+				const steps = siteMigrationFlow.initialize();
+				expect(
+					steps && steps.some( ( step ) => step.slug === STEPS.SITE_MIGRATION_BACKUP.slug )
+				).toBe( enabled );
+			} );
+
+			it( 'returns from the backup placeholder to address entry', () => {
+				jest
+					.spyOn( config, 'isEnabled' )
+					.mockImplementation( ( flag ) => flag === 'migration/reprint-flow' );
+				const destination = runNavigation( {
+					from: STEPS.SITE_MIGRATION_BACKUP,
+					query: { from: 'https://example.com', ref: 'move-lp', siteId: 123 },
+				} );
+				expect( destination ).toMatchDestination( {
+					step: STEPS.SITE_MIGRATION_IDENTIFY,
+				} );
+			} );
+		} );
+
 		//TODO: Move it to the top be the first test group to follow the order of the flow
 		describe( 'SITE_MIGRATION_IDENTIFY', () => {
 			beforeEach( () => {
