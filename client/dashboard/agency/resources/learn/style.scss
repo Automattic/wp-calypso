@@ -30,34 +30,26 @@
 		format( 'woff2' );
 }
 
-// Product palettes as ( ink, paper ). Most come from Color Studio; VIP's gold is
-// from its brand palette and Pressable's red-orange from https://pressable.com/press-kit/.
-$resource-palettes: (
-	'automattic-for-agencies': (
-		$studio-white,
-		$studio-gray-100,
-	),
-	'jetpack': (
-		$studio-white,
-		$studio-jetpack-green-50,
-	),
-	'pressable': (
-		$studio-black,
-		#dd3a03,
-	),
-	'woocommerce': (
-		$studio-white,
-		$studio-woocommerce-purple-50,
-	),
-	'wordpress-com': (
-		$studio-white,
-		$studio-wordpress-blue-50,
-	),
-	'wordpress-vip': (
-		#13191e,
-		#d8a45f,
-	),
+// Product brand colours. Most come from Color Studio; VIP's gold is from its brand
+// palette and Pressable's red-orange from https://pressable.com/press-kit/.
+$resource-brands: (
+	'automattic-for-agencies': $studio-gray-100,
+	'jetpack': $studio-jetpack-green-50,
+	'pressable': #dd3a03,
+	'woocommerce': $studio-woocommerce-purple-50,
+	'wordpress-com': $studio-wordpress-blue-50,
+	'wordpress-vip': #d8a45f,
 );
+
+.dashboard-resources-learn__card-header,
+.dashboard-resources-learn__list-title,
+.dashboard-resources-learn__list-brand {
+	@each $product, $color in $resource-brands {
+		&[data-product='#{$product}'] {
+			--resource-brand: #{$color};
+		}
+	}
+}
 
 // The DataViews wrapper paints its own surface; the filter bar sits on the page background.
 .dashboard-resources-learn__filters {
@@ -158,8 +150,7 @@ $resource-palettes: (
 }
 
 .dashboard-resources-learn__card-header {
-	--resource-card-ink: #{$studio-black};
-	--resource-card-paper: #{$studio-gray-0};
+	--resource-brand: #{$studio-gray-100};
 
 	display: flex;
 	flex-direction: column;
@@ -167,8 +158,9 @@ $resource-palettes: (
 	min-block-size: 220px;
 	padding: 20px 24px;
 	box-sizing: border-box;
-	color: var( --resource-card-ink );
-	background: var( --resource-card-paper );
+	// A light tint of the brand colour, with the brand colour itself for ink.
+	color: var( --resource-card-ink, var( --resource-brand ) );
+	background: color-mix( in srgb, var( --resource-brand ) 18%, #{$studio-white} );
 
 	// Nested under the header for specificity over the components' own runtime styles.
 	.dashboard-resources-learn__card-eyebrow {
@@ -183,13 +175,6 @@ $resource-palettes: (
 		letter-spacing: -0.035em;
 		text-wrap: balance;
 		overflow-wrap: anywhere;
-	}
-
-	@each $product, $palette in $resource-palettes {
-		&[data-product='#{$product}'] {
-			--resource-card-ink: #{nth( $palette, 1 )};
-			--resource-card-paper: #{nth( $palette, 2 )};
-		}
 	}
 
 	&[data-product='automattic-for-agencies'] {
@@ -237,6 +222,9 @@ $resource-palettes: (
 	}
 
 	&[data-product='wordpress-vip'] {
+		// The gold is too light to read on its own tint.
+		--resource-card-ink: #13191e;
+
 		.dashboard-resources-learn__card-title {
 			font-family: 'A4A Source Serif', Georgia, serif;
 			font-weight: 600;
@@ -245,11 +233,11 @@ $resource-palettes: (
 	}
 }
 
-// Inverted against the header, so it reads on every palette.
+// Solid in the header's ink, so it stands out from the tint.
 .dashboard-resources-learn__top-badge {
-	background-color: var( --resource-card-ink );
-	border-color: var( --resource-card-ink );
-	color: var( --resource-card-paper );
+	background-color: var( --resource-card-ink, var( --resource-brand ) );
+	border-color: var( --resource-card-ink, var( --resource-brand ) );
+	color: $studio-white;
 }
 
 .dashboard-resources-learn__card-brand {
@@ -301,15 +289,6 @@ $resource-palettes: (
 		.dashboard-resources-learn__list-title,
 		.dashboard-resources-learn__list-brand {
 			color: var( --resource-brand, currentColor );
-		}
-	}
-}
-
-.dashboard-resources-learn__list-title,
-.dashboard-resources-learn__list-brand {
-	@each $product, $palette in $resource-palettes {
-		&[data-product='#{$product}'] {
-			--resource-brand: #{nth( $palette, 2 )};
 		}
 	}
 }
