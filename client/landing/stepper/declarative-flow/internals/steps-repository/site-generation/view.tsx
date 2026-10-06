@@ -5,6 +5,8 @@ import { check, wordpress } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useRef, useState } from 'react';
 import { BuildVisualization } from './build-visualization';
+import { BuildWowStreamBoard } from './stream/stream-board';
+import type { BuildWowStreamView } from './stream/use-build-wow-stream';
 import type { SiteGenerationState } from './use-site-generation';
 import type { BuildWowGraph } from 'calypso/landing/stepper/utils/build-wow';
 import type { CSSProperties } from 'react';
@@ -281,10 +283,12 @@ function BuildProgress( { state }: { state: SiteGenerationState } ) {
 export function SiteGenerationView( {
 	state,
 	graph,
+	stream,
 	onReload,
 }: {
 	state: SiteGenerationState;
 	graph?: BuildWowGraph;
+	stream?: BuildWowStreamView | null;
 	onReload: () => void;
 } ) {
 	const translate = useTranslate();
@@ -347,6 +351,7 @@ export function SiteGenerationView( {
 						{ translate( 'Hello! I’m the WordPress Agent, and I’m building your site right now.' ) }
 					</p>
 					<BuildProgress state={ state } />
+					{ stream && state.status === 'working' && <BuildWowStreamBoard stream={ stream } /> }
 				</div>
 			</aside>
 		</main>

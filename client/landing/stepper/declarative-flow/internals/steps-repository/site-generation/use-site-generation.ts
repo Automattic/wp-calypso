@@ -2,7 +2,9 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { logBuildWowEvent, requestBuildWowSite } from 'calypso/landing/stepper/utils/build-wow';
 import { pollForBuildWowStatus } from './build-status-poller';
 import { getEditorUrlFromStatus } from './editor-url';
+import { isStreamInfoEqual } from './stream/types';
 import type { BuildWowUi } from './build-status-poller';
+import type { BuildWowStreamInfo } from './stream/types';
 import type { BuildWowGraph } from 'calypso/landing/stepper/utils/build-wow';
 
 export type SiteGenerationStep = {
@@ -23,6 +25,8 @@ export type SiteGenerationState = {
 	steps: SiteGenerationStep[];
 	retryBuild: ( () => void ) | null;
 	isRetryingBuild: boolean;
+	// The live feed the status endpoint advertises for this run, while working.
+	streamInfo?: BuildWowStreamInfo | null;
 };
 
 const GENERATION_TIMEOUT_MS = 30 * 60 * 1000;
@@ -99,6 +103,7 @@ export function useSiteGeneration( {
 	source,
 	specId,
 	graph,
+	streamEvents = false,
 	steps,
 }: {
 	siteIdentifier: string | null;
@@ -106,6 +111,8 @@ export function useSiteGeneration( {
 	specId?: string | null;
 	/** Graph the build was queued with, so a retry rebuilds on the same one. */
 	graph?: BuildWowGraph;
+	/** The live-feed opt-in, so a retry asks for it again. */
+	streamEvents?: boolean;
 	steps: Array< Pick< SiteGenerationStep, 'id' | 'label' > >;
 } ): SiteGenerationState {
 	const [ serverSteps, setServerSteps ] = useState< SiteGenerationStep[] | null >( null );
@@ -113,6 +120,7 @@ export function useSiteGeneration( {
 	const [ failure, setFailure ] = useState< GenerationFailure | null >( null );
 	const [ buildAttempt, setBuildAttempt ] = useState( 0 );
 	const [ isRetryingBuild, setIsRetryingBuild ] = useState( false );
+	const [ streamInfo, setStreamInfo ] = useState< BuildWowStreamInfo | null >( null );
 	const isRetryingRef = useRef( false );
 	const hasRequiredParameters = Boolean( siteIdentifier );
 	const generationTimeoutMs = graph === 'dsl' ? DSL_GENERATION_TIMEOUT_MS : GENERATION_TIMEOUT_MS;
@@ -158,6 +166,10 @@ export function useSiteGeneration( {
 					return nextSteps.length > 0 ? nextSteps : previousSteps;
 				} );
 			},
+			onStream: ( nextStreamInfo ) =>
+				setStreamInfo( ( previous ) =>
+					isStreamInfoEqual( previous, nextStreamInfo ) ? previous : nextStreamInfo
+				),
 			onRequestError: ( reason ) =>
 				logBuildWowEvent( 'site_generation_status_request_failed', {
 					site_identifier: siteIdentifier,
@@ -182,8 +194,13 @@ export function useSiteGeneration( {
 			spec_id: specId,
 		} );
 		try {
-			await requestBuildWowSite( siteIdentifier, specId, graph );
+			if ( streamEvents ) {
+				await requestBuildWowSite( siteIdentifier, specId, graph, undefined, true );
+			} else {
+				await requestBuildWowSite( siteIdentifier, specId, graph );
+			}
 			clearStoredStepTimer( siteIdentifier );
+			setStreamInfo( null );
 			setFallbackStartedAt( Date.now() );
 			setServerSteps( null );
 			setFailure( null );
@@ -198,7 +215,7 @@ export function useSiteGeneration( {
 			isRetryingRef.current = false;
 			setIsRetryingBuild( false );
 		}
-	}, [ siteIdentifier, specId, graph ] );
+	}, [ siteIdentifier, specId, graph, streamEvents ] );
 
 	let failureReason: SiteGenerationFailureReason | undefined;
 	if ( ! hasRequiredParameters ) {
@@ -224,5 +241,6 @@ export function useSiteGeneration( {
 			} ) ),
 		retryBuild: canRetryBuild ? retryBuild : null,
 		isRetryingBuild,
+		streamInfo: failureReason ? null : streamInfo,
 	};
 }

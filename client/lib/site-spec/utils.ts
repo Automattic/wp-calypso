@@ -394,12 +394,14 @@ export function getBuildWowSiteSpecConfig( {
 	ref,
 	source,
 	graph,
+	streamEvents,
 }: {
 	siteSlug?: string | null;
 	siteId?: string | number | null;
 	ref?: string | null;
 	source?: string | null;
 	graph?: string | null;
+	streamEvents?: boolean;
 } = {} ): SiteSpecConfig {
 	const buildSiteUrl = addQueryArgs( '/setup/ai-site-builder-spec/site-spec', {
 		build_wow: '1',
@@ -408,6 +410,7 @@ export function getBuildWowSiteSpecConfig( {
 		...( ref ? { ref } : {} ),
 		...( source ? { source } : {} ),
 		...( graph ? { graph } : {} ),
+		...( streamEvents ? { build_wow_stream: '1' } : {} ),
 	} );
 
 	const defaultConfig = getDefaultSiteSpecConfig();

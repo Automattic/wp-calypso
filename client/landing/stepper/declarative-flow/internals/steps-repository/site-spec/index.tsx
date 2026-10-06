@@ -22,6 +22,8 @@ import {
 import {
 	getBuildWowGraph,
 	getBuildWowSiteIdentifier,
+	getBuildWowStreamQueryArgs,
+	isBuildWowStreamRequested,
 	logBuildWowEvent,
 	requestBuildWowSite,
 } from 'calypso/landing/stepper/utils/build-wow';
@@ -309,6 +311,7 @@ const SiteSpec: StepType = function SiteSpec( { navigation } ) {
 			const elapsedMs = () => Date.now() - specConfirmStartTime;
 			let responseBlogId: number | undefined;
 			const graph = getBuildWowGraph( queryParams );
+			const streamEvents = isBuildWowStreamRequested( queryParams );
 
 			try {
 				logBuildWowEvent( 'spec_confirm_request_start', {
@@ -316,7 +319,13 @@ const SiteSpec: StepType = function SiteSpec( { navigation } ) {
 					site_identifier: buildWowSiteIdentifier,
 				} );
 
-				const response = await requestBuildWowSite( buildWowSiteIdentifier, specId, graph );
+				const response = await requestBuildWowSite(
+					buildWowSiteIdentifier,
+					specId,
+					graph,
+					undefined,
+					streamEvents
+				);
 				responseBlogId = response.blog_id;
 
 				logBuildWowEvent(
@@ -354,6 +363,7 @@ const SiteSpec: StepType = function SiteSpec( { navigation } ) {
 					...( ref ? { ref } : {} ),
 					...( source ? { source } : {} ),
 					...( graph ? { graph } : {} ),
+					...getBuildWowStreamQueryArgs( streamEvents ),
 				} );
 			} catch ( error ) {
 				const message = error instanceof Error ? error.message : String( error );
@@ -486,7 +496,8 @@ const SiteSpec: StepType = function SiteSpec( { navigation } ) {
 							blueprintArchiveSiteIdentifier,
 							specId,
 							getBuildWowGraph( queryParams ),
-							blueprintArchiveSlug
+							blueprintArchiveSlug,
+							isBuildWowStreamRequested( queryParams )
 						);
 						logBlueprintArchiveEvent( 'redirect_site_generation', {
 							site_identifier: blueprintArchiveSiteIdentifier,
@@ -501,6 +512,7 @@ const SiteSpec: StepType = function SiteSpec( { navigation } ) {
 								siteSlug: blueprintArchiveSiteIdentifier,
 								specId,
 								...( ref ? { ref } : {} ),
+								...getBuildWowStreamQueryArgs( isBuildWowStreamRequested( queryParams ) ),
 							} ),
 						};
 					}
@@ -623,6 +635,7 @@ const SiteSpec: StepType = function SiteSpec( { navigation } ) {
 					ref: queryParams.get( 'ref' ),
 					source: querySource,
 					graph: getBuildWowGraph( queryParams ),
+					streamEvents: isBuildWowStreamRequested( queryParams ),
 				} ) }
 				onSpecConfirm={ handleBuildWowSpecConfirm }
 			/>
