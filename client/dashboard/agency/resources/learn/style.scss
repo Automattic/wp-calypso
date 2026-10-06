@@ -160,9 +160,9 @@ $resource-brands: (
 
 	display: flex;
 	flex-direction: column;
-	gap: 16px;
+	gap: $grid-unit-20;
 	min-block-size: 220px;
-	padding: 20px 24px;
+	padding: 20px $grid-unit-30;
 	box-sizing: border-box;
 	// A light tint of the brand colour, with the brand colour itself for ink.
 	color: var( --resource-card-ink, var( --resource-brand ) );
@@ -172,7 +172,7 @@ $resource-brands: (
 
 	.dashboard-resource-illustration {
 		position: absolute;
-		inset-block-start: 8px;
+		inset-block-start: $grid-unit-10;
 		inset-inline-end: 14px;
 		inline-size: 72px;
 		block-size: 72px;
@@ -213,7 +213,7 @@ $resource-brands: (
 
 	&[data-product='jetpack'] {
 		.dashboard-resources-learn__card-title {
-			padding-inline-start: 12px;
+			padding-inline-start: $grid-unit-15;
 			border-inline-start: 4px solid currentColor;
 			font-size: 28px;
 			font-weight: 700;
@@ -265,7 +265,7 @@ $resource-brands: (
 }
 
 .dashboard-resources-learn__card-brand {
-	padding-block-start: 12px;
+	padding-block-start: $grid-unit-15;
 	border-block-start: 1px solid color-mix( in srgb, currentColor 25%, transparent );
 }
 
