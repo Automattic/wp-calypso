@@ -73,16 +73,14 @@ describe( 'DIFMOfferCard', () => {
 		expect( screen.queryByRole( 'button', { name: 'See the offer' } ) ).not.toBeInTheDocument();
 	} );
 
-	test( 'shows the DIFM upsell while the experiment assignment loads', () => {
+	test( 'renders neither card while an eligible user’s assignment loads', () => {
 		nock( 'https://public-api.wordpress.com' )
 			.get( /experiments\/0\.1\.0\/assignments\/calypso/ )
 			.reply( 200, { variations: {}, ttl: 3600 } );
 
-		render( <DIFMOfferCard site={ mockSite } /> );
+		const { container } = render( <DIFMOfferCard site={ mockSite } /> );
 
-		expect(
-			screen.getByRole( 'heading', { name: 'We’ll bring your vision to life' } )
-		).toBeVisible();
+		expect( container ).toBeEmptyDOMElement();
 	} );
 
 	test( 'does not show the offer on an A4A dev site in a treatment', () => {

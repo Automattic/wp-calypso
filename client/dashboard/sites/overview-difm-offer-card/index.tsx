@@ -11,6 +11,8 @@ import type { Site } from '@automattic/api-core';
 /**
  * Fills the DIFM slot in the site overview. A user in a treatment arm of the DIFM
  * offer experiment sees the offer; everyone else sees the existing DIFM upsell.
+ * While an eligible user's assignment loads, the slot stays empty: mounting the old
+ * card first would record its upsell impression for users in a treatment arm.
  */
 export default function DIFMOfferCard( { site }: { site: Site } ) {
 	const localeSlug = useLocale();
@@ -20,7 +22,11 @@ export default function DIFMOfferCard( { site }: { site: Site } ) {
 		localeSlug,
 		isA4ADevSite: site.is_a4a_dev_site,
 	} );
-	const copy = ! isLoading ? getDifmOfferCopy( variation ) : null;
+	if ( isLoading ) {
+		return null;
+	}
+
+	const copy = getDifmOfferCopy( variation );
 
 	if ( ! copy ) {
 		return <DIFMUpsellCard site={ site } />;
