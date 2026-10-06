@@ -67,20 +67,6 @@ describe( 'Analytics', () => {
 	} );
 
 	describe( 'mc', () => {
-		test( 'waits for prerender activation before sending either pixel', () => {
-			Object.defineProperty( document, 'prerendering', { configurable: true, value: true } );
-			bumpStat( 'prerender', 'first' );
-			bumpStatWithPageView( 'prerender', 'second' );
-			expect( imagesLoaded ).toHaveLength( 0 );
-			Object.defineProperty( document, 'prerendering', { configurable: true, value: false } );
-			document.dispatchEvent( new Event( 'prerenderingchange' ) );
-			expect( imagesLoaded.map( ( image ) => image.query.v ) ).toEqual( [
-				'wpcom-no-pv',
-				'wpcom',
-			] );
-			delete document.prerendering;
-		} );
-
 		test( 'bumpStat with group and stat', () => {
 			bumpStat( 'go', 'time' );
 			expect( imagesLoaded[ 0 ].query.v ).toEqual( 'wpcom-no-pv' );
@@ -188,24 +174,6 @@ describe( 'Analytics', () => {
 				};
 				cookie.parse.mockImplementation( () => ( { tk_ai: true } ) );
 				global.console.error = jest.fn();
-			} );
-
-			test( 'forwards each hidden event once and in order after activation', () => {
-				Object.defineProperty( document, 'prerendering', { configurable: true, value: true } );
-				const forwarded = jest.fn();
-				tracksEvents.on( 'record-event', forwarded );
-				recordTracksEvent( 'calypso_prerender_first', { step: 'first' } );
-				recordTracksEvent( 'calypso_prerender_second', { step: 'second' } );
-				expect( window._tkq.push ).not.toHaveBeenCalled();
-				expect( forwarded ).not.toHaveBeenCalled();
-				Object.defineProperty( document, 'prerendering', { configurable: true, value: false } );
-				document.dispatchEvent( new Event( 'prerenderingchange' ) );
-				expect( forwarded.mock.calls ).toEqual( [
-					[ 'calypso_prerender_first', { step: 'first' } ],
-					[ 'calypso_prerender_second', { step: 'second' } ],
-				] );
-				tracksEvents.removeListener( 'record-event', forwarded );
-				delete document.prerendering;
 			} );
 
 			test( 'should log error if event name does not match regex', () => {

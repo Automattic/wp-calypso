@@ -1,7 +1,5 @@
 /** @jest-environment jsdom */
 
-import { whenDocumentActive } from '../src/when-document-active';
-
 jest.mock( '@automattic/load-script', () => ( {
 	loadScript: jest.fn( () => Promise.resolve() ),
 } ) );
@@ -19,84 +17,82 @@ function activate() {
 	document.dispatchEvent( new Event( 'prerenderingchange' ) );
 }
 
+beforeEach( () => {
+	window._tkq = [];
+} );
 afterEach( () => {
 	activate();
 	jest.clearAllMocks();
-	window._tkq = [];
 } );
 
-test.each( [ false, undefined ] )( 'ordinary documents run synchronously (%s)', ( value ) => {
-	prerender( value );
-	const callback = jest.fn( () => 42 );
-	expect( whenDocumentActive( callback ) ).toBe( 42 );
-	expect( callback ).toHaveBeenCalledTimes( 1 );
-} );
+test.each( [ false, undefined ] )(
+	'ordinary documents load Tracks immediately (%s)',
+	async ( value ) => {
+		prerender( value );
+		await jest.isolateModulesAsync( async () => {
+			const tracks = await import( '../src/tracks' );
+			const { loadScript } = await import( '@automattic/load-script' );
+			expect( loadScript ).toHaveBeenCalledWith( '//stats.wp.com/w.js?69' );
+			await tracks.getTracksLoadPromise();
+			activate();
+			expect( loadScript ).toHaveBeenCalledTimes( 1 );
+		} );
+	}
+);
 
-test( 'unused prerenders stay silent and activation preserves callback order exactly once', async () => {
-	prerender( true );
-	const calls: number[] = [];
-	const first = whenDocumentActive( () => calls.push( 1 ) );
-	const second = whenDocumentActive( () => calls.push( 2 ) );
-	await Promise.resolve();
-	expect( calls ).toEqual( [] );
-	activate();
-	whenDocumentActive( () => calls.push( 3 ) );
-	activate();
-	await Promise.all( [ first, second ] );
-	expect( calls ).toEqual( [ 1, 2, 3 ] );
-} );
-
-test( 'one failed callback does not prevent other callbacks from activating', async () => {
-	prerender( true );
-	const failure = whenDocumentActive( () => {
-		throw new Error( 'failure' );
-	} );
-	const success = jest.fn();
-	whenDocumentActive( success );
-	activate();
-	await expect( failure ).rejects.toThrow( 'failure' );
-	expect( success ).toHaveBeenCalledTimes( 1 );
-} );
-
-test( 'Tracks delays its script, identity, event and subscribers until activation', async () => {
+test( 'keeps identity and events queued in order until the loader activates once', async () => {
 	prerender( true );
 	await jest.isolateModulesAsync( async () => {
 		const tracks = await import( '../src/tracks' );
-		const { loadScript: loaded } = await import( '@automattic/load-script' );
+		const { loadScript } = await import( '@automattic/load-script' );
+		const user = { ID: 123, username: 'test', email: 'test@example.com' };
+		const initialized = tracks.initializeAnalytics( user, undefined );
 		const subscriber = jest.fn();
 		tracks.analyticsEvents.on( 'record-event', subscriber );
-		tracks.identifyUser( { ID: 123, username: 'prerender-test', email: 'test@example.com' } );
-		tracks.recordTracksEvent( 'calypso_test_view', { order: 1 } );
-		expect( loaded ).not.toHaveBeenCalled();
-		expect( window._tkq ).toEqual( [] );
-		expect( subscriber ).not.toHaveBeenCalled();
+		tracks.recordTracksEvent( 'calypso_test_first', { order: 1 } );
+		tracks.recordTracksEvent( 'calypso_test_second', { order: 2 } );
+		const expected = [
+			[ 'identifyUser', 123, 'test' ],
+			[ 'recordEvent', 'calypso_test_first', { order: 1 } ],
+			[ 'recordEvent', 'calypso_test_second', { order: 2 } ],
+		];
+		expect( window._tkq ).toEqual( expected );
+		expect( subscriber ).toHaveBeenCalledTimes( 2 );
+		await Promise.resolve();
+		expect( loadScript ).not.toHaveBeenCalled();
 		activate();
-		expect( loaded ).toHaveBeenCalledTimes( 1 );
-		expect( window._tkq ).toEqual( [
-			[ 'identifyUser', 123, 'prerender-test' ],
-			[ 'recordEvent', 'calypso_test_view', { order: 1 } ],
-		] );
-		expect( subscriber ).toHaveBeenCalledTimes( 1 );
+		await initialized;
+		activate();
+		expect( loadScript ).toHaveBeenCalledTimes( 1 );
+		expect( window._tkq ).toEqual( expected );
 	} );
 } );
 
-test( 'queued events retain their original properties and per-event subscribers', async () => {
+test( 'preserves initialization when activation happens first', async () => {
 	prerender( true );
 	await jest.isolateModulesAsync( async () => {
 		const tracks = await import( '../src/tracks' );
-		let step = 'first';
-		const initialized = tracks.initializeAnalytics( undefined, () => ( { step } ) );
-		const forwarded: unknown[] = [];
-		const onRecord = ( name: string, props: unknown ) => forwarded.push( [ name, props ] );
-		tracks.recordTracksEvent( 'calypso_test_first', {}, onRecord );
-		step = 'second';
-		tracks.recordTracksEvent( 'calypso_test_second', {}, onRecord );
-		expect( forwarded ).toEqual( [] );
+		const { loadScript } = await import( '@automattic/load-script' );
+		activate();
+		await tracks.initializeAnalytics( undefined, undefined );
+		expect( loadScript ).toHaveBeenCalledTimes( 1 );
+	} );
+} );
+
+test( 'waits for activation before attempting the blocked-analytics fallback', async () => {
+	prerender( true );
+	await jest.isolateModulesAsync( async () => {
+		const { loadScript } = await import( '@automattic/load-script' );
+		( loadScript as jest.Mock ).mockImplementation( ( url: string ) =>
+			url.includes( 'w.js?' ) ? Promise.reject( new Error( 'blocked' ) ) : Promise.resolve()
+		);
+		const tracks = await import( '../src/tracks' );
+		const initialized = tracks.initializeAnalytics( undefined, undefined );
+		await Promise.resolve();
+		expect( loadScript ).not.toHaveBeenCalled();
 		activate();
 		await initialized;
-		expect( forwarded ).toEqual( [
-			[ 'calypso_test_first', { step: 'first' } ],
-			[ 'calypso_test_second', { step: 'second' } ],
-		] );
+		expect( loadScript ).toHaveBeenNthCalledWith( 1, '//stats.wp.com/w.js?69' );
+		expect( loadScript ).toHaveBeenNthCalledWith( 2, expect.stringContaining( '/nostats.js?' ) );
 	} );
 } );

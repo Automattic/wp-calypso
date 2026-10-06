@@ -1,4 +1,3 @@
-import { isDocumentPrerendering, whenDocumentActive } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import debug from 'debug';
 
@@ -33,10 +32,6 @@ function buildQuerystringNoPrefix( group, name ) {
 }
 
 export function bumpStat( group, name ) {
-	if ( isDocumentPrerendering() ) {
-		return whenDocumentActive( () => bumpStat( group, name ) );
-	}
-
 	if ( 'object' === typeof group ) {
 		mcDebug( 'Bumping stats %o', group );
 	} else {
@@ -55,10 +50,6 @@ export function bumpStat( group, name ) {
 }
 
 export function bumpStatWithPageView( group, name ) {
-	if ( isDocumentPrerendering() ) {
-		return whenDocumentActive( () => bumpStatWithPageView( group, name ) );
-	}
-
 	// this function is fairly dangerous, as it bumps page views for wpcom and should only be called in very specific cases.
 	if ( 'object' === typeof group ) {
 		mcDebug( 'Bumping page view with props %o', group );

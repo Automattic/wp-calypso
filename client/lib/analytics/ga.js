@@ -1,8 +1,4 @@
-import {
-	getCurrentUser,
-	isDocumentPrerendering,
-	whenDocumentActive,
-} from '@automattic/calypso-analytics';
+import { getCurrentUser } from '@automattic/calypso-analytics';
 import debug from 'debug';
 import { GA4 } from 'calypso/lib/analytics/ad-tracking';
 import isAkismetCheckout from '../akismet/is-akismet-checkout';
@@ -119,11 +115,7 @@ export const gaRecordEvent = makeGoogleAnalyticsTrackingFunction(
  * @returns {Function} Wrapped function
  */
 export function makeGoogleAnalyticsTrackingFunction( func ) {
-	return function track( ...args ) {
-		if ( isDocumentPrerendering() ) {
-			return whenDocumentActive( () => track( ...args ) );
-		}
-
+	return function ( ...args ) {
 		if ( ! mayWeTrackByTracker( 'ga' ) ) {
 			gaDebug( '[Disallowed] analytics %s( %o )', func.name, args );
 			return;

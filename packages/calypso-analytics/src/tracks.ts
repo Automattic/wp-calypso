@@ -9,7 +9,6 @@ import { getCurrentUser, setCurrentUser } from './utils/current-user';
 import debug from './utils/debug';
 import getDoNotTrack from './utils/do-not-track';
 import getTrackingPrefs from './utils/get-tracking-prefs';
-import { whenDocumentActive } from './when-document-active';
 
 declare global {
 	interface Window {
@@ -48,9 +47,16 @@ let _superProps: any; // Added to all Tracks events.
 let _loadTracksResult = Promise.resolve(); // default value for non-BOM environments.
 
 if ( typeof document !== 'undefined' ) {
-	_loadTracksResult = Promise.resolve(
-		whenDocumentActive( () => loadScript( '//stats.wp.com/w.js?69' ) )
-	);
+	const loadTracks = () => loadScript( '//stats.wp.com/w.js?69' );
+	if ( ( document as Document & { prerendering?: boolean } ).prerendering ) {
+		_loadTracksResult = new Promise( ( resolve, reject ) => {
+			document.addEventListener( 'prerenderingchange', () => loadTracks().then( resolve, reject ), {
+				once: true,
+			} );
+		} );
+	} else {
+		_loadTracksResult = loadTracks();
+	}
 }
 
 function createRandomId( randomBytesLength = 9 ): string {
@@ -125,10 +131,8 @@ export function getTracksLoadPromise() {
 
 export function pushEventToTracksQueue( args: Array< any > ) {
 	if ( typeof window !== 'undefined' ) {
-		whenDocumentActive( () => {
-			window._tkq = window._tkq || [];
-			window._tkq.push( args );
-		} );
+		window._tkq = window._tkq || [];
+		window._tkq.push( args );
 	}
 }
 
@@ -200,11 +204,7 @@ export function signalUserFromAnotherProduct( userId: string, userIdType: string
 	pushEventToTracksQueue( [ 'signalAliasUserGeneral', userId, userIdType ] );
 }
 
-export function recordTracksEvent(
-	eventName: string,
-	eventProperties?: any,
-	onRecord?: ( eventName: string, eventProperties: any ) => void
-) {
+export function recordTracksEvent( eventName: string, eventProperties?: any ) {
 	eventProperties = eventProperties || {};
 
 	const currentUser = getCurrentUser();
@@ -285,11 +285,8 @@ export function recordTracksEvent(
 
 	debug( 'Recording event "%s" with actual props %o', eventName, eventProperties );
 
-	whenDocumentActive( () => {
-		pushEventToTracksQueue( [ 'recordEvent', eventName, eventProperties ] );
-		analyticsEvents.emit( 'record-event', eventName, eventProperties );
-		onRecord?.( eventName, eventProperties );
-	} );
+	pushEventToTracksQueue( [ 'recordEvent', eventName, eventProperties ] );
+	analyticsEvents.emit( 'record-event', eventName, eventProperties );
 }
 
 /**
