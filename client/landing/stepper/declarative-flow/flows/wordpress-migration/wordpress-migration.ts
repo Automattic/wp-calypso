@@ -14,6 +14,7 @@ const wordpressMigration: FlowV2< typeof initialize > = {
 	__experimentalUseBuiltinAuth: true,
 	initialize,
 	useStepNavigation() {
+		// No next step until the DIY routes are implemented in DOTCOM-18687.
 		return { submit: () => undefined };
 	},
 };
