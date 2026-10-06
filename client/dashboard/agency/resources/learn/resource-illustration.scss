@@ -1,6 +1,6 @@
 // Animated content-type illustrations, ported from the i2 Library prototype.
 .dashboard-resource-illustration {
-	--resource-animation-duration: 2.4s;
+	--dashboard-resource-illustration-duration: 2.4s;
 }
 
 @keyframes dashboard-resource-illustration__talk-typing {
@@ -18,64 +18,64 @@
 	.dashboard-resources-learn__card:is( :hover, :focus-within ) {
 		.dashboard-resource-illustration__video-button {
 			transform-origin: 56px 36px;
-			animation: dashboard-resource-illustration__video-press var( --resource-animation-duration )
-				ease-in-out infinite;
+			animation: dashboard-resource-illustration__video-press
+				var( --dashboard-resource-illustration-duration ) ease-in-out infinite;
 		}
 		.dashboard-resource-illustration__video-scene,
 		.dashboard-resource-illustration__video-timeline {
 			animation: dashboard-resource-illustration__video-timeline
-				var( --resource-animation-duration ) linear infinite;
+				var( --dashboard-resource-illustration-duration ) linear infinite;
 		}
 		.dashboard-resource-illustration__video-gradient {
-			animation: dashboard-resource-illustration__video-light var( --resource-animation-duration )
-				ease-in-out infinite;
+			animation: dashboard-resource-illustration__video-light
+				var( --dashboard-resource-illustration-duration ) ease-in-out infinite;
 		}
 		.dashboard-resource-illustration__video-progress {
 			animation: dashboard-resource-illustration__video-progress
-				var( --resource-animation-duration ) linear infinite;
+				var( --dashboard-resource-illustration-duration ) linear infinite;
 		}
 		.dashboard-resource-illustration__video-playhead {
 			animation: dashboard-resource-illustration__video-playhead
-				var( --resource-animation-duration ) linear infinite;
+				var( --dashboard-resource-illustration-duration ) linear infinite;
 		}
 		.dashboard-resource-illustration__guide-sign {
 			animation: dashboard-resource-illustration__guide-direction
-				var( --resource-animation-duration ) ease-in-out infinite;
+				var( --dashboard-resource-illustration-duration ) ease-in-out infinite;
 		}
 		.dashboard-resource-illustration__guide-sign-return {
 			animation-name: dashboard-resource-illustration__guide-return;
 		}
 		.dashboard-resource-illustration__talk-dot {
-			animation: dashboard-resource-illustration__talk-typing var( --resource-animation-duration )
-				ease-in-out infinite;
+			animation: dashboard-resource-illustration__talk-typing
+				var( --dashboard-resource-illustration-duration ) ease-in-out infinite;
 		}
 		.dashboard-resource-illustration__talk-dot-1 {
-			animation-delay: calc( var( --resource-animation-duration ) / -6 );
+			animation-delay: calc( var( --dashboard-resource-illustration-duration ) / -6 );
 		}
 		.dashboard-resource-illustration__talk-dot-2 {
-			animation-delay: calc( var( --resource-animation-duration ) / -3 );
+			animation-delay: calc( var( --dashboard-resource-illustration-duration ) / -3 );
 		}
 		.dashboard-resource-illustration__check-rows {
-			animation: dashboard-resource-illustration__check-advance var( --resource-animation-duration )
-				ease-in-out infinite;
+			animation: dashboard-resource-illustration__check-advance
+				var( --dashboard-resource-illustration-duration ) ease-in-out infinite;
 		}
 		.dashboard-resource-illustration__check-new {
 			stroke-dasharray: 1;
-			animation: dashboard-resource-illustration__check-draw var( --resource-animation-duration )
-				linear infinite;
+			animation: dashboard-resource-illustration__check-draw
+				var( --dashboard-resource-illustration-duration ) linear infinite;
 		}
 		.dashboard-resource-illustration__slide-content {
-			animation: dashboard-resource-illustration__slide-advance var( --resource-animation-duration )
-				ease-in-out infinite;
+			animation: dashboard-resource-illustration__slide-advance
+				var( --dashboard-resource-illustration-duration ) ease-in-out infinite;
 		}
 		.dashboard-resource-illustration__paper-lines {
 			animation: dashboard-resource-illustration__paper-scroll
-				calc( var( --resource-animation-duration ) * 3 ) ease-in-out infinite;
+				calc( var( --dashboard-resource-illustration-duration ) * 3 ) ease-in-out infinite;
 		}
 		.dashboard-resource-illustration__paper-new-line {
 			stroke-dasharray: 18;
 			animation: dashboard-resource-illustration__paper-type-1
-				calc( var( --resource-animation-duration ) * 3 ) linear infinite;
+				calc( var( --dashboard-resource-illustration-duration ) * 3 ) linear infinite;
 		}
 		@for $line from 1 through 4 {
 			.dashboard-resource-illustration__paper-line-#{ $line } {
@@ -83,8 +83,8 @@
 			}
 		}
 		.dashboard-resource-illustration__trend-line {
-			animation: dashboard-resource-illustration__trend-travel var( --resource-animation-duration )
-				linear infinite;
+			animation: dashboard-resource-illustration__trend-travel
+				var( --dashboard-resource-illustration-duration ) linear infinite;
 		}
 	}
 }
