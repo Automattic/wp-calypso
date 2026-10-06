@@ -5,21 +5,19 @@ import {
 } from '@automattic/api-queries';
 import { useMutation, useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
-import { useCallback, useMemo } from 'react';
+import { useCallback } from 'react';
 import { useAnalytics } from '../../../app/analytics';
 import { usePersistentView } from '../../../app/hooks/use-persistent-view';
 import { learnRoute } from '../../../app/router/agency';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
-import { formatAgencyResources } from './format-resources';
 import ResourceCenter, { getResourceCenterDescription } from './resource-center';
 import { DEFAULT_VIEW } from './views';
-import type { ResourceItem } from './types';
+import type { AgencyEnablementResource } from '@automattic/api-core';
 
 export default function Learn() {
 	const { recordTracksEvent } = useAnalytics();
 	const { data } = useSuspenseQuery( agencyEnablementResourcesQuery() );
-	const resources = useMemo( () => formatAgencyResources( data.results ), [ data ] );
 	const searchParams = learnRoute.useSearch();
 	const { view, updateView } = usePersistentView( {
 		slug: 'agency-library',
@@ -31,7 +29,7 @@ export default function Learn() {
 	const agencyId = agency?.id;
 
 	const handleResourceClick = useCallback(
-		( resource: ResourceItem ) => {
+		( resource: AgencyEnablementResource ) => {
 			if ( agencyId ) {
 				recordResourceEvent( {
 					resource_id: resource.id,
@@ -50,7 +48,7 @@ export default function Learn() {
 			}
 		>
 			<ResourceCenter
-				resources={ resources }
+				resources={ data.results }
 				view={ view }
 				onChangeView={ updateView }
 				recordTracksEvent={ recordTracksEvent }

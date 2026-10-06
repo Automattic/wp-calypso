@@ -1,9 +1,10 @@
 import { VisuallyHidden } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import type { OpenResource, ResourceItem } from './types';
+import type { OpenResource } from './types';
+import type { AgencyEnablementResource } from '@automattic/api-core';
 
 interface ResourceLinkProps {
-	resource: ResourceItem;
+	resource: AgencyEnablementResource;
 	className: string;
 	onOpen: OpenResource;
 }
@@ -17,7 +18,7 @@ export default function ResourceLink( { resource, className, onOpen }: ResourceL
 	return (
 		<a
 			className={ className }
-			href={ resource.externalUrl }
+			href={ resource.external_url }
 			target="_blank"
 			rel="noopener noreferrer"
 			onClick={ ( event ) => onOpen( resource, event ) }

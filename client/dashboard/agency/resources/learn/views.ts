@@ -3,7 +3,7 @@ import type { View } from '@wordpress/dataviews';
 // The grid renders its own cards, so DataViews only lays out the list.
 export const LAYOUT_FIELDS = {
 	grid: [],
-	table: [ 'product', 'contentType', 'stage' ],
+	table: [ 'product', 'content_type', 'stage' ],
 };
 
 export type LayoutType = keyof typeof LAYOUT_FIELDS;

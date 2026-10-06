@@ -3,18 +3,19 @@ import { __ } from '@wordpress/i18n';
 import { useCallback, useMemo, useState } from 'react';
 import BrowseAllResources from './browse-all-resources';
 import { getYouTubeEmbedUrl } from './youtube-embed';
-import type { OpenResource, ResourceItem, RecordTracksEvent } from './types';
+import type { OpenResource, RecordTracksEvent } from './types';
+import type { AgencyEnablementResource } from '@automattic/api-core';
 import type { View } from '@wordpress/dataviews';
 
 export const getResourceCenterDescription = () =>
 	__( 'Resources to help you learn, win clients, and deliver great work.' );
 
 interface ResourceCenterProps {
-	resources: ResourceItem[];
+	resources: AgencyEnablementResource[];
 	view: View;
 	onChangeView: ( view: View ) => void;
 	recordTracksEvent?: RecordTracksEvent;
-	onResourceClick?: ( resource: ResourceItem ) => void;
+	onResourceClick?: ( resource: AgencyEnablementResource ) => void;
 }
 
 export default function ResourceCenter( {
@@ -24,7 +25,7 @@ export default function ResourceCenter( {
 	recordTracksEvent = () => {},
 	onResourceClick,
 }: ResourceCenterProps ) {
-	const [ videoResource, setVideoResource ] = useState< ResourceItem | null >( null );
+	const [ videoResource, setVideoResource ] = useState< AgencyEnablementResource | null >( null );
 
 	const openResource: OpenResource = useCallback(
 		( resource, event ) => {
@@ -49,8 +50,8 @@ export default function ResourceCenter( {
 			// Featured first, then by created_at descending (newest first).
 			[ ...unsortedResources ].sort(
 				( a, b ) =>
-					Number( b.isFeatured ) - Number( a.isFeatured ) ||
-					new Date( b.createdAt ).getTime() - new Date( a.createdAt ).getTime()
+					Number( b.is_featured ) - Number( a.is_featured ) ||
+					new Date( b.created_at ).getTime() - new Date( a.created_at ).getTime()
 			),
 		[ unsortedResources ]
 	);
@@ -81,7 +82,7 @@ export default function ResourceCenter( {
 							} }
 						>
 							<iframe
-								src={ getYouTubeEmbedUrl( videoResource.externalUrl ) }
+								src={ getYouTubeEmbedUrl( videoResource.external_url ) }
 								title={ videoResource.name }
 								frameBorder="0"
 								allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"

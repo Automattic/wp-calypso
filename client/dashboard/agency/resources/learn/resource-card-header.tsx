@@ -8,11 +8,11 @@ import { Text } from '../../../components/text';
 import { getContentTypeLabel } from './labels';
 import ResourceIllustration from './resource-illustration';
 import ResourceProductLogo from './resource-product-logo';
-import type { ResourceItem } from './types';
+import type { AgencyEnablementResource } from '@automattic/api-core';
 import type { ReactNode } from 'react';
 
 interface ResourceCardHeaderProps {
-	resource: ResourceItem;
+	resource: AgencyEnablementResource;
 	title: ReactNode;
 }
 
@@ -38,9 +38,9 @@ export default function ResourceCardHeader( { resource, title }: ResourceCardHea
 					lineHeight="16px"
 					upperCase
 				>
-					{ getContentTypeLabel( resource.contentType ) }
+					{ getContentTypeLabel( resource.content_type ) }
 				</Text>
-				{ resource.isFeatured && (
+				{ resource.is_featured && (
 					<Badge className="dashboard-resources-learn__top-badge">{ __( 'Top resource' ) }</Badge>
 				) }
 			</VStack>

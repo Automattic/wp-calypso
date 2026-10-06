@@ -9,10 +9,11 @@ import { Card, CardBody } from '../../../components/card';
 import { getAudienceLabel, getStageLabel } from './labels';
 import ResourceCardHeader from './resource-card-header';
 import ResourceLink from './resource-link';
-import type { OpenResource, ResourceItem } from './types';
+import type { OpenResource } from './types';
+import type { AgencyEnablementResource } from '@automattic/api-core';
 
 interface ResourceCardProps {
-	resource: ResourceItem;
+	resource: AgencyEnablementResource;
 	onOpen: OpenResource;
 }
 
