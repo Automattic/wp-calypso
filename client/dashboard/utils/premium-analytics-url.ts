@@ -82,8 +82,8 @@ function boundaryOf(
 			const real = instants.filter(
 				( instant ) => instant + zoneOffsetAt( timezone, instant ) * MINUTE === wallClock
 			);
-			// A repeated clock time has two instants, and the day takes the outer one. Only a midnight is ever skipped, and then the day starts after the gap.
-			let instant = Math.max( ...instants );
+			// A repeated clock time has two instants, and the day takes the outer one. A skipped one, as at Havana's midnight or Nuuk's 23:00, takes the side inside the day.
+			let instant = edge === 'start' ? Math.max( ...instants ) : Math.min( ...instants );
 			if ( real.length ) {
 				instant = edge === 'start' ? Math.min( ...real ) : Math.max( ...real );
 			}

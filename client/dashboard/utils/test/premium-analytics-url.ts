@@ -99,6 +99,20 @@ describe( 'getPremiumAnalyticsPath', () => {
 		).toBe( '/?from=2026-03-08T01%3A00%3A00.000-04%3A00&to=2026-03-08T23%3A59%3A59.999-04%3A00' );
 	} );
 
+	// Nuuk jumps from 23:00 on 28 March straight to midnight.
+	it( 'ends a day whose last hour is skipped before the jump, not in the day after', () => {
+		expect(
+			route(
+				getPremiumAnalyticsPath( '/', {
+					from: '2026-03-28',
+					to: '2026-03-28',
+					gmtOffset: -2,
+					timezone: 'America/Nuuk',
+				} )
+			)
+		).toBe( '/?from=2026-03-28T00%3A00%3A00.000-02%3A00&to=2026-03-28T22%3A59%3A59.999-02%3A00' );
+	} );
+
 	// Havana repeats the first hour of 1 November, and Santiago the last hour of 4 April.
 	it( 'covers both runs of an hour the clock repeats at either end of a day', () => {
 		const days = ( day: string, timezone: string ) =>
