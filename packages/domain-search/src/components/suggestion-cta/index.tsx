@@ -95,8 +95,16 @@ export const DomainSuggestionCTA = ( { domainName }: DomainSuggestionCTAProps ) 
 	// Moving a domain the user already owns is a choice rather than a purchase.
 	const isDomainMove = isDomainMoveInternal( suggestion );
 
-	const selectIcon = config.showSelectCta ? plus : isDomainMove ? arrowRight : undefined;
-	const selectLabel = config.showSelectCta ? __( 'Select' ) : isDomainMove ? __( 'Move' ) : undefined;
+	let selectIcon;
+	let selectLabel;
+
+	if ( config.showSelectCta ) {
+		selectIcon = plus;
+		selectLabel = __( 'Select' );
+	} else if ( isDomainMove ) {
+		selectIcon = arrowRight;
+		selectLabel = __( 'Move' );
+	}
 
 	const errorMessage = isCurrentMutation && error?.message;
 
