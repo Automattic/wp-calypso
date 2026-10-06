@@ -49,6 +49,10 @@ export async function loadChatFromServer(
 	);
 	url.searchParams.set( 'page_number', safePage.toString() );
 	url.searchParams.set( 'items_per_page', safeItemsPerPage.toString() );
+	// The server hides tool rows from history unless asked.
+	if ( allowToolMessages ) {
+		url.searchParams.set( 'include_tool_messages', 'true' );
+	}
 
 	logger( 'Loading conversation from server: %s (page %d)', chatId, safePage );
 

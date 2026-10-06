@@ -131,6 +131,24 @@ describe( 'useAgentChat', () => {
 			expect( toolResult ).toBeNull();
 		} );
 
+		it( 'keeps the text the agent wrote before a tool call in the same message', () => {
+			const result = transformClientMessageToUI(
+				buildMessage( [
+					{ type: 'text', text: 'Here is the product:' },
+					{
+						type: 'data',
+						data: {
+							toolCallId: 'tc-1',
+							toolId: 'woocommerce-ai__render-product-card',
+							arguments: { product_id: 42 },
+						},
+					},
+				] )
+			);
+
+			expect( result?.content ).toEqual( [ { type: 'text', text: 'Here is the product:' } ] );
+		} );
+
 		it( 'drops the entire message when only unknown `data` parts remain', () => {
 			// Internal metadata must never reach the UI. With nothing left to
 			// show, the whole message is dropped so it doesn't add an empty

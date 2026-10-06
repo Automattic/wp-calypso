@@ -185,21 +185,21 @@ export const transformClientMessageToUI = (
 	clientMessage: ClientMessage,
 	messageActionsRegistrations: MessageActionsRegistration[] = []
 ): UIMessage | null => {
-	// Filter out tool-related messages that shouldn't appear in UI
-	const hasToolContent = clientMessage.parts.some( ( part ) => {
-		if ( part.type === 'data' ) {
-			const data = part.data as any;
-			// Skip messages that contain tool calls or tool results
-			return data.toolCallId || data.toolId || data.result;
+	// Tool calls and results stay out of the UI, but text the agent wrote in the
+	// same message (its preamble before a tool call) is part of the reply.
+	const isToolPart = ( part: ( typeof clientMessage.parts )[ number ] ) => {
+		if ( part.type !== 'data' ) {
+			return false;
 		}
-		return false;
-	} );
+		const data = part.data as any;
+		return Boolean( data.toolCallId || data.toolId || data.result );
+	};
+	const hasToolContent = clientMessage.parts.some( isToolPart );
+	const parts = hasToolContent
+		? clientMessage.parts.filter( ( part ) => part.type === 'text' )
+		: clientMessage.parts;
 
-	if ( hasToolContent ) {
-		return null; // Don't show tool-related messages in UI
-	}
-
-	const content = clientMessage.parts
+	const content = parts
 		.map( ( part ) => {
 			if ( part.type === 'text' ) {
 				// Check metadata for content type (e.g., `text`, `context`)
