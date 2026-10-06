@@ -9,19 +9,19 @@ import { __ } from '@wordpress/i18n';
 import { useMemo } from 'react';
 import { DataViewsEmptyStateLayout } from '../../../components/dataviews';
 import Grid from '../../../components/grid';
+import ResourceCard from './card';
+import { LAYOUT_FIELDS } from './dataviews/views';
 import {
 	getAudienceLabel,
 	getContentTypeLabel,
 	getFormatLabel,
 	getProductLabel,
 	getStageLabel,
-} from './labels';
-import ResourceCard from './resource-card';
+} from './lib/labels';
 import ResourceLink from './resource-link';
 import ResourceProductLogo from './resource-product-logo';
-import { LAYOUT_FIELDS } from './views';
+import type { LayoutType } from './dataviews/views';
 import type { OpenResource } from './types';
-import type { LayoutType } from './views';
 import type { AgencyEnablementResource, AgencyResourceStage } from '@automattic/api-core';
 import type { View, Field } from '@wordpress/dataviews';
 

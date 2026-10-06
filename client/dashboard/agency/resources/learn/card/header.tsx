@@ -4,10 +4,10 @@ import {
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { Badge } from '@wordpress/ui';
-import { Text } from '../../../components/text';
-import { getContentTypeLabel } from './labels';
-import ResourceIllustration from './resource-illustration';
-import ResourceProductLogo from './resource-product-logo';
+import { Text } from '../../../../components/text';
+import { getContentTypeLabel } from '../lib/labels';
+import ResourceProductLogo from '../resource-product-logo';
+import ResourceIllustration from './illustration';
 import type { AgencyEnablementResource } from '@automattic/api-core';
 import type { ReactNode } from 'react';
 

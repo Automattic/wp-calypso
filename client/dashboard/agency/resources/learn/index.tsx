@@ -11,8 +11,8 @@ import { usePersistentView } from '../../../app/hooks/use-persistent-view';
 import { learnRoute } from '../../../app/router/agency';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
+import { DEFAULT_VIEW } from './dataviews/views';
 import ResourceCenter, { getResourceCenterDescription } from './resource-center';
-import { DEFAULT_VIEW } from './views';
 import type { AgencyEnablementResource } from '@automattic/api-core';
 
 export default function Learn() {

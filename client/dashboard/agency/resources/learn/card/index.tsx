@@ -5,11 +5,11 @@ import {
 } from '@wordpress/components';
 import { Badge } from '@wordpress/ui';
 import { memo } from 'react';
-import { Card, CardBody } from '../../../components/card';
-import { getAudienceLabel, getStageLabel } from './labels';
-import ResourceCardHeader from './resource-card-header';
-import ResourceLink from './resource-link';
-import type { OpenResource } from './types';
+import { Card, CardBody } from '../../../../components/card';
+import { getAudienceLabel, getStageLabel } from '../lib/labels';
+import ResourceLink from '../resource-link';
+import ResourceCardHeader from './header';
+import type { OpenResource } from '../types';
 import type { AgencyEnablementResource } from '@automattic/api-core';
 
 interface ResourceCardProps {

@@ -1,8 +1,8 @@
 import { Modal, __experimentalVStack as VStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useCallback, useMemo, useState } from 'react';
+import { getYouTubeEmbedUrl } from './lib/youtube-embed';
 import ResourceLibrary from './resource-library';
-import { getYouTubeEmbedUrl } from './youtube-embed';
 import type { OpenResource, RecordTracksEvent } from './types';
 import type { AgencyEnablementResource } from '@automattic/api-core';
 import type { View } from '@wordpress/dataviews';
