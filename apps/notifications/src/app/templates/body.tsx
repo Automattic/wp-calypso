@@ -26,6 +26,9 @@ import type { Note, Block, BlockWithSignature } from '../types';
 const TRANSPARENT_PIXEL =
 	'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
 
+// Images from the note's markup. React-rendered ones, such as avatars, are left alone.
+const CONTENT_IMAGE = 'img.wpnc__image';
+
 const isReplyBlock = ( note: Note, block: Block ) =>
 	block.ranges && block.ranges.length > 1 && block.ranges[ 1 ].id === note.meta?.ids?.reply_comment;
 
@@ -175,13 +178,13 @@ export const NoteBody = ( { note }: { note: Note } ) => {
 			image.removeAttribute( 'srcset' );
 			image.src = TRANSPARENT_PIXEL;
 		};
-		element.querySelectorAll( 'img' ).forEach( ( image ) => {
+		element.querySelectorAll< HTMLImageElement >( CONTENT_IMAGE ).forEach( ( image ) => {
 			if ( image.complete && image.naturalWidth === 0 ) {
 				markUnavailable( image );
 			}
 		} );
 		const handleError = ( event: Event ) => {
-			if ( event.target instanceof HTMLImageElement ) {
+			if ( event.target instanceof HTMLImageElement && event.target.matches( CONTENT_IMAGE ) ) {
 				markUnavailable( event.target );
 			}
 		};
