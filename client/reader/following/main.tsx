@@ -6,7 +6,7 @@ import AsyncLoad from 'calypso/components/async-load';
 import BloganuaryHeader from 'calypso/components/bloganuary-header';
 import NavigationHeader from 'calypso/components/navigation-header';
 import ResurrectedWelcomeModalGate from 'calypso/components/resurrected-welcome-modal';
-import DiscoverNewBlogs from 'calypso/reader/new-blogs';
+import NewBlogsExperimentSlot from 'calypso/reader/new-blogs/experiment-slot';
 import { useNewBlogs } from 'calypso/reader/new-blogs/use-new-blogs';
 import ReaderOnboardingGate from 'calypso/reader/onboarding-rsm/gate';
 import SuggestionProvider from 'calypso/reader/search-stream/suggestion-provider';
@@ -24,7 +24,10 @@ const loadTrackResurrections = () =>
 		/* webpackChunkName: "async-load-calypso-lib-analytics-track-resurrections" */ 'calypso/lib/analytics/track-resurrections'
 	);
 
-function FollowingStream( { ...props } ) {
+function FollowingStream( {
+	suppressReaderOnboarding: forceSuppressReaderOnboarding = false,
+	...props
+} ) {
 	const { currentView } = useFollowingView();
 	const dispatch = useDispatch();
 	const [ isResurrectedModalVisible, setIsResurrectedModalVisible ] = useState( false );
@@ -51,13 +54,15 @@ function FollowingStream( { ...props } ) {
 	}, [ shouldDelayReaderOnboarding, isResurrectedModalVisible ] );
 
 	const suppressReaderOnboarding =
-		readerOnboardingShouldShow && ( isResurrectedModalVisible || shouldDelayReaderOnboarding );
+		forceSuppressReaderOnboarding ||
+		( readerOnboardingShouldShow && ( isResurrectedModalVisible || shouldDelayReaderOnboarding ) );
 
 	// "Discover new blogs" (READ-542): one bounded block in the Recent feed,
 	// in the third spot (after two recent posts), per the READ-542 thread. Only
 	// on the "all subscriptions" feed, never on a single site's feed, and not
 	// mounted at all while loading, for cold-start users, or once hidden —
-	// all of which leave `recs` empty.
+	// all of which leave `recs` empty. The spot is where the READ-543 A/B
+	// assigns users, in both groups; only treatment sees the module.
 	const { recs, isHidden, dismissBlog, hide } = useNewBlogs();
 	const showNewBlogs =
 		isEnabled( 'reader/discover-new-blogs' ) && ! props.feedId && ! isHidden && recs.length > 0;
@@ -65,7 +70,7 @@ function FollowingStream( { ...props } ) {
 	const newBlogsBlock = useMemo(
 		() =>
 			showNewBlogs ? (
-				<DiscoverNewBlogs recs={ recs } dismissBlog={ dismissBlog } hide={ hide } />
+				<NewBlogsExperimentSlot recs={ recs } dismissBlog={ dismissBlog } hide={ hide } />
 			) : null,
 		[ showNewBlogs, recs, dismissBlog, hide ]
 	);

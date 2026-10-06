@@ -15,6 +15,7 @@ import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import OpenLink from './action-link';
 import StatsListActions from './stats-list-actions';
 import StatsListCountryFlag from './stats-list-country-flag';
+import StatsListVideoThumbnail from './stats-list-video-thumbnail';
 
 const StatsListCard = ( {
 	data,
@@ -122,9 +123,11 @@ const StatsListCard = ( {
 	const generateLeftItem = ( item ) => {
 		let leftSideItem; // undefined value avoids rendering an empty node if nothing generates the output
 
-		// left icon visible for avatars, contry flags or tags and categories.
+		// Left icon is shown for country flags, video thumbnails, avatars, and tag/category icons.
 		if ( item?.countryCode ) {
 			leftSideItem = <StatsListCountryFlag countryCode={ item.countryCode } />;
+		} else if ( moduleType === 'videoplays' ) {
+			leftSideItem = <StatsListVideoThumbnail poster={ item?.poster } />;
 		} else if ( showLeftIcon && item?.icon ) {
 			leftSideItem = <StatsCardAvatar url={ item?.icon } altName={ item?.label } />;
 		} else if ( Array.isArray( item?.label ) ) {

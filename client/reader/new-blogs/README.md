@@ -16,14 +16,28 @@ is `@automattic/api-core` `fetchReadNewBlogs` + `@automattic/api-queries`
 
 `reader/discover-new-blogs`
 
-Off (`false`) in every environment. To try it, append
-`?flags=reader/discover-new-blogs` to the URL (works locally and on calypso.live).
+On (`true`) in every environment for the READ-543 A/B: with the flag on, eligible
+users get an ExPlat assignment and only treatment sees the module, see
+"A/B (READ-543)" below. `?flags=-reader/discover-new-blogs` switches it off from
+the URL, and switching the flag off is the kill switch.
 
 Mount point: `client/reader/following/main.tsx` calls `useNewBlogs()` and, when
 the flag is on, the view is the "all subscriptions" Recent stream (no `feedId`),
 the user has recs (none while loading or for cold-start) and has not hidden the
-module, passes `<DiscoverNewBlogs />` to `<ReaderStream>` as `inStreamBlock` at
+module, passes `<NewBlogsExperimentSlot />` to `<ReaderStream>` as `inStreamBlock` at
 `inStreamBlockPosition` 2, i.e. the third spot after two recent posts.
+
+## A/B (READ-543)
+
+ExPlat experiment `calypso_reader_discover_new_blogs_202610_v1` (`control` / `treatment`).
+`NewBlogsExperimentSlot` (`experiment-slot.tsx`) calls `useExperiment` when the stream
+mounts the spot above, in both groups, so only users with recs are assigned and control
+is the same kind of user as treatment. Control renders nothing there; treatment renders
+`<DiscoverNewBlogs />`. To see a given variation, use the experiment's manual assignment
+bookmarklet in ExPlat (while the experiment is in staging, only Automatticians are assigned).
+
+The main readout is out-of-network follows and post opens across both groups, from the
+existing follow and open events. The module's own events (below) show how it does.
 
 Placement note: the PRD said "never in the chronological follow feed", but the
 READ-542 thread (rob.pugh, Dave Martin, 2026-09-03) moved it to Recent so the
@@ -61,7 +75,27 @@ and rendered by the module's own card (`card.tsx`). An error post (deleted /
 private / 404) renders nothing, which doubles as the client half of the
 serve-time guard.
 
+## TrainTracks (READ-543)
+
+The endpoint doesn't send railcars, so `useNewBlogs` mints one per rec per snapshot
+(`buildRailcar`: `{ railcar, fetch_algo: 'cluster_rec_v0', fetch_position, rec_blog_id,
+rec_post_id }`, `fetch_position` = 1-based snapshot rank) and every event for a card shares it.
+The module renders `NewBlogRec` = `ReadNewBlogsRec` + `railcar`.
+
+| event                          | when                                | `action`                                                               |
+| ------------------------------ | ----------------------------------- | ---------------------------------------------------------------------- |
+| `calypso_traintracks_render`   | card on screen, once per card       | — (`ui_algo` `reader_recent_discover_new_blogs`, `ui_position` = slot) |
+| `calypso_traintracks_interact` | title click                         | `recommended_post_clicked`                                             |
+|                                | Subscribe / Unsubscribe             | `recommended_site_subscribed` / `recommended_site_unsubscribed`        |
+|                                | X                                   | `recommended_site_dismissed`                                           |
+|                                | More like this (per card on screen) | `recommended_more_clicked`                                             |
+|                                | Hide (per card on screen)           | `recommended_module_hidden`                                            |
+
+The `calypso_reader_discover_new_blogs_*` Tracks events from READ-542 fire alongside.
+`_render` fires on the first card impression (not on mount), so it counts the same
+thing as the TrainTracks renders. Helpers live in `tracks.ts`.
+
 ## Wiring left to do
 
 1. Persist dismiss and Hide server-side instead of `localStorage` (READ-542 layer 3).
-2. A/B assignment + fuller Tracks per READ-543.
+2. ExPlat assignment for the A/B (READ-543) — needs the experiment name.

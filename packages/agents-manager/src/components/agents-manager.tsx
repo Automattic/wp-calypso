@@ -8,6 +8,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useSelect } from '@wordpress/data';
 import { useEffect, useRef } from '@wordpress/element';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { ORCHESTRATOR_AGENT_ID } from '../constants';
 import { AgentsManagerContextProvider, useAgentsManagerContext } from '../contexts';
 import { useAgentConfig } from '../hooks/use-agent-config';
 import { useEmptyViewSuggestions } from '../hooks/use-empty-view-suggestions';
@@ -152,8 +153,9 @@ export default function AgentsManager( {
 /**
  * Resolve the session to resume from this tab's stored session, which
  * conversation switches save before navigating here.
- * Reader chat pre-generates one (blog frontends reload on every navigation);
- * other agents get theirs from the server via `onSessionIdChange`.
+ * Reader chat and the orchestrator pre-generate one, so a page change before
+ * the first reply still finds the session; other agents get theirs from the
+ * server via `onSessionIdChange`.
  * Empty means a new chat.
  */
 function resolveTabSessionId(
@@ -165,7 +167,7 @@ function resolveTabSessionId(
 	if ( isNewChat ) {
 		return '';
 	}
-	if ( isReaderChatAgent( agentId ) ) {
+	if ( isReaderChatAgent( agentId ) || agentId === ORCHESTRATOR_AGENT_ID ) {
 		return getOrCreateSessionId( agentId, siteKey, userId );
 	}
 	return getSessionId( agentId, siteKey, userId );

@@ -3664,7 +3664,7 @@ describe( 'toolProvider', () => {
 			expect( showComponent?.input_schema?.properties?.type?.enum ).not.toContain(
 				'seo-description'
 			);
-			// The migration ability still delegates component types owned by Big Sky.
+			// The legacy ability still delegates component types owned by Big Sky.
 			expect( legacyShowComponent?.input_schema?.properties?.type?.enum ).toBeUndefined();
 		} );
 
@@ -3862,7 +3862,6 @@ describe( 'toolProvider', () => {
 			expect( parsed.data.postId ).toBeUndefined();
 			expect( parsed.data.calypsoCheckpointId ).toBe( 'call_test_123' );
 			expect( parsed.data.isCurrent ).toBe( true );
-			expect( parsed.data.hideZoomAction ).toBe( true );
 			expect( parsed.data.responseTrackingProperties ).toBeUndefined();
 		} );
 
@@ -4036,7 +4035,7 @@ describe( 'toolProvider', () => {
 		} );
 
 		it.each( [ LEGACY_SHOW_COMPONENT_ABILITY_NAME, LEGACY_SHOW_COMPONENT_TOOL_ID ] )(
-			'accepts the legacy Big Sky show-component ability as %s during migration',
+			'accepts the legacy Big Sky show-component ability as %s',
 			async ( name ) => {
 				const { result } = ( await toolProvider.executeAbility( name, {
 					type: 'ai-editorial-review',
@@ -4126,7 +4125,6 @@ describe( 'toolProvider', () => {
 			expect( parsed.data.type ).toBe( 'ai-editorial-review' );
 			expect( parsed.data.calypsoCheckpointId ).toBeUndefined();
 			expect( parsed.data.isCurrent ).toBe( true );
-			expect( parsed.data.hideZoomAction ).toBe( true );
 			expect( parsed.data.postId ).toBe( 123 );
 			expect( parsed.data.props.postId ).toBe( 123 );
 		} );
@@ -4165,7 +4163,6 @@ describe( 'toolProvider', () => {
 			expect( parsed.data.type ).toBe( 'post-feedback' );
 			expect( parsed.data.calypsoCheckpointId ).toBeUndefined();
 			expect( parsed.data.isCurrent ).toBe( true );
-			expect( parsed.data.hideZoomAction ).toBe( true );
 			expect( parsed.data.postId ).toBe( 123 );
 			expect( parsed.data.props.postId ).toBe( 123 );
 		} );

@@ -2,6 +2,7 @@ import { wpcom } from '../wpcom-fetcher';
 import type {
 	AgencyApiResponse,
 	AgencyBlog,
+	AgencyProgramStats,
 	AgencyResourcesResponse,
 	McpSettings,
 	McpSettingsUpdate,
@@ -19,6 +20,13 @@ export async function fetchAgency(): Promise< AgencyApiResponse > {
 export async function fetchAgencyResources(): Promise< AgencyResourcesResponse > {
 	return wpcom.req.get( {
 		path: '/agency/resources',
+		apiNamespace: 'wpcom/v2',
+	} );
+}
+
+export async function fetchAgencyProgramStats(): Promise< AgencyProgramStats > {
+	return wpcom.req.get( {
+		path: '/agency/stats',
 		apiNamespace: 'wpcom/v2',
 	} );
 }

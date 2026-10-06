@@ -1,242 +1,130 @@
-import { registerStore, createRegistry } from '@wordpress/data';
 import debugFactory from 'debug';
+import { useSyncExternalStore } from 'react';
 import { maskField } from 'calypso/lib/checkout';
 import type {
 	CardElementType,
 	CardFieldState,
-	CardStoreAction,
 	CardStoreState,
 	CardStoreType,
 	StoreStateValue,
 } from './types';
-import type { SelectFromMap } from '@automattic/data-stores';
-import type { AnyAction } from 'redux';
 
 const debug = debugFactory( 'calypso:composite-checkout:credit-card' );
 
-export const actions = {
-	changeBrand( payload: string ): CardStoreAction {
-		return { type: 'BRAND_SET', payload };
-	},
-	setCardDataError( type: CardElementType, message: string | null ): CardStoreAction {
-		return { type: 'CARD_DATA_ERROR_SET', payload: { type, message } };
-	},
-	setCardDataComplete( type: CardElementType, complete: boolean ): CardStoreAction {
-		return { type: 'CARD_DATA_COMPLETE_SET', payload: { type, complete } };
-	},
-	setFieldValue( key: string, value: string ): CardStoreAction {
-		return { type: 'FIELD_VALUE_SET', payload: { key, value } };
-	},
-	setFieldError( key: string, message: string ): CardStoreAction {
-		return { type: 'FIELD_ERROR_SET', payload: { key, message } };
-	},
-	setUseForAllSubscriptions( payload: boolean ): CardStoreAction {
-		return { type: 'USE_FOR_ALL_SUBSCRIPTIONS_SET', payload };
-	},
-	setForBusinessUse( payload: boolean ): CardStoreAction {
-		return { type: 'USE_FOR_BUSINESS_SET', payload };
-	},
-	touchAllFields(): CardStoreAction {
-		return { type: 'TOUCH_ALL_FIELDS' };
-	},
-	setFormSubmitAttempted( payload: boolean ): CardStoreAction {
-		return { type: 'FORM_SUBMIT_ATTEMPTED_SET', payload };
-	},
-	resetFields(): CardStoreAction {
-		return { type: 'RESET_FIELDS' };
-	},
-};
+export function getIncompleteFieldKeys( state: CardStoreState ): CardElementType[] {
+	return Object.keys( state.cardDataComplete ).filter(
+		( key ) => ! state.cardDataComplete[ key as CardElementType ]
+	) as CardElementType[];
+}
 
-export const selectors = {
-	getBrand( state: CardStoreState ): string {
-		return state.brand || '';
-	},
-	getCardDataErrors( state: CardStoreState ) {
-		return state.cardDataErrors;
-	},
-	getIncompleteFieldKeys( state: CardStoreState ): CardElementType[] {
-		return Object.keys( state.cardDataComplete ).filter(
-			( key ) => ! state.cardDataComplete[ key as CardElementType ]
-		) as CardElementType[];
-	},
-	getFields( state: CardStoreState ) {
-		return state.fields;
-	},
-	useForAllSubscriptions( state: CardStoreState ) {
-		return state.useForAllSubscriptions;
-	},
-	useForBusiness( state: CardStoreState ) {
-		return state.useForBusiness;
-	},
-	formSubmitAttempted( state: CardStoreState ) {
-		return state.formSubmitAttempted || false;
-	},
-};
-
-export type WpcomCreditCardSelectors = SelectFromMap< typeof selectors >;
+/**
+ * Subscribe a component to part of a credit card store's state.
+ *
+ * The selector must return a value that is referentially stable for an
+ * unchanged state (eg: a property of the state, not a newly derived array or
+ * object), or the component will re-render forever.
+ */
+export function useCreditCardStoreState< T >(
+	store: CardStoreType,
+	selector: ( state: CardStoreState ) => T
+): T {
+	return useSyncExternalStore( store.subscribe, () => selector( store.getState() ) );
+}
 
 export function createCreditCardPaymentMethodStore( {
 	initialUseForAllSubscriptions,
 	allowUseForAllSubscriptions,
-	registry,
 }: {
 	initialUseForAllSubscriptions?: boolean;
 	allowUseForAllSubscriptions?: boolean;
-	registry?: ReturnType< typeof createRegistry >;
 } ): CardStoreType {
 	debug( 'creating a new credit card payment method store' );
 
-	function fieldReducer( state: CardFieldState = {}, action?: CardStoreAction ) {
-		switch ( action?.type ) {
-			case 'FIELD_VALUE_SET':
-				return {
-					...state,
-					[ action.payload.key ]: {
-						value: maskField(
-							action.payload.key,
-							state[ action.payload.key ]?.value,
-							action.payload.value
-						),
-						isTouched: true,
-						errors: [],
-					},
-				};
-			case 'FIELD_ERROR_SET': {
-				return {
-					...state,
-					[ action.payload.key ]: {
-						...state[ action.payload.key ],
-						errors: [ action.payload.message ],
-					},
-				};
-			}
-			case 'TOUCH_ALL_FIELDS': {
-				return Object.keys( state ).reduce(
+	let state: CardStoreState = {
+		fields: {},
+		cardDataErrors: {},
+		cardDataComplete: {
+			cardNumber: false,
+			cardCvc: false,
+			cardExpiry: false,
+		},
+		brand: null,
+		useForAllSubscriptions: allowUseForAllSubscriptions
+			? ( initialUseForAllSubscriptions ?? false )
+			: false,
+		useForBusiness: undefined,
+		formSubmitAttempted: false,
+	};
+
+	let subscribers: Array< () => void > = [];
+
+	function setState( newState: Partial< CardStoreState > ): void {
+		state = { ...state, ...newState };
+		subscribers.forEach( ( subscriber ) => subscriber() );
+	}
+
+	function setFields( fields: CardFieldState ): void {
+		setState( { fields } );
+	}
+
+	return {
+		getState: () => state,
+
+		subscribe: ( callback ) => {
+			subscribers.push( callback );
+			return () => {
+				subscribers = subscribers.filter( ( subscriber ) => subscriber !== callback );
+			};
+		},
+
+		changeBrand: ( brand ) => setState( { brand } ),
+
+		setCardDataError: ( type, message ) =>
+			setState( { cardDataErrors: { ...state.cardDataErrors, [ type ]: message } } ),
+
+		setCardDataComplete: ( type, complete ) =>
+			setState( { cardDataComplete: { ...state.cardDataComplete, [ type ]: complete } } ),
+
+		setFieldValue: ( key, value ) =>
+			setFields( {
+				...state.fields,
+				[ key ]: {
+					value: maskField( key, state.fields[ key ]?.value, value ),
+					isTouched: true,
+					errors: [],
+				},
+			} ),
+
+		setFieldError: ( key, message ) =>
+			setFields( {
+				...state.fields,
+				[ key ]: {
+					...state.fields[ key ],
+					errors: [ message ],
+				},
+			} ),
+
+		setUseForAllSubscriptions: ( useForAllSubscriptions ) =>
+			setState( {
+				useForAllSubscriptions: allowUseForAllSubscriptions ? useForAllSubscriptions : false,
+			} ),
+
+		setForBusinessUse: ( useForBusiness ) => setState( { useForBusiness } ),
+
+		touchAllFields: () =>
+			setFields(
+				Object.keys( state.fields ).reduce(
 					( obj: Record< string, StoreStateValue >, key: string ) => {
 						obj[ key ] = {
-							value: state[ key ].value,
+							value: state.fields[ key ].value,
 							isTouched: true,
 						};
 						return obj;
 					},
 					{}
-				);
-			}
-			case 'RESET_FIELDS': {
-				return {};
-			}
-			default:
-				return state;
-		}
-	}
+				)
+			),
 
-	function cardDataCompleteReducer(
-		state = {
-			cardNumber: false,
-			cardCvc: false,
-			cardExpiry: false,
-		},
-		action?: CardStoreAction
-	) {
-		switch ( action?.type ) {
-			case 'CARD_DATA_COMPLETE_SET':
-				return { ...state, [ action.payload.type ]: action.payload.complete };
-			default:
-				return state;
-		}
-	}
-
-	function cardDataErrorsReducer( state = {}, action?: CardStoreAction ) {
-		switch ( action?.type ) {
-			case 'CARD_DATA_ERROR_SET':
-				return { ...state, [ action.payload.type ]: action.payload.message };
-			default:
-				return state;
-		}
-	}
-
-	function brandReducer( state: string | null | undefined = null, action?: CardStoreAction ) {
-		switch ( action?.type ) {
-			case 'BRAND_SET':
-				return action.payload;
-			default:
-				return state;
-		}
-	}
-
-	function allSubscriptionsReducer( state: boolean, action?: CardStoreAction ) {
-		switch ( action?.type ) {
-			case 'USE_FOR_ALL_SUBSCRIPTIONS_SET':
-				return action.payload;
-			default:
-				return state;
-		}
-	}
-
-	function forBusinessReducer( state: boolean | undefined, action?: CardStoreAction ) {
-		switch ( action?.type ) {
-			case 'USE_FOR_BUSINESS_SET':
-				return action.payload;
-			default:
-				return state;
-		}
-	}
-
-	function formSubmitAttemptedReducer( state: boolean = false, action?: CardStoreAction ) {
-		switch ( action?.type ) {
-			case 'FORM_SUBMIT_ATTEMPTED_SET':
-				return action.payload;
-			default:
-				return state;
-		}
-	}
-
-	function getInitialUseForAllSubscriptionsValue() {
-		if ( ! allowUseForAllSubscriptions ) {
-			return false;
-		}
-		if ( initialUseForAllSubscriptions !== undefined ) {
-			return initialUseForAllSubscriptions;
-		}
-		return false;
-	}
-
-	function createStore( registerStoreFunction: typeof registerStore ) {
-		return registerStoreFunction( 'wpcom-credit-card', {
-			reducer(
-				state = {
-					fields: fieldReducer(),
-					cardDataErrors: cardDataErrorsReducer(),
-					cardDataComplete: cardDataCompleteReducer(),
-					brand: brandReducer(),
-					useForAllSubscriptions: getInitialUseForAllSubscriptionsValue(),
-					useForBusiness: forBusinessReducer( undefined ),
-					formSubmitAttempted: formSubmitAttemptedReducer(),
-				},
-				action: AnyAction
-			) {
-				return {
-					fields: fieldReducer( state.fields, action as CardStoreAction ),
-					cardDataErrors: cardDataErrorsReducer( state.cardDataErrors, action as CardStoreAction ),
-					cardDataComplete: cardDataCompleteReducer(
-						state.cardDataComplete,
-						action as CardStoreAction
-					),
-					brand: brandReducer( state.brand, action as CardStoreAction ),
-					useForAllSubscriptions: allowUseForAllSubscriptions
-						? allSubscriptionsReducer( state.useForAllSubscriptions, action as CardStoreAction )
-						: false,
-					useForBusiness: forBusinessReducer( state.useForBusiness, action as CardStoreAction ),
-					formSubmitAttempted: formSubmitAttemptedReducer(
-						state.formSubmitAttempted,
-						action as CardStoreAction
-					),
-				};
-			},
-			actions,
-			selectors,
-		} );
-	}
-
-	return createStore( registry?.registerStore ?? registerStore );
+		setFormSubmitAttempted: ( formSubmitAttempted ) => setState( { formSubmitAttempted } ),
+	};
 }

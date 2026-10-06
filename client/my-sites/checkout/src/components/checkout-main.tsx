@@ -11,13 +11,13 @@ import {
 	translateCheckoutPaymentMethodToTracksPaymentMethod,
 } from '@automattic/wpcom-checkout';
 import { VGSCollectProvider } from '@vgs/collect-js-react';
-import { useSelect } from '@wordpress/data';
 import debugFactory from 'debug';
 import DOMPurify from 'dompurify';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useMemo } from 'react';
 import { getDashboardFromHostname } from 'calypso/dashboard/app/routing';
 import { getDashboardStepperLogo } from 'calypso/dashboard/app/stepper-logo';
+import { isCommerceGarden } from 'calypso/dashboard/utils/site-types';
 import { useCheckoutMigrationIntroductoryOfferSticker } from 'calypso/data/site-migration/use-checkout-migration-introductory-offer-sticker';
 import { recordAddEvent } from 'calypso/lib/analytics/cart';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
@@ -27,12 +27,10 @@ import { useSelector, useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice, infoNotice } from 'calypso/state/notices/actions';
 import hasGravatarDomainQueryParam from 'calypso/state/selectors/has-gravatar-domain-query-param';
-import isPrivateSite from 'calypso/state/selectors/is-private-site';
-import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
-import { isJetpackSite, isCommerceGardenSite } from 'calypso/state/sites/selectors';
 import useActOnceOnStrings from '../hooks/use-act-once-on-strings';
 import useAddProductsFromUrl from '../hooks/use-add-products-from-url';
 import useCheckoutFlowTrackKey from '../hooks/use-checkout-flow-track-key';
+import { isJetpackNotAtomicSite, useCheckoutSite } from '../hooks/use-checkout-site';
 import { useCheckoutUiRedesignExperiment } from '../hooks/use-checkout-ui-redesign-experiment';
 import useCountryList from '../hooks/use-country-list';
 import useCreatePaymentMethods from '../hooks/use-create-payment-methods';
@@ -51,10 +49,12 @@ import useRemoveFromCartAndRedirect from '../hooks/use-remove-from-cart-and-redi
 import { useStoredPaymentMethods } from '../hooks/use-stored-payment-methods';
 import { logStashLoadErrorEvent, logStashEvent, convertErrorToString } from '../lib/analytics';
 import blikProcessor from '../lib/blik-processor';
+import { recaptchaClientIdStore, useContactDetails } from '../lib/checkout-stores';
 import existingCardProcessor from '../lib/existing-card-processor';
 import existingPayPalPPCPProcessor from '../lib/existing-paypal-ppcp-processor';
 import freePurchaseProcessor from '../lib/free-purchase-processor';
 import genericRedirectProcessor from '../lib/generic-redirect-processor';
+import { isExternalA4ACheckout } from '../lib/is-external-a4a-checkout';
 import multiPartnerCardProcessor from '../lib/multi-partner-card-processor';
 import payPalProcessor from '../lib/paypal-express-processor';
 import { payPalJsProcessor } from '../lib/paypal-js-processor';
@@ -62,9 +62,9 @@ import { pixAutomaticoProcessor } from '../lib/pix-automatico-processor';
 import { pixProcessor } from '../lib/pix-processor';
 import { translateResponseCartToWPCOMCart } from '../lib/translate-cart';
 import upiProcessor from '../lib/upi-processor';
+import { useValueStore } from '../lib/value-store';
 import weChatProcessor from '../lib/we-chat-processor';
 import webPayProcessor from '../lib/web-pay-processor';
-import { CHECKOUT_STORE } from '../lib/wpcom-store';
 import { CheckoutLoadingPlaceholder } from './checkout-loading-placeholder';
 import CheckoutMainContent from './checkout-main-content';
 import { OnChangeItemVariant } from './item-variation-picker';
@@ -146,14 +146,10 @@ export default function CheckoutMain( {
 }: CheckoutMainProps ) {
 	const translate = useTranslate();
 
+	const { data: site, isLoading: isSiteLoading } = useCheckoutSite( siteId );
 	const isJetpackNotAtomic =
-		useSelector( ( state ) => {
-			const isCommerce = siteId && isCommerceGardenSite( state, siteId );
-			return (
-				siteId && isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId ) && ! isCommerce
-			);
-		} ) || sitelessCheckoutType === 'jetpack';
-	const isPrivate = useSelector( ( state ) => siteId && isPrivateSite( state, siteId ) ) || false;
+		( isJetpackNotAtomicSite( site ) && ! ( site && isCommerceGarden( site ) ) ) ||
+		sitelessCheckoutType === 'jetpack';
 	const isGravatarDomain = useSelector( hasGravatarDomainQueryParam );
 	const cartKey = useCartKey();
 
@@ -258,8 +254,6 @@ export default function CheckoutMain( {
 	} = usePrepareProductsForCart( {
 		productAliasFromUrl,
 		purchaseId,
-		usesJetpackProducts: isJetpackNotAtomic,
-		isPrivate,
 		siteSlug: updatedSiteSlug,
 		sitelessCheckoutType,
 		isLoggedOutCart,
@@ -466,11 +460,8 @@ export default function CheckoutMain( {
 		// Only wait for stored cards to load if we are using cards
 		( allowedPaymentMethods.includes( 'card' ) && isLoadingStoredCards );
 
-	const contactDetails = useSelect( ( select ) => select( CHECKOUT_STORE ).getContactInfo(), [] );
-	const recaptchaClientId = useSelect(
-		( select ) => select( CHECKOUT_STORE ).getRecaptchaClientId(),
-		[]
-	);
+	const contactDetails = useContactDetails();
+	const recaptchaClientId = useValueStore( recaptchaClientIdStore );
 
 	const paymentMethods = arePaymentMethodsLoading
 		? []
@@ -603,7 +594,7 @@ export default function CheckoutMain( {
 					transactionData,
 					dataForProcessor,
 					translate,
-					sitelessCheckoutType === 'a4a'
+					isExternalA4ACheckout( sitelessCheckoutType )
 				),
 			'stripe-blik': ( transactionData: unknown ) =>
 				blikProcessor( transactionData, dataForProcessor, translate ),
@@ -670,7 +661,6 @@ export default function CheckoutMain( {
 		weights: { ...checkoutTheme.weights, ...gravatarFontWeights },
 	};
 
-	const isCheckoutV2ExperimentLoading = false;
 	const [ isCheckoutUiRedesignLoading ] = useCheckoutUiRedesignExperiment();
 	const { isLoading: isMobileCheckoutStickySummaryLoading } =
 		useMobileCheckoutStickySummaryExperiment();
@@ -698,7 +688,7 @@ export default function CheckoutMain( {
 			isLoading: responseCart.products.length < 1,
 		},
 		{ name: translate( 'Loading countries list' ), isLoading: countriesList.length < 1 },
-		{ name: translate( 'Loading Site' ), isLoading: isCheckoutV2ExperimentLoading },
+		{ name: translate( 'Loading Site' ), isLoading: isSiteLoading },
 		{
 			name: translate( 'Loading checkout' ),
 			isLoading: isCheckoutUiRedesignLoading || isMobileCheckoutStickySummaryLoading,
@@ -936,12 +926,7 @@ export default function CheckoutMain( {
 						changeSelection={ changeSelection }
 						countriesList={ countriesList }
 						createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
-						infoMessage={
-							<PrePurchaseNotices
-								siteId={ updatedSiteId }
-								shouldQueryUserPurchases={ Boolean( sitelessCheckoutType ) }
-							/>
-						}
+						infoMessage={ <PrePurchaseNotices /> }
 						isLoggedOutCart={ !! isLoggedOutCart }
 						onPageLoadError={ onPageLoadError }
 						paymentMethods={ paymentMethods }

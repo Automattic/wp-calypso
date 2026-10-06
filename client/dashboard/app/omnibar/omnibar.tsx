@@ -12,11 +12,13 @@ import { useQuery } from '@tanstack/react-query';
 import { useEffect, useMemo, useState } from 'react';
 import { dashboardLink, wpcomLink } from '../../utils/link';
 import { getSiteDisplayName } from '../../utils/site-name';
+import { useAnalytics } from '../analytics';
 import { useAppContext } from '../context';
 import { omnibarEvents } from './events';
 import { OmnibarHomeIcon } from './home';
 import { buildAiChatPluginNode } from './plugin-ai-chat';
 import { addDashboardNode, useDashboardPlugin } from './plugin-dashboard';
+import { createFreeDomainUpsellNodeBuilder } from './plugin-free-domain-upsell-experiment';
 import { useHelpCenterPlugin } from './plugin-help-center';
 import { useLanguageSwitcherPlugin } from './plugin-language-switcher';
 import { useLaunchSitePlugin } from './plugin-launch-site';
@@ -91,6 +93,7 @@ function ConnectedOmnibar( {
 	sectionName?: string;
 } ) {
 	const { supports } = useAppContext();
+	const { recordTracksEvent } = useAnalytics();
 	const recordNodeClick = useRecordOmnibarNodeClick();
 	const [ hydrated, setHydrated ] = useState( false );
 	useEffect( () => {
@@ -117,9 +120,10 @@ function ConnectedOmnibar( {
 			'my-wpcom-account': buildWpcomAccountNode,
 			'site-plan-badge': buildSiteBadgeNode,
 			'site-status-badge': buildSiteBadgeNode,
+			'free-domain-upsell': createFreeDomainUpsellNodeBuilder( { sectionName, recordTracksEvent } ),
 			...( authUser ? { logout: createLogoutNodeBuilder( authUser ) } : {} ),
 		} ),
-		[ authUser ]
+		[ authUser, sectionName, recordTracksEvent ]
 	);
 
 	const adminBarNodes = useMemo(

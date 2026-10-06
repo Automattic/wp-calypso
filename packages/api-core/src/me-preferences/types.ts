@@ -32,6 +32,11 @@ export interface VisitCounter {
 	lastUpdated: number | null; // Result of Date.now(), or null before the first visit
 }
 
+export interface A4AFeedbackEntry {
+	lastSubmittedAt?: number;
+	lastSkippedAt?: number;
+}
+
 export interface UserPreferences {
 	recentSites?: number[];
 	'hosting-dashboard-color-scheme'?: 'light' | 'dark' | 'system';
@@ -62,9 +67,13 @@ export interface UserPreferences {
 	two_step_security_key_reregister_required?: boolean;
 	'a4a-dashboard-pd-not-approved-popover'?: boolean;
 	'a4a-marketplace-referral-guide-seen'?: boolean;
+	'a4a-referrals-bank-details-success-notice-seen'?: boolean;
 	'a4a-marketplace-term-pricing'?: 'monthly' | 'yearly';
+	/** Shared with the classic A4A dashboard: a milestone answered there is not asked again here. */
+	'a4a-feedback'?: Record< string, A4AFeedbackEntry >;
 	'notifications-layout-style'?: 'detailed' | 'simplified';
 	'notifications-view-settings-seen'?: boolean;
+	'notifications-subscriber-alerts-enabled'?: boolean;
 	/** Timestamp of the Pressable usage-limit notification the user dismissed. */
 	'pressable-limit-notification-dismissed'?: number;
 	'a4a-agency-approval-notice-dismissed'?: boolean;

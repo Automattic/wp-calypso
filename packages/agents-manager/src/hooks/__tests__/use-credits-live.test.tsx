@@ -130,6 +130,7 @@ it.each( [ 'personal', 'premium', 'business' ] as const )(
 		expect( props( result.current ).upgradeUrl ).toBe(
 			'https://wordpress.com/plans/example.wordpress.com'
 		);
+		expect( result.current.notice?.message ).toBe( 'You’ve used all your site credits.' );
 		expect( result.current.notice?.action ).toEqual( {
 			label: 'Upgrade',
 			href: props( result.current ).upgradeUrl,
@@ -233,14 +234,14 @@ it( 'refreshes an upgraded balance on return focus and removes the action at Com
 } );
 
 it.each( [
-	[ 2001, undefined ],
-	[ 2000, '20% of site credits left.' ],
-	[ 1999, '19% of site credits left.' ],
-	[ 1, '<1% of site credits left.' ],
-	[ 0, '0% of site credits left.' ],
+	[ 2001, undefined, undefined ],
+	[ 2000, '20% of site credits left.', true ],
+	[ 1999, '19% of site credits left.', true ],
+	[ 1, '<1% of site credits left.', true ],
+	[ 0, 'You’ve used all your site credits.', false ],
 ] as const )(
 	'shows an initial live warning at %i of 10000 credits',
-	async ( remaining, message ) => {
+	async ( remaining, message, dismissible ) => {
 		fetchMock.mockResolvedValueOnce(
 			response(
 				creditSnapshot( {
@@ -254,7 +255,10 @@ it.each( [
 		const { result } = renderCredits();
 		await flush();
 		expect( result.current.notice?.message ).toBe( message );
-		expect( result.current.notice?.dismissible ).toBe( message ? true : undefined );
+		expect( result.current.notice?.dismissible ).toBe( dismissible );
+		expect( typeof result.current.notice?.onDismiss ).toBe(
+			dismissible ? 'function' : 'undefined'
+		);
 		expect( props( result.current ).isOpen ).toBe( false );
 	}
 );
@@ -270,16 +274,16 @@ it( 'updates the paid ring and warning together through live depletion and reple
 	const { result } = renderCredits();
 	await flush();
 	expect( getCreditsTone( props( result.current ).status ) ).toBe( 'muted' );
-	for ( const [ remaining, label ] of [
-		[ 500, '20' ],
-		[ 499, '19' ],
-		[ 1, '<1' ],
-		[ 0, '0' ],
+	for ( const [ remaining, message ] of [
+		[ 500, '20% of site credits left.' ],
+		[ 499, '19% of site credits left.' ],
+		[ 1, '<1% of site credits left.' ],
+		[ 0, 'You’ve used all your site credits.' ],
 	] as const ) {
 		await receive( balance( remaining ) );
 		expect( props( result.current ).status.remaining ).toBe( remaining );
 		expect( getCreditsTone( props( result.current ).status ) ).toBe( 'error' );
-		expect( result.current.notice?.message ).toBe( `${ label }% of site credits left.` );
+		expect( result.current.notice?.message ).toBe( message );
 	}
 	fetchMock.mockResolvedValueOnce( response( balance( 525 ) ) );
 	act( () => window.dispatchEvent( new Event( 'focus' ) ) );
@@ -289,12 +293,13 @@ it( 'updates the paid ring and warning together through live depletion and reple
 } );
 
 it.each( [ 'commerce', undefined, 'unsupported' ] )(
-	'shows a low warning without an upgrade for tier %p',
+	'shows the exhausted notice without an upgrade for tier %p',
 	async ( plan_tier ) => {
 		const { result } = renderCredits();
 		await receive( { ...exhausted(), plan_tier } );
-		expect( result.current.notice?.message ).toBe( '0% of site credits left.' );
+		expect( result.current.notice?.message ).toBe( 'You’ve used all your site credits.' );
 		expect( result.current.notice?.action ).toBeUndefined();
+		expect( result.current.notice?.dismissible ).toBe( false );
 	}
 );
 
@@ -322,7 +327,9 @@ it( 'keeps dismissal within the current visit and ignores previous-site dismiss 
 	act( () => oldDismiss?.() );
 	expect( view.result.current.notice ).toBeUndefined();
 	await receive( exhausted() );
-	expect( view.result.current.notice ).toBeUndefined();
+	expect( view.result.current.notice?.message ).toBe( 'You’ve used all your site credits.' );
+	expect( view.result.current.notice?.dismissible ).toBe( false );
+	expect( view.result.current.notice?.onDismiss ).toBeUndefined();
 	expect( props( view.result.current ).isOpen ).toBe( true );
 	act( () => expect( view.result.current.beforeSubmit() ).toBe( false ) );
 	await receive( creditSnapshot() );
@@ -458,7 +465,7 @@ it.each( [ 'GET', 'terminal' ] )(
 			expect( props( result.current ).status ).not.toHaveProperty( 'planTier' );
 			expect( props( result.current ).status ).toMatchObject( { plan: 'paid', remaining: 0 } );
 			act( () => expect( result.current.beforeSubmit() ).toBe( false ) );
-			expect( result.current.notice?.message ).toBe( '0% of site credits left.' );
+			expect( result.current.notice?.message ).toBe( 'You’ve used all your site credits.' );
 			expect( result.current.notice?.action ).toBeUndefined();
 		}
 	}
@@ -683,8 +690,9 @@ it.each( [ false, true ] )(
 		} );
 		expect( props( result.current ).isOpen ).toBe( true );
 		expect( props( result.current ).status.remaining ).toBe( 0 );
-		expect( result.current.notice?.message ).toBe( '0% of site credits left.' );
-		expect( result.current.notice?.dismissible ).toBe( true );
+		expect( result.current.notice?.message ).toBe( 'You’ve used all your site credits.' );
+		expect( result.current.notice?.dismissible ).toBe( false );
+		expect( result.current.notice?.onDismiss ).toBeUndefined();
 	}
 );
 it.each( [ null, undefined, false, { broken: true }, creditSnapshot( { blog_id: 456 } ) ] )(

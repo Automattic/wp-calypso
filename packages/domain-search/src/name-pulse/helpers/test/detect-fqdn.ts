@@ -70,6 +70,27 @@ describe( 'detectFqdn', () => {
 		} );
 	} );
 
+	it( 'joins an unknown double ending into the name instead of reading it as a subdomain', () => {
+		expect( detectFqdn( 'example.co.com', TLDS ) ).toEqual( {
+			isFqdn: true,
+			baseName: 'exampleco',
+			tld: 'com',
+			fullDomain: 'exampleco.com',
+		} );
+		expect( detectFqdn( 'example.org.net', TLDS ) ).toMatchObject( {
+			fullDomain: 'exampleorg.net',
+		} );
+		expect( detectFqdn( 'shop.example.co.com', TLDS ) ).toMatchObject( {
+			fullDomain: 'exampleco.com',
+			subdomain: 'shop',
+		} );
+		expect( detectFqdn( 'co.com', TLDS ) ).toMatchObject( { fullDomain: 'co.com' } );
+		expect( detectFqdn( 'shop.icecream.com', TLDS ) ).toMatchObject( {
+			fullDomain: 'icecream.com',
+			subdomain: 'shop',
+		} );
+	} );
+
 	it( 'reports a free WordPress.com subdomain and keeps its label', () => {
 		expect( detectFqdn( 'mysite.wordpress.com', TLDS ) ).toEqual( {
 			isFqdn: false,

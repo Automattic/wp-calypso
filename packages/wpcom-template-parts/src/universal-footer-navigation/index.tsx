@@ -65,8 +65,8 @@ export const languageEntries: [ string, string ][] = [
 	[ 'en', 'English' ],
 ];
 
-// eslint-disable-next-line wpcalypso/i18n-unlocalized-url -- Must match the shared QR code; localized /get/ routes are not part of this destination.
-const APP_DOWNLOAD_URL = 'https://apps.wordpress.com/get/?campaign=qrcode-apps';
+// eslint-disable-next-line wpcalypso/i18n-unlocalized-url -- Must match the shared QR code; localized /store routes are not part of this destination.
+const APP_DOWNLOAD_URL = 'https://apps.wordpress.com/store?campaign=qrcode-apps';
 const APP_STORE_URL =
 	'https://apps.apple.com/app/apple-store/id1565481562?ct=wp.com--footer&mt=8&pt=299112';
 const GOOGLE_PLAY_URL =
@@ -91,12 +91,14 @@ export const getFooterColorway = (
 const FooterStack = ( {
 	column,
 	open,
+	collapsible = true,
 	onToggle,
 	showLegalSlot = true,
 	additionalCompanyLinks,
 }: {
 	column: FooterColumn;
 	open: boolean;
+	collapsible?: boolean;
 	onToggle?: ( open: boolean ) => void;
 	showLegalSlot?: boolean;
 	additionalCompanyLinks?: React.ReactNode;
@@ -107,7 +109,8 @@ const FooterStack = ( {
 			open={ open }
 			onToggle={ ( event ) => onToggle?.( ( event.currentTarget as HTMLDetailsElement ).open ) }
 		>
-			<summary>
+			{ /* Desktop columns stay open, so the heading must not collapse them. */ }
+			<summary onClick={ collapsible ? undefined : ( event ) => event.preventDefault() }>
 				<div className="lp-footer-stack__summary lp-color-primary">
 					<div className="lp-footer-stack__summary__content lp-bold">{ column.title }</div>
 					<ChevronSvg className="lp-footer-stack__summary__marker lp-display-none@L" />
@@ -401,6 +404,7 @@ export const PureUniversalNavbarFooter = ( {
 									key={ column.id }
 									column={ column }
 									open={ ! collapseStacks || openStack === column.id }
+									collapsible={ collapseStacks }
 									onToggle={ ( open ) => {
 										if ( ! collapseStacks ) {
 											return;

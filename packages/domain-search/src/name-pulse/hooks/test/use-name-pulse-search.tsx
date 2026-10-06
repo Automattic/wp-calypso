@@ -23,6 +23,7 @@ import {
 	NamePulseDomainStatus,
 } from '../../helpers';
 import { useNamePulseSearch } from '../use-name-pulse-search';
+import { namePulseVerdictQueryKey, setNamePulseVerdict } from '../use-name-pulse-verdicts';
 import type {
 	DomainAvailability,
 	NamePulseAvailabilityResponse,
@@ -200,6 +201,59 @@ describe( 'useNamePulseSearch', () => {
 		rerender( { q: 'test' } );
 
 		expect( result.current.topResultsCount ).toBe( 3 );
+	} );
+
+	it( 'keeps the bundle anchors once known, dropping only a name that turns out taken', async () => {
+		let calls = 0;
+		const availability = jest.fn( ( domainNames: string[] ) => {
+			calls += 1;
+
+			// Later checks never answer, so a name that has to be checked again stays WAITING.
+			return calls === 1
+				? Promise.resolve( buildNamePulseAvailabilityResponse( domainNames ) )
+				: new Promise< NamePulseAvailabilityResponse >( () => {} );
+		} );
+		const { result } = renderHook( () => useNamePulseSearch( 'icecream' ), {
+			wrapper: ( { children } ) => (
+				<FetcherSearch
+					availability={ availability }
+					suggestions={ async () => ( { suggestions: [], errors: [] } ) }
+					domainAvailability={ async ( domainName ) =>
+						buildAvailability( { domain_name: domainName } )
+					}
+				>
+					{ children }
+				</FetcherSearch>
+			),
+		} );
+
+		await waitFor( () =>
+			expect( result.current.bundleAnchors ).toEqual( [
+				'icecream.blog',
+				'icecream.com',
+				'icecream.org',
+			] )
+		);
+
+		// The first top result is found taken and the row that replaces it has
+		// no verdict yet.
+		act( () => {
+			void queryClient.resetQueries( { queryKey: namePulseVerdictQueryKey( 'icecream.net' ) } );
+			setNamePulseVerdict( queryClient, 'icecream.blog', {
+				status: NamePulseDomainStatus.TAKEN,
+				is_realtime: true,
+			} );
+		} );
+
+		await waitFor( () =>
+			expect( result.current.topResults.map( ( row ) => row.domain_name ) ).toEqual( [
+				'icecream.com',
+				'icecream.org',
+				'icecream.net',
+			] )
+		);
+		expect( statusOf( result, 'icecream.net' ) ).toBe( NamePulseDomainStatus.WAITING );
+		expect( result.current.bundleAnchors ).toEqual( [ 'icecream.com', 'icecream.org' ] );
 	} );
 
 	it( 'regenerates the rows on every keystroke and checks availability once the query settles', async () => {
@@ -390,7 +444,7 @@ describe( 'useNamePulseSearch', () => {
 
 		await waitFor( () =>
 			expect( result.current.notice?.message ).toBe(
-				'We don’t recognize .d, so we’re showing results for “icecreamd”. Try .com or .blog instead.'
+				'We don’t recognize that ending. Try .com or .blog, or enter just the name and we’ll suggest the rest.'
 			)
 		);
 		await waitFor( () =>

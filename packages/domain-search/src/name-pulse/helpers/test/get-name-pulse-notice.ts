@@ -27,7 +27,7 @@ describe( 'getNamePulseNotice', () => {
 			status: 'warning',
 			dismissible: true,
 			message:
-				'We don’t recognize .d, so we’re showing results for “icecreamd”. Try .com or .blog instead.',
+				'We don’t recognize that ending. Try .com or .blog, or enter just the name and we’ll suggest the rest.',
 		} );
 	} );
 

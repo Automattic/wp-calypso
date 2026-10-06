@@ -1,6 +1,8 @@
+import { isAutomatticianQuery } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
 import { BigSkyLogo, SummaryButton } from '@automattic/components';
 import { Step } from '@automattic/onboarding';
+import { useQuery as useDataQuery } from '@tanstack/react-query';
 import {
 	__experimentalVStack as VStack,
 	__experimentalHStack as HStack,
@@ -12,10 +14,7 @@ import { arrowUp, layout } from '@wordpress/icons';
 import i18n, { useTranslate } from 'i18n-calypso';
 import { FormEvent, useEffect, useRef, useState } from 'react';
 import { WOO_HOSTING_SOLUTIONS_REF } from 'calypso/landing/stepper/constants';
-import {
-	planSupportsBuildWow,
-	planSupportsBuildWowDsl,
-} from 'calypso/landing/stepper/utils/build-wow-plans';
+import { planSupportsBuildWow } from 'calypso/landing/stepper/utils/build-wow-plans';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getSignupCompleteSlug } from 'calypso/signup/storageUtils';
 import { usePlanCartItem } from '../../../../hooks/use-plan-cart-item';
@@ -48,11 +47,15 @@ const SetupYourSiteAIStep: StepType = ( { navigation } ) => {
 	// legacy builder there.
 	const planSlug = boughtPlanSlug ?? site?.plan?.product_slug;
 	const offerBuildWow = config.isEnabled( 'site-spec' ) && planSupportsBuildWow( planSlug );
-	// Pre-production only: a build on the site-builder's DSL graph, for testing it end to end.
-	const offerBuildWowDsl =
-		config.isEnabled( 'site-spec' ) &&
-		config.isEnabled( 'site-spec/build-wow-dsl' ) &&
-		planSupportsBuildWowDsl( planSlug );
+	// Staging and development only, for Automatticians: a build on the blocks-first
+	// graph, to compare it with the DSL build the main card runs.
+	const canOfferBuildWowBlocksFirst =
+		offerBuildWow && config.isEnabled( 'site-spec/build-wow-blocks-first' );
+	const { data: isAutomattician = false } = useDataQuery( {
+		...isAutomatticianQuery(),
+		enabled: canOfferBuildWowBlocksFirst,
+	} );
+	const offerBuildWowBlocksFirst = canOfferBuildWowBlocksFirst && isAutomattician;
 
 	// One choice per visit: submitting navigates away, so the controls disable and
 	// later clicks are ignored. The ref covers clicks landing before the re-render.
@@ -95,10 +98,10 @@ const SetupYourSiteAIStep: StepType = ( { navigation } ) => {
 		} );
 	};
 
-	const submitGenerateTheme = ( graph?: BuildWowGraph ) => {
+	const submitGenerateTheme = ( graph: BuildWowGraph ) => {
 		recordTracksEvent( 'calypso_onboarding_setup_your_site_with_ai_selection', {
 			selection: 'generate-theme',
-			...( graph ? { graph } : {} ),
+			graph,
 		} );
 
 		navigation.submit( {
@@ -140,18 +143,18 @@ const SetupYourSiteAIStep: StepType = ( { navigation } ) => {
 		}
 
 		if ( offerBuildWow ) {
-			submitGenerateTheme( 'blocks-first' );
+			submitGenerateTheme( 'dsl' );
 			return;
 		}
 
 		submitBuildWithAI();
 	};
 
-	const handleCustomDesignDslClick = () => {
+	const handleCustomDesignBlocksFirstClick = () => {
 		if ( ! claimSubmit() ) {
 			return;
 		}
-		submitGenerateTheme( 'dsl' );
+		submitGenerateTheme( 'blocks-first' );
 	};
 
 	const buildWithAIPromptCard = (
@@ -215,12 +218,12 @@ const SetupYourSiteAIStep: StepType = ( { navigation } ) => {
 		/>
 	);
 
-	const buildWithAIDslSummary = offerBuildWowDsl && (
+	const buildWithAIBlocksFirstSummary = offerBuildWowBlocksFirst && (
 		<SummaryButton
-			title="Create a custom design (DSL)"
-			description="Pre-production only: build the site on the site-builder DSL graph."
+			title="Create a custom design (blocks-first)"
+			description="Automatticians only: build the site on the blocks-first graph."
 			decoration={ <BigSkyLogo.CentralLogo heartless /> }
-			onClick={ handleCustomDesignDslClick }
+			onClick={ handleCustomDesignBlocksFirstClick }
 			disabled={ isSubmitting }
 		/>
 	);
@@ -228,14 +231,14 @@ const SetupYourSiteAIStep: StepType = ( { navigation } ) => {
 	const startWithTemplateCard = (
 		<SummaryButton
 			title={ i18n.fixMe( {
-				text: 'Start with a template',
-				newCopy: translate( 'Start with a template' ),
-				oldCopy: translate( 'Manual setup' ),
+				text: 'Start with a pre-made design',
+				newCopy: translate( 'Start with a pre-made design' ),
+				oldCopy: translate( 'Start with a template' ),
 			} ) }
 			description={ i18n.fixMe( {
-				text: 'Get a simple, ready-to-go site to make your own.',
-				newCopy: translate( 'Get a simple, ready-to-go site to make your own.' ),
-				oldCopy: translate( 'Get started instantly with a simple, ready-to-go WordPress site.' ),
+				text: "We'll install a ready-to-edit theme for you.",
+				newCopy: translate( "We'll install a ready-to-edit theme for you." ),
+				oldCopy: translate( 'Get a simple, ready-to-go site to make your own.' ),
 			} ) }
 			decoration={ <Icon icon={ layout } /> }
 			onClick={ handleBlankSite }
@@ -252,9 +255,9 @@ const SetupYourSiteAIStep: StepType = ( { navigation } ) => {
 				</>
 			) : (
 				<>
-					{ startWithTemplateCard }
 					{ buildWithAISummary }
-					{ buildWithAIDslSummary }
+					{ startWithTemplateCard }
+					{ buildWithAIBlocksFirstSummary }
 				</>
 			) }
 		</VStack>

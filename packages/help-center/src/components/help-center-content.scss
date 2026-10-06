@@ -12,6 +12,13 @@
 				box-sizing: border-box;
 			}
 		}
+
+		.help-center__container-content-error {
+			margin: 0;
+			padding: 16px;
+			font-size: 0.875rem;
+			color: var( --color-text );
+		}
 	}
 
 	// Only show the blender when the footer is present.

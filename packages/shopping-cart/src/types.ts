@@ -932,6 +932,12 @@ export interface ResponseCartProductExtra {
 	is_art_promo?: boolean;
 
 	/**
+	 * True on a Business plan added from the free DIFM (Do it for me) offer.
+	 * Checkout uses it to show the DIFM offer next steps.
+	 */
+	difm_offer?: boolean;
+
+	/**
 	 * Set to 'renewal' if requesting a renewal.
 	 *
 	 * Often this does not need to be explicitly set because the shopping cart
@@ -951,6 +957,12 @@ export interface ResponseCartProductExtra {
 	isA4ADevSiteCheckout?: boolean;
 	referral_id?: number;
 	agency_id?: number;
+
+	/**
+	 * Position of the line among identical A4A products, so the store keeps
+	 * one cart item per unit instead of merging them.
+	 */
+	cart_item_index?: number;
 
 	/**
 	 * A4A Pressable PHP Memory add-on target domain.

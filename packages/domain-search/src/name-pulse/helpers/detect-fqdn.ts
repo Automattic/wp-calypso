@@ -30,11 +30,15 @@ const notFqdn = ( baseName: string, details: FqdnDetails = {} ): FqdnDetection =
 
 const MAX_TLD_LABELS = Math.max( ...wpcomMultiLevelTlds.map( ( tld ) => tld.split( '.' ).length ) );
 
+// Labels that only make sense as part of an ending (`co` in `co.uk`), never as the name.
+const SECOND_LEVEL_LABELS = [ 'ac', 'co', 'com', 'edu', 'gov', 'net', 'org' ];
+
 /**
  * Splits on dots and sanitizes each label, so stray characters and empty labels
  * (`coffee..com`, `coffee.com.`) do not matter. The longest known ending wins, so
  * `coffee.co.uk` is `co.uk`, not `uk`. With no known ending the labels are joined
- * into one name: `icecream.d` gives `icecreamd`.
+ * into one name: `icecream.d` gives `icecreamd`. An unknown double ending is
+ * joined too: `example.co.com` gives `exampleco.com`, not `co.com`.
  * @example detectFqdn( 'Coffee.COM' ) // { isFqdn: true, baseName: 'coffee', tld: 'com', fullDomain: 'coffee.com' }
  */
 export function detectFqdn( input: string, tlds: readonly string[] ): FqdnDetection {
@@ -64,8 +68,14 @@ export function detectFqdn( input: string, tlds: readonly string[] ): FqdnDetect
 			continue;
 		}
 
-		const baseName = labels[ labels.length - size - 1 ];
-		const subdomain = labels.slice( 0, -size - 1 ).join( '.' );
+		const prefix = labels.slice( 0, -size - 1 );
+		let baseName = labels[ labels.length - size - 1 ];
+
+		if ( prefix.length > 0 && SECOND_LEVEL_LABELS.includes( baseName ) ) {
+			baseName = prefix.pop() + baseName;
+		}
+
+		const subdomain = prefix.join( '.' );
 
 		if ( baseName.length < 2 ) {
 			return notFqdn( baseName );

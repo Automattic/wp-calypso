@@ -4,11 +4,13 @@
  */
 export const MARKETPLACE_HOSTING_ROUTE = '/hosting';
 export const MARKETPLACE_PRODUCTS_ROUTE = '/products';
+export const MARKETPLACE_PURCHASES_ROUTE = '/purchases';
 export const MARKETPLACE_REFERRAL_CHECKOUT_ROUTE = '/referral-checkout';
+export const CRM_DOWNLOADS_SEGMENT = 'crm-downloads';
 
-// The agency checkout lives on WordPress.com, next to the client referral
-// checkout; link it through `wpcomLink()`.
-export const WPCOM_AGENCY_CHECKOUT_PATH = '/checkout/agency/purchase';
+// The agency checkout is the WordPress.com checkout, served from the
+// dashboard's own address so it runs under the agency's login.
+export const AGENCY_CHECKOUT_PATH = '/checkout/agency/purchase';
 
 export type HostingSection = 'wpcom' | 'pressable' | 'vip';
 
@@ -25,3 +27,8 @@ export const getMarketplaceReferHostingRoute = ( type: ReferHostingType ) =>
 
 export const getMarketplaceHostingSectionRoute = ( section: HostingSection ) =>
 	`${ MARKETPLACE_HOSTING_ROUTE }/${ section }`;
+
+export const getCrmDownloadsRoute = ( licenseKey: string ) =>
+	`${ MARKETPLACE_PURCHASES_ROUTE }/${ CRM_DOWNLOADS_SEGMENT }/${ encodeURIComponent(
+		licenseKey
+	) }`;

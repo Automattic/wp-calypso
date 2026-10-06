@@ -6,17 +6,6 @@ import ALL_STATS_NOTICES from '../all-notice-definitions';
 import isPremiumAnalyticsPreviewCohort from '../premium-analytics-preview-cohort';
 import type { StatsNoticeProps } from '../types';
 
-jest.mock( '@automattic/calypso-config', () => {
-	const flags: Record< string, boolean > = { 'stats/premium-analytics-preview': true };
-	( globalThis as Record< string, unknown > ).__previewCohortTestFlags = flags;
-	const isEnabled = ( flag: string ) => !! flags[ flag ];
-	const config = jest.requireActual( '@automattic/calypso-config' );
-	return { __esModule: true, default: Object.assign( config, { isEnabled } ), isEnabled };
-} );
-
-const mockFlags = () =>
-	( globalThis as Record< string, unknown > ).__previewCohortTestFlags as Record< string, boolean >;
-
 const premiumAnalyticsPreviewNotice = ALL_STATS_NOTICES.find(
 	( notice ) => notice.noticeId === 'premium_analytics_preview'
 );
@@ -27,7 +16,6 @@ const eligibleSite: StatsNoticeProps = {
 	siteId: 123,
 	isOdysseyStats: false,
 	isWpcom: true,
-	isAtomic: false,
 	canManageOptions: true,
 	hasCommercialStats: true,
 	isPremiumAnalyticsEnabled: false,
@@ -38,25 +26,13 @@ const eligibleSite: StatsNoticeProps = {
 };
 
 describe( 'premium_analytics_preview notice visibility', () => {
-	it.each( [
-		[ true, false, false ],
-		[ true, true, true ],
-		[ false, false, true ],
-		[ false, true, true ],
-	] )( 'Atomic %s with flag %s is in the cohort: %s', ( isAtomic, flag, expected ) => {
-		mockFlags()[ 'stats/premium-analytics-preview-atomic' ] = flag;
-		const options = { ...eligibleSite, isAtomic };
-
-		expect( isPremiumAnalyticsPreviewCohort( options ) ).toBe( expected );
-		expect( premiumAnalyticsPreviewNotice?.isVisibleFunc( options ) ).toBe( expected );
-	} );
-
 	it( 'is registered and enabled', () => {
 		expect( premiumAnalyticsPreviewNotice ).toBeDefined();
 		expect( premiumAnalyticsPreviewNotice?.disabled ).toBe( false );
 	} );
 
 	it( 'shows for an administrator on an eligible site', () => {
+		expect( isPremiumAnalyticsPreviewCohort( eligibleSite ) ).toBe( true );
 		expect( premiumAnalyticsPreviewNotice?.isVisibleFunc( eligibleSite ) ).toBe( true );
 	} );
 

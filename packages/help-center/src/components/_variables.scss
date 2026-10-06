@@ -15,7 +15,7 @@ $head-foot-height: 56px;
 // (packages/agents-manager/src/styles/variables.scss). A focused panel must
 // always beat an unfocused one, so they share one base + focused offset.
 $overlay-panel-z-index-base: 999990;
-$overlay-panel-z-index-focused: 999995;
+$overlay-panel-z-index-focused: 999994;
 $help-center-z-index: $overlay-panel-z-index-base;
 $help-center-z-index-focused: $overlay-panel-z-index-focused;
 $help-center-blue: #3858e9;

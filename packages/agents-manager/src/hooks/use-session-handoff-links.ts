@@ -1,6 +1,6 @@
 import { useEffect } from '@wordpress/element';
 import { useAgentsManagerContext } from '../contexts';
-import { getSessionId, NO_SITE } from '../utils/agent-session';
+import { getSessionId, isUnsentSession, NO_SITE } from '../utils/agent-session';
 import { addSessionHandoff, isHandoffAgent, isHandoffDestination } from '../utils/session-handoff';
 
 /**
@@ -47,7 +47,8 @@ export function useSessionHandoffLinks( agentId?: string ): void {
 			}
 
 			const sessionId = getSessionId( agentId, siteKey, userId );
-			if ( ! sessionId ) {
+			// An unsent session does not exist on the server yet.
+			if ( ! sessionId || isUnsentSession( sessionId ) ) {
 				return;
 			}
 

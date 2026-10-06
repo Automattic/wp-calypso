@@ -7,8 +7,9 @@ import {
 	getMarketplaceHostingSectionRoute,
 	getMarketplaceReferHostingRoute,
 } from '../paths';
+import { useMarketplaceType } from '../use-marketplace-type';
 import PartnerOffers from './partner-offers';
-import type { PartnerOfferLinks } from './types';
+import type { PartnerOffer, PartnerOfferLinks } from './types';
 
 const LINKS: PartnerOfferLinks = {
 	hostingWpcom: getMarketplaceHostingSectionRoute( 'wpcom' ),
@@ -21,10 +22,22 @@ const LINKS: PartnerOfferLinks = {
 
 export default function ExclusiveOffers() {
 	const { recordTracksEvent } = useAnalytics();
+	const { updateMarketplaceType } = useMarketplaceType();
+
+	const handleCtaClick = ( offer: PartnerOffer ) => {
+		const purchaseType = offer.cta.purchase_type;
+		if ( purchaseType === 'referral' || purchaseType === 'regular' ) {
+			updateMarketplaceType( purchaseType );
+		}
+	};
 
 	return (
 		<PageLayout header={ <PageHeader title={ __( 'Exclusive offers' ) } /> }>
-			<PartnerOffers links={ LINKS } recordTracksEvent={ recordTracksEvent } />
+			<PartnerOffers
+				links={ LINKS }
+				recordTracksEvent={ recordTracksEvent }
+				onCtaClick={ handleCtaClick }
+			/>
 		</PageLayout>
 	);
 }

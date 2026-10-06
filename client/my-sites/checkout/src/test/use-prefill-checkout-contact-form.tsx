@@ -11,12 +11,14 @@ import {
 } from '@automattic/shopping-cart';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen, waitFor } from '@testing-library/react';
-import { dispatch, useSelect } from '@wordpress/data';
 import { useState } from 'react';
 import { Provider as ReduxProvider } from 'react-redux';
 import { useExperiment } from 'calypso/lib/explat';
 import { usePrefillCheckoutContactForm } from 'calypso/my-sites/checkout/src/hooks/use-prefill-checkout-contact-form';
-import { CHECKOUT_STORE } from 'calypso/my-sites/checkout/src/lib/wpcom-store';
+import {
+	resetCheckoutStores,
+	useContactDetails,
+} from 'calypso/my-sites/checkout/src/lib/checkout-stores';
 import {
 	countryList,
 	createTestReduxStore,
@@ -81,7 +83,7 @@ function MyTestContent() {
 	usePrefillCheckoutContactForm( {
 		setShouldShowContactDetailsValidationErrors: () => null,
 	} );
-	const contactInfo = useSelect( ( select ) => select( CHECKOUT_STORE ).getContactInfo(), [] );
+	const contactInfo = useContactDetails();
 	const [ localLocation, setLocation ] = useState( { countryCode: '', postalCode: '' } );
 	const onChangeCountry = ( evt ) => {
 		const newVal = evt.target.value;
@@ -124,7 +126,7 @@ function MyTestContent() {
 
 describe( 'usePrefillCheckoutContactForm', () => {
 	beforeEach( () => {
-		dispatch( CHECKOUT_STORE ).reset();
+		resetCheckoutStores();
 		jest.clearAllMocks();
 	} );
 

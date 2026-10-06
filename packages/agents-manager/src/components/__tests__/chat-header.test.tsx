@@ -83,12 +83,25 @@ function renderChatHeader( title?: string, isDocked = false, onBack?: () => void
 
 describe( 'ChatHeader', () => {
 	afterEach( () => {
+		delete window.__agentsManagerConfig;
 		mockSetIsMinimized.mockClear();
 		mockIsInternalOnly = false;
 		document.getElementById( 'wp-admin-bar-agents-manager-ai-chat' )?.remove();
 		delete ( globalThis as { agentsManagerData?: unknown } ).agentsManagerData;
 		document.querySelector( '.masterbar__item-agents-manager-ai-chat' )?.remove();
 	} );
+
+	it.each( [ true, false ] )(
+		'hides dismiss controls for a non-dismissible chat (docked: %s)',
+		( isDocked ) => {
+			window.__agentsManagerConfig = { chatPresentation: { dismissible: false } };
+			installAdminBarTrigger();
+			renderChatHeader( 'History', isDocked, jest.fn() );
+			expect( screen.queryByText( 'Close' ) ).toBeNull();
+			expect( screen.queryByText( 'Minimize' ) ).toBeNull();
+			expect( screen.getByText( 'More Options' ) ).toBeInTheDocument();
+		}
+	);
 
 	it( 'renders the title with a matching title attribute so the full text shows on hover when truncated', () => {
 		const title = 'A very long support guides title';

@@ -146,15 +146,28 @@ export interface DomainSearchConfig {
 	skippable: boolean;
 	/**
 	 * Optional copy overrides for the free-subdomain skip card. When omitted, the
-	 * card keeps its default "Start free with %(domain)s" title and "Start Free"
-	 * CTA. `title` may include the `%(domain)s` placeholder, interpolated with the
-	 * free subdomain (e.g. flows that require a paid plan can drop the "free"
-	 * framing).
+	 * card keeps its default "Start free with %(domain)s" title, "Upgrade to a custom
+	 * domain name anytime." subtitle and "Start Free" CTA. `title` may include the
+	 * `%(domain)s` placeholder, interpolated with the free subdomain (e.g.
+	 * flows that require a paid plan can drop the "free" framing).
 	 */
 	skipSuggestionCopy?: {
 		title?: string;
+		subtitle?: string;
 		buttonText?: string;
+		/** Accessible label of the skip button. Defaults to "Skip purchase and continue with %(domain)s". */
+		skipLabel?: string;
 	};
+	/**
+	 * Where the free-subdomain skip card renders. `results` (the default) puts it at the top of
+	 * the results list, below the `BeforeResults` slot; `top` puts it above that slot.
+	 */
+	skipSuggestionPlacement?: 'results' | 'top';
+	/**
+	 * Label the add-to-cart button "Select" with a plus icon instead of "Add to cart" with a
+	 * cart icon, so picking a domain reads less like a purchase.
+	 */
+	showSelectCta?: boolean;
 	/**
 	 * Hide the free *.wordpress.com subdomain skip card and offer only a plain "skip / set up a
 	 * domain later" control. Used by flows whose site never keeps a free subdomain (e.g. the

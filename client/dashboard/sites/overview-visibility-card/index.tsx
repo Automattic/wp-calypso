@@ -2,8 +2,6 @@ import { siteLaunchpadQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { __, sprintf } from '@wordpress/i18n';
 import { lockOutline, published } from '@wordpress/icons';
-import { LAUNCHPAD_PERSONALIZATION_EXPERIMENT, normalizeVariation } from 'calypso/lib/ai-launchpad';
-import { useExperiment } from 'calypso/lib/explat';
 import { launch } from '../../components/icons';
 import OverviewCard from '../../components/overview-card';
 import { wpcomLink } from '../../utils/link';
@@ -37,23 +35,19 @@ function getLaunchpadChecklistSlug( site: Site ) {
 function VisibilityCardUnlaunched( { site }: { site: Site } ) {
 	const {
 		isActive: isAiLaunchpad,
+		isNoGuidance,
 		setupUrl,
 		tasks: aiTasks,
 	} = useAiLaunchpad( site.slug, {
 		withTasks: true,
 	} );
 
-	const [ , personalizationAssignment ] = useExperiment( LAUNCHPAD_PERSONALIZATION_EXPERIMENT );
-	const isNoGuidance =
-		normalizeVariation( personalizationAssignment?.variationName ) === 'no_guidance';
-
 	const { data: launchpad } = useQuery( {
 		...siteLaunchpadQuery( site.ID, getLaunchpadChecklistSlug( site ) ),
 		enabled: ! isAiLaunchpad && ! isNoGuidance,
 	} );
 
-	// The no_guidance launchpad-personalization variation gets no setup guidance at all:
-	// the card behaves like a plain coming-soon site, pointing at the visibility settings.
+	// No-guidance sites get no setup guidance: a plain coming-soon card.
 	if ( isNoGuidance ) {
 		return <VisibilityCardComingSoon site={ site } />;
 	}

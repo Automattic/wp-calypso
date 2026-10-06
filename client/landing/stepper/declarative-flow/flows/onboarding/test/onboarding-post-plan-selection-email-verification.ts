@@ -36,7 +36,7 @@ jest.mock( '@wordpress/data', () => ( {
 		setHideFreePlan: jest.fn(),
 	} ),
 	useSelect: jest.fn( () => ( {} ) ),
-	resolveSelect: jest.fn(),
+	resolveSelect: jest.fn( () => ( { getSite: async () => ( { options: {} } ) } ) ),
 } ) );
 
 jest.mock( 'calypso/landing/stepper/hooks/use-query', () => ( {
@@ -88,11 +88,6 @@ jest.mock( '@automattic/onboarding', () => ( {
 	SITE_SETUP_FLOW: 'site-setup',
 	clearStepPersistedState: jest.fn(),
 	isOnboardingFlow: ( flow: string ) => flow === 'onboarding',
-} ) );
-
-jest.mock( 'calypso/lib/ai-launchpad', () => ( {
-	resolveLaunchpadPersonalizationVariation: jest.fn( async () => 'control' ),
-	getLaunchpadPersonalizationDestination: jest.fn(),
 } ) );
 
 jest.mock( 'calypso/lib/url', () => ( { pathToUrl: ( path: string ) => path } ) );
