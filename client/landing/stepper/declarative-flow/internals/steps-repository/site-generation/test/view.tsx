@@ -206,6 +206,24 @@ describe( 'SiteGenerationView wait estimate', () => {
 } );
 
 describe( 'SiteGenerationView server recovery', () => {
+	it( 'offers a reload when the site is ready but the editor is unavailable', async () => {
+		const onReload = jest.fn();
+		render(
+			<SiteGenerationView
+				state={ { ...idleState, status: 'failed', failureReason: 'editor-unavailable', steps: [] } }
+				onReload={ onReload }
+			/>
+		);
+
+		expect(
+			screen.getByRole( 'heading', { name: 'Your site is ready, but we couldn’t open the editor' } )
+		).toBeVisible();
+		expect( screen.getByText( 'Reload this page to try again.' ) ).toBeVisible();
+		expect( screen.queryByRole( 'button', { name: 'Start again' } ) ).not.toBeInTheDocument();
+		await userEvent.click( screen.getByRole( 'button', { name: 'Reload' } ) );
+		expect( onReload ).toHaveBeenCalledTimes( 1 );
+	} );
+
 	it( 'renders the server failure copy and starts the rebuild', async () => {
 		const retryBuild = jest.fn();
 		render(
