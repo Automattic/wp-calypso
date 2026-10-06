@@ -84,7 +84,7 @@ export const areSignaturePlansFor = (
 
 export function getPlanCategoryTabs( areSignaturePlans: boolean, hasNewPremiumPlans: boolean ) {
 	const pooled = __(
-		'Traffic and storage pooled across all your client sites, from 1 to 150 installs.'
+		'Traffic and storage pooled across all your client sites, from 1 to 150 WordPress installs.'
 	);
 	const large = __( 'For large portfolios of 200 to 500 WordPress installs.' );
 	return [
@@ -92,12 +92,12 @@ export function getPlanCategoryTabs( areSignaturePlans: boolean, hasNewPremiumPl
 			? [
 					{
 						key: PLAN_CATEGORY_SIGNATURE,
-						label: __( 'Signature plans 1–10' ),
+						label: __( 'Signature plans 1⁠–⁠10' ),
 						description: pooled,
 					},
 					{
 						key: PLAN_CATEGORY_SIGNATURE_HIGH,
-						label: __( 'Signature plans 11–17' ),
+						label: __( 'Signature plans 11⁠–⁠17' ),
 						description: large,
 					},
 				]
@@ -107,9 +107,9 @@ export function getPlanCategoryTabs( areSignaturePlans: boolean, hasNewPremiumPl
 				] ),
 		{
 			key: PLAN_CATEGORY_PREMIUM,
-			label: hasNewPremiumPlans ? __( 'Premium plans 1–11' ) : __( 'Premium plans' ),
+			label: hasNewPremiumPlans ? __( 'Premium plans 1⁠–⁠11' ) : __( 'Premium plans' ),
 			description: __(
-				'Dedicated resources for one high-traffic site, from 150K to 10M visits per month.'
+				'Dedicated resources for one high-traffic WordPress site, from 150K to 10M visits per month.'
 			),
 		},
 	];
