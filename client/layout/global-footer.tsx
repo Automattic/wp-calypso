@@ -63,7 +63,7 @@ const Footer2026Privacy = ( props: FooterProps ) => {
 };
 
 // Pages that end on a dark section, so the 2026 footer continues it; all others stay white.
-const DARK_FOOTER_ROUTES = [ '/themes', '/patterns', '/speed-test-tool/weekly-report' ];
+const DARK_FOOTER_ROUTES = [ '/themes', '/patterns' ];
 
 const isDarkFooterPage = ( state: AppState ) => {
 	const route = removeLocaleFromPathLocaleInFront( getCurrentRoute( state ) ?? '' );
@@ -84,12 +84,12 @@ const isDarkFooterPage = ( state: AppState ) => {
 
 export function GlobalFooter( props: FooterProps ) {
 	const isDarkEnding = useSelector( isDarkFooterPage );
+	// `footer/light` forces the white footer, even on dark-ending pages.
+	const isForcedLight = isEnabled( 'footer/light' );
+	const colorway = props.colorway === 'white' && isDarkEnding ? 'dark' : props.colorway;
 
 	return props.colorway ? (
-		<Footer2026Privacy
-			{ ...props }
-			colorway={ props.colorway === 'white' && isDarkEnding ? 'dark' : props.colorway }
-		/>
+		<Footer2026Privacy { ...props } colorway={ isForcedLight ? 'white' : colorway } />
 	) : (
 		<UniversalNavbarFooter { ...props } />
 	);

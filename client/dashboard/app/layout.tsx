@@ -61,18 +61,40 @@ function AnalyticsProviderWithClient( {
 				recordTracksPageViewWithPageParams( url, {
 					device_type: resolveDeviceTypeByViewPort(),
 				} );
-				if ( app ) {
-					recordTracksEvent( 'wpcom_unified_admin_page_view', {
-						source: 'msd',
-						app,
-						path: router.state.location.pathname,
-						route: url,
-					} );
-				}
 			},
 		} ),
-		[ router, app ]
+		[ router ]
 	);
+
+	useEffect( () => {
+		if ( ! app ) {
+			return;
+		}
+
+		const recordUnifiedPageView = () => {
+			if ( router.state.matches.some( ( match ) => match.status === 'redirected' ) ) {
+				return;
+			}
+
+			analyticsClient.recordTracksEvent( 'wpcom_unified_admin_page_view', {
+				source: 'msd',
+				app,
+				path: router.state.location.pathname,
+				route: getNormalizedPath( router.state.matches, router.basepath ),
+			} );
+		};
+		const unsubscribe = router.subscribe( 'onResolved', ( { pathChanged } ) => {
+			if ( pathChanged ) {
+				recordUnifiedPageView();
+			}
+		} );
+
+		if ( router.state.status === 'idle' && router.state.matches.length ) {
+			recordUnifiedPageView();
+		}
+
+		return unsubscribe;
+	}, [ router, app, analyticsClient ] );
 
 	useSurvicate();
 	useSurvicateVisitTraits();

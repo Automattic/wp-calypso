@@ -4,17 +4,11 @@
 // @ts-nocheck - TODO: Fix TypeScript issues
 import page from '@automattic/calypso-router';
 import {
-	SUCCESS,
-	ERROR,
-	FAILURE,
-	UNKNOWN,
-	PROCESSING,
-} from 'calypso/state/order-transactions/constants';
-import {
 	addUrlToPendingPageRedirect,
 	redirectThroughPending,
 	getRedirectFromPendingPage,
 } from '../lib/pending-page';
+import { SUCCESS, ERROR, FAILURE, UNKNOWN, PROCESSING } from '../types/order-transaction';
 
 jest.mock( '@automattic/calypso-router' );
 
@@ -292,6 +286,17 @@ describe( 'getRedirectFromPendingPage', () => {
 		expect( actual ).toEqual( { url: 'https://wordpress.com/home/12345' } );
 	} );
 
+	it( 'returns the agency dashboard url with the receipt interpolated if there is also a receipt', () => {
+		const actual = getRedirectFromPendingPage( {
+			isLoadingOrder: false,
+			redirectTo: 'https://agencies-beta.automattic.com/purchases?receipt_id=:receiptId',
+			receiptId: 12345,
+		} );
+		expect( actual ).toEqual( {
+			url: 'https://agencies-beta.automattic.com/purchases?receipt_id=12345',
+		} );
+	} );
+
 	it( 'returns a generic no-site url for an absolute url if it is not allowed and there is also a receipt', () => {
 		const actual = getRedirectFromPendingPage( {
 			isLoadingOrder: false,
@@ -535,17 +540,6 @@ describe( 'getRedirectFromPendingPage', () => {
 			},
 		} );
 		expect( actual ).toEqual( { url: '/checkout/no-site', isError: true } );
-	} );
-
-	it( 'returns a checkout url if there was an HTTP error', () => {
-		const actual = getRedirectFromPendingPage( {
-			isLoadingOrder: false,
-			redirectTo: '/home',
-			siteSlug: 'example.com',
-			error: new Error( 'test error' ),
-			orderId: 1,
-		} );
-		expect( actual ).toEqual( { url: '/checkout/example.com', isError: true } );
 	} );
 
 	it( 'returns a checkout url if the transaction is unknown', () => {

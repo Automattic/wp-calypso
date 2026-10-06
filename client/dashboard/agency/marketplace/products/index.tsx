@@ -46,7 +46,7 @@ import { getProductSearchText } from './lib/product-search';
 import ProductCardSkeleton from './product-card-skeleton';
 import ProductDetailsModal from './product-details-modal';
 import ProductStoreCard from './product-store-card';
-import { parseCartEntries, useShoppingCart } from './use-shopping-cart';
+import { parseCartEntries, useCartOpen, useShoppingCart } from './use-shopping-cart';
 import type { TileValue } from './category-tiles';
 import type { ProductBrand, ProductCategory } from './lib/product-categories';
 import type { ProductListItem, ProductSection } from './lib/product-groups';
@@ -129,14 +129,8 @@ export default function MarketplaceProducts() {
 	}, [ allProducts, showPressableAddons ] );
 
 	const searchParams = marketplaceProductsRoute.useSearch() as ProductsSearchParams;
-	const {
-		items: cartItems,
-		hasItem,
-		addItem,
-		removeItem,
-		replaceItems,
-		clearCart,
-	} = useShoppingCart();
+	const { items: cartItems, hasItem, addItem, removeItem, replaceItems } = useShoppingCart();
+	const [ isCartOpen, setIsCartOpen ] = useCartOpen();
 	const [ view, setView ] = useState< View >( () => ( {
 		...DEFAULT_VIEW,
 		search: searchParams.search_query != null ? String( searchParams.search_query ) : '',
@@ -307,7 +301,7 @@ export default function MarketplaceProducts() {
 	const handleViewChange = ( nextView: View ) => {
 		if ( nextView.search !== view.search ) {
 			recordTracksEvent( 'calypso_a4a_marketplace_products_overview_input_search', {
-				searchQuery: nextView.search,
+				search_query: nextView.search,
 			} );
 		}
 		if ( nextView.filters !== view.filters ) {
@@ -414,8 +408,10 @@ export default function MarketplaceProducts() {
 									term={ termPricing }
 									isReferralMode={ isReferralMode }
 									isAgencyApproved={ isAgencyApproved( agency ) }
+									isLegacyBilling={ agency?.billing_system === 'legacy' }
+									open={ isCartOpen }
+									onToggle={ setIsCartOpen }
 									onRemove={ removeItem }
-									onCheckout={ clearCart }
 								/>
 							</HStack>
 						</HStack>

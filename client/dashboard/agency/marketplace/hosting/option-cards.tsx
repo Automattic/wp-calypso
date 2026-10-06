@@ -5,6 +5,7 @@ import {
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { check } from '@wordpress/icons';
+import { Badge } from '@wordpress/ui';
 import clsx from 'clsx';
 import { Card, CardBody } from '../../../components/card';
 
@@ -12,7 +13,10 @@ export interface OptionCardItem {
 	value: string;
 	label: string;
 	description: string;
+	/** Can't be picked, such as a plan type below the plan the agency owns. */
 	disabled?: boolean;
+	/** A short status top right, such as why it can't be picked. */
+	tag?: string;
 }
 
 export default function OptionCards( {
@@ -65,6 +69,12 @@ export default function OptionCards( {
 									<Icon icon={ check } className="dashboard-marketplace-hosting__option-check" />
 								</HStack>
 								<Text variant="muted">{ option.description }</Text>
+								{ /* Why it can't be picked, under the description so the title never wraps. */ }
+								{ option.tag && (
+									<Badge className="dashboard-marketplace-hosting__option-tag">
+										{ option.tag }
+									</Badge>
+								) }
 							</VStack>
 						</CardBody>
 					</Card>

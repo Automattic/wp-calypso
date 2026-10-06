@@ -77,6 +77,7 @@ import {
 	RestAPIClient,
 	Secrets,
 	SecretsManager,
+	setRunningSpecFile,
 	SidebarComponent,
 	SiteSelectComponent,
 	SignupPickPlanPage,
@@ -264,6 +265,7 @@ export const test = base.extend<
 		[ K in keyof typeof fixtureAccounts ]: TestAccount;
 	} & {
 		_abandonLoginLockWaits: void;
+		_runningSpecFile: void;
 		_throttleActionHandler: void;
 		/**
 		 * Test account selected based on the current environment variables.
@@ -506,6 +508,21 @@ export const test = base.extend<
 			// Any teardown running means the test body is over: a wait still pending belongs to
 			// no live test, so abandoning it here cannot fail one.
 			abandonPendingLoginLockWaits();
+		},
+		{ auto: true },
+	],
+	_runningSpecFile: [
+		async ( {}, use, testInfo ) => {
+			// Lets a mixed Atomic run resolve the test's variation from fixtures, which run
+			// outside the spec file: `accountGivenByEnvironment` has to pick that site's account.
+			// The title path starts with the spec file Playwright loaded; `testInfo.file` would
+			// name the shared helper that declares the test, as `block-smoke-testing.ts` does.
+			setRunningSpecFile( testInfo.titlePath[ 0 ] );
+			try {
+				await use();
+			} finally {
+				setRunningSpecFile( undefined );
+			}
 		},
 		{ auto: true },
 	],

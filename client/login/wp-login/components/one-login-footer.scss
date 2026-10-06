@@ -15,12 +15,15 @@
 		height: auto;
 
 		// For ExternalLink-rendered footer links, only underline the text content
-		// so the trailing "opens in new tab" arrow icon stays clean.
+		// so the trailing "opens in new tab" arrow icon stays clean. The offset is
+		// reset because ExternalLink's own 0.2em offset drops the underline below
+		// the neighbouring footer links.
 		&.components-external-link {
 			text-decoration: none;
 
 			.components-external-link__contents {
 				text-decoration: underline;
+				text-underline-offset: inherit;
 			}
 		}
 	}

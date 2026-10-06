@@ -15,7 +15,6 @@ module.exports = {
 							'calypso/data/*',
 							'!calypso/data/data-center',
 							'!calypso/data/php-versions',
-							// Allowed: calypso/lib/ai-launchpad
 							// Allowed: calypso/lib/explat
 							// Allowed: calypso/lib/color-scheme
 							// Allowed: calypso/lib/interval/use-interval (temporary)
@@ -24,7 +23,6 @@ module.exports = {
 							// Allowed: calypso/lib/wp
 							'!calypso/lib',
 							'calypso/lib/*',
-							'!calypso/lib/ai-launchpad',
 							'!calypso/lib/color-scheme',
 							'!calypso/lib/explat',
 							'!calypso/lib/interval',
@@ -65,6 +63,7 @@ module.exports = {
 							'!@automattic/components/src/breadcrumbs/types',
 							'!@automattic/components/src/logos',
 							'!@automattic/components/src/resurrected-welcome-modal',
+							'!@automattic/components/src/experience-control',
 							'!@automattic/date-range-picker',
 							'!@automattic/domain-search',
 							'!@automattic/domains-table',

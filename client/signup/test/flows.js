@@ -92,6 +92,15 @@ describe( 'Signup Flows Configuration', () => {
 				} )
 			).toBe( '/sites/test-site/settings/site-visibility?celebrateLaunch=true' );
 		} );
+
+		test.each( [
+			[ 'https://test-site.wordpress.com/wp-admin/' ],
+			[ 'https://test-site.wordpress.com/wp-admin/options-reading.php' ],
+		] )( 'uses the wp-admin celebration argument when back_to is %s', ( backTo ) => {
+			expect(
+				getDestination( { siteSlug: 'test-site', refParameter: 'wp-admin', back_to: backTo } )
+			).toBe( `${ backTo }?celebrate-launch=true` );
+		} );
 	} );
 
 	describe( 'filterDestination with checkout URLs', () => {

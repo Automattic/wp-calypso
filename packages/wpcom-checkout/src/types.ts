@@ -2,60 +2,23 @@ import type { DomainContactDetails, RequestCart } from '@automattic/shopping-car
 import type { TranslateResult } from 'i18n-calypso';
 export type { SitelessCheckoutType } from '@automattic/shopping-cart';
 
-type PurchaseSiteId = number;
-
-export type WPCOMTransactionEndpointResponseSuccess = {
-	success: true;
-	purchases: Record< PurchaseSiteId, TransactionResponsePurchase[] >;
-	failed_purchases: Record< PurchaseSiteId, FailedPurchase[] >;
-	receipt_id: number;
-	order_id: number | '';
-	redirect_url?: string;
-	paypal_order_id?: string;
-	qr_code?: string;
-	is_gift_purchase: boolean;
-	display_price: string;
-	price_integer: number;
-	price_float: number;
-	currency: string;
-	is_gravatar_domain: boolean;
-};
-
-export type WPCOMTransactionEndpointResponseFailed = {
-	success: false;
-	purchases: Record< PurchaseSiteId, TransactionResponsePurchase[] >;
-	failed_purchases: Record< PurchaseSiteId, FailedPurchase[] >;
-	receipt_id: number;
-	order_id: number | '';
-	redirect_url?: string;
-	qr_code?: string;
-	is_gift_purchase: boolean;
-	display_price: string;
-	price_integer: number;
-	price_float: number;
-	currency: string;
-	is_gravatar_domain: boolean;
-};
-
-export type WPCOMTransactionEndpointResponseRedirect = {
-	message: { payment_intent_client_secret: string } | { setup_intent_client_secret: string } | '';
-	order_id: number | '';
-	redirect_url: string;
-	qr_code?: string;
-};
-
-export type WPCOMTransactionEndpointResponsePayPal = {
-	order_id: number | '';
-	paypal_order_id: string;
-	redirect_url?: string;
-	qr_code?: string;
-};
-
-export type WPCOMTransactionEndpointResponse =
-	| WPCOMTransactionEndpointResponseSuccess
-	| WPCOMTransactionEndpointResponseFailed
-	| WPCOMTransactionEndpointResponsePayPal
-	| WPCOMTransactionEndpointResponseRedirect;
+export type {
+	AdConversionDetails,
+	FailedPurchase,
+	PayPalExpressEndpointRequestPayload,
+	TaxVendorInfo,
+	ToSAcceptanceTrackingDetails,
+	TransactionDomainContactDetails,
+	TransactionDomainContactExtraDetails,
+	TransactionResponsePurchase,
+	WPCOMTransactionEndpointPaymentDetails,
+	WPCOMTransactionEndpointRequestPayload,
+	WPCOMTransactionEndpointResponse,
+	WPCOMTransactionEndpointResponseFailed,
+	WPCOMTransactionEndpointResponsePayPal,
+	WPCOMTransactionEndpointResponseRedirect,
+	WPCOMTransactionEndpointResponseSuccess,
+} from '@automattic/api-core';
 
 export interface TaxBreakdownEntry {
 	label: string;
@@ -63,65 +26,6 @@ export interface TaxBreakdownEntry {
 	rate_display: string;
 	local_tax_collected: number;
 	local_tax_collected_integer: number;
-}
-
-export interface TaxVendorInfo {
-	/**
-	 * The country code for this info.
-	 */
-	country_code: string;
-
-	/**
-	 * The mailing address to display on receipts as a list of strings (each
-	 * string should be on its own line).
-	 */
-	address: string[];
-
-	/**
-	 * An object containing tax names and corresponding vendor ids that are used for the user's country
-	 *
-	 * This will deprecate the vat_id and tax_name properties
-	 * For now, those two properties will stay in place for backwards compatibility
-	 *
-	 * Key:   The localized name of the tax (eg: "VAT", "GST", etc.).
-	 * Value: A8c vendor id for that specific tax
-	 */
-	tax_name_and_vendor_id_array: Record< string, string >;
-
-	/**
-	 * The vendor's VAT id.
-	 * @deprecated This is still in place for backwards compability with cached clients
-	 */
-	vat_id: string;
-
-	/**
-	 * The localized name of the tax (eg: "VAT", "GST", etc.).
-	 * @deprecated This is still in place for backwards compability with cached clients
-	 */
-	tax_name: string;
-}
-
-export interface TransactionResponsePurchase {
-	delayed_provisioning?: boolean;
-	expiry?: string;
-	is_domain_registration: boolean;
-	is_email_verified?: boolean;
-	is_renewal: boolean;
-	is_root_domain_with_us?: boolean;
-	is_hundred_year_domain?: boolean;
-	meta: string | null;
-	new_quantity?: number;
-	product_id: string | number;
-	product_name: string;
-	product_name_short: string;
-	product_type: string;
-	product_slug: string;
-	registrar_support_url?: string;
-	user_email: string;
-	saas_redirect_url?: string;
-	tax_vendor_info?: TaxVendorInfo;
-	blog_id: number;
-	price_integer?: number;
 }
 
 export interface TransactionRequest {
@@ -152,80 +56,6 @@ export interface TransactionRequest {
 	code?: string | undefined;
 	useForAllSubscriptions?: boolean;
 	eventSource?: string;
-}
-
-export type WPCOMTransactionEndpoint = (
-	_: WPCOMTransactionEndpointRequestPayload
-) => Promise< WPCOMTransactionEndpointResponse >;
-
-// Request payload as expected by the WPCOM transactions endpoint
-// '/me/transactions/': WPCOM_JSON_API_Transactions_Endpoint
-export type WPCOMTransactionEndpointRequestPayload = {
-	cart: RequestCart;
-	payment: WPCOMTransactionEndpointPaymentDetails;
-	domainDetails?: DomainContactDetails;
-	tos?: ToSAcceptanceTrackingDetails;
-	ad_conversion?: AdConversionDetails;
-};
-
-export type ToSAcceptanceTrackingDetails = {
-	path: string;
-	locale: string;
-	viewport: string;
-};
-
-export type AdConversionDetails = {
-	ad_details: string;
-	sensitive_pixel_options: string; // sensitive_pixel_options
-};
-
-export type WPCOMTransactionEndpointPaymentDetails = {
-	paymentMethod: string;
-	paymentKey?: string;
-	paymentPartner?: string;
-	storedDetailsId?: string;
-	name: string;
-	email?: string;
-	zip: string;
-	postalCode: string;
-	country: string;
-	countryCode: string;
-	state?: string;
-	city?: string;
-	address?: string;
-	streetNumber?: string;
-	phoneNumber?: string;
-	document?: string;
-	isForBusiness?: boolean;
-	deviceId?: string;
-	successUrl?: string;
-	cancelUrl?: string;
-	idealBank?: string;
-	// 6-digit BLIK code generated in the customer's banking app.
-	code?: string;
-	useForAllSubscriptions?: boolean;
-	eventSource?: string;
-};
-
-/**
- * The data returned by the /me/domain-contact-information endpoint
- */
-export interface RawCachedDomainContactDetails {
-	first_name?: string;
-	last_name?: string;
-	organization?: string;
-	email?: string;
-	phone?: string;
-	phone_number_country?: string;
-	address_1?: string;
-	address_2?: string;
-	city?: string;
-	state?: string;
-	postal_code?: string;
-	country_code?: string;
-	fax?: string;
-	vat_id?: string;
-	extra?: DomainContactValidationRequestExtraFields;
 }
 
 /**
@@ -303,23 +133,6 @@ export type EsDomainContactExtraDetailsErrors = {
 	redEsAgreementAccepted?: string | TranslateResult;
 	redEsAgreementVersion?: string | TranslateResult;
 };
-
-export type PayPalExpressEndpoint = (
-	_: PayPalExpressEndpointRequestPayload
-) => Promise< PayPalExpressEndpointResponse >;
-
-export type PayPalExpressEndpointRequestPayload = {
-	successUrl: string;
-	cancelUrl: string;
-	cart: RequestCart;
-	domainDetails: DomainContactDetails | null;
-	country: string;
-	postalCode: string;
-	tos?: ToSAcceptanceTrackingDetails;
-	ad_conversion?: AdConversionDetails;
-};
-
-export type PayPalExpressEndpointResponse = unknown;
 
 export interface LineItemType {
 	id: string;
@@ -472,21 +285,6 @@ export interface ManagedValue {
 	errors: string[] | TranslateResult[]; // Has value passed validation?
 }
 
-export type WpcomStoreState = {
-	recaptchaClientId: number;
-	transactionResult?: WPCOMTransactionEndpointResponse | undefined;
-	contactDetails: ManagedContactDetails;
-	vatDetails: VatDetails;
-};
-
-export interface FailedPurchase {
-	product_meta: string;
-	product_id: string | number;
-	product_slug: string;
-	product_cost: string | number;
-	product_name: string;
-}
-
 export interface VatDetails {
 	country?: string | null;
 	id?: string | null;
@@ -502,11 +300,7 @@ export interface VatDetails {
  * assume input came from the user.
  */
 export type ManagedContactDetailsUpdaters = {
-	updatePhone: ( arg0: ManagedContactDetails, arg1: string ) => ManagedContactDetails;
-	updatePhoneNumberCountry: ( arg0: ManagedContactDetails, arg1: string ) => ManagedContactDetails;
-	updatePostalCode: ( arg0: ManagedContactDetails, arg1: string ) => ManagedContactDetails;
 	updateEmail: ( arg0: ManagedContactDetails, arg1: string ) => ManagedContactDetails;
-	updateCountryCode: ( arg0: ManagedContactDetails, arg1: string ) => ManagedContactDetails;
 	updateTaxFields: (
 		arg0: ManagedContactDetails,
 		arg1: ManagedContactDetails
@@ -516,7 +310,6 @@ export type ManagedContactDetailsUpdaters = {
 		arg1: DomainContactDetails
 	) => ManagedContactDetails;
 	touchContactFields: ( arg0: ManagedContactDetails ) => ManagedContactDetails;
-	updateVatId: ( arg0: ManagedContactDetails, arg1: string ) => ManagedContactDetails;
 	setErrorMessages: (
 		arg0: ManagedContactDetails,
 		arg1: ManagedContactDetailsErrors
@@ -530,47 +323,6 @@ export type ManagedContactDetailsUpdaters = {
 		arg0: ManagedContactDetails,
 		arg1: PossiblyCompleteDomainContactDetails
 	) => ManagedContactDetails;
-};
-
-/**
- * Request parameter expected by the domain contact validation endpoint.
- * @see WPCOM_JSON_API_Signups_Validation_User_Endpoint
- */
-export type SignupValidationResponse = {
-	success: boolean;
-	messages?: {
-		first_name?: string[];
-		last_name?: string[];
-		email?: Record< string, string >;
-		username?: string[];
-		password?: string[];
-	};
-};
-
-/**
- * Request parameter expected by the domain contact validation endpoint.
- * @see WPCOM_JSON_API_Domains_Validate_Contact_Information_Endpoint
- */
-export type ContactValidationRequestContactInformation = {
-	address_1?: string;
-	address_2?: string;
-	city?: string;
-	country_code?: string;
-	email?: string;
-	extra?: DomainContactValidationRequestExtraFields;
-	fax?: string;
-	first_name?: string;
-	last_name?: string;
-	organization?: string;
-	phone?: string;
-	phone_number_country?: string;
-	postal_code?: string;
-	state?: string;
-	vat_id?: string;
-};
-
-export type DomainContactValidationRequest = {
-	contact_information: ContactValidationRequestContactInformation;
 };
 
 export type GSuiteContactValidationRequest = {
@@ -592,105 +344,18 @@ export type GSuiteContactValidationRequest = {
 	};
 };
 
-export type DomainContactValidationRequestExtraFields = {
-	ca?: {
-		lang?: string;
-		legal_type?: string;
-		cira_agreement_accepted?: boolean;
-	};
-	uk?: {
-		registrant_type?: string;
-		registration_number?: string;
-		trading_name?: string;
-	};
-	fr?: {
-		registrant_type?: string;
-		registrant_vat_id?: string;
-		trademark_number?: string;
-		siren_siret?: string;
-	};
-	in?: {
-		nexus_declaration?: boolean;
-		nexus_connection_type?: string;
-	};
-	es?: {
-		registrant_entity_type?: string;
-		registrant_identification_number?: string;
-		admin_identification_number?: string;
-		red_es_agreement_accepted?: boolean;
-		red_es_agreement_version?: string;
-	};
-	is_for_business?: boolean;
-};
-
-export type ContactValidationResponseMessagesExtra = {
-	ca?: {
-		lang?: string[];
-		legal_type?: string[];
-		cira_agreement_accepted?: string[];
-	};
-	uk?: {
-		registrant_type?: string[];
-		registration_number?: string[];
-		trading_name?: string[];
-	};
-	fr?: {
-		registrant_type?: string[];
-		trademark_number?: string[];
-		siren_siret?: string[];
-	};
-	in?: {
-		nexus_declaration?: string[];
-		nexus_connection_type?: string[];
-	};
-	es?: {
-		registrant_entity_type?: string[];
-		registrant_identification_number?: string[];
-		admin_identification_number?: string[];
-		red_es_agreement_accepted?: string[];
-		red_es_agreement_version?: string[];
-	};
-	is_for_business?: boolean;
-};
-
-/**
- * Response format of the domain contact validation endpoint.
- */
-export type ContactValidationResponseMessages = {
-	first_name?: string[];
-	last_name?: string[];
-	organization?: string[];
-	email?: string[];
-	phone?: string[];
-	phone_number_country?: string[];
-	address_1?: string[];
-	address_2?: string[];
-	city?: string[];
-	state?: string[];
-	postal_code?: string[];
-	country_code?: string[];
-	fax?: string[];
-	vat_id?: string[];
-	extra?: ContactValidationResponseMessagesExtra;
-};
-
-export type RawContactValidationResponseMessages = Record< string, string[] >;
-
-export type DomainContactValidationResponse =
-	| { success: true }
-	| {
-			success: false;
-			messages: ContactValidationResponseMessages;
-			messages_simple: string[];
-	  };
-
-export type RawDomainContactValidationResponse =
-	| { success: true }
-	| {
-			success: false;
-			messages: RawContactValidationResponseMessages;
-			messages_simple: string[];
-	  };
+export type {
+	ContactValidationRequestContactInformation,
+	ContactValidationResponseMessages,
+	ContactValidationResponseMessagesExtra,
+	DomainContactValidationRequest,
+	DomainContactValidationRequestExtraFields,
+	DomainContactValidationResponse,
+	RawCachedDomainContactDetails,
+	RawContactValidationResponseMessages,
+	RawDomainContactValidationResponse,
+	SignupValidationResponse,
+} from '@automattic/api-core';
 
 export type {
 	CountryListItemBase,

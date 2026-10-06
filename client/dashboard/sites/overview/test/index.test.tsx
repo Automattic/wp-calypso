@@ -4,26 +4,11 @@
 
 import { screen, waitFor, within } from '@testing-library/react';
 import nock from 'nock';
-import { LAUNCHPAD_PERSONALIZATION_EXPERIMENT } from 'calypso/lib/ai-launchpad';
 import { APP_CONTEXT_DEFAULT_CONFIG } from '../../../app/context';
 import { render } from '../../../test-utils';
 import SiteOverview from '../index';
 import type { AppConfig } from '../../../app/context';
 import type { Site, User } from '@automattic/api-core';
-
-// Seed a live ExPlat assignment into the storage the real useExperiment hook reads from, so it
-// resolves to the given variation through its normal code path — no module or network mocking.
-function assignPersonalizationVariation( variationName: string | null ) {
-	window.localStorage.setItem(
-		`explat-experiment--${ LAUNCHPAD_PERSONALIZATION_EXPERIMENT }`,
-		JSON.stringify( {
-			experimentName: LAUNCHPAD_PERSONALIZATION_EXPERIMENT,
-			variationName,
-			retrievedTimestamp: Date.now(),
-			ttl: 3600,
-		} )
-	);
-}
 
 const site = {
 	ID: 1,
@@ -285,9 +270,13 @@ describe( '<SiteOverview>', () => {
 		expect( await getCard( 'The perfect domain awaits' ) ).toBeVisible();
 	} );
 
-	test( 'shows a plain coming-soon visibility card for the no_guidance launchpad-personalization variation', async () => {
-		assignPersonalizationVariation( 'no_guidance' );
-		mockSite( { ...site, launch_status: 'unlaunched' } as Site );
+	test( 'shows a plain coming-soon visibility card for no-guidance sites', async () => {
+		mockSite( {
+			...site,
+			launch_status: 'unlaunched',
+			capabilities: { manage_options: true },
+			options: { ...site.options, wpcom_ai_launchpad_no_guidance: true },
+		} as Site );
 		render( <SiteOverview siteSlug={ site.slug } /> );
 
 		await screen.findByRole( 'heading', { name: 'Test Site' } );

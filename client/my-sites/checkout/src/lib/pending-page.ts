@@ -1,14 +1,8 @@
 import page from '@automattic/calypso-router';
 import { determineUrlType, isAllowedRedirectUrl, URL_TYPE } from '@automattic/calypso-url';
-import {
-	SUCCESS,
-	ERROR,
-	FAILURE,
-	PROCESSING,
-	ASYNC_PENDING,
-} from 'calypso/state/order-transactions/constants';
+import { SUCCESS, ERROR, FAILURE, PROCESSING, ASYNC_PENDING } from '../types/order-transaction';
+import type { OrderTransaction } from '../types/order-transaction';
 import type { Receipt } from '@automattic/api-core';
-import type { OrderTransaction } from 'calypso/state/selectors/get-order-transaction';
 
 export interface PendingPageRedirectOptions {
 	siteSlug?: string | undefined;
@@ -39,7 +33,6 @@ export interface RedirectInstructions {
 
 export interface RedirectForTransactionStatusArgs {
 	isLoadingOrder: boolean;
-	error?: Error | null;
 	transaction?: OrderTransaction | null;
 	orderId?: number;
 	receiptId?: number;
@@ -312,6 +305,7 @@ function isRedirectAllowed( url: string, siteSlug: string | undefined ): boolean
 		'gravatar.com',
 		'difmrequest.com',
 		'agencies.automattic.com',
+		'agencies-beta.automattic.com',
 		'agencies.localhost',
 		...( siteSlug ? [ siteSlug.includes( '::' ) ? siteSlug.split( '::' )[ 0 ] : siteSlug ] : [] ),
 	];
@@ -402,7 +396,6 @@ function buildSuccessRedirect( {
  */
 export function getRedirectFromPendingPage( {
 	isLoadingOrder,
-	error,
 	transaction,
 	orderId,
 	receiptId,
@@ -512,15 +505,6 @@ export function getRedirectFromPendingPage( {
 		transaction?.processingStatus === ASYNC_PENDING
 	) {
 		return undefined;
-	}
-
-	// A HTTP or other unknown error occured; we will send the user back to
-	// checkout.
-	if ( error ) {
-		return {
-			url: checkoutUrl,
-			isError: true,
-		};
 	}
 
 	return {

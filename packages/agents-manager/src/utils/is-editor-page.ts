@@ -1,10 +1,9 @@
 /**
- * Whether the current page is the post/page block editor or the site editor.
+ * Whether the current page is the site editor, a post or page editor, or a custom post type's
+ * block editor.
  *
- * Reads WordPress's server-set admin body classes — present in the initial HTML for both "new"
- * and "edit" screens — rather than the URL, since the edit URL (`post.php?post=N`) omits the
- * post type and would misclassify custom post types. Custom post types are intentionally
- * excluded (the post type comes from `post-type-{type}`, set in `wp-admin/admin-header.php`).
+ * Reads the admin body classes set in `wp-admin/admin-header.php`, not the URL: the edit URL
+ * (`post.php?post=N`) omits the post type.
  */
 export function isEditorPage(): boolean {
 	if ( typeof document === 'undefined' || ! document.body ) {
@@ -18,11 +17,12 @@ export function isEditorPage(): boolean {
 		return true;
 	}
 
-	// Post or page editor (`post.php` / `post-new.php`), excluding custom post types.
+	// Post editor (`post.php` / `post-new.php`).
 	const isPostEditorScreen =
 		classList.contains( 'post-php' ) || classList.contains( 'post-new-php' );
 	const isPostOrPage =
 		classList.contains( 'post-type-post' ) || classList.contains( 'post-type-page' );
+	const isBlockEditor = classList.contains( 'block-editor-page' );
 
-	return isPostEditorScreen && isPostOrPage;
+	return isPostEditorScreen && ( isPostOrPage || isBlockEditor );
 }

@@ -1,4 +1,9 @@
-import { submitMarketingSurvey, UserPreferences, updatePreferences } from '@automattic/api-core';
+import {
+	submitA4AFeedbackSurvey,
+	submitMarketingSurvey,
+	UserPreferences,
+	updatePreferences,
+} from '@automattic/api-core';
 import { mutationOptions } from '@tanstack/react-query';
 import { rawUserPreferencesQuery } from './me-preferences';
 import { queryClient } from './query-client';
@@ -7,6 +12,12 @@ export const marketingSurveyMutation = () =>
 	mutationOptions( {
 		meta: { statId: 'marketing-survey-submit' },
 		mutationFn: submitMarketingSurvey,
+	} );
+
+export const a4aFeedbackSurveyMutation = () =>
+	mutationOptions( {
+		meta: { statId: 'a4a-feedback-survey-submit' },
+		mutationFn: submitA4AFeedbackSurvey,
 	} );
 
 export const cancelPurchaseSurveyCompletedMutation = ( purchaseId: string | number ) => {

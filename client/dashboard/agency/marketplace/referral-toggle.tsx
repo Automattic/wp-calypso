@@ -1,50 +1,29 @@
-import {
-	activeAgencyQuery,
-	userPreferenceMutation,
-	userPreferenceQuery,
-} from '@automattic/api-queries';
+import { userPreferenceMutation, userPreferenceQuery } from '@automattic/api-queries';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { __experimentalHStack as HStack, Button, ToggleControl } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { info } from '@wordpress/icons';
 import { useEffect } from 'react';
-import { useAnalytics } from '../../app/analytics';
-import { isAgencyApproved } from './is-agency-approved';
-import { useMarketplaceType } from './use-marketplace-type';
+import { useReferralToggle } from './use-referral-toggle';
 import useReferralsGuide from './use-referrals-guide';
-import { useTermPricing } from './use-term-pricing';
-import type { MarketplaceType } from './use-marketplace-type';
 
 // Shared with the classic A4A marketplace so the guide only shows once across dashboards.
 const GUIDE_SEEN_PREFERENCE = 'a4a-marketplace-referral-guide-seen';
 
-export default function ReferralToggle() {
-	const { data: agency } = useQuery( activeAgencyQuery() );
-	const { recordTracksEvent } = useAnalytics();
-	const { marketplaceType, updateMarketplaceType } = useMarketplaceType();
-	const { termPricing } = useTermPricing();
+/** The referral mode switch, named for what the page sells: products by default, or hosting. */
+export default function ReferralToggle( { label = __( 'Refer to clients' ) }: { label?: string } ) {
+	const { checked, disabled, onChange } = useReferralToggle();
 	const { openGuide, guideModal } = useReferralsGuide();
 
 	const { data: guideSeen, isFetched } = useQuery( userPreferenceQuery( GUIDE_SEEN_PREFERENCE ) );
 	const { mutate: saveGuideSeen } = useMutation( userPreferenceMutation( GUIDE_SEEN_PREFERENCE ) );
 
-	const agencyApproved = isAgencyApproved( agency );
-
 	useEffect( () => {
-		if ( marketplaceType === 'referral' && isFetched && ! guideSeen ) {
+		if ( checked && isFetched && ! guideSeen ) {
 			saveGuideSeen( true );
 			openGuide();
 		}
-	}, [ marketplaceType, isFetched, guideSeen, saveGuideSeen, openGuide ] );
-
-	const handleToggle = ( checked: boolean ) => {
-		const nextType: MarketplaceType = checked ? 'referral' : 'regular';
-		updateMarketplaceType( nextType );
-		recordTracksEvent( 'calypso_a4a_marketplace_referral_toggle', {
-			purchase_mode: nextType,
-			term_pricing: termPricing,
-		} );
-	};
+	}, [ checked, isFetched, guideSeen, saveGuideSeen, openGuide ] );
 
 	return (
 		<>
@@ -52,10 +31,10 @@ export default function ReferralToggle() {
 			<HStack spacing={ 1 } expanded={ false } alignment="center">
 				<ToggleControl
 					__nextHasNoMarginBottom
-					checked={ marketplaceType === 'referral' }
-					disabled={ ! agencyApproved }
-					label={ __( 'Refer to clients' ) }
-					onChange={ handleToggle }
+					checked={ checked }
+					disabled={ disabled }
+					label={ label }
+					onChange={ onChange }
 				/>
 				<Button
 					size="small"

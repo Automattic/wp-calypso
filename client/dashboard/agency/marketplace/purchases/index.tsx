@@ -1,7 +1,7 @@
 import { activeAgencyQuery, paginatedJetpackAgencyLicensesQuery } from '@automattic/api-queries';
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
-import { useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { useAnalytics } from '../../../app/analytics';
 import { usePersistentView } from '../../../app/hooks/use-persistent-view';
 import { useLocale } from '../../../app/locale';
@@ -12,9 +12,11 @@ import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
 import RouterLinkButton from '../../../components/router-link-button';
 import { DEFAULT_CONFIG } from '../../../sites/dataviews/views';
+import { MilestoneFeedbackModal, useMilestoneFeedback } from '../../feedback';
 import { OWNER_ROLE } from '../../team/constants';
 import { useLicenseActions } from './actions';
 import { DEFAULT_VIEW, getLicenseFields, getLicenseId, toFetchOptions } from './dataviews';
+import { useCheckoutReturn } from './use-checkout-return';
 import { useProvisioningLicenses } from './use-provisioning-licenses';
 import type { JetpackLicense } from '@automattic/api-core';
 
@@ -26,6 +28,7 @@ export default function MarketplacePurchases() {
 	const canRevoke = hasAnyCapability( agency?.user?.capabilities ?? [], 'a4a_revoke_licenses' );
 	const isAgencyOwner = agency?.user?.role === OWNER_ROLE;
 	const currentSearchParams = marketplacePurchasesRoute.useSearch();
+	useCheckoutReturn();
 
 	const { view, updateView, resetView } = usePersistentView( {
 		slug: 'marketplace-purchases',
@@ -44,7 +47,21 @@ export default function MarketplacePurchases() {
 		() => getLicenseFields( { locale, isAgencyOwner, provisioningLicenseKeys } ),
 		[ locale, isAgencyOwner, provisioningLicenseKeys ]
 	);
-	const actions = useLicenseActions( { agencyId, canRevoke, isAgencyOwner, isProvisioning } );
+	const [ isFeedbackOpen, setIsFeedbackOpen ] = useState( false );
+	const { shouldAsk } = useMilestoneFeedback( 'purchase-completed' );
+	// Memoised: useLicenseActions keys its actions off this callback's identity.
+	const onLicenseAssigned = useCallback( () => {
+		if ( shouldAsk ) {
+			setIsFeedbackOpen( true );
+		}
+	}, [ shouldAsk ] );
+	const actions = useLicenseActions( {
+		agencyId,
+		canRevoke,
+		isAgencyOwner,
+		isProvisioning,
+		onLicenseAssigned,
+	} );
 
 	const paginationInfo = {
 		totalItems: data?.total_items ?? 0,
@@ -105,6 +122,12 @@ export default function MarketplacePurchases() {
 					}
 				/>
 			</DataViewsCard>
+			{ isFeedbackOpen && (
+				<MilestoneFeedbackModal
+					type="purchase-completed"
+					onClose={ () => setIsFeedbackOpen( false ) }
+				/>
+			) }
 		</PageLayout>
 	);
 }

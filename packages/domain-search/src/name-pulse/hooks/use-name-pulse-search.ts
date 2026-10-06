@@ -9,6 +9,7 @@ import {
 	filterNamePulseSuggestions,
 	generateExactMatches,
 	getAiTopResults,
+	getNamePulseExactMatch,
 	getNamePulseNotice,
 	getResultsLayout,
 	getTopResults,
@@ -143,6 +144,7 @@ export const useNamePulseSearch = ( query: string ) => {
 		return { ...typed, exactGrid: { show: typed.top.show && ! isAiMode } };
 	}, [ query, tlds, isAiMode ] );
 	const { baseName, wordCount } = layout;
+	const isBareWord = layout.mode === 'single';
 	const showExactGrid = layout.exactGrid.show;
 	const initialCheckCount =
 		wordCount > 1 ? NAME_PULSE_INITIAL_CHECK_MULTI_WORD : NAME_PULSE_INITIAL_CHECK_SINGLE_WORD;
@@ -160,8 +162,10 @@ export const useNamePulseSearch = ( query: string ) => {
 
 	const exactRows = useMemo(
 		() =>
-			showExactGrid && gridTlds ? generateExactMatches( baseName, gridTlds ) : EMPTY_RESULTS,
-		[ showExactGrid, baseName, gridTlds ]
+			showExactGrid && gridTlds
+				? generateExactMatches( baseName, gridTlds, { promoteMatchedTld: isBareWord } )
+				: EMPTY_RESULTS,
+		[ showExactGrid, baseName, gridTlds, isBareWord ]
 	);
 
 	// Names asked for beyond the initial slice ("Show more", top-results
@@ -188,25 +192,28 @@ export const useNamePulseSearch = ( query: string ) => {
 	// The bulk check is zone-file based: it says a domain is taken, not why.
 	// Both wait for the query to settle, so half-typed input is not checked or flagged.
 	const typedDomain = isSettled ? ( layout.fqdn?.fullDomain ?? '' ) : '';
-	const { data: typedDomainAvailability, isPending: isCheckingTypedDomain } = useQuery( {
+	const { data: typedDomainAvailability, isError: isTypedDomainError } = useQuery( {
 		...queries.domainAvailability( typedDomain ),
 		enabled: Boolean( typedDomain ),
 	} );
 
-	// Its row waits on that verdict rather than quoting a bulk price and a cart
-	// button the notice is about to contradict.
-	const uncheckedTypedDomain = isCheckingTypedDomain ? typedDomain : '';
+	// The typed domain leaves the grid for its own card while it is checked, so
+	// neither its row nor Top results quote a bulk price and a cart button the
+	// notice may be about to contradict. A taken name comes back to the grid.
+	const exactMatch = useMemo(
+		() => getNamePulseExactMatch( layout.fqdn, typedDomainAvailability, isTypedDomainError ),
+		[ layout.fqdn, typedDomainAvailability, isTypedDomainError ]
+	);
+	const exactMatchName = exactMatch?.domainName;
 
 	// UNKNOWN rows (batch failed or timed out) stay in the grid so the rows
 	// behind them do not slide into view unchecked.
 	const rawExactList = useMemo(
 		() =>
-			exactRows.map( ( row ) =>
-				row.domain_name === uncheckedTypedDomain
-					? { ...row, status: NamePulseDomainStatus.WAITING }
-					: applyNamePulseVerdict( row, exactVerdicts[ row.domain_name ] )
-			),
-		[ exactRows, exactVerdicts, uncheckedTypedDomain ]
+			exactRows
+				.filter( ( row ) => row.domain_name !== exactMatchName )
+				.map( ( row ) => applyNamePulseVerdict( row, exactVerdicts[ row.domain_name ] ) ),
+		[ exactRows, exactVerdicts, exactMatchName ]
 	);
 
 	const { results: rawKeywordResults, isLoading: isLoadingKeyword } = useNamePulseSuggestions( {
@@ -289,6 +296,61 @@ export const useNamePulseSearch = ( query: string ) => {
 		[ rawCreativeResults, topResults, exactList, keywordResults ]
 	);
 
+	// Anchors wait for every verdict they depend on, so an answer arriving late
+	// cannot slot in ahead of the bundle already shown.
+	const readyAnchors = useMemo( () => {
+		const isWaiting = ( result: NamePulseDomainResult ) =>
+			result.status === NamePulseDomainStatus.WAITING;
+
+		if (
+			! isSettled ||
+			isLoadingTop ||
+			( exactMatch && ! exactMatch.availability ) ||
+			topResults.some( isWaiting )
+		) {
+			return null;
+		}
+
+		return [
+			...( exactMatch?.availability ? [ exactMatch.domainName ] : [] ),
+			...topResults
+				.filter( ( result ) => result.status === NamePulseDomainStatus.AVAILABLE )
+				.map( ( result ) => result.domain_name ),
+		];
+	}, [ isSettled, isLoadingTop, exactMatch, topResults ] );
+
+	// Once known, the anchors hold for the rest of the search: a Top result that
+	// later leaves for an unchecked one must not take the bundle down with it.
+	// Only a name found taken since then is dropped.
+	const [ keptAnchors, setKeptAnchors ] = useState< { query: string; names: string[] } | null >(
+		null
+	);
+
+	if ( readyAnchors && keptAnchors?.query !== settledQuery ) {
+		setKeptAnchors( { query: settledQuery, names: readyAnchors } );
+	}
+
+	const bundleAnchors = useMemo( () => {
+		if ( ! isSettled || keptAnchors?.query !== settledQuery ) {
+			return null;
+		}
+
+		const taken = new Set(
+			[ ...rawExactList, ...rawKeywordResults, ...rawCreativeResults ]
+				.filter( ( result ) => result.status === NamePulseDomainStatus.TAKEN )
+				.map( ( result ) => result.domain_name )
+		);
+
+		return keptAnchors.names.filter( ( name ) => ! taken.has( name ) );
+	}, [
+		isSettled,
+		keptAnchors,
+		settledQuery,
+		rawExactList,
+		rawKeywordResults,
+		rawCreativeResults,
+	] );
+
 	const revealExact = useCallback(
 		( rows: NamePulseDomainResult[] ) => requestNames( rows.map( ( row ) => row.domain_name ) ),
 		[ requestNames ]
@@ -297,6 +359,8 @@ export const useNamePulseSearch = ( query: string ) => {
 	return {
 		layout,
 		notice,
+		exactMatch,
+		bundleAnchors,
 		exactList,
 		keywordResults,
 		creativeResults,
