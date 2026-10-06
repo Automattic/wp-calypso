@@ -28,6 +28,19 @@ beforeEach( () => {
 
 const LONG_DOMAIN = 'icecreamshopnearsuratairport.boutique';
 
+const mockLabelLayout = ( labelWidth: number ) => {
+	jest
+		.spyOn( Element.prototype, 'getBoundingClientRect' )
+		.mockReturnValue( { width: labelWidth, right: 0 } as DOMRect );
+	jest.spyOn( HTMLCanvasElement.prototype, 'getContext' ).mockReturnValue( {
+		measureText: ( text: string ) => ( { width: text.length * 10 } ),
+	} as unknown as CanvasRenderingContext2D );
+};
+
+afterEach( () => {
+	jest.restoreAllMocks();
+} );
+
 const buildResult = ( overrides: Partial< NamePulseDomainResult > ): NamePulseDomainResult => ( {
 	domain_name: 'icecream.net',
 	suffix: 'net',
@@ -115,14 +128,25 @@ describe( 'NamePulseResultRow', () => {
 		expect( screen.getByRole( 'img', { name: 'Checking…' } ) ).toBeInTheDocument();
 	} );
 
-	it( 'truncates a long name on desktop', () => {
+	it( 'truncates a long name on desktop to the space it has', () => {
+		// 100px at 10px per character fits 4 + "…" + 4.
+		mockLabelLayout( 100 );
+
 		const { container } = renderRow(
 			buildResult( { domain_name: LONG_DOMAIN, suffix: 'boutique' } )
 		);
 
 		expect( container.querySelector( '.name-pulse-row__domain--wrap' ) ).not.toBeInTheDocument();
-		expect( screen.queryByText( 'icecreamshopnearsuratairport' ) ).not.toBeInTheDocument();
+		expect( screen.getByText( 'icec…port' ) ).toBeInTheDocument();
 		expect( screen.getByText( '.boutique' ) ).toBeInTheDocument();
+	} );
+
+	it( 'shows the full long name on desktop when it fits', () => {
+		mockLabelLayout( 1000 );
+
+		renderRow( buildResult( { domain_name: LONG_DOMAIN, suffix: 'boutique' } ) );
+
+		expect( screen.getByText( 'icecreamshopnearsuratairport' ) ).toBeInTheDocument();
 	} );
 
 	it( 'shows the full long name below desktop', () => {
