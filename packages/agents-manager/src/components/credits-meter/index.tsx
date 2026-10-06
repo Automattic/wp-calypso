@@ -22,7 +22,7 @@ interface Props {
 	onAction?: () => void;
 	/** Plans page for a live balance with a supported upgradeable tier. */
 	upgradeUrl?: string;
-	/** Shown instead of a CTA to people who can't buy for the site. */
+	/** Shown instead of a CTA to people who can't upgrade the site themselves. */
 	purchaseHint?: string;
 	/** Full balance and purchases page, when available. */
 	manageUrl?: string;

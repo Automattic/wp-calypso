@@ -90,12 +90,18 @@ const exhausted = ( blocked = false ) =>
 const receive = ( snapshot: unknown, state: 'completed' | 'failed' | 'canceled' = 'completed' ) =>
 	act( async () => mockConfig.onTaskUpdate?.( terminal( snapshot, state ) ) );
 const fetchMock = jest.fn();
-// `null` leaves `can_purchase` out, as an older server does.
-const response = ( snapshot: unknown, canPurchase: boolean | null = true ) => ( {
+// `null` leaves a field out, as an older server does; the server itself sends
+// `can_upgrade: null` when it can't tell who bought the plan.
+const response = (
+	snapshot: unknown,
+	canBuyCredits: boolean | null = true,
+	canUpgrade: boolean | null = canBuyCredits
+) => ( {
 	ok: true,
 	json: async () => ( {
 		ai_credits: snapshot,
-		...( canPurchase === null ? {} : { can_purchase: canPurchase } ),
+		...( canBuyCredits === null ? {} : { can_buy_credits: canBuyCredits } ),
+		...( canUpgrade === null ? {} : { can_upgrade: canUpgrade } ),
 	} ),
 } );
 
@@ -201,6 +207,45 @@ describe( 'purchase access', () => {
 		expect( result.current.notice?.dismissible ).toBe( true );
 	} );
 
+	it( 'points an admin who didn’t buy the plan to its purchaser, with no link', async () => {
+		fetchMock.mockResolvedValueOnce(
+			response( { ...exhausted(), plan_tier: 'personal' }, true, false )
+		);
+		const { result } = renderCredits();
+		await flush();
+		expect( props( result.current ).status.remaining ).toBe( 0 );
+		expect( props( result.current ).upgradeUrl ).toBeUndefined();
+		expect( purchaseHint( result.current ) ).toBe(
+			'Ask the account that bought this plan to upgrade.'
+		);
+		expect( result.current.notice?.message ).toBe(
+			'You’ve used all your site credits. Ask the account that bought this plan to upgrade.'
+		);
+		expect( result.current.notice?.action ).toBeUndefined();
+	} );
+
+	it( 'keeps the low-balance notice for an admin who didn’t buy the plan, without a link', async () => {
+		fetchMock.mockResolvedValueOnce(
+			response(
+				creditSnapshot( {
+					credits_limit: 10000,
+					credits_remaining: 1999,
+					credits_used: 8001,
+					plan_tier: 'personal',
+				} ),
+				true,
+				false
+			)
+		);
+		const { result } = renderCredits();
+		await flush();
+		expect( result.current.notice?.message ).toBe(
+			'19% of site credits left. Ask the account that bought this plan to upgrade.'
+		);
+		expect( result.current.notice?.action ).toBeUndefined();
+		expect( result.current.notice?.dismissible ).toBe( true );
+	} );
+
 	it( 'offers neither a link nor guidance when the server doesn’t say', async () => {
 		fetchMock.mockResolvedValueOnce( response( { ...exhausted(), plan_tier: 'personal' }, null ) );
 		const { result } = renderCredits();
@@ -210,6 +255,32 @@ describe( 'purchase access', () => {
 		expect( result.current.notice?.message ).toBe( 'You’ve used all your site credits.' );
 		expect( result.current.notice?.action ).toBeUndefined();
 	} );
+
+	it.each( [
+		[ 'omits', response( { ...exhausted(), plan_tier: 'personal' }, true, null ) ],
+		[
+			'nulls',
+			{
+				ok: true,
+				json: async () => ( {
+					ai_credits: { ...exhausted(), plan_tier: 'personal' },
+					can_buy_credits: true,
+					can_upgrade: null,
+				} ),
+			},
+		],
+	] )(
+		'offers an admin neither a link nor guidance when the server %s who bought the plan',
+		async ( _case, read ) => {
+			fetchMock.mockResolvedValueOnce( read );
+			const { result } = renderCredits();
+			await flush();
+			expect( props( result.current ).upgradeUrl ).toBeUndefined();
+			expect( purchaseHint( result.current ) ).toBeUndefined();
+			expect( result.current.notice?.message ).toBe( 'You’ve used all your site credits.' );
+			expect( result.current.notice?.action ).toBeUndefined();
+		}
+	);
 
 	it( 'keeps the balance read’s answer through terminal updates', async () => {
 		fetchMock.mockResolvedValueOnce(
