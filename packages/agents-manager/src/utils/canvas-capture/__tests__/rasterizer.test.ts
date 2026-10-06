@@ -1,10 +1,11 @@
 import {
 	buildSvg,
 	clearFontCache,
+	clusterSpans,
 	collectStyleText,
-	editOutgrowsViewport,
 	getBands,
 	getCaptureRect,
+	getCaptureRects,
 	getInkSpans,
 	getUsedFontFamilies,
 	inlineFonts,
@@ -133,35 +134,114 @@ describe( 'getCaptureRect', () => {
 	} );
 } );
 
-describe( 'editOutgrowsViewport', () => {
-	const canvasWindow = asWindow( { scrollY: 0, innerWidth: 981, innerHeight: 1000 } );
+describe( 'clusterSpans', () => {
+	it.each( [
+		[
+			'keeps blocks that fit a screenful together',
+			[
+				{ top: 100, bottom: 200 },
+				{ top: 400, bottom: 600 },
+			],
+			[ { top: 100, bottom: 600, count: 2 } ],
+		],
+		[
+			// Forcing these into one frame means scaling the page until neither
+			// is readable, which is what separate pictures exist to avoid.
+			'splits blocks that do not',
+			[
+				{ top: 100, bottom: 200 },
+				{ top: 4000, bottom: 4200 },
+			],
+			[
+				{ top: 100, bottom: 200, count: 1 },
+				{ top: 4000, bottom: 4200, count: 1 },
+			],
+		],
+		[
+			'groups from the top regardless of the order given',
+			[
+				{ top: 4000, bottom: 4200 },
+				{ top: 100, bottom: 200 },
+				{ top: 300, bottom: 400 },
+			],
+			[
+				{ top: 100, bottom: 400, count: 2 },
+				{ top: 4000, bottom: 4200, count: 1 },
+			],
+		],
+		[ 'has no groups for no spans', [], [] ],
+	] )( '%s', ( _name, spans, expected ) => {
+		expect( clusterSpans( spans, 1000 ) ).toEqual( expected );
+	} );
+} );
 
-	it( 'is true when the edited blocks reach past a screenful', () => {
-		// Recolouring every heading leaves blocks from top to bottom. One band
-		// centred on their midpoint frames the middle of the document and leaves
-		// the other forty changes unseen.
-		const canvasDocument = asDocument(
-			canvasWith( {
-				first: box( { left: 0, top: 100, width: 900, height: 50 } ),
-				last: box( { left: 0, top: 4000, width: 900, height: 50 } ),
-			} )
-		);
-
-		expect( editOutgrowsViewport( canvasDocument, canvasWindow, [ 'first', 'last' ] ) ).toBe(
-			true
-		);
+describe( 'getCaptureRects', () => {
+	const setup = ( boxesByClientId: Boxes, { documentHeight = 6000 } = {} ) => ( {
+		canvasDocument: asDocument( {
+			...canvasWith( boxesByClientId ),
+			documentElement: { scrollWidth: 981, scrollHeight: documentHeight },
+			body: { scrollWidth: 981, scrollHeight: documentHeight },
+		} ),
+		canvasWindow: asWindow( { scrollX: 0, scrollY: 0, innerWidth: 981, innerHeight: 1000 } ),
 	} );
 
-	it.each( [
-		[ 'an edit that fits in one', [ 'only' ] ],
-		[ 'a block that did not resolve', [ 'gone' ] ],
-		[ 'no blocks', [] ],
-	] )( 'is false for %s', ( _name, clientIds ) => {
-		const canvasDocument = asDocument(
-			canvasWith( { only: box( { left: 0, top: 300, width: 900, height: 200 } ) } )
-		);
+	it( 'gives one band to blocks that sit together', () => {
+		const { canvasDocument, canvasWindow } = setup( {
+			a: box( { left: 0, top: 1000, width: 900, height: 100 } ),
+			b: box( { left: 0, top: 1300, width: 900, height: 100 } ),
+		} );
 
-		expect( editOutgrowsViewport( canvasDocument, canvasWindow, clientIds ) ).toBe( false );
+		expect( getCaptureRects( canvasDocument, canvasWindow, [ 'a', 'b' ] ) ).toEqual( [
+			{ x: 0, y: 700, width: 981, height: 1000, framed: 2 },
+		] );
+	} );
+
+	it( 'gives a band each to areas far apart, top to bottom', () => {
+		// The comparison case: the edited section and the section it is being
+		// matched to, each at native scale rather than one scaled-down sheet.
+		const { canvasDocument, canvasWindow } = setup( {
+			edited: box( { left: 0, top: 500, width: 900, height: 200 } ),
+			reference: box( { left: 0, top: 4000, width: 900, height: 200 } ),
+		} );
+
+		const rects = getCaptureRects( canvasDocument, canvasWindow, [ 'reference', 'edited' ] );
+
+		expect( rects ).toHaveLength( 2 );
+		expect( rects?.map( ( rect ) => rect.y ) ).toEqual( [ 100, 3600 ] );
+		expect( rects?.every( ( rect ) => rect.framed === 1 ) ).toBe( true );
+	} );
+
+	it( 'falls back to the whole page past the cap', () => {
+		// Recolouring every heading lands in a dozen places. A dozen pictures
+		// is not a better answer than one overview.
+		const { canvasDocument, canvasWindow } = setup( {
+			a: box( { left: 0, top: 0, width: 900, height: 50 } ),
+			b: box( { left: 0, top: 1500, width: 900, height: 50 } ),
+			c: box( { left: 0, top: 3000, width: 900, height: 50 } ),
+			d: box( { left: 0, top: 4500, width: 900, height: 50 } ),
+			e: box( { left: 0, top: 6000, width: 900, height: 50 } ),
+		} );
+
+		expect(
+			getCaptureRects( canvasDocument, canvasWindow, [ 'a', 'b', 'c', 'd', 'e' ] )
+		).toBeNull();
+	} );
+
+	it( 'falls back to the whole page for a block taller than a screenful', () => {
+		// A band would show its middle and silently drop the rest.
+		const { canvasDocument, canvasWindow } = setup( {
+			hero: box( { left: 0, top: 200, width: 900, height: 2500 } ),
+		} );
+
+		expect( getCaptureRects( canvasDocument, canvasWindow, [ 'hero' ] ) ).toBeNull();
+	} );
+
+	it( 'falls back to the viewport when nothing resolved', () => {
+		const { canvasDocument, canvasWindow } = setup( {} );
+
+		expect( getCaptureRects( canvasDocument, canvasWindow, [ 'gone' ] ) ).toEqual( [
+			{ x: 0, y: 0, width: 981, height: 1000, framed: 0 },
+		] );
 	} );
 } );
 

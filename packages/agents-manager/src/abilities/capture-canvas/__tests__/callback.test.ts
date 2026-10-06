@@ -1,7 +1,13 @@
 jest.mock( '../../../utils/block-ids', () => ( {
 	resolveClientId: jest.fn( ( id: string ) => `resolved-${ id }` ),
 } ) );
-jest.mock( '../../../utils/canvas-capture', () => ( { captureCanvas: jest.fn() } ) );
+// Only the capture itself is stubbed. `describeCaptureShape` is a pure
+// function of the files that came back, so the real sentences are under test
+// rather than a second copy of them written into a mock.
+jest.mock( '../../../utils/canvas-capture', () => ( {
+	...jest.requireActual( '../../../utils/canvas-capture' ),
+	captureCanvas: jest.fn(),
+} ) );
 
 import { captureCanvas } from '../../../utils/canvas-capture';
 import { captureCanvasCallback } from '../callback';

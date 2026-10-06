@@ -33,6 +33,7 @@ import { getVisibilityLabels } from '../../utils/site-visibility';
 import { canManageSite } from '../features';
 import { useAiLaunchpad } from '../hooks/use-ai-launchpad';
 import SitePreview from '../site-preview';
+import { PlanAwaitingCheckout, useSiteAwaitingCheckout } from './plan-awaiting-checkout';
 import { PlanExpiryStatus } from './plan-expiry-status';
 import { useIsSiteUnreachable } from './site-unreachable-status';
 import type { SiteBadge, SiteBlockingStatus, SiteVisibility } from '../../types';
@@ -428,6 +429,8 @@ export function Plan( {
 	isJetpack: boolean;
 	value: string;
 } ) {
+	const awaitingCheckout = useSiteAwaitingCheckout( site );
+
 	if ( isSelfHostedJetpackConnected ) {
 		if ( ! isJetpack ) {
 			return <IneligibleIndicator />;
@@ -437,8 +440,15 @@ export function Plan( {
 
 	return (
 		<VStack spacing={ 1 }>
-			<span>{ value }</span>
-			<PlanExpiryStatus site={ site } />
+			{ /* The same span either way, with only its text changing: the answer arrives after
+			     first paint, and swapping elements across that boundary crashes under Google
+			     Translate (react/react#11538). */ }
+			<span>{ awaitingCheckout ? __( 'Awaiting checkout' ) : value }</span>
+			{ awaitingCheckout ? (
+				<PlanAwaitingCheckout pending={ awaitingCheckout } />
+			) : (
+				<PlanExpiryStatus site={ site } />
+			) }
 		</VStack>
 	);
 }

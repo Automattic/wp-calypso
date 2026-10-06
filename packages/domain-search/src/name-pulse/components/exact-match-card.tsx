@@ -87,13 +87,15 @@ export const NamePulseExactMatchCard = ( {
 	if ( inCart ) {
 		cta = <DomainSuggestionContinueCTA disabled={ isMutating } onClick={ events.onContinue } />;
 	} else if ( error ) {
-		cta = <DomainSuggestionErrorCTA errorMessage={ error.message } callback={ toggleCart } />;
+		cta = (
+			<DomainSuggestionErrorCTA errorMessage={ error.message } callback={ () => toggleCart() } />
+		);
 	} else {
 		cta = (
 			<DomainSuggestionPrimaryCTA
 				disabled={ isMutating }
 				isBusy={ isPending }
-				onClick={ toggleCart }
+				onClick={ () => toggleCart() }
 			/>
 		);
 	}

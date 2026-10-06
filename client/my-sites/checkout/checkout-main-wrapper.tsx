@@ -1,10 +1,10 @@
+import { fetchStripeConfiguration } from '@automattic/api-core';
 import config from '@automattic/calypso-config';
 import { StripeHookProvider } from '@automattic/calypso-stripe';
 import { CheckoutErrorBoundary } from '@automattic/composite-checkout';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import { logToLogstash } from 'calypso/lib/logstash';
-import { getStripeConfiguration } from 'calypso/lib/store-transactions';
 import Recaptcha from 'calypso/signup/recaptcha';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
@@ -110,7 +110,7 @@ export default function CheckoutMainWrapper( {
 				<CheckoutQueryClientProvider>
 					<CalypsoShoppingCartProvider shouldShowPersistentErrors>
 						<StripeHookProvider
-							fetchStripeConfiguration={ getStripeConfiguration }
+							fetchStripeConfiguration={ fetchStripeConfiguration }
 							locale={ locale }
 						>
 							<CheckoutMain
