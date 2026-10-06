@@ -9,6 +9,8 @@ import type { CanvasCaptureOptions, FilePart } from './capture';
 
 export type { CanvasCaptureOptions, FilePart };
 export { describeCaptureShape, getUnframedClientIds } from './framing';
+export { describeMeasuredLayout, describeUnmoved, snapshotLayout } from './measurements';
+export type { LayoutSnapshot } from './measurements';
 
 type CaptureModule = typeof import( './capture' );
 
