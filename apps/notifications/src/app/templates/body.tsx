@@ -167,9 +167,9 @@ export const NoteBody = ( { note }: { note: Note } ) => {
 	// Content images arrive as markup, so React can't catch one that fails to load (a
 	// blocked or cross-origin source). Swap it for a placeholder rather than leave the
 	// browser's broken icon. `error` doesn't bubble, so listen in the capture phase.
-	const bodyRef = useRef< HTMLDivElement >( null );
+	const contentRef = useRef< HTMLDivElement >( null );
 	useEffect( () => {
-		const element = bodyRef.current;
+		const element = contentRef.current;
 		if ( ! element ) {
 			return;
 		}
@@ -196,14 +196,16 @@ export const NoteBody = ( { note }: { note: Note } ) => {
 	}, [ note ] );
 
 	return (
-		<VStack className="wpnc__body" ref={ bodyRef }>
+		<VStack className="wpnc__body">
 			{ preface }
 			{ showPendingApprovalBadge && (
 				<div className="wpnc__pending-approval-section">
 					<PendingApprovalStrip note={ note } />
 				</div>
 			) }
-			<div className="wpnc__body-content">{ body }</div>
+			<div className="wpnc__body-content" ref={ contentRef }>
+				{ body }
+			</div>
 			<ReplyBlock note={ note } />
 		</VStack>
 	);
