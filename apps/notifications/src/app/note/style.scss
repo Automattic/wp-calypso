@@ -8,7 +8,9 @@
 	padding: 0;
 	margin: 0;
 	line-height: 20px;
-	text-wrap: balance;
+	// Balancing evens out line lengths by breaking early, which leaves paragraphs
+	// ragged; it is kept for headings only.
+	text-wrap: pretty;
 	// Break long unbroken strings (e.g. URLs) so they wrap instead of
 	// overflowing horizontally, which is especially visible on mobile.
 	overflow-wrap: break-word;
@@ -29,22 +31,22 @@
 		text-align: justify;
 	}
 
-	.wpnc__h1 {
-		font-size: $font-size-2x-large;
-		font-weight: 850; /* stylelint-disable-line scales/font-weights */
-		line-height: 1.4;
+	// Headings sit beside 13px text in a narrow panel, so they mark sections rather
+	// than title a page: close to body size, with room above to separate them.
+	:is(h1, h2, h3, h4, h5, h6, .wpnc__h1, .wpnc__h2, .wpnc__h3) {
+		margin: $grid-unit-10 0 $grid-unit-05;
+		font-size: $font-size-large;
+		font-weight: 600;
+		line-height: 20px;
+		text-wrap: balance;
+
+		&:first-child {
+			margin-block-start: 0;
+		}
 	}
 
-	.wpnc__h2 {
-		font-size: 26px;
-		font-weight: 750; /* stylelint-disable-line scales/font-weights */
-		line-height: 1.4;
-	}
-
-	.wpnc__h3 {
-		font-size: 18px;
-		font-weight: 700;
-		line-height: 1.4;
+	:is(h3, h4, h5, h6, .wpnc__h3) {
+		font-size: $default-font-size;
 	}
 
 	.uppercase {
@@ -87,6 +89,7 @@
 		max-width: 100%;
 		height: auto;
 		margin: auto;
+		border-radius: $radius-small;
 	}
 
 	.wpnc__badge {
