@@ -905,6 +905,44 @@ describe( 'NamePulseResults', () => {
 		expect( onContinue ).toHaveBeenCalledTimes( 1 );
 	} );
 
+	it( 'confirms the special requirements of the exact-match card before adding it to the cart', async () => {
+		const user = userEvent.setup();
+		const message = '.blog domains may require identity verification by the registry.';
+		const cart = buildCart();
+
+		render(
+			<NamePulseTestSearch
+				query="icecream.blog"
+				cart={ cart }
+				domainAvailability={ async ( domainName ) =>
+					buildAvailability( {
+						domain_name: domainName,
+						tld: 'blog',
+						policy_notices: [
+							{ type: 'identity_verification', label: 'Special requirements', message },
+						],
+					} )
+				}
+			/>
+		);
+
+		const card = within( await findExactMatchCard() );
+		await user.click( card.getByRole( 'button', { name: 'Add to cart' } ) );
+
+		const dialog = await screen.findByRole( 'dialog', { name: 'Special requirements' } );
+		expect( dialog ).toHaveTextContent( message );
+		expect( cart.onAddItem ).not.toHaveBeenCalled();
+
+		await user.click( within( dialog ).getByRole( 'button', { name: 'Add to cart' } ) );
+
+		await waitFor( () =>
+			expect( cart.onAddItem ).toHaveBeenCalledWith(
+				expect.objectContaining( { domain_name: 'icecream.blog' } )
+			)
+		);
+		await waitFor( () => expect( screen.queryByRole( 'dialog' ) ).not.toBeInTheDocument() );
+	} );
+
 	describe( 'bundle card', () => {
 		it( 'is not requested when bundle suggestions are off', async () => {
 			const bundleForDomain = jest.fn( async () => null );

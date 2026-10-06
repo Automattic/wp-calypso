@@ -4,9 +4,9 @@ import { useViewportMatch } from '@wordpress/compose';
 import { sprintf } from '@wordpress/i18n';
 import { cautionFilled, cart as cartIcon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
-import { Badge, Dialog, Button as DialogButton } from '@wordpress/ui';
+import { Badge } from '@wordpress/ui';
 import clsx from 'clsx';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useDomainSearch } from '../../page/context';
 import { DomainSearchTrademarkClaimsModal } from '../../ui';
 import {
@@ -18,6 +18,7 @@ import {
 } from '../helpers';
 import { useNamePulseCartToggle } from '../hooks/use-name-pulse-cart-toggle';
 import { setNamePulseVerdict } from '../hooks/use-name-pulse-verdicts';
+import { NamePulsePolicyNoticeDialog } from './policy-notice-dialog';
 
 interface NamePulseResultRowProps {
 	result: NamePulseDomainResult;
@@ -72,20 +73,6 @@ export const NamePulseResultRow = ( { result, position }: NamePulseResultRowProp
 	// Below wide desktop the row is too narrow to truncate without losing most of
 	// the name, so the name wraps onto a second line instead.
 	const wrapName = useViewportMatch( 'large', '<' );
-	const {
-		inCart,
-		isPending,
-		error,
-		toggleCart,
-		trademarkClaimsNoticeInfo,
-		acceptTrademarkClaim,
-		closeTrademarkClaims,
-	} = useNamePulseCartToggle( result.domain_name, position );
-	const [ isPolicyNoticeOpen, setIsPolicyNoticeOpen ] = useState( false );
-	// Held from the moment the dialog opens: the real-time check that runs on
-	// confirming can update the row's notices while the dialog is still showing.
-	const [ policyNotice, setPolicyNotice ] = useState< { title: string; message: string } >();
-	const policyNoticeRef = useRef< HTMLDivElement >( null );
 
 	const { domain_name: domainName, suffix, source } = result;
 	const label = suffix ? domainName.slice( 0, -( suffix.length + 1 ) ) : domainName;
@@ -132,7 +119,19 @@ export const NamePulseResultRow = ( { result, position }: NamePulseResultRowProp
 	const showPremiumBadge = isAvailable && isPremium;
 	// TLDs with special requirements are rarely registered, so the requirements
 	// stay off the row and are confirmed in a dialog before the name goes to the cart.
-	const policyNotices = isAvailable && ! inCart ? ( row.policy_notices ?? [] ) : [];
+	const {
+		inCart,
+		isPending,
+		error,
+		toggleCart,
+		trademarkClaimsNoticeInfo,
+		acceptTrademarkClaim,
+		closeTrademarkClaims,
+		policyNotice,
+		isPolicyNoticeOpen,
+		confirmPolicyNotice,
+		closePolicyNotice,
+	} = useNamePulseCartToggle( domainName, position, row.policy_notices );
 	const labelTruncateLimit = showPremiumBadge ? 12 : 20;
 	const suffixText = (
 		<Text as="span" weight={ 600 } variant={ isUnavailable ? 'muted' : undefined }>
@@ -216,46 +215,18 @@ export const NamePulseResultRow = ( { result, position }: NamePulseResultRowProp
 						isBusy={ isPending }
 						disabled={ isPending }
 						aria-pressed={ inCart }
-						onClick={ () => {
-							if ( policyNotices.length === 0 ) {
-								toggleCart();
-								return;
-							}
-							setPolicyNotice( {
-								title: policyNotices[ 0 ].label,
-								message: policyNotices.map( ( notice ) => notice.message ).join( ' ' ),
-							} );
-							setIsPolicyNoticeOpen( true );
-						} }
+						onClick={ toggleCart }
 					/>
 				) }
 			</span>
 			{ policyNotice && (
-				<Dialog.Root
+				<NamePulsePolicyNoticeDialog
+					notice={ policyNotice }
 					open={ isPolicyNoticeOpen }
-					onOpenChange={ ( open ) => ! isPending && setIsPolicyNoticeOpen( open ) }
-				>
-					<Dialog.Popup size="small" ref={ policyNoticeRef } initialFocus={ policyNoticeRef }>
-						<Dialog.Header>
-							<Dialog.Title>{ policyNotice.title }</Dialog.Title>
-							<Dialog.CloseIcon />
-						</Dialog.Header>
-						<Dialog.Content>
-							<Dialog.Description>{ policyNotice.message }</Dialog.Description>
-						</Dialog.Content>
-						<Dialog.Footer>
-							<Dialog.Action variant="minimal" disabled={ isPending }>
-								{ __( 'Cancel' ) }
-							</Dialog.Action>
-							<DialogButton
-								loading={ isPending }
-								onClick={ () => toggleCart( { onSettled: () => setIsPolicyNoticeOpen( false ) } ) }
-							>
-								{ __( 'Add to cart' ) }
-							</DialogButton>
-						</Dialog.Footer>
-					</Dialog.Popup>
-				</Dialog.Root>
+					isPending={ isPending }
+					onConfirm={ confirmPolicyNotice }
+					onClose={ closePolicyNotice }
+				/>
 			) }
 			{ trademarkClaimsNoticeInfo && (
 				<DomainSearchTrademarkClaimsModal
