@@ -173,18 +173,21 @@ export function DateRangeContent( props: DateRangeContentProps ) {
 
 	const endMonth = makeTZMonthFromDate( siteMonthStart );
 
-	// Drafts, `today` and `disabledBefore` hold site days as browser-local midnights, but the
-	// calendar compares days in `timeZoneForCalendar`, so convert at the boundary both ways.
+	// Use TZDate for calendar selection when a valid IANA time zone is available
+	const value =
+		timeZoneForCalendar && ( fromDraft || toDraft )
+			? {
+					from: fromDraft ? new TZDate( +fromDraft, timeZoneForCalendar ) : undefined,
+					to: toDraft ? new TZDate( +toDraft, timeZoneForCalendar ) : undefined,
+				}
+			: { from: fromDraft ?? undefined, to: toDraft ?? undefined };
+
+	// `today` and `disabledBefore` are site days held as browser-local midnights, but the calendar
+	// matches days in `timeZoneForCalendar`, so rebuild them as that day's midnight in the site zone.
 	const toCalendarDay = ( d: Date ) =>
 		timeZoneForCalendar
 			? new TZDate( d.getFullYear(), d.getMonth(), d.getDate(), timeZoneForCalendar )
 			: d;
-	const toSiteDay = ( d: Date ) => new Date( d.getFullYear(), d.getMonth(), d.getDate() );
-
-	const value = {
-		from: fromDraft ? toCalendarDay( fromDraft ) : undefined,
-		to: toDraft ? toCalendarDay( toDraft ) : undefined,
-	};
 
 	const disabledMatcher = ( () => {
 		const matchers: Array< { after: Date } | { before: Date } > = [];
@@ -341,12 +344,12 @@ export function DateRangeContent( props: DateRangeContentProps ) {
 						value={ value }
 						onValueChange={ ( range ) => {
 							// A click after a complete range starts a new one with no end, so `to` must be cleared too.
-							const from = range?.from ? toSiteDay( range.from ) : undefined;
-							const to = range?.to ? toSiteDay( range.to ) : undefined;
+							const from = range?.from ? new Date( range.from.getTime() ) : undefined;
+							const to = range?.to ? new Date( range.to.getTime() ) : undefined;
 							setFromDraft( from );
 							setToDraft( to );
-							setFromStr( from ? formatSiteYmd( from ) : '' );
-							setToStr( to ? formatSiteYmd( to ) : '' );
+							setFromStr( from ? formatYmd( from, timezoneString, gmtOffset ) : '' );
+							setToStr( to ? formatYmd( to, timezoneString, gmtOffset ) : '' );
 							setIsTyping( false );
 						} }
 					/>

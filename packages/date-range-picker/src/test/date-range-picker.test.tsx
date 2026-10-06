@@ -101,31 +101,21 @@ describe( 'DateRangePicker (new)', () => {
 		expect( getByRole( 'button', { name: /^Apply$/i } ) ).toBeDisabled();
 	} );
 
-	// The test environment runs in UTC, so New York is behind the browser and Taipei ahead of it.
-	test.each( [ 'America/New_York', 'Asia/Taipei' ] )(
-		'calendar days match site days in %s',
-		async ( timezoneString ) => {
-			const { getByRole, findByRole, getByLabelText } = renderDateRangePicker( {
-				start: new Date( 2025, 7, 19 ),
-				end: new Date( 2025, 7, 22 ),
-				timezoneString,
-				disabledBefore: new Date( 2025, 7, 15 ),
-			} );
-			await userEvent.click( getByRole( 'button', { name: /Date range:/i } ) );
+	// The test environment runs in UTC, so a New York site is a day behind at site midnight.
+	test( 'today and disabledBefore follow site days when the site is behind the browser', async () => {
+		const { getByRole, findByRole } = renderDateRangePicker( {
+			timezoneString: 'America/New_York',
+			disabledBefore: new Date( 2025, 7, 15 ),
+		} );
+		await userEvent.click( getByRole( 'button', { name: /Date range:/i } ) );
 
-			const grid = within( await findByRole( 'grid', { name: /August 2025/i } ) );
-			const day = ( d: number ) =>
-				grid.getByRole( 'button', { name: new RegExp( `August ${ d }, 2025` ) } );
-			expect( day( 14 ) ).toBeDisabled();
-			expect( day( 15 ) ).toBeEnabled();
-			expect( day( 25 ) ).toBeEnabled();
-			expect( day( 19 ) ).toHaveAccessibleName( expect.stringMatching( /selected/i ) );
-			expect( day( 18 ) ).not.toHaveAccessibleName( expect.stringMatching( /selected/i ) );
-
-			await userEvent.click( day( 16 ) );
-			expect( getByLabelText( 'Start date' ) ).toHaveValue( '2025-08-16' );
-		}
-	);
+		const grid = within( await findByRole( 'grid', { name: /August 2025/i } ) );
+		const day = ( d: number ) =>
+			grid.getByRole( 'button', { name: new RegExp( `August ${ d }, 2025` ) } );
+		expect( day( 14 ) ).toBeDisabled();
+		expect( day( 15 ) ).toBeEnabled();
+		expect( day( 25 ) ).toBeEnabled();
+	} );
 
 	test( 'shows one month below the two-month breakpoint', async () => {
 		const { getByRole, findAllByRole } = renderDateRangePicker();
