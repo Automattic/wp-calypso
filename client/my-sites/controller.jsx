@@ -1022,13 +1022,21 @@ export function shouldRedirectToJetpackAuthorize( context, site ) {
  * @returns {string} redirectURL -- The redirect URL.
  */
 export function getJetpackAuthorizeURL( context, site ) {
+	const xmlrpcUrl = site?.meta?.links?.xmlrpc;
+	// Public site responses omit options, but the XML-RPC URL includes the WordPress directory.
+	const adminUrl =
+		site?.options?.admin_url ||
+		( xmlrpcUrl
+			? new URL( 'wp-admin/', xmlrpcUrl ).href
+			: trailingslashit( site?.URL ) + 'wp-admin/' );
+
 	return addQueryArgs(
 		{
 			page: 'jetpack',
 			action: 'authorize_redirect',
 			dest_url: removeQueryArgs( window.origin + context.path, 'unlinked' ),
 		},
-		trailingslashit( site?.URL ) + 'wp-admin/'
+		trailingslashit( adminUrl )
 	);
 }
 
