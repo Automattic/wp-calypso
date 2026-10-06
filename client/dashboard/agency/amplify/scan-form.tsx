@@ -5,6 +5,7 @@ import { __ } from '@wordpress/i18n';
 import { closeSmall } from '@wordpress/icons';
 import { useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
+import SiteScreenshot from './site-screenshot';
 import { normalizeAmplifyUrl } from './url';
 import type { CSSProperties } from 'react';
 
@@ -223,8 +224,13 @@ export function WebsiteAddressPicker( {
 				onMouseEnter={ () => setActiveIndex( index ) }
 				onClick={ () => chooseSite( site ) }
 			>
-				<strong>{ site.label }</strong>
-				<span className="dashboard-amplify-url">{ site.hostname }</span>
+				<span className="dashboard-amplify-scan-form__suggestion-thumbnail">
+					<SiteScreenshot url={ site.url } alt="" compact decorative />
+				</span>
+				<span className="dashboard-amplify-scan-form__suggestion-details">
+					<strong>{ site.label }</strong>
+					<span className="dashboard-amplify-url">{ site.hostname }</span>
+				</span>
 			</button>
 		) );
 	} else {
