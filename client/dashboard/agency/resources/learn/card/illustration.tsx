@@ -2,7 +2,7 @@ import { useId } from 'react';
 import type { AgencyEnablementResource, AgencyResourceContentType } from '@automattic/api-core';
 import type { ComponentType } from 'react';
 
-import './resource-illustration.scss';
+import './illustration.scss';
 
 // React's ids contain colons, which don't survive inside `url(#…)` everywhere.
 function useSvgId() {

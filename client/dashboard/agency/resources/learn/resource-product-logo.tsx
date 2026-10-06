@@ -5,7 +5,7 @@ import vipLogo from 'calypso/assets/images/a8c-for-agencies/product-wordmarks/vi
 import wooLogo from 'calypso/assets/images/a8c-for-agencies/product-wordmarks/woo.svg';
 import wordpressOrgLogo from 'calypso/assets/images/a8c-for-agencies/product-wordmarks/wordpress-org.svg';
 import wpcomLogo from 'calypso/assets/images/a8c-for-agencies/product-wordmarks/wpcom.svg';
-import { getProductLabel } from './labels';
+import { getProductLabel } from './lib/labels';
 import type { CSSProperties } from 'react';
 
 const LOGOS: Record< string, { src: string; inlineSize: number } > = {
