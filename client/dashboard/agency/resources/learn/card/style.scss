@@ -1,7 +1,6 @@
 @import '@automattic/color-studio/dist/color-variables';
 @import '@wordpress/base-styles/colors';
 @import '@wordpress/base-styles/variables';
-@import '../brands';
 
 // Display faces from the Automattic for Agencies site.
 @font-face {
@@ -115,12 +114,6 @@
 
 .dashboard-resources-learn__card-header {
 	--resource-brand: #{$studio-gray-100};
-
-	@each $product, $color in $resource-brands {
-		&[data-product='#{$product}'] {
-			--resource-brand: #{$color};
-		}
-	}
 
 	display: flex;
 	flex-direction: column;

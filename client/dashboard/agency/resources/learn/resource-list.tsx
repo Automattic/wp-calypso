@@ -4,8 +4,6 @@ import ResourceProductLogo from './resource-product-logo';
 import type { OpenResource } from './types';
 import type { AgencyEnablementResource } from '@automattic/api-core';
 
-import './resource-list.scss';
-
 interface ResourceListCellProps {
 	resource: AgencyEnablementResource;
 }
