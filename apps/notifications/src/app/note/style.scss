@@ -188,7 +188,15 @@
 	ul,
 	ol {
 		margin-left: 1.5em;
+		// Paragraph spacing comes from blank lines in the note's text, and a list's
+		// closing tag can share its line with what follows, so the list carries its own.
+		margin-bottom: $grid-unit-20;
 		list-style-position: inside;
+
+		// Where a blank line does follow, it would double the gap.
+		+ br {
+			display: none;
+		}
 	}
 
 	ul {
