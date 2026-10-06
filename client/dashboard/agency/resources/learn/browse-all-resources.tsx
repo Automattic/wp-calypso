@@ -192,6 +192,7 @@ export default function BrowseAllResources( {
 						<HStack justify="flex-start" expanded={ false }>
 							<DataViews.Search />
 							<ToggleGroupControl
+								className="dashboard-resources-learn__layout-toggle"
 								label={ __( 'Layout' ) }
 								value={ view.type }
 								hideLabelFromVision

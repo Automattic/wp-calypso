@@ -61,6 +61,12 @@ $resource-brands: (
 		border-color: $gray-400;
 	}
 
+	// Match the compact search input; the control has no compact size.
+	.dashboard-resources-learn__layout-toggle,
+	.dashboard-resources-learn__stage-filter {
+		block-size: $button-size-compact;
+	}
+
 	// Only rendered while the filters are open, so the gap goes with them.
 	.dashboard-resources-learn__filters-toggled {
 		margin-block-start: $grid-unit-15;
