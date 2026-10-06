@@ -27,10 +27,12 @@ export interface DifmOfferEligibilityInput {
 	localeSlug?: string;
 	/**
 	 * An agency builds an A4A dev site for a client, so the offer does not apply. Only an
-	 * explicit `false` is eligible, like the other inputs. Agency-managed Atomic sites need
-	 * no check: Atomic requires a Business plan or higher, which is already ineligible.
+	 * explicit `false` is eligible. The key is required so that a caller cannot leave it out
+	 * by mistake; pass the site's value even while it is still `undefined`. Agency-managed
+	 * Atomic sites need no check: Atomic requires a Business plan or higher, which is
+	 * already ineligible.
 	 */
-	isA4ADevSite?: boolean;
+	isA4ADevSite: boolean | undefined;
 }
 
 export interface DifmOfferResult {
@@ -62,6 +64,7 @@ export function normalizeDifmOfferVariation(
 const ELIGIBLE_PLAN_SLUGS = new Set< string >( [
 	DotcomPlans.FREE_PLAN,
 	DotcomPlans.PERSONAL_MONTHLY,
+	DotcomPlans.PERSONAL_TRIAL_MONTHLY,
 	DotcomPlans.PERSONAL,
 	DotcomPlans.PERSONAL_2_YEARS,
 	DotcomPlans.PERSONAL_3_YEARS,

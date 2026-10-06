@@ -66,6 +66,15 @@ describe( 'isEligibleForDifmOffer', () => {
 		}
 	} );
 
+	it( 'accepts the Personal free trial', () => {
+		expect(
+			isEligibleForDifmOffer(
+				{ ...eligibleInput(), planSlug: DotcomPlans.PERSONAL_TRIAL_MONTHLY },
+				NOW
+			)
+		).toBe( true );
+	} );
+
 	it( 'rejects the Woo hosted free plans', () => {
 		for ( const planSlug of [
 			WooHostedPlans.WOO_HOSTED_FREE_PLAN,
