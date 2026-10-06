@@ -8,25 +8,24 @@ import {
 	trackImageStudioUpgradeNoticeShown,
 	trackImageStudioUpgradeNoticeClick,
 } from '../utils/tracking';
-import {
-	formatCreditsLeft,
-	getSiteCreditsLevel,
-	parseSiteCredits,
-	useAiCredits,
-} from './use-ai-credits';
+import { getSiteCreditsLevel, useAiCredits } from './use-ai-credits';
 import type { AuthProvider, TaskUpdate } from '@automattic/agenttic-client';
 
 jest.mock( '@wordpress/i18n', () => ( {
 	__: ( str: string ) => str,
+	_n: ( single: string, plural: string, count: number ) => ( count === 1 ? single : plural ),
 	sprintf: jest.requireActual( '@wordpress/i18n' ).sprintf,
 } ) );
 
-// The package root loads the whole chat; the ring's balance helpers are all this hook uses.
-jest.mock( '@automattic/agents-manager', () =>
-	jest.requireActual( '@automattic/agents-manager/src/utils/live-credits' )
-);
+// The package root loads the whole chat; its credits helpers are all this hook uses.
+jest.mock( '@automattic/agents-manager', () => ( {
+	...jest.requireActual( '@automattic/agents-manager/src/utils/credits' ),
+	...jest.requireActual( '@automattic/agents-manager/src/utils/live-credits' ),
+} ) );
 
 jest.mock( '../utils/tracking', () => ( {
+	getImageStudioBlogId: jest.requireActual( '../utils/tracking' ).getImageStudioBlogId,
+	getImageStudioSiteType: jest.requireActual( '../utils/tracking' ).getImageStudioSiteType,
 	trackImageStudioUpgradeNoticeShown: jest.fn(),
 	trackImageStudioUpgradeNoticeClick: jest.fn(),
 } ) );
@@ -54,15 +53,6 @@ const planSnapshot = ( remaining: number, overrides: Record< string, unknown > =
 	...overrides,
 } );
 
-const noPlanSnapshot = {
-	reason: 'wpcom_no_plan',
-	eligible: false,
-	blog_id: BLOG_ID,
-	plan_tier: 'free',
-	credits_limit: 0,
-	credits_remaining: 0,
-};
-
 const UPGRADE_URL = 'https://wordpress.com/plans/123?source=wp_ai_credits';
 const upgradeAction = { label: 'Upgrade', onClick: expect.any( Function ) };
 const meterAt = ( percent: number ) => ( {
@@ -70,62 +60,12 @@ const meterAt = ( percent: number ) => ( {
 	upgradeUrl: UPGRADE_URL,
 } );
 
-describe( 'parseSiteCredits', () => {
-	it( 'reads a paid plan balance', () => {
-		expect( parseSiteCredits( planSnapshot( 8_000 ), BLOG_ID ) ).toEqual( {
-			hasPlan: true,
-			remaining: 8_000,
-			planTier: 'premium',
-		} );
-	} );
-
-	it( 'prefers the combined balance once the endpoint sends purchased credits too', () => {
-		expect(
-			parseSiteCredits( planSnapshot( 8_000, { credits_available: 50_000 } ), BLOG_ID )
-		).toMatchObject( { remaining: 50_000 } );
-	} );
-
-	it( 'reads a plan that includes no credits', () => {
-		expect( parseSiteCredits( noPlanSnapshot, BLOG_ID ) ).toEqual( {
-			hasPlan: false,
-			remaining: 0,
-		} );
-	} );
-
-	it.each( [
-		{ name: 'a missing snapshot', value: undefined },
-		{ name: 'a snapshot for another site', value: planSnapshot( 8_000, { blog_id: 456 } ) },
-		{
-			name: 'a balance that is not a number',
-			value: planSnapshot( 8_000, { credits_remaining: '8000' } ),
-		},
-		{ name: 'an unknown reason', value: planSnapshot( 8_000, { reason: 'something_new' } ) },
-		{ name: 'a paid plan with a zero limit', value: planSnapshot( 0, { credits_limit: 0 } ) },
-	] )( 'treats $name as unknown, never as a zero balance', ( { value } ) => {
-		expect( parseSiteCredits( value, BLOG_ID ) ).toBeNull();
-	} );
-} );
-
 describe( 'getSiteCreditsLevel', () => {
 	it.each( [
-		{ name: 'none when the plan includes no credits', hasPlan: false, remaining: 0, level: 'none' },
-		{ name: 'out at zero', hasPlan: true, remaining: 0, level: 'out' },
-		{ name: 'low below 20,000', hasPlan: true, remaining: 19_999, level: 'low' },
-		{ name: 'nothing from 20,000', hasPlan: true, remaining: 20_000, level: null },
-	] )( '$name', ( { hasPlan, remaining, level } ) => {
-		expect( getSiteCreditsLevel( { hasPlan, remaining } ) ).toBe( level );
-	} );
-} );
-
-describe( 'formatCreditsLeft', () => {
-	it.each( [
-		{ remaining: 800, message: '800 credits left.' },
-		{ remaining: 1_000, message: '1k credits left.' },
-		{ remaining: 8_500, message: '8.5k credits left.' },
-		{ remaining: 19_999, message: '19.9k credits left.' },
-		{ remaining: 67_000, message: '67k credits left.' },
-	] )( 'reads $remaining as "$message"', ( { remaining, message } ) => {
-		expect( formatCreditsLeft( remaining ) ).toBe( message );
+		{ name: 'low below 20,000', remaining: 19_999, level: 'low' },
+		{ name: 'nothing from 20,000', remaining: 20_000, level: null },
+	] )( '$name', ( { remaining, level } ) => {
+		expect( getSiteCreditsLevel( remaining ) ).toBe( level );
 	} );
 } );
 
@@ -164,7 +104,7 @@ describe( 'useAiCredits', () => {
 		jest.clearAllMocks();
 		fetchMock = jest.fn();
 		window.fetch = fetchMock;
-		window.imageStudioData = { blogId: BLOG_ID };
+		window.imageStudioData = { blogId: BLOG_ID, siteType: 'simple' };
 	} );
 
 	afterEach( () => {
@@ -202,6 +142,7 @@ describe( 'useAiCredits', () => {
 					message: 'You’ve used all your site credits.',
 					status: 'warning',
 					dismissible: false,
+					onDismiss: expect.any( Function ),
 					action: upgradeAction,
 				},
 				isLimitReached: true,
@@ -237,6 +178,14 @@ describe( 'useAiCredits', () => {
 		expect( result.current.isLimitReached ).toBe( false );
 	} );
 
+	it( 'uses the singular for the last credit', async () => {
+		respondWith( { ai_credits: planSnapshot( 1 ) } );
+
+		const { result } = renderCredits();
+
+		await waitFor( () => expect( result.current.notice?.message ).toBe( '1 credit left.' ) );
+	} );
+
 	it( 'hides a dismissed low notice until the credits run out', async () => {
 		respondWith( { ai_credits: planSnapshot( 6_000 ) } );
 		const { result } = renderCredits();
@@ -254,16 +203,6 @@ describe( 'useAiCredits', () => {
 		expect( result.current.isLimitReached ).toBe( true );
 	} );
 
-	it( 'locks the input and shows no ring when the plan includes no credits', async () => {
-		respondWith( { ai_credits: noPlanSnapshot } );
-
-		const { result } = renderCredits();
-
-		await waitFor( () => expect( result.current.isLimitReached ).toBe( true ) );
-		expect( result.current.notice?.message ).toBe( 'This site’s plan doesn’t include AI credits.' );
-		expect( result.current.meter ).toBeUndefined();
-	} );
-
 	it( 'offers no upgrade on the top plan', async () => {
 		respondWith( { ai_credits: planSnapshot( 0, { plan_tier: 'commerce' } ) } );
 
@@ -274,15 +213,6 @@ describe( 'useAiCredits', () => {
 		expect( result.current.meter ).toEqual( { status: expect.anything(), upgradeUrl: undefined } );
 	} );
 
-	it( 'shows the notice but no ring when the balance doesn’t match the Agent’s shape', async () => {
-		respondWith( { ai_credits: planSnapshot( 6_000, { resets_at: 'soon' } ) } );
-
-		const { result } = renderCredits();
-
-		await waitFor( () => expect( result.current.notice ).toBeDefined() );
-		expect( result.current.meter ).toBeUndefined();
-	} );
-
 	it.each( [
 		{
 			name: 'the site is not on AI credits',
@@ -290,6 +220,23 @@ describe( 'useAiCredits', () => {
 			body: { code: 'ai_credit_allowance_not_available' },
 		},
 		{ name: 'the answer is unreadable', ok: true, body: { ai_credits: 'nope' } },
+		{
+			name: 'the balance doesn’t match the Agent’s shape',
+			ok: true,
+			body: { ai_credits: planSnapshot( 0, { resets_at: 'soon' } ) },
+		},
+		{
+			name: 'the site’s plan includes no credits',
+			ok: true,
+			body: {
+				ai_credits: planSnapshot( 0, {
+					reason: 'wpcom_no_plan',
+					eligible: false,
+					plan_tier: 'free',
+					credits_limit: 0,
+				} ),
+			},
+		},
 	] )( 'shows nothing when $name', async ( { ok, body } ) => {
 		respondWith( body, ok );
 
@@ -310,6 +257,15 @@ describe( 'useAiCredits', () => {
 		expect( stateOf( result ) ).toEqual( NOTHING );
 		expect( consoleError ).toHaveBeenCalled();
 		consoleError.mockRestore();
+	} );
+
+	it( 'does not ask on a self-hosted site, which can’t be on AI credits', () => {
+		window.imageStudioData = { blogId: BLOG_ID, siteType: 'jetpack' };
+
+		const { result } = renderCredits();
+
+		expect( fetchMock ).not.toHaveBeenCalled();
+		expect( stateOf( result ) ).toEqual( NOTHING );
 	} );
 
 	it( 'does not ask when the page names no site', () => {
@@ -366,6 +322,42 @@ describe( 'useAiCredits', () => {
 	} );
 
 	it.each( [
+		{ name: 'a running update', final: false, state: 'working' },
+		{ name: 'an update that only names a running state', final: undefined, state: 'working' },
+	] as const )( 'waits for the turn to end before using $name', async ( { final, state } ) => {
+		respondWith( { ai_credits: planSnapshot( 30_000 ) } );
+		const { result } = renderCredits();
+		await waitFor( () => expect( result.current.isLoading ).toBe( false ) );
+
+		act( () => {
+			result.current.onTaskUpdate( {
+				...finalUpdate( planSnapshot( 0 ) ),
+				final,
+				status: { state },
+			} );
+		} );
+
+		expect( result.current.isLimitReached ).toBe( false );
+		expect( result.current.meter ).toEqual( meterAt( 75 ) );
+	} );
+
+	it( 'takes the balance from a failed turn that has no final flag', async () => {
+		respondWith( { ai_credits: planSnapshot( 30_000 ) } );
+		const { result } = renderCredits();
+		await waitFor( () => expect( result.current.isLoading ).toBe( false ) );
+
+		act( () => {
+			result.current.onTaskUpdate( {
+				...finalUpdate( planSnapshot( 0 ) ),
+				final: undefined,
+				status: { state: 'failed' },
+			} );
+		} );
+
+		expect( result.current.isLimitReached ).toBe( true );
+	} );
+
+	it.each( [
 		{ name: 'carries no balance', aiCredits: undefined },
 		{ name: 'carries an unreadable balance', aiCredits: { nope: true } },
 	] )( 'keeps the last known balance when an update $name', async ( { aiCredits } ) => {
@@ -378,6 +370,27 @@ describe( 'useAiCredits', () => {
 		} );
 
 		expect( result.current.notice?.message ).toBe( '6k credits left.' );
+	} );
+
+	it( 'keeps a turn’s balance when the opening check answers after it', async () => {
+		let resolveFetch: ( value: unknown ) => void = () => {};
+		fetchMock.mockReturnValue(
+			new Promise( ( resolve ) => {
+				resolveFetch = resolve;
+			} )
+		);
+		const { result } = renderCredits();
+		await waitFor( () => expect( fetchMock ).toHaveBeenCalled() );
+
+		act( () => {
+			result.current.onTaskUpdate( finalUpdate( planSnapshot( 0 ) ) );
+		} );
+		await act( async () => {
+			resolveFetch( { ok: true, json: async () => ( { ai_credits: planSnapshot( 30_000 ) } ) } );
+		} );
+
+		expect( result.current.isLimitReached ).toBe( true );
+		expect( result.current.isLoading ).toBe( false );
 	} );
 
 	it( 'ignores a late response after the modal closed', async () => {

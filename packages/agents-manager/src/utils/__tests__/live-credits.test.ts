@@ -1,5 +1,9 @@
 import { getCreditsLabel, isCreditsExhausted } from '../credits';
-import { buildLiveCreditsStatus, parseCreditSnapshot } from '../live-credits';
+import {
+	buildLiveCreditsStatus,
+	parseCreditSnapshot,
+	parseLiveCreditsStatus,
+} from '../live-credits';
 import { creditSnapshot } from './fixtures/credit-snapshot';
 import { localNumber } from './fixtures/local-number';
 
@@ -28,6 +32,11 @@ it( 'adapts the real draft allowance to one exact paid pool with its server rese
 			},
 		],
 	} );
+} );
+it( 'gives other chats the ring status for a valid snapshot and nothing for an unknown one', () => {
+	const snapshot = creditSnapshot();
+	expect( parseLiveCreditsStatus( snapshot, 123 ) ).toEqual( buildLiveCreditsStatus( snapshot ) );
+	expect( parseLiveCreditsStatus( snapshot, 456 ) ).toBeUndefined();
 } );
 it.each( [
 	[ 'wpcom-site-monthly-v1', '2026-10-01T00:00:00Z', 'Oct 1' ],

@@ -151,6 +151,15 @@ export function getLiveCreditSiteId(
 		: undefined;
 }
 
+/** The ring's status for a valid allowance snapshot, so other chats can show the same balance. */
+export function parseLiveCreditsStatus(
+	value: unknown,
+	siteId: number
+): CreditsStatus | undefined {
+	const snapshot = parseCreditSnapshot( value, siteId );
+	return snapshot && buildLiveCreditsStatus( snapshot );
+}
+
 export function buildLiveCreditsStatus( snapshot: CreditSnapshot ): CreditsStatus {
 	const percent = ( 100 * snapshot.credits_remaining ) / snapshot.credits_limit;
 	const { top_up_credits_purchased: topUpsPurchased, top_up_credits_remaining: topUpsRemaining } =

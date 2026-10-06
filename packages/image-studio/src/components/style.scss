@@ -360,24 +360,13 @@ body.js.is-image-studio-open {
 	}
 
 	.ChatFooter-module_container {
-		padding: 4px 4px 4px 8px;
+		padding: 12px;
 		transition: margin-top 0.3s ease;
 		border-radius: var(--radius-lg, 8px);
 		z-index: 100;
 
 		&:has(.Suggestions-module_container) {
 			margin-top: 42px;
-		}
-
-		// Generate mode only: when picker toolbar is present
-		&:has(.image-studio-input-toolbar-item) {
-			padding: 12px;
-			position: relative !important;
-
-			// Make ChatInput container not use flex positioning for the button
-			.ChatInput-module_container {
-				position: static !important;
-			}
 		}
 	}
 

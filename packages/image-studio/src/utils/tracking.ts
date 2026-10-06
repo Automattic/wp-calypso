@@ -58,7 +58,7 @@ function getImageStudioWindowData(): ImageStudioTrackingData | undefined {
 	return ( window as unknown as { imageStudioData?: ImageStudioTrackingData } ).imageStudioData;
 }
 
-function getTrackingBlogId(): number | null {
+export function getImageStudioBlogId(): number | null {
 	const blogId = getImageStudioWindowData()?.blogId;
 
 	if ( typeof blogId !== 'number' && typeof blogId !== 'string' ) {
@@ -70,7 +70,7 @@ function getTrackingBlogId(): number | null {
 	return Number.isFinite( parsedBlogId ) && parsedBlogId > 0 ? parsedBlogId : null;
 }
 
-function getTrackingSiteType(): ImageStudioSiteType {
+export function getImageStudioSiteType(): ImageStudioSiteType {
 	const siteType = getImageStudioWindowData()?.siteType;
 
 	if ( SITE_TYPES.includes( siteType as ImageStudioSiteType ) ) {
@@ -110,8 +110,8 @@ function recordImageStudioEvent(
 	properties: Record< string, string | number | boolean > = {}
 ): void {
 	const entryPoint = getImageStudioEntryPoint();
-	const blogId = getTrackingBlogId();
-	const siteType = getTrackingSiteType();
+	const blogId = getImageStudioBlogId();
+	const siteType = getImageStudioSiteType();
 	const imageStudioWindowData = getImageStudioWindowData();
 	const sessionId = getSessionId();
 	const baseProps: Record< string, string | number | boolean > = {
@@ -563,19 +563,18 @@ export function trackImageStudioError( {
 /** What showed the notice: the credits check on open, a re-check after a turn, or a failed request. */
 export type UpgradeNoticeTrigger = 'open' | 'refresh' | 'error';
 
+interface UpgradeNoticeEvent {
+	mode: ImageStudioMode;
+	trigger: UpgradeNoticeTrigger;
+}
+
 /**
  * Tracks when the limit-reached upgrade notice is shown
  * @param options         - Tracking options
  * @param options.mode    - 'edit' or 'generate'
  * @param options.trigger - What showed the notice
  */
-export function trackImageStudioUpgradeNoticeShown( {
-	mode,
-	trigger,
-}: {
-	mode: ImageStudioMode;
-	trigger: UpgradeNoticeTrigger;
-} ): void {
+export function trackImageStudioUpgradeNoticeShown( { mode, trigger }: UpgradeNoticeEvent ): void {
 	recordImageStudioEvent( 'image_studio_upgrade_notice_shown', { mode, trigger } );
 }
 
@@ -587,13 +586,7 @@ export function trackImageStudioUpgradeNoticeShown( {
  * @param options.mode    - 'edit' or 'generate'
  * @param options.trigger - What showed the notice
  */
-export function trackImageStudioUpgradeNoticeClick( {
-	mode,
-	trigger,
-}: {
-	mode: ImageStudioMode;
-	trigger: UpgradeNoticeTrigger;
-} ): void {
+export function trackImageStudioUpgradeNoticeClick( { mode, trigger }: UpgradeNoticeEvent ): void {
 	recordImageStudioEvent( 'image_studio_upgrade_notice_click', { mode, trigger } );
 	recordTracksEventBase( 'jetpack_ai_upgrade_button', {
 		placement: 'image-studio-limit-notice',

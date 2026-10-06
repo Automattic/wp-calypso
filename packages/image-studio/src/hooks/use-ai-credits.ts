@@ -1,101 +1,58 @@
-import { buildLiveCreditsStatus, parseCreditSnapshot } from '@automattic/agents-manager';
-import { useEvent } from '@wordpress/compose';
-import { useEffect, useMemo, useRef, useState } from '@wordpress/element';
-import { __, sprintf } from '@wordpress/i18n';
 import {
+	CREDITS_LOW_BALANCE,
+	formatCreditsShort,
+	parseLiveCreditsStatus,
+} from '@automattic/agents-manager';
+import { useEvent } from '@wordpress/compose';
+import { useEffect, useRef, useState } from '@wordpress/element';
+import { __, _n, sprintf } from '@wordpress/i18n';
+import {
+	getImageStudioBlogId,
+	getImageStudioSiteType,
 	trackImageStudioUpgradeNoticeShown,
 	trackImageStudioUpgradeNoticeClick,
 	type UpgradeNoticeTrigger,
 } from '../utils/tracking';
 import type { ImageStudioMode } from '../types';
 import type { CreditsStatus } from '@automattic/agents-manager';
-import type { AuthProvider, TaskUpdate } from '@automattic/agenttic-client';
+import type { AuthProvider, TaskState, TaskUpdate } from '@automattic/agenttic-client';
 import type { NoticeConfig } from '@automattic/agenttic-ui';
-
-/** Balance below which the notice shows, on every paid plan. Matches the Agent's own threshold. */
-const SITE_CREDITS_LOW_BALANCE = 20_000;
 
 /** Suggestions wait on the first balance, so a slow endpoint must not hold them back. */
 const SITE_CREDITS_TIMEOUT_MS = 5000;
 
 const WPCOM_SITES_API = 'https://public-api.wordpress.com/wpcom/v2/sites';
 
+const TURN_END_STATES: TaskState[] = [ 'completed', 'failed', 'canceled' ];
+
 /** Plans with a higher plan to move to. */
 const UPGRADABLE_PLAN_TIERS = [ 'personal', 'premium', 'business' ];
 
-export interface SiteCredits {
-	/** False when the site's plan includes no AI credits. */
-	hasPlan: boolean;
-	remaining: number;
-	planTier?: string;
-}
+type PaidCreditsStatus = Extract< CreditsStatus, { plan: 'paid' } >;
 
-function isCount( value: unknown ): value is number {
-	return typeof value === 'number' && Number.isSafeInteger( value ) && value >= 0;
-}
+type SiteCreditsLevel = 'out' | 'low';
 
-/**
- * Reads the `ai_credits` snapshot WordPress.com sends for a site on AI credits.
- * Anything unexpected is unknown, never a zero balance.
- */
-export function parseSiteCredits( value: unknown, blogId: number ): SiteCredits | null {
-	if ( ! value || typeof value !== 'object' ) {
-		return null;
-	}
-
-	const snapshot = value as Record< string, unknown >;
-	const { credits_limit: limit, plan_tier: planTier } = snapshot;
-	// Once top-ups ship, `credits_available` adds purchased credits to the plan balance.
-	const remaining = snapshot.credits_available ?? snapshot.credits_remaining;
-	if ( snapshot.blog_id !== blogId || ! isCount( limit ) || ! isCount( remaining ) ) {
-		return null;
-	}
-
-	if ( snapshot.reason === 'wpcom_no_plan' && snapshot.eligible === false && limit === 0 ) {
-		return { hasPlan: false, remaining };
-	}
-
-	if ( snapshot.reason === 'wpcom_site_plan' && snapshot.eligible === true && limit > 0 ) {
-		return {
-			hasPlan: true,
-			remaining,
-			...( typeof planTier === 'string' ? { planTier } : {} ),
-		};
-	}
-
-	return null;
-}
-
-export function getSiteCreditsLevel( credits: SiteCredits ): 'none' | 'out' | 'low' | null {
-	if ( ! credits.hasPlan ) {
-		return 'none';
-	}
-	if ( credits.remaining === 0 ) {
+export function getSiteCreditsLevel( remaining: number ): SiteCreditsLevel | null {
+	if ( remaining === 0 ) {
 		return 'out';
 	}
-	return credits.remaining < SITE_CREDITS_LOW_BALANCE ? 'low' : null;
+	return remaining < CREDITS_LOW_BALANCE ? 'low' : null;
 }
 
-/** Under 1,000 in full; from 1,000 in thousands with one decimal, floored so it never overstates. */
-export function formatCreditsLeft( remaining: number ): string {
-	if ( remaining < 1000 ) {
-		return sprintf(
-			/* translators: %s: number of credits left, e.g. "800" */
-			__( '%s credits left.', __i18n_text_domain__ ),
-			remaining.toLocaleString()
-		);
+function getNoticeMessage( level: SiteCreditsLevel, remaining: number ): string {
+	if ( level === 'out' ) {
+		return __( 'You’ve used all your site credits.', __i18n_text_domain__ );
 	}
-	const thousands = Math.floor( remaining / 100 ) / 10;
 	return sprintf(
-		/* translators: %s: thousands of credits left, e.g. "8.5" or "67" */
-		__( '%sk credits left.', __i18n_text_domain__ ),
-		thousands.toLocaleString( undefined, { maximumFractionDigits: 1 } )
+		/* translators: %s: site credits left in short form, e.g. "800" or "8.5k" */
+		_n( '%s credit left.', '%s credits left.', remaining, __i18n_text_domain__ ),
+		formatCreditsShort( remaining )
 	);
 }
 
-function getBlogId(): number | null {
-	const blogId = Number( window.imageStudioData?.blogId );
-	return Number.isSafeInteger( blogId ) && blogId > 0 ? blogId : null;
+/** Only Simple and Atomic sites can be on AI credits, so self-hosted sites skip the check. */
+function getSiteCreditsBlogId(): number | null {
+	return getImageStudioSiteType() === 'jetpack' ? null : getImageStudioBlogId();
 }
 
 /** Resolves to undefined when the site is not on AI credits or the request fails. */
@@ -119,7 +76,7 @@ async function fetchSiteCredits( blogId: number, authProvider: AuthProvider ): P
 	}
 }
 
-export interface AiCreditsState {
+interface AiCreditsState {
 	notice: NoticeConfig | undefined;
 	isLimitReached: boolean;
 	/** Callers hold suggestions back while true, so chips don't flash before a notice. */
@@ -143,40 +100,35 @@ export function useAiCredits( {
 	mode: ImageStudioMode;
 	authProvider?: AuthProvider;
 } ): AiCreditsState {
-	const [ blogId ] = useState( getBlogId );
-	const [ balance, setBalance ] = useState< {
-		credits: SiteCredits;
-		status?: CreditsStatus;
-	} | null >( null );
+	const [ blogId ] = useState( getSiteCreditsBlogId );
+	const [ status, setStatus ] = useState< PaidCreditsStatus | null >( null );
 	const [ isLoading, setIsLoading ] = useState( blogId !== null );
 	const [ isLowNoticeDismissed, setIsLowNoticeDismissed ] = useState( false );
-	const shown = useRef< {
-		level: ReturnType< typeof getSiteCreditsLevel >;
-		trigger: UpgradeNoticeTrigger;
-	} >( { level: null, trigger: 'open' } );
+	const turnBalanceCount = useRef( 0 );
+	const shown = useRef< { level: SiteCreditsLevel | null; trigger: UpgradeNoticeTrigger } >( {
+		level: null,
+		trigger: 'open',
+	} );
 
-	// An unreadable balance keeps whatever was known, so a fluke never clears or shows a notice.
+	// The Agent's parser, so the notice, the lock and the dot always agree. An unreadable
+	// balance keeps whatever was known, so a fluke never clears or shows a notice.
 	const applyCredits = useEvent( ( snapshot: unknown, trigger: UpgradeNoticeTrigger ) => {
 		if ( blogId === null ) {
-			return;
+			return false;
 		}
-		const next = parseSiteCredits( snapshot, blogId );
-		if ( ! next ) {
-			return;
+		const next = parseLiveCreditsStatus( snapshot, blogId );
+		if ( next?.plan !== 'paid' ) {
+			return false;
 		}
-		const level = getSiteCreditsLevel( next );
+		const level = getSiteCreditsLevel( next.remaining );
 		if ( level !== shown.current.level ) {
 			if ( level ) {
 				trackImageStudioUpgradeNoticeShown( { mode, trigger } );
 			}
 			shown.current = { level, trigger };
 		}
-		// The ring reads the balance exactly as the Agent's does, so the two always agree.
-		const ringSnapshot = parseCreditSnapshot( snapshot, blogId );
-		setBalance( {
-			credits: next,
-			status: ringSnapshot && buildLiveCreditsStatus( ringSnapshot ),
-		} );
+		setStatus( next );
+		return true;
 	} );
 
 	useEffect( () => {
@@ -185,6 +137,7 @@ export function useAiCredits( {
 		}
 
 		let isCancelled = false;
+		const turnBalancesBefore = turnBalanceCount.current;
 		const timeout = setTimeout( () => setIsLoading( false ), SITE_CREDITS_TIMEOUT_MS );
 
 		fetchSiteCredits( blogId, authProvider ).then( ( result ) => {
@@ -193,7 +146,10 @@ export function useAiCredits( {
 			}
 			clearTimeout( timeout );
 			setIsLoading( false );
-			applyCredits( result, 'open' );
+			// A turn that finished while this check ran already reported a newer balance.
+			if ( turnBalanceCount.current === turnBalancesBefore ) {
+				applyCredits( result, 'open' );
+			}
 		} );
 
 		return () => {
@@ -202,57 +158,43 @@ export function useAiCredits( {
 		};
 	}, [ blogId, authProvider, applyCredits ] );
 
+	// Wait for the turn to end: locking the input mid-turn would also disable Stop.
 	const onTaskUpdate = useEvent( ( update: TaskUpdate ) => {
-		if ( update.aiCredits !== undefined ) {
-			applyCredits( update.aiCredits, 'refresh' );
+		const isTurnEnd = update.final ?? TURN_END_STATES.includes( update.status.state );
+		if ( isTurnEnd && applyCredits( update.aiCredits, 'refresh' ) ) {
+			turnBalanceCount.current++;
 		}
 	} );
 
-	// Stable object for the memoised chat component.
-	return useMemo( () => {
-		if ( ! balance ) {
-			return { notice: undefined, isLimitReached: false, isLoading, onTaskUpdate };
-		}
-
-		const { credits, status } = balance;
-		const canUpgrade =
-			! credits.hasPlan || UPGRADABLE_PLAN_TIERS.includes( credits.planTier ?? '' );
-		const upgradeUrl = canUpgrade
+	const level = status ? getSiteCreditsLevel( status.remaining ) : null;
+	const upgradeUrl =
+		status && UPGRADABLE_PLAN_TIERS.includes( status.planTier ?? '' )
 			? `https://wordpress.com/plans/${ blogId }?source=wp_ai_credits`
 			: undefined;
-		const meter = status && { status, upgradeUrl };
+	const isNoticeHidden = level === 'low' && isLowNoticeDismissed;
 
-		const level = getSiteCreditsLevel( credits );
-		if ( ! level || ( level === 'low' && isLowNoticeDismissed ) ) {
-			return { notice: undefined, isLimitReached: false, isLoading, onTaskUpdate, meter };
-		}
-
-		const messages = {
-			none: __( 'This site’s plan doesn’t include AI credits.', __i18n_text_domain__ ),
-			out: __( 'You’ve used all your site credits.', __i18n_text_domain__ ),
-			low: formatCreditsLeft( credits.remaining ),
-		};
-
-		return {
-			isLimitReached: level !== 'low',
-			isLoading,
-			onTaskUpdate,
-			meter,
-			notice: {
-				message: messages[ level ],
-				status: 'warning',
-				dismissible: level === 'low',
-				...( level === 'low' && { onDismiss: () => setIsLowNoticeDismissed( true ) } ),
-				action: upgradeUrl
-					? {
-							label: __( 'Upgrade', __i18n_text_domain__ ),
-							onClick: () => {
-								trackImageStudioUpgradeNoticeClick( { mode, trigger: shown.current.trigger } );
-								window.open( upgradeUrl, '_blank', 'noopener,noreferrer' );
-							},
-						}
-					: undefined,
-			},
-		};
-	}, [ balance, isLoading, isLowNoticeDismissed, mode, blogId, onTaskUpdate ] );
+	return {
+		isLimitReached: level === 'out',
+		isLoading,
+		onTaskUpdate,
+		meter: status ? { status, upgradeUrl } : undefined,
+		notice:
+			status && level && ! isNoticeHidden
+				? {
+						message: getNoticeMessage( level, status.remaining ),
+						status: 'warning',
+						dismissible: level === 'low',
+						onDismiss: () => setIsLowNoticeDismissed( true ),
+						action: upgradeUrl
+							? {
+									label: __( 'Upgrade', __i18n_text_domain__ ),
+									onClick: () => {
+										trackImageStudioUpgradeNoticeClick( { mode, trigger: shown.current.trigger } );
+										window.open( upgradeUrl, '_blank', 'noopener,noreferrer' );
+									},
+								}
+							: undefined,
+					}
+				: undefined,
+	};
 }

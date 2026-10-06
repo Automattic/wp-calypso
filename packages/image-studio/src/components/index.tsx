@@ -11,7 +11,7 @@ import { useDispatch, useSelect } from '@wordpress/data';
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useAgentConfig } from '../hooks/use-agent-config';
-import { type AiCreditsState, useAiCredits } from '../hooks/use-ai-credits';
+import { useAiCredits } from '../hooks/use-ai-credits';
 import { useAnnotation } from '../hooks/use-annotation';
 import { useBeforeUnload } from '../hooks/use-beforeunload';
 import { useDeletePermanently } from '../hooks/use-delete-permanently';
@@ -65,13 +65,11 @@ type CloseDialogConfig = {
 
 function ImageStudioAgentChat( {
 	agentConfig: agentConfigProp,
-	aiCredits,
 	attachmentId,
 	mode,
 	onChatSubmit,
 }: {
 	agentConfig: UseAgentChatConfig;
-	aiCredits: AiCreditsState;
 	attachmentId?: number;
 	mode: ImageStudioMode;
 	onChatSubmit?: () => Promise< void > | void;
@@ -81,12 +79,13 @@ function ImageStudioAgentChat( {
 		isLimitReached,
 		isLoading: isCheckingCredits,
 		meter: creditsMeter,
-	} = aiCredits;
+		onTaskUpdate: onCreditsTaskUpdate,
+	} = useAiCredits( { mode, authProvider: agentConfigProp.authProvider } );
 	const [ isCreditsMeterOpen, setIsCreditsMeterOpen ] = useState( false );
 	const agentChatProps = useAgentChat( {
 		...agentConfigProp,
 		onTaskUpdate: ( update ) => {
-			aiCredits.onTaskUpdate( update );
+			onCreditsTaskUpdate( update );
 			return agentConfigProp.onTaskUpdate?.( update );
 		},
 	} );
@@ -135,7 +134,7 @@ function ImageStudioAgentChat( {
 		messages: displayMessages,
 		mode,
 		inputValue,
-		disabled: isVideoMode || isLimitReached || isCheckingCredits,
+		disabled: isVideoMode || isLimitReached,
 	} );
 
 	const videoSuggestions = useVideoClipSuggestions( {
@@ -143,7 +142,7 @@ function ImageStudioAgentChat( {
 		clearSuggestions: agentChatProps.clearSuggestions,
 		messages: displayMessages,
 		inputValue,
-		disabled: ! isVideoMode || isLimitReached || isCheckingCredits,
+		disabled: ! isVideoMode || isLimitReached,
 	} );
 
 	const { handleSuggestionClick, isLoadingSuggestions, abortSuggestionsLoading } = isVideoMode
@@ -235,7 +234,8 @@ function ImageStudioAgentChat( {
 				<AgentUI.ConversationView showHeader={ false }>
 					<AgentUI.Messages />
 					<AgentUI.Footer>
-						{ ! isLimitReached && suggestionsComponent }
+						{ /* Suggestions load during the credits check but wait for it to show, so they never flash and vanish. */ }
+						{ ! isLimitReached && ! isCheckingCredits && suggestionsComponent }
 						<AgentUI.Notice />
 						{ /* Stacked puts the pickers on the same row as the credits dot and send button. */ }
 						<AgentUI.Input
@@ -244,18 +244,14 @@ function ImageStudioAgentChat( {
 							disabled={ isStopDisabled || isLimitReached ? true : undefined }
 							leadingActions={
 								<>
-									{ mode === ImageStudioMode.Generate && isVideoMode && (
-										<StylePicker disabled={ isProcessing } mode={ mode } variant="video" />
-									) }
 									{ mode === ImageStudioMode.Generate && ! isVideoMode && (
-										<>
-											<AspectRatioPicker disabled={ isProcessing } />
-											<StylePicker disabled={ isProcessing } mode={ mode } />
-										</>
+										<AspectRatioPicker disabled={ isProcessing } />
 									) }
-									{ mode !== ImageStudioMode.Generate && (
-										<StylePicker disabled={ isProcessing } mode={ mode } />
-									) }
+									<StylePicker
+										disabled={ isProcessing }
+										mode={ mode }
+										variant={ mode === ImageStudioMode.Generate && isVideoMode ? 'video' : 'image' }
+									/>
 								</>
 							}
 						/>
@@ -278,14 +274,12 @@ function ImageStudioAgentChat( {
 
 const ImageStudioAgentUIComponent = ( {
 	agentConfig,
-	aiCredits,
 	attachmentId,
 	modalOpenKey,
 	onChatSubmit,
 	mode,
 }: {
 	agentConfig: UseAgentChatConfig;
-	aiCredits: AiCreditsState;
 	attachmentId?: number;
 	modalOpenKey?: number;
 	onChatSubmit?: () => void;
@@ -295,7 +289,6 @@ const ImageStudioAgentUIComponent = ( {
 		<ImageStudioAgentChat
 			key={ `agentchat-${ modalOpenKey || 'default' }` }
 			agentConfig={ agentConfig }
-			aiCredits={ aiCredits }
 			attachmentId={ attachmentId }
 			mode={ mode }
 			onChatSubmit={ onChatSubmit }
@@ -512,8 +505,6 @@ const ImageStudioContent = withInstanceId(
 			? ImageStudioMode.Edit
 			: ImageStudioMode.Generate;
 
-		const aiCredits = useAiCredits( { mode, authProvider: agentConfigState?.authProvider } );
-
 		const modalClasses = cn(
 			'image-studio-modal',
 			{
@@ -698,7 +689,6 @@ const ImageStudioContent = withInstanceId(
 								agentConfigState ? (
 									<ImageStudioAgentUI
 										agentConfig={ agentConfigState }
-										aiCredits={ aiCredits }
 										attachmentId={ attachmentId ?? undefined }
 										modalOpenKey={ modalOpenKey }
 										onChatSubmit={ handleChatSubmit }
