@@ -174,8 +174,11 @@ export const NoteBody = ( { note }: { note: Note } ) => {
 			return;
 		}
 		const markUnavailable = ( image: HTMLImageElement ) => {
+			// A placeholder that fails to load would otherwise re-enter here forever.
+			if ( image.classList.contains( 'is-unavailable' ) ) {
+				return;
+			}
 			image.classList.add( 'is-unavailable' );
-			image.removeAttribute( 'srcset' );
 			image.src = TRANSPARENT_PIXEL;
 		};
 		element.querySelectorAll< HTMLImageElement >( CONTENT_IMAGE ).forEach( ( image ) => {
