@@ -52,12 +52,6 @@ export function isDateRangeId( value: unknown ): value is DateRangeId {
 }
 
 /**
- * Resolve a range id to its query parameters, falling back to the default
- * range for anything unrecognised — a stale or hand-edited stored value
- * should degrade to the default view rather than break the widget.
- * @param id The range id to resolve.
- */
-/**
  * The first day a range covers, as `YYYY-MM-DD`.
  *
  * The lists are fetched with `summarize=1`, where the API counts back in days from
@@ -81,19 +75,11 @@ export function getRangeStartDate( range: DateRange, endDate: string ): string {
 }
 
 /**
- * Whether the chart puts a tick on a range's last point.
- *
- * The axis chooses its ticks from the number of points it is given, and for these two
- * ranges the choice lands on the last one — all seven days, and four of the twelve
- * months. That label then sits on the chart's right edge, where centring it on the tick
- * runs past the edge and the chart's `overflow: hidden` clips it. The longer ranges stop
- * short of their last point, so theirs has room.
- * @param range The selected range.
+ * Resolve a range id to its query parameters, falling back to the default
+ * range for anything unrecognised — a stale or hand-edited stored value
+ * should degrade to the default view rather than break the widget.
+ * @param id The range id to resolve.
  */
-export function labelsLastPoint( range: DateRange ): boolean {
-	return DATE_RANGE_LAST_7_DAYS === range.id || DATE_RANGE_LAST_12_MONTHS === range.id;
-}
-
 export function getDateRange( id: unknown ): DateRange {
 	return (
 		DATE_RANGES.find( ( range ) => range.id === id ) ??

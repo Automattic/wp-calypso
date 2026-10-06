@@ -1,5 +1,4 @@
 import { Notice } from '@wordpress/ui';
-import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import moment from 'moment';
 import { lazy, Suspense, useMemo, FunctionComponent } from 'react';
@@ -8,7 +7,7 @@ import { buildChartData } from 'calypso/my-sites/stats/stats-chart-tabs/utility'
 import StatsModulePlaceholder from 'calypso/my-sites/stats/stats-module/placeholder';
 import { parseLocalDate } from 'calypso/my-sites/stats/utils';
 import useVisitsQuery from '../hooks/use-visits-query';
-import { DateRange, labelsLastPoint } from '../lib/date-ranges';
+import { DateRange } from '../lib/date-ranges';
 import { deriveSeriesColors } from '../lib/series-colors';
 import ChartBoundary from './chart-boundary';
 import MetricValue from './metric-value';
@@ -140,11 +139,7 @@ const MiniChart: FunctionComponent< MiniChartProps > = ( { siteId, gmtOffset, ra
 			   behind — the totals above it stay either way. */ }
 			<ChartBoundary fallback={ null }>
 				<div
-					// A range whose last point gets a tick puts that label on the chart's right
-					// edge, where it needs ending at the tick rather than centring on it.
-					className={ clsx( 'stats-widget-chart', {
-						'has-edge-label': labelsLastPoint( range ),
-					} ) }
+					className="stats-widget-chart"
 					style={ isLoading || hasChart ? { blockSize: `${ CHART_HEIGHT }px` } : undefined }
 				>
 					{ isLoading && <StatsModulePlaceholder isLoading /> }

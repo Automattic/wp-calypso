@@ -71,15 +71,16 @@ const OverviewChart: FunctionComponent< OverviewChartProps > = ( { series, heigh
 		height={ height }
 		curveType="monotone"
 		renderTooltip={ ( params ) => renderTooltip( unit, params ) }
-		margin={ { left: 32, top: 8, bottom: 20, right: 8 } }
+		// Which date the axis ticks last moves with the calendar, and a tick on the last point
+		// centres its label on the chart's right edge. The right margin is wide enough for
+		// half a date label ("Sep 30"), so none is clipped whichever lands there.
+		margin={ { left: 32, top: 8, bottom: 20, right: 24 } }
 		options={ {
 			// Start at zero, so ranges that never approach it don't look more dramatic
 			// than they are.
 			yScale: { type: 'linear', zero: true },
 			axis: {
-				// The class lets mini-chart.scss right-align the last date on the 7-day chart.
 				x: {
-					axisClassName: 'stats-widget-chart__x-axis',
 					tickFormat: ( value: number ) =>
 						moment( value ).format( 'month' === unit ? 'MMM' : 'MMM D' ),
 				},

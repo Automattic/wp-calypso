@@ -49,11 +49,6 @@ describe( 'OverviewChart axes', () => {
 		expect( x.tickFormat( new Date( 2026, 8, 1 ).getTime() ) ).toBe( 'Sep' );
 	} );
 
-	it( 'gives the x axis the class the edge-label rule targets', () => {
-		const { x } = renderAxes();
-		expect( x.axisClassName ).toBe( 'stats-widget-chart__x-axis' );
-	} );
-
 	it( 'leaves zero unlabelled and formats other values compactly', () => {
 		const { y } = renderAxes();
 		expect( y.tickFormat( 0 ) ).toBe( '' );
