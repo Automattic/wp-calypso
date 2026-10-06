@@ -6,6 +6,7 @@ import { __ } from '@wordpress/i18n';
 import { Badge } from '@wordpress/ui';
 import { Text } from '../../../components/text';
 import { getContentTypeLabel } from './labels';
+import ResourceIllustration from './resource-illustration';
 import ResourceProductLogo from './resource-product-logo';
 import type { ResourceItem } from './types';
 import type { ReactNode } from 'react';
@@ -22,7 +23,13 @@ interface ResourceCardHeaderProps {
 export default function ResourceCardHeader( { resource, title }: ResourceCardHeaderProps ) {
 	return (
 		<div className="dashboard-resources-learn__card-header" data-product={ resource.product }>
-			<VStack spacing={ 2 } alignment="flex-start" expanded={ false }>
+			<ResourceIllustration resource={ resource } />
+			<VStack
+				spacing={ 2 }
+				alignment="flex-start"
+				expanded={ false }
+				className="dashboard-resources-learn__card-label"
+			>
 				<Text
 					className="dashboard-resources-learn__card-eyebrow"
 					color="inherit"

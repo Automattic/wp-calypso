@@ -162,6 +162,24 @@ $resource-brands: (
 	color: var( --resource-card-ink, var( --resource-brand ) );
 	background: color-mix( in srgb, var( --resource-brand ) 18%, #{$studio-white} );
 
+	position: relative;
+
+	.dashboard-resource-illustration {
+		position: absolute;
+		inset-block-start: 8px;
+		inset-inline-end: 14px;
+		inline-size: 72px;
+		block-size: 72px;
+	}
+
+	// Reserves the illustration's corner, so neither the label nor a long title
+	// runs into it.
+	.dashboard-resources-learn__card-label {
+		min-block-size: 64px;
+		padding-inline-end: 80px;
+		box-sizing: border-box;
+	}
+
 	// Nested under the header for specificity over the components' own runtime styles.
 	.dashboard-resources-learn__card-eyebrow {
 		letter-spacing: 0.14em;
