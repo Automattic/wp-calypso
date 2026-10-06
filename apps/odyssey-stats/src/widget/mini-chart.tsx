@@ -43,7 +43,9 @@ const MiniChart: FunctionComponent< MiniChartProps > = ( { siteId, gmtOffset, ra
 		.utcOffset( Number.isFinite( gmtOffset ) ? gmtOffset : 0 )
 		.format( 'YYYY-MM-DD' );
 
-	const { isLoading, isError, data } = useVisitsQuery( siteId, unit, quantity, queryDate );
+	// Pending rather than loading: a retry waits while the tab is hidden or offline, and
+	// `isLoading` is false while it waits, so the range would read as empty until it ran.
+	const { isPending, isError, data } = useVisitsQuery( siteId, unit, quantity, queryDate );
 
 	const totals = useMemo( () => {
 		const records = ( data ?? [] ) as VisitRecord[];
@@ -85,12 +87,12 @@ const MiniChart: FunctionComponent< MiniChartProps > = ( { siteId, gmtOffset, ra
 	// A failed request is not an empty range: its zeros would read as "no traffic" while
 	// the lists below may still show views, so it gets its own message instead.
 	const isEmpty = ! isError && totals.views === 0 && totals.visitors === 0;
-	const hasChart = ! isLoading && ! isError && ! isEmpty;
+	const hasChart = ! isPending && ! isError && ! isEmpty;
 
 	return (
 		<div className="stats-widget-minichart">
 			{ /* Hidden for an empty range or a failed request, where zeros would read as "no traffic". */ }
-			{ ( isLoading || hasChart ) && (
+			{ ( isPending || hasChart ) && (
 				<div className="stats-widget-metrics">
 					<div className="stats-widget-metric">
 						<div className="stats-widget-metric__title">
@@ -140,10 +142,10 @@ const MiniChart: FunctionComponent< MiniChartProps > = ( { siteId, gmtOffset, ra
 			<ChartBoundary fallback={ null }>
 				<div
 					className="stats-widget-chart"
-					style={ isLoading || hasChart ? { blockSize: `${ CHART_HEIGHT }px` } : undefined }
+					style={ isPending || hasChart ? { blockSize: `${ CHART_HEIGHT }px` } : undefined }
 				>
-					{ isLoading && <StatsModulePlaceholder isLoading /> }
-					{ ! isLoading && isEmpty && (
+					{ isPending && <StatsModulePlaceholder isLoading /> }
+					{ ! isPending && isEmpty && (
 						<Notice.Root intent="info" className="stats-widget-empty-notice">
 							<Notice.Description>
 								{ translate( 'We are collecting traffic data for your site' ) }
@@ -155,7 +157,7 @@ const MiniChart: FunctionComponent< MiniChartProps > = ( { siteId, gmtOffset, ra
 							</Notice.Actions>
 						</Notice.Root>
 					) }
-					{ ! isLoading && isError && (
+					{ ! isPending && isError && (
 						<p className="stats-widget-minichart__error">{ translate( 'No data to show' ) }</p>
 					) }
 					{ hasChart && (

@@ -190,13 +190,13 @@ export default function Highlights( { siteId, gmtOffset, statsBaseUrl, range }: 
 
 	const {
 		data: topPostsAndPages = [],
-		isFetching: isFetchingPostsAndPages,
+		isPending: isPendingPostsAndPages,
 		isError: isPostsAndPagesError,
 	} = useTopPostsQuery( siteId, startDate, queryDate );
 
 	const {
 		data: topReferrers = [],
-		isFetching: isFetchingReferrers,
+		isPending: isPendingReferrers,
 		isError: isReferrersError,
 	} = useReferrersQuery( siteId, startDate, queryDate );
 
@@ -211,8 +211,8 @@ export default function Highlights( { siteId, gmtOffset, statsBaseUrl, range }: 
 	// request that errored would read as a range with no traffic and take the section and
 	// its "See more" links with it; the lists say "No data to show" instead.
 	const isEmpty =
-		! isFetchingPostsAndPages &&
-		! isFetchingReferrers &&
+		! isPendingPostsAndPages &&
+		! isPendingReferrers &&
 		! isPostsAndPagesError &&
 		! isReferrersError &&
 		topPostsAndPages.length === 0 &&
@@ -227,7 +227,7 @@ export default function Highlights( { siteId, gmtOffset, statsBaseUrl, range }: 
 			name: HIGHLIGHT_TAB_TOP_POSTS_PAGES,
 			title: topPostsAndPagesTitle,
 			items: topPostsAndPages,
-			isLoading: isFetchingPostsAndPages,
+			isLoading: isPendingPostsAndPages,
 			viewAllUrl: viewAllPostsStatsUrl,
 			isItemLinkExternal: false,
 			trackingName: 'top_posts',
@@ -237,7 +237,7 @@ export default function Highlights( { siteId, gmtOffset, statsBaseUrl, range }: 
 			name: HIGHLIGHT_TAB_TOP_REFERRERS,
 			title: topReferrersTitle,
 			items: topReferrers,
-			isLoading: isFetchingReferrers,
+			isLoading: isPendingReferrers,
 			viewAllUrl: viewAllReferrerStatsUrl,
 			isItemLinkExternal: true,
 			trackingName: 'top_referrers',

@@ -24,7 +24,7 @@ const SITE_ID = 123;
  */
 const queryState = ( { data, error, loading } = {} ) => ( {
 	data: error ? undefined : ( data ?? [] ),
-	isFetching: !! loading,
+	isPending: !! loading,
 	isError: !! error,
 } );
 
