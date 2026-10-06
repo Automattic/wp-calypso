@@ -53,8 +53,7 @@ export default function AgencySidebar() {
 	);
 	const canAccessLibrary = !! supports.agency.learn && canAccess( learnRoute );
 	const canAccessPartnerDirectory =
-		!! ( supports.agency.partnerDirectory && activeAgency?.partner_directory?.allowed ) &&
-		canAccess( agencyPartnerDirectoryRoute );
+		!! supports.agency.partnerDirectory && canAccess( agencyPartnerDirectoryRoute );
 	const canAccessTiers = !! supports.agency.tiers && canAccess( agencyTiersRoute );
 	const canAccessEarn = !! supports.agency.earn && earnSectionRoutes.some( canAccess );
 	const canAccessTeam = !! supports.agency.team && canAccess( agencyTeamRoute );
