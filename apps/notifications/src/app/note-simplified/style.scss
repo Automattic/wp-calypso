@@ -78,20 +78,13 @@ a.wpnc-simplified__quiet-links:visited {
 	&:is(a):hover {
 		border-color: var(--wp-admin-theme-color);
 	}
-
-	&.is-featured {
-		padding: 0;
-
-		.wpnc-simplified__card-text {
-			padding: $grid-unit-15;
-		}
-	}
 }
 
-.wpnc-simplified__card-image {
+.wpnc-simplified__post-image {
 	display: block;
 	width: 100%;
-	aspect-ratio: 2 / 1;
+	aspect-ratio: 16 / 9;
+	border-radius: $radius-medium;
 	object-fit: cover;
 }
 

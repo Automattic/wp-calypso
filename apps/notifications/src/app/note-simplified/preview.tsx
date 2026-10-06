@@ -52,64 +52,68 @@ export const ContextCard = ( {
 	</CardLink>
 );
 
+const SiteByline = ( {
+	siteIcon,
+	siteName,
+	byline,
+}: {
+	siteIcon?: string;
+	siteName?: string;
+	byline?: string;
+} ) => (
+	<HStack justify="flex-start" spacing={ 2 }>
+		{ siteIcon ? (
+			<img
+				className="wpnc-simplified__site-icon"
+				src={ siteIcon }
+				alt=""
+				width={ 32 }
+				height={ 32 }
+			/>
+		) : (
+			// The block editor's own stand-in for a site without an icon.
+			<Icon className="wpnc-simplified__site-icon is-placeholder" icon={ wordpress } size={ 32 } />
+		) }
+		<VStack spacing={ 0 }>
+			{ siteName && (
+				<Text size={ 12 } weight={ 600 }>
+					{ siteName }
+				</Text>
+			) }
+			{ byline && (
+				<Text size={ 12 } variant="muted">
+					{ byline }
+				</Text>
+			) }
+		</VStack>
+	</HStack>
+);
+
+const useByline = ( author?: string, date?: string ) => {
+	const { locale } = useAppContext();
+	return [ author, date && formatDate( date, locale ) ].filter( Boolean ).join( ' · ' );
+};
+
+/** A post referenced by a comment, a like or a reblog, introduced by its site. */
 export const PostCard = ( {
 	title,
 	excerpt,
 	url,
-	isFeatured,
-	image,
 	siteName,
 	siteIcon,
 	author,
 	date,
 }: NonNullable< NoteView[ 'post' ] > ) => {
-	const { locale } = useAppContext();
-	const byline = [ author, date && formatDate( date, locale ) ].filter( Boolean ).join( ' · ' );
+	const byline = useByline( author, date );
 
-	// A post that is the news shows its image, under a row that already says who
-	// published it and when. Anywhere else it is a reference, introduced by its site.
 	return (
-		<CardLink url={ url } className={ clsx( { 'is-featured': isFeatured } ) }>
-			{ isFeatured && image && (
-				<img className="wpnc-simplified__card-image" src={ image } alt="" />
-			) }
+		<CardLink url={ url }>
 			<VStack className="wpnc-simplified__card-text" spacing={ 2 }>
-				{ ! isFeatured && (
-					<span className="wpnc-simplified__card-arrow" aria-hidden="true">
-						&#8599;
-					</span>
-				) }
-				{ ! isFeatured && ( siteName || byline ) && (
-					<HStack justify="flex-start" spacing={ 2 }>
-						{ siteIcon ? (
-							<img
-								className="wpnc-simplified__site-icon"
-								src={ siteIcon }
-								alt=""
-								width={ 32 }
-								height={ 32 }
-							/>
-						) : (
-							// The block editor's own stand-in for a site without an icon.
-							<Icon
-								className="wpnc-simplified__site-icon is-placeholder"
-								icon={ wordpress }
-								size={ 32 }
-							/>
-						) }
-						<VStack spacing={ 0 }>
-							{ siteName && (
-								<Text size={ 12 } weight={ 600 }>
-									{ siteName }
-								</Text>
-							) }
-							{ byline && (
-								<Text size={ 12 } variant="muted">
-									{ byline }
-								</Text>
-							) }
-						</VStack>
-					</HStack>
+				<span className="wpnc-simplified__card-arrow" aria-hidden="true">
+					&#8599;
+				</span>
+				{ ( siteName || byline ) && (
+					<SiteByline siteIcon={ siteIcon } siteName={ siteName } byline={ byline } />
 				) }
 				{ title && (
 					<Text size={ 15 } weight={ 600 }>
@@ -117,11 +121,46 @@ export const PostCard = ( {
 					</Text>
 				) }
 				{ excerpt && (
-					<Text variant="muted" truncate numberOfLines={ isFeatured ? 3 : 2 }>
+					<Text variant="muted" truncate numberOfLines={ 2 }>
 						{ excerpt }
 					</Text>
 				) }
 			</VStack>
 		</CardLink>
+	);
+};
+
+/** A newly published post, laid out in the panel itself: the post is the note. */
+export const PostPreview = ( {
+	title,
+	excerpt,
+	url,
+	image,
+	siteName,
+	siteIcon,
+	author,
+	date,
+}: NonNullable< NoteView[ 'post' ] > ) => {
+	const byline = useByline( author, date );
+
+	return (
+		<VStack className="wpnc-simplified__quiet-links" spacing={ 3 }>
+			{ image && (
+				<a href={ url } target="_blank" rel="noreferrer" tabIndex={ -1 } aria-hidden="true">
+					<img className="wpnc-simplified__post-image" src={ image } alt="" />
+				</a>
+			) }
+			{ ( siteName || byline ) && (
+				<SiteByline siteIcon={ siteIcon } siteName={ siteName } byline={ byline } />
+			) }
+			{ title && (
+				<Text size={ 15 } weight={ 600 }>
+					<a href={ url } target="_blank" rel="noreferrer">
+						{ title }
+					</a>
+				</Text>
+			) }
+			{ excerpt && <Text variant="muted">{ excerpt }</Text> }
+		</VStack>
 	);
 };

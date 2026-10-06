@@ -10,7 +10,7 @@ import getIsNotePendingApproval from '../../panel/state/selectors/get-is-note-pe
 import { NoteBody } from '../templates/body';
 import ActorRow, { NoteMeta, NoteTime } from './actor-row';
 import { getNoteView } from './note-view';
-import { ContextCard, PostCard } from './preview';
+import { ContextCard, PostCard, PostPreview } from './preview';
 import SubscriptionNotice from './subscription-notice';
 import Thread from './thread';
 import type { Note } from '../types';
@@ -53,12 +53,12 @@ export default function SimplifiedNote( { note }: { note: Note } ) {
 					follow={ view.follow }
 				/>
 			) }
-			{ view.post && (
-				<VStack spacing={ 3 }>
+			{ view.post &&
+				( view.post.isFeatured ? (
+					<PostPreview { ...view.post } />
+				) : (
 					<PostCard { ...view.post } />
-					{ view.subscribedSiteId && <SubscriptionNotice siteId={ view.subscribedSiteId } /> }
-				</VStack>
-			) }
+				) ) }
 			{ thread && (
 				<Thread
 					thread={ thread }
@@ -84,6 +84,7 @@ export default function SimplifiedNote( { note }: { note: Note } ) {
 				</Heading>
 			) }
 			{ ! hasSpeaker && body }
+			{ view.subscribedSiteId && <SubscriptionNotice siteId={ view.subscribedSiteId } /> }
 		</VStack>
 	);
 }

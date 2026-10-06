@@ -178,8 +178,12 @@ export function getNoteView( note: Note, isPendingApproval = false ): NoteView {
 		const title =
 			toPlainText( details?.title ) ||
 			( noteTitle && ! isRestating( noteTitle, parent?.text ) ? noteTitle : undefined );
-		const excerpt =
-			toPlainText( details?.excerpt ) || ( hasPostCard ? postBlock?.text : undefined );
+		let excerpt = toPlainText( details?.excerpt ) || ( hasPostCard ? postBlock?.text : undefined );
+		// A new post's own content block is shown in full below it, so the excerpt only
+		// stands in when that block is missing.
+		if ( traits.isPostNews && postBlock ) {
+			excerpt = undefined;
+		}
 
 		if ( ! title && ! excerpt ) {
 			return undefined;
@@ -294,7 +298,7 @@ export function getNoteView( note: Note, isPendingApproval = false ): NoteView {
 				( { signature } ) =>
 					! ( ( hasComment || isActorShown ) && signature.type === 'user' ) &&
 					// Only a card that was built may stand in for the post it describes.
-					! ( hasPostCard && !! post && signature.type === 'post' )
+					! ( hasPostCard && !! post && ! post.isFeatured && signature.type === 'post' )
 			)
 			.map( ( { block } ) => block ),
 	};
