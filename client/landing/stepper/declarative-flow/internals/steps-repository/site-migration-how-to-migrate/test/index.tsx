@@ -50,16 +50,19 @@ describe( 'SiteMigrationHowToMigrate', () => {
 		jest.restoreAllMocks();
 	} );
 
-	it( 'cancels and uses browser Back when the navigation handler is missing', async () => {
-		jest.spyOn( history, 'state', 'get' ).mockReturnValue( { idx: 1 } );
-		const back = jest.spyOn( history, 'back' ).mockImplementation( () => {} );
-		render( { navigation } );
+	it.each( [ 0, 1 ] )(
+		'cancels and uses browser Back without a navigation handler at history index %i',
+		async ( idx ) => {
+			jest.spyOn( history, 'state', 'get' ).mockReturnValue( { idx } );
+			const back = jest.spyOn( history, 'back' ).mockImplementation( () => {} );
+			render( { navigation } );
 
-		await userEvent.click( screen.getByRole( 'button', { name: /Back/ } ) );
+			await userEvent.click( screen.getByRole( 'button', { name: /Back/ } ) );
 
-		expect( mockCancelMigration ).toHaveBeenCalledTimes( 1 );
-		expect( back ).toHaveBeenCalledTimes( 1 );
-	} );
+			expect( mockCancelMigration ).toHaveBeenCalledTimes( 1 );
+			expect( back ).toHaveBeenCalledTimes( 1 );
+		}
+	);
 
 	it( 'records migration-start conversions on arrival', () => {
 		render( { navigation } );

@@ -68,7 +68,7 @@ const SiteMigrationHowToMigrate: StepType< {
 		cancelMigration();
 		if ( navigation?.goBack ) {
 			navigation.goBack();
-		} else if ( history.state?.idx > 0 ) {
+		} else {
 			history.back();
 		}
 	}, [ cancelMigration, navigation ] );

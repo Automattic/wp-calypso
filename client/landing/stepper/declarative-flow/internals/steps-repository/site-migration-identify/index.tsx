@@ -35,7 +35,8 @@ export const Analyzer: FC< Props > = ( {
 } ) => {
 	const translate = useTranslate();
 	const [ siteURL, setSiteURL ] = useState< string >( '' );
-	const hasCompleted = useRef( false );
+	const onCompleteRef = useRef( onComplete );
+	onCompleteRef.current = onComplete;
 	const {
 		data: siteInfo,
 		isError: hasError,
@@ -58,17 +59,11 @@ export const Analyzer: FC< Props > = ( {
 		( isFetched && ! hasError && ! hostingProviderData && ! hasHostingError );
 
 	useEffect( () => {
-		if ( ! siteURL ) {
-			hasCompleted.current = false;
-			return;
-		}
-
 		// Only complete when we have both site info AND hosting info (or hosting check failed)
-		if ( ! hasCompleted.current && siteInfo && ( hostingProviderData || hasHostingError ) ) {
-			hasCompleted.current = true;
-			onComplete( siteInfo, hostingProviderData?.hosting_provider?.slug );
+		if ( siteInfo && ( hostingProviderData || hasHostingError ) ) {
+			onCompleteRef.current( siteInfo, hostingProviderData?.hosting_provider?.slug );
 		}
-	}, [ onComplete, siteURL, siteInfo, hostingProviderData, hasHostingError ] );
+	}, [ siteInfo, hostingProviderData, hasHostingError ] );
 
 	useEffect( () => {
 		onVisibilityChange?.( ! isScanning );
