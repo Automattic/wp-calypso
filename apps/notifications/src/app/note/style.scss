@@ -98,6 +98,18 @@
 		border-radius: $radius-small;
 	}
 
+	// Stands in for an image that couldn't load, so the reader knows one was there.
+	img.is-unavailable {
+		display: block;
+		width: 100%;
+		height: auto;
+		aspect-ratio: 16 / 9;
+		border-radius: $radius-small;
+		background: var(--wp-components-color-gray-100, #{$gray-100})
+			url(data:image/svg+xml,%3Csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20viewBox=%270%200%2024%2024%27%3E%3Cpath%20fill=%27%23949494%27%20d=%27M19%203H5a2%202%200%200%200-2%202v14a2%202%200%200%200%202%202h14a2%202%200%200%200%202-2V5a2%202%200%200%200-2-2Zm.5%2016a.5.5%200%200%201-.5.5H5a.5.5%200%200%201-.5-.5v-3.1l3.4-2.9%202.8%202.4%204.4-3.7%204.4%203.6V19Zm0-5.6L15.1%2010l-4.4%203.7-2.8-2.4-3.4%202.9V5a.5.5%200%200%201%20.5-.5h14a.5.5%200%200%201%20.5.5v8.4Z%27/%3E%3C/svg%3E)
+			center / 32px no-repeat;
+	}
+
 	.wpnc__badge {
 		display: block;
 		margin: 0 auto;
