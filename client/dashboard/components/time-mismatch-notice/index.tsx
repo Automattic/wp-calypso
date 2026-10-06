@@ -65,7 +65,7 @@ export const TimeMismatchNotice = ( {
 	const reason = createInterpolateElement(
 		/** Translators: settingsLink is a link to the site general options page. */
 		__(
-			"This page uses your site's time zone, which differs from yours. <settingsLink>You can update it if needed</settingsLink>."
+			'This page uses your site’s time zone, which differs from yours. <settingsLink>You can update it if needed</settingsLink>'
 		),
 		{
 			settingsLink: (
