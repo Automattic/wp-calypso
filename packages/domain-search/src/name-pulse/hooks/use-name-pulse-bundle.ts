@@ -2,14 +2,19 @@ import { useQueries } from '@tanstack/react-query';
 import { useDomainSearch } from '../../page/context';
 import type { BundleSuggestion } from '@automattic/api-core';
 
+// Mirrors the backend's `bundle_triggers` list, which Name Pulse does not fetch:
+// that would cost a suggestions request to save a few bundle ones.
+const isBundleTrigger = ( fqdn: string ) => fqdn.endsWith( '.com' );
+
 const hasCompanion = ( bundle: BundleSuggestion | null | undefined ): bundle is BundleSuggestion =>
 	!! bundle && bundle.domains.length > 1;
 
 /**
  * The backend only anchors a bundle on a trigger TLD (`.com` today), and only
  * while that name is available, so a typed `.blog` or a taken `.com` has none of
- * its own. Each anchor is asked in order and the first with a companion wins;
- * a later answer never replaces an earlier anchor's, so the card does not swap.
+ * its own and is not asked. Each trigger anchor is asked in order and the first
+ * with a companion wins; a later answer never replaces an earlier anchor's, so
+ * the card does not swap.
  * Anchors share the `bundleForDomain` cache with the classic inline bundle rows.
  */
 export const useNamePulseBundle = ( anchors: string[] | null ) => {
@@ -17,7 +22,7 @@ export const useNamePulseBundle = ( anchors: string[] | null ) => {
 	const enabled = config.showBundleSuggestions && anchors !== null;
 
 	const results = useQueries( {
-		queries: ( enabled ? anchors : [] ).map( ( fqdn ) => ( {
+		queries: ( enabled ? anchors.filter( isBundleTrigger ) : [] ).map( ( fqdn ) => ( {
 			...queries.bundleForDomain( fqdn ),
 			enabled: true,
 		} ) ),
