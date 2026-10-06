@@ -1,12 +1,15 @@
 import config from '@automattic/calypso-config';
+import { getUrlParts } from '@automattic/calypso-url';
 import { formatNumber } from '@automattic/number-formatters';
 import { Step } from '@automattic/onboarding';
+import { ProgressBar, Spinner } from '@wordpress/components';
 import { next, published, shield } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { type FC, useEffect, useState, useCallback, useRef } from 'react';
 import CaptureInput from 'calypso/blocks/import/capture/capture-input';
 import ScanningStep from 'calypso/blocks/import/scanning';
+import { convertPlatformName } from 'calypso/blocks/import/util';
 import DocumentHead from 'calypso/components/data/document-head';
 import { useAnalyzeUrlQuery } from 'calypso/data/site-profiler/use-analyze-url-query';
 import { useHostingProviderQuery } from 'calypso/data/site-profiler/use-hosting-provider-query';
@@ -28,6 +31,8 @@ interface Props {
 	flowName: string;
 	onVisibilityChange: ( isVisible: boolean ) => void;
 	isReprintFlow?: boolean;
+	siteURL: string;
+	onSiteURLChange: ( url: string ) => void;
 }
 
 export const Analyzer: FC< Props > = ( {
@@ -36,9 +41,10 @@ export const Analyzer: FC< Props > = ( {
 	onVisibilityChange,
 	hideImporterListLink = false,
 	isReprintFlow = false,
+	siteURL,
+	onSiteURLChange,
 } ) => {
 	const translate = useTranslate();
-	const [ siteURL, setSiteURL ] = useState< string >( '' );
 	const onCompleteRef = useRef( onComplete );
 	onCompleteRef.current = onComplete;
 	const {
@@ -46,6 +52,7 @@ export const Analyzer: FC< Props > = ( {
 		isError: hasError,
 		isFetching,
 		isFetched,
+		refetch,
 	} = useAnalyzeUrlQuery( siteURL, siteURL !== '' );
 
 	// Fetch hosting provider after we get site info
@@ -64,18 +71,44 @@ export const Analyzer: FC< Props > = ( {
 
 	useEffect( () => {
 		// Only complete when we have both site info AND hosting info (or hosting check failed)
-		if ( siteInfo && ( hostingProviderData || hasHostingError ) ) {
+		if (
+			siteURL &&
+			siteInfo &&
+			! hasError &&
+			! isFetching &&
+			! isFetchingHosting &&
+			( hostingProviderData || hasHostingError )
+		) {
 			onCompleteRef.current( siteInfo, hostingProviderData?.hosting_provider?.slug );
 		}
-	}, [ siteInfo, hostingProviderData, hasHostingError ] );
+	}, [
+		siteURL,
+		siteInfo,
+		hostingProviderData,
+		hasHostingError,
+		hasError,
+		isFetching,
+		isFetchingHosting,
+	] );
 
 	useEffect( () => {
 		onVisibilityChange?.( ! isScanning );
 	}, [ isScanning, onVisibilityChange ] );
 
-	if ( isScanning ) {
+	if ( isScanning && ! isReprintFlow ) {
 		return <ScanningStep />;
 	}
+
+	const sourceURL = /^https?:\/\//i.test( siteURL ) ? siteURL : `https://${ siteURL }`;
+	const { hostname } = getUrlParts( sourceURL );
+	const platformName =
+		siteInfo?.platform && siteInfo.platform !== 'unknown'
+			? convertPlatformName( siteInfo.platform )
+			: undefined;
+	const hasIdentifiedPlatform = !! siteInfo && ! isFetching;
+	const checkStatus = hasIdentifiedPlatform
+		? translate( 'Checking your hosting provider' )
+		: translate( 'Identifying your site platform' );
 
 	const hostingDetailItems = [
 		{
@@ -106,10 +139,59 @@ export const Analyzer: FC< Props > = ( {
 
 	return (
 		<>
-			<div className="import__capture-container">
+			{ isReprintFlow && isScanning && (
+				<div className="site-migration-identify__checking">
+					<div className="site-migration-identify__summary">
+						<span>{ hostname }</span>
+						<Step.LinkButton href={ sourceURL } target="_blank" rel="noopener noreferrer">
+							{ platformName
+								? translate( '%(platform)s site ↗', { args: { platform: platformName } } )
+								: translate( 'View site ↗' ) }
+						</Step.LinkButton>
+					</div>
+					<div className="site-migration-identify__status" role="status" aria-live="polite">
+						<div className="site-migration-identify__status-title">
+							<span className="site-migration-identify__spinner">
+								<Spinner />
+							</span>
+							<span>{ checkStatus }</span>
+						</div>
+						<div className="site-migration-identify__progress">
+							<div>
+								<ProgressBar
+									className="site-migration-identify__progress-bar"
+									value={ hasIdentifiedPlatform ? 100 : undefined }
+									aria-label={ translate( 'Site platform' ) }
+								/>
+								<span>{ translate( 'Site platform' ) }</span>
+							</div>
+							<div>
+								<ProgressBar
+									className="site-migration-identify__progress-bar"
+									value={ hasIdentifiedPlatform ? undefined : 0 }
+									aria-label={ translate( 'Hosting provider' ) }
+								/>
+								<span>{ translate( 'Hosting provider' ) }</span>
+							</div>
+						</div>
+						<p>
+							{ translate( 'We’re looking at %(site)s to see what we can copy.', {
+								args: { site: hostname },
+							} ) }
+						</p>
+					</div>
+				</div>
+			) }
+			<div className="import__capture-container" hidden={ isReprintFlow && isScanning }>
 				<CaptureInput
-					onInputEnter={ setSiteURL }
-					onInputChange={ () => setSiteURL( '' ) }
+					onInputEnter={ ( url ) => {
+						if ( isReprintFlow && url === siteURL ) {
+							refetch();
+						} else {
+							onSiteURLChange( url );
+						}
+					} }
+					onInputChange={ () => onSiteURLChange( '' ) }
 					hasError={ hasError }
 					skipInitialChecking
 					onDontHaveSiteAddressClick={ onSkip }
@@ -171,18 +253,27 @@ const SiteMigrationIdentify: StepType< {
 
 	const urlQueryParams = useQuery();
 
-	const [ isVisible, setIsVisible ] = useState( false );
+	const [ isVisible, setIsVisible ] = useState( true );
+	const [ siteURL, setSiteURL ] = useState( '' );
+	const isChecking = isReprintFlow && ! isVisible;
+	const goBack = isChecking ? () => setSiteURL( '' ) : navigation?.goBack;
 
 	const stepContent = (
 		<Analyzer
 			onComplete={ ( { platform, url }, hostingProviderSlug ) =>
-				handleSubmit( 'continue', { platform, from: url, host: hostingProviderSlug } )
+				handleSubmit( 'continue', {
+					platform,
+					from: url,
+					host: hostingProviderSlug,
+				} )
 			}
 			hideImporterListLink={ urlQueryParams.get( 'hide_importer_link' ) === 'true' }
 			onSkip={ () => {
 				handleSubmit( isReprintFlow ? 'backup_file' : 'skip_platform_identification' );
 			} }
 			isReprintFlow={ isReprintFlow }
+			siteURL={ siteURL }
+			onSiteURLChange={ setSiteURL }
 			flowName={ flow }
 			onVisibilityChange={ ( isVisible ) => {
 				setIsVisible( isVisible );
@@ -192,24 +283,31 @@ const SiteMigrationIdentify: StepType< {
 
 	return (
 		<>
-			<DocumentHead title={ translate( 'Import your site content' ) } />
+			<DocumentHead
+				title={
+					isChecking ? translate( 'Checking your site' ) : translate( 'Import your site content' )
+				}
+			/>
 			<Step.CenteredColumnLayout
 				className={ clsx( 'step-container-v2--site-migration-identify', {
 					'site-migration-identify--reprint': isReprintFlow,
+					'site-migration-identify--checking': isChecking,
 				} ) }
-				columnWidth={ 4 }
+				columnWidth={ isChecking ? 6 : 4 }
 				topBar={
-					<Step.TopBar
-						leftElement={
-							navigation?.goBack ? <Step.BackButton onClick={ navigation.goBack } /> : null
-						}
-					/>
+					<Step.TopBar leftElement={ goBack ? <Step.BackButton onClick={ goBack } /> : null } />
 				}
 				heading={
-					isVisible ? (
+					isChecking || isVisible ? (
 						<Step.Heading
-							text={ translate( "Let's find your site" ) }
-							subText={ translate( 'Enter your current site address below to get started.' ) }
+							text={
+								isChecking ? translate( 'Checking your site' ) : translate( "Let's find your site" )
+							}
+							subText={
+								isChecking
+									? undefined
+									: translate( 'Enter your current site address below to get started.' )
+							}
 						/>
 					) : undefined
 				}
