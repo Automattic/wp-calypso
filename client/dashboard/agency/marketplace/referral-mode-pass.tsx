@@ -1,3 +1,5 @@
+import { userPreferenceMutation, userPreferenceQuery } from '@automattic/api-queries';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import {
 	__experimentalHeading as Heading,
 	__experimentalHStack as HStack,
@@ -8,8 +10,10 @@ import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';
 import { useState } from 'react';
 import { Notice } from '../../components/notice';
+import stepHosting from './images/referral/step-1-add-hosting.svg';
 import stepProduct from './images/referral/step-1-add.svg';
 import stepRequest from './images/referral/step-2-send.svg';
+import stepReferralsHosting from './images/referral/step-3-earn-hosting.svg';
 import stepReferrals from './images/referral/step-3-earn.svg';
 import type { ReactNode } from 'react';
 
@@ -27,7 +31,8 @@ import './referral-mode-pass.scss';
 //       it to a one-line bar that stays while referral mode is on.
 // The choice sticks for the session so Hosting and Products agree.
 const STORAGE_KEY = 'a4a-referral-treatment';
-const BAND_FOLDED_KEY = 'a4a-referral-band-folded';
+// “Got it” is remembered on the account, so the band opens folded on every page and visit.
+const BAND_FOLDED_PREFERENCE = 'a4a-marketplace-referral-band-folded';
 // The band's ground, `?field=`: n flat light blue (default), o flat neutral grey,
 // p the Amplify field at 35%. Figma › Referral steps v2 (A4AD-217).
 function fieldTreatment(): 'n' | 'o' | 'p' {
@@ -91,26 +96,24 @@ export function ReferralEarnPill( { children }: { children: ReactNode } ) {
 type BandProps = {
 	headline: string;
 	summary: string;
+	/** Which page the band sits on: its first and last drawings show that page's item. */
+	kind?: 'products' | 'hosting';
 };
 
-function readFolded() {
-	try {
-		return window.sessionStorage.getItem( BAND_FOLDED_KEY ) === '1';
-	} catch {
-		return false;
-	}
-}
-
-function writeFolded( folded: boolean ) {
-	try {
-		window.sessionStorage.setItem( BAND_FOLDED_KEY, folded ? '1' : '0' );
-	} catch {}
-}
-
-export function ReferralModeBand( { headline, summary }: BandProps ) {
-	const [ state, setState ] = useState< 'open' | 'folding' | 'folded' >( () =>
-		readFolded() ? 'folded' : 'open'
+export function ReferralModeBand( { headline, summary, kind = 'products' }: BandProps ) {
+	const isHosting = kind === 'hosting';
+	const { data: savedFolded, isFetched } = useQuery(
+		userPreferenceQuery( BAND_FOLDED_PREFERENCE )
 	);
+	const { mutate: saveFolded } = useMutation( userPreferenceMutation( BAND_FOLDED_PREFERENCE ) );
+	// Until the account says otherwise, follow it; a click this visit takes over.
+	const [ choice, setState ] = useState< 'open' | 'folding' | 'folded' | null >( null );
+	const state = choice ?? ( savedFolded ? 'folded' : 'open' );
+
+	// Wait for the preference, so a folded band never flashes open first.
+	if ( ! isFetched ) {
+		return null;
+	}
 
 	if ( state === 'folded' ) {
 		return (
@@ -122,7 +125,7 @@ export function ReferralModeBand( { headline, summary }: BandProps ) {
 				<Button
 					variant="link"
 					onClick={ () => {
-						writeFolded( false );
+						saveFolded( false );
 						setState( 'open' );
 					} }
 				>
@@ -141,62 +144,72 @@ export function ReferralModeBand( { headline, summary }: BandProps ) {
 				}
 			} }
 		>
-			<section className="referral-band" aria-label={ __( 'Referral mode' ) }>
-				<div className="referral-band-intro">
-					<span className="referral-band-eyebrow">
-						<span className="referral-dot" aria-hidden="true" />
-						{ __( 'Referral mode is on' ) }
-					</span>
-					<Heading level={ 2 } className="referral-band-title">
-						{ headline }
-					</Heading>
-					<HStack spacing={ 4 } justify="flex-start" expanded={ false }>
-						<Button
-							variant="secondary"
-							size="compact"
-							onClick={ () => {
-								writeFolded( true );
-								setState(
-									window.matchMedia( '(prefers-reduced-motion: reduce)' ).matches
-										? 'folded'
-										: 'folding'
-								);
-							} }
-						>
-							{ __( 'Got it' ) }
-						</Button>
-						<ExternalLink href={ REFERRALS_HELP_URL }>{ __( 'Learn more' ) }</ExternalLink>
-					</HStack>
-				</div>
-				<div className={ clsx( 'referral-band-field', `is-${ fieldTreatment() }` ) }>
-					<span className="referral-light is-light" aria-hidden="true" />
-					<span className="referral-light is-medium" aria-hidden="true" />
-					<span className="referral-light is-dark" aria-hidden="true" />
-					<span className="referral-light is-centre" aria-hidden="true" />
-					<span className="referral-grain" aria-hidden="true" />
-					<div className="referral-step">
-						<img className="referral-art" src={ stepProduct } alt="" />
-						<p className="referral-step-caption">
-							<Pin n={ 1 } />
-							{ __( 'Add products to a referral cart' ) }
-						</p>
+			<div className="referral-band-clip">
+				<section className="referral-band" aria-label={ __( 'Referral mode' ) }>
+					<div className="referral-band-intro">
+						<span className="referral-band-eyebrow">
+							<span className="referral-dot" aria-hidden="true" />
+							{ __( 'Referral mode is on' ) }
+						</span>
+						<Heading level={ 2 } className="referral-band-title">
+							{ headline }
+						</Heading>
+						<HStack spacing={ 4 } justify="flex-start" expanded={ false }>
+							<Button
+								variant="secondary"
+								size="compact"
+								onClick={ () => {
+									saveFolded( true );
+									setState(
+										window.matchMedia( '(prefers-reduced-motion: reduce)' ).matches
+											? 'folded'
+											: 'folding'
+									);
+								} }
+							>
+								{ __( 'Got it' ) }
+							</Button>
+							<ExternalLink href={ REFERRALS_HELP_URL }>{ __( 'Learn more' ) }</ExternalLink>
+						</HStack>
 					</div>
-					<div className="referral-step">
-						<img className="referral-art" src={ stepRequest } alt="" />
-						<p className="referral-step-caption">
-							<Pin n={ 2 } />
-							{ __( 'Send your client a payment request' ) }
-						</p>
+					<div className={ clsx( 'referral-band-field', `is-${ fieldTreatment() }` ) }>
+						<span className="referral-light is-light" aria-hidden="true" />
+						<span className="referral-light is-medium" aria-hidden="true" />
+						<span className="referral-light is-dark" aria-hidden="true" />
+						<span className="referral-light is-centre" aria-hidden="true" />
+						<span className="referral-grain" aria-hidden="true" />
+						<div className="referral-step">
+							<img className="referral-art" src={ isHosting ? stepHosting : stepProduct } alt="" />
+							<p className="referral-step-caption">
+								<Pin n={ 1 } />
+								<span>
+									{ isHosting
+										? __( 'Add hosting to a referral cart' )
+										: __( 'Add products to a referral cart' ) }
+								</span>
+							</p>
+						</div>
+						<div className="referral-step">
+							<img className="referral-art" src={ stepRequest } alt="" />
+							<p className="referral-step-caption">
+								<Pin n={ 2 } />
+								{ __( 'Send your client a payment request' ) }
+							</p>
+						</div>
+						<div className="referral-step">
+							<img
+								className="referral-art"
+								src={ isHosting ? stepReferralsHosting : stepReferrals }
+								alt=""
+							/>
+							<p className="referral-step-caption">
+								<Pin n={ 3 } />
+								{ __( 'Earn every time they pay or renew' ) }
+							</p>
+						</div>
 					</div>
-					<div className="referral-step">
-						<img className="referral-art" src={ stepReferrals } alt="" />
-						<p className="referral-step-caption">
-							<Pin n={ 3 } />
-							{ __( 'Earn every time they pay or renew' ) }
-						</p>
-					</div>
-				</div>
-			</section>
+				</section>
+			</div>
 		</div>
 	);
 }

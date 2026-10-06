@@ -196,6 +196,7 @@ export default function MarketplaceHosting( { section }: { section?: HostingSect
 		>
 			{ isReferralMode && referralTreatment() === 'hb' && (
 				<ReferralModeBand
+					kind="hosting"
 					headline={ __(
 						'Your client pays the retail price. You earn 20% recurring commission on their\u00a0hosting.'
 					) }
