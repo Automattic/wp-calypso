@@ -79,6 +79,17 @@ $resource-palettes: (
 	position: relative;
 	overflow: hidden;
 
+	// Inset rather than Card's outer border, so the header paints over it and
+	// the border only frames the body, never the brand colour.
+	&.components-card {
+		box-shadow: inset 0 0 0 1px
+			color-mix(
+				in srgb,
+				var( --wpds-color-foreground-content-neutral, #{$gray-900} ) 12%,
+				transparent
+			);
+	}
+
 	// Each card spans a header row and a body row of the page grid, so headers
 	// in the same row share a height and the bodies line up beneath them.
 	// Card wraps its children in an inner element, which has to pass it on.
@@ -108,7 +119,7 @@ $resource-palettes: (
 		&:hover {
 			z-index: 1;
 			transform: translateY( -3px ) rotate( -0.5deg ) scale( 1.018 );
-			box-shadow: 0 0 0 1px
+			box-shadow: inset 0 0 0 1px
 				color-mix(
 					in srgb,
 					var( --wpds-color-foreground-content-neutral, #{$gray-900} ) 20%,
