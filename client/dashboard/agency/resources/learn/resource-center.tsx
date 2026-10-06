@@ -3,7 +3,7 @@ import { __ } from '@wordpress/i18n';
 import { useCallback, useMemo, useState } from 'react';
 import BrowseAllResources from './browse-all-resources';
 import { getYouTubeEmbedUrl } from './youtube-embed';
-import type { ResourceItem, RecordTracksEvent } from './types';
+import type { OpenResource, ResourceItem, RecordTracksEvent } from './types';
 import type { View } from '@wordpress/dataviews';
 
 export const getResourceCenterDescription = () =>
@@ -24,13 +24,25 @@ export default function ResourceCenter( {
 	recordTracksEvent = () => {},
 	onResourceClick,
 }: ResourceCenterProps ) {
-	const [ showVideoModal, setShowVideoModal ] = useState( false );
-	const [ selectedResource, setSelectedResource ] = useState< ResourceItem | null >( null );
+	const [ videoResource, setVideoResource ] = useState< ResourceItem | null >( null );
 
-	const handleOpenVideoModal = useCallback( ( resource: ResourceItem ) => {
-		setSelectedResource( resource );
-		setShowVideoModal( true );
-	}, [] );
+	const openResource: OpenResource = useCallback(
+		( resource, event ) => {
+			if ( resource.format === 'video' ) {
+				event.preventDefault();
+				setVideoResource( resource );
+			}
+
+			recordTracksEvent( 'calypso_a4a_resource_center_browse_cta_click', {
+				resource_id: resource.id,
+				resource_name: resource.name,
+			} );
+
+			// Host-specific side effect, such as recording the open server-side.
+			onResourceClick?.( resource );
+		},
+		[ recordTracksEvent, onResourceClick ]
+	);
 
 	const resources = useMemo(
 		() =>
@@ -49,17 +61,15 @@ export default function ResourceCenter( {
 				resources={ resources }
 				view={ view }
 				onChangeView={ onChangeView }
-				onOpenVideoModal={ handleOpenVideoModal }
-				recordTracksEvent={ recordTracksEvent }
-				onResourceClick={ onResourceClick }
+				onOpenResource={ openResource }
 			/>
 
-			{ showVideoModal && selectedResource && (
+			{ videoResource && (
 				<Modal
 					isDismissible
 					size="large"
-					onRequestClose={ () => setShowVideoModal( false ) }
-					title={ selectedResource.name }
+					onRequestClose={ () => setVideoResource( null ) }
+					title={ videoResource.name }
 				>
 					<VStack spacing={ 4 }>
 						<div
@@ -71,8 +81,8 @@ export default function ResourceCenter( {
 							} }
 						>
 							<iframe
-								src={ getYouTubeEmbedUrl( selectedResource.externalUrl ) }
-								title={ selectedResource.name }
+								src={ getYouTubeEmbedUrl( videoResource.externalUrl ) }
+								title={ videoResource.name }
 								frameBorder="0"
 								allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
 								allowFullScreen

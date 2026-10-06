@@ -9,16 +9,25 @@ import { Card, CardBody } from '../../../components/card';
 import { getAudienceLabel, getStageLabel } from './labels';
 import ResourceCardHeader from './resource-card-header';
 import ResourceLink from './resource-link';
-import type { ResourceLinkProps } from './resource-link';
+import type { OpenResource, ResourceItem } from './types';
 
-function ResourceCard( props: Omit< ResourceLinkProps, 'className' > ) {
-	const { resource } = props;
+interface ResourceCardProps {
+	resource: ResourceItem;
+	onOpen: OpenResource;
+}
 
+function ResourceCard( { resource, onOpen }: ResourceCardProps ) {
 	return (
 		<Card className="dashboard-resources-learn__card">
 			<ResourceCardHeader
 				resource={ resource }
-				title={ <ResourceLink { ...props } className="dashboard-resources-learn__card-link" /> }
+				title={
+					<ResourceLink
+						resource={ resource }
+						className="dashboard-resources-learn__card-link"
+						onOpen={ onOpen }
+					/>
+				}
 			/>
 			<CardBody>
 				<VStack spacing={ 3 } justify="flex-start">
