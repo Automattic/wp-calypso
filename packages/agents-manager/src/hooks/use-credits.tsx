@@ -1,6 +1,6 @@
 import { useAgentChat } from '@automattic/agenttic-client';
 import { useCallback, useEffect, useMemo, useRef, useState } from '@wordpress/element';
-import { __, sprintf } from '@wordpress/i18n';
+import { __, _n, sprintf } from '@wordpress/i18n';
 import CreditsMeter from '../components/credits-meter';
 import { API_BASE_URL } from '../constants';
 import { NO_SITE } from '../utils/agent-session';
@@ -374,7 +374,7 @@ export function useCredits( {
 					icon: false,
 					message: sprintf(
 						/* translators: %s: site credits left in short form, e.g. "800" or "8.5k" */
-						__( '%s credits left.', __i18n_text_domain__ ),
+						_n( '%s credit left.', '%s credits left.', status.remaining, __i18n_text_domain__ ),
 						formatCreditsShort( status.remaining )
 					),
 					action,

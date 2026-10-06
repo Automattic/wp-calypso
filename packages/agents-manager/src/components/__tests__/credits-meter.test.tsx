@@ -188,7 +188,7 @@ describe( 'CreditsMeter', () => {
 		};
 		render( <CreditsMeter status={ status } isOpen onToggle={ () => {} } /> );
 		expect(
-			screen.getByRole( 'button', { name: `${ localNumber( 1 ) } credits left` } )
+			screen.getByRole( 'button', { name: `${ localNumber( 1 ) } credit left` } )
 		).toBeInTheDocument();
 		expect( screen.getByText( '<1%' ) ).toBeInTheDocument();
 		expect(
@@ -211,6 +211,9 @@ describe( 'CreditsMeter', () => {
 				upgradeUrl="https://wordpress.com/plans/example.wordpress.com"
 			/>
 		);
+		expect(
+			screen.getByRole( 'button', { name: `${ localNumber( 0 ) } credits left` } )
+		).toBeInTheDocument();
 		expect( screen.getByText( '0% left' ) ).toHaveClass( 'is-exhausted' );
 		expect( screen.getByText( 'You’ve used all your site credits.' ) ).toHaveClass(
 			'agents-manager-credits-meter__message'

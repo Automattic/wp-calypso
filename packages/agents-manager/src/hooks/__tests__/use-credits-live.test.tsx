@@ -29,6 +29,7 @@ jest.mock( '@wordpress/element', () => jest.requireActual( 'react' ) );
 jest.mock( 'i18n-calypso', () => ( { getBrowserSafeLocale: () => 'en' } ) );
 jest.mock( '@wordpress/i18n', () => ( {
 	__: ( text: string ) => text,
+	_n: ( single: string, plural: string, count: number ) => ( count === 1 ? single : plural ),
 	sprintf: ( format: string, ...values: unknown[] ) => {
 		let index = 0;
 		return format
@@ -242,6 +243,7 @@ it.each( [
 	[ 15000, 15000, `${ localNumber( 15 ) }k credits left.`, true ],
 	[ 8500, 40000, `${ localNumber( 8.5 ) }k credits left.`, true ],
 	[ 800, 40000, `${ localNumber( 800 ) } credits left.`, true ],
+	[ 1, 40000, `${ localNumber( 1 ) } credit left.`, true ],
 	[ 0, 40000, 'You’ve used all your site credits.', false ],
 ] as const )(
 	'shows an initial live warning at %i of %i credits',

@@ -1,4 +1,4 @@
-import { __, sprintf } from '@wordpress/i18n';
+import { __, _n, sprintf } from '@wordpress/i18n';
 import type { ProgressRingTone } from '@automattic/agenttic-ui';
 
 export type CreditsPlan = 'free' | 'paid';
@@ -25,7 +25,11 @@ interface CreditsStatusBase {
 }
 
 export type CreditsStatus =
-	| ( CreditsStatusBase & { plan: 'free'; remaining?: number } )
+	| ( CreditsStatusBase & {
+			plan: 'free';
+			/** Exact balance when a server supplies one, which demo mode doesn't. */
+			remaining?: number;
+	  } )
 	| ( CreditsStatusBase & {
 			plan: 'paid';
 			/** Exact balance across the plan and top-ups; display rounding never drives gating. */
@@ -67,6 +71,10 @@ export function isCreditsExhausted( status: CreditsStatus ): boolean {
 		: clampPercent( status.percent ) <= 0;
 }
 
+/**
+ * Free plans only, by percentage. The paid low-balance notice compares the
+ * combined balance with `CREDITS_LOW_BALANCE` in `useCredits()`.
+ */
 export function isCreditsLow(
 	status: CreditsStatus,
 	threshold: number = CREDITS_LOW_THRESHOLD
@@ -112,7 +120,7 @@ export function getCreditsLabel( status: CreditsStatus ): string {
 		// The combined balance across the plan and top-ups, not the monthly allowance alone.
 		return sprintf(
 			/* translators: %s: site credits left in short form, e.g. "800" or "10.8k" */
-			__( '%s credits left', __i18n_text_domain__ ),
+			_n( '%s credit left', '%s credits left', status.remaining, __i18n_text_domain__ ),
 			formatCreditsShort( status.remaining )
 		);
 	}
@@ -130,15 +138,15 @@ export function formatCreditsDetail( pool: CreditsPool ): string | undefined {
 	}
 
 	return sprintf(
-		/* translators: 1: credits left in the pool, 2: credits in the pool, both in short form, e.g. "10.8k" and "15k" */
-		__( '%1$s of %2$s credits left', __i18n_text_domain__ ),
+		/* translators: 1: credits left in the pool, 2: credits in the pool (sets the plural), both in short form, e.g. "10.8k" and "15k" */
+		_n( '%1$s of %2$s credit left', '%1$s of %2$s credits left', pool.total, __i18n_text_domain__ ),
 		formatCreditsShort( pool.remaining ),
 		formatCreditsShort( pool.total )
 	);
 }
 
-// Mocked balances until the backend snapshot lands. Plan credits are spent
-// before top-ups, so the aggregate drains the plan pool first.
+// Demo-mode balances for chats with no live site (`?am_credits`). Plan credits
+// are spent before top-ups, so the aggregate drains the plan pool first.
 const MOCK_PLAN_TOTAL = 15000;
 const MOCK_TOPUPS_TOTAL = 1000;
 

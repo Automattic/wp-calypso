@@ -14,6 +14,7 @@ import { localNumber } from './fixtures/local-number';
 
 jest.mock( '@wordpress/i18n', () => ( {
 	__: ( text: string ) => text,
+	_n: ( single: string, plural: string, count: number ) => ( count === 1 ? single : plural ),
 	sprintf: ( format: string, ...args: unknown[] ) => {
 		let index = 0;
 		return format
@@ -125,6 +126,12 @@ describe( 'getCreditsLabel', () => {
 		expect( getCreditsLabel( paid( 0.4, 800 ) ) ).toBe( `${ localNumber( 800 ) } credits left` );
 		expect( getCreditsLabel( paid( 0, 67000 ) ) ).toBe( `${ localNumber( 67 ) }k credits left` );
 	} );
+
+	it( 'uses the singular only for exactly one credit', () => {
+		expect( getCreditsLabel( paid( 0, 1 ) ) ).toBe( `${ localNumber( 1 ) } credit left` );
+		expect( getCreditsLabel( paid( 0 ) ) ).toBe( `${ localNumber( 0 ) } credits left` );
+		expect( getCreditsLabel( paid( 0, 2 ) ) ).toBe( `${ localNumber( 2 ) } credits left` );
+	} );
 } );
 
 describe( 'formatCreditsDetail', () => {
@@ -151,6 +158,18 @@ describe( 'formatCreditsDetail', () => {
 				total: 2500,
 			} )
 		).toBe( `${ localNumber( 1 ) } of ${ localNumber( 2.5 ) }k credits left` );
+	} );
+
+	it( 'picks the plural by the pool total, not by the credits left', () => {
+		expect(
+			formatCreditsDetail( {
+				id: 'plan',
+				label: 'Monthly plan',
+				percent: 0,
+				remaining: 0,
+				total: 1,
+			} )
+		).toBe( `${ localNumber( 0 ) } of ${ localNumber( 1 ) } credit left` );
 	} );
 } );
 
