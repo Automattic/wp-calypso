@@ -88,6 +88,13 @@ export const wordpressMigrationPath = buildPathHelper< {
 	};
 } >( `/setup/${ WORDPRESS_MIGRATION_FLOW }` );
 
+export const siteCheckPath = buildPathHelper<
+	{
+		queryParams: { from: string; platform: ImporterPlatform; host?: string; isWpcom?: boolean };
+	},
+	typeof STEPS.SITE_MIGRATION_CHECK.slug
+>( STEPS.SITE_MIGRATION_CHECK.slug );
+
 export const processingPath = buildPathHelper<
 	{
 		queryParams: {

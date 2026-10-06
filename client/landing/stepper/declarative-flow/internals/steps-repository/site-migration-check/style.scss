@@ -1,0 +1,210 @@
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/variables';
+
+.step-container-v2:has( .site-migration-check ) {
+	.step-container-v2__content-wrapper {
+		gap: 32px;
+
+		@media ( min-width: $break-large ) {
+			padding-top: 48px;
+		}
+	}
+
+	.step-container-v2__heading h1 {
+		letter-spacing: 0.2px;
+		line-height: 1.18;
+	}
+
+	.step-container-v2__top-bar-wordpress-logo--wordmark {
+		height: 18px;
+	}
+
+	.step-container-v2__top-bar-left-element::before {
+		content: '';
+		height: 16px;
+		border-inline-start: 1px solid var( --color-neutral-5 );
+		margin-inline: 8px 16px;
+	}
+
+	.step-container-v2__back-button {
+		text-decoration: none;
+		font-weight: 400;
+	}
+
+	.site-migration-check {
+		display: flex;
+		flex-direction: column;
+		gap: 24px;
+		max-width: 660px;
+	}
+
+	.step-container-v2__link-button {
+		height: auto;
+		font-size: $font-size-medium;
+		line-height: 1.54;
+		font-weight: 400;
+		text-align: start;
+	}
+
+	.site-migration-check__summary {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		justify-content: space-between;
+		gap: 12px;
+		padding: 15px 24px;
+		border: 1px solid var( --color-neutral-5 );
+		border-radius: 8px;
+		font-size: 1rem;
+		line-height: 1.5;
+		overflow-wrap: anywhere;
+	}
+
+	.site-migration-check__platform {
+		font-size: 0.75rem;
+		line-height: 1.33;
+		color: var( --color-neutral-50 );
+	}
+
+	.site-migration-check__actions {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 10px;
+	}
+
+	.site-migration-check__choice.components-button {
+		box-sizing: border-box;
+		width: 100%;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 12px;
+		padding: 24px;
+		border: 1px solid var( --color-neutral-5 );
+		border-radius: 8px;
+		background: var( --color-surface );
+		color: var( --color-neutral-100 );
+		text-decoration: none;
+		white-space: normal;
+
+		&:disabled {
+			color: var( --color-neutral-50 );
+		}
+
+		&:not( :disabled ):hover {
+			border-color: var( --color-link );
+		}
+	}
+
+	.site-migration-check__choice-content {
+		display: flex;
+		flex-direction: column;
+		gap: 2px;
+		min-width: 0;
+		line-height: 1.54;
+	}
+
+	.site-migration-check__choice-title {
+		font-size: $font-size-large;
+		line-height: 1.33;
+		font-weight: 500;
+	}
+
+	.site-migration-check__choice-description {
+		font-size: $font-size-medium;
+		color: var( --color-neutral-50 );
+	}
+
+	.site-migration-check__choice-arrow {
+		flex: none;
+		/* stylelint-disable-next-line scales/font-sizes */
+		font-size: 1.375rem;
+		line-height: 1.09;
+		color: var( --color-neutral-50 );
+	}
+
+	.migration-instructions-from-preview {
+		flex: none;
+		border-radius: 8px;
+		box-shadow: none;
+
+		.migration-instructions-from-preview__screenshot {
+			height: auto;
+			min-height: 0;
+			aspect-ratio: 660 / 331;
+			border: 1px solid var( --color-neutral-5 );
+			border-radius: 8px;
+		}
+	}
+
+	.site-migration-check__card {
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 16px;
+		padding: 24px;
+		border: 1px solid var( --color-neutral-5 );
+		border-radius: 8px;
+		background: var( --color-surface );
+		font-size: $font-size-medium;
+		line-height: 1.54;
+
+		&:has( .site-migration-check__actions ) .site-migration-check__choice-content {
+			max-width: 480px;
+		}
+
+		.components-notice {
+			box-sizing: border-box;
+			width: 100%;
+			margin: 0;
+			padding: 12px;
+			border: 1px solid #94d29e;
+			border-radius: 8px;
+			background: #ebffed;
+			color: #002900;
+		}
+
+		.components-notice__content {
+			display: flex;
+			align-items: flex-start;
+			gap: 4px;
+			margin: 0;
+			font-size: inherit;
+			line-height: inherit;
+			font-weight: 600;
+			overflow-wrap: anywhere;
+
+			img {
+				flex: none;
+			}
+
+			span {
+				padding-block: 2px;
+			}
+		}
+
+		.step-container-v2__primary-button,
+		.step-container-v2__secondary-button {
+			padding-inline: 12px;
+			font-size: inherit;
+			line-height: inherit;
+		}
+	}
+}
+
+.step-container-v2:has( .site-migration-check--choices ) .step-container-v2__heading {
+	width: 100%;
+	max-width: 660px;
+
+	h1 {
+		text-wrap: wrap;
+	}
+
+	p {
+		max-width: 432px;
+		margin: 24px auto 0;
+		font-size: 0.875rem;
+		line-height: 1.43;
+		color: var( --color-neutral-60 );
+	}
+}
