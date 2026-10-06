@@ -5,7 +5,7 @@ import { render, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import MockDate from 'mockdate';
 import { useState } from 'react';
-import { DateRangePicker } from '../date-range-picker';
+import { DateRangePicker } from '..';
 import type { ComponentProps } from 'react';
 
 function renderDateRangePicker( {
