@@ -80,6 +80,12 @@
 		justify-content: flex-start;
 	}
 	.resource-preview-actions {
+		inline-size: 100%;
+		.resource-read-button {
+			margin-inline-start: auto;
+			flex-shrink: 0;
+			align-self: center;
+		}
 		flex-wrap: wrap;
 		gap: 8px;
 		.components-button {

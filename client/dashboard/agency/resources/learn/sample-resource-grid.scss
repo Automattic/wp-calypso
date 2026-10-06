@@ -128,6 +128,10 @@
 	overflow: hidden;
 }
 
+.sample-resource-library .resource-card-details .resource-description {
+	-webkit-line-clamp: 3;
+}
+
 @media ( hover: hover ) and ( pointer: fine ) and ( prefers-reduced-motion: no-preference ) {
 	.sample-resource-library .dataviews-layout__container {
 		overflow: visible;
@@ -1199,10 +1203,18 @@
 			.dataviews-view-table__col-expand
 		) {
 		inline-size: 15%;
+
+		&:nth-child( 2 ) {
+			inline-size: 20%;
+		}
 	}
 
 	col:first-child {
-		inline-size: 55%;
+		inline-size: 50%;
+	}
+
+	tr > :nth-child( 2 ) {
+		padding-inline: 24px;
 	}
 
 	tr:has( .resource-list-title ) {
@@ -1219,6 +1231,24 @@
 				color: var( --list-brand-color );
 			}
 		}
+	}
+
+	.dataviews-view-table__cell-content-wrapper,
+	.dataviews-view-table__primary-column-content {
+		min-inline-size: 0;
+		max-inline-size: 100%;
+		inline-size: 100%;
+	}
+
+	.resource-list-title {
+		min-inline-size: 0;
+		max-inline-size: 100%;
+	}
+
+	.resource-list-title-text {
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
 	}
 
 	.dataviews-title-field {

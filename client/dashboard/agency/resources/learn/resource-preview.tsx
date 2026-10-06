@@ -13,6 +13,7 @@ import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import ResourceDetailArtwork from './resource-detail-artwork';
 import { getResourceDownload } from './resource-download';
 import { getResourceTags } from './resource-presentation';
+import ResourceReadButton from './resource-read-button';
 import type { LibraryResource } from './types';
 import type { MouseEvent } from 'react';
 import './resource-detail-artwork.scss';
@@ -26,8 +27,14 @@ export default function ResourcePreview( {
 	onNext,
 	onClose,
 	onFilter,
+	isRead = false,
+	readError = false,
+	onToggleRead,
 }: {
 	resource: LibraryResource;
+	isRead?: boolean;
+	readError?: boolean;
+	onToggleRead?: () => void;
 	origin: DOMRect | null;
 	previousResource?: LibraryResource;
 	nextResource?: LibraryResource;
@@ -166,6 +173,7 @@ export default function ResourcePreview( {
 						>
 							<HStack
 								className="resource-preview-actions"
+								wrap
 								spacing={ 2 }
 								justify="start"
 								expanded={ false }
@@ -231,6 +239,9 @@ export default function ResourcePreview( {
 								>
 									<span>{ copyState === __( 'Link copied' ) ? copyState : __( 'Copy link' ) }</span>
 								</Button>
+								{ onToggleRead && (
+									<ResourceReadButton isRead={ isRead } onChange={ onToggleRead } />
+								) }
 							</HStack>
 							<HStack
 								className="resource-preview-metadata"
@@ -263,6 +274,13 @@ export default function ResourcePreview( {
 				<VisuallyHidden>
 					<span role="status">{ copyState }</span>
 				</VisuallyHidden>
+				{ readError && (
+					<Text role="alert">
+						{ __(
+							'Could not save your reading status. Please allow browser storage and try again.'
+						) }
+					</Text>
+				) }
 				{ downloadError && (
 					<p className="resource-detail-error" role="alert">
 						{ downloadError }

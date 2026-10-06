@@ -11,6 +11,8 @@ import { DataViews as WPDataViews, filterSortAndPaginate } from '@wordpress/data
 import { __, sprintf } from '@wordpress/i18n';
 import { closeSmall, Icon } from '@wordpress/icons';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useAnalytics } from '../../../app/analytics';
+import { useAuth } from '../../../app/auth';
 import { learnRoute } from '../../../app/router/agency';
 import { DataViews } from '../../../components/dataviews';
 import { hubRecommendationIds, hubResources } from './hub-resources';
@@ -22,6 +24,7 @@ import ResourceRecommendations from './resource-recommendations';
 import ResourceTags from './resource-tags';
 import useResourceCoverHeight from './use-resource-cover-height';
 import useResourceLoadMore from './use-resource-load-more';
+import useResourceReadState from './use-resource-read-state';
 import type { LibraryResource } from './types';
 import type { Field, View } from '@wordpress/dataviews';
 
@@ -47,7 +50,8 @@ const recommendedResources = hubRecommendationIds.flatMap( ( id ) =>
 const createFields = (
 	onFilter: ( field: string, value: string ) => void,
 	onlyTopResources: boolean,
-	viewType: View[ 'type' ]
+	viewType: View[ 'type' ],
+	readIds: string[]
 ): Field< LibraryResource >[] => [
 	{
 		id: 'title',
@@ -88,6 +92,17 @@ const createFields = (
 				</VStack>
 			),
 		enableGlobalSearch: true,
+	},
+	{
+		id: 'readStatus',
+		label: __( 'Reading status' ),
+		type: 'text',
+		getValue: ( { item } ) => ( readIds.includes( item.id ) ? 'read' : 'unread' ),
+		elements: [
+			{ value: 'unread', label: __( 'Unread' ) },
+			{ value: 'read', label: __( 'Read' ) },
+		],
+		filterBy: { operators: [ 'is' ] },
 	},
 	{
 		id: 'featured',
@@ -166,6 +181,20 @@ const createFields = (
 ];
 
 export default function SampleResourceGrid() {
+	const { user } = useAuth();
+	const { readIds, setRead: saveRead, error: readError } = useResourceReadState( user.ID );
+	const { recordTracksEvent } = useAnalytics();
+	const setRead = useCallback(
+		( id: string, read: boolean ) => {
+			if ( saveRead( id, read ) ) {
+				recordTracksEvent( 'calypso_a4a_resource_read_status_changed', {
+					resource_id: id,
+					is_read: read,
+				} );
+			}
+		},
+		[ saveRead, recordTracksEvent ]
+	);
 	const [ view, setView ] = useState< View >( initialView );
 	const [ stage, setStage ] = useState( 'All' );
 	const [ previewFromRecommendations, setPreviewFromRecommendations ] = useState( false );
@@ -191,8 +220,8 @@ export default function SampleResourceGrid() {
 	}, [] );
 	const libraryRef = useResourceCoverHeight();
 	const fields = useMemo(
-		() => createFields( applyTagFilter, onlyTopResources, view.type ),
-		[ applyTagFilter, onlyTopResources, view.type ]
+		() => createFields( applyTagFilter, onlyTopResources, view.type, readIds ),
+		[ applyTagFilter, onlyTopResources, view.type, readIds ]
 	);
 
 	const filteredResources = useMemo(
@@ -228,7 +257,15 @@ export default function SampleResourceGrid() {
 		}
 	}, [ data, libraryRef ] );
 
-	const previewResources = previewFromRecommendations ? recommendedResources : navigationResources;
+	const navigationSnapshot = useRef( navigationResources );
+	useEffect( () => {
+		if ( ! selectedResource ) {
+			navigationSnapshot.current = navigationResources;
+		}
+	}, [ navigationResources, selectedResource ] );
+	const previewResources = previewFromRecommendations
+		? recommendedResources
+		: navigationSnapshot.current;
 	const resourceIndex = previewResources.findIndex( ( item ) => item.id === resourceId );
 
 	return (
@@ -447,6 +484,13 @@ export default function SampleResourceGrid() {
 				) : (
 					<WPDataViews.FiltersToggled className="dataviews-filters__container" />
 				) }
+				{ readError && (
+					<Text role="alert">
+						{ __(
+							'Could not save your reading status. Please allow browser storage and try again.'
+						) }
+					</Text>
+				) }
 				<DataViews.Layout />
 				{ navigationResources.length > 0 && (
 					<VStack className="resource-load-more" spacing={ 3 } alignment="center">
@@ -476,6 +520,11 @@ export default function SampleResourceGrid() {
 			{ selectedResource && (
 				<ResourcePreview
 					resource={ selectedResource }
+					isRead={ readIds.includes( selectedResource.id ) }
+					readError={ readError }
+					onToggleRead={ () =>
+						setRead( selectedResource.id, ! readIds.includes( selectedResource.id ) )
+					}
 					onFilter={ ( field, value ) => {
 						applyTagFilter( field, value );
 						setOrigin( null );
