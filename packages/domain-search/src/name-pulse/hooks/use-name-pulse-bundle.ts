@@ -12,9 +12,8 @@ const hasCompanion = ( bundle: BundleSuggestion | null | undefined ): bundle is 
 /**
  * The backend only anchors a bundle on a trigger TLD (`.com` today), and only
  * while that name is available, so a typed `.blog` or a taken `.com` has none of
- * its own and is not asked. Each trigger anchor is asked in order and the first
- * with a companion wins; a later answer never replaces an earlier anchor's, so
- * the card does not swap.
+ * its own. Each anchor is asked in order and the first with a companion wins;
+ * a later answer never replaces an earlier anchor's, so the card does not swap.
  * Anchors share the `bundleForDomain` cache with the classic inline bundle rows.
  */
 export const useNamePulseBundle = ( anchors: string[] | null ) => {
