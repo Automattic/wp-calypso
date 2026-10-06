@@ -25,6 +25,7 @@ import { DomainSuggestionMatchReasons } from '../../ui/domain-suggestion-match-r
 import { bullseyeIcon } from '../../ui/icons/bullseye-icon';
 import { getNamePulseSalePrice } from '../helpers';
 import { useNamePulseCartToggle } from '../hooks/use-name-pulse-cart-toggle';
+import { NamePulsePolicyNoticeDialog } from './policy-notice-dialog';
 
 /**
  * Laid out like the bundle card it sits beside, from the classic suggestion
@@ -52,7 +53,11 @@ export const NamePulseExactMatchCard = ( {
 		trademarkClaimsNoticeInfo,
 		acceptTrademarkClaim,
 		closeTrademarkClaims,
-	} = useNamePulseCartToggle( domainName, 0 );
+		policyNotice,
+		isPolicyNoticeOpen,
+		confirmPolicyNotice,
+		closePolicyNotice,
+	} = useNamePulseCartToggle( domainName, 0, availability.policy_notices );
 
 	const containerContext = useMemo(
 		() =>
@@ -82,15 +87,13 @@ export const NamePulseExactMatchCard = ( {
 	if ( inCart ) {
 		cta = <DomainSuggestionContinueCTA disabled={ isMutating } onClick={ events.onContinue } />;
 	} else if ( error ) {
-		cta = (
-			<DomainSuggestionErrorCTA errorMessage={ error.message } callback={ () => toggleCart() } />
-		);
+		cta = <DomainSuggestionErrorCTA errorMessage={ error.message } callback={ toggleCart } />;
 	} else {
 		cta = (
 			<DomainSuggestionPrimaryCTA
 				disabled={ isMutating }
 				isBusy={ isPending }
-				onClick={ () => toggleCart() }
+				onClick={ toggleCart }
 			/>
 		);
 	}
@@ -133,6 +136,15 @@ export const NamePulseExactMatchCard = ( {
 					) }
 				</VStack>
 			</div>
+			{ policyNotice && (
+				<NamePulsePolicyNoticeDialog
+					notice={ policyNotice }
+					open={ isPolicyNoticeOpen }
+					isPending={ isPending }
+					onConfirm={ confirmPolicyNotice }
+					onClose={ closePolicyNotice }
+				/>
+			) }
 			{ trademarkClaimsNoticeInfo && (
 				<DomainSearchTrademarkClaimsModal
 					domainName={ domainName }
