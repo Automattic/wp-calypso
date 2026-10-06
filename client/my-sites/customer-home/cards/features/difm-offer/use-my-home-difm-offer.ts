@@ -1,5 +1,7 @@
 import { useLocale } from '@automattic/i18n-utils';
 import { getDifmOfferCopy, useDifmOffer } from 'calypso/dashboard/utils/difm-offer';
+import useHomeLayoutQuery from 'calypso/data/home/use-home-layout-query';
+import { FEATURE_DIFM_OFFER } from 'calypso/my-sites/customer-home/cards/constants';
 import { useSelector } from 'calypso/state';
 import isSiteA4ADevSite from 'calypso/state/selectors/is-site-a4a-dev-site';
 import { getSiteOption } from 'calypso/state/sites/selectors';
@@ -14,7 +16,7 @@ interface MyHomeDifmOffer {
 
 /**
  * Resolves the DIFM offer for the selected site. `copy` is null when the card must not render.
- * The older "Build it for me" task card also reads this, so that both cards never show together.
+ * The paid `TASK_USE_BUILT_BY` task card also reads this, so that both cards never show together.
  */
 export default function useMyHomeDifmOffer(): MyHomeDifmOffer {
 	const siteId = useSelector( getSelectedSiteId );
@@ -23,6 +25,7 @@ export default function useMyHomeDifmOffer(): MyHomeDifmOffer {
 		string | undefined;
 	const isA4ADevSite = useSelector( ( state ) => isSiteA4ADevSite( state, siteId ) );
 	const localeSlug = useLocale();
+	const { data: layout } = useHomeLayoutQuery( siteId, { enabled: false } );
 
 	const { isEligible, isLoading, variation } = useDifmOffer( {
 		planSlug,
@@ -31,7 +34,12 @@ export default function useMyHomeDifmOffer(): MyHomeDifmOffer {
 		isA4ADevSite,
 	} );
 
-	if ( ! isEligible || isLoading ) {
+	// The paid task hides on a non-null `copy`, so the card must also be in the layout,
+	// or the user sees neither. Only the secondary location renders this card.
+	const secondaryCards = ( layout as { secondary?: string[] } | undefined )?.secondary;
+	const isInLayout = !! secondaryCards?.includes( FEATURE_DIFM_OFFER );
+
+	if ( ! isEligible || isLoading || ! isInLayout ) {
 		return { copy: null, variation };
 	}
 
