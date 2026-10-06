@@ -18,7 +18,7 @@ The router passes `from`, `siteId`, `siteSlug`, `platform`, `host`, `ref`, `sour
 
 ## Owned by
 
-WordPress.com migrations project
+@Automattic/jetpack-avalon
 
 ## Context
 
