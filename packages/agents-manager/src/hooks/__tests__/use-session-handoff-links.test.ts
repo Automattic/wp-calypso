@@ -11,7 +11,7 @@ const mockContext = {
 jest.mock( '../../contexts', () => ( { useAgentsManagerContext: () => mockContext } ) );
 
 import { fireEvent, renderHook } from '@testing-library/react';
-import { saveSessionId } from '../../utils/agent-session';
+import { getOrCreateSessionId, saveSessionId } from '../../utils/agent-session';
 import { useSessionHandoffLinks } from '../use-session-handoff-links';
 
 const CALYPSO_LINK = 'https://wordpress.com/home/example.com';
@@ -60,6 +60,14 @@ describe( 'useSessionHandoffLinks', () => {
 		renderHook( () => useSessionHandoffLinks( 'wp-orchestrator' ) );
 
 		expect( handoffOnClick( attributes ) ).toBe( HANDED_OFF_LINK );
+	} );
+
+	it( 'does not hand off a session no turn was sent in', () => {
+		sessionStorage.clear();
+		getOrCreateSessionId( 'wp-orchestrator', '111', 7 );
+		renderHook( () => useSessionHandoffLinks( 'wp-orchestrator' ) );
+
+		expect( handoffOnClick( { href: CALYPSO_LINK } ) ).toBeUndefined();
 	} );
 
 	it( 'hands off when an element inside the link is clicked', () => {

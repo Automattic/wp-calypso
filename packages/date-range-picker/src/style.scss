@@ -34,6 +34,13 @@
 	}
 }
 
+// `@wordpress/ui`'s month navigation icons set no fill, so they stay black instead of
+// following the button's color (e.g. dark mode, disabled). `:not([fill])` spares the
+// range preview outline, which sets `fill="none"`.
+.daterange-calendar svg:not([fill]) {
+	fill: currentColor;
+}
+
 /* Mobile */
 @media ( max-width: 600px ) {
 	.daterange-calendar {

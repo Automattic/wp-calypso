@@ -747,6 +747,23 @@ describe( 'OrchestratorChat', () => {
 		expect( getSessionId( 'wp-orchestrator' ) ).toBe( '' );
 	} );
 
+	it( 'keeps the live history when a remount fetches the conversation mid-turn', () => {
+		mockManagerTurnInFlight = true;
+		const loadMessages = jest.fn();
+		mockUseAgentChat.mockReturnValue( agentChatReturn( { loadMessages } ) );
+		render( chat() );
+
+		const { onSuccess } = mockUseConversation.mock.calls.at( -1 )![ 0 ] as {
+			onSuccess: ( messages: unknown[], sessionId: string ) => void;
+		};
+		act( () => {
+			onSuccess( [], 'canonical-session-id' );
+		} );
+
+		expect( loadMessages ).not.toHaveBeenCalled();
+		expect( getSessionId( 'wp-orchestrator' ) ).toBe( 'canonical-session-id' );
+	} );
+
 	it( 'saves the server’s canonical session ID as the tab session', () => {
 		render( chat() );
 

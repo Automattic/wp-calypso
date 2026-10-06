@@ -1,6 +1,6 @@
 # @automattic/date-range-picker
 
-A date-range picker built on top of `@automattic/ui`'s `DateRangeCalendar`. It
+A date-range picker built on top of `@wordpress/ui`'s `RangeCalendar`. It
 provides a popover-style trigger, keyboard-navigable preset shortcuts (last 7
 days, month-to-date, etc.), accessible date inputs, and timezone-aware
 site-day handling.
@@ -80,20 +80,12 @@ The host application must install these alongside the picker:
 - `@wordpress/date` (`>=5.23.0`)
 - `@wordpress/i18n` (`>=5.23.0`)
 - `@wordpress/icons` (`>=10.23.0`)
+- `@wordpress/ui` (`>=0.22.0`)
 
 These are peer dependencies (not bundled) so that the host can control the
 exact version and avoid duplicate copies of WordPress packages — multiple
 copies of `@wordpress/compose` will silently break hooks shared across the
 picker and the host.
-
-### Calendar styles
-
-The picker renders `@automattic/ui`'s `DateRangeCalendar`. Make sure the
-host loads its stylesheet once:
-
-```ts
-import '@automattic/ui/style.css';
-```
 
 ### Skinning via CSS custom properties
 

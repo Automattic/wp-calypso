@@ -737,8 +737,29 @@ describe( 'NamePulseResults', () => {
 
 	it( 'narrows every section to the chosen endings and restores them on clear', async () => {
 		const user = userEvent.setup();
+		const keywordRequests: NamePulseSuggestionsQuery[] = [];
 
-		render( <NamePulseTestSearch query="ice cream" /> );
+		render(
+			<NamePulseTestSearch
+				query="ice cream"
+				suggestions={ async ( params ) => {
+					keywordRequests.push( params );
+
+					// Like the endpoint, a filtered request returns extra matching names.
+					return {
+						suggestions: params.tlds
+							? [
+									...NAME_PULSE_SUGGESTIONS_FIXTURE.filter( ( { domain_name } ) =>
+										params.tlds?.some( ( tld ) => domain_name.endsWith( `.${ tld }` ) )
+									),
+									{ domain_name: 'scoopsandcones.com', relevance: 0.1, raw_price: 24 },
+								]
+							: NAME_PULSE_SUGGESTIONS_FIXTURE,
+						errors: [],
+					};
+				} }
+			/>
+		);
 
 		await within( await findRow( 'icecream.net' ) ).findByText( '$24' );
 		await findRow( 'creamyice.com' );
@@ -749,11 +770,15 @@ describe( 'NamePulseResults', () => {
 
 		await waitFor( () => expect( domainsIn( 'top' ) ).toEqual( [ 'icecream.com' ] ) );
 		expect( document.querySelector( '[data-section="exact"]' ) ).toBeNull();
-		expect( domainsIn( 'suggestions' ) ).toEqual( [
-			'creamyice.com',
-			'icecreamshop.com',
-			'frozentreats.com',
-		] );
+		await waitFor( () =>
+			expect( domainsIn( 'suggestions' ) ).toEqual( [
+				'creamyice.com',
+				'icecreamshop.com',
+				'frozentreats.com',
+				'scoopsandcones.com',
+			] )
+		);
+		expect( keywordRequests.map( ( params ) => params.tlds ) ).toEqual( [ undefined, [ 'com' ] ] );
 
 		await user.click( screen.getByRole( 'button', { name: 'Filter, 1 filter applied' } ) );
 		await user.click( await screen.findByRole( 'button', { name: 'Clear' } ) );
@@ -783,6 +808,41 @@ describe( 'NamePulseResults', () => {
 		await waitFor( () => expect( domainsIn( 'top' ) ).toEqual( [ 'icecream.com' ] ) );
 		expect( ( await findExactMatchCard() ).getAttribute( 'data-domain' ) ).toBe( 'icecream.net' );
 		expect( document.querySelector( '[data-section="exact"]' ) ).toBeNull();
+	} );
+
+	it( 'filters Creative matches on the page, as their provider ignores the chosen endings', async () => {
+		const user = userEvent.setup();
+		const aiRequests: NamePulseSuggestionsQuery[] = [];
+
+		render(
+			<NamePulseTestSearch
+				query="a blog about icecream"
+				suggestions={ async ( params ) => {
+					if ( params.use_ai ) {
+						aiRequests.push( params );
+					}
+
+					return {
+						suggestions: params.use_ai
+							? NAME_PULSE_AI_SUGGESTIONS_FIXTURE
+							: NAME_PULSE_SUGGESTIONS_FIXTURE,
+						errors: [],
+					};
+				} }
+			/>
+		);
+
+		await findRow( 'coldcomfort.cafe' );
+
+		await user.click( screen.getByRole( 'button', { name: 'Filter, no filters applied' } ) );
+		await user.click( await screen.findByRole( 'option', { name: '.blog' } ) );
+		await user.click( screen.getByRole( 'button', { name: 'Apply' } ) );
+
+		await waitFor( () => expect( rowFor( 'coldcomfort.cafe' ) ).toBeNull() );
+		expect( rowFor( 'brainfreeze.club' ) ).toBeNull();
+		expect( rowFor( 'thedailyscoop.blog' ) ).not.toBeNull();
+		expect( aiRequests ).toHaveLength( 1 );
+		expect( aiRequests[ 0 ].tlds ).toBeUndefined();
 	} );
 
 	it( 'shows the sale price and the match reasons of the real-time check on the exact-match card', async () => {

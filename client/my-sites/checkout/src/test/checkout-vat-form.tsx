@@ -5,7 +5,6 @@
 import { convertResponseCartToRequestCart } from '@automattic/shopping-cart';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { dispatch } from '@wordpress/data';
 import nock from 'nock';
 import { useCheckoutHelpCenter } from 'calypso/my-sites/checkout/src/hooks/use-checkout-help-center';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
@@ -14,7 +13,6 @@ import { isMarketplaceProduct } from 'calypso/state/products-list/selectors';
 import { getPlansBySiteId } from 'calypso/state/sites/plans/selectors/get-plans-by-site';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { resetCheckoutStores } from '../lib/checkout-stores';
-import { CHECKOUT_STORE } from '../lib/wpcom-store';
 import {
 	planWithoutDomain,
 	mockSetCartEndpointWith,
@@ -87,7 +85,6 @@ describe( 'Checkout contact step VAT form', () => {
 	} );
 
 	beforeEach( () => {
-		dispatch( CHECKOUT_STORE ).reset();
 		resetCheckoutStores();
 		( useCartKey as jest.Mock ).mockImplementation( () => mainCartKey );
 		nock.cleanAll();

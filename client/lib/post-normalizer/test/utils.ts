@@ -50,6 +50,34 @@ describe( 'isFeaturedImageInContent', () => {
 		};
 		expect( isFeaturedImageInContent( post ) ).toEqual( 1 );
 	} );
+
+	test( 'should match resized and scaled copies of the featured image', () => {
+		const post = {
+			post_thumbnail: {
+				URL: 'https://example.com/wp-content/uploads/2026/09/3.jpg',
+			},
+			images: [
+				{ src: 'https://example.com/wp-content/uploads/2026/09/3.jpg' },
+				{ src: 'https://example.com/wp-content/uploads/2026/09/16-771x1024.jpg' },
+				{ src: 'https://example.com/wp-content/uploads/2026/09/3-scaled-771x1024.jpg' },
+			],
+		};
+		expect( isFeaturedImageInContent( post ) ).toEqual( 2 );
+	} );
+
+	test( 'should not treat a different image with a size-like name as a match', () => {
+		const post = {
+			post_thumbnail: {
+				URL: 'https://example.com/wp-content/uploads/2026/09/3.jpg',
+			},
+			images: [
+				{ src: 'https://example.com/wp-content/uploads/2026/09/3.jpg' },
+				{ src: 'https://example.com/wp-content/uploads/2026/09/3-2.jpg' },
+				{ src: 'https://example.com/wp-content/uploads/2026/09/300x200.jpg' },
+			],
+		};
+		expect( isFeaturedImageInContent( post ) ).toBe( false );
+	} );
 } );
 
 describe( 'makeImageURLSafe', () => {
