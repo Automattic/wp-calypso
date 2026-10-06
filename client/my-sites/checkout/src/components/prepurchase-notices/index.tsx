@@ -23,13 +23,17 @@ import { useShoppingCart } from '@automattic/shopping-cart';
 import { useCallback, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import Notice from 'calypso/components/notice';
+import versionCompare from 'calypso/lib/version-compare';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
-import { getSitePlan, isJetpackMinimumVersion, getSiteOption } from 'calypso/state/sites/selectors';
-import getSelectedSite from 'calypso/state/ui/selectors/get-selected-site';
+import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
+import {
+	getActivePlanSlug,
+	getJetpackConnectionActivePlugins,
+	useCheckoutSite,
+} from '../../hooks/use-checkout-site';
 import JetpackPluginRequiredVersionNotice from './jetpack-plugin-required-version-notice';
 import SitePlanIncludesCartProductNotice from './site-plan-includes-cart-product-notice';
 import type { ResponseCartProduct } from '@automattic/shopping-cart';
-import type { AppState } from 'calypso/types';
 import './style.scss';
 
 /**
@@ -37,19 +41,13 @@ import './style.scss';
  * from a range of possible options.
  */
 const PrePurchaseNotices = () => {
-	const selectedSite = useSelector( getSelectedSite );
-	const siteId = selectedSite?.ID;
+	const siteId = useSelector( getSelectedSiteId );
 	const cartKey = useCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
 	const cartItemSlugs = responseCart.products.map( ( item ) => item.product_slug );
 
-	const currentSitePlan = useSelector( ( state ) => {
-		if ( ! siteId ) {
-			return null;
-		}
-
-		return getSitePlan( state, siteId );
-	} );
+	const { data: site } = useCheckoutSite( siteId );
+	const planSlugOnSite = getActivePlanSlug( site );
 
 	const getMatchingProducts = useCallback( ( items: ResponseCartProduct[], planSlug: string ) => {
 		const planFeatures = getAllFeaturesForPlan( planSlug ) as ReadonlyArray< string >;
@@ -93,8 +91,6 @@ const PrePurchaseNotices = () => {
 	}, [] );
 
 	const cartProductThatOverlapsSitePlan = useMemo( () => {
-		const planSlugOnSite = currentSitePlan?.product_slug;
-
 		// Bypass the notice if the site doesn't have a plan or the plan is Jetpack Free
 		if ( ! planSlugOnSite || planSlugOnSite === 'jetpack_free' ) {
 			return null;
@@ -103,23 +99,16 @@ const PrePurchaseNotices = () => {
 		const matchingProducts = getMatchingProducts( responseCart.products, planSlugOnSite );
 
 		return matchingProducts?.[ 0 ];
-	}, [ currentSitePlan?.product_slug, getMatchingProducts, responseCart.products ] );
+	}, [ planSlugOnSite, getMatchingProducts, responseCart.products ] );
 
 	const BACKUP_MINIMUM_JETPACK_VERSION = '8.5';
-	const siteHasBackupMinimumPluginVersion = useSelector( ( state: AppState ) => {
-		const activeConnectedPlugins = getSiteOption(
-			state,
-			siteId,
-			'jetpack_connection_active_plugins'
-		) as string[];
-		const backupPluginActive =
-			Array.isArray( activeConnectedPlugins ) &&
-			activeConnectedPlugins.includes( 'jetpack-backup' );
-		return (
-			backupPluginActive ||
-			( siteId && isJetpackMinimumVersion( state, siteId, BACKUP_MINIMUM_JETPACK_VERSION ) )
-		);
-	} );
+	const activeConnectedPlugins = getJetpackConnectionActivePlugins( site );
+	const jetpackVersion = site?.options?.jetpack_version;
+	const siteHasBackupMinimumPluginVersion =
+		activeConnectedPlugins.includes( 'jetpack-backup' ) ||
+		( ( site?.jetpack || activeConnectedPlugins.length > 0 ) &&
+			!! jetpackVersion &&
+			versionCompare( jetpackVersion, BACKUP_MINIMUM_JETPACK_VERSION, '>=' ) );
 
 	// All these notices (and the selectors that drive them)
 	// require a site ID to work. We should *conceptually* always
@@ -130,12 +119,12 @@ const PrePurchaseNotices = () => {
 		return null;
 	}
 
-	if ( currentSitePlan && cartProductThatOverlapsSitePlan ) {
+	if ( site?.plan && cartProductThatOverlapsSitePlan ) {
 		return (
 			<SitePlanIncludesCartProductNotice
-				plan={ currentSitePlan }
+				plan={ site.plan }
 				product={ cartProductThatOverlapsSitePlan }
-				selectedSite={ selectedSite }
+				selectedSite={ site }
 			/>
 		);
 	}
