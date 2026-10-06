@@ -91,6 +91,21 @@ describe( 'Site Migration Flow', () => {
 			Object.assign( window.location, { pathname: '/', search: '', hash: '' } );
 		} );
 
+		it( 'redirects a direct result URL to address entry without the flag, preserving context', () => {
+			jest.spyOn( config, 'isEnabled' ).mockReturnValue( false );
+			const search =
+				'?from=https%3A%2F%2Fexample.com&platform=wordpress&ref=new-site-popover&sessionId=abc';
+			Object.assign( window.location, {
+				pathname: '/setup/site-migration/site-migration-check',
+				search,
+				hash: '#test',
+			} );
+			expect( siteMigrationFlow.initialize() ).toBe( false );
+			expect( window.location.replace ).toHaveBeenCalledWith(
+				`/setup/site-migration/site-migration-identify${ search }#test`
+			);
+		} );
+
 		it.each( [ '', '/', '/pt-br', '/pt-br/' ] )(
 			'redirects the legacy choice URL with suffix "%s" while preserving context',
 			( suffix ) => {
@@ -363,6 +378,183 @@ describe( 'Site Migration Flow', () => {
 		} );
 
 		describe( 'Reprint address routes', () => {
+			it.each( [ true, false ] )( 'gates the result page when the flag is %s', ( enabled ) => {
+				jest
+					.spyOn( config, 'isEnabled' )
+					.mockImplementation( ( flag ) => enabled && flag === 'migration/reprint-flow' );
+				const destination = runNavigation( {
+					from: STEPS.SITE_MIGRATION_IDENTIFY,
+					dependencies: {
+						action: 'continue',
+						from: 'https://example.com',
+						platform: 'wordpress',
+						host: 'bluehost',
+					},
+				} );
+				expect( destination ).toMatchDestination( {
+					step: enabled ? STEPS.SITE_MIGRATION_CHECK : STEPS.SITE_CREATION_STEP,
+					query: { from: 'https://example.com', platform: 'wordpress', host: 'bluehost' },
+				} );
+				const steps = siteMigrationFlow.initialize();
+				expect(
+					steps && steps.some( ( step ) => step.slug === STEPS.SITE_MIGRATION_CHECK.slug )
+				).toBe( enabled );
+			} );
+
+			it.each( [
+				{ platform: 'unknown', isWpcom: false, enabled: true },
+				{ platform: 'wordpress', isWpcom: true, enabled: true },
+				{ platform: 'unknown', isWpcom: false, enabled: false },
+				{ platform: 'wordpress', isWpcom: true, enabled: false },
+				{ platform: 'squarespace', isWpcom: false, enabled: true },
+				{ platform: 'squarespace', isWpcom: false, enabled: false },
+				{ platform: 'medium', isWpcom: false, enabled: true },
+			] )( 'gates the intermediate result for %j', ( { enabled, ...source } ) => {
+				jest
+					.spyOn( config, 'isEnabled' )
+					.mockImplementation( ( flag ) => enabled && flag === 'migration/reprint-flow' );
+				jest.mocked( getCurrentUserSiteCount ).mockReturnValue( 2 );
+				const destination = runNavigation( {
+					from: STEPS.SITE_MIGRATION_IDENTIFY,
+					dependencies: { action: 'continue', from: 'https://example.com', ...source },
+				} );
+				expect( destination ).toMatchDestination( {
+					step: enabled ? STEPS.SITE_MIGRATION_CHECK : STEPS.PICK_SITE,
+					query: enabled
+						? {
+								from: 'https://example.com',
+								platform: source.platform,
+								isWpcom: String( source.isWpcom ),
+							}
+						: undefined,
+				} );
+			} );
+
+			it( 'clears the previous host when checking an edited source without a detected host', () => {
+				jest
+					.spyOn( config, 'isEnabled' )
+					.mockImplementation( ( flag ) => flag === 'migration/reprint-flow' );
+				const destination = runNavigation( {
+					from: STEPS.SITE_MIGRATION_IDENTIFY,
+					dependencies: {
+						action: 'continue',
+						from: 'https://new.example.com',
+						platform: 'wordpress',
+					},
+					query: { from: 'https://old.example.com', host: 'bluehost' },
+				} );
+				expect( destination ).toMatchDestination( {
+					step: STEPS.SITE_MIGRATION_CHECK,
+					query: { from: 'https://new.example.com', platform: 'wordpress', host: '' },
+				} );
+			} );
+
+			it( 'clears the WordPress.com result when checking a different external source', () => {
+				jest
+					.spyOn( config, 'isEnabled' )
+					.mockImplementation( ( flag ) => flag === 'migration/reprint-flow' );
+				const destination = runNavigation( {
+					from: STEPS.SITE_MIGRATION_IDENTIFY,
+					dependencies: {
+						action: 'continue',
+						from: 'https://new.example.com',
+						platform: 'wordpress',
+					},
+					query: { from: 'https://old.example.com', isWpcom: 'true' },
+				} );
+				expect( destination ).toMatchDestination( {
+					step: STEPS.SITE_MIGRATION_CHECK,
+					query: { from: 'https://new.example.com', isWpcom: 'false' },
+				} );
+			} );
+
+			it.each( [ 'wix', 'ghost' ] )( 'keeps %s on its current route', ( platform ) => {
+				jest
+					.spyOn( config, 'isEnabled' )
+					.mockImplementation( ( flag ) => flag === 'migration/reprint-flow' );
+				const destination = runNavigation( {
+					from: STEPS.SITE_MIGRATION_IDENTIFY,
+					dependencies: {
+						action: 'continue',
+						from: 'https://example.com',
+						platform,
+					},
+				} );
+				expect( destination ).toMatchDestination( { step: STEPS.SITE_CREATION_STEP } );
+			} );
+
+			it( 'opens the backup page from the unknown-platform result', () => {
+				jest
+					.spyOn( config, 'isEnabled' )
+					.mockImplementation( ( flag ) => flag === 'migration/reprint-flow' );
+				const destination = runNavigation( {
+					from: STEPS.SITE_MIGRATION_CHECK,
+					dependencies: { action: 'backup_file' },
+					query: {
+						from: 'https://example.com',
+						platform: 'unknown',
+						source: 'sites-dashboard',
+						ref: 'new-site-popover',
+						sessionId: '3C',
+					},
+				} );
+				expect( destination ).toMatchDestination( {
+					step: STEPS.SITE_MIGRATION_BACKUP,
+				} );
+			} );
+
+			it.each( [
+				{ platform: 'unknown' },
+				{ platform: 'wordpress', isWpcom: 'true' },
+				{ platform: 'squarespace' },
+			] )( 'blocks result continuation for %j', ( query ) => {
+				jest
+					.spyOn( config, 'isEnabled' )
+					.mockImplementation( ( flag ) => flag === 'migration/reprint-flow' );
+				const destination = runNavigation( {
+					from: STEPS.SITE_MIGRATION_CHECK,
+					dependencies: {
+						action: 'continue',
+						from: 'https://example.com',
+						platform: query.platform,
+					},
+					query,
+				} );
+				expect( destination ).toMatchDestination( { step: STEPS.SITE_MIGRATION_IDENTIFY } );
+			} );
+
+			it( 'continues from the result page to destination selection without repeating it', () => {
+				jest
+					.spyOn( config, 'isEnabled' )
+					.mockImplementation( ( flag ) => flag === 'migration/reprint-flow' );
+				jest.mocked( getCurrentUserSiteCount ).mockReturnValue( 2 );
+				const destination = runNavigation( {
+					from: STEPS.SITE_MIGRATION_CHECK,
+					dependencies: {
+						action: 'continue',
+						from: 'https://example.com',
+						platform: 'wordpress',
+						host: 'bluehost',
+					},
+				} );
+				expect( destination ).toMatchDestination( {
+					step: STEPS.PICK_SITE,
+					query: { from: 'https://example.com', platform: 'wordpress', host: 'bluehost' },
+				} );
+			} );
+
+			it( 'returns from the result page to address entry', () => {
+				jest
+					.spyOn( config, 'isEnabled' )
+					.mockImplementation( ( flag ) => flag === 'migration/reprint-flow' );
+				const destination = runNavigation( {
+					from: STEPS.SITE_MIGRATION_CHECK,
+					dependencies: { action: 'back' },
+					query: { from: 'https://example.com', platform: 'wordpress' },
+				} );
+				expect( destination ).toMatchDestination( { step: STEPS.SITE_MIGRATION_IDENTIFY } );
+			} );
+
 			it.each( [ true, false ] )( 'gates the backup route when the flag is %s', ( enabled ) => {
 				jest
 					.spyOn( config, 'isEnabled' )

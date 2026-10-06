@@ -42,6 +42,7 @@ import type {
 const BASE_STEPS = [
 	STEPS.SITE_MIGRATION_IDENTIFY,
 	STEPS.SITE_MIGRATION_BACKUP,
+	STEPS.SITE_MIGRATION_CHECK,
 	STEPS.SITE_MIGRATION_HOW_TO_MIGRATE,
 	STEPS.SITE_MIGRATION_UPGRADE_PLAN,
 	STEPS.SITE_MIGRATION_INSTRUCTIONS,
@@ -62,6 +63,17 @@ const BASE_STEPS = [
 
 function initialize() {
 	const { pathname, search, hash } = window.location;
+	if (
+		! config.isEnabled( 'migration/reprint-flow' ) &&
+		matchPath( '/setup/:flow/site-migration-check/:lang?', pathname )
+	) {
+		window.location.replace(
+			pathname.replace( '/site-migration-check', `/${ STEPS.SITE_MIGRATION_IDENTIFY.slug }` ) +
+				search +
+				hash
+		);
+		return false as const;
+	}
 	if ( matchPath( '/setup/:flow/site-migration-import-or-migrate/:lang?', pathname ) ) {
 		window.location.replace(
 			pathname.replace(
@@ -77,7 +89,8 @@ function initialize() {
 	return stepsWithRequiredLogin(
 		BASE_STEPS.filter(
 			( step ) =>
-				step.slug !== STEPS.SITE_MIGRATION_BACKUP.slug ||
+				( step.slug !== STEPS.SITE_MIGRATION_BACKUP.slug &&
+					step.slug !== STEPS.SITE_MIGRATION_CHECK.slug ) ||
 				config.isEnabled( 'migration/reprint-flow' )
 		)
 	);
@@ -184,19 +197,45 @@ const siteMigration: FlowV2< typeof initialize > = {
 		const submit: SubmitHandler< typeof initialize > = ( submittedStep ) => {
 			const { slug, providedDependencies } = submittedStep;
 			switch ( slug ) {
-				case STEPS.SITE_MIGRATION_IDENTIFY.slug: {
-					const { from, platform, action, host } = providedDependencies as {
+				case STEPS.SITE_MIGRATION_IDENTIFY.slug:
+				case STEPS.SITE_MIGRATION_CHECK.slug: {
+					const { from, platform, action, host, isWpcom } = providedDependencies as {
 						from: string;
 						platform: ImporterPlatform;
-						action: SiteMigrationIdentifyAction;
+						action: SiteMigrationIdentifyAction | 'back';
 						host?: string;
+						isWpcom?: boolean;
 					};
+					if (
+						slug === STEPS.SITE_MIGRATION_CHECK.slug &&
+						( action === 'back' ||
+							! config.isEnabled( 'migration/reprint-flow' ) ||
+							( action !== 'backup_file' &&
+								( ! from ||
+									platform !== 'wordpress' ||
+									isWpcom ||
+									urlQueryParams.get( 'isWpcom' ) === 'true' ) ) )
+					) {
+						return navigate( STEPS.SITE_MIGRATION_IDENTIFY.slug );
+					}
 					const hasDestinationSite = hasSite( siteId, siteSlug );
 					if ( action === 'backup_file' ) {
 						return navigate(
 							config.isEnabled( 'migration/reprint-flow' )
 								? STEPS.SITE_MIGRATION_BACKUP.slug
 								: STEPS.SITE_MIGRATION_IDENTIFY.slug
+						);
+					}
+					if (
+						slug === STEPS.SITE_MIGRATION_IDENTIFY.slug &&
+						config.isEnabled( 'migration/reprint-flow' ) &&
+						action === 'continue' &&
+						( platform === 'unknown' ||
+							( platform !== 'wix' && isPlatformImportable( platform ) ) ) &&
+						from
+					) {
+						return navigate(
+							paths.siteCheckPath( { from, platform, host: host ?? '', isWpcom: !! isWpcom } )
 						);
 					}
 					const isSSHMigrationAvailable = config.isEnabled( 'migration/ssh-migration' );

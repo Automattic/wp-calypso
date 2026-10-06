@@ -374,6 +374,26 @@ describe( 'SiteMigrationIdentify', () => {
 				)
 			);
 		} );
+
+		it( 'passes the WordPress.com detection result to avoid offering a full-site copy', async () => {
+			const submit = jest.fn();
+			render( { navigation: { submit } } );
+			mockApi()
+				.get( '/wpcom/v2/imports/analyze-url' )
+				.query( { site_url: 'https://example.com' } )
+				.reply( 200, {
+					...API_RESPONSE_WORDPRESS_PLATFORM,
+					platform_data: { is_wpcom: true, is_wpengine: false, is_pressable: false },
+				} );
+			mockApi()
+				.get( '/wpcom/v2/site-profiler/hosting-provider/example.com' )
+				.reply( 200, { hosting_provider: { slug: 'automattic' } } );
+			await userEvent.type( getInput(), 'https://example.com' );
+			await userEvent.click( screen.getByRole( 'button', { name: 'Continue' } ) );
+			await waitFor( () =>
+				expect( submit ).toHaveBeenCalledWith( expect.objectContaining( { isWpcom: true } ) )
+			);
+		} );
 	} );
 
 	it( 'hides the back button and link by default', async () => {

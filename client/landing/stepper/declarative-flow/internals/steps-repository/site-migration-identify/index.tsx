@@ -225,6 +225,7 @@ const SiteMigrationIdentify: StepType< {
 				platform?: string;
 				from?: string;
 				host?: string;
+				isWpcom?: boolean;
 		  }
 		| undefined;
 } > = function ( { navigation, flow } ) {
@@ -236,7 +237,7 @@ const SiteMigrationIdentify: StepType< {
 	const handleSubmit = useCallback(
 		async (
 			action: SiteMigrationIdentifyAction,
-			data?: { platform: string; from: string; host?: string }
+			data?: { platform: string; from: string; host?: string; isWpcom?: boolean }
 		) => {
 			// If we have a URL of the source, we send requests to the mShots API to create screenshots
 			// early in the flow to avoid long loading times in the migration instructions step.
@@ -259,11 +260,12 @@ const SiteMigrationIdentify: StepType< {
 
 	const stepContent = (
 		<Analyzer
-			onComplete={ ( { platform, url }, hostingProviderSlug ) =>
+			onComplete={ ( { platform, url, platform_data }, hostingProviderSlug ) =>
 				handleSubmit( 'continue', {
 					platform,
 					from: url,
 					host: hostingProviderSlug,
+					...( isReprintFlow && platform_data?.is_wpcom ? { isWpcom: true } : {} ),
 				} )
 			}
 			hideImporterListLink={ urlQueryParams.get( 'hide_importer_link' ) === 'true' }
