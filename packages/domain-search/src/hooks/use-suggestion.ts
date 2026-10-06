@@ -74,8 +74,10 @@ const getPriceRuleForSuggestion = ( {
 export const useSuggestion = ( domainName: string ) => {
 	const { query, queries, config, events } = useDomainSearch();
 
+	// Read the availability of the query, not of this card's domain: every card's
+	// position must count the FQDN that useSuggestionsList puts first.
 	const { data: fqdnAvailability } = useQuery( {
-		...queries.domainAvailability( domainName ),
+		...queries.domainAvailability( query ),
 	} );
 
 	const { data, isError } = useQuery( {
@@ -87,9 +89,10 @@ export const useSuggestion = ( domainName: string ) => {
 	const cachedSuggestions = data ?? ( isError ? [] : undefined );
 
 	if ( cachedSuggestions ) {
-		const suggestions = fqdnAvailability
-			? addAvailabilityAsSuggestion( cachedSuggestions, fqdnAvailability )
-			: cachedSuggestions;
+		const suggestions =
+			fqdnAvailability && query === fqdnAvailability.domain_name
+				? addAvailabilityAsSuggestion( cachedSuggestions, fqdnAvailability )
+				: cachedSuggestions;
 
 		const suggestionPosition = suggestions.findIndex(
 			( suggestion ) => suggestion.domain_name === domainName

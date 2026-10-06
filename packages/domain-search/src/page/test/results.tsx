@@ -176,6 +176,48 @@ describe( 'ResultsPage', () => {
 			).not.toBeInTheDocument();
 		} );
 
+		it.each( [
+			[ DomainAvailabilityStatus.AVAILABLE, { 'test.com': 0, 'test.net': 1, 'test.org': 2 } ],
+			[ DomainAvailabilityStatus.REGISTERED, { 'test.net': 1, 'test.org': 2 } ],
+		] )(
+			'reports the suggestion positions after the %s FQDN when searching for it',
+			async ( status, expectedPositions ) => {
+				const onSuggestionRender = jest.fn();
+
+				mockGetAvailabilityQuery( {
+					params: { domainName: 'test.com' },
+					availability: buildAvailability( { domain_name: 'test.com', status } ),
+				} );
+
+				mockGetSuggestionsQuery( {
+					params: { query: 'test.com' },
+					suggestions: [
+						buildSuggestion( { domain_name: 'test.net' } ),
+						buildSuggestion( { domain_name: 'test.org' } ),
+					],
+				} );
+
+				render(
+					<TestDomainSearch query="test.com" events={ { onSuggestionRender } }>
+						<ResultsPage />
+					</TestDomainSearch>
+				);
+
+				await screen.findByTitle( 'test.org' );
+
+				await waitFor( () => {
+					const positions = Object.fromEntries(
+						onSuggestionRender.mock.calls.map( ( [ suggestion ] ) => [
+							suggestion.domain_name,
+							suggestion.position,
+						] )
+					);
+
+					expect( positions ).toEqual( expectedPositions );
+				} );
+			}
+		);
+
 		it( 'renders the "show more results" button if there are more than config.numberOfDomainsResultsPerPage suggestions', async () => {
 			mockGetSuggestionsQuery( {
 				params: { query: 'test' },
