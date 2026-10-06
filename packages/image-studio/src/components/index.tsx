@@ -10,6 +10,7 @@ import { useDispatch, useSelect } from '@wordpress/data';
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useAgentConfig } from '../hooks/use-agent-config';
+import { type AiCreditsState, useAiCredits } from '../hooks/use-ai-credits';
 import { useAnnotation } from '../hooks/use-annotation';
 import { useBeforeUnload } from '../hooks/use-beforeunload';
 import { useDeletePermanently } from '../hooks/use-delete-permanently';
@@ -63,16 +64,25 @@ type CloseDialogConfig = {
 
 function ImageStudioAgentChat( {
 	agentConfig: agentConfigProp,
+	aiCredits,
 	attachmentId,
 	mode,
 	onChatSubmit,
 }: {
 	agentConfig: UseAgentChatConfig;
+	aiCredits: AiCreditsState;
 	attachmentId?: number;
 	mode: ImageStudioMode;
 	onChatSubmit?: () => Promise< void > | void;
 } ) {
-	const agentChatProps = useAgentChat( agentConfigProp );
+	const { notice: creditsNotice, isLimitReached, isLoading: isCheckingCredits } = aiCredits;
+	const agentChatProps = useAgentChat( {
+		...agentConfigProp,
+		onTaskUpdate: ( update ) => {
+			aiCredits.onTaskUpdate( update );
+			return agentConfigProp.onTaskUpdate?.( update );
+		},
+	} );
 	const { addNotice } = useDispatch( imageStudioStore );
 	// Storing the input value for detecting when it is cleared
 	const [ inputValue, setInputValue ] = useState( '' );
@@ -118,7 +128,7 @@ function ImageStudioAgentChat( {
 		messages: displayMessages,
 		mode,
 		inputValue,
-		disabled: isVideoMode,
+		disabled: isVideoMode || isLimitReached || isCheckingCredits,
 	} );
 
 	const videoSuggestions = useVideoClipSuggestions( {
@@ -126,7 +136,7 @@ function ImageStudioAgentChat( {
 		clearSuggestions: agentChatProps.clearSuggestions,
 		messages: displayMessages,
 		inputValue,
-		disabled: ! isVideoMode,
+		disabled: ! isVideoMode || isLimitReached || isCheckingCredits,
 	} );
 
 	const { handleSuggestionClick, isLoadingSuggestions, abortSuggestionsLoading } = isVideoMode
@@ -203,13 +213,17 @@ function ImageStudioAgentChat( {
 				onInputChange={ setInputValue }
 				onSuggestionClick={ handleSuggestionClick }
 				maxInputLength={ isVideoMode ? 2000 : 1000 }
+				notice={ creditsNotice }
 			>
 				<AgentUI.ConversationView showHeader={ false }>
 					<AgentUI.Messages />
 					<AgentUI.Footer>
-						{ suggestionsComponent }
+						{ ! isLimitReached && suggestionsComponent }
 						<AgentUI.Notice />
-						<AgentUI.Input disabled={ isStopDisabled ? true : undefined } />
+						<AgentUI.Input
+							readOnly={ isLimitReached }
+							disabled={ isStopDisabled || isLimitReached ? true : undefined }
+						/>
 						<div className="image-studio-modal__input-toolbar">
 							{ mode === ImageStudioMode.Generate && isVideoMode && (
 								<StylePicker disabled={ isProcessing } mode={ mode } variant="video" />
@@ -243,12 +257,14 @@ function ImageStudioAgentChat( {
 
 const ImageStudioAgentUIComponent = ( {
 	agentConfig,
+	aiCredits,
 	attachmentId,
 	modalOpenKey,
 	onChatSubmit,
 	mode,
 }: {
 	agentConfig: UseAgentChatConfig;
+	aiCredits: AiCreditsState;
 	attachmentId?: number;
 	modalOpenKey?: number;
 	onChatSubmit?: () => void;
@@ -258,6 +274,7 @@ const ImageStudioAgentUIComponent = ( {
 		<ImageStudioAgentChat
 			key={ `agentchat-${ modalOpenKey || 'default' }` }
 			agentConfig={ agentConfig }
+			aiCredits={ aiCredits }
 			attachmentId={ attachmentId }
 			mode={ mode }
 			onChatSubmit={ onChatSubmit }
@@ -474,6 +491,8 @@ const ImageStudioContent = withInstanceId(
 			? ImageStudioMode.Edit
 			: ImageStudioMode.Generate;
 
+		const aiCredits = useAiCredits( { mode, authProvider: agentConfigState?.authProvider } );
+
 		const modalClasses = cn(
 			'image-studio-modal',
 			{
@@ -658,6 +677,7 @@ const ImageStudioContent = withInstanceId(
 								agentConfigState ? (
 									<ImageStudioAgentUI
 										agentConfig={ agentConfigState }
+										aiCredits={ aiCredits }
 										attachmentId={ attachmentId ?? undefined }
 										modalOpenKey={ modalOpenKey }
 										onChatSubmit={ handleChatSubmit }

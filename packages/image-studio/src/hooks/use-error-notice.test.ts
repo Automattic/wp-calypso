@@ -291,6 +291,7 @@ describe( 'useErrorNotice', () => {
 			expect( trackImageStudioUpgradeNoticeShown ).toHaveBeenCalledTimes( 1 );
 			expect( trackImageStudioUpgradeNoticeShown ).toHaveBeenCalledWith( {
 				mode: ImageStudioMode.Generate,
+				trigger: 'error',
 			} );
 		} );
 
@@ -307,6 +308,7 @@ describe( 'useErrorNotice', () => {
 			actions[ 0 ].onClick();
 			expect( trackImageStudioUpgradeNoticeClick ).toHaveBeenCalledWith( {
 				mode: ImageStudioMode.Generate,
+				trigger: 'error',
 			} );
 		} );
 
