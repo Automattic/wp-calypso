@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.0.0
+
+- Breaking: render the calendar with `@wordpress/ui`'s `RangeCalendar` instead of `@automattic/ui`'s `DateRangeCalendar`. `@wordpress/ui` (`>=0.22.0`) is now a required peer dependency, and the `@automattic/ui/style.css` import is no longer needed.
+- Clicking a day after a complete range is selected now starts a new range from that day, instead of extending or shrinking the existing range.
+
 ## 1.0.6
 
 - Publish against `@automattic/ui@^2.0.0`, resolving a duplicate/mismatched `@automattic/ui` version in the installed dependency tree (previously published `1.0.4` pinned `@automattic/ui@^1.0.3`).

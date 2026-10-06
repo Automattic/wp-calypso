@@ -78,6 +78,36 @@ describe( 'DateRangePicker (new)', () => {
 		expect( span ).toBeVisible();
 	} );
 
+	test( 'starting a new range from a complete one empties the end date input', async () => {
+		const { getByRole, findByRole, getByLabelText } = renderDateRangePicker();
+		await userEvent.click( getByRole( 'button', { name: /Date range:/i } ) );
+
+		const augGrid = await findByRole( 'grid', { name: /August 2025/i } );
+		await userEvent.click( within( augGrid ).getByRole( 'button', { name: /August 6, 2025/i } ) );
+
+		expect( getByLabelText( 'End date' ) ).toHaveValue( '' );
+	} );
+
+	test( 'clicking the day of a single-day range does not fall back to the default preset', async () => {
+		const { getByRole, findByRole } = renderDateRangePicker( {
+			start: new Date( 2025, 7, 20 ),
+			end: new Date( 2025, 7, 20 ),
+		} );
+		await userEvent.click( getByRole( 'button', { name: /Date range:/i } ) );
+
+		const augGrid = await findByRole( 'grid', { name: /August 2025/i } );
+		await userEvent.click( within( augGrid ).getByRole( 'button', { name: /August 20, 2025/i } ) );
+
+		expect( getByRole( 'button', { name: /^Apply$/i } ) ).toBeDisabled();
+	} );
+
+	test( 'shows one month below the two-month breakpoint', async () => {
+		const { getByRole, findAllByRole } = renderDateRangePicker();
+		await userEvent.click( getByRole( 'button', { name: /Date range:/i } ) );
+
+		expect( await findAllByRole( 'grid' ) ).toHaveLength( 1 );
+	} );
+
 	test( 'Clear → shows “Apply last 7 days”; click applies and closes', async () => {
 		const { getByRole, findByRole, getByLabelText } = renderDateRangePicker( {
 			start: new Date( 2025, 7, 1 ),
