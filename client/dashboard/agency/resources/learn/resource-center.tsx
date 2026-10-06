@@ -4,18 +4,23 @@ import { useCallback, useMemo, useState } from 'react';
 import BrowseAllResources from './browse-all-resources';
 import { getYouTubeEmbedUrl } from './youtube-embed';
 import type { ResourceItem, RecordTracksEvent } from './types';
+import type { View } from '@wordpress/dataviews';
 
 export const getResourceCenterDescription = () =>
 	__( 'Resources to help you learn, win clients, and deliver great work.' );
 
 interface ResourceCenterProps {
 	resources: ResourceItem[];
+	view: View;
+	onChangeView: ( view: View ) => void;
 	recordTracksEvent?: RecordTracksEvent;
 	onResourceClick?: ( resource: ResourceItem ) => void;
 }
 
 export default function ResourceCenter( {
 	resources: unsortedResources,
+	view,
+	onChangeView,
 	recordTracksEvent = () => {},
 	onResourceClick,
 }: ResourceCenterProps ) {
@@ -42,6 +47,8 @@ export default function ResourceCenter( {
 		<>
 			<BrowseAllResources
 				resources={ resources }
+				view={ view }
+				onChangeView={ onChangeView }
 				onOpenVideoModal={ handleOpenVideoModal }
 				recordTracksEvent={ recordTracksEvent }
 				onResourceClick={ onResourceClick }

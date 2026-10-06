@@ -1,11 +1,12 @@
 import { agencyResourceEventMutation } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
 import { __experimentalSpacer as Spacer, __experimentalText as Text } from '@wordpress/components';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { formatAgencyResources } from 'calypso/dashboard/agency/resources/learn/format-resources';
 import ResourceCenter, {
 	getResourceCenterDescription,
 } from 'calypso/dashboard/agency/resources/learn/resource-center';
+import { DEFAULT_VIEW } from 'calypso/dashboard/agency/resources/learn/views';
 import { useDispatch, useSelector } from 'calypso/state';
 import { getActiveAgencyId } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -26,6 +27,7 @@ export default function ResourceCenterOverviewContent( {
 	const { mutate: recordResourceEvent } = useMutation( agencyResourceEventMutation() );
 
 	const resources = useMemo( () => formatAgencyResources( data?.results ?? [] ), [ data ] );
+	const [ view, setView ] = useState( DEFAULT_VIEW );
 
 	const recordTracks = useCallback(
 		( eventName: string, properties?: Record< string, unknown > ) => {
@@ -55,6 +57,8 @@ export default function ResourceCenterOverviewContent( {
 			</Spacer>
 			<ResourceCenter
 				resources={ resources }
+				view={ view }
+				onChangeView={ setView }
 				recordTracksEvent={ recordTracks }
 				onResourceClick={ handleResourceClick }
 			/>
