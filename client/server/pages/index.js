@@ -890,19 +890,24 @@ const setUpSectionContext = ( section, entrypoint ) => ( req, res, next ) => {
 	next();
 };
 
-const getStringQueryArg = ( req, name ) =>
-	typeof req.query[ name ] === 'string' ? req.query[ name ].slice( 0, 500 ) : undefined;
-
 // The dashboard host has no wp-login.php, so these 404s are either scanners or a
 // redirect of ours built against the wrong host. Collect enough to tell them apart.
 const logWpLoginNotFound = ( req ) => {
+	const getStringQueryArg = ( name ) =>
+		typeof req.query[ name ] === 'string' ? req.query[ name ].slice( 0, 500 ) : undefined;
 	const hasLoggedInCookie = !! req.cookies.wordpress_logged_in;
 	// Browsers send Sec-Fetch-* on every request; most scanners don't.
 	const secFetchSite = req.get( 'sec-fetch-site' );
+	let secFetchSiteStat = 'unset';
+	if ( secFetchSite !== undefined ) {
+		secFetchSiteStat = [ 'cross-site', 'same-origin', 'same-site', 'none' ].includes( secFetchSite )
+			? secFetchSite
+			: 'other';
+	}
 
 	bumpStat(
 		'dashboard-404-wp-login',
-		`${ hasLoggedInCookie ? 'cookie' : 'no-cookie' }:${ secFetchSite ?? 'unset' }`
+		`${ hasLoggedInCookie ? 'cookie' : 'no-cookie' }:${ secFetchSiteStat }`
 	);
 
 	analytics.logstash.log( {
@@ -917,8 +922,8 @@ const logWpLoginNotFound = ( req ) => {
 			path: req.path,
 			// Values are omitted since they can carry nonces and auth codes.
 			query_keys: Object.keys( req.query ),
-			action: getStringQueryArg( req, 'action' ),
-			redirect_to: getStringQueryArg( req, 'redirect_to' ),
+			action: getStringQueryArg( 'action' ),
+			redirect_to: getStringQueryArg( 'redirect_to' ),
 			referer: req.get( 'referer' ),
 			user_agent: req.get( 'user-agent' ),
 			accept: req.get( 'accept' )?.slice( 0, 200 ),
