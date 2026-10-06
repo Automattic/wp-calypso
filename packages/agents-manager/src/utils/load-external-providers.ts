@@ -22,6 +22,7 @@ import {
 import { findAbilityByName } from '../abilities/ability-name';
 import { withPageDesignStream } from '../abilities/stream-page-design/stream';
 import { withAbilityCompletionBroadcast } from './ability-completion-broadcast';
+import { bigSkyPageContextProvider, isBigSkyEnabled } from './big-sky-page-context';
 import { withCanvasBinding, withCanvasGuard } from './canvas-guard';
 import { getAgentsManagerInlineData } from './get-agents-manager-inline-data';
 import { isEditorPage } from './is-editor-page';
@@ -616,7 +617,10 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 		};
 	}
 
-	if ( agentProviders.length === 0 ) {
+	// A Big Sky site needs AM's abilities and page context even with no provider.
+	const isBigSkySite = isBigSkyEnabled();
+
+	if ( agentProviders.length === 0 && ! isBigSkySite ) {
 		setLoadedProviderIds( [] );
 		return { markdownExtensions: defaultMarkdownExtensions };
 	}
@@ -636,7 +640,9 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 	// by ability name, so a migrated ability executes through AM even if an
 	// external provider still ships its copy.
 	const allToolProviders: ToolProvider[] = [ amToolProvider ];
-	const allContextProviders: ContextProvider[] = [];
+	// Big Sky's page context goes first, so its `wp-admin` environment wins over
+	// the Jetpack AI sidebar's `gutenberg`.
+	const allContextProviders: ContextProvider[] = isBigSkySite ? [ bigSkyPageContextProvider ] : [];
 	const allMarkdownComponents: MarkdownComponents[] = [];
 	const allMarkdownExtensions: MarkdownExtensions[] = [];
 	const allGetChatComponents: GetChatComponent[] = [];

@@ -110,8 +110,10 @@ export async function registerEditorAbilities(): Promise< void > {
 }
 
 // Re-exported for the facade's sync views (`getAmCheckpointContext`,
-// `getAmPageContentMarkup`, `getAmPageStructure`, `getAmCheckpointActions`).
+// `getAmPageContentMarkup`, `getAmPageStructure`, `getAmEditorPostContext`,
+// `getAmCheckpointActions`).
 export { getAvailableCheckpoints } from '../utils/checkpoints';
+export { getEditorPostContext } from '../utils/editor-post-context';
 export { getPageContentMarkup } from '../utils/page-content-markup';
 export { getPageStructure } from '../utils/page-structure';
 

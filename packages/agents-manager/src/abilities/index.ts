@@ -130,6 +130,14 @@ export function getAmPageStructure(): PageStructure | null {
 }
 
 /**
+ * The post the editor has open, for the client context. Empty until the
+ * editor abilities have loaded, and off editor pages.
+ */
+export function getAmEditorPostContext(): Record< string, unknown > {
+	return loadedEditorAbilities?.getEditorPostContext() ?? {};
+}
+
+/**
  * AM's checkpoint store for the chat's Undo, or `null` until the editor
  * abilities have loaded — before then nothing has written to it.
  */
