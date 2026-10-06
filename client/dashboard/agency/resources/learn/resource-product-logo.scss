@@ -1,0 +1,11 @@
+.dashboard-resources-learn__product-logo {
+	display: block;
+	block-size: 20px;
+	inline-size: var( --resource-logo-width );
+	max-inline-size: 100%;
+	background: currentColor;
+	mask-image: var( --resource-logo-image );
+	mask-size: contain;
+	mask-position: left center;
+	mask-repeat: no-repeat;
+}

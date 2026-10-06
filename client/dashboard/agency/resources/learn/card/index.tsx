@@ -12,6 +12,8 @@ import ResourceCardHeader from './header';
 import type { OpenResource } from '../types';
 import type { AgencyEnablementResource } from '@automattic/api-core';
 
+import './style.scss';
+
 interface ResourceCardProps {
 	resource: AgencyEnablementResource;
 	onOpen: OpenResource;
