@@ -1,3 +1,4 @@
+import { CreditsMeter } from '@automattic/agents-manager';
 import { getAgentManager, useAgentChat, UseAgentChatConfig } from '@automattic/agenttic-client';
 import { AgentUI, cn, ThinkingMessage } from '@automattic/agenttic-ui';
 import {
@@ -75,7 +76,13 @@ function ImageStudioAgentChat( {
 	mode: ImageStudioMode;
 	onChatSubmit?: () => Promise< void > | void;
 } ) {
-	const { notice: creditsNotice, isLimitReached, isLoading: isCheckingCredits } = aiCredits;
+	const {
+		notice: creditsNotice,
+		isLimitReached,
+		isLoading: isCheckingCredits,
+		meter: creditsMeter,
+	} = aiCredits;
+	const [ isCreditsMeterOpen, setIsCreditsMeterOpen ] = useState( false );
 	const agentChatProps = useAgentChat( {
 		...agentConfigProp,
 		onTaskUpdate: ( update ) => {
@@ -214,30 +221,44 @@ function ImageStudioAgentChat( {
 				onSuggestionClick={ handleSuggestionClick }
 				maxInputLength={ isVideoMode ? 2000 : 1000 }
 				notice={ creditsNotice }
+				trailingActions={
+					creditsMeter && (
+						<CreditsMeter
+							status={ creditsMeter.status }
+							upgradeUrl={ creditsMeter.upgradeUrl }
+							isOpen={ isCreditsMeterOpen }
+							onToggle={ setIsCreditsMeterOpen }
+						/>
+					)
+				}
 			>
 				<AgentUI.ConversationView showHeader={ false }>
 					<AgentUI.Messages />
 					<AgentUI.Footer>
 						{ ! isLimitReached && suggestionsComponent }
 						<AgentUI.Notice />
+						{ /* Stacked puts the pickers on the same row as the credits dot and send button. */ }
 						<AgentUI.Input
+							layout="stacked"
 							readOnly={ isLimitReached }
 							disabled={ isStopDisabled || isLimitReached ? true : undefined }
-						/>
-						<div className="image-studio-modal__input-toolbar">
-							{ mode === ImageStudioMode.Generate && isVideoMode && (
-								<StylePicker disabled={ isProcessing } mode={ mode } variant="video" />
-							) }
-							{ mode === ImageStudioMode.Generate && ! isVideoMode && (
+							leadingActions={
 								<>
-									<AspectRatioPicker disabled={ isProcessing } />
-									<StylePicker disabled={ isProcessing } mode={ mode } />
+									{ mode === ImageStudioMode.Generate && isVideoMode && (
+										<StylePicker disabled={ isProcessing } mode={ mode } variant="video" />
+									) }
+									{ mode === ImageStudioMode.Generate && ! isVideoMode && (
+										<>
+											<AspectRatioPicker disabled={ isProcessing } />
+											<StylePicker disabled={ isProcessing } mode={ mode } />
+										</>
+									) }
+									{ mode !== ImageStudioMode.Generate && (
+										<StylePicker disabled={ isProcessing } mode={ mode } />
+									) }
 								</>
-							) }
-							{ mode !== ImageStudioMode.Generate && (
-								<StylePicker disabled={ isProcessing } mode={ mode } />
-							) }
-						</div>
+							}
+						/>
 					</AgentUI.Footer>
 				</AgentUI.ConversationView>
 			</AgentUI.Container>

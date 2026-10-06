@@ -189,11 +189,6 @@ body.js.is-image-studio-open {
 	@include visually-hidden();
 }
 
-.image-studio-modal__input-toolbar {
-	display: flex;
-	gap: 8px;
-}
-
 .image-studio-modal__media-library-disclaimer {
 	margin: 6px 0 0;
 	font-size: 12px;

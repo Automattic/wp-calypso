@@ -21,6 +21,11 @@ jest.mock( '@wordpress/i18n', () => ( {
 	sprintf: jest.requireActual( '@wordpress/i18n' ).sprintf,
 } ) );
 
+// The package root loads the whole chat; the ring's balance helpers are all this hook uses.
+jest.mock( '@automattic/agents-manager', () =>
+	jest.requireActual( '@automattic/agents-manager/src/utils/live-credits' )
+);
+
 jest.mock( '../utils/tracking', () => ( {
 	trackImageStudioUpgradeNoticeShown: jest.fn(),
 	trackImageStudioUpgradeNoticeClick: jest.fn(),
@@ -30,13 +35,22 @@ const BLOG_ID = 123;
 const NOTHING = { notice: undefined, isLimitReached: false, isLoading: false };
 
 const planSnapshot = ( remaining: number, overrides: Record< string, unknown > = {} ) => ( {
+	schema_version: 1,
+	policy_id: 'wpcom-site-plan-period-v1',
+	cost_version: 'provider-cost-v1',
+	accounting_mode: 'provider_cost',
 	reason: 'wpcom_site_plan',
 	eligible: true,
+	preview: true,
+	enforcement: 'site_allowance',
 	blog_id: BLOG_ID,
 	plan_tier: 'premium',
 	credits_limit: 40_000,
 	credits_used: 40_000 - remaining,
 	credits_remaining: remaining,
+	exhausted: remaining === 0,
+	blocked: false,
+	resets_at: '2026-11-01T00:00:00Z',
 	...overrides,
 } );
 
@@ -49,7 +63,12 @@ const noPlanSnapshot = {
 	credits_remaining: 0,
 };
 
+const UPGRADE_URL = 'https://wordpress.com/plans/123?source=wp_ai_credits';
 const upgradeAction = { label: 'Upgrade', onClick: expect.any( Function ) };
+const meterAt = ( percent: number ) => ( {
+	status: expect.objectContaining( { plan: 'paid', percent } ),
+	upgradeUrl: UPGRADE_URL,
+} );
 
 describe( 'parseSiteCredits', () => {
 	it( 'reads a paid plan balance', () => {
@@ -167,7 +186,8 @@ describe( 'useAiCredits', () => {
 			'https://public-api.wordpress.com/wpcom/v2/sites/123/ai/credits',
 			expect.objectContaining( { headers: { Authorization: 'Bearer token' } } )
 		);
-		expect( stateOf( result ) ).toEqual( NOTHING );
+		// Above the low threshold only the dot shows, as in the Agent's chat.
+		expect( stateOf( result ) ).toEqual( { ...NOTHING, meter: meterAt( 75 ) } );
 	} );
 
 	it( 'locks the input and shows a persistent notice when the site is out of credits', async () => {
@@ -186,6 +206,7 @@ describe( 'useAiCredits', () => {
 				},
 				isLimitReached: true,
 				isLoading: false,
+				meter: meterAt( 0 ),
 			} )
 		);
 		expect( trackImageStudioUpgradeNoticeShown ).toHaveBeenCalledWith( {
@@ -199,11 +220,7 @@ describe( 'useAiCredits', () => {
 			mode: ImageStudioMode.Edit,
 			trigger: 'open',
 		} );
-		expect( openSpy ).toHaveBeenCalledWith(
-			'https://wordpress.com/plans/123?source=wp_ai_credits',
-			'_blank',
-			'noopener,noreferrer'
-		);
+		expect( openSpy ).toHaveBeenCalledWith( UPGRADE_URL, '_blank', 'noopener,noreferrer' );
 		openSpy.mockRestore();
 	} );
 
@@ -237,13 +254,14 @@ describe( 'useAiCredits', () => {
 		expect( result.current.isLimitReached ).toBe( true );
 	} );
 
-	it( 'locks the input when the plan includes no credits', async () => {
+	it( 'locks the input and shows no ring when the plan includes no credits', async () => {
 		respondWith( { ai_credits: noPlanSnapshot } );
 
 		const { result } = renderCredits();
 
 		await waitFor( () => expect( result.current.isLimitReached ).toBe( true ) );
 		expect( result.current.notice?.message ).toBe( 'This site’s plan doesn’t include AI credits.' );
+		expect( result.current.meter ).toBeUndefined();
 	} );
 
 	it( 'offers no upgrade on the top plan', async () => {
@@ -253,6 +271,16 @@ describe( 'useAiCredits', () => {
 
 		await waitFor( () => expect( result.current.notice ).toBeDefined() );
 		expect( result.current.notice?.action ).toBeUndefined();
+		expect( result.current.meter ).toEqual( { status: expect.anything(), upgradeUrl: undefined } );
+	} );
+
+	it( 'shows the notice but no ring when the balance doesn’t match the Agent’s shape', async () => {
+		respondWith( { ai_credits: planSnapshot( 6_000, { resets_at: 'soon' } ) } );
+
+		const { result } = renderCredits();
+
+		await waitFor( () => expect( result.current.notice ).toBeDefined() );
+		expect( result.current.meter ).toBeUndefined();
 	} );
 
 	it.each( [
@@ -329,6 +357,7 @@ describe( 'useAiCredits', () => {
 		} );
 
 		expect( result.current.isLimitReached ).toBe( true );
+		expect( result.current.meter ).toEqual( meterAt( 0 ) );
 		expect( fetchMock ).toHaveBeenCalledTimes( 1 );
 		expect( trackImageStudioUpgradeNoticeShown ).toHaveBeenCalledWith( {
 			mode: ImageStudioMode.Generate,

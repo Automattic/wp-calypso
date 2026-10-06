@@ -1,3 +1,4 @@
+import { buildLiveCreditsStatus, parseCreditSnapshot } from '@automattic/agents-manager';
 import { useEvent } from '@wordpress/compose';
 import { useEffect, useMemo, useRef, useState } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
@@ -7,6 +8,7 @@ import {
 	type UpgradeNoticeTrigger,
 } from '../utils/tracking';
 import type { ImageStudioMode } from '../types';
+import type { CreditsStatus } from '@automattic/agents-manager';
 import type { AuthProvider, TaskUpdate } from '@automattic/agenttic-client';
 import type { NoticeConfig } from '@automattic/agenttic-ui';
 
@@ -96,14 +98,8 @@ function getBlogId(): number | null {
 	return Number.isSafeInteger( blogId ) && blogId > 0 ? blogId : null;
 }
 
-/**
- * Resolves to null when the site is not on AI credits or the balance cannot be
- * read, so a broken check never shows a wrong notice.
- */
-async function fetchSiteCredits(
-	blogId: number,
-	authProvider: AuthProvider
-): Promise< SiteCredits | null > {
+/** Resolves to undefined when the site is not on AI credits or the request fails. */
+async function fetchSiteCredits( blogId: number, authProvider: AuthProvider ): Promise< unknown > {
 	try {
 		const headers = await authProvider();
 		const response = await window.fetch( `${ WPCOM_SITES_API }/${ blogId }/ai/credits`, {
@@ -113,13 +109,13 @@ async function fetchSiteCredits(
 		} );
 		// A site that is not on AI credits answers 404.
 		if ( ! response.ok ) {
-			return null;
+			return undefined;
 		}
 		const data = await response.json();
-		return parseSiteCredits( data?.ai_credits, blogId );
+		return data?.ai_credits;
 	} catch ( error ) {
 		window.console?.error?.( '[Image Studio] Failed to fetch site AI credits:', error );
-		return null;
+		return undefined;
 	}
 }
 
@@ -130,6 +126,8 @@ export interface AiCreditsState {
 	isLoading: boolean;
 	/** For the chat config: a turn's final update carries the new balance. */
 	onTaskUpdate: ( update: TaskUpdate ) => void;
+	/** The Agent's credits dot, for sites on a paid plan. */
+	meter?: { status: CreditsStatus; upgradeUrl?: string };
 }
 
 /**
@@ -146,7 +144,10 @@ export function useAiCredits( {
 	authProvider?: AuthProvider;
 } ): AiCreditsState {
 	const [ blogId ] = useState( getBlogId );
-	const [ credits, setCredits ] = useState< SiteCredits | null >( null );
+	const [ balance, setBalance ] = useState< {
+		credits: SiteCredits;
+		status?: CreditsStatus;
+	} | null >( null );
 	const [ isLoading, setIsLoading ] = useState( blogId !== null );
 	const [ isLowNoticeDismissed, setIsLowNoticeDismissed ] = useState( false );
 	const shown = useRef< {
@@ -155,7 +156,11 @@ export function useAiCredits( {
 	} >( { level: null, trigger: 'open' } );
 
 	// An unreadable balance keeps whatever was known, so a fluke never clears or shows a notice.
-	const applyCredits = useEvent( ( next: SiteCredits | null, trigger: UpgradeNoticeTrigger ) => {
+	const applyCredits = useEvent( ( snapshot: unknown, trigger: UpgradeNoticeTrigger ) => {
+		if ( blogId === null ) {
+			return;
+		}
+		const next = parseSiteCredits( snapshot, blogId );
 		if ( ! next ) {
 			return;
 		}
@@ -166,7 +171,12 @@ export function useAiCredits( {
 			}
 			shown.current = { level, trigger };
 		}
-		setCredits( next );
+		// The ring reads the balance exactly as the Agent's does, so the two always agree.
+		const ringSnapshot = parseCreditSnapshot( snapshot, blogId );
+		setBalance( {
+			credits: next,
+			status: ringSnapshot && buildLiveCreditsStatus( ringSnapshot ),
+		} );
 	} );
 
 	useEffect( () => {
@@ -193,16 +203,28 @@ export function useAiCredits( {
 	}, [ blogId, authProvider, applyCredits ] );
 
 	const onTaskUpdate = useEvent( ( update: TaskUpdate ) => {
-		if ( blogId !== null && update.aiCredits !== undefined ) {
-			applyCredits( parseSiteCredits( update.aiCredits, blogId ), 'refresh' );
+		if ( update.aiCredits !== undefined ) {
+			applyCredits( update.aiCredits, 'refresh' );
 		}
 	} );
 
 	// Stable object for the memoised chat component.
 	return useMemo( () => {
-		const level = credits ? getSiteCreditsLevel( credits ) : null;
-		if ( ! credits || ! level || ( level === 'low' && isLowNoticeDismissed ) ) {
+		if ( ! balance ) {
 			return { notice: undefined, isLimitReached: false, isLoading, onTaskUpdate };
+		}
+
+		const { credits, status } = balance;
+		const canUpgrade =
+			! credits.hasPlan || UPGRADABLE_PLAN_TIERS.includes( credits.planTier ?? '' );
+		const upgradeUrl = canUpgrade
+			? `https://wordpress.com/plans/${ blogId }?source=wp_ai_credits`
+			: undefined;
+		const meter = status && { status, upgradeUrl };
+
+		const level = getSiteCreditsLevel( credits );
+		if ( ! level || ( level === 'low' && isLowNoticeDismissed ) ) {
+			return { notice: undefined, isLimitReached: false, isLoading, onTaskUpdate, meter };
 		}
 
 		const messages = {
@@ -210,32 +232,27 @@ export function useAiCredits( {
 			out: __( 'You’ve used all your site credits.', __i18n_text_domain__ ),
 			low: formatCreditsLeft( credits.remaining ),
 		};
-		const canUpgrade =
-			! credits.hasPlan || UPGRADABLE_PLAN_TIERS.includes( credits.planTier ?? '' );
 
 		return {
 			isLimitReached: level !== 'low',
 			isLoading,
 			onTaskUpdate,
+			meter,
 			notice: {
 				message: messages[ level ],
 				status: 'warning',
 				dismissible: level === 'low',
 				...( level === 'low' && { onDismiss: () => setIsLowNoticeDismissed( true ) } ),
-				action: canUpgrade
+				action: upgradeUrl
 					? {
 							label: __( 'Upgrade', __i18n_text_domain__ ),
 							onClick: () => {
 								trackImageStudioUpgradeNoticeClick( { mode, trigger: shown.current.trigger } );
-								window.open(
-									`https://wordpress.com/plans/${ blogId }?source=wp_ai_credits`,
-									'_blank',
-									'noopener,noreferrer'
-								);
+								window.open( upgradeUrl, '_blank', 'noopener,noreferrer' );
 							},
 						}
 					: undefined,
 			},
 		};
-	}, [ credits, isLoading, isLowNoticeDismissed, mode, blogId, onTaskUpdate ] );
+	}, [ balance, isLoading, isLowNoticeDismissed, mode, blogId, onTaskUpdate ] );
 }
