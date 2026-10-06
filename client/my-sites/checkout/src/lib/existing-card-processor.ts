@@ -1,3 +1,4 @@
+import { fetchStripeConfiguration } from '@automattic/api-core';
 import { loadStripeLibrary } from '@automattic/calypso-stripe';
 import {
 	makeSuccessResponse,
@@ -5,7 +6,6 @@ import {
 	makeErrorResponse,
 } from '@automattic/composite-checkout';
 import debugFactory from 'debug';
-import { getStripeConfiguration } from 'calypso/lib/store-transactions';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { recordTransactionBeginAnalytics, logStashEvent } from '../lib/analytics';
 import getDomainDetails from './get-domain-details';
@@ -100,7 +100,7 @@ export default async function existingCardProcessor(
 				// we may contact the wrong Stripe account.
 				const cardSpecificStripe = transactionData.paymentPartnerProcessorId
 					? await loadStripeLibrary( {
-							fetchStripeConfiguration: getStripeConfiguration,
+							fetchStripeConfiguration: fetchStripeConfiguration,
 							paymentPartner: transactionData.paymentPartnerProcessorId,
 						} )
 					: undefined;

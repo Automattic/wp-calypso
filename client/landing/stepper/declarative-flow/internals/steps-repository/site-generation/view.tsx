@@ -165,8 +165,13 @@ function ErrorCanvas( { state, onReload }: { state: SiteGenerationState; onReloa
 	const failureReason = state.failureReason ?? 'missing-parameters';
 
 	let title = translate( 'We couldn’t check your site' );
-	let description = translate( 'The site or editor destination is missing from this page.' );
+	let description = translate( 'The site is missing from this page.' );
 	let actionLabel = translate( 'Reload' );
+
+	if ( failureReason === 'editor-unavailable' ) {
+		title = translate( 'Your site is ready, but we couldn’t open the editor' );
+		description = translate( 'Reload this page to try again.' );
+	}
 
 	if ( failureReason === 'timed-out' || failureReason === 'build-failed' ) {
 		title = translate( 'This is taking longer than expected' );

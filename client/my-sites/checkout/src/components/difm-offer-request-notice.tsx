@@ -20,7 +20,7 @@ export default function DIFMOfferRequestNotice( { responseCart }: { responseCart
 	return (
 		<RequestNotice status="success" onRemove={ () => setIsDismissed( true ) }>
 			{ translate(
-				"Thank you for submitting your request. After you complete checkout, we'll be in touch within 24 hours to discuss your project."
+				"Thank you for submitting your request. After you complete checkout, we'll be in touch within one business day to discuss your project."
 			) }
 		</RequestNotice>
 	);

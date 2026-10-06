@@ -131,12 +131,6 @@ export function buildOmnibarNodesFromAdminBarNodes(
 				};
 				break;
 			}
-			default: {
-				if ( ! node.parent ) {
-					siteActionNodes.push( omnibarNode );
-				}
-				break;
-			}
 		}
 
 		const builder = builders?.[ node.id ];

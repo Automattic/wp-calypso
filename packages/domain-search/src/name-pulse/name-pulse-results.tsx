@@ -107,7 +107,9 @@ export const NamePulseResults = () => {
 						skeletonCount={ topResultsCount }
 					/>
 				) }
-				{ ! exactMatch && bundleCard }
+				{ ! exactMatch && bundleCard && (
+					<div className="name-pulse-bundle-wide">{ bundleCard }</div>
+				) }
 				{ layout.exactGrid.show && ! hasTldsError && (
 					<NamePulseResultsSection
 						id="exact"
