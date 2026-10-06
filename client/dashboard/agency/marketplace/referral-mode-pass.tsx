@@ -19,14 +19,14 @@ import type { ReactNode } from 'react';
 
 import './referral-mode-pass.scss';
 
-// A4AD-217, `?referral=`:
+// Referral mode treatments, `?referral=`:
 //   g   Main today: “Refer products” toggle, info icon, five-slide guide on the first switch.
 //   h   the toggle reads “Refer to clients”, no info icon, no guide on the switch,
 //       and a notice that can't be dismissed while referral mode is on.
 //   hb  (default) H with the earning shown before the switch (a chip beside the toggle) and,
 //       once on, a band: what you earn, and the three steps as SVGs exported from
 //       Figma “Marketplace Graphics” › Referral / product, request, referrals (the
-//       Featured drawings' grammar) on the Amplify blue field. No guide: the band
+//       Featured drawings' grammar) on the blue field. No guide: the band
 //       is the walkthrough. “Got it” folds
 //       it to a one-line bar that stays while referral mode is on.
 // The choice sticks for the session so Hosting and Products agree.
@@ -34,7 +34,7 @@ const STORAGE_KEY = 'a4a-referral-treatment';
 // “Got it” is remembered on the account, so the band opens folded on every page and visit.
 const BAND_FOLDED_PREFERENCE = 'a4a-marketplace-referral-band-folded';
 // The band's ground, `?field=`: n flat light blue (default), o flat neutral grey,
-// p the Amplify field at 35%. Figma › Referral steps v2 (A4AD-217).
+// p the blurred blue field at 35%. Figma › Referral steps v2.
 function fieldTreatment(): 'n' | 'o' | 'p' {
 	const param = new URLSearchParams( window.location.search ).get( 'field' );
 	try {

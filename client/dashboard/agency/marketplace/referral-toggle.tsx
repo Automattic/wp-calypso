@@ -17,7 +17,7 @@ export default function ReferralToggle( {
 	earn = __( 'Earn up to 50%' ),
 }: {
 	label?: string;
-	/** A4AD-217 hB: the commission pill beside the switch while referral mode is off. */
+	/** Option hB: the commission pill beside the switch while referral mode is off. */
 	earn?: string;
 } ) {
 	const { checked, disabled, onChange } = useReferralToggle();
