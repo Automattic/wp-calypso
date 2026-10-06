@@ -20,6 +20,7 @@ import { useShoppingCart } from '../products/use-shopping-cart';
 import { useTermPricing } from '../use-term-pricing';
 import ReferralEmailPreviewModal from './email-preview-modal';
 import { getReferralLogoPreviewUrl } from './lib/logo';
+import { EmptyCartNotice, MissingSitePlanNotice } from './notices';
 import RequestClientPaymentForm from './request-form';
 import ReferralSummary from './summary';
 import { useDevSiteReferral } from './use-dev-site-referral';
@@ -69,102 +70,14 @@ export default function ReferralCheckout() {
 	const backTo = from ?? MARKETPLACE_PRODUCTS_ROUTE;
 	const isFreeOnly = cart.lines.length > 0 && cart.lines.every( ( line ) => line.priceInfo.isFree );
 
-	const renderBody = () => {
-		if ( referralBlogId && devSite.isLoading ) {
-			return null;
-		}
-		if ( referralBlogId && devSite.isMissing ) {
-			return (
-				<div className="referral-checkout__empty">
-					<Notice
-						variant="error"
-						title={ __( 'Failed to load the site’s plan.' ) }
-						actions={
-							<RouterLinkButton variant="primary" to={ backTo }>
-								{ __( 'Back' ) }
-							</RouterLinkButton>
-						}
-					>
-						{ __(
-							'We couldn’t find a development plan for this site to refer. Go back and try again.'
-						) }
-					</Notice>
-				</div>
-			);
-		}
-		if ( cart.lines.length === 0 ) {
-			return (
-				<div className="referral-checkout__empty">
-					<Notice
-						variant="info"
-						title={ __( 'Your cart is empty.' ) }
-						actions={
-							<RouterLinkButton variant="primary" to={ backTo }>
-								{ __( 'Back to the marketplace' ) }
-							</RouterLinkButton>
-						}
-					>
-						{ __( 'Add the products you want to refer, then come back to request the payment.' ) }
-					</Notice>
-				</div>
-			);
-		}
-		return (
-			<div className="referral-checkout__body">
-				<VStack className="referral-checkout__main" spacing={ 6 }>
-					<HStack spacing={ 3 } justify="flex-start" alignment="center" expanded={ false }>
-						<span className="referral-checkout__title-check">
-							<Icon icon={ check } size={ 24 } />
-						</span>
-						<Heading level={ 1 } size={ 28 } weight={ 500 }>
-							{ __( 'Request client payment' ) }
-						</Heading>
-					</HStack>
-					{ isFreeOnly && (
-						<Notice variant="info">
-							{ __(
-								'Because your referral includes only free products, you can assign them immediately after purchase — no client payment or approval required.'
-							) }
-						</Notice>
-					) }
-					{ ! isFreeOnly && (
-						<RequestClientPaymentForm
-							email={ request.email }
-							emailError={ request.emailError }
-							message={ request.message }
-							logo={ request.logo }
-							profileLogoUrl={ profileLogoUrl }
-							lastReferralLogoUrl={ lastReferralLogoUrl }
-							onEmailChange={ request.onEmailChange }
-							onMessageChange={ request.onMessageChange }
-							onLogoChange={ request.onLogoChange }
-						/>
-					) }
-				</VStack>
-				<aside className="referral-checkout__aside">
-					<ReferralSummary
-						lines={ cart.lines }
-						siteUrl={ devSite.license?.siteUrl }
-						currency={ cart.currency }
-						term={ termPricing }
-						total={ cart.total }
-						commission={ cart.commission }
-						isTotalReady={ cart.isTotalReady }
-						isFreeOnly={ isFreeOnly }
-						isUserUnverified={ ! user.email_verified }
-						canIssueLicenses={ agency?.can_issue_licenses ?? true }
-						canSend={ request.canSend }
-						canCopy={ request.canCopy }
-						isBusy={ request.isBusy }
-						onSend={ request.send }
-						onCopy={ request.copy }
-						onPurchase={ request.purchase }
-						onPreview={ openPreview }
-					/>
-				</aside>
-			</div>
-		);
-	};
+	const isSiteLoading = !! referralBlogId && devSite.isLoading;
+
+	let notice = null;
+	if ( referralBlogId && devSite.isMissing ) {
+		notice = <MissingSitePlanNotice backTo={ backTo } />;
+	} else if ( cart.lines.length === 0 && ! isSiteLoading ) {
+		notice = <EmptyCartNotice backTo={ backTo } />;
+	}
 
 	return (
 		<div className="referral-checkout">
@@ -174,7 +87,62 @@ export default function ReferralCheckout() {
 					{ __( 'Back' ) }
 				</RouterLinkButton>
 			</HStack>
-			{ renderBody() }
+			{ notice ?? (
+				<div className="referral-checkout__body">
+					<VStack className="referral-checkout__main" spacing={ 6 }>
+						<HStack spacing={ 3 } justify="flex-start" alignment="center" expanded={ false }>
+							<span className="referral-checkout__title-check">
+								<Icon icon={ check } size={ 24 } />
+							</span>
+							<Heading level={ 1 } size={ 28 } weight={ 500 }>
+								{ __( 'Request client payment' ) }
+							</Heading>
+						</HStack>
+						{ isFreeOnly && (
+							<Notice variant="info">
+								{ __(
+									'Because your referral includes only free products, you can assign them immediately after purchase — no client payment or approval required.'
+								) }
+							</Notice>
+						) }
+						{ ! isFreeOnly && (
+							<RequestClientPaymentForm
+								email={ request.email }
+								emailError={ request.emailError }
+								message={ request.message }
+								logo={ request.logo }
+								profileLogoUrl={ profileLogoUrl }
+								lastReferralLogoUrl={ lastReferralLogoUrl }
+								onEmailChange={ request.onEmailChange }
+								onMessageChange={ request.onMessageChange }
+								onLogoChange={ request.onLogoChange }
+							/>
+						) }
+					</VStack>
+					<aside className="referral-checkout__aside">
+						<ReferralSummary
+							lines={ cart.lines }
+							siteUrl={ devSite.license?.siteUrl }
+							currency={ cart.currency }
+							term={ termPricing }
+							total={ cart.total }
+							commission={ cart.commission }
+							isLoading={ isSiteLoading }
+							isTotalReady={ cart.isTotalReady && ! isSiteLoading }
+							isFreeOnly={ isFreeOnly }
+							isUserUnverified={ ! user.email_verified }
+							canIssueLicenses={ agency?.can_issue_licenses ?? true }
+							canSend={ request.canSend && ! isSiteLoading }
+							canCopy={ request.canCopy && ! isSiteLoading }
+							isBusy={ request.isBusy }
+							onSend={ request.send }
+							onCopy={ request.copy }
+							onPurchase={ request.purchase }
+							onPreview={ openPreview }
+						/>
+					</aside>
+				</div>
+			) }
 			{ preview && (
 				<ReferralEmailPreviewModal
 					agencyId={ agencyId }

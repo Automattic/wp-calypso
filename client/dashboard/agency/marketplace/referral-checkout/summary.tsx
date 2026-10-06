@@ -13,6 +13,7 @@ import { Card, CardBody, CardDivider, CardHeader } from '../../../components/car
 import { SectionHeader } from '../../../components/section-header';
 import { Text } from '../../../components/text';
 import { TextBlur } from '../../../components/text-blur';
+import { TextSkeleton } from '../../../components/text-skeleton';
 import { wpcomLink } from '../../../utils/link';
 import { WPCOM_CREATOR_PLAN_SLUG } from '../lib/wpcom-hosting';
 import { getTermSuffix } from '../products/lib/product-pricing';
@@ -29,6 +30,8 @@ interface Props {
 	term: TermPricing;
 	total: number;
 	commission: number;
+	/** The lines are still being worked out, as when a site's plan is loading. */
+	isLoading?: boolean;
 	isTotalReady: boolean;
 	/** A cart of free products is issued to the agency at once, with no client. */
 	isFreeOnly: boolean;
@@ -66,6 +69,7 @@ export default function ReferralSummary( {
 	term,
 	total,
 	commission,
+	isLoading = false,
 	isTotalReady,
 	isFreeOnly,
 	isUserUnverified,
@@ -115,7 +119,12 @@ export default function ReferralSummary( {
 			>
 				{ __( 'Copy referral link' ) }
 			</Button>
-			<Button variant="link" className="referral-checkout__preview-link" onClick={ onPreview }>
+			<Button
+				variant="link"
+				className="referral-checkout__preview-link"
+				disabled={ isLoading }
+				onClick={ onPreview }
+			>
 				{ __( 'Preview email' ) }
 			</Button>
 		</VStack>
@@ -129,6 +138,12 @@ export default function ReferralSummary( {
 			<CardBody>
 				<VStack spacing={ 4 }>
 					<VStack spacing={ 2 }>
+						{ isLoading && (
+							<HStack justify="space-between" spacing={ 3 }>
+								<TextSkeleton length={ 18 } />
+								<TextSkeleton length={ 8 } />
+							</HStack>
+						) }
 						{ lines.map( ( { item, product, priceInfo, subtotal } ) => (
 							<HStack key={ item.slug } justify="space-between" spacing={ 3 }>
 								<HStack spacing={ 1 } justify="flex-start" expanded={ false }>

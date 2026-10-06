@@ -29,6 +29,8 @@ export const agencyDevSiteLicenseQuery = ( agencyId: number, blogId: number ) =>
 		queryKey: [ 'agency', agencyId, 'sites', blogId, 'dev-license' ] as const,
 		queryFn: () => fetchAgencyDevSiteLicense( agencyId, blogId ),
 		enabled: agencyId > 0 && blogId > 0,
+		// A site without a license is an answer, not a glitch to retry.
+		retry: false,
 		meta: { persist: false },
 	} );
 
