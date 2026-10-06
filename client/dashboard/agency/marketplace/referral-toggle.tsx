@@ -4,7 +4,7 @@ import { __experimentalHStack as HStack, Button, ToggleControl } from '@wordpres
 import { __ } from '@wordpress/i18n';
 import { info } from '@wordpress/icons';
 import { useEffect } from 'react';
-import { ReferralEarnPill, referralTreatment } from './referral-mode-pass';
+import { markReferralReveal, ReferralEarnPill, referralTreatment } from './referral-mode-pass';
 import { useReferralToggle } from './use-referral-toggle';
 import useReferralsGuide from './use-referrals-guide';
 
@@ -45,7 +45,12 @@ export default function ReferralToggle( {
 					checked={ checked }
 					disabled={ disabled }
 					label={ isPassH ? __( 'Refer to clients' ) : label }
-					onChange={ onChange }
+					onChange={ ( isOn: boolean ) => {
+						if ( isOn ) {
+							markReferralReveal();
+						}
+						onChange( isOn );
+					} }
 				/>
 				{ treatment === 'hb' && ! checked && <ReferralEarnPill>{ earn }</ReferralEarnPill> }
 				{ ! isPassH && (

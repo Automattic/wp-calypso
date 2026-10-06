@@ -8,7 +8,7 @@ import {
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';
-import { useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { Notice } from '../../components/notice';
 import stepHosting from './images/referral/step-1-add-hosting.svg';
 import stepProduct from './images/referral/step-1-add.svg';
@@ -100,6 +100,13 @@ type BandProps = {
 	kind?: 'products' | 'hosting';
 };
 
+// The reveal plays only when the agency switches referral mode on, never when a
+// page opens with the mode already on (moving between Hosting and Products).
+let revealPending = false;
+export function markReferralReveal() {
+	revealPending = true;
+}
+
 export function ReferralModeBand( { headline, summary, kind = 'products' }: BandProps ) {
 	const isHosting = kind === 'hosting';
 	const { data: savedFolded, isFetched } = useQuery(
@@ -107,17 +114,134 @@ export function ReferralModeBand( { headline, summary, kind = 'products' }: Band
 	);
 	const { mutate: saveFolded } = useMutation( userPreferenceMutation( BAND_FOLDED_PREFERENCE ) );
 	// Until the account says otherwise, follow it; a click this visit takes over.
-	const [ choice, setState ] = useState< 'open' | 'folding' | 'folded' | null >( null );
-	const state = choice ?? ( savedFolded ? 'folded' : 'open' );
+	const [ choice, setChoice ] = useState< 'band' | 'bar' | null >( null );
+	const view = choice ?? ( savedFolded ? 'bar' : 'band' );
+	// Motion only answers an action on this page: switching the mode on, “Got it”,
+	// or “How it works”. A page that opens with the mode on just shows it.
+	const [ isRevealing ] = useState( () => {
+		const pending = revealPending;
+		revealPending = false;
+		return pending;
+	} );
+	const [ isOpened, setIsOpened ] = useState( ! isRevealing );
+	const isAnimated = isRevealing || choice !== null;
+
+	// One box, two layers: its height moves between the band's and the bar's
+	// natural heights while the layers crossfade, so the page below moves once.
+	const bandRef = useRef< HTMLElement >( null );
+	const barRef = useRef< HTMLDivElement >( null );
+	const [ heights, setHeights ] = useState< { band: number; bar: number } | null >( null );
+	useLayoutEffect( () => {
+		const band = bandRef.current;
+		const bar = barRef.current;
+		if ( ! band || ! bar ) {
+			return;
+		}
+		const measure = () => setHeights( { band: band.offsetHeight, bar: bar.offsetHeight } );
+		measure();
+		const observer = new ResizeObserver( measure );
+		observer.observe( band );
+		observer.observe( bar );
+		return () => observer.disconnect();
+	}, [ isFetched ] );
+
+	// The reveal starts from a closed box that has painted once.
+	useEffect( () => {
+		if ( isOpened || ! heights ) {
+			return;
+		}
+		const frame = window.requestAnimationFrame( () => setIsOpened( true ) );
+		return () => window.cancelAnimationFrame( frame );
+	}, [ isOpened, heights ] );
 
 	// Wait for the preference, so a folded band never flashes open first.
 	if ( ! isFetched ) {
 		return null;
 	}
 
-	if ( state === 'folded' ) {
-		return (
-			<div className="referral-band-bar">
+	let height: number | undefined;
+	if ( ! isOpened ) {
+		height = 0;
+	} else if ( heights ) {
+		height = view === 'band' ? heights.band : heights.bar;
+	}
+
+	return (
+		<div
+			className={ clsx(
+				'referral-shell',
+				`is-${ view }`,
+				isAnimated && 'is-animated',
+				! isOpened && 'is-closed'
+			) }
+			style={ { height } }
+		>
+			<section
+				ref={ bandRef }
+				className="referral-band"
+				aria-label={ __( 'Referral mode' ) }
+				inert={ view !== 'band' }
+			>
+				<div className="referral-band-intro">
+					<span className="referral-band-eyebrow">
+						<span className="referral-dot" aria-hidden="true" />
+						{ __( 'Referral mode is on' ) }
+					</span>
+					<Heading level={ 2 } className="referral-band-title">
+						{ headline }
+					</Heading>
+					<HStack spacing={ 4 } justify="flex-start" expanded={ false }>
+						<Button
+							variant="secondary"
+							size="compact"
+							onClick={ () => {
+								saveFolded( true );
+								setChoice( 'bar' );
+							} }
+						>
+							{ __( 'Got it' ) }
+						</Button>
+						<ExternalLink href={ REFERRALS_HELP_URL }>{ __( 'Learn more' ) }</ExternalLink>
+					</HStack>
+				</div>
+				<div className={ clsx( 'referral-band-field', `is-${ fieldTreatment() }` ) }>
+					<span className="referral-light is-light" aria-hidden="true" />
+					<span className="referral-light is-medium" aria-hidden="true" />
+					<span className="referral-light is-dark" aria-hidden="true" />
+					<span className="referral-light is-centre" aria-hidden="true" />
+					<span className="referral-grain" aria-hidden="true" />
+					<div className="referral-step">
+						<img className="referral-art" src={ isHosting ? stepHosting : stepProduct } alt="" />
+						<p className="referral-step-caption">
+							<Pin n={ 1 } />
+							<span>
+								{ isHosting
+									? __( 'Add hosting to a referral cart' )
+									: __( 'Add products to a referral cart' ) }
+							</span>
+						</p>
+					</div>
+					<div className="referral-step">
+						<img className="referral-art" src={ stepRequest } alt="" />
+						<p className="referral-step-caption">
+							<Pin n={ 2 } />
+							{ __( 'Send your client a payment request' ) }
+						</p>
+					</div>
+					<div className="referral-step">
+						<img
+							className="referral-art"
+							src={ isHosting ? stepReferralsHosting : stepReferrals }
+							alt=""
+						/>
+						<p className="referral-step-caption">
+							<Pin n={ 3 } />
+							{ __( 'Earn every time they pay or renew' ) }
+						</p>
+					</div>
+				</div>
+			</section>
+			<div ref={ barRef } className="referral-band-bar" inert={ view !== 'bar' }>
 				<span className="referral-dot" aria-hidden="true" />
 				<span className="referral-band-bar-text">
 					<strong>{ __( 'Referring to clients.' ) }</strong> { summary }
@@ -126,89 +250,11 @@ export function ReferralModeBand( { headline, summary, kind = 'products' }: Band
 					variant="link"
 					onClick={ () => {
 						saveFolded( false );
-						setState( 'open' );
+						setChoice( 'band' );
 					} }
 				>
 					{ __( 'How it works' ) }
 				</Button>
-			</div>
-		);
-	}
-
-	return (
-		<div
-			className={ clsx( 'referral-band-reveal', state === 'folding' && 'is-folding' ) }
-			onAnimationEnd={ ( event ) => {
-				if ( state === 'folding' && event.target === event.currentTarget ) {
-					setState( 'folded' );
-				}
-			} }
-		>
-			<div className="referral-band-clip">
-				<section className="referral-band" aria-label={ __( 'Referral mode' ) }>
-					<div className="referral-band-intro">
-						<span className="referral-band-eyebrow">
-							<span className="referral-dot" aria-hidden="true" />
-							{ __( 'Referral mode is on' ) }
-						</span>
-						<Heading level={ 2 } className="referral-band-title">
-							{ headline }
-						</Heading>
-						<HStack spacing={ 4 } justify="flex-start" expanded={ false }>
-							<Button
-								variant="secondary"
-								size="compact"
-								onClick={ () => {
-									saveFolded( true );
-									setState(
-										window.matchMedia( '(prefers-reduced-motion: reduce)' ).matches
-											? 'folded'
-											: 'folding'
-									);
-								} }
-							>
-								{ __( 'Got it' ) }
-							</Button>
-							<ExternalLink href={ REFERRALS_HELP_URL }>{ __( 'Learn more' ) }</ExternalLink>
-						</HStack>
-					</div>
-					<div className={ clsx( 'referral-band-field', `is-${ fieldTreatment() }` ) }>
-						<span className="referral-light is-light" aria-hidden="true" />
-						<span className="referral-light is-medium" aria-hidden="true" />
-						<span className="referral-light is-dark" aria-hidden="true" />
-						<span className="referral-light is-centre" aria-hidden="true" />
-						<span className="referral-grain" aria-hidden="true" />
-						<div className="referral-step">
-							<img className="referral-art" src={ isHosting ? stepHosting : stepProduct } alt="" />
-							<p className="referral-step-caption">
-								<Pin n={ 1 } />
-								<span>
-									{ isHosting
-										? __( 'Add hosting to a referral cart' )
-										: __( 'Add products to a referral cart' ) }
-								</span>
-							</p>
-						</div>
-						<div className="referral-step">
-							<img className="referral-art" src={ stepRequest } alt="" />
-							<p className="referral-step-caption">
-								<Pin n={ 2 } />
-								{ __( 'Send your client a payment request' ) }
-							</p>
-						</div>
-						<div className="referral-step">
-							<img
-								className="referral-art"
-								src={ isHosting ? stepReferralsHosting : stepReferrals }
-								alt=""
-							/>
-							<p className="referral-step-caption">
-								<Pin n={ 3 } />
-								{ __( 'Earn every time they pay or renew' ) }
-							</p>
-						</div>
-					</div>
-				</section>
 			</div>
 		</div>
 	);

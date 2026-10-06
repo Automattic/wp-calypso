@@ -14,67 +14,84 @@
 	--referral-ease: cubic-bezier( 0.2, 0, 0, 1 );
 }
 
-// The reveal, in order: the row opens like a curtain over the band at its full
-// height (so nothing inside reflows or slides), then the copy fades in, then the
-// three steps left to right. “Got it” runs it back: content out, then the row closes.
-.referral-band-reveal {
-	display: grid;
-	grid-template-rows: 1fr;
-	animation: referral-open 280ms var( --referral-ease, ease-out ) both;
-
-	&.is-folding {
-		animation: referral-close 200ms cubic-bezier( 0.4, 0, 1, 1 ) 100ms both;
-
-		.referral-band-intro,
-		.referral-step {
-			animation: referral-content-out 120ms ease-in both;
-		}
-	}
-}
-
-.referral-band-clip {
-	min-block-size: 0;
+// One box, two layers (the band and the one-line bar). The box's height moves
+// once between them while the layers crossfade, so the page below moves once.
+// Motion only plays after an action on this page (`.is-animated`).
+.referral-shell {
+	--referral-move: 320ms cubic-bezier( 0.32, 0.72, 0, 1 );
+	position: relative;
 	overflow: hidden;
-}
-
-@keyframes referral-open {
-	from {
-		grid-template-rows: 0fr;
-	}
-}
-
-@keyframes referral-close {
-	to {
-		grid-template-rows: 0fr;
-	}
-}
-
-.referral-band-reveal .referral-band-intro {
-	animation: referral-content-in 220ms ease-out 160ms both;
-}
-
-@keyframes referral-content-in {
-	from {
-		opacity: 0;
-	}
-}
-
-@keyframes referral-content-out {
-	to {
-		opacity: 0;
-	}
-}
-
-.referral-band {
-	display: grid;
-	grid-template-columns: minmax( 240px, 300px ) minmax( 0, 1fr );
-	overflow: hidden;
+	// The layout follows the band's own width, not the window's: the sidebar
+	// and the page's columns decide how much room it really has.
+	container: referral-band / inline-size;
 	border: 1px solid #e0e0e0;
 	border-radius: 8px;
 	background: #fff;
 
-	@media ( max-width: 960px ) {
-		grid-template-columns: minmax( 0, 1fr );
+	&.is-closed {
+		opacity: 0;
+	}
+
+	&.is-animated {
+		transition:
+			height var( --referral-move ),
+			opacity 160ms ease-out;
+	}
+}
+
+// The incoming layer fades in once the outgoing one has gone.
+.referral-band,
+.referral-band-bar {
+	.referral-shell.is-animated & {
+		transition:
+			opacity 200ms ease-out 120ms,
+			visibility 0s;
+	}
+}
+
+.referral-shell.is-band .referral-band-bar,
+.referral-shell.is-bar .referral-band {
+	opacity: 0;
+	visibility: hidden;
+
+	.referral-shell.is-animated & {
+		transition:
+			opacity 120ms ease-in,
+			visibility 0s 120ms;
+	}
+}
+
+// Then the three steps settle in, left to right, without travelling.
+.referral-shell.is-animated .referral-step {
+	transition:
+		opacity 220ms ease-out 160ms,
+		transform 220ms var( --referral-ease ) 160ms;
+
+	&:nth-of-type( 2 ) {
+		transition-delay: 200ms;
+	}
+	&:nth-of-type( 3 ) {
+		transition-delay: 240ms;
+	}
+}
+
+.referral-shell.is-closed .referral-step,
+.referral-shell.is-bar .referral-step {
+	opacity: 0;
+	transform: scale( 0.98 );
+}
+
+.referral-shell.is-animated.is-bar .referral-step {
+	transition: opacity 120ms ease-in;
+}
+
+.referral-band {
+	display: grid;
+	grid-template-columns: minmax( 0, 1fr );
+
+	// Wide: the copy beside the three steps.
+	@container referral-band ( min-width: 1080px ) {
+		grid-template-columns: minmax( 240px, 300px ) minmax( 0, 1fr );
 	}
 }
 
@@ -143,8 +160,28 @@
 		opacity: 0.35;
 	}
 
-	@media ( max-width: 600px ) {
-		grid-template-columns: minmax( 0, 1fr );
+	// Medium: a full row of steps under the copy, never narrower than a
+	// drawing can be read at.
+	@container referral-band ( max-width: 1079px ) {
+		grid-template-columns: repeat( 3, minmax( 200px, 1fr ) );
+		padding: 24px;
+	}
+
+	// Narrow: one step at a time, scrolled sideways, so the band stays short.
+	@container referral-band ( max-width: 719px ) {
+		grid-template-columns: none;
+		grid-auto-flow: column;
+		grid-auto-columns: 240px;
+		gap: 16px;
+		overflow-x: auto;
+		overscroll-behavior-x: contain;
+		scroll-snap-type: x mandatory;
+		scroll-padding-inline: 24px;
+		scrollbar-width: none;
+
+		.referral-step {
+			scroll-snap-align: start;
+		}
 	}
 }
 
@@ -204,16 +241,6 @@
 	box-shadow: var( --referral-card-shadow );
 }
 
-.referral-band-reveal .referral-step {
-	animation: referral-step-in 260ms var( --referral-ease, ease-out ) 220ms both;
-}
-
-@keyframes referral-step-in {
-	from {
-		opacity: 0;
-		transform: scale( 0.98 );
-	}
-}
 
 .referral-step {
 	inline-size: 100%;
@@ -224,12 +251,6 @@
 	gap: 14px;
 	min-inline-size: 0;
 
-	.referral-band-reveal:not( .is-folding ) &:nth-child( 2 ) {
-		animation-delay: 280ms;
-	}
-	.referral-band-reveal:not( .is-folding ) &:nth-child( 3 ) {
-		animation-delay: 340ms;
-	}
 }
 
 .referral-step-caption {
@@ -285,25 +306,18 @@
 }
 
 .referral-band-bar {
+	position: absolute;
+	inset-block-start: 0;
+	inset-inline: 0;
 	display: flex;
 	flex-wrap: wrap;
 	align-items: center;
 	gap: 12px;
 	padding: 10px 16px;
-	border: 1px solid #e0e0e0;
-	border-radius: 8px;
-	background: #fff;
 	font-size: 13px;
 	color: var( --referral-text );
-	animation: referral-bar-in 220ms var( --referral-ease, ease-out ) both;
 }
 
-@keyframes referral-bar-in {
-	from {
-		opacity: 0;
-		transform: translateY( -4px );
-	}
-}
 
 .referral-band-bar-text {
 	flex: 1;
@@ -311,11 +325,8 @@
 }
 
 @media ( prefers-reduced-motion: reduce ) {
-	.referral-band-reveal,
-	.referral-band-reveal.is-folding,
-	.referral-band-reveal .referral-band-intro,
-	.referral-band-reveal .referral-step,
-	.referral-band-bar {
-		animation: none !important;
+	.referral-shell,
+	.referral-shell * {
+		transition: none !important;
 	}
 }
