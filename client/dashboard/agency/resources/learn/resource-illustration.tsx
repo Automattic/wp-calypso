@@ -1,6 +1,7 @@
 import { useId } from 'react';
 import type { ResourceItem } from './types';
-import type { ReactNode } from 'react';
+import type { AgencyResourceContentType } from '@automattic/api-core';
+import type { ComponentType } from 'react';
 
 import './resource-illustration.scss';
 
@@ -65,9 +66,8 @@ function VideoIllustration() {
 	);
 }
 
-const getIllustrations = ( clipId: string ): Record< string, ReactNode > => ( {
-	video: <VideoIllustration />,
-	guide: (
+function GuideIllustration() {
+	return (
 		<>
 			<ellipse
 				cx="56"
@@ -95,8 +95,12 @@ const getIllustrations = ( clipId: string ): Record< string, ReactNode > => ( {
 				</g>
 			</g>
 		</>
-	),
-	checklist: (
+	);
+}
+
+function ChecklistIllustration() {
+	const clipId = useSvgId();
+	return (
 		<>
 			<path d="M50 17h-5q-4 0-4 4v30q0 4 4 4h22q4 0 4-4V21q0-4-4-4h-5" />
 			<rect x="50" y="14" width="12" height="6" rx="2" />
@@ -119,8 +123,11 @@ const getIllustrations = ( clipId: string ): Record< string, ReactNode > => ( {
 				</g>
 			</g>
 		</>
-	),
-	'slide-deck': (
+	);
+}
+
+function SlideDeckIllustration() {
+	return (
 		<>
 			<rect x="34" y="20" width="44" height="29" rx="4" />
 			<path d="M56 49V56M48 56H64" />
@@ -153,8 +160,12 @@ const getIllustrations = ( clipId: string ): Record< string, ReactNode > => ( {
 				</g>
 			</svg>
 		</>
-	),
-	'one-pager': (
+	);
+}
+
+function OnePagerIllustration() {
+	const clipId = useSvgId();
+	return (
 		<>
 			<path d="M44 15H63L72 24V53Q72 57 68 57H44Q40 57 40 53V19Q40 15 44 15Z" />
 			<path d="M63 15v5q0 4 4 4h5" />
@@ -180,8 +191,11 @@ const getIllustrations = ( clipId: string ): Record< string, ReactNode > => ( {
 				</g>
 			</g>
 		</>
-	),
-	'talk-track': (
+	);
+}
+
+function TalkTrackIllustration() {
+	return (
 		<>
 			<path d="M44 20H68Q76 20 76 28V40Q76 48 68 48H54L44 56V48Q36 48 36 40V28Q36 20 44 20Z" />
 			<g fill="currentColor" stroke="none">
@@ -196,8 +210,11 @@ const getIllustrations = ( clipId: string ): Record< string, ReactNode > => ( {
 				) ) }
 			</g>
 		</>
-	),
-	'case-study': (
+	);
+}
+
+function CaseStudyIllustration() {
+	return (
 		<>
 			<path d="M37 20V49Q37 53 41 53H76" />
 			<svg x="42" y="22" width="34" height="26" viewBox="42 22 34 26" overflow="hidden">
@@ -214,22 +231,35 @@ const getIllustrations = ( clipId: string ): Record< string, ReactNode > => ( {
 				/>
 			</svg>
 		</>
-	),
-} );
+	);
+}
 
-const ILLUSTRATION_ALIASES: Record< string, string > = {
-	webinar: 'video',
-	'process-guide': 'guide',
-	'reference-guide': 'guide',
+type IllustrationType =
+	'video' | 'guide' | 'checklist' | 'slide-deck' | 'one-pager' | 'talk-track' | 'case-study';
+
+const ILLUSTRATIONS: Record< IllustrationType, ComponentType > = {
+	video: VideoIllustration,
+	guide: GuideIllustration,
+	checklist: ChecklistIllustration,
+	'slide-deck': SlideDeckIllustration,
+	'one-pager': OnePagerIllustration,
+	'talk-track': TalkTrackIllustration,
+	'case-study': CaseStudyIllustration,
 };
 
-function getIllustrationType( resource: ResourceItem ): string {
-	if ( resource.format === 'video' ) {
-		return 'video';
-	}
-
-	return ILLUSTRATION_ALIASES[ resource.contentType ] ?? resource.contentType;
-}
+const CONTENT_TYPE_ILLUSTRATIONS: Record< AgencyResourceContentType, IllustrationType > = {
+	'battle-card': 'one-pager',
+	blog: 'one-pager',
+	'case-study': 'case-study',
+	checklist: 'checklist',
+	guide: 'guide',
+	'one-pager': 'one-pager',
+	'process-guide': 'guide',
+	'reference-guide': 'guide',
+	'slide-deck': 'slide-deck',
+	'talk-track': 'talk-track',
+	webinar: 'video',
+};
 
 /**
  * An animated line drawing of the resource's content type, from the i2 Library
@@ -237,9 +267,13 @@ function getIllustrationType( resource: ResourceItem ): string {
  * focused.
  */
 export default function ResourceIllustration( { resource }: { resource: ResourceItem } ) {
-	const clipId = useSvgId();
-	const illustrations = getIllustrations( clipId );
-	const type = getIllustrationType( resource );
+	const Illustration =
+		ILLUSTRATIONS[
+			resource.format === 'video'
+				? 'video'
+				: // The API isn't validated against the union, so fall back for new types.
+					( CONTENT_TYPE_ILLUSTRATIONS[ resource.contentType ] ?? 'one-pager' )
+		];
 
 	return (
 		<svg
@@ -255,7 +289,7 @@ export default function ResourceIllustration( { resource }: { resource: Resource
 		>
 			<g transform="translate(56 36)">
 				<g className="dashboard-resource-illustration__artwork">
-					{ illustrations[ type ] ?? illustrations[ 'one-pager' ] }
+					<Illustration />
 				</g>
 			</g>
 		</svg>
