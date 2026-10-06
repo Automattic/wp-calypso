@@ -12,7 +12,6 @@ type DateInputsProps = {
 	onFromChange: ( v: string ) => void;
 	onToChange: ( v: string ) => void;
 	todayStr: string;
-	minStr?: string;
 	fromStyle?: React.CSSProperties;
 	toStyle?: React.CSSProperties;
 	stack?: boolean;
@@ -31,7 +30,6 @@ export function DateInputs( {
 	onFromChange,
 	onToChange,
 	todayStr,
-	minStr,
 	fromStyle,
 	toStyle,
 	stack = false,
@@ -59,7 +57,6 @@ export function DateInputs( {
 						onFromChange( value ?? '' );
 					} }
 					autoComplete="off"
-					min={ minStr }
 					max={ toStr || todayStr }
 					style={ { width: '100%', ...( fromStyle || {} ) } }
 					__next40pxDefaultSize
@@ -78,7 +75,7 @@ export function DateInputs( {
 						onToChange( value ?? '' );
 					} }
 					autoComplete="off"
-					min={ fromStr || minStr }
+					min={ fromStr || undefined }
 					style={ { width: '100%', ...( toStyle || {} ) } }
 					__next40pxDefaultSize
 				/>
@@ -109,7 +106,6 @@ export function DateInputs( {
 					onFromChange( value ?? '' );
 				} }
 				autoComplete="off"
-				min={ minStr }
 				max={ toStr || todayStr }
 				style={ fromStyle }
 				__next40pxDefaultSize
@@ -128,7 +124,7 @@ export function DateInputs( {
 					onToChange( value ?? '' );
 				} }
 				autoComplete="off"
-				min={ fromStr || minStr }
+				min={ fromStr || undefined }
 				style={ toStyle }
 				__next40pxDefaultSize
 			/>

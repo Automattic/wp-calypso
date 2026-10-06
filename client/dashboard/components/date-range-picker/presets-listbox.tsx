@@ -14,7 +14,6 @@ type PresetsListboxProps = {
 	onSelect: ( id: PresetId ) => void;
 	compositeActiveId: string | null;
 	setCompositeActiveId: ( id: string | null ) => void;
-	hiddenPresets?: PresetId[];
 };
 
 export function PresetsListbox( {
@@ -23,12 +22,11 @@ export function PresetsListbox( {
 	onSelect,
 	compositeActiveId,
 	setCompositeActiveId,
-	hiddenPresets,
 }: PresetsListboxProps ) {
 	const items: ReadonlyArray< { id: PresetId; label: string } > = [
 		...presetDefs,
 		{ id: 'custom' as const, label: __( 'Custom' ) },
-	].filter( ( item ) => ! hiddenPresets?.includes( item.id ) );
+	];
 
 	return (
 		<VStack justify="flex-start" alignment="stretch" spacing={ 1 } className="daterange-presets">
