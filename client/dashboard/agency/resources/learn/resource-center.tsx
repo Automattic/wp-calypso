@@ -1,6 +1,6 @@
 import { Modal, __experimentalVStack as VStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import BrowseAllResources from './browse-all-resources';
 import { getYouTubeEmbedUrl } from './youtube-embed';
 import type { ResourceItem, RecordTracksEvent } from './types';
@@ -22,10 +22,10 @@ export default function ResourceCenter( {
 	const [ showVideoModal, setShowVideoModal ] = useState( false );
 	const [ selectedResource, setSelectedResource ] = useState< ResourceItem | null >( null );
 
-	const handleOpenVideoModal = ( resource: ResourceItem ) => {
+	const handleOpenVideoModal = useCallback( ( resource: ResourceItem ) => {
 		setSelectedResource( resource );
 		setShowVideoModal( true );
-	};
+	}, [] );
 
 	const resources = useMemo(
 		() =>
