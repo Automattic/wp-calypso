@@ -191,8 +191,11 @@ describe( 'abilities facade', () => {
 	it( 'never loads the editor abilities just to read the checkpoint or the page context', async () => {
 		setEditorPage( true );
 		const {
+			getAmAgentBlockId,
 			getAmCheckpointActions,
 			getAmCheckpointContext,
+			getAmEditorContentContext,
+			getAmEditorPostContext,
 			getAmPageContentMarkup,
 			getAmPageStructure,
 			registerAbility,
@@ -202,9 +205,19 @@ describe( 'abilities facade', () => {
 		expect( getAmCheckpointActions() ).toBeNull();
 		expect( getAmPageContentMarkup() ).toBe( '' );
 		expect( getAmPageStructure() ).toBeNull();
+		expect( getAmEditorPostContext() ).toEqual( {} );
+		expect( getAmEditorContentContext() ).toEqual( {} );
+		expect( getAmAgentBlockId( 'uuid-hero' ) ).toBe( 'uuid-hero' );
 		// A load would resolve and register in a later task — let it settle.
 		await new Promise( ( resolve ) => setTimeout( resolve, 0 ) );
 		expect( registerAbility ).not.toHaveBeenCalled();
+	} );
+
+	// Hosts call it across bundles, with whatever they hold.
+	it.each( [ undefined, '' ] )( 'gives a host no block id for %p', async ( clientId ) => {
+		const { getAmAgentBlockId } = await load();
+
+		expect( getAmAgentBlockId( clientId as never ) ).toBe( '' );
 	} );
 
 	it( 'logs registration failures instead of throwing', async () => {

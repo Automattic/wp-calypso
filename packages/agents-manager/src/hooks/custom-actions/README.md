@@ -19,6 +19,7 @@ Consuming the API? See [Public API](#public-api). Adding a new action? See [Addi
 | `getSessionId`             | `() => string`                                          | Active session ID.                                                                                                |
 | `getTabId`                 | `() => string`                                          | The `tab_id` on the chat's Tracks events, so host events can join on it.                                          |
 | `getTurnId`                | `() => string`                                          | The current `turn_id` (the last send's), or `''` before the first send.                                           |
+| `getAgentBlockId`          | `(clientId: string) => string`                          | The id the agent knows a block by, so a host can name the block to it.                                            |
 | `recordBigSkyTracksEvent`  | `(eventName: BigSkyEventName, props?) => void`          | Record a full `jetpack_big_sky_*` event name with family base props.                                              |
 | `isChatVisible`            | `() => boolean`                                         | Whether the chat is visible (open and not minimized).                                                             |
 | `setChatOpen`              | `(isOpen: boolean) => void`                             | Open or close the chat (closing is ignored when non-dismissible). Opening also expands it from the minimized bar. |
@@ -40,7 +41,7 @@ Consuming the API? See [Public API](#public-api). Adding a new action? See [Addi
 
 \* Available only while the chat panel is mounted. Always optional-chain these calls — they can be `undefined` even after `isReady` is `true`.
 
-`recordBigSkyTracksEvent` is absent on older Agents Manager bundles — optional-chain it too.
+`recordBigSkyTracksEvent` and `getAgentBlockId` are absent on older Agents Manager bundles — optional-chain them too.
 `BigSkyEventName` is `` `jetpack_big_sky_${ string }` `` — the full prefix is required. The bare prefix alone, or any non-conforming name, is dropped without recording.
 Chat and feedback events (message send, suggestions, responses, thumbs) are also recorded as `calypso_agents_manager_<same suffix>` with the shared properties; other names are recorded under the Big Sky name only.
 

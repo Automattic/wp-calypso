@@ -1,6 +1,7 @@
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useCallback, useEffect, useRef } from '@wordpress/element';
 import { useNavigate } from 'react-router-dom';
+import { getAmAgentBlockId } from '../../abilities';
 import { useAgentsManagerContext } from '../../contexts';
 import { AGENTS_MANAGER_STORE } from '../../stores';
 import { markActionOrigin } from '../../utils/action-origin';
@@ -280,6 +281,7 @@ export function useSetupCustomActions( {
 		getSessionId: getTabSessionId,
 		getTabId,
 		getTurnId,
+		getAgentBlockId: getAmAgentBlockId,
 		recordBigSkyTracksEvent: recordGuardedBigSkyTracksEvent,
 		setChatOpen,
 		setChatDocked,

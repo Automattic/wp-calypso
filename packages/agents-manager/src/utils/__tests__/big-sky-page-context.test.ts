@@ -1,13 +1,28 @@
 /**
  * @jest-environment jsdom
  */
+import { getAmEditorContentContext, getAmEditorPostContext } from '../../abilities';
 import { bigSkyPageContextProvider } from '../big-sky-page-context';
 
-jest.mock( '../../abilities', () => ( { getAmEditorPostContext: () => ( {} ) } ) );
+jest.mock( '../../abilities', () => ( {
+	getAmEditorPostContext: jest.fn( () => ( {} ) ),
+	getAmEditorContentContext: jest.fn( () => ( {} ) ),
+} ) );
 
 describe( 'bigSkyPageContextProvider', () => {
 	afterEach( () => {
 		document.body.className = '';
+	} );
+
+	it( 'sends the open post and what the editor holds', () => {
+		jest.mocked( getAmEditorPostContext ).mockReturnValueOnce( { current_page_id: 7 } );
+		jest.mocked( getAmEditorContentContext ).mockReturnValueOnce( { customCSS: 'a {}' } );
+
+		expect( bigSkyPageContextProvider.getClientContext() ).toMatchObject( {
+			environment: 'wp-admin',
+			current_page_id: 7,
+			customCSS: 'a {}',
+		} );
 	} );
 
 	it.each( [

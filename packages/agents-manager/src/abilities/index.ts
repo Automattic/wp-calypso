@@ -138,6 +138,27 @@ export function getAmEditorPostContext(): Record< string, unknown > {
 }
 
 /**
+ * The editor's block types, selected text and custom CSS for the client
+ * context. Empty until the editor abilities have loaded, and off editor pages.
+ */
+export function getAmEditorContentContext(): Record< string, unknown > {
+	return loadedEditorAbilities?.getEditorContentContext() ?? {};
+}
+
+/**
+ * The id the agent knows a block by, so a host can name the block to it. The
+ * clientId itself until the editor abilities have loaded: the agent's tools
+ * take that too.
+ */
+export function getAmAgentBlockId( clientId: string ): string {
+	if ( typeof clientId !== 'string' || ! clientId ) {
+		return '';
+	}
+
+	return loadedEditorAbilities?.getAgentBlockId( clientId ) ?? clientId;
+}
+
+/**
  * AM's checkpoint store for the chat's Undo, or `null` until the editor
  * abilities have loaded — before then nothing has written to it.
  */
