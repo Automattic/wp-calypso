@@ -298,7 +298,7 @@ export type AgencyResourceContentType =
  * How the client opens the resource, and a filter axis of its own.
  *
  * `video` opens `external_url` in the in-portal modal; every other value
- * opens it in a new tab. It also picks the call-to-action label.
+ * opens it in a new tab.
  */
 export type AgencyResourceFormat = 'pdf' | 'slides' | 'video' | 'doc' | 'webpage';
 
