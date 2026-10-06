@@ -206,7 +206,8 @@ export const agencyTiersRoute = createRoute( {
 	)
 );
 
-// `/partner-directory` – layout that gates on the partner directory program
+// `/partner-directory` – layout that shows the tier upsell to agencies
+// below Agency Partner
 export const agencyPartnerDirectoryRoute = createRoute( {
 	staticData: { requiresAgencyCapability: 'a4a_read_partner_directory' },
 	head: () => ( {
@@ -218,17 +219,14 @@ export const agencyPartnerDirectoryRoute = createRoute( {
 	} ),
 	getParentRoute: () => agencyRoute,
 	path: PARTNER_DIRECTORY_ROUTE,
-	beforeLoad: async ( { cause } ) => {
-		if ( cause === 'preload' ) {
-			return;
-		}
-
-		const agency = await queryClient.ensureQueryData( activeAgencyQuery() );
-		if ( ! agency?.partner_directory?.allowed ) {
-			throw redirectAsNotAllowed( { to: '/overview' } );
-		}
-	},
-} );
+	loader: () => queryClient.ensureQueryData( activeAgencyQuery() ),
+} ).lazy( () =>
+	import( '../../agency/partner-directory/layout' ).then( ( d ) =>
+		createLazyRoute( 'agency-partner-directory-layout' )( {
+			component: d.default,
+		} )
+	)
+);
 
 const agencyPartnerDirectoryIndexRoute = createRoute( {
 	getParentRoute: () => agencyPartnerDirectoryRoute,

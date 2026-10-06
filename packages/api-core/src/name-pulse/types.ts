@@ -11,6 +11,9 @@ export interface NamePulseSuggestionsQuery {
 
 	/** How long the endpoint waits on its providers, in milliseconds. */
 	timeout?: number;
+
+	/** Endings without the dot, e.g. `com`. AI suggestions ignore it. */
+	tlds?: string[];
 }
 
 export interface NamePulseSuggestion {

@@ -4,7 +4,7 @@ import { COPY_SITE_FLOW, addProductsToCart } from '@automattic/onboarding';
 import { useQuery } from '@tanstack/react-query';
 import { createHigherOrderComponent } from '@wordpress/compose';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { useEffect, useMemo, useCallback } from 'react';
+import { useEffect, useMemo, useCallback, useState } from 'react';
 import { ONBOARD_STORE, SITE_STORE } from 'calypso/landing/stepper/stores';
 import { clearSignupDestinationCookie } from 'calypso/signup/storageUtils';
 import { useDispatch as useReduxDispatch, useSelector } from 'calypso/state';
@@ -22,19 +22,33 @@ interface SiteCopyOptions {
 
 function useSafeSiteHasFeature( siteId: number | undefined, feature: string, enabled = true ) {
 	const dispatch = useReduxDispatch();
+	const [ completedSiteId, setCompletedSiteId ] = useState< number >();
 	useEffect( () => {
+		setCompletedSiteId( undefined );
 		if ( ! siteId || ! enabled ) {
 			return;
 		}
-		dispatch( fetchSiteFeatures( siteId ) );
+		let active = true;
+		dispatch( fetchSiteFeatures( siteId ) ).then( () => {
+			if ( active ) {
+				setCompletedSiteId( siteId );
+			}
+		} );
+		return () => {
+			active = false;
+		};
 	}, [ dispatch, siteId, enabled ] );
 
-	return useSelector( ( state ) => {
+	const hasFeature = useSelector( ( state ) => {
 		if ( ! siteId ) {
 			return false;
 		}
 		return siteHasFeature( state, siteId, feature );
 	} );
+	return {
+		hasFeature,
+		isFetching: enabled && !! siteId && completedSiteId !== siteId,
+	};
 }
 
 function getMarketplaceProducts( purchases: Purchase[] | undefined, siteId: number ) {
@@ -56,11 +70,8 @@ export const useSiteCopy = (
 	options: SiteCopyOptions = { enabled: true }
 ) => {
 	const userId = useSelector( getCurrentUserId );
-	const hasCopySiteFeature = useSafeSiteHasFeature(
-		site?.ID,
-		WPCOM_FEATURES_COPY_SITE,
-		options.enabled
-	);
+	const { hasFeature: hasCopySiteFeature, isFetching: isFetchingSiteFeatures } =
+		useSafeSiteHasFeature( site?.ID, WPCOM_FEATURES_COPY_SITE, options.enabled );
 	const requestingSiteFeatures = useSelector( ( state ) =>
 		isRequestingSiteFeatures( state, site?.ID )
 	);
@@ -121,10 +132,11 @@ export const useSiteCopy = (
 			shouldShowSiteCopyItem,
 			startSiteCopy,
 			resumeSiteCopy,
-			isFetching: isLoadingPurchases || requestingSiteFeatures,
+			isFetching: isLoadingPurchases || isFetchingSiteFeatures || requestingSiteFeatures,
 		} ),
 		[
 			isLoadingPurchases,
+			isFetchingSiteFeatures,
 			requestingSiteFeatures,
 			resumeSiteCopy,
 			shouldShowSiteCopyItem,

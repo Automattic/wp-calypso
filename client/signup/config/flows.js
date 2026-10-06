@@ -125,24 +125,32 @@ function getSignupDestination( { siteSlug, redirect_to, localeSlug, flowName } )
 }
 
 /**
+ * The wp-admin screen a launch started from, as named by its `ref`.
+ * @param {Object} dependencies the signup dependency store
+ * @returns {string|null} the screen's URL, or null when the launch didn't start in wp-admin
+ */
+function getWpAdminLaunchUrl( dependencies ) {
+	const ref = dependencies.refParameter?.trim() ?? '';
+
+	if ( ref !== 'wp-admin' && ! ref.startsWith( 'wp-admin/' ) ) {
+		return null;
+	}
+
+	return `https://${ dependencies.siteSlug }/${ ref }`;
+}
+
+/**
  * Where the user came from before entering the launch flow, without the arguments that celebrate a
  * successful launch. Use this when the launch did not happen.
  * @param {Object} dependencies the signup dependency store
  * @returns {string} the URL to send the user back to
  */
 export function getLaunchReturnUrl( dependencies ) {
-	if ( dependencies.back_to ) {
-		return dependencies.back_to;
-	}
-
-	const ref = dependencies.refParameter?.trim() ?? '';
-	const isWpAdminPath = ref === 'wp-admin' || ref.startsWith( 'wp-admin/' );
-
-	if ( isWpAdminPath ) {
-		return `https://${ dependencies.siteSlug }/${ ref }`;
-	}
-
-	return `/home/${ dependencies.siteSlug }`;
+	return (
+		dependencies.back_to ||
+		getWpAdminLaunchUrl( dependencies ) ||
+		`/home/${ dependencies.siteSlug }`
+	);
 }
 
 /**
@@ -161,8 +169,13 @@ function getCelebrateLaunchArgs( url ) {
 
 function getLaunchDestination( dependencies ) {
 	// `redirect_to` lands the user somewhere other than where they came from once the site is live,
-	// so `back_to` is free to keep meaning "the page the Back button returns to".
-	const url = dependencies.redirect_to || getLaunchReturnUrl( dependencies );
+	// so `back_to` is free to keep meaning "the page the Back button returns to". Likewise, `ref`
+	// names a wp-admin screen that celebrates the launch, while a wp-admin `back_to` can be any
+	// screen.
+	const url =
+		dependencies.redirect_to ||
+		getWpAdminLaunchUrl( dependencies ) ||
+		getLaunchReturnUrl( dependencies );
 
 	return addQueryArgs( getCelebrateLaunchArgs( url ), url );
 }

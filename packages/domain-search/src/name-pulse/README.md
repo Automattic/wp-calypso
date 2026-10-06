@@ -8,7 +8,7 @@ Premium names are priced apart from the rest. The bulk check quotes every name a
 
 A typed `name.tld` leaves the grid for its own card (`components/exact-match-card.tsx`), fed by the same per-domain check as the notice; a taken name has no card and its row stays in the grid. With `config.showBundleSuggestions` on, `hooks/use-name-pulse-bundle.ts` asks the per-domain bundle endpoint for the typed domain, then each Top result, and shows the first bundle found: beside the exact-match card, or under Top results when there is none. The backend only anchors bundles on an available `.com`, which is why the Top results are asked too.
 
-`components/filter.tsx` is the classic filter button fed by the Name Pulse TLD list, shown on the results page only. The endpoints take no filter, so the selected endings narrow the exact-match grid and the suggestions client-side; a typed domain keeps its ending.
+`components/filter.tsx` is the classic filter button fed by the Name Pulse TLD list, shown on the results page only. Keyword suggestions are refetched with the selected endings as `tlds`. The exact-match grid and AI suggestions (which ignore `tlds`) are filtered client-side; a typed domain keeps its ending.
 
 ## Imports
 

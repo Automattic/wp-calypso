@@ -24,7 +24,7 @@ export const captureCanvasAbility: Ability = {
 				type: 'array',
 				items: { type: 'string' },
 				description:
-					'Blocks to centre the picture on. Omit to capture the visible area of the canvas. Naming the blocks in question is what guarantees they are in frame, since the user may be scrolled elsewhere. Ignored when fullPage is set.',
+					'Blocks to centre the picture on. Omit to capture the visible area of the canvas. Naming the blocks in question is what guarantees they are in frame, since the user may be scrolled elsewhere. To compare two areas, name the blocks on both sides — a picture framing one of them cannot answer whether they match. Ignored when fullPage is set.',
 			},
 			fullPage: {
 				type: 'boolean',
