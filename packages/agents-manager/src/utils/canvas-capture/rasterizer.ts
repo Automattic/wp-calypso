@@ -28,6 +28,19 @@ import type { CanvasCaptureContext, CanvasRasterizer } from './capture';
 // output pixels rather than with page complexity.
 const MAX_LONG_EDGE = 1400;
 
+// How many separate pictures one capture may return.
+//
+// Areas far apart on the page used to be answered with a single whole-page
+// image, which is scaled to fit and therefore illegible — useless for the
+// comparisons that need two distant sections both readable. Framing each area
+// in its own viewport-sized band keeps every one of them at native scale.
+//
+// Capped because each band is a full serialize-and-rasterize of the document,
+// and because a reader given a dozen pictures of one page is no better off
+// than one given a thumbnail of it. Past the cap the whole page is the honest
+// answer, scaling and all.
+const MAX_CAPTURES = 4;
+
 const PLACEHOLDER_FILL = '#d5d7da';
 const IMAGE_MIME = 'image/webp';
 const IMAGE_QUALITY = 0.92;
@@ -284,52 +297,116 @@ const getDocumentSize = (
  * @param clientIds      Blocks to frame the capture on.
  * @returns The span, or null when none resolved.
  */
+const getBlockSpans = (
+	canvasDocument: Document,
+	canvasWindow: Window,
+	clientIds: string[]
+): Array< { top: number; bottom: number } > => {
+	const scrollY = canvasWindow.scrollY || 0;
+
+	return (
+		findBlockElements( canvasDocument, clientIds )
+			.map( ( element ) => element.getBoundingClientRect() )
+			// A block scrolled out of view still has a box; a block with no layout
+			// (display:none, or detached) does not, and framing on it would show an
+			// arbitrary part of the page.
+			.filter( ( box ) => box.width > 0 && box.height > 0 )
+			.map( ( box ) => ( { top: box.top + scrollY, bottom: box.bottom + scrollY } ) )
+	);
+};
+
 const getEditedSpan = (
 	canvasDocument: Document,
 	canvasWindow: Window,
 	clientIds: string[]
 ): { top: number; bottom: number; count: number } | null => {
-	const scrollY = canvasWindow.scrollY || 0;
-	const boxes = findBlockElements( canvasDocument, clientIds )
-		.map( ( element ) => element.getBoundingClientRect() )
-		// A block scrolled out of view still has a box; a block with no layout
-		// (display:none, or detached) does not, and framing on it would show an
-		// arbitrary part of the page.
-		.filter( ( box ) => box.width > 0 && box.height > 0 );
+	const spans = getBlockSpans( canvasDocument, canvasWindow, clientIds );
 
-	if ( ! boxes.length ) {
+	if ( ! spans.length ) {
 		return null;
 	}
 
 	return {
-		top: Math.min( ...boxes.map( ( box ) => box.top ) ) + scrollY,
-		bottom: Math.max( ...boxes.map( ( box ) => box.bottom ) ) + scrollY,
-		count: boxes.length,
+		top: Math.min( ...spans.map( ( span ) => span.top ) ),
+		bottom: Math.max( ...spans.map( ( span ) => span.bottom ) ),
+		count: spans.length,
 	};
 };
 
 /**
- * Whether the edited blocks reach further than a single screenful.
+ * Groups block spans into the fewest bands that each hold their group whole.
  *
- * A sweeping change — recolouring every heading on the page, say — leaves blocks
- * spread from top to bottom. Centring one band on their midpoint then frames the
- * middle of the document and shows a single screenful of it, quite possibly a
- * stretch where nothing looks different, while the forty other changes go
- * unseen. When the edit is that wide, the whole page is the only honest picture
- * of it.
- * @param canvasDocument The canvas document.
- * @param canvasWindow   The canvas window.
- * @param clientIds      Blocks to frame the capture on.
- * @returns Whether they outgrow the viewport.
+ * Two blocks a few hundred pixels apart belong in one picture: separating them
+ * would answer a question about their relationship with two pictures that each
+ * show one side of it. Two blocks three screens apart do not, and forcing them
+ * into one frame means scaling the page down until neither is readable.
+ *
+ * So the test is simply whether they still fit a screenful together. Greedy
+ * from the top, which is enough: the spans are laid out on one axis, and a
+ * group that has already outgrown the viewport cannot be rescued by what comes
+ * after it.
+ * @param spans          Block spans, in any order.
+ * @param viewportHeight How much fits in one band.
+ * @returns The groups, top to bottom.
  */
-export const editOutgrowsViewport = (
-	canvasDocument: Document,
-	canvasWindow: Window,
-	clientIds: string[]
-): boolean => {
-	const span = getEditedSpan( canvasDocument, canvasWindow, clientIds );
+export const clusterSpans = (
+	spans: Array< { top: number; bottom: number } >,
+	viewportHeight: number
+): Array< { top: number; bottom: number; count: number } > => {
+	const clusters: Array< { top: number; bottom: number; count: number } > = [];
 
-	return !! span && span.bottom - span.top > canvasWindow.innerHeight;
+	[ ...spans ]
+		.sort( ( a, b ) => a.top - b.top )
+		.forEach( ( span ) => {
+			const current = clusters[ clusters.length - 1 ];
+
+			if ( current && Math.max( current.bottom, span.bottom ) - current.top <= viewportHeight ) {
+				current.bottom = Math.max( current.bottom, span.bottom );
+				current.count += 1;
+
+				return;
+			}
+
+			clusters.push( { top: span.top, bottom: span.bottom, count: 1 } );
+		} );
+
+	return clusters;
+};
+
+/**
+ * The viewport-sized band that shows a span, centred on it.
+ *
+ * Clamped to the document, so a span near either end gives a band that stops at
+ * the edge rather than one padded with nothing.
+ * @param span           The span to frame, and how many blocks it holds.
+ * @param span.top       Its top, in document coordinates.
+ * @param span.bottom    Its bottom, in document coordinates.
+ * @param span.count     How many blocks it groups.
+ * @param canvasWindow   The canvas window.
+ * @param documentHeight The page height, to clamp against.
+ * @returns The band.
+ */
+const bandForSpan = (
+	span: { top: number; bottom: number; count: number },
+	canvasWindow: Window,
+	documentHeight: number
+): CaptureRect => {
+	const width = canvasWindow.innerWidth;
+	const height = canvasWindow.innerHeight;
+
+	// The blocks decide where to look, never how much. The agent routinely edits
+	// something the user has not scrolled to, and a band at the current scroll
+	// position would then show an unrelated part of the page — which reads as
+	// the edit not having happened.
+	const centre = ( span.top + span.bottom ) / 2;
+
+	return {
+		x: 0,
+		y: Math.max( 0, Math.min( centre - height / 2, documentHeight - height ) ),
+		width,
+		height,
+		framed: span.count,
+	};
 };
 
 /**
@@ -347,9 +424,6 @@ export const getCaptureRect = (
 	canvasWindow: Window,
 	clientIds: string[]
 ): CaptureRect => {
-	const scrollY = canvasWindow.scrollY || 0;
-	const width = canvasWindow.innerWidth;
-	const height = canvasWindow.innerHeight;
 	const documentHeight = getDocumentSize( canvasDocument, canvasWindow ).height;
 
 	// Always a full-width, viewport-tall band. Framing tightly on the blocks
@@ -361,22 +435,69 @@ export const getCaptureRect = (
 	const span = getEditedSpan( canvasDocument, canvasWindow, clientIds );
 
 	if ( ! span ) {
-		return { x: 0, y: scrollY, width, height, framed: 0 };
+		return {
+			x: 0,
+			y: canvasWindow.scrollY || 0,
+			width: canvasWindow.innerWidth,
+			height: canvasWindow.innerHeight,
+			framed: 0,
+		};
 	}
 
-	// The blocks decide where to look, never how much. The agent routinely edits
-	// something the user has not scrolled to, and a band at the current scroll
-	// position would then show an unrelated part of the page — which reads as
-	// the edit not having happened.
-	const centre = ( span.top + span.bottom ) / 2;
+	return bandForSpan( span, canvasWindow, documentHeight );
+};
 
-	return {
-		x: 0,
-		y: Math.max( 0, Math.min( centre - height / 2, documentHeight - height ) ),
-		width,
-		height,
-		framed: span.count,
-	};
+/**
+ * One band per group of blocks, or `null` when bands cannot cover them.
+ *
+ * This is what decides between a handful of native-scale pictures and one
+ * scaled-down picture of everything. Bands win whenever they can, because a
+ * whole-page capture of a tall document is too small to read — the tool says so
+ * itself — and the comparisons this exists for are exactly the ones that need
+ * two distant areas both legible.
+ *
+ * `null` means the blocks cannot be covered this way, and the caller should fall
+ * back to the whole page. Two ways that happens:
+ *
+ * - More groups than `MAX_CAPTURES`. A sweeping change — every heading on the
+ *   page recoloured — lands in a dozen places, and a dozen pictures is not a
+ *   better answer than one overview.
+ * - A group taller than the viewport. A band would show its middle and silently
+ *   drop the rest, which is the failure this whole path exists to avoid.
+ * @param canvasDocument The canvas document.
+ * @param canvasWindow   The canvas window.
+ * @param clientIds      Blocks to frame.
+ * @returns The bands, top to bottom, or null.
+ */
+export const getCaptureRects = (
+	canvasDocument: Document,
+	canvasWindow: Window,
+	clientIds: string[]
+): CaptureRect[] | null => {
+	const spans = getBlockSpans( canvasDocument, canvasWindow, clientIds );
+
+	// No blocks resolved, so there is nothing to group: one band wherever the
+	// user is looking, exactly as before.
+	if ( ! spans.length ) {
+		return [ getCaptureRect( canvasDocument, canvasWindow, clientIds ) ];
+	}
+
+	const viewportHeight = canvasWindow.innerHeight;
+	const clusters = clusterSpans( spans, viewportHeight );
+
+	if ( clusters.length > MAX_CAPTURES ) {
+		return null;
+	}
+
+	if ( clusters.some( ( cluster ) => cluster.bottom - cluster.top > viewportHeight ) ) {
+		return null;
+	}
+
+	const documentHeight = getDocumentSize( canvasDocument, canvasWindow ).height;
+
+	// Already top to bottom: `clusterSpans` groups in that order, and a band
+	// sits at its group's midpoint.
+	return clusters.map( ( cluster ) => bandForSpan( cluster, canvasWindow, documentHeight ) );
 };
 
 /**
@@ -954,26 +1075,6 @@ const settle = ( milliseconds: number ) =>
 	);
 
 /**
- * Whether the region being captured should contain visible marks.
- *
- * The blank check exists to catch a half-rasterized render, but a crop can be
- * legitimately flat: recolouring a group's background, or editing a spacer,
- * frames a region with nothing in it. Refusing those would mean never capturing
- * them at all. Asking the source DOM whether there is any text to draw separates
- * "nothing rendered" from "nothing to render".
- * @param canvasDocument The canvas document.
- * @param clientIds      Blocks the capture framed.
- * @returns Whether marks are expected.
- */
-const expectsInk = ( canvasDocument: Document, clientIds: string[] ): boolean => {
-	const roots = clientIds.length
-		? findBlockElements( canvasDocument, clientIds )
-		: [ canvasDocument.body ];
-
-	return roots.some( ( root ) => ( root.textContent || '' ).trim().length > 0 );
-};
-
-/**
  * Yields until the canvas window is idle, so the capture is not taken mid-render.
  * @param view    The canvas window.
  * @param timeout Longest to wait.
@@ -1256,6 +1357,68 @@ const bandExpectsInk = (
 ): boolean => spans.some( ( span ) => span.bottom > band.y && span.top < band.y + band.height );
 
 /**
+ * Renders each band as its own image, reusing one clone and one set of rules.
+ *
+ * The expensive parts of a capture — reading every rule, inlining the fonts,
+ * cloning the body — are page-wide and do not change between bands, so they are
+ * paid once however many pictures come out. What repeats is the per-band
+ * serialize and rasterize, which is the same work `drawPageToBlob` already does
+ * per band; the difference is only that these end up as separate images at
+ * native scale rather than stitched into one scaled-down sheet.
+ *
+ * A band that will not render is fatal to the whole capture rather than quietly
+ * dropped. A set of pictures with one missing looks exactly like a set that was
+ * only ever meant to have the rest.
+ * @param clone                The cloned body, reused across bands.
+ * @param styleText            CSS to embed.
+ * @param documentSize         The page's laid-out size.
+ * @param documentSize.width   Page width.
+ * @param documentSize.height  Page height.
+ * @param rects                The bands to render.
+ * @param inkSpans             Page spans that should draw something.
+ * @param onStats              Receives the serialize cost.
+ * @returns One image per band.
+ */
+const drawRegionsToBlobs = async (
+	clone: Element,
+	styleText: string,
+	documentSize: { width: number; height: number },
+	rects: CaptureRect[],
+	inkSpans: Array< { top: number; bottom: number } >,
+	onStats?: ( stats: { serialize: number; markupBytes: number } ) => void
+): Promise< Blob[] > => {
+	const blobs: Blob[] = [];
+	let serialize = 0;
+	let markupBytes = 0;
+
+	for ( const rect of rects ) {
+		offsetCloneToBand( clone as HTMLElement, rect.y, documentSize.width );
+
+		// XMLSerializer, not innerHTML: `<foreignObject>` content must be
+		// well-formed XML, and HTML serialization leaves void elements unclosed
+		// and bare ampersands unescaped.
+		const serializeStartedAt = performance.now();
+		const markup = new window.XMLSerializer().serializeToString( clone );
+		serialize += performance.now() - serializeStartedAt;
+		markupBytes += markup.length;
+
+		const blob = await drawToBlob(
+			buildSvg( markup, styleText, { width: documentSize.width, height: rect.height } ),
+			rect,
+			bandExpectsInk( inkSpans, { y: rect.y, height: rect.height } )
+		);
+
+		if ( blob ) {
+			blobs.push( blob );
+		}
+	}
+
+	onStats?.( { serialize: Math.round( serialize ), markupBytes } );
+
+	return blobs;
+};
+
+/**
  * Renders the whole page by rasterizing it in bands and stitching them.
  *
  * Bands are drawn straight into the final, already-scaled canvas rather than
@@ -1391,15 +1554,19 @@ export const rasterizeCanvas: CanvasRasterizer = async ( {
 	await whenIdle( canvasWindow );
 	await whenStill( canvasDocument, canvasWindow, clientIds );
 
-	// A band cannot show an edit that reaches past a screenful, so a sweeping
-	// change picks the whole page for itself rather than framing the middle of
-	// it and leaving the rest unseen.
-	const wholePage =
-		Boolean( fullPage ) || editOutgrowsViewport( canvasDocument, canvasWindow, clientIds );
+	// Areas close together share a band; areas far apart get one each, so both
+	// sides of a comparison stay at native scale. `null` means bands cannot
+	// honestly cover them — too many, or one taller than a screenful — and the
+	// whole page, scaling and all, is the only picture that shows everything.
+	const rects = getCaptureRects( canvasDocument, canvasWindow, clientIds );
+	const wholePage = Boolean( fullPage ) || rects === null;
+	const bands = rects ?? [];
 
-	const rect = getCaptureRect( canvasDocument, canvasWindow, clientIds );
+	// Every band is the viewport's size, and it is also what the stitched page
+	// is rendered in. A canvas with no laid-out viewport cannot be drawn at all.
+	const bandHeight = canvasWindow.innerHeight;
 
-	if ( ! rect.width || ! rect.height ) {
+	if ( ! canvasWindow.innerWidth || ! bandHeight ) {
 		return null;
 	}
 
@@ -1439,14 +1606,13 @@ export const rasterizeCanvas: CanvasRasterizer = async ( {
 		const cloned = body.cloneNode( true ) as Element;
 		replaceImagesWithPlaceholders( body, cloned, canvasWindow );
 
-		// Only for a full page. A single band renders the document once, so a
-		// viewport-positioned element lands where it belongs; it is repeated
-		// renders that duplicate it.
-		if ( wholePage ) {
+		// Whenever the document is rendered more than once. A single band
+		// renders it once, so a viewport-positioned element lands where it
+		// belongs; it is repeated renders — a stitched page, or several bands —
+		// that would draw the fixed header into every one of them.
+		if ( wholePage || bands.length > 1 ) {
 			pinViewportPositionedElements( body, cloned, canvasWindow );
 		}
-
-		offsetCloneToBand( cloned as HTMLElement, rect.y, documentSize.width );
 
 		return cloned;
 	} );
@@ -1455,7 +1621,7 @@ export const rasterizeCanvas: CanvasRasterizer = async ( {
 	// render says nothing on its own; the crop, the document it was measured
 	// against, and whether the requested blocks even resolved say a great deal.
 	const diagnostics = {
-		rect,
+		bands,
 		documentSize,
 		clientIds,
 		wholePage,
@@ -1464,35 +1630,27 @@ export const rasterizeCanvas: CanvasRasterizer = async ( {
 		cssBytes: styleText.length,
 	};
 
-	const blob = await time( 'render', async () => {
+	const inkSpans = getInkSpans( body, canvasWindow );
+	const blobs = await time( 'render', async () => {
 		try {
 			// A full page serializes the clone once per band as it draws.
 			if ( wholePage ) {
-				return await drawPageToBlob(
-					clone,
-					styleText,
-					documentSize,
-					rect.height,
-					getInkSpans( body, canvasWindow )
-				);
+				const page = await drawPageToBlob( clone, styleText, documentSize, bandHeight, inkSpans );
+
+				return page ? [ page ] : [];
 			}
 
-			// XMLSerializer, not innerHTML: `<foreignObject>` content must be
-			// well-formed XML, and HTML serialization leaves void elements unclosed
-			// and bare ampersands unescaped.
-			const markup = await time( 'serialize', () =>
-				new window.XMLSerializer().serializeToString( clone )
+			return await drawRegionsToBlobs(
+				clone,
+				styleText,
+				documentSize,
+				bands,
+				inkSpans,
+				( stats ) => {
+					stages.serialize = stats.serialize;
+					stages.markup_bytes = stats.markupBytes;
+				}
 			);
-
-			// The frame is a full-width band at the crop's height. Vertical
-			// positioning is done by the offset above; the horizontal crop is taken
-			// at draw time.
-			const svg = buildSvg( markup, styleText, {
-				width: documentSize.width,
-				height: rect.height,
-			} );
-
-			return await drawToBlob( svg, rect, expectsInk( canvasDocument, clientIds ) );
 		} catch ( error ) {
 			// Re-thrown with the context gathered above, so the one error that
 			// leaves here carries what is needed to diagnose it.
@@ -1506,23 +1664,36 @@ export const rasterizeCanvas: CanvasRasterizer = async ( {
 		}
 	} );
 
-	if ( ! blob ) {
+	if ( ! blobs.length ) {
 		return null;
 	}
 
-	const bytes = await time( 'encode', async () => toBase64( await blob.arrayBuffer() ) );
+	const encoded = await time( 'encode', async () =>
+		Promise.all( blobs.map( async ( blob ) => toBase64( await blob.arrayBuffer() ) ) )
+	);
 
-	return [
-		{
-			type: 'file',
-			file: {
-				name: wholePage ? 'canvas-page.png' : 'canvas.webp',
-				mimeType: wholePage ? FULL_PAGE_MIME : IMAGE_MIME,
-				bytes,
-			},
+	return encoded.map( ( bytes, index ) => ( {
+		type: 'file' as const,
+		file: {
+			name: wholePage ? 'canvas-page.png' : `canvas-${ index + 1 }.webp`,
+			mimeType: wholePage ? FULL_PAGE_MIME : IMAGE_MIME,
+			bytes,
+		},
+		metadata: {
 			// Images are placeholders, so a reader of this capture must not
 			// conclude the page's photographs are missing or broken.
-			metadata: { imagesArePlaceholders: true, fullPage: wholePage, framed: rect.framed },
+			imagesArePlaceholders: true,
+			fullPage: wholePage,
+			// Blocks framed by this band, not by the capture as a whole, so a
+			// reader can tell which picture holds what it asked about.
+			framed: wholePage
+				? ( getEditedSpan( canvasDocument, canvasWindow, clientIds )?.count ?? 0 )
+				: bands[ index ].framed,
+			// Which of several pictures of one page this is, top to bottom.
+			// Without it a reader has no way to tell a set of different areas
+			// from a set of attempts at the same one.
+			regionIndex: index + 1,
+			regionCount: encoded.length,
 		},
-	];
+	} ) );
 };

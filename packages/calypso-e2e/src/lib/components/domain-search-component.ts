@@ -108,7 +108,8 @@ export class DomainSearchComponent {
 	 */
 	async search( keyword: string ): Promise< void > {
 		const container = this.getContainer();
-		const deadline = Date.now() + SEARCH_BUDGET;
+		const startedAt = Date.now();
+		const deadline = startedAt + SEARCH_BUDGET;
 
 		// Every wait below is bounded on its own, and `reloadAndRetry` runs the
 		// closure three times, so the search as a whole has to be bounded too: one
@@ -211,8 +212,10 @@ export class DomainSearchComponent {
 			// Retry a few times when this is encountered.
 			await reloadAndRetry( this.page, searchDomainClosure );
 		} catch ( error ) {
-			// The failure might be due to a ban.
-			handleActiveThrottles( [ 'domain-suggestions' ] );
+			// The failure might be due to a ban. Read as of when the search began:
+			// a ban lasts as long as the budget does, so one met early in the search
+			// has lapsed by the time the budget is spent.
+			handleActiveThrottles( [ 'domain-suggestions' ], startedAt );
 			throw error;
 		}
 	}
@@ -511,8 +514,11 @@ export class DomainSearchComponent {
 	/**
 	 * Skips the domain search screen.
 	 */
-	async skipPurchase(): Promise< string > {
-		const button = this.page.getByRole( 'button', { name: 'Skip purchase' } );
+	async skipPurchase(): Promise< void > {
+		// Onboarding labels the button without the free subdomain.
+		const button = this.page.getByRole( 'button', {
+			name: /^(Skip purchase|Skip the domain for now)/,
+		} );
 
 		try {
 			await button.waitFor();
@@ -528,15 +534,6 @@ export class DomainSearchComponent {
 			throw error;
 		}
 
-		let domain = await button.getAttribute( 'aria-label' );
-		domain = domain?.replace( 'Skip purchase and continue with ', '' ) ?? null;
-
-		if ( ! domain ) {
-			throw new Error( 'No domain found for skip purchase button' );
-		}
-
 		await button.click();
-
-		return domain;
 	}
 }

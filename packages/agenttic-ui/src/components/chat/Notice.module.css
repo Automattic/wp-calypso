@@ -76,7 +76,9 @@
 	opacity: 0.8;
 }
 
-.action:is( :focus, :focus-visible ) {
+/* wp-admin recolors focused and pressed links. Keep the notice color. */
+.action:is( :focus, :focus-visible, :active ) {
+	color: var( --color-foreground );
 	outline-offset: 0;
 }
 

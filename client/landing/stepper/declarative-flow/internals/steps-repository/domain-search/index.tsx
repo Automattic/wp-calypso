@@ -1,5 +1,6 @@
 import { isMonthly } from '@automattic/calypso-products';
 import { HelpCenter } from '@automattic/data-stores';
+import { DomainSuggestionBadge } from '@automattic/domain-search';
 import {
 	isAIBuilderFlow,
 	isAIBuilderOnboardingFlow,
@@ -17,6 +18,7 @@ import {
 import { Button } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { useDispatch, useSelect } from '@wordpress/data';
+import { createInterpolateElement } from '@wordpress/element';
 import { help } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { useMemo } from 'react';
@@ -152,6 +154,7 @@ const DomainSearchStep: StepType< {
 	const wowSkipCopy = isWowFunnel ? __( 'Set up a domain later' ) : undefined;
 	const stepCounter = useOnboardingStepCounter( flow, 'domains' );
 	const resultsVariation = getDomainSearchResultsVariation( flow );
+	const isCustomDomainBannerCopyVariation = resultsVariation === 'custom_domain_banner_copy';
 
 	const storedSiteTitle = useSelect(
 		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedSiteTitle(),
@@ -228,6 +231,7 @@ const DomainSearchStep: StepType< {
 			hideFreeSubdomainSuggestion: isWowFunnel,
 			skipSuggestionPlacement:
 				resultsVariation === 'free_banner_top' ? ( 'top' as const ) : undefined,
+			showSelectCta: resultsVariation === 'tone_down_purchase',
 			includeDotBlogSubdomain:
 				! isHundredYearPlanFlow( flow ) &&
 				! isHundredYearDomainFlow( flow ) &&
@@ -393,6 +397,25 @@ const DomainSearchStep: StepType< {
 					return null;
 				}
 
+				if ( isCustomDomainBannerCopyVariation ) {
+					return (
+						<FreeDomainForAYearPromo
+							title={ __( 'Look professional for less' ) }
+							subtitle={ createInterpolateElement(
+								__(
+									'When you purchase an annual plan, the first year of domain name registration is on us.<br />Discount automatically applied at checkout.'
+								),
+								{ br: <br /> }
+							) }
+							badge={
+								<DomainSuggestionBadge variation="success">
+									{ __( 'First year free' ) }
+								</DomainSuggestionBadge>
+							}
+						/>
+					);
+				}
+
 				return (
 					<FreeDomainForAYearPromo
 						isCiab={ isCiab }
@@ -417,6 +440,8 @@ const DomainSearchStep: StepType< {
 		hideFreeDomainPromo,
 		freeDomainPromoTitle,
 		freeDomainPromoSubtitle,
+		isCustomDomainBannerCopyVariation,
+		__,
 	] );
 
 	const headerText = useMemo( () => {

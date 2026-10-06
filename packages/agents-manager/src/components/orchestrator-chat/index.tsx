@@ -38,6 +38,7 @@ import useRegenerateAction from '../../hooks/use-regenerate-action';
 import useSourcesAction from '../../hooks/use-sources-action';
 import useSuggestionsRenderedTracking from '../../hooks/use-suggestions-rendered-tracking';
 import { markActionOrigin, takeActionOrigin } from '../../utils/action-origin';
+import { markSessionSent } from '../../utils/agent-session';
 import {
 	blockCurrentRequest,
 	buildCanvasKey,
@@ -771,6 +772,13 @@ export default function OrchestratorChat( {
 		},
 	} );
 
+	// Every send path runs a turn.
+	useEffect( () => {
+		if ( isProcessing && agentConfig?.sessionId ) {
+			markSessionSent( agentConfig.sessionId );
+		}
+	}, [ isProcessing, agentConfig?.sessionId ] );
+
 	const { isLoading: isLoadingConversation } = useConversation( {
 		maxPages: isReaderChat ? 1 : 10,
 		enabled: shouldLoadConversation,
@@ -809,9 +817,12 @@ export default function OrchestratorChat( {
 			// the parked call lives in — hydrate only if its restore came up
 			// empty (e.g. a quota-failed persist). Read the manager, not React
 			// state: `messages` stays empty until the async agent init lands.
+			// A remount mid-turn (History and back, reopening the panel) fetches a
+			// transcript without the reply yet, so the live history stays.
 			if (
-				! hadParkedNavigation ||
-				agentManager.getConversationHistory( agentConfig!.agentId ).length === 0
+				! agentManager.isTurnInFlight( agentConfig!.agentId ) &&
+				( ! hadParkedNavigation ||
+					agentManager.getConversationHistory( agentConfig!.agentId ).length === 0 )
 			) {
 				loadMessages( loadedMessages );
 			}

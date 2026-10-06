@@ -48,6 +48,12 @@ export const applyBlockEditsAbility: Ability = {
 				description:
 					'Set by the server, never by the model: the acknowledgement for this call may be held back until the canvas capture attached to the result has been looked at. Forwarded to the client only when a capture was actually produced.',
 			},
+			visualCheckClientIds: {
+				type: 'array',
+				items: { type: 'string' },
+				description:
+					'ClientIds of the blocks this edit is being compared against, whenever the request is to make something look like something else on the page — in any property: "make this match the other section", "same color as the subscribe section background", "use the heading font from the hero", "make these buttons look like the ones above", "line these up", "same spacing as above". Name the blocks being matched TO, not the blocks being edited — and the block that carries what is being matched (for a section\'s background, the section\'s group). The result is checked against a capture that otherwise frames only what was edited, and a comparison cannot be judged from a picture that shows one side of it. Leave it out when the request is not relative to other blocks.',
+			},
 			reverseMap: {
 				type: 'object',
 				description: 'Optional reverse mapping for client IDs',
@@ -71,6 +77,12 @@ export const applyBlockEditsAbility: Ability = {
 					message: {
 						type: 'string',
 						description: 'Human-readable success or error message.',
+					},
+					captureNotes: {
+						type: 'array',
+						items: { type: 'string' },
+						description:
+							'Sentences about what the attached screenshots do and do not show, kept apart from the message.',
 					},
 					outcome: {
 						type: 'string',

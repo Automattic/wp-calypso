@@ -60,6 +60,7 @@ export default function EarnWooPayments() {
 						excludedSiteIds={ excludedSiteIds }
 						recordTracksEvent={ recordTracksEvent }
 						onSelectSite={ navigateToSiteSetup }
+						shouldUseRouterLink
 					/>
 				) : undefined
 			}
@@ -73,7 +74,12 @@ export default function EarnWooPayments() {
 	return (
 		<PageLayout
 			header={ header }
-			notices={ <MissingPaymentSettingsNotice hasCommissionActivity={ hasSites } /> }
+			notices={
+				<MissingPaymentSettingsNotice
+					hasCommissionActivity={ hasSites }
+					commissionType="woopayments"
+				/>
+			}
 		>
 			{ showEmptyState ? (
 				<WooPaymentsDashboardEmptyState />

@@ -65,7 +65,7 @@ type CoreSelectStore =
 	{ getEntityRecord?: ( kind: string, name: string, key?: number ) => unknown } | undefined;
 
 /** Reads the optional server-provided Automattician tracking signal. */
-function getIsA11n(): boolean | undefined {
+export function getIsA11n(): boolean | undefined {
 	const isA11n = getAgentsManagerInlineData()?.isA11n;
 	return typeof isA11n === 'boolean' ? isA11n : undefined;
 }
@@ -121,8 +121,7 @@ export function getIsTest(): boolean {
  * plus the `surface` claim derived from the same editor-store read.
  */
 function getBigSkyPageProps(): TracksProps {
-	// `block_editor` only while the `core/editor` store is registered (unlike
-	// `isEditorPage()`, this includes custom post types and the site editor);
+	// `block_editor` only while the `core/editor` store is registered;
 	// preserved by the catch, omitted on plain wp-admin screens.
 	let surfaceProps: TracksProps = {};
 	try {

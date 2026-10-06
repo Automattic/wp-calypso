@@ -7,7 +7,6 @@ import { useQuery } from '@tanstack/react-query';
 import { Button } from '@wordpress/components';
 import { Icon, commentAuthorAvatar, plus, search } from '@wordpress/icons';
 import clsx from 'clsx';
-import closest from 'component-closest';
 import i18n, { localize } from 'i18n-calypso';
 import { Component, useMemo } from 'react';
 import { connect, useSelector } from 'react-redux';
@@ -112,7 +111,7 @@ export class ReaderSidebar extends Component {
 	}
 
 	handleClick = ( event ) => {
-		if ( ! event.isDefaultPrevented() && closest( event.target, 'a,span' ) ) {
+		if ( ! event.isDefaultPrevented() && event.target.closest( 'a,span' ) ) {
 			this.props.setNextLayoutFocus( 'content' );
 		}
 	};

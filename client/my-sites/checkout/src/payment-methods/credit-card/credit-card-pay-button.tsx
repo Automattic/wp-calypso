@@ -6,7 +6,6 @@ import {
 	PAYMENT_METHOD_STEP_ID,
 } from '@automattic/composite-checkout';
 import { useElements, CardNumberElement } from '@stripe/react-stripe-js';
-import { useSelect } from '@wordpress/data';
 import { useState, useEffect } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
 import debugFactory from 'debug';
@@ -16,9 +15,8 @@ import { errorNotice } from 'calypso/state/notices/actions';
 import { useVgsFormSubmit } from '../../hooks/use-vgs-form-submit';
 import { useVgsFormValidation } from '../../hooks/use-vgs-form-validation';
 import { logStashEvent } from '../../lib/analytics';
-import { actions, selectors } from './store';
-import type { WpcomCreditCardSelectors } from './store';
-import type { CardFieldState, CardStoreType } from './types';
+import { getIncompleteFieldKeys, useCreditCardStoreState } from './store';
+import type { CardStoreType } from './types';
 import type { ProcessPayment } from '@automattic/composite-checkout';
 import type { ReactNode } from 'react';
 
@@ -41,21 +39,12 @@ export default function CreditCardPayButton( {
 	const { stripeConfiguration, stripe } = useStripe();
 	const submitVgsForm = useVgsFormSubmit();
 	const { validateVgsForm } = useVgsFormValidation();
-	const fields: CardFieldState = useSelect(
-		( select ) => ( select( 'wpcom-credit-card' ) as WpcomCreditCardSelectors ).getFields(),
-		[]
+	const fields = useCreditCardStoreState( store, ( state ) => state.fields );
+	const useForAllSubscriptions = useCreditCardStoreState(
+		store,
+		( state ) => state.useForAllSubscriptions
 	);
-
-	const useForAllSubscriptions = useSelect(
-		( select ) =>
-			( select( 'wpcom-credit-card' ) as WpcomCreditCardSelectors ).useForAllSubscriptions(),
-		[]
-	);
-
-	const useForBusiness = useSelect(
-		( select ) => ( select( 'wpcom-credit-card' ) as WpcomCreditCardSelectors ).useForBusiness(),
-		[]
-	);
+	const useForBusiness = useCreditCardStoreState( store, ( state ) => state.useForBusiness );
 
 	const cardholderName = fields.cardholderName;
 	const { formStatus, setFormSubmitting, setFormReady } = useFormStatus();
@@ -158,7 +147,7 @@ export default function CreditCardPayButton( {
 					if ( ! vgsValidation.isValid ) {
 						debug( 'VGS form validation failed', vgsValidation.errorMessage );
 						// Mark form submission as attempted to show field errors
-						store.dispatch( actions.setFormSubmitAttempted( true ) );
+						store.setFormSubmitAttempted( true );
 						setDisplayFieldsError(
 							vgsValidation.errorMessage || __( 'Please check your card details and try again.' )
 						);
@@ -215,22 +204,22 @@ function isCreditCardFormValid(
 
 	switch ( paymentPartner ) {
 		case 'stripe': {
-			const fields = selectors.getFields( store.getState() );
+			const fields = store.getState().fields;
 			const cardholderName = fields.cardholderName;
 			if ( ! cardholderName?.value?.length ) {
 				// Touch the field so it displays a validation error
-				store.dispatch( actions.setFieldValue( 'cardholderName', '' ) );
-				store.dispatch( actions.setFieldError( 'cardholderName', __( 'This field is required' ) ) );
+				store.setFieldValue( 'cardholderName', '' );
+				store.setFieldError( 'cardholderName', __( 'This field is required' ) );
 				setFieldsError();
 			}
-			const errors = selectors.getCardDataErrors( store.getState() );
-			const incompleteFieldKeys = selectors.getIncompleteFieldKeys( store.getState() );
+			const errors = store.getState().cardDataErrors;
+			const incompleteFieldKeys = getIncompleteFieldKeys( store.getState() );
 			const areThereErrors = Object.keys( errors ).some( ( errorKey ) => errors[ errorKey ] );
 
 			if ( incompleteFieldKeys.length > 0 ) {
 				// Show "this field is required" for each incomplete field
-				incompleteFieldKeys.map( ( key ) =>
-					store.dispatch( actions.setCardDataError( key, __( 'This field is required' ) ) )
+				incompleteFieldKeys.forEach( ( key ) =>
+					store.setCardDataError( key, __( 'This field is required' ) )
 				);
 				setFieldsError();
 			}
@@ -244,9 +233,9 @@ function isCreditCardFormValid(
 
 		case 'ebanx': {
 			// Touch fields so that we show errors
-			store.dispatch( actions.touchAllFields() );
+			store.touchAllFields();
 
-			const rawState = selectors.getFields( store.getState() );
+			const rawState = store.getState().fields;
 
 			// Validate billing fields only here
 			// VGS card fields validation is handled separately via useVgsFormValidation hook
@@ -267,7 +256,7 @@ function isCreditCardFormValid(
 				const fieldValue = rawState[ fieldName ]?.value;
 				if ( ! fieldValue || fieldValue.trim() === '' ) {
 					isValid = false;
-					store.dispatch( actions.setFieldError( fieldName, __( 'This field is required' ) ) );
+					store.setFieldError( fieldName, __( 'This field is required' ) );
 				}
 			} );
 

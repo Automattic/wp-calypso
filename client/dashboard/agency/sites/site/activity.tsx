@@ -1,6 +1,5 @@
 import { HostingFeatures, LogType } from '@automattic/api-core';
 import { siteBySlugQuery } from '@automattic/api-queries';
-import { DateRangePicker } from '@automattic/date-range-picker';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
@@ -10,6 +9,7 @@ import { useSiteTimezoneWithJetpackFallback } from '../../../app/hooks/use-site-
 import { useIntlLocale } from '../../../app/locale';
 import { agencySiteActivityRoute, agencySiteRoute } from '../../../app/router/agency';
 import { Card, CardBody } from '../../../components/card';
+import { DateRangePicker } from '../../../components/date-range-picker';
 import InlineSupportLink from '../../../components/inline-support-link';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';

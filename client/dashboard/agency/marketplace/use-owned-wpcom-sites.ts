@@ -3,14 +3,18 @@ import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
 import { agencyLicensesQuery, countOwnedWpcomSites, getWpcomPlan } from './lib/wpcom-hosting';
 import { useMarketplaceType } from './use-marketplace-type';
+import type { MarketplaceType } from './use-marketplace-type';
 
 /**
  * How many WordPress.com sites the agency pays for today. They raise the
  * volume tier of new sites, so the cart and the Hosting page both need the
- * same number. Referrals never count what the agency owns.
+ * same number. Referrals never count what the agency owns. Follows the current
+ * marketplace mode, or `type` for a page that belongs to one mode whatever the
+ * toggle says.
  */
-export function useOwnedWpcomSites() {
-	const { marketplaceType } = useMarketplaceType();
+export function useOwnedWpcomSites( type?: MarketplaceType ) {
+	const { marketplaceType: currentType } = useMarketplaceType();
+	const marketplaceType = type ?? currentType;
 	const { data: agency } = useQuery( activeAgencyQuery() );
 	const agencyId = agency?.id ?? 0;
 

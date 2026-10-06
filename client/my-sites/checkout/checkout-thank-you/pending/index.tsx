@@ -24,9 +24,11 @@ import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { useDispatch } from 'calypso/state';
 import { fetchCurrentUser } from 'calypso/state/current-user/actions';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
+import { getCalypsoQueryClient } from 'calypso/state/query-client';
 import { requestSite } from 'calypso/state/sites/actions';
 import usePurchaseOrder from '../../src/hooks/use-purchase-order';
 import { logStashLoadErrorEvent } from '../../src/lib/analytics';
+import { recordCompletedPurchaseAnalytics } from '../../src/lib/record-completed-purchase-analytics';
 import { SUCCESS } from '../../src/types/order-transaction';
 import {
 	PLAN_AND_DOMAIN_NOTICE_QUERY_VALUE,
@@ -391,7 +393,9 @@ function useRedirectOnTransactionSuccess( {
 			reduxDispatch( requestSite( blogId ) );
 		}
 
+		// Help Center reads Calypso's client; this page renders under the api-queries one.
 		queryClient.invalidateQueries( { queryKey: SUPPORT_STATUS_QUERY_KEY } );
+		getCalypsoQueryClient()?.invalidateQueries( { queryKey: SUPPORT_STATUS_QUERY_KEY } );
 
 		// For plan + domain purchases the `domain-and-plan` flow sends the user to
 		// `/home/<site>` instead of the thank-you page. Tag the destination URL with
@@ -409,6 +413,15 @@ function useRedirectOnTransactionSuccess( {
 		}
 
 		const finalRedirectInstructions = { ...redirectInstructions, url: finalUrl };
+
+		// This is the first point where we know the purchase is complete, so
+		// record it before leaving the page.
+		if ( receipt && ! redirectInstructions.isError && ! redirectInstructions.isUnknown ) {
+			recordCompletedPurchaseAnalytics( receipt, reduxDispatch ).then( () =>
+				notifyAndPerformRedirect( siteSlug, finalRedirectInstructions )
+			);
+			return;
+		}
 
 		notifyAndPerformRedirect( siteSlug, finalRedirectInstructions );
 	}, [

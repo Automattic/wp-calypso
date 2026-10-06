@@ -1,10 +1,5 @@
-import config from '@automattic/calypso-config';
 import { useEffect } from 'react';
 import { trackPremiumAnalyticsPreviewEvent } from '../premium-analytics-preview/track-event';
-import {
-	PREMIUM_ANALYTICS_PREVIEW_FLAG,
-	PREMIUM_ANALYTICS_PREVIEW_ATOMIC_FLAG,
-} from './premium-analytics-preview-cohort';
 import type { NoticeIdType } from '../hooks/use-notice-visibility-query';
 
 type PreviewGateSignals = {
@@ -15,7 +10,6 @@ type PreviewGateSignals = {
 	premiumAnalyticsDashboardUrl?: string | null;
 	isVip: boolean;
 	isP2: boolean;
-	isAtomic: boolean;
 	isPremiumAnalyticsEnabled?: boolean;
 	isStatusError: boolean;
 	/** The notice that won the conflict group over the invitation, when one did. */
@@ -53,7 +47,6 @@ const notShownReason = ( {
 	premiumAnalyticsDashboardUrl,
 	isVip,
 	isP2,
-	isAtomic,
 	isPremiumAnalyticsEnabled,
 	isStatusError,
 	suppressedBy,
@@ -80,9 +73,6 @@ const notShownReason = ( {
 	}
 	if ( isP2 ) {
 		return 'is_p2';
-	}
-	if ( isAtomic && ! config.isEnabled( PREMIUM_ANALYTICS_PREVIEW_ATOMIC_FLAG ) ) {
-		return 'atomic_hold';
 	}
 	if ( isPremiumAnalyticsEnabled === true ) {
 		return 'already_enabled';
@@ -121,19 +111,11 @@ export default function usePremiumAnalyticsPreviewNotShownEvent( {
 	premiumAnalyticsDashboardUrl,
 	isVip,
 	isP2,
-	isAtomic,
 	isPremiumAnalyticsEnabled,
 	isStatusError,
 	suppressedBy,
 }: NotShownSignals ) {
 	useEffect( () => {
-		// The flag is off everywhere the preview has not reached yet, so counting those sites would
-		// record one event per Traffic mount across all of WordPress.com and say only which build
-		// we are in.
-		if ( ! config.isEnabled( PREMIUM_ANALYTICS_PREVIEW_FLAG ) ) {
-			return;
-		}
-
 		if ( ! siteId || ! isSettled || recordedSiteIds.has( siteId ) ) {
 			return;
 		}
@@ -152,7 +134,6 @@ export default function usePremiumAnalyticsPreviewNotShownEvent( {
 			premiumAnalyticsDashboardUrl,
 			isVip,
 			isP2,
-			isAtomic,
 			isPremiumAnalyticsEnabled,
 			isStatusError,
 			suppressedBy,
@@ -181,7 +162,6 @@ export default function usePremiumAnalyticsPreviewNotShownEvent( {
 		premiumAnalyticsDashboardUrl,
 		isVip,
 		isP2,
-		isAtomic,
 		isPremiumAnalyticsEnabled,
 		isStatusError,
 		suppressedBy,

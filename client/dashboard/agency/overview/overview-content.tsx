@@ -138,6 +138,7 @@ export default function AgencyOverviewContent( {
 					isEligibleForPressableExpansionOffer={ isEligibleForPressableExpansionOffer }
 					aiMcpHref={ links.aiMcp }
 					pressableHostingHref={ links.pressableHosting }
+					shouldUseRouterLink={ shouldUseRouterLink }
 					recordTracksEvent={ recordTracksEvent }
 				/>
 			</VStack>

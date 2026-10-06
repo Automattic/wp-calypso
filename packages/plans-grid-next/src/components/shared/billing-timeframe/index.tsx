@@ -6,7 +6,7 @@ import {
 } from '@automattic/calypso-products';
 import { formatCurrency } from '@automattic/number-formatters';
 import styled from '@emotion/styled';
-import { fixMe, useTranslate } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import { usePlansGridContext } from '../../../grid-context';
 import usePlanBillingDescription from '../../../hooks/data-store/use-plan-billing-description';
 import type { GridPlan } from '../../../types';
@@ -93,17 +93,10 @@ const BillingTimeframe = ( { showRefundPeriod, planSlug }: Props ) => {
 
 		return (
 			<BillingTimeframeContainer>
-				{ fixMe( {
-					text: 'Starts at %(price)s/month per site, excl. taxes',
-					newCopy: translate( 'Starts at %(price)s/month per site, excl. taxes', {
-						args: { price },
-						comment:
-							'Translators: %(price)s is the monthly price for agencies. "Excl. taxes" is short for excluding taxes',
-					} ),
-					oldCopy: translate( 'Starts at %(price)s/month per site', {
-						args: { price },
-						comment: 'Translators: %(price)s is the monthly price for agencies',
-					} ),
+				{ translate( 'Starts at %(price)s/month per site, excl. taxes', {
+					args: { price },
+					comment:
+						'Translators: %(price)s is the monthly price for agencies. "Excl. taxes" is short for excluding taxes',
 				} ) }
 			</BillingTimeframeContainer>
 		);

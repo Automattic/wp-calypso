@@ -20,7 +20,7 @@ import { useDismissRecommendedSite } from 'calypso/reader/data/recommended-sites
 import { useDispatch, useSelector } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
-import type { ReadNewBlogsRec } from '@automattic/api-core';
+import { buildRailcar, type NewBlogRec } from './tracks';
 
 const DISMISSED_STORAGE_KEY = 'reader-new-blogs-dismissed-v1';
 const HIDDEN_STORAGE_KEY = 'reader-new-blogs-hidden-v1';
@@ -53,7 +53,7 @@ export interface UseNewBlogsResult {
 	 * Recommendations to render, best-first, minus dismissed blogs. Empty means
 	 * loading, cold-start, or everything dismissed: the caller renders nothing.
 	 */
-	recs: ReadNewBlogsRec[];
+	recs: NewBlogRec[];
 	/** True when the user hid the whole module. */
 	isHidden: boolean;
 	/** "Not interested": hide every rec from this blog, now and on reload. */
@@ -118,9 +118,21 @@ export function useNewBlogs(): UseNewBlogsResult {
 		writeStorage( HIDDEN_STORAGE_KEY, true );
 	}, [] );
 
+	// One TrainTracks railcar per rec per snapshot (READ-543), minted once so
+	// every render / interact for the same card shares an id. `fetch_position`
+	// is the 1-based rank in the snapshot.
+	const recsWithRailcars = useMemo(
+		() =>
+			( data?.recs ?? [] ).map( ( rec, index ) => ( {
+				...rec,
+				railcar: buildRailcar( rec, index + 1 ),
+			} ) ),
+		[ data ]
+	);
+
 	const recs = useMemo(
-		() => ( data?.recs ?? [] ).filter( ( rec ) => ! dismissedBlogs.has( rec.blogId ) ),
-		[ data, dismissedBlogs ]
+		() => recsWithRailcars.filter( ( rec ) => ! dismissedBlogs.has( rec.blogId ) ),
+		[ recsWithRailcars, dismissedBlogs ]
 	);
 
 	return { recs, isHidden, dismissBlog, hide };

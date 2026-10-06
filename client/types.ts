@@ -133,6 +133,7 @@ declare global {
 			clientIp?: string;
 		};
 		currentUser?: User;
+		subscriptionManagementSubkey?: string; // Subkey for logged-out subscription management i.e. via email link.
 		__REDUX_DEVTOOLS_EXTENSION__?: () => void;
 		Blackbox?: {
 			configure: ( config: {

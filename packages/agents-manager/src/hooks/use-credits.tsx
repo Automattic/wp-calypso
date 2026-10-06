@@ -68,7 +68,7 @@ interface UseCreditsResult {
 	chat: UseAgentChatReturn;
 	/** Ring + popover; hidden until this site returns valid allowance metadata. */
 	trailingActions?: TrailingActions;
-	/** Dismissible low-credit notice, or a persistent exhausted free-plan notice. */
+	/** Dismissible low-credit notice, or a persistent exhausted notice. */
 	notice?: NoticeConfig;
 	/** Blocks Send and suggestions at zero, keeping the typed text. */
 	beforeSubmit: () => boolean;
@@ -350,30 +350,37 @@ export function useCredits( {
 	}, [ status, isPopoverOpen, setIsPopoverOpen, handleAction, siteId, upgradeUrl ] );
 
 	const notice = useMemo< NoticeConfig | undefined >( () => {
-		if (
-			siteId &&
-			status?.plan === 'paid' &&
-			status.percent <= CREDITS_LOW_THRESHOLD &&
-			! isLowNoticeDismissed
-		) {
-			return {
-				icon: false,
-				message: sprintf(
-					/* translators: %s: percentage of site credits left, e.g. "20" or "<1" */
-					__( '%s%% of site credits left.', __i18n_text_domain__ ),
-					formatPercent( status.percent )
-				),
-				action: upgradeUrl
-					? {
-							label: __( 'Upgrade', __i18n_text_domain__ ),
-							href: upgradeUrl,
-							target: '_blank',
-							rel: 'noopener noreferrer',
-						}
-					: undefined,
-				dismissible: true,
-				onDismiss: dismissLowNotice,
-			};
+		if ( siteId && status?.plan === 'paid' ) {
+			const action = upgradeUrl
+				? {
+						label: __( 'Upgrade', __i18n_text_domain__ ),
+						href: upgradeUrl,
+						target: '_blank',
+						rel: 'noopener noreferrer',
+					}
+				: undefined;
+			// A dismissed low notice must not hide the exhausted state.
+			if ( isExhausted ) {
+				return {
+					icon: false,
+					message: __( 'You’ve used all your site credits.', __i18n_text_domain__ ),
+					action,
+					dismissible: false,
+				};
+			}
+			if ( status.percent <= CREDITS_LOW_THRESHOLD && ! isLowNoticeDismissed ) {
+				return {
+					icon: false,
+					message: sprintf(
+						/* translators: %s: percentage of site credits left, e.g. "20" or "<1" */
+						__( '%s%% of site credits left.', __i18n_text_domain__ ),
+						formatPercent( status.percent )
+					),
+					action,
+					dismissible: true,
+					onDismiss: dismissLowNotice,
+				};
+			}
 		}
 		if ( ! status || status.plan !== 'free' ) {
 			return undefined;

@@ -562,29 +562,17 @@ function compact( elements: ( string | false | undefined | null )[] ): string[] 
 }
 
 const WPComGetBillingTimeframe = (): TranslateResult =>
-	i18n.fixMe( {
-		text: 'per month, billed yearly, excl. taxes',
-		newCopy: i18n.translate( 'per month, billed yearly, excl. taxes', {
-			comment: 'Excl. Taxes is short for excluding taxes',
-		} ),
-		oldCopy: i18n.translate( 'per month, billed yearly' ),
-	} ) as TranslateResult;
+	i18n.translate( 'per month, billed yearly, excl. taxes', {
+		comment: 'Excl. Taxes is short for excluding taxes',
+	} );
 const WPComGetBiennialBillingTimeframe = (): TranslateResult =>
-	i18n.fixMe( {
-		text: '/month, billed every two years, excl. taxes',
-		newCopy: i18n.translate( '/month, billed every two years, excl. taxes', {
-			comment: 'Excl. Taxes is short for excluding taxes',
-		} ),
-		oldCopy: i18n.translate( '/month, billed every two years' ),
-	} ) as TranslateResult;
+	i18n.translate( '/month, billed every two years, excl. taxes', {
+		comment: 'Excl. Taxes is short for excluding taxes',
+	} );
 const WPComGetTriennialBillingTimeframe = (): TranslateResult =>
-	i18n.fixMe( {
-		text: '/month, billed every three years, excl. taxes',
-		newCopy: i18n.translate( '/month, billed every three years, excl. taxes', {
-			comment: 'Excl. Taxes is short for excluding taxes',
-		} ),
-		oldCopy: i18n.translate( '/month, billed every three years' ),
-	} ) as TranslateResult;
+	i18n.translate( '/month, billed every three years, excl. taxes', {
+		comment: 'Excl. Taxes is short for excluding taxes',
+	} );
 
 const getBiAnnualTimeframe = (): BillingTerm => ( {
 	term: TERM_BIENNIALLY,
@@ -599,13 +587,9 @@ const getAnnualTimeframe = (): BillingTerm => ( {
 const getMonthlyTimeframe = (): BillingTerm => ( {
 	term: TERM_MONTHLY,
 	getBillingTimeFrame: () =>
-		i18n.fixMe( {
-			text: 'per month, billed monthly, excl. taxes',
-			newCopy: i18n.translate( 'per month, billed monthly, excl. taxes', {
-				comment: 'Excl. Taxes is short for excluding taxes',
-			} ),
-			oldCopy: i18n.translate( 'per month, billed monthly' ),
-		} ) as TranslateResult,
+		translate( 'per month, billed monthly, excl. taxes', {
+			comment: 'Excl. Taxes is short for excluding taxes',
+		} ),
 } );
 const getJetpackCommonPlanDetails = () => ( {
 	getRecommendedFor: () => [
@@ -901,7 +885,7 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 	getSignupFeatures: () => [
 		FEATURE_FREE_DOMAIN,
 		FEATURE_FAST_SUPPORT_FROM_EXPERTS,
-		FEATURE_FREE_THEMES,
+		WPCOM_FEATURES_PREMIUM_THEMES_LIMITED,
 		FEATURE_STYLE_CUSTOMIZATION,
 	],
 	getBlogSignupFeatures: () => [

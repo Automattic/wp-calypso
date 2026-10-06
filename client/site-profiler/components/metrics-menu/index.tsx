@@ -1,4 +1,3 @@
-import { Button } from '@automattic/components';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import React, { useEffect, useState } from 'react';
@@ -7,12 +6,6 @@ import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
 import StickyPanel from 'calypso/components/sticky-panel';
 import { useIsMenuSectionVisible } from 'calypso/site-profiler/hooks/use-is-menu-section-visible';
-
-const FullReportButton = styled( Button )`
-	margin-right: 8px;
-	border-radius: 4px;
-	box-shadow: 0px 1px 2px 0px rgba( 0, 0, 0, 0.05 );
-`;
 
 const SectionNavbar = styled( SectionNav )`
 	margin-top: 10px;
@@ -23,7 +16,6 @@ interface MetricsMenuProps {
 	basicMetricsRef?: React.RefObject< HTMLElement | null >;
 	performanceMetricsRef?: React.RefObject< HTMLElement | null >;
 	healthScoresRef?: React.RefObject< HTMLElement | null >;
-	onCTAClick: () => void;
 }
 
 interface MenuItem {
@@ -39,7 +31,7 @@ enum MetricsMenuTabs {
 
 export const MetricsMenu: React.FC< MetricsMenuProps > = ( props ) => {
 	const translate = useTranslate();
-	const { basicMetricsRef, performanceMetricsRef, healthScoresRef, onCTAClick } = props;
+	const { basicMetricsRef, performanceMetricsRef, healthScoresRef } = props;
 
 	const references = {
 		[ MetricsMenuTabs.basic ]: basicMetricsRef,
@@ -99,9 +91,6 @@ export const MetricsMenu: React.FC< MetricsMenuProps > = ( props ) => {
 						</NavItem>
 					) ) }
 				</NavTabs>
-				<FullReportButton primary onClick={ onCTAClick }>
-					{ translate( "Get full site report - It's free" ) }
-				</FullReportButton>
 			</SectionNavbar>
 		</StickyPanel>
 	);

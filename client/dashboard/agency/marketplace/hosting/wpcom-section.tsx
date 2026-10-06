@@ -21,6 +21,7 @@ import { TextBlur } from '../../../components/text-blur';
 import { DomainUpsellIllustraction } from '../../../sites/overview-domain-upsell-card/upsell-illustration';
 import wpcomDescriptor from '../exclusive-offers/images/wordpressdotcom-descriptor.svg';
 import { getWpcomTieredPrice } from '../products/lib/product-pricing';
+import { MAX_CART_ITEM_QUANTITY } from '../products/use-shopping-cart';
 import { DevSiteConfigurationModal } from '../purchases/site-configuration-modal';
 import { BrandMark, CheckGrid, HostingFeatures, Testimonials } from './content-sections';
 import SelectedPlanCard from './selected-plan-card';
@@ -297,10 +298,16 @@ export default function WpcomSection( {
 														label={ __( 'Number of sites' ) }
 														hideLabelFromVision
 														min={ 1 }
+														max={ MAX_CART_ITEM_QUANTITY }
 														spinControls="custom"
 														value={ String( quantity ) }
 														onChange={ ( value ) =>
-															setQuantity( Math.max( 1, parseInt( String( value ), 10 ) || 1 ) )
+															setQuantity(
+																Math.min(
+																	MAX_CART_ITEM_QUANTITY,
+																	Math.max( 1, parseInt( String( value ), 10 ) || 1 )
+																)
+															)
 														}
 													/>
 												</div>

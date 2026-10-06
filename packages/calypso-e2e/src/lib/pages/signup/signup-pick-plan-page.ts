@@ -99,7 +99,9 @@ export class SignupPickPlanPage {
 			// Non-free plans should redirect to the Checkout cart.
 			redirectUrl ??= new RegExp( '.*checkout.*' );
 		} else {
-			redirectUrl ??= new RegExp( '.*(setup/site-setup|home/.+ref=onboarding).*' );
+			redirectUrl ??= new RegExp(
+				'.*(setup/site-setup|site-setup-wp-admin|home/.+ref=onboarding).*'
+			);
 		}
 
 		// Awaited alongside the redirect rather than after it: a refused creation
@@ -133,7 +135,9 @@ export class SignupPickPlanPage {
 			// Non-free plans should redirect to the Checkout cart.
 			redirectUrl ??= new RegExp( '.*checkout.*' );
 		} else {
-			redirectUrl ??= new RegExp( '.*(setup/site-setup|home/.+ref=onboarding).*' );
+			redirectUrl ??= new RegExp(
+				'.*(setup/site-setup|site-setup-wp-admin|home/.+ref=onboarding).*'
+			);
 		}
 
 		const actions = [

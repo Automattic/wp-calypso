@@ -62,6 +62,7 @@ export const SITE_OPTIONS = [
 	'is_wpforteams_site',
 	'jetpack_recovery_mode_status',
 	'jetpack_sso_require_two_step',
+	'jetpack_version',
 	'migration_source_site_domain',
 	'p2_hub_blog_id',
 	'site_creation_flow',
@@ -73,6 +74,7 @@ export const SITE_OPTIONS = [
 	'wpcom_ai_launchpad_enabled',
 	'wpcom_ai_launchpad_dismissed',
 	'wpcom_ai_launchpad_completed',
+	'wpcom_ai_launchpad_no_guidance',
 	'wpcom_production_blog_id',
 ];
 

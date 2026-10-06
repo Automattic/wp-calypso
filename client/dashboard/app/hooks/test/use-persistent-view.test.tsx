@@ -256,6 +256,63 @@ describe( 'usePersistentView', () => {
 				] );
 			} );
 		} );
+
+		it( 'should follow the default view fields when the persisted view has none', async () => {
+			const persistedView = {
+				type: 'table',
+				sort: { field: 'name', direction: 'desc' },
+			};
+			mockGetCalypsoPreferences( {
+				'hosting-dashboard-dataviews-view-sites': persistedView,
+			} );
+
+			const { Wrapper } = createTestWrapper();
+			const { result, rerender } = renderHook(
+				( { fields }: { fields: string[] } ) =>
+					usePersistentView( { slug, defaultView: { ...defaultView, fields } } ),
+				{ wrapper: Wrapper, initialProps: { fields: [ 'status' ] } }
+			);
+
+			await waitFor( () => {
+				expect( result.current.view ).toEqual( {
+					...persistedView,
+					fields: [ 'status' ],
+					page: 1,
+					search: '',
+				} );
+			} );
+
+			rerender( { fields: [ 'status', 'payment-method' ] } );
+
+			await waitFor( () => {
+				expect( result.current.view.fields ).toEqual( [ 'status', 'payment-method' ] );
+			} );
+		} );
+
+		it( 'should keep the persisted view fields over the default view fields', async () => {
+			const persistedView = {
+				type: 'table',
+				sort: { field: 'name', direction: 'asc' },
+				fields: [ 'status' ],
+			};
+			mockGetCalypsoPreferences( {
+				'hosting-dashboard-dataviews-view-sites': persistedView,
+			} );
+
+			const { Wrapper } = createTestWrapper();
+			const { result } = renderHook(
+				() =>
+					usePersistentView( {
+						slug,
+						defaultView: { ...defaultView, fields: [ 'status', 'payment-method' ] },
+					} ),
+				{ wrapper: Wrapper }
+			);
+
+			await waitFor( () => {
+				expect( result.current.view.fields ).toEqual( [ 'status' ] );
+			} );
+		} );
 	} );
 
 	describe( 'updateView', () => {
@@ -286,6 +343,74 @@ describe( 'usePersistentView', () => {
 					page: 1,
 					search: '',
 				} );
+			} );
+
+			await waitFor( () => {
+				expect( expectedUpdatePreferences.isDone() ).toBe( true );
+			} );
+		} );
+
+		it( 'should not persist fields that match the default view', async () => {
+			mockGetCalypsoPreferences( {} );
+
+			const viewToPersist: View = {
+				type: 'table',
+				layout: { density: 'compact' },
+				sort: { field: 'name', direction: 'desc' },
+			};
+			const expectedUpdatePreferences = mockUpdateCalypsoPreferences( {
+				'hosting-dashboard-dataviews-view-sites': viewToPersist,
+			} );
+
+			const { Wrapper } = createTestWrapper();
+			const { result } = renderHook(
+				() => usePersistentView( { slug, defaultView: { ...defaultView, fields: [ 'status' ] } } ),
+				{ wrapper: Wrapper }
+			);
+
+			await waitFor( () => {
+				expect( result.current.updateView ).toBeTruthy();
+			} );
+
+			act( () => {
+				result.current.updateView( {
+					...viewToPersist,
+					fields: [ 'status' ],
+					page: 1,
+					search: '',
+				} );
+			} );
+
+			await waitFor( () => {
+				expect( expectedUpdatePreferences.isDone() ).toBe( true );
+			} );
+		} );
+
+		it( 'should persist fields that differ from the default view', async () => {
+			mockGetCalypsoPreferences( {} );
+
+			const viewToPersist: View = {
+				type: 'table',
+				layout: { density: 'compact' },
+				sort: { field: 'name', direction: 'asc' },
+				fields: [ 'status', 'payment-method' ],
+			};
+			const expectedUpdatePreferences = mockUpdateCalypsoPreferences( {
+				'hosting-dashboard-dataviews-view-sites': viewToPersist,
+			} );
+
+			const { Wrapper } = createTestWrapper();
+			const { result } = renderHook(
+				() => usePersistentView( { slug, defaultView: { ...defaultView, fields: [ 'status' ] } } ),
+				{ wrapper: Wrapper }
+			);
+
+			await waitFor( () => {
+				expect( result.current.updateView ).toBeTruthy();
+			} );
+
+			act( () => {
+				result.current.updateView( { ...viewToPersist, page: 1, search: '' } );
 			} );
 
 			await waitFor( () => {
