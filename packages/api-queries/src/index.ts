@@ -178,4 +178,5 @@ export * from './user';
 export * from './user-sites';
 export * from './woo-country-regions';
 export * from './wordpress-agent';
+export * from './wow-funnel-pending';
 export * from './wp-org-core-version';

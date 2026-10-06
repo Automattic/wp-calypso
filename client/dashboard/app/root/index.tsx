@@ -28,7 +28,6 @@ import Notifications from '../notifications';
 import { useOmnibarEvent } from '../omnibar/events';
 import OmnibarAgentsManager from '../omnibar/omnibar-agents-manager';
 import OmnibarHelpCenter from '../omnibar/omnibar-help-center';
-import OmnibarSiteSwitcher from '../omnibar/omnibar-site-switcher';
 import { useSyncOmnibarSite } from '../omnibar/site';
 import ResponsiveSidebar from '../responsive-sidebar';
 import { ResurrectedWelcomeModalGate } from '../resurrected-welcome-modal';
@@ -191,7 +190,6 @@ function Root() {
 			{ supports.notifications && <Notifications anchor /> }
 			{ supports.help && <HelpCenter /> }
 			<OmnibarAgentsManager pathname={ pathname } />
-			<OmnibarSiteSwitcher />
 			<Snackbars />
 			<CheckoutSuccessFlashMessage />
 			{ isResurrectedWelcomeModalEnabled && (
