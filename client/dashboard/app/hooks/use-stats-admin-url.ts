@@ -16,7 +16,8 @@ export interface StatsAdminUrlSite {
 
 /**
  * The wp-admin address a "see your stats" link opens: the Premium Analytics dashboard when the
- * site has it switched on, `statsPath` otherwise.
+ * site has it switched on, `statsPath` otherwise. Undefined until the site answers, so an early
+ * click cannot land on the page the answer is about to replace.
  * @todo UNI-832: return the dashboard unconditionally once Premium Analytics replaces Stats.
  * @param site      The site the link belongs to.
  * @param statsPath The classic Stats path, relative to wp-admin.
@@ -26,13 +27,13 @@ export function useStatsAdminUrl(
 	statsPath = STATS_PATH
 ): string | undefined {
 	// Core's settings route answers only to manage_options, so anyone else keeps the Stats link.
-	const { data: isPremiumAnalyticsEnabled } = useQuery( {
+	const { data: isPremiumAnalyticsEnabled, isLoading } = useQuery( {
 		...sitePremiumAnalyticsEnabledQuery( site?.ID ?? 0 ),
 		enabled: !! site?.ID && !! site.capabilities?.manage_options,
 	} );
 
 	const adminUrl = site?.options?.admin_url;
-	if ( ! adminUrl ) {
+	if ( ! adminUrl || isLoading ) {
 		return undefined;
 	}
 

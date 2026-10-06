@@ -66,7 +66,15 @@ describe( 'useStatsAdminUrl', () => {
 		expect( result.current ).toBe( 'https://example.com/wp-admin/admin.php?page=stats' );
 	} );
 
-	it( 'adds the slash an admin URL without a trailing one is missing', () => {
+	it( 'gives no link while the site has not answered, so an early click cannot open classic Stats', () => {
+		mockPremiumAnalyticsEnabled( true );
+
+		const { result } = renderStatsAdminUrl( site );
+
+		expect( result.current ).toBeUndefined();
+	} );
+
+	it( 'adds the slash an admin URL without a trailing one is missing', async () => {
 		mockPremiumAnalyticsEnabled( false );
 
 		const { result } = renderStatsAdminUrl( {
@@ -74,6 +82,8 @@ describe( 'useStatsAdminUrl', () => {
 			options: { admin_url: 'https://example.com/wp-admin' },
 		} );
 
-		expect( result.current ).toBe( 'https://example.com/wp-admin/admin.php?page=stats' );
+		await waitFor( () =>
+			expect( result.current ).toBe( 'https://example.com/wp-admin/admin.php?page=stats' )
+		);
 	} );
 } );
