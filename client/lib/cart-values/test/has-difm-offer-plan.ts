@@ -1,6 +1,9 @@
 import {
 	PLAN_BUSINESS,
+	PLAN_BUSINESS_2_YEARS,
+	PLAN_BUSINESS_3_YEARS,
 	PLAN_BUSINESS_MONTHLY,
+	PLAN_JETPACK_BUSINESS,
 	PLAN_PREMIUM,
 	WPCOM_DIFM_LITE,
 } from '@automattic/calypso-products';
@@ -19,9 +22,24 @@ describe( 'hasDIFMOfferPlan()', () => {
 		expect( hasDIFMOfferPlan( cartWith( PLAN_BUSINESS, { difm_offer: true } ) ) ).toBe( true );
 	} );
 
-	test( 'returns true for a flagged Business plan of any billing term', () => {
-		expect( hasDIFMOfferPlan( cartWith( PLAN_BUSINESS_MONTHLY, { difm_offer: true } ) ) ).toBe(
+	test( 'returns true for a flagged 2-year or 3-year Business plan', () => {
+		expect( hasDIFMOfferPlan( cartWith( PLAN_BUSINESS_2_YEARS, { difm_offer: true } ) ) ).toBe(
 			true
+		);
+		expect( hasDIFMOfferPlan( cartWith( PLAN_BUSINESS_3_YEARS, { difm_offer: true } ) ) ).toBe(
+			true
+		);
+	} );
+
+	test( 'returns false for a flagged monthly Business plan', () => {
+		expect( hasDIFMOfferPlan( cartWith( PLAN_BUSINESS_MONTHLY, { difm_offer: true } ) ) ).toBe(
+			false
+		);
+	} );
+
+	test( 'returns false for a flagged Jetpack Business plan', () => {
+		expect( hasDIFMOfferPlan( cartWith( PLAN_JETPACK_BUSINESS, { difm_offer: true } ) ) ).toBe(
+			false
 		);
 	} );
 
