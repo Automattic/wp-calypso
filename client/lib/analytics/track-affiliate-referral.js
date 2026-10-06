@@ -1,3 +1,4 @@
+import { isDocumentPrerendering, whenDocumentActive } from '@automattic/calypso-analytics';
 import { pick } from '@automattic/js-utils';
 import debug from 'debug';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -24,6 +25,12 @@ export async function trackAffiliateReferral( {
 	subId,
 	referrer,
 } ) {
+	if ( isDocumentPrerendering() ) {
+		return whenDocumentActive( () =>
+			trackAffiliateReferral( { vendorId, affiliateId, campaignId, subId, referrer } )
+		);
+	}
+
 	referDebug( 'Recording affiliate referral.', {
 		vendorId,
 		affiliateId,

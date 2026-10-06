@@ -1,3 +1,4 @@
+import { whenDocumentActive } from '@automattic/calypso-analytics';
 import { loadScript } from '@automattic/load-script';
 import { closeSurvicateSurvey } from './close-survey';
 import debug from './debug';
@@ -23,6 +24,15 @@ export function isSurvicateScriptLoaded(): boolean {
  * repeated calls don't accumulate observers.
  */
 export function loadSurvicateScript( workspaceId: string, signal?: AbortSignal ): Promise< void > {
+	return whenDocumentActive( () => {
+		if ( signal?.aborted ) {
+			return Promise.reject( new DOMException( 'Aborted', 'AbortError' ) );
+		}
+		return loadActiveSurvicateScript( workspaceId, signal );
+	} );
+}
+
+function loadActiveSurvicateScript( workspaceId: string, signal?: AbortSignal ): Promise< void > {
 	debug( 'Loading Survicate script for workspace %s', workspaceId );
 
 	const onSurveyDisplayed = () => {

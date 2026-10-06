@@ -1,4 +1,8 @@
-import { getCurrentUser } from '@automattic/calypso-analytics';
+import {
+	getCurrentUser,
+	isDocumentPrerendering,
+	whenDocumentActive,
+} from '@automattic/calypso-analytics';
 import { loadScript } from '@automattic/load-script';
 import isAkismetCheckout from 'calypso/lib/akismet/is-akismet-checkout';
 import isJetpackCheckout from 'calypso/lib/jetpack/is-jetpack-checkout';
@@ -27,7 +31,11 @@ import {
 import { circularReferenceSafeJSONStringify } from './debug';
 import { setup } from './setup';
 
-export const loadTrackingScripts = attemptLoad( async () => {
+export const loadTrackingScripts = attemptLoad( async function load() {
+	if ( isDocumentPrerendering() ) {
+		return whenDocumentActive( () => load() );
+	}
+
 	setup();
 
 	const scripts = getTrackingScriptsToLoad();

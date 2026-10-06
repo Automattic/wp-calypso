@@ -1,3 +1,4 @@
+import { whenDocumentActive } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import { captureException } from '@automattic/calypso-sentry';
 import { addQueryArgs } from '@wordpress/url';
@@ -86,5 +87,7 @@ export function bumpMultipleStats( ...groupValuePairs: [ string, string ][] ) {
 
 	const url = addQueryArgs( document.location.protocol + '//pixel.wp.com/g.gif', queryArgs );
 
-	new window.Image().src = url;
+	whenDocumentActive( () => {
+		new window.Image().src = url;
+	} );
 }

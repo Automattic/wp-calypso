@@ -1,6 +1,7 @@
 /**
  * Re-export
  */
+export { isDocumentPrerendering, whenDocumentActive } from './when-document-active';
 export { default as getDoNotTrack } from './utils/do-not-track';
 export { getCurrentUser, setCurrentUser } from './utils/current-user';
 export { getPageViewParams, getMostRecentUrlPath } from './page-view-params';

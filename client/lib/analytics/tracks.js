@@ -1,7 +1,6 @@
 import { EventEmitter } from 'events';
 import {
 	recordTracksEvent as baseRecordTracksEvent,
-	analyticsEvents,
 	recordTracksPageView as baseRecordTracksPageView,
 	pushEventToTracksQueue,
 } from '@automattic/calypso-analytics';
@@ -9,11 +8,9 @@ import {
 export const tracksEvents = new EventEmitter();
 
 export function recordTracksEvent( eventName, eventProperties ) {
-	analyticsEvents.once( 'record-event', ( _eventName, _eventProperties ) => {
+	baseRecordTracksEvent( eventName, eventProperties, ( _eventName, _eventProperties ) => {
 		tracksEvents.emit( 'record-event', _eventName, _eventProperties );
 	} );
-
-	baseRecordTracksEvent( eventName, eventProperties );
 }
 
 export function recordTracksPageView( urlPath, params ) {

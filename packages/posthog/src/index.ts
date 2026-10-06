@@ -1,4 +1,8 @@
-import { getTrackingPrefs } from '@automattic/calypso-analytics';
+import {
+	getTrackingPrefs,
+	isDocumentPrerendering,
+	whenDocumentActive,
+} from '@automattic/calypso-analytics';
 import posthog from 'posthog-js';
 
 let initialized = false;
@@ -28,7 +32,12 @@ export function reset() {
 	initialized = false;
 }
 
-export function init( apiKey: string, user?: PostHogUser, overrides?: PostHogOverrides ) {
+export function init( apiKey: string, user?: PostHogUser, overrides?: PostHogOverrides ): void {
+	if ( isDocumentPrerendering() ) {
+		whenDocumentActive( () => init( apiKey, user, overrides ) );
+		return;
+	}
+
 	if ( initialized || ! apiKey ) {
 		return;
 	}

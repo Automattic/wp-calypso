@@ -1,6 +1,10 @@
 // pageView is a wrapper for pageview events across Tracks and GA.
 
-import { recordTracksPageViewWithPageParams } from '@automattic/calypso-analytics';
+import {
+	recordTracksPageViewWithPageParams,
+	isDocumentPrerendering,
+	whenDocumentActive,
+} from '@automattic/calypso-analytics';
 import { resolveDeviceTypeByViewPort } from '@automattic/viewport';
 import { retarget as retargetAdTrackers } from 'calypso/lib/analytics/ad-tracking';
 import saveImpactAffiliateClickId from 'calypso/lib/analytics/impact-affiliate';
@@ -11,6 +15,10 @@ import { processQueue } from './queue';
 import { referRecordPageView } from './refer';
 
 export function recordPageView( urlPath, pageTitle, params = {}, options = {} ) {
+	if ( isDocumentPrerendering() ) {
+		return whenDocumentActive( () => recordPageView( urlPath, pageTitle, params, options ) );
+	}
+
 	// Add delay to avoid stale `_dl` in recorded calypso_page_view event details.
 	// `_dl` (browserdocumentlocation) is read from the current URL by external JavaScript.
 	setTimeout( () => {
