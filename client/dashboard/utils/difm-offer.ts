@@ -1,9 +1,6 @@
-import {
-	isWpComFreePlan,
-	isWpComPersonalPlan,
-	isWpComPremiumPlan,
-} from '@automattic/calypso-products';
+import { DotcomPlans } from '@automattic/api-core';
 import { englishLocales } from '@automattic/i18n-utils';
+import { __ } from '@wordpress/i18n';
 import { useExperiment } from 'calypso/lib/explat';
 
 /**
@@ -28,6 +25,14 @@ export interface DifmOfferEligibilityInput {
 	planSlug?: string;
 	siteCreatedAt?: string;
 	localeSlug?: string;
+	/**
+	 * An agency builds an A4A dev site for a client, so the offer does not apply. Only an
+	 * explicit `false` is eligible. The key is required so that a caller cannot leave it out
+	 * by mistake; pass the site's value even while it is still `undefined`. Agency-managed
+	 * Atomic sites need no check: Atomic requires a Business plan or higher, which is
+	 * already ineligible.
+	 */
+	isA4ADevSite: boolean | undefined;
 }
 
 export interface DifmOfferResult {
@@ -56,10 +61,21 @@ export function normalizeDifmOfferVariation(
 	}
 }
 
+const ELIGIBLE_PLAN_SLUGS = new Set< string >( [
+	DotcomPlans.FREE_PLAN,
+	DotcomPlans.PERSONAL_MONTHLY,
+	DotcomPlans.PERSONAL_TRIAL_MONTHLY,
+	DotcomPlans.PERSONAL,
+	DotcomPlans.PERSONAL_2_YEARS,
+	DotcomPlans.PERSONAL_3_YEARS,
+	DotcomPlans.PREMIUM_MONTHLY,
+	DotcomPlans.PREMIUM,
+	DotcomPlans.PREMIUM_2_YEARS,
+	DotcomPlans.PREMIUM_3_YEARS,
+] );
+
 function isEligiblePlan( planSlug: string ): boolean {
-	return (
-		isWpComFreePlan( planSlug ) || isWpComPersonalPlan( planSlug ) || isWpComPremiumPlan( planSlug )
-	);
+	return ELIGIBLE_PLAN_SLUGS.has( planSlug );
 }
 
 // Site models can hand back a space-separated `YYYY-MM-DD HH:MM:SS` (GMT) string
@@ -90,10 +106,10 @@ function isEnglishLocale( localeSlug: string ): boolean {
 }
 
 export function isEligibleForDifmOffer(
-	{ planSlug, siteCreatedAt, localeSlug }: DifmOfferEligibilityInput,
+	{ planSlug, siteCreatedAt, localeSlug, isA4ADevSite }: DifmOfferEligibilityInput,
 	now: number = Date.now()
 ): boolean {
-	if ( ! planSlug || ! siteCreatedAt || ! localeSlug ) {
+	if ( ! planSlug || ! siteCreatedAt || ! localeSlug || isA4ADevSite !== false ) {
 		return false;
 	}
 
@@ -125,4 +141,46 @@ export function useDifmOffer( input: DifmOfferEligibilityInput ): DifmOfferResul
 		isLoading,
 		variation: normalizeDifmOfferVariation( experimentAssignment?.variationName ),
 	};
+}
+
+export interface DifmOfferCopy {
+	title: string;
+	description: string;
+	ctaText: string;
+}
+
+/**
+ * Banner copy for each variation, from the copy review on the design post. Every
+ * placement renders this copy with its own surface's components, so the variations
+ * differ only in copy. `control` gets no banner.
+ */
+export function getDifmOfferCopy( variation: DifmOfferVariation ): DifmOfferCopy | null {
+	const ctaText = __( 'See the offer' );
+
+	switch ( variation ) {
+		case 'skip_setup':
+			return {
+				title: __( 'Skip the setup' ),
+				description: __(
+					'For a limited time, our experts will bring your vision to life. Free with Business.'
+				),
+				ctaText,
+			};
+		case 'expert_help':
+			return {
+				title: __( 'Expert help to get you started' ),
+				description: __( 'A human builds your site based on your needs — free with Business.' ),
+				ctaText,
+			};
+		case 'no_time':
+			return {
+				title: __( 'No time to build your site?' ),
+				description: __(
+					'Let us take that off your plate. Ready in 4 days and free with Business.'
+				),
+				ctaText,
+			};
+		default:
+			return null;
+	}
 }
