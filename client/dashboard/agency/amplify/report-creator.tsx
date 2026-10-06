@@ -4,29 +4,26 @@ import { RadioControl, Spinner, __experimentalHeading as Heading } from '@wordpr
 import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
-import { useCallback, useState } from 'react';
-import { createPortal } from 'react-dom';
+import { useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { Text } from '../../components/text';
-import heroBeforeAfter from './hero-before-after.webp';
-import AmplifyDrawnHeroArt, { AmplifyModalArt, isDrawnHero } from './hero-directions';
-import heroExplodedSite from './hero-exploded-site.webp';
-import heroPrecisionAudit from './hero-precision-audit.webp';
-import AmplifyHeroShader from './hero-shader';
+import AmplifyOverviewStory from './overview-story';
 import { WebsiteAddressPicker, getStartErrorMessage } from './scan-form';
 import AmplifyScorePreview from './score-preview';
-import tracingPaperAudit from './tracing-paper-audit.webp';
 import { normalizeAmplifyUrl } from './url';
-import type { AmplifyHero, AmplifyHeroTweaks } from './dev-state-controls';
 import type { SiteOption } from './scan-form';
 import type { AmplifyMode, AmplifyUsage } from '@automattic/api-core';
-import type { CSSProperties } from 'react';
 
 const REPORT_MODES: {
 	value: AmplifyMode;
 	label: string;
 	description: string;
 }[] = [
+	{
+		value: 'full',
+		label: __( 'Full report' ),
+		description: __( 'First-time visitors and AI systems in one report.' ),
+	},
 	{
 		value: 'human',
 		label: __( 'First-time visitors' ),
@@ -37,33 +34,17 @@ const REPORT_MODES: {
 		label: __( 'AI systems' ),
 		description: __( 'How AI tools like ChatGPT and Perplexity read and rank the site.' ),
 	},
-	{
-		value: 'full',
-		label: __( 'Both' ),
-		description: __( 'Visitors and AI in one report.' ),
-	},
 ];
-
-const HERO_IMAGES: Partial< Record< AmplifyHero, string > > = {
-	tracing: tracingPaperAudit,
-	audit: heroPrecisionAudit,
-	improve: heroBeforeAfter,
-	layers: heroExplodedSite,
-};
 
 export default function AmplifyReportCreator( {
 	agencyId,
-	hero,
-	heroTweaks,
 	usage,
 	initialUrl = '',
-	initialMode = 'human',
+	initialMode = 'full',
 	isModal = false,
 	onCreated,
 }: {
 	agencyId: number;
-	hero: AmplifyHero;
-	heroTweaks: AmplifyHeroTweaks;
 	usage?: AmplifyUsage;
 	initialUrl?: string;
 	initialMode?: AmplifyMode;
@@ -78,49 +59,6 @@ export default function AmplifyReportCreator( {
 	const [ urlError, setUrlError ] = useState( '' );
 	const [ selectedSite, setSelectedSite ] = useState< string | null >( null );
 	const [ mode, setMode ] = useState< AmplifyMode >( initialMode );
-	const [ modalFrame, setModalFrame ] = useState< HTMLElement | null >( null );
-	const setOverviewNode = useCallback(
-		( node: HTMLElement | null ) => {
-			if ( isModal ) {
-				setModalFrame( node?.closest< HTMLElement >( '.components-modal__frame' ) ?? null );
-			}
-		},
-		[ isModal ]
-	);
-	const drawnHero = isDrawnHero( hero ) ? hero : null;
-	const heroImage = HERO_IMAGES[ hero ] ?? '';
-	const heroZoom = heroTweaks.zoom * ( isModal ? 0.88 : 1 );
-	const heroStyle = {
-		backgroundImage: `url(${ heroImage })`,
-		'--amplify-hero-height-scale': heroTweaks.height / 100,
-		'--amplify-hero-zoom': `${ heroZoom }%`,
-		'--amplify-hero-hue': `${ heroTweaks.hue }deg`,
-		'--amplify-hero-saturation': `${ heroTweaks.saturation }%`,
-		'--amplify-hero-contrast': `${ heroTweaks.contrast }%`,
-		'--amplify-hero-brightness': `${ heroTweaks.brightness }%`,
-		'--amplify-hero-blur': `${ heroTweaks.blur }px`,
-		'--amplify-hero-fade-start': `${ heroTweaks.fadeStart }%`,
-		'--amplify-hero-fade-end': `${ heroTweaks.fadeEnd }%`,
-	} as CSSProperties;
-	const heroArt = drawnHero ? (
-		<div
-			className="dashboard-amplify-overview__hero-art"
-			data-direction={ hero }
-			style={ { '--amplify-hero-height-scale': heroTweaks.height / 100 } as CSSProperties }
-			aria-hidden="true"
-		>
-			<AmplifyDrawnHeroArt hero={ drawnHero } />
-		</div>
-	) : (
-		<div className="dashboard-amplify-overview__hero-art" style={ heroStyle } aria-hidden="true">
-			<AmplifyHeroShader
-				image={ heroImage }
-				strength={ heroTweaks.noiseStrength }
-				scale={ heroTweaks.grainSize }
-				zoom={ heroZoom }
-			/>
-		</div>
-	);
 	const handleSubmit = ( event: React.FormEvent ) => {
 		event.preventDefault();
 		if ( start.isPending ) {
@@ -158,18 +96,17 @@ export default function AmplifyReportCreator( {
 		<section
 			className="dashboard-amplify-overview"
 			data-context={ isModal ? 'modal' : 'empty' }
-			data-hero-art={ isModal && drawnHero ? 'none' : undefined }
 			aria-labelledby={ isModal ? undefined : 'dashboard-amplify-title' }
-			ref={ setOverviewNode }
 		>
-			{ /* Returning users get the form alone: the drawn art stays on the first visit. */ }
-			{ isModal && modalFrame && ! drawnHero
-				? createPortal( heroArt, modalFrame )
-				: ! isModal && heroArt }
+			{ ! isModal && (
+				<div className="dashboard-amplify-overview__hero-preview">
+					<AmplifyScorePreview mode={ mode } />
+				</div>
+			) }
 			{ ! isModal && (
 				<div className="dashboard-amplify-overview__intro">
 					<Heading id="dashboard-amplify-title" level={ 2 }>
-						{ __( 'Win your next client with a report on their homepage' ) }
+						{ __( 'Win your next client with a homepage analysis' ) }
 					</Heading>
 					<div className="dashboard-amplify-overview__summary">
 						<Text>
@@ -178,11 +115,6 @@ export default function AmplifyReportCreator( {
 							) }
 						</Text>
 					</div>
-				</div>
-			) }
-			{ isModal && drawnHero && (
-				<div className="amplify-modal-art" aria-hidden="true">
-					<AmplifyModalArt hero={ drawnHero } />
 				</div>
 			) }
 			<form className="dashboard-amplify-overview__url-form" onSubmit={ handleSubmit }>
@@ -245,17 +177,7 @@ export default function AmplifyReportCreator( {
 					} );
 				} }
 			/>
-			{ ! isModal && (
-				<div className="dashboard-amplify-overview__example">
-					<Heading level={ 3 }>{ __( 'What you’ll bring to the pitch' ) }</Heading>
-					<p>
-						{ __(
-							'Scores by category, what’s holding the site back, and an AI-ready prompt to fix each issue.'
-						) }
-					</p>
-					<AmplifyScorePreview mode={ mode } />
-				</div>
-			) }
+			{ ! isModal && <AmplifyOverviewStory /> }
 		</section>
 	);
 }

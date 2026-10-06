@@ -5,10 +5,12 @@ export default function SiteScreenshot( {
 	url,
 	alt,
 	compact = false,
+	decorative = false,
 }: {
 	url: string;
 	alt: string;
 	compact?: boolean;
+	decorative?: boolean;
 } ) {
 	const [ attempt, setAttempt ] = useState( 0 );
 	const [ ready, setReady ] = useState( false );
@@ -52,13 +54,15 @@ export default function SiteScreenshot( {
 			clearTimeout( timeout );
 		};
 	}, [ src, attempt ] );
+	const statusText = failed ? __( 'Preview unavailable' ) : __( 'Preparing preview…' );
+	const placeholder = decorative ? null : <span>{ statusText }</span>;
 
 	return (
-		<div className="dashboard-amplify-site-shot">
+		<div className="dashboard-amplify-site-shot" aria-hidden={ decorative || undefined }>
 			{ ready && ! failed ? (
 				<img src={ src } alt={ alt } loading="lazy" onError={ () => setFailed( true ) } />
 			) : (
-				<span>{ failed ? __( 'Preview unavailable' ) : __( 'Preparing preview…' ) }</span>
+				placeholder
 			) }
 		</div>
 	);
