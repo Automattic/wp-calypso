@@ -5,6 +5,7 @@ import type {
 	AgencyResourceProduct,
 	AgencyResourceStage,
 } from '@automattic/api-core';
+import type { MouseEvent } from 'react';
 
 export type ResourceItem = {
 	id: number;
@@ -30,3 +31,6 @@ export type RecordTracksEvent = (
 	eventName: string,
 	properties?: Record< string, unknown >
 ) => void;
+
+/** Opens a resource from a card or list row, given the click that opened it. */
+export type OpenResource = ( resource: ResourceItem, event: MouseEvent ) => void;

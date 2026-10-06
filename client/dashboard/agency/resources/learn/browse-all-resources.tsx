@@ -21,14 +21,12 @@ import ResourceCard from './resource-card';
 import ResourceLink from './resource-link';
 import ResourceProductLogo from './resource-product-logo';
 import { LAYOUT_FIELDS } from './views';
-import type { ResourceItem, RecordTracksEvent } from './types';
+import type { OpenResource, ResourceItem } from './types';
 import type { LayoutType } from './views';
 import type { AgencyResourceStage } from '@automattic/api-core';
 import type { View, Field } from '@wordpress/dataviews';
 
 import './style.scss';
-
-const TRACKS_EVENT_NAME = 'calypso_a4a_resource_center_browse_cta_click';
 
 type StageFilter = AgencyResourceStage | 'all';
 
@@ -36,18 +34,14 @@ interface BrowseAllResourcesProps {
 	resources: ResourceItem[];
 	view: View;
 	onChangeView: ( view: View ) => void;
-	onOpenVideoModal: ( resource: ResourceItem ) => void;
-	recordTracksEvent: RecordTracksEvent;
-	onResourceClick?: ( resource: ResourceItem ) => void;
+	onOpenResource: OpenResource;
 }
 
 export default function BrowseAllResources( {
 	resources,
 	view,
 	onChangeView,
-	onOpenVideoModal,
-	recordTracksEvent,
-	onResourceClick,
+	onOpenResource,
 }: BrowseAllResourcesProps ) {
 	// The stage toggle drives an ordinary filter, so it's saved with the rest of the view.
 	const stage = ( view.filters?.find( ( filter ) => filter.field === 'stage' )?.value ??
@@ -107,10 +101,7 @@ export default function BrowseAllResources( {
 						<ResourceLink
 							resource={ item }
 							className="dashboard-resources-learn__list-link"
-							onOpenVideoModal={ onOpenVideoModal }
-							recordTracksEvent={ recordTracksEvent }
-							onResourceClick={ onResourceClick }
-							tracksEventName={ TRACKS_EVENT_NAME }
+							onOpen={ onOpenResource }
 						/>
 					</span>
 				),
@@ -157,7 +148,7 @@ export default function BrowseAllResources( {
 				filterBy: false,
 			},
 		];
-	}, [ resources, onOpenVideoModal, recordTracksEvent, onResourceClick ] );
+	}, [ resources, onOpenResource ] );
 
 	// The library isn't paginated, so every match is shown.
 	const { data: filteredData, paginationInfo } = useMemo(
@@ -232,14 +223,7 @@ export default function BrowseAllResources( {
 			{ ! isList && filteredData.length > 0 && (
 				<Grid templateColumns="repeat( auto-fill, minmax( 280px, 1fr ) )" gap="xl">
 					{ filteredData.map( ( item ) => (
-						<ResourceCard
-							key={ item.id }
-							resource={ item }
-							onOpenVideoModal={ onOpenVideoModal }
-							recordTracksEvent={ recordTracksEvent }
-							onResourceClick={ onResourceClick }
-							tracksEventName={ TRACKS_EVENT_NAME }
-						/>
+						<ResourceCard key={ item.id } resource={ item } onOpen={ onOpenResource } />
 					) ) }
 				</Grid>
 			) }
