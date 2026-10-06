@@ -4,7 +4,11 @@
 import { render, screen } from '@testing-library/react';
 import useReferrersQuery from '../../hooks/use-referrers-query';
 import useTopPostsQuery from '../../hooks/use-top-posts-query';
-import { getDateRange, DATE_RANGE_LAST_7_DAYS } from '../../lib/date-ranges';
+import {
+	getDateRange,
+	DATE_RANGE_LAST_7_DAYS,
+	DATE_RANGE_LAST_12_MONTHS,
+} from '../../lib/date-ranges';
 import Highlights from '../highlights';
 
 jest.mock( '../../hooks/use-top-posts-query' );
@@ -26,7 +30,7 @@ const queryState = ( { data, error, loading } = {} ) => ( {
 
 const items = ( ...titles ) => titles.map( ( title, id ) => ( { id, title, views: 10 } ) );
 
-function renderHighlights( { posts, referrers } ) {
+function renderHighlights( { posts, referrers, rangeId = DATE_RANGE_LAST_7_DAYS } ) {
 	useTopPostsQuery.mockReturnValue( queryState( posts ) );
 	useReferrersQuery.mockReturnValue( queryState( referrers ) );
 
@@ -35,7 +39,7 @@ function renderHighlights( { posts, referrers } ) {
 			siteId={ SITE_ID }
 			gmtOffset={ 0 }
 			statsBaseUrl="https://example.com/wp-admin/admin.php?page=stats"
-			range={ getDateRange( DATE_RANGE_LAST_7_DAYS ) }
+			range={ getDateRange( rangeId ) }
 		/>
 	);
 }
@@ -63,6 +67,21 @@ describe( 'Highlights', () => {
 		expect( screen.getByText( 'Popular content & referrers' ) ).toBeInTheDocument();
 		expect( screen.getByRole( 'link', { name: 'See more' } ) ).toBeInTheDocument();
 		expect( screen.getByText( 'No data to show' ) ).toBeInTheDocument();
+	} );
+
+	it( 'opens "See more" on the same days the list covers', () => {
+		jest.useFakeTimers().setSystemTime( new Date( '2026-10-06T12:00:00Z' ) );
+		renderHighlights( {
+			posts: { data: items( 'Hello world' ) },
+			referrers: {},
+			rangeId: DATE_RANGE_LAST_12_MONTHS,
+		} );
+		jest.useRealTimers();
+
+		expect( screen.getByRole( 'link', { name: 'See more' } ) ).toHaveAttribute(
+			'href',
+			`https://example.com/wp-admin/admin.php?page=stats/stats/day/posts/${ SITE_ID }?chartStart=2025-11-01&chartEnd=2026-10-06`
+		);
 	} );
 
 	it( 'keeps the section while a list is still loading', () => {

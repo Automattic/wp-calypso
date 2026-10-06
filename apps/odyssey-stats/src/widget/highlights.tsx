@@ -174,7 +174,6 @@ const TopColumn: FunctionComponent< TopColumnProps > = ( {
 
 export default function Highlights( { siteId, gmtOffset, statsBaseUrl, range }: HighlightsProps ) {
 	const translate = useTranslate();
-	const { unit, quantity } = range;
 
 	const topPostsAndPagesTitle = translate( 'Top Posts & Pages' );
 	const topReferrersTitle = translate( 'Top Referrers' );
@@ -182,14 +181,12 @@ export default function Highlights( { siteId, gmtOffset, statsBaseUrl, range }: 
 	const queryDate = moment()
 		.utcOffset( Number.isFinite( gmtOffset ) ? gmtOffset : 0 )
 		.format( 'YYYY-MM-DD' );
-	// The period segment and `num` both track the range, so the deep link opens the
-	// same window the widget is showing.
-	const viewAllPostsStatsUrl = `${ statsBaseUrl }/stats/${ unit }/posts/${ siteId }?startDate=${ queryDate }&summarize=1&num=${ quantity }`;
-	const viewAllReferrerStatsUrl = `${ statsBaseUrl }/stats/${ unit }/referrers/${ siteId }?startDate=${ queryDate }&summarize=1&num=${ quantity }`;
-
 	// Both lists are summarized, which counts in days whatever period it is handed, so the
 	// window is stated as its first and last day rather than as the range's own buckets.
+	// "See more" opens that same window.
 	const startDate = getRangeStartDate( range, queryDate );
+	const viewAllPostsStatsUrl = `${ statsBaseUrl }/stats/day/posts/${ siteId }?chartStart=${ startDate }&chartEnd=${ queryDate }`;
+	const viewAllReferrerStatsUrl = `${ statsBaseUrl }/stats/day/referrers/${ siteId }?chartStart=${ startDate }&chartEnd=${ queryDate }`;
 
 	const {
 		data: topPostsAndPages = [],
