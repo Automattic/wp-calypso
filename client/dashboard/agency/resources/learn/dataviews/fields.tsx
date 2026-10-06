@@ -7,8 +7,7 @@ import {
 	getProductLabel,
 	getStageLabel,
 } from '../lib/labels';
-import ResourceLink from '../resource-link';
-import ResourceProductLogo from '../resource-product-logo';
+import { ResourceListProduct, ResourceListTitle } from '../resource-list';
 import type { OpenResource } from '../types';
 import type { AgencyEnablementResource } from '@automattic/api-core';
 import type { Field } from '@wordpress/dataviews';
@@ -53,15 +52,7 @@ export function useResourceFields(
 				id: 'name',
 				label: __( 'Title' ),
 				getValue: ( { item } ) => item.name,
-				render: ( { item } ) => (
-					<span className="dashboard-resources-learn__list-title" data-product={ item.product }>
-						<ResourceLink
-							resource={ item }
-							className="dashboard-resources-learn__list-link"
-							onOpen={ onOpenResource }
-						/>
-					</span>
-				),
+				render: ( { item } ) => <ResourceListTitle resource={ item } onOpen={ onOpenResource } />,
 				enableGlobalSearch: true,
 				enableSorting: false,
 				enableHiding: false,
@@ -85,11 +76,7 @@ export function useResourceFields(
 			},
 			{
 				...filterField( 'product', __( 'Product' ), ( item ) => item.product, getProductLabel ),
-				render: ( { item } ) => (
-					<span className="dashboard-resources-learn__list-brand" data-product={ item.product }>
-						<ResourceProductLogo product={ item.product } />
-					</span>
-				),
+				render: ( { item } ) => <ResourceListProduct resource={ item } />,
 			},
 			filterField( 'audience', __( 'Audience' ), ( item ) => item.audience, getAudienceLabel ),
 			filterField(
