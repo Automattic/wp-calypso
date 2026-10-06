@@ -12,6 +12,7 @@ import { useResourceFields } from './dataviews/fields';
 import { LAYOUT_FIELDS } from './dataviews/views';
 import { getStageLabel } from './lib/labels';
 import ResourceGrid from './resource-grid';
+import ResourceList from './resource-list';
 import type { LayoutType } from './dataviews/views';
 import type { OpenResource } from './types';
 import type { AgencyEnablementResource, AgencyResourceStage } from '@automattic/api-core';
@@ -124,7 +125,7 @@ export default function ResourceLibrary( {
 					<Spacer marginBottom={ 4 }>
 						<DataViews.FiltersToggled className="dashboard-resources-learn__filters-toggled" />
 					</Spacer>
-					{ isList && filteredData.length > 0 && <DataViews.Layout /> }
+					{ isList && filteredData.length > 0 && <ResourceList /> }
 				</DataViews>
 			</div>
 			{ ! isList && filteredData.length > 0 && (
