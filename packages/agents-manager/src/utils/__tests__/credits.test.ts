@@ -3,6 +3,7 @@ import {
 	buildMockCreditsStatus,
 	clampPercent,
 	formatCreditsDetail,
+	formatCreditsLeft,
 	formatCreditsShort,
 	formatPercent,
 	getCreditsLabel,
@@ -115,6 +116,14 @@ describe( 'formatCreditsShort', () => {
 	} );
 } );
 
+describe( 'formatCreditsLeft', () => {
+	it( 'reads an amount as a short sentence, singular only for exactly one credit', () => {
+		expect( formatCreditsLeft( 67000 ) ).toBe( `${ localNumber( 67 ) }k credits left` );
+		expect( formatCreditsLeft( 1 ) ).toBe( `${ localNumber( 1 ) } credit left` );
+		expect( formatCreditsLeft( 0 ) ).toBe( `${ localNumber( 0 ) } credits left` );
+	} );
+} );
+
 describe( 'getCreditsLabel', () => {
 	it( 'gives free plans a percentage', () => {
 		expect( getCreditsLabel( free( 55 ) ) ).toBe( '55% of free credits left' );
@@ -203,6 +212,11 @@ describe( 'buildMockCreditsStatus', () => {
 		expect( pools( 5 ).plan.remaining ).toBe( 0 );
 		expect( pools( 5 ).topups.remaining ).toBe( 800 );
 		expect( pools( 0 ).plan.percent ).toBe( 0 );
-		expect( pools( 0 ).topups.percent ).toBe( 0 );
+		expect( pools( 0 ).topups.remaining ).toBe( 0 );
+	} );
+
+	it( 'gives paid top-ups their balance alone, like a live site', () => {
+		expect( pools( 50 ).topups ).toEqual( { id: 'topups', label: 'Top-ups', remaining: 1000 } );
+		expect( pools( 0 ).topups ).toEqual( { id: 'topups', label: 'Top-ups', remaining: 0 } );
 	} );
 } );
