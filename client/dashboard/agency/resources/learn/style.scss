@@ -263,6 +263,28 @@ $resource-palettes: (
 .dashboard-resources-learn__filters .dataviews-view-table tr {
 	position: relative;
 
+	// Line the outer columns up with the toolbar edges. The header selectors
+	// repeat DataViews' own :has() to outrank its padding for sortable headers.
+	> td:first-child,
+	> th:first-child,
+	> th:first-child:has( .dataviews-view-table-header-button ) {
+		padding-inline-start: 0;
+	}
+
+	> td:last-child,
+	> th:last-child,
+	> th:last-child:has( .dataviews-view-table-header-button ) {
+		padding-inline-end: 0;
+	}
+
+	> th:first-child .dataviews-view-table-header-button {
+		padding-inline-start: 0;
+	}
+
+	> th:last-child .dataviews-view-table-header-button {
+		padding-inline-end: 0;
+	}
+
 	&:hover,
 	&:focus-within {
 		.dashboard-resources-learn__list-title,
