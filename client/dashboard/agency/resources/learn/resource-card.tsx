@@ -4,13 +4,14 @@ import {
 	__experimentalHStack as HStack,
 } from '@wordpress/components';
 import { Badge } from '@wordpress/ui';
+import { memo } from 'react';
 import { Card, CardBody } from '../../../components/card';
 import { getAudienceLabel, getStageLabel } from './labels';
 import ResourceCardHeader from './resource-card-header';
 import ResourceLink from './resource-link';
 import type { ResourceLinkProps } from './resource-link';
 
-export default function ResourceCard( props: Omit< ResourceLinkProps, 'className' > ) {
+function ResourceCard( props: Omit< ResourceLinkProps, 'className' > ) {
 	const { resource } = props;
 
 	return (
@@ -33,3 +34,6 @@ export default function ResourceCard( props: Omit< ResourceLinkProps, 'className
 		</Card>
 	);
 }
+
+// Search and filters re-render the grid, but leave each card's props unchanged.
+export default memo( ResourceCard );
