@@ -2,7 +2,7 @@ import { getBlockType, getBlockTypes } from '@wordpress/blocks';
 import { select } from '@wordpress/data';
 import { getBlockNames } from './editor-blocks';
 import { getSelectedTextContext } from './get-selected-text';
-import { getCustomCss, getEditedGlobalStyles } from './global-styles';
+import { getCustomCss, getEditedGlobalStyles, waitForEditedGlobalStyles } from './global-styles';
 
 // The agent knows the core and Jetpack blocks; any other block on the page
 // needs its schema.
@@ -52,4 +52,12 @@ export function getEditorContentContext(): Record< string, unknown > {
 	} catch {
 		return {};
 	}
+}
+
+/**
+ * Starts loading what the context reads but an editor may not have yet: the
+ * post editor fetches the global styles only once something asks for them.
+ */
+export function preloadEditorContentContext(): void {
+	void waitForEditedGlobalStyles();
 }
