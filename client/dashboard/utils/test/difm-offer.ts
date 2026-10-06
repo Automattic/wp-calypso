@@ -2,6 +2,7 @@
  * @jest-environment jsdom
  */
 
+import { DotcomPlans, JetpackPlans, WooHostedPlans } from '@automattic/api-core';
 import { renderHook } from '@testing-library/react';
 import { useExperiment } from 'calypso/lib/explat';
 import {
@@ -20,15 +21,6 @@ jest.mock( 'calypso/lib/explat', () => ( {
 
 const mockUseExperiment = jest.mocked( useExperiment );
 
-// Plan slugs from packages/calypso-products/src/constants, which the dashboard cannot import.
-const PLAN_FREE = 'free_plan';
-const PLAN_PERSONAL = 'personal-bundle';
-const PLAN_PREMIUM = 'value_bundle';
-const PLAN_BUSINESS = 'business-bundle';
-const PLAN_ECOMMERCE = 'ecommerce-bundle';
-const PLAN_JETPACK_FREE = 'jetpack_free';
-const PLAN_JETPACK_PERSONAL = 'jetpack_personal';
-const PLAN_JETPACK_PREMIUM = 'jetpack_premium';
 const MS_PER_DAY = 24 * 60 * 60 * 1000;
 const NOW = Date.parse( '2026-09-24T12:00:00Z' );
 
@@ -38,7 +30,7 @@ function isoDaysAgo( days: number, now: number = NOW ): string {
 
 function eligibleInput( now: number = NOW ) {
 	return {
-		planSlug: PLAN_FREE,
+		planSlug: DotcomPlans.FREE_PLAN,
 		siteCreatedAt: isoDaysAgo( 1, now ),
 		localeSlug: 'en',
 		isA4ADevSite: false,
@@ -56,38 +48,54 @@ function createExperimentAssignment( variationName: string | null ) {
 
 describe( 'isEligibleForDifmOffer', () => {
 	it( 'accepts free, personal and premium plans', () => {
-		for ( const planSlug of [ PLAN_FREE, PLAN_PERSONAL, PLAN_PREMIUM ] ) {
+		for ( const planSlug of [ DotcomPlans.FREE_PLAN, DotcomPlans.PERSONAL, DotcomPlans.PREMIUM ] ) {
 			expect( isEligibleForDifmOffer( { ...eligibleInput(), planSlug }, NOW ) ).toBe( true );
 		}
 	} );
 
 	it( 'accepts the monthly, 2-year and 3-year terms of personal and premium', () => {
 		for ( const planSlug of [
-			'personal-bundle-monthly',
-			'personal-bundle-2y',
-			'personal-bundle-3y',
-			'value_bundle_monthly',
-			'value_bundle-2y',
-			'value_bundle-3y',
+			DotcomPlans.PERSONAL_MONTHLY,
+			DotcomPlans.PERSONAL_2_YEARS,
+			DotcomPlans.PERSONAL_3_YEARS,
+			DotcomPlans.PREMIUM_MONTHLY,
+			DotcomPlans.PREMIUM_2_YEARS,
+			DotcomPlans.PREMIUM_3_YEARS,
 		] ) {
 			expect( isEligibleForDifmOffer( { ...eligibleInput(), planSlug }, NOW ) ).toBe( true );
 		}
 	} );
 
+	it( 'accepts the Personal free trial', () => {
+		expect(
+			isEligibleForDifmOffer(
+				{ ...eligibleInput(), planSlug: DotcomPlans.PERSONAL_TRIAL_MONTHLY },
+				NOW
+			)
+		).toBe( true );
+	} );
+
 	it( 'rejects the Woo hosted free plans', () => {
-		for ( const planSlug of [ 'woo_hosted_free_plan', 'woo_hosted_free_trial_plan_monthly' ] ) {
+		for ( const planSlug of [
+			WooHostedPlans.WOO_HOSTED_FREE_PLAN,
+			WooHostedPlans.WOO_HOSTED_FREE_TRIAL_PLAN_MONTHLY,
+		] ) {
 			expect( isEligibleForDifmOffer( { ...eligibleInput(), planSlug }, NOW ) ).toBe( false );
 		}
 	} );
 
 	it( 'rejects business, commerce and unknown plans', () => {
-		for ( const planSlug of [ PLAN_BUSINESS, PLAN_ECOMMERCE, 'not-a-plan' ] ) {
+		for ( const planSlug of [ DotcomPlans.BUSINESS, DotcomPlans.ECOMMERCE, 'not-a-plan' ] ) {
 			expect( isEligibleForDifmOffer( { ...eligibleInput(), planSlug }, NOW ) ).toBe( false );
 		}
 	} );
 
 	it( 'rejects Jetpack plans that share a type with an eligible plan', () => {
-		for ( const planSlug of [ PLAN_JETPACK_FREE, PLAN_JETPACK_PERSONAL, PLAN_JETPACK_PREMIUM ] ) {
+		for ( const planSlug of [
+			JetpackPlans.PLAN_JETPACK_FREE,
+			JetpackPlans.PLAN_JETPACK_PERSONAL,
+			JetpackPlans.PLAN_JETPACK_PREMIUM,
+		] ) {
 			expect( isEligibleForDifmOffer( { ...eligibleInput(), planSlug }, NOW ) ).toBe( false );
 		}
 	} );
@@ -260,13 +268,28 @@ describe( 'getDifmOfferCopy', () => {
 		expect( getDifmOfferCopy( 'control' ) ).toBeNull();
 	} );
 
-	it( 'returns a distinct title for each copy variation, with the same CTA', () => {
-		const copies = ( [ 'skip_setup', 'expert_help', 'no_time' ] as const ).map( getDifmOfferCopy );
-		const titles = copies.map( ( copy ) => copy?.title );
+	it( 'returns the skip_setup copy', () => {
+		expect( getDifmOfferCopy( 'skip_setup' ) ).toEqual( {
+			title: 'Skip the setup',
+			description:
+				'For a limited time, our experts will bring your vision to life. Free with Business.',
+			ctaText: 'See the offer',
+		} );
+	} );
 
-		expect( new Set( titles ).size ).toBe( 3 );
-		for ( const copy of copies ) {
-			expect( copy?.ctaText ).toBe( 'See the offer' );
-		}
+	it( 'returns the expert_help copy', () => {
+		expect( getDifmOfferCopy( 'expert_help' ) ).toEqual( {
+			title: 'Expert help to get you started',
+			description: 'A human builds your site based on your needs — free with Business.',
+			ctaText: 'See the offer',
+		} );
+	} );
+
+	it( 'returns the no_time copy', () => {
+		expect( getDifmOfferCopy( 'no_time' ) ).toEqual( {
+			title: 'No time to build your site?',
+			description: 'Let us take that off your plate. Ready in 4 days and free with Business.',
+			ctaText: 'See the offer',
+		} );
 	} );
 } );
