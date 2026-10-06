@@ -3,6 +3,7 @@ import { hasMarketplaceProduct } from '@automattic/calypso-products';
 import { Button, Gridicon } from '@automattic/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
+import { useMemo } from 'react';
 import A4APluginsJetpackBanner from 'calypso/a8c-for-agencies/sections/plugins/plugins-jetpack-banner';
 import QueryDotorgPlugins from 'calypso/components/data/query-dotorg-plugins';
 import QueryJetpackSitesFeatures from 'calypso/components/data/query-jetpack-sites-features';
@@ -44,7 +45,7 @@ import { getAllPlugins as getAllWporgPlugins } from 'calypso/state/plugins/wporg
 import { getProductsList } from 'calypso/state/products-list/selectors';
 import getSelectedOrAllSitesWithJetpackPlugin from 'calypso/state/selectors/get-selected-or-all-sites-with-jetpack-plugin';
 import getSites from 'calypso/state/selectors/get-sites';
-import { isRequestingSites } from 'calypso/state/sites/selectors';
+import { getSiteId, isRequestingSites } from 'calypso/state/sites/selectors';
 import { PluginActionName, PluginActions, Site } from '../hooks/types';
 import { withShowPluginActionDialog } from '../hooks/use-show-plugin-action-dialog';
 import PluginAvailableOnSitesList from '../plugin-management-v2/plugin-details-v2/plugin-available-on-sites-list';
@@ -63,6 +64,8 @@ type ActionCallbacks = Record< PluginActionName, PluginActionCallback >;
 
 interface PluginsDashboardProps {
 	pluginSlug: string;
+	siteSlug?: string;
+	filterUpdates?: boolean;
 	doSearch: ( query: string ) => void; // prop coming from UrlSearch
 	search: string | undefined;
 	showPluginActionDialog: (
@@ -84,6 +87,8 @@ interface PluginsDashboardProps {
 
 const PluginsDashboard = ( {
 	pluginSlug,
+	siteSlug,
+	filterUpdates,
 	doSearch,
 	search: searchTerm,
 	showPluginActionDialog,
@@ -91,8 +96,15 @@ const PluginsDashboard = ( {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const isJetpackCloudOrA8CForAgencies = isJetpackCloud() || isA8CForAgencies();
-	const allSites = useSelector( ( state ) =>
+	const sites = useSelector( ( state ) =>
 		isA8CForAgencies() ? getSelectedOrAllSitesWithJetpackPlugin( state ) : getSites( state )
+	);
+	const selectedSiteId = useSelector( ( state ) =>
+		siteSlug ? getSiteId( state, siteSlug ) : null
+	);
+	const allSites = useMemo(
+		() => ( siteSlug ? sites.filter( ( site ) => site?.ID === selectedSiteId ) : sites ),
+		[ sites, siteSlug, selectedSiteId ]
 	);
 	const siteIds = siteObjectsToSiteIds( allSites ) ?? [];
 	const wporgPlugins = useSelector( ( state ) => getAllWporgPlugins( state ) );
@@ -348,6 +360,7 @@ const PluginsDashboard = ( {
 					pluginSlug={ pluginSlug }
 					currentPlugins={ currentPlugins }
 					initialSearch={ searchTerm }
+					initialFilterUpdates={ filterUpdates }
 					isLoading={ isLoading }
 					onSearch={ doSearch }
 					bulkActionDialog={ bulkActionDialog }
