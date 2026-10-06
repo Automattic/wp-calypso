@@ -43,8 +43,6 @@ const initialView: View = {
 	fields: LAYOUT_FIELDS.grid,
 	search: '',
 	filters: [],
-	page: 1,
-	perPage: 100,
 };
 
 type StageFilter = AgencyResourceStage | 'all';
@@ -168,8 +166,14 @@ export default function BrowseAllResources( {
 		];
 	}, [ resources, onOpenVideoModal, recordTracksEvent, onResourceClick ] );
 
+	// The library isn't paginated, so every match is shown.
 	const { data: filteredData, paginationInfo } = useMemo(
-		() => filterSortAndPaginate( stageResources, view, fields ),
+		() =>
+			filterSortAndPaginate(
+				stageResources,
+				{ ...view, page: 1, perPage: Math.max( stageResources.length, 1 ) },
+				fields
+			),
 		[ stageResources, view, fields ]
 	);
 
