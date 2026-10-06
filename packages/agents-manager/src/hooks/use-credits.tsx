@@ -109,6 +109,12 @@ export function useCredits( {
 	currentScope.current = scope;
 	const balanceRequest = useRef< AbortController | undefined >( undefined );
 	const [ balance, setBalance ] = useState< { scope: typeof scope; snapshot: CreditSnapshot } >();
+	// Whether this user may buy for the site, per the balance read. Terminal updates
+	// don't carry it, so it outlives balance refreshes; undefined until the server says.
+	const [ purchaseAccess, setPurchaseAccess ] = useState< {
+		scope: typeof scope;
+		canPurchase?: boolean;
+	} >();
 	const [ seed ] = useState( readMockSeed );
 	const [ percent, setPercent ] = useState( seed?.percent ?? 0 );
 	const [ dismissedNoticeScope, setDismissedNoticeScope ] = useState< typeof scope >();
@@ -205,6 +211,12 @@ export function useCredits( {
 			const data = response.ok ? await response.json() : undefined;
 			if ( ! isCurrent() ) {
 				return;
+			}
+			if ( data ) {
+				setPurchaseAccess( {
+					scope,
+					canPurchase: typeof data.can_purchase === 'boolean' ? data.can_purchase : undefined,
+				} );
 			}
 			const snapshot = parseCreditSnapshot( data?.ai_credits, scope.siteId );
 			if ( snapshot && Date.parse( snapshot.resets_at ) > Date.now() ) {
@@ -313,7 +325,12 @@ export function useCredits( {
 
 	const isExhausted = status ? isCreditsExhausted( status ) : false;
 	const isLow = status ? isCreditsLow( status ) : false;
-	const upgradeUrl = status ? getLiveCreditsUpgradeUrl( status, siteId, site ) : undefined;
+	const planUpgradeUrl = status ? getLiveCreditsUpgradeUrl( status, siteId, site ) : undefined;
+	const canPurchase = purchaseAccess?.scope === scope ? purchaseAccess.canPurchase : undefined;
+	// Only admins get the purchase link; others are pointed to an admin. An older server
+	// that doesn't say gets neither, rather than offering a purchase checkout would refuse.
+	const upgradeUrl = canPurchase === true ? planUpgradeUrl : undefined;
+	const askAdminToUpgrade = !! planUpgradeUrl && canPurchase === false;
 
 	// A known balance draining to zero opens once; initial reads and new visits stay quiet.
 	const wasExhaustedRef = useRef( { scope, hasBalance: !! status, isExhausted } );
@@ -345,9 +362,20 @@ export function useCredits( {
 				onToggle={ setIsPopoverOpen }
 				onAction={ siteId ? undefined : handleAction }
 				upgradeUrl={ upgradeUrl }
+				purchaseHint={
+					askAdminToUpgrade ? __( 'Ask a site admin to upgrade.', __i18n_text_domain__ ) : undefined
+				}
 			/>
 		);
-	}, [ status, isPopoverOpen, setIsPopoverOpen, handleAction, siteId, upgradeUrl ] );
+	}, [
+		status,
+		isPopoverOpen,
+		setIsPopoverOpen,
+		handleAction,
+		siteId,
+		upgradeUrl,
+		askAdminToUpgrade,
+	] );
 
 	const notice = useMemo< NoticeConfig | undefined >( () => {
 		if ( siteId && status?.plan === 'paid' ) {
@@ -363,7 +391,12 @@ export function useCredits( {
 			if ( isExhausted ) {
 				return {
 					icon: false,
-					message: __( 'You’ve used all your site credits.', __i18n_text_domain__ ),
+					message: askAdminToUpgrade
+						? __(
+								'You’ve used all your site credits. Ask a site admin to upgrade.',
+								__i18n_text_domain__
+							)
+						: __( 'You’ve used all your site credits.', __i18n_text_domain__ ),
 					action,
 					dismissible: false,
 				};
@@ -371,11 +404,22 @@ export function useCredits( {
 			if ( isLow && ! isLowNoticeDismissed ) {
 				return {
 					icon: false,
-					message: sprintf(
-						/* translators: %s: site credits left in short form, e.g. "800" or "8.5k" */
-						_n( '%s credit left.', '%s credits left.', status.remaining, __i18n_text_domain__ ),
-						formatCreditsShort( status.remaining )
-					),
+					message: askAdminToUpgrade
+						? sprintf(
+								/* translators: %s: site credits left in short form, e.g. "800" or "8.5k" */
+								_n(
+									'%s credit left. Ask a site admin to upgrade.',
+									'%s credits left. Ask a site admin to upgrade.',
+									status.remaining,
+									__i18n_text_domain__
+								),
+								formatCreditsShort( status.remaining )
+							)
+						: sprintf(
+								/* translators: %s: site credits left in short form, e.g. "800" or "8.5k" */
+								_n( '%s credit left.', '%s credits left.', status.remaining, __i18n_text_domain__ ),
+								formatCreditsShort( status.remaining )
+							),
 					action,
 					dismissible: true,
 					onDismiss: dismissLowNotice,
@@ -414,6 +458,7 @@ export function useCredits( {
 		status,
 		siteId,
 		upgradeUrl,
+		askAdminToUpgrade,
 		isExhausted,
 		isLow,
 		isLowNoticeDismissed,

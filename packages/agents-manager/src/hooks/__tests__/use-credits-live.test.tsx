@@ -90,10 +90,15 @@ const exhausted = ( blocked = false ) =>
 const receive = ( snapshot: unknown, state: 'completed' | 'failed' | 'canceled' = 'completed' ) =>
 	act( async () => mockConfig.onTaskUpdate?.( terminal( snapshot, state ) ) );
 const fetchMock = jest.fn();
-const response = ( snapshot: unknown ) => ( {
+// `null` leaves `can_purchase` out, as an older server does.
+const response = ( snapshot: unknown, canPurchase: boolean | null = true ) => ( {
 	ok: true,
-	json: async () => ( { ai_credits: snapshot } ),
+	json: async () => ( {
+		ai_credits: snapshot,
+		...( canPurchase === null ? {} : { can_purchase: canPurchase } ),
+	} ),
 } );
+
 function deferred< T >() {
 	let resolve!: ( value: T ) => void;
 	let reject!: ( reason?: unknown ) => void;
@@ -154,8 +159,92 @@ it.each( [ 'commerce', undefined, null, 'unsupported' ] )(
 		expect( result.current.notice?.action ).toBeUndefined();
 	}
 );
+describe( 'purchase access', () => {
+	const purchaseHint = ( value: ReturnType< typeof useCredits > ) =>
+		(
+			value.trailingActions as ReactElement< {
+				purchaseHint?: string;
+			} >
+		 )?.props.purchaseHint;
+
+	it( 'points someone who can’t buy to a site admin, with no purchase link', async () => {
+		fetchMock.mockResolvedValueOnce( response( { ...exhausted(), plan_tier: 'personal' }, false ) );
+		const { result } = renderCredits();
+		await flush();
+		expect( props( result.current ).status.remaining ).toBe( 0 );
+		expect( props( result.current ).upgradeUrl ).toBeUndefined();
+		expect( purchaseHint( result.current ) ).toBe( 'Ask a site admin to upgrade.' );
+		expect( result.current.notice?.message ).toBe(
+			'You’ve used all your site credits. Ask a site admin to upgrade.'
+		);
+		expect( result.current.notice?.action ).toBeUndefined();
+	} );
+
+	it( 'keeps the low-balance notice for someone who can’t buy, without a link', async () => {
+		fetchMock.mockResolvedValueOnce(
+			response(
+				creditSnapshot( {
+					credits_limit: 10000,
+					credits_remaining: 1999,
+					credits_used: 8001,
+					plan_tier: 'personal',
+				} ),
+				false
+			)
+		);
+		const { result } = renderCredits();
+		await flush();
+		expect( result.current.notice?.message ).toBe(
+			'19% of site credits left. Ask a site admin to upgrade.'
+		);
+		expect( result.current.notice?.action ).toBeUndefined();
+		expect( result.current.notice?.dismissible ).toBe( true );
+	} );
+
+	it( 'offers neither a link nor guidance when the server doesn’t say', async () => {
+		fetchMock.mockResolvedValueOnce( response( { ...exhausted(), plan_tier: 'personal' }, null ) );
+		const { result } = renderCredits();
+		await flush();
+		expect( props( result.current ).upgradeUrl ).toBeUndefined();
+		expect( purchaseHint( result.current ) ).toBeUndefined();
+		expect( result.current.notice?.message ).toBe( 'You’ve used all your site credits.' );
+		expect( result.current.notice?.action ).toBeUndefined();
+	} );
+
+	it( 'keeps the balance read’s answer through terminal updates', async () => {
+		fetchMock.mockResolvedValueOnce(
+			response( creditSnapshot( { plan_tier: 'personal' } ), false )
+		);
+		const { result } = renderCredits();
+		await flush();
+		await receive( { ...exhausted(), plan_tier: 'personal' } );
+		expect( props( result.current ).upgradeUrl ).toBeUndefined();
+		expect( purchaseHint( result.current ) ).toBe( 'Ask a site admin to upgrade.' );
+	} );
+
+	it( 'shows no guidance on a tier without an upgrade', async () => {
+		fetchMock.mockResolvedValueOnce( response( { ...exhausted(), plan_tier: 'commerce' }, false ) );
+		const { result } = renderCredits();
+		await flush();
+		expect( purchaseHint( result.current ) ).toBeUndefined();
+		expect( result.current.notice?.message ).toBe( 'You’ve used all your site credits.' );
+	} );
+
+	it( 'drops the answer when the visit changes', async () => {
+		fetchMock.mockResolvedValueOnce( response( creditSnapshot( { plan_tier: 'personal' } ) ) );
+		const view = renderCredits();
+		await flush();
+		expect( props( view.result.current ).upgradeUrl ).toBeDefined();
+		view.rerender( { ...defaultOptions, userId: 2 } );
+		await receive( creditSnapshot() );
+		expect( props( view.result.current )?.upgradeUrl ).toBeUndefined();
+	} );
+} );
+
 it( 'waits for matching site data and follows a domain change for the same site', async () => {
+	fetchMock.mockResolvedValueOnce( response( creditSnapshot() ) );
 	const view = renderCredits( { site: undefined } );
+	await flush();
 	await receive( creditSnapshot( { plan_tier: 'personal' } ) );
 	expect( props( view.result.current ).upgradeUrl ).toBeUndefined();
 	view.rerender( { ...defaultOptions, site: { ID: 456, domain: 'other.wordpress.com' } } );
@@ -179,7 +268,9 @@ it.each( [ '', '.', '..', ' ' ] )(
 	}
 );
 it( 'never uses a previous site destination during a site switch', async () => {
+	fetchMock.mockResolvedValueOnce( response( creditSnapshot() ) );
 	const view = renderCredits();
+	await flush();
 	await receive( creditSnapshot( { plan_tier: 'personal' } ) );
 	const oldObserver = mockConfig.onTaskUpdate;
 	const next = {
@@ -187,8 +278,10 @@ it( 'never uses a previous site destination during a site switch', async () => {
 		siteKey: '456',
 		agentConfig: { ...agentConfig, authenticationScope: { siteId: 456, userId: 1 } },
 	};
+	fetchMock.mockResolvedValueOnce( response( creditSnapshot( { blog_id: 456 } ) ) );
 	view.rerender( next );
 	expect( view.result.current.trailingActions ).toBeUndefined();
+	await flush();
 	await receive( creditSnapshot( { blog_id: 456, plan_tier: 'premium' } ) );
 	expect( props( view.result.current ).upgradeUrl ).toBeUndefined();
 	view.rerender( { ...next, site: { ID: 456, domain: 'second.wordpress.com' } } );
@@ -200,7 +293,9 @@ it( 'never uses a previous site destination during a site switch', async () => {
 it.each( [ { userId: 2 }, { agentConfig: { ...agentConfig, authProvider: jest.fn() } } ] )(
 	'drops the upgrade action when the authenticated visit changes: %p',
 	async ( next ) => {
+		fetchMock.mockResolvedValueOnce( response( creditSnapshot() ) );
 		const view = renderCredits();
+		await flush();
 		await receive( creditSnapshot( { plan_tier: 'personal' } ) );
 		expect( props( view.result.current ).upgradeUrl ).toBeDefined();
 		view.rerender( { ...defaultOptions, ...next } );
@@ -404,7 +499,9 @@ it.each( [ 'commerce', undefined, 'unsupported' ] )(
 );
 
 it( 'uses the meter destination as site details become available or change', async () => {
+	fetchMock.mockResolvedValueOnce( response( creditSnapshot() ) );
 	const view = renderCredits( { site: undefined } );
+	await flush();
 	await receive( { ...exhausted(), plan_tier: 'personal' } );
 	expect( view.result.current.notice?.action ).toBeUndefined();
 	view.rerender( { ...defaultOptions, site: { ID: 456, domain: 'other.wordpress.com' } } );

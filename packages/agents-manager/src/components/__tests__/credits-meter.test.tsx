@@ -211,6 +211,25 @@ describe( 'CreditsMeter', () => {
 		expect( screen.getByRole( 'link', { name: 'Upgrade' } ) ).toHaveClass( 'is-primary' );
 	} );
 
+	it( 'shows the purchase hint instead of a CTA to someone who can’t buy', () => {
+		render(
+			<CreditsMeter
+				status={ livePaid( 0 ) }
+				isOpen
+				onToggle={ () => {} }
+				purchaseHint="Ask a site admin to upgrade."
+			/>
+		);
+		expect( screen.getByText( 'You’ve used all your site credits.' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Ask a site admin to upgrade.' ) ).toHaveClass(
+			'agents-manager-credits-meter__message'
+		);
+		expect( screen.queryByRole( 'link' ) ).not.toBeInTheDocument();
+		expect(
+			screen.queryByRole( 'button', { name: /Upgrade|Add credits/ } )
+		).not.toBeInTheDocument();
+	} );
+
 	it( 'keeps the detail and neutral percent on a paid plan with one credit left', () => {
 		render(
 			<CreditsMeter

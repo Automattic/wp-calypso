@@ -22,6 +22,8 @@ interface Props {
 	onAction?: () => void;
 	/** Plans page for a live balance with a supported upgradeable tier. */
 	upgradeUrl?: string;
+	/** Shown instead of a CTA to people who can't buy for the site. */
+	purchaseHint?: string;
 	/** Full balance and purchases page, when available. */
 	manageUrl?: string;
 }
@@ -124,6 +126,7 @@ export default function CreditsMeter( {
 	onToggle,
 	onAction,
 	upgradeUrl,
+	purchaseHint,
 	manageUrl,
 }: Props ) {
 	const label = getCreditsLabel( status );
@@ -185,6 +188,9 @@ export default function CreditsMeter( {
 								? __( 'You’ve used all your free credits.', __i18n_text_domain__ )
 								: __( 'You’ve used all your site credits.', __i18n_text_domain__ ) }
 						</p>
+					) }
+					{ purchaseHint && (
+						<p className="agents-manager-credits-meter__message">{ purchaseHint }</p>
 					) }
 					{ ( upgradeUrl || onAction ) && (
 						<Button
