@@ -127,6 +127,8 @@ interface AgentsManagerActions {
 	getTabId?: () => string;
 	/** The current turn's `turn_id`, or '' before the first send, so a host's requests can name the turn behind them. */
 	getTurnId?: () => string;
+	/** The id the agent knows a block by, so a host can name the block to it. */
+	getAgentBlockId?: ( clientId: string ) => string;
 	/**
 	 * Records a Tracks event in the `jetpack_big_sky_` family with its base
 	 * props. `eventName` includes the family prefix.
