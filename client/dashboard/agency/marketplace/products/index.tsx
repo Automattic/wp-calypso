@@ -18,9 +18,11 @@ import PageLayout from '../../../components/page-layout';
 import { SectionHeader } from '../../../components/section-header';
 import { isPressablePlanLicense, pressableLicensesQuery } from '../hosting/lib/pressable-products';
 import { isAgencyApproved } from '../is-agency-approved';
+import { ReferralModeBand, ReferralModeNotice, referralTreatment } from '../referral-mode-pass';
 import ReferralToggle from '../referral-toggle';
 import TermPricingToggle from '../term-pricing-toggle';
 import { useMarketplaceType } from '../use-marketplace-type';
+import useReferralsGuide from '../use-referrals-guide';
 import { useTermPricing } from '../use-term-pricing';
 import CartMenu from './cart-menu';
 import CategoryTiles, { CategoryMark, isProductCategory } from './category-tiles';
@@ -106,6 +108,10 @@ export default function MarketplaceProducts() {
 	const { marketplaceType, updateMarketplaceType } = useMarketplaceType();
 	const { termPricing } = useTermPricing();
 	const isReferralMode = marketplaceType === 'referral';
+	const referralPass = referralTreatment();
+	const showReferralModeNotice = isReferralMode && referralPass === 'h';
+	const showReferralModeBand = isReferralMode && referralPass === 'hb';
+	const { openGuide: openReferralGuide, guideModal: referralGuideModal } = useReferralsGuide();
 
 	const { data: agency } = useQuery( activeAgencyQuery() );
 	const agencyId = agency?.id ?? 0;
@@ -419,6 +425,22 @@ export default function MarketplaceProducts() {
 				/>
 			}
 		>
+			{ referralGuideModal }
+			{ showReferralModeNotice && (
+				<ReferralModeNotice onLearnMore={ openReferralGuide }>
+					{ __(
+						'Your client pays the retail price. You earn up to 50% recurring commission on what they buy.'
+					) }
+				</ReferralModeNotice>
+			) }
+			{ showReferralModeBand && (
+				<ReferralModeBand
+					headline={ __(
+						'Your client pays the retail price. You earn up to 50% recurring\u00a0commission.'
+					) }
+					summary={ __( 'Your client pays. You earn up to 50% recurring commission.' ) }
+				/>
+			) }
 			{ detailsProduct && (
 				<ProductDetailsModal
 					product={ detailsProduct }

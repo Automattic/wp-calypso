@@ -16,6 +16,7 @@ import { isAgencyApproved } from '../is-agency-approved';
 import { getWpcomPlan } from '../lib/wpcom-hosting';
 import CartMenu from '../products/cart-menu';
 import { useCartOpen, useShoppingCart } from '../products/use-shopping-cart';
+import { ReferralModeBand, referralTreatment } from '../referral-mode-pass';
 import ReferralToggle from '../referral-toggle';
 import TermPricingToggle from '../term-pricing-toggle';
 import { useAgencyPressablePlan } from '../use-agency-pressable-plan';
@@ -175,7 +176,7 @@ export default function MarketplaceHosting( { section }: { section?: HostingSect
 							{ section && <TermPricingToggle short={ isSmallScreen } /> }
 							{ /* Refer and the cart wrap together, so the cart never sits alone. */ }
 							<HStack spacing={ isSmallScreen ? 2 : 4 } expanded={ false }>
-								<ReferralToggle label={ __( 'Refer hosting' ) } />
+								<ReferralToggle label={ __( 'Refer hosting' ) } earn={ __( 'Earn 20%' ) } />
 								<CartMenu
 									items={ cartItems }
 									products={ allProducts ?? [] }
@@ -193,6 +194,14 @@ export default function MarketplaceHosting( { section }: { section?: HostingSect
 				/>
 			}
 		>
+			{ isReferralMode && referralTreatment() === 'hb' && (
+				<ReferralModeBand
+					headline={ __(
+						'Your client pays the retail price. You earn 20% recurring commission on their\u00a0hosting.'
+					) }
+					summary={ __( 'Your client pays. You earn 20% recurring commission on hosting.' ) }
+				/>
+			) }
 			<PressableUsageLimitNotice agency={ agency } />
 			<PressableOffers agency={ agency } />
 			{ section ? (
