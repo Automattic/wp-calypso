@@ -182,6 +182,7 @@ function getToolMessageData( message: Pick< UIMessage, 'content' > ):
 			toolCallId?: string;
 			componentType?: string;
 			summary?: string;
+			data?: unknown;
 	  }
 	| undefined {
 	const firstText = message.content?.[ 0 ]?.text;
@@ -196,6 +197,7 @@ function getToolMessageData( message: Pick< UIMessage, 'content' > ):
 			toolCallId: parsed?.tool_call_id,
 			componentType: parsed?.data?.type,
 			summary: parsed?.data?.summary,
+			data: parsed?.data,
 		};
 	} catch ( _error ) {
 		return undefined;
@@ -237,13 +239,35 @@ function getBlockEditAgentMessageText( update: TaskUpdate ): string | undefined 
 	return undefined;
 }
 
-function isShowComponentMessage( message: Pick< UIMessage, 'content' > ): boolean {
-	const toolData = getToolMessageData( message );
-	return isShowComponentTool( toolData?.toolId );
+// A provider's own tool component is kept on screen the same way as a
+// show-component picker when the live message carrying it is replaced.
+function isProviderToolMessage(
+	toolData: ReturnType< typeof getToolMessageData >,
+	getToolComponent?: GetToolComponent
+): boolean {
+	return !! toolData?.toolId && !! getToolComponent?.( toolData.toolId );
 }
 
-function getShowComponentIdentity( message: Pick< UIMessage, 'content' > ): string | undefined {
+function isShowComponentMessage(
+	message: Pick< UIMessage, 'content' >,
+	getToolComponent?: GetToolComponent
+): boolean {
 	const toolData = getToolMessageData( message );
+	return (
+		isShowComponentTool( toolData?.toolId ) || isProviderToolMessage( toolData, getToolComponent )
+	);
+}
+
+function getShowComponentIdentity(
+	message: Pick< UIMessage, 'content' >,
+	getToolComponent?: GetToolComponent
+): string | undefined {
+	const toolData = getToolMessageData( message );
+	if ( toolData && isProviderToolMessage( toolData, getToolComponent ) ) {
+		return [ toolData.toolId, toolData.toolCallId, JSON.stringify( toolData.data ) ]
+			.filter( Boolean )
+			.join( '|' );
+	}
 	if ( ! toolData || ! isShowComponentTool( toolData.toolId ) ) {
 		return undefined;
 	}
@@ -670,21 +694,24 @@ export default function OrchestratorChat( {
 		[ clearRetainedShowComponentMessages, getRegenerateHandler, credits.beforeSubmit ]
 	);
 
-	const getShowComponentOrder = useCallback( ( message: UIMessage ): number | undefined => {
-		const identity = getShowComponentIdentity( message );
-		if ( ! identity ) {
-			return undefined;
-		}
+	const getShowComponentOrder = useCallback(
+		( message: UIMessage ): number | undefined => {
+			const identity = getShowComponentIdentity( message, getToolComponent );
+			if ( ! identity ) {
+				return undefined;
+			}
 
-		const existingOrder = showComponentOrderRef.current.get( identity );
-		if ( existingOrder !== undefined ) {
-			return existingOrder;
-		}
+			const existingOrder = showComponentOrderRef.current.get( identity );
+			if ( existingOrder !== undefined ) {
+				return existingOrder;
+			}
 
-		const nextOrder = nextShowComponentOrderRef.current++;
-		showComponentOrderRef.current.set( identity, nextOrder );
-		return nextOrder;
-	}, [] );
+			const nextOrder = nextShowComponentOrderRef.current++;
+			showComponentOrderRef.current.set( identity, nextOrder );
+			return nextOrder;
+		},
+		[ getToolComponent ]
+	);
 
 	useEffect( () => {
 		const previousMessages = previousMessagesRef.current;
@@ -709,13 +736,18 @@ export default function OrchestratorChat( {
 			return;
 		}
 
-		messages.filter( isShowComponentMessage ).forEach( getShowComponentOrder );
+		messages
+			.filter( ( message ) => isShowComponentMessage( message, getToolComponent ) )
+			.forEach( getShowComponentOrder );
 
 		const currentShowComponentIdentities = new Set(
-			messages.filter( isShowComponentMessage ).map( getShowComponentIdentity ).filter( Boolean )
+			messages
+				.filter( ( message ) => isShowComponentMessage( message, getToolComponent ) )
+				.map( ( message ) => getShowComponentIdentity( message, getToolComponent ) )
+				.filter( Boolean )
 		);
 		const retainedCandidates = previousMessages.filter( ( previousMessage ) => {
-			const identity = getShowComponentIdentity( previousMessage );
+			const identity = getShowComponentIdentity( previousMessage, getToolComponent );
 			return !! identity && ! currentShowComponentIdentities.has( identity );
 		} );
 
@@ -725,7 +757,7 @@ export default function OrchestratorChat( {
 				let changed = false;
 
 				for ( const message of retainedCandidates ) {
-					const identity = getShowComponentIdentity( message );
+					const identity = getShowComponentIdentity( message, getToolComponent );
 					// One placeholder per identity, so a component that drops and
 					// returns refreshes in place instead of stacking another copy.
 					const retainedId = `retained-${ identity }`;
@@ -740,7 +772,13 @@ export default function OrchestratorChat( {
 		}
 
 		previousMessagesRef.current = messages;
-	}, [ clearRetainedShowComponentMessages, getShowComponentOrder, messages, isRegenerating ] );
+	}, [
+		clearRetainedShowComponentMessages,
+		getShowComponentOrder,
+		getToolComponent,
+		messages,
+		isRegenerating,
+	] );
 
 	// Reader-chat sessions are short (usually < 50 messages) — don't waste
 	// time paginating 10 pages deep. One page covers typical use.
@@ -1547,7 +1585,8 @@ export default function OrchestratorChat( {
 				const fullMessage = messageFromRequest.content
 					? ( messageFromRequest as UIMessage )
 					: messagesRef.current.find( ( message ) => message.id === msg.id );
-				const isShowComponent = !! fullMessage && isShowComponentMessage( fullMessage );
+				const isShowComponent =
+					!! fullMessage && isShowComponentMessage( fullMessage, getToolComponent );
 
 				return {
 					id: msg.id,
@@ -1600,17 +1639,19 @@ export default function OrchestratorChat( {
 				! message.content?.some( ( content ) => content?.text === LOCAL_TOOL_RUNNING_MESSAGE )
 		);
 
-		currentMessages.filter( isShowComponentMessage ).forEach( getShowComponentOrder );
+		currentMessages
+			.filter( ( message ) => isShowComponentMessage( message, getToolComponent ) )
+			.forEach( getShowComponentOrder );
 
 		const currentShowComponentIdentities = new Set(
 			currentMessages
-				.filter( isShowComponentMessage )
-				.map( getShowComponentIdentity )
+				.filter( ( message ) => isShowComponentMessage( message, getToolComponent ) )
+				.map( ( message ) => getShowComponentIdentity( message, getToolComponent ) )
 				.filter( Boolean )
 		);
 		const retainedMessagesToDisplay = [ ...retainedShowComponentMessages.values() ].filter(
 			( message ) => {
-				const identity = getShowComponentIdentity( message );
+				const identity = getShowComponentIdentity( message, getToolComponent );
 				return !! identity && ! currentShowComponentIdentities.has( identity );
 			}
 		);
