@@ -388,7 +388,8 @@ export const marketplaceProductsRoute = createRoute( {
 	head: () => ( {
 		meta: [
 			{
-				title: __( 'Products' ),
+				// The sidebar names this place by what agencies call it.
+				title: __( 'Plugins and add-ons' ),
 			},
 		],
 	} ),
@@ -476,7 +477,11 @@ export type MarketplaceSection = {
 // Purchases is part of the Marketplace feature, so it shares the flag.
 export const marketplaceSections: MarketplaceSection[] = [
 	{ route: marketplaceHostingRoute, supports: 'marketplace', label: () => __( 'Hosting' ) },
-	{ route: marketplaceProductsRoute, supports: 'marketplace', label: () => __( 'Products' ) },
+	{
+		route: marketplaceProductsRoute,
+		supports: 'marketplace',
+		label: () => __( 'Plugins and add-ons' ),
+	},
 	{ route: marketplacePurchasesRoute, supports: 'marketplace', label: () => __( 'Purchases' ) },
 	{
 		route: exclusiveOffersRoute,

@@ -80,7 +80,7 @@ describe( '<AgencySidebar>', () => {
 		expect( screen.getByRole( 'button', { name: 'Grow' } ) ).toBeVisible();
 		expect( screen.getByRole( 'button', { name: 'Earn' } ) ).toBeVisible();
 		expect( screen.getByRole( 'button', { name: 'Agency' } ) ).toBeVisible();
-		for ( const name of [ 'Hosting', 'Products', 'Purchases', 'Exclusive offers' ] ) {
+		for ( const name of [ 'Hosting', 'Plugins and add-ons', 'Purchases', 'Exclusive offers' ] ) {
 			expect( screen.getByRole( 'link', { name } ) ).toBeVisible();
 		}
 	} );
@@ -174,7 +174,7 @@ describe( '<AgencySidebar>', () => {
 
 		expect( screen.getByRole( 'button', { name: 'Marketplace' } ) ).toBeVisible();
 		expect( screen.getByRole( 'link', { name: 'Hosting' } ) ).toBeVisible();
-		expect( screen.getByRole( 'link', { name: 'Products' } ) ).toBeVisible();
+		expect( screen.getByRole( 'link', { name: 'Plugins and add-ons' } ) ).toBeVisible();
 		expect( screen.queryByRole( 'link', { name: 'Exclusive offers' } ) ).not.toBeInTheDocument();
 		expect( screen.queryByRole( 'link', { name: 'Purchases' } ) ).not.toBeInTheDocument();
 	} );
@@ -185,7 +185,7 @@ describe( '<AgencySidebar>', () => {
 		expect( screen.getByRole( 'button', { name: 'Marketplace' } ) ).toBeVisible();
 		expect( screen.getByRole( 'link', { name: 'Purchases' } ) ).toBeVisible();
 		expect( screen.queryByRole( 'link', { name: 'Hosting' } ) ).not.toBeInTheDocument();
-		expect( screen.queryByRole( 'link', { name: 'Products' } ) ).not.toBeInTheDocument();
+		expect( screen.queryByRole( 'link', { name: 'Plugins and add-ons' } ) ).not.toBeInTheDocument();
 	} );
 
 	// Partner Directory is gated by both an agency flag
