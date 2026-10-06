@@ -895,6 +895,19 @@ const setUpSectionContext = ( section, entrypoint ) => ( req, res, next ) => {
 const logWpLoginNotFound = ( req ) => {
 	const getStringQueryArg = ( name ) =>
 		typeof req.query[ name ] === 'string' ? req.query[ name ].slice( 0, 500 ) : undefined;
+	// Query strings, fragments and userinfo can carry nonces and auth codes, so only keep
+	// the origin and path.
+	const stripUrl = ( value ) => {
+		if ( typeof value !== 'string' ) {
+			return undefined;
+		}
+		try {
+			const url = new URL( value );
+			return `${ url.origin }${ url.pathname }`.slice( 0, 500 );
+		} catch {
+			return value.split( /[?#]/ )[ 0 ].slice( 0, 500 );
+		}
+	};
 	const hasLoggedInCookie = !! req.cookies.wordpress_logged_in;
 	// Browsers send Sec-Fetch-* on every request; most scanners don't.
 	const secFetchSite = req.get( 'sec-fetch-site' );
@@ -923,8 +936,8 @@ const logWpLoginNotFound = ( req ) => {
 			// Values are omitted since they can carry nonces and auth codes.
 			query_keys: Object.keys( req.query ),
 			action: getStringQueryArg( 'action' ),
-			redirect_to: getStringQueryArg( 'redirect_to' ),
-			referer: req.get( 'referer' ),
+			redirect_to: stripUrl( req.query.redirect_to ),
+			referer: stripUrl( req.get( 'referer' ) ),
 			user_agent: req.get( 'user-agent' ),
 			accept: req.get( 'accept' )?.slice( 0, 200 ),
 			has_logged_in_cookie: hasLoggedInCookie,
