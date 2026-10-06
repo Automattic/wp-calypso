@@ -83,7 +83,8 @@ export const useNamePulseCartToggle = ( domainName: string, position: number ) =
 		inCart,
 		isPending,
 		error,
-		toggleCart: () => toggleCart( { acceptedTrademarkClaim: false } ),
+		toggleCart: ( options?: { onSettled?: () => void } ) =>
+			toggleCart( { acceptedTrademarkClaim: false }, options ),
 		trademarkClaimsNoticeInfo,
 		acceptTrademarkClaim: () => {
 			setTrademarkClaimsNoticeInfo( undefined );
