@@ -3,6 +3,7 @@ import {
 	createClient,
 	updateToolResultsWithResolvedPromises,
 } from '../client/index';
+import { isPreambleUpdate } from '../client/utils/core';
 import {
 	createTextMessage,
 	createToolResultDataPart,
@@ -623,6 +624,19 @@ function createAgentManager(): AgentManager {
 								await persistConversationHistory( key, currentConversationHistory );
 							}
 							await clearConversation( oldSessionId );
+						}
+					}
+
+					// What the agent said before a tool call is part of the reply, and the
+					// next request replays it so the agent knows it was said.
+					if ( isPreambleUpdate( update ) ) {
+						currentConversationHistory = [
+							...currentConversationHistory,
+							extractNewContentFromMessage( update.status.message! ),
+						];
+						managedAgent.conversationHistory = currentConversationHistory;
+						if ( withHistory ) {
+							await persistConversationHistory( key, currentConversationHistory );
 						}
 					}
 

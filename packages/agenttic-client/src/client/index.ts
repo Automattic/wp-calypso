@@ -1,3 +1,4 @@
+import { isPreambleUpdate } from './utils/core';
 import {
 	executeRequest,
 	executeStreamingRequest,
@@ -191,7 +192,7 @@ const NO_MATCHING_TOOL_CALLS: MatchingToolCalls = Object.freeze( {
  *
  * Callers dispatch exactly what `matched` holds, so a call the provider has no
  * handler for is never forwarded to `executeTool` on the strength of some
- * *other* call in the same message matching. `unmatched` is returned rather
+ * other* call in the same message matching. `unmatched` is returned rather
  * than discarded because a dispatched call still owes the agent a result — see
  * the `input-required` branch in `processAgentResponseStream`.
  * @param toolProvider                - The tool provider to check
@@ -589,6 +590,12 @@ async function* processAgentResponseStream(
 	requestOptions?: RequestOptions
 ): AsyncIterable< TaskUpdate > {
 	for await ( const update of stream ) {
+		// The continuation replays this turn to the agent, so it has to include
+		// what the agent already said, or it introduces the same thing twice.
+		if ( isPreambleUpdate( update ) ) {
+			newConversationParts.push( update.status.message! );
+		}
+
 		const inputRequiredMessage =
 			update.status.state === 'input-required' && update.status.message && toolProvider
 				? update.status.message

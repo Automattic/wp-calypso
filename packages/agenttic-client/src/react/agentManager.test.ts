@@ -486,6 +486,43 @@ describe( 'agentManager', () => {
 			expect( parts.some( ( part: any ) => 'arguments' in ( part.data ?? {} ) ) ).toBe( true );
 		} );
 
+		it( 'keeps what the agent says before a tool call in the conversation history', async () => {
+			const preamble: Message = {
+				role: 'agent',
+				kind: 'message',
+				parts: [ { type: 'text', text: 'I found the Hoodie with Zipper.' } ],
+				messageId: 'preamble',
+			};
+			mockClient.sendMessageStream.mockImplementation( async function* () {
+				yield {
+					id: 'task-123',
+					status: { state: 'running', message: preamble },
+					final: false,
+					kind: 'status',
+					text: 'I found the Hoodie with Zipper.',
+				} as TaskUpdate;
+				yield {
+					id: 'task-123',
+					status: { state: 'completed', message: mockAgentMessage },
+					final: true,
+					text: 'Hello back!',
+				} as TaskUpdate;
+			} );
+
+			for await ( const update of agentManager.sendMessageStream( 'test-key', 'Hello' ) ) {
+				void update;
+			}
+
+			const texts = agentManager
+				.getConversationHistory( 'test-key' )
+				.filter( ( message ) => message.role === 'agent' )
+				.map( ( message ) =>
+					message.parts.map( ( part: any ) => ( part.type === 'text' ? part.text : '' ) ).join( '' )
+				);
+			expect( texts[ 0 ] ).toBe( 'I found the Hoodie with Zipper.' );
+			expect( texts ).toHaveLength( 2 );
+		} );
+
 		it( 'should stream messages from agent', async () => {
 			const mockUpdates: TaskUpdate[] = [
 				{

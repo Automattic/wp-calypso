@@ -14,6 +14,7 @@ import type {
 	ToolCallDataPart,
 	ToolDataPart,
 	ToolResultDataPart,
+	TaskUpdate,
 } from '../types/index';
 
 /**
@@ -348,4 +349,21 @@ export function createToolResultMessage(
  */
 export function createAbortController(): AbortController {
 	return new AbortController();
+}
+
+/**
+ * Whether an update is something the agent said before a tool call in the
+ * same turn: a complete text utterance the server marks as still running.
+ * Token deltas never arrive in this shape, so it is safe to keep as history.
+ * @param update - A streamed task update.
+ */
+export function isPreambleUpdate( update: TaskUpdate ): boolean {
+	const parts = update.status?.message?.parts ?? [];
+	return (
+		! update.final &&
+		update.status?.state === 'running' &&
+		parts.length > 0 &&
+		parts.every( ( part ) => part.type === 'text' ) &&
+		parts.some( ( part ) => part.type === 'text' && part.text.trim() !== '' )
+	);
 }
