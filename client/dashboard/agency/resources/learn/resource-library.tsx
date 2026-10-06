@@ -29,19 +29,19 @@ import './style.scss';
 
 type StageFilter = AgencyResourceStage | 'all';
 
-interface BrowseAllResourcesProps {
+interface ResourceLibraryProps {
 	resources: AgencyEnablementResource[];
 	view: View;
 	onChangeView: ( view: View ) => void;
 	onOpenResource: OpenResource;
 }
 
-export default function BrowseAllResources( {
+export default function ResourceLibrary( {
 	resources,
 	view,
 	onChangeView,
 	onOpenResource,
-}: BrowseAllResourcesProps ) {
+}: ResourceLibraryProps ) {
 	// The stage toggle drives an ordinary filter, so it's saved with the rest of the view.
 	const stage = ( view.filters?.find( ( filter ) => filter.field === 'stage' )?.value ??
 		'all' ) as StageFilter;

@@ -1,7 +1,7 @@
 import { Modal, __experimentalVStack as VStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useCallback, useMemo, useState } from 'react';
-import BrowseAllResources from './browse-all-resources';
+import ResourceLibrary from './resource-library';
 import { getYouTubeEmbedUrl } from './youtube-embed';
 import type { OpenResource, RecordTracksEvent } from './types';
 import type { AgencyEnablementResource } from '@automattic/api-core';
@@ -58,7 +58,7 @@ export default function ResourceCenter( {
 
 	return (
 		<>
-			<BrowseAllResources
+			<ResourceLibrary
 				resources={ resources }
 				view={ view }
 				onChangeView={ onChangeView }
