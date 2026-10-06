@@ -3,6 +3,7 @@ import { logger } from '../client/utils/logger';
 import { resolveActionsForMessage } from '../message-actions/resolver';
 import { useMessageActions } from '../message-actions/useMessageActions';
 import { getAgentManager } from './agentManager';
+import { messageCarriesToolPayload } from './conversationUtils';
 import { useRegenerate } from './useRegenerate';
 import type {
 	AuthProvider,
@@ -714,6 +715,32 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 							progressMessage: update.progressMessage || null,
 							progressPhase: update.progressPhase || null,
 						} ) );
+					}
+
+					// A tool's renderable payload (a picker, a card) is a message of its own,
+					// under the id the agent manager keeps it in history. Streaming it into
+					// the open bubble would let the next deltas overwrite it, so the text
+					// after the component would render above it until the turn settles.
+					if (
+						! update.final &&
+						update.status?.message &&
+						messageCarriesToolPayload( update.status.message )
+					) {
+						const payloadMessage = transformClientMessageToUI(
+							update.status.message,
+							registrationsRef.current
+						);
+						streamingMessageId = null;
+						if ( payloadMessage ) {
+							setState( ( prev ) => ( {
+								...prev,
+								uiMessages: [
+									...prev.uiMessages.filter( ( msg ) => msg.id !== payloadMessage.id ),
+									payloadMessage,
+								],
+							} ) );
+						}
+						continue;
 					}
 
 					// Handle incremental text updates during streaming
