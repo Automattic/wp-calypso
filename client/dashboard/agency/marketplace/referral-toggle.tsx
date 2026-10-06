@@ -54,7 +54,7 @@ export default function ReferralToggle() {
 					__nextHasNoMarginBottom
 					checked={ marketplaceType === 'referral' }
 					disabled={ ! agencyApproved }
-					label={ __( 'Refer products' ) }
+					label={ __( 'Refer to clients' ) }
 					onChange={ handleToggle }
 				/>
 				<Button
