@@ -47,6 +47,7 @@ import {
 import {
 	getBuildWowSiteIdentifier,
 	getBuildWowSiteSpecUrl,
+	isBuildWowStreamRequested,
 	logBuildWowEvent,
 	requestBuildWowSite,
 	type BuildWowGraph,
@@ -718,6 +719,7 @@ const onboarding: FlowV2< typeof initialize > = {
 									siteId,
 									ref: refParameter,
 									graph,
+									streamEvents: isBuildWowStreamRequested( queryParams ),
 								} )
 							);
 							return;
