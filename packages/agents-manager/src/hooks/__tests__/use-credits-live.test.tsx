@@ -905,11 +905,71 @@ it( 'uses the terminal balance and avoids reads while an Agent task is running',
 	await flush();
 	expect( fetchMock ).toHaveBeenCalledTimes( 1 );
 	await receive( creditSnapshot() );
+	expect( fetchMock ).toHaveBeenCalledTimes( 1 );
 	mockIsProcessing = false;
 	view.rerender( defaultOptions );
 	await flush();
 	expect( props( view.result.current ).status.remaining ).toBe( 2450 );
+} );
+it.each( [
+	[ 'the opening read was aborted by the task', false ],
+	[ 'the chat opened during the task', true ],
+] )(
+	'reads who may buy after a task delivers the balance when %s',
+	async ( _case, openedMidTask ) => {
+		mockIsProcessing = openedMidTask;
+		const view = renderCredits();
+		await flush();
+		mockIsProcessing = true;
+		view.rerender( defaultOptions );
+		const openingReads = openedMidTask ? 0 : 1;
+		expect( fetchMock ).toHaveBeenCalledTimes( openingReads );
+		expect( fetchMock.mock.calls.every( ( [ , init ] ) => init.signal.aborted ) ).toBe( true );
+		await receive( creditSnapshot( { plan_tier: 'personal' } ) );
+		expect( props( view.result.current ).status.remaining ).toBe( 2450 );
+		expect( props( view.result.current ).upgradeUrl ).toBeUndefined();
+		const read = deferred< ReturnType< typeof response > >();
+		fetchMock.mockReturnValueOnce( read.promise );
+		mockIsProcessing = false;
+		view.rerender( defaultOptions );
+		await flush();
+		expect( fetchMock ).toHaveBeenCalledTimes( openingReads + 1 );
+		// The terminal balance stays while the read is pending; only the access is missing.
+		expect( props( view.result.current ).status.remaining ).toBe( 2450 );
+		expect( props( view.result.current ).upgradeUrl ).toBeUndefined();
+		read.resolve( response( creditSnapshot( { plan_tier: 'personal' } ) ) );
+		await flush();
+		expect( props( view.result.current ).upgradeUrl ).toBe(
+			'https://wordpress.com/plans/example.wordpress.com'
+		);
+		await receive( { ...exhausted(), plan_tier: 'personal' } );
+		expect( props( view.result.current ).isOpen ).toBe( true );
+		expect( view.result.current.notice?.action?.href ).toBe(
+			'https://wordpress.com/plans/example.wordpress.com'
+		);
+		expect( fetchMock ).toHaveBeenCalledTimes( openingReads + 1 );
+	}
+);
+it( 'does not read again after a task when the opening read already said who may buy', async () => {
+	fetchMock.mockResolvedValueOnce( response( creditSnapshot( { plan_tier: 'personal' } ) ) );
+	const view = renderCredits();
+	await flush();
 	expect( fetchMock ).toHaveBeenCalledTimes( 1 );
+	mockIsProcessing = true;
+	view.rerender( defaultOptions );
+	await receive( { ...exhausted(), plan_tier: 'personal' } );
+	mockIsProcessing = false;
+	view.rerender( defaultOptions );
+	await flush();
+	expect( fetchMock ).toHaveBeenCalledTimes( 1 );
+	expect( props( view.result.current ).status.remaining ).toBe( 0 );
+	expect( props( view.result.current ).isOpen ).toBe( true );
+	expect( props( view.result.current ).upgradeUrl ).toBe(
+		'https://wordpress.com/plans/example.wordpress.com'
+	);
+	expect( view.result.current.notice?.action?.href ).toBe(
+		'https://wordpress.com/plans/example.wordpress.com'
+	);
 } );
 it.each( [ 'no update', 'missing metadata', 'invalid metadata' ] )(
 	'reads again when a task ends with %s',

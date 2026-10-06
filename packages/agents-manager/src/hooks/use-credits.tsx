@@ -118,6 +118,8 @@ export function useCredits( {
 		canBuyCredits?: boolean;
 		canUpgrade?: boolean;
 	} >();
+	const upgradeAccessRef = useRef( upgradeAccess );
+	upgradeAccessRef.current = upgradeAccess;
 	const [ seed ] = useState( readMockSeed );
 	const [ percent, setPercent ] = useState( seed?.percent ?? 0 );
 	const [ dismissedNoticeScope, setDismissedNoticeScope ] = useState< typeof scope >();
@@ -302,6 +304,11 @@ export function useCredits( {
 			if ( scope.siteId ) {
 				if ( previous.validTerminalRevision === scope.validTerminalRevision ) {
 					invalidateBalance();
+					void refreshBalance();
+				} else if ( upgradeAccessRef.current?.scope !== scope ) {
+					// The task delivered the balance, but only a read says who may buy: the
+					// opening read is aborted when a task starts, so an early send (or a chat
+					// opened mid-task) would otherwise leave an admin without Upgrade.
 					void refreshBalance();
 				}
 			} else if ( isMockEnabled && seed ) {
