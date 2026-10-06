@@ -1,14 +1,13 @@
 import {
 	__experimentalSpacer as Spacer,
 	__experimentalHStack as HStack,
-	__experimentalText as Text,
-	__experimentalVStack as VStack,
 	__experimentalToggleGroupControl as ToggleGroupControl,
 	__experimentalToggleGroupControlOption as ToggleGroupControlOption,
 } from '@wordpress/components';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { useMemo } from 'react';
+import { DataViewsEmptyStateLayout } from '../../../components/dataviews';
 import Grid from '../../../components/grid';
 import {
 	getAudienceLabel,
@@ -228,14 +227,12 @@ export default function BrowseAllResources( {
 				</Grid>
 			) }
 			{ filteredData.length === 0 && (
-				<VStack spacing={ 1 }>
-					<Text weight={ 500 }>{ __( "We couldn't find any resources related to that." ) }</Text>
-					<Text variant="muted">
-						{ __(
-							'Try adjusting your search or exploring other resources to help your agency grow.'
-						) }
-					</Text>
-				</VStack>
+				<DataViewsEmptyStateLayout
+					title={ __( "We couldn't find any resources related to that." ) }
+					description={ __(
+						'Try adjusting your search or exploring other resources to help your agency grow.'
+					) }
+				/>
 			) }
 		</>
 	);
