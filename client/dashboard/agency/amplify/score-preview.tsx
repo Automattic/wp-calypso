@@ -1,12 +1,31 @@
-import { Button } from '@wordpress/components';
+import { Tooltip } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { closeSmall } from '@wordpress/icons';
-import { useCallback, useLayoutEffect, useRef, useState } from 'react';
+import {
+	atSymbol,
+	brush,
+	code,
+	comment,
+	file,
+	globe,
+	mobile,
+	paragraph,
+	people,
+	postAuthor,
+	search,
+	shield,
+	starFilled,
+	tag,
+	tool,
+	update,
+} from '@wordpress/icons';
+import { useLayoutEffect, useRef, useState } from 'react';
+import { severityFor } from './score-severity';
 import type { AmplifyMode } from '@automattic/api-core';
-import type { CSSProperties } from 'react';
 
 type ScoreMetric = {
 	label: string;
+	description: string;
+	icon: JSX.Element;
 	score: number;
 	max: number;
 };
@@ -20,21 +39,85 @@ type ScorePerspective = {
 };
 
 // Example results from a real report, with the current weighted rubric categories.
-const PERSPECTIVES: Record< 'human' | 'ai', ScorePerspective > = {
+export const PERSPECTIVES: Record< 'human' | 'ai', ScorePerspective > = {
 	human: {
 		type: 'human',
 		label: __( 'First-time visitors' ),
 		description: __( 'Actionable advice for each category to help new visitors feel at home.' ),
 		score: 46,
 		metrics: [
-			{ label: __( 'Trust Signals' ), score: 4, max: 18 },
-			{ label: __( 'Contact & Conversion' ), score: 3, max: 17 },
-			{ label: __( 'SEO' ), score: 5, max: 11 },
-			{ label: __( 'Mobile Experience' ), score: 7, max: 12 },
-			{ label: __( 'Content Quality' ), score: 11, max: 12 },
-			{ label: __( 'Design & Experience' ), score: 5, max: 10 },
-			{ label: __( 'Accessibility' ), score: 8, max: 10 },
-			{ label: __( 'Audience Resonance' ), score: 3, max: 10 },
+			{
+				label: __( 'Trust Signals' ),
+				icon: shield,
+				description: __(
+					'Does the site give a prospective client enough evidence to feel safe handing over a project?'
+				),
+				score: 4,
+				max: 18,
+			},
+			{
+				label: __( 'Contact & Conversion' ),
+				icon: atSymbol,
+				description: __(
+					'A prospective client is ready to reach out. Does the site make that easy, or create friction at the worst possible moment?'
+				),
+				score: 3,
+				max: 17,
+			},
+			{
+				label: __( 'SEO' ),
+				icon: search,
+				description: __(
+					'Can a prospective client find this site when they search? All signals are sourced from Google Search Central documentation.'
+				),
+				score: 5,
+				max: 11,
+			},
+			{
+				label: __( 'Mobile Experience' ),
+				icon: mobile,
+				description: __(
+					'A first impression increasingly happens on a phone. Does the site hold up when a prospective client pulls it up on their device?'
+				),
+				score: 7,
+				max: 12,
+			},
+			{
+				label: __( 'Content Quality' ),
+				icon: paragraph,
+				description: __(
+					'Is the writing compelling, clear, and professional? Errors and poor readability erode trust before a client has read a single sentence.'
+				),
+				score: 11,
+				max: 12,
+			},
+			{
+				label: __( 'Design & Experience' ),
+				icon: brush,
+				description: __(
+					'Does the site look credible and feel effortless to use? All signals are grounded in the Laws of UX.'
+				),
+				score: 5,
+				max: 10,
+			},
+			{
+				label: __( 'Accessibility' ),
+				icon: globe,
+				description: __(
+					'Does the site work for everyone? Amplify measures against WCAG AA, the standard referenced by courts and regulators globally.'
+				),
+				score: 8,
+				max: 10,
+			},
+			{
+				label: __( 'Audience Resonance' ),
+				icon: people,
+				description: __(
+					'Does the site feel made for the right client? Within seconds of landing, a prospective client should feel the site is speaking directly to them.'
+				),
+				score: 3,
+				max: 10,
+			},
 		],
 	},
 	ai: {
@@ -45,28 +128,81 @@ const PERSPECTIVES: Record< 'human' | 'ai', ScorePerspective > = {
 		),
 		score: 50,
 		metrics: [
-			{ label: __( 'Technical Health' ), score: 18, max: 20 },
-			{ label: __( 'Structured Data' ), score: 3, max: 18 },
-			{ label: __( 'AEO Readiness' ), score: 3, max: 16 },
-			{ label: __( 'E-E-A-T Signals' ), score: 9, max: 14 },
-			{ label: __( 'Content Freshness' ), score: 7, max: 12 },
-			{ label: __( 'Entity Clarity' ), score: 7, max: 10 },
-			{ label: __( 'Content Specificity' ), score: 3, max: 7 },
-			{ label: __( 'llms.txt' ), score: 0, max: 3 },
+			{
+				label: __( 'Technical Health' ),
+				icon: tool,
+				description: __(
+					'Can AI tools access, crawl, and render the site? If a crawler cannot reach the content, nothing else matters.'
+				),
+				score: 18,
+				max: 20,
+			},
+			{
+				label: __( 'Structured Data' ),
+				icon: code,
+				description: __(
+					'Schema markup tells AI tools exactly what the site is about rather than making them infer it. The difference between an AI accurately describing your client and producing a generic summary.'
+				),
+				score: 3,
+				max: 18,
+			},
+			{
+				label: __( 'AEO Readiness' ),
+				icon: comment,
+				description: __(
+					'Answer Engine Optimization. Is the content structured to surface in AI-generated answers? AI tools prioritize pages that answer questions directly, not pages that bury key information.'
+				),
+				score: 3,
+				max: 16,
+			},
+			{
+				label: __( 'E-E-A-T Signals' ),
+				icon: starFilled,
+				description: __(
+					"Experience, Expertise, Authoritativeness, Trustworthiness. Google's quality framework and the backbone of how AI tools evaluate whether a source is worth citing."
+				),
+				score: 9,
+				max: 14,
+			},
+			{
+				label: __( 'Content Freshness' ),
+				icon: update,
+				description: __(
+					'Is the content up to date? AI tools and search engines both treat stale content as a signal of lower reliability.'
+				),
+				score: 7,
+				max: 12,
+			},
+			{
+				label: __( 'Entity Clarity' ),
+				icon: postAuthor,
+				description: __(
+					'Does the site make it unambiguous who this business is? AI knowledge graphs depend on clear, consistent entity signals across the web.'
+				),
+				score: 7,
+				max: 10,
+			},
+			{
+				label: __( 'Content Specificity' ),
+				icon: tag,
+				description: __(
+					'Does the content say something specific, or could it describe any business in the same category? Generic content is the most common reason AI tools skip a site when generating recommendations.'
+				),
+				score: 3,
+				max: 7,
+			},
+			{
+				label: __( 'llms.txt' ),
+				icon: file,
+				description: __(
+					'An emerging standard that lets businesses publish a machine-readable summary of their site specifically for large language models.'
+				),
+				score: 0,
+				max: 3,
+			},
 		],
 	},
 };
-
-function severityFor( score: number, max: number ) {
-	const percentage = ( score / max ) * 100;
-	if ( percentage >= 80 ) {
-		return 'good';
-	}
-	if ( percentage >= 50 ) {
-		return 'warn';
-	}
-	return 'danger';
-}
 
 function ScoreIllustration( { type }: { type: ScorePerspective[ 'type' ] } ) {
 	return (
@@ -118,7 +254,13 @@ function ScoreIllustration( { type }: { type: ScorePerspective[ 'type' ] } ) {
 	);
 }
 
-function ScoreCard( { perspective }: { perspective: ScorePerspective } ) {
+function ScoreCard( {
+	perspective,
+	isHidden,
+}: {
+	perspective: ScorePerspective;
+	isHidden: boolean;
+} ) {
 	return (
 		<div className="dashboard-amplify-score-preview__card">
 			<div className="dashboard-amplify-score-preview__card-header">
@@ -137,7 +279,13 @@ function ScoreCard( { perspective }: { perspective: ScorePerspective } ) {
 			<div className="dashboard-amplify-score-preview__metrics">
 				{ perspective.metrics.map( ( metric ) => (
 					<div className="dashboard-amplify-score-preview__metric" key={ metric.label }>
-						<span>{ metric.label }</span>
+						<Tooltip
+							className="dashboard-amplify-score-preview__metric-tooltip"
+							text={ metric.description }
+							delay={ 200 }
+						>
+							<span tabIndex={ isHidden ? -1 : 0 }>{ metric.label }</span>
+						</Tooltip>
 						<div className="dashboard-amplify-score-preview__bar" aria-hidden="true">
 							<span
 								data-severity={ severityFor( metric.score, metric.max ) }
@@ -157,13 +305,6 @@ function ScoreCard( { perspective }: { perspective: ScorePerspective } ) {
 export default function AmplifyScorePreview( { mode }: { mode: AmplifyMode } ) {
 	const [ displayMode, setDisplayMode ] = useState( mode );
 	const [ isExpanded, setIsExpanded ] = useState( false );
-	const [ isReturning, setIsReturning ] = useState( false );
-	const [ anchorRect, setAnchorRect ] = useState( { left: 0, top: 0, width: 0, height: 0 } );
-	const [ viewport, setViewport ] = useState( { width: 0, height: 0 } );
-	const anchor = useRef< HTMLDivElement >( null );
-	const openButton = useRef< HTMLButtonElement >( null );
-	const closeButton = useRef< HTMLButtonElement >( null );
-	const hasOpened = useRef( false );
 	const humanSheet = useRef< HTMLDivElement >( null );
 	const aiSheet = useRef< HTMLDivElement >( null );
 	const activeShuffle = useRef< {
@@ -172,80 +313,20 @@ export default function AmplifyScorePreview( { mode }: { mode: AmplifyMode } ) {
 		target: 'human' | 'ai';
 		animations: Animation[];
 	} | null >( null );
-	const close = useCallback( () => {
-		setIsExpanded( false );
-		setIsReturning( ! window.matchMedia( '(prefers-reduced-motion: reduce)' ).matches );
-	}, [] );
-
 	useLayoutEffect( () => {
-		const update = () => {
-			const rect = anchor.current?.getBoundingClientRect();
-			if ( ! rect ) {
-				return;
-			}
-			setAnchorRect( ( previous ) =>
-				previous.left === rect.left &&
-				previous.top === rect.top &&
-				previous.width === rect.width &&
-				previous.height === rect.height
-					? previous
-					: { left: rect.left, top: rect.top, width: rect.width, height: rect.height }
-			);
-			setViewport( ( previous ) =>
-				previous.width === window.innerWidth && previous.height === window.innerHeight
-					? previous
-					: { width: window.innerWidth, height: window.innerHeight }
-			);
-		};
-		update();
-		const observer = new ResizeObserver( update );
-		if ( anchor.current ) {
-			observer.observe( anchor.current );
-		}
-		window.addEventListener( 'resize', update );
-		window.addEventListener( 'scroll', update, true );
-		return () => {
-			observer.disconnect();
-			window.removeEventListener( 'resize', update );
-			window.removeEventListener( 'scroll', update, true );
-		};
-	}, [ displayMode ] );
-
-	useLayoutEffect( () => {
-		if ( ! isExpanded && ! isReturning ) {
-			if ( hasOpened.current ) {
-				openButton.current?.focus();
-			}
+		if ( ! isExpanded ) {
 			return;
 		}
-		if ( isExpanded ) {
-			hasOpened.current = true;
-			closeButton.current?.focus();
-		}
-		const previousOverflow = document.body.style.overflow;
-		document.body.style.overflow = 'hidden';
 		const handleKeyDown = ( event: KeyboardEvent ) => {
-			if ( event.key === 'Escape' && isExpanded ) {
-				close();
-			} else if ( event.key === 'Tab' && isExpanded ) {
-				event.preventDefault();
-				closeButton.current?.focus();
+			if ( event.key === 'Escape' ) {
+				setIsExpanded( false );
 			}
 		};
 		window.addEventListener( 'keydown', handleKeyDown );
 		return () => {
-			document.body.style.overflow = previousOverflow;
 			window.removeEventListener( 'keydown', handleKeyDown );
 		};
-	}, [ close, isExpanded, isReturning ] );
-
-	useLayoutEffect( () => {
-		if ( ! isReturning ) {
-			return;
-		}
-		const timer = window.setTimeout( () => setIsReturning( false ), 420 );
-		return () => window.clearTimeout( timer );
-	}, [ isReturning ] );
+	}, [ isExpanded ] );
 
 	useLayoutEffect( () => {
 		const active = activeShuffle.current;
@@ -319,93 +400,57 @@ export default function AmplifyScorePreview( { mode }: { mode: AmplifyMode } ) {
 		return () => activeShuffle.current?.animations.forEach( ( animation ) => animation.cancel() );
 	}, [] );
 
-	const isTwoColumns = viewport.width >= 1240;
-	const expandedScale = isTwoColumns
-		? Math.min( 1.25, ( viewport.width - 104 ) / 1080, ( viewport.height - 80 ) / 340 )
-		: Math.min( 1.2, ( viewport.width - 48 ) / 540, ( viewport.height - 104 ) / 680 );
-	const cardScale = Math.max( 0.35, expandedScale );
-	const offset = ( ( isTwoColumns ? 540 : 340 ) * cardScale ) / 2 + 12;
-	const humanFirst = mode !== 'ai';
-	const firstOffset = humanFirst ? -offset : offset;
-	const secondOffset = -firstOffset;
-	const cardsStyle = {
-		left: isExpanded ? 0 : anchorRect.left,
-		top: isExpanded ? 0 : anchorRect.top,
-		width: isExpanded ? '100vw' : anchorRect.width,
-		height: isExpanded ? '100dvh' : anchorRect.height,
-		'--score-expanded-scale': cardScale,
-		'--score-human-x': `${ isTwoColumns ? firstOffset : 0 }px`,
-		'--score-ai-x': `${ isTwoColumns ? secondOffset : 0 }px`,
-		'--score-human-y': `${ isTwoColumns ? 0 : firstOffset }px`,
-		'--score-ai-y': `${ isTwoColumns ? 0 : secondOffset }px`,
-	} as CSSProperties;
-	const open = () => {
+	const toggle = () => {
 		activeShuffle.current?.animations.forEach( ( animation ) => animation.cancel() );
 		activeShuffle.current = null;
 		setDisplayMode( mode );
-		setIsReturning( false );
-		setIsExpanded( true );
+		setIsExpanded( ( expanded ) => ! expanded );
 	};
 
 	return (
-		<>
+		<div
+			className="dashboard-amplify-score-preview__anchor"
+			data-mode={ displayMode }
+			data-expanded={ isExpanded }
+		>
 			<div
-				ref={ anchor }
-				className="dashboard-amplify-score-preview__anchor"
+				className="dashboard-amplify-score-preview__cards"
 				data-mode={ displayMode }
-			/>
-			{ anchorRect.width > 0 && (
+				data-expanded={ isExpanded }
+				onPointerUp={ toggle }
+			>
 				<div
-					className="dashboard-amplify-score-preview__cards"
-					data-mode={ displayMode }
-					data-expanded={ isExpanded }
-					data-overlay={ isExpanded || isReturning }
-					style={ cardsStyle }
-					role={ isExpanded ? 'dialog' : undefined }
-					aria-modal={ isExpanded ? 'true' : undefined }
-					aria-label={ isExpanded ? __( 'Sample report scores' ) : undefined }
+					ref={ humanSheet }
+					className="dashboard-amplify-score-preview__sheet"
+					data-perspective="human"
+					aria-hidden={ ! isExpanded && mode === 'ai' }
 				>
-					<button
-						type="button"
-						className="dashboard-amplify-score-preview__scrim"
-						aria-label={ __( 'Close sample report scores' ) }
-						tabIndex={ isExpanded ? 0 : -1 }
-						onClick={ close }
-					/>
-					<div
-						ref={ humanSheet }
-						className="dashboard-amplify-score-preview__sheet"
-						data-perspective="human"
-						aria-hidden={ ! isExpanded && mode === 'ai' }
-					>
-						<ScoreCard perspective={ PERSPECTIVES.human } />
-					</div>
-					<div
-						ref={ aiSheet }
-						className="dashboard-amplify-score-preview__sheet"
-						data-perspective="ai"
-						aria-hidden={ ! isExpanded && mode === 'human' }
-					>
-						<ScoreCard perspective={ PERSPECTIVES.ai } />
-					</div>
-					<button
-						type="button"
-						className="dashboard-amplify-score-preview__open"
-						aria-label={ __( 'View full sample report scores' ) }
-						ref={ openButton }
-						onClick={ open }
-					/>
-					<Button
-						ref={ closeButton }
-						className="dashboard-amplify-score-preview__close"
-						variant="tertiary"
-						icon={ closeSmall }
-						label={ __( 'Close sample report scores' ) }
-						tabIndex={ isExpanded ? 0 : -1 }
-						onClick={ close }
+					<ScoreCard
+						perspective={ PERSPECTIVES.human }
+						isHidden={ ! isExpanded && mode === 'ai' }
 					/>
 				</div>
-			) }
-		</>
+				<div
+					ref={ aiSheet }
+					className="dashboard-amplify-score-preview__sheet"
+					data-perspective="ai"
+					aria-hidden={ ! isExpanded && mode === 'human' }
+				>
+					<ScoreCard
+						perspective={ PERSPECTIVES.ai }
+						isHidden={ ! isExpanded && mode === 'human' }
+					/>
+				</div>
+				<button
+					type="button"
+					className="dashboard-amplify-score-preview__open"
+					aria-label={
+						isExpanded ? __( 'Collapse sample report scores' ) : __( 'Expand sample report scores' )
+					}
+					aria-expanded={ isExpanded }
+					onClick={ toggle }
+				/>
+			</div>
+		</div>
 	);
 }

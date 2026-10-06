@@ -9,12 +9,9 @@ import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { Text } from '../../components/text';
 import AmplifyDevStateControls, {
-	DEFAULT_HERO_TWEAKS,
-	type AmplifyHero,
 	makePreviewReports,
 	useAmplifyDevSettings,
 } from './dev-state-controls';
-import { isDrawnHero } from './hero-directions';
 import AmplifyNewReportModal from './new-report-modal';
 import AmplifyReportCreator from './report-creator';
 import AmplifyReportsList from './reports';
@@ -33,27 +30,22 @@ export default function AgencyAmplify() {
 		() => makePreviewReports( devSettings.mode === 'one' ? 1 : 24 ),
 		[ devSettings.mode ]
 	);
-	// Review links: ?hero=findings-a1..a4|report-tile and
-	// ?state=first|one set the panel once on load.
+	// Review links can set the preview persona once on load.
 	useEffect( () => {
 		if ( ! isDevelopment || ! areDevSettingsReady ) {
 			return;
 		}
 		const searchParams = new URLSearchParams( window.location.search );
-		const urlHero = searchParams.get( 'hero' );
 		const urlState = searchParams.get( 'state' );
-		const hasHero = !! urlHero && isDrawnHero( urlHero );
-		if ( ! hasHero && urlState !== 'first' && urlState !== 'one' ) {
+		if ( urlState !== 'first' && urlState !== 'one' ) {
 			return;
 		}
 		setDevSettings( ( previous ) => ( {
 			...previous,
-			hero: hasHero ? ( urlHero as AmplifyHero ) : previous.hero,
-			mode: urlState === 'first' || urlState === 'one' ? urlState : previous.mode,
+			mode: urlState,
 		} ) );
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ areDevSettingsReady ] );
-	const hero = devSettings.hero;
 	const devMode = devSettings.mode;
 	const mode = isDevelopment && areDevSettingsReady ? devMode : 'live';
 	const liveReports = reportsQuery.data?.reports ?? [];
@@ -101,8 +93,6 @@ export default function AgencyAmplify() {
 						<EmptyState>
 							<AmplifyReportCreator
 								agencyId={ agencyId }
-								hero={ isDevelopment ? hero : 'before-after' }
-								heroTweaks={ isDevelopment ? devSettings.heroTweaks : DEFAULT_HERO_TWEAKS }
 								usage={ reportsQuery.data?.usage }
 								onCreated={ () => {
 									if ( isDevelopment ) {
@@ -135,8 +125,6 @@ export default function AgencyAmplify() {
 			{ isNewReportOpen && (
 				<AmplifyNewReportModal
 					agencyId={ agencyId }
-					hero={ isDevelopment ? hero : 'before-after' }
-					heroTweaks={ isDevelopment ? devSettings.heroTweaks : DEFAULT_HERO_TWEAKS }
 					usage={ reportsQuery.data?.usage }
 					onClose={ () => setIsNewReportOpen( false ) }
 					onCreated={ () => {
