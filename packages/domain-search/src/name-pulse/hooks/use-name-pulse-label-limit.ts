@@ -33,11 +33,15 @@ export const useNamePulseLabelLimit = ( label: string ) => {
 			return;
 		}
 
-		// The label's width plus the free space at the end of the name column.
-		const available =
-			labelElement.getBoundingClientRect().width +
-			name.getBoundingClientRect().right -
-			lastChild.getBoundingClientRect().right;
+		// The label's width plus the free space at the end of the name column,
+		// which is on the left in RTL.
+		const nameRect = name.getBoundingClientRect();
+		const lastChildRect = lastChild.getBoundingClientRect();
+		const free =
+			getComputedStyle( name ).direction === 'rtl'
+				? lastChildRect.left - nameRect.left
+				: nameRect.right - lastChildRect.right;
+		const available = labelElement.getBoundingClientRect().width + free;
 
 		// No layout, e.g. in tests.
 		if ( ! available ) {

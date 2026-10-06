@@ -149,6 +149,32 @@ describe( 'NamePulseResultRow', () => {
 		expect( screen.getByText( 'icecreamshopnearsuratairport' ) ).toBeInTheDocument();
 	} );
 
+	it( 'uses the free space on the left of the name in RTL', () => {
+		mockLabelLayout( 100 );
+		// 900px free on the left of a 100px label; none on the right.
+		jest.spyOn( Element.prototype, 'getBoundingClientRect' ).mockImplementation( function (
+			this: Element
+		) {
+			return (
+				this.classList.contains( 'name-pulse-row__name' )
+					? { left: 0, right: 1000, width: 1000 }
+					: { left: 900, right: 1000, width: 100 }
+			) as DOMRect;
+		} );
+		const getComputedStyle = window.getComputedStyle;
+		jest.spyOn( window, 'getComputedStyle' ).mockImplementation(
+			( element ) =>
+				new Proxy( getComputedStyle( element ), {
+					get: ( style, property ) =>
+						property === 'direction' ? 'rtl' : Reflect.get( style, property ),
+				} )
+		);
+
+		renderRow( buildResult( { domain_name: LONG_DOMAIN, suffix: 'boutique' } ) );
+
+		expect( screen.getByText( 'icecreamshopnearsuratairport' ) ).toBeInTheDocument();
+	} );
+
 	it( 'shows the full long name below desktop', () => {
 		mockUseViewportMatch.mockReturnValue( true );
 
