@@ -6,7 +6,7 @@ import {
 } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { useState, useEffect, useMemo, useRef } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { getModerateCommentsLink } from '../../panel/helpers/notes';
 import { html } from '../../panel/indices-to-html';
@@ -21,10 +21,6 @@ import PromptBlock from './block-prompt';
 import User from './block-user';
 import NotePreface from './preface';
 import type { Note, Block, BlockWithSignature } from '../types';
-
-// Shows the placeholder's own background, and can't itself fail to load.
-const TRANSPARENT_PIXEL =
-	'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
 
 const isReplyBlock = ( note: Note, block: Block ) =>
 	block.ranges && block.ranges.length > 1 && block.ranges[ 1 ].id === note.meta?.ids?.reply_comment;
@@ -161,36 +157,8 @@ export const NoteBody = ( { note }: { note: Note } ) => {
 		bumpStat( 'notes-click-type', note.type );
 	}, [ note.type ] );
 
-	// Content images arrive as markup, so React can't catch one that fails to load (a
-	// blocked or cross-origin source). Swap it for a placeholder rather than leave the
-	// browser's broken icon. `error` doesn't bubble, so listen in the capture phase.
-	const bodyRef = useRef< HTMLDivElement >( null );
-	useEffect( () => {
-		const element = bodyRef.current;
-		if ( ! element ) {
-			return;
-		}
-		const markUnavailable = ( image: HTMLImageElement ) => {
-			image.classList.add( 'is-unavailable' );
-			image.removeAttribute( 'srcset' );
-			image.src = TRANSPARENT_PIXEL;
-		};
-		element.querySelectorAll( 'img' ).forEach( ( image ) => {
-			if ( image.complete && image.naturalWidth === 0 ) {
-				markUnavailable( image );
-			}
-		} );
-		const handleError = ( event: Event ) => {
-			if ( event.target instanceof HTMLImageElement ) {
-				markUnavailable( event.target );
-			}
-		};
-		element.addEventListener( 'error', handleError, true );
-		return () => element.removeEventListener( 'error', handleError, true );
-	}, [ note ] );
-
 	return (
-		<VStack className="wpnc__body" ref={ bodyRef }>
+		<VStack className="wpnc__body">
 			{ preface }
 			{ showPendingApprovalBadge && (
 				<div className="wpnc__pending-approval-section">
