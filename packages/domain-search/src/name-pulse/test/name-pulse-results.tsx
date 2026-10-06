@@ -974,6 +974,7 @@ describe( 'NamePulseResults', () => {
 			expect( bundle.closest( '.name-pulse-featured' ) ).toContainElement(
 				await findExactMatchCard()
 			);
+			expect( bundle.closest( '.name-pulse-bundle-wide' ) ).toBeNull();
 			expect( within( bundle ).getByText( 'Protect your brand' ) ).toBeVisible();
 			expect( bundleForDomain ).toHaveBeenCalledWith( 'icecream.com' );
 			expect( onBundleShown ).toHaveBeenCalledTimes( 1 );
@@ -1030,6 +1031,8 @@ describe( 'NamePulseResults', () => {
 
 			expect( document.querySelector( '.name-pulse-featured' ) ).toBeNull();
 			expect( isAfterTopResults( bundle ) ).toBe( true );
+			// Spans the row, so it lays the price out beside the TLDs.
+			expect( bundle.closest( '.name-pulse-bundle-wide' ) ).not.toBeNull();
 		} );
 
 		it( 'renders nothing when no anchor has a bundle', async () => {
