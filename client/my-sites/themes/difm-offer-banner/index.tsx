@@ -3,6 +3,7 @@ import { getDifmOfferCopy, useDifmOffer } from 'calypso/dashboard/utils/difm-off
 import { useSelector } from 'calypso/state';
 import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
 import { getSite } from 'calypso/state/sites/selectors';
+import { isUpsellCardDisplayed } from 'calypso/state/themes/selectors';
 
 const UPSELL_ID = 'themes-difm-offer';
 const UPSELL_FEATURE_ID = 'difm-offer';
@@ -14,6 +15,8 @@ interface DifmOfferBannerProps {
 export default function DifmOfferBanner( { siteId }: DifmOfferBannerProps ) {
 	const site = useSelector( ( state ) => getSite( state, siteId ) );
 	const localeSlug = useSelector( getCurrentLocaleSlug ) ?? undefined;
+	// The in-grid upsell card already offers DIFM, so hide this banner while it shows.
+	const isUpsellCardShown = useSelector( isUpsellCardDisplayed );
 
 	const { isEligible, isLoading, variation } = useDifmOffer( {
 		planSlug: site?.plan?.product_slug,
@@ -24,7 +27,7 @@ export default function DifmOfferBanner( { siteId }: DifmOfferBannerProps ) {
 
 	const copy = getDifmOfferCopy( variation );
 
-	if ( ! site || ! isEligible || isLoading || ! copy ) {
+	if ( ! site || isUpsellCardShown || ! isEligible || isLoading || ! copy ) {
 		return null;
 	}
 
