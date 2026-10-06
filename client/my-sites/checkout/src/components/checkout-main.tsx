@@ -934,12 +934,7 @@ export default function CheckoutMain( {
 						changeSelection={ changeSelection }
 						countriesList={ countriesList }
 						createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
-						infoMessage={
-							<PrePurchaseNotices
-								siteId={ updatedSiteId }
-								shouldQueryUserPurchases={ Boolean( sitelessCheckoutType ) }
-							/>
-						}
+						infoMessage={ <PrePurchaseNotices /> }
 						isLoggedOutCart={ !! isLoggedOutCart }
 						onPageLoadError={ onPageLoadError }
 						paymentMethods={ paymentMethods }

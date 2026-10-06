@@ -146,7 +146,7 @@ describe( 'Checkout contact step', () => {
 		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } /> );
 
 		expect( await screen.findByText( 'Enter your contact information' ) ).toBeInTheDocument();
-		expect( screen.getByRole( 'link', { name: 'Learn more' } ) ).toHaveAttribute(
+		expect( await screen.findByRole( 'link', { name: 'Learn more' } ) ).toHaveAttribute(
 			'href',
 			'https://wordpress.com/support/domains/private-domain-registration/#information-we-collect-and-why'
 		);

@@ -173,7 +173,6 @@ describe( 'SiteSpec early provisioning step', () => {
 		);
 		wpcomPostMock.mockResolvedValue( {
 			blog_id: 123,
-			site_editor_url: 'https://example.wordpress.com/wp-admin/site-editor.php',
 			atomic: {
 				is_atomic: true,
 				ready_for_editor: true,
@@ -209,9 +208,7 @@ describe( 'SiteSpec early provisioning step', () => {
 		expect( redirect.searchParams.get( 'specId' ) ).toBe( 'spec-456' );
 		expect( redirect.searchParams.get( 'ref' ) ).toBe( 'site-card' );
 		expect( redirect.searchParams.get( 'source' ) ).toBe( 'site-overview' );
-		expect( redirect.searchParams.get( 'editorUrl' ) ).toBe(
-			'https://example.wordpress.com/wp-admin/site-editor.php?source=site-overview'
-		);
+		expect( redirect.searchParams.has( 'editorUrl' ) ).toBe( false );
 
 		expect( logToLogstashMock ).toHaveBeenCalledWith(
 			expect.objectContaining( {
@@ -462,7 +459,6 @@ describe( 'SiteSpec blueprint archive import', () => {
 			);
 			wpcomPostMock.mockResolvedValue( {
 				blog_id: 123,
-				site_editor_url: 'https://example.wordpress.com/wp-admin/site-editor.php?canvas=edit',
 				build: { status: 'queued' },
 			} );
 		} );
@@ -486,6 +482,7 @@ describe( 'SiteSpec blueprint archive import', () => {
 			expect( destination.searchParams.get( 'build_wow' ) ).toBe( '1' );
 			expect( destination.searchParams.get( 'specId' ) ).toBe( 'spec-789' );
 			expect( destination.searchParams.get( 'siteId' ) ).toBe( '123' );
+			expect( destination.searchParams.has( 'editorUrl' ) ).toBe( false );
 		} );
 
 		it( 'keeps the blueprint out of the interview so the full design brief is asked', () => {

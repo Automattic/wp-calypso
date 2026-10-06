@@ -514,8 +514,11 @@ export class DomainSearchComponent {
 	/**
 	 * Skips the domain search screen.
 	 */
-	async skipPurchase(): Promise< string > {
-		const button = this.page.getByRole( 'button', { name: 'Skip purchase' } );
+	async skipPurchase(): Promise< void > {
+		// Onboarding labels the button without the free subdomain.
+		const button = this.page.getByRole( 'button', {
+			name: /^(Skip purchase|Skip the domain for now)/,
+		} );
 
 		try {
 			await button.waitFor();
@@ -531,15 +534,6 @@ export class DomainSearchComponent {
 			throw error;
 		}
 
-		let domain = await button.getAttribute( 'aria-label' );
-		domain = domain?.replace( 'Skip purchase and continue with ', '' ) ?? null;
-
-		if ( ! domain ) {
-			throw new Error( 'No domain found for skip purchase button' );
-		}
-
 		await button.click();
-
-		return domain;
 	}
 }

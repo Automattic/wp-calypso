@@ -1,3 +1,4 @@
+import { siteByIdQuery } from '@automattic/api-queries';
 import {
 	isDomainMapping,
 	isDomainRegistration,
@@ -6,6 +7,7 @@ import {
 import { FormStatus, useFormStatus } from '@automattic/composite-checkout';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { styled, joinClasses } from '@automattic/wpcom-checkout';
+import { useQuery } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useCallback } from 'react';
 import { hasP2PlusPlan } from 'calypso/lib/cart-values/cart-items';
@@ -149,8 +151,21 @@ export default function WPCheckoutOrderReview( {
 	const [ , isCheckoutUiRedesignV1 ] = useCheckoutUiRedesignExperiment();
 	const { isMobileCheckoutStickySummary } = useMobileCheckoutStickySummaryExperiment();
 
+	// A cart without a site in its key (eg: a renewal at `/checkout/renew/:id`)
+	// can still belong to a site if the server assigned one to it.
+	const cartBlogId = Number( responseCart.blog_id ) || 0;
+	const { data: cartSite } = useQuery( {
+		...siteByIdQuery( cartBlogId ),
+		enabled: ! selectedSiteData && cartBlogId > 0,
+	} );
+
 	// This is what will be displayed at the top of checkout prefixed by "Site: ".
-	const domainUrl = getDomainToDisplayInCheckoutHeader( responseCart, selectedSiteData, siteUrl );
+	const domainUrl = getDomainToDisplayInCheckoutHeader(
+		responseCart,
+		selectedSiteData,
+		siteUrl,
+		cartSite?.slug
+	);
 
 	const planIsP2Plus = hasP2PlusPlan( responseCart );
 
@@ -296,7 +311,8 @@ export function CouponFieldArea( {
 function getDomainToDisplayInCheckoutHeader(
 	responseCart: ResponseCart,
 	selectedSiteData: SiteDetails | undefined | null,
-	sitelessCheckoutSlug: string | undefined
+	sitelessCheckoutSlug: string | undefined,
+	cartSiteSlug: string | undefined
 ): string | undefined {
 	if ( hasP2PlusPlan( responseCart ) ) {
 		return undefined;
@@ -326,7 +342,7 @@ function getDomainToDisplayInCheckoutHeader(
 		return sitelessCheckoutSlug;
 	}
 
-	return undefined;
+	return cartSiteSlug;
 }
 
 function getDomainProductUrlToDisplayInCheckoutHeader(

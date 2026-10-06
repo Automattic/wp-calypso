@@ -31,7 +31,8 @@ declare const agentsManagerData:
 			isA11n?: boolean;
 			/**
 			 * The site's own usage-tracking opt-in, where the host has one (a WooCommerce
-			 * store's). `false` stops every Tracks event; absent means allowed.
+			 * store's). `false` stops every Tracks event; absent means allowed. Also sent
+			 * in the client context, where only `true` lets the orchestrator record events.
 			 */
 			isTrackingAllowed?: boolean;
 			/** Whether the site is WordPress.com-hosted (Simple/WoA). */

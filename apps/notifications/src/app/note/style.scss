@@ -8,7 +8,9 @@
 	padding: 0;
 	margin: 0;
 	line-height: 20px;
-	text-wrap: balance;
+	// Balancing evens out line lengths by breaking early, which leaves paragraphs
+	// ragged; it is kept for headings only.
+	text-wrap: pretty;
 	// Break long unbroken strings (e.g. URLs) so they wrap instead of
 	// overflowing horizontally, which is especially visible on mobile.
 	overflow-wrap: break-word;
@@ -29,22 +31,28 @@
 		text-align: justify;
 	}
 
-	.wpnc__h1 {
-		font-size: $font-size-2x-large;
-		font-weight: 850; /* stylelint-disable-line scales/font-weights */
-		line-height: 1.4;
+	// Headings sit beside 13px text in a narrow panel, so they mark sections rather
+	// than title a page: close to body size, with room above to separate them.
+	:is(h1, h2, h3, h4, h5, h6, .wpnc__h1, .wpnc__h2, .wpnc__h3) {
+		margin: $grid-unit-10 0 $grid-unit-05;
+		font-size: 17px;
+		font-weight: $font-weight-medium;
+		line-height: 24px;
+		text-wrap: balance;
+
+		&:first-child {
+			margin-block-start: 0;
+		}
 	}
 
-	.wpnc__h2 {
-		font-size: 26px;
-		font-weight: 750; /* stylelint-disable-line scales/font-weights */
-		line-height: 1.4;
+	:is(h3, h4, h5, h6, .wpnc__h3) {
+		font-size: $font-size-large;
+		line-height: 20px;
 	}
 
-	.wpnc__h3 {
-		font-size: 18px;
-		font-weight: 700;
-		line-height: 1.4;
+	// Matches the dashboard's emphasis, which is lighter than the browser's bold.
+	:is(strong, b) {
+		font-weight: 600;
 	}
 
 	.uppercase {
@@ -86,7 +94,8 @@
 		display: block;
 		max-width: 100%;
 		height: auto;
-		margin: auto;
+		margin: 0 auto $grid-unit-10;
+		border-radius: $radius-small;
 	}
 
 	.wpnc__badge {
@@ -180,7 +189,15 @@
 	ul,
 	ol {
 		margin-left: 1.5em;
+		// Paragraph spacing comes from blank lines in the note's text, and a list's
+		// closing tag can share its line with what follows, so the list carries its own.
+		margin-bottom: $grid-unit-20;
 		list-style-position: inside;
+
+		// Where a blank line does follow, it would double the gap.
+		+ br {
+			display: none;
+		}
 	}
 
 	ul {
@@ -199,6 +216,16 @@
 
 	li {
 		margin: auto;
+	}
+
+	// Posts often carry empty paragraphs, which would otherwise add stray gaps.
+	p:empty {
+		display: none;
+	}
+
+	// Only between items, so the list's own top and bottom spacing is unchanged.
+	li + li {
+		margin-top: $grid-unit-05;
 	}
 
 	// Monospaced, boxed styling for inline code and code blocks.
