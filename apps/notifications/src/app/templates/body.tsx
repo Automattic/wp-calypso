@@ -20,7 +20,7 @@ import NoteActions from './actions';
 import Comment from './block-comment';
 import Post from './block-post';
 import PromptBlock from './block-prompt';
-import User from './block-user';
+import User, { isPeopleListNote } from './block-user';
 import NotePreface from './preface';
 import type { Note, Block, BlockWithSignature } from '../types';
 
@@ -155,13 +155,15 @@ export const NoteBody = ( { note }: { note: Note } ) => {
 			}
 		} );
 
-	// Outside a comment, the people a note opens with are a list, and the text after
-	// them is a footnote to it, such as a link to every like.
+	// The people a list note opens with are stacked as one list, and text closing the
+	// note is a footnote to it, such as a link to every like.
 	const firstOther = body.findIndex( ( { type } ) => type !== User );
-	const people =
-		note.type === 'comment' ? [] : body.slice( 0, firstOther < 0 ? undefined : firstOther );
+	const people = isPeopleListNote( note )
+		? body.slice( 0, firstOther < 0 ? undefined : firstOther )
+		: [];
 	const others = body.slice( people.length );
-	const footnote = people.length > 0 && others[ 0 ]?.type === 'div' ? others.shift() : null;
+	const footnote =
+		people.length > 0 && others.length === 1 && others[ 0 ].type === 'div' ? others.pop() : null;
 
 	useEffect( () => {
 		bumpStat( 'notes-click-type', note.type );

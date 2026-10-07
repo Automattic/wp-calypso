@@ -14,6 +14,10 @@ import FollowLink, { followStatTypes } from './follow-link';
 import type { Note, Block } from '../types';
 import type { ReactElement } from 'react';
 
+// Notes whose body is a list of the people who acted.
+export const isPeopleListNote = ( note: Note ) =>
+	[ 'like', 'comment_like', 'follow' ].includes( note.type );
+
 function getDisplayURL( url: string ) {
 	const parser = document.createElement( 'a' );
 	parser.href = url;
@@ -80,9 +84,9 @@ export default function UserBlock( { note, block }: { note: Note; block: Block }
 		</a>
 	);
 
-	// Outside a comment, a person is a byline: their name over their site, with the
-	// follow link at the far end.
-	if ( note.type !== 'comment' ) {
+	// In a list, a person is a byline: their name over their site, with the follow
+	// link at the far end.
+	if ( isPeopleListNote( note ) ) {
 		return (
 			<HStack className="wpnc__user" spacing={ 4 }>
 				{ avatar }
@@ -123,9 +127,11 @@ export default function UserBlock( { note, block }: { note: Note; block: Block }
 	// between them — so there's never a leading, trailing, or doubled separator
 	// when an item is absent.
 	const descriptionParts = [
-		<a key="date" href={ note.url } target="_blank" rel="noreferrer" style={ { flexShrink: 0 } }>
-			<Text variant="muted">{ formatDate( note.timestamp, locale ) }</Text>
-		</a>,
+		note.type === 'comment' && (
+			<a key="date" href={ note.url } target="_blank" rel="noreferrer" style={ { flexShrink: 0 } }>
+				<Text variant="muted">{ formatDate( note.timestamp, locale ) }</Text>
+			</a>
+		),
 		homeTitle && (
 			<a
 				key="home"
@@ -137,6 +143,17 @@ export default function UserBlock( { note, block }: { note: Note; block: Block }
 				{ homeTitle }
 			</a>
 		),
+		note.type !== 'comment' &&
+			!! block.meta?.ids?.site &&
+			block.actions &&
+			'follow' in block.actions && (
+				<FollowLink
+					key="follow"
+					site={ block.meta.ids.site }
+					isFollowing={ !! block.actions.follow }
+					noteType={ note.type as keyof typeof followStatTypes }
+				/>
+			),
 	].filter( ( part ): part is ReactElement => Boolean( part ) );
 
 	return (

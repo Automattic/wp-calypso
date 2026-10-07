@@ -335,11 +335,6 @@
 	a {
 		text-decoration: none;
 	}
-
-	// The Text component sets its own colour, which would hide that these are links.
-	a:hover .components-text {
-		color: var(--wp-admin-theme-color);
-	}
 }
 
 // The body's reset pins every element to its parent's font size, which outranks the
