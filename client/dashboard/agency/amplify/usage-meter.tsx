@@ -154,7 +154,6 @@ export function AmplifyUsageMeter( {
 	if ( ! usage || ! hasAllowance( status ) ) {
 		return null;
 	}
-	const remaining = Math.max( 0, usage.limit - usage.used );
 	// The bar fills as audits are used and turns red when the allowance is gone.
 	const percent = Math.min( 100, Math.round( ( usage.used / Math.max( 1, usage.limit ) ) * 100 ) );
 	return (
@@ -171,9 +170,9 @@ export function AmplifyUsageMeter( {
 			</div>
 			<Text size={ 13 } className="dashboard-amplify-usage__label">
 				{ sprintf(
-					/* translators: 1: audits remaining, 2: monthly audit limit */
+					/* translators: 1: audits used this month, 2: monthly audit limit */
 					__( '%1$d of %2$d audits' ),
-					remaining,
+					Math.min( usage.used, usage.limit ),
 					usage.limit
 				) }
 			</Text>
