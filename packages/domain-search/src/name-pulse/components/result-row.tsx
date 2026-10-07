@@ -63,19 +63,22 @@ const Price = ( {
 		return (
 			<span className="name-pulse-row__price name-pulse-row__price--card">
 				{ isSale && (
-					<Text as="s" size={ 16 } variant="muted">
+					<Text as="s" size={ 18 } lineHeight="26px" variant="muted">
 						{ yearlyPrice }
 					</Text>
 				) }
 				<Text
-					size={ 16 }
+					size={ 18 }
+					lineHeight="26px"
 					color={ isSale ? 'var( --domain-search-promotional-price-color )' : undefined }
 				>
 					{ salePrice ?? yearlyPrice }
 				</Text>
-				<Text size={ 13 }>{ isSale ? __( '/first year' ) : __( '/year' ) }</Text>
+				<Text size={ 11 } lineHeight="20px">
+					{ isSale ? __( '/first year' ) : __( '/year' ) }
+				</Text>
 				{ renewal && (
-					<Text size={ 12 } variant="muted">
+					<Text size={ 11 } lineHeight="20px" variant="muted">
 						{ renewal }
 					</Text>
 				) }
