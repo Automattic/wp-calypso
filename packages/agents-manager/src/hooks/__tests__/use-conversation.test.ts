@@ -233,6 +233,22 @@ describe( 'useConversation', () => {
 			}
 		);
 
+		it( 'drops the Retry notice once the chat starts processing', () => {
+			jest.useFakeTimers();
+			mockLoadedConversation( [ question ] );
+			const { result, rerender } = renderHook(
+				( props: { waitForReply: boolean } ) => useConversation( props ),
+				{ initialProps: { waitForReply: true } }
+			);
+			act( () => jest.advanceTimersByTime( MAX_REPLY_WAIT_MS ) );
+			expect( result.current.notice?.message ).toBe( 'No reply arrived for your last question.' );
+
+			rerender( { waitForReply: false } );
+
+			expect( result.current.notice ).toBeUndefined();
+			jest.useRealTimers();
+		} );
+
 		it( 'cancels the reload in flight when the chat starts processing', () => {
 			mockLoadedConversation( [ question ] );
 			const { rerender } = renderHook(

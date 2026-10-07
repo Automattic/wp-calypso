@@ -115,7 +115,16 @@ export default function useConversation( {
 
 	useEffect(
 		() => {
-			if ( ! waitForReply && replyWait === 'waiting' ) {
+			if ( waitForReply ) {
+				return;
+			}
+
+			// A new turn answers the Retry notice too: its Retry would resend mid-turn.
+			if ( replyWait === 'timed-out' ) {
+				setReplyWait( 'idle' );
+			}
+
+			if ( replyWait === 'waiting' ) {
 				setReplyWait( 'idle' );
 
 				// A reload still in flight would land over the turn that just started.
