@@ -118,7 +118,7 @@
 	display: flex;
 	flex-direction: column;
 	gap: $grid-unit-20;
-	min-block-size: 220px;
+	min-block-size: 140px;
 	padding: 20px $grid-unit-30;
 	box-sizing: border-box;
 	// A light tint of the brand colour, with the brand colour itself for ink.
@@ -135,17 +135,12 @@
 		block-size: 72px;
 	}
 
-	// Reserves the illustration's corner, so neither the label nor a long title
-	// runs into it.
+	// The wordmark and badge, kept clear of the illustration's corner so that
+	// neither they nor a long title run into it.
 	.dashboard-resources-learn__card-label {
 		min-block-size: 64px;
 		padding-inline-end: 80px;
 		box-sizing: border-box;
-	}
-
-	// Nested under the header for specificity over the components' own runtime styles.
-	.dashboard-resources-learn__card-eyebrow {
-		letter-spacing: 0.14em;
 	}
 
 	.dashboard-resources-learn__card-title {
@@ -219,11 +214,6 @@
 	background-color: var( --resource-card-ink, var( --resource-brand ) );
 	border-color: var( --resource-card-ink, var( --resource-brand ) );
 	color: $studio-white;
-}
-
-.dashboard-resources-learn__card-brand {
-	padding-block-start: $grid-unit-15;
-	border-block-start: 1px solid color-mix( in srgb, currentColor 25%, transparent );
 }
 
 .dashboard-resources-learn__filter-badge {

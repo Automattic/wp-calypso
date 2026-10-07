@@ -7,7 +7,7 @@ import { __, sprintf } from '@wordpress/i18n';
 import { Badge } from '@wordpress/ui';
 import { memo } from 'react';
 import { Card, CardBody } from '../../../../components/card';
-import { getAudienceLabel, getStageLabel } from '../lib/labels';
+import { getAudienceLabel, getContentTypeLabel, getStageLabel } from '../lib/labels';
 import ResourceLink from '../resource-link';
 import ResourceCardHeader from './header';
 import type { FilterResources, OpenResource } from '../types';
@@ -28,7 +28,7 @@ function FilterBadge( { label, onClick }: { label: string; onClick: () => void }
 			type="button"
 			className="dashboard-resources-learn__filter-badge"
 			aria-label={
-				/* translators: %s: A resource's audience or stage, such as "Learn". */
+				/* translators: %s: A resource's content type, audience or stage, such as "Learn". */
 				sprintf( __( 'Filter by %s' ), label )
 			}
 			onClick={ onClick }
@@ -57,6 +57,10 @@ function ResourceCard( { resource, onOpen, onFilter }: ResourceCardProps ) {
 						{ resource.description }
 					</Text>
 					<HStack spacing={ 1 } justify="flex-start" wrap>
+						<FilterBadge
+							label={ getContentTypeLabel( resource.content_type ) }
+							onClick={ () => onFilter( 'content_type', resource.content_type ) }
+						/>
 						<FilterBadge
 							label={ getAudienceLabel( resource.audience ) }
 							onClick={ () => onFilter( 'audience', resource.audience ) }

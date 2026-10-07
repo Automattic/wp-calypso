@@ -4,8 +4,6 @@ import {
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { Badge } from '@wordpress/ui';
-import { Text } from '../../../../components/text';
-import { getContentTypeLabel } from '../lib/labels';
 import ResourceProductLogo from '../resource-product-logo';
 import ResourceIllustration from './illustration';
 import type { AgencyEnablementResource } from '@automattic/api-core';
@@ -30,16 +28,7 @@ export default function ResourceCardHeader( { resource, title }: ResourceCardHea
 				expanded={ false }
 				className="dashboard-resources-learn__card-label"
 			>
-				<Text
-					className="dashboard-resources-learn__card-eyebrow"
-					color="inherit"
-					size={ 10 }
-					weight={ 600 }
-					lineHeight="16px"
-					upperCase
-				>
-					{ getContentTypeLabel( resource.content_type ) }
-				</Text>
+				<ResourceProductLogo product={ resource.product } />
 				{ resource.is_featured && (
 					<Badge className="dashboard-resources-learn__top-badge">{ __( 'Top resource' ) }</Badge>
 				) }
@@ -47,9 +36,6 @@ export default function ResourceCardHeader( { resource, title }: ResourceCardHea
 			<Heading level={ 3 } color="inherit" className="dashboard-resources-learn__card-title">
 				{ title }
 			</Heading>
-			<div className="dashboard-resources-learn__card-brand">
-				<ResourceProductLogo product={ resource.product } />
-			</div>
 		</div>
 	);
 }
