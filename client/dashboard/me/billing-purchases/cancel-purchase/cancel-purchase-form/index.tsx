@@ -526,14 +526,11 @@ function canGoToNextStep( {
 }
 
 function getSurveyTitle( surveyStep: string ) {
-	if ( surveyStep === CANCELLATION_OFFER_STEP ) {
-		return '';
-	}
-	if ( surveyStep === UPSELL_STEP ) {
-		return '';
+	if ( surveyStep === FEEDBACK_STEP || surveyStep === NEXT_ADVENTURE_STEP ) {
+		return __( 'Before you go, please answer a few quick questions to help us improve.' );
 	}
 
-	return __( 'Before you go, please answer a few quick questions to help us improve.' );
+	return '';
 }
 
 export default function CancelPurchaseForm( props: CancelPurchaseFormProps ) {

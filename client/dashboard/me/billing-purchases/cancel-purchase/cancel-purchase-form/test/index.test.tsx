@@ -5,7 +5,7 @@
 import { screen } from '@testing-library/react';
 import { render } from '../../../../../test-utils';
 import CancelPurchaseForm from '../index';
-import { FEEDBACK_STEP, NEXT_ADVENTURE_STEP } from '../steps';
+import { ATOMIC_REVERT_STEP, FEEDBACK_STEP, NEXT_ADVENTURE_STEP, REMOVE_PLAN_STEP } from '../steps';
 import type { Purchase } from '@automattic/api-core';
 
 function makePurchase( overrides: Partial< Purchase > = {} ): Purchase {
@@ -40,6 +40,13 @@ const defaultProps = {
 	onRadioOneChange: noop,
 	onTextOneChange: noop,
 };
+
+const personalPlan = makePurchase( {
+	product_name: 'WordPress.com Personal',
+	product_slug: 'personal-bundle',
+	subscription_status: 'active',
+	expiry_date: '2027-02-23T12:00:00+00:00',
+} );
 
 describe( '<CancelPurchaseForm />', () => {
 	test( 'asks for a cancellation reason for a Google Workspace purchase', () => {
@@ -97,5 +104,58 @@ describe( '<CancelPurchaseForm />', () => {
 
 		expect( screen.queryByRole( 'radio' ) ).not.toBeInTheDocument();
 		expect( screen.getByRole( 'button', { name: 'Complete removal' } ) ).toBeEnabled();
+	} );
+
+	test.each( [ FEEDBACK_STEP, NEXT_ADVENTURE_STEP ] )(
+		'shows the survey title on %s',
+		( surveyStep ) => {
+			render(
+				<CancelPurchaseForm
+					{ ...defaultProps }
+					surveyStep={ surveyStep }
+					purchase={ makePurchase() }
+				/>
+			);
+
+			expect(
+				screen.getByRole( 'heading', { name: /answer a few quick questions/ } )
+			).toBeVisible();
+		}
+	);
+
+	test( 'shows only the remove plan copy on the remove plan step', () => {
+		render(
+			<CancelPurchaseForm
+				{ ...defaultProps }
+				surveyStep={ REMOVE_PLAN_STEP }
+				allSteps={ [ REMOVE_PLAN_STEP ] }
+				purchase={ personalPlan }
+			/>
+		);
+
+		expect(
+			screen.queryByRole( 'heading', { name: /answer a few quick questions/ } )
+		).not.toBeInTheDocument();
+		expect( screen.getByText( /If you remove your plan/ ) ).toBeVisible();
+		expect( screen.getByText( /If you keep your plan/ ) ).toHaveTextContent(
+			'until Feb 23, 2027.'
+		);
+	} );
+
+	test( 'shows only the revert warning on the atomic revert step', () => {
+		render(
+			<CancelPurchaseForm
+				{ ...defaultProps }
+				surveyStep={ ATOMIC_REVERT_STEP }
+				allSteps={ [ ATOMIC_REVERT_STEP ] }
+				atomicTransfer={ { created_at: '2026-01-15T12:00:00+00:00' } }
+				purchase={ makePurchase( { expiry_date: '2027-02-23T12:00:00+00:00' } ) }
+			/>
+		);
+
+		expect(
+			screen.queryByRole( 'heading', { name: /answer a few quick questions/ } )
+		).not.toBeInTheDocument();
+		expect( screen.getByRole( 'heading', { name: 'Proceed with caution' } ) ).toBeVisible();
 	} );
 } );
