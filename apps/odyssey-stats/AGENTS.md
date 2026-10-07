@@ -78,7 +78,7 @@ Below both thresholds nothing provides it, so our copy is fetched as its own asy
 
 Two `webpack.config.js` aliases make that work: `@wordpress/components/build-style/style.css` is stubbed to an empty file so `style.scss`'s unconditional import doesn't pull it into the main bundle, and `odyssey-wp-components-style` points at the real file for the dynamic `import()`. The stub is scoped to this build only — `client/assets/stylesheets/style.scss` still imports the vendor CSS for Calypso, Blaze Dashboard and Stepper, which are standalone SPAs with no wp-admin to inherit it from.
 
-The widget entry (`widget-loader`) never imports `style.scss`, and Jetpack enqueues it without Odyssey's stylesheet, so the `stats_admin_version` signal never reaches the dashboard. It calls `loadWpComponentsStyleForWidget` instead, which skips our copy on WP 6.9+ or when the page already links `wp-components`, on its own or inside the concatenated `load-styles.php` request most production sites serve.
+The widget (`src/widget/index.tsx`, loaded by the `widget-loader` entry) never imports `style.scss`, and Jetpack enqueues it without Odyssey's stylesheet, so the `stats_admin_version` signal never reaches the dashboard. It calls `loadWpComponentsStyleForWidget` instead, which skips our copy on WP 6.9+ or when the page already links `wp-components`, on its own or inside the concatenated `load-styles.php` request most production sites serve.
 
 **If Odyssey ever needs a `@wordpress/components` style that wp-admin doesn't provide, add it as first-party SCSS — don't bundle the vendor file unconditionally.**
 

@@ -46,18 +46,9 @@ function isAtLeast( version: unknown, minimum: string ): boolean {
 /**
  * Whether wp-admin already serves `@wordpress/components`' base CSS, making our own copy redundant.
  *
- * Two independent signals, either one sufficient:
- *
- * - `stats_admin_version` — the real contract: Jetpack declaring `wp-components` as a dependency of
- *   our own stylesheet. Reaches a site only once its Jetpack plugin updates.
- * - `software_version` — WP 6.9+ enqueues `wp-components` globally for the command palette. That's
- *   an implementation detail of the palette, not a promise to us, but it's true today regardless of
- *   Jetpack version, so checking it means an un-updated Jetpack on a WP 6.9+ site still gets exactly
- *   one copy instead of two (harmless — nothing to collide with below 6.9 either way — but wasteful).
- *
- * Exported for tests: the version parsing is the only real logic here, and getting it wrong in
- * either direction is costly — too eager and we double-load and collide, too shy and the app
- * renders unstyled.
+ * Either signal is enough: `stats_admin_version`, where Jetpack declares `wp-components` as a
+ * dependency of our stylesheet, or WP 6.9+, which enqueues it for the command palette. The second
+ * is the palette's implementation detail, not a promise, but covers an un-updated Jetpack.
  */
 export function isProvidedByWpAdmin(): boolean {
 	return (
@@ -143,7 +134,8 @@ export default async function loadWpComponentsStyle(): Promise< void > {
 }
 
 /**
- * The dashboard widget's counterpart to `loadWpComponentsStyle`.
+ * Loads our copy of `@wordpress/components`' base CSS for the dashboard widget, unless
+ * `isProvidedToWidget`.
  */
 export async function loadWpComponentsStyleForWidget(): Promise< void > {
 	if ( isProvidedToWidget() ) {
