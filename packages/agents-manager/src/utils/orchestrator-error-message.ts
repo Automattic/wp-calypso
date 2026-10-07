@@ -1,5 +1,11 @@
 import { __ } from '@wordpress/i18n';
 
+/**
+ * The server's error code for a second result to the same browser tool call: another
+ * page answered first and the turn continues there, so it is not an error to show.
+ */
+export const TOOL_RESULT_ALREADY_RECEIVED = 'tool_result_already_received';
+
 function isUsageLimitError( error: string ): boolean {
 	return error === 'ai_editorial_review_over_limit' || /jetpack ai usage limit/i.test( error );
 }

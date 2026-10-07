@@ -989,6 +989,31 @@ describe( 'parseSSEStream', () => {
 		expect( thrown ).toEqual( new Error( 'Streaming error: Terminal failure' ) );
 	} );
 
+	it( 'keeps the server error code on the thrown error', async () => {
+		const stream = streamFromEvents( [
+			{
+				jsonrpc: '2.0',
+				id: 'req-1',
+				error: {
+					code: -32000,
+					message: 'This tool result was already received.',
+					data: { code: 'tool_result_already_received' },
+				},
+			},
+		] );
+		let thrown: unknown;
+		try {
+			// eslint-disable-next-line @typescript-eslint/no-unused-vars
+			for await ( const update of parseSSEStream( stream ) ) {
+				// Drain.
+			}
+		} catch ( error ) {
+			thrown = error;
+		}
+
+		expect( ( thrown as { code?: string } ).code ).toBe( 'tool_result_already_received' );
+	} );
+
 	describe( 'delta pacing', () => {
 		afterEach( () => {
 			vi.unstubAllGlobals();

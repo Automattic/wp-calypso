@@ -7,6 +7,8 @@ const mockCancelQueries = jest.fn();
 const mockGetQueryData = jest.fn();
 const mockLoadChatFromServer = jest.fn();
 const mockLoadAllMessagesFromServer = jest.fn();
+const mockLoadConversation = jest.fn();
+let mockParkedNavigationCallId: string | undefined;
 
 jest.mock(
 	'@automattic/agenttic-client',
@@ -16,6 +18,7 @@ jest.mock(
 		createOdieBotId: ( agentId: string ) => agentId,
 		loadAllMessagesFromServer: ( ...args: unknown[] ) => mockLoadAllMessagesFromServer( ...args ),
 		loadChatFromServer: ( ...args: unknown[] ) => mockLoadChatFromServer( ...args ),
+		loadConversation: ( ...args: unknown[] ) => mockLoadConversation( ...args ),
 	} ),
 	{ virtual: true }
 );
@@ -29,11 +32,18 @@ jest.mock( '../../contexts', () => ( {
 	useAgentsManagerContext: jest.fn(),
 } ) );
 
+jest.mock( '../../utils/wp-admin-navigation-state', () => ( {
+	getPendingNavigation: () =>
+		mockParkedNavigationCallId ? { toolCallId: mockParkedNavigationCallId } : null,
+} ) );
+
 import { useQuery } from '@tanstack/react-query';
 import { act, renderHook } from '@testing-library/react';
 import { useAgentsManagerContext } from '../../contexts';
 import { getOrCreateSessionId, markSessionSent } from '../../utils/agent-session';
-import useConversation, { MAX_REPLY_WAIT_MS } from '../use-conversation';
+import { INTERRUPTED_TOOL_RESULT } from '../../utils/tool-call-resume';
+import useConversation, { MAX_REPLY_WAIT_MS, RESUME_AFTER_MS } from '../use-conversation';
+import type { PendingClientTools } from '@automattic/agenttic-client';
 
 const mockUseQuery = useQuery as jest.Mock;
 const mockUseAgentsManagerContext = useAgentsManagerContext as jest.Mock;
@@ -60,9 +70,9 @@ const toolResult = serverMessage(
 const reply = serverMessage( 3, 'agent', 'You have 12 products.' );
 
 // Each load is a new object, as a refetch returns.
-const mockLoadedConversation = ( messages: object[] ) =>
+const mockLoadedConversation = ( messages: object[], pendingClientTools?: PendingClientTools ) =>
 	mockUseQuery.mockReturnValue( {
-		data: { messages: [ ...messages ] },
+		data: { messages: [ ...messages ], ...( pendingClientTools && { pendingClientTools } ) },
 		error: null,
 		isError: false,
 		isLoading: false,
@@ -75,6 +85,7 @@ const renderWaitingConversation = ( onSuccess = jest.fn(), onRetry = jest.fn() )
 
 describe( 'useConversation', () => {
 	beforeEach( () => {
+		mockLoadConversation.mockResolvedValue( { messages: [] } );
 		mockUseQuery.mockReturnValue( {
 			data: undefined,
 			error: null,
@@ -345,6 +356,157 @@ describe( 'useConversation', () => {
 
 			expect( result.current.notice?.message ).toBe( 'No reply arrived for your last question.' );
 			jest.useRealTimers();
+		} );
+
+		describe( 'a turn paused on a browser tool', () => {
+			const pausedOn = ( state: PendingClientTools[ 'state' ] ): PendingClientTools => ( {
+				state,
+				calls: [
+					{
+						toolCallId: 'call-top',
+						toolId: 'woocommerce__get_top_products',
+						arguments: { limit: 5 },
+						createdAt: '2026-10-01 10:00:00',
+					},
+				],
+			} );
+
+			const renderPaused = ( onResume: jest.Mock, state: PendingClientTools[ 'state' ] ) => {
+				mockLoadedConversation( [ question, toolResult ], pausedOn( state ) );
+				return renderHook( () =>
+					useConversation( { waitForReply: true, onSuccess: jest.fn(), onResume } )
+				);
+			};
+
+			beforeEach( () => {
+				jest.useFakeTimers();
+				mockParkedNavigationCallId = undefined;
+			} );
+
+			afterEach( () => {
+				jest.useRealTimers();
+			} );
+
+			it( 'gives the old page time, then resumes with an interrupted result and the calls of the turn', async () => {
+				let finishResume: ( replied: boolean ) => void = () => {};
+				const onResume = jest.fn(
+					() => new Promise< boolean >( ( resolve ) => ( finishResume = resolve ) )
+				);
+				const { result } = renderPaused( onResume, 'unanswered' );
+
+				act( () => jest.advanceTimersByTime( RESUME_AFTER_MS - 1 ) );
+				expect( onResume ).not.toHaveBeenCalled();
+
+				await act( async () => jest.advanceTimersByTime( 1 ) );
+
+				expect( onResume ).toHaveBeenCalledWith(
+					[
+						{
+							toolCallId: 'call-top',
+							toolId: 'woocommerce__get_top_products',
+							result: INTERRUPTED_TOOL_RESULT,
+						},
+					],
+					[
+						{
+							toolCallId: 'call-top',
+							toolId: 'woocommerce__get_top_products',
+							arguments: { limit: 5 },
+						},
+					]
+				);
+				expect( result.current.notice?.message ).toBe( 'Picking up your last question…' );
+				expect( lastQueryOptions().refetchInterval ).toBe( false );
+
+				await act( async () => finishResume( true ) );
+
+				expect( result.current.notice ).toBeUndefined();
+			} );
+
+			it( 'sends the result the old page stored instead of an interrupted one', async () => {
+				const onResume = jest.fn().mockResolvedValue( true );
+				mockLoadConversation.mockResolvedValue( {
+					messages: [
+						{
+							role: 'agent',
+							parts: [
+								{
+									type: 'data',
+									data: {
+										toolCallId: 'call-top',
+										toolId: 'woocommerce__get_top_products',
+										result: { rows: 5 },
+									},
+								},
+							],
+						},
+					],
+				} );
+				mockLoadAllMessagesFromServer.mockResolvedValue( { messages: [] } );
+				renderPaused( onResume, 'unanswered' );
+
+				// The tab's transcript is read before the server's replaces it.
+				await act( async () => lastQueryOptions().queryFn() );
+				await act( async () => jest.advanceTimersByTime( RESUME_AFTER_MS ) );
+
+				expect( onResume.mock.calls[ 0 ][ 0 ][ 0 ].result ).toEqual( { rows: 5 } );
+			} );
+
+			it.each( [ 'claimed', 'running' ] as const )(
+				'keeps waiting while the turn is %s elsewhere',
+				async ( state ) => {
+					const onResume = jest.fn();
+					const { result } = renderPaused( onResume, state );
+
+					await act( async () => jest.advanceTimersByTime( RESUME_AFTER_MS ) );
+
+					expect( onResume ).not.toHaveBeenCalled();
+					expect( result.current.notice?.message ).toBe( 'Waiting for the reply…' );
+				}
+			);
+
+			it.each( [
+				[ 'brings no reply', jest.fn().mockResolvedValue( false ) ],
+				[ 'loses the race', jest.fn().mockRejectedValue( new Error( 'already received' ) ) ],
+			] )( 'goes back to waiting, once, when the resume %s', async ( _case, onResume ) => {
+				const { result, rerender } = renderPaused( onResume, 'unanswered' );
+
+				await act( async () => jest.advanceTimersByTime( RESUME_AFTER_MS ) );
+
+				expect( result.current.notice?.message ).toBe( 'Waiting for the reply…' );
+				expect( lastQueryOptions().refetchInterval ).toBe( 3000 );
+
+				mockLoadedConversation( [ question, toolResult ], pausedOn( 'unanswered' ) );
+				rerender();
+				await act( async () => jest.advanceTimersByTime( RESUME_AFTER_MS ) );
+
+				expect( onResume ).toHaveBeenCalledTimes( 1 );
+			} );
+
+			it( 'does not load a reload over the reply the resume streams', async () => {
+				const onSuccess = jest.fn();
+				const onResume = jest.fn( () => new Promise< boolean >( () => {} ) );
+				mockLoadedConversation( [ question, toolResult ], pausedOn( 'unanswered' ) );
+				const { rerender } = renderHook( () =>
+					useConversation( { waitForReply: true, onSuccess, onResume } )
+				);
+				await act( async () => jest.advanceTimersByTime( RESUME_AFTER_MS ) );
+
+				mockLoadedConversation( [ question, toolResult, reply ] );
+				rerender();
+
+				expect( onSuccess ).toHaveBeenCalledTimes( 1 );
+			} );
+
+			it( 'leaves a parked wp-admin-navigate call to the navigation continuation', async () => {
+				mockParkedNavigationCallId = 'call-top';
+				const onResume = jest.fn();
+				renderPaused( onResume, 'unanswered' );
+
+				await act( async () => jest.advanceTimersByTime( RESUME_AFTER_MS ) );
+
+				expect( onResume ).not.toHaveBeenCalled();
+			} );
 		} );
 	} );
 } );

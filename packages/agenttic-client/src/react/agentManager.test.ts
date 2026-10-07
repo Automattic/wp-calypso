@@ -486,6 +486,94 @@ describe( 'agentManager', () => {
 			expect( parts.some( ( part: any ) => 'arguments' in ( part.data ?? {} ) ) ).toBe( true );
 		} );
 
+		it( 'sendToolResults pairs every call of a turn this page never saw', async () => {
+			// A turn resumed after a page change: this page only has the question.
+			await agentManager.replaceMessages( 'test-key', [
+				{
+					role: 'user',
+					kind: 'message',
+					parts: [ { type: 'text', text: 'Top 5 products?' } ],
+					messageId: 'm1',
+				},
+			] as Message[] );
+			mockClient.sendMessageStream.mockImplementation( async function* () {} );
+			vi.mocked( createToolResultDataPart ).mockImplementation(
+				( toolCallId: string, toolId: string, result: unknown ) => ( {
+					type: 'data',
+					data: { toolCallId, toolId, result },
+				} )
+			);
+
+			// eslint-disable-next-line @typescript-eslint/no-unused-vars
+			for await ( const update of agentManager.sendToolResults(
+				'test-key',
+				[ { toolCallId: 'call-top', toolId: 'top_products', result: { error: 'interrupted' } } ],
+				[ { toolCallId: 'call-top', toolId: 'top_products', arguments: { limit: 5 } } ]
+			) ) {
+				// Drain.
+			}
+
+			const sent = mockClient.sendMessageStream.mock.calls[ 0 ][ 0 ].message.parts.filter(
+				( part: any ) => part.type === 'data' && 'toolCallId' in ( part.data ?? {} )
+			);
+			expect(
+				sent.map( ( part: any ) => [ part.data.toolCallId, 'result' in part.data ] )
+			).toEqual( [
+				[ 'call-top', false ],
+				[ 'call-top', true ],
+			] );
+			expect( sent[ 1 ].data.result ).toEqual( { error: 'interrupted' } );
+		} );
+
+		it( 'sendToolResults leaves calls already in history alone and replaces their results', async () => {
+			await agentManager.replaceMessages( 'test-key', [
+				{
+					role: 'agent',
+					kind: 'message',
+					parts: [
+						{
+							type: 'data',
+							data: { toolCallId: 'call-top', toolId: 'top_products', arguments: {} },
+						},
+					],
+					messageId: 'm1',
+				},
+				{
+					role: 'agent',
+					kind: 'message',
+					parts: [
+						{
+							type: 'data',
+							data: { toolCallId: 'call-top', toolId: 'top_products', result: { rows: 1 } },
+						},
+					],
+					messageId: 'm2',
+				},
+			] as Message[] );
+			mockClient.sendMessageStream.mockImplementation( async function* () {} );
+			vi.mocked( createToolResultDataPart ).mockImplementation(
+				( toolCallId: string, toolId: string, result: unknown ) => ( {
+					type: 'data',
+					data: { toolCallId, toolId, result },
+				} )
+			);
+
+			// eslint-disable-next-line @typescript-eslint/no-unused-vars
+			for await ( const update of agentManager.sendToolResults(
+				'test-key',
+				[ { toolCallId: 'call-top', toolId: 'top_products', result: { rows: 5 } } ],
+				[ { toolCallId: 'call-top', toolId: 'top_products', arguments: {} } ]
+			) ) {
+				// Drain.
+			}
+
+			const sent = mockClient.sendMessageStream.mock.calls[ 0 ][ 0 ].message.parts.filter(
+				( part: any ) => part.type === 'data' && 'toolCallId' in ( part.data ?? {} )
+			);
+			expect( sent ).toHaveLength( 2 );
+			expect( sent[ 1 ].data.result ).toEqual( { rows: 5 } );
+		} );
+
 		it( 'should stream messages from agent', async () => {
 			const mockUpdates: TaskUpdate[] = [
 				{

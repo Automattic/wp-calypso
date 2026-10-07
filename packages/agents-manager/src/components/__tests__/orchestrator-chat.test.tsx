@@ -11,6 +11,11 @@ const mockUseAgentChat = jest.fn();
 const mockUpdateSessionId = jest.fn();
 let mockManagerHasAgent = true;
 let mockManagerTurnInFlight = false;
+let mockConversationHistory: Array< {
+	role: string;
+	messageId?: string;
+	parts: Array< Record< string, unknown > >;
+} > = [];
 let mockAgentChatConfig: { onTaskUpdate?: ( update: TaskUpdate ) => Promise< void > } | undefined;
 let mockConversationConfig:
 	| {
@@ -25,6 +30,10 @@ let mockConversationConfig:
 			) => void;
 			waitForReply?: boolean;
 			onRetry?: ( question: string ) => void;
+			onResume?: (
+				toolResults: Array< Record< string, unknown > >,
+				turnToolCalls: Array< Record< string, unknown > >
+			) => Promise< boolean >;
 	  }
 	| undefined;
 const mockUseRegenerateAction = jest.fn();
@@ -314,6 +323,7 @@ jest.mock(
 			updateSessionId: mockUpdateSessionId,
 			hasAgent: () => mockManagerHasAgent,
 			isTurnInFlight: () => mockManagerTurnInFlight,
+			getConversationHistory: () => mockConversationHistory,
 		} ),
 		useAgentChat: ( config: typeof mockAgentChatConfig ) => {
 			mockAgentChatConfig = config;
@@ -713,6 +723,7 @@ describe( 'OrchestratorChat', () => {
 		sessionStorage.clear();
 		mockManagerHasAgent = true;
 		mockManagerTurnInFlight = false;
+		mockConversationHistory = [];
 		mockHasEditorRedo = false;
 		mockOpenPost = null;
 		mockEditorBlocks = [];
@@ -1829,6 +1840,21 @@ describe( 'OrchestratorChat', () => {
 		it( 'records nothing while there is no error', () => {
 			render( chat() );
 
+			expect( chatErrorCalls() ).toEqual( [] );
+		} );
+
+		it( 'neither shows nor records a resume that another page answered first', () => {
+			mockUseAgentChat.mockReturnValue(
+				agentChatReturn( {
+					error: 'Streaming error: This tool result was already received.',
+					errorCode: 'tool_result_already_received',
+				} )
+			);
+
+			render( chat() );
+
+			const props = mockAgentChat.mock.calls.at( -1 )![ 0 ] as { error?: string | null };
+			expect( props.error ).toBeFalsy();
 			expect( chatErrorCalls() ).toEqual( [] );
 		} );
 	} );
@@ -4222,6 +4248,54 @@ describe( 'OrchestratorChat', () => {
 
 			expect( onSubmit ).toHaveBeenCalledWith( 'ship the sale banner' );
 			expect( uploadImagesToWordPress ).not.toHaveBeenCalled();
+		} );
+
+		it( 'resumes a turn paused on browser tools through the chat send and reports the reply', async () => {
+			// The old page's stored result, which the send drops before adding the reply:
+			// the history ends no longer than it started.
+			mockConversationHistory = [
+				{ role: 'user', messageId: 'm-question', parts: [ { type: 'text', text: 'Top 5?' } ] },
+				{ role: 'agent', messageId: 'm-result', parts: [ { type: 'data', data: {} } ] },
+			];
+			const onSubmit = jest.fn( async () => {
+				mockConversationHistory = [
+					mockConversationHistory[ 0 ],
+					{
+						role: 'agent',
+						messageId: 'm-reply',
+						parts: [ { type: 'text', text: 'Here are your top products.' } ],
+					},
+				];
+			} );
+			mockUseAgentChat.mockReturnValue( agentChatReturn( { onSubmit } ) );
+			render( chat() );
+			const toolResults = [ { toolCallId: 'call-top', toolId: 'top_products', result: {} } ];
+			const turnToolCalls = [ { toolCallId: 'call-top', toolId: 'top_products', arguments: {} } ];
+
+			let replied: boolean | undefined;
+			await act( async () => {
+				replied = await mockConversationConfig?.onResume?.( toolResults, turnToolCalls );
+			} );
+
+			expect( onSubmit ).toHaveBeenCalledWith( '', {
+				type: 'tool_results',
+				toolResults,
+				turnToolCalls,
+			} );
+			expect( replied ).toBe( true );
+		} );
+
+		it( 'reports no reply when the resume lost to another page', async () => {
+			const onSubmit = jest.fn().mockResolvedValue( undefined );
+			mockUseAgentChat.mockReturnValue( agentChatReturn( { onSubmit } ) );
+			render( chat() );
+
+			let replied: boolean | undefined;
+			await act( async () => {
+				replied = await mockConversationConfig?.onResume?.( [], [] );
+			} );
+
+			expect( replied ).toBe( false );
 		} );
 	} );
 } );

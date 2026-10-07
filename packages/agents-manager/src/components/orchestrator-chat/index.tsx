@@ -1,4 +1,10 @@
-import { getAgentManager, type TaskUpdate, type UIMessage } from '@automattic/agenttic-client';
+import {
+	getAgentManager,
+	type TaskUpdate,
+	type ToolResultInput,
+	type TurnToolCall,
+	type UIMessage,
+} from '@automattic/agenttic-client';
 import {
 	type Suggestion,
 	type MarkdownComponents,
@@ -65,6 +71,7 @@ import { mergeEmptyViewSuggestions } from '../../utils/merge-empty-view-suggesti
 import {
 	getOrchestratorErrorMessage,
 	getOrchestratorErrorType,
+	TOOL_RESULT_ALREADY_RECEIVED,
 } from '../../utils/orchestrator-error-message';
 import { getReaderChatErrorMessage } from '../../utils/reader-chat-error-message';
 import { isShowComponentTool } from '../../utils/show-component-tools';
@@ -541,6 +548,7 @@ export default function OrchestratorChat( {
 		suggestions,
 		isProcessing,
 		error,
+		errorCode,
 		loadMessages,
 		onSubmit,
 		abortCurrentRequest,
@@ -743,19 +751,22 @@ export default function OrchestratorChat( {
 	// time paginating 10 pages deep. One page covers typical use.
 	const shouldLoadConversation =
 		! isReaderChat || ( ! hasUserSentMessage && messages.length === 0 && ! isProcessing );
+	// A resume that another page beat to the same turn is not an error (see
+	// `TOOL_RESULT_ALREADY_RECEIVED`).
+	const reportedError = errorCode === TOOL_RESULT_ALREADY_RECEIVED ? null : error;
 	const chatError = isReaderChat
-		? getReaderChatErrorMessage( error )
-		: getOrchestratorErrorMessage( error );
+		? getReaderChatErrorMessage( reportedError )
+		: getOrchestratorErrorMessage( reportedError );
 
 	// One event per error the chat shows. `error` returns to null between
 	// attempts, so the same failure repeating on a later send counts again.
 	useEffect( () => {
-		if ( error ) {
+		if ( reportedError ) {
 			recordAgentsManagerTracksEvent( 'calypso_agents_manager_chat_error', {
-				error_type: getOrchestratorErrorType( error ),
+				error_type: getOrchestratorErrorType( reportedError ),
 			} );
 		}
-	}, [ error ] );
+	}, [ reportedError ] );
 
 	// Resume the conversation after a `wp-admin-navigate` full page reload;
 	// while such a resume is pending, hydration below must not replace the
@@ -781,11 +792,36 @@ export default function OrchestratorChat( {
 
 	// Retry sends through `submitChatMessage`, declared below.
 	const retryQuestionRef = useRef< ( question: string ) => void >( undefined );
+
+	// Answers the browser tool calls a turn paused on before a page change, so the
+	// reply streams in here; resolves to whether one did. The send rewrites
+	// history (drops stale results), so a reply is a message it did not have.
+	const resumeToolCalls = useCallback(
+		async ( toolResults: ToolResultInput[], turnToolCalls: TurnToolCall[] ) => {
+			const agentManager = getAgentManager();
+			const agentKey = agentConfig!.agentId;
+			const before = new Set(
+				agentManager.getConversationHistory( agentKey ).map( ( { messageId } ) => messageId )
+			);
+			await onSubmit( '', { type: 'tool_results', toolResults, turnToolCalls } );
+			return agentManager
+				.getConversationHistory( agentKey )
+				.some(
+					( message ) =>
+						! before.has( message.messageId ) &&
+						message.role === 'agent' &&
+						message.parts.some( ( part ) => part.type === 'text' && part.text.trim() )
+				);
+		},
+		[ agentConfig, onSubmit ]
+	);
+
 	const { isLoading: isLoadingConversation, notice: replyNotice } = useConversation( {
 		maxPages: isReaderChat ? 1 : 10,
 		enabled: shouldLoadConversation,
 		waitForReply: ! isProcessing,
 		onRetry: ( question ) => retryQuestionRef.current?.( question ),
+		onResume: resumeToolCalls,
 		onSuccess: ( loadedMessages, serverSessionId ) => {
 			if ( isReaderChat && ( hasUserSentMessage || messages.length > 0 || isProcessing ) ) {
 				return;

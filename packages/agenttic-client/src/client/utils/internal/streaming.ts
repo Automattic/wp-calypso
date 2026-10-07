@@ -3,6 +3,21 @@ import { logger } from '../logger';
 import type { Message, Task, TaskUpdate } from '../../types/index';
 
 /**
+ * A JSON-RPC error raised by the stream. `code` is the server's machine-readable
+ * reason (`error.data.code`), when it sends one.
+ */
+export type StreamError = Error & { code?: string };
+
+function createStreamError( error: { message?: string; data?: unknown } ): StreamError {
+	const streamError: StreamError = new Error( `Streaming error: ${ error.message }` );
+	const code = ( error.data as { code?: unknown } | undefined )?.code;
+	if ( typeof code === 'string' ) {
+		streamError.code = code;
+	}
+	return streamError;
+}
+
+/**
  * Parse a stream chunk from a server-sent events stream.
  * This function processes an incoming chunk of data, potentially combined with a buffer
  * from previous chunks, and extracts events.
@@ -199,9 +214,7 @@ export async function* parseSSEStream(
 				hasProcessedDelta = true;
 			}
 
-			const streamError = event.error
-				? new Error( `Streaming error: ${ event.error.message }` )
-				: null;
+			const streamError = event.error ? createStreamError( event.error ) : null;
 			if ( streamError && ! event.result?.status ) {
 				throw streamError;
 			}
