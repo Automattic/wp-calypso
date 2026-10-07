@@ -1,14 +1,18 @@
 import {
+	Button,
 	SelectControl,
 	__experimentalSpacer as Spacer,
 	__experimentalHStack as HStack,
+	__experimentalText as Text,
+	__experimentalVStack as VStack,
 	__experimentalToggleGroupControl as ToggleGroupControl,
 	__experimentalToggleGroupControlOption as ToggleGroupControlOption,
 } from '@wordpress/components';
 import { useEvent, useViewportMatch } from '@wordpress/compose';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
-import { __, sprintf } from '@wordpress/i18n';
-import { useMemo } from 'react';
+import { __, _n, sprintf } from '@wordpress/i18n';
+import { useMemo, useState } from 'react';
+import { useInView } from 'react-intersection-observer';
 import { DataViewsEmptyStateLayout } from '../../../components/dataviews';
 import { useResourceFields } from './dataviews/fields';
 import { LAYOUT_FIELDS } from './dataviews/views';
@@ -21,6 +25,8 @@ import type { AgencyEnablementResource, AgencyResourceStage } from '@automattic/
 import type { View } from '@wordpress/dataviews';
 
 import './style.scss';
+
+const PAGE_SIZE = 24;
 
 type StageFilter = AgencyResourceStage | 'all';
 
@@ -103,6 +109,22 @@ export default function ResourceLibrary( {
 		[ resources, view, fields ]
 	);
 
+	// Reveal results a page at a time, starting over whenever search or filters change.
+	const resultsKey = JSON.stringify( [ view.search, view.filters ] );
+	const [ shown, setShown ] = useState( { key: resultsKey, count: PAGE_SIZE } );
+	const visibleCount = shown.key === resultsKey ? shown.count : PAGE_SIZE;
+	const visibleData = useMemo(
+		() => filteredData.slice( 0, visibleCount ),
+		[ filteredData, visibleCount ]
+	);
+	const hasMore = visibleCount < filteredData.length;
+	const loadMore = () => setShown( { key: resultsKey, count: visibleCount + PAGE_SIZE } );
+
+	// Loads the next page as the end of the results scrolls into view.
+	const { ref: loadMoreRef } = useInView( {
+		onChange: ( inView ) => inView && hasMore && loadMore(),
+	} );
+
 	const isList = view.type === 'table';
 	// The stage toggle doesn't fit beside the toolbar on narrow screens.
 	const isSmallViewport = useViewportMatch( 'medium', '<' );
@@ -111,7 +133,7 @@ export default function ResourceLibrary( {
 		<>
 			<div className="dashboard-resources-learn__filters">
 				<DataViews< AgencyEnablementResource >
-					data={ filteredData }
+					data={ visibleData }
 					fields={ fields }
 					view={ view }
 					onChangeView={ onChangeView }
@@ -190,10 +212,36 @@ export default function ResourceLibrary( {
 			</div>
 			{ ! isList && filteredData.length > 0 && (
 				<ResourceGrid
-					resources={ filteredData }
+					resources={ visibleData }
 					onOpenResource={ onOpenResource }
 					onFilterResources={ filterResources }
 				/>
+			) }
+			{ filteredData.length > 0 && (
+				<Spacer marginTop={ 8 }>
+					<VStack spacing={ 3 } alignment="center">
+						<Text variant="muted" role="status">
+							{ sprintf(
+								/* translators: 1: Number of resources shown. 2: Number of matching resources. */
+								_n(
+									'Showing %1$d of %2$d resource',
+									'Showing %1$d of %2$d resources',
+									filteredData.length
+								),
+								visibleData.length,
+								filteredData.length
+							) }
+						</Text>
+						{ hasMore && (
+							<>
+								<div ref={ loadMoreRef } />
+								<Button variant="secondary" __next40pxDefaultSize onClick={ loadMore }>
+									{ __( 'Load more' ) }
+								</Button>
+							</>
+						) }
+					</VStack>
+				</Spacer>
 			) }
 			{ filteredData.length === 0 && (
 				<DataViewsEmptyStateLayout
