@@ -29,7 +29,7 @@ const REPORT_MODES: {
 	},
 	{
 		value: 'human',
-		label: __( 'First-time visitors' ),
+		label: __( 'People' ),
 		description: __( 'Trust, clarity, and what builds confidence.' ),
 	},
 	{
@@ -163,7 +163,7 @@ export default function AmplifyReportCreator( {
 				<div className="dashboard-amplify-overview__modal-summary">
 					<Text>
 						{ __(
-							'Audit any public homepage for first-time visitors, AI agents, or both, and get a report of what to fix for your pitch.'
+							'Audit any public homepage for people, AI agents, or both, and get a report of what to fix for your pitch.'
 						) }
 					</Text>
 				</div>
