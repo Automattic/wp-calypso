@@ -3,6 +3,7 @@ import { __, sprintf } from '@wordpress/i18n';
 import { useEffect, useRef, useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import InlineSupportLink from '../../components/inline-support-link';
+import { getReportTiming } from './constants';
 import { SampleReportPage } from './sample-report';
 import { getSampleFindings, getSampleLenses, getSeverityLabel } from './sample-report-data';
 import AmplifySampleReportModal from './sample-report-modal';
@@ -21,6 +22,17 @@ const FAQS = [
 		question: __( 'What does a site need to be audited?' ),
 		answer: __(
 			'Just a public homepage. It works on any platform, WordPress or not, and you don’t need to connect the site or sign in. The audit looks at the page’s visible design and front-end code.'
+		),
+	},
+	{
+		id: 'timing',
+		question: __( 'How long does a report take?' ),
+		answer: sprintf(
+			/* translators: %s: how long a report takes, e.g. "10 to 20 minutes" */
+			__(
+				'Most reports are ready in %s. You can leave the page while it runs, and the report appears in your list when it’s done.'
+			),
+			getReportTiming()
 		),
 	},
 	{
