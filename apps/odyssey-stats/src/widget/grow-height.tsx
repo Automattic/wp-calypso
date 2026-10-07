@@ -4,19 +4,14 @@ import { useLayoutEffect, useRef, useState, FunctionComponent, ReactNode } from 
 import './grow-height.scss';
 
 interface GrowHeightProps {
-	className?: string;
 	children: ReactNode;
 }
 
 /**
- * Eases its height when its content grows, such as a list filling in after its
- * one-row skeleton; shrinking is immediate.
- *
- * `height: auto` cannot be transitioned in every browser yet (`interpolate-size` is
- * Chromium-only), so the content is measured and the wrapper is given that height
- * explicitly, which can be.
+ * Eases its height when its content grows; shrinking is immediate. The content is measured
+ * because `height: auto` cannot be transitioned outside Chromium (`interpolate-size`).
  */
-const GrowHeight: FunctionComponent< GrowHeightProps > = ( { className, children } ) => {
+const GrowHeight: FunctionComponent< GrowHeightProps > = ( { children } ) => {
 	const contentRef = useRef< HTMLDivElement >( null );
 	const heightRef = useRef< number | undefined >( undefined );
 	const [ height, setHeight ] = useState< number >();
@@ -42,9 +37,10 @@ const GrowHeight: FunctionComponent< GrowHeightProps > = ( { className, children
 
 	return (
 		<div
-			className={ clsx( 'stats-widget-grow-height', { 'is-growing': isGrowing }, className ) }
+			className={ clsx( 'stats-widget-grow-height', { 'is-growing': isGrowing } ) }
 			style={ { height } }
 			onTransitionEnd={ ( event ) => {
+				// A row's own hover transition bubbles up here too.
 				if ( event.target === event.currentTarget ) {
 					setIsGrowing( false );
 				}

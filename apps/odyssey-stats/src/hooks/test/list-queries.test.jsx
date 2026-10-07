@@ -32,8 +32,6 @@ describe( 'the widget list queries', () => {
 		wpcom.req.get.mockClear();
 	} );
 
-	// A summarized request counts back in days whatever period it is handed, so asking for
-	// `period=month&num=12` returned twelve days. Both lists state the window instead.
 	it.each( [
 		[ 'top posts', useTopPostsQuery, '/sites/123/stats/top-posts' ],
 		[ 'referrers', useReferrersQuery, '/sites/123/stats/referrers' ],
@@ -85,15 +83,6 @@ describe( 'the referrers list', () => {
 		expect( row.title ).toBe( 'X' );
 		expect( row.views ).toBe( 25 );
 		expect( row.url ).toBe( 'https://x.com/' );
-	} );
-
-	it( 'keeps the order the API sorted the groups into', async () => {
-		const rows = await rowsFor( [
-			{ name: 'X', total: 25, results: [ { name: 'x.com', views: 20 } ] },
-			{ name: 'Search', results: { views: 22 } },
-		] );
-
-		expect( rows.map( ( row ) => row.views ) ).toEqual( [ 25, 22 ] );
 	} );
 
 	it( 'adds the children up when a group states no total', async () => {

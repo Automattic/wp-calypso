@@ -39,9 +39,7 @@ function queryReferrers( siteId: number, params: QueryReferrersParams ) {
 }
 
 /**
- * The range's top referrers.
- *
- * Takes the window as whole days, for the reason given in `use-top-posts-query`.
+ * Top referrers over the days from `startDate` to `date` (see `getRangeStartDate`).
  * @param siteId    The site to query.
  * @param startDate First day of the range, as `YYYY-MM-DD`.
  * @param date      Last day of the range, as `YYYY-MM-DD`.
@@ -64,10 +62,8 @@ export default function useReferrersQuery(
 			return data?.summary?.groups.map( ( group: GroupWithChildren & GroupWithoutChildren ) => {
 				const children = Array.isArray( group.results ) ? group.results : [];
 
-				// A group — "X", say, holding x.com and a status URL — is named and counted
-				// by the group itself. Reading its first child instead both understated the
-				// figure and could leave the list out of order, since the API sorts groups by
-				// their totals.
+				// A group ("X", holding x.com and a status URL) is counted by its own total,
+				// which is also what the API sorts the groups by.
 				const views = children.length
 					? ( group.total ??
 						children.reduce( ( total, child ) => total + ( child.views ?? 0 ), 0 ) )

@@ -11,8 +11,8 @@ interface MetricValueProps {
 }
 
 /**
- * A metric's figure: counted up on arrival, shown compact ("12.3K"), with the full amount
- * in a tooltip whenever the compact form hides digits.
+ * A metric's figure, counted up and shown compact ("12.3K"), with the full amount in a
+ * tooltip when the compact form hides digits.
  */
 const MetricValue: FunctionComponent< MetricValueProps > = ( { value, describe } ) => {
 	const displayedValue = useCountUp( value );

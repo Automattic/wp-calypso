@@ -12,9 +12,12 @@ import {
 	DEFAULT_DATE_RANGE_ID,
 	DateRangeId,
 	getDateRange,
+	getRangeStartDate,
+	getSiteToday,
 	isDateRangeId,
 } from '../lib/date-ranges';
 import getExploreMoreUrl from '../lib/get-explore-more-url';
+import { loadWpComponentsStyleForWidget } from '../lib/load-wp-components-style';
 import getSiteAdminUrl from '../lib/selectors/get-site-admin-url';
 import getSiteStatsBaseUrl from '../lib/selectors/get-site-stats-base-url';
 import setLocale from '../lib/set-locale';
@@ -34,7 +37,7 @@ import './index.scss';
 const rangeStorageKey = ( siteId: number ) => `jetpack_stats_widget_date_range_${ siteId }`;
 
 /**
- * Read the stored range for a site, falling back to the default.
+ * The range stored for a site, or the default.
  * @param siteId The current site id.
  */
 function readStoredRangeId( siteId: number ): DateRangeId {
@@ -48,7 +51,7 @@ function readStoredRangeId( siteId: number ): DateRangeId {
 }
 
 /**
- * Persist the selected range for a site.
+ * Remember the selected range for a site.
  * @param siteId The current site id.
  * @param id     The range to remember.
  */
@@ -65,6 +68,7 @@ function storeRangeId( siteId: number, id: DateRangeId ) {
  */
 export function init() {
 	const currentSiteId = config( 'blog_id' );
+	const gmtOffset = config( 'gmt_offset' );
 	const localeSlug = config( 'i18n_locale_slug' ) || config( 'i18n_default_locale_slug' ) || 'en';
 
 	const statsBaseUrl = getSiteStatsBaseUrl();
@@ -73,8 +77,12 @@ export function init() {
 
 	const queryClient = new QueryClient();
 
-	// Ensure locale files are loaded before rendering.
-	setLocale( localeSlug ).then( () => {
+	// Locale files and, below WP 6.9, the components' base CSS, before anything renders. A
+	// stylesheet that fails to load still leaves a working, if unstyled, widget.
+	Promise.all( [
+		setLocale( localeSlug ),
+		loadWpComponentsStyleForWidget().catch( () => undefined ),
+	] ).then( () => {
 		const statsWidgetEl = document.getElementById( 'dashboard_stats' );
 		if ( ! statsWidgetEl ) {
 			return;
@@ -83,12 +91,13 @@ export function init() {
 			const translate = useTranslate();
 			const customTheme = useWPAdminTheme();
 			const statsLink = useStatsLink( currentSiteId );
-			// One range drives both the chart and the highlights, so they can never
-			// describe different windows.
 			const [ rangeId, setRangeId ] = useState< DateRangeId >( () =>
 				readStoredRangeId( currentSiteId )
 			);
+			// Worked out once, so the chart, the lists and their links all cover the same days.
 			const range = getDateRange( rangeId );
+			const endDate = getSiteToday( gmtOffset );
+			const startDate = getRangeStartDate( range, endDate );
 
 			const onRangeChange = ( nextRangeId: DateRangeId ) => {
 				if ( nextRangeId !== rangeId ) {
@@ -109,17 +118,15 @@ export function init() {
 							icon={ trendingUp }
 							action={ <DateRangeControl value={ rangeId } onChange={ onRangeChange } /> }
 						>
-							<MiniChart
-								siteId={ currentSiteId }
-								gmtOffset={ config( 'gmt_offset' ) }
-								range={ range }
-							/>
+							<MiniChart siteId={ currentSiteId } range={ range } endDate={ endDate } />
 						</WidgetSection>
 						<Highlights
 							siteId={ currentSiteId }
-							gmtOffset={ config( 'gmt_offset' ) }
 							statsBaseUrl={ statsBaseUrl }
-							range={ range }
+							rangeId={ rangeId }
+							startDate={ startDate }
+							endDate={ endDate }
+							gmtOffset={ gmtOffset }
 						/>
 						<Modules siteId={ currentSiteId } adminBaseUrl={ adminBaseUrl } />
 						<div className="stats-widget-footer">

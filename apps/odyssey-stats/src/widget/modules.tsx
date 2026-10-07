@@ -26,16 +26,9 @@ interface ModuleCardProps {
 	manageUrl?: string;
 }
 
-interface ProtectModuleProps {
+interface ModulesProps {
 	siteId: number;
-}
-
-interface ModulesProps extends ProtectModuleProps {
 	adminBaseUrl: null | string;
-}
-
-interface AkismetModuleProps extends ProtectModuleProps {
-	manageUrl: string;
 }
 
 const ModuleCard: FunctionComponent< ModuleCardProps > = ( {
@@ -116,111 +109,35 @@ const ModuleCard: FunctionComponent< ModuleCardProps > = ( {
 	);
 };
 
-const AkismetModule: FunctionComponent< AkismetModuleProps > = ( { siteId, manageUrl } ) => {
-	const translate = useTranslate();
-
-	const {
-		data: akismetData,
-		isLoading: isAkismetLoading,
-		refetch: refetchAkismetData,
-		isError: isAkismetError,
-		error: akismetError,
-	} = useModuleDataQuery( 'akismet' );
-
-	// The function installs Akismet plugin if not exists.
-	const activateProduct = ( productSlug: string ) => () => {
-		return wpcom.req
-			.post( {
-				apiNamespace: 'my-jetpack/v1',
-				path: `/site/products/${ productSlug }`,
-			} )
-			.then( refetchAkismetData );
-	};
-
-	return (
-		<ModuleCard
-			title={ translate( 'Blocked spam comments' ) }
-			value={ akismetData as number }
-			describe={ ( count ) =>
-				translate( '%(count)s blocked spam comment', '%(count)s blocked spam comments', {
-					count: akismetData as number,
-					args: { count },
-				} ) as string
-			}
-			isError={ isAkismetError }
-			error={ akismetError instanceof Error ? akismetError.message : '' }
-			isLoading={ isAkismetLoading }
-			canManageModule={ canCurrentUser( siteId, 'manage_options' ) }
-			activateProduct={ activateProduct( 'anti-spam' ) }
-			manageUrl={ manageUrl }
-		/>
-	);
-};
-
-const ProtectModule: FunctionComponent< ProtectModuleProps > = ( { siteId } ) => {
-	const translate = useTranslate();
-
-	const {
-		data: protectData,
-		isLoading: isProtectLoading,
-		refetch: refetchProtectData,
-		isError: isProtectError,
-		error: protectError,
-	} = useModuleDataQuery( 'protect' );
-
-	const activateModule = ( module: string ) => () => {
-		return wpcom.req
-			.post( { path: '/settings', apiNamespace: 'jetpack/v4' }, { [ module ]: true } )
-			.then( refetchProtectData );
-	};
-
-	return (
-		<ModuleCard
-			title={ translate( 'Blocked login attempts' ) }
-			value={ protectData as number }
-			describe={ ( count ) =>
-				translate( '%(count)s blocked login attempt', '%(count)s blocked login attempts', {
-					count: protectData as number,
-					args: { count },
-				} ) as string
-			}
-			isError={ isProtectError }
-			error={ protectError instanceof Error ? protectError.message : '' }
-			isLoading={ isProtectLoading }
-			canManageModule={ canCurrentUser( siteId, 'manage_options' ) }
-			activateProduct={ activateModule( 'protect' ) }
-		/>
-	);
-};
-
 const SiteProtection: FunctionComponent< ModulesProps > = ( { siteId, adminBaseUrl } ) => {
 	const translate = useTranslate();
 	const canManageModules = canCurrentUser( siteId, 'manage_options' );
-
-	// Both cards query through these keys too, so this reads their cached state rather
-	// than fetching again.
-	const { isError: isProtectError } = useModuleDataQuery( 'protect' );
-	const { isError: isAkismetError, isLoading: isAkismetLoading } = useModuleDataQuery( 'akismet' );
+	const protect = useModuleDataQuery( 'protect' );
+	const akismet = useModuleDataQuery( 'akismet' );
 
 	// A card hides itself when its figure failed and the viewer cannot act on it; with
 	// both hidden the section would be an empty card.
-	const hasProtect = ! isProtectError || canManageModules;
-	const hasAkismet = ! isAkismetError || canManageModules;
-	if ( ! hasProtect && ! hasAkismet ) {
+	if ( protect.isError && akismet.isError && ! canManageModules ) {
 		return null;
 	}
 
-	// Doubles as the Akismet key configuration page, which is where its spam figures live.
-	// WordPress registers it with the plugin, so it is missing exactly when Akismet is. The
-	// footer link travels with a working figure; an invalid key gets the card's own link,
-	// which is the one error state where the page is there to fix it.
+	const activateProtect = () =>
+		wpcom.req
+			.post( { path: '/settings', apiNamespace: 'jetpack/v4' }, { protect: true } )
+			.then( protect.refetch );
+
+	// Installs the Akismet plugin when it is missing.
+	const activateAkismet = () =>
+		wpcom.req
+			.post( { apiNamespace: 'my-jetpack/v1', path: '/site/products/anti-spam' } )
+			.then( akismet.refetch );
+
+	// Registered by the Akismet plugin, so it exists only while Akismet is active.
 	const akismetUrl = adminBaseUrl + 'admin.php?page=akismet-key-config';
 
-	// The page itself needs `manage_options`, which the figure beside it does not: the module
-	// data endpoint asks for `jetpack_admin_page`, which maps to `edit_posts` on a connected
-	// site. So an editor reads the count and would be turned away from the page behind the
-	// link. Waiting for the figure also keeps the link from flashing while the query runs.
-	const hasAkismetInsights = canManageModules && ! isAkismetError && ! isAkismetLoading;
+	// The page needs `manage_options`, while the figure only needs `edit_posts`, so an editor
+	// could read the count but not open the page. Waiting for the figure keeps it from flashing.
+	const hasAkismetInsights = canManageModules && ! akismet.isError && ! akismet.isLoading;
 
 	return (
 		<WidgetSection
@@ -229,10 +146,35 @@ const SiteProtection: FunctionComponent< ModulesProps > = ( { siteId, adminBaseU
 			className="stats-widget-modules"
 		>
 			<div className="stats-widget-metrics">
-				<ProtectModule siteId={ siteId } />
-				<AkismetModule
-					siteId={ siteId }
-					// The URL is used to redirect the user to the Akismet Key configuration page.
+				<ModuleCard
+					title={ translate( 'Blocked login attempts' ) }
+					value={ protect.data as number }
+					describe={ ( count ) =>
+						translate( '%(count)s blocked login attempt', '%(count)s blocked login attempts', {
+							count: protect.data as number,
+							args: { count },
+						} ) as string
+					}
+					isError={ protect.isError }
+					error={ protect.error instanceof Error ? protect.error.message : '' }
+					isLoading={ protect.isLoading }
+					canManageModule={ canManageModules }
+					activateProduct={ activateProtect }
+				/>
+				<ModuleCard
+					title={ translate( 'Blocked spam comments' ) }
+					value={ akismet.data as number }
+					describe={ ( count ) =>
+						translate( '%(count)s blocked spam comment', '%(count)s blocked spam comments', {
+							count: akismet.data as number,
+							args: { count },
+						} ) as string
+					}
+					isError={ akismet.isError }
+					error={ akismet.error instanceof Error ? akismet.error.message : '' }
+					isLoading={ akismet.isLoading }
+					canManageModule={ canManageModules }
+					activateProduct={ activateAkismet }
 					manageUrl={ akismetUrl }
 				/>
 			</div>
@@ -263,7 +205,6 @@ export default function Modules( { siteId, adminBaseUrl }: ModulesProps ) {
 		return null;
 	}
 
-	// The cards' queries all run inside this component, so a site that fails either gate
-	// never asks for routes it does not serve.
+	// SiteProtection runs the module queries, so it mounts only once both gates pass.
 	return <SiteProtection siteId={ siteId } adminBaseUrl={ adminBaseUrl } />;
 }

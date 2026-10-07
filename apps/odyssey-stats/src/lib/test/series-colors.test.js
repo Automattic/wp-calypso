@@ -30,9 +30,6 @@ describe( 'deriveSeriesColors', () => {
 		} );
 	} );
 
-	// The reason the companion is luminance-matched rather than merely hue-rotated:
-	// a naive rotation of the default admin blue lands on a green that reads far
-	// lighter and falls below 3:1 against the widget surface.
 	it( 'should match the primary luminance so neither series reads heavier', () => {
 		PRIMARIES.forEach( ( primary ) => {
 			const [ first, second ] = deriveSeriesColors( primary );
@@ -40,9 +37,7 @@ describe( 'deriveSeriesColors', () => {
 		} );
 	} );
 
-	// Not an absolute 3:1 floor: some admin scheme primaries (ectoplasm's olive, say)
-	// already sit below it on a light surface, and the primary is WordPress's choice,
-	// not ours. What the derivation owes is that the companion is no worse.
+	// Relative, not a 3:1 floor: some scheme primaries (ectoplasm) already sit below it.
 	it( 'should not give the companion worse surface contrast than the primary', () => {
 		const surface = luminance( '#ffffff' );
 		const contrast = ( color ) => ( surface + 0.05 ) / ( luminance( color ) + 0.05 );

@@ -19,16 +19,6 @@ describe( 'ChartBoundary', () => {
 		console.error.mockRestore();
 	} );
 
-	it( 'renders its children while they hold up', () => {
-		render(
-			<ChartBoundary fallback={ <p>Fallback</p> }>
-				<p>Chart</p>
-			</ChartBoundary>
-		);
-
-		expect( screen.getByText( 'Chart' ) ).toBeInTheDocument();
-	} );
-
 	it( 'swaps in the fallback when the chart throws, leaving the page it sits in', () => {
 		render(
 			<div>

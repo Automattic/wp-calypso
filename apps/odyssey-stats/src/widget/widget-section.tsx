@@ -18,9 +18,6 @@ interface WidgetSectionProps {
 
 /**
  * The frame every widget section shares: a card with a title and an optional control.
- *
- * There is no footer slot: Highlights' "See more" changes with the selected tab, so
- * trailing links stay with each section's children.
  */
 const WidgetSection: FunctionComponent< WidgetSectionProps > = ( {
 	title,

@@ -2,9 +2,10 @@ import config, { optionalConfig } from './config-api';
 
 /**
  * The WP release whose command palette enqueues `wp-components` globally across wp-admin, making
- * `@wordpress/components`' base CSS available to us on every admin page.
+ * `@wordpress/components`' base CSS available to us on every admin page. Core added
+ * `wp_enqueue_command_palette_assets` to `admin_enqueue_scripts` in 6.9.0.
  */
-const WP_VERSION_WITH_GLOBAL_WP_COMPONENTS = '7.0';
+const WP_VERSION_WITH_GLOBAL_WP_COMPONENTS = '6.9';
 
 /**
  * The `stats-admin` release that declares `wp-components` as a dependency of Odyssey's own
@@ -49,35 +50,75 @@ function isAtLeast( version: unknown, minimum: string ): boolean {
  *
  * - `stats_admin_version` — the real contract: Jetpack declaring `wp-components` as a dependency of
  *   our own stylesheet. Reaches a site only once its Jetpack plugin updates.
- * - `software_version` — WP 7.0+ enqueues `wp-components` globally for the command palette. That's
+ * - `software_version` — WP 6.9+ enqueues `wp-components` globally for the command palette. That's
  *   an implementation detail of the palette, not a promise to us, but it's true today regardless of
- *   Jetpack version, so checking it means an un-updated Jetpack on a WP 7.0+ site still gets exactly
- *   one copy instead of two (harmless — nothing to collide with below 7.0 either way — but wasteful).
+ *   Jetpack version, so checking it means an un-updated Jetpack on a WP 6.9+ site still gets exactly
+ *   one copy instead of two (harmless — nothing to collide with below 6.9 either way — but wasteful).
  *
  * Exported for tests: the version parsing is the only real logic here, and getting it wrong in
  * either direction is costly — too eager and we double-load and collide, too shy and the app
  * renders unstyled.
  */
 export function isProvidedByWpAdmin(): boolean {
-	// Both versions are also served at the top level, which is the only place they appear on a
-	// site with no WordPress.com connection: `intial_state` is keyed by blog id. The nested read
-	// stays as the fallback, since the JS ships from a CDN and can meet a `stats-admin` old enough
-	// to place them only inside the dashboard's state.
+	return (
+		isAtLeast( siteVersion( 'stats_admin_version' ), STATS_ADMIN_VERSION_WITH_WP_COMPONENTS_DEP ) ||
+		isAtLeast( siteVersion( 'software_version' ), WP_VERSION_WITH_GLOBAL_WP_COMPONENTS )
+	);
+}
+
+/**
+ * Whether the dashboard already serves `@wordpress/components`' base CSS to the widget.
+ *
+ * `stats_admin_version` is no signal here: Jetpack enqueues the widget without Odyssey's own
+ * stylesheet, which is what carries that dependency. So it is the WP version, or the page itself.
+ */
+export function isProvidedToWidget(): boolean {
+	return (
+		isAtLeast( siteVersion( 'software_version' ), WP_VERSION_WITH_GLOBAL_WP_COMPONENTS ) ||
+		isStyleOnPage( 'wp-components' )
+	);
+}
+
+/**
+ * Whether the page links a stylesheet handle, alone or inside wp-admin's concatenated
+ * `load-styles.php` request, which carries no per-handle id.
+ * @param handle The style handle.
+ */
+function isStyleOnPage( handle: string ): boolean {
+	if ( document.getElementById( `${ handle }-css` ) ) {
+		return true;
+	}
+
+	return Array.from(
+		document.querySelectorAll< HTMLLinkElement >( 'link[href*="load-styles.php"]' )
+	).some( ( link ) =>
+		Array.from( new URL( link.href, document.baseURI ).searchParams )
+			.filter( ( [ key ] ) => key.startsWith( 'load' ) )
+			.some( ( [ , handles ] ) => handles.split( ',' ).includes( handle ) )
+	);
+}
+
+/**
+ * A version the site reports.
+ * @param key `stats_admin_version` or `software_version`.
+ */
+function siteVersion( key: 'stats_admin_version' | 'software_version' ): unknown {
+	// Also served at the top level, which is the only place they appear on a site with no
+	// WordPress.com connection: `intial_state` is keyed by blog id. The nested read stays as the
+	// fallback, since the JS ships from a CDN and can meet a `stats-admin` old enough to place
+	// them only inside the dashboard's state.
 	const siteOptions =
 		optionalConfig( 'intial_state' )?.sites?.items?.[ config( 'blog_id' ) as number ]?.options ??
 		{};
 
-	return (
-		isAtLeast(
-			optionalConfig( 'stats_admin_version' ) ?? siteOptions.stats_admin_version,
-			STATS_ADMIN_VERSION_WITH_WP_COMPONENTS_DEP
-		) ||
-		isAtLeast(
-			optionalConfig( 'software_version' ) ?? siteOptions.software_version,
-			WP_VERSION_WITH_GLOBAL_WP_COMPONENTS
-		)
-	);
+	return optionalConfig( key ) ?? siteOptions[ key ];
 }
+
+const importStyle = () =>
+	import(
+		/* webpackChunkName: "wp-components-style" */
+		'odyssey-wp-components-style'
+	);
 
 /**
  * Loads our own copy of `@wordpress/components`' base CSS, but only when nothing on the page
@@ -98,8 +139,16 @@ export default async function loadWpComponentsStyle(): Promise< void > {
 		return;
 	}
 
-	await import(
-		/* webpackChunkName: "wp-components-style" */
-		'odyssey-wp-components-style'
-	);
+	await importStyle();
+}
+
+/**
+ * The dashboard widget's counterpart to `loadWpComponentsStyle`.
+ */
+export async function loadWpComponentsStyleForWidget(): Promise< void > {
+	if ( isProvidedToWidget() ) {
+		return;
+	}
+
+	await importStyle();
 }

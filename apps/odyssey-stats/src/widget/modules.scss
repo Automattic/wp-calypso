@@ -19,11 +19,8 @@ $jp-gray: #dcdcde;
 	}
 }
 
-// Use base component styling of `@wordpress/components/Button`, with the fill stated rather than
-// left to the component. `wp-components` — which carries both the button's own colours and the
-// admin theme colour they resolve from — is loaded by `AppBoot`, not by this entry, so a site with
-// neither WP 7.0 nor a recent `jetpack-stats-admin` has none of it. Naming the colours here, with
-// the accent as the fallback, keeps these buttons filled on those sites and themed everywhere else.
+// Colours stated rather than left to `wp-components`, so the buttons stay filled even if its
+// stylesheet fails to load.
 .components-button.jetpack-emerald-button {
 	font-weight: 600;
 

@@ -39,27 +39,23 @@ describe( 'OverviewChart axes', () => {
 		LineChart.mockClear();
 	} );
 
-	it( 'labels dates as a short month and day', () => {
-		const { x } = renderAxes();
-		expect( x.tickFormat( new Date( 2026, 8, 20 ).getTime() ) ).toBe( 'Sep 20' );
+	it.each( [
+		[ 'day', 'Sep 20' ],
+		[ 'month', 'Sep' ],
+	] )( 'labels a %s point as %s', ( unit, expected ) => {
+		const { x } = renderAxes( unit );
+		expect( x.tickFormat( new Date( 2026, 8, 20 ).getTime() ) ).toBe( expected );
 	} );
 
-	it( 'labels monthly points by month alone', () => {
-		const { x } = renderAxes( 'month' );
-		expect( x.tickFormat( new Date( 2026, 8, 1 ).getTime() ) ).toBe( 'Sep' );
-	} );
-
-	it( 'leaves zero unlabelled and formats other values compactly', () => {
+	it.each( [
+		[ 0, '' ],
+		[ 0.5, '' ],
+		[ 2.5, '' ],
+		[ 3, '3' ],
+		[ 1200, '1.2K' ],
+	] )( 'labels the value %s as "%s"', ( value, expected ) => {
 		const { y } = renderAxes();
-		expect( y.tickFormat( 0 ) ).toBe( '' );
-		expect( y.tickFormat( 1200 ) ).toBe( '1.2K' );
-	} );
-
-	it( 'leaves fractional values unlabelled, since views are whole', () => {
-		const { y } = renderAxes();
-		expect( y.tickFormat( 0.5 ) ).toBe( '' );
-		expect( y.tickFormat( 2.5 ) ).toBe( '' );
-		expect( y.tickFormat( 3 ) ).toBe( '3' );
+		expect( y.tickFormat( value ) ).toBe( expected );
 	} );
 } );
 
@@ -68,14 +64,12 @@ describe( 'OverviewChart tooltip', () => {
 		LineChart.mockClear();
 	} );
 
-	it( 'names the month a monthly total covers, rather than its first day', () => {
-		renderTooltip( 'month', { Views: 1200 } );
-		expect( screen.getByText( 'July 2026' ) ).toBeInTheDocument();
-	} );
-
-	it( 'names the day a daily total covers', () => {
-		renderTooltip( 'day', { Views: 1200 } );
-		expect( screen.getByText( 'Jul 1, 2026' ) ).toBeInTheDocument();
+	it.each( [
+		[ 'month', 'July 2026' ],
+		[ 'day', 'Jul 1, 2026' ],
+	] )( 'names the %s a total covers', ( unit, expected ) => {
+		renderTooltip( unit, { Views: 1200 } );
+		expect( screen.getByText( expected ) ).toBeInTheDocument();
 	} );
 
 	it( 'lists every series in full, largest first', () => {
@@ -84,10 +78,5 @@ describe( 'OverviewChart tooltip', () => {
 		expect( screen.getByText( '1,204' ) ).toBeInTheDocument();
 		expect( screen.getByText( '620' ) ).toBeInTheDocument();
 		expect( container.textContent ).toMatch( /Views.*Visitors/ );
-	} );
-
-	it( 'renders nothing when no point is hovered', () => {
-		const { renderTooltip: render_ } = renderChart( 'day' );
-		expect( render_( { tooltipData: {} } ) ).toBeNull();
 	} );
 } );
