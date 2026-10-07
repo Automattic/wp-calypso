@@ -4,6 +4,7 @@ import { useState } from 'react';
 import useSafe from '../../panel/helpers/use-safe';
 import { bumpStat } from '../../panel/rest-client/bump-stat';
 import { wpcom } from '../../panel/rest-client/wpcom';
+import type { CSSProperties } from 'react';
 
 export const followStatTypes = {
 	comment: 'note_commented_post',
@@ -17,10 +18,12 @@ export const FollowLink = ( {
 	site,
 	noteType,
 	isFollowing: initialIsFollowing,
+	style,
 }: {
 	site: number;
 	noteType: keyof typeof followStatTypes;
 	isFollowing: boolean;
+	style?: CSSProperties;
 } ) => {
 	const [ isRequestRunning, setIsRequestRunning ] = useState( false );
 	const [ isFollowing, setIsFollowing ] = useState( initialIsFollowing );
@@ -66,7 +69,7 @@ export const FollowLink = ( {
 		<Button
 			variant="link"
 			size="compact"
-			style={ { height: '16px', textDecoration: 'none' } }
+			style={ { height: '16px', textDecoration: 'none', ...style } }
 			onClick={ toggleFollowStatus }
 		>
 			{ isFollowing ? __( 'Subscribed' ) : __( 'Subscribe' ) }

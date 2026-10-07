@@ -70,7 +70,7 @@ export default function UserBlock( { note, block }: { note: Note; block: Block }
 	const byline = isLikeOrFollowNote( note ) && (
 		<>
 			<FlexBlock>
-				<VStack spacing={ 0 }>
+				<VStack spacing={ 0.5 }>
 					<a
 						className="wpnc__user-title"
 						href={ readerProfileUrl }
@@ -96,6 +96,7 @@ export default function UserBlock( { note, block }: { note: Note; block: Block }
 					site={ block.meta.ids.site }
 					isFollowing={ !! block.actions.follow }
 					noteType={ note.type as keyof typeof followStatTypes }
+					style={ { fontWeight: 'var(--wpds-typography-font-weight-emphasis)' } }
 				/>
 			) }
 		</>
