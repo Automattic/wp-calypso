@@ -1,6 +1,9 @@
-import { __experimentalHeading as Heading } from '@wordpress/components';
+import { Button, __experimentalHeading as Heading } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { useEffect, useRef, useState } from 'react';
+import { useAnalytics } from '../../app/analytics';
+import AmplifyAlsoUseful from './also-useful';
+import AmplifySampleReportModal from './sample-report-modal';
 import { PERSPECTIVES } from './score-preview';
 import { severityFor } from './score-severity';
 
@@ -12,15 +15,15 @@ const FAQS = [
 		),
 	},
 	{
-		question: __( 'Does Amplify analyze the whole site?' ),
+		question: __( 'Does the audit cover the whole site?' ),
 		answer: __(
-			'Not yet. Amplify looks at a public homepage—the place where many visitors and AI tools first encounter a business. The report is a point-in-time view, not a full-site audit.'
+			'Not yet. Each audit looks at a public homepage, where many visitors and AI tools first encounter a business. The report is a point-in-time view, not a full-site audit.'
 		),
 	},
 	{
 		question: __( 'What’s included in a full report?' ),
 		answer: __(
-			'A full report combines the first-time visitor and AI systems perspectives. Each has its own score out of 100, category breakdown, findings, and suggested next steps. You can also create a report for just one perspective.'
+			'A full report covers both lenses: first-time visitors and AI agents. Each has its own score out of 100, a category breakdown, and findings that explain why they matter and how to improve them. You can also run an audit for just one lens.'
 		),
 	},
 	{
@@ -30,21 +33,21 @@ const FAQS = [
 		),
 	},
 	{
-		question: __( 'What can I do with the prompts?' ),
+		question: __( 'Can I turn the report into my own pitch?' ),
 		answer: __(
-			'Findings include prompts you can bring to an AI agent to explore or implement a fix. Review the result against the site and your client’s goals before making a change.'
+			'Yes. Feed the PDF into your AI tool of choice to create a branded report or pitch deck in your agency’s voice. Review the result against the site before you share it.'
 		),
 	},
 	{
-		question: __( 'Can I share a report with a client?' ),
+		question: __( 'Can I share a report with a prospect?' ),
 		answer: __(
-			'Yes. Download the completed report as a PDF to bring to a pitch or share during a client check-in.'
+			'Yes. Download the completed report as a PDF to send ahead of a pitch or walk through together.'
 		),
 	},
 	{
 		question: __( 'Will a report update after the homepage changes?' ),
 		answer: __(
-			'No. Each report captures the public homepage at the time of analysis. Create another report after making changes to see an updated assessment.'
+			'No. Each report captures the public homepage at the time of the audit. Run another audit after making changes to see an updated assessment.'
 		),
 	},
 ];
@@ -101,7 +104,7 @@ function PromptGraphic() {
 		<div className="dashboard-amplify-story__prompt" aria-hidden="true">
 			<p>
 				{ __(
-					'Rewrite the homepage headline so it clearly names who this business serves and the outcome it delivers.'
+					'Turn this report into a 5-slide pitch deck in our agency’s voice, leading with the three biggest gaps.'
 				) }
 				<span className="dashboard-amplify-story__prompt-caret" />
 			</p>
@@ -174,7 +177,7 @@ function ScoreCategories() {
 			</Heading>
 			<p className="dashboard-amplify-story__rubric-intro">
 				{ __(
-					'Each perspective looks at eight categories. Together, they show where a homepage is working and where it needs attention.'
+					'Each lens looks at eight categories. Together, they show where a homepage is working and where it needs attention.'
 				) }
 			</p>
 			<div className="dashboard-amplify-story__rubric-columns" ref={ gridRef }>
@@ -185,12 +188,12 @@ function ScoreCategories() {
 						aria-labelledby={ `amplify-rubric-${ type }` }
 					>
 						<Heading id={ `amplify-rubric-${ type }` } level={ 3 }>
-							{ PERSPECTIVES[ type ].label }
+							{ PERSPECTIVES[ type ].title }
 						</Heading>
 						<p>
 							{ type === 'human'
-								? __( 'How a new visitor experiences the homepage.' )
-								: __( 'How clearly AI tools can access and understand the homepage.' ) }
+								? __( 'First-time visitors: trust, clarity, and what builds confidence.' )
+								: __( 'AI agents: how ChatGPT, Perplexity, and others read and rank the site.' ) }
 						</p>
 						<div className="dashboard-amplify-story__rubric-grid">
 							{ PERSPECTIVES[ type ].metrics.map( ( metric, index ) => {
@@ -257,6 +260,8 @@ function ScoreCategories() {
 }
 
 export default function AmplifyOverviewStory() {
+	const { recordTracksEvent } = useAnalytics();
+	const [ isSampleOpen, setIsSampleOpen ] = useState( false );
 	return (
 		<div className="dashboard-amplify-story">
 			<section
@@ -268,11 +273,11 @@ export default function AmplifyOverviewStory() {
 				</div>
 				<div className="dashboard-amplify-story__copy">
 					<Heading id="amplify-perspectives-title" level={ 2 }>
-						{ __( 'Two perspectives on one homepage' ) }
+						{ __( 'Two lenses, one complete picture' ) }
 					</Heading>
 					<p>
 						{ __(
-							'See how the homepage feels to someone visiting for the first time and how clearly AI systems can understand it. Choose either perspective, or bring both together in a full report.'
+							'Each audit scores the homepage across 16 categories, from trust signals and mobile experience to structured data, and calls out the most critical improvements for both people and AI agents.'
 						) }
 					</p>
 				</div>
@@ -287,13 +292,23 @@ export default function AmplifyOverviewStory() {
 				</div>
 				<div className="dashboard-amplify-story__copy">
 					<Heading id="amplify-categories-title" level={ 2 }>
-						{ __( 'Go beyond a single score' ) }
+						{ __( 'What’s in the report' ) }
 					</Heading>
 					<p>
 						{ __(
-							'Category scores show where to focus. The visitor report covers things like trust, content, mobile experience, and conversion. The AI report looks at technical health, structured data, and how specifically the site describes the business.'
+							'A comprehensive PDF report with detailed findings on problem areas, so you can approach a prospect with proof of why their site needs work and a clear roadmap for how you’ll improve it once they hire your agency.'
 						) }
 					</p>
+					<Button
+						variant="link"
+						className="dashboard-amplify-story__sample-link"
+						onClick={ () => {
+							recordTracksEvent( 'calypso_a4a_amplify_sample_report_open', { source: 'story' } );
+							setIsSampleOpen( true );
+						} }
+					>
+						{ __( 'View a sample report' ) }
+					</Button>
 				</div>
 			</section>
 
@@ -303,17 +318,19 @@ export default function AmplifyOverviewStory() {
 				</div>
 				<div className="dashboard-amplify-story__copy">
 					<Heading id="amplify-prompts-title" level={ 2 }>
-						{ __( 'Bring a concrete next step to the pitch' ) }
+						{ __( 'Ready to make your own' ) }
 					</Heading>
 					<p>
 						{ __(
-							'Each finding explains what needs attention and includes a prompt you can take to an AI agent. Use it to explore a fix, then apply your own judgment before sharing or publishing the result.'
+							'Feed the PDF into your AI tool of choice to turn it into a branded report or pitch deck in your agency’s voice.'
 						) }
 					</p>
 				</div>
 			</section>
 
 			<ScoreCategories />
+
+			<AmplifyAlsoUseful />
 
 			<section className="dashboard-amplify-story__faq" aria-labelledby="amplify-faq-title">
 				<Heading id="amplify-faq-title" level={ 2 }>
@@ -331,6 +348,7 @@ export default function AmplifyOverviewStory() {
 					) ) }
 				</div>
 			</section>
+			{ isSampleOpen && <AmplifySampleReportModal onClose={ () => setIsSampleOpen( false ) } /> }
 		</div>
 	);
 }
