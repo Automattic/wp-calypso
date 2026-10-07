@@ -27,8 +27,8 @@ interface Props {
 }
 
 function PoolRow( { pool, isExhausted }: { pool: CreditsPool; isExhausted: boolean } ) {
-	// A pool with no allowance shows its balance under a muted label, never in the exhausted style.
-	if ( pool.percent === undefined ) {
+	// Top-ups have no allowance or reset, so the row shows their balance, never the exhausted style.
+	if ( pool.id === 'topups' ) {
 		const balance = formatCreditsLeft( pool.remaining );
 		return (
 			<div
