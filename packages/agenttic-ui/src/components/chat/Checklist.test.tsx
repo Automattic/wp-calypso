@@ -168,6 +168,26 @@ describe( 'Checklist', () => {
 		expect( onSubmit ).not.toHaveBeenCalled();
 	} );
 
+	it( 'gives each checklist instance its own description ids', () => {
+		const disabledItems: ChecklistItem[] = [
+			{ id: 'woo', label: 'Add products', prompt: 'Add', disabled: true, disabledReason: 'Later' },
+		];
+		act( () => {
+			root.render(
+				<>
+					<Checklist title="One" items={ disabledItems } />
+					<Checklist title="Two" items={ disabledItems } />
+				</>
+			);
+		} );
+
+		const ids = Array.from( container.querySelectorAll( 'button[aria-describedby]' ) ).map( ( b ) =>
+			b.getAttribute( 'aria-describedby' )
+		);
+		expect( ids ).toHaveLength( 2 );
+		expect( new Set( ids ).size ).toBe( 2 );
+	} );
+
 	it( 'renders a disabled item that is in progress as an inert row', () => {
 		render( {
 			items: [

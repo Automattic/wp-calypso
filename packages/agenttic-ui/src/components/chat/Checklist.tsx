@@ -86,11 +86,13 @@ const getRowKind = ( item: ChecklistItem ): RowKind => {
 
 interface ChecklistRowProps {
 	item: ChecklistItem;
+	/** Per-instance prefix, so two lists sharing task ids don't share DOM ids. */
+	idPrefix: string;
 	statusLabel: string;
 	onSelect: ( item: ChecklistItem ) => void;
 }
 
-function ChecklistRow( { item, statusLabel, onSelect }: ChecklistRowProps ) {
+function ChecklistRow( { item, idPrefix, statusLabel, onSelect }: ChecklistRowProps ) {
 	const status = getStatus( item );
 	const className = cn( styles.item, {
 		[ styles[ 'item-in_progress' ] ]: status === 'in_progress',
@@ -120,7 +122,7 @@ function ChecklistRow( { item, statusLabel, onSelect }: ChecklistRowProps ) {
 			);
 		case 'disabled': {
 			// Stays focusable so the reason is reachable from the keyboard.
-			const reasonId = item.disabledReason ? `agenttic-checklist-reason-${ item.id }` : undefined;
+			const reasonId = item.disabledReason ? `${ idPrefix }-reason-${ item.id }` : undefined;
 			const button = (
 				<button
 					type="button"
@@ -259,6 +261,7 @@ export function Checklist( {
 								<div className={ styles.pad }>
 									<ChecklistRow
 										item={ item }
+										idPrefix={ listId }
 										statusLabel={ statusLabels[ getStatus( item ) ] }
 										onSelect={ handleItemClick }
 									/>
