@@ -150,14 +150,22 @@ export const marketplaceReferPremiumPlanContext: Callback = ( context, next ) =>
 
 export const checkoutContext: Callback = ( context, next ) => {
 	const { siteSlug, planSlug } = context.params;
-	const { referral_blog_id } = context.query;
+	const { referral_blog_id, skip_active_cart } = context.query;
 	const referralBlogId = referral_blog_id ? parseInt( referral_blog_id ) : undefined;
+	// Set by the WordPress.com middleware when it has already prepared and saved the cart
+	// (the Pressable Titan redirect): checkout must load that cart, not the frontend one.
+	const skipActiveCart = skip_active_cart === '1';
 
 	context.secondary = <MarketplaceSidebar path={ context.path } />;
 	context.primary = (
 		<>
 			<MarketplacePageViewTracker title="Marketplace > Checkout" path={ context.path } />
-			<Checkout referralBlogId={ referralBlogId } siteSlug={ siteSlug } planSlug={ planSlug } />
+			<Checkout
+				referralBlogId={ referralBlogId }
+				siteSlug={ siteSlug }
+				planSlug={ planSlug }
+				skipActiveCart={ skipActiveCart }
+			/>
 		</>
 	);
 	next();
