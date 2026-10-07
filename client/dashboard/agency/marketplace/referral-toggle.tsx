@@ -9,7 +9,12 @@ import { __experimentalHStack as HStack, Button, ToggleControl } from '@wordpres
 import { __ } from '@wordpress/i18n';
 import { info } from '@wordpress/icons';
 import { useEffect } from 'react';
-import { markReferralReveal, ReferralEarnPill, referralTreatment } from './referral-mode-pass';
+import {
+	markReferralReveal,
+	previewsNewReferrer,
+	ReferralEarnPill,
+	referralTreatment,
+} from './referral-mode-pass';
 import { useReferralToggle } from './use-referral-toggle';
 import useReferralsGuide from './use-referrals-guide';
 
@@ -38,7 +43,7 @@ export default function ReferralToggle( {
 	// flips, and goes once the agency has sent a referral.
 	const { data: agency } = useQuery( activeAgencyQuery() );
 	const { data: referrals } = useQuery( referralsQuery( agency?.id ?? 0 ) );
-	const hasReferred = !! referrals?.length;
+	const hasReferred = ! previewsNewReferrer() && !! referrals?.length;
 
 	useEffect( () => {
 		if ( ! isPassH && checked && isFetched && ! guideSeen ) {

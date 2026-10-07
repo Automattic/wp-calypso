@@ -49,6 +49,22 @@ function fieldTreatment(): 'n' | 'o' | 'p' {
 		return param === 'o' || param === 'p' ? param : 'n';
 	}
 }
+// `?referred=0` previews the page as an agency that hasn't sent a referral yet,
+// so the earn pill shows; `?referred=1` goes back to the agency's own referrals.
+const NEW_REFERRER_PREVIEW_KEY = 'a4a-referral-preview-new-referrer';
+export function previewsNewReferrer(): boolean {
+	const param = new URLSearchParams( window.location.search ).get( 'referred' );
+	try {
+		if ( param === '0' ) {
+			window.sessionStorage.setItem( NEW_REFERRER_PREVIEW_KEY, '1' );
+		} else if ( param === '1' ) {
+			window.sessionStorage.removeItem( NEW_REFERRER_PREVIEW_KEY );
+		}
+		return window.sessionStorage.getItem( NEW_REFERRER_PREVIEW_KEY ) === '1';
+	} catch {
+		return param === '0';
+	}
+}
 const REFERRALS_HELP_URL =
 	'https://agencieshelp.automattic.com/knowledge-base/referring-products-to-clients/';
 
