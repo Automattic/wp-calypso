@@ -137,7 +137,7 @@ const SiteProtection: FunctionComponent< ModulesProps > = ( { siteId, adminBaseU
 
 	// The page needs `manage_options`, while the figure only needs `edit_posts`, so an editor
 	// could read the count but not open the page. Waiting for the figure keeps it from flashing.
-	const hasAkismetInsights = canManageModules && ! akismet.isError && ! akismet.isLoading;
+	const hasAkismetInsights = canManageModules && ! akismet.isError && ! akismet.isPending;
 
 	return (
 		<WidgetSection
@@ -157,7 +157,7 @@ const SiteProtection: FunctionComponent< ModulesProps > = ( { siteId, adminBaseU
 					}
 					isError={ protect.isError }
 					error={ protect.error instanceof Error ? protect.error.message : '' }
-					isLoading={ protect.isLoading }
+					isLoading={ protect.isPending }
 					canManageModule={ canManageModules }
 					activateProduct={ activateProtect }
 				/>
@@ -172,7 +172,7 @@ const SiteProtection: FunctionComponent< ModulesProps > = ( { siteId, adminBaseU
 					}
 					isError={ akismet.isError }
 					error={ akismet.error instanceof Error ? akismet.error.message : '' }
-					isLoading={ akismet.isLoading }
+					isLoading={ akismet.isPending }
 					canManageModule={ canManageModules }
 					activateProduct={ activateAkismet }
 					manageUrl={ akismetUrl }

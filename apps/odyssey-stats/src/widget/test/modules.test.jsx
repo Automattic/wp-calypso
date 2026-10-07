@@ -34,6 +34,7 @@ const moduleStates = ( { protect, akismet } ) => {
 		const state = module === 'protect' ? protect : akismet;
 		return {
 			data: state.data,
+			isPending: !! ( state.loading || state.paused ),
 			isLoading: !! state.loading,
 			isError: !! state.error,
 			error: state.error ? new Error( state.error ) : null,
@@ -45,6 +46,8 @@ const moduleStates = ( { protect, akismet } ) => {
 const ok = ( data ) => ( { data } );
 const failed = ( error = 'not_active' ) => ( { error } );
 const pending = () => ( { loading: true } );
+// Waiting for the connection to come back: still pending, but not fetching.
+const paused = () => ( { paused: true } );
 
 function renderModules() {
 	return render( <Modules siteId={ SITE_ID } adminBaseUrl="https://example.com/wp-admin/" /> );
@@ -141,8 +144,11 @@ describe( 'Modules', () => {
 			}
 		);
 
-		it( 'waits for the figure before offering the link, so it does not flash', () => {
-			moduleStates( { protect: ok( 12345 ), akismet: pending() } );
+		it.each( [
+			[ 'loading', pending ],
+			[ 'paused', paused ],
+		] )( 'waits for a %s figure before offering the link', ( _, state ) => {
+			moduleStates( { protect: ok( 12345 ), akismet: state() } );
 			renderModules();
 
 			expect(
