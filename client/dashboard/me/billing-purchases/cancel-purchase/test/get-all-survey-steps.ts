@@ -8,7 +8,7 @@ import {
 	NEXT_ADVENTURE_STEP,
 	REMOVE_PLAN_STEP,
 } from '../cancel-purchase-form/steps';
-import { getAllSurveySteps } from '../index';
+import { getAllSurveySteps } from '../get-all-survey-steps';
 import type { CancelIntent } from '../../../../utils/purchase';
 import type { Purchase } from '@automattic/api-core';
 
