@@ -12,7 +12,7 @@ import { buildCart } from '../../../test-helpers/factories/cart';
 import { withNamePulseQueries } from '../../../test-helpers/factories/name-pulse';
 import { queryClient } from '../../../test-helpers/renderer';
 import { NamePulseDomainStatus, type NamePulseDomainResult } from '../../helpers';
-import { NamePulseResultRow } from '../result-row';
+import { NamePulseResultRow, type NamePulseResultRowVariant } from '../result-row';
 import type { DomainAvailability } from '@automattic/api-core';
 
 jest.mock( '@wordpress/compose', () => ( {
@@ -79,7 +79,8 @@ const notUsed = () => Promise.reject( new Error( 'not used' ) );
 const renderRow = (
 	result: NamePulseDomainResult,
 	domainAvailability: ( domainName: string ) => Promise< DomainAvailability > = notUsed,
-	cart = buildCart()
+	cart = buildCart(),
+	variant?: NamePulseResultRowVariant
 ) => {
 	const fetcher = jest.fn( domainAvailability );
 
@@ -99,7 +100,7 @@ const renderRow = (
 						domainAvailability: fetcher,
 					} ) }
 				>
-					<NamePulseResultRow result={ result } position={ 0 } />
+					<NamePulseResultRow result={ result } position={ 0 } variant={ variant } />
 				</DomainSearchContext.Provider>
 			</QueryClientProvider>
 		);
@@ -248,6 +249,50 @@ describe( 'NamePulseResultRow', () => {
 		expect( screen.getByText( 'Premium' ) ).toBeInTheDocument();
 		expect( screen.getByText( '$350' ) ).toBeInTheDocument();
 		expect( fetcher ).not.toHaveBeenCalled();
+	} );
+
+	describe( 'card variant', () => {
+		const renderCard = ( result: NamePulseDomainResult ) =>
+			renderRow( result, notUsed, buildCart(), 'card' );
+
+		it( 'shows the regular price struck through, the sale price and the renewal on one line', () => {
+			renderCard(
+				buildResult( {
+					domain_name: 'icecream.blog',
+					suffix: 'blog',
+					cost: '$33.00',
+					raw_price: 33,
+					sale_cost: 3.3,
+					currency_code: 'USD',
+				} )
+			);
+
+			const price = document.querySelector( '.name-pulse-row__price--card' ) as HTMLElement;
+
+			expect( document.querySelector( '.name-pulse-row--card' ) ).toBeInTheDocument();
+			expect( within( price ).getByText( '$33' ).tagName ).toBe( 'S' );
+			expect( within( price ).getByText( '$3.30' ) ).toBeInTheDocument();
+			expect( within( price ).getByText( '/first year' ) ).toBeInTheDocument();
+			expect( within( price ).getByText( '$33/year renewal' ) ).toBeInTheDocument();
+		} );
+
+		it( 'shows the yearly price alone when there is no sale', () => {
+			renderCard( buildResult( { cost: '$29.00', raw_price: 29, currency_code: 'USD' } ) );
+
+			const price = document.querySelector( '.name-pulse-row__price--card' ) as HTMLElement;
+
+			expect( within( price ).getByText( '$29' ) ).toBeInTheDocument();
+			expect( within( price ).getByText( '/year' ) ).toBeInTheDocument();
+			expect( price.querySelector( 's' ) ).not.toBeInTheDocument();
+			expect( within( price ).queryByText( /renewal/ ) ).not.toBeInTheDocument();
+		} );
+
+		it( 'keeps the table row layout by default', () => {
+			renderRow( buildResult( { cost: '$29.00', raw_price: 29, currency_code: 'USD' } ) );
+
+			expect( document.querySelector( '.name-pulse-row--card' ) ).not.toBeInTheDocument();
+			expect( document.querySelector( '.name-pulse-row__price--card' ) ).not.toBeInTheDocument();
+		} );
 	} );
 
 	it( 'shows no Sale badge on a sale', () => {
