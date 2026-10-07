@@ -5,7 +5,8 @@ const MENU_DESTINATIONS = [
 	{ destination: 'settings', selector: '#adminmenu a[href*="page=jetpack#/settings"]' },
 ] as const;
 
-type ExploreMoreDestination = ( typeof MENU_DESTINATIONS )[ number ][ 'destination' ] | 'stats';
+export type ExploreMoreDestination =
+	( typeof MENU_DESTINATIONS )[ number ][ 'destination' ] | 'stats';
 
 /**
  * Where "Explore more" goes: My Jetpack, then Jetpack's Settings, then `fallbackUrl` where

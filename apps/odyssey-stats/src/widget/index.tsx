@@ -11,10 +11,8 @@ import config from '../lib/config-api';
 import {
 	DEFAULT_DATE_RANGE_ID,
 	DateRangeId,
-	getDateRange,
-	getRangeStartDate,
-	getSiteToday,
 	isDateRangeId,
+	resolveDateRange,
 } from '../lib/date-ranges';
 import getExploreMoreUrl from '../lib/get-explore-more-url';
 import { loadWpComponentsStyleForWidget } from '../lib/load-wp-components-style';
@@ -94,10 +92,7 @@ export function init() {
 			const [ rangeId, setRangeId ] = useState< DateRangeId >( () =>
 				readStoredRangeId( currentSiteId )
 			);
-			// Worked out once, so the chart, the lists and their links all cover the same days.
-			const range = getDateRange( rangeId );
-			const endDate = getSiteToday( gmtOffset );
-			const startDate = getRangeStartDate( range, endDate );
+			const range = resolveDateRange( rangeId, gmtOffset );
 
 			const onRangeChange = ( nextRangeId: DateRangeId ) => {
 				if ( nextRangeId !== rangeId ) {
@@ -118,14 +113,12 @@ export function init() {
 							icon={ trendingUp }
 							action={ <DateRangeControl value={ rangeId } onChange={ onRangeChange } /> }
 						>
-							<MiniChart siteId={ currentSiteId } range={ range } endDate={ endDate } />
+							<MiniChart siteId={ currentSiteId } range={ range } />
 						</WidgetSection>
 						<Highlights
 							siteId={ currentSiteId }
 							statsBaseUrl={ statsBaseUrl }
-							rangeId={ rangeId }
-							startDate={ startDate }
-							endDate={ endDate }
+							range={ range }
 							gmtOffset={ gmtOffset }
 						/>
 						<Modules siteId={ currentSiteId } adminBaseUrl={ adminBaseUrl } />

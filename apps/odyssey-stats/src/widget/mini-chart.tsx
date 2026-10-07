@@ -1,13 +1,12 @@
 import { Notice } from '@wordpress/ui';
 import { useTranslate } from 'i18n-calypso';
-import { lazy, Suspense, useMemo, FunctionComponent } from 'react';
+import { lazy, Suspense, useMemo, useState, FunctionComponent } from 'react';
 import useCssVariable from 'calypso/my-sites/stats/hooks/use-css-variable';
 import { buildChartData } from 'calypso/my-sites/stats/stats-chart-tabs/utility';
 import StatsModulePlaceholder from 'calypso/my-sites/stats/stats-module/placeholder';
 import { parseLocalDate } from 'calypso/my-sites/stats/utils';
 import useVisitsQuery from '../hooks/use-visits-query';
-import { DateRange } from '../lib/date-ranges';
-import { deriveSeriesColors } from '../lib/series-colors';
+import { ResolvedDateRange } from '../lib/date-ranges';
 import ChartBoundary from './chart-boundary';
 import MetricValue from './metric-value';
 
@@ -17,9 +16,7 @@ import './mini-chart.scss';
 
 interface MiniChartProps {
 	siteId: number;
-	range: DateRange;
-	/** The range's last day, as `YYYY-MM-DD`. */
-	endDate: string;
+	range: ResolvedDateRange;
 }
 
 interface VisitRecord {
@@ -30,14 +27,15 @@ interface VisitRecord {
 
 const CHART_HEIGHT = 160;
 
-const MiniChart: FunctionComponent< MiniChartProps > = ( { siteId, range, endDate } ) => {
+const MiniChart: FunctionComponent< MiniChartProps > = ( { siteId, range } ) => {
 	const translate = useTranslate();
-	const { unit, quantity } = range;
+	const { unit, quantity, endDate } = range;
 
-	// The chart follows the user's admin colour scheme. Read from `body`: the scheme sets
-	// the variable there, while `:root` only carries wp-admin's default blue.
-	const primaryColor = useCssVariable( '--wp-admin-theme-color', document.body );
-	const [ viewsColor, visitorsColor ] = deriveSeriesColors( primaryColor );
+	// The admin colour scheme's series colours, as on the Stats page's line chart. Read from the
+	// widget's own element, since the scheme class that sets them is on the widget root.
+	const [ rootElement, setRootElement ] = useState< HTMLDivElement | null >( null );
+	const viewsColor = useCssVariable( '--chart-series-views', rootElement );
+	const visitorsColor = useCssVariable( '--chart-series-visitors', rootElement );
 
 	// `status`, not `isLoading`: a retry waiting on a hidden tab or a lost connection is still
 	// pending, while `isLoading` is false and would read the range as empty.
@@ -85,19 +83,18 @@ const MiniChart: FunctionComponent< MiniChartProps > = ( { siteId, range, endDat
 	const hasChart = status === 'success' && ! isEmpty;
 	// Fixed, so the card keeps its height from the placeholder to the chart.
 	const chartBoxStyle = { blockSize: `${ CHART_HEIGHT }px` };
+	const noData = (
+		<p className="stats-widget-minichart__error">{ translate( 'No data to show' ) }</p>
+	);
 
 	return (
-		<div className="stats-widget-minichart">
+		<div className="stats-widget-minichart" ref={ setRootElement }>
 			{ ( isPending || hasChart ) && (
 				<div className="stats-widget-metrics">
 					<div className="stats-widget-metric">
 						<div className="stats-widget-metric__title">
 							{ translate( 'Views', { context: 'noun' } ) }
-							<span
-								className="stats-widget-metric__swatch"
-								style={ { backgroundColor: viewsColor } }
-								aria-hidden="true"
-							/>
+							<span className="stats-widget-metric__swatch is-views" aria-hidden="true" />
 						</div>
 						<MetricValue
 							value={ totals.views }
@@ -112,11 +109,7 @@ const MiniChart: FunctionComponent< MiniChartProps > = ( { siteId, range, endDat
 					<div className="stats-widget-metric">
 						<div className="stats-widget-metric__title">
 							{ translate( 'Visitors', { context: 'noun' } ) }
-							<span
-								className="stats-widget-metric__swatch"
-								style={ { backgroundColor: visitorsColor } }
-								aria-hidden="true"
-							/>
+							<span className="stats-widget-metric__swatch is-visitors" aria-hidden="true" />
 						</div>
 						<MetricValue
 							value={ totals.visitors }
@@ -148,12 +141,10 @@ const MiniChart: FunctionComponent< MiniChartProps > = ( { siteId, range, endDat
 					</Notice.Actions>
 				</Notice.Root>
 			) }
-			{ status === 'error' && (
-				<p className="stats-widget-minichart__error">{ translate( 'No data to show' ) }</p>
-			) }
+			{ status === 'error' && noData }
 			{ hasChart && (
 				// Around the chart alone, so a failed chart takes only its own box with it.
-				<ChartBoundary fallback={ null }>
+				<ChartBoundary fallback={ noData }>
 					<div className="stats-widget-chart" style={ chartBoxStyle }>
 						<Suspense fallback={ <StatsModulePlaceholder isLoading /> }>
 							<OverviewChart series={ series } height={ CHART_HEIGHT } unit={ unit } />

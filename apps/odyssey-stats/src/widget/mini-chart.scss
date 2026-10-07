@@ -18,6 +18,14 @@
 		inline-size: var(--wpds-dimension-size-2xs, 16px);
 		block-size: 2px;
 		border-radius: var(--wpds-border-radius-sm, 2px);
+
+		&.is-views {
+			background-color: var(--chart-series-views);
+		}
+
+		&.is-visitors {
+			background-color: var(--chart-series-visitors);
+		}
 	}
 
 	.stats-widget-empty-notice {

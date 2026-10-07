@@ -51,6 +51,22 @@ describe( 'recordWidgetEvent', () => {
 			expect( window.location.href ).toBe( 'https://example.test/next' );
 		} );
 
+		it( 'counts a click repeated while the link is held once', () => {
+			const follow = recordWidgetEventThenFollow( 'post_clicked' );
+			const second = clickOn( { href: 'https://example.test/other' } );
+			follow( clickOn() );
+			follow( second );
+
+			expect( recordTracksEvent ).toHaveBeenCalledTimes( 1 );
+			expect( second.preventDefault ).toHaveBeenCalled();
+
+			jest.runAllTimers();
+			expect( window.location.href ).toBe( 'https://example.test/next' );
+
+			follow( clickOn() );
+			expect( recordTracksEvent ).toHaveBeenCalledTimes( 2 );
+		} );
+
 		it.each( [
 			{ target: '_blank' },
 			{ metaKey: true },

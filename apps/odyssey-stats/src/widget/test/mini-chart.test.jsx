@@ -36,7 +36,8 @@ const pending = () => ( { status: 'pending' } );
 
 function renderMiniChart( state, rangeId = DATE_RANGE_LAST_7_DAYS ) {
 	useVisitsQuery.mockReturnValue( state );
-	return <MiniChart siteId={ 1 } range={ getDateRange( rangeId ) } endDate="2026-10-07" />;
+	const range = { ...getDateRange( rangeId ), startDate: '2026-10-01', endDate: '2026-10-07' };
+	return <MiniChart siteId={ 1 } range={ range } />;
 }
 
 describe( 'MiniChart', () => {
@@ -58,6 +59,14 @@ describe( 'MiniChart', () => {
 		expect( screen.getByText( '30' ) ).toBeInTheDocument();
 		expect( screen.getByText( '12' ) ).toBeInTheDocument();
 		expect( await screen.findByText( 'Chart' ) ).toBeInTheDocument();
+	} );
+
+	it( 'says no data where the chart failed to load', async () => {
+		mockChartFails = true;
+		render( renderMiniChart( success( days( [ 20, 8 ] ) ) ) );
+
+		expect( await screen.findByText( 'No data to show' ) ).toBeInTheDocument();
+		expect( screen.getByText( '20' ) ).toBeInTheDocument();
 	} );
 
 	it( 'says a failed request has no data, rather than that the range is empty', () => {
@@ -88,13 +97,15 @@ describe( 'MiniChart', () => {
 		).not.toBeInTheDocument();
 	} );
 
-	it( 'still reports a failed range after the chart itself has failed', async () => {
+	it( 'still reports an empty range after the chart itself has failed', async () => {
 		mockChartFails = true;
 		const { rerender } = render( renderMiniChart( success( days( [ 20, 8 ] ) ) ) );
-		expect( screen.getByText( '20' ) ).toBeInTheDocument();
-
-		rerender( renderMiniChart( failed(), DATE_RANGE_LAST_90_DAYS ) );
-
 		expect( await screen.findByText( 'No data to show' ) ).toBeInTheDocument();
+
+		rerender( renderMiniChart( success( days( [ 0, 0 ] ) ), DATE_RANGE_LAST_90_DAYS ) );
+
+		expect(
+			await screen.findByText( 'We are collecting traffic data for your site' )
+		).toBeInTheDocument();
 	} );
 } );

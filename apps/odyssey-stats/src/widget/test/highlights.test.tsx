@@ -24,6 +24,14 @@ jest.mock( '../../lib/config-api', () => ( { optionalConfig: () => undefined } )
 jest.mock( '../../lib/selectors/can-current-user', () => () => true );
 jest.mock( '../../lib/selectors/get-site-admin-url', () => () => 'https://example.com/wp-admin/' );
 
+const RANGE = {
+	id: 'last_12_months',
+	unit: 'month',
+	quantity: 12,
+	startDate: '2025-11-01',
+	endDate: '2026-10-06',
+} as const;
+
 /**
  * The address a link opens, the dashboard route in its `p` param, and the days that route opens on.
  * @param link The link.
@@ -41,9 +49,7 @@ function renderHighlights() {
 		<Highlights
 			siteId={ 1 }
 			statsBaseUrl="https://example.com/stats"
-			rangeId="last_12_months"
-			startDate="2025-11-01"
-			endDate="2026-10-06"
+			range={ RANGE }
 			gmtOffset={ 0 }
 		/>
 	);

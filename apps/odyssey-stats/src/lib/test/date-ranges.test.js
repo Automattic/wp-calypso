@@ -7,6 +7,7 @@ import {
 	getRangeStartDate,
 	getSiteToday,
 	isDateRangeId,
+	resolveDateRange,
 } from '../date-ranges';
 
 describe( 'isDateRangeId', () => {
@@ -45,5 +46,22 @@ describe( 'getRangeStartDate', () => {
 		[ DATE_RANGE_LAST_12_MONTHS, '2026-01-15', '2025-02-01' ],
 	] )( 'should start %s ending %s on %s', ( id, endDate, expected ) => {
 		expect( getRangeStartDate( getDateRange( id ), endDate ) ).toBe( expected );
+	} );
+} );
+
+describe( 'resolveDateRange', () => {
+	afterEach( () => {
+		jest.useRealTimers();
+	} );
+
+	it( "should end on the site's today and start where the range does", () => {
+		jest.useFakeTimers().setSystemTime( new Date( '2026-10-05T23:00:00Z' ) );
+		expect( resolveDateRange( DATE_RANGE_LAST_7_DAYS, 2 ) ).toEqual( {
+			id: DATE_RANGE_LAST_7_DAYS,
+			unit: 'day',
+			quantity: 7,
+			startDate: '2026-09-30',
+			endDate: '2026-10-06',
+		} );
 	} );
 } );

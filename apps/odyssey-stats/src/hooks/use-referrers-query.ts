@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
 import getDefaultQueryParams from 'calypso/my-sites/stats/hooks/default-query-params';
+import type { ResolvedDateRange } from '../lib/date-ranges';
 
 interface QueryReferrersParams {
 	period: string;
@@ -11,7 +12,7 @@ interface QueryReferrersParams {
 }
 
 interface ReferresResponse {
-	summary: { groups: ( GroupWithChildren & GroupWithoutChildren )[] };
+	summary: { groups: ReferrerGroup[] };
 }
 
 interface GroupWithChildren {
@@ -34,37 +35,44 @@ interface GroupWithoutChildren {
 	};
 }
 
+type ReferrerGroup = GroupWithChildren | GroupWithoutChildren;
+
+function hasChildren( group: ReferrerGroup ): group is GroupWithChildren {
+	return Array.isArray( group.results );
+}
+
 function queryReferrers( siteId: number, params: QueryReferrersParams ) {
 	return wpcom.req.get( `/sites/${ siteId }/stats/referrers`, params );
 }
 
 /**
- * Top referrers over the days from `startDate` to `date` (see `getRangeStartDate`).
- * @param siteId    The site to query.
- * @param startDate First day of the range, as `YYYY-MM-DD`.
- * @param date      Last day of the range, as `YYYY-MM-DD`.
- * @param summarize Whether to total the window rather than break it down by day.
- * @param max       How many rows to return; 0 for the API's own limit.
+ * Top referrers over a range's days, totalled rather than broken down by day.
+ * @param siteId The site to query.
+ * @param days   The range's first and last day.
  */
 export default function useReferrersQuery(
 	siteId: number,
-	startDate: string,
-	date: string,
-	summarize = 1,
-	max = 0
+	days: Pick< ResolvedDateRange, 'startDate' | 'endDate' >
 ) {
+	const { startDate, endDate } = days;
 	return useQuery( {
 		...getDefaultQueryParams< ReferresResponse >(),
-		queryKey: [ 'stats-widget', 'referrers', siteId, startDate, date, summarize, max ],
+		queryKey: [ 'stats-widget', 'referrers', siteId, startDate, endDate ],
 		queryFn: () =>
-			queryReferrers( siteId, { period: 'day', start_date: startDate, date, summarize, max } ),
+			queryReferrers( siteId, {
+				period: 'day',
+				start_date: startDate,
+				date: endDate,
+				summarize: 1,
+				max: 0,
+			} ),
 		select: ( data ) => {
-			return data?.summary?.groups.map( ( group: GroupWithChildren & GroupWithoutChildren ) => {
-				const children = Array.isArray( group.results ) ? group.results : [];
+			return data?.summary?.groups.map( ( group: ReferrerGroup ) => {
+				const children = hasChildren( group ) ? group.results : [];
 
 				// A group ("X", holding x.com and a status URL) is counted by its own total,
 				// which is also what the API sorts the groups by.
-				const views = children.length
+				const views = hasChildren( group )
 					? ( group.total ??
 						children.reduce( ( total, child ) => total + ( child.views ?? 0 ), 0 ) )
 					: group.results.views;

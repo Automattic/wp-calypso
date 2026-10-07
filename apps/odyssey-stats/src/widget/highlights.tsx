@@ -2,10 +2,10 @@ import { formatNumber } from '@automattic/number-formatters';
 import { TabPanel } from '@wordpress/components';
 import { Icon, chartBar, external } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { FunctionComponent, useRef } from 'react';
+import { FunctionComponent, useState } from 'react';
 import useReferrersQuery from '../hooks/use-referrers-query';
 import useTopPostsQuery from '../hooks/use-top-posts-query';
-import { DateRangeId } from '../lib/date-ranges';
+import { ResolvedDateRange } from '../lib/date-ranges';
 import { HighLightItem } from '../typings';
 import GrowHeight from './grow-height';
 import recordWidgetEvent, { recordWidgetEventThenFollow } from './record-widget-event';
@@ -37,10 +37,7 @@ interface TopColumnProps {
 interface HighlightsProps {
 	siteId: number;
 	statsBaseUrl: string;
-	rangeId: DateRangeId;
-	/** First and last day of the range, as `YYYY-MM-DD`. */
-	startDate: string;
-	endDate: string;
+	range: ResolvedDateRange;
 	gmtOffset: number;
 }
 
@@ -139,16 +136,10 @@ const TopColumn: FunctionComponent< TopColumnProps > = ( {
 	);
 };
 
-export default function Highlights( {
-	siteId,
-	statsBaseUrl,
-	rangeId,
-	startDate,
-	endDate,
-	gmtOffset,
-}: HighlightsProps ) {
+export default function Highlights( { siteId, statsBaseUrl, range, gmtOffset }: HighlightsProps ) {
 	const translate = useTranslate();
 	const statsLink = useStatsLink( siteId );
+	const { startDate, endDate } = range;
 
 	// "See more" and the post rows open the days the lists cover, on Stats or Premium Analytics.
 	const linkRange = { from: startDate, to: endDate, gmtOffset };
@@ -174,16 +165,17 @@ export default function Highlights( {
 		data: topPostsAndPages = [],
 		isPending: isPendingPostsAndPages,
 		isError: isPostsAndPagesError,
-	} = useTopPostsQuery( siteId, startDate, endDate );
+	} = useTopPostsQuery( siteId, range );
 
 	const {
 		data: topReferrers = [],
 		isPending: isPendingReferrers,
 		isError: isReferrersError,
-	} = useReferrersQuery( siteId, startDate, endDate );
+	} = useReferrersQuery( siteId, range );
 
-	// TabPanel also reports the initial tab on mount; only a change is a user's click.
-	const selectedTabRef = useRef< string >( HIGHLIGHT_TAB_TOP_POSTS_PAGES );
+	// Held here rather than left to TabPanel, which remounts when the section comes back after
+	// an empty range and reports its initial tab as it does; only a change is a user's click.
+	const [ selectedTab, setSelectedTab ] = useState< string >( HIGHLIGHT_TAB_TOP_POSTS_PAGES );
 
 	// Drop the section only once both lists have answered empty. A failed request also falls
 	// back to `[]`, so errors are excluded: those lists say "No data to show" instead.
@@ -208,8 +200,8 @@ export default function Highlights( {
 			viewAllUrl: viewAllPostsStatsUrl,
 			itemHref: postHref,
 			isExternal: false,
-			trackingName: 'top_posts',
-			itemEvent: 'post_clicked',
+			trackingName: 'top_posts' as const,
+			itemEvent: 'post_clicked' as const,
 		},
 		{
 			name: HIGHLIGHT_TAB_TOP_REFERRERS,
@@ -219,8 +211,8 @@ export default function Highlights( {
 			viewAllUrl: viewAllReferrerStatsUrl,
 			itemHref: referrerHref,
 			isExternal: true,
-			trackingName: 'top_referrers',
-			itemEvent: 'referrer_clicked',
+			trackingName: 'top_referrers' as const,
+			itemEvent: 'referrer_clicked' as const,
 		},
 	];
 
@@ -233,11 +225,12 @@ export default function Highlights( {
 			<TabPanel
 				className="stats-widget-highlights__tabs"
 				tabs={ tabs.map( ( { name, title } ) => ( { name, title } ) ) }
+				initialTabName={ selectedTab }
 				onSelect={ ( tabName: string ) => {
-					if ( tabName === selectedTabRef.current ) {
+					if ( tabName === selectedTab ) {
 						return;
 					}
-					selectedTabRef.current = tabName;
+					setSelectedTab( tabName );
 					const selected = tabs.find( ( candidate ) => candidate.name === tabName );
 					if ( selected ) {
 						recordWidgetEvent( 'highlights_tab_clicked', { tab: selected.trackingName } );
@@ -257,7 +250,7 @@ export default function Highlights( {
 							onItemClick={ recordWidgetEventThenFollow( active.itemEvent ) }
 							onViewAllClick={ recordWidgetEventThenFollow( 'see_more_clicked', {
 								tab: active.trackingName,
-								range: rangeId,
+								range: range.id,
 							} ) }
 						/>
 					);

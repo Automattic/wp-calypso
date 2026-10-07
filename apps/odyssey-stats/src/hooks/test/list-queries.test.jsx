@@ -22,7 +22,9 @@ const wrapper = ( { children } ) => {
  * @param {Function} hook The query hook to render.
  */
 async function requestFrom( hook ) {
-	renderHook( () => hook( SITE_ID, '2025-11-01', '2026-10-05' ), { wrapper } );
+	renderHook( () => hook( SITE_ID, { startDate: '2025-11-01', endDate: '2026-10-05' } ), {
+		wrapper,
+	} );
 	await waitFor( () => expect( wpcom.req.get ).toHaveBeenCalled() );
 	return wpcom.req.get.mock.calls[ 0 ];
 }
@@ -57,9 +59,12 @@ describe( 'the referrers list', () => {
 	 */
 	async function rowsFor( groups ) {
 		wpcom.req.get.mockResolvedValueOnce( { summary: { groups } } );
-		const { result } = renderHook( () => useReferrersQuery( SITE_ID, '2026-09-06', '2026-10-05' ), {
-			wrapper,
-		} );
+		const { result } = renderHook(
+			() => useReferrersQuery( SITE_ID, { startDate: '2026-09-06', endDate: '2026-10-05' } ),
+			{
+				wrapper,
+			}
+		);
 		await waitFor( () => expect( result.current.data ).toBeDefined() );
 		return result.current.data;
 	}

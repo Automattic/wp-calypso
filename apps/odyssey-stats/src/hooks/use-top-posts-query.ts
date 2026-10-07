@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
 import getDefaultQueryParams from 'calypso/my-sites/stats/hooks/default-query-params';
+import type { ResolvedDateRange } from '../lib/date-ranges';
 
 interface QueryTopPostsParams {
 	period: string;
@@ -19,25 +20,26 @@ function queryTopPosts( siteId: number, params: QueryTopPostsParams ) {
 }
 
 /**
- * Top posts and pages over the days from `startDate` to `date` (see `getRangeStartDate`).
- * @param siteId    The site to query.
- * @param startDate First day of the range, as `YYYY-MM-DD`.
- * @param date      Last day of the range, as `YYYY-MM-DD`.
- * @param summarize Whether to total the window rather than break it down by day.
- * @param max       How many rows to return; 0 for the API's own limit.
+ * Top posts and pages over a range's days, totalled rather than broken down by day.
+ * @param siteId The site to query.
+ * @param days   The range's first and last day.
  */
 export default function useTopPostsQuery(
 	siteId: number,
-	startDate: string,
-	date: string,
-	summarize = 1,
-	max = 0
+	days: Pick< ResolvedDateRange, 'startDate' | 'endDate' >
 ) {
+	const { startDate, endDate } = days;
 	return useQuery( {
 		...getDefaultQueryParams< TopPostsResponse >(),
-		queryKey: [ 'stats-widget', 'top-posts', siteId, startDate, date, summarize, max ],
+		queryKey: [ 'stats-widget', 'top-posts', siteId, startDate, endDate ],
 		queryFn: () =>
-			queryTopPosts( siteId, { period: 'day', start_date: startDate, date, summarize, max } ),
+			queryTopPosts( siteId, {
+				period: 'day',
+				start_date: startDate,
+				date: endDate,
+				summarize: 1,
+				max: 0,
+			} ),
 		select: ( data ) => data?.summary?.postviews,
 		staleTime: 5 * 60 * 1000,
 	} );

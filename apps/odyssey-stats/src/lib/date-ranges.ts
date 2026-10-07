@@ -24,12 +24,23 @@ export type DateRangeId =
 
 export const DEFAULT_DATE_RANGE_ID: DateRangeId = DATE_RANGE_LAST_7_DAYS;
 
-export const DATE_RANGES: DateRange[] = [
-	{ id: DATE_RANGE_LAST_7_DAYS, unit: 'day', quantity: 7 },
-	{ id: DATE_RANGE_LAST_30_DAYS, unit: 'day', quantity: 30 },
-	{ id: DATE_RANGE_LAST_90_DAYS, unit: 'day', quantity: 90 },
-	{ id: DATE_RANGE_LAST_12_MONTHS, unit: 'month', quantity: 12 },
-];
+const DATE_RANGE_BUCKETS: Record< DateRangeId, Pick< DateRange, 'unit' | 'quantity' > > = {
+	[ DATE_RANGE_LAST_7_DAYS ]: { unit: 'day', quantity: 7 },
+	[ DATE_RANGE_LAST_30_DAYS ]: { unit: 'day', quantity: 30 },
+	[ DATE_RANGE_LAST_90_DAYS ]: { unit: 'day', quantity: 90 },
+	[ DATE_RANGE_LAST_12_MONTHS ]: { unit: 'month', quantity: 12 },
+};
+
+export const DATE_RANGES: DateRange[] = ( Object.keys( DATE_RANGE_BUCKETS ) as DateRangeId[] ).map(
+	( id ) => ( { id, ...DATE_RANGE_BUCKETS[ id ] } )
+);
+
+/** A range pinned to the days it covers, so the chart, the lists and their links agree. */
+export interface ResolvedDateRange extends DateRange {
+	/** First and last day, as `YYYY-MM-DD`. */
+	startDate: string;
+	endDate: string;
+}
 
 /**
  * Whether a value read back from storage is still a range the control offers.
@@ -69,12 +80,20 @@ export function getRangeStartDate( range: DateRange, endDate: string ): string {
 }
 
 /**
- * The range for an id, or the default range for anything unrecognised.
+ * The range for an id.
  * @param id The range id.
  */
-export function getDateRange( id: unknown ): DateRange {
-	return (
-		DATE_RANGES.find( ( range ) => range.id === id ) ??
-		( DATE_RANGES.find( ( range ) => range.id === DEFAULT_DATE_RANGE_ID ) as DateRange )
-	);
+export function getDateRange( id: DateRangeId ): DateRange {
+	return { id, ...DATE_RANGE_BUCKETS[ id ] };
+}
+
+/**
+ * The range for an id, ending today in the site's timezone.
+ * @param id        The range id.
+ * @param gmtOffset The site's offset from UTC, in hours.
+ */
+export function resolveDateRange( id: DateRangeId, gmtOffset: number ): ResolvedDateRange {
+	const range = getDateRange( id );
+	const endDate = getSiteToday( gmtOffset );
+	return { ...range, startDate: getRangeStartDate( range, endDate ), endDate };
 }
