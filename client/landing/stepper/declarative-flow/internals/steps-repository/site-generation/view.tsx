@@ -6,7 +6,6 @@ import { useTranslate } from 'i18n-calypso';
 import { useEffect, useRef, useState } from 'react';
 import { BuildVisualization } from './build-visualization';
 import { BuildWowStreamCanvas } from './stream/build-canvas';
-import { BuildWowStreamBoard } from './stream/stream-board';
 import type { BuildWowStreamView } from './stream/use-build-wow-stream';
 import type { SiteGenerationState } from './use-site-generation';
 import type { BuildWowGraph } from 'calypso/landing/stepper/utils/build-wow';
@@ -154,13 +153,21 @@ function WaitingCanvas( {
 					'This can take up to 10 minutes. No worries, you’ll receive an email when the site is ready.'
 				);
 
+	if ( stream ) {
+		return (
+			<div className="site-generation__waiting site-generation__waiting--live">
+				<BuildWowStreamCanvas
+					activityLabel={ activityLabel }
+					reassurance={ String( description ) }
+					stream={ stream }
+				/>
+			</div>
+		);
+	}
+
 	return (
 		<div className="site-generation__waiting">
-			{ stream ? (
-				<BuildWowStreamCanvas activityLabel={ activityLabel } stream={ stream } />
-			) : (
-				<BuildVisualization onTap={ onPreviewTap } />
-			) }
+			<BuildVisualization onTap={ onPreviewTap } />
 			<div className="site-generation__waiting-copy">
 				<h1 className="site-generation__waiting-title">
 					{ translate( 'All good things are worth the wait' ) }
@@ -366,7 +373,6 @@ export function SiteGenerationView( {
 						{ translate( 'Hello! I’m the WordPress Agent, and I’m building your site right now.' ) }
 					</p>
 					<BuildProgress state={ state } />
-					{ stream && state.status === 'working' && <BuildWowStreamBoard stream={ stream } /> }
 				</div>
 			</aside>
 		</main>
