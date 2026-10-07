@@ -25,6 +25,7 @@ export default function ResourceCardHeader( { resource, title }: ResourceCardHea
 			<VStack
 				spacing={ 2 }
 				alignment="flex-start"
+				justify="flex-start"
 				expanded={ false }
 				className="dashboard-resources-learn__card-label"
 			>
