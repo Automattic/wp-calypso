@@ -43,6 +43,11 @@ const mockRecordTracksEvent = recordTracksEvent as unknown as jest.Mock;
 const mockSavePreference = savePreference as unknown as jest.Mock;
 
 const SITE_ID = 123;
+const SITE = {
+	ID: SITE_ID,
+	domain: 'userpersonalsitetest1234.wordpress.com',
+	slug: 'userpersonalsitetest1234.wordpress.com',
+};
 const URGENT_DOMAIN_NAME = 'urgent-domain-1234.live';
 const NON_URGENT_PLAN_NAME = 'WordPress.com Personal';
 
@@ -136,7 +141,7 @@ function renderReminder( {
 	const ui = ( nextCart: PartialCart ) => (
 		<QueryClientProvider client={ queryClient }>
 			<ReduxProvider store={ store }>
-				<UpcomingRenewalsReminder cart={ nextCart } addItemToCart={ addItemToCart } />
+				<UpcomingRenewalsReminder cart={ nextCart } addItemToCart={ addItemToCart } site={ SITE } />
 			</ReduxProvider>
 		</QueryClientProvider>
 	);
