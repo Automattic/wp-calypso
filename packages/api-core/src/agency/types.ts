@@ -314,11 +314,15 @@ export interface AgencyEnablementResource {
 	/**
 	 * The destination for every format: the file for a PDF or deck, the page for
 	 * a webpage, the watch URL for a video. `format` says how to open it.
-	 *
-	 * There is no thumbnail field: cards are built from `product`,
-	 * `content_type` and `name` rather than from supplied artwork.
 	 */
 	external_url: string;
+
+	/**
+	 * An image of the resource, such as a document's first page or a still from
+	 * a video, shown in its details. Cards are built from `product`,
+	 * `content_type` and `name` instead.
+	 */
+	thumbnail_url: string | null;
 
 	product: AgencyResourceProduct;
 	stage: AgencyResourceStage;
