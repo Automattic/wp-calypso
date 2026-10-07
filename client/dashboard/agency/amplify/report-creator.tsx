@@ -173,8 +173,8 @@ export default function AmplifyReportCreator( {
 				<div className="dashboard-amplify-overview__url-row">
 					<WebsiteAddressPicker
 						agencyId={ agencyId }
-						label={ __( 'Enter a publicly accessible URL' ) }
-						placeholder={ __( 'yourgroovydomain.com' ) }
+						label={ __( 'Homepage' ) }
+						placeholder={ __( 'Paste a prospect’s URL or pick a client site' ) }
 						idPrefix="amplify-report-connected-site"
 						value={ urlInput }
 						selectedSite={ selectedSite }
