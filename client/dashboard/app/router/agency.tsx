@@ -286,6 +286,8 @@ export const marketplaceHostingRoute = createRoute( {
 			queryClient.prefetchQuery( agencyLicensesQuery( agency.id ) );
 			await Promise.all( [
 				queryClient.ensureQueryData( agencyProductsQuery( agency.id ) ),
+				// The referral toggle shows its commission until the agency's first referral.
+				queryClient.ensureQueryData( referralsQuery( agency.id ) ).catch( () => undefined ),
 				queryClient.ensureQueryData( pressableLicensesQuery( agency.id ) ).catch( () => undefined ),
 				mayBeEligibleForPressableExpansionOffer( agency ) &&
 					queryClient
@@ -408,7 +410,7 @@ export const marketplaceProductsRoute = createRoute( {
 	head: () => ( {
 		meta: [
 			{
-				title: __( 'Products' ),
+				title: __( 'Plugins and add-ons' ),
 			},
 		],
 	} ),
@@ -425,6 +427,8 @@ export const marketplaceProductsRoute = createRoute( {
 			queryClient.prefetchQuery( agencyLicensesQuery( agency.id ) );
 			await Promise.all( [
 				queryClient.ensureQueryData( agencyProductsQuery( agency.id ) ),
+				// The referral toggle shows its commission until the agency's first referral.
+				queryClient.ensureQueryData( referralsQuery( agency.id ) ).catch( () => undefined ),
 				// The cart prices Pressable plans by whether the agency owns one.
 				queryClient.ensureQueryData( pressableLicensesQuery( agency.id ) ).catch( () => undefined ),
 			] );
@@ -596,7 +600,11 @@ export type MarketplaceSection = {
 // Purchases is part of the Marketplace feature, so it shares the flag.
 export const marketplaceSections: MarketplaceSection[] = [
 	{ route: marketplaceHostingRoute, supports: 'marketplace', label: () => __( 'Hosting' ) },
-	{ route: marketplaceProductsRoute, supports: 'marketplace', label: () => __( 'Products' ) },
+	{
+		route: marketplaceProductsRoute,
+		supports: 'marketplace',
+		label: () => __( 'Plugins and add-ons' ),
+	},
 	{ route: marketplacePurchasesRoute, supports: 'marketplace', label: () => __( 'Purchases' ) },
 	{
 		route: exclusiveOffersRoute,

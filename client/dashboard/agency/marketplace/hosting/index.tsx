@@ -16,6 +16,7 @@ import { isAgencyApproved } from '../is-agency-approved';
 import { getWpcomPlan } from '../lib/wpcom-hosting';
 import CartMenu from '../products/cart-menu';
 import { useCartOpen, useShoppingCart } from '../products/use-shopping-cart';
+import ReferralModeBand from '../referral-mode-band';
 import ReferralToggle from '../referral-toggle';
 import TermPricingToggle from '../term-pricing-toggle';
 import { useAgencyPressablePlan } from '../use-agency-pressable-plan';
@@ -191,7 +192,7 @@ export default function MarketplaceHosting( { section }: { section?: HostingSect
 							{ /* Only the WordPress.com and Pressable pages show prices. */ }
 							{ section && section !== 'vip' && <TermPricingToggle short={ isSmallScreen } /> }
 							<HStack spacing={ 4 } expanded={ false }>
-								<ReferralToggle label={ __( 'Refer hosting' ) } />
+								<ReferralToggle kind="hosting" />
 								<CartMenu
 									items={ cartItems }
 									products={ allProducts ?? [] }
@@ -209,6 +210,9 @@ export default function MarketplaceHosting( { section }: { section?: HostingSect
 				/>
 			}
 		>
+			{ isReferralMode && section !== 'vip' && (
+				<ReferralModeBand kind={ section === 'pressable' ? 'pressable' : 'hosting' } />
+			) }
 			<PressableUsageLimitNotice agency={ agency } />
 			<PressableOffers agency={ agency } />
 			{ section ? (
