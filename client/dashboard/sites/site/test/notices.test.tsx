@@ -87,6 +87,24 @@ describe( '<InaccessibleJetpackNotice>', () => {
 		);
 	} );
 
+	test( 'does not link to the SFTP/SSH settings for a self-hosted Jetpack site', async () => {
+		nock( 'https://public-api.wordpress.com' ).post( '/rest/v1.1/logstash' ).reply( 200 );
+
+		render(
+			<InaccessibleJetpackNotice
+				error={ new Error() }
+				site={ { ...site, is_wpcom_atomic: false, jetpack_connection: true } as Site }
+			/>
+		);
+
+		expect(
+			await screen.findByText( 'Your Jetpack site cannot be reached at this time.' )
+		).toBeVisible();
+		expect(
+			screen.queryByRole( 'link', { name: 'Connect over SFTP/SSH' } )
+		).not.toBeInTheDocument();
+	} );
+
 	test( 'does not link to the SFTP/SSH settings for users who cannot manage the site', async () => {
 		nock( 'https://public-api.wordpress.com' ).post( '/rest/v1.1/logstash' ).reply( 200 );
 
