@@ -215,25 +215,3 @@
 	border-color: var( --resource-card-ink, var( --resource-brand ) );
 	color: $studio-white;
 }
-
-.dashboard-resources-learn__filter-badge {
-	// Above the card's stretched link, so a click filters rather than opens.
-	position: relative;
-	z-index: 1;
-	padding: 0;
-	border: 0;
-	// The badge's own radius, so the focus ring follows its shape.
-	border-radius: var( --wpds-border-radius-lg, #{$radius-large} );
-	background: none;
-	font: inherit;
-	cursor: pointer;
-
-	&:hover > * {
-		background-color: $gray-200;
-	}
-
-	&:focus-visible {
-		outline: 2px solid var( --wpds-color-stroke-focus, var( --wp-admin-theme-color ) );
-		outline-offset: 1px;
-	}
-}

@@ -1,7 +1,7 @@
 import { DataViews } from '@wordpress/dataviews';
 import ResourceLink from './resource-link';
 import ResourceProductLogo from './resource-product-logo';
-import type { OpenResource } from './types';
+import type { SelectResource } from './types';
 import type { AgencyEnablementResource } from '@automattic/api-core';
 
 interface ResourceListCellProps {
@@ -11,14 +11,14 @@ interface ResourceListCellProps {
 /** The title column: a stretched link, so the whole row opens the resource. */
 export function ResourceListTitle( {
 	resource,
-	onOpen,
-}: ResourceListCellProps & { onOpen: OpenResource } ) {
+	onSelect,
+}: ResourceListCellProps & { onSelect: SelectResource } ) {
 	return (
 		<span className="dashboard-resources-learn__list-title" data-product={ resource.product }>
 			<ResourceLink
 				resource={ resource }
 				className="dashboard-resources-learn__list-link"
-				onOpen={ onOpen }
+				onSelect={ onSelect }
 			/>
 		</span>
 	);

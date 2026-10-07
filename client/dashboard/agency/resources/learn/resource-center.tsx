@@ -1,9 +1,7 @@
-import { Modal, __experimentalVStack as VStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { useCallback, useMemo, useState } from 'react';
-import { getYouTubeEmbedUrl } from './lib/youtube-embed';
+import { useCallback, useMemo } from 'react';
 import ResourceLibrary from './resource-library';
-import type { OpenResource, RecordTracksEvent } from './types';
+import type { RecordTracksEvent } from './types';
 import type { AgencyEnablementResource } from '@automattic/api-core';
 import type { View } from '@wordpress/dataviews';
 
@@ -25,15 +23,17 @@ export default function ResourceCenter( {
 	recordTracksEvent = () => {},
 	onResourceClick,
 }: ResourceCenterProps ) {
-	const [ videoResource, setVideoResource ] = useState< AgencyEnablementResource | null >( null );
+	const previewResource = useCallback(
+		( resource: AgencyEnablementResource ) =>
+			recordTracksEvent( 'calypso_a4a_resource_center_preview', {
+				resource_id: resource.id,
+				resource_name: resource.name,
+			} ),
+		[ recordTracksEvent ]
+	);
 
-	const openResource: OpenResource = useCallback(
-		( resource, event ) => {
-			if ( resource.format === 'video' ) {
-				event.preventDefault();
-				setVideoResource( resource );
-			}
-
+	const openResource = useCallback(
+		( resource: AgencyEnablementResource ) => {
 			recordTracksEvent( 'calypso_a4a_resource_center_browse_cta_click', {
 				resource_id: resource.id,
 				resource_name: resource.name,
@@ -57,48 +57,12 @@ export default function ResourceCenter( {
 	);
 
 	return (
-		<>
-			<ResourceLibrary
-				resources={ resources }
-				view={ view }
-				onChangeView={ onChangeView }
-				onOpenResource={ openResource }
-			/>
-
-			{ videoResource && (
-				<Modal
-					isDismissible
-					size="large"
-					onRequestClose={ () => setVideoResource( null ) }
-					title={ videoResource.name }
-				>
-					<VStack spacing={ 4 }>
-						<div
-							style={ {
-								position: 'relative',
-								paddingBottom: '56.25%',
-								height: 0,
-								overflow: 'hidden',
-							} }
-						>
-							<iframe
-								src={ getYouTubeEmbedUrl( videoResource.external_url ) }
-								title={ videoResource.name }
-								frameBorder="0"
-								allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-								allowFullScreen
-								style={ {
-									position: 'absolute',
-									top: 0,
-									left: 0,
-									width: '100%',
-									height: '100%',
-								} }
-							/>
-						</div>
-					</VStack>
-				</Modal>
-			) }
-		</>
+		<ResourceLibrary
+			resources={ resources }
+			view={ view }
+			onChangeView={ onChangeView }
+			onPreviewResource={ previewResource }
+			onOpenResource={ openResource }
+		/>
 	);
 }
