@@ -93,15 +93,10 @@ function SiteOverviewPrimaryCards( { site, gap }: { site: Site; gap: GapSize } )
 	return (
 		<>
 			<PlanCard site={ site } />
-			{ ( () => {
-				const showVisibilityCard = ! site.is_wpcom_flex;
-				return (
-					<Grid columns={ 1 } rows={ showVisibilityCard ? 2 : 1 } gap={ gap }>
-						{ showVisibilityCard && <VisibilityCard site={ site } /> }
-						<BackupCard site={ site } />
-					</Grid>
-				);
-			} )() }
+			<Grid columns={ 1 } rows={ 2 } gap={ gap }>
+				<VisibilityCard site={ site } />
+				<BackupCard site={ site } />
+			</Grid>
 			<Grid columns={ 1 } rows={ 2 } gap={ gap }>
 				{ ( () => {
 					if ( site.is_a4a_dev_site ) {

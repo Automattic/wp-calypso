@@ -50,6 +50,21 @@ html:has( .name-pulse-search-input ) {
 		box-shadow: 0 0 0 1px $gray-100;
 		min-width: 0;
 	}
+
+	// Each result is its own card, so the cells take the frame and the grid
+	// only spaces them out.
+	&--cards {
+		gap: 20px;
+		border: 0;
+		border-radius: 0;
+		overflow: visible;
+
+		> [role='listitem'] {
+			box-shadow: none;
+			border: 1px solid $gray-300;
+			border-radius: 8px;
+		}
+	}
 }
 
 .name-pulse-row {
@@ -201,6 +216,37 @@ html:has( .name-pulse-search-input ) {
 		&--name {
 			width: 9.5rem;
 		}
+	}
+}
+
+// The name sits above the price, and the cart button closes the price line.
+// Phones get the table row instead, so this never meets the row's phone grid.
+.name-pulse-row--card {
+	display: flex;
+	flex-direction: column;
+	align-items: stretch;
+	justify-content: center;
+	gap: 0;
+	min-height: 5.875rem;
+	padding: 1rem 1.5rem;
+
+	.name-pulse-row__name {
+		flex: none;
+	}
+
+	.name-pulse-row__cart {
+		margin-inline-start: auto;
+	}
+
+	.name-pulse-row__price--card {
+		flex-direction: row;
+		flex-wrap: wrap;
+		align-items: baseline;
+		column-gap: 0.25rem;
+	}
+
+	&.name-pulse-row--skeleton {
+		gap: 1.25rem;
 	}
 }
 
