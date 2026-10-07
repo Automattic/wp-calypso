@@ -192,7 +192,7 @@ function ScoreCategories() {
 			</Heading>
 			<p className="dashboard-amplify-story__rubric-intro">
 				{ __(
-					'Each lens looks at eight categories. Together, they show where a homepage is working and where it needs attention.'
+					'Each lens looks at eight categories. Together, they show where a homepage is doing well and where it needs improvements.'
 				) }
 			</p>
 			<div className="dashboard-amplify-story__rubric-columns" ref={ gridRef }>
