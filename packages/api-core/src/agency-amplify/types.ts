@@ -21,6 +21,8 @@ export interface AmplifyUsage {
 	used: number;
 	limit: number;
 	resets_at: string;
+	/** Per-agency cap set by a partner manager in Mission Control, when present. */
+	override?: number | null;
 }
 
 export interface AmplifyReportsResponse {

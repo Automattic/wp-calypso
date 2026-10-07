@@ -1,12 +1,15 @@
 import { Modal } from '@wordpress/components';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
+import { getFeatureName } from './constants';
 import AmplifyOverviewStory from './overview-story';
 import { AmplifyOverviewIntro } from './report-creator';
 
 export default function AmplifyLearnMoreModal( { onClose }: { onClose: () => void } ) {
+	/* translators: %s: feature name, e.g. "Prospect audits" */
+	const aboutLabel = sprintf( __( 'About %s' ), getFeatureName() );
 	return (
 		<Modal
-			contentLabel={ __( 'About Amplify' ) }
+			contentLabel={ aboutLabel }
 			size="large"
 			className="dashboard-amplify-learn-more-modal"
 			onRequestClose={ onClose }
@@ -16,7 +19,7 @@ export default function AmplifyLearnMoreModal( { onClose }: { onClose: () => voi
 				data-context="learn-more"
 				aria-labelledby="dashboard-amplify-title"
 			>
-				<AmplifyOverviewIntro mode="full" heroTitle={ __( 'About Amplify' ) } />
+				<AmplifyOverviewIntro mode="full" heroTitle={ aboutLabel } />
 				<AmplifyOverviewStory />
 			</div>
 		</Modal>
