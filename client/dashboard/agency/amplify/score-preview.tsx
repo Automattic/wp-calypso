@@ -1,23 +1,5 @@
 import { Tooltip } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import {
-	atSymbol,
-	brush,
-	code,
-	comment,
-	file,
-	globe,
-	mobile,
-	paragraph,
-	people,
-	postAuthor,
-	search,
-	shield,
-	starFilled,
-	tag,
-	tool,
-	update,
-} from '@wordpress/icons';
 import { useLayoutEffect, useRef, useState } from 'react';
 import { severityFor } from './score-severity';
 import type { AmplifyMode } from '@automattic/api-core';
@@ -25,7 +7,6 @@ import type { AmplifyMode } from '@automattic/api-core';
 type ScoreMetric = {
 	label: string;
 	description: string;
-	icon: JSX.Element;
 	score: number;
 	max: number;
 };
@@ -48,43 +29,38 @@ export const PERSPECTIVES: Record< 'human' | 'ai', ScorePerspective > = {
 		metrics: [
 			{
 				label: __( 'Trust Signals' ),
-				icon: shield,
 				description: __(
-					'Does the site give a prospective client enough evidence to feel safe handing over a project?'
+					'Does the site give a first-time visitor enough evidence to feel confident getting in touch?'
 				),
 				score: 4,
 				max: 18,
 			},
 			{
 				label: __( 'Contact & Conversion' ),
-				icon: atSymbol,
 				description: __(
-					'A prospective client is ready to reach out. Does the site make that easy, or create friction at the worst possible moment?'
+					'When someone is ready to reach out, does the site make that easy, or create friction at the worst possible moment?'
 				),
 				score: 3,
 				max: 17,
 			},
 			{
 				label: __( 'SEO' ),
-				icon: search,
 				description: __(
-					'Can a prospective client find this site when they search? All signals are sourced from Google Search Central documentation.'
+					'Can people find this site when they search? All signals are sourced from Google Search Central documentation.'
 				),
 				score: 5,
 				max: 11,
 			},
 			{
 				label: __( 'Mobile Experience' ),
-				icon: mobile,
 				description: __(
-					'A first impression increasingly happens on a phone. Does the site hold up when a prospective client pulls it up on their device?'
+					'A first impression often happens on a phone. Does the site hold up there?'
 				),
 				score: 7,
 				max: 12,
 			},
 			{
 				label: __( 'Content Quality' ),
-				icon: paragraph,
 				description: __(
 					'Is the writing compelling, clear, and professional? Errors and poor readability erode trust before a client has read a single sentence.'
 				),
@@ -93,7 +69,6 @@ export const PERSPECTIVES: Record< 'human' | 'ai', ScorePerspective > = {
 			},
 			{
 				label: __( 'Design & Experience' ),
-				icon: brush,
 				description: __(
 					'Does the site look credible and feel effortless to use? All signals are grounded in the Laws of UX.'
 				),
@@ -102,7 +77,6 @@ export const PERSPECTIVES: Record< 'human' | 'ai', ScorePerspective > = {
 			},
 			{
 				label: __( 'Accessibility' ),
-				icon: globe,
 				description: __(
 					'Does the site work for everyone? Amplify measures against WCAG AA, the standard referenced by courts and regulators globally.'
 				),
@@ -111,9 +85,8 @@ export const PERSPECTIVES: Record< 'human' | 'ai', ScorePerspective > = {
 			},
 			{
 				label: __( 'Audience Resonance' ),
-				icon: people,
 				description: __(
-					'Does the site feel made for the right client? Within seconds of landing, a prospective client should feel the site is speaking directly to them.'
+					'Does the site feel made for the right audience? Within seconds of landing, visitors should feel the site is speaking directly to them.'
 				),
 				score: 3,
 				max: 10,
@@ -130,7 +103,6 @@ export const PERSPECTIVES: Record< 'human' | 'ai', ScorePerspective > = {
 		metrics: [
 			{
 				label: __( 'Technical Health' ),
-				icon: tool,
 				description: __(
 					'Can AI tools access, crawl, and render the site? If a crawler cannot reach the content, nothing else matters.'
 				),
@@ -139,7 +111,6 @@ export const PERSPECTIVES: Record< 'human' | 'ai', ScorePerspective > = {
 			},
 			{
 				label: __( 'Structured Data' ),
-				icon: code,
 				description: __(
 					'Schema markup tells AI tools exactly what the site is about rather than making them infer it. The difference between an AI accurately describing your client and producing a generic summary.'
 				),
@@ -148,7 +119,6 @@ export const PERSPECTIVES: Record< 'human' | 'ai', ScorePerspective > = {
 			},
 			{
 				label: __( 'AEO Readiness' ),
-				icon: comment,
 				description: __(
 					'Answer Engine Optimization. Is the content structured to surface in AI-generated answers? AI tools prioritize pages that answer questions directly, not pages that bury key information.'
 				),
@@ -157,7 +127,6 @@ export const PERSPECTIVES: Record< 'human' | 'ai', ScorePerspective > = {
 			},
 			{
 				label: __( 'E-E-A-T Signals' ),
-				icon: starFilled,
 				description: __(
 					"Experience, Expertise, Authoritativeness, Trustworthiness. Google's quality framework and the backbone of how AI tools evaluate whether a source is worth citing."
 				),
@@ -166,7 +135,6 @@ export const PERSPECTIVES: Record< 'human' | 'ai', ScorePerspective > = {
 			},
 			{
 				label: __( 'Content Freshness' ),
-				icon: update,
 				description: __(
 					'Is the content up to date? AI tools and search engines both treat stale content as a signal of lower reliability.'
 				),
@@ -175,7 +143,6 @@ export const PERSPECTIVES: Record< 'human' | 'ai', ScorePerspective > = {
 			},
 			{
 				label: __( 'Entity Clarity' ),
-				icon: postAuthor,
 				description: __(
 					'Does the site make it unambiguous who this business is? AI knowledge graphs depend on clear, consistent entity signals across the web.'
 				),
@@ -184,7 +151,6 @@ export const PERSPECTIVES: Record< 'human' | 'ai', ScorePerspective > = {
 			},
 			{
 				label: __( 'Content Specificity' ),
-				icon: tag,
 				description: __(
 					'Does the content say something specific, or could it describe any business in the same category? Generic content is the most common reason AI tools skip a site when generating recommendations.'
 				),
@@ -193,7 +159,6 @@ export const PERSPECTIVES: Record< 'human' | 'ai', ScorePerspective > = {
 			},
 			{
 				label: __( 'llms.txt' ),
-				icon: file,
 				description: __(
 					'An emerging standard that lets businesses publish a machine-readable summary of their site specifically for large language models.'
 				),
@@ -257,9 +222,11 @@ function ScoreIllustration( { type }: { type: ScorePerspective[ 'type' ] } ) {
 function ScoreCard( {
 	perspective,
 	isHidden,
+	isExpanded,
 }: {
 	perspective: ScorePerspective;
 	isHidden: boolean;
+	isExpanded: boolean;
 } ) {
 	return (
 		<div className="dashboard-amplify-score-preview__card">
@@ -279,13 +246,19 @@ function ScoreCard( {
 			<div className="dashboard-amplify-score-preview__metrics">
 				{ perspective.metrics.map( ( metric ) => (
 					<div className="dashboard-amplify-score-preview__metric" key={ metric.label }>
-						<Tooltip
-							className="dashboard-amplify-score-preview__metric-tooltip"
-							text={ metric.description }
-							delay={ 200 }
-						>
-							<span tabIndex={ isHidden ? -1 : 0 }>{ metric.label }</span>
-						</Tooltip>
+						{ isExpanded && ! isHidden ? (
+							<Tooltip
+								className="dashboard-amplify-score-preview__metric-tooltip"
+								text={ metric.description }
+								delay={ 200 }
+							>
+								<button type="button" onPointerUp={ ( event ) => event.stopPropagation() }>
+									{ metric.label }
+								</button>
+							</Tooltip>
+						) : (
+							<span>{ metric.label }</span>
+						) }
 						<div className="dashboard-amplify-score-preview__bar" aria-hidden="true">
 							<span
 								data-severity={ severityFor( metric.score, metric.max ) }
@@ -428,6 +401,7 @@ export default function AmplifyScorePreview( { mode }: { mode: AmplifyMode } ) {
 					<ScoreCard
 						perspective={ PERSPECTIVES.human }
 						isHidden={ ! isExpanded && mode === 'ai' }
+						isExpanded={ isExpanded }
 					/>
 				</div>
 				<div
@@ -439,6 +413,7 @@ export default function AmplifyScorePreview( { mode }: { mode: AmplifyMode } ) {
 					<ScoreCard
 						perspective={ PERSPECTIVES.ai }
 						isHidden={ ! isExpanded && mode === 'human' }
+						isExpanded={ isExpanded }
 					/>
 				</div>
 				<button
