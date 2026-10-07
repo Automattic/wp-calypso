@@ -17,17 +17,10 @@ const KB_URLS: Record< 'human' | 'ai', string > = {
 
 const FAQS = [
 	{
-		id: 'any-platform',
-		question: __( 'Do sites need to be on WordPress?' ),
+		id: 'site-requirements',
+		question: __( 'What does a site need to be audited?' ),
 		answer: __(
-			'Nope! The audit works on any platform. It looks at the page’s visible design and front-end code, so the only requirement is that the site is public.'
-		),
-	},
-	{
-		id: 'site-access',
-		question: __( 'Do I need access to the site?' ),
-		answer: __(
-			'No. Enter the URL of any public homepage, including a site you’re pitching to. You do not need to connect the site or sign in to it.'
+			'Just a public homepage. It works on any platform, WordPress or not, and you don’t need to connect the site or sign in. The audit looks at the page’s visible design and front-end code.'
 		),
 	},
 	{
