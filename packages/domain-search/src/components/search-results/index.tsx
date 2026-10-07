@@ -6,6 +6,7 @@ import {
 	DomainSuggestionLoadMore,
 } from '../../ui';
 import { InlineBundleRow } from '../inline-bundle-row';
+import { SuggestionErrorBoundary } from '../suggestion-error-boundary';
 import { SearchResultsItem } from './item';
 import { SearchResultsPlaceholder } from './placeholder';
 import type { InlineBundleEntry } from '../../hooks/use-inline-bundles';
@@ -50,7 +51,11 @@ const SearchResults = ( {
 		<>
 			<DomainSuggestionsList>
 				{ suggestionsToShow.flatMap( ( suggestion ) => {
-					const row = <SearchResultsItem key={ suggestion } domainName={ suggestion } />;
+					const row = (
+						<SuggestionErrorBoundary key={ suggestion }>
+							<SearchResultsItem domainName={ suggestion } />
+						</SuggestionErrorBoundary>
+					);
 					const inlineBundle = getInlineBundle( suggestion );
 
 					// Only emit an inline row when this domain is a trigger in the cart

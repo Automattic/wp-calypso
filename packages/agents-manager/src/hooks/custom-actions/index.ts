@@ -4,6 +4,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useAgentsManagerContext } from '../../contexts';
 import { AGENTS_MANAGER_STORE } from '../../stores';
 import { markActionOrigin } from '../../utils/action-origin';
+import { getChatPresentation } from '../../utils/chat-presentation';
 import {
 	removeExternalContextCard,
 	removeExternalContextEntry,
@@ -143,7 +144,10 @@ export function useSetupCustomActions( {
 
 	const setChatOpen = useCallback(
 		( shouldOpen: boolean ) => {
-			if ( typeof shouldOpen !== 'boolean' ) {
+			if (
+				typeof shouldOpen !== 'boolean' ||
+				( ! shouldOpen && ! getChatPresentation().dismissible )
+			) {
 				return;
 			}
 
@@ -245,7 +249,7 @@ export function useSetupCustomActions( {
 	const getChatState = useCallback( (): Promise< AgentsManagerChatState > => {
 		if ( hasLoaded ) {
 			return Promise.resolve( {
-				isOpen,
+				isOpen: isOpen || ! getChatPresentation().dismissible,
 				isDocked,
 				floatingPosition,
 			} );
@@ -260,7 +264,7 @@ export function useSetupCustomActions( {
 	useEffect( () => {
 		if ( hasLoaded && resolveRef.current ) {
 			resolveRef.current( {
-				isOpen,
+				isOpen: isOpen || ! getChatPresentation().dismissible,
 				isDocked,
 				floatingPosition,
 			} );
@@ -270,7 +274,10 @@ export function useSetupCustomActions( {
 
 	// Entry points outside the bundle (the omnibar AI and Help buttons, Jetpack's
 	// AI sidebar) read this to decide whether a click closes or opens.
-	const getIsChatVisible = useCallback( () => isChatVisible, [ isChatVisible ] );
+	const getIsChatVisible = useCallback(
+		() => isChatVisible || ! getChatPresentation().dismissible,
+		[ isChatVisible ]
+	);
 
 	// The chat's current route (e.g. `/chat`), so callers can detect a same-route re-click.
 	const getCurrentRoute = useCallback( () => locationRef.current.pathname, [] );

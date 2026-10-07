@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
 import { useMemo } from 'react';
 import { getAvailabilityNotice } from '../../helpers/get-availability-notice';
+import { isFqdnShownAsSuggestion } from '../../helpers/is-fqdn-shown-as-suggestion';
 import { isSupportedPremiumDomain } from '../../helpers/is-supported-premium-domain';
 import { useDomainSearch } from '../../page/context';
 import { DomainSearchNotice } from '../../ui';
@@ -101,7 +102,12 @@ export const SearchNotice = () => {
 		return getAvailabilityNotice( query, availability, events, currentSiteUrl );
 	}, [ query, availability, events, currentSiteUrl, includeOwnedDomainInSuggestions ] );
 
-	const errorMessage = suggestionError?.message ?? availabilityError?.message;
+	// A failed suggestions request still renders the exact-match card when the FQDN is
+	// available, so its error would contradict the card.
+	const isFqdnShown =
+		!! availability && isFqdnShownAsSuggestion( availability, includeOwnedDomainInSuggestions );
+	const errorMessage =
+		( isFqdnShown ? undefined : suggestionError?.message ) ?? availabilityError?.message;
 
 	if ( errorMessage ) {
 		return <DomainSearchNotice status="error">{ errorMessage }</DomainSearchNotice>;

@@ -17,6 +17,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useCallback, useMemo } from 'react';
 import { getDashboardFromHostname } from 'calypso/dashboard/app/routing';
 import { getDashboardStepperLogo } from 'calypso/dashboard/app/stepper-logo';
+import { isCommerceGarden } from 'calypso/dashboard/utils/site-types';
 import { useCheckoutMigrationIntroductoryOfferSticker } from 'calypso/data/site-migration/use-checkout-migration-introductory-offer-sticker';
 import { recordAddEvent } from 'calypso/lib/analytics/cart';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
@@ -26,12 +27,10 @@ import { useSelector, useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice, infoNotice } from 'calypso/state/notices/actions';
 import hasGravatarDomainQueryParam from 'calypso/state/selectors/has-gravatar-domain-query-param';
-import isPrivateSite from 'calypso/state/selectors/is-private-site';
-import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
-import { isJetpackSite, isCommerceGardenSite } from 'calypso/state/sites/selectors';
 import useActOnceOnStrings from '../hooks/use-act-once-on-strings';
 import useAddProductsFromUrl from '../hooks/use-add-products-from-url';
 import useCheckoutFlowTrackKey from '../hooks/use-checkout-flow-track-key';
+import { isJetpackNotAtomicSite, useCheckoutSite } from '../hooks/use-checkout-site';
 import { useCheckoutUiRedesignExperiment } from '../hooks/use-checkout-ui-redesign-experiment';
 import useCountryList from '../hooks/use-country-list';
 import useCreatePaymentMethods from '../hooks/use-create-payment-methods';
@@ -147,14 +146,10 @@ export default function CheckoutMain( {
 }: CheckoutMainProps ) {
 	const translate = useTranslate();
 
+	const { data: site, isLoading: isSiteLoading } = useCheckoutSite( siteId );
 	const isJetpackNotAtomic =
-		useSelector( ( state ) => {
-			const isCommerce = siteId && isCommerceGardenSite( state, siteId );
-			return (
-				siteId && isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId ) && ! isCommerce
-			);
-		} ) || sitelessCheckoutType === 'jetpack';
-	const isPrivate = useSelector( ( state ) => siteId && isPrivateSite( state, siteId ) ) || false;
+		( isJetpackNotAtomicSite( site ) && ! ( site && isCommerceGarden( site ) ) ) ||
+		sitelessCheckoutType === 'jetpack';
 	const isGravatarDomain = useSelector( hasGravatarDomainQueryParam );
 	const cartKey = useCartKey();
 
@@ -259,8 +254,6 @@ export default function CheckoutMain( {
 	} = usePrepareProductsForCart( {
 		productAliasFromUrl,
 		purchaseId,
-		usesJetpackProducts: isJetpackNotAtomic,
-		isPrivate,
 		siteSlug: updatedSiteSlug,
 		sitelessCheckoutType,
 		isLoggedOutCart,
@@ -668,7 +661,6 @@ export default function CheckoutMain( {
 		weights: { ...checkoutTheme.weights, ...gravatarFontWeights },
 	};
 
-	const isCheckoutV2ExperimentLoading = false;
 	const [ isCheckoutUiRedesignLoading ] = useCheckoutUiRedesignExperiment();
 	const { isLoading: isMobileCheckoutStickySummaryLoading } =
 		useMobileCheckoutStickySummaryExperiment();
@@ -696,7 +688,7 @@ export default function CheckoutMain( {
 			isLoading: responseCart.products.length < 1,
 		},
 		{ name: translate( 'Loading countries list' ), isLoading: countriesList.length < 1 },
-		{ name: translate( 'Loading Site' ), isLoading: isCheckoutV2ExperimentLoading },
+		{ name: translate( 'Loading Site' ), isLoading: isSiteLoading },
 		{
 			name: translate( 'Loading checkout' ),
 			isLoading: isCheckoutUiRedesignLoading || isMobileCheckoutStickySummaryLoading,

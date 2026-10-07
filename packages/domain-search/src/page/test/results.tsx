@@ -12,6 +12,7 @@ import {
 	mockGetBundleTriggersQuery,
 	mockGetFreeSuggestionQuery,
 	mockGetSuggestionsQuery,
+	mockGetSuggestionsQueryEmptyResults,
 } from '../../test-helpers/queries/suggestions';
 import { TestDomainSearch } from '../../test-helpers/renderer';
 import { ResultsPage } from '../results';
@@ -146,6 +147,76 @@ describe( 'ResultsPage', () => {
 			expect( testOrg ).not.toHaveTextContent( 'Recommended' );
 			expect( testOrg ).not.toHaveTextContent( 'Best alternative' );
 		} );
+
+		it( 'renders the exact-match suggestion if the suggestions request fails for an available FQDN', async () => {
+			mockGetSuggestionsQueryEmptyResults( { params: { query: 'foo.live' } } );
+			mockGetAvailabilityQuery( {
+				params: { domainName: 'foo.live' },
+				availability: buildAvailability( {
+					domain_name: 'foo.live',
+					tld: 'live',
+					status: DomainAvailabilityStatus.AVAILABLE,
+					cost: '$25',
+				} ),
+			} );
+
+			render(
+				<TestDomainSearch query="foo.live">
+					<ResultsPage />
+				</TestDomainSearch>
+			);
+
+			const exactMatch = await screen.findByTitle( 'foo.live' );
+
+			expect( exactMatch ).toHaveTextContent( "It's available!" );
+			expect( exactMatch ).toHaveTextContent( '$25' );
+			expect( screen.getByRole( 'button', { name: 'Add to cart' } ) ).toBeInTheDocument();
+			expect(
+				screen.queryByText( 'No available domains for that search.' )
+			).not.toBeInTheDocument();
+		} );
+
+		it.each( [
+			[ DomainAvailabilityStatus.AVAILABLE, { 'test.com': 0, 'test.net': 1, 'test.org': 2 } ],
+			[ DomainAvailabilityStatus.REGISTERED, { 'test.net': 1, 'test.org': 2 } ],
+		] )(
+			'reports the suggestion positions after the %s FQDN when searching for it',
+			async ( status, expectedPositions ) => {
+				const onSuggestionRender = jest.fn();
+
+				mockGetAvailabilityQuery( {
+					params: { domainName: 'test.com' },
+					availability: buildAvailability( { domain_name: 'test.com', status } ),
+				} );
+
+				mockGetSuggestionsQuery( {
+					params: { query: 'test.com' },
+					suggestions: [
+						buildSuggestion( { domain_name: 'test.net' } ),
+						buildSuggestion( { domain_name: 'test.org' } ),
+					],
+				} );
+
+				render(
+					<TestDomainSearch query="test.com" events={ { onSuggestionRender } }>
+						<ResultsPage />
+					</TestDomainSearch>
+				);
+
+				await screen.findByTitle( 'test.org' );
+
+				await waitFor( () => {
+					const positions = Object.fromEntries(
+						onSuggestionRender.mock.calls.map( ( [ suggestion ] ) => [
+							suggestion.domain_name,
+							suggestion.position,
+						] )
+					);
+
+					expect( positions ).toEqual( expectedPositions );
+				} );
+			}
+		);
 
 		it( 'renders the "show more results" button if there are more than config.numberOfDomainsResultsPerPage suggestions', async () => {
 			mockGetSuggestionsQuery( {

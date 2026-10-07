@@ -2,32 +2,25 @@
  * @jest-environment jsdom
  */
 
-import {
-	PLAN_BUSINESS,
-	PLAN_ECOMMERCE,
-	PLAN_FREE,
-	PLAN_JETPACK_FREE,
-	PLAN_JETPACK_PERSONAL,
-	PLAN_JETPACK_PREMIUM,
-	PLAN_PERSONAL,
-	PLAN_PREMIUM,
-} from '@automattic/calypso-products';
+import { DotcomPlans, JetpackPlans, WooHostedPlans } from '@automattic/api-core';
 import { renderHook } from '@testing-library/react';
 import { useExperiment } from 'calypso/lib/explat';
 import {
 	DIFM_OFFER_EXPERIMENT,
 	DIFM_OFFER_MAX_SITE_AGE_DAYS,
+	getDifmOfferCopy,
 	isEligibleForDifmOffer,
 	normalizeCreatedAt,
 	normalizeDifmOfferVariation,
 	useDifmOffer,
-} from '../index';
+} from '../difm-offer';
 
 jest.mock( 'calypso/lib/explat', () => ( {
 	useExperiment: jest.fn(),
 } ) );
 
 const mockUseExperiment = jest.mocked( useExperiment );
+
 const MS_PER_DAY = 24 * 60 * 60 * 1000;
 const NOW = Date.parse( '2026-09-24T12:00:00Z' );
 
@@ -37,9 +30,10 @@ function isoDaysAgo( days: number, now: number = NOW ): string {
 
 function eligibleInput( now: number = NOW ) {
 	return {
-		planSlug: PLAN_FREE,
+		planSlug: DotcomPlans.FREE_PLAN,
 		siteCreatedAt: isoDaysAgo( 1, now ),
 		localeSlug: 'en',
+		isA4ADevSite: false,
 	};
 }
 
@@ -54,19 +48,54 @@ function createExperimentAssignment( variationName: string | null ) {
 
 describe( 'isEligibleForDifmOffer', () => {
 	it( 'accepts free, personal and premium plans', () => {
-		for ( const planSlug of [ PLAN_FREE, PLAN_PERSONAL, PLAN_PREMIUM ] ) {
+		for ( const planSlug of [ DotcomPlans.FREE_PLAN, DotcomPlans.PERSONAL, DotcomPlans.PREMIUM ] ) {
 			expect( isEligibleForDifmOffer( { ...eligibleInput(), planSlug }, NOW ) ).toBe( true );
 		}
 	} );
 
+	it( 'accepts the monthly, 2-year and 3-year terms of personal and premium', () => {
+		for ( const planSlug of [
+			DotcomPlans.PERSONAL_MONTHLY,
+			DotcomPlans.PERSONAL_2_YEARS,
+			DotcomPlans.PERSONAL_3_YEARS,
+			DotcomPlans.PREMIUM_MONTHLY,
+			DotcomPlans.PREMIUM_2_YEARS,
+			DotcomPlans.PREMIUM_3_YEARS,
+		] ) {
+			expect( isEligibleForDifmOffer( { ...eligibleInput(), planSlug }, NOW ) ).toBe( true );
+		}
+	} );
+
+	it( 'accepts the Personal free trial', () => {
+		expect(
+			isEligibleForDifmOffer(
+				{ ...eligibleInput(), planSlug: DotcomPlans.PERSONAL_TRIAL_MONTHLY },
+				NOW
+			)
+		).toBe( true );
+	} );
+
+	it( 'rejects the Woo hosted free plans', () => {
+		for ( const planSlug of [
+			WooHostedPlans.WOO_HOSTED_FREE_PLAN,
+			WooHostedPlans.WOO_HOSTED_FREE_TRIAL_PLAN_MONTHLY,
+		] ) {
+			expect( isEligibleForDifmOffer( { ...eligibleInput(), planSlug }, NOW ) ).toBe( false );
+		}
+	} );
+
 	it( 'rejects business, commerce and unknown plans', () => {
-		for ( const planSlug of [ PLAN_BUSINESS, PLAN_ECOMMERCE, 'not-a-plan' ] ) {
+		for ( const planSlug of [ DotcomPlans.BUSINESS, DotcomPlans.ECOMMERCE, 'not-a-plan' ] ) {
 			expect( isEligibleForDifmOffer( { ...eligibleInput(), planSlug }, NOW ) ).toBe( false );
 		}
 	} );
 
 	it( 'rejects Jetpack plans that share a type with an eligible plan', () => {
-		for ( const planSlug of [ PLAN_JETPACK_FREE, PLAN_JETPACK_PERSONAL, PLAN_JETPACK_PREMIUM ] ) {
+		for ( const planSlug of [
+			JetpackPlans.PLAN_JETPACK_FREE,
+			JetpackPlans.PLAN_JETPACK_PERSONAL,
+			JetpackPlans.PLAN_JETPACK_PREMIUM,
+		] ) {
 			expect( isEligibleForDifmOffer( { ...eligibleInput(), planSlug }, NOW ) ).toBe( false );
 		}
 	} );
@@ -119,6 +148,15 @@ describe( 'isEligibleForDifmOffer', () => {
 			false
 		);
 		expect( isEligibleForDifmOffer( { ...eligibleInput(), localeSlug: 'fr' }, NOW ) ).toBe( false );
+	} );
+
+	it( 'rejects an A4A dev site, and a site whose A4A status is unknown', () => {
+		expect( isEligibleForDifmOffer( { ...eligibleInput(), isA4ADevSite: true }, NOW ) ).toBe(
+			false
+		);
+		expect( isEligibleForDifmOffer( { ...eligibleInput(), isA4ADevSite: undefined }, NOW ) ).toBe(
+			false
+		);
 	} );
 
 	it( 'rejects input with a missing planSlug, siteCreatedAt or localeSlug', () => {
@@ -221,6 +259,37 @@ describe( 'useDifmOffer', () => {
 			isEligible: true,
 			isLoading: true,
 			variation: 'control',
+		} );
+	} );
+} );
+
+describe( 'getDifmOfferCopy', () => {
+	it( 'returns no copy for control', () => {
+		expect( getDifmOfferCopy( 'control' ) ).toBeNull();
+	} );
+
+	it( 'returns the skip_setup copy', () => {
+		expect( getDifmOfferCopy( 'skip_setup' ) ).toEqual( {
+			title: 'Skip the setup',
+			description:
+				'For a limited time, our experts will bring your vision to life. Free with Business.',
+			ctaText: 'See the offer',
+		} );
+	} );
+
+	it( 'returns the expert_help copy', () => {
+		expect( getDifmOfferCopy( 'expert_help' ) ).toEqual( {
+			title: 'Expert help to get you started',
+			description: 'A human builds your site based on your needs — free with Business.',
+			ctaText: 'See the offer',
+		} );
+	} );
+
+	it( 'returns the no_time copy', () => {
+		expect( getDifmOfferCopy( 'no_time' ) ).toEqual( {
+			title: 'No time to build your site?',
+			description: 'Let us take that off your plate. Ready in 4 days and free with Business.',
+			ctaText: 'See the offer',
 		} );
 	} );
 } );
