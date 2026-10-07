@@ -36,6 +36,39 @@ const REPORT_MODES: {
 	},
 ];
 
+export function AmplifyOverviewIntro( {
+	mode,
+	heroTitle,
+}: {
+	mode: AmplifyMode;
+	heroTitle?: string;
+} ) {
+	return (
+		<>
+			<div className="dashboard-amplify-overview__hero-preview">
+				{ heroTitle && (
+					<Heading className="dashboard-amplify-overview__hero-title" level={ 1 }>
+						{ heroTitle }
+					</Heading>
+				) }
+				<AmplifyScorePreview mode={ mode } />
+			</div>
+			<div className="dashboard-amplify-overview__intro">
+				<Heading id="dashboard-amplify-title" level={ 2 }>
+					{ __( 'Win your next client with a homepage analysis' ) }
+				</Heading>
+				<div className="dashboard-amplify-overview__summary">
+					<Text>
+						{ __(
+							'Enter any public homepage. You get a branded report on what’s holding it back and how you’d fix it, ready for the pitch.'
+						) }
+					</Text>
+				</div>
+			</div>
+		</>
+	);
+}
+
 export default function AmplifyReportCreator( {
 	agencyId,
 	usage,
@@ -98,23 +131,14 @@ export default function AmplifyReportCreator( {
 			data-context={ isModal ? 'modal' : 'empty' }
 			aria-labelledby={ isModal ? undefined : 'dashboard-amplify-title' }
 		>
-			{ ! isModal && (
-				<div className="dashboard-amplify-overview__hero-preview">
-					<AmplifyScorePreview mode={ mode } />
-				</div>
-			) }
-			{ ! isModal && (
-				<div className="dashboard-amplify-overview__intro">
-					<Heading id="dashboard-amplify-title" level={ 2 }>
-						{ __( 'Win your next client with a homepage analysis' ) }
-					</Heading>
-					<div className="dashboard-amplify-overview__summary">
-						<Text>
-							{ __(
-								'Enter a prospect’s homepage. You get a branded report on what’s holding it back and how you’d fix it, ready for the pitch.'
-							) }
-						</Text>
-					</div>
+			{ ! isModal && <AmplifyOverviewIntro mode={ mode } /> }
+			{ isModal && (
+				<div className="dashboard-amplify-overview__modal-summary">
+					<Text>
+						{ __(
+							'Analyze any public homepage for first-time visitors, AI systems, or both. Get category scores and practical next steps to share with a client.'
+						) }
+					</Text>
 				</div>
 			) }
 			<form className="dashboard-amplify-overview__url-form" onSubmit={ handleSubmit }>
@@ -122,7 +146,7 @@ export default function AmplifyReportCreator( {
 					<WebsiteAddressPicker
 						agencyId={ agencyId }
 						label={ __( 'Homepage' ) }
-						placeholder={ __( 'prospect.com, or one of your client sites' ) }
+						placeholder={ __( 'Enter a URL or choose a client site' ) }
 						idPrefix="amplify-report-connected-site"
 						value={ urlInput }
 						selectedSite={ selectedSite }

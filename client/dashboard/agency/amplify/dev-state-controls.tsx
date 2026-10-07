@@ -93,13 +93,15 @@ export function useAmplifyDevSettings( enabled: boolean ) {
 
 export function makePreviewReports( count: number ): AmplifyReport[] {
 	const modes: AmplifyMode[] = [ 'full', 'human', 'ai' ];
+	const exampleSites = [ 'automattic.com', 'wordpress.com', 'jetpack.com', 'woocommerce.com' ];
 	return Array.from( { length: count }, ( _, index ): AmplifyReport => {
 		const createdAt = new Date( Date.now() - index * 86_400_000 ).toISOString();
+		const hostname = exampleSites[ index % exampleSites.length ];
 		return {
 			id: `amplify-preview-${ index + 1 }`,
 			status: 'completed',
-			url: `https://sample-${ index + 1 }.example`,
-			site_title: `Sample site ${ index + 1 }`,
+			url: `https://${ hostname }`,
+			site_title: hostname,
 			mode: modes[ index % modes.length ],
 			created_at: createdAt,
 			updated_at: createdAt,

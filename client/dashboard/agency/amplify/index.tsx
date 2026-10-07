@@ -12,6 +12,7 @@ import AmplifyDevStateControls, {
 	makePreviewReports,
 	useAmplifyDevSettings,
 } from './dev-state-controls';
+import AmplifyLearnMoreModal from './learn-more-modal';
 import AmplifyNewReportModal from './new-report-modal';
 import AmplifyReportCreator from './report-creator';
 import AmplifyReportsList from './reports';
@@ -24,6 +25,7 @@ export default function AgencyAmplify() {
 	const reportsQuery = useQuery( amplifyReportsQuery( agencyId ) );
 	const { recordTracksEvent } = useAnalytics();
 	const [ isNewReportOpen, setIsNewReportOpen ] = useState( false );
+	const [ isLearnMoreOpen, setIsLearnMoreOpen ] = useState( false );
 	const [ devSettings, setDevSettings, areDevSettingsReady ] =
 		useAmplifyDevSettings( isDevelopment );
 	const previewReports = useMemo(
@@ -70,6 +72,10 @@ export default function AgencyAmplify() {
 		recordTracksEvent( 'calypso_a4a_amplify_new_report_click' );
 		setIsNewReportOpen( true );
 	};
+	const openLearnMore = () => {
+		recordTracksEvent( 'calypso_a4a_amplify_learn_more_click' );
+		setIsLearnMoreOpen( true );
+	};
 
 	return (
 		<PageLayout
@@ -79,9 +85,20 @@ export default function AgencyAmplify() {
 					description={ __( 'Homepage reports for pitches and client check-ins.' ) }
 					actions={
 						state !== 'empty' ? (
-							<Button variant="primary" onClick={ openNewReport }>
-								{ __( 'New report' ) }
-							</Button>
+							<>
+								{ state === 'reports' && (
+									<Button
+										variant="tertiary"
+										className="dashboard-amplify-learn-more-button"
+										onClick={ openLearnMore }
+									>
+										{ __( 'Learn more' ) }
+									</Button>
+								) }
+								<Button variant="primary" onClick={ openNewReport }>
+									{ __( 'New report' ) }
+								</Button>
+							</>
 						) : undefined
 					}
 				/>
@@ -135,6 +152,7 @@ export default function AgencyAmplify() {
 					} }
 				/>
 			) }
+			{ isLearnMoreOpen && <AmplifyLearnMoreModal onClose={ () => setIsLearnMoreOpen( false ) } /> }
 			{ isDevelopment && areDevSettingsReady && (
 				<AmplifyDevStateControls settings={ devSettings } onChange={ setDevSettings } />
 			) }
