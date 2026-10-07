@@ -21,10 +21,7 @@ function AdminHelpCenterContent() {
 		[]
 	);
 
-	// Check for agents-manager-masterbar first, then fall back to help-center
-	const button =
-		document.getElementById( 'wp-admin-bar-agents-manager' ) ||
-		document.getElementById( 'wp-admin-bar-help-center' );
+	const button = document.getElementById( 'wp-admin-bar-help-center' );
 
 	const masterbarNotificationsButton = document.getElementById( 'wp-admin-bar-notes' );
 	const supportLinks = document.querySelectorAll( '[data-target="wpcom-help-center"]' );

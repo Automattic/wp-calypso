@@ -1,6 +1,6 @@
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useCallback, useEffect, useRef } from '@wordpress/element';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useAgentsManagerContext } from '../../contexts';
 import { AGENTS_MANAGER_STORE } from '../../stores';
 import { markActionOrigin } from '../../utils/action-origin';
@@ -134,11 +134,6 @@ export function useSetupCustomActions( {
 	const { setIsOpen, setIsDocked, setIsMinimized } = useDispatch( AGENTS_MANAGER_STORE );
 	const { agentConfig, getTabSessionId, resumeChat } = useAgentsManagerContext();
 	const navigate = useNavigate();
-	const location = useLocation();
-	// Keep the latest location in a ref so `getCurrentRoute` stays a stable
-	// reference while always reporting the chat's current route.
-	const locationRef = useRef( location );
-	locationRef.current = location;
 	const resolveRef = useRef< ( ( state: AgentsManagerChatState ) => void ) | null >( null );
 	const shouldPersistOpenState = ! isReaderChatAgent( agentConfig?.agentId );
 
@@ -272,20 +267,16 @@ export function useSetupCustomActions( {
 		}
 	}, [ hasLoaded, isOpen, isDocked, floatingPosition ] );
 
-	// Entry points outside the bundle (the omnibar AI and Help buttons, Jetpack's
-	// AI sidebar) read this to decide whether a click closes or opens.
+	// Entry points outside the bundle (the omnibar AI button, Jetpack's AI
+	// sidebar) read this to decide whether a click closes or opens.
 	const getIsChatVisible = useCallback(
 		() => isChatVisible || ! getChatPresentation().dismissible,
 		[ isChatVisible ]
 	);
 
-	// The chat's current route (e.g. `/chat`), so callers can detect a same-route re-click.
-	const getCurrentRoute = useCallback( () => locationRef.current.pathname, [] );
-
 	useRegisterCustomActions( {
 		getChatState,
 		isChatVisible: getIsChatVisible,
-		getCurrentRoute,
 		getSessionId: getTabSessionId,
 		getTabId,
 		getTurnId,
