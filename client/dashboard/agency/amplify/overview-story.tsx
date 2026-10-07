@@ -2,10 +2,17 @@ import { Button, Panel, PanelBody, __experimentalHeading as Heading } from '@wor
 import { __, sprintf } from '@wordpress/i18n';
 import { useEffect, useRef, useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
+import InlineSupportLink from '../../components/inline-support-link';
 import AmplifyAlsoUseful from './also-useful';
 import AmplifySampleReportModal from './sample-report-modal';
 import { PERSPECTIVES } from './score-preview';
 import { severityFor } from './score-severity';
+
+// TODO: replace with the knowledge base articles once they're published.
+const KB_URLS: Record< 'human' | 'ai', string > = {
+	human: 'https://agencieshelp.automattic.com/knowledge-base/',
+	ai: 'https://agencieshelp.automattic.com/knowledge-base/',
+};
 
 const FAQS = [
 	{
@@ -124,6 +131,7 @@ function PromptGraphic() {
 }
 
 function ScoreCategories() {
+	const { recordTracksEvent } = useAnalytics();
 	const [ previewedCategory, setPreviewedCategory ] = useState< string | null >( null );
 	const [ selectedCategory, setSelectedCategory ] = useState< string | null >( null );
 	const [ tooltipContent, setTooltipContent ] = useState( '' );
@@ -198,9 +206,22 @@ function ScoreCategories() {
 							{ PERSPECTIVES[ type ].title }
 						</Heading>
 						<p>
-							{ type === 'human'
-								? __( 'First-time visitors: trust, clarity, and what builds confidence.' )
-								: __( 'AI agents: how ChatGPT, Perplexity, and others read and rank the site.' ) }
+							<span>
+								{ type === 'human'
+									? __( 'First-time visitors: trust, clarity, and what builds confidence.' )
+									: __( 'AI agents: how ChatGPT, Perplexity, and others read and rank the site.' ) }
+							</span>{ ' ' }
+							<InlineSupportLink
+								supportLink={ KB_URLS[ type ] }
+								forceOpenInHelpCenter
+								onClick={ () =>
+									recordTracksEvent( 'calypso_a4a_amplify_rubric_kb_click', { lens: type } )
+								}
+							>
+								{ type === 'human'
+									? __( 'See everything the people audit covers' )
+									: __( 'See everything the AI audit covers' ) }
+							</InlineSupportLink>
 						</p>
 						<div className="dashboard-amplify-story__rubric-grid">
 							{ PERSPECTIVES[ type ].metrics.map( ( metric, index ) => {
