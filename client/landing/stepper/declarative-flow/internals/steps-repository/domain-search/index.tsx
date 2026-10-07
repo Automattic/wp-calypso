@@ -56,7 +56,7 @@ import { OnboardingProgress } from '../components/onboarding-progress';
 import { useShowOnboardingProgress } from '../components/onboarding-progress/use-show-onboarding-progress';
 import HundredYearPlanStepWrapper from '../hundred-year-plan-step-wrapper';
 import { getSkipSuggestionCopy } from './get-skip-suggestion-copy';
-import { getDomainSearchResultsVariation } from './results-experiment';
+import { useDomainSearchResultsExperiment } from './results-experiment';
 import type { Step as StepType } from '../../types';
 import type { FreeDomainSuggestion } from '@automattic/api-core';
 import type { HelpCenterSelect, OnboardSelect } from '@automattic/data-stores';
@@ -153,7 +153,8 @@ const DomainSearchStep: StepType< {
 	const isWowFunnel = !! queryParams.get( 'wow_funnel' );
 	const wowSkipCopy = isWowFunnel ? __( 'Set up a domain later' ) : undefined;
 	const stepCounter = useOnboardingStepCounter( flow, 'domains' );
-	const resultsVariation = getDomainSearchResultsVariation( flow );
+	const { isLoading: isLoadingResultsExperiment, variation: resultsVariation } =
+		useDomainSearchResultsExperiment( flow );
 	const isCustomDomainBannerCopyVariation = resultsVariation === 'custom_domain_banner_copy';
 
 	const storedSiteTitle = useSelect(
@@ -495,7 +496,11 @@ const DomainSearchStep: StepType< {
 		return __( 'Make it yours with a .com, .blog, or one of 350+ domain options.' );
 	}, [ flow, isCiab, isWooHostingSolutions, __, subHeaderTextOverride ] );
 
-	const domainSearchElement = (
+	// Holding the search until the experiment is assigned keeps users from seeing control
+	// and then switching to their variation.
+	const domainSearchElement = isLoadingResultsExperiment ? (
+		<></>
+	) : (
 		<WPCOMDomainSearch
 			className={
 				shouldUseStepContainerV2( flow )

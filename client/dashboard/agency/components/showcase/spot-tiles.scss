@@ -1,0 +1,100 @@
+@import '@wordpress/base-styles/colors';
+
+.dashboard-spot-tiles {
+	min-inline-size: 0;
+	margin-block-end: 16px;
+}
+
+.dashboard-spot-tiles__row {
+	--fade-start: 0%;
+	--fade-end: 0%;
+	--fade-direction: to right;
+
+	min-inline-size: 0;
+	// Room for the tiles' focus ring, which the scroll row would otherwise clip.
+	margin-block: -2px;
+	margin-inline: calc( -1 * var( --page-layout-inline-padding ) );
+	padding: 4px var( --page-layout-inline-padding );
+	scroll-padding-inline: var( --page-layout-inline-padding );
+	overflow-x: auto;
+	overscroll-behavior-x: contain;
+	scroll-behavior: smooth;
+	scroll-snap-type: x mandatory;
+	scrollbar-width: none;
+	mask-image: linear-gradient(
+		var( --fade-direction ),
+		transparent,
+		rgba( 0, 0, 0, 0.3 ) calc( var( --fade-start ) * 0.35 ),
+		rgba( 0, 0, 0, 0.75 ) calc( var( --fade-start ) * 0.7 ),
+		#000 var( --fade-start ),
+		#000 calc( 100% - var( --fade-end ) ),
+		rgba( 0, 0, 0, 0.75 ) calc( 100% - var( --fade-end ) * 0.7 ),
+		rgba( 0, 0, 0, 0.3 ) calc( 100% - var( --fade-end ) * 0.35 ),
+		transparent
+	);
+
+	&::-webkit-scrollbar {
+		display: none;
+	}
+
+	// Gradients have no logical direction, so the fade runs from the
+	// inline start by hand.
+	[dir='rtl'] & {
+		--fade-direction: to left;
+	}
+
+	&.can-back {
+		--fade-start: 40px;
+	}
+
+	&.can-forward {
+		--fade-end: 64px;
+	}
+
+	@media ( prefers-reduced-motion: reduce ) {
+		scroll-behavior: auto;
+	}
+}
+
+.dashboard-spot-tiles__tile {
+	// 136px keeps the longest names on one line; a longer translation widens its
+	// own tile rather than wrapping.
+	flex: 0 0 auto;
+	min-inline-size: 136px;
+	scroll-snap-align: start;
+	cursor: pointer;
+
+	// Focused and selected tiles already carry a ring.
+	&:hover:not( :focus-visible, .is-selected ) {
+		box-shadow: 0 0 0 1px var( --wp-components-color-accent, var( --wp-admin-theme-color ) ) inset;
+	}
+
+	&:focus-visible {
+		outline: 2px solid var( --wp-components-color-accent, var( --wp-admin-theme-color ) );
+		outline-offset: 2px;
+	}
+
+	&.is-selected {
+		box-shadow: 0 0 0 2px var( --wp-components-color-accent, var( --wp-admin-theme-color ) ) inset;
+	}
+
+	// A selected tile's ring doubles as its focus ring.
+	&.is-selected:focus-visible {
+		outline: none;
+	}
+}
+
+.dashboard-spot-tiles__body {
+	padding: 20px 12px;
+	text-align: center;
+	fill: $gray-900;
+}
+
+.dashboard-spot-tiles__label {
+	white-space: nowrap;
+}
+
+.dashboard-spot-tiles__divider {
+	margin-inline: 8px;
+	color: $gray-200;
+}

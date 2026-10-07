@@ -73,6 +73,7 @@ export interface UserPreferences {
 	'a4a-feedback'?: Record< string, A4AFeedbackEntry >;
 	'notifications-layout-style'?: 'detailed' | 'simplified';
 	'notifications-view-settings-seen'?: boolean;
+	'notifications-subscriber-alerts-enabled'?: boolean;
 	/** Timestamp of the Pressable usage-limit notification the user dismissed. */
 	'pressable-limit-notification-dismissed'?: number;
 	'a4a-agency-approval-notice-dismissed'?: boolean;

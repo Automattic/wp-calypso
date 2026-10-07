@@ -2,7 +2,7 @@ import { userPreferenceMutation, userPreferenceQuery } from '@automattic/api-que
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { __experimentalHStack as HStack, Button, ToggleControl } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { Icon, info } from '@wordpress/icons';
+import { info } from '@wordpress/icons';
 import { useEffect } from 'react';
 import { useReferralToggle } from './use-referral-toggle';
 import useReferralsGuide from './use-referrals-guide';
@@ -36,13 +36,11 @@ export default function ReferralToggle() {
 					onChange={ onChange }
 				/>
 				<Button
-					variant="tertiary"
 					size="small"
-					aria-label={ __( 'Learn more about product referral mode' ) }
+					icon={ info }
+					label={ __( 'Learn more about product referral mode' ) }
 					onClick={ openGuide }
-				>
-					<Icon icon={ info } size={ 16 } />
-				</Button>
+				/>
 			</HStack>
 		</>
 	);

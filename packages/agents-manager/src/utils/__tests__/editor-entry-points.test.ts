@@ -89,6 +89,12 @@ describe( 'isEditorAiEntryEnabled', () => {
 		window.matchMedia = originalMatchMedia;
 	} );
 
+	it( 'hides the toolbar entry when the host hides entry points', () => {
+		window.__agentsManagerConfig = { chatPresentation: { showEntryPoints: false } };
+		expect( isEditorAiEntryEnabled() ).toBe( false );
+		delete window.__agentsManagerConfig;
+	} );
+
 	it( 'returns true on an editor page, on desktop, with the omnibar off', () => {
 		mockIsEditorPage.mockReturnValue( true );
 		setDesktop( true );

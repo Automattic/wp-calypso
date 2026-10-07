@@ -105,9 +105,12 @@ export const NamePulseResults = () => {
 						isLoading={ isLoadingTop }
 						maxVisible={ topResultsCount }
 						skeletonCount={ topResultsCount }
+						variant="card"
 					/>
 				) }
-				{ ! exactMatch && bundleCard }
+				{ ! exactMatch && bundleCard && (
+					<div className="name-pulse-bundle-wide">{ bundleCard }</div>
+				) }
 				{ layout.exactGrid.show && ! hasTldsError && (
 					<NamePulseResultsSection
 						id="exact"
