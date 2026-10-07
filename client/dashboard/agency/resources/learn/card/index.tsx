@@ -3,13 +3,14 @@ import {
 	__experimentalVStack as VStack,
 	__experimentalHStack as HStack,
 } from '@wordpress/components';
+import { __, sprintf } from '@wordpress/i18n';
 import { Badge } from '@wordpress/ui';
 import { memo } from 'react';
 import { Card, CardBody } from '../../../../components/card';
 import { getAudienceLabel, getStageLabel } from '../lib/labels';
 import ResourceLink from '../resource-link';
 import ResourceCardHeader from './header';
-import type { OpenResource } from '../types';
+import type { FilterResources, OpenResource } from '../types';
 import type { AgencyEnablementResource } from '@automattic/api-core';
 
 import './style.scss';
@@ -17,9 +18,27 @@ import './style.scss';
 interface ResourceCardProps {
 	resource: AgencyEnablementResource;
 	onOpen: OpenResource;
+	onFilter: FilterResources;
 }
 
-function ResourceCard( { resource, onOpen }: ResourceCardProps ) {
+/** A badge that filters the library by its value. It sits above the card's stretched link. */
+function FilterBadge( { label, onClick }: { label: string; onClick: () => void } ) {
+	return (
+		<button
+			type="button"
+			className="dashboard-resources-learn__filter-badge"
+			aria-label={
+				/* translators: %s: A resource's audience or stage, such as "Learn". */
+				sprintf( __( 'Filter by %s' ), label )
+			}
+			onClick={ onClick }
+		>
+			<Badge intent="draft">{ label }</Badge>
+		</button>
+	);
+}
+
+function ResourceCard( { resource, onOpen, onFilter }: ResourceCardProps ) {
 	return (
 		<Card className="dashboard-resources-learn__card">
 			<ResourceCardHeader
@@ -38,8 +57,14 @@ function ResourceCard( { resource, onOpen }: ResourceCardProps ) {
 						{ resource.description }
 					</Text>
 					<HStack spacing={ 1 } justify="flex-start" wrap>
-						<Badge intent="draft">{ getAudienceLabel( resource.audience ) }</Badge>
-						<Badge intent="draft">{ getStageLabel( resource.stage ) }</Badge>
+						<FilterBadge
+							label={ getAudienceLabel( resource.audience ) }
+							onClick={ () => onFilter( 'audience', resource.audience ) }
+						/>
+						<FilterBadge
+							label={ getStageLabel( resource.stage ) }
+							onClick={ () => onFilter( 'stage', resource.stage ) }
+						/>
 					</HStack>
 				</VStack>
 			</CardBody>

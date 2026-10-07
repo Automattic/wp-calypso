@@ -5,7 +5,7 @@ import {
 	__experimentalToggleGroupControl as ToggleGroupControl,
 	__experimentalToggleGroupControlOption as ToggleGroupControlOption,
 } from '@wordpress/components';
-import { useViewportMatch } from '@wordpress/compose';
+import { useEvent, useViewportMatch } from '@wordpress/compose';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __, sprintf } from '@wordpress/i18n';
 import { useMemo } from 'react';
@@ -16,7 +16,7 @@ import { getStageLabel } from './lib/labels';
 import ResourceGrid from './resource-grid';
 import ResourceList from './resource-list';
 import type { LayoutType } from './dataviews/views';
-import type { OpenResource } from './types';
+import type { FilterResources, OpenResource } from './types';
 import type { AgencyEnablementResource, AgencyResourceStage } from '@automattic/api-core';
 import type { View } from '@wordpress/dataviews';
 
@@ -49,6 +49,22 @@ export default function ResourceLibrary( {
 				...( value === 'all' ? [] : [ { field: 'stage', operator: 'is' as const, value } ] ),
 			],
 		} );
+
+	// Stable across renders, so memoised cards don't re-render while searching.
+	const filterResources: FilterResources = useEvent( ( field, value ) => {
+		if ( field === 'stage' ) {
+			setStage( value as StageFilter );
+			return;
+		}
+
+		onChangeView( {
+			...view,
+			filters: [
+				...( view.filters ?? [] ).filter( ( filter ) => filter.field !== field ),
+				{ field, operator: 'is', value },
+			],
+		} );
+	} );
 
 	const stageOptions: { value: StageFilter; label: string; description: string }[] = [
 		{ value: 'all', label: __( 'All' ), description: __( 'Resources for every stage.' ) },
@@ -173,7 +189,11 @@ export default function ResourceLibrary( {
 				</DataViews>
 			</div>
 			{ ! isList && filteredData.length > 0 && (
-				<ResourceGrid resources={ filteredData } onOpenResource={ onOpenResource } />
+				<ResourceGrid
+					resources={ filteredData }
+					onOpenResource={ onOpenResource }
+					onFilterResources={ filterResources }
+				/>
 			) }
 			{ filteredData.length === 0 && (
 				<DataViewsEmptyStateLayout
