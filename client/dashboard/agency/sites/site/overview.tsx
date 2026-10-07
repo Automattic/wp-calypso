@@ -6,6 +6,7 @@ import Grid from '../../../components/grid';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
 import PerformanceCard from '../../../sites/overview-performance-card';
+import PlanCard from '../../../sites/overview-plan-card';
 import SiteOverviewFields from '../../../sites/overview-site-fields';
 import VisibilityCard from '../../../sites/overview-visibility-card';
 import { siteTypeSupportsFeature } from '../../../utils/site-type-feature-support';
@@ -30,6 +31,7 @@ export default function AgencySiteOverview() {
 			}
 		>
 			<Grid columns={ isSmallViewport ? 1 : 2 } gap={ isSmallViewport ? 'lg' : 'xl' }>
+				<PlanCard site={ fullSite } />
 				<VisibilityCard site={ fullSite } />
 				<BackupCard site={ site } />
 				<ScanCard site={ site } siteSlug={ siteSlug } />

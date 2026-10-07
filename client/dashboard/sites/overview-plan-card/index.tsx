@@ -12,6 +12,7 @@ import {
 import { __, sprintf } from '@wordpress/i18n';
 import { wordpress } from '@wordpress/icons';
 import { useAnalytics } from '../../app/analytics';
+import { useAppContext } from '../../app/context';
 import { useLocale } from '../../app/locale';
 import { purchasesRoute } from '../../app/router/me';
 import Grid from '../../components/grid';
@@ -20,6 +21,7 @@ import OverviewCard from '../../components/overview-card';
 import { getPurchaseExpiryStatusText } from '../../components/purchase-expiry-status';
 import RouterLinkButton from '../../components/router-link-button';
 import { isDashboardBackport } from '../../utils/is-dashboard-backport';
+import { wpcomLink } from '../../utils/link';
 import {
 	getJetpackProductsForSite,
 	getSitePlanDisplayName,
@@ -57,8 +59,14 @@ function SitePlanStats( { site }: { site: Site } ) {
 	);
 }
 
+function useHasBillingRoutes() {
+	const { supports } = useAppContext();
+	return !! supports.me && !! supports.me.billing;
+}
+
 function SeeAllPurchasesLink( { site }: { site: Site } ) {
 	const { recordTracksEvent } = useAnalytics();
+	const hasBillingRoutes = useHasBillingRoutes();
 
 	const handleClick = () => {
 		recordTracksEvent( 'calypso_dashboard_site_overview_see_all_purchases_click' );
@@ -69,6 +77,18 @@ function SeeAllPurchasesLink( { site }: { site: Site } ) {
 			<Button
 				variant="link"
 				href={ `/purchases/subscriptions/${ site.slug }` }
+				onClick={ handleClick }
+			>
+				{ __( 'See all purchases' ) }
+			</Button>
+		);
+	}
+
+	if ( ! hasBillingRoutes ) {
+		return (
+			<Button
+				variant="link"
+				href={ wpcomLink( `/purchases/subscriptions/${ site.slug }` ) }
 				onClick={ handleClick }
 			>
 				{ __( 'See all purchases' ) }
@@ -147,13 +167,15 @@ function WpcomPlanCard( {
 	isLoading: boolean;
 } ) {
 	const locale = useLocale();
+	const hasBillingRoutes = useHasBillingRoutes();
+
 	return (
 		<OverviewCard
 			title={ __( 'Plan' ) }
 			icon={ wordpress }
 			heading={ getSitePlanDisplayName( site ) }
 			description={ getCardDescription( site, locale, purchase ) }
-			link={ getSitePlanUrl( site, purchase ) }
+			link={ getSitePlanUrl( site, purchase, { hasBillingRoutes } ) }
 			tracksId="site-overview-plan"
 			isLoading={ isLoading }
 			bottom={
@@ -215,13 +237,15 @@ function CommerceGardenPlanCard( {
 	isLoading: boolean;
 } ) {
 	const locale = useLocale();
+	const hasBillingRoutes = useHasBillingRoutes();
+
 	return (
 		<OverviewCard
 			title={ __( 'Plan' ) }
 			icon={ commerceGardenPlan }
 			heading={ getSitePlanDisplayName( site ) }
 			description={ getCardDescription( site, locale, purchase ) }
-			link={ getSitePlanUrl( site, purchase ) }
+			link={ getSitePlanUrl( site, purchase, { hasBillingRoutes } ) }
 			tracksId="plan"
 			isLoading={ isLoading }
 		/>

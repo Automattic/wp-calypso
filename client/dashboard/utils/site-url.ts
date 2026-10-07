@@ -75,7 +75,11 @@ export function getSiteVisibilityURL( site: Site ) {
  * - If the site is a wpcom site without a purchase, returns the URL to upgrade the site plan.
  * - Otherwise, returns the most appropriate URL to manage the site's current plan.
  */
-export function getSitePlanUrl( site: Site, purchase?: Purchase ) {
+export function getSitePlanUrl(
+	site: Site,
+	purchase?: Purchase,
+	{ hasBillingRoutes = true }: { hasBillingRoutes?: boolean } = {}
+) {
 	if ( site.is_wpcom_staging_site ) {
 		return undefined;
 	}
@@ -92,7 +96,7 @@ export function getSitePlanUrl( site: Site, purchase?: Purchase ) {
 		return getSitePlanUpgradeUrl( site );
 	}
 
-	return isDashboardBackport()
+	return isDashboardBackport() || ! hasBillingRoutes
 		? wpcomLink( `/purchases/subscriptions/${ site.slug }/${ purchase.ID }` )
 		: `/me/billing/purchases/${ purchase.ID }`;
 }
