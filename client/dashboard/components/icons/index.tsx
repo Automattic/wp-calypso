@@ -15,12 +15,6 @@ export const wordpressLabs = (
 	</SVG>
 );
 
-export const play = (
-	<SVG xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-		<Path d="M8 5.5v13l10.5-6.5L8 5.5Z" fill="currentColor" />
-	</SVG>
-);
-
 export const menuDot = (
 	<SVG xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">
 		<Circle cx="12" cy="12" r="2" fill="currentColor" />

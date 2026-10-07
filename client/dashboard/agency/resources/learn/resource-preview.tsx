@@ -1,8 +1,15 @@
 import { Icon } from '@wordpress/components';
+import { Path, SVG } from '@wordpress/primitives';
 import { useState } from 'react';
-import { play } from '../../../components/icons';
 import ResourceIllustration from './card/illustration';
 import type { AgencyEnablementResource } from '@automattic/api-core';
+
+// @wordpress/icons has no play icon.
+const play = (
+	<SVG xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+		<Path d="M8 5.5v13l10.5-6.5L8 5.5Z" fill="currentColor" />
+	</SVG>
+);
 
 interface ResourcePreviewProps {
 	resource: AgencyEnablementResource;
