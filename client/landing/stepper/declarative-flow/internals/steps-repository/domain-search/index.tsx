@@ -56,7 +56,7 @@ import { OnboardingProgress } from '../components/onboarding-progress';
 import { useShowOnboardingProgress } from '../components/onboarding-progress/use-show-onboarding-progress';
 import HundredYearPlanStepWrapper from '../hundred-year-plan-step-wrapper';
 import { getSkipSuggestionCopy } from './get-skip-suggestion-copy';
-import { getDomainSearchResultsVariation } from './results-experiment';
+import { useDomainSearchResultsExperiment } from './results-experiment';
 import type { Step as StepType } from '../../types';
 import type { FreeDomainSuggestion } from '@automattic/api-core';
 import type { HelpCenterSelect, OnboardSelect } from '@automattic/data-stores';
@@ -153,9 +153,9 @@ const DomainSearchStep: StepType< {
 	const isWowFunnel = !! queryParams.get( 'wow_funnel' );
 	const wowSkipCopy = isWowFunnel ? __( 'Set up a domain later' ) : undefined;
 	const stepCounter = useOnboardingStepCounter( flow, 'domains' );
-	const resultsVariation = getDomainSearchResultsVariation( flow );
+	const { isLoading: isLoadingResultsExperiment, variation: resultsVariation } =
+		useDomainSearchResultsExperiment( flow );
 	const isCustomDomainBannerCopyVariation = resultsVariation === 'custom_domain_banner_copy';
-	const isFreeDomainBannerCopyVariation = resultsVariation === 'free_domain_banner_copy';
 
 	const storedSiteTitle = useSelect(
 		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedSiteTitle(),
@@ -184,18 +184,6 @@ const DomainSearchStep: StepType< {
 	} );
 
 	const config = useMemo( () => {
-		const experimentSkipCopy = isFreeDomainBannerCopyVariation
-			? {
-					title: __( 'Skip the domain for now' ),
-					subtitle: __(
-						'You’ll get a WordPress.com branded domain. Upgrade to a custom domain name anytime.'
-					),
-					buttonText: __( 'Skip' ),
-					// Keeps the free *.wordpress.com address out of the accessible label too.
-					skipLabel: __( 'Skip the domain for now' ),
-				}
-			: undefined;
-
 		const urlAllowedTlds = tldQuery?.split( ',' ) ?? [];
 
 		// Precedence for allowedTlds:
@@ -234,13 +222,10 @@ const DomainSearchStep: StepType< {
 			// Free-subdomain skip card copy, in order of precedence: per-flow
 			// `freeSubdomainTitle` / `freeSubdomainButtonLabel` overrides, then the WoW
 			// funnel default (no free-subdomain option to offer, see `isWowFunnel` above),
-			// then the results experiment copy, then the flow default resolved by
-			// `getSkipSuggestionCopy`.
+			// then the flow default resolved by `getSkipSuggestionCopy`.
 			skipSuggestionCopy: getSkipSuggestionCopy( flow, __, {
-				title: freeSubdomainTitle ?? wowSkipCopy ?? experimentSkipCopy?.title,
-				subtitle: experimentSkipCopy?.subtitle,
-				buttonText: freeSubdomainButtonLabel ?? wowSkipCopy ?? experimentSkipCopy?.buttonText,
-				skipLabel: experimentSkipCopy?.skipLabel,
+				title: freeSubdomainTitle ?? wowSkipCopy,
+				buttonText: freeSubdomainButtonLabel ?? wowSkipCopy,
 			} ),
 			// WoW funnel: hide the free *.wordpress.com subdomain card entirely and offer only
 			// the skip control.
@@ -270,7 +255,6 @@ const DomainSearchStep: StepType< {
 		isWowFunnel,
 		wowSkipCopy,
 		resultsVariation,
-		isFreeDomainBannerCopyVariation,
 		tldQuery,
 		query,
 		allowedTldsProp,
@@ -512,7 +496,11 @@ const DomainSearchStep: StepType< {
 		return __( 'Make it yours with a .com, .blog, or one of 350+ domain options.' );
 	}, [ flow, isCiab, isWooHostingSolutions, __, subHeaderTextOverride ] );
 
-	const domainSearchElement = (
+	// Holding the search until the experiment is assigned keeps users from seeing control
+	// and then switching to their variation.
+	const domainSearchElement = isLoadingResultsExperiment ? (
+		<></>
+	) : (
 		<WPCOMDomainSearch
 			className={
 				shouldUseStepContainerV2( flow )

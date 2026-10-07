@@ -2,17 +2,18 @@
  * @jest-environment jsdom
  */
 import config from '@automattic/calypso-config';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { render, renderHook, screen, waitFor } from '@testing-library/react';
+import { focusManager, QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { act, render, renderHook, screen, waitFor } from '@testing-library/react';
 import nock from 'nock';
 import { bumpStat } from '../../analytics';
 import { AppProvider, APP_CONTEXT_DEFAULT_CONFIG } from '../../context';
 import {
 	AUTH_QUERY_KEY,
 	AuthProvider,
-	initializeCurrentUser,
+	authQueryFn,
 	sessionStateQuery,
 	updateCurrentUser,
+	useAuth,
 	useSessionStateQuery,
 } from '../index';
 import type { User } from '@automattic/api-core';
@@ -30,37 +31,39 @@ function wpError( fields: { status: number; statusCode: number; error?: string }
 	return Object.assign( new Error( 'boom' ), fields );
 }
 
-function renderAuth() {
+function renderAuth( { children = <div>signed in</div> }: { children?: React.ReactNode } = {} ) {
 	const queryClient = new QueryClient();
 	return {
 		queryClient,
 		...render(
 			<QueryClientProvider client={ queryClient }>
 				<AppProvider config={ APP_CONTEXT_DEFAULT_CONFIG }>
-					<AuthProvider>
-						<div>signed in</div>
-					</AuthProvider>
+					<AuthProvider>{ children }</AuthProvider>
 				</AppProvider>
 			</QueryClientProvider>
 		),
 	};
 }
 
-describe( 'updateCurrentUser', () => {
+describe( 'authQueryFn', () => {
 	afterEach( () => {
 		config.disable( 'wpcom-user-bootstrap' );
 		delete window.currentUser;
 	} );
 
-	test( 'survives a refetch in a bootstrapped session', async () => {
+	test( 'requests /me once the bootstrapped user is cached', async () => {
 		config.enable( 'wpcom-user-bootstrap' );
 		window.currentUser = { ...testUser, two_step_enabled: false };
+		const scope = nock( 'https://public-api.wordpress.com' )
+			.get( '/rest/v1.1/me' )
+			.query( true )
+			.reply( 200, { ...testUser, two_step_enabled: true } );
 		const queryClient = new QueryClient();
-		await queryClient.fetchQuery( { queryKey: AUTH_QUERY_KEY, queryFn: initializeCurrentUser } );
+		await queryClient.fetchQuery( { queryKey: AUTH_QUERY_KEY, queryFn: authQueryFn } );
 
-		updateCurrentUser( queryClient, { two_step_enabled: true } );
 		await queryClient.refetchQueries( { queryKey: AUTH_QUERY_KEY } );
 
+		expect( scope.isDone() ).toBe( true );
 		expect( queryClient.getQueryData< User >( AUTH_QUERY_KEY )?.two_step_enabled ).toBe( true );
 	} );
 } );
@@ -200,6 +203,155 @@ describe( '<AuthProvider> stats', () => {
 		await waitFor( () =>
 			expect( mockedBumpStat ).toHaveBeenCalledWith( 'dashboard-auth', 'bounce:expired' )
 		);
+	} );
+} );
+
+describe( '<AuthProvider> user fetch errors', () => {
+	type MeResponseBuilder = ( me: nock.Interceptor ) => nock.Scope;
+
+	function mockMeEndpoint( respond: MeResponseBuilder ) {
+		return respond(
+			nock( 'https://public-api.wordpress.com' ).get( '/rest/v1.1/me' ).query( true )
+		);
+	}
+
+	type BumpStatReason = 'error' | 'unauthorized';
+	type ErrorCase = [ string, MeResponseBuilder, BumpStatReason ];
+
+	const TRANSIENT_ERRORS: ErrorCase[] = [
+		[
+			'a server error',
+			( me ) => me.reply( 500, { error: 'internal_server_error', message: 'Something broke' } ),
+			'error',
+		],
+		[
+			'an unavailable service',
+			( me ) => me.reply( 503, { error: 'service_unavailable', message: 'Try again later' } ),
+			'error',
+		],
+		[ 'a network failure', ( me ) => me.replyWithError( 'offline' ), 'error' ],
+	];
+
+	const UNAUTHORIZED_ERRORS: ErrorCase[] = [
+		[
+			'a 401',
+			( me ) =>
+				me.reply( 401, { error: 'invalid_token', message: 'The OAuth2 token is invalid.' } ),
+			'unauthorized',
+		],
+		[
+			'a 403 authorization_required',
+			( me ) =>
+				me.reply( 403, { error: 'authorization_required', message: 'User cannot access this' } ),
+			'unauthorized',
+		],
+	];
+
+	const PAGE_URL = 'https://example.com/sites';
+
+	beforeEach( () => {
+		Object.defineProperty( window, 'location', {
+			writable: true,
+			value: { href: PAGE_URL, pathname: '/sites', search: '' },
+		} );
+	} );
+
+	afterEach( () => {
+		config.disable( 'wpcom-user-bootstrap' );
+		delete window.currentUser;
+		window.sessionStorage.clear();
+		focusManager.setFocused( undefined );
+	} );
+
+	describe( 'on first load', () => {
+		test.each( [ ...TRANSIENT_ERRORS, ...UNAUTHORIZED_ERRORS ] )(
+			'redirects to login after %s',
+			async ( _name, respond, reason ) => {
+				mockMeEndpoint( respond );
+
+				renderAuth();
+
+				await waitFor( () =>
+					expect( mockedBumpStat ).toHaveBeenCalledWith( 'dashboard-auth', `bounce:${ reason }` )
+				);
+				expect( window.location.href ).toContain( '/log-in?redirect_to=' );
+				expect( screen.queryByText( 'signed in' ) ).not.toBeInTheDocument();
+			}
+		);
+	} );
+
+	describe.each( [
+		[
+			'loaded from window.currentUser',
+			() => {
+				config.enable( 'wpcom-user-bootstrap' );
+				window.currentUser = testUser;
+			},
+		],
+		[ 'fetched from /me', () => mockMeEndpoint( ( me ) => me.reply( 200, testUser ) ) ],
+	] )( 'when refetching a user %s', ( _source, signIn ) => {
+		test.each( TRANSIENT_ERRORS )( 'keeps the app on screen after %s', async ( _name, respond ) => {
+			signIn();
+			const { queryClient } = renderAuth();
+			expect( await screen.findByText( 'signed in' ) ).toBeVisible();
+
+			mockMeEndpoint( respond );
+
+			await queryClient.refetchQueries( { queryKey: AUTH_QUERY_KEY } );
+
+			await waitFor( () =>
+				expect( queryClient.getQueryState( AUTH_QUERY_KEY )?.status ).toBe( 'error' )
+			);
+			expect( screen.getByText( 'signed in' ) ).toBeVisible();
+			expect( window.location.href ).toBe( PAGE_URL );
+			expect( mockedBumpStat ).not.toHaveBeenCalledWith(
+				'dashboard-auth',
+				expect.stringMatching( /^bounce:/ )
+			);
+		} );
+
+		test.each( TRANSIENT_ERRORS )(
+			'refetches the user on the next window focus after %s',
+			async ( _name, respond ) => {
+				function Username() {
+					return <div>username: { useAuth().user.username }</div>;
+				}
+
+				signIn();
+				const { queryClient } = renderAuth( { children: <Username /> } );
+				expect( await screen.findByText( 'username: testuser' ) ).toBeVisible();
+
+				mockMeEndpoint( respond );
+				act( () => updateCurrentUser( queryClient, { username: 'patched' } ) );
+
+				await waitFor( () =>
+					expect( queryClient.getQueryState( AUTH_QUERY_KEY )?.status ).toBe( 'error' )
+				);
+				expect( screen.getByText( 'username: patched' ) ).toBeVisible();
+
+				mockMeEndpoint( ( me ) => me.reply( 200, { ...testUser, username: 'confirmed' } ) );
+				act( () => focusManager.setFocused( true ) );
+
+				expect( await screen.findByText( 'username: confirmed' ) ).toBeVisible();
+				expect( window.location.href ).toBe( PAGE_URL );
+			}
+		);
+
+		test.each( UNAUTHORIZED_ERRORS )( 'redirects to login after %s', async ( _name, respond ) => {
+			signIn();
+			const { queryClient } = renderAuth();
+			expect( await screen.findByText( 'signed in' ) ).toBeVisible();
+
+			mockMeEndpoint( respond );
+
+			await queryClient.refetchQueries( { queryKey: AUTH_QUERY_KEY } );
+
+			await waitFor( () =>
+				expect( mockedBumpStat ).toHaveBeenCalledWith( 'dashboard-auth', 'bounce:unauthorized' )
+			);
+			expect( window.location.href ).toContain( '/log-in?redirect_to=' );
+			expect( screen.queryByText( 'signed in' ) ).not.toBeInTheDocument();
+		} );
 	} );
 } );
 

@@ -137,10 +137,36 @@ export const createReferralMutation = ( agencyId: number ) =>
 		mutationFn: ( params: CreateReferralParams ) => createReferral( agencyId, params ),
 	} );
 
+let lastDataUrl: { url: string; key: string } | null = null;
+
+/**
+ * A short stand-in for a logo URL in the query key. A picked file arrives as a
+ * data URL of up to several megabytes, too large to keep in a key.
+ */
+function getLogoKey( url?: string ): string | undefined {
+	if ( ! url?.startsWith( 'data:' ) ) {
+		return url;
+	}
+	if ( lastDataUrl?.url !== url ) {
+		let hash = 0;
+		for ( let i = 0; i < url.length; i++ ) {
+			hash = ( Math.imul( 31, hash ) + url.charCodeAt( i ) ) | 0;
+		}
+		lastDataUrl = { url, key: `data:${ url.length }:${ hash >>> 0 }` };
+	}
+	return lastDataUrl.key;
+}
+
 export const referralEmailPreviewQuery = ( agencyId: number, params: ReferralEmailPreviewParams ) =>
 	queryOptions( {
-		queryKey: [ 'agency', agencyId, 'referral-email-preview', params ] as const,
+		queryKey: [
+			'agency',
+			agencyId,
+			'referral-email-preview',
+			{ ...params, logo_url: getLogoKey( params.logo_url ) },
+		] as const,
 		queryFn: () => fetchReferralEmailPreview( agencyId, params ),
 		enabled: agencyId > 0 && params.product_ids.length > 0,
 		staleTime: 5 * 60 * 1000,
+		meta: { persist: false },
 	} );

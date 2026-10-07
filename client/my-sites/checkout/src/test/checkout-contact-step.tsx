@@ -5,13 +5,11 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useViewportMatch } from '@wordpress/compose';
-import { dispatch } from '@wordpress/data';
 import nock from 'nock';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { isMarketplaceProduct } from 'calypso/state/products-list/selectors';
 import { getPlansBySiteId } from 'calypso/state/sites/plans/selectors/get-plans-by-site';
-import { isJetpackSite } from 'calypso/state/sites/selectors';
-import { CHECKOUT_STORE } from '../lib/wpcom-store';
+import { resetCheckoutStores } from '../lib/checkout-stores';
 import {
 	domainProduct,
 	domainTransferProduct,
@@ -32,8 +30,6 @@ import {
 import { MockCheckout } from './util/mock-checkout';
 import type { CartKey, ResponseCart } from '@automattic/shopping-cart';
 
-jest.mock( 'calypso/state/sites/selectors' );
-jest.mock( 'calypso/state/selectors/is-site-automated-transfer' );
 jest.mock( 'calypso/state/sites/plans/selectors/get-plans-by-site' );
 jest.mock( 'calypso/my-sites/checkout/use-cart-key' );
 jest.mock( 'calypso/lib/analytics/utils/refresh-country-code-cookie-gdpr' );
@@ -57,13 +53,12 @@ describe( 'Checkout contact step', () => {
 	} ) );
 	mockGetSiteDomainsEndpoint( [] );
 	isMarketplaceProduct.mockImplementation( () => false );
-	isJetpackSite.mockImplementation( () => false );
 	( useCartKey as jest.Mock ).mockImplementation( () => mainCartKey );
 	mockMatchMediaOnWindow();
 
 	beforeEach( () => {
 		( useViewportMatch as jest.Mock ).mockReturnValue( false );
-		dispatch( CHECKOUT_STORE ).reset();
+		resetCheckoutStores();
 		nock.cleanAll();
 		mockGetVatInfoEndpoint( {} );
 		mockGetPaymentMethodsEndpoint( [] );
@@ -147,7 +142,7 @@ describe( 'Checkout contact step', () => {
 		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } /> );
 
 		expect( await screen.findByText( 'Enter your contact information' ) ).toBeInTheDocument();
-		expect( screen.getByRole( 'link', { name: 'Learn more' } ) ).toHaveAttribute(
+		expect( await screen.findByRole( 'link', { name: 'Learn more' } ) ).toHaveAttribute(
 			'href',
 			'https://wordpress.com/support/domains/private-domain-registration/#information-we-collect-and-why'
 		);

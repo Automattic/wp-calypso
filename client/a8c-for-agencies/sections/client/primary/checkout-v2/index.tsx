@@ -1,8 +1,8 @@
+import { fetchStripeConfiguration } from '@automattic/api-core';
 import { StripeHookProvider } from '@automattic/calypso-stripe';
 import { CheckoutErrorBoundary } from '@automattic/composite-checkout';
 import { useTranslate } from 'i18n-calypso';
 import A4ALogo from 'calypso/a8c-for-agencies/components/a4a-logo';
-import { getStripeConfiguration } from 'calypso/lib/store-transactions';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import CheckoutQueryClientProvider from 'calypso/my-sites/checkout/checkout-query-client-provider';
 import CheckoutMain from 'calypso/my-sites/checkout/src/components/checkout-main';
@@ -85,7 +85,10 @@ export default function ClientCheckoutV2() {
 		>
 			<CheckoutQueryClientProvider>
 				<CalypsoShoppingCartProvider shouldShowPersistentErrors>
-					<StripeHookProvider fetchStripeConfiguration={ getStripeConfiguration } locale={ locale }>
+					<StripeHookProvider
+						fetchStripeConfiguration={ fetchStripeConfiguration }
+						locale={ locale }
+					>
 						<ClientCheckoutContent />
 					</StripeHookProvider>
 				</CalypsoShoppingCartProvider>

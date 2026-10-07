@@ -1,4 +1,4 @@
-import { getIntervalTypeForTerm } from '@automattic/calypso-products';
+import { getIntervalTypeForTerm, PLAN_BUSINESS, PLAN_PREMIUM } from '@automattic/calypso-products';
 import {
 	PERSONAL_THEME,
 	PREMIUM_THEME,
@@ -7,6 +7,7 @@ import {
 	MARKETPLACE_THEME,
 } from '@automattic/design-picker';
 import { PlansIntent } from '@automattic/plans-grid-next';
+import { THEME_TIERS } from 'calypso/components/theme-tier/constants';
 import { supportedIntervalTypes } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/unified-plans/util';
 import type { SupportedUrlFriendlyTermType } from '@automattic/plans-grid-next';
 
@@ -28,6 +29,17 @@ export const hideEscapeHatchForIntent = ( intent: PlansIntent ) => {
 	return intent === 'plans-ai-assembler-free-trial';
 };
 
+const getHidePlanPropsBelow = ( minimumPlan: string ) => {
+	switch ( minimumPlan ) {
+		case PLAN_BUSINESS:
+			return { hidePremiumPlan: true, hidePersonalPlan: true, hideFreePlan: true };
+		case PLAN_PREMIUM:
+			return { hidePersonalPlan: true, hideFreePlan: true };
+		default:
+			return { hideFreePlan: true };
+	}
+};
+
 /**
  * Determine which plans should be displayed based on the type of the selected theme.
  */
@@ -40,16 +52,16 @@ export const getHidePlanPropsBasedOnThemeType = ( themeType: string ) => {
 	}
 
 	/**
-	 * Premium themes: Display Premium, Business and eCommerce
+	 * Personal and premium themes: display the tier's minimum plan and everything above it.
 	 */
-	if ( themeType === PREMIUM_THEME ) {
-		return { hidePersonalPlan: true, hideFreePlan: true };
+	if ( themeType === PERSONAL_THEME || themeType === PREMIUM_THEME ) {
+		return getHidePlanPropsBelow( THEME_TIERS[ themeType ].minimumUpsellPlan );
 	}
 
 	/**
-	 * Personal and marketplace themes: Display Personal, Premium, Business and eCommerce
+	 * Marketplace themes: Display Personal, Premium, Business and eCommerce
 	 */
-	if ( themeType === PERSONAL_THEME || themeType === MARKETPLACE_THEME ) {
+	if ( themeType === MARKETPLACE_THEME ) {
 		return { hideFreePlan: true };
 	}
 

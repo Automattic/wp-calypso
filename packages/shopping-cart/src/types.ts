@@ -932,6 +932,12 @@ export interface ResponseCartProductExtra {
 	is_art_promo?: boolean;
 
 	/**
+	 * True on a Business plan added from the free DIFM (Do it for me) offer.
+	 * Checkout uses it to show the DIFM offer next steps.
+	 */
+	difm_offer?: boolean;
+
+	/**
 	 * Set to 'renewal' if requesting a renewal.
 	 *
 	 * Often this does not need to be explicitly set because the shopping cart

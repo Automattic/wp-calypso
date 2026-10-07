@@ -1,3 +1,5 @@
+import type { PolicyNotice } from '../domain-suggestions/types';
+
 /**
  * Parameters for `GET /wpcom/v2/domains/name-pulse/suggestions`.
  */
@@ -9,6 +11,9 @@ export interface NamePulseSuggestionsQuery {
 
 	/** How long the endpoint waits on its providers, in milliseconds. */
 	timeout?: number;
+
+	/** Endings without the dot, e.g. `com`. AI suggestions ignore it. */
+	tlds?: string[];
 }
 
 export interface NamePulseSuggestion {
@@ -28,6 +33,7 @@ export interface NamePulseSuggestion {
 
 	currency_code?: string;
 	is_premium?: boolean;
+	policy_notices?: PolicyNotice[];
 }
 
 export interface NamePulseProviderError {
@@ -54,6 +60,7 @@ export interface NamePulseAvailabilityEntry {
 	raw_price?: number;
 	sale_cost?: number;
 	currency_code?: string;
+	policy_notices?: PolicyNotice[];
 }
 
 /**

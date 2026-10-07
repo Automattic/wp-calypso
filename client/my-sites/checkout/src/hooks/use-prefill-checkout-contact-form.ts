@@ -1,14 +1,13 @@
 import config from '@automattic/calypso-config';
 import { useCompleteAllSteps, useSuppressNextForwardScroll } from '@automattic/composite-checkout';
 import { getCountryPostalCodeSupport } from '@automattic/wpcom-checkout';
-import { useDispatch as useWordPressDataDispatch } from '@wordpress/data';
 import debugFactory from 'debug';
 import { useEffect, useRef, useState } from 'react';
 import { logToLogstash } from 'calypso/lib/logstash';
 import { useDispatch as useReduxDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { convertErrorToString } from '../lib/analytics';
-import { CHECKOUT_STORE } from '../lib/wpcom-store';
+import { contactDetailsActions } from '../lib/checkout-stores';
 import { useCachedContactDetails } from './use-cached-contact-details';
 import useCountryList from './use-country-list';
 import type { PossiblyCompleteDomainContactDetails } from '@automattic/wpcom-checkout';
@@ -32,13 +31,7 @@ function useCachedContactDetailsForCheckoutForm(
 			? getCountryPostalCodeSupport( countriesList, cachedContactDetails.countryCode )
 			: false;
 
-	const checkoutStoreActions = useWordPressDataDispatch( CHECKOUT_STORE );
-	if ( ! checkoutStoreActions?.loadDomainContactDetailsFromCache ) {
-		throw new Error(
-			'useCachedContactDetailsForCheckoutForm must be run after the checkout data store has been initialized'
-		);
-	}
-	const { loadDomainContactDetailsFromCache } = checkoutStoreActions;
+	const { loadDomainContactDetailsFromCache } = contactDetailsActions;
 
 	const isMounted = useRef( true );
 	useEffect( () => {
@@ -79,7 +72,12 @@ function useCachedContactDetailsForCheckoutForm(
 		loadDomainContactDetailsFromCache( {
 			...cachedContactDetails,
 			postalCode: arePostalCodesSupported ? ( cachedContactDetails.postalCode ?? null ) : '',
-		} )
+		} );
+		// Continue in a microtask, as this did when the contact details lived in a
+		// `@wordpress/data` store (whose dispatch returns a resolved promise), so
+		// that the step-completion logic below keeps the same timing relative to
+		// the store update.
+		Promise.resolve()
 			.then( () => {
 				if ( ! isMounted.current ) {
 					return false;

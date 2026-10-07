@@ -3,8 +3,10 @@
  */
 import { DotcomPlans, SubscriptionBillPeriod } from '@automattic/api-core';
 import { QueryClient } from '@tanstack/react-query';
+import { waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import MockDate from 'mockdate';
+import nock from 'nock';
 import { render as testUtilsRender } from '../../../test-utils';
 import { wpcomLink } from '../../../utils/link';
 import { Plan } from '../index';
@@ -32,6 +34,27 @@ function makeSite( plan?: Partial< NonNullable< Site[ 'plan' ] > > ): Site {
 			...plan,
 		},
 	} as Site;
+}
+
+/**
+ * A site a funnel built before its owner paid: already on Atomic, and reading as Free.
+ */
+function makeAtomicFreeSite(): Site {
+	return {
+		...makeSite( {
+			product_slug: DotcomPlans.FREE_PLAN,
+			product_name_short: 'Free',
+			is_free: true,
+		} ),
+		is_wpcom_atomic: true,
+	} as Site;
+}
+
+function mockPendingFunnelSite( response: object, status = 200 ) {
+	return nock( 'https://public-api.wordpress.com' )
+		.get( '/wpcom/v2/wow-funnel/pending' )
+		.query( true )
+		.reply( status, response );
 }
 
 function makePurchase( overrides: Partial< Purchase > = {} ): Purchase {
@@ -263,6 +286,143 @@ describe( '<Plan>', () => {
 			'calypso_dashboard_sites_plan_renew_nag_click',
 			expect.objectContaining( { cta: 'upgrade', state: 'expired_grace' } )
 		);
+	} );
+
+	test( 'a site its funnel is holding for checkout links its owner back to finish buying it', async () => {
+		mockPendingFunnelSite( {
+			pending: true,
+			blog_id: SITE_ID,
+			site_slug: 'test.wordpress.com',
+			funnel_slug: 'blueprint',
+			funnel_args: { blueprint_slug: 'punk' },
+		} );
+
+		const { container, findByRole } = renderPlan( { site: makeAtomicFreeSite() } );
+
+		const link = await findByRole( 'link' );
+		expect( link ).toHaveTextContent( 'Finish setup' );
+		expect( link ).toHaveAttribute(
+			'href',
+			wpcomLink( '/setup/onboarding?wow_funnel=blueprint&blueprint=punk' )
+		);
+		// Not "Free": the site is waiting for the plan in its owner's cart.
+		expect( container.textContent ).toContain( 'Awaiting checkout' );
+		expect( container.textContent ).not.toContain( 'Free' );
+	} );
+
+	test( 'a held site whose funnel run carries no blueprint links to the funnel alone', async () => {
+		mockPendingFunnelSite( {
+			pending: true,
+			blog_id: SITE_ID,
+			site_slug: 'test.wordpress.com',
+			funnel_slug: 'default',
+			funnel_args: {},
+		} );
+
+		const { findByRole } = renderPlan( { site: makeAtomicFreeSite() } );
+
+		expect( await findByRole( 'link' ) ).toHaveAttribute(
+			'href',
+			wpcomLink( '/setup/onboarding?wow_funnel=default' )
+		);
+	} );
+
+	test( 'records a click on the finish setup link', async () => {
+		mockPendingFunnelSite( {
+			pending: true,
+			blog_id: SITE_ID,
+			site_slug: 'test.wordpress.com',
+			funnel_slug: 'blueprint',
+			funnel_args: { blueprint_slug: 'punk' },
+		} );
+
+		const { findByRole, recordTracksEvent } = renderPlan( { site: makeAtomicFreeSite() } );
+
+		await userEvent.click( await findByRole( 'link' ) );
+
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
+			'calypso_dashboard_sites_plan_finish_setup_click',
+			{ surface: 'dashboard-sites-list', funnel: 'blueprint' }
+		);
+	} );
+
+	test( 'an Atomic site on the Free plan that no funnel is holding keeps its plan name', async () => {
+		const scope = mockPendingFunnelSite( { pending: false } );
+
+		const { container, queryByRole } = renderPlan( { site: makeAtomicFreeSite() } );
+
+		await waitFor( () => expect( scope.isDone() ).toBe( true ) );
+		expect( container.textContent ).toBe( 'Free' );
+		expect( queryByRole( 'link' ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'a held site that is a different one leaves this row alone', async () => {
+		const scope = mockPendingFunnelSite( {
+			pending: true,
+			blog_id: SITE_ID + 1,
+			site_slug: 'other.wordpress.com',
+			funnel_slug: 'blueprint',
+			funnel_args: { blueprint_slug: 'punk' },
+		} );
+
+		const { container, queryByRole } = renderPlan( { site: makeAtomicFreeSite() } );
+
+		await waitFor( () => expect( scope.isDone() ).toBe( true ) );
+		expect( container.textContent ).toBe( 'Free' );
+		expect( queryByRole( 'link' ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'a held site whose run the entry URL cannot express gets no link', async () => {
+		// Re-entering with a URL that does not name the same run would offer only to discard
+		// the site, and a funnel the flow does not know would start ordinary onboarding.
+		const unknownArg = mockPendingFunnelSite( {
+			pending: true,
+			blog_id: SITE_ID,
+			site_slug: 'test.wordpress.com',
+			funnel_slug: 'blueprint',
+			funnel_args: { blueprint_slug: 'punk', something_new: '1' },
+		} );
+		const first = renderPlan( { site: makeAtomicFreeSite() } );
+		await waitFor( () => expect( unknownArg.isDone() ).toBe( true ) );
+		expect( first.container.textContent ).toBe( 'Free' );
+		expect( first.queryByRole( 'link' ) ).not.toBeInTheDocument();
+		first.unmount();
+
+		const unknownFunnel = mockPendingFunnelSite( {
+			pending: true,
+			blog_id: SITE_ID,
+			site_slug: 'test.wordpress.com',
+			funnel_slug: 'not-a-funnel-this-client-knows',
+			funnel_args: {},
+		} );
+		const second = renderPlan( { site: makeAtomicFreeSite() } );
+		await waitFor( () => expect( unknownFunnel.isDone() ).toBe( true ) );
+		expect( second.container.textContent ).toBe( 'Free' );
+		expect( second.queryByRole( 'link' ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'a lookup that fails leaves the plan name as it was', async () => {
+		const scope = mockPendingFunnelSite( { code: 'rest_forbidden' }, 403 );
+
+		const { container, queryByRole } = renderPlan( { site: makeAtomicFreeSite() } );
+
+		await waitFor( () => expect( scope.isDone() ).toBe( true ) );
+		expect( container.textContent ).toBe( 'Free' );
+		expect( queryByRole( 'link' ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'a site that could not be held never asks', async () => {
+		// Simple, and paid: neither can be a site a funnel is holding for checkout.
+		const scope = mockPendingFunnelSite( { pending: false } );
+
+		renderPlan( { site: makeSite( { product_name_short: 'Premium' } ) } );
+		renderPlan( {
+			site: { ...makeSite( { product_name_short: 'Business' } ), is_wpcom_atomic: true } as Site,
+		} );
+
+		// Long enough for a query that was going to fire to have fired.
+		await new Promise( ( resolve ) => setTimeout( resolve, 50 ) );
+		expect( scope.isDone() ).toBe( false );
 	} );
 
 	test( 'an expired trial sends the subscriber to buy a plan instead of renewing one', () => {

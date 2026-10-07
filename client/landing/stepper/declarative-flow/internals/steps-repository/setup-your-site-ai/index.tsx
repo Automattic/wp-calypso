@@ -221,7 +221,7 @@ const SetupYourSiteAIStep: StepType = ( { navigation } ) => {
 	const buildWithAIBlocksFirstSummary = offerBuildWowBlocksFirst && (
 		<SummaryButton
 			title="Create a custom design (blocks-first)"
-			description="Staging only: build the site on the blocks-first graph."
+			description="Automatticians only: build the site on the blocks-first graph."
 			decoration={ <BigSkyLogo.CentralLogo heartless /> }
 			onClick={ handleCustomDesignBlocksFirstClick }
 			disabled={ isSubmitting }
@@ -231,14 +231,14 @@ const SetupYourSiteAIStep: StepType = ( { navigation } ) => {
 	const startWithTemplateCard = (
 		<SummaryButton
 			title={ i18n.fixMe( {
-				text: 'Start with a template',
-				newCopy: translate( 'Start with a template' ),
-				oldCopy: translate( 'Manual setup' ),
+				text: 'Start with a pre-made design',
+				newCopy: translate( 'Start with a pre-made design' ),
+				oldCopy: translate( 'Start with a template' ),
 			} ) }
 			description={ i18n.fixMe( {
-				text: 'Get a simple, ready-to-go site to make your own.',
-				newCopy: translate( 'Get a simple, ready-to-go site to make your own.' ),
-				oldCopy: translate( 'Get started instantly with a simple, ready-to-go WordPress site.' ),
+				text: "We'll install a ready-to-edit theme for you.",
+				newCopy: translate( "We'll install a ready-to-edit theme for you." ),
+				oldCopy: translate( 'Get a simple, ready-to-go site to make your own.' ),
 			} ) }
 			decoration={ <Icon icon={ layout } /> }
 			onClick={ handleBlankSite }

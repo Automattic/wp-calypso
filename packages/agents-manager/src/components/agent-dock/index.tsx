@@ -27,6 +27,7 @@ import { AGENTS_MANAGER_STORE } from '../../stores';
 import { LocalConversationListItem } from '../../types';
 import { takeActionOrigin } from '../../utils/action-origin';
 import { saveSessionId } from '../../utils/agent-session';
+import { getChatPresentation } from '../../utils/chat-presentation';
 import { getAgentsManagerInlineData } from '../../utils/get-agents-manager-inline-data';
 import { isEditorPage } from '../../utils/is-editor-page';
 import { isReaderChatAgent } from '../../utils/is-reader-chat-agent';
@@ -95,6 +96,7 @@ export default function AgentDock( {
 	capabilities,
 }: Props ) {
 	const { agentConfig, siteKey, currentUser } = useAgentsManagerContext();
+	const { dismissible } = getChatPresentation();
 
 	const [ isCompactMode, setIsCompactMode ] = useState(
 		window.__agentsManagerActions?.isCompactMode ?? false
@@ -117,6 +119,7 @@ export default function AgentDock( {
 		const store: AgentsManagerSelect = select( AGENTS_MANAGER_STORE );
 		return store.getAgentsManagerState();
 	}, [] );
+	const isOpen = isPersistedOpen || ! dismissible;
 	const { pathname } = useLocation();
 	const navigate = useNavigate();
 	const navigationType = useNavigationType();
@@ -146,7 +149,7 @@ export default function AgentDock( {
 		createAgentPortal,
 	} = useAgentLayoutManager( {
 		defaultDocked: isReaderChat ? false : isPersistedDocked,
-		defaultOpen: isPersistedOpen,
+		defaultOpen: isOpen,
 		desktopMediaQuery,
 		// Only open the sidebar; keep the current route. Admin-bar items
 		// set their own route (e.g. history) before opening it.
@@ -170,6 +173,9 @@ export default function AgentDock( {
 	// Docked close fires `sidebar_close_click` (via `onCloseSidebar`); undocked
 	// close fires `dock_back_button_click`. Matches Big Sky.
 	const handleClose = () => {
+		if ( ! dismissible ) {
+			return;
+		}
 		if ( isDocked ) {
 			closeSidebar();
 		} else {
@@ -411,9 +417,9 @@ export default function AgentDock( {
 
 	// With the AI chat entry button, the chat hides on close and can minimize to
 	// the bar. Without one, it stays mounted and collapses to a button instead.
-	const isChatVisible = isPersistedOpen || ! hasAiChatEntry;
-	const isMinimizedActive = hasAiChatEntry && isMinimized;
-	const chatIsOpen = isPersistedOpen && ! isMinimizedActive;
+	const isChatVisible = isOpen || ! hasAiChatEntry;
+	const isMinimizedActive = dismissible && hasAiChatEntry && isMinimized;
+	const chatIsOpen = isOpen && ! isMinimizedActive;
 
 	useRaiseOnFocus( isChatVisible && ! isDocked ? portalNode : null, chatIsOpen );
 

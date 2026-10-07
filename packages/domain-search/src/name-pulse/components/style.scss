@@ -97,14 +97,6 @@ html:has( .name-pulse-search-input ) {
 		// out of the row's wrap calculation, so it shrinks/truncates in place
 		// instead of pushing `&__status` onto a second line.
 		flex: 1 1 0%;
-
-		// A Sale and a Premium badge together leave the name only a few
-		// characters, so the pair drops under it.
-		&--stacked {
-			flex-direction: column;
-			align-items: flex-start;
-			gap: 0.25rem;
-		}
 	}
 
 	&__badges {
@@ -297,6 +289,73 @@ html:has( .name-pulse-search-input ) {
 		&__cta .components-button {
 			width: 100%;
 			justify-content: center;
+		}
+	}
+}
+
+// Under Top results the bundle card spans the row, so the price and button
+// move beside the TLDs instead of under them. Narrow screens keep the
+// shared card's stacked layout.
+.name-pulse-bundle-wide {
+	.bundle-tld-chips .bundle-tld-chips__tld {
+		font-weight: 400;
+	}
+
+	.bundle-card .bundle-card__cta.is-secondary {
+		color: var( --wp-admin-theme-color, #3858e9 );
+		box-shadow: inset 0 0 0 1px var( --wp-admin-theme-color, #3858e9 );
+	}
+
+	.bundle-card .bundle-price .components-text:not( .bundle-price__sub-text ) {
+		font-size: 20px;
+		line-height: 28px;
+	}
+
+	.bundle-card .bundle-price__sub-text,
+	.bundle-card .bundle-card__tagline {
+		color: $gray-900;
+	}
+
+	.bundle-card .bundle-card__tagline {
+		font-size: 13px;
+	}
+
+	.bundle-card .bundle-card__footer-icon {
+		fill: $gray-900;
+	}
+
+	@media ( min-width: $break-small ) {
+		.bundle-card > .components-v-stack {
+			display: grid;
+			grid-template-columns: minmax( 0, 1fr ) auto;
+			column-gap: 24px;
+
+			> * {
+				grid-column: 1 / -1;
+			}
+		}
+
+		.bundle-card .bundle-card__header {
+			grid-row: 1;
+		}
+
+		.bundle-card .bundle-card__tlds {
+			grid-column: 1;
+			grid-row: 2;
+		}
+
+		// The stack's 16px gap pulls the domains too far from their TLDs.
+		.bundle-card .bundle-card__members {
+			grid-column: 1;
+			grid-row: 3;
+			margin-block-start: -12px;
+		}
+
+		.bundle-card .bundle-card__price-row {
+			grid-column: 2;
+			grid-row: 2 / span 2;
+			align-self: center;
+			gap: 40px;
 		}
 	}
 }

@@ -59,7 +59,6 @@
 		"@wordpress/react-i18n": "^4.48.0",
 		"@wordpress/url": "^4.48.0",
 		"autosize": "^6.0.1",
-		"classnames": "^2.5.1",
 		"clsx": "^2.1.1",
 		"dompurify": "3.4.13",
 		"framer-motion": "^12.23.12",

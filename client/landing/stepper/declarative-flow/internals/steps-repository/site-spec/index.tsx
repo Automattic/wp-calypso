@@ -44,6 +44,7 @@ import {
 import wpcom from 'calypso/lib/wp';
 import { buildEarlyProvisionDestination } from './early-provisioning';
 import type { Step as StepType } from '../../types';
+import './style.scss';
 
 function SiteSpecContainer( {
 	siteSpecConfig,
@@ -56,7 +57,7 @@ function SiteSpecContainer( {
 } ) {
 	useSiteSpec( { siteSpecConfig, onMessage, onSpecConfirm } );
 
-	return <div id="site-spec-container" style={ { height: '100vh' } } />;
+	return <div id="site-spec-container" className="site-spec-step__container" />;
 }
 
 function getSpecId( specData: unknown ): string {
@@ -333,16 +334,8 @@ const SiteSpec: StepType = function SiteSpec( { navigation } ) {
 					response.blog_id
 				);
 
-				if ( ! response.site_editor_url ) {
-					throw new Error( 'Build-wow response is missing the Site Editor URL.' );
-				}
-
 				const ref = queryParams.get( 'ref' );
 				const source = queryParams.get( 'source' );
-				// No spec_id on the editor URL: that param asks the editor plugin
-				// to build the site itself, and this build already ran on the
-				// server. A second build on the canvas wipes the generated pages.
-				const destination = addQueryArgs( response.site_editor_url, source ? { source } : {} );
 
 				logBuildWowEvent(
 					'site_generation_redirect',
@@ -358,7 +351,6 @@ const SiteSpec: StepType = function SiteSpec( { navigation } ) {
 					...( response.blog_id ? { siteId: response.blog_id } : {} ),
 					siteSlug: buildWowSiteIdentifier,
 					specId,
-					editorUrl: destination,
 					...( ref ? { ref } : {} ),
 					...( source ? { source } : {} ),
 					...( graph ? { graph } : {} ),
@@ -496,10 +488,6 @@ const SiteSpec: StepType = function SiteSpec( { navigation } ) {
 							getBuildWowGraph( queryParams ),
 							blueprintArchiveSlug
 						);
-						if ( ! response.site_editor_url ) {
-							throw new Error( 'Build-wow response is missing the Site Editor URL.' );
-						}
-
 						logBlueprintArchiveEvent( 'redirect_site_generation', {
 							site_identifier: blueprintArchiveSiteIdentifier,
 							build_status: response.build?.status,
@@ -512,7 +500,6 @@ const SiteSpec: StepType = function SiteSpec( { navigation } ) {
 								...( response.blog_id ? { siteId: response.blog_id } : {} ),
 								siteSlug: blueprintArchiveSiteIdentifier,
 								specId,
-								editorUrl: response.site_editor_url,
 								...( ref ? { ref } : {} ),
 							} ),
 						};

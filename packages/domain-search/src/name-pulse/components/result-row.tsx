@@ -18,6 +18,7 @@ import {
 } from '../helpers';
 import { useNamePulseCartToggle } from '../hooks/use-name-pulse-cart-toggle';
 import { setNamePulseVerdict } from '../hooks/use-name-pulse-verdicts';
+import { NamePulsePolicyNoticeDialog } from './policy-notice-dialog';
 
 interface NamePulseResultRowProps {
 	result: NamePulseDomainResult;
@@ -72,15 +73,6 @@ export const NamePulseResultRow = ( { result, position }: NamePulseResultRowProp
 	// Below wide desktop the row is too narrow to truncate without losing most of
 	// the name, so the name wraps onto a second line instead.
 	const wrapName = useViewportMatch( 'large', '<' );
-	const {
-		inCart,
-		isPending,
-		error,
-		toggleCart,
-		trademarkClaimsNoticeInfo,
-		acceptTrademarkClaim,
-		closeTrademarkClaims,
-	} = useNamePulseCartToggle( result.domain_name, position );
 
 	const { domain_name: domainName, suffix, source } = result;
 	const label = suffix ? domainName.slice( 0, -( suffix.length + 1 ) ) : domainName;
@@ -125,11 +117,22 @@ export const NamePulseResultRow = ( { result, position }: NamePulseResultRowProp
 	// waiting for one that is not coming.
 	const isPremiumPriceMissing = needsPremiumPrice && ! realtimeVerdict;
 	const showPremiumBadge = isAvailable && isPremium;
-	const showSaleBadge = isAvailable && !! getNamePulseSalePrice( row );
-	// One badge still fits beside the name; two leave it only a few characters,
-	// so the pair moves under it and the name keeps the full column width.
-	const stackBadges = showSaleBadge && showPremiumBadge;
-	const labelTruncateLimit = ( showSaleBadge || showPremiumBadge ) && ! stackBadges ? 12 : 20;
+	// TLDs with special requirements are rarely registered, so the requirements
+	// stay off the row and are confirmed in a dialog before the name goes to the cart.
+	const {
+		inCart,
+		isPending,
+		error,
+		toggleCart,
+		trademarkClaimsNoticeInfo,
+		acceptTrademarkClaim,
+		closeTrademarkClaims,
+		policyNotice,
+		isPolicyNoticeOpen,
+		confirmPolicyNotice,
+		closePolicyNotice,
+	} = useNamePulseCartToggle( domainName, position, row.policy_notices );
+	const labelTruncateLimit = showPremiumBadge ? 12 : 20;
 	const suffixText = (
 		<Text as="span" weight={ 600 } variant={ isUnavailable ? 'muted' : undefined }>
 			{ suffix ? `.${ suffix }` : '' }
@@ -142,9 +145,7 @@ export const NamePulseResultRow = ( { result, position }: NamePulseResultRowProp
 			data-domain={ domainName }
 			data-status={ NamePulseDomainStatus[ status ].toLowerCase() }
 		>
-			<span
-				className={ clsx( 'name-pulse-row__name', stackBadges && 'name-pulse-row__name--stacked' ) }
-			>
+			<span className="name-pulse-row__name">
 				{ wrapName ? (
 					<span className="name-pulse-row__domain name-pulse-row__domain--wrap">
 						<Text as="span" variant="muted">
@@ -169,10 +170,9 @@ export const NamePulseResultRow = ( { result, position }: NamePulseResultRowProp
 						</span>
 					</Tooltip>
 				) }
-				{ ( showSaleBadge || showPremiumBadge ) && (
+				{ showPremiumBadge && (
 					<span className="name-pulse-row__badges">
-						{ showSaleBadge && <Badge intent="medium">{ __( 'Sale' ) }</Badge> }
-						{ showPremiumBadge && <Badge intent="informational">{ __( 'Premium' ) }</Badge> }
+						<Badge intent="informational">{ __( 'Premium' ) }</Badge>
 					</span>
 				) }
 			</span>
@@ -219,6 +219,15 @@ export const NamePulseResultRow = ( { result, position }: NamePulseResultRowProp
 					/>
 				) }
 			</span>
+			{ policyNotice && (
+				<NamePulsePolicyNoticeDialog
+					notice={ policyNotice }
+					open={ isPolicyNoticeOpen }
+					isPending={ isPending }
+					onConfirm={ confirmPolicyNotice }
+					onClose={ closePolicyNotice }
+				/>
+			) }
 			{ trademarkClaimsNoticeInfo && (
 				<DomainSearchTrademarkClaimsModal
 					domainName={ domainName }

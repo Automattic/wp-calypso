@@ -249,6 +249,43 @@ describe( 'LoginForm', () => {
 		expect( screen.getByText( 'Your username' ) ).toBeInTheDocument();
 	} );
 
+	test( 'prefills the email from the OAuth2 redirect_to URL', async () => {
+		render( <LoginForm />, {
+			initialState: {
+				route: {
+					query: {
+						current: {
+							redirect_to:
+								'https://public-api.wordpress.com/oauth2/authorize/?client_id=1&email_address=test%2Btag%40example.com',
+						},
+						initial: {},
+					},
+				},
+			},
+		} );
+
+		expect( screen.getByLabelText( /username/i ) ).toHaveValue( 'test+tag@example.com' );
+	} );
+
+	test( 'prefers the top-level email_address over the one in redirect_to', async () => {
+		render( <LoginForm />, {
+			initialState: {
+				route: {
+					query: {
+						current: {
+							email_address: 'top@example.com',
+							redirect_to:
+								'https://public-api.wordpress.com/oauth2/authorize/?client_id=1&email_address=nested%40example.com',
+						},
+						initial: {},
+					},
+				},
+			},
+		} );
+
+		expect( screen.getByLabelText( /username/i ) ).toHaveValue( 'top@example.com' );
+	} );
+
 	describe( 'Blackbox integration', () => {
 		const mockFetch = jest.fn();
 

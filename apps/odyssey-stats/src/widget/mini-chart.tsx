@@ -12,6 +12,7 @@ import { getChartRangeParams } from 'calypso/my-sites/stats/utils';
 import nothing from '../components/nothing';
 import useVisitsQuery from '../hooks/use-visits-query';
 import { Unit } from '../typings';
+import useStatsLink from './use-stats-link';
 
 import './mini-chart.scss';
 
@@ -34,6 +35,7 @@ const MiniChart: FunctionComponent< MiniChartProps > = ( {
 	quantity = 7,
 } ) => {
 	const translate = useTranslate();
+	const statsLink = useStatsLink( siteId );
 
 	const chartViews = {
 		attr: 'views',
@@ -46,17 +48,28 @@ const MiniChart: FunctionComponent< MiniChartProps > = ( {
 	};
 	const charts = [ chartViews, chartVisitors ];
 
-	const queryDate = moment()
-		.utcOffset( Number.isFinite( gmtOffset ) ? gmtOffset : 0 )
-		.format( 'YYYY-MM-DD' );
+	const siteOffset = Number.isFinite( gmtOffset ) ? gmtOffset : 0;
+	const momentInSite = ( input?: moment.MomentInput ) =>
+		input === undefined
+			? moment().utcOffset( siteOffset )
+			: moment.utc( input ).utcOffset( siteOffset, true );
+	const queryDate = momentInSite().format( 'YYYY-MM-DD' );
 	const [ period, setPeriod ] = useState< Unit >( 'day' );
 
 	const { isLoading, data } = useVisitsQuery( siteId, period, quantity, queryDate );
 
 	const barClick = ( bar: { data: BarData } ) => {
-		const { chartStart, chartEnd, chartPeriod } = getChartRangeParams( bar.data.period, period );
+		const { chartStart, chartEnd, chartPeriod } = getChartRangeParams(
+			bar.data.period,
+			period,
+			momentInSite
+		);
 
-		window.location.href = `${ statsBaseUrl }/stats/${ chartPeriod }/${ siteId }?chartStart=${ chartStart }&chartEnd=${ chartEnd }`;
+		window.location.href = statsLink(
+			`${ statsBaseUrl }/stats/${ chartPeriod }/${ siteId }?chartStart=${ chartStart }&chartEnd=${ chartEnd }`,
+			'/',
+			{ from: chartStart, to: chartEnd, gmtOffset }
+		);
 	};
 
 	const chartData = buildChartData(

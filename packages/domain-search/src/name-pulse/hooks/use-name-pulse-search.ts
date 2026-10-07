@@ -58,6 +58,9 @@ const toSuggestionResults = (
  * bulk-checked, but they read the verdict cache so a real-time verdict on click
  * reaches them. Reports loading while the query is still being typed so the
  * section holds its skeletons.
+ *
+ * Keyword suggestions are filtered by the endpoint. AI suggestions ignore
+ * `tlds`, so they are filtered here.
  */
 const useNamePulseSuggestions = ( {
 	suggestionsQuery,
@@ -73,25 +76,30 @@ const useNamePulseSuggestions = ( {
 	const { queries, filter } = useDomainSearch();
 	const useAi = source === 'ai';
 	const active = show && isSettled;
+	// Sorted so the same endings in any order share a cache entry.
+	const requestTlds = useMemo(
+		() => ( useAi || filter.tlds.length === 0 ? [] : [ ...filter.tlds ].sort() ),
+		[ useAi, filter.tlds ]
+	);
 	const { data, isPending } = useQuery( {
 		...queries.namePulseSuggestions( {
 			query: active ? suggestionsQuery : '',
 			use_ai: useAi,
 			...( useAi ? { timeout: NAME_PULSE_AI_TIMEOUT_MS } : {} ),
+			...( requestTlds.length > 0 ? { tlds: requestTlds } : {} ),
 		} ),
 		enabled: active,
 	} );
 
-	const rows = useMemo(
-		() =>
-			active
-				? filterNamePulseSuggestions(
-						toSuggestionResults( data?.suggestions, source ),
-						filter.tlds
-					)
-				: EMPTY_RESULTS,
-		[ active, data, source, filter.tlds ]
-	);
+	const rows = useMemo( () => {
+		if ( ! active ) {
+			return EMPTY_RESULTS;
+		}
+
+		const results = toSuggestionResults( data?.suggestions, source );
+
+		return useAi ? filterNamePulseSuggestions( results, filter.tlds ) : results;
+	}, [ active, data, source, useAi, filter.tlds ] );
 	const names = useMemo( () => rows.map( ( row ) => row.domain_name ), [ rows ] );
 	const verdicts = useNamePulseVerdicts( names, false );
 	const results = useMemo(
@@ -144,6 +152,7 @@ export const useNamePulseSearch = ( query: string ) => {
 		return { ...typed, exactGrid: { show: typed.top.show && ! isAiMode } };
 	}, [ query, tlds, isAiMode ] );
 	const { baseName, wordCount } = layout;
+	const isBareWord = layout.mode === 'single';
 	const showExactGrid = layout.exactGrid.show;
 	const initialCheckCount =
 		wordCount > 1 ? NAME_PULSE_INITIAL_CHECK_MULTI_WORD : NAME_PULSE_INITIAL_CHECK_SINGLE_WORD;
@@ -161,8 +170,10 @@ export const useNamePulseSearch = ( query: string ) => {
 
 	const exactRows = useMemo(
 		() =>
-			showExactGrid && gridTlds ? generateExactMatches( baseName, gridTlds ) : EMPTY_RESULTS,
-		[ showExactGrid, baseName, gridTlds ]
+			showExactGrid && gridTlds
+				? generateExactMatches( baseName, gridTlds, { promoteMatchedTld: isBareWord } )
+				: EMPTY_RESULTS,
+		[ showExactGrid, baseName, gridTlds, isBareWord ]
 	);
 
 	// Names asked for beyond the initial slice ("Show more", top-results

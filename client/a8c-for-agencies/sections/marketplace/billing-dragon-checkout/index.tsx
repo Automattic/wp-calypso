@@ -1,3 +1,4 @@
+import { fetchStripeConfiguration } from '@automattic/api-core';
 import page from '@automattic/calypso-router';
 import { StripeHookProvider } from '@automattic/calypso-stripe';
 import { CheckoutErrorBoundary } from '@automattic/composite-checkout';
@@ -7,7 +8,6 @@ import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import A4ALogo from 'calypso/a8c-for-agencies/components/a4a-logo';
 import { A4A_MARKETPLACE_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
-import { getStripeConfiguration } from 'calypso/lib/store-transactions';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import CheckoutQueryClientProvider from 'calypso/my-sites/checkout/checkout-query-client-provider';
 import CartMessageCleanup from 'calypso/my-sites/checkout/src/components/cart-message-cleanup';
@@ -77,8 +77,6 @@ function BillingDragonCheckoutContent( {
 	} = usePrepareProductsForCart( {
 		productAliasFromUrl: planSlug,
 		purchaseId: null,
-		usesJetpackProducts: false,
-		isPrivate: false,
 		siteSlug,
 		sitelessCheckoutType: 'a4a',
 	} );
@@ -290,7 +288,10 @@ export default function BillingDragonCheckout( {
 			<CheckoutQueryClientProvider>
 				<CalypsoShoppingCartProvider shouldShowPersistentErrors>
 					<CartMessageCleanup />
-					<StripeHookProvider fetchStripeConfiguration={ getStripeConfiguration } locale={ locale }>
+					<StripeHookProvider
+						fetchStripeConfiguration={ fetchStripeConfiguration }
+						locale={ locale }
+					>
 						<BillingDragonCheckoutContent
 							cartItems={ cartItems }
 							withA8cLogo={ withA8cLogo }
