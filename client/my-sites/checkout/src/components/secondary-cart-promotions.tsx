@@ -1,7 +1,7 @@
 import config from '@automattic/calypso-config';
 import { styled } from '@automattic/wpcom-checkout';
 import { FunctionComponent } from 'react';
-import { getSiteDisplayUrl } from 'calypso/dashboard/utils/site-url';
+import { withoutHttp } from 'calypso/lib/url';
 import CartFreeUserPlanUpsell from 'calypso/my-sites/checkout/cart/cart-free-user-plan-upsell';
 import UpcomingRenewalsReminder from 'calypso/my-sites/checkout/cart/upcoming-renewals-reminder';
 import { useCheckoutSite } from 'calypso/my-sites/checkout/src/hooks/use-checkout-site';
@@ -77,7 +77,7 @@ const SecondaryCartPromotions: FunctionComponent< Props > = ( {
 	);
 	const site =
 		selectedSite ??
-		( cartSite && { ID: cartSite.ID, slug: cartSite.slug, domain: getSiteDisplayUrl( cartSite ) } );
+		( cartSite && { ID: cartSite.ID, slug: cartSite.slug, domain: withoutHttp( cartSite.URL ) } );
 
 	if ( config.isEnabled( 'upgrades/upcoming-renewals-notices' ) && isPurchaseRenewal && site ) {
 		return (
