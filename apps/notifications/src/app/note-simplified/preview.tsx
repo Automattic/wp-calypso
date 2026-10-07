@@ -79,7 +79,7 @@ export const PostCard = ( {
 						) }
 						<VStack spacing={ 0 }>
 							{ siteName && (
-								<Text size={ 12 } weight={ 600 } truncate>
+								<Text size={ 13 } weight={ 600 } truncate>
 									{ siteName }
 								</Text>
 							) }

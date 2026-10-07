@@ -105,7 +105,7 @@ export default function ActorRow( {
 	return (
 		<HStack alignment="top" justify="flex-start" spacing={ 3 }>
 			<Avatars avatars={ avatars } link={ getHeaderLink( sentence ) } />
-			<VStack className="wpnc-simplified__quiet-links" spacing={ 1 }>
+			<VStack className="wpnc-simplified__quiet-links" spacing={ 0 }>
 				<div>
 					<div
 						className="wpnc-simplified__sentence"
