@@ -246,6 +246,14 @@ export const PRODUCT_1GB_SPACE = 'wordpress_com_1gb_space_addon_yearly';
 
 export const PRODUCT_STUDIO_CODE_AI_CREDITS = 'studio-code-ai-credits';
 
+export const PRODUCT_WPCOM_AI_CREDITS = 'wpcom-ai-credits';
+
+// Products that sell a quantity of AI credits, shown with their credit count.
+export const AI_CREDITS_PRODUCT_SLUGS: readonly string[] = [
+	PRODUCT_STUDIO_CODE_AI_CREDITS,
+	PRODUCT_WPCOM_AI_CREDITS,
+];
+
 export const OFFSITE_REDIRECT = 'offsite_redirect';
 
 export const AkismetUpgradesProductMap: Record< string, string > = {

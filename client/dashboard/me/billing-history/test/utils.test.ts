@@ -16,6 +16,12 @@ describe( 'renderTransactionQuantitySummary', () => {
 		);
 	} );
 
+	test( 'shows credit quantity for AI Credits', () => {
+		expect( renderTransactionQuantitySummary( item( 'wpcom-ai-credits', 5000 ) ) ).toEqual(
+			'Purchase of 5,000 AI credits'
+		);
+	} );
+
 	test( 'uses the singular form for one credit', () => {
 		expect( renderTransactionQuantitySummary( item( 'studio-code-ai-credits', 1 ) ) ).toEqual(
 			'Purchase of 1 AI credit'
