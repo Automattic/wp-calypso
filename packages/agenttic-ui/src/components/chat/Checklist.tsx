@@ -80,7 +80,8 @@ const getRowKind = ( item: ChecklistItem ): RowKind => {
 	if ( isActionable( item ) ) {
 		return 'open';
 	}
-	return item.disabled && ! isSettled( item ) ? 'disabled' : 'inert';
+	// Status wins over `disabled`: only an open task can be a disabled one.
+	return item.disabled && getStatus( item ) === 'todo' ? 'disabled' : 'inert';
 };
 
 interface ChecklistRowProps {

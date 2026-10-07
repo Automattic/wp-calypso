@@ -168,6 +168,23 @@ describe( 'Checklist', () => {
 		expect( onSubmit ).not.toHaveBeenCalled();
 	} );
 
+	it( 'renders a disabled item that is in progress as an inert row', () => {
+		render( {
+			items: [
+				{
+					id: 'woo',
+					label: 'Add products',
+					prompt: 'Add products',
+					status: 'in_progress',
+					disabled: true,
+					disabledReason: 'Install WooCommerce first',
+				},
+			],
+		} );
+
+		expect( rowFor( 'Add products' ).querySelector( 'button' ) ).toBeNull();
+	} );
+
 	it( 'announces each status to assistive technology', () => {
 		render();
 

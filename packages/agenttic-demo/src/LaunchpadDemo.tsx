@@ -99,7 +99,16 @@ const LaunchpadDemo: React.FC< { currentTheme: 'light' | 'dark' } > = ( { curren
 		setCollapsed( false );
 	};
 
-	// First selection moves the list out of the conversation and pins it.
+	// First selection moves the list out of the conversation and pins it. That
+	// swaps checklist instances, so the focus the component put on its header
+	// has to be carried over to the pinned one.
+	const pinnedRef = useRef< HTMLDivElement >( null );
+	useEffect( () => {
+		if ( pinned ) {
+			pinnedRef.current?.querySelector< HTMLButtonElement >( 'button[aria-expanded]' )?.focus();
+		}
+	}, [ pinned ] );
+
 	const select = useCallback( ( id: string ) => {
 		setItems( ( current ) =>
 			current.map( ( item ) => ( item.id === id ? { ...item, status: 'in_progress' } : item ) )
@@ -190,7 +199,7 @@ const LaunchpadDemo: React.FC< { currentTheme: 'light' | 'dark' } > = ( { curren
 						>
 							<AgentUI.ConversationView>
 								{ pinned && (
-									<div className="launchpad-demo__pinned">
+									<div ref={ pinnedRef } className="launchpad-demo__pinned">
 										<LaunchpadChecklist state={ state } />
 									</div>
 								) }
