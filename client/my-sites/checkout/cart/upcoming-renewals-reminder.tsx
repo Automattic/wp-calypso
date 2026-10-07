@@ -23,7 +23,6 @@ import { PartialCart } from 'calypso/my-sites/checkout/src/components/secondary-
 import { useSelector, useDispatch } from 'calypso/state';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { hasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
-import { getSelectedSite } from 'calypso/state/ui/selectors';
 import type { Purchase } from '@automattic/api-core';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import type { TranslateResult } from 'i18n-calypso';
@@ -57,16 +56,19 @@ interface SelectedSite {
 interface Props {
 	cart: PartialCart;
 	addItemToCart: ( item: MinimalRequestCartProduct ) => void;
+	site: SelectedSite;
 }
 
-const UpcomingRenewalsReminder: FunctionComponent< Props > = ( { cart, addItemToCart } ) => {
+const UpcomingRenewalsReminder: FunctionComponent< Props > = ( {
+	cart,
+	addItemToCart,
+	site: selectedSite,
+} ) => {
 	const reduxDispatch = useDispatch();
 	const translate = useTranslate();
-	const selectedSite = useSelector( ( state ) => getSelectedSite( state ) as SelectedSite );
-	const { data: sitePurchases, isPending: arePurchasesPending } = useQuery( {
-		...sitePurchasesQuery( selectedSite?.ID ?? 0 ),
-		enabled: Boolean( selectedSite?.ID ),
-	} );
+	const { data: sitePurchases, isPending: arePurchasesPending } = useQuery(
+		sitePurchasesQuery( selectedSite.ID )
+	);
 	const renewableSitePurchases = useMemo(
 		() => ( sitePurchases ?? [] ).filter( needsToRenewSoon ),
 		[ sitePurchases ]
@@ -205,7 +207,7 @@ const UpcomingRenewalsReminder: FunctionComponent< Props > = ( { cart, addItemTo
 		reduxDispatch,
 	] );
 
-	if ( ! userId || ! selectedSite ) {
+	if ( ! userId ) {
 		return null;
 	}
 
