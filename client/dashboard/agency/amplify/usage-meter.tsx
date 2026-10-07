@@ -87,6 +87,9 @@ function LimitsExplainer( { label, resetDate }: { label?: string; resetDate?: st
 							) ) }
 						</ul>
 						<Text size={ 13 } lineHeight="20px">
+							{ __( 'Audits that fail or time out don’t count toward your allowance.' ) }
+						</Text>
+						<Text size={ 13 } lineHeight="20px">
 							<Link
 								to="/tiers"
 								onClick={ () => recordTracksEvent( 'calypso_a4a_amplify_usage_info_tiers_click' ) }
