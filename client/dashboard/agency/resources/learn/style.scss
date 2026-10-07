@@ -144,3 +144,20 @@ $resource-brands: (
 		outline-offset: 1px;
 	}
 }
+
+// Joins the previous and next buttons into one bordered control, as in the
+// i2 designs. No core component draws a connected pair of icon buttons.
+.dashboard-resources-learn__modal-navigation {
+	border: 1px solid var( --wpds-color-stroke-surface-neutral, #{$gray-300} );
+	border-radius: $radius-medium;
+
+	> .components-button + .components-button {
+		border-inline-start: 1px solid var( --wpds-color-stroke-surface-neutral, #{$gray-300} );
+	}
+}
+
+// Heading has no letter-spacing prop. Nested for specificity over its runtime styles.
+.dashboard-resources-learn__modal .dashboard-resources-learn__modal-title {
+	letter-spacing: -0.035em;
+	text-wrap: pretty;
+}

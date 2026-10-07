@@ -1,12 +1,13 @@
 import {
 	Button,
 	Modal,
+	__experimentalHeading as Heading,
 	__experimentalHStack as HStack,
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { __, isRTL } from '@wordpress/i18n';
-import { chevronLeft, chevronRight } from '@wordpress/icons';
+import { chevronLeft, chevronRight, closeSmall } from '@wordpress/icons';
 import ResourceBadges from './resource-badges';
 import type { FilterResources } from './types';
 import type { AgencyEnablementResource } from '@automattic/api-core';
@@ -38,7 +39,8 @@ export default function ResourceModal( {
 
 	return (
 		<Modal
-			title={ resource.name }
+			className="dashboard-resources-learn__modal"
+			contentLabel={ resource.name }
 			size="medium"
 			onRequestClose={ onClose }
 			onKeyDown={ ( event ) => {
@@ -48,44 +50,66 @@ export default function ResourceModal( {
 					onNext?.();
 				}
 			} }
-			headerActions={
-				<>
-					<Button
-						icon={ isRTL() ? chevronRight : chevronLeft }
-						label={ __( 'Previous resource' ) }
-						size="compact"
-						disabled={ ! onPrevious }
-						accessibleWhenDisabled
-						onClick={ onPrevious }
-					/>
-					<Button
-						icon={ isRTL() ? chevronLeft : chevronRight }
-						label={ __( 'Next resource' ) }
-						size="compact"
-						disabled={ ! onNext }
-						accessibleWhenDisabled
-						onClick={ onNext }
-					/>
-				</>
-			}
+			// The navigation leads the header, so the modal draws its own.
+			__experimentalHideHeader
 		>
 			<VStack spacing={ 6 }>
-				<VStack spacing={ 4 }>
-					<Text>{ resource.description }</Text>
-					<ResourceBadges resource={ resource } onFilter={ onFilter } />
-				</VStack>
-				<HStack justify="flex-start">
-					<Button
-						variant="primary"
-						href={ resource.external_url }
-						target="_blank"
-						rel="noopener noreferrer"
-						onClick={ () => onOpen( resource ) }
-						__next40pxDefaultSize
+				<HStack justify="space-between">
+					<HStack
+						spacing={ 0 }
+						expanded={ false }
+						className="dashboard-resources-learn__modal-navigation"
+						role="group"
+						aria-label={ __( 'Resource navigation' ) }
 					>
-						{ __( 'Open resource' ) }
-					</Button>
+						<Button
+							icon={ isRTL() ? chevronRight : chevronLeft }
+							label={ __( 'Previous resource' ) }
+							size="compact"
+							disabled={ ! onPrevious }
+							accessibleWhenDisabled
+							onClick={ onPrevious }
+						/>
+						<Button
+							icon={ isRTL() ? chevronLeft : chevronRight }
+							label={ __( 'Next resource' ) }
+							size="compact"
+							disabled={ ! onNext }
+							accessibleWhenDisabled
+							onClick={ onNext }
+						/>
+					</HStack>
+					<Button icon={ closeSmall } label={ __( 'Close' ) } size="compact" onClick={ onClose } />
 				</HStack>
+				<VStack spacing={ 6 }>
+					<VStack spacing={ 3 }>
+						<Heading
+							level={ 1 }
+							size={ 32 }
+							weight={ 600 }
+							lineHeight={ 1.15 }
+							className="dashboard-resources-learn__modal-title"
+						>
+							{ resource.name }
+						</Heading>
+						<Text size={ 15 } lineHeight={ 1.45 }>
+							{ resource.description }
+						</Text>
+					</VStack>
+					<ResourceBadges resource={ resource } onFilter={ onFilter } />
+					<HStack justify="flex-start">
+						<Button
+							variant="primary"
+							href={ resource.external_url }
+							target="_blank"
+							rel="noopener noreferrer"
+							onClick={ () => onOpen( resource ) }
+							__next40pxDefaultSize
+						>
+							{ __( 'Open in new tab' ) }
+						</Button>
+					</HStack>
+				</VStack>
 			</VStack>
 		</Modal>
 	);
