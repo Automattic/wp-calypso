@@ -10,10 +10,10 @@ import { styled, joinClasses } from '@automattic/wpcom-checkout';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useCallback } from 'react';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { hasP2PlusPlan } from 'calypso/lib/cart-values/cart-items';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
-import { useSelector, useDispatch } from 'calypso/state';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { useSelector } from 'calypso/state';
 import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'calypso/state/current-user/constants';
 import {
 	currentUserHasFlag,
@@ -121,31 +121,20 @@ export default function WPCheckoutOrderReview( {
 	const translate = useTranslate();
 	const cartKey = useCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
-	const reduxDispatch = useDispatch();
 
 	const onRemoveProductCancel = useCallback( () => {
-		reduxDispatch( recordTracksEvent( 'calypso_checkout_composite_cancel_delete_product' ) );
-	}, [ reduxDispatch ] );
-	const onRemoveProduct = useCallback(
-		( label: string ) => {
-			reduxDispatch(
-				recordTracksEvent( 'calypso_checkout_composite_delete_product', {
-					product_name: label,
-				} )
-			);
-		},
-		[ reduxDispatch ]
-	);
-	const onRemoveProductClick = useCallback(
-		( label: string ) => {
-			reduxDispatch(
-				recordTracksEvent( 'calypso_checkout_composite_delete_product_press', {
-					product_name: label,
-				} )
-			);
-		},
-		[ reduxDispatch ]
-	);
+		recordTracksEvent( 'calypso_checkout_composite_cancel_delete_product' );
+	}, [] );
+	const onRemoveProduct = useCallback( ( label: string ) => {
+		recordTracksEvent( 'calypso_checkout_composite_delete_product', {
+			product_name: label,
+		} );
+	}, [] );
+	const onRemoveProductClick = useCallback( ( label: string ) => {
+		recordTracksEvent( 'calypso_checkout_composite_delete_product_press', {
+			product_name: label,
+		} );
+	}, [] );
 
 	const selectedSiteData = useSelector( getSelectedSite );
 	const [ , isCheckoutUiRedesignV1 ] = useCheckoutUiRedesignExperiment();

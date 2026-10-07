@@ -184,7 +184,7 @@ export default function useCreatePaymentSubmittedAndProcessingCallback( {
 				if ( receiptId ) {
 					queryClient
 						.fetchQuery( receiptQuery( receiptId, { includeFailedPurchases: true } ) )
-						.then( ( receipt ) => recordCompletedPurchaseAnalytics( receipt, reduxDispatch ) )
+						.then( ( receipt ) => recordCompletedPurchaseAnalytics( receipt ) )
 						.catch( ( error ) => debug( 'could not fetch receipt for analytics', error ) );
 				}
 				return;
