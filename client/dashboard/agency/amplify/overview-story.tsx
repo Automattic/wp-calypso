@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import InlineSupportLink from '../../components/inline-support-link';
 import AmplifyAlsoUseful from './also-useful';
+import { getSampleFindings, getSampleLenses, getSeverityLabel } from './sample-report-data';
 import AmplifySampleReportModal from './sample-report-modal';
 import { PERSPECTIVES } from './score-preview';
 import { severityFor } from './score-severity';
@@ -66,23 +67,26 @@ const FAQS = [
 	},
 ];
 
-function PerspectivesGraphic() {
+/** The sample report's top Critical finding, shown as a finding card. */
+function FindingGraphic() {
+	const finding = getSampleFindings()[ 0 ];
+	const lens = getSampleLenses().find( ( item ) => item.key === finding.lens );
 	return (
-		<div className="dashboard-amplify-story__perspectives" aria-hidden="true">
-			<div className="dashboard-amplify-story__mini-report">
-				<span>{ __( 'First-time visitors' ) }</span>
-				<strong>59/100</strong>
-				<i />
-				<i />
-				<i />
-			</div>
-			<div className="dashboard-amplify-story__mini-report">
-				<span>{ __( 'AI agents' ) }</span>
-				<strong>43/100</strong>
-				<i />
-				<i />
-				<i />
-			</div>
+		<div className="dashboard-amplify-story__finding" aria-hidden="true">
+			<span className="dashboard-amplify-story__finding-severity">
+				{ getSeverityLabel( finding.severity ) }
+			</span>
+			<span className="dashboard-amplify-story__finding-meta">
+				{ lens?.label } · { finding.category }
+			</span>
+			<strong>{ finding.title }</strong>
+			<p>{ finding.detail }</p>
+			<p>
+				<b>{ __( 'Why it matters:' ) }</b> { finding.impact }
+			</p>
+			<p className="dashboard-amplify-story__finding-improve">
+				<b>{ __( 'How to improve:' ) }</b> { finding.improve }
+			</p>
 		</div>
 	);
 }
@@ -297,15 +301,15 @@ export default function AmplifyOverviewStory() {
 				aria-labelledby="amplify-perspectives-title"
 			>
 				<div className="dashboard-amplify-story__graphic">
-					<PerspectivesGraphic />
+					<FindingGraphic />
 				</div>
 				<div className="dashboard-amplify-story__copy">
 					<Heading id="amplify-perspectives-title" level={ 2 }>
-						{ __( 'Two lenses, one complete picture' ) }
+						{ __( 'Specific findings you can pitch' ) }
 					</Heading>
 					<p>
 						{ __(
-							'Each audit scores the homepage across 16 categories, from trust signals and mobile experience to structured data, and calls out the most critical improvements for both people and AI agents.'
+							'Every finding names the problem, why it costs the business customers, and how to improve it, so you walk into the pitch with specifics instead of opinions.'
 						) }
 					</p>
 				</div>
