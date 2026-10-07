@@ -271,7 +271,10 @@ export default function AmplifyReportsList( {
 									} );
 									retryReport( item.id, {
 										onSuccess: () =>
-											createSuccessNotice( __( 'Audit restarted.' ), { type: 'snackbar' } ),
+											createSuccessNotice(
+												__( 'Audit restarted. Failed audits don’t count toward your allowance.' ),
+												{ type: 'snackbar' }
+											),
 										onError: () =>
 											createErrorNotice( __( 'Could not restart the audit. Please try again.' ), {
 												type: 'snackbar',

@@ -124,7 +124,8 @@
 	white-space: nowrap;
 }
 
-.dashboard-amplify-results .dataviews-view-table tbody td:has( time ) {
+/* Keep every column vertically centered, including taller failed rows. */
+.dashboard-amplify-results .dataviews-view-table tbody td {
 	vertical-align: middle;
 }
 
