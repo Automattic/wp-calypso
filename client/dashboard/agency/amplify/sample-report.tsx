@@ -110,7 +110,7 @@ function CoverPage( { index }: { index: number } ) {
 					<strong>{ __( 'In this report' ) }</strong>
 					<ol>
 						<li>{ __( 'Score breakdown' ) }</li>
-						<li>{ __( 'How people judge a site, by category' ) }</li>
+						<li>{ __( 'How visitors judge a site, by category' ) }</li>
 						<li>{ __( 'How AI interprets a site, by category' ) }</li>
 						<li>{ __( 'Findings by severity' ) }</li>
 					</ol>
