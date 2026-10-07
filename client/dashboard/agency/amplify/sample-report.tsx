@@ -103,7 +103,7 @@ function CoverPage( { index }: { index: number } ) {
 				</div>
 				<p>
 					{ __(
-						'Before a new guest books a table, the homepage has already made an impression. This report looks at the site through two lenses: how it lands with first-time visitors, and how clearly AI assistants can understand and recommend it.'
+						'Before a new guest books a table, the homepage has already made an impression. This report looks at the site through two lenses: how it lands with first-time visitors, and how clearly AI agents can understand and recommend it.'
 					) }
 				</p>
 				<div className="amplify-sample-page__toc">

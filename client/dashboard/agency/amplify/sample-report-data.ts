@@ -51,7 +51,7 @@ export function getSampleLenses(): SampleLens[] {
 	return [
 		{
 			key: 'human',
-			label: __( 'First-time visitors' ),
+			label: __( 'People' ),
 			title: __( 'How people judge a site' ),
 			score: 59,
 			categories: [

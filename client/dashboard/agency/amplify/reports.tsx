@@ -208,7 +208,7 @@ export default function AmplifyReportsList( {
 			},
 			{
 				id: 'humanScore',
-				label: __( 'First-time visitors' ),
+				label: __( 'People' ),
 				getValue: ( { item } ) => item.score.human ?? -1,
 				render: ( { item } ) =>
 					item.status === 'completed' ? (

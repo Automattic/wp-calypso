@@ -205,7 +205,7 @@ function ScoreCategories() {
 						<p>
 							<span>
 								{ type === 'human'
-									? __( 'First-time visitors: trust, clarity, and what builds confidence.' )
+									? __( 'People: trust, clarity, and what builds confidence.' )
 									: __( 'AI agents: how ChatGPT, Perplexity, and others read and rank the site.' ) }
 							</span>{ ' ' }
 							<InlineSupportLink
