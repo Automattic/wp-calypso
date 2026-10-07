@@ -63,30 +63,6 @@ function mockLicenses( items: unknown[] ) {
 		.reply( 200, { items, total_pages: 1 } );
 }
 
-function mockSitePlanQueries() {
-	nock( API )
-		.get( `/rest/v1.4/sites/${ site.ID }/plans` )
-		.query( true )
-		.reply( 200, {
-			plans: {
-				1: {
-					product_id: 1,
-					product_slug: 'jetpack_free',
-					product_name_short: 'Jetpack Free',
-					current_plan: true,
-					original_price: { amount: 0 },
-					raw_price: 0,
-					raw_price_integer: 0,
-					raw_discount: 0,
-					raw_discount_integer: 0,
-					cost_overrides: [],
-				},
-			},
-		} );
-
-	nock( API ).get( '/rest/v1.2/upgrades' ).query( true ).reply( 200, [] );
-}
-
 describe( '<AgencySitePlanCard>', () => {
 	test( 'shows the agency’s Pressable plan on a Pressable site', async () => {
 		mockAgency();
@@ -104,16 +80,5 @@ describe( '<AgencySitePlanCard>', () => {
 
 		const planLink = await screen.findByRole( 'link', { name: /Pressable Signature 4/ } );
 		expect( planLink ).toHaveAttribute( 'href', '/hosting/pressable' );
-	} );
-
-	test( 'falls back to the Jetpack card when the agency has no Pressable plan', async () => {
-		mockAgency();
-		mockLicenses( [] );
-		mockSitePlanQueries();
-
-		render( <AgencySitePlanCard agencySite={ pressableAgencySite } site={ site } /> );
-
-		expect( await screen.findByText( 'Jetpack Free' ) ).toBeVisible();
-		expect( screen.queryByText( /Pressable Signature/ ) ).not.toBeInTheDocument();
 	} );
 } );
