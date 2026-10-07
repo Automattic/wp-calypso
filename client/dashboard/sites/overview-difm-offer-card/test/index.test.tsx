@@ -3,6 +3,7 @@
  */
 import '@testing-library/jest-dom';
 import { screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { render } from '../../../test-utils';
 import { DIFM_OFFER_EXPERIMENT } from '../../../utils/difm-offer';
@@ -60,6 +61,27 @@ describe( 'DIFMOfferCard', () => {
 		).toBeVisible();
 		expect( screen.getByRole( 'button', { name: 'See the offer' } ) ).toBeVisible();
 		expect( screen.queryByText( 'We’ll bring your vision to life' ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'records the variation on the offer impression and click events', async () => {
+		assignExperiment( 'no_time' );
+		const expectedProperties = {
+			upsell_id: 'site-overview-difm-offer',
+			upsell_feature_id: 'difm-offer',
+			variation: 'no_time',
+		};
+
+		const { recordTracksEvent } = render( <DIFMOfferCard site={ mockSite } /> );
+		await userEvent.click( await screen.findByRole( 'button', { name: 'See the offer' } ) );
+
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
+			'calypso_dashboard_upsell_impression',
+			expectedProperties
+		);
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
+			'calypso_dashboard_upsell_click',
+			expectedProperties
+		);
 	} );
 
 	test( 'shows the DIFM upsell to a user in control', async () => {

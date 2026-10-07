@@ -46,6 +46,7 @@ export default function DIFMOfferCard( { site }: { site: Site } ) {
 					variant="secondary"
 					upsellId="site-overview-difm-offer"
 					upsellFeatureId="difm-offer"
+					tracksProperties={ { variation } }
 					onClick={ () => {
 						// The offer modal opens here in a follow-up.
 					} }
