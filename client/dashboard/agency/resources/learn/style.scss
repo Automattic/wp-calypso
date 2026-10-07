@@ -13,10 +13,11 @@ $resource-brands: (
 	'wordpress-vip': #d8a45f,
 );
 
-// Each product's brand colour, for the card header's tint and the list's hover.
+// Each product's brand colour, for the card header and preview tints and the list's hover.
 .dashboard-resources-learn__card-header,
 .dashboard-resources-learn__list-title,
-.dashboard-resources-learn__list-brand {
+.dashboard-resources-learn__list-brand,
+.dashboard-resources-learn__preview {
 	@each $product, $color in $resource-brands {
 		&[data-product='#{$product}'] {
 			--resource-brand: #{$color};
@@ -150,6 +151,7 @@ $resource-brands: (
 .dashboard-resources-learn__modal-navigation {
 	border: 1px solid var( --wpds-color-stroke-surface-neutral, #{$gray-300} );
 	border-radius: $radius-medium;
+	background: var( --wpds-color-background-surface-neutral-strong, #{$white} );
 
 	> .components-button + .components-button {
 		border-inline-start: 1px solid var( --wpds-color-stroke-surface-neutral, #{$gray-300} );
@@ -160,4 +162,62 @@ $resource-brands: (
 .dashboard-resources-learn__modal .dashboard-resources-learn__modal-title {
 	letter-spacing: -0.035em;
 	text-wrap: pretty;
+}
+
+// The preview runs to the modal's edges, cancelling its content padding, with
+// the navigation and close button over it.
+.dashboard-resources-learn__modal-media {
+	position: relative;
+	margin: calc( -1 * #{$grid-unit-30} ) calc( -1 * #{$grid-unit-30} ) 0;
+}
+
+.dashboard-resources-learn__modal-controls {
+	position: absolute;
+	inset: $grid-unit-15 $grid-unit-15 auto;
+}
+
+.dashboard-resources-learn__modal-close {
+	background: var( --wpds-color-background-surface-neutral-strong, #{$white} );
+	border-radius: 50%;
+}
+
+.dashboard-resources-learn__preview {
+	--resource-brand: #{$studio-gray-100};
+
+	position: relative;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	block-size: 240px;
+	overflow: hidden;
+	color: var( --resource-brand );
+	background: color-mix( in srgb, var( --resource-brand ) 18%, #{$studio-white} );
+	border-block-end: 1px solid var( --wpds-color-stroke-surface-neutral, #{$gray-300} );
+
+	.dashboard-resource-illustration {
+		inline-size: 120px;
+		block-size: 120px;
+	}
+}
+
+// Fills the frame from the top, where a document's title usually is.
+.dashboard-resources-learn__preview-image {
+	inline-size: 100%;
+	block-size: 100%;
+	object-fit: cover;
+	object-position: top;
+}
+
+.dashboard-resources-learn__preview-play {
+	position: absolute;
+	inset: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	inline-size: 64px;
+	block-size: 64px;
+	margin: auto;
+	border-radius: 50%;
+	color: $white;
+	background: color-mix( in srgb, #{$gray-900} 70%, transparent );
 }
