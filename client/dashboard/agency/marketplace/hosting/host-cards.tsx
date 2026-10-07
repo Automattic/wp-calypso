@@ -1,4 +1,5 @@
 import {
+	__experimentalHeading as Heading,
 	__experimentalHStack as HStack,
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
@@ -107,7 +108,9 @@ export default function HostCards( {
 								</VStack>
 								<Divider style={ { color: 'var(--dashboard-overview__divider-color)' } } />
 								<VStack spacing={ 3 }>
-									<Text weight={ 500 }>{ __( 'What’s included' ) }</Text>
+									<Heading level={ 2 } size={ 13 } weight={ 500 }>
+										{ __( 'What’s included' ) }
+									</Heading>
 									<CheckList items={ host.includes } />
 								</VStack>
 							</VStack>
