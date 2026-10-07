@@ -109,10 +109,7 @@ export function useCredits( {
 	currentScope.current = scope;
 	const balanceRequest = useRef< AbortController | undefined >( undefined );
 	const [ balance, setBalance ] = useState< { scope: typeof scope; snapshot: CreditSnapshot } >();
-	// What this user may buy for the site, per the balance read: `canBuyCredits` says
-	// they administer it, `canUpgrade` that they also bought its current plan. Terminal
-	// updates don't carry them, so they outlive balance refreshes; undefined until the
-	// server says (or when it doesn't know).
+	// Who may buy, from the balance read. Terminal updates don't carry it.
 	const [ upgradeAccess, setUpgradeAccess ] = useState< {
 		scope: typeof scope;
 		canBuyCredits?: boolean;
@@ -217,8 +214,7 @@ export function useCredits( {
 			if ( ! isCurrent() ) {
 				return;
 			}
-			// A failed read keeps the visit's last answer on purpose: checkout enforces who may
-			// buy, and clearing it on a transient error would hide Upgrade from an admin.
+			// A failed read keeps the last answer; checkout still enforces it.
 			if ( data ) {
 				setUpgradeAccess( {
 					scope,
@@ -308,9 +304,7 @@ export function useCredits( {
 					invalidateBalance();
 					void refreshBalance();
 				} else if ( upgradeAccessRef.current?.scope !== scope ) {
-					// The task delivered the balance, but only a read says who may buy: the
-					// opening read is aborted when a task starts, so an early send (or a chat
-					// opened mid-task) would otherwise leave an admin without Upgrade.
+					// The task brought the balance but not who may buy, so read once more.
 					void refreshBalance();
 				}
 			} else if ( isMockEnabled && seed ) {
@@ -341,9 +335,7 @@ export function useCredits( {
 	const isLow = status ? isCreditsLow( status ) : false;
 	const planUpgradeUrl = status ? getLiveCreditsUpgradeUrl( status, siteId, site ) : undefined;
 	const access = upgradeAccess?.scope === scope ? upgradeAccess : undefined;
-	// Only the plan's purchaser gets the upgrade link; anyone else is told who bought it, in
-	// the plans page's words. A server that doesn't say (or doesn't know) gets neither,
-	// rather than a checkout that would refuse the purchase.
+	// Upgrade only when checkout would accept it; unknown shows neither link nor message.
 	const upgradeUrl = access?.canUpgrade === true ? planUpgradeUrl : undefined;
 	const isNotPlanPurchaser = !! planUpgradeUrl && access?.canUpgrade === false;
 
