@@ -115,12 +115,24 @@ describe( 'SiteGenerationView progress and fallback states', () => {
 		const liveCanvas = within( screen.getByRole( 'region', { name: 'Live site build' } ) );
 		expect( liveCanvas.getByRole( 'heading', { name: 'A garden for everyone' } ) ).toBeVisible();
 		expect( liveCanvas.getByText( 'Quiet and welcoming' ) ).toBeVisible();
+		expect( liveCanvas.getByText( 'Garden journal' ) ).toBeVisible();
 		expect( liveCanvas.getByLabelText( 'Leaf, #176B45' ) ).toBeVisible();
 		expect( liveCanvas.getByText( 'Source Serif' ) ).toBeVisible();
-		expect( liveCanvas.getAllByText( 'Welcome · Visit' ).length ).toBeGreaterThan( 0 );
+		expect( liveCanvas.getByText( 'Welcome' ) ).toBeVisible();
+		expect( liveCanvas.getAllByText( 'Visit' ) ).toHaveLength( 2 );
 		expect( liveCanvas.getByText( 'A place to pause' ) ).toBeVisible();
 		expect( liveCanvas.getByText( 'In progress' ) ).toBeVisible();
 		expect( liveCanvas.getByText( '1 of 2 images ready' ) ).toBeVisible();
+
+		const sidebar = screen.getByRole( 'complementary', { name: 'Site generation progress' } );
+		expect( within( sidebar ).queryByText( 'A garden for everyone' ) ).not.toBeInTheDocument();
+		expect( within( sidebar ).queryByText( 'Quiet and welcoming' ) ).not.toBeInTheDocument();
+		expect( within( sidebar ).queryByText( 'Leaf, #176B45' ) ).not.toBeInTheDocument();
+		expect(
+			within( sidebar ).getByText(
+				'Hello! I’m the WordPress Agent, and I’m building your site right now.'
+			)
+		).toBeVisible();
 	} );
 
 	it( 'shows structured Engine data when an older host advertises progress only', () => {
@@ -158,9 +170,60 @@ describe( 'SiteGenerationView progress and fallback states', () => {
 		expect( liveCanvas.getByText( 'Playful editorial layouts' ) ).toBeVisible();
 		expect( liveCanvas.getByLabelText( 'Berry, #B91D60' ) ).toBeVisible();
 		expect( liveCanvas.getByText( 'Fredoka' ) ).toBeVisible();
-		expect( liveCanvas.getByText( 'Welcome · Animal preview' ) ).toBeVisible();
+		expect( liveCanvas.getByText( 'Welcome' ) ).toBeVisible();
+		expect( liveCanvas.getByText( 'Animal preview' ) ).toBeVisible();
+		expect( liveCanvas.queryByText( 'In progress' ) ).not.toBeInTheDocument();
 		expect( liveCanvas.getByText( '1 of 2 images ready' ) ).toBeVisible();
 		expect( liveCanvas.getByText( 'Polishing your site' ) ).toBeVisible();
+	} );
+
+	it( 'clears the brief when a retry drops the previous plan and sections', () => {
+		const stream: BuildWowStreamView = {
+			...progressStream,
+			info: {
+				...progressStream.info,
+				capabilities: [ 'progress', 'planning', 'design', 'sections' ],
+			},
+			state: {
+				...progressStream.state,
+				plan: {
+					status: 'developing',
+					title: 'A garden for everyone',
+					direction: 'Quiet and welcoming',
+					palette: [ { name: 'Leaf', color: '#176B45' } ],
+					typography: null,
+					pages: [ { slug: 'home', title: 'Home', sections: [ 'Welcome' ] } ],
+				},
+				sections: {
+					home: { 0: { kind: 'content', name: 'Welcome', partial: false } },
+				},
+			},
+		};
+		const { rerender } = render(
+			<SiteGenerationView
+				onReload={ jest.fn() }
+				state={ { ...idleState, status: 'working', steps: [] } }
+				stream={ stream }
+			/>
+		);
+
+		expect( screen.getByRole( 'heading', { name: 'A garden for everyone' } ) ).toBeVisible();
+		expect( screen.getByLabelText( 'Leaf, #176B45' ) ).toBeVisible();
+		expect( screen.getByText( 'Welcome' ) ).toBeVisible();
+
+		rerender(
+			<SiteGenerationView
+				onReload={ jest.fn() }
+				state={ { ...idleState, status: 'working', steps: [] } }
+				stream={ progressStream }
+			/>
+		);
+
+		expect( screen.getByRole( 'heading', { name: 'Your site is taking shape' } ) ).toBeVisible();
+		expect( screen.queryByText( 'A garden for everyone' ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( 'Quiet and welcoming' ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( 'Welcome' ) ).not.toBeInTheDocument();
+		expect( screen.queryByLabelText( 'Leaf, #176B45' ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'shows an accessible elapsed time for the active step and updates it every second', () => {
