@@ -71,14 +71,14 @@ function PerspectivesGraphic() {
 		<div className="dashboard-amplify-story__perspectives" aria-hidden="true">
 			<div className="dashboard-amplify-story__mini-report">
 				<span>{ __( 'First-time visitors' ) }</span>
-				<strong>46/100</strong>
+				<strong>59/100</strong>
 				<i />
 				<i />
 				<i />
 			</div>
 			<div className="dashboard-amplify-story__mini-report">
 				<span>{ __( 'AI agents' ) }</span>
-				<strong>50/100</strong>
+				<strong>43/100</strong>
 				<i />
 				<i />
 				<i />
@@ -92,9 +92,9 @@ function CategoriesGraphic() {
 		<div className="dashboard-amplify-story__categories" aria-hidden="true">
 			<span>{ __( 'Category breakdown' ) }</span>
 			{ [
-				{ label: __( 'Trust signals' ), score: 4, max: 18 },
-				{ label: __( 'Mobile experience' ), score: 7, max: 12 },
-				{ label: __( 'Content quality' ), score: 11, max: 12 },
+				{ label: __( 'Trust signals' ), score: 9, max: 18 },
+				{ label: __( 'Mobile experience' ), score: 8, max: 12 },
+				{ label: __( 'Content quality' ), score: 9, max: 12 },
 			].map( ( item ) => (
 				<div className="dashboard-amplify-story__category" key={ item.label }>
 					<span>{ item.label }</span>
