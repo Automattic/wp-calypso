@@ -86,7 +86,7 @@ describe( 'StaticSiteImportCard', () => {
 		await userEvent.click( screen.getByRole( 'button', { name: 'Looks right' } ) );
 		expect( recordTracksEvent ).toHaveBeenCalledWith(
 			'calypso_dashboard_static_site_import_feedback',
-			{ site_id: 42, platform: 'wix', rating: 'good' }
+			{ site_id: 42, source_platform: 'wix', rating: 'good' }
 		);
 		expect( screen.getByText( 'Thanks for the feedback!' ) ).toBeVisible();
 	} );

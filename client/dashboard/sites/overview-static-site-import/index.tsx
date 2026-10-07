@@ -100,7 +100,7 @@ function Feedback( { siteId, platform }: { siteId: number; platform?: string } )
 		setVote( rating );
 		recordTracksEvent( 'calypso_dashboard_static_site_import_feedback', {
 			site_id: siteId,
-			platform,
+			source_platform: platform,
 			rating,
 		} );
 		if ( rating === 'bad' ) {
