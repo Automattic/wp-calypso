@@ -102,7 +102,7 @@ export const PERSPECTIVES: Record< 'human' | 'ai', ScorePerspective > = {
 		label: __( 'AI agents' ),
 		title: __( 'How AI interprets a site' ),
 		description: __(
-			'More and more people use AI to find businesses online. We check whether tools like ChatGPT can understand the business and recommend it.'
+			'More people are using AI to find businesses online. We check whether tools like ChatGPT can understand the business and recommend it.'
 		),
 		score: 50,
 		metrics: [
