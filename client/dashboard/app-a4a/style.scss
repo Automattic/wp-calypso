@@ -43,9 +43,8 @@
 	// Resources
 	--dashboard-resource-media__background-color: #d7e9f1;
 
-	// Marketplace: each maker's colours on the featured tiles and the product
-	// tiles. Woo's come from Color Studio; Jetpack's from its brand board, since
-	// Color Studio has no scale for it yet; every other maker takes the greys.
+	// Marketplace maker colours. Jetpack's come from its brand board, since Color
+	// Studio has no scale for it yet.
 	--dashboard-marketplace-woo__color: #{$studio-woocommerce-purple-50};
 	--dashboard-marketplace-woo__ink-color: #{$studio-woocommerce-purple-70};
 	--dashboard-marketplace-woo__tint-color: #{$studio-woocommerce-purple-5};
