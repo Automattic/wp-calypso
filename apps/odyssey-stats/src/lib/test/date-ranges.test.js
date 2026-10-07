@@ -7,6 +7,7 @@ import {
 	DEFAULT_DATE_RANGE_ID,
 	getDateRange,
 	getRangeStartDate,
+	getSiteToday,
 	isDateRangeId,
 } from '../date-ranges';
 
@@ -64,6 +65,21 @@ describe( 'DATE_RANGES', () => {
 	it( 'should not repeat an id', () => {
 		const ids = DATE_RANGES.map( ( range ) => range.id );
 		expect( new Set( ids ).size ).toBe( ids.length );
+	} );
+} );
+
+describe( 'getSiteToday', () => {
+	afterEach( () => {
+		jest.useRealTimers();
+	} );
+
+	it.each( [
+		[ 14, '2026-10-02' ],
+		[ 0, '2026-10-01' ],
+		[ -12, '2026-09-30' ],
+	] )( 'should date 11:00 UTC on Oct 1 by the site offset %s', ( gmtOffset, expected ) => {
+		jest.useFakeTimers().setSystemTime( new Date( '2026-10-01T11:00:00Z' ) );
+		expect( getSiteToday( gmtOffset ) ).toBe( expected );
 	} );
 } );
 

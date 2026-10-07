@@ -4,11 +4,6 @@
 import { render, screen } from '@testing-library/react';
 import useReferrersQuery from '../../hooks/use-referrers-query';
 import useTopPostsQuery from '../../hooks/use-top-posts-query';
-import {
-	getDateRange,
-	DATE_RANGE_LAST_7_DAYS,
-	DATE_RANGE_LAST_12_MONTHS,
-} from '../../lib/date-ranges';
 import Highlights from '../highlights';
 
 jest.mock( '../../hooks/use-top-posts-query' );
@@ -37,16 +32,18 @@ const queryState = ( { data, error, loading } = {} ) => ( {
 
 const items = ( ...titles ) => titles.map( ( title, id ) => ( { id, title, views: 10 } ) );
 
-function renderHighlights( { posts, referrers, rangeId = DATE_RANGE_LAST_7_DAYS } ) {
+function renderHighlights( { posts, referrers } ) {
 	useTopPostsQuery.mockReturnValue( queryState( posts ) );
 	useReferrersQuery.mockReturnValue( queryState( referrers ) );
 
 	return render(
 		<Highlights
 			siteId={ SITE_ID }
-			gmtOffset={ 0 }
 			statsBaseUrl="https://example.com/wp-admin/admin.php?page=stats"
-			range={ getDateRange( rangeId ) }
+			rangeId="last_12_months"
+			startDate="2025-11-01"
+			endDate="2026-10-06"
+			gmtOffset={ 0 }
 		/>
 	);
 }
@@ -77,13 +74,7 @@ describe( 'Highlights', () => {
 	} );
 
 	it( 'opens "See more" on the same days the list covers', () => {
-		jest.useFakeTimers().setSystemTime( new Date( '2026-10-06T12:00:00Z' ) );
-		renderHighlights( {
-			posts: { data: items( 'Hello world' ) },
-			referrers: {},
-			rangeId: DATE_RANGE_LAST_12_MONTHS,
-		} );
-		jest.useRealTimers();
+		renderHighlights( { posts: { data: items( 'Hello world' ) }, referrers: {} } );
 
 		expect( screen.getByRole( 'link', { name: 'See more' } ) ).toHaveAttribute(
 			'href',

@@ -36,7 +36,7 @@ const pending = () => ( { status: 'pending' } );
 
 function renderMiniChart( state, rangeId = DATE_RANGE_LAST_7_DAYS ) {
 	useVisitsQuery.mockReturnValue( state );
-	return <MiniChart siteId={ 1 } gmtOffset={ 0 } range={ getDateRange( rangeId ) } />;
+	return <MiniChart siteId={ 1 } range={ getDateRange( rangeId ) } endDate="2026-10-07" />;
 }
 
 describe( 'MiniChart', () => {

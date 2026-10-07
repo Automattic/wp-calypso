@@ -52,6 +52,16 @@ export function isDateRangeId( value: unknown ): value is DateRangeId {
 }
 
 /**
+ * Today in the site's timezone, as `YYYY-MM-DD`: the last day every range covers.
+ * @param gmtOffset The site's offset from UTC, in hours.
+ */
+export function getSiteToday( gmtOffset: number ): string {
+	return moment()
+		.utcOffset( Number.isFinite( gmtOffset ) ? gmtOffset : 0 )
+		.format( 'YYYY-MM-DD' );
+}
+
+/**
  * The first day a range covers, as `YYYY-MM-DD`.
  *
  * The lists are fetched with `summarize=1`, where the API counts back in days from

@@ -1,6 +1,5 @@
 import { Notice } from '@wordpress/ui';
 import { useTranslate } from 'i18n-calypso';
-import moment from 'moment';
 import { lazy, Suspense, useMemo, FunctionComponent } from 'react';
 import useCssVariable from 'calypso/my-sites/stats/hooks/use-css-variable';
 import { buildChartData } from 'calypso/my-sites/stats/stats-chart-tabs/utility';
@@ -18,8 +17,9 @@ import './mini-chart.scss';
 
 interface MiniChartProps {
 	siteId: number;
-	gmtOffset: number;
 	range: DateRange;
+	/** The range's last day, as `YYYY-MM-DD`. */
+	endDate: string;
 }
 
 interface VisitRecord {
@@ -30,7 +30,7 @@ interface VisitRecord {
 
 const CHART_HEIGHT = 160;
 
-const MiniChart: FunctionComponent< MiniChartProps > = ( { siteId, gmtOffset, range } ) => {
+const MiniChart: FunctionComponent< MiniChartProps > = ( { siteId, range, endDate } ) => {
 	const translate = useTranslate();
 	const { unit, quantity } = range;
 
@@ -39,13 +39,9 @@ const MiniChart: FunctionComponent< MiniChartProps > = ( { siteId, gmtOffset, ra
 	const primaryColor = useCssVariable( '--wp-admin-theme-color', document.body );
 	const [ viewsColor, visitorsColor ] = deriveSeriesColors( primaryColor );
 
-	const queryDate = moment()
-		.utcOffset( Number.isFinite( gmtOffset ) ? gmtOffset : 0 )
-		.format( 'YYYY-MM-DD' );
-
 	// `status`, not `isLoading`: a retry waiting on a hidden tab or a lost connection is still
 	// pending, while `isLoading` is false and would read the range as empty.
-	const { status, data } = useVisitsQuery( siteId, unit, quantity, queryDate );
+	const { status, data } = useVisitsQuery( siteId, unit, quantity, endDate );
 
 	const totals = useMemo( () => {
 		const records = ( data ?? [] ) as VisitRecord[];
@@ -59,7 +55,7 @@ const MiniChart: FunctionComponent< MiniChartProps > = ( { siteId, gmtOffset, ra
 	}, [ data ] );
 
 	const series = useMemo( () => {
-		const chartData = buildChartData( [ 'visitors' ], 'views', data, unit, queryDate );
+		const chartData = buildChartData( [ 'visitors' ], 'views', data, unit, endDate );
 		const toPoints = ( attribute: 'views' | 'visitors' ) =>
 			chartData
 				.map( ( record: { data: VisitRecord } ) => ( {
@@ -82,7 +78,7 @@ const MiniChart: FunctionComponent< MiniChartProps > = ( { siteId, gmtOffset, ra
 				options: { stroke: visitorsColor },
 			},
 		];
-	}, [ data, unit, queryDate, viewsColor, visitorsColor, translate ] );
+	}, [ data, unit, endDate, viewsColor, visitorsColor, translate ] );
 
 	const isPending = status === 'pending';
 	const isEmpty = status === 'success' && totals.views === 0 && totals.visitors === 0;

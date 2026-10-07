@@ -2,7 +2,6 @@
  * @jest-environment jsdom
  */
 import { render, screen } from '@testing-library/react';
-import { getDateRange, DATE_RANGE_LAST_12_MONTHS } from '../../lib/date-ranges';
 import Highlights from '../highlights';
 
 jest.mock( '../../hooks/use-top-posts-query', () => () => ( {
@@ -41,9 +40,11 @@ function renderHighlights() {
 	render(
 		<Highlights
 			siteId={ 1 }
-			gmtOffset={ 0 }
 			statsBaseUrl="https://example.com/stats"
-			range={ getDateRange( DATE_RANGE_LAST_12_MONTHS ) }
+			rangeId="last_12_months"
+			startDate="2025-11-01"
+			endDate="2026-10-06"
+			gmtOffset={ 0 }
 		/>
 	);
 }
@@ -54,11 +55,6 @@ describe( 'Highlights with Premium Analytics', () => {
 			observe() {}
 			disconnect() {}
 		} as unknown as typeof ResizeObserver;
-		jest.useFakeTimers().setSystemTime( new Date( '2026-10-06T12:00:00Z' ) );
-	} );
-
-	afterEach( () => {
-		jest.useRealTimers();
 	} );
 
 	it( 'opens the report on the days the list covers', () => {

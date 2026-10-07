@@ -2,11 +2,10 @@ import { formatNumber } from '@automattic/number-formatters';
 import { TabPanel } from '@wordpress/components';
 import { Icon, chartBar, external } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import moment from 'moment';
 import { FunctionComponent, useRef } from 'react';
 import useReferrersQuery from '../hooks/use-referrers-query';
 import useTopPostsQuery from '../hooks/use-top-posts-query';
-import { DateRange, getRangeStartDate } from '../lib/date-ranges';
+import { DateRangeId } from '../lib/date-ranges';
 import { HighLightItem } from '../typings';
 import GrowHeight from './grow-height';
 import recordWidgetEvent, { recordWidgetEventThenFollow } from './record-widget-event';
@@ -44,9 +43,12 @@ interface TopColumnProps {
 
 interface HighlightsProps {
 	siteId: number;
-	gmtOffset: number;
 	statsBaseUrl: string;
-	range: DateRange;
+	rangeId: DateRangeId;
+	/** First and last day of the range, as `YYYY-MM-DD`. */
+	startDate: string;
+	endDate: string;
+	gmtOffset: number;
 }
 
 const HIGHLIGHT_ITEMS_LIMIT = 5;
@@ -187,28 +189,29 @@ const TopColumn: FunctionComponent< TopColumnProps > = ( {
 	);
 };
 
-export default function Highlights( { siteId, gmtOffset, statsBaseUrl, range }: HighlightsProps ) {
+export default function Highlights( {
+	siteId,
+	statsBaseUrl,
+	rangeId,
+	startDate,
+	endDate,
+	gmtOffset,
+}: HighlightsProps ) {
 	const translate = useTranslate();
 	const statsLink = useStatsLink( siteId );
 
 	const topPostsAndPagesTitle = translate( 'Top Posts & Pages' );
 	const topReferrersTitle = translate( 'Top Referrers' );
 
-	const queryDate = moment()
-		.utcOffset( Number.isFinite( gmtOffset ) ? gmtOffset : 0 )
-		.format( 'YYYY-MM-DD' );
-	// Both lists are summarized, which counts in days whatever period it is handed, so the
-	// window is stated as its first and last day rather than as the range's own buckets.
-	// "See more" and the item links open that same window, on Stats or Premium Analytics.
-	const startDate = getRangeStartDate( range, queryDate );
-	const linkRange = { from: startDate, to: queryDate, gmtOffset };
+	// "See more" and the post rows open the days the lists cover, on Stats or Premium Analytics.
+	const linkRange = { from: startDate, to: endDate, gmtOffset };
 	const viewAllPostsStatsUrl = statsLink(
-		`${ statsBaseUrl }/stats/day/posts/${ siteId }?chartStart=${ startDate }&chartEnd=${ queryDate }`,
+		`${ statsBaseUrl }/stats/day/posts/${ siteId }?chartStart=${ startDate }&chartEnd=${ endDate }`,
 		'/reports/posts',
 		linkRange
 	);
 	const viewAllReferrerStatsUrl = statsLink(
-		`${ statsBaseUrl }/stats/day/referrers/${ siteId }?chartStart=${ startDate }&chartEnd=${ queryDate }`,
+		`${ statsBaseUrl }/stats/day/referrers/${ siteId }?chartStart=${ startDate }&chartEnd=${ endDate }`,
 		'/reports/referrers',
 		linkRange
 	);
@@ -217,13 +220,13 @@ export default function Highlights( { siteId, gmtOffset, statsBaseUrl, range }: 
 		data: topPostsAndPages = [],
 		isPending: isPendingPostsAndPages,
 		isError: isPostsAndPagesError,
-	} = useTopPostsQuery( siteId, startDate, queryDate );
+	} = useTopPostsQuery( siteId, startDate, endDate );
 
 	const {
 		data: topReferrers = [],
 		isPending: isPendingReferrers,
 		isError: isReferrersError,
-	} = useReferrersQuery( siteId, startDate, queryDate );
+	} = useReferrersQuery( siteId, startDate, endDate );
 
 	// TabPanel also reports the initial tab on mount; only a change is a user's click.
 	const selectedTabRef = useRef< string >( HIGHLIGHT_TAB_TOP_POSTS_PAGES );
@@ -307,7 +310,7 @@ export default function Highlights( { siteId, gmtOffset, statsBaseUrl, range }: 
 							onItemClick={ recordWidgetEventThenFollow( active.itemEvent ) }
 							onViewAllClick={ recordWidgetEventThenFollow( 'see_more_clicked', {
 								tab: active.trackingName,
-								range: range.id,
+								range: rangeId,
 							} ) }
 						/>
 					);
