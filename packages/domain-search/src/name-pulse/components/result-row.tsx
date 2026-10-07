@@ -17,6 +17,7 @@ import {
 	type NamePulseDomainResult,
 } from '../helpers';
 import { useNamePulseCartToggle } from '../hooks/use-name-pulse-cart-toggle';
+import { useNamePulseLabelLimit } from '../hooks/use-name-pulse-label-limit';
 import { setNamePulseVerdict } from '../hooks/use-name-pulse-verdicts';
 import { NamePulsePolicyNoticeDialog } from './policy-notice-dialog';
 
@@ -132,7 +133,7 @@ export const NamePulseResultRow = ( { result, position }: NamePulseResultRowProp
 		confirmPolicyNotice,
 		closePolicyNotice,
 	} = useNamePulseCartToggle( domainName, position, row.policy_notices );
-	const labelTruncateLimit = showPremiumBadge ? 12 : 20;
+	const { nameRef, labelRef, limit: labelLimit } = useNamePulseLabelLimit( label );
 	const suffixText = (
 		<Text as="span" weight={ 600 } variant={ isUnavailable ? 'muted' : undefined }>
 			{ suffix ? `.${ suffix }` : '' }
@@ -145,7 +146,7 @@ export const NamePulseResultRow = ( { result, position }: NamePulseResultRowProp
 			data-domain={ domainName }
 			data-status={ NamePulseDomainStatus[ status ].toLowerCase() }
 		>
-			<span className="name-pulse-row__name">
+			<span ref={ nameRef } className="name-pulse-row__name">
 				{ wrapName ? (
 					<span className="name-pulse-row__domain name-pulse-row__domain--wrap">
 						<Text as="span" variant="muted">
@@ -158,11 +159,12 @@ export const NamePulseResultRow = ( { result, position }: NamePulseResultRowProp
 					<Tooltip text={ domainName }>
 						<span className="name-pulse-row__domain">
 							<Text
+								ref={ labelRef }
 								as="span"
 								variant="muted"
 								truncate
 								ellipsizeMode="middle"
-								limit={ labelTruncateLimit }
+								limit={ labelLimit }
 							>
 								{ label }
 							</Text>
