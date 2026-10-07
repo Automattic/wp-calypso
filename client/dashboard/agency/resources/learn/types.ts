@@ -13,3 +13,6 @@ export type RecordTracksEvent = (
 
 /** Opens a resource from a card or list row, given the click that opened it. */
 export type OpenResource = ( resource: AgencyEnablementResource, event: MouseEvent ) => void;
+
+/** Narrows the library to resources sharing one of a card's badges. */
+export type FilterResources = ( field: 'audience' | 'stage', value: string ) => void;
