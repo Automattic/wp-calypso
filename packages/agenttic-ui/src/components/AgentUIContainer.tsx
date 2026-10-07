@@ -312,8 +312,9 @@ export function AgentUIContainer( {
 				const message = value.trim();
 
 				// A blocked send is a no-op: the suggestion stays in the list and the
-				// click is not reported, so hosts don't retire it as consumed.
-				if ( message && ! canSubmitMessage( message, 'suggestion' ) ) {
+				// click is not reported, so hosts don't retire it as consumed. The
+				// agent client drops a send while one is in flight, so that counts too.
+				if ( isProcessing || ( message && ! canSubmitMessage( message, 'suggestion' ) ) ) {
 					return false;
 				}
 
@@ -345,7 +346,7 @@ export function AgentUIContainer( {
 				return false;
 			}
 		},
-		[ clearSuggestions, onSubmit, onSuggestionClick, input, canSubmitMessage ]
+		[ clearSuggestions, onSubmit, onSuggestionClick, input, canSubmitMessage, isProcessing ]
 	);
 
 	// Handle opening the chat and call onOpen callback

@@ -39,11 +39,12 @@ export interface AgentUIContextValue {
 	// Suggestions
 	suggestions?: Suggestion[];
 	clearSuggestions?: () => void;
-	// Returns whether the suggestion was actually sent (see AgentUIContainer).
+	// The container returns whether the suggestion was actually sent; custom
+	// providers may return nothing.
 	handleSuggestionSubmit: (
 		selectedSuggestion: Suggestion,
 		availableSuggestions: Suggestion[]
-	) => boolean;
+	) => boolean | void;
 	// What a mounted Suggestions instance renders: `[]` while hidden, `null` on unmount.
 	// The container unions every instance and dedups before calling onSuggestionsRendered.
 	reportSuggestionsRendered?: ( instanceId: string, shown: Suggestion[] | null ) => void;

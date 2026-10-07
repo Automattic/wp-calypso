@@ -41,13 +41,14 @@ describe( 'AgentUIContainer beforeSubmit', () => {
 	async function render(
 		beforeSubmit: BeforeSubmit,
 		onSubmit = vi.fn(),
-		onSuggestionClick = vi.fn()
+		onSuggestionClick = vi.fn(),
+		isProcessing = false
 	) {
 		await act( async () => {
 			root.render(
 				<AgentUIContainer
 					messages={ [] }
-					isProcessing={ false }
+					isProcessing={ isProcessing }
 					onSubmit={ onSubmit }
 					variant="embedded"
 					suggestions={ SUGGESTIONS }
@@ -107,6 +108,22 @@ describe( 'AgentUIContainer beforeSubmit', () => {
 			suggestion?.click();
 		} );
 		expect( beforeSubmit ).toHaveBeenCalledWith( 'Run it now', 'suggestion' );
+		expect( onSubmit ).not.toHaveBeenCalled();
+		expect( onSuggestionClick ).not.toHaveBeenCalled();
+		expect(
+			Array.from( container.querySelectorAll( 'button' ) ).some(
+				( button ) => button.textContent === 'Run it'
+			)
+		).toBe( true );
+	} );
+
+	it( 'rejects an auto-submit suggestion while a send is already processing', async () => {
+		const beforeSubmit = vi.fn( (): boolean => true );
+		const onSuggestionClick = vi.fn();
+		const { onSubmit, suggestion } = await render( beforeSubmit, vi.fn(), onSuggestionClick, true );
+		await act( async () => {
+			suggestion?.click();
+		} );
 		expect( onSubmit ).not.toHaveBeenCalled();
 		expect( onSuggestionClick ).not.toHaveBeenCalled();
 		expect(

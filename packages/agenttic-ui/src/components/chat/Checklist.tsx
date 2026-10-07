@@ -172,6 +172,7 @@ export function Checklist( {
 	const isControlled = collapsed !== undefined;
 	const isCollapsed = isControlled ? collapsed : internalCollapsed;
 	const listId = useId();
+	const headerRef = useRef< HTMLButtonElement >( null );
 
 	const setCollapsed = ( next: boolean ) => {
 		if ( ! isControlled ) {
@@ -208,6 +209,8 @@ export function Checklist( {
 			}
 			if ( started && collapseOnSelect && ! isCollapsed ) {
 				setCollapsed( true );
+				// The clicked row folds away under aria-hidden; keep focus somewhere visible.
+				headerRef.current?.focus();
 			}
 		} finally {
 			busyRef.current = false;
@@ -220,6 +223,7 @@ export function Checklist( {
 			className={ cn( styles.checklist, { [ styles.collapsed ]: isCollapsed }, className ) }
 		>
 			<button
+				ref={ headerRef }
 				type="button"
 				className={ styles.header }
 				aria-expanded={ ! isCollapsed }

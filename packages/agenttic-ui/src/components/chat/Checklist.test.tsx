@@ -115,6 +115,17 @@ describe( 'Checklist', () => {
 		expect( header().getAttribute( 'aria-expanded' ) ).toBe( 'false' );
 	} );
 
+	it( 'moves focus to the header after a selection collapses the list', async () => {
+		render( { onSubmit: vi.fn() } );
+
+		const button = rowFor( 'Launch site' ).querySelector( 'button' ) as HTMLButtonElement;
+		button.focus();
+		click( button );
+		await flush();
+
+		expect( document.activeElement ).toBe( header() );
+	} );
+
 	it( 'keeps the list open when collapseOnSelect is false', async () => {
 		render( { onSubmit: vi.fn(), collapseOnSelect: false } );
 
