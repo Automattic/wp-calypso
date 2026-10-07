@@ -1,14 +1,14 @@
 import { userSettingsMutation } from '@automattic/api-queries';
-import { useLocale } from '@automattic/i18n-utils';
 import { useMutation } from '@tanstack/react-query';
 import { Icon, SelectControl, __experimentalVStack as VStack } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { unlock } from '@wordpress/icons';
 import clsx from 'clsx';
 import { isToday } from 'date-fns';
-import { useState } from 'react';
+import { useEffect, useReducer, useState } from 'react';
 import { useMcpTracksAudienceProps } from '../../../me/mcp/tracks';
 import { useAnalytics } from '../../app/analytics';
+import { useLocale } from '../../app/locale';
 import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import { CardBody } from '../../components/card';
 import ConfirmModal from '../../components/confirm-modal';
@@ -54,6 +54,7 @@ export default function McpApprovalBypassControl( {
 	const { recordTracksEvent } = useAnalytics();
 	const tracksAudienceProps = useMcpTracksAudienceProps();
 	const [ isOpen, setIsOpen ] = useState( false );
+	const [ , rerender ] = useReducer( ( count: number ) => count + 1, 0 );
 	const [ pendingDuration, setPendingDuration ] = useState< McpApprovalBypassDuration | null >(
 		null
 	);
@@ -65,11 +66,22 @@ export default function McpApprovalBypassControl( {
 		} )
 	);
 
+	const expiresAtMs =
+		approvalBypass.active && approvalBypass.expires_at ? approvalBypass.expires_at * 1000 : null;
+
+	// The server stops honoring the bypass at the deadline, so the page must not keep showing it on.
+	useEffect( () => {
+		if ( expiresAtMs === null || expiresAtMs <= Date.now() ) {
+			return;
+		}
+		const timer = setTimeout( rerender, expiresAtMs - Date.now() );
+		return () => clearTimeout( timer );
+	}, [ expiresAtMs ] );
+
+	const isActive = approvalBypass.active && ( expiresAtMs === null || expiresAtMs > Date.now() );
+	const expiresAt = isActive && expiresAtMs !== null ? new Date( expiresAtMs ) : null;
+
 	const durationLabels = getDurationLabels();
-	const expiresAt =
-		approvalBypass.active && approvalBypass.expires_at
-			? new Date( approvalBypass.expires_at * 1000 )
-			: null;
 
 	let value: string = 'off';
 	let status = durationLabels.off;
@@ -84,7 +96,7 @@ export default function McpApprovalBypassControl( {
 				isToday( expiresAt ) ? { timeStyle: 'short' } : { dateStyle: 'medium', timeStyle: 'short' }
 			)
 		);
-	} else if ( approvalBypass.active ) {
+	} else if ( isActive ) {
 		value = 'forever';
 		status = __( 'On until turned off' );
 	}
@@ -116,7 +128,7 @@ export default function McpApprovalBypassControl( {
 			return;
 		}
 		const duration = newValue as McpApprovalBypassDuration;
-		if ( ! approvalBypass.active && duration !== 'off' ) {
+		if ( ! isActive && duration !== 'off' ) {
 			setPendingDuration( duration );
 			return;
 		}
@@ -129,7 +141,7 @@ export default function McpApprovalBypassControl( {
 				density="medium"
 				title={ __( 'Bypass permissions' ) }
 				decoration={ <Icon icon={ unlock } size={ 24 } /> }
-				badges={ [ { text: status, intent: approvalBypass.active ? 'medium' : 'draft' } ] }
+				badges={ [ { text: status, intent: isActive ? 'medium' : 'draft' } ] }
 				aria-expanded={ isOpen }
 				onClick={ () => setIsOpen( ! isOpen ) }
 			/>

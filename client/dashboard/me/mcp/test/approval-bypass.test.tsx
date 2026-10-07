@@ -1,6 +1,6 @@
 /** @jest-environment jsdom */
 import { isAutomatticianQuery, queryClient } from '@automattic/api-queries';
-import { screen, waitFor } from '@testing-library/react';
+import { act, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { render } from '../../../test-utils';
@@ -112,5 +112,48 @@ describe( '<McpApprovalBypassControl />', () => {
 
 		expect( screen.queryByRole( 'dialog' ) ).not.toBeInTheDocument();
 		await waitFor( () => expect( save.isDone() ).toBe( true ) );
+	} );
+	test( 'treats a passed deadline as off and confirms before turning on again', async () => {
+		const save = mockSave( '2h', { active: true, expires_at: 1_900_000_000 } );
+
+		render(
+			<McpApprovalBypassControl
+				approvalBypass={ { active: true, expires_at: Math.floor( Date.now() / 1000 ) - 60 } }
+			/>,
+			{ queryClient }
+		);
+
+		expect( screen.getByText( 'Off' ) ).toBeVisible();
+
+		const select = await openSelect();
+		expect( select ).toHaveValue( 'off' );
+
+		await userEvent.selectOptions( select, '2h' );
+
+		expect( screen.getByRole( 'dialog', { name: 'Bypass permissions?' } ) ).toBeVisible();
+		expect( save.isDone() ).toBe( false );
+	} );
+
+	test( 'switches to off when the deadline passes while the page is open', () => {
+		jest.useFakeTimers();
+		try {
+			render(
+				<McpApprovalBypassControl
+					approvalBypass={ { active: true, expires_at: Math.floor( Date.now() / 1000 ) + 60 } }
+				/>,
+				{ queryClient }
+			);
+
+			expect( screen.getByText( /^On until / ) ).toBeVisible();
+
+			act( () => {
+				jest.advanceTimersByTime( 61_000 );
+			} );
+
+			expect( screen.queryByText( /^On until / ) ).not.toBeInTheDocument();
+			expect( screen.getByText( 'Off' ) ).toBeVisible();
+		} finally {
+			jest.useRealTimers();
+		}
 	} );
 } );
