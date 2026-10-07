@@ -24,8 +24,8 @@ const REPORT_MODES: {
 }[] = [
 	{
 		value: 'full',
-		label: __( 'Full' ),
-		description: __( 'The complete picture for your pitch.' ),
+		label: __( 'Full report' ),
+		description: __( 'People and AI agents, the complete picture for your pitch.' ),
 	},
 	{
 		value: 'human',
