@@ -4,6 +4,7 @@ import { useEffect, useRef } from '@wordpress/element';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAgentsManagerContext } from '../../contexts';
 import { AGENTS_MANAGER_STORE } from '../../stores';
+import { getChatPresentation } from '../../utils/chat-presentation';
 import { recordAgentsManagerTracksEvent } from '../../utils/tracks';
 import { useAiChatEntryState } from '../use-ai-chat-entry-state';
 import useHasAiChatEntryButton, {
@@ -48,6 +49,7 @@ export default function useAdminBarIntegration( {
 	closeChat,
 }: UseAdminBarIntegrationOptions ): boolean {
 	const navigate = useNavigate();
+	const { dismissible, showEntryPoints } = getChatPresentation();
 	const { pathname } = useLocation();
 	const { currentUser, resumeChat, sectionName, site } = useAgentsManagerContext();
 	const currentSiteId = getValidBlogId( site?.ID );
@@ -164,13 +166,21 @@ export default function useAdminBarIntegration( {
 			return;
 		}
 
+		if ( ! showEntryPoints ) {
+			const wasHidden = aiChatButton.hidden;
+			aiChatButton.hidden = true;
+			return () => {
+				aiChatButton.hidden = wasHidden;
+			};
+		}
+
 		const handleClick = () => {
 			recordAgentsManagerTracksEvent( 'calypso_agents_manager_ai_chat_clicked', {
 				surface: 'admin_bar',
 				section: sectionName || 'wp-admin',
-				action: isChatVisibleRef.current ? 'close' : 'open',
+				action: dismissible && isChatVisibleRef.current ? 'close' : 'open',
 			} );
-			if ( isChatVisibleRef.current ) {
+			if ( dismissible && isChatVisibleRef.current ) {
 				closeChatRef.current();
 				return;
 			}
@@ -180,7 +190,7 @@ export default function useAdminBarIntegration( {
 
 		aiChatButton.addEventListener( 'click', handleClick );
 		return () => aiChatButton.removeEventListener( 'click', handleClick );
-	}, [ sectionName ] );
+	}, [ sectionName, dismissible, showEntryPoints ] );
 
 	// Wire each Help menu item's click: track it, then open or close the chat.
 	useEffect( () => {
@@ -206,7 +216,8 @@ export default function useAdminBarIntegration( {
 			const handleClick = () => {
 				// Re-clicking the item for the current route closes the chat; a
 				// different route switches view (and opens/expands) without closing.
-				const isClosing = isChatVisibleRef.current && currentRouteRef.current === route;
+				const isClosing =
+					dismissible && isChatVisibleRef.current && currentRouteRef.current === route;
 				recordTracksEvent( 'calypso_dashboard_help_center_menu_panel_click', {
 					section: sectionName || 'wp-admin',
 					destination,
@@ -229,7 +240,7 @@ export default function useAdminBarIntegration( {
 				element?.removeEventListener( 'click', handleClick )
 			);
 		};
-	}, [ navigate, sectionName ] );
+	}, [ navigate, sectionName, dismissible ] );
 
 	return hasAiChatEntry;
 }

@@ -224,6 +224,7 @@ function useWpAdminAgent() {
 
 describe( 'AgentDock', () => {
 	beforeEach( () => {
+		delete window.__agentsManagerConfig;
 		jest.clearAllMocks();
 		setLoadedProviderIds( undefined );
 		takeActionOrigin( 'open' );
@@ -340,6 +341,20 @@ describe( 'AgentDock', () => {
 
 		expect( screen.getByTestId( 'support-guides' ) ).toBeInTheDocument();
 		expect( screen.getByTestId( 'location' ).textContent ).toBe( '/support-guides' );
+	} );
+
+	it( 'keeps a non-dismissible chat expanded when the saved state is closed and minimized', () => {
+		useWpAdminAgent();
+		window.__agentsManagerConfig = { chatPresentation: { dismissible: false } };
+		mockHasAdminBar = true;
+		mockAgentsManagerState = { isOpen: false, isDocked: false, isMinimized: true };
+		renderAgentDock();
+		expect( mockUseAgentLayoutManager ).toHaveBeenCalledWith(
+			expect.objectContaining( { defaultOpen: true } )
+		);
+		fireEvent.click( screen.getByText( 'Close chat' ) );
+		expect( mockSetIsOpen ).not.toHaveBeenCalled();
+		delete window.__agentsManagerConfig;
 	} );
 
 	it( 'clears the minimized flag when the entry button disappears mid-session', () => {

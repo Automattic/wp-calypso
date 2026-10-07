@@ -105,6 +105,7 @@ export const NamePulseResults = () => {
 						isLoading={ isLoadingTop }
 						maxVisible={ topResultsCount }
 						skeletonCount={ topResultsCount }
+						variant="card"
 					/>
 				) }
 				{ ! exactMatch && bundleCard && (

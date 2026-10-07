@@ -1,62 +1,72 @@
 /**
  * @jest-environment jsdom
  */
-import { useQuery } from '@tanstack/react-query';
-import { renderHook } from '@testing-library/react';
-import { useStatsSparklinePlugin } from '../plugin-stats-sparkline';
+import { buildOmnibarNodesFromAdminBarNodes } from '@automattic/omnibar';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { renderHook, waitFor } from '@testing-library/react';
+import nock from 'nock';
+import { removeUndrawnStatsNode, useStatsSparklineNodeBuilder } from '../plugin-stats-sparkline';
 import type { Site } from '@automattic/api-core';
+import type { AdminBarNode } from '@automattic/omnibar';
 
-jest.mock( '@tanstack/react-query', () => ( {
-	useQuery: jest.fn(),
-} ) );
+const site = { ID: 1 } as Site;
 
-jest.mock( '@automattic/api-queries', () => ( {
-	siteHourlyViewsQuery: jest.fn( () => ( { queryKey: [ 'site-hourly-views' ] } ) ),
-} ) );
+const statsNode = {
+	id: 'stats',
+	title: '<div><img src="chart.png"></div>',
+	parent: false,
+	href: 'https://example.com/wp-admin/admin.php?page=jetpack-premium-analytics-wp-admin',
+	group: false,
+} as AdminBarNode;
 
-const mockUseQuery = useQuery as jest.MockedFunction< typeof useQuery >;
+const commentsNode = { ...statsNode, id: 'comments' } as AdminBarNode;
 
-const simpleSite = {
-	ID: 1,
-	options: { admin_url: 'https://example.com/wp-admin/' },
-	capabilities: { view_stats: true },
-} as unknown as Site;
+function renderNodeBuilder( adminBarNodes: AdminBarNode[] ) {
+	const queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
+	const wrapper = ( { children }: { children: React.ReactNode } ) => (
+		<QueryClientProvider client={ queryClient }>{ children }</QueryClientProvider>
+	);
 
-describe( 'useStatsSparklinePlugin', () => {
-	beforeEach( () => {
-		jest.clearAllMocks();
-		mockUseQuery.mockReturnValue( { data: [ 1, 2, 3 ] } as never );
+	return {
+		queryClient,
+		...renderHook( () => useStatsSparklineNodeBuilder( { site, adminBarNodes } ), { wrapper } ),
+	};
+}
+
+describe( 'useStatsSparklineNodeBuilder', () => {
+	test( 'draws the site admin bar Stats node as a chart instead of its image markup', async () => {
+		nock( 'https://public-api.wordpress.com' )
+			.get( '/rest/v1.1/sites/1/stats/visits' )
+			.query( true )
+			.reply( 200, { data: [ [ '2026-10-01 00:00:00', 3 ] ] } );
+
+		const { result } = renderNodeBuilder( [ statsNode ] );
+
+		await waitFor( () => expect( result.current ).toBeDefined() );
+		const builder = result.current as NonNullable< typeof result.current >;
+		const [ node ] =
+			buildOmnibarNodesFromAdminBarNodes( [ statsNode ], { stats: builder } ).siteActions ?? [];
+		expect( node.title ).toBeUndefined();
+		expect( node.href ).toBe( statsNode.href );
+		expect( node.render ).toBeDefined();
 	} );
 
-	test( 'renders the sparkline on a Simple site', () => {
-		const { result } = renderHook( () => useStatsSparklinePlugin( { site: simpleSite } ) );
+	test( 'fetches no views when the site admin bar has no Stats node', () => {
+		const { result, queryClient } = renderNodeBuilder( [] );
 
-		expect( result.current?.href ).toBe( 'https://example.com/wp-admin/admin.php?page=stats' );
-	} );
-
-	test( 'renders the sparkline when the Jetpack site has the Stats module active', () => {
-		const site = { ...simpleSite, jetpack: true, jetpack_modules: [ 'stats', 'monitor' ] } as Site;
-
-		const { result } = renderHook( () => useStatsSparklinePlugin( { site } ) );
-
-		expect( result.current ).toBeDefined();
-	} );
-
-	// Without the module there is no admin.php?page=stats screen, so the sparkline would link
-	// to "Sorry, you are not allowed to access this page".
-	test( 'renders nothing when the Jetpack site has the Stats module off', () => {
-		const site = { ...simpleSite, jetpack: true, jetpack_modules: [ 'monitor' ] } as Site;
-
-		const { result } = renderHook( () => useStatsSparklinePlugin( { site } ) );
-
+		expect( queryClient.isFetching() ).toBe( 0 );
 		expect( result.current ).toBeUndefined();
 	} );
+} );
 
-	test( 'renders nothing when the user cannot view stats', () => {
-		const site = { ...simpleSite, capabilities: { view_stats: false } } as unknown as Site;
-
-		const { result } = renderHook( () => useStatsSparklinePlugin( { site } ) );
-
-		expect( result.current ).toBeUndefined();
+describe( 'removeUndrawnStatsNode', () => {
+	test( 'leaves out the Stats node until there is a builder to draw it', () => {
+		expect( removeUndrawnStatsNode( [ statsNode, commentsNode ], undefined ) ).toEqual( [
+			commentsNode,
+		] );
+		expect( removeUndrawnStatsNode( [ statsNode, commentsNode ], () => ( {} ) ) ).toEqual( [
+			statsNode,
+			commentsNode,
+		] );
 	} );
 } );

@@ -4,8 +4,8 @@ import { useQuery } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent } from 'react';
 import PrePurchaseNotice from './prepurchase-notice';
+import type { Site as ApiSite } from '@automattic/api-core';
 import type { ResponseCartProduct } from '@automattic/shopping-cart';
-import type { SitePlan } from 'calypso/state/sites/selectors/get-site-plan';
 
 type Site = {
 	ID: number;
@@ -13,7 +13,7 @@ type Site = {
 };
 
 type Props = {
-	plan: SitePlan;
+	plan: Pick< NonNullable< ApiSite[ 'plan' ] >, 'product_slug' | 'product_name_short' >;
 	product: ResponseCartProduct;
 	selectedSite: Site;
 };

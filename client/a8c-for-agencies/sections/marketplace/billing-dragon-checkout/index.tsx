@@ -77,8 +77,6 @@ function BillingDragonCheckoutContent( {
 	} = usePrepareProductsForCart( {
 		productAliasFromUrl: planSlug,
 		purchaseId: null,
-		usesJetpackProducts: false,
-		isPrivate: false,
 		siteSlug,
 		sitelessCheckoutType: 'a4a',
 	} );

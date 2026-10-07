@@ -15,6 +15,23 @@
 	}
 }
 
+.omnibar__notifications-icon--subscriber-pulse {
+	animation: omnibar-notifications-subscriber-pulse 800ms ease-in-out 2;
+	transform-origin: center;
+}
+
+@keyframes omnibar-notifications-subscriber-pulse {
+	50% {
+		transform: scale( 1.18 );
+	}
+}
+
+@media ( prefers-reduced-motion: reduce ) {
+	.omnibar__notifications-icon--subscriber-pulse {
+		animation: none;
+	}
+}
+
 .omnibar .omnibar__notifications-unread-dot {
 	fill: #adbaf3;
 	stroke: var( --omnibar-background );

@@ -57,7 +57,29 @@ describe( 'useAdminBarIntegration', () => {
 		document.body.append( aiChatButton );
 	} );
 
-	afterEach( () => aiChatButton.remove() );
+	afterEach( () => {
+		aiChatButton.remove();
+		delete window.__agentsManagerConfig;
+	} );
+
+	it( 'hides the host-disabled toggle without wiring a click listener and restores it on unmount', () => {
+		window.__agentsManagerConfig = { chatPresentation: { showEntryPoints: false } };
+		const { unmount } = renderWithChatVisible( true );
+		expect( aiChatButton.hidden ).toBe( true );
+		aiChatButton.click();
+		expect( closeChat ).not.toHaveBeenCalled();
+		expect( openChat ).not.toHaveBeenCalled();
+		unmount();
+		expect( aiChatButton.hidden ).toBe( false );
+	} );
+
+	it( 'does not close a non-dismissible chat from a visible toggle', () => {
+		window.__agentsManagerConfig = { chatPresentation: { dismissible: false } };
+		renderWithChatVisible( true );
+		aiChatButton.click();
+		expect( closeChat ).not.toHaveBeenCalled();
+		expect( openChat ).toHaveBeenCalled();
+	} );
 
 	it( 'leaves a page-painted label alone while the chat stays hidden', () => {
 		renderWithChatVisible( false );
