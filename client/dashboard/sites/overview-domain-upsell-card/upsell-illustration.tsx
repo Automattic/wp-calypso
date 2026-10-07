@@ -5,10 +5,12 @@ export const DomainUpsellIllustraction = ( {
 	title,
 	domain,
 	search,
+	isLoading,
 }: {
 	title?: string;
 	domain?: string;
 	search: string;
+	isLoading?: boolean;
 } ) => (
 	<SVG
 		width="318"
@@ -38,7 +40,7 @@ export const DomainUpsellIllustraction = ( {
 				direction="ltr"
 				fill="#1E1E1E"
 				fontSize="12px"
-				{ ...( ! domain ? { filter: 'blur(0.3em)', opacity: 0.5 } : {} ) }
+				{ ...( isLoading ? { filter: 'blur(0.3em)', opacity: 0.5 } : {} ) }
 			>
 				{ domain ?? search }
 			</text>

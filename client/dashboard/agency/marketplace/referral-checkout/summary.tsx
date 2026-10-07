@@ -39,6 +39,7 @@ interface Props {
 	onSend: () => void;
 	onCopy: () => void;
 	onPurchase: () => void;
+	onPreview: () => void;
 }
 
 const getLineName = ( product: AgencyProduct, quantity: number ) => {
@@ -72,6 +73,7 @@ export default function ReferralSummary( {
 	onSend,
 	onCopy,
 	onPurchase,
+	onPreview,
 }: Props ) {
 	const suffix = getTermSuffix( term );
 
@@ -109,6 +111,9 @@ export default function ReferralSummary( {
 				onClick={ onCopy }
 			>
 				{ __( 'Copy referral link' ) }
+			</Button>
+			<Button variant="link" className="referral-checkout__preview-link" onClick={ onPreview }>
+				{ __( 'Preview email' ) }
 			</Button>
 		</VStack>
 	);

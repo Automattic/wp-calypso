@@ -1,9 +1,12 @@
+import { getCreditsLabel, isCreditsExhausted } from '../credits';
 import { buildLiveCreditsStatus, parseCreditSnapshot } from '../live-credits';
 import { creditSnapshot } from './fixtures/credit-snapshot';
+import { localNumber } from './fixtures/local-number';
 
 jest.mock( 'i18n-calypso', () => ( { getBrowserSafeLocale: () => 'en' } ) );
 jest.mock( '@wordpress/i18n', () => ( {
 	__: ( text: string ) => text,
+	_n: ( single: string, plural: string, count: number ) => ( count === 1 ? single : plural ),
 	sprintf: ( format: string, value: unknown ) => format.replace( '%s', String( value ) ),
 } ) );
 
@@ -125,6 +128,70 @@ it( 'preserves the exact positive balance instead of treating display rounding a
 	expect( parseCreditSnapshot( snapshot, 123 ) ).toEqual( snapshot );
 	expect( buildLiveCreditsStatus( snapshot ) ).toMatchObject( { percent: 0.04, remaining: 1 } );
 } );
+describe( 'combined balance', () => {
+	// No plan credits left, but top-ups: the server counts the site as not exhausted.
+	const topUpsOnly = creditSnapshot( {
+		credits_used: 2500,
+		credits_remaining: 0,
+		credits_available: 67000,
+	} );
+
+	it( 'keeps the plan balance when an older snapshot has no combined balance', () => {
+		const parsed = parseCreditSnapshot( creditSnapshot(), 123 );
+		expect( parsed ).not.toHaveProperty( 'credits_available' );
+		expect( buildLiveCreditsStatus( parsed! ) ).toMatchObject( { percent: 98, remaining: 2450 } );
+		expect(
+			parseCreditSnapshot(
+				creditSnapshot( { credits_used: 2500, credits_remaining: 0, exhausted: true } ),
+				123
+			)
+		).toBeDefined();
+	} );
+
+	it( 'accepts a combined balance equal to the plan balance', () => {
+		const snapshot = creditSnapshot( { credits_available: 2450 } );
+		expect( parseCreditSnapshot( snapshot, 123 ) ).toEqual( snapshot );
+		expect( buildLiveCreditsStatus( snapshot ) ).toMatchObject( { percent: 98, remaining: 2450 } );
+	} );
+
+	it( 'reads top-ups as spendable once the plan credits run out', () => {
+		expect( parseCreditSnapshot( topUpsOnly, 123 ) ).toEqual( topUpsOnly );
+		const status = buildLiveCreditsStatus( topUpsOnly );
+		expect( status ).toMatchObject( {
+			percent: 0,
+			remaining: 67000,
+			pools: [ { id: 'plan', percent: 0, remaining: 0, total: 2500 } ],
+		} );
+		expect( isCreditsExhausted( status ) ).toBe( false );
+		expect( getCreditsLabel( status ) ).toBe( `${ localNumber( 67 ) }k credits left` );
+	} );
+
+	it( 'reads an exhausted combined balance', () => {
+		const snapshot = creditSnapshot( {
+			credits_used: 2500,
+			credits_remaining: 0,
+			credits_available: 0,
+			exhausted: true,
+		} );
+		expect( parseCreditSnapshot( snapshot, 123 ) ).toEqual( snapshot );
+		expect( isCreditsExhausted( buildLiveCreditsStatus( snapshot ) ) ).toBe( true );
+	} );
+
+	it.each( [
+		{ credits_available: -1 },
+		{ credits_available: 2450.5 },
+		{ credits_available: '67000' },
+		{ credits_available: null },
+		{ credits_available: Number.MAX_SAFE_INTEGER + 1 },
+		{ credits_available: 2449 },
+		{ ...topUpsOnly, exhausted: true },
+		{ ...topUpsOnly, credits_available: 0 },
+		{ ...topUpsOnly, blocked: true },
+	] )( 'rejects an unreadable or inconsistent combined balance %p', ( overrides ) => {
+		expect( parseCreditSnapshot( { ...creditSnapshot(), ...overrides }, 123 ) ).toBeUndefined();
+	} );
+} );
+
 it.each( [ null, false, undefined ] )(
 	'treats missing/unreadable backend status as unknown: %p',
 	( snapshot ) => {

@@ -132,7 +132,10 @@ describe( 'SetupYourSiteAIStep', () => {
 		it( 'renders the custom design card before the template card by default', () => {
 			renderStep();
 
-			expect( getButtonNames() ).toEqual( [ 'Create a custom design', 'Start with a template' ] );
+			expect( getButtonNames() ).toEqual( [
+				'Create a custom design',
+				'Start with a pre-made design',
+			] );
 		} );
 
 		it( 'keeps the AI prompt card before the template card for the Woo hosting solutions ref', () => {
@@ -140,7 +143,7 @@ describe( 'SetupYourSiteAIStep', () => {
 
 			renderStep();
 
-			expect( getButtonNames() ).toEqual( [ 'Build with AI', 'Start with a template' ] );
+			expect( getButtonNames() ).toEqual( [ 'Build with AI', 'Start with a pre-made design' ] );
 		} );
 	} );
 
@@ -148,7 +151,7 @@ describe( 'SetupYourSiteAIStep', () => {
 		it( 'submits the blank-site choice from the template card', () => {
 			renderStep();
 
-			fireEvent.click( screen.getByRole( 'button', { name: 'Start with a template' } ) );
+			fireEvent.click( screen.getByRole( 'button', { name: 'Start with a pre-made design' } ) );
 
 			expect( recordTracksEvent ).toHaveBeenCalledWith(
 				'calypso_onboarding_setup_your_site_with_ai_selection',
@@ -244,13 +247,17 @@ describe( 'SetupYourSiteAIStep', () => {
 			renderStep();
 
 			clickCustomDesign();
-			expect( screen.getByRole( 'button', { name: 'Start with a template' } ) ).toBeDisabled();
+			expect(
+				screen.getByRole( 'button', { name: 'Start with a pre-made design' } )
+			).toBeDisabled();
 
 			const pageshow = new Event( 'pageshow' ) as PageTransitionEvent;
 			Object.defineProperty( pageshow, 'persisted', { value: true } );
 			fireEvent( window, pageshow );
 
-			expect( screen.getByRole( 'button', { name: 'Start with a template' } ) ).toBeEnabled();
+			expect(
+				screen.getByRole( 'button', { name: 'Start with a pre-made design' } )
+			).toBeEnabled();
 		} );
 
 		it( 'submits a choice only once per visit and disables the controls', () => {
@@ -258,10 +265,12 @@ describe( 'SetupYourSiteAIStep', () => {
 
 			clickCustomDesign();
 			clickCustomDesign();
-			fireEvent.click( screen.getByRole( 'button', { name: 'Start with a template' } ) );
+			fireEvent.click( screen.getByRole( 'button', { name: 'Start with a pre-made design' } ) );
 
 			expect( navigation.submit ).toHaveBeenCalledTimes( 1 );
-			expect( screen.getByRole( 'button', { name: 'Start with a template' } ) ).toBeDisabled();
+			expect(
+				screen.getByRole( 'button', { name: 'Start with a pre-made design' } )
+			).toBeDisabled();
 			expect( screen.getByRole( 'button', { name: 'Create a custom design' } ) ).toBeDisabled();
 		} );
 	} );
@@ -276,7 +285,7 @@ describe( 'SetupYourSiteAIStep', () => {
 
 			expect( getButtonNames() ).toEqual( [
 				'Create a custom design',
-				'Start with a template',
+				'Start with a pre-made design',
 				'Create a custom design (blocks-first)',
 			] );
 		} );
@@ -305,7 +314,10 @@ describe( 'SetupYourSiteAIStep', () => {
 
 			renderStep();
 
-			expect( getButtonNames() ).toEqual( [ 'Create a custom design', 'Start with a template' ] );
+			expect( getButtonNames() ).toEqual( [
+				'Create a custom design',
+				'Start with a pre-made design',
+			] );
 		} );
 
 		it( 'hides the blocks-first card on a plan that cannot take build-wow', () => {
@@ -313,7 +325,10 @@ describe( 'SetupYourSiteAIStep', () => {
 
 			renderStep();
 
-			expect( getButtonNames() ).toEqual( [ 'Create a custom design', 'Start with a template' ] );
+			expect( getButtonNames() ).toEqual( [
+				'Create a custom design',
+				'Start with a pre-made design',
+			] );
 		} );
 
 		it( 'hides the blocks-first card for the Woo hosting solutions ref', () => {
@@ -321,7 +336,7 @@ describe( 'SetupYourSiteAIStep', () => {
 
 			renderStep();
 
-			expect( getButtonNames() ).toEqual( [ 'Build with AI', 'Start with a template' ] );
+			expect( getButtonNames() ).toEqual( [ 'Build with AI', 'Start with a pre-made design' ] );
 		} );
 	} );
 

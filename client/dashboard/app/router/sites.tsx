@@ -840,16 +840,6 @@ export const siteSettingsSiteVisibilityRoute = createRoute( {
 	} ),
 	getParentRoute: () => siteSettingsRoute,
 	path: 'site-visibility',
-	beforeLoad: async ( { cause, params: { siteSlug } } ) => {
-		if ( cause === 'preload' ) {
-			return;
-		}
-
-		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
-		if ( site.is_wpcom_flex ) {
-			throw redirectAsNotAllowed( { to: siteSettingsRoute.fullPath, params: { siteSlug } } );
-		}
-	},
 	loader: async ( { context, params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
 

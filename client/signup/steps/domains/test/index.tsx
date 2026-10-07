@@ -2,9 +2,8 @@
  * @jest-environment jsdom
  */
 
-jest.mock(
-	'calypso/signup/step-wrapper',
-	() => ( props: { stepContent?: React.ReactNode } ) => props.stepContent ?? null
+jest.mock( 'calypso/signup/step-wrapper', () =>
+	jest.fn( ( props: { stepContent?: React.ReactNode } ) => props.stepContent ?? null )
 );
 jest.mock( 'calypso/components/domains/wpcom-domain-search', () => ( {
 	WPCOMDomainSearch: jest.fn().mockReturnValue( null ),
@@ -18,12 +17,14 @@ import config from '@automattic/calypso-config';
 import React from 'react';
 import { WPCOMDomainSearch } from 'calypso/components/domains/wpcom-domain-search';
 import { useQueryHandler } from 'calypso/components/domains/wpcom-domain-search/use-query-handler';
+import StepWrapper from 'calypso/signup/step-wrapper';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import DomainSearchStep from '../';
 
 const mockWPCOMDomainSearch = WPCOMDomainSearch as jest.Mock;
 const mockUseQueryHandler = useQueryHandler as jest.Mock;
 const mockQueryHandler = mockUseQueryHandler() as { clearQuery: jest.Mock; resetQuery: jest.Mock };
+const mockStepWrapper = StepWrapper as unknown as jest.Mock;
 
 const domainItem = { meta: 'example.com', product_slug: 'domain_reg' };
 
@@ -196,6 +197,12 @@ describe( 'DomainSearchStep — Name Pulse search', () => {
 		} );
 	} );
 
+	it( 'seeds the search from ?new= so Name Pulse can restore it after a refresh', () => {
+		renderStep( { ...baseProps, queryObject: { new: 'coffeeshop' } } );
+
+		expect( mockUseQueryHandler.mock.calls[ 0 ][ 0 ].initialQuery ).toBe( 'coffeeshop' );
+	} );
+
 	it( 'lifts the domain-only exclusion on the free-first-year promo', () => {
 		renderStep();
 
@@ -208,5 +215,73 @@ describe( 'DomainSearchStep — Name Pulse search', () => {
 		renderStep();
 
 		expect( mockWPCOMDomainSearch.mock.calls[ 0 ][ 0 ].slots.BeforeResults() ).toBeNull();
+	} );
+} );
+
+describe( 'DomainSearchStep — launch-site Back button', () => {
+	const launchProps = {
+		...baseProps,
+		flowName: 'launch-site',
+		stepName: 'domains-launch',
+	};
+
+	// The site the signup controller loaded and selected for the flow.
+	const withSelectedSite = ( selectedSiteId: number | null ) => ( {
+		initialState: {
+			currentUser: { id: 12345 },
+			sites: { items: { 77: { ID: 77, URL: 'https://real-site.wordpress.com' } } },
+		},
+		reducers: { ui: () => ( { selectedSiteId } ) },
+	} );
+
+	const renderWithBackTo = ( backTo: string, selectedSiteId: number | null = 77 ) => {
+		window.history.replaceState(
+			{},
+			'',
+			`/start/launch-site/domains-launch?back_to=${ encodeURIComponent( backTo ) }`
+		);
+		mockStepWrapper.mockClear();
+		renderWithProvider(
+			<DomainSearchStep { ...launchProps } />,
+			withSelectedSite( selectedSiteId )
+		);
+		return mockStepWrapper.mock.calls.at( -1 )?.[ 0 ];
+	};
+
+	beforeEach( () => {
+		jest.clearAllMocks();
+		mockWPCOMDomainSearch.mockReturnValue( null );
+	} );
+
+	afterAll( () => {
+		window.history.replaceState( {}, '', '/' );
+	} );
+
+	it( 'returns to a wp-admin screen on the site the flow loaded', () => {
+		const backTo = 'https://real-site.wordpress.com/wp-admin/post.php?post=1&action=edit';
+		const props = renderWithBackTo( backTo );
+
+		expect( props?.backUrl ).toBe( backTo );
+		expect( props?.backLabelText ).toBe( 'Back' );
+	} );
+
+	it( 'ignores a back_to on any other host', () => {
+		const props = renderWithBackTo( 'https://evil.example/wp-admin/tools.php' );
+
+		expect( props?.backUrl ).not.toContain( 'evil.example' );
+		expect( props?.backLabelText ).toBe( 'Back to sites' );
+	} );
+
+	it( 'ignores a back_to whose host only starts with a dashboard origin', () => {
+		const props = renderWithBackTo( 'https://my.wordpress.com.evil.example/' );
+
+		expect( props?.backUrl ).not.toContain( 'evil.example' );
+		expect( props?.backLabelText ).toBe( 'Back to sites' );
+	} );
+
+	it( 'ignores a site-host back_to when no site was loaded for the flow', () => {
+		const props = renderWithBackTo( 'https://real-site.wordpress.com/wp-admin/tools.php', null );
+
+		expect( props?.backLabelText ).toBe( 'Back to sites' );
 	} );
 } );

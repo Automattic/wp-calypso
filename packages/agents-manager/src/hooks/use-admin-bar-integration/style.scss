@@ -197,3 +197,8 @@
 		}
 	}
 }
+
+// Core and mobile admin-bar rules set display explicitly, overriding native hidden.
+#wpadminbar #wp-toolbar #wp-admin-bar-top-secondary #wp-admin-bar-agents-manager-ai-chat[hidden] {
+	display: none !important;
+}

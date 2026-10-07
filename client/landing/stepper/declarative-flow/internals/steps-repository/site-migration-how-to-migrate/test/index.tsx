@@ -76,7 +76,22 @@ describe( 'SiteMigrationHowToMigrate', () => {
 
 	afterEach( () => {
 		jest.resetAllMocks();
+		jest.restoreAllMocks();
 	} );
+
+	it.each( [ 0, 1 ] )(
+		'cancels and uses browser Back without a navigation handler at history index %i',
+		async ( idx ) => {
+			jest.spyOn( history, 'state', 'get' ).mockReturnValue( { idx } );
+			const back = jest.spyOn( history, 'back' ).mockImplementation( () => {} );
+			render( { navigation } );
+
+			await userEvent.click( screen.getByRole( 'button', { name: /Back/ } ) );
+
+			expect( mockCancelMigration ).toHaveBeenCalledTimes( 1 );
+			expect( back ).toHaveBeenCalledTimes( 1 );
+		}
+	);
 
 	it( 'records migration-start conversions on arrival', () => {
 		render( { navigation } );

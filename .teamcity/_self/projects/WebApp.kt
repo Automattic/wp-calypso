@@ -1052,7 +1052,8 @@ object PreReleaseE2ETests : BuildType({
 			}
 			branchFilter = "+:<default>"
 			buildFailedToStart = true
-			buildFailed = true
+			// Glorybot posts failures here, but only for the run that gates the currently staged commit.
+			buildFailed = false
 			buildFinishedSuccessfully = false
 			buildProbablyHanging = true
 		}

@@ -8,6 +8,8 @@ import {
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { check, chevronLeft, Icon } from '@wordpress/icons';
+import { useState } from 'react';
+import { useAnalytics } from '../../../app/analytics';
 import { useAuth } from '../../../app/auth';
 import { marketplaceReferralCheckoutRoute } from '../../../app/router/agency';
 import { Notice } from '../../../components/notice';
@@ -16,6 +18,8 @@ import { MARKETPLACE_PRODUCTS_ROUTE } from '../paths';
 import { useCartLines } from '../products/use-cart-lines';
 import { useShoppingCart } from '../products/use-shopping-cart';
 import { useTermPricing } from '../use-term-pricing';
+import ReferralEmailPreviewModal from './email-preview-modal';
+import { getReferralLogoPreviewUrl } from './lib/logo';
 import RequestClientPaymentForm from './request-form';
 import ReferralSummary from './summary';
 import { useRequestClientPayment } from './use-request-client-payment';
@@ -28,6 +32,7 @@ import './style.scss';
  */
 export default function ReferralCheckout() {
 	const { user } = useAuth();
+	const { recordTracksEvent } = useAnalytics();
 	const { from } = marketplaceReferralCheckoutRoute.useSearch();
 	const { data: agency } = useQuery( activeAgencyQuery() );
 	const agencyId = agency?.id ?? 0;
@@ -41,11 +46,21 @@ export default function ReferralCheckout() {
 		term: termPricing,
 		isReferralMode: true,
 	} );
+	const profileLogoUrl = agency?.profile?.company_details?.logo_url || null;
+	const lastReferralLogoUrl = agency?.referrals_logo || null;
 	const request = useRequestClientPayment( {
 		agencyId,
 		lines: cart.lines,
 		term: termPricing,
+		profileLogoUrl,
+		lastReferralLogoUrl,
 	} );
+
+	const [ preview, setPreview ] = useState< { logoUrl?: string } | null >( null );
+	const openPreview = async () => {
+		recordTracksEvent( 'calypso_a4a_client_referral_email_preview_click' );
+		setPreview( { logoUrl: await getReferralLogoPreviewUrl( request.logo ) } );
+	};
 
 	const backTo = from ?? MARKETPLACE_PRODUCTS_ROUTE;
 	const isFreeOnly = cart.lines.length > 0 && cart.lines.every( ( line ) => line.priceInfo.isFree );
@@ -95,8 +110,12 @@ export default function ReferralCheckout() {
 								email={ request.email }
 								emailError={ request.emailError }
 								message={ request.message }
+								logo={ request.logo }
+								profileLogoUrl={ profileLogoUrl }
+								lastReferralLogoUrl={ lastReferralLogoUrl }
 								onEmailChange={ request.onEmailChange }
 								onMessageChange={ request.onMessageChange }
+								onLogoChange={ request.onLogoChange }
 							/>
 						) }
 					</VStack>
@@ -117,9 +136,20 @@ export default function ReferralCheckout() {
 							onSend={ request.send }
 							onCopy={ request.copy }
 							onPurchase={ request.purchase }
+							onPreview={ openPreview }
 						/>
 					</aside>
 				</div>
+			) }
+			{ preview && (
+				<ReferralEmailPreviewModal
+					agencyId={ agencyId }
+					productIds={ request.productIds }
+					greetingLine={ request.message.trim() }
+					logoUrl={ preview.logoUrl }
+					term={ termPricing }
+					onClose={ () => setPreview( null ) }
+				/>
 			) }
 		</div>
 	);

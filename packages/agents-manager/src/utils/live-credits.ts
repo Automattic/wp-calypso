@@ -20,6 +20,8 @@ export interface CreditSnapshot {
 	credits_limit: number;
 	credits_used: number;
 	credits_remaining: number;
+	/** Plan and top-up credits left together; absent from older snapshots. */
+	credits_available?: number;
 	exhausted: boolean;
 	blocked: boolean;
 	resets_at: string;
@@ -40,7 +42,13 @@ export function parseCreditSnapshot( value: unknown, siteId: number ): CreditSna
 		return undefined;
 	}
 	const snapshot = value as Record< string, unknown >;
-	const { credits_limit: limit, credits_used: used, credits_remaining: remaining } = snapshot;
+	const {
+		credits_limit: limit,
+		credits_used: used,
+		credits_remaining: remaining,
+		// An older snapshot has no combined balance, so its balance is the plan's.
+		credits_available: available = remaining,
+	} = snapshot;
 	if (
 		snapshot.schema_version !== 1 ||
 		( snapshot.policy_id !== 'wpcom-site-monthly-v1' &&
@@ -52,15 +60,17 @@ export function parseCreditSnapshot( value: unknown, siteId: number ): CreditSna
 		snapshot.preview !== true ||
 		snapshot.enforcement !== 'site_allowance' ||
 		snapshot.blog_id !== siteId ||
-		! [ limit, used, remaining ].every(
+		! [ limit, used, remaining, available ].every(
 			( amount ) => typeof amount === 'number' && Number.isSafeInteger( amount ) && amount >= 0
 		) ||
 		typeof limit !== 'number' ||
 		limit <= 0 ||
 		typeof used !== 'number' ||
 		typeof remaining !== 'number' ||
+		typeof available !== 'number' ||
 		remaining !== Math.max( 0, limit - used ) ||
-		snapshot.exhausted !== ( remaining === 0 ) ||
+		available < remaining ||
+		snapshot.exhausted !== ( available === 0 ) ||
 		typeof snapshot.blocked !== 'boolean' ||
 		( snapshot.blocked && ! snapshot.exhausted ) ||
 		! isUtcTimestamp( snapshot.resets_at )
@@ -105,7 +115,7 @@ export function buildLiveCreditsStatus( snapshot: CreditSnapshot ): CreditsStatu
 		plan: 'paid',
 		...( snapshot.plan_tier ? { planTier: snapshot.plan_tier } : {} ),
 		percent,
-		remaining: snapshot.credits_remaining,
+		remaining: snapshot.credits_available ?? snapshot.credits_remaining,
 		pools: [
 			{
 				id: 'plan',

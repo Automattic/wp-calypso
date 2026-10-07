@@ -5,7 +5,10 @@ import { SearchNotice } from '..';
 import { buildAvailability } from '../../../test-helpers/factories/availability';
 import { buildSuggestion } from '../../../test-helpers/factories/suggestions';
 import { mockGetAvailabilityQuery } from '../../../test-helpers/queries/availability';
-import { mockGetSuggestionsQuery } from '../../../test-helpers/queries/suggestions';
+import {
+	mockGetSuggestionsQuery,
+	mockGetSuggestionsQueryEmptyResults,
+} from '../../../test-helpers/queries/suggestions';
 import { TestDomainSearchWithSuggestions } from '../../../test-helpers/renderer';
 
 const AVAILABLE_DOMAIN_STATUSES = [
@@ -65,6 +68,44 @@ describe( 'SearchNotice', () => {
 		const [ notice ] = screen.getAllByText( 'Failed to fetch the suggestions' );
 
 		expect( notice ).toBeInTheDocument();
+	} );
+
+	it( 'renders the error notice from the suggestion query for a bare-term query when it returns empty results', async () => {
+		mockGetSuggestionsQueryEmptyResults( { params: { query: 'foo' } } );
+
+		render(
+			<TestDomainSearchWithSuggestions query="foo">
+				<SearchNotice />
+			</TestDomainSearchWithSuggestions>
+		);
+
+		expect( await screen.findByText( 'Error notice' ) ).toBeInTheDocument();
+
+		const [ notice ] = screen.getAllByText( 'No available domains for that search.' );
+
+		expect( notice ).toBeInTheDocument();
+	} );
+
+	it( 'does not render the error notice from the suggestion query if the queried FQDN is available', async () => {
+		mockGetSuggestionsQueryEmptyResults( { params: { query: 'foo.live' } } );
+		mockGetAvailabilityQuery( {
+			params: { domainName: 'foo.live' },
+			availability: buildAvailability( {
+				domain_name: 'foo.live',
+				tld: 'live',
+				status: DomainAvailabilityStatus.AVAILABLE,
+			} ),
+		} );
+
+		const { container } = render(
+			<TestDomainSearchWithSuggestions query="foo.live">
+				<SearchNotice />
+			</TestDomainSearchWithSuggestions>
+		);
+
+		await waitForElementToBeRemoved( () => screen.getByText( 'LOADING_TEST_CONTENT' ) );
+
+		expect( container ).toBeEmptyDOMElement();
 	} );
 
 	it( 'renders the error notice from the availability query if that query failed', async () => {

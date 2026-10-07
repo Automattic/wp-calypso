@@ -26,11 +26,16 @@ import {
 	getCurrentUserVisibleSiteCount,
 	isUserLoggedIn,
 } from 'calypso/state/current-user/selectors';
+import { requestSite } from 'calypso/state/sites/actions';
+import { getSiteId } from 'calypso/state/sites/selectors';
+import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import {
 	COMPARE_PLANS_QUERY_PARAM,
 	LEGACY_TO_RECOMMENDED_MAP,
 } from '../plans/jetpack-plans/plan-upgrade/constants';
+import { getAgencySiteCheckoutExitUrl } from './agency-checkout/lib/agency-checkout-params';
+import AgencySiteCheckout from './agency-site';
 import AgencySitelessCheckout from './agency-siteless';
 import CalypsoShoppingCartProvider from './calypso-shopping-cart-provider';
 import CheckoutMainWrapper from './checkout-main-wrapper';
@@ -254,6 +259,50 @@ export function checkoutA4AAgencySiteless( context, next ) {
 			<CheckoutSitelessDocumentTitle />
 
 			<AgencySitelessCheckout />
+		</>
+	);
+
+	next();
+}
+
+/**
+ * Selects the site of an agency site checkout. A site the user cannot load
+ * sends them back to the dashboard instead of on to the siteless checkout,
+ * which is where the generic site selection would redirect.
+ */
+export function selectA4AAgencySite( context, next ) {
+	const { getState, dispatch } = context.store;
+	const siteFragment = context.params.site;
+
+	dispatch( requestSite( siteFragment ) )
+		.catch( () => null )
+		.then( ( site ) => {
+			const siteId = site?.ID ?? getSiteId( getState(), siteFragment );
+			if ( ! siteId ) {
+				window.location.assign( getAgencySiteCheckoutExitUrl( window.location.search ) );
+				return;
+			}
+			dispatch( setSelectedSiteId( siteId ) );
+			next();
+		} );
+}
+
+export function checkoutA4AAgencySite( context, next ) {
+	const selectedSite = getSelectedSite( context.store.getState() );
+	const CheckoutDocumentTitle = () => {
+		const translate = useTranslate();
+		return <DocumentHead title={ translate( 'Checkout' ) } />;
+	};
+
+	context.primary = (
+		<>
+			<CheckoutDocumentTitle />
+
+			<AgencySiteCheckout
+				siteId={ selectedSite.ID }
+				siteSlug={ selectedSite.slug }
+				productSlug={ context.params.product }
+			/>
 		</>
 	);
 

@@ -1,0 +1,44 @@
+@import '@wordpress/base-styles/colors';
+@import '@automattic/color-studio/dist/color-variables';
+
+.dashboard-body-card {
+	block-size: 100%;
+}
+
+.dashboard-body-card__body {
+	box-sizing: border-box;
+	block-size: 100%;
+}
+
+.dashboard-body-card__stack {
+	block-size: 100%;
+}
+
+.dashboard-body-card__byline {
+	color: $studio-gray-60;
+}
+
+.dashboard-body-card__description {
+	color: $studio-gray-70;
+	text-wrap: pretty;
+}
+
+.dashboard-body-card__foot {
+	margin-block-start: auto;
+	font-size: 13px;
+}
+
+.dashboard-body-card__tile {
+	display: inline-grid;
+	flex: none;
+	place-items: center;
+	inline-size: 40px;
+	block-size: 40px;
+	border-radius: 8px;
+	background: var( --dashboard-accent );
+	color: var( --dashboard-accent-on );
+
+	svg {
+		fill: currentColor;
+	}
+}

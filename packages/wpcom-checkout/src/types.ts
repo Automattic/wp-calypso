@@ -1,4 +1,3 @@
-import type { WPCOMTransactionEndpointResponse } from '@automattic/api-core';
 import type { DomainContactDetails, RequestCart } from '@automattic/shopping-cart';
 import type { TranslateResult } from 'i18n-calypso';
 export type { SitelessCheckoutType } from '@automattic/shopping-cart';
@@ -286,13 +285,6 @@ export interface ManagedValue {
 	errors: string[] | TranslateResult[]; // Has value passed validation?
 }
 
-export type WpcomStoreState = {
-	recaptchaClientId: number;
-	transactionResult?: WPCOMTransactionEndpointResponse | undefined;
-	contactDetails: ManagedContactDetails;
-	vatDetails: VatDetails;
-};
-
 export interface VatDetails {
 	country?: string | null;
 	id?: string | null;
@@ -308,11 +300,7 @@ export interface VatDetails {
  * assume input came from the user.
  */
 export type ManagedContactDetailsUpdaters = {
-	updatePhone: ( arg0: ManagedContactDetails, arg1: string ) => ManagedContactDetails;
-	updatePhoneNumberCountry: ( arg0: ManagedContactDetails, arg1: string ) => ManagedContactDetails;
-	updatePostalCode: ( arg0: ManagedContactDetails, arg1: string ) => ManagedContactDetails;
 	updateEmail: ( arg0: ManagedContactDetails, arg1: string ) => ManagedContactDetails;
-	updateCountryCode: ( arg0: ManagedContactDetails, arg1: string ) => ManagedContactDetails;
 	updateTaxFields: (
 		arg0: ManagedContactDetails,
 		arg1: ManagedContactDetails
@@ -322,7 +310,6 @@ export type ManagedContactDetailsUpdaters = {
 		arg1: DomainContactDetails
 	) => ManagedContactDetails;
 	touchContactFields: ( arg0: ManagedContactDetails ) => ManagedContactDetails;
-	updateVatId: ( arg0: ManagedContactDetails, arg1: string ) => ManagedContactDetails;
 	setErrorMessages: (
 		arg0: ManagedContactDetails,
 		arg1: ManagedContactDetailsErrors
