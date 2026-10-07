@@ -1531,23 +1531,25 @@ html[dir='rtl'] .dashboard-amplify-score-preview__card {
 }
 
 .dashboard-amplify-story__faq-list {
-	display: grid;
-	gap: 30px;
-	margin-block-start: 40px;
+	margin-block-start: 32px;
+	border-radius: 8px;
+	overflow: hidden;
+	text-align: start;
 }
 
-.dashboard-amplify-story__faq-item h3 {
-	margin: 0;
-	font-size: 18px;
-	font-weight: 600;
-	line-height: 1.4;
+/* Accordion toggles span the row and wrap long questions. */
+.dashboard-amplify-story__faq-list .components-panel__body-toggle.components-button {
+	inline-size: 100%;
+	justify-content: flex-start;
+	text-align: start;
+	white-space: normal;
 }
 
-.dashboard-amplify-story__faq-item p {
+.dashboard-amplify-story__faq-list .components-panel__body p {
 	max-width: 640px;
-	margin: 8px 0 0;
+	margin: 0;
 	color: var( --color-text-subtle );
-	font-size: 16px;
+	font-size: 14px;
 	line-height: 1.6;
 }
 

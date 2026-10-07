@@ -1,4 +1,4 @@
-import { Button, __experimentalHeading as Heading } from '@wordpress/components';
+import { Button, Panel, PanelBody, __experimentalHeading as Heading } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { useEffect, useRef, useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
@@ -9,42 +9,49 @@ import { severityFor } from './score-severity';
 
 const FAQS = [
 	{
+		id: 'site-access',
 		question: __( 'Do I need access to the site?' ),
 		answer: __(
 			'No. Enter the URL of any public homepage, including a site you’re pitching to. You do not need to connect the site or sign in to it.'
 		),
 	},
 	{
+		id: 'homepage-only',
 		question: __( 'Does the audit cover the whole site?' ),
 		answer: __(
 			'Not yet. Each audit looks at a public homepage, where many visitors and AI tools first encounter a business. The report is a point-in-time view, not a full-site audit.'
 		),
 	},
 	{
+		id: 'full-report',
 		question: __( 'What’s included in a full report?' ),
 		answer: __(
 			'A full report covers both lenses: first-time visitors and AI agents. Each has its own score out of 100, a category breakdown, and findings that explain why they matter and how to improve them. You can also run an audit for just one lens.'
 		),
 	},
 	{
+		id: 'using-scores',
 		question: __( 'How should I use the scores?' ),
 		answer: __(
 			'Treat them as directional signals, not a final verdict. Use the category scores and individual findings to start a conversation about what is working, what needs attention, and what to improve first.'
 		),
 	},
 	{
+		id: 'own-pitch',
 		question: __( 'Can I turn the report into my own pitch?' ),
 		answer: __(
 			'Yes. Feed the PDF into your AI tool of choice to create a branded report or pitch deck in your agency’s voice. Review the result against the site before you share it.'
 		),
 	},
 	{
+		id: 'share-with-prospect',
 		question: __( 'Can I share a report with a prospect?' ),
 		answer: __(
 			'Yes. Download the completed report as a PDF to send ahead of a pitch or walk through together.'
 		),
 	},
 	{
+		id: 'report-updates',
 		question: __( 'Will a report update after the homepage changes?' ),
 		answer: __(
 			'No. Each report captures the public homepage at the time of the audit. Run another audit after making changes to see an updated assessment.'
@@ -339,14 +346,23 @@ export default function AmplifyOverviewStory() {
 				<p className="dashboard-amplify-story__faq-intro">
 					{ __( 'A few things to know before you create or share a report.' ) }
 				</p>
-				<div className="dashboard-amplify-story__faq-list">
+				<Panel className="dashboard-amplify-story__faq-list">
 					{ FAQS.map( ( faq ) => (
-						<div className="dashboard-amplify-story__faq-item" key={ faq.question }>
-							<Heading level={ 3 }>{ faq.question }</Heading>
+						<PanelBody
+							key={ faq.id }
+							title={ faq.question }
+							initialOpen={ false }
+							onToggle={ ( isOpen ) =>
+								recordTracksEvent(
+									isOpen ? 'calypso_a4a_amplify_faq_open' : 'calypso_a4a_amplify_faq_close',
+									{ faq_id: faq.id }
+								)
+							}
+						>
 							<p>{ faq.answer }</p>
-						</div>
+						</PanelBody>
 					) ) }
-				</div>
+				</Panel>
 			</section>
 			{ isSampleOpen && <AmplifySampleReportModal onClose={ () => setIsSampleOpen( false ) } /> }
 		</div>
