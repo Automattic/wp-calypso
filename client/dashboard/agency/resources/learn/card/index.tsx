@@ -1,44 +1,21 @@
-import {
-	__experimentalText as Text,
-	__experimentalVStack as VStack,
-	__experimentalHStack as HStack,
-} from '@wordpress/components';
-import { __, sprintf } from '@wordpress/i18n';
-import { Badge } from '@wordpress/ui';
+import { __experimentalText as Text, __experimentalVStack as VStack } from '@wordpress/components';
 import { memo } from 'react';
 import { Card, CardBody } from '../../../../components/card';
-import { getAudienceLabel, getContentTypeLabel, getStageLabel } from '../lib/labels';
+import ResourceBadges from '../resource-badges';
 import ResourceLink from '../resource-link';
 import ResourceCardHeader from './header';
-import type { FilterResources, OpenResource } from '../types';
+import type { FilterResources, SelectResource } from '../types';
 import type { AgencyEnablementResource } from '@automattic/api-core';
 
 import './style.scss';
 
 interface ResourceCardProps {
 	resource: AgencyEnablementResource;
-	onOpen: OpenResource;
+	onSelect: SelectResource;
 	onFilter: FilterResources;
 }
 
-/** A badge that filters the library by its value. It sits above the card's stretched link. */
-function FilterBadge( { label, onClick }: { label: string; onClick: () => void } ) {
-	return (
-		<button
-			type="button"
-			className="dashboard-resources-learn__filter-badge"
-			aria-label={
-				/* translators: %s: A resource's content type, audience or stage, such as "Learn". */
-				sprintf( __( 'Filter by %s' ), label )
-			}
-			onClick={ onClick }
-		>
-			<Badge intent="draft">{ label }</Badge>
-		</button>
-	);
-}
-
-function ResourceCard( { resource, onOpen, onFilter }: ResourceCardProps ) {
+function ResourceCard( { resource, onSelect, onFilter }: ResourceCardProps ) {
 	return (
 		<Card className="dashboard-resources-learn__card">
 			<ResourceCardHeader
@@ -47,7 +24,7 @@ function ResourceCard( { resource, onOpen, onFilter }: ResourceCardProps ) {
 					<ResourceLink
 						resource={ resource }
 						className="dashboard-resources-learn__card-link"
-						onOpen={ onOpen }
+						onSelect={ onSelect }
 					/>
 				}
 			/>
@@ -56,20 +33,7 @@ function ResourceCard( { resource, onOpen, onFilter }: ResourceCardProps ) {
 					<Text variant="muted" className="dashboard-resources-learn__card-description">
 						{ resource.description }
 					</Text>
-					<HStack spacing={ 1 } justify="flex-start" wrap>
-						<FilterBadge
-							label={ getContentTypeLabel( resource.content_type ) }
-							onClick={ () => onFilter( 'content_type', resource.content_type ) }
-						/>
-						<FilterBadge
-							label={ getAudienceLabel( resource.audience ) }
-							onClick={ () => onFilter( 'audience', resource.audience ) }
-						/>
-						<FilterBadge
-							label={ getStageLabel( resource.stage ) }
-							onClick={ () => onFilter( 'stage', resource.stage ) }
-						/>
-					</HStack>
+					<ResourceBadges resource={ resource } onFilter={ onFilter } />
 				</VStack>
 			</CardBody>
 		</Card>

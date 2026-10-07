@@ -1,17 +1,17 @@
 import Grid from '../../../components/grid';
 import ResourceCard from './card';
-import type { FilterResources, OpenResource } from './types';
+import type { FilterResources, SelectResource } from './types';
 import type { AgencyEnablementResource } from '@automattic/api-core';
 
 interface ResourceGridProps {
 	resources: AgencyEnablementResource[];
-	onOpenResource: OpenResource;
+	onSelectResource: SelectResource;
 	onFilterResources: FilterResources;
 }
 
 export default function ResourceGrid( {
 	resources,
-	onOpenResource,
+	onSelectResource,
 	onFilterResources,
 }: ResourceGridProps ) {
 	return (
@@ -20,7 +20,7 @@ export default function ResourceGrid( {
 				<ResourceCard
 					key={ item.id }
 					resource={ item }
-					onOpen={ onOpenResource }
+					onSelect={ onSelectResource }
 					onFilter={ onFilterResources }
 				/>
 			) ) }

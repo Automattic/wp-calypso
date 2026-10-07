@@ -8,7 +8,7 @@ import {
 	getStageLabel,
 } from '../lib/labels';
 import { ResourceListProduct, ResourceListTitle } from '../resource-list';
-import type { OpenResource } from '../types';
+import type { SelectResource } from '../types';
 import type { AgencyEnablementResource } from '@automattic/api-core';
 import type { Field } from '@wordpress/dataviews';
 
@@ -18,7 +18,7 @@ import type { Field } from '@wordpress/dataviews';
  */
 export function useResourceFields(
 	resources: AgencyEnablementResource[],
-	onOpenResource: OpenResource
+	onSelectResource: SelectResource
 ) {
 	return useMemo( (): Field< AgencyEnablementResource >[] => {
 		// Only offer values that occur in the data, per the v2 contract.
@@ -52,7 +52,9 @@ export function useResourceFields(
 				id: 'name',
 				label: __( 'Title' ),
 				getValue: ( { item } ) => item.name,
-				render: ( { item } ) => <ResourceListTitle resource={ item } onOpen={ onOpenResource } />,
+				render: ( { item } ) => (
+					<ResourceListTitle resource={ item } onSelect={ onSelectResource } />
+				),
 				enableGlobalSearch: true,
 				enableSorting: false,
 				enableHiding: false,
@@ -92,5 +94,5 @@ export function useResourceFields(
 				filterBy: false,
 			},
 		];
-	}, [ resources, onOpenResource ] );
+	}, [ resources, onSelectResource ] );
 }

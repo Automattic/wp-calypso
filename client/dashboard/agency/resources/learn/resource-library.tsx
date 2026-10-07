@@ -19,8 +19,9 @@ import { LAYOUT_FIELDS } from './dataviews/views';
 import { getStageLabel } from './lib/labels';
 import ResourceGrid from './resource-grid';
 import ResourceList from './resource-list';
+import ResourceModal from './resource-modal';
 import type { LayoutType } from './dataviews/views';
-import type { FilterResources, OpenResource } from './types';
+import type { FilterResources, SelectResource } from './types';
 import type { AgencyEnablementResource, AgencyResourceStage } from '@automattic/api-core';
 import type { View } from '@wordpress/dataviews';
 
@@ -34,13 +35,15 @@ interface ResourceLibraryProps {
 	resources: AgencyEnablementResource[];
 	view: View;
 	onChangeView: ( view: View ) => void;
-	onOpenResource: OpenResource;
+	onPreviewResource: ( resource: AgencyEnablementResource ) => void;
+	onOpenResource: ( resource: AgencyEnablementResource ) => void;
 }
 
 export default function ResourceLibrary( {
 	resources,
 	view,
 	onChangeView,
+	onPreviewResource,
 	onOpenResource,
 }: ResourceLibraryProps ) {
 	// The stage toggle drives an ordinary filter, so it's saved with the rest of the view.
@@ -96,7 +99,26 @@ export default function ResourceLibrary( {
 		},
 	];
 
-	const fields = useResourceFields( resources, onOpenResource );
+	const [ selectedId, setSelectedId ] = useState< number | null >( null );
+
+	const previewResource = ( resource: AgencyEnablementResource ) => {
+		setSelectedId( resource.id );
+		onPreviewResource( resource );
+	};
+
+	// Stable across renders, so memoised cards don't re-render while searching.
+	const selectResource: SelectResource = useEvent( ( resource, event ) => {
+		// Modified clicks follow the link and open the resource itself.
+		if ( event.metaKey || event.ctrlKey || event.shiftKey || event.altKey ) {
+			onOpenResource( resource );
+			return;
+		}
+
+		event.preventDefault();
+		previewResource( resource );
+	} );
+
+	const fields = useResourceFields( resources, selectResource );
 
 	// The library isn't paginated, so every match is shown.
 	const { data: filteredData, paginationInfo } = useMemo(
@@ -126,6 +148,12 @@ export default function ResourceLibrary( {
 	} );
 
 	const isList = view.type === 'table';
+
+	// The modal moves through every match, not only those loaded so far.
+	const selectedIndex = filteredData.findIndex( ( resource ) => resource.id === selectedId );
+	const selectedResource = filteredData[ selectedIndex ];
+	const previousResource = filteredData[ selectedIndex - 1 ];
+	const nextResource = filteredData[ selectedIndex + 1 ];
 	// The stage toggle doesn't fit beside the toolbar on narrow screens.
 	const isSmallViewport = useViewportMatch( 'medium', '<' );
 
@@ -213,7 +241,7 @@ export default function ResourceLibrary( {
 			{ ! isList && filteredData.length > 0 && (
 				<ResourceGrid
 					resources={ visibleData }
-					onOpenResource={ onOpenResource }
+					onSelectResource={ selectResource }
 					onFilterResources={ filterResources }
 				/>
 			) }
@@ -242,6 +270,19 @@ export default function ResourceLibrary( {
 						) }
 					</VStack>
 				</Spacer>
+			) }
+			{ selectedResource && (
+				<ResourceModal
+					resource={ selectedResource }
+					onClose={ () => setSelectedId( null ) }
+					onPrevious={ previousResource && ( () => previewResource( previousResource ) ) }
+					onNext={ nextResource && ( () => previewResource( nextResource ) ) }
+					onOpen={ onOpenResource }
+					onFilter={ ( field, value ) => {
+						setSelectedId( null );
+						filterResources( field, value );
+					} }
+				/>
 			) }
 			{ filteredData.length === 0 && (
 				<DataViewsEmptyStateLayout
