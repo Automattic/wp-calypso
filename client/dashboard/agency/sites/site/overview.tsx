@@ -12,6 +12,7 @@ import { siteTypeSupportsFeature } from '../../../utils/site-type-feature-suppor
 import { getSiteName } from '../dataviews/site-data';
 import ActivityCard from './activity-card';
 import BackupCard from './backup-card';
+import AgencySiteHeaderActions from './header-actions';
 import ScanCard from './scan-card';
 
 export default function AgencySiteOverview() {
@@ -26,6 +27,7 @@ export default function AgencySiteOverview() {
 				<PageHeader
 					title={ getSiteName( site ) }
 					description={ <SiteOverviewFields site={ fullSite } /> }
+					actions={ <AgencySiteHeaderActions site={ site } /> }
 				/>
 			}
 		>
