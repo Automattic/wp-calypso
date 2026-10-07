@@ -25,7 +25,7 @@ export const PERSPECTIVES: Record< 'human' | 'ai', ScorePerspective > = {
 	human: {
 		type: 'human',
 		label: __( 'People' ),
-		title: __( 'How people judge a site' ),
+		title: __( 'How visitors judge a site' ),
 		description: __(
 			'New visitors decide if a business is trustworthy in seconds. We check if the homepage proactively answers visitors’ questions and earns their trust.'
 		),
