@@ -13,12 +13,8 @@ const TOOLTIP_DATE_STYLE = { fontWeight: 600, marginBlockEnd: '4px' };
 const TOOLTIP_ROW_STYLE = { display: 'flex', justifyContent: 'space-between', gap: '12px' };
 
 /**
- * Tooltip for a hovered point: the date it belongs to, then each series by value.
- *
- * The package's own tooltip prints `date.toLocaleDateString()`, which labels a month's
- * total as the first day of that month and follows the browser's locale rather than the
- * site's. Moment carries Odyssey's locale, and the format follows the range's bucket, as
- * the axis labels do.
+ * Tooltip for a hovered point. The package's own prints `toLocaleDateString()`, which names
+ * a month's total by its first day and ignores the site's locale.
  * @param unit The range's bucket.
  * @returns The `renderTooltip` handler.
  */
@@ -55,8 +51,7 @@ interface OverviewChartProps {
 }
 
 /**
- * The Overview line chart, loaded as its own chunk: `@automattic/charts` bundles visx
- * (~157KB gzipped), so the rest of the widget paints without waiting for it.
+ * The Overview line chart, loaded as its own chunk so the rest of the widget paints first.
  * @param props        Component props.
  * @param props.series The series to plot.
  * @param props.height Chart height in pixels.
@@ -71,23 +66,19 @@ const OverviewChart: FunctionComponent< OverviewChartProps > = ( { series, heigh
 		height={ height }
 		curveType="monotone"
 		renderTooltip={ ( params ) => renderTooltip( unit, params ) }
-		// Which date the axis ticks last moves with the calendar, and a tick on the last point
-		// centres its label on the chart's right edge. The right margin is wide enough for
-		// half a date label ("Sep 30"), so none is clipped whichever lands there.
+		// Room on the right for half a date label ("Sep 30"), since the last tick can fall on
+		// the last point and centre its label on the edge.
 		margin={ { left: 32, top: 8, bottom: 20, right: 24 } }
 		options={ {
-			// Start at zero, so ranges that never approach it don't look more dramatic
-			// than they are.
+			// From zero, so a range that never approaches it doesn't look more dramatic than it is.
 			yScale: { type: 'linear', zero: true },
 			axis: {
 				x: {
 					tickFormat: ( value: number ) =>
 						moment( value ).format( 'month' === unit ? 'MMM' : 'MMM D' ),
 				},
-				// Compact ticks ("12K"), which fit the left margin and match the totals. Zero is
-				// blanked since the grid line marks it, and so are the fractional ticks a quiet
-				// site gets, since views and visitors are whole. Blanked rather than through
-				// visx's `hideZero`, which the package doesn't type.
+				// Compact, like the totals. Zero is left to the grid line, and a quiet site's
+				// fractional ticks are blanked since views are whole (`hideZero` isn't typed).
 				y: {
 					orientation: 'left',
 					tickFormat: ( value: number ) =>

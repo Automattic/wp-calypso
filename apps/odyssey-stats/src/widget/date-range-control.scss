@@ -1,6 +1,5 @@
-// Follows Premium Analytics' `menu-trigger` mixin (jetpack
-// `premium-analytics/packages/ui/src/styles/_menu-trigger.scss`), restyling wp-components'
-// Button as a form field. It is the Button WordPress ships, not the one in `node_modules`.
+// Restyles WordPress's own Button as a form field, after Premium Analytics' `menu-trigger`
+// mixin (jetpack `premium-analytics/packages/ui/src/styles/_menu-trigger.scss`).
 .stats-widget-date-range {
 	// Flex, so the inline-flex button doesn't sit on a text baseline.
 	display: flex;

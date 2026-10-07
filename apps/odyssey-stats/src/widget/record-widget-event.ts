@@ -1,15 +1,12 @@
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import type { MouseEvent } from 'react';
 
-/**
- * Tracks only queues an event; navigating in the same tick cancels the request that would
- * have sent it. The connection flow waits the same beat before leaving the page.
- */
+// Tracks only queues an event, and navigating in the same tick cancels its request. The
+// connection flow waits the same beat.
 const TRACKS_FLUSH_DELAY = 250;
 
 /**
- * Records a Tracks event for the dashboard widget, following the `jetpack_odyssey_stats_`
- * naming the rest of Odyssey Stats uses.
+ * Records a `jetpack_odyssey_stats_widget_*` Tracks event.
  * @param name       The action, verb last, e.g. `date_range_changed`.
  * @param properties Event properties.
  */
@@ -19,8 +16,7 @@ export default function recordWidgetEvent( name: string, properties?: Record< st
 
 /**
  * Click handler for a link that leaves the dashboard: records the event, then follows the
- * link a beat later so the request survives. A click the browser would open elsewhere —
- * a new tab or window — is left alone, since the page it was clicked from stays put.
+ * link a beat later. A click that opens a new tab or window is left alone.
  * @param name       The action, verb last.
  * @param properties Event properties.
  * @returns The click handler.

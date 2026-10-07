@@ -19,9 +19,9 @@ interface DateRangeControlProps {
 }
 
 /**
- * The widget's date range picker. Follows Premium Analytics' `DateComparisonDropdown`
- * (jetpack `premium-analytics/packages/ui/src/date-comparison-dropdown`), rather than a
- * `SelectControl`, whose options open in the browser's native menu.
+ * The widget's date range picker, after Premium Analytics' `DateComparisonDropdown` (jetpack
+ * `premium-analytics/packages/ui/src/date-comparison-dropdown`), rather than a `SelectControl`,
+ * whose options open in the browser's native menu.
  */
 const DateRangeControl: FunctionComponent< DateRangeControlProps > = ( { value, onChange } ) => {
 	const translate = useTranslate();

@@ -11,14 +11,9 @@ interface ChartBoundaryState {
 }
 
 /**
- * Keeps a failing chart from taking the widget with it.
- *
- * The chart is a lazy chunk, so it can fail long after the page loaded — a dropped
- * connection, or a deploy that replaced the hashed filename this page was served. `Suspense`
- * covers the wait, not the failure: an error thrown while rendering unmounts the whole widget
- * root, blanking the totals, the lists and the links along with the chart.
- *
- * A class is the only way to catch that; hooks have no equivalent of `componentDidCatch`.
+ * Keeps a failing chart from taking the widget with it. The chart is a lazy chunk, which can
+ * fail long after the page loaded (a dropped connection, or a deploy replacing its hashed
+ * filename), and an error while rendering would otherwise unmount the whole widget root.
  */
 export default class ChartBoundary extends Component< ChartBoundaryProps, ChartBoundaryState > {
 	state: ChartBoundaryState = { hasFailed: false };

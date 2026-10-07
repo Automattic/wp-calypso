@@ -19,11 +19,7 @@ function queryTopPosts( siteId: number, params: QueryTopPostsParams ) {
 }
 
 /**
- * The range's top posts and pages.
- *
- * The window is stated as whole days between `startDate` and `date`: a summarized
- * request counts back in days whatever period it is given, so a month period would
- * silently return that many days instead. See `getRangeStartDate`.
+ * Top posts and pages over the days from `startDate` to `date` (see `getRangeStartDate`).
  * @param siteId    The site to query.
  * @param startDate First day of the range, as `YYYY-MM-DD`.
  * @param date      Last day of the range, as `YYYY-MM-DD`.
