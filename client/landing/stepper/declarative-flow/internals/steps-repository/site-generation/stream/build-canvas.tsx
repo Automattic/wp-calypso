@@ -1,18 +1,37 @@
+import { Tabs } from '@automattic/components';
+import { Icon, caution, image as imageIcon } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import type { StreamPage, StreamSection } from './reducer';
+import { useEffect, useState } from 'react';
+import { useBuildImagePreview } from './use-build-image-preview';
+import type {
+	StreamImage,
+	StreamPage,
+	StreamPlan,
+	StreamPlanImage,
+	StreamSection,
+} from './reducer';
 import type { BuildWowStreamView } from './use-build-wow-stream';
 import type { CSSProperties } from 'react';
 
-function hasCapability( stream: BuildWowStreamView, capability: string ): boolean {
-	return stream.info.capabilities.includes( capability );
+function hasCapability( stream: BuildWowStreamView | null, capability: string ): boolean {
+	return stream?.info.capabilities.includes( capability ) ?? false;
 }
 
-// Streamed family names become a font-family stack. Anything that is not a
-// real family name is dropped, and a local face always follows so a missing
-// webfont still leaves the specimen readable.
+const GENERIC_FONT_FAMILY =
+	/^(serif|sans-serif|monospace|cursive|fantasy|system-ui|ui-serif|ui-sans-serif|ui-monospace|ui-rounded|emoji|math|fangsong)$/i;
+
+function fontFamilies( family: string ): string[] {
+	return family
+		.split( ',' )
+		.map( ( name ) => name.replace( /[^a-zA-Z0-9 -]/g, '' ).trim() )
+		.filter( Boolean );
+}
+
 function specimenStack( family: string, fallback: string ): string {
-	const safe = family.replace( /[^a-zA-Z0-9 -]/g, '' ).trim();
-	return safe ? `"${ safe }", ${ fallback }` : fallback;
+	const stack = fontFamilies( family ).map( ( name ) =>
+		GENERIC_FONT_FAMILY.test( name ) ? name : `"${ name }"`
+	);
+	return [ ...stack, fallback ].join( ', ' );
 }
 
 function isHeadingRole( role: string | null ): boolean {
@@ -23,12 +42,119 @@ function isBodyRole( role: string | null ): boolean {
 	return /body|text|paragraph/i.test( role ?? '' );
 }
 
-function imageLabel( id: string ): string {
-	const words = id.replace( /[-_]+/g, ' ' ).replace( /\s+/g, ' ' ).trim();
+function imageLabel( id: string ): string | null {
+	const filename = id.split( '/' ).pop() ?? id;
+	const stem = filename.replace( /\.[^.]+$/, '' );
+	if ( /[a-f\d]{16,}/i.test( stem ) ) {
+		return null;
+	}
+	const words = stem.replace( /[-_]+/g, ' ' ).replace( /\s+/g, ' ' ).trim();
 	if ( ! words ) {
-		return id;
+		return null;
 	}
 	return words.charAt( 0 ).toUpperCase() + words.slice( 1 );
+}
+
+function imageEntriesForPlan(
+	plannedImages: StreamPlanImage[] | null | undefined,
+	images: Record< string, StreamImage >
+): Array< [ string, StreamImage ] > {
+	const lifecycleImages = Object.entries( images );
+	if ( ! plannedImages?.length ) {
+		return lifecycleImages;
+	}
+
+	const matchedIds = new Set< string >();
+	const plannedEntries = plannedImages.map( ( planned, index ) => {
+		const match = lifecycleImages.find(
+			( [ id, image ] ) => ! matchedIds.has( id ) && image.query === planned.query
+		);
+		if ( match ) {
+			matchedIds.add( match[ 0 ] );
+			return [ `planned-${ index }`, match[ 1 ] ] as [ string, StreamImage ];
+		}
+		return [
+			`planned-${ index }`,
+			{
+				status: 'pending',
+				url: null,
+				query: planned.query,
+				aspectRatio: planned.aspectRatio,
+			},
+		] as [ string, StreamImage ];
+	} );
+
+	return [ ...plannedEntries, ...lifecycleImages.filter( ( [ id ] ) => ! matchedIds.has( id ) ) ];
+}
+
+function ImagePreview( {
+	url: fallbackUrl,
+	previewId,
+	stream,
+	label,
+	status,
+	objectFit,
+}: {
+	url: string | null;
+	previewId?: string;
+	stream: BuildWowStreamView | null;
+	label: string;
+	status: string;
+	objectFit: 'cover' | 'contain';
+} ) {
+	const previewUrl = useBuildImagePreview( previewId, stream );
+	const url = previewUrl ?? fallbackUrl;
+	const [ loadedUrl, setLoadedUrl ] = useState< string | null >( null );
+	const [ failedUrl, setFailedUrl ] = useState< string | null >( null );
+	const isLoaded = Boolean( url && loadedUrl === url && failedUrl !== url );
+	return (
+		<div className="site-generation-live__image-preview" data-loaded={ isLoaded }>
+			<span aria-hidden="true" className="site-generation-live__slot-mark" data-status={ status }>
+				<Icon icon={ status === 'failed' ? caution : imageIcon } />
+			</span>
+			{ url && failedUrl !== url && (
+				<img
+					alt={ label }
+					loading="lazy"
+					onError={ () => setFailedUrl( url ) }
+					onLoad={ () => setLoadedUrl( url ) }
+					referrerPolicy="no-referrer"
+					src={ url }
+					style={ { objectFit } }
+				/>
+			) }
+		</div>
+	);
+}
+
+function streamedFontFamily( family: string ): string | null {
+	return (
+		fontFamilies( family ).find(
+			( name ) => ! GENERIC_FONT_FAMILY.test( name ) && name.toLowerCase() !== 'recoleta'
+		) ?? null
+	);
+}
+
+function StreamedFont( { family }: { family: string } ) {
+	useEffect( () => {
+		const params = new URLSearchParams( {
+			family: `${ family }:ital,wght@0,400;0,700;1,400;1,700`,
+			display: 'swap',
+		} );
+		const stylesheet = document.createElement( 'link' );
+		stylesheet.rel = 'stylesheet';
+		stylesheet.href = `https://fonts-api.wp.com/css2?${ params.toString() }`;
+		document.head.appendChild( stylesheet );
+		return () => stylesheet.remove();
+	}, [ family ] );
+	return null;
+}
+
+function paletteColor( palette: StreamPlan[ 'palette' ], names: string[], fallback: string ) {
+	const namedColor = palette?.find( ( swatch ) =>
+		names.some( ( name ) => swatch.name.toLowerCase().includes( name ) )
+	);
+	return namedColor?.color ?? fallback;
 }
 
 type OutlineRow = {
@@ -87,42 +213,53 @@ export function BuildWowStreamCanvas( {
 	stream,
 	activityLabel,
 	reassurance,
+	imageBaseUrl,
 }: {
-	stream: BuildWowStreamView;
+	stream: BuildWowStreamView | null;
 	activityLabel?: string;
 	reassurance?: string;
+	imageBaseUrl?: string;
 } ) {
 	const translate = useTranslate();
-	const { info, state } = stream;
-	const plan = state.plan;
+	const state = stream?.state;
+	const plan = state?.plan;
 	// Older Build Wow hosts may advertise only `progress` while still forwarding
 	// the Engine's structured plan fields. Render those fields when present; the
 	// payload itself is the evidence, and this UI never renders generated markup.
-	const canPlan = hasCapability( stream, 'planning' ) || Boolean( plan?.direction || plan?.pages );
+	const canPlan =
+		hasCapability( stream, 'planning' ) ||
+		Boolean( plan?.direction || plan?.pages || plan?.images?.length );
 	const canDesign =
 		hasCapability( stream, 'design' ) ||
 		Boolean( plan?.palette?.length || plan?.typography?.length );
 	const canShowSections = hasCapability( stream, 'sections' );
-	const directions = canPlan ? state.directions : [];
+	const directions = canPlan ? ( state?.directions ?? [] ) : [];
 	const palette = canDesign ? ( plan?.palette ?? [] ) : [];
 	const typography = canDesign ? ( plan?.typography ?? [] ) : [];
 	const pages = canPlan ? ( plan?.pages ?? [] ) : [];
-	const imageEntries = Object.entries( state.images );
-	const readyImages = imageEntries.filter( ( [ , status ] ) => status === 'ready' ).length;
+	const imageEntries = imageEntriesForPlan( plan?.images, state?.images ?? {} );
+	const readyImages = imageEntries.filter( ( [ , image ] ) => image.status === 'ready' ).length;
 	const headingFace =
 		typography.find( ( face ) => isHeadingRole( face.role ) ) ?? typography[ 0 ] ?? null;
 	const bodyFace =
 		typography.find( ( face ) => face !== headingFace && isBodyRole( face.role ) ) ??
 		typography.find( ( face ) => face !== headingFace ) ??
 		null;
+	const fontFamiliesToLoad = [
+		...new Set( typography.map( ( face ) => streamedFontFamily( face.family ) ) ),
+	].filter( ( family ): family is string => family !== null );
+	const paletteStyle = {
+		'--live-site-accent': paletteColor( palette, [ 'accent', 'primary', 'highlight' ], '#3858e9' ),
+		'--live-site-surface': paletteColor( palette, [ 'surface', 'paper', 'background' ], '#f6f6f7' ),
+	} as CSSProperties;
 	const groups = pages.map( ( page ) => ( {
 		key: page.slug,
 		title: page.title,
-		rows: outlineRows( page, state.sections[ page.slug ], canShowSections ),
+		rows: outlineRows( page, state?.sections[ page.slug ], canShowSections ),
 	} ) );
 
 	if ( canShowSections ) {
-		for ( const [ route, positions ] of Object.entries( state.sections ) ) {
+		for ( const [ route, positions ] of Object.entries( state?.sections ?? {} ) ) {
 			if ( pages.some( ( page ) => page.slug === route ) ) {
 				continue;
 			}
@@ -143,7 +280,8 @@ export function BuildWowStreamCanvas( {
 		directions.length ||
 		palette.length ||
 		typography.length ||
-		pages.length
+		pages.length ||
+		plan?.images?.length
 	);
 	let lede: string | null = null;
 	if ( plan?.direction && canPlan ) {
@@ -153,10 +291,8 @@ export function BuildWowStreamCanvas( {
 			translate( 'A visual world. A thoughtful structure. A site that feels like you.' )
 		);
 	}
-	const currentStep = state.currentStep ?? activityLabel ?? translate( 'Getting the build ready' );
-	const graphLabel = info.graph
-		? translate( '%(graph)s build', { args: { graph: info.graph } } )
-		: translate( 'Site build' );
+	const currentStep =
+		state?.currentStep ?? activityLabel ?? translate( 'Preparing your live site preview' );
 	let statusLabel = translate( 'Listening' );
 	if ( isComposing ) {
 		statusLabel = translate( 'Composing' );
@@ -169,6 +305,12 @@ export function BuildWowStreamCanvas( {
 		rowCount === 1
 			? translate( '%(count)d section', { args: { count: rowCount } } )
 			: translate( '%(count)d sections', { args: { count: rowCount } } );
+	const [ selectedPageKey, setSelectedPageKey ] = useState< string | null >( null );
+	const selectedPageIndex = Math.max(
+		0,
+		groups.findIndex( ( group ) => group.key === selectedPageKey )
+	);
+	const selectedPage = groups[ selectedPageIndex ];
 
 	return (
 		<section
@@ -177,7 +319,12 @@ export function BuildWowStreamCanvas( {
 			data-brief={ hasBrief ? 'ready' : 'waiting' }
 			data-capability-design={ canDesign }
 			data-capability-planning={ canPlan }
+			data-status={ isComposing ? 'composing' : ( plan?.status ?? 'listening' ) }
+			style={ paletteStyle }
 		>
+			{ fontFamiliesToLoad.map( ( family ) => (
+				<StreamedFont family={ family } key={ family } />
+			) ) }
 			<div className="site-generation-live__mast">
 				<p className="site-generation-live__eyebrow">
 					{ hasBrief
@@ -187,7 +334,6 @@ export function BuildWowStreamCanvas( {
 				<p className="site-generation-live__status">
 					<span aria-hidden="true" className="site-generation-live__status-dot" />
 					<span>{ statusLabel }</span>
-					<span className="site-generation-live__graph">{ graphLabel }</span>
 				</p>
 			</div>
 
@@ -195,6 +341,7 @@ export function BuildWowStreamCanvas( {
 				<div className="site-generation-live__direction">
 					<h2
 						className="site-generation-live__title"
+						key={ plan?.title ?? 'site-title-placeholder' }
 						style={
 							headingFace
 								? ( {
@@ -205,10 +352,17 @@ export function BuildWowStreamCanvas( {
 					>
 						{ plan?.title ?? translate( 'Your site is taking shape' ) }
 					</h2>
-					{ lede && <p className="site-generation-live__lede">{ lede }</p> }
+					{ lede && (
+						<p className="site-generation-live__lede" key={ lede }>
+							{ lede }
+						</p>
+					) }
 
 					{ typography.length > 0 && headingFace ? (
-						<div className="site-generation-live__specimen">
+						<div
+							className="site-generation-live__specimen"
+							key={ `${ headingFace.family }-${ bodyFace?.family ?? '' }` }
+						>
 							<p className="site-generation-live__label">{ translate( 'The type' ) }</p>
 							<div className="site-generation-live__specimen-sample">
 								<span
@@ -237,17 +391,12 @@ export function BuildWowStreamCanvas( {
 										{ face.role && (
 											<span className="site-generation-live__face-role">{ face.role }</span>
 										) }
-										<span className="site-generation-live__face-name">{ face.family }</span>
+										<span className="site-generation-live__face-name">{ face.name }</span>
 									</li>
 								) ) }
 							</ul>
 						</div>
-					) : (
-						<div aria-hidden="true" className="site-generation-live__cards">
-							<span className="site-generation-live__card">Aa</span>
-							<span className="site-generation-live__card">Aa</span>
-						</div>
-					) }
+					) : null }
 
 					{ ( directions.length > 0 || ! plan?.direction ) && (
 						<div className="site-generation-live__feeling">
@@ -274,7 +423,10 @@ export function BuildWowStreamCanvas( {
 					) }
 
 					{ palette.length > 0 && (
-						<div className="site-generation-live__palette-block">
+						<div
+							className="site-generation-live__palette-block"
+							key={ palette.map( ( swatch ) => swatch.color ).join( '-' ) }
+						>
 							<p className="site-generation-live__label">{ translate( 'The palette' ) }</p>
 							<ul
 								aria-label={ String( translate( 'Emerging color palette' ) ) }
@@ -310,22 +462,46 @@ export function BuildWowStreamCanvas( {
 								</p>
 							</div>
 							<ul className="site-generation-live__slots">
-								{ imageEntries.map( ( [ id, status ] ) => (
-									<li
-										className={ `site-generation-live__slot site-generation-live__slot--${ status }` }
-										key={ id }
-									>
-										<span aria-hidden="true" className="site-generation-live__slot-mark" />
-										<span className="site-generation-live__slot-name">{ imageLabel( id ) }</span>
-										<span className="site-generation-live__slot-status">
-											{ status === 'ready' && translate( 'Ready' ) }
-											{ status === 'generating' && translate( 'Creating' ) }
-											{ status === 'failed' && translate( 'Couldn’t create' ) }
-											{ status === 'pending' && translate( 'Waiting' ) }
-										</span>
-									</li>
-								) ) }
+								{ imageEntries.map( ( [ key, image ] ) => {
+									const previewUrl =
+										image.url && imageBaseUrl ? new URL( image.url, imageBaseUrl ).href : null;
+									const queryLabel =
+										image.query && /^[a-z\d]+(?:[-_][a-z\d]+)+$/i.test( image.query )
+											? imageLabel( image.query )
+											: image.query;
+									const label =
+										queryLabel ?? imageLabel( key ) ?? String( translate( 'Site image' ) );
+									return (
+										<li
+											className={ `site-generation-live__slot site-generation-live__slot--${ image.status }` }
+											key={ key }
+										>
+											<ImagePreview
+												label={ label }
+												previewId={ image.previewId }
+												stream={ stream }
+												objectFit={ image.aspectRatio === '1:1' ? 'contain' : 'cover' }
+												status={ image.status }
+												url={ previewUrl }
+											/>
+											<span className="site-generation-live__slot-name">{ label }</span>
+											<span className="site-generation-live__slot-status">
+												{ image.status === 'ready' && translate( 'Ready' ) }
+												{ image.status === 'generating' && translate( 'Creating' ) }
+												{ image.status === 'failed' && translate( 'Generation attempt failed' ) }
+												{ image.status === 'pending' && translate( 'Waiting' ) }
+											</span>
+										</li>
+									);
+								} ) }
 							</ul>
+							{ imageEntries.some(
+								( [ , image ] ) => image.status === 'ready' && ! image.url && ! image.previewId
+							) && (
+								<p className="site-generation-live__waiting-note">
+									{ translate( 'Images are ready. Previews aren’t available for this build.' ) }
+								</p>
+							) }
 						</div>
 					) }
 				</div>
@@ -338,22 +514,35 @@ export function BuildWowStreamCanvas( {
 						</p>
 					</div>
 					<div className="site-generation-live__site">
-						<span aria-hidden="true" className="site-generation-live__site-mark" />
 						<span
 							aria-hidden={ plan?.title ? true : undefined }
 							className="site-generation-live__site-name"
 						>
 							{ plan?.title ?? translate( 'Your new website' ) }
 						</span>
-						<span aria-hidden="true" className="site-generation-live__status-dot" />
 					</div>
-					{ rowCount > 0 ? (
-						<div className="site-generation-live__pages">
+					{ selectedPage ? (
+						<Tabs
+							onSelect={ ( key: string | null | undefined ) => setSelectedPageKey( key ?? null ) }
+							selectedTabId={ selectedPage.key }
+						>
+							<Tabs.TabList
+								aria-label={ String( translate( 'Site pages' ) ) }
+								className="site-generation-live__page-tabs"
+								density="compact"
+							>
+								{ groups.map( ( group ) => (
+									<Tabs.Tab key={ group.key } tabId={ group.key }>
+										{ group.title }
+									</Tabs.Tab>
+								) ) }
+							</Tabs.TabList>
 							{ groups.map( ( group ) => (
-								<div className="site-generation-live__page" key={ group.key }>
-									{ groups.length > 1 && (
-										<p className="site-generation-live__page-title">{ group.title }</p>
-									) }
+								<Tabs.TabPanel
+									className="site-generation-live__pages"
+									key={ group.key }
+									tabId={ group.key }
+								>
 									<ol className="site-generation-live__rows">
 										{ group.rows.map( ( row, index ) => (
 											<li
@@ -378,19 +567,14 @@ export function BuildWowStreamCanvas( {
 											</li>
 										) ) }
 									</ol>
-								</div>
+								</Tabs.TabPanel>
 							) ) }
-						</div>
+						</Tabs>
 					) : (
 						<div className="site-generation-live__outline-empty">
-							<div aria-hidden="true" className="site-generation-live__dashes">
-								<span />
-								<span />
-								<span />
-							</div>
 							<p>{ translate( 'Connecting your ideas into a site' ) }</p>
 							<p className="site-generation-live__waiting-note">
-								{ translate( 'Your structure will appear here' ) }
+								{ translate( 'Your page structure will appear here' ) }
 							</p>
 						</div>
 					) }
@@ -403,7 +587,6 @@ export function BuildWowStreamCanvas( {
 			</div>
 
 			<div aria-live="polite" className="site-generation-live__activity" role="status">
-				<span aria-hidden="true" className="site-generation-live__activity-mark" />
 				<span className="site-generation-live__activity-copy">
 					<span>{ currentStep }</span>
 					{ reassurance && <span className="site-generation-live__reassure">{ reassurance }</span> }

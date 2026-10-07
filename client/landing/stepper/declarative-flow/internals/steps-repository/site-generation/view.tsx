@@ -135,11 +135,15 @@ function ElapsedTime( { startedAt }: { startedAt: number } ) {
 function WaitingCanvas( {
 	graph,
 	stream,
+	streamRequested,
+	imageBaseUrl,
 	activityLabel,
 	onPreviewTap,
 }: {
 	graph?: BuildWowGraph;
 	stream?: BuildWowStreamView | null;
+	streamRequested: boolean;
+	imageBaseUrl?: string;
 	activityLabel?: string;
 	onPreviewTap: () => void;
 } ) {
@@ -153,13 +157,14 @@ function WaitingCanvas( {
 					'This can take up to 10 minutes. No worries, you’ll receive an email when the site is ready.'
 				);
 
-	if ( stream ) {
+	if ( streamRequested || stream ) {
 		return (
 			<div className="site-generation__waiting site-generation__waiting--live">
 				<BuildWowStreamCanvas
 					activityLabel={ activityLabel }
+					imageBaseUrl={ imageBaseUrl }
 					reassurance={ String( description ) }
-					stream={ stream }
+					stream={ stream ?? null }
 				/>
 			</div>
 		);
@@ -300,11 +305,15 @@ export function SiteGenerationView( {
 	state,
 	graph,
 	stream,
+	streamRequested = false,
+	siteSlug,
 	onReload,
 }: {
 	state: SiteGenerationState;
 	graph?: BuildWowGraph;
 	stream?: BuildWowStreamView | null;
+	streamRequested?: boolean;
+	siteSlug?: string | null;
 	onReload: () => void;
 } ) {
 	const translate = useTranslate();
@@ -316,6 +325,17 @@ export function SiteGenerationView( {
 		'--site-generation-canvas-base': baseColor ?? undefined,
 	} as CSSProperties;
 	const activeStepLabel = state.steps.find( ( step ) => step.status === 'active' )?.label;
+	let imageBaseUrl: string | undefined;
+	if ( siteSlug && ! /[/?#@]/.test( siteSlug ) ) {
+		try {
+			const siteUrl = new URL( `https://${ siteSlug }` );
+			if ( siteUrl.hostname === siteSlug.toLowerCase() ) {
+				imageBaseUrl = siteUrl.origin;
+			}
+		} catch {
+			// The live canvas can still show image status when the site has no valid host.
+		}
+	}
 
 	return (
 		<main className="site-generation" data-generation-view={ state.status }>
@@ -353,8 +373,10 @@ export function SiteGenerationView( {
 						<WaitingCanvas
 							activityLabel={ activeStepLabel }
 							graph={ graph }
+							imageBaseUrl={ imageBaseUrl }
 							onPreviewTap={ cycleTint }
 							stream={ state.status === 'working' ? stream : null }
+							streamRequested={ streamRequested }
 						/>
 					) }
 				</div>

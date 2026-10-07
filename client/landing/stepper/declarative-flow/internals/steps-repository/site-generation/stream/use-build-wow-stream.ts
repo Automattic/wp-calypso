@@ -7,6 +7,7 @@ import type { BuildWowStreamInfo } from './types';
 export type BuildWowStreamView = {
 	info: BuildWowStreamInfo;
 	state: BuildWowStreamState;
+	authorize?: () => Promise< string | null >;
 };
 
 /**
@@ -44,7 +45,7 @@ export function useBuildWowStream( info: BuildWowStreamInfo | null ): BuildWowSt
 		const unsubscribe = subscribeToBuildWowStream( {
 			info,
 			authorize,
-			onState: ( state ) => setView( { info, state } ),
+			onState: ( state ) => setView( { info, state, authorize } ),
 			onStop: ( reason ) =>
 				logBuildWowEvent(
 					'site_generation_stream_stopped',
