@@ -1,28 +1,29 @@
 /**
  * @jest-environment jsdom
  */
-import { render } from '@testing-library/react';
-import { DropdownMenu } from '@wordpress/components';
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import DateRangeControl from '../date-range-control';
 
-jest.mock( '@wordpress/components', () => ( {
-	DropdownMenu: jest.fn( () => null ),
-	MenuGroup: ( { children } ) => children,
-	MenuItem: ( { children } ) => children,
-} ) );
-
 describe( 'DateRangeControl', () => {
-	beforeEach( () => {
-		DropdownMenu.mockClear();
-	} );
-
-	it( 'shows the selected range on the button', () => {
-		render( <DateRangeControl value="last_30_days" onChange={ jest.fn() } /> );
-		expect( DropdownMenu.mock.calls[ 0 ][ 0 ].text ).toBe( 'Last 30 days' );
-	} );
-
 	it( 'names the button with the range it shows, for speech control', () => {
 		render( <DateRangeControl value="last_30_days" onChange={ jest.fn() } /> );
-		expect( DropdownMenu.mock.calls[ 0 ][ 0 ].label ).toBe( 'Date range: Last 30 days' );
+
+		expect( screen.getByRole( 'button', { name: 'Date range: Last 30 days' } ) ).toHaveTextContent(
+			'Last 30 days'
+		);
+	} );
+
+	it( 'reports the chosen range and closes the menu', async () => {
+		const user = userEvent.setup();
+		const onChange = jest.fn();
+		render( <DateRangeControl value="last_7_days" onChange={ onChange } /> );
+
+		await user.click( screen.getByRole( 'button', { name: 'Date range: Last 7 days' } ) );
+		expect( screen.getByRole( 'menuitemradio', { name: 'Last 7 days' } ) ).toBeChecked();
+
+		await user.click( screen.getByRole( 'menuitemradio', { name: 'Last 90 days' } ) );
+		expect( onChange ).toHaveBeenCalledWith( 'last_90_days' );
+		expect( screen.queryByRole( 'menuitemradio' ) ).not.toBeInTheDocument();
 	} );
 } );

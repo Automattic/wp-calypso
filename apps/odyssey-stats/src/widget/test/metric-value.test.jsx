@@ -20,21 +20,12 @@ describe( 'MetricValue', () => {
 		window.matchMedia = jest.fn().mockReturnValue( { matches: true } );
 	} );
 
-	it( 'shows the compact figure', () => {
-		render( <MetricValue value={ 118492 } describe={ describe_ } /> );
-		expect( screen.getByText( '118.5K' ) ).toBeInTheDocument();
-	} );
-
-	it( 'adds a tooltip with the full amount when the compact form hides digits', () => {
-		render( <MetricValue value={ 118492 } describe={ describe_ } /> );
-		expect( screen.getByTestId( 'tooltip' ) ).toHaveAttribute( 'data-text', '118,492 views' );
-	} );
-
-	it( 'gives screen readers the full amount, and hides the compact one from them', () => {
+	it( 'shows the compact figure, with the full amount in a tooltip and for screen readers', () => {
 		const { container } = render( <MetricValue value={ 118492 } describe={ describe_ } /> );
 
-		expect( container.querySelector( '.screen-reader-text' ) ).toHaveTextContent( '118,492 views' );
 		expect( screen.getByText( '118.5K' ) ).toHaveAttribute( 'aria-hidden', 'true' );
+		expect( screen.getByTestId( 'tooltip' ) ).toHaveAttribute( 'data-text', '118,492 views' );
+		expect( container.querySelector( '.screen-reader-text' ) ).toHaveTextContent( '118,492 views' );
 	} );
 
 	it( 'skips the tooltip when the figure is already exact', () => {

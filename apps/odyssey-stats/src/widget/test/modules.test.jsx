@@ -91,18 +91,12 @@ describe( 'Modules', () => {
 	describe( 'for a user who cannot manage modules', () => {
 		beforeEach( () => canCurrentUser.mockReturnValue( false ) );
 
-		it( 'hides a failed metric rather than showing it as zero', () => {
+		it( 'hides a failed metric rather than showing it as zero, and its Anti-spam link', () => {
 			moduleStates( { protect: ok( 12345 ), akismet: failed() } );
 			renderModules();
 
 			expect( screen.getByText( 'Blocked login attempts' ) ).toBeInTheDocument();
 			expect( screen.queryByText( 'Blocked spam comments' ) ).not.toBeInTheDocument();
-		} );
-
-		it( 'hides the Anti-spam link along with the Akismet metric', () => {
-			moduleStates( { protect: ok( 12345 ), akismet: failed() } );
-			renderModules();
-
 			expect(
 				screen.queryByRole( 'link', { name: 'Anti-spam insights' } )
 			).not.toBeInTheDocument();
@@ -115,16 +109,10 @@ describe( 'Modules', () => {
 			expect( container ).toBeEmptyDOMElement();
 		} );
 
-		it( 'shows both metrics when the data loads', () => {
+		it( 'shows both metrics but withholds the Anti-spam link, whose page asks for more', () => {
 			renderModules();
 
 			expect( screen.getByText( 'Blocked login attempts' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'Blocked spam comments' ) ).toBeInTheDocument();
-		} );
-
-		it( 'withholds the Anti-spam link, whose page asks for more than the figure does', () => {
-			renderModules();
-
 			expect( screen.getByText( 'Blocked spam comments' ) ).toBeInTheDocument();
 			expect(
 				screen.queryByRole( 'link', { name: 'Anti-spam insights' } )

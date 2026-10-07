@@ -51,23 +51,18 @@ describe( 'recordWidgetEvent', () => {
 			expect( window.location.href ).toBe( 'https://example.test/next' );
 		} );
 
-		it( 'leaves a new-tab link alone, since the page it was clicked from stays', () => {
-			const event = clickOn( { target: '_blank' } );
-			recordWidgetEventThenFollow( 'referrer_clicked' )( event );
+		it.each( [
+			{ target: '_blank' },
+			{ metaKey: true },
+			{ ctrlKey: true },
+			{ shiftKey: true },
+			{ altKey: true },
+		] )( 'leaves a click that opens elsewhere alone: %o', ( click ) => {
+			const event = clickOn( click );
+			recordWidgetEventThenFollow( 'post_clicked' )( event );
 
 			expect( recordTracksEvent ).toHaveBeenCalled();
 			expect( event.preventDefault ).not.toHaveBeenCalled();
 		} );
-
-		it.each( [ 'metaKey', 'ctrlKey', 'shiftKey', 'altKey' ] )(
-			'leaves a %s click alone, which the browser opens elsewhere',
-			( key ) => {
-				const event = clickOn( { [ key ]: true } );
-				recordWidgetEventThenFollow( 'post_clicked' )( event );
-
-				expect( recordTracksEvent ).toHaveBeenCalled();
-				expect( event.preventDefault ).not.toHaveBeenCalled();
-			}
-		);
 	} );
 } );
