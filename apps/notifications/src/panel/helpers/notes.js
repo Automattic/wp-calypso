@@ -59,10 +59,10 @@ export function getNewPostLink( note ) {
 }
 
 /**
- * Whether a note's body is a list of the people who acted
+ * Whether a note reports likes or new subscribers, whose body lists the people who acted
  * @param note
  * @returns {boolean}
  */
-export function isPeopleListNote( note ) {
+export function isLikeOrFollowNote( note ) {
 	return [ 'like', 'comment_like', 'follow' ].includes( note.type );
 }

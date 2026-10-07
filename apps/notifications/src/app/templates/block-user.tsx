@@ -7,7 +7,7 @@ import {
 } from '@wordpress/components';
 import { Fragment } from 'react';
 import { useSelector } from 'react-redux';
-import { isPeopleListNote } from '../../panel/helpers/notes';
+import { isLikeOrFollowNote } from '../../panel/helpers/notes';
 import getIsNoteApproved from '../../panel/state/selectors/get-is-note-approved';
 import { useAppContext } from '../context';
 import NoteIcon from '../note-icon';
@@ -67,7 +67,7 @@ export default function UserBlock( { note, block }: { note: Note; block: Block }
 
 	// In a list, a person is a byline: their name over their site, with the follow
 	// link at the far end.
-	const byline = isPeopleListNote( note ) && (
+	const byline = isLikeOrFollowNote( note ) && (
 		<>
 			<FlexBlock>
 				<VStack spacing={ 0 }>
