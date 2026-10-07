@@ -82,12 +82,14 @@ function getExistingSearchSource(
 				expired: isExpiredAndInGracePeriod( purchase ),
 			} ) ),
 	];
-	const renewable = subscriptions.filter( ( { slug, owned } ) => owned && slug === routeProduct );
-	if ( renewable.length ) {
-		return renewable.every( ( { expired } ) => expired ) ? 'expired' : 'renewal';
+	const ownsRouteProduct = ( rows: SearchSubscription[] ) =>
+		rows.some( ( { slug, owned } ) => owned && slug === routeProduct );
+	const active = subscriptions.filter( ( { expired } ) => ! expired );
+	if ( active.length ) {
+		return ownsRouteProduct( active ) ? 'renewal' : 'product';
 	}
 	if ( subscriptions.length ) {
-		return subscriptions.every( ( { expired } ) => expired ) ? 'expiredProduct' : 'product';
+		return ownsRouteProduct( subscriptions ) ? 'expired' : 'expiredProduct';
 	}
 
 	const planSlug = site.plan?.product_slug;
