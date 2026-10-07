@@ -113,7 +113,7 @@ export const ActionBlock = ( { note, goBack }: { note: Note; goBack: () => void 
 		// The body above is the scroll region; this footer is a non-scrolling
 		// sibling below it, so it stays visible without sticky positioning. When the
 		// reply is short the body sizes to its content and this sits right beneath it.
-		<CardFooter size="small">
+		<CardFooter size="small" style={ { paddingBlockStart: 8 } }>
 			<NoteActions note={ note } goBack={ goBack } />
 		</CardFooter>
 	);
