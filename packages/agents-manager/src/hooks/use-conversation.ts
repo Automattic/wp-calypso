@@ -66,8 +66,8 @@ export default function useConversation( {
 	const queryClient = useQueryClient();
 	const queryKey = [ 'agents-manager-conversation', sessionId ];
 
+	// eslint-disable-next-line @tanstack/query/exhaustive-deps -- we only want to refetch when sessionId changes
 	const { data, isLoading, isError, error } = useQuery( {
-		// eslint-disable-next-line @tanstack/query/exhaustive-deps -- we only want to refetch when sessionId changes
 		queryKey,
 		queryFn: async () => {
 			const urlSearchParams = new URLSearchParams( window.location.search );
