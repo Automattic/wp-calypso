@@ -9,6 +9,7 @@ import {
 import { __, isRTL } from '@wordpress/i18n';
 import { chevronLeft, chevronRight, closeSmall } from '@wordpress/icons';
 import ResourceBadges from './resource-badges';
+import ResourcePreview from './resource-preview';
 import type { FilterResources } from './types';
 import type { AgencyEnablementResource } from '@automattic/api-core';
 
@@ -50,37 +51,46 @@ export default function ResourceModal( {
 					onNext?.();
 				}
 			} }
-			// The navigation leads the header, so the modal draws its own.
+			// The preview leads the modal, with the navigation over it, so it draws its own header.
 			__experimentalHideHeader
 		>
 			<VStack spacing={ 6 }>
-				<HStack justify="space-between">
-					<HStack
-						spacing={ 0 }
-						expanded={ false }
-						className="dashboard-resources-learn__modal-navigation"
-						role="group"
-						aria-label={ __( 'Resource navigation' ) }
-					>
+				<div className="dashboard-resources-learn__modal-media">
+					<ResourcePreview key={ resource.id } resource={ resource } onOpen={ onOpen } />
+					<HStack justify="space-between" className="dashboard-resources-learn__modal-controls">
+						<HStack
+							spacing={ 0 }
+							expanded={ false }
+							className="dashboard-resources-learn__modal-navigation"
+							role="group"
+							aria-label={ __( 'Resource navigation' ) }
+						>
+							<Button
+								icon={ isRTL() ? chevronRight : chevronLeft }
+								label={ __( 'Previous resource' ) }
+								size="compact"
+								disabled={ ! onPrevious }
+								accessibleWhenDisabled
+								onClick={ onPrevious }
+							/>
+							<Button
+								icon={ isRTL() ? chevronLeft : chevronRight }
+								label={ __( 'Next resource' ) }
+								size="compact"
+								disabled={ ! onNext }
+								accessibleWhenDisabled
+								onClick={ onNext }
+							/>
+						</HStack>
 						<Button
-							icon={ isRTL() ? chevronRight : chevronLeft }
-							label={ __( 'Previous resource' ) }
+							className="dashboard-resources-learn__modal-close"
+							icon={ closeSmall }
+							label={ __( 'Close' ) }
 							size="compact"
-							disabled={ ! onPrevious }
-							accessibleWhenDisabled
-							onClick={ onPrevious }
-						/>
-						<Button
-							icon={ isRTL() ? chevronLeft : chevronRight }
-							label={ __( 'Next resource' ) }
-							size="compact"
-							disabled={ ! onNext }
-							accessibleWhenDisabled
-							onClick={ onNext }
+							onClick={ onClose }
 						/>
 					</HStack>
-					<Button icon={ closeSmall } label={ __( 'Close' ) } size="compact" onClick={ onClose } />
-				</HStack>
+				</div>
 				<VStack spacing={ 6 }>
 					<VStack spacing={ 3 }>
 						<Heading
