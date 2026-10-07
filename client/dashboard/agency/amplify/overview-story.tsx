@@ -3,10 +3,11 @@ import { __, sprintf } from '@wordpress/i18n';
 import { useEffect, useRef, useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import InlineSupportLink from '../../components/inline-support-link';
+import { SampleReportPage } from './sample-report';
 import { getSampleFindings, getSampleLenses, getSeverityLabel } from './sample-report-data';
 import AmplifySampleReportModal from './sample-report-modal';
 import { PERSPECTIVES } from './score-preview';
-import { severityFor } from './score-severity';
+import type { SamplePageKey } from './sample-report';
 
 // TODO: replace with the knowledge base articles once they're published.
 const KB_URLS: Record< 'human' | 'ai', string > = {
@@ -83,29 +84,22 @@ function FindingGraphic() {
 	);
 }
 
-function CategoriesGraphic() {
+/** Three sample report pages fanned out; opens the full sample. */
+function ReportStackGraphic( { onOpen }: { onOpen: () => void } ) {
+	const pages: SamplePageKey[] = [ 'findings-top', 'scores', 'cover' ];
 	return (
-		<div className="dashboard-amplify-story__categories" aria-hidden="true">
-			<span>{ __( 'Category breakdown' ) }</span>
-			{ [
-				{ label: __( 'Trust signals' ), score: 9, max: 18 },
-				{ label: __( 'Mobile experience' ), score: 8, max: 12 },
-				{ label: __( 'Content quality' ), score: 9, max: 12 },
-			].map( ( item ) => (
-				<div className="dashboard-amplify-story__category" key={ item.label }>
-					<span>{ item.label }</span>
-					<div>
-						<i
-							data-severity={ severityFor( item.score, item.max ) }
-							style={ { width: `${ ( item.score / item.max ) * 100 }%` } }
-						/>
-					</div>
-					<strong>
-						{ item.score }/{ item.max }
-					</strong>
-				</div>
+		<button
+			type="button"
+			className="dashboard-amplify-story__report-stack"
+			onClick={ onOpen }
+			aria-label={ __( 'View a sample report' ) }
+		>
+			{ pages.map( ( page ) => (
+				<span key={ page } className="dashboard-amplify-story__report-page" data-page={ page }>
+					<SampleReportPage page={ page } isDecorative />
+				</span>
 			) ) }
-		</div>
+		</button>
 	);
 }
 
@@ -290,29 +284,17 @@ export default function AmplifyOverviewStory() {
 		<div className="dashboard-amplify-story">
 			<section
 				className="dashboard-amplify-story__section"
-				aria-labelledby="amplify-perspectives-title"
-			>
-				<div className="dashboard-amplify-story__graphic">
-					<FindingGraphic />
-				</div>
-				<div className="dashboard-amplify-story__copy">
-					<Heading id="amplify-perspectives-title" level={ 2 }>
-						{ __( 'Specific findings you can pitch' ) }
-					</Heading>
-					<p>
-						{ __(
-							'Every finding names the problem, why it costs the business customers, and how to improve it, so you walk into the pitch with specifics instead of opinions.'
-						) }
-					</p>
-				</div>
-			</section>
-
-			<section
-				className="dashboard-amplify-story__section"
 				aria-labelledby="amplify-categories-title"
 			>
 				<div className="dashboard-amplify-story__graphic">
-					<CategoriesGraphic />
+					<ReportStackGraphic
+						onOpen={ () => {
+							recordTracksEvent( 'calypso_a4a_amplify_sample_report_open', {
+								source: 'story-graphic',
+							} );
+							setIsSampleOpen( true );
+						} }
+					/>
 				</div>
 				<div className="dashboard-amplify-story__copy">
 					<Heading id="amplify-categories-title" level={ 2 }>
@@ -333,6 +315,25 @@ export default function AmplifyOverviewStory() {
 					>
 						{ __( 'View a sample report' ) }
 					</Button>
+				</div>
+			</section>
+
+			<section
+				className="dashboard-amplify-story__section"
+				aria-labelledby="amplify-perspectives-title"
+			>
+				<div className="dashboard-amplify-story__graphic">
+					<FindingGraphic />
+				</div>
+				<div className="dashboard-amplify-story__copy">
+					<Heading id="amplify-perspectives-title" level={ 2 }>
+						{ __( 'Specific findings you can pitch' ) }
+					</Heading>
+					<p>
+						{ __(
+							'Every finding names the problem, why it costs the business customers, and how to improve it, so you walk into the pitch with specifics instead of opinions.'
+						) }
+					</p>
 				</div>
 			</section>
 
