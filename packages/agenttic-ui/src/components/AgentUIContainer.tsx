@@ -328,22 +328,18 @@ export function AgentUIContainer( {
 				void onSubmit( message );
 				return true;
 			}
-			{
-				// Default: populate input field for user to edit/submit
-				const valueWithSpace = value.endsWith( ' ' ) ? value : `${ value } `;
-				input.setValue( valueWithSpace );
-				clearSuggestions?.();
-				if ( input.textareaRef.current ) {
-					input.textareaRef.current.focus();
-					input.textareaRef.current.setSelectionRange(
-						valueWithSpace.length,
-						valueWithSpace.length
-					);
-				}
 
-				onSuggestionClick?.( selectedSuggestion, availableSuggestions );
-				return false;
+			// Default: populate input field for user to edit/submit
+			const valueWithSpace = value.endsWith( ' ' ) ? value : `${ value } `;
+			input.setValue( valueWithSpace );
+			clearSuggestions?.();
+			if ( input.textareaRef.current ) {
+				input.textareaRef.current.focus();
+				input.textareaRef.current.setSelectionRange( valueWithSpace.length, valueWithSpace.length );
 			}
+
+			onSuggestionClick?.( selectedSuggestion, availableSuggestions );
+			return false;
 		},
 		[ clearSuggestions, onSubmit, onSuggestionClick, input, canSubmitMessage, isProcessing ]
 	);
