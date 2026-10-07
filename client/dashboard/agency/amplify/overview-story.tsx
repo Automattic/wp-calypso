@@ -343,7 +343,7 @@ export default function AmplifyOverviewStory() {
 				</div>
 				<div className="dashboard-amplify-story__copy">
 					<Heading id="amplify-prompts-title" level={ 2 }>
-						{ __( 'Ready to make your own' ) }
+						{ __( 'Turn it into your pitch' ) }
 					</Heading>
 					<p>
 						{ __(
