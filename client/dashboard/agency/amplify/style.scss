@@ -1184,51 +1184,12 @@ html[dir='rtl'] .dashboard-amplify-score-preview__card {
 	line-height: 1.6;
 }
 
-.dashboard-amplify-story__perspectives {
-	position: relative;
-	width: min( 100%, 390px );
-	height: 220px;
-}
 
-.dashboard-amplify-story__mini-report {
-	position: absolute;
-	inset: 0 auto auto 0;
-	box-sizing: border-box;
-	width: 70%;
-	height: 190px;
-	padding: 18px;
-	border: 1px solid var( --color-border-subtle );
-	border-radius: 8px;
-	background: var( --color-surface );
-	box-shadow: 0 12px 32px color-mix( in srgb, var( --color-text ) 10%, transparent );
-}
 
-.dashboard-amplify-story__mini-report:nth-child( 2 ) {
-	inset: 30px 0 auto auto;
-}
 
-.dashboard-amplify-story__mini-report span,
-.dashboard-amplify-story__mini-report strong {
-	display: block;
-	font-size: 13px;
-}
 
-.dashboard-amplify-story__mini-report strong {
-	margin-block: 5px 22px;
-	font-size: 22px;
-}
 
-.dashboard-amplify-story__mini-report i {
-	display: block;
-	height: 5px;
-	margin-block-end: 12px;
-	border-radius: 3px;
-	background: color-mix( in srgb, var( --amplify-story-accent ) 30%, var( --color-surface ) );
-}
 
-.dashboard-amplify-story__mini-report i:nth-last-child( 1 ) {
-	width: 58%;
-}
 
 .dashboard-amplify-story__categories {
 	box-sizing: border-box;
@@ -2297,4 +2258,56 @@ html[dir='rtl'] .dashboard-amplify-score-preview__card {
 	font-size: 14px;
 	line-height: 1.5;
 	text-wrap: pretty;
+}
+
+/* Story row: sample finding card */
+.dashboard-amplify-story__finding {
+	box-sizing: border-box;
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+	width: min( 100%, 420px );
+	padding: 20px 22px;
+	border: 1px solid var( --color-border-subtle );
+	border-inline-start: 3px solid var( --color-error );
+	border-radius: 8px;
+	background: var( --color-surface );
+	box-shadow: 0 12px 32px color-mix( in srgb, var( --color-text ) 8%, transparent );
+	font-size: 13px;
+	line-height: 1.45;
+	text-align: start;
+}
+
+.dashboard-amplify-story__finding-severity {
+	color: var( --color-error );
+	font-size: 11px;
+	font-weight: 700;
+	letter-spacing: 0.06em;
+	text-transform: uppercase;
+}
+
+.dashboard-amplify-story__finding-meta {
+	color: var( --color-text-subtle );
+	font-size: 11px;
+	font-weight: 600;
+	letter-spacing: 0.03em;
+	text-transform: uppercase;
+}
+
+.dashboard-amplify-story__finding strong {
+	font-size: 15px;
+}
+
+.dashboard-amplify-story__finding p {
+	margin: 0;
+	color: var( --color-text-subtle );
+}
+
+.dashboard-amplify-story__finding p b {
+	color: var( --color-text );
+}
+
+.dashboard-amplify-story__finding-improve {
+	padding-block-start: 6px;
+	border-block-start: 1px solid var( --color-border-subtle );
 }
