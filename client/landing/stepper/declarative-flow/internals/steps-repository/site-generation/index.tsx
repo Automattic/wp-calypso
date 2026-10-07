@@ -1,7 +1,11 @@
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
-import { getBuildWowGraph } from 'calypso/landing/stepper/utils/build-wow';
+import {
+	getBuildWowGraph,
+	isBuildWowStreamRequested,
+} from 'calypso/landing/stepper/utils/build-wow';
+import { useBuildWowStream } from './stream/use-build-wow-stream';
 import { useSiteGeneration } from './use-site-generation';
 import { SiteGenerationView } from './view';
 import type { Step as StepType } from '../../types';
@@ -14,6 +18,7 @@ const SiteGeneration: StepType = function SiteGeneration() {
 	const source = query.get( 'source' );
 	const specId = query.get( 'specId' );
 	const graph = getBuildWowGraph( query );
+	const streamEvents = isBuildWowStreamRequested( query );
 	// Fallback checklist only: the server-computed ui.steps from the status
 	// endpoint is authoritative (labels included, already localized). This
 	// list covers the moments before the first response arrives, and backends
@@ -30,7 +35,8 @@ const SiteGeneration: StepType = function SiteGeneration() {
 		],
 		[ translate ]
 	);
-	const state = useSiteGeneration( { siteIdentifier, source, specId, graph, steps } );
+	const state = useSiteGeneration( { siteIdentifier, source, specId, graph, streamEvents, steps } );
+	const stream = useBuildWowStream( state.streamInfo ?? null );
 
 	const reload = () => {
 		window.location.reload();
@@ -39,7 +45,7 @@ const SiteGeneration: StepType = function SiteGeneration() {
 	return (
 		<>
 			<DocumentHead title={ translate( 'Generating your site' ) } />
-			<SiteGenerationView graph={ graph } onReload={ reload } state={ state } />
+			<SiteGenerationView graph={ graph } onReload={ reload } state={ state } stream={ stream } />
 		</>
 	);
 };

@@ -2,9 +2,11 @@
  * @jest-environment jsdom
  */
 
-import { act, fireEvent, render, screen } from '@testing-library/react';
+import { act, fireEvent, render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { initialStreamState } from '../stream/reducer';
 import { SiteGenerationView, TINT_HOLD_MS } from '../view';
+import type { BuildWowStreamView } from '../stream/use-build-wow-stream';
 import type { SiteGenerationState, SiteGenerationStep } from '../use-site-generation';
 
 jest.mock( 'i18n-calypso', () => ( {
@@ -24,6 +26,23 @@ const idleState = {
 	isRetryingBuild: false,
 };
 
+const progressStream: BuildWowStreamView = {
+	info: {
+		protocol: 1,
+		blogId: 123,
+		runId: 'run-1',
+		graph: 'dsl',
+		capabilities: [ 'progress' ],
+		eventsUrl: 'https://example.com/events',
+		snapshotUrl: 'https://example.com/snapshot',
+	},
+	state: {
+		...initialStreamState( 'run-1' ),
+		phases: { prepare: 1 },
+		currentStep: 'Validate the exported DSL theme',
+	},
+};
+
 function fireTransitionEnd( element: HTMLElement, propertyName: string ) {
 	const event = new Event( 'transitionend', { bubbles: true } );
 	Object.defineProperty( event, 'propertyName', { value: propertyName } );
@@ -31,6 +50,119 @@ function fireTransitionEnd( element: HTMLElement, propertyName: string ) {
 }
 
 describe( 'SiteGenerationView progress and fallback states', () => {
+	it( 'uses live graph progress for an opted-in build and keeps the synthetic preview out', () => {
+		const { container } = render(
+			<SiteGenerationView
+				onReload={ jest.fn() }
+				state={ { ...idleState, status: 'working', steps: [] } }
+				stream={ progressStream }
+			/>
+		);
+
+		expect( screen.getByRole( 'region', { name: 'Live site build' } ) ).toBeVisible();
+		expect( screen.getByText( 'dsl build' ) ).toBeVisible();
+		expect( screen.getByRole( 'heading', { name: 'Your site is taking shape' } ) ).toBeVisible();
+		expect( screen.getAllByText( 'Validate the exported DSL theme' ).length ).toBeGreaterThan( 0 );
+		expect( container.querySelector( '.site-generation__page-preview' ) ).toBeNull();
+		expect( screen.queryByText( 'Colors' ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'keeps the existing synthetic preview when there is no active stream', () => {
+		const { container } = render(
+			<SiteGenerationView
+				onReload={ jest.fn() }
+				state={ { ...idleState, status: 'working', steps: [] } }
+			/>
+		);
+
+		expect( container.querySelector( '.site-generation__page-preview' ) ).toBeInTheDocument();
+		expect( screen.queryByRole( 'region', { name: 'Live site build' } ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'reveals design and page details only when the graph advertises those capabilities', () => {
+		const stream: BuildWowStreamView = {
+			...progressStream,
+			info: {
+				...progressStream.info,
+				capabilities: [ 'progress', 'planning', 'design', 'sections', 'images' ],
+			},
+			state: {
+				...progressStream.state,
+				directions: [ 'Garden journal' ],
+				images: { hero: 'ready', visit: 'generating' },
+				sections: {
+					home: { 0: { kind: 'content', name: 'A place to pause', partial: true } },
+				},
+				plan: {
+					status: 'developing',
+					title: 'A garden for everyone',
+					direction: 'Quiet and welcoming',
+					palette: [ { name: 'Leaf', color: '#176B45' } ],
+					typography: [ { name: 'Source Serif', family: 'Source Serif', role: 'heading' } ],
+					pages: [ { slug: 'home', title: 'Home', sections: [ 'Welcome', 'Visit' ] } ],
+				},
+			},
+		};
+
+		render(
+			<SiteGenerationView
+				onReload={ jest.fn() }
+				state={ { ...idleState, status: 'working', steps: [] } }
+				stream={ stream }
+			/>
+		);
+
+		const liveCanvas = within( screen.getByRole( 'region', { name: 'Live site build' } ) );
+		expect( liveCanvas.getByRole( 'heading', { name: 'A garden for everyone' } ) ).toBeVisible();
+		expect( liveCanvas.getByText( 'Quiet and welcoming' ) ).toBeVisible();
+		expect( liveCanvas.getByLabelText( 'Leaf, #176B45' ) ).toBeVisible();
+		expect( liveCanvas.getByText( 'Source Serif' ) ).toBeVisible();
+		expect( liveCanvas.getAllByText( 'Welcome · Visit' ).length ).toBeGreaterThan( 0 );
+		expect( liveCanvas.getByText( 'A place to pause' ) ).toBeVisible();
+		expect( liveCanvas.getByText( 'In progress' ) ).toBeVisible();
+		expect( liveCanvas.getByText( '1 of 2 images ready' ) ).toBeVisible();
+	} );
+
+	it( 'shows structured Engine data when an older host advertises progress only', () => {
+		const stream: BuildWowStreamView = {
+			...progressStream,
+			state: {
+				...progressStream.state,
+				currentStep: null,
+				plan: {
+					status: 'completed',
+					title: 'Goat Moat',
+					direction: 'Playful editorial layouts',
+					palette: [ { name: 'Berry', color: '#B91D60' } ],
+					typography: [ { name: 'Fredoka', family: 'Fredoka', role: 'heading' } ],
+					pages: [ { slug: 'home', title: 'Home', sections: [ 'Welcome', 'Animal preview' ] } ],
+				},
+				images: { hero: 'ready', goat: 'generating' },
+			},
+		};
+
+		render(
+			<SiteGenerationView
+				onReload={ jest.fn() }
+				state={ {
+					...idleState,
+					status: 'working',
+					steps: [ { id: 'polish', label: 'Polishing your site', status: 'active' } ],
+				} }
+				stream={ stream }
+			/>
+		);
+
+		const liveCanvas = within( screen.getByRole( 'region', { name: 'Live site build' } ) );
+		expect( liveCanvas.getByRole( 'heading', { name: 'Goat Moat' } ) ).toBeVisible();
+		expect( liveCanvas.getByText( 'Playful editorial layouts' ) ).toBeVisible();
+		expect( liveCanvas.getByLabelText( 'Berry, #B91D60' ) ).toBeVisible();
+		expect( liveCanvas.getByText( 'Fredoka' ) ).toBeVisible();
+		expect( liveCanvas.getByText( 'Welcome · Animal preview' ) ).toBeVisible();
+		expect( liveCanvas.getByText( '1 of 2 images ready' ) ).toBeVisible();
+		expect( liveCanvas.getByText( 'Polishing your site' ) ).toBeVisible();
+	} );
+
 	it( 'shows an accessible elapsed time for the active step and updates it every second', () => {
 		jest.useFakeTimers();
 		jest.setSystemTime( new Date( '2026-08-07T12:00:00Z' ) );

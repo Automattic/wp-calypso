@@ -20,6 +20,21 @@ export function getBuildWowGraph( queryParams: URLSearchParams ): BuildWowGraph 
 	return BUILD_WOW_GRAPHS.find( ( graph ) => graph === requested );
 }
 
+/**
+ * Asks for the optional live build feed. It only requests it: the server
+ * decides eligibility and pins the choice to the run, and the status
+ * endpoint's `stream` block says whether this run actually streams.
+ */
+export const BUILD_WOW_STREAM_QUERY_ARG = 'build_wow_stream';
+
+export function isBuildWowStreamRequested( queryParams: URLSearchParams ): boolean {
+	return queryParams.get( BUILD_WOW_STREAM_QUERY_ARG ) === '1';
+}
+
+export function getBuildWowStreamQueryArgs( streamEvents?: boolean ): Record< string, string > {
+	return streamEvents ? { [ BUILD_WOW_STREAM_QUERY_ARG ]: '1' } : {};
+}
+
 type BuildWowAtomicState = {
 	is_atomic?: boolean;
 	is_transfer_active?: boolean;
@@ -77,6 +92,7 @@ export function getBuildWowSiteSpecUrl( {
 	source,
 	prompt,
 	graph,
+	streamEvents,
 }: {
 	siteSlug?: string | null;
 	siteId?: string | number | null;
@@ -84,6 +100,7 @@ export function getBuildWowSiteSpecUrl( {
 	source?: string | null;
 	prompt?: string | null;
 	graph?: BuildWowGraph;
+	streamEvents?: boolean;
 } ): string {
 	return addQueryArgs( BUILD_WOW_SITE_SPEC_PATH, {
 		build_wow: '1',
@@ -93,6 +110,7 @@ export function getBuildWowSiteSpecUrl( {
 		...( source ? { source } : {} ),
 		...( prompt ? { prompt } : {} ),
 		...( graph ? { graph } : {} ),
+		...getBuildWowStreamQueryArgs( streamEvents ),
 	} );
 }
 
@@ -107,7 +125,8 @@ export async function requestBuildWowSite(
 	siteIdentifier: string,
 	specId?: string,
 	graph?: BuildWowGraph,
-	blueprintId?: string
+	blueprintId?: string,
+	streamEvents?: boolean
 ): Promise< BuildWowResponse > {
 	return wpcom.req.post(
 		{
@@ -120,6 +139,8 @@ export async function requestBuildWowSite(
 			// queues a build: the server records the graph with that build, and a
 			// call without a spec queues nothing to record it against.
 			...( specId && graph ? { graph } : {} ),
+			// Like graph, only a call that queues a build carries the opt-in.
+			...( specId && streamEvents ? { stream_events: true } : {} ),
 			// The blueprint hybrid: the blueprint onboarding already put the site on Atomic, which
 			// the server otherwise refuses as somebody's established site.
 			...( blueprintId ? { blueprint_id: blueprintId } : {} ),
