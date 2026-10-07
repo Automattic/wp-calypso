@@ -13,6 +13,7 @@ import { getSiteName } from '../dataviews/site-data';
 import { isTeamMemberWithoutSiteAccess } from './access';
 import ActivityCard from './activity-card';
 import BackupCard from './backup-card';
+import AgencySiteHeaderActions from './header-actions';
 import NoAccessCallout from './no-access-callout';
 import AgencySitePlanCard from './plan-card';
 import ScanCard from './scan-card';
@@ -59,6 +60,7 @@ export default function AgencySiteOverview() {
 				<PageHeader
 					title={ getSiteName( site ) }
 					description={ <SiteOverviewFields site={ fullSite } /> }
+					actions={ <AgencySiteHeaderActions site={ site } /> }
 				/>
 			}
 		>
