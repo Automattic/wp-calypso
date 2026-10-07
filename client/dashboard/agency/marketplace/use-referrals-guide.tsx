@@ -33,7 +33,7 @@ const getSteps = (): ReferralsGuideStep[] => [
 	{
 		title: __( 'Add the products your client needs' ),
 		description: __(
-			'Ensure “Refer products” is toggled on, and add any mix of products to your cart.'
+			'Ensure “Refer to clients” is toggled on, and add any mix of products to your cart.'
 		),
 		preview: (
 			<video

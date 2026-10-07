@@ -1,0 +1,332 @@
+// Option hB, drawn from the Figma “Marketplace Graphics” page: the blurred hero
+// field (blurred light, medium and dark blue over #f6f7f7), white cards with the
+// system's two-layer shadow, SF type at 11/12/13px, chips and numbered pins.
+// UI pieces (dot, chips, pins) use the dashboard's theme blue, not Main's blues.
+.referral-band,
+.referral-band-bar,
+.referral-chip {
+	--referral-theme: var( --wp-admin-theme-color, #3858e9 );
+	--referral-theme-soft: color-mix( in srgb, var( --referral-theme ) 20%, #fff );
+	--referral-theme-ink: color-mix( in srgb, var( --referral-theme ) 70%, #000 );
+	--referral-text: #1d2327;
+	--referral-muted: #646970;
+	--referral-card-shadow: 0 10px 24px rgba( 0, 0, 0, 0.1 ), 0 1px 3px rgba( 0, 0, 0, 0.06 );
+	--referral-ease: cubic-bezier( 0.2, 0, 0, 1 );
+}
+
+// One box, two layers (the band and the one-line bar). The box's height moves
+// once between them while the layers crossfade, so the page below moves once.
+// Motion only plays after an action on this page (`.is-animated`).
+.referral-shell {
+	--referral-move: 320ms cubic-bezier( 0.32, 0.72, 0, 1 );
+	position: relative;
+	overflow: hidden;
+	// The layout follows the band's own width, not the window's: the sidebar
+	// and the page's columns decide how much room it really has.
+	container: referral-band / inline-size;
+	border: 1px solid #e0e0e0;
+	border-radius: 8px;
+	background: #fff;
+
+	&.is-closed {
+		opacity: 0;
+	}
+
+	&.is-animated {
+		transition:
+			height var( --referral-move ),
+			opacity 160ms ease-out;
+	}
+}
+
+// The incoming layer fades in once the outgoing one has gone.
+.referral-band,
+.referral-band-bar {
+	.referral-shell.is-animated & {
+		transition:
+			opacity 200ms ease-out 120ms,
+			visibility 0s;
+	}
+}
+
+.referral-shell.is-band .referral-band-bar,
+.referral-shell.is-bar .referral-band {
+	opacity: 0;
+	visibility: hidden;
+
+	.referral-shell.is-animated & {
+		transition:
+			opacity 120ms ease-in,
+			visibility 0s 120ms;
+	}
+}
+
+// Then the three steps settle in, left to right, without travelling.
+.referral-shell.is-animated .referral-step {
+	transition:
+		opacity 220ms ease-out 160ms,
+		transform 220ms var( --referral-ease ) 160ms;
+
+	&:nth-of-type( 2 ) {
+		transition-delay: 200ms;
+	}
+	&:nth-of-type( 3 ) {
+		transition-delay: 240ms;
+	}
+}
+
+.referral-shell.is-closed .referral-step,
+.referral-shell.is-bar .referral-step {
+	opacity: 0;
+	transform: scale( 0.98 );
+}
+
+.referral-shell.is-animated.is-bar .referral-step {
+	transition: opacity 120ms ease-in;
+}
+
+.referral-band {
+	display: grid;
+	grid-template-columns: minmax( 0, 1fr );
+
+	// Wide: the copy beside the three steps.
+	@container referral-band ( min-width: 1080px ) {
+		grid-template-columns: minmax( 240px, 300px ) minmax( 0, 1fr );
+	}
+}
+
+.referral-band-intro {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	justify-content: center;
+	gap: 12px;
+	padding: 24px;
+}
+
+.referral-band-eyebrow {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	font-size: 12px;
+	font-weight: 500;
+	color: var( --referral-theme );
+}
+
+.referral-dot {
+	flex: none;
+	inline-size: 8px;
+	block-size: 8px;
+	border-radius: 50%;
+	background: var( --referral-theme );
+	box-shadow: 0 0 0 4px var( --referral-theme-soft );
+}
+
+.referral-band .referral-band-title {
+	margin: 0;
+	font-size: 15px;
+	font-weight: 500;
+	line-height: 22px;
+	color: var( --referral-text );
+	text-wrap: balance;
+}
+
+// The blue field: the same four lights as Figma's Field frame (positions as a
+// share of its 1100x340), with Figma's 150px layer blur and the 4% grain.
+.referral-band-field {
+	position: relative;
+	isolation: isolate;
+	overflow: hidden;
+	display: grid;
+	grid-template-columns: repeat( 3, minmax( 0, 1fr ) );
+	gap: 24px;
+	align-items: start;
+	margin: 0;
+	padding: 32px;
+	list-style: none;
+	background: #e5f1ff;
+
+	&.is-o {
+		background: #f6f7f7;
+	}
+	&.is-p {
+		background: #f6f7f7;
+	}
+	&:not( .is-p ) .referral-light,
+	&:not( .is-p ) .referral-grain {
+		display: none;
+	}
+	&.is-p .referral-light {
+		opacity: 0.35;
+	}
+
+	// Medium: a full row of steps under the copy, never narrower than a
+	// drawing can be read at.
+	@container referral-band ( max-width: 1079px ) {
+		grid-template-columns: repeat( 3, minmax( 200px, 1fr ) );
+		padding: 24px;
+	}
+
+	// Narrow: one step at a time, scrolled sideways, so the band stays short.
+	@container referral-band ( max-width: 719px ) {
+		grid-template-columns: none;
+		grid-auto-flow: column;
+		grid-auto-columns: 240px;
+		gap: 16px;
+		overflow-x: auto;
+		overscroll-behavior-x: contain;
+		scroll-snap-type: x mandatory;
+		scroll-padding-inline: 24px;
+		scrollbar-width: none;
+
+		.referral-step {
+			scroll-snap-align: start;
+		}
+	}
+}
+
+.referral-light {
+	position: absolute;
+	z-index: -1;
+	border-radius: 50%;
+	filter: blur( 75px );
+
+	&.is-light {
+		inset-inline-start: -14.5%;
+		inset-block-start: -35%;
+		inline-size: 56%;
+		block-size: 124%;
+		background: rgba( 114, 179, 255, 0.85 );
+	}
+	&.is-medium {
+		inset-inline-start: 65.5%;
+		inset-block-start: -17.6%;
+		inline-size: 51%;
+		block-size: 112%;
+		background: rgba( 3, 135, 255, 0.7 );
+	}
+	&.is-dark {
+		inset-inline-start: 34.5%;
+		inset-block-start: 47%;
+		inline-size: 42%;
+		block-size: 88%;
+		background: rgba( 2, 64, 228, 0.55 );
+	}
+	&.is-centre {
+		inset-inline-start: 27%;
+		inset-block-start: -50%;
+		inline-size: 51%;
+		block-size: 88%;
+		background: rgba( 114, 179, 255, 0.7 );
+	}
+}
+
+.referral-grain {
+	position: absolute;
+	inset: 0;
+	z-index: -1;
+	opacity: 0.08;
+	mix-blend-mode: multiply;
+	/* stylelint-disable-next-line function-url-quotes -- the data URI has its own parentheses */
+	background-image: url( "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E" );
+}
+
+// The step drawings: Figma SVGs, white on the field like the Featured tiles.
+.referral-art {
+	display: block;
+	inline-size: 100%;
+	max-inline-size: 280px;
+	block-size: auto;
+	border-radius: 8px;
+	box-shadow: var( --referral-card-shadow );
+}
+
+
+.referral-step {
+	inline-size: 100%;
+	max-inline-size: 280px;
+	justify-self: center;
+	display: flex;
+	flex-direction: column;
+	gap: 14px;
+	min-inline-size: 0;
+
+}
+
+.referral-step-caption {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	margin: 0;
+	font-size: 13px;
+	line-height: 18px;
+	color: var( --referral-text );
+	text-wrap: pretty;
+}
+
+.referral-pin {
+	flex: none;
+	display: grid;
+	place-items: center;
+	inline-size: 26px;
+	block-size: 26px;
+	border-radius: 50%;
+	background: rgba( 2, 64, 228, 0.18 );
+
+	span {
+		display: grid;
+		place-items: center;
+		inline-size: 18px;
+		block-size: 18px;
+		border-radius: 50%;
+		background: #0240e4;
+		font-size: 10px;
+		font-weight: 600;
+		line-height: 1;
+		color: #fff;
+	}
+}
+
+// The system's chips: solid theme blue, or soft.
+.referral-chip {
+	flex: none;
+	padding: 0 6px;
+	border-radius: 4px;
+	background: var( --referral-theme );
+	font-size: 11px;
+	font-weight: 600;
+	line-height: 16px;
+	white-space: nowrap;
+	color: #fff;
+
+	&.is-soft {
+		background: var( --referral-theme-soft );
+		color: var( --referral-theme-ink );
+	}
+}
+
+.referral-band-bar {
+	position: absolute;
+	inset-block-start: 0;
+	inset-inline: 0;
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 12px;
+	padding: 10px 16px;
+	font-size: 13px;
+	color: var( --referral-text );
+}
+
+
+.referral-band-bar-text {
+	flex: 1;
+	min-inline-size: 0;
+}
+
+@media ( prefers-reduced-motion: reduce ) {
+	.referral-shell,
+	.referral-shell * {
+		transition: none !important;
+	}
+}

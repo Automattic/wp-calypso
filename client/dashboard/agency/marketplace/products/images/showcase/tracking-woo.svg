@@ -1,0 +1,13 @@
+<svg width="320" height="152" viewBox="0 0 320 152" fill="none" xmlns="http://www.w3.org/2000/svg">
+<rect width="320" height="152" rx="8" fill="white"/>
+<text fill="#1D2327" style="white-space: pre" xml:space="preserve" font-family="SF Pro, SF Pro Text, -apple-system, BlinkMacSystemFont, system-ui, sans-serif" font-size="13" font-weight="590"><tspan x="16" y="28.6211">Order #1042</tspan></text>
+<circle cx="24" cy="50" r="5" fill="#720EEC"/>
+<text fill="#50575E" style="white-space: pre" xml:space="preserve" font-family="SF Pro, SF Pro Text, -apple-system, BlinkMacSystemFont, system-ui, sans-serif" font-size="12"><tspan x="42" y="54.2656">Ordered</tspan></text>
+<circle cx="24" cy="76" r="5" fill="#720EEC"/>
+<text fill="#50575E" style="white-space: pre" xml:space="preserve" font-family="SF Pro, SF Pro Text, -apple-system, BlinkMacSystemFont, system-ui, sans-serif" font-size="12"><tspan x="42" y="80.2656">Shipped</tspan></text>
+<rect x="16" y="94" width="16" height="16" rx="8" fill="#F2EDFF"/>
+<circle cx="24" cy="102" r="3.5" fill="white" stroke="#720EEC" stroke-width="3"/>
+<text fill="#1D2327" style="white-space: pre" xml:space="preserve" font-family="SF Pro, SF Pro Text, -apple-system, BlinkMacSystemFont, system-ui, sans-serif" font-size="12" font-weight="590"><tspan x="42" y="106.266">Out for delivery</tspan></text>
+<circle cx="24" cy="128" r="4.25" stroke="#A7AAAD" stroke-width="1.5"/>
+<text fill="#50575E" style="white-space: pre" xml:space="preserve" font-family="SF Pro, SF Pro Text, -apple-system, BlinkMacSystemFont, system-ui, sans-serif" font-size="12"><tspan x="42" y="132.266">Delivered</tspan></text>
+</svg>

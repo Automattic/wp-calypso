@@ -1,0 +1,11 @@
+<svg width="320" height="176" viewBox="0 0 320 176" fill="none" xmlns="http://www.w3.org/2000/svg">
+<rect width="320" height="176" rx="8" fill="white"/>
+<text fill="#1D2327" style="white-space: pre" xml:space="preserve" font-family="SF Pro, SF Pro Text, -apple-system, BlinkMacSystemFont, system-ui, sans-serif" font-size="13" font-weight="590"><tspan x="16" y="28.6211">Shipping rates</tspan></text>
+<text fill="#1D2327" style="white-space: pre" xml:space="preserve" font-family="SF Pro, SF Pro Text, -apple-system, BlinkMacSystemFont, system-ui, sans-serif" font-size="12"><tspan x="26" y="62.2656">Up to 1 kg</tspan></text>
+<text fill="#1D2327" style="white-space: pre" xml:space="preserve" font-family="SF Pro, SF Pro Text, -apple-system, BlinkMacSystemFont, system-ui, sans-serif" font-size="12" font-weight="bold" text-anchor="end"><tspan x="294" y="62.2656">$4.00</tspan></text>
+<rect x="16" y="85" width="288" height="32" rx="4" fill="#F6F7F7"/>
+<text fill="#1D2327" style="white-space: pre" xml:space="preserve" font-family="SF Pro, SF Pro Text, -apple-system, BlinkMacSystemFont, system-ui, sans-serif" font-size="12"><tspan x="26" y="105.266">1 to 5 kg</tspan></text>
+<text fill="#1D2327" style="white-space: pre" xml:space="preserve" font-family="SF Pro, SF Pro Text, -apple-system, BlinkMacSystemFont, system-ui, sans-serif" font-size="12" font-weight="bold" text-anchor="end"><tspan x="294" y="105.266">$9.50</tspan></text>
+<text fill="#1D2327" style="white-space: pre" xml:space="preserve" font-family="SF Pro, SF Pro Text, -apple-system, BlinkMacSystemFont, system-ui, sans-serif" font-size="12"><tspan x="26" y="147.266">5 to 10 kg</tspan></text>
+<text fill="#1D2327" style="white-space: pre" xml:space="preserve" font-family="SF Pro, SF Pro Text, -apple-system, BlinkMacSystemFont, system-ui, sans-serif" font-size="12" font-weight="bold" text-anchor="end"><tspan x="294" y="147.266">$14.00</tspan></text>
+</svg>

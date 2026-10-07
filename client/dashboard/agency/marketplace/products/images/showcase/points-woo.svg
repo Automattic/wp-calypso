@@ -1,0 +1,11 @@
+<svg width="320" height="166" viewBox="0 0 320 166" fill="none" xmlns="http://www.w3.org/2000/svg">
+<rect width="320" height="166" rx="8" fill="white"/>
+<text fill="#1D2327" style="white-space: pre" xml:space="preserve" font-family="SF Pro, SF Pro Text, -apple-system, BlinkMacSystemFont, system-ui, sans-serif" font-size="13" font-weight="590"><tspan x="16" y="28.6211">Your rewards</tspan></text>
+<text fill="#5007AA" style="white-space: pre" xml:space="preserve" font-family="SF Pro, SF Pro Text, -apple-system, BlinkMacSystemFont, system-ui, sans-serif" font-size="28" font-weight="bold"><tspan x="16" y="65.9531">240</tspan></text>
+<text fill="#1D2327" style="white-space: pre" xml:space="preserve" font-family="SF Pro, SF Pro Text, -apple-system, BlinkMacSystemFont, system-ui, sans-serif" font-size="12"><tspan x="76" y="66.2656">points</tspan></text>
+<rect x="16" y="80" width="288" height="6" rx="3" fill="#DCDCDE"/>
+<rect x="16" y="80" width="230" height="6" rx="3" fill="#720EEC"/>
+<text fill="#50575E" style="white-space: pre" xml:space="preserve" font-family="SF Pro, SF Pro Text, -apple-system, BlinkMacSystemFont, system-ui, sans-serif" font-size="11"><tspan x="16" y="107.91">60 points to a $5 reward</tspan></text>
+<rect x="16" y="122" width="72" height="28" rx="4" fill="#F2EDFF"/>
+<text fill="#5007AA" style="white-space: pre" xml:space="preserve" font-family="SF Pro, SF Pro Text, -apple-system, BlinkMacSystemFont, system-ui, sans-serif" font-size="12" font-weight="590" text-anchor="middle"><tspan x="52" y="140.266">Redeem</tspan></text>
+</svg>

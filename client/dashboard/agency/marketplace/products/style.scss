@@ -1,120 +1,76 @@
+@import '@wordpress/base-styles/colors';
+
 // The DataViews wrapper paints its own surface; the filter bar sits on the page background.
 .dashboard-marketplace-products__filters {
 	--wp-dataviews-color-background: transparent;
-}
-
-.dashboard-marketplace-products__toolbar {
-	padding-block: 16px;
-}
-
-.dashboard-marketplace-products__tiles-wrap {
-	position: relative;
-
-	&::after {
-		content: '';
-		position: absolute;
-		inset-block-start: 0;
-		inset-inline-end: 0;
-		inline-size: 80px;
-		block-size: 100%;
-		background: linear-gradient( to right, transparent, var( --dashboard__background-color ) );
-		pointer-events: none;
-	}
-
-	html[dir='rtl'] &::after {
-		background: linear-gradient( to left, transparent, var( --dashboard__background-color ) ) #{'/*rtl:ignore*/'};
-	}
-}
-
-.dashboard-marketplace-products__tiles {
-	display: flex;
-	gap: 16px;
-	overflow-x: auto;
-	padding: 4px;
-	scrollbar-width: none;
-
-	&::-webkit-scrollbar {
-		display: none;
-	}
-
-	&::after {
-		content: '';
-		flex: 0 0 64px;
-	}
-}
-
-.dashboard-marketplace-products__tile {
-	flex: 0 0 200px;
-	cursor: pointer;
-
-	&:hover,
-	&:focus-visible {
-		box-shadow: 0 0 0 1px var( --wp-components-color-accent, var( --wp-admin-theme-color ) ) inset;
-	}
-
-	&.is-selected {
-		box-shadow: 0 0 0 2px var( --wp-components-color-accent, var( --wp-admin-theme-color ) ) inset;
-	}
-}
-
-.dashboard-marketplace-products__tile-body {
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	block-size: 100px;
-	box-sizing: border-box;
-}
-
-.dashboard-marketplace-products__tile-logo {
-	block-size: 28px;
-	inline-size: auto;
-}
-
-.dashboard-marketplace-products__tile-label {
-	display: inline-flex;
-	align-items: center;
-	gap: 8px;
-}
-
-.dashboard-marketplace-products__card {
-	block-size: 100%;
-}
-
-.dashboard-marketplace-products__card-body {
-	display: flex;
-	flex-direction: column;
-	block-size: 100%;
-	box-sizing: border-box;
-}
-
-.dashboard-marketplace-products__card-main {
-	flex: 1;
-}
-
-// Price and actions sit together at the foot of the card, so short
-// descriptions leave the gap above the price rather than between them.
-.dashboard-marketplace-products__card-footer {
+	// 40px from the featured showcase above, the same as the Library.
 	margin-block-start: 16px;
 }
 
-// The brand mark is the round badge at the start of the descriptor lockup.
-.dashboard-marketplace-products__card-mark {
-	inline-size: 24px;
-	block-size: 24px;
+// The count beside a picked category's heading: quiet, on the heading's line.
+.dashboard-marketplace-products__job-count {
+	margin-inline-start: 12px;
+	font-size: 15px;
+	font-weight: 400;
+	color: $gray-700;
+}
+
+// The results keep at least a screen's height, so narrowing the list never
+// leaves the page shorter than the scroll position (the browser would jump up).
+.dashboard-marketplace-products__results {
+	min-block-size: 100vh;
+}
+
+// A product's marketplace icon, at the card tile's size and radius.
+.dashboard-marketplace-products__product-icon {
+	display: block;
+	flex: none;
+	inline-size: 40px;
+	block-size: 40px;
+	border-radius: 8px;
 	object-fit: cover;
-	object-position: left;
-	flex-shrink: 0;
+	box-shadow: inset 0 0 0 1px rgba( 0, 0, 0, 0.06 );
 }
 
-.dashboard-marketplace-products__card-logo {
-	block-size: 24px;
-	inline-size: auto;
-	max-inline-size: 160px;
-	object-fit: contain;
+// A Jetpack product glyph or the "more" glyph, drawn through a mask in the
+// tile's text colour.
+.dashboard-marketplace-products__product-glyph {
+	display: block;
+	inline-size: 22px;
+	block-size: 22px;
+	background: currentColor;
+	mask: var( --product-glyph ) center / contain no-repeat;
+
+	// The "more" glyph carries its own air, so it fills the whole tile.
+	&.is-more {
+		inline-size: 100%;
+		block-size: 100%;
+	}
 }
 
-.dashboard-marketplace-products__section-mark {
-	object-position: left;
+// The actions sit above the card's link layer, the price on its own line
+// above them so both fit on the narrowest card.
+.dashboard-marketplace-products__card-actions {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 8px 16px;
+}
+
+// A featured product without a drawing: its tile and name on a white card.
+.dashboard-marketplace-products__featured-fallback {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	padding: 16px;
+	border-radius: 8px;
+	background: #fff;
+	box-shadow:
+		0 12px 32px rgba( 0, 0, 0, 0.12 ),
+		0 2px 6px rgba( 0, 0, 0, 0.08 );
+	font-size: 13px;
+	font-weight: 600;
+	color: #1e1e1e;
 }
 
 // Product details: content on the left, price rail on the right, so the price
@@ -187,3 +143,43 @@
 		fill: var( --wp-components-color-accent, var( --wp-admin-theme-color ) );
 	}
 }
+
+// The loading card's tile, at the store card tile's size and radius.
+.dashboard-marketplace-products__skeleton-tile {
+	display: block;
+	flex: none;
+	inline-size: 40px;
+	block-size: 40px;
+	border-radius: 8px;
+	background: $gray-100;
+}
+
+// A list heading's icon matches the tiles' icons, black rather than the
+// section header's grey decoration, and sits closer to the name: the header
+// centres it in a 32px box, so it shifts toward the name by that box's slack.
+.dashboard-marketplace-products__section-mark {
+	display: inline-flex;
+	translate: 4px 0;
+
+	svg {
+		fill: $gray-900;
+	}
+
+	// A brand's round mark, the same 24px as the icons.
+	img {
+		inline-size: 24px;
+		block-size: 24px;
+	}
+}
+
+// Search, the filter button and the active filters, in one line that takes the
+// row's width up to previous and next.
+.dashboard-marketplace-products__toolbar {
+	flex: 1;
+	min-inline-size: 0;
+
+	> * {
+		flex-shrink: 0;
+	}
+}
+

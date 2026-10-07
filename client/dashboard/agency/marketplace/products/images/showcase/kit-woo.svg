@@ -1,0 +1,10 @@
+<svg width="320" height="128" viewBox="0 0 320 128" fill="none" xmlns="http://www.w3.org/2000/svg">
+<rect width="320" height="128" rx="8" fill="white"/>
+<text fill="#1D2327" style="white-space: pre" xml:space="preserve" font-family="SF Pro, SF Pro Text, -apple-system, BlinkMacSystemFont, system-ui, sans-serif" font-size="13" font-weight="590"><tspan x="16" y="28.6211">Build your kit</tspan></text>
+<rect x="16.5" y="42.5" width="287" height="29" rx="3.5" stroke="#DCDCDE"/>
+<text fill="#1D2327" style="white-space: pre" xml:space="preserve" font-family="SF Pro, SF Pro Text, -apple-system, BlinkMacSystemFont, system-ui, sans-serif" font-size="12"><tspan x="23" y="61.2656">Base</tspan></text>
+<circle cx="291" cy="57" r="4" fill="white" stroke="#720EEC" stroke-width="4"/>
+<rect x="16.5" y="82.5" width="287" height="29" rx="3.5" stroke="#DCDCDE"/>
+<text fill="#1D2327" style="white-space: pre" xml:space="preserve" font-family="SF Pro, SF Pro Text, -apple-system, BlinkMacSystemFont, system-ui, sans-serif" font-size="12"><tspan x="23" y="101.266">Colour</tspan></text>
+<circle cx="291" cy="97" r="4" fill="white" stroke="#720EEC" stroke-width="4"/>
+</svg>
