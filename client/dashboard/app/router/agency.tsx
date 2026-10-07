@@ -74,6 +74,7 @@ import {
 	PARTNER_DIRECTORY_EXPERTISE_SEGMENT,
 	PARTNER_DIRECTORY_ROUTE,
 } from '../../agency/partner-directory/paths';
+import { isPressableSite } from '../../agency/sites/lib';
 import {
 	canOptOutOfWordPressBeta,
 	canSwitchWordPressVersion,
@@ -1028,8 +1029,25 @@ const agencySiteOverviewRoute = createRoute( {
 	getParentRoute: () => agencySiteRoute,
 	path: '/',
 	loader: async ( { params: { siteSlug } } ) => {
-		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+		const [ site, agencySite ] = await Promise.all( [
+			queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) ),
+			queryClient.ensureQueryData( agencySiteQuery( siteSlug ) ),
+		] );
 		queryClient.prefetchQuery( sitePerformancePagesQuery( site.ID ) );
+
+		// Settle the plan card before first paint, so a Pressable site does not
+		// show the Jetpack card first and then swap to the Pressable one.
+		if ( isPressableSite( agencySite ) ) {
+			const agency = await queryClient.ensureQueryData( activeAgencyQuery() );
+			if ( agency?.id ) {
+				await Promise.all( [
+					queryClient.ensureQueryData( agencyProductsQuery( agency.id ) ),
+					queryClient
+						.ensureQueryData( pressableLicensesQuery( agency.id ) )
+						.catch( () => undefined ),
+				] );
+			}
+		}
 	},
 } ).lazy( () =>
 	import( '../../agency/sites/site/overview' ).then( ( d ) =>

@@ -6,13 +6,13 @@ import Grid from '../../../components/grid';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
 import PerformanceCard from '../../../sites/overview-performance-card';
-import PlanCard from '../../../sites/overview-plan-card';
 import SiteOverviewFields from '../../../sites/overview-site-fields';
 import VisibilityCard from '../../../sites/overview-visibility-card';
 import { siteTypeSupportsFeature } from '../../../utils/site-type-feature-support';
 import { getSiteName } from '../dataviews/site-data';
 import ActivityCard from './activity-card';
 import BackupCard from './backup-card';
+import AgencySitePlanCard from './plan-card';
 import ScanCard from './scan-card';
 
 export default function AgencySiteOverview() {
@@ -31,7 +31,7 @@ export default function AgencySiteOverview() {
 			}
 		>
 			<Grid columns={ isSmallViewport ? 1 : 2 } gap={ isSmallViewport ? 'lg' : 'xl' }>
-				<PlanCard site={ fullSite } />
+				<AgencySitePlanCard agencySite={ site } site={ fullSite } />
 				<VisibilityCard site={ fullSite } />
 				<BackupCard site={ site } />
 				<ScanCard site={ site } siteSlug={ siteSlug } />
