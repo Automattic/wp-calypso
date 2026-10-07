@@ -1,10 +1,10 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 import {
+	FlexBlock,
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 	__experimentalText as Text,
 } from '@wordpress/components';
-import clsx from 'clsx';
 import { Fragment } from 'react';
 import { useSelector } from 'react-redux';
 import getIsNoteApproved from '../../panel/state/selectors/get-is-note-approved';
@@ -55,6 +55,7 @@ export default function UserBlock( {
 }: {
 	note: Note;
 	block: Block;
+	/** A byline: the name over their site, with the follow link at the far end. */
 	isCompact?: boolean;
 } ) {
 	const { locale } = useAppContext();
@@ -84,6 +85,53 @@ export default function UserBlock( {
 			/>
 		);
 
+	const avatar = (
+		<a
+			href={ readerProfileUrl }
+			target="_blank"
+			rel="noreferrer"
+			style={ {
+				display: 'flex',
+				flexShrink: 0,
+				borderRadius: '50%',
+				overflow: 'hidden',
+			} }
+		>
+			<NoteIcon icon={ media?.url } alt={ block.text } size={ 32 } />
+		</a>
+	);
+
+	if ( isCompact ) {
+		return (
+			<HStack className="wpnc__user" spacing={ 4 }>
+				{ avatar }
+				<FlexBlock>
+					<VStack spacing={ 0 }>
+						<a
+							className="wpnc__user-title"
+							href={ readerProfileUrl }
+							target="_blank"
+							rel="noreferrer"
+						>
+							{ /* A line count, since the plain `truncate` loses to Text's own wrapping. */ }
+							<Text truncate numberOfLines={ 1 }>
+								{ block.text }
+							</Text>
+						</a>
+						{ homeTitle && (
+							<a href={ homeLink } target="_blank" rel="noopener noreferrer">
+								<Text className="wpnc__user-site" variant="muted" truncate numberOfLines={ 1 }>
+									{ homeTitle }
+								</Text>
+							</a>
+						) }
+					</VStack>
+				</FlexBlock>
+				{ followLink }
+			</HStack>
+		);
+	}
+
 	// Build the present description items, then interleave a single separator
 	// between them — so there's never a leading, trailing, or doubled separator
 	// when an item is absent.
@@ -104,30 +152,13 @@ export default function UserBlock( {
 				{ homeTitle }
 			</a>
 		),
-		! isCompact && followLink,
+		followLink,
 	].filter( ( part ): part is ReactElement => Boolean( part ) );
 
 	return (
-		<HStack
-			className={ clsx( 'wpnc__user', { 'is-compact': isCompact } ) }
-			justify="flex-start"
-			alignment={ isCompact ? 'center' : 'flex-start' }
-			spacing={ 4 }
-		>
-			<a
-				href={ readerProfileUrl }
-				target="_blank"
-				rel="noreferrer"
-				style={ {
-					display: 'flex',
-					flexShrink: 0,
-					borderRadius: '50%',
-					overflow: 'hidden',
-				} }
-			>
-				<NoteIcon icon={ media?.url } alt={ block.text } size={ 32 } />
-			</a>
-			<VStack className="wpnc__user-text" alignment="flex-start" spacing={ 0 }>
+		<HStack className="wpnc__user" justify="flex-start" alignment="flex-start" spacing={ 4 }>
+			{ avatar }
+			<VStack alignment="flex-start" spacing={ 0 }>
 				<a className="wpnc__user-title" href={ readerProfileUrl } target="_blank" rel="noreferrer">
 					<Text>{ block.text }</Text>
 				</a>
@@ -140,7 +171,6 @@ export default function UserBlock( {
 					) ) }
 				</HStack>
 			</VStack>
-			{ isCompact && followLink && <div className="wpnc__user-follow">{ followLink }</div> }
 		</HStack>
 	);
 }

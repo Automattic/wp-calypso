@@ -1,12 +1,13 @@
 import {
 	__experimentalHStack as HStack,
+	__experimentalText as Text,
 	__experimentalVStack as VStack,
+	CardDivider,
 	CardFooter,
 	ExternalLink,
 } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import clsx from 'clsx';
 import { useState, useEffect, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { getModerateCommentsLink } from '../../panel/helpers/notes';
@@ -119,6 +120,11 @@ export const ActionBlock = ( { note, goBack }: { note: Note; goBack: () => void 
 	);
 };
 
+type People = { rows: ReactNode[]; footnote?: ReactNode };
+
+const isPeople = ( item: ReactNode | People ): item is People =>
+	!! item && typeof item === 'object' && 'rows' in item;
+
 export const NoteBody = ( {
 	note,
 	isCompact = false,
@@ -146,8 +152,6 @@ export const NoteBody = ( {
 	const shownBlocks = restBlocks.filter( ( block ) => ! isReplyBlock( note, block.block ) );
 	const renderBlock = ( block: BlockWithSignature, i: number ) => {
 		const key = 'block-' + note.id + '-' + i;
-		// Text after a list of people is a footnote to it, such as a link to every like.
-		const isPeopleFootnote = isCompact && shownBlocks[ i - 1 ]?.signature.type === 'user';
 
 		switch ( block.signature.type ) {
 			case 'user':
@@ -159,23 +163,28 @@ export const NoteBody = ( {
 			case 'prompt':
 				return <PromptBlock key={ key } block={ block.block } />;
 			default:
-				return (
-					<div key={ key } className={ clsx( { 'wpnc__people-footnote': isPeopleFootnote } ) }>
-						{ p( html( block.block ) ) }
-					</div>
-				);
+				return <div key={ key }>{ p( html( block.block ) ) }</div>;
 		}
 	};
 
-	// Compact bylines are stacked as one list, so the stack sets the space between people.
-	const body: Array< ReactNode | ReactNode[] > = [];
+	// Compact bylines are stacked as one list, and the text that follows them is a
+	// footnote to it, such as a link to every like.
+	const body: Array< ReactNode | People > = [];
 	shownBlocks.forEach( ( block, i ) => {
-		const isPerson = isCompact && block.signature.type === 'user';
 		const last = body[ body.length - 1 ];
-		if ( isPerson && Array.isArray( last ) ) {
-			last.push( renderBlock( block, i ) );
+		const people = isPeople( last ) && ! last.footnote ? last : undefined;
+		const { type } = block.signature;
+
+		if ( isCompact && type === 'user' ) {
+			if ( people ) {
+				people.rows.push( renderBlock( block, i ) );
+			} else {
+				body.push( { rows: [ renderBlock( block, i ) ] } );
+			}
+		} else if ( people && ( type === 'text' || type === 'reply' ) ) {
+			people.footnote = renderBlock( block, i );
 		} else {
-			body.push( isPerson ? [ renderBlock( block, i ) ] : renderBlock( block, i ) );
+			body.push( renderBlock( block, i ) );
 		}
 	} );
 
@@ -193,9 +202,17 @@ export const NoteBody = ( {
 			) }
 			<div className="wpnc__body-content">
 				{ body.map( ( item, i ) =>
-					Array.isArray( item ) ? (
-						<VStack key={ `people-${ i }` } className="wpnc__people" spacing={ 4 }>
-							{ item }
+					isPeople( item ) ? (
+						<VStack key={ `people-${ i }` } spacing={ 3 }>
+							<VStack spacing={ 2 }>{ item.rows }</VStack>
+							{ item.footnote && (
+								<>
+									<CardDivider />
+									<Text as="div" className="wpnc__people-footnote" variant="muted">
+										{ item.footnote }
+									</Text>
+								</>
+							) }
 						</VStack>
 					) : (
 						item
