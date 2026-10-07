@@ -1,5 +1,5 @@
 import { __ } from '@wordpress/i18n';
-import { thumbsUp } from '@wordpress/icons';
+import { starEmpty, starFilled } from '@wordpress/icons';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { getReferenceId } from '../../panel/helpers/notes';
@@ -27,7 +27,8 @@ const LikeButton = ( { commentId, isLiked, note, setLikeStatus } ) => {
 
 	return (
 		<ActionButton
-			icon={ thumbsUp }
+			icon={ isLiked ? starFilled : starEmpty }
+			variant="tertiary"
 			isActive={ isLiked }
 			hotkey="l"
 			onToggle={ () =>
