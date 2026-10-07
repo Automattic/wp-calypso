@@ -50,7 +50,7 @@ const rows = () =>
 	Array.from( container.querySelectorAll( 'li' ) ).filter(
 		( row ) => row.getAttribute( 'aria-hidden' ) !== 'true'
 	);
-const rowLabels = () => rows().map( ( row ) => row.textContent );
+const rowLabels = () => rows().map( ( row ) => row.querySelector( 'span' )?.textContent );
 const header = () => container.querySelector( 'button[aria-expanded]' ) as HTMLButtonElement;
 const rowFor = ( label: string ) => {
 	const row = rows().find( ( candidate ) => candidate.textContent?.includes( label ) );
@@ -133,7 +133,7 @@ describe( 'Checklist', () => {
 		expect( rowFor( 'Publish the About page' ).querySelector( 'button' ) ).not.toBeNull();
 	} );
 
-	it( 'renders a disabled item inert, with its reason as a title', () => {
+	it( 'keeps a disabled item focusable and describes it by its reason', () => {
 		const onSubmit = vi.fn();
 		render( {
 			onSubmit,
@@ -148,11 +148,22 @@ describe( 'Checklist', () => {
 			],
 		} );
 
-		const row = rowFor( 'Add products' );
-		expect( row.querySelector( 'button' ) ).toBeNull();
-		expect( row.querySelector( '[aria-disabled="true"]' )?.getAttribute( 'title' ) ).toBe(
-			'Install WooCommerce first'
-		);
+		const button = rowFor( 'Add products' ).querySelector( 'button' ) as HTMLButtonElement;
+		expect( button.getAttribute( 'aria-disabled' ) ).toBe( 'true' );
+		const reasonId = button.getAttribute( 'aria-describedby' ) as string;
+		expect( document.getElementById( reasonId )?.textContent ).toBe( 'Install WooCommerce first' );
+
+		click( button );
+		expect( onSubmit ).not.toHaveBeenCalled();
+	} );
+
+	it( 'announces each status to assistive technology', () => {
+		render();
+
+		expect( rowFor( 'Customize the design' ).textContent ).toContain( 'Done' );
+		expect( rowFor( 'Replace placeholder images' ).textContent ).toContain( 'In progress' );
+		expect( rowFor( 'Add a custom domain' ).textContent ).toContain( 'Skipped' );
+		expect( rowFor( 'Launch site' ).textContent ).toContain( 'To do' );
 	} );
 
 	it( 'runs the action first and skips the submit when it returns false', async () => {
@@ -260,7 +271,7 @@ describe( 'AgentUIChecklist', () => {
 	};
 
 	it( 'routes a sent selection through the container and reports it', async () => {
-		const handleSuggestionSubmit = vi.fn();
+		const handleSuggestionSubmit = vi.fn( () => true );
 		const onSelect = renderWired( { handleSuggestionSubmit } );
 
 		click( rowFor( 'Launch site' ).querySelector( 'button' ) );
@@ -271,9 +282,9 @@ describe( 'AgentUIChecklist', () => {
 		expect( header().getAttribute( 'aria-expanded' ) ).toBe( 'false' );
 	} );
 
-	it( 'keeps the item open when the container blocks the send', async () => {
-		const handleSuggestionSubmit = vi.fn();
-		const onSelect = renderWired( { handleSuggestionSubmit, canSubmitMessage: () => false } );
+	it( 'keeps the item open when the container does not send', async () => {
+		const handleSuggestionSubmit = vi.fn( () => false );
+		const onSelect = renderWired( { handleSuggestionSubmit } );
 
 		click( rowFor( 'Launch site' ).querySelector( 'button' ) );
 		await flush();
@@ -284,7 +295,7 @@ describe( 'AgentUIChecklist', () => {
 	} );
 
 	it( 'keeps the item open when the prompt only fills the composer', async () => {
-		const handleSuggestionSubmit = vi.fn();
+		const handleSuggestionSubmit = vi.fn( () => false );
 		const onSelect = vi.fn();
 		act( () => {
 			root.render(

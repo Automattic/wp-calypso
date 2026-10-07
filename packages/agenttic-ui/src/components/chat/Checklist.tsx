@@ -1,7 +1,9 @@
+import { __ } from '@wordpress/i18n';
 import React, { useId, useRef, useState } from 'react';
 import { cn } from '../../utils/classNames';
 import { ChevronDownIcon } from '../icons/ChevronDownIcon';
 import { ChevronUpIcon } from '../icons/ChevronUpIcon';
+import { Tooltip } from '../ui/tooltip';
 import styles from './Checklist.module.css';
 import type { ChecklistItem, ChecklistItemStatus } from '../../types';
 
@@ -72,6 +74,75 @@ function StatusIcon( { status }: { status: ChecklistItemStatus } ) {
 	);
 }
 
+type RowKind = 'open' | 'disabled' | 'inert';
+
+const getRowKind = ( item: ChecklistItem ): RowKind => {
+	if ( isActionable( item ) ) {
+		return 'open';
+	}
+	return item.disabled && ! isSettled( item ) ? 'disabled' : 'inert';
+};
+
+interface ChecklistRowProps {
+	item: ChecklistItem;
+	statusLabel: string;
+	onSelect: ( item: ChecklistItem ) => void;
+}
+
+function ChecklistRow( { item, statusLabel, onSelect }: ChecklistRowProps ) {
+	const status = getStatus( item );
+	const className = cn( styles.item, {
+		[ styles[ 'item-in_progress' ] ]: status === 'in_progress',
+		[ styles.settled ]: isSettled( item ),
+	} );
+	const content = (
+		<>
+			<StatusIcon status={ status } />
+			<span className={ styles.label }>{ item.label }</span>
+			<span className={ styles.status }>{ statusLabel }</span>
+		</>
+	);
+
+	switch ( getRowKind( item ) ) {
+		case 'open':
+			return (
+				<button
+					type="button"
+					className={ cn( className, styles.actionable ) }
+					onClick={ ( e ) => {
+						e.stopPropagation();
+						onSelect( item );
+					} }
+				>
+					{ content }
+				</button>
+			);
+		case 'disabled': {
+			// Stays focusable so the reason is reachable from the keyboard.
+			const reasonId = item.disabledReason ? `agenttic-checklist-reason-${ item.id }` : undefined;
+			const button = (
+				<button
+					type="button"
+					className={ className }
+					aria-disabled="true"
+					aria-describedby={ reasonId }
+				>
+					{ content }
+				</button>
+			);
+			return reasonId ? (
+				<Tooltip label={ item.disabledReason as string } descriptionId={ reasonId }>
+					{ button }
+				</Tooltip>
+			) : (
+				button
+			);
+		}
+		default:
+			return <div className={ className }>{ content }</div>;
+	}
+}
+
 /**
  * A task list that lives in the chat: a header with progress and a
  * collapse toggle, and one row per task. Clicking an open task submits it
@@ -110,6 +181,13 @@ export function Checklist( {
 	};
 
 	const settledCount = items.filter( isSettled ).length;
+
+	const statusLabels: Record< ChecklistItemStatus, string > = {
+		todo: __( 'To do', 'a8c-agenttic' ),
+		in_progress: __( 'In progress', 'a8c-agenttic' ),
+		done: __( 'Done', 'a8c-agenttic' ),
+		skipped: __( 'Skipped', 'a8c-agenttic' ),
+	};
 
 	// One click at a time: `action` may await a network call, during which the
 	// row still looks clickable.
@@ -165,20 +243,7 @@ export function Checklist( {
 			   to zero height and out of the accessibility tree. */ }
 			<ul id={ listId } className={ styles.list }>
 				{ items.map( ( item ) => {
-					const status = getStatus( item );
-					const actionable = isActionable( item );
-					const hidden = isCollapsed && status !== 'in_progress';
-					const rowClassName = cn( styles.item, {
-						[ styles[ 'item-in_progress' ] ]: status === 'in_progress',
-						[ styles.settled ]: isSettled( item ),
-					} );
-					const content = (
-						<>
-							<StatusIcon status={ status } />
-							<span className={ styles.label }>{ item.label }</span>
-						</>
-					);
-
+					const hidden = isCollapsed && getStatus( item ) !== 'in_progress';
 					return (
 						<li
 							key={ item.id }
@@ -187,26 +252,11 @@ export function Checklist( {
 						>
 							<div className={ styles.roll }>
 								<div className={ styles.pad }>
-									{ actionable ? (
-										<button
-											type="button"
-											className={ cn( rowClassName, styles.actionable ) }
-											onClick={ ( e ) => {
-												e.stopPropagation();
-												handleItemClick( item );
-											} }
-										>
-											{ content }
-										</button>
-									) : (
-										<div
-											className={ rowClassName }
-											aria-disabled={ item.disabled || undefined }
-											title={ item.disabled ? item.disabledReason : undefined }
-										>
-											{ content }
-										</div>
-									) }
+									<ChecklistRow
+										item={ item }
+										statusLabel={ statusLabels[ getStatus( item ) ] }
+										onSelect={ handleItemClick }
+									/>
 								</div>
 							</div>
 						</li>

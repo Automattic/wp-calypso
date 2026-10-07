@@ -16,21 +16,13 @@ export interface AgentUIChecklistProps extends Omit< ChecklistProps, 'onSubmit' 
  * @param props.onSelect Called with the selected item once its prompt is sent.
  */
 export function AgentUIChecklist( { onSelect, ...props }: AgentUIChecklistProps ) {
-	const { handleSuggestionSubmit, canSubmitMessage } = useAgentUIContext();
+	const { handleSuggestionSubmit } = useAgentUIContext();
 
 	const handleSubmit = useCallback(
 		( selectedItem: ChecklistItem, items: ChecklistItem[] ): boolean => {
-			// Mirrors the container's gate: only an auto-submitted prompt it accepts
-			// starts the task. A blocked send or a prompt that merely lands in the
-			// composer leaves the item open so the user can try again.
-			const message = ( selectedItem.prompt ?? selectedItem.label ).trim();
-			const sent =
-				Boolean( selectedItem.autoSubmit ) &&
-				message !== '' &&
-				( canSubmitMessage?.( message, 'suggestion' ) ?? true );
-
-			handleSuggestionSubmit( selectedItem, items );
-
+			// A blocked send, or a prompt that merely lands in the composer, leaves
+			// the item open so the user can try again.
+			const sent = handleSuggestionSubmit( selectedItem, items ) === true;
 			if ( ! sent ) {
 				return false;
 			}
@@ -42,7 +34,7 @@ export function AgentUIChecklist( { onSelect, ...props }: AgentUIChecklistProps 
 			}
 			return true;
 		},
-		[ onSelect, handleSuggestionSubmit, canSubmitMessage ]
+		[ onSelect, handleSuggestionSubmit ]
 	);
 
 	return <Checklist { ...props } onSubmit={ handleSubmit } />;

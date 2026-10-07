@@ -301,8 +301,10 @@ export function AgentUIContainer( {
 	);
 
 	// Handle suggestion submission
+	// Returns whether the suggestion was handed to the agent: false when the
+	// send was blocked or when the prompt only went into the composer.
 	const handleSuggestionSubmit = useCallback(
-		async ( selectedSuggestion: Suggestion, availableSuggestions: Suggestion[] ) => {
+		( selectedSuggestion: Suggestion, availableSuggestions: Suggestion[] ): boolean => {
 			const value = selectedSuggestion.prompt ?? selectedSuggestion.label;
 
 			if ( selectedSuggestion.autoSubmit ) {
@@ -312,19 +314,21 @@ export function AgentUIContainer( {
 				// A blocked send is a no-op: the suggestion stays in the list and the
 				// click is not reported, so hosts don't retire it as consumed.
 				if ( message && ! canSubmitMessage( message, 'suggestion' ) ) {
-					return;
+					return false;
 				}
 
 				clearSuggestions?.();
 
-				// Report the click before awaiting the send: `onSubmit` may not settle
-				// until the reply finishes streaming (or at all).
+				// Report the click before the send: `onSubmit` may not settle until
+				// the reply finishes streaming (or at all).
 				onSuggestionClick?.( selectedSuggestion, availableSuggestions );
 
 				if ( message ) {
-					await onSubmit( message );
+					void onSubmit( message );
 				}
-			} else {
+				return true;
+			}
+			{
 				// Default: populate input field for user to edit/submit
 				const valueWithSpace = value.endsWith( ' ' ) ? value : `${ value } `;
 				input.setValue( valueWithSpace );
@@ -338,6 +342,7 @@ export function AgentUIContainer( {
 				}
 
 				onSuggestionClick?.( selectedSuggestion, availableSuggestions );
+				return false;
 			}
 		},
 		[ clearSuggestions, onSubmit, onSuggestionClick, input, canSubmitMessage ]
@@ -532,7 +537,6 @@ export function AgentUIContainer( {
 		clearSuggestions,
 		handleSuggestionSubmit,
 		reportSuggestionsRendered,
-		canSubmitMessage,
 
 		// Notice
 		notice: computedNotice,
