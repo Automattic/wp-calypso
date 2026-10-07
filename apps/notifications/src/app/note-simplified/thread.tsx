@@ -98,14 +98,7 @@ export default function Thread( {
 					authorUrl={ parent.authorUrl }
 					meta={ parentMeta }
 				>
-					<a
-						className="wpnc-simplified__quiet-links"
-						href={ parent.url }
-						target="_blank"
-						rel="noreferrer"
-					>
-						{ parent.text }
-					</a>
+					<div className="wpnc-simplified__parent-text">{ parent.text }</div>
 				</ThreadItem>
 			) }
 			{ speaker && (

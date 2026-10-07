@@ -1,4 +1,4 @@
-import { __ } from '@wordpress/i18n';
+import { __, _n, sprintf } from '@wordpress/i18n';
 import { zipWithSignature } from '../../panel/templates/functions';
 import { splitSubject } from '../note-list/simplified-subject';
 import { getHeaderLink } from '../templates/note-summary';
@@ -15,9 +15,17 @@ type TypeTraits = {
 	isPostNews?: boolean;
 	/** The note is about a comment the reader wrote. */
 	isAboutComment?: boolean;
-	/** Heads the list of people who acted; the list itself says how many. */
-	peopleHeading?: string;
+	/** Heads the list of people who acted, given how many there are. */
+	peopleHeading?: ( count: number ) => string;
+	/** Names the open note in place of the endpoint's title. */
+	title?: string;
+	/** The post card only names the post, since what happened is the news. */
+	hidesExcerpt?: boolean;
 };
+
+const getLikesHeading = ( count: number ) =>
+	/* translators: %d: the number of likes */
+	sprintf( _n( '%d like', '%d likes', count ), count );
 
 // What each note type means, in one place. Types not listed fall back to the shape of
 // their blocks.
@@ -30,17 +38,19 @@ const getTypeTraits = ( type: string ): TypeTraits => {
 		case 'new_post':
 			return { isPostNews: true };
 		case 'comment_like':
-			return { isAboutComment: true, peopleHeading: __( 'Likes' ) };
+			return { isAboutComment: true, title: __( 'Likes' ), peopleHeading: getLikesHeading };
 		case 'like':
-			return { peopleHeading: __( 'Likes' ) };
+			return { title: __( 'Likes' ), hidesExcerpt: true, peopleHeading: getLikesHeading };
 		case 'reblog':
-			return { peopleHeading: __( 'Reblogs' ) };
+			return { peopleHeading: () => __( 'Reblogs' ) };
 		case 'follow':
-			return { peopleHeading: __( 'Subscribers' ) };
+			return { peopleHeading: () => __( 'Subscribers' ) };
 		default:
 			return {};
 	}
 };
+
+export const getNoteTitle = ( note: Note ) => getTypeTraits( note.type ).title ?? note.title;
 
 export type NoteView = {
 	/** System notes (orders, achievements, renewals) have no one acting; their body says it all. */
@@ -80,11 +90,6 @@ export type NoteView = {
 	/** The note's own blocks, minus those the layout above already shows. */
 	bodyBlocks: Block[];
 };
-
-const toPlainText = ( markup?: string ) =>
-	markup
-		? new DOMParser().parseFromString( markup, 'text/html' ).body.textContent?.trim()
-		: undefined;
 
 const getDisplayUrl = ( url?: string, withPath = false ) => {
 	try {
@@ -130,8 +135,9 @@ export function getNoteView( note: Note, isPendingApproval = false ): NoteView {
 		if ( ! isReply && ! traits.isAboutComment ) {
 			return undefined;
 		}
-		const details = note.parent_comment;
-		const text = details?.text ?? contextText;
+		const details = note.meta?.parent_comment;
+		// Blank lines between paragraphs would spend the clamped lines on nothing.
+		const text = details?.text?.trim().replace( /\s*\n\s*/g, '\n' ) || contextText;
 		if ( ! text ) {
 			return undefined;
 		}
@@ -166,17 +172,16 @@ export function getNoteView( note: Note, isPendingApproval = false ): NoteView {
 			return undefined;
 		}
 
-		const details = note.post;
+		const details = note.meta?.post;
 		const noteTitle = hasPostCard
 			? split?.title
 			: ( getRangeText( sentence, 'post' ) ?? getRangeText( header, 'post' ) );
 		// The endpoint's title is the real one; only a title read from the note's own text
 		// can turn out to be the start of the comment it answers.
 		const title =
-			toPlainText( details?.title ) ||
+			details?.title ||
 			( noteTitle && ! isRestating( noteTitle, parent?.text ) ? noteTitle : undefined );
-		const excerpt =
-			toPlainText( details?.excerpt ) || ( hasPostCard ? postBlock?.text : undefined );
+		const excerpt = traits.hidesExcerpt || ! hasPostCard ? undefined : postBlock?.text;
 
 		if ( ! title && ! excerpt ) {
 			return undefined;
@@ -186,10 +191,10 @@ export function getNoteView( note: Note, isPendingApproval = false ): NoteView {
 			title,
 			excerpt,
 			url: details?.url ?? ( hasPostCard ? undefined : postRange?.url ) ?? note.url,
-			siteName: toPlainText( details?.site_name ),
-			siteIcon: details?.site_icon,
+			siteName: note.meta?.site?.name,
+			siteIcon: note.meta?.site?.icon,
 			author: details?.author_name,
-			date: details?.date,
+			date: details?.date ?? undefined,
 		};
 	};
 	const post = getPost();
@@ -219,7 +224,7 @@ export function getNoteView( note: Note, isPendingApproval = false ): NoteView {
 	// Beneath a card or a comment, the list of people already says who acted.
 	const peopleHeading =
 		users.length > 0 && ! hasWords && ( hasCard || !! parent )
-			? ( traits.peopleHeading ?? note.title )
+			? ( traits.peopleHeading?.( users.length ) ?? note.title )
 			: undefined;
 	// A lone person is named by the actor row or the thread, so their block isn't repeated.
 	const isActorShown = users.length === 1 && ! peopleHeading;
@@ -242,9 +247,7 @@ export function getNoteView( note: Note, isPendingApproval = false ): NoteView {
 		.slice( 0, MAX_AVATARS );
 	const action = split?.action ?? sentence;
 	const followSiteId = actor?.meta?.ids?.site;
-	const newPostTitle = traits.isPostNews
-		? toPlainText( note.post?.title ) || split?.title
-		: undefined;
+	const newPostTitle = traits.isPostNews ? note.meta?.post?.title || split?.title : undefined;
 
 	return {
 		hasActor: users.length > 0 || !! header,
@@ -258,7 +261,9 @@ export function getNoteView( note: Note, isPendingApproval = false ): NoteView {
 			split && ! hasCard && ! isConversation && ! traits.isPostNews
 				? { title: split.title, url: target?.url }
 				: undefined,
-		postTitle: newPostTitle ? { title: newPostTitle, url: note.post?.url ?? note.url } : undefined,
+		postTitle: newPostTitle
+			? { title: newPostTitle, url: note.meta?.post?.url ?? note.url }
+			: undefined,
 		origin: getOrigin(),
 		follow:
 			isActorShown && ! hasComment && followSiteId && actor.actions && 'follow' in actor.actions

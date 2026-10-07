@@ -5,17 +5,11 @@ import { addListeners, removeListeners } from '../panel/state/create-listener-mi
 
 let client: any;
 
-export type ClientOptions = {
-	/** Ask for post and parent-comment details, which only the simplified note shows. */
-	includePostDetails?: boolean;
-};
-
-// There is one client per page, so whichever caller starts it sets its options.
-export function initClient( wpcom: any, options: ClientOptions = {} ) {
+export function initClient( wpcom: any ) {
 	initAPI( wpcom );
 
 	if ( ! client ) {
-		client = new RestClient( options );
+		client = new RestClient();
 		client.setVisibility( { isShowing: false, isVisible: ! document.hidden } );
 		document.addEventListener( 'visibilitychange', () => {
 			client.setVisibility( { isShowing: client.isShowing, isVisible: ! document.hidden } );
@@ -30,16 +24,8 @@ export function getClient() {
 	return client;
 }
 
-/**
- * Starts the client ahead of the panel to keep the unseen count fresh, so it takes
- * the same options the panel would pass.
- */
-export function subscribeUnseenCount(
-	wpcom: any,
-	onCount: ( count: number ) => void,
-	options: ClientOptions = {}
-): () => void {
-	initClient( wpcom, options );
+export function subscribeUnseenCount( wpcom: any, onCount: ( count: number ) => void ): () => void {
+	initClient( wpcom );
 
 	const handlers = {
 		APP_RENDER_NOTES: [

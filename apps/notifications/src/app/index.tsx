@@ -157,9 +157,7 @@ const NotificationApp = ( {
 	const [ isReady, setIsReady ] = useState( !! getClient() );
 
 	useEffect( () => {
-		initClient( wpcom, {
-			includePostDetails: isSimplifiedNoteEnabled && isViewSettingsEnabled,
-		} );
+		initClient( wpcom );
 		setIsReady( true );
 
 		store.dispatch( { type: 'APP_IS_READY' } );
@@ -170,7 +168,7 @@ const NotificationApp = ( {
 			store.dispatch( { type: SET_IS_SHOWING, isShowing: false } );
 			getClient()?.setVisibility( { isShowing: false, isVisible: ! document.hidden } );
 		};
-	}, [ wpcom, isSimplifiedNoteEnabled, isViewSettingsEnabled ] );
+	}, [ wpcom ] );
 
 	// Seeded once, whenever the host resolves them. A later value would overwrite
 	// whatever the picker has since saved.

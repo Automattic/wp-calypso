@@ -72,6 +72,18 @@ export default function UserBlock( {
 			? getDisplayURL( homeLink )
 			: block.meta?.titles?.home;
 
+	const followLink = note.type !== 'comment' &&
+		!! block.meta?.ids?.site &&
+		block.actions &&
+		'follow' in block.actions && (
+			<FollowLink
+				key="follow"
+				site={ block.meta.ids.site }
+				isFollowing={ !! block.actions.follow }
+				noteType={ note.type as keyof typeof followStatTypes }
+			/>
+		);
+
 	// Build the present description items, then interleave a single separator
 	// between them — so there's never a leading, trailing, or doubled separator
 	// when an item is absent.
@@ -92,17 +104,7 @@ export default function UserBlock( {
 				{ homeTitle }
 			</a>
 		),
-		note.type !== 'comment' &&
-			!! block.meta?.ids?.site &&
-			block.actions &&
-			'follow' in block.actions && (
-				<FollowLink
-					key="follow"
-					site={ block.meta.ids.site }
-					isFollowing={ !! block.actions.follow }
-					noteType={ note.type as keyof typeof followStatTypes }
-				/>
-			),
+		! isCompact && followLink,
 	].filter( ( part ): part is ReactElement => Boolean( part ) );
 
 	return (
@@ -125,7 +127,7 @@ export default function UserBlock( {
 			>
 				<NoteIcon icon={ media?.url } alt={ block.text } size={ 32 } />
 			</a>
-			<VStack alignment="flex-start" spacing={ 0 }>
+			<VStack className="wpnc__user-text" alignment="flex-start" spacing={ 0 }>
 				<a className="wpnc__user-title" href={ readerProfileUrl } target="_blank" rel="noreferrer">
 					<Text>{ block.text }</Text>
 				</a>
@@ -138,6 +140,7 @@ export default function UserBlock( {
 					) ) }
 				</HStack>
 			</VStack>
+			{ isCompact && followLink && <div className="wpnc__user-follow">{ followLink }</div> }
 		</HStack>
 	);
 }

@@ -20,6 +20,7 @@ import getIsNoteRead from '../../panel/state/selectors/get-is-note-read';
 import getLayoutStyle from '../../panel/state/selectors/get-layout-style';
 import { useAppContext } from '../context';
 import SimplifiedNote from '../note-simplified';
+import { getNoteTitle } from '../note-simplified/note-view';
 import { NoteBody, ActionBlock } from '../templates/body';
 import CloseButton from '../templates/close-button';
 import NoteSummary from '../templates/note-summary';
@@ -121,7 +122,7 @@ const Note = ( { isDismissible, noteId, setSelectedNoteId, noteNavigation }: Not
 							/>
 						) }
 						<Heading level={ 3 } size={ 15 } weight={ 500 }>
-							{ note.title }
+							{ isSimplified ? getNoteTitle( note ) : note.title }
 						</Heading>
 					</HStack>
 					<HStack justify="flex-end" style={ { width: 'auto', flexShrink: 0 } }>

@@ -61,6 +61,15 @@ a.wpnc-simplified__quiet-links:visited {
 	overflow-wrap: anywhere;
 }
 
+// The endpoint sends the whole comment, line breaks included.
+.wpnc-simplified__parent-text {
+	display: -webkit-box;
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: 4;
+	overflow: hidden;
+	white-space: pre-line;
+}
+
 .wpnc-simplified__card {
 	display: block;
 	padding: $grid-unit-15;

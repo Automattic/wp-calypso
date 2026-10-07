@@ -340,9 +340,15 @@
 			margin-block: 0;
 		}
 
+		// Takes the free width, so the follow link lands at the far end. An auto margin
+		// can't do it: the body's reset zeroes margins on every div.
+		.wpnc__user-text {
+			flex: 1;
+		}
+
 		.wpnc__user-title {
 			color: inherit;
-			font-weight: 600;
+			font-weight: $font-weight-medium;
 		}
 
 		.wpnc__user-description {
@@ -354,6 +360,23 @@
 			}
 		}
 	}
+}
+
+.wpnc__user-follow {
+	flex-shrink: 0;
+
+	.components-button {
+		font-weight: $font-weight-medium;
+	}
+}
+
+// Scoped past the body's reset, which zeroes padding on every div.
+.wpnc__body-content .wpnc__people-footnote {
+	margin-block-start: $grid-unit-10;
+	padding-block-start: $grid-unit-15;
+	border-block-start: 1px solid var(--wpnc-divider__color, #{$gray-200});
+	font-size: $font-size-small;
+	color: var(--wp-components-color-gray-700, #{$gray-700});
 }
 
 /**

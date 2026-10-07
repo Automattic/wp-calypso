@@ -25,7 +25,7 @@ export default function SimplifiedNote( { note }: { note: Note } ) {
 	const { thread, origin } = view;
 	// Stable, since the body's effects (the reply lookup among them) depend on the note.
 	const bodyNote = useMemo( () => ( { ...note, body: view.bodyBlocks } ), [ note, view ] );
-	const parentDate = note.parent_comment?.date;
+	const parentDate = note.meta?.parent_comment?.date;
 
 	// The thread pictures and dates whoever is speaking, and a headed list names
 	// whoever acted, so neither needs the actor row above it.
@@ -60,10 +60,7 @@ export default function SimplifiedNote( { note }: { note: Note } ) {
 					parentMeta={
 						parentDate && (
 							<Text className="wpnc-simplified__quiet-links" size={ 12 } variant="muted">
-								<NoteTime
-									timestamp={ parentDate }
-									url={ note.parent_comment?.url ?? thread.parent?.url ?? note.url }
-								/>
+								<NoteTime timestamp={ parentDate } url={ thread.parent?.url ?? note.url } />
 							</Text>
 						)
 					}

@@ -6,6 +6,7 @@ import {
 } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import clsx from 'clsx';
 import { useState, useEffect, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { getModerateCommentsLink } from '../../panel/helpers/notes';
@@ -143,8 +144,10 @@ export const NoteBody = ( {
 
 	const body = restBlocks
 		.filter( ( block ) => ! isReplyBlock( note, block.block ) )
-		.map( ( block, i ) => {
+		.map( ( block, i, shown ) => {
 			const key = 'block-' + note.id + '-' + i;
+			// Text after a list of people is a footnote to it, such as a link to every like.
+			const isPeopleFootnote = isCompact && shown[ i - 1 ]?.signature.type === 'user';
 
 			switch ( block.signature.type ) {
 				case 'user':
@@ -156,7 +159,11 @@ export const NoteBody = ( {
 				case 'prompt':
 					return <PromptBlock key={ key } block={ block.block } />;
 				default:
-					return <div key={ key }>{ p( html( block.block ) ) }</div>;
+					return (
+						<div key={ key } className={ clsx( { 'wpnc__people-footnote': isPeopleFootnote } ) }>
+							{ p( html( block.block ) ) }
+						</div>
+					);
 			}
 		} );
 

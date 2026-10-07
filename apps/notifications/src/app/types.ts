@@ -114,32 +114,31 @@ export type Note = {
 			user?: string;
 			home?: string;
 		};
+		// Only on notes about a post or page. Text fields are plain text.
+		post?: {
+			title: string;
+			url: string;
+			date: string | null;
+			author_name: string;
+		};
+		site?: {
+			name: string;
+			icon: string;
+		};
+		/** The comment a reply answers, or the one a like is for, once approved. */
+		parent_comment?: {
+			text: string;
+			author_name: string;
+			author_avatar: string | null;
+			date: string | null;
+			url: string;
+		};
 	};
 	title: string;
 	note_hash: number;
 	subject: Subject[];
 	header?: Subject[]; // present in some note types
 	body: Block[];
-	// Sent only when the request asks for `include=post_details`.
-	post?: NotePost;
-	parent_comment?: {
-		date?: string;
-		url?: string;
-		text?: string;
-		author_name?: string;
-		author_avatar?: string;
-	};
-};
-
-export type NotePost = {
-	title?: string;
-	excerpt?: string;
-	featured_image?: string;
-	date?: string;
-	url?: string;
-	author_name?: string;
-	site_name?: string;
-	site_icon?: string;
 };
 
 type Inbox = {
