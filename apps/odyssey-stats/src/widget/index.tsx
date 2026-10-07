@@ -15,6 +15,7 @@ import {
 	isDateRangeId,
 } from '../lib/date-ranges';
 import getExploreMoreUrl from '../lib/get-explore-more-url';
+import { loadWpComponentsStyleForWidget } from '../lib/load-wp-components-style';
 import getSiteAdminUrl from '../lib/selectors/get-site-admin-url';
 import getSiteStatsBaseUrl from '../lib/selectors/get-site-stats-base-url';
 import setLocale from '../lib/set-locale';
@@ -73,8 +74,12 @@ export function init() {
 
 	const queryClient = new QueryClient();
 
-	// Ensure locale files are loaded before rendering.
-	setLocale( localeSlug ).then( () => {
+	// Locale files and, below WP 6.9, the components' base CSS, before anything renders. A
+	// stylesheet that fails to load still leaves a working, if unstyled, widget.
+	Promise.all( [
+		setLocale( localeSlug ),
+		loadWpComponentsStyleForWidget().catch( () => undefined ),
+	] ).then( () => {
 		const statsWidgetEl = document.getElementById( 'dashboard_stats' );
 		if ( ! statsWidgetEl ) {
 			return;

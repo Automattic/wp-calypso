@@ -60,25 +60,65 @@ function isAtLeast( version: unknown, minimum: string ): boolean {
  * renders unstyled.
  */
 export function isProvidedByWpAdmin(): boolean {
-	// Both versions are also served at the top level, which is the only place they appear on a
-	// site with no WordPress.com connection: `intial_state` is keyed by blog id. The nested read
-	// stays as the fallback, since the JS ships from a CDN and can meet a `stats-admin` old enough
-	// to place them only inside the dashboard's state.
+	return (
+		isAtLeast( siteVersion( 'stats_admin_version' ), STATS_ADMIN_VERSION_WITH_WP_COMPONENTS_DEP ) ||
+		isAtLeast( siteVersion( 'software_version' ), WP_VERSION_WITH_GLOBAL_WP_COMPONENTS )
+	);
+}
+
+/**
+ * Whether the dashboard already serves `@wordpress/components`' base CSS to the widget.
+ *
+ * `stats_admin_version` is no signal here: Jetpack enqueues the widget without Odyssey's own
+ * stylesheet, which is what carries that dependency. So it is the WP version, or the page itself.
+ */
+export function isProvidedToWidget(): boolean {
+	return (
+		isAtLeast( siteVersion( 'software_version' ), WP_VERSION_WITH_GLOBAL_WP_COMPONENTS ) ||
+		isStyleOnPage( 'wp-components' )
+	);
+}
+
+/**
+ * Whether the page links a stylesheet handle, alone or inside wp-admin's concatenated
+ * `load-styles.php` request, which carries no per-handle id.
+ * @param handle The style handle.
+ */
+function isStyleOnPage( handle: string ): boolean {
+	if ( document.getElementById( `${ handle }-css` ) ) {
+		return true;
+	}
+
+	return Array.from(
+		document.querySelectorAll< HTMLLinkElement >( 'link[href*="load-styles.php"]' )
+	).some( ( link ) =>
+		Array.from( new URL( link.href, document.baseURI ).searchParams )
+			.filter( ( [ key ] ) => key.startsWith( 'load' ) )
+			.some( ( [ , handles ] ) => handles.split( ',' ).includes( handle ) )
+	);
+}
+
+/**
+ * A version the site reports.
+ * @param key `stats_admin_version` or `software_version`.
+ */
+function siteVersion( key: 'stats_admin_version' | 'software_version' ): unknown {
+	// Also served at the top level, which is the only place they appear on a site with no
+	// WordPress.com connection: `intial_state` is keyed by blog id. The nested read stays as the
+	// fallback, since the JS ships from a CDN and can meet a `stats-admin` old enough to place
+	// them only inside the dashboard's state.
 	const siteOptions =
 		optionalConfig( 'intial_state' )?.sites?.items?.[ config( 'blog_id' ) as number ]?.options ??
 		{};
 
-	return (
-		isAtLeast(
-			optionalConfig( 'stats_admin_version' ) ?? siteOptions.stats_admin_version,
-			STATS_ADMIN_VERSION_WITH_WP_COMPONENTS_DEP
-		) ||
-		isAtLeast(
-			optionalConfig( 'software_version' ) ?? siteOptions.software_version,
-			WP_VERSION_WITH_GLOBAL_WP_COMPONENTS
-		)
-	);
+	return optionalConfig( key ) ?? siteOptions[ key ];
 }
+
+const importStyle = () =>
+	import(
+		/* webpackChunkName: "wp-components-style" */
+		'odyssey-wp-components-style'
+	);
 
 /**
  * Loads our own copy of `@wordpress/components`' base CSS, but only when nothing on the page
@@ -99,8 +139,16 @@ export default async function loadWpComponentsStyle(): Promise< void > {
 		return;
 	}
 
-	await import(
-		/* webpackChunkName: "wp-components-style" */
-		'odyssey-wp-components-style'
-	);
+	await importStyle();
+}
+
+/**
+ * The dashboard widget's counterpart to `loadWpComponentsStyle`.
+ */
+export async function loadWpComponentsStyleForWidget(): Promise< void > {
+	if ( isProvidedToWidget() ) {
+		return;
+	}
+
+	await importStyle();
 }

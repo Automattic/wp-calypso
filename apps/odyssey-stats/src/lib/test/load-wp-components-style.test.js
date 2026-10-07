@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 import config, { optionalConfig } from '../config-api';
-import { isProvidedByWpAdmin } from '../load-wp-components-style';
+import { isProvidedByWpAdmin, isProvidedToWidget } from '../load-wp-components-style';
 
 jest.mock( '../config-api', () => ( {
 	__esModule: true,
@@ -179,5 +179,41 @@ describe( 'isProvidedByWpAdmin — a site with no WordPress.com connection', () 
 	it( 'survives a payload carrying neither version', () => {
 		mockUnconnected( {} );
 		expect( isProvidedByWpAdmin() ).toBe( false );
+	} );
+} );
+
+describe( 'isProvidedToWidget', () => {
+	afterEach( () => {
+		resetConfig();
+		document.head.innerHTML = '';
+	} );
+
+	it( 'loads our copy below WP 6.9 even once stats-admin declares the dependency', () => {
+		mockSiteOptions( { software_version: '6.8', stats_admin_version: '0.32.0' } );
+		expect( isProvidedToWidget() ).toBe( false );
+	} );
+
+	it( 'skips our copy on WP 6.9+', () => {
+		mockWpVersion( '6.9' );
+		expect( isProvidedToWidget() ).toBe( true );
+	} );
+
+	it.each( [
+		[ 'on its own', '<link rel="stylesheet" id="wp-components-css" href="#">' ],
+		[
+			'inside load-styles.php',
+			'<link rel="stylesheet" href="/wp-admin/load-styles.php?load%5Bchunk_0%5D=dashicons,admin-bar&amp;load%5Bchunk_1%5D=buttons,wp-components">',
+		],
+	] )( 'skips our copy when a plugin already links the stylesheet %s', ( _, link ) => {
+		mockWpVersion( '6.8' );
+		document.head.innerHTML = link;
+		expect( isProvidedToWidget() ).toBe( true );
+	} );
+
+	it( 'does not mistake another handle in load-styles.php for it', () => {
+		mockWpVersion( '6.8' );
+		document.head.innerHTML =
+			'<link rel="stylesheet" href="/wp-admin/load-styles.php?load%5B%5D=wp-components-extra,buttons">';
+		expect( isProvidedToWidget() ).toBe( false );
 	} );
 } );
