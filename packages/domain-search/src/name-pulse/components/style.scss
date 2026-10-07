@@ -224,6 +224,7 @@ html:has( .name-pulse-search-input ) {
 .name-pulse-row--card {
 	display: flex;
 	flex-direction: column;
+	flex-wrap: nowrap;
 	align-items: stretch;
 	justify-content: center;
 	gap: 0;
