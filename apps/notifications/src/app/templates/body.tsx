@@ -10,7 +10,7 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useState, useEffect, useMemo } from 'react';
 import { useSelector } from 'react-redux';
-import { getModerateCommentsLink, isLikeOrFollowNote } from '../../panel/helpers/notes';
+import { getModerateCommentsLink, isPeopleListNote } from '../../panel/helpers/notes';
 import { html } from '../../panel/indices-to-html';
 import { bumpStat } from '../../panel/rest-client/bump-stat';
 import { wpcom } from '../../panel/rest-client/wpcom';
@@ -158,7 +158,7 @@ export const NoteBody = ( { note }: { note: Note } ) => {
 	// The people a list note opens with are stacked as one list, and text closing the
 	// note is a footnote to it, such as a link to every like.
 	const firstOther = body.findIndex( ( { type } ) => type !== User );
-	const people = isLikeOrFollowNote( note )
+	const people = isPeopleListNote( note )
 		? body.slice( 0, firstOther < 0 ? undefined : firstOther )
 		: [];
 	const others = body.slice( people.length );
