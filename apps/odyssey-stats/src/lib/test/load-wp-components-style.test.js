@@ -44,10 +44,10 @@ function mockStatsAdminVersion( statsAdminVersion ) {
 	mockSiteOptions( { stats_admin_version: statsAdminVersion } );
 }
 
-describe( 'isProvidedByWpAdmin — software_version signal (WP 7.0+ command palette)', () => {
+describe( 'isProvidedByWpAdmin — software_version signal (WP 6.9+ command palette)', () => {
 	afterEach( resetConfig );
 
-	it.each( [ '7.0', '7.0.2', '7.1', '8.0', '10.0' ] )(
+	it.each( [ '6.9', '6.9.4', '7.0', '7.0.2', '8.0', '10.0' ] )(
 		'reports WP %s as already providing the stylesheet, so we skip our copy',
 		( version ) => {
 			mockWpVersion( version );
@@ -55,7 +55,7 @@ describe( 'isProvidedByWpAdmin — software_version signal (WP 7.0+ command pale
 		}
 	);
 
-	it.each( [ '6.9', '6.9.3', '6.8.3', '6.7', '5.9' ] )(
+	it.each( [ '6.8', '6.8.3', '6.7', '5.9' ] )(
 		'reports WP %s as not providing it, so we load our copy',
 		( version ) => {
 			mockWpVersion( version );
@@ -63,19 +63,19 @@ describe( 'isProvidedByWpAdmin — software_version signal (WP 7.0+ command pale
 		}
 	);
 
-	it( 'compares segments numerically, not lexically — 6.10 must not beat 7.0', () => {
+	it( 'compares segments numerically, not lexically — 6.10 must not trail 6.9', () => {
 		mockWpVersion( '6.10' );
-		expect( isProvidedByWpAdmin() ).toBe( false );
+		expect( isProvidedByWpAdmin() ).toBe( true );
 	} );
 
-	it( 'treats a two-digit major correctly — 10.0 is above 7.0 despite sorting below as a string', () => {
+	it( 'treats a two-digit major correctly — 10.0 is above 6.9 despite sorting below as a string', () => {
 		mockWpVersion( '10.0' );
 		expect( isProvidedByWpAdmin() ).toBe( true );
 	} );
 
-	it( 'handles a WP beta/RC version string such as 7.0-beta1', () => {
-		mockWpVersion( '7.0-beta1' );
-		// `parseInt( '0-beta1' )` is 0, so this reads as 7.0 — correct, betas ship the palette.
+	it( 'handles a WP beta/RC version string such as 6.9-beta1', () => {
+		mockWpVersion( '6.9-beta1' );
+		// `parseInt( '9-beta1' )` is 9, so this reads as 6.9 — correct, betas ship the palette.
 		expect( isProvidedByWpAdmin() ).toBe( true );
 	} );
 } );
@@ -109,17 +109,17 @@ describe( 'isProvidedByWpAdmin — either signal is sufficient', () => {
 	afterEach( resetConfig );
 
 	it( 'skips our copy when Jetpack has updated but WP has not — the dependency declaration is enough on its own', () => {
-		mockSiteOptions( { software_version: '6.9', stats_admin_version: '0.32.0' } );
+		mockSiteOptions( { software_version: '6.8', stats_admin_version: '0.32.0' } );
 		expect( isProvidedByWpAdmin() ).toBe( true );
 	} );
 
-	it( 'skips our copy when WP is 7.0+ but Jetpack has not updated yet — the global enqueue is enough on its own', () => {
-		mockSiteOptions( { software_version: '7.0.2', stats_admin_version: '0.31.11' } );
+	it( 'skips our copy when WP is 6.9+ but Jetpack has not updated yet — the global enqueue is enough on its own', () => {
+		mockSiteOptions( { software_version: '6.9.4', stats_admin_version: '0.31.11' } );
 		expect( isProvidedByWpAdmin() ).toBe( true );
 	} );
 
 	it( 'loads our copy only when neither signal holds', () => {
-		mockSiteOptions( { software_version: '6.9', stats_admin_version: '0.31.11' } );
+		mockSiteOptions( { software_version: '6.8', stats_admin_version: '0.31.11' } );
 		expect( isProvidedByWpAdmin() ).toBe( false );
 	} );
 } );
@@ -162,7 +162,7 @@ describe( 'isProvidedByWpAdmin — a site with no WordPress.com connection', () 
 	const mockUnconnected = ( topLevel ) => mockConfig( undefined, topLevel, 0 );
 
 	it( 'reads software_version from the top level', () => {
-		mockUnconnected( { software_version: '7.0.3' } );
+		mockUnconnected( { software_version: '6.9.4' } );
 		expect( isProvidedByWpAdmin() ).toBe( true );
 	} );
 
@@ -172,7 +172,7 @@ describe( 'isProvidedByWpAdmin — a site with no WordPress.com connection', () 
 	} );
 
 	it( 'loads our copy when neither top-level signal holds', () => {
-		mockUnconnected( { software_version: '6.9', stats_admin_version: '0.31.11' } );
+		mockUnconnected( { software_version: '6.8', stats_admin_version: '0.31.11' } );
 		expect( isProvidedByWpAdmin() ).toBe( false );
 	} );
 
