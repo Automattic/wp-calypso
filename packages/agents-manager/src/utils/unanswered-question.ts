@@ -65,3 +65,21 @@ export function getUnansweredQuestion(
 		lastActivityAt: typeof lastActivityAt === 'number' ? lastActivityAt : 0,
 	};
 }
+
+/**
+ * A conversation with its newest page reloaded: the page replaces the rows it
+ * covers and keeps the older ones, in the order the full load returns them.
+ * @param loaded     The conversation as loaded before, newest page first.
+ * @param newestPage The reloaded newest page.
+ * @returns The merged conversation.
+ */
+export function mergeNewestPage( loaded: Message[], newestPage: Message[] ): Message[] {
+	const ids = newestPage.map( serverIdOf ).filter( ( id ) => id > 0 );
+	const oldestOnPage = ids.length ? Math.min( ...ids ) : Infinity;
+	const older = loaded.filter( ( message ) => {
+		const id = serverIdOf( message );
+		return id > 0 && id < oldestOnPage;
+	} );
+
+	return [ ...newestPage, ...older ];
+}

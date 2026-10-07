@@ -4,19 +4,25 @@
 /* eslint-disable import/order -- jest.mock calls must precede imports */
 const mockIsTurnInFlight = jest.fn( () => false );
 const mockCancelQueries = jest.fn();
+const mockGetQueryData = jest.fn();
+const mockLoadChatFromServer = jest.fn();
+const mockLoadAllMessagesFromServer = jest.fn();
 
 jest.mock(
 	'@automattic/agenttic-client',
 	() => ( {
 		getAgentManager: () => ( { isTurnInFlight: mockIsTurnInFlight } ),
-		loadAllMessagesFromServer: jest.fn(),
+		isOdieBotId: () => false,
+		createOdieBotId: ( agentId: string ) => agentId,
+		loadAllMessagesFromServer: ( ...args: unknown[] ) => mockLoadAllMessagesFromServer( ...args ),
+		loadChatFromServer: ( ...args: unknown[] ) => mockLoadChatFromServer( ...args ),
 	} ),
 	{ virtual: true }
 );
 
 jest.mock( '@tanstack/react-query', () => ( {
 	useQuery: jest.fn(),
-	useQueryClient: () => ( { cancelQueries: mockCancelQueries } ),
+	useQueryClient: () => ( { cancelQueries: mockCancelQueries, getQueryData: mockGetQueryData } ),
 } ) );
 
 jest.mock( '../../contexts', () => ( {
@@ -291,6 +297,37 @@ describe( 'useConversation', () => {
 			expect( onRetry ).toHaveBeenCalledWith( 'How many products do I have?' );
 			expect( result.current.notice ).toBeUndefined();
 
+			jest.useRealTimers();
+		} );
+
+		it( 'reloads only the newest page while it waits, keeping the older ones', async () => {
+			mockLoadedConversation( [ question ] );
+			renderWaitingConversation();
+			mockGetQueryData.mockReturnValue( { messages: [ question ] } );
+			mockLoadChatFromServer.mockResolvedValue( { messages: [ toolResult, reply ] } );
+
+			const result = await lastQueryOptions().queryFn();
+
+			expect( mockLoadAllMessagesFromServer ).not.toHaveBeenCalled();
+			expect( mockLoadChatFromServer.mock.calls[ 0 ].slice( 2 ) ).toEqual( [ 1, 50, true ] );
+			expect( result.messages ).toEqual( [ toolResult, reply, question ] );
+		} );
+
+		it( 'restarts the wait whenever a new message lands', () => {
+			jest.useFakeTimers();
+			mockLoadedConversation( [ question ] );
+			const { result, rerender } = renderWaitingConversation();
+
+			act( () => jest.advanceTimersByTime( MAX_REPLY_WAIT_MS - 1000 ) );
+			mockLoadedConversation( [ question, toolResult ] );
+			rerender();
+			act( () => jest.advanceTimersByTime( MAX_REPLY_WAIT_MS - 1000 ) );
+
+			expect( result.current.notice?.message ).toBe( 'Waiting for the reply…' );
+
+			act( () => jest.advanceTimersByTime( 1000 ) );
+
+			expect( result.current.notice?.message ).toBe( 'No reply arrived for your last question.' );
 			jest.useRealTimers();
 		} );
 	} );

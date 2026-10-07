@@ -1,7 +1,9 @@
 import {
 	getAgentManager,
 	loadAllMessagesFromServer,
+	loadChatFromServer,
 	type Message,
+	type ServerLoadResult,
 } from '@automattic/agenttic-client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useEffect, useMemo, useRef, useState } from '@wordpress/element';
@@ -11,11 +13,16 @@ import { useAgentsManagerContext } from '../contexts';
 import { isUnsentSession } from '../utils/agent-session';
 import { getConversationBotId } from '../utils/conversation-bot-id';
 import { isReaderChatAgent } from '../utils/is-reader-chat-agent';
-import { getNewestServerId, getUnansweredQuestion } from '../utils/unanswered-question';
+import {
+	getNewestServerId,
+	getUnansweredQuestion,
+	mergeNewestPage,
+} from '../utils/unanswered-question';
 import type { NoticeConfig } from '@automattic/agenttic-ui';
 
 const REPLY_POLL_INTERVAL_MS = 3000;
-// Also how old a question may be and still be waited on.
+// How long the conversation may stay unchanged, and how old a question may be,
+// and still be waited on.
 export const MAX_REPLY_WAIT_MS = 2 * 60_000;
 
 type ReplyWait = 'idle' | 'waiting' | 'timed-out';
@@ -61,6 +68,8 @@ export default function useConversation( {
 	const isUnsent = useMemo( () => !! sessionId && isUnsentSession( sessionId ), [ sessionId ] );
 
 	const [ replyWait, setReplyWait ] = useState< ReplyWait >( 'idle' );
+	const replyWaitRef = useRef( replyWait );
+	replyWaitRef.current = replyWait;
 	const loadedNewestIdRef = useRef( 0 );
 
 	const queryClient = useQueryClient();
@@ -73,17 +82,19 @@ export default function useConversation( {
 			const urlSearchParams = new URLSearchParams( window.location.search );
 			const hasAgentParam = urlSearchParams.has( 'agent' );
 			const botId = getConversationBotId( agentId, hasAgentParam );
+			const config = { botId, apiBaseUrl: API_BASE_URL, authProvider };
 
-			return await loadAllMessagesFromServer(
-				sessionId,
-				{
-					botId,
-					apiBaseUrl: API_BASE_URL,
-					authProvider,
-				},
-				maxPages,
-				true
-			);
+			// Only the newest page can change while a reply is awaited.
+			const loaded = queryClient.getQueryData< ServerLoadResult >( queryKey );
+			if ( replyWaitRef.current === 'waiting' && loaded ) {
+				const newestPage = await loadChatFromServer( sessionId, config, 1, 50, true );
+				return {
+					...newestPage,
+					messages: mergeNewestPage( loaded.messages, newestPage.messages ),
+				};
+			}
+
+			return await loadAllMessagesFromServer( sessionId, config, maxPages, true );
 		},
 		// Public Reader Chat does not expose conversation history, and the
 		// server-side history endpoint requires permissions public readers
@@ -96,6 +107,7 @@ export default function useConversation( {
 	} );
 
 	const question = data && getUnansweredQuestion( data.messages );
+	const newestId = data ? getNewestServerId( data.messages ) : 0;
 
 	useEffect( () => {
 		setReplyWait( 'idle' );
@@ -120,7 +132,6 @@ export default function useConversation( {
 				return;
 			}
 
-			const newestId = getNewestServerId( data.messages );
 			const isTurnInFlight = getAgentManager().isTurnInFlight( agentId );
 
 			if ( replyWait === 'waiting' ) {
@@ -157,6 +168,7 @@ export default function useConversation( {
 		[ data ]
 	);
 
+	// Restarts with each new message: a long turn still adding results is not over.
 	useEffect( () => {
 		if ( replyWait !== 'waiting' ) {
 			return;
@@ -165,7 +177,7 @@ export default function useConversation( {
 		const timer = setTimeout( () => setReplyWait( 'timed-out' ), MAX_REPLY_WAIT_MS );
 
 		return () => clearTimeout( timer );
-	}, [ replyWait ] );
+	}, [ replyWait, newestId ] );
 
 	useEffect( () => {
 		if ( error ) {
