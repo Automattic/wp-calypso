@@ -13,6 +13,7 @@ import { thunk } from 'redux-thunk';
 import { useExperiment } from 'calypso/lib/explat';
 import domainManagementReducer from 'calypso/state/domains/management/reducer';
 import noticesReducer from 'calypso/state/notices/reducer';
+import type { Site } from '@automattic/api-core';
 import type { PricedAPIPlan, StorePlanSlug } from '@automattic/data-stores';
 import type {
 	CartKey,
@@ -1265,6 +1266,23 @@ export function mockGetVatInfoEndpoint( response ) {
 		.get( '/rest/v1.1/me/vat-info' )
 		.optionally()
 		.reply( 200, response );
+}
+
+export function createTestSite( overrides: Partial< Site > = {} ): Site {
+	return {
+		ID: siteId,
+		slug: 'foo.com',
+		URL: 'https://foo.com',
+		name: 'Foo',
+		jetpack: false,
+		jetpack_connection: false,
+		is_wpcom_atomic: false,
+		is_private: false,
+		is_garden: false,
+		garden_name: null,
+		options: { admin_url: 'https://foo.com/wp-admin/', software_version: '6.8' },
+		...overrides,
+	} as Site;
 }
 
 export function mockGetSiteDomainsEndpoint( response: unknown[] ) {

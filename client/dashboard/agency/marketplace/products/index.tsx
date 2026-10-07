@@ -1,26 +1,21 @@
 import { activeAgencyQuery, agencyProductsQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import {
-	Button,
 	__experimentalHStack as HStack,
-	__experimentalSpacer as Spacer,
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
+import { useViewportMatch } from '@wordpress/compose';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
-import { __ } from '@wordpress/i18n';
-import { check } from '@wordpress/icons';
+import { __, _n, sprintf } from '@wordpress/i18n';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useAnalytics } from '../../../app/analytics';
 import { useIntlLocale } from '../../../app/locale';
 import { marketplaceProductsRoute } from '../../../app/router/agency';
-import { ButtonStack } from '../../../components/button-stack';
-import { Callout } from '../../../components/callout';
 import Grid from '../../../components/grid';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
 import { SectionHeader } from '../../../components/section-header';
-import WooPaymentsIllustration from '../../overview/woopayments-illustration';
 import { isPressablePlanLicense, pressableLicensesQuery } from '../hosting/lib/pressable-products';
 import { isAgencyApproved } from '../is-agency-approved';
 import ReferralToggle from '../referral-toggle';
@@ -28,33 +23,34 @@ import TermPricingToggle from '../term-pricing-toggle';
 import { useMarketplaceType } from '../use-marketplace-type';
 import { useTermPricing } from '../use-term-pricing';
 import CartMenu from './cart-menu';
-import CategoryTiles, { isCategoryTileValue } from './category-tiles';
-import { BRAND_MARKS } from './lib/brand-marks';
+import CategoryTiles, { CategoryMark, isProductCategory, isTileValue } from './category-tiles';
+import FeaturedShowcase from './featured-showcase';
+import FeaturedShowcaseSkeleton from './featured-showcase-skeleton';
 import {
 	getBrandLabels,
 	getCategoryShortLabels,
 	getProductBrand,
-	getProductFilterCategories,
+	getProductCategories,
 	getProductType,
 	getTypeLabels,
 	isPressableAddon,
 } from './lib/product-categories';
 import {
+	getFeaturedProducts,
 	getItemId,
-	getItemProducts,
 	getMarketplaceProducts,
+	getProductListItems,
 	getProductSections,
 } from './lib/product-groups';
 import { isFreeProduct } from './lib/product-pricing';
 import { getProductSearchText } from './lib/product-search';
-import { WOOPAYMENTS_PRODUCT_SLUG } from './lib/product-slugs';
-import ProductCard, { getCartActionLabel, getWooPaymentsCardCopy } from './product-card';
 import ProductCardSkeleton from './product-card-skeleton';
 import ProductDetailsModal from './product-details-modal';
+import ProductStoreCard from './product-store-card';
 import { parseCartEntries, useCartOpen, useShoppingCart } from './use-shopping-cart';
-import type { CategoryTileValue } from './category-tiles';
+import type { TileValue } from './category-tiles';
 import type { ProductBrand, ProductCategory } from './lib/product-categories';
-import type { ProductListItem } from './lib/product-groups';
+import type { ProductListItem, ProductSection } from './lib/product-groups';
 import type { AgencyProduct } from '@automattic/api-core';
 import type { Field, View } from '@wordpress/dataviews';
 
@@ -78,12 +74,21 @@ interface ProductsSearchParams {
 	purchase_type?: string;
 }
 
-// Classic category keys that differ from the tile values.
-const CLASSIC_CATEGORY_KEYS: Record< string, CategoryTileValue > = {
+// Older category keys that differ from the filter values.
+const LEGACY_CATEGORY_KEYS: Record< string, TileValue > = {
 	'pressable-addon': 'pressable',
 	'shipping-delivery-fulfillment': 'shipping',
 	'store-content-and-customization': 'store-content',
 };
+
+const getSectionTitle = ( key: ProductSection[ 'key' ] | ProductBrand ) => {
+	if ( key === 'other' ) {
+		return __( 'Plans, add-ons and more' );
+	}
+	return isProductCategory( key ) ? getCategoryShortLabels()[ key ] : getBrandLabels()[ key ];
+};
+
+const PRODUCT_GRID_COLUMNS = 'repeat( auto-fill, minmax( 300px, 1fr ) )';
 
 // TODO: Still missing from the classic Products page:
 // - the agency approval notice (pending / approved / rejected)
@@ -92,6 +97,7 @@ const CLASSIC_CATEGORY_KEYS: Record< string, CategoryTileValue > = {
 // - Pressable PHP memory add-ons targeting a specific site
 export default function MarketplaceProducts() {
 	const { recordTracksEvent } = useAnalytics();
+	const isSmallScreen = useViewportMatch( 'small', '<' );
 	const { marketplaceType, updateMarketplaceType } = useMarketplaceType();
 	const { termPricing } = useTermPricing();
 	const isReferralMode = marketplaceType === 'referral';
@@ -124,14 +130,15 @@ export default function MarketplaceProducts() {
 		...DEFAULT_VIEW,
 		search: searchParams.search_query != null ? String( searchParams.search_query ) : '',
 	} ) );
-	const [ selectedTile, setSelectedTile ] = useState< CategoryTileValue | null >( () => {
+	// The tiles keep their own selection and narrow the list before DataViews
+	// sees it, so picking a tile never opens the filter bar or adds a chip; the
+	// filter button stays for the finer filters (type, price).
+	const [ selectedCategory, setSelectedCategory ] = useState< TileValue | null >( () => {
 		const category = searchParams.category
-			? ( CLASSIC_CATEGORY_KEYS[ searchParams.category ] ?? searchParams.category )
+			? ( LEGACY_CATEGORY_KEYS[ searchParams.category ] ?? searchParams.category )
 			: null;
-		return isCategoryTileValue( category ) ? category : null;
+		return isTileValue( category ) ? category : null;
 	} );
-	const showPressableTile = showPressableAddons && products.some( isPressableAddon );
-	const tileCategory = selectedTile === 'pressable' && ! showPressableTile ? null : selectedTile;
 
 	// `?product_slug=a,b` and `?products=a:2,b:1` replace the cart with those
 	// products, as the classic products page does.
@@ -185,6 +192,8 @@ export default function MarketplaceProducts() {
 				label: __( 'Name' ),
 				type: 'text',
 				enableGlobalSearch: true,
+				// The search box already matches this text, so it is not offered as a filter too.
+				filterBy: false,
 				getValue: ( { item } ) => getProductSearchText( item ),
 			},
 			{
@@ -201,33 +210,24 @@ export default function MarketplaceProducts() {
 						label: categoryLabels[ category ],
 					} ) ),
 				],
-				filterBy: { operators: [ 'isAny' ] },
+				// The tiles are the category filter, so the filter button doesn't
+				// offer it a second time.
+				filterBy: false,
 				enableSorting: false,
-				getValue: ( { item } ) => [
-					getProductBrand( item ),
-					...getProductFilterCategories( item ),
-				],
-			},
-			{
-				id: 'vendor',
-				label: __( 'Developed by' ),
-				type: 'text',
-				elements: [ { value: 'woocommerce', label: __( 'WooCommerce' ) } ],
-				filterBy: { operators: [ 'is' ] },
-				enableSorting: false,
-				getValue: ( { item } ) =>
-					getProductBrand( item ) === 'woocommerce' ? 'woocommerce' : '',
+				getValue: ( { item } ) => [ getProductBrand( item ), ...getProductCategories( item ) ],
 			},
 			{
 				id: 'type',
 				label: __( 'Type' ),
 				type: 'text',
-				elements: ( Object.keys( typeLabels ) as ( keyof typeof typeLabels )[] ).map(
-					( type ) => ( {
+				// Extension is every WooCommerce product, which the WooCommerce tile
+				// already picks, so the filter offers only the types the tiles don't.
+				elements: ( Object.keys( typeLabels ) as ( keyof typeof typeLabels )[] )
+					.filter( ( type ) => type !== 'extension' )
+					.map( ( type ) => ( {
 						value: type,
 						label: typeLabels[ type ],
-					} )
-				),
+					} ) ),
 				filterBy: { operators: [ 'is' ] },
 				enableSorting: false,
 				getValue: ( { item } ) => getProductType( item ),
@@ -247,28 +247,51 @@ export default function MarketplaceProducts() {
 		];
 	}, [] );
 
+	const productBrands = useMemo(
+		() => [ ...new Set( products.map( getProductBrand ) ) ],
+		[ products ]
+	);
+	// A pick only counts while its tile is shown: a brand tile goes when the list
+	// has no products of that brand (Pressable add-ons outside referral mode).
+	const activeCategory =
+		selectedCategory &&
+		( isProductCategory( selectedCategory ) || productBrands.includes( selectedCategory ) )
+			? selectedCategory
+			: null;
 	const tileProducts = useMemo(
 		() =>
-			tileCategory
+			activeCategory
 				? products.filter( ( product ) =>
-						[ getProductBrand( product ), ...getProductFilterCategories( product ) ].includes(
-							tileCategory
+						[ getProductBrand( product ), ...getProductCategories( product ) ].includes(
+							activeCategory
 						)
 					)
 				: products,
-		[ products, tileCategory ]
+		[ products, activeCategory ]
 	);
 	const { data: filteredProducts } = useMemo(
 		() => filterSortAndPaginate( tileProducts, view, fields ),
 		[ tileProducts, view, fields ]
 	);
-	// Every section stays while searching or filtering, each showing only its
-	// matching products, as the classic dashboard does.
+	const isNarrowed =
+		activeCategory !== null || view.search !== '' || ( view.filters?.length ?? 0 ) > 0;
 	const locale = useIntlLocale();
+	const featuredProducts = useMemo( () => getFeaturedProducts( products ), [ products ] );
 	const sections = useMemo(
-		() => getProductSections( filteredProducts, locale ),
-		[ filteredProducts, locale ]
+		() => ( isNarrowed ? [] : getProductSections( products, locale ) ),
+		[ isNarrowed, products, locale ]
 	);
+	const filteredItems = useMemo(
+		() => ( isNarrowed ? getProductListItems( filteredProducts, locale ) : [] ),
+		[ isNarrowed, filteredProducts, locale ]
+	);
+	const resultCount = sprintf(
+		/* translators: %d: number of matching products */
+		_n( '%d product', '%d products', filteredItems.length ),
+		filteredItems.length
+	);
+	const pickedCategory =
+		activeCategory && ! view.search && ( view.filters?.length ?? 0 ) === 0 ? activeCategory : null;
 
 	const handleViewChange = ( nextView: View ) => {
 		if ( nextView.search !== view.search ) {
@@ -286,7 +309,6 @@ export default function MarketplaceProducts() {
 						.flatMap( ( filter ) => filter.value )
 						.join( ',' );
 				recordTracksEvent( 'calypso_a4a_marketplace_products_overview_select_filter', {
-					categories: selected( 'category' ),
 					types: selected( 'type' ),
 					prices: selected( 'price' ),
 				} );
@@ -295,11 +317,12 @@ export default function MarketplaceProducts() {
 		setView( nextView );
 	};
 
-	const handleTileSelect = ( category: CategoryTileValue | null ) => {
+	const handleTileSelect = ( category: TileValue | null ) => {
 		if ( category ) {
 			recordTracksEvent( 'calypso_a4a_marketplace_product_category_selected', { category } );
 		}
-		setSelectedTile( category );
+		setSelectedCategory( category );
+		setView( ( current ) => ( { ...current, page: 1 } ) );
 	};
 
 	const toggleCart = useCallback(
@@ -333,9 +356,9 @@ export default function MarketplaceProducts() {
 	};
 
 	const renderGrid = ( items: ProductListItem[] ) => (
-		<Grid templateColumns="repeat( auto-fill, minmax( 280px, 1fr ) )" gap="xl">
+		<Grid templateColumns={ PRODUCT_GRID_COLUMNS } gap="lg">
 			{ items.map( ( item ) => (
-				<ProductCard
+				<ProductStoreCard
 					key={ getItemId( item ) }
 					item={ item }
 					term={ termPricing }
@@ -353,61 +376,33 @@ export default function MarketplaceProducts() {
 		</Grid>
 	);
 
-	const wooPayments = products.find( ( product ) => product.slug === WOOPAYMENTS_PRODUCT_SLUG );
-	const renderWooPaymentsBanner = () => {
-		if ( ! wooPayments ) {
-			return null;
-		}
-		const inCart = hasItem( wooPayments.slug );
-		const copy = getWooPaymentsCardCopy();
-		return (
-			<Callout
-				title={ copy.title }
-				titleAs="h3"
-				description={ <Text variant="muted">{ copy.description }</Text> }
-				image={ <WooPaymentsIllustration title={ __( 'A client store using WooPayments' ) } /> }
-				imageVariant="full-bleed"
-				actions={
-					<ButtonStack justify="flex-start">
-						<Button
-							variant="secondary"
-							size="compact"
-							icon={ inCart ? check : undefined }
-							onClick={ () => toggleCart( wooPayments ) }
-						>
-							{ getCartActionLabel( isReferralMode, inCart ) }
-						</Button>
-						<Button variant="link" onClick={ () => openDetails( wooPayments ) }>
-							{ __( 'View details' ) }
-						</Button>
-					</ButtonStack>
-				}
-			/>
-		);
-	};
-
 	return (
 		<PageLayout
 			header={
 				<PageHeader
-					title={ __( 'Products' ) }
+					title={ __( 'Extend your clients’ sites' ) }
 					description={ __(
-						'Extensions, plans, and add-ons for your clients’ sites. Buy for your agency or refer them to a client.'
+						'Buy extensions, plans, and add-ons directly, or refer them to clients and earn commission.'
 					) }
 					actions={
-						<HStack spacing={ 4 } expanded={ false }>
-							<ReferralToggle />
-							<CartMenu
-								items={ cartItems }
-								products={ allProducts ?? [] }
-								term={ termPricing }
-								isReferralMode={ isReferralMode }
-								isAgencyApproved={ isAgencyApproved( agency ) }
-								isLegacyBilling={ agency?.billing_system === 'legacy' }
-								open={ isCartOpen }
-								onToggle={ setIsCartOpen }
-								onRemove={ removeItem }
-							/>
+						<HStack spacing={ 4 } expanded={ false } wrap>
+							{ /* Below 600px the billing term drops "Billed" so the row still fits. */ }
+							<TermPricingToggle short={ isSmallScreen } />
+							{ /* Refer and the cart wrap together, so the cart never sits alone. */ }
+							<HStack spacing={ 4 } expanded={ false }>
+								<ReferralToggle />
+								<CartMenu
+									items={ cartItems }
+									products={ allProducts ?? [] }
+									term={ termPricing }
+									isReferralMode={ isReferralMode }
+									isAgencyApproved={ isAgencyApproved( agency ) }
+									isLegacyBilling={ agency?.billing_system === 'legacy' }
+									open={ isCartOpen }
+									onToggle={ setIsCartOpen }
+									onRemove={ removeItem }
+								/>
+							</HStack>
 						</HStack>
 					}
 				/>
@@ -423,81 +418,105 @@ export default function MarketplaceProducts() {
 					onClose={ () => setDetailsProduct( null ) }
 				/>
 			) }
-			<CategoryTiles
-				selected={ tileCategory }
-				showPressable={ showPressableTile }
-				onSelect={ handleTileSelect }
-			/>
+			{ isLoading && <FeaturedShowcaseSkeleton /> }
+			{ ! isLoading && featuredProducts.length > 0 && (
+				<FeaturedShowcase
+					products={ featuredProducts }
+					term={ termPricing }
+					isReferralMode={ isReferralMode }
+					isInCart={ hasItem }
+					onToggleCart={ toggleCart }
+					onViewDetails={ openDetails }
+				/>
+			) }
 			<div className="dashboard-marketplace-products__filters">
 				<DataViews< AgencyProduct >
-					data={ tileProducts }
+					data={ products }
 					getItemId={ ( item ) => item.slug }
 					fields={ fields }
 					view={ view }
 					onChangeView={ handleViewChange }
-					paginationInfo={ { totalItems: tileProducts.length, totalPages: 1 } }
+					paginationInfo={ { totalItems: products.length, totalPages: 1 } }
 					defaultLayouts={ { list: {} } }
 					search
 				>
-					<HStack justify="space-between" className="dashboard-marketplace-products__toolbar">
-						<HStack justify="flex-start" expanded={ false }>
-							<DataViews.Search />
-							<DataViews.FiltersToggle />
-						</HStack>
-						<TermPricingToggle />
-					</HStack>
-					<Spacer marginBottom={ 4 }>
-						<DataViews.FiltersToggled />
-					</Spacer>
+					<CategoryTiles
+						selected={ activeCategory }
+						onSelect={ handleTileSelect }
+						brands={ productBrands }
+						lead={
+							<HStack
+								spacing={ 2 }
+								justify="flex-start"
+								wrap
+								className="dashboard-marketplace-products__toolbar"
+							>
+								<DataViews.Search />
+								<DataViews.FiltersToggle />
+								<DataViews.FiltersToggled />
+							</HStack>
+						}
+					/>
 				</DataViews>
 			</div>
 			{ isLoading && (
-				<Grid templateColumns="repeat( auto-fill, minmax( 280px, 1fr ) )" gap="xl">
+				<Grid templateColumns={ PRODUCT_GRID_COLUMNS } gap="lg">
 					{ Array.from( { length: 4 }, ( _, index ) => (
 						<ProductCardSkeleton key={ index } />
 					) ) }
 				</Grid>
 			) }
-			{ ! isLoading && sections.length === 0 && (
-				<VStack spacing={ 1 }>
-					<Text weight={ 500 }>{ __( 'Sorry, no results found.' ) }</Text>
-					<Text variant="muted">
-						{ __(
-							'Please try refining your search and filtering to find what you’re looking for.'
-						) }
-					</Text>
+			{ ! isLoading && isNarrowed && (
+				<VStack
+					spacing={ 4 }
+					justify="flex-start"
+					className="dashboard-marketplace-products__results"
+				>
+					{ pickedCategory ? (
+						<SectionHeader
+							level={ 2 }
+							title={
+								<>
+									{ getSectionTitle( pickedCategory ) }
+									<Text
+										variant="muted"
+										size={ 15 }
+										weight={ 400 }
+										className="dashboard-marketplace-products__job-count"
+									>
+										{ resultCount }
+									</Text>
+								</>
+							}
+							decoration={ <CategoryMark section={ pickedCategory } /> }
+						/>
+					) : (
+						<SectionHeader level={ 2 } title={ resultCount } />
+					) }
+					{ filteredItems.length === 0 ? (
+						<VStack spacing={ 1 }>
+							<Text weight={ 500 }>{ __( 'Sorry, no results found.' ) }</Text>
+							<Text variant="muted">
+								{ __(
+									'Please try refining your search and filtering to find what you’re looking for.'
+								) }
+							</Text>
+						</VStack>
+					) : (
+						renderGrid( filteredItems )
+					) }
 				</VStack>
 			) }
-			{ ! isLoading && (
+			{ ! isLoading && ! isNarrowed && (
 				<VStack spacing={ 10 }>
 					{ sections.map( ( section ) => (
 						<VStack key={ section.key } spacing={ 4 }>
 							<SectionHeader
 								level={ 2 }
-								title={ section.title }
-								description={ section.description }
-								decoration={
-									section.brand ? (
-										<img
-											src={ BRAND_MARKS[ section.brand ] }
-											alt=""
-											className="dashboard-marketplace-products__section-mark"
-										/>
-									) : undefined
-								}
+								title={ getSectionTitle( section.key ) }
+								decoration={ <CategoryMark section={ section.key } /> }
 							/>
-							{ section.key === 'featured' &&
-								section.items.some(
-									( item ) => getItemProducts( item )[ 0 ].slug === WOOPAYMENTS_PRODUCT_SLUG
-								) &&
-								renderWooPaymentsBanner() }
-							{ renderGrid(
-								section.key === 'featured'
-									? section.items.filter(
-											( item ) => getItemProducts( item )[ 0 ].slug !== WOOPAYMENTS_PRODUCT_SLUG
-										)
-									: section.items
-							) }
+							{ renderGrid( section.items ) }
 						</VStack>
 					) ) }
 				</VStack>

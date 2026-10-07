@@ -174,6 +174,15 @@ interface AgentsManagerActions {
  * Extend Window interface for cross-bundle data sharing.
  */
 interface Window {
+	/** Host configuration set before loading Agents Manager; applies to this document only. */
+	__agentsManagerConfig?: {
+		chatPresentation?: {
+			/** Allow closing or minimizing the chat. Defaults to true. */
+			dismissible?: boolean;
+			/** Show wp-admin and editor toolbar chat toggles. Defaults to true. */
+			showEntryPoints?: boolean;
+		};
+	};
 	__agentsManagerActions?: AgentsManagerActions;
 	/** Build commit injected by Calypso's server-rendered document; absent on widgets.wp.com bundles. */
 	COMMIT_SHA?: string;
