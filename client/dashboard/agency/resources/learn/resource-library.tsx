@@ -5,7 +5,7 @@ import {
 	__experimentalToggleGroupControlOption as ToggleGroupControlOption,
 } from '@wordpress/components';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import { useMemo } from 'react';
 import { DataViewsEmptyStateLayout } from '../../../components/dataviews';
 import { useResourceFields } from './dataviews/fields';
@@ -48,12 +48,28 @@ export default function ResourceLibrary( {
 			],
 		} );
 
-	const stageOptions: { value: StageFilter; label: string }[] = [
-		{ value: 'all', label: __( 'All' ) },
-		...( [ 'learn', 'sell', 'manage', 'grow' ] as const ).map( ( value ) => ( {
-			value,
-			label: getStageLabel( value ),
-		} ) ),
+	const stageOptions: { value: StageFilter; label: string; description: string }[] = [
+		{ value: 'all', label: __( 'All' ), description: __( 'Resources for every stage.' ) },
+		{
+			value: 'learn',
+			label: getStageLabel( 'learn' ),
+			description: __( 'Get to know our products.' ),
+		},
+		{
+			value: 'sell',
+			label: getStageLabel( 'sell' ),
+			description: __( 'Prepare for client conversations.' ),
+		},
+		{
+			value: 'manage',
+			label: getStageLabel( 'manage' ),
+			description: __( 'Deliver and support client projects.' ),
+		},
+		{
+			value: 'grow',
+			label: getStageLabel( 'grow' ),
+			description: __( 'Build your agency and partnerships.' ),
+		},
 	];
 
 	const fields = useResourceFields( resources, onOpenResource );
@@ -118,6 +134,15 @@ export default function ResourceLibrary( {
 									key={ option.value }
 									value={ option.value }
 									label={ option.label }
+									// The tooltip shows the aria-label, so it keeps the visible
+									// name first for assistive technology.
+									aria-label={ sprintf(
+										/* translators: 1: Stage name, such as "Learn". 2: What the stage's resources help with. */
+										__( '%1$s: %2$s' ),
+										option.label,
+										option.description
+									) }
+									showTooltip
 								/>
 							) ) }
 						</ToggleGroupControl>
