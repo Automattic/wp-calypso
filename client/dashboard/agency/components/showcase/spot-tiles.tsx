@@ -8,7 +8,7 @@ import clsx from 'clsx';
 import { Card, CardBody } from '../../../components/card';
 import Divider from '../../../components/divider';
 import { SectionHeader } from '../../../components/section-header';
-import { rowArrows, useRowScroll } from './row-arrows';
+import { RowArrows, useRowScroll } from './row-arrows';
 import type { RowArrowLabels } from './row-arrows';
 
 import './spot-tiles.scss';
@@ -52,13 +52,13 @@ export default function SpotTiles< T extends string >( {
 			{ lead ? (
 				<HStack justify="space-between" alignment="center">
 					{ lead }
-					{ rowArrows( { canScroll, page, labels: arrowLabels } ) }
+					<RowArrows canScroll={ canScroll } page={ page } labels={ arrowLabels } />
 				</HStack>
 			) : (
 				<SectionHeader
 					level={ 2 }
 					title={ title }
-					actions={ rowArrows( { canScroll, page, labels: arrowLabels } ) }
+					actions=<RowArrows canScroll={ canScroll } page={ page } labels={ arrowLabels } />
 				/>
 			) }
 			<HStack

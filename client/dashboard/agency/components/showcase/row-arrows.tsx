@@ -59,8 +59,8 @@ export interface RowArrowLabels {
 	next: string;
 }
 
-// Undefined while the row fits, so the header shows no arrows.
-export function rowArrows( {
+// Renders nothing while the row fits, so the header shows no arrows.
+export function RowArrows( {
 	canScroll,
 	page,
 	labels,
@@ -68,7 +68,7 @@ export function rowArrows( {
 	labels: RowArrowLabels;
 } ) {
 	if ( ! canScroll.back && ! canScroll.forward ) {
-		return undefined;
+		return null;
 	}
 	return (
 		<HStack spacing={ 1 } expanded={ false }>

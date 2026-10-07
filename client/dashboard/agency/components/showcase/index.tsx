@@ -7,7 +7,7 @@ import {
 import clsx from 'clsx';
 import { Card } from '../../../components/card';
 import { SectionHeader } from '../../../components/section-header';
-import { rowArrows, useRowScroll } from './row-arrows';
+import { RowArrows, useRowScroll } from './row-arrows';
 import type { RowArrowLabels } from './row-arrows';
 import type { ReactNode } from 'react';
 
@@ -46,7 +46,7 @@ export default function Showcase( {
 			<SectionHeader
 				level={ 2 }
 				title={ title }
-				actions={ rowArrows( { canScroll, page, labels: arrowLabels } ) }
+				actions={ <RowArrows canScroll={ canScroll } page={ page } labels={ arrowLabels } /> }
 			/>
 			<ul
 				ref={ rowRef }
