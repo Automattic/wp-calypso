@@ -172,7 +172,7 @@ export function AmplifyUsageMeter( {
 			<Text size={ 13 } className="dashboard-amplify-usage__label">
 				{ sprintf(
 					/* translators: 1: audits remaining, 2: monthly audit limit */
-					__( '%1$d of %2$d audits remaining' ),
+					__( '%1$d of %2$d audits' ),
 					remaining,
 					usage.limit
 				) }
