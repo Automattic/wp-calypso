@@ -254,9 +254,10 @@ describe( 'UnavailableSearchResult', () => {
 		const availabilityQuery = mockGetAvailabilityQuery( {
 			params: { domainName: 'cms.example.com' },
 			availability: buildAvailability( {
-				domain_name: 'example.com',
+				domain_name: 'cms.example.com',
 				tld: 'com',
 				status: DomainAvailabilityStatus.MAPPED,
+				root_domain_owned_by_other_user: true,
 			} ),
 		} );
 

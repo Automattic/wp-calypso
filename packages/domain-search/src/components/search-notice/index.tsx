@@ -4,6 +4,7 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { useMemo } from 'react';
 import { getAvailabilityNotice } from '../../helpers/get-availability-notice';
+import { getRootDomain } from '../../helpers/get-root-domain';
 import { isFqdnShownAsSuggestion } from '../../helpers/is-fqdn-shown-as-suggestion';
 import { isSubdomainWithUnavailableRootDomain } from '../../helpers/is-subdomain-with-unavailable-root-domain';
 import { isSupportedPremiumDomain } from '../../helpers/is-supported-premium-domain';
@@ -95,7 +96,7 @@ export const SearchNotice = () => {
 		}
 
 		if ( isSubdomainWithUnavailableRootDomain( availability, query ) ) {
-			const rootDomain = availability.domain_name;
+			const rootDomain = getRootDomain( query );
 
 			return {
 				severity: 'error' as const,

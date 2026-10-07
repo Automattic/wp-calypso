@@ -1191,13 +1191,15 @@ describe( 'SearchNotice', () => {
 	} );
 
 	describe( 'subdomain with an unavailable root domain', () => {
-		it( 'renders the ownership message when the root domain is mapped (status)', async () => {
+		it( 'renders the ownership message when the root is mapped by another account', async () => {
+			// A mapped root comes back with the searched subdomain in domain_name.
 			mockNoSuggestionsAndAvailability(
 				'cms.example.com',
 				buildAvailability( {
-					domain_name: 'example.com',
+					domain_name: 'cms.example.com',
 					tld: 'com',
 					status: DomainAvailabilityStatus.MAPPED,
+					root_domain_owned_by_other_user: true,
 				} )
 			);
 
@@ -1220,13 +1222,15 @@ describe( 'SearchNotice', () => {
 			).not.toBeInTheDocument();
 		} );
 
-		it( 'renders the ownership message when the root domain is registered by another user', async () => {
+		it( 'renders the ownership message when the root is registered by another account', async () => {
+			// A registered root comes back with the root itself in domain_name.
 			mockNoSuggestionsAndAvailability(
 				'cms.example.com',
 				buildAvailability( {
 					domain_name: 'example.com',
 					tld: 'com',
 					status: DomainAvailabilityStatus.REGISTERED,
+					root_domain_owned_by_other_user: true,
 				} )
 			);
 
@@ -1245,10 +1249,9 @@ describe( 'SearchNotice', () => {
 			).not.toBeInTheDocument();
 		} );
 
-		it( 'does not show the ownership message when only the subdomain is mapped (root not on WordPress.com)', async () => {
-			// The backend leaves `domain_name` as the searched subdomain here (rather than
-			// swapping it to the root), so this is the user's own already-mapped subdomain
-			// of an externally-registered root, not a root owned by another account.
+		it( 'does not show the ownership message when the root is not owned by another account', async () => {
+			// The user's own already-mapped subdomain of an externally-registered root: the
+			// backend reports root_domain_owned_by_other_user = false, so no ownership notice.
 			mockNoSuggestionsAndAvailability(
 				'cms.example.com',
 				buildAvailability( {
@@ -1256,7 +1259,7 @@ describe( 'SearchNotice', () => {
 					tld: 'com',
 					status: DomainAvailabilityStatus.MAPPED,
 					mappable: DomainAvailabilityStatus.FORBIDDEN,
-					root_domain_provider: 'unknown',
+					root_domain_owned_by_other_user: false,
 				} )
 			);
 
