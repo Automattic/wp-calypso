@@ -17,12 +17,12 @@ export function getStartErrorMessage( error: unknown ): string {
 		return __( 'We couldn’t reach that site. Check that it’s public and try again.' );
 	}
 	if ( code === 'amplify_report_limit_reached' || code === 'amplify_report_rate_limited' ) {
-		return __( 'You’ve used all your audits for this month.' );
+		return __( 'You’ve used all your reports for this month.' );
 	}
 	if ( code === 'amplify_account_not_activated' ) {
-		return __( 'Audits unlock once your account is activated.' );
+		return __( 'Reports unlock once your account is activated.' );
 	}
-	return __( 'Could not start the audit. Please try again.' );
+	return __( 'Could not start the report. Please try again.' );
 }
 
 function WebsiteAddressInput( {

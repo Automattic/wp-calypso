@@ -116,8 +116,8 @@ export default function AgencyAmplify() {
 			<Tooltip
 				text={
 					usageStatus === 'cap'
-						? __( 'You’ve used all your audits for this month.' )
-						: __( 'Audits unlock once your account is activated.' )
+						? __( 'You’ve used all your reports for this month.' )
+						: __( 'Reports unlock once your account is activated.' )
 				}
 			>
 				{ newReportButton }

@@ -45,7 +45,7 @@ function LimitsExplainer( { label, resetDate }: { label?: string; resetDate?: st
 				size="small"
 				icon={ info }
 				iconSize={ 16 }
-				label={ label ?? __( 'More information about monthly audits' ) }
+				label={ label ?? __( 'More information about monthly reports' ) }
 				onClick={ () => {
 					setIsOpen( true );
 					recordTracksEvent( 'calypso_a4a_amplify_usage_info_open' );
@@ -64,12 +64,12 @@ function LimitsExplainer( { label, resetDate }: { label?: string; resetDate?: st
 								? sprintf(
 										/* translators: %s: date the allowance resets, e.g. November 1 */
 										__(
-											'Your agency tier sets how many homepage audits you can run each month. Each one comes out of your allowance, which resets on %s.'
+											'Your agency tier sets how many reports you can create each month. Each one comes out of your allowance, which resets on %s.'
 										),
 										resetDate
 									)
 								: __(
-										'Your agency tier sets how many homepage audits you can run each month. Each one comes out of your allowance, which resets on the 1st of every month.'
+										'Your agency tier sets how many reports you can create each month. Each one comes out of your allowance, which resets on the 1st of every month.'
 									) }
 						</Text>
 						<ul className="dashboard-amplify-usage__tiers">
@@ -78,7 +78,7 @@ function LimitsExplainer( { label, resetDate }: { label?: string; resetDate?: st
 									<Text size={ 13 } lineHeight="20px">
 										{ sprintf(
 											/* translators: 1: agency tier name, 2: number of scans per month */
-											__( '%1$s: %2$d audits/mo' ),
+											__( '%1$s: %2$d reports/mo' ),
 											tier.label,
 											tier.scans
 										) }
@@ -92,7 +92,7 @@ function LimitsExplainer( { label, resetDate }: { label?: string; resetDate?: st
 						 * dashboard can't enforce it.
 						 */ }
 						<Text size={ 13 } lineHeight="20px">
-							{ __( 'Audits that fail or time out don’t count toward your allowance.' ) }
+							{ __( 'Reports that fail or time out don’t count toward your allowance.' ) }
 						</Text>
 						<Text size={ 13 } lineHeight="20px">
 							<Link
@@ -128,10 +128,10 @@ export function AmplifyScansLeft( {
 		<div className="dashboard-amplify-scans-left" data-status={ status }>
 			<Text size={ 12 } lineHeight="16px" variant="muted">
 				{ left === 0
-					? __( 'No audits left this month' )
+					? __( 'No reports left this month' )
 					: sprintf(
 							/* translators: %d: number of scans left this month */
-							_n( '%d audit left this month', '%d audits left this month', left ),
+							_n( '%d report left this month', '%d reports left this month', left ),
 							left
 						) }
 			</Text>
@@ -164,14 +164,14 @@ export function AmplifyUsageMeter( {
 				aria-valuemin={ 0 }
 				aria-valuemax={ usage.limit }
 				aria-valuenow={ Math.min( usage.used, usage.limit ) }
-				aria-label={ __( 'Audits used this month' ) }
+				aria-label={ __( 'Reports used this month' ) }
 			>
 				<span style={ { width: `${ percent }%` } } />
 			</div>
 			<Text size={ 13 } className="dashboard-amplify-usage__label">
 				{ sprintf(
 					/* translators: 1: audits used this month, 2: monthly audit limit */
-					__( '%1$d of %2$d audits' ),
+					__( '%1$d of %2$d reports' ),
 					Math.min( usage.used, usage.limit ),
 					usage.limit
 				) }
@@ -205,7 +205,7 @@ export function AmplifyLimitNotice( {
 		return (
 			<Notice variant="warning" title={ __( 'We’re reviewing your account' ) }>
 				{ __(
-					'Feel free to explore while we review your agency. Audits unlock once your account is activated, and most are activated within one business day.'
+					'Feel free to explore while we review your agency. Reports unlock once your account is activated, and most are activated within one business day.'
 				) }
 			</Notice>
 		);
@@ -235,7 +235,7 @@ export function AmplifyLimitNotice( {
 			variant="warning"
 			title={ sprintf(
 				/* translators: %d: monthly scan limit */
-				__( 'You’ve used all %d audits this month' ),
+				__( 'You’ve used all %d reports this month' ),
 				usage.limit
 			) }
 			actions={
