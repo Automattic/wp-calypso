@@ -48,7 +48,7 @@ export const agencySiteQuery = ( siteUrl: string ) =>
 				sites.find( ( agencySite ) => agencySite.blog_id === site.ID ) ?? null;
 
 			const { sites: searchResults } = await fetchAgencySites( agencyId, {
-				search: siteUrl.split( '.' )[ 0 ],
+				search: siteUrl.replace( /^www\./, '' ).split( '.' )[ 0 ],
 				per_page: 100,
 			} );
 			const match = findSite( searchResults );
