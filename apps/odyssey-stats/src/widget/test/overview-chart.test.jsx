@@ -3,7 +3,12 @@
  */
 import { LineChart } from '@automattic/charts';
 import { render, screen } from '@testing-library/react';
+import moment from 'moment';
+import 'moment/locale/de';
 import OverviewChart from '../overview-chart';
+
+// Loading a locale also switches to it.
+moment.locale( 'en' );
 
 jest.mock( '@automattic/charts', () => ( {
 	LineChart: jest.fn( () => null ),
@@ -66,10 +71,20 @@ describe( 'OverviewChart tooltip', () => {
 
 	it.each( [
 		[ 'month', 'July 2026' ],
-		[ 'day', 'Jul 1, 2026' ],
+		[ 'day', 'July 1, 2026' ],
 	] )( 'names the %s a total covers', ( unit, expected ) => {
 		renderTooltip( unit, { Views: 1200 } );
 		expect( screen.getByText( expected ) ).toBeInTheDocument();
+	} );
+
+	it( "writes the date in the site locale's order", () => {
+		moment.locale( 'de' );
+		try {
+			renderTooltip( 'day', { Views: 1200 } );
+		} finally {
+			moment.locale( 'en' );
+		}
+		expect( screen.getByText( '1. Juli 2026' ) ).toBeInTheDocument();
 	} );
 
 	it( 'lists every series in full, largest first', () => {

@@ -4,6 +4,7 @@ import '@automattic/charts/style.css';
 import { formatNumber, formatNumberCompact } from '@automattic/number-formatters';
 import moment from 'moment';
 import { FunctionComponent } from 'react';
+import { formatDate } from 'calypso/my-sites/stats/stats-chart-tabs/utility';
 import { Unit } from '../typings';
 import type { DataPointDate, RenderTooltipParams, SeriesData } from '@automattic/charts';
 
@@ -30,9 +31,7 @@ function renderTooltip( unit: Unit, { tooltipData }: RenderTooltipParams< DataPo
 
 	return (
 		<div>
-			<div style={ TOOLTIP_DATE_STYLE }>
-				{ moment( hoveredDate ).format( 'month' === unit ? 'MMMM YYYY' : 'MMM D, YYYY' ) }
-			</div>
+			<div style={ TOOLTIP_DATE_STYLE }>{ formatDate( hoveredDate, unit ) }</div>
 			{ points.map( ( point ) => (
 				<div key={ point.label } style={ TOOLTIP_ROW_STYLE }>
 					<span>{ point.label }</span>
