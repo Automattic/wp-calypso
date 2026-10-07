@@ -43,9 +43,9 @@ const MiniChart: FunctionComponent< MiniChartProps > = ( { siteId, gmtOffset, ra
 		.utcOffset( Number.isFinite( gmtOffset ) ? gmtOffset : 0 )
 		.format( 'YYYY-MM-DD' );
 
-	// Pending rather than loading: a retry waits while the tab is hidden or offline, and
-	// `isLoading` is false while it waits, so the range would read as empty until it ran.
-	const { isPending, isError, data } = useVisitsQuery( siteId, unit, quantity, queryDate );
+	// `status`, not `isLoading`: a retry waiting on a hidden tab or a lost connection is still
+	// pending, while `isLoading` is false and would read the range as empty.
+	const { status, data } = useVisitsQuery( siteId, unit, quantity, queryDate );
 
 	const totals = useMemo( () => {
 		const records = ( data ?? [] ) as VisitRecord[];
@@ -84,14 +84,14 @@ const MiniChart: FunctionComponent< MiniChartProps > = ( { siteId, gmtOffset, ra
 		];
 	}, [ data, unit, queryDate, viewsColor, visitorsColor, translate ] );
 
-	// A failed request is not an empty range: its zeros would read as "no traffic" while
-	// the lists below may still show views, so it gets its own message instead.
-	const isEmpty = ! isError && totals.views === 0 && totals.visitors === 0;
-	const hasChart = ! isPending && ! isError && ! isEmpty;
+	const isPending = status === 'pending';
+	const isEmpty = status === 'success' && totals.views === 0 && totals.visitors === 0;
+	const hasChart = status === 'success' && ! isEmpty;
+	// Fixed, so the card keeps its height from the placeholder to the chart.
+	const chartBoxStyle = { blockSize: `${ CHART_HEIGHT }px` };
 
 	return (
 		<div className="stats-widget-minichart">
-			{ /* Hidden for an empty range or a failed request, where zeros would read as "no traffic". */ }
 			{ ( isPending || hasChart ) && (
 				<div className="stats-widget-metrics">
 					<div className="stats-widget-metric">
@@ -135,38 +135,36 @@ const MiniChart: FunctionComponent< MiniChartProps > = ( { siteId, gmtOffset, ra
 				</div>
 			) }
 
-			{ /* A fixed height while loading and for the chart, so the card doesn't resize
-			   between them; the empty notice sizes to its content. The boundary wraps the
-			   box rather than the chart alone, so a chart that fails leaves no empty space
-			   behind — the totals above it stay either way. */ }
-			<ChartBoundary fallback={ null }>
-				<div
-					className="stats-widget-chart"
-					style={ isPending || hasChart ? { blockSize: `${ CHART_HEIGHT }px` } : undefined }
-				>
-					{ isPending && <StatsModulePlaceholder isLoading /> }
-					{ ! isPending && isEmpty && (
-						<Notice.Root intent="info" className="stats-widget-empty-notice">
-							<Notice.Description>
-								{ translate( 'We are collecting traffic data for your site' ) }
-							</Notice.Description>
-							<Notice.Actions>
-								<Notice.ActionLink href="https://jetpack.com/stats/" openInNewTab>
-									{ translate( 'Learn more about stats' ) }
-								</Notice.ActionLink>
-							</Notice.Actions>
-						</Notice.Root>
-					) }
-					{ ! isPending && isError && (
-						<p className="stats-widget-minichart__error">{ translate( 'No data to show' ) }</p>
-					) }
-					{ hasChart && (
+			{ isPending && (
+				<div className="stats-widget-chart" style={ chartBoxStyle }>
+					<StatsModulePlaceholder isLoading />
+				</div>
+			) }
+			{ isEmpty && (
+				<Notice.Root intent="info" className="stats-widget-empty-notice">
+					<Notice.Description>
+						{ translate( 'We are collecting traffic data for your site' ) }
+					</Notice.Description>
+					<Notice.Actions>
+						<Notice.ActionLink href="https://jetpack.com/stats/" openInNewTab>
+							{ translate( 'Learn more about stats' ) }
+						</Notice.ActionLink>
+					</Notice.Actions>
+				</Notice.Root>
+			) }
+			{ status === 'error' && (
+				<p className="stats-widget-minichart__error">{ translate( 'No data to show' ) }</p>
+			) }
+			{ hasChart && (
+				// Around the chart alone, so a failed chart takes only its own box with it.
+				<ChartBoundary fallback={ null }>
+					<div className="stats-widget-chart" style={ chartBoxStyle }>
 						<Suspense fallback={ <StatsModulePlaceholder isLoading /> }>
 							<OverviewChart series={ series } height={ CHART_HEIGHT } unit={ unit } />
 						</Suspense>
-					) }
-				</div>
-			</ChartBoundary>
+					</div>
+				</ChartBoundary>
+			) }
 		</div>
 	);
 };
