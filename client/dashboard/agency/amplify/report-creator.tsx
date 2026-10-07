@@ -63,7 +63,7 @@ export function AmplifyOverviewIntro( {
 				<div className="dashboard-amplify-overview__summary">
 					<Text>
 						{ __(
-							'Website visitors leave when their questions go unanswered, and AI agents skip sites they can’t parse. Our audit covers both audiences and gives you a report of what to fix, so you can approach prospective clients with a winning pitch.'
+							'Website visitors leave when their questions go unanswered, and AI agents skip sites they can’t parse. Our audit covers both audiences and gives you a report of what to fix, so you can approach prospective clients with a pitch built on evidence.'
 						) }
 					</Text>
 				</div>
