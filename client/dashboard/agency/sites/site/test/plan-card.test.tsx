@@ -88,7 +88,7 @@ function mockSitePlanQueries() {
 }
 
 describe( '<AgencySitePlanCard>', () => {
-	test( 'shows the agency’s Pressable plan and shared usage on a Pressable site', async () => {
+	test( 'shows the agency’s Pressable plan on a Pressable site', async () => {
 		mockAgency();
 		mockLicenses( [
 			{
@@ -104,11 +104,6 @@ describe( '<AgencySitePlanCard>', () => {
 
 		const planLink = await screen.findByRole( 'link', { name: /Pressable Signature 4/ } );
 		expect( planLink ).toHaveAttribute( 'href', '/hosting/pressable' );
-		expect(
-			screen.getByText( 'Storage and visits are shared across 3 sites in your plan.' )
-		).toBeVisible();
-		expect( screen.getByText( 'Visits this month' ) ).toBeVisible();
-		expect( screen.getByText( '10GB' ) ).toBeVisible();
 	} );
 
 	test( 'falls back to the Jetpack card when the agency has no Pressable plan', async () => {

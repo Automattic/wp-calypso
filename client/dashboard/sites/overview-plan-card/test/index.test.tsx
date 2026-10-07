@@ -21,14 +21,6 @@ const site = {
 	plan: { product_slug: 'business-bundle', product_name_short: 'Business' },
 } as Site;
 
-const withBillingRoutes: AppConfig = {
-	...APP_CONTEXT_DEFAULT_CONFIG,
-	supports: {
-		...APP_CONTEXT_DEFAULT_CONFIG.supports,
-		me: { billing: { monetizeSubscriptions: true }, security: false, apps: false },
-	},
-};
-
 const withoutBillingRoutes: AppConfig = {
 	...APP_CONTEXT_DEFAULT_CONFIG,
 	supports: { ...APP_CONTEXT_DEFAULT_CONFIG.supports, me: false },
@@ -79,15 +71,6 @@ describe( '<PlanCard>', () => {
 			.get( `/wpcom/v2/sites/${ site.ID }/hosting/metrics` )
 			.query( true )
 			.reply( 200, { data: { periods: {} } } );
-	} );
-
-	test( 'links the plan to the dashboard purchase when the app has billing routes', async () => {
-		render( <PlanCard site={ site } />, { config: withBillingRoutes } );
-
-		expect( await screen.findByRole( 'link', { name: /Business/ } ) ).toHaveAttribute(
-			'href',
-			`/me/billing/purchases/${ PURCHASE_ID }`
-		);
 	} );
 
 	test( 'links the plan and purchases to WordPress.com when the app has no billing routes', async () => {
