@@ -1,4 +1,4 @@
-import { __, _n, sprintf } from '@wordpress/i18n';
+import { __ } from '@wordpress/i18n';
 import { zipWithSignature } from '../../panel/templates/functions';
 import { splitSubject } from '../note-list/simplified-subject';
 import { getHeaderLink } from '../templates/note-summary';
@@ -15,17 +15,13 @@ type TypeTraits = {
 	isPostNews?: boolean;
 	/** The note is about a comment the reader wrote. */
 	isAboutComment?: boolean;
-	/** Heads the list of people who acted, given how many there are. */
-	peopleHeading?: ( count: number ) => string;
+	/** Heads the list of people who acted, in place of the endpoint's title. */
+	peopleHeading?: string;
 	/** Names the open note in place of the endpoint's title. */
 	title?: string;
 	/** The post card only names the post, since what happened is the news. */
 	hidesExcerpt?: boolean;
 };
-
-const getLikesHeading = ( count: number ) =>
-	/* translators: %d: the number of likes */
-	sprintf( _n( '%d like', '%d likes', count ), count );
 
 // What each note type means, in one place. Types not listed fall back to the shape of
 // their blocks.
@@ -38,13 +34,13 @@ const getTypeTraits = ( type: string ): TypeTraits => {
 		case 'new_post':
 			return { isPostNews: true };
 		case 'comment_like':
-			return { isAboutComment: true, title: __( 'Likes' ), peopleHeading: getLikesHeading };
+			return { isAboutComment: true, title: __( 'Likes' ) };
 		case 'like':
-			return { title: __( 'Likes' ), hidesExcerpt: true, peopleHeading: getLikesHeading };
+			return { title: __( 'Likes' ), hidesExcerpt: true };
 		case 'reblog':
-			return { peopleHeading: () => __( 'Reblogs' ) };
+			return { peopleHeading: __( 'Reblogs' ) };
 		case 'follow':
-			return { peopleHeading: () => __( 'Subscribers' ) };
+			return { peopleHeading: __( 'Subscribers' ) };
 		default:
 			return {};
 	}
@@ -221,10 +217,11 @@ export function getNoteView( note: Note, isPendingApproval = false ): NoteView {
 	const card = getCard();
 	const hasCard = hasPostCard || !! card;
 
-	// Beneath a card or a comment, the list of people already says who acted.
+	// Beneath a card or a comment, the list of people already says who acted. The list
+	// holds only some of them, so the count comes from the endpoint's title.
 	const peopleHeading =
 		users.length > 0 && ! hasWords && ( hasCard || !! parent )
-			? ( traits.peopleHeading?.( users.length ) ?? note.title )
+			? ( traits.peopleHeading ?? note.title )
 			: undefined;
 	// A lone person is named by the actor row or the thread, so their block isn't repeated.
 	const isActorShown = users.length === 1 && ! peopleHeading;
