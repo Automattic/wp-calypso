@@ -11,34 +11,27 @@ import GrowHeight from './grow-height';
 import recordWidgetEvent, { recordWidgetEventThenFollow } from './record-widget-event';
 import useStatsLink from './use-stats-link';
 import WidgetSection from './widget-section';
-import type { PremiumAnalyticsRange } from 'calypso/dashboard/utils/premium-analytics-url';
 import type { MouseEvent } from 'react';
 
 import './highlights.scss';
 
-interface ItemWrapperProps {
-	siteId: number;
-	statsBaseUrl: string;
-	isItemLink: boolean;
+type ClickHandler = ( event: MouseEvent< HTMLAnchorElement > ) => void;
+
+interface ItemLinkProps {
 	item: HighLightItem;
-	isItemLinkExternal: boolean;
-	/** The days the list covers, so a post's link opens on them. */
-	linkRange: PremiumAnalyticsRange;
-	onClick?: ( event: MouseEvent< HTMLAnchorElement > ) => void;
+	href: string;
+	isExternal: boolean;
+	onClick: ClickHandler;
 }
 
 interface TopColumnProps {
 	items: Array< HighLightItem >;
-	viewAllUrl: string;
-	viewAllText: string;
+	itemHref: ( item: HighLightItem ) => string;
+	isExternal: boolean;
 	isLoading: boolean;
-	statsBaseUrl: string;
-	siteId: number;
-	isItemLinkExternal?: boolean;
-	isItemLink?: boolean;
-	linkRange: PremiumAnalyticsRange;
-	onItemClick?: ( event: MouseEvent< HTMLAnchorElement > ) => void;
-	onViewAllClick?: ( event: MouseEvent< HTMLAnchorElement > ) => void;
+	viewAllUrl: string;
+	onItemClick: ClickHandler;
+	onViewAllClick: ClickHandler;
 }
 
 interface HighlightsProps {
@@ -55,64 +48,16 @@ const HIGHLIGHT_ITEMS_LIMIT = 5;
 const HIGHLIGHT_TAB_TOP_POSTS_PAGES = 'topPostsAndPages';
 const HIGHLIGHT_TAB_TOP_REFERRERS = 'topReferrers';
 
-const postAndPageLink = ( baseUrl: string, siteId: number, postId: number ) => {
-	return `${ baseUrl }/stats/post/${ postId }/${ siteId }`;
-};
-
-const externalLink = ( item: HighLightItem ) => {
-	// Url is for referrers and href is for top posts and pages.
-	return item.url || item.href;
-};
-
-const ItemWrapper: FunctionComponent< ItemWrapperProps > = ( {
-	statsBaseUrl,
-	siteId,
-	isItemLink,
-	item,
-	isItemLinkExternal,
-	linkRange,
-	onClick,
-} ) => {
+const ItemLink: FunctionComponent< ItemLinkProps > = ( { item, href, isExternal, onClick } ) => {
 	const translate = useTranslate();
-	const statsLink = useStatsLink( siteId );
 
 	// The bare figure is what the design shows; screen readers get the worded version so
 	// the number is not announced without its unit.
-	const renderedItem = (
-		<>
-			<span className="stats-widget-highlights-card__title">
-				<span className="stats-widget-highlights-card__title-text">{ item.title }</span>
-				{ isItemLink && isItemLinkExternal && (
-					<Icon className="stats-icon" icon={ external } size={ 16 } />
-				) }
-			</span>
-			<span className="stats-widget-highlights-card__value" aria-hidden="true">
-				{ formatNumber( item.views ) }
-			</span>
-			<span className="screen-reader-text">
-				{ translate( '%(views)s Views', {
-					args: {
-						views: formatNumber( item.views ),
-					},
-				} ) }
-				{ isItemLink && isItemLinkExternal && ` ${ translate( '(opens in a new tab)' ) }` }
-			</span>
-		</>
-	);
-
-	return isItemLink ? (
+	return (
 		<a
 			className="stats-widget-highlights-card__item"
-			href={
-				isItemLinkExternal
-					? externalLink( item )
-					: statsLink(
-							postAndPageLink( statsBaseUrl, siteId, item.id ),
-							item.id > 0 ? `/post/${ item.id }` : null,
-							linkRange
-						)
-			}
-			target={ isItemLinkExternal ? '_blank' : '_self' }
+			href={ href }
+			target={ isExternal ? '_blank' : '_self' }
 			onClick={ onClick }
 			rel="noopener noreferrer"
 			title={ translate( 'View detailed stats for %(title)s', {
@@ -123,23 +68,31 @@ const ItemWrapper: FunctionComponent< ItemWrapperProps > = ( {
 				comment: 'Text for anchor linking to a stats page for a given post/page',
 			} ) }
 		>
-			{ renderedItem }
+			<span className="stats-widget-highlights-card__title">
+				<span className="stats-widget-highlights-card__title-text">{ item.title }</span>
+				{ isExternal && <Icon className="stats-icon" icon={ external } size={ 16 } /> }
+			</span>
+			<span className="stats-widget-highlights-card__value" aria-hidden="true">
+				{ formatNumber( item.views ) }
+			</span>
+			<span className="screen-reader-text">
+				{ translate( '%(views)s Views', {
+					args: {
+						views: formatNumber( item.views ),
+					},
+				} ) }
+				{ isExternal && ` ${ translate( '(opens in a new tab)' ) }` }
+			</span>
 		</a>
-	) : (
-		<div className="stats-widget-highlights-card__item">{ renderedItem }</div>
 	);
 };
 
 const TopColumn: FunctionComponent< TopColumnProps > = ( {
 	items,
-	viewAllUrl,
-	viewAllText,
+	itemHref,
+	isExternal,
 	isLoading,
-	statsBaseUrl,
-	siteId,
-	isItemLink = false,
-	isItemLinkExternal = false,
-	linkRange,
+	viewAllUrl,
 	onItemClick,
 	onViewAllClick,
 } ) => {
@@ -166,13 +119,10 @@ const TopColumn: FunctionComponent< TopColumnProps > = ( {
 					<ul className="stats-widget-highlights-card__list">
 						{ items.slice( 0, HIGHLIGHT_ITEMS_LIMIT ).map( ( item, idx ) => (
 							<li key={ idx }>
-								<ItemWrapper
+								<ItemLink
 									item={ item }
-									statsBaseUrl={ statsBaseUrl }
-									siteId={ siteId }
-									isItemLink={ isItemLink }
-									isItemLinkExternal={ isItemLinkExternal }
-									linkRange={ linkRange }
+									href={ itemHref( item ) }
+									isExternal={ isExternal }
 									onClick={ onItemClick }
 								/>
 							</li>
@@ -182,7 +132,7 @@ const TopColumn: FunctionComponent< TopColumnProps > = ( {
 			</GrowHeight>
 			<div className="stats-widget-highlights-card__view-all">
 				<a href={ viewAllUrl } onClick={ onViewAllClick }>
-					{ viewAllText }
+					{ translate( 'See more' ) }
 				</a>
 			</div>
 		</div>
@@ -200,9 +150,6 @@ export default function Highlights( {
 	const translate = useTranslate();
 	const statsLink = useStatsLink( siteId );
 
-	const topPostsAndPagesTitle = translate( 'Top Posts & Pages' );
-	const topReferrersTitle = translate( 'Top Referrers' );
-
 	// "See more" and the post rows open the days the lists cover, on Stats or Premium Analytics.
 	const linkRange = { from: startDate, to: endDate, gmtOffset };
 	const viewAllPostsStatsUrl = statsLink(
@@ -215,6 +162,13 @@ export default function Highlights( {
 		'/reports/referrers',
 		linkRange
 	);
+	const postHref = ( item: HighLightItem ) =>
+		statsLink(
+			`${ statsBaseUrl }/stats/post/${ item.id }/${ siteId }`,
+			item.id > 0 ? `/post/${ item.id }` : null,
+			linkRange
+		);
+	const referrerHref = ( item: HighLightItem ) => item.url || item.href;
 
 	const {
 		data: topPostsAndPages = [],
@@ -231,13 +185,8 @@ export default function Highlights( {
 	// TabPanel also reports the initial tab on mount; only a change is a user's click.
 	const selectedTabRef = useRef< string >( HIGHLIGHT_TAB_TOP_POSTS_PAGES );
 
-	// Nothing to show in either list, once both have answered: drop the section rather
-	// than leave a card of two empty tabs. While either is loading it stays, showing its
-	// skeleton. A single empty list keeps its tab and says so.
-	//
-	// A failed request is not an empty one. Both fall back to `[]`, so without this a
-	// request that errored would read as a range with no traffic and take the section and
-	// its "See more" links with it; the lists say "No data to show" instead.
+	// Drop the section only once both lists have answered empty. A failed request also falls
+	// back to `[]`, so errors are excluded: those lists say "No data to show" instead.
 	const isEmpty =
 		! isPendingPostsAndPages &&
 		! isPendingReferrers &&
@@ -253,21 +202,23 @@ export default function Highlights( {
 	const tabs = [
 		{
 			name: HIGHLIGHT_TAB_TOP_POSTS_PAGES,
-			title: topPostsAndPagesTitle,
+			title: translate( 'Top Posts & Pages' ),
 			items: topPostsAndPages,
 			isLoading: isPendingPostsAndPages,
 			viewAllUrl: viewAllPostsStatsUrl,
-			isItemLinkExternal: false,
+			itemHref: postHref,
+			isExternal: false,
 			trackingName: 'top_posts',
 			itemEvent: 'post_clicked',
 		},
 		{
 			name: HIGHLIGHT_TAB_TOP_REFERRERS,
-			title: topReferrersTitle,
+			title: translate( 'Top Referrers' ),
 			items: topReferrers,
 			isLoading: isPendingReferrers,
 			viewAllUrl: viewAllReferrerStatsUrl,
-			isItemLinkExternal: true,
+			itemHref: referrerHref,
+			isExternal: true,
 			trackingName: 'top_referrers',
 			itemEvent: 'referrer_clicked',
 		},
@@ -298,15 +249,11 @@ export default function Highlights( {
 
 					return (
 						<TopColumn
-							viewAllUrl={ active.viewAllUrl }
-							viewAllText={ translate( 'See more' ) }
 							items={ active.items }
+							itemHref={ active.itemHref }
+							isExternal={ active.isExternal }
 							isLoading={ active.isLoading }
-							statsBaseUrl={ statsBaseUrl }
-							siteId={ siteId }
-							isItemLink
-							isItemLinkExternal={ active.isItemLinkExternal }
-							linkRange={ linkRange }
+							viewAllUrl={ active.viewAllUrl }
 							onItemClick={ recordWidgetEventThenFollow( active.itemEvent ) }
 							onViewAllClick={ recordWidgetEventThenFollow( 'see_more_clicked', {
 								tab: active.trackingName,
