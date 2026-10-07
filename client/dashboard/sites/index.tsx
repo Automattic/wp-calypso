@@ -116,6 +116,8 @@ const getFetchPaginatedSitesOptions = (
 			options.plan = filter.value.map( ( v: string ) => planSlugsByName?.[ v ] ).flat();
 		} else if ( filter.field === 'visibility' && filter.value ) {
 			options.visibility = filter.value;
+		} else if ( filter.field === 'is_favorited' && typeof filter.value === 'boolean' ) {
+			options.is_favorited = filter.value;
 		}
 	} );
 
