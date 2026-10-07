@@ -167,20 +167,19 @@
 		padding: 24px;
 	}
 
-	// Narrow: one step at a time, scrolled sideways, so the band stays short.
+	// Narrow: the three steps as a list without their drawings, so all three
+	// show at once and the band stays short.
 	@container referral-band ( max-width: 719px ) {
-		grid-template-columns: none;
-		grid-auto-flow: column;
-		grid-auto-columns: 240px;
-		gap: 16px;
-		overflow-x: auto;
-		overscroll-behavior-x: contain;
-		scroll-snap-type: x mandatory;
-		scroll-padding-inline: 24px;
-		scrollbar-width: none;
+		grid-template-columns: minmax( 0, 1fr );
+		gap: 12px;
+
+		.referral-art {
+			display: none;
+		}
 
 		.referral-step {
-			scroll-snap-align: start;
+			max-inline-size: none;
+			justify-self: stretch;
 		}
 	}
 }
