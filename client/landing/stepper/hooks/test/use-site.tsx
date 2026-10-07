@@ -9,7 +9,7 @@ import { defaultSiteDetails } from 'calypso/landing/stepper/declarative-flow/int
 import { SITE_STORE } from 'calypso/landing/stepper/stores';
 import { requestSite } from 'calypso/state/sites/actions';
 import { renderHookWithProvider } from 'calypso/test-helpers/testing-library';
-import { useSite, useSiteDetails } from '../use-site';
+import { useSite, useSiteQuery } from '../use-site';
 import type { SiteDetails } from '@automattic/data-stores';
 import type { PropsWithChildren } from 'react';
 
@@ -33,13 +33,18 @@ jest.mock( 'calypso/landing/stepper/declarative-flow/internals/state-manager/sto
 	} ),
 } ) );
 
-const renderSite = ( fragment?: number | string, entry = '/setup?siteId=123' ) =>
+const renderSite = (
+	fragment?: number | string,
+	entry = '/setup?siteId=123',
+	requesting = false
+) =>
 	renderHookWithProvider(
 		( { siteFragment }: { siteFragment?: number | string } ) => ( {
-			details: useSiteDetails( siteFragment ),
+			details: useSiteQuery( siteFragment ),
 			legacy: useSite( siteFragment ),
 		} ),
 		{
+			initialState: { sites: { requesting: { 123: requesting } } },
 			initialProps: { siteFragment: fragment },
 			wrapper: ( { children }: PropsWithChildren ) => (
 				<MemoryRouter initialEntries={ [ entry ] }>{ children }</MemoryRouter>
@@ -47,7 +52,7 @@ const renderSite = ( fragment?: number | string, entry = '/setup?siteId=123' ) =
 		}
 	);
 
-describe( 'useSiteDetails', () => {
+describe( 'useSiteQuery', () => {
 	beforeEach( () => {
 		jest.resetAllMocks();
 		jest.mocked( requestSite ).mockImplementation( () => jest.fn() );
@@ -87,31 +92,36 @@ describe( 'useSiteDetails', () => {
 		}
 	);
 
-	it( 'retries a failed numeric lookup using the same resolution key', async () => {
-		let resolveRetry!: ( value: SiteDetails ) => void;
-		const retry = new Promise< SiteDetails >( ( resolve ) => {
-			resolveRetry = resolve;
-		} );
-		jest
-			.mocked( wpcomRequest )
-			.mockRejectedValueOnce( { error: 'http_request_failed', message: 'Request failed' } )
-			.mockReturnValueOnce( retry );
-		const { result } = renderSite( 123 );
+	it.each( [ false, true ] )(
+		'retries a failed numeric lookup (Redux in flight: %s)',
+		async ( requesting ) => {
+			let resolveRetry!: ( value: SiteDetails ) => void;
+			const retry = new Promise< SiteDetails >( ( resolve ) => {
+				resolveRetry = resolve;
+			} );
+			jest
+				.mocked( wpcomRequest )
+				.mockRejectedValueOnce( { error: 'http_request_failed', message: 'Request failed' } )
+				.mockReturnValueOnce( retry );
+			const { result } = renderSite( 123, '/setup?siteId=123', requesting );
 
-		await waitFor( () => expect( result.current.details.isError ).toBe( true ) );
-		expect( result.current.details.isLoading ).toBe( false );
-		expect( result.current.legacy ).toBeNull();
-		act( () => {
-			result.current.details.refetch?.();
-		} );
-		await waitFor( () => expect( wpcomRequest ).toHaveBeenCalledTimes( 2 ) );
-		expect( result.current.details.isLoading ).toBe( true );
-		expect( result.current.details.isError ).toBe( false );
-		await act( async () => resolveRetry( site ) );
-		expect( result.current.details.data ).toEqual( site );
-		expect( result.current.details.isLoading ).toBe( false );
-		expect( result.current.legacy ).toEqual( site );
-	} );
+			await waitFor( () => expect( result.current.details.isError ).toBe( true ) );
+			expect( result.current.details.isLoading ).toBe( false );
+			expect( result.current.legacy ).toBeNull();
+			jest.mocked( requestSite ).mockClear();
+			act( () => {
+				result.current.details.refetch();
+			} );
+			await waitFor( () => expect( wpcomRequest ).toHaveBeenCalledTimes( 2 ) );
+			expect( jest.mocked( requestSite ).mock.calls ).toEqual( requesting ? [] : [ [ 123 ] ] );
+			expect( result.current.details.isLoading ).toBe( true );
+			expect( result.current.details.isError ).toBe( false );
+			await act( async () => resolveRetry( site ) );
+			expect( result.current.details.data ).toEqual( site );
+			expect( result.current.details.isLoading ).toBe( false );
+			expect( result.current.legacy ).toEqual( site );
+		}
+	);
 
 	it( 'keeps concurrent lookups independent when one fails', async () => {
 		jest
@@ -150,9 +160,10 @@ describe( 'useSiteDetails', () => {
 			data: null,
 			isLoading: false,
 			isError: false,
-			refetch: undefined,
+			refetch: expect.any( Function ),
 		} );
 		expect( result.current.legacy ).toBeNull();
+		act( () => result.current.details.refetch() );
 		expect( wpcomRequest ).not.toHaveBeenCalled();
 		expect( requestSite ).not.toHaveBeenCalled();
 	} );

@@ -70,7 +70,7 @@ const destination = { ID: 2, URL: `https://${ destinationSlug }` };
 const locationDescriptor = Object.getOwnPropertyDescriptor( window, 'location' )!;
 const navigate = jest.fn();
 
-function renderAssertions() {
+function renderAssertions( source = sourceSlug ) {
 	return renderHookWithProvider(
 		() => {
 			useSelect( ( select ) => select( SITE_STORE ).getSite( destinationSlug ), [] );
@@ -80,7 +80,7 @@ function renderAssertions() {
 			wrapper: ( { children }: { children: React.ReactNode } ) => (
 				<MemoryRouter
 					initialEntries={ [
-						`/setup/copy-site/automated-copy?sourceSlug=${ sourceSlug }&siteSlug=${ destinationSlug }`,
+						`/setup/copy-site/automated-copy?sourceSlug=${ source }&siteSlug=${ destinationSlug }`,
 					] }
 				>
 					{ children }
@@ -152,6 +152,16 @@ beforeEach( () => {
 } );
 
 describe( 'copy site source validation', () => {
+	it( 'rejects a missing source without validating the destination as the source', async () => {
+		jest.mocked( wpcomRequest ).mockResolvedValue( destination );
+		const { result } = renderAssertions( '' );
+		await waitFor( () => expect( result.current?.state ).toBe( AssertConditionState.FAILURE ) );
+		expect( result.current?.message ).toBe( 'Copy Site flow requires a valid source site.' );
+		expect( window.location.assign ).toHaveBeenCalledWith( '/sites' );
+		expect( wpcom.req.get ).not.toHaveBeenCalled();
+		expect( wpcom.req.post ).not.toHaveBeenCalled();
+	} );
+
 	it.each( [ 'destination first', 'source first', 'destination fails' ] )(
 		'waits for source details and features when %s',
 		async ( order ) => {

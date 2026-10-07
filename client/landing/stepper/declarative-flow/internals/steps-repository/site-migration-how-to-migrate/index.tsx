@@ -8,7 +8,7 @@ import DocumentHead from 'calypso/components/data/document-head';
 import { useMigrationCancellation } from 'calypso/data/site-migration/landing/use-migration-cancellation';
 import { useMigrationStickerMutation } from 'calypso/data/site-migration/use-migration-sticker';
 import { HOW_TO_MIGRATE_OPTIONS } from 'calypso/landing/stepper/constants';
-import { useSiteDetails } from 'calypso/landing/stepper/hooks/use-site';
+import { useSiteQuery } from 'calypso/landing/stepper/hooks/use-site';
 import {
 	recordMigrationStartEvent,
 	recordMigrationStartFacebookEvent,
@@ -29,7 +29,7 @@ const SiteMigrationHowToMigrate: StepType< {
 } > = ( props ) => {
 	const { navigation, headerText, subHeaderText } = props;
 	const translate = useTranslate();
-	const { data: site, isLoading, isError, refetch } = useSiteDetails();
+	const { data: site, isLoading, isError, refetch } = useSiteQuery();
 	const { mutate: cancelMigration } = useMigrationCancellation( site?.ID );
 	const { deleteMigrationSticker } = useMigrationStickerMutation();
 
@@ -128,14 +128,14 @@ const SiteMigrationHowToMigrate: StepType< {
 						<Step.Heading
 							text={ errorTitle }
 							subText={
-								refetch
+								isError
 									? translate( 'Please try again, or go back to choose another site.' )
 									: translate( 'Go back to choose a destination site.' )
 							}
 						/>
 					}
 				>
-					{ refetch && (
+					{ isError && (
 						<div className="how-to-migrate__experiment-expectations">
 							<NextButton onClick={ refetch }>{ translate( 'Try again' ) }</NextButton>
 						</div>

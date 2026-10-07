@@ -9,10 +9,10 @@ import { useSiteIdParam } from './use-site-id-param';
 import { useSiteSlugParam } from './use-site-slug-param';
 
 export function useSite( siteFragment?: number | string ) {
-	return useSiteDetails( siteFragment ).data;
+	return useSiteQuery( siteFragment ).data;
 }
 
-export function useSiteDetails( siteFragment?: number | string ) {
+export function useSiteQuery( siteFragment?: number | string ) {
 	const dispatch = useDispatch();
 	const { invalidateResolution } = useStoreDispatch( SITE_STORE );
 	const siteSlug = useSiteSlugParam();
@@ -46,15 +46,22 @@ export function useSiteDetails( siteFragment?: number | string ) {
 		}
 	}, [ dispatch, siteIdOrSlug ] );
 
-	const refetch = useCallback(
-		() => invalidateResolution( 'getSite', [ siteIdOrSlug ] ),
-		[ invalidateResolution, siteIdOrSlug ]
-	);
+	const refetch = useCallback( () => {
+		if ( ! siteIdOrSlug ) {
+			return;
+		}
+		invalidateResolution( 'getSite', [ siteIdOrSlug ] );
+		dispatch( ( d, getState ) => {
+			if ( ! isRequestingSite( getState(), siteIdOrSlug ) ) {
+				d( requestSite( siteIdOrSlug ) );
+			}
+		} );
+	}, [ dispatch, invalidateResolution, siteIdOrSlug ] );
 
 	return {
 		data,
 		isLoading: !! siteIdOrSlug && ! data && ! hasResolved,
 		isError: !! siteIdOrSlug && ! data && hasResolved,
-		refetch: siteIdOrSlug ? refetch : undefined,
+		refetch,
 	};
 }
