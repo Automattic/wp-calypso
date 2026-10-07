@@ -35,8 +35,8 @@ export function PlaygroundIframe( {
 	const [ query ] = useSearchParams();
 
 	const retry = () => {
-		setPlaygroundError( null );
-		setAttempt( ( previous ) => previous + 1 );
+		// A failed dynamic import can remain cached for the lifetime of the document.
+		window.location.reload();
 	};
 
 	const createNewPlayground = () => {
@@ -46,7 +46,8 @@ export function PlaygroundIframe( {
 			searchParams.delete( 'blueprint-url' );
 		}
 		setSearchParams( searchParams, { replace: true } );
-		retry();
+		setPlaygroundError( null );
+		setAttempt( ( previous ) => previous + 1 );
 	};
 
 	useEffect( () => {
