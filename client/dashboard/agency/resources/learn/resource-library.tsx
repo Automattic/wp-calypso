@@ -86,7 +86,7 @@ export default function ResourceLibrary( {
 				>
 					<HStack justify="space-between" wrap>
 						<HStack justify="flex-start" expanded={ false }>
-							<DataViews.Search />
+							<DataViews.Search label={ __( 'Search resources' ) } />
 							<ToggleGroupControl
 								className="dashboard-resources-learn__layout-toggle"
 								label={ __( 'Layout' ) }
