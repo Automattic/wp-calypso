@@ -15,4 +15,7 @@ export type RecordTracksEvent = (
 export type OpenResource = ( resource: AgencyEnablementResource, event: MouseEvent ) => void;
 
 /** Narrows the library to resources sharing one of a card's badges. */
-export type FilterResources = ( field: 'audience' | 'stage', value: string ) => void;
+export type FilterResources = (
+	field: 'content_type' | 'audience' | 'stage',
+	value: string
+) => void;
