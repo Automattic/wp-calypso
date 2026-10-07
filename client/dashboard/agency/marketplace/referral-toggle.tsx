@@ -1,4 +1,9 @@
-import { userPreferenceMutation, userPreferenceQuery } from '@automattic/api-queries';
+import {
+	activeAgencyQuery,
+	referralsQuery,
+	userPreferenceMutation,
+	userPreferenceQuery,
+} from '@automattic/api-queries';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { __experimentalHStack as HStack, Button, ToggleControl } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
@@ -17,7 +22,7 @@ export default function ReferralToggle( {
 	earn = __( 'Earn up to 50%' ),
 }: {
 	label?: string;
-	/** Option hB: the commission pill beside the switch while referral mode is off. */
+	/** Option hB: the commission pill beside the switch until the agency's first referral. */
 	earn?: string;
 } ) {
 	const { checked, disabled, onChange } = useReferralToggle();
@@ -28,6 +33,12 @@ export default function ReferralToggle( {
 
 	const treatment = referralTreatment();
 	const isPassH = treatment !== 'g';
+
+	// The pill stays in both modes, so the header never moves when the switch
+	// flips, and goes once the agency has sent a referral.
+	const { data: agency } = useQuery( activeAgencyQuery() );
+	const { data: referrals } = useQuery( referralsQuery( agency?.id ?? 0 ) );
+	const hasReferred = !! referrals?.length;
 
 	useEffect( () => {
 		if ( ! isPassH && checked && isFetched && ! guideSeen ) {
@@ -52,7 +63,7 @@ export default function ReferralToggle( {
 						onChange( isOn );
 					} }
 				/>
-				{ treatment === 'hb' && ! checked && <ReferralEarnPill>{ earn }</ReferralEarnPill> }
+				{ treatment === 'hb' && ! hasReferred && <ReferralEarnPill>{ earn }</ReferralEarnPill> }
 				{ ! isPassH && (
 					<Button
 						size="small"

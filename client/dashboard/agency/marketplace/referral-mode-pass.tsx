@@ -11,9 +11,11 @@ import clsx from 'clsx';
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { Notice } from '../../components/notice';
 import stepHosting from './images/referral/step-1-add-hosting.svg';
+import stepPressable from './images/referral/step-1-add-pressable.svg';
 import stepProduct from './images/referral/step-1-add.svg';
 import stepRequest from './images/referral/step-2-send.svg';
 import stepReferralsHosting from './images/referral/step-3-earn-hosting.svg';
+import stepReferralsPressable from './images/referral/step-3-earn-pressable.svg';
 import stepReferrals from './images/referral/step-3-earn.svg';
 import type { ReactNode } from 'react';
 
@@ -93,11 +95,24 @@ export function ReferralEarnPill( { children }: { children: ReactNode } ) {
 	return <span className="referral-chip is-soft">{ children }</span>;
 }
 
+type BandKind = 'products' | 'hosting' | 'pressable';
+
 type BandProps = {
 	headline: string;
 	summary: string;
-	/** Which page the band sits on: its first and last drawings show that page's item. */
-	kind?: 'products' | 'hosting';
+	/**
+	 * Which page the band sits on: its first and last drawings show that page's
+	 * item. Hosting draws a WordPress.com site, Pressable a Pressable plan.
+	 */
+	kind?: BandKind;
+};
+
+// The first and last drawings for each page. Pressable shows Signature 1 at its
+// regular yearly price, so the drawing outlasts the introductory offer.
+const BAND_ART: Record< BandKind, { add: string; earn: string } > = {
+	products: { add: stepProduct, earn: stepReferrals },
+	hosting: { add: stepHosting, earn: stepReferralsHosting },
+	pressable: { add: stepPressable, earn: stepReferralsPressable },
 };
 
 // The reveal plays only when the agency switches referral mode on, never when a
@@ -108,7 +123,8 @@ export function markReferralReveal() {
 }
 
 export function ReferralModeBand( { headline, summary, kind = 'products' }: BandProps ) {
-	const isHosting = kind === 'hosting';
+	const isHosting = kind !== 'products';
+	const art = BAND_ART[ kind ];
 	const { data: savedFolded, isFetched } = useQuery(
 		userPreferenceQuery( BAND_FOLDED_PREFERENCE )
 	);
@@ -211,7 +227,7 @@ export function ReferralModeBand( { headline, summary, kind = 'products' }: Band
 					<span className="referral-light is-centre" aria-hidden="true" />
 					<span className="referral-grain" aria-hidden="true" />
 					<div className="referral-step">
-						<img className="referral-art" src={ isHosting ? stepHosting : stepProduct } alt="" />
+						<img className="referral-art" src={ art.add } alt="" />
 						<p className="referral-step-caption">
 							<Pin n={ 1 } />
 							<span>
@@ -229,14 +245,10 @@ export function ReferralModeBand( { headline, summary, kind = 'products' }: Band
 						</p>
 					</div>
 					<div className="referral-step">
-						<img
-							className="referral-art"
-							src={ isHosting ? stepReferralsHosting : stepReferrals }
-							alt=""
-						/>
+						<img className="referral-art" src={ art.earn } alt="" />
 						<p className="referral-step-caption">
 							<Pin n={ 3 } />
-							{ __( 'Earn every time they pay or renew' ) }
+							{ __( 'Earn quarterly on active subscriptions' ) }
 						</p>
 					</div>
 				</div>
