@@ -340,8 +340,9 @@ function getBasicSurveySteps( {
 	return [ FEEDBACK_STEP ];
 }
 
-function getAllSurveySteps( {
+export function getAllSurveySteps( {
 	purchase,
+	intent,
 	upsell,
 	cancellationOffer,
 	hasQuestionTwo,
@@ -350,6 +351,7 @@ function getAllSurveySteps( {
 	isSplitCancelRemoveEnabled,
 }: {
 	purchase: Purchase;
+	intent: CancelIntent | null;
 	upsell: CancelPurchaseState[ 'upsell' ];
 	cancellationOffer: CancellationOffer | undefined;
 	hasQuestionTwo: boolean;
@@ -363,8 +365,11 @@ function getAllSurveySteps( {
 		hasQuestionTwo,
 		plans,
 	} );
-	const skipRemovePlanSurvey = purchase.is_plan && userHasCompletedCancelSurveyForPurchase;
 	const flowType = getPurchaseCancellationFlowType( purchase );
+	const skipRemovePlanSurvey =
+		getDisplayVariant( intent, flowType ) === 'remove' &&
+		purchase.is_plan &&
+		userHasCompletedCancelSurveyForPurchase;
 
 	if (
 		purchase.will_atomic_revert_after_removal &&
@@ -374,7 +379,7 @@ function getAllSurveySteps( {
 		steps.push( ATOMIC_REVERT_STEP );
 	}
 
-	// If the survey has already been completed, then remove certain steps and make `REMOVE_PLAN_STEP` the first step.
+	// Survey already done: a plan removal starts at REMOVE_PLAN_STEP. Cancel and auto-renew still show the survey.
 	if ( skipRemovePlanSurvey ) {
 		const stepsToRemove = [ FEEDBACK_STEP, NEXT_ADVENTURE_STEP ];
 		steps = steps.filter( ( step ) => ! stepsToRemove.includes( step ) );
@@ -592,13 +597,12 @@ function CancelPurchaseInner() {
 
 	const allSteps = getAllSurveySteps( {
 		purchase,
+		intent,
 		upsell: state.upsell,
 		cancellationOffer,
 		hasQuestionTwo: Boolean( state.questionTwoOrder?.length ),
 		plans,
-		userHasCompletedCancelSurveyForPurchase: fireOnConfirm
-			? false
-			: userHasCompletedCancelSurveyForPurchase,
+		userHasCompletedCancelSurveyForPurchase,
 		isSplitCancelRemoveEnabled,
 	} );
 
