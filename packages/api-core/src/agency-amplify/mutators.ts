@@ -25,6 +25,8 @@ export async function archiveAmplifyReport(
 
 /**
  * Relaunches a failed report with the same URL and mode, updating the same row.
+ * BACKEND REQUIRED: this endpoint doesn't exist yet (A4A Linear: "Expose failure
+ * reason and add a retry endpoint"). Failed runs must not count toward `usage.used`.
  */
 export async function retryAmplifyReport(
 	agencyId: number,
