@@ -20,9 +20,9 @@ const ThreadItem = ( {
 	meta?: ReactNode;
 	children: ReactNode;
 } ) => {
-	const photo = <NoteIcon className="wpnc-simplified__photo" icon={ avatar } size={ 32 } />;
+	const photo = <NoteIcon className="wpnc-simplified__photo" icon={ avatar } size={ 36 } />;
 	const name = author && (
-		<Text weight={ 600 }>
+		<Text size={ 15 } weight={ 600 }>
 			{ authorUrl ? (
 				<a href={ authorUrl } target="_blank" rel="noreferrer">
 					{ author }
@@ -39,7 +39,7 @@ const ThreadItem = ( {
 			className="wpnc-simplified__thread-item"
 			alignment="top"
 			justify="flex-start"
-			spacing={ 4 }
+			spacing={ 3 }
 		>
 			{ authorUrl ? (
 				// The name beside it links to the same profile, so the photo stays out of the tab order.
@@ -58,7 +58,7 @@ const ThreadItem = ( {
 			) }
 			<VStack className="wpnc-simplified__thread-content" spacing={ 1 }>
 				<HStack
-					className="wpnc-simplified__quiet-links"
+					className="wpnc-simplified__quiet-links wpnc-simplified__thread-header"
 					alignment="baseline"
 					justify="flex-start"
 					spacing={ 2 }

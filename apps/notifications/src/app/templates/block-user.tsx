@@ -125,7 +125,7 @@ export default function UserBlock( {
 					overflow: 'hidden',
 				} }
 			>
-				<NoteIcon icon={ media?.url } alt={ block.text } size={ 32 } />
+				<NoteIcon icon={ media?.url } alt={ block.text } size={ 36 } />
 			</a>
 			<VStack className="wpnc__user-text" alignment="flex-start" spacing={ 0 }>
 				<a className="wpnc__user-title" href={ readerProfileUrl } target="_blank" rel="noreferrer">

@@ -55,31 +55,31 @@ export const PostCard = ( {
 
 	return (
 		<CardLink url={ url }>
-			<VStack className="wpnc-simplified__card-text" spacing={ 2 }>
+			<VStack className="wpnc-simplified__card-text" spacing={ 4 }>
 				<span className="wpnc-simplified__card-arrow" aria-hidden="true">
 					&#8599;
 				</span>
 				{ ( siteName || byline ) && (
-					<HStack justify="flex-start" spacing={ 2 }>
+					<HStack justify="flex-start" spacing={ 3 }>
 						{ siteIcon ? (
 							<img
 								className="wpnc-simplified__site-icon"
 								src={ siteIcon }
 								alt=""
-								width={ 32 }
-								height={ 32 }
+								width={ 36 }
+								height={ 36 }
 							/>
 						) : (
 							// The block editor's own stand-in for a site without an icon.
 							<Icon
 								className="wpnc-simplified__site-icon is-placeholder"
 								icon={ wordpress }
-								size={ 32 }
+								size={ 36 }
 							/>
 						) }
 						<VStack spacing={ 0 }>
 							{ siteName && (
-								<Text size={ 12 } weight={ 600 }>
+								<Text size={ 12 } weight={ 600 } truncate>
 									{ siteName }
 								</Text>
 							) }
@@ -91,15 +91,19 @@ export const PostCard = ( {
 						</VStack>
 					</HStack>
 				) }
-				{ title && (
-					<Text size={ 15 } weight={ 600 }>
-						{ title }
-					</Text>
-				) }
-				{ excerpt && (
-					<Text variant="muted" truncate numberOfLines={ 2 }>
-						{ excerpt }
-					</Text>
+				{ ( title || excerpt ) && (
+					<VStack spacing={ 2 }>
+						{ title && (
+							<Text size={ 15 } weight={ 600 }>
+								{ title }
+							</Text>
+						) }
+						{ excerpt && (
+							<Text variant="muted" truncate numberOfLines={ 2 }>
+								{ excerpt }
+							</Text>
+						) }
+					</VStack>
 				) }
 			</VStack>
 		</CardLink>

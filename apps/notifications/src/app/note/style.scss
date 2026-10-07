@@ -332,10 +332,6 @@
 
 	// A byline: the name, then what else is known about them in small muted text.
 	&.is-compact {
-		.wpnc__note & {
-			padding-block: $grid-unit-10;
-		}
-
 		.wpnc__note-icon {
 			margin-block: 0;
 		}
@@ -344,6 +340,18 @@
 		// can't do it: the body's reset zeroes margins on every div.
 		.wpnc__user-text {
 			flex: 1;
+			min-width: 0;
+		}
+
+		// Long names and site titles end in an ellipsis rather than pushing the row wider.
+		.wpnc__user-title,
+		.wpnc__user-title > *,
+		.wpnc__user-description a:not(.components-button) {
+			display: block;
+			max-width: 100%;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			white-space: nowrap;
 		}
 
 		.wpnc__user-title {
@@ -366,13 +374,13 @@
 	flex-shrink: 0;
 
 	.components-button {
-		font-weight: $font-weight-medium;
+		font-weight: var(--wpds-typography-font-weight-emphasis, #{$font-weight-medium});
 	}
 }
 
 // Scoped past the body's reset, which zeroes padding on every div.
 .wpnc__body-content .wpnc__people-footnote {
-	margin-block-start: $grid-unit-10;
+	margin-block-start: $grid-unit-15;
 	padding-block-start: $grid-unit-15;
 	border-block-start: 1px solid var(--wpnc-divider__color, #{$gray-200});
 	font-size: $font-size-small;

@@ -34,9 +34,9 @@ a.wpnc-simplified__quiet-links:visited {
 	font-weight: 600;
 }
 
-.wpnc-simplified__heading {
-	padding-block-end: $grid-unit-10;
-	border-block-end: 1px solid var(--wpnc-divider__color, #{$gray-200});
+// The divider draws in the current colour.
+.wpnc-simplified__divider {
+	color: var(--wpnc-divider__color, #{$gray-200});
 }
 
 .wpnc-simplified__thread {
@@ -61,6 +61,12 @@ a.wpnc-simplified__quiet-links:visited {
 	overflow-wrap: anywhere;
 }
 
+// As tall as the photo, so the name and date sit level with its middle.
+.wpnc-simplified__thread-header {
+	min-height: 36px;
+	align-content: center;
+}
+
 // The endpoint sends the whole comment, line breaks included.
 .wpnc-simplified__parent-text {
 	display: -webkit-box;
@@ -72,7 +78,7 @@ a.wpnc-simplified__quiet-links:visited {
 
 .wpnc-simplified__card {
 	display: block;
-	padding: $grid-unit-15;
+	padding: $grid-unit-20;
 	border: 1px solid var(--wpnc-divider__color, #{$gray-200});
 	border-radius: $radius-medium;
 	overflow: hidden;
@@ -91,7 +97,7 @@ a.wpnc-simplified__quiet-links:visited {
 
 .wpnc-simplified__site-icon {
 	flex-shrink: 0;
-	border-radius: $radius-small;
+	border-radius: $radius-medium;
 
 	&.is-placeholder {
 		padding: $grid-unit-05;
@@ -101,7 +107,7 @@ a.wpnc-simplified__quiet-links:visited {
 
 	img,
 	&::after {
-		border-radius: $radius-small;
+		border-radius: $radius-medium;
 	}
 }
 

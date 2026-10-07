@@ -1,4 +1,5 @@
 import {
+	__experimentalDivider as Divider,
 	__experimentalHeading as Heading,
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
@@ -70,9 +71,12 @@ export default function SimplifiedNote( { note }: { note: Note } ) {
 			) }
 			{ view.card && <ContextCard { ...view.card } /> }
 			{ view.peopleHeading && (
-				<Heading className="wpnc-simplified__heading" level={ 3 } size={ 13 } weight={ 600 }>
-					{ view.peopleHeading }
-				</Heading>
+				<VStack spacing={ 3 }>
+					<Heading level={ 3 } size={ 15 } weight={ 600 }>
+						{ view.peopleHeading }
+					</Heading>
+					<Divider className="wpnc-simplified__divider" />
+				</VStack>
 			) }
 			{ view.postTitle && (
 				<Text className="wpnc-simplified__quiet-links" size={ 15 } weight={ 600 }>

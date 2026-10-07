@@ -17,7 +17,7 @@ import type { ReactNode } from 'react';
 const Avatars = ( { avatars, link }: { avatars: string[]; link?: string } ) => {
 	const icons = avatars.map( ( url, index ) => (
 		// eslint-disable-next-line react/no-array-index-key -- placeholder avatars repeat.
-		<NoteIcon key={ index } icon={ url } size={ 32 } />
+		<NoteIcon key={ index } icon={ url } size={ 36 } />
 	) );
 
 	if ( avatars.length === 1 && link ) {
