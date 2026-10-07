@@ -43,7 +43,7 @@ export async function saveIpsTag( domain: string, ipsTag: string ): Promise< voi
 
 export async function fetchIpsTagList(): Promise< IpsTag[] > {
 	const errorMessage = sprintf(
-		/* translators: %s is the name of the list being fetched. */
+		/* translators: %(list)s is the name of the list being fetched. */
 		__( 'Failed to fetch %(list)s list. Please refresh the page and try again.' ),
 		{ list: 'IPS tag' }
 	);
@@ -60,30 +60,30 @@ export async function fetchIpsTagList(): Promise< IpsTag[] > {
 
 export async function fetchDomainTransferRequest(
 	domain: string,
-	siteSlug: string
+	siteId: number
 ): Promise< DomainTransferRequest | null > {
 	return wpcom.req.get( {
-		path: `/sites/${ siteSlug }/domains/${ domain }/transfer-to-any-user`,
+		path: `/sites/${ siteId }/domains/${ domain }/transfer-to-any-user`,
 	} );
 }
 
 export async function updateDomainTransferRequest(
 	domain: string,
-	siteSlug: string,
+	siteId: number,
 	email: string
 ): Promise< void > {
 	return wpcom.req.post( {
-		path: `/sites/${ siteSlug }/domains/${ domain }/transfer-to-any-user`,
+		path: `/sites/${ siteId }/domains/${ domain }/transfer-to-any-user`,
 		body: { email },
 	} );
 }
 
 export async function deleteDomainTransferRequest(
 	domain: string,
-	siteSlug: string
+	siteId: number
 ): Promise< void > {
 	return wpcom.req.post( {
-		path: `/sites/${ siteSlug }/domains/${ domain }/transfer-to-any-user/delete`,
+		path: `/sites/${ siteId }/domains/${ domain }/transfer-to-any-user/delete`,
 	} );
 }
 
