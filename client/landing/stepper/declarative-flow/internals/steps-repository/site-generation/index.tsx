@@ -15,6 +15,7 @@ const SiteGeneration: StepType = function SiteGeneration() {
 	const translate = useTranslate();
 	const query = useMemo( () => new URLSearchParams( window.location.search ), [] );
 	const siteIdentifier = query.get( 'siteId' ) || query.get( 'siteSlug' );
+	const siteSlug = query.get( 'siteSlug' );
 	const source = query.get( 'source' );
 	const specId = query.get( 'specId' );
 	const graph = getBuildWowGraph( query );
@@ -37,6 +38,9 @@ const SiteGeneration: StepType = function SiteGeneration() {
 	);
 	const state = useSiteGeneration( { siteIdentifier, source, specId, graph, streamEvents, steps } );
 	const stream = useBuildWowStream( state.streamInfo ?? null );
+	// Keep the synthetic preview out of the initial render when the status
+	// response confirms a stream, even before the event subscription is ready.
+	const streamRequested = streamEvents || Boolean( state.streamInfo );
 
 	const reload = () => {
 		window.location.reload();
@@ -45,7 +49,14 @@ const SiteGeneration: StepType = function SiteGeneration() {
 	return (
 		<>
 			<DocumentHead title={ translate( 'Generating your site' ) } />
-			<SiteGenerationView graph={ graph } onReload={ reload } state={ state } stream={ stream } />
+			<SiteGenerationView
+				graph={ graph }
+				onReload={ reload }
+				siteSlug={ siteSlug }
+				state={ state }
+				stream={ stream }
+				streamRequested={ streamRequested }
+			/>
 		</>
 	);
 };

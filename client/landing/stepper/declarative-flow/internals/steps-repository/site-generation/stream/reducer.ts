@@ -2,9 +2,8 @@ import type { BuildWowStreamEnvelope } from './types';
 
 // Folds Engine build events (docs/events.md in site-builder-engine) into what
 // the waiting screen shows. Unknown types and malformed payloads are ignored.
-// Section HTML and image URLs are not kept: rendering generated markup needs
-// its own isolated preview surface, and image URLs point at theme assets that
-// only exist once the site is delivered.
+// Section HTML is discarded because generated markup needs its own isolated
+// preview surface. Ready image paths are retained for image-only previews.
 
 export type StreamPlanStatus = 'proposed' | 'developing' | 'completed';
 
@@ -20,7 +19,10 @@ export type StreamPlan = {
 	palette: StreamSwatch[] | null;
 	typography: StreamTypeface[] | null;
 	pages: StreamPage[] | null;
+	images: StreamPlanImage[] | null;
 };
+
+export type StreamPlanImage = { query: string; aspectRatio: string | null };
 
 export type StreamSection = {
 	kind: 'chrome' | 'content';
@@ -29,6 +31,13 @@ export type StreamSection = {
 };
 
 export type StreamImageStatus = 'pending' | 'generating' | 'ready' | 'failed';
+export type StreamImage = {
+	status: StreamImageStatus;
+	url: string | null;
+	previewId?: string;
+	query: string | null;
+	aspectRatio: string | null;
+};
 
 export type BuildWowStreamState = {
 	runId: string;
@@ -40,7 +49,7 @@ export type BuildWowStreamState = {
 	directions: string[];
 	plan: StreamPlan | null;
 	sections: Record< string, Record< number, StreamSection > >;
-	images: Record< string, StreamImageStatus >;
+	images: Record< string, StreamImage >;
 	// The Engine finished its own work. Never a reason to navigate: Build Wow
 	// still has to deliver the result, and only the status endpoint says live.
 	engineTerminal: 'completed' | 'failed' | 'paused' | null;
@@ -118,6 +127,15 @@ function parsePage( item: unknown ): StreamPage | null {
 	};
 }
 
+function parsePlanImage( item: unknown ): StreamPlanImage | null {
+	const image = record( item );
+	const query = text( image?.query, 200 );
+	if ( ! image || ! query ) {
+		return null;
+	}
+	return { query, aspectRatio: text( image.aspectRatio, 20 ) };
+}
+
 function planFrom( data: Record< string, unknown >, status: StreamPlanStatus ): StreamPlan {
 	return {
 		status,
@@ -126,6 +144,7 @@ function planFrom( data: Record< string, unknown >, status: StreamPlanStatus ): 
 		palette: list( data.palette, parseSwatch ),
 		typography: list( data.typography, parseTypeface ),
 		pages: list( data.pages, parsePage ),
+		images: list( data.images, parsePlanImage ),
 	};
 }
 
@@ -142,6 +161,7 @@ function mergePlan( previous: StreamPlan | null, next: StreamPlan ): StreamPlan 
 		palette: next.palette ?? previous.palette,
 		typography: next.typography ?? previous.typography,
 		pages: next.pages ?? previous.pages,
+		images: next.images ?? previous.images,
 	};
 }
 
@@ -258,7 +278,24 @@ export function applyStreamEvent(
 			if ( ! ( id in state.images ) && Object.keys( state.images ).length >= MAX_ITEMS ) {
 				return state;
 			}
-			return { ...state, images: { ...state.images, [ id ]: status } };
+			const rawUrl = text( data.url, 2048 );
+			const previewId = text( data.preview_id, 64 );
+			const url = rawUrl?.startsWith( '/wp-content/themes/' ) ? rawUrl : null;
+			return {
+				...state,
+				images: {
+					...state.images,
+					[ id ]: {
+						status,
+						url: status === 'ready' ? url : null,
+						...( status === 'ready' && previewId && /^[a-f0-9]{64}$/.test( previewId )
+							? { previewId }
+							: {} ),
+						query: text( data.query, 200 ),
+						aspectRatio: text( data.aspectRatio, 20 ),
+					},
+				},
+			};
 		}
 		case 'build.completed':
 			return { ...state, engineTerminal: 'completed', currentStep: null };

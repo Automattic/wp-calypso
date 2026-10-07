@@ -6,6 +6,7 @@ import { act, fireEvent, render, screen } from '@testing-library/react';
 import { pollForBuildWowStatus } from '../build-status-poller';
 import SiteGeneration from '../index';
 import { useSiteGeneration } from '../use-site-generation';
+import { SiteGenerationView } from '../view';
 import type { SiteGenerationState } from '../use-site-generation';
 
 let mockState: SiteGenerationState;
@@ -24,10 +25,14 @@ jest.mock( '../build-status-poller', () => ( {
 	pollForBuildWowStatus: jest.fn( () => jest.fn() ),
 } ) );
 
+jest.mock( '../stream/use-build-wow-stream', () => ( {
+	useBuildWowStream: jest.fn( () => null ),
+} ) );
+
 jest.mock( '../view', () => ( {
-	SiteGenerationView: ( { onReload }: { onReload: () => void } ) => (
+	SiteGenerationView: jest.fn( ( { onReload }: { onReload: () => void } ) => (
 		<button onClick={ onReload }>Recover</button>
-	),
+	) ),
 } ) );
 
 describe( 'SiteGeneration recovery', () => {
@@ -127,6 +132,39 @@ describe( 'SiteGeneration recovery', () => {
 			'polish',
 			'publish',
 		] );
+	} );
+
+	it( 'passes the stream opt-in through to the live generation canvas', () => {
+		window.location.search = '?build_wow=1&build_wow_stream=1&siteSlug=example.wordpress.com';
+		mockState = { ...mockState, status: 'working' };
+		renderStep();
+
+		expect( SiteGenerationView ).toHaveBeenCalledWith(
+			expect.objectContaining( { streamRequested: true, siteSlug: 'example.wordpress.com' } ),
+			undefined
+		);
+	} );
+
+	it( 'uses the live canvas as soon as the status response advertises a stream', () => {
+		window.location.search = '?build_wow=1&siteSlug=example.wordpress.com';
+		mockState = {
+			...mockState,
+			status: 'working',
+			streamInfo: {
+				protocol: 1,
+				blogId: 123,
+				runId: 'run-1',
+				capabilities: [ 'progress' ],
+				eventsUrl: 'https://example.com/events',
+				snapshotUrl: 'https://example.com/snapshot',
+			},
+		};
+		renderStep();
+
+		expect( SiteGenerationView ).toHaveBeenCalledWith(
+			expect.objectContaining( { streamRequested: true, siteSlug: 'example.wordpress.com' } ),
+			undefined
+		);
 	} );
 
 	it( 'reloads when checking again after a timeout', () => {
