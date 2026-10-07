@@ -31,7 +31,7 @@ const REPORT_LAYOUTS: SupportedLayouts = {
 		showMedia: true,
 		descriptionField: undefined,
 		showDescription: false,
-		layout: { styles: TABLE_STYLES },
+		layout: { aspectRatio: '16/9', styles: TABLE_STYLES },
 	},
 };
 
@@ -42,7 +42,7 @@ const DEFAULT_VIEW: View = {
 	titleField: 'site',
 	mediaField: 'preview',
 	showMedia: true,
-	layout: { styles: TABLE_STYLES },
+	layout: { aspectRatio: '16/9', styles: TABLE_STYLES },
 	fields: [ 'humanScore', 'aiScore', 'created', 'actions' ],
 	filters: [],
 	sort: { field: 'created', direction: 'desc' },

@@ -1,5 +1,6 @@
-import { Icon, __experimentalHeading as Heading } from '@wordpress/components';
-import { __ } from '@wordpress/i18n';
+import { __experimentalHeading as Heading } from '@wordpress/components';
+import { __, sprintf } from '@wordpress/i18n';
+import { useEffect, useRef, useState } from 'react';
 import { PERSPECTIVES } from './score-preview';
 import { severityFor } from './score-severity';
 
@@ -7,7 +8,7 @@ const FAQS = [
 	{
 		question: __( 'Do I need access to the site?' ),
 		answer: __(
-			'No. Enter the URL of any public homepage, including a prospect’s site. You do not need to connect the site or sign in to it.'
+			'No. Enter the URL of any public homepage, including a site you’re pitching to. You do not need to connect the site or sign in to it.'
 		),
 	},
 	{
@@ -113,8 +114,61 @@ function PromptGraphic() {
 }
 
 function ScoreCategories() {
+	const [ previewedCategory, setPreviewedCategory ] = useState< string | null >( null );
+	const [ selectedCategory, setSelectedCategory ] = useState< string | null >( null );
+	const [ tooltipContent, setTooltipContent ] = useState( '' );
+	const [ tooltipPosition, setTooltipPosition ] = useState( { x: 0, y: 0 } );
+	const gridRef = useRef< HTMLDivElement >( null );
+	const rubricRef = useRef< HTMLElement >( null );
+	const tooltipRef = useRef< HTMLDivElement >( null );
+	const activeCategory = previewedCategory ?? selectedCategory;
+
+	const positionTooltip = ( clientX: number, clientY: number ) => {
+		const rubric = rubricRef.current?.getBoundingClientRect();
+		if ( ! rubric ) {
+			return;
+		}
+		const tooltipWidth = tooltipRef.current?.offsetWidth ?? 300;
+		const tooltipHeight = tooltipRef.current?.offsetHeight ?? 120;
+		const rightEdge = Math.min( rubric.right, window.innerWidth - 12 );
+		const left =
+			clientX + 16 + tooltipWidth <= rightEdge ? clientX + 16 : clientX - tooltipWidth - 16;
+		const top =
+			clientY + 16 + tooltipHeight <= window.innerHeight - 12
+				? clientY + 16
+				: clientY - tooltipHeight - 16;
+		setTooltipPosition( {
+			x: Math.max( 12, left ) - rubric.left,
+			y: top - rubric.top,
+		} );
+	};
+
+	useEffect( () => {
+		const dismissOnOutsideClick = ( event: PointerEvent ) => {
+			if ( ! gridRef.current?.contains( event.target as Node ) ) {
+				setSelectedCategory( null );
+			}
+		};
+		const dismissOnEscape = ( event: KeyboardEvent ) => {
+			if ( event.key === 'Escape' ) {
+				setSelectedCategory( null );
+				setPreviewedCategory( null );
+			}
+		};
+		document.addEventListener( 'pointerdown', dismissOnOutsideClick );
+		document.addEventListener( 'keydown', dismissOnEscape );
+		return () => {
+			document.removeEventListener( 'pointerdown', dismissOnOutsideClick );
+			document.removeEventListener( 'keydown', dismissOnEscape );
+		};
+	}, [] );
+
 	return (
-		<section className="dashboard-amplify-story__rubric" aria-labelledby="amplify-rubric-title">
+		<section
+			className="dashboard-amplify-story__rubric"
+			aria-labelledby="amplify-rubric-title"
+			ref={ rubricRef }
+		>
 			<Heading id="amplify-rubric-title" level={ 2 }>
 				{ __( 'What each score looks for' ) }
 			</Heading>
@@ -123,7 +177,7 @@ function ScoreCategories() {
 					'Each perspective looks at eight categories. Together, they show where a homepage is working and where it needs attention.'
 				) }
 			</p>
-			<div className="dashboard-amplify-story__rubric-columns">
+			<div className="dashboard-amplify-story__rubric-columns" ref={ gridRef }>
 				{ ( [ 'human', 'ai' ] as const ).map( ( type ) => (
 					<section
 						className="dashboard-amplify-story__rubric-perspective"
@@ -138,17 +192,65 @@ function ScoreCategories() {
 								? __( 'How a new visitor experiences the homepage.' )
 								: __( 'How clearly AI tools can access and understand the homepage.' ) }
 						</p>
-						<dl>
-							{ PERSPECTIVES[ type ].metrics.map( ( metric ) => (
-								<div key={ metric.label }>
-									<Icon icon={ metric.icon } size={ 20 } aria-hidden="true" />
-									<dt>{ metric.label }</dt>
-									<dd>{ metric.description }</dd>
-								</div>
-							) ) }
-						</dl>
+						<div className="dashboard-amplify-story__rubric-grid">
+							{ PERSPECTIVES[ type ].metrics.map( ( metric, index ) => {
+								const category = `${ type }-${ index }`;
+								const isActive = activeCategory === category;
+								/* translators: %d: maximum points available in a report category. */
+								const maxPointsLabel = sprintf( __( '%d pts' ), metric.max );
+								return (
+									<div
+										className="dashboard-amplify-story__rubric-item"
+										data-active={ isActive }
+										key={ category }
+									>
+										<button
+											type="button"
+											aria-expanded={ isActive }
+											aria-describedby={ isActive ? 'amplify-rubric-tooltip' : undefined }
+											onPointerEnter={ ( event ) => {
+												setTooltipContent( metric.description );
+												setPreviewedCategory( category );
+												positionTooltip( event.clientX, event.clientY );
+											} }
+											onPointerMove={ ( event ) => positionTooltip( event.clientX, event.clientY ) }
+											onPointerLeave={ () => setPreviewedCategory( null ) }
+											onFocus={ ( event ) => {
+												setTooltipContent( metric.description );
+												setPreviewedCategory( category );
+												const rect = event.currentTarget.getBoundingClientRect();
+												positionTooltip( rect.left + rect.width / 2, rect.bottom );
+											} }
+											onBlur={ () => setPreviewedCategory( null ) }
+											onClick={ ( event ) => {
+												setTooltipContent( metric.description );
+												const rect = event.currentTarget.getBoundingClientRect();
+												positionTooltip( rect.left + rect.width / 2, rect.bottom );
+												setSelectedCategory( ( current ) =>
+													current === category ? null : category
+												);
+											} }
+										>
+											<span>{ metric.label }</span>
+											<strong>{ maxPointsLabel }</strong>
+										</button>
+									</div>
+								);
+							} ) }
+						</div>
 					</section>
 				) ) }
+			</div>
+			<div
+				id="amplify-rubric-tooltip"
+				ref={ tooltipRef }
+				className="dashboard-amplify-story__rubric-tooltip"
+				role="tooltip"
+				aria-hidden={ ! activeCategory }
+				data-visible={ !! activeCategory }
+				style={ { left: tooltipPosition.x, top: tooltipPosition.y } }
+			>
+				<span key={ tooltipContent }>{ tooltipContent }</span>
 			</div>
 		</section>
 	);
