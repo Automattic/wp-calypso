@@ -6,7 +6,7 @@ import type { AgencyTierId } from '@automattic/api-core';
  * says what the tool does (A4A-3403). Keep every user-facing reference pointed
  * here so the final rename is a one-line change.
  */
-export const getFeatureName = () => __( 'Prospect audits' );
+export const getFeatureName = () => __( 'Prospect reports' );
 
 /** Timing copy used everywhere, per the v1 PRD. */
 export const getReportTiming = () => __( '10 to 20 minutes' );

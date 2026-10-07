@@ -5,7 +5,7 @@ import AmplifyOverviewStory from './overview-story';
 import { AmplifyOverviewIntro } from './report-creator';
 
 export default function AmplifyLearnMoreModal( { onClose }: { onClose: () => void } ) {
-	/* translators: %s: feature name, e.g. "Prospect audits" */
+	/* translators: %s: feature name, e.g. "Prospect reports" */
 	const aboutLabel = sprintf( __( 'About %s' ), getFeatureName() );
 	return (
 		<Modal
