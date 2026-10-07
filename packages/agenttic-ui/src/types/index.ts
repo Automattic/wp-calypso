@@ -48,6 +48,14 @@ export interface Suggestion {
 	disabledReason?: string; // Tooltip on a disabled suggestion, explaining what would make it usable
 }
 
+export type ChecklistItemStatus = 'todo' | 'in_progress' | 'done' | 'skipped';
+
+// A checklist task is a suggestion with a status: clicking one submits like a
+// suggestion does. `done` and `skipped` items are settled and inert.
+export interface ChecklistItem extends Omit< Suggestion, 'options' > {
+	status?: ChecklistItemStatus; // Defaults to 'todo'
+}
+
 export interface QuestionChoice {
 	label: string;
 	message?: string;

@@ -532,6 +532,7 @@ export function AgentUIContainer( {
 		clearSuggestions,
 		handleSuggestionSubmit,
 		reportSuggestionsRendered,
+		canSubmitMessage,
 
 		// Notice
 		notice: computedNotice,

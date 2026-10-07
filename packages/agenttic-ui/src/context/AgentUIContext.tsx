@@ -1,5 +1,12 @@
 import React, { createContext, useContext } from 'react';
-import type { ChatState, Message, NoticeConfig, Suggestion, TrailingActions } from '../types';
+import type {
+	ChatState,
+	Message,
+	NoticeConfig,
+	SubmitSource,
+	Suggestion,
+	TrailingActions,
+} from '../types';
 import type { ComponentType } from 'react';
 
 export interface AgentUIContextValue {
@@ -46,6 +53,9 @@ export interface AgentUIContextValue {
 	// What a mounted Suggestions instance renders: `[]` while hidden, `null` on unmount.
 	// The container unions every instance and dedups before calling onSuggestionsRendered.
 	reportSuggestionsRendered?: ( instanceId: string, shown: Suggestion[] | null ) => void;
+	// The container's send gate (`beforeSubmit`), so a component can tell whether
+	// handing a message to handleSuggestionSubmit will actually send it.
+	canSubmitMessage?: ( message: string, source: SubmitSource ) => boolean;
 
 	// Notice
 	notice?: NoticeConfig;
