@@ -6,6 +6,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import poweredByTitanLogo from 'calypso/assets/images/email-providers/titan/powered-by-titan-caps.svg';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { titanMailMonthly, titanMailYearly } from 'calypso/lib/cart-values/cart-items';
 import { BillingIntervalToggle } from 'calypso/my-sites/email/email-providers-comparison/billing-interval-toggle';
 import { IntervalLength } from 'calypso/my-sites/email/email-providers-comparison/interval-length';
@@ -21,8 +22,7 @@ import {
 } from 'calypso/my-sites/email/form/mailboxes/constants';
 import { EmailProvider } from 'calypso/my-sites/email/form/mailboxes/types';
 import { getProfessionalEmailCheckoutUpsellPath } from 'calypso/my-sites/email/paths';
-import { useDispatch, useSelector } from 'calypso/state';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { useSelector } from 'calypso/state';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import MasterbarStyled from '../../checkout-thank-you/redesign-v2/masterbar-styled';
 import ProfessionalEmailUpsellPlaceholder from './placeholder';
@@ -77,7 +77,6 @@ const ProfessionalEmailUpsell = ( {
 	isLoading = false,
 }: ProfessionalEmailUpsellProps ) => {
 	const translate = useTranslate();
-	const dispatch = useDispatch();
 	const [ selectedIntervalLength, setSelectedIntervalLength ] = useState( intervalLength );
 
 	const selectedSite = useSelector( getSelectedSite );
@@ -88,12 +87,10 @@ const ProfessionalEmailUpsell = ( {
 
 	const changeIntervalLength = ( newIntervalLength: IntervalLength ) => {
 		setSelectedIntervalLength( newIntervalLength );
-		dispatch(
-			recordTracksEvent( 'calypso_professional_email_upsell_nudge_billing_interval_toggle_click', {
-				domain_name: domainName,
-				new_interval: newIntervalLength,
-			} )
-		);
+		recordTracksEvent( 'calypso_professional_email_upsell_nudge_billing_interval_toggle_click', {
+			domain_name: domainName,
+			new_interval: newIntervalLength,
+		} );
 	};
 
 	const onSubmit = async ( mailboxOperations: MailboxOperations ) => {
