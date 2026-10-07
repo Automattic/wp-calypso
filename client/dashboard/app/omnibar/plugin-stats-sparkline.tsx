@@ -9,8 +9,7 @@ import type { AdminBarNode, OmnibarNode } from '@automattic/omnibar';
 import './plugin-stats-sparkline.scss';
 
 /**
- * Draws the site admin bar's `stats` node, which decides whether the sparkline shows and where it links,
- * as an SVG chart of the hourly views instead of the image wp-admin uses.
+ * Draws the site admin bar's `stats` node, which decides whether the sparkline shows and where it links, as an SVG chart of the hourly views instead of the image wp-admin uses.
  * @returns The node builder, or undefined while there are no views to draw.
  */
 export function useStatsSparklineNodeBuilder( {
