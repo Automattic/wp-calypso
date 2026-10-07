@@ -269,6 +269,8 @@ export default function AmplifyReportsList( {
 										report_id: item.id,
 										mode: item.mode,
 									} );
+									// BACKEND REQUIRED: the retry endpoint must not count failed or
+									// timed-out runs toward `usage.used`. The success notice promises it.
 									retryReport( item.id, {
 										onSuccess: () =>
 											createSuccessNotice(
