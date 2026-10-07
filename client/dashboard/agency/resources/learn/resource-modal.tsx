@@ -57,7 +57,12 @@ export default function ResourceModal( {
 			<VStack spacing={ 6 }>
 				<div className="dashboard-resources-learn__modal-media">
 					<ResourcePreview key={ resource.id } resource={ resource } onOpen={ onOpen } />
-					<HStack justify="space-between" className="dashboard-resources-learn__modal-controls">
+					{ /* Not expanded: the insets set its width, which a 100% width would overflow. */ }
+					<HStack
+						justify="space-between"
+						expanded={ false }
+						className="dashboard-resources-learn__modal-controls"
+					>
 						<HStack
 							spacing={ 0 }
 							expanded={ false }
