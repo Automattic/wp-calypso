@@ -1,9 +1,11 @@
 import {
+	SelectControl,
 	__experimentalSpacer as Spacer,
 	__experimentalHStack as HStack,
 	__experimentalToggleGroupControl as ToggleGroupControl,
 	__experimentalToggleGroupControlOption as ToggleGroupControlOption,
 } from '@wordpress/components';
+import { useViewportMatch } from '@wordpress/compose';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __, sprintf } from '@wordpress/i18n';
 import { useMemo } from 'react';
@@ -86,6 +88,8 @@ export default function ResourceLibrary( {
 	);
 
 	const isList = view.type === 'table';
+	// The stage toggle doesn't fit beside the toolbar on narrow screens.
+	const isSmallViewport = useViewportMatch( 'medium', '<' );
 
 	return (
 		<>
@@ -120,32 +124,47 @@ export default function ResourceLibrary( {
 							</ToggleGroupControl>
 							<DataViews.FiltersToggle />
 						</HStack>
-						<ToggleGroupControl
-							className="dashboard-resources-learn__stage-filter"
-							label={ __( 'Stage' ) }
-							value={ stage }
-							hideLabelFromVision
-							__next40pxDefaultSize
-							__nextHasNoMarginBottom
-							onChange={ ( value ) => setStage( ( value ?? 'all' ) as StageFilter ) }
-						>
-							{ stageOptions.map( ( option ) => (
-								<ToggleGroupControlOption
-									key={ option.value }
-									value={ option.value }
-									label={ option.label }
-									// The tooltip shows the aria-label, so it keeps the visible
-									// name first for assistive technology.
-									aria-label={ sprintf(
-										/* translators: 1: Stage name, such as "Learn". 2: What the stage's resources help with. */
-										__( '%1$s: %2$s' ),
-										option.label,
-										option.description
-									) }
-									showTooltip
-								/>
-							) ) }
-						</ToggleGroupControl>
+						{ isSmallViewport ? (
+							<SelectControl
+								label={ __( 'Stage' ) }
+								hideLabelFromVision
+								size="compact"
+								value={ stage }
+								options={ stageOptions.map( ( option ) => ( {
+									value: option.value,
+									label: option.value === 'all' ? __( 'All stages' ) : option.label,
+								} ) ) }
+								onChange={ ( value ) => setStage( value as StageFilter ) }
+								__nextHasNoMarginBottom
+							/>
+						) : (
+							<ToggleGroupControl
+								className="dashboard-resources-learn__stage-filter"
+								label={ __( 'Stage' ) }
+								value={ stage }
+								hideLabelFromVision
+								__next40pxDefaultSize
+								__nextHasNoMarginBottom
+								onChange={ ( value ) => setStage( ( value ?? 'all' ) as StageFilter ) }
+							>
+								{ stageOptions.map( ( option ) => (
+									<ToggleGroupControlOption
+										key={ option.value }
+										value={ option.value }
+										label={ option.label }
+										// The tooltip shows the aria-label, so it keeps the visible
+										// name first for assistive technology.
+										aria-label={ sprintf(
+											/* translators: 1: Stage name, such as "Learn". 2: What the stage's resources help with. */
+											__( '%1$s: %2$s' ),
+											option.label,
+											option.description
+										) }
+										showTooltip
+									/>
+								) ) }
+							</ToggleGroupControl>
+						) }
 					</HStack>
 					<Spacer marginBottom={ 4 }>
 						<DataViews.FiltersToggled className="dashboard-resources-learn__filters-toggled" />
