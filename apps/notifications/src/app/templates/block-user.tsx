@@ -48,16 +48,7 @@ function formatDate( timestamp: string, locale: string ) {
 	} ).format( date );
 }
 
-export default function UserBlock( {
-	note,
-	block,
-	isCompact = false,
-}: {
-	note: Note;
-	block: Block;
-	/** A byline: the name over their site, with the follow link at the far end. */
-	isCompact?: boolean;
-} ) {
+export default function UserBlock( { note, block }: { note: Note; block: Block } ) {
 	const { locale } = useAppContext();
 	const isApproved = useSelector( ( state ) => getIsNoteApproved( state, note ) );
 	const homeLink = block.meta?.links?.home || '';
@@ -72,18 +63,6 @@ export default function UserBlock( {
 		homeLink && ( ! block.meta?.titles?.home || ( note.type === 'comment' && ! isApproved ) )
 			? getDisplayURL( homeLink )
 			: block.meta?.titles?.home;
-
-	const followLink = note.type !== 'comment' &&
-		!! block.meta?.ids?.site &&
-		block.actions &&
-		'follow' in block.actions && (
-			<FollowLink
-				key="follow"
-				site={ block.meta.ids.site }
-				isFollowing={ !! block.actions.follow }
-				noteType={ note.type as keyof typeof followStatTypes }
-			/>
-		);
 
 	const avatar = (
 		<a
@@ -101,7 +80,9 @@ export default function UserBlock( {
 		</a>
 	);
 
-	if ( isCompact ) {
+	// Outside a comment, a person is a byline: their name over their site, with the
+	// follow link at the far end.
+	if ( note.type !== 'comment' ) {
 		return (
 			<HStack className="wpnc__user" spacing={ 4 }>
 				{ avatar }
@@ -127,7 +108,13 @@ export default function UserBlock( {
 						) }
 					</VStack>
 				</FlexBlock>
-				{ followLink }
+				{ !! block.meta?.ids?.site && block.actions && 'follow' in block.actions && (
+					<FollowLink
+						site={ block.meta.ids.site }
+						isFollowing={ !! block.actions.follow }
+						noteType={ note.type as keyof typeof followStatTypes }
+					/>
+				) }
 			</HStack>
 		);
 	}
@@ -136,11 +123,9 @@ export default function UserBlock( {
 	// between them — so there's never a leading, trailing, or doubled separator
 	// when an item is absent.
 	const descriptionParts = [
-		note.type === 'comment' && (
-			<a key="date" href={ note.url } target="_blank" rel="noreferrer" style={ { flexShrink: 0 } }>
-				<Text variant="muted">{ formatDate( note.timestamp, locale ) }</Text>
-			</a>
-		),
+		<a key="date" href={ note.url } target="_blank" rel="noreferrer" style={ { flexShrink: 0 } }>
+			<Text variant="muted">{ formatDate( note.timestamp, locale ) }</Text>
+		</a>,
 		homeTitle && (
 			<a
 				key="home"
@@ -152,7 +137,6 @@ export default function UserBlock( {
 				{ homeTitle }
 			</a>
 		),
-		followLink,
 	].filter( ( part ): part is ReactElement => Boolean( part ) );
 
 	return (

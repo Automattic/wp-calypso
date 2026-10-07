@@ -23,7 +23,6 @@ import PromptBlock from './block-prompt';
 import User from './block-user';
 import NotePreface from './preface';
 import type { Note, Block, BlockWithSignature } from '../types';
-import type { ReactNode } from 'react';
 
 const isReplyBlock = ( note: Note, block: Block ) =>
 	block.ranges && block.ranges.length > 1 && block.ranges[ 1 ].id === note.meta?.ids?.reply_comment;
@@ -120,19 +119,7 @@ export const ActionBlock = ( { note, goBack }: { note: Note; goBack: () => void 
 	);
 };
 
-type People = { rows: ReactNode[]; footnote?: ReactNode };
-
-const isPeople = ( item: ReactNode | People ): item is People =>
-	!! item && typeof item === 'object' && 'rows' in item;
-
-export const NoteBody = ( {
-	note,
-	isCompact = false,
-}: {
-	note: Note;
-	/** Renders people as bylines, for layouts where they aren't the focus. */
-	isCompact?: boolean;
-} ) => {
+export const NoteBody = ( { note }: { note: Note } ) => {
 	const blocks: BlockWithSignature[] = zipWithSignature( note.body, note );
 	const showPendingApprovalBadge = useSelector( ( state ) =>
 		getIsNotePendingApproval( state, note )
@@ -149,44 +136,32 @@ export const NoteBody = ( {
 	const restBlocks =
 		firstNonTextBlockIndex !== -1 ? blocks.slice( firstNonTextBlockIndex ) : blocks;
 
-	const shownBlocks = restBlocks.filter( ( block ) => ! isReplyBlock( note, block.block ) );
-	const renderBlock = ( block: BlockWithSignature, i: number ) => {
-		const key = 'block-' + note.id + '-' + i;
+	const body = restBlocks
+		.filter( ( block ) => ! isReplyBlock( note, block.block ) )
+		.map( ( block, i ) => {
+			const key = 'block-' + note.id + '-' + i;
 
-		switch ( block.signature.type ) {
-			case 'user':
-				return <User key={ key } block={ block.block } note={ note } isCompact={ isCompact } />;
-			case 'comment':
-				return <Comment key={ key } block={ block.block } meta={ note.meta } />;
-			case 'post':
-				return <Post key={ key } block={ block.block } />;
-			case 'prompt':
-				return <PromptBlock key={ key } block={ block.block } />;
-			default:
-				return <div key={ key }>{ p( html( block.block ) ) }</div>;
-		}
-	};
-
-	// Compact bylines are stacked as one list, and the text that follows them is a
-	// footnote to it, such as a link to every like.
-	const body: Array< ReactNode | People > = [];
-	shownBlocks.forEach( ( block, i ) => {
-		const last = body[ body.length - 1 ];
-		const people = isPeople( last ) && ! last.footnote ? last : undefined;
-		const { type } = block.signature;
-
-		if ( isCompact && type === 'user' ) {
-			if ( people ) {
-				people.rows.push( renderBlock( block, i ) );
-			} else {
-				body.push( { rows: [ renderBlock( block, i ) ] } );
+			switch ( block.signature.type ) {
+				case 'user':
+					return <User key={ key } block={ block.block } note={ note } />;
+				case 'comment':
+					return <Comment key={ key } block={ block.block } meta={ note.meta } />;
+				case 'post':
+					return <Post key={ key } block={ block.block } />;
+				case 'prompt':
+					return <PromptBlock key={ key } block={ block.block } />;
+				default:
+					return <div key={ key }>{ p( html( block.block ) ) }</div>;
 			}
-		} else if ( people && ( type === 'text' || type === 'reply' ) ) {
-			people.footnote = renderBlock( block, i );
-		} else {
-			body.push( renderBlock( block, i ) );
-		}
-	} );
+		} );
+
+	// Outside a comment, the people a note opens with are a list, and the text after
+	// them is a footnote to it, such as a link to every like.
+	const firstOther = body.findIndex( ( { type } ) => type !== User );
+	const people =
+		note.type === 'comment' ? [] : body.slice( 0, firstOther < 0 ? undefined : firstOther );
+	const others = body.slice( people.length );
+	const footnote = people.length > 0 && others[ 0 ]?.type === 'div' ? others.shift() : null;
 
 	useEffect( () => {
 		bumpStat( 'notes-click-type', note.type );
@@ -201,23 +176,18 @@ export const NoteBody = ( {
 				</div>
 			) }
 			<div className="wpnc__body-content">
-				{ body.map( ( item, i ) =>
-					isPeople( item ) ? (
-						<VStack key={ `people-${ i }` } spacing={ 3 }>
-							<VStack spacing={ 2 }>{ item.rows }</VStack>
-							{ item.footnote && (
-								<>
-									<CardDivider />
-									<Text as="div" className="wpnc__people-footnote" variant="muted">
-										{ item.footnote }
-									</Text>
-								</>
-							) }
-						</VStack>
-					) : (
-						item
-					)
+				{ people.length > 0 && (
+					<VStack spacing={ 3 }>
+						<VStack spacing={ 2 }>{ people }</VStack>
+						{ footnote && <CardDivider /> }
+						{ footnote && (
+							<Text as="div" className="wpnc__people-footnote" variant="muted">
+								{ footnote }
+							</Text>
+						) }
+					</VStack>
 				) }
+				{ others }
 			</div>
 			<ReplyBlock note={ note } />
 		</VStack>
