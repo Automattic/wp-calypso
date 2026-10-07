@@ -160,7 +160,7 @@ export default function AmplifyReportsList( {
 					const failure =
 						item.status === 'failed' ? (
 							<span className="dashboard-amplify-report-site__failure">
-								{ item.failure_reason || __( 'The audit didn’t finish.' ) }
+								{ item.failure_reason || __( 'The report didn’t finish.' ) }
 							</span>
 						) : null;
 					return title ? (
@@ -274,11 +274,11 @@ export default function AmplifyReportsList( {
 									retryReport( item.id, {
 										onSuccess: () =>
 											createSuccessNotice(
-												__( 'Audit restarted. Failed audits don’t count toward your allowance.' ),
+												__( 'Report restarted. Failed reports don’t count toward your allowance.' ),
 												{ type: 'snackbar' }
 											),
 										onError: () =>
-											createErrorNotice( __( 'Could not restart the audit. Please try again.' ), {
+											createErrorNotice( __( 'Could not restart the report. Please try again.' ), {
 												type: 'snackbar',
 											} ),
 									} );
