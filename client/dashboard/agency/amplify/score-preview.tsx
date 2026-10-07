@@ -66,7 +66,7 @@ export const PERSPECTIVES: Record< 'human' | 'ai', ScorePerspective > = {
 			{
 				label: __( 'Content Quality' ),
 				description: __(
-					'Is the writing compelling, clear, and professional? Errors and poor readability erode trust before a client has read a single sentence.'
+					'Is the writing compelling, clear, and professional? Errors and poor readability erode trust before a visitor has read a single sentence.'
 				),
 				score: 11,
 				max: 12,
@@ -82,7 +82,7 @@ export const PERSPECTIVES: Record< 'human' | 'ai', ScorePerspective > = {
 			{
 				label: __( 'Accessibility' ),
 				description: __(
-					'Does the site work for everyone? Amplify measures against WCAG AA, the standard referenced by courts and regulators globally.'
+					'Does the site work for everyone? We check key accessibility signals like contrast, text alternatives, and labels. It isn’t a full WCAG conformance audit.'
 				),
 				score: 8,
 				max: 10,
@@ -117,7 +117,7 @@ export const PERSPECTIVES: Record< 'human' | 'ai', ScorePerspective > = {
 			{
 				label: __( 'Structured Data' ),
 				description: __(
-					'Schema markup tells AI tools exactly what the site is about rather than making them infer it. The difference between an AI accurately describing your client and producing a generic summary.'
+					'Schema markup tells AI tools exactly what the site is about rather than making them infer it. The difference between an AI accurately describing the business and producing a generic summary.'
 				),
 				score: 3,
 				max: 18,
