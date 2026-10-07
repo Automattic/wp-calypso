@@ -388,7 +388,7 @@ describe( 'siteSelection', () => {
 		} );
 	} );
 
-	it( 'should keep the standard line on a checkout renewal, which non-admins can make', async () => {
+	it( 'should show the "might not have permission" line on renewals, since non-admins can renew', async () => {
 		respondWithSite( { site_owner: USER_ID + 1 } );
 		const renewalPath = `/checkout/jetpack_growth_yearly/renew/1234/${ SITE_SLUG }`;
 
