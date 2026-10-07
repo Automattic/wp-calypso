@@ -7,6 +7,7 @@ import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { Text } from '../../components/text';
+import AmplifyAlsoUseful from './also-useful';
 import { getReportTiming } from './constants';
 import AmplifyOverviewStory from './overview-story';
 import { WebsiteAddressPicker, getStartErrorMessage } from './scan-form';
@@ -225,6 +226,7 @@ export default function AmplifyReportCreator( {
 					} );
 				} }
 			/>
+			{ ! isModal && <AmplifyAlsoUseful /> }
 			{ ! isModal && <AmplifyOverviewStory /> }
 		</section>
 	);

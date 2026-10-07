@@ -3,7 +3,6 @@ import { __, sprintf } from '@wordpress/i18n';
 import { useEffect, useRef, useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import InlineSupportLink from '../../components/inline-support-link';
-import AmplifyAlsoUseful from './also-useful';
 import { getSampleFindings, getSampleLenses, getSeverityLabel } from './sample-report-data';
 import AmplifySampleReportModal from './sample-report-modal';
 import { PERSPECTIVES } from './score-preview';
@@ -354,8 +353,6 @@ export default function AmplifyOverviewStory() {
 			</section>
 
 			<ScoreCategories />
-
-			<AmplifyAlsoUseful />
 
 			<section className="dashboard-amplify-story__faq" aria-labelledby="amplify-faq-title">
 				<Heading id="amplify-faq-title" level={ 2 }>
