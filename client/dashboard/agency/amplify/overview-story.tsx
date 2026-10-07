@@ -30,13 +30,6 @@ const FAQS = [
 		),
 	},
 	{
-		id: 'full-report',
-		question: __( 'What’s included in a full report?' ),
-		answer: __(
-			'A full report covers both lenses: first-time visitors and AI agents. Each has its own score out of 100, a category breakdown, and findings that explain why they matter and how to improve them. You can also run an audit for just one lens.'
-		),
-	},
-	{
 		id: 'using-scores',
 		question: __( 'How should I use the scores?' ),
 		answer: __(
