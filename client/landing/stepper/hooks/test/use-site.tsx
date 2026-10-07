@@ -10,14 +10,12 @@ import { SITE_STORE } from 'calypso/landing/stepper/stores';
 import { requestSite } from 'calypso/state/sites/actions';
 import { renderHookWithProvider } from 'calypso/test-helpers/testing-library';
 import { useSite, useSiteDetails } from '../use-site';
-import type { SiteActions, SiteDetails } from '@automattic/data-stores';
-import type { ActionCreatorsOf, StoreDescriptor } from '@wordpress/data';
+import type { SiteDetails } from '@automattic/data-stores';
 import type { PropsWithChildren } from 'react';
 
 let mockCreatedSiteId: number | undefined;
 const site = { ...defaultSiteDetails, ID: 123, URL: 'https://destination.wordpress.com' };
-const siteActions = dispatch( SITE_STORE ) as SiteActions &
-	Pick< ActionCreatorsOf< StoreDescriptor >, 'invalidateResolutionForStore' >;
+const siteActions = dispatch( SITE_STORE );
 
 jest.mock( '@automattic/data-stores/src/wpcom-request', () => ( {
 	__esModule: true,

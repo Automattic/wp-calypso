@@ -97,19 +97,19 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		response,
 	} );
 
-	const receiveSiteTitle = ( siteId: number, name: string | undefined ) => ( {
+	const receiveSiteTitle = ( siteId: number | string, name: string | undefined ) => ( {
 		type: 'RECEIVE_SITE_TITLE' as const,
 		siteId,
 		name,
 	} );
 
-	const receiveSiteTagline = ( siteId: number, tagline: string | undefined ) => ( {
+	const receiveSiteTagline = ( siteId: number | string, tagline: string | undefined ) => ( {
 		type: 'RECEIVE_SITE_TAGLINE' as const,
 		siteId,
 		tagline,
 	} );
 
-	const receiveSiteVerticalId = ( siteId: number, verticalId: string | undefined ) => ( {
+	const receiveSiteVerticalId = ( siteId: number | string, verticalId: string | undefined ) => ( {
 		type: 'RECEIVE_SITE_VERTICAL_ID' as const,
 		siteId,
 		verticalId,
@@ -187,7 +187,7 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		settings,
 	} );
 
-	const updateSiteSettings = ( siteId: number, settings: SiteSettings ) => ( {
+	const updateSiteSettings = ( siteId: number | string, settings: SiteSettings ) => ( {
 		type: 'UPDATE_SITE_SETTINGS' as const,
 		siteId,
 		settings,
@@ -303,7 +303,7 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 	}
 
 	function* saveSiteSettings(
-		siteId: number,
+		siteId: number | string,
 		settings: {
 			blogname?: string;
 			blogdescription?: string;
@@ -349,7 +349,7 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		} catch ( e ) {}
 	}
 
-	function* setStaticHomepageOnSite( siteID: number, pageId: number ) {
+	function* setStaticHomepageOnSite( siteID: number | string, pageId: number ) {
 		try {
 			yield wpcomRequest( {
 				path: `/sites/${ encodeURIComponent( siteID ) }/homepage`,
@@ -379,7 +379,7 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		yield saveSiteSettings( siteId, { blogdescription } );
 	}
 
-	function* installTheme( siteSlugOrId: string | string, themeSlug: string ) {
+	function* installTheme( siteSlugOrId: string | number, themeSlug: string ) {
 		yield wpcomRequest( {
 			path: `/sites/${ siteSlugOrId }/themes/${ themeSlug }/install`,
 			apiVersion: '1.1',
@@ -492,7 +492,7 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 	}
 
 	function* assembleSite(
-		siteSlug: string,
+		siteSlug: string | number,
 		stylesheet = '',
 		{
 			homeHtml,
@@ -551,9 +551,8 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		message,
 	} );
 
-	const clearSiteSetupError = ( siteId: number ) => ( {
+	const clearSiteSetupError = () => ( {
 		type: 'CLEAR_SITE_SETUP_ERROR',
-		siteId,
 	} );
 
 	const atomicTransferStart = (

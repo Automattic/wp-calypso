@@ -7,8 +7,6 @@ import { useFlowState } from '../declarative-flow/internals/state-manager/store'
 import { SITE_STORE } from '../stores';
 import { useSiteIdParam } from './use-site-id-param';
 import { useSiteSlugParam } from './use-site-slug-param';
-import type { SiteSelect } from '@automattic/data-stores';
-import type { CurriedSelectorsOf, StoreDescriptor } from '@wordpress/data';
 
 export function useSite( siteFragment?: number | string ) {
 	return useSiteDetails( siteFragment ).data;
@@ -24,8 +22,7 @@ export function useSiteDetails( siteFragment?: number | string ) {
 
 	const { data, hasResolved } = useSelect(
 		( select ) => {
-			const siteStore = select( SITE_STORE ) as SiteSelect &
-				Pick< CurriedSelectorsOf< StoreDescriptor >, 'hasFinishedResolution' >;
+			const siteStore = select( SITE_STORE );
 
 			return {
 				data: ( siteIdOrSlug && siteStore.getSite( siteIdOrSlug ) ) || null,

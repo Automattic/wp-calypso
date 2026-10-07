@@ -16,7 +16,7 @@ import wpcom from 'calypso/lib/wp';
 import { initialSiteState } from 'calypso/state/sites/features/reducer';
 import { renderHookWithProvider, renderWithProvider } from 'calypso/test-helpers/testing-library';
 import copySite from '../copy-site';
-import type { OnboardActions, SiteActions, SiteDetails, SiteSelect } from '@automattic/data-stores';
+import type { OnboardActions, SiteDetails } from '@automattic/data-stores';
 
 const mockLegacySiteGet = jest.fn();
 
@@ -73,10 +73,7 @@ const navigate = jest.fn();
 function renderAssertions() {
 	return renderHookWithProvider(
 		() => {
-			useSelect(
-				( select ) => ( select( SITE_STORE ) as SiteSelect ).getSite( destinationSlug ),
-				[]
-			);
+			useSelect( ( select ) => select( SITE_STORE ).getSite( destinationSlug ), [] );
 			return copySite.useAssertConditions?.();
 		},
 		{
@@ -144,9 +141,7 @@ afterAll( () => Object.defineProperty( window, 'location', locationDescriptor ) 
 
 beforeEach( () => {
 	jest.clearAllMocks();
-	const siteActions = dispatch( SITE_STORE ) as SiteActions & {
-		invalidateResolutionForStore: () => void;
-	};
+	const siteActions = dispatch( SITE_STORE );
 	siteActions.reset();
 	siteActions.invalidateResolutionForStore();
 	( dispatch( ONBOARD_STORE ) as OnboardActions ).resetOnboardStore();
@@ -303,7 +298,7 @@ describe( 'copy site failure handling', () => {
 					Promise.resolve( path === `/sites/${ destinationSlug }` ? destination : source )
 				);
 			jest.mocked( wpcom.req.get ).mockReturnValue( request.promise );
-			( dispatch( SITE_STORE ) as SiteActions ).receiveSite( source.ID, source );
+			dispatch( SITE_STORE ).receiveSite( source.ID, source );
 			const features = {
 				[ source.ID ]: {
 					...initialSiteState,

@@ -84,7 +84,7 @@ describe( 'SiteMigrationHowToMigrate', () => {
 		async ( idx ) => {
 			jest.spyOn( history, 'state', 'get' ).mockReturnValue( { idx } );
 			const back = jest.spyOn( history, 'back' ).mockImplementation( () => {} );
-			render( { navigation } );
+			render( { navigation: { submit: navigation.submit } } );
 
 			await userEvent.click( screen.getByRole( 'button', { name: /Back/ } ) );
 
