@@ -1,25 +1,20 @@
-/**
- * Menu destinations for the widget's "Explore more" link, most preferred first.
- *
- * Read from wp-admin's own menu rather than built from `admin_url`, because whether each
- * page exists depends on the Jetpack version, the site's host and the user's
- * capabilities — the menu already reflects all of that. `$=` keeps My Jetpack's own
- * item from matching its deep links, such as `page=my-jetpack#/add-videopress`.
- */
+// Read from wp-admin's menu, which already reflects the Jetpack version, host and user
+// capabilities that decide whether each page exists. `$=` skips My Jetpack's deep links.
 const MENU_DESTINATIONS = [
 	{ destination: 'my_jetpack', selector: '#adminmenu a[href$="page=my-jetpack"]' },
 	{ destination: 'settings', selector: '#adminmenu a[href*="page=jetpack#/settings"]' },
-];
+] as const;
+
+type ExploreMoreDestination = ( typeof MENU_DESTINATIONS )[ number ][ 'destination' ] | 'stats';
 
 /**
- * Resolve where "Explore more" should go: My Jetpack, then Jetpack's Settings, and
- * `fallbackUrl` when the Jetpack menu is absent altogether (as on Simple sites).
- * `destination` names the choice, for Tracks.
+ * Where "Explore more" goes: My Jetpack, then Jetpack's Settings, then `fallbackUrl` where
+ * there is no Jetpack menu (as on Simple sites).
  * @param fallbackUrl Destination when neither menu item is on the page.
  */
 export default function getExploreMoreUrl( fallbackUrl: string ): {
 	url: string;
-	destination: string;
+	destination: ExploreMoreDestination;
 } {
 	for ( const { destination, selector } of MENU_DESTINATIONS ) {
 		const link = document.querySelector< HTMLAnchorElement >( selector );

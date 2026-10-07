@@ -32,57 +32,45 @@ describe( 'useCountUp', () => {
 	};
 
 	it( 'counts up from zero and settles on the target', () => {
-		const { result } = renderHook( () => useCountUp( 1000, 800 ) );
+		const { result } = renderHook( () => useCountUp( 1000 ) );
 		expect( result.current ).toBe( 0 );
 
-		advanceTo( 400 );
+		advanceTo( 200 );
 		expect( result.current ).toBeGreaterThan( 0 );
 		expect( result.current ).toBeLessThan( 1000 );
 
-		advanceTo( 800 );
+		advanceTo( 400 );
 		expect( result.current ).toBe( 1000 );
 	} );
 
 	it( 'drops to zero instantly and counts up again from there', () => {
-		const { result, rerender } = renderHook( ( { target } ) => useCountUp( target, 800 ), {
+		const { result, rerender } = renderHook( ( { target } ) => useCountUp( target ), {
 			initialProps: { target: 1000 },
 		} );
-		advanceTo( 800 );
+		advanceTo( 400 );
 
 		rerender( { target: 0 } );
 		expect( result.current ).toBe( 0 );
 		expect( callbacks ).toHaveLength( 0 );
 
 		rerender( { target: 500 } );
-		advanceTo( 1200 );
+		advanceTo( 600 );
 		expect( result.current ).toBeGreaterThan( 0 );
 		expect( result.current ).toBeLessThan( 500 );
 
-		advanceTo( 1600 );
+		advanceTo( 800 );
 		expect( result.current ).toBe( 500 );
 	} );
 
 	it( 'jumps between two non-zero values', () => {
-		const { result, rerender } = renderHook( ( { target } ) => useCountUp( target, 800 ), {
+		const { result, rerender } = renderHook( ( { target } ) => useCountUp( target ), {
 			initialProps: { target: 1000 },
 		} );
-		advanceTo( 800 );
+		advanceTo( 400 );
 
 		rerender( { target: 500 } );
 		expect( result.current ).toBe( 500 );
 		expect( callbacks ).toHaveLength( 0 );
-	} );
-
-	it( 'waits for a non-zero value before counting', () => {
-		const { result, rerender } = renderHook( ( { target } ) => useCountUp( target, 800 ), {
-			initialProps: { target: 0 },
-		} );
-		expect( callbacks ).toHaveLength( 0 );
-
-		rerender( { target: 1000 } );
-		advanceTo( 400 );
-		expect( result.current ).toBeGreaterThan( 0 );
-		expect( result.current ).toBeLessThan( 1000 );
 	} );
 
 	it( 'jumps straight to the target when reduced motion is preferred', () => {

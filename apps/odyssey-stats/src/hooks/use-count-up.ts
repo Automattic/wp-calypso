@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 
-const DEFAULT_DURATION = 400;
+const DURATION = 400;
 
 const easeOutCubic = ( progress: number ) => 1 - Math.pow( 1 - progress, 3 );
 
@@ -9,17 +9,12 @@ const prefersReducedMotion = () =>
 	window.matchMedia?.( '(prefers-reduced-motion: reduce)' ).matches;
 
 /**
- * Count a number up from zero when it arrives.
- *
- * Only a rise from zero animates — the first load, and each new date range, which
- * drops the total to zero while it loads. Any other change, including the drop to
- * zero itself, jumps straight to the value. Users who ask for reduced motion get the
- * final value immediately.
- * @param target   The value to settle on.
- * @param duration Animation length in milliseconds.
+ * Count a number up when it arrives. Only a rise from zero animates (the first load, and each
+ * new range, which drops to zero while loading); any other change, or reduced motion, jumps.
+ * @param target The value to settle on.
  * @returns The value to render for the current frame.
  */
-export default function useCountUp( target: number, duration = DEFAULT_DURATION ): number {
+export default function useCountUp( target: number ): number {
 	const [ value, setValue ] = useState( 0 );
 	const valueRef = useRef( 0 );
 
@@ -34,7 +29,7 @@ export default function useCountUp( target: number, duration = DEFAULT_DURATION 
 		const start = performance.now();
 
 		const tick = ( now: number ) => {
-			const progress = Math.min( 1, ( now - start ) / duration );
+			const progress = Math.min( 1, ( now - start ) / DURATION );
 			const next = target * easeOutCubic( progress );
 			valueRef.current = next;
 			setValue( next );
@@ -46,7 +41,7 @@ export default function useCountUp( target: number, duration = DEFAULT_DURATION 
 
 		frame = requestAnimationFrame( tick );
 		return () => cancelAnimationFrame( frame );
-	}, [ target, duration ] );
+	}, [ target ] );
 
 	return value;
 }
