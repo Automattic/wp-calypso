@@ -135,7 +135,7 @@ const LaunchpadDemo: React.FC< { currentTheme: 'light' | 'dark' } > = ( { curren
 				.launchpad-demo {
 					display: flex;
 					height: 100%;
-					background-color: ${ currentTheme === 'dark' ? '#1e1e1e' : '#f0f0f1' };
+					background-color: ${ currentTheme === 'dark' ? '#1e1e1e' : '#fcfcfc' };
 				}
 
 				.launchpad-demo__content {
