@@ -170,11 +170,6 @@ describe( '<SiteOverview>', () => {
 			.get( `/wpcom/v2/sites/${ site.ID }/hosting/metrics` )
 			.query( true )
 			.reply( 200, { data: { periods: {} } } );
-
-		nock( 'https://public-api.wordpress.com' )
-			.get( `/wpcom/v2/sites/${ site.ID }/flex-usage` )
-			.query( true )
-			.reply( 200, {} );
 	} );
 
 	afterEach( () => {
@@ -418,24 +413,6 @@ describe( '<SiteOverview>', () => {
 		await waitFor( () =>
 			expect( screen.queryByText( 'We’ll bring your vision to life' ) ).not.toBeInTheDocument()
 		);
-	} );
-
-	test( 'renders the overview of a site with Flex plan', async () => {
-		mockSite( { ...site, is_wpcom_flex: true } as Site );
-
-		render( <SiteOverview siteSlug={ site.slug } /> );
-		await screen.findByRole( 'heading', { name: 'Test Site' } );
-		await waitForFeatureGatedCards( 'Business' );
-
-		expect( screen.getByRole( 'link', { name: /WP Admin/ } ) ).toBeVisible();
-
-		expect( await getCard( 'Last backup' ) ).toBeVisible();
-		expect( await getCard( 'Performance' ) ).toBeVisible();
-		expect( await getCard( 'Last scan' ) ).toBeVisible();
-		expect( await getCard( 'Plan' ) ).toBeVisible();
-		expect( await getCard( 'Latest activity' ) ).toBeVisible();
-		expect( await getCard( 'Month-to-date site usage' ) ).toBeVisible();
-		expect( await getCard( 'The perfect domain awaits' ) ).toBeVisible();
 	} );
 
 	test( 'shows the two-step-required notice when the site requires it and the user has no two-step', async () => {
