@@ -64,5 +64,5 @@ export function getNewPostLink( note ) {
  * @returns {boolean}
  */
 export function isLikeOrFollowNote( note ) {
-	return [ 'like', 'comment_like', 'follow' ].includes( note.type );
+	return [ 'like', 'comment_like', 'follow', 'blogger_follow_reco' ].includes( note.type );
 }

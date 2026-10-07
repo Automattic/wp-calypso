@@ -96,7 +96,6 @@ export default function UserBlock( { note, block }: { note: Note; block: Block }
 					site={ block.meta.ids.site }
 					isFollowing={ !! block.actions.follow }
 					noteType={ note.type as keyof typeof followStatTypes }
-					style={ { fontWeight: 'var(--wpds-typography-font-weight-emphasis)' } }
 				/>
 			) }
 		</>
