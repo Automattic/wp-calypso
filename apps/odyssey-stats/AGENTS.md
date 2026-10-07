@@ -65,14 +65,14 @@ The `:where(prefix)` string gets repeated on every scoped rule (not deduped), so
 
 #### @wordpress/components' base CSS
 
-Odyssey's JS externalizes `@wordpress/components` to the page's own `wp.components` (via `DependencyExtractionWebpackPlugin`), so the matching stylesheet should come from wp-admin too. **WP 7.0+ enqueues `wp-components` globally** for the command palette, so on those versions it's already on the page.
+Odyssey's JS externalizes `@wordpress/components` to the page's own `wp.components` (via `DependencyExtractionWebpackPlugin`), so the matching stylesheet should come from wp-admin too. **WP 6.9+ enqueues `wp-components` globally** for the command palette (`wp_enqueue_command_palette_assets` on `admin_enqueue_scripts`), so on those versions it's already on the page.
 
 Shipping our own copy alongside it puts two independently-versioned copies of the same unnamespaced class names (`.components-modal__frame`, `.components-button`, …) on one page, colliding with wp-admin's own instances of those components. They genuinely disagree — core sets `.components-modal__frame` to `min-width: 350px; margin: auto`, ours to `320px` / `margin: 0` — which is what left WP 7.0's command palette off-centre with the wrong padding (STATS-251). Scoping our copy isn't a real fix either: `.components-modal__screen-overlay`/`.components-popover__fallback-container` sit on the shared wrapper every Modal/Popover gets, ours and core's alike, so they can't distinguish "our modal" from "core's".
 
 So it's loaded **conditionally**, by `src/lib/load-wp-components-style.ts`, awaited in `AppBoot` before anything renders. Either of two independent signals is enough to skip our copy:
 
 - **`stats_admin_version`** — the real contract: `jetpack-stats-admin` declares `wp-components` as a dependency of Odyssey's own stylesheet (Automattic/jetpack#50881). Only reaches a site once its Jetpack plugin updates.
-- **`software_version` (WP 7.0+)** — wp-admin's own global enqueue for the command palette. An implementation detail of the palette, not a promise to us, but checking it means an un-updated Jetpack on a WP 7.0+ site still gets exactly one copy instead of two.
+- **`software_version` (WP 6.9+)** — wp-admin's own global enqueue for the command palette. An implementation detail of the palette, not a promise to us, but checking it means an un-updated Jetpack on a WP 6.9+ site still gets exactly one copy instead of two.
 
 Below both thresholds nothing provides it, so our copy is fetched as its own async chunk. Those sites have no command palette either, since both providers postdate it — nothing to collide with.
 
