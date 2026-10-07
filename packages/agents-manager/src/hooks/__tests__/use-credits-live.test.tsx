@@ -173,15 +173,17 @@ describe( 'purchase access', () => {
 			} >
 		 )?.props.purchaseHint;
 
-	it( 'points someone who can’t buy to a site admin, with no purchase link', async () => {
+	it( 'tells someone who can’t buy that another account bought the plan, with no purchase link', async () => {
 		fetchMock.mockResolvedValueOnce( response( { ...exhausted(), plan_tier: 'personal' }, false ) );
 		const { result } = renderCredits();
 		await flush();
 		expect( props( result.current ).status.remaining ).toBe( 0 );
 		expect( props( result.current ).upgradeUrl ).toBeUndefined();
-		expect( purchaseHint( result.current ) ).toBe( 'Ask a site admin to upgrade.' );
+		expect( purchaseHint( result.current ) ).toBe(
+			'This plan was purchased by a different WordPress.com account. To manage this plan, log in to that account or contact the account owner.'
+		);
 		expect( result.current.notice?.message ).toBe(
-			'You’ve used all your site credits. Ask a site admin to upgrade.'
+			'You’ve used all your site credits. This plan was purchased by a different WordPress.com account. To manage this plan, log in to that account or contact the account owner.'
 		);
 		expect( result.current.notice?.action ).toBeUndefined();
 	} );
@@ -201,13 +203,13 @@ describe( 'purchase access', () => {
 		const { result } = renderCredits();
 		await flush();
 		expect( result.current.notice?.message ).toBe(
-			'19% of site credits left. Ask a site admin to upgrade.'
+			'19% of site credits left. This plan was purchased by a different WordPress.com account. To manage this plan, log in to that account or contact the account owner.'
 		);
 		expect( result.current.notice?.action ).toBeUndefined();
 		expect( result.current.notice?.dismissible ).toBe( true );
 	} );
 
-	it( 'points an admin who didn’t buy the plan to its purchaser, with no link', async () => {
+	it( 'tells an admin who didn’t buy the plan that another account bought it, with no link', async () => {
 		fetchMock.mockResolvedValueOnce(
 			response( { ...exhausted(), plan_tier: 'personal' }, true, false )
 		);
@@ -216,10 +218,10 @@ describe( 'purchase access', () => {
 		expect( props( result.current ).status.remaining ).toBe( 0 );
 		expect( props( result.current ).upgradeUrl ).toBeUndefined();
 		expect( purchaseHint( result.current ) ).toBe(
-			'Ask the account that bought this plan to upgrade.'
+			'This plan was purchased by a different WordPress.com account. To manage this plan, log in to that account or contact the account owner.'
 		);
 		expect( result.current.notice?.message ).toBe(
-			'You’ve used all your site credits. Ask the account that bought this plan to upgrade.'
+			'You’ve used all your site credits. This plan was purchased by a different WordPress.com account. To manage this plan, log in to that account or contact the account owner.'
 		);
 		expect( result.current.notice?.action ).toBeUndefined();
 	} );
@@ -240,7 +242,7 @@ describe( 'purchase access', () => {
 		const { result } = renderCredits();
 		await flush();
 		expect( result.current.notice?.message ).toBe(
-			'19% of site credits left. Ask the account that bought this plan to upgrade.'
+			'19% of site credits left. This plan was purchased by a different WordPress.com account. To manage this plan, log in to that account or contact the account owner.'
 		);
 		expect( result.current.notice?.action ).toBeUndefined();
 		expect( result.current.notice?.dismissible ).toBe( true );
@@ -290,7 +292,9 @@ describe( 'purchase access', () => {
 		await flush();
 		await receive( { ...exhausted(), plan_tier: 'personal' } );
 		expect( props( result.current ).upgradeUrl ).toBeUndefined();
-		expect( purchaseHint( result.current ) ).toBe( 'Ask a site admin to upgrade.' );
+		expect( purchaseHint( result.current ) ).toBe(
+			'This plan was purchased by a different WordPress.com account. To manage this plan, log in to that account or contact the account owner.'
+		);
 	} );
 
 	it( 'shows no guidance on a tier without an upgrade', async () => {
@@ -350,7 +354,9 @@ describe( 'purchase access', () => {
 		} );
 		await flush();
 		expect( props( view.result.current ).upgradeUrl ).toBeUndefined();
-		expect( purchaseHint( view.result.current ) ).toBe( 'Ask a site admin to upgrade.' );
+		expect( purchaseHint( view.result.current ) ).toBe(
+			'This plan was purchased by a different WordPress.com account. To manage this plan, log in to that account or contact the account owner.'
+		);
 		// Back on A, its new read hangs: neither the old answer for A nor B's applies.
 		view.rerender( defaultOptions );
 		await flush();

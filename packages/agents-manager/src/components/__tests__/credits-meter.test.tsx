@@ -217,13 +217,15 @@ describe( 'CreditsMeter', () => {
 				status={ livePaid( 0 ) }
 				isOpen
 				onToggle={ () => {} }
-				purchaseHint="Ask a site admin to upgrade."
+				purchaseHint="This plan was purchased by a different WordPress.com account. To manage this plan, log in to that account or contact the account owner."
 			/>
 		);
 		expect( screen.getByText( 'You’ve used all your site credits.' ) ).toBeInTheDocument();
-		expect( screen.getByText( 'Ask a site admin to upgrade.' ) ).toHaveClass(
-			'agents-manager-credits-meter__message'
-		);
+		expect(
+			screen.getByText(
+				'This plan was purchased by a different WordPress.com account. To manage this plan, log in to that account or contact the account owner.'
+			)
+		).toHaveClass( 'agents-manager-credits-meter__message' );
 		expect( screen.queryByRole( 'link' ) ).not.toBeInTheDocument();
 		expect(
 			screen.queryByRole( 'button', { name: /Upgrade|Add credits/ } )
