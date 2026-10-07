@@ -18,6 +18,11 @@ export interface AmplifyReport {
 }
 
 export interface AmplifyUsage {
+	/**
+	 * Audits counted against this month's allowance.
+	 * BACKEND REQUIRED: must exclude failed and timed-out audits (including
+	 * failed runs that are later retried). The dashboard tells agencies they don't count.
+	 */
 	used: number;
 	limit: number;
 	resets_at: string;

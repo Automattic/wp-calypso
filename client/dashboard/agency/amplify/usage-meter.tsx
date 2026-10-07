@@ -86,6 +86,11 @@ function LimitsExplainer( { label, resetDate }: { label?: string; resetDate?: st
 								</li>
 							) ) }
 						</ul>
+						{ /*
+						 * BACKEND REQUIRED: the API must exclude failed and timed-out audits
+						 * from `usage.used`. This copy only describes that rule; the
+						 * dashboard can't enforce it.
+						 */ }
 						<Text size={ 13 } lineHeight="20px">
 							{ __( 'Audits that fail or time out don’t count toward your allowance.' ) }
 						</Text>
