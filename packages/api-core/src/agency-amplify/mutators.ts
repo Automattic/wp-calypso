@@ -22,3 +22,16 @@ export async function archiveAmplifyReport(
 		body: { archived: true },
 	} );
 }
+
+/**
+ * Relaunches a failed report with the same URL and mode, updating the same row.
+ */
+export async function retryAmplifyReport(
+	agencyId: number,
+	reportId: string
+): Promise< AmplifyReport > {
+	return wpcom.req.post( {
+		path: `/agency/${ agencyId }/amplify/reports/${ reportId }/retry`,
+		apiNamespace: 'wpcom/v2',
+	} );
+}

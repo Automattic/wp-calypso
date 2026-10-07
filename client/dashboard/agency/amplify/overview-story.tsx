@@ -60,7 +60,7 @@ function PerspectivesGraphic() {
 				<i />
 			</div>
 			<div className="dashboard-amplify-story__mini-report">
-				<span>{ __( 'AI systems' ) }</span>
+				<span>{ __( 'AI agents' ) }</span>
 				<strong>50/100</strong>
 				<i />
 				<i />

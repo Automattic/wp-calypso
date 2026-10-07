@@ -14,6 +14,7 @@ type ScoreMetric = {
 type ScorePerspective = {
 	type: 'human' | 'ai';
 	label: string;
+	title: string;
 	description: string;
 	score: number;
 	metrics: ScoreMetric[];
@@ -24,7 +25,10 @@ export const PERSPECTIVES: Record< 'human' | 'ai', ScorePerspective > = {
 	human: {
 		type: 'human',
 		label: __( 'First-time visitors' ),
-		description: __( 'Actionable advice for each category to help new visitors feel at home.' ),
+		title: __( 'How people judge a site' ),
+		description: __(
+			'New visitors decide if a business is trustworthy in seconds. We check if the homepage proactively answers visitors’ questions and earns their trust.'
+		),
 		score: 46,
 		metrics: [
 			{
@@ -95,9 +99,10 @@ export const PERSPECTIVES: Record< 'human' | 'ai', ScorePerspective > = {
 	},
 	ai: {
 		type: 'ai',
-		label: __( 'AI systems' ),
+		label: __( 'AI agents' ),
+		title: __( 'How AI interprets a site' ),
 		description: __(
-			'Actionable advice for each category to help AI systems understand your site.'
+			'More and more people use AI to find businesses online. We check whether tools like ChatGPT can understand the business and recommend it.'
 		),
 		score: 50,
 		metrics: [
@@ -233,7 +238,10 @@ function ScoreCard( {
 			<div className="dashboard-amplify-score-preview__card-header">
 				<ScoreIllustration type={ perspective.type } />
 				<div className="dashboard-amplify-score-preview__card-title">
-					<h4 className="dashboard-amplify-score-preview__heading">{ perspective.label }</h4>
+					<div className="dashboard-amplify-score-preview__card-heading">
+						<span className="dashboard-amplify-score-preview__label">{ perspective.label }</span>
+						<h4 className="dashboard-amplify-score-preview__heading">{ perspective.title }</h4>
+					</div>
 					<p>{ perspective.description }</p>
 				</div>
 				<strong
