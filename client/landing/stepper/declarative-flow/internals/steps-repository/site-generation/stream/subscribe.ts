@@ -7,9 +7,10 @@ import type { BuildWowStreamInfo } from './types';
 // Follows one run's feed: a snapshot first, then finite event responses, each
 // resumed from the last applied cursor. An expired cursor or a gap in the
 // sequence rebuilds from a fresh snapshot. A superseded run, a missing feed,
-// a repeated failure, or the end of generation stops the feed and leaves the
-// screen on status polling, which keeps running throughout. Nothing here can
-// start, retry, or cancel the build.
+// or repeated failures stops the feed and leaves the screen on status polling.
+// Engine terminal events do not end the host run: delivery can continue after
+// build.completed, and a later host phase may retry. Nothing here can start,
+// retry, or cancel the build.
 
 export type BuildWowStreamStopReason = 'superseded' | 'unauthorized' | 'unavailable';
 
@@ -229,12 +230,6 @@ export function subscribeToBuildWowStream( {
 							: IDLE_RECONNECT_MS[ Math.min( idleConnections, IDLE_RECONNECT_MS.length ) - 1 ];
 					delay = Math.max( delay, retryMs );
 					failures = 0;
-				}
-				// Generation is over; nothing more will arrive, and status polling
-				// takes the screen the rest of the way.
-				if ( state.engineTerminal ) {
-					lifetime.abort();
-					return;
 				}
 			} catch ( error ) {
 				if ( lifetime.signal.aborted ) {
