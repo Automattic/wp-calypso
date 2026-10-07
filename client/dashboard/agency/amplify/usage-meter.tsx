@@ -155,7 +155,8 @@ export function AmplifyUsageMeter( {
 		return null;
 	}
 	const remaining = Math.max( 0, usage.limit - usage.used );
-	const percent = Math.min( 100, Math.round( ( remaining / Math.max( 1, usage.limit ) ) * 100 ) );
+	// The bar fills as audits are used and turns red when the allowance is gone.
+	const percent = Math.min( 100, Math.round( ( usage.used / Math.max( 1, usage.limit ) ) * 100 ) );
 	return (
 		<div className="dashboard-amplify-usage" data-status={ status }>
 			<div
@@ -163,8 +164,8 @@ export function AmplifyUsageMeter( {
 				role="meter"
 				aria-valuemin={ 0 }
 				aria-valuemax={ usage.limit }
-				aria-valuenow={ remaining }
-				aria-label={ __( 'Audits remaining this month' ) }
+				aria-valuenow={ Math.min( usage.used, usage.limit ) }
+				aria-label={ __( 'Audits used this month' ) }
 			>
 				<span style={ { width: `${ percent }%` } } />
 			</div>
