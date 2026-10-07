@@ -59,6 +59,9 @@ export function isProductBrand( value: unknown ): value is ProductBrand {
 	return typeof value === 'string' && BRANDS.includes( value as ProductBrand );
 }
 
+export const isTileValue = ( value: unknown ): value is TileValue =>
+	isProductCategory( value ) || isProductBrand( value );
+
 export function CategoryMark( { section }: { section: TileValue | 'other' } ) {
 	return (
 		<HStack expanded={ false } className="dashboard-marketplace-products__section-mark">

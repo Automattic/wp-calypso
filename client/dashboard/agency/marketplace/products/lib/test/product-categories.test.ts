@@ -1,4 +1,4 @@
-import { getProductCategories, getProductFilterCategories } from '../product-categories';
+import { getProductCategories } from '../product-categories';
 import type { AgencyProduct } from '@automattic/api-core';
 
 const product = ( slug: string, family_slug: string ): AgencyProduct => ( {
@@ -9,20 +9,19 @@ const product = ( slug: string, family_slug: string ): AgencyProduct => ( {
 	family_slug,
 } );
 
-describe( 'getProductFilterCategories', () => {
-	test( 'lists Jetpack Complete under the categories it bundles, but not as badges', () => {
-		const complete = product( 'jetpack-complete', 'jetpack-packs' );
-		expect( getProductCategories( complete ) ).toEqual( [] );
-		expect( getProductFilterCategories( complete ) ).toEqual( [
-			'security',
-			'performance',
-			'social',
-			'growth',
-		] );
+describe( 'getProductCategories', () => {
+	test( 'leaves plans without a job category', () => {
+		expect( getProductCategories( product( 'jetpack-complete', 'jetpack-packs' ) ) ).toEqual( [] );
+		expect( getProductCategories( product( 'jetpack-security-t1', 'jetpack-packs' ) ) ).toEqual(
+			[]
+		);
 	} );
 
-	test( 'matches the badge categories for everything else', () => {
-		const scan = product( 'jetpack-scan', 'jetpack-products' );
-		expect( getProductFilterCategories( scan ) ).toEqual( getProductCategories( scan ) );
+	test( 'counts the backup storage add-ons as security', () => {
+		expect(
+			getProductCategories(
+				product( 'jetpack-backup-addon-storage-10gb-monthly', 'jetpack-backup-storage' )
+			)
+		).toEqual( [ 'security' ] );
 	} );
 } );

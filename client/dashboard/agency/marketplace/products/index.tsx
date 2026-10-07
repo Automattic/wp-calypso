@@ -23,14 +23,14 @@ import TermPricingToggle from '../term-pricing-toggle';
 import { useMarketplaceType } from '../use-marketplace-type';
 import { useTermPricing } from '../use-term-pricing';
 import CartMenu from './cart-menu';
-import CategoryTiles, { CategoryMark, isProductCategory } from './category-tiles';
+import CategoryTiles, { CategoryMark, isProductCategory, isTileValue } from './category-tiles';
 import FeaturedShowcase from './featured-showcase';
 import FeaturedShowcaseSkeleton from './featured-showcase-skeleton';
 import {
 	getBrandLabels,
 	getCategoryShortLabels,
 	getProductBrand,
-	getProductFilterCategories,
+	getProductCategories,
 	getProductType,
 	getTypeLabels,
 	isPressableAddon,
@@ -74,18 +74,12 @@ interface ProductsSearchParams {
 	purchase_type?: string;
 }
 
-type CategoryFilterValue = ProductBrand | ProductCategory;
-
 // Older category keys that differ from the filter values.
-const LEGACY_CATEGORY_KEYS: Record< string, CategoryFilterValue > = {
+const LEGACY_CATEGORY_KEYS: Record< string, TileValue > = {
 	'pressable-addon': 'pressable',
 	'shipping-delivery-fulfillment': 'shipping',
 	'store-content-and-customization': 'store-content',
 };
-
-const isCategoryFilterValue = ( value: unknown ): value is CategoryFilterValue =>
-	isProductCategory( value ) ||
-	( typeof value === 'string' && Object.keys( getBrandLabels() ).includes( value ) );
 
 const getSectionTitle = ( key: ProductSection[ 'key' ] | ProductBrand ) => {
 	if ( key === 'other' ) {
@@ -143,7 +137,7 @@ export default function MarketplaceProducts() {
 		const category = searchParams.category
 			? ( LEGACY_CATEGORY_KEYS[ searchParams.category ] ?? searchParams.category )
 			: null;
-		return isCategoryFilterValue( category ) ? category : null;
+		return isTileValue( category ) ? category : null;
 	} );
 
 	// `?product_slug=a,b` and `?products=a:2,b:1` replace the cart with those
@@ -220,10 +214,7 @@ export default function MarketplaceProducts() {
 				// offer it a second time.
 				filterBy: false,
 				enableSorting: false,
-				getValue: ( { item } ) => [
-					getProductBrand( item ),
-					...getProductFilterCategories( item ),
-				],
+				getValue: ( { item } ) => [ getProductBrand( item ), ...getProductCategories( item ) ],
 			},
 			{
 				id: 'type',
@@ -271,7 +262,7 @@ export default function MarketplaceProducts() {
 		() =>
 			activeCategory
 				? products.filter( ( product ) =>
-						[ getProductBrand( product ), ...getProductFilterCategories( product ) ].includes(
+						[ getProductBrand( product ), ...getProductCategories( product ) ].includes(
 							activeCategory
 						)
 					)

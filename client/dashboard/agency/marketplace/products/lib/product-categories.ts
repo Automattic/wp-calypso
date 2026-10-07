@@ -4,7 +4,6 @@ import {
 	CONVERSION_PRODUCT_SLUGS,
 	CUSTOMER_SERVICE_PRODUCT_SLUGS,
 	GROWTH_PRODUCT_SLUGS,
-	JETPACK_COMPLETE_PRODUCT_SLUG,
 	JETPACK_PACKS_FAMILY_SLUG,
 	MERCHANDISING_PRODUCT_SLUGS,
 	PAYMENTS_PRODUCT_SLUGS,
@@ -118,13 +117,4 @@ export function getProductCategories( product: AgencyProduct ): ProductCategory[
 		}
 		return CATEGORY_SLUGS[ category ].includes( product.slug );
 	} );
-}
-
-// Jetpack Complete carries no category badges, but the classic category filters
-// still list it under every category its bundled products cover.
-export function getProductFilterCategories( product: AgencyProduct ): ProductCategory[] {
-	if ( product.slug === JETPACK_COMPLETE_PRODUCT_SLUG ) {
-		return [ 'security', 'performance', 'social', 'growth' ];
-	}
-	return getProductCategories( product );
 }
