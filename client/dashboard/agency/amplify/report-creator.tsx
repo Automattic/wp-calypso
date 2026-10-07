@@ -130,7 +130,7 @@ export default function AmplifyReportCreator( {
 					createSuccessNotice(
 						sprintf(
 							/* translators: %s: how long a report takes, e.g. "10 to 20 minutes" */
-							__( 'Audit started. Your report will be ready in %s.' ),
+							__( 'Report started. It will be ready in %s.' ),
 							getReportTiming()
 						),
 						{ type: 'snackbar' }
