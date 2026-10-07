@@ -9,6 +9,12 @@ import CancelPurchaseForm from '../index';
 import { ATOMIC_REVERT_STEP, FEEDBACK_STEP, NEXT_ADVENTURE_STEP, REMOVE_PLAN_STEP } from '../steps';
 import type { Purchase } from '@automattic/api-core';
 
+const mockNavigate = jest.fn();
+jest.mock( '@tanstack/react-router', () => ( {
+	...jest.requireActual( '@tanstack/react-router' ),
+	useNavigate: () => mockNavigate,
+} ) );
+
 function makePurchase( overrides: Partial< Purchase > = {} ): Purchase {
 	return {
 		ID: 123,
@@ -38,6 +44,7 @@ const defaultProps = {
 	atomicRevertOnClickCheckTwo: noop,
 	onGetCancellationOffer: noop,
 	onImportRadioChange: noop,
+	onKeepSubscriptionClick: noop,
 	onRadioOneChange: noop,
 	onTextOneChange: noop,
 };
@@ -50,6 +57,10 @@ const personalPlan = makePurchase( {
 } );
 
 describe( '<CancelPurchaseForm />', () => {
+	beforeEach( () => {
+		jest.clearAllMocks();
+	} );
+
 	test( 'asks for a cancellation reason for a Google Workspace purchase', () => {
 		render(
 			<CancelPurchaseForm
@@ -180,5 +191,43 @@ describe( '<CancelPurchaseForm />', () => {
 		await user.click( removeButton );
 
 		expect( onSubmit ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	test( 'returns to purchase settings when Keep plan is clicked on the remove plan step', async () => {
+		const user = userEvent.setup();
+		const onKeepSubscriptionClick = jest.fn();
+		const onSubmit = jest.fn();
+		render(
+			<CancelPurchaseForm
+				{ ...defaultProps }
+				surveyStep={ REMOVE_PLAN_STEP }
+				allSteps={ [ REMOVE_PLAN_STEP ] }
+				purchase={ personalPlan }
+				onKeepSubscriptionClick={ onKeepSubscriptionClick }
+				onSubmit={ onSubmit }
+			/>
+		);
+
+		await user.click( screen.getByRole( 'button', { name: 'Keep plan' } ) );
+
+		expect( mockNavigate ).toHaveBeenCalledWith(
+			expect.objectContaining( { params: { purchaseId: personalPlan.ID } } )
+		);
+		expect( onKeepSubscriptionClick ).toHaveBeenCalledTimes( 1 );
+		expect( onSubmit ).not.toHaveBeenCalled();
+	} );
+
+	test( 'disables Keep plan while the removal is submitting on the remove plan step', () => {
+		render(
+			<CancelPurchaseForm
+				{ ...defaultProps }
+				surveyStep={ REMOVE_PLAN_STEP }
+				allSteps={ [ REMOVE_PLAN_STEP ] }
+				purchase={ personalPlan }
+				isSubmitting
+			/>
+		);
+
+		expect( screen.getByRole( 'button', { name: 'Keep plan' } ) ).toBeDisabled();
 	} );
 } );

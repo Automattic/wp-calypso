@@ -11,6 +11,7 @@ import {
 	type CancelIntent,
 } from '../../../../utils/purchase';
 import { getSolutionsForReason } from '../get-solutions-for-reason';
+import KeepSubscriptionButton from '../keep-subscription-button';
 import { useIsSplitCancelRemoveEnabled } from '../use-is-split-cancel-remove-enabled';
 import { AtomicRevertStep } from './step-components/atomic-revert-step';
 import EducationContentStep from './step-components/educational-content-step';
@@ -72,6 +73,7 @@ interface CancelPurchaseFormProps {
 	onClickAcceptForCancellationOffer?: () => void;
 	onGetCancellationOffer: ( newPurchaseId?: string ) => void;
 	onImportRadioChange: ( eventOrValue: React.ChangeEvent< HTMLInputElement > | string ) => void;
+	onKeepSubscriptionClick: () => void;
 	onNextAdventureValidationChange?: ( isValid: boolean ) => void;
 	onRadioOneChange: ( eventOrValue: React.ChangeEvent< HTMLInputElement > | string ) => void;
 	onRadioTwoChange?: ( eventOrValue: React.ChangeEvent< HTMLInputElement > | string ) => void;
@@ -311,11 +313,12 @@ function SurveyContent( {
 function StepButtons( {
 	canGoNext,
 	clickNext,
-	closeDialog,
 	disableButtons,
 	intent,
 	isSubmitting,
+	onKeepSubscriptionClick,
 	onSubmit,
+	purchase,
 	solution,
 	surveyStep,
 	allSteps,
@@ -381,14 +384,12 @@ function StepButtons( {
 				>
 					{ __( 'Complete removal' ) }
 				</Button>
-				<Button
-					disabled={ ! canGoNext }
-					isBusy={ isCancelling }
-					onClick={ closeDialog }
-					variant="secondary"
-				>
-					{ __( 'Keep plan' ) }
-				</Button>
+				<KeepSubscriptionButton
+					purchase={ purchase }
+					intent="remove"
+					onKeepSubscriptionClick={ onKeepSubscriptionClick }
+					disabled={ isCancelling }
+				/>
 			</ButtonStack>
 		);
 	}

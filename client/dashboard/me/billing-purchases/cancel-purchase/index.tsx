@@ -1781,6 +1781,7 @@ function CancelPurchaseInner() {
 			onClickAcceptForCancellationOffer={ onClickAcceptForCancellationOffer }
 			onGetCancellationOffer={ onGetCancellationOffer }
 			onImportRadioChange={ onImportRadioChange }
+			onKeepSubscriptionClick={ onKeepSubscriptionClick }
 			onNextAdventureValidationChange={ onNextAdventureValidationChange }
 			onRadioOneChange={ onRadioOneChange }
 			onRadioTwoChange={ onRadioTwoChange }
