@@ -1765,10 +1765,6 @@ html[dir='rtl'] .dashboard-amplify-score-preview__card {
 	color: var( --color-text-subtle );
 }
 
-.dashboard-amplify-usage__reset::before {
-	margin-inline: 6px;
-	content: '·';
-}
 
 .dashboard-amplify-usage__info.components-button {
 	min-width: 24px;
@@ -1796,8 +1792,7 @@ html[dir='rtl'] .dashboard-amplify-score-preview__card {
 }
 
 @media ( max-width: 782px ) {
-	.dashboard-amplify-usage__bar,
-	.dashboard-amplify-usage__reset {
+	.dashboard-amplify-usage__bar {
 		display: none;
 	}
 }

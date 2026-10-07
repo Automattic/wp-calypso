@@ -35,7 +35,7 @@ function useResetDate( usage?: AmplifyUsage ) {
  * Info button + popover explaining monthly limits. Same pattern as the
  * "Influenced revenue" info button on the Tiers and Overview pages.
  */
-function LimitsExplainer( { label }: { label?: string } ) {
+function LimitsExplainer( { label, resetDate }: { label?: string; resetDate?: string | null } ) {
 	const [ isOpen, setIsOpen ] = useState( false );
 	const { recordTracksEvent } = useAnalytics();
 	return (
@@ -60,9 +60,17 @@ function LimitsExplainer( { label }: { label?: string } ) {
 				>
 					<VStack spacing={ 3 } style={ { width: '280px', padding: '8px' } }>
 						<Text size={ 13 } lineHeight="20px">
-							{ __(
-								'Your agency tier sets how many homepage audits you can run each month. Each one comes out of your allowance, which resets on the 1st of every month.'
-							) }
+							{ resetDate
+								? sprintf(
+										/* translators: %s: date the allowance resets, e.g. November 1 */
+										__(
+											'Your agency tier sets how many homepage audits you can run each month. Each one comes out of your allowance, which resets on %s.'
+										),
+										resetDate
+									)
+								: __(
+										'Your agency tier sets how many homepage audits you can run each month. Each one comes out of your allowance, which resets on the 1st of every month.'
+									) }
 						</Text>
 						<ul className="dashboard-amplify-usage__tiers">
 							{ getTierAllowances().map( ( tier ) => (
@@ -103,6 +111,7 @@ export function AmplifyScansLeft( {
 	usage?: AmplifyUsage;
 	status: AmplifyUsageStatus;
 } ) {
+	const resetDate = useResetDate( usage );
 	if ( ! usage || ! hasAllowance( status ) ) {
 		return null;
 	}
@@ -118,7 +127,7 @@ export function AmplifyScansLeft( {
 							left
 						) }
 			</Text>
-			<LimitsExplainer />
+			<LimitsExplainer resetDate={ resetDate } />
 		</div>
 	);
 }
@@ -137,7 +146,8 @@ export function AmplifyUsageMeter( {
 	if ( ! usage || ! hasAllowance( status ) ) {
 		return null;
 	}
-	const percent = Math.min( 100, Math.round( ( usage.used / Math.max( 1, usage.limit ) ) * 100 ) );
+	const remaining = Math.max( 0, usage.limit - usage.used );
+	const percent = Math.min( 100, Math.round( ( remaining / Math.max( 1, usage.limit ) ) * 100 ) );
 	return (
 		<div className="dashboard-amplify-usage" data-status={ status }>
 			<div
@@ -145,29 +155,20 @@ export function AmplifyUsageMeter( {
 				role="meter"
 				aria-valuemin={ 0 }
 				aria-valuemax={ usage.limit }
-				aria-valuenow={ usage.used }
-				aria-label={ __( 'Audits used this month' ) }
+				aria-valuenow={ remaining }
+				aria-label={ __( 'Audits remaining this month' ) }
 			>
 				<span style={ { width: `${ percent }%` } } />
 			</div>
 			<Text size={ 13 } className="dashboard-amplify-usage__label">
 				{ sprintf(
-					/* translators: 1: scans used, 2: monthly scan limit */
-					__( '%1$d of %2$d audits used this month' ),
-					usage.used,
+					/* translators: 1: audits remaining, 2: monthly audit limit */
+					__( '%1$d of %2$d audits remaining' ),
+					remaining,
 					usage.limit
 				) }
-				{ resetDate && (
-					<span className="dashboard-amplify-usage__reset">
-						{ sprintf(
-							/* translators: %s: date the allowance resets, e.g. November 1 */
-							__( 'Resets %s' ),
-							resetDate
-						) }
-					</span>
-				) }
 			</Text>
-			<LimitsExplainer />
+			<LimitsExplainer resetDate={ resetDate } />
 		</div>
 	);
 }
