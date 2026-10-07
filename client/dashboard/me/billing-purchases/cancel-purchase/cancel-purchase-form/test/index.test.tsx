@@ -3,6 +3,7 @@
  */
 
 import { screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { render } from '../../../../../test-utils';
 import CancelPurchaseForm from '../index';
 import { ATOMIC_REVERT_STEP, FEEDBACK_STEP, NEXT_ADVENTURE_STEP, REMOVE_PLAN_STEP } from '../steps';
@@ -157,5 +158,27 @@ describe( '<CancelPurchaseForm />', () => {
 			screen.queryByRole( 'heading', { name: /answer a few quick questions/ } )
 		).not.toBeInTheDocument();
 		expect( screen.getByRole( 'heading', { name: 'Proceed with caution' } ) ).toBeVisible();
+	} );
+
+	test( 'submits the removal from the Complete removal button on the remove plan step', async () => {
+		const user = userEvent.setup();
+		const onSubmit = jest.fn();
+		render(
+			<CancelPurchaseForm
+				{ ...defaultProps }
+				surveyStep={ REMOVE_PLAN_STEP }
+				allSteps={ [ REMOVE_PLAN_STEP ] }
+				purchase={ personalPlan }
+				onSubmit={ onSubmit }
+			/>
+		);
+
+		const removeButton = screen.getByRole( 'button', { name: 'Complete removal' } );
+		expect( removeButton ).toBeEnabled();
+		expect( screen.queryByRole( 'button', { name: 'Continue' } ) ).not.toBeInTheDocument();
+
+		await user.click( removeButton );
+
+		expect( onSubmit ).toHaveBeenCalledTimes( 1 );
 	} );
 } );

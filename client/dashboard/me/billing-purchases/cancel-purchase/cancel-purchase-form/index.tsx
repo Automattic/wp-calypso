@@ -375,10 +375,11 @@ function StepButtons( {
 					className="cancel-purchase-form__remove-plan-button"
 					disabled={ ! canGoNext }
 					isBusy={ isCancelling }
+					isDestructive
 					onClick={ onSubmit }
 					variant="primary"
 				>
-					{ __( 'Continue' ) }
+					{ __( 'Complete removal' ) }
 				</Button>
 				<Button
 					disabled={ ! canGoNext }
