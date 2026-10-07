@@ -1,10 +1,9 @@
 import { useTranslate } from 'i18n-calypso';
 import type { BuildWowStreamView } from './use-build-wow-stream';
 
-// What the live feed has decided so far, shown only for the capabilities the
-// run advertises. Panels are chosen by capability, never by graph name, so a
-// graph without planning events still shows progress and nothing it cannot
-// back up. Generated markup (preview formats) is not rendered here.
+// What the live feed has decided so far. Structured fields are rendered when
+// present even if an older host's descriptor omits their capability. Generated
+// markup (preview formats) is never rendered here.
 
 function hasCapability( stream: BuildWowStreamView, capability: string ): boolean {
 	return stream.info.capabilities.includes( capability );
@@ -16,11 +15,11 @@ export function BuildWowStreamBoard( { stream }: { stream: BuildWowStreamView } 
 	const plan = state.plan;
 
 	const showProgress = hasCapability( stream, 'progress' ) && state.currentStep;
-	const showDirections = hasCapability( stream, 'planning' ) && state.directions.length > 0;
-	const showPlan = hasCapability( stream, 'planning' ) && plan && ( plan.title || plan.direction );
-	const palette = hasCapability( stream, 'design' ) ? ( plan?.palette ?? [] ) : [];
-	const typography = hasCapability( stream, 'design' ) ? ( plan?.typography ?? [] ) : [];
-	const pages = hasCapability( stream, 'planning' ) ? ( plan?.pages ?? [] ) : [];
+	const showDirections = state.directions.length > 0;
+	const showPlan = Boolean( plan && ( plan.title || plan.direction ) );
+	const palette = plan?.palette ?? [];
+	const typography = plan?.typography ?? [];
+	const pages = plan?.pages ?? [];
 
 	const plannedSections = pages.reduce( ( total, page ) => total + page.sections.length, 0 );
 	const writtenSections = Object.values( state.sections ).reduce(
@@ -35,7 +34,7 @@ export function BuildWowStreamBoard( { stream }: { stream: BuildWowStreamView } 
 
 	const imageStatuses = Object.values( state.images );
 	const readyImages = imageStatuses.filter( ( status ) => status === 'ready' ).length;
-	const showImages = hasCapability( stream, 'images' ) && imageStatuses.length > 0;
+	const showImages = imageStatuses.length > 0;
 
 	if (
 		! showProgress &&
