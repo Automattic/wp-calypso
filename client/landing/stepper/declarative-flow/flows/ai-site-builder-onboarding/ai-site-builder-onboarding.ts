@@ -23,7 +23,11 @@ import {
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import { useQuery } from '../../../hooks/use-query';
 import { ONBOARD_STORE, SITE_STORE } from '../../../stores';
-import { getBuildWowSiteSpecUrl } from '../../../utils/build-wow';
+import {
+	BUILD_WOW_SITE_SPEC_PATH,
+	commerceUsesBuildWow,
+	getBuildWowSiteSpecUrl,
+} from '../../../utils/build-wow';
 import { planSupportsBuildWow } from '../../../utils/build-wow-plans';
 import { stepsWithRequiredLogin } from '../../../utils/steps-with-required-login';
 import { STEPS } from '../../internals/steps';
@@ -191,6 +195,11 @@ const aiSiteBuilderOnboarding: FlowV2< typeof initialize > = {
 						return navigate( STEPS.ERROR.slug );
 					}
 
+					if ( destination.startsWith( `${ BUILD_WOW_SITE_SPEC_PATH }?` ) ) {
+						window.location.replace( destination );
+						return;
+					}
+
 					let editorUrl: URL;
 					try {
 						editorUrl = new URL( destination );
@@ -275,8 +284,11 @@ const aiSiteBuilderOnboarding: FlowV2< typeof initialize > = {
 					// preparation is only for the legacy site editor destination. The build-wow
 					// destination lives in the ai-site-builder-spec flow, which bounces to plain
 					// onboarding without the site-spec feature.
+					const isCommerce = !! planCartItem && isEcommercePlan( planCartItem.product_slug );
 					const useBuildWow =
-						config.isEnabled( 'site-spec' ) && planSupportsBuildWow( planCartItem?.product_slug );
+						config.isEnabled( 'site-spec' ) &&
+						( planSupportsBuildWow( planCartItem?.product_slug ) ||
+							( isCommerce && ( await commerceUsesBuildWow( siteId ) ) ) );
 
 					const prompt =
 						query.get( 'prompt' ) || window.sessionStorage.getItem( 'stored_ai_prompt' ) || '';
@@ -325,13 +337,12 @@ const aiSiteBuilderOnboarding: FlowV2< typeof initialize > = {
 					setSignupCompleteFlowName( flowName );
 					setSignupCompleteSiteID( siteId );
 
-					const checkoutDestination =
-						planCartItem && isEcommercePlan( planCartItem.product_slug )
-							? addQueryArgs(
-									`/setup/${ AI_SITE_BUILDER_ONBOARDING_FLOW }/${ STEPS.WAIT_FOR_COMMERCE_ATOMIC.slug }`,
-									{ siteId, siteSlug, redirect_to: destination }
-								)
-							: destination;
+					const checkoutDestination = isCommerce
+						? addQueryArgs(
+								`/setup/${ AI_SITE_BUILDER_ONBOARDING_FLOW }/${ STEPS.WAIT_FOR_COMMERCE_ATOMIC.slug }`,
+								{ siteId, siteSlug, redirect_to: destination }
+							)
+						: destination;
 					persistSignupDestination( checkoutDestination );
 
 					return window.location.assign(
