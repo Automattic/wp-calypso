@@ -199,6 +199,184 @@
 	}
 }
 
+// The opt-in stream replaces the synthetic preview with the decisions and
+// work the selected engine graph has actually emitted.
+.site-generation-live {
+	box-sizing: border-box;
+	display: flex;
+	flex-direction: column;
+	width: min( 680px, 100% );
+	min-height: clamp( 260px, 44vh, 390px );
+	margin-block-end: 40px;
+	border: 1px solid var( --site-generation-canvas-line );
+	border-radius: 8px;
+	background: var( --studio-white );
+	color: var( --site-generation-canvas-heading );
+	text-align: start;
+	overflow: hidden;
+	animation: site-generation-live-arrive 320ms cubic-bezier( 0.16, 1, 0.3, 1 ) both;
+}
+
+@keyframes site-generation-live-arrive {
+	from {
+		opacity: 0.7;
+		translate: 0 8px;
+	}
+}
+
+.site-generation-live__toolbar {
+	display: flex;
+	align-items: center;
+	gap: 9px;
+	min-height: 42px;
+	padding-inline: 16px;
+	border-block-end: 1px solid var( --site-generation-canvas-line );
+	background: var( --site-generation-canvas-background );
+}
+
+.site-generation-live__brand {
+	display: inline-flex;
+	color: var( --site-generation-canvas-mark );
+}
+
+.site-generation-live__graph {
+	color: var( --site-generation-canvas-text );
+	font-size: $font-body-small;
+}
+
+.site-generation-live__pulse {
+	width: 7px;
+	height: 7px;
+	margin-inline-start: auto;
+	border-radius: 50%;
+	background: var( --site-generation-canvas-accent );
+	animation: site-generation-live-pulse 1800ms ease-in-out infinite;
+}
+
+@keyframes site-generation-live-pulse {
+	50% {
+		opacity: 0.45;
+	}
+}
+
+.site-generation-live__live-label {
+	color: var( --site-generation-canvas-text );
+	font-size: $font-body-small;
+}
+
+.site-generation-live__content {
+	flex: 1;
+	padding: clamp( 20px, 4vw, 38px );
+}
+
+.site-generation-live__title {
+	max-width: 480px;
+	margin: 0;
+	font-size: clamp( 22px, 3vw, 34px );
+	font-weight: 500;
+	line-height: 1.15;
+	letter-spacing: -0.02em;
+	text-wrap: balance;
+}
+
+.site-generation-live__direction {
+	max-width: 640px;
+	margin: 12px 0 0;
+	color: var( --site-generation-canvas-text );
+	line-height: 1.5;
+}
+
+.site-generation-live__palette {
+	display: flex;
+	gap: 8px;
+	margin: 24px 0 0;
+	padding: 0;
+	list-style: none;
+}
+
+.site-generation-live__swatch {
+	width: 28px;
+	height: 28px;
+	border: 1px solid rgba( 0, 0, 0, 0.12 );
+	border-radius: 50%;
+	background: var( --stream-swatch );
+}
+
+.site-generation-live__type {
+	margin: 10px 0 0;
+	color: var( --site-generation-canvas-text );
+	font-size: $font-body-small;
+}
+
+.site-generation-live__structure {
+	display: grid;
+	grid-template-columns: repeat( auto-fit, minmax( 120px, 1fr ) );
+	gap: 8px;
+	margin-block-start: 20px;
+}
+
+.site-generation-live__page,
+.site-generation-live__section {
+	min-width: 0;
+	padding: 10px 12px;
+	border: 1px solid var( --site-generation-canvas-line );
+	border-radius: 8px;
+	background: var( --site-generation-canvas-background );
+	font-size: $font-body-small;
+}
+
+.site-generation-live__section {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 10px;
+	color: var( --site-generation-canvas-heading );
+}
+
+.site-generation-live__section span + span {
+	color: var( --site-generation-canvas-text );
+	font-size: $font-body-small;
+}
+
+.site-generation-live__page strong,
+.site-generation-live__page span {
+	display: block;
+	font-weight: 500;
+}
+
+.site-generation-live__page span {
+	margin-block-start: 4px;
+	color: var( --site-generation-canvas-text );
+	font-weight: 400;
+}
+
+.site-generation-live__activity {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	min-height: 48px;
+	padding-inline: 16px;
+	border-block-start: 1px solid var( --site-generation-canvas-line );
+	color: var( --site-generation-canvas-heading );
+	font-size: $font-body-small;
+}
+
+.site-generation-live__activity-mark {
+	width: 16px;
+	height: 16px;
+	flex: none;
+	border: 2px solid var( --site-generation-canvas-line );
+	border-block-start-color: var( --site-generation-canvas-accent );
+	border-radius: 50%;
+	animation: site-generation-live-spin 900ms linear infinite;
+}
+
+@keyframes site-generation-live-spin {
+	to {
+		rotate: 360deg;
+	}
+}
+
 // The frame's scale is the product of two factors so the hover lift and the
 // morph dip compose instead of overriding each other. The pointer tilt lives
 // on `transform` with its own short transition, and the parallax offsets it
@@ -1288,6 +1466,12 @@
 		transition: none;
 	}
 
+	.site-generation-live,
+	.site-generation-live__pulse,
+	.site-generation-live__activity-mark {
+		animation: none;
+	}
+
 	.site-generation__page-preview:hover {
 		--site-generation-lift: 1;
 		box-shadow: var( --site-generation-shadow-rest );
@@ -1344,6 +1528,11 @@
 
 	.site-generation__build-visual {
 		width: min( 100%, calc( 240px * 16 / 9 ), calc( 45vh * 16 / 9 ) );
+		margin-block-end: 16px;
+	}
+
+	.site-generation-live {
+		min-height: min( 340px, 44vh );
 		margin-block-end: 16px;
 	}
 

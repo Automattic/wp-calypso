@@ -5,6 +5,7 @@ import { check, wordpress } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useRef, useState } from 'react';
 import { BuildVisualization } from './build-visualization';
+import { BuildWowStreamCanvas } from './stream/build-canvas';
 import { BuildWowStreamBoard } from './stream/stream-board';
 import type { BuildWowStreamView } from './stream/use-build-wow-stream';
 import type { SiteGenerationState } from './use-site-generation';
@@ -134,9 +135,13 @@ function ElapsedTime( { startedAt }: { startedAt: number } ) {
 
 function WaitingCanvas( {
 	graph,
+	stream,
+	activityLabel,
 	onPreviewTap,
 }: {
 	graph?: BuildWowGraph;
+	stream?: BuildWowStreamView | null;
+	activityLabel?: string;
 	onPreviewTap: () => void;
 } ) {
 	const translate = useTranslate();
@@ -151,7 +156,11 @@ function WaitingCanvas( {
 
 	return (
 		<div className="site-generation__waiting">
-			<BuildVisualization onTap={ onPreviewTap } />
+			{ stream ? (
+				<BuildWowStreamCanvas activityLabel={ activityLabel } stream={ stream } />
+			) : (
+				<BuildVisualization onTap={ onPreviewTap } />
+			) }
 			<div className="site-generation__waiting-copy">
 				<h1 className="site-generation__waiting-title">
 					{ translate( 'All good things are worth the wait' ) }
@@ -299,6 +308,7 @@ export function SiteGenerationView( {
 		'--site-generation-hue': hue ?? undefined,
 		'--site-generation-canvas-base': baseColor ?? undefined,
 	} as CSSProperties;
+	const activeStepLabel = state.steps.find( ( step ) => step.status === 'active' )?.label;
 
 	return (
 		<main className="site-generation" data-generation-view={ state.status }>
@@ -333,7 +343,12 @@ export function SiteGenerationView( {
 					{ state.status === 'failed' ? (
 						<ErrorCanvas state={ state } onReload={ onReload } />
 					) : (
-						<WaitingCanvas graph={ graph } onPreviewTap={ cycleTint } />
+						<WaitingCanvas
+							activityLabel={ activeStepLabel }
+							graph={ graph }
+							onPreviewTap={ cycleTint }
+							stream={ state.status === 'working' ? stream : null }
+						/>
 					) }
 				</div>
 			</section>
