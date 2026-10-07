@@ -173,7 +173,7 @@ export default function AmplifyReportCreator( {
 				<div className="dashboard-amplify-overview__url-row">
 					<WebsiteAddressPicker
 						agencyId={ agencyId }
-						label={ __( 'Homepage' ) }
+						label={ __( 'Homepage URL' ) }
 						placeholder={ __( 'Paste a prospect’s URL or pick a client site' ) }
 						idPrefix="amplify-report-connected-site"
 						value={ urlInput }
