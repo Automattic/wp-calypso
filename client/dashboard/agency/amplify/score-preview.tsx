@@ -14,25 +14,29 @@ type ScoreMetric = {
 type ScorePerspective = {
 	type: 'human' | 'ai';
 	label: string;
+	title: string;
 	description: string;
 	score: number;
 	metrics: ScoreMetric[];
 };
 
-// Example results from a real report, with the current weighted rubric categories.
+// Sample scores for the fictional Olive & Ember restaurant, matching sample-report-data.ts.
 export const PERSPECTIVES: Record< 'human' | 'ai', ScorePerspective > = {
 	human: {
 		type: 'human',
-		label: __( 'First-time visitors' ),
-		description: __( 'Actionable advice for each category to help new visitors feel at home.' ),
-		score: 46,
+		label: __( 'People' ),
+		title: __( 'How visitors judge a site' ),
+		description: __(
+			'New visitors decide if a business is trustworthy in seconds. We check if the homepage proactively answers visitors’ questions and earns their trust.'
+		),
+		score: 59,
 		metrics: [
 			{
 				label: __( 'Trust Signals' ),
 				description: __(
 					'Does the site give a first-time visitor enough evidence to feel confident getting in touch?'
 				),
-				score: 4,
+				score: 9,
 				max: 18,
 			},
 			{
@@ -40,7 +44,7 @@ export const PERSPECTIVES: Record< 'human' | 'ai', ScorePerspective > = {
 				description: __(
 					'When someone is ready to reach out, does the site make that easy, or create friction at the worst possible moment?'
 				),
-				score: 3,
+				score: 8,
 				max: 17,
 			},
 			{
@@ -48,7 +52,7 @@ export const PERSPECTIVES: Record< 'human' | 'ai', ScorePerspective > = {
 				description: __(
 					'Can people find this site when they search? All signals are sourced from Google Search Central documentation.'
 				),
-				score: 5,
+				score: 7,
 				max: 11,
 			},
 			{
@@ -56,15 +60,15 @@ export const PERSPECTIVES: Record< 'human' | 'ai', ScorePerspective > = {
 				description: __(
 					'A first impression often happens on a phone. Does the site hold up there?'
 				),
-				score: 7,
+				score: 8,
 				max: 12,
 			},
 			{
 				label: __( 'Content Quality' ),
 				description: __(
-					'Is the writing compelling, clear, and professional? Errors and poor readability erode trust before a client has read a single sentence.'
+					'Is the writing compelling, clear, and professional? Errors and poor readability erode trust before a visitor has read a single sentence.'
 				),
-				score: 11,
+				score: 9,
 				max: 12,
 			},
 			{
@@ -72,15 +76,15 @@ export const PERSPECTIVES: Record< 'human' | 'ai', ScorePerspective > = {
 				description: __(
 					'Does the site look credible and feel effortless to use? All signals are grounded in the Laws of UX.'
 				),
-				score: 5,
+				score: 8,
 				max: 10,
 			},
 			{
 				label: __( 'Accessibility' ),
 				description: __(
-					'Does the site work for everyone? Amplify measures against WCAG AA, the standard referenced by courts and regulators globally.'
+					'Does the site work for everyone? We check key accessibility signals like contrast, text alternatives, and labels. It isn’t a full WCAG conformance audit.'
 				),
-				score: 8,
+				score: 6,
 				max: 10,
 			},
 			{
@@ -88,31 +92,32 @@ export const PERSPECTIVES: Record< 'human' | 'ai', ScorePerspective > = {
 				description: __(
 					'Does the site feel made for the right audience? Within seconds of landing, visitors should feel the site is speaking directly to them.'
 				),
-				score: 3,
+				score: 4,
 				max: 10,
 			},
 		],
 	},
 	ai: {
 		type: 'ai',
-		label: __( 'AI systems' ),
+		label: __( 'AI agents' ),
+		title: __( 'How AI interprets a site' ),
 		description: __(
-			'Actionable advice for each category to help AI systems understand your site.'
+			'More people are using AI to find businesses online. We check whether tools like ChatGPT can understand the business and recommend it.'
 		),
-		score: 50,
+		score: 43,
 		metrics: [
 			{
 				label: __( 'Technical Health' ),
 				description: __(
 					'Can AI tools access, crawl, and render the site? If a crawler cannot reach the content, nothing else matters.'
 				),
-				score: 18,
+				score: 16,
 				max: 20,
 			},
 			{
 				label: __( 'Structured Data' ),
 				description: __(
-					'Schema markup tells AI tools exactly what the site is about rather than making them infer it. The difference between an AI accurately describing your client and producing a generic summary.'
+					'Schema markup tells AI tools exactly what the site is about rather than making them infer it. The difference between an AI accurately describing the business and producing a generic summary.'
 				),
 				score: 3,
 				max: 18,
@@ -122,7 +127,7 @@ export const PERSPECTIVES: Record< 'human' | 'ai', ScorePerspective > = {
 				description: __(
 					'Answer Engine Optimization. Is the content structured to surface in AI-generated answers? AI tools prioritize pages that answer questions directly, not pages that bury key information.'
 				),
-				score: 3,
+				score: 4,
 				max: 16,
 			},
 			{
@@ -130,7 +135,7 @@ export const PERSPECTIVES: Record< 'human' | 'ai', ScorePerspective > = {
 				description: __(
 					"Experience, Expertise, Authoritativeness, Trustworthiness. Google's quality framework and the backbone of how AI tools evaluate whether a source is worth citing."
 				),
-				score: 9,
+				score: 7,
 				max: 14,
 			},
 			{
@@ -138,7 +143,7 @@ export const PERSPECTIVES: Record< 'human' | 'ai', ScorePerspective > = {
 				description: __(
 					'Is the content up to date? AI tools and search engines both treat stale content as a signal of lower reliability.'
 				),
-				score: 7,
+				score: 4,
 				max: 12,
 			},
 			{
@@ -146,7 +151,7 @@ export const PERSPECTIVES: Record< 'human' | 'ai', ScorePerspective > = {
 				description: __(
 					'Does the site make it unambiguous who this business is? AI knowledge graphs depend on clear, consistent entity signals across the web.'
 				),
-				score: 7,
+				score: 6,
 				max: 10,
 			},
 			{
@@ -233,7 +238,10 @@ function ScoreCard( {
 			<div className="dashboard-amplify-score-preview__card-header">
 				<ScoreIllustration type={ perspective.type } />
 				<div className="dashboard-amplify-score-preview__card-title">
-					<h4 className="dashboard-amplify-score-preview__heading">{ perspective.label }</h4>
+					<div className="dashboard-amplify-score-preview__card-heading">
+						<span className="dashboard-amplify-score-preview__label">{ perspective.label }</span>
+						<h4 className="dashboard-amplify-score-preview__heading">{ perspective.title }</h4>
+					</div>
 					<p>{ perspective.description }</p>
 				</div>
 				<strong

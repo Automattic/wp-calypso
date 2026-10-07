@@ -2,6 +2,7 @@ import { agencyQuery, activeAgencyQuery } from '@automattic/api-queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
 import { home, globe, people, tag, trendingUp, currencyDollar } from '@wordpress/icons';
+import { getFeatureName as getAmplifyFeatureName } from '../../agency/amplify/constants';
 import { SidebarExpandableMenuItem, SidebarMenuItem } from '../../components/sidebar';
 import { useAppContext } from '../context';
 import {
@@ -96,7 +97,7 @@ export default function AgencySidebar() {
 						<SidebarMenuItem to="/migrations">{ __( 'Migrations' ) }</SidebarMenuItem>
 					) }
 					{ canAccessAmplify && (
-						<SidebarMenuItem to="/amplify">{ __( 'Amplify' ) }</SidebarMenuItem>
+						<SidebarMenuItem to="/amplify">{ getAmplifyFeatureName() }</SidebarMenuItem>
 					) }
 				</SidebarExpandableMenuItem>
 			) }

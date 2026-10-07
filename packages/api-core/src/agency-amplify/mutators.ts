@@ -22,3 +22,18 @@ export async function archiveAmplifyReport(
 		body: { archived: true },
 	} );
 }
+
+/**
+ * Relaunches a failed report with the same URL and mode, updating the same row.
+ * BACKEND REQUIRED: this endpoint doesn't exist yet (A4A Linear: "Expose failure
+ * reason and add a retry endpoint"). Failed runs must not count toward `usage.used`.
+ */
+export async function retryAmplifyReport(
+	agencyId: number,
+	reportId: string
+): Promise< AmplifyReport > {
+	return wpcom.req.post( {
+		path: `/agency/${ agencyId }/amplify/reports/${ reportId }/retry`,
+		apiNamespace: 'wpcom/v2',
+	} );
+}

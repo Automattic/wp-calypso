@@ -1,4 +1,8 @@
-import { archiveAmplifyReportMutation, paginatedAgencySitesQuery } from '@automattic/api-queries';
+import {
+	archiveAmplifyReportMutation,
+	paginatedAgencySitesQuery,
+	retryAmplifyReportMutation,
+} from '@automattic/api-queries';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { Button, Modal, __experimentalHStack as HStack } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
@@ -114,6 +118,12 @@ export default function AmplifyReportsList( {
 	}, [ showSearch ] );
 	const [ reportToArchive, setReportToArchive ] = useState< AmplifyReport | null >( null );
 	const archive = useMutation( archiveAmplifyReportMutation( agencyId ) );
+	const {
+		mutate: retryReport,
+		isPending: isRetryPending,
+		variables: retryVariables,
+	} = useMutation( retryAmplifyReportMutation( agencyId ) );
+	const retryingId = isRetryPending ? retryVariables : null;
 	const firstSites = useQuery( {
 		...paginatedAgencySitesQuery( { page: 1, per_page: 20 }, agencyId ),
 		enabled: !! agencyId && reports.length > 0 && ! isPreview,
@@ -147,14 +157,24 @@ export default function AmplifyReportsList( {
 				getValue: ( { item } ) => titleFor( item ) ?? item.url,
 				render: ( { item } ) => {
 					const title = titleFor( item );
+					const failure =
+						item.status === 'failed' ? (
+							<span className="dashboard-amplify-report-site__failure">
+								{ item.failure_reason || __( 'The report didn’t finish.' ) }
+							</span>
+						) : null;
 					return title ? (
 						<span className="dashboard-amplify-report-site">
 							<strong>{ title }</strong>
 							<span className="dashboard-amplify-url">{ item.url }</span>
+							{ failure }
 						</span>
 					) : (
-						<span className="dashboard-amplify-url dashboard-amplify-url--standalone">
-							{ item.url }
+						<span className="dashboard-amplify-report-site">
+							<span className="dashboard-amplify-url dashboard-amplify-url--standalone">
+								{ item.url }
+							</span>
+							{ failure }
 						</span>
 					);
 				},
@@ -188,7 +208,7 @@ export default function AmplifyReportsList( {
 			},
 			{
 				id: 'humanScore',
-				label: __( 'First-time visitors' ),
+				label: __( 'People' ),
 				getValue: ( { item } ) => item.score.human ?? -1,
 				render: ( { item } ) =>
 					item.status === 'completed' ? (
@@ -200,7 +220,7 @@ export default function AmplifyReportsList( {
 			},
 			{
 				id: 'aiScore',
-				label: __( 'AI systems' ),
+				label: __( 'AI agents' ),
 				getValue: ( { item } ) => item.score.ai ?? -1,
 				render: ( { item } ) =>
 					item.status === 'completed' ? (
@@ -238,9 +258,34 @@ export default function AmplifyReportsList( {
 						);
 					} else if ( item.status === 'failed' ) {
 						actionContent = (
-							<span title={ item.failure_reason ?? undefined }>
-								<Badge intent="high">{ __( 'Failed' ) }</Badge>
-							</span>
+							<Button
+								variant="secondary"
+								size="compact"
+								isBusy={ retryingId === item.id }
+								disabled={ isPreview || !! retryingId }
+								accessibleWhenDisabled
+								onClick={ () => {
+									recordTracksEvent( 'calypso_a4a_amplify_report_retry_click', {
+										report_id: item.id,
+										mode: item.mode,
+									} );
+									// BACKEND REQUIRED: the retry endpoint must not count failed or
+									// timed-out runs toward `usage.used`. The success notice promises it.
+									retryReport( item.id, {
+										onSuccess: () =>
+											createSuccessNotice(
+												__( 'Report restarted. Failed reports don’t count toward your allowance.' ),
+												{ type: 'snackbar' }
+											),
+										onError: () =>
+											createErrorNotice( __( 'Could not restart the report. Please try again.' ), {
+												type: 'snackbar',
+											} ),
+									} );
+								} }
+							>
+								{ __( 'Retry' ) }
+							</Button>
 						);
 					} else {
 						actionContent = (
@@ -295,7 +340,17 @@ export default function AmplifyReportsList( {
 				enableSorting: true,
 			},
 		],
-		[ archive.isPending, isPreview, locale, recordTracksEvent, titleFor ]
+		[
+			archive.isPending,
+			createErrorNotice,
+			createSuccessNotice,
+			isPreview,
+			locale,
+			recordTracksEvent,
+			retryReport,
+			retryingId,
+			titleFor,
+		]
 	);
 
 	const { data: visibleReports, paginationInfo } = filterSortAndPaginate( reports, view, fields );
@@ -317,9 +372,7 @@ export default function AmplifyReportsList( {
 						<DataViewsEmptyStateLayout
 							title={ isFiltered ? __( 'No matching reports' ) : __( 'No reports yet' ) }
 							description={
-								isFiltered
-									? __( 'Try another search.' )
-									: __( 'Analyses you run will appear here.' )
+								isFiltered ? __( 'Try another search.' ) : __( 'Audits you run will appear here.' )
 							}
 							isBorderless
 						/>
