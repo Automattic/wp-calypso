@@ -224,8 +224,6 @@ html:has( .name-pulse-search-input ) {
 .name-pulse-row--card {
 	display: flex;
 	flex-direction: column;
-	// A wrapping column sizes its line to the longest name, so the name would
-	// overflow the card instead of truncating.
 	flex-wrap: nowrap;
 	align-items: stretch;
 	justify-content: center;
