@@ -2,15 +2,24 @@
  * @jest-environment jsdom
  */
 import { act, render, screen } from '@testing-library/react';
+import { useViewportMatch } from '@wordpress/compose';
 import { TestDomainSearch } from '../../../test-helpers/renderer';
 import { NAME_PULSE_SKELETON_TIMEOUT_MS } from '../../helpers';
 import { NamePulseResultsSection } from '../results-section';
+
+jest.mock( '@wordpress/compose', () => ( {
+	...jest.requireActual( '@wordpress/compose' ),
+	useViewportMatch: jest.fn(),
+} ) );
+
+const mockUseViewportMatch = jest.mocked( useViewportMatch );
 
 const skeletonCount = () => document.querySelectorAll( '.name-pulse-row--skeleton' ).length;
 
 describe( 'NamePulseResultsSection', () => {
 	beforeEach( () => {
 		jest.useFakeTimers();
+		mockUseViewportMatch.mockReturnValue( false );
 	} );
 
 	afterEach( () => {
@@ -65,6 +74,29 @@ describe( 'NamePulseResultsSection', () => {
 		expect(
 			document.querySelectorAll( '.name-pulse-row--skeleton.name-pulse-row--card' )
 		).toHaveLength( 3 );
+	} );
+
+	it( 'keeps the table layout for the card variant on phones', () => {
+		mockUseViewportMatch.mockImplementation(
+			( breakpoint, operator ) => breakpoint === 'small' && operator === '<'
+		);
+
+		render(
+			<TestDomainSearch>
+				<NamePulseResultsSection
+					id="top"
+					title="Top results"
+					results={ [] }
+					isLoading
+					skeletonCount={ 3 }
+					variant="card"
+				/>
+			</TestDomainSearch>
+		);
+
+		expect( skeletonCount() ).toBe( 3 );
+		expect( document.querySelector( '.name-pulse-grid--cards' ) ).not.toBeInTheDocument();
+		expect( document.querySelector( '.name-pulse-row--card' ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'keeps the table layout by default', () => {

@@ -220,8 +220,8 @@ html:has( .name-pulse-search-input ) {
 }
 
 // The name sits above the price, and the cart button closes the price line.
-// Phones keep this layout, so it outranks the row's phone grid above.
-.name-pulse-row.name-pulse-row--card {
+// Phones get the table row instead, so this never meets the row's phone grid.
+.name-pulse-row--card {
 	display: flex;
 	flex-direction: column;
 	align-items: stretch;
@@ -232,10 +232,6 @@ html:has( .name-pulse-search-input ) {
 
 	.name-pulse-row__name {
 		flex: none;
-	}
-
-	.name-pulse-row__status {
-		display: flex;
 	}
 
 	.name-pulse-row__cart {
