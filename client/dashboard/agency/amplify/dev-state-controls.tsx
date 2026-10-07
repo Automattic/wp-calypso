@@ -1,11 +1,20 @@
 import { __ } from '@wordpress/i18n';
 import { useEffect, useRef, useState } from 'react';
-import type { AmplifyMode, AmplifyReport } from '@automattic/api-core';
+import type {
+	AgencyApprovalStatus,
+	AgencyTierId,
+	AmplifyMode,
+	AmplifyReport,
+	AmplifyUsage,
+} from '@automattic/api-core';
 import './dev-state-controls.scss';
 
 export type AmplifyPreviewMode = 'live' | 'first' | 'one' | 'dozens' | 'loading' | 'error';
+export type AmplifyUsagePreview =
+	'live' | 'fresh' | 'low' | 'cap-activated' | 'cap-partner' | 'pending' | 'rejected';
 type Settings = {
 	mode: AmplifyPreviewMode;
+	usage: AmplifyUsagePreview;
 	x: number;
 	y: number;
 	collapsed: boolean;
@@ -15,11 +24,75 @@ const STORAGE_KEY = 'a4a-amplify-dev-state-controls-v1';
 const PANEL_WIDTH = 224;
 const DEFAULT_SETTINGS: Settings = {
 	mode: 'live',
+	usage: 'live',
 	x: 16,
 	y: 16,
 	collapsed: false,
 };
 const MODES: AmplifyPreviewMode[] = [ 'live', 'first', 'one', 'dozens', 'loading', 'error' ];
+const USAGE_PREVIEWS: { value: AmplifyUsagePreview; label: string }[] = [
+	{ value: 'live', label: __( 'Live usage' ) },
+	{ value: 'fresh', label: __( 'Plenty left (3 of 15)' ) },
+	{ value: 'low', label: __( 'Running low (13 of 15)' ) },
+	{ value: 'cap-activated', label: __( 'At cap, Account activated' ) },
+	{ value: 'cap-partner', label: __( 'At cap, Agency Partner+' ) },
+	{ value: 'pending', label: __( 'Awaiting review' ) },
+	{ value: 'rejected', label: __( 'Not approved' ) },
+];
+
+function firstOfNextMonthUtc() {
+	const now = new Date();
+	return new Date( Date.UTC( now.getUTCFullYear(), now.getUTCMonth() + 1, 1 ) ).toISOString();
+}
+
+export function makePreviewUsage( preview: AmplifyUsagePreview ): {
+	usage: AmplifyUsage;
+	tierId: AgencyTierId | undefined;
+	approvalStatus: AgencyApprovalStatus;
+} | null {
+	const resets_at = firstOfNextMonthUtc();
+	const approved = 'approved' as const;
+	switch ( preview ) {
+		case 'fresh':
+			return {
+				usage: { used: 3, limit: 15, resets_at },
+				tierId: 'agency-partner',
+				approvalStatus: approved,
+			};
+		case 'low':
+			return {
+				usage: { used: 13, limit: 15, resets_at },
+				tierId: 'agency-partner',
+				approvalStatus: approved,
+			};
+		case 'cap-activated':
+			return {
+				usage: { used: 5, limit: 5, resets_at },
+				tierId: 'emerging-partner',
+				approvalStatus: approved,
+			};
+		case 'cap-partner':
+			return {
+				usage: { used: 15, limit: 15, resets_at },
+				tierId: 'agency-partner',
+				approvalStatus: approved,
+			};
+		case 'pending':
+			return {
+				usage: { used: 0, limit: 5, resets_at },
+				tierId: 'emerging-partner',
+				approvalStatus: 'pending',
+			};
+		case 'rejected':
+			return {
+				usage: { used: 0, limit: 0, resets_at },
+				tierId: undefined,
+				approvalStatus: 'rejected',
+			};
+		default:
+			return null;
+	}
+}
 
 function clamp( value: number, max: number ) {
 	return Math.max( 0, Math.min( value, max ) );
@@ -39,6 +112,9 @@ function readSettings(): Settings {
 		}
 		return {
 			mode: MODES.includes( savedMode ) ? savedMode : DEFAULT_SETTINGS.mode,
+			usage: USAGE_PREVIEWS.some( ( option ) => option.value === saved.usage )
+				? saved.usage
+				: DEFAULT_SETTINGS.usage,
 			x: Number.isFinite( saved.x )
 				? clamp( saved.x, window.innerWidth - PANEL_WIDTH )
 				: DEFAULT_SETTINGS.x,
@@ -97,9 +173,15 @@ export function makePreviewReports( count: number ): AmplifyReport[] {
 	return Array.from( { length: count }, ( _, index ): AmplifyReport => {
 		const createdAt = new Date( Date.now() - index * 86_400_000 ).toISOString();
 		const hostname = exampleSites[ index % exampleSites.length ];
+		let status: AmplifyReport[ 'status' ] = 'completed';
+		if ( count > 1 && index === 1 ) {
+			status = 'in_progress';
+		} else if ( count > 1 && index === 2 ) {
+			status = 'failed';
+		}
 		return {
 			id: `amplify-preview-${ index + 1 }`,
-			status: 'completed',
+			status,
 			url: `https://${ hostname }`,
 			site_title: hostname,
 			mode: modes[ index % modes.length ],
@@ -112,7 +194,8 @@ export function makePreviewReports( count: number ): AmplifyReport[] {
 			},
 			pdf_url: null,
 			archived: false,
-			failure_reason: null,
+			failure_reason:
+				status === 'failed' ? 'The site took too long to load, so the audit timed out.' : null,
 		};
 	} );
 }
@@ -207,6 +290,25 @@ export default function AmplifyDevStateControls( {
 						) ) }
 					</div>
 				</fieldset>
+				<fieldset>
+					<legend>{ __( 'Usage' ) }</legend>
+					<div className="dashboard-amplify-dev-controls__choices">
+						{ USAGE_PREVIEWS.map( ( option ) => (
+							<label key={ option.value }>
+								<input
+									type="radio"
+									name="amplify-dev-usage"
+									value={ option.value }
+									checked={ settings.usage === option.value }
+									onChange={ () =>
+										onChange( ( previous ) => ( { ...previous, usage: option.value } ) )
+									}
+								/>
+								{ option.label }
+							</label>
+						) ) }
+					</div>
+				</fieldset>
 				<button
 					type="button"
 					className="dashboard-amplify-dev-controls__reset"
@@ -214,6 +316,7 @@ export default function AmplifyDevStateControls( {
 						onChange( ( previous ) => ( {
 							...previous,
 							mode: 'live',
+							usage: 'live',
 						} ) )
 					}
 				>

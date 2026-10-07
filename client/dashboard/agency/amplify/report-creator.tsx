@@ -2,16 +2,19 @@ import { startAmplifyReportMutation } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
 import { RadioControl, Spinner, __experimentalHeading as Heading } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { Text } from '../../components/text';
+import { getReportTiming } from './constants';
 import AmplifyOverviewStory from './overview-story';
 import { WebsiteAddressPicker, getStartErrorMessage } from './scan-form';
 import AmplifyScorePreview from './score-preview';
 import { normalizeAmplifyUrl } from './url';
+import { AmplifyScansLeft } from './usage-meter';
 import type { SiteOption } from './scan-form';
+import type { AmplifyUsageStatus } from './usage';
 import type { AmplifyMode, AmplifyUsage } from '@automattic/api-core';
 
 const REPORT_MODES: {
@@ -21,18 +24,18 @@ const REPORT_MODES: {
 }[] = [
 	{
 		value: 'full',
-		label: __( 'Full report' ),
-		description: __( 'First-time visitors and AI systems in one report.' ),
+		label: __( 'Full' ),
+		description: __( 'The complete picture for your pitch.' ),
 	},
 	{
 		value: 'human',
 		label: __( 'First-time visitors' ),
-		description: __( 'How the site comes across to someone seeing it for the first time.' ),
+		description: __( 'Trust, clarity, and what builds confidence.' ),
 	},
 	{
 		value: 'ai',
-		label: __( 'AI systems' ),
-		description: __( 'How AI tools like ChatGPT and Perplexity read and rank the site.' ),
+		label: __( 'AI agents' ),
+		description: __( 'How ChatGPT, Perplexity, and others read and rank the site.' ),
 	},
 ];
 
@@ -55,12 +58,12 @@ export function AmplifyOverviewIntro( {
 			</div>
 			<div className="dashboard-amplify-overview__intro">
 				<Heading id="dashboard-amplify-title" level={ 2 }>
-					{ __( 'Win your next client with a homepage analysis' ) }
+					{ __( 'Turn a prospect’s homepage into your next winning pitch' ) }
 				</Heading>
 				<div className="dashboard-amplify-overview__summary">
 					<Text>
 						{ __(
-							'Enter any public homepage. You get a branded report on what’s holding it back and how you’d fix it, ready for the pitch.'
+							'Website visitors leave when their questions go unanswered, and AI agents skip sites they can’t parse. Our audit covers both audiences and gives you a report of what to fix, so you can approach prospective clients with a winning pitch.'
 						) }
 					</Text>
 				</div>
@@ -71,23 +74,33 @@ export function AmplifyOverviewIntro( {
 
 export default function AmplifyReportCreator( {
 	agencyId,
+	canScan = true,
 	usage,
+	usageStatus = 'unknown',
+	limitNotice,
 	initialUrl = '',
 	initialMode = 'full',
 	isModal = false,
 	onCreated,
+	onUsageError,
 }: {
 	agencyId: number;
+	/** False at the monthly cap, while awaiting review, or when not approved. */
+	canScan?: boolean;
 	usage?: AmplifyUsage;
+	usageStatus?: AmplifyUsageStatus;
+	/** Awaiting review, not approved, or cap notice, shown above the form. */
+	limitNotice?: React.ReactNode;
 	initialUrl?: string;
 	initialMode?: AmplifyMode;
 	isModal?: boolean;
 	onCreated: () => void;
+	/** Called when the API rejects an audit for usage reasons, so the page can refresh usage. */
+	onUsageError?: ( code: string ) => void;
 } ) {
 	const { recordTracksEvent } = useAnalytics();
 	const { createSuccessNotice } = useDispatch( noticesStore );
 	const start = useMutation( startAmplifyReportMutation( agencyId ) );
-	const atLimit = !! usage && usage.used >= usage.limit;
 	const [ urlInput, setUrlInput ] = useState( initialUrl );
 	const [ urlError, setUrlError ] = useState( '' );
 	const [ selectedSite, setSelectedSite ] = useState< string | null >( null );
@@ -102,8 +115,7 @@ export default function AmplifyReportCreator( {
 			setUrlError( __( 'Enter a valid public website URL.' ) );
 			return;
 		}
-		if ( atLimit ) {
-			setUrlError( __( 'You’ve reached the current scan limit. Please try again later.' ) );
+		if ( ! canScan ) {
 			return;
 		}
 		setUrlError( '' );
@@ -115,12 +127,27 @@ export default function AmplifyReportCreator( {
 			{ url, mode },
 			{
 				onSuccess: () => {
-					createSuccessNotice( __( 'Analysis started. Your report is being built.' ), {
-						type: 'snackbar',
-					} );
+					createSuccessNotice(
+						sprintf(
+							/* translators: %s: how long a report takes, e.g. "10 to 20 minutes" */
+							__( 'Audit started. Your report will be ready in %s.' ),
+							getReportTiming()
+						),
+						{ type: 'snackbar' }
+					);
 					onCreated();
 				},
-				onError: ( error ) => setUrlError( getStartErrorMessage( error ) ),
+				onError: ( error ) => {
+					const code = ( error as { code?: string } )?.code;
+					if (
+						code === 'amplify_report_limit_reached' ||
+						code === 'amplify_report_rate_limited' ||
+						code === 'amplify_account_not_activated'
+					) {
+						onUsageError?.( code );
+					}
+					setUrlError( getStartErrorMessage( error ) );
+				},
 			}
 		);
 	};
@@ -136,17 +163,18 @@ export default function AmplifyReportCreator( {
 				<div className="dashboard-amplify-overview__modal-summary">
 					<Text>
 						{ __(
-							'Analyze any public homepage for first-time visitors, AI systems, or both. Get category scores and practical next steps to share with a client.'
+							'Audit any public homepage for first-time visitors, AI agents, or both, and get a report of what to fix for your pitch.'
 						) }
 					</Text>
 				</div>
 			) }
+			{ limitNotice && <div className="dashboard-amplify-overview__limit">{ limitNotice }</div> }
 			<form className="dashboard-amplify-overview__url-form" onSubmit={ handleSubmit }>
 				<div className="dashboard-amplify-overview__url-row">
 					<WebsiteAddressPicker
 						agencyId={ agencyId }
-						label={ __( 'Homepage' ) }
-						placeholder={ __( 'Enter a URL or choose a client site' ) }
+						label={ __( 'Enter a publicly accessible URL' ) }
+						placeholder={ __( 'yourgroovydomain.com' ) }
 						idPrefix="amplify-report-connected-site"
 						value={ urlInput }
 						selectedSite={ selectedSite }
@@ -172,7 +200,7 @@ export default function AmplifyReportCreator( {
 						type="submit"
 						className="components-button is-primary dashboard-amplify-overview__submit"
 						aria-busy={ start.isPending }
-						disabled={ start.isPending || ! agencyId || atLimit }
+						disabled={ start.isPending || ! agencyId || ! canScan }
 					>
 						{ start.isPending ? <Spinner /> : __( 'Create report' ) }
 					</button>
@@ -182,11 +210,7 @@ export default function AmplifyReportCreator( {
 						{ urlError }
 					</p>
 				) }
-				{ atLimit && ! urlError && (
-					<p className="dashboard-amplify-overview__url-error" role="status">
-						{ __( 'You’ve reached the current scan limit. Please try again later.' ) }
-					</p>
-				) }
+				<AmplifyScansLeft usage={ usage } status={ usageStatus } />
 			</form>
 			<RadioControl
 				className="dashboard-amplify-overview__mode-options"

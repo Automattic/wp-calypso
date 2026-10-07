@@ -1,6 +1,7 @@
 import {
 	archiveAmplifyReport,
 	fetchAmplifyReports,
+	retryAmplifyReport,
 	startAmplifyReport,
 } from '@automattic/api-core';
 import { mutationOptions, queryOptions } from '@tanstack/react-query';
@@ -55,6 +56,27 @@ export const archiveAmplifyReportMutation = ( agencyId: number ) =>
 				( previous ) =>
 					previous
 						? { ...previous, reports: previous.reports.filter( ( item ) => item.id !== report.id ) }
+						: previous
+			);
+			queryClient.invalidateQueries( { queryKey: amplifyReportsQuery( agencyId ).queryKey } );
+		},
+	} );
+
+export const retryAmplifyReportMutation = ( agencyId: number ) =>
+	mutationOptions( {
+		meta: { statId: 'agcy-amplify-report-retry' },
+		mutationFn: ( reportId: string ) => retryAmplifyReport( agencyId, reportId ),
+		onSuccess: ( report ) => {
+			queryClient.setQueryData< AmplifyReportsResponse >(
+				amplifyReportsQuery( agencyId ).queryKey,
+				( previous ) =>
+					previous
+						? {
+								...previous,
+								reports: previous.reports.map( ( item ) =>
+									item.id === report.id ? report : item
+								),
+							}
 						: previous
 			);
 			queryClient.invalidateQueries( { queryKey: amplifyReportsQuery( agencyId ).queryKey } );

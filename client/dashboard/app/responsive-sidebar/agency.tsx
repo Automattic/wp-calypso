@@ -2,6 +2,7 @@ import { agencyQuery, activeAgencyQuery } from '@automattic/api-queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
 import { home, globe, people, tag, trendingUp, currencyDollar } from '@wordpress/icons';
+import { getFeatureName as getAmplifyFeatureName } from '../../agency/amplify/constants';
 import { crossoverLinkProps } from '../../agency/crossover/store';
 import { canSwitchAgencyDashboard } from '../../agency/lib/dashboard-opt-in';
 import { isAgencyApproved } from '../../agency/marketplace/is-agency-approved';
@@ -107,7 +108,7 @@ export default function AgencySidebar() {
 						<SidebarMenuItem to="/migrations">{ __( 'Migrations' ) }</SidebarMenuItem>
 					) }
 					{ canAccessAmplify && (
-						<SidebarMenuItem to="/amplify">{ __( 'Amplify' ) }</SidebarMenuItem>
+						<SidebarMenuItem to="/amplify">{ getAmplifyFeatureName() }</SidebarMenuItem>
 					) }
 				</SidebarExpandableMenuItem>
 			) }
