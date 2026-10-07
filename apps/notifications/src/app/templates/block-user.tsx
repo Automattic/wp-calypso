@@ -7,16 +7,13 @@ import {
 } from '@wordpress/components';
 import { Fragment } from 'react';
 import { useSelector } from 'react-redux';
+import { isPeopleListNote } from '../../panel/helpers/notes';
 import getIsNoteApproved from '../../panel/state/selectors/get-is-note-approved';
 import { useAppContext } from '../context';
 import NoteIcon from '../note-icon';
 import FollowLink, { followStatTypes } from './follow-link';
 import type { Note, Block } from '../types';
 import type { ReactElement } from 'react';
-
-// Notes whose body is a list of the people who acted.
-export const isPeopleListNote = ( note: Note ) =>
-	[ 'like', 'comment_like', 'follow' ].includes( note.type );
 
 function getDisplayURL( url: string ) {
 	const parser = document.createElement( 'a' );

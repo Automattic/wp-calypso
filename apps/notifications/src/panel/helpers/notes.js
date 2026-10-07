@@ -57,3 +57,12 @@ export function getModerateCommentsLink( note ) {
 export function getNewPostLink( note ) {
 	return getActionBlock( note.body ).new_post_link;
 }
+
+/**
+ * Whether a note's body is a list of the people who acted
+ * @param note
+ * @returns {boolean}
+ */
+export function isPeopleListNote( note ) {
+	return [ 'like', 'comment_like', 'follow' ].includes( note.type );
+}

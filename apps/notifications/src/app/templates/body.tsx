@@ -10,7 +10,7 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useState, useEffect, useMemo } from 'react';
 import { useSelector } from 'react-redux';
-import { getModerateCommentsLink } from '../../panel/helpers/notes';
+import { getModerateCommentsLink, isPeopleListNote } from '../../panel/helpers/notes';
 import { html } from '../../panel/indices-to-html';
 import { bumpStat } from '../../panel/rest-client/bump-stat';
 import { wpcom } from '../../panel/rest-client/wpcom';
@@ -20,7 +20,7 @@ import NoteActions from './actions';
 import Comment from './block-comment';
 import Post from './block-post';
 import PromptBlock from './block-prompt';
-import User, { isPeopleListNote } from './block-user';
+import User from './block-user';
 import NotePreface from './preface';
 import type { Note, Block, BlockWithSignature } from '../types';
 
