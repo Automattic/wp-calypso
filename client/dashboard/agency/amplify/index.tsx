@@ -135,7 +135,7 @@ export default function AgencyAmplify() {
 				<PageHeader
 					title={ getFeatureName() }
 					description={ __(
-						'Audit a prospective client’s homepage, spot the problems, and pitch the solutions.'
+						'Win more business by auditing a prospect’s homepage, spotting the problems, and pitching the fix.'
 					) }
 					actions={
 						state !== 'empty' ? (
