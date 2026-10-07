@@ -158,7 +158,7 @@ const Note = ( { isDismissible, noteId, setSelectedNoteId, noteNavigation }: Not
 						</>
 					) }
 					<div className={ getClasses( { note, isPendingApproval, isRead } ) }>
-						<NoteBody note={ note } />
+						<NoteBody note={ note } isCompact={ note.type !== 'comment' } />
 					</div>
 				</VStack>
 			</CardBody>
