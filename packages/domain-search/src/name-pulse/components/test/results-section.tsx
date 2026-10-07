@@ -46,4 +46,42 @@ describe( 'NamePulseResultsSection', () => {
 		expect( skeletonCount() ).toBe( 0 );
 		expect( screen.queryByText( 'More suggestions' ) ).not.toBeInTheDocument();
 	} );
+
+	it( 'lays the skeleton slots out as cards in the card variant', () => {
+		render(
+			<TestDomainSearch>
+				<NamePulseResultsSection
+					id="top"
+					title="Top results"
+					results={ [] }
+					isLoading
+					skeletonCount={ 3 }
+					variant="card"
+				/>
+			</TestDomainSearch>
+		);
+
+		expect( document.querySelector( '.name-pulse-grid--cards' ) ).toBeInTheDocument();
+		expect(
+			document.querySelectorAll( '.name-pulse-row--skeleton.name-pulse-row--card' )
+		).toHaveLength( 3 );
+	} );
+
+	it( 'keeps the table layout by default', () => {
+		render(
+			<TestDomainSearch>
+				<NamePulseResultsSection
+					id="suggestions"
+					title="More suggestions"
+					results={ [] }
+					isLoading
+					skeletonCount={ 3 }
+				/>
+			</TestDomainSearch>
+		);
+
+		expect( document.querySelector( '.name-pulse-grid' ) ).toBeInTheDocument();
+		expect( document.querySelector( '.name-pulse-grid--cards' ) ).not.toBeInTheDocument();
+		expect( document.querySelector( '.name-pulse-row--card' ) ).not.toBeInTheDocument();
+	} );
 } );

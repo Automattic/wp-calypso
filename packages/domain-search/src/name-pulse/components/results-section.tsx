@@ -3,13 +3,18 @@ import {
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
+import clsx from 'clsx';
 import { useEffect, useState } from 'react';
 import {
 	NAME_PULSE_PAGE_SIZE,
 	NAME_PULSE_SKELETON_TIMEOUT_MS,
 	type NamePulseDomainResult,
 } from '../helpers';
-import { NamePulseResultRow, NamePulseResultRowSkeleton } from './result-row';
+import {
+	NamePulseResultRow,
+	NamePulseResultRowSkeleton,
+	type NamePulseResultRowVariant,
+} from './result-row';
 
 interface NamePulseResultsSectionProps {
 	id: string;
@@ -23,6 +28,8 @@ interface NamePulseResultsSectionProps {
 	showMoreLabel?: string;
 	/** Rows revealed by "Show more", so the caller can check their availability. */
 	onReveal?: ( rows: NamePulseDomainResult[] ) => void;
+	/** `card` lays each result out as its own larger card instead of a table row. */
+	variant?: NamePulseResultRowVariant;
 }
 
 export const NamePulseResultsSection = ( {
@@ -34,6 +41,7 @@ export const NamePulseResultsSection = ( {
 	skeletonCount = NAME_PULSE_PAGE_SIZE,
 	showMoreLabel,
 	onReveal,
+	variant = 'row',
 }: NamePulseResultsSectionProps ) => {
 	const [ visibleCount, setVisibleCount ] = useState( NAME_PULSE_PAGE_SIZE );
 	const [ skeletonsTimedOut, setSkeletonsTimedOut ] = useState( false );
@@ -70,15 +78,18 @@ export const NamePulseResultsSection = ( {
 					{ title }
 				</Text>
 			) }
-			<div className="name-pulse-grid" role="list">
+			<div
+				className={ clsx( 'name-pulse-grid', variant === 'card' && 'name-pulse-grid--cards' ) }
+				role="list"
+			>
 				{ visible.map( ( result, index ) => (
 					<div role="listitem" key={ result.domain_name }>
-						<NamePulseResultRow result={ result } position={ index } />
+						<NamePulseResultRow result={ result } position={ index } variant={ variant } />
 					</div>
 				) ) }
 				{ Array.from( { length: skeletons }, ( _, index ) => (
 					<div role="listitem" key={ `skeleton-${ index }` }>
-						<NamePulseResultRowSkeleton />
+						<NamePulseResultRowSkeleton variant={ variant } />
 					</div>
 				) ) }
 			</div>

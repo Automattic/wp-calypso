@@ -21,12 +21,21 @@ import { useNamePulseLabelLimit } from '../hooks/use-name-pulse-label-limit';
 import { setNamePulseVerdict } from '../hooks/use-name-pulse-verdicts';
 import { NamePulsePolicyNoticeDialog } from './policy-notice-dialog';
 
+export type NamePulseResultRowVariant = 'row' | 'card';
+
 interface NamePulseResultRowProps {
 	result: NamePulseDomainResult;
 	position: number;
+	variant?: NamePulseResultRowVariant;
 }
 
-const Price = ( { result }: { result: NamePulseDomainResult } ) => {
+const Price = ( {
+	result,
+	variant,
+}: {
+	result: NamePulseDomainResult;
+	variant: NamePulseResultRowVariant;
+} ) => {
 	const { __ } = useI18n();
 	const { cost, raw_price: rawPrice, currency_code: currencyCode } = result;
 	const yearlyPrice =
@@ -40,6 +49,39 @@ const Price = ( { result }: { result: NamePulseDomainResult } ) => {
 
 	const salePrice = getNamePulseSalePrice( result );
 	const isSale = !! salePrice;
+	const renewal =
+		isSale &&
+		sprintf(
+			// translators: %(price)s is the domain renewal price.
+			__( '%(price)s/year renewal' ),
+			{ price: yearlyPrice }
+		);
+
+	// A card has room for the whole offer on one line: the regular price struck
+	// through, the sale price, and the renewal price after it.
+	if ( variant === 'card' ) {
+		return (
+			<span className="name-pulse-row__price name-pulse-row__price--card">
+				{ isSale && (
+					<Text as="s" size={ 16 } variant="muted">
+						{ yearlyPrice }
+					</Text>
+				) }
+				<Text
+					size={ 16 }
+					color={ isSale ? 'var( --domain-search-promotional-price-color )' : undefined }
+				>
+					{ salePrice ?? yearlyPrice }
+				</Text>
+				<Text size={ 13 }>{ isSale ? __( '/first year' ) : __( '/year' ) }</Text>
+				{ renewal && (
+					<Text size={ 12 } variant="muted">
+						{ renewal }
+					</Text>
+				) }
+			</span>
+		);
+	}
 
 	return (
 		<span className={ clsx( 'name-pulse-row__price', isSale && 'name-pulse-row__price--sale' ) }>
@@ -54,20 +96,20 @@ const Price = ( { result }: { result: NamePulseDomainResult } ) => {
 					{ isSale ? __( '/first year' ) : __( '/year' ) }
 				</Text>
 			</span>
-			{ isSale && (
+			{ renewal && (
 				<Text size={ 12 } variant="muted">
-					{ sprintf(
-						// translators: %(price)s is the domain renewal price.
-						__( '%(price)s/year renewal' ),
-						{ price: yearlyPrice }
-					) }
+					{ renewal }
 				</Text>
 			) }
 		</span>
 	);
 };
 
-export const NamePulseResultRow = ( { result, position }: NamePulseResultRowProps ) => {
+export const NamePulseResultRow = ( {
+	result,
+	position,
+	variant = 'row',
+}: NamePulseResultRowProps ) => {
 	const { __ } = useI18n();
 	const { queries } = useDomainSearch();
 	const queryClient = useQueryClient();
@@ -134,22 +176,29 @@ export const NamePulseResultRow = ( { result, position }: NamePulseResultRowProp
 		closePolicyNotice,
 	} = useNamePulseCartToggle( domainName, position, row.policy_notices );
 	const { nameRef, labelRef, limit: labelLimit } = useNamePulseLabelLimit( label );
+	const isCard = variant === 'card';
+	const nameSize = isCard ? 20 : undefined;
 	const suffixText = (
-		<Text as="span" weight={ 600 } variant={ isUnavailable ? 'muted' : undefined }>
+		<Text
+			as="span"
+			size={ nameSize }
+			weight={ isCard ? 400 : 600 }
+			variant={ isUnavailable ? 'muted' : undefined }
+		>
 			{ suffix ? `.${ suffix }` : '' }
 		</Text>
 	);
 
 	return (
 		<div
-			className="name-pulse-row"
+			className={ clsx( 'name-pulse-row', isCard && 'name-pulse-row--card' ) }
 			data-domain={ domainName }
 			data-status={ NamePulseDomainStatus[ status ].toLowerCase() }
 		>
 			<span ref={ nameRef } className="name-pulse-row__name">
 				{ wrapName ? (
 					<span className="name-pulse-row__domain name-pulse-row__domain--wrap">
-						<Text as="span" variant="muted">
+						<Text as="span" size={ nameSize } variant="muted">
 							{ label }
 						</Text>
 						<wbr />
@@ -161,6 +210,7 @@ export const NamePulseResultRow = ( { result, position }: NamePulseResultRowProp
 							<Text
 								ref={ labelRef }
 								as="span"
+								size={ nameSize }
 								variant="muted"
 								truncate
 								ellipsizeMode="middle"
@@ -191,7 +241,7 @@ export const NamePulseResultRow = ( { result, position }: NamePulseResultRowProp
 						aria-label={ __( 'Checking price…' ) }
 					/>
 				) }
-				{ isAvailable && ! isPremiumPriceMissing && <Price result={ row } /> }
+				{ isAvailable && ! isPremiumPriceMissing && <Price result={ row } variant={ variant } /> }
 				{ error && (
 					<Tooltip delay={ 0 } text={ error.message } placement="top">
 						<Button
@@ -242,8 +292,19 @@ export const NamePulseResultRow = ( { result, position }: NamePulseResultRowProp
 	);
 };
 
-export const NamePulseResultRowSkeleton = () => (
-	<div className="name-pulse-row name-pulse-row--skeleton" aria-hidden="true">
+export const NamePulseResultRowSkeleton = ( {
+	variant = 'row',
+}: {
+	variant?: NamePulseResultRowVariant;
+} ) => (
+	<div
+		className={ clsx(
+			'name-pulse-row',
+			'name-pulse-row--skeleton',
+			variant === 'card' && 'name-pulse-row--card'
+		) }
+		aria-hidden="true"
+	>
 		<span className="name-pulse-row__skeleton name-pulse-row__skeleton--name" />
 		<span className="name-pulse-row__skeleton" />
 	</div>
