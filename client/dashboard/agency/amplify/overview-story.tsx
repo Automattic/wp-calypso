@@ -9,6 +9,13 @@ import { severityFor } from './score-severity';
 
 const FAQS = [
 	{
+		id: 'any-platform',
+		question: __( 'Do sites need to be on WordPress?' ),
+		answer: __(
+			'Nope! The audit works on any platform. It looks at the page’s visible design and front-end code, so the only requirement is that the site is public.'
+		),
+	},
+	{
 		id: 'site-access',
 		question: __( 'Do I need access to the site?' ),
 		answer: __(
