@@ -1,4 +1,4 @@
-import { DotcomFeatures, HostingFeatures, fetchTwoStep } from '@automattic/api-core';
+import { DotcomFeatures, HostingFeatures } from '@automattic/api-core';
 import {
 	activeAgencyQuery,
 	agencyDevSiteLicenseQuery,
@@ -81,11 +81,14 @@ import {
 	canTransferSite,
 	canViewHundredYearPlanSettings,
 } from '../../sites/features';
-import { reauthRequiredLink } from '../../utils/link';
 import { hasHostingFeature, hasPlanFeature } from '../../utils/site-features';
 import { getSiteTypeFeatureSupports } from '../../utils/site-type-feature-support';
 import { AUTH_QUERY_KEY } from '../auth';
-import { dashboardRedirect, redirectAsNotAllowed } from './redirect';
+import {
+	dashboardRedirect,
+	redirectAsNotAllowed,
+	redirectIfTwoStepReauthRequired,
+} from './redirect';
 import { rootRoute } from './root';
 import type { HostingSection, ReferHostingType } from '../../agency/marketplace/paths';
 import type { AgencySupports } from '../context';
@@ -1435,7 +1438,14 @@ export const agencySiteSettingsRoute = createRoute( {
 
 		// Keep the router in sync with the sidebar, which only offers Settings
 		// to users with manage_options on the site.
-		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+		let site;
+		try {
+			site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+		} catch {
+			// Do nothing and propagate the error through the loader function.
+			return;
+		}
+
 		if ( ! site.capabilities?.manage_options ) {
 			throw redirectAsNotAllowed( { to: `/sites/${ siteSlug }` } );
 		}
@@ -1502,10 +1512,7 @@ const agencySiteSettingsAIToolsRoute = createRoute( {
 		}
 
 		if ( cause === 'enter' ) {
-			const twoStep = await fetchTwoStep();
-			if ( twoStep.two_step_reauthorization_required ) {
-				throw dashboardRedirect( { href: reauthRequiredLink(), reloadDocument: true } );
-			}
+			await redirectIfTwoStepReauthRequired();
 		}
 	},
 	loader: async ( { params: { siteSlug } } ) => {
