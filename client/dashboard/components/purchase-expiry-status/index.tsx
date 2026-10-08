@@ -63,9 +63,11 @@ function UrgentExpiryStatus( {
 	copy,
 	hasExpired,
 	untranslatedFallbackText,
+	isInsideLink,
 }: {
 	purchase: Purchase;
 	copy: ExpiryStatusCopy;
+	isInsideLink?: boolean;
 
 	/**
 	 * Whether `copy` describes a lapsed subscription rather than one still
@@ -106,7 +108,7 @@ function UrgentExpiryStatus( {
 		purchase.bill_period_days === SubscriptionBillPeriod.PLAN_MONTHLY_PERIOD
 			? EXPIRY_ERROR_DAYS
 			: EXPIRY_WARNING_DAYS;
-	const isRenewalWorthOffering = canRenew && daysUntilExpiry <= renewalWindowDays;
+	const isRenewalWorthOffering = ! isInsideLink && canRenew && daysUntilExpiry <= renewalWindowDays;
 
 	const expiryText = copy.text ?? untranslatedFallbackText;
 
@@ -147,9 +149,13 @@ function UrgentExpiryStatus( {
 export function PurchaseExpiryStatus( {
 	purchase,
 	isSiteMissing,
+	isInsideLink,
 }: {
 	purchase: Purchase;
 	isSiteMissing?: boolean;
+
+	/** Rendered inside a link, so it must not render links of its own. */
+	isInsideLink?: boolean;
 } ) {
 	const locale = useLocale();
 	const { setShowHelpCenter } = useHelpCenter();
@@ -237,7 +243,11 @@ export function PurchaseExpiryStatus( {
 				'This product is an in-app purchase. You can manage it from within <managePurchase>the app store</managePurchase>.'
 			),
 			{
-				managePurchase: <a href={ purchase.iap_purchase_management_link } />,
+				managePurchase: isInsideLink ? (
+					<span />
+				) : (
+					<a href={ purchase.iap_purchase_management_link } />
+				),
 			}
 		);
 	}
@@ -447,6 +457,7 @@ export function PurchaseExpiryStatus( {
 				copy={ copy }
 				hasExpired={ false }
 				untranslatedFallbackText={ untranslatedFallbackText }
+				isInsideLink={ isInsideLink }
 			/>
 		);
 	}
@@ -463,6 +474,7 @@ export function PurchaseExpiryStatus( {
 				purchase={ purchase }
 				copy={ getExpiredCopy( new Date( purchase.expiry_date ) ) }
 				hasExpired
+				isInsideLink={ isInsideLink }
 			/>
 		);
 	}
