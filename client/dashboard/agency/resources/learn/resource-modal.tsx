@@ -8,7 +8,7 @@ import {
 } from '@wordpress/components';
 import { useReducedMotion, useViewportMatch } from '@wordpress/compose';
 import { __, isRTL } from '@wordpress/i18n';
-import { chevronLeft, chevronRight, closeSmall } from '@wordpress/icons';
+import { check, chevronLeft, chevronRight, closeSmall } from '@wordpress/icons';
 import { useLayoutEffect, useRef } from 'react';
 import ResourceBadges from './resource-badges';
 import ResourcePreview from './resource-preview';
@@ -22,6 +22,8 @@ interface ResourceModalProps {
 	onNext?: () => void;
 	onOpen: ( resource: AgencyEnablementResource ) => void;
 	onFilter: FilterResources;
+	isRead: boolean;
+	onToggleRead: () => void;
 	/** Where the modal was opened from, so it can grow out of that card or row. */
 	origin?: DOMRect;
 }
@@ -37,6 +39,8 @@ export default function ResourceModal( {
 	onNext,
 	onOpen,
 	onFilter,
+	isRead,
+	onToggleRead,
 	origin,
 }: ResourceModalProps ) {
 	// Previous points back along the reading direction, so it swaps in RTL.
@@ -168,7 +172,7 @@ export default function ResourceModal( {
 						</Text>
 					</VStack>
 					<ResourceBadges resource={ resource } onFilter={ onFilter } showFeatured />
-					<HStack justify="flex-start">
+					<HStack justify="space-between" wrap>
 						<Button
 							variant="primary"
 							href={ resource.external_url }
@@ -178,6 +182,15 @@ export default function ResourceModal( {
 							__next40pxDefaultSize
 						>
 							{ __( 'Open in new tab' ) }
+						</Button>
+						<Button
+							variant="tertiary"
+							icon={ isRead ? check : undefined }
+							isPressed={ isRead }
+							onClick={ onToggleRead }
+							__next40pxDefaultSize
+						>
+							{ isRead ? __( 'Read' ) : __( 'Mark as read' ) }
 						</Button>
 					</HStack>
 				</VStack>

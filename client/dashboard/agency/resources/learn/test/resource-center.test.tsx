@@ -2,14 +2,17 @@
  * @jest-environment jsdom
  */
 
-import { screen, within } from '@testing-library/react';
+import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import nock from 'nock';
 import { useState } from 'react';
 import { render } from '../../../../test-utils';
 import { DEFAULT_VIEW } from '../dataviews/views';
 import ResourceCenter from '../resource-center';
 import type { AgencyEnablementResource } from '@automattic/api-core';
 import type { ComponentProps } from 'react';
+
+const API = 'https://public-api.wordpress.com';
 
 function resource( overrides: Partial< AgencyEnablementResource > = {} ) {
 	return {
@@ -73,6 +76,13 @@ function getCardTitles() {
 }
 
 describe( '<ResourceCenter>', () => {
+	beforeEach( () => {
+		nock( API )
+			.persist()
+			.get( '/rest/v1.1/me/preferences' )
+			.reply( 200, { calypso_preferences: {} } );
+	} );
+
 	test( 'lists top resources first, then the newest', async () => {
 		renderLibrary();
 
@@ -147,6 +157,32 @@ describe( '<ResourceCenter>', () => {
 			{ resource_id: 2, resource_name: 'Jetpack battle card' }
 		);
 		expect( onResourceClick ).toHaveBeenCalledWith( expect.objectContaining( { id: 2 } ) );
+	} );
+
+	test( 'marks a resource as read in the user preferences', async () => {
+		const scope = nock( API )
+			.post( '/rest/v1.1/me/preferences', ( body ) => {
+				expect( body ).toEqual( {
+					calypso_preferences: { 'a4a-library-read-resources': [ 2 ] },
+				} );
+				return true;
+			} )
+			.reply( 200, { calypso_preferences: { 'a4a-library-read-resources': [ 2 ] } } );
+		const { recordTracksEvent } = renderLibrary();
+
+		await userEvent.click( await screen.findByRole( 'link', { name: 'Jetpack battle card' } ) );
+		const dialog = await screen.findByRole( 'dialog', { name: 'Jetpack battle card' } );
+		await userEvent.click( within( dialog ).getByRole( 'button', { name: 'Mark as read' } ) );
+
+		expect( within( dialog ).getByRole( 'button', { name: 'Read' } ) ).toHaveAttribute(
+			'aria-pressed',
+			'true'
+		);
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
+			'calypso_a4a_resource_center_read_status_change',
+			{ resource_id: 2, resource_name: 'Jetpack battle card', is_read: true }
+		);
+		await waitFor( () => expect( scope.isDone() ).toBe( true ) );
 	} );
 
 	test( 'reveals more results on request', async () => {

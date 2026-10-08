@@ -18,7 +18,8 @@ import type { Field } from '@wordpress/dataviews';
  */
 export function useResourceFields(
 	resources: AgencyEnablementResource[],
-	onSelectResource: SelectResource
+	onSelectResource: SelectResource,
+	readIds: number[]
 ) {
 	return useMemo( (): Field< AgencyEnablementResource >[] => {
 		// Only offer values that occur in the data.
@@ -77,6 +78,19 @@ export function useResourceFields(
 				enableHiding: true,
 			},
 			{
+				id: 'read_status',
+				label: __( 'Reading status' ),
+				type: 'text',
+				getValue: ( { item } ) => ( readIds.includes( item.id ) ? 'read' : 'unread' ),
+				elements: [
+					{ value: 'unread', label: __( 'Unread' ) },
+					{ value: 'read', label: __( 'Read' ) },
+				],
+				filterBy: { operators: [ 'is' ] },
+				enableSorting: false,
+				enableHiding: true,
+			},
+			{
 				...filterField( 'product', __( 'Product' ), ( item ) => item.product, getProductLabel ),
 				render: ( { item } ) => <ResourceListProduct resource={ item } />,
 			},
@@ -94,5 +108,5 @@ export function useResourceFields(
 				filterBy: false,
 			},
 		];
-	}, [ resources, onSelectResource ] );
+	}, [ resources, onSelectResource, readIds ] );
 }

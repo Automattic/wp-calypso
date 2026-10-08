@@ -32,8 +32,11 @@ function renderModal( props: Partial< Parameters< typeof ResourceModal >[ 0 ] > 
 		onClose: jest.fn(),
 		onOpen: jest.fn(),
 		onFilter: jest.fn(),
+		onToggleRead: jest.fn(),
 	};
-	render( <ResourceModal resource={ resource() } { ...callbacks } { ...props } /> );
+	render(
+		<ResourceModal resource={ resource() } isRead={ false } { ...callbacks } { ...props } />
+	);
 	return callbacks;
 }
 
@@ -91,6 +94,23 @@ describe( 'ResourceModal', () => {
 
 		expect( onPrevious ).toHaveBeenCalledTimes( 1 );
 		expect( onNext ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	test( 'marks the resource as read, and shows when it is', async () => {
+		const { onToggleRead } = renderModal();
+
+		await userEvent.click( screen.getByRole( 'button', { name: 'Mark as read' } ) );
+
+		expect( onToggleRead ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	test( 'shows a read resource as pressed', () => {
+		renderModal( { isRead: true } );
+
+		expect( screen.getByRole( 'button', { name: 'Read' } ) ).toHaveAttribute(
+			'aria-pressed',
+			'true'
+		);
 	} );
 
 	test( 'filters the library from a badge', async () => {

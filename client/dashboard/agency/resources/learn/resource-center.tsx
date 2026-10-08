@@ -1,6 +1,7 @@
 import { __ } from '@wordpress/i18n';
 import { useCallback, useMemo } from 'react';
 import ResourceLibrary from './resource-library';
+import { useReadResources } from './use-read-resources';
 import type { RecordTracksEvent } from './types';
 import type { AgencyEnablementResource } from '@automattic/api-core';
 import type { View } from '@wordpress/dataviews';
@@ -45,6 +46,17 @@ export default function ResourceCenter( {
 		[ recordTracksEvent, onResourceClick ]
 	);
 
+	const { readIds, setRead } = useReadResources();
+
+	const setResourceRead = ( resource: AgencyEnablementResource, isRead: boolean ) => {
+		setRead( resource.id, isRead );
+		recordTracksEvent( 'calypso_a4a_resource_center_read_status_change', {
+			resource_id: resource.id,
+			resource_name: resource.name,
+			is_read: isRead,
+		} );
+	};
+
 	const resources = useMemo(
 		() =>
 			// Featured first, then by created_at descending (newest first).
@@ -63,6 +75,8 @@ export default function ResourceCenter( {
 			onChangeView={ onChangeView }
 			onPreviewResource={ previewResource }
 			onOpenResource={ openResource }
+			readIds={ readIds }
+			onSetRead={ setResourceRead }
 		/>
 	);
 }
