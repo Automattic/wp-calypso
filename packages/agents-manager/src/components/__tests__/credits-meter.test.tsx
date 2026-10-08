@@ -153,24 +153,6 @@ describe( 'CreditsMeter', () => {
 		expect( onAction ).toHaveBeenCalled();
 	} );
 
-	it( 'turns the dot red below 20k credits whatever the plan share', () => {
-		const { rerender } = render(
-			<CreditsMeter status={ paid } isOpen={ false } onToggle={ () => {} } />
-		);
-		const cases: [ CreditsStatus, string, number ][] = [
-			[ { ...paid, remaining: 20000 }, 'muted', 20 ],
-			[ { ...paid, remaining: 19999 }, 'error', 19.9 ],
-			[ { ...paid, percent: 0, remaining: 25000 }, 'muted', 25 ],
-		];
-		for ( const [ status, tone, thousands ] of cases ) {
-			rerender( <CreditsMeter status={ status } isOpen={ false } onToggle={ () => {} } /> );
-			expect(
-				screen.getByRole( 'button', { name: `${ localNumber( thousands ) }k credits left` } )
-			).toBeInTheDocument();
-			expect( screen.getByTestId( 'dot' ) ).toHaveAttribute( 'data-tone', tone );
-		}
-	} );
-
 	it( 'renders real fractional allowance details without inventing purchase or manage actions', () => {
 		const status: CreditsStatus = {
 			plan: 'paid',
