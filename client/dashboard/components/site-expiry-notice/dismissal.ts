@@ -14,9 +14,21 @@ export function findPlanExpiryNoticeDismissMetaKey(
 }
 
 /**
+ * The last second of the UTC day a purchase expires on, in milliseconds: the
+ * `expiry_ts` jetpack-mu-wpcom's `Expiry_Data` judges a grace dismissal against.
+ */
+export function getPurchaseExpiryCutoff( expiryDate: string ): number {
+	const expiresAt = new Date( expiryDate );
+	return (
+		Date.UTC( expiresAt.getUTCFullYear(), expiresAt.getUTCMonth(), expiresAt.getUTCDate() + 1 ) -
+		1000
+	);
+}
+
+/**
  * A dismissal only counts for the term it was made in: a stamp older than the
- * reference time (the revert that put the site in post-grace) belongs to a
- * previous term and the notice comes back. Same rule as
+ * reference time (the end of the expiry day in grace, the revert in post-grace)
+ * belongs to a previous term and the notice comes back. Same rule as
  * `Expiry_Notice_Dismiss::is_dismissed()` in jetpack-mu-wpcom.
  * @param dismissedAt   Unix seconds, as `users/me` meta stores it.
  * @param referenceTime Milliseconds since the epoch.
