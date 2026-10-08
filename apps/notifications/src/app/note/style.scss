@@ -361,8 +361,9 @@
 .wpnc__note.wpnc__like .wpnc__body .wpnc__body-content,
 .wpnc__note.wpnc__comment_like .wpnc__body .wpnc__body-content,
 .wpnc__note.wpnc__follow .wpnc__body .wpnc__body-content {
+	// With the list's own gap, this matches the space above the first person.
 	.wpnc__paragraph {
-		padding: 16px 0 0;
+		padding: $grid-unit-10 0 0;
 	}
 }
 
