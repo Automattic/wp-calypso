@@ -14,6 +14,10 @@ import {
 	useRef,
 } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import convertA2uiMessagesToComponents, {
+	attachA2uiPresentation,
+} from '../../a2ui/convert-a2ui-messages-to-components';
+import useA2ui from '../../a2ui/use-a2ui';
 import { LOCAL_TOOL_RUNNING_MESSAGE } from '../../constants';
 import { useAgentsManagerContext } from '../../contexts';
 import { useRegisterCustomActions } from '../../hooks/custom-actions';
@@ -1575,7 +1579,12 @@ export default function OrchestratorChat( {
 
 	useAbilitiesRegistration();
 
-	const displayedMessages = useMemo< AgentsManagerUIMessage[] >( () => {
+	const a2uiPresentation = useA2ui( {
+		messages,
+		conversationId: checkpointSessionIdentity,
+		isProcessing,
+	} );
+	const convertedMessages = useMemo< AgentsManagerUIMessage[] >( () => {
 		// The stable checkpoint getter reads these values through refs.
 		void checkpointActionRevision;
 		void checkpointSessionIdentity;
@@ -1662,6 +1671,8 @@ export default function OrchestratorChat( {
 			);
 		}
 
+		currentMessages = convertA2uiMessagesToComponents( currentMessages );
+
 		currentMessages = convertToolMessagesToComponents( {
 			messages: currentMessages,
 			getChatComponent,
@@ -1746,6 +1757,10 @@ export default function OrchestratorChat( {
 		thinkingMessage,
 		transformMessages,
 	] );
+	const displayedMessages = useMemo(
+		() => attachA2uiPresentation( convertedMessages, a2uiPresentation ),
+		[ convertedMessages, a2uiPresentation ]
+	);
 
 	// Notify parent when has-messages state changes.
 	const messageCount = displayedMessages.length;
