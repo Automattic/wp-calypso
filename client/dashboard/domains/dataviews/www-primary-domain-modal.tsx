@@ -58,7 +58,7 @@ export function WwwPrimaryDomainModal( { domain, onClose }: WwwPrimaryDomainModa
 				</Text>
 				<Text>
 					{ __(
-						'Most browsers hide “www” in the address bar, so for most visitors this change won’t be noticeable. It only changes which address your site redirects to. Only continue if you have a specific reason to use the “www” address.'
+						'Most browsers hide “www” in the address bar, so most visitors won’t notice this change. It only changes which address your site redirects to. Only continue if you have a specific reason to use the “www” address.'
 					) }
 				</Text>
 			</VStack>
