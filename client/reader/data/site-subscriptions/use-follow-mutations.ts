@@ -15,7 +15,8 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { translate } from 'i18n-calypso';
 import { useResendEmailVerification } from 'calypso/landing/stepper/hooks/use-resend-email-verification';
 import { removeRecommendedSiteFromCache } from 'calypso/reader/data/recommended-sites';
-import { useDispatch } from 'calypso/state';
+import { useDispatch, useSelector } from 'calypso/state';
+import { getCurrentUser, isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import {
 	invalidateFollowSensitiveCaches,
@@ -37,6 +38,7 @@ interface RecommendedSiteInfo {
 
 type FollowMutationContext = {
 	previousSiteSubscriptionsData?: SiteSubscriptionsInfiniteData;
+	skipOptimisticFollow?: boolean;
 };
 
 export {
@@ -134,6 +136,10 @@ export const useFollowSite = ( recommendedSiteInfo?: RecommendedSiteInfo ) => {
 	const queryClient = useQueryClient();
 	const dispatch = useDispatch();
 	const resendEmailVerification = useResendEmailVerification( { from: 'wpcom-reader' } );
+	const currentUser = useSelector( getCurrentUser );
+	const isEmailVerified = useSelector( isCurrentUserEmailVerified );
+	// isCurrentUserEmailVerified is false when no user is loaded.
+	const skipOptimisticFollow = Boolean( currentUser ) && ! isEmailVerified;
 	const baseMutation = followSiteMutation( queryClient );
 
 	return useMutation( {
@@ -145,15 +151,20 @@ export const useFollowSite = ( recommendedSiteInfo?: RecommendedSiteInfo ) => {
 			return baseMutation.mutationFn( withFollowingSource( params ) );
 		},
 		onMutate: ( params ) => {
-			const context = getFollowMutationContext( queryClient );
+			const context: FollowMutationContext = {
+				...getFollowMutationContext( queryClient ),
+				skipOptimisticFollow,
+			};
 
-			if ( params.feedUrl ) {
-				patchReadSiteFollowStatus( queryClient, params.feedUrl, true );
-				patchSiteSubscription( queryClient, {
-					requestedFeedUrl: params.feedUrl,
-					subscription: createOptimisticFollow( { ...params, feedUrl: params.feedUrl } ),
-				} );
+			if ( skipOptimisticFollow || ! params.feedUrl ) {
+				return context;
 			}
+
+			patchReadSiteFollowStatus( queryClient, params.feedUrl, true );
+			patchSiteSubscription( queryClient, {
+				requestedFeedUrl: params.feedUrl,
+				subscription: createOptimisticFollow( { ...params, feedUrl: params.feedUrl } ),
+			} );
 
 			return context;
 		},
@@ -182,9 +193,11 @@ export const useFollowSite = ( recommendedSiteInfo?: RecommendedSiteInfo ) => {
 		},
 		onError: ( error, params, context ) => {
 			baseMutation.onError?.( error, withFollowingSource( params ), context );
-			rollbackSiteSubscriptions( queryClient, context );
-			if ( params.feedUrl ) {
-				patchReadSiteFollowStatus( queryClient, params.feedUrl, false );
+			if ( ! context?.skipOptimisticFollow ) {
+				rollbackSiteSubscriptions( queryClient, context );
+				if ( params.feedUrl ) {
+					patchReadSiteFollowStatus( queryClient, params.feedUrl, false );
+				}
 			}
 
 			const unverifiedFollow = getUnverifiedFollowData( error );

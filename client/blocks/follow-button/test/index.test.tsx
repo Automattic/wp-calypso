@@ -97,6 +97,7 @@ describe( 'FollowButtonContainer', () => {
 			await userEvent.click( screen.getByRole( 'button', { name: 'Subscribe' } ) );
 
 			expect( onFollowToggle ).not.toHaveBeenCalled();
+			expect( screen.getByRole( 'button', { name: 'Subscribe' } ) ).toBeVisible();
 			expect( verificationNotices( actions ) ).toEqual( [
 				expect.objectContaining( {
 					notice: expect.objectContaining( {
