@@ -42,6 +42,8 @@ interface ResourceLibraryProps {
 	onChangeView: ( view: View ) => void;
 	onPreviewResource: ( resource: AgencyEnablementResource ) => void;
 	onOpenResource: ( resource: AgencyEnablementResource ) => void;
+	readIds: number[];
+	onSetRead: ( resource: AgencyEnablementResource, isRead: boolean ) => void;
 }
 
 export default function ResourceLibrary( {
@@ -50,6 +52,8 @@ export default function ResourceLibrary( {
 	onChangeView,
 	onPreviewResource,
 	onOpenResource,
+	readIds,
+	onSetRead,
 }: ResourceLibraryProps ) {
 	// The stage toggle drives an ordinary filter, so it's saved with the rest of the view.
 	const stageValue = view.filters?.find( ( filter ) => filter.field === 'stage' )?.value;
@@ -120,7 +124,7 @@ export default function ResourceLibrary( {
 		onOpen: onOpenResource,
 	} );
 
-	const fields = useResourceFields( resources, selection.select );
+	const fields = useResourceFields( resources, selection.select, readIds );
 
 	// The library isn't paginated, so every match is shown.
 	const { data: filteredData, paginationInfo } = useMemo(
@@ -272,6 +276,8 @@ export default function ResourceLibrary( {
 					onPrevious={ previous && ( () => selection.preview( previous ) ) }
 					onNext={ next && ( () => selection.preview( next ) ) }
 					onOpen={ onOpenResource }
+					isRead={ readIds.includes( selected.id ) }
+					onToggleRead={ () => onSetRead( selected, ! readIds.includes( selected.id ) ) }
 					onFilter={ ( field, value ) => {
 						selection.clear();
 						filterResources( field, value );
