@@ -475,6 +475,11 @@ export default function convertToolMessagesToComponents( {
 			) {
 				return [];
 			}
+			// The server may answer a no-change with a retry, which would hide the
+			// summary again; withhold it until the turn ends so it never flashes.
+			if ( isProcessing && blockEditOutcome === 'no-changes' ) {
+				return [];
+			}
 			const summary = getDisplayMessageFromToolData( textData.data );
 			if ( ! summary && blockEditOutcome !== 'no-changes' ) {
 				return [];
@@ -487,13 +492,11 @@ export default function convertToolMessagesToComponents( {
 			}
 			// While a promised check is still running, the transient thinking indicator
 			// already reads as the agent working, so the summary is withheld rather than
-			// replaced by a second, static one. `no-changes` is excluded: nothing was
-			// written, so there is nothing to look at. The summary returns as soon as any
+			// replaced by a second, static one. The summary returns as soon as any
 			// of the three ends the wait — the reply lands, the turn ends, or the stream
 			// stops — so a flag that over-promises cannot swallow the edit.
 			if (
 				isProcessing &&
-				blockEditOutcome !== 'no-changes' &&
 				isVisualCheckPending( textData.tool_id, textData.data ) &&
 				isAwaitingVisualCheckReply( array, index )
 			) {

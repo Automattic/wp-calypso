@@ -688,7 +688,7 @@ describe( 'convertToolMessagesToComponents', () => {
 			expect( result[ 0 ].id ).toBe( 'later-tool' );
 		} );
 
-		it( 'ignores the flag for a no-change outcome', () => {
+		it( 'ignores the flag for a no-change outcome once the turn ends', () => {
 			const noChangeOutcome = createApplyBlockEditsMessage(
 				'tool-call-1',
 				{
@@ -704,7 +704,7 @@ describe( 'convertToolMessagesToComponents', () => {
 
 			const result = convertToolMessagesToComponents( {
 				messages: [ noChangeOutcome ],
-				isProcessing: true,
+				isProcessing: false,
 			} );
 
 			expect( result[ 0 ].content ).toEqual( [ { type: 'text', text: '✓ No changes needed' } ] );
@@ -755,6 +755,35 @@ describe( 'convertToolMessagesToComponents', () => {
 
 		expect( result[ 0 ].content ).toEqual( [ { type: 'text', text: '✓ No changes needed' } ] );
 		expect( result[ 0 ].suppressThinking ).toBe( false );
+	} );
+
+	it( 'withholds a no-changes summary until the turn ends', () => {
+		const noChangeOutcome = createApplyBlockEditsMessage( 'tool-call-1', {
+			result: { success: true, outcome: 'no-changes' },
+		} );
+
+		expect(
+			convertToolMessagesToComponents( { messages: [ noChangeOutcome ], isProcessing: true } )
+		).toEqual( [] );
+
+		const result = convertToolMessagesToComponents( {
+			messages: [ noChangeOutcome ],
+			isProcessing: false,
+		} );
+		expect( result[ 0 ].content ).toEqual( [ { type: 'text', text: '✓ No changes needed' } ] );
+	} );
+
+	it( 'still shows an applied block edit summary while the turn runs', () => {
+		const appliedOutcome = createApplyBlockEditsMessage( 'tool-call-1', {
+			result: { success: true, message: 'Made the paragraph red.', outcome: 'updated' },
+		} );
+
+		const result = convertToolMessagesToComponents( {
+			messages: [ appliedOutcome ],
+			isProcessing: true,
+		} );
+
+		expect( result[ 0 ].content ).toEqual( [ { type: 'text', text: 'Made the paragraph red.' } ] );
 	} );
 
 	it( 'hides a block edit summary the server replaced with a retry', () => {
