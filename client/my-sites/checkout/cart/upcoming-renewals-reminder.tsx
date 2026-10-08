@@ -8,7 +8,9 @@ import { FunctionComponent, useMemo, useCallback, useState, useEffect, useRef } 
 import { dismissCard } from 'calypso/blocks/dismissible-card/actions';
 import { isCardDismissed } from 'calypso/blocks/dismissible-card/selectors';
 import SectionHeader from 'calypso/components/section-header';
+import { getPlanExpiryUrgency } from 'calypso/dashboard/components/plan-expiry-notice/get-plan-expiry-notice';
 import { getRelativeDayString } from 'calypso/dashboard/utils/datetime';
+import { EXPIRY_ERROR_DAYS, EXPIRY_WARNING_DAYS } from 'calypso/dashboard/utils/purchase';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getRenewalItemFromProduct } from 'calypso/lib/cart-values/cart-items';
@@ -90,16 +92,38 @@ const UpcomingRenewalsReminder: FunctionComponent< Props > = ( { cart, addItemTo
 		[ renewableSitePurchases, purchasesIdsAlreadyInCart ]
 	);
 
+	// Soonest expiry among plans being renewed that show a warning or error
+	// expiry notice. That notice hides the purchase page's notice about other
+	// purchases expiring soon, so checkout lists them instead.
+	const renewingPlanDaysUntilExpiry = useMemo( () => {
+		const days = ( sitePurchases ?? [] )
+			.filter( ( purchase ) => {
+				if ( ! purchasesIdsAlreadyInCart.includes( purchase.ID ) ) {
+					return false;
+				}
+				const urgency = getPlanExpiryUrgency( purchase );
+				return urgency === 'warning' || urgency === 'error';
+			} )
+			.map( ( purchase ) => purchase.days_until_expiry )
+			.filter( ( daysUntilExpiry ) => daysUntilExpiry != null );
+		return days.length > 0 ? Math.min( ...days ) : null;
+	}, [ sitePurchases, purchasesIdsAlreadyInCart ] );
+
 	// Urgent = already expired, or expiring within 10 days. daysUntilExpiry is the
 	// server's day count (negative during the post-expiry grace period).
+	// When renewing a plan with a warning or error expiry notice, also anything
+	// expiring within 60 days and at most a week after that plan.
 	const urgentPurchases = useMemo(
 		() =>
 			renewablePurchasesNotAlreadyInCart.filter(
 				( purchase ) =>
 					purchase.days_until_expiry != null &&
-					purchase.days_until_expiry < URGENT_RENEWAL_WINDOW_IN_DAYS
+					( purchase.days_until_expiry < URGENT_RENEWAL_WINDOW_IN_DAYS ||
+						( renewingPlanDaysUntilExpiry != null &&
+							purchase.days_until_expiry <= EXPIRY_WARNING_DAYS &&
+							purchase.days_until_expiry <= renewingPlanDaysUntilExpiry + EXPIRY_ERROR_DAYS ) )
 			),
-		[ renewablePurchasesNotAlreadyInCart ]
+		[ renewablePurchasesNotAlreadyInCart, renewingPlanDaysUntilExpiry ]
 	);
 
 	// Dismissal key for the current set of urgent purchases. Dismissing keeps the
