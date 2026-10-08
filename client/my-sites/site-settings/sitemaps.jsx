@@ -13,6 +13,7 @@ import JetpackModuleToggle from 'calypso/my-sites/site-settings/jetpack-module-t
 import getJetpackModule from 'calypso/state/selectors/get-jetpack-module';
 import isActivatingJetpackModule from 'calypso/state/selectors/is-activating-jetpack-module';
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
+import isSiteWpcom from 'calypso/state/selectors/is-site-wpcom';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import {
 	getSelectedSite,
@@ -63,18 +64,24 @@ class Sitemaps extends Component {
 		);
 	}
 
-	renderInfoLink( link, privacyLink ) {
-		const { translate } = this.props;
-
-		return (
-			<SupportInfo
-				text={ translate(
-					'Automatically generates the files required for search engines to index your site.'
-				) }
-				link={ link }
-				privacyLink={ privacyLink }
-			/>
+	renderInfoLink() {
+		const { siteIsWpcom, translate } = this.props;
+		const text = translate(
+			'Automatically generates the files required for search engines to index your site.'
 		);
+
+		if ( siteIsWpcom ) {
+			return (
+				<SupportInfo
+					text={ text }
+					link={ localizeUrl( 'https://wordpress.com/support/sitemaps/' ) }
+					supportPostId={ 142 }
+					privacyLink={ false }
+				/>
+			);
+		}
+
+		return <SupportInfo text={ text } link="https://jetpack.com/support/sitemaps/" />;
 	}
 
 	renderSitemapExplanation() {
@@ -193,12 +200,7 @@ class Sitemaps extends Component {
 
 				<PanelCardHeading>
 					{ translate( 'Sitemaps' ) }
-					{ siteIsJetpack
-						? this.renderInfoLink( 'https://jetpack.com/support/sitemaps/' )
-						: this.renderInfoLink(
-								localizeUrl( 'https://wordpress.com/support/sitemaps/' ),
-								false
-							) }
+					{ this.renderInfoLink() }
 				</PanelCardHeading>
 
 				{ siteIsJetpack ? this.renderJetpackSettings() : this.renderWpcomSettings() }
@@ -215,6 +217,7 @@ export default connect( ( state ) => {
 		site: getSelectedSite( state ),
 		siteSlug: getSelectedSiteSlug( state ),
 		siteIsJetpack: isJetpackSite( state, siteId ),
+		siteIsWpcom: isSiteWpcom( state, siteId ),
 		sitemapsModule: getJetpackModule( state, siteId, 'sitemaps' ),
 		sitemapsModuleActive: !! isJetpackModuleActive( state, siteId, 'sitemaps' ),
 	};
