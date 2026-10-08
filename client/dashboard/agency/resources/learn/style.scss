@@ -1,6 +1,9 @@
 @import '@automattic/color-studio/dist/color-variables';
 @import '@wordpress/base-styles/colors';
 @import '@wordpress/base-styles/variables';
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+@import '@wordpress/base-styles/animations';
 
 // Product brand colours. Most come from Color Studio; VIP's gold is from its brand
 // palette and Pressable's red-orange from https://pressable.com/press-kit/.
@@ -220,4 +223,21 @@ $resource-brands: (
 	border-radius: 50%;
 	color: $white;
 	background: color-mix( in srgb, #{$gray-900} 70%, transparent );
+}
+
+// Doubled up for specificity over the Modal's own frame rules; its closing
+// animation is more specific still, so it keeps working.
+.dashboard-resources-learn__modal.components-modal__frame {
+	@include break-small() {
+		// Pinned near the top rather than centred, so it doesn't jump as content
+		// height changes between resources.
+		margin: 10vh auto auto;
+		max-block-size: calc( 90vh - #{$grid-unit-50} );
+		// Replaced by growing out of the card it was opened from.
+		animation-name: none;
+	}
+}
+
+.dashboard-resources-learn__modal-fade {
+	@include animation__fade-in( 0.15s, 0s, ease-out );
 }
