@@ -1,5 +1,4 @@
 import { omitBy } from '@automattic/js-utils';
-import { useTranslate } from 'i18n-calypso';
 import {
 	getFollowingSource,
 	useFollowSite,
@@ -7,10 +6,8 @@ import {
 	useUnfollowSite,
 } from 'calypso/reader/data/site-subscriptions';
 import { useSelector, useDispatch } from 'calypso/state';
-import { isUserLoggedIn, isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
-import { errorNotice } from 'calypso/state/notices/actions';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { registerLastActionRequiresLogin } from 'calypso/state/reader-ui/actions';
-import { useResendEmailVerification } from '../../landing/stepper/hooks/use-resend-email-verification';
 import FollowButton from './button';
 import type { JSX } from 'react';
 
@@ -50,7 +47,6 @@ function FollowButtonContainer( {
 	onFollowToggle,
 }: FollowButtonContainerProps ): JSX.Element {
 	const isLoggedIn = useSelector( isUserLoggedIn );
-	const isEmailVerified = useSelector( isCurrentUserEmailVerified );
 	const following = useIsSubscribed( {
 		feedUrl: siteUrl,
 		feedId,
@@ -60,8 +56,6 @@ function FollowButtonContainer( {
 	const { mutate: unfollowSite, isPending: isUnfollowingPending } = useUnfollowSite();
 
 	const dispatch = useDispatch();
-	const resendEmailVerification = useResendEmailVerification( { from: 'wpcom-reader' } );
-	const translate = useTranslate();
 
 	const followSource = followApiSource ?? getFollowingSource();
 
@@ -80,18 +74,6 @@ function FollowButtonContainer( {
 					type: 'follow-site',
 					siteUrl,
 					followData,
-				} )
-			);
-		}
-
-		if ( ! isEmailVerified ) {
-			return dispatch(
-				errorNotice( translate( 'Your email has not been verified yet.' ), {
-					id: 'resend-verification-email',
-					button: translate( 'Resend Email' ),
-					onClick: () => {
-						resendEmailVerification();
-					},
 				} )
 			);
 		}

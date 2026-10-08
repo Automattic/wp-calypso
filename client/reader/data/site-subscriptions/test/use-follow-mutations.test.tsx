@@ -43,8 +43,14 @@ jest.mock( '@automattic/calypso-config', () => {
 
 const makeQueryClient = () => new QueryClient( { defaultOptions: { queries: { retry: false } } } );
 
-const makeWrapper = ( queryClient: QueryClient ) => {
-	const store = createStore( ( state = {} ) => state );
+const makeWrapper = (
+	queryClient: QueryClient,
+	onAction: ( action: { type: string } ) => void = () => {}
+) => {
+	const store = createStore( ( state = {}, action: { type: string } ) => {
+		onAction( action );
+		return state;
+	} );
 
 	return function Wrapper( { children }: { children: ReactNode } ) {
 		return (
@@ -330,6 +336,61 @@ describe( 'follow mutation cache helpers', () => {
 			is_following: true,
 		} );
 	} );
+
+	it.each( [
+		{
+			outcome: 'saved until the email is verified',
+			data: { pending_subscription: true, pending_limit_reached: false, pending_limit: 10 },
+			text: 'Verify your email address to finish subscribing. We will subscribe you once you do.',
+		},
+		{
+			outcome: 'not saved because the waiting list is full',
+			data: { pending_subscription: false, pending_limit_reached: true, pending_limit: 10 },
+			text: 'Verify your email address to finish subscribing. This site was not saved because you already have 10 subscriptions waiting.',
+		},
+		{
+			outcome: 'not saved',
+			data: { pending_subscription: false, pending_limit_reached: false, pending_limit: 10 },
+			text: 'Verify your email address before subscribing. This site was not saved.',
+		},
+	] )(
+		'useFollowSite asks the user to verify when an unverified follow is $outcome',
+		async ( { data, text } ) => {
+			const queryClient = makeQueryClient();
+			const actions: Array< {
+				type: string;
+				notice?: { text?: string; noticeId?: string; button?: string };
+			} > = [];
+			nock( BASE ).post( '/rest/v1.1/read/following/mine/new' ).reply( 400, {
+				error: 'email_unverified',
+				message: 'server message',
+				data,
+			} );
+
+			const { result } = renderHook( () => useFollowSite(), {
+				wrapper: makeWrapper( queryClient, ( action ) => actions.push( action ) ),
+			} );
+
+			act( () => {
+				result.current.mutate( { feedUrl: 'https://example.com/feed' } );
+			} );
+
+			await waitFor( () => expect( result.current.isError ).toBe( true ) );
+
+			expect( getCachedSiteSubscriptions( queryClient ) ).toEqual( [] );
+			expect( actions ).toContainEqual(
+				expect.objectContaining( {
+					type: 'NOTICE_CREATE',
+					notice: expect.objectContaining( {
+						text,
+						noticeId: 'resend-verification-email',
+						button: 'Resend Email',
+						status: 'is-error',
+					} ),
+				} )
+			);
+		}
+	);
 
 	it( 'useFollowSite keeps a recommended site in the cache when the follow fails', async () => {
 		const queryClient = makeQueryClient();

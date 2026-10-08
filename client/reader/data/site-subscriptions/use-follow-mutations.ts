@@ -13,6 +13,7 @@ import {
 import config from '@automattic/calypso-config';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { translate } from 'i18n-calypso';
+import { useResendEmailVerification } from 'calypso/landing/stepper/hooks/use-resend-email-verification';
 import { removeRecommendedSiteFromCache } from 'calypso/reader/data/recommended-sites';
 import { useDispatch } from 'calypso/state';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
@@ -58,6 +59,52 @@ const withFollowingSource = < TParams extends FollowSiteParams | UnfollowSitePar
 
 const getNoticeTarget = ( feedUrl?: string ) => feedUrl ?? translate( 'this site' );
 
+interface UnverifiedFollowData {
+	pending_subscription?: boolean;
+	pending_limit_reached?: boolean;
+	pending_limit?: number;
+}
+
+const isRecord = ( value: unknown ): value is Record< string, unknown > =>
+	typeof value === 'object' && value !== null;
+
+const getUnverifiedFollowData = ( error: unknown ): UnverifiedFollowData | undefined => {
+	if ( ! isRecord( error ) || error.error !== 'email_unverified' ) {
+		return undefined;
+	}
+
+	if ( ! isRecord( error.data ) ) {
+		return {};
+	}
+
+	return {
+		pending_subscription: error.data.pending_subscription === true,
+		pending_limit_reached: error.data.pending_limit_reached === true,
+		pending_limit:
+			typeof error.data.pending_limit === 'number' ? error.data.pending_limit : undefined,
+	};
+};
+
+const getUnverifiedFollowNoticeText = ( data: UnverifiedFollowData ) => {
+	if ( data.pending_subscription ) {
+		return translate(
+			'Verify your email address to finish subscribing. We will subscribe you once you do.'
+		);
+	}
+
+	if ( data.pending_limit_reached && typeof data.pending_limit === 'number' ) {
+		return translate(
+			'Verify your email address to finish subscribing. This site was not saved because you already have %(count)d subscriptions waiting.',
+			{
+				args: { count: data.pending_limit },
+				comment: 'count is how many follows are already waiting for email verification.',
+			}
+		);
+	}
+
+	return translate( 'Verify your email address before subscribing. This site was not saved.' );
+};
+
 const getPositiveNumber = ( id?: number | string ): number | undefined => {
 	const numericId = typeof id === 'string' ? Number( id ) : id;
 
@@ -96,6 +143,7 @@ const rollbackSiteSubscriptions = ( queryClient: QueryClient, context?: FollowMu
 export const useFollowSite = ( recommendedSiteInfo?: RecommendedSiteInfo ) => {
 	const queryClient = useQueryClient();
 	const dispatch = useDispatch();
+	const resendEmailVerification = useResendEmailVerification( { from: 'wpcom-reader' } );
 	const baseMutation = followSiteMutation( queryClient );
 
 	return useMutation( {
@@ -148,6 +196,21 @@ export const useFollowSite = ( recommendedSiteInfo?: RecommendedSiteInfo ) => {
 			if ( params.feedUrl ) {
 				patchReadSiteFollowStatus( queryClient, params.feedUrl, false );
 			}
+
+			const unverifiedFollow = getUnverifiedFollowData( error );
+			if ( unverifiedFollow ) {
+				dispatch(
+					errorNotice( getUnverifiedFollowNoticeText( unverifiedFollow ), {
+						id: 'resend-verification-email',
+						button: translate( 'Resend Email' ),
+						onClick: () => {
+							resendEmailVerification();
+						},
+					} )
+				);
+				return;
+			}
+
 			dispatch(
 				errorNotice(
 					translate( 'Sorry, there was a problem subscribing %(url)s. Please try again.', {

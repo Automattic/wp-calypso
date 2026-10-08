@@ -317,4 +317,62 @@ describe( 'ReaderPendingActionHandler', () => {
 		jest.useRealTimers();
 		await waitFor( () => expect( followScope.isDone() ).toBe( true ) );
 	} );
+
+	it( 'shows a verify notice when a replayed follow is waiting on email verification', async () => {
+		jest.useFakeTimers();
+		const queryClient = makeQueryClient();
+		const actions: Array< {
+			type: string;
+			notice?: { text?: string; noticeId?: string };
+		} > = [];
+		const followScope = nock( BASE )
+			.post( '/rest/v1.1/read/following/mine/new', {
+				url: 'https://example.com/feed',
+				source: 'test-source',
+			} )
+			.reply( 400, {
+				error: 'email_unverified',
+				message: 'server message',
+				data: {
+					pending_subscription: true,
+					pending_limit_reached: false,
+					pending_limit: 10,
+				},
+			} );
+
+		renderWithProviders(
+			queryClient,
+			{
+				currentUser: { id: 1 },
+				readerUi: {
+					persistedLastActionPriorToLogin: {
+						type: 'follow-site',
+						siteId: 100,
+						postId: 1,
+						siteUrl: 'https://example.com/feed',
+						followData: { feed_ID: 123 },
+					},
+				},
+			},
+			( action ) => actions.push( action )
+		);
+
+		act( () => {
+			jest.advanceTimersByTime( 2000 );
+		} );
+
+		jest.useRealTimers();
+		await waitFor( () => expect( followScope.isDone() ).toBe( true ) );
+		await waitFor( () =>
+			expect( actions ).toContainEqual(
+				expect.objectContaining( {
+					type: 'NOTICE_CREATE',
+					notice: expect.objectContaining( {
+						text: 'Verify your email address to finish subscribing. We will subscribe you once you do.',
+						noticeId: 'resend-verification-email',
+					} ),
+				} )
+			)
+		);
+	} );
 } );
