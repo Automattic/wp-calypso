@@ -8,7 +8,7 @@ import {
 } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useAuth } from '../../app/auth';
 import { redirectToDashboardLink, wpcomLink } from '../../utils/link';
 import { ButtonStack } from '../button-stack';
@@ -47,6 +47,7 @@ export function RequestStep( {
 	productSlug,
 	onSubmit,
 	onRequestSent,
+	onBusyChange,
 	onCancel,
 }: {
 	site: Site;
@@ -55,6 +56,7 @@ export function RequestStep( {
 	productSlug: string;
 	onSubmit: () => void;
 	onRequestSent: () => void;
+	onBusyChange: ( isBusy: boolean ) => void;
 	onCancel: () => void;
 } ) {
 	const { user } = useAuth();
@@ -69,6 +71,10 @@ export function RequestStep( {
 
 	const isBusy = buildRequest.isPending || isAddingToCart;
 	const canSubmit = description.trim() !== '' && ! isBusy;
+
+	useEffect( () => {
+		onBusyChange( isBusy );
+	}, [ isBusy, onBusyChange ] );
 
 	const addPlanToCartAndCheckout = async () => {
 		setIsAddingToCart( true );
@@ -162,7 +168,7 @@ export function RequestStep( {
 				/>
 				<Text variant="muted">{ __( "We'll be in touch within one business day." ) }</Text>
 				<ButtonStack justify="flex-end">
-					<Button variant="tertiary" __next40pxDefaultSize onClick={ onCancel }>
+					<Button variant="tertiary" __next40pxDefaultSize disabled={ isBusy } onClick={ onCancel }>
 						{ __( 'Cancel' ) }
 					</Button>
 					<Button

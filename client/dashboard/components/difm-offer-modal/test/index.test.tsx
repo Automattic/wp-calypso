@@ -158,6 +158,9 @@ describe( '<DifmOfferModal>', () => {
 		await waitFor( () =>
 			expect( window.location.href ).toContain( '/checkout/example.wordpress.com' )
 		);
+		const checkoutUrl = new URL( window.location.href );
+		expect( checkoutUrl.searchParams.get( 'cancel_to' ) ).toBeTruthy();
+		expect( checkoutUrl.searchParams.has( 'redirect_to' ) ).toBe( false );
 		expect( request.isDone() ).toBe( true );
 		expect( mockAddProductsToCart ).toHaveBeenCalledWith( 123, [
 			{ product_slug: 'business-bundle-2y', extra: { difm_offer: true } },
@@ -173,12 +176,25 @@ describe( '<DifmOfferModal>', () => {
 	} );
 
 	test.each( [
+		[
+			400,
+			'rest_invalid_param',
+			'Some of the details you entered are not valid. Check them and try again.',
+		],
+		[
+			400,
+			'difm_offer_invalid_email',
+			'The email address on your account is not valid. Update it in your account settings and try again.',
+		],
+		[ 403, 'rest_forbidden', 'Only an administrator of this site can request a site build.' ],
 		[ 403, 'difm_offer_ineligible', 'This site is not eligible for this offer.' ],
 		[
 			429,
 			'rate_limit_exceeded',
 			'You have sent too many requests. Wait a few minutes and try again.',
 		],
+		[ 500, 'difm_offer_email_failed', 'We could not send your request. Try again.' ],
+		[ 500, 'unknown_error', 'Something went wrong. Try again.' ],
 	] )( 'shows a %d %s error inline and keeps the modal open', async ( status, code, message ) => {
 		const user = userEvent.setup();
 		const onClose = jest.fn();
@@ -221,6 +237,43 @@ describe( '<DifmOfferModal>', () => {
 			expect( window.location.href ).toContain( '/checkout/example.wordpress.com' )
 		);
 		expect( mockAddProductsToCart ).toHaveBeenCalledTimes( 2 );
+	} );
+
+	test( 'does not record a dismiss when the modal closes after the build request succeeds', async () => {
+		const user = userEvent.setup();
+		const onClose = jest.fn();
+		nock( API ).post( BUILD_REQUEST_PATH ).reply( 200, { success: true } );
+		mockAddProductsToCart.mockRejectedValueOnce( new Error( 'The cart is unavailable.' ) );
+		const { recordTracksEvent } = renderModal( onClose );
+
+		const description = await goToRequestStep( user );
+		await user.type( description, 'A bakery site' );
+		await user.click( screen.getByRole( 'button', { name: 'Send request' } ) );
+		await screen.findByText( /we could not add the plan to your cart/ );
+		await user.click( screen.getByRole( 'button', { name: 'Cancel' } ) );
+
+		expect( onClose ).toHaveBeenCalled();
+		expect( recordTracksEvent ).not.toHaveBeenCalledWith(
+			'calypso_dashboard_upsell_dismiss',
+			expect.anything()
+		);
+	} );
+
+	test( 'does not close while the plan is added to the cart', async () => {
+		const user = userEvent.setup();
+		const onClose = jest.fn();
+		nock( API ).post( BUILD_REQUEST_PATH ).reply( 200, { success: true } );
+		mockAddProductsToCart.mockReturnValueOnce( new Promise( () => {} ) );
+		renderModal( onClose );
+
+		const description = await goToRequestStep( user );
+		await user.type( description, 'A bakery site' );
+		await user.click( screen.getByRole( 'button', { name: 'Send request' } ) );
+
+		await waitFor( () => expect( mockAddProductsToCart ).toHaveBeenCalled() );
+		expect( screen.getByRole( 'button', { name: 'Cancel' } ) ).toBeDisabled();
+		await user.keyboard( '{Escape}' );
+		expect( onClose ).not.toHaveBeenCalled();
 	} );
 
 	test( 'records a dismiss when the modal closes without a submit', async () => {
