@@ -338,16 +338,11 @@ export interface AgencyEnablementResourcesResponse {
 }
 
 /**
- * Engagement recorded per resource. `open` is the event the endpoint already
- * records; `preview` and `download` are the in-portal actions v2 adds.
+ * An agency opening a resource, recorded against the agency.
  */
-export type AgencyResourceEventType = 'open' | 'preview' | 'download';
-
 export interface AgencyResourceEvent {
 	resource_id: number;
 	resource_name: string;
-	agency_id: number;
-	event_type?: AgencyResourceEventType;
 }
 
 export interface AgencyResourceEventResponse {

@@ -126,10 +126,10 @@ export const agencyEnablementResourcesQuery = () =>
  * There is nothing to invalidate: the endpoint writes to the engagement log,
  * not to the resource list.
  */
-export const agencyResourceEventMutation = () =>
+export const agencyResourceEventMutation = ( agencyId: number ) =>
 	mutationOptions( {
 		meta: { statId: 'agcy-resource-event' },
-		mutationFn: ( event: AgencyResourceEvent ) => recordAgencyResourceEvent( event ),
+		mutationFn: ( event: AgencyResourceEvent ) => recordAgencyResourceEvent( agencyId, event ),
 	} );
 
 export const tipaltiIFrameUrlQuery = ( agencyId: number ) =>

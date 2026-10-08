@@ -25,17 +25,15 @@ export default function Learn() {
 		queryParams: searchParams,
 	} );
 	const { data: agency } = useQuery( activeAgencyQuery() );
-	const { mutate: recordResourceEvent } = useMutation( agencyResourceEventMutation() );
 	const agencyId = agency?.id;
+	const { mutate: recordResourceEvent } = useMutation(
+		agencyResourceEventMutation( agencyId ?? 0 )
+	);
 
 	const handleResourceClick = useCallback(
 		( resource: AgencyEnablementResource ) => {
 			if ( agencyId ) {
-				recordResourceEvent( {
-					resource_id: resource.id,
-					resource_name: resource.name,
-					agency_id: agencyId,
-				} );
+				recordResourceEvent( { resource_id: resource.id, resource_name: resource.name } );
 			}
 		},
 		[ agencyId, recordResourceEvent ]
