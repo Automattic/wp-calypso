@@ -4,6 +4,7 @@ import {
 	__experimentalVStack as VStack,
 	__experimentalText as Text,
 } from '@wordpress/components';
+import clsx from 'clsx';
 import { Fragment } from 'react';
 import { useSelector } from 'react-redux';
 import getIsNoteApproved from '../../panel/state/selectors/get-is-note-approved';
@@ -47,7 +48,15 @@ function formatDate( timestamp: string, locale: string ) {
 	} ).format( date );
 }
 
-export default function UserBlock( { note, block }: { note: Note; block: Block } ) {
+export default function UserBlock( {
+	note,
+	block,
+	isCompact = false,
+}: {
+	note: Note;
+	block: Block;
+	isCompact?: boolean;
+} ) {
 	const { locale } = useAppContext();
 	const isApproved = useSelector( ( state ) => getIsNoteApproved( state, note ) );
 	const homeLink = block.meta?.links?.home || '';
@@ -62,6 +71,18 @@ export default function UserBlock( { note, block }: { note: Note; block: Block }
 		homeLink && ( ! block.meta?.titles?.home || ( note.type === 'comment' && ! isApproved ) )
 			? getDisplayURL( homeLink )
 			: block.meta?.titles?.home;
+
+	const followLink = note.type !== 'comment' &&
+		!! block.meta?.ids?.site &&
+		block.actions &&
+		'follow' in block.actions && (
+			<FollowLink
+				key="follow"
+				site={ block.meta.ids.site }
+				isFollowing={ !! block.actions.follow }
+				noteType={ note.type as keyof typeof followStatTypes }
+			/>
+		);
 
 	// Build the present description items, then interleave a single separator
 	// between them — so there's never a leading, trailing, or doubled separator
@@ -83,21 +104,16 @@ export default function UserBlock( { note, block }: { note: Note; block: Block }
 				{ homeTitle }
 			</a>
 		),
-		note.type !== 'comment' &&
-			!! block.meta?.ids?.site &&
-			block.actions &&
-			'follow' in block.actions && (
-				<FollowLink
-					key="follow"
-					site={ block.meta.ids.site }
-					isFollowing={ !! block.actions.follow }
-					noteType={ note.type as keyof typeof followStatTypes }
-				/>
-			),
+		! isCompact && followLink,
 	].filter( ( part ): part is ReactElement => Boolean( part ) );
 
 	return (
-		<HStack className="wpnc__user" justify="flex-start" alignment="flex-start" spacing={ 4 }>
+		<HStack
+			className={ clsx( 'wpnc__user', { 'is-compact': isCompact } ) }
+			justify="flex-start"
+			alignment={ isCompact ? 'center' : 'flex-start' }
+			spacing={ 4 }
+		>
 			<a
 				href={ readerProfileUrl }
 				target="_blank"
@@ -111,7 +127,7 @@ export default function UserBlock( { note, block }: { note: Note; block: Block }
 			>
 				<NoteIcon icon={ media?.url } alt={ block.text } size={ 36 } />
 			</a>
-			<VStack alignment="flex-start" spacing={ 0 }>
+			<VStack className="wpnc__user-text" alignment="flex-start" spacing={ 0 }>
 				<a className="wpnc__user-title" href={ readerProfileUrl } target="_blank" rel="noreferrer">
 					<Text>{ block.text }</Text>
 				</a>
@@ -124,6 +140,7 @@ export default function UserBlock( { note, block }: { note: Note; block: Block }
 					) ) }
 				</HStack>
 			</VStack>
+			{ isCompact && followLink && <div className="wpnc__user-follow">{ followLink }</div> }
 		</HStack>
 	);
 }

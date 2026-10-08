@@ -6,6 +6,7 @@ import {
 } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import clsx from 'clsx';
 import { useState, useEffect, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { getModerateCommentsLink } from '../../panel/helpers/notes';
@@ -21,6 +22,7 @@ import PromptBlock from './block-prompt';
 import User from './block-user';
 import NotePreface from './preface';
 import type { Note, Block, BlockWithSignature } from '../types';
+import type { ReactNode } from 'react';
 
 const isReplyBlock = ( note: Note, block: Block ) =>
 	block.ranges && block.ranges.length > 1 && block.ranges[ 1 ].id === note.meta?.ids?.reply_comment;
@@ -111,13 +113,20 @@ export const ActionBlock = ( { note, goBack }: { note: Note; goBack: () => void 
 		// The body above is the scroll region; this footer is a non-scrolling
 		// sibling below it, so it stays visible without sticky positioning. When the
 		// reply is short the body sizes to its content and this sits right beneath it.
-		<CardFooter size="small">
+		<CardFooter size="small" style={ { paddingBlockStart: 8 } }>
 			<NoteActions note={ note } goBack={ goBack } />
 		</CardFooter>
 	);
 };
 
-export const NoteBody = ( { note }: { note: Note } ) => {
+export const NoteBody = ( {
+	note,
+	isCompact = false,
+}: {
+	note: Note;
+	/** Renders people as bylines, for layouts where they aren't the focus. */
+	isCompact?: boolean;
+} ) => {
 	const blocks: BlockWithSignature[] = zipWithSignature( note.body, note );
 	const showPendingApprovalBadge = useSelector( ( state ) =>
 		getIsNotePendingApproval( state, note )
@@ -134,24 +143,41 @@ export const NoteBody = ( { note }: { note: Note } ) => {
 	const restBlocks =
 		firstNonTextBlockIndex !== -1 ? blocks.slice( firstNonTextBlockIndex ) : blocks;
 
-	const body = restBlocks
-		.filter( ( block ) => ! isReplyBlock( note, block.block ) )
-		.map( ( block, i ) => {
-			const key = 'block-' + note.id + '-' + i;
+	const shownBlocks = restBlocks.filter( ( block ) => ! isReplyBlock( note, block.block ) );
+	const renderBlock = ( block: BlockWithSignature, i: number ) => {
+		const key = 'block-' + note.id + '-' + i;
+		// Text after a list of people is a footnote to it, such as a link to every like.
+		const isPeopleFootnote = isCompact && shownBlocks[ i - 1 ]?.signature.type === 'user';
 
-			switch ( block.signature.type ) {
-				case 'user':
-					return <User key={ key } block={ block.block } note={ note } />;
-				case 'comment':
-					return <Comment key={ key } block={ block.block } meta={ note.meta } />;
-				case 'post':
-					return <Post key={ key } block={ block.block } />;
-				case 'prompt':
-					return <PromptBlock key={ key } block={ block.block } />;
-				default:
-					return <div key={ key }>{ p( html( block.block ) ) }</div>;
-			}
-		} );
+		switch ( block.signature.type ) {
+			case 'user':
+				return <User key={ key } block={ block.block } note={ note } isCompact={ isCompact } />;
+			case 'comment':
+				return <Comment key={ key } block={ block.block } meta={ note.meta } />;
+			case 'post':
+				return <Post key={ key } block={ block.block } />;
+			case 'prompt':
+				return <PromptBlock key={ key } block={ block.block } />;
+			default:
+				return (
+					<div key={ key } className={ clsx( { 'wpnc__people-footnote': isPeopleFootnote } ) }>
+						{ p( html( block.block ) ) }
+					</div>
+				);
+		}
+	};
+
+	// Compact bylines are stacked as one list, so the stack sets the space between people.
+	const body: Array< ReactNode | ReactNode[] > = [];
+	shownBlocks.forEach( ( block, i ) => {
+		const isPerson = isCompact && block.signature.type === 'user';
+		const last = body[ body.length - 1 ];
+		if ( isPerson && Array.isArray( last ) ) {
+			last.push( renderBlock( block, i ) );
+		} else {
+			body.push( isPerson ? [ renderBlock( block, i ) ] : renderBlock( block, i ) );
+		}
+	} );
 
 	useEffect( () => {
 		bumpStat( 'notes-click-type', note.type );
@@ -165,7 +191,17 @@ export const NoteBody = ( { note }: { note: Note } ) => {
 					<PendingApprovalStrip note={ note } />
 				</div>
 			) }
-			<div className="wpnc__body-content">{ body }</div>
+			<div className="wpnc__body-content">
+				{ body.map( ( item, i ) =>
+					Array.isArray( item ) ? (
+						<VStack key={ `people-${ i }` } className="wpnc__people" spacing={ 4 }>
+							{ item }
+						</VStack>
+					) : (
+						item
+					)
+				) }
+			</div>
 			<ReplyBlock note={ note } />
 		</VStack>
 	);

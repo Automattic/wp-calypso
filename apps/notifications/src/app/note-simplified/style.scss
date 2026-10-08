@@ -1,0 +1,132 @@
+@import '@wordpress/base-styles/colors';
+@import '@wordpress/base-styles/variables';
+
+// Links in the note's own chrome read as text until hovered; links in the body keep
+// their colour.
+.wpnc-simplified__quiet-links a,
+.wpnc-simplified__quiet-links a:visited,
+a.wpnc-simplified__quiet-links,
+a.wpnc-simplified__quiet-links:visited {
+	color: inherit;
+	text-decoration: none;
+
+	&:hover {
+		text-decoration: underline;
+	}
+}
+
+.wpnc-simplified__avatars {
+	display: flex;
+	flex-shrink: 0;
+
+	.wpnc__note-icon + .wpnc__note-icon {
+		margin-inline-start: -#{$grid-unit-15};
+
+		img {
+			box-shadow: 0 0 0 2px var(--color-surface, #{$white});
+		}
+	}
+}
+
+// The sentence is markup from the API: text between ranges is bare, so its direct
+// children are the people and things it names.
+.wpnc-simplified__sentence > :is(a, span) {
+	font-weight: 600;
+}
+
+// The divider draws in the current colour.
+.wpnc-simplified__divider {
+	color: var(--wpnc-divider__color, #{$gray-200});
+}
+
+.wpnc-simplified__thread {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.wpnc-simplified__thread-item {
+	padding-block: $grid-unit-10;
+}
+
+// Without this the text column squeezes the photo under the name.
+.wpnc-simplified__photo {
+	display: flex;
+	flex-shrink: 0;
+}
+
+.wpnc-simplified__thread-content {
+	flex: 1;
+	min-width: 0;
+	overflow-wrap: anywhere;
+}
+
+// As tall as the photo, so the name and date sit level with its middle.
+.wpnc-simplified__thread-header {
+	min-height: 36px;
+	align-content: center;
+}
+
+// The endpoint sends the whole comment, line breaks included.
+.wpnc-simplified__parent-text {
+	display: -webkit-box;
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: 4;
+	overflow: hidden;
+	white-space: pre-line;
+}
+
+.wpnc-simplified__card {
+	display: block;
+	padding: $grid-unit-20;
+	border: 1px solid var(--wpnc-divider__color, #{$gray-200});
+	border-radius: $radius-medium;
+	overflow: hidden;
+	overflow-wrap: anywhere;
+
+	&,
+	&:visited {
+		color: inherit;
+		text-decoration: none;
+	}
+
+	&:is(a):hover {
+		border-color: var(--wp-admin-theme-color);
+	}
+}
+
+.wpnc-simplified__site-icon {
+	flex-shrink: 0;
+	border-radius: $radius-medium;
+
+	&.is-placeholder {
+		padding: $grid-unit-05;
+		background: var(--wp-components-color-gray-100, #{$gray-100});
+		fill: var(--wp-components-color-gray-700, #{$gray-700});
+	}
+
+	img,
+	&::after {
+		border-radius: $radius-medium;
+	}
+}
+
+.wpnc-simplified__card-text {
+	position: relative;
+}
+
+.wpnc-simplified__card-arrow {
+	position: absolute;
+	inset-block-start: 0;
+	inset-inline-end: 0;
+	color: var(--wp-components-color-gray-700, #{$gray-700});
+
+	.wpnc-simplified__card:hover & {
+		color: var(--wp-admin-theme-color);
+	}
+
+	// Keeps the first line of the card clear of it.
+	& + * {
+		padding-inline-end: $grid-unit-30;
+	}
+}

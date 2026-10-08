@@ -335,6 +335,62 @@
 	a {
 		text-decoration: none;
 	}
+
+	// A byline: the name, then what else is known about them in small muted text.
+	&.is-compact {
+		.wpnc__note-icon {
+			margin-block: 0;
+		}
+
+		// Takes the free width, so the follow link lands at the far end. An auto margin
+		// can't do it: the body's reset zeroes margins on every div.
+		.wpnc__user-text {
+			flex: 1;
+			min-width: 0;
+		}
+
+		// Long names and site titles end in an ellipsis rather than pushing the row wider.
+		.wpnc__user-title,
+		.wpnc__user-title > *,
+		.wpnc__user-description a:not(.components-button) {
+			display: block;
+			max-width: 100%;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			white-space: nowrap;
+		}
+
+		.wpnc__user-title {
+			color: inherit;
+			font-weight: $font-weight-medium;
+		}
+
+		.wpnc__user-description {
+			font-size: $font-size-small;
+			color: var(--wp-components-color-gray-700, #{$gray-700});
+
+			a:not(.components-button) {
+				color: inherit;
+			}
+		}
+	}
+}
+
+.wpnc__user-follow {
+	flex-shrink: 0;
+
+	.components-button {
+		font-weight: var(--wpds-typography-font-weight-emphasis, #{$font-weight-medium});
+	}
+}
+
+// Scoped past the body's reset, which zeroes padding on every div.
+.wpnc__body-content .wpnc__people-footnote {
+	margin-block-start: $grid-unit-15;
+	padding-block-start: $grid-unit-15;
+	border-block-start: 1px solid var(--wpnc-divider__color, #{$gray-200});
+	font-size: $font-size-small;
+	color: var(--wp-components-color-gray-700, #{$gray-700});
 }
 
 /**
@@ -382,6 +438,29 @@
 	flex-wrap: wrap;
 	justify-content: center;
 	white-space: normal;
+}
+
+// The like sits apart from the menu as a quiet toggle, told apart by its star.
+.wpnc__action-link.components-button.is-tertiary.has-text {
+	gap: 2px;
+	padding-inline-start: 0;
+	font-size: $font-size-medium;
+	font-weight: $font-weight-medium;
+	color: $gray-700;
+
+	&:hover:not(:disabled) {
+		background: none;
+		color: $gray-900;
+	}
+
+	&.active-action,
+	&.active-action:hover:not(:disabled) {
+		color: var(--wp-admin-theme-color);
+	}
+}
+
+.wpnc__actions-menu-toggle.components-button {
+	flex-shrink: 0;
 }
 
 /**
