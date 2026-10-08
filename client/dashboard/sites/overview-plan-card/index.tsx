@@ -276,7 +276,7 @@ function getCardDescription( site: Site, locale: string, purchase?: Purchase ) {
 	}
 
 	if ( purchase ) {
-		return getPurchaseExpiryStatusText( purchase, locale ).text;
+		return getPurchaseExpiryStatusText( purchase, locale );
 	}
 
 	return undefined;
