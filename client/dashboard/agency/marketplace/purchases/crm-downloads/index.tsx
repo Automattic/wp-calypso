@@ -125,7 +125,7 @@ function ExtensionsList( { licenseKey }: { licenseKey: string } ) {
 						</Text>
 						<Button
 							variant="secondary"
-							__next40pxDefaultSize
+							size="compact"
 							isBusy={ isFetching }
 							disabled={ isFetching }
 							onClick={ () => refetch() }

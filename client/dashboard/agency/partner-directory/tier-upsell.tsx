@@ -39,6 +39,7 @@ export default function PartnerDirectoryTierUpsell() {
 				<RouterLinkButton
 					to="/tiers"
 					variant="primary"
+					size="compact"
 					onClick={ () =>
 						recordTracksEvent( 'calypso_agency_tier_permission_error_button_click', {
 							section: TRACKS_SECTION,
