@@ -6,7 +6,7 @@ const BASE = 'https://public-api.wordpress.com';
 describe( 'fetchNamePulseSuggestions', () => {
 	afterEach( () => nock.cleanAll() );
 
-	it( 'requests keyword suggestions with use_ai=0, domainsbot and no timeout', async () => {
+	it( 'requests keyword suggestions with use_ai=0, donuts and domainsbot and no timeout', async () => {
 		const scope = nock( BASE )
 			.get( '/wpcom/v2/domains/name-pulse/suggestions' )
 			.query(
@@ -14,7 +14,7 @@ describe( 'fetchNamePulseSuggestions', () => {
 					query.query === 'coffee shop' &&
 					query.use_ai === '0' &&
 					query.allow_premium === 'true' &&
-					query.providers === 'domainsbot' &&
+					query.providers === 'donuts,domainsbot' &&
 					query.timeout === undefined
 			)
 			.reply( 200, {
@@ -32,7 +32,7 @@ describe( 'fetchNamePulseSuggestions', () => {
 		expect( response.errors ).toHaveLength( 1 );
 	} );
 
-	it( 'requests AI suggestions with use_ai=1, verisign and the timeout in milliseconds', async () => {
+	it( 'requests AI suggestions with use_ai=1, donuts and verisign and the timeout in milliseconds', async () => {
 		const scope = nock( BASE )
 			.get( '/wpcom/v2/domains/name-pulse/suggestions' )
 			.query(
@@ -40,7 +40,7 @@ describe( 'fetchNamePulseSuggestions', () => {
 					query.query === 'a blog about coffee' &&
 					query.use_ai === '1' &&
 					query.allow_premium === 'true' &&
-					query.providers === 'verisign' &&
+					query.providers === 'donuts,verisign' &&
 					query.timeout === '10000'
 			)
 			.reply( 200, { suggestions: [ { domain_name: 'dailybrew.blog', relevance: 0.8 } ] } );
