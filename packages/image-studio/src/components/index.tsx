@@ -11,7 +11,7 @@ import { useDispatch, useSelect } from '@wordpress/data';
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useAgentConfig } from '../hooks/use-agent-config';
-import { useAiCredits } from '../hooks/use-ai-credits';
+import { useAiCredits, type AiCreditsState } from '../hooks/use-ai-credits';
 import { useAnnotation } from '../hooks/use-annotation';
 import { useBeforeUnload } from '../hooks/use-beforeunload';
 import { useDeletePermanently } from '../hooks/use-delete-permanently';
@@ -68,11 +68,13 @@ function ImageStudioAgentChat( {
 	attachmentId,
 	mode,
 	onChatSubmit,
+	credits,
 }: {
 	agentConfig: UseAgentChatConfig;
 	attachmentId?: number;
 	mode: ImageStudioMode;
 	onChatSubmit?: () => Promise< void > | void;
+	credits: AiCreditsState;
 } ) {
 	const {
 		notice: creditsNotice,
@@ -81,7 +83,7 @@ function ImageStudioAgentChat( {
 		meter: creditsMeter,
 		onTaskUpdate: onCreditsTaskUpdate,
 		beforeSubmit: creditsBeforeSubmit,
-	} = useAiCredits( { mode, authProvider: agentConfigProp.authProvider } );
+	} = credits;
 	const agentChatProps = useAgentChat( {
 		...agentConfigProp,
 		onTaskUpdate: ( update ) => {
@@ -278,12 +280,14 @@ const ImageStudioAgentUIComponent = ( {
 	modalOpenKey,
 	onChatSubmit,
 	mode,
+	credits,
 }: {
 	agentConfig: UseAgentChatConfig;
 	attachmentId?: number;
 	modalOpenKey?: number;
 	onChatSubmit?: () => void;
 	mode: ImageStudioMode;
+	credits: AiCreditsState;
 } ) => {
 	return (
 		<ImageStudioAgentChat
@@ -292,6 +296,7 @@ const ImageStudioAgentUIComponent = ( {
 			attachmentId={ attachmentId }
 			mode={ mode }
 			onChatSubmit={ onChatSubmit }
+			credits={ credits }
 		/>
 	);
 };
@@ -368,6 +373,11 @@ const ImageStudioContent = withInstanceId(
 		} );
 
 		const agentConfigState = useAgentConfig( agentConfigFactory, modalOpenKey );
+		// One balance for the chat and the sidebar's Regenerate buttons, which run their own turns.
+		const credits = useAiCredits( {
+			mode: config?.attachmentId ? ImageStudioMode.Edit : ImageStudioMode.Generate,
+			authProvider: agentConfigState?.authProvider,
+		} );
 
 		const [ isPromptSent, setIsPromptSent ] = useState( false );
 		const [ activeToolbarOption, setActiveToolbarOption ] = useState< ToolbarOption | null >(
@@ -693,6 +703,7 @@ const ImageStudioContent = withInstanceId(
 										modalOpenKey={ modalOpenKey }
 										onChatSubmit={ handleChatSubmit }
 										mode={ mode }
+										credits={ credits }
 									/>
 								) : (
 									<div className="image-studio-agent-loading">
@@ -715,6 +726,7 @@ const ImageStudioContent = withInstanceId(
 									className="image-studio-modal__sidebar-inner"
 								>
 									<ImageStudioAltTextSidebar
+										credits={ credits }
 										onClose={ () => setActiveToolbarOption( null ) }
 										onDeletePermanently={ handleDeletePermanently }
 										canDeletePermanently={ canDeletePermanently }

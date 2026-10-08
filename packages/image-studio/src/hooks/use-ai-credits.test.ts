@@ -447,6 +447,17 @@ describe( 'useAiCredits', () => {
 		expect( result.current.meter?.isOpen ).toBe( false );
 	} );
 
+	it( 'returns the same result between renders, so the memoised chat doesn’t re-render', async () => {
+		respondWith( { ai_credits: planSnapshot( 30_000 ) } );
+		const { result, rerender } = renderCredits();
+		await waitFor( () => expect( result.current.isLoading ).toBe( false ) );
+
+		const first = result.current;
+		rerender( { mode: ImageStudioMode.Generate, authProvider } );
+
+		expect( result.current ).toBe( first );
+	} );
+
 	it( 'ignores a late response after the modal closed', async () => {
 		let resolveFetch: ( value: unknown ) => void = () => {};
 		fetchMock.mockReturnValue(

@@ -6,7 +6,7 @@ import {
 	parseLiveCreditsStatus,
 } from '@automattic/agents-manager';
 import { useEvent } from '@wordpress/compose';
-import { useEffect, useRef, useState } from '@wordpress/element';
+import { useEffect, useMemo, useRef, useState } from '@wordpress/element';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import {
 	getImageStudioBlogId,
@@ -91,7 +91,7 @@ async function fetchSiteCredits( blogId: number, authProvider: AuthProvider ): P
 	}
 }
 
-interface AiCreditsState {
+export interface AiCreditsState {
 	notice: NoticeConfig | undefined;
 	/** Out of credits. Callers hide suggestions, which cost credits to load. */
 	isLimitReached: boolean;
@@ -207,36 +207,50 @@ export function useAiCredits( {
 		return false;
 	} );
 
-	return {
-		isLimitReached: level === 'out',
-		isLoading,
-		onTaskUpdate,
-		beforeSubmit,
-		meter: status
-			? { status, upgradeUrl, isOpen: isMeterOpen, onToggle: setIsMeterOpen }
-			: undefined,
-		notice:
-			status && level && ! isNoticeHidden
-				? {
-						icon: false,
-						message: getNoticeMessage( level, status.remaining ),
-						dismissible: level === 'low',
-						onDismiss: () => setIsLowNoticeDismissed( true ),
-						action: upgradeUrl
-							? {
-									label: __( 'Upgrade', __i18n_text_domain__ ),
-									href: upgradeUrl,
-									target: '_blank',
-									rel: 'noopener noreferrer',
-									onClick: () =>
-										trackImageStudioUpgradeNoticeClick( {
-											mode,
-											trigger: shown.current.trigger,
-											...getNoticeCredits( status, level, upgradeUrl ),
-										} ),
-								}
-							: undefined,
-					}
+	// Memoised so the memoised chat doesn't re-render whenever the modal does.
+	return useMemo(
+		() => ( {
+			isLimitReached: level === 'out',
+			isLoading,
+			onTaskUpdate,
+			beforeSubmit,
+			meter: status
+				? { status, upgradeUrl, isOpen: isMeterOpen, onToggle: setIsMeterOpen }
 				: undefined,
-	};
+			notice:
+				status && level && ! isNoticeHidden
+					? {
+							icon: false,
+							message: getNoticeMessage( level, status.remaining ),
+							dismissible: level === 'low',
+							onDismiss: () => setIsLowNoticeDismissed( true ),
+							action: upgradeUrl
+								? {
+										label: __( 'Upgrade', __i18n_text_domain__ ),
+										href: upgradeUrl,
+										target: '_blank',
+										rel: 'noopener noreferrer',
+										onClick: () =>
+											trackImageStudioUpgradeNoticeClick( {
+												mode,
+												trigger: shown.current.trigger,
+												...getNoticeCredits( status, level, upgradeUrl ),
+											} ),
+									}
+								: undefined,
+						}
+					: undefined,
+		} ),
+		[
+			status,
+			level,
+			upgradeUrl,
+			isNoticeHidden,
+			isMeterOpen,
+			isLoading,
+			mode,
+			onTaskUpdate,
+			beforeSubmit,
+		]
+	);
 }
