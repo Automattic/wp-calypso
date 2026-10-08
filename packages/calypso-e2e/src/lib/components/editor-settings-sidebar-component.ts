@@ -1,4 +1,4 @@
-import { Locator, Page } from 'playwright';
+import { Frame, Page } from 'playwright';
 import envVariables from '../../env-variables';
 import { EditorComponent } from './editor-component';
 import type { ArticlePublishSchedule, EditorSidebarTab, ArticlePrivacyOptions } from './types';
@@ -432,6 +432,9 @@ export class EditorSettingsSidebarComponent {
 			return;
 		}
 
+		const editorFrame = await ( await editorParent.elementHandle() )?.ownerFrame();
+		const tagIdsBefore = editorFrame ? await this.getEditedTagIds( editorFrame ) : [];
+
 		const existingTerm = editorParent.getByRole( 'option', { name, exact: true } );
 		const newTerm = editorParent.getByRole( 'option', {
 			name: `Create: ${ name }`,
@@ -454,32 +457,44 @@ export class EditorSettingsSidebarComponent {
 		// The chip is not proof the tag is on the post: "Create: <term>" shows it
 		// right away and only assigns the term once its REST request resolves, so
 		// publishing in between saves the post without it.
-		await this.waitForTagAssigned( editorParent, name );
+		if ( editorFrame ) {
+			await this.waitForTagAssigned( editorFrame, name, tagIdsBefore );
+		}
 	}
 
 	/**
-	 * Waits until the post's edited tags include a tag with the given name.
+	 * Returns the IDs of the tags currently assigned to the post in the Editor.
 	 *
-	 * Runs inside the Editor frame, so it works for both the iframed (Simple)
-	 * and non-iframed (Atomic) editors.
+	 * @param {Frame} editorFrame The frame the Editor runs in.
+	 */
+	private async getEditedTagIds( editorFrame: Frame ): Promise< number[] > {
+		return editorFrame.evaluate(
+			() =>
+				// eslint-disable-next-line @typescript-eslint/no-explicit-any
+				( window as any )?.wp?.data?.select( 'core/editor' )?.getEditedPostAttribute( 'tags' ) ?? []
+		);
+	}
+
+	/**
+	 * Waits until a tag that was not assigned before is assigned to the post.
 	 *
-	 * @param {Locator} editorParent The Editor's parent element.
-	 * @param {string} name Tag name.
+	 * Compares tag IDs only: resolving the tag's name would take another REST
+	 * request, which can fail even though the assignment went through.
+	 *
+	 * @param {Frame} editorFrame The frame the Editor runs in.
+	 * @param {string} name Tag name, for the error message.
+	 * @param {number[]} tagIdsBefore Tag IDs assigned before the tag was picked.
 	 * @param {number} timeout Maximum time to wait, in milliseconds.
 	 */
 	private async waitForTagAssigned(
-		editorParent: Locator,
+		editorFrame: Frame,
 		name: string,
+		tagIdsBefore: number[],
 		timeout = 15 * 1000
 	): Promise< void > {
-		const editorFrame = await ( await editorParent.elementHandle() )?.ownerFrame();
-		if ( ! editorFrame ) {
-			return;
-		}
-
 		try {
 			await editorFrame.waitForFunction(
-				( tagName ) => {
+				( before ) => {
 					// eslint-disable-next-line @typescript-eslint/no-explicit-any
 					const select = ( window as any )?.wp?.data?.select;
 
@@ -488,21 +503,11 @@ export class EditorSettingsSidebarComponent {
 						return true;
 					}
 
-					const decode = ( html: string ) => {
-						const textarea = document.createElement( 'textarea' );
-						textarea.innerHTML = html;
-						return textarea.value;
-					};
 					const tagIds: number[] = select( 'core/editor' ).getEditedPostAttribute( 'tags' ) ?? [];
 
-					return tagIds.some(
-						( id ) =>
-							decode(
-								select( 'core' ).getEntityRecord( 'taxonomy', 'post_tag', id )?.name ?? ''
-							) === tagName
-					);
+					return tagIds.some( ( id ) => ! before.includes( id ) );
 				},
-				name,
+				tagIdsBefore,
 				{ timeout }
 			);
 		} catch {
