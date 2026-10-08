@@ -2,8 +2,6 @@
  * @jest-environment jsdom
  */
 
-// Importing `jest-fetch-mock` adds a jest-friendly `fetch` polyfill to the global scope.
-import 'jest-fetch-mock';
 import ThemeQueryManager from 'calypso/lib/query-manager/theme';
 import {
 	ACTIVE_THEME_REQUEST,
@@ -62,6 +60,12 @@ import {
 	redirectToLivePreview,
 } from '../actions';
 import { themesUpdated } from '../actions/theme-update';
+
+// `jest-fetch-mock` adds a `fetch` polyfill to the global scope, but it also replaces the Fetch API
+// classes that nock uses to build mocked responses, so restore those.
+const { Request, Response, Headers } = global;
+require( 'jest-fetch-mock' );
+Object.assign( global, { Request, Response, Headers } );
 
 jest.mock( '@automattic/calypso-config', () => {
 	const mock = () => 'development';

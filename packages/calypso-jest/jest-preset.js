@@ -7,6 +7,7 @@ const { defaults } = require( 'jest-config' );
 
 module.exports = {
 	resolver: require.resolve( './src/module-resolver.js' ),
+	setupFiles: [ require.resolve( './src/setup-globals.js' ) ],
 	setupFilesAfterEnv: [ require.resolve( './src/setup.js' ) ],
 	testEnvironment: 'node',
 	testMatch: [ '<rootDir>/**/test/*.[jt]s?(x)', '!**/.eslintrc.*' ],

@@ -17,7 +17,7 @@ const shared = {
 	testEnvironmentOptions: {
 		url: 'https://example.com',
 	},
-	setupFiles: [ 'jest-canvas-mock' ],
+	setupFiles: [ ...base.setupFiles, 'jest-canvas-mock' ],
 	globals: {
 		google: {},
 		__i18n_text_domain__: 'default',
