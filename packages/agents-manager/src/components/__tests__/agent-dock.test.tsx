@@ -305,8 +305,7 @@ describe( 'AgentDock', () => {
 		const { onOpenSidebar } = mockUseAgentLayoutManager.mock.calls.at( -1 )[ 0 ];
 		act( () => onOpenSidebar() );
 
-		// Opening the docked sidebar must not override a route chosen from the
-		// WP admin bar (e.g. Chat history).
+		// Opening the docked sidebar must not override the route the WP admin bar chose.
 		expect( screen.getByTestId( 'location' ).textContent ).toBe( '/history' );
 	} );
 

@@ -214,12 +214,6 @@ export default function AgentDock( {
 		prevHasAiChatEntryRef.current = hasAiChatEntry;
 	}, [ hasAiChatEntry, isMinimized, setIsMinimized ] );
 
-	// Reader chat (public blog frontends) gets `/chat` only. The other routes:
-	// - `/zendesk`: the human support chat, Woo AI only.
-	// - `/post`: the guide viewer, opened from in-chat links and sources.
-	// - `/history`: the chat header's history button.
-	const showZendeskChat = ! isReaderChat && isWooAiProvider();
-
 	useSetupCustomActions( {
 		canDock,
 		dock,
@@ -516,9 +510,12 @@ export default function AgentDock( {
 			{ isChatVisible &&
 				createAgentPortal(
 					// NOTE: Use route state to pass data that needs to be accessed throughout the app.
+					// Reader chat (public blog frontends) only gets `/chat`.
 					<Routes>
 						<Route path="/chat" element={ OrchestratorChatRoute } />
-						{ showZendeskChat && <Route path="/zendesk" element={ ZendeskChatRoute } /> }
+						{ ! isReaderChat && isWooAiProvider() && (
+							<Route path="/zendesk" element={ ZendeskChatRoute } />
+						) }
 						{ ! isReaderChat && <Route path="/post" element={ SupportGuideRoute } /> }
 						{ ! isReaderChat && <Route path="/history" element={ HistoryRoute } /> }
 						<Route
