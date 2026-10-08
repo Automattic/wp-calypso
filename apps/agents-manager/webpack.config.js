@@ -77,7 +77,6 @@ function getIndividualConfig( options = {} ) {
 				...( webpackConfig.resolve?.alias || {} ),
 				// Share one Smooch instance with the Help Center bundle when both load
 				// together (e.g. the Site Editor). See smooch-shim.js.
-				// TODO: Remove once Agents Manager takes over the Help Center.
 				smooch$: path.join( __dirname, '../../build-tools/webpack/smooch-shim.js' ),
 			},
 		},
@@ -200,14 +199,12 @@ function getReaderConfig( options = {} ) {
 			alias: {
 				...( webpackConfig.resolve?.alias || {} ),
 				// Share one Smooch instance across bundles (see smooch-shim.js).
-				// TODO: Remove once Agents Manager takes over the Help Center.
 				smooch$: path.join( __dirname, '../../build-tools/webpack/smooch-shim.js' ),
 				// Keep libvips' inlined WASM out of the frontend bundle. See
 				// reader-chat-vips-stub.js.
 				'@wordpress/vips/worker$': path.join( __dirname, 'reader-chat-vips-stub.js' ),
 				'../agent-history': path.join( __dirname, 'reader-chat-route-stub.js' ),
 				'../support-guide': path.join( __dirname, 'reader-chat-route-stub.js' ),
-				'../support-guides': path.join( __dirname, 'reader-chat-route-stub.js' ),
 				'../zendesk-chat': path.join( __dirname, 'reader-chat-route-stub.js' ),
 			},
 		},
