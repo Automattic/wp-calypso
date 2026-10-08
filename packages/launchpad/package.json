@@ -48,12 +48,12 @@
 		"@automattic/typography": "workspace:^",
 		"@automattic/viewport": "workspace:^",
 		"@tanstack/react-query": "^5.83.0",
-		"@wordpress/api-fetch": "^7.48.0",
-		"@wordpress/base-styles": "^9.1.0",
-		"@wordpress/components": "^37.0.0",
-		"@wordpress/icons": "^13.3.0",
-		"@wordpress/ui": "^0.18.0",
-		"@wordpress/url": "^4.48.0",
+		"@wordpress/api-fetch": "^7.57.0",
+		"@wordpress/base-styles": "^13.3.0",
+		"@wordpress/components": "^42.0.0",
+		"@wordpress/icons": "^18.0.0",
+		"@wordpress/ui": "^0.24.0",
+		"@wordpress/url": "^4.57.0",
 		"clsx": "^2.1.1",
 		"social-logos": "^3.4.0",
 		"tslib": "^2.8.1",
@@ -74,7 +74,7 @@
 		"webpack": "^5.99.8"
 	},
 	"peerDependencies": {
-		"@wordpress/i18n": "^6.21.0",
+		"@wordpress/i18n": "^6.30.0",
 		"react": "^18.3.1 || ^19.0.0",
 		"react-dom": "^18.3.1 || ^19.0.0"
 	}
