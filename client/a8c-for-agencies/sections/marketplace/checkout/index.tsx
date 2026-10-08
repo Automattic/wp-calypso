@@ -40,11 +40,11 @@ function Checkout( {
 		return null;
 	}
 
-	// New Billing Dragon Checkout V2 page: check for BD feature flag and it's not in a referral context.
+	// Billing Dragon Checkout V2: used outside a referral context, or whenever the URL
+	// carries a plan. That launches a development site, which is a purchase whatever
+	// mode the marketplace was left in.
 	// A cart the backend already prepared only exists on the WordPress.com side, so it always
 	// goes through the Billing Dragon checkout.
-	// A plan in the URL launches a development site, which is a purchase whatever
-	// mode the marketplace was left in.
 	const isPlanCheckout = !! planSlug;
 	if (
 		( isEnabled( 'a4a-bd-checkout' ) || skipActiveCart ) &&
