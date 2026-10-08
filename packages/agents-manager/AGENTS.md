@@ -65,7 +65,7 @@ The editor abilities (`abilities/editor-abilities.ts`) load as an async chunk on
 - **Guard callbacks that change editor state** with an `isEditorPage()` early return, as `set-site-logo` does.
 - **Validate arguments in the callback** — nothing enforces the `input_schema` at runtime: a stringified `"false"` is truthy, and an empty object arrives as `[]`.
 - **Resolve block ids with `resolveClientId()`** — the agent knows blocks by the short ids AM's page context hands out (`utils/block-ids.ts`).
-- **Take checkpoints through `withCheckpoint()`** (`utils/checkpoints.ts`). A new domain needs a scoped key, a snapshot/restore and redo support. A batch calls `recorder.markWritten()` for each domain it changes and returns a partial failure instead of throwing, so the checkpoint survives.
+- **Take checkpoints through `withCheckpoint()`** (`utils/checkpoints.ts`). A new domain needs a scoped key, a snapshot/restore and redo support. A batch records through the `CheckpointRecorder` it is handed — `markWritten()` for an up-front domain it changed, `capturePageRename()` / `captureMenu()` as it reaches pages and menus — and returns a partial failure instead of throwing, so the checkpoint survives.
 
 ## Pitfalls
 
