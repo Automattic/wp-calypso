@@ -1,4 +1,4 @@
-import { HostingFeatures, DotcomFeatures, LogType } from '@automattic/api-core';
+import { HostingFeatures, DotcomFeatures, LogType, fetchTwoStep } from '@automattic/api-core';
 import {
 	bigSkyPluginQuery,
 	bulkDomainUpdateStatusQuery,
@@ -58,6 +58,7 @@ import {
 	canViewHundredYearPlanSettings,
 } from '../../sites/features';
 import { VALUES_SEVERITY } from '../../sites/logs/dataviews/constants';
+import { reauthRequiredLink } from '../../utils/link';
 import {
 	getActivityLogHiddenGroups,
 	hasHostingFeature,
@@ -71,11 +72,7 @@ import { getSiteTypeFeatureSupports } from '../../utils/site-type-feature-suppor
 import { isSelfHostedJetpackConnected } from '../../utils/site-types';
 import { userHasNoLiveSites } from '../../utils/user';
 import { AUTH_QUERY_KEY } from '../auth';
-import {
-	dashboardRedirect,
-	redirectAsNotAllowed,
-	redirectIfTwoStepReauthRequired,
-} from './redirect';
+import { dashboardRedirect, redirectAsNotAllowed } from './redirect';
 import { rootRoute } from './root';
 import type { AppConfig } from '../context';
 import type { DifmWebsiteContentResponse, Site, User } from '@automattic/api-core';
@@ -883,7 +880,10 @@ export const siteSettingsAIToolsRoute = createRoute( {
 		}
 
 		if ( cause === 'enter' ) {
-			await redirectIfTwoStepReauthRequired();
+			const twoStep = await fetchTwoStep();
+			if ( twoStep.two_step_reauthorization_required ) {
+				throw dashboardRedirect( { href: reauthRequiredLink(), reloadDocument: true } );
+			}
 		}
 	},
 	loader: async ( { params: { siteSlug } } ) => {
