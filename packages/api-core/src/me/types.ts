@@ -1,4 +1,4 @@
-export type UserFlags = 'calypso_allow_nonprimary_domains_without_plan' | 'wpcom-flex';
+export type UserFlags = 'calypso_allow_nonprimary_domains_without_plan';
 
 export interface SocialLoginConnection {
 	service: string;

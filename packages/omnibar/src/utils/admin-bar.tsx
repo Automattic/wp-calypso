@@ -95,6 +95,10 @@ export function buildOmnibarNodesFromAdminBarNodes(
 				siteActionNodes.push( omnibarNode );
 				break;
 			}
+			case 'stats': {
+				siteActionNodes.push( omnibarNode );
+				break;
+			}
 			case 'my-account': {
 				const doc = new DOMParser().parseFromString( node.title || '', 'text/html' );
 				const avatar = doc.querySelector( 'img' );

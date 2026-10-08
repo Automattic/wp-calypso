@@ -591,6 +591,11 @@ This mixin generates alias variables for a color palette. For example, the
 @mixin color-scheme-dark-theme-dataviews {
 	--wp-dataviews-color-background: var( --dashboard-surface__background-color );
 
+	// DataViews hard-codes a white background on the sticky infinite-scroll toolbar.
+	.dataviews__view-actions--infinite-scroll {
+		background-color: var( --wp-dataviews-color-background );
+	}
+
 	.dataviews-view-table {
 		color: var( --dashboard__text-muted-color );
 

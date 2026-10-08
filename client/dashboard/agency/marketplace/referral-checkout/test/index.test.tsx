@@ -10,6 +10,12 @@ import ReferralCheckout from '../index';
 
 const API = 'https://public-api.wordpress.com';
 const AGENCY_ID = 123;
+const DEV_SITE_ID = 55;
+
+let mockSearch: { referral_blog_id?: number } = {};
+jest.mock( '../../../../app/router/agency', () => ( {
+	marketplaceReferralCheckoutRoute: { useSearch: () => mockSearch },
+} ) );
 
 const products = [
 	{
@@ -105,6 +111,7 @@ describe( '<ReferralCheckout>', () => {
 	afterEach( () => {
 		nock.cleanAll();
 		sessionStorage.clear();
+		mockSearch = {};
 	} );
 
 	test( 'lists the cart with what the client pays and the commission', async () => {
@@ -163,6 +170,64 @@ describe( '<ReferralCheckout>', () => {
 		await waitFor( () =>
 			expect( sessionStorage.getItem( 'referrals-shopping-card-selected-items' ) ).toBeNull()
 		);
+	} );
+
+	test( 'refers the plan of a development site with its license, leaving the cart alone', async () => {
+		mockSearch = { referral_blog_id: DEV_SITE_ID };
+		mockApi();
+		nock( API )
+			.get( '/wpcom/v2/agency/license/dev-site' )
+			.query( { agency_id: String( AGENCY_ID ), blog_id: String( DEV_SITE_ID ) } )
+			.reply( 200, {
+				a4a_site_id: 1,
+				license_id: 777,
+				product_id: 2112,
+				site_url: 'https://dev.example.com',
+			} );
+		let body: Record< string, unknown > | undefined;
+		nock( API )
+			.post( `/wpcom/v2/agency/${ AGENCY_ID }/referrals`, ( requestBody ) => {
+				body = requestBody;
+				return true;
+			} )
+			.reply( 200, {
+				id: 9,
+				client: { id: 1, email: 'client@example.com' },
+				products: [],
+				status: 'pending',
+				checkout_url: 'https://wordpress.com/checkout/agency/referral?x=1',
+			} );
+		const user = userEvent.setup();
+		render( <ReferralCheckout /> );
+
+		expect( await screen.findByText( 'Site: dev.example.com' ) ).toBeVisible();
+		// The license is on the monthly product, so the line is billed monthly whatever the saved term says.
+		expect( screen.getAllByText( /\/mo$/ ).length ).toBeGreaterThan( 0 );
+		expect( screen.queryByText( /\/yr$/ ) ).not.toBeInTheDocument();
+		await user.type( screen.getByLabelText( 'Client’s email address' ), 'client@example.com' );
+		await user.click( screen.getByRole( 'button', { name: 'Send to client' } ) );
+
+		await waitFor( () => expect( body ).toBeDefined() );
+		expect( body ).toMatchObject( {
+			product_ids: '2112',
+			licenses: [ { product_id: 2112, license_id: 777 } ],
+		} );
+		expect( sessionStorage.getItem( 'referrals-shopping-card-selected-items' ) ).toBe(
+			'jetpack-backup-t1:1'
+		);
+	} );
+
+	test( 'explains when the development site has no plan to refer', async () => {
+		mockSearch = { referral_blog_id: DEV_SITE_ID };
+		mockApi();
+		nock( API )
+			.get( '/wpcom/v2/agency/license/dev-site' )
+			.query( true )
+			.reply( 404, { code: 'not_found', message: 'License not found' } );
+		render( <ReferralCheckout /> );
+
+		expect( await screen.findByText( 'Failed to load the site’s plan.' ) ).toBeVisible();
+		expect( screen.queryByText( 'VaultPress Backup 10GB' ) ).not.toBeInTheDocument();
 	} );
 
 	test( 'sends one payment request when Send is clicked twice', async () => {

@@ -84,15 +84,20 @@ function main() {
 		return debug( 'main: not visible. sleeping.' );
 	}
 
-	if ( this.inbox.length === 1 && this.inbox[ 0 ].action && this.inbox[ 0 ].action === 'push' ) {
-		const note_id = this.inbox[ 0 ].note_id;
-		debug( 'main: have one push message with note_id, calling getNote(%d)', note_id, this.inbox );
+	if ( this.inbox.length === 1 && this.inbox[ 0 ].action === 'push' ) {
+		const message = this.inbox[ 0 ];
+		debug(
+			'main: have one push message with note_id, calling getNote(%d)',
+			message.note_id,
+			this.inbox
+		);
 		this.inbox = [];
-		this.getNote( note_id );
+		this.getNote( message.note_id, message );
 	} else if ( this.inbox.length ) {
-		debug( 'main: have messages, calling getNotes', this.inbox );
+		const messages = this.inbox;
+		debug( 'main: have messages, calling getNotes', messages );
 		this.inbox = [];
-		this.getNotes();
+		this.getNotes( undefined, messages );
 	} else if ( ! notes.length ) {
 		debug( 'main: no notes in local cache, calling getNotes' );
 		this.getNotes();
@@ -139,11 +144,17 @@ function pinghubCallback( err, event ) {
 		this.subscribed = false;
 	} else if ( responseType === 'message' ) {
 		// WebSocket message: add to inbox, call main() to trigger API call
+		const receivedAt = Date.now();
+		const wasVisibleAtReceipt = this.isVisible;
 		let message = true;
 		try {
 			message = JSON.parse( event?.response?.data );
 		} catch ( e ) {}
-		this.inbox.push( message );
+		this.inbox.push(
+			message && typeof message === 'object' && ! Array.isArray( message )
+				? { ...message, receivedAt, wasVisibleAtReceipt }
+				: message
+		);
 		debug( 'pinghubCallback: received message', event.response, 'this.inbox =', this.inbox );
 		this.main();
 	} else {
@@ -157,7 +168,7 @@ function pinghubCallback( err, event ) {
 	this.reschedule();
 }
 
-function getNote( note_id ) {
+function getNote( note_id, livePushMessage ) {
 	// initialize the list if it's empty
 	if ( this.noteList.length === 0 ) {
 		this.getNotes();
@@ -172,8 +183,9 @@ function getNote( note_id ) {
 			logError( error, { request: 'getNote', note_id, status: error.status, code: error.error } );
 			return;
 		}
+		const previousNotes = getAllNotes( store.getState() );
 		store.dispatch( actions.notes.addNotes( data.notes ) );
-		ready.call( this );
+		ready.call( this, getLiveFollowCandidates( data.notes, [ livePushMessage ], previousNotes ) );
 	} );
 }
 
@@ -185,7 +197,7 @@ function getNote( note_id ) {
  * (UNIX epoch seconds) it pages older notes in additively for load-more and
  * never prunes, since an older slice isn't a superset of what's loaded.
  */
-function getNotes( before ) {
+function getNotes( before, livePushMessages = [] ) {
 	if ( this.gettingNotes ) {
 		return;
 	}
@@ -250,6 +262,7 @@ function getNotes( before ) {
 			return;
 		}
 
+		const previousNotes = getAllNotes( store.getState() );
 		store.dispatch( actions.ui.loadedNotes() );
 
 		// Short page (fewer than requested) means the server has nothing more.
@@ -316,7 +329,7 @@ function getNotes( before ) {
 			cleanupLocalCache.call( this );
 		}
 		this.retries = 0;
-		ready.call( this );
+		ready.call( this, getLiveFollowCandidates( data.notes, livePushMessages, previousNotes ) );
 
 		// New notes arriving via polling/push land in the shared store but not in
 		// the active filter's id list. Refresh that list so a filtered view (e.g.
@@ -555,13 +568,62 @@ function getFilteredNotes( before ) {
 }
 
 /**
- * Reports new notification data if available
- *
- * New notification data is available _if_ we
- * have a note with a timestamp newer than we
- * did the last time we called this function.
+ * Matches live push messages to hydrated follow notes and suppresses identical cached snapshots.
  */
-function ready() {
+function getLiveFollowCandidates( notes, pushMessages = [], previousNotes = [] ) {
+	const previousNotesById = new Map( previousNotes.map( ( note ) => [ String( note.id ), note ] ) );
+	const pushesByNoteId = new Map();
+
+	pushMessages.forEach( ( message ) => {
+		if (
+			message?.action !== 'push' ||
+			typeof message.wasVisibleAtReceipt !== 'boolean' ||
+			! Number.isSafeInteger( message.receivedAt ) ||
+			( typeof message.note_id !== 'number' && typeof message.note_id !== 'string' ) ||
+			String( message.note_id ).length === 0
+		) {
+			return;
+		}
+
+		const key = String( message.note_id );
+		const previous = pushesByNoteId.get( key );
+		if ( ! previous || message.receivedAt < previous.receivedAt ) {
+			pushesByNoteId.set( key, message );
+		}
+	} );
+
+	return Array.from( pushesByNoteId.values() )
+		.sort( ( a, b ) => a.receivedAt - b.receivedAt )
+		.flatMap( ( message ) => {
+			const note = notes.find( ( item ) => String( item.id ) === String( message.note_id ) );
+			const targetSiteId = note?.type === 'follow' ? note.meta?.ids?.site : undefined;
+			if ( ! Number.isSafeInteger( targetSiteId ) || targetSiteId <= 0 ) {
+				return [];
+			}
+
+			const previousNote = previousNotesById.get( String( note.id ) );
+			if (
+				previousNote?.note_hash !== undefined &&
+				previousNote.note_hash !== null &&
+				note.note_hash !== undefined &&
+				note.note_hash !== null &&
+				previousNote.note_hash === note.note_hash
+			) {
+				return [];
+			}
+
+			return [
+				{
+					targetSiteId,
+					type: 'follow',
+					receivedAt: message.receivedAt,
+					wasVisibleAtReceipt: message.wasVisibleAtReceipt,
+				},
+			];
+		} );
+}
+
+function ready( subscriberNotifications = [] ) {
 	const notes = getAllNotes( store.getState() );
 
 	let newNotes = notes.filter(
@@ -576,7 +638,12 @@ function ready() {
 	}
 
 	const latestType = notes.slice( -1 )[ 0 ]?.type ?? null;
-	store.dispatch( { type: 'APP_RENDER_NOTES', newNoteCount, latestType } );
+	store.dispatch( {
+		type: 'APP_RENDER_NOTES',
+		newNoteCount,
+		latestType,
+		...( subscriberNotifications.length && { subscriberNotifications } ),
+	} );
 
 	this.firstRender = false;
 }

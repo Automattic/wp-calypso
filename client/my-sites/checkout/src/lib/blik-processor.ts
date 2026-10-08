@@ -38,14 +38,13 @@ export default async function blikProcessor(
 		siteId,
 		includeDomainDetails,
 		includeGSuiteDetails,
-		reduxDispatch,
 		responseCart,
 		contactDetails,
 		fromSiteSlug,
 	} = options;
 	const paymentMethodId = 'stripe-blik';
 
-	reduxDispatch( recordTransactionBeginAnalytics( { paymentMethodId } ) );
+	recordTransactionBeginAnalytics( { paymentMethodId } );
 
 	const {
 		origin = 'https://wordpress.com',
