@@ -21,7 +21,7 @@ export function useResourceSelection( { onPreview, onOpen }: UseResourceSelectio
 		onPreview( resource );
 	};
 
-	// Stable across renders, so memoised cards don't re-render while searching.
+	// Stable across renders, so memoized cards don't re-render while searching.
 	const select: SelectResource = useEvent( ( resource, event ) => {
 		// Modified clicks follow the link and open the resource itself.
 		if ( event.metaKey || event.ctrlKey || event.shiftKey || event.altKey ) {
@@ -41,8 +41,8 @@ export function useResourceSelection( { onPreview, onOpen }: UseResourceSelectio
 	return { selectedId, origin, select, preview, clear: () => setSelectedId( null ) };
 }
 
-/** The selected resource and its neighbours among the current results. */
-export function getNeighbours( results: AgencyEnablementResource[], selectedId: number | null ) {
+/** The selected resource and its neighbors among the current results. */
+export function getNeighbors( results: AgencyEnablementResource[], selectedId: number | null ) {
 	const index = results.findIndex( ( resource ) => resource.id === selectedId );
 
 	return index === -1
