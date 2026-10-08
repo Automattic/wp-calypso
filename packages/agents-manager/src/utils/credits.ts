@@ -1,25 +1,35 @@
 import { __, _n, sprintf } from '@wordpress/i18n';
-import type { ProgressRingTone } from '@automattic/agenttic-ui';
+import type { StatusIndicatorTone } from '@automattic/agenttic-ui';
 
 export type CreditsPlan = 'free' | 'paid';
 export type CreditsPlanTier = 'personal' | 'premium' | 'business' | 'commerce';
 
 /** One balance shown as a row in the credits popover. */
-export interface CreditsPool {
-	id: 'free' | 'plan' | 'topups';
-	label: string;
-	/** Remaining share of this pool, 0–100. */
-	percent: number;
-	/** Reset or expiry, already formatted for display. */
-	dateLabel?: string;
-	remaining?: number;
-	total?: number;
-}
+export type CreditsPool =
+	| {
+			id: 'free' | 'plan';
+			label: string;
+			/** Remaining share of this pool, 0–100. */
+			percent: number;
+			/** Reset or expiry, already formatted for display. */
+			dateLabel?: string;
+			remaining?: number;
+			total?: number;
+	  }
+	| {
+			/** Top-ups have no allowance or reset, so the row shows their balance alone. */
+			id: 'topups';
+			label: string;
+			remaining: number;
+			percent?: never;
+			dateLabel?: never;
+			total?: never;
+	  };
 
 interface CreditsStatusBase {
 	/** Known paid tier supplied by the server; absent for older or unsupported metadata. */
 	planTier?: CreditsPlanTier;
-	/** Overall remaining share, 0–100; drives the ring and the free-plan tooltip. */
+	/** Overall remaining share, 0–100; drives the free-plan dot, tooltip and notice. */
 	percent: number;
 	pools: CreditsPool[];
 }
@@ -36,10 +46,10 @@ export type CreditsStatus =
 			remaining: number;
 	  } );
 
-/** Low-balance percentage for the ring tone and the free-plan notice. */
+/** Free-plan low-balance percentage, for the dot tone and the notice. */
 export const CREDITS_LOW_THRESHOLD = 20;
 
-/** Paid balance, in credits, below which the low-balance notice shows. */
+/** Paid balance, in credits, below which the dot turns red and the low-balance notice shows. */
 export const CREDITS_LOW_BALANCE = 20000;
 
 export function clampPercent( percent: number ): number {
@@ -72,25 +82,32 @@ export function isCreditsExhausted( status: CreditsStatus ): boolean {
 }
 
 /**
- * Free plans only, by percentage. The paid low-balance notice compares the
- * combined balance with `CREDITS_LOW_BALANCE` in `useCredits()`.
+ * Low but not exhausted: paid plans by the combined balance against
+ * `CREDITS_LOW_BALANCE`, free plans by percentage against `threshold`.
  */
 export function isCreditsLow(
 	status: CreditsStatus,
 	threshold: number = CREDITS_LOW_THRESHOLD
 ): boolean {
-	return status.plan === 'free' && ! isCreditsExhausted( status ) && status.percent <= threshold;
+	if ( isCreditsExhausted( status ) ) {
+		return false;
+	}
+
+	return status.plan === 'paid'
+		? status.remaining < CREDITS_LOW_BALANCE
+		: status.percent <= threshold;
 }
 
 /**
- * Low or exhausted balances use the error tone on every plan. Above the
- * threshold, paid plans stay muted and free plans use the primary tone.
+ * Low or exhausted balances use the error tone, by the same rule as the
+ * credits notices. Otherwise paid plans stay muted and free plans use the
+ * primary tone.
  */
 export function getCreditsTone(
 	status: CreditsStatus,
 	threshold: number = CREDITS_LOW_THRESHOLD
-): ProgressRingTone {
-	if ( status.percent <= threshold || isCreditsExhausted( status ) ) {
+): StatusIndicatorTone {
+	if ( isCreditsLow( status, threshold ) || isCreditsExhausted( status ) ) {
 		return 'error';
 	}
 
@@ -114,15 +131,20 @@ export function formatCreditsShort( credits: number ): string {
 	);
 }
 
-/** Tooltip and screen-reader sentence for the ring. */
+/** An amount of credits left as a sentence, e.g. "67k credits left". */
+export function formatCreditsLeft( credits: number ): string {
+	return sprintf(
+		/* translators: %s: site credits left in short form, e.g. "800" or "10.8k" */
+		_n( '%s credit left', '%s credits left', credits, __i18n_text_domain__ ),
+		formatCreditsShort( credits )
+	);
+}
+
+/** Tooltip and screen-reader sentence for the dot button. */
 export function getCreditsLabel( status: CreditsStatus ): string {
 	if ( status.plan === 'paid' ) {
 		// The combined balance across the plan and top-ups, not the monthly allowance alone.
-		return sprintf(
-			/* translators: %s: site credits left in short form, e.g. "800" or "10.8k" */
-			_n( '%s credit left', '%s credits left', status.remaining, __i18n_text_domain__ ),
-			formatCreditsShort( status.remaining )
-		);
+		return formatCreditsLeft( status.remaining );
 	}
 
 	return sprintf(
@@ -173,9 +195,7 @@ export function buildMockCreditsStatus( plan: CreditsPlan, percent: number ): Cr
 				{
 					id: 'topups',
 					label: __( 'Top-ups', __i18n_text_domain__ ),
-					percent: ( 100 * topupsRemaining ) / MOCK_TOPUPS_TOTAL,
 					remaining: topupsRemaining,
-					total: MOCK_TOPUPS_TOTAL,
 				},
 			],
 		};

@@ -25,14 +25,10 @@ describe( 'getHidePlanPropsBasedOnThemeType', () => {
 		}
 	);
 
-	it( 'shows Premium and higher for premium themes', () => {
-		expect( getHidePlanPropsBasedOnThemeType( PREMIUM_THEME ) ).toEqual( {
-			hidePersonalPlan: true,
-			hideFreePlan: true,
-		} );
-	} );
-
-	it( 'shows Personal and higher for personal themes', () => {
-		expect( getHidePlanPropsBasedOnThemeType( PERSONAL_THEME ) ).toEqual( { hideFreePlan: true } );
-	} );
+	it.each( [ PERSONAL_THEME, PREMIUM_THEME ] )(
+		'shows Personal and higher for %s themes',
+		( type ) => {
+			expect( getHidePlanPropsBasedOnThemeType( type ) ).toEqual( { hideFreePlan: true } );
+		}
+	);
 } );

@@ -5,6 +5,7 @@ import '@testing-library/jest-dom';
 import { queryClient } from '@automattic/api-queries';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { select } from '@wordpress/data';
 import nock from 'nock';
 import { render } from '../../../test-utils';
 import AgencyApprovalNotice from '../agency-approval-notice';
@@ -50,12 +51,17 @@ describe( '<AgencyApprovalNotice>', () => {
 		expect( await screen.findByText( /While we review your agency/ ) ).toBeVisible();
 	} );
 
-	test( 'points a rejected agency to support', async () => {
+	test( 'opens the contact form for a rejected agency', async () => {
 		mockPreferences();
 		renderNotice( agency( 'rejected' ) );
 
-		expect( await screen.findByText( /We have not approved your application/ ) ).toBeVisible();
-		expect( screen.getByRole( 'link', { name: 'contact support' } ) ).toBeVisible();
+		await userEvent.click( await screen.findByRole( 'button', { name: 'contact support' } ) );
+
+		await waitFor( () => {
+			const helpCenter = select( 'automattic/help-center' );
+			expect( helpCenter.isHelpCenterShown() ).toBe( true );
+			expect( helpCenter.getNavigateToRoute()?.route ).toBe( '/contact-form' );
+		} );
 	} );
 
 	test( 'welcomes a newly approved agency until dismissed', async () => {

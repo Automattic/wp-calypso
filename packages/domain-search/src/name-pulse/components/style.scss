@@ -224,6 +224,7 @@ html:has( .name-pulse-search-input ) {
 .name-pulse-row--card {
 	display: flex;
 	flex-direction: column;
+	flex-wrap: nowrap;
 	align-items: stretch;
 	justify-content: center;
 	gap: 0;
@@ -264,12 +265,45 @@ html:has( .name-pulse-search-input ) {
 	}
 }
 
+// Figma outlines the bundle CTA in the accent color, unlike the gray secondary
+// buttons on the classic results page.
+.domain-search--name-pulse .bundle-card .bundle-card__cta.is-secondary {
+	color: var( --wp-admin-theme-color, #3858e9 );
+	box-shadow: inset 0 0 0 1px var( --wp-admin-theme-color, #3858e9 );
+}
+
+.domain-search--name-pulse .bundle-tld-chips .bundle-tld-chips__tld {
+	font-weight: 400;
+}
+
 // The exact-match card and the bundle card split the row; either one alone
 // takes the full width, and they stack once there is no room for two.
 .name-pulse-featured {
 	display: grid;
 	grid-template-columns: repeat( auto-fit, minmax( min( 100%, 24rem ), 1fr ) );
 	gap: 1rem;
+
+	// Both cards stretch to the same bottom edge, so equal footers and
+	// bottom-aligned price rows put the two buttons on the same line, whatever
+	// the height of each price.
+	.domain-suggestion-match-reasons > li,
+	.bundle-card__footer > * {
+		display: flex;
+		align-items: center;
+		min-height: 24px;
+	}
+
+	// 2px below the TLDs, not the stack's 16px.
+	.bundle-card .bundle-card__members {
+		margin-block-start: -14px;
+	}
+
+	@media ( min-width: $break-small ) {
+		.name-pulse-exact-card__price-row,
+		.bundle-card__price-row {
+			align-items: flex-end;
+		}
+	}
 }
 
 // Matches the bundle card it sits beside: same frame, price row and footer.
@@ -343,15 +377,6 @@ html:has( .name-pulse-search-input ) {
 // move beside the TLDs instead of under them. Narrow screens keep the
 // shared card's stacked layout.
 .name-pulse-bundle-wide {
-	.bundle-tld-chips .bundle-tld-chips__tld {
-		font-weight: 400;
-	}
-
-	.bundle-card .bundle-card__cta.is-secondary {
-		color: var( --wp-admin-theme-color, #3858e9 );
-		box-shadow: inset 0 0 0 1px var( --wp-admin-theme-color, #3858e9 );
-	}
-
 	.bundle-card .bundle-price .components-text:not( .bundle-price__sub-text ) {
 		font-size: 20px;
 		line-height: 28px;

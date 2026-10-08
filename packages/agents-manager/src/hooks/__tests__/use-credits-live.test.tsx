@@ -5,7 +5,7 @@ import { act, renderHook } from '@testing-library/react';
 import { ORCHESTRATOR_AGENT_URL } from '../../constants';
 import { creditSnapshot } from '../../utils/__tests__/fixtures/credit-snapshot';
 import { localNumber } from '../../utils/__tests__/fixtures/local-number';
-import { getCreditsTone } from '../../utils/credits';
+import { getCreditsLabel, getCreditsTone } from '../../utils/credits';
 import { useCredits } from '../use-credits';
 import type { AgentConfig } from '../../utils/create-agent-config';
 import type { CreditsStatus } from '../../utils/credits';
@@ -269,7 +269,7 @@ it.each( [
 	}
 );
 
-it( 'updates the paid ring by plan share and the warning by amount through depletion and replenishment', async () => {
+it( 'turns the dot red by amount through depletion and replenishment', async () => {
 	const balance = ( remaining: number ) =>
 		creditSnapshot( {
 			credits_limit: 100000,
@@ -280,24 +280,28 @@ it( 'updates the paid ring by plan share and the warning by amount through deple
 	fetchMock.mockResolvedValueOnce( response( balance( 25000 ) ) );
 	const { result } = renderCredits();
 	await flush();
-	expect( getCreditsTone( props( result.current ).status ) ).toBe( 'muted' );
-	expect( result.current.notice ).toBeUndefined();
-	for ( const [ remaining, message ] of [
-		[ 20000, undefined ],
-		[ 19999, `${ localNumber( 19.9 ) }k credits left.` ],
-		[ 800, `${ localNumber( 800 ) } credits left.` ],
-		[ 0, 'You’ve used all your site credits.' ],
+	// The dot and the notice share one rule, so the dot is red exactly when a notice would show.
+	const expectDot = ( tone: 'muted' | 'error', message?: string ) => {
+		const actual = getCreditsTone( props( result.current ).status );
+		expect( actual ).toBe( tone );
+		expect( result.current.notice?.message ).toBe( message );
+		expect( result.current.notice !== undefined ).toBe( actual === 'error' );
+	};
+	expectDot( 'muted' );
+	for ( const [ remaining, tone, message ] of [
+		[ 20000, 'muted', undefined ],
+		[ 19999, 'error', `${ localNumber( 19.9 ) }k credits left.` ],
+		[ 800, 'error', `${ localNumber( 800 ) } credits left.` ],
+		[ 0, 'error', 'You’ve used all your site credits.' ],
 	] as const ) {
 		await receive( balance( remaining ) );
 		expect( props( result.current ).status.remaining ).toBe( remaining );
-		expect( getCreditsTone( props( result.current ).status ) ).toBe( 'error' );
-		expect( result.current.notice?.message ).toBe( message );
+		expectDot( tone, message );
 	}
 	fetchMock.mockResolvedValueOnce( response( balance( 25000 ) ) );
 	act( () => window.dispatchEvent( new Event( 'focus' ) ) );
 	await flush();
-	expect( getCreditsTone( props( result.current ).status ) ).toBe( 'muted' );
-	expect( result.current.notice ).toBeUndefined();
+	expectDot( 'muted' );
 } );
 
 it.each( [ 'GET', 'terminal' ] )(
@@ -324,6 +328,64 @@ it.each( [ 'GET', 'terminal' ] )(
 			remaining: 67000,
 			pools: [ { id: 'plan', percent: 0, remaining: 0 } ],
 		} );
+		expect( props( result.current ).isOpen ).toBe( false );
+		expect( result.current.notice ).toBeUndefined();
+		act( () => expect( result.current.beforeSubmit() ).toBe( true ) );
+	}
+);
+
+// A 15,000-credit plan with 67,000 of 100,000 top-up credits left.
+const withTopUps = ( planRemaining: number ) =>
+	creditSnapshot( {
+		plan_tier: 'personal',
+		credits_limit: 15000,
+		credits_used: 15000 - planRemaining,
+		credits_remaining: planRemaining,
+		credits_available: planRemaining + 67000,
+		top_up_credits_purchased: 100000,
+		top_up_credits_used: 33000,
+		top_up_credits_remaining: 67000,
+	} );
+
+it( 'shows no low notice while top-ups keep a low plan balance above the limit', async () => {
+	fetchMock.mockResolvedValueOnce( response( withTopUps( 5000 ) ) );
+	const { result } = renderCredits();
+	await flush();
+	expect( props( result.current ).status ).toMatchObject( {
+		remaining: 72000,
+		pools: [
+			{ id: 'plan', remaining: 5000 },
+			{ id: 'topups', remaining: 67000 },
+		],
+	} );
+	expect( getCreditsLabel( props( result.current ).status ) ).toBe(
+		`${ localNumber( 72 ) }k credits left`
+	);
+	expect( result.current.notice ).toBeUndefined();
+} );
+
+it.each( [ 'GET', 'terminal' ] )(
+	'spends top-ups once plan credits run out, without blocking Send, through %s',
+	async ( source ) => {
+		fetchMock.mockResolvedValueOnce( response( withTopUps( 5000 ) ) );
+		const { result } = renderCredits();
+		await flush();
+		if ( source === 'GET' ) {
+			fetchMock.mockResolvedValueOnce( response( withTopUps( 0 ) ) );
+			act( () => window.dispatchEvent( new Event( 'focus' ) ) );
+			await flush();
+		} else {
+			await receive( withTopUps( 0 ) );
+		}
+		const { status } = props( result.current );
+		expect( status ).toMatchObject( {
+			remaining: 67000,
+			pools: [
+				{ id: 'plan', percent: 0, remaining: 0 },
+				{ id: 'topups', remaining: 67000 },
+			],
+		} );
+		expect( getCreditsLabel( status ) ).toBe( `${ localNumber( 67 ) }k credits left` );
 		expect( props( result.current ).isOpen ).toBe( false );
 		expect( result.current.notice ).toBeUndefined();
 		act( () => expect( result.current.beforeSubmit() ).toBe( true ) );
@@ -817,7 +879,7 @@ it( 'clears old amounts after cancellation/error without terminal metadata, incl
 	expect( fetchMock ).not.toHaveBeenCalled();
 } );
 it.each( [ 'focus', 'online', 'visibilitychange' ] )(
-	'keeps the ring and its open popover visible during a %s refresh',
+	'keeps the dot and its open popover visible during a %s refresh',
 	async ( event ) => {
 		const read = deferred< ReturnType< typeof response > >();
 		fetchMock
@@ -825,7 +887,7 @@ it.each( [ 'focus', 'online', 'visibilitychange' ] )(
 			.mockReturnValueOnce( read.promise );
 		const { result } = renderCredits();
 		await flush();
-		// Clicking the ring can focus the sidebar's window before opening the popover.
+		// Clicking the dot can focus the sidebar's window before opening the popover.
 		act( () => {
 			( event === 'visibilitychange' ? document : window ).dispatchEvent( new Event( event ) );
 			props( result.current ).onToggle( true );

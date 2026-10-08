@@ -272,7 +272,7 @@ function getCardDescription( site: Site, purchase?: Purchase ) {
 	}
 
 	if ( purchase ) {
-		return <PurchaseExpiryStatus purchase={ purchase } />;
+		return <PurchaseExpiryStatus purchase={ purchase } isInsideLink />;
 	}
 
 	return undefined;
