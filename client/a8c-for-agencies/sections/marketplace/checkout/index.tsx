@@ -15,9 +15,16 @@ interface CheckoutProps {
 	isClient?: boolean;
 	siteSlug?: string;
 	planSlug?: string;
+	skipActiveCart?: boolean;
 }
 
-function Checkout( { referralBlogId, isClient, siteSlug, planSlug }: CheckoutProps ) {
+function Checkout( {
+	referralBlogId,
+	isClient,
+	siteSlug,
+	planSlug,
+	skipActiveCart,
+}: CheckoutProps ) {
 	const { marketplaceType } = useContext( MarketplaceTypeContext );
 	const isReferralMarketplace = marketplaceType === MARKETPLACE_TYPE_REFERRAL;
 
@@ -33,14 +40,18 @@ function Checkout( { referralBlogId, isClient, siteSlug, planSlug }: CheckoutPro
 		return null;
 	}
 
-	// New Billing Dragon Checkout V2 page: check for BD feature flag and it's not in a referral context
+	// New Billing Dragon Checkout V2 page: check for BD feature flag and it's not in a referral context.
+	// A cart the backend already prepared only exists on the WordPress.com side, so it always
+	// goes through the Billing Dragon checkout.
 	if (
-		isEnabled( 'a4a-bd-checkout' ) &&
+		( isEnabled( 'a4a-bd-checkout' ) || skipActiveCart ) &&
 		! isReferralMarketplace &&
 		! isClient &&
 		! referralBlogId
 	) {
-		return <CheckoutV2 siteSlug={ siteSlug } planSlug={ planSlug } />;
+		return (
+			<CheckoutV2 siteSlug={ siteSlug } planSlug={ planSlug } skipActiveCart={ skipActiveCart } />
+		);
 	}
 
 	return <CheckoutV1 referralBlogId={ referralBlogId } isClient={ isClient } />;
