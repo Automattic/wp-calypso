@@ -168,15 +168,6 @@ jest.mock( '../support-guide', () => ( {
 	__esModule: true,
 	default: () => <div data-testid="support-guide">Support guide</div>,
 } ) );
-jest.mock( '../support-guides', () => ( {
-	__esModule: true,
-	default: ( { onExpand }: { onExpand: () => void } ) => (
-		<div data-testid="support-guides">
-			Support guides
-			<button onClick={ onExpand }>Expand guides</button>
-		</div>
-	),
-} ) );
 
 import AgentDock from '../agent-dock';
 import { markActionOrigin, takeActionOrigin } from '../../utils/action-origin';
@@ -315,32 +306,8 @@ describe( 'AgentDock', () => {
 		act( () => onOpenSidebar() );
 
 		// Opening the docked sidebar must not override a route chosen from the
-		// WP admin bar (e.g. Chat history / Support guides).
+		// WP admin bar (e.g. Chat history).
 		expect( screen.getByTestId( 'location' ).textContent ).toBe( '/history' );
-	} );
-
-	it( 'keeps the support guides view when expanding from the minimized state', () => {
-		useWpAdminAgent();
-		mockHasAdminBar = true;
-		mockAgentsManagerState = { isOpen: true, isDocked: false, isMinimized: true };
-
-		renderAgentDock( '/support-guides' );
-		fireEvent.click( screen.getByText( 'Expand guides' ) );
-
-		expect( mockResumeChat ).not.toHaveBeenCalled();
-		expect( screen.getByTestId( 'location' ).textContent ).toBe( '/support-guides' );
-	} );
-
-	it( 'keeps the support guides list without the WP admin bar trigger', () => {
-		// The route stays registered even without an entry button, so a
-		// mid-session entry-button change (Site Editor navigation) can't
-		// redirect a user off the list.
-		useWpAdminAgent();
-
-		renderAgentDock( '/support-guides' );
-
-		expect( screen.getByTestId( 'support-guides' ) ).toBeInTheDocument();
-		expect( screen.getByTestId( 'location' ).textContent ).toBe( '/support-guides' );
 	} );
 
 	it( 'keeps a non-dismissible chat expanded when the saved state is closed and minimized', () => {

@@ -40,7 +40,6 @@ import EditorAiChatButton from '../editor-ai-chat-button';
 import { SwitchToFloating } from '../icons';
 import OrchestratorChat from '../orchestrator-chat';
 import SupportGuide from '../support-guide';
-import SupportGuides from '../support-guides';
 import ZendeskChat from '../zendesk-chat';
 import type {
 	AbilitiesSetupHook,
@@ -215,20 +214,11 @@ export default function AgentDock( {
 		prevHasAiChatEntryRef.current = hasAiChatEntry;
 	}, [ hasAiChatEntry, isMinimized, setIsMinimized ] );
 
-	// Route visibility. All are hidden in reader chat (public blog frontends);
-	// some add a further requirement, noted below. Ordered to match the routes.
-	//
+	// Reader chat (public blog frontends) gets `/chat` only. The other routes:
+	// - `/zendesk`: the human support chat, Woo AI only.
+	// - `/post`: the guide viewer, opened from in-chat links and sources.
+	// - `/history`: the chat header's history button.
 	const showZendeskChat = ! isReaderChat && isWooAiProvider();
-	// `/support-guides` (the list) is registered even
-	// without an entry button: unregistering it mid-session (Site Editor
-	// navigation) would yank the route from under a user viewing it, and the
-	// wildcard redirect would reset their chat.
-	const showSupportGuides = ! isReaderChat;
-	// `/post` (the viewer) opens a guide or link from in-chat links and sources,
-	// so unlike the list it can open directly from a chat link.
-	const showSupportGuide = ! isReaderChat;
-	// `/history` matches the chat header's history button.
-	const showChatHistory = ! isReaderChat;
 
 	useSetupCustomActions( {
 		canDock,
@@ -519,17 +509,6 @@ export default function AgentDock( {
 		/>
 	);
 
-	const SupportGuidesRoute = (
-		<SupportGuides
-			onAbort={ handleAbort }
-			onClose={ handleClose }
-			onExpand={ handleExpand }
-			isDocked={ isDocked }
-			isOpen={ chatIsOpen }
-			chatHeaderOptions={ chatHeaderOptions }
-		/>
-	);
-
 	return (
 		<>
 			<EditorAiChatButton onClose={ handleClose } onOpenChat={ openChat } />
@@ -540,9 +519,8 @@ export default function AgentDock( {
 					<Routes>
 						<Route path="/chat" element={ OrchestratorChatRoute } />
 						{ showZendeskChat && <Route path="/zendesk" element={ ZendeskChatRoute } /> }
-						{ showSupportGuides && <Route path="/support-guides" element={ SupportGuidesRoute } /> }
-						{ showSupportGuide && <Route path="/post" element={ SupportGuideRoute } /> }
-						{ showChatHistory && <Route path="/history" element={ HistoryRoute } /> }
+						{ ! isReaderChat && <Route path="/post" element={ SupportGuideRoute } /> }
+						{ ! isReaderChat && <Route path="/history" element={ HistoryRoute } /> }
 						<Route
 							path="*"
 							element={
