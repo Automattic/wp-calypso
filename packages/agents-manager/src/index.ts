@@ -13,7 +13,6 @@ export { recordAgentsManagerTracksEvent } from './utils/tracks';
 // Host-facing controls for the chat dock, for entry points outside it
 export {
 	closeAgentsManagerChat,
-	getAgentsManagerChatRoute,
 	isAgentsManagerChatVisible,
 	openAgentsManagerChat,
 } from './utils/chat-actions';

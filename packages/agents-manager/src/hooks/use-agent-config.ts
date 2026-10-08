@@ -3,7 +3,6 @@ import { ORCHESTRATOR_AGENT_ID } from '../constants';
 interface AgentConfig {
 	agentId: string;
 	version?: string;
-	isLoading: boolean;
 }
 
 /**
@@ -29,6 +28,5 @@ export function useAgentConfig( hostAgentId?: string ): AgentConfig {
 	return {
 		agentId: hostAgentId || agentIdParam || inlineAgentId || ORCHESTRATOR_AGENT_ID,
 		version: versionParam || undefined,
-		isLoading: false,
 	};
 }
