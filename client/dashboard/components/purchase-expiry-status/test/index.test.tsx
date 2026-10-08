@@ -168,15 +168,22 @@ describe( '<PurchaseExpiryStatus>', () => {
 
 	describe( 'a purchase the viewer cannot renew', () => {
 		test.each( [
-			[ 'is not theirs', { user_id: OWNER_ID + 1 } ],
-			[ 'cannot be explicitly renewed', { can_explicit_renew: false } ],
-		] )( 'is still flagged, but offers nothing to click, when it %s', ( _label, overrides ) => {
-			render(
-				<PurchaseExpiryStatus purchase={ createPurchase( overrides as Partial< Purchase > ) } />
-			);
+			[ 'is not theirs', { user_id: OWNER_ID + 1 }, false ],
+			[ 'cannot be explicitly renewed', { can_explicit_renew: false }, false ],
+			[ 'is shown inside a link', {}, true ],
+		] )(
+			'is still flagged, but offers nothing to click, when it %s',
+			( _label, overrides, isInsideLink ) => {
+				render(
+					<PurchaseExpiryStatus
+						purchase={ createPurchase( overrides as Partial< Purchase > ) }
+						isInsideLink={ isInsideLink }
+					/>
+				);
 
-			expect( screen.getByText( /expires in 45 days/i ) ).toBeVisible();
-			expect( renewLink() ).toBeNull();
-		} );
+				expect( screen.getByText( /expires in 45 days/i ) ).toBeVisible();
+				expect( renewLink() ).toBeNull();
+			}
+		);
 	} );
 } );
