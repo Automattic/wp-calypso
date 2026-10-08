@@ -20,7 +20,13 @@ import { EVERY_FIVE_SECONDS, Interval } from 'calypso/lib/interval';
 import { useDispatch, useSelector } from 'calypso/state';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import isUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
-import { getSite, getSiteDomain, isJetpackSite } from 'calypso/state/sites/selectors';
+import {
+	getSite,
+	getSiteAdminUrl,
+	getSiteDomain,
+	isAdminInterfaceWPAdmin,
+	isJetpackSite,
+} from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { useSetFeatureBreadcrumb } from '../../../../hooks/breadcrumbs/use-set-feature-breadcrumb';
 import { DIFMUpsell } from '../../../components/difm-upsell-banner';
@@ -35,6 +41,8 @@ function SiteResetCard( {
 	isAtomic,
 	isUnlaunchedSite: isUnlaunchedSiteProp,
 	site,
+	isClassicView,
+	siteAdminUrl,
 } ) {
 	const siteId = useSelector( getSelectedSiteId );
 	const dispatch = useDispatch();
@@ -110,7 +118,7 @@ function SiteResetCard( {
 					: sprintf( translate( '%d posts' ), data.post_count );
 			result.push( {
 				message,
-				url: `/posts/${ siteDomain }`,
+				url: isClassicView && siteAdminUrl ? `${ siteAdminUrl }edit.php` : `/posts/${ siteDomain }`,
 			} );
 		}
 
@@ -121,7 +129,10 @@ function SiteResetCard( {
 					: sprintf( translate( '%d pages' ), data.page_count );
 			result.push( {
 				message,
-				url: `/pages/${ siteDomain }`,
+				url:
+					isClassicView && siteAdminUrl
+						? `${ siteAdminUrl }edit.php?post_type=page`
+						: `/pages/${ siteDomain }`,
 			} );
 		}
 
@@ -132,7 +143,8 @@ function SiteResetCard( {
 					: sprintf( translate( '%d media items' ), data.media_count );
 			result.push( {
 				message,
-				url: `/media/${ siteDomain }`,
+				url:
+					isClassicView && siteAdminUrl ? `${ siteAdminUrl }upload.php` : `/media/${ siteDomain }`,
 			} );
 		}
 
@@ -241,6 +253,8 @@ function SiteResetCard( {
 							warningText={ translate(
 								'Before resetting your site, consider exporting your content as a backup.'
 							) }
+							isClassicView={ isClassicView }
+							siteAdminUrl={ siteAdminUrl }
 						/>
 					) }
 					<FormLabel htmlFor="confirmResetInput" className="reset-site__confirm-label">
@@ -329,5 +343,7 @@ export default connect( ( state ) => {
 		selectedSiteSlug: getSelectedSiteSlug( state ),
 		isAtomic: isJetpackSite( state, siteId ),
 		isUnlaunchedSite: isUnlaunchedSite( state, siteId ),
+		isClassicView: isAdminInterfaceWPAdmin( state, siteId ),
+		siteAdminUrl: getSiteAdminUrl( state, siteId ),
 	};
 } )( localize( SiteResetCard ) );
