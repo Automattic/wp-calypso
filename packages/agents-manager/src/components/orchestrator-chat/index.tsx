@@ -68,7 +68,7 @@ import {
 } from '../../utils/orchestrator-error-message';
 import { getReaderChatErrorMessage } from '../../utils/reader-chat-error-message';
 import { isShowComponentTool } from '../../utils/show-component-tools';
-import { isBlockEditToolId } from '../../utils/tool-message-utils';
+import { getRetryingToolCallId, isBlockEditToolId } from '../../utils/tool-message-utils';
 import { recordAgentsManagerTracksEvent, recordBigSkyTracksEvent } from '../../utils/tracks';
 import { startTurn } from '../../utils/turn-id';
 import AgentChat from '../agent-chat';
@@ -338,6 +338,9 @@ export default function OrchestratorChat( {
 	const [ thinkingMessage, setThinkingMessage ] = useState< string | null >( null );
 	const [ isBuildingSite, setIsBuildingSite ] = useState( false );
 	const [ deletedMessageIds, setDeletedMessageIds ] = useState< Set< string > >( new Set() );
+	const [ retriedToolCallIds, setRetriedToolCallIds ] = useState< ReadonlySet< string > >(
+		new Set()
+	);
 	const [ sourceDriftInvalidatedCheckpointIds, setSourceDriftInvalidatedCheckpointIds ] = useState<
 		Set< string >
 	>( new Set() );
@@ -466,6 +469,15 @@ export default function OrchestratorChat( {
 		return {
 			...agentConfig,
 			onTaskUpdate: async ( update: TaskUpdate ) => {
+				const retryingToolCallId = getRetryingToolCallId( update.status?.message );
+				if ( retryingToolCallId ) {
+					setRetriedToolCallIds( ( previous ) =>
+						previous.has( retryingToolCallId )
+							? previous
+							: new Set( [ ...previous, retryingToolCallId ] )
+					);
+				}
+
 				const streamedMessages = streamedCheckpointMessagesRef.current;
 				const isCurrentStreamGeneration =
 					streamedMessages.streamGeneration === checkpointStreamGeneration;
@@ -1668,6 +1680,7 @@ export default function OrchestratorChat( {
 			currentPostId,
 			isProcessing,
 			canEscalateToHuman: isWooAiProvider(),
+			retriedToolCallIds,
 		} );
 
 		const latestAgentMessageId = getLatestAgentMessageId( currentMessages );
@@ -1741,6 +1754,7 @@ export default function OrchestratorChat( {
 		isProcessing,
 		messages,
 		retainedShowComponentMessages,
+		retriedToolCallIds,
 		siteBuildUtils,
 		sourceDriftInvalidatedCheckpointIds,
 		thinkingMessage,

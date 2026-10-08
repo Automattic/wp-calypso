@@ -757,6 +757,23 @@ describe( 'convertToolMessagesToComponents', () => {
 		expect( result[ 0 ].suppressThinking ).toBe( false );
 	} );
 
+	it( 'hides a block edit summary the server replaced with a retry', () => {
+		const retried = createApplyBlockEditsMessage( 'tool-call-retried', {
+			result: { success: true, outcome: 'no-changes' },
+		} );
+		const other = createApplyBlockEditsMessage( 'tool-call-other', {
+			result: { success: true, outcome: 'no-changes' },
+		} );
+
+		const result = convertToolMessagesToComponents( {
+			messages: [ retried, other ],
+			retriedToolCallIds: new Set( [ 'tool-call-retried' ] ),
+		} );
+
+		expect( result ).toHaveLength( 1 );
+		expect( result[ 0 ].id ).toBe( other.id );
+	} );
+
 	it( 'suppresses transient thinking for other converted tool summaries', () => {
 		const message = createToolMessage( 'big_sky__set_site_logo', {
 			result: {

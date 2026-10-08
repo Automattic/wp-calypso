@@ -60,6 +60,8 @@ interface Options {
 	/** Whether the agent's turn is still running, so a promised check may still land. */
 	isProcessing?: boolean;
 	canEscalateToHuman?: boolean;
+	/** Block-edit tool calls the server has replaced with a retry. */
+	retriedToolCallIds?: ReadonlySet< string >;
 }
 
 interface MessageWithContextFlags extends UIMessage {
@@ -267,6 +269,7 @@ export default function convertToolMessagesToComponents( {
 	currentPostId,
 	isProcessing,
 	canEscalateToHuman = true,
+	retriedToolCallIds,
 }: Options ): AgentsManagerUIMessage[] {
 	return messages.flatMap( ( message, index, array ) => {
 		if ( isContextOnlyMessage( message ) ) {
@@ -462,6 +465,13 @@ export default function convertToolMessagesToComponents( {
 				isBlockEditToolId( textData.tool_id ) &&
 				! blockEditOutcome &&
 				! isLegacySuccessfulApplyBlockEditsResult
+			) {
+				return [];
+			}
+			if (
+				isBlockEditToolId( textData.tool_id ) &&
+				typeof textData.tool_call_id === 'string' &&
+				retriedToolCallIds?.has( textData.tool_call_id )
 			) {
 				return [];
 			}
