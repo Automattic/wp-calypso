@@ -292,7 +292,9 @@ describe( '<DifmOfferModal>', () => {
 	test( 'does not close while the build request is pending', async () => {
 		const user = userEvent.setup();
 		const onClose = jest.fn();
-		nock( API ).post( BUILD_REQUEST_PATH ).delay( 2000 ).reply( 200, { success: true } );
+		nock( API )
+			.post( BUILD_REQUEST_PATH )
+			.reply( () => new Promise( () => {} ) );
 		renderModal( onClose );
 
 		const description = await goToRequestStep( user );
