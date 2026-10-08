@@ -34,7 +34,10 @@ import { usePost } from 'calypso/reader/data/post';
 import { withPostLikeActions } from 'calypso/reader/data/post/likes';
 import { useCanMarkSeen, withSeenPostsMutations } from 'calypso/reader/data/seen-posts';
 import { withSite } from 'calypso/reader/data/site';
-import { useSiteSubscriptionForFeed } from 'calypso/reader/data/site-subscriptions';
+import {
+	getCachedIsFollowingPost,
+	useSiteSubscriptionForFeed,
+} from 'calypso/reader/data/site-subscriptions';
 import { getSiteName } from 'calypso/reader/get-helpers';
 import readerContentWidth from 'calypso/reader/lib/content-width';
 import { markPostSeen } from 'calypso/reader/mark-post-seen';
@@ -48,6 +51,7 @@ import { useStreamPostKeySelection } from 'calypso/reader/stream/use-stream-post
 import { getPostTitleFallback, showSelectedPost } from 'calypso/reader/utils';
 import XPostHelper, { isXPost } from 'calypso/reader/xpost-helper';
 import { useSelector } from 'calypso/state';
+import { getCalypsoQueryClient } from 'calypso/state/query-client';
 import {
 	setViewingFullPostKey,
 	unsetViewingFullPostKey,
@@ -557,7 +561,7 @@ export class FullPostView extends Component {
 			recordTrackForPost(
 				'calypso_reader_article_opened',
 				post,
-				{},
+				{ is_following: getCachedIsFollowingPost( getCalypsoQueryClient(), post ) },
 				{
 					pathnameOverride: this.props.referralStream,
 				}
