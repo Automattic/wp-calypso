@@ -155,7 +155,7 @@ export default function ResourceModal( {
 				<VStack spacing={ 6 } key={ resource.id } className={ fadeClassName }>
 					<VStack spacing={ 3 }>
 						<Heading
-							level={ 1 }
+							level={ 2 }
 							size={ 32 }
 							weight={ 600 }
 							lineHeight={ 1.15 }

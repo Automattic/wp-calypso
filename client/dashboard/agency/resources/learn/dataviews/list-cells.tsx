@@ -1,7 +1,6 @@
-import { DataViews } from '@wordpress/dataviews';
-import ResourceLink from './resource-link';
-import ResourceProductLogo from './resource-product-logo';
-import type { SelectResource } from './types';
+import ResourceLink from '../resource-link';
+import ResourceProductLogo from '../resource-product-logo';
+import type { SelectResource } from '../types';
 import type { AgencyEnablementResource } from '@automattic/api-core';
 
 interface ResourceListCellProps {
@@ -30,12 +29,4 @@ export function ResourceListProduct( { resource }: ResourceListCellProps ) {
 			<ResourceProductLogo product={ resource.product } />
 		</span>
 	);
-}
-
-/**
- * The list layout: DataViews' table, with columns from `useResourceFields`.
- * Renders inside the library's `DataViews`, which supplies its data and view.
- */
-export default function ResourceList() {
-	return <DataViews.Layout />;
 }

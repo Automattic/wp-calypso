@@ -7,7 +7,7 @@ import {
 	getProductLabel,
 	getStageLabel,
 } from '../lib/labels';
-import { ResourceListProduct, ResourceListTitle } from '../resource-list';
+import { ResourceListProduct, ResourceListTitle } from './list-cells';
 import type { SelectResource } from '../types';
 import type { AgencyEnablementResource } from '@automattic/api-core';
 import type { Field } from '@wordpress/dataviews';
@@ -22,20 +22,20 @@ export function useResourceFields(
 ) {
 	return useMemo( (): Field< AgencyEnablementResource >[] => {
 		// Only offer values that occur in the data.
-		const toElements = (
-			getValue: ( resource: AgencyEnablementResource ) => string,
-			getLabel: ( value: string ) => string
+		const toElements = < T extends string >(
+			getValue: ( resource: AgencyEnablementResource ) => T,
+			getLabel: ( value: T ) => string
 		) =>
 			Array.from( new Set( resources.map( getValue ) ) ).map( ( value ) => ( {
 				value,
 				label: getLabel( value ),
 			} ) );
 
-		const filterField = (
+		const filterField = < T extends string >(
 			id: string,
 			label: string,
-			getValue: ( resource: AgencyEnablementResource ) => string,
-			getLabel: ( value: string ) => string
+			getValue: ( resource: AgencyEnablementResource ) => T,
+			getLabel: ( value: T ) => string
 		): Field< AgencyEnablementResource > => ( {
 			id,
 			label,

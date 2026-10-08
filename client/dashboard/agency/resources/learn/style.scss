@@ -5,7 +5,7 @@
 @import '@wordpress/base-styles/mixins';
 @import '@wordpress/base-styles/animations';
 
-// Product brand colours. Most come from Color Studio; VIP's gold is from its brand
+// Product brand colors. Most come from Color Studio; VIP's gold is from its brand
 // palette and Pressable's red-orange from https://pressable.com/press-kit/.
 $resource-brands: (
 	'automattic-for-agencies': $studio-gray-100,
@@ -16,7 +16,7 @@ $resource-brands: (
 	'wordpress-vip': #d8a45f,
 );
 
-// Each product's brand colour, for the card header and preview tints and the list's hover.
+// Each product's brand color, for the card header and preview tints and the list's hover.
 .dashboard-resources-learn__card-header,
 .dashboard-resources-learn__list-title,
 .dashboard-resources-learn__list-brand,
@@ -65,7 +65,7 @@ $resource-brands: (
 }
 
 // List view: the title is a stretched link over its row, and the row takes on
-// the product's brand colour on hover.
+// the product's brand color on hover.
 .dashboard-resources-learn__filters .dataviews-view-table tr {
 	position: relative;
 
@@ -272,7 +272,7 @@ $resource-brands: (
 // animation is more specific still, so it keeps working.
 .dashboard-resources-learn__modal.components-modal__frame {
 	@include break-small() {
-		// Pinned near the top rather than centred, so it doesn't jump as content
+		// Pinned near the top rather than centered, so it doesn't jump as content
 		// height changes between resources.
 		margin: 10vh auto auto;
 		max-block-size: calc( 90vh - #{$grid-unit-50} );

@@ -1,11 +1,18 @@
 import { __ } from '@wordpress/i18n';
+import type {
+	AgencyResourceAudience,
+	AgencyResourceContentType,
+	AgencyResourceFormat,
+	AgencyResourceProduct,
+	AgencyResourceStage,
+} from '@automattic/api-core';
 
 /**
  * Display labels for the v2 taxonomy slugs. The API is not validated against
  * the slug unions at runtime, so every lookup falls back to the slug itself.
  */
 
-const PRODUCT_LABELS: Record< string, string > = {
+const PRODUCT_LABELS: Record< AgencyResourceProduct, string > = {
 	'automattic-for-agencies': 'Automattic for Agencies',
 	jetpack: 'Jetpack',
 	pressable: 'Pressable',
@@ -15,12 +22,12 @@ const PRODUCT_LABELS: Record< string, string > = {
 	'wordpress-vip': 'WordPress VIP',
 };
 
-export function getProductLabel( product: string ): string {
+export function getProductLabel( product: AgencyResourceProduct ): string {
 	return PRODUCT_LABELS[ product ] ?? product;
 }
 
-export function getContentTypeLabel( contentType: string ): string {
-	const labels: Record< string, string > = {
+export function getContentTypeLabel( contentType: AgencyResourceContentType ): string {
+	const labels: Record< AgencyResourceContentType, string > = {
 		'battle-card': __( 'Battle card' ),
 		blog: __( 'Blog' ),
 		'case-study': __( 'Case study' ),
@@ -37,8 +44,8 @@ export function getContentTypeLabel( contentType: string ): string {
 	return labels[ contentType ] ?? contentType;
 }
 
-export function getStageLabel( stage: string ): string {
-	const labels: Record< string, string > = {
+export function getStageLabel( stage: AgencyResourceStage ): string {
+	const labels: Record< AgencyResourceStage, string > = {
 		learn: __( 'Learn' ),
 		sell: __( 'Sell' ),
 		manage: __( 'Manage' ),
@@ -48,8 +55,8 @@ export function getStageLabel( stage: string ): string {
 	return labels[ stage ] ?? stage;
 }
 
-export function getAudienceLabel( audience: string ): string {
-	const labels: Record< string, string > = {
+export function getAudienceLabel( audience: AgencyResourceAudience ): string {
+	const labels: Record< AgencyResourceAudience, string > = {
 		all: __( 'All audiences' ),
 		developer: __( 'Developers' ),
 		business: __( 'Business' ),
@@ -59,8 +66,8 @@ export function getAudienceLabel( audience: string ): string {
 	return labels[ audience ] ?? audience;
 }
 
-export function getFormatLabel( format: string ): string {
-	const labels: Record< string, string > = {
+export function getFormatLabel( format: AgencyResourceFormat ): string {
+	const labels: Record< AgencyResourceFormat, string > = {
 		pdf: __( 'PDF' ),
 		slides: __( 'Slides' ),
 		video: __( 'Video' ),

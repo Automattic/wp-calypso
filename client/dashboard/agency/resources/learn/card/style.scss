@@ -35,7 +35,7 @@
 	overflow: hidden;
 
 	// Inset rather than Card's outer border, so the header paints over it and
-	// the border only frames the body, never the brand colour.
+	// the border only frames the body, never the brand color.
 	&.components-card {
 		box-shadow: inset 0 0 0 1px
 			color-mix(

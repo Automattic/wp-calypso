@@ -18,9 +18,8 @@ import { useResourceFields } from './dataviews/fields';
 import { LAYOUT_FIELDS } from './dataviews/views';
 import { getStageLabel } from './lib/labels';
 import ResourceGrid from './resource-grid';
-import ResourceList from './resource-list';
 import ResourceModal from './resource-modal';
-import { getNeighbours, useResourceSelection } from './use-resource-selection';
+import { getNeighbors, useResourceSelection } from './use-resource-selection';
 import type { LayoutType } from './dataviews/views';
 import type { FilterResources } from './types';
 import type { AgencyEnablementResource, AgencyResourceStage } from '@automattic/api-core';
@@ -31,6 +30,11 @@ import './style.scss';
 const PAGE_SIZE = 24;
 
 type StageFilter = AgencyResourceStage | 'all';
+
+const STAGE_FILTERS: readonly StageFilter[] = [ 'all', 'learn', 'sell', 'manage', 'grow' ];
+
+const isStageFilter = ( value: unknown ): value is StageFilter =>
+	( STAGE_FILTERS as readonly unknown[] ).includes( value );
 
 interface ResourceLibraryProps {
 	resources: AgencyEnablementResource[];
@@ -48,8 +52,8 @@ export default function ResourceLibrary( {
 	onOpenResource,
 }: ResourceLibraryProps ) {
 	// The stage toggle drives an ordinary filter, so it's saved with the rest of the view.
-	const stage = ( view.filters?.find( ( filter ) => filter.field === 'stage' )?.value ??
-		'all' ) as StageFilter;
+	const stageValue = view.filters?.find( ( filter ) => filter.field === 'stage' )?.value;
+	const stage = isStageFilter( stageValue ) ? stageValue : 'all';
 
 	const setStage = ( value: StageFilter ) =>
 		onChangeView( {
@@ -60,10 +64,12 @@ export default function ResourceLibrary( {
 			],
 		} );
 
-	// Stable across renders, so memoised cards don't re-render while searching.
+	// Stable across renders, so memoized cards don't re-render while searching.
 	const filterResources: FilterResources = useEvent( ( field, value ) => {
 		if ( field === 'stage' ) {
-			setStage( value as StageFilter );
+			if ( isStageFilter( value ) ) {
+				setStage( value );
+			}
 			return;
 		}
 
@@ -136,7 +142,7 @@ export default function ResourceLibrary( {
 	const isList = view.type === 'table';
 
 	// The modal moves through every match, not only those loaded so far.
-	const { selected, previous, next } = getNeighbours( filteredData, selection.selectedId );
+	const { selected, previous, next } = getNeighbors( filteredData, selection.selectedId );
 	// The stage toggle doesn't fit beside the toolbar on narrow screens.
 	const isSmallViewport = useViewportMatch( 'medium', '<' );
 
@@ -183,7 +189,7 @@ export default function ResourceLibrary( {
 									value: option.value,
 									label: option.value === 'all' ? __( 'All stages' ) : option.label,
 								} ) ) }
-								onChange={ ( value ) => setStage( value as StageFilter ) }
+								onChange={ ( value ) => isStageFilter( value ) && setStage( value ) }
 								__nextHasNoMarginBottom
 							/>
 						) : (
@@ -194,7 +200,7 @@ export default function ResourceLibrary( {
 								hideLabelFromVision
 								__next40pxDefaultSize
 								__nextHasNoMarginBottom
-								onChange={ ( value ) => setStage( ( value ?? 'all' ) as StageFilter ) }
+								onChange={ ( value ) => setStage( isStageFilter( value ) ? value : 'all' ) }
 							>
 								{ stageOptions.map( ( option ) => (
 									<ToggleGroupControlOption
@@ -218,7 +224,7 @@ export default function ResourceLibrary( {
 					<Spacer marginBottom={ 4 }>
 						<DataViews.FiltersToggled className="dashboard-resources-learn__filters-toggled" />
 					</Spacer>
-					{ isList && filteredData.length > 0 && <ResourceList /> }
+					{ isList && filteredData.length > 0 && <DataViews.Layout /> }
 				</DataViews>
 			</div>
 			{ ! isList && filteredData.length > 0 && (
@@ -270,7 +276,7 @@ export default function ResourceLibrary( {
 			) }
 			{ filteredData.length === 0 && (
 				<DataViewsEmptyStateLayout
-					title={ __( "We couldn't find any resources related to that." ) }
+					title={ __( 'We couldn’t find any resources related to that.' ) }
 					description={ __(
 						'Try adjusting your search or exploring other resources to help your agency grow.'
 					) }

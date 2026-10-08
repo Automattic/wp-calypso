@@ -6,9 +6,10 @@ import wooLogo from 'calypso/assets/images/a8c-for-agencies/product-wordmarks/wo
 import wordpressOrgLogo from 'calypso/assets/images/a8c-for-agencies/product-wordmarks/wordpress-org.svg';
 import wpcomLogo from 'calypso/assets/images/a8c-for-agencies/product-wordmarks/wpcom.svg';
 import { getProductLabel } from './lib/labels';
+import type { AgencyResourceProduct } from '@automattic/api-core';
 import type { CSSProperties } from 'react';
 
-const LOGOS: Record< string, { src: string; inlineSize: number } > = {
+const LOGOS: Record< AgencyResourceProduct, { src: string; inlineSize: number } > = {
 	'automattic-for-agencies': { src: a4aLogo, inlineSize: 100 },
 	jetpack: { src: jetpackLogo, inlineSize: 72 },
 	pressable: { src: pressableLogo, inlineSize: 88 },
@@ -22,7 +23,7 @@ const LOGOS: Record< string, { src: string; inlineSize: number } > = {
  * The wordmark is used as a mask, so it takes the header's text color rather
  * than the brand colors baked into the SVG.
  */
-export default function ResourceProductLogo( { product }: { product: string } ) {
+export default function ResourceProductLogo( { product }: { product: AgencyResourceProduct } ) {
 	const logo = LOGOS[ product ];
 
 	if ( ! logo ) {
