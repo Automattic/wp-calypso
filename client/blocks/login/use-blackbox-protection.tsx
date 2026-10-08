@@ -1,5 +1,5 @@
 import config from '@automattic/calypso-config';
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import BlackboxChallenge from 'calypso/blocks/login/blackbox-challenge';
 import { getBlackboxApiKey } from 'calypso/blocks/login/utils/blackbox-sdk';
 import { getBlackboxSessionId } from 'calypso/blocks/login/utils/get-blackbox-session-id';
@@ -30,6 +30,12 @@ interface UseBlackboxProtectionOptions {
 	 * challenge can render until this flips back to false.
 	 */
 	suspended?: boolean;
+	/**
+	 * Retire the session when this becomes a failed result, so the next
+	 * submit collects a new one. Ignored while Blackbox is off. Keep passing
+	 * the same value until the next failure.
+	 */
+	resetOnError?: unknown;
 }
 
 const noopGetSessionId = () => Promise.resolve( undefined );
@@ -40,6 +46,7 @@ const noopGetSessionId = () => Promise.resolve( undefined );
 export function useBlackboxProtection( {
 	feature,
 	suspended,
+	resetOnError,
 }: UseBlackboxProtectionOptions ): BlackboxProtection {
 	const apiKey = getBlackboxApiKey( feature );
 	const enabled =
@@ -64,6 +71,22 @@ export function useBlackboxProtection( {
 		[ apiKey ]
 	);
 
+	const reset = useCallback( () => {
+		try {
+			window.Blackbox?.reset?.();
+		} catch {
+			// Intentionally ignored — Blackbox must never block the host form.
+		}
+	}, [] );
+
+	useEffect( () => {
+		if ( ! enabled || ! resetOnError ) {
+			return;
+		}
+
+		reset();
+	}, [ enabled, resetOnError, reset ] );
+
 	return {
 		isSubmitBlocked,
 		challenge: (
@@ -74,12 +97,6 @@ export function useBlackboxProtection( {
 			/>
 		),
 		getSessionId: enabled ? getSessionId : noopGetSessionId,
-		reset: () => {
-			try {
-				window.Blackbox?.reset?.();
-			} catch {
-				// Intentionally ignored — Blackbox must never block the host form.
-			}
-		},
+		reset,
 	};
 }
