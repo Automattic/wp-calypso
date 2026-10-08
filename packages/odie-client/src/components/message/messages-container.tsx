@@ -170,7 +170,11 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 				) }
 				<JumpToRecent containerReference={ messagesContainerRef } />
 
-				{ chat.provider === 'odie' && chat.status === 'sending' && <ThinkingPlaceholder /> }
+				{ chat.provider === 'odie' &&
+					chat.status === 'sending' &&
+					chat.messages.at( -1 )?.role !== 'bot' && (
+						<ThinkingPlaceholder content={ chat.progressMessage } />
+					) }
 				{ chat.provider === 'odie' && chat.status === 'transfer' && (
 					<ThinkingPlaceholder
 						content={

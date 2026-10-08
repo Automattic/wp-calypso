@@ -9,7 +9,34 @@ export const useAutoScroll = (
 	const debounceTimeoutRef = useRef< number >( 500 );
 	const debounceTimeoutIdRef = useRef< number | null >( null );
 	const lastChatStatus = useRef< string | null >( null );
+	const followedStreamedReply = useRef( false );
 	const [ isScrolling, setIsScrolling ] = useState( false );
+
+	const lastMessage = chat.messages.at( -1 );
+	const streamedText =
+		chat.status === 'sending' && lastMessage?.role === 'bot' ? lastMessage.content : null;
+
+	useEffect( () => {
+		if ( chat.status === 'loading' || lastMessage?.role !== 'bot' ) {
+			followedStreamedReply.current = false;
+		}
+	}, [ chat.status, lastMessage ] );
+
+	useEffect( () => {
+		if ( ! isEnabled || streamedText === null ) {
+			return;
+		}
+
+		followedStreamedReply.current = true;
+		requestAnimationFrame( () => {
+			const messages = messagesContainerRef.current?.querySelectorAll( '.odie-chatbox-message' );
+			messages?.[ messages.length - 1 ]?.scrollIntoView( {
+				behavior: 'instant',
+				block: 'end',
+				inline: 'nearest',
+			} );
+		} );
+	}, [ streamedText, isEnabled, messagesContainerRef ] );
 
 	useEffect( () => {
 		if ( ! isEnabled ) {
@@ -18,6 +45,13 @@ export const useAutoScroll = (
 
 		const messageCount = chat.messages.length;
 		if ( messageCount < 1 || [ 'loading', 'sending' ].includes( chat.status ) ) {
+			return;
+		}
+
+		// The reader followed the streamed reply down. Scrolling to its start, on completion or when the
+		// chat reloads afterwards, would lose their place; the next message they send resets this.
+		if ( followedStreamedReply.current ) {
+			lastChatStatus.current = chat.status;
 			return;
 		}
 

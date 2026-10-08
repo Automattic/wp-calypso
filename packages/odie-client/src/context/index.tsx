@@ -53,6 +53,7 @@ export const OdieAssistantContext = createContext< OdieAssistantContextInterface
 	trackEvent: noop,
 	forceEmailSupport: false,
 	isChatRestricted: false,
+	isStreamingEnabled: false,
 } );
 
 // Custom hook to access the OdieAssistantContext
@@ -79,6 +80,7 @@ export const OdieAssistantProvider: React.FC< OdieAssistantProviderProps > = ( {
 	currentUser,
 	forceEmailSupport = false,
 	isChatRestricted = false,
+	isStreamingEnabled = false,
 	launcherContext,
 	children,
 } ) => {
@@ -204,6 +206,7 @@ export const OdieAssistantProvider: React.FC< OdieAssistantProviderProps > = ( {
 				version: overriddenVersion,
 				forceEmailSupport,
 				isChatRestricted,
+				isStreamingEnabled,
 				launcherContext,
 			} }
 		>

@@ -2,6 +2,7 @@
 /**
  * External Dependencies
  */
+import config from '@automattic/calypso-config';
 import OdieAssistantProvider, { OdieAssistant } from '@automattic/odie-client';
 import { useCanConnectToZendeskMessaging } from '@automattic/zendesk-client';
 import { useEffect } from '@wordpress/element';
@@ -81,6 +82,7 @@ export function HelpCenterChat( {
 			isUserEligibleForPaidSupport={ isUserEligibleForPaidSupport }
 			forceEmailSupport={ Boolean( forceEmailSupport ) }
 			isChatRestricted={ Boolean( isChatRestricted ) }
+			isStreamingEnabled={ config.isEnabled( 'help/odie-streaming' ) }
 			launcherContext={ launcherContext }
 		>
 			<div className="help-center__container-chat">
