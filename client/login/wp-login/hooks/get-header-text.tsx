@@ -10,6 +10,7 @@ import {
 	isVIPOAuth2Client,
 	isSharedMobileAppOAuth2Client,
 	isIosOAuth2Client,
+	isSpacefastOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
 import { getOAuth2Client } from 'calypso/state/oauth2-clients/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
@@ -175,6 +176,8 @@ export function getHeaderText( {
 				clientName = 'Woo';
 			} else if ( isVIPOAuth2Client( oauth2Client ) ) {
 				clientName = 'VIP';
+			} else if ( isSpacefastOAuth2Client( oauth2Client ) ) {
+				clientName = 'Spacefast';
 			}
 
 			/**
