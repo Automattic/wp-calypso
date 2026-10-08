@@ -23,7 +23,9 @@ interface ResourcePreviewProps {
  */
 export default function ResourcePreview( { resource, onOpen }: ResourcePreviewProps ) {
 	const [ hasFailed, setHasFailed ] = useState( false );
-	const showThumbnail = !! resource.thumbnail_url && ! hasFailed;
+	const [ hasLoaded, setHasLoaded ] = useState( false );
+	const hasThumbnail = !! resource.thumbnail_url && ! hasFailed;
+	const isLoading = hasThumbnail && ! hasLoaded;
 
 	return (
 		<a
@@ -34,17 +36,21 @@ export default function ResourcePreview( { resource, onOpen }: ResourcePreviewPr
 			rel="noopener noreferrer"
 			tabIndex={ -1 }
 			aria-hidden="true"
+			data-loading={ isLoading || undefined }
 			onClick={ () => onOpen( resource ) }
 		>
-			{ showThumbnail ? (
+			{ /* The illustration stands in, animated, until the thumbnail loads, and stays if it fails. */ }
+			{ ( ! hasThumbnail || isLoading ) && <ResourceIllustration resource={ resource } /> }
+			{ hasThumbnail && (
 				<img
 					className="dashboard-resources-learn__preview-image"
 					src={ resource.thumbnail_url ?? undefined }
 					alt=""
+					// Hidden images still load, so this waits for it without a placeholder.
+					hidden={ isLoading }
+					onLoad={ () => setHasLoaded( true ) }
 					onError={ () => setHasFailed( true ) }
 				/>
-			) : (
-				<ResourceIllustration resource={ resource } />
 			) }
 			{ resource.format === 'video' && (
 				<span className="dashboard-resources-learn__preview-play">
