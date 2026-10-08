@@ -439,7 +439,18 @@ export class EditorSettingsSidebarComponent {
 		} );
 		await existingTerm.or( newTerm ).first().click();
 
-		await editorParent.getByRole( 'button', { name: `Remove ${ name }`, exact: true } ).waitFor();
+		// Gutenberg < 24.2 names the chip's remove button "Remove <term>". From 24.2 it's
+		// just "Remove", with the term name in the chip label next to it.
+		const legacyRemoveButton = editorParent.getByRole( 'button', {
+			name: `Remove ${ name }`,
+			exact: true,
+		} );
+		const chipRemoveButton = editorParent
+			.locator( panel )
+			.getByText( name, { exact: true } )
+			.locator( '..' )
+			.getByRole( 'button', { name: 'Remove', exact: true } );
+		await legacyRemoveButton.or( chipRemoveButton ).first().waitFor();
 	}
 
 	/**
