@@ -24,8 +24,9 @@ const UPSELL_FEATURE_ID = 'difm-offer';
  * While an eligible user's assignment loads, the slot stays empty: mounting the old
  * card first would record its upsell impression for users in a treatment arm.
  *
- * The offer is for one site, so its dismissal is stored per site. A dismissed offer
- * leaves the slot empty instead of falling back to the paid DIFM upsell.
+ * A dismissal is stored per user: dismissing the offer on one site hides it on all
+ * of the user's sites. A dismissed offer leaves the slot empty instead of falling
+ * back to the paid DIFM upsell.
  */
 export default function DIFMOfferCard( { site }: { site: Site } ) {
 	const localeSlug = useLocale();
@@ -38,7 +39,7 @@ export default function DIFMOfferCard( { site }: { site: Site } ) {
 	} );
 	const copy = getDifmOfferCopy( variation );
 
-	const preferenceName = `hosting-dashboard-difm-offer-dismissed-${ site.ID }` as const;
+	const preferenceName = 'hosting-dashboard-difm-offer-dismissed';
 	const { data: dismissedAt, isLoading: isDismissalLoading } = useQuery( {
 		...userPreferenceQuery( preferenceName ),
 		enabled: !! copy,

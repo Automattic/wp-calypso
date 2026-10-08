@@ -150,10 +150,10 @@ describe( 'DIFMOfferCard', () => {
 			screen.queryByRole( 'heading', { name: 'No time to build your site?' } )
 		).not.toBeInTheDocument();
 	} );
-	test( 'hides the offer, and does not show the DIFM upsell, when the offer was dismissed on this site', async () => {
+	test( 'hides the offer, and does not show the DIFM upsell, when the user dismissed the offer', async () => {
 		nock.cleanAll();
 		mockPreferences( {
-			[ `hosting-dashboard-difm-offer-dismissed-${ mockSite.ID }` ]: '2026-10-08T12:00:00.000Z',
+			'hosting-dashboard-difm-offer-dismissed': '2026-10-08T12:00:00.000Z',
 		} );
 		assignExperiment( 'no_time' );
 
@@ -167,21 +167,7 @@ describe( 'DIFMOfferCard', () => {
 		expect( screen.queryByText( 'We’ll bring your vision to life' ) ).not.toBeInTheDocument();
 	} );
 
-	test( 'still shows the offer when it was dismissed on a different site', async () => {
-		nock.cleanAll();
-		mockPreferences( {
-			'hosting-dashboard-difm-offer-dismissed-456': '2026-10-08T12:00:00.000Z',
-		} );
-		assignExperiment( 'no_time' );
-
-		render( <DIFMOfferCard site={ mockSite } /> );
-
-		expect(
-			await screen.findByRole( 'heading', { name: 'No time to build your site?' } )
-		).toBeVisible();
-	} );
-
-	test( 'dismissing hides the offer, saves the dismissal for this site, and records the event', async () => {
+	test( 'dismissing hides the offer, saves the dismissal for the user, and records the event', async () => {
 		nock.cleanAll();
 		const { getSavedBody } = mockPreferences();
 		assignExperiment( 'no_time' );
@@ -201,7 +187,7 @@ describe( 'DIFMOfferCard', () => {
 		await waitFor( () =>
 			expect( getSavedBody() ).toEqual( {
 				calypso_preferences: {
-					[ `hosting-dashboard-difm-offer-dismissed-${ mockSite.ID }` ]: expect.any( String ),
+					'hosting-dashboard-difm-offer-dismissed': expect.any( String ),
 				},
 			} )
 		);
