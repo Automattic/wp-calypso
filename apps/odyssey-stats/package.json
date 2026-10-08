@@ -80,7 +80,7 @@
 		"path-browserify": "^1.0.1",
 		"postcss": "^8.5.15",
 		"postcss-prefix-selector": "^1.16.1",
-		"postcss-selector-parser": "^6.1.2",
+		"postcss-selector-parser": "^7.0.0",
 		"size-limit": "^8.2.6",
 		"webpack": "^5.99.8",
 		"webpack-bundle-analyzer": "^4.10.2"
