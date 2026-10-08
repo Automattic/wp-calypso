@@ -30,6 +30,7 @@ module.exports = {
 			...shared,
 			displayName: 'client',
 			testPathIgnorePatterns: [ ...shared.testPathIgnorePatterns, '<rootDir>/dashboard/' ],
+			setupFiles: [ ...shared.setupFiles, '<rootDir>/../test/client/setup-globals.js' ],
 			setupFilesAfterEnv: [
 				...shared.setupFilesAfterEnv,
 				'<rootDir>/../test/client/setup-test-framework.js',
