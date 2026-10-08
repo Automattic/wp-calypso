@@ -12,6 +12,7 @@ import { siteTypeSupportsFeature } from '../../../utils/site-type-feature-suppor
 import { getSiteName } from '../dataviews/site-data';
 import ActivityCard from './activity-card';
 import BackupCard from './backup-card';
+import AgencySitePlanCard from './plan-card';
 import ScanCard from './scan-card';
 
 export default function AgencySiteOverview() {
@@ -30,6 +31,7 @@ export default function AgencySiteOverview() {
 			}
 		>
 			<Grid columns={ isSmallViewport ? 1 : 2 } gap={ isSmallViewport ? 'lg' : 'xl' }>
+				<AgencySitePlanCard agencySite={ site } site={ fullSite } />
 				<VisibilityCard site={ fullSite } />
 				<BackupCard site={ site } />
 				<ScanCard site={ site } siteSlug={ siteSlug } />
