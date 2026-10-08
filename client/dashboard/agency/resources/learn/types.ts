@@ -16,6 +16,6 @@ export type SelectResource = ( resource: AgencyEnablementResource, event: MouseE
 
 /** Narrows the library to resources sharing one of a card's badges. */
 export type FilterResources = (
-	field: 'content_type' | 'audience' | 'stage',
+	field: 'featured' | 'content_type' | 'audience' | 'stage',
 	value: string
 ) => void;
