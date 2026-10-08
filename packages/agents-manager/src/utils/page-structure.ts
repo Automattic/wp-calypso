@@ -73,11 +73,16 @@ const withControlledBlocks = ( blocks: EditorBlock[] ): EditorBlock[] =>
  * wrapper matches no slug and sits outside the section root, so the region is
  * widened to it: what the agent cannot see, it cannot edit.
  */
-function getPageRegions(): PageBlock[] {
+function getPageRegions(): PageBlock[] | null {
 	const sectionRoot = getSectionRootClientId();
 
 	if ( ! sectionRoot ) {
 		return withControlledBlocks( getBlocks() );
+	}
+
+	const rootBlock = getBlock( sectionRoot );
+	if ( ! rootBlock?.name ) {
+		return null;
 	}
 
 	const templateParts = getTemplatePartClientIds();
@@ -130,7 +135,7 @@ function getPageRegions(): PageBlock[] {
 						attributes: block?.attributes ?? {},
 						innerBlocks,
 					},
-				]
+			  ]
 			: [];
 	};
 
@@ -143,7 +148,7 @@ function getPageRegions(): PageBlock[] {
 	return [
 		...toRegion( 'header', headerRoot ),
 		{
-			name: getBlock( sectionRoot )?.name,
+			name: rootBlock.name,
 			type: 'content',
 			clientId: sectionRoot,
 			innerBlocks: content,
@@ -154,8 +159,8 @@ function getPageRegions(): PageBlock[] {
 
 /**
  * The page structure under short ids, or `null` before the editor holds a
- * post or when it cannot be read: a context read must never fail the turn,
- * and an empty structure would displace the provider's. Records the menu
+ * post or when its section root cannot be read. The context merger marks
+ * that state unavailable instead of using provider content. Records the menu
  * items it lists, for `getMenuItemAttributes()`.
  */
 export function getPageStructure(): PageStructure | null {
@@ -197,7 +202,12 @@ function readPageStructure(): PageStructure | null {
 			};
 		};
 
-		const currentPageContent = getPageRegions().map( ( block ) => shorten( block ) );
+		const regions = getPageRegions();
+		if ( ! regions ) {
+			return null;
+		}
+
+		const currentPageContent = regions.map( ( block ) => shorten( block ) );
 		const selected = getSelectedBlockClientId();
 
 		setMenuItemAttributes( menuItemAttributes );

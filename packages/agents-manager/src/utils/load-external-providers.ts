@@ -462,11 +462,18 @@ function withPageContext(
 			const context = contextProvider.getClientContext();
 			const currentPageContentMarkup = getAmPageContentMarkup();
 			const availableCheckpoints = getAmCheckpointContext();
+			const ownsStructure = context.environment !== JETPACK_AI_SIDEBAR_ENVIRONMENT;
+			const structure = ownsStructure ? getAmPageStructure() : null;
 
 			return {
 				...context,
 				...( currentPageContentMarkup && { currentPageContentMarkup } ),
-				...( context.environment !== JETPACK_AI_SIDEBAR_ENVIRONMENT && getAmPageStructure() ),
+				...( ownsStructure && {
+					currentPageContent: structure?.currentPageContent ?? [],
+					selectedBlockClientId: structure?.selectedBlockClientId ?? '',
+					currentPageContentMarkup: structure ? currentPageContentMarkup : '',
+					pageContentStatus: structure ? 'ready' : 'unavailable',
+				} ),
 				...( availableCheckpoints.length && { availableCheckpoints } ),
 			};
 		},

@@ -67,6 +67,11 @@ interface CommandsActions {
 	close?: () => void;
 }
 interface CoreResolvers {
+	getEntityRecord: (
+		kind: string,
+		name: string,
+		key: number
+	) => Promise< { id?: number; type?: string } | undefined >;
 	getEditedEntityRecord: ( kind: string, name: string, key: unknown ) => Promise< unknown >;
 }
 
@@ -85,6 +90,8 @@ export interface EditorNavigateInput {
 }
 
 export interface EditorNavigateIO {
+	/** Verifies that the destination exists as a page before leaving the current editor. */
+	isPage: ( pageId: number ) => Promise< boolean >;
 	/** Saves every dirty entity, so nothing is lost when the route changes. */
 	saveEverything: () => Promise< void >;
 	/** The site editor's router history, or undefined outside the site editor. */
@@ -137,6 +144,28 @@ export async function editorNavigate(
 				__i18n_text_domain__
 			)
 		);
+	}
+
+	if ( ! isPagesList ) {
+		try {
+			if ( ! ( await io.isPage( pageId ) ) ) {
+				return errorResult(
+					'The destination is not an available page. Do not use /page/{id} for a post or retry this path. Ask the user to open the intended document in its editor.',
+					__(
+						'I could not find that page, so I stayed in the current editor.',
+						__i18n_text_domain__
+					)
+				);
+			}
+		} catch {
+			return errorResult(
+				'The destination page could not be verified. The editor has not moved. Tell the user the page could not be opened.',
+				__(
+					'I could not check that page, so I stayed in the current editor.',
+					__i18n_text_domain__
+				)
+			);
+		}
 	}
 
 	// The schema admits `page/12`, `/page/12` and a trailing slash alike.
@@ -387,6 +416,10 @@ async function restorePostContentEditing( departingClientId: string | undefined 
 }
 
 const createIO = (): EditorNavigateIO => ( {
+	isPage: async ( pageId ) => {
+		const page = await coreResolve().getEntityRecord( 'postType', 'page', pageId );
+		return page?.type === 'page' && Number( page.id ) === pageId;
+	},
 	saveEverything,
 	getHistory: getEditorHistory,
 	waitForPage,
