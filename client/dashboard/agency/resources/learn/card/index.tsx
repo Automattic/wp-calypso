@@ -17,7 +17,7 @@ interface ResourceCardProps {
 
 function ResourceCard( { resource, onSelect, onFilter }: ResourceCardProps ) {
 	return (
-		<Card className="dashboard-resources-learn__card">
+		<Card className="dashboard-resources-learn__card" isBorderless>
 			<ResourceCardHeader
 				resource={ resource }
 				title={

@@ -31,18 +31,26 @@
 }
 
 .dashboard-resources-learn__card {
+	--resource-card-border: color-mix(
+		in srgb,
+		var( --wpds-color-foreground-content-neutral, #{$gray-900} ) 12%,
+		transparent
+	);
+
 	position: relative;
 	overflow: hidden;
+	isolation: isolate;
 
-	// Inset rather than Card's outer border, so the header paints over it and
-	// the border only frames the body, never the brand color.
-	&.components-card {
-		box-shadow: inset 0 0 0 1px
-			color-mix(
-				in srgb,
-				var( --wpds-color-foreground-content-neutral, #{$gray-900} ) 12%,
-				transparent
-			);
+	// Drawn in place of Card's own border, behind the content, so the header
+	// paints over it and the border only frames the body, never the brand color.
+	&::after {
+		content: '';
+		position: absolute;
+		inset: 0;
+		z-index: -1;
+		border-radius: inherit;
+		box-shadow: inset 0 0 0 1px var( --resource-card-border );
+		pointer-events: none;
 	}
 
 	// Each card spans a header row and a body row of the page grid, so headers
@@ -66,19 +74,21 @@
 
 @media ( hover: hover ) and ( pointer: fine ) and ( prefers-reduced-motion: no-preference ) {
 	.dashboard-resources-learn__card {
-		transition:
-			transform 280ms cubic-bezier( 0.2, 1.4, 0.4, 1 ),
-			box-shadow 180ms ease-out;
+		transition: transform 280ms cubic-bezier( 0.2, 1.4, 0.4, 1 );
+
+		&::after {
+			transition: box-shadow 180ms ease-out;
+		}
 
 		&:hover {
+			--resource-card-border: color-mix(
+				in srgb,
+				var( --wpds-color-foreground-content-neutral, #{$gray-900} ) 20%,
+				transparent
+			);
+
 			z-index: 1;
 			transform: translateY( -3px ) rotate( -0.5deg ) scale( 1.018 );
-			box-shadow: inset 0 0 0 1px
-				color-mix(
-					in srgb,
-					var( --wpds-color-foreground-content-neutral, #{$gray-900} ) 20%,
-					transparent
-				);
 		}
 
 		&:nth-child( even ):hover {
