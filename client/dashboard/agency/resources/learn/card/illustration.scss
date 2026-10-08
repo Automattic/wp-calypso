@@ -1,0 +1,277 @@
+.dashboard-resource-illustration {
+	--dashboard-resource-illustration-duration: 2.4s;
+}
+
+@keyframes dashboard-resource-illustration__talk-typing {
+	0%,
+	70%,
+	100% {
+		opacity: 0.35;
+	}
+	35% {
+		opacity: 1;
+	}
+}
+
+@media ( prefers-reduced-motion: no-preference ) {
+	.dashboard-resources-learn__card:is( :hover, :focus-within ),
+	.dashboard-resources-learn__preview[data-loading] {
+		.dashboard-resource-illustration__video-button {
+			transform-origin: 56px 36px;
+			animation: dashboard-resource-illustration__video-press
+				var( --dashboard-resource-illustration-duration ) ease-in-out infinite;
+		}
+		.dashboard-resource-illustration__video-scene,
+		.dashboard-resource-illustration__video-timeline {
+			animation: dashboard-resource-illustration__video-timeline
+				var( --dashboard-resource-illustration-duration ) linear infinite;
+		}
+		.dashboard-resource-illustration__video-gradient {
+			animation: dashboard-resource-illustration__video-light
+				var( --dashboard-resource-illustration-duration ) ease-in-out infinite;
+		}
+		.dashboard-resource-illustration__video-progress {
+			animation: dashboard-resource-illustration__video-progress
+				var( --dashboard-resource-illustration-duration ) linear infinite;
+		}
+		.dashboard-resource-illustration__video-playhead {
+			animation: dashboard-resource-illustration__video-playhead
+				var( --dashboard-resource-illustration-duration ) linear infinite;
+		}
+		.dashboard-resource-illustration__guide-sign {
+			animation: dashboard-resource-illustration__guide-direction
+				var( --dashboard-resource-illustration-duration ) ease-in-out infinite;
+		}
+		.dashboard-resource-illustration__guide-sign-return {
+			animation-name: dashboard-resource-illustration__guide-return;
+		}
+		.dashboard-resource-illustration__talk-dot {
+			animation: dashboard-resource-illustration__talk-typing
+				var( --dashboard-resource-illustration-duration ) ease-in-out infinite;
+		}
+		.dashboard-resource-illustration__talk-dot-1 {
+			animation-delay: calc( var( --dashboard-resource-illustration-duration ) / -6 );
+		}
+		.dashboard-resource-illustration__talk-dot-2 {
+			animation-delay: calc( var( --dashboard-resource-illustration-duration ) / -3 );
+		}
+		.dashboard-resource-illustration__check-rows {
+			animation: dashboard-resource-illustration__check-advance
+				var( --dashboard-resource-illustration-duration ) ease-in-out infinite;
+		}
+		.dashboard-resource-illustration__check-new {
+			stroke-dasharray: 1;
+			animation: dashboard-resource-illustration__check-draw
+				var( --dashboard-resource-illustration-duration ) linear infinite;
+		}
+		.dashboard-resource-illustration__slide-content {
+			animation: dashboard-resource-illustration__slide-advance
+				var( --dashboard-resource-illustration-duration ) ease-in-out infinite;
+		}
+		.dashboard-resource-illustration__paper-lines {
+			animation: dashboard-resource-illustration__paper-scroll
+				calc( var( --dashboard-resource-illustration-duration ) * 3 ) ease-in-out infinite;
+		}
+		.dashboard-resource-illustration__paper-new-line {
+			stroke-dasharray: 18;
+			animation: dashboard-resource-illustration__paper-type-1
+				calc( var( --dashboard-resource-illustration-duration ) * 3 ) linear infinite;
+		}
+		@for $line from 1 through 4 {
+			.dashboard-resource-illustration__paper-line-#{ $line } {
+				animation-name: dashboard-resource-illustration__paper-type-#{$line};
+			}
+		}
+		.dashboard-resource-illustration__trend-line {
+			animation: dashboard-resource-illustration__trend-travel
+				var( --dashboard-resource-illustration-duration ) linear infinite;
+		}
+	}
+}
+
+.dashboard-resource-illustration__video-scene,
+.dashboard-resource-illustration__video-timeline {
+	opacity: 0;
+}
+.dashboard-resource-illustration__video-progress {
+	stroke-dasharray: 1;
+	stroke-dashoffset: 1;
+}
+@keyframes dashboard-resource-illustration__video-press {
+	0%,
+	6%,
+	94%,
+	100% {
+		transform: scale( 1 );
+		opacity: 1;
+	}
+	12% {
+		transform: scale( 0.72 );
+		opacity: 1;
+	}
+	17% {
+		transform: scale( 0.94 );
+		opacity: 1;
+	}
+	23%,
+	86% {
+		transform: scale( 0.8 );
+		opacity: 0;
+	}
+}
+@keyframes dashboard-resource-illustration__video-timeline {
+	0%,
+	18%,
+	92%,
+	100% {
+		opacity: 0;
+	}
+	25%,
+	85% {
+		opacity: 1;
+	}
+}
+@keyframes dashboard-resource-illustration__video-light {
+	0%,
+	18% {
+		transform: translateX( -28px );
+	}
+	85%,
+	100% {
+		transform: translateX( 28px );
+	}
+}
+@keyframes dashboard-resource-illustration__video-progress {
+	0%,
+	25% {
+		stroke-dashoffset: 1;
+	}
+	82%,
+	100% {
+		stroke-dashoffset: 0;
+	}
+}
+@keyframes dashboard-resource-illustration__video-playhead {
+	0%,
+	25% {
+		transform: translateX( 0 );
+	}
+	82%,
+	100% {
+		transform: translateX( 28px );
+	}
+}
+@keyframes dashboard-resource-illustration__guide-direction {
+	0%,
+	15%,
+	75%,
+	100% {
+		transform: translateX( 0 );
+	}
+	35%,
+	50% {
+		transform: translateX( 4px );
+	}
+}
+@keyframes dashboard-resource-illustration__guide-return {
+	0%,
+	15%,
+	75%,
+	100% {
+		transform: translateX( 0 );
+	}
+	35%,
+	50% {
+		transform: translateX( -4px );
+	}
+}
+@keyframes dashboard-resource-illustration__check-advance {
+	0%,
+	20% {
+		transform: translateY( 0 );
+	}
+	45%,
+	100% {
+		transform: translateY( -10px );
+	}
+}
+@keyframes dashboard-resource-illustration__check-draw {
+	0%,
+	45% {
+		stroke-dashoffset: 1;
+		opacity: 0;
+	}
+	46% {
+		stroke-dashoffset: 1;
+		opacity: 1;
+	}
+	72%,
+	100% {
+		stroke-dashoffset: 0;
+		opacity: 1;
+	}
+}
+@keyframes dashboard-resource-illustration__slide-advance {
+	0%,
+	22% {
+		transform: translateX( 0 );
+	}
+	30%,
+	52% {
+		transform: translateX( -44px );
+	}
+	60%,
+	82% {
+		transform: translateX( -88px );
+	}
+	90%,
+	100% {
+		transform: translateX( -132px );
+	}
+}
+@keyframes dashboard-resource-illustration__paper-scroll {
+	0%,
+	16% {
+		transform: translateY( 0 );
+	}
+	28% {
+		transform: translateY( -4px );
+	}
+	40% {
+		transform: translateY( -8px );
+	}
+	52% {
+		transform: translateY( -12px );
+	}
+	64%,
+	78% {
+		transform: translateY( -16px );
+	}
+	94%,
+	100% {
+		transform: translateY( 0 );
+	}
+}
+@for $line from 1 through 4 {
+	@keyframes dashboard-resource-illustration__paper-type-#{ $line } {
+		0%,
+		#{ 16+( $line - 1 ) * 12 }% {
+			stroke-dashoffset: 18;
+		}
+		#{ 24+( $line - 1 ) * 12 }%,
+		94% {
+			stroke-dashoffset: 0;
+		}
+		100% {
+			stroke-dashoffset: 18;
+		}
+	}
+}
+@keyframes dashboard-resource-illustration__trend-travel {
+	from {
+		transform: translateX( 0 );
+	}
+	to {
+		transform: translateX( -36px );
+	}
+}

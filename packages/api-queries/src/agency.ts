@@ -1,7 +1,8 @@
 import {
 	fetchAgency,
-	fetchAgencyResources,
 	fetchAgencyProgramStats,
+	fetchAgencyEnablementResources,
+	recordAgencyResourceEvent,
 	fetchAgencyScheduleCallLink,
 	fetchAgencyMcpSettings,
 	updateAgencyMcpSettings,
@@ -20,6 +21,7 @@ import type {
 	AgencyHostingReferral,
 	AgencyPartnerDirectoryApplicationUpdate,
 	AgencyProfileUpdate,
+	AgencyResourceEvent,
 	AgencyVipPartnerOpportunity,
 	McpSettings,
 	McpSettingsUpdate,
@@ -102,17 +104,32 @@ export const agencyScheduleCallLinkQuery = ( agencyId: number ) =>
 		retry: false,
 	} );
 
-export const agencyResourcesQuery = () =>
-	queryOptions( {
-		queryKey: [ 'agency', 'resources' ] as const,
-		queryFn: fetchAgencyResources,
-		staleTime: 5 * 60 * 1000,
-	} );
-
 export const agencyProgramStatsQuery = () =>
 	queryOptions( {
 		queryKey: [ 'agency', 'program-stats' ] as const,
 		queryFn: fetchAgencyProgramStats,
+	} );
+
+/**
+ * Enablement resources with the v2 taxonomy.
+ */
+export const agencyEnablementResourcesQuery = () =>
+	queryOptions( {
+		queryKey: [ 'agency', 'resources', 'v2' ] as const,
+		queryFn: fetchAgencyEnablementResources,
+		staleTime: 5 * 60 * 1000,
+	} );
+
+/**
+ * Records engagement with a resource so it can be correlated to the agency.
+ *
+ * There is nothing to invalidate: the endpoint writes to the engagement log,
+ * not to the resource list.
+ */
+export const agencyResourceEventMutation = ( agencyId: number ) =>
+	mutationOptions( {
+		meta: { statId: 'agcy-resource-event' },
+		mutationFn: ( event: AgencyResourceEvent ) => recordAgencyResourceEvent( agencyId, event ),
 	} );
 
 export const tipaltiIFrameUrlQuery = ( agencyId: number ) =>

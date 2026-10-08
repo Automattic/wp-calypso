@@ -251,34 +251,102 @@ export interface AgencyBlog {
 }
 
 /**
- * A single learn/resource item, as returned by GET /wpcom/v2/agency/resources.
- */
-export interface AgencyResource {
-	id: number;
-	name: string;
-	description: string;
-	external_url: string;
-	format: string;
-	related_product: string;
-	related_product_type: string;
-	resource_type: string;
-	preview_image: string;
-	section: string;
-	created_at: string;
-	updated_at: string;
-}
-
-export interface AgencyResourcesResponse {
-	status: string;
-	results: AgencyResource[];
-	total: number;
-}
-
-/**
  * Response from GET /wpcom/v2/agency/stats. Public, program-wide counts.
  */
 export interface AgencyProgramStats {
 	active_agencies: number;
+}
+
+/**
+ * The enablement taxonomy used by the v2 resources endpoint.
+ *
+ * Every value is a stable slug rather than a display string: the client owns
+ * the translated labels, so renaming a label never breaks a saved filter.
+ */
+export type AgencyResourceProduct =
+	| 'automattic-for-agencies'
+	| 'jetpack'
+	| 'pressable'
+	| 'woocommerce'
+	| 'wordpress-com'
+	| 'wordpress-org'
+	| 'wordpress-vip';
+
+export type AgencyResourceStage = 'learn' | 'sell' | 'manage' | 'grow';
+
+export type AgencyResourceAudience = 'all' | 'developer' | 'business' | 'client';
+
+/**
+ * A new content type means updating this list, so derive filter options from
+ * the response rather than from it, and give any slug-keyed lookup a fallback:
+ * the API is not validated against this union at runtime.
+ */
+export type AgencyResourceContentType =
+	| 'battle-card'
+	| 'blog'
+	| 'case-study'
+	| 'checklist'
+	| 'guide'
+	| 'one-pager'
+	| 'process-guide'
+	| 'reference-guide'
+	| 'slide-deck'
+	| 'talk-track'
+	| 'webinar';
+
+/** The kind of file the resource is, and a filter axis of its own. */
+export type AgencyResourceFormat = 'pdf' | 'slides' | 'video' | 'doc' | 'webpage';
+
+/**
+ * A single resource from the enablement hub, as returned by
+ * GET /wpcom/v2/agency/resources/v2.
+ */
+export interface AgencyEnablementResource {
+	id: number;
+	name: string;
+	description: string;
+
+	/**
+	 * The resource itself: the file for a PDF or deck, the page for a webpage,
+	 * the watch URL for a video.
+	 */
+	external_url: string;
+
+	/**
+	 * An image of the resource, such as a document's first page or a still from
+	 * a video, shown in its details. Cards are built from `product`,
+	 * `content_type` and `name` instead.
+	 */
+	thumbnail_url: string | null;
+
+	product: AgencyResourceProduct;
+	stage: AgencyResourceStage;
+	audience: AgencyResourceAudience;
+	content_type: AgencyResourceContentType;
+	format: AgencyResourceFormat;
+
+	/** Surfaced first in every view. Labelled "Top resource" in the UI. */
+	is_featured: boolean;
+	created_at: string;
+	updated_at: string;
+}
+
+export interface AgencyEnablementResourcesResponse {
+	status: string;
+	results: AgencyEnablementResource[];
+	total: number;
+}
+
+/**
+ * An agency opening a resource, recorded against the agency.
+ */
+export interface AgencyResourceEvent {
+	resource_id: number;
+	resource_name: string;
+}
+
+export interface AgencyResourceEventResponse {
+	success: boolean;
 }
 
 export interface TipaltiIFrameUrl {

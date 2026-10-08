@@ -1,16 +1,23 @@
-import { useCallback } from 'react';
-import useRecordResourceEventMutation from 'calypso/a8c-for-agencies/data/learn/use-record-resource-event-mutation';
-import ResourceCenter from 'calypso/dashboard/agency/resources/learn/resource-center';
+import { agencyResourceEventMutation } from '@automattic/api-queries';
+import { useMutation } from '@tanstack/react-query';
+import { __experimentalSpacer as Spacer, __experimentalText as Text } from '@wordpress/components';
+import { useCallback, useMemo, useState } from 'react';
+import { DEFAULT_VIEW } from 'calypso/dashboard/agency/resources/learn/dataviews/views';
+import ResourceCenter, {
+	getResourceCenterDescription,
+} from 'calypso/dashboard/agency/resources/learn/resource-center';
 import { useDispatch, useSelector } from 'calypso/state';
 import { getActiveAgencyId } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import type { APIAgencyResourcesResponse } from 'calypso/a8c-for-agencies/data/learn/types';
-import type { ResourceItem } from 'calypso/dashboard/agency/resources/learn/types';
+import type {
+	AgencyEnablementResource,
+	AgencyEnablementResourcesResponse,
+} from '@automattic/api-core';
 
 import './style.scss';
 
 interface ResourceCenterOverviewContentProps {
-	data: APIAgencyResourcesResponse | undefined;
+	data: AgencyEnablementResourcesResponse | undefined;
 }
 
 export default function ResourceCenterOverviewContent( {
@@ -18,7 +25,12 @@ export default function ResourceCenterOverviewContent( {
 }: ResourceCenterOverviewContentProps ) {
 	const dispatch = useDispatch();
 	const agencyId = useSelector( getActiveAgencyId );
-	const { mutate: recordResourceEvent } = useRecordResourceEventMutation();
+	const { mutate: recordResourceEvent } = useMutation(
+		agencyResourceEventMutation( agencyId ?? 0 )
+	);
+
+	const resources = useMemo( () => data?.results ?? [], [ data ] );
+	const [ view, setView ] = useState( DEFAULT_VIEW );
 
 	const recordTracks = useCallback(
 		( eventName: string, properties?: Record< string, unknown > ) => {
@@ -29,23 +41,26 @@ export default function ResourceCenterOverviewContent( {
 
 	// Record the resource engagement server-side (a8c-specific).
 	const handleResourceClick = useCallback(
-		( resource: ResourceItem ) => {
+		( resource: AgencyEnablementResource ) => {
 			if ( agencyId ) {
-				recordResourceEvent( {
-					resourceId: resource.id,
-					resourceName: resource.name,
-					agencyId,
-				} );
+				recordResourceEvent( { resource_id: resource.id, resource_name: resource.name } );
 			}
 		},
 		[ agencyId, recordResourceEvent ]
 	);
 
 	return (
-		<ResourceCenter
-			data={ data }
-			recordTracksEvent={ recordTracks }
-			onResourceClick={ handleResourceClick }
-		/>
+		<>
+			<Spacer marginBottom={ 8 }>
+				<Text size={ 15 }>{ getResourceCenterDescription() }</Text>
+			</Spacer>
+			<ResourceCenter
+				resources={ resources }
+				view={ view }
+				onChangeView={ setView }
+				recordTracksEvent={ recordTracks }
+				onResourceClick={ handleResourceClick }
+			/>
+		</>
 	);
 }

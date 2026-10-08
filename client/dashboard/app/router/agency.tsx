@@ -2,9 +2,9 @@ import { DotcomFeatures, HostingFeatures, fetchTwoStep } from '@automattic/api-c
 import {
 	activeAgencyQuery,
 	agencyDevSiteLicenseQuery,
+	agencyEnablementResourcesQuery,
 	agencyProductsQuery,
 	agencyQuery,
-	agencyResourcesQuery,
 	agencySiteQuery,
 	agencySitesWithPluginsQuery,
 	agencyWooPaymentsDataQuery,
@@ -656,7 +656,7 @@ export const learnRoute = createRoute( {
 	} ),
 	getParentRoute: () => agencyRoute,
 	path: 'library',
-	loader: () => queryClient.ensureQueryData( agencyResourcesQuery() ),
+	loader: () => queryClient.ensureQueryData( agencyEnablementResourcesQuery() ),
 } ).lazy( () =>
 	import( '../../agency/resources/learn' ).then( ( d ) =>
 		createLazyRoute( 'resources-learn' )( {
