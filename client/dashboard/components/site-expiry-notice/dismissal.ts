@@ -2,15 +2,19 @@ import { PLAN_EXPIRY_NOTICE_DISMISS_META_KEY_SUFFIX } from '@automattic/api-core
 import type { SiteUserMeta } from '@automattic/api-core';
 
 /**
- * The server prefixes the base name per site (`wp_` on Atomic, `wp_{blog_id}_`
- * on Simple), so the exact key is read back off `users/me` rather than guessed.
+ * The server prefixes the base name per site (`wp_{blog_id}_` on Simple, the site's own table
+ * prefix on Atomic). On Simple `users/me` also lists the API's own blog's key, so the site's wins.
  */
 export function findPlanExpiryNoticeDismissMetaKey(
-	meta: SiteUserMeta | undefined
+	meta: SiteUserMeta | undefined,
+	siteId: number
 ): string | undefined {
-	return Object.keys( meta ?? {} ).find( ( key ) =>
-		key.endsWith( '_' + PLAN_EXPIRY_NOTICE_DISMISS_META_KEY_SUFFIX )
-	);
+	const keys = Object.keys( meta ?? {} );
+	const simpleKey = `wp_${ siteId }_${ PLAN_EXPIRY_NOTICE_DISMISS_META_KEY_SUFFIX }`;
+	if ( keys.includes( simpleKey ) ) {
+		return simpleKey;
+	}
+	return keys.find( ( key ) => key.endsWith( '_' + PLAN_EXPIRY_NOTICE_DISMISS_META_KEY_SUFFIX ) );
 }
 
 /**

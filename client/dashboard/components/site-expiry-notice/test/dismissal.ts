@@ -6,15 +6,26 @@ import {
 
 const REVERTED_AT = Date.UTC( 2026, 1, 10, 12 );
 
-test( 'finds the per-site key by suffix, whatever the prefix', () => {
-	expect(
-		findPlanExpiryNoticeDismissMetaKey( {
-			wp_123_wpcom_plan_expiry_notice_dismiss: 0,
-			wp_123_wpcom_plan_expiry_modal_dismiss: 0,
-		} )
-	).toBe( 'wp_123_wpcom_plan_expiry_notice_dismiss' );
-	expect( findPlanExpiryNoticeDismissMetaKey( { other: 1 } ) ).toBeUndefined();
-	expect( findPlanExpiryNoticeDismissMetaKey( undefined ) ).toBeUndefined();
+test.each( [
+	[
+		'a Simple site',
+		{ wp_123_wpcom_plan_expiry_notice_dismiss: 0, wp_123_wpcom_plan_expiry_modal_dismiss: 0 },
+		'wp_123_wpcom_plan_expiry_notice_dismiss',
+	],
+	[
+		'a Simple site listed after the API blog',
+		{ wp_999_wpcom_plan_expiry_notice_dismiss: 0, wp_123_wpcom_plan_expiry_notice_dismiss: 0 },
+		'wp_123_wpcom_plan_expiry_notice_dismiss',
+	],
+	[
+		'an Atomic site',
+		{ wp_wpcom_plan_expiry_notice_dismiss: 0 },
+		'wp_wpcom_plan_expiry_notice_dismiss',
+	],
+	[ 'no dismissal key', { other: 1 }, undefined ],
+	[ 'no meta', undefined, undefined ],
+] )( 'finds the dismissal key for %s', ( _, meta, key ) => {
+	expect( findPlanExpiryNoticeDismissMetaKey( meta, 123 ) ).toBe( key );
 } );
 
 test( 'a stamp at or after the reference counts; older or missing does not', () => {

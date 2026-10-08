@@ -177,7 +177,7 @@ export function useSiteExpiryNotice(
 		if ( currentUserUpdatedAt === 0 ) {
 			return null;
 		}
-		const dismissMetaKey = findPlanExpiryNoticeDismissMetaKey( currentUser?.meta );
+		const dismissMetaKey = findPlanExpiryNoticeDismissMetaKey( currentUser?.meta, siteId );
 		if (
 			dismissMetaKey &&
 			isPlanExpiryNoticeDismissed( currentUser?.meta?.[ dismissMetaKey ], referenceTime )
