@@ -724,13 +724,44 @@ describe( 'convertToolMessagesToComponents', () => {
 		expect( result ).toEqual( [] );
 	} );
 
-	it( 'suppresses transient thinking for converted apply-block-edits messages', () => {
+	it( 'keeps transient thinking visible after converted apply-block-edits messages', () => {
 		const message = createToolMessage( 'big_sky__apply_block_edits', {
 			followUpTasks: true,
 			result: {
 				success: true,
 				message: 'Updated the header and footer.',
 				outcome: 'updated',
+			},
+		} );
+
+		const result = convertToolMessagesToComponents( {
+			messages: [ message ],
+		} );
+
+		expect( result[ 0 ].suppressThinking ).toBe( false );
+	} );
+
+	it( 'keeps transient thinking visible after a no-changes block edit', () => {
+		const message = createToolMessage( 'big_sky__apply_block_edits', {
+			result: {
+				success: true,
+				outcome: 'no-changes',
+			},
+		} );
+
+		const result = convertToolMessagesToComponents( {
+			messages: [ message ],
+		} );
+
+		expect( result[ 0 ].content ).toEqual( [ { type: 'text', text: '✓ No changes needed' } ] );
+		expect( result[ 0 ].suppressThinking ).toBe( false );
+	} );
+
+	it( 'suppresses transient thinking for other converted tool summaries', () => {
+		const message = createToolMessage( 'big_sky__set_site_logo', {
+			result: {
+				success: true,
+				message: 'Updated the site logo.',
 			},
 		} );
 
