@@ -518,7 +518,9 @@ export default function convertToolMessagesToComponents( {
 			return [
 				{
 					...message,
-					suppressThinking: true,
+					// Block edits always return to the agent, which keeps working after the
+					// summary (often on further edits), so the indicator must stay visible.
+					suppressThinking: ! isBlockEditToolId( textData.tool_id ),
 					content,
 				},
 			];
