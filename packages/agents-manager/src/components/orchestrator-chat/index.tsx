@@ -17,6 +17,7 @@ import { __ } from '@wordpress/i18n';
 import { LOCAL_TOOL_RUNNING_MESSAGE } from '../../constants';
 import { useAgentsManagerContext } from '../../contexts';
 import { useRegisterCustomActions } from '../../hooks/custom-actions';
+import useA2ui from '../../hooks/use-a2ui';
 import useAbilitiesRegistration from '../../hooks/use-abilities-registration';
 import useAgentTraceIds from '../../hooks/use-agent-trace-ids';
 import { useBroadcastConversationActivity } from '../../hooks/use-broadcast-conversation-activity';
@@ -333,6 +334,7 @@ export default function OrchestratorChat( {
 }: Props ) {
 	const { agentConfig, getTabSessionId, siteKey, site, currentUser } = useAgentsManagerContext();
 
+	const a2uiMetadataRef = useRef< () => Record< string, unknown > | undefined >( () => undefined );
 	const [ inputValue, setInputValue ] = useState( '' );
 	const [ isThinking, setIsThinking ] = useState( false );
 	const [ thinkingMessage, setThinkingMessage ] = useState< string | null >( null );
@@ -465,6 +467,7 @@ export default function OrchestratorChat( {
 		const { onTaskUpdate } = agentConfig;
 		return {
 			...agentConfig,
+			getMessageMetadata: () => a2uiMetadataRef.current(),
 			onTaskUpdate: async ( update: TaskUpdate ) => {
 				const streamedMessages = streamedCheckpointMessagesRef.current;
 				const isCurrentStreamGeneration =
@@ -537,6 +540,8 @@ export default function OrchestratorChat( {
 	} );
 	const {
 		addMessage,
+		completedMessages,
+		historyRevision,
 		messages,
 		suggestions,
 		isProcessing,
@@ -1438,6 +1443,15 @@ export default function OrchestratorChat( {
 		},
 		[ inputValue, onSubmitWithImages, credits.beforeSubmit ]
 	);
+	const a2ui = useA2ui( {
+		messages: completedMessages,
+		historyRevision,
+		scopeIdentity: checkpointScopeIdentity,
+		sessionId: checkpointSessionId,
+		agentConfig,
+		isProcessing,
+	} );
+	a2uiMetadataRef.current = a2ui.getMessageMetadata;
 
 	const submitChatMessageFromHost = useCallback(
 		async ( message?: string ) => {
@@ -1668,6 +1682,7 @@ export default function OrchestratorChat( {
 			currentPostId,
 			isProcessing,
 			canEscalateToHuman: isWooAiProvider(),
+			a2ui: a2ui.presentation,
 		} );
 
 		const latestAgentMessageId = getLatestAgentMessageId( currentMessages );
@@ -1725,6 +1740,7 @@ export default function OrchestratorChat( {
 
 		return currentMessages;
 	}, [
+		a2ui.presentation,
 		checkpointActionRevision,
 		checkpointSessionIdentity,
 		currentPostId,

@@ -40,6 +40,20 @@ See `src/extension-types.ts` for the full API documentation on creating custom:
 - **Suggestions**: Custom suggestions shown in the empty chat view
 - **Markdown Components/Extensions**: Custom rendering for agent responses
 
+### A2UI Forms
+
+A2UI `v0.9` response arrays load the SDK renderer on demand. The client identifies these arrays by the first message's version and passes their contents directly to the SDK, trusting the server's payload structure. Agenttic exposes completed messages in canonical history order. The hook applies each new message once; replacing or truncating history replays it in a fresh runtime. Ordinary chat rerenders and streamed appends preserve unsent form input. Restoring forms after a reload requires server history to retain their A2UI operations, including intermediate responses.
+
+The SDK owns `createSurface`, `updateComponents`, `updateDataModel`, and `deleteSurface` semantics, including errors for duplicate creates and updates to unknown surfaces. A surface appears at its creation message. Each applied batch notifies renderer subscribers and publishes a new presentation so transcript memoization displays appended surfaces immediately. The renderer uses that notification for surface lookup, root readiness, and error recovery. Deleting a surface removes its controls; recreating the ID places the new surface at the new message.
+
+The transcript displays surfaces instead of response JSON. Button actions are sent unchanged as `{ version: 'v0.9', action }` in an authenticated `action/execute` request. The backend executes the named server ability directly, without another model call. Failed actions display an error on the originating surface and never fall back to chat submission. Notices use WordPress notice text colors, with a readable fallback for older WordPress controls in dark chat. Every outbound chat message includes the SDK's `a2uiClientDataModel` transport metadata for surfaces requesting `sendDataModel`. Controls are disabled while the agent is processing or an action is executing.
+
+The renderer uses the SDK's standard basic catalog and schemas, with WordPress presentations for `TextField` and `Button`. Text fields retain local edits when an update leaves their value definition unchanged; a changed literal value replaces the edit. Invalid validation patterns show a field error without crashing the surface, and corrected patterns clear the error. Field help inherits the chat's text color to stay readable in dark chat. A surface that encounters another rendering error retries after the next protocol update. Other basic components and functions retain their SDK implementations. Renderer code lives under `src/a2ui`.
+
+Run package tests with `yarn jest -c packages/agents-manager/jest.config.js --runInBand`. The package Jest configuration transforms the SDK's ESM dependencies.
+
+The backend must supply a component with ID `root` and component definitions for button children. While the root component is pending, the form displays a WordPress SVG spinner instead of the SDK's `[Loading root...]` placeholder. The SDK handles progressive rendering once the root arrives; no missing roots or literal button labels are inferred.
+
 ### Using the Store
 
 The package exports a data store for managing the agent's UI state.

@@ -1,9 +1,11 @@
 import { __ } from '@wordpress/i18n';
+import A2uiChatSurface, { type A2uiPresentation } from '../components/a2ui-surface';
 import ChatResponseRenderedTracker, {
 	createChatResponseActionCallback,
 } from '../components/chat-response-tracking';
 import { EscalationButton } from '../components/escalation-button';
 import OpenHelpCenterButton from '../components/open-help-center-button';
+import { isA2uiActionMessage } from './a2ui-messages';
 import lazyComponent from './lazy-component';
 import { isShowComponentTool } from './show-component-tools';
 import {
@@ -60,6 +62,7 @@ interface Options {
 	/** Whether the agent's turn is still running, so a promised check may still land. */
 	isProcessing?: boolean;
 	canEscalateToHuman?: boolean;
+	a2ui?: A2uiPresentation;
 }
 
 interface MessageWithContextFlags extends UIMessage {
@@ -72,6 +75,7 @@ interface MessageWithContextFlags extends UIMessage {
 
 export function isContextOnlyMessage( message: UIMessage ): boolean {
 	return (
+		isA2uiActionMessage( message ) ||
 		( message as MessageWithContextFlags ).context?.flags?.context_only === true ||
 		message.content?.some( ( content ) => {
 			if ( content.type === 'context' ) {
@@ -267,6 +271,7 @@ export default function convertToolMessagesToComponents( {
 	currentPostId,
 	isProcessing,
 	canEscalateToHuman = true,
+	a2ui,
 }: Options ): AgentsManagerUIMessage[] {
 	return messages.flatMap( ( message, index, array ) => {
 		if ( isContextOnlyMessage( message ) ) {
@@ -321,6 +326,22 @@ export default function convertToolMessagesToComponents( {
 			textData = JSON.parse( firstContentText );
 		} catch ( _error ) {
 			return followsTerminalApplyBlockEditsOutcome( array, index ) ? [] : [ message ];
+		}
+
+		if ( Array.isArray( textData ) && textData[ 0 ]?.version === 'v0.9' ) {
+			const surfaceIds = a2ui?.runtime?.getSurfaceIds( message.id ) ?? [];
+			return surfaceIds.length > 0
+				? [
+						{
+							...message,
+							content: surfaceIds.map( ( surfaceId ) => ( {
+								type: 'component' as const,
+								component: A2uiChatSurface as React.ComponentType,
+								componentProps: { ...a2ui, surfaceId, isProcessing },
+							} ) ),
+						},
+					]
+				: [];
 		}
 
 		if (

@@ -1,4 +1,5 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { generateMessageId } from '../client/utils/core';
 import { logger } from '../client/utils/logger';
 import { resolveActionsForMessage } from '../message-actions/resolver';
 import { useMessageActions } from '../message-actions/useMessageActions';
@@ -19,6 +20,13 @@ import type { ReactNode } from 'react';
 const sortUIMessagesByTime = ( messages: UIMessage[] ): UIMessage[] => {
 	return [ ...messages ].sort( ( a, b ) => a.timestamp - b.timestamp );
 };
+
+const hasHistoryChanges = ( previous: ClientMessage[], next: ClientMessage[] ): boolean =>
+	previous.some(
+		( message, index ) =>
+			message.messageId !== next[ index ]?.messageId ||
+			JSON.stringify( message.parts ) !== JSON.stringify( next[ index ]?.parts )
+	);
 
 /**
  * Select the UI-only messages to keep when reconciling against client history.
@@ -337,6 +345,8 @@ export interface UseAgentChatConfig {
 	enableStreaming?: boolean; // Enable token-by-token streaming
 	// Observe every raw TaskUpdate yielded by the stream before built-in UI handling.
 	onTaskUpdate?: ( update: TaskUpdate ) => void | Promise< void >;
+	/** Transport metadata evaluated immediately before each send. */
+	getMessageMetadata?: () => Record< string, unknown > | undefined;
 	odieBotId?: string; // Odie bot ID for server-based conversation storage (e.g., 'wpcom-agent-wp_orchestrator'). When set, enables server storage.
 	credentials?: RequestCredentials; // Set 'include' to send cookies with cross-origin requests.
 }
@@ -345,6 +355,10 @@ export interface UseAgentChatConfig {
 export interface UseAgentChatReturn {
 	// AgentUI props
 	messages: UIMessage[];
+	/** Completed messages in canonical history order, without streaming drafts. */
+	completedMessages: UIMessage[];
+	/** Changes when completed history is replaced, truncated, or revised. */
+	historyRevision: number;
 	isProcessing: boolean;
 	error: string | null;
 	onSubmit: ( message: string, options?: SubmitOptions ) => Promise< void >;
@@ -377,6 +391,7 @@ export interface UseAgentChatReturn {
 
 // Internal state interface
 export interface AgentChatState {
+	historyRevision: number;
 	clientMessages: ClientMessage[];
 	uiMessages: UIMessage[];
 	isProcessing: boolean;
@@ -420,6 +435,7 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 
 	// Internal state
 	const [ state, setState ] = useState< AgentChatState >( {
+		historyRevision: 0,
 		clientMessages: [],
 		uiMessages: [],
 		isProcessing: false,
@@ -447,6 +463,8 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 
 	// Keep the raw task-update observer fresh without reinitializing the agent
 	// or changing the stable onSubmit callback identity.
+	const getMessageMetadataRef = useRef( config.getMessageMetadata );
+	getMessageMetadataRef.current = config.getMessageMetadata;
 	const onTaskUpdateRef = useRef( config.onTaskUpdate );
 	useEffect( () => {
 		onTaskUpdateRef.current = config.onTaskUpdate;
@@ -504,6 +522,7 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 
 						return {
 							...prev,
+							historyRevision: prev.historyRevision + 1,
 							clientMessages: clientHistory,
 							uiMessages: uiHistory,
 						};
@@ -511,6 +530,7 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 				} else {
 					setState( ( prev ) => ( {
 						...prev,
+						historyRevision: prev.historyRevision + 1,
 						clientMessages: [],
 						uiMessages: [],
 					} ) );
@@ -523,6 +543,7 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 				if ( currentHistory.length === 0 ) {
 					setState( ( prev ) => ( {
 						...prev,
+						historyRevision: prev.historyRevision + 1,
 						clientMessages: [],
 						uiMessages: [],
 					} ) );
@@ -533,6 +554,7 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 				await agentManager.replaceMessages( agentKey, [] );
 				setState( ( prev ) => ( {
 					...prev,
+					historyRevision: prev.historyRevision + 1,
 					clientMessages: [],
 					uiMessages: [],
 				} ) );
@@ -599,6 +621,7 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 
 				setState( ( prev ) => ( {
 					...prev,
+					historyRevision: prev.historyRevision + 1,
 					clientMessages: restoreOnError.clientMessages,
 					uiMessages: restoreOnError.uiMessages,
 					isProcessing: false,
@@ -636,6 +659,7 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 
 				setState( ( prev ) => ( {
 					...prev,
+					historyRevision: prev.historyRevision + ( internalOptions?.truncateHistoryTo ? 1 : 0 ),
 					clientMessages: internalOptions?.initialClientMessages ?? prev.clientMessages,
 					uiMessages: userMessage
 						? [ ...( internalOptions?.initialUiMessages ?? prev.uiMessages ), userMessage ]
@@ -665,8 +689,9 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 				// Pass metadata including archived flag and content type if provided
 				const messageOptions: any = {};
 				const hasContentType = !! options?.type && ! isToolResult;
-				if ( options?.archived || hasContentType ) {
+				if ( options?.archived || hasContentType || getMessageMetadataRef.current ) {
 					messageOptions.metadata = {
+						...getMessageMetadataRef.current?.(),
 						...( options?.archived && { archived: true } ),
 						...( hasContentType && { contentType: options!.type } ),
 					};
@@ -720,7 +745,7 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 					if ( ! update.final && update.text ) {
 						// Create or update the streaming message
 						if ( ! streamingMessageId ) {
-							streamingMessageId = `agent-streaming-${ Date.now() }`;
+							streamingMessageId = `agent-streaming-${ generateMessageId() }`;
 							const streamingMessage: UIMessage = {
 								id: streamingMessageId,
 								role: 'agent',
@@ -755,16 +780,40 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 								),
 							} ) );
 						}
+					}
 
-						// Close the streaming bubble after a non-final text-bearing
-						// status event. Each TaskStatusUpdateEvent carrying text
-						// represents a completed model utterance — the agent server
-						// guarantees the next deltas will not extend that message —
-						// so we rotate to a fresh bubble. This preserves the preamble
-						// when the model says something before tool calls and a
-						// separate final answer afterward; without rotation the
-						// post-preamble deltas would overwrite the preamble bubble.
-						if ( update.kind === 'status' ) {
+					if ( ! update.final && update.kind === 'status' ) {
+						const history = agentManager.getConversationHistory( agentKey );
+						const completed = history.find(
+							( message ) => message.messageId === update.status.message?.messageId
+						);
+						const uiMessage =
+							completed && transformClientMessageToUI( completed, registrationsRef.current );
+						if ( uiMessage ) {
+							const streamingId = streamingMessageId;
+							setState( ( prev ) => {
+								const existing = prev.uiMessages.find(
+									( message ) => message.id === uiMessage.id || message.id === streamingId
+								);
+								return {
+									...prev,
+									historyRevision:
+										prev.historyRevision +
+										( hasHistoryChanges( prev.clientMessages, history ) ? 1 : 0 ),
+									clientMessages: history,
+									uiMessages: existing
+										? prev.uiMessages
+												.filter( ( message ) => message.id !== streamingId || message === existing )
+												.map( ( message ) =>
+													message === existing
+														? { ...uiMessage, reactKey: existing.reactKey }
+														: message
+												)
+										: [ ...prev.uiMessages, uiMessage ],
+								};
+							} );
+						}
+						if ( uiMessage || update.text ) {
 							streamingMessageId = null;
 						}
 					}
@@ -813,6 +862,9 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 
 								return {
 									...prev,
+									historyRevision:
+										prev.historyRevision +
+										( hasHistoryChanges( prev.clientMessages, updatedClientHistory ) ? 1 : 0 ),
 									clientMessages: updatedClientHistory,
 									uiMessages: nextUIMessages,
 									isProcessing: false,
@@ -861,6 +913,9 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 
 						return {
 							...prev,
+							historyRevision:
+								prev.historyRevision +
+								( hasHistoryChanges( prev.clientMessages, updatedClientHistory ) ? 1 : 0 ),
 							clientMessages: updatedClientHistory,
 							uiMessages: mergedUIMessages,
 							isProcessing: false,
@@ -994,6 +1049,7 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 
 			setState( ( prev ) => ( {
 				...prev,
+				historyRevision: prev.historyRevision + 1,
 				clientMessages: messages,
 				uiMessages,
 			} ) );
@@ -1010,8 +1066,15 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 		sendMessage,
 	} );
 
+	const completedMessages = useMemo(
+		() => transformMessages( state.clientMessages ),
+		[ state.clientMessages, transformMessages ]
+	);
+
 	return {
 		// AgentUI props
+		completedMessages,
+		historyRevision: state.historyRevision,
 		messages: state.uiMessages,
 		isProcessing: state.isProcessing,
 		error: state.error,

@@ -315,7 +315,7 @@ jest.mock(
 		} ),
 		useAgentChat: ( config: typeof mockAgentChatConfig ) => {
 			mockAgentChatConfig = config;
-			return mockUseAgentChat();
+			return { completedMessages: [], historyRevision: 0, ...mockUseAgentChat() };
 		},
 	} ),
 	{ virtual: true }

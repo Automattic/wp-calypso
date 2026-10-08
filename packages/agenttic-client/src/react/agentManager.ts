@@ -692,6 +692,32 @@ function createAgentManager(): AgentManager {
 						}
 					}
 
+					// Status text marks a completed utterance, even when the turn continues.
+					const statusMessage = update.status?.message;
+					if (
+						update.kind === 'status' &&
+						! update.final &&
+						[ 'working', 'running', 'completed' ].includes( update.status.state ) &&
+						statusMessage?.role === 'agent' &&
+						statusMessage.parts.some( ( part ) => part.type === 'text' && part.text.trim() ) &&
+						! statusMessage.parts.some(
+							( part ) => part.type === 'data' && 'toolCallId' in part.data
+						) &&
+						! messageCarriesToolPayload( statusMessage ) &&
+						! currentConversationHistory.some(
+							( message ) => message.messageId === statusMessage.messageId
+						)
+					) {
+						currentConversationHistory = [
+							...currentConversationHistory,
+							extractNewContentFromMessage( statusMessage ),
+						];
+						managedAgent.conversationHistory = currentConversationHistory;
+						if ( withHistory ) {
+							await persistConversationHistory( key, currentConversationHistory );
+						}
+					}
+
 					if ( update.final || update.status?.state === 'input-required' ) {
 						sawTurnTerminus = true;
 					}
@@ -728,7 +754,23 @@ function createAgentManager(): AgentManager {
 
 						if ( update.status?.message ) {
 							const finalAgentMessage = extractNewContentFromMessage( update.status.message );
-							currentConversationHistory = [ ...currentConversationHistory, finalAgentMessage ];
+							currentConversationHistory = currentConversationHistory.some(
+								( message ) => message.messageId === finalAgentMessage.messageId
+							)
+								? currentConversationHistory.map( ( message ) =>
+										message.messageId === finalAgentMessage.messageId
+											? {
+													...finalAgentMessage,
+													metadata: {
+														...message.metadata,
+														...finalAgentMessage.metadata,
+														timestamp:
+															message.metadata?.timestamp ?? finalAgentMessage.metadata?.timestamp,
+													},
+												}
+											: message
+									)
+								: [ ...currentConversationHistory, finalAgentMessage ];
 						}
 
 						managedAgent.conversationHistory = currentConversationHistory;

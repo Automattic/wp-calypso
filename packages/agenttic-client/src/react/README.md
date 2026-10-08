@@ -86,6 +86,14 @@ const chat = useAgentChat( {
 The callback fires only when the ID actually changes, and errors it throws are
 logged without breaking the message flow.
 
+### Completed History and Outbound Metadata
+
+`completedMessages` exposes stored messages in canonical history order without streaming drafts or UI-only tool messages. Text-bearing status messages become available while the turn continues.
+
+`historyRevision` changes when history is loaded, replaced, truncated, or an existing message's parts change. Appending messages leaves it unchanged, allowing consumers to preserve local state while processing new messages.
+
+Use `getMessageMetadata` to attach current transport metadata to every outbound message, including context actions, regeneration, and tool results. The callback runs immediately before dispatch.
+
 ### Manual Storage Operations
 
 ```typescript
@@ -121,6 +129,7 @@ await clearAllConversations();
 
 - Conversations are automatically loaded when the hook initializes
 - New messages are immediately persisted after being added to state
+- Completed text-bearing status updates are retained before the turn finishes; final echoes of the same message ID update the existing history entry
 - Tool interactions are captured and stored efficiently
 - Storage operations are non-blocking and handle errors gracefully
 
