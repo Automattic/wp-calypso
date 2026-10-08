@@ -11,6 +11,7 @@ import {
 import MiniChart from '../mini-chart';
 
 let mockChartFails = false;
+let mockChartLoading = false;
 
 jest.mock( '../../hooks/use-visits-query' );
 jest.mock( 'calypso/my-sites/stats/hooks/use-css-variable', () => () => '#3858e9' );
@@ -19,6 +20,10 @@ jest.mock( '../overview-chart', () => ( {
 	default: () => {
 		if ( mockChartFails ) {
 			throw new Error( 'Loading chunk 9542 failed' );
+		}
+		// Suspends, as the chart does while its chunk downloads.
+		if ( mockChartLoading ) {
+			throw new Promise( () => {} );
 		}
 		return <p>Chart</p>;
 	},
@@ -43,6 +48,7 @@ function renderMiniChart( state, rangeId = DATE_RANGE_LAST_7_DAYS ) {
 describe( 'MiniChart', () => {
 	beforeEach( () => {
 		mockChartFails = false;
+		mockChartLoading = false;
 		// Reduced motion lands the totals on their value without counting up.
 		window.matchMedia = jest.fn().mockReturnValue( { matches: true } );
 		jest.spyOn( console, 'error' ).mockImplementation( () => {} );
@@ -67,6 +73,15 @@ describe( 'MiniChart', () => {
 	] )( 'hides the footer %s, with no chart to follow', ( _, state ) => {
 		render( renderMiniChart( state ) );
 
+		expect( screen.queryByRole( 'link', { name: 'More stats' } ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'holds the footer back while the chart itself is still loading', async () => {
+		mockChartLoading = true;
+		render( renderMiniChart( success( days( [ 20, 8 ] ) ) ) );
+
+		expect( await screen.findByText( '20' ) ).toBeInTheDocument();
+		expect( screen.queryByText( 'Chart' ) ).not.toBeInTheDocument();
 		expect( screen.queryByRole( 'link', { name: 'More stats' } ) ).not.toBeInTheDocument();
 	} );
 

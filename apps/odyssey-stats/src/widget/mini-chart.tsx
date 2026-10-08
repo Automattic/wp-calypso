@@ -147,12 +147,19 @@ const MiniChart: FunctionComponent< MiniChartProps > = ( { siteId, range, footer
 			{ hasChart && (
 				// Around the chart alone, so a failed chart takes only its own box with it.
 				<ChartBoundary fallback={ noData }>
-					<div className="stats-widget-chart" style={ chartBoxStyle }>
-						<Suspense fallback={ <StatsModulePlaceholder isLoading /> }>
+					{ /* The footer waits with the chart: data can arrive before the chart's chunk does. */ }
+					<Suspense
+						fallback={
+							<div className="stats-widget-chart" style={ chartBoxStyle }>
+								<StatsModulePlaceholder isLoading />
+							</div>
+						}
+					>
+						<div className="stats-widget-chart" style={ chartBoxStyle }>
 							<OverviewChart series={ series } height={ CHART_HEIGHT } unit={ unit } />
-						</Suspense>
-					</div>
-					{ footer }
+						</div>
+						{ footer }
+					</Suspense>
 				</ChartBoundary>
 			) }
 		</div>
