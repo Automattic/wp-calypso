@@ -8,7 +8,11 @@ import { FunctionComponent, useMemo, useCallback, useState, useEffect, useRef } 
 import { dismissCard } from 'calypso/blocks/dismissible-card/actions';
 import { isCardDismissed } from 'calypso/blocks/dismissible-card/selectors';
 import SectionHeader from 'calypso/components/section-header';
-import { getPlanExpiryUrgency } from 'calypso/dashboard/components/plan-expiry-notice/get-plan-expiry-notice';
+import {
+	getPlanExpiryUrgency,
+	hasPlanExpiryNotice,
+} from 'calypso/dashboard/components/plan-expiry-notice/get-plan-expiry-notice';
+import { shouldShowExpiringNotice } from 'calypso/dashboard/me/billing-purchases/purchase-settings/should-show-expiring-notice';
 import { getRelativeDayString } from 'calypso/dashboard/utils/datetime';
 import { EXPIRY_ERROR_DAYS, EXPIRY_WARNING_DAYS } from 'calypso/dashboard/utils/purchase';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
@@ -92,18 +96,15 @@ const UpcomingRenewalsReminder: FunctionComponent< Props > = ( { cart, addItemTo
 		[ renewableSitePurchases, purchasesIdsAlreadyInCart ]
 	);
 
-	// Soonest expiry among plans being renewed that show a warning or error
-	// expiry notice. That notice hides the purchase page's notice about other
-	// purchases expiring soon, so checkout lists them instead.
+	// Soonest expiry among plans being renewed that show an expiry notice. That
+	// notice hides the purchase page's notice about other purchases expiring
+	// soon, so checkout lists them instead.
 	const renewingPlanDaysUntilExpiry = useMemo( () => {
 		const days = ( sitePurchases ?? [] )
-			.filter( ( purchase ) => {
-				if ( ! purchasesIdsAlreadyInCart.includes( purchase.ID ) ) {
-					return false;
-				}
-				const urgency = getPlanExpiryUrgency( purchase );
-				return urgency === 'warning' || urgency === 'error';
-			} )
+			.filter(
+				( purchase ) =>
+					purchasesIdsAlreadyInCart.includes( purchase.ID ) && hasPlanExpiryNotice( purchase )
+			)
 			.map( ( purchase ) => purchase.days_until_expiry )
 			.filter( ( daysUntilExpiry ) => daysUntilExpiry != null );
 		return days.length > 0 ? Math.min( ...days ) : null;
@@ -111,18 +112,29 @@ const UpcomingRenewalsReminder: FunctionComponent< Props > = ( { cart, addItemTo
 
 	// Urgent = already expired, or expiring within 10 days. daysUntilExpiry is the
 	// server's day count (negative during the post-expiry grace period).
-	// When renewing a plan with a warning or error expiry notice, also anything
-	// expiring within 60 days and at most a week after that plan.
+	// When renewing a plan with an expiry notice, also anything expiring within
+	// 60 days and at most a week after that plan, if its own purchase page warns
+	// about it. The plan expiry notice counts local calendar days, so near a
+	// boundary it can be a day off from daysUntilExpiry.
 	const urgentPurchases = useMemo(
 		() =>
-			renewablePurchasesNotAlreadyInCart.filter(
-				( purchase ) =>
-					purchase.days_until_expiry != null &&
-					( purchase.days_until_expiry < URGENT_RENEWAL_WINDOW_IN_DAYS ||
-						( renewingPlanDaysUntilExpiry != null &&
-							purchase.days_until_expiry <= EXPIRY_WARNING_DAYS &&
-							purchase.days_until_expiry <= renewingPlanDaysUntilExpiry + EXPIRY_ERROR_DAYS ) )
-			),
+			renewablePurchasesNotAlreadyInCart.filter( ( purchase ) => {
+				const daysUntilExpiry = purchase.days_until_expiry;
+				if ( daysUntilExpiry == null ) {
+					return false;
+				}
+				if ( daysUntilExpiry < URGENT_RENEWAL_WINDOW_IN_DAYS ) {
+					return true;
+				}
+				return (
+					renewingPlanDaysUntilExpiry != null &&
+					daysUntilExpiry <= EXPIRY_WARNING_DAYS &&
+					daysUntilExpiry <= renewingPlanDaysUntilExpiry + EXPIRY_ERROR_DAYS &&
+					( hasWarningOrErrorExpiryNotice( purchase ) ||
+						// Included purchases aren't renewable, so there's no attached plan to pass.
+						shouldShowExpiringNotice( purchase, undefined ) )
+				);
+			} ),
 		[ renewablePurchasesNotAlreadyInCart, renewingPlanDaysUntilExpiry ]
 	);
 
@@ -270,6 +282,11 @@ const UpcomingRenewalsReminder: FunctionComponent< Props > = ( { cart, addItemTo
 		</div>
 	);
 };
+
+function hasWarningOrErrorExpiryNotice( purchase: Purchase ) {
+	const urgency = getPlanExpiryUrgency( purchase );
+	return urgency === 'warning' || urgency === 'error';
+}
 
 function getMessages( {
 	translate,
