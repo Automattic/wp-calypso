@@ -510,7 +510,6 @@ export default function AgentDock( {
 			{ isChatVisible &&
 				createAgentPortal(
 					// NOTE: Use route state to pass data that needs to be accessed throughout the app.
-					// Reader chat (public blog frontends) only gets `/chat`.
 					<Routes>
 						<Route path="/chat" element={ OrchestratorChatRoute } />
 						{ ! isReaderChat && isWooAiProvider() && (
