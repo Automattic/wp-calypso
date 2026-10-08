@@ -65,6 +65,7 @@ describe( 'EngagementBar', () => {
 
 	it( 'loads the post when it is missing from the canonical post cache', async () => {
 		const queryClient = makeQueryClient();
+		// Persist so that a refetch left in flight by the previous test can't use up the mock.
 		nock( 'https://public-api.wordpress.com' )
 			.get( '/rest/v1.2/read/feed/200/posts/300' )
 			.query( true )
@@ -75,7 +76,8 @@ describe( 'EngagementBar', () => {
 				feed_item_ID: 300,
 				global_ID: 'global-1',
 				title: 'Fetched post',
-			} );
+			} )
+			.persist();
 
 		renderWithProviders( queryClient, <EngagementBar feedId={ 200 } postId={ 300 } /> );
 

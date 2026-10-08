@@ -49,8 +49,8 @@ describe( 'AtmosphereThreadView', () => {
 	} );
 	afterEach( () => nock.cleanAll() );
 
-	it( 'renders a status announcement while connections are pending', () => {
-		nock( 'https://public-api.wordpress.com' )
+	it( 'renders a status announcement while connections are pending', async () => {
+		const scope = nock( 'https://public-api.wordpress.com' )
 			.get( listUrl )
 			.delay( 100 )
 			.reply( 200, { connections: [] } );
@@ -60,6 +60,8 @@ describe( 'AtmosphereThreadView', () => {
 		} );
 
 		expect( screen.getByRole( 'status' ) ).toHaveTextContent( /loading/i );
+		// Wait for nock to match the request so it can't consume the next test's mock.
+		await waitFor( () => expect( scope.isDone() ).toBe( true ) );
 	} );
 
 	it( 'redirects to /reader/atmosphere when the connection is missing', async () => {

@@ -8,13 +8,16 @@ import { render } from '../../../test-utils';
 import { InaccessibleJetpackNotice } from '../notices';
 
 describe( '<InaccessibleJetpackNotice>', () => {
-	test( 'displays the error message', () => {
-		nock( 'https://public-api.wordpress.com' ).post( '/rest/v1.1/logstash' ).reply( 200 );
+	test( 'displays the error message', async () => {
+		const scope = nock( 'https://public-api.wordpress.com' )
+			.post( '/rest/v1.1/logstash' )
+			.reply( 200 );
 
 		const error = new Error( 'Connection timed out' );
 		render( <InaccessibleJetpackNotice error={ error } /> );
 
 		expect( screen.getByText( 'Connection timed out' ) ).toBeVisible();
+		await waitFor( () => expect( scope.isDone() ).toBe( true ) );
 	} );
 
 	test( 'logs to Logstash on mount', async () => {

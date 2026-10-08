@@ -197,7 +197,8 @@ describe( 'ReaderListHeader', () => {
 	} );
 
 	test( 'shows total items count on Sites tab', async () => {
-		nockListItems( 'test_user', 'my-list', { total_items: 42, items: [] } );
+		// Persist so that unmocked requests left in flight by earlier tests can't use up the mock.
+		nockListItems( 'test_user', 'my-list', { total_items: 42, items: [] } ).persist();
 
 		renderReaderListHeader();
 

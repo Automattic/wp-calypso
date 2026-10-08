@@ -157,11 +157,12 @@ describe( 'UserProfileHeader', () => {
 			},
 		];
 
+		// Persist so that unmocked requests left in flight by earlier tests can't use up the mock.
 		nockGetUserSites( defaultUser.ID, {
 			sites: mockSites,
 			total: mockSites.length,
 			primary_site_id: 1,
-		} );
+		} ).persist();
 
 		renderWithClient( <UserProfileHeader user={ defaultUser } view="posts" /> );
 

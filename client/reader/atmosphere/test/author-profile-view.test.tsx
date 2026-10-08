@@ -59,8 +59,8 @@ afterEach( () => {
 } );
 
 describe( 'AuthorProfileView', () => {
-	it( 'shows a loading status while connections are pending', () => {
-		nock( 'https://public-api.wordpress.com' )
+	it( 'shows a loading status while connections are pending', async () => {
+		const scope = nock( 'https://public-api.wordpress.com' )
 			.get( '/wpcom/v2/reader/atmosphere/connections' )
 			.delay( 5000 )
 			.reply( 200, { connections: [] } );
@@ -68,6 +68,8 @@ describe( 'AuthorProfileView', () => {
 		renderWithProvider( <AuthorProfileView connectionId={ 42 } actor="alice.bsky.social" /> );
 
 		expect( screen.getByRole( 'status' ) ).toHaveTextContent( /loading/i );
+		// Wait for nock to match the request so it can't consume the next test's mock.
+		await waitFor( () => expect( scope.isDone() ).toBe( true ) );
 	} );
 
 	it( 'redirects to /reader/atmosphere when the connection is missing', async () => {
