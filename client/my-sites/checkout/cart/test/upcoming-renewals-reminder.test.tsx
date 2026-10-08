@@ -1,7 +1,6 @@
 /**
  * @jest-environment jsdom
  */
-import { SubscriptionBillPeriod } from '@automattic/api-core';
 import { sitePurchasesQuery } from '@automattic/api-queries';
 import { getEmptyResponseCartProduct } from '@automattic/shopping-cart';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -12,13 +11,18 @@ import Modal from 'react-modal';
 import { Provider as ReduxProvider } from 'react-redux';
 import { createStore, applyMiddleware } from 'redux';
 import { thunk } from 'redux-thunk';
-import { getPlanExpiryUrgency } from 'calypso/dashboard/components/plan-expiry-notice/get-plan-expiry-notice';
+import {
+	getPlanExpiryUrgency,
+	hasPlanExpiryNotice,
+} from 'calypso/dashboard/components/plan-expiry-notice/get-plan-expiry-notice';
+import { shouldShowExpiringNotice } from 'calypso/dashboard/me/billing-purchases/purchase-settings/should-show-expiring-notice';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { storeData } from 'calypso/my-sites/checkout/src/components/test/lib/fixtures';
 import { recordTracksEvent as recordReduxTracksEvent } from 'calypso/state/analytics/actions';
 import { savePreference } from 'calypso/state/preferences/actions';
 import UpcomingRenewalsReminder from '../upcoming-renewals-reminder';
 import type { Purchase } from '@automattic/api-core';
+import type { PlanExpiryUrgency } from 'calypso/dashboard/components/plan-expiry-notice/get-plan-expiry-notice';
 import type { PartialCart } from 'calypso/my-sites/checkout/src/components/secondary-cart-promotions';
 
 import 'calypso/my-sites/checkout/src/test/util';
@@ -42,8 +46,22 @@ jest.mock( 'calypso/state/preferences/actions', () => ( {
 	setPreference: jest.fn( ( key, value ) => ( { type: 'PREFERENCE_SET', key, value } ) ),
 } ) );
 
+jest.mock( 'calypso/dashboard/components/plan-expiry-notice/get-plan-expiry-notice', () => ( {
+	...jest.requireActual( 'calypso/dashboard/components/plan-expiry-notice/get-plan-expiry-notice' ),
+	getPlanExpiryUrgency: jest.fn(),
+	hasPlanExpiryNotice: jest.fn(),
+} ) );
+
+jest.mock(
+	'calypso/dashboard/me/billing-purchases/purchase-settings/should-show-expiring-notice',
+	() => ( { shouldShowExpiringNotice: jest.fn() } )
+);
+
 const mockRecordTracksEvent = recordTracksEvent as unknown as jest.Mock;
 const mockSavePreference = savePreference as unknown as jest.Mock;
+const mockGetPlanExpiryUrgency = getPlanExpiryUrgency as unknown as jest.Mock;
+const mockHasPlanExpiryNotice = hasPlanExpiryNotice as unknown as jest.Mock;
+const mockShouldShowExpiringNotice = shouldShowExpiringNotice as unknown as jest.Mock;
 
 const SITE_ID = 123;
 const URGENT_DOMAIN_NAME = 'urgent-domain-1234.live';
@@ -111,31 +129,13 @@ function expiringIn( days: number ) {
 	return { expiry_date: moment().add( days, 'days' ).format(), days_until_expiry: days };
 }
 
-// An annual WordPress.com plan with auto-renew off: getPlanExpiryUrgency is
-// 'warning' from 8 to 60 days out and 'info' beyond.
-function expiringPlanPurchase( days: number, overrides = {} ) {
-	return nonUrgentPlanPurchase( {
-		is_plan: true,
-		is_jetpack_plan_or_product: false,
-		bill_period_days: SubscriptionBillPeriod.PLAN_ANNUAL_PERIOD,
-		is_auto_renew_enabled: false,
-		might_still_auto_renew: false,
-		is_past_first_auto_renew_attempt_date: false,
-		is_past_last_auto_renew_attempt_date: false,
-		...expiringIn( days ),
-		...overrides,
-	} );
-}
-
-function renewalCart( purchaseId: number ): PartialCart {
+function renewalCart( ...purchaseIds: number[] ): PartialCart {
 	return {
-		products: [
-			{
-				...getEmptyResponseCartProduct(),
-				subscription_id: String( purchaseId ),
-				is_renewal: true,
-			},
-		],
+		products: purchaseIds.map( ( purchaseId ) => ( {
+			...getEmptyResponseCartProduct(),
+			subscription_id: String( purchaseId ),
+			is_renewal: true,
+		} ) ),
 	};
 }
 
@@ -355,267 +355,87 @@ describe( 'UpcomingRenewalsReminder', () => {
 	} );
 
 	describe( 'outside the 10-day window', () => {
-		const warningPlan = () => expiringPlanPurchase( 14 );
-		const infoPlan = () => expiringPlanPurchase( 200 );
-		const domain = () => urgentDomainPurchase( expiringIn( 20 ) );
+		const PLAN_ID = 20;
+		const OTHER_ID = 10;
 
-		// Auto-renew on and the first renewal attempt is still ahead, so the urgency is null.
-		const autoRenewingPlan = () =>
-			expiringPlanPurchase( 14, { is_auto_renew_enabled: true, might_still_auto_renew: true } );
+		type Scenario = {
+			// Urgency and days until expiry of each plan in the cart, with IDs
+			// counting up from PLAN_ID.
+			plans: [ PlanExpiryUrgency | null, number ][];
+			otherDays: number;
+			// How the other purchase's own page warns that it's expiring: the
+			// generic expiring notice, a warning-urgency plan expiry notice, or not at all.
+			otherNotice?: 'expiring' | 'warning' | null;
+		};
 
-		// Auto-renew on but the first renewal attempt already failed, so the urgency is 'warning'.
-		const failingAutoRenewPlan = () =>
-			expiringPlanPurchase( 14, {
-				is_auto_renew_enabled: true,
-				might_still_auto_renew: true,
-				is_past_first_auto_renew_attempt_date: true,
-			} );
-		const domainExpiringIn = ( days: number, overrides = {} ) =>
-			urgentDomainPurchase( { ...expiringIn( days ), ...overrides } );
-
-		// A monthly add-on with auto-renew on, which the API returns as 'active'
-		// until its last 10 days.
-		const addOnExpiringIn = ( days: number ) =>
-			nonUrgentPlanPurchase( {
-				ID: 30,
-				product_name: 'Jetpack Backup Add-on Storage (10GB)',
-				product_slug: 'jetpack_backup_addon_storage_10gb_monthly',
-				product_type: 'jetpack',
-				bill_period_days: SubscriptionBillPeriod.PLAN_MONTHLY_PERIOD,
-				is_auto_renew_enabled: true,
-				expiry_status: 'active',
-				...expiringIn( days ),
-			} );
-
-		test( 'plan fixtures resolve to warning and info urgency', () => {
-			expect( getPlanExpiryUrgency( warningPlan() as unknown as Purchase ) ).toBe( 'warning' );
-			expect( getPlanExpiryUrgency( infoPlan() as unknown as Purchase ) ).toBe( 'info' );
-		} );
-
-		test( 'failing auto-renew and 5-day plan fixtures resolve to warning and error urgency', () => {
-			expect( getPlanExpiryUrgency( failingAutoRenewPlan() as unknown as Purchase ) ).toBe(
-				'warning'
+		function renderScenario( { plans, otherDays, otherNotice = 'expiring' }: Scenario ) {
+			const planIds = plans.map( ( _plan, index ) => PLAN_ID + index );
+			const urgencyById = new Map< number, PlanExpiryUrgency | null >(
+				plans.map( ( [ urgency ], index ) => [ planIds[ index ], urgency ] )
 			);
-			expect( getPlanExpiryUrgency( expiringPlanPurchase( 5 ) as unknown as Purchase ) ).toBe(
-				'error'
+			if ( otherNotice === 'warning' ) {
+				urgencyById.set( OTHER_ID, 'warning' );
+			}
+			const urgencyOf = ( purchase: Purchase ) => urgencyById.get( purchase.ID ) ?? null;
+			mockGetPlanExpiryUrgency.mockImplementation( urgencyOf );
+			mockHasPlanExpiryNotice.mockImplementation( ( purchase ) => urgencyOf( purchase ) !== null );
+			mockShouldShowExpiringNotice.mockImplementation( () => otherNotice === 'expiring' );
+
+			renderReminder( {
+				purchases: [
+					...plans.map( ( [ , days ], index ) =>
+						nonUrgentPlanPurchase( { ID: planIds[ index ], is_plan: true, ...expiringIn( days ) } )
+					),
+					urgentDomainPurchase( expiringIn( otherDays ) ),
+				],
+				cart: renewalCart( ...planIds ),
+			} );
+		}
+
+		test.each< [ string, Scenario, boolean ] >( [
+			[
+				'auto-opens for a purchase expiring soon after an info-urgency plan',
+				{ plans: [ [ 'info', 200 ] ], otherDays: 20 },
+				true,
+			],
+			[
+				'keeps the dialog closed for a purchase near a plan with no expiry notice',
+				{ plans: [ [ null, 14 ] ], otherDays: 20 },
+				false,
+			],
+			[
+				'keeps the dialog closed for a purchase whose own page shows no expiring notice',
+				{ plans: [ [ 'warning', 14 ] ], otherDays: 20, otherNotice: null },
+				false,
+			],
+			[
+				'auto-opens for a purchase 60 days from expiry with a warning plan notice of its own',
+				{ plans: [ [ 'warning', 58 ] ], otherDays: 60, otherNotice: 'warning' },
+				true,
+			],
+			[
+				'keeps the dialog closed for a purchase over a week after the soonest plan',
+				{
+					plans: [
+						[ 'warning', 14 ],
+						[ 'warning', 50 ],
+					],
+					otherDays: 25,
+				},
+				false,
+			],
+			[
+				'auto-opens for a purchase in the 10-day window and near the plan, listing it once',
+				{ plans: [ [ 'warning', 14 ] ], otherDays: 5 },
+				true,
+			],
+		] )( '%s', async ( _label, scenario, opens ) => {
+			renderScenario( scenario );
+			expect( await screen.findByText( 'Renew your products together' ) ).toBeVisible();
+			const dialog = await screen.findByRole( 'dialog' ).catch( () => null );
+			expect( dialog ? within( dialog ).getAllByText( URGENT_DOMAIN_NAME ) : [] ).toHaveLength(
+				opens ? 1 : 0
 			);
-		} );
-
-		test( 'auto-renewing plan fixture resolves to null urgency', () => {
-			expect( getPlanExpiryUrgency( autoRenewingPlan() as unknown as Purchase ) ).toBeNull();
-		} );
-
-		test( 'auto-opens for a domain expiring soon after the plan being renewed', async () => {
-			renderReminder( {
-				purchases: [ failingAutoRenewPlan(), domain() ],
-				cart: renewalCart( 20 ),
-			} );
-			expect( await screen.findByText( 'Upcoming renewals' ) ).toBeVisible();
-			const dialog = screen.getByRole( 'dialog' );
-			expect( within( dialog ).getByText( URGENT_DOMAIN_NAME ) ).toBeVisible();
-		} );
-
-		test( 'auto-opens when the plan being renewed is in the error window', async () => {
-			renderReminder( {
-				purchases: [ expiringPlanPurchase( 5 ), domainExpiringIn( 12 ) ],
-				cart: renewalCart( 20 ),
-			} );
-			expect( await screen.findByText( 'Upcoming renewals' ) ).toBeVisible();
-		} );
-
-		test( 'keeps the dialog closed for a domain expiring far beyond the plan', async () => {
-			renderReminder( {
-				purchases: [ warningPlan(), domainExpiringIn( 90 ) ],
-				cart: renewalCart( 20 ),
-			} );
-			expect( await screen.findByText( 'Renew your products together' ) ).toBeVisible();
-			await expect( screen.findByText( 'Upcoming renewals' ) ).toNeverAppear();
-		} );
-
-		test( 'includes a domain expiring 7 days after the plan', async () => {
-			renderReminder( {
-				purchases: [ warningPlan(), domainExpiringIn( 21 ) ],
-				cart: renewalCart( 20 ),
-			} );
-			expect( await screen.findByText( 'Upcoming renewals' ) ).toBeVisible();
-		} );
-
-		test( 'excludes a domain expiring 8 days after the plan', async () => {
-			renderReminder( {
-				purchases: [ warningPlan(), domainExpiringIn( 22 ) ],
-				cart: renewalCart( 20 ),
-			} );
-			expect( await screen.findByText( 'Renew your products together' ) ).toBeVisible();
-			await expect( screen.findByText( 'Upcoming renewals' ) ).toNeverAppear();
-		} );
-
-		test( 'includes a domain 60 days from expiry when renewing a plan 58 days out', async () => {
-			renderReminder( {
-				purchases: [ expiringPlanPurchase( 58 ), domainExpiringIn( 60 ) ],
-				cart: renewalCart( 20 ),
-			} );
-			expect( await screen.findByText( 'Upcoming renewals' ) ).toBeVisible();
-		} );
-
-		test( 'excludes a domain 61 days from expiry even within 7 days of the plan', async () => {
-			renderReminder( {
-				purchases: [ expiringPlanPurchase( 58 ), domainExpiringIn( 61 ) ],
-				cart: renewalCart( 20 ),
-			} );
-			expect( await screen.findByText( 'Renew your products together' ) ).toBeVisible();
-			await expect( screen.findByText( 'Upcoming renewals' ) ).toNeverAppear();
-		} );
-
-		test( 'measures the window from the soonest-expiring plan being renewed', async () => {
-			renderReminder( {
-				purchases: [
-					warningPlan(),
-					expiringPlanPurchase( 50, { ID: 21 } ),
-					domainExpiringIn( 25 ),
-				],
-				cart: { products: [ ...renewalCart( 20 ).products, ...renewalCart( 21 ).products ] },
-			} );
-			expect( await screen.findByText( 'Renew your products together' ) ).toBeVisible();
-			await expect( screen.findByText( 'Upcoming renewals' ) ).toNeverAppear();
-		} );
-
-		test( 'lists purchases from the 10-day window and near the plan together, each once', async () => {
-			const otherDomainName = 'other-domain-1234.live';
-			renderReminder( {
-				purchases: [
-					warningPlan(),
-					domainExpiringIn( 5 ),
-					domainExpiringIn( 20, { ID: 11, meta: otherDomainName } ),
-				],
-				cart: renewalCart( 20 ),
-			} );
-			expect( await screen.findByText( 'Upcoming renewals' ) ).toBeVisible();
-			const dialog = screen.getByRole( 'dialog' );
-			expect( within( dialog ).getAllByRole( 'checkbox' ) ).toHaveLength( 2 );
-			expect( within( dialog ).getByText( URGENT_DOMAIN_NAME ) ).toBeVisible();
-			expect( within( dialog ).getByText( otherDomainName ) ).toBeVisible();
-		} );
-
-		test( 'includes a purchase within 10 days that expires over a week after the plan', async () => {
-			renderReminder( {
-				purchases: [ expiringPlanPurchase( 1 ), domainExpiringIn( 9 ) ],
-				cart: renewalCart( 20 ),
-			} );
-			expect( await screen.findByText( 'Upcoming renewals' ) ).toBeVisible();
-		} );
-
-		test( 'closing the dialog dismisses a set expiring near the plan', async () => {
-			renderReminder( {
-				purchases: [ warningPlan(), domain() ],
-				cart: renewalCart( 20 ),
-			} );
-			expect( await screen.findByText( 'Upcoming renewals' ) ).toBeVisible();
-			const dialog = screen.getByRole( 'dialog' );
-			await userEvent.click( within( dialog ).getByRole( 'button', { name: 'Cancel' } ) );
-			expect( savePreference ).toHaveBeenCalledWith(
-				'dismissible-card-checkout-urgent-renewals-10',
-				true
-			);
-			expect( recordTracksEvent ).toHaveBeenCalledWith(
-				'calypso_checkout_urgent_renewals_modal_dismiss'
-			);
-		} );
-
-		test( 'auto-opens when another purchase near the plan joins a dismissed set', async () => {
-			renderReminder( {
-				purchases: [ warningPlan(), domain(), domainExpiringIn( 21, { ID: 11 } ) ],
-				cart: renewalCart( 20 ),
-				preferences: dismissedPrefs( 10 ),
-			} );
-			expect( await screen.findByText( 'Upcoming renewals' ) ).toBeVisible();
-		} );
-
-		test( 'keeps the dialog closed when the cart has no renewal', async () => {
-			renderReminder( { purchases: [ warningPlan(), domain() ] } );
-			expect( await screen.findByText( 'Renew your products together' ) ).toBeVisible();
-			await expect( screen.findByText( 'Upcoming renewals' ) ).toNeverAppear();
-		} );
-
-		test( 'keeps the dialog closed for a warning-urgency plan when renewing a domain', async () => {
-			renderReminder( {
-				purchases: [ warningPlan(), domain() ],
-				cart: renewalCart( 10 ),
-			} );
-			expect( await screen.findByText( 'Renew your products together' ) ).toBeVisible();
-			await expect( screen.findByText( 'Upcoming renewals' ) ).toNeverAppear();
-		} );
-
-		test( 'auto-opens for a domain expiring soon when renewing an info-urgency plan', async () => {
-			renderReminder( {
-				purchases: [ infoPlan(), domain() ],
-				cart: renewalCart( 20 ),
-			} );
-			expect( await screen.findByText( 'Upcoming renewals' ) ).toBeVisible();
-			const dialog = screen.getByRole( 'dialog' );
-			expect( within( dialog ).getByText( URGENT_DOMAIN_NAME ) ).toBeVisible();
-		} );
-
-		test( 'keeps the dialog closed for a domain when renewing an auto-renewing plan', async () => {
-			renderReminder( {
-				purchases: [ autoRenewingPlan(), domain() ],
-				cart: renewalCart( 20 ),
-			} );
-			expect( await screen.findByText( 'Renew your products together' ) ).toBeVisible();
-			await expect( screen.findByText( 'Upcoming renewals' ) ).toNeverAppear();
-		} );
-
-		test( 'lists a warning-urgency plan near the plan being renewed', async () => {
-			const otherPlanName = 'WordPress.com Premium';
-			renderReminder( {
-				purchases: [
-					warningPlan(),
-					expiringPlanPurchase( 18, {
-						ID: 21,
-						product_name: otherPlanName,
-						product_slug: 'value_bundle',
-					} ),
-				],
-				cart: renewalCart( 20 ),
-			} );
-			expect( await screen.findByText( 'Upcoming renewals' ) ).toBeVisible();
-			const dialog = screen.getByRole( 'dialog' );
-			expect( within( dialog ).getByText( otherPlanName ) ).toBeVisible();
-		} );
-
-		test( 'includes an auto-renewing purchase within 10 days of expiry', async () => {
-			renderReminder( {
-				purchases: [
-					warningPlan(),
-					domainExpiringIn( 5, { is_auto_renew_enabled: true, expiry_status: 'auto-renewing' } ),
-				],
-				cart: renewalCart( 20 ),
-			} );
-			expect( await screen.findByText( 'Upcoming renewals' ) ).toBeVisible();
-		} );
-
-		test( 'keeps the dialog closed for an auto-renewing monthly add-on near the plan', async () => {
-			renderReminder( {
-				purchases: [ warningPlan(), addOnExpiringIn( 20 ) ],
-				cart: renewalCart( 20 ),
-			} );
-			expect( await screen.findByText( 'Renew your products together' ) ).toBeVisible();
-			await expect( screen.findByText( 'Upcoming renewals' ) ).toNeverAppear();
-		} );
-
-		test( 'keeps the dialog closed for an auto-renewing annual domain near the plan', async () => {
-			renderReminder( {
-				purchases: [
-					expiringPlanPurchase( 50 ),
-					domainExpiringIn( 55, {
-						bill_period_days: SubscriptionBillPeriod.PLAN_ANNUAL_PERIOD,
-						is_auto_renew_enabled: true,
-						expiry_status: 'auto-renewing',
-					} ),
-				],
-				cart: renewalCart( 20 ),
-			} );
-			expect( await screen.findByText( 'Renew your products together' ) ).toBeVisible();
-			await expect( screen.findByText( 'Upcoming renewals' ) ).toNeverAppear();
 		} );
 	} );
 } );

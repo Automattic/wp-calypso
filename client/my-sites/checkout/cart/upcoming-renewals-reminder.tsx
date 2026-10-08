@@ -96,9 +96,8 @@ const UpcomingRenewalsReminder: FunctionComponent< Props > = ( { cart, addItemTo
 		[ renewableSitePurchases, purchasesIdsAlreadyInCart ]
 	);
 
-	// Soonest expiry among plans being renewed that show an expiry notice. That
-	// notice hides the purchase page's notice about other purchases expiring
-	// soon, so checkout lists them instead.
+	// Days left on the plan being renewed, if it shows an expiry notice.
+	// That notice hides other expiring purchases on the plan's page, so we show them here.
 	const renewingPlanDaysUntilExpiry = useMemo( () => {
 		const days = ( sitePurchases ?? [] )
 			.filter(
@@ -130,7 +129,7 @@ const UpcomingRenewalsReminder: FunctionComponent< Props > = ( { cart, addItemTo
 					renewingPlanDaysUntilExpiry != null &&
 					daysUntilExpiry <= EXPIRY_WARNING_DAYS &&
 					daysUntilExpiry <= renewingPlanDaysUntilExpiry + EXPIRY_ERROR_DAYS &&
-					( hasWarningOrErrorExpiryNotice( purchase ) ||
+					( getPlanExpiryUrgency( purchase ) === 'warning' ||
 						// Included purchases aren't renewable, so there's no attached plan to pass.
 						shouldShowExpiringNotice( purchase, undefined ) )
 				);
@@ -282,11 +281,6 @@ const UpcomingRenewalsReminder: FunctionComponent< Props > = ( { cart, addItemTo
 		</div>
 	);
 };
-
-function hasWarningOrErrorExpiryNotice( purchase: Purchase ) {
-	const urgency = getPlanExpiryUrgency( purchase );
-	return urgency === 'warning' || urgency === 'error';
-}
 
 function getMessages( {
 	translate,
