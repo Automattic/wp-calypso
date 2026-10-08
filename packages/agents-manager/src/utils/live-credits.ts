@@ -206,6 +206,20 @@ export function buildLiveCreditsStatus( snapshot: CreditSnapshot ): CreditsStatu
 	};
 }
 
+/**
+ * The plans page for a plan with a higher plan to move to. Calypso's plans
+ * route takes the site's domain or its ID.
+ */
+export function getCreditsUpgradeUrl(
+	status: CreditsStatus,
+	site: string | number
+): string | undefined {
+	if ( ! [ 'personal', 'premium', 'business' ].includes( status.planTier ?? '' ) ) {
+		return undefined;
+	}
+	return `https://wordpress.com/plans/${ encodeURIComponent( site ) }`;
+}
+
 /** Bind the plans destination to the same site as the authenticated balance. */
 export function getLiveCreditsUpgradeUrl(
 	status: CreditsStatus,
@@ -216,10 +230,9 @@ export function getLiveCreditsUpgradeUrl(
 		! siteId ||
 		Number( site?.ID ) !== siteId ||
 		! site?.domain.trim() ||
-		[ '.', '..' ].includes( site.domain ) ||
-		! [ 'personal', 'premium', 'business' ].includes( status.planTier ?? '' )
+		[ '.', '..' ].includes( site.domain )
 	) {
 		return undefined;
 	}
-	return `https://wordpress.com/plans/${ encodeURIComponent( site.domain ) }`;
+	return getCreditsUpgradeUrl( status, site.domain );
 }

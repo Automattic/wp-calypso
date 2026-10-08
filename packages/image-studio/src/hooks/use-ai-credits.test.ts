@@ -49,7 +49,7 @@ const planSnapshot = ( remaining: number, overrides: Record< string, unknown > =
 	...overrides,
 } );
 
-const UPGRADE_URL = 'https://wordpress.com/plans/123?source=wp_ai_credits';
+const UPGRADE_URL = 'https://wordpress.com/plans/123';
 const upgradeAction = {
 	label: 'Upgrade',
 	href: UPGRADE_URL,

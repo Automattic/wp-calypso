@@ -45,5 +45,5 @@ export { CREDITS_LOW_BALANCE, formatCreditsShort } from './utils/credits';
 
 // Site credits ring, for chats outside the dock that show the same balance
 export { default as CreditsMeter } from './components/credits-meter';
-export { parseLiveCreditsStatus } from './utils/live-credits';
+export { getCreditsUpgradeUrl, parseLiveCreditsStatus } from './utils/live-credits';
 export type { CreditsStatus } from './utils/credits';

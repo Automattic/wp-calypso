@@ -1,6 +1,7 @@
 import {
 	CREDITS_LOW_BALANCE,
 	formatCreditsShort,
+	getCreditsUpgradeUrl,
 	parseLiveCreditsStatus,
 } from '@automattic/agents-manager';
 import { useEvent } from '@wordpress/compose';
@@ -23,9 +24,6 @@ const SITE_CREDITS_TIMEOUT_MS = 5000;
 const WPCOM_SITES_API = 'https://public-api.wordpress.com/wpcom/v2/sites';
 
 const TURN_END_STATES: TaskState[] = [ 'completed', 'failed', 'canceled' ];
-
-/** Plans with a higher plan to move to. */
-const UPGRADABLE_PLAN_TIERS = [ 'personal', 'premium', 'business' ];
 
 type PaidCreditsStatus = Extract< CreditsStatus, { plan: 'paid' } >;
 
@@ -176,10 +174,7 @@ export function useAiCredits( {
 	} );
 
 	const level = status ? getSiteCreditsLevel( status.remaining ) : null;
-	const upgradeUrl =
-		status && UPGRADABLE_PLAN_TIERS.includes( status.planTier ?? '' )
-			? `https://wordpress.com/plans/${ blogId }?source=wp_ai_credits`
-			: undefined;
+	const upgradeUrl = status && blogId !== null ? getCreditsUpgradeUrl( status, blogId ) : undefined;
 	const isNoticeHidden = level === 'low' && isLowNoticeDismissed;
 
 	const beforeSubmit = useEvent( () => {
