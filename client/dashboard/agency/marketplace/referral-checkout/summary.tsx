@@ -33,12 +33,17 @@ interface Props {
 	/** The lines are still being worked out, as when a site's plan is loading. */
 	isLoading?: boolean;
 	isTotalReady: boolean;
+	/** A cart of free products needs no client: the agency takes it through the checkout. */
+	isFreeOnly: boolean;
+	/** The agency checkout for a free cart. */
+	checkoutUrl: string;
 	isUserUnverified: boolean;
 	canSend: boolean;
 	canCopy: boolean;
 	isBusy: boolean;
 	onSend: () => void;
 	onCopy: () => void;
+	onCheckout: () => void;
 	onPreview: () => void;
 }
 
@@ -66,17 +71,33 @@ export default function ReferralSummary( {
 	commission,
 	isLoading = false,
 	isTotalReady,
+	isFreeOnly,
+	checkoutUrl,
 	isUserUnverified,
 	canSend,
 	canCopy,
 	isBusy,
 	onSend,
 	onCopy,
+	onCheckout,
 	onPreview,
 }: Props ) {
 	const suffix = getTermSuffix( term );
 
-	const actions = (
+	const actions = isFreeOnly ? (
+		<VStack>
+			<Button
+				variant="primary"
+				style={ { justifyContent: 'center' } }
+				__next40pxDefaultSize
+				href={ checkoutUrl }
+				disabled={ isUserUnverified }
+				onClick={ onCheckout }
+			>
+				{ __( 'Checkout' ) }
+			</Button>
+		</VStack>
+	) : (
 		<VStack spacing={ 2 }>
 			<Button
 				variant="primary"
@@ -149,23 +170,27 @@ export default function ReferralSummary( {
 						) }
 					</VStack>
 					<CardDivider />
-					<HStack justify="space-between" alignment="baseline">
-						<Text weight={ 500 }>{ __( 'Total your client will pay' ) }</Text>
-						<Heading level={ 3 } size={ 20 }>
-							<TextBlur isBlurred={ ! isTotalReady }>
-								{ formatCurrency( total, currency ) }
-							</TextBlur>
-						</Heading>
-					</HStack>
-					{ commission > 0 && (
-						<HStack justify="space-between">
-							<Text variant="muted">{ __( 'Your estimated commission' ) }</Text>
-							<Text variant="muted">
-								<TextBlur isBlurred={ ! isTotalReady }>
-									{ formatCurrency( commission, currency ) + suffix }
-								</TextBlur>
-							</Text>
-						</HStack>
+					{ ! isFreeOnly && (
+						<>
+							<HStack justify="space-between" alignment="baseline">
+								<Text weight={ 500 }>{ __( 'Total your client will pay' ) }</Text>
+								<Heading level={ 3 } size={ 20 }>
+									<TextBlur isBlurred={ ! isTotalReady }>
+										{ formatCurrency( total, currency ) }
+									</TextBlur>
+								</Heading>
+							</HStack>
+							{ commission > 0 && (
+								<HStack justify="space-between">
+									<Text variant="muted">{ __( 'Your estimated commission' ) }</Text>
+									<Text variant="muted">
+										<TextBlur isBlurred={ ! isTotalReady }>
+											{ formatCurrency( commission, currency ) + suffix }
+										</TextBlur>
+									</Text>
+								</HStack>
+							) }
+						</>
 					) }
 					{ isUserUnverified ? (
 						<Tooltip
@@ -188,22 +213,26 @@ export default function ReferralSummary( {
 							) }
 						</Text>
 					) }
-					<CardDivider />
-					<VStack spacing={ 2 }>
-						<Text weight={ 500 } size={ 12 }>
-							{ __( 'When you share this payment request:' ) }
-						</Text>
-						<Text variant="muted" size={ 12 }>
-							{ __(
-								'Your client will receive instructions to create a WordPress.com account and complete their purchase. Once their payment is successful, they’ll be enrolled in an automatically renewing subscription (monthly or annual, based on checkout). They can cancel anytime.'
-							) }
-						</Text>
-						<Text variant="muted" size={ 12 }>
-							{ __(
-								'After their purchase, you’ll be able to manage the products on your client’s behalf.'
-							) }
-						</Text>
-					</VStack>
+					{ ! isFreeOnly && (
+						<>
+							<CardDivider />
+							<VStack spacing={ 2 }>
+								<Text weight={ 500 } size={ 12 }>
+									{ __( 'When you share this payment request:' ) }
+								</Text>
+								<Text variant="muted" size={ 12 }>
+									{ __(
+										'Your client will receive instructions to create a WordPress.com account and complete their purchase. Once their payment is successful, they’ll be enrolled in an automatically renewing subscription (monthly or annual, based on checkout). They can cancel anytime.'
+									) }
+								</Text>
+								<Text variant="muted" size={ 12 }>
+									{ __(
+										'After their purchase, you’ll be able to manage the products on your client’s behalf.'
+									) }
+								</Text>
+							</VStack>
+						</>
+					) }
 				</VStack>
 			</CardBody>
 		</Card>

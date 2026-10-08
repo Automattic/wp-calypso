@@ -259,13 +259,30 @@ describe( '<ReferralCheckout>', () => {
 		expect( requests ).toBe( 1 );
 	} );
 
-	test( 'asks the client to take a cart of free products, like any referral', async () => {
-		fillCart( 'jetpack-stats-free' );
-		mockApi( { catalog: freeProducts } );
+	test( 'sends a free cart to the agency checkout, even while an invoice is overdue', async () => {
+		fillCart( 'jetpack-stats-free', 'jetpack-boost-free' );
+		mockApi( { agency: { can_issue_licenses: false }, catalog: freeProducts } );
 		render( <ReferralCheckout /> );
 
-		expect( await screen.findByRole( 'button', { name: 'Send to client' } ) ).toBeVisible();
-		expect( screen.getByLabelText( 'Client’s email address' ) ).toBeVisible();
-		expect( screen.queryByRole( 'button', { name: 'Purchase' } ) ).not.toBeInTheDocument();
+		const url = new URL(
+			( await screen.findByRole( 'link', { name: 'Checkout' } ) ).getAttribute( 'href' ) ?? ''
+		);
+		expect( url.pathname ).toBe( '/checkout/agency/purchase' );
+		expect( url.searchParams.get( 'products' ) ).toBe(
+			'jetpack-stats-free:1,jetpack-boost-free:1'
+		);
+		expect( url.searchParams.get( 'redirect_to' ) ).toContain( '/purchases?cart=referral&' );
+	} );
+
+	test( 'sends a free cart from an agency on the previous billing system to its checkout', async () => {
+		fillCart( 'jetpack-stats-free' );
+		mockApi( { agency: { billing_system: 'legacy' }, catalog: freeProducts } );
+		render( <ReferralCheckout /> );
+
+		const url = new URL(
+			( await screen.findByRole( 'link', { name: 'Checkout' } ) ).getAttribute( 'href' ) ?? ''
+		);
+		expect( url.pathname ).toBe( '/marketplace/checkout' );
+		expect( url.searchParams.get( 'product_slug' ) ).toBe( 'jetpack-stats-free' );
 	} );
 } );

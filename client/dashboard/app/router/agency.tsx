@@ -518,6 +518,7 @@ export const marketplacePurchasesRoute = createRoute( {
 		search?: string;
 		status?: string;
 		receipt_id?: string;
+		cart?: string;
 		flash?: string;
 		purchased_plan?: string;
 	} => {
@@ -531,6 +532,7 @@ export const marketplacePurchasesRoute = createRoute( {
 			search: asString( search.search ),
 			status: asString( search.status ),
 			receipt_id: asId( search.receipt_id ),
+			cart: asString( search.cart ),
 			flash: asString( search.flash ),
 			purchased_plan: asString( search.purchased_plan ),
 		};
