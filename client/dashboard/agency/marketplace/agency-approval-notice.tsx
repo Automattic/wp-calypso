@@ -1,9 +1,10 @@
 import { userPreferenceOptimisticMutation, userPreferenceQuery } from '@automattic/api-queries';
 import { useMutation, useQuery } from '@tanstack/react-query';
+import { Button } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { Notice } from '../../components/notice';
-import { a4aLink } from '../../utils/link';
+import { useContactSupport } from '../support/use-contact-support';
 import type { Agency } from '@automattic/api-core';
 
 // Shared with the classic dashboard so a dismissal carries over.
@@ -22,6 +23,7 @@ export default function AgencyApprovalNotice( { agency }: { agency: Agency | nul
 	const { mutate: saveDismissed } = useMutation(
 		userPreferenceOptimisticMutation( DISMISS_PREFERENCE )
 	);
+	const { openContactForm } = useContactSupport();
 
 	const status = agency?.approval_status;
 	if ( ! status || ! isFetched || isDismissed ) {
@@ -45,9 +47,7 @@ export default function AgencyApprovalNotice( { agency }: { agency: Agency | nul
 					__(
 						'We have not approved your application for the Automattic for Agencies program. Please <a>contact support</a> to discuss this further if you think this was done in error.'
 					),
-					// TODO: The MSD has no contact-support widget yet; this opens the
-					// classic one, as the Pressable section does.
-					{ a: <a href={ a4aLink( '/overview#contact-support' ) } /> }
+					{ a: <Button variant="link" onClick={ () => openContactForm() } /> }
 				) }
 			</Notice>
 		);
