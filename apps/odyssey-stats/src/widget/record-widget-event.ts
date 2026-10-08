@@ -16,6 +16,7 @@ interface WidgetEvents {
 	post_clicked: undefined;
 	referrer_clicked: undefined;
 	anti_spam_insights_clicked: undefined;
+	more_stats_clicked: { range: DateRangeId };
 	explore_more_clicked: { destination: ExploreMoreDestination };
 }
 

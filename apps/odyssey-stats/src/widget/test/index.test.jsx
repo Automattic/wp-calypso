@@ -92,6 +92,36 @@ describe( 'Stats widget', () => {
 		expect( screen.getByText( 'Chart of last_90_days' ) ).toBeInTheDocument();
 	} );
 
+	it( 'opens "More stats" on the days the chart shows', async () => {
+		// Only the clock: findBy* still needs real timers to poll.
+		jest.useFakeTimers( {
+			now: new Date( '2026-10-06T12:00:00Z' ),
+			doNotFake: [
+				'setTimeout',
+				'clearTimeout',
+				'setInterval',
+				'clearInterval',
+				'setImmediate',
+				'queueMicrotask',
+				'nextTick',
+			],
+		} );
+		localStorage.setItem( STORAGE_KEY, 'last_12_months' );
+		try {
+			await renderWidget();
+		} finally {
+			jest.useRealTimers();
+		}
+
+		expect( screen.getByRole( 'link', { name: 'More stats' } ) ).toHaveAttribute(
+			'href',
+			'https://example.com/stats/stats/month/123?chartStart=2025-11-01&chartEnd=2026-10-06'
+		);
+		expect( recordWidgetEventThenFollow ).toHaveBeenCalledWith( 'more_stats_clicked', {
+			range: 'last_12_months',
+		} );
+	} );
+
 	it( 'sends "Explore more" to My Jetpack where the menu has it', async () => {
 		await renderWidget(
 			'<ul id="adminmenu"><li><a href="https://example.com/wp-admin/admin.php?page=my-jetpack">My Jetpack</a></li></ul>'
