@@ -169,6 +169,7 @@ export class TestAccount {
 	private async waitForLandingRedirect( page: Page ): Promise< void > {
 		try {
 			await page.waitForURL( ( url ) => url.pathname.replace( /\/$/, '' ) !== '/home', {
+				waitUntil: 'commit',
 				timeout: LANDING_REDIRECT_TIMEOUT,
 			} );
 		} catch ( error ) {
