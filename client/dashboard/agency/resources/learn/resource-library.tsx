@@ -82,27 +82,36 @@ export default function ResourceLibrary( {
 		} );
 	} );
 
-	const stageOptions: { value: StageFilter; label: string; description: string }[] = [
-		{ value: 'all', label: __( 'All' ), description: __( 'Resources for every stage.' ) },
+	const stageOptions: { value: StageFilter; label: string; ariaLabel: string }[] = [
+		{
+			value: 'all',
+			label: __( 'All' ),
+			/* translators: Stage filter tooltip. Keep "All" matching the stage's button label. */
+			ariaLabel: __( 'All: Resources for every stage.' ),
+		},
 		{
 			value: 'learn',
 			label: getStageLabel( 'learn' ),
-			description: __( 'Get to know our products.' ),
+			/* translators: Stage filter tooltip. Keep "Learn" matching the stage's button label. */
+			ariaLabel: __( 'Learn: Get to know our products.' ),
 		},
 		{
 			value: 'sell',
 			label: getStageLabel( 'sell' ),
-			description: __( 'Prepare for client conversations.' ),
+			/* translators: Stage filter tooltip. Keep "Sell" matching the stage's button label. */
+			ariaLabel: __( 'Sell: Prepare for client conversations.' ),
 		},
 		{
 			value: 'manage',
 			label: getStageLabel( 'manage' ),
-			description: __( 'Deliver and support client projects.' ),
+			/* translators: Stage filter tooltip. Keep "Manage" matching the stage's button label. */
+			ariaLabel: __( 'Manage: Deliver and support client projects.' ),
 		},
 		{
 			value: 'grow',
 			label: getStageLabel( 'grow' ),
-			description: __( 'Build your agency and partnerships.' ),
+			/* translators: Stage filter tooltip. Keep "Grow" matching the stage's button label. */
+			ariaLabel: __( 'Grow: Build your agency and partnerships.' ),
 		},
 	];
 
@@ -207,14 +216,9 @@ export default function ResourceLibrary( {
 										key={ option.value }
 										value={ option.value }
 										label={ option.label }
-										// The tooltip shows the aria-label, so it keeps the visible
-										// name first for assistive technology.
-										aria-label={ sprintf(
-											/* translators: 1: Stage name, such as "Learn". 2: What the stage's resources help with. */
-											__( '%1$s: %2$s' ),
-											option.label,
-											option.description
-										) }
+										// The tooltip shows the aria-label, so it leads with the visible
+										// name for assistive technology.
+										aria-label={ option.ariaLabel }
 										showTooltip
 									/>
 								) ) }
