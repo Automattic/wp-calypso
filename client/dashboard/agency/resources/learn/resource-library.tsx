@@ -9,11 +9,11 @@ import {
 	__experimentalToggleGroupControlOption as ToggleGroupControlOption,
 } from '@wordpress/components';
 import { useEvent, useViewportMatch } from '@wordpress/compose';
-import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
+import { DataViews as WPDataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { useMemo, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
-import { DataViewsEmptyStateLayout } from '../../../components/dataviews';
+import { DataViews, DataViewsEmptyStateLayout } from '../../../components/dataviews';
 import { useResourceFields } from './dataviews/fields';
 import { LAYOUT_FIELDS } from './dataviews/views';
 import { getStageLabel } from './lib/labels';
@@ -170,7 +170,7 @@ export default function ResourceLibrary( {
 				>
 					<HStack justify="space-between" wrap>
 						<HStack justify="flex-start" expanded={ false }>
-							<DataViews.Search label={ __( 'Search resources' ) } />
+							<WPDataViews.Search label={ __( 'Search resources' ) } />
 							<ToggleGroupControl
 								className="dashboard-resources-learn__layout-toggle"
 								label={ __( 'Layout' ) }
@@ -186,7 +186,7 @@ export default function ResourceLibrary( {
 								<ToggleGroupControlOption value="grid" label={ __( 'Grid' ) } />
 								<ToggleGroupControlOption value="table" label={ __( 'List' ) } />
 							</ToggleGroupControl>
-							<DataViews.FiltersToggle />
+							<WPDataViews.FiltersToggle />
 						</HStack>
 						{ isSmallViewport ? (
 							<SelectControl
@@ -226,9 +226,9 @@ export default function ResourceLibrary( {
 						) }
 					</HStack>
 					<Spacer marginBottom={ 4 }>
-						<DataViews.FiltersToggled className="dashboard-resources-learn__filters-toggled" />
+						<WPDataViews.FiltersToggled className="dashboard-resources-learn__filters-toggled" />
 					</Spacer>
-					{ isList && filteredData.length > 0 && <DataViews.Layout /> }
+					{ isList && filteredData.length > 0 && <WPDataViews.Layout /> }
 				</DataViews>
 			</div>
 			{ ! isList && filteredData.length > 0 && (
