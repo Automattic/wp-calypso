@@ -99,6 +99,9 @@ function FollowButtonContainer( {
 					}
 				)
 			);
+			followSite( { feedUrl: siteUrl, source: followSource } );
+			// onFollowToggle reports a completed follow to the caller.
+			return;
 		}
 
 		if ( followingSite ) {

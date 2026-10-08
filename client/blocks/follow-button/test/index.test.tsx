@@ -22,7 +22,7 @@ const makeQueryClient = () =>
 		defaultOptions: { queries: { retry: false }, mutations: { retry: false } },
 	} );
 
-const renderButton = ( actions: NoticeAction[] ) => {
+const renderButton = ( actions: NoticeAction[], onFollowToggle: () => void = () => {} ) => {
 	const store = createStore(
 		(
 			state = {
@@ -44,7 +44,10 @@ const renderButton = ( actions: NoticeAction[] ) => {
 	return render(
 		<Provider store={ store }>
 			<QueryClientProvider client={ makeQueryClient() }>
-				<FollowButtonContainer siteUrl="https://example.com/feed" onFollowToggle={ () => {} } />
+				<FollowButtonContainer
+					siteUrl="https://example.com/feed"
+					onFollowToggle={ onFollowToggle }
+				/>
 			</QueryClientProvider>
 		</Provider>
 	);
@@ -89,9 +92,11 @@ describe( 'FollowButtonContainer', () => {
 					data,
 				} );
 
-			renderButton( actions );
+			const onFollowToggle = jest.fn();
+			renderButton( actions, onFollowToggle );
 			await userEvent.click( screen.getByRole( 'button', { name: 'Subscribe' } ) );
 
+			expect( onFollowToggle ).not.toHaveBeenCalled();
 			expect( verificationNotices( actions ) ).toEqual( [
 				expect.objectContaining( {
 					notice: expect.objectContaining( {
@@ -101,10 +106,11 @@ describe( 'FollowButtonContainer', () => {
 					} ),
 				} ),
 			] );
-			expect( followScope.isDone() ).toBe( true );
+			await waitFor( () => expect( followScope.isDone() ).toBe( true ) );
 
 			await waitFor( () => expect( verificationNotices( actions ) ).toHaveLength( 2 ) );
 
+			expect( onFollowToggle ).not.toHaveBeenCalled();
 			expect( verificationNotices( actions )[ 1 ] ).toEqual(
 				expect.objectContaining( {
 					notice: expect.objectContaining( {
@@ -114,7 +120,6 @@ describe( 'FollowButtonContainer', () => {
 					} ),
 				} )
 			);
-			expect( followScope.isDone() ).toBe( true );
 		}
 	);
 } );
