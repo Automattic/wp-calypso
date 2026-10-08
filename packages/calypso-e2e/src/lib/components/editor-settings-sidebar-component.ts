@@ -485,8 +485,7 @@ export class EditorSettingsSidebarComponent {
 						) => { name?: string } | undefined;
 					};
 					const editorWindow = element.ownerDocument?.defaultView as
-						| ( Window & { wp?: { data?: { select?: Select } } } )
-						| null;
+						( Window & { wp?: { data?: { select?: Select } } } ) | null;
 					const select = editorWindow?.wp?.data?.select;
 
 					// Without the store there is nothing to check against.
