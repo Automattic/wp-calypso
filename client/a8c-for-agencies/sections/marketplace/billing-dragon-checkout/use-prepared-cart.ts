@@ -4,12 +4,12 @@ import type { CartKey } from '@automattic/shopping-cart';
 import type { TranslateResult } from 'i18n-calypso';
 
 /**
- * Checkout for a cart the WordPress.com middleware already prepared and saved
- * for the agency (the Pressable Titan redirect arrives with
- * `skip_active_cart=1`). The cart is read as it is on the server and never
- * replaced, so the prepared items keep their `extra`, `mpcp_state` included.
- * A cart that failed to load, is empty, or holds anything the middleware did
- * not prepare is an error, never a fallback to the frontend Marketplace cart.
+ * Checkout for a cart the WordPress.com backend already prepared and saved for
+ * the agency (the checkout URL arrives with `skip_active_cart=1`). The cart is
+ * read as it is on the server and never replaced, so the prepared items keep
+ * their `extra` untouched. A cart that failed to load, is empty, or holds
+ * anything the backend did not prepare is an error, never a fallback to the
+ * frontend Marketplace cart.
  */
 export default function usePreparedCart(
 	cartKey: CartKey,

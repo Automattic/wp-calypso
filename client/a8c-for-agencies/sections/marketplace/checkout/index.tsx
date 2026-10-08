@@ -41,7 +41,7 @@ function Checkout( {
 	}
 
 	// New Billing Dragon Checkout V2 page: check for BD feature flag and it's not in a referral context.
-	// A cart the middleware already prepared only exists on the WordPress.com side, so it always
+	// A cart the backend already prepared only exists on the WordPress.com side, so it always
 	// goes through the Billing Dragon checkout.
 	if (
 		( isEnabled( 'a4a-bd-checkout' ) || skipActiveCart ) &&

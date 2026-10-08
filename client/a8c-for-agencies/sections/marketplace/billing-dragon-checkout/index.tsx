@@ -73,8 +73,8 @@ function BillingDragonCheckoutContent( {
 	const cartKey = siteId || 'no-site';
 	const { replaceProductsInCart, responseCart } = useShoppingCart( cartKey );
 
-	// Prepared Cart Flow: the WordPress.com middleware already saved the cart (Pressable Titan
-	// redirect, `skip_active_cart=1`). Load it as it is; the fill flows below must not run.
+	// Prepared Cart Flow: the WordPress.com backend already saved the cart (`skip_active_cart=1`
+	// in the URL). Load it as it is; the fill flows below must not run.
 	const prepared = usePreparedCart( cartKey, skipActiveCart );
 	const isReady = skipActiveCart ? prepared.isReady : isFilled;
 	const error = skipActiveCart ? prepared.error : fillError;
@@ -253,12 +253,14 @@ function BillingDragonCheckoutContent( {
 		return () => clearTimeout( timeoutId );
 	}, [ skipActiveCart, isFilled, fillError ] );
 
-	if ( ! isReady ) {
-		return <ClientCheckoutPlaceholder />;
-	}
-
+	// An error is checked first: a prepared cart that failed is never ready, and there is no
+	// timeout to force the checkout open, so the placeholder would otherwise show forever.
 	if ( error ) {
 		return <ClientCheckoutError title={ translate( 'Error' ) } message={ error } />;
+	}
+
+	if ( ! isReady ) {
+		return <ClientCheckoutPlaceholder />;
 	}
 
 	return (

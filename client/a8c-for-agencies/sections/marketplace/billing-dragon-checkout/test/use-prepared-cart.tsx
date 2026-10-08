@@ -29,8 +29,8 @@ function mockCart( {
 	} );
 }
 
-const preparedTitanItem = {
-	extra: { isA4ASitelessCheckout: true, agency_id: 42, mpcp_state: 'op_12345/AB+cd=' },
+const preparedItem = {
+	extra: { isA4ASitelessCheckout: true, agency_id: 42 },
 };
 
 describe( 'usePreparedCart', () => {
@@ -46,7 +46,7 @@ describe( 'usePreparedCart', () => {
 	} );
 
 	it( 'is ready when the loaded cart holds only prepared agency items, without touching the cart', () => {
-		mockCart( { products: [ preparedTitanItem ] } );
+		mockCart( { products: [ preparedItem ] } );
 		const { result } = renderHook( () => usePreparedCart( 'no-site', true ) );
 
 		expect( result.current ).toEqual( { isReady: true, error: null } );
@@ -71,7 +71,7 @@ describe( 'usePreparedCart', () => {
 	} );
 
 	it( 'reports a cart holding an item that was not prepared for the agency', () => {
-		mockCart( { products: [ preparedTitanItem, { extra: {} } ] } );
+		mockCart( { products: [ preparedItem, { extra: {} } ] } );
 		const { result } = renderHook( () => usePreparedCart( 'no-site', true ) );
 
 		expect( result.current.isReady ).toBe( false );
