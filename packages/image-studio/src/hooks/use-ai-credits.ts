@@ -77,13 +77,21 @@ async function fetchSiteCredits( blogId: number, authProvider: AuthProvider ): P
 
 interface AiCreditsState {
 	notice: NoticeConfig | undefined;
+	/** Out of credits. Callers hide suggestions, which cost credits to load. */
 	isLimitReached: boolean;
 	/** Callers hold suggestions back while true, so chips don't flash before a notice. */
 	isLoading: boolean;
 	/** For the chat config: a turn's final update carries the new balance. */
 	onTaskUpdate: ( update: TaskUpdate ) => void;
+	/** For the chat container: at zero, blocks Send and opens the dot's details, keeping the draft. */
+	beforeSubmit: () => boolean;
 	/** The Agent's credits dot, for sites on a paid plan. */
-	meter?: { status: CreditsStatus; upgradeUrl?: string };
+	meter?: {
+		status: CreditsStatus;
+		upgradeUrl?: string;
+		isOpen: boolean;
+		onToggle: ( isOpen: boolean ) => void;
+	};
 }
 
 /**
@@ -103,10 +111,11 @@ export function useAiCredits( {
 	const [ status, setStatus ] = useState< PaidCreditsStatus | null >( null );
 	const [ isLoading, setIsLoading ] = useState( blogId !== null );
 	const [ isLowNoticeDismissed, setIsLowNoticeDismissed ] = useState( false );
+	const [ isMeterOpen, setIsMeterOpen ] = useState( false );
 	const turnBalanceCount = useRef( 0 );
 	const shownLevel = useRef< SiteCreditsLevel | null >( null );
 
-	// The Agent's parser, so the notice, the lock and the dot always agree. An unreadable
+	// The Agent's parser, so the notice, the send block and the dot always agree. An unreadable
 	// balance keeps whatever was known, so a fluke never clears or shows a notice.
 	const applyCredits = useEvent( ( snapshot: unknown, trigger: UpgradeNoticeTrigger ) => {
 		if ( blogId === null ) {
@@ -117,6 +126,10 @@ export function useAiCredits( {
 			return false;
 		}
 		const level = getSiteCreditsLevel( next.remaining );
+		// A known balance running out opens the dot's details once. The first read stays quiet.
+		if ( level === 'out' && status && getSiteCreditsLevel( status.remaining ) !== 'out' ) {
+			setIsMeterOpen( true );
+		}
 		if ( level !== shownLevel.current ) {
 			if ( level ) {
 				trackImageStudioUpgradeNoticeShown( { mode, trigger } );
@@ -154,7 +167,7 @@ export function useAiCredits( {
 		};
 	}, [ blogId, authProvider, applyCredits ] );
 
-	// Wait for the turn to end: locking the input mid-turn would also disable Stop.
+	// Only a turn's last update has its final balance.
 	const onTaskUpdate = useEvent( ( update: TaskUpdate ) => {
 		const isTurnEnd = update.final ?? TURN_END_STATES.includes( update.status.state );
 		if ( isTurnEnd && applyCredits( update.aiCredits, 'refresh' ) ) {
@@ -169,11 +182,22 @@ export function useAiCredits( {
 			: undefined;
 	const isNoticeHidden = level === 'low' && isLowNoticeDismissed;
 
+	const beforeSubmit = useEvent( () => {
+		if ( level !== 'out' ) {
+			return true;
+		}
+		setIsMeterOpen( true );
+		return false;
+	} );
+
 	return {
 		isLimitReached: level === 'out',
 		isLoading,
 		onTaskUpdate,
-		meter: status ? { status, upgradeUrl } : undefined,
+		beforeSubmit,
+		meter: status
+			? { status, upgradeUrl, isOpen: isMeterOpen, onToggle: setIsMeterOpen }
+			: undefined,
 		notice:
 			status && level && ! isNoticeHidden
 				? {

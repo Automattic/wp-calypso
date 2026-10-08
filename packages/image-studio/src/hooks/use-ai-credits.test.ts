@@ -56,9 +56,11 @@ const upgradeAction = {
 	target: '_blank',
 	rel: 'noopener noreferrer',
 };
-const meterAt = ( percent: number ) => ( {
+const meterAt = ( percent: number, isOpen = false ) => ( {
 	status: expect.objectContaining( { plan: 'paid', percent } ),
 	upgradeUrl: UPGRADE_URL,
+	isOpen,
+	onToggle: expect.any( Function ),
 } );
 
 describe( 'getSiteCreditsLevel', () => {
@@ -86,9 +88,9 @@ describe( 'useAiCredits', () => {
 			{ initialProps: { mode, authProvider: auth } }
 		);
 
-	/** The hook's state without its callback, for whole-state assertions. */
+	/** The hook's state without its callbacks, for whole-state assertions. */
 	const stateOf = ( result: { current: ReturnType< typeof useAiCredits > } ) => {
-		const { onTaskUpdate, ...state } = result.current;
+		const { onTaskUpdate, beforeSubmit, ...state } = result.current;
 		return state;
 	};
 
@@ -131,7 +133,7 @@ describe( 'useAiCredits', () => {
 		expect( stateOf( result ) ).toEqual( { ...NOTHING, meter: meterAt( 75 ) } );
 	} );
 
-	it( 'locks the input and shows a persistent notice when the site is out of credits', async () => {
+	it( 'shows a persistent notice at zero, and Send opens the dot’s details instead', async () => {
 		respondWith( { ai_credits: planSnapshot( 0 ) } );
 
 		const { result } = renderCredits( ImageStudioMode.Edit );
@@ -154,9 +156,16 @@ describe( 'useAiCredits', () => {
 			mode: ImageStudioMode.Edit,
 			trigger: 'open',
 		} );
+
+		let canSubmit = true;
+		act( () => {
+			canSubmit = result.current.beforeSubmit();
+		} );
+		expect( canSubmit ).toBe( false );
+		expect( result.current.meter ).toEqual( meterAt( 0, true ) );
 	} );
 
-	it( 'keeps the input open and shows the amount left when credits are low', async () => {
+	it( 'lets Send through and shows the amount left when credits are low', async () => {
 		respondWith( { ai_credits: planSnapshot( 6_000 ) } );
 
 		const { result } = renderCredits();
@@ -167,6 +176,8 @@ describe( 'useAiCredits', () => {
 			dismissible: true,
 		} );
 		expect( result.current.isLimitReached ).toBe( false );
+		expect( result.current.beforeSubmit() ).toBe( true );
+		expect( result.current.meter?.isOpen ).toBe( false );
 	} );
 
 	it( 'uses the singular for the last credit', async () => {
@@ -201,7 +212,7 @@ describe( 'useAiCredits', () => {
 
 		await waitFor( () => expect( result.current.notice ).toBeDefined() );
 		expect( result.current.notice?.action ).toBeUndefined();
-		expect( result.current.meter ).toEqual( { status: expect.anything(), upgradeUrl: undefined } );
+		expect( result.current.meter?.upgradeUrl ).toBeUndefined();
 	} );
 
 	it.each( [
@@ -294,7 +305,7 @@ describe( 'useAiCredits', () => {
 		await waitFor( () => expect( result.current.isLimitReached ).toBe( true ) );
 	} );
 
-	it( 'takes the new balance from a turn’s final update', async () => {
+	it( 'takes the new balance from a turn’s final update, and opens the dot’s details at zero', async () => {
 		respondWith( { ai_credits: planSnapshot( 30_000 ) } );
 		const { result } = renderCredits();
 		await waitFor( () => expect( result.current.isLoading ).toBe( false ) );
@@ -304,7 +315,7 @@ describe( 'useAiCredits', () => {
 		} );
 
 		expect( result.current.isLimitReached ).toBe( true );
-		expect( result.current.meter ).toEqual( meterAt( 0 ) );
+		expect( result.current.meter ).toEqual( meterAt( 0, true ) );
 		expect( fetchMock ).toHaveBeenCalledTimes( 1 );
 		expect( trackImageStudioUpgradeNoticeShown ).toHaveBeenCalledWith( {
 			mode: ImageStudioMode.Generate,
@@ -382,6 +393,26 @@ describe( 'useAiCredits', () => {
 
 		expect( result.current.isLimitReached ).toBe( true );
 		expect( result.current.isLoading ).toBe( false );
+		// No balance was known before the turn, so the details stay closed.
+		expect( result.current.meter?.isOpen ).toBe( false );
+	} );
+
+	it( 'opens the dot’s details only once when the credits run out', async () => {
+		respondWith( { ai_credits: planSnapshot( 30_000 ) } );
+		const { result } = renderCredits();
+		await waitFor( () => expect( result.current.isLoading ).toBe( false ) );
+
+		act( () => {
+			result.current.onTaskUpdate( finalUpdate( planSnapshot( 0 ) ) );
+		} );
+		act( () => {
+			result.current.meter?.onToggle( false );
+		} );
+		act( () => {
+			result.current.onTaskUpdate( finalUpdate( planSnapshot( 0 ) ) );
+		} );
+
+		expect( result.current.meter?.isOpen ).toBe( false );
 	} );
 
 	it( 'ignores a late response after the modal closed', async () => {

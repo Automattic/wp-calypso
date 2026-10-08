@@ -80,8 +80,8 @@ function ImageStudioAgentChat( {
 		isLoading: isCheckingCredits,
 		meter: creditsMeter,
 		onTaskUpdate: onCreditsTaskUpdate,
+		beforeSubmit: creditsBeforeSubmit,
 	} = useAiCredits( { mode, authProvider: agentConfigProp.authProvider } );
-	const [ isCreditsMeterOpen, setIsCreditsMeterOpen ] = useState( false );
 	const agentChatProps = useAgentChat( {
 		...agentConfigProp,
 		onTaskUpdate: ( update ) => {
@@ -220,13 +220,14 @@ function ImageStudioAgentChat( {
 				onSuggestionClick={ handleSuggestionClick }
 				maxInputLength={ isVideoMode ? 2000 : 1000 }
 				notice={ creditsNotice }
+				beforeSubmit={ creditsBeforeSubmit }
 				trailingActions={
 					creditsMeter && (
 						<CreditsMeter
 							status={ creditsMeter.status }
 							upgradeUrl={ creditsMeter.upgradeUrl }
-							isOpen={ isCreditsMeterOpen }
-							onToggle={ setIsCreditsMeterOpen }
+							isOpen={ creditsMeter.isOpen }
+							onToggle={ creditsMeter.onToggle }
 						/>
 					)
 				}
@@ -240,8 +241,7 @@ function ImageStudioAgentChat( {
 						{ /* Stacked puts the pickers on the same row as the credits dot and send button. */ }
 						<AgentUI.Input
 							layout="stacked"
-							readOnly={ isLimitReached }
-							disabled={ isStopDisabled || isLimitReached ? true : undefined }
+							disabled={ isStopDisabled ? true : undefined }
 							leadingActions={
 								<>
 									{ mode === ImageStudioMode.Generate && ! isVideoMode && (
