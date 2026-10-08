@@ -36,19 +36,7 @@ export class ReaderPage {
 	 * Example {@link https://wordpress.com/reader}
 	 */
 	async visit(): Promise< void > {
-		const url = getCalypsoURL( 'reader' );
-
-		try {
-			await this.page.goto( url );
-		} catch ( error ) {
-			// `TestAccount.authenticate` leaves the page on My Home, which can send an account
-			// on to the Multi-site Dashboard after `load`. That navigation aborts this one.
-			if ( ! ( error instanceof Error ) || ! error.message.includes( 'net::ERR_ABORTED' ) ) {
-				throw error;
-			}
-			await this.page.goto( url );
-		}
-
+		await this.page.goto( getCalypsoURL( 'reader' ) );
 		await this.page.waitForURL( /reader/ );
 	}
 

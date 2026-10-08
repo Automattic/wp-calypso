@@ -17,8 +17,12 @@ test.describe(
 		test( 'As a user, I can view the Reader', async ( { page } ) => {
 			await test.step( 'Authenticate', async () => {
 				const testAccount = new TestAccount( accountName );
-				// No `waitForStability` needed because we will immediately navigate after authenticating.
 				await testAccount.authenticate( page );
+
+				// Bare /home forwards to the account's landing page (e.g. the Multi-site
+				// Dashboard) only after it loads. Navigating while that is pending gets the
+				// Reader visit aborted, so let it land first.
+				await page.waitForURL( ( url ) => url.pathname !== '/home' );
 			} );
 
 			await test.step( 'Visit the Reader', async () => {
