@@ -25,6 +25,8 @@ export default function DifmOfferModal( {
 	const [ term, setTerm ] = useState< DifmOfferTerm >( '1y' );
 	// A ref, not state, because the close handler only reads it and nothing renders from it.
 	const hasSentRequest = useRef( false );
+	// A close during a pending request would drop the cart step, or redirect after the close.
+	const [ isBusy, setIsBusy ] = useState( false );
 
 	const tracksProps = {
 		source,
@@ -34,7 +36,10 @@ export default function DifmOfferModal( {
 	};
 
 	const handleClose = () => {
-		// Once the build request is sent, the user has acted on the offer, even when the
+		if ( isBusy ) {
+			return;
+		}
+		// Once the build request succeeds, the user has acted on the offer, even when the
 		// cart step fails afterwards, so closing the modal is not a dismissal.
 		if ( ! hasSentRequest.current ) {
 			recordTracksEvent( 'calypso_dashboard_upsell_dismiss', tracksProps );
@@ -51,6 +56,7 @@ export default function DifmOfferModal( {
 		<Modal
 			title={ __( 'Let our experts build your site' ) }
 			onRequestClose={ handleClose }
+			isDismissible={ ! isBusy }
 			size="medium"
 		>
 			{ step === 'offer' ? (
@@ -75,6 +81,7 @@ export default function DifmOfferModal( {
 					onRequestSent={ () => {
 						hasSentRequest.current = true;
 					} }
+					onBusyChange={ setIsBusy }
 					onCancel={ handleClose }
 				/>
 			) }
