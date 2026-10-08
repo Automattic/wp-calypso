@@ -57,6 +57,8 @@ export default function DifmOfferModal( {
 			title={ __( 'Let our experts build your site' ) }
 			onRequestClose={ handleClose }
 			isDismissible={ ! isBusy }
+			shouldCloseOnEsc={ ! isBusy }
+			shouldCloseOnClickOutside={ ! isBusy }
 			size="medium"
 		>
 			{ step === 'offer' ? (

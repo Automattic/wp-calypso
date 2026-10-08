@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 import '@testing-library/jest-dom';
-import { screen, waitFor } from '@testing-library/react';
+import { act, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { render } from '../../../test-utils';
@@ -49,6 +49,21 @@ function renderModal( onClose = jest.fn() ) {
 async function goToRequestStep( user: ReturnType< typeof userEvent.setup > ) {
 	await user.click( await screen.findByRole( 'button', { name: 'Continue' } ) );
 	return screen.getByRole( 'textbox', { name: /Describe the site you want/ } );
+}
+
+async function expectModalNotToClose(
+	user: ReturnType< typeof userEvent.setup >,
+	description: HTMLElement,
+	onClose: jest.Mock
+) {
+	expect( screen.getByRole( 'button', { name: 'Cancel' } ) ).toBeDisabled();
+	expect( screen.queryByRole( 'button', { name: 'Close' } ) ).not.toBeInTheDocument();
+	// Escape from the busy submit button does not reach the modal, so focus a field first.
+	await user.click( description );
+	await user.keyboard( '{Escape}' );
+	// The modal calls onRequestClose only after its exit animation, which runs for about 240ms.
+	await act( () => new Promise( ( resolve ) => setTimeout( resolve, 500 ) ) );
+	expect( onClose ).not.toHaveBeenCalled();
 }
 
 beforeEach( () => {
@@ -271,9 +286,21 @@ describe( '<DifmOfferModal>', () => {
 		await user.click( screen.getByRole( 'button', { name: 'Send request' } ) );
 
 		await waitFor( () => expect( mockAddProductsToCart ).toHaveBeenCalled() );
-		expect( screen.getByRole( 'button', { name: 'Cancel' } ) ).toBeDisabled();
-		await user.keyboard( '{Escape}' );
-		expect( onClose ).not.toHaveBeenCalled();
+		await expectModalNotToClose( user, description, onClose );
+	} );
+
+	test( 'does not close while the build request is pending', async () => {
+		const user = userEvent.setup();
+		const onClose = jest.fn();
+		nock( API ).post( BUILD_REQUEST_PATH ).delay( 2000 ).reply( 200, { success: true } );
+		renderModal( onClose );
+
+		const description = await goToRequestStep( user );
+		await user.type( description, 'A bakery site' );
+		await user.click( screen.getByRole( 'button', { name: 'Send request' } ) );
+
+		await expectModalNotToClose( user, description, onClose );
+		expect( mockAddProductsToCart ).not.toHaveBeenCalled();
 	} );
 
 	test( 'records a dismiss when the modal closes without a submit', async () => {
