@@ -51,7 +51,7 @@ export default function ResourceModal( {
 
 	// Grows the modal out of the card or row it was opened from.
 	useLayoutEffect( () => {
-		const frame = contentRef.current?.closest< HTMLElement >( '.components-modal__frame' );
+		const frame = contentRef.current?.closest< HTMLElement >( '.dashboard-resources-learn__modal' );
 		if ( ! frame || ! origin || isReducedMotion || ! isCentered ) {
 			return;
 		}
