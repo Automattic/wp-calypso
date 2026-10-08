@@ -19,6 +19,7 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { isSupportSession } from '@automattic/calypso-support-session';
 import { select, subscribe } from '@wordpress/data';
 import { invokeSurvicateEvent, observeHelpCenter } from '../invoke-event';
+import { registerSurveySuppressor } from '../suppressors';
 
 const mockSelect = select as jest.Mock;
 const mockSubscribe = subscribe as unknown as jest.Mock;
@@ -196,6 +197,51 @@ describe( 'invokeSurvicateEvent', () => {
 		expect( mockRecordTracksEvent ).toHaveBeenCalledWith(
 			'calypso_survicate_survey_suppressed',
 			expect.objectContaining( { reason: 'support_session' } )
+		);
+	} );
+
+	test( 'should suppress the event while a registered suppressor is active', () => {
+		const invokeEvent = jest.fn();
+		const closeSurvey = jest.fn();
+		window._sva = { invokeEvent, closeSurvey };
+		const unregister = registerSurveySuppressor( {
+			reason: 'notifications',
+			isActive: () => true,
+			subscribe: () => () => {},
+		} );
+
+		invokeSurvicateEvent( 'testEvent' );
+		unregister();
+
+		expect( invokeEvent ).not.toHaveBeenCalled();
+		expect( closeSurvey ).toHaveBeenCalledTimes( 1 );
+		expect( mockRecordTracksEvent ).toHaveBeenCalledWith( 'calypso_survicate_survey_suppressed', {
+			reason: 'notifications',
+			trigger: 'invoke_event',
+			event_name: 'testEvent',
+		} );
+	} );
+
+	test( 'should report a registered suppressor ahead of a generic modal', () => {
+		window._sva = { invokeEvent: jest.fn(), closeSurvey: jest.fn() };
+		const modal = document.createElement( 'div' );
+		modal.setAttribute( 'role', 'dialog' );
+		modal.setAttribute( 'aria-modal', 'true' );
+		( modal as HTMLElement & { checkVisibility?: () => boolean } ).checkVisibility = () => true;
+		document.body.appendChild( modal );
+		const unregister = registerSurveySuppressor( {
+			reason: 'notifications',
+			isActive: () => true,
+			subscribe: () => () => {},
+		} );
+
+		invokeSurvicateEvent( 'testEvent' );
+		unregister();
+		modal.remove();
+
+		expect( mockRecordTracksEvent ).toHaveBeenCalledWith(
+			'calypso_survicate_survey_suppressed',
+			expect.objectContaining( { reason: 'notifications' } )
 		);
 	} );
 
