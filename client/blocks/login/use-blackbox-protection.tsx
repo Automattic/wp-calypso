@@ -31,9 +31,8 @@ interface UseBlackboxProtectionOptions {
 	 */
 	suspended?: boolean;
 	/**
-	 * Retire the session when this becomes a failed result, so the next
-	 * submit collects a new one. Ignored while Blackbox is off. Keep passing
-	 * the same value until the next failure.
+	 * When this becomes a failed result, retire the session and start a
+	 * replacement collect. Pass the same value until the next failure.
 	 */
 	resetOnError?: unknown;
 }
@@ -51,7 +50,9 @@ export function useBlackboxProtection( {
 	const apiKey = getBlackboxApiKey( feature );
 	const enabled =
 		! suspended && !! apiKey && config.isEnabled( 'blackbox' ) && config.isEnabled( feature );
-	const [ isSubmitBlocked, setIsSubmitBlocked ] = useState( enabled );
+	const [ challengeBlocksSubmit, setChallengeBlocksSubmit ] = useState( enabled );
+	const [ replacementInFlight, setReplacementInFlight ] = useState( false );
+	const isSubmitBlocked = challengeBlocksSubmit || replacementInFlight;
 
 	// Re-block during render when a suspended surface re-enables: the challenge
 	// only re-blocks from a post-paint effect, which would leave the submit
@@ -59,11 +60,11 @@ export function useBlackboxProtection( {
 	const prevEnabled = useRef( enabled );
 	if ( prevEnabled.current !== enabled ) {
 		prevEnabled.current = enabled;
-		setIsSubmitBlocked( enabled );
+		setChallengeBlocksSubmit( enabled );
 	}
 
 	const handleSubmitBlockedChange = useCallback( ( isBlocked: boolean ) => {
-		setIsSubmitBlocked( isBlocked );
+		setChallengeBlocksSubmit( isBlocked );
 	}, [] );
 
 	const getSessionId = useCallback(
@@ -81,11 +82,26 @@ export function useBlackboxProtection( {
 
 	useEffect( () => {
 		if ( ! enabled || ! resetOnError ) {
+			setReplacementInFlight( false );
 			return;
 		}
 
+		let cancelled = false;
+		// reset() aborts the visible challenge before the replacement collect
+		// decides, and that abort would re-enable submit. Hold it until the
+		// collect settles; a challenge that starts keeps its own block.
+		setReplacementInFlight( true );
 		reset();
-	}, [ enabled, resetOnError, reset ] );
+		getSessionId().finally( () => {
+			if ( ! cancelled ) {
+				setReplacementInFlight( false );
+			}
+		} );
+
+		return () => {
+			cancelled = true;
+		};
+	}, [ enabled, resetOnError, reset, getSessionId ] );
 
 	return {
 		isSubmitBlocked,
