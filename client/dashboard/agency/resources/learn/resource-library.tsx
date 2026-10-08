@@ -100,6 +100,7 @@ export default function ResourceLibrary( {
 	];
 
 	const [ selectedId, setSelectedId ] = useState< number | null >( null );
+	const [ origin, setOrigin ] = useState< DOMRect >();
 
 	const previewResource = ( resource: AgencyEnablementResource ) => {
 		setSelectedId( resource.id );
@@ -115,6 +116,11 @@ export default function ResourceLibrary( {
 		}
 
 		event.preventDefault();
+		setOrigin(
+			( event.currentTarget as Element )
+				.closest( '.dashboard-resources-learn__card, tr' )
+				?.getBoundingClientRect()
+		);
 		previewResource( resource );
 	} );
 
@@ -278,6 +284,7 @@ export default function ResourceLibrary( {
 					onPrevious={ previousResource && ( () => previewResource( previousResource ) ) }
 					onNext={ nextResource && ( () => previewResource( nextResource ) ) }
 					onOpen={ onOpenResource }
+					origin={ origin }
 					onFilter={ ( field, value ) => {
 						setSelectedId( null );
 						filterResources( field, value );
