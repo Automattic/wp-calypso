@@ -77,35 +77,9 @@ export default function UserBlock( { note, block }: { note: Note; block: Block }
 		/>
 	);
 
-	// In a list, a person is a byline: their name over their site, with the follow
-	// link at the far end.
-	const byline = isPeopleListNote( note ) && (
-		<>
-			<FlexBlock>
-				<VStack spacing={ 0.5 }>
-					<a
-						className="wpnc__user-title"
-						href={ readerProfileUrl }
-						target="_blank"
-						rel="noreferrer"
-					>
-						{ /* A line count, since the plain `truncate` loses to Text's own wrapping. */ }
-						<Text truncate numberOfLines={ 1 }>
-							{ block.text }
-						</Text>
-					</a>
-					{ homeTitle && (
-						<a href={ homeLink } target="_blank" rel="noopener noreferrer">
-							<Text className="wpnc__user-site" variant="muted" truncate numberOfLines={ 1 }>
-								{ homeTitle }
-							</Text>
-						</a>
-					) }
-				</VStack>
-			</FlexBlock>
-			{ followLink }
-		</>
-	);
+	// Two layouts: in a list of people the site sits under the name with the follow
+	// link at the far end; elsewhere the details share one line under the name.
+	const isListRow = isPeopleListNote( note );
 
 	// Build the present description items, then interleave a single separator
 	// between them — so there's never a leading, trailing, or doubled separator
@@ -134,7 +108,7 @@ export default function UserBlock( { note, block }: { note: Note; block: Block }
 		<HStack
 			className="wpnc__user"
 			justify="flex-start"
-			alignment={ byline ? 'center' : 'flex-start' }
+			alignment={ isListRow ? 'center' : 'flex-start' }
 			spacing={ 4 }
 		>
 			<a
@@ -150,7 +124,33 @@ export default function UserBlock( { note, block }: { note: Note; block: Block }
 			>
 				<NoteIcon icon={ media?.url } alt={ block.text } size={ 32 } />
 			</a>
-			{ byline || (
+			{ isListRow ? (
+				<>
+					<FlexBlock>
+						<VStack spacing={ 0.5 }>
+							<a
+								className="wpnc__user-title"
+								href={ readerProfileUrl }
+								target="_blank"
+								rel="noreferrer"
+							>
+								{ /* A line count, since the plain `truncate` loses to Text's own wrapping. */ }
+								<Text truncate numberOfLines={ 1 }>
+									{ block.text }
+								</Text>
+							</a>
+							{ homeTitle && (
+								<a href={ homeLink } target="_blank" rel="noopener noreferrer">
+									<Text className="wpnc__user-site" variant="muted" truncate numberOfLines={ 1 }>
+										{ homeTitle }
+									</Text>
+								</a>
+							) }
+						</VStack>
+					</FlexBlock>
+					{ followLink }
+				</>
+			) : (
 				<VStack alignment="flex-start" spacing={ 0 }>
 					<a
 						className="wpnc__user-title"
