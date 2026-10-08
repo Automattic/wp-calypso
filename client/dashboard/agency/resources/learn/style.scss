@@ -191,10 +191,13 @@ $resource-brands: (
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	block-size: 240px;
+	block-size: clamp( 200px, 32dvh, 280px );
+	box-sizing: border-box;
+	// Insets the thumbnail like a sheet of paper, cropped where the frame ends.
+	padding: 36px clamp( 36px, 13%, 72px ) 0;
 	overflow: hidden;
 	color: var( --resource-brand );
-	background: color-mix( in srgb, var( --resource-brand ) 18%, #{$studio-white} );
+	background: var( --wpds-color-background-surface-neutral, #{$gray-100} );
 	border-block-end: 1px solid var( --wpds-color-stroke-surface-neutral, #{$gray-300} );
 
 	.dashboard-resource-illustration {
@@ -203,12 +206,17 @@ $resource-brands: (
 	}
 }
 
-// Fills the frame from the top, where a document's title usually is.
+// Shows the top of the document or page, as its first sheet.
 .dashboard-resources-learn__preview-image {
+	align-self: flex-start;
 	inline-size: 100%;
-	block-size: 100%;
+	min-block-size: 100%;
 	object-fit: cover;
 	object-position: top;
+	border-radius: $radius-large $radius-large 0 0;
+	box-shadow:
+		0 0 0 1px rgba( $black, 0.08 ),
+		0 8px 24px rgba( $black, 0.1 );
 }
 
 .dashboard-resources-learn__preview-play {
