@@ -20,8 +20,9 @@ import { getStageLabel } from './lib/labels';
 import ResourceGrid from './resource-grid';
 import ResourceList from './resource-list';
 import ResourceModal from './resource-modal';
+import { getNeighbours, useResourceSelection } from './use-resource-selection';
 import type { LayoutType } from './dataviews/views';
-import type { FilterResources, SelectResource } from './types';
+import type { FilterResources } from './types';
 import type { AgencyEnablementResource, AgencyResourceStage } from '@automattic/api-core';
 import type { View } from '@wordpress/dataviews';
 
@@ -99,32 +100,12 @@ export default function ResourceLibrary( {
 		},
 	];
 
-	const [ selectedId, setSelectedId ] = useState< number | null >( null );
-	const [ origin, setOrigin ] = useState< DOMRect >();
-
-	const previewResource = ( resource: AgencyEnablementResource ) => {
-		setSelectedId( resource.id );
-		onPreviewResource( resource );
-	};
-
-	// Stable across renders, so memoised cards don't re-render while searching.
-	const selectResource: SelectResource = useEvent( ( resource, event ) => {
-		// Modified clicks follow the link and open the resource itself.
-		if ( event.metaKey || event.ctrlKey || event.shiftKey || event.altKey ) {
-			onOpenResource( resource );
-			return;
-		}
-
-		event.preventDefault();
-		setOrigin(
-			( event.currentTarget as Element )
-				.closest( '.dashboard-resources-learn__card, tr' )
-				?.getBoundingClientRect()
-		);
-		previewResource( resource );
+	const selection = useResourceSelection( {
+		onPreview: onPreviewResource,
+		onOpen: onOpenResource,
 	} );
 
-	const fields = useResourceFields( resources, selectResource );
+	const fields = useResourceFields( resources, selection.select );
 
 	// The library isn't paginated, so every match is shown.
 	const { data: filteredData, paginationInfo } = useMemo(
@@ -156,10 +137,7 @@ export default function ResourceLibrary( {
 	const isList = view.type === 'table';
 
 	// The modal moves through every match, not only those loaded so far.
-	const selectedIndex = filteredData.findIndex( ( resource ) => resource.id === selectedId );
-	const selectedResource = filteredData[ selectedIndex ];
-	const previousResource = filteredData[ selectedIndex - 1 ];
-	const nextResource = filteredData[ selectedIndex + 1 ];
+	const { selected, previous, next } = getNeighbours( filteredData, selection.selectedId );
 	// The stage toggle doesn't fit beside the toolbar on narrow screens.
 	const isSmallViewport = useViewportMatch( 'medium', '<' );
 
@@ -247,7 +225,7 @@ export default function ResourceLibrary( {
 			{ ! isList && filteredData.length > 0 && (
 				<ResourceGrid
 					resources={ visibleData }
-					onSelectResource={ selectResource }
+					onSelectResource={ selection.select }
 					onFilterResources={ filterResources }
 				/>
 			) }
@@ -277,16 +255,16 @@ export default function ResourceLibrary( {
 					</VStack>
 				</Spacer>
 			) }
-			{ selectedResource && (
+			{ selected && (
 				<ResourceModal
-					resource={ selectedResource }
-					onClose={ () => setSelectedId( null ) }
-					onPrevious={ previousResource && ( () => previewResource( previousResource ) ) }
-					onNext={ nextResource && ( () => previewResource( nextResource ) ) }
+					resource={ selected }
+					origin={ selection.origin }
+					onClose={ selection.clear }
+					onPrevious={ previous && ( () => selection.preview( previous ) ) }
+					onNext={ next && ( () => selection.preview( next ) ) }
 					onOpen={ onOpenResource }
-					origin={ origin }
 					onFilter={ ( field, value ) => {
-						setSelectedId( null );
+						selection.clear();
 						filterResources( field, value );
 					} }
 				/>
