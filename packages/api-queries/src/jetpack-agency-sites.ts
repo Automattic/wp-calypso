@@ -2,7 +2,8 @@ import { fetchAgencySites } from '@automattic/api-core';
 import { queryOptions } from '@tanstack/react-query';
 import { agencyQuery } from './agency';
 import { queryClient } from './query-client';
-import type { FetchAgencySitesOptions } from '@automattic/api-core';
+import { siteBySlugQuery } from './site';
+import type { AgencySite, FetchAgencySitesOptions } from '@automattic/api-core';
 
 export const agencySitesQueryKey = [ 'agency-sites' ];
 
@@ -32,18 +33,36 @@ export const agencySitesQuery = ( options: FetchAgencySitesOptions = {} ) =>
 		queryFn: async () => ( await fetchAgencySites( await resolveAgencyId(), options ) ).sites,
 	} );
 
-// The endpoint has no single-site lookup, so we search the agency's sites by
-// URL and select the exact match. TODO: replace with a dedicated single-site
-// endpoint.
+// The index may store either the `.wordpress.com` or `.wpcomstaging.com` URL,
+// so search by subdomain and match by blog ID. TODO: replace with a dedicated
+// single-site endpoint.
 export const agencySiteQuery = ( siteUrl: string ) =>
 	queryOptions( {
 		queryKey: [ ...agencySitesQueryKey, 'site', siteUrl ],
 		queryFn: async () => {
-			const { sites } = await fetchAgencySites( await resolveAgencyId(), {
-				search: siteUrl,
+			const [ agencyId, site ] = await Promise.all( [
+				resolveAgencyId(),
+				queryClient.ensureQueryData( siteBySlugQuery( siteUrl ) ),
+			] );
+			const findSite = ( sites: AgencySite[] ) =>
+				sites.find( ( agencySite ) => agencySite.blog_id === site.ID ) ?? null;
+
+			const { sites: searchResults } = await fetchAgencySites( agencyId, {
+				search: siteUrl.replace( /^www\./, '' ).split( '.' )[ 0 ],
 				per_page: 100,
 			} );
-			return sites.find( ( site ) => site.url === siteUrl ) ?? null;
+			const match = findSite( searchResults );
+			if ( match ) {
+				return match;
+			}
+
+			const { total } = await fetchAgencySites( agencyId, { per_page: 1 } );
+			if ( ! total ) {
+				return null;
+			}
+
+			const { sites } = await fetchAgencySites( agencyId, { per_page: total } );
+			return findSite( sites );
 		},
 	} );
 
