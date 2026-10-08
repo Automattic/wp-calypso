@@ -472,56 +472,40 @@ export class EditorSettingsSidebarComponent {
 		name: string,
 		timeout = 15 * 1000
 	): Promise< void > {
-		const assigned = await editorParent.evaluate(
-			( element, { tagName, timeoutMs }: { tagName: string; timeoutMs: number } ) =>
-				new Promise< boolean >( ( resolve ) => {
-					type Select = ( store: string ) => {
-						getEditedPostAttribute?: ( attribute: string ) => number[] | undefined;
-						getEntityRecord?: (
-							kind: string,
-							name: string,
-							id: number
-						) => { name?: string } | undefined;
-					};
-					const editorWindow = element.ownerDocument?.defaultView as
-						( Window & { wp?: { data?: { select?: Select } } } ) | null;
-					const select = editorWindow?.wp?.data?.select;
+		const editorFrame = await ( await editorParent.elementHandle() )?.ownerFrame();
+		if ( ! editorFrame ) {
+			return;
+		}
+
+		try {
+			await editorFrame.waitForFunction(
+				( tagName ) => {
+					// eslint-disable-next-line @typescript-eslint/no-explicit-any
+					const select = ( window as any )?.wp?.data?.select;
 
 					// Without the store there is nothing to check against.
-					if ( ! select ) {
-						resolve( true );
-						return;
+					if ( typeof select !== 'function' ) {
+						return true;
 					}
 
 					const decode = ( html: string ) => {
-						const textarea = element.ownerDocument.createElement( 'textarea' );
+						const textarea = document.createElement( 'textarea' );
 						textarea.innerHTML = html;
 						return textarea.value;
 					};
+					const tagIds: number[] = select( 'core/editor' ).getEditedPostAttribute( 'tags' ) ?? [];
 
-					const isAssigned = () =>
-						( select( 'core/editor' ).getEditedPostAttribute?.( 'tags' ) ?? [] ).some(
-							( id ) =>
-								decode(
-									select( 'core' ).getEntityRecord?.( 'taxonomy', 'post_tag', id )?.name ?? ''
-								) === tagName
-						);
-
-					const deadline = Date.now() + timeoutMs;
-					const poll = setInterval( () => {
-						if ( isAssigned() ) {
-							clearInterval( poll );
-							resolve( true );
-						} else if ( Date.now() > deadline ) {
-							clearInterval( poll );
-							resolve( false );
-						}
-					}, 200 );
-				} ),
-			{ tagName: name, timeoutMs: timeout }
-		);
-
-		if ( ! assigned ) {
+					return tagIds.some(
+						( id ) =>
+							decode(
+								select( 'core' ).getEntityRecord( 'taxonomy', 'post_tag', id )?.name ?? ''
+							) === tagName
+					);
+				},
+				name,
+				{ timeout }
+			);
+		} catch {
 			throw new Error( `Tag "${ name }" was not assigned to the post within ${ timeout }ms.` );
 		}
 	}
