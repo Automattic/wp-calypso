@@ -20,7 +20,12 @@ jest.mock( '../../lib/selectors/get-site-stats-base-url', () => () => 'https://e
 jest.mock( '../../lib/selectors/get-site-admin-url', () => () => 'https://example.com/wp-admin/' );
 jest.mock( 'calypso/my-sites/stats/hooks/use-wp-admin-theme', () => () => null );
 jest.mock( '../use-stats-link', () => () => ( url ) => url );
-jest.mock( '../mini-chart', () => ( { range } ) => <p>{ `Chart of ${ range.id }` }</p> );
+jest.mock( '../mini-chart', () => ( { range, footer } ) => (
+	<>
+		<p>{ `Chart of ${ range.id }` }</p>
+		{ footer }
+	</>
+) );
 jest.mock( '../highlights', () => () => null );
 jest.mock( '../modules', () => () => null );
 jest.mock( '../record-widget-event', () => ( {

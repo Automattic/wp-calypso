@@ -113,21 +113,26 @@ export function init() {
 							icon={ trendingUp }
 							action={ <DateRangeControl value={ rangeId } onChange={ onRangeChange } /> }
 						>
-							<MiniChart siteId={ currentSiteId } range={ range } />
-							<div className="stats-widget-overview__footer">
-								<a
-									href={ statsLink(
-										`${ statsBaseUrl }/stats/${ range.unit }/${ currentSiteId }?chartStart=${ range.startDate }&chartEnd=${ range.endDate }`,
-										'/',
-										{ from: range.startDate, to: range.endDate, gmtOffset }
-									) }
-									onClick={ recordWidgetEventThenFollow( 'more_stats_clicked', {
-										range: rangeId,
-									} ) }
-								>
-									{ translate( 'More stats' ) }
-								</a>
-							</div>
+							<MiniChart
+								siteId={ currentSiteId }
+								range={ range }
+								footer={
+									<div className="stats-widget-overview__footer">
+										<a
+											href={ statsLink(
+												`${ statsBaseUrl }/stats/${ range.unit }/${ currentSiteId }?chartStart=${ range.startDate }&chartEnd=${ range.endDate }`,
+												'/',
+												{ from: range.startDate, to: range.endDate, gmtOffset }
+											) }
+											onClick={ recordWidgetEventThenFollow( 'more_stats_clicked', {
+												range: rangeId,
+											} ) }
+										>
+											{ translate( 'More stats' ) }
+										</a>
+									</div>
+								}
+							/>
 						</WidgetSection>
 						<Highlights
 							siteId={ currentSiteId }

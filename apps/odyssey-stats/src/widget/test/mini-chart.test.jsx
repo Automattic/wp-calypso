@@ -37,7 +37,7 @@ const pending = () => ( { status: 'pending' } );
 function renderMiniChart( state, rangeId = DATE_RANGE_LAST_7_DAYS ) {
 	useVisitsQuery.mockReturnValue( state );
 	const range = { ...getDateRange( rangeId ), startDate: '2026-10-01', endDate: '2026-10-07' };
-	return <MiniChart siteId={ 1 } range={ range } />;
+	return <MiniChart siteId={ 1 } range={ range } footer={ <a href="#stats">More stats</a> } />;
 }
 
 describe( 'MiniChart', () => {
@@ -51,6 +51,31 @@ describe( 'MiniChart', () => {
 	afterEach( () => {
 		// eslint-disable-next-line no-console
 		console.error.mockRestore();
+	} );
+
+	it( 'shows the footer under a drawn chart', async () => {
+		render( renderMiniChart( success( days( [ 20, 8 ] ) ) ) );
+
+		expect( await screen.findByText( 'Chart' ) ).toBeInTheDocument();
+		expect( screen.getByRole( 'link', { name: 'More stats' } ) ).toBeInTheDocument();
+	} );
+
+	it.each( [
+		[ 'while loading', pending() ],
+		[ 'for an empty range', success( days( [ 0, 0 ] ) ) ],
+		[ 'when the request failed', failed() ],
+	] )( 'hides the footer %s, with no chart to follow', ( _, state ) => {
+		render( renderMiniChart( state ) );
+
+		expect( screen.queryByRole( 'link', { name: 'More stats' } ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'hides the footer when the chart itself fails', async () => {
+		mockChartFails = true;
+		render( renderMiniChart( success( days( [ 20, 8 ] ) ) ) );
+
+		expect( await screen.findByText( 'No data to show' ) ).toBeInTheDocument();
+		expect( screen.queryByRole( 'link', { name: 'More stats' } ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'sums the range into the totals and draws the chart', async () => {

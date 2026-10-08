@@ -1,6 +1,6 @@
 import { Notice } from '@wordpress/ui';
 import { useTranslate } from 'i18n-calypso';
-import { lazy, Suspense, useMemo, useState, FunctionComponent } from 'react';
+import { lazy, Suspense, useMemo, useState, FunctionComponent, ReactNode } from 'react';
 import useCssVariable from 'calypso/my-sites/stats/hooks/use-css-variable';
 import { buildChartData } from 'calypso/my-sites/stats/stats-chart-tabs/utility';
 import StatsModulePlaceholder from 'calypso/my-sites/stats/stats-module/placeholder';
@@ -17,6 +17,8 @@ import './mini-chart.scss';
 interface MiniChartProps {
 	siteId: number;
 	range: ResolvedDateRange;
+	/** Shown under the chart, and only with it: not while loading, for an empty range or on an error. */
+	footer?: ReactNode;
 }
 
 interface VisitRecord {
@@ -27,7 +29,7 @@ interface VisitRecord {
 
 const CHART_HEIGHT = 160;
 
-const MiniChart: FunctionComponent< MiniChartProps > = ( { siteId, range } ) => {
+const MiniChart: FunctionComponent< MiniChartProps > = ( { siteId, range, footer } ) => {
 	const translate = useTranslate();
 	const { unit, quantity, endDate } = range;
 
@@ -150,6 +152,7 @@ const MiniChart: FunctionComponent< MiniChartProps > = ( { siteId, range } ) => 
 							<OverviewChart series={ series } height={ CHART_HEIGHT } unit={ unit } />
 						</Suspense>
 					</div>
+					{ footer }
 				</ChartBoundary>
 			) }
 		</div>
