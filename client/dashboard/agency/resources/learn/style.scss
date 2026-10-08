@@ -198,6 +198,12 @@ $resource-brands: (
 	color: var( --resource-brand );
 	background: var( --wpds-color-background-surface-neutral, #{$gray-100} );
 	border-block-end: 1px solid var( --wpds-color-stroke-surface-neutral, #{$gray-300} );
+	text-decoration: none;
+
+	&:focus-visible {
+		outline: 2px solid var( --wpds-color-stroke-focus, var( --wp-admin-theme-color ) );
+		outline-offset: -4px;
+	}
 
 	.dashboard-resource-illustration {
 		inline-size: 120px;
@@ -217,18 +223,49 @@ $resource-brands: (
 		0 8px 24px rgba( $black, 0.1 );
 }
 
-.dashboard-resources-learn__preview-play {
+// The open affordance shows on hover and focus; videos always show their play
+// button. Neither shows while the thumbnail loads.
+.dashboard-resources-learn__preview-open {
 	position: absolute;
 	inset: 0;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	inline-size: 64px;
-	block-size: 64px;
-	margin: auto;
-	border-radius: 50%;
-	color: $white;
-	background: color-mix( in srgb, #{$gray-900} 70%, transparent );
+	display: grid;
+	place-items: center;
+	opacity: 0;
+
+	svg {
+		box-sizing: content-box;
+		padding: 14px;
+		border-radius: 50%;
+		color: var( --wpds-color-foreground-content-neutral, #{$gray-900} );
+		fill: currentColor;
+		background: var( --wpds-color-background-surface-neutral-strong, #{$white} );
+		box-shadow: 0 2px 16px rgba( $black, 0.18 );
+	}
+
+	.dashboard-resources-learn__preview:is( :hover, :focus-visible, [data-video] ) & {
+		opacity: 1;
+	}
+
+	.dashboard-resources-learn__preview[data-loading] & {
+		opacity: 0;
+	}
+}
+
+.dashboard-resources-learn__preview-open-label {
+	position: absolute;
+	inset-block-start: calc( 50% + 38px );
+	padding: 6px 10px;
+	border-radius: $radius-medium;
+	color: var( --wpds-color-background-surface-neutral-strong, #{$white} );
+	background: var( --wpds-color-foreground-content-neutral, #{$gray-900} );
+	font-size: 12px;
+	line-height: 1.4;
+	white-space: nowrap;
+	opacity: 0;
+
+	.dashboard-resources-learn__preview:is( :hover, :focus-visible ) & {
+		opacity: 1;
+	}
 }
 
 // Doubled up for specificity over the Modal's own frame rules; its closing
