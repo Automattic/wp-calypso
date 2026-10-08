@@ -335,9 +335,14 @@ export function useCredits( {
 	const isLow = status ? isCreditsLow( status ) : false;
 	const planUpgradeUrl = status ? getLiveCreditsUpgradeUrl( status, siteId, site ) : undefined;
 	const access = upgradeAccess?.scope === scope ? upgradeAccess : undefined;
-	// Upgrade only when checkout would accept it; unknown shows neither link nor message.
+	// Upgrade only when checkout would accept it; everyone else is told who can buy, or nothing when the server can’t say.
 	const upgradeUrl = access?.canUpgrade === true ? planUpgradeUrl : undefined;
-	const isNotPlanPurchaser = !! planUpgradeUrl && access?.canUpgrade === false;
+	let askToUpgrade: 'site-admin' | 'plan-owner' | undefined;
+	if ( planUpgradeUrl && access?.canBuyCredits === false ) {
+		askToUpgrade = 'site-admin';
+	} else if ( planUpgradeUrl && access?.canUpgrade === false ) {
+		askToUpgrade = 'plan-owner';
+	}
 
 	// A known balance draining to zero opens once; initial reads and new visits stay quiet.
 	const wasExhaustedRef = useRef( { scope, hasBalance: !! status, isExhausted } );
@@ -358,12 +363,15 @@ export function useCredits( {
 		setIsPopoverOpen( false );
 	}, [ setIsPopoverOpen ] );
 
-	const purchaseHint = isNotPlanPurchaser
-		? __(
-				'This plan was purchased by a different WordPress.com account. To manage this plan, log in to that account or contact the account owner.',
-				__i18n_text_domain__
-			)
-		: undefined;
+	let purchaseHint: string | undefined;
+	if ( askToUpgrade === 'site-admin' ) {
+		purchaseHint = __( 'Ask a site admin to add more.', __i18n_text_domain__ );
+	} else if ( askToUpgrade === 'plan-owner' ) {
+		purchaseHint = __(
+			'This plan was purchased by a different WordPress.com account. To manage this plan, log in to that account or contact the account owner.',
+			__i18n_text_domain__
+		);
+	}
 
 	const trailingActions = useMemo< TrailingActions | undefined >( () => {
 		if ( ! status ) {
@@ -393,31 +401,49 @@ export function useCredits( {
 				: undefined;
 			// A dismissed low notice must not hide the exhausted state.
 			if ( isExhausted ) {
-				const message: string = isNotPlanPurchaser
-					? __(
-							'You’ve used all your site credits. This plan was purchased by a different WordPress.com account. To manage this plan, log in to that account or contact the account owner.',
-							__i18n_text_domain__
-						)
-					: __( 'You’ve used all your site credits.', __i18n_text_domain__ );
+				let message: string = __( 'You’ve used all your site credits.', __i18n_text_domain__ );
+				if ( askToUpgrade === 'site-admin' ) {
+					message = __(
+						'You’ve used all your site credits. Ask a site admin to add more.',
+						__i18n_text_domain__
+					);
+				} else if ( askToUpgrade === 'plan-owner' ) {
+					message = __(
+						'You’ve used all your site credits. Ask the plan owner to upgrade.',
+						__i18n_text_domain__
+					);
+				}
 				return { icon: false, message, action, dismissible: false };
 			}
 			if ( isLow && ! isLowNoticeDismissed ) {
-				const message: string = isNotPlanPurchaser
-					? sprintf(
-							/* translators: %s: site credits left in short form, e.g. "800" or "8.5k" */
-							_n(
-								'%s credit left. This plan was purchased by a different WordPress.com account. To manage this plan, log in to that account or contact the account owner.',
-								'%s credits left. This plan was purchased by a different WordPress.com account. To manage this plan, log in to that account or contact the account owner.',
-								status.remaining,
-								__i18n_text_domain__
-							),
-							formatCreditsShort( status.remaining )
-						)
-					: sprintf(
-							/* translators: %s: site credits left in short form, e.g. "800" or "8.5k" */
-							_n( '%s credit left.', '%s credits left.', status.remaining, __i18n_text_domain__ ),
-							formatCreditsShort( status.remaining )
-						);
+				let message: string = sprintf(
+					/* translators: %s: site credits left in short form, e.g. "800" or "8.5k" */
+					_n( '%s credit left.', '%s credits left.', status.remaining, __i18n_text_domain__ ),
+					formatCreditsShort( status.remaining )
+				);
+				if ( askToUpgrade === 'site-admin' ) {
+					message = sprintf(
+						/* translators: %s: site credits left in short form, e.g. "800" or "8.5k" */
+						_n(
+							'%s credit left. Ask a site admin to add more.',
+							'%s credits left. Ask a site admin to add more.',
+							status.remaining,
+							__i18n_text_domain__
+						),
+						formatCreditsShort( status.remaining )
+					);
+				} else if ( askToUpgrade === 'plan-owner' ) {
+					message = sprintf(
+						/* translators: %s: site credits left in short form, e.g. "800" or "8.5k" */
+						_n(
+							'%s credit left. Ask the plan owner to upgrade.',
+							'%s credits left. Ask the plan owner to upgrade.',
+							status.remaining,
+							__i18n_text_domain__
+						),
+						formatCreditsShort( status.remaining )
+					);
+				}
 				return { icon: false, message, action, dismissible: true, onDismiss: dismissLowNotice };
 			}
 		}
@@ -453,7 +479,7 @@ export function useCredits( {
 		status,
 		siteId,
 		upgradeUrl,
-		isNotPlanPurchaser,
+		askToUpgrade,
 		isExhausted,
 		isLow,
 		isLowNoticeDismissed,
