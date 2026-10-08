@@ -67,11 +67,10 @@ export default function UserBlock( { note, block }: { note: Note; block: Block }
 
 	// The API offers a follow action only for people whose site can be followed, and
 	// its value says whether the reader already follows it.
-	const siteId = block.meta?.ids?.site;
-	const followLink = !! siteId && !! block.actions && 'follow' in block.actions && (
+	const followLink = !! block.meta?.ids?.site && !! block.actions && 'follow' in block.actions && (
 		<FollowLink
 			key="follow"
-			site={ siteId }
+			site={ block.meta.ids.site }
 			isFollowing={ !! block.actions.follow }
 			noteType={ note.type as keyof typeof followStatTypes }
 		/>
