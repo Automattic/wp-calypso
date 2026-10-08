@@ -335,7 +335,9 @@ export const HelpCenterA4AContactForm = () => {
 					disabled={ ! isValidForm || isPending }
 					isBusy={ isPending }
 				>
-					<HStack justify="center">{ __( 'Send message', __i18n_text_domain__ ) }</HStack>
+					<HStack as="span" justify="center">
+						{ __( 'Send message', __i18n_text_domain__ ) }
+					</HStack>
 				</Button>
 
 				{ hasSubmitError && (
