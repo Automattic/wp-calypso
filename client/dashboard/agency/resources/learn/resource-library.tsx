@@ -129,7 +129,6 @@ export default function ResourceLibrary( {
 	const hasMore = visibleCount < filteredData.length;
 	const loadMore = () => setShown( { key: resultsKey, count: visibleCount + PAGE_SIZE } );
 
-	// Loads the next page as the end of the results scrolls into view.
 	const { ref: loadMoreRef } = useInView( {
 		onChange: ( inView ) => inView && hasMore && loadMore(),
 	} );

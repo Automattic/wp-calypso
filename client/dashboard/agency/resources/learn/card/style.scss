@@ -64,7 +64,6 @@
 	}
 }
 
-// A small lift on hover, tilting alternate cards the opposite way.
 @media ( hover: hover ) and ( pointer: fine ) and ( prefers-reduced-motion: no-preference ) {
 	.dashboard-resources-learn__card {
 		transition:
@@ -121,7 +120,6 @@
 	min-block-size: 140px;
 	padding: 20px $grid-unit-30;
 	box-sizing: border-box;
-	// A light tint of the brand colour, with the brand colour itself for ink.
 	color: var( --resource-card-ink, var( --resource-brand ) );
 	background: color-mix( in srgb, var( --resource-brand ) 18%, #{$studio-white} );
 
@@ -209,7 +207,6 @@
 	}
 }
 
-// Solid in the header's ink, so it stands out from the tint.
 .dashboard-resources-learn__top-badge {
 	background-color: var( --resource-card-ink, var( --resource-brand ) );
 	border-color: var( --resource-card-ink, var( --resource-brand ) );

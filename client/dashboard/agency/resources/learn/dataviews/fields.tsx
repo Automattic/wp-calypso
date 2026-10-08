@@ -21,7 +21,7 @@ export function useResourceFields(
 	onSelectResource: SelectResource
 ) {
 	return useMemo( (): Field< AgencyEnablementResource >[] => {
-		// Only offer values that occur in the data, per the v2 contract.
+		// Only offer values that occur in the data.
 		const toElements = (
 			getValue: ( resource: AgencyEnablementResource ) => string,
 			getLabel: ( value: string ) => string

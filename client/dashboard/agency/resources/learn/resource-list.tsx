@@ -24,7 +24,6 @@ export function ResourceListTitle( {
 	);
 }
 
-/** The product column: the product's wordmark. */
 export function ResourceListProduct( { resource }: ResourceListCellProps ) {
 	return (
 		<span className="dashboard-resources-learn__list-brand" data-product={ resource.product }>
