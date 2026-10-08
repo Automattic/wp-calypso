@@ -128,9 +128,10 @@ const readymadeTemplateFlow: Flow = {
 					// If the user's site has just been launched.
 					if (
 						typeof providedDependencies?.siteSlug === 'string' &&
+						providedDependencies.siteSlug &&
 						providedDependencies?.isLaunched
 					) {
-						await saveSiteSettings( providedDependencies?.siteSlug, {
+						await saveSiteSettings( siteId, {
 							launchpad_screen: 'off',
 						} );
 						return navigate( 'celebration-step' );

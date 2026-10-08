@@ -147,7 +147,7 @@ export const sitesDomains: Reducer< { [ key: number ]: Domain[] }, Action > = (
 	return state;
 };
 
-export const sitesSettings: Reducer< { [ key: number | string ]: SiteSettings }, Action > = (
+export const sitesSettings: Reducer< { [ key: number ]: SiteSettings }, Action > = (
 	state = {},
 	action
 ) => {
