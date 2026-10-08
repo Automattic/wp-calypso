@@ -11,33 +11,22 @@ const play = (
 	</SVG>
 );
 
-interface ResourcePreviewProps {
-	resource: AgencyEnablementResource;
-	onOpen: ( resource: AgencyEnablementResource ) => void;
-}
-
 /**
  * The resource's thumbnail, or its illustration when it has none or the image
- * fails to load. Clicking it opens the resource; it's left out of the tab order
- * because the modal's open button does the same for keyboard users.
+ * fails to load. Decorative: the modal's title names the resource, and its open
+ * button opens it.
  */
-export default function ResourcePreview( { resource, onOpen }: ResourcePreviewProps ) {
+export default function ResourcePreview( { resource }: { resource: AgencyEnablementResource } ) {
 	const [ hasFailed, setHasFailed ] = useState( false );
 	const [ hasLoaded, setHasLoaded ] = useState( false );
 	const hasThumbnail = !! resource.thumbnail_url && ! hasFailed;
 	const isLoading = hasThumbnail && ! hasLoaded;
 
 	return (
-		<a
+		<div
 			className="dashboard-resources-learn__preview"
 			data-product={ resource.product }
-			href={ resource.external_url }
-			target="_blank"
-			rel="noopener noreferrer"
-			tabIndex={ -1 }
-			aria-hidden="true"
 			data-loading={ isLoading || undefined }
-			onClick={ () => onOpen( resource ) }
 		>
 			{ /* The illustration stands in, animated, until the thumbnail loads, and stays if it fails. */ }
 			{ ( ! hasThumbnail || isLoading ) && <ResourceIllustration resource={ resource } /> }
@@ -57,6 +46,6 @@ export default function ResourcePreview( { resource, onOpen }: ResourcePreviewPr
 					<Icon icon={ play } size={ 28 } />
 				</span>
 			) }
-		</a>
+		</div>
 	);
 }

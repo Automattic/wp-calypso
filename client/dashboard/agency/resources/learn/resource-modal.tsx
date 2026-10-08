@@ -99,7 +99,7 @@ export default function ResourceModal( {
 				<div className="dashboard-resources-learn__modal-media">
 					{ /* Keyed so it fades in anew; the controls aren't, so focus stays on them. */ }
 					<div key={ resource.id } className={ fadeClassName }>
-						<ResourcePreview resource={ resource } onOpen={ onOpen } />
+						<ResourcePreview resource={ resource } />
 					</div>
 					{ /* Not expanded: the insets set its width, which a 100% width would overflow. */ }
 					<HStack
