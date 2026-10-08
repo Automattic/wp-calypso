@@ -69,6 +69,7 @@ export default function ResourceCard( {
 				</VStack>
 				<Button
 					variant="secondary"
+					size="compact"
 					{ ...( ! isVideo && { href: resource.externalUrl, target: '_blank' } ) }
 					onClick={ handleClick }
 					style={ { marginTop: '24px', alignSelf: 'flex-start' } }

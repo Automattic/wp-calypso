@@ -54,6 +54,7 @@ export default function EarnReferrals() {
 						hasReferrals && isAgencyApproved( agency ) ? (
 							<RouterLinkButton
 								variant="primary"
+								__next40pxDefaultSize
 								to="/exclusive-offers"
 								onClick={ () =>
 									recordTracksEvent( 'calypso_a4a_referrals_make_a_referral_button_click' )

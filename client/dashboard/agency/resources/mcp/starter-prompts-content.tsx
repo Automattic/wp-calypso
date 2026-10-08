@@ -85,7 +85,12 @@ function StarterPromptItem( {
 					<Text className="mcp-starter-prompt__text">{ prompt.prompt }</Text>
 				</div>
 				<HStack justify="flex-start" expanded={ false }>
-					<Button variant="secondary" icon={ copied ? check : copy } onClick={ handleCopy }>
+					<Button
+						variant="secondary"
+						size="compact"
+						icon={ copied ? check : copy }
+						onClick={ handleCopy }
+					>
 						{ copied ? __( 'Copied' ) : __( 'Copy prompt' ) }
 					</Button>
 				</HStack>
