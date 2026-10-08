@@ -269,7 +269,7 @@ it.each( [
 	}
 );
 
-it( 'updates the paid ring by plan share and the warning by amount through depletion and replenishment', async () => {
+it( 'turns the dot red by amount through depletion and replenishment', async () => {
 	const balance = ( remaining: number ) =>
 		creditSnapshot( {
 			credits_limit: 100000,
@@ -280,24 +280,28 @@ it( 'updates the paid ring by plan share and the warning by amount through deple
 	fetchMock.mockResolvedValueOnce( response( balance( 25000 ) ) );
 	const { result } = renderCredits();
 	await flush();
-	expect( getCreditsTone( props( result.current ).status ) ).toBe( 'muted' );
-	expect( result.current.notice ).toBeUndefined();
-	for ( const [ remaining, message ] of [
-		[ 20000, undefined ],
-		[ 19999, `${ localNumber( 19.9 ) }k credits left.` ],
-		[ 800, `${ localNumber( 800 ) } credits left.` ],
-		[ 0, 'You’ve used all your site credits.' ],
+	// The dot and the notice share one rule, so the dot is red exactly when a notice would show.
+	const expectDot = ( tone: 'muted' | 'error', message?: string ) => {
+		const actual = getCreditsTone( props( result.current ).status );
+		expect( actual ).toBe( tone );
+		expect( result.current.notice?.message ).toBe( message );
+		expect( result.current.notice !== undefined ).toBe( actual === 'error' );
+	};
+	expectDot( 'muted' );
+	for ( const [ remaining, tone, message ] of [
+		[ 20000, 'muted', undefined ],
+		[ 19999, 'error', `${ localNumber( 19.9 ) }k credits left.` ],
+		[ 800, 'error', `${ localNumber( 800 ) } credits left.` ],
+		[ 0, 'error', 'You’ve used all your site credits.' ],
 	] as const ) {
 		await receive( balance( remaining ) );
 		expect( props( result.current ).status.remaining ).toBe( remaining );
-		expect( getCreditsTone( props( result.current ).status ) ).toBe( 'error' );
-		expect( result.current.notice?.message ).toBe( message );
+		expectDot( tone, message );
 	}
 	fetchMock.mockResolvedValueOnce( response( balance( 25000 ) ) );
 	act( () => window.dispatchEvent( new Event( 'focus' ) ) );
 	await flush();
-	expect( getCreditsTone( props( result.current ).status ) ).toBe( 'muted' );
-	expect( result.current.notice ).toBeUndefined();
+	expectDot( 'muted' );
 } );
 
 it.each( [ 'GET', 'terminal' ] )(
@@ -875,7 +879,7 @@ it( 'clears old amounts after cancellation/error without terminal metadata, incl
 	expect( fetchMock ).not.toHaveBeenCalled();
 } );
 it.each( [ 'focus', 'online', 'visibilitychange' ] )(
-	'keeps the ring and its open popover visible during a %s refresh',
+	'keeps the dot and its open popover visible during a %s refresh',
 	async ( event ) => {
 		const read = deferred< ReturnType< typeof response > >();
 		fetchMock
@@ -883,7 +887,7 @@ it.each( [ 'focus', 'online', 'visibilitychange' ] )(
 			.mockReturnValueOnce( read.promise );
 		const { result } = renderCredits();
 		await flush();
-		// Clicking the ring can focus the sidebar's window before opening the popover.
+		// Clicking the dot can focus the sidebar's window before opening the popover.
 		act( () => {
 			( event === 'visibilitychange' ? document : window ).dispatchEvent( new Event( event ) );
 			props( result.current ).onToggle( true );

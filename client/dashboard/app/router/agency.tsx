@@ -84,7 +84,6 @@ import {
 import { reauthRequiredLink } from '../../utils/link';
 import { hasHostingFeature, hasPlanFeature } from '../../utils/site-features';
 import { getSiteTypeFeatureSupports } from '../../utils/site-type-feature-support';
-import { getSiteDisplayUrl } from '../../utils/site-url';
 import { AUTH_QUERY_KEY } from '../auth';
 import { dashboardRedirect, redirectAsNotAllowed } from './redirect';
 import { rootRoute } from './root';
@@ -883,9 +882,7 @@ async function isAgencyWooPaymentsSite( siteId: number ): Promise< boolean > {
 	}
 
 	const site = await queryClient.ensureQueryData( siteByIdQuery( siteId ) );
-	const agencySite = await queryClient.ensureQueryData(
-		agencySiteQuery( getSiteDisplayUrl( site ) )
-	);
+	const agencySite = await queryClient.ensureQueryData( agencySiteQuery( site.slug ) );
 	return !! agencySite;
 }
 

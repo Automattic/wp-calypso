@@ -6,7 +6,6 @@ import { API_BASE_URL } from '../constants';
 import { NO_SITE } from '../utils/agent-session';
 import {
 	type CreditsPlan,
-	CREDITS_LOW_BALANCE,
 	buildMockCreditsStatus,
 	clampPercent,
 	formatCreditsShort,
@@ -67,7 +66,7 @@ interface UseCreditsOptions {
 
 interface UseCreditsResult {
 	chat: UseAgentChatReturn;
-	/** Ring + popover; hidden until this site returns valid allowance metadata. */
+	/** Dot + popover; hidden until this site returns valid allowance metadata. */
 	trailingActions?: TrailingActions;
 	/** Dismissible low-credit notice, or a persistent exhausted notice. */
 	notice?: NoticeConfig;
@@ -369,7 +368,7 @@ export function useCredits( {
 					dismissible: false,
 				};
 			}
-			if ( status.remaining < CREDITS_LOW_BALANCE && ! isLowNoticeDismissed ) {
+			if ( isLow && ! isLowNoticeDismissed ) {
 				return {
 					icon: false,
 					message: sprintf(
