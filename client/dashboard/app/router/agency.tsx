@@ -1,4 +1,4 @@
-import { DotcomFeatures, HostingFeatures, fetchTwoStep } from '@automattic/api-core';
+import { DotcomFeatures, HostingFeatures } from '@automattic/api-core';
 import {
 	activeAgencyQuery,
 	agencyDevSiteLicenseQuery,
@@ -81,11 +81,14 @@ import {
 	canTransferSite,
 	canViewHundredYearPlanSettings,
 } from '../../sites/features';
-import { reauthRequiredLink } from '../../utils/link';
 import { hasHostingFeature, hasPlanFeature } from '../../utils/site-features';
 import { getSiteTypeFeatureSupports } from '../../utils/site-type-feature-support';
 import { AUTH_QUERY_KEY } from '../auth';
-import { dashboardRedirect, redirectAsNotAllowed } from './redirect';
+import {
+	dashboardRedirect,
+	redirectAsNotAllowed,
+	redirectIfTwoStepReauthRequired,
+} from './redirect';
 import { rootRoute } from './root';
 import type { HostingSection, ReferHostingType } from '../../agency/marketplace/paths';
 import type { AgencySupports } from '../context';
@@ -1502,10 +1505,7 @@ const agencySiteSettingsAIToolsRoute = createRoute( {
 		}
 
 		if ( cause === 'enter' ) {
-			const twoStep = await fetchTwoStep();
-			if ( twoStep.two_step_reauthorization_required ) {
-				throw dashboardRedirect( { href: reauthRequiredLink(), reloadDocument: true } );
-			}
+			await redirectIfTwoStepReauthRequired();
 		}
 	},
 	loader: async ( { params: { siteSlug } } ) => {
