@@ -38,7 +38,7 @@ export function useDisclaimerText( props ) {
 	if ( isWooJPC ) {
 		const termsOfServiceLink = (
 			<a
-				href={ localizeUrl( 'https://wordpress.com/tos/' ) }
+				href={ localizeUrl( 'https://automattic.com/tos/' ) }
 				target="_blank"
 				rel="noopener noreferrer"
 				className="jetpack-connect__sso-actions-modal-link"

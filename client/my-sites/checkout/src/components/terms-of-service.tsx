@@ -43,7 +43,7 @@ export const TermsOfService = ( {
 					href={
 						isAkismetCheckout()
 							? localizeUrl( 'https://akismet.com/tos/' )
-							: localizeUrl( 'https://wordpress.com/tos/' )
+							: localizeUrl( 'https://automattic.com/tos/' )
 					}
 					target="_blank"
 					rel="noopener noreferrer"
