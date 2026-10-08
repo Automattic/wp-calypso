@@ -164,7 +164,8 @@
 	.site-migration-identify--reprint {
 		max-width: 464px;
 
-		&.site-migration-identify--checking {
+		&.site-migration-identify--checking,
+		&.site-migration-identify--connection-issue {
 			max-width: 660px;
 		}
 	}
@@ -288,6 +289,65 @@
 		font-weight: 500;
 	}
 
+	.site-migration-identify__connection-issue {
+		align-items: flex-start;
+		font-size: $font-size-medium;
+		line-height: 1.54;
+
+		.components-notice {
+			box-sizing: border-box;
+			width: 100%;
+			margin: 0;
+			padding: 12px;
+			border: 1px solid var( --wp-components-notice-border-color );
+			border-radius: 8px;
+			background: var( --wp-components-notice-background-color );
+			color: var( --wp-components-notice-text-color );
+		}
+
+		.components-notice__content {
+			display: flex;
+			align-items: flex-start;
+			gap: 4px;
+			margin: 0;
+			font-size: inherit;
+			line-height: inherit;
+			font-weight: 600;
+			overflow-wrap: anywhere;
+
+			img {
+				flex: none;
+			}
+
+			span {
+				padding-block: 2px;
+			}
+		}
+
+		.step-container-v2__link-button,
+		.step-container-v2__primary-button,
+		.step-container-v2__secondary-button {
+			font-size: inherit;
+			line-height: inherit;
+		}
+
+		.step-container-v2__link-button {
+			height: auto;
+			font-weight: 400;
+		}
+
+		.step-container-v2__primary-button,
+		.step-container-v2__secondary-button {
+			padding-inline: 12px;
+		}
+	}
+
+	.site-migration-identify__actions {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 10px;
+	}
+
 	.site-migration-identify__spinner {
 		display: flex;
 		align-items: center;
@@ -329,5 +389,17 @@
 		> div {
 			background: var( --color-link );
 		}
+	}
+}
+
+.step-container-v2:has( .site-migration-identify--connection-issue ) .step-container-v2__heading {
+	width: 100%;
+	max-width: 660px;
+
+	p {
+		max-width: 432px;
+		margin-inline: auto;
+		color: var( --color-neutral-60 );
+		letter-spacing: -0.32px;
 	}
 }
