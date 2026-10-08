@@ -6,12 +6,12 @@ import { fireEvent, render, screen, waitFor, within } from '@testing-library/rea
 import userEvent from '@testing-library/user-event';
 import { useState } from '@wordpress/element';
 
-// agenttic-ui ships ESM only, which jest can't resolve here; the ring is a stub.
+// agenttic-ui ships ESM only, which jest can't resolve here; the dot is a stub.
 jest.mock(
 	'@automattic/agenttic-ui',
 	() => ( {
-		ProgressRing: ( { percent, tone }: { percent: number; tone: string } ) => (
-			<svg data-testid="ring" data-percent={ percent } data-tone={ tone } />
+		StatusIndicator: ( { tone, size }: { tone: string; size?: number } ) => (
+			<svg data-testid="dot" data-tone={ tone } data-size={ size } />
 		),
 	} ),
 	{ virtual: true }
@@ -126,11 +126,12 @@ describe( 'CreditsMeter', () => {
 		}
 	);
 
-	it( 'labels the ring with the balance sentence and toggles the popover', () => {
+	it( 'labels the dot with the balance sentence and toggles the popover', () => {
 		const onToggle = jest.fn();
 		render( <CreditsMeter status={ paid } isOpen={ false } onToggle={ onToggle } /> );
 		const toggle = screen.getByRole( 'button', { name: `${ localNumber( 11.6 ) }k credits left` } );
-		expect( screen.getByTestId( 'ring' ) ).toHaveAttribute( 'data-tone', 'muted' );
+		expect( screen.getByTestId( 'dot' ) ).toHaveAttribute( 'data-tone', 'error' );
+		expect( screen.getByTestId( 'dot' ) ).toHaveAttribute( 'data-size', '12' );
 		fireEvent.click( toggle );
 		expect( onToggle ).toHaveBeenCalledWith( true );
 	} );
@@ -150,26 +151,6 @@ describe( 'CreditsMeter', () => {
 		expect( screen.getByRole( 'button', { name: 'Add credits' } ) ).toHaveClass( 'is-secondary' );
 		fireEvent.click( screen.getByRole( 'button', { name: 'Add credits' } ) );
 		expect( onAction ).toHaveBeenCalled();
-	} );
-
-	it( 'updates the paid ring tone at the exact plan threshold independently of its amount label', () => {
-		const { rerender } = render(
-			<CreditsMeter status={ paid } isOpen={ false } onToggle={ () => {} } />
-		);
-		for ( const [ percent, tone ] of [
-			[ 20.01, 'muted' ],
-			[ 20, 'error' ],
-			[ 20.01, 'muted' ],
-		] as const ) {
-			rerender(
-				<CreditsMeter status={ { ...paid, percent } } isOpen={ false } onToggle={ () => {} } />
-			);
-			expect(
-				screen.getByRole( 'button', { name: `${ localNumber( 11.6 ) }k credits left` } )
-			).toBeInTheDocument();
-			expect( screen.getByTestId( 'ring' ) ).toHaveAttribute( 'data-tone', tone );
-			expect( screen.getByTestId( 'ring' ) ).toHaveAttribute( 'data-percent', String( percent ) );
-		}
 	} );
 
 	it( 'renders real fractional allowance details without inventing purchase or manage actions', () => {
@@ -216,6 +197,7 @@ describe( 'CreditsMeter', () => {
 		expect(
 			screen.getByRole( 'button', { name: `${ localNumber( 0 ) } credits left` } )
 		).toBeInTheDocument();
+		expect( screen.getByTestId( 'dot' ) ).toHaveAttribute( 'data-tone', 'error' );
 		expect( screen.getByText( '0% left' ) ).toHaveClass( 'is-exhausted' );
 		expect( screen.getByText( 'You’ve used all your site credits.' ) ).toHaveClass(
 			'agents-manager-credits-meter__message'
@@ -256,7 +238,7 @@ describe( 'CreditsMeter', () => {
 		expect(
 			screen.getByRole( 'button', { name: `${ localNumber( 67 ) }k credits left` } )
 		).toBeInTheDocument();
-		expect( screen.getByTestId( 'ring' ) ).toHaveAttribute( 'data-percent', '0' );
+		expect( screen.getByTestId( 'dot' ) ).toHaveAttribute( 'data-tone', 'muted' );
 		expect( screen.getByText( '0%' ) ).not.toHaveClass( 'is-exhausted' );
 		expect(
 			screen.getByText( `${ localNumber( 0 ) } of ${ localNumber( 80 ) }k credits left` )

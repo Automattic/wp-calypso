@@ -34,7 +34,7 @@ async function AppBoot() {
 	const localeSlug = config( 'i18n_locale_slug' ) || config( 'i18n_default_locale_slug' ) || 'en';
 
 	// Awaited before anything renders so components are never painted unstyled on the WP versions
-	// that need it. Resolves immediately without a request on WP 7.0+, which serves it already.
+	// that need it. Resolves without a request where wp-admin already serves it.
 	await loadWpComponentsStyle();
 
 	const rootReducer = combineReducers( {

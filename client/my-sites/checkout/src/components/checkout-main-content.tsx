@@ -58,6 +58,7 @@ import { OnboardingProgress } from 'calypso/landing/stepper/declarative-flow/int
 import { useShowOnboardingProgress } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/components/onboarding-progress/use-show-onboarding-progress';
 import { useInitialIsInStepContainerV2FlowContext } from 'calypso/layout/utils';
 import isAkismetCheckout from 'calypso/lib/akismet/is-akismet-checkout';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import {
 	hasGoogleApps,
 	hasDomainRegistration,
@@ -90,7 +91,6 @@ import SitePreview from 'calypso/my-sites/customer-home/cards/features/site-prev
 import useOneDollarOfferTrack from 'calypso/my-sites/plans/hooks/use-onedollar-offer-track';
 import { siteHasPaidPlan } from 'calypso/signup/steps/site-picker/site-picker-submit';
 import { useDispatch as useReduxDispatch, useSelector } from 'calypso/state';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice, removeNotice } from 'calypso/state/notices/actions';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import { getIsOnboardingAffiliateFlow } from 'calypso/state/signup/flow/selectors';
@@ -997,7 +997,6 @@ export default function CheckoutMainContent( {
 									showErrorMessageBriefly,
 									applyDomainContactValidationResults,
 									clearDomainContactErrorMessages,
-									reduxDispatch,
 									translate,
 									shouldDisplayValidationErrors
 								);
@@ -1054,12 +1053,10 @@ export default function CheckoutMainContent( {
 										prepareDomainContactValidationRequest( contactInfo )
 									);
 
-									reduxDispatch(
-										recordTracksEvent( 'calypso_checkout_composite_step_complete', {
-											step: 1,
-											step_name: 'contact-form',
-										} )
-									);
+									recordTracksEvent( 'calypso_checkout_composite_step_complete', {
+										step: 1,
+										step_name: 'contact-form',
+									} );
 								}
 								return validationResponse;
 							} }
