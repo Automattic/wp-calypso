@@ -55,7 +55,7 @@ export default function EarnMigrations() {
 					description={ __( 'Earn commissions for migrating sites to Automattic hosting.' ) }
 					actions={
 						canTagSitesForCommission ? (
-							<Button variant="primary" onClick={ onOpenAddSitesModal }>
+							<Button variant="primary" __next40pxDefaultSize onClick={ onOpenAddSitesModal }>
 								{ __( 'Tag sites for commission' ) }
 							</Button>
 						) : undefined

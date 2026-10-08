@@ -82,6 +82,7 @@ export default function MarketplacePurchases() {
 						<RouterLinkButton
 							to="/products"
 							variant="primary"
+							__next40pxDefaultSize
 							onClick={ () => recordTracksEvent( 'calypso_a4a_license_list_issue_license_click' ) }
 						>
 							{ __( 'Issue new license' ) }
