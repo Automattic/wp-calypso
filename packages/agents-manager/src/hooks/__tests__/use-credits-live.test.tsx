@@ -125,12 +125,12 @@ it.each( [ 'personal', 'premium', 'business' ] as const )(
 		const { result } = renderCredits();
 		await flush();
 		expect( props( result.current ).upgradeUrl ).toBe(
-			'https://wordpress.com/plans/example.wordpress.com'
+			'https://wordpress.com/plans/example.wordpress.com?source=wp_ai_credits'
 		);
 		expect( props( result.current ).onAction ).toBeUndefined();
 		await receive( { ...exhausted(), plan_tier } );
 		expect( props( result.current ).upgradeUrl ).toBe(
-			'https://wordpress.com/plans/example.wordpress.com'
+			'https://wordpress.com/plans/example.wordpress.com?source=wp_ai_credits'
 		);
 		expect( result.current.notice?.message ).toBe( 'You’ve used all your site credits.' );
 		expect( result.current.notice?.action ).toEqual( {
@@ -162,11 +162,11 @@ it( 'waits for matching site data and follows a domain change for the same site'
 	expect( props( view.result.current ).upgradeUrl ).toBeUndefined();
 	view.rerender( defaultOptions );
 	expect( props( view.result.current ).upgradeUrl ).toBe(
-		'https://wordpress.com/plans/example.wordpress.com'
+		'https://wordpress.com/plans/example.wordpress.com?source=wp_ai_credits'
 	);
 	view.rerender( { ...defaultOptions, site: { ID: '123', domain: 'mapped.example::blog' } } );
 	expect( props( view.result.current ).upgradeUrl ).toBe(
-		'https://wordpress.com/plans/mapped.example%3A%3Ablog'
+		'https://wordpress.com/plans/mapped.example%3A%3Ablog?source=wp_ai_credits'
 	);
 } );
 it.each( [ '', '.', '..', ' ' ] )(
@@ -194,7 +194,7 @@ it( 'never uses a previous site destination during a site switch', async () => {
 	view.rerender( { ...next, site: { ID: 456, domain: 'second.wordpress.com' } } );
 	await act( async () => oldObserver?.( terminal( creditSnapshot( { plan_tier: 'commerce' } ) ) ) );
 	expect( props( view.result.current ).upgradeUrl ).toBe(
-		'https://wordpress.com/plans/second.wordpress.com'
+		'https://wordpress.com/plans/second.wordpress.com?source=wp_ai_credits'
 	);
 } );
 it.each( [ { userId: 2 }, { agentConfig: { ...agentConfig, authProvider: jest.fn() } } ] )(
@@ -415,7 +415,7 @@ it( 'uses the meter destination as site details become available or change', asy
 	);
 	view.rerender( { ...defaultOptions, site: { ID: 123, domain: 'mapped.example' } } );
 	expect( view.result.current.notice?.action?.href ).toBe(
-		'https://wordpress.com/plans/mapped.example'
+		'https://wordpress.com/plans/mapped.example?source=wp_ai_credits'
 	);
 } );
 

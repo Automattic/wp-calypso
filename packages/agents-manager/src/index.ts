@@ -42,3 +42,12 @@ export { default as FeedbackInput } from './components/feedback-input';
 
 // Site credits copy, so other chats show the same amounts and low-balance limit
 export { CREDITS_LOW_BALANCE, formatCreditsShort } from './utils/credits';
+
+// Site credits dot, for chats outside the dock that show the same balance
+export { default as CreditsMeter } from './components/credits-meter';
+export {
+	CREDITS_UPGRADE_SOURCE,
+	getCreditsUpgradeUrl,
+	parseLiveCreditsStatus,
+} from './utils/live-credits';
+export type { CreditsStatus } from './utils/credits';

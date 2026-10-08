@@ -227,7 +227,8 @@ export interface NoticeConfig {
 				href: string;
 				target?: React.HTMLAttributeAnchorTarget;
 				rel?: string;
-				onClick?: never;
+				/** Runs before the link opens, for example to record the click. */
+				onClick?: () => void;
 		  };
 	dismissible?: boolean;
 	onDismiss?: () => void;
