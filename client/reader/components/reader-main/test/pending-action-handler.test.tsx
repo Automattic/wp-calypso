@@ -368,7 +368,7 @@ describe( 'ReaderPendingActionHandler', () => {
 				expect.objectContaining( {
 					type: 'NOTICE_CREATE',
 					notice: expect.objectContaining( {
-						text: 'Verify your email address to finish subscribing. We will subscribe you once you do.',
+						text: 'Please verify your email before subscribing. We will subscribe you once you do.',
 						noticeId: 'resend-verification-email',
 					} ),
 				} )

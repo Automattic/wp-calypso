@@ -61,8 +61,6 @@ const getNoticeTarget = ( feedUrl?: string ) => feedUrl ?? translate( 'this site
 
 interface UnverifiedFollowData {
 	pending_subscription?: boolean;
-	pending_limit_reached?: boolean;
-	pending_limit?: number;
 }
 
 const isRecord = ( value: unknown ): value is Record< string, unknown > =>
@@ -79,30 +77,22 @@ const getUnverifiedFollowData = ( error: unknown ): UnverifiedFollowData | undef
 
 	return {
 		pending_subscription: error.data.pending_subscription === true,
-		pending_limit_reached: error.data.pending_limit_reached === true,
-		pending_limit:
-			typeof error.data.pending_limit === 'number' ? error.data.pending_limit : undefined,
 	};
 };
 
 const getUnverifiedFollowNoticeText = ( data: UnverifiedFollowData ) => {
 	if ( data.pending_subscription ) {
 		return translate(
-			'Verify your email address to finish subscribing. We will subscribe you once you do.'
-		);
-	}
-
-	if ( data.pending_limit_reached && typeof data.pending_limit === 'number' ) {
-		return translate(
-			'Verify your email address to finish subscribing. This site was not saved because you already have %(count)d subscriptions waiting.',
+			'Please verify your email before subscribing. We will subscribe you once you do.',
 			{
-				args: { count: data.pending_limit },
-				comment: 'count is how many follows are already waiting for email verification.',
+				comment: 'Shown when a follow is held until the user verifies their email.',
 			}
 		);
 	}
 
-	return translate( 'Verify your email address before subscribing. This site was not saved.' );
+	return translate( 'Please verify your email before subscribing. This site was not subscribed.', {
+		comment: 'Shown when an unverified follow was refused.',
+	} );
 };
 
 const getPositiveNumber = ( id?: number | string ): number | undefined => {
@@ -202,7 +192,7 @@ export const useFollowSite = ( recommendedSiteInfo?: RecommendedSiteInfo ) => {
 				dispatch(
 					errorNotice( getUnverifiedFollowNoticeText( unverifiedFollow ), {
 						id: 'resend-verification-email',
-						button: translate( 'Resend Email' ),
+						button: translate( 'Resend verification email' ),
 						onClick: () => {
 							resendEmailVerification();
 						},

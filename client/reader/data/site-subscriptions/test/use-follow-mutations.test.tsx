@@ -339,19 +339,19 @@ describe( 'follow mutation cache helpers', () => {
 
 	it.each( [
 		{
-			outcome: 'saved until the email is verified',
+			outcome: 'subscribed once the email is verified',
 			data: { pending_subscription: true, pending_limit_reached: false, pending_limit: 10 },
-			text: 'Verify your email address to finish subscribing. We will subscribe you once you do.',
+			text: 'Please verify your email before subscribing. We will subscribe you once you do.',
 		},
 		{
-			outcome: 'not saved because the waiting list is full',
+			outcome: 'not subscribed because the waiting list is full',
 			data: { pending_subscription: false, pending_limit_reached: true, pending_limit: 10 },
-			text: 'Verify your email address to finish subscribing. This site was not saved because you already have 10 subscriptions waiting.',
+			text: 'Please verify your email before subscribing. This site was not subscribed.',
 		},
 		{
-			outcome: 'not saved',
+			outcome: 'not subscribed',
 			data: { pending_subscription: false, pending_limit_reached: false, pending_limit: 10 },
-			text: 'Verify your email address before subscribing. This site was not saved.',
+			text: 'Please verify your email before subscribing. This site was not subscribed.',
 		},
 	] )(
 		'useFollowSite asks the user to verify when an unverified follow is $outcome',
@@ -384,7 +384,7 @@ describe( 'follow mutation cache helpers', () => {
 					notice: expect.objectContaining( {
 						text,
 						noticeId: 'resend-verification-email',
-						button: 'Resend Email',
+						button: 'Resend verification email',
 						status: 'is-error',
 					} ),
 				} )
