@@ -87,6 +87,15 @@ $resource-brands: (
 		padding-inline-start: 0;
 	}
 
+	// The dashboard's global DataViews overrides pad the first column with
+	// !important on narrow screens, so only !important keeps it flush here.
+	@media ( max-width: #{$break-medium} ) {
+		> td:first-child,
+		> th:first-child {
+			padding-inline-start: 0 !important;
+		}
+	}
+
 	> th:last-child .dataviews-view-table-header-button {
 		padding-inline-end: 0;
 	}
