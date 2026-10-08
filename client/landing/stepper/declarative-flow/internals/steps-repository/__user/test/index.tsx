@@ -73,6 +73,14 @@ describe( 'User email signup step', () => {
 			).not.toBeInTheDocument();
 		} );
 
+		it( 'does not link the logo for Woo hosting solutions referrals', () => {
+			renderUserStep( '/onboarding/user?ref=woo-hosting-solutions-flow' );
+			expect( screen.getByRole( 'heading', { name: 'Create your account' } ) ).toBeVisible();
+			expect(
+				screen.queryByRole( 'link', { name: 'WordPress.com home' } )
+			).not.toBeInTheDocument();
+		} );
+
 		it( 'does not link the logo with partner branding', () => {
 			mockUsePartnerBranding.mockReturnValue( { ...noPartnerBranding, hasCustomBranding: true } );
 			renderUserStep();
