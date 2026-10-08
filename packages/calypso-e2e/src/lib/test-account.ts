@@ -1,7 +1,7 @@
 import fs from 'fs/promises';
 import path from 'path';
 import chalk from 'chalk';
-import { BrowserContext, Cookie, Page } from 'playwright';
+import { BrowserContext, Cookie, Page, errors } from 'playwright';
 import { TestAccountName } from '..';
 import { getAccountSiteURL, getCalypsoURL } from '../data-helper';
 import { EmailClient } from '../email-client';
@@ -17,6 +17,10 @@ import type { TestAccountCredentials } from '../secrets';
 // for itself: an adopted file can be dead on arrival, and each retry costs a lock hold
 // and a page load.
 const MAX_ADOPTIONS = 2;
+
+// How long bare /home gets to redirect to the account's landing page. It resolves the
+// destination from fetched preferences and site data, so it can fire well after load.
+const LANDING_REDIRECT_TIMEOUT = 20 * 1000;
 
 /**
  * Represents the WPCOM test account.
@@ -50,9 +54,9 @@ export class TestAccount {
 	 * Authenticates the account using previously saved cookies or via the login
 	 * page UI if cookies are unavailable.
 	 *
-	 * Does not wait for the landing page to render. Specs navigate to their own
-	 * target next; one that drives the page login lands on waits for the part of it
-	 * that it uses.
+	 * Waits for the redirect off bare /home to the account's landing page, but not for
+	 * the landing page to render. Specs navigate to their own target next; one that
+	 * drives the landing page waits for the part of it that it uses.
 	 *
 	 * @param {Page} page Page object.
 	 * @param {string} [url] URL to expect once authenticated and redirections are finished.
@@ -82,6 +86,8 @@ export class TestAccount {
 			}
 			await this.ensureFreshAuthCookies( page, rejected );
 		}
+
+		await this.waitForLandingRedirect( page );
 
 		if ( url ) {
 			await page.waitForURL( url, { timeout: 20 * 1000 } );
@@ -149,6 +155,28 @@ export class TestAccount {
 			waitUntil: 'commit',
 			timeout: 60 * 1000,
 		} );
+	}
+
+	/**
+	 * Waits out the redirect bare /home makes to the account's landing page.
+	 *
+	 * Both ways of authenticating end on /home, and its redirect can fire after load. When
+	 * the landing page is on another origin (the hosting dashboard, wp-admin) the redirect
+	 * is a document navigation, and it aborts a goto the spec has started but not committed
+	 * with net::ERR_ABORTED. If the landing page can't be resolved, /home stays put, so a
+	 * timeout isn't an error.
+	 */
+	private async waitForLandingRedirect( page: Page ): Promise< void > {
+		try {
+			await page.waitForURL( ( url ) => url.pathname.replace( /\/$/, '' ) !== '/home', {
+				timeout: LANDING_REDIRECT_TIMEOUT,
+			} );
+		} catch ( error ) {
+			if ( ! ( error instanceof errors.TimeoutError ) ) {
+				throw error;
+			}
+			this.log( 'Stayed on /home' );
+		}
 	}
 
 	/**
