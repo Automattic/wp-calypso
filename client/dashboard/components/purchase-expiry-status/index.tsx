@@ -51,6 +51,29 @@ function FormattedExpiryDate( { locale, purchase }: { locale: string; purchase: 
 }
 
 /**
+ * An urgent status as plain text, with the expiry date it leaves out in a tooltip.
+ */
+function UrgentExpiryText( {
+	purchase,
+	copy,
+	untranslatedFallbackText,
+}: {
+	purchase: Purchase;
+	copy: ExpiryStatusCopy;
+	untranslatedFallbackText?: React.ReactNode;
+} ) {
+	const locale = useLocale();
+	return (
+		<Text
+			intent={ copy.intent }
+			title={ formatDate( new Date( purchase.expiry_date ), locale, { dateStyle: 'long' } ) }
+		>
+			{ copy.text ?? untranslatedFallbackText }
+		</Text>
+	);
+}
+
+/**
  * The expiry status of a subscription that is close to expiring or has already
  * expired: colored to draw attention, and linked to renewal checkout where
  * renewing is something the viewer can act on right now.
@@ -63,11 +86,9 @@ function UrgentExpiryStatus( {
 	copy,
 	hasExpired,
 	untranslatedFallbackText,
-	isInsideLink,
 }: {
 	purchase: Purchase;
 	copy: ExpiryStatusCopy;
-	isInsideLink?: boolean;
 
 	/**
 	 * Whether `copy` describes a lapsed subscription rather than one still
@@ -108,15 +129,17 @@ function UrgentExpiryStatus( {
 		purchase.bill_period_days === SubscriptionBillPeriod.PLAN_MONTHLY_PERIOD
 			? EXPIRY_ERROR_DAYS
 			: EXPIRY_WARNING_DAYS;
-	const isRenewalWorthOffering = ! isInsideLink && canRenew && daysUntilExpiry <= renewalWindowDays;
+	const isRenewalWorthOffering = canRenew && daysUntilExpiry <= renewalWindowDays;
 
 	const expiryText = copy.text ?? untranslatedFallbackText;
 
 	if ( ! isRenewalWorthOffering ) {
 		return (
-			<Text intent={ copy.intent } title={ expiryDateTitle }>
-				{ expiryText }
-			</Text>
+			<UrgentExpiryText
+				purchase={ purchase }
+				copy={ copy }
+				untranslatedFallbackText={ untranslatedFallbackText }
+			/>
 		);
 	}
 
@@ -149,42 +172,16 @@ function UrgentExpiryStatus( {
 export function PurchaseExpiryStatus( {
 	purchase,
 	isSiteMissing,
-	isInsideLink,
 }: {
 	purchase: Purchase;
 	isSiteMissing?: boolean;
-
-	/** Rendered inside a link, so it must not render links of its own. */
-	isInsideLink?: boolean;
 } ) {
 	const locale = useLocale();
 	const { setShowHelpCenter } = useHelpCenter();
 
-	// @todo: There isn't currently a way to get the taxName based on the
-	// country. The country is not included in the purchase information
-	// envelope. We should add this information so we can utilize useTaxName
-	// to retrieve the correct taxName. For now, we are using a fallback tax
-	// name with context, to prevent mis-translation.
-	// translators: Shortened form of 'Sales Tax', not a country-specific tax name
-	const taxName = __( 'tax' );
-
-	/* translators: %s is the name of taxes in the country (eg: "VAT" or "GST"). */
-	const excludeTaxStringAbbreviation = sprintf( __( '(excludes %s)' ), [ taxName ] );
-
-	/* translators: %s is the name of taxes in the country (eg: "VAT" or "GST"). */
-	const excludeTaxStringTitle = sprintf( __( 'Renewal price excludes any applicable %s' ), [
-		taxName,
-	] );
-
-	if ( purchase.partner_name && ! isA4ABillingDragonPurchase( purchase ) ) {
-		// translators: partnerName is the name of the partner service who manages this product
-		return sprintf( __( 'Managed by %(partnerName)s' ), {
-			partnerName: purchase.partner_name,
-		} );
-	}
-
 	if (
 		isSiteMissing &&
+		! isManagedByPartner( purchase ) &&
 		purchase.is_attached_to_holding_site &&
 		purchase.product_type === 'jetpack'
 	) {
@@ -206,12 +203,19 @@ export function PurchaseExpiryStatus( {
 		temporarySitePurchaseProductTypes.includes( purchase.product_type );
 	const isJetpack = purchase.is_jetpack_plan_or_product;
 
-	if ( isSiteMissing && ! isA4ABDPurchase && ! isKnownTemporarySiteProductType && isJetpack ) {
+	if (
+		isSiteMissing &&
+		! isManagedByPartner( purchase ) &&
+		! isA4ABDPurchase &&
+		! isKnownTemporarySiteProductType &&
+		isJetpack
+	) {
 		return <span>{ __( 'Disconnected from WordPress.com' ) }</span>;
 	}
 
 	if (
 		isSiteMissing &&
+		! isManagedByPartner( purchase ) &&
 		! isA4ABDPurchase &&
 		! isKnownTemporarySiteProductType &&
 		! purchase.is_domain
@@ -237,19 +241,89 @@ export function PurchaseExpiryStatus( {
 		);
 	}
 
+	if (
+		! isManagedByPartner( purchase ) &&
+		purchase.is_iap_purchase &&
+		purchase.iap_purchase_management_link
+	) {
+		return getInAppPurchaseText( <a href={ purchase.iap_purchase_management_link } /> );
+	}
+
+	const status = describePurchaseExpiry( purchase, locale );
+	return isUrgentExpiry( status ) ? (
+		<UrgentExpiryStatus purchase={ purchase } { ...status } />
+	) : (
+		status
+	);
+}
+
+/**
+ * What a purchase's expiry status says, with no links, for a caller that is itself
+ * a link to the purchase. `PurchaseExpiryStatus` adds the links the purchases list offers.
+ */
+export function getPurchaseExpiryStatusText( purchase: Purchase, locale: string ) {
+	const status = describePurchaseExpiry( purchase, locale );
+	return isUrgentExpiry( status ) ? (
+		<UrgentExpiryText purchase={ purchase } { ...status } />
+	) : (
+		status
+	);
+}
+
+/** An expiring or expired status, which the purchases list links to renewal checkout. */
+interface UrgentExpiry {
+	kind: 'urgent';
+	copy: ExpiryStatusCopy;
+	hasExpired: boolean;
+	untranslatedFallbackText?: React.ReactNode;
+}
+
+function isUrgentExpiry( status: React.ReactNode | UrgentExpiry ): status is UrgentExpiry {
+	return typeof status === 'object' && status !== null && 'kind' in status;
+}
+
+function isManagedByPartner( purchase: Purchase ) {
+	return Boolean( purchase.partner_name ) && ! isA4ABillingDragonPurchase( purchase );
+}
+
+function getInAppPurchaseText( managePurchase: React.JSX.Element ) {
+	return createInterpolateElement(
+		__(
+			'This product is an in-app purchase. You can manage it from within <managePurchase>the app store</managePurchase>.'
+		),
+		{ managePurchase }
+	);
+}
+
+function describePurchaseExpiry(
+	purchase: Purchase,
+	locale: string
+): React.ReactNode | UrgentExpiry {
+	// @todo: There isn't currently a way to get the taxName based on the
+	// country. The country is not included in the purchase information
+	// envelope. We should add this information so we can utilize useTaxName
+	// to retrieve the correct taxName. For now, we are using a fallback tax
+	// name with context, to prevent mis-translation.
+	// translators: Shortened form of 'Sales Tax', not a country-specific tax name
+	const taxName = __( 'tax' );
+
+	/* translators: %s is the name of taxes in the country (eg: "VAT" or "GST"). */
+	const excludeTaxStringAbbreviation = sprintf( __( '(excludes %s)' ), [ taxName ] );
+
+	/* translators: %s is the name of taxes in the country (eg: "VAT" or "GST"). */
+	const excludeTaxStringTitle = sprintf( __( 'Renewal price excludes any applicable %s' ), [
+		taxName,
+	] );
+
+	if ( purchase.partner_name && ! isA4ABillingDragonPurchase( purchase ) ) {
+		// translators: partnerName is the name of the partner service who manages this product
+		return sprintf( __( 'Managed by %(partnerName)s' ), {
+			partnerName: purchase.partner_name,
+		} );
+	}
+
 	if ( purchase.is_iap_purchase && purchase.iap_purchase_management_link ) {
-		return createInterpolateElement(
-			__(
-				'This product is an in-app purchase. You can manage it from within <managePurchase>the app store</managePurchase>.'
-			),
-			{
-				managePurchase: isInsideLink ? (
-					<span />
-				) : (
-					<a href={ purchase.iap_purchase_management_link } />
-				),
-			}
-		);
+		return getInAppPurchaseText( <span /> );
 	}
 
 	const isCentennial = isCentennialPurchase( purchase );
@@ -451,15 +525,7 @@ export function PurchaseExpiryStatus( {
 			}
 		);
 
-		return (
-			<UrgentExpiryStatus
-				purchase={ purchase }
-				copy={ copy }
-				hasExpired={ false }
-				untranslatedFallbackText={ untranslatedFallbackText }
-				isInsideLink={ isInsideLink }
-			/>
-		);
+		return { kind: 'urgent', copy, hasExpired: false, untranslatedFallbackText };
 	}
 	if ( isExpiredOrRemoved( purchase ) && 'concierge-session' === purchase.product_slug ) {
 		// translators: %s is a formatted expiry date
@@ -469,14 +535,11 @@ export function PurchaseExpiryStatus( {
 	}
 
 	if ( isExpiredOrRemoved( purchase ) ) {
-		return (
-			<UrgentExpiryStatus
-				purchase={ purchase }
-				copy={ getExpiredCopy( new Date( purchase.expiry_date ) ) }
-				hasExpired
-				isInsideLink={ isInsideLink }
-			/>
-		);
+		return {
+			kind: 'urgent',
+			copy: getExpiredCopy( new Date( purchase.expiry_date ) ),
+			hasExpired: true,
+		};
 	}
 
 	if ( isIncludedWithPlan( purchase ) ) {

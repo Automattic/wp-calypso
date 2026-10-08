@@ -6,7 +6,7 @@ import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import MockDate from 'mockdate';
 import { render } from '../../../test-utils';
-import { PurchaseExpiryStatus } from '../index';
+import { PurchaseExpiryStatus, getPurchaseExpiryStatusText } from '../index';
 import type { Purchase } from '@automattic/api-core';
 
 // The copy counts whole calendar days in the viewer's time zone, so these
@@ -168,22 +168,46 @@ describe( '<PurchaseExpiryStatus>', () => {
 
 	describe( 'a purchase the viewer cannot renew', () => {
 		test.each( [
-			[ 'is not theirs', { user_id: OWNER_ID + 1 }, false ],
-			[ 'cannot be explicitly renewed', { can_explicit_renew: false }, false ],
-			[ 'is shown inside a link', {}, true ],
-		] )(
-			'is still flagged, but offers nothing to click, when it %s',
-			( _label, overrides, isInsideLink ) => {
-				render(
-					<PurchaseExpiryStatus
-						purchase={ createPurchase( overrides as Partial< Purchase > ) }
-						isInsideLink={ isInsideLink }
-					/>
-				);
+			[ 'is not theirs', { user_id: OWNER_ID + 1 } ],
+			[ 'cannot be explicitly renewed', { can_explicit_renew: false } ],
+		] )( 'is still flagged, but offers nothing to click, when it %s', ( _label, overrides ) => {
+			render(
+				<PurchaseExpiryStatus purchase={ createPurchase( overrides as Partial< Purchase > ) } />
+			);
 
-				expect( screen.getByText( /expires in 45 days/i ) ).toBeVisible();
-				expect( renewLink() ).toBeNull();
-			}
+			expect( screen.getByText( /expires in 45 days/i ) ).toBeVisible();
+			expect( renewLink() ).toBeNull();
+		} );
+	} );
+} );
+
+describe( 'getPurchaseExpiryStatusText()', () => {
+	beforeEach( () => MockDate.set( NOW ) );
+	afterEach( () => MockDate.reset() );
+
+	test.each( [
+		[ 'an expiring purchase', {}, /expires in 45 days/i ],
+		[
+			'an expired purchase',
+			{ expiry_status: 'expired', expiry_date: daysFromNow( -3 ) },
+			/expired 3 days ago/i,
+		],
+		[
+			'an in-app purchase',
+			{
+				is_iap_purchase: true,
+				iap_purchase_management_link: 'https://apps.apple.com/account/subscriptions',
+			},
+			/in-app purchase/i,
+		],
+	] )( 'describes %s with nothing to click', ( _label, overrides, text ) => {
+		render(
+			<>
+				{ getPurchaseExpiryStatusText( createPurchase( overrides as Partial< Purchase > ), 'en' ) }
+			</>
 		);
+
+		expect( screen.getByText( text ) ).toBeVisible();
+		expect( renewLink() ).toBeNull();
 	} );
 } );
