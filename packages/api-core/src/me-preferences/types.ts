@@ -77,4 +77,6 @@ export interface UserPreferences {
 	/** Timestamp of the Pressable usage-limit notification the user dismissed. */
 	'pressable-limit-notification-dismissed'?: number;
 	'a4a-agency-approval-notice-dismissed'?: boolean;
+	/** Resources marked as read in the A4A Library, shared with the classic A4A dashboard. */
+	'a4a-library-read-resources'?: number[];
 }

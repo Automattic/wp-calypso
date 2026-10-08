@@ -42,6 +42,7 @@ const defaultValues: Required< UserPreferences > = {
 	'notifications-subscriber-alerts-enabled': false,
 	'pressable-limit-notification-dismissed': 0,
 	'a4a-agency-approval-notice-dismissed': false,
+	'a4a-library-read-resources': [],
 };
 
 const staticPreferenceStatIds: Record< string, string > = {
@@ -71,6 +72,7 @@ const staticPreferenceStatIds: Record< string, string > = {
 	'a4a-feedback': 'a4afb',
 	'pressable-limit-notification-dismissed': 'prslim',
 	'a4a-agency-approval-notice-dismissed': 'a4aappr',
+	'a4a-library-read-resources': 'a4aread',
 };
 
 const dynamicPreferenceStatPrefixes: Record< string, string > = {
