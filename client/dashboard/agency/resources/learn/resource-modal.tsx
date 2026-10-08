@@ -9,7 +9,7 @@ import {
 import { useReducedMotion, useViewportMatch } from '@wordpress/compose';
 import { __, isRTL } from '@wordpress/i18n';
 import { chevronLeft, chevronRight, closeSmall } from '@wordpress/icons';
-import { useLayoutEffect, useRef, useState } from 'react';
+import { useLayoutEffect, useRef } from 'react';
 import ResourceBadges from './resource-badges';
 import ResourcePreview from './resource-preview';
 import type { FilterResources } from './types';
@@ -75,16 +75,9 @@ export default function ResourceModal( {
 	}, [ origin, isReducedMotion, isCentered ] );
 
 	// Content fades in as you move between resources, but not on opening.
-	const [ hasNavigated, setHasNavigated ] = useState( false );
-	const navigate = ( go?: () => void ) =>
-		go &&
-		( () => {
-			setHasNavigated( true );
-			go();
-		} );
-	const goPrevious = navigate( onPrevious );
-	const goNext = navigate( onNext );
-	const fadeClassName = hasNavigated ? 'dashboard-resources-learn__modal-fade' : undefined;
+	const openedId = useRef( resource.id );
+	const fadeClassName =
+		resource.id !== openedId.current ? 'dashboard-resources-learn__modal-fade' : undefined;
 
 	return (
 		<Modal
@@ -94,9 +87,9 @@ export default function ResourceModal( {
 			onRequestClose={ onClose }
 			onKeyDown={ ( event ) => {
 				if ( event.key === previousKey ) {
-					goPrevious?.();
+					onPrevious?.();
 				} else if ( event.key === nextKey ) {
-					goNext?.();
+					onNext?.();
 				}
 			} }
 			// The preview leads the modal, with the navigation over it, so it draws its own header.
@@ -125,17 +118,17 @@ export default function ResourceModal( {
 								icon={ isRTL() ? chevronRight : chevronLeft }
 								label={ __( 'Previous resource' ) }
 								size="compact"
-								disabled={ ! goPrevious }
+								disabled={ ! onPrevious }
 								accessibleWhenDisabled
-								onClick={ goPrevious }
+								onClick={ onPrevious }
 							/>
 							<Button
 								icon={ isRTL() ? chevronLeft : chevronRight }
 								label={ __( 'Next resource' ) }
 								size="compact"
-								disabled={ ! goNext }
+								disabled={ ! onNext }
 								accessibleWhenDisabled
-								onClick={ goNext }
+								onClick={ onNext }
 							/>
 						</HStack>
 						<Button
