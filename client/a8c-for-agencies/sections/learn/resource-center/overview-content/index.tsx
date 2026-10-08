@@ -25,7 +25,9 @@ export default function ResourceCenterOverviewContent( {
 }: ResourceCenterOverviewContentProps ) {
 	const dispatch = useDispatch();
 	const agencyId = useSelector( getActiveAgencyId );
-	const { mutate: recordResourceEvent } = useMutation( agencyResourceEventMutation() );
+	const { mutate: recordResourceEvent } = useMutation(
+		agencyResourceEventMutation( agencyId ?? 0 )
+	);
 
 	const resources = useMemo( () => data?.results ?? [], [ data ] );
 	const [ view, setView ] = useState( DEFAULT_VIEW );
@@ -41,11 +43,7 @@ export default function ResourceCenterOverviewContent( {
 	const handleResourceClick = useCallback(
 		( resource: AgencyEnablementResource ) => {
 			if ( agencyId ) {
-				recordResourceEvent( {
-					resource_id: resource.id,
-					resource_name: resource.name,
-					agency_id: agencyId,
-				} );
+				recordResourceEvent( { resource_id: resource.id, resource_name: resource.name } );
 			}
 		},
 		[ agencyId, recordResourceEvent ]
@@ -53,7 +51,7 @@ export default function ResourceCenterOverviewContent( {
 
 	return (
 		<>
-			<Spacer marginBottom={ 8 } style={ { maxWidth: '650px' } }>
+			<Spacer marginBottom={ 8 }>
 				<Text size={ 15 }>{ getResourceCenterDescription() }</Text>
 			</Spacer>
 			<ResourceCenter
