@@ -65,17 +65,6 @@ export default function UserBlock( { note, block }: { note: Note; block: Block }
 			? getDisplayURL( homeLink )
 			: block.meta?.titles?.home;
 
-	// The API offers a follow action only for people whose site can be followed, and
-	// its value says whether the reader already follows it.
-	const followLink = !! block.meta?.ids?.site && !! block.actions && 'follow' in block.actions && (
-		<FollowLink
-			key="follow"
-			site={ block.meta.ids.site }
-			isFollowing={ !! block.actions.follow }
-			noteType={ note.type as keyof typeof followStatTypes }
-		/>
-	);
-
 	// Two layouts: in a list of people the site sits under the name with the follow
 	// link at the far end; elsewhere the details share one line under the name.
 	const isListRow = isPeopleListNote( note );
@@ -100,7 +89,17 @@ export default function UserBlock( { note, block }: { note: Note; block: Block }
 				{ homeTitle }
 			</a>
 		),
-		note.type !== 'comment' && followLink,
+		note.type !== 'comment' &&
+			!! block.meta?.ids?.site &&
+			block.actions &&
+			'follow' in block.actions && (
+				<FollowLink
+					key="follow"
+					site={ block.meta.ids.site }
+					isFollowing={ !! block.actions.follow }
+					noteType={ note.type as keyof typeof followStatTypes }
+				/>
+			),
 	].filter( ( part ): part is ReactElement => Boolean( part ) );
 
 	return (
@@ -147,7 +146,7 @@ export default function UserBlock( { note, block }: { note: Note; block: Block }
 							) }
 						</VStack>
 					</FlexBlock>
-					{ followLink }
+					{ descriptionParts.find( ( { key } ) => key === 'follow' ) }
 				</>
 			) : (
 				<VStack alignment="flex-start" spacing={ 0 }>
