@@ -48,6 +48,7 @@ export interface UserPreferences {
 	[ key: `hosting-dashboard-tours-${ string }` ]: string; // ISO date string when the user completed the tours
 	[ key: `hosting-dashboard-time-mismatch-warning-dismissed-${ number }` ]: string | undefined; // Timestamp when the user dismissed the notice
 	[ key: `hosting-dashboard-wp-beta-notice-dismissed-${ number }` ]: string | undefined; // ISO timestamp when the user dismissed the beta notice for a site
+	[ key: `hosting-dashboard-difm-offer-dismissed-${ number }` ]: string | undefined; // ISO timestamp when the user dismissed the free DIFM offer for a site
 	'hosting-dashboard-welcome-notice-dismissed'?: string; // Timestamp when the user dismissed the notice
 	'wordpress-labs-opt-in'?: WordPressLabsOptIn;
 	'wordpress-labs-excluded-sites'?: number[]; // Site IDs excluded from an otherwise-opted-in account

@@ -80,6 +80,7 @@ const dynamicPreferenceStatPrefixes: Record< string, string > = {
 	'hosting-dashboard-tours': 'tours',
 	'hosting-dashboard-time-mismatch-warning-dismissed': 'timewrn',
 	'hosting-dashboard-wp-beta-notice-dismissed': 'wpbeta',
+	'hosting-dashboard-difm-offer-dismissed': 'difmofr',
 	'cancel-purchase-survey-completed': 'cncsvy',
 	'cancellation-offer-accepted-notice-dismissed': 'cncofr',
 };
