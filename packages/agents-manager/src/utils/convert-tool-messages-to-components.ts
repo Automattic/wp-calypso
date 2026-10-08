@@ -106,6 +106,19 @@ function getShowComponentSummary( message: UIMessage ): string | undefined {
 	}
 }
 
+function isBlockEditToolMessage( message: UIMessage ): boolean {
+	const firstText = message.content?.[ 0 ]?.text;
+	if ( ! hasAgentRole( message ) || ! firstText ) {
+		return false;
+	}
+
+	try {
+		return isBlockEditToolId( JSON.parse( firstText )?.tool_id );
+	} catch ( _error ) {
+		return false;
+	}
+}
+
 function hasAgentRole( message: UIMessage ): boolean {
 	const role = message.role as string;
 	return role === 'agent' || role === 'assistant';
@@ -183,6 +196,33 @@ function hasLaterApplyBlockEditsOutcome(
 				laterData?.tool_call_id === toolCallId &&
 				getApplyBlockEditsOutcome( laterData.tool_id, laterData.data )
 			) {
+				return true;
+			}
+		} catch ( _error ) {}
+	}
+
+	return false;
+}
+
+/**
+ * Whether a later block edit in the same turn reports an outcome. A no-change
+ * followed by one was superseded — typically by the server's retry, whose
+ * `retryingToolCallId` is not part of rehydrated history.
+ */
+function hasLaterBlockEditOutcomeInTurn( messages: UIMessage[], currentIndex: number ): boolean {
+	for ( const laterMessage of messages.slice( currentIndex + 1 ) ) {
+		if ( laterMessage.role === 'user' ) {
+			return false;
+		}
+
+		const laterText = laterMessage.content?.[ 0 ]?.text;
+		if ( ! hasAgentRole( laterMessage ) || ! laterText ) {
+			continue;
+		}
+
+		try {
+			const laterData = JSON.parse( laterText );
+			if ( getApplyBlockEditsOutcome( laterData?.tool_id, laterData?.data ) ) {
 				return true;
 			}
 		} catch ( _error ) {}
@@ -271,7 +311,11 @@ export default function convertToolMessagesToComponents( {
 	canEscalateToHuman = true,
 	retriedToolCallIds,
 }: Options ): AgentsManagerUIMessage[] {
-	return messages.flatMap( ( message, index, array ) => {
+	const convertMessage = (
+		message: UIMessage,
+		index: number,
+		array: UIMessage[]
+	): AgentsManagerUIMessage | AgentsManagerUIMessage[] => {
 		if ( isContextOnlyMessage( message ) ) {
 			return [];
 		}
@@ -480,6 +524,9 @@ export default function convertToolMessagesToComponents( {
 			if ( isProcessing && blockEditOutcome === 'no-changes' ) {
 				return [];
 			}
+			if ( blockEditOutcome === 'no-changes' && hasLaterBlockEditOutcomeInTurn( array, index ) ) {
+				return [];
+			}
 			const summary = getDisplayMessageFromToolData( textData.data );
 			if ( ! summary && blockEditOutcome !== 'no-changes' ) {
 				return [];
@@ -561,5 +608,30 @@ export default function convertToolMessagesToComponents( {
 		// eslint-disable-next-line no-console
 		console.warn( `[AgentsManager] Unhandled tool message with tool_id: ${ textData.tool_id }` );
 		return [];
+	};
+
+	const converted: AgentsManagerUIMessage[] = [];
+	// A block edit always returns to the agent, so one that renders nothing (a
+	// retried or withheld outcome, a failure, a pending check) still means the
+	// agent is working.
+	let hasHiddenBlockEditSinceLatest = false;
+	messages.forEach( ( message, index, array ) => {
+		const result = [ convertMessage( message, index, array ) ].flat();
+		if ( result.length > 0 ) {
+			converted.push( ...result );
+			hasHiddenBlockEditSinceLatest = false;
+		} else if ( isBlockEditToolMessage( message ) ) {
+			hasHiddenBlockEditSinceLatest = true;
+		}
 	} );
+
+	// Without this, an earlier message (e.g. a logo summary) would become the
+	// latest one and its `suppressThinking` would hide the indicator, and the
+	// retry progress with it, while the turn is still running.
+	const latest = converted[ converted.length - 1 ];
+	if ( isProcessing && hasHiddenBlockEditSinceLatest && latest?.suppressThinking ) {
+		converted[ converted.length - 1 ] = { ...latest, suppressThinking: false };
+	}
+
+	return converted;
 }
