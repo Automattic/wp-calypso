@@ -17,6 +17,7 @@ import { useAgentsManagerContext } from '../contexts';
 import { isUnsentSession } from '../utils/agent-session';
 import { getConversationBotId } from '../utils/conversation-bot-id';
 import { isReaderChatAgent } from '../utils/is-reader-chat-agent';
+import { TOOL_RESULT_ALREADY_RECEIVED } from '../utils/orchestrator-error-message';
 import { buildToolCallResume } from '../utils/tool-call-resume';
 import {
 	getNewestServerId,
@@ -257,8 +258,12 @@ export default function useConversation( {
 				let replied = false;
 				try {
 					replied = ( await onResume?.( results, turnToolCalls ) ) ?? false;
-				} catch {
+				} catch ( resumeError ) {
 					// Another page answered first, or the send failed: keep waiting for a reply.
+					if ( ( resumeError as { code?: string } )?.code !== TOOL_RESULT_ALREADY_RECEIVED ) {
+						// eslint-disable-next-line no-console
+						console.error( '[useConversation] Error resuming the paused turn:', resumeError );
+					}
 				}
 				setReplyWait( ( current ) => {
 					if ( current !== 'resuming' ) {

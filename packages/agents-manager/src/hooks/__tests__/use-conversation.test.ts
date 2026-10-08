@@ -483,6 +483,24 @@ describe( 'useConversation', () => {
 				expect( onResume ).toHaveBeenCalledTimes( 1 );
 			} );
 
+			it( 'logs a failed resume, but not one another page beat', async () => {
+				const consoleError = jest.spyOn( console, 'error' ).mockImplementation( () => {} );
+				const lost = Object.assign( new Error( 'already received' ), {
+					code: 'tool_result_already_received',
+				} );
+				renderPaused( jest.fn().mockRejectedValue( lost ), 'unanswered' );
+				await act( async () => jest.advanceTimersByTime( RESUME_AFTER_MS ) );
+				expect( consoleError ).not.toHaveBeenCalled();
+
+				renderPaused( jest.fn().mockRejectedValue( new Error( 'network' ) ), 'unanswered' );
+				await act( async () => jest.advanceTimersByTime( RESUME_AFTER_MS ) );
+				expect( consoleError ).toHaveBeenCalledWith(
+					'[useConversation] Error resuming the paused turn:',
+					expect.any( Error )
+				);
+				consoleError.mockRestore();
+			} );
+
 			it( 'does not load a reload over the reply the resume streams', async () => {
 				const onSuccess = jest.fn();
 				const onResume = jest.fn( () => new Promise< boolean >( () => {} ) );
