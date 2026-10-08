@@ -86,6 +86,17 @@ export default function ResourceModal( {
 			size="medium"
 			onRequestClose={ onClose }
 			onKeyDown={ ( event ) => {
+				// Leave modified arrows, such as Alt+Arrow for history, to the browser.
+				if (
+					event.defaultPrevented ||
+					event.altKey ||
+					event.ctrlKey ||
+					event.metaKey ||
+					event.shiftKey
+				) {
+					return;
+				}
+
 				if ( event.key === previousKey ) {
 					onPrevious?.();
 				} else if ( event.key === nextKey ) {
