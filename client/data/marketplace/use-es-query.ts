@@ -1,3 +1,4 @@
+import { buildDefaultIconUrl } from '@automattic/api-core';
 import languages, { LanguageSlug } from '@automattic/languages';
 import {
 	UseQueryResult,
@@ -29,10 +30,6 @@ const getIconUrl = ( pluginSlug: string, icon: string ): string => {
 
 	return buildDefaultIconUrl( pluginSlug );
 };
-
-function buildDefaultIconUrl( pluginSlug: string ) {
-	return `https://s.w.org/plugins/geopattern-icon/${ pluginSlug }.svg`;
-}
 
 const mapIndexResultsToPluginData = ( results: ESHits ): Plugin[] => {
 	if ( ! results ) {
