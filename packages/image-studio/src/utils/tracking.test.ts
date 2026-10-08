@@ -631,24 +631,85 @@ describe( 'upgrade notice tracking', () => {
 		} );
 	} );
 
-	it( 'records the trigger with the shown event so on-open and post-error notices can be split', () => {
-		trackImageStudioUpgradeNoticeShown( { mode: ImageStudioMode.Generate, trigger: 'open' } );
+	const siteCredits = {
+		meter: 'site_credits',
+		state: 'low',
+		planTier: 'premium',
+		creditsLeft: 8500,
+		ctaType: 'upgrade',
+		ref: 'wp_ai_credits',
+	} as const;
+
+	const jetpackAiQuota = {
+		meter: 'jetpack_ai',
+		state: 'zero',
+		planTier: 'none',
+		creditsLeft: 'none',
+		ctaType: 'upgrade',
+		ref: 'none',
+	} as const;
+
+	it( 'records the trigger and credit details with the shown event, to join the Agent’s credits events', () => {
+		trackImageStudioUpgradeNoticeShown( {
+			mode: ImageStudioMode.Generate,
+			trigger: 'open',
+			...siteCredits,
+		} );
 
 		expect( recordTracksEventMock ).toHaveBeenCalledWith(
 			'jetpack_big_sky_image_studio_upgrade_notice_shown',
-			expect.objectContaining( { mode: 'generate', trigger: 'open' } )
+			expect.objectContaining( {
+				mode: 'generate',
+				trigger: 'open',
+				meter: 'site_credits',
+				state: 'low',
+				plan_tier: 'premium',
+				credits_left: 8500,
+				cta_type: 'upgrade',
+				ref: 'wp_ai_credits',
+			} )
 		);
 	} );
 
-	it( 'records the trigger with the click event and keeps the product-wide upgrade button event', () => {
-		trackImageStudioUpgradeNoticeClick( { mode: ImageStudioMode.Edit, trigger: 'error' } );
+	it( 'records the Jetpack AI quota click and keeps the product-wide upgrade button event', () => {
+		trackImageStudioUpgradeNoticeClick( {
+			mode: ImageStudioMode.Edit,
+			trigger: 'error',
+			...jetpackAiQuota,
+		} );
 
 		expect( recordTracksEventMock ).toHaveBeenCalledWith(
 			'jetpack_big_sky_image_studio_upgrade_notice_click',
-			expect.objectContaining( { mode: 'edit', trigger: 'error' } )
+			expect.objectContaining( {
+				mode: 'edit',
+				trigger: 'error',
+				meter: 'jetpack_ai',
+				state: 'zero',
+				plan_tier: 'none',
+				credits_left: 'none',
+				cta_type: 'upgrade',
+				ref: 'none',
+			} )
 		);
 		expect( recordTracksEventMock ).toHaveBeenCalledWith( 'jetpack_ai_upgrade_button', {
 			placement: 'image-studio-limit-notice',
 		} );
+	} );
+
+	it( 'keeps site credits upgrades out of the Jetpack AI upgrade button funnel', () => {
+		trackImageStudioUpgradeNoticeClick( {
+			mode: ImageStudioMode.Edit,
+			trigger: 'refresh',
+			...siteCredits,
+		} );
+
+		expect( recordTracksEventMock ).toHaveBeenCalledWith(
+			'jetpack_big_sky_image_studio_upgrade_notice_click',
+			expect.objectContaining( { meter: 'site_credits', ref: 'wp_ai_credits' } )
+		);
+		expect( recordTracksEventMock ).not.toHaveBeenCalledWith(
+			'jetpack_ai_upgrade_button',
+			expect.anything()
+		);
 	} );
 } );

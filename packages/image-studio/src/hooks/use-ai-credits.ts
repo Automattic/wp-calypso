@@ -1,5 +1,6 @@
 import {
 	CREDITS_LOW_BALANCE,
+	CREDITS_UPGRADE_SOURCE,
 	formatCreditsShort,
 	getCreditsUpgradeUrl,
 	parseLiveCreditsStatus,
@@ -11,6 +12,8 @@ import {
 	getImageStudioBlogId,
 	getImageStudioSiteType,
 	trackImageStudioUpgradeNoticeShown,
+	trackImageStudioUpgradeNoticeClick,
+	type UpgradeNoticeCredits,
 	type UpgradeNoticeTrigger,
 } from '../utils/tracking';
 import type { ImageStudioMode } from '../types';
@@ -45,6 +48,21 @@ function getNoticeMessage( level: SiteCreditsLevel, remaining: number ): string 
 		_n( '%s credit left.', '%s credits left.', remaining, __i18n_text_domain__ ),
 		formatCreditsShort( remaining )
 	);
+}
+
+function getNoticeCredits(
+	status: PaidCreditsStatus,
+	level: SiteCreditsLevel,
+	upgradeUrl: string | undefined
+): UpgradeNoticeCredits {
+	return {
+		meter: 'site_credits',
+		state: level === 'out' ? 'zero' : 'low',
+		planTier: status.planTier ?? 'none',
+		creditsLeft: status.remaining,
+		ctaType: upgradeUrl ? 'upgrade' : 'none',
+		ref: upgradeUrl ? CREDITS_UPGRADE_SOURCE : 'none',
+	};
 }
 
 /** Only Simple and Atomic sites can be on AI credits, so self-hosted sites skip the check. */
@@ -111,7 +129,10 @@ export function useAiCredits( {
 	const [ isLowNoticeDismissed, setIsLowNoticeDismissed ] = useState( false );
 	const [ isMeterOpen, setIsMeterOpen ] = useState( false );
 	const turnBalanceCount = useRef( 0 );
-	const shownLevel = useRef< SiteCreditsLevel | null >( null );
+	const shown = useRef< { level: SiteCreditsLevel | null; trigger: UpgradeNoticeTrigger } >( {
+		level: null,
+		trigger: 'open',
+	} );
 
 	// The Agent's parser, so the notice, the send block and the dot always agree. An unreadable
 	// balance keeps whatever was known, so a fluke never clears or shows a notice.
@@ -128,11 +149,12 @@ export function useAiCredits( {
 		if ( level === 'out' && status && getSiteCreditsLevel( status.remaining ) !== 'out' ) {
 			setIsMeterOpen( true );
 		}
-		if ( level !== shownLevel.current ) {
+		if ( level !== shown.current.level ) {
 			if ( level ) {
-				trackImageStudioUpgradeNoticeShown( { mode, trigger } );
+				const credits = getNoticeCredits( next, level, getCreditsUpgradeUrl( next, blogId ) );
+				trackImageStudioUpgradeNoticeShown( { mode, trigger, ...credits } );
 			}
-			shownLevel.current = level;
+			shown.current = { level, trigger };
 		}
 		setStatus( next );
 		return true;
@@ -206,6 +228,12 @@ export function useAiCredits( {
 									href: upgradeUrl,
 									target: '_blank',
 									rel: 'noopener noreferrer',
+									onClick: () =>
+										trackImageStudioUpgradeNoticeClick( {
+											mode,
+											trigger: shown.current.trigger,
+											...getNoticeCredits( status, level, upgradeUrl ),
+										} ),
 								}
 							: undefined,
 					}

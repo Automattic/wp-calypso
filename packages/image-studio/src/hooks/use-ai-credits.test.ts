@@ -4,7 +4,10 @@
  */
 import { act, renderHook, waitFor } from '@testing-library/react';
 import { ImageStudioMode } from '../types';
-import { trackImageStudioUpgradeNoticeShown } from '../utils/tracking';
+import {
+	trackImageStudioUpgradeNoticeShown,
+	trackImageStudioUpgradeNoticeClick,
+} from '../utils/tracking';
 import { getSiteCreditsLevel, useAiCredits } from './use-ai-credits';
 import type { AuthProvider, TaskUpdate } from '@automattic/agenttic-client';
 
@@ -24,6 +27,7 @@ jest.mock( '../utils/tracking', () => ( {
 	getImageStudioBlogId: jest.requireActual( '../utils/tracking' ).getImageStudioBlogId,
 	getImageStudioSiteType: jest.requireActual( '../utils/tracking' ).getImageStudioSiteType,
 	trackImageStudioUpgradeNoticeShown: jest.fn(),
+	trackImageStudioUpgradeNoticeClick: jest.fn(),
 } ) );
 
 const BLOG_ID = 123;
@@ -49,13 +53,24 @@ const planSnapshot = ( remaining: number, overrides: Record< string, unknown > =
 	...overrides,
 } );
 
-const UPGRADE_URL = 'https://wordpress.com/plans/123';
+const UPGRADE_URL = 'https://wordpress.com/plans/123?source=wp_ai_credits';
 const upgradeAction = {
 	label: 'Upgrade',
 	href: UPGRADE_URL,
 	target: '_blank',
 	rel: 'noopener noreferrer',
+	onClick: expect.any( Function ),
 };
+
+/** The credit details sent with the notice events, so they join the Agent's credits events. */
+const noticeCredits = ( state: 'low' | 'zero', creditsLeft: number ) => ( {
+	meter: 'site_credits',
+	state,
+	planTier: 'premium',
+	creditsLeft,
+	ctaType: 'upgrade',
+	ref: 'wp_ai_credits',
+} );
 const meterAt = ( percent: number, isOpen = false ) => ( {
 	status: expect.objectContaining( { plan: 'paid', percent } ),
 	upgradeUrl: UPGRADE_URL,
@@ -155,6 +170,14 @@ describe( 'useAiCredits', () => {
 		expect( trackImageStudioUpgradeNoticeShown ).toHaveBeenCalledWith( {
 			mode: ImageStudioMode.Edit,
 			trigger: 'open',
+			...noticeCredits( 'zero', 0 ),
+		} );
+
+		result.current.notice?.action?.onClick?.();
+		expect( trackImageStudioUpgradeNoticeClick ).toHaveBeenCalledWith( {
+			mode: ImageStudioMode.Edit,
+			trigger: 'open',
+			...noticeCredits( 'zero', 0 ),
 		} );
 
 		let canSubmit = true;
@@ -178,6 +201,11 @@ describe( 'useAiCredits', () => {
 		expect( result.current.isLimitReached ).toBe( false );
 		expect( result.current.beforeSubmit() ).toBe( true );
 		expect( result.current.meter?.isOpen ).toBe( false );
+		expect( trackImageStudioUpgradeNoticeShown ).toHaveBeenCalledWith( {
+			mode: ImageStudioMode.Generate,
+			trigger: 'open',
+			...noticeCredits( 'low', 6_000 ),
+		} );
 	} );
 
 	it( 'uses the singular for the last credit', async () => {
@@ -213,6 +241,9 @@ describe( 'useAiCredits', () => {
 		await waitFor( () => expect( result.current.notice ).toBeDefined() );
 		expect( result.current.notice?.action ).toBeUndefined();
 		expect( result.current.meter?.upgradeUrl ).toBeUndefined();
+		expect( trackImageStudioUpgradeNoticeShown ).toHaveBeenCalledWith(
+			expect.objectContaining( { planTier: 'commerce', ctaType: 'none', ref: 'none' } )
+		);
 	} );
 
 	it.each( [
@@ -320,6 +351,7 @@ describe( 'useAiCredits', () => {
 		expect( trackImageStudioUpgradeNoticeShown ).toHaveBeenCalledWith( {
 			mode: ImageStudioMode.Generate,
 			trigger: 'refresh',
+			...noticeCredits( 'zero', 0 ),
 		} );
 	} );
 

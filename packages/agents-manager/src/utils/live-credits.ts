@@ -206,6 +206,9 @@ export function buildLiveCreditsStatus( snapshot: CreditSnapshot ): CreditsStatu
 	};
 }
 
+/** Tags upgrades from the credits prompts. Checkout copies it onto the purchase, and Tracks events send it as `ref`. */
+export const CREDITS_UPGRADE_SOURCE = 'wp_ai_credits';
+
 /**
  * The plans page for a plan with a higher plan to move to. Calypso's plans
  * route takes the site's domain or its ID.
@@ -217,7 +220,7 @@ export function getCreditsUpgradeUrl(
 	if ( ! [ 'personal', 'premium', 'business' ].includes( status.planTier ?? '' ) ) {
 		return undefined;
 	}
-	return `https://wordpress.com/plans/${ encodeURIComponent( site ) }`;
+	return `https://wordpress.com/plans/${ encodeURIComponent( site ) }?source=${ CREDITS_UPGRADE_SOURCE }`;
 }
 
 /** Bind the plans destination to the same site as the authenticated balance. */

@@ -7,8 +7,19 @@ import {
 } from '../utils/tracking';
 import type { NoticeAction, NoticeType } from '../store';
 import type { ImageStudioMode } from '../types';
+import type { UpgradeNoticeCredits } from '../utils/tracking';
 
 type AddNoticeFunc = ( content: string, type: NoticeType, actions?: NoticeAction[] ) => void;
+
+/** The old Jetpack AI quota only refuses at zero, with no balance or plan to report. */
+const JETPACK_AI_QUOTA_NOTICE: UpgradeNoticeCredits = {
+	meter: 'jetpack_ai',
+	state: 'zero',
+	planTier: 'none',
+	creditsLeft: 'none',
+	ctaType: 'upgrade',
+	ref: 'none',
+};
 
 /**
  * Hook that displays an error notice when an error occurs.
@@ -43,7 +54,11 @@ export function useErrorNotice(
 			// Show upgrade notices as persistent warning notices
 			if ( ! trackedImpressions.current.has( content ) ) {
 				trackedImpressions.current.add( content );
-				trackImageStudioUpgradeNoticeShown( { mode, trigger: 'error' } );
+				trackImageStudioUpgradeNoticeShown( {
+					mode,
+					trigger: 'error',
+					...JETPACK_AI_QUOTA_NOTICE,
+				} );
 			}
 			addNotice( content, 'warning', [
 				{
@@ -52,7 +67,12 @@ export function useErrorNotice(
 						: __( 'Upgrade plan', __i18n_text_domain__ ),
 					url,
 					openInNewTab: true,
-					onClick: () => trackImageStudioUpgradeNoticeClick( { mode, trigger: 'error' } ),
+					onClick: () =>
+						trackImageStudioUpgradeNoticeClick( {
+							mode,
+							trigger: 'error',
+							...JETPACK_AI_QUOTA_NOTICE,
+						} ),
 				},
 			] );
 		} else if ( url ) {
