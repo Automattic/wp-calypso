@@ -21,7 +21,7 @@ jest.mock( 'calypso/blocks/login/utils/get-blackbox-session-id', () => ( {
 } ) );
 
 jest.mock( '@automattic/calypso-config', () => {
-	const config = jest.fn( ( key: string ) => {
+	const config = ( key: string ) => {
 		if ( key === 'blackbox_signup_api_key' ) {
 			return 'signup-key';
 		}
@@ -29,14 +29,22 @@ jest.mock( '@automattic/calypso-config', () => {
 			return 'login-key';
 		}
 		return undefined;
-	} );
+	};
 	config.isEnabled = jest.fn( () => true );
 	return config;
 } );
 
 describe( 'useBlackboxProtection resetOnError', () => {
+	const reset = jest.fn();
+
 	beforeEach( () => {
-		window.Blackbox = { reset: jest.fn() };
+		reset.mockClear();
+		window.Blackbox = {
+			configure: jest.fn(),
+			collect: jest.fn(),
+			getSessionId: jest.fn(),
+			reset,
+		};
 		( getBlackboxSessionId as jest.Mock ).mockReset();
 		( getBlackboxSessionId as jest.Mock ).mockResolvedValue( undefined );
 	} );
@@ -66,7 +74,7 @@ describe( 'useBlackboxProtection resetOnError', () => {
 		rerender( { resetOnError: { code: 403 } } );
 		await act( async () => {} );
 
-		expect( window.Blackbox.reset ).toHaveBeenCalledTimes( 1 );
+		expect( reset ).toHaveBeenCalledTimes( 1 );
 	} );
 
 	it( 'keeps the session while protection is suspended', () => {
@@ -74,7 +82,7 @@ describe( 'useBlackboxProtection resetOnError', () => {
 
 		rerender( { resetOnError: { code: 403 }, suspended: true } );
 
-		expect( window.Blackbox.reset ).not.toHaveBeenCalled();
+		expect( reset ).not.toHaveBeenCalled();
 	} );
 
 	it( 'resets once while the same failure stays on the form', async () => {
@@ -85,7 +93,7 @@ describe( 'useBlackboxProtection resetOnError', () => {
 		rerender( { resetOnError: error } );
 		await act( async () => {} );
 
-		expect( window.Blackbox.reset ).toHaveBeenCalledTimes( 1 );
+		expect( reset ).toHaveBeenCalledTimes( 1 );
 	} );
 
 	it( 'resets again after a later redeem fails', async () => {
@@ -97,7 +105,7 @@ describe( 'useBlackboxProtection resetOnError', () => {
 		rerender( { resetOnError: { code: 429 } } );
 		await act( async () => {} );
 
-		expect( window.Blackbox.reset ).toHaveBeenCalledTimes( 2 );
+		expect( reset ).toHaveBeenCalledTimes( 2 );
 	} );
 
 	function ContinueButton( { resetOnError }: { resetOnError: { code: number } | null } ) {
