@@ -79,6 +79,7 @@ export type AppConfig = {
 		siteOverview: SiteOverviewSupports;
 		colorScheme: boolean;
 		darkMode: boolean;
+		switch?: boolean;
 	};
 	posthog?: {
 		apiKey: string;
@@ -132,6 +133,7 @@ export const APP_CONTEXT_DEFAULT_CONFIG: AppConfig = {
 		},
 		colorScheme: false,
 		darkMode: false,
+		switch: false,
 	},
 	optIn: false,
 	components: {
