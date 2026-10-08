@@ -10,8 +10,9 @@ import Modal from 'react-modal';
 import { Provider as ReduxProvider } from 'react-redux';
 import { createStore, applyMiddleware } from 'redux';
 import { thunk } from 'redux-thunk';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { storeData } from 'calypso/my-sites/checkout/src/components/test/lib/fixtures';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { recordTracksEvent as recordReduxTracksEvent } from 'calypso/state/analytics/actions';
 import { savePreference } from 'calypso/state/preferences/actions';
 import UpcomingRenewalsReminder from '../upcoming-renewals-reminder';
 import type { Purchase } from '@automattic/api-core';
@@ -19,6 +20,11 @@ import type { PartialCart } from 'calypso/my-sites/checkout/src/components/secon
 
 import 'calypso/my-sites/checkout/src/test/util';
 
+jest.mock( 'calypso/lib/analytics/tracks', () => ( {
+	recordTracksEvent: jest.fn(),
+} ) );
+
+// `TrackComponentView` still records through Redux.
 jest.mock( 'calypso/state/analytics/actions', () => ( {
 	recordTracksEvent: jest.fn( ( name, props ) => ( {
 		type: 'ANALYTICS_EVENT_RECORD',
@@ -270,7 +276,7 @@ describe( 'UpcomingRenewalsReminder', () => {
 		test( 'the quiet box renders with a renewable purchase present', async () => {
 			renderReminder( { purchases: [ nonUrgentPlanPurchase() ] } );
 			expect( await screen.findByText( 'Renew your products together' ) ).toBeVisible();
-			expect( recordTracksEvent ).toHaveBeenCalledWith(
+			expect( recordReduxTracksEvent ).toHaveBeenCalledWith(
 				'calypso_checkout_upcoming_renewals_impression',
 				undefined
 			);

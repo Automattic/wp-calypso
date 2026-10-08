@@ -1,11 +1,10 @@
 import { fetchStripeConfiguration } from '@automattic/api-core';
-import { plansQuery } from '@automattic/api-queries';
+import { productsQuery } from '@automattic/api-queries';
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { TERM_MONTHLY, isPlan, PlanSlug } from '@automattic/calypso-products';
+import { TERM_ANNUALLY, TERM_MONTHLY, isPlan } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { StripeHookProvider } from '@automattic/calypso-stripe';
 import { CompactCard, Gridicon } from '@automattic/components';
-import { Plans, ProductsList } from '@automattic/data-stores';
 import { withShoppingCart, createRequestCartProduct } from '@automattic/shopping-cart';
 import { useQuery } from '@tanstack/react-query';
 import { isURL } from '@wordpress/url';
@@ -14,7 +13,6 @@ import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
 import { Component } from 'react';
 import QueryProductsList from 'calypso/components/data/query-products-list';
-import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import QuerySites from 'calypso/components/data/query-sites';
 import Main from 'calypso/components/main';
 import { TITAN_MAIL_MONTHLY_SLUG, TITAN_MAIL_YEARLY_SLUG } from 'calypso/lib/titan/constants';
@@ -22,7 +20,6 @@ import getThankYouPageUrl from 'calypso/my-sites/checkout/get-thank-you-page-url
 import ProfessionalEmailUpsell from 'calypso/my-sites/checkout/upsell-nudge/professional-email-upsell';
 import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
 import { IntervalLength } from 'calypso/my-sites/email/email-providers-comparison/interval-length';
-import useCheckPlanAvailabilityForPurchase from 'calypso/my-sites/plans-features-main/hooks/use-check-plan-availability-for-purchase';
 import {
 	retrieveSignupDestination,
 	clearSignupDestinationCookie,
@@ -31,8 +28,6 @@ import {
 import { useSelector } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { getProductsList, isProductsListFetching } from 'calypso/state/products-list/selectors';
-import canUpgradeToPlan from 'calypso/state/selectors/can-upgrade-to-plan';
-import { isRequestingSitePlans, getPlansBySiteId } from 'calypso/state/sites/plans/selectors';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import PurchaseModal from '../purchase-modal';
@@ -40,6 +35,7 @@ import {
 	type WithIsEligibleForOneClickCheckoutProps,
 	withIsEligibleForOneClickCheckout,
 } from '../purchase-modal/with-is-eligible-for-one-click-checkout';
+import { getActivePlanSlug, useCheckoutSite } from '../src/hooks/use-checkout-site';
 import { QuickstartSessionsRetirement } from './quickstart-sessions-retirement';
 import type { WithShoppingCartProps, MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import './style.scss';
@@ -66,7 +62,6 @@ export interface UpsellNudgeManualProps {
 export interface UpsellNudgeAutomaticProps extends WithShoppingCartProps {
 	isLoading?: boolean;
 	hasProductsList?: boolean;
-	hasSitePlans?: boolean;
 	product: MinimalRequestCartProduct | undefined;
 	isLoggedIn?: boolean;
 	siteSlug?: string | null;
@@ -100,7 +95,7 @@ export class UpsellNudge extends Component< UpsellNudgeProps, UpsellNudgeState >
 	}
 
 	render() {
-		const { selectedSiteId, hasProductsList, hasSitePlans, upsellType, upgradeItem } = this.props;
+		const { selectedSiteId, hasProductsList, upsellType, upgradeItem } = this.props;
 
 		// There is no `siteId` if we're purchasing a domain-only site, so we pass the site slug to the query component instead.
 		const siteId =
@@ -117,9 +112,6 @@ export class UpsellNudge extends Component< UpsellNudgeProps, UpsellNudgeState >
 			<Main className={ clsx( upsellType ) }>
 				<QuerySites siteId={ siteId } />
 				{ ! hasProductsList && <QueryProductsList /> }
-				{ ! hasSitePlans && typeof siteId === 'number' && ! isNaN( siteId ) && (
-					<QuerySitePlans siteId={ siteId } />
-				) }
 				{ this.renderContent() }
 				{ this.state.showPurchaseModal && this.renderPurchaseModal() }
 				{ this.preloadIconsForPurchaseModal() }
@@ -418,68 +410,35 @@ const WrappedUpsellNudge = (
 	const { siteSlugParam, upgradeItem, upsellType } = props;
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const selectedSiteId = useSelector( getSelectedSiteId );
-	const products = ProductsList.useProducts();
-	const currentPlanTerm = Plans.useCurrentPlanTerm( { siteId: selectedSiteId } );
-	const upsellProductSlug = getProductSlug(
-		upsellType,
-		upgradeItem ?? '',
-		currentPlanTerm ?? TERM_MONTHLY
-	);
+	const { data: products, isLoading: isLoadingProducts } = useQuery( productsQuery() );
+	const { data: site, isLoading: isLoadingSite } = useCheckoutSite( selectedSiteId );
+	// Free and expired plans fall back to monthly, as they have no billing term.
+	const currentPlanTerm =
+		getActivePlanSlug( site ) && ! site?.plan?.is_free && site?.plan?.billing_period !== 'Monthly'
+			? TERM_ANNUALLY
+			: TERM_MONTHLY;
 	const upsellProduct =
-		upsellProductSlug && products.data?.[ upsellProductSlug as ProductsList.StoreProductSlug ];
+		products?.[ getProductSlug( upsellType, upgradeItem ?? '', currentPlanTerm ) ];
 	const cartProduct =
-		upsellProduct?.productSlug && upsellProduct?.id
+		upsellProduct?.product_slug && upsellProduct?.product_id
 			? createRequestCartProduct( {
-					product_slug: upsellProduct.productSlug,
-					product_id: upsellProduct.id,
+					product_slug: upsellProduct.product_slug,
+					product_id: upsellProduct.product_id,
 				} )
 			: undefined;
-	// `upgradeItem` may reference a plan by its `path_slug` (e.g. `business`), so
-	// resolve it to the product slug (from the server plans list) before checking
-	// upgrade eligibility. Falls back to the value as-is when it isn't a path slug.
-	const { data: plans } = useQuery( plansQuery() );
-	const upgradeItemSlug = upgradeItem ?? '';
-	const upgradePlanSlug =
-		plans?.find( ( plan ) => plan.path_slug === upgradeItemSlug )?.product_slug ?? upgradeItemSlug;
-	const planSlug = useSelector( ( state ) =>
-		canUpgradeToPlan( state, selectedSiteId ?? 0, upgradePlanSlug ) ? upgradePlanSlug : undefined
-	);
 	const siteSlug =
 		useSelector( ( state ) => getSiteSlug( state, selectedSiteId ) ) ?? siteSlugParam;
 
-	/**
-	 * Redux site-plans replaceable by data-store `Plans.useSitePlans`
-	 *  - Needs confirmation whether consumed later
-	 */
-	const sitePlans = useSelector(
-		( state ) => getPlansBySiteId( state, selectedSiteId ?? undefined ).data // (the beauty of inconsistency / .data)
-	);
-	const isLoadingSitePlans = useSelector( ( state ) =>
-		isRequestingSitePlans( state, selectedSiteId )
-	);
-
-	/**
-	 * Redux products-list replaceable by data-store `Products.useProducts`
-	 *  - Needs confirmation whether consumed later
-	 */
-	const productsList = useSelector( getProductsList ); // (the beauty of inconsistency / no .data)
+	// `ProfessionalEmailPrice` reads the Redux products list.
+	const productsList = useSelector( getProductsList );
 	const isLoadingProductsList = useSelector( isProductsListFetching );
-
-	const pricing = Plans.usePricingMetaForGridPlans( {
-		planSlugs: [ planSlug as PlanSlug ],
-		siteId: selectedSiteId,
-		useCheckPlanAvailabilityForPurchase,
-		coupon: undefined,
-		withProratedDiscounts: true,
-	} );
 
 	return (
 		<UpsellNudge
 			{ ...props }
-			isLoading={ ! pricing || products.isLoading || isLoadingProductsList || isLoadingSitePlans }
-			hasSitePlans={ sitePlans ? sitePlans.length > 0 : undefined }
+			isLoading={ isLoadingProducts || isLoadingSite || isLoadingProductsList }
 			hasProductsList={ Object.keys( productsList ).length > 0 }
-			currentPlanTerm={ currentPlanTerm ?? TERM_MONTHLY }
+			currentPlanTerm={ currentPlanTerm }
 			product={ cartProduct }
 			isLoggedIn={ isLoggedIn }
 			siteSlug={ siteSlug }

@@ -120,7 +120,7 @@ export default function UserBlock( { note, block }: { note: Note; block: Block }
 					overflow: 'hidden',
 				} }
 			>
-				<NoteIcon icon={ media?.url } alt={ block.text } size={ 32 } />
+				<NoteIcon icon={ media?.url } alt={ block.text } size={ 36 } />
 			</a>
 			{ isListRow ? (
 				<>

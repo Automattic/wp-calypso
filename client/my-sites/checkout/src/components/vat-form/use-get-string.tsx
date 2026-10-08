@@ -1,8 +1,7 @@
 import { CALYPSO_CONTACT } from '@automattic/urls';
 import { TranslateResult, useTranslate } from 'i18n-calypso';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useTaxName } from 'calypso/my-sites/checkout/src/hooks/use-country-list';
-import { useDispatch } from 'calypso/state';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 const TAX_NAMES = [ 'CT', 'GST', 'SST', 'VAT' ] as const;
 type TaxName = ( typeof TAX_NAMES )[ number ];
@@ -18,7 +17,6 @@ type VatStringsValue = {
 
 export function useGetVatFormString( countryCode: string | undefined ) {
 	const translate = useTranslate();
-	const reduxDispatch = useDispatch();
 	const untypedTaxName = useTaxName( countryCode ?? 'GB', 'en' );
 	const taxName: TaxName | undefined = TAX_NAMES.find( ( taxName ) => taxName === untypedTaxName );
 
@@ -28,7 +26,7 @@ export function useGetVatFormString( countryCode: string | undefined ) {
 			href={ CALYPSO_CONTACT }
 			rel="noreferrer"
 			onClick={ () => {
-				reduxDispatch( recordTracksEvent( 'calypso_vat_details_support_click' ) );
+				recordTracksEvent( 'calypso_vat_details_support_click' );
 			} }
 		/>
 	);
