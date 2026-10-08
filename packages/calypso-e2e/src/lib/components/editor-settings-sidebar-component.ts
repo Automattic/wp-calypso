@@ -1,4 +1,4 @@
-import { Page } from 'playwright';
+import { Locator, Page } from 'playwright';
 import envVariables from '../../env-variables';
 import { EditorComponent } from './editor-component';
 import type { ArticlePublishSchedule, EditorSidebarTab, ArticlePrivacyOptions } from './types';
@@ -451,6 +451,81 @@ export class EditorSettingsSidebarComponent {
 			.locator( '..' )
 			.getByRole( 'button', { name: 'Remove', exact: true } );
 		await legacyRemoveButton.or( chipRemoveButton ).first().waitFor();
+
+		// The chip is not proof the tag is on the post: "Create: <term>" shows it
+		// right away and only assigns the term once its REST request resolves, so
+		// publishing in between saves the post without it.
+		await this.waitForTagAssigned( editorParent, name );
+	}
+
+	/**
+	 * Waits until the post's edited tags include a tag with the given name.
+	 *
+	 * Runs inside the Editor frame, so it works for both the iframed (Simple)
+	 * and non-iframed (Atomic) editors.
+	 *
+	 * @param {Locator} editorParent The Editor's parent element.
+	 * @param {string} name Tag name.
+	 * @param {number} timeout Maximum time to wait, in milliseconds.
+	 */
+	private async waitForTagAssigned(
+		editorParent: Locator,
+		name: string,
+		timeout = 15 * 1000
+	): Promise< void > {
+		const assigned = await editorParent.evaluate(
+			( element, { tagName, timeoutMs }: { tagName: string; timeoutMs: number } ) =>
+				new Promise< boolean >( ( resolve ) => {
+					type Select = ( store: string ) => {
+						getEditedPostAttribute?: ( attribute: string ) => number[] | undefined;
+						getEntityRecord?: (
+							kind: string,
+							name: string,
+							id: number
+						) => { name?: string } | undefined;
+					};
+					const editorWindow = element.ownerDocument?.defaultView as
+						| ( Window & { wp?: { data?: { select?: Select } } } )
+						| null;
+					const select = editorWindow?.wp?.data?.select;
+
+					// Without the store there is nothing to check against.
+					if ( ! select ) {
+						resolve( true );
+						return;
+					}
+
+					const decode = ( html: string ) => {
+						const textarea = element.ownerDocument.createElement( 'textarea' );
+						textarea.innerHTML = html;
+						return textarea.value;
+					};
+
+					const isAssigned = () =>
+						( select( 'core/editor' ).getEditedPostAttribute?.( 'tags' ) ?? [] ).some(
+							( id ) =>
+								decode(
+									select( 'core' ).getEntityRecord?.( 'taxonomy', 'post_tag', id )?.name ?? ''
+								) === tagName
+						);
+
+					const deadline = Date.now() + timeoutMs;
+					const poll = setInterval( () => {
+						if ( isAssigned() ) {
+							clearInterval( poll );
+							resolve( true );
+						} else if ( Date.now() > deadline ) {
+							clearInterval( poll );
+							resolve( false );
+						}
+					}, 200 );
+				} ),
+			{ tagName: name, timeoutMs: timeout }
+		);
+
+		if ( ! assigned ) {
+			throw new Error( `Tag "${ name }" was not assigned to the post within ${ timeout }ms.` );
+		}
 	}
 
 	/**
