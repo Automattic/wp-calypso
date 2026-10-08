@@ -10,6 +10,7 @@ import { editorNavigateAbility } from '../../abilities/editor-navigate';
 import { getBlockTreeAbility } from '../../abilities/get-block-tree';
 import { openHelpCenterAbility } from '../../abilities/open-help-center';
 import { restoreCheckpointAbility } from '../../abilities/restore-checkpoint';
+import { saveChangesAbility } from '../../abilities/save-changes';
 import { setSiteLogoAbility } from '../../abilities/set-site-logo';
 import { showComponentAbility } from '../../abilities/show-component';
 import { showTemplateAbility } from '../../abilities/show-template';
@@ -283,6 +284,7 @@ describe( 'loadExternalProviders', () => {
 				editorNavigateAbility,
 				openHelpCenterAbility,
 				restoreCheckpointAbility,
+				saveChangesAbility,
 				setSiteLogoAbility,
 				showComponentAbility,
 				streamPageDesignAbility,
@@ -326,6 +328,7 @@ describe( 'loadExternalProviders', () => {
 				editorNavigateAbility,
 				openHelpCenterAbility,
 				restoreCheckpointAbility,
+				saveChangesAbility,
 				setSiteLogoAbility,
 				showComponentAbility,
 				streamPageDesignAbility,
@@ -388,6 +391,7 @@ describe( 'loadExternalProviders', () => {
 				editorNavigateAbility,
 				openHelpCenterAbility,
 				restoreCheckpointAbility,
+				saveChangesAbility,
 				setSiteLogoAbility,
 				showComponentAbility,
 				streamPageDesignAbility,
@@ -941,6 +945,7 @@ describe( 'loadExternalProviders', () => {
 				editorNavigateAbility,
 				openHelpCenterAbility,
 				restoreCheckpointAbility,
+				saveChangesAbility,
 				setSiteLogoAbility,
 				showComponentAbility,
 				streamPageDesignAbility,
