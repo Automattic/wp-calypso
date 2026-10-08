@@ -155,15 +155,15 @@ export const NoteBody = ( { note }: { note: Note } ) => {
 			}
 		} );
 
-	// The people a list note opens with are stacked as one list, and text closing the
-	// note is a footnote to it, such as a link to every like.
-	const firstOther = body.findIndex( ( { type } ) => type !== User );
-	const people = isPeopleListNote( note )
-		? body.slice( 0, firstOther < 0 ? undefined : firstOther )
-		: [];
-	const others = body.slice( people.length );
-	const footnote =
-		people.length > 0 && others.length === 1 && others[ 0 ].type === 'div' ? others.pop() : null;
+	// A people list opens with its people. They are stacked together, and a single
+	// block of text after them is a footnote to the list, such as a link to every like.
+	let peopleCount = 0;
+	while ( isPeopleListNote( note ) && body[ peopleCount ]?.type === User ) {
+		peopleCount++;
+	}
+	const people = body.slice( 0, peopleCount );
+	const rest = body.slice( peopleCount );
+	const hasFootnote = peopleCount > 0 && rest.length === 1 && rest[ 0 ].type === 'div';
 
 	useEffect( () => {
 		bumpStat( 'notes-click-type', note.type );
@@ -178,18 +178,18 @@ export const NoteBody = ( { note }: { note: Note } ) => {
 				</div>
 			) }
 			<div className="wpnc__body-content">
-				{ people.length > 0 && (
+				{ peopleCount > 0 && (
 					<VStack spacing={ 3 }>
 						<VStack spacing={ 2 }>{ people }</VStack>
-						{ footnote && <CardDivider /> }
-						{ footnote && (
+						{ hasFootnote && <CardDivider /> }
+						{ hasFootnote && (
 							<Text as="div" className="wpnc__people-footnote" variant="muted">
-								{ footnote }
+								{ rest }
 							</Text>
 						) }
 					</VStack>
 				) }
-				{ others }
+				{ ! hasFootnote && rest }
 			</div>
 			<ReplyBlock note={ note } />
 		</VStack>
