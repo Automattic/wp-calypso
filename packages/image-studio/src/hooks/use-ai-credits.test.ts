@@ -429,6 +429,19 @@ describe( 'useAiCredits', () => {
 		expect( result.current.meter?.isOpen ).toBe( false );
 	} );
 
+	it( 'opens the dot’s details when a known balance runs out in the same render', async () => {
+		fetchMock.mockReturnValue( new Promise( () => {} ) );
+		const { result } = renderCredits();
+		await waitFor( () => expect( fetchMock ).toHaveBeenCalled() );
+
+		act( () => {
+			result.current.onTaskUpdate( finalUpdate( planSnapshot( 30_000 ) ) );
+			result.current.onTaskUpdate( finalUpdate( planSnapshot( 0 ) ) );
+		} );
+
+		expect( result.current.meter?.isOpen ).toBe( true );
+	} );
+
 	it( 'opens the dot’s details only once when the credits run out', async () => {
 		respondWith( { ai_credits: planSnapshot( 30_000 ) } );
 		const { result } = renderCredits();

@@ -151,7 +151,7 @@ export function getLiveCreditSiteId(
 		: undefined;
 }
 
-/** The ring's status for a valid allowance snapshot, so other chats can show the same balance. */
+/** The dot's status for a valid allowance snapshot, so other chats can show the same balance. */
 export function parseLiveCreditsStatus(
 	value: unknown,
 	siteId: number

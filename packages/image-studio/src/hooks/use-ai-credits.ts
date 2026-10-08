@@ -129,8 +129,13 @@ export function useAiCredits( {
 	const [ isLowNoticeDismissed, setIsLowNoticeDismissed ] = useState( false );
 	const [ isMeterOpen, setIsMeterOpen ] = useState( false );
 	const turnBalanceCount = useRef( 0 );
-	const shown = useRef< { level: SiteCreditsLevel | null; trigger: UpgradeNoticeTrigger } >( {
-		level: null,
+	// `undefined` until a balance is known. Updated as each balance arrives, so two in one render
+	// still compare with each other.
+	const shown = useRef< {
+		level: SiteCreditsLevel | null | undefined;
+		trigger: UpgradeNoticeTrigger;
+	} >( {
+		level: undefined,
 		trigger: 'open',
 	} );
 
@@ -146,7 +151,7 @@ export function useAiCredits( {
 		}
 		const level = getSiteCreditsLevel( next.remaining );
 		// A known balance running out opens the dot's details once. The first read stays quiet.
-		if ( level === 'out' && status && getSiteCreditsLevel( status.remaining ) !== 'out' ) {
+		if ( level === 'out' && shown.current.level !== undefined && shown.current.level !== 'out' ) {
 			setIsMeterOpen( true );
 		}
 		if ( level !== shown.current.level ) {

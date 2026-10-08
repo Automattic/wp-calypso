@@ -597,7 +597,8 @@ function getUpgradeNoticeProperties( event: UpgradeNoticeEvent ) {
 }
 
 /**
- * Tracks when the limit-reached upgrade notice is shown
+ * Tracks when an upgrade notice is shown: low or out of site credits, or out
+ * of the Jetpack AI quota. `state` and `meter` tell them apart.
  * @param event - The notice's mode, trigger and credit details
  */
 export function trackImageStudioUpgradeNoticeShown( event: UpgradeNoticeEvent ): void {

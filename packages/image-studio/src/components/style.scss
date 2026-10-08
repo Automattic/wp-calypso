@@ -108,7 +108,9 @@ body.js.is-image-studio-open {
 		color: #fff;
 	}
 
-	a {
+	// agenttic-ui colours its own links, such as the credits notice's Upgrade link.
+	// `:where()` keeps this rule's specificity unchanged.
+	a:where(:not(.agenttic *)) {
 		color: $color-link;
 	}
 
@@ -372,11 +374,6 @@ body.js.is-image-studio-open {
 		// agenttic-ui pulls the notice out by its default 8px footer padding. Match ours so it sits flush on the input.
 		[data-slot="notice"] {
 			margin: (-$chat-footer-padding) (-$chat-footer-padding) 0;
-		}
-
-		// The modal colours its links light blue. Keep the action in the foreground colour, as in the Agents Manager.
-		.Notice-module_action {
-			color: var(--color-foreground);
 		}
 	}
 
