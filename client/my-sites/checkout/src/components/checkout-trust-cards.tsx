@@ -1,4 +1,5 @@
 import { isPlan } from '@automattic/calypso-products';
+import { usePaymentMethod } from '@automattic/composite-checkout';
 import styled from '@emotion/styled';
 import { Icon } from '@wordpress/components';
 import { lock, reusableBlock } from '@wordpress/icons';
@@ -85,6 +86,7 @@ const TrustCardNote = styled.div`
 
 export default function CheckoutTrustCards( { cart }: { cart: ResponseCart } ) {
 	const translate = useTranslate();
+	const paymentMethod = usePaymentMethod();
 	const refundSummary = getRefundWindowSummary( cart );
 	const refundPlanProduct = refundSummary?.usePlanProductName
 		? cart.products.find( isPlan )
@@ -115,11 +117,13 @@ export default function CheckoutTrustCards( { cart }: { cart: ResponseCart } ) {
 				</TrustCard>
 			) }
 
-			<TrustCard>
-				<Icon icon={ lock } size={ 20 } />
-				<TrustCardHeader>{ translate( 'SSL secure payment' ) }</TrustCardHeader>
-				<TrustCardBody>{ translate( 'Encrypted with 256-bit SSL.' ) }</TrustCardBody>
-			</TrustCard>
+			{ paymentMethod?.id !== 'free-purchase' && (
+				<TrustCard>
+					<Icon icon={ lock } size={ 20 } />
+					<TrustCardHeader>{ translate( 'SSL secure payment' ) }</TrustCardHeader>
+					<TrustCardBody>{ translate( 'Encrypted with 256-bit SSL.' ) }</TrustCardBody>
+				</TrustCard>
+			) }
 
 			<CheckoutProcessorNotice />
 		</TrustCardsRow>
