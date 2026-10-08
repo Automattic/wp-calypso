@@ -50,158 +50,74 @@ function FormattedExpiryDate( { locale, purchase }: { locale: string; purchase: 
 	);
 }
 
-interface UrgentExpiryProps {
-	purchase: Purchase;
-	copy: ExpiryStatusCopy;
+/** What `getPurchaseExpiryStatusText()` says about a purchase. */
+export interface PurchaseExpiryStatusText {
+	/** The status, with no links in it. */
+	text: React.ReactNode;
 
 	/**
-	 * Whether `copy` describes a lapsed subscription rather than one still
-	 * heading for expiry. Taken from the caller because that is decided by the
-	 * subscription's status, which can disagree with its date in both
-	 * directions — and the tooltip has to read the same way the status does.
+	 * Set on the urgent statuses, which offer renewal where the viewer can: the
+	 * wording and color for the renew link, and whether the purchase has lapsed.
 	 */
-	hasExpired: boolean;
-
-	/**
-	 * Wording for locales that have no translation for `copy` yet. A `ReactNode`
-	 * because that older sentence interpolates the date into an element. Both
-	 * this and `copy.text`'s nullability go away once the copy is translated.
-	 */
-	untranslatedFallbackText?: React.ReactNode;
+	renewal?: {
+		label: React.ReactNode;
+		intent: ExpiryStatusCopy[ 'intent' ];
+		hasExpired: boolean;
+	};
 }
 
-// The wording drops the expiry date to keep the column short, so it moves to
-// a tooltip rather than disappearing.
-function useExpiryDateTitle( purchase: Purchase ) {
-	const locale = useLocale();
+// The urgent wording drops the expiry date to keep the column short, so it
+// moves to a tooltip rather than disappearing.
+function formatExpiryDateTitle( purchase: Purchase, locale: string ) {
 	return formatDate( new Date( purchase.expiry_date ), locale, { dateStyle: 'long' } );
 }
 
 /**
- * The expiry status of a subscription that is close to expiring or has already
- * expired, colored to draw attention.
+ * A subscription close to expiring or already expired, colored to draw attention.
  *
- * Expiry further off than the warning window is not urgent, and is rendered as
- * plain text by the caller rather than through here.
+ * `hasExpired` comes from the caller because the subscription's status decides it,
+ * and can disagree with its date. `untranslatedFallbackText` is for locales with
+ * no translation for `copy` yet; it goes once the copy is translated.
  */
-function UrgentExpiryText( { purchase, copy, untranslatedFallbackText }: UrgentExpiryProps ) {
-	return (
-		<Text intent={ copy.intent } title={ useExpiryDateTitle( purchase ) }>
-			{ copy.text ?? untranslatedFallbackText }
-		</Text>
+function getUrgentStatusText(
+	purchase: Purchase,
+	locale: string,
+	copy: ExpiryStatusCopy,
+	hasExpired: boolean,
+	untranslatedFallbackText?: React.ReactNode
+): PurchaseExpiryStatusText {
+	const label = copy.text ?? untranslatedFallbackText;
+	return {
+		text: (
+			<Text intent={ copy.intent } title={ formatExpiryDateTitle( purchase, locale ) }>
+				{ label }
+			</Text>
+		),
+		renewal: { label, intent: copy.intent, hasExpired },
+	};
+}
+
+function getInAppPurchaseText( managePurchase: React.JSX.Element ) {
+	return createInterpolateElement(
+		__(
+			'This product is an in-app purchase. You can manage it from within <managePurchase>the app store</managePurchase>.'
+		),
+		{ managePurchase }
 	);
 }
 
-/**
- * UrgentExpiryText, linked to renewal checkout where renewing is something the
- * viewer can act on right now.
- */
-function UrgentExpiryStatus( props: UrgentExpiryProps ) {
-	const { purchase, copy, hasExpired, untranslatedFallbackText } = props;
-	const { user } = useAuth();
-	const { recordTracksEvent } = useAnalytics();
-	const expiryDateTitle = useExpiryDateTitle( purchase );
-	const daysUntilExpiry = getCalendarDaysUntil( new Date( purchase.expiry_date ) );
-
-	// The purchase page gates its "Renew now" action on these same two
-	// conditions. Calypso's equivalent surfaces apply a longer list; the two
-	// clients are knowingly out of step here.
-	const canRenew = purchase.can_explicit_renew && String( user.ID ) === String( purchase.user_id );
-
-	// How close to expiry a subscription has to be before renewal is worth
-	// offering. A monthly subscription is never far from expiring, so the annual
-	// window would ask for a renewal within days of the purchase; it gets the
-	// last week instead. Anything already past its expiry date is inside either.
-	const renewalWindowDays =
-		purchase.bill_period_days === SubscriptionBillPeriod.PLAN_MONTHLY_PERIOD
-			? EXPIRY_ERROR_DAYS
-			: EXPIRY_WARNING_DAYS;
-	const isRenewalWorthOffering = canRenew && daysUntilExpiry <= renewalWindowDays;
-
-	if ( ! isRenewalWorthOffering ) {
-		return <UrgentExpiryText { ...props } />;
-	}
-
-	const renewalTitle = hasExpired
-		? getExpiredRenewalTitle( expiryDateTitle )
-		: getExpiringSoonRenewalTitle( expiryDateTitle );
-
-	return (
-		<Text intent={ copy.intent }>
-			<a
-				className="purchase-expiry-status__renew-link"
-				// On the link rather than the wrapper, so that it describes the link
-				// to a screen reader as well as showing on hover.
-				title={ renewalTitle ?? expiryDateTitle }
-				href={ getRenewalUrlFromPurchase( purchase ) }
-				onClick={ () =>
-					recordTracksEvent( 'calypso_purchases_renew_now_click', {
-						product_slug: purchase.product_slug,
-						position: 'purchase-list',
-					} )
-				}
-			>
-				{ copy.text ?? untranslatedFallbackText }
-				<Icon icon={ arrowUpRight } size={ 18 } />
-			</a>
-		</Text>
-	);
-}
-
-/** How the two links the status can carry are rendered. */
-interface ExpiryStatusRenderers {
-	urgent: ( props: UrgentExpiryProps ) => React.ReactNode;
-	inAppPurchaseLink: ( href: string ) => React.JSX.Element;
-}
-
-const LINKED_RENDERERS: ExpiryStatusRenderers = {
-	urgent: ( props ) => <UrgentExpiryStatus { ...props } />,
-	inAppPurchaseLink: ( href ) => <a href={ href } />,
-};
-
-const TEXT_RENDERERS: ExpiryStatusRenderers = {
-	urgent: ( props ) => <UrgentExpiryText { ...props } />,
-	inAppPurchaseLink: () => <span />,
-};
-
-/**
- * A purchase's expiry status, with a link to renew or manage it where the viewer can.
- */
-export function PurchaseExpiryStatus( {
-	purchase,
-	isSiteMissing,
-}: {
-	purchase: Purchase;
-	isSiteMissing?: boolean;
-} ) {
-	return (
-		<ExpiryStatus
-			purchase={ purchase }
-			isSiteMissing={ isSiteMissing }
-			renderers={ LINKED_RENDERERS }
-		/>
-	);
+function isManagedByPartner( purchase: Purchase ) {
+	return Boolean( purchase.partner_name ) && ! isA4ABillingDragonPurchase( purchase );
 }
 
 /**
- * The same status as plain text, for a caller that links to the purchase as a whole.
+ * What a purchase's expiry status says, with no links, for a caller that is
+ * itself a link. `PurchaseExpiryStatus` adds the links the purchases list offers.
  */
-export function PurchaseExpiryText( { purchase }: { purchase: Purchase } ) {
-	return <ExpiryStatus purchase={ purchase } renderers={ TEXT_RENDERERS } />;
-}
-
-function ExpiryStatus( {
-	purchase,
-	isSiteMissing,
-	renderers,
-}: {
-	purchase: Purchase;
-	isSiteMissing?: boolean;
-	renderers: ExpiryStatusRenderers;
-} ) {
-	const locale = useLocale();
-	const { setShowHelpCenter } = useHelpCenter();
-
+export function getPurchaseExpiryStatusText(
+	purchase: Purchase,
+	locale: string
+): PurchaseExpiryStatusText {
 	// @todo: There isn't currently a way to get the taxName based on the
 	// country. The country is not included in the purchase information
 	// envelope. We should add this information so we can utilize useTaxName
@@ -218,149 +134,98 @@ function ExpiryStatus( {
 		taxName,
 	] );
 
-	if ( purchase.partner_name && ! isA4ABillingDragonPurchase( purchase ) ) {
-		// translators: partnerName is the name of the partner service who manages this product
-		return sprintf( __( 'Managed by %(partnerName)s' ), {
-			partnerName: purchase.partner_name,
-		} );
-	}
-
-	if (
-		isSiteMissing &&
-		purchase.is_attached_to_holding_site &&
-		purchase.product_type === 'jetpack'
-	) {
-		return (
-			<>
-				<span>{ __( 'Activate your product license key' ) }</span>
-				<br />
-				<ExternalLink href="https://jetpack.com/support/activate-a-jetpack-product-via-license-key/">
-					{ __( 'Learn more' ) }
-				</ExternalLink>
-			</>
-		);
-	}
-
-	const isA4ABDPurchase = isA4ABillingDragonPurchase( purchase );
-	const temporarySitePurchaseProductTypes = [ 'saas_plugin', 'jetpack', 'akismet', 'studio_code' ];
-	const isKnownTemporarySiteProductType =
-		purchase.is_attached_to_holding_site &&
-		temporarySitePurchaseProductTypes.includes( purchase.product_type );
-	const isJetpack = purchase.is_jetpack_plan_or_product;
-
-	if ( isSiteMissing && ! isA4ABDPurchase && ! isKnownTemporarySiteProductType && isJetpack ) {
-		return <span>{ __( 'Disconnected from WordPress.com' ) }</span>;
-	}
-
-	if (
-		isSiteMissing &&
-		! isA4ABDPurchase &&
-		! isKnownTemporarySiteProductType &&
-		! purchase.is_domain
-	) {
-		return (
-			<span>
-				{ createInterpolateElement(
-					__( 'You no longer have access to this site and its purchases. <contactSupportLink/>' ),
-					{
-						contactSupportLink: (
-							<Button
-								variant="link"
-								onClick={ () => {
-									setShowHelpCenter( true );
-								} }
-							>
-								{ __( 'Contact support' ) }
-							</Button>
-						),
-					}
-				) }
-			</span>
-		);
+	if ( purchase.partner_name && isManagedByPartner( purchase ) ) {
+		return {
+			// translators: partnerName is the name of the partner service who manages this product
+			text: sprintf( __( 'Managed by %(partnerName)s' ), {
+				partnerName: purchase.partner_name,
+			} ),
+		};
 	}
 
 	if ( purchase.is_iap_purchase && purchase.iap_purchase_management_link ) {
-		return createInterpolateElement(
-			__(
-				'This product is an in-app purchase. You can manage it from within <managePurchase>the app store</managePurchase>.'
-			),
-			{
-				managePurchase: renderers.inAppPurchaseLink( purchase.iap_purchase_management_link ),
-			}
-		);
+		return { text: getInAppPurchaseText( <span /> ) };
 	}
 
 	const isCentennial = isCentennialPurchase( purchase );
 
 	if ( isCentennial ) {
 		if ( isIncludedWithPlan( purchase ) ) {
-			return __( 'Included with plan' );
+			return { text: __( 'Included with plan' ) };
 		}
-		return createInterpolateElement(
-			// translators: date is a formatted expiry date
-			__( 'Paid until <date />' ),
-			{
-				date: <FormattedExpiryDate locale={ locale } purchase={ purchase } />,
-			}
-		);
+		return {
+			text: createInterpolateElement(
+				// translators: date is a formatted expiry date
+				__( 'Paid until <date />' ),
+				{
+					date: <FormattedExpiryDate locale={ locale } purchase={ purchase } />,
+				}
+			),
+		};
 	}
 
 	const isFreeTrial = isFreeTrialEndingOnExpiryDate( purchase );
 	if ( isFreeTrial && isRenewingBeforeExpiration( purchase ) ) {
-		return createInterpolateElement(
-			sprintf(
-				// translators: %(date)s: a formatted date, %(amount)s: a currency amount, excludeTaxStringAbbreviation: something like "excludes VAT"
-				__(
-					'Free trial ends on %(date)s, renews automatically at %(amount)s <excludeTaxStringAbbreviation />'
+		return {
+			text: createInterpolateElement(
+				sprintf(
+					// translators: %(date)s: a formatted date, %(amount)s: a currency amount, excludeTaxStringAbbreviation: something like "excludes VAT"
+					__(
+						'Free trial ends on %(date)s, renews automatically at %(amount)s <excludeTaxStringAbbreviation />'
+					),
+					{
+						date: formatDate( new Date( purchase.expiry_date ), locale, { dateStyle: 'long' } ),
+						amount: formatCurrency( purchase.price_integer, purchase.currency_code, {
+							isSmallestUnit: true,
+							stripZeros: true,
+						} ),
+					}
 				),
 				{
-					date: formatDate( new Date( purchase.expiry_date ), locale, { dateStyle: 'long' } ),
-					amount: formatCurrency( purchase.price_integer, purchase.currency_code, {
-						isSmallestUnit: true,
-						stripZeros: true,
-					} ),
+					excludeTaxStringAbbreviation: (
+						<abbr title={ excludeTaxStringTitle }>{ excludeTaxStringAbbreviation }</abbr>
+					),
 				}
 			),
-			{
-				excludeTaxStringAbbreviation: (
-					<abbr title={ excludeTaxStringTitle }>{ excludeTaxStringAbbreviation }</abbr>
-				),
-			}
-		);
+		};
 	}
 
 	if ( isFreeTrial && ! isExpiredOrRemoved( purchase ) ) {
-		return (
-			<span>
-				{
-					// translators: %(date)s: a formatted date
-					sprintf( __( 'Free trial ends on %(date)s' ), {
-						date: formatDate( new Date( purchase.expiry_date ), locale, { dateStyle: 'long' } ),
-					} )
-				}
-			</span>
-		);
+		return {
+			text: (
+				<span>
+					{
+						// translators: %(date)s: a formatted date
+						sprintf( __( 'Free trial ends on %(date)s' ), {
+							date: formatDate( new Date( purchase.expiry_date ), locale, { dateStyle: 'long' } ),
+						} )
+					}
+				</span>
+			),
+		};
 	}
 
 	const isRenewingOnDate = Boolean( isRenewingBeforeExpiration( purchase ) && purchase.renew_date );
 	if ( isRenewingOnDate && creditCardHasAlreadyExpired( purchase ) ) {
-		return <span>{ __( 'Credit card expired' ) }</span>;
+		return { text: <span>{ __( 'Credit card expired' ) }</span> };
 	}
 
 	if ( isRenewingOnDate && creditCardExpiresBeforeSubscription( purchase ) ) {
-		return (
-			<span>
-				{ sprintf(
-					// translators: %(date)s: a formatted date
-					__( 'Credit card expires before your next renewal on %(date)s' ),
-					{
-						date: formatDate( new Date( purchase.renew_date ?? '' ), locale, {
-							dateStyle: 'long',
-						} ),
-					}
-				) }
-			</span>
-		);
+		return {
+			text: (
+				<span>
+					{ sprintf(
+						// translators: %(date)s: a formatted date
+						__( 'Credit card expires before your next renewal on %(date)s' ),
+						{
+							date: formatDate( new Date( purchase.renew_date ?? '' ), locale, {
+								dateStyle: 'long',
+							} ),
+						}
+					) }
+				</span>
+			),
+		};
 	}
 
 	// When a downgrade is scheduled for the next renewal, the plan won't simply
@@ -374,25 +239,29 @@ function ExpiryStatus( {
 			dateStyle: 'long',
 		} );
 		if ( targetPlanName ) {
-			return (
+			return {
+				text: (
+					<span>
+						{ sprintf(
+							// translators: %(plan)s is the plan being downgraded to (e.g. "Personal"); %(date)s is a formatted date
+							__( 'Changing to %(plan)s on %(date)s' ),
+							{ plan: targetPlanName, date: renewalDate }
+						) }
+					</span>
+				),
+			};
+		}
+		return {
+			text: (
 				<span>
 					{ sprintf(
-						// translators: %(plan)s is the plan being downgraded to (e.g. "Personal"); %(date)s is a formatted date
-						__( 'Changing to %(plan)s on %(date)s' ),
-						{ plan: targetPlanName, date: renewalDate }
+						// translators: %(date)s is a formatted date
+						__( 'Changing plan on %(date)s' ),
+						{ date: renewalDate }
 					) }
 				</span>
-			);
-		}
-		return (
-			<span>
-				{ sprintf(
-					// translators: %(date)s is a formatted date
-					__( 'Changing plan on %(date)s' ),
-					{ date: renewalDate }
-				) }
-			</span>
-		);
+			),
+		};
 	}
 
 	if ( isRenewingOnDate && purchase.bill_period_days ) {
@@ -410,54 +279,64 @@ function ExpiryStatus( {
 		};
 		switch ( purchase.bill_period_days ) {
 			case SubscriptionBillPeriod.PLAN_MONTHLY_PERIOD:
-				return createInterpolateElement(
-					sprintf(
-						// translators: %(date)s: a formatted date, %(amount)s: a currency amount, excludeTaxStringAbbreviation: something like "excludes VAT"
-						__( 'Renews monthly at %(amount)s <excludeTaxStringAbbreviation /> on %(date)s' ),
-						translateArgs
+				return {
+					text: createInterpolateElement(
+						sprintf(
+							// translators: %(date)s: a formatted date, %(amount)s: a currency amount, excludeTaxStringAbbreviation: something like "excludes VAT"
+							__( 'Renews monthly at %(amount)s <excludeTaxStringAbbreviation /> on %(date)s' ),
+							translateArgs
+						),
+						translateComponents
 					),
-					translateComponents
-				);
+				};
 			case SubscriptionBillPeriod.PLAN_ANNUAL_PERIOD:
-				return createInterpolateElement(
-					sprintf(
-						// translators: %(date)s: a formatted date, %(amount)s: a currency amount, excludeTaxStringAbbreviation: something like "excludes VAT"
-						__( 'Renews yearly at %(amount)s <excludeTaxStringAbbreviation /> on %(date)s' ),
-						translateArgs
+				return {
+					text: createInterpolateElement(
+						sprintf(
+							// translators: %(date)s: a formatted date, %(amount)s: a currency amount, excludeTaxStringAbbreviation: something like "excludes VAT"
+							__( 'Renews yearly at %(amount)s <excludeTaxStringAbbreviation /> on %(date)s' ),
+							translateArgs
+						),
+						translateComponents
 					),
-					translateComponents
-				);
+				};
 			case SubscriptionBillPeriod.PLAN_BIENNIAL_PERIOD:
-				return createInterpolateElement(
-					sprintf(
-						// translators: %(date)s: a formatted date, %(amount)s: a currency amount, excludeTaxStringAbbreviation: something like "excludes VAT"
-						__(
-							'Renews every two years at %(amount)s <excludeTaxStringAbbreviation /> on %(date)s'
+				return {
+					text: createInterpolateElement(
+						sprintf(
+							// translators: %(date)s: a formatted date, %(amount)s: a currency amount, excludeTaxStringAbbreviation: something like "excludes VAT"
+							__(
+								'Renews every two years at %(amount)s <excludeTaxStringAbbreviation /> on %(date)s'
+							),
+							translateArgs
 						),
-						translateArgs
+						translateComponents
 					),
-					translateComponents
-				);
+				};
 			case SubscriptionBillPeriod.PLAN_TRIENNIAL_PERIOD:
-				return createInterpolateElement(
-					sprintf(
-						// translators: %(date)s: a formatted date, %(amount)s: a currency amount, excludeTaxStringAbbreviation: something like "excludes VAT"
-						__(
-							'Renews every three years at %(amount)s <excludeTaxStringAbbreviation /> on %(date)s'
+				return {
+					text: createInterpolateElement(
+						sprintf(
+							// translators: %(date)s: a formatted date, %(amount)s: a currency amount, excludeTaxStringAbbreviation: something like "excludes VAT"
+							__(
+								'Renews every three years at %(amount)s <excludeTaxStringAbbreviation /> on %(date)s'
+							),
+							translateArgs
 						),
-						translateArgs
+						translateComponents
 					),
-					translateComponents
-				);
+				};
 			default:
-				return createInterpolateElement(
-					sprintf(
-						// translators: %(date)s: a formatted date, %(amount)s: a currency amount, excludeTaxStringAbbreviation: something like "excludes VAT"
-						__( 'Renews at %(amount)s <excludeTaxStringAbbreviation /> on %(date)s' ),
-						translateArgs
+				return {
+					text: createInterpolateElement(
+						sprintf(
+							// translators: %(date)s: a formatted date, %(amount)s: a currency amount, excludeTaxStringAbbreviation: something like "excludes VAT"
+							__( 'Renews at %(amount)s <excludeTaxStringAbbreviation /> on %(date)s' ),
+							translateArgs
+						),
+						translateComponents
 					),
-					translateComponents
-				);
+				};
 		}
 	}
 
@@ -465,13 +344,15 @@ function ExpiryStatus( {
 		const copy = getExpiringSoonCopy( new Date( purchase.expiry_date ) );
 
 		if ( ! copy ) {
-			return createInterpolateElement(
-				// translators: date is a formatted expiry date
-				__( 'Expires on <date />' ),
-				{
-					date: <FormattedExpiryDate locale={ locale } purchase={ purchase } />,
-				}
-			);
+			return {
+				text: createInterpolateElement(
+					// translators: date is a formatted expiry date
+					__( 'Expires on <date />' ),
+					{
+						date: <FormattedExpiryDate locale={ locale } purchase={ purchase } />,
+					}
+				),
+			};
 		}
 
 		// Only reached where the day-count copy has no translation yet. Delete
@@ -489,39 +370,162 @@ function ExpiryStatus( {
 			}
 		);
 
-		return renderers.urgent( {
-			purchase,
-			copy,
-			hasExpired: false,
-			untranslatedFallbackText,
-		} );
+		return getUrgentStatusText( purchase, locale, copy, false, untranslatedFallbackText );
 	}
 	if ( isExpiredOrRemoved( purchase ) && 'concierge-session' === purchase.product_slug ) {
-		// translators: %s is a formatted expiry date
-		return sprintf( __( 'Session used on %s' ), [
-			formatDate( new Date( purchase.expiry_date ), locale, { dateStyle: 'long' } ),
-		] );
+		return {
+			// translators: %s is a formatted expiry date
+			text: sprintf( __( 'Session used on %s' ), [
+				formatDate( new Date( purchase.expiry_date ), locale, { dateStyle: 'long' } ),
+			] ),
+		};
 	}
 
 	if ( isExpiredOrRemoved( purchase ) ) {
-		return renderers.urgent( {
+		return getUrgentStatusText(
 			purchase,
-			copy: getExpiredCopy( new Date( purchase.expiry_date ) ),
-			hasExpired: true,
-		} );
+			locale,
+			getExpiredCopy( new Date( purchase.expiry_date ) ),
+			true
+		);
 	}
 
 	if ( isIncludedWithPlan( purchase ) ) {
-		return __( 'Included with Plan' );
+		return { text: __( 'Included with Plan' ) };
 	}
 
 	if ( isOneTimePurchase( purchase ) && purchase.product_slug !== 'domain_transfer' ) {
-		return __( 'One-time purchase' );
+		return { text: __( 'One-time purchase' ) };
 	}
 
 	if ( isAkismetFreeProduct( purchase ) && purchase.product_slug !== 'domain_transfer' ) {
-		return __( 'Never Expires' );
+		return { text: __( 'Never Expires' ) };
 	}
 
-	return null;
+	return { text: null };
+}
+
+/**
+ * A purchase's expiry status, linked to renewal checkout where renewing is
+ * something the viewer can act on right now.
+ */
+export function PurchaseExpiryStatus( {
+	purchase,
+	isSiteMissing,
+}: {
+	purchase: Purchase;
+	isSiteMissing?: boolean;
+} ) {
+	const locale = useLocale();
+	const { user } = useAuth();
+	const { recordTracksEvent } = useAnalytics();
+	const { setShowHelpCenter } = useHelpCenter();
+
+	// Only the purchases list knows the site is gone; a partner still manages the purchase.
+	if ( isSiteMissing && ! isManagedByPartner( purchase ) ) {
+		if ( purchase.is_attached_to_holding_site && purchase.product_type === 'jetpack' ) {
+			return (
+				<>
+					<span>{ __( 'Activate your product license key' ) }</span>
+					<br />
+					<ExternalLink href="https://jetpack.com/support/activate-a-jetpack-product-via-license-key/">
+						{ __( 'Learn more' ) }
+					</ExternalLink>
+				</>
+			);
+		}
+
+		const isA4ABDPurchase = isA4ABillingDragonPurchase( purchase );
+		const temporarySitePurchaseProductTypes = [
+			'saas_plugin',
+			'jetpack',
+			'akismet',
+			'studio_code',
+		];
+		const isKnownTemporarySiteProductType =
+			purchase.is_attached_to_holding_site &&
+			temporarySitePurchaseProductTypes.includes( purchase.product_type );
+		const isJetpack = purchase.is_jetpack_plan_or_product;
+
+		if ( ! isA4ABDPurchase && ! isKnownTemporarySiteProductType && isJetpack ) {
+			return <span>{ __( 'Disconnected from WordPress.com' ) }</span>;
+		}
+
+		if ( ! isA4ABDPurchase && ! isKnownTemporarySiteProductType && ! purchase.is_domain ) {
+			return (
+				<span>
+					{ createInterpolateElement(
+						__( 'You no longer have access to this site and its purchases. <contactSupportLink/>' ),
+						{
+							contactSupportLink: (
+								<Button
+									variant="link"
+									onClick={ () => {
+										setShowHelpCenter( true );
+									} }
+								>
+									{ __( 'Contact support' ) }
+								</Button>
+							),
+						}
+					) }
+				</span>
+			);
+		}
+	}
+
+	if (
+		! isManagedByPartner( purchase ) &&
+		purchase.is_iap_purchase &&
+		purchase.iap_purchase_management_link
+	) {
+		return getInAppPurchaseText( <a href={ purchase.iap_purchase_management_link } /> );
+	}
+
+	const { text, renewal } = getPurchaseExpiryStatusText( purchase, locale );
+
+	// The purchase page gates its "Renew now" action on these same two
+	// conditions. Calypso's equivalent surfaces apply a longer list; the two
+	// clients are knowingly out of step here.
+	const canRenew = purchase.can_explicit_renew && String( user.ID ) === String( purchase.user_id );
+
+	// How close to expiry a subscription has to be before renewal is worth
+	// offering. A monthly subscription is never far from expiring, so the annual
+	// window would ask for a renewal within days of the purchase; it gets the
+	// last week instead. Anything already past its expiry date is inside either.
+	const renewalWindowDays =
+		purchase.bill_period_days === SubscriptionBillPeriod.PLAN_MONTHLY_PERIOD
+			? EXPIRY_ERROR_DAYS
+			: EXPIRY_WARNING_DAYS;
+	const daysUntilExpiry = getCalendarDaysUntil( new Date( purchase.expiry_date ) );
+
+	if ( ! renewal || ! canRenew || daysUntilExpiry > renewalWindowDays ) {
+		return text;
+	}
+
+	const expiryDateTitle = formatExpiryDateTitle( purchase, locale );
+	const renewalTitle = renewal.hasExpired
+		? getExpiredRenewalTitle( expiryDateTitle )
+		: getExpiringSoonRenewalTitle( expiryDateTitle );
+
+	return (
+		<Text intent={ renewal.intent }>
+			<a
+				className="purchase-expiry-status__renew-link"
+				// On the link rather than the wrapper, so that it describes the link
+				// to a screen reader as well as showing on hover.
+				title={ renewalTitle ?? expiryDateTitle }
+				href={ getRenewalUrlFromPurchase( purchase ) }
+				onClick={ () =>
+					recordTracksEvent( 'calypso_purchases_renew_now_click', {
+						product_slug: purchase.product_slug,
+						position: 'purchase-list',
+					} )
+				}
+			>
+				{ renewal.label }
+				<Icon icon={ arrowUpRight } size={ 18 } />
+			</a>
+		</Text>
+	);
 }

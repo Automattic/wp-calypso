@@ -6,7 +6,7 @@ import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import MockDate from 'mockdate';
 import { render } from '../../../test-utils';
-import { PurchaseExpiryStatus, PurchaseExpiryText } from '../index';
+import { PurchaseExpiryStatus, getPurchaseExpiryStatusText } from '../index';
 import type { Purchase } from '@automattic/api-core';
 
 // The copy counts whole calendar days in the viewer's time zone, so these
@@ -181,7 +181,7 @@ describe( '<PurchaseExpiryStatus>', () => {
 	} );
 } );
 
-describe( '<PurchaseExpiryText>', () => {
+describe( 'getPurchaseExpiryStatusText()', () => {
 	beforeEach( () => MockDate.set( NOW ) );
 	afterEach( () => MockDate.reset() );
 
@@ -202,7 +202,12 @@ describe( '<PurchaseExpiryText>', () => {
 		],
 	] )( 'describes %s with nothing to click', ( _label, overrides, text ) => {
 		render(
-			<PurchaseExpiryText purchase={ createPurchase( overrides as Partial< Purchase > ) } />
+			<>
+				{
+					getPurchaseExpiryStatusText( createPurchase( overrides as Partial< Purchase > ), 'en' )
+						.text
+				}
+			</>
 		);
 
 		expect( screen.getByText( text ) ).toBeVisible();
