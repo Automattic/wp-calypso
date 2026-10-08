@@ -203,7 +203,9 @@ describe( 'purchase access', () => {
 		const { result } = renderCredits();
 		await flush();
 		expect( result.current.notice?.message ).toBe(
-			'19% of site credits left. This plan was purchased by a different WordPress.com account. To manage this plan, log in to that account or contact the account owner.'
+			`${ localNumber(
+				1.9
+			) }k credits left. This plan was purchased by a different WordPress.com account. To manage this plan, log in to that account or contact the account owner.`
 		);
 		expect( result.current.notice?.action ).toBeUndefined();
 		expect( result.current.notice?.dismissible ).toBe( true );
@@ -242,7 +244,9 @@ describe( 'purchase access', () => {
 		const { result } = renderCredits();
 		await flush();
 		expect( result.current.notice?.message ).toBe(
-			'19% of site credits left. This plan was purchased by a different WordPress.com account. To manage this plan, log in to that account or contact the account owner.'
+			`${ localNumber(
+				1.9
+			) }k credits left. This plan was purchased by a different WordPress.com account. To manage this plan, log in to that account or contact the account owner.`
 		);
 		expect( result.current.notice?.action ).toBeUndefined();
 		expect( result.current.notice?.dismissible ).toBe( true );
@@ -341,7 +345,7 @@ describe( 'purchase access', () => {
 		const view = renderCredits();
 		await flush();
 		expect( props( view.result.current ).upgradeUrl ).toBe(
-			'https://wordpress.com/plans/example.wordpress.com'
+			'https://wordpress.com/plans/example.wordpress.com?source=wp_ai_credits'
 		);
 		fetchMock.mockResolvedValueOnce(
 			response( creditSnapshot( { blog_id: 456, plan_tier: 'personal' } ), false )
@@ -369,7 +373,7 @@ describe( 'purchase access', () => {
 		act( () => window.dispatchEvent( new Event( 'focus' ) ) );
 		await flush();
 		expect( props( view.result.current ).upgradeUrl ).toBe(
-			'https://wordpress.com/plans/example.wordpress.com'
+			'https://wordpress.com/plans/example.wordpress.com?source=wp_ai_credits'
 		);
 		expect( purchaseHint( view.result.current ) ).toBeUndefined();
 	} );
@@ -388,11 +392,11 @@ describe( 'purchase access', () => {
 		expect( result.current.trailingActions ).toBeUndefined();
 		await receive( { ...exhausted(), plan_tier: 'personal' } );
 		expect( props( result.current ).upgradeUrl ).toBe(
-			'https://wordpress.com/plans/example.wordpress.com'
+			'https://wordpress.com/plans/example.wordpress.com?source=wp_ai_credits'
 		);
 		expect( purchaseHint( result.current ) ).toBeUndefined();
 		expect( result.current.notice?.action?.href ).toBe(
-			'https://wordpress.com/plans/example.wordpress.com'
+			'https://wordpress.com/plans/example.wordpress.com?source=wp_ai_credits'
 		);
 	} );
 } );
@@ -1025,12 +1029,12 @@ it.each( [
 		read.resolve( response( creditSnapshot( { plan_tier: 'personal' } ) ) );
 		await flush();
 		expect( props( view.result.current ).upgradeUrl ).toBe(
-			'https://wordpress.com/plans/example.wordpress.com'
+			'https://wordpress.com/plans/example.wordpress.com?source=wp_ai_credits'
 		);
 		await receive( { ...exhausted(), plan_tier: 'personal' } );
 		expect( props( view.result.current ).isOpen ).toBe( true );
 		expect( view.result.current.notice?.action?.href ).toBe(
-			'https://wordpress.com/plans/example.wordpress.com'
+			'https://wordpress.com/plans/example.wordpress.com?source=wp_ai_credits'
 		);
 		expect( fetchMock ).toHaveBeenCalledTimes( openingReads + 1 );
 	}
@@ -1050,10 +1054,10 @@ it( 'does not read again after a task when the opening read already said who may
 	expect( props( view.result.current ).status.remaining ).toBe( 0 );
 	expect( props( view.result.current ).isOpen ).toBe( true );
 	expect( props( view.result.current ).upgradeUrl ).toBe(
-		'https://wordpress.com/plans/example.wordpress.com'
+		'https://wordpress.com/plans/example.wordpress.com?source=wp_ai_credits'
 	);
 	expect( view.result.current.notice?.action?.href ).toBe(
-		'https://wordpress.com/plans/example.wordpress.com'
+		'https://wordpress.com/plans/example.wordpress.com?source=wp_ai_credits'
 	);
 } );
 it.each( [ 'no update', 'missing metadata', 'invalid metadata' ] )(
