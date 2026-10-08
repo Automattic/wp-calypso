@@ -24,15 +24,10 @@ type SubmitFreePurchaseTransactionData = Omit<
 export default async function freePurchaseProcessor(
 	transactionOptions: PaymentProcessorOptions
 ): Promise< PaymentProcessorResponse > {
-	const {
-		responseCart,
-		includeDomainDetails,
-		includeGSuiteDetails,
-		contactDetails,
-		reduxDispatch,
-	} = transactionOptions;
+	const { responseCart, includeDomainDetails, includeGSuiteDetails, contactDetails } =
+		transactionOptions;
 
-	reduxDispatch( recordTransactionBeginAnalytics( { paymentMethodId: 'free-purchase' } ) );
+	recordTransactionBeginAnalytics( { paymentMethodId: 'free-purchase' } );
 
 	const taxData = doesPurchaseHaveFullCredits( responseCart )
 		? {

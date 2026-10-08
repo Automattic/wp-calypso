@@ -14,6 +14,8 @@ const mockSetIsSplitScreen = jest.fn();
 const mockUseAgentLayoutManager = jest.fn();
 const mockResumeChat = jest.fn();
 const mockCloseSidebar = jest.fn();
+const mockUseRaiseOnFocus = jest.fn();
+const mockPortalNode = document.createElement( 'div' );
 let mockLayoutIsDocked = false;
 // Overrides the layout mock's `canDock` (which otherwise follows
 // `mockLayoutIsDocked`) so floating-but-dockable states are testable.
@@ -76,9 +78,14 @@ jest.mock( '../../hooks/use-agent-layout-manager', () => ( options: unknown ) =>
 		undock: jest.fn(),
 		openSidebar: jest.fn(),
 		closeSidebar: mockCloseSidebar,
+		portalNode: mockPortalNode,
 		createAgentPortal: ( children: React.ReactNode ) => children,
 	};
 } );
+jest.mock( '../../hooks/use-raise-on-focus', () => ( {
+	__esModule: true,
+	default: ( node: HTMLElement | null, isOpen: boolean ) => mockUseRaiseOnFocus( node, isOpen ),
+} ) );
 jest.mock( '../../hooks/custom-actions', () => ( {
 	useSetupCustomActions: () => {},
 } ) );
@@ -161,15 +168,6 @@ jest.mock( '../support-guide', () => ( {
 	__esModule: true,
 	default: () => <div data-testid="support-guide">Support guide</div>,
 } ) );
-jest.mock( '../support-guides', () => ( {
-	__esModule: true,
-	default: ( { onExpand }: { onExpand: () => void } ) => (
-		<div data-testid="support-guides">
-			Support guides
-			<button onClick={ onExpand }>Expand guides</button>
-		</div>
-	),
-} ) );
 
 import AgentDock from '../agent-dock';
 import { markActionOrigin, takeActionOrigin } from '../../utils/action-origin';
@@ -217,6 +215,7 @@ function useWpAdminAgent() {
 
 describe( 'AgentDock', () => {
 	beforeEach( () => {
+		delete window.__agentsManagerConfig;
 		jest.clearAllMocks();
 		setLoadedProviderIds( undefined );
 		takeActionOrigin( 'open' );
@@ -306,33 +305,22 @@ describe( 'AgentDock', () => {
 		const { onOpenSidebar } = mockUseAgentLayoutManager.mock.calls.at( -1 )[ 0 ];
 		act( () => onOpenSidebar() );
 
-		// Opening the docked sidebar must not override a route chosen from the
-		// WP admin bar (e.g. Chat history / Support guides).
+		// Opening the docked sidebar must not override the route the WP admin bar chose.
 		expect( screen.getByTestId( 'location' ).textContent ).toBe( '/history' );
 	} );
 
-	it( 'keeps the support guides view when expanding from the minimized state', () => {
+	it( 'keeps a non-dismissible chat expanded when the saved state is closed and minimized', () => {
 		useWpAdminAgent();
+		window.__agentsManagerConfig = { chatPresentation: { dismissible: false } };
 		mockHasAdminBar = true;
-		mockAgentsManagerState = { isOpen: true, isDocked: false, isMinimized: true };
-
-		renderAgentDock( '/support-guides' );
-		fireEvent.click( screen.getByText( 'Expand guides' ) );
-
-		expect( mockResumeChat ).not.toHaveBeenCalled();
-		expect( screen.getByTestId( 'location' ).textContent ).toBe( '/support-guides' );
-	} );
-
-	it( 'keeps the support guides list without the WP admin bar trigger', () => {
-		// The route stays registered even without an entry button, so a
-		// mid-session entry-button change (Site Editor navigation) can't
-		// redirect a user off the list.
-		useWpAdminAgent();
-
-		renderAgentDock( '/support-guides' );
-
-		expect( screen.getByTestId( 'support-guides' ) ).toBeInTheDocument();
-		expect( screen.getByTestId( 'location' ).textContent ).toBe( '/support-guides' );
+		mockAgentsManagerState = { isOpen: false, isDocked: false, isMinimized: true };
+		renderAgentDock();
+		expect( mockUseAgentLayoutManager ).toHaveBeenCalledWith(
+			expect.objectContaining( { defaultOpen: true } )
+		);
+		fireEvent.click( screen.getByText( 'Close chat' ) );
+		expect( mockSetIsOpen ).not.toHaveBeenCalled();
+		delete window.__agentsManagerConfig;
 	} );
 
 	it( 'clears the minimized flag when the entry button disappears mid-session', () => {
@@ -649,6 +637,31 @@ describe( 'AgentDock', () => {
 		expect( screen.queryByText( 'Switch to floating' ) ).toBeNull();
 		expect( screen.queryByText( 'Switch to sidebar' ) ).toBeNull();
 	} );
+
+	it.each( [
+		{ state: 'open', isOpen: true, node: mockPortalNode, isChatOpen: true },
+		{
+			state: 'minimized',
+			isOpen: true,
+			isMinimized: true,
+			node: mockPortalNode,
+			isChatOpen: false,
+		},
+		{ state: 'hidden', isOpen: false, node: null, isChatOpen: false },
+		{ state: 'docked', isOpen: true, isLayoutDocked: true, node: null, isChatOpen: true },
+	] )(
+		'gives `useRaiseOnFocus` the node only while the chat floats and shows ($state)',
+		( { isOpen, isMinimized = false, isLayoutDocked = false, node, isChatOpen } ) => {
+			useWpAdminAgent();
+			mockHasAdminBar = true;
+			mockLayoutIsDocked = isLayoutDocked;
+			mockAgentsManagerState = { isOpen, isDocked: isLayoutDocked, isMinimized };
+
+			renderAgentDock();
+
+			expect( mockUseRaiseOnFocus ).toHaveBeenLastCalledWith( node, isChatOpen );
+		}
+	);
 
 	it.each( [
 		{

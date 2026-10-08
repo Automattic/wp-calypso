@@ -36,7 +36,6 @@ import {
 import { css, keyframes } from '@emotion/react';
 import { Icon } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
-import { useSelect, useDispatch } from '@wordpress/data';
 import { help, pencil } from '@wordpress/icons';
 import clsx from 'clsx';
 import debugFactory from 'debug';
@@ -59,11 +58,13 @@ import { OnboardingProgress } from 'calypso/landing/stepper/declarative-flow/int
 import { useShowOnboardingProgress } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/components/onboarding-progress/use-show-onboarding-progress';
 import { useInitialIsInStepContainerV2FlowContext } from 'calypso/layout/utils';
 import isAkismetCheckout from 'calypso/lib/akismet/is-akismet-checkout';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import {
 	hasGoogleApps,
 	hasDomainRegistration,
 	hasTransferProduct,
 	hasDIFMProduct,
+	hasDIFMOfferPlan,
 	has100YearPlan as cartHas100YearPlan,
 	ObjectWithProducts,
 	hasPlan,
@@ -90,18 +91,22 @@ import SitePreview from 'calypso/my-sites/customer-home/cards/features/site-prev
 import useOneDollarOfferTrack from 'calypso/my-sites/plans/hooks/use-onedollar-offer-track';
 import { siteHasPaidPlan } from 'calypso/signup/steps/site-picker/site-picker-submit';
 import { useDispatch as useReduxDispatch, useSelector } from 'calypso/state';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice, removeNotice } from 'calypso/state/notices/actions';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import { getIsOnboardingAffiliateFlow } from 'calypso/state/signup/flow/selectors';
-import { getWpComDomainBySiteId } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { useUpdateCachedContactDetails } from '../hooks/use-cached-contact-details';
 import { useCheckoutHelpCenter } from '../hooks/use-checkout-help-center';
 import useCouponFieldState from '../hooks/use-coupon-field-state';
+import useSiteDomains from '../hooks/use-site-domains';
+import {
+	contactDetailsActions,
+	useContactDetails,
+	vatDetailsInFormStore,
+} from '../lib/checkout-stores';
 import { validateContactDetails } from '../lib/contact-validation';
 import { updateCartContactDetailsForCheckout } from '../lib/update-cart-contact-details-for-checkout';
-import { CHECKOUT_STORE } from '../lib/wpcom-store';
+import { useValueStore } from '../lib/value-store';
 import { CheckoutMoneyBackGuarantee } from './CheckoutMoneyBackGuarantee';
 import AcceptTermsOfServiceCheckbox from './accept-terms-of-service-checkbox';
 import badge14Src from './assets/icons/badge-14.svg';
@@ -109,9 +114,9 @@ import badge7Src from './assets/icons/badge-7.svg';
 import badgeGenericSrc from './assets/icons/badge-generic.svg';
 import badgeSecurity from './assets/icons/security.svg';
 import CheckoutNextSteps from './checkout-next-steps';
-import CheckoutProcessorNotice from './checkout-processor-notice';
 import { CheckoutSidebarPlanUpsell } from './checkout-sidebar-plan-upsell';
 import CheckoutTrustCards from './checkout-trust-cards';
+import DIFMOfferRequestNotice from './difm-offer-request-notice';
 import { EmptyCart, shouldShowEmptyCartPage } from './empty-cart';
 import { handleProgressStepSelect } from './handle-progress-step-select';
 import JetpackAkismetCheckoutSidebarPlanUpsell from './jetpack-akismet-checkout-sidebar-plan-upsell';
@@ -356,7 +361,7 @@ function CheckoutSidebarNudge( {
 		return null;
 	}
 
-	if ( isDIFMInCart ) {
+	if ( isDIFMInCart || hasDIFMOfferPlan( responseCart ) ) {
 		return (
 			<CheckoutSidebarNudgeWrapper>
 				<CheckoutNextSteps responseCart={ responseCart } />
@@ -527,8 +532,8 @@ export default function CheckoutMainContent( {
 	const shouldHidePlansStep =
 		isOnboardingFlowCheckout && hasStepCount && stepsTotal < ONBOARDING_STEPPER_TOTAL;
 	const selectedSiteData = useSelector( getSelectedSite );
-	const wpcomDomain = useSelector( ( state ) =>
-		getWpComDomainBySiteId( state, selectedSiteData?.ID )
+	const wpcomDomain = useSiteDomains( selectedSiteData?.ID ).find(
+		( { isWPCOMDomain, isWpcomStagingDomain } ) => isWPCOMDomain || isWpcomStagingDomain
 	);
 
 	// Only show the site preview for WPCOM domains that have a site connected to the site id
@@ -554,12 +559,10 @@ export default function CheckoutMainContent( {
 
 	const contactDetailsType = getContactDetailsType( responseCart );
 
-	const contactInfo = useSelect( ( select ) => select( CHECKOUT_STORE ).getContactInfo(), [] );
+	const contactInfo = useContactDetails();
 
-	const vatDetailsInForm = useSelect( ( select ) => select( CHECKOUT_STORE ).getVatDetails(), [] );
+	const vatDetailsInForm = useValueStore( vatDetailsInFormStore );
 	const { setVatDetails, vatDetails: vatDetailsFromServer } = useVatDetails();
-
-	const checkoutActions = useDispatch( CHECKOUT_STORE );
 
 	const [
 		shouldShowContactDetailsValidationErrors,
@@ -675,15 +678,11 @@ export default function CheckoutMainContent( {
 	const { helpCenterButtonCopy, helpCenterButtonLink, toggleHelpCenter, showHelpIcon } =
 		useCheckoutHelpCenter();
 
-	if ( ! checkoutActions ) {
-		return null;
-	}
-
 	const {
 		touchContactFields,
 		applyDomainContactValidationResults,
 		clearDomainContactErrorMessages,
-	} = checkoutActions;
+	} = contactDetailsActions;
 
 	if ( transactionStatus === TransactionStatus.COMPLETE ) {
 		if ( isStepContainerV2 ) {
@@ -932,6 +931,7 @@ export default function CheckoutMainContent( {
 				isMobileCheckoutStickySummary={ isMobileCheckoutStickySummary }
 			>
 				<CheckoutOrderBanner />
+				<DIFMOfferRequestNotice responseCart={ responseCart } />
 				{ isStepContainerV2 ? (
 					<Step.Heading
 						text={ translate( 'Checkout' ) }
@@ -997,7 +997,6 @@ export default function CheckoutMainContent( {
 									showErrorMessageBriefly,
 									applyDomainContactValidationResults,
 									clearDomainContactErrorMessages,
-									reduxDispatch,
 									translate,
 									shouldDisplayValidationErrors
 								);
@@ -1054,12 +1053,10 @@ export default function CheckoutMainContent( {
 										prepareDomainContactValidationRequest( contactInfo )
 									);
 
-									reduxDispatch(
-										recordTracksEvent( 'calypso_checkout_composite_step_complete', {
-											step: 1,
-											step_name: 'contact-form',
-										} )
-									);
+									recordTracksEvent( 'calypso_checkout_composite_step_complete', {
+										step: 1,
+										step_name: 'contact-form',
+									} );
 								}
 								return validationResponse;
 							} }
@@ -1207,12 +1204,7 @@ export default function CheckoutMainContent( {
 					) }
 					{ checkoutSummary }
 					{ checkoutMainContent }
-					{ isLargeViewport && (
-						<>
-							<CheckoutProcessorNotice />
-							<CheckoutTrustCards cart={ responseCart } />
-						</>
-					) }
+					{ isLargeViewport && <CheckoutTrustCards cart={ responseCart } /> }
 				</WPCheckoutWrapper>
 			</SubmitButtonSlotContext.Provider>
 		);
@@ -1302,7 +1294,6 @@ export default function CheckoutMainContent( {
 								<>
 									<div className="checkout-main-column">
 										{ checkoutMainContent }
-										<CheckoutProcessorNotice />
 										<CheckoutTrustCards cart={ responseCart } />
 									</div>
 									{ checkoutSummary }
@@ -2428,6 +2419,11 @@ const CheckoutTermsAndCheckboxesWrapper = styled.div`
 		padding-inline-start: 40px;
 		padding-inline-end: 0;
 	}
+
+	/* On desktop without a consent checkbox the terms live in the sidebar and nothing renders here. */
+	&:empty {
+		display: none;
+	}
 `;
 
 function CheckoutTermsAndCheckboxes( {
@@ -2642,7 +2638,6 @@ const WPCheckoutWrapper = styled.div< {
 	grid-template-areas:
 		'sidebar-content'
 		'main-content'
-		'processor-notice'
 		'trust-cards';
 	align-content: start;
 	justify-content: center;
@@ -2653,7 +2648,6 @@ const WPCheckoutWrapper = styled.div< {
 		grid-template-columns: 1fr minmax( 500px, 688px ) 475px 1fr;
 		grid-template-areas:
 			'main-content main-content sidebar-content sidebar-content'
-			'. processor-notice sidebar-content sidebar-content'
 			'. trust-cards sidebar-content sidebar-content';
 		justify-items: end;
 	}
@@ -2665,11 +2659,6 @@ const WPCheckoutWrapper = styled.div< {
 
 	& > .checkout-trust-cards {
 		grid-area: trust-cards;
-		justify-self: center;
-	}
-
-	& > .checkout-processor-notice {
-		grid-area: processor-notice;
 		justify-self: center;
 	}
 
@@ -2730,7 +2719,6 @@ const WPCheckoutWrapper = styled.div< {
 				'checkout-title-area'
 				'sidebar-content'
 				'main-content'
-				'processor-notice'
 				'trust-cards';
 			.checkout-sidebar-content {
 				background: ${ colorStudio.colors[ 'White' ] };

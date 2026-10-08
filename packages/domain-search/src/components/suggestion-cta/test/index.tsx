@@ -82,6 +82,52 @@ describe( 'DomainSuggestionCTA', () => {
 			} );
 		} );
 
+		it( 'labels the cta "Select" when the select cta is enabled', async () => {
+			const user = userEvent.setup();
+
+			mockGetSuggestionsQuery( {
+				params: { query: 'test-select' },
+				suggestions: [ buildSuggestion( { domain_name: 'test-select.com' } ) ],
+			} );
+
+			mockGetAvailabilityQuery( {
+				params: { domainName: 'test-select.com' },
+				availability: buildAvailability( {
+					domain_name: 'test-select.com',
+					status: DomainAvailabilityStatus.AVAILABLE,
+				} ),
+			} );
+
+			const onAddDomainToCart = jest.fn();
+
+			render(
+				<TestDomainSearchWithSuggestions
+					query="test-select"
+					config={ { showSelectCta: true } }
+					events={ { onAddDomainToCart } }
+				>
+					<DomainSuggestionsList>
+						<DomainSuggestionCTA domainName="test-select.com" />
+					</DomainSuggestionsList>
+				</TestDomainSearchWithSuggestions>
+			);
+
+			const selectCta = await screen.findByRole( 'button', { name: 'Select' } );
+
+			expect( screen.queryByRole( 'button', { name: 'Add to cart' } ) ).not.toBeInTheDocument();
+
+			await user.click( selectCta );
+
+			await waitFor( () => {
+				expect( onAddDomainToCart ).toHaveBeenCalledWith(
+					'test-select.com',
+					0,
+					false,
+					expect.any( String )
+				);
+			} );
+		} );
+
 		/**
 		 * The scenario in this test case can happen when the user searches for a FQDN with a
 		 * TLD that's not present in the TLDs filter
@@ -515,6 +561,36 @@ describe( 'DomainSuggestionCTA', () => {
 			} );
 		} );
 
+		it( 'labels the error cta "Select" when the select cta is enabled', async () => {
+			const user = userEvent.setup();
+
+			mockGetSuggestionsQuery( {
+				params: { query: 'test-error' },
+				suggestions: [ buildSuggestion( { domain_name: 'test-error.com' } ) ],
+			} );
+
+			mockGetAvailabilityQuery( {
+				params: { domainName: 'test-error.com' },
+				availability: new Error( 'Failed to fetch the availability' ),
+			} );
+
+			render(
+				<TestDomainSearchWithSuggestions query="test-error" config={ { showSelectCta: true } }>
+					<DomainSuggestionsList>
+						<DomainSuggestionCTA domainName="test-error.com" />
+					</DomainSuggestionsList>
+				</TestDomainSearchWithSuggestions>
+			);
+
+			await user.click( await screen.findByRole( 'button', { name: 'Select' } ) );
+
+			await waitFor( () => {
+				expect( screen.getByRole( 'button', { name: 'Select' } ) ).toHaveClass( 'is-destructive' );
+			} );
+
+			expect( screen.queryByRole( 'button', { name: 'Add to cart' } ) ).not.toBeInTheDocument();
+		} );
+
 		it( 'allows retrying the operation', async () => {
 			const user = userEvent.setup();
 
@@ -621,6 +697,34 @@ describe( 'DomainSuggestionCTA', () => {
 				expect( successCta ).toHaveClass( 'is-busy' );
 			} );
 		} );
+	} );
+
+	it( 'labels the cta "Move" for a domain the user already owns', async () => {
+		const suggestion = buildSuggestion( {
+			domain_name: 'owned-domain.com',
+			product_slug: 'domain_move_internal',
+		} );
+
+		mockGetSuggestionsQuery( {
+			params: { query: 'owned-domain' },
+			suggestions: [ suggestion ],
+		} );
+
+		mockGetAvailabilityQuery( {
+			params: { domainName: 'owned-domain.com' },
+			availability: buildAvailability( { domain_name: 'owned-domain.com' } ),
+		} );
+
+		render(
+			<TestDomainSearchWithSuggestions query="owned-domain">
+				<DomainSuggestionsList>
+					<DomainSuggestionCTA domainName="owned-domain.com" />
+				</DomainSuggestionsList>
+			</TestDomainSearchWithSuggestions>
+		);
+
+		expect( await screen.findByRole( 'button', { name: 'Move' } ) ).toBeInTheDocument();
+		expect( screen.queryByRole( 'button', { name: 'Add to cart' } ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'allows contacting support if the premium domain is too expensive', async () => {

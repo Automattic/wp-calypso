@@ -97,7 +97,6 @@ import {
 	isDotcomPlan,
 	getRenewalUrlFromPurchase,
 	isStorageUpgradeEligible,
-	isWpcomFlexSubscription,
 	isAkismetFreeProduct,
 	isExpiredAndInGracePeriod,
 	isExpiredWithNoAutoRenewAttemptsLeft,
@@ -116,7 +115,6 @@ import {
 	getSitePurchaseStorageUpgradeUrl,
 	getUpgradedPurchaseRedirectUrl,
 } from '../../../utils/site-url';
-import BillingFlexUsageCard from '../../billing-flex-usage';
 import { useIsSplitCancelRemoveEnabled } from '../cancel-purchase/use-is-split-cancel-remove-enabled';
 import { BillingPurchaseInfoPopover } from '../dataviews';
 import { PurchasePaymentMethod } from '../purchase-payment-method';
@@ -1851,14 +1849,11 @@ export default function PurchaseSettings() {
 						<AkismetApiKeyCard />
 					) }
 				</Grid>
-				{ ( ( site && ! isRemoved( purchase ) ) || ( features && features.length > 0 ) ) && (
-					<WPComResourceMeters purchase={ purchase } site={ site } features={ features } />
-				) }
-				{ isWpcomFlexSubscription( purchase ) && (
-					<BillingFlexUsageCard purchaseId={ purchase.ID } />
-				) }
 				{ ! purchase.is_trial_plan && ! isCentennial && ! isRemoved( purchase ) && (
 					<ManageSubscriptionCard purchase={ purchase } />
+				) }
+				{ ( ( site && ! isRemoved( purchase ) ) || ( features && features.length > 0 ) ) && (
+					<WPComResourceMeters purchase={ purchase } site={ site } features={ features } />
 				) }
 				<PurchaseSettingsActions purchase={ purchase } />
 			</VStack>

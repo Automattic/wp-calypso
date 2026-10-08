@@ -483,6 +483,7 @@ import {
 	getBlockingMove,
 	startNewUserRequest,
 } from '../../utils/canvas-binding';
+import { bindToEditorPath } from '../../utils/canvas-guard';
 import { recordAgentsManagerTracksEvent, recordBigSkyTracksEvent } from '../../utils/tracks';
 import OrchestratorChat from '../orchestrator-chat';
 
@@ -744,6 +745,23 @@ describe( 'OrchestratorChat', () => {
 
 		expect( mockUpdateSessionId ).not.toHaveBeenCalled();
 		expect( getSessionId( 'wp-orchestrator' ) ).toBe( '' );
+	} );
+
+	it( 'keeps the live history when a remount fetches the conversation mid-turn', () => {
+		mockManagerTurnInFlight = true;
+		const loadMessages = jest.fn();
+		mockUseAgentChat.mockReturnValue( agentChatReturn( { loadMessages } ) );
+		render( chat() );
+
+		const { onSuccess } = mockUseConversation.mock.calls.at( -1 )![ 0 ] as {
+			onSuccess: ( messages: unknown[], sessionId: string ) => void;
+		};
+		act( () => {
+			onSuccess( [], 'canonical-session-id' );
+		} );
+
+		expect( loadMessages ).not.toHaveBeenCalled();
+		expect( getSessionId( 'wp-orchestrator' ) ).toBe( 'canonical-session-id' );
 	} );
 
 	it( 'saves the server’s canonical session ID as the tab session', () => {
@@ -3674,7 +3692,15 @@ describe( 'OrchestratorChat', () => {
 		);
 	} );
 
-	it( 'tells the regenerate getter which message is latest and whether it is streaming', () => {
+	it( 'keeps response actions on the raw streaming state while images upload', () => {
+		renderWithImageUpload( createImageUpload( { isUploadingImages: true } ) );
+
+		expect( mockAgentChat.mock.calls[ 0 ][ 0 ] ).toEqual(
+			expect.objectContaining( { isProcessing: true, isStreaming: false } )
+		);
+	} );
+
+	it( 'tells the regenerate getter which message is latest', () => {
 		const getRegenerateActions = jest.fn( () => [] );
 		mockUseRegenerateAction.mockReturnValue( getRegenerateActions );
 		mockUseAgentChat.mockReturnValue(
@@ -3705,11 +3731,11 @@ describe( 'OrchestratorChat', () => {
 
 		expect( getRegenerateActions ).toHaveBeenCalledWith(
 			expect.objectContaining( { id: 'agent-1' } ),
-			{ isLatestAgentMessage: false, isStreaming: true }
+			{ isLatestAgentMessage: false }
 		);
 		expect( getRegenerateActions ).toHaveBeenCalledWith(
 			expect.objectContaining( { id: 'agent-2' } ),
-			{ isLatestAgentMessage: true, isStreaming: true }
+			{ isLatestAgentMessage: true }
 		);
 	} );
 
@@ -3989,9 +4015,11 @@ describe( 'OrchestratorChat', () => {
 		} );
 
 		it( 'does not abort while the agent is moving the canvas itself', () => {
-			// `editor-navigate` clears the binding before it runs, so the unmount and
-			// remount it causes are not read as the user walking away. Without this the
-			// agent's own navigation would abort the agent's own request.
+			// A canvas-moving ability drops the binding before it runs when its
+			// destination is not a page the binding can follow — `wp-admin/navigate`,
+			// or `editor-navigate` opening the pages list — so the unmount and remount
+			// it causes are not read as the user walking away. Without this the agent's
+			// own navigation would abort the agent's own request.
 			mockUseAgentChat.mockReturnValue( agentChatReturn( { isProcessing: true } ) );
 			const { abortCurrentRequest } = mockUseAgentChat();
 
@@ -4007,11 +4035,10 @@ describe( 'OrchestratorChat', () => {
 
 		it( 'does not abort when the agent opens a page it just had created', () => {
 			// The reported failure, end to end: `add-page` creates the page on the
-			// server and hands the client an `editor-navigate` call for it. That
-			// result is an outgoing message, so it rebinds — and a page created a
-			// moment ago on the server is not in the store, so the editor is still
-			// reporting the old one when it does. Binding ahead to the destination is
-			// what stops the arrival killing the turn that asked for it.
+			// server and hands the client an `editor-navigate` call. That result is
+			// an outgoing message, so it rebinds — but the new page is not in the
+			// store yet, so the editor still reports the old one. Binding ahead to
+			// the destination is what stops the arrival killing the turn.
 			mockUseAgentChat.mockReturnValue( agentChatReturn( { isProcessing: true } ) );
 			const { abortCurrentRequest, addMessage } = mockUseAgentChat();
 
@@ -4048,13 +4075,52 @@ describe( 'OrchestratorChat', () => {
 			expect( getBlockingMove() ).toEqual( { from: 'Contact', to: 'About' } );
 		} );
 
+		it( 'does not abort when the agent leaves the page it is deleting', () => {
+			// `edit-entity-record` routes the editor off the page on screen before
+			// deleting it, through the navigate callback rather than the ability — so
+			// it hands the binding over itself, or its own move reads as the user
+			// leaving and aborts the turn that asked for the delete.
+			mockUseAgentChat.mockReturnValue( agentChatReturn( { isProcessing: true } ) );
+			const { abortCurrentRequest, addMessage } = mockUseAgentChat();
+
+			render( chat() );
+			bindToOpenCanvas();
+
+			// Leaving About for the front page, Contact.
+			bindToEditorPath( '/page/9' );
+			openPage( CONTACT_PAGE );
+			// The delete's tool result, sent from the front page.
+			bindToOpenCanvas();
+
+			expect( abortCurrentRequest ).not.toHaveBeenCalled();
+			expect( addMessage ).not.toHaveBeenCalled();
+
+			// The user leaving afterwards is still caught.
+			openPage( ABOUT_PAGE );
+
+			expect( abortCurrentRequest ).toHaveBeenCalledTimes( 1 );
+		} );
+
+		it( 'does not abort when the agent leaves for the pages list before deleting', () => {
+			mockUseAgentChat.mockReturnValue( agentChatReturn( { isProcessing: true } ) );
+			const { abortCurrentRequest, addMessage } = mockUseAgentChat();
+
+			render( chat() );
+			bindToOpenCanvas();
+
+			bindToEditorPath( 'all-pages' );
+			openPage( null );
+
+			expect( abortCurrentRequest ).not.toHaveBeenCalled();
+			expect( addMessage ).not.toHaveBeenCalled();
+		} );
+
 		it( 'does not abort a new message sent after navigating between turns', async () => {
-			// The main hazard `startNewUserRequest()` closes, and it has nothing to do
-			// with the block: turn one binds to About, the user then moves to Contact
-			// with nothing running (so no abort), and sends a new message. The new turn
-			// flips `isProcessing` before its own outbound message rebinds, so a
-			// binding left over from turn one reads as a move and aborts the request
-			// the user just made — every time they ask a question after navigating.
+			// The main hazard `startNewUserRequest()` closes, and it is not about the
+			// block: turn one binds to About, the user moves to Contact with nothing
+			// running (so no abort), then sends a new message. The new turn flips
+			// `isProcessing` before its outbound message rebinds, so turn one's
+			// binding reads as a move and aborts the message the user just sent.
 			mockUseAgentChat.mockReturnValue( agentChatReturn( { isProcessing: false } ) );
 			const { rerender } = render( chat() );
 			bindToOpenCanvas();

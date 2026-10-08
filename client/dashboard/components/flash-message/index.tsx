@@ -9,10 +9,10 @@ interface FlashMessageProps {
 	type?: 'success' | 'error';
 }
 
-const PARAM_NAME = 'flash';
+export const FLASH_QUERY_PARAM = 'flash';
 
 export function reloadWithFlashMessage( messageId: string ) {
-	const newUrl = addQueryArgs( window.location.href, { [ PARAM_NAME ]: messageId } );
+	const newUrl = addQueryArgs( window.location.href, { [ FLASH_QUERY_PARAM ]: messageId } );
 	window.location.replace( newUrl );
 }
 
@@ -28,7 +28,7 @@ export default function FlashMessage( { id, message, type = 'success' }: FlashMe
 			return;
 		}
 		const params = new URLSearchParams( window.location.search );
-		if ( params.get( PARAM_NAME ) === id ) {
+		if ( params.get( FLASH_QUERY_PARAM ) === id ) {
 			switch ( type ) {
 				case 'error':
 					createErrorNotice( message, { type: 'snackbar' } );
@@ -38,7 +38,7 @@ export default function FlashMessage( { id, message, type = 'success' }: FlashMe
 					break;
 			}
 
-			params.delete( PARAM_NAME );
+			params.delete( FLASH_QUERY_PARAM );
 			const newUrl =
 				window.location.pathname + ( params.toString() ? '?' + params.toString() : '' );
 			window.history.replaceState( {}, '', newUrl );

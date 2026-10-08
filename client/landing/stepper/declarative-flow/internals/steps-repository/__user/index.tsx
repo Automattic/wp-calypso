@@ -1,6 +1,7 @@
 import { userSettingsQuery } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
-import { Step, StepContainer } from '@automattic/onboarding';
+import { localizeUrl } from '@automattic/i18n-utils';
+import { ONBOARDING_FLOW, Step, StepContainer } from '@automattic/onboarding';
 import { useQuery as useDataQuery } from '@tanstack/react-query';
 import { Button } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
@@ -110,7 +111,7 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 	// knows who it is yet, and Redux still reports nobody logged in.
 	const isWaitingForCreatedAccount = !! wpAccountCreateResponse && gateStatus === 'pending';
 	const { socialServiceResponse } = useSocialService();
-	const { topBarLogo, partnerConfig, signupTosElement } = usePartnerBranding();
+	const { hasCustomBranding, topBarLogo, partnerConfig, signupTosElement } = usePartnerBranding();
 
 	// Woo-referrer users keep the permanent email-first + slider treatment from PR #110118.
 	// Everyone else is bucketed by calypso_account_step_improvement_202606_v2 (round 2):
@@ -172,6 +173,7 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 	);
 
 	const locale = useFlowLocale();
+	const shouldLinkLogo = flow === ONBOARDING_FLOW && ! hasCustomBranding && ! isEditingEmail;
 
 	const loginLink = login( {
 		signupUrl,
@@ -395,6 +397,12 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 		const topBar = (
 			<Step.TopBar
 				logo={ topBarLogo }
+				logoHref={ shouldLinkLogo ? localizeUrl( 'https://wordpress.com/', locale ) : undefined }
+				onLogoClick={
+					shouldLinkLogo
+						? () => recordTracksEvent( 'calypso_signup_logo_click', { flow, step: stepName } )
+						: undefined
+				}
 				leftElement={ backButton }
 				rightElement={
 					hideLoginLink || isEmailFirstVariant || isEditingEmail ? null : (

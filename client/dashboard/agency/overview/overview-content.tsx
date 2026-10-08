@@ -24,8 +24,10 @@ export interface AgencyOverviewLinks {
 	woopayments: string;
 	marketplace: string;
 	partnerDirectory: string;
-	contactSupport: string;
+	/** A URL, or a callback that opens contact support in-app. */
+	contactSupport: string | ( () => void );
 	aiMcp: string;
+	pressableHosting: string;
 	helpful: HelpfulLink[];
 }
 
@@ -84,7 +86,7 @@ export default function AgencyOverviewContent( {
 	return (
 		<Grid columns={ isSmallViewport ? 1 : 2 } gap={ isSmallViewport ? 'lg' : 'xl' }>
 			<VStack spacing={ spacing } justify="flex-start">
-				{ isRejected && <RejectedTierCard contactSupportHref={ links.contactSupport } /> }
+				{ isRejected && <RejectedTierCard contactSupport={ links.contactSupport } /> }
 				{ isPending && (
 					<PendingTierCard
 						onRelaunchTour={ onRelaunchTour }
@@ -136,6 +138,8 @@ export default function AgencyOverviewContent( {
 					isEligibleForPressableIntroOffer={ isEligibleForPressableIntroOffer }
 					isEligibleForPressableExpansionOffer={ isEligibleForPressableExpansionOffer }
 					aiMcpHref={ links.aiMcp }
+					pressableHostingHref={ links.pressableHosting }
+					shouldUseRouterLink={ shouldUseRouterLink }
 					recordTracksEvent={ recordTracksEvent }
 				/>
 			</VStack>

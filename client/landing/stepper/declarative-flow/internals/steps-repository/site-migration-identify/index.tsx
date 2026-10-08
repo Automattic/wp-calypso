@@ -6,7 +6,7 @@ import { Notice, ProgressBar, Spinner } from '@wordpress/components';
 import { next, published, shield } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { type FC, useEffect, useState, useCallback } from 'react';
+import { type FC, useEffect, useState, useCallback, useRef } from 'react';
 import CaptureInput from 'calypso/blocks/import/capture/capture-input';
 import ScanningStep from 'calypso/blocks/import/scanning';
 import { convertPlatformName } from 'calypso/blocks/import/util';
@@ -48,6 +48,8 @@ export const Analyzer: FC< Props > = ( {
 	onSiteURLChange,
 } ) => {
 	const translate = useTranslate();
+	const onCompleteRef = useRef( onComplete );
+	onCompleteRef.current = onComplete;
 	const {
 		data: siteInfo,
 		isError: hasError,
@@ -104,10 +106,9 @@ export const Analyzer: FC< Props > = ( {
 			! isFetchingHosting &&
 			( hostingProviderData || hasHostingError )
 		) {
-			onComplete( siteInfo, hostingProviderData?.hosting_provider?.slug );
+			onCompleteRef.current( siteInfo, hostingProviderData?.hosting_provider?.slug );
 		}
 	}, [
-		onComplete,
 		siteURL,
 		siteInfo,
 		hostingProviderData,

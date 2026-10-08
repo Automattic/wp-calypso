@@ -11,6 +11,7 @@ import Grid from '../../../../components/grid';
 import { PageHeader } from '../../../../components/page-header';
 import PageLayout from '../../../../components/page-layout';
 import { Text } from '../../../../components/text';
+import MissingPaymentSettingsNotice from '../../missing-payment-settings-notice';
 import ConsolidatedViews from '../consolidated-views';
 import { useReferral } from '../hooks/use-referral';
 import { getOrderSummary } from '../lib/get-order-summary';
@@ -115,6 +116,7 @@ export default function ReferralOverview() {
 					}
 				/>
 			}
+			notices={ <MissingPaymentSettingsNotice hasCommissionActivity commissionType="referrals" /> }
 		>
 			<ConsolidatedViews
 				isSingleClient
@@ -131,7 +133,7 @@ export default function ReferralOverview() {
 					isEmpty={ recentReferrals.length === 0 }
 					emptyText={ __( 'No referrals yet.' ) }
 					seeAllTitle={ __( 'See all referrals' ) }
-					seeAllHref={ `/earn/referrals/${ referralId }/orders` }
+					seeAllHref={ `/referrals/${ referralId }/orders` }
 				>
 					<DataViews< ReferralApiResponse >
 						data={ recentReferrals }
@@ -150,7 +152,7 @@ export default function ReferralOverview() {
 					isEmpty={ recentPurchases.length === 0 }
 					emptyText={ __( 'No purchases yet.' ) }
 					seeAllTitle={ __( 'See all purchases' ) }
-					seeAllHref={ `/earn/referrals/${ referralId }/purchases` }
+					seeAllHref={ `/referrals/${ referralId }/purchases` }
 				>
 					<DataViews< PurchaseItem >
 						data={ recentPurchases }

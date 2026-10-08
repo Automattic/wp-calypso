@@ -54,6 +54,7 @@ import loginRouter, { LOGIN_SECTION_DEFINITION } from 'calypso/login';
 import sections from 'calypso/sections';
 import isSectionEnabled from 'calypso/sections-filter';
 import { serverRouter, getCacheKey } from 'calypso/server/isomorphic-routing';
+import analytics from 'calypso/server/lib/analytics';
 import { isWpMobileApp, isWcMobileApp } from 'calypso/server/lib/is-mobile-app';
 import performanceMark from 'calypso/server/lib/performance-mark/index';
 import {
@@ -440,10 +441,7 @@ function setUpLoggedOutRoute( req, res, next ) {
 	}
 
 	if ( req.cookies?.subkey ) {
-		req.context.user = {
-			...( req.context.user ?? {} ),
-			subscriptionManagementSubkey: req.cookies.subkey,
-		};
+		req.context.subscriptionManagementSubkey = req.cookies.subkey;
 	}
 
 	Promise.all( setupRequests )
@@ -892,10 +890,73 @@ const setUpSectionContext = ( section, entrypoint ) => ( req, res, next ) => {
 	next();
 };
 
+// The dashboard host has no wp-login.php, so these 404s are either scanners or a
+// redirect of ours built against the wrong host. Collect enough to tell them apart.
+const logWpLoginNotFound = ( req ) => {
+	const getStringQueryArg = ( name ) =>
+		typeof req.query[ name ] === 'string' ? req.query[ name ].slice( 0, 500 ) : undefined;
+	// Query strings, fragments and userinfo can carry nonces and auth codes, so only keep
+	// the origin and path.
+	const stripUrl = ( value ) => {
+		if ( typeof value !== 'string' ) {
+			return undefined;
+		}
+		try {
+			const url = new URL( value );
+			return `${ url.origin }${ url.pathname }`.slice( 0, 500 );
+		} catch {
+			return value.split( /[?#]/ )[ 0 ].slice( 0, 500 );
+		}
+	};
+	const hasLoggedInCookie = !! req.cookies.wordpress_logged_in;
+	// Browsers send Sec-Fetch-* on every request; most scanners don't.
+	const secFetchSite = req.get( 'sec-fetch-site' );
+	let secFetchSiteStat = 'unset';
+	if ( secFetchSite !== undefined ) {
+		secFetchSiteStat = [ 'cross-site', 'same-origin', 'same-site', 'none' ].includes( secFetchSite )
+			? secFetchSite
+			: 'other';
+	}
+
+	bumpStat(
+		'dashboard-404-wp-login',
+		`${ hasLoggedInCookie ? 'cookie' : 'no-cookie' }:${ secFetchSiteStat }`
+	);
+
+	analytics.logstash.log( {
+		feature: 'calypso_ssr',
+		message: 'Dashboard wp-login.php 404',
+		severity: 'info',
+		tags: [ 'dashboard', 'dashboard-404-wp-login' ],
+		properties: {
+			env: calypsoEnv,
+			app_version: process.env.COMMIT_SHA,
+			hostname: req.hostname,
+			path: req.path,
+			// Values are omitted since they can carry nonces and auth codes.
+			query_keys: Object.keys( req.query ),
+			action: getStringQueryArg( 'action' ),
+			redirect_to: stripUrl( req.query.redirect_to ),
+			referer: stripUrl( req.get( 'referer' ) ),
+			user_agent: req.get( 'user-agent' ),
+			accept: req.get( 'accept' )?.slice( 0, 200 ),
+			has_logged_in_cookie: hasLoggedInCookie,
+			sec_fetch_site: secFetchSite,
+			sec_fetch_mode: req.get( 'sec-fetch-mode' ),
+			sec_fetch_dest: req.get( 'sec-fetch-dest' ),
+			sec_fetch_user: req.get( 'sec-fetch-user' ),
+			country_code: req.get( 'x-geoip-country-code' ),
+		},
+	} );
+};
+
 const setNotFoundStatus = ( req, res, next ) => {
 	res.status( 404 );
 	// bumpStat only accepts 32 chars max for the value
 	bumpStat( 'dashboard-404', req.path.slice( 0, 32 ) );
+	if ( req.path === '/wp-login.php' ) {
+		logWpLoginNotFound( req );
+	}
 	next();
 };
 
@@ -1458,6 +1519,14 @@ export default function pages() {
 		}
 		const redirectUrl = localizeUrl( `https://wordpress.com/support`, req.context.locale );
 		return res.redirect( 301, redirectUrl );
+	} );
+
+	// The logged-out Speed Test Tool was retired; old report links go to the site speed guide.
+	// Unprefixed URLs get English: this route doesn't load the user, so their account locale is unknown.
+	const speedTestToolPath = `/${ getAnyLanguageRouteParam() }?/speed-test-tool`;
+	app.get( [ speedTestToolPath, `${ speedTestToolPath }/*` ], ( req, res ) => {
+		const locale = req.params.lang ?? config( 'i18n_default_locale_slug' );
+		res.redirect( 301, localizeUrl( 'https://wordpress.com/support/site-speed/', locale ) );
 	} );
 	// catchall to render 404 for all routes not explicitly allowed in client/sections
 	app.use( render404() );

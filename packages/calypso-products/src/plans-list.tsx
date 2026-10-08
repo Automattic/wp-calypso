@@ -452,7 +452,6 @@ import {
 	FEATURE_SENSEI_JETPACK,
 	WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
 	FEATURE_PREMIUM_THEMES,
-	WPCOM_FEATURES_PREMIUM_THEMES_LIMITED,
 	WPCOM_FEATURES_BACKUPS_RESTORE,
 	FEATURE_REAL_TIME_SECURITY_SCANS,
 	FEATURE_TIERED_STORAGE_PLANS_AVAILABLE,
@@ -562,29 +561,17 @@ function compact( elements: ( string | false | undefined | null )[] ): string[] 
 }
 
 const WPComGetBillingTimeframe = (): TranslateResult =>
-	i18n.fixMe( {
-		text: 'per month, billed yearly, excl. taxes',
-		newCopy: i18n.translate( 'per month, billed yearly, excl. taxes', {
-			comment: 'Excl. Taxes is short for excluding taxes',
-		} ),
-		oldCopy: i18n.translate( 'per month, billed yearly' ),
-	} ) as TranslateResult;
+	i18n.translate( 'per month, billed yearly, excl. taxes', {
+		comment: 'Excl. Taxes is short for excluding taxes',
+	} );
 const WPComGetBiennialBillingTimeframe = (): TranslateResult =>
-	i18n.fixMe( {
-		text: '/month, billed every two years, excl. taxes',
-		newCopy: i18n.translate( '/month, billed every two years, excl. taxes', {
-			comment: 'Excl. Taxes is short for excluding taxes',
-		} ),
-		oldCopy: i18n.translate( '/month, billed every two years' ),
-	} ) as TranslateResult;
+	i18n.translate( '/month, billed every two years, excl. taxes', {
+		comment: 'Excl. Taxes is short for excluding taxes',
+	} );
 const WPComGetTriennialBillingTimeframe = (): TranslateResult =>
-	i18n.fixMe( {
-		text: '/month, billed every three years, excl. taxes',
-		newCopy: i18n.translate( '/month, billed every three years, excl. taxes', {
-			comment: 'Excl. Taxes is short for excluding taxes',
-		} ),
-		oldCopy: i18n.translate( '/month, billed every three years' ),
-	} ) as TranslateResult;
+	i18n.translate( '/month, billed every three years, excl. taxes', {
+		comment: 'Excl. Taxes is short for excluding taxes',
+	} );
 
 const getBiAnnualTimeframe = (): BillingTerm => ( {
 	term: TERM_BIENNIALLY,
@@ -599,13 +586,9 @@ const getAnnualTimeframe = (): BillingTerm => ( {
 const getMonthlyTimeframe = (): BillingTerm => ( {
 	term: TERM_MONTHLY,
 	getBillingTimeFrame: () =>
-		i18n.fixMe( {
-			text: 'per month, billed monthly, excl. taxes',
-			newCopy: i18n.translate( 'per month, billed monthly, excl. taxes', {
-				comment: 'Excl. Taxes is short for excluding taxes',
-			} ),
-			oldCopy: i18n.translate( 'per month, billed monthly' ),
-		} ) as TranslateResult,
+		translate( 'per month, billed monthly, excl. taxes', {
+			comment: 'Excl. Taxes is short for excluding taxes',
+		} ),
 } );
 const getJetpackCommonPlanDetails = () => ( {
 	getRecommendedFor: () => [
@@ -901,7 +884,7 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 	getSignupFeatures: () => [
 		FEATURE_FREE_DOMAIN,
 		FEATURE_FAST_SUPPORT_FROM_EXPERTS,
-		FEATURE_FREE_THEMES,
+		WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
 		FEATURE_STYLE_CUSTOMIZATION,
 	],
 	getBlogSignupFeatures: () => [
@@ -927,7 +910,7 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_UNLIMITED_ENTITIES,
 		FEATURE_CUSTOM_DOMAIN,
 		FEATURE_AD_FREE_EXPERIENCE,
-		WPCOM_FEATURES_PREMIUM_THEMES_LIMITED,
+		WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
 		FEATURE_SUPPORT_FROM_EXPERTS,
 		FEATURE_STATS_BASIC_20250206,
 		FEATURE_UPLOAD_PLUGINS,
@@ -941,7 +924,7 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_CUSTOM_DOMAIN,
 		FEATURE_AD_FREE_EXPERIENCE,
 		FEATURE_GUIDED_WEBSITE_BUILDER_LIMITED,
-		WPCOM_FEATURES_PREMIUM_THEMES_LIMITED,
+		WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
 		FEATURE_SUPPORT_FROM_EXPERTS,
 		FEATURE_UPLOAD_PLUGINS,
 	],
@@ -985,7 +968,7 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 	getStorageFeature: () => FEATURE_6GB_STORAGE,
 	getPlanComparisonFeatureLabels: ( { isExperimentVariant } = {} ) => {
 		const baseFeatures = {
-			[ FEATURE_PREMIUM_THEMES ]: i18n.translate( 'Dozens of premium themes' ),
+			[ FEATURE_PREMIUM_THEMES ]: i18n.translate( 'All premium themes' ),
 			[ FEATURE_SHARES_SOCIAL_MEDIA_JP ]: i18n.translate( '%d shares per month', { args: [ 30 ] } ),
 			[ FEATURE_COMMISSION_FEE_STANDARD_FEATURES ]: formatNumber( 0.08, {
 				numberFormatOptions: { style: 'percent' },

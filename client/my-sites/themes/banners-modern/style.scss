@@ -301,6 +301,12 @@
 	margin-bottom: 8px;
 }
 
+.plan-upgrade-banner__price-renewal {
+	color: var( --plan-banner-price );
+	font-size: $font-body-small;
+	margin: -8px 0 16px;
+}
+
 .plan-upgrade-banner__billing-toggle {
 	align-items: flex-start;
 	border: none;

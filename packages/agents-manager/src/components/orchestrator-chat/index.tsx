@@ -38,6 +38,7 @@ import useRegenerateAction from '../../hooks/use-regenerate-action';
 import useSourcesAction from '../../hooks/use-sources-action';
 import useSuggestionsRenderedTracking from '../../hooks/use-suggestions-rendered-tracking';
 import { markActionOrigin, takeActionOrigin } from '../../utils/action-origin';
+import { markSessionSent } from '../../utils/agent-session';
 import {
 	blockCurrentRequest,
 	buildCanvasKey,
@@ -65,7 +66,6 @@ import {
 	getOrchestratorErrorMessage,
 	getOrchestratorErrorType,
 } from '../../utils/orchestrator-error-message';
-import { setProviderCheckpoints } from '../../utils/provider-checkpoints';
 import { getReaderChatErrorMessage } from '../../utils/reader-chat-error-message';
 import { isShowComponentTool } from '../../utils/show-component-tools';
 import { isBlockEditToolId } from '../../utils/tool-message-utils';
@@ -772,6 +772,13 @@ export default function OrchestratorChat( {
 		},
 	} );
 
+	// Every send path runs a turn.
+	useEffect( () => {
+		if ( isProcessing && agentConfig?.sessionId ) {
+			markSessionSent( agentConfig.sessionId );
+		}
+	}, [ isProcessing, agentConfig?.sessionId ] );
+
 	const { isLoading: isLoadingConversation } = useConversation( {
 		maxPages: isReaderChat ? 1 : 10,
 		enabled: shouldLoadConversation,
@@ -810,9 +817,12 @@ export default function OrchestratorChat( {
 			// the parked call lives in — hydrate only if its restore came up
 			// empty (e.g. a quota-failed persist). Read the manager, not React
 			// state: `messages` stays empty until the async agent init lands.
+			// A remount mid-turn (History and back, reopening the panel) fetches a
+			// transcript without the reply yet, so the live history stays.
 			if (
-				! hadParkedNavigation ||
-				agentManager.getConversationHistory( agentConfig!.agentId ).length === 0
+				! agentManager.isTurnInFlight( agentConfig!.agentId ) &&
+				( ! hadParkedNavigation ||
+					agentManager.getConversationHistory( agentConfig!.agentId ).length === 0 )
 			) {
 				loadMessages( loadedMessages );
 			}
@@ -1198,14 +1208,6 @@ export default function OrchestratorChat( {
 		nativeUndoRevertedTurn,
 		sourceDriftInvalidatedCheckpointIds,
 	] );
-
-	// TODO (ability-migration): Remove once the last checkpoint-writing Big Sky
-	// ability migrates. Keeps the provider checkpoint store reachable for the
-	// `restore-checkpoint` delegation while Big Sky still writes checkpoints.
-	useEffect( () => {
-		setProviderCheckpoints( checkpoint );
-		return () => setProviderCheckpoints( undefined );
-	}, [ checkpoint ] );
 
 	// Register thumbs-up/down feedback actions on agent messages.
 	const { showFeedbackInput, submitFeedbackText, resetFeedback, getFeedbackActionsForMessage } =
@@ -1696,7 +1698,6 @@ export default function OrchestratorChat( {
 				...getCopyActionsForMessage( message ),
 				...getRegenerateActionsForMessage( message, {
 					isLatestAgentMessage: message.id === latestAgentMessageId,
-					isStreaming: isProcessing,
 				} ),
 			];
 			const hasRegisteredCheckpointAction = message.actions?.some(
@@ -1871,6 +1872,9 @@ export default function OrchestratorChat( {
 			suggestions={ suggestionsVisible ? suggestions : [] }
 			emptyViewSuggestions={ displayedEmptyViewSuggestions }
 			isProcessing={ showProcessingIndicator || isUploadingImages }
+			// The indicator above hides mid-reply and covers uploads; response actions
+			// follow the raw streaming state.
+			isStreaming={ isProcessing }
 			thinkingMessage={
 				isUploadingImages ? __( 'Uploading images…', __i18n_text_domain__ ) : progressMessage
 			}

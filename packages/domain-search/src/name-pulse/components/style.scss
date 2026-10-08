@@ -22,6 +22,11 @@
 	max-width: var( --domain-search-content-max-width );
 }
 
+// Reserve scrollbar space so the layout doesn't shift when results appear.
+html:has( .name-pulse-search-input ) {
+	scrollbar-gutter: stable;
+}
+
 .name-pulse-grid {
 	display: grid;
 	grid-template-columns: repeat( 3, minmax( 0, 1fr ) );
@@ -30,7 +35,7 @@
 	overflow: hidden;
 	gap: 1px;
 
-	@media ( max-width: #{ $break-medium - 1px } ) {
+	@media ( max-width: #{ $break-large - 1px } ) {
 		grid-template-columns: repeat( 2, minmax( 0, 1fr ) );
 	}
 
@@ -45,6 +50,21 @@
 		box-shadow: 0 0 0 1px $gray-100;
 		min-width: 0;
 	}
+
+	// Each result is its own card, so the cells take the frame and the grid
+	// only spaces them out.
+	&--cards {
+		gap: 20px;
+		border: 0;
+		border-radius: 0;
+		overflow: visible;
+
+		> [role='listitem'] {
+			box-shadow: none;
+			border: 1px solid $gray-300;
+			border-radius: 8px;
+		}
+	}
 }
 
 .name-pulse-row {
@@ -57,6 +77,32 @@
 	box-sizing: border-box;
 	flex-wrap: wrap;
 
+	// On phones the price drops under the name and the cart button sits to the
+	// right of both, so the name gets the full width of its column.
+	@media ( max-width: #{ $break-small - 1px } ) {
+		display: grid;
+		grid-template-columns: minmax( 0, 1fr ) auto;
+		align-items: center;
+		gap: 0.25rem 0.75rem;
+
+		.name-pulse-row__status {
+			display: contents;
+
+			> * {
+				grid-column: 1;
+			}
+		}
+
+		.name-pulse-row__cart {
+			grid-column: 2;
+			grid-row: 1 / span 2;
+		}
+
+		.name-pulse-row__price {
+			align-items: flex-start;
+		}
+	}
+
 	&__name {
 		display: flex;
 		align-items: center;
@@ -66,14 +112,6 @@
 		// out of the row's wrap calculation, so it shrinks/truncates in place
 		// instead of pushing `&__status` onto a second line.
 		flex: 1 1 0%;
-
-		// A Sale and a Premium badge together leave the name only a few
-		// characters, so the pair drops under it.
-		&--stacked {
-			flex-direction: column;
-			align-items: flex-start;
-			gap: 0.25rem;
-		}
 	}
 
 	&__badges {
@@ -82,12 +120,8 @@
 		gap: 0.5rem;
 		max-width: 100%;
 
-		.domain-suggestion-badge {
+		> * {
 			flex-shrink: 0;
-			height: 20px;
-			padding-inline: 6px;
-			border-radius: 4px;
-			font-size: 11px;
 		}
 	}
 
@@ -185,6 +219,38 @@
 	}
 }
 
+// The name sits above the price, and the cart button closes the price line.
+// Phones get the table row instead, so this never meets the row's phone grid.
+.name-pulse-row--card {
+	display: flex;
+	flex-direction: column;
+	flex-wrap: nowrap;
+	align-items: stretch;
+	justify-content: center;
+	gap: 0;
+	min-height: 5.875rem;
+	padding: 1rem 1.5rem;
+
+	.name-pulse-row__name {
+		flex: none;
+	}
+
+	.name-pulse-row__cart {
+		margin-inline-start: auto;
+	}
+
+	.name-pulse-row__price--card {
+		flex-direction: row;
+		flex-wrap: wrap;
+		align-items: baseline;
+		column-gap: 0.25rem;
+	}
+
+	&.name-pulse-row--skeleton {
+		gap: 1.25rem;
+	}
+}
+
 .name-pulse-section__more {
 	text-align: center;
 
@@ -195,6 +261,172 @@
 		&:focus:not( :focus-visible ) {
 			box-shadow: none;
 			outline: none;
+		}
+	}
+}
+
+// Figma outlines the bundle CTA in the accent color, unlike the gray secondary
+// buttons on the classic results page.
+.domain-search--name-pulse .bundle-card .bundle-card__cta.is-secondary {
+	color: var( --wp-admin-theme-color, #3858e9 );
+	box-shadow: inset 0 0 0 1px var( --wp-admin-theme-color, #3858e9 );
+}
+
+.domain-search--name-pulse .bundle-tld-chips .bundle-tld-chips__tld {
+	font-weight: 400;
+}
+
+// The exact-match card and the bundle card split the row; either one alone
+// takes the full width, and they stack once there is no room for two.
+.name-pulse-featured {
+	display: grid;
+	grid-template-columns: repeat( auto-fit, minmax( min( 100%, 24rem ), 1fr ) );
+	gap: 1rem;
+
+	// Both cards stretch to the same bottom edge, so equal footers and
+	// bottom-aligned price rows put the two buttons on the same line, whatever
+	// the height of each price.
+	.domain-suggestion-match-reasons > li,
+	.bundle-card__footer > * {
+		display: flex;
+		align-items: center;
+		min-height: 24px;
+	}
+
+	// 2px below the TLDs, not the stack's 16px.
+	.bundle-card .bundle-card__members {
+		margin-block-start: -14px;
+	}
+
+	@media ( min-width: $break-small ) {
+		.name-pulse-exact-card__price-row,
+		.bundle-card__price-row {
+			align-items: flex-end;
+		}
+	}
+}
+
+// Matches the bundle card it sits beside: same frame, price row and footer.
+.name-pulse-exact-card {
+	box-sizing: border-box;
+	min-width: 0;
+	padding: 24px;
+	border-radius: 8px;
+	box-shadow:
+		0 0 0 1px rgba( 0, 0, 0, 0.1 ),
+		0 1px 2px rgba( 0, 0, 0, 0.05 );
+
+	// Stretch to the bundle card's height so both footers sit on the same line.
+	> .components-v-stack {
+		height: 100%;
+	}
+
+	&__icon {
+		display: inline-flex;
+
+		svg {
+			width: 20px;
+			height: 20px;
+		}
+	}
+
+	&__domain.components-text {
+		margin: 0;
+		line-height: 1.2;
+		overflow-wrap: anywhere;
+	}
+
+	&__tld {
+		white-space: nowrap;
+	}
+
+	&__price-row {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		justify-content: space-between;
+		gap: 1rem;
+		margin-block-start: auto;
+	}
+
+	&__cta {
+		flex-shrink: 0;
+	}
+
+	&__footer {
+		padding-top: 16px;
+		border-top: 1px solid rgba( 0, 0, 0, 0.08 );
+	}
+
+	// Same as the bundle card: the price sits above a full-width button.
+	@media ( max-width: #{ $break-small - 1px } ) {
+		&__price-row {
+			flex-direction: column;
+			align-items: flex-start;
+		}
+
+		&__cta,
+		&__cta .components-button {
+			width: 100%;
+			justify-content: center;
+		}
+	}
+}
+
+// Under Top results the bundle card spans the row, so the price and button
+// move beside the TLDs instead of under them. Narrow screens keep the
+// shared card's stacked layout.
+.name-pulse-bundle-wide {
+	.bundle-card .bundle-price .components-text:not( .bundle-price__sub-text ) {
+		font-size: 20px;
+		line-height: 28px;
+	}
+
+	.bundle-card .bundle-price__sub-text,
+	.bundle-card .bundle-card__tagline {
+		color: $gray-900;
+	}
+
+	.bundle-card .bundle-card__tagline {
+		font-size: 13px;
+	}
+
+	.bundle-card .bundle-card__footer-icon {
+		fill: $gray-900;
+	}
+
+	@media ( min-width: $break-small ) {
+		.bundle-card > .components-v-stack {
+			display: grid;
+			grid-template-columns: minmax( 0, 1fr ) auto;
+			column-gap: 24px;
+
+			> * {
+				grid-column: 1 / -1;
+			}
+		}
+
+		.bundle-card .bundle-card__header {
+			grid-row: 1;
+		}
+
+		.bundle-card .bundle-card__tlds {
+			grid-column: 1;
+			grid-row: 2;
+		}
+
+		// The stack's 16px gap pulls the domains too far from their TLDs.
+		.bundle-card .bundle-card__members {
+			grid-column: 1;
+			grid-row: 3;
+			margin-block-start: -12px;
+		}
+
+		.bundle-card .bundle-card__price-row {
+			grid-column: 2;
+			grid-row: 2 / span 2;
+			align-self: center;
+			gap: 40px;
 		}
 	}
 }

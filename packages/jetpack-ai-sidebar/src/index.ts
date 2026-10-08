@@ -749,7 +749,6 @@ function handleShowComponent( input: any ): any {
 		type,
 		props: componentProps,
 		isCurrent: true,
-		hideZoomAction: true,
 	};
 	const responseTrackingProperties = getResponseRenderedTrackingProperties( type, componentProps );
 	if ( responseTrackingProperties ) {

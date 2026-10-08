@@ -20,6 +20,7 @@ import type { ChatProps } from '../../types';
 export function Chat( {
 	messages,
 	isProcessing,
+	isStreaming,
 	error,
 	onSubmit,
 	beforeSubmit,
@@ -281,6 +282,7 @@ export function Chat( {
 					leadingActions={ leadingActions }
 					trailingActions={ trailingActions }
 					isProcessing={ isProcessing }
+					isStreaming={ isStreaming }
 					onStop={ onStop }
 					showHeader={ false }
 					notice={ notice }
@@ -436,6 +438,7 @@ export function Chat( {
 								leadingActions={ leadingActions }
 								trailingActions={ trailingActions }
 								isProcessing={ isProcessing }
+								isStreaming={ isStreaming }
 								onStop={ onStop }
 								showHeader
 								onClose={ handleClose }

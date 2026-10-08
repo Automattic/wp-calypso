@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import { render } from '@testing-library/react';
+import { render } from '../../../test-utils';
 import { Name } from '../index';
 import type { Site } from '@automattic/api-core';
 

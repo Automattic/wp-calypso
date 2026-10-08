@@ -1,3 +1,4 @@
+import { fetchTransactionOrder } from '@automattic/api-core';
 import {
 	makeRedirectResponse,
 	makeErrorResponse,
@@ -7,7 +8,6 @@ import { createElement } from 'react';
 import { flushSync } from 'react-dom';
 import { Root, createRoot } from 'react-dom/client';
 import userAgent from 'calypso/lib/user-agent';
-import { RawOrder, fetchPurchaseOrder } from '../hooks/use-purchase-order';
 import { recordTransactionBeginAnalytics } from '../lib/analytics';
 import getDomainDetails from '../lib/get-domain-details';
 import getPostalCode from '../lib/get-postal-code';
@@ -16,6 +16,7 @@ import { addUrlToPendingPageRedirect } from './pending-page';
 import submitWpcomTransaction from './submit-wpcom-transaction';
 import { WeChatConfirmation } from './we-chat-confirmation';
 import type { PaymentProcessorOptions } from '../types/payment-processors';
+import type { TransactionOrder } from '@automattic/api-core';
 import type { PaymentProcessorResponse } from '@automattic/composite-checkout';
 import type {
 	WPCOMTransactionEndpointResponse,
@@ -43,13 +44,12 @@ export default async function weChatProcessor(
 		siteId,
 		includeDomainDetails,
 		includeGSuiteDetails,
-		reduxDispatch,
 		responseCart,
 		contactDetails,
 	} = options;
 	const paymentMethodId = 'wechat';
 
-	reduxDispatch( recordTransactionBeginAnalytics( { paymentMethodId } ) );
+	recordTransactionBeginAnalytics( { paymentMethodId } );
 
 	const baseURL = new URL(
 		typeof window !== 'undefined' ? window.location.href : 'https://wordpress.com'
@@ -164,8 +164,8 @@ async function pollForOrderStatus(
 	orderId: number,
 	pollInterval: number,
 	genericErrorMessage: string
-): Promise< RawOrder > {
-	const orderData = await fetchPurchaseOrder( orderId );
+): Promise< TransactionOrder > {
+	const orderData = await fetchTransactionOrder( orderId );
 	if ( ! orderData ) {
 		// eslint-disable-next-line no-console
 		console.error( 'Order was not found.' );

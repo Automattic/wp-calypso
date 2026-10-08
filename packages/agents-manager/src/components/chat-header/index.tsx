@@ -5,6 +5,7 @@ import { close, moreVertical, chevronLeft, Icon } from '@wordpress/icons';
 import { useAgentsManagerContext } from '../../contexts';
 import useHasAiChatEntryButton from '../../hooks/use-has-ai-chat-entry-button';
 import { AGENTS_MANAGER_STORE } from '../../stores';
+import { getChatPresentation } from '../../utils/chat-presentation';
 import { recordAgentsManagerTracksEvent } from '../../utils/tracks';
 import { Minimize } from '../icons';
 import type { ComponentProps } from 'react';
@@ -28,7 +29,8 @@ export default function ChatHeader( { onClose, options, title, onBack, isDocked 
 
 	// Minimize only applies to the floating chat reachable from an AI chat entry button
 	// (wp-admin bar, Calypso masterbar, or editor toolbar).
-	const showMinimize = hasAiChatEntry && ! isDocked;
+	const { dismissible } = getChatPresentation();
+	const showMinimize = dismissible && hasAiChatEntry && ! isDocked;
 
 	return (
 		<div className="agents-manager-chat-header">
@@ -77,20 +79,22 @@ export default function ChatHeader( { onClose, options, title, onBack, isDocked 
 					controls={ options }
 					icon={ moreVertical }
 					label={ __( 'More Options', __i18n_text_domain__ ) }
-					// Render inside the panel node so opening the menu doesn't blur the panel
+					// Render inside the panel node so the menu stacks with the panel
 					popoverProps={ {
 						className: 'agents-manager-chat-header__menu-popover',
 						inline: true,
 					} }
 					toggleProps={ { size: 'small' } }
 				/>
-				<Button
-					className="agents-manager-chat-header__close-btn"
-					icon={ close }
-					onClick={ onClose }
-					label={ __( 'Close', __i18n_text_domain__ ) }
-					size="small"
-				/>
+				{ dismissible && (
+					<Button
+						className="agents-manager-chat-header__close-btn"
+						icon={ close }
+						onClick={ onClose }
+						label={ __( 'Close', __i18n_text_domain__ ) }
+						size="small"
+					/>
+				) }
 			</div>
 		</div>
 	);

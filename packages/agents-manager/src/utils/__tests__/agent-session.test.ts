@@ -9,6 +9,8 @@ import {
 	saveSessionId,
 	clearSessionId,
 	getOrCreateSessionId,
+	isUnsentSession,
+	markSessionSent,
 } from '../agent-session';
 import { setResolvedAgentId } from '../resolved-agent-id';
 
@@ -194,5 +196,28 @@ describe( 'getOrCreateSessionId', () => {
 		);
 
 		globalThis.crypto.randomUUID = savedRandomUUID;
+	} );
+} );
+
+describe( 'unsent sessions', () => {
+	beforeEach( () => {
+		ensureCryptoRandomUUID();
+	} );
+
+	it( 'marks a freshly minted session unsent until a turn is sent in it', () => {
+		const sessionId = getOrCreateSessionId( 'wp-orchestrator' );
+
+		expect( isUnsentSession( sessionId ) ).toBe( true );
+
+		markSessionSent( sessionId );
+
+		expect( isUnsentSession( sessionId ) ).toBe( false );
+	} );
+
+	it( 'never marks a session it did not mint', () => {
+		saveSessionId( 'server-session-id', 'wp-orchestrator' );
+
+		expect( getOrCreateSessionId( 'wp-orchestrator' ) ).toBe( 'server-session-id' );
+		expect( isUnsentSession( 'server-session-id' ) ).toBe( false );
 	} );
 } );

@@ -21,23 +21,21 @@ import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopp
 import { getRedirectFromPendingPage } from 'calypso/my-sites/checkout/src/lib/pending-page';
 import { sendMessageToOpener } from 'calypso/my-sites/checkout/src/lib/popup';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
-import { useSelector, useDispatch } from 'calypso/state';
+import { useDispatch } from 'calypso/state';
 import { fetchCurrentUser } from 'calypso/state/current-user/actions';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
-import { SUCCESS } from 'calypso/state/order-transactions/constants';
-import getOrderTransactionError from 'calypso/state/selectors/get-order-transaction-error';
+import { getCalypsoQueryClient } from 'calypso/state/query-client';
 import { requestSite } from 'calypso/state/sites/actions';
 import usePurchaseOrder from '../../src/hooks/use-purchase-order';
 import { logStashLoadErrorEvent } from '../../src/lib/analytics';
+import { recordCompletedPurchaseAnalytics } from '../../src/lib/record-completed-purchase-analytics';
+import { SUCCESS } from '../../src/types/order-transaction';
 import {
 	PLAN_AND_DOMAIN_NOTICE_QUERY_VALUE,
 	PURCHASE_NOTICE_QUERY_KEY,
 } from '../purchase-notice-constants';
+import type { OrderTransaction, OrderTransactionSuccess } from '../../src/types/order-transaction';
 import type { RedirectInstructions } from 'calypso/my-sites/checkout/src/lib/pending-page';
-import type {
-	OrderTransaction,
-	OrderTransactionSuccess,
-} from 'calypso/state/selectors/get-order-transaction';
 import type { CalypsoDispatch } from 'calypso/state/types';
 
 import './style.scss';
@@ -241,9 +239,6 @@ function useRedirectOnTransactionSuccess( {
 	} );
 	const isReceiptLoaded = isReceiptSuccess || isReceiptError;
 
-	const error: Error | null = useSelector( ( state ) =>
-		orderId ? getOrderTransactionError( state, orderId ) : null
-	);
 	const reduxDispatch = useDispatch();
 	const queryClient = useQueryClient();
 	const cartKey = useCartKey();
@@ -354,7 +349,6 @@ function useRedirectOnTransactionSuccess( {
 
 		const redirectInstructions = getRedirectFromPendingPage( {
 			isLoadingOrder,
-			error,
 			transaction,
 			orderId,
 			receiptId,
@@ -399,7 +393,9 @@ function useRedirectOnTransactionSuccess( {
 			reduxDispatch( requestSite( blogId ) );
 		}
 
+		// Help Center reads Calypso's client; this page renders under the api-queries one.
 		queryClient.invalidateQueries( { queryKey: SUPPORT_STATUS_QUERY_KEY } );
+		getCalypsoQueryClient()?.invalidateQueries( { queryKey: SUPPORT_STATUS_QUERY_KEY } );
 
 		// For plan + domain purchases the `domain-and-plan` flow sends the user to
 		// `/home/<site>` instead of the thank-you page. Tag the destination URL with
@@ -409,7 +405,7 @@ function useRedirectOnTransactionSuccess( {
 		let finalUrl = isPlanAndDomainPurchase
 			? addQueryArgs( redirectInstructions.url, {
 					[ PURCHASE_NOTICE_QUERY_KEY ]: PLAN_AND_DOMAIN_NOTICE_QUERY_VALUE,
-			  } )
+				} )
 			: redirectInstructions.url;
 
 		if ( ! redirectInstructions.isError && ! redirectInstructions.isUnknown ) {
@@ -417,6 +413,15 @@ function useRedirectOnTransactionSuccess( {
 		}
 
 		const finalRedirectInstructions = { ...redirectInstructions, url: finalUrl };
+
+		// This is the first point where we know the purchase is complete, so
+		// record it before leaving the page.
+		if ( receipt && ! redirectInstructions.isError && ! redirectInstructions.isUnknown ) {
+			recordCompletedPurchaseAnalytics( receipt ).then( () =>
+				notifyAndPerformRedirect( siteSlug, finalRedirectInstructions )
+			);
+			return;
+		}
 
 		notifyAndPerformRedirect( siteSlug, finalRedirectInstructions );
 	}, [
@@ -426,7 +431,6 @@ function useRedirectOnTransactionSuccess( {
 		isUnifiedCheckout,
 		isUserRefreshedForUnified,
 		connectingJetpackText,
-		error,
 		finalReceiptId,
 		isReceiptLoaded,
 		isRenewal,

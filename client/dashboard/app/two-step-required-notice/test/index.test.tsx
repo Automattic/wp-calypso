@@ -3,22 +3,20 @@
  */
 import { screen } from '@testing-library/react';
 import { render } from '../../../test-utils';
-import TwoStepRequiredNotice, { useSitesRequiringTwoStep } from '../index';
+import TwoStepRequiredNotice, { useSiteRequiresTwoStep } from '../index';
 import type { Site, User } from '@automattic/api-core';
 
 function makeSite( {
-	ID = 1,
 	name = 'Team Site',
 	requiresTwoStep = true,
 	jetpackModules = [ 'sso' ],
 }: {
-	ID?: number;
 	name?: string;
 	requiresTwoStep?: boolean;
 	jetpackModules?: string[] | null;
 } = {} ) {
 	return {
-		ID,
+		ID: 1,
 		name,
 		jetpack: true,
 		jetpack_modules: jetpackModules,
@@ -31,49 +29,58 @@ function accountUser( { twoStepEnabled }: { twoStepEnabled?: boolean } = {} ) {
 }
 
 // The hook is exercised through a probe component so it runs inside the same providers
-// the notice has on the sites pages.
-function HookProbe( { sites }: { sites: Site[] } ) {
-	const requiring = useSitesRequiringTwoStep( sites );
-	return <div>{ requiring.map( ( site ) => site.ID ).join( ',' ) || 'none' }</div>;
+// the notice has on the site overview.
+function HookProbe( { site }: { site: Site } ) {
+	return <div>{ useSiteRequiresTwoStep( site ) ? 'required' : 'not required' }</div>;
 }
 
-describe( 'useSitesRequiringTwoStep', () => {
-	test( 'keeps sites that require two-step and have SSO active when the user has no two-step', async () => {
-		render(
-			<HookProbe
-				sites={ [
-					makeSite( { ID: 1 } ),
-					makeSite( { ID: 2, requiresTwoStep: false } ),
-					makeSite( { ID: 3, jetpackModules: [ 'stats' ] } ),
-					makeSite( { ID: 4, jetpackModules: null } ),
-					makeSite( { ID: 5 } ),
-				] }
-			/>,
-			{ user: accountUser( { twoStepEnabled: false } ) }
-		);
+describe( 'useSiteRequiresTwoStep', () => {
+	test( 'is true when the site requires two-step, SSO is active and the user has no two-step', async () => {
+		render( <HookProbe site={ makeSite() } />, {
+			user: accountUser( { twoStepEnabled: false } ),
+		} );
 
-		expect( await screen.findByText( '1,5' ) ).toBeVisible();
+		expect( await screen.findByText( 'required' ) ).toBeVisible();
 	} );
 
-	test( 'is empty when the user already has two-step', async () => {
-		render( <HookProbe sites={ [ makeSite() ] } />, {
+	test( 'is false when the site does not require two-step', async () => {
+		render( <HookProbe site={ makeSite( { requiresTwoStep: false } ) } />, {
+			user: accountUser( { twoStepEnabled: false } ),
+		} );
+
+		expect( await screen.findByText( 'not required' ) ).toBeVisible();
+	} );
+
+	test.each( [
+		[ 'inactive', [ 'stats' ] ],
+		[ 'unknown', null ],
+	] )( 'is false when the SSO module is %s', async ( _label, jetpackModules ) => {
+		render( <HookProbe site={ makeSite( { jetpackModules } ) } />, {
+			user: accountUser( { twoStepEnabled: false } ),
+		} );
+
+		expect( await screen.findByText( 'not required' ) ).toBeVisible();
+	} );
+
+	test( 'is false when the user already has two-step', async () => {
+		render( <HookProbe site={ makeSite() } />, {
 			user: accountUser( { twoStepEnabled: true } ),
 		} );
 
-		expect( await screen.findByText( 'none' ) ).toBeVisible();
+		expect( await screen.findByText( 'not required' ) ).toBeVisible();
 	} );
 
-	test( 'is empty when the field is absent, as it is before wpcom deploys', async () => {
-		render( <HookProbe sites={ [ makeSite() ] } />, { user: accountUser() } );
+	test( 'is false when the field is absent, as it is before wpcom deploys', async () => {
+		render( <HookProbe site={ makeSite() } />, { user: accountUser() } );
 
-		expect( await screen.findByText( 'none' ) ).toBeVisible();
+		expect( await screen.findByText( 'not required' ) ).toBeVisible();
 	} );
 } );
 
 describe( '<TwoStepRequiredNotice>', () => {
-	test( 'names the site when one site requires two-step and records an impression', async () => {
+	test( 'names the site and records an impression', async () => {
 		const { recordTracksEvent } = render(
-			<TwoStepRequiredNotice sites={ [ makeSite( { name: 'Team Site' } ) ] } />
+			<TwoStepRequiredNotice site={ makeSite( { name: 'Team Site' } ) } />
 		);
 
 		expect(
@@ -86,20 +93,8 @@ describe( '<TwoStepRequiredNotice>', () => {
 		);
 	} );
 
-	test( 'uses the generic copy when several sites require two-step', async () => {
-		render(
-			<TwoStepRequiredNotice
-				sites={ [ makeSite( { ID: 1, name: 'One' } ), makeSite( { ID: 2, name: 'Two' } ) ] }
-			/>
-		);
-
-		expect(
-			await screen.findByText( /Some of your sites require two-step authentication/ )
-		).toBeVisible();
-	} );
-
 	test( 'links to the two-step settings as its only action', async () => {
-		render( <TwoStepRequiredNotice sites={ [ makeSite() ] } /> );
+		render( <TwoStepRequiredNotice site={ makeSite() } /> );
 
 		const links = await screen.findAllByRole( 'link' );
 		expect( links ).toHaveLength( 1 );

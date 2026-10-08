@@ -1,13 +1,15 @@
+import { createPayPalExpressUrl } from '@automattic/api-core';
 import { makeRedirectResponse, makeErrorResponse } from '@automattic/composite-checkout';
-import { mapRecordKeysRecursively, camelToSnakeCase } from '@automattic/js-utils';
 import { tryToGuessPostalCodeFormat } from '@automattic/wpcom-checkout';
 import debugFactory from 'debug';
 import getToSAcceptancePayload from 'calypso/lib/tos-acceptance-tracking';
-import wp from 'calypso/lib/wp';
 import { recordTransactionBeginAnalytics } from '../lib/analytics';
 import getDomainDetails from '../lib/get-domain-details';
 import { addUrlToPendingPageRedirect } from '../lib/pending-page';
-import { createTransactionEndpointCartFromResponseCart } from '../lib/translate-cart';
+import {
+	convertDomainContactDetailsForTransaction,
+	createTransactionEndpointCartFromResponseCart,
+} from '../lib/translate-cart';
 import { createWpcomAccountBeforeTransaction } from './create-wpcom-account-before-transaction';
 import type { PaymentProcessorOptions } from '../types/payment-processors';
 import type { PaymentProcessorResponse } from '@automattic/composite-checkout';
@@ -22,7 +24,6 @@ export default async function payPalProcessor(
 	const {
 		getThankYouUrl,
 		createUserAndSiteBeforeTransaction,
-		reduxDispatch,
 		includeDomainDetails,
 		includeGSuiteDetails,
 		responseCart,
@@ -31,7 +32,7 @@ export default async function payPalProcessor(
 		contactDetails,
 		fromSiteSlug,
 	} = transactionOptions;
-	reduxDispatch( recordTransactionBeginAnalytics( { paymentMethodId: 'paypal-express' } ) );
+	recordTransactionBeginAnalytics( { paymentMethodId: 'paypal-express' } );
 
 	const thankYouUrl = getThankYouUrl();
 	let currentUrl;
@@ -81,9 +82,6 @@ export default async function payPalProcessor(
  * This is one of two transactions endpoint functions; also see
  * `submitWpcomTransaction`.
  *
- * Note that the payload property is (mostly) in camelCase but the actual
- * submitted data will be converted (mostly) to snake_case.
- *
  * Please do not alter payload inside this function if possible to retain type
  * safety. Instead, alter
  * `createPayPalExpressEndpointRequestPayloadFromLineItems` or add a new type
@@ -98,10 +96,7 @@ async function wpcomPayPalExpress(
 		payload.cart = await createWpcomAccountBeforeTransaction( payload.cart, transactionOptions );
 	}
 
-	const body = mapRecordKeysRecursively( payload, camelToSnakeCase );
-	const path = '/me/paypal-express-url';
-	const apiVersion = '1.2';
-	return wp.req.post( { path }, { apiVersion }, body );
+	return createPayPalExpressUrl( payload );
 }
 
 function createPayPalExpressEndpointRequestPayloadFromLineItems( {
@@ -120,16 +115,16 @@ function createPayPalExpressEndpointRequestPayloadFromLineItems( {
 	const postalCode = responseCart.tax.location.postal_code ?? '';
 	const country = responseCart.tax.location.country_code ?? '';
 	return {
-		successUrl,
-		cancelUrl,
+		success_url: successUrl,
+		cancel_url: cancelUrl,
 		cart: createTransactionEndpointCartFromResponseCart( {
 			siteId,
 			contactDetails: domainDetails,
 			responseCart,
 		} ),
 		country,
-		postalCode: postalCode ? tryToGuessPostalCodeFormat( postalCode.toUpperCase(), country ) : '',
-		domainDetails,
+		postal_code: postalCode ? tryToGuessPostalCodeFormat( postalCode.toUpperCase(), country ) : '',
+		domain_details: domainDetails && convertDomainContactDetailsForTransaction( domainDetails ),
 		tos: getToSAcceptancePayload(),
 	};
 }

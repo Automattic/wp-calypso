@@ -85,7 +85,7 @@ describe( '<ReferHosting>', () => {
 		).not.toBeInTheDocument();
 
 		const backLink = screen.getByRole( 'link', { name: 'Back to the marketplace' } );
-		expect( backLink ).toHaveAttribute( 'href', '/marketplace/hosting/pressable' );
+		expect( backLink ).toHaveAttribute( 'href', '/hosting/pressable' );
 		await user.click( backLink );
 		await waitFor( () =>
 			expect( recordTracksEvent ).toHaveBeenCalledWith(

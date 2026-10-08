@@ -1,0 +1,184 @@
+/**
+ * A cover's image carries attributes the editor's media picker keeps in step:
+ * the overlay and `isDark` from the image's colour, the focal point and
+ * featured-image flag that belonged to the old image, and a dim ratio that
+ * would hide a first image. An image the agent writes gets the same treatment.
+ */
+
+import { getBlock, getPaletteColor } from '../../utils/editor-blocks';
+import { sameJson } from '../../utils/same-json';
+import { mergeAttributes } from './merge-blocks';
+import type { BlockAttributes, EditorBlock } from '../../utils/editor-blocks';
+
+const COVER_BLOCK = 'core/cover';
+
+// White, like the editor's fallback: an image that cannot be read is more
+// often light than dark.
+const DEFAULT_IMAGE_COLOR = '#FFF';
+
+// A stalled image would otherwise hold the whole call open, undo level included.
+const IMAGE_COLOR_TIMEOUT = 5000;
+
+const withDeadline = < T >( promise: Promise< T >, milliseconds: number ): Promise< T > =>
+	new Promise( ( resolve, reject ) => {
+		const timer = setTimeout( () => reject( new Error( 'Timed out' ) ), milliseconds );
+
+		promise.then( resolve, reject ).finally( () => clearTimeout( timer ) );
+	} );
+
+// The overlay a cover shows when none is chosen, from the block's stylesheet.
+const DEFAULT_OVERLAY_COLOR = '#000';
+
+// What the derived write reads or sets.
+const COVER_KEYS = [
+	'url',
+	'dimRatio',
+	'focalPoint',
+	'useFeaturedImage',
+	'overlayColor',
+	'customOverlayColor',
+	'isUserOverlayColor',
+];
+
+type Colord = typeof import( 'colord' ).colord;
+type Write = ( clientId: string, attributes: BlockAttributes ) => void;
+
+// Loaded on the first cover image, in their own chunk.
+const loadColorLibraries = () =>
+	Promise.all( [
+		import( /* webpackChunkName: "am-cover-color" */ 'colord' ),
+		import( /* webpackChunkName: "am-cover-color" */ 'fast-average-color' ),
+	] );
+
+const asNumber = ( value: unknown ): number | undefined =>
+	typeof value === 'number' ? value : undefined;
+
+const setsOverlay = ( { overlayColor, customOverlayColor }: BlockAttributes ): boolean =>
+	overlayColor !== undefined || customOverlayColor !== undefined;
+
+/** The overlay `attributes` show; a palette slug the palette lacks is `undefined`. */
+function getOverlayColor( {
+	overlayColor,
+	customOverlayColor,
+}: BlockAttributes ): string | undefined {
+	if ( typeof overlayColor === 'string' ) {
+		return getPaletteColor( overlayColor );
+	}
+
+	return typeof customOverlayColor === 'string' ? customOverlayColor : DEFAULT_OVERLAY_COLOR;
+}
+
+/** Whether the overlay over the image reads as dark, as the editor judges it. */
+function compositeIsDark(
+	colord: Colord,
+	dimRatio: number,
+	overlayColor: string,
+	imageColor: string
+): boolean {
+	if ( overlayColor === imageColor || dimRatio === 100 ) {
+		return colord( overlayColor ).isDark();
+	}
+
+	const overlay = colord( overlayColor )
+		.alpha( dimRatio / 100 )
+		.toRgb();
+	const image = colord( imageColor ).toRgb();
+	const alpha = overlay.a + image.a * ( 1 - overlay.a );
+	const channel = ( over: number, under: number ) =>
+		over * overlay.a + under * image.a * ( 1 - overlay.a );
+
+	return colord( {
+		r: channel( overlay.r, image.r ),
+		g: channel( overlay.g, image.g ),
+		b: channel( overlay.b, image.b ),
+		a: alpha,
+	} ).isDark();
+}
+
+/**
+ * Writes what a cover's new image implies, after the update that set it. The
+ * request's own values win; the overlay is left to a user who chose it.
+ */
+export async function syncCoverWithImage(
+	clientId: string,
+	before: EditorBlock,
+	requested: BlockAttributes | null | undefined,
+	write: Write
+): Promise< void > {
+	const url = requested?.url;
+
+	if (
+		! requested ||
+		before.name !== COVER_BLOCK ||
+		typeof url !== 'string' ||
+		! url ||
+		url === before.attributes.url
+	) {
+		return;
+	}
+
+	// The image is already written; a chunk that fails to load costs the colour, not the rest.
+	const libraries = await loadColorLibraries().catch( () => undefined );
+	let imageColor = DEFAULT_IMAGE_COLOR;
+
+	if ( libraries ) {
+		try {
+			const color = new libraries[ 1 ].FastAverageColor().getColorAsync( url, { silent: true } );
+
+			imageColor = ( await withDeadline( color, IMAGE_COLOR_TIMEOUT ) ).hex;
+		} catch {
+			// An unreadable or stalled image keeps the default.
+		}
+	}
+
+	// The waits above are long enough for the user to act: a cover that no
+	// longer reads as the update left it is left alone.
+	const expected = mergeAttributes( before.attributes, requested );
+	const current = getBlock( clientId )?.attributes;
+
+	if ( ! current || COVER_KEYS.some( ( key ) => ! sameJson( current[ key ], expected[ key ] ) ) ) {
+		return;
+	}
+
+	const setsSlug = typeof requested.overlayColor === 'string';
+	const setsCustom = typeof requested.customOverlayColor === 'string';
+	const derived: BlockAttributes = {
+		focalPoint: undefined,
+		useFeaturedImage: undefined,
+		// A first image would otherwise sit under a full-strength overlay.
+		...( before.attributes.url === undefined &&
+			before.attributes.dimRatio === 100 && { dimRatio: 50 } ),
+		// One overlay form at a time: a slug left in place would win over a custom colour.
+		...( setsSlug !== setsCustom &&
+			( setsSlug ? { customOverlayColor: undefined } : { overlayColor: undefined } ) ),
+	};
+	const requestsOverlay = setsOverlay( requested );
+	const recolours =
+		!! libraries && ! requestsOverlay && before.attributes.isUserOverlayColor !== true;
+
+	if ( recolours ) {
+		Object.assign( derived, {
+			overlayColor: undefined,
+			customOverlayColor: imageColor,
+			isUserOverlayColor: false,
+		} );
+	}
+
+	const overlayColor = recolours
+		? imageColor
+		: getOverlayColor( requestsOverlay ? requested : before.attributes );
+	const dimRatio =
+		asNumber( requested.dimRatio ) ??
+		asNumber( derived.dimRatio ) ??
+		asNumber( before.attributes.dimRatio ) ??
+		100;
+
+	if ( libraries && overlayColor ) {
+		derived.isDark = compositeIsDark( libraries[ 0 ].colord, dimRatio, overlayColor, imageColor );
+	}
+
+	write(
+		clientId,
+		Object.fromEntries( Object.entries( derived ).filter( ( [ key ] ) => ! ( key in requested ) ) )
+	);
+}

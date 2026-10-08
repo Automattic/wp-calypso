@@ -2,7 +2,7 @@ import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { isTestModeEnvironment } from '@automattic/zendesk-client';
 import { Spinner } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import clx from 'classnames';
+import clsx from 'clsx';
 import { useEffect, useRef, useState } from 'react';
 import { NavigationType, useNavigate, useNavigationType, useSearchParams } from 'react-router-dom';
 import { getOdieInitialMessage, ODIE_DEFAULT_BOT_SLUG_LEGACY } from '../../constants';
@@ -29,8 +29,14 @@ interface ChatMessagesProps {
 }
 
 export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
-	const { chat, isChatLoaded, isUserEligibleForPaidSupport, forceEmailSupport, launcherContext } =
-		useOdieAssistantContext();
+	const {
+		chat,
+		isChatLoaded,
+		isUserEligibleForPaidSupport,
+		forceEmailSupport,
+		launcherContext,
+		isLoadingZendeskHistory,
+	} = useOdieAssistantContext();
 	const isTestMode = isTestModeEnvironment();
 	const hasEnTranslation = useHasEnTranslation();
 	const createZendeskConversation = useCreateZendeskConversation();
@@ -120,7 +126,7 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 
 	return (
 		<div
-			className={ clx( 'chatbox-messages', {
+			className={ clsx( 'chatbox-messages', {
 				'force-email-support': forceEmailSupport && chat.provider === 'zendesk',
 			} ) }
 			ref={ messagesContainerRef }
@@ -139,7 +145,7 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 			</div>
 			<>
 				<div
-					className={ clx( 'chatbox-loading-chat__spinner', {
+					className={ clsx( 'chatbox-loading-chat__spinner', {
 						'is-visible': chat.status === 'loading' || ( isScrolling && chat.status !== 'sending' ),
 					} ) }
 				>
@@ -156,7 +162,12 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 						key={ 0 }
 					/>
 				) }
-				{ chat.messages?.length > 0 && <MessagesClusterizer messages={ chat.messages } /> }
+				{ chat.messages?.length > 0 && (
+					<MessagesClusterizer
+						messages={ chat.messages }
+						isLoadingZendeskHistory={ isLoadingZendeskHistory }
+					/>
+				) }
 				<JumpToRecent containerReference={ messagesContainerRef } />
 
 				{ chat.provider === 'odie' && chat.status === 'sending' && <ThinkingPlaceholder /> }

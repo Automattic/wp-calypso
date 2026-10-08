@@ -145,13 +145,21 @@ export interface Agency {
 	tier?: AgencyTier;
 	influenced_revenue?: number;
 	approval_status?: AgencyApprovalStatus | '';
+	/** False while an unpaid invoice or a missing payment method blocks new licenses. */
+	can_issue_licenses?: boolean;
 	profile?: AgencyProfile;
+	/** The logo the agency last uploaded for a referral email. */
+	referrals_logo?: string | null;
 	partner_directory?: {
 		allowed: boolean;
 		directories: AgencyPartnerDirectorySlug[];
 	};
 	amplify?: {
 		allowed: boolean;
+	};
+	signup_meta?: {
+		/** The site count band chosen at signup, e.g. '1-5'. */
+		number_sites?: string;
 	};
 	created_at: string;
 	billing_system?: 'billingdragon' | 'legacy';
@@ -264,6 +272,13 @@ export interface AgencyResourcesResponse {
 	status: string;
 	results: AgencyResource[];
 	total: number;
+}
+
+/**
+ * Response from GET /wpcom/v2/agency/stats. Public, program-wide counts.
+ */
+export interface AgencyProgramStats {
+	active_agencies: number;
 }
 
 export interface TipaltiIFrameUrl {

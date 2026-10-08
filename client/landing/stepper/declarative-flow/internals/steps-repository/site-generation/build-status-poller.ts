@@ -35,7 +35,7 @@ export type BuildWowStatusResponse = {
 	build_phase?: string;
 	// Where a finished build lands. Once the build is live this names the
 	// generated front page on the edit canvas; before that it is the bare
-	// easy-mode URL the site-spec step already captured.
+	// easy-mode URL.
 	site_editor_url?: string;
 	ui?: BuildWowUi;
 };

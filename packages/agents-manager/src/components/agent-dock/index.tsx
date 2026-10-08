@@ -21,14 +21,18 @@ import { useAgentsManagerContext } from '../../contexts';
 import { useSetupCustomActions } from '../../hooks/custom-actions';
 import useAdminBarIntegration from '../../hooks/use-admin-bar-integration';
 import useAgentLayoutManager from '../../hooks/use-agent-layout-manager';
+import useRaiseOnFocus from '../../hooks/use-raise-on-focus';
 import useReaderChatPersistence from '../../hooks/use-reader-chat-persistence';
 import { AGENTS_MANAGER_STORE } from '../../stores';
 import { LocalConversationListItem } from '../../types';
 import { takeActionOrigin } from '../../utils/action-origin';
 import { saveSessionId } from '../../utils/agent-session';
+import { getChatPresentation } from '../../utils/chat-presentation';
 import { getAgentsManagerInlineData } from '../../utils/get-agents-manager-inline-data';
+import { isEditorPage } from '../../utils/is-editor-page';
 import { isReaderChatAgent } from '../../utils/is-reader-chat-agent';
 import { isWooAiProvider } from '../../utils/is-woo-ai-provider';
+import lazyComponent from '../../utils/lazy-component';
 import { recordAgentsManagerTracksEvent, recordBigSkyTracksEvent } from '../../utils/tracks';
 import AgentHistory from '../agent-history';
 import { type Options as ChatHeaderOptions } from '../chat-header';
@@ -36,7 +40,6 @@ import EditorAiChatButton from '../editor-ai-chat-button';
 import { SwitchToFloating } from '../icons';
 import OrchestratorChat from '../orchestrator-chat';
 import SupportGuide from '../support-guide';
-import SupportGuides from '../support-guides';
 import ZendeskChat from '../zendesk-chat';
 import type {
 	AbilitiesSetupHook,
@@ -49,6 +52,13 @@ import type {
 } from '../../utils/load-external-providers';
 import type { AgentsManagerSelect } from '@automattic/data-stores';
 import './style.scss';
+
+// Carries the block-editor stack, so it loads only where a design can stream.
+// Mounted here rather than in the chat: closing the chat unmounts it, and a
+// design streaming meanwhile still has to be painted and committed.
+const PageDesignRenderer = lazyComponent(
+	() => import( /* webpackChunkName: "am-page-design-renderer" */ '../page-design-renderer' )
+);
 
 interface Props {
 	/** Suggestions displayed when the chat is empty. */
@@ -85,6 +95,7 @@ export default function AgentDock( {
 	capabilities,
 }: Props ) {
 	const { agentConfig, siteKey, currentUser } = useAgentsManagerContext();
+	const { dismissible } = getChatPresentation();
 
 	const [ isCompactMode, setIsCompactMode ] = useState(
 		window.__agentsManagerActions?.isCompactMode ?? false
@@ -107,6 +118,7 @@ export default function AgentDock( {
 		const store: AgentsManagerSelect = select( AGENTS_MANAGER_STORE );
 		return store.getAgentsManagerState();
 	}, [] );
+	const isOpen = isPersistedOpen || ! dismissible;
 	const { pathname } = useLocation();
 	const navigate = useNavigate();
 	const navigationType = useNavigationType();
@@ -132,10 +144,11 @@ export default function AgentDock( {
 		undock,
 		openSidebar,
 		closeSidebar,
+		portalNode,
 		createAgentPortal,
 	} = useAgentLayoutManager( {
 		defaultDocked: isReaderChat ? false : isPersistedDocked,
-		defaultOpen: isPersistedOpen,
+		defaultOpen: isOpen,
 		desktopMediaQuery,
 		// Only open the sidebar; keep the current route. Admin-bar items
 		// set their own route (e.g. history) before opening it.
@@ -159,6 +172,9 @@ export default function AgentDock( {
 	// Docked close fires `sidebar_close_click` (via `onCloseSidebar`); undocked
 	// close fires `dock_back_button_click`. Matches Big Sky.
 	const handleClose = () => {
+		if ( ! dismissible ) {
+			return;
+		}
 		if ( isDocked ) {
 			closeSidebar();
 		} else {
@@ -197,21 +213,6 @@ export default function AgentDock( {
 		}
 		prevHasAiChatEntryRef.current = hasAiChatEntry;
 	}, [ hasAiChatEntry, isMinimized, setIsMinimized ] );
-
-	// Route visibility. All are hidden in reader chat (public blog frontends);
-	// some add a further requirement, noted below. Ordered to match the routes.
-	//
-	const showZendeskChat = ! isReaderChat && isWooAiProvider();
-	// `/support-guides` (the list) is registered even
-	// without an entry button: unregistering it mid-session (Site Editor
-	// navigation) would yank the route from under a user viewing it, and the
-	// wildcard redirect would reset their chat.
-	const showSupportGuides = ! isReaderChat;
-	// `/post` (the viewer) opens a guide or link from in-chat links and sources,
-	// so unlike the list it can open directly from a chat link.
-	const showSupportGuide = ! isReaderChat;
-	// `/history` matches the chat header's history button.
-	const showChatHistory = ! isReaderChat;
 
 	useSetupCustomActions( {
 		canDock,
@@ -400,9 +401,11 @@ export default function AgentDock( {
 
 	// With the AI chat entry button, the chat hides on close and can minimize to
 	// the bar. Without one, it stays mounted and collapses to a button instead.
-	const isChatVisible = isPersistedOpen || ! hasAiChatEntry;
-	const isMinimizedActive = hasAiChatEntry && isMinimized;
-	const chatIsOpen = isPersistedOpen && ! isMinimizedActive;
+	const isChatVisible = isOpen || ! hasAiChatEntry;
+	const isMinimizedActive = dismissible && hasAiChatEntry && isMinimized;
+	const chatIsOpen = isOpen && ! isMinimizedActive;
+
+	useRaiseOnFocus( isChatVisible && ! isDocked ? portalNode : null, chatIsOpen );
 
 	// Recorded here rather than from the entry buttons: the dock only renders once
 	// the providers have loaded, so `provider_ids` is always set. `restored` marks
@@ -500,29 +503,20 @@ export default function AgentDock( {
 		/>
 	);
 
-	const SupportGuidesRoute = (
-		<SupportGuides
-			onAbort={ handleAbort }
-			onClose={ handleClose }
-			onExpand={ handleExpand }
-			isDocked={ isDocked }
-			isOpen={ chatIsOpen }
-			chatHeaderOptions={ chatHeaderOptions }
-		/>
-	);
-
 	return (
 		<>
 			<EditorAiChatButton onClose={ handleClose } onOpenChat={ openChat } />
+			{ isEditorPage() && <PageDesignRenderer /> }
 			{ isChatVisible &&
 				createAgentPortal(
 					// NOTE: Use route state to pass data that needs to be accessed throughout the app.
 					<Routes>
 						<Route path="/chat" element={ OrchestratorChatRoute } />
-						{ showZendeskChat && <Route path="/zendesk" element={ ZendeskChatRoute } /> }
-						{ showSupportGuides && <Route path="/support-guides" element={ SupportGuidesRoute } /> }
-						{ showSupportGuide && <Route path="/post" element={ SupportGuideRoute } /> }
-						{ showChatHistory && <Route path="/history" element={ HistoryRoute } /> }
+						{ ! isReaderChat && isWooAiProvider() && (
+							<Route path="/zendesk" element={ ZendeskChatRoute } />
+						) }
+						{ ! isReaderChat && <Route path="/post" element={ SupportGuideRoute } /> }
+						{ ! isReaderChat && <Route path="/history" element={ HistoryRoute } /> }
 						<Route
 							path="*"
 							element={

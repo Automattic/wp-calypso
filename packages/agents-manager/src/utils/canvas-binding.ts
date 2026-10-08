@@ -34,8 +34,8 @@
  * retries. Letting an absent canvas through turns that readiness retry into an
  * unbounded loop against a page that is never coming back.
  *
- * Module-level state, matching `provider-checkpoints.ts` — there is one chat per
- * page load and the wrappers that read this are themselves module-level.
+ * Module-level state — there is one chat per page load and the wrappers that
+ * read this are themselves module-level.
  */
 
 import { select } from '@wordpress/data';

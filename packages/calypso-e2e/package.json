@@ -45,6 +45,7 @@
 		"typescript": "^6.0.3"
 	},
 	"scripts": {
+		"capture-google-session": "node scripts/capture-google-session.cjs",
 		"clean": "yarn build --clean && rm -rf dist",
 		"build": "tsc --build ./tsconfig.json && tsc --build ./tsconfig.cjs.json",
 		"encrypt-secrets": "openssl enc -md sha1 -aes-256-cbc -pass env:E2E_SECRETS_KEY -out ./src/secrets/encrypted.enc -in ./src/secrets/decrypted-secrets.json",

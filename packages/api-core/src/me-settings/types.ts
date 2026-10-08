@@ -57,6 +57,14 @@ export type McpAbilities = {
 	group_intents?: Record< string, boolean >;
 };
 
+/** `expires_at` is a Unix timestamp in seconds; `null` while active means it stays on until turned off. */
+export type McpApprovalBypass = {
+	active: boolean;
+	expires_at: number | null;
+};
+
+export type McpApprovalBypassDuration = '30m' | '2h' | '12h' | 'forever' | 'off';
+
 export interface UserSettings {
 	advertising_targeting_opt_out: boolean;
 	avatar_URL: string;
@@ -97,6 +105,8 @@ export interface UserSettings {
 
 	primary_site_ID?: number;
 	mcp_abilities?: McpAbilities;
+	/** Present only for Automatticians. */
+	mcp_approval_bypass?: McpApprovalBypass;
 	/** When true, account-level AI assistant features are enabled (requires API support). */
 	ai_assistant?: boolean | null;
 
@@ -110,6 +120,11 @@ export interface UserSettings {
 	user_email_change_requested_from?: string;
 	new_user_email?: string;
 }
+
+// `mcp_approval_bypass` is read as its state but written as a duration.
+export type UserSettingsUpdate = Partial< Omit< UserSettings, 'mcp_approval_bypass' > > & {
+	mcp_approval_bypass?: McpApprovalBypassDuration;
+};
 
 export interface PasswordValidationResponse {
 	passed: boolean;

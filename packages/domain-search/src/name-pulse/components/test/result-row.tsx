@@ -3,7 +3,8 @@
  */
 import { DomainAvailabilityStatus } from '@automattic/api-core';
 import { QueryClientProvider } from '@tanstack/react-query';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor, within } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { useViewportMatch } from '@wordpress/compose';
 import { DomainSearchContext, useDomainSearchContextValue } from '../../../page/context';
 import { buildAvailability } from '../../../test-helpers/factories/availability';
@@ -11,7 +12,7 @@ import { buildCart } from '../../../test-helpers/factories/cart';
 import { withNamePulseQueries } from '../../../test-helpers/factories/name-pulse';
 import { queryClient } from '../../../test-helpers/renderer';
 import { NamePulseDomainStatus, type NamePulseDomainResult } from '../../helpers';
-import { NamePulseResultRow } from '../result-row';
+import { NamePulseResultRow, type NamePulseResultRowVariant } from '../result-row';
 import type { DomainAvailability } from '@automattic/api-core';
 
 jest.mock( '@wordpress/compose', () => ( {
@@ -26,6 +27,19 @@ beforeEach( () => {
 } );
 
 const LONG_DOMAIN = 'icecreamshopnearsuratairport.boutique';
+
+const mockLabelLayout = ( labelWidth: number ) => {
+	jest
+		.spyOn( Element.prototype, 'getBoundingClientRect' )
+		.mockReturnValue( { width: labelWidth, right: 0 } as DOMRect );
+	jest.spyOn( HTMLCanvasElement.prototype, 'getContext' ).mockReturnValue( {
+		measureText: ( text: string ) => ( { width: text.length * 10 } ),
+	} as unknown as CanvasRenderingContext2D );
+};
+
+afterEach( () => {
+	jest.restoreAllMocks();
+} );
 
 const buildResult = ( overrides: Partial< NamePulseDomainResult > ): NamePulseDomainResult => ( {
 	domain_name: 'icecream.net',
@@ -64,13 +78,15 @@ const notUsed = () => Promise.reject( new Error( 'not used' ) );
 
 const renderRow = (
 	result: NamePulseDomainResult,
-	domainAvailability: ( domainName: string ) => Promise< DomainAvailability > = notUsed
+	domainAvailability: ( domainName: string ) => Promise< DomainAvailability > = notUsed,
+	cart = buildCart(),
+	variant?: NamePulseResultRowVariant
 ) => {
 	const fetcher = jest.fn( domainAvailability );
 
 	const Wrapper = () => {
 		const contextValue = useDomainSearchContextValue( {
-			cart: buildCart(),
+			cart,
 			config: { showNamePulseSearch: true },
 		} );
 
@@ -84,7 +100,7 @@ const renderRow = (
 						domainAvailability: fetcher,
 					} ) }
 				>
-					<NamePulseResultRow result={ result } position={ 0 } />
+					<NamePulseResultRow result={ result } position={ 0 } variant={ variant } />
 				</DomainSearchContext.Provider>
 			</QueryClientProvider>
 		);
@@ -113,11 +129,51 @@ describe( 'NamePulseResultRow', () => {
 		expect( screen.getByRole( 'img', { name: 'Checking…' } ) ).toBeInTheDocument();
 	} );
 
-	it( 'truncates a long name on desktop', () => {
+	it( 'truncates a long name on desktop to the space it has', () => {
+		// 100px at 10px per character fits 4 + "…" + 4.
+		mockLabelLayout( 100 );
+
+		const { container } = renderRow(
+			buildResult( { domain_name: LONG_DOMAIN, suffix: 'boutique' } )
+		);
+
+		expect( container.querySelector( '.name-pulse-row__domain--wrap' ) ).not.toBeInTheDocument();
+		expect( screen.getByText( 'icec…port' ) ).toBeInTheDocument();
+		expect( screen.getByText( '.boutique' ) ).toBeInTheDocument();
+	} );
+
+	it( 'shows the full long name on desktop when it fits', () => {
+		mockLabelLayout( 1000 );
+
 		renderRow( buildResult( { domain_name: LONG_DOMAIN, suffix: 'boutique' } ) );
 
-		expect( screen.queryByText( 'icecreamshopnearsuratairport' ) ).not.toBeInTheDocument();
-		expect( screen.getByText( '.boutique' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'icecreamshopnearsuratairport' ) ).toBeInTheDocument();
+	} );
+
+	it( 'uses the free space on the left of the name in RTL', () => {
+		mockLabelLayout( 100 );
+		// 900px free on the left of a 100px label; none on the right.
+		jest.spyOn( Element.prototype, 'getBoundingClientRect' ).mockImplementation( function (
+			this: Element
+		) {
+			return (
+				this.classList.contains( 'name-pulse-row__name' )
+					? { left: 0, right: 1000, width: 1000 }
+					: { left: 900, right: 1000, width: 100 }
+			) as DOMRect;
+		} );
+		const getComputedStyle = window.getComputedStyle;
+		jest.spyOn( window, 'getComputedStyle' ).mockImplementation(
+			( element ) =>
+				new Proxy( getComputedStyle( element ), {
+					get: ( style, property ) =>
+						property === 'direction' ? 'rtl' : Reflect.get( style, property ),
+				} )
+		);
+
+		renderRow( buildResult( { domain_name: LONG_DOMAIN, suffix: 'boutique' } ) );
+
+		expect( screen.getByText( 'icecreamshopnearsuratairport' ) ).toBeInTheDocument();
 	} );
 
 	it( 'shows the full long name below desktop', () => {
@@ -125,6 +181,20 @@ describe( 'NamePulseResultRow', () => {
 
 		renderRow( buildResult( { domain_name: LONG_DOMAIN, suffix: 'boutique' } ) );
 
+		expect( screen.getByText( 'icecreamshopnearsuratairport' ) ).toBeInTheDocument();
+		expect( screen.getByText( '.boutique' ) ).toBeInTheDocument();
+	} );
+
+	it( 'wraps the full long name below the large breakpoint, where the two-column row is too tight to truncate', () => {
+		mockUseViewportMatch.mockImplementation(
+			( breakpoint, operator ) => breakpoint === 'large' && operator === '<'
+		);
+
+		const { container } = renderRow(
+			buildResult( { domain_name: LONG_DOMAIN, suffix: 'boutique' } )
+		);
+
+		expect( container.querySelector( '.name-pulse-row__domain--wrap' ) ).toBeInTheDocument();
 		expect( screen.getByText( 'icecreamshopnearsuratairport' ) ).toBeInTheDocument();
 		expect( screen.getByText( '.boutique' ) ).toBeInTheDocument();
 	} );
@@ -179,5 +249,144 @@ describe( 'NamePulseResultRow', () => {
 		expect( screen.getByText( 'Premium' ) ).toBeInTheDocument();
 		expect( screen.getByText( '$350' ) ).toBeInTheDocument();
 		expect( fetcher ).not.toHaveBeenCalled();
+	} );
+
+	describe( 'card variant', () => {
+		const renderCard = ( result: NamePulseDomainResult ) =>
+			renderRow( result, notUsed, buildCart(), 'card' );
+
+		it( 'shows the regular price struck through, the sale price and the renewal on one line', () => {
+			renderCard(
+				buildResult( {
+					domain_name: 'icecream.blog',
+					suffix: 'blog',
+					cost: '$33.00',
+					raw_price: 33,
+					sale_cost: 3.3,
+					currency_code: 'USD',
+				} )
+			);
+
+			const price = document.querySelector( '.name-pulse-row__price--card' ) as HTMLElement;
+
+			expect( document.querySelector( '.name-pulse-row--card' ) ).toBeInTheDocument();
+			expect( within( price ).getByText( '$33' ).tagName ).toBe( 'S' );
+			expect( within( price ).getByText( '$3.30' ) ).toBeInTheDocument();
+			expect( within( price ).getByText( '/first year' ) ).toBeInTheDocument();
+			expect( within( price ).getByText( '$33/year renewal' ) ).toBeInTheDocument();
+		} );
+
+		it( 'shows the yearly price alone when there is no sale', () => {
+			renderCard( buildResult( { cost: '$29.00', raw_price: 29, currency_code: 'USD' } ) );
+
+			const price = document.querySelector( '.name-pulse-row__price--card' ) as HTMLElement;
+
+			expect( within( price ).getByText( '$29' ) ).toBeInTheDocument();
+			expect( within( price ).getByText( '/year' ) ).toBeInTheDocument();
+			expect( price.querySelector( 's' ) ).not.toBeInTheDocument();
+			expect( within( price ).queryByText( /renewal/ ) ).not.toBeInTheDocument();
+		} );
+
+		it( 'keeps the table row layout by default', () => {
+			renderRow( buildResult( { cost: '$29.00', raw_price: 29, currency_code: 'USD' } ) );
+
+			expect( document.querySelector( '.name-pulse-row--card' ) ).not.toBeInTheDocument();
+			expect( document.querySelector( '.name-pulse-row__price--card' ) ).not.toBeInTheDocument();
+		} );
+	} );
+
+	it( 'shows no Sale badge on a sale', () => {
+		renderRow( buildResult( { sale_cost: 3.3, currency_code: 'USD' } ) );
+
+		expect( screen.queryByText( 'Sale' ) ).not.toBeInTheDocument();
+	} );
+
+	describe( 'policy notices', () => {
+		const POLICY_NOTICES = [
+			{
+				type: 'identity_verification',
+				label: 'Special requirements',
+				message: '.in domains may require identity verification by the registry.',
+			},
+		];
+
+		const available = () =>
+			Promise.resolve(
+				buildAvailability( {
+					domain_name: 'icecream.in',
+					tld: 'in',
+					status: DomainAvailabilityStatus.AVAILABLE,
+				} )
+			);
+
+		const buildPolicyResult = () =>
+			buildResult( { domain_name: 'icecream.in', suffix: 'in', policy_notices: POLICY_NOTICES } );
+
+		it( 'keeps the notice off the row', () => {
+			renderRow( buildPolicyResult() );
+
+			expect( screen.queryByText( 'Special requirements' ) ).not.toBeInTheDocument();
+			expect( screen.queryByText( POLICY_NOTICES[ 0 ].message ) ).not.toBeInTheDocument();
+		} );
+
+		it( 'confirms the notice in a dialog before adding the name', async () => {
+			const { fetcher } = renderRow( buildPolicyResult(), available );
+
+			await userEvent.click( screen.getByRole( 'button', { name: 'Add to cart' } ) );
+
+			const dialog = await screen.findByRole( 'dialog', { name: 'Special requirements' } );
+			expect( dialog ).toHaveTextContent( POLICY_NOTICES[ 0 ].message );
+			await waitFor( () => expect( dialog ).toHaveFocus() );
+			expect( fetcher ).not.toHaveBeenCalled();
+
+			await userEvent.click( within( dialog ).getByRole( 'button', { name: 'Add to cart' } ) );
+
+			await waitFor( () => expect( fetcher ).toHaveBeenCalled() );
+		} );
+
+		it( 'keeps the dialog open until the name is in the cart', async () => {
+			let finishAdding = () => {};
+			const cart = buildCart( {
+				onAddItem: jest.fn(
+					() => new Promise< void >( ( resolve ) => ( finishAdding = resolve ) )
+				),
+			} );
+			renderRow( buildPolicyResult(), available, cart );
+
+			await userEvent.click( screen.getByRole( 'button', { name: 'Add to cart' } ) );
+			const dialog = await screen.findByRole( 'dialog', { name: 'Special requirements' } );
+			await userEvent.click( within( dialog ).getByRole( 'button', { name: 'Add to cart' } ) );
+
+			await waitFor( () => expect( cart.onAddItem ).toHaveBeenCalled() );
+			expect( dialog ).toBeInTheDocument();
+			expect( within( dialog ).getByRole( 'button', { name: 'Cancel' } ) ).toHaveAttribute(
+				'aria-disabled',
+				'true'
+			);
+
+			finishAdding();
+
+			await waitFor( () => expect( screen.queryByRole( 'dialog' ) ).not.toBeInTheDocument() );
+		} );
+
+		it( 'keeps the name out of the cart when the dialog is canceled', async () => {
+			const { fetcher } = renderRow( buildPolicyResult(), available );
+
+			await userEvent.click( screen.getByRole( 'button', { name: 'Add to cart' } ) );
+			const dialog = await screen.findByRole( 'dialog', { name: 'Special requirements' } );
+			await userEvent.click( within( dialog ).getByRole( 'button', { name: 'Cancel' } ) );
+
+			await waitFor( () => expect( screen.queryByRole( 'dialog' ) ).not.toBeInTheDocument() );
+			expect( fetcher ).not.toHaveBeenCalled();
+		} );
+
+		it( 'adds a name without notices straight away', async () => {
+			const { fetcher } = renderRow( buildResult( {} ), available );
+
+			await userEvent.click( screen.getByRole( 'button', { name: 'Add to cart' } ) );
+
+			await waitFor( () => expect( fetcher ).toHaveBeenCalled() );
+			expect( screen.queryByRole( 'dialog' ) ).not.toBeInTheDocument();
+		} );
 	} );
 } );

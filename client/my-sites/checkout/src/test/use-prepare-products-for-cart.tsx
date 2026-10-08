@@ -20,8 +20,6 @@ function renderPrepareProducts( {
 		usePrepareProductsForCart( {
 			productAliasFromUrl,
 			purchaseId,
-			usesJetpackProducts: false,
-			isPrivate: false,
 			siteSlug: undefined,
 			sitelessCheckoutType,
 			// The siteless route controller always sets this, so the 'wpcom' branch
@@ -146,5 +144,43 @@ describe( 'usePrepareProductsForCart for siteless renewals', () => {
 		expect( result.current.productsForCart.map( ( product ) => product.extra.purchaseId ) ).toEqual(
 			[ '12345', '67890' ]
 		);
+	} );
+} );
+
+describe( 'usePrepareProductsForCart for Professional Email', () => {
+	it( 'sets new_quantity from the :-q- suffix', () => {
+		const { result } = renderPrepareProducts( {
+			productAliasFromUrl: 'wp_titan_mail_yearly:example.com:-q-3',
+			sitelessCheckoutType: 'wpcom',
+		} );
+
+		expect( result.current.productsForCart[ 0 ].extra.new_quantity ).toBe( 3 );
+	} );
+
+	it( 'sets new_quantity to 1 when the URL has no quantity', () => {
+		const { result } = renderPrepareProducts( {
+			productAliasFromUrl: 'wp_titan_mail_monthly:example.com',
+			sitelessCheckoutType: 'wpcom',
+		} );
+
+		expect( result.current.productsForCart[ 0 ].extra.new_quantity ).toBe( 1 );
+	} );
+
+	it( 'sets new_quantity for every Professional Email tier', () => {
+		const { result } = renderPrepareProducts( {
+			productAliasFromUrl: 'wp_titan_mail_ultra_yearly:example.com',
+			sitelessCheckoutType: 'wpcom',
+		} );
+
+		expect( result.current.productsForCart[ 0 ].extra.new_quantity ).toBe( 1 );
+	} );
+
+	it( 'does not set new_quantity on other products', () => {
+		const { result } = renderPrepareProducts( {
+			productAliasFromUrl: 'personal-bundle:-q-5',
+			sitelessCheckoutType: 'wpcom',
+		} );
+
+		expect( result.current.productsForCart[ 0 ].extra.new_quantity ).toBeUndefined();
 	} );
 } );

@@ -140,4 +140,21 @@ describe( 'ThemeTierBadge', () => {
 			expect( screen.getByText( 'Available on Personal' ) ).toBeInTheDocument();
 		} );
 	} );
+
+	it( 'should upsell Personal for a premium-tier theme', async () => {
+		jest.mocked( wpcomProxyRequest ).mockResolvedValue( [ PERSONAL_PLAN ] );
+
+		render(
+			<ThemeTierBadge
+				themeId="meraki"
+				siteId={ 123 }
+				siteSlug="test-site"
+				isLockedStyleVariation={ false }
+			/>
+		);
+
+		await waitFor( () => {
+			expect( screen.getByText( 'Available on Personal' ) ).toBeInTheDocument();
+		} );
+	} );
 } );

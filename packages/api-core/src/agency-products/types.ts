@@ -9,6 +9,8 @@ export interface AgencyProductMetadata {
 	visits: number;
 	storage: number;
 	php_worker_count: number;
+	/** Size with unit, e.g. "512MB"; null except on the PHP memory add-on. Optional until the API deploys it. */
+	php_memory?: string | null;
 	category: string;
 }
 
@@ -29,6 +31,8 @@ export interface AgencyProduct {
 	tier_monthly_prices?: AgencyProductTierPrice[];
 	tier_yearly_prices?: AgencyProductTierPrice[];
 	metadata?: AgencyProductMetadata;
+	/** The product's icon, where the catalog has one (WooCommerce products). */
+	icon_url?: string;
 	/** Not in the API response — added client-side from the parent family. */
 	family_slug: string;
 }
