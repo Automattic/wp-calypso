@@ -4,10 +4,7 @@
  */
 import { act, renderHook, waitFor } from '@testing-library/react';
 import { ImageStudioMode } from '../types';
-import {
-	trackImageStudioUpgradeNoticeShown,
-	trackImageStudioUpgradeNoticeClick,
-} from '../utils/tracking';
+import { trackImageStudioUpgradeNoticeShown } from '../utils/tracking';
 import { getSiteCreditsLevel, useAiCredits } from './use-ai-credits';
 import type { AuthProvider, TaskUpdate } from '@automattic/agenttic-client';
 
@@ -27,7 +24,6 @@ jest.mock( '../utils/tracking', () => ( {
 	getImageStudioBlogId: jest.requireActual( '../utils/tracking' ).getImageStudioBlogId,
 	getImageStudioSiteType: jest.requireActual( '../utils/tracking' ).getImageStudioSiteType,
 	trackImageStudioUpgradeNoticeShown: jest.fn(),
-	trackImageStudioUpgradeNoticeClick: jest.fn(),
 } ) );
 
 const BLOG_ID = 123;
@@ -54,7 +50,12 @@ const planSnapshot = ( remaining: number, overrides: Record< string, unknown > =
 } );
 
 const UPGRADE_URL = 'https://wordpress.com/plans/123?source=wp_ai_credits';
-const upgradeAction = { label: 'Upgrade', onClick: expect.any( Function ) };
+const upgradeAction = {
+	label: 'Upgrade',
+	href: UPGRADE_URL,
+	target: '_blank',
+	rel: 'noopener noreferrer',
+};
 const meterAt = ( percent: number ) => ( {
 	status: expect.objectContaining( { plan: 'paid', percent } ),
 	upgradeUrl: UPGRADE_URL,
@@ -131,7 +132,6 @@ describe( 'useAiCredits', () => {
 	} );
 
 	it( 'locks the input and shows a persistent notice when the site is out of credits', async () => {
-		const openSpy = jest.spyOn( window, 'open' ).mockReturnValue( null );
 		respondWith( { ai_credits: planSnapshot( 0 ) } );
 
 		const { result } = renderCredits( ImageStudioMode.Edit );
@@ -139,8 +139,8 @@ describe( 'useAiCredits', () => {
 		await waitFor( () =>
 			expect( stateOf( result ) ).toEqual( {
 				notice: {
+					icon: false,
 					message: 'You’ve used all your site credits.',
-					status: 'warning',
 					dismissible: false,
 					onDismiss: expect.any( Function ),
 					action: upgradeAction,
@@ -154,15 +154,6 @@ describe( 'useAiCredits', () => {
 			mode: ImageStudioMode.Edit,
 			trigger: 'open',
 		} );
-
-		result.current.notice?.action?.onClick?.();
-
-		expect( trackImageStudioUpgradeNoticeClick ).toHaveBeenCalledWith( {
-			mode: ImageStudioMode.Edit,
-			trigger: 'open',
-		} );
-		expect( openSpy ).toHaveBeenCalledWith( UPGRADE_URL, '_blank', 'noopener,noreferrer' );
-		openSpy.mockRestore();
 	} );
 
 	it( 'keeps the input open and shows the amount left when credits are low', async () => {

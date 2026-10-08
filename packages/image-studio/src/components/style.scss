@@ -360,13 +360,23 @@ body.js.is-image-studio-open {
 	}
 
 	.ChatFooter-module_container {
-		padding: 12px;
+		padding: $chat-footer-padding;
 		transition: margin-top 0.3s ease;
 		border-radius: var(--radius-lg, 8px);
 		z-index: 100;
 
 		&:has(.Suggestions-module_container) {
 			margin-top: 42px;
+		}
+
+		// agenttic-ui pulls the notice out by its default 8px footer padding. Match ours so it sits flush on the input.
+		[data-slot="notice"] {
+			margin: (-$chat-footer-padding) (-$chat-footer-padding) 0;
+		}
+
+		// The modal colours its links light blue. Keep the action in the foreground colour, as in the Agents Manager.
+		.Notice-module_action {
+			color: var(--color-foreground);
 		}
 	}
 

@@ -10,7 +10,6 @@ import {
 	getImageStudioBlogId,
 	getImageStudioSiteType,
 	trackImageStudioUpgradeNoticeShown,
-	trackImageStudioUpgradeNoticeClick,
 	type UpgradeNoticeTrigger,
 } from '../utils/tracking';
 import type { ImageStudioMode } from '../types';
@@ -105,10 +104,7 @@ export function useAiCredits( {
 	const [ isLoading, setIsLoading ] = useState( blogId !== null );
 	const [ isLowNoticeDismissed, setIsLowNoticeDismissed ] = useState( false );
 	const turnBalanceCount = useRef( 0 );
-	const shown = useRef< { level: SiteCreditsLevel | null; trigger: UpgradeNoticeTrigger } >( {
-		level: null,
-		trigger: 'open',
-	} );
+	const shownLevel = useRef< SiteCreditsLevel | null >( null );
 
 	// The Agent's parser, so the notice, the lock and the dot always agree. An unreadable
 	// balance keeps whatever was known, so a fluke never clears or shows a notice.
@@ -121,11 +117,11 @@ export function useAiCredits( {
 			return false;
 		}
 		const level = getSiteCreditsLevel( next.remaining );
-		if ( level !== shown.current.level ) {
+		if ( level !== shownLevel.current ) {
 			if ( level ) {
 				trackImageStudioUpgradeNoticeShown( { mode, trigger } );
 			}
-			shown.current = { level, trigger };
+			shownLevel.current = level;
 		}
 		setStatus( next );
 		return true;
@@ -181,17 +177,16 @@ export function useAiCredits( {
 		notice:
 			status && level && ! isNoticeHidden
 				? {
+						icon: false,
 						message: getNoticeMessage( level, status.remaining ),
-						status: 'warning',
 						dismissible: level === 'low',
 						onDismiss: () => setIsLowNoticeDismissed( true ),
 						action: upgradeUrl
 							? {
 									label: __( 'Upgrade', __i18n_text_domain__ ),
-									onClick: () => {
-										trackImageStudioUpgradeNoticeClick( { mode, trigger: shown.current.trigger } );
-										window.open( upgradeUrl, '_blank', 'noopener,noreferrer' );
-									},
+									href: upgradeUrl,
+									target: '_blank',
+									rel: 'noopener noreferrer',
 								}
 							: undefined,
 					}
