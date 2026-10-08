@@ -359,6 +359,10 @@ describe( 'UpcomingRenewalsReminder', () => {
 		const infoPlan = () => expiringPlanPurchase( 200 );
 		const domain = () => urgentDomainPurchase( expiringIn( 20 ) );
 
+		// Auto-renew on and the first renewal attempt is still ahead, so the urgency is null.
+		const autoRenewingPlan = () =>
+			expiringPlanPurchase( 14, { is_auto_renew_enabled: true, might_still_auto_renew: true } );
+
 		// Auto-renew on but the first renewal attempt already failed, so the urgency is 'warning'.
 		const failingAutoRenewPlan = () =>
 			expiringPlanPurchase( 14, {
@@ -368,6 +372,20 @@ describe( 'UpcomingRenewalsReminder', () => {
 			} );
 		const domainExpiringIn = ( days: number, overrides = {} ) =>
 			urgentDomainPurchase( { ...expiringIn( days ), ...overrides } );
+
+		// A monthly add-on with auto-renew on, which the API returns as 'active'
+		// until its last 10 days.
+		const addOnExpiringIn = ( days: number ) =>
+			nonUrgentPlanPurchase( {
+				ID: 30,
+				product_name: 'Jetpack Backup Add-on Storage (10GB)',
+				product_slug: 'jetpack_backup_addon_storage_10gb_monthly',
+				product_type: 'jetpack',
+				bill_period_days: SubscriptionBillPeriod.PLAN_MONTHLY_PERIOD,
+				is_auto_renew_enabled: true,
+				expiry_status: 'active',
+				...expiringIn( days ),
+			} );
 
 		test( 'plan fixtures resolve to warning and info urgency', () => {
 			expect( getPlanExpiryUrgency( warningPlan() as unknown as Purchase ) ).toBe( 'warning' );
@@ -381,6 +399,10 @@ describe( 'UpcomingRenewalsReminder', () => {
 			expect( getPlanExpiryUrgency( expiringPlanPurchase( 5 ) as unknown as Purchase ) ).toBe(
 				'error'
 			);
+		} );
+
+		test( 'auto-renewing plan fixture resolves to null urgency', () => {
+			expect( getPlanExpiryUrgency( autoRenewingPlan() as unknown as Purchase ) ).toBeNull();
 		} );
 
 		test( 'auto-opens for a domain expiring soon after the plan being renewed', async () => {
@@ -523,9 +545,73 @@ describe( 'UpcomingRenewalsReminder', () => {
 			await expect( screen.findByText( 'Upcoming renewals' ) ).toNeverAppear();
 		} );
 
-		test( 'keeps the dialog closed for a domain when renewing an info-urgency plan', async () => {
+		test( 'auto-opens for a domain expiring soon when renewing an info-urgency plan', async () => {
 			renderReminder( {
 				purchases: [ infoPlan(), domain() ],
+				cart: renewalCart( 20 ),
+			} );
+			expect( await screen.findByText( 'Upcoming renewals' ) ).toBeVisible();
+			const dialog = screen.getByRole( 'dialog' );
+			expect( within( dialog ).getByText( URGENT_DOMAIN_NAME ) ).toBeVisible();
+		} );
+
+		test( 'keeps the dialog closed for a domain when renewing an auto-renewing plan', async () => {
+			renderReminder( {
+				purchases: [ autoRenewingPlan(), domain() ],
+				cart: renewalCart( 20 ),
+			} );
+			expect( await screen.findByText( 'Renew your products together' ) ).toBeVisible();
+			await expect( screen.findByText( 'Upcoming renewals' ) ).toNeverAppear();
+		} );
+
+		test( 'lists a warning-urgency plan near the plan being renewed', async () => {
+			const otherPlanName = 'WordPress.com Premium';
+			renderReminder( {
+				purchases: [
+					warningPlan(),
+					expiringPlanPurchase( 18, {
+						ID: 21,
+						product_name: otherPlanName,
+						product_slug: 'value_bundle',
+					} ),
+				],
+				cart: renewalCart( 20 ),
+			} );
+			expect( await screen.findByText( 'Upcoming renewals' ) ).toBeVisible();
+			const dialog = screen.getByRole( 'dialog' );
+			expect( within( dialog ).getByText( otherPlanName ) ).toBeVisible();
+		} );
+
+		test( 'includes an auto-renewing purchase within 10 days of expiry', async () => {
+			renderReminder( {
+				purchases: [
+					warningPlan(),
+					domainExpiringIn( 5, { is_auto_renew_enabled: true, expiry_status: 'auto-renewing' } ),
+				],
+				cart: renewalCart( 20 ),
+			} );
+			expect( await screen.findByText( 'Upcoming renewals' ) ).toBeVisible();
+		} );
+
+		test( 'keeps the dialog closed for an auto-renewing monthly add-on near the plan', async () => {
+			renderReminder( {
+				purchases: [ warningPlan(), addOnExpiringIn( 20 ) ],
+				cart: renewalCart( 20 ),
+			} );
+			expect( await screen.findByText( 'Renew your products together' ) ).toBeVisible();
+			await expect( screen.findByText( 'Upcoming renewals' ) ).toNeverAppear();
+		} );
+
+		test( 'keeps the dialog closed for an auto-renewing annual domain near the plan', async () => {
+			renderReminder( {
+				purchases: [
+					expiringPlanPurchase( 50 ),
+					domainExpiringIn( 55, {
+						bill_period_days: SubscriptionBillPeriod.PLAN_ANNUAL_PERIOD,
+						is_auto_renew_enabled: true,
+						expiry_status: 'auto-renewing',
+					} ),
+				],
 				cart: renewalCart( 20 ),
 			} );
 			expect( await screen.findByText( 'Renew your products together' ) ).toBeVisible();
