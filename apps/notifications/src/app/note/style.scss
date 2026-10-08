@@ -339,8 +339,7 @@
 
 // The body's reset pins every element to its parent's font size, which outranks the
 // size the Text component would set.
-.wpnc__body-content .wpnc__user-site,
-.wpnc__body-content .wpnc__people-footnote {
+.wpnc__body-content .wpnc__user-site {
 	font-size: $font-size-small;
 }
 
@@ -353,6 +352,17 @@
 
 	.wpnc__user {
 		padding: 0 0 $grid-unit-20 0;
+	}
+}
+
+/**
+ * Likes, Follows
+ */
+.wpnc__note.wpnc__like .wpnc__body .wpnc__body-content,
+.wpnc__note.wpnc__comment_like .wpnc__body .wpnc__body-content,
+.wpnc__note.wpnc__follow .wpnc__body .wpnc__body-content {
+	.wpnc__paragraph {
+		padding: 16px 0 0;
 	}
 }
 

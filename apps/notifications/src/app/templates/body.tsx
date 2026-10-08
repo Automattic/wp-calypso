@@ -1,8 +1,6 @@
 import {
 	__experimentalHStack as HStack,
-	__experimentalText as Text,
 	__experimentalVStack as VStack,
-	CardDivider,
 	CardFooter,
 	ExternalLink,
 } from '@wordpress/components';
@@ -155,12 +153,6 @@ export const NoteBody = ( { note }: { note: Note } ) => {
 			}
 		} );
 
-	// In a list of people, text closing the note is a footnote to the list, such as a
-	// link to every like.
-	const isPeopleList = isPeopleListNote( note );
-	const lastBlock = body[ body.length - 1 ];
-	const footnote = isPeopleList && body.length > 1 && lastBlock.type === 'div' && lastBlock;
-
 	useEffect( () => {
 		bumpStat( 'notes-click-type', note.type );
 	}, [ note.type ] );
@@ -173,15 +165,9 @@ export const NoteBody = ( { note }: { note: Note } ) => {
 					<PendingApprovalStrip note={ note } />
 				</div>
 			) }
-			{ isPeopleList ? (
-				<VStack className="wpnc__body-content" spacing={ 3 }>
-					<VStack spacing={ 2 }>{ footnote ? body.slice( 0, -1 ) : body }</VStack>
-					{ footnote && <CardDivider /> }
-					{ footnote && (
-						<Text as="div" className="wpnc__people-footnote" variant="muted">
-							{ footnote }
-						</Text>
-					) }
+			{ isPeopleListNote( note ) ? (
+				<VStack className="wpnc__body-content" spacing={ 2 }>
+					{ body }
 				</VStack>
 			) : (
 				<div className="wpnc__body-content">{ body }</div>
