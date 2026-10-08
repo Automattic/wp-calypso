@@ -68,7 +68,6 @@ export default function ReferralCheckout() {
 	};
 
 	const backTo = from ?? MARKETPLACE_PRODUCTS_ROUTE;
-	const isFreeOnly = cart.lines.length > 0 && cart.lines.every( ( line ) => line.priceInfo.isFree );
 
 	const isSiteLoading = !! referralBlogId && devSite.isLoading;
 
@@ -98,26 +97,17 @@ export default function ReferralCheckout() {
 								{ __( 'Request client payment' ) }
 							</Heading>
 						</HStack>
-						{ isFreeOnly && (
-							<Notice variant="info">
-								{ __(
-									'Because your referral includes only free products, you can assign them immediately after purchase — no client payment or approval required.'
-								) }
-							</Notice>
-						) }
-						{ ! isFreeOnly && (
-							<RequestClientPaymentForm
-								email={ request.email }
-								emailError={ request.emailError }
-								message={ request.message }
-								logo={ request.logo }
-								profileLogoUrl={ profileLogoUrl }
-								lastReferralLogoUrl={ lastReferralLogoUrl }
-								onEmailChange={ request.onEmailChange }
-								onMessageChange={ request.onMessageChange }
-								onLogoChange={ request.onLogoChange }
-							/>
-						) }
+						<RequestClientPaymentForm
+							email={ request.email }
+							emailError={ request.emailError }
+							message={ request.message }
+							logo={ request.logo }
+							profileLogoUrl={ profileLogoUrl }
+							lastReferralLogoUrl={ lastReferralLogoUrl }
+							onEmailChange={ request.onEmailChange }
+							onMessageChange={ request.onMessageChange }
+							onLogoChange={ request.onLogoChange }
+						/>
 					</VStack>
 					<aside className="referral-checkout__aside">
 						<ReferralSummary
@@ -129,15 +119,12 @@ export default function ReferralCheckout() {
 							commission={ cart.commission }
 							isLoading={ isSiteLoading }
 							isTotalReady={ cart.isTotalReady && ! isSiteLoading }
-							isFreeOnly={ isFreeOnly }
 							isUserUnverified={ ! user.email_verified }
-							canIssueLicenses={ agency?.can_issue_licenses ?? true }
 							canSend={ request.canSend && ! isSiteLoading }
 							canCopy={ request.canCopy && ! isSiteLoading }
 							isBusy={ request.isBusy }
 							onSend={ request.send }
 							onCopy={ request.copy }
-							onPurchase={ request.purchase }
 							onPreview={ openPreview }
 						/>
 					</aside>

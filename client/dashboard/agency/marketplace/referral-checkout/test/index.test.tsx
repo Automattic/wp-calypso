@@ -259,51 +259,13 @@ describe( '<ReferralCheckout>', () => {
 		expect( requests ).toBe( 1 );
 	} );
 
-	test( 'keeps a free cart from an agency that cannot issue licenses', async () => {
-		fillCart( 'jetpack-stats-free' );
-		mockApi( { agency: { can_issue_licenses: false }, catalog: freeProducts } );
-		render( <ReferralCheckout /> );
-
-		expect( await screen.findByRole( 'button', { name: 'Purchase' } ) ).toBeDisabled();
-	} );
-
-	test( 'lets an agency that can issue licenses purchase a free cart', async () => {
+	test( 'asks the client to take a cart of free products, like any referral', async () => {
 		fillCart( 'jetpack-stats-free' );
 		mockApi( { catalog: freeProducts } );
 		render( <ReferralCheckout /> );
 
-		expect( await screen.findByRole( 'button', { name: 'Purchase' } ) ).toBeEnabled();
-	} );
-
-	test( 'keeps only the lines that failed after a partial free purchase', async () => {
-		fillCart( 'jetpack-stats-free', 'jetpack-boost-free' );
-		mockApi( { catalog: freeProducts } );
-		const issued: string[] = [];
-		nock( API )
-			.post(
-				'/wpcom/v2/jetpack-licensing/licenses',
-				( body ) => body.product === 'jetpack-stats-free'
-			)
-			.reply( 200, () => {
-				issued.push( 'jetpack-stats-free' );
-				return [];
-			} );
-		nock( API )
-			.post(
-				'/wpcom/v2/jetpack-licensing/licenses',
-				( body ) => body.product === 'jetpack-boost-free'
-			)
-			.reply( 500, { code: 'error', message: 'Nope' } );
-		const user = userEvent.setup();
-		render( <ReferralCheckout /> );
-
-		await user.click( await screen.findByRole( 'button', { name: 'Purchase' } ) );
-
-		await waitFor( () =>
-			expect( sessionStorage.getItem( 'referrals-shopping-card-selected-items' ) ).toBe(
-				'jetpack-boost-free:1'
-			)
-		);
-		expect( issued ).toEqual( [ 'jetpack-stats-free' ] );
+		expect( await screen.findByRole( 'button', { name: 'Send to client' } ) ).toBeVisible();
+		expect( screen.getByLabelText( 'Client’s email address' ) ).toBeVisible();
+		expect( screen.queryByRole( 'button', { name: 'Purchase' } ) ).not.toBeInTheDocument();
 	} );
 } );

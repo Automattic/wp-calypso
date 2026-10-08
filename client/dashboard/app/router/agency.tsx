@@ -523,11 +523,14 @@ export const marketplacePurchasesRoute = createRoute( {
 	} => {
 		const page = Number( search.page );
 		const asString = ( value: unknown ) => ( typeof value === 'string' ? value : undefined );
+		// The router parses a numeric value such as `receipt_id=123` into a number.
+		const asId = ( value: unknown ) =>
+			typeof value === 'number' ? String( value ) : asString( value );
 		return {
 			page: Number.isInteger( page ) && page > 0 ? page : undefined,
 			search: asString( search.search ),
 			status: asString( search.status ),
-			receipt_id: asString( search.receipt_id ),
+			receipt_id: asId( search.receipt_id ),
 			flash: asString( search.flash ),
 			purchased_plan: asString( search.purchased_plan ),
 		};

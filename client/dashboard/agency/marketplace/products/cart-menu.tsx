@@ -113,6 +113,8 @@ export default function CartMenu( {
 			open={ open }
 			onToggle={ onToggle }
 			popoverProps={ { placement: 'bottom-end' } }
+			// Focuses the panel, not its first Remove button, which Enter would trigger.
+			focusOnMount
 			expandOnMobile
 			renderToggle={ ( { isOpen, onToggle } ) => (
 				<Button

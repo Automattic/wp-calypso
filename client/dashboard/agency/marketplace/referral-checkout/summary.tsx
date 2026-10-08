@@ -33,17 +33,12 @@ interface Props {
 	/** The lines are still being worked out, as when a site's plan is loading. */
 	isLoading?: boolean;
 	isTotalReady: boolean;
-	/** A cart of free products is issued to the agency at once, with no client. */
-	isFreeOnly: boolean;
 	isUserUnverified: boolean;
-	/** Gates the purchase of a free cart, which is issued to the agency itself. */
-	canIssueLicenses: boolean;
 	canSend: boolean;
 	canCopy: boolean;
 	isBusy: boolean;
 	onSend: () => void;
 	onCopy: () => void;
-	onPurchase: () => void;
 	onPreview: () => void;
 }
 
@@ -71,33 +66,17 @@ export default function ReferralSummary( {
 	commission,
 	isLoading = false,
 	isTotalReady,
-	isFreeOnly,
 	isUserUnverified,
-	canIssueLicenses,
 	canSend,
 	canCopy,
 	isBusy,
 	onSend,
 	onCopy,
-	onPurchase,
 	onPreview,
 }: Props ) {
 	const suffix = getTermSuffix( term );
 
-	const actions = isFreeOnly ? (
-		<VStack>
-			<Button
-				variant="primary"
-				style={ { justifyContent: 'center' } }
-				__next40pxDefaultSize
-				isBusy={ isBusy }
-				disabled={ isBusy || isUserUnverified || ! canIssueLicenses }
-				onClick={ onPurchase }
-			>
-				{ __( 'Purchase' ) }
-			</Button>
-		</VStack>
-	) : (
+	const actions = (
 		<VStack spacing={ 2 }>
 			<Button
 				variant="primary"
@@ -170,27 +149,23 @@ export default function ReferralSummary( {
 						) }
 					</VStack>
 					<CardDivider />
-					{ ! isFreeOnly && (
-						<>
-							<HStack justify="space-between" alignment="baseline">
-								<Text weight={ 500 }>{ __( 'Total your client will pay' ) }</Text>
-								<Heading level={ 3 } size={ 20 }>
-									<TextBlur isBlurred={ ! isTotalReady }>
-										{ formatCurrency( total, currency ) }
-									</TextBlur>
-								</Heading>
-							</HStack>
-							{ commission > 0 && (
-								<HStack justify="space-between">
-									<Text variant="muted">{ __( 'Your estimated commission' ) }</Text>
-									<Text variant="muted">
-										<TextBlur isBlurred={ ! isTotalReady }>
-											{ formatCurrency( commission, currency ) + suffix }
-										</TextBlur>
-									</Text>
-								</HStack>
-							) }
-						</>
+					<HStack justify="space-between" alignment="baseline">
+						<Text weight={ 500 }>{ __( 'Total your client will pay' ) }</Text>
+						<Heading level={ 3 } size={ 20 }>
+							<TextBlur isBlurred={ ! isTotalReady }>
+								{ formatCurrency( total, currency ) }
+							</TextBlur>
+						</Heading>
+					</HStack>
+					{ commission > 0 && (
+						<HStack justify="space-between">
+							<Text variant="muted">{ __( 'Your estimated commission' ) }</Text>
+							<Text variant="muted">
+								<TextBlur isBlurred={ ! isTotalReady }>
+									{ formatCurrency( commission, currency ) + suffix }
+								</TextBlur>
+							</Text>
+						</HStack>
 					) }
 					{ isUserUnverified ? (
 						<Tooltip
@@ -214,34 +189,21 @@ export default function ReferralSummary( {
 						</Text>
 					) }
 					<CardDivider />
-					{ isFreeOnly ? (
+					<VStack spacing={ 2 }>
+						<Text weight={ 500 } size={ 12 }>
+							{ __( 'When you share this payment request:' ) }
+						</Text>
 						<Text variant="muted" size={ 12 }>
-							{ createInterpolateElement(
-								__(
-									'By purchasing, you agree to our <a>Terms of Service</a> and authorize your payment method to be charged on a recurring basis until you cancel, which you can do at any time.'
-								),
-								{
-									a: <a href={ wpcomLink( '/tos' ) } target="_blank" rel="noreferrer" />,
-								}
+							{ __(
+								'Your client will receive instructions to create a WordPress.com account and complete their purchase. Once their payment is successful, they’ll be enrolled in an automatically renewing subscription (monthly or annual, based on checkout). They can cancel anytime.'
 							) }
 						</Text>
-					) : (
-						<VStack spacing={ 2 }>
-							<Text weight={ 500 } size={ 12 }>
-								{ __( 'When you share this payment request:' ) }
-							</Text>
-							<Text variant="muted" size={ 12 }>
-								{ __(
-									'Your client will receive instructions to create a WordPress.com account and complete their purchase. Once their payment is successful, they’ll be enrolled in an automatically renewing subscription (monthly or annual, based on checkout). They can cancel anytime.'
-								) }
-							</Text>
-							<Text variant="muted" size={ 12 }>
-								{ __(
-									'After their purchase, you’ll be able to manage the products on your client’s behalf.'
-								) }
-							</Text>
-						</VStack>
-					) }
+						<Text variant="muted" size={ 12 }>
+							{ __(
+								'After their purchase, you’ll be able to manage the products on your client’s behalf.'
+							) }
+						</Text>
+					</VStack>
 				</VStack>
 			</CardBody>
 		</Card>
