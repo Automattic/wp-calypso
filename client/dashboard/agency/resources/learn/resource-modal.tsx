@@ -39,9 +39,10 @@ export default function ResourceModal( {
 	onFilter,
 	origin,
 }: ResourceModalProps ) {
-	const [ previousKey, nextKey ] = isRTL()
-		? [ 'ArrowRight', 'ArrowLeft' ]
-		: [ 'ArrowLeft', 'ArrowRight' ];
+	// Previous points back along the reading direction, so it swaps in RTL.
+	const [ previousKey, nextKey, previousIcon, nextIcon ] = isRTL()
+		? ( [ 'ArrowRight', 'ArrowLeft', chevronRight, chevronLeft ] as const )
+		: ( [ 'ArrowLeft', 'ArrowRight', chevronLeft, chevronRight ] as const );
 
 	const contentRef = useRef< HTMLDivElement >( null );
 	const isReducedMotion = useReducedMotion();
@@ -126,7 +127,7 @@ export default function ResourceModal( {
 							aria-label={ __( 'Resource navigation' ) }
 						>
 							<Button
-								icon={ isRTL() ? chevronRight : chevronLeft }
+								icon={ previousIcon }
 								label={ __( 'Previous resource' ) }
 								size="compact"
 								disabled={ ! onPrevious }
@@ -134,7 +135,7 @@ export default function ResourceModal( {
 								onClick={ onPrevious }
 							/>
 							<Button
-								icon={ isRTL() ? chevronLeft : chevronRight }
+								icon={ nextIcon }
 								label={ __( 'Next resource' ) }
 								size="compact"
 								disabled={ ! onNext }
