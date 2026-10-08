@@ -71,7 +71,6 @@ import { mergeEmptyViewSuggestions } from '../../utils/merge-empty-view-suggesti
 import {
 	getOrchestratorErrorMessage,
 	getOrchestratorErrorType,
-	TOOL_RESULT_ALREADY_RECEIVED,
 } from '../../utils/orchestrator-error-message';
 import { getReaderChatErrorMessage } from '../../utils/reader-chat-error-message';
 import { isShowComponentTool } from '../../utils/show-component-tools';
@@ -548,7 +547,6 @@ export default function OrchestratorChat( {
 		suggestions,
 		isProcessing,
 		error,
-		errorCode,
 		loadMessages,
 		onSubmit,
 		abortCurrentRequest,
@@ -751,22 +749,19 @@ export default function OrchestratorChat( {
 	// time paginating 10 pages deep. One page covers typical use.
 	const shouldLoadConversation =
 		! isReaderChat || ( ! hasUserSentMessage && messages.length === 0 && ! isProcessing );
-	// A resume that another page beat to the same turn is not an error (see
-	// `TOOL_RESULT_ALREADY_RECEIVED`).
-	const reportedError = errorCode === TOOL_RESULT_ALREADY_RECEIVED ? null : error;
 	const chatError = isReaderChat
-		? getReaderChatErrorMessage( reportedError )
-		: getOrchestratorErrorMessage( reportedError );
+		? getReaderChatErrorMessage( error )
+		: getOrchestratorErrorMessage( error );
 
 	// One event per error the chat shows. `error` returns to null between
 	// attempts, so the same failure repeating on a later send counts again.
 	useEffect( () => {
-		if ( reportedError ) {
+		if ( error ) {
 			recordAgentsManagerTracksEvent( 'calypso_agents_manager_chat_error', {
-				error_type: getOrchestratorErrorType( reportedError ),
+				error_type: getOrchestratorErrorType( error ),
 			} );
 		}
-	}, [ reportedError ] );
+	}, [ error ] );
 
 	// Resume the conversation after a `wp-admin-navigate` full page reload;
 	// while such a resume is pending, hydration below must not replace the

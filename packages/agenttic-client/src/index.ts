@@ -126,7 +126,6 @@ export {
 // server.
 export {
 	getUnresolvedMessages,
-	loadConversation,
 	reconcileWithServer,
 	type DeliveryStatus,
 } from './react/conversationStorage';

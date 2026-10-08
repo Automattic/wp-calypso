@@ -1,9 +1,4 @@
-import type {
-	Message,
-	PendingClientTools,
-	ToolResultInput,
-	TurnToolCall,
-} from '@automattic/agenttic-client';
+import type { PendingClientTools, ToolResultInput, TurnToolCall } from '@automattic/agenttic-client';
 
 /**
  * The result a resume sends for a browser tool call whose page went away before
@@ -18,32 +13,20 @@ export const INTERRUPTED_TOOL_RESULT = {
 };
 
 /**
- * Builds the message that resumes a turn paused on browser tool calls: one result
- * per pending call (the one the old page stored, else `INTERRUPTED_TOOL_RESULT`),
- * and the calls to add to history when this page never saw them.
- * @param pending       The calls the server reports the turn is waiting on.
- * @param localMessages The tab's stored transcript, read before hydration replaced it.
+ * Builds the message that resumes a turn paused on browser tool calls: an
+ * `INTERRUPTED_TOOL_RESULT` per pending call, and the calls to add to history,
+ * since this page never saw them.
+ * @param pending The calls the server reports the turn is waiting on.
  */
-export function buildToolCallResume(
-	pending: PendingClientTools,
-	localMessages: Message[]
-): { results: ToolResultInput[]; turnToolCalls: TurnToolCall[] } {
-	const storedResults = new Map< string, unknown >();
-	for ( const message of localMessages ) {
-		for ( const part of message.parts ) {
-			if ( part.type === 'data' && 'toolCallId' in part.data && 'result' in part.data ) {
-				storedResults.set( String( part.data.toolCallId ), part.data.result );
-			}
-		}
-	}
-
+export function buildToolCallResume( pending: PendingClientTools ): {
+	results: ToolResultInput[];
+	turnToolCalls: TurnToolCall[];
+} {
 	return {
 		results: pending.calls.map( ( { toolCallId, toolId } ) => ( {
 			toolCallId,
 			toolId,
-			result: storedResults.has( toolCallId )
-				? storedResults.get( toolCallId )
-				: INTERRUPTED_TOOL_RESULT,
+			result: INTERRUPTED_TOOL_RESULT,
 		} ) ),
 		turnToolCalls: pending.calls.map( ( { toolCallId, toolId, arguments: args } ) => ( {
 			toolCallId,

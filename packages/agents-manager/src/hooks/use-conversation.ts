@@ -2,7 +2,6 @@ import {
 	getAgentManager,
 	loadAllMessagesFromServer,
 	loadChatFromServer,
-	loadConversation,
 	type Message,
 	type PendingClientTools,
 	type ServerLoadResult,
@@ -17,7 +16,6 @@ import { useAgentsManagerContext } from '../contexts';
 import { isUnsentSession } from '../utils/agent-session';
 import { getConversationBotId } from '../utils/conversation-bot-id';
 import { isReaderChatAgent } from '../utils/is-reader-chat-agent';
-import { TOOL_RESULT_ALREADY_RECEIVED } from '../utils/orchestrator-error-message';
 import { buildToolCallResume } from '../utils/tool-call-resume';
 import {
 	getNewestServerId,
@@ -64,9 +62,9 @@ interface Result {
  * it is reloaded until the reply lands, then offers Retry if none comes.
  *
  * A turn paused on a browser-run tool has no page left to send the result, so
- * after `RESUME_AFTER_MS` this page answers its calls with the result the old page
- * stored, or an "interrupted" one. The server takes one result per call, so a
- * resume that loses to another page just keeps waiting.
+ * after `RESUME_AFTER_MS` this page answers its calls with an "interrupted" result
+ * and the assistant re-runs what it needs. The server takes one result per call, so
+ * a resume that loses to another page just keeps waiting.
  */
 export default function useConversation( {
 	maxPages = 10,
@@ -91,11 +89,6 @@ export default function useConversation( {
 	const replyWaitRef = useRef( replyWait );
 	replyWaitRef.current = replyWait;
 	const loadedNewestIdRef = useRef( 0 );
-	// The tab's transcript as it was before hydration replaced it: the old page may
-	// have stored a tool result it never got to send.
-	const localMessagesRef = useRef< { sessionId: string; messages: Message[] } | undefined >(
-		undefined
-	);
 	const resumeAttemptedRef = useRef( false );
 
 	const queryClient = useQueryClient();
@@ -109,13 +102,6 @@ export default function useConversation( {
 			const hasAgentParam = urlSearchParams.has( 'agent' );
 			const botId = getConversationBotId( agentId, hasAgentParam );
 			const config = { botId, apiBaseUrl: API_BASE_URL, authProvider };
-
-			if ( localMessagesRef.current?.sessionId !== sessionId ) {
-				const { messages } = await loadConversation( sessionId ).catch( () => ( {
-					messages: [] as Message[],
-				} ) );
-				localMessagesRef.current = { sessionId, messages };
-			}
 
 			// Only the newest page can change while a reply is awaited.
 			const loaded = queryClient.getQueryData< ServerLoadResult >( queryKey );
@@ -251,19 +237,14 @@ export default function useConversation( {
 
 				resumeAttemptedRef.current = true;
 				setReplyWait( 'resuming' );
-				const { results, turnToolCalls } = buildToolCallResume(
-					pending,
-					localMessagesRef.current?.messages ?? []
-				);
+				const { results, turnToolCalls } = buildToolCallResume( pending );
 				let replied = false;
 				try {
 					replied = ( await onResume?.( results, turnToolCalls ) ) ?? false;
 				} catch ( resumeError ) {
 					// Another page answered first, or the send failed: keep waiting for a reply.
-					if ( ( resumeError as { code?: string } )?.code !== TOOL_RESULT_ALREADY_RECEIVED ) {
-						// eslint-disable-next-line no-console
-						console.error( '[useConversation] Error resuming the paused turn:', resumeError );
-					}
+					// eslint-disable-next-line no-console
+					console.error( '[useConversation] Error resuming the paused turn:', resumeError );
 				}
 				setReplyWait( ( current ) => {
 					if ( current !== 'resuming' ) {

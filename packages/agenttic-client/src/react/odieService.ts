@@ -192,12 +192,6 @@ export async function listConversationsFromServer(
 	}
 }
 
-// Only page 1 carries the chat's current state; keep it when pages are merged.
-const pageOneState = ( { sessionId, pendingClientTools }: ServerLoadResult ) => ( {
-	...( sessionId && { sessionId } ),
-	...( pendingClientTools && { pendingClientTools } ),
-} );
-
 /**
  * Load multiple pages of messages and combine them
  * Useful for loading entire conversation history
@@ -245,7 +239,6 @@ export async function loadAllMessagesFromServer(
 				hasMore: totalPagesToLoad < firstPage.pagination.totalPages,
 			},
 			chatId: firstPage.chatId,
-			...pageOneState( firstPage ),
 		};
 	} catch ( error ) {
 		logger( 'Failed to load all pages: %O', error );
@@ -254,7 +247,6 @@ export async function loadAllMessagesFromServer(
 			messages: allMessages,
 			pagination: firstPage.pagination,
 			chatId: firstPage.chatId,
-			...pageOneState( firstPage ),
 		};
 	}
 }

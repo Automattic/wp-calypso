@@ -7,7 +7,6 @@ const mockCancelQueries = jest.fn();
 const mockGetQueryData = jest.fn();
 const mockLoadChatFromServer = jest.fn();
 const mockLoadAllMessagesFromServer = jest.fn();
-const mockLoadConversation = jest.fn();
 let mockParkedNavigationCallId: string | undefined;
 
 jest.mock(
@@ -18,7 +17,6 @@ jest.mock(
 		createOdieBotId: ( agentId: string ) => agentId,
 		loadAllMessagesFromServer: ( ...args: unknown[] ) => mockLoadAllMessagesFromServer( ...args ),
 		loadChatFromServer: ( ...args: unknown[] ) => mockLoadChatFromServer( ...args ),
-		loadConversation: ( ...args: unknown[] ) => mockLoadConversation( ...args ),
 	} ),
 	{ virtual: true }
 );
@@ -85,7 +83,6 @@ const renderWaitingConversation = ( onSuccess = jest.fn(), onRetry = jest.fn() )
 
 describe( 'useConversation', () => {
 	beforeEach( () => {
-		mockLoadConversation.mockResolvedValue( { messages: [] } );
 		mockUseQuery.mockReturnValue( {
 			data: undefined,
 			error: null,
@@ -423,35 +420,6 @@ describe( 'useConversation', () => {
 				expect( result.current.notice ).toBeUndefined();
 			} );
 
-			it( 'sends the result the old page stored instead of an interrupted one', async () => {
-				const onResume = jest.fn().mockResolvedValue( true );
-				mockLoadConversation.mockResolvedValue( {
-					messages: [
-						{
-							role: 'agent',
-							parts: [
-								{
-									type: 'data',
-									data: {
-										toolCallId: 'call-top',
-										toolId: 'woocommerce__get_top_products',
-										result: { rows: 5 },
-									},
-								},
-							],
-						},
-					],
-				} );
-				mockLoadAllMessagesFromServer.mockResolvedValue( { messages: [] } );
-				renderPaused( onResume, 'unanswered' );
-
-				// The tab's transcript is read before the server's replaces it.
-				await act( async () => lastQueryOptions().queryFn() );
-				await act( async () => jest.advanceTimersByTime( RESUME_AFTER_MS ) );
-
-				expect( onResume.mock.calls[ 0 ][ 0 ][ 0 ].result ).toEqual( { rows: 5 } );
-			} );
-
 			it( 'keeps waiting while a run holds the turn elsewhere', async () => {
 				const onResume = jest.fn();
 				const { result } = renderPaused( onResume, 'running' );
@@ -480,17 +448,12 @@ describe( 'useConversation', () => {
 				expect( onResume ).toHaveBeenCalledTimes( 1 );
 			} );
 
-			it( 'logs a failed resume, but not one another page beat', async () => {
+			it( 'logs a failed resume', async () => {
 				const consoleError = jest.spyOn( console, 'error' ).mockImplementation( () => {} );
-				const lost = Object.assign( new Error( 'already received' ), {
-					code: 'tool_result_already_received',
-				} );
-				renderPaused( jest.fn().mockRejectedValue( lost ), 'unanswered' );
-				await act( async () => jest.advanceTimersByTime( RESUME_AFTER_MS ) );
-				expect( consoleError ).not.toHaveBeenCalled();
-
 				renderPaused( jest.fn().mockRejectedValue( new Error( 'network' ) ), 'unanswered' );
+
 				await act( async () => jest.advanceTimersByTime( RESUME_AFTER_MS ) );
+
 				expect( consoleError ).toHaveBeenCalledWith(
 					'[useConversation] Error resuming the paused turn:',
 					expect.any( Error )

@@ -1842,21 +1842,6 @@ describe( 'OrchestratorChat', () => {
 
 			expect( chatErrorCalls() ).toEqual( [] );
 		} );
-
-		it( 'neither shows nor records a resume that another page answered first', () => {
-			mockUseAgentChat.mockReturnValue(
-				agentChatReturn( {
-					error: 'Streaming error: This tool result was already received.',
-					errorCode: 'tool_result_already_received',
-				} )
-			);
-
-			render( chat() );
-
-			const props = mockAgentChat.mock.calls.at( -1 )![ 0 ] as { error?: string | null };
-			expect( props.error ).toBeFalsy();
-			expect( chatErrorCalls() ).toEqual( [] );
-		} );
 	} );
 
 	describe( 'response outcome tracking', () => {
