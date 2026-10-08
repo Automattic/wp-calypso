@@ -1,6 +1,5 @@
 import { isWpcomEnterpriseGridPlan } from '@automattic/calypso-products';
 import clsx from 'clsx';
-import { usePlansGridContext } from '../../grid-context';
 import { GridPlan } from '../../types';
 import PlanDivOrTdContainer from '../plan-div-td-container';
 import BillingTimeframe from '../shared/billing-timeframe';
@@ -18,9 +17,8 @@ const BillingTimeframes = ( {
 	renderedGridPlans,
 	showRefundPeriod,
 }: BillingTimeframesProps ) => {
-	const { isEnterpriseA4AIndia } = usePlansGridContext();
 	return renderedGridPlans.map( ( { planSlug } ) => {
-		if ( isWpcomEnterpriseGridPlan( planSlug ) && ! isEnterpriseA4AIndia ) {
+		if ( isWpcomEnterpriseGridPlan( planSlug ) ) {
 			return null;
 		}
 

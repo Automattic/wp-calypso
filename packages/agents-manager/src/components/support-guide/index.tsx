@@ -44,14 +44,12 @@ export default function SupportGuide( {
 	const isFromChat = state?.from === FROM_CHAT || !! state?.conversationId;
 	const title = __( 'Support Guides', __i18n_text_domain__ );
 
-	// Navigate back to the source route, preserving relevant state.
+	// Navigate back to the conversation the guide was opened from.
 	const handleBack = () => {
-		if ( state?.from === FROM_CHAT ) {
-			navigate( '/chat' );
-		} else if ( state?.conversationId ) {
+		if ( state?.from !== FROM_CHAT && state?.conversationId ) {
 			navigate( '/zendesk', { state } );
 		} else {
-			navigate( '/support-guides', { state } );
+			navigate( '/chat' );
 		}
 	};
 

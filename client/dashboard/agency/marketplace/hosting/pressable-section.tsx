@@ -15,7 +15,7 @@ import { Callout } from '../../../components/callout';
 import { Card, CardBody, CardDivider, CardHeader } from '../../../components/card';
 import Divider from '../../../components/divider';
 import { SectionHeader } from '../../../components/section-header';
-import { a4aLink } from '../../../utils/link';
+import { useContactSupport } from '../../support/use-contact-support';
 import pressableDescriptor from '../exclusive-offers/images/pressable-descriptor.svg';
 import { getProductPriceInfo } from '../products/lib/product-pricing';
 import {
@@ -140,6 +140,7 @@ export default function PressableSection( {
 	onAddToCart,
 }: Props ) {
 	const { recordTracksEvent } = useAnalytics();
+	const { openContactForm } = useContactSupport();
 
 	const existingPlanInfo = useMemo(
 		() => ( existingPlan ? getPressablePlanInfo( existingPlan ) : undefined ),
@@ -356,13 +357,7 @@ export default function PressableSection( {
 							: undefined
 					}
 					action={
-						// TODO: The MSD has no contact-support widget yet; this opens the
-						// classic hosting page with the widget's hash fragment.
-						<Button
-							variant="primary"
-							__next40pxDefaultSize
-							href={ a4aLink( '/marketplace/hosting/pressable#contact-support-a4a' ) }
-						>
+						<Button variant="primary" __next40pxDefaultSize onClick={ () => openContactForm() }>
 							{ isReferralMode ? __( 'Contact us to refer' ) : __( 'Contact us' ) }
 						</Button>
 					}

@@ -1,14 +1,14 @@
 import { useAgentChat } from '@automattic/agenttic-client';
 import { useCallback, useEffect, useMemo, useRef, useState } from '@wordpress/element';
-import { __, sprintf } from '@wordpress/i18n';
+import { __, _n, sprintf } from '@wordpress/i18n';
 import CreditsMeter from '../components/credits-meter';
 import { API_BASE_URL } from '../constants';
 import { NO_SITE } from '../utils/agent-session';
 import {
 	type CreditsPlan,
-	CREDITS_LOW_THRESHOLD,
 	buildMockCreditsStatus,
 	clampPercent,
+	formatCreditsShort,
 	formatPercent,
 	isCreditsExhausted,
 	isCreditsLow,
@@ -66,7 +66,7 @@ interface UseCreditsOptions {
 
 interface UseCreditsResult {
 	chat: UseAgentChatReturn;
-	/** Ring + popover; hidden until this site returns valid allowance metadata. */
+	/** Dot + popover; hidden until this site returns valid allowance metadata. */
 	trailingActions?: TrailingActions;
 	/** Dismissible low-credit notice, or a persistent exhausted notice. */
 	notice?: NoticeConfig;
@@ -368,13 +368,13 @@ export function useCredits( {
 					dismissible: false,
 				};
 			}
-			if ( status.percent <= CREDITS_LOW_THRESHOLD && ! isLowNoticeDismissed ) {
+			if ( isLow && ! isLowNoticeDismissed ) {
 				return {
 					icon: false,
 					message: sprintf(
-						/* translators: %s: percentage of site credits left, e.g. "20" or "<1" */
-						__( '%s%% of site credits left.', __i18n_text_domain__ ),
-						formatPercent( status.percent )
+						/* translators: %s: site credits left in short form, e.g. "800" or "8.5k" */
+						_n( '%s credit left.', '%s credits left.', status.remaining, __i18n_text_domain__ ),
+						formatCreditsShort( status.remaining )
 					),
 					action,
 					dismissible: true,

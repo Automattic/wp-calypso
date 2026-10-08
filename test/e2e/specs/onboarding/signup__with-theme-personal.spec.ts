@@ -24,12 +24,12 @@ import { expect, tags, test } from '../../lib/pw-base';
 import { apiCloseAccount } from '../shared';
 
 test.describe(
-	'Lifecycle: Premium theme signup, onboard, launch and cancel subscription',
+	'Lifecycle: Personal theme signup, onboard, launch and cancel subscription',
 	{ tag: [ tags.CALYPSO_RELEASE ] },
 	() => {
-		const planName = 'Premium';
+		const planName = 'Personal';
 		const testUser = DataHelper.getNewTestUser( {
-			usernamePrefix: 'ftmepremium',
+			usernamePrefix: 'ftmepersonal',
 		} );
 
 		let newUserDetails: NewUserResponse | undefined;
@@ -51,7 +51,7 @@ test.describe(
 			} );
 		} );
 
-		test( 'Signup, purchase, and cancel a Premium theme plan', async ( { page } ) => {
+		test( 'Signup, purchase, and cancel a Personal theme plan', async ( { page } ) => {
 			// Signup + purchase + atomic cancel stacks a 90s purchase timeout
 			// with several 30s waits; the 120s config default is not enough.
 			test.setTimeout( 240 * 1000 );
@@ -65,9 +65,9 @@ test.describe(
 				await themesPage.visitShowcase();
 			} );
 
-			await test.step( 'Select a Premium theme and start signup', async () => {
+			await test.step( 'Select a Personal theme and start signup', async () => {
 				const loggedOutThemesPage = new LoggedOutThemesPage( page );
-				await loggedOutThemesPage.filterBy( 'Premium' );
+				await loggedOutThemesPage.filterBy( 'Personal' );
 				themeSlug = await loggedOutThemesPage.startWithFirstTheme();
 			} );
 

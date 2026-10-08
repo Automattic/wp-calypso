@@ -23,6 +23,7 @@ import { getInitialReferralLogo, getReferralLogoOption, getReferralLogoPayload }
 import type { ReferralLogo } from './lib/logo';
 import type { CartLine } from '../products/use-cart-lines';
 import type { TermPricing } from '../use-term-pricing';
+import type { DevSiteReferral } from './use-dev-site-referral';
 import type { ReferralFlowType } from '@automattic/api-core';
 
 interface Options {
@@ -31,6 +32,8 @@ interface Options {
 	term: TermPricing;
 	profileLogoUrl: string | null;
 	lastReferralLogoUrl: string | null;
+	/** Set when the lines are the plan of a development site, whose license the client takes over. */
+	license?: DevSiteReferral;
 }
 
 interface ApiError {
@@ -59,6 +62,7 @@ export function useRequestClientPayment( {
 	term,
 	profileLogoUrl,
 	lastReferralLogoUrl,
+	license,
 }: Options ) {
 	const navigate = useNavigate();
 	const queryClient = useQueryClient();
@@ -125,7 +129,10 @@ export function useRequestClientPayment( {
 		return uploadedLogoRef.current.url;
 	};
 
-	const productIds = lines.map( ( { product } ) => getTermProductId( product, term ) );
+	// A development site's license names its own product; the saved term does not apply.
+	const productIds = license
+		? [ license.productId ]
+		: lines.map( ( { product } ) => getTermProductId( product, term ) );
 
 	const validate = async (): Promise< boolean > => {
 		if ( ! emailValidator.validate( email ) ) {
@@ -173,13 +180,19 @@ export function useRequestClientPayment( {
 				client_email: email,
 				client_message: message,
 				product_ids: productIds.join( ',' ),
+				...( license && {
+					licenses: [ { product_id: license.productId, license_id: license.licenseId } ],
+				} ),
 				flow_type: flowType,
 				logo: getReferralLogoPayload( logo, uploadedUrl ),
 			} );
 			// The link is copied for both flows.
 			const isLinkCopied = await copyToClipboard( referral.checkout_url );
-			clearStoredCart( 'referral' );
-			updateMarketplaceType( 'regular' );
+			// A development site's plan never went through the cart, which stays as it was.
+			if ( ! license ) {
+				clearStoredCart( 'referral' );
+				updateMarketplaceType( 'regular' );
+			}
 			navigate( {
 				to: '/referrals',
 				search: {
