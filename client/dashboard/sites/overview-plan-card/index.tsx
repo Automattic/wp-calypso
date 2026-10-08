@@ -16,7 +16,7 @@ import { purchasesRoute } from '../../app/router/me';
 import Grid from '../../components/grid';
 import { commerceGardenPlan } from '../../components/icons';
 import OverviewCard from '../../components/overview-card';
-import { PurchaseExpiryStatus } from '../../components/purchase-expiry-status';
+import { PurchaseExpiryText } from '../../components/purchase-expiry-status';
 import RouterLinkButton from '../../components/router-link-button';
 import { isDashboardBackport } from '../../utils/is-dashboard-backport';
 import {
@@ -272,7 +272,7 @@ function getCardDescription( site: Site, purchase?: Purchase ) {
 	}
 
 	if ( purchase ) {
-		return <PurchaseExpiryStatus purchase={ purchase } isInsideLink />;
+		return <PurchaseExpiryText purchase={ purchase } />;
 	}
 
 	return undefined;

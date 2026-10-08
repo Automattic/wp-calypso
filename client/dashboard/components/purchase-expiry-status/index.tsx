@@ -50,24 +50,9 @@ function FormattedExpiryDate( { locale, purchase }: { locale: string; purchase: 
 	);
 }
 
-/**
- * The expiry status of a subscription that is close to expiring or has already
- * expired: colored to draw attention, and linked to renewal checkout where
- * renewing is something the viewer can act on right now.
- *
- * Expiry further off than the warning window is not urgent, and is rendered as
- * plain text by the caller rather than through here.
- */
-function UrgentExpiryStatus( {
-	purchase,
-	copy,
-	hasExpired,
-	untranslatedFallbackText,
-	isInsideLink,
-}: {
+interface UrgentExpiryProps {
 	purchase: Purchase;
 	copy: ExpiryStatusCopy;
-	isInsideLink?: boolean;
 
 	/**
 	 * Whether `copy` describes a lapsed subscription rather than one still
@@ -83,17 +68,40 @@ function UrgentExpiryStatus( {
 	 * this and `copy.text`'s nullability go away once the copy is translated.
 	 */
 	untranslatedFallbackText?: React.ReactNode;
-} ) {
+}
+
+// The wording drops the expiry date to keep the column short, so it moves to
+// a tooltip rather than disappearing.
+function useExpiryDateTitle( purchase: Purchase ) {
 	const locale = useLocale();
+	return formatDate( new Date( purchase.expiry_date ), locale, { dateStyle: 'long' } );
+}
+
+/**
+ * The expiry status of a subscription that is close to expiring or has already
+ * expired, colored to draw attention.
+ *
+ * Expiry further off than the warning window is not urgent, and is rendered as
+ * plain text by the caller rather than through here.
+ */
+function UrgentExpiryText( { purchase, copy, untranslatedFallbackText }: UrgentExpiryProps ) {
+	return (
+		<Text intent={ copy.intent } title={ useExpiryDateTitle( purchase ) }>
+			{ copy.text ?? untranslatedFallbackText }
+		</Text>
+	);
+}
+
+/**
+ * UrgentExpiryText, linked to renewal checkout where renewing is something the
+ * viewer can act on right now.
+ */
+function UrgentExpiryStatus( props: UrgentExpiryProps ) {
+	const { purchase, copy, hasExpired, untranslatedFallbackText } = props;
 	const { user } = useAuth();
 	const { recordTracksEvent } = useAnalytics();
-
-	// The wording drops the expiry date to keep the column short, so it moves to
-	// a tooltip rather than disappearing.
+	const expiryDateTitle = useExpiryDateTitle( purchase );
 	const daysUntilExpiry = getCalendarDaysUntil( new Date( purchase.expiry_date ) );
-	const expiryDateTitle = formatDate( new Date( purchase.expiry_date ), locale, {
-		dateStyle: 'long',
-	} );
 
 	// The purchase page gates its "Renew now" action on these same two
 	// conditions. Calypso's equivalent surfaces apply a longer list; the two
@@ -108,16 +116,10 @@ function UrgentExpiryStatus( {
 		purchase.bill_period_days === SubscriptionBillPeriod.PLAN_MONTHLY_PERIOD
 			? EXPIRY_ERROR_DAYS
 			: EXPIRY_WARNING_DAYS;
-	const isRenewalWorthOffering = ! isInsideLink && canRenew && daysUntilExpiry <= renewalWindowDays;
-
-	const expiryText = copy.text ?? untranslatedFallbackText;
+	const isRenewalWorthOffering = canRenew && daysUntilExpiry <= renewalWindowDays;
 
 	if ( ! isRenewalWorthOffering ) {
-		return (
-			<Text intent={ copy.intent } title={ expiryDateTitle }>
-				{ expiryText }
-			</Text>
-		);
+		return <UrgentExpiryText { ...props } />;
 	}
 
 	const renewalTitle = hasExpired
@@ -139,23 +141,63 @@ function UrgentExpiryStatus( {
 					} )
 				}
 			>
-				{ expiryText }
+				{ copy.text ?? untranslatedFallbackText }
 				<Icon icon={ arrowUpRight } size={ 18 } />
 			</a>
 		</Text>
 	);
 }
 
+/** How the two links the status can carry are rendered. */
+interface ExpiryStatusRenderers {
+	urgent: ( props: UrgentExpiryProps ) => React.ReactNode;
+	inAppPurchaseLink: ( href: string ) => React.JSX.Element;
+}
+
+const LINKED_RENDERERS: ExpiryStatusRenderers = {
+	urgent: ( props ) => <UrgentExpiryStatus { ...props } />,
+	inAppPurchaseLink: ( href ) => <a href={ href } />,
+};
+
+const TEXT_RENDERERS: ExpiryStatusRenderers = {
+	urgent: ( props ) => <UrgentExpiryText { ...props } />,
+	inAppPurchaseLink: () => <span />,
+};
+
+/**
+ * A purchase's expiry status, with a link to renew or manage it where the viewer can.
+ */
 export function PurchaseExpiryStatus( {
 	purchase,
 	isSiteMissing,
-	isInsideLink,
 }: {
 	purchase: Purchase;
 	isSiteMissing?: boolean;
+} ) {
+	return (
+		<ExpiryStatus
+			purchase={ purchase }
+			isSiteMissing={ isSiteMissing }
+			renderers={ LINKED_RENDERERS }
+		/>
+	);
+}
 
-	/** Rendered inside a link, so it must not render links of its own. */
-	isInsideLink?: boolean;
+/**
+ * The same status as plain text, for a caller that links to the purchase as a whole.
+ */
+export function PurchaseExpiryText( { purchase }: { purchase: Purchase } ) {
+	return <ExpiryStatus purchase={ purchase } renderers={ TEXT_RENDERERS } />;
+}
+
+function ExpiryStatus( {
+	purchase,
+	isSiteMissing,
+	renderers,
+}: {
+	purchase: Purchase;
+	isSiteMissing?: boolean;
+	renderers: ExpiryStatusRenderers;
 } ) {
 	const locale = useLocale();
 	const { setShowHelpCenter } = useHelpCenter();
@@ -243,11 +285,7 @@ export function PurchaseExpiryStatus( {
 				'This product is an in-app purchase. You can manage it from within <managePurchase>the app store</managePurchase>.'
 			),
 			{
-				managePurchase: isInsideLink ? (
-					<span />
-				) : (
-					<a href={ purchase.iap_purchase_management_link } />
-				),
+				managePurchase: renderers.inAppPurchaseLink( purchase.iap_purchase_management_link ),
 			}
 		);
 	}
@@ -451,15 +489,12 @@ export function PurchaseExpiryStatus( {
 			}
 		);
 
-		return (
-			<UrgentExpiryStatus
-				purchase={ purchase }
-				copy={ copy }
-				hasExpired={ false }
-				untranslatedFallbackText={ untranslatedFallbackText }
-				isInsideLink={ isInsideLink }
-			/>
-		);
+		return renderers.urgent( {
+			purchase,
+			copy,
+			hasExpired: false,
+			untranslatedFallbackText,
+		} );
 	}
 	if ( isExpiredOrRemoved( purchase ) && 'concierge-session' === purchase.product_slug ) {
 		// translators: %s is a formatted expiry date
@@ -469,14 +504,11 @@ export function PurchaseExpiryStatus( {
 	}
 
 	if ( isExpiredOrRemoved( purchase ) ) {
-		return (
-			<UrgentExpiryStatus
-				purchase={ purchase }
-				copy={ getExpiredCopy( new Date( purchase.expiry_date ) ) }
-				hasExpired
-				isInsideLink={ isInsideLink }
-			/>
-		);
+		return renderers.urgent( {
+			purchase,
+			copy: getExpiredCopy( new Date( purchase.expiry_date ) ),
+			hasExpired: true,
+		} );
 	}
 
 	if ( isIncludedWithPlan( purchase ) ) {
