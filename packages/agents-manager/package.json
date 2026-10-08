@@ -41,6 +41,9 @@
 		"watch": "tsc --build ./tsconfig.json --watch"
 	},
 	"dependencies": {
+		"@a2ui/markdown-it": "0.2.0",
+		"@a2ui/react": "0.12.0",
+		"@a2ui/web_core": "0.12.0",
 		"@automattic/agenttic-client": "workspace:^",
 		"@automattic/agenttic-ui": "workspace:^",
 		"@automattic/calypso-analytics": "workspace:^",
