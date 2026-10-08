@@ -452,18 +452,15 @@ describe( 'useConversation', () => {
 				expect( onResume.mock.calls[ 0 ][ 0 ][ 0 ].result ).toEqual( { rows: 5 } );
 			} );
 
-			it.each( [ 'claimed', 'running' ] as const )(
-				'keeps waiting while the turn is %s elsewhere',
-				async ( state ) => {
-					const onResume = jest.fn();
-					const { result } = renderPaused( onResume, state );
+			it( 'keeps waiting while a run holds the turn elsewhere', async () => {
+				const onResume = jest.fn();
+				const { result } = renderPaused( onResume, 'running' );
 
-					await act( async () => jest.advanceTimersByTime( RESUME_AFTER_MS ) );
+				await act( async () => jest.advanceTimersByTime( RESUME_AFTER_MS ) );
 
-					expect( onResume ).not.toHaveBeenCalled();
-					expect( result.current.notice?.message ).toBe( 'Waiting for the reply…' );
-				}
-			);
+				expect( onResume ).not.toHaveBeenCalled();
+				expect( result.current.notice?.message ).toBe( 'Waiting for the reply…' );
+			} );
 
 			it.each( [
 				[ 'brings no reply', jest.fn().mockResolvedValue( false ) ],

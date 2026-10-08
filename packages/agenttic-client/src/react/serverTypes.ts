@@ -70,11 +70,11 @@ export interface ServerChat {
  */
 export interface PendingClientTools {
 	/**
-	 * `unanswered`: no result arrived. `claimed`: a result was received and is
-	 * continuing the turn. `running`: a run is in progress on the session.
+	 * `unanswered`: no result arrived for the calls listed. `running`: a run is in
+	 * progress on the session.
 	 */
-	state: 'unanswered' | 'claimed' | 'running';
-	/** The calls handed to the browser, with the arguments it would have run them with. */
+	state: 'unanswered' | 'running';
+	/** The calls still waiting on the browser, with the arguments it would have run them with. */
 	calls: Array< {
 		toolCallId: string;
 		toolId: string;
