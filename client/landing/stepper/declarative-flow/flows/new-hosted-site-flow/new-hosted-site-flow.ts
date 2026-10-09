@@ -98,6 +98,13 @@ const hosting: FlowV2< typeof initialize > = {
 	__experimentalUseBuiltinAuth: true,
 	isSignupFlow: true,
 	initialize,
+	useStepsProps() {
+		return {
+			[ STEPS.DOMAIN_SEARCH.slug ]: {
+				shouldHidePlansStep: hasCommercePurchaseSteps( this.name, useQuery() ),
+			},
+		};
+	},
 	useStepNavigation( _currentStepSlug, navigate ) {
 		const {
 			setPendingAction,

@@ -4,10 +4,7 @@ import { useSelect } from '@wordpress/data';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { getCurrentQueryParams } from '../../../utils/get-current-query-params';
 import { shouldSkipPlansStep } from '../../../utils/preselected-plan';
-import {
-	hasPurchaseStepsParameter,
-	hasPreselectedPurchasePlan,
-} from '../../internals/steps-repository/components/onboarding-progress/use-show-onboarding-progress';
+import { hasPurchaseStepsParameter } from '../../internals/steps-repository/components/onboarding-progress/use-show-onboarding-progress';
 import {
 	getOnboardingStepperPosition,
 	ONBOARDING_STEPPER_GROUP_BY_SLUG,
@@ -29,7 +26,8 @@ import type { OnboardSelect } from '@automattic/data-stores';
  */
 export function useOnboardingStepCounter(
 	flow: string,
-	slug: string
+	slug: string,
+	hidePlansStep = false
 ): { current: number; total: number } | null {
 	const isMobileViewport = useViewportMatch( 'small', '<' );
 	const planCartItem = useSelect(
@@ -53,6 +51,6 @@ export function useOnboardingStepCounter(
 	// `<Router>` — in production too.
 	return getOnboardingStepperPosition(
 		group,
-		hasPreselectedPurchasePlan( query, planCartItem ) || shouldSkipPlansStep( query, planCartItem )
+		hidePlansStep || shouldSkipPlansStep( query, planCartItem )
 	);
 }

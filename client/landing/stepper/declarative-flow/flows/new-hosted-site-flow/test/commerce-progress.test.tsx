@@ -212,3 +212,21 @@ it( 'leaves other cached new-hosted-site consumers unchanged', () => {
 	window.dispatchEvent( new PageTransitionEvent( 'pageshow', { persisted: true } ) );
 	expect( window.location.reload ).not.toHaveBeenCalled();
 } );
+
+it( 'supplies the domain screen with the two-step Commerce journey', () => {
+	mockQuery = new URLSearchParams( 'showPurchaseSteps=true&showDomainStep&plan=ecommerce-bundle' );
+	expect( renderHook( () => hosting.useStepsProps!() ).result.current.domains ).toEqual( {
+		shouldHidePlansStep: true,
+	} );
+} );
+
+it.each( [
+	'showDomainStep&plan=ecommerce-bundle',
+	'showPurchaseSteps=true&showDomainStep&plan=ecommerce-trial-bundle-monthly',
+	'showPurchaseSteps=true&showDomainStep&plan=personal-bundle',
+] )( 'keeps the domain step defaults for %s', ( query ) => {
+	mockQuery = new URLSearchParams( query );
+	expect( renderHook( () => hosting.useStepsProps!() ).result.current.domains ).toEqual( {
+		shouldHidePlansStep: false,
+	} );
+} );
