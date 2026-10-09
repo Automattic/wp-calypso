@@ -43,7 +43,7 @@ export default function EarnMigrations() {
 	);
 
 	const onOpenAddSitesModal = useCallback( () => {
-		recordTracksEvent( 'calypso_a8c_migrations_commissions_tag_sites_click' );
+		recordTracksEvent( 'calypso_a4a_migrations_commissions_tag_sites_click' );
 		setIsAddSitesModalOpen( true );
 	}, [ recordTracksEvent ] );
 

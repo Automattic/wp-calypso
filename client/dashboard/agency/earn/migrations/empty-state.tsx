@@ -15,7 +15,7 @@ export default function MigrationsCommissionsEmptyState( {
 	canTagSitesForCommission: boolean;
 } ) {
 	const onTagMySelfMigratedSitesClick = useCallback( () => {
-		recordTracksEvent( 'calypso_a8c_migrations_commissions_tag_my_self_migrated_sites_click' );
+		recordTracksEvent( 'calypso_a4a_migrations_commissions_tag_my_self_migrated_sites_click' );
 		onTagSitesClick();
 	}, [ recordTracksEvent, onTagSitesClick ] );
 
@@ -59,7 +59,7 @@ export default function MigrationsCommissionsEmptyState( {
 																href={ a4aPluginUrl }
 																onClick={ () => {
 																	recordTracksEvent(
-																		'calypso_a8c_migrations_commissions_a4a_plugin_link_click'
+																		'calypso_a4a_migrations_commissions_a4a_plugin_link_click'
 																	);
 																} }
 															/>
