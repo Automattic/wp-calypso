@@ -49,7 +49,7 @@ export function getAgencyActions( {
 	recordTracksEvent: AnalyticsClient[ 'recordTracksEvent' ];
 } ): Action< AgencySite >[] {
 	const track = ( action: string ) =>
-		recordTracksEvent( 'calypso_dashboard_sites_action_click', { action } );
+		recordTracksEvent( 'calypso_a4a_sites_action_click', { action } );
 
 	const openWpcom = ( action: string, path: string ) => {
 		track( action );
