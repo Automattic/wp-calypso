@@ -7049,17 +7049,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@preact/signals-core@npm:^1.14.2":
+"@preact/signals-core@npm:^1.14.2, @preact/signals-core@npm:^1.7.0":
   version: 1.14.4
   resolution: "@preact/signals-core@npm:1.14.4"
   checksum: 963622e5c1c98a6946ec1ad01e9901ebacf316ab0a7e3c56c6ebaefee5b2c8ea03c3bdb8ba74120612b5f8976f5dc94693134670e372dded79db9994045aadd1
-  languageName: node
-  linkType: hard
-
-"@preact/signals-core@npm:^1.7.0":
-  version: 1.8.0
-  resolution: "@preact/signals-core@npm:1.8.0"
-  checksum: fa773157621d881e7aefddb8dbded805d8203600211040cc4b5907726e288a163fa58558c1d36bc7085d75e6488af0a806322bbbed005d08be76a76f40244246
   languageName: node
   linkType: hard
 
