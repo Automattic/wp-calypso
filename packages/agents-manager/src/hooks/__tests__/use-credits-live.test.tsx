@@ -1593,6 +1593,18 @@ describe( 'credits Tracks events', () => {
 		} );
 	} );
 
+	it( 'sends the editor’s site type when the page sets it', async () => {
+		window._currentSiteType = 'atomic';
+		try {
+			fetchMock.mockResolvedValueOnce( response( low() ) );
+			renderCredits( freshScope() );
+			await flush();
+			expect( creditsEvents()[ 0 ][ 1 ] ).toMatchObject( { site_type: 'atomic' } );
+		} finally {
+			delete window._currentSiteType;
+		}
+	} );
+
 	it( 'records a dismissal once, and nothing from a previous site’s handler', async () => {
 		const scope = freshScope();
 		fetchMock.mockResolvedValueOnce( response( low() ) );

@@ -77,6 +77,12 @@ function getAgentEnvironment( contextProvider?: ContextProvider ): string {
 	}
 }
 
+/** WordPress.com sets `_currentSiteType` on editor pages only, so other surfaces send `none`. */
+function getSiteType(): string {
+	const siteType = window._currentSiteType;
+	return typeof siteType === 'string' && siteType !== '' ? siteType : 'none';
+}
+
 export function recordCreditsTracksEvent(
 	eventName: CreditsTracksEventName,
 	{
@@ -88,8 +94,7 @@ export function recordCreditsTracksEvent(
 ): void {
 	recordAgentsManagerTracksEvent( eventName, {
 		blog_id: siteId,
-		// No page data on every chat surface tells Simple from Atomic.
-		site_type: 'none',
+		site_type: getSiteType(),
 		agent_environment: getAgentEnvironment( contextProvider ),
 		state: getCreditsState( status ),
 		credits_left: status.remaining ?? 'none',
