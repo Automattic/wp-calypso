@@ -142,9 +142,8 @@ export const PluginSwitcher = ( {
 					filter={
 						<PluginUpdatesFilter
 							siteCount={
-								( pluginsWithIcon ?? [] ).filter(
-									( plugin ) => plugin.sitesWithPluginUpdate.length > 0
-								).length
+								pluginsWithIcon?.filter( ( plugin ) => plugin.sitesWithPluginUpdate.length > 0 )
+									.length
 							}
 							updatesField={ updatesField }
 							view={ view }
