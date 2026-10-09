@@ -4,6 +4,7 @@
 // @ts-nocheck - the flow test helpers are untyped
 import config from '@automattic/calypso-config';
 import { isCurrentUserLoggedIn } from '@automattic/data-stores/src/user/selectors';
+import { dispatch, select } from '@wordpress/data';
 import { STEPS } from 'calypso/landing/stepper/declarative-flow/internals/steps';
 import {
 	renderFlow,
@@ -11,10 +12,10 @@ import {
 } from 'calypso/landing/stepper/declarative-flow/test/helpers';
 import { useIsSiteAdmin } from 'calypso/landing/stepper/hooks/use-is-site-admin';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
+import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { goToCheckout } from 'calypso/landing/stepper/utils/checkout';
 import { getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
 import staticSiteImportFlow from '../static-site-import-flow';
-
 const originalLocation = window.location;
 
 jest.mock( 'calypso/landing/stepper/utils/checkout' );
@@ -277,5 +278,46 @@ describe( 'Static site import flow', () => {
 				plan: 'business-bundle',
 			} );
 		} );
+		it.each( [ 'keep', 'free' ] )(
+			'clears a previous domain registration when choosing %s',
+			( domainChoice ) => {
+				const actions = dispatch( ONBOARD_STORE );
+				actions.resetOnboardStore();
+				actions.setDomain( {
+					domain_name: 'busybearscleaning.com',
+					is_free: false,
+				} );
+				actions.setDomainCartItem( {
+					product_slug: 'domain_reg',
+					meta: 'busybearscleaning.com',
+				} );
+				actions.setDomainCartItems( [
+					{ product_slug: 'domain_reg', meta: 'busybearscleaning.com' },
+				] );
+				actions.setSiteUrl( 'busybearscleaning.com' );
+				const siteUrl = domainChoice === 'free' ? 'busybears.wordpress.com' : undefined;
+
+				try {
+					const destination = runNavigation( {
+						from: STEPS.STATIC_SITE_IMPORT_ADDRESS,
+						dependencies: { domainChoice, siteUrl },
+						query: { ...SESSION, domainChoice: 'register' },
+					} );
+
+					expect( destination ).toMatchDestination( {
+						step: STEPS.UNIFIED_PLANS,
+						query: { domainChoice },
+					} );
+
+					const onboard = select( ONBOARD_STORE );
+					expect( onboard.getSelectedDomain() ).toBeUndefined();
+					expect( onboard.getDomainCartItem() ).toBeUndefined();
+					expect( onboard.getDomainCartItems() ).toEqual( [] );
+					expect( onboard.getSiteUrl() ).toBe( siteUrl ?? '' );
+				} finally {
+					actions.resetOnboardStore();
+				}
+			}
+		);
 	} );
 } );

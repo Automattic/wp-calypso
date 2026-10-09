@@ -239,9 +239,11 @@ const staticSiteImport: FlowV2< typeof initialize > = {
 					if ( choice === 'register' ) {
 						return navigate( `${ STEPS.DOMAIN_SEARCH.slug }?domainChoice=${ choice }` );
 					}
-					if ( siteUrl ) {
-						setSiteUrl( siteUrl );
-					}
+					setDomain( undefined );
+					setDomainCartItem( undefined );
+					setDomainCartItems( [] );
+					setSignupDomainOrigin( undefined );
+					setSiteUrl( choice === 'free' ? ( siteUrl ?? '' ) : '' );
 
 					return navigate( `${ STEPS.UNIFIED_PLANS.slug }?domainChoice=${ choice }` );
 				}
