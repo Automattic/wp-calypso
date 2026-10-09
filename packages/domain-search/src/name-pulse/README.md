@@ -16,15 +16,15 @@ Name Pulse sends the classic domain search events (`calypso_domain_search_pagevi
 
 Its own events are `calypso_domain_search_name_pulse_<name>`, sent through `events.onNamePulseTracksEvent`. Every one carries `section`, `flow_name`, `is_logged_in` and `is_name_pulse: true`. None of them carries the query text.
 
-| Event | When | Props |
-| --- | --- | --- |
-| `search_settled` | Once per settled query | `query_length`, `word_count`, `search_mode` (`fqdn`, `single`, `keyword`, `ai`), `detected_tld`, `filter_tlds_count` |
-| `results_rendered` | Once per settled query, when every section has loaded or after 10 s. Counts are the rows shown before any "Show more" | `search_mode`, `top_count`, `exact_count`, `suggestions_count`, `creative_count`, `has_exact_card`, `time_to_first_result_ms`, `time_to_complete_ms`, `timed_out` |
-| `search_cleared` | The input is emptied | `previous_query_length`, `previous_word_count` |
-| `show_more_click` | "Show more" in a section | `results_section`, `visible_before`, `visible_after` |
-| `result_add_to_cart`, `result_remove_from_cart` | A row or the exact-match card adds or removes a name | `results_section` (`top`, `exact`, `suggestions`, `creative`, `exact_card`), `position`, `tld`, `name_pulse_source`, `availability_status`, `is_premium`, `raw_price`, `currency_code` |
-| `availability_failed` | An availability batch fails, times out or leaves names out | `reason` (`network`, `timeout`, `missing_entry`), `failed_count`, `batch_size` |
-| `suggestions_failed` | A suggestions request fails or returns provider errors | `use_ai`, `request_failed`, `provider_error_codes` (`provider:code`, comma-separated), `result_count` |
+| Event                                           | When                                                                                                                  | Props                                                                                                                                                                                  |
+| ----------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `search_settled`                                | Once per settled query                                                                                                | `query_length`, `word_count`, `search_mode` (`fqdn`, `single`, `keyword`, `ai`), `detected_tld`, `filter_tlds_count`                                                                   |
+| `results_rendered`                              | Once per settled query, when every section has loaded or after 10 s. Counts are the rows shown before any "Show more" | `search_mode`, `top_count`, `exact_count`, `suggestions_count`, `creative_count`, `has_exact_card`, `time_to_first_result_ms`, `time_to_complete_ms`, `timed_out`                      |
+| `search_cleared`                                | The input is emptied                                                                                                  | `previous_query_length`, `previous_word_count`                                                                                                                                         |
+| `show_more_click`                               | "Show more" in a section                                                                                              | `results_section`, `visible_before`, `visible_after`                                                                                                                                   |
+| `result_add_to_cart`, `result_remove_from_cart` | A row or the exact-match card adds or removes a name                                                                  | `results_section` (`top`, `exact`, `suggestions`, `creative`, `exact_card`), `position`, `tld`, `name_pulse_source`, `availability_status`, `is_premium`, `raw_price`, `currency_code` |
+| `availability_failed`                           | An availability batch fails, times out or leaves names out                                                            | `reason` (`network`, `timeout`, `missing_entry`), `failed_count`, `batch_size`                                                                                                         |
+| `suggestions_failed`                            | A suggestions request fails or returns provider errors                                                                | `use_ai`, `request_failed`, `provider_error_codes` (`provider:code`, comma-separated), `result_count`                                                                                  |
 
 ## Imports
 
