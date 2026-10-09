@@ -87,7 +87,12 @@ export function Notice( {
 			<div className={ styles.actions }>
 				{ action?.href !== undefined ? (
 					<Button className={ styles.action } variant="link" asChild>
-						<a href={ action.href } target={ action.target } rel={ action.rel }>
+						<a
+							href={ action.href }
+							target={ action.target }
+							rel={ action.rel }
+							onClick={ action.onClick }
+						>
 							{ action.label }
 						</a>
 					</Button>

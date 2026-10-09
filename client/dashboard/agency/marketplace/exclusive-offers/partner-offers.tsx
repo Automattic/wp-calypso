@@ -211,23 +211,25 @@ export default function PartnerOffers( {
 				</Text>
 			</Spacer>
 
-			<DataViews< PartnerOffer >
-				data={ partnerOffers }
-				fields={ fields }
-				view={ view }
-				onChangeView={ setView }
-				paginationInfo={ { totalItems: partnerOffers.length, totalPages: 1 } }
-				defaultLayouts={ { list: {} } }
-				search
-			>
-				<HStack justify="start" style={ { paddingBlock: '16px' } }>
-					<DataViews.Search />
-					<DataViews.FiltersToggle />
-				</HStack>
-				<Spacer marginBottom={ 4 }>
-					<DataViews.FiltersToggled />
-				</Spacer>
-			</DataViews>
+			<div className="exclusive-offers-filters">
+				<DataViews< PartnerOffer >
+					data={ partnerOffers }
+					fields={ fields }
+					view={ view }
+					onChangeView={ setView }
+					paginationInfo={ { totalItems: partnerOffers.length, totalPages: 1 } }
+					defaultLayouts={ { list: {} } }
+					search
+				>
+					<HStack justify="start" style={ { paddingBlock: '16px' } }>
+						<DataViews.Search />
+						<DataViews.FiltersToggle />
+					</HStack>
+					<Spacer marginBottom={ 4 }>
+						<DataViews.FiltersToggled />
+					</Spacer>
+				</DataViews>
+			</div>
 			<Grid templateColumns="repeat( auto-fill, minmax( 280px, 1fr ) )" gap="2xl">
 				{ filteredData.map( ( item ) => (
 					<PartnerOfferCard

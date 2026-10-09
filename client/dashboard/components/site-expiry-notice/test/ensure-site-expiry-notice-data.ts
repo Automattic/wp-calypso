@@ -5,6 +5,7 @@ import {
 	NOW,
 	SITE_ID,
 	expiryInDays,
+	grace,
 	makePurchase,
 	revertedTransfer,
 } from '../../plan-expiry-notice/test/fixtures';
@@ -26,18 +27,30 @@ beforeEach( () => {
 } );
 afterEach( () => MockDate.reset() );
 
-test( 'with a plan it settles purchases only', async () => {
-	upgrades( [ makePurchase( { expiry_date: expiryInDays( 3 ) } ) ] );
-	const transfer = api()
-		.get( `/wpcom/v2/sites/${ SITE_ID }/atomic/transfers/latest` )
-		.query( true )
-		.reply( 200, {} );
+test.each( [
+	[ 'before expiry', makePurchase( { expiry_date: expiryInDays( 3 ) } ), false, false ],
+	[ 'in grace on an Atomic site', grace(), true, false ],
+	[ 'in grace on a Simple site', grace(), false, true ],
+] )(
+	'with a plan %s it never asks for the transfer; the meta only when dismissible: %s',
+	async ( _, purchase, isAtomic, fetchesMeta ) => {
+		upgrades( [ purchase ] );
+		const transfer = api()
+			.get( `/wpcom/v2/sites/${ SITE_ID }/atomic/transfers/latest` )
+			.query( true )
+			.reply( 200, {} );
+		const meta = api()
+			.get( `/wp/v2/sites/${ SITE_ID }/users/me` )
+			.query( true )
+			.reply( 200, { id: 1, name: 'me', slug: 'me', meta: {} } );
 
-	await ensureSiteExpiryNoticeData( site() );
+		await ensureSiteExpiryNoticeData( site( isAtomic ) );
 
-	expect( queryClient.getQueryData( PURCHASES_KEY ) ).toHaveLength( 1 );
-	expect( transfer.isDone() ).toBe( false );
-} );
+		expect( queryClient.getQueryData( PURCHASES_KEY ) ).toHaveLength( 1 );
+		expect( transfer.isDone() ).toBe( false );
+		expect( meta.isDone() ).toBe( fetchesMeta );
+	}
+);
 
 test( 'refetches purchases the hook would consider stale', async () => {
 	// A persisted copy from an earlier visit may predate the plan's lapse; the

@@ -66,7 +66,7 @@ export interface UserPreferences {
 	'reader-profile-hidden-sites'?: number[];
 	two_step_security_key_reregister_required?: boolean;
 	'a4a-dashboard-pd-not-approved-popover'?: boolean;
-	'a4a-marketplace-referral-guide-seen'?: boolean;
+	'a4a-marketplace-referral-band-folded'?: boolean;
 	'a4a-referrals-bank-details-success-notice-seen'?: boolean;
 	'a4a-marketplace-term-pricing'?: 'monthly' | 'yearly';
 	/** Shared with the classic A4A dashboard: a milestone answered there is not asked again here. */
