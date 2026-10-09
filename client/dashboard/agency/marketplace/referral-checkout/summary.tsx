@@ -33,17 +33,17 @@ interface Props {
 	/** The lines are still being worked out, as when a site's plan is loading. */
 	isLoading?: boolean;
 	isTotalReady: boolean;
-	/** A cart of free products is issued to the agency at once, with no client. */
+	/** A cart of free products needs no client: the agency takes it through the checkout. */
 	isFreeOnly: boolean;
+	/** The agency checkout for a free cart. */
+	checkoutUrl: string;
 	isUserUnverified: boolean;
-	/** Gates the purchase of a free cart, which is issued to the agency itself. */
-	canIssueLicenses: boolean;
 	canSend: boolean;
 	canCopy: boolean;
 	isBusy: boolean;
 	onSend: () => void;
 	onCopy: () => void;
-	onPurchase: () => void;
+	onCheckout: () => void;
 	onPreview: () => void;
 }
 
@@ -72,14 +72,14 @@ export default function ReferralSummary( {
 	isLoading = false,
 	isTotalReady,
 	isFreeOnly,
+	checkoutUrl,
 	isUserUnverified,
-	canIssueLicenses,
 	canSend,
 	canCopy,
 	isBusy,
 	onSend,
 	onCopy,
-	onPurchase,
+	onCheckout,
 	onPreview,
 }: Props ) {
 	const suffix = getTermSuffix( term );
@@ -90,11 +90,11 @@ export default function ReferralSummary( {
 				variant="primary"
 				style={ { justifyContent: 'center' } }
 				__next40pxDefaultSize
-				isBusy={ isBusy }
-				disabled={ isBusy || isUserUnverified || ! canIssueLicenses }
-				onClick={ onPurchase }
+				href={ checkoutUrl }
+				disabled={ isUserUnverified }
+				onClick={ onCheckout }
 			>
-				{ __( 'Purchase' ) }
+				{ __( 'Checkout' ) }
 			</Button>
 		</VStack>
 	) : (
@@ -213,34 +213,25 @@ export default function ReferralSummary( {
 							) }
 						</Text>
 					) }
-					<CardDivider />
-					{ isFreeOnly ? (
-						<Text variant="muted" size={ 12 }>
-							{ createInterpolateElement(
-								__(
-									'By purchasing, you agree to our <a>Terms of Service</a> and authorize your payment method to be charged on a recurring basis until you cancel, which you can do at any time.'
-								),
-								{
-									a: <a href={ wpcomLink( '/tos' ) } target="_blank" rel="noreferrer" />,
-								}
-							) }
-						</Text>
-					) : (
-						<VStack spacing={ 2 }>
-							<Text weight={ 500 } size={ 12 }>
-								{ __( 'When you share this payment request:' ) }
-							</Text>
-							<Text variant="muted" size={ 12 }>
-								{ __(
-									'Your client will receive instructions to create a WordPress.com account and complete their purchase. Once their payment is successful, they’ll be enrolled in an automatically renewing subscription (monthly or annual, based on checkout). They can cancel anytime.'
-								) }
-							</Text>
-							<Text variant="muted" size={ 12 }>
-								{ __(
-									'After their purchase, you’ll be able to manage the products on your client’s behalf.'
-								) }
-							</Text>
-						</VStack>
+					{ ! isFreeOnly && (
+						<>
+							<CardDivider />
+							<VStack spacing={ 2 }>
+								<Text weight={ 500 } size={ 12 }>
+									{ __( 'When you share this payment request:' ) }
+								</Text>
+								<Text variant="muted" size={ 12 }>
+									{ __(
+										'Your client will receive instructions to create a WordPress.com account and complete their purchase. Once their payment is successful, they’ll be enrolled in an automatically renewing subscription (monthly or annual, based on checkout). They can cancel anytime.'
+									) }
+								</Text>
+								<Text variant="muted" size={ 12 }>
+									{ __(
+										'After their purchase, you’ll be able to manage the products on your client’s behalf.'
+									) }
+								</Text>
+							</VStack>
+						</>
 					) }
 				</VStack>
 			</CardBody>

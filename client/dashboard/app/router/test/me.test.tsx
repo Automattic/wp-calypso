@@ -3,10 +3,12 @@
  */
 
 import { queryClient } from '@automattic/api-queries';
+import { createMemoryHistory, createRouter } from '@tanstack/react-router';
 import nock from 'nock';
 import { isDashboardBackport } from '../../../utils/is-dashboard-backport';
 import { APP_CONTEXT_DEFAULT_CONFIG, type AppConfig } from '../../context';
-import { createMeRoutes, purchaseSettingsIndexRoute } from '../me';
+import { createMeRoutes, meRoute, purchaseSettingsIndexRoute } from '../me';
+import { rootRoute } from '../root';
 
 jest.mock( '../../../utils/is-dashboard-backport', () => ( {
 	isDashboardBackport: jest.fn( () => false ),
@@ -142,4 +144,81 @@ test( 'loads the purchase settings when the user cannot read media storage', asy
 	await expect(
 		loader( { params: { purchaseId: String( purchaseId ) } } )
 	).resolves.toBeUndefined();
+} );
+
+// A route that fails in `beforeLoad` leaves the routes below it pending, and the router never
+// settles. The dashboard then swaps the error screen for its slow-navigation loader.
+test( 'settles every match when the session is dead', async () => {
+	const unauthenticated = {
+		error: 'authorization_required',
+		message: 'An active access token must be used to query information about the current user.',
+	};
+
+	nock( 'https://public-api.wordpress.com' )
+		.get( '/rest/v1.1/me/two-step' )
+		.query( true )
+		.reply( 403, unauthenticated );
+
+	nock( 'https://public-api.wordpress.com' )
+		.get( '/rest/v1.1/me/settings' )
+		.query( true )
+		.reply( 403, unauthenticated );
+
+	const router = createRouter( {
+		routeTree: rootRoute.addChildren( createMeRoutes( dashboardConfig ) ),
+		history: createMemoryHistory( { initialEntries: [ '/me/notifications' ] } ),
+		context: { config: dashboardConfig },
+	} );
+
+	await router.load();
+
+	expect( router.state.matches.map( ( { routeId, status } ) => [ routeId, status ] ) ).toEqual( [
+		[ '__root__', 'success' ],
+		[ '/me', 'error' ],
+		[ '/me/notifications', 'success' ],
+		[ '/me/notifications/', 'success' ],
+	] );
+} );
+
+test( 'loads the page when only the two-step check fails', async () => {
+	nock( 'https://public-api.wordpress.com' )
+		.get( '/rest/v1.1/me/two-step' )
+		.query( true )
+		.reply( 500, { error: 'internal_error', message: 'Something went wrong.' } );
+
+	nock( 'https://public-api.wordpress.com' )
+		.get( '/rest/v1.1/me/settings' )
+		.query( true )
+		.reply( 200, {} );
+
+	const router = createRouter( {
+		routeTree: rootRoute.addChildren( createMeRoutes( dashboardConfig ) ),
+		history: createMemoryHistory( { initialEntries: [ '/me/notifications' ] } ),
+		context: { config: dashboardConfig },
+	} );
+
+	await router.load();
+
+	expect( router.state.matches.map( ( { status } ) => status ) ).toEqual( [
+		'success',
+		'success',
+		'success',
+		'success',
+	] );
+} );
+
+test( 'redirects to reauthorize when the two-step session has expired', async () => {
+	nock( 'https://public-api.wordpress.com' )
+		.get( '/rest/v1.1/me/two-step' )
+		.query( true )
+		.reply( 200, { two_step_reauthorization_required: true } );
+
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	const beforeLoad = meRoute.options.beforeLoad as any;
+
+	await expect( beforeLoad( { cause: 'enter' } ) ).rejects.toMatchObject( {
+		isRedirect: true,
+		href: expect.stringContaining( '/me/reauth-required' ),
+		reloadDocument: true,
+	} );
 } );

@@ -29,6 +29,16 @@ jest.mock( '../utils/tracking', () => ( {
 	trackImageStudioUpgradeNoticeClick: jest.fn(),
 } ) );
 
+/** The old Jetpack AI quota has no balance or plan to report. */
+const jetpackAiQuotaCredits = {
+	meter: 'jetpack_ai',
+	state: 'zero',
+	planTier: 'none',
+	creditsLeft: 'none',
+	ctaType: 'upgrade',
+	ref: 'none',
+};
+
 describe( 'useErrorNotice', () => {
 	let mockAddNotice: jest.Mock;
 
@@ -291,6 +301,8 @@ describe( 'useErrorNotice', () => {
 			expect( trackImageStudioUpgradeNoticeShown ).toHaveBeenCalledTimes( 1 );
 			expect( trackImageStudioUpgradeNoticeShown ).toHaveBeenCalledWith( {
 				mode: ImageStudioMode.Generate,
+				trigger: 'error',
+				...jetpackAiQuotaCredits,
 			} );
 		} );
 
@@ -307,6 +319,8 @@ describe( 'useErrorNotice', () => {
 			actions[ 0 ].onClick();
 			expect( trackImageStudioUpgradeNoticeClick ).toHaveBeenCalledWith( {
 				mode: ImageStudioMode.Generate,
+				trigger: 'error',
+				...jetpackAiQuotaCredits,
 			} );
 		} );
 
