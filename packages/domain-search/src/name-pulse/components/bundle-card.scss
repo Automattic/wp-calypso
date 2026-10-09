@@ -1,17 +1,12 @@
 @import '@wordpress/base-styles/breakpoints';
 @import '@wordpress/base-styles/colors';
+@import 'card';
 
 .name-pulse-bundle-card {
-	box-sizing: border-box;
+	@include name-pulse-card;
 	display: flex;
 	flex-direction: column;
 	gap: 16px;
-	min-width: 0;
-	padding: 24px;
-	border-radius: 8px;
-	box-shadow:
-		0 0 0 1px rgba( 0, 0, 0, 0.1 ),
-		0 1px 2px rgba( 0, 0, 0, 0.05 );
 	color: $gray-900;
 	font-size: 13px;
 	line-height: 1.4;
@@ -109,9 +104,7 @@
 		display: flex;
 		align-items: center;
 		gap: 8px;
-		min-height: 24px;
-		padding-top: 16px;
-		border-top: 1px solid rgba( 0, 0, 0, 0.08 );
+		@include name-pulse-card-footer;
 		color: $gray-700;
 		font-size: 12px;
 	}
@@ -136,13 +129,12 @@
 		font-size: 20px;
 	}
 
-	.name-pulse-bundle-card__renewal,
-	.name-pulse-bundle-card__footer {
+	.name-pulse-bundle-card__renewal {
 		color: $gray-900;
 	}
 
 	.name-pulse-bundle-card__footer {
-		min-height: 0;
+		color: $gray-900;
 		font-size: 13px;
 	}
 

@@ -84,6 +84,7 @@ export const NamePulseBundleCard = ( { bundle, isWide = false }: NamePulseBundle
 	const bundlePrice = String( bundle_cost ?? bundle_price );
 	const originalPrice = String( original_cost ?? original_price );
 	const isInCart = domains.every( ( { domain } ) => cart.hasItem( domain ) );
+	const members = domains.map( ( { domain } ) => ( { domain, ...splitDomain( domain ) } ) );
 
 	return (
 		<div className={ clsx( 'name-pulse-bundle-card', isWide && 'name-pulse-bundle-card--wide' ) }>
@@ -103,28 +104,25 @@ export const NamePulseBundleCard = ( { bundle, isWide = false }: NamePulseBundle
 
 			<div className="name-pulse-bundle-card__lineup">
 				<p className="name-pulse-bundle-card__tlds">
-					{ domains.map( ( { domain }, index ) => (
+					{ members.map( ( { domain, tld }, index ) => (
 						<Fragment key={ domain }>
 							{ index > 0 && (
 								<span className="name-pulse-bundle-card__plus" aria-hidden="true">
 									+
 								</span>
 							) }
-							<span>.{ splitDomain( domain ).tld }</span>
+							<span>.{ tld }</span>
 						</Fragment>
 					) ) }
 				</p>
 				<p className="name-pulse-bundle-card__domains">
-					{ domains.map( ( { domain }, index ) => {
-						const { sld, tld } = splitDomain( domain );
-						return (
-							<Fragment key={ domain }>
-								{ index > 0 && ', ' }
-								{ sld }
-								{ tld && <span className="name-pulse-bundle-card__domain-tld">.{ tld }</span> }
-							</Fragment>
-						);
-					} ) }
+					{ members.map( ( { domain, sld, tld }, index ) => (
+						<Fragment key={ domain }>
+							{ index > 0 && ', ' }
+							{ sld }
+							{ tld && <span className="name-pulse-bundle-card__domain-tld">.{ tld }</span> }
+						</Fragment>
+					) ) }
 				</p>
 			</div>
 
