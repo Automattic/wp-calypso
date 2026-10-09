@@ -161,7 +161,9 @@ describe( 'UserProfileHeader', () => {
 			sites: mockSites,
 			total: mockSites.length,
 			primary_site_id: 1,
-		} );
+		} )
+			// Persist so that unmocked requests left in flight by earlier tests can't use up the mock.
+			.persist();
 
 		renderWithClient( <UserProfileHeader user={ defaultUser } view="posts" /> );
 
