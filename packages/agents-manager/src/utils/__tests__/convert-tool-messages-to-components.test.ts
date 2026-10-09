@@ -688,7 +688,7 @@ describe( 'convertToolMessagesToComponents', () => {
 			expect( result[ 0 ].id ).toBe( 'later-tool' );
 		} );
 
-		it( 'ignores the flag for a no-change outcome', () => {
+		it( 'ignores the flag for a no-change outcome once the turn ends', () => {
 			const noChangeOutcome = createApplyBlockEditsMessage(
 				'tool-call-1',
 				{
@@ -704,7 +704,7 @@ describe( 'convertToolMessagesToComponents', () => {
 
 			const result = convertToolMessagesToComponents( {
 				messages: [ noChangeOutcome ],
-				isProcessing: true,
+				isProcessing: false,
 			} );
 
 			expect( result[ 0 ].content ).toEqual( [ { type: 'text', text: '✓ No changes needed' } ] );
@@ -724,13 +724,240 @@ describe( 'convertToolMessagesToComponents', () => {
 		expect( result ).toEqual( [] );
 	} );
 
-	it( 'suppresses transient thinking for converted apply-block-edits messages', () => {
+	it( 'keeps transient thinking visible after converted apply-block-edits messages', () => {
 		const message = createToolMessage( 'big_sky__apply_block_edits', {
 			followUpTasks: true,
 			result: {
 				success: true,
 				message: 'Updated the header and footer.',
 				outcome: 'updated',
+			},
+		} );
+
+		const result = convertToolMessagesToComponents( {
+			messages: [ message ],
+		} );
+
+		expect( result[ 0 ].suppressThinking ).toBe( false );
+	} );
+
+	it( 'keeps transient thinking visible after a no-changes block edit', () => {
+		const message = createToolMessage( 'big_sky__apply_block_edits', {
+			result: {
+				success: true,
+				outcome: 'no-changes',
+			},
+		} );
+
+		const result = convertToolMessagesToComponents( {
+			messages: [ message ],
+		} );
+
+		expect( result[ 0 ].content ).toEqual( [ { type: 'text', text: '✓ No changes needed' } ] );
+		expect( result[ 0 ].suppressThinking ).toBe( false );
+	} );
+
+	it( 'withholds a no-changes summary until the turn ends', () => {
+		const noChangeOutcome = createApplyBlockEditsMessage( 'tool-call-1', {
+			result: { success: true, outcome: 'no-changes' },
+		} );
+
+		expect(
+			convertToolMessagesToComponents( { messages: [ noChangeOutcome ], isProcessing: true } )
+		).toEqual( [] );
+
+		const result = convertToolMessagesToComponents( {
+			messages: [ noChangeOutcome ],
+			isProcessing: false,
+		} );
+		expect( result[ 0 ].content ).toEqual( [ { type: 'text', text: '✓ No changes needed' } ] );
+	} );
+
+	it( 'still shows an applied block edit summary while the turn runs', () => {
+		const appliedOutcome = createApplyBlockEditsMessage( 'tool-call-1', {
+			result: { success: true, message: 'Made the paragraph red.', outcome: 'updated' },
+		} );
+
+		const result = convertToolMessagesToComponents( {
+			messages: [ appliedOutcome ],
+			isProcessing: true,
+		} );
+
+		expect( result[ 0 ].content ).toEqual( [ { type: 'text', text: 'Made the paragraph red.' } ] );
+	} );
+
+	describe( 'transient thinking in a mixed turn', () => {
+		const logoSummary = createToolMessage(
+			'big_sky__set_site_logo',
+			{ summary: 'Set the site logo.' },
+			{ id: 'logo-summary' }
+		);
+
+		it( 'keeps thinking visible when a retried block edit follows a summary that suppresses it', () => {
+			const retried = createApplyBlockEditsMessage(
+				'tool-call-retried',
+				{ result: { success: true, outcome: 'no-changes' } },
+				{ id: 'retried' }
+			);
+
+			const result = convertToolMessagesToComponents( {
+				messages: [ logoSummary, retried ],
+				isProcessing: true,
+				retriedToolCallIds: new Set( [ 'tool-call-retried' ] ),
+			} );
+
+			expect( result ).toHaveLength( 1 );
+			expect( result[ 0 ].id ).toBe( 'logo-summary' );
+			expect( result[ 0 ].suppressThinking ).toBe( false );
+		} );
+
+		it( 'keeps thinking visible while a no-changes summary is withheld', () => {
+			const noChangeOutcome = createApplyBlockEditsMessage(
+				'tool-call-1',
+				{ result: { success: true, outcome: 'no-changes' } },
+				{ id: 'no-change-outcome' }
+			);
+
+			const result = convertToolMessagesToComponents( {
+				messages: [ logoSummary, noChangeOutcome ],
+				isProcessing: true,
+			} );
+
+			expect( result ).toHaveLength( 1 );
+			expect( result[ 0 ].suppressThinking ).toBe( false );
+		} );
+
+		it( 'keeps thinking visible after a failed block edit', () => {
+			const failed = createApplyBlockEditsMessage(
+				'tool-call-1',
+				{ success: false, summary: 'Could not update the header.' },
+				{ id: 'failed' }
+			);
+
+			const result = convertToolMessagesToComponents( {
+				messages: [ logoSummary, failed ],
+				isProcessing: true,
+			} );
+
+			expect( result[ 0 ].suppressThinking ).toBe( false );
+		} );
+
+		it( 'restores suppression once the turn ends', () => {
+			const retried = createApplyBlockEditsMessage(
+				'tool-call-retried',
+				{ result: { success: true, outcome: 'no-changes' } },
+				{ id: 'retried' }
+			);
+
+			const result = convertToolMessagesToComponents( {
+				messages: [ logoSummary, retried ],
+				isProcessing: false,
+				retriedToolCallIds: new Set( [ 'tool-call-retried' ] ),
+			} );
+
+			expect( result ).toHaveLength( 1 );
+			expect( result[ 0 ].suppressThinking ).toBe( true );
+		} );
+
+		it( 'leaves suppression alone when the summary is the latest message', () => {
+			const result = convertToolMessagesToComponents( {
+				messages: [ logoSummary ],
+				isProcessing: true,
+			} );
+
+			expect( result[ 0 ].suppressThinking ).toBe( true );
+		} );
+
+		it( 'leaves suppression alone when the hidden block edit precedes the summary', () => {
+			const retried = createApplyBlockEditsMessage(
+				'tool-call-retried',
+				{ result: { success: true, outcome: 'no-changes' } },
+				{ id: 'retried' }
+			);
+
+			const result = convertToolMessagesToComponents( {
+				messages: [ retried, logoSummary ],
+				isProcessing: true,
+				retriedToolCallIds: new Set( [ 'tool-call-retried' ] ),
+			} );
+
+			expect( result ).toHaveLength( 1 );
+			expect( result[ 0 ].suppressThinking ).toBe( true );
+		} );
+	} );
+
+	it( 'keeps a no-changes summary when an unrelated block edit follows in the same turn', () => {
+		const noChangeOutcome = createApplyBlockEditsMessage(
+			'tool-call-1',
+			{ result: { success: true, outcome: 'no-changes' } },
+			{ id: 'no-change-outcome' }
+		);
+		const otherOutcome = createApplyBlockEditsMessage(
+			'tool-call-2',
+			{ result: { success: true, message: 'Made the heading red.', outcome: 'updated' } },
+			{ id: 'other-outcome' }
+		);
+
+		const result = convertToolMessagesToComponents( {
+			messages: [ noChangeOutcome, otherOutcome ],
+		} );
+
+		expect( result.map( ( message ) => message.id ) ).toEqual( [
+			'no-change-outcome',
+			'other-outcome',
+		] );
+	} );
+
+	it( 'keeps a no-changes summary when the next block edit is in a later turn', () => {
+		const noChangeOutcome = createApplyBlockEditsMessage(
+			'tool-call-1',
+			{ result: { success: true, outcome: 'no-changes' } },
+			{ id: 'no-change-outcome' }
+		);
+		const userMessage = createMessage( {
+			id: 'user',
+			role: 'user',
+			content: [ { type: 'text', text: 'Now make it bold.' } ],
+		} );
+		const laterOutcome = createApplyBlockEditsMessage(
+			'tool-call-2',
+			{ result: { success: true, message: 'Made it bold.', outcome: 'updated' } },
+			{ id: 'later-outcome' }
+		);
+
+		const result = convertToolMessagesToComponents( {
+			messages: [ noChangeOutcome, userMessage, laterOutcome ],
+		} );
+
+		expect( result.map( ( message ) => message.id ) ).toEqual( [
+			'no-change-outcome',
+			'user',
+			'later-outcome',
+		] );
+	} );
+
+	it( 'hides a block edit summary the server replaced with a retry', () => {
+		const retried = createApplyBlockEditsMessage( 'tool-call-retried', {
+			result: { success: true, outcome: 'no-changes' },
+		} );
+		const other = createApplyBlockEditsMessage( 'tool-call-other', {
+			result: { success: true, outcome: 'no-changes' },
+		} );
+
+		const result = convertToolMessagesToComponents( {
+			messages: [ retried, other ],
+			retriedToolCallIds: new Set( [ 'tool-call-retried' ] ),
+		} );
+
+		expect( result ).toHaveLength( 1 );
+		expect( result[ 0 ].id ).toBe( other.id );
+	} );
+
+	it( 'suppresses transient thinking for other converted tool summaries', () => {
+		const message = createToolMessage( 'big_sky__set_site_logo', {
+			result: {
+				success: true,
+				message: 'Updated the site logo.',
 			},
 		} );
 
