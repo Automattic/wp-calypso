@@ -205,33 +205,6 @@ function hasLaterApplyBlockEditsOutcome(
 }
 
 /**
- * Whether a later block edit in the same turn reports an outcome. A no-change
- * followed by one was superseded — typically by the server's retry, whose
- * `retryingToolCallId` is not part of rehydrated history.
- */
-function hasLaterBlockEditOutcomeInTurn( messages: UIMessage[], currentIndex: number ): boolean {
-	for ( const laterMessage of messages.slice( currentIndex + 1 ) ) {
-		if ( laterMessage.role === 'user' ) {
-			return false;
-		}
-
-		const laterText = laterMessage.content?.[ 0 ]?.text;
-		if ( ! hasAgentRole( laterMessage ) || ! laterText ) {
-			continue;
-		}
-
-		try {
-			const laterData = JSON.parse( laterText );
-			if ( getApplyBlockEditsOutcome( laterData?.tool_id, laterData?.data ) ) {
-				return true;
-			}
-		} catch ( _error ) {}
-	}
-
-	return false;
-}
-
-/**
  * Whether the deferred reply for a promised visual check is still outstanding.
  *
  * The reply is plain agent prose following the tool result, so the wait lasts
@@ -512,6 +485,9 @@ export default function convertToolMessagesToComponents( {
 			) {
 				return [];
 			}
+			// Retries are known only from the live stream: rehydrated history has no
+			// `retryingToolCallId`, so after a reload a retried no-change reappears. A
+			// later edit in the same turn is not proof of a retry, so none is inferred.
 			if (
 				isBlockEditToolId( textData.tool_id ) &&
 				typeof textData.tool_call_id === 'string' &&
@@ -522,9 +498,6 @@ export default function convertToolMessagesToComponents( {
 			// The server may answer a no-change with a retry, which would hide the
 			// summary again; withhold it until the turn ends so it never flashes.
 			if ( isProcessing && blockEditOutcome === 'no-changes' ) {
-				return [];
-			}
-			if ( blockEditOutcome === 'no-changes' && hasLaterBlockEditOutcomeInTurn( array, index ) ) {
 				return [];
 			}
 			const summary = getDisplayMessageFromToolData( textData.data );

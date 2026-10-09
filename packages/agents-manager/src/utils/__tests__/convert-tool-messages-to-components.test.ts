@@ -886,24 +886,26 @@ describe( 'convertToolMessagesToComponents', () => {
 		} );
 	} );
 
-	it( 'hides a no-changes summary superseded by a later block edit in rehydrated history', () => {
+	it( 'keeps a no-changes summary when an unrelated block edit follows in the same turn', () => {
 		const noChangeOutcome = createApplyBlockEditsMessage(
 			'tool-call-1',
 			{ result: { success: true, outcome: 'no-changes' } },
 			{ id: 'no-change-outcome' }
 		);
-		const retryOutcome = createApplyBlockEditsMessage(
+		const otherOutcome = createApplyBlockEditsMessage(
 			'tool-call-2',
-			{ result: { success: true, message: 'Made the paragraph red.', outcome: 'updated' } },
-			{ id: 'retry-outcome' }
+			{ result: { success: true, message: 'Made the heading red.', outcome: 'updated' } },
+			{ id: 'other-outcome' }
 		);
 
 		const result = convertToolMessagesToComponents( {
-			messages: [ noChangeOutcome, retryOutcome ],
+			messages: [ noChangeOutcome, otherOutcome ],
 		} );
 
-		expect( result ).toHaveLength( 1 );
-		expect( result[ 0 ].id ).toBe( 'retry-outcome' );
+		expect( result.map( ( message ) => message.id ) ).toEqual( [
+			'no-change-outcome',
+			'other-outcome',
+		] );
 	} );
 
 	it( 'keeps a no-changes summary when the next block edit is in a later turn', () => {
