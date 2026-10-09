@@ -47,7 +47,16 @@ let _superProps: any; // Added to all Tracks events.
 let _loadTracksResult = Promise.resolve(); // default value for non-BOM environments.
 
 if ( typeof document !== 'undefined' ) {
-	_loadTracksResult = loadScript( '//stats.wp.com/w.js?69' );
+	const loadTracks = () => loadScript( '//stats.wp.com/w.js?69' );
+	if ( ( document as Document & { prerendering?: boolean } ).prerendering ) {
+		_loadTracksResult = new Promise( ( resolve, reject ) => {
+			document.addEventListener( 'prerenderingchange', () => loadTracks().then( resolve, reject ), {
+				once: true,
+			} );
+		} );
+	} else {
+		_loadTracksResult = loadTracks();
+	}
 }
 
 function createRandomId( randomBytesLength = 9 ): string {
