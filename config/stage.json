@@ -50,7 +50,6 @@
 		"dev/store-sandbox-helper": true,
 		"dolly/telegram": true,
 		"domain-bundling": true,
-		"domain-search/name-pulse": true,
 		"domain-transfer-redesign": true,
 		"emails/titan-tiers": false,
 		"footer-redesign/2026": true,
