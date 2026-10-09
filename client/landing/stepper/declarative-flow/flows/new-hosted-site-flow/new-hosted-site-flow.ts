@@ -7,7 +7,6 @@ import { useEffect } from 'react';
 import { useIsValidWooPartner } from 'calypso/landing/stepper/hooks/use-is-valid-woo-partner';
 import { recordFreeHostingTrialStarted } from 'calypso/lib/analytics/ad-tracking/ad-track-trial-start';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { pathToUrl } from 'calypso/lib/url';
 import {
 	setSignupCompleteSlug,
 	persistSignupDestination,
@@ -255,13 +254,14 @@ const hosting: FlowV2< typeof initialize > = {
 							if ( couponCode ) {
 								resetCouponCode();
 							}
-							const backUrl = pathToUrl(
+							const backUrl = new URL(
 								addQueryArgs( '/setup/new-hosted-site/domains', {
 									...Object.fromEntries( query ),
 									siteId,
 									siteSlug,
-								} )
-							);
+								} ),
+								window.location.origin
+							).href;
 							const stepPosition = getOnboardingStepperPosition( 'checkout', true );
 							if ( commercePlanFirst ) {
 								// Browser Back must resume domains rather than rerun site creation.
