@@ -1,10 +1,11 @@
+import { productsQuery } from '@automattic/api-queries';
 import page from '@automattic/calypso-router';
 import { Button, FormInputValidation, Gridicon, SelectDropdown } from '@automattic/components';
+import { useQuery } from '@tanstack/react-query';
 import clsx from 'clsx';
 import { useTranslate, TranslateResult } from 'i18n-calypso';
 import { FC, useState, useCallback, useEffect, useMemo, useRef } from 'react';
 import footerCardImg from 'calypso/assets/images/jetpack/licensing-card.webp';
-import QueryProducts from 'calypso/components/data/query-products-list';
 import LicensingActivation from 'calypso/components/jetpack/licensing-activation';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { addQueryArgs, urlToSlug } from 'calypso/lib/url';
@@ -12,11 +13,6 @@ import { useSelector, useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserName } from 'calypso/state/current-user/selectors';
 import { requestUpdateJetpackCheckoutSupportTicket } from 'calypso/state/jetpack-checkout/actions';
-import {
-	isProductsListFetching as getIsProductListFetching,
-	getProductName,
-	getProductsList,
-} from 'calypso/state/products-list/selectors';
 import getJetpackCheckoutSupportTicketDestinationSiteId from 'calypso/state/selectors/get-jetpack-checkout-support-ticket-destination-site-id';
 import getJetpackCheckoutSupportTicketIncompatibleProductIds from 'calypso/state/selectors/get-jetpack-checkout-support-ticket-incompatible-products';
 import getSupportTicketRequestStatus from 'calypso/state/selectors/get-jetpack-checkout-support-ticket-status';
@@ -46,10 +42,6 @@ type Product = {
 	product_slug: string;
 };
 
-interface ProductsList {
-	[ P: string ]: Product;
-}
-
 const LicensingActivationThankYou: FC< Props > = ( {
 	productSlug,
 	receiptId = 0,
@@ -63,11 +55,11 @@ const LicensingActivationThankYou: FC< Props > = ( {
 
 	const hasProductInfo = productSlug !== 'no_product';
 
-	const productName = useSelector( ( state ) =>
-		hasProductInfo ? getProductName( state, productSlug ) : null
-	);
-	const productsList: ProductsList = useSelector( getProductsList );
-	const isProductListFetching = useSelector( getIsProductListFetching );
+	const { data: productsList, isLoading: isProductListFetching } = useQuery( {
+		...productsQuery( 'jetpack' ),
+		enabled: hasProductInfo,
+	} );
+	const productName = hasProductInfo ? productsList?.[ productSlug ]?.product_name : null;
 	const userName = useSelector( getCurrentUserName );
 	const jetpackSites = useSelector( getJetpackSites ) as JetpackSite[];
 
@@ -173,11 +165,10 @@ const LicensingActivationThankYou: FC< Props > = ( {
 		}
 		if ( supportTicketRequestStatus === 'success' && destinationSiteId !== undefined ) {
 			if ( incompatibleProductIds.length ) {
-				const incompatibleProductKey = Object.keys( productsList ).find( ( productKey ) =>
-					incompatibleProductIds.includes( productsList[ productKey ].product_id )
-				);
 				const incompatibleProductName =
-					productsList[ incompatibleProductKey as keyof ProductsList ].product_name;
+					Object.values( productsList ?? {} ).find( ( product ) =>
+						incompatibleProductIds.includes( product.product_id )
+					)?.product_name ?? '';
 				return setError(
 					translate(
 						"I'm sorry, you cannot activate %(productName)s on {{strong}}%(selectedSite)s{{/strong}} because that site already has a subscription to %(incompatibleProductName)s.",
@@ -288,7 +279,6 @@ const LicensingActivationThankYou: FC< Props > = ( {
 				properties={ { product_slug: productSlug } }
 				title="Checkout > Jetpack Thank You Licensing Auto Activation"
 			/>
-			{ hasProductInfo && <QueryProducts type="jetpack" /> }
 			<LicensingActivation
 				title={
 					source === 'connect-after-checkout' ? (
