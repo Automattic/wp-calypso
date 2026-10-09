@@ -1,6 +1,6 @@
 import { Notice } from '@wordpress/ui';
 import { useTranslate } from 'i18n-calypso';
-import { lazy, Suspense, useMemo, useState, FunctionComponent } from 'react';
+import { lazy, Suspense, useMemo, useState, FunctionComponent, ReactNode } from 'react';
 import useCssVariable from 'calypso/my-sites/stats/hooks/use-css-variable';
 import { buildChartData } from 'calypso/my-sites/stats/stats-chart-tabs/utility';
 import StatsModulePlaceholder from 'calypso/my-sites/stats/stats-module/placeholder';
@@ -17,6 +17,8 @@ import './mini-chart.scss';
 interface MiniChartProps {
 	siteId: number;
 	range: ResolvedDateRange;
+	/** Shown under the chart, and only with it: not while loading, for an empty range or on an error. */
+	footer?: ReactNode;
 }
 
 interface VisitRecord {
@@ -27,7 +29,7 @@ interface VisitRecord {
 
 const CHART_HEIGHT = 160;
 
-const MiniChart: FunctionComponent< MiniChartProps > = ( { siteId, range } ) => {
+const MiniChart: FunctionComponent< MiniChartProps > = ( { siteId, range, footer } ) => {
 	const translate = useTranslate();
 	const { unit, quantity, endDate } = range;
 
@@ -83,6 +85,12 @@ const MiniChart: FunctionComponent< MiniChartProps > = ( { siteId, range } ) => 
 	const hasChart = status === 'success' && ! isEmpty;
 	// Fixed, so the card keeps its height from the placeholder to the chart.
 	const chartBoxStyle = { blockSize: `${ CHART_HEIGHT }px` };
+	// One placeholder for both waits: for the data, and for the chart's chunk.
+	const chartPlaceholder = (
+		<div className="stats-widget-chart" style={ chartBoxStyle }>
+			<StatsModulePlaceholder isLoading />
+		</div>
+	);
 	const noData = (
 		<p className="stats-widget-minichart__error">{ translate( 'No data to show' ) }</p>
 	);
@@ -124,11 +132,7 @@ const MiniChart: FunctionComponent< MiniChartProps > = ( { siteId, range } ) => 
 				</div>
 			) }
 
-			{ isPending && (
-				<div className="stats-widget-chart" style={ chartBoxStyle }>
-					<StatsModulePlaceholder isLoading />
-				</div>
-			) }
+			{ isPending && chartPlaceholder }
 			{ isEmpty && (
 				<Notice.Root intent="info" className="stats-widget-empty-notice">
 					<Notice.Description>
@@ -145,11 +149,13 @@ const MiniChart: FunctionComponent< MiniChartProps > = ( { siteId, range } ) => 
 			{ hasChart && (
 				// Around the chart alone, so a failed chart takes only its own box with it.
 				<ChartBoundary fallback={ noData }>
-					<div className="stats-widget-chart" style={ chartBoxStyle }>
-						<Suspense fallback={ <StatsModulePlaceholder isLoading /> }>
+					{ /* The footer waits with the chart: data can arrive before the chart's chunk does. */ }
+					<Suspense fallback={ chartPlaceholder }>
+						<div className="stats-widget-chart" style={ chartBoxStyle }>
 							<OverviewChart series={ series } height={ CHART_HEIGHT } unit={ unit } />
-						</Suspense>
-					</div>
+						</div>
+						{ footer }
+					</Suspense>
 				</ChartBoundary>
 			) }
 		</div>

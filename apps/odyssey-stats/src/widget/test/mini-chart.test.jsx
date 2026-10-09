@@ -11,6 +11,7 @@ import {
 import MiniChart from '../mini-chart';
 
 let mockChartFails = false;
+let mockChartLoading = false;
 
 jest.mock( '../../hooks/use-visits-query' );
 jest.mock( 'calypso/my-sites/stats/hooks/use-css-variable', () => () => '#3858e9' );
@@ -19,6 +20,10 @@ jest.mock( '../overview-chart', () => ( {
 	default: () => {
 		if ( mockChartFails ) {
 			throw new Error( 'Loading chunk 9542 failed' );
+		}
+		// Suspends, as the chart does while its chunk downloads.
+		if ( mockChartLoading ) {
+			throw new Promise( () => {} );
 		}
 		return <p>Chart</p>;
 	},
@@ -37,12 +42,13 @@ const pending = () => ( { status: 'pending' } );
 function renderMiniChart( state, rangeId = DATE_RANGE_LAST_7_DAYS ) {
 	useVisitsQuery.mockReturnValue( state );
 	const range = { ...getDateRange( rangeId ), startDate: '2026-10-01', endDate: '2026-10-07' };
-	return <MiniChart siteId={ 1 } range={ range } />;
+	return <MiniChart siteId={ 1 } range={ range } footer={ <a href="#stats">More stats</a> } />;
 }
 
 describe( 'MiniChart', () => {
 	beforeEach( () => {
 		mockChartFails = false;
+		mockChartLoading = false;
 		// Reduced motion lands the totals on their value without counting up.
 		window.matchMedia = jest.fn().mockReturnValue( { matches: true } );
 		jest.spyOn( console, 'error' ).mockImplementation( () => {} );
@@ -51,6 +57,40 @@ describe( 'MiniChart', () => {
 	afterEach( () => {
 		// eslint-disable-next-line no-console
 		console.error.mockRestore();
+	} );
+
+	it( 'shows the footer under a drawn chart', async () => {
+		render( renderMiniChart( success( days( [ 20, 8 ] ) ) ) );
+
+		expect( await screen.findByText( 'Chart' ) ).toBeInTheDocument();
+		expect( screen.getByRole( 'link', { name: 'More stats' } ) ).toBeInTheDocument();
+	} );
+
+	it.each( [
+		[ 'while loading', pending() ],
+		[ 'for an empty range', success( days( [ 0, 0 ] ) ) ],
+		[ 'when the request failed', failed() ],
+	] )( 'hides the footer %s, with no chart to follow', ( _, state ) => {
+		render( renderMiniChart( state ) );
+
+		expect( screen.queryByRole( 'link', { name: 'More stats' } ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'holds the footer back while the chart itself is still loading', async () => {
+		mockChartLoading = true;
+		render( renderMiniChart( success( days( [ 20, 8 ] ) ) ) );
+
+		expect( await screen.findByText( '20' ) ).toBeInTheDocument();
+		expect( screen.queryByText( 'Chart' ) ).not.toBeInTheDocument();
+		expect( screen.queryByRole( 'link', { name: 'More stats' } ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'hides the footer when the chart itself fails', async () => {
+		mockChartFails = true;
+		render( renderMiniChart( success( days( [ 20, 8 ] ) ) ) );
+
+		expect( await screen.findByText( 'No data to show' ) ).toBeInTheDocument();
+		expect( screen.queryByRole( 'link', { name: 'More stats' } ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'sums the range into the totals and draws the chart', async () => {

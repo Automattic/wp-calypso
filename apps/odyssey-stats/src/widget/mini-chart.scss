@@ -58,3 +58,8 @@
 	}
 
 }
+
+// Spaced as the other sections' closing links, such as "Anti-spam insights".
+.stats-widget-overview__footer {
+	margin-block-start: var(--wpds-dimension-gap-lg, 16px);
+}

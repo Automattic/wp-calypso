@@ -20,7 +20,12 @@ jest.mock( '../../lib/selectors/get-site-stats-base-url', () => () => 'https://e
 jest.mock( '../../lib/selectors/get-site-admin-url', () => () => 'https://example.com/wp-admin/' );
 jest.mock( 'calypso/my-sites/stats/hooks/use-wp-admin-theme', () => () => null );
 jest.mock( '../use-stats-link', () => () => ( url ) => url );
-jest.mock( '../mini-chart', () => ( { range } ) => <p>{ `Chart of ${ range.id }` }</p> );
+jest.mock( '../mini-chart', () => ( { range, footer } ) => (
+	<>
+		<p>{ `Chart of ${ range.id }` }</p>
+		{ footer }
+	</>
+) );
 jest.mock( '../highlights', () => () => null );
 jest.mock( '../modules', () => () => null );
 jest.mock( '../record-widget-event', () => ( {
@@ -90,6 +95,49 @@ describe( 'Stats widget', () => {
 		} );
 		expect( localStorage.getItem( STORAGE_KEY ) ).toBe( 'last_90_days' );
 		expect( screen.getByText( 'Chart of last_90_days' ) ).toBeInTheDocument();
+	} );
+
+	it( 'opens "More stats" on the days the chart shows', async () => {
+		// Only the clock: findBy* still needs real timers to poll.
+		jest.useFakeTimers( {
+			now: new Date( '2026-10-06T12:00:00Z' ),
+			doNotFake: [
+				'setTimeout',
+				'clearTimeout',
+				'setInterval',
+				'clearInterval',
+				'setImmediate',
+				'queueMicrotask',
+				'nextTick',
+			],
+		} );
+		localStorage.setItem( STORAGE_KEY, 'last_12_months' );
+		// Each tracked link gets its own handler, so the click can be traced to this one.
+		recordWidgetEventThenFollow.mockImplementation( () =>
+			jest.fn( ( event ) => event.preventDefault() )
+		);
+		// The clock stays fixed until the end, since the widget works out its range on every render.
+		try {
+			await renderWidget();
+			const link = screen.getByRole( 'link', { name: 'More stats' } );
+
+			expect( link ).toHaveAttribute(
+				'href',
+				'https://example.com/stats/stats/month/123?chartStart=2025-11-01&chartEnd=2026-10-06'
+			);
+
+			const call = recordWidgetEventThenFollow.mock.calls.findIndex(
+				( [ name ] ) => name === 'more_stats_clicked'
+			);
+			expect( recordWidgetEventThenFollow.mock.calls[ call ][ 1 ] ).toEqual( {
+				range: 'last_12_months',
+			} );
+			await userEvent.setup().click( link );
+			expect( recordWidgetEventThenFollow.mock.results[ call ].value ).toHaveBeenCalled();
+		} finally {
+			jest.useRealTimers();
+			recordWidgetEventThenFollow.mockImplementation( () => jest.fn() );
+		}
 	} );
 
 	it( 'sends "Explore more" to My Jetpack where the menu has it', async () => {
