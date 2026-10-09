@@ -4,7 +4,7 @@ import type { NamePulseResultsLayout } from './get-results-layout';
 
 export type NamePulseAvailabilityVerdict = Pick<
 	DomainAvailability,
-	'status' | 'domain_name' | 'tld'
+	'status' | 'domain_name' | 'tld' | 'is_supported_premium_domain'
 >;
 
 export interface NamePulseNotice {
@@ -68,6 +68,16 @@ function fromAvailability( verdict: NamePulseAvailabilityVerdict ): NamePulseNot
 		return {
 			status: 'error',
 			message: __( 'This is a free WordPress.com subdomain. You can’t map it to another site.' ),
+		};
+	}
+
+	if (
+		verdict.status === DomainAvailabilityStatus.AVAILABLE_PREMIUM &&
+		! verdict.is_supported_premium_domain
+	) {
+		return {
+			status: 'error',
+			message: __( 'This is a premium domain. We don’t support purchasing it on WordPress.com.' ),
 		};
 	}
 

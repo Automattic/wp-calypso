@@ -129,6 +129,27 @@ describe( 'getNamePulseNotice', () => {
 		} );
 	} );
 
+	it( 'explains a premium domain WordPress.com does not sell', () => {
+		expect(
+			getNamePulseNotice( layoutFor( 'icecream.com' ), {
+				...verdict( DomainAvailabilityStatus.AVAILABLE_PREMIUM ),
+				is_supported_premium_domain: false,
+			} )
+		).toEqual( {
+			status: 'error',
+			message: 'This is a premium domain. We don’t support purchasing it on WordPress.com.',
+		} );
+	} );
+
+	it( 'leaves a premium domain WordPress.com sells to its card', () => {
+		expect(
+			getNamePulseNotice( layoutFor( 'icecream.com' ), {
+				...verdict( DomainAvailabilityStatus.AVAILABLE_PREMIUM ),
+				is_supported_premium_domain: true,
+			} )
+		).toBeNull();
+	} );
+
 	it( 'prefers the availability verdict over the dropped subdomain', () => {
 		expect(
 			getNamePulseNotice(
