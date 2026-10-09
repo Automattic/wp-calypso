@@ -112,19 +112,32 @@ describe( 'Stats widget', () => {
 			],
 		} );
 		localStorage.setItem( STORAGE_KEY, 'last_12_months' );
+		// Each tracked link gets its own handler, so the click can be traced to this one.
+		recordWidgetEventThenFollow.mockImplementation( () =>
+			jest.fn( ( event ) => event.preventDefault() )
+		);
+		// The clock stays fixed until the end, since the widget works out its range on every render.
 		try {
 			await renderWidget();
+			const link = screen.getByRole( 'link', { name: 'More stats' } );
+
+			expect( link ).toHaveAttribute(
+				'href',
+				'https://example.com/stats/stats/month/123?chartStart=2025-11-01&chartEnd=2026-10-06'
+			);
+
+			const call = recordWidgetEventThenFollow.mock.calls.findIndex(
+				( [ name ] ) => name === 'more_stats_clicked'
+			);
+			expect( recordWidgetEventThenFollow.mock.calls[ call ][ 1 ] ).toEqual( {
+				range: 'last_12_months',
+			} );
+			await userEvent.setup().click( link );
+			expect( recordWidgetEventThenFollow.mock.results[ call ].value ).toHaveBeenCalled();
 		} finally {
 			jest.useRealTimers();
+			recordWidgetEventThenFollow.mockImplementation( () => jest.fn() );
 		}
-
-		expect( screen.getByRole( 'link', { name: 'More stats' } ) ).toHaveAttribute(
-			'href',
-			'https://example.com/stats/stats/month/123?chartStart=2025-11-01&chartEnd=2026-10-06'
-		);
-		expect( recordWidgetEventThenFollow ).toHaveBeenCalledWith( 'more_stats_clicked', {
-			range: 'last_12_months',
-		} );
 	} );
 
 	it( 'sends "Explore more" to My Jetpack where the menu has it', async () => {
