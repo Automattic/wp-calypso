@@ -391,11 +391,8 @@ const siteMigration: FlowV2< typeof initialize > = {
 								( providedDependencies?.queryParams as { [ key: string ]: string } ) || {};
 
 							Object.keys( newQueryParams ).forEach( ( key ) => {
-								if ( newQueryParams[ key ] ) {
-									urlQueryParams.set( key, newQueryParams[ key ] );
-								} else {
-									urlQueryParams.delete( key );
-								}
+								// Empty values override the current query params preserved by Stepper navigation.
+								urlQueryParams.set( key, newQueryParams[ key ] || '' );
 							} );
 
 							const queryParams = Object.fromEntries( urlQueryParams );

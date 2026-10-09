@@ -6,10 +6,11 @@ import config from '@automattic/calypso-config';
 import { PLAN_BUSINESS_MONTHLY } from '@automattic/calypso-products';
 import { isCurrentUserLoggedIn } from '@automattic/data-stores/src/user/selectors';
 import { WORDPRESS_MIGRATION_FLOW } from '@automattic/onboarding';
-import { waitFor } from '@testing-library/react';
+import { act, waitFor } from '@testing-library/react';
 import nock from 'nock';
-import { MemoryRouter } from 'react-router';
+import { MemoryRouter, useLocation } from 'react-router';
 import { HOW_TO_MIGRATE_OPTIONS } from 'calypso/landing/stepper/constants';
+import { useFlowNavigation } from 'calypso/landing/stepper/declarative-flow/internals/hooks/use-flow-navigation';
 import { useFlowState } from 'calypso/landing/stepper/declarative-flow/internals/state-manager/store';
 import { STEPS } from 'calypso/landing/stepper/declarative-flow/internals/steps';
 import registeredFlows from 'calypso/landing/stepper/declarative-flow/registered-flows';
@@ -911,6 +912,77 @@ describe( 'Site Migration Flow', () => {
 		} );
 
 		describe( 'PICK_SITE', () => {
+			describe.each( [ true, false ] )( 'query updates with Reprint enabled: %s', ( enabled ) => {
+				afterEach( () => {
+					Object.assign( window.location, { search: '' } );
+				} );
+
+				it.each( [
+					[ 'clears search and resets pagination', { search: '', page: undefined } ],
+					[ 'changes status and resets pagination', { status: 'public', page: undefined } ],
+					[ 'changes page', { page: 2 } ],
+				] )( '%s without restoring stale parameters or losing context', ( _, queryParams ) => {
+					jest.spyOn( config, 'isEnabled' ).mockReturnValue( enabled );
+					const context = {
+						from: 'https://source.com/',
+						platform: 'wordpress',
+						host: 'bluehost',
+						source: 'sites-dashboard',
+						ref: 'new-site-popover',
+						sessionId: 'abc',
+						...( enabled && { flags: 'migration/reprint-flow' } ),
+					};
+					const search = new URLSearchParams( {
+						...context,
+						search: 'old-search',
+						status: 'private',
+						page: '3',
+					} ).toString();
+					const initialEntry = `/setup/site-migration/sitePicker?${ search }`;
+					Object.assign( window.location, { search: `?${ search }` } );
+					const { result } = renderHookWithProvider(
+						() => {
+							const { navigate } = useFlowNavigation( siteMigrationFlow );
+							const navigation = siteMigrationFlow.useStepNavigation(
+								STEPS.PICK_SITE.slug,
+								navigate
+							);
+							return { navigation, location: useLocation() };
+						},
+						{
+							wrapper: ( { children } ) => (
+								<MemoryRouter basename="/setup" initialEntries={ [ initialEntry ] }>
+									{ children }
+								</MemoryRouter>
+							),
+						}
+					);
+
+					act( () => {
+						result.current.navigation.submit( {
+							slug: STEPS.PICK_SITE.slug,
+							providedDependencies: { action: 'update-query', queryParams },
+						} );
+					} );
+
+					expect( result.current.location.pathname ).toBe( '/site-migration/sitePicker' );
+					expect(
+						Object.fromEntries( new URLSearchParams( result.current.location.search ) )
+					).toEqual( {
+						...context,
+						search: 'old-search',
+						status: 'private',
+						page: '3',
+						...Object.fromEntries(
+							Object.entries( queryParams ).map( ( [ key, value ] ) => [
+								key,
+								String( value ?? '' ),
+							] )
+						),
+					} );
+				} );
+			} );
+
 			it( 'redirects to HOW_TO_MIGRATE when a site is selected', () => {
 				const destination = runNavigation( {
 					from: STEPS.PICK_SITE,
