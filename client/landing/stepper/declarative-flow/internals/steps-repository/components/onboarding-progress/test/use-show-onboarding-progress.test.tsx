@@ -8,10 +8,7 @@ jest.mock( '@wordpress/compose', () => ( {
 
 import { renderHook } from '@testing-library/react';
 import { useViewportMatch } from '@wordpress/compose';
-import {
-	hasPreselectedPurchasePlan,
-	useShowOnboardingProgress,
-} from '../use-show-onboarding-progress';
+import { useShowOnboardingProgress } from '../use-show-onboarding-progress';
 
 const mockViewport = useViewportMatch as unknown as jest.Mock;
 
@@ -60,23 +57,3 @@ it( 'keeps parameter-enabled progress off mobile', () => {
 	mockViewport.mockReturnValue( false );
 	expect( renderHook( () => useShowOnboardingProgress( false ) ).result.current ).toBe( false );
 } );
-
-it.each( [ 'personal-bundle', 'value_bundle', 'business-bundle', 'ecommerce-bundle' ] )(
-	'hides a preselected %s plan only when the cart agrees',
-	( plan ) => {
-		const query = new URLSearchParams( { showPurchaseSteps: 'true', plan } );
-		expect( hasPreselectedPurchasePlan( query, { product_slug: plan } ) ).toBe( true );
-		expect( hasPreselectedPurchasePlan( query, null ) ).toBe( false );
-		expect( hasPreselectedPurchasePlan( query, { product_slug: 'other' } ) ).toBe( false );
-		query.delete( 'showPurchaseSteps' );
-		expect( hasPreselectedPurchasePlan( query, { product_slug: plan } ) ).toBe( false );
-	}
-);
-
-it.each( [ 'ecommerce-trial-bundle-monthly', 'invalid' ] )(
-	'keeps the plans step for %s',
-	( plan ) => {
-		const query = new URLSearchParams( { showPurchaseSteps: 'true', plan } );
-		expect( hasPreselectedPurchasePlan( query, { product_slug: plan } ) ).toBe( false );
-	}
-);

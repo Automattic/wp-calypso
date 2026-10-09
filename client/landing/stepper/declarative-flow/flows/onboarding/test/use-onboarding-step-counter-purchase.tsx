@@ -9,12 +9,6 @@ jest.mock( '@automattic/onboarding', () => ( {
 	NEW_HOSTED_SITE_FLOW: 'new-hosted-site',
 	ONBOARDING_FLOW: 'onboarding',
 } ) );
-jest.mock( '@automattic/calypso-products', () => ( {
-	isDotComPlan: ( { product_slug }: { product_slug: string } ) =>
-		product_slug.endsWith( 'bundle-2y' ) || product_slug === 'ecommerce-trial-bundle-monthly',
-	isFreeHostingTrial: () => false,
-	PLAN_ECOMMERCE_TRIAL_MONTHLY: 'ecommerce-trial-bundle-monthly',
-} ) );
 jest.mock( 'calypso/landing/stepper/utils/preselected-plan', () => ( {
 	shouldSkipPlansStep: () => false,
 } ) );
@@ -40,7 +34,8 @@ beforeEach( () => {
 } );
 
 const counter = () =>
-	renderHook( () => useOnboardingStepCounter( NEW_HOSTED_SITE_FLOW, 'domains' ) ).result.current;
+	renderHook( () => useOnboardingStepCounter( NEW_HOSTED_SITE_FLOW, 'domains', true ) ).result
+		.current;
 
 it( 'shows domains as step one of two on mobile', () => {
 	expect( counter() ).toEqual( { current: 1, total: 2 } );
@@ -56,9 +51,10 @@ it( 'does not change unmarked Commerce visits', () => {
 	expect( counter() ).toBeNull();
 } );
 
-it( 'does not show the paid two-step journey for a Commerce trial', () => {
-	mockQuery.set( 'plan', 'ecommerce-trial-bundle-monthly' );
-	expect( counter() ).toEqual( { current: 1, total: 3 } );
+it( 'keeps the plan step unless the flow requests otherwise', () => {
+	expect(
+		renderHook( () => useOnboardingStepCounter( NEW_HOSTED_SITE_FLOW, 'domains' ) ).result.current
+	).toEqual( { current: 1, total: 3 } );
 } );
 
 it( 'supports another flow without a preselected plan', () => {

@@ -53,10 +53,7 @@ import { useSiteSlugParam } from '../../../../hooks/use-site-slug-param';
 import { useOnboardingStepCounter } from '../../../flows/onboarding/use-onboarding-step-counter';
 import { shouldUseStepContainerV2 } from '../../../helpers/should-use-step-container-v2';
 import { OnboardingProgress } from '../components/onboarding-progress';
-import {
-	hasPreselectedPurchasePlan,
-	useShowOnboardingProgress,
-} from '../components/onboarding-progress/use-show-onboarding-progress';
+import { useShowOnboardingProgress } from '../components/onboarding-progress/use-show-onboarding-progress';
 import HundredYearPlanStepWrapper from '../hundred-year-plan-step-wrapper';
 import { getSkipSuggestionCopy } from './get-skip-suggestion-copy';
 import { useDomainSearchResultsExperiment } from './results-experiment';
@@ -97,6 +94,7 @@ const DomainSearchStep: StepType< {
 		headerText?: string;
 		subHeaderText?: string;
 		hideUseMyDomainLink?: boolean;
+		shouldHidePlansStep?: boolean;
 		hideFreeDomainPromo?: boolean;
 		freeDomainPromoTitle?: string;
 		freeDomainPromoSubtitle?: string;
@@ -111,6 +109,7 @@ const DomainSearchStep: StepType< {
 	headerText: headerTextOverride,
 	subHeaderText: subHeaderTextOverride,
 	hideUseMyDomainLink,
+	shouldHidePlansStep: hidePlansStep = false,
 	hideFreeDomainPromo,
 	freeDomainPromoTitle,
 	freeDomainPromoSubtitle,
@@ -155,7 +154,7 @@ const DomainSearchStep: StepType< {
 	// option to offer — show only a "Set up a domain later" skip control.
 	const isWowFunnel = !! queryParams.get( 'wow_funnel' );
 	const wowSkipCopy = isWowFunnel ? __( 'Set up a domain later' ) : undefined;
-	const stepCounter = useOnboardingStepCounter( flow, 'domains' );
+	const stepCounter = useOnboardingStepCounter( flow, 'domains', hidePlansStep );
 	const { isLoading: isLoadingResultsExperiment, variation: resultsVariation } =
 		useDomainSearchResultsExperiment( flow );
 	const isCustomDomainBannerCopyVariation = resultsVariation === 'custom_domain_banner_copy';
@@ -169,9 +168,7 @@ const DomainSearchStep: StepType< {
 		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getPlanCartItem(),
 		[]
 	);
-	const shouldHidePlansStep =
-		hasPreselectedPurchasePlan( queryParams, planCartItem ) ||
-		shouldSkipPlansStep( queryParams, planCartItem );
+	const shouldHidePlansStep = hidePlansStep || shouldSkipPlansStep( queryParams, planCartItem );
 
 	// For CIAB sites, prefer the site title over the slug for domain suggestions
 	// since the slug is often randomly generated.
