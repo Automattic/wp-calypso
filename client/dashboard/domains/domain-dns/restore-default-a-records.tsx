@@ -36,7 +36,13 @@ export default function RestoreDefaultARecords( {
 					<Button __next40pxDefaultSize variant="tertiary" onClick={ onCancel } isBusy={ isBusy }>
 						{ __( 'Cancel' ) }
 					</Button>
-					<Button __next40pxDefaultSize variant="primary" isBusy={ isBusy } onClick={ onConfirm }>
+					<Button
+						__next40pxDefaultSize
+						variant="primary"
+						isBusy={ isBusy }
+						disabled={ isBusy }
+						onClick={ onConfirm }
+					>
 						{ __( 'Restore' ) }
 					</Button>
 				</ButtonStack>
