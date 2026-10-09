@@ -2,8 +2,12 @@ import { activeAgencyQuery, referralsQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { __experimentalHStack as HStack, ToggleControl } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import { Badge } from '@wordpress/ui';
+import {
+	HOSTING_REFERRAL_COMMISSION_PERCENTAGE,
+	PRODUCTS_REFERRAL_COMMISSION_PERCENTAGE,
+} from './lib/referral-commission';
 import { useReferralToggle } from './use-referral-toggle';
 
 export default function ReferralToggle( { kind }: { kind: 'products' | 'hosting' } ) {
@@ -27,7 +31,17 @@ export default function ReferralToggle( { kind }: { kind: 'products' | 'hosting'
 			/>
 			{ showEarnings && (
 				<Badge intent="informational">
-					{ kind === 'hosting' ? __( 'Earn 20%' ) : __( 'Earn up to 50%' ) }
+					{ kind === 'hosting'
+						? sprintf(
+								/* translators: %d is the commission percentage. */
+								__( 'Earn %d%%' ),
+								HOSTING_REFERRAL_COMMISSION_PERCENTAGE
+							)
+						: sprintf(
+								/* translators: %d is the highest commission percentage. */
+								__( 'Earn up to %d%%' ),
+								PRODUCTS_REFERRAL_COMMISSION_PERCENTAGE
+							) }
 				</Badge>
 			) }
 		</HStack>

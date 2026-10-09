@@ -8,8 +8,9 @@ import {
 	Button,
 } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import { useEffect, useRef } from 'react';
+import { useAnalytics } from '../../app/analytics';
 import { Card, CardBody } from '../../components/card';
 import InlineSupportLink from '../../components/inline-support-link';
 import addHostingArt from './images/referral/step-1-add-hosting.svg';
@@ -19,6 +20,10 @@ import sendArt from './images/referral/step-2-send.svg';
 import earnHostingArt from './images/referral/step-3-earn-hosting.svg';
 import earnPressableArt from './images/referral/step-3-earn-pressable.svg';
 import earnProductArt from './images/referral/step-3-earn.svg';
+import {
+	HOSTING_REFERRAL_COMMISSION_PERCENTAGE,
+	PRODUCTS_REFERRAL_COMMISSION_PERCENTAGE,
+} from './lib/referral-commission';
 
 import './referral-mode-band.scss';
 
@@ -32,10 +37,17 @@ export type ReferralModeBandKind = 'products' | 'hosting' | 'pressable';
 const getCopy = ( kind: ReferralModeBandKind ) => {
 	if ( kind === 'products' ) {
 		return {
-			headline: __( 'Your client pays the retail price. You earn up to 50% recurring commission.' ),
-			summary: __(
-				/* translators: <strong> marks the status at the start of the sentence. */
-				'<strong>Referring to clients.</strong> Your client pays. You earn up to 50% recurring commission.'
+			headline: sprintf(
+				/* translators: %d is the highest commission percentage. */
+				__( 'Your client pays the retail price. You earn up to %d%% recurring commission.' ),
+				PRODUCTS_REFERRAL_COMMISSION_PERCENTAGE
+			),
+			summary: sprintf(
+				/* translators: <strong> marks the status at the start of the sentence; %d is the highest commission percentage. */
+				__(
+					'<strong>Referring to clients.</strong> Your client pays. You earn up to %d%% recurring commission.'
+				),
+				PRODUCTS_REFERRAL_COMMISSION_PERCENTAGE
 			),
 			addStep: __( 'Add products to a referral cart' ),
 			addArt: addProductArt,
@@ -43,12 +55,19 @@ const getCopy = ( kind: ReferralModeBandKind ) => {
 		};
 	}
 	return {
-		headline: __(
-			'Your client pays the retail price. You earn 20% recurring commission on their hosting.'
+		headline: sprintf(
+			/* translators: %d is the commission percentage. */
+			__(
+				'Your client pays the retail price. You earn %d%% recurring commission on their hosting.'
+			),
+			HOSTING_REFERRAL_COMMISSION_PERCENTAGE
 		),
-		summary: __(
-			/* translators: <strong> marks the status at the start of the sentence. */
-			'<strong>Referring to clients.</strong> Your client pays. You earn 20% recurring commission on hosting.'
+		summary: sprintf(
+			/* translators: <strong> marks the status at the start of the sentence; %d is the commission percentage. */
+			__(
+				'<strong>Referring to clients.</strong> Your client pays. You earn %d%% recurring commission on hosting.'
+			),
+			HOSTING_REFERRAL_COMMISSION_PERCENTAGE
 		),
 		addStep: __( 'Add hosting to a referral cart' ),
 		addArt: kind === 'pressable' ? addPressableArt : addHostingArt,
@@ -62,6 +81,7 @@ export default function ReferralModeBand( { kind }: { kind: ReferralModeBandKind
 		userPreferenceOptimisticMutation( FOLDED_PREFERENCE )
 	);
 	const copy = getCopy( kind );
+	const { recordTracksEvent } = useAnalytics();
 
 	// Folding swaps the whole band, so focus follows to the button that undoes it.
 	const gotItRef = useRef< HTMLButtonElement >( null );
@@ -76,6 +96,12 @@ export default function ReferralModeBand( { kind }: { kind: ReferralModeBandKind
 	}, [ isFolded ] );
 
 	const toggleFolded = ( folded: boolean ) => {
+		recordTracksEvent(
+			folded
+				? 'calypso_a4a_marketplace_referral_band_got_it_click'
+				: 'calypso_a4a_marketplace_referral_band_how_it_works_click',
+			{ kind }
+		);
 		shouldMoveFocus.current = true;
 		setFolded( folded );
 	};
@@ -127,7 +153,15 @@ export default function ReferralModeBand( { kind }: { kind: ReferralModeBandKind
 						>
 							{ __( 'Got it' ) }
 						</Button>
-						<InlineSupportLink supportLink={ REFERRALS_HELP_URL } forceOpenInHelpCenter />
+						<InlineSupportLink
+							supportLink={ REFERRALS_HELP_URL }
+							forceOpenInHelpCenter
+							onClick={ () =>
+								recordTracksEvent( 'calypso_a4a_marketplace_referral_band_learn_more_click', {
+									kind,
+								} )
+							}
+						/>
 					</HStack>
 				</VStack>
 				<ol className="referral-mode-band__steps">

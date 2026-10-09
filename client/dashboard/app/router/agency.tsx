@@ -284,10 +284,11 @@ export const marketplaceHostingRoute = createRoute( {
 			// The cart total counts the owned WordPress.com sites; warm that
 			// query without holding the page on every license the agency has.
 			queryClient.prefetchQuery( agencyLicensesQuery( agency.id ) );
+			// The referral toggle's commission badge only shows before the first
+			// referral, so the page doesn't wait for the full referrals list.
+			queryClient.prefetchQuery( referralsQuery( agency.id ) );
 			await Promise.all( [
 				queryClient.ensureQueryData( agencyProductsQuery( agency.id ) ),
-				// The referral toggle shows its commission until the agency's first referral.
-				queryClient.ensureQueryData( referralsQuery( agency.id ) ).catch( () => undefined ),
 				queryClient.ensureQueryData( pressableLicensesQuery( agency.id ) ).catch( () => undefined ),
 				mayBeEligibleForPressableExpansionOffer( agency ) &&
 					queryClient
@@ -425,10 +426,11 @@ export const marketplaceProductsRoute = createRoute( {
 			// The cart total counts the owned WordPress.com sites; warm that
 			// query without holding the page on every license the agency has.
 			queryClient.prefetchQuery( agencyLicensesQuery( agency.id ) );
+			// The referral toggle's commission badge only shows before the first
+			// referral, so the page doesn't wait for the full referrals list.
+			queryClient.prefetchQuery( referralsQuery( agency.id ) );
 			await Promise.all( [
 				queryClient.ensureQueryData( agencyProductsQuery( agency.id ) ),
-				// The referral toggle shows its commission until the agency's first referral.
-				queryClient.ensureQueryData( referralsQuery( agency.id ) ).catch( () => undefined ),
 				// The cart prices Pressable plans by whether the agency owns one.
 				queryClient.ensureQueryData( pressableLicensesQuery( agency.id ) ).catch( () => undefined ),
 			] );
