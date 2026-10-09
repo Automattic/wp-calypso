@@ -43,6 +43,8 @@ export default function ResourceBadges( {
 	onFilter,
 	showFeatured = false,
 }: ResourceBadgesProps ) {
+	const { content_type: contentType, audience, stage } = resource;
+
 	return (
 		<HStack spacing={ 1 } justify="flex-start" wrap>
 			{ showFeatured && resource.is_featured && (
@@ -52,18 +54,24 @@ export default function ResourceBadges( {
 					onClick={ () => onFilter( 'featured', 'featured' ) }
 				/>
 			) }
-			<FilterBadge
-				label={ getContentTypeLabel( resource.content_type ) }
-				onClick={ () => onFilter( 'content_type', resource.content_type ) }
-			/>
-			<FilterBadge
-				label={ getAudienceLabel( resource.audience ) }
-				onClick={ () => onFilter( 'audience', resource.audience ) }
-			/>
-			<FilterBadge
-				label={ getStageLabel( resource.stage ) }
-				onClick={ () => onFilter( 'stage', resource.stage ) }
-			/>
+			{ contentType && (
+				<FilterBadge
+					label={ getContentTypeLabel( contentType ) }
+					onClick={ () => onFilter( 'content_type', contentType ) }
+				/>
+			) }
+			{ audience && (
+				<FilterBadge
+					label={ getAudienceLabel( audience ) }
+					onClick={ () => onFilter( 'audience', audience ) }
+				/>
+			) }
+			{ stage && (
+				<FilterBadge
+					label={ getStageLabel( stage ) }
+					onClick={ () => onFilter( 'stage', stage ) }
+				/>
+			) }
 		</HStack>
 	);
 }

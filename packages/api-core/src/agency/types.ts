@@ -320,9 +320,10 @@ export interface AgencyEnablementResource {
 	thumbnail_url: string | null;
 
 	product: AgencyResourceProduct;
-	stage: AgencyResourceStage;
-	audience: AgencyResourceAudience;
-	content_type: AgencyResourceContentType;
+	/** Expected on every resource, but null where one was published without it. */
+	stage: AgencyResourceStage | null;
+	audience: AgencyResourceAudience | null;
+	content_type: AgencyResourceContentType | null;
 	format: AgencyResourceFormat;
 
 	/** Surfaced first in every view. Labelled "Top resource" in the UI. */

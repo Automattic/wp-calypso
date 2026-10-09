@@ -24,10 +24,12 @@ export function useResourceFields(
 	return useMemo( (): Field< AgencyEnablementResource >[] => {
 		// Only offer values that occur in the data.
 		const toElements = < T extends string >(
-			getValue: ( resource: AgencyEnablementResource ) => T,
+			getValue: ( resource: AgencyEnablementResource ) => T | null,
 			getLabel: ( value: T ) => string
 		) =>
-			Array.from( new Set( resources.map( getValue ) ) ).map( ( value ) => ( {
+			Array.from(
+				new Set( resources.map( getValue ).filter( ( value ): value is T => !! value ) )
+			).map( ( value ) => ( {
 				value,
 				label: getLabel( value ),
 			} ) );
@@ -35,7 +37,7 @@ export function useResourceFields(
 		const filterField = < T extends string >(
 			id: string,
 			label: string,
-			getValue: ( resource: AgencyEnablementResource ) => T,
+			getValue: ( resource: AgencyEnablementResource ) => T | null,
 			getLabel: ( value: T ) => string
 		): Field< AgencyEnablementResource > => ( {
 			id,
