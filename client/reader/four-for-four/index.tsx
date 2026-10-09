@@ -69,6 +69,27 @@ export function FourForFour() {
 		} );
 	}, [ selectedCandidate?.blogId ] ); // eslint-disable-line react-hooks/exhaustive-deps -- keyed on the id, not the object
 
+	// What the writer was actually offered on arrival. Without this, a page
+	// view that rendered an empty list is indistinguishable from one the
+	// writer abandoned before the list arrived.
+	const hasRecordedCandidates = useRef( false );
+	useEffect( () => {
+		if ( hasRecordedCandidates.current || isLoadingCandidates ) {
+			return;
+		}
+		hasRecordedCandidates.current = true;
+
+		if ( isCandidatesError ) {
+			recordTracksRef.current( `${ FOUR_FOR_FOUR_TRACKS_EVENT_PREFIX }candidates_error` );
+			return;
+		}
+
+		recordTracksRef.current( `${ FOUR_FOR_FOUR_TRACKS_EVENT_PREFIX }candidates_shown`, {
+			count: candidates.length,
+			participant_count: candidates.filter( ( candidate ) => candidate.isParticipant ).length,
+		} );
+	}, [ isLoadingCandidates, isCandidatesError, candidates ] );
+
 	const isComplete = status === 'completed';
 	const progressCount = Math.min( followedCount, FOUR_FOR_FOUR_REQUIRED_SUBSCRIPTIONS );
 	const progressLabel = String(
