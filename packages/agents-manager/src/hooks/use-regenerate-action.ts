@@ -2,7 +2,7 @@ import { RegenerateAltIcon } from '@automattic/agenttic-ui';
 import { createElement, useCallback } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import type { UIMessage } from '@automattic/agenttic-client';
-import type { MessageAction } from '@automattic/agenttic-ui/dist/types';
+import type { MessageAction } from '@automattic/agenttic-ui';
 
 const REGENERATE_ACTION_ORDER = 3.5;
 
