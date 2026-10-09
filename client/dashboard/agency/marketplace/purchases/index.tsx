@@ -15,10 +15,17 @@ import { DEFAULT_CONFIG } from '../../../sites/dataviews/views';
 import { MilestoneFeedbackModal, useMilestoneFeedback } from '../../feedback';
 import { OWNER_ROLE } from '../../team/constants';
 import { useLicenseActions } from './actions';
-import { DEFAULT_VIEW, getLicenseFields, getLicenseId, toFetchOptions } from './dataviews';
+import {
+	DEFAULT_VIEW,
+	getLicenseFields,
+	getLicenseId,
+	recordLicenseViewChanges,
+	toFetchOptions,
+} from './dataviews';
 import { useCheckoutReturn } from './use-checkout-return';
 import { useProvisioningLicenses } from './use-provisioning-licenses';
 import type { JetpackLicense } from '@automattic/api-core';
+import type { View } from '@wordpress/dataviews';
 
 export default function MarketplacePurchases() {
 	const locale = useLocale();
@@ -63,6 +70,11 @@ export default function MarketplacePurchases() {
 		onLicenseAssigned,
 	} );
 
+	const onChangeView = ( nextView: View ) => {
+		recordLicenseViewChanges( view, nextView, recordTracksEvent );
+		updateView( nextView );
+	};
+
 	const paginationInfo = {
 		totalItems: data?.total_items ?? 0,
 		totalPages: data?.total_pages ?? 1,
@@ -99,7 +111,7 @@ export default function MarketplacePurchases() {
 					view={ view }
 					isLoading={ isLoading }
 					isPlaceholderData={ isPlaceholderData }
-					onChangeView={ updateView }
+					onChangeView={ onChangeView }
 					onReset={ resetView }
 					getItemId={ getLicenseId }
 					paginationInfo={ paginationInfo }

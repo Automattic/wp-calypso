@@ -77,6 +77,44 @@ export function toFetchOptions( view: View ): FetchJetpackLicensesPageOptions {
 	};
 }
 
+export function recordLicenseViewChanges(
+	oldView: View,
+	newView: View,
+	recordTracksEvent: ( eventName: string, properties?: Record< string, unknown > ) => void
+) {
+	const before = toFetchOptions( oldView );
+	const after = toFetchOptions( newView );
+	const isSortChanged =
+		before.sortField !== after.sortField || before.sortDirection !== after.sortDirection;
+
+	// Once per search rather than per keystroke, and without the search term.
+	if ( ! before.search && after.search ) {
+		recordTracksEvent( 'calypso_a4a_license_list_search' );
+	}
+
+	if ( isSortChanged ) {
+		recordTracksEvent( 'calypso_a4a_license_list_sort_button_click', {
+			sort_field: after.sortField,
+			current_sort_field: before.sortField,
+			current_sort_direction: before.sortDirection,
+		} );
+	}
+
+	if ( before.filter !== after.filter ) {
+		recordTracksEvent( 'calypso_a4a_license_list_state_filter_click', { status: after.filter } );
+	}
+
+	// A new search, filter or sort also resets the page; only count real page clicks.
+	if (
+		before.page !== after.page &&
+		before.search === after.search &&
+		before.filter === after.filter &&
+		! isSortChanged
+	) {
+		recordTracksEvent( 'calypso_a4a_license_list_pagination_page_click', { page: after.page } );
+	}
+}
+
 export const getLicenseId = ( license: JetpackLicense ) => String( license.license_id );
 
 const PRESSABLE_AGENCY_URL = 'https://my.pressable.com/agency/auth';
