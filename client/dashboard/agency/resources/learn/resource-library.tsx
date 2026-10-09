@@ -11,7 +11,7 @@ import {
 import { useEvent, useViewportMatch } from '@wordpress/compose';
 import { DataViews as WPDataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __, _n, sprintf } from '@wordpress/i18n';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { DataViews, DataViewsEmptyStateLayout } from '../../../components/dataviews';
 import { useResourceFields } from './dataviews/fields';
@@ -152,6 +152,18 @@ export default function ResourceLibrary( {
 	const hasMore = visibleCount < filteredData.length;
 	const loadMore = () => setShown( { key: resultsKey, count: visibleCount + PAGE_SIZE } );
 
+	// Load more moves focus to the first resource it reveals, rather than leaving
+	// it on the button, or losing it when the button goes.
+	const focusAfterLoad = useRef< number | null >( null );
+	useEffect( () => {
+		if ( focusAfterLoad.current !== null ) {
+			document
+				.querySelector< HTMLElement >( `[data-resource-id="${ focusAfterLoad.current }"]` )
+				?.focus();
+			focusAfterLoad.current = null;
+		}
+	}, [ visibleData ] );
+
 	const { ref: loadMoreRef } = useInView( {
 		onChange: ( inView ) => inView && hasMore && loadMore(),
 	} );
@@ -269,7 +281,14 @@ export default function ResourceLibrary( {
 						{ hasMore && (
 							<>
 								<div ref={ loadMoreRef } />
-								<Button variant="secondary" __next40pxDefaultSize onClick={ loadMore }>
+								<Button
+									variant="secondary"
+									__next40pxDefaultSize
+									onClick={ () => {
+										focusAfterLoad.current = filteredData[ visibleCount ].id;
+										loadMore();
+									} }
+								>
 									{ __( 'Load more' ) }
 								</Button>
 							</>

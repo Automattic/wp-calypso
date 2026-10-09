@@ -226,6 +226,7 @@ describe( '<ResourceCenter>', () => {
 		await userEvent.click( screen.getByRole( 'button', { name: 'Load more' } ) );
 
 		expect( screen.getByText( 'Showing 30 of 30 resources' ) ).toBeVisible();
+		expect( screen.getByRole( 'link', { name: 'Resource 25' } ) ).toHaveFocus();
 		expect( screen.queryByRole( 'button', { name: 'Load more' } ) ).not.toBeInTheDocument();
 	} );
 } );
