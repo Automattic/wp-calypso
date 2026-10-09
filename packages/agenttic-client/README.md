@@ -536,6 +536,7 @@ interface UIMessage {
 	} >;
 	timestamp: number;
 	actions?: UIMessageAction[];
+	className?: string;
 }
 
 interface Tool {
