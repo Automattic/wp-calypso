@@ -76,7 +76,6 @@ export const Message = React.forwardRef< HTMLDivElement, MessageProps >( functio
 			data-role={ message.role }
 			className={ cn(
 				styles.message,
-				message.className,
 				styles[ message.role ],
 				message.disabled ? styles.disabled : undefined
 			) }

@@ -109,7 +109,6 @@ export interface UIMessage {
 	showIcon: boolean;
 	icon?: string;
 	actions?: UIMessageAction[];
-	className?: string;
 	reactKey?: string; // Stable key for React rendering (prevents unmount/remount during updates)
 }
 
