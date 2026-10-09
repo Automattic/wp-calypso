@@ -141,7 +141,7 @@ export default function AgencySites() {
 
 	const handleSiteClick = useCallback(
 		( site: AgencySite ) =>
-			recordTracksEvent( 'calypso_dashboard_sites_item_click', { site_id: site.blog_id } ),
+			recordTracksEvent( 'calypso_a4a_sites_item_click', { site_id: site.blog_id } ),
 		[ recordTracksEvent ]
 	);
 
