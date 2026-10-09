@@ -9,8 +9,8 @@ import { isRecord } from './is-record';
 // Nothing writes the block any more, but sites touched by the old version still
 // carry it, and its `!important` typography permanently overrides any font the
 // user later picks (ESE-20). Detection subset of Big Sky's
-// `shared/legacy-style-variation-css` — the consent dialog and removal flow are
-// still Big Sky's, tracked in AM-27.
+// `shared/legacy-style-variation-css`; the consent dialog and removal flow are
+// Big Sky's (see `use-styles`).
 
 export const LEGACY_CSS_START = '/* easy-site-editor-style-variation:start */';
 export const LEGACY_CSS_END = '/* easy-site-editor-style-variation:end */';

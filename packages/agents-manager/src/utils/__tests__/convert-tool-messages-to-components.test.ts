@@ -58,8 +58,6 @@ import type { UIMessage } from '@automattic/agenttic-client';
 
 const MockComponent = jest.fn();
 const SHOW_COMPONENT_TOOL_ID = JETPACK_AI_SHOW_COMPONENT_TOOL_ID;
-const LEGACY_SHOW_COMPONENT_TOOL_ID = BIG_SKY_SHOW_COMPONENT_TOOL_ID;
-
 const createMessage = ( overrides: Partial< UIMessage > = {} ): UIMessage =>
 	( {
 		id: 'msg-1',
@@ -224,8 +222,8 @@ describe( 'convertToolMessagesToComponents', () => {
 		} );
 	} );
 
-	it( 'renders legacy Big Sky show-component messages during migration', () => {
-		const message = createToolMessage( LEGACY_SHOW_COMPONENT_TOOL_ID, {
+	it( 'renders a provider show-component type through `getChatComponent`', () => {
+		const message = createToolMessage( BIG_SKY_SHOW_COMPONENT_TOOL_ID, {
 			type: 'my-component',
 			props: { name: 'test' },
 			isCurrent: true,
@@ -267,7 +265,7 @@ describe( 'convertToolMessagesToComponents', () => {
 	} );
 
 	it( 'does not suppress the thinking indicator for component messages with follow-up tasks', () => {
-		const message = createToolMessage( LEGACY_SHOW_COMPONENT_TOOL_ID, {
+		const message = createToolMessage( BIG_SKY_SHOW_COMPONENT_TOOL_ID, {
 			type: 'my-component',
 			followUpTasks: true,
 			isCurrent: true,
@@ -283,7 +281,7 @@ describe( 'convertToolMessagesToComponents', () => {
 	} );
 
 	it( 'renders the provider pattern picker disabled for history rows', () => {
-		const message = createToolMessage( LEGACY_SHOW_COMPONENT_TOOL_ID, {
+		const message = createToolMessage( BIG_SKY_SHOW_COMPONENT_TOOL_ID, {
 			type: 'pattern-picker',
 			props: { patterns: [] },
 		} );
@@ -302,7 +300,7 @@ describe( 'convertToolMessagesToComponents', () => {
 	} );
 
 	it( 'renders the notice for prototype-member component types', () => {
-		const message = createToolMessage( LEGACY_SHOW_COMPONENT_TOOL_ID, {
+		const message = createToolMessage( BIG_SKY_SHOW_COMPONENT_TOOL_ID, {
 			type: 'toString',
 			props: { name: 'test' },
 		} );
@@ -315,7 +313,7 @@ describe( 'convertToolMessagesToComponents', () => {
 	} );
 
 	it( 'renders a short notice when no component resolves on either side', () => {
-		const message = createToolMessage( LEGACY_SHOW_COMPONENT_TOOL_ID, {
+		const message = createToolMessage( BIG_SKY_SHOW_COMPONENT_TOOL_ID, {
 			type: 'unknown-component',
 		} );
 		const getChatComponent = jest.fn().mockReturnValue( null );
@@ -340,8 +338,8 @@ describe( 'convertToolMessagesToComponents', () => {
 
 		const result = convertToolMessagesToComponents( {
 			messages: [
-				createToolMessage( LEGACY_SHOW_COMPONENT_TOOL_ID, data, { id: 'msg-1', actions } ),
-				createToolMessage( LEGACY_SHOW_COMPONENT_TOOL_ID, data, { id: 'msg-2', actions } ),
+				createToolMessage( BIG_SKY_SHOW_COMPONENT_TOOL_ID, data, { id: 'msg-1', actions } ),
+				createToolMessage( BIG_SKY_SHOW_COMPONENT_TOOL_ID, data, { id: 'msg-2', actions } ),
 			],
 			getChatComponent,
 		} );
@@ -751,7 +749,7 @@ describe( 'convertToolMessagesToComponents', () => {
 			{ id: 'tool-1' }
 		);
 		const finalMessage = createToolMessage(
-			LEGACY_SHOW_COMPONENT_TOOL_ID,
+			BIG_SKY_SHOW_COMPONENT_TOOL_ID,
 			{
 				type: 'color-picker',
 				summary: 'Pick a blue palette.',
@@ -991,7 +989,7 @@ describe( 'convertToolMessagesToComponents', () => {
 
 			const result = convertToolMessagesToComponents( {
 				messages: [
-					createToolMessage( LEGACY_SHOW_COMPONENT_TOOL_ID, data, { id: 'tool-1' } ),
+					createToolMessage( BIG_SKY_SHOW_COMPONENT_TOOL_ID, data, { id: 'tool-1' } ),
 					...laterMessages,
 				],
 				getChatComponent,

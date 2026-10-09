@@ -272,7 +272,7 @@ function guardAbilityCallback( ability: Ability ): Ability {
  * Refuses a canvas write whose canvas has moved since the model asked for it.
  *
  * Applied to the merged tool provider, so it is indifferent to which provider owns
- * a given ability — including after an ability migrates into AM.
+ * a given ability.
  * @param toolProvider The merged tool provider, if any.
  * @returns The wrapped provider, or undefined when there is nothing to wrap.
  */

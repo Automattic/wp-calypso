@@ -1,6 +1,6 @@
 # Custom Actions
 
-> **Warning:** Cross-bundle bridge for the Big Sky migration. Actions live on `window.__agentsManagerActions` — don't expose anything sensitive.
+> **Warning:** Cross-bundle bridge. Actions live on `window.__agentsManagerActions` — don't expose anything sensitive.
 
 This folder publishes `window.__agentsManagerActions` so code outside the React tree (other bundles, external scripts) can drive the Agents Manager.
 

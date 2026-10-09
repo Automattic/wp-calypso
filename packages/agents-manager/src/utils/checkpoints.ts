@@ -41,7 +41,7 @@ import type { Block } from '@wordpress/blocks';
  * AM-owned checkpoint store: in-memory, per page load, keyed by tool call id.
  *
  * Ported from Big Sky's `use-checkpoint` as plain functions, since AM abilities
- * execute as plain callbacks. Every migrated domain restores here: global
+ * execute as plain callbacks. Every domain they write restores here: global
  * styles, custom CSS, the site logo, the site title, site metadata, pages,
  * navigation and the page's blocks.
  *

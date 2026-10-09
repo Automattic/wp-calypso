@@ -29,7 +29,7 @@ export interface AgentsManagerUIMessage extends UIMessage {
 type AmComponentType = ShowComponentType | typeof OPEN_HELP_CENTER_BUTTON_TYPE;
 
 // AM-owned components by type. These take precedence over provider
-// components — AM is the single source of truth for each migrated type.
+// components — AM is the single source of truth for each of these types.
 //
 // The pickers carry the block-editor preview stack, so they load on demand:
 // a picker row fetches its chunk when it first renders, and other chats never

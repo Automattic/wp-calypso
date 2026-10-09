@@ -6,8 +6,7 @@ import type { Ability } from '../types';
 /**
  * The `restore-checkpoint` ability definition.
  *
- * Keeps the `big-sky/` name so the backend route allowlists keep matching;
- * the schema and prompt text mirror Big Sky's registration.
+ * Keeps the `big-sky/` name so the backend route allowlists keep matching.
  */
 export const restoreCheckpointAbility: Ability = {
 	name: 'big-sky/restore-checkpoint',

@@ -12,8 +12,7 @@ export type ShowComponentType = ( typeof SHOW_COMPONENT_TYPES )[ number ];
 /**
  * The `show-component` ability definition.
  *
- * Keeps the `big-sky/` name so the backend route allowlists keep matching;
- * the category mirrors Big Sky's client-side registration.
+ * Keeps the `big-sky/` name so the backend route allowlists keep matching.
  */
 export const showComponentAbility: Ability = {
 	name: 'big-sky/show-component',
