@@ -77,7 +77,8 @@
 			animation: dashboard-resource-illustration__paper-type-1
 				calc( var( --dashboard-resource-illustration-duration ) * 3 ) linear infinite;
 		}
-		@for $line from 1 through 4 {
+		// Line 1's animation is set with the rest above.
+		@for $line from 2 through 4 {
 			.dashboard-resource-illustration__paper-line-#{ $line } {
 				animation-name: dashboard-resource-illustration__paper-type-#{$line};
 			}

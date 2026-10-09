@@ -20,17 +20,11 @@ function ResourceCard( { resource, onSelect, onFilter }: ResourceCardProps ) {
 		<Card className="dashboard-resources-learn__card" isBorderless>
 			<ResourceCardHeader
 				resource={ resource }
-				title={
-					<ResourceLink
-						resource={ resource }
-						className="dashboard-resources-learn__card-link"
-						onSelect={ onSelect }
-					/>
-				}
+				title={ <ResourceLink resource={ resource } onSelect={ onSelect } /> }
 			/>
 			<CardBody>
 				<VStack spacing={ 3 } justify="flex-start">
-					<Text variant="muted" className="dashboard-resources-learn__card-description">
+					<Text variant="muted" truncate numberOfLines={ 2 }>
 						{ resource.description }
 					</Text>
 					<ResourceBadges resource={ resource } onFilter={ onFilter } />
