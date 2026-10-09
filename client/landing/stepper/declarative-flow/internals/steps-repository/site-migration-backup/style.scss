@@ -1,0 +1,105 @@
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/variables';
+
+.step-container-v2:has( .site-migration-backup ) {
+	.step-container-v2__content-wrapper {
+		gap: 32px;
+
+		@media ( min-width: $break-large ) {
+			padding-top: 48px;
+		}
+	}
+
+	.step-container-v2__heading {
+		h1 {
+			letter-spacing: 0.2px;
+			line-height: 1.18;
+		}
+
+		p {
+			max-width: 432px;
+			margin: 24px auto 0;
+			font-size: 0.875rem;
+			line-height: 1.43;
+			text-wrap: wrap;
+		}
+	}
+
+	.step-container-v2__top-bar-wordpress-logo--wordmark {
+		height: 18px;
+	}
+
+	.step-container-v2__top-bar-left-element::before {
+		content: '';
+		height: 16px;
+		border-inline-start: 1px solid var( --color-neutral-5 );
+		margin-inline: 8px 16px;
+	}
+
+	.step-container-v2__back-button {
+		text-decoration: none;
+		font-weight: 400;
+	}
+
+	.site-migration-backup {
+		max-width: 660px;
+	}
+
+	.site-migration-backup__card {
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 16px;
+		padding: 24px;
+		border: 1px solid var( --color-neutral-5 );
+		border-radius: 8px;
+		background: var( --color-surface );
+		font-size: $font-size-medium;
+		line-height: 1.54;
+
+		.step-container-v2__primary-button {
+			padding-inline: 12px;
+			font-size: inherit;
+			line-height: inherit;
+		}
+
+		.step-container-v2__link-button {
+			height: auto;
+			text-align: start;
+			font-weight: 400;
+		}
+	}
+
+	.site-migration-backup__drop-zone {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 6px;
+		box-sizing: border-box;
+		width: 100%;
+		padding: 32px 24px;
+		border: 1px dashed var( --color-neutral-40 );
+		border-radius: 8px;
+		background: var( --color-neutral-0 );
+		color: var( --color-neutral-100 );
+		font-family: inherit;
+		cursor: not-allowed;
+	}
+
+	.site-migration-backup__drop-zone-title {
+		font-size: 0.875rem;
+		font-weight: 500;
+		line-height: 1.43;
+	}
+
+	.site-migration-backup__drop-zone-description {
+		font-size: 0.75rem;
+		line-height: 1.33;
+		color: var( --color-neutral-50 );
+	}
+
+	.site-migration-backup__description {
+		margin: 0;
+		color: var( --color-neutral-50 );
+	}
+}

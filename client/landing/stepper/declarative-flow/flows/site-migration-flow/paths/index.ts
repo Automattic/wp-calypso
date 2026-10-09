@@ -1,3 +1,4 @@
+import { WORDPRESS_MIGRATION_FLOW } from '@automattic/onboarding';
 import { generatePath } from 'react-router';
 import { Primitive } from 'utility-types';
 import { STEPS } from 'calypso/landing/stepper/declarative-flow/internals/steps';
@@ -54,10 +55,22 @@ export const siteCreationPath = buildPathHelper<
 
 export const sitePickerPath = buildPathHelper<
 	{
-		queryParams: { from: string | null; platform: ImporterPlatform; ssh?: string; host?: string };
+		queryParams: {
+			from: string | null;
+			platform: ImporterPlatform;
+			ssh?: string;
+			host?: string;
+			siteId?: number | '';
+			siteSlug?: string;
+		};
 	},
 	typeof STEPS.PICK_SITE.slug
 >( STEPS.PICK_SITE.slug );
+
+export const plansPath = buildPathHelper<
+	{ queryParams: { from: string; platform: ImporterPlatform; host?: string } },
+	typeof STEPS.UNIFIED_PLANS.slug
+>( STEPS.UNIFIED_PLANS.slug );
 
 export const howToMigratePath = buildPathHelper<
 	{
@@ -65,10 +78,41 @@ export const howToMigratePath = buildPathHelper<
 			from?: string | null;
 			siteSlug: string;
 			siteId?: number | string;
+			platform?: ImporterPlatform;
+			host?: string;
 		};
 	},
 	typeof STEPS.SITE_MIGRATION_HOW_TO_MIGRATE.slug
 >( STEPS.SITE_MIGRATION_HOW_TO_MIGRATE.slug );
+
+export const wordpressMigrationPath = buildPathHelper< {
+	queryParams: {
+		from: string;
+		siteId: number;
+		siteSlug: string;
+		platform: ImporterPlatform;
+		host?: string;
+		ref: string;
+		source: string | null;
+		sessionId: string | null;
+		flags: string | null;
+		backToFlow: string;
+	};
+} >( `/setup/${ WORDPRESS_MIGRATION_FLOW }` );
+
+export const siteCheckPath = buildPathHelper<
+	{
+		queryParams: {
+			from: string;
+			platform: ImporterPlatform;
+			host?: string;
+			isWpcom?: boolean;
+			siteId?: number;
+			siteSlug?: string;
+		};
+	},
+	typeof STEPS.SITE_MIGRATION_CHECK.slug
+>( STEPS.SITE_MIGRATION_CHECK.slug );
 
 export const processingPath = buildPathHelper<
 	{

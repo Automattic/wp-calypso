@@ -26,10 +26,29 @@ describe( 'useSitePreviewMShotImageHandler', () => {
 	afterEach( () => {
 		nock.cleanAll();
 		jest.clearAllMocks();
+		jest.restoreAllMocks();
 	} );
 
 	beforeAll( () => {
 		nock.disableNetConnect();
+	} );
+
+	it( 'keeps the comparison capture at a desktop 3:2 viewport regardless of thumbnail width', async () => {
+		const options = { vpw: 1200, vph: 800, w: 1200, h: 800, screen_height: 800, scale: 2 };
+		const open = jest.spyOn( XMLHttpRequest.prototype, 'open' );
+		const scope = nock( 'https://s0.wp.com' )
+			.get( '/mshots/v1/https%3A%2F%2Fexample.com' )
+			.query( options )
+			.reply( 200, {} );
+		Object.defineProperty( mockRef, 'current', { value: { offsetWidth: 300 } } );
+		const { result } = renderHook( () =>
+			useSitePreviewMShotImageHandler( 'https://example.com', options )
+		);
+		expect( result.current.mShotsOption ).toEqual( options );
+		act( () => window.dispatchEvent( new Event( 'resize' ) ) );
+		expect( result.current.mShotsOption ).toEqual( options );
+		await waitFor( () => expect( scope.isDone() ).toBe( true ) );
+		expect( open ).toHaveBeenCalledTimes( 1 );
 	} );
 
 	it( 'should return the correct segment based on width', () => {

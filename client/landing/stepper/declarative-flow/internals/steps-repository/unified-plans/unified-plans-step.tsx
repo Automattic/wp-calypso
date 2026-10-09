@@ -28,6 +28,7 @@ import { useTranslate, TranslateResult } from 'i18n-calypso';
 import moment from 'moment';
 import { parse as parseQs } from 'qs';
 import AsyncLoad from 'calypso/components/async-load';
+import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import MarketingMessage from 'calypso/components/marketing-message';
 import Notice from 'calypso/components/notice';
@@ -126,7 +127,8 @@ export interface UnifiedPlansStepProps {
 		Extract< UrlFriendlyTermType, 'monthly' | 'yearly' | '2yearly' | '3yearly' >
 	>;
 	headerText?: string;
-	subHeaderText?: string;
+	subHeaderText?: TranslateResult;
+	disablePlanSelection?: boolean;
 	highlightLabelOverrides?: { [ K in PlanSlug ]?: TranslateResult };
 	titleBadgeOverrides?: { [ K in PlanSlug ]?: TranslateResult };
 	taglineOverrides?: { [ K in PlanSlug ]?: TranslateResult };
@@ -250,6 +252,7 @@ function UnifiedPlansStep( {
 	displayedIntervals,
 	headerText,
 	subHeaderText,
+	disablePlanSelection,
 	highlightLabelOverrides,
 	titleBadgeOverrides,
 	taglineOverrides,
@@ -684,6 +687,7 @@ function UnifiedPlansStep( {
 				}
 				displayedIntervals={ displayedIntervals }
 				onUpgradeClick={ handleUpgradeClick }
+				disablePlanSelection={ disablePlanSelection }
 				customerType={ customerType }
 				deemphasizeFreePlan={ deemphasizeFreePlan }
 				renderFreePlanCtaInStepContainerV2={ shouldUseModalBackedFreePlanCTA }
@@ -725,6 +729,7 @@ function UnifiedPlansStep( {
 
 		return (
 			<>
+				{ headerText && <DocumentHead title={ headerText } /> }
 				{ /*
 				 * The layout mounts hidden (CSS: visibility:hidden + position:absolute) so
 				 * PlansFeaturesMain's data-fetching hooks run immediately. Step.Loading

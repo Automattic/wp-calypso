@@ -2,6 +2,7 @@ import { getIntervalTypeForTerm, getPlan, isFreePlan } from '@automattic/calypso
 import { OnboardSelect } from '@automattic/data-stores';
 import { DOMAIN_FLOW, ONBOARDING_FLOW, Step, useStepPersistedState } from '@automattic/onboarding';
 import { useSelect, useDispatch as useWPDispatch } from '@wordpress/data';
+import { useTranslate, type TranslateResult } from 'i18n-calypso';
 import { useState, useEffect } from 'react';
 import { useQueryTheme } from 'calypso/components/data/query-theme';
 import Loading from 'calypso/components/loading';
@@ -29,11 +30,11 @@ import type { Step as StepType } from '../../types';
 import type { PlanSlug } from '@automattic/calypso-products';
 import type { PlansIntent } from '@automattic/plans-grid-next';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
-import type { TranslateResult } from 'i18n-calypso';
 import './style.scss';
 
 type ProvidedDependencies = {
 	stepName: 'plans';
+	action?: 'select-existing-site';
 	cartItems: MinimalRequestCartProduct[] | null;
 };
 
@@ -46,6 +47,8 @@ const PlansStepAdaptor: StepType< {
 		displayedIntervals?: SupportedIntervalTypes[];
 		headerText?: string;
 		subHeaderText?: string;
+		showExistingSiteLink?: boolean;
+		disablePlanSelection?: boolean;
 		hideFreePlan?: boolean;
 		hideEnterprisePlan?: boolean;
 		hidePersonalPlan?: boolean;
@@ -72,6 +75,8 @@ const PlansStepAdaptor: StepType< {
 		wrapperProps,
 		headerText,
 		subHeaderText,
+		showExistingSiteLink,
+		disablePlanSelection,
 		hideFreePlan: hideFreePlanOverride,
 		hideEnterprisePlan: hideEnterprisePlanOverride,
 		hidePersonalPlan: hidePersonalPlanOverride,
@@ -83,6 +88,7 @@ const PlansStepAdaptor: StepType< {
 		titleBadgeOverrides,
 		taglineOverrides,
 	} = props;
+	const translate = useTranslate();
 	const [ stepState, setStepState ] = useStepPersistedState< ProvidedDependencies >( 'plans-step' );
 	const siteSlug = useSiteSlug();
 
@@ -234,7 +240,32 @@ const PlansStepAdaptor: StepType< {
 			hideEcommercePlan={ hideEcommercePlanOverride || blueprintHideProps.hideEcommercePlan }
 			hidePlanTypeSelector={ hidePlanTypeSelectorOverride }
 			headerText={ headerText }
-			subHeaderText={ subHeaderText }
+			subHeaderText={
+				showExistingSiteLink ? (
+					<>
+						{ subHeaderText }
+						<br />
+						{ translate( 'Or {{link}}migrate to a site you already have{{/link}}.', {
+							components: {
+								link: (
+									<Step.LinkButton
+										onClick={ () =>
+											props.navigation.submit?.( {
+												stepName: 'plans',
+												cartItems: null,
+												action: 'select-existing-site',
+											} )
+										}
+									/>
+								),
+							},
+						} ) }
+					</>
+				) : (
+					subHeaderText
+				)
+			}
+			disablePlanSelection={ disablePlanSelection }
 			highlightLabelOverrides={ highlightLabelOverrides }
 			titleBadgeOverrides={ titleBadgeOverrides }
 			taglineOverrides={ taglineOverrides }

@@ -278,6 +278,14 @@ export const STEPS = {
 		slug: 'site-migration-identify',
 		asyncComponent: () => import( './steps-repository/site-migration-identify' ),
 	},
+	SITE_MIGRATION_BACKUP: {
+		slug: 'site-migration-backup',
+		asyncComponent: () => import( './steps-repository/site-migration-backup' ),
+	},
+	SITE_MIGRATION_CHECK: {
+		slug: 'site-migration-check',
+		asyncComponent: () => import( './steps-repository/site-migration-check' ),
+	},
 
 	SITE_MIGRATION_OTHER_PLATFORM_DETECTED_IMPORT: {
 		slug: 'other-platform-detected',

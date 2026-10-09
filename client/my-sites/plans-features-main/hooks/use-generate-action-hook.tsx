@@ -64,6 +64,7 @@ type UseActionHookProps = {
 };
 
 export default function useGenerateActionHook( {
+	disablePlanSelection,
 	siteId,
 	cartHandler,
 	flowName,
@@ -80,6 +81,7 @@ export default function useGenerateActionHook( {
 	delayedDowngradeToProductSlug,
 	onRenewCurrentPlan,
 }: {
+	disablePlanSelection?: boolean;
 	siteId?: number | null;
 	cartHandler?: ( cartItems?: MinimalRequestCartProduct[] | null ) => void;
 	flowName?: string | null;
@@ -248,7 +250,12 @@ export default function useGenerateActionHook( {
 		};
 	};
 
-	return useActionHook;
+	return function useAction( props ) {
+		const action = useActionHook( props );
+		return disablePlanSelection
+			? { ...action, primary: { ...action.primary, status: 'disabled', callback: () => undefined } }
+			: action;
+	};
 }
 
 function getLaunchPageAction( {

@@ -66,7 +66,11 @@ const SitePickerStep: Step< {
 
 	const onQueryParamChange = ( params: Partial< SitesDashboardQueryParams > ) => {
 		recordTracksEvent( 'calypso_import_site_picker_query_param_change', params );
-		navigation.submit?.( { action: 'update-query', queryParams: params } );
+		navigation.submit?.( {
+			action: 'update-query',
+			queryParams: params,
+			shouldSkipSubmitTracking: true,
+		} );
 	};
 
 	const createNewSite = () => {
@@ -82,7 +86,7 @@ const SitePickerStep: Step< {
 			title: site?.title,
 		} );
 		const host = hostingProviderData?.hosting_provider?.slug;
-		navigation.submit?.( { action: 'select-site', site, host } );
+		navigation.submit?.( { action: 'select-site', site, host, shouldSkipSubmitTracking: true } );
 	};
 
 	const onSelectSite = ( site: SiteExcerptData ) => {
@@ -121,7 +125,7 @@ const SitePickerStep: Step< {
 			<DocumentHead title={ __( 'Pick your destination' ) } />
 			<StepContainer
 				stepName="site-picker"
-				goBack={ () => history.back() }
+				goBack={ navigation.goBack ?? ( () => history.back() ) }
 				stepContent={
 					<SitePicker
 						page={ page }

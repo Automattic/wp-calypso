@@ -111,6 +111,7 @@
 		"migration-flow/introductory-offer": true,
 		"migration/non-wordpress-source": false,
 		"migration/ssh-migration": false,
+		"migration/reprint-flow": false,
 		"oauth/unified-experience": false,
 		"onboarding/create-course": false,
 		"onboarding/import-from-blogger": true,

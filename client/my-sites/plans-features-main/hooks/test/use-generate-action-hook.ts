@@ -22,7 +22,7 @@ jest.mock( 'i18n-calypso', () => ( {
 	translate: jest.fn(),
 } ) );
 jest.mock( '@wordpress/data' );
-jest.mock( '../use-generate-action-callback', () => () => jest.fn() );
+jest.mock( '../use-generate-action-callback' );
 
 import {
 	PLAN_BUSINESS,
@@ -40,6 +40,7 @@ import {
 import { Plans } from '@automattic/data-stores';
 import { renderHook } from '@testing-library/react';
 import { useSelector } from 'react-redux';
+import useGenerateActionCallback from '../use-generate-action-callback';
 import useGenerateActionHook from '../use-generate-action-hook';
 
 describe( 'useGenerateActionHook', () => {
@@ -94,6 +95,7 @@ describe( 'useGenerateActionHook', () => {
 
 	beforeEach( () => {
 		jest.resetAllMocks();
+		jest.mocked( useGenerateActionCallback ).mockReturnValue( jest.fn() );
 
 		( useSelector as jest.Mock ).mockImplementation( ( selector ) =>
 			selector( {
@@ -114,6 +116,25 @@ describe( 'useGenerateActionHook', () => {
 		( Plans.useCurrentPlan as jest.Mock ).mockImplementation( () => null );
 		( Plans.usePricingMetaForGridPlans as jest.Mock ).mockImplementation( () => ( {} ) );
 	} );
+
+	it.each( [ PLAN_PERSONAL, PLAN_BUSINESS, PLAN_ECOMMERCE, PLAN_ENTERPRISE_GRID_WPCOM ] )(
+		'disables purchase callbacks for %s in a preview',
+		( planSlug ) => {
+			const purchase = jest.fn();
+			jest.mocked( useGenerateActionCallback ).mockReturnValue( () => purchase );
+			const { result } = renderHook( () =>
+				useGenerateActionHook( {
+					isInSignup: true,
+					isLaunchPage: false,
+					disablePlanSelection: true,
+				} )
+			);
+			const action = result.current( { planSlug } );
+			expect( action.primary.status ).toBe( 'disabled' );
+			action.primary.callback();
+			expect( purchase ).not.toHaveBeenCalled();
+		}
+	);
 
 	it( 'should handle enterprise plans', () => {
 		const { result } = renderHook( () =>

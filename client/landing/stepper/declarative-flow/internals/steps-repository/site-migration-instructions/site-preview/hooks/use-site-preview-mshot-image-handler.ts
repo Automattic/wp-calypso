@@ -1,7 +1,7 @@
 import { throttle } from '@wordpress/compose';
-import { useEffect, useRef, useState } from '@wordpress/element';
+import { useCallback, useEffect, useRef, useState } from '@wordpress/element';
 
-interface MShotConfig {
+export interface MShotConfig {
 	vpw: number;
 	vph: number;
 	w: number;
@@ -43,7 +43,7 @@ const sendScreenshotRequest = ( screenShotUrl: string ) => {
 	http.send();
 };
 
-export const useSitePreviewMShotImageHandler = ( url: string = '' ) => {
+export const useSitePreviewMShotImageHandler = ( url: string = '', options?: MShotConfig ) => {
 	const [ mShotsOption, setMShotsOption ] = useState< MShotConfig | undefined >( undefined );
 	const [ currentSegment, setCurrentSegment ] = useState( '' );
 
@@ -77,7 +77,7 @@ export const useSitePreviewMShotImageHandler = ( url: string = '' ) => {
 	};
 
 	useEffect( () => {
-		if ( ! previewRef?.current ) {
+		if ( options || ! previewRef?.current ) {
 			return;
 		}
 		updateDimensions( previewRef );
@@ -85,34 +85,36 @@ export const useSitePreviewMShotImageHandler = ( url: string = '' ) => {
 
 		window.addEventListener( 'resize', throttledResizeHandler );
 		return () => window.removeEventListener( 'resize', throttledResizeHandler );
-	}, [ previewRef ] );
+	}, [ previewRef, options ] );
 
-	const createScreenshots = ( url: string ) => {
-		Object.entries( mShotConfigs ).forEach( ( mShotParams ) => {
-			const screenShotUrl = `https://s0.wp.com/mshots/v1/${ encodeURIComponent(
-				url
-			) }?${ Object.entries( mShotParams[ 1 ] )
-				.filter( ( entry ) => !! entry[ 1 ] )
-				.map( ( [ key, val ] ) => key + '=' + val )
-				.join( '&' ) }`;
+	const createScreenshots = useCallback(
+		( url: string ) => {
+			const configs = options ? [ options ] : Object.values( mShotConfigs );
+			configs.forEach( ( config ) => {
+				const screenShotUrl = `https://s0.wp.com/mshots/v1/${ encodeURIComponent(
+					url
+				) }?${ Object.entries( config )
+					.filter( ( entry ) => !! entry[ 1 ] )
+					.map( ( [ key, val ] ) => key + '=' + val )
+					.join( '&' ) }`;
 
-			sendScreenshotRequest( screenShotUrl );
-		} );
-	};
+				sendScreenshotRequest( screenShotUrl );
+			} );
+		},
+		[ options ]
+	);
 
 	useEffect( () => {
 		if ( url ) {
-			// In case the screenshots were not created before (for example, the site-identify step), we send a request
-			// generate all the responsive screenshots. Otherwise if the user resizes the window to check the responsiveness,
-			// it will take a long loading time each time.
+			// Prewarm captures so resizing does not wait for screenshot generation.
 			createScreenshots( url );
 		}
-	}, [ url ] );
+	}, [ url, createScreenshots ] );
 
 	return {
 		createScreenshots,
 		getSegment,
-		mShotsOption,
+		mShotsOption: options ?? mShotsOption,
 		updateDimensions,
 		currentSegment,
 		previewRef,
