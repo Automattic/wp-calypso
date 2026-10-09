@@ -21,7 +21,7 @@ import type {
 } from 'calypso/my-sites/plans/jetpack-plans/types';
 
 /**
- * build the URL to checkout page for the enviroment and products.
+ * build the URL to checkout page for the environment and products.
  * @param {string} siteSlug Selected site
  * @param {string | string[]} products Slugs of the products to add to the cart
  * @param {QueryArgs} urlQueryArgs Additional query params appended to url (ie. for affiliate tracking, or whatever)
