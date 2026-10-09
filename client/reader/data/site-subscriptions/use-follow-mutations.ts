@@ -13,8 +13,10 @@ import {
 import config from '@automattic/calypso-config';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { translate } from 'i18n-calypso';
+import { useResendEmailVerification } from 'calypso/landing/stepper/hooks/use-resend-email-verification';
 import { removeRecommendedSiteFromCache } from 'calypso/reader/data/recommended-sites';
-import { useDispatch } from 'calypso/state';
+import { useDispatch, useSelector } from 'calypso/state';
+import { getCurrentUser, isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import {
 	invalidateFollowSensitiveCaches,
@@ -36,6 +38,7 @@ interface RecommendedSiteInfo {
 
 type FollowMutationContext = {
 	previousSiteSubscriptionsData?: SiteSubscriptionsInfiniteData;
+	skipOptimisticFollow?: boolean;
 };
 
 export {
@@ -57,6 +60,42 @@ const withFollowingSource = < TParams extends FollowSiteParams | UnfollowSitePar
 } );
 
 const getNoticeTarget = ( feedUrl?: string ) => feedUrl ?? translate( 'this site' );
+
+interface UnverifiedFollowData {
+	pending_subscription?: boolean;
+}
+
+const isRecord = ( value: unknown ): value is Record< string, unknown > =>
+	typeof value === 'object' && value !== null;
+
+const getUnverifiedFollowData = ( error: unknown ): UnverifiedFollowData | undefined => {
+	if ( ! isRecord( error ) || error.error !== 'email_unverified' ) {
+		return undefined;
+	}
+
+	if ( ! isRecord( error.data ) ) {
+		return {};
+	}
+
+	return {
+		pending_subscription: error.data.pending_subscription === true,
+	};
+};
+
+const getUnverifiedFollowNoticeText = ( data: UnverifiedFollowData ) => {
+	if ( data.pending_subscription ) {
+		return translate(
+			'Please verify your email before subscribing. We will subscribe you once you do.',
+			{
+				comment: 'Shown when a follow is held until the user verifies their email.',
+			}
+		);
+	}
+
+	return translate( 'Please verify your email before subscribing. This site was not subscribed.', {
+		comment: 'Shown when an unverified follow was refused.',
+	} );
+};
 
 const getPositiveNumber = ( id?: number | string ): number | undefined => {
 	const numericId = typeof id === 'string' ? Number( id ) : id;
@@ -96,6 +135,11 @@ const rollbackSiteSubscriptions = ( queryClient: QueryClient, context?: FollowMu
 export const useFollowSite = ( recommendedSiteInfo?: RecommendedSiteInfo ) => {
 	const queryClient = useQueryClient();
 	const dispatch = useDispatch();
+	const resendEmailVerification = useResendEmailVerification( { from: 'wpcom-reader' } );
+	const currentUser = useSelector( getCurrentUser );
+	const isEmailVerified = useSelector( isCurrentUserEmailVerified );
+	// isCurrentUserEmailVerified is false when no user is loaded.
+	const skipOptimisticFollow = Boolean( currentUser ) && ! isEmailVerified;
 	const baseMutation = followSiteMutation( queryClient );
 
 	return useMutation( {
@@ -107,15 +151,20 @@ export const useFollowSite = ( recommendedSiteInfo?: RecommendedSiteInfo ) => {
 			return baseMutation.mutationFn( withFollowingSource( params ) );
 		},
 		onMutate: ( params ) => {
-			const context = getFollowMutationContext( queryClient );
+			const context: FollowMutationContext = {
+				...getFollowMutationContext( queryClient ),
+				skipOptimisticFollow,
+			};
 
-			if ( params.feedUrl ) {
-				patchReadSiteFollowStatus( queryClient, params.feedUrl, true );
-				patchSiteSubscription( queryClient, {
-					requestedFeedUrl: params.feedUrl,
-					subscription: createOptimisticFollow( { ...params, feedUrl: params.feedUrl } ),
-				} );
+			if ( skipOptimisticFollow || ! params.feedUrl ) {
+				return context;
 			}
+
+			patchReadSiteFollowStatus( queryClient, params.feedUrl, true );
+			patchSiteSubscription( queryClient, {
+				requestedFeedUrl: params.feedUrl,
+				subscription: createOptimisticFollow( { ...params, feedUrl: params.feedUrl } ),
+			} );
 
 			return context;
 		},
@@ -144,10 +193,27 @@ export const useFollowSite = ( recommendedSiteInfo?: RecommendedSiteInfo ) => {
 		},
 		onError: ( error, params, context ) => {
 			baseMutation.onError?.( error, withFollowingSource( params ), context );
-			rollbackSiteSubscriptions( queryClient, context );
-			if ( params.feedUrl ) {
-				patchReadSiteFollowStatus( queryClient, params.feedUrl, false );
+			if ( ! context?.skipOptimisticFollow ) {
+				rollbackSiteSubscriptions( queryClient, context );
+				if ( params.feedUrl ) {
+					patchReadSiteFollowStatus( queryClient, params.feedUrl, false );
+				}
 			}
+
+			const unverifiedFollow = getUnverifiedFollowData( error );
+			if ( unverifiedFollow ) {
+				dispatch(
+					errorNotice( getUnverifiedFollowNoticeText( unverifiedFollow ), {
+						id: 'resend-verification-email',
+						button: translate( 'Resend verification email' ),
+						onClick: () => {
+							resendEmailVerification();
+						},
+					} )
+				);
+				return;
+			}
+
 			dispatch(
 				errorNotice(
 					translate( 'Sorry, there was a problem subscribing %(url)s. Please try again.', {
