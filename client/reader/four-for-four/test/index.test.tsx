@@ -96,6 +96,12 @@ function mockStatus( status: string | null, followedBlogIds: number[] = [] ) {
 		.reply( 200, { status, blog_id: 1, followed_blog_ids: followedBlogIds } );
 }
 
+function mockBlockedFollow() {
+	return nock( API )
+		.post( '/rest/v1.1/read/following/mine/new' )
+		.reply( 200, { subscribed: false, info: 'blocked' } );
+}
+
 function mockFollow( blogId: number, delayMs = 0 ) {
 	return nock( API )
 		.post( '/rest/v1.1/read/following/mine/new' )
@@ -374,6 +380,50 @@ describe( 'FourForFour', () => {
 				)
 			);
 			expect( screen.queryByRole( 'status' ) ).not.toBeInTheDocument();
+		} );
+	} );
+
+	describe( 'a follow the server refuses', () => {
+		it( 'names the site and does not count it toward the total', async () => {
+			const user = userEvent.setup();
+			mockStatus( 'opted_in', [ 3 ] );
+			mockCandidates( [ candidate( 2, 'Second Site' ) ] );
+			mockBlockedFollow();
+
+			renderWithProvider( <FourForFour />, { initialState, queryClient: createQueryClient() } );
+
+			await user.click( await screen.findByRole( 'button', { name: 'Subscribe' } ) );
+
+			expect( await screen.findByRole( 'alert' ) ).toHaveTextContent(
+				'We were unable to subscribe you to Second Site.'
+			);
+			expect( screen.getByRole( 'progressbar' ) ).toHaveAttribute( 'aria-valuenow', '1' );
+			expect( mockRecordReaderTracksEvent ).toHaveBeenCalledWith(
+				'calypso_reader_four_for_four_follow_failed',
+				{ blog_id: 2 }
+			);
+		} );
+
+		it( 'clears the message once the site is subscribed to', async () => {
+			const user = userEvent.setup();
+			mockStatus( 'opted_in', [ 3 ] );
+			mockCandidates( [ candidate( 2, 'Second Site' ) ] );
+			mockBlockedFollow();
+			mockFollow( 2 );
+			nock( API )
+				.post( '/wpcom/v2/read/four-for-four/progress', { blog_ids: [ 2 ] } )
+				.reply( 200, { status: 'opted_in', blog_id: 1, followed_blog_ids: [ 3, 2 ] } );
+
+			renderWithProvider( <FourForFour />, { initialState, queryClient: createQueryClient() } );
+
+			const subscribe = await screen.findByRole( 'button', { name: 'Subscribe' } );
+			await user.click( subscribe );
+			await screen.findByRole( 'alert' );
+
+			await user.click( subscribe );
+
+			await waitFor( () => expect( screen.queryByRole( 'alert' ) ).not.toBeInTheDocument() );
+			expect( screen.getByRole( 'progressbar' ) ).toHaveAttribute( 'aria-valuenow', '2' );
 		} );
 	} );
 
