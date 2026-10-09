@@ -17,6 +17,7 @@ import { Fragment, useEffect, useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody, CardDivider } from '../../components/card';
+import Notice from '../../components/notice';
 import { PageHeader } from '../../components/page-header';
 import { Text } from '../../components/text';
 import type { Site } from '@automattic/api-core';
@@ -148,6 +149,13 @@ export function StartedDIFMContentInfo( { site }: { site: Site } ) {
 						</Fragment>
 					) ) }
 				</Card>
+				{ ! site.site_migration?.in_progress && (
+					<Notice variant="info">
+						{ __(
+							'Heads up: if it has been more than 3 business days since you started this migration, please check your email — we may have asked for admin credentials for your source site to begin the migration. Reply to that email or contact support if you need help.'
+						) }
+					</Notice>
+				) }
 				{ ticketId && (
 					<ButtonStack justify="flex-start">
 						<Button
