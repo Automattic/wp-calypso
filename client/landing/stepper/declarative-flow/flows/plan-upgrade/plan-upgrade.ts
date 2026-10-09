@@ -1,3 +1,4 @@
+import { isAllowedRedirectUrl } from '@automattic/calypso-url';
 import { PLAN_UPGRADE_FLOW } from '@automattic/onboarding';
 import { encodeProductForUrl } from '@automattic/wpcom-checkout';
 import { resolveSelect } from '@wordpress/data';
@@ -69,11 +70,17 @@ const planUpgradeFlow: FlowV2< typeof initialize > = {
 		const query = useQuery();
 		const selectedFeature = query.get( 'feature' ) ?? undefined;
 		const backTo = query.get( 'back_to' ) ?? query.get( 'cancel_to' ) ?? undefined;
+		const siteHostname = query.get( 'siteSlug' )?.split( '::' )[ 0 ];
 
 		// Validate back_to to prevent open redirect - must not be external (expect for allowed origins).
 		const isValidBackTo = dashboardOrigins().some( ( origin ) => backTo?.startsWith( origin ) );
+		// The site's own host, such as its wp-admin, is safe: initialize() only runs for sites the user manages.
+		const isSiteBackTo =
+			!! backTo && !! siteHostname && isAllowedRedirectUrl( backTo, [ siteHostname ] );
 		const safeBackTo =
-			backTo && ( ! isExternal( backTo ) || isValidBackTo ) ? backTo : dashboardLink( '/sites' );
+			backTo && ( ! isExternal( backTo ) || isValidBackTo || isSiteBackTo )
+				? backTo
+				: dashboardLink( '/sites' );
 
 		return {
 			[ STEPS.UNIFIED_PLANS.slug ]: {
