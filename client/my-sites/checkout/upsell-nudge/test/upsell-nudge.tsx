@@ -3,8 +3,8 @@
  */
 // @ts-nocheck - TODO: Fix TypeScript issues
 
+import { siteByIdQuery } from '@automattic/api-queries';
 import page from '@automattic/calypso-router';
-import { Plans, ProductsList } from '@automattic/data-stores';
 import {
 	createShoppingCartManagerClient,
 	getEmptyResponseCart,
@@ -17,6 +17,7 @@ import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { Provider as ReduxProvider } from 'react-redux';
 import {
+	createTestSite,
 	mockCartEndpoint,
 	mockGetSupportedCountriesEndpoint,
 } from 'calypso/my-sites/checkout/src/test/util';
@@ -27,61 +28,13 @@ import initialReducer from 'calypso/state/reducer';
 import { setStore } from 'calypso/state/redux-store';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import UpsellNudge, { PROFESSIONAL_EMAIL_UPSELL } from '../index';
+import type { Site } from '@automattic/api-core';
 import type { StoredPaymentMethodCard } from '@automattic/wpcom-checkout';
 
 jest.mock( '@automattic/calypso-router', () => jest.fn() );
-jest.mock( '@automattic/data-stores', () => ( {
-	...jest.requireActual( '@automattic/data-stores' ),
-	ProductsList: {
-		...jest.requireActual( '@automattic/data-stores' ).ProductsList,
-		useProducts: jest.fn(),
-	},
-	Plans: {
-		...jest.requireActual( '@automattic/data-stores' ).Plans,
-		usePlans: jest.fn(),
-		useCurrentPlan: jest.fn(),
-		usePricingMetaForGridPlans: jest.fn(),
-	},
-} ) );
-
 const mockCountries: CountryListItem[] = [
 	{ code: 'US', has_postal_codes: true, name: 'United States', vat_supported: false },
 ];
-
-const mockDataStorePlans = {
-	'business-bundle': {
-		planSlug: 'business-bundle',
-		pricing: {
-			currencyCode: 'USD',
-			billPeriod: 365,
-			originalPrice: {
-				full: 30000,
-				monthly: 30000,
-			},
-			discountedPrice: {
-				full: 30000,
-				monthly: 30000,
-			},
-		},
-	},
-};
-
-const mockDataStoreProducts = {
-	'business-bundle': {
-		id: 1008,
-		productSlug: 'business-bundle',
-	},
-
-	wp_titan_mail_yearly: {
-		id: 401,
-		productSlug: 'wp_titan_mail_yearly',
-	},
-
-	wp_titan_mail_monthly: {
-		id: 400,
-		productSlug: 'wp_titan_mail_monthly',
-	},
-};
 
 const mockProducts = {
 	'business-bundle': {
@@ -235,6 +188,14 @@ function createTestReduxStore() {
 	return reduxStore;
 }
 
+function createTestQueryClient( site?: Partial< Site > ) {
+	const queryClient = new QueryClient();
+	const { queryKey } = siteByIdQuery( siteId );
+	queryClient.setQueryDefaults( queryKey, { staleTime: Infinity } );
+	queryClient.setQueryData( queryKey, createTestSite( { ID: siteId, ...site } ) );
+	return queryClient;
+}
+
 describe( 'UpsellNudge', () => {
 	const currentData = { cards: [] };
 
@@ -249,21 +210,9 @@ describe( 'UpsellNudge', () => {
 		nock( 'https://public-api.wordpress.com' )
 			.get( '/rest/v1.1/products?type=all' )
 			.reply( 200, () => mockProducts );
-		Plans.useCurrentPlan.mockImplementation( () => ( {
-			[ 'business-bundle' ]: mockDataStorePlans[ 'business-bundle' ],
-		} ) );
-		Plans.usePlans.mockImplementation( () => ( {
-			data: {
-				[ 'business-bundle' ]: mockDataStorePlans,
-			},
-		} ) );
-		Plans.usePricingMetaForGridPlans.mockImplementation( () => ( {
-			[ 'business-bundle' ]: {
-				...mockDataStorePlans[ 'business-bundle' ].pricing,
-				billingPeriod: mockDataStorePlans[ 'business-bundle' ].pricing.billPeriod,
-			},
-		} ) );
-		ProductsList.useProducts.mockImplementation( () => ( { data: mockDataStoreProducts } ) );
+		nock( 'https://public-api.wordpress.com' )
+			.get( '/rest/v1.1/products/' )
+			.reply( 200, () => mockProducts );
 	} );
 
 	afterAll( () => {
@@ -276,7 +225,7 @@ describe( 'UpsellNudge', () => {
 			.get( new RegExp( '^/rest/v1.2/me/payment-methods' ) )
 			.reply( 200, () => currentData.cards );
 		const user = userEvent.setup();
-		const queryClient = new QueryClient();
+		const queryClient = createTestQueryClient();
 		const initialCart = getEmptyResponseCart();
 		const mockCartFunctions = mockCartEndpoint( initialCart, 'USD', 'US' );
 		const shoppingCartClient = createShoppingCartManagerClient( mockCartFunctions );
@@ -316,7 +265,7 @@ describe( 'UpsellNudge', () => {
 			.get( new RegExp( '^/rest/v1.2/me/payment-methods' ) )
 			.reply( 200, () => [] );
 		const user = userEvent.setup();
-		const queryClient = new QueryClient();
+		const queryClient = createTestQueryClient();
 		const initialCart = getEmptyResponseCart();
 		const mockCartFunctions = mockCartEndpoint( initialCart, 'USD', 'US' );
 		const shoppingCartClient = createShoppingCartManagerClient( mockCartFunctions );
@@ -354,6 +303,59 @@ describe( 'UpsellNudge', () => {
 				.getState()
 				.responseCart.products.some(
 					( product ) => product.product_id === mockProducts.wp_titan_mail_monthly.product_id
+				)
+		).toBeTruthy();
+	} );
+
+	it( 'adds yearly email to the cart when the site has a yearly plan', async () => {
+		nock( 'https://public-api.wordpress.com' )
+			.get( new RegExp( '^/rest/v1.2/me/payment-methods' ) )
+			.reply( 200, () => [] );
+		const user = userEvent.setup();
+		const queryClient = createTestQueryClient( {
+			plan: {
+				product_slug: 'business-bundle',
+				is_free: false,
+				expired: false,
+				billing_period: 'Yearly',
+			},
+		} );
+		const initialCart = getEmptyResponseCart();
+		const mockCartFunctions = mockCartEndpoint( initialCart, 'USD', 'US' );
+		const shoppingCartClient = createShoppingCartManagerClient( mockCartFunctions );
+		mockGetSupportedCountriesEndpoint( mockCountries );
+
+		render(
+			<ReduxProvider store={ createTestReduxStore() }>
+				<QueryClientProvider client={ queryClient }>
+					<ShoppingCartProvider managerClient={ shoppingCartClient }>
+						<UpsellNudge
+							upsellType={ PROFESSIONAL_EMAIL_UPSELL }
+							upgradeItem="example.com"
+							receiptId={ 12345 }
+							siteSlugParam="example.com"
+						/>
+					</ShoppingCartProvider>
+				</QueryClientProvider>
+			</ReduxProvider>
+		);
+
+		await user.type( await screen.findByLabelText( /Enter email address/ ), 'testuser' );
+		await user.type(
+			await screen.findByLabelText( /Set password/ ),
+			'aadjhaduhaidwahdawdhakjdbakdjbw'
+		);
+		await user.click( await screen.findByText( 'Add Professional Email' ) );
+		await waitFor( () => {
+			expect( page ).toHaveBeenCalledWith( '/checkout/example.com' );
+		} );
+
+		expect(
+			shoppingCartClient
+				.forCartKey( siteId )
+				.getState()
+				.responseCart.products.some(
+					( product ) => product.product_id === mockProducts.wp_titan_mail_yearly.product_id
 				)
 		).toBeTruthy();
 	} );

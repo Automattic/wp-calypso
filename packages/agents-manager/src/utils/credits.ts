@@ -1,35 +1,56 @@
-import { __, sprintf } from '@wordpress/i18n';
-import { getBrowserSafeLocale } from 'i18n-calypso';
-import type { ProgressRingTone } from '@automattic/agenttic-ui';
+import { __, _n, sprintf } from '@wordpress/i18n';
+import type { StatusIndicatorTone } from '@automattic/agenttic-ui';
 
 export type CreditsPlan = 'free' | 'paid';
 export type CreditsPlanTier = 'personal' | 'premium' | 'business' | 'commerce';
 
 /** One balance shown as a row in the credits popover. */
-export interface CreditsPool {
-	id: 'free' | 'plan' | 'topups';
-	label: string;
-	/** Remaining share of this pool, 0–100. */
-	percent: number;
-	/** Reset or expiry, already formatted for display. */
-	dateLabel?: string;
-	remaining?: number;
-	total?: number;
-}
+export type CreditsPool =
+	| {
+			id: 'free' | 'plan';
+			label: string;
+			/** Remaining share of this pool, 0–100. */
+			percent: number;
+			/** Reset or expiry, already formatted for display. */
+			dateLabel?: string;
+			remaining?: number;
+			total?: number;
+	  }
+	| {
+			/** Top-ups have no allowance or reset, so the row shows their balance alone. */
+			id: 'topups';
+			label: string;
+			remaining: number;
+			percent?: never;
+			dateLabel?: never;
+			total?: never;
+	  };
 
-export interface CreditsStatus {
-	plan: CreditsPlan;
+interface CreditsStatusBase {
 	/** Known paid tier supplied by the server; absent for older or unsupported metadata. */
 	planTier?: CreditsPlanTier;
-	/** Overall remaining share, 0–100; drives the ring and tooltip. */
+	/** Overall remaining share, 0–100; drives the free-plan dot, tooltip and notice. */
 	percent: number;
 	pools: CreditsPool[];
-	/** Exact balance when supplied by the server; display rounding never drives gating. */
-	remaining?: number;
 }
 
-/** Low-balance threshold for the ring tone and credits notice. */
+export type CreditsStatus =
+	| ( CreditsStatusBase & {
+			plan: 'free';
+			/** Exact balance when a server supplies one, which demo mode doesn't. */
+			remaining?: number;
+	  } )
+	| ( CreditsStatusBase & {
+			plan: 'paid';
+			/** Exact balance across the plan and top-ups; display rounding never drives gating. */
+			remaining: number;
+	  } );
+
+/** Free-plan low-balance percentage, for the dot tone and the notice. */
 export const CREDITS_LOW_THRESHOLD = 20;
+
+/** Paid balance, in credits, below which the dot turns red and the low-balance notice shows. */
+export const CREDITS_LOW_BALANCE = 20000;
 
 export function clampPercent( percent: number ): number {
 	if ( ! Number.isFinite( percent ) ) {
@@ -60,59 +81,77 @@ export function isCreditsExhausted( status: CreditsStatus ): boolean {
 		: clampPercent( status.percent ) <= 0;
 }
 
+/**
+ * Low but not exhausted: paid plans by the combined balance against
+ * `CREDITS_LOW_BALANCE`, free plans by percentage against `threshold`.
+ */
 export function isCreditsLow(
 	status: CreditsStatus,
 	threshold: number = CREDITS_LOW_THRESHOLD
 ): boolean {
-	return status.plan === 'free' && ! isCreditsExhausted( status ) && status.percent <= threshold;
+	if ( isCreditsExhausted( status ) ) {
+		return false;
+	}
+
+	return status.plan === 'paid'
+		? status.remaining < CREDITS_LOW_BALANCE
+		: status.percent <= threshold;
 }
 
 /**
- * Low or exhausted balances use the error tone on every plan. Above the
- * threshold, paid plans stay muted and free plans use the primary tone.
+ * Low or exhausted balances use the error tone, by the same rule as the
+ * credits notices. Otherwise paid plans stay muted and free plans use the
+ * primary tone.
  */
 export function getCreditsTone(
 	status: CreditsStatus,
 	threshold: number = CREDITS_LOW_THRESHOLD
-): ProgressRingTone {
-	if ( status.percent <= threshold || isCreditsExhausted( status ) ) {
+): StatusIndicatorTone {
+	if ( isCreditsLow( status, threshold ) || isCreditsExhausted( status ) ) {
 		return 'error';
 	}
 
 	return status.plan === 'paid' ? 'muted' : 'primary';
 }
 
-/** Tooltip and screen-reader sentence for the ring. */
-export function getCreditsLabel( status: CreditsStatus ): string {
-	const percent = formatPercent( status.percent );
+/**
+ * Credits in short form: in full under 1,000, then in thousands with one
+ * decimal and a "k", rounded down so it never shows more than the site has.
+ * The number follows the browser's language.
+ */
+export function formatCreditsShort( credits: number ): string {
+	if ( credits < 1000 ) {
+		return credits.toLocaleString();
+	}
 
+	return sprintf(
+		/* translators: %s: thousands of credits, e.g. "8.5" or "67"; "k" abbreviates thousands */
+		__( '%sk', __i18n_text_domain__ ),
+		( Math.floor( credits / 100 ) / 10 ).toLocaleString( undefined, { maximumFractionDigits: 1 } )
+	);
+}
+
+/** An amount of credits left as a sentence, e.g. "67k credits left". */
+export function formatCreditsLeft( credits: number ): string {
+	return sprintf(
+		/* translators: %s: site credits left in short form, e.g. "800" or "10.8k" */
+		_n( '%s credit left', '%s credits left', credits, __i18n_text_domain__ ),
+		formatCreditsShort( credits )
+	);
+}
+
+/** Tooltip and screen-reader sentence for the dot button. */
+export function getCreditsLabel( status: CreditsStatus ): string {
 	if ( status.plan === 'paid' ) {
-		// The aggregate across the plan and top-up pools, hence "site credits"
-		// (the popover's heading), not the monthly allowance alone.
-		return sprintf(
-			/* translators: %s: percentage of the site's credits left, e.g. "72" or "<1" */
-			__( '%s%% of site credits left', __i18n_text_domain__ ),
-			percent
-		);
+		// The combined balance across the plan and top-ups, not the monthly allowance alone.
+		return formatCreditsLeft( status.remaining );
 	}
 
 	return sprintf(
 		/* translators: %s: percentage of free credits left, e.g. "15" or "<1" */
 		__( '%s%% of free credits left', __i18n_text_domain__ ),
-		percent
+		formatPercent( status.percent )
 	);
-}
-
-// The interface locale, not the browser's, so the figures match the
-// translated sentence around them. The browser-safe accessor keeps the
-// regional variant (`de-ch`) in a form `Intl` accepts.
-function formatCredits( value: number ): string {
-	const locale = getBrowserSafeLocale() ?? 'en';
-	try {
-		return value.toLocaleString( locale );
-	} catch {
-		return value.toLocaleString( 'en' );
-	}
 }
 
 export function formatCreditsDetail( pool: CreditsPool ): string | undefined {
@@ -121,15 +160,15 @@ export function formatCreditsDetail( pool: CreditsPool ): string | undefined {
 	}
 
 	return sprintf(
-		/* translators: 1: credits remaining, 2: credits in the pool */
-		__( '%1$s of %2$s credits', __i18n_text_domain__ ),
-		formatCredits( pool.remaining ),
-		formatCredits( pool.total )
+		/* translators: 1: credits left in the pool, 2: credits in the pool (sets the plural), both in short form, e.g. "10.8k" and "15k" */
+		_n( '%1$s of %2$s credit left', '%1$s of %2$s credits left', pool.total, __i18n_text_domain__ ),
+		formatCreditsShort( pool.remaining ),
+		formatCreditsShort( pool.total )
 	);
 }
 
-// Mocked balances until the backend snapshot lands. Plan credits are spent
-// before top-ups, so the aggregate drains the plan pool first.
+// Demo-mode balances for chats with no live site (`?am_credits`). Plan credits
+// are spent before top-ups, so the aggregate drains the plan pool first.
 const MOCK_PLAN_TOTAL = 15000;
 const MOCK_TOPUPS_TOTAL = 1000;
 
@@ -143,6 +182,7 @@ export function buildMockCreditsStatus( plan: CreditsPlan, percent: number ): Cr
 		return {
 			plan,
 			percent,
+			remaining,
 			pools: [
 				{
 					id: 'plan',
@@ -155,10 +195,7 @@ export function buildMockCreditsStatus( plan: CreditsPlan, percent: number ): Cr
 				{
 					id: 'topups',
 					label: __( 'Top-ups', __i18n_text_domain__ ),
-					percent: ( 100 * topupsRemaining ) / MOCK_TOPUPS_TOTAL,
-					dateLabel: __( 'Expires 15 Sep 2027', __i18n_text_domain__ ),
 					remaining: topupsRemaining,
-					total: MOCK_TOPUPS_TOTAL,
 				},
 			],
 		};

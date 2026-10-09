@@ -3,12 +3,11 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
 import { Fragment, useState, useEffect, useRef } from 'react';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { LeftColumn, RightColumn } from 'calypso/my-sites/checkout/src/components/ie-fallback';
 import Spinner from 'calypso/my-sites/checkout/src/components/spinner';
 import { useMobileCheckoutStickySummaryExperiment } from 'calypso/my-sites/checkout/src/hooks/use-mobile-checkout-sticky-summary-experiment';
 import { logStashEvent } from 'calypso/my-sites/checkout/src/lib/analytics';
-import { useDispatch as useReduxDispatch } from 'calypso/state';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import AssignToAllPaymentMethods from './assign-to-all-payment-methods';
 import ContactFields from './contact-fields';
 import CreditCardCvvField from './credit-card-cvv-field';
@@ -78,7 +77,6 @@ export default function CreditCardFields( {
 		setUseForAllSubscriptions,
 		setForBusinessUse,
 	} = store;
-	const reduxDispatch = useReduxDispatch();
 
 	// We need the countryCode for the country specific payment fields which have
 	// no country selector but require country data during validation and submit
@@ -103,13 +101,11 @@ export default function CreditCardFields( {
 		}
 
 		if ( input.error && input.error.message ) {
-			reduxDispatch(
-				recordTracksEvent( 'calypso_checkout_composite_stripe_field_invalid_error', {
-					error_type: 'Stripe field error',
-					error_field: input.elementType,
-					error_message: input.error.message,
-				} )
-			);
+			recordTracksEvent( 'calypso_checkout_composite_stripe_field_invalid_error', {
+				error_type: 'Stripe field error',
+				error_field: input.elementType,
+				error_message: input.error.message,
+			} );
 			setCardDataError( input.elementType, input.error.message );
 			return;
 		}

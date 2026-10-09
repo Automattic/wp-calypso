@@ -95,6 +95,10 @@ export function buildOmnibarNodesFromAdminBarNodes(
 				siteActionNodes.push( omnibarNode );
 				break;
 			}
+			case 'stats': {
+				siteActionNodes.push( omnibarNode );
+				break;
+			}
 			case 'my-account': {
 				const doc = new DOMParser().parseFromString( node.title || '', 'text/html' );
 				const avatar = doc.querySelector( 'img' );
@@ -129,12 +133,6 @@ export function buildOmnibarNodesFromAdminBarNodes(
 					displayName: doc.querySelector( '.display-name' )?.textContent?.trim(),
 					username: doc.querySelector( '.username' )?.textContent?.trim(),
 				};
-				break;
-			}
-			default: {
-				if ( ! node.parent ) {
-					siteActionNodes.push( omnibarNode );
-				}
 				break;
 			}
 		}

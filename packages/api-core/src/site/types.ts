@@ -51,6 +51,8 @@ export interface SiteOptions {
 	/** Whether a plan change would move the site off the pre-2026 feature gating. */
 	is_legacy_gating_site?: boolean;
 	is_wpforteams_site?: boolean;
+	/** Slugs of the active plugins that use the Jetpack connection, e.g. `jetpack-backup`. */
+	jetpack_connection_active_plugins?: string[];
 	jetpack_recovery_mode_status?: {
 		recovery_mode_email_last_sent?: number;
 		recovery_session_entered_at?: number;
@@ -58,6 +60,7 @@ export interface SiteOptions {
 		recovery_session_errors?: JetpackRecoverySessionError[];
 	} | null;
 	jetpack_sso_require_two_step?: boolean;
+	jetpack_version?: string;
 	migration_source_site_domain?: string;
 	p2_hub_blog_id?: number;
 	site_creation_flow?: string;
@@ -112,7 +115,6 @@ export interface Site {
 	is_coming_soon: boolean;
 	is_private: boolean;
 	is_wpcom_atomic: boolean;
-	is_wpcom_flex: boolean;
 	is_wpcom_staging_site: boolean;
 	is_vip: boolean;
 	lang: string;

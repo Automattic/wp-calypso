@@ -33,22 +33,30 @@ const config = {
 	supports: { ...APP_CONTEXT_DEFAULT_CONFIG.supports, agency: agencySupports },
 };
 
-function mockAgency( capabilities: string[], amplifyAllowed = true ) {
+function mockAgency(
+	capabilities: string[],
+	amplifyAllowed = true,
+	partnerDirectoryAllowed = true
+) {
 	nock( 'https://public-api.wordpress.com' )
 		.persist()
 		.get( '/wpcom/v2/agency' )
 		.reply( 200, [
 			{
 				id: 1,
-				partner_directory: { allowed: true, directories: [] },
+				partner_directory: { allowed: partnerDirectoryAllowed, directories: [] },
 				amplify: { allowed: amplifyAllowed },
 				user: { capabilities },
 			},
 		] );
 }
 
-async function renderSidebar( capabilities: string[], amplifyAllowed = true ) {
-	mockAgency( capabilities, amplifyAllowed );
+async function renderSidebar(
+	capabilities: string[],
+	amplifyAllowed = true,
+	partnerDirectoryAllowed = true
+) {
+	mockAgency( capabilities, amplifyAllowed, partnerDirectoryAllowed );
 	render(
 		<AppProvider config={ config }>
 			<AgencySidebar />
@@ -80,7 +88,7 @@ describe( '<AgencySidebar>', () => {
 		expect( screen.getByRole( 'button', { name: 'Grow' } ) ).toBeVisible();
 		expect( screen.getByRole( 'button', { name: 'Earn' } ) ).toBeVisible();
 		expect( screen.getByRole( 'button', { name: 'Agency' } ) ).toBeVisible();
-		for ( const name of [ 'Hosting', 'Products', 'Purchases', 'Exclusive offers' ] ) {
+		for ( const name of [ 'Hosting', 'Plugins and add-ons', 'Purchases', 'Exclusive offers' ] ) {
 			expect( screen.getByRole( 'link', { name } ) ).toBeVisible();
 		}
 	} );
@@ -174,7 +182,7 @@ describe( '<AgencySidebar>', () => {
 
 		expect( screen.getByRole( 'button', { name: 'Marketplace' } ) ).toBeVisible();
 		expect( screen.getByRole( 'link', { name: 'Hosting' } ) ).toBeVisible();
-		expect( screen.getByRole( 'link', { name: 'Products' } ) ).toBeVisible();
+		expect( screen.getByRole( 'link', { name: 'Plugins and add-ons' } ) ).toBeVisible();
 		expect( screen.queryByRole( 'link', { name: 'Exclusive offers' } ) ).not.toBeInTheDocument();
 		expect( screen.queryByRole( 'link', { name: 'Purchases' } ) ).not.toBeInTheDocument();
 	} );
@@ -185,18 +193,24 @@ describe( '<AgencySidebar>', () => {
 		expect( screen.getByRole( 'button', { name: 'Marketplace' } ) ).toBeVisible();
 		expect( screen.getByRole( 'link', { name: 'Purchases' } ) ).toBeVisible();
 		expect( screen.queryByRole( 'link', { name: 'Hosting' } ) ).not.toBeInTheDocument();
-		expect( screen.queryByRole( 'link', { name: 'Products' } ) ).not.toBeInTheDocument();
+		expect( screen.queryByRole( 'link', { name: 'Plugins and add-ons' } ) ).not.toBeInTheDocument();
 	} );
 
-	// Partner Directory is gated by both an agency flag
-	// (`partner_directory.allowed`) and a capability. `mockAgency` always
-	// reports the flag on, so these cases isolate the capability gate.
+	// Only the capability hides Partner Directories. Agencies below Agency
+	// Partner (`partner_directory.allowed` off) still see the item, and the
+	// route shows them the tier upsell.
 	test( 'shows Partner Directories under Grow when the user holds the capability', async () => {
 		await renderSidebar( [ 'a4a_read_partner_directory' ] );
 
 		expect( screen.getByRole( 'button', { name: 'Grow' } ) ).toBeVisible();
 		expect( screen.getByRole( 'link', { name: 'Partner Directories' } ) ).toBeVisible();
 		expect( screen.queryByRole( 'link', { name: 'Agency tier' } ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'shows Partner Directories to agencies below Agency Partner', async () => {
+		await renderSidebar( [ 'a4a_read_partner_directory' ], true, false );
+
+		expect( screen.getByRole( 'link', { name: 'Partner Directories' } ) ).toBeVisible();
 	} );
 
 	test( 'hides Partner Directories when the user lacks the capability', async () => {

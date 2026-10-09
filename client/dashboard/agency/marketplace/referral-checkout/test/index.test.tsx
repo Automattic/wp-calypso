@@ -10,6 +10,12 @@ import ReferralCheckout from '../index';
 
 const API = 'https://public-api.wordpress.com';
 const AGENCY_ID = 123;
+const DEV_SITE_ID = 55;
+
+let mockSearch: { referral_blog_id?: number } = {};
+jest.mock( '../../../../app/router/agency', () => ( {
+	marketplaceReferralCheckoutRoute: { useSearch: () => mockSearch },
+} ) );
 
 const products = [
 	{
@@ -105,6 +111,7 @@ describe( '<ReferralCheckout>', () => {
 	afterEach( () => {
 		nock.cleanAll();
 		sessionStorage.clear();
+		mockSearch = {};
 	} );
 
 	test( 'lists the cart with what the client pays and the commission', async () => {
@@ -165,6 +172,64 @@ describe( '<ReferralCheckout>', () => {
 		);
 	} );
 
+	test( 'refers the plan of a development site with its license, leaving the cart alone', async () => {
+		mockSearch = { referral_blog_id: DEV_SITE_ID };
+		mockApi();
+		nock( API )
+			.get( '/wpcom/v2/agency/license/dev-site' )
+			.query( { agency_id: String( AGENCY_ID ), blog_id: String( DEV_SITE_ID ) } )
+			.reply( 200, {
+				a4a_site_id: 1,
+				license_id: 777,
+				product_id: 2112,
+				site_url: 'https://dev.example.com',
+			} );
+		let body: Record< string, unknown > | undefined;
+		nock( API )
+			.post( `/wpcom/v2/agency/${ AGENCY_ID }/referrals`, ( requestBody ) => {
+				body = requestBody;
+				return true;
+			} )
+			.reply( 200, {
+				id: 9,
+				client: { id: 1, email: 'client@example.com' },
+				products: [],
+				status: 'pending',
+				checkout_url: 'https://wordpress.com/checkout/agency/referral?x=1',
+			} );
+		const user = userEvent.setup();
+		render( <ReferralCheckout /> );
+
+		expect( await screen.findByText( 'Site: dev.example.com' ) ).toBeVisible();
+		// The license is on the monthly product, so the line is billed monthly whatever the saved term says.
+		expect( screen.getAllByText( /\/mo$/ ).length ).toBeGreaterThan( 0 );
+		expect( screen.queryByText( /\/yr$/ ) ).not.toBeInTheDocument();
+		await user.type( screen.getByLabelText( 'Client’s email address' ), 'client@example.com' );
+		await user.click( screen.getByRole( 'button', { name: 'Send to client' } ) );
+
+		await waitFor( () => expect( body ).toBeDefined() );
+		expect( body ).toMatchObject( {
+			product_ids: '2112',
+			licenses: [ { product_id: 2112, license_id: 777 } ],
+		} );
+		expect( sessionStorage.getItem( 'referrals-shopping-card-selected-items' ) ).toBe(
+			'jetpack-backup-t1:1'
+		);
+	} );
+
+	test( 'explains when the development site has no plan to refer', async () => {
+		mockSearch = { referral_blog_id: DEV_SITE_ID };
+		mockApi();
+		nock( API )
+			.get( '/wpcom/v2/agency/license/dev-site' )
+			.query( true )
+			.reply( 404, { code: 'not_found', message: 'License not found' } );
+		render( <ReferralCheckout /> );
+
+		expect( await screen.findByText( 'Failed to load the site’s plan.' ) ).toBeVisible();
+		expect( screen.queryByText( 'VaultPress Backup 10GB' ) ).not.toBeInTheDocument();
+	} );
+
 	test( 'sends one payment request when Send is clicked twice', async () => {
 		mockApi();
 		let requests = 0;
@@ -194,51 +259,30 @@ describe( '<ReferralCheckout>', () => {
 		expect( requests ).toBe( 1 );
 	} );
 
-	test( 'keeps a free cart from an agency that cannot issue licenses', async () => {
-		fillCart( 'jetpack-stats-free' );
+	test( 'sends a free cart to the agency checkout, even while an invoice is overdue', async () => {
+		fillCart( 'jetpack-stats-free', 'jetpack-boost-free' );
 		mockApi( { agency: { can_issue_licenses: false }, catalog: freeProducts } );
 		render( <ReferralCheckout /> );
 
-		expect( await screen.findByRole( 'button', { name: 'Purchase' } ) ).toBeDisabled();
-	} );
-
-	test( 'lets an agency that can issue licenses purchase a free cart', async () => {
-		fillCart( 'jetpack-stats-free' );
-		mockApi( { catalog: freeProducts } );
-		render( <ReferralCheckout /> );
-
-		expect( await screen.findByRole( 'button', { name: 'Purchase' } ) ).toBeEnabled();
-	} );
-
-	test( 'keeps only the lines that failed after a partial free purchase', async () => {
-		fillCart( 'jetpack-stats-free', 'jetpack-boost-free' );
-		mockApi( { catalog: freeProducts } );
-		const issued: string[] = [];
-		nock( API )
-			.post(
-				'/wpcom/v2/jetpack-licensing/licenses',
-				( body ) => body.product === 'jetpack-stats-free'
-			)
-			.reply( 200, () => {
-				issued.push( 'jetpack-stats-free' );
-				return [];
-			} );
-		nock( API )
-			.post(
-				'/wpcom/v2/jetpack-licensing/licenses',
-				( body ) => body.product === 'jetpack-boost-free'
-			)
-			.reply( 500, { code: 'error', message: 'Nope' } );
-		const user = userEvent.setup();
-		render( <ReferralCheckout /> );
-
-		await user.click( await screen.findByRole( 'button', { name: 'Purchase' } ) );
-
-		await waitFor( () =>
-			expect( sessionStorage.getItem( 'referrals-shopping-card-selected-items' ) ).toBe(
-				'jetpack-boost-free:1'
-			)
+		const url = new URL(
+			( await screen.findByRole( 'link', { name: 'Checkout' } ) ).getAttribute( 'href' ) ?? ''
 		);
-		expect( issued ).toEqual( [ 'jetpack-stats-free' ] );
+		expect( url.pathname ).toBe( '/checkout/agency/purchase' );
+		expect( url.searchParams.get( 'products' ) ).toBe(
+			'jetpack-stats-free:1,jetpack-boost-free:1'
+		);
+		expect( url.searchParams.get( 'redirect_to' ) ).toContain( '/purchases?cart=referral&' );
+	} );
+
+	test( 'sends a free cart from an agency on the previous billing system to its checkout', async () => {
+		fillCart( 'jetpack-stats-free' );
+		mockApi( { agency: { billing_system: 'legacy' }, catalog: freeProducts } );
+		render( <ReferralCheckout /> );
+
+		const url = new URL(
+			( await screen.findByRole( 'link', { name: 'Checkout' } ) ).getAttribute( 'href' ) ?? ''
+		);
+		expect( url.pathname ).toBe( '/marketplace/checkout' );
+		expect( url.searchParams.get( 'product_slug' ) ).toBe( 'jetpack-stats-free' );
 	} );
 } );

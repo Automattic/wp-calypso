@@ -13,6 +13,7 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import wpcom from 'calypso/lib/wp';
 import type { Step } from '../../types';
 import type { SiteSelect } from '@automattic/data-stores';
+import type { CurriedSelectorsOf, StoreDescriptor } from '@wordpress/data';
 
 const TIME_CHECK_TRANSFER_STATUS = 3000;
 const TRANSFER_TIMEOUT = 1000 * 300;
@@ -20,17 +21,23 @@ const TRANSFER_TIMEOUT = 1000 * 300;
 const wait = ( ms: number ) => new Promise( ( res ) => setTimeout( res, ms ) );
 
 const AutomatedCopySite: Step = function AutomatedCopySite( { navigation } ) {
-	const { submit } = navigation;
+	const { submit, exitFlow } = navigation;
 	const site = useSite();
 	const urlQueryParams = useQuery();
 	const siteSlug = urlQueryParams.get( 'siteSlug' );
 	const sourceSlug = urlQueryParams.get( 'sourceSlug' );
-	const sourceSite = useSelect(
-		( select ) =>
-			sourceSlug ? ( select( SITE_STORE ) as SiteSelect ).getSite( sourceSlug ) : undefined,
-		[ sourceSlug ]
+	const { sourceSiteId, hasResolvedDestinationSite } = useSelect(
+		( select ) => {
+			const siteStore = select( SITE_STORE ) as SiteSelect &
+				Pick< CurriedSelectorsOf< StoreDescriptor >, 'hasFinishedResolution' >;
+			return {
+				sourceSiteId: sourceSlug ? siteStore.getSite( sourceSlug )?.ID : undefined,
+				hasResolvedDestinationSite:
+					!! siteSlug && siteStore.hasFinishedResolution( 'getSite', [ siteSlug ] ),
+			};
+		},
+		[ sourceSlug, siteSlug ]
 	);
-	const sourceSiteId = sourceSite?.ID;
 	const { setPendingAction, setProgress } = useDispatch( ONBOARD_STORE );
 	const { requestLatestAtomicTransfer } = useDispatch( SITE_STORE );
 	const { getSiteLatestAtomicTransfer, getSiteLatestAtomicTransferError } = useSelect(
@@ -40,6 +47,10 @@ const AutomatedCopySite: Step = function AutomatedCopySite( { navigation } ) {
 	const instanceRef = useRef< { siteId?: number; sourceSiteId?: number } >( {} );
 
 	useEffect( () => {
+		if ( hasResolvedDestinationSite && ! site?.ID ) {
+			exitFlow?.( '/sites' );
+			return;
+		}
 		if ( ! site?.ID || ! sourceSiteId ) {
 			return;
 		}
@@ -144,8 +155,10 @@ const AutomatedCopySite: Step = function AutomatedCopySite( { navigation } ) {
 
 		submit?.();
 	}, [
+		exitFlow,
 		getSiteLatestAtomicTransfer,
 		getSiteLatestAtomicTransferError,
+		hasResolvedDestinationSite,
 		requestLatestAtomicTransfer,
 		setPendingAction,
 		setProgress,

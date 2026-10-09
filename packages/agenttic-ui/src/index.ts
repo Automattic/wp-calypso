@@ -42,6 +42,8 @@ export { ActionButtons } from './components/chat/ChatInput';
 export type { ActionButton } from './components/chat/ChatInput';
 export { ProgressRing } from './components/ui/progress-ring';
 export type { ProgressRingProps, ProgressRingTone } from './components/ui/progress-ring';
+export { StatusIndicator } from './components/ui/status-indicator';
+export type { StatusIndicatorProps, StatusIndicatorTone } from './components/ui/status-indicator';
 export { Message } from './components/chat/Message';
 export { Suggestions } from './components/chat/Suggestions';
 export { Checklist } from './components/chat/Checklist';

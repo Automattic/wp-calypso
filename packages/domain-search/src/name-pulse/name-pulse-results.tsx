@@ -45,7 +45,7 @@ export const NamePulseResults = () => {
 	const hasTldsError = layout.exactGrid.show && isTldsError;
 	const { bundle, isLoading: isLoadingBundle } = useNamePulseBundle( bundleAnchors );
 	const bundleCard = bundle ? (
-		<NamePulseBundleCard key={ bundle.bundle_group_id } bundle={ bundle } />
+		<NamePulseBundleCard key={ bundle.bundle_group_id } bundle={ bundle } isWide={ ! exactMatch } />
 	) : null;
 
 	return (
@@ -105,6 +105,7 @@ export const NamePulseResults = () => {
 						isLoading={ isLoadingTop }
 						maxVisible={ topResultsCount }
 						skeletonCount={ topResultsCount }
+						variant="card"
 					/>
 				) }
 				{ ! exactMatch && bundleCard }

@@ -24,14 +24,14 @@ declare const agentsManagerData:
 	| {
 			agentProviders?: ( string | import( './utils/load-external-providers' ).LoadedProviders )[];
 			agentId?: string;
-			helpCenterUrl?: string;
 			/** Dev/internal context (localhost, jurassic, proxied a11ns, internal Atomic). Drives `is_test`. */
 			isDevMode?: boolean;
 			/** Whether the current request is attributed to an Automattician for tracking. */
 			isA11n?: boolean;
 			/**
 			 * The site's own usage-tracking opt-in, where the host has one (a WooCommerce
-			 * store's). `false` stops every Tracks event; absent means allowed.
+			 * store's). `false` stops every Tracks event; absent means allowed. Also sent
+			 * in the client context, where only `true` lets the orchestrator record events.
 			 */
 			isTrackingAllowed?: boolean;
 			/** Whether the site is WordPress.com-hosted (Simple/WoA). */
@@ -148,7 +148,6 @@ interface AgentsManagerActions {
 	chatNavigate: import( 'react-router-dom' ).NavigateFunction;
 	resumeChat: () => void;
 	isChatVisible: () => boolean;
-	getCurrentRoute: () => string;
 	isCompactMode?: boolean;
 	isChatEnabled?: boolean;
 	desktopMediaQuery?: string;
@@ -173,6 +172,15 @@ interface AgentsManagerActions {
  * Extend Window interface for cross-bundle data sharing.
  */
 interface Window {
+	/** Host configuration set before loading Agents Manager; applies to this document only. */
+	__agentsManagerConfig?: {
+		chatPresentation?: {
+			/** Allow closing or minimizing the chat. Defaults to true. */
+			dismissible?: boolean;
+			/** Show wp-admin and editor toolbar chat toggles. Defaults to true. */
+			showEntryPoints?: boolean;
+		};
+	};
 	__agentsManagerActions?: AgentsManagerActions;
 	/** Build commit injected by Calypso's server-rendered document; absent on widgets.wp.com bundles. */
 	COMMIT_SHA?: string;

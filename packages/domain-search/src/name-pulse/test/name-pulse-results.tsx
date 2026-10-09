@@ -133,7 +133,7 @@ const findNotice = () => findElement( '.name-pulse-notice' );
 
 const findExactMatchCard = () => findElement( '.name-pulse-exact-card[data-domain]' );
 
-const findBundleCard = () => findElement( '.bundle-card' );
+const findBundleCard = () => findElement( '.name-pulse-bundle-card' );
 
 const isAfterTopResults = ( element: HTMLElement ) =>
 	Boolean(
@@ -271,8 +271,7 @@ describe( 'NamePulseResults', () => {
 		expect( within( premium ).getByRole( 'button', { name: 'Add to cart' } ) ).toBeInTheDocument();
 
 		const sale = await findRow( 'icecream.site' );
-		expect( await within( sale ).findByText( 'Sale' ) ).toBeInTheDocument();
-		expect( within( sale ).getByText( '$6' ) ).toBeInTheDocument();
+		expect( await within( sale ).findByText( '$6' ) ).toBeInTheDocument();
 		expect( within( sale ).getByText( '/first year' ) ).toBeInTheDocument();
 		expect( within( sale ).getByText( '$48/year renewal' ) ).toBeInTheDocument();
 
@@ -333,7 +332,7 @@ describe( 'NamePulseResults', () => {
 		).toBeInTheDocument();
 
 		await waitFor( () => expect( rowFor( 'icecream.best' ) ).not.toBeNull() );
-		expect( within( rowFor( 'icecream.best' ) ).getByText( 'Sale' ) ).toBeInTheDocument();
+		expect( within( rowFor( 'icecream.best' ) ).getByText( '/first year' ) ).toBeInTheDocument();
 		expect( within( rowFor( 'creamyice.com' ) ).getByText( '$24' ) ).toBeInTheDocument();
 		expect( sectionRows( 'suggestions' ) ).toHaveLength( NAME_PULSE_SUGGESTIONS_FIXTURE.length );
 	} );
@@ -906,6 +905,44 @@ describe( 'NamePulseResults', () => {
 		expect( onContinue ).toHaveBeenCalledTimes( 1 );
 	} );
 
+	it( 'confirms the special requirements of the exact-match card before adding it to the cart', async () => {
+		const user = userEvent.setup();
+		const message = '.blog domains may require identity verification by the registry.';
+		const cart = buildCart();
+
+		render(
+			<NamePulseTestSearch
+				query="icecream.blog"
+				cart={ cart }
+				domainAvailability={ async ( domainName ) =>
+					buildAvailability( {
+						domain_name: domainName,
+						tld: 'blog',
+						policy_notices: [
+							{ type: 'identity_verification', label: 'Special requirements', message },
+						],
+					} )
+				}
+			/>
+		);
+
+		const card = within( await findExactMatchCard() );
+		await user.click( card.getByRole( 'button', { name: 'Add to cart' } ) );
+
+		const dialog = await screen.findByRole( 'dialog', { name: 'Special requirements' } );
+		expect( dialog ).toHaveTextContent( message );
+		expect( cart.onAddItem ).not.toHaveBeenCalled();
+
+		await user.click( within( dialog ).getByRole( 'button', { name: 'Add to cart' } ) );
+
+		await waitFor( () =>
+			expect( cart.onAddItem ).toHaveBeenCalledWith(
+				expect.objectContaining( { domain_name: 'icecream.blog' } )
+			)
+		);
+		await waitFor( () => expect( screen.queryByRole( 'dialog' ) ).not.toBeInTheDocument() );
+	} );
+
 	describe( 'bundle card', () => {
 		it( 'is not requested when bundle suggestions are off', async () => {
 			const bundleForDomain = jest.fn( async () => null );
@@ -916,7 +953,7 @@ describe( 'NamePulseResults', () => {
 			await waitFor( () => expect( domainsIn( 'top' ) ).toHaveLength( 3 ) );
 
 			expect( bundleForDomain ).not.toHaveBeenCalled();
-			expect( document.querySelector( '.bundle-card' ) ).toBeNull();
+			expect( document.querySelector( '.name-pulse-bundle-card' ) ).toBeNull();
 		} );
 
 		it( 'sits beside the exact-match card of a typed .com, anchored on it', async () => {
@@ -937,6 +974,7 @@ describe( 'NamePulseResults', () => {
 			expect( bundle.closest( '.name-pulse-featured' ) ).toContainElement(
 				await findExactMatchCard()
 			);
+			expect( bundle ).not.toHaveClass( 'name-pulse-bundle-card--wide' );
 			expect( within( bundle ).getByText( 'Protect your brand' ) ).toBeVisible();
 			expect( bundleForDomain ).toHaveBeenCalledWith( 'icecream.com' );
 			expect( onBundleShown ).toHaveBeenCalledTimes( 1 );
@@ -962,10 +1000,7 @@ describe( 'NamePulseResults', () => {
 			expect( bundle.closest( '.name-pulse-featured' ) ).not.toBeNull();
 			expect( domainsIn( 'top' ) ).toEqual( [ 'icecream.com', 'icecream.org', 'icecream.net' ] );
 			expect( bundleForDomain.mock.calls.map( ( [ fqdn ] ) => fqdn ) ).toEqual( [
-				'icecream.blog',
 				'icecream.com',
-				'icecream.org',
-				'icecream.net',
 			] );
 		} );
 
@@ -996,6 +1031,8 @@ describe( 'NamePulseResults', () => {
 
 			expect( document.querySelector( '.name-pulse-featured' ) ).toBeNull();
 			expect( isAfterTopResults( bundle ) ).toBe( true );
+			// Spans the row, so it lays the price out beside the TLDs.
+			expect( bundle ).toHaveClass( 'name-pulse-bundle-card--wide' );
 		} );
 
 		it( 'renders nothing when no anchor has a bundle', async () => {
@@ -1009,9 +1046,10 @@ describe( 'NamePulseResults', () => {
 				/>
 			);
 
-			await waitFor( () => expect( bundleForDomain ).toHaveBeenCalledTimes( 3 ) );
+			await waitFor( () => expect( bundleForDomain ).toHaveBeenCalledWith( 'icecream.com' ) );
 
-			expect( document.querySelector( '.bundle-card' ) ).toBeNull();
+			expect( bundleForDomain ).toHaveBeenCalledTimes( 1 );
+			expect( document.querySelector( '.name-pulse-bundle-card' ) ).toBeNull();
 		} );
 
 		it( 'adds every member to the cart in one go, and explains a bundle that is gone', async () => {

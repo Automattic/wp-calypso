@@ -13,9 +13,9 @@ import {
 	useShoppingCart,
 } from '@automattic/shopping-cart';
 import { useTranslate } from 'i18n-calypso';
-import { useDispatch } from 'react-redux';
 import SectionHeader from 'calypso/components/section-header';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import {
 	hasDomainRegistration,
 	hasTransferProduct,
@@ -25,7 +25,6 @@ import {
 } from 'calypso/lib/cart-values/cart-items';
 import { siteHasPaidPlan } from 'calypso/signup/steps/site-picker/site-picker-submit';
 import { useSelector } from 'calypso/state';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import useCartKey from '../use-cart-key';
 
@@ -165,7 +164,6 @@ export default function CartFreeUserPlanUpsell( { addItemToCart }: CartFreeUserP
 	const hasPaidPlan = siteHasPaidPlan( selectedSite );
 	const hasPlanInCart = hasPlan( responseCart );
 	const hasHundredYearDomainInCart = has100YearDomain( responseCart );
-	const dispatch = useDispatch();
 	const upsellProductSlug = PLAN_PERSONAL;
 	const upsellPlan = getPlan( upsellProductSlug );
 	const firstDomainInCart = responseCart.products.find( isRegistrationOrTransfer );
@@ -199,7 +197,7 @@ export default function CartFreeUserPlanUpsell( { addItemToCart }: CartFreeUserP
 
 		if ( planCartItem ) {
 			addItemToCart( planCartItem );
-			dispatch( recordTracksEvent( 'calypso_non_dwpo_checkout_plan_upsell_add_to_cart', {} ) );
+			recordTracksEvent( 'calypso_non_dwpo_checkout_plan_upsell_add_to_cart', {} );
 		}
 	};
 

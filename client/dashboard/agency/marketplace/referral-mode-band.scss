@@ -1,0 +1,127 @@
+@import '@wordpress/base-styles/colors';
+@import '@wordpress/base-styles/variables';
+
+.referral-mode-band {
+	--referral-mode-band-theme: var( --wp-admin-theme-color, #{$gray-900} );
+	--referral-mode-band-halo: color-mix( in srgb, var( --referral-mode-band-theme ) 20%, #{$white} );
+	--referral-mode-band-pin-halo: color-mix(
+		in srgb,
+		var( --dashboard-marketplace-referral__color ) 18%,
+		transparent
+	);
+	overflow: hidden;
+	// The steps follow the band's own width: the sidebar and the page decide how much room it has.
+	container: referral-mode-band / inline-size;
+}
+
+.referral-mode-band__layout {
+	display: grid;
+	grid-template-columns: minmax( 0, 1fr );
+}
+
+.referral-mode-band__intro {
+	align-self: center;
+	padding: 24px;
+}
+
+.referral-mode-band__status::before {
+	content: '';
+	display: inline-block;
+	inline-size: 8px;
+	block-size: 8px;
+	margin-inline-end: 8px;
+	border-radius: $radius-round;
+	background: var( --referral-mode-band-theme );
+	box-shadow: 0 0 0 4px var( --referral-mode-band-halo );
+	vertical-align: middle;
+}
+
+.referral-mode-band__headline {
+	text-wrap: balance;
+}
+
+.referral-mode-band__steps {
+	counter-reset: referral-mode-band-step;
+	display: grid;
+	grid-template-columns: repeat( 3, minmax( 0, 1fr ) );
+	gap: 24px;
+	margin: 0;
+	padding: 24px;
+	list-style: none;
+	background: var( --dashboard-marketplace-referral__tint-color );
+}
+
+.referral-mode-band__step {
+	counter-increment: referral-mode-band-step;
+	display: grid;
+	grid-template-columns: auto minmax( 0, 1fr );
+	grid-template-areas:
+		'art art'
+		'pin caption';
+	align-items: center;
+	justify-self: center;
+	gap: 12px 8px;
+	inline-size: 100%;
+	max-inline-size: 280px;
+
+	&::before {
+		content: counter( referral-mode-band-step );
+		grid-area: pin;
+		display: grid;
+		place-items: center;
+		inline-size: 18px;
+		block-size: 18px;
+		// The halo sits in the margin, so the pin takes the design's 26px.
+		margin: 4px;
+		border-radius: $radius-round;
+		background: var( --dashboard-marketplace-referral__color );
+		box-shadow: 0 0 0 4px var( --referral-mode-band-pin-halo );
+		color: var( --dashboard-marketplace-referral__on-color );
+		font-size: 10px;
+		font-weight: 600;
+		line-height: 1;
+	}
+}
+
+.referral-mode-band__art {
+	grid-area: art;
+	display: block;
+	inline-size: 100%;
+	block-size: auto;
+	border-radius: $radius-large;
+	box-shadow: $elevation-small;
+}
+
+.referral-mode-band__caption {
+	grid-area: caption;
+	text-wrap: balance;
+}
+
+@container referral-mode-band ( min-width: 1080px ) {
+	.referral-mode-band__layout {
+		grid-template-columns: minmax( 240px, 300px ) minmax( 0, 1fr );
+	}
+
+	.referral-mode-band__steps {
+		padding: 32px;
+	}
+}
+
+// Without the drawings, the band stays short on narrow screens.
+@container referral-mode-band ( max-width: 719px ) {
+	.referral-mode-band__steps {
+		grid-template-columns: minmax( 0, 1fr );
+		gap: 12px;
+		padding: 16px;
+	}
+
+	.referral-mode-band__step {
+		grid-template-areas: 'pin caption';
+		justify-self: stretch;
+		max-inline-size: none;
+	}
+
+	.referral-mode-band__art {
+		display: none;
+	}
+}

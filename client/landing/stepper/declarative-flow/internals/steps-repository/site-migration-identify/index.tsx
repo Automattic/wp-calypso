@@ -2,7 +2,7 @@ import { formatNumber } from '@automattic/number-formatters';
 import { Step } from '@automattic/onboarding';
 import { next, published, shield } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { type FC, useEffect, useState, useCallback } from 'react';
+import { type FC, useEffect, useState, useCallback, useRef } from 'react';
 import CaptureInput from 'calypso/blocks/import/capture/capture-input';
 import ScanningStep from 'calypso/blocks/import/scanning';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -35,6 +35,8 @@ export const Analyzer: FC< Props > = ( {
 } ) => {
 	const translate = useTranslate();
 	const [ siteURL, setSiteURL ] = useState< string >( '' );
+	const onCompleteRef = useRef( onComplete );
+	onCompleteRef.current = onComplete;
 	const {
 		data: siteInfo,
 		isError: hasError,
@@ -59,9 +61,9 @@ export const Analyzer: FC< Props > = ( {
 	useEffect( () => {
 		// Only complete when we have both site info AND hosting info (or hosting check failed)
 		if ( siteInfo && ( hostingProviderData || hasHostingError ) ) {
-			onComplete( siteInfo, hostingProviderData?.hosting_provider?.slug );
+			onCompleteRef.current( siteInfo, hostingProviderData?.hosting_provider?.slug );
 		}
-	}, [ onComplete, siteInfo, hostingProviderData, hasHostingError ] );
+	}, [ siteInfo, hostingProviderData, hasHostingError ] );
 
 	useEffect( () => {
 		onVisibilityChange?.( ! isScanning );

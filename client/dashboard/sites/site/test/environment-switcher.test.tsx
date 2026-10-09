@@ -110,6 +110,16 @@ function setupNock(
 	}
 }
 
+function mockSiteRequests() {
+	return nock( 'https://public-api.wordpress.com:443' )
+		.get( `/rest/v1.1/sites/${ mockProductionSiteWithStaging.ID }` )
+		.query( true )
+		.reply( 200, mockProductionSiteWithStaging )
+		.get( `/rest/v1.1/sites/${ mockStagingSite.ID }` )
+		.query( true )
+		.reply( 200, mockStagingSite );
+}
+
 /** Build a QueryClient with only client-managed state (no network endpoint). */
 function buildQueryClient(
 	productionSite: Site,
@@ -158,14 +168,18 @@ describe( 'EnvironmentSwitcher', () => {
 	afterEach( () => nock.cleanAll() );
 
 	describe( 'Environment Display', () => {
-		test( 'displays "Production" for production sites', () => {
+		test( 'displays "Production" for production sites', async () => {
+			const scope = mockSiteRequests();
 			render( <EnvironmentSwitcher site={ mockProductionSiteWithStaging } /> );
 			expect( screen.getByText( 'Production' ) ).toBeVisible();
+			await waitFor( () => expect( scope.isDone() ).toBe( true ) );
 		} );
 
-		test( 'displays "Staging" for staging sites', () => {
+		test( 'displays "Staging" for staging sites', async () => {
+			const scope = mockSiteRequests();
 			render( <EnvironmentSwitcher site={ mockStagingSite } /> );
 			expect( screen.getByText( 'Staging' ) ).toBeVisible();
+			await waitFor( () => expect( scope.isDone() ).toBe( true ) );
 		} );
 	} );
 
