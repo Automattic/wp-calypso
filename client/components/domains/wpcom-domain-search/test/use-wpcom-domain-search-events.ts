@@ -276,4 +276,95 @@ describe( 'useWPCOMDomainSearchEvents', () => {
 			} )
 		);
 	} );
+
+	describe( 'Name Pulse', () => {
+		const createStore = () => {
+			const store = {
+				getState: () => ( { currentUser: { id: null } } ),
+				subscribe: () => () => {},
+				dispatch: jest.fn(),
+			};
+
+			return store;
+		};
+
+		const getDispatchedTracksProperties = ( store: ReturnType< typeof createStore > ) =>
+			store.dispatch.mock.calls.flatMap( ( [ action ] ) =>
+				( action.meta?.analytics ?? [] )
+					.filter(
+						( entry: { payload: { service: string } } ) => entry.payload.service === 'tracks'
+					)
+					.map( ( entry: { payload: { properties: object } } ) => entry.payload.properties )
+			);
+
+		const renderEvents = ( isNamePulse?: boolean ) => {
+			const store = createStore();
+			const { result } = renderHookWithProvider(
+				() => useWPCOMDomainSearchEvents( { ...defaultProps, isNamePulse } ),
+				{ store }
+			);
+
+			return { events: result.current, store };
+		};
+
+		const bundle = { bundle_group_id: 'group', domains: [ {}, {} ] };
+
+		beforeEach( () => {
+			jest.mocked( recordTracksEvent ).mockClear();
+		} );
+
+		it( 'sends the classic events unchanged when Name Pulse is off', () => {
+			const { events, store } = renderEvents();
+
+			events.onPageView();
+			events.onShowMoreResults( 2 );
+			events.onBundleShown( bundle, 'card' );
+
+			const dispatched = getDispatchedTracksProperties( store );
+			expect( dispatched ).toHaveLength( 2 );
+			dispatched.forEach( ( properties ) =>
+				expect( properties ).not.toHaveProperty( 'is_name_pulse' )
+			);
+			expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_domain_bundle_shown', {
+				domain_bundle_group_id: 'group',
+				domain_count: 2,
+				placement: 'card',
+			} );
+		} );
+
+		it( 'marks every classic event with is_name_pulse on Name Pulse', () => {
+			const { events, store } = renderEvents( true );
+
+			events.onPageView();
+			events.onShowMoreResults( 2 );
+			events.onBundleShown( bundle, 'card' );
+
+			const dispatched = getDispatchedTracksProperties( store );
+			expect( dispatched ).toHaveLength( 2 );
+			dispatched.forEach( ( properties ) =>
+				expect( properties ).toHaveProperty( 'is_name_pulse', true )
+			);
+			expect( recordTracksEvent ).toHaveBeenCalledWith(
+				'calypso_domain_bundle_shown',
+				expect.objectContaining( { is_name_pulse: true } )
+			);
+		} );
+
+		it( 'records Name Pulse events with the section, flow and login state', () => {
+			const { events } = renderEvents( true );
+
+			events.onNamePulseTracksEvent( 'search_settled', { query_length: 5 } );
+
+			expect( recordTracksEvent ).toHaveBeenCalledWith(
+				'calypso_domain_search_name_pulse_search_settled',
+				{
+					section: 'analytics-section',
+					flow_name: 'flow-name',
+					is_logged_in: false,
+					is_name_pulse: true,
+					query_length: 5,
+				}
+			);
+		} );
+	} );
 } );

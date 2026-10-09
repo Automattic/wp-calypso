@@ -36,6 +36,24 @@ describe( 'DomainSearch', () => {
 		expect( screen.getByText( 'Before Results' ) ).toBeInTheDocument();
 	} );
 
+	it( 'sends no Name Pulse events from the classic results page', async () => {
+		const onNamePulseTracksEvent = jest.fn();
+		const onSuggestionsReceive = jest.fn();
+
+		mockGetSuggestionsQuery( { params: { query: 'coffee' }, suggestions: [] } );
+
+		render(
+			<DomainSearch
+				cart={ buildCart() }
+				query="coffee"
+				events={ { onNamePulseTracksEvent, onSuggestionsReceive } }
+			/>
+		);
+
+		await waitFor( () => expect( onSuggestionsReceive ).toHaveBeenCalled() );
+		expect( onNamePulseTracksEvent ).not.toHaveBeenCalled();
+	} );
+
 	it( 'fires the onPageView event when the component mounts', () => {
 		const onPageView = jest.fn();
 

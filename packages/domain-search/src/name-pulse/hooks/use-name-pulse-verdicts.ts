@@ -58,6 +58,8 @@ const toVerdict = (
 	return { status: NamePulseDomainStatus.AVAILABLE, ...pickPricing( entry ) };
 };
 
+export type NamePulseBatchFailureReason = 'timeout' | 'network' | 'missing_entry';
+
 interface Waiter {
 	resolve: ( verdict: NamePulseVerdict ) => void;
 	reject: ( error: Error ) => void;
@@ -74,7 +76,12 @@ class NamePulseAvailabilityBatcher {
 
 	constructor(
 		private fetchBatch: ( domainNames: string[] ) => Promise< NamePulseAvailabilityResponse >,
-		private commit: ( domainName: string, verdict: NamePulseVerdict ) => NamePulseVerdict
+		private commit: ( domainName: string, verdict: NamePulseVerdict ) => NamePulseVerdict,
+		private reportFailure: (
+			reason: NamePulseBatchFailureReason,
+			failedCount: number,
+			batchSize: number
+		) => void
 	) {}
 
 	load( domainName: string ) {
@@ -98,7 +105,11 @@ class NamePulseAvailabilityBatcher {
 	}
 
 	private send( batch: string[], waiters: Map< string, Waiter > ) {
+		// A batch that times out is reported once, whatever it does when it lands.
+		let hasTimedOut = false;
 		const timer = setTimeout( () => {
+			hasTimedOut = true;
+			this.reportFailure( 'timeout', batch.length, batch.length );
 			batch.forEach( ( name ) =>
 				waiters.get( name )?.reject( new Error( 'Availability check timed out.' ) )
 			);
@@ -107,6 +118,7 @@ class NamePulseAvailabilityBatcher {
 		this.fetchBatch( batch ).then(
 			( data ) => {
 				clearTimeout( timer );
+				let missingCount = 0;
 
 				for ( const name of batch ) {
 					const verdict = toVerdict( data[ name ] );
@@ -114,12 +126,20 @@ class NamePulseAvailabilityBatcher {
 					if ( verdict ) {
 						waiters.get( name )?.resolve( this.commit( name, verdict ) );
 					} else {
+						missingCount++;
 						waiters.get( name )?.reject( new Error( `No availability entry for ${ name }.` ) );
 					}
+				}
+
+				if ( missingCount > 0 && ! hasTimedOut ) {
+					this.reportFailure( 'missing_entry', missingCount, batch.length );
 				}
 			},
 			( error: Error ) => {
 				clearTimeout( timer );
+				if ( ! hasTimedOut ) {
+					this.reportFailure( 'network', batch.length, batch.length );
+				}
 				batch.forEach( ( name ) => waiters.get( name )?.reject( error ) );
 			}
 		);
@@ -138,14 +158,24 @@ export const useNamePulseVerdicts = (
 	enabled: boolean
 ): Record< string, NamePulseVerdictState > => {
 	const queryClient = useQueryClient();
-	const { queries } = useDomainSearch();
+	const { queries, events } = useDomainSearch();
 	const fetchBatch = useEvent( ( batch: string[] ) =>
 		queryClient.fetchQuery( queries.namePulseAvailability( batch ) )
 	);
 	const commit = useEvent( ( domainName: string, verdict: NamePulseVerdict ) =>
 		setNamePulseVerdict( queryClient, domainName, verdict )
 	);
-	const [ batcher ] = useState( () => new NamePulseAvailabilityBatcher( fetchBatch, commit ) );
+	const reportFailure = useEvent(
+		( reason: NamePulseBatchFailureReason, failedCount: number, batchSize: number ) =>
+			events.onNamePulseTracksEvent( 'availability_failed', {
+				reason,
+				failed_count: failedCount,
+				batch_size: batchSize,
+			} )
+	);
+	const [ batcher ] = useState(
+		() => new NamePulseAvailabilityBatcher( fetchBatch, commit, reportFailure )
+	);
 
 	// `combine` output is structurally shared, so the states only change when a
 	// verdict does. It must close over the names: react-query memoises it on the

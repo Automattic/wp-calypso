@@ -6,7 +6,7 @@ import { cautionFilled, cart as cartIcon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { Badge } from '@wordpress/ui';
 import clsx from 'clsx';
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import { useDomainSearch } from '../../page/context';
 import { DomainSearchTrademarkClaimsModal } from '../../ui';
 import {
@@ -14,7 +14,9 @@ import {
 	getNamePulseSalePrice,
 	NamePulseDomainStatus,
 	toNamePulseRealtimeVerdict,
+	toNamePulseTracksSuggestion,
 	type NamePulseDomainResult,
+	type NamePulseTracksSection,
 } from '../helpers';
 import { useNamePulseCartToggle } from '../hooks/use-name-pulse-cart-toggle';
 import { useNamePulseLabelLimit } from '../hooks/use-name-pulse-label-limit';
@@ -25,6 +27,7 @@ export type NamePulseResultRowVariant = 'row' | 'card';
 
 interface NamePulseResultRowProps {
 	result: NamePulseDomainResult;
+	section: NamePulseTracksSection;
 	position: number;
 	variant?: NamePulseResultRowVariant;
 }
@@ -110,11 +113,12 @@ const Price = ( {
 
 export const NamePulseResultRow = ( {
 	result,
+	section,
 	position,
 	variant = 'row',
 }: NamePulseResultRowProps ) => {
 	const { __ } = useI18n();
-	const { queries } = useDomainSearch();
+	const { queries, events } = useDomainSearch();
 	const queryClient = useQueryClient();
 	// Below wide desktop the row is too narrow to truncate without losing most of
 	// the name, so the name wraps onto a second line instead.
@@ -177,7 +181,20 @@ export const NamePulseResultRow = ( {
 		isPolicyNoticeOpen,
 		confirmPolicyNotice,
 		closePolicyNotice,
-	} = useNamePulseCartToggle( domainName, position, row.policy_notices );
+	} = useNamePulseCartToggle( row, section, position, row.policy_notices );
+
+	// Reported once the row has a verdict, so the classic render event knows
+	// whether the name is premium. A row still waiting has not been shown yet.
+	const hasReportedRender = useRef( false );
+
+	useEffect( () => {
+		if ( isWaiting || hasReportedRender.current ) {
+			return;
+		}
+
+		hasReportedRender.current = true;
+		events.onSuggestionRender( toNamePulseTracksSuggestion( row, position ) );
+	} );
 	const { nameRef, labelRef, limit: labelLimit } = useNamePulseLabelLimit( label );
 	const isCard = variant === 'card';
 	const nameSize = isCard ? 20 : undefined;

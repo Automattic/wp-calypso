@@ -1091,4 +1091,234 @@ describe( 'NamePulseResults', () => {
 			);
 		} );
 	} );
+
+	describe( 'Tracks', () => {
+		const buildEvents = () => ( {
+			onNamePulseTracksEvent: jest.fn(),
+			onSuggestionsReceive: jest.fn(),
+			onSuggestionRender: jest.fn(),
+			onSuggestionInteract: jest.fn(),
+			onAddDomainToCart: jest.fn(),
+			onQueryAvailabilityCheck: jest.fn(),
+			onShowMoreResults: jest.fn(),
+			onTrademarkClaimsNoticeShown: jest.fn(),
+			onTrademarkClaimsNoticeClosed: jest.fn(),
+		} );
+
+		const namePulseEvent = ( events: ReturnType< typeof buildEvents >, name: string ) =>
+			events.onNamePulseTracksEvent.mock.calls.find(
+				( [ eventName ] ) => eventName === name
+			)?.[ 1 ];
+
+		it( 'reports the settled search and the rendered page without the query text', async () => {
+			const events = buildEvents();
+
+			render( <NamePulseTestSearch query="icecream" events={ events } /> );
+
+			await waitFor( () => expect( namePulseEvent( events, 'results_rendered' ) ).toBeDefined() );
+
+			expect( namePulseEvent( events, 'search_settled' ) ).toEqual( {
+				query_length: 8,
+				word_count: 1,
+				search_mode: 'single',
+				detected_tld: undefined,
+				filter_tlds_count: 0,
+			} );
+			expect( namePulseEvent( events, 'results_rendered' ) ).toEqual(
+				expect.objectContaining( {
+					search_mode: 'single',
+					top_count: 3,
+					suggestions_count: expect.any( Number ),
+					time_to_first_result_ms: expect.any( Number ),
+					time_to_complete_ms: expect.any( Number ),
+					timed_out: false,
+				} )
+			);
+			expect(
+				events.onNamePulseTracksEvent.mock.calls.filter( ( [ name ] ) => name === 'search_settled' )
+			).toHaveLength( 1 );
+		} );
+
+		it( 'sends the classic suggestions and render events', async () => {
+			const events = buildEvents();
+
+			render( <NamePulseTestSearch query="icecream" events={ events } /> );
+
+			await waitFor( () =>
+				expect( events.onSuggestionsReceive ).toHaveBeenCalledWith(
+					'icecream',
+					expect.arrayContaining( [ 'creamyice.com' ] ),
+					expect.any( Number )
+				)
+			);
+			await waitFor( () =>
+				expect( events.onSuggestionRender ).toHaveBeenCalledWith(
+					expect.objectContaining( { domain_name: 'icecream.net', vendor: 'name_pulse_exact' } )
+				)
+			);
+			expect( events.onSuggestionsReceive ).toHaveBeenCalledTimes( 1 );
+		} );
+
+		it( 'sends the classic availability event for a typed domain', async () => {
+			const events = buildEvents();
+
+			render( <NamePulseTestSearch query="icecream.com" events={ events } /> );
+
+			await waitFor( () =>
+				expect( events.onQueryAvailabilityCheck ).toHaveBeenCalledWith(
+					DomainAvailabilityStatus.AVAILABLE,
+					'icecream.com',
+					expect.any( Number )
+				)
+			);
+			expect( namePulseEvent( events, 'search_settled' ) ).toEqual(
+				expect.objectContaining( { search_mode: 'fqdn', detected_tld: 'com' } )
+			);
+		} );
+
+		it( 'reports an add to cart with its section, position and source', async () => {
+			const user = userEvent.setup();
+			const events = buildEvents();
+
+			render( <NamePulseTestSearch query="icecream" events={ events } /> );
+
+			await within( await findRow( 'icecream.net' ) ).findByText( '$24' );
+			await user.click(
+				within( rowFor( 'icecream.net' ) ).getByRole( 'button', { name: 'Add to cart' } )
+			);
+
+			await waitFor( () =>
+				expect( namePulseEvent( events, 'result_add_to_cart' ) ).toEqual(
+					expect.objectContaining( {
+						results_section: 'exact',
+						position: 0,
+						tld: 'net',
+						name_pulse_source: 'exact',
+						availability_status: 'available',
+						is_premium: false,
+					} )
+				)
+			);
+			expect( events.onSuggestionInteract ).toHaveBeenCalledWith(
+				expect.objectContaining( { domain_name: 'icecream.net', position: 0 } )
+			);
+			expect( events.onAddDomainToCart ).toHaveBeenCalledWith(
+				'icecream.net',
+				0,
+				false,
+				'name_pulse_exact'
+			);
+		} );
+
+		it( 'reports "Show more" with the rows shown before and after', async () => {
+			const user = userEvent.setup();
+			const events = buildEvents();
+
+			render( <NamePulseTestSearch query="icecream" events={ events } /> );
+
+			await within( await findRow( 'icecream.net' ) ).findByText( '$24' );
+			await user.click( screen.getByRole( 'button', { name: 'Show more exact matches' } ) );
+
+			expect( events.onShowMoreResults ).toHaveBeenCalledWith( 2 );
+			expect( namePulseEvent( events, 'show_more_click' ) ).toEqual( {
+				results_section: 'exact',
+				visible_before: NAME_PULSE_PAGE_SIZE,
+				visible_after: NAME_PULSE_PAGE_SIZE * 2,
+			} );
+		} );
+
+		it( 'reports a cleared search', async () => {
+			const user = userEvent.setup();
+			const events = buildEvents();
+
+			render( <NamePulseTestSearch query="ice cream" events={ events } /> );
+
+			await user.clear( screen.getByRole( 'searchbox' ) );
+
+			expect( namePulseEvent( events, 'search_cleared' ) ).toEqual( {
+				previous_query_length: 9,
+				previous_word_count: 2,
+			} );
+		} );
+
+		it( 'reports provider errors in the suggestions response', async () => {
+			const events = buildEvents();
+
+			render(
+				<NamePulseTestSearch
+					query="icecream"
+					events={ events }
+					suggestions={ async () => ( {
+						suggestions: NAME_PULSE_SUGGESTIONS_FIXTURE,
+						errors: [ { provider: 'verisign', code: 'timeout', message: 'Timed out' } ],
+					} ) }
+				/>
+			);
+
+			await waitFor( () =>
+				expect( namePulseEvent( events, 'suggestions_failed' ) ).toEqual( {
+					use_ai: false,
+					request_failed: false,
+					provider_error_codes: 'verisign:timeout',
+					result_count: NAME_PULSE_SUGGESTIONS_FIXTURE.length,
+				} )
+			);
+		} );
+
+		it( 'reports an availability batch that fails', async () => {
+			const events = buildEvents();
+
+			render(
+				<NamePulseTestSearch
+					query="icecream"
+					events={ events }
+					availability={ async () => {
+						throw new Error( 'Network error' );
+					} }
+				/>
+			);
+
+			await waitFor( () =>
+				expect( namePulseEvent( events, 'availability_failed' ) ).toEqual(
+					expect.objectContaining( { reason: 'network', failed_count: expect.any( Number ) } )
+				)
+			);
+		} );
+
+		it( 'sends the classic event when the trademark notice is closed', async () => {
+			const user = userEvent.setup();
+			const events = buildEvents();
+
+			render(
+				<NamePulseTestSearch
+					query="icecream"
+					events={ events }
+					domainAvailability={ async ( domainName ) =>
+						buildAvailability( {
+							domain_name: domainName,
+							status: DomainAvailabilityStatus.AVAILABLE,
+							cost: '$24.00',
+							raw_price: 24,
+							trademark_claims_notice_info: { claim: { markName: 'Ice Cream' } },
+						} )
+					}
+				/>
+			);
+
+			await within( await findRow( 'icecream.net' ) ).findByText( '$24' );
+			await user.click(
+				within( rowFor( 'icecream.net' ) ).getByRole( 'button', { name: 'Add to cart' } )
+			);
+			await screen.findByText( 'icecream.net matches a trademark.' );
+			await user.click( screen.getByRole( 'button', { name: 'Close' } ) );
+
+			expect( events.onTrademarkClaimsNoticeShown ).toHaveBeenCalled();
+			// The modal reports the close once its exit animation ends.
+			await waitFor( () =>
+				expect( events.onTrademarkClaimsNoticeClosed ).toHaveBeenCalledWith(
+					expect.objectContaining( { domain_name: 'icecream.net' } )
+				)
+			);
+		} );
+	} );
 } );

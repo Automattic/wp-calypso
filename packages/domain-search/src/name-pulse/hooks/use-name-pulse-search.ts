@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { useViewportMatch } from '@wordpress/compose';
+import { useEvent, useViewportMatch } from '@wordpress/compose';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { getTld } from '../../helpers/get-tld';
 import { useDomainSearch } from '../../page/context';
@@ -73,7 +73,7 @@ const useNamePulseSuggestions = ( {
 	show: boolean;
 	source: Extract< NamePulseSource, 'keyword' | 'ai' >;
 } ) => {
-	const { queries, filter } = useDomainSearch();
+	const { queries, filter, events } = useDomainSearch();
 	const useAi = source === 'ai';
 	const active = show && isSettled;
 	// Sorted so the same endings in any order share a cache entry.
@@ -81,7 +81,7 @@ const useNamePulseSuggestions = ( {
 		() => ( useAi || filter.tlds.length === 0 ? [] : [ ...filter.tlds ].sort() ),
 		[ useAi, filter.tlds ]
 	);
-	const { data, isPending } = useQuery( {
+	const { data, isPending, isError } = useQuery( {
 		...queries.namePulseSuggestions( {
 			query: active ? suggestionsQuery : '',
 			use_ai: useAi,
@@ -90,6 +90,28 @@ const useNamePulseSuggestions = ( {
 		} ),
 		enabled: active,
 	} );
+
+	const providerErrorCodes = data?.errors
+		?.map( ( error ) => `${ error.provider }:${ error.code }` )
+		.join( ',' );
+
+	const reportFailure = useEvent( () => {
+		if ( ! active || ( ! isError && ! providerErrorCodes ) ) {
+			return;
+		}
+
+		events.onNamePulseTracksEvent( 'suggestions_failed', {
+			use_ai: useAi,
+			request_failed: isError,
+			provider_error_codes: providerErrorCodes,
+			result_count: data?.suggestions.length ?? 0,
+		} );
+	} );
+
+	// Once per response: `data` and `isError` change when a new one lands.
+	useEffect( () => {
+		reportFailure();
+	}, [ data, isError, reportFailure ] );
 
 	const rows = useMemo( () => {
 		if ( ! active ) {
@@ -359,6 +381,11 @@ export const useNamePulseSearch = ( query: string ) => {
 		rawCreativeResults,
 	] );
 
+	const suggestionResults = useMemo(
+		() => [ ...rawKeywordResults, ...rawCreativeResults ],
+		[ rawKeywordResults, rawCreativeResults ]
+	);
+
 	const revealExact = useCallback(
 		( rows: NamePulseDomainResult[] ) => requestNames( rows.map( ( row ) => row.domain_name ) ),
 		[ requestNames ]
@@ -366,6 +393,12 @@ export const useNamePulseSearch = ( query: string ) => {
 
 	return {
 		layout,
+		settledQuery,
+		settledLayout,
+		isSettled,
+		hasTlds: tlds !== undefined || isTldsError,
+		typedDomainAvailability,
+		suggestionResults,
 		notice,
 		exactMatch,
 		bundleAnchors,
