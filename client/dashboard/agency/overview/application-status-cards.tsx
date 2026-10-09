@@ -101,9 +101,14 @@ export function PendingTierCard( {
 
 export function RejectedTierCard( {
 	contactSupport,
+	recordTracksEvent,
 }: {
 	contactSupport: string | ( () => void );
+	recordTracksEvent?: RecordTracksEvent;
 } ) {
+	const onContactSupportClick = () =>
+		recordTracksEvent?.( 'calypso_a4a_overview_contact_support_click' );
+
 	return (
 		<ApplicationStatusCard
 			decoration={
@@ -124,9 +129,15 @@ export function RejectedTierCard( {
 					{
 						a:
 							typeof contactSupport === 'function' ? (
-								<Button variant="link" onClick={ contactSupport } />
+								<Button
+									variant="link"
+									onClick={ () => {
+										onContactSupportClick();
+										contactSupport();
+									} }
+								/>
 							) : (
-								<a href={ contactSupport } />
+								<a href={ contactSupport } onClick={ onContactSupportClick } />
 							),
 					}
 				) }
