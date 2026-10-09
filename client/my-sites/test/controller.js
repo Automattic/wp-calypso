@@ -6,6 +6,7 @@ import page from '@automattic/calypso-router';
 import configureStore from 'redux-mock-store';
 import { thunk } from 'redux-thunk';
 import * as pageView from 'calypso/lib/analytics/page-view';
+import * as navigation from 'calypso/lib/navigate';
 import { PREFERENCES_SET, SELECTED_SITE_SET } from 'calypso/state/action-types';
 import { requestSite } from 'calypso/state/sites/actions';
 import {
@@ -323,6 +324,31 @@ describe( 'siteSelection', () => {
 		expect( next ).not.toHaveBeenCalled();
 		// It settled on its redirect straight away instead of waiting out the backoff.
 		expect( page.redirect ).toHaveBeenCalled();
+	} );
+
+	it( 'should authorize an unlinked checkout in the fetched WordPress directory', async () => {
+		const adminUrl = `https://${ SITE_SLUG }/wordpress/wp-admin/`;
+		respondWithSite( {
+			URL: `https://${ SITE_SLUG }`,
+			meta: { links: { xmlrpc: `https://${ SITE_SLUG }/wordpress/xmlrpc.php` } },
+		} );
+		const navigate = jest.spyOn( navigation, 'navigate' ).mockImplementation( () => {} );
+		const checkoutPath = `/checkout/${ SITE_SLUG }/jetpack_videopress`;
+		const { next } = selectSite( () => unmanageableSiteState, {
+			path: `${ checkoutPath }?unlinked=1`,
+			pathname: checkoutPath,
+			query: { unlinked: '1' },
+		} );
+
+		await jest.advanceTimersByTimeAsync( 0 );
+
+		expect( navigate ).toHaveBeenCalledTimes( 1 );
+		const redirectUrl = new URL( navigate.mock.calls[ 0 ][ 0 ] );
+		expect( redirectUrl.origin + redirectUrl.pathname ).toBe( adminUrl );
+		expect( redirectUrl.searchParams.get( 'dest_url' ) ).toBe(
+			`${ window.origin }${ checkoutPath }`
+		);
+		expect( next ).not.toHaveBeenCalled();
 	} );
 
 	it( 'should give up retrying once the backoff is exhausted', async () => {
