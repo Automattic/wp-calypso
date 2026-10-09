@@ -23,9 +23,25 @@ const getNumericId = ( id: number | string ): number | undefined => {
 };
 
 /**
+ * Whether every subscription is cached. The list loads a page at a time and
+ * stops at 2,000 rows, so a blog missing from a partial list may still be
+ * followed. Mirrors the query's next-page check: the pages must cover the
+ * server's total, or end on an empty page when there's no total.
+ */
+const hasAllSiteSubscriptions = ( data: SiteSubscriptionsInfiniteData ): boolean => {
+	const totalCount = data.pages.find( ( page ) => typeof page.totalCount === 'number' )?.totalCount;
+	if ( typeof totalCount !== 'number' ) {
+		return data.pages[ data.pages.length - 1 ]?.subscriptions.length === 0;
+	}
+
+	return data.pages.reduce( ( rows, page ) => rows + page.number, 0 ) >= totalCount;
+};
+
+/**
  * Whether the user follows a post's blog or feed, read from the cached
- * subscriptions. Undefined while they haven't loaded, so tracking can tell
- * "unknown" apart from "not following".
+ * subscriptions. A match means true at any point; false needs the whole list
+ * cached. Otherwise undefined, so tracking reports "unknown" rather than a
+ * wrong "not following".
  */
 export const getCachedIsFollowingPost = (
 	queryClient: QueryClient | null,
@@ -40,7 +56,11 @@ export const getCachedIsFollowingPost = (
 		return undefined;
 	}
 
-	return getIsSubscribedFromData( data, { blogId, feedId } );
+	if ( getIsSubscribedFromData( data, { blogId, feedId } ) ) {
+		return true;
+	}
+
+	return hasAllSiteSubscriptions( data ) ? false : undefined;
 };
 
 export const patchReadSiteFollowStatus = (

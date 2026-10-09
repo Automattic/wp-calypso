@@ -3,16 +3,22 @@ import { QueryClient } from '@tanstack/react-query';
 import { getCachedIsFollowingPost } from '../cache';
 import type { SiteSubscriptionItem } from '@automattic/api-core';
 
-const makeClient = ( subscriptions?: Partial< SiteSubscriptionItem >[] ) => {
+type Page = { subscriptions: Partial< SiteSubscriptionItem >[]; totalCount: number | null };
+
+const makeClientWithPages = ( pages: Page[] ) => {
 	const queryClient = new QueryClient();
-	if ( subscriptions ) {
-		queryClient.setQueryData( getSiteSubscriptionsQueryKey(), {
-			pages: [ { subscriptions, totalCount: subscriptions.length, page: 1, number: 200 } ],
-			pageParams: [ 1 ],
-		} );
-	}
+	queryClient.setQueryData( getSiteSubscriptionsQueryKey(), {
+		pages: pages.map( ( page, index ) => ( { ...page, page: index + 1, number: 100 } ) ),
+		pageParams: pages.map( ( _, index ) => index + 1 ),
+	} );
 	return queryClient;
 };
+
+// A complete one-page list.
+const makeClient = ( subscriptions?: Partial< SiteSubscriptionItem >[] ) =>
+	subscriptions
+		? makeClientWithPages( [ { subscriptions, totalCount: subscriptions.length } ] )
+		: new QueryClient();
 
 describe( 'getCachedIsFollowingPost', () => {
 	it( 'returns undefined before the subscriptions load', () => {
@@ -52,6 +58,57 @@ describe( 'getCachedIsFollowingPost', () => {
 		expect(
 			getCachedIsFollowingPost( queryClient, { site_ID: 5, feed_ID: 10, is_external: true } )
 		).toBe( false );
+	} );
+
+	describe( 'with part of the list cached', () => {
+		const followed = { blog_ID: 1, feed_ID: 10, is_following: true };
+
+		it( 'returns true for a followed blog that is already cached', () => {
+			const queryClient = makeClientWithPages( [
+				{ subscriptions: [ followed ], totalCount: 150 },
+			] );
+
+			expect( getCachedIsFollowingPost( queryClient, { site_ID: 1 } ) ).toBe( true );
+		} );
+
+		it( 'returns undefined for a blog not cached yet', () => {
+			const queryClient = makeClientWithPages( [
+				{ subscriptions: [ followed ], totalCount: 150 },
+			] );
+
+			expect( getCachedIsFollowingPost( queryClient, { site_ID: 2 } ) ).toBeUndefined();
+		} );
+
+		it( 'returns false once every page is cached', () => {
+			const queryClient = makeClientWithPages( [
+				{ subscriptions: [ followed ], totalCount: 150 },
+				{ subscriptions: [], totalCount: 150 },
+			] );
+
+			expect( getCachedIsFollowingPost( queryClient, { site_ID: 2 } ) ).toBe( false );
+		} );
+
+		it( 'returns undefined past the 2,000-row cap', () => {
+			const pages = Array.from( { length: 20 }, () => ( {
+				subscriptions: [ followed ],
+				totalCount: 2500,
+			} ) );
+
+			expect( getCachedIsFollowingPost( makeClientWithPages( pages ), { site_ID: 2 } ) ).toBe(
+				undefined
+			);
+		} );
+
+		it( 'without a total, returns false only after an empty last page', () => {
+			const partial = makeClientWithPages( [ { subscriptions: [ followed ], totalCount: null } ] );
+			const complete = makeClientWithPages( [
+				{ subscriptions: [ followed ], totalCount: null },
+				{ subscriptions: [], totalCount: null },
+			] );
+
+			expect( getCachedIsFollowingPost( partial, { site_ID: 2 } ) ).toBeUndefined();
+			expect( getCachedIsFollowingPost( complete, { site_ID: 2 } ) ).toBe( false );
+		} );
 	} );
 
 	it( 'returns undefined when the post has no blog or feed id', () => {
