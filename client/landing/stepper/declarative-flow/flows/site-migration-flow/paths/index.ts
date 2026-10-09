@@ -60,6 +60,11 @@ export const sitePickerPath = buildPathHelper<
 	typeof STEPS.PICK_SITE.slug
 >( STEPS.PICK_SITE.slug );
 
+export const plansPath = buildPathHelper<
+	{ queryParams: { from: string; platform: ImporterPlatform; host?: string } },
+	typeof STEPS.UNIFIED_PLANS.slug
+>( STEPS.UNIFIED_PLANS.slug );
+
 export const howToMigratePath = buildPathHelper<
 	{
 		queryParams: {

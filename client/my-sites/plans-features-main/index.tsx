@@ -144,6 +144,7 @@ export interface PlansFeaturesMainProps {
 	basePlansPath?: string;
 	selectedPlan?: PlanSlug;
 	selectedFeature?: string;
+	disablePlanSelection?: boolean;
 	onUpgradeClick?: ( cartItems?: MinimalRequestCartProduct[] | null ) => void;
 	redirectTo?: string;
 	pluginSlug?: string;
@@ -231,6 +232,7 @@ const PlansFeaturesMain = ( {
 	setSiteUrlAsFreeDomainSuggestion,
 	isDomainTransfer,
 	onUpgradeClick,
+	disablePlanSelection,
 	hidePlanTypeSelector,
 	redirectTo,
 	pluginSlug,
@@ -915,6 +917,7 @@ const PlansFeaturesMain = ( {
 	};
 
 	const useAction = useGenerateActionHook( {
+		disablePlanSelection,
 		siteId,
 		cartHandler: onUpgradeClick,
 		flowName,
