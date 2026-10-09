@@ -2,8 +2,8 @@ import { ONBOARDING_FLOW } from '@automattic/onboarding';
 import { useViewportMatch } from '@wordpress/compose';
 import { useSelect } from '@wordpress/data';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
+import { hasCommercePurchaseSteps } from '../../../utils/commerce-purchase-steps';
 import { getCurrentQueryParams } from '../../../utils/get-current-query-params';
-import { isPlanFirstCommerce } from '../../../utils/plan-first-commerce';
 import { shouldSkipPlansStep } from '../../../utils/preselected-plan';
 import {
 	getOnboardingStepperPosition,
@@ -35,8 +35,8 @@ export function useOnboardingStepCounter(
 	);
 
 	const query = getCurrentQueryParams();
-	const isCommercePlanFirst = isPlanFirstCommerce( flow, query );
-	if ( ( flow !== ONBOARDING_FLOW && ! isCommercePlanFirst ) || ! isMobileViewport ) {
+	const showCommercePurchaseSteps = hasCommercePurchaseSteps( flow, query );
+	if ( ( flow !== ONBOARDING_FLOW && ! showCommercePurchaseSteps ) || ! isMobileViewport ) {
 		return null;
 	}
 
@@ -50,6 +50,6 @@ export function useOnboardingStepCounter(
 	// `<Router>` — in production too.
 	return getOnboardingStepperPosition(
 		group,
-		isCommercePlanFirst || shouldSkipPlansStep( query, planCartItem )
+		showCommercePurchaseSteps || shouldSkipPlansStep( query, planCartItem )
 	);
 }

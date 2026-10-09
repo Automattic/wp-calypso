@@ -31,7 +31,7 @@ import { dashboardLink, dashboardOrigins } from 'calypso/dashboard/utils/link';
 import { isRelativeUrl } from 'calypso/dashboard/utils/url';
 import { WOO_HOSTING_SOLUTIONS_REF } from 'calypso/landing/stepper/constants';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
-import { isPlanFirstCommerce } from 'calypso/landing/stepper/utils/plan-first-commerce';
+import { hasCommercePurchaseSteps } from 'calypso/landing/stepper/utils/commerce-purchase-steps';
 import { shouldSkipPlansStep } from 'calypso/landing/stepper/utils/preselected-plan';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -148,8 +148,10 @@ const DomainSearchStep: StepType< {
 
 	const isCiab = dashboard === 'ciab';
 	const isWooHostingSolutions = queryParams.get( 'ref' ) === WOO_HOSTING_SOLUTIONS_REF;
-	const isCommercePlanFirst = isPlanFirstCommerce( flow, queryParams );
-	const showProgress = useShowOnboardingProgress( isOnboardingFlow( flow ) || isCommercePlanFirst );
+	const showCommercePurchaseSteps = hasCommercePurchaseSteps( flow, queryParams );
+	const showProgress = useShowOnboardingProgress(
+		isOnboardingFlow( flow ) || showCommercePurchaseSteps
+	);
 	// WoW funnel: the site is always transferred to Atomic, so there is no free-subdomain
 	// option to offer — show only a "Set up a domain later" skip control.
 	const isWowFunnel = !! queryParams.get( 'wow_funnel' );
@@ -169,7 +171,7 @@ const DomainSearchStep: StepType< {
 		[]
 	);
 	const shouldHidePlansStep =
-		isCommercePlanFirst || shouldSkipPlansStep( queryParams, planCartItem );
+		showCommercePurchaseSteps || shouldSkipPlansStep( queryParams, planCartItem );
 
 	// For CIAB sites, prefer the site title over the slug for domain suggestions
 	// since the slug is often randomly generated.

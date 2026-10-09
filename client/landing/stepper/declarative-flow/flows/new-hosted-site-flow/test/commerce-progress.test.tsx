@@ -77,7 +77,7 @@ beforeEach( () => {
 	mockSavedFlow = NEW_HOSTED_SITE_FLOW;
 	mockQuery = new URLSearchParams( {
 		plan: mockPlan.product_slug,
-		plan_first: 'true',
+		showPurchaseSteps: 'true',
 		showDomainStep: '',
 	} );
 	Object.defineProperty( window, 'location', {
@@ -131,7 +131,7 @@ it( 'passes a two-step checkout overview and a term-preserving return URL', () =
 	expect( back.searchParams.get( 'plan' ) ).toBe( mockPlan.product_slug );
 	expect( back.searchParams.get( 'siteId' ) ).toBe( mockSite.siteId );
 	expect( back.searchParams.get( 'siteSlug' ) ).toBe( mockSite.siteSlug );
-	expect( back.searchParams.get( 'plan_first' ) ).toBe( 'true' );
+	expect( back.searchParams.get( 'showPurchaseSteps' ) ).toBe( 'true' );
 	expect( checkout.searchParams.get( 'redirect_to' ) ).toContain(
 		'/setup/transferring-hosted-site'
 	);
@@ -140,7 +140,7 @@ it( 'passes a two-step checkout overview and a term-preserving return URL', () =
 } );
 
 it( 'keeps other Commerce entries on their existing checkout behavior', () => {
-	mockQuery.delete( 'plan_first' );
+	mockQuery.delete( 'showPurchaseSteps' );
 	const nav = navigation( 'processing' );
 	act( () =>
 		nav.submit( {
@@ -207,7 +207,7 @@ it( 'remounts cached Commerce pages at the saved return URL', () => {
 } );
 
 it( 'leaves other cached new-hosted-site consumers unchanged', () => {
-	mockQuery.delete( 'plan_first' );
+	mockQuery.delete( 'showPurchaseSteps' );
 	renderHook( () => hosting.useSideEffect?.( 'processing', jest.fn() ) );
 	window.dispatchEvent( new PageTransitionEvent( 'pageshow', { persisted: true } ) );
 	expect( window.location.reload ).not.toHaveBeenCalled();

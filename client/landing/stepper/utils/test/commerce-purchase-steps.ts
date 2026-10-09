@@ -8,7 +8,7 @@ import {
 	getSignupCompleteSlug,
 	retrieveSignupDestination,
 } from 'calypso/signup/storageUtils';
-import { isPlanFirstCommerce, isPlanFirstCommerceResume } from '../plan-first-commerce';
+import { hasCommercePurchaseSteps, isCommercePurchaseResume } from '../commerce-purchase-steps';
 
 jest.mock( 'calypso/signup/storageUtils', () => ( {
 	getSignupCompleteFlowName: jest.fn(),
@@ -18,7 +18,7 @@ jest.mock( 'calypso/signup/storageUtils', () => ( {
 } ) );
 
 const makeQuery = ( plan = 'ecommerce-bundle' ) =>
-	new URLSearchParams( { plan_first: 'true', showDomainStep: '', plan } );
+	new URLSearchParams( { showPurchaseSteps: 'true', showDomainStep: '', plan } );
 
 describe( 'plan-first Commerce progress', () => {
 	it.each( [
@@ -27,7 +27,7 @@ describe( 'plan-first Commerce progress', () => {
 		'ecommerce-bundle-2y',
 		'ecommerce-bundle-3y',
 	] )( 'opts in paid Commerce term %s', ( plan ) => {
-		expect( isPlanFirstCommerce( NEW_HOSTED_SITE_FLOW, makeQuery( plan ) ) ).toBe( true );
+		expect( hasCommercePurchaseSteps( NEW_HOSTED_SITE_FLOW, makeQuery( plan ) ) ).toBe( true );
 	} );
 
 	it.each( [
@@ -37,17 +37,17 @@ describe( 'plan-first Commerce progress', () => {
 		'ecommerce-trial-bundle-monthly',
 		'invalid',
 	] )( 'keeps other plans and trials out: %s', ( plan ) => {
-		expect( isPlanFirstCommerce( NEW_HOSTED_SITE_FLOW, makeQuery( plan ) ) ).toBe( false );
+		expect( hasCommercePurchaseSteps( NEW_HOSTED_SITE_FLOW, makeQuery( plan ) ) ).toBe( false );
 	} );
 
-	it.each( [ 'plan_first', 'showDomainStep', 'plan' ] )( 'requires %s', ( param ) => {
+	it.each( [ 'showPurchaseSteps', 'showDomainStep', 'plan' ] )( 'requires %s', ( param ) => {
 		const query = makeQuery();
 		query.delete( param );
-		expect( isPlanFirstCommerce( NEW_HOSTED_SITE_FLOW, query ) ).toBe( false );
+		expect( hasCommercePurchaseSteps( NEW_HOSTED_SITE_FLOW, query ) ).toBe( false );
 	} );
 
 	it( 'does not change another flow', () => {
-		expect( isPlanFirstCommerce( 'onboarding', makeQuery() ) ).toBe( false );
+		expect( hasCommercePurchaseSteps( 'onboarding', makeQuery() ) ).toBe( false );
 	} );
 } );
 
@@ -67,22 +67,22 @@ describe( 'Commerce checkout return', () => {
 	};
 
 	it( 'resumes the same saved site', () => {
-		expect( isPlanFirstCommerceResume( NEW_HOSTED_SITE_FLOW, returnQuery() ) ).toBe( true );
+		expect( isCommercePurchaseResume( NEW_HOSTED_SITE_FLOW, returnQuery() ) ).toBe( true );
 	} );
 
 	it.each( [ 'siteSlug', 'siteId' ] )( 'rejects a different %s', ( param ) => {
 		const query = returnQuery();
 		query.set( param, 'another-site' );
-		expect( isPlanFirstCommerceResume( NEW_HOSTED_SITE_FLOW, query ) ).toBe( false );
+		expect( isCommercePurchaseResume( NEW_HOSTED_SITE_FLOW, query ) ).toBe( false );
 	} );
 
 	it( 'rejects storage belonging to a different flow', () => {
 		jest.mocked( getSignupCompleteFlowName ).mockReturnValue( 'onboarding' );
-		expect( isPlanFirstCommerceResume( NEW_HOSTED_SITE_FLOW, returnQuery() ) ).toBe( false );
+		expect( isCommercePurchaseResume( NEW_HOSTED_SITE_FLOW, returnQuery() ) ).toBe( false );
 	} );
 
 	it( 'requires an unfinished checkout destination', () => {
 		jest.mocked( retrieveSignupDestination ).mockReturnValue( '' );
-		expect( isPlanFirstCommerceResume( NEW_HOSTED_SITE_FLOW, returnQuery() ) ).toBe( false );
+		expect( isCommercePurchaseResume( NEW_HOSTED_SITE_FLOW, returnQuery() ) ).toBe( false );
 	} );
 } );

@@ -23,8 +23,11 @@ import { isUserEligibleForFreeHostingTrial } from 'calypso/state/selectors/is-us
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import { useQuery } from '../../../hooks/use-query';
 import { ONBOARD_STORE } from '../../../stores';
+import {
+	hasCommercePurchaseSteps,
+	isCommercePurchaseResume,
+} from '../../../utils/commerce-purchase-steps';
 import { getCurrentQueryParams } from '../../../utils/get-current-query-params';
-import { isPlanFirstCommerce, isPlanFirstCommerceResume } from '../../../utils/plan-first-commerce';
 import { stepsWithRequiredLogin } from '../../../utils/steps-with-required-login';
 import { STEPS } from '../../internals/steps';
 import { ProcessingResult } from '../../internals/steps-repository/processing-step/constants';
@@ -43,7 +46,7 @@ async function initialize( reduxStore: Store ) {
 	reduxStore.dispatch( setSelectedSiteId( null ) );
 	clearStepPersistedState( NEW_HOSTED_SITE_FLOW );
 	const queryParams = getCurrentQueryParams();
-	if ( ! isPlanFirstCommerceResume( NEW_HOSTED_SITE_FLOW, queryParams ) ) {
+	if ( ! isCommercePurchaseResume( NEW_HOSTED_SITE_FLOW, queryParams ) ) {
 		clearSignupDestinationCookie();
 		clearSignupCompleteFlowName();
 		clearSignupCompleteSlug();
@@ -127,7 +130,7 @@ const hosting: FlowV2< typeof initialize > = {
 
 		const flowName = this.name;
 		const showDomainStep = query.has( 'showDomainStep' );
-		const commercePlanFirst = isPlanFirstCommerce( flowName, query );
+		const commercePurchaseSteps = hasCommercePurchaseSteps( flowName, query );
 		const isWooPartner = useIsValidWooPartner();
 
 		const getGoBack = () => {
@@ -159,7 +162,7 @@ const hosting: FlowV2< typeof initialize > = {
 					setDomainCartItems( providedDependencies.domainCart as MinimalRequestCartProduct[] );
 					setSignupDomainOrigin( providedDependencies.signupDomainOrigin as string );
 
-					if ( planCartItem && isPlanFirstCommerceResume( flowName, query ) ) {
+					if ( planCartItem && isCommercePurchaseResume( flowName, query ) ) {
 						const siteSlug = query.get( 'siteSlug' )!;
 						const siteId = query.get( 'siteId' )!;
 						setPendingAction( async () => {
@@ -217,7 +220,7 @@ const hosting: FlowV2< typeof initialize > = {
 				case STEPS.PROCESSING.slug: {
 					if ( providedDependencies.processingResult === ProcessingResult.SUCCESS ) {
 						const siteId = providedDependencies.siteId || getSignupCompleteSiteID();
-						setSignupCompleteSiteID( commercePlanFirst ? siteId : providedDependencies.siteId );
+						setSignupCompleteSiteID( commercePurchaseSteps ? siteId : providedDependencies.siteId );
 						const siteSlug = providedDependencies.siteSlug || getSignupCompleteSlug();
 						const destinationParams: Record< string, string > = {
 							siteId,
@@ -247,7 +250,7 @@ const hosting: FlowV2< typeof initialize > = {
 						if ( providedDependencies.goToCheckout ) {
 							persistSignupDestination( destination );
 							setSignupCompleteSlug(
-								commercePlanFirst ? siteSlug : providedDependencies?.siteSlug
+								commercePurchaseSteps ? siteSlug : providedDependencies?.siteSlug
 							);
 							setSignupCompleteFlowName( flowName );
 
@@ -263,23 +266,23 @@ const hosting: FlowV2< typeof initialize > = {
 								window.location.origin
 							).href;
 							const stepPosition = getOnboardingStepperPosition( 'checkout', true );
-							if ( commercePlanFirst ) {
+							if ( commercePurchaseSteps ) {
 								// Browser Back must resume domains rather than rerun site creation.
 								window.history.replaceState( window.history.state, '', backUrl );
 							}
 							return window.location.assign(
 								addQueryArgs(
 									`/checkout/${ encodeURIComponent(
-										( commercePlanFirst
+										( commercePurchaseSteps
 											? siteSlug
 											: ( providedDependencies?.siteSlug as string ) ) ?? ''
 									) }`,
 									{
 										redirect_to: destination,
 										coupon: couponCode,
-										...( commercePlanFirst && {
+										...( commercePurchaseSteps && {
 											flow: NEW_HOSTED_SITE_FLOW,
-											plan_first: 'true',
+											showPurchaseSteps: 'true',
 											plan: query.get( 'plan' ),
 											showDomainStep: '',
 											signup: 1,
@@ -305,9 +308,9 @@ const hosting: FlowV2< typeof initialize > = {
 		};
 	},
 	useSideEffect( currentStepSlug ) {
-		const commercePlanFirst = isPlanFirstCommerce( NEW_HOSTED_SITE_FLOW, useQuery() );
+		const commercePurchaseSteps = hasCommercePurchaseSteps( NEW_HOSTED_SITE_FLOW, useQuery() );
 		useEffect( () => {
-			if ( ! commercePlanFirst ) {
+			if ( ! commercePurchaseSteps ) {
 				return;
 			}
 			const restorePage = ( event: PageTransitionEvent ) => {
@@ -318,7 +321,7 @@ const hosting: FlowV2< typeof initialize > = {
 			};
 			window.addEventListener( 'pageshow', restorePage );
 			return () => window.removeEventListener( 'pageshow', restorePage );
-		}, [ commercePlanFirst ] );
+		}, [ commercePurchaseSteps ] );
 		const studioSiteId = useQuery().get( 'studioSiteId' );
 		const autoOpenPush = useQuery().get( 'autoOpenPush' );
 		const section = useQuery().get( 'section' );

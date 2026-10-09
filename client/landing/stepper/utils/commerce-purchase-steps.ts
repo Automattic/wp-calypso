@@ -7,11 +7,11 @@ import {
 	retrieveSignupDestination,
 } from 'calypso/signup/storageUtils';
 
-export function isPlanFirstCommerce( flow: string, query: URLSearchParams ): boolean {
+export function hasCommercePurchaseSteps( flow: string, query: URLSearchParams ): boolean {
 	const plan = query.get( 'plan' );
 	return (
 		flow === NEW_HOSTED_SITE_FLOW &&
-		query.get( 'plan_first' ) === 'true' &&
+		query.get( 'showPurchaseSteps' ) === 'true' &&
 		query.has( 'showDomainStep' ) &&
 		!! plan &&
 		isEcommercePlan( plan ) &&
@@ -19,9 +19,9 @@ export function isPlanFirstCommerce( flow: string, query: URLSearchParams ): boo
 	);
 }
 
-export function isPlanFirstCommerceResume( flow: string, query: URLSearchParams ): boolean {
+export function isCommercePurchaseResume( flow: string, query: URLSearchParams ): boolean {
 	return (
-		isPlanFirstCommerce( flow, query ) &&
+		hasCommercePurchaseSteps( flow, query ) &&
 		!! query.get( 'siteSlug' ) &&
 		!! query.get( 'siteId' ) &&
 		query.get( 'siteSlug' ) === getSignupCompleteSlug() &&
