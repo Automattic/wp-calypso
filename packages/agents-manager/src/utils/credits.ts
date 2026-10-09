@@ -50,7 +50,7 @@ export type CreditsStatus =
 export const CREDITS_LOW_THRESHOLD = 20;
 
 /** Paid balance, in credits, below which the dot turns red and the low-balance notice shows. */
-export const CREDITS_LOW_BALANCE = 20000;
+export const CREDITS_LOW_BALANCE = 10000;
 
 export function clampPercent( percent: number ): number {
 	if ( ! Number.isFinite( percent ) ) {

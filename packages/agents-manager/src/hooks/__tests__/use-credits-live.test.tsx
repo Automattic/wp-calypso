@@ -519,10 +519,10 @@ it( 'refreshes an upgraded balance on return focus and removes the action at Com
 } );
 
 it.each( [
-	[ 20001, 40000, undefined, undefined ],
-	[ 20000, 40000, undefined, undefined ],
-	[ 19999, 40000, `${ localNumber( 19.9 ) }k credits left.`, true ],
-	[ 15000, 15000, `${ localNumber( 15 ) }k credits left.`, true ],
+	[ 15000, 15000, undefined, undefined ],
+	[ 10001, 40000, undefined, undefined ],
+	[ 10000, 40000, undefined, undefined ],
+	[ 9999, 40000, `${ localNumber( 9.9 ) }k credits left.`, true ],
 	[ 8500, 40000, `${ localNumber( 8.5 ) }k credits left.`, true ],
 	[ 800, 40000, `${ localNumber( 800 ) } credits left.`, true ],
 	[ 1, 40000, `${ localNumber( 1 ) } credit left.`, true ],
@@ -571,8 +571,8 @@ it( 'turns the dot red by amount through depletion and replenishment', async () 
 	};
 	expectDot( 'muted' );
 	for ( const [ remaining, tone, message ] of [
-		[ 20000, 'muted', undefined ],
-		[ 19999, 'error', `${ localNumber( 19.9 ) }k credits left.` ],
+		[ 10000, 'muted', undefined ],
+		[ 9999, 'error', `${ localNumber( 9.9 ) }k credits left.` ],
 		[ 800, 'error', `${ localNumber( 800 ) } credits left.` ],
 		[ 0, 'error', 'You’ve used all your site credits.' ],
 	] as const ) {
