@@ -27,6 +27,9 @@ import { getCurrentQueryParams } from '../../../utils/get-current-query-params';
 import { stepsWithRequiredLogin } from '../../../utils/steps-with-required-login';
 import { STEPS } from '../../internals/steps';
 import { ProcessingResult } from '../../internals/steps-repository/processing-step/constants';
+import { getOnboardingStepperPosition } from '../onboarding/step-counter-config';
+import { hasCommercePurchaseSteps, isCommercePurchaseResume } from './commerce-purchase-steps';
+import { resumeCommerceCart } from './resume-commerce-cart';
 import type { FlowV2, SubmitHandler } from '../../internals/types';
 import type { DomainSuggestion } from '@automattic/api-core';
 import type { OnboardActions, OnboardSelect } from '@automattic/data-stores';
@@ -39,12 +42,13 @@ async function initialize( reduxStore: Store ) {
 	// @ts-expect-error We're using the thunk middleware but TS doesn't know that.
 	reduxStore.dispatch( setSelectedSiteId( null ) );
 	clearStepPersistedState( NEW_HOSTED_SITE_FLOW );
-	clearSignupDestinationCookie();
-	clearSignupCompleteFlowName();
-	clearSignupCompleteSlug();
-	clearSignupCompleteSiteID();
-
 	const queryParams = getCurrentQueryParams();
+	if ( ! isCommercePurchaseResume( NEW_HOSTED_SITE_FLOW, queryParams ) ) {
+		clearSignupDestinationCookie();
+		clearSignupCompleteFlowName();
+		clearSignupCompleteSlug();
+		clearSignupCompleteSiteID();
+	}
 	const showDomainStep = queryParams.has( 'showDomainStep' );
 	const productSlug = queryParams.get( 'plan' );
 
@@ -94,8 +98,16 @@ const hosting: FlowV2< typeof initialize > = {
 	__experimentalUseBuiltinAuth: true,
 	isSignupFlow: true,
 	initialize,
+	useStepsProps() {
+		return {
+			[ STEPS.DOMAIN_SEARCH.slug ]: {
+				shouldHidePlansStep: hasCommercePurchaseSteps( this.name, useQuery() ),
+			},
+		};
+	},
 	useStepNavigation( _currentStepSlug, navigate ) {
 		const {
+			setPendingAction,
 			setDomain,
 			setDomainCartItem,
 			setDomainCartItems,
@@ -122,6 +134,7 @@ const hosting: FlowV2< typeof initialize > = {
 
 		const flowName = this.name;
 		const showDomainStep = query.has( 'showDomainStep' );
+		const commercePurchaseSteps = hasCommercePurchaseSteps( flowName, query );
 		const isWooPartner = useIsValidWooPartner();
 
 		const getGoBack = () => {
@@ -152,6 +165,20 @@ const hosting: FlowV2< typeof initialize > = {
 					setDomainCartItem( providedDependencies.domainItem as MinimalRequestCartProduct );
 					setDomainCartItems( providedDependencies.domainCart as MinimalRequestCartProduct[] );
 					setSignupDomainOrigin( providedDependencies.signupDomainOrigin as string );
+
+					if ( planCartItem && isCommercePurchaseResume( flowName, query ) ) {
+						const siteSlug = query.get( 'siteSlug' )!;
+						const siteId = query.get( 'siteId' )!;
+						setPendingAction( async () => {
+							await resumeCommerceCart(
+								siteSlug,
+								planCartItem,
+								( providedDependencies.domainCart as MinimalRequestCartProduct[] ) ?? []
+							);
+							return { siteId, siteSlug, goToCheckout: true, siteCreated: true };
+						} );
+						return navigate( STEPS.PROCESSING.slug );
+					}
 
 					if ( planCartItem ) {
 						return navigate( STEPS.SITE_CREATION_STEP.slug );
@@ -197,7 +224,7 @@ const hosting: FlowV2< typeof initialize > = {
 				case STEPS.PROCESSING.slug: {
 					if ( providedDependencies.processingResult === ProcessingResult.SUCCESS ) {
 						const siteId = providedDependencies.siteId || getSignupCompleteSiteID();
-						setSignupCompleteSiteID( providedDependencies.siteId );
+						setSignupCompleteSiteID( commercePurchaseSteps ? siteId : providedDependencies.siteId );
 						const siteSlug = providedDependencies.siteSlug || getSignupCompleteSlug();
 						const destinationParams: Record< string, string > = {
 							siteId,
@@ -226,18 +253,49 @@ const hosting: FlowV2< typeof initialize > = {
 
 						if ( providedDependencies.goToCheckout ) {
 							persistSignupDestination( destination );
-							setSignupCompleteSlug( providedDependencies?.siteSlug );
+							setSignupCompleteSlug(
+								commercePurchaseSteps ? siteSlug : providedDependencies?.siteSlug
+							);
 							setSignupCompleteFlowName( flowName );
 
 							if ( couponCode ) {
 								resetCouponCode();
 							}
+							const backUrl = new URL(
+								addQueryArgs( '/setup/new-hosted-site/domains', {
+									...Object.fromEntries( query ),
+									siteId,
+									siteSlug,
+								} ),
+								window.location.origin
+							).href;
+							const stepPosition = getOnboardingStepperPosition( 'checkout', true );
+							if ( commercePurchaseSteps ) {
+								// Browser Back must resume domains rather than rerun site creation.
+								window.history.replaceState( window.history.state, '', backUrl );
+							}
 							return window.location.assign(
 								addQueryArgs(
 									`/checkout/${ encodeURIComponent(
-										( providedDependencies?.siteSlug as string ) ?? ''
+										( commercePurchaseSteps
+											? siteSlug
+											: ( providedDependencies?.siteSlug as string ) ) ?? ''
 									) }`,
-									{ redirect_to: destination, coupon: couponCode }
+									{
+										redirect_to: destination,
+										coupon: couponCode,
+										...( commercePurchaseSteps && {
+											flow: NEW_HOSTED_SITE_FLOW,
+											showPurchaseSteps: 'true',
+											plan: query.get( 'plan' ),
+											showDomainStep: '',
+											signup: 1,
+											checkoutBackUrl: backUrl,
+											checkoutBackUrlDomains: backUrl,
+											steps_current: stepPosition.current,
+											steps_total: stepPosition.total,
+										} ),
+									}
 								)
 							);
 						}
@@ -254,6 +312,20 @@ const hosting: FlowV2< typeof initialize > = {
 		};
 	},
 	useSideEffect( currentStepSlug ) {
+		const commercePurchaseSteps = hasCommercePurchaseSteps( NEW_HOSTED_SITE_FLOW, useQuery() );
+		useEffect( () => {
+			if ( ! commercePurchaseSteps ) {
+				return;
+			}
+			const restorePage = ( event: PageTransitionEvent ) => {
+				if ( event.persisted ) {
+					// A cached processing page must remount at its domain-return URL.
+					window.location.reload();
+				}
+			};
+			window.addEventListener( 'pageshow', restorePage );
+			return () => window.removeEventListener( 'pageshow', restorePage );
+		}, [ commercePurchaseSteps ] );
 		const studioSiteId = useQuery().get( 'studioSiteId' );
 		const autoOpenPush = useQuery().get( 'autoOpenPush' );
 		const section = useQuery().get( 'section' );

@@ -530,7 +530,9 @@ export default function CheckoutMainContent( {
 	// The flow reports how many steps its visit had. Onboarding sends one fewer when the plan
 	// arrived preselected, so the grid was never among them.
 	const shouldHidePlansStep =
-		isOnboardingFlowCheckout && hasStepCount && stepsTotal < ONBOARDING_STEPPER_TOTAL;
+		( isOnboardingFlowCheckout || showProgress ) &&
+		hasStepCount &&
+		stepsTotal < ONBOARDING_STEPPER_TOTAL;
 	const selectedSiteData = useSelector( getSelectedSite );
 	const wpcomDomain = useSiteDomains( selectedSiteData?.ID ).find(
 		( { isWPCOMDomain, isWpcomStagingDomain } ) => isWPCOMDomain || isWpcomStagingDomain
