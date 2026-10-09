@@ -56,7 +56,7 @@ import Loading from 'calypso/components/loading';
 import { ONBOARDING_STEPPER_TOTAL } from 'calypso/landing/stepper/declarative-flow/flows/onboarding/step-counter-config';
 import { OnboardingProgress } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/components/onboarding-progress';
 import { useShowOnboardingProgress } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/components/onboarding-progress/use-show-onboarding-progress';
-import { isPlanFirstCommerce } from 'calypso/landing/stepper/utils/plan-first-commerce';
+import { hasCommercePurchaseSteps } from 'calypso/landing/stepper/utils/commerce-purchase-steps';
 import { useInitialIsInStepContainerV2FlowContext } from 'calypso/layout/utils';
 import isAkismetCheckout from 'calypso/lib/akismet/is-akismet-checkout';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -507,7 +507,7 @@ export default function CheckoutMainContent( {
 	const searchParams = new URLSearchParams( window.location.search );
 	const isOnboardingFlowCheckout =
 		searchParams.get( 'flow' ) === ONBOARDING_FLOW ||
-		isPlanFirstCommerce( searchParams.get( 'flow' ) ?? '', searchParams );
+		hasCommercePurchaseSteps( searchParams.get( 'flow' ) ?? '', searchParams );
 	const showProgress = useShowOnboardingProgress( isOnboardingFlowCheckout );
 	const forceCheckoutBackUrlDomains = useValidCheckoutBackUrl(
 		siteUrl ?? '',

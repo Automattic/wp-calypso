@@ -32,7 +32,9 @@ jest.mock( 'calypso/landing/stepper/utils/get-current-query-params', () => ( {
 
 beforeEach( () => {
 	mockMobile = true;
-	mockQuery = new URLSearchParams( 'plan_first=true&showDomainStep&plan=ecommerce-bundle-2y' );
+	mockQuery = new URLSearchParams(
+		'showPurchaseSteps=true&showDomainStep&plan=ecommerce-bundle-2y'
+	);
 } );
 
 const counter = () =>
@@ -48,7 +50,7 @@ it( 'leaves desktop to the progress overview', () => {
 } );
 
 it( 'does not change unmarked Commerce visits', () => {
-	mockQuery.delete( 'plan_first' );
+	mockQuery.delete( 'showPurchaseSteps' );
 	expect( counter() ).toBeNull();
 } );
 
