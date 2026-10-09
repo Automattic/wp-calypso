@@ -11,6 +11,17 @@ jest.mock( '../../site-migration-instructions/site-preview', () => ( {
 } ) );
 
 describe( 'SiteMigrationCheck', () => {
+	it( 'uses the flow Back handler without submitting a new navigation', async () => {
+		const goBack = jest.fn();
+		const submit = jest.fn();
+		renderStep( <SiteMigrationCheck { ...mockStepProps( { navigation: { submit, goBack } } ) } />, {
+			initialEntry: '/site-migration-check?from=https://wordpress.org/&platform=wordpress',
+		} );
+		await userEvent.click( screen.getByRole( 'button', { name: 'Back' } ) );
+		expect( goBack ).toHaveBeenCalledTimes( 1 );
+		expect( submit ).not.toHaveBeenCalled();
+	} );
+
 	it( 'shows the supplied site and waits for Continue, with the expert link disabled', async () => {
 		const submit = jest.fn();
 		renderStep( <SiteMigrationCheck { ...mockStepProps( { navigation: { submit } } ) } />, {

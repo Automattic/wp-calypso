@@ -130,7 +130,11 @@ const SiteMigrationCheck: StepType< {
 						: 'site-migration-check'
 				}
 				columnWidth={ 6 }
-				topBar={ <Step.TopBar leftElement={ <Step.BackButton onClick={ returnToAddress } /> } /> }
+				topBar={
+					<Step.TopBar
+						leftElement={ <Step.BackButton onClick={ navigation.goBack ?? returnToAddress } /> }
+					/>
+				}
 				heading={ <Step.Heading text={ title } subText={ subTitle } /> }
 			>
 				<div className="site-migration-check__summary">
