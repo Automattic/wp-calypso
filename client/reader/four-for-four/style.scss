@@ -34,7 +34,8 @@
 		background-color: color-mix( in srgb, var( --color-accent ) 8%, var( --color-surface ) );
 	}
 
-	&__save-error {
+	&__save-error,
+	&__follow-error {
 		margin: 4px 24px 0;
 		padding: 8px 16px;
 		border: 1px solid color-mix( in srgb, var( --color-error ) 25%, var( --color-surface ) );
@@ -56,7 +57,9 @@
 // Let the byline use the card's full width: the subscribe control sits over
 // the top-right corner instead of taking a column of its own, and only the
 // title line reserves room for it.
-.subscribe-modal.four-for-four-modal .subscribe-modal__site-list-column .reader-subscription-list-item {
+.subscribe-modal.four-for-four-modal
+	.subscribe-modal__site-list-column
+	.reader-subscription-list-item {
 	.reader-subscription-list-item__options {
 		position: absolute;
 		top: 12px;

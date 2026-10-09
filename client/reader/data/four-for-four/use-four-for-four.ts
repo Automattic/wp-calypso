@@ -90,6 +90,37 @@ export function useFourForFour() {
 		[ follows, candidateBlogIdByUrl, candidateBlogIds ]
 	);
 
+	const failedFollows = useMutationState( {
+		filters: {
+			predicate: ( mutation ) =>
+				mutation.options.meta?.statId === 'read-site-follow' && mutation.state.status === 'error',
+		},
+		select: ( mutation ) =>
+			( mutation.state.variables as FollowSiteParams | undefined )?.feedUrl ?? '',
+	} );
+
+	const followedBlogIds = useMemo(
+		() => new Set( [ ...recordedBlogIds, ...candidateFollows.map( ( follow ) => follow.blogId ) ] ),
+		[ recordedBlogIds, candidateFollows ]
+	);
+
+	// A follow can be refused outright, most often by the spam filter. The
+	// global error notice sits behind the modal, so the page has to say so
+	// itself or the button looks broken.
+	const failedBlogIds = useMemo(
+		() =>
+			Array.from(
+				new Set(
+					failedFollows
+						.map( ( feedUrl ) => candidateBlogIdByUrl.get( feedUrl ) ?? 0 )
+						.filter(
+							( blogId ) => candidateBlogIds.has( blogId ) && ! followedBlogIds.has( blogId )
+						)
+				)
+			),
+		[ failedFollows, candidateBlogIdByUrl, candidateBlogIds, followedBlogIds ]
+	);
+
 	// IDs that are settled: either the server kept them, or it rejected them
 	// enough times that we stopped asking. Never re-sent, so nothing can loop.
 	const answeredBlogIds = useRef( new Set< number >() );
@@ -176,10 +207,7 @@ export function useFourForFour() {
 		return () => clearTimeout( timer );
 	}, [ retryDelayMs ] );
 
-	const followedCount = new Set( [
-		...recordedBlogIds,
-		...candidateFollows.map( ( follow ) => follow.blogId ),
-	] ).size;
+	const followedCount = followedBlogIds.size;
 
 	const retrySave = () => {
 		if ( statusQuery.isError ) {
@@ -197,6 +225,7 @@ export function useFourForFour() {
 		refetchCandidates: candidatesQuery.refetch,
 		status: statusQuery.data?.status ?? null,
 		followedCount,
+		failedBlogIds,
 		hasSaveError: statusQuery.isError || progress.isError,
 		retrySave,
 	};
