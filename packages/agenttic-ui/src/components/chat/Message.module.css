@@ -61,7 +61,8 @@
 
 /* MARKDOWN */
 
-.message * {
+/* stylelint-disable-next-line selector-pseudo-class-no-unknown -- CSS Modules :global */
+.message:where( :not( :global( .a2ui ) ) ) * {
 	font-size: var( --text-sm );
 	font-weight: 400;
 	line-height: var( --text-sm--line-height );
