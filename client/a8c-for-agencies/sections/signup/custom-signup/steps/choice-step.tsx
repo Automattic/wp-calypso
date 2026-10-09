@@ -28,6 +28,10 @@ type Props = {
 	ctaLabel: string;
 	// Small text shown above the buttons.
 	footerNote?: string;
+	// Selected options keep click order and show their rank.
+	ranked?: boolean;
+	// Blocks Continue until at least one option is selected.
+	required?: boolean;
 	onContinue: ( answer: ChoiceStepAnswer ) => void;
 	onBack: ( answer: ChoiceStepAnswer ) => void;
 };
@@ -41,12 +45,15 @@ export default function ChoiceStep( {
 	otherPlaceholder,
 	ctaLabel,
 	footerNote,
+	ranked,
+	required = false,
 	onContinue,
 	onBack,
 }: Props ) {
 	const translate = useTranslate();
 	const [ value, setValue ] = useState< string[] >( initialValue );
 	const [ otherText, setOtherText ] = useState( initialOtherText );
+	const [ showRequiredError, setShowRequiredError ] = useState( false );
 
 	const answer = (): ChoiceStepAnswer => ( {
 		value,
@@ -54,17 +61,35 @@ export default function ChoiceStep( {
 		otherText: value.includes( 'other' ) ? otherText : '',
 	} );
 
+	const handleContinue = () => {
+		if ( required && value.length === 0 ) {
+			setShowRequiredError( true );
+			return;
+		}
+		onContinue( answer() );
+	};
+
 	return (
 		<Form className="a4a-custom-signup-step" title={ title } description={ description }>
 			<ChoiceCards
 				label={ title }
 				options={ options }
 				value={ value }
-				onChange={ setValue }
+				onChange={ ( next ) => {
+					setValue( next );
+					setShowRequiredError( false );
+				} }
 				otherText={ otherText }
 				onOtherTextChange={ setOtherText }
 				otherPlaceholder={ otherPlaceholder }
+				ranked={ ranked }
 			/>
+
+			{ showRequiredError && (
+				<p className="a4a-form__error a4a-custom-signup-step-error" role="alert">
+					{ translate( 'Select at least one goal to continue.' ) }
+				</p>
+			) }
 
 			{ footerNote && <p className="a4a-custom-signup-step-note">{ footerNote }</p> }
 
@@ -78,7 +103,7 @@ export default function ChoiceStep( {
 					>
 						{ translate( 'Back' ) }
 					</Button>
-					<Button __next40pxDefaultSize variant="primary" onClick={ () => onContinue( answer() ) }>
+					<Button __next40pxDefaultSize variant="primary" onClick={ handleContinue }>
 						{ ctaLabel }
 					</Button>
 				</div>

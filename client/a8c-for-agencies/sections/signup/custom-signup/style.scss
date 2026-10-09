@@ -719,6 +719,24 @@ $a4a-font-base: 'https://s2.wp.com/wp-content/themes/a8c/the-one-theme/assets/fo
 	}
 }
 
+.a4a-custom-signup .a4a-custom-signup-step-error {
+	margin: 0;
+	font-size: 0.8125rem;
+	font-style: normal;
+	color: var( --color-error );
+}
+
+.a4a-choice-card-check.is-ranked {
+	width: 24px;
+	height: 24px;
+	margin-block-start: -2px;
+	border-radius: 50%;
+	font-size: 0.75rem;
+	font-weight: 600;
+	line-height: 1;
+	color: var( --a4a-signup-white );
+}
+
 .a4a-choice-card.is-selected .a4a-choice-card-check {
 	border-color: var( --a4a-signup-accent-1 );
 	background-color: var( --a4a-signup-accent-1 );

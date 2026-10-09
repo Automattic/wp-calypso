@@ -78,7 +78,9 @@ export default function CustomSignupForm() {
 					<ChoiceStep
 						key="challenges"
 						title={ translate( 'What can we help your agency with?' ) }
-						description={ translate( 'Tell us your goals, and we’ll tailor your experience.' ) }
+						description={ translate(
+							'Select your goals in order of priority, and we’ll tailor your experience.'
+						) }
 						options={ getChallengeOptions() }
 						initialValue={ data.challenges }
 						initialOtherText={ data.challengesOther }
@@ -90,6 +92,8 @@ export default function CustomSignupForm() {
 						onBack={ ( { value, otherText } ) =>
 							goTo( { challenges: value, challengesOther: otherText }, STEP_ABOUT_AGENCY )
 						}
+						ranked
+						required
 						onContinue={ finish }
 					/>
 				);

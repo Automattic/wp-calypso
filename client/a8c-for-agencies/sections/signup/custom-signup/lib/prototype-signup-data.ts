@@ -19,7 +19,7 @@ export type PrototypeSignupData = {
 	agencySize: string;
 	managedSites: string;
 	servicesOffered: string[];
-	// Step 3 (goals): what the agency needs help with.
+	// Step 3 (goals): what the agency needs help with, in priority order (first = top).
 	challenges: string[];
 	challengesOther: string;
 };

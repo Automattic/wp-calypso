@@ -4,6 +4,9 @@
  * Multi-select answers shown as toggleable cards (or compact chips). An option
  * marked `isOther` expands into a text field when selected, so people can
  * describe what's missing from the list.
+ *
+ * With `ranked`, `value` keeps click order and each selected card shows its
+ * position (1, 2, 3…), so the order people pick in becomes their priority.
  */
 import { TextareaControl } from '@wordpress/components';
 import { Icon, check } from '@wordpress/icons';
@@ -20,6 +23,7 @@ type Props = {
 	otherText?: string;
 	onOtherTextChange?: ( text: string ) => void;
 	otherPlaceholder?: string;
+	ranked?: boolean;
 };
 
 export default function ChoiceCards( {
@@ -31,6 +35,7 @@ export default function ChoiceCards( {
 	otherText = '',
 	onOtherTextChange,
 	otherPlaceholder,
+	ranked = false,
 }: Props ) {
 	const translate = useTranslate();
 
@@ -48,7 +53,8 @@ export default function ChoiceCards( {
 			aria-label={ label }
 		>
 			{ options.map( ( option ) => {
-				const isSelected = value.includes( option.value );
+				const rank = value.indexOf( option.value ) + 1;
+				const isSelected = rank > 0;
 				const isExpanded = !! option.isOther && isSelected && !! onOtherTextChange;
 
 				return (
@@ -63,9 +69,17 @@ export default function ChoiceCards( {
 							aria-expanded={ option.isOther ? isExpanded : undefined }
 							onClick={ () => toggle( option.value ) }
 						>
-							<span className="a4a-choice-card-check" aria-hidden="true">
-								{ isSelected && <Icon icon={ check } size={ 16 } /> }
+							<span
+								className={ clsx( 'a4a-choice-card-check', { 'is-ranked': ranked } ) }
+								aria-hidden="true"
+							>
+								{ isSelected && ( ranked ? rank : <Icon icon={ check } size={ 16 } /> ) }
 							</span>
+							{ ranked && isSelected && (
+								<span className="screen-reader-text">
+									{ translate( 'Priority %(rank)d', { args: { rank } } ) }
+								</span>
+							) }
 							<span className="a4a-choice-card-text">
 								<span className="a4a-choice-card-label">{ option.label }</span>
 								{ variant === 'cards' && option.description && (
