@@ -26,6 +26,15 @@ const submitPlan = ( plan: string ) =>
 
 const checkoutUrl = () => ( window.location.assign as jest.Mock ).mock.calls[ 0 ][ 0 ];
 
+const goBack = () => {
+	const stepsProps = planUpgradeFlow.useStepsProps!() as Record<
+		string,
+		{ wrapperProps: { goBack: () => void } }
+	>;
+	stepsProps[ STEPS.UNIFIED_PLANS.slug ].wrapperProps.goBack();
+	return ( window.location.assign as jest.Mock ).mock.calls[ 0 ][ 0 ];
+};
+
 describe( 'plan-upgrade flow', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
@@ -114,5 +123,18 @@ describe( 'plan-upgrade flow', () => {
 		submitPlan( 'personal-bundle' );
 
 		expect( checkoutUrl() ).toContain( 'redirect_to=' );
+	} );
+
+	it( 'goes back to the site itself, such as its wp-admin', () => {
+		mockQuery.cancel_to =
+			'https://example.wordpress.com/wp-admin/admin.php?page=jetpack-activity-log';
+
+		expect( goBack() ).toBe( mockQuery.cancel_to );
+	} );
+
+	it( 'does not go back to a host that only looks like the site', () => {
+		mockQuery.cancel_to = 'https://example.wordpress.com.evil.example/wp-admin/';
+
+		expect( goBack() ).toContain( '/sites' );
 	} );
 } );
