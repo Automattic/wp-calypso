@@ -87,7 +87,6 @@ export interface Message {
 	icon?: string;
 	actions?: MessageAction[];
 	disabled?: boolean;
-	className?: string;
 	reactKey?: string; // Stable key for React rendering (prevents unmount/remount during updates)
 	sources?: AgentSource[]; // Agent message sources/citations rendered beneath the body
 }
