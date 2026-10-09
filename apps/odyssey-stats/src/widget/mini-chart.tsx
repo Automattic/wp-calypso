@@ -85,6 +85,12 @@ const MiniChart: FunctionComponent< MiniChartProps > = ( { siteId, range, footer
 	const hasChart = status === 'success' && ! isEmpty;
 	// Fixed, so the card keeps its height from the placeholder to the chart.
 	const chartBoxStyle = { blockSize: `${ CHART_HEIGHT }px` };
+	// One placeholder for both waits: for the data, and for the chart's chunk.
+	const chartPlaceholder = (
+		<div className="stats-widget-chart" style={ chartBoxStyle }>
+			<StatsModulePlaceholder isLoading />
+		</div>
+	);
 	const noData = (
 		<p className="stats-widget-minichart__error">{ translate( 'No data to show' ) }</p>
 	);
@@ -126,11 +132,7 @@ const MiniChart: FunctionComponent< MiniChartProps > = ( { siteId, range, footer
 				</div>
 			) }
 
-			{ isPending && (
-				<div className="stats-widget-chart" style={ chartBoxStyle }>
-					<StatsModulePlaceholder isLoading />
-				</div>
-			) }
+			{ isPending && chartPlaceholder }
 			{ isEmpty && (
 				<Notice.Root intent="info" className="stats-widget-empty-notice">
 					<Notice.Description>
@@ -148,13 +150,7 @@ const MiniChart: FunctionComponent< MiniChartProps > = ( { siteId, range, footer
 				// Around the chart alone, so a failed chart takes only its own box with it.
 				<ChartBoundary fallback={ noData }>
 					{ /* The footer waits with the chart: data can arrive before the chart's chunk does. */ }
-					<Suspense
-						fallback={
-							<div className="stats-widget-chart" style={ chartBoxStyle }>
-								<StatsModulePlaceholder isLoading />
-							</div>
-						}
-					>
+					<Suspense fallback={ chartPlaceholder }>
 						<div className="stats-widget-chart" style={ chartBoxStyle }>
 							<OverviewChart series={ series } height={ CHART_HEIGHT } unit={ unit } />
 						</div>
