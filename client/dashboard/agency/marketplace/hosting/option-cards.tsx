@@ -5,6 +5,7 @@ import {
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { check } from '@wordpress/icons';
+import { Badge } from '@wordpress/ui';
 import clsx from 'clsx';
 import { Card, CardBody } from '../../../components/card';
 
@@ -13,6 +14,8 @@ export interface OptionCardItem {
 	label: string;
 	description: string;
 	disabled?: boolean;
+	/** A short status, such as why the option can't be picked. */
+	tag?: string;
 }
 
 export default function OptionCards( {
@@ -65,6 +68,11 @@ export default function OptionCards( {
 									<Icon icon={ check } className="dashboard-marketplace-hosting__option-check" />
 								</HStack>
 								<Text variant="muted">{ option.description }</Text>
+								{ option.tag && (
+									<HStack justify="flex-start">
+										<Badge>{ option.tag }</Badge>
+									</HStack>
+								) }
 							</VStack>
 						</CardBody>
 					</Card>

@@ -17,7 +17,7 @@ const shared = {
 	testEnvironmentOptions: {
 		url: 'https://example.com',
 	},
-	setupFiles: [ 'jest-canvas-mock' ],
+	setupFiles: [ ...base.setupFiles, 'jest-canvas-mock' ],
 	globals: {
 		google: {},
 		__i18n_text_domain__: 'default',
@@ -30,6 +30,7 @@ module.exports = {
 			...shared,
 			displayName: 'client',
 			testPathIgnorePatterns: [ ...shared.testPathIgnorePatterns, '<rootDir>/dashboard/' ],
+			setupFiles: [ ...shared.setupFiles, '<rootDir>/../test/client/setup-globals.js' ],
 			setupFilesAfterEnv: [
 				...shared.setupFilesAfterEnv,
 				'<rootDir>/../test/client/setup-test-framework.js',

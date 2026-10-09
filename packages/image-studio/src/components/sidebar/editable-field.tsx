@@ -10,7 +10,11 @@ import { store as imageStudioStore } from '../../store';
 import { ImageStudioMode, type MetadataField } from '../../types';
 import { defaultAgentConfigFactory } from '../../utils/agent-config';
 import { trackImageStudioGenAIButtonClick } from '../../utils/tracking';
+import type { AiCreditsState } from '../../hooks/use-ai-credits';
 import './editable-field.scss';
+
+/** The chat's credits handlers, so a regeneration updates and respects the same balance. */
+export type RegenerateCredits = Pick< AiCreditsState, 'onTaskUpdate' | 'beforeSubmit' >;
 
 interface GenAIButtonProps {
 	agentConfigState: UseAgentChatConfig;
@@ -18,6 +22,7 @@ interface GenAIButtonProps {
 	setProcessing: ( processing: boolean ) => void;
 	field: MetadataField;
 	attachmentId?: number;
+	credits?: RegenerateCredits;
 }
 
 function GenAIButton( {
@@ -26,8 +31,16 @@ function GenAIButton( {
 	setProcessing,
 	field,
 	attachmentId,
+	credits,
 }: GenAIButtonProps ) {
-	const agentChatProps = useAgentChat( agentConfigState );
+	// A regeneration is an Agent turn, so its last update carries the new balance.
+	const agentChatProps = useAgentChat( {
+		...agentConfigState,
+		onTaskUpdate: ( update ) => {
+			credits?.onTaskUpdate( update );
+			return agentConfigState.onTaskUpdate?.( update );
+		},
+	} );
 	const { addNotice } = useDispatch( imageStudioStore );
 
 	useEffect( () => {
@@ -38,6 +51,11 @@ function GenAIButton( {
 	useErrorNotice( agentChatProps.error, addNotice, ImageStudioMode.Edit );
 
 	const handleClick = () => {
+		// At zero credits this opens the credits details instead, as Send does.
+		if ( credits && ! credits.beforeSubmit() ) {
+			return;
+		}
+
 		// Track the GenAI button click
 		trackImageStudioGenAIButtonClick( {
 			field,
@@ -67,6 +85,7 @@ interface EditableFieldProps {
 	disabled?: boolean;
 	field: MetadataField;
 	attachmentId?: number;
+	credits?: RegenerateCredits;
 }
 
 export function EditableField( {
@@ -77,6 +96,7 @@ export function EditableField( {
 	disabled = false,
 	field,
 	attachmentId,
+	credits,
 }: EditableFieldProps ) {
 	const [ editedValue, setEditedValue ] = useState( value );
 	const [ processing, setProcessing ] = useState( false );
@@ -127,6 +147,7 @@ export function EditableField( {
 							prompt={ `Generate a new ${ label.toLowerCase() } for this image` }
 							field={ field }
 							attachmentId={ attachmentId }
+							credits={ credits }
 						/>
 					) }
 				</div>

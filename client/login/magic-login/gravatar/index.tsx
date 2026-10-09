@@ -7,6 +7,7 @@ import { useRef, useState, useEffect } from '@wordpress/element';
 import clsx from 'clsx';
 import emailValidator from 'email-validator';
 import { TranslateResult, useTranslate } from 'i18n-calypso';
+import { useBlackboxProtection } from 'calypso/blocks/login/use-blackbox-protection';
 import FormButton from 'calypso/components/forms/form-button';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import GlobalNotices from 'calypso/components/global-notices';
@@ -567,7 +568,10 @@ interface GravPoweredEmailCodeVerificationProps {
 	isNewAccount: boolean;
 	verificationCodeInputValue: string;
 	handleGravPoweredCodeInputChange: ( e: React.ChangeEvent< HTMLInputElement > ) => void;
-	handleGravPoweredCodeSubmit: ( e: React.FormEvent< HTMLFormElement > ) => void;
+	handleGravPoweredCodeSubmit: (
+		e: React.FormEvent< HTMLFormElement >,
+		blackboxSessionId?: string
+	) => void;
 	handleGravPoweredEmailCodeSend: ( email: string ) => void;
 	resendEmailCountdown: number;
 	isRequestingEmail: boolean;
@@ -601,13 +605,43 @@ const GravPoweredEmailCodeVerification = ( {
 }: GravPoweredEmailCodeVerificationProps ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
+	const codeValidationError = useSelector( getMagicLoginRequestAuthError );
+	const { challenge, getSessionId, isSubmitBlocked } = useBlackboxProtection( {
+		feature: 'blackbox-signup',
+		suspended: ! isNewAccount,
+		resetOnError: codeValidationError,
+	} );
+	const [ isCollectingSession, setIsCollectingSession ] = useState( false );
+	const isCollectingSessionRef = useRef( false );
+	const onSubmit = async ( event: React.FormEvent< HTMLFormElement > ) => {
+		event.preventDefault();
+		if ( isSubmitBlocked || isCollectingSessionRef.current ) {
+			return;
+		}
+
+		const shouldCollect = isNewAccount;
+		if ( shouldCollect ) {
+			isCollectingSessionRef.current = true;
+			setIsCollectingSession( true );
+		}
+		try {
+			const blackboxSessionId = await getSessionId();
+			handleGravPoweredCodeSubmit( event, blackboxSessionId );
+		} finally {
+			if ( shouldCollect ) {
+				isCollectingSessionRef.current = false;
+				setIsCollectingSession( false );
+			}
+		}
+	};
 	const isValidatingCode = useSelector( isFetchingMagicLoginAuth );
 	const isCodeValidated = useSelector( getMagicLoginRequestedAuthSuccessfully );
-	const codeValidationError = useSelector( getMagicLoginRequestAuthError );
 	const twoFactorEnabled = useSelector( isTwoFactorEnabled );
 	const twoFactorNotificationSent = useSelector( getTwoFactorNotificationSent );
 	const redirectToSanitized = useSelector( getRedirectToSanitized );
-	const isProcessingCode = isValidatingCode || isCodeValidated;
+	const isProcessingCode = isCollectingSession || isValidatingCode || isCodeValidated;
+	// A challenge raised by this submit's collect holds the request, so stop spinning while it is up.
+	const isButtonBusy = isProcessingCode && ! isSubmitBlocked;
 
 	useEffect( () => {
 		if ( ! isCodeValidated ) {
@@ -684,10 +718,7 @@ const GravPoweredEmailCodeVerification = ( {
 				) }
 			</p>
 			{ isNewAccount && <GravPoweredMagicLoginTos /> }
-			<form
-				className="grav-powered-magic-login__verification-code-form"
-				onSubmit={ handleGravPoweredCodeSubmit }
-			>
+			<form className="grav-powered-magic-login__verification-code-form" onSubmit={ onSubmit }>
 				<FormLabel htmlFor="verification-code" hidden>
 					{ translate( 'Enter the verification code' ) }
 				</FormLabel>
@@ -700,6 +731,7 @@ const GravPoweredEmailCodeVerification = ( {
 					isError={ !! codeValidationError }
 					autoFocus // eslint-disable-line jsx-a11y/no-autofocus
 				/>
+				{ challenge }
 				{ codeValidationError && (
 					<Notice
 						text={ errorText }
@@ -711,11 +743,12 @@ const GravPoweredEmailCodeVerification = ( {
 				<FormButton
 					primary
 					disabled={
+						isSubmitBlocked ||
+						isProcessingCode ||
 						! verificationCodeInputValue ||
-						verificationCodeInputValue.length < 6 ||
-						isProcessingCode
+						verificationCodeInputValue.length < 6
 					}
-					busy={ isProcessingCode }
+					busy={ isButtonBusy }
 				>
 					{ translate( 'Continue' ) }
 				</FormButton>
@@ -1088,7 +1121,10 @@ const GravPoweredMagicLogin = ( { path }: { path: string } ) => {
 		} );
 	};
 
-	const handleGravPoweredCodeSubmit = ( e: React.FormEvent< HTMLFormElement > ) => {
+	const handleGravPoweredCodeSubmit = (
+		e: React.FormEvent< HTMLFormElement >,
+		blackboxSessionId?: string
+	) => {
 		e.preventDefault();
 
 		dispatch(
@@ -1096,7 +1132,8 @@ const GravPoweredMagicLogin = ( { path }: { path: string } ) => {
 				`${ publicToken }:${ btoa( verificationCodeInputValue ) }`,
 				currentQueryArguments?.redirect_to ?? '',
 				oauth2Client ? getGravatarOAuth2Flow( oauth2Client ) : undefined,
-				true
+				true,
+				blackboxSessionId
 			)
 		);
 	};

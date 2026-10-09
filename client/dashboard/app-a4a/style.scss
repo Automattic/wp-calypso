@@ -57,4 +57,10 @@
 	--dashboard-marketplace-neutral__ink-color: #{$gray-900};
 	--dashboard-marketplace-neutral__tint-color: #{$gray-100};
 	--dashboard-marketplace-neutral__on-color: #{$white};
+
+	// Referral mode band: the steps' field and numbers. Taken from the Marketplace graphics,
+	// since Color Studio has no match for these blues.
+	--dashboard-marketplace-referral__color: #0240e4;
+	--dashboard-marketplace-referral__tint-color: #e5f1ff;
+	--dashboard-marketplace-referral__on-color: #{$white};
 }

@@ -151,6 +151,15 @@ export function getLiveCreditSiteId(
 		: undefined;
 }
 
+/** The dot's status for a valid allowance snapshot, so other chats can show the same balance. */
+export function parseLiveCreditsStatus(
+	value: unknown,
+	siteId: number
+): CreditsStatus | undefined {
+	const snapshot = parseCreditSnapshot( value, siteId );
+	return snapshot && buildLiveCreditsStatus( snapshot );
+}
+
 export function buildLiveCreditsStatus( snapshot: CreditSnapshot ): CreditsStatus {
 	const percent = ( 100 * snapshot.credits_remaining ) / snapshot.credits_limit;
 	const { top_up_credits_purchased: topUpsPurchased, top_up_credits_remaining: topUpsRemaining } =
@@ -197,6 +206,23 @@ export function buildLiveCreditsStatus( snapshot: CreditSnapshot ): CreditsStatu
 	};
 }
 
+/** Tags upgrades from the credits prompts. Checkout copies it onto the purchase, and Tracks events send it as `ref`. */
+export const CREDITS_UPGRADE_SOURCE = 'wp_ai_credits';
+
+/**
+ * The plans page for a plan with a higher plan to move to. Calypso's plans
+ * route takes the site's domain or its ID.
+ */
+export function getCreditsUpgradeUrl(
+	status: CreditsStatus,
+	site: string | number
+): string | undefined {
+	if ( ! [ 'personal', 'premium', 'business' ].includes( status.planTier ?? '' ) ) {
+		return undefined;
+	}
+	return `https://wordpress.com/plans/${ encodeURIComponent( site ) }?source=${ CREDITS_UPGRADE_SOURCE }`;
+}
+
 /** Bind the plans destination to the same site as the authenticated balance. */
 export function getLiveCreditsUpgradeUrl(
 	status: CreditsStatus,
@@ -207,10 +233,9 @@ export function getLiveCreditsUpgradeUrl(
 		! siteId ||
 		Number( site?.ID ) !== siteId ||
 		! site?.domain.trim() ||
-		[ '.', '..' ].includes( site.domain ) ||
-		! [ 'personal', 'premium', 'business' ].includes( status.planTier ?? '' )
+		[ '.', '..' ].includes( site.domain )
 	) {
 		return undefined;
 	}
-	return `https://wordpress.com/plans/${ encodeURIComponent( site.domain ) }`;
+	return getCreditsUpgradeUrl( status, site.domain );
 }
