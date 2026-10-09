@@ -26,9 +26,11 @@ const SITE_INDEXING_DELAY_MS = 1000;
 export default function RemoveSiteModal( {
 	site,
 	closeModal,
+	onRemoved,
 }: {
 	site: AgencySite;
 	closeModal?: () => void;
+	onRemoved?: () => void;
 } ) {
 	const { recordTracksEvent } = useAnalytics();
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
@@ -90,6 +92,7 @@ export default function RemoveSiteModal( {
 					type: 'snackbar',
 				} );
 				closeModal?.();
+				onRemoved?.();
 			},
 			onError: ( error: Error ) => notifyFailure( error.message ),
 		} );
