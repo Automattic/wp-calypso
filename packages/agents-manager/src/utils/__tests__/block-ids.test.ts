@@ -1,15 +1,8 @@
-jest.mock( '../provider-store', () => ( { providerSelectors: jest.fn() } ) );
-
 import type * as BlockIds from '../block-ids';
 
 // The map lasts for the page load, so each test starts from a fresh module.
-function loadBlockIds( providerMap?: Record< string, string > ) {
+function loadBlockIds() {
 	jest.resetModules();
-	jest
-		.requireMock( '../provider-store' )
-		.providerSelectors.mockReturnValue(
-			providerMap && { getFullPageStructure: () => ( { clientIdMap: providerMap } ) }
-		);
 
 	return jest.requireActual< typeof BlockIds >( '../block-ids' );
 }
@@ -29,15 +22,16 @@ it( 'gives a block the same short id on every lookup, and resolves it back', () 
 
 // Digits alone would read as a page id or a menu `ref`.
 it( 'mints four characters, a letter first, past an id already taken', () => {
-	const providerMap = { aaaa: 'uuid-taken' };
-	const { toShortId } = loadBlockIds( providerMap ).createShortIdLookup();
+	const { toShortId } = loadBlockIds().createShortIdLookup();
+	const random = jest.spyOn( Math, 'random' ).mockReturnValue( 0 );
 
-	// Four picks of the first character make `aaaa`; the next four, `z999`.
-	const random = jest.spyOn( Math, 'random' ).mockReturnValue( 0.999 );
+	expect( toShortId( 'uuid-taken' ) ).toBe( 'aaaa' );
+
+	// Four picks of the first character make `aaaa` again; the next four, `z999`.
+	random.mockReturnValue( 0.999 );
 	[ 0, 0, 0, 0 ].forEach( ( value ) => random.mockReturnValueOnce( value ) );
 
 	expect( toShortId( 'uuid-hero' ) ).toBe( 'z999' );
-	expect( providerMap ).toEqual( { aaaa: 'uuid-taken', z999: 'uuid-hero' } );
 } );
 
 // A host names a block to the agent: the id must be the one the page structure lists.
@@ -83,31 +77,6 @@ it( 'repoints a short id, or every short id that stood for a replaced block', ()
 	repointBlockId( 'uuid-new', 'uuid-newer' );
 
 	expect( resolveClientId( shortId ) ).toBe( 'uuid-newer' );
-} );
-
-// TODO (ability-migration): Goes with the shared map in `block-ids.ts`.
-describe( 'with a provider-held map', () => {
-	// The provider looks a block up in its map before minting, and resolves
-	// through it, so one object keeps both sides on the same ids.
-	it( 'reuses the ids it holds', () => {
-		const { createShortIdLookup, resolveClientId } = loadBlockIds( { bMnU: 'uuid-hero' } );
-
-		expect( createShortIdLookup().toShortId( 'uuid-hero' ) ).toBe( 'bMnU' );
-		expect( resolveClientId( 'bMnU' ) ).toBe( 'uuid-hero' );
-	} );
-
-	it( 'carries over the ids handed out before its store appeared', () => {
-		const blockIds = loadBlockIds();
-		const hero = blockIds.createShortIdLookup().toShortId( 'uuid-hero' );
-		const providerMap: Record< string, string > = {};
-
-		jest.requireMock( '../provider-store' ).providerSelectors.mockReturnValue( {
-			getFullPageStructure: () => ( { clientIdMap: providerMap } ),
-		} );
-
-		expect( blockIds.createShortIdLookup().toShortId( 'uuid-hero' ) ).toBe( hero );
-		expect( providerMap ).toEqual( { [ hero ]: 'uuid-hero' } );
-	} );
 } );
 
 it( 'keeps the menu items of the last page structure only', () => {

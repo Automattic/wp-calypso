@@ -5,7 +5,6 @@
  * one from an earlier load resolves to nothing rather than to another block.
  */
 
-import { providerSelectors } from './provider-store';
 import type { BlockAttributes } from './editor-blocks';
 
 type ClientIdMap = Record< string, string >;
@@ -13,34 +12,19 @@ type ClientIdMap = Record< string, string >;
 const LETTERS = 'abcdefghijklmnopqrstuvwxyz';
 const CHARACTERS = `${ LETTERS }0123456789`;
 
-let clientIdMap: ClientIdMap = {};
+const clientIdMap: ClientIdMap = {};
 let menuItemAttributes = new Map< string, BlockAttributes >();
-
-// TODO (ability-migration): Drop the shared map once Big Sky's context builder
-// goes. It mints into the map its store holds and resolves through it, so
-// working in that one object keeps both sides on the same id for the same block.
-function getClientIdMap(): ClientIdMap {
-	const provided = providerSelectors< {
-		getFullPageStructure?: () => { clientIdMap?: ClientIdMap } | undefined;
-	} >()?.getFullPageStructure?.()?.clientIdMap;
-
-	if ( provided && provided !== clientIdMap ) {
-		clientIdMap = Object.assign( provided, clientIdMap );
-	}
-
-	return clientIdMap;
-}
 
 const pick = ( characters: string ): string =>
 	characters[ Math.floor( Math.random() * characters.length ) ];
 
 // Letter first: an id made of digits would read as a page id or a menu `ref`.
-function mintShortId( map: ClientIdMap ): string {
+function mintShortId(): string {
 	let shortId: string;
 
 	do {
 		shortId = pick( LETTERS ) + pick( CHARACTERS ) + pick( CHARACTERS ) + pick( CHARACTERS );
-	} while ( Object.hasOwn( map, shortId ) );
+	} while ( Object.hasOwn( clientIdMap, shortId ) );
 
 	return shortId;
 }
@@ -53,10 +37,8 @@ export function createShortIdLookup(): {
 	toShortId: ( clientId: string ) => string;
 	findShortId: ( clientId: string ) => string | undefined;
 } {
-	const map = getClientIdMap();
-
 	const shortIds = new Map(
-		Object.entries( map ).map( ( [ shortId, clientId ] ) => [ clientId, shortId ] )
+		Object.entries( clientIdMap ).map( ( [ shortId, clientId ] ) => [ clientId, shortId ] )
 	);
 
 	return {
@@ -64,8 +46,8 @@ export function createShortIdLookup(): {
 			let shortId = shortIds.get( clientId );
 
 			if ( ! shortId ) {
-				shortId = mintShortId( map );
-				map[ shortId ] = clientId;
+				shortId = mintShortId();
+				clientIdMap[ shortId ] = clientId;
 				shortIds.set( clientId, shortId );
 			}
 
@@ -90,9 +72,7 @@ export const getAgentBlockId = ( clientId: string ): string =>
  * those out unshortened.
  */
 export function resolveClientId( id: string ): string {
-	const map = getClientIdMap();
-
-	return Object.hasOwn( map, id ) ? map[ id ] : id;
+	return Object.hasOwn( clientIdMap, id ) ? clientIdMap[ id ] : id;
 }
 
 /**
@@ -100,18 +80,16 @@ export function resolveClientId( id: string ): string {
  * `id` is a short id, or the clientId the agent's ids resolved to.
  */
 export function repointBlockId( id: string, clientId: string ): void {
-	const map = getClientIdMap();
-
-	if ( Object.hasOwn( map, id ) ) {
-		map[ id ] = clientId;
+	if ( Object.hasOwn( clientIdMap, id ) ) {
+		clientIdMap[ id ] = clientId;
 
 		return;
 	}
 
-	Object.keys( map )
-		.filter( ( shortId ) => map[ shortId ] === id )
+	Object.keys( clientIdMap )
+		.filter( ( shortId ) => clientIdMap[ shortId ] === id )
 		.forEach( ( shortId ) => {
-			map[ shortId ] = clientId;
+			clientIdMap[ shortId ] = clientId;
 		} );
 }
 
