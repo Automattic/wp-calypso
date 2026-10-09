@@ -18,7 +18,7 @@ $resource-brands: (
 
 // Each product's brand color, for the card header and preview tints and the list's hover.
 .dashboard-resources-learn__card-header,
-.dashboard-resources-learn__list-title,
+.dashboard-resources-learn__item-link,
 .dashboard-resources-learn__list-brand,
 .dashboard-resources-learn__preview {
 	--resource-brand: #{$studio-gray-100};
@@ -72,53 +72,32 @@ $resource-brands: (
 	mask-repeat: no-repeat;
 }
 
-// List view: the title is a stretched link over its row, and the row takes on
-// the product's brand color on hover.
+// List view: DataViews renders the title as the item link, stretched over its
+// row so the whole row opens the resource, and the row takes on the product's
+// brand color on hover.
 .dashboard-resources-learn__filters .dataviews-view-table tr {
 	position: relative;
 
-	// Line the outer columns up with the toolbar edges. The header selectors
-	// repeat DataViews' own :has() to outrank its padding for sortable headers.
-	> td:first-child,
-	> th:first-child,
-	> th:first-child:has( .dataviews-view-table-header-button ) {
-		padding-inline-start: 0;
-	}
-
-	> td:last-child,
-	> th:last-child,
-	> th:last-child:has( .dataviews-view-table-header-button ) {
-		padding-inline-end: 0;
-	}
-
-	> th:first-child .dataviews-view-table-header-button {
-		padding-inline-start: 0;
-	}
-
-	// The dashboard's global DataViews overrides pad the first column with
-	// !important on narrow screens, so only !important keeps it flush here.
-	@media ( max-width: #{$break-medium} ) {
-		> td:first-child,
-		> th:first-child {
-			padding-inline-start: 0 !important;
-		}
-	}
-
-	> th:last-child .dataviews-view-table-header-button {
-		padding-inline-end: 0;
-	}
-
-	&:hover,
-	&:focus-within {
-		.dashboard-resources-learn__list-title,
+	&:is( :hover, :focus-within ) {
+		.dashboard-resources-learn__item-link,
 		.dashboard-resources-learn__list-brand {
-			color: var( --resource-brand, currentColor );
+			color: var( --resource-brand );
 		}
 	}
 }
 
-// A resource's link, stretched with ::after over its card or row so the whole
-// of it is clickable, and drawing the focus ring around it.
+.dashboard-resources-learn__item-link {
+	text-decoration: none;
+
+	&::after {
+		content: '';
+		position: absolute;
+		inset: 0;
+	}
+}
+
+// A resource's link, stretched with ::after over its card so the whole of it is
+// clickable, and drawing the focus ring around it.
 .dashboard-resources-learn__link {
 	color: inherit;
 	text-decoration: none;

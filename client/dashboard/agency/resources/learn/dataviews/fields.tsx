@@ -7,8 +7,7 @@ import {
 	getProductLabel,
 	getStageLabel,
 } from '../lib/labels';
-import { ResourceListProduct, ResourceListTitle } from './list-cells';
-import type { SelectResource } from '../types';
+import { ResourceListProduct } from './list-cells';
 import type { AgencyEnablementResource } from '@automattic/api-core';
 import type { Field } from '@wordpress/dataviews';
 
@@ -16,11 +15,7 @@ import type { Field } from '@wordpress/dataviews';
  * Fields for filtering the library and for the list layout's columns. The
  * grid renders its own cards, so only the list uses the `render` callbacks.
  */
-export function useResourceFields(
-	resources: AgencyEnablementResource[],
-	onSelectResource: SelectResource,
-	readIds: number[]
-) {
+export function useResourceFields( resources: AgencyEnablementResource[], readIds: number[] ) {
 	return useMemo( (): Field< AgencyEnablementResource >[] => {
 		// Only offer values that occur in the data.
 		const toElements = < T extends string >(
@@ -55,9 +50,6 @@ export function useResourceFields(
 				id: 'name',
 				label: __( 'Title' ),
 				getValue: ( { item } ) => item.name,
-				render: ( { item } ) => (
-					<ResourceListTitle resource={ item } onSelect={ onSelectResource } />
-				),
 				enableGlobalSearch: true,
 				enableSorting: false,
 				enableHiding: false,
@@ -110,5 +102,5 @@ export function useResourceFields(
 				filterBy: false,
 			},
 		];
-	}, [ resources, onSelectResource, readIds ] );
+	}, [ resources, readIds ] );
 }

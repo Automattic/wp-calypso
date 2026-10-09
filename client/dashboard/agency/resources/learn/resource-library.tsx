@@ -11,12 +11,15 @@ import {
 import { useEvent, useViewportMatch } from '@wordpress/compose';
 import { DataViews as WPDataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __, _n, sprintf } from '@wordpress/i18n';
+import clsx from 'clsx';
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { Card } from '../../../components/card';
 import { DataViews, DataViewsEmptyStateLayout } from '../../../components/dataviews';
 import { useResourceFields } from './dataviews/fields';
 import { LAYOUT_FIELDS } from './dataviews/views';
 import { getStageLabel } from './lib/labels';
 import ResourceGrid from './resource-grid';
+import ResourceLink from './resource-link';
 import ResourceModal from './resource-modal';
 import { getNeighbors, useResourceSelection } from './use-resource-selection';
 import type { LayoutType } from './dataviews/views';
@@ -116,7 +119,7 @@ export default function ResourceLibrary( {
 		onPreview: onPreviewResource,
 	} );
 
-	const fields = useResourceFields( resources, selection.select, readIds );
+	const fields = useResourceFields( resources, readIds );
 
 	// The library isn't paginated, so every match is shown.
 	const { data: filteredData, paginationInfo } = useMemo(
@@ -175,6 +178,15 @@ export default function ResourceLibrary( {
 					paginationInfo={ paginationInfo }
 					defaultLayouts={ { grid: {}, table: {} } }
 					getItemId={ ( item ) => String( item.id ) }
+					renderItemLink={ ( { item, ...props } ) => (
+						<ResourceLink
+							{ ...props }
+							className={ clsx( props.className, 'dashboard-resources-learn__item-link' ) }
+							data-product={ item.product }
+							resource={ item }
+							onSelect={ selection.select }
+						/>
+					) }
 					search
 				>
 					<HStack justify="space-between" wrap>
@@ -237,7 +249,11 @@ export default function ResourceLibrary( {
 					<Spacer marginBottom={ 4 }>
 						<WPDataViews.FiltersToggled className="dashboard-resources-learn__filters-toggled" />
 					</Spacer>
-					{ isList && filteredData.length > 0 && <WPDataViews.Layout /> }
+					{ isList && filteredData.length > 0 && (
+						<Card>
+							<WPDataViews.Layout />
+						</Card>
+					) }
 				</DataViews>
 			</div>
 			{ ! isList && filteredData.length > 0 && (
