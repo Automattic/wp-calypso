@@ -65,9 +65,15 @@ function getNoticeCredits(
 	};
 }
 
-/** Only Simple and Atomic sites can be on AI credits, so self-hosted sites skip the check. */
+/**
+ * Only Simple and Atomic sites can be on AI credits. Self-hosted sites skip the check, as do
+ * sites the page says don't use AI credits, such as free Simple sites outside the rollout.
+ */
 function getSiteCreditsBlogId(): number | null {
-	return getImageStudioSiteType() === 'jetpack' ? null : getImageStudioBlogId();
+	if ( getImageStudioSiteType() === 'jetpack' || window.imageStudioData?.usesAiCredits === false ) {
+		return null;
+	}
+	return getImageStudioBlogId();
 }
 
 /** Resolves to undefined when the site is not on AI credits or the request fails. */
