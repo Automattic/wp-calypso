@@ -25,7 +25,7 @@
 	"dependencies": {
 		"@automattic/survicate": "workspace:^",
 		"@automattic/viewport": "workspace:^",
-		"@wordpress/data": "^10.48.0"
+		"@wordpress/data": "^10.57.0"
 	},
 	"devDependencies": {
 		"@automattic/calypso-apps-builder": "workspace:^",

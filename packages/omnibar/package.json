@@ -35,15 +35,15 @@
 	},
 	"private": true,
 	"dependencies": {
-		"@wordpress/components": "^37.0.0",
-		"@wordpress/compose": "^8.2.0",
-		"@wordpress/i18n": "^6.21.0",
-		"@wordpress/icons": "^13.3.0",
-		"@wordpress/private-apis": "^1.51.0",
-		"@wordpress/ui": "^0.23.0"
+		"@wordpress/components": "^42.0.0",
+		"@wordpress/compose": "^8.10.0",
+		"@wordpress/i18n": "^6.30.0",
+		"@wordpress/icons": "^18.0.0",
+		"@wordpress/private-apis": "^2.0.0",
+		"@wordpress/ui": "^0.24.0"
 	},
 	"peerDependencies": {
-		"@wordpress/data": "^10.48.0",
+		"@wordpress/data": "^10.57.0",
 		"react": "^18.3.1 || ^19.0.0",
 		"react-dom": "^18.3.1 || ^19.0.0"
 	},
