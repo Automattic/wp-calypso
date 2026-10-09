@@ -47,7 +47,7 @@ export default function Learn() {
 		( id: number | null ) =>
 			navigate( {
 				search: ( prev: Record< string, unknown > ) => ( { ...prev, resource: id ?? undefined } ),
-				replace: isOpen || id === null,
+				replace: isOpen,
 				resetScroll: false,
 			} ),
 		[ navigate, isOpen ]

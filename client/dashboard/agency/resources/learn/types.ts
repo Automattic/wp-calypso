@@ -3,8 +3,7 @@ import type { MouseEvent } from 'react';
 
 /**
  * Tracking callback injected by each host app (dashboard uses its analytics,
- * a8c-for-agencies dispatches a Redux `recordTracksEvent`). Defaults to a no-op
- * so the shared components work without analytics wired up.
+ * a8c-for-agencies dispatches a Redux `recordTracksEvent`).
  */
 export type RecordTracksEvent = (
 	eventName: string,

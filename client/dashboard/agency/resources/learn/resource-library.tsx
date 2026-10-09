@@ -30,11 +30,6 @@ const PAGE_SIZE = 24;
 
 type StageFilter = AgencyResourceStage | 'all';
 
-const STAGE_FILTERS: readonly StageFilter[] = [ 'all', 'learn', 'sell', 'manage', 'grow' ];
-
-const isStageFilter = ( value: unknown ): value is StageFilter =>
-	( STAGE_FILTERS as readonly unknown[] ).includes( value );
-
 interface ResourceLibraryProps {
 	resources: AgencyEnablementResource[];
 	view: View;
@@ -58,10 +53,6 @@ export default function ResourceLibrary( {
 	selectedId,
 	onSelectedIdChange,
 }: ResourceLibraryProps ) {
-	// The stage toggle drives an ordinary filter, so it's saved with the rest of the view.
-	const stageValue = view.filters?.find( ( filter ) => filter.field === 'stage' )?.value;
-	const stage = isStageFilter( stageValue ) ? stageValue : 'all';
-
 	const setStage = ( value: StageFilter ) =>
 		onChangeView( {
 			...view,
@@ -72,22 +63,15 @@ export default function ResourceLibrary( {
 		} );
 
 	// Stable across renders, so memoized cards don't re-render while searching.
-	const filterResources: FilterResources = useEvent( ( field, value ) => {
-		if ( field === 'stage' ) {
-			if ( isStageFilter( value ) ) {
-				setStage( value );
-			}
-			return;
-		}
-
+	const filterResources: FilterResources = useEvent( ( field, value ) =>
 		onChangeView( {
 			...view,
 			filters: [
 				...( view.filters ?? [] ).filter( ( filter ) => filter.field !== field ),
 				{ field, operator: 'is', value },
 			],
-		} );
-	} );
+		} )
+	);
 
 	const stageOptions: { value: StageFilter; label: string; ariaLabel: string }[] = [
 		{
@@ -121,6 +105,11 @@ export default function ResourceLibrary( {
 			ariaLabel: __( 'Grow: Build your agency and partnerships.' ),
 		},
 	];
+	const toStage = ( value: unknown ) =>
+		stageOptions.find( ( option ) => option.value === value )?.value ?? 'all';
+
+	// The stage toggle drives an ordinary filter, so it's saved with the rest of the view.
+	const stage = toStage( view.filters?.find( ( filter ) => filter.field === 'stage' )?.value );
 
 	const selection = useResourceSelection( {
 		onSelectedIdChange,
@@ -217,7 +206,7 @@ export default function ResourceLibrary( {
 									value: option.value,
 									label: option.value === 'all' ? __( 'All stages' ) : option.label,
 								} ) ) }
-								onChange={ ( value ) => isStageFilter( value ) && setStage( value ) }
+								onChange={ ( value ) => setStage( toStage( value ) ) }
 								__nextHasNoMarginBottom
 							/>
 						) : (
@@ -228,7 +217,7 @@ export default function ResourceLibrary( {
 								hideLabelFromVision
 								__next40pxDefaultSize
 								__nextHasNoMarginBottom
-								onChange={ ( value ) => setStage( isStageFilter( value ) ? value : 'all' ) }
+								onChange={ ( value ) => setStage( toStage( value ) ) }
 							>
 								{ stageOptions.map( ( option ) => (
 									<ToggleGroupControlOption

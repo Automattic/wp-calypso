@@ -12,6 +12,9 @@ import type { UserPreferences } from '@automattic/api-core';
 const READ_RESOURCES_PREFERENCE = 'a4a-library-read-resources';
 
 /** The resources the user has marked as read, kept in their preferences. */
+// Shared, so the results don't recompute on every render while preferences load.
+const NO_READ_IDS: number[] = [];
+
 export function useReadResources() {
 	// The classic dashboard renders with its own query client, which the shared
 	// optimistic preference mutation doesn't update, so this updates whichever
@@ -19,7 +22,9 @@ export function useReadResources() {
 	const queryClient = useQueryClient();
 	const preferencesKey = rawUserPreferencesQuery().queryKey;
 
-	const { data: readIds = [] } = useQuery( userPreferenceQuery( READ_RESOURCES_PREFERENCE ) );
+	const { data: readIds = NO_READ_IDS } = useQuery(
+		userPreferenceQuery( READ_RESOURCES_PREFERENCE )
+	);
 	const { mutate } = useMutation( {
 		...withSnackbar( userPreferenceMutation( READ_RESOURCES_PREFERENCE ), {
 			error: __( 'Your reading status couldn’t be saved. Please try again.' ),
@@ -35,8 +40,8 @@ export function useReadResources() {
 		},
 		onError: ( _error, _ids, context ) => {
 			queryClient.setQueryData( preferencesKey, context?.previous );
+			queryClient.invalidateQueries( { queryKey: preferencesKey } );
 		},
-		onSettled: () => queryClient.invalidateQueries( { queryKey: preferencesKey } ),
 	} );
 
 	const setRead = ( id: number, isRead: boolean ) =>

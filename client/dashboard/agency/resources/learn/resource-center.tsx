@@ -13,8 +13,8 @@ interface ResourceCenterProps {
 	resources: AgencyEnablementResource[];
 	view: View;
 	onChangeView: ( view: View ) => void;
-	recordTracksEvent?: RecordTracksEvent;
-	onResourceClick?: ( resource: AgencyEnablementResource ) => void;
+	recordTracksEvent: RecordTracksEvent;
+	onResourceClick: ( resource: AgencyEnablementResource ) => void;
 	/** The resource whose details are open. */
 	selectedId: number | null;
 	onSelectedIdChange: ( id: number | null ) => void;
@@ -24,7 +24,7 @@ export default function ResourceCenter( {
 	resources: unsortedResources,
 	view,
 	onChangeView,
-	recordTracksEvent = () => {},
+	recordTracksEvent,
 	onResourceClick,
 	selectedId,
 	onSelectedIdChange,
@@ -46,7 +46,7 @@ export default function ResourceCenter( {
 			} );
 
 			// Host-specific side effect, such as recording the open server-side.
-			onResourceClick?.( resource );
+			onResourceClick( resource );
 		},
 		[ recordTracksEvent, onResourceClick ]
 	);
