@@ -77,6 +77,14 @@ export function createShortIdLookup(): {
 }
 
 /**
+ * The id the agent knows a block by, so a host can name the block to it.
+ * Minted when the block has none yet: the next page structure lists the block
+ * under the same id.
+ */
+export const getAgentBlockId = ( clientId: string ): string =>
+	createShortIdLookup().toShortId( clientId );
+
+/**
  * The clientId a short id stands for. An id the map does not hold is taken as
  * a clientId already: `get-block-tree`, WebMCP and the Jetpack AI sidebar hand
  * those out unshortened.

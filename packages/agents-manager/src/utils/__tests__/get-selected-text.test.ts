@@ -3,10 +3,6 @@
  */
 import { getAttributePlainText, getSelectedTextContext } from '../get-selected-text';
 
-jest.mock( '@wordpress/block-editor', () => ( {
-	store: 'core/block-editor',
-} ) );
-
 const mockGetSelectionStart = jest.fn();
 const mockGetSelectionEnd = jest.fn();
 const mockGetBlockAttributes = jest.fn();

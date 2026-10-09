@@ -47,6 +47,8 @@ interface BlockEditorSelect {
 	getBlock?: ( clientId: string ) => EditorBlock | null;
 	getBlocks: ( rootClientId?: string ) => EditorBlock[];
 	getBlocksByName?: ( name: string ) => string[];
+	getClientIdsWithDescendants?: () => string[];
+	getBlockName?: ( clientId: string ) => string | null;
 	getBlockParents?: ( clientId: string ) => string[];
 	getBlockRootClientId?: ( clientId: string ) => string | null;
 	getSelectedBlockClientId?: () => string | null;
@@ -91,6 +93,18 @@ export const getBlock = ( clientId: string ): EditorBlock | undefined =>
 /** The clientIds of every `name` block, at any depth. */
 export const getBlocksByName = ( name: string ): string[] =>
 	blockEditorSelect()?.getBlocksByName?.( name ) ?? [];
+
+/** The names of the block types in the editor, at any depth. */
+export function getBlockNames(): Set< string > {
+	const blockEditor = blockEditorSelect();
+	const clientIds = blockEditor?.getClientIdsWithDescendants?.() ?? [];
+
+	return new Set(
+		clientIds
+			.map( ( clientId ) => blockEditor?.getBlockName?.( clientId ) )
+			.filter( ( name ): name is string => !! name )
+	);
+}
 
 /** The ancestors of `clientId`, outermost first. */
 export const getBlockParents = ( clientId: string ): string[] =>
