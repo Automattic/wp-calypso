@@ -8,8 +8,6 @@ import type { ActivityLogEntry } from '@automattic/api-core';
 export interface UseActivityLogOptions {
 	siteId: number;
 	dateRange?: { start: Date; end: Date };
-	timezoneString?: string;
-	gmtOffset?: number;
 	enabled?: boolean;
 }
 
@@ -23,8 +21,6 @@ export interface UseActivityLogResult {
  */
 export function useActivityLog( {
 	siteId,
-	timezoneString,
-	gmtOffset,
 	dateRange,
 	enabled = true,
 }: UseActivityLogOptions ): UseActivityLogResult {
@@ -35,13 +31,8 @@ export function useActivityLog( {
 			return { after: undefined, before: undefined };
 		}
 
-		return buildTimeRangeForActivityLog(
-			dateRange.start,
-			dateRange.end,
-			timezoneString,
-			gmtOffset
-		);
-	}, [ dateRange, timezoneString, gmtOffset ] );
+		return buildTimeRangeForActivityLog( dateRange.start, dateRange.end );
+	}, [ dateRange ] );
 
 	const queryResult = useQuery( {
 		...siteBackupActivityLogEntriesQuery( siteId, undefined, true, after, before ),
