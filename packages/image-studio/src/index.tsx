@@ -31,6 +31,8 @@ interface ImageStudioData {
 	blogId?: number | string;
 	siteType?: 'simple' | 'atomic' | 'jetpack' | 'wpcom' | 'woa';
 	isA11n?: boolean;
+	// Null when the server can't tell, so the site's balance is still requested.
+	usesAiCredits?: boolean | null;
 	// Reported as `agent_version` on Tracks events.
 	version?: string;
 }

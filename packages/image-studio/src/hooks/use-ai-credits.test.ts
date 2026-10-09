@@ -301,6 +301,32 @@ describe( 'useAiCredits', () => {
 		expect( stateOf( result ) ).toEqual( NOTHING );
 	} );
 
+	it( 'does not ask when the page says the site doesn’t use AI credits', () => {
+		window.imageStudioData = { blogId: BLOG_ID, siteType: 'simple', usesAiCredits: false };
+
+		const { result } = renderCredits();
+
+		expect( fetchMock ).not.toHaveBeenCalled();
+		expect( stateOf( result ) ).toEqual( NOTHING );
+	} );
+
+	it.each( [
+		{ name: 'the page says the site uses AI credits', usesAiCredits: true },
+		{ name: 'the page can’t tell', usesAiCredits: null },
+		{ name: 'the page comes from a Jetpack version without the flag', usesAiCredits: undefined },
+	] )( 'asks when $name', async ( { usesAiCredits } ) => {
+		window.imageStudioData = {
+			blogId: BLOG_ID,
+			siteType: 'atomic',
+			...( usesAiCredits === undefined ? {} : { usesAiCredits } ),
+		};
+		respondWith( { ai_credits: planSnapshot( 30_000 ) } );
+
+		const { result } = renderCredits();
+
+		await waitFor( () => expect( result.current.meter ).toEqual( meterAt( 75 ) ) );
+	} );
+
 	it( 'does not ask when the page names no site', () => {
 		delete window.imageStudioData;
 

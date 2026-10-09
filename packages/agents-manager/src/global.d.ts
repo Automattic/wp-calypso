@@ -41,7 +41,7 @@ declare const agentsManagerData:
 			/** The host section the chat runs in, e.g. `wp-admin` or `gutenberg`. */
 			sectionName?: string;
 			/** The site's canonical identity; injected on wp-admin only. */
-			site?: { ID?: number; domain?: string };
+			site?: { ID?: number; domain?: string; usesAiCredits?: boolean | null };
 			emptyViewHeading?: string;
 			emptyViewHelp?: string;
 	  }

@@ -734,6 +734,28 @@ it( 'keeps dismissal within the current visit and ignores previous-site dismiss 
 	expect( view.result.current.notice?.message ).toBe( `${ localNumber( 500 ) } credits left.` );
 } );
 
+it( 'never asks for a balance when the page says the site doesn’t use AI credits', async () => {
+	const { result } = renderCredits( { site: { ...site, usesAiCredits: false } } );
+	await flush();
+	await act( async () => {
+		window.dispatchEvent( new Event( 'focus' ) );
+	} );
+	expect( fetchMock ).not.toHaveBeenCalled();
+	expect( result.current.trailingActions ).toBeUndefined();
+	expect( result.current.notice ).toBeUndefined();
+	expect( result.current.beforeSubmit() ).toBe( true );
+} );
+it.each( [
+	[ 'says the site uses AI credits', { ...site, usesAiCredits: true } ],
+	[ 'can’t tell', { ...site, usesAiCredits: null } ],
+	[ 'comes from a Jetpack version without the flag', site ],
+	[ 'describes another site', { ID: 456, domain: 'other.wordpress.com', usesAiCredits: false } ],
+] )( 'still asks for a balance when the page %s', async ( _name, pageSite ) => {
+	fetchMock.mockResolvedValueOnce( response( creditSnapshot( { plan_tier: 'personal' } ) ) );
+	renderCredits( { site: pageSite } );
+	await flush();
+	expect( fetchMock ).toHaveBeenCalledTimes( 1 );
+} );
 it( 'reads the authenticated balance on opening without sending a prompt', async () => {
 	fetchMock.mockResolvedValueOnce( response( creditSnapshot( { plan_tier: 'personal' } ) ) );
 	const { result } = renderCredits();

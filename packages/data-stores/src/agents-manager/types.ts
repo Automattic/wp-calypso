@@ -10,6 +10,8 @@ export interface AgentsManagerSite {
 	ID: number | string;
 	domain: string;
 	URL?: string;
+	/** False when the host page knows the site doesn't use AI credits. Null when it can't tell. */
+	usesAiCredits?: boolean | null;
 }
 
 export type Dispatch = DispatchFromMap< typeof actions >;

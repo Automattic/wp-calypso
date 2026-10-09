@@ -80,17 +80,17 @@ The host page URL can carry these query parameters:
 
 ### AgentsManager Props
 
-| Prop                             | Type                           | Description                                                                                                              |
-| -------------------------------- | ------------------------------ | ------------------------------------------------------------------------------------------------------------------------ |
-| `sectionName`                    | `string`                       | The name of the current section (e.g., 'wp-admin', 'gutenberg').                                                         |
-| `currentUser`                    | `CurrentUser` (optional)       | Current user (from `@automattic/data-stores`). Sets `isLoggedIn`.                                                        |
-| `site`                           | `AgentsManagerSite` (optional) | The selected site object (from `@automattic/data-stores`).                                                               |
-| `currentRoute`                   | `string` (optional)            | The current route path.                                                                                                  |
-| `currentSiteId`                  | `number` (optional)            | The ID of the selected site. When set, chat state is scoped to this site. When omitted, uses a shared "no-site" context. |
-| `agentId`                        | `string` (optional)            | Explicit agent ID supplied by the host.                                                                                  |
-| `zendeskConversationTags`        | `string[]` (optional)          | Zendesk conversation tags to apply when a new support conversation is created.                                           |
-| `zendeskSmoochIntegrationKey`    | `string` (optional)            | Index selecting a dedicated Smooch integration for new support conversations (e.g. `woo`).                               |
-| `zendeskTicketProductFieldValue` | `string` (optional)            | Zendesk Product ticket-field value to apply to new support conversations.                                                |
+| Prop                             | Type                           | Description                                                                                                                    |
+| -------------------------------- | ------------------------------ | ------------------------------------------------------------------------------------------------------------------------------ |
+| `sectionName`                    | `string`                       | The name of the current section (e.g., 'wp-admin', 'gutenberg').                                                               |
+| `currentUser`                    | `CurrentUser` (optional)       | Current user (from `@automattic/data-stores`). Sets `isLoggedIn`.                                                              |
+| `site`                           | `AgentsManagerSite` (optional) | The selected site object (from `@automattic/data-stores`). With `usesAiCredits: false`, the chat skips the AI credits request. |
+| `currentRoute`                   | `string` (optional)            | The current route path.                                                                                                        |
+| `currentSiteId`                  | `number` (optional)            | The ID of the selected site. When set, chat state is scoped to this site. When omitted, uses a shared "no-site" context.       |
+| `agentId`                        | `string` (optional)            | Explicit agent ID supplied by the host.                                                                                        |
+| `zendeskConversationTags`        | `string[]` (optional)          | Zendesk conversation tags to apply when a new support conversation is created.                                                 |
+| `zendeskSmoochIntegrationKey`    | `string` (optional)            | Index selecting a dedicated Smooch integration for new support conversations (e.g. `woo`).                                     |
+| `zendeskTicketProductFieldValue` | `string` (optional)            | Zendesk Product ticket-field value to apply to new support conversations.                                                      |
 
 ### Exported Hooks and Utilities
 

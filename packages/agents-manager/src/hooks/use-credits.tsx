@@ -88,7 +88,10 @@ export function useCredits( {
 	isOpen,
 }: UseCreditsOptions ): UseCreditsResult {
 	const isMockEnabled = enabled && siteKey === NO_SITE;
-	const requestedSiteId = enabled ? getLiveCreditSiteId( siteKey, agentConfig ) : undefined;
+	// The host page can say the site doesn't use AI credits, so its balance request would only 404.
+	const isWithoutAiCredits = site?.usesAiCredits === false && String( site.ID ) === siteKey;
+	const requestedSiteId =
+		enabled && ! isWithoutAiCredits ? getLiveCreditSiteId( siteKey, agentConfig ) : undefined;
 	const { authProvider, authenticationScope } = agentConfig;
 	const siteId =
 		authenticationScope?.siteId === requestedSiteId && authenticationScope?.userId === userId
