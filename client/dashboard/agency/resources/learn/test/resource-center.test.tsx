@@ -57,12 +57,26 @@ const resources = [
 
 type ResourceCenterProps = ComponentProps< typeof ResourceCenter >;
 
-function Library( props: Omit< ResourceCenterProps, 'view' | 'onChangeView' > ) {
+type LibraryProps = Omit<
+	ResourceCenterProps,
+	'view' | 'onChangeView' | 'selectedId' | 'onSelectedIdChange'
+> & { initialSelectedId?: number };
+
+function Library( { initialSelectedId, ...props }: LibraryProps ) {
 	const [ view, setView ] = useState( DEFAULT_VIEW );
-	return <ResourceCenter view={ view } onChangeView={ setView } { ...props } />;
+	const [ selectedId, setSelectedId ] = useState( initialSelectedId ?? null );
+	return (
+		<ResourceCenter
+			view={ view }
+			onChangeView={ setView }
+			selectedId={ selectedId }
+			onSelectedIdChange={ setSelectedId }
+			{ ...props }
+		/>
+	);
 }
 
-function renderLibrary( props: Partial< ResourceCenterProps > = {} ) {
+function renderLibrary( props: Partial< LibraryProps > = {} ) {
 	const callbacks = {
 		recordTracksEvent: jest.fn(),
 		onResourceClick: jest.fn(),
@@ -157,6 +171,12 @@ describe( '<ResourceCenter>', () => {
 			{ resource_id: 2, resource_name: 'Jetpack battle card' }
 		);
 		expect( onResourceClick ).toHaveBeenCalledWith( expect.objectContaining( { id: 2 } ) );
+	} );
+
+	test( 'opens the resource a link names', async () => {
+		renderLibrary( { initialSelectedId: 2 } );
+
+		expect( await screen.findByRole( 'dialog', { name: 'Jetpack battle card' } ) ).toBeVisible();
 	} );
 
 	test( 'marks a resource as read in the user preferences', async () => {

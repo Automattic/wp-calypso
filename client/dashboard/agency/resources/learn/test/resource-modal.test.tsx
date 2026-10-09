@@ -120,4 +120,18 @@ describe( 'ResourceModal', () => {
 
 		expect( onFilter ).toHaveBeenCalledWith( 'stage', 'grow' );
 	} );
+
+	test( 'copies a link to the resource', async () => {
+		const writeText = jest.fn().mockResolvedValue( undefined );
+		Object.defineProperty( window.navigator, 'clipboard', {
+			value: { writeText },
+			configurable: true,
+		} );
+		renderModal();
+
+		await userEvent.click( screen.getByRole( 'button', { name: 'Copy link' } ) );
+
+		expect( writeText ).toHaveBeenCalledWith( 'https://example.com/?resource=1' );
+		expect( screen.getByRole( 'button', { name: 'Link copied' } ) ).toBeVisible();
+	} );
 } );

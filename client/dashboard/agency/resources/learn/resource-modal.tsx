@@ -1,3 +1,4 @@
+import { speak } from '@wordpress/a11y';
 import {
 	Button,
 	Modal,
@@ -9,7 +10,7 @@ import {
 import { useReducedMotion, useViewportMatch } from '@wordpress/compose';
 import { __, isRTL } from '@wordpress/i18n';
 import { check, chevronLeft, chevronRight, closeSmall } from '@wordpress/icons';
-import { useLayoutEffect, useRef } from 'react';
+import { useLayoutEffect, useRef, useState } from 'react';
 import ResourceBadges from './resource-badges';
 import ResourcePreview from './resource-preview';
 import type { FilterResources } from './types';
@@ -83,6 +84,23 @@ export default function ResourceModal( {
 	const openedId = useRef( resource.id );
 	const fadeClassName =
 		resource.id !== openedId.current ? 'dashboard-resources-learn__modal-fade' : undefined;
+
+	// Keyed by resource, so moving on resets the confirmation.
+	const [ copiedId, setCopiedId ] = useState< number >();
+	const isCopied = copiedId === resource.id;
+	const copyLink = async () => {
+		try {
+			// The same link the resource's card points to.
+			await navigator.clipboard.writeText(
+				new URL( `?resource=${ resource.id }`, window.location.href ).href
+			);
+			setCopiedId( resource.id );
+			speak( __( 'Link copied.' ) );
+			setTimeout( () => setCopiedId( undefined ), 2000 );
+		} catch {
+			// The address bar has the same link, so a failed write stays silent.
+		}
+	};
 
 	return (
 		<Modal
@@ -173,16 +191,21 @@ export default function ResourceModal( {
 					</VStack>
 					<ResourceBadges resource={ resource } onFilter={ onFilter } showFeatured />
 					<HStack justify="space-between" wrap>
-						<Button
-							variant="primary"
-							href={ resource.external_url }
-							target="_blank"
-							rel="noopener noreferrer"
-							onClick={ () => onOpen( resource ) }
-							__next40pxDefaultSize
-						>
-							{ __( 'Open in new tab' ) }
-						</Button>
+						<HStack spacing={ 2 } expanded={ false }>
+							<Button
+								variant="primary"
+								href={ resource.external_url }
+								target="_blank"
+								rel="noopener noreferrer"
+								onClick={ () => onOpen( resource ) }
+								__next40pxDefaultSize
+							>
+								{ __( 'Open in new tab' ) }
+							</Button>
+							<Button variant="tertiary" onClick={ copyLink } __next40pxDefaultSize>
+								{ isCopied ? __( 'Link copied' ) : __( 'Copy link' ) }
+							</Button>
+						</HStack>
 						<Button
 							variant="tertiary"
 							icon={ isRead ? check : undefined }

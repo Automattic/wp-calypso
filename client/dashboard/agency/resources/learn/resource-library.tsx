@@ -44,6 +44,8 @@ interface ResourceLibraryProps {
 	onOpenResource: ( resource: AgencyEnablementResource ) => void;
 	readIds: number[];
 	onSetRead: ( resource: AgencyEnablementResource, isRead: boolean ) => void;
+	selectedId: number | null;
+	onSelectedIdChange: ( id: number | null ) => void;
 }
 
 export default function ResourceLibrary( {
@@ -54,6 +56,8 @@ export default function ResourceLibrary( {
 	onOpenResource,
 	readIds,
 	onSetRead,
+	selectedId,
+	onSelectedIdChange,
 }: ResourceLibraryProps ) {
 	// The stage toggle drives an ordinary filter, so it's saved with the rest of the view.
 	const stageValue = view.filters?.find( ( filter ) => filter.field === 'stage' )?.value;
@@ -120,6 +124,7 @@ export default function ResourceLibrary( {
 	];
 
 	const selection = useResourceSelection( {
+		onSelectedIdChange,
 		onPreview: onPreviewResource,
 		onOpen: onOpenResource,
 	} );
@@ -155,7 +160,12 @@ export default function ResourceLibrary( {
 	const isList = view.type === 'table';
 
 	// The modal moves through every match, not only those loaded so far.
-	const { selected, previous, next } = getNeighbors( filteredData, selection.selectedId );
+	const neighbors = getNeighbors( filteredData, selectedId );
+	// A shared link can name a resource the saved filters hide; show it anyway,
+	// without neighbors to move to.
+	const selected =
+		neighbors.selected ?? resources.find( ( resource ) => resource.id === selectedId );
+	const { previous, next } = neighbors;
 	// The stage toggle doesn't fit beside the toolbar on narrow screens.
 	const isSmallViewport = useViewportMatch( 'medium', '<' );
 

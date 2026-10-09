@@ -656,6 +656,18 @@ export const learnRoute = createRoute( {
 	} ),
 	getParentRoute: () => agencyRoute,
 	path: 'library',
+	// The view's page and search, plus the resource whose details are open.
+	validateSearch: (
+		search: Record< string, unknown >
+	): { page?: number; search?: string; resource?: number } => {
+		const page = Number( search.page );
+		const resource = Number( search.resource );
+		return {
+			page: Number.isInteger( page ) && page > 0 ? page : undefined,
+			search: typeof search.search === 'string' ? search.search : undefined,
+			resource: Number.isInteger( resource ) && resource > 0 ? resource : undefined,
+		};
+	},
 	loader: () => queryClient.ensureQueryData( agencyEnablementResourcesQuery() ),
 } ).lazy( () =>
 	import( '../../agency/resources/learn' ).then( ( d ) =>
