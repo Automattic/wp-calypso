@@ -70,8 +70,7 @@ export function SidebarExpandableMenuItem( {
 				className={ clsx( 'dashboard-sidebar__expandable-panel', {
 					'is-open': isOpen,
 				} ) }
-				// @ts-expect-error For some reason there's no inert type.
-				inert={ ! isOpen ? 'true' : undefined }
+				inert={ ! isOpen }
 			>
 				<VStack id={ panelId } spacing={ 1 }>
 					{ children }
