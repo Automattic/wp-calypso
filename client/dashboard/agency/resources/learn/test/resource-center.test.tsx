@@ -139,6 +139,13 @@ describe( '<ResourceCenter>', () => {
 		expect( getCardTitles() ).toEqual( [ 'Woo case study' ] );
 	} );
 
+	test( 'leaves out the badges a resource has no value for', async () => {
+		renderLibrary( { resources: [ resource( { audience: null, stage: null } ) ] } );
+
+		expect( await screen.findByRole( 'button', { name: 'Filter by Guide' } ) ).toBeVisible();
+		expect( screen.getAllByRole( 'button', { name: /^Filter by/ } ) ).toHaveLength( 1 );
+	} );
+
 	test( 'shows an empty state when nothing matches', async () => {
 		renderLibrary();
 

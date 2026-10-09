@@ -274,8 +274,9 @@ export default function ResourceIllustration( {
 		ILLUSTRATIONS[
 			resource.format === 'video'
 				? 'video'
-				: // The API isn't validated against the union, so fall back for new types.
-					( CONTENT_TYPE_ILLUSTRATIONS[ resource.content_type ] ?? 'one-pager' )
+				: // The API isn't validated against the union, so fall back for new or missing types.
+					( ( resource.content_type && CONTENT_TYPE_ILLUSTRATIONS[ resource.content_type ] ) ??
+					'one-pager' )
 		];
 
 	return (
