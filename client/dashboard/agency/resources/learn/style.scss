@@ -30,6 +30,12 @@ $resource-brands: (
 	}
 }
 
+// Holds the Library for focus lookups without becoming a layout box, so its
+// sections stay items of the page's stack.
+.dashboard-resources-learn__results {
+	display: contents;
+}
+
 // The DataViews wrapper paints its own surface; the filter bar sits on the page background.
 .dashboard-resources-learn__filters {
 	--wp-dataviews-color-background: transparent;

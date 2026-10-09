@@ -25,18 +25,16 @@ export function useResourceSelection( {
 	};
 
 	// Stable across renders, so memoized cards don't re-render while searching.
-	const select: SelectResource = useEvent( ( resource, event ) => {
+	const select: SelectResource = useEvent( ( resource, event, originElement ) => {
 		// Modified clicks follow the link, opening the details in a new tab or window.
 		if ( event.metaKey || event.ctrlKey || event.shiftKey || event.altKey ) {
 			return;
 		}
 
 		event.preventDefault();
-		setOrigin(
-			( event.currentTarget as Element )
-				.closest( '.dashboard-resources-learn__card, tr' )
-				?.getBoundingClientRect()
-		);
+		const target = event.currentTarget as Element;
+		// DataViews renders the list's rows, so a row is found from its link.
+		setOrigin( ( originElement ?? target.closest( 'tr' ) ?? target ).getBoundingClientRect() );
 		preview( resource );
 	} );
 

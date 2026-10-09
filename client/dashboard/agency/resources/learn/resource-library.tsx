@@ -141,11 +141,12 @@ export default function ResourceLibrary( {
 
 	// Load more moves focus to the first resource it reveals, rather than leaving
 	// it on the button, or losing it when the button goes.
+	const resultsRef = useRef< HTMLDivElement >( null );
 	const focusAfterLoad = useRef< number | null >( null );
 	useEffect( () => {
 		if ( focusAfterLoad.current !== null ) {
-			document
-				.querySelector< HTMLElement >( `[data-resource-id="${ focusAfterLoad.current }"]` )
+			resultsRef.current
+				?.querySelector< HTMLElement >( `[data-resource-id="${ focusAfterLoad.current }"]` )
 				?.focus();
 			focusAfterLoad.current = null;
 		}
@@ -164,7 +165,7 @@ export default function ResourceLibrary( {
 	const isSmallViewport = useViewportMatch( 'medium', '<' );
 
 	return (
-		<>
+		<div ref={ resultsRef } className="dashboard-resources-learn__results">
 			<div className="dashboard-resources-learn__filters">
 				<DataViews< AgencyEnablementResource >
 					data={ visibleData }
@@ -300,6 +301,6 @@ export default function ResourceLibrary( {
 					) }
 				/>
 			) }
-		</>
+		</div>
 	);
 }
