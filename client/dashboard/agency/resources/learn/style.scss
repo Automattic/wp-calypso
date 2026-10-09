@@ -21,6 +21,8 @@ $resource-brands: (
 .dashboard-resources-learn__list-title,
 .dashboard-resources-learn__list-brand,
 .dashboard-resources-learn__preview {
+	--resource-brand: #{$studio-gray-100};
+
 	@each $product, $color in $resource-brands {
 		&[data-product='#{$product}'] {
 			--resource-brand: #{$color};
@@ -109,7 +111,9 @@ $resource-brands: (
 	}
 }
 
-.dashboard-resources-learn__list-link {
+// A resource's link, stretched with ::after over its card or row so the whole
+// of it is clickable, and drawing the focus ring around it.
+.dashboard-resources-learn__link {
 	color: inherit;
 	text-decoration: none;
 
@@ -194,8 +198,6 @@ $resource-brands: (
 }
 
 .dashboard-resources-learn__preview {
-	--resource-brand: #{$studio-gray-100};
-
 	position: relative;
 	display: flex;
 	align-items: center;

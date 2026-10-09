@@ -14,11 +14,7 @@ export function ResourceListTitle( {
 }: ResourceListCellProps & { onSelect: SelectResource } ) {
 	return (
 		<span className="dashboard-resources-learn__list-title" data-product={ resource.product }>
-			<ResourceLink
-				resource={ resource }
-				className="dashboard-resources-learn__list-link"
-				onSelect={ onSelect }
-			/>
+			<ResourceLink resource={ resource } onSelect={ onSelect } />
 		</span>
 	);
 }

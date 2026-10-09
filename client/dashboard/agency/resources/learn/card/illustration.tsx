@@ -281,7 +281,7 @@ export default function ResourceIllustration( {
 	return (
 		<svg
 			className="dashboard-resource-illustration"
-			viewBox="84 44 56 56"
+			viewBox="28 8 56 56"
 			fill="none"
 			stroke="currentColor"
 			strokeWidth="1.2"
@@ -290,11 +290,7 @@ export default function ResourceIllustration( {
 			aria-hidden="true"
 			focusable="false"
 		>
-			<g transform="translate(56 36)">
-				<g className="dashboard-resource-illustration__artwork">
-					<Illustration />
-				</g>
-			</g>
+			<Illustration />
 		</svg>
 	);
 }
