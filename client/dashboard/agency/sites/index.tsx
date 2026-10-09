@@ -173,7 +173,7 @@ export default function AgencySites() {
 						<Button
 							variant="primary"
 							onClick={ () => {
-								recordTracksEvent( 'calypso_dashboard_agency_sites_add_new_site_clicked' );
+								recordTracksEvent( 'calypso_a4a_sites_add_new_site_clicked' );
 								setActiveModal( 'menu' );
 							} }
 							__next40pxDefaultSize
