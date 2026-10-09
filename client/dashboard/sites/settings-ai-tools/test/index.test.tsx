@@ -488,13 +488,11 @@ describe( '<AIToolsSettings>', () => {
 		await waitFor( () => {
 			expect( settingsScope.isDone() ).toBe( true );
 		} );
-		await waitFor( () => {
-			expect(
-				screen.getByRole( 'checkbox', {
-					name: 'Enable WordPress Agent email address',
-				} )
-			).toBeChecked();
-		} );
+		expect(
+			screen.getByRole( 'checkbox', {
+				name: 'Enable WordPress Agent email address',
+			} )
+		).toBeChecked();
 		expect( screen.getByLabelText( 'WordPress Agent email address' ) ).toHaveValue(
 			'agent+atomic-secret@post.wordpress.com'
 		);
