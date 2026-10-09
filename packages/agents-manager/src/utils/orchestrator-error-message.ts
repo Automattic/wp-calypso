@@ -24,9 +24,17 @@ export function getOrchestratorErrorMessage( error: string | null ): string | nu
 
 /**
  * A coarse class for a chat error, safe to send to Tracks: the raw server
- * message can carry request details, so it is never sent itself.
+ * message can carry request details, so it is never sent itself. `code` is the
+ * failed reply's refusal code, which names a site credits refusal.
  */
-export function getOrchestratorErrorType( error: string ): 'usage_limit' | 'rate_limit' | 'other' {
+export function getOrchestratorErrorType(
+	error: string,
+	code?: string
+): 'credits' | 'usage_limit' | 'rate_limit' | 'other' {
+	if ( code?.startsWith( 'ai_credit_allowance_' ) ) {
+		return 'credits';
+	}
+
 	if ( isUsageLimitError( error ) ) {
 		return 'usage_limit';
 	}

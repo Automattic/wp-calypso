@@ -237,7 +237,7 @@ function hasEditorStore(): boolean {
  * Injected `agentsManagerData` means a wp-admin host (Jetpack, Woo AI); its
  * absence means a Calypso-rendered page.
  */
-function getAgentsManagerSurface(): string {
+export function getAgentsManagerSurface(): string {
 	if ( isReaderChatHost() ) {
 		return 'reader-chat';
 	}

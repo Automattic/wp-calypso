@@ -5,7 +5,8 @@ import { act, renderHook } from '@testing-library/react';
 import { ORCHESTRATOR_AGENT_URL } from '../../constants';
 import { creditSnapshot } from '../../utils/__tests__/fixtures/credit-snapshot';
 import { localNumber } from '../../utils/__tests__/fixtures/local-number';
-import { getCreditsLabel, getCreditsTone } from '../../utils/credits';
+import { CREDITS_LOW_BALANCE, getCreditsLabel, getCreditsTone } from '../../utils/credits';
+import { recordAgentsManagerTracksEvent } from '../../utils/tracks';
 import { useCredits } from '../use-credits';
 import type { AgentConfig } from '../../utils/create-agent-config';
 import type { CreditsStatus } from '../../utils/credits';
@@ -38,6 +39,7 @@ jest.mock( '@wordpress/i18n', () => ( {
 	},
 } ) );
 jest.mock( '../../components/credits-meter', () => () => null );
+jest.mock( '../../utils/tracks', () => ( { recordAgentsManagerTracksEvent: jest.fn() } ) );
 
 const authProvider = jest.fn();
 const agentConfig: AgentConfig = {
@@ -55,6 +57,7 @@ const defaultOptions = {
 	site: site as AgentsManagerSite | null | undefined,
 	userId: 1,
 	isOpen: true,
+	isNoticeVisible: true,
 };
 const terminal = (
 	aiCredits?: unknown,
@@ -124,6 +127,7 @@ beforeEach( () => {
 	authProvider.mockReset().mockResolvedValue( { Authorization: 'Bearer site-jwt' } );
 	Object.defineProperty( document, 'visibilityState', { configurable: true, value: 'visible' } );
 	globalThis.fetch = fetchMock;
+	jest.mocked( recordAgentsManagerTracksEvent ).mockClear();
 } );
 afterEach( () => {
 	jest.useRealTimers();
@@ -1463,4 +1467,280 @@ it( 'accepts the first terminal snapshot after the server assigns the same conve
 	} );
 	await act( async () => observer?.( terminal( creditSnapshot() ) ) );
 	expect( props( view.result.current ).status.remaining ).toBe( 2450 );
+} );
+describe( 'credits Tracks events', () => {
+	// Recorded notice states last for the page, so each case uses its own user.
+	let nextUserId = 1000;
+	const freshScope = ( overrides: Partial< AgentConfig > = {} ) => {
+		const scopedUserId = nextUserId++;
+		return {
+			userId: scopedUserId,
+			agentConfig: {
+				...agentConfig,
+				...overrides,
+				authenticationScope: { siteId: 123, userId: scopedUserId },
+			},
+		};
+	};
+	const creditsEvents = () =>
+		jest
+			.mocked( recordAgentsManagerTracksEvent )
+			.mock.calls.filter( ( [ eventName ] ) => eventName.includes( '_credits_' ) );
+	const low = () =>
+		creditSnapshot( { credits_remaining: 5, credits_used: 2495, plan_tier: 'personal' } );
+	const healthy = () =>
+		creditSnapshot( {
+			credits_limit: CREDITS_LOW_BALANCE * 2,
+			credits_remaining: CREDITS_LOW_BALANCE,
+			credits_used: CREDITS_LOW_BALANCE,
+			plan_tier: 'business',
+		} );
+	const base = { blog_id: 123, site_type: 'none', agent_environment: 'none' };
+
+	it( 'records the notice once per state, not on re-renders or a repeated state', async () => {
+		const scope = freshScope();
+		fetchMock.mockResolvedValueOnce( response( low() ) );
+		const view = renderCredits( scope );
+		await flush();
+		view.rerender( { ...defaultOptions, ...scope } );
+		expect( creditsEvents() ).toEqual( [
+			[
+				'calypso_agents_manager_credits_notice_shown',
+				{
+					...base,
+					state: 'low',
+					credits_left: 5,
+					plan_tier: 'personal',
+					user_role: 'admin',
+					cta_type: 'upgrade',
+				},
+			],
+		] );
+		await receive( { ...exhausted(), plan_tier: 'personal' } );
+		await receive( low() );
+		await receive( { ...exhausted(), plan_tier: 'personal' } );
+		expect(
+			creditsEvents().map( ( [ name, eventProps ] ) => [ name, eventProps?.state ] )
+		).toEqual( [
+			[ 'calypso_agents_manager_credits_notice_shown', 'low' ],
+			[ 'calypso_agents_manager_credits_notice_shown', 'zero' ],
+		] );
+	} );
+
+	it( 'keeps a recorded notice across a remount and a new conversation, but not for another user', async () => {
+		const scope = freshScope();
+		fetchMock.mockResolvedValue( response( low() ) );
+		const first = renderCredits( scope );
+		await flush();
+		first.unmount();
+		const second = renderCredits( scope );
+		await flush();
+		second.rerender( {
+			...defaultOptions,
+			...scope,
+			agentConfig: { ...scope.agentConfig, authProvider: jest.fn( authProvider ) },
+		} );
+		await flush();
+		expect( second.result.current.notice ).toBeDefined();
+		expect( creditsEvents() ).toHaveLength( 1 );
+		renderCredits( freshScope() );
+		await flush();
+		expect( creditsEvents() ).toHaveLength( 2 );
+	} );
+
+	it( 'waits until the chat draws the notice', async () => {
+		const scope = freshScope();
+		fetchMock.mockResolvedValueOnce( response( low() ) );
+		const view = renderCredits( { ...scope, isNoticeVisible: false } );
+		await flush();
+		expect( view.result.current.notice ).toBeDefined();
+		expect( creditsEvents() ).toEqual( [] );
+		view.rerender( { ...defaultOptions, ...scope, isNoticeVisible: true } );
+		expect( creditsEvents() ).toHaveLength( 1 );
+	} );
+
+	it.each( [
+		[ true, true, 'admin', 'upgrade' ],
+		[ false, false, 'non_admin', 'contact_admin' ],
+		[ true, false, 'admin', 'contact_plan_owner' ],
+		[ null, null, 'none', 'none' ],
+	] as const )(
+		'records who may buy (%p, %p) as %s with the %s call to action the notice shows',
+		async ( canBuyCredits, canUpgrade, userRole, ctaType ) => {
+			fetchMock.mockResolvedValueOnce( response( low(), canBuyCredits, canUpgrade ) );
+			renderCredits( freshScope() );
+			await flush();
+			expect( creditsEvents() ).toEqual( [
+				[
+					'calypso_agents_manager_credits_notice_shown',
+					expect.objectContaining( { user_role: userRole, cta_type: ctaType } ),
+				],
+			] );
+		}
+	);
+
+	it( 'sends the client context environment unchanged and the tier as none when unknown', async () => {
+		fetchMock.mockResolvedValueOnce( response( { ...low(), plan_tier: undefined } ) );
+		renderCredits(
+			freshScope( {
+				contextProvider: { getClientContext: () => ( { environment: 'site-editor' } ) },
+			} )
+		);
+		await flush();
+		expect( creditsEvents()[ 0 ][ 1 ] ).toMatchObject( {
+			agent_environment: 'site-editor',
+			plan_tier: 'none',
+		} );
+	} );
+
+	it( 'records a dismissal once, and nothing from a previous site’s handler', async () => {
+		const scope = freshScope();
+		fetchMock.mockResolvedValueOnce( response( low() ) );
+		const view = renderCredits( scope );
+		await flush();
+		const oldDismiss = view.result.current.notice?.onDismiss;
+		act( () => oldDismiss?.() );
+		expect( creditsEvents().at( -1 ) ).toEqual( [
+			'calypso_agents_manager_credits_notice_dismissed',
+			{ ...base, state: 'low', credits_left: 5, plan_tier: 'personal' },
+		] );
+		view.rerender( {
+			...defaultOptions,
+			siteKey: '456',
+			userId: scope.userId,
+			agentConfig: { ...agentConfig, authenticationScope: { siteId: 456, userId: scope.userId } },
+		} );
+		await receive( { ...low(), blog_id: 456 } );
+		const count = creditsEvents().length;
+		act( () => oldDismiss?.() );
+		expect( creditsEvents() ).toHaveLength( count );
+		expect(
+			creditsEvents().filter(
+				( [ name ] ) => name === 'calypso_agents_manager_credits_notice_dismissed'
+			)
+		).toHaveLength( 1 );
+	} );
+
+	it( 'records a click on the dot as ok on a healthy balance, only when it opens', async () => {
+		fetchMock.mockResolvedValueOnce( response( healthy() ) );
+		const { result } = renderCredits( freshScope() );
+		await flush();
+		expect( result.current.notice ).toBeUndefined();
+		act( () => props( result.current ).onToggle( true ) );
+		act( () => props( result.current ).onToggle( true ) );
+		act( () => props( result.current ).onToggle( false ) );
+		expect( creditsEvents() ).toEqual( [
+			[
+				'calypso_agents_manager_credits_meter_opened',
+				{
+					...base,
+					state: 'ok',
+					credits_left: CREDITS_LOW_BALANCE,
+					plan_tier: 'business',
+					trigger: 'click',
+				},
+			],
+		] );
+	} );
+
+	it( 'records every blocked send, even with the popover already open', async () => {
+		fetchMock.mockResolvedValueOnce( response( { ...exhausted(), plan_tier: 'personal' } ) );
+		const { result } = renderCredits( freshScope() );
+		await flush();
+		act( () => expect( result.current.beforeSubmit() ).toBe( false ) );
+		expect( props( result.current ).isOpen ).toBe( true );
+		act( () => expect( result.current.beforeSubmit() ).toBe( false ) );
+		const opened = creditsEvents().filter(
+			( [ name ] ) => name === 'calypso_agents_manager_credits_meter_opened'
+		);
+		expect( opened ).toEqual( [
+			[
+				'calypso_agents_manager_credits_meter_opened',
+				{
+					...base,
+					state: 'zero',
+					credits_left: 0,
+					plan_tier: 'personal',
+					trigger: 'submit_blocked',
+				},
+			],
+			[
+				'calypso_agents_manager_credits_meter_opened',
+				expect.objectContaining( { trigger: 'submit_blocked' } ),
+			],
+		] );
+	} );
+
+	it( 'records no popover opening when a reply uses the last credits', async () => {
+		fetchMock.mockResolvedValueOnce( response( healthy() ) );
+		const { result } = renderCredits( freshScope() );
+		await flush();
+		await receive( { ...exhausted(), plan_tier: 'business' } );
+		expect( props( result.current ).isOpen ).toBe( true );
+		expect(
+			creditsEvents().filter(
+				( [ name ] ) => name === 'calypso_agents_manager_credits_meter_opened'
+			)
+		).toEqual( [] );
+	} );
+
+	it( 'records nothing without a live balance', async () => {
+		const { result } = renderCredits( { ...freshScope(), siteKey: '456' } );
+		await flush();
+		expect( result.current.trailingActions ).toBeUndefined();
+		act( () => expect( result.current.beforeSubmit() ).toBe( true ) );
+		expect( creditsEvents() ).toEqual( [] );
+	} );
+} );
+
+describe( 'refusal code', () => {
+	const failed = ( parts: unknown[] ): TaskUpdate =>
+		( {
+			id: 'task',
+			status: {
+				state: 'failed',
+				message: { role: 'agent', kind: 'message', messageId: 'm', parts },
+			},
+			final: true,
+			text: '',
+		} ) as TaskUpdate;
+	const refusal = failed( [
+		{ type: 'text', text: 'You’ve used all your site credits.' },
+		{ type: 'data', data: { code: 'ai_credit_allowance_exhausted' } },
+	] );
+
+	it( 'keeps the failed reply’s code for one read', async () => {
+		const { result } = renderCredits();
+		await act( async () => mockConfig.onTaskUpdate?.( refusal ) );
+		expect( result.current.takeRefusalCode() ).toBe( 'ai_credit_allowance_exhausted' );
+		expect( result.current.takeRefusalCode() ).toBeUndefined();
+	} );
+
+	it( 'drops the code once a later reply finishes without one', async () => {
+		const { result } = renderCredits();
+		await act( async () => mockConfig.onTaskUpdate?.( refusal ) );
+		await act( async () =>
+			mockConfig.onTaskUpdate?.( { ...refusal, status: { state: 'working' }, final: false } )
+		);
+		await receive( creditSnapshot() );
+		expect( result.current.takeRefusalCode() ).toBeUndefined();
+		await act( async () =>
+			mockConfig.onTaskUpdate?.( failed( [ { type: 'text', text: 'Oops' } ] ) )
+		);
+		expect( result.current.takeRefusalCode() ).toBeUndefined();
+	} );
+
+	it( 'drops the code when the next turn starts', async () => {
+		const view = renderCredits();
+		await act( async () => mockConfig.onTaskUpdate?.( refusal ) );
+		mockIsProcessing = true;
+		view.rerender( defaultOptions );
+		expect( view.result.current.takeRefusalCode() ).toBeUndefined();
+	} );
+
+	it( 'keeps the code without a live balance, since every chat shows the error', async () => {
+		const { result } = renderCredits( { siteKey: '456' } );
+		await act( async () => mockConfig.onTaskUpdate?.( refusal ) );
+		expect( result.current.takeRefusalCode() ).toBe( 'ai_credit_allowance_exhausted' );
+	} );
 } );

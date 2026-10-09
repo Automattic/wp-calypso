@@ -349,6 +349,32 @@ describe( 'createAgentConfig', () => {
 		}
 	);
 
+	it.each( clientContexts )(
+		'sends the browser events’ surface in the %s client context',
+		async ( _, contextProvider ) => {
+			const createConfig = () =>
+				createAgentConfig( {
+					sessionId: 'session-1',
+					sessionSiteKey: 'no-site',
+					agentId: DOLLY_AGENT_ID,
+					contextProvider,
+				} );
+
+			const calypsoConfig = await createConfig();
+			expect( calypsoConfig.contextProvider?.getClientContext() ).toHaveProperty(
+				'surface',
+				'calypso'
+			);
+
+			setAgentsManagerData( {} );
+			const wpAdminConfig = await createConfig();
+			expect( wpAdminConfig.contextProvider?.getClientContext() ).toHaveProperty(
+				'surface',
+				'wp-admin'
+			);
+		}
+	);
+
 	it( 'omits the tracking opt-in and the Automattician flag when the host does not set them, and the turn id before a send', async () => {
 		const config = await createAgentConfig( {
 			sessionId: 'session-1',
