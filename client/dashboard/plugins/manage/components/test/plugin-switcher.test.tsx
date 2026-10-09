@@ -35,6 +35,7 @@ describe( '<PluginSwitcher> – no-results empty state (DOTMSD-1343)', () => {
 				view={ { ...baseView, search: 'zzznotarealplugin' } }
 				onChangeView={ () => {} }
 				paginationInfo={ { totalItems: 0, totalPages: 0 } }
+				isError={ false }
 			/>
 		);
 
@@ -51,9 +52,28 @@ describe( '<PluginSwitcher> – no-results empty state (DOTMSD-1343)', () => {
 				view={ baseView }
 				onChangeView={ () => {} }
 				paginationInfo={ { totalItems: 0, totalPages: 0 } }
+				isError={ false }
 			/>
 		);
 
 		expect( screen.getByText( 'No plugins found.' ) ).toBeVisible();
+	} );
+
+	test( 'shows an error message instead of the empty state when the plugins failed to load', () => {
+		render(
+			<PluginSwitcher
+				pluginsWithIcon={ [] }
+				searchableFields={ searchableFields }
+				view={ baseView }
+				onChangeView={ () => {} }
+				paginationInfo={ { totalItems: 0, totalPages: 0 } }
+				isError
+			/>
+		);
+
+		expect(
+			screen.getByText( 'Couldn’t load your plugins. Please try again later.' )
+		).toBeVisible();
+		expect( screen.queryByText( 'No plugins found.' ) ).not.toBeInTheDocument();
 	} );
 } );

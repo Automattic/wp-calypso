@@ -21,6 +21,7 @@ export const PluginSwitcher = ( {
 	view,
 	onChangeView,
 	paginationInfo,
+	isError,
 }: {
 	pluginsWithIcon?: PluginListRow[];
 	searchableFields: Field< PluginListRow >[];
@@ -28,6 +29,7 @@ export const PluginSwitcher = ( {
 	view: View;
 	onChangeView: Dispatch< SetStateAction< View > >;
 	paginationInfo: { totalItems: number; totalPages: number };
+	isError: boolean;
 } ) => {
 	const scrollRef = useRef< HTMLDivElement >( null );
 	const [ itemsPerPage ] = useState( view.perPage );
@@ -136,7 +138,11 @@ export const PluginSwitcher = ( {
 					getItemUrl={ ( item ) => pluginRoute.to.replace( '$pluginId', item.slug ) }
 					renderItem={ renderItem }
 					searchableFields={ searchableFields }
-					noResultsText={ __( 'No plugins found.' ) }
+					noResultsText={
+						isError
+							? __( 'Couldn’t load your plugins. Please try again later.' )
+							: __( 'No plugins found.' )
+					}
 					onClose={ () => {} }
 					width="auto"
 					filter={
