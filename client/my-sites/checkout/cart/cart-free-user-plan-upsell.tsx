@@ -1,3 +1,4 @@
+import { productsQuery } from '@automattic/api-queries';
 import {
 	getPlan,
 	PLAN_PERSONAL,
@@ -5,13 +6,13 @@ import {
 	isDomainTransfer,
 } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
-import { StoreProductSlug, useProducts } from '@automattic/data-stores/src/products-list';
 import { formatCurrency } from '@automattic/number-formatters';
 import {
 	type MinimalRequestCartProduct,
 	type ResponseCartProduct,
 	useShoppingCart,
 } from '@automattic/shopping-cart';
+import { useQuery } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
 import SectionHeader from 'calypso/components/section-header';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
@@ -140,15 +141,11 @@ function UpgradeText( {
 }
 
 function useGetPriceForProduct( productSlug: string ): number | undefined {
-	const { data } = useProducts( [ productSlug as StoreProductSlug ] );
-	if ( ! data ) {
-		return undefined;
-	}
-	const productData = data[ productSlug as keyof typeof data ];
-	if ( ! productData ) {
-		return undefined;
-	}
-	return productData.costSmallestUnit;
+	const { data } = useQuery( {
+		...productsQuery(),
+		select: ( products ) => products[ productSlug ]?.cost_smallest_unit,
+	} );
+	return data;
 }
 
 export default function CartFreeUserPlanUpsell( { addItemToCart }: CartFreeUserPlanUpsellProps ) {
