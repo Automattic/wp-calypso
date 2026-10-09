@@ -213,7 +213,8 @@ export default function ResourceModal( {
 							onClick={ onToggleRead }
 							__next40pxDefaultSize
 						>
-							{ isRead ? __( 'Read' ) : __( 'Mark as read' ) }
+							{ /* Wrap in span; avoids a Google Translate DOM crash (react/react#11538) */ }
+							<span>{ isRead ? __( 'Read' ) : __( 'Mark as read' ) }</span>
 						</Button>
 					</HStack>
 				</VStack>
