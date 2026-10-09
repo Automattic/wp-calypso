@@ -1,0 +1,828 @@
+/**
+ * PROTOTYPE — proof of concept only.
+ *
+ * Styles for `/custom-signup`, following the automattic.com/for-agencies visual
+ * language: Source Serif 4 headings, Knockout stats, Inter body, black text,
+ * blue accents and pill buttons.
+ *
+ * Spacing follows an 8px scale. There is one light design and no dark mode. This file owns every layout
+ * style for the page and doesn't load signup-v2's stylesheets.
+ *
+ * Layout (≥ 1080px): a split screen sized to fit one laptop viewport. The
+ * sidebar holds the logo, pitch and testimonial; the main column holds the
+ * form, vertically centered. Below 1080px the sidebar hides and the form
+ * column shows the logo.
+ */
+
+/* Values match automattic.com/for-agencies rather than the Calypso scales. */
+/* stylelint-disable scales/font-weights, scales/font-sizes, scales/radii */
+
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+
+$a4a-font-base: 'https://s2.wp.com/wp-content/themes/a8c/the-one-theme/assets/fonts';
+
+@font-face {
+	font-family: 'A4A Inter';
+	font-weight: 100 900;
+	font-display: swap;
+	src: url( #{$a4a-font-base}/inter/InterVariable-latin.woff2 ) format( 'woff2' );
+}
+
+@font-face {
+	font-family: 'A4A Source Serif 4';
+	font-weight: 200 900;
+	font-display: swap;
+	src: url( #{$a4a-font-base}/source-serif-4/source-serif-4-variable-normal.woff2 )
+		format( 'woff2' );
+}
+
+@font-face {
+	font-family: 'A4A Knockout';
+	font-weight: 400;
+	font-display: swap;
+	src: url( #{$a4a-font-base}/knockout/knockout-400-normal.woff2 ) format( 'woff2' );
+}
+
+.a4a-custom-signup {
+	// Palette from automattic.com/for-agencies.
+	--a4a-signup-black: #000;
+	--a4a-signup-white: #fff;
+	--a4a-signup-gray-1: #f6f7f7;
+	--a4a-signup-gray-2: #dcdcde;
+	--a4a-signup-gray-3: #50575e;
+	--a4a-signup-gray-5: #646970;
+	--a4a-signup-border: #a7aaad;
+	--a4a-signup-accent-1: #0240e4;
+	--a4a-signup-accent-2: #0387ff;
+	--a4a-signup-accent-3: #72b3ff;
+	--a4a-signup-accent-4: #d6e9ff;
+	--a4a-signup-selected: #f3f8ff;
+	--a4a-signup-gray-light: #f7f8f8;
+	--a4a-signup-panel: #0240e4; // Brand blue (accent-1).
+	--a4a-signup-font-sans: 'A4A Inter', Inter, -apple-system, system-ui, sans-serif;
+	--a4a-signup-font-serif: 'A4A Source Serif 4', 'Source Serif 4', Georgia, serif;
+	// Shared top offset for the sidebar pitch and the form, so the step progress
+	// lines up with the top of the pitch headline.
+	--a4a-signup-content-top: clamp( 96px, 16vh, 160px );
+	--a4a-signup-font-display:
+		'A4A Knockout', Bahnschrift, 'DIN Alternate', 'Franklin Gothic Medium', sans-serif;
+
+	// Pin to the viewport so Calypso's layout padding and page background don't
+	// show around the prototype.
+	position: fixed;
+	inset: 0;
+	z-index: 10;
+	overflow: hidden;
+	background-color: var( --a4a-signup-white );
+	color: var( --a4a-signup-black );
+	font-family: var( --a4a-signup-font-sans );
+	// Keeps native controls (selects, scrollbars) light even when the OS is dark.
+	color-scheme: light;
+
+	* {
+		box-sizing: border-box;
+	}
+
+	h1,
+	h2,
+	p,
+	blockquote,
+	figure {
+		margin: 0;
+	}
+
+	a {
+		color: var( --a4a-signup-accent-1 );
+	}
+}
+
+// Logo lockup: Automattic ▪ Agencies.
+.a4a-custom-signup-logo {
+	display: inline-flex;
+	flex-shrink: 0;
+	align-items: center;
+	gap: 8px;
+	color: var( --a4a-signup-black );
+
+	svg {
+		display: block;
+		height: 14px;
+		width: auto;
+	}
+
+	// The "Agencies" artwork has extra padding in its 15-unit viewBox, so at the
+	// same height its capitals render ~0.6px shorter than "Automattic". Scaling
+	// it to 14.66px matches the cap heights (13.02px), and centered alignment
+	// then puts both words on the same baseline.
+	svg:last-child {
+		height: 14.66px;
+	}
+}
+
+.a4a-custom-signup-logo-separator {
+	width: 4px;
+	height: 4px;
+	background-color: currentColor;
+}
+
+// Layout.
+.a4a-custom-signup-layout {
+	display: flex;
+	width: 100%;
+	height: 100%;
+}
+
+.a4a-custom-signup-sidebar {
+	display: none;
+
+	@include break-xlarge {
+		position: relative;
+		display: flex;
+		flex-direction: column;
+		justify-content: space-between;
+		gap: clamp( 24px, 4vh, 48px );
+		width: 46%;
+		height: 100%;
+		padding: var( --a4a-signup-content-top ) clamp( 32px, 4vw, 72px ) clamp( 32px, 5vh, 56px );
+		overflow-y: auto;
+	}
+}
+
+// Main column scrolls on its own; the form is centered horizontally.
+.a4a-custom-signup-main {
+	display: flex;
+	flex: 1;
+	flex-direction: column;
+	min-width: 0;
+	padding: 0 16px;
+	overflow-y: auto;
+	// Brand-blue panel behind the white form card.
+	background-color: var( --a4a-signup-panel );
+	scrollbar-width: thin;
+
+	@include break-medium {
+		padding: 0 clamp( 24px, 4vw, 72px );
+	}
+}
+
+.a4a-custom-signup-form {
+	width: 100%;
+	max-width: 672px;
+	// Anchored to a fixed top offset (rather than vertically centered) so the
+	// progress bar and heading stay put when steps have different heights.
+	// The card's top padding is subtracted so the step progress still lines up
+	// with the sidebar headline.
+	--a4a-signup-card-padding: 48px;
+	margin: calc( var( --a4a-signup-content-top ) - var( --a4a-signup-card-padding ) ) auto 48px;
+	padding: var( --a4a-signup-card-padding );
+	background-color: var( --a4a-signup-white );
+	border-radius: 8px;
+}
+
+.a4a-custom-signup-form-logo {
+	margin-block-end: 24px;
+
+	@include break-xlarge {
+		display: none;
+	}
+}
+
+// Sidebar pitch.
+.a4a-custom-signup-pitch {
+	display: flex;
+	flex-direction: column;
+	gap: clamp( 16px, 2.5vh, 24px );
+	max-width: 720px;
+}
+
+// The sidebar logo sits above the shared content line.
+.a4a-custom-signup-sidebar > .a4a-custom-signup-logo {
+	position: absolute;
+	inset-block-start: clamp( 32px, 5vh, 56px );
+	inset-inline-start: clamp( 32px, 4vw, 72px );
+}
+
+.a4a-custom-signup-pitch-title {
+	font-family: var( --a4a-signup-font-serif );
+	font-weight: 400;
+	font-size: clamp( 2.25rem, 3.2vw, 3.25rem );
+	line-height: 1.1;
+	letter-spacing: -0.015em;
+}
+
+.a4a-custom-signup-pitch-description {
+	font-size: 1.0625rem;
+	line-height: 1.55;
+	color: var( --a4a-signup-gray-3 );
+	max-width: 640px;
+}
+
+.a4a-custom-signup-stats {
+	display: grid;
+	grid-template-columns: repeat( 3, 1fr );
+	gap: 16px;
+	margin: 8px 0 0;
+	padding: 0;
+	list-style: none;
+}
+
+.a4a-custom-signup-stat {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	padding: 24px;
+	border-radius: 8px;
+	background-color: var( --a4a-signup-gray-light );
+}
+
+// Small "UP TO" eyebrow above the number.
+.a4a-custom-signup-stat-prefix {
+	margin-block-end: 0;
+	font-size: 0.75rem;
+	font-weight: 600;
+	line-height: 1;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+	color: var( --a4a-signup-gray-5 );
+}
+
+.a4a-custom-signup-stat-value {
+	font-family: var( --a4a-signup-font-display );
+	font-size: clamp( 3rem, 4.2vw, 4.25rem );
+	line-height: 0.9;
+	text-transform: uppercase;
+	color: var( --a4a-signup-accent-1 );
+}
+
+.a4a-custom-signup-stat-label {
+	font-size: 0.875rem;
+	line-height: 1.35;
+	color: var( --a4a-signup-gray-3 );
+	// Evens out line lengths so the three labels wrap alike.
+	text-wrap: balance;
+}
+
+// Testimonial: kept quiet (no card, small gray type) so it doesn't compete
+// with the form for attention.
+.a4a-custom-signup-testimonial {
+	max-width: 460px;
+	padding-inline-start: 16px;
+	border-inline-start: 2px solid var( --a4a-signup-gray-2 );
+}
+
+.a4a-custom-signup .a4a-custom-signup-testimonial-quote {
+	// Reset Calypso's global blockquote styles (gray box, padding, border).
+	padding: 0;
+	border: 0;
+	background: none;
+	font-style: normal;
+	margin-block-end: 16px;
+	font-size: 0.9375rem;
+	line-height: 1.5;
+	color: var( --a4a-signup-gray-5 );
+}
+
+.a4a-custom-signup-testimonial-author {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+
+.a4a-custom-signup-testimonial-avatar {
+	width: 32px;
+	height: 32px;
+	border-radius: 50%;
+}
+
+// Name, role, and company on one line.
+.a4a-custom-signup-testimonial-info {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0 8px;
+	font-size: 0.8125rem;
+	line-height: 1.4;
+	color: var( --a4a-signup-gray-5 );
+
+	> span + span::before {
+		content: '·';
+		margin-inline-end: 8px;
+	}
+}
+
+.a4a-custom-signup-testimonial-name {
+	font-weight: 600;
+	color: var( --a4a-signup-gray-3 );
+}
+
+// Step progress: labels over one continuous meter.
+.a4a-custom-signup-progress {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+
+	// Optical nudge (one 8px step): the 52px serif headline's cap height sits
+	// lower in its line box than the small step labels.
+	@include break-xlarge {
+		margin-block-start: 8px;
+	}
+}
+
+.a4a-custom-signup-progress-labels {
+	display: grid;
+	gap: 8px;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.a4a-custom-signup-progress-label {
+	font-size: 0.8125rem;
+	color: var( --a4a-signup-gray-5 );
+	transition: color 0.2s ease;
+
+	&.is-active {
+		font-weight: 600;
+		color: var( --a4a-signup-black );
+	}
+}
+
+.a4a-custom-signup-progress-track {
+	display: block;
+	height: 8px;
+	border-radius: 9999px;
+	background-color: var( --a4a-signup-accent-4 );
+	overflow: hidden;
+}
+
+.a4a-custom-signup-progress-fill {
+	display: block;
+	height: 100%;
+	border-radius: inherit;
+	background-color: var( --a4a-signup-accent-1 );
+	transition: width 0.4s ease;
+}
+
+// Form steps (built on the shared A4A Form components).
+.a4a-custom-signup .a4a-custom-signup-step.a4a-form {
+	max-width: none;
+	margin: 32px 0 0;
+	gap: 16px;
+
+	@include break-xlarge {
+		margin-block-start: 24px;
+	}
+
+	.a4a-form__heading {
+		display: flex;
+		flex-direction: column;
+		gap: 8px;
+	}
+
+	.a4a-form__heading-title {
+		font-family: var( --a4a-signup-font-serif );
+		font-weight: 400;
+		font-size: 2.25rem;
+		line-height: 1.15;
+		letter-spacing: -0.01em;
+		color: var( --a4a-signup-black );
+
+		@include break-xlarge {
+			font-size: 1.875rem;
+		}
+	}
+
+	.a4a-form__heading-description {
+		font-family: var( --a4a-signup-font-sans );
+		font-size: 1.0625rem;
+		line-height: 1.5;
+		color: var( --a4a-signup-gray-3 );
+
+		@include break-xlarge {
+			font-size: 0.9375rem;
+		}
+	}
+
+	.a4a-form__section-field {
+		gap: 8px;
+	}
+
+	.a4a-form__section-field-label,
+	.a4a-form__section-field-required,
+	.form-phone-input label {
+		font-family: var( --a4a-signup-font-sans );
+		font-size: 0.875rem;
+		font-weight: 500;
+		color: var( --a4a-signup-black );
+	}
+
+	.form-fieldset {
+		margin: 0;
+	}
+
+	// Text inputs and selects.
+	input[type='text'].form-text-input,
+	input[type='email'].form-text-input,
+	input[type='tel'].form-text-input,
+	input[type='url'].form-text-input,
+	.form-select {
+		width: 100%;
+		min-height: 40px;
+		font-family: var( --a4a-signup-font-sans );
+		font-size: 0.875rem;
+		color: var( --a4a-signup-black );
+		background-color: var( --a4a-signup-white );
+		border: 1px solid var( --a4a-signup-border );
+		border-radius: 4px;
+
+		&::placeholder {
+			color: var( --a4a-signup-gray-5 );
+		}
+
+		&:focus {
+			border-color: var( --a4a-signup-accent-1 );
+			box-shadow: 0 0 0 1px var( --a4a-signup-accent-1 );
+			outline: none;
+		}
+	}
+
+	// Searchable dropdown: one border on the outer container.
+	.searchable-dropdown {
+		width: 100%;
+	}
+
+	.searchable-dropdown .components-combobox-control__suggestions-container {
+		min-height: 40px;
+		border: 1px solid var( --a4a-signup-border );
+		border-radius: 4px;
+		background-color: var( --a4a-signup-white );
+		overflow: hidden;
+
+		&:focus-within {
+			border-color: var( --a4a-signup-accent-1 );
+			box-shadow: 0 0 0 1px var( --a4a-signup-accent-1 );
+		}
+
+		.components-flex {
+			border: 0;
+			background-color: transparent;
+			color: var( --a4a-signup-black );
+		}
+
+		.components-button.has-icon {
+			color: var( --a4a-signup-gray-5 );
+		}
+	}
+
+	.searchable-dropdown input.components-combobox-control__input[type='text'] {
+		font-family: var( --a4a-signup-font-sans );
+		font-size: 0.875rem;
+		color: var( --a4a-signup-black );
+		background: transparent;
+		border: 0;
+		box-shadow: none;
+
+		&::placeholder {
+			color: var( --a4a-signup-gray-5 );
+		}
+	}
+
+	.searchable-dropdown .components-form-token-field__suggestions-list {
+		border-block-start: 1px solid var( --a4a-signup-gray-2 );
+		background-color: var( --a4a-signup-white );
+	}
+
+	.searchable-dropdown .components-form-token-field__suggestion {
+		font-family: var( --a4a-signup-font-sans );
+		color: var( --a4a-signup-black );
+		background-color: var( --a4a-signup-white );
+
+		&.is-selected {
+			color: var( --a4a-signup-white );
+			background-color: var( --a4a-signup-accent-1 );
+		}
+	}
+
+	// Pill buttons, like the site's "Start growing now for free" CTA.
+	.components-button.is-primary {
+		height: auto;
+		min-height: 48px;
+		padding: 8px 32px;
+		font-family: var( --a4a-signup-font-sans );
+		font-size: 1rem;
+		font-weight: 500;
+		color: var( --a4a-signup-black );
+		background-color: var( --a4a-signup-accent-3 );
+		border-radius: 9999px;
+		box-shadow: none;
+
+		&:hover:not( :disabled ) {
+			color: var( --a4a-signup-black );
+			background-color: var( --a4a-signup-accent-2 );
+		}
+
+		&:focus-visible {
+			box-shadow:
+				0 0 0 2px var( --a4a-signup-white ),
+				0 0 0 4px var( --a4a-signup-accent-1 );
+		}
+
+		&:disabled {
+			opacity: 0.6;
+		}
+	}
+
+	.a4a-custom-signup-back-button.components-button {
+		font-family: var( --a4a-signup-font-sans );
+		color: var( --a4a-signup-black );
+		background: transparent;
+		box-shadow: none;
+
+		&:hover:not( :disabled ) {
+			color: var( --a4a-signup-accent-1 );
+			background: transparent;
+		}
+	}
+}
+
+.a4a-custom-signup-step-actions {
+	display: flex;
+	align-items: center;
+	gap: 16px;
+}
+
+// Step 1: two-column field grid so all agency details fit in one view.
+.a4a-custom-signup .a4a-custom-signup-details.a4a-form {
+	gap: 24px 16px; // Fewer fields per step, so more breathing room.
+
+	@include break-small {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+	}
+
+	> .a4a-form__heading,
+	> .a4a-custom-signup-section-title,
+	> :has( #email ),
+	> .a4a-custom-signup-phone,
+	> .a4a-custom-signup-full-row,
+	> .a4a-form__footer {
+		grid-column: 1 / -1;
+	}
+
+	// Lighter fields: softer labels and hairline borders.
+	.a4a-form__section-field {
+		gap: 8px;
+	}
+
+	.a4a-form__section-field-label,
+	.form-phone-input label {
+		font-size: 0.8125rem;
+		font-weight: 500;
+		color: var( --a4a-signup-gray-3 );
+	}
+
+	input[type='text'].form-text-input,
+	input[type='email'].form-text-input,
+	input[type='tel'].form-text-input,
+	.form-select,
+	.searchable-dropdown .components-combobox-control__suggestions-container {
+		border-color: var( --a4a-signup-gray-2 );
+
+		&:hover {
+			border-color: var( --a4a-signup-border );
+		}
+	}
+
+	input[type='text'].form-text-input:focus,
+	input[type='email'].form-text-input:focus,
+	input[type='tel'].form-text-input:focus,
+	.form-select:focus,
+	.searchable-dropdown .components-combobox-control__suggestions-container:focus-within {
+		border-color: var( --a4a-signup-accent-1 );
+	}
+}
+
+// Small eyebrow that splits step 1 into "About you" and "About your agency".
+.a4a-custom-signup .a4a-custom-signup-section-title {
+	margin: 8px 0 0;
+	font-size: 0.6875rem;
+	font-weight: 600;
+	line-height: 1;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+	color: var( --a4a-signup-gray-5 );
+
+	& ~ .a4a-custom-signup-section-title {
+		margin-block-start: 16px;
+		padding-block-start: 24px;
+		border-block-start: 1px solid var( --a4a-signup-gray-2 );
+	}
+}
+
+// Continue button and agreement copy share one row.
+.a4a-custom-signup .a4a-custom-signup-details-footer {
+	display: flex;
+	align-items: center;
+	gap: 24px;
+	margin-block-start: 8px;
+
+	.a4a-custom-signup-tos {
+		max-width: 300px;
+	}
+}
+
+.a4a-custom-signup-phone .form-phone-input {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+
+	@include break-small {
+		flex-direction: row;
+		gap: 16px;
+
+		.form-phone-input__country,
+		.form-phone-input__phone-number {
+			flex: 1;
+		}
+	}
+}
+
+.a4a-custom-signup-tos,
+.a4a-custom-signup .a4a-custom-signup-step-note {
+	font-size: 0.8125rem;
+	line-height: 1.5;
+	color: var( --a4a-signup-gray-3 );
+}
+
+// Multi-select cards (steps 2 and 3) and chips (services on step 1).
+.a4a-choice-cards {
+	display: grid;
+	gap: 8px;
+
+	&.is-chips {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 8px;
+	}
+}
+
+.a4a-choice-card {
+	display: flex;
+	align-items: flex-start;
+	gap: 16px;
+	width: 100%;
+	padding: 16px 24px;
+	font: inherit;
+	text-align: start;
+	color: var( --a4a-signup-black );
+	background-color: var( --a4a-signup-white );
+	border: 1px solid var( --a4a-signup-gray-2 );
+	border-radius: 4px;
+	cursor: pointer;
+	transition:
+		border-color 0.15s ease,
+		background-color 0.15s ease,
+		box-shadow 0.15s ease;
+
+	&:hover {
+		border-color: var( --a4a-signup-border );
+	}
+
+	&:focus-visible {
+		outline: none;
+		box-shadow:
+			0 0 0 2px var( --a4a-signup-white ),
+			0 0 0 4px var( --a4a-signup-accent-1 );
+	}
+
+	&.is-selected {
+		border-color: var( --a4a-signup-accent-1 );
+		background-color: var( --a4a-signup-selected );
+		box-shadow: inset 0 0 0 1px var( --a4a-signup-accent-1 );
+	}
+}
+
+.a4a-choice-card-check {
+	display: flex;
+	flex-shrink: 0;
+	align-items: center;
+	justify-content: center;
+	width: 16px;
+	height: 16px;
+	margin-block-start: 0;
+	border: 1px solid var( --a4a-signup-border );
+	border-radius: 4px;
+	background-color: var( --a4a-signup-white );
+
+	svg {
+		fill: var( --a4a-signup-white );
+	}
+}
+
+.a4a-choice-card.is-selected .a4a-choice-card-check {
+	border-color: var( --a4a-signup-accent-1 );
+	background-color: var( --a4a-signup-accent-1 );
+}
+
+.a4a-choice-card-text {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+}
+
+.a4a-choice-card-label {
+	font-size: 1rem;
+	font-weight: 500;
+	line-height: 1.35;
+}
+
+.a4a-choice-card-description {
+	font-size: 0.875rem;
+	line-height: 1.45;
+	color: var( --a4a-signup-gray-3 );
+}
+
+// "Other" expands into a text field attached to the bottom of its card.
+.a4a-choice-card-group.is-expanded {
+	.a4a-choice-card.is-selected {
+		border-block-end: 0;
+		padding-block-end: 17px; // Makes up for the removed 1px border.
+		border-end-start-radius: 0;
+		border-end-end-radius: 0;
+		box-shadow:
+			inset 1px 0 0 var( --a4a-signup-accent-1 ),
+			inset -1px 0 0 var( --a4a-signup-accent-1 ),
+			inset 0 1px 0 var( --a4a-signup-accent-1 );
+	}
+}
+
+.a4a-custom-signup .a4a-choice-card-other {
+	padding: 0 24px 16px 56px;
+	border: 1px solid var( --a4a-signup-accent-1 );
+	border-block-start: 0;
+	border-end-start-radius: 4px;
+	border-end-end-radius: 4px;
+	background-color: var( --a4a-signup-selected );
+	box-shadow:
+		inset 1px 0 0 var( --a4a-signup-accent-1 ),
+		inset -1px 0 0 var( --a4a-signup-accent-1 ),
+		inset 0 -1px 0 var( --a4a-signup-accent-1 );
+
+	textarea.components-textarea-control__input {
+		width: 100%;
+		padding: 8px 16px;
+		font-family: var( --a4a-signup-font-sans );
+		font-size: 0.875rem;
+		color: var( --a4a-signup-black );
+		background-color: var( --a4a-signup-white );
+		border: 1px solid var( --a4a-signup-gray-2 );
+		border-radius: 4px;
+		box-shadow: none;
+		resize: vertical;
+
+		&::placeholder {
+			color: var( --a4a-signup-gray-5 );
+		}
+
+		&:focus {
+			border-color: var( --a4a-signup-accent-1 );
+			box-shadow: 0 0 0 1px var( --a4a-signup-accent-1 );
+			outline: none;
+		}
+	}
+}
+
+// Chip variant: compact pills. The check only appears once a chip is selected.
+.a4a-choice-cards.is-chips .a4a-choice-card {
+	width: auto;
+	align-items: center;
+	gap: 8px;
+	padding: 8px 16px;
+	color: var( --a4a-signup-gray-3 );
+	border-color: var( --a4a-signup-gray-2 );
+	border-radius: 9999px;
+
+	.a4a-choice-card-check {
+		display: none;
+	}
+
+	.a4a-choice-card-label {
+		font-size: 0.8125rem;
+		font-weight: 400;
+	}
+
+	&.is-selected {
+		padding-inline-start: 8px;
+		color: var( --a4a-signup-black );
+		border-color: var( --a4a-signup-accent-1 );
+		box-shadow: none;
+
+		.a4a-choice-card-check {
+			display: flex;
+			width: 16px;
+			height: 16px;
+			margin: 0;
+			border-radius: 50%;
+		}
+	}
+}
