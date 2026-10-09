@@ -386,6 +386,7 @@ __metadata:
     smooch: "npm:^5.7.17"
     typescript: "npm:^6.0.3"
     wpcom-proxy-request: "workspace:^"
+    zod: "npm:^3.25.76"
   peerDependencies:
     "@wordpress/data": ^10.48.0
     "@wordpress/element": ^8.0.0
