@@ -3,10 +3,17 @@
  */
 
 import { screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { render } from '../../../../../test-utils';
 import CancelPurchaseForm from '../index';
-import { FEEDBACK_STEP, NEXT_ADVENTURE_STEP } from '../steps';
+import { ATOMIC_REVERT_STEP, FEEDBACK_STEP, NEXT_ADVENTURE_STEP, REMOVE_PLAN_STEP } from '../steps';
 import type { Purchase } from '@automattic/api-core';
+
+const mockNavigate = jest.fn();
+jest.mock( '@tanstack/react-router', () => ( {
+	...jest.requireActual( '@tanstack/react-router' ),
+	useNavigate: () => mockNavigate,
+} ) );
 
 function makePurchase( overrides: Partial< Purchase > = {} ): Purchase {
 	return {
@@ -37,11 +44,23 @@ const defaultProps = {
 	atomicRevertOnClickCheckTwo: noop,
 	onGetCancellationOffer: noop,
 	onImportRadioChange: noop,
+	onKeepSubscriptionClick: noop,
 	onRadioOneChange: noop,
 	onTextOneChange: noop,
 };
 
+const personalPlan = makePurchase( {
+	product_name: 'WordPress.com Personal',
+	product_slug: 'personal-bundle',
+	subscription_status: 'active',
+	expiry_date: '2027-02-23T12:00:00+00:00',
+} );
+
 describe( '<CancelPurchaseForm />', () => {
+	beforeEach( () => {
+		jest.clearAllMocks();
+	} );
+
 	test( 'asks for a cancellation reason for a Google Workspace purchase', () => {
 		render(
 			<CancelPurchaseForm
@@ -97,5 +116,118 @@ describe( '<CancelPurchaseForm />', () => {
 
 		expect( screen.queryByRole( 'radio' ) ).not.toBeInTheDocument();
 		expect( screen.getByRole( 'button', { name: 'Complete removal' } ) ).toBeEnabled();
+	} );
+
+	test.each( [ FEEDBACK_STEP, NEXT_ADVENTURE_STEP ] )(
+		'shows the survey title on %s',
+		( surveyStep ) => {
+			render(
+				<CancelPurchaseForm
+					{ ...defaultProps }
+					surveyStep={ surveyStep }
+					purchase={ makePurchase() }
+				/>
+			);
+
+			expect(
+				screen.getByRole( 'heading', { name: /answer a few quick questions/ } )
+			).toBeVisible();
+		}
+	);
+
+	test( 'shows only the remove plan copy on the remove plan step', () => {
+		render(
+			<CancelPurchaseForm
+				{ ...defaultProps }
+				surveyStep={ REMOVE_PLAN_STEP }
+				allSteps={ [ REMOVE_PLAN_STEP ] }
+				purchase={ personalPlan }
+			/>
+		);
+
+		expect(
+			screen.queryByRole( 'heading', { name: /answer a few quick questions/ } )
+		).not.toBeInTheDocument();
+		expect( screen.getByText( /If you remove your plan/ ) ).toBeVisible();
+		expect( screen.getByText( /If you keep your plan/ ) ).toHaveTextContent(
+			'until Feb 23, 2027.'
+		);
+	} );
+
+	test( 'shows only the revert warning on the atomic revert step', () => {
+		render(
+			<CancelPurchaseForm
+				{ ...defaultProps }
+				surveyStep={ ATOMIC_REVERT_STEP }
+				allSteps={ [ ATOMIC_REVERT_STEP ] }
+				atomicTransfer={ { created_at: '2026-01-15T12:00:00+00:00' } }
+				purchase={ makePurchase( { expiry_date: '2027-02-23T12:00:00+00:00' } ) }
+			/>
+		);
+
+		expect(
+			screen.queryByRole( 'heading', { name: /answer a few quick questions/ } )
+		).not.toBeInTheDocument();
+		expect( screen.getByRole( 'heading', { name: 'Proceed with caution' } ) ).toBeVisible();
+	} );
+
+	test( 'submits the removal from the Complete removal button on the remove plan step', async () => {
+		const user = userEvent.setup();
+		const onSubmit = jest.fn();
+		render(
+			<CancelPurchaseForm
+				{ ...defaultProps }
+				surveyStep={ REMOVE_PLAN_STEP }
+				allSteps={ [ REMOVE_PLAN_STEP ] }
+				purchase={ personalPlan }
+				onSubmit={ onSubmit }
+			/>
+		);
+
+		const removeButton = screen.getByRole( 'button', { name: 'Complete removal' } );
+		expect( removeButton ).toBeEnabled();
+		expect( screen.queryByRole( 'button', { name: 'Continue' } ) ).not.toBeInTheDocument();
+
+		await user.click( removeButton );
+
+		expect( onSubmit ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	test( 'returns to purchase settings when Keep plan is clicked on the remove plan step', async () => {
+		const user = userEvent.setup();
+		const onKeepSubscriptionClick = jest.fn();
+		const onSubmit = jest.fn();
+		render(
+			<CancelPurchaseForm
+				{ ...defaultProps }
+				surveyStep={ REMOVE_PLAN_STEP }
+				allSteps={ [ REMOVE_PLAN_STEP ] }
+				purchase={ personalPlan }
+				onKeepSubscriptionClick={ onKeepSubscriptionClick }
+				onSubmit={ onSubmit }
+			/>
+		);
+
+		await user.click( screen.getByRole( 'button', { name: 'Keep plan' } ) );
+
+		expect( mockNavigate ).toHaveBeenCalledWith(
+			expect.objectContaining( { params: { purchaseId: personalPlan.ID } } )
+		);
+		expect( onKeepSubscriptionClick ).toHaveBeenCalledTimes( 1 );
+		expect( onSubmit ).not.toHaveBeenCalled();
+	} );
+
+	test( 'disables Keep plan while the removal is submitting on the remove plan step', () => {
+		render(
+			<CancelPurchaseForm
+				{ ...defaultProps }
+				surveyStep={ REMOVE_PLAN_STEP }
+				allSteps={ [ REMOVE_PLAN_STEP ] }
+				purchase={ personalPlan }
+				isSubmitting
+			/>
+		);
+
+		expect( screen.getByRole( 'button', { name: 'Keep plan' } ) ).toBeDisabled();
 	} );
 } );
