@@ -115,6 +115,13 @@ const initialState = {
 	currentUser: { id: 1, user: { ID: 1, email_verified: true } },
 };
 
+// No backoff between the progress mutation's own retries, and no
+// retries for queries, so failure paths resolve quickly.
+const createQueryClient = () =>
+	new QueryClient( {
+		defaultOptions: { queries: { retry: false }, mutations: { retryDelay: 0 } },
+	} );
+
 describe( 'FourForFour', () => {
 	beforeEach( () => {
 		nock.cleanAll();
@@ -241,13 +248,6 @@ describe( 'FourForFour', () => {
 	} );
 
 	describe( 'saving progress', () => {
-		// No backoff between the progress mutation's own retries, and no
-		// retries for queries, so failure paths resolve quickly.
-		const createQueryClient = () =>
-			new QueryClient( {
-				defaultOptions: { queries: { retry: false }, mutations: { retryDelay: 0 } },
-			} );
-
 		it( 'shows an error when a save fails and saves again on retry', async () => {
 			const user = userEvent.setup();
 			mockStatus( 'opted_in', [ 3, 4, 5 ] );
@@ -324,6 +324,96 @@ describe( 'FourForFour', () => {
 			await waitFor( () => expect( first.isDone() ).toBe( true ) );
 			await waitFor( () => expect( second.isDone() ).toBe( true ) );
 			expect( screen.getByRole( 'progressbar' ) ).toHaveAttribute( 'aria-valuenow', '2' );
+		} );
+	} );
+
+	describe( 'follows the server does not keep', () => {
+		it( 'sends the follow again when the server does not count it', async () => {
+			const user = userEvent.setup();
+			mockStatus( 'opted_in', [ 3, 4, 5 ] );
+			mockCandidates( [ candidate( 2, 'Second Site' ) ] );
+			mockFollow( 2 );
+			// The subscription has not propagated yet, so the server keeps none of it.
+			const rejected = nock( API )
+				.post( '/wpcom/v2/read/four-for-four/progress', { blog_ids: [ 2 ] } )
+				.reply( 200, { status: 'opted_in', blog_id: 1, followed_blog_ids: [ 3, 4, 5 ] } );
+			const accepted = nock( API )
+				.post( '/wpcom/v2/read/four-for-four/progress', { blog_ids: [ 2 ] } )
+				.reply( 200, { status: 'completed', blog_id: 1, followed_blog_ids: [ 3, 4, 5, 2 ] } );
+
+			renderWithProvider( <FourForFour />, { initialState, queryClient: createQueryClient() } );
+
+			await user.click( await screen.findByRole( 'button', { name: 'Subscribe' } ) );
+
+			await waitFor( () => expect( rejected.isDone() ).toBe( true ) );
+			await waitFor( () => expect( accepted.isDone() ).toBe( true ) );
+			expect( await screen.findByRole( 'status' ) ).toHaveTextContent( "You're in!" );
+		} );
+
+		it( 'gives up after three rejections and records the dropped follow', async () => {
+			const user = userEvent.setup();
+			mockStatus( 'opted_in', [ 3, 4, 5 ] );
+			mockCandidates( [ candidate( 2, 'Second Site' ) ] );
+			mockFollow( 2 );
+			// A fourth request would have no mock and would fail the test.
+			const rejections = nock( API )
+				.post( '/wpcom/v2/read/four-for-four/progress', { blog_ids: [ 2 ] } )
+				.times( 3 )
+				.reply( 200, { status: 'opted_in', blog_id: 1, followed_blog_ids: [ 3, 4, 5 ] } );
+
+			renderWithProvider( <FourForFour />, { initialState, queryClient: createQueryClient() } );
+
+			await user.click( await screen.findByRole( 'button', { name: 'Subscribe' } ) );
+
+			// Long enough to cover both retry waits.
+			await waitFor( () => expect( rejections.isDone() ).toBe( true ), { timeout: 4000 } );
+			await waitFor( () =>
+				expect( mockRecordReaderTracksEvent ).toHaveBeenCalledWith(
+					'calypso_reader_four_for_four_progress_dropped',
+					{ blog_id: 2, attempts: 3 }
+				)
+			);
+			expect( screen.queryByRole( 'status' ) ).not.toBeInTheDocument();
+		} );
+	} );
+
+	describe( 'candidate instrumentation', () => {
+		it( 'records how many sites the writer was offered', async () => {
+			mockStatus( 'opted_in' );
+			mockCandidates( [ candidate( 2, 'Second Site', true ), candidate( 3, 'Third Site' ) ] );
+
+			renderWithProvider( <FourForFour />, { initialState } );
+
+			await screen.findByTestId( 'list-item-2' );
+			expect( mockRecordReaderTracksEvent ).toHaveBeenCalledWith(
+				'calypso_reader_four_for_four_candidates_shown',
+				{ count: 2, participant_count: 1 }
+			);
+		} );
+
+		it( 'records an empty pool as a count of zero', async () => {
+			mockStatus( 'opted_in' );
+			mockCandidates( [] );
+
+			renderWithProvider( <FourForFour />, { initialState } );
+
+			expect( await screen.findByText( 'No new writers to show right now.' ) ).toBeVisible();
+			expect( mockRecordReaderTracksEvent ).toHaveBeenCalledWith(
+				'calypso_reader_four_for_four_candidates_shown',
+				{ count: 0, participant_count: 0 }
+			);
+		} );
+
+		it( 'records a failure to load the pool', async () => {
+			mockStatus( 'opted_in' );
+			nock( API ).get( '/wpcom/v2/read/four-for-four/candidates' ).reply( 500, { code: 'error' } );
+
+			renderWithProvider( <FourForFour />, { initialState, queryClient: createQueryClient() } );
+
+			expect( await screen.findByText( "We couldn't load sites right now." ) ).toBeVisible();
+			expect( mockRecordReaderTracksEvent ).toHaveBeenCalledWith(
+				'calypso_reader_four_for_four_candidates_error'
+			);
 		} );
 	} );
 } );
