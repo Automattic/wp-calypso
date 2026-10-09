@@ -9,6 +9,7 @@ const defaultValues: Required< UserPreferences > = {
 	'hosting-dashboard-dark-mode-announcement-dismissed': '',
 	'hosting-dashboard-opt-in': { value: 'unset', updated_at: '' },
 	'hosting-dashboard-welcome-notice-dismissed': '',
+	'hosting-dashboard-difm-offer-dismissed': '',
 	'wordpress-labs-opt-in': { value: 'unset', updated_at: '' },
 	'wordpress-labs-excluded-sites': [],
 	'account-recovery-interstitial-snoozed-until': 0,
@@ -71,6 +72,7 @@ const staticPreferenceStatIds: Record< string, string > = {
 	'a4a-feedback': 'a4afb',
 	'pressable-limit-notification-dismissed': 'prslim',
 	'a4a-agency-approval-notice-dismissed': 'a4aappr',
+	'hosting-dashboard-difm-offer-dismissed': 'difmofr',
 };
 
 const dynamicPreferenceStatPrefixes: Record< string, string > = {

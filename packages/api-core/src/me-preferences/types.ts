@@ -49,6 +49,7 @@ export interface UserPreferences {
 	[ key: `hosting-dashboard-time-mismatch-warning-dismissed-${ number }` ]: string | undefined; // Timestamp when the user dismissed the notice
 	[ key: `hosting-dashboard-wp-beta-notice-dismissed-${ number }` ]: string | undefined; // ISO timestamp when the user dismissed the beta notice for a site
 	'hosting-dashboard-welcome-notice-dismissed'?: string; // Timestamp when the user dismissed the notice
+	'hosting-dashboard-difm-offer-dismissed'?: string; // ISO timestamp when the user dismissed the free DIFM offer, on any site
 	'wordpress-labs-opt-in'?: WordPressLabsOptIn;
 	'wordpress-labs-excluded-sites'?: number[]; // Site IDs excluded from an otherwise-opted-in account
 	'account-recovery-interstitial-snoozed-until'?: number; // Unix timestamp (seconds) until which the account-recovery interstitial is snoozed; 0/unset means "never snoozed"
