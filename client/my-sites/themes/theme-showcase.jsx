@@ -46,6 +46,7 @@ import { getThemesBookmark } from 'calypso/state/themes/themes-ui/selectors';
 import EligibilityWarningModal from './atomic-transfer-dialog';
 import PlanUpgradeBanner from './banners-modern/plan-upgrade-banner';
 import { CustomSelectWrapper } from './custom-select-wrapper';
+import DifmOfferBanner from './difm-offer-banner';
 import {
 	addTracking,
 	getSubjectsFromTermTable,
@@ -865,6 +866,7 @@ class ThemeShowcase extends Component {
 					) }
 					<div className="themes__showcase">
 						{ showThemeErrors && <ThemeErrors siteId={ siteId } /> }
+						{ siteId && <DifmOfferBanner siteId={ siteId } /> }
 						{ ! isSiteWooExpressOrEcomFreeTrial && this.renderBanner() }
 						{ this.renderThemes( themeProps ) }
 					</div>
