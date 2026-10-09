@@ -1,4 +1,4 @@
-import { basicCatalog, createComponentImplementation } from '@a2ui/react/v0_9';
+import { basicCatalog, createComponentImplementation, MarkdownContext } from '@a2ui/react/v0_9';
 import {
 	ButtonApi,
 	Catalog,
@@ -87,7 +87,9 @@ const Button = createComponentImplementation( buttonApi, ( { props, buildChild }
 		variant={ props.variant === 'primary' ? 'primary' : 'secondary' }
 		onClick={ props.action }
 	>
-		{ buildChild( props.child ) }
+		<MarkdownContext.Provider value={ undefined }>
+			{ buildChild( props.child ) }
+		</MarkdownContext.Provider>
 	</GutenbergButton>
 ) );
 
