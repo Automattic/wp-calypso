@@ -7,7 +7,6 @@ interface UseResourceSelectionOptions {
 	/** The selection is held by the host, so the dashboard can keep it in the URL. */
 	onSelectedIdChange: ( id: number | null ) => void;
 	onPreview: ( resource: AgencyEnablementResource ) => void;
-	onOpen: ( resource: AgencyEnablementResource ) => void;
 }
 
 /**
@@ -17,7 +16,6 @@ interface UseResourceSelectionOptions {
 export function useResourceSelection( {
 	onSelectedIdChange,
 	onPreview,
-	onOpen,
 }: UseResourceSelectionOptions ) {
 	const [ origin, setOrigin ] = useState< DOMRect >();
 
@@ -28,9 +26,8 @@ export function useResourceSelection( {
 
 	// Stable across renders, so memoized cards don't re-render while searching.
 	const select: SelectResource = useEvent( ( resource, event ) => {
-		// Modified clicks follow the link and open the resource itself.
+		// Modified clicks follow the link, opening the details in a new tab or window.
 		if ( event.metaKey || event.ctrlKey || event.shiftKey || event.altKey ) {
-			onOpen( resource );
 			return;
 		}
 

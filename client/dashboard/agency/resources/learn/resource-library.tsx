@@ -126,7 +126,6 @@ export default function ResourceLibrary( {
 	const selection = useResourceSelection( {
 		onSelectedIdChange,
 		onPreview: onPreviewResource,
-		onOpen: onOpenResource,
 	} );
 
 	const fields = useResourceFields( resources, selection.select, readIds );

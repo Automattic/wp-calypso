@@ -173,6 +173,15 @@ describe( '<ResourceCenter>', () => {
 		expect( onResourceClick ).toHaveBeenCalledWith( expect.objectContaining( { id: 2 } ) );
 	} );
 
+	test( 'links each resource to its details, so they open in a new tab or can be shared', async () => {
+		renderLibrary();
+
+		expect( await screen.findByRole( 'link', { name: 'Jetpack battle card' } ) ).toHaveAttribute(
+			'href',
+			'?resource=2'
+		);
+	} );
+
 	test( 'opens the resource a link names', async () => {
 		renderLibrary( { initialSelectedId: 2 } );
 
