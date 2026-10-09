@@ -191,7 +191,7 @@ export default function ImportFromWPCOMModal( { onClose }: ImportFromWPCOMModalP
 	const handleAddSites = () => {
 		const blogIds = selection.map( Number );
 
-		recordTracksEvent( 'calypso_dashboard_agency_sites_import_wpcom_sites_click', {
+		recordTracksEvent( 'calypso_a4a_sites_import_wpcom_sites_click', {
 			site_count: blogIds.length,
 		} );
 
