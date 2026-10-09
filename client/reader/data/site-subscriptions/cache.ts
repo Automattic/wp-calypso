@@ -1,5 +1,6 @@
 import { prepareComparableUrl, type ReadSiteResponse } from '@automattic/api-core';
 import {
+	getHasAllSiteSubscriptionsFromData,
 	getIsSubscribedFromData,
 	getSiteSubscriptionsQueryKey,
 	readSiteQuery,
@@ -20,21 +21,6 @@ const getNumericId = ( id: number | string ): number | undefined => {
 	return typeof numericId === 'number' && Number.isFinite( numericId ) && numericId > 0
 		? numericId
 		: undefined;
-};
-
-/**
- * Whether every subscription is cached. The list loads a page at a time and
- * stops at 2,000 rows, so a blog missing from a partial list may still be
- * followed. Mirrors the query's next-page check: the pages must cover the
- * server's total, or end on an empty page when there's no total.
- */
-const hasAllSiteSubscriptions = ( data: SiteSubscriptionsInfiniteData ): boolean => {
-	const totalCount = data.pages.find( ( page ) => typeof page.totalCount === 'number' )?.totalCount;
-	if ( typeof totalCount !== 'number' ) {
-		return data.pages[ data.pages.length - 1 ]?.subscriptions.length === 0;
-	}
-
-	return data.pages.reduce( ( rows, page ) => rows + page.number, 0 ) >= totalCount;
 };
 
 /**
@@ -60,7 +46,7 @@ export const getCachedIsFollowingPost = (
 		return true;
 	}
 
-	return hasAllSiteSubscriptions( data ) ? false : undefined;
+	return getHasAllSiteSubscriptionsFromData( data ) ? false : undefined;
 };
 
 export const patchReadSiteFollowStatus = (

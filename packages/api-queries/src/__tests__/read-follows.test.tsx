@@ -16,6 +16,7 @@ import {
 	getSiteSubscriptionsCountFromData,
 	getSiteSubscriptionsFromData,
 	getSiteSubscriptionsQueryKey,
+	getHasAllSiteSubscriptionsFromData,
 	getIsSubscribedFromData,
 	getSiteSubscriptionFromData,
 	getOrganizationSiteSubscriptionsFromData,
@@ -414,6 +415,44 @@ describe( 'follow selectors and cache helpers', () => {
 		expect(
 			getIsSubscribedFromData( getCachedData( client ), { feedUrl: 'https://example.com/feed/' } )
 		).toBe( false );
+	} );
+} );
+
+describe( 'getHasAllSiteSubscriptionsFromData', () => {
+	// Pages as the API returns them: `number` is the rows on that page.
+	const makePages = ( rowsPerPage: number[], totalCount: number | null ) => ( {
+		pages: rowsPerPage.map( ( rows, index ) => ( {
+			subscriptions: Array.from( { length: rows }, () => makeFollow() ),
+			totalCount,
+			page: index + 1,
+			number: rows,
+		} ) ),
+		pageParams: rowsPerPage.map( ( _, index ) => index + 1 ),
+	} );
+
+	it( 'is false with nothing cached', () => {
+		expect( getHasAllSiteSubscriptionsFromData( undefined ) ).toBe( false );
+	} );
+
+	it( 'is true once the requested rows cover the total, even if pages came back short', () => {
+		expect(
+			getHasAllSiteSubscriptionsFromData( makePages( [ 8, 0, 0, 2, 2, 23, 0, 0, 0 ], 814 ) )
+		).toBe( true );
+	} );
+
+	it( 'is false while pages are still to come', () => {
+		expect( getHasAllSiteSubscriptionsFromData( makePages( [ 100, 100 ], 814 ) ) ).toBe( false );
+	} );
+
+	it( 'is false past the 2,000-row cap', () => {
+		expect( getHasAllSiteSubscriptionsFromData( makePages( Array( 20 ).fill( 100 ), 2500 ) ) ).toBe(
+			false
+		);
+	} );
+
+	it( 'without a total, is true only after an empty last page', () => {
+		expect( getHasAllSiteSubscriptionsFromData( makePages( [ 100 ], null ) ) ).toBe( false );
+		expect( getHasAllSiteSubscriptionsFromData( makePages( [ 100, 0 ], null ) ) ).toBe( true );
 	} );
 } );
 

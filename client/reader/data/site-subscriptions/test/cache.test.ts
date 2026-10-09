@@ -8,7 +8,12 @@ type Page = { subscriptions: Partial< SiteSubscriptionItem >[]; totalCount: numb
 const makeClientWithPages = ( pages: Page[] ) => {
 	const queryClient = new QueryClient();
 	queryClient.setQueryData( getSiteSubscriptionsQueryKey(), {
-		pages: pages.map( ( page, index ) => ( { ...page, page: index + 1, number: 100 } ) ),
+		// Like the API, `number` is how many rows the page returned.
+		pages: pages.map( ( page, index ) => ( {
+			...page,
+			page: index + 1,
+			number: page.subscriptions.length,
+		} ) ),
 		pageParams: pages.map( ( _, index ) => index + 1 ),
 	} );
 	return queryClient;
@@ -86,6 +91,19 @@ describe( 'getCachedIsFollowingPost', () => {
 			] );
 
 			expect( getCachedIsFollowingPost( queryClient, { site_ID: 2 } ) ).toBe( false );
+		} );
+
+		it( 'returns false when every page is cached even if pages came back short', () => {
+			// 814 rows on the server, most filtered out, so 9 pages hold only 35 sites.
+			const rowsPerPage = [ 8, 0, 0, 2, 2, 23, 0, 0, 0 ];
+			const pages = rowsPerPage.map( ( rows ) => ( {
+				subscriptions: Array.from( { length: rows }, () => followed ),
+				totalCount: 814,
+			} ) );
+
+			expect( getCachedIsFollowingPost( makeClientWithPages( pages ), { site_ID: 2 } ) ).toBe(
+				false
+			);
 		} );
 
 		it( 'returns undefined past the 2,000-row cap', () => {
