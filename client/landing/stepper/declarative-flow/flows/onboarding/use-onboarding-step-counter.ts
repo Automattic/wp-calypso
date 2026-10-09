@@ -3,6 +3,7 @@ import { useViewportMatch } from '@wordpress/compose';
 import { useSelect } from '@wordpress/data';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { getCurrentQueryParams } from '../../../utils/get-current-query-params';
+import { isPlanFirstCommerce } from '../../../utils/plan-first-commerce';
 import { shouldSkipPlansStep } from '../../../utils/preselected-plan';
 import {
 	getOnboardingStepperPosition,
@@ -14,7 +15,7 @@ import type { OnboardSelect } from '@automattic/data-stores';
  * Returns `{ current, total }` for the onboarding Stepper indicator.
  *
  * Returns `null` when the indicator should not be displayed — when:
- *  - the current flow isn't the onboarding flow, or
+ *  - the current flow hasn't opted into onboarding progress, or
  *  - the step is not opted into the indicator (e.g. internal steps like
  *    `processing` / `create-site`), or
  *  - the viewport is not mobile (the indicator is mobile-only per the Figma spec).
@@ -33,7 +34,9 @@ export function useOnboardingStepCounter(
 		[]
 	);
 
-	if ( flow !== ONBOARDING_FLOW || ! isMobileViewport ) {
+	const query = getCurrentQueryParams();
+	const isCommercePlanFirst = isPlanFirstCommerce( flow, query );
+	if ( ( flow !== ONBOARDING_FLOW && ! isCommercePlanFirst ) || ! isMobileViewport ) {
 		return null;
 	}
 
@@ -47,6 +50,6 @@ export function useOnboardingStepCounter(
 	// `<Router>` — in production too.
 	return getOnboardingStepperPosition(
 		group,
-		shouldSkipPlansStep( getCurrentQueryParams(), planCartItem )
+		isCommercePlanFirst || shouldSkipPlansStep( query, planCartItem )
 	);
 }

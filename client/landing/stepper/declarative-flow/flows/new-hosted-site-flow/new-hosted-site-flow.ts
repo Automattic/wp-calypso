@@ -7,6 +7,7 @@ import { useEffect } from 'react';
 import { useIsValidWooPartner } from 'calypso/landing/stepper/hooks/use-is-valid-woo-partner';
 import { recordFreeHostingTrialStarted } from 'calypso/lib/analytics/ad-tracking/ad-track-trial-start';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { pathToUrl } from 'calypso/lib/url';
 import {
 	setSignupCompleteSlug,
 	persistSignupDestination,
@@ -24,9 +25,12 @@ import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import { useQuery } from '../../../hooks/use-query';
 import { ONBOARD_STORE } from '../../../stores';
 import { getCurrentQueryParams } from '../../../utils/get-current-query-params';
+import { isPlanFirstCommerce, isPlanFirstCommerceResume } from '../../../utils/plan-first-commerce';
 import { stepsWithRequiredLogin } from '../../../utils/steps-with-required-login';
 import { STEPS } from '../../internals/steps';
 import { ProcessingResult } from '../../internals/steps-repository/processing-step/constants';
+import { getOnboardingStepperPosition } from '../onboarding/step-counter-config';
+import { resumeCommerceCart } from './resume-commerce-cart';
 import type { FlowV2, SubmitHandler } from '../../internals/types';
 import type { DomainSuggestion } from '@automattic/api-core';
 import type { OnboardActions, OnboardSelect } from '@automattic/data-stores';
@@ -39,12 +43,13 @@ async function initialize( reduxStore: Store ) {
 	// @ts-expect-error We're using the thunk middleware but TS doesn't know that.
 	reduxStore.dispatch( setSelectedSiteId( null ) );
 	clearStepPersistedState( NEW_HOSTED_SITE_FLOW );
-	clearSignupDestinationCookie();
-	clearSignupCompleteFlowName();
-	clearSignupCompleteSlug();
-	clearSignupCompleteSiteID();
-
 	const queryParams = getCurrentQueryParams();
+	if ( ! isPlanFirstCommerceResume( NEW_HOSTED_SITE_FLOW, queryParams ) ) {
+		clearSignupDestinationCookie();
+		clearSignupCompleteFlowName();
+		clearSignupCompleteSlug();
+		clearSignupCompleteSiteID();
+	}
 	const showDomainStep = queryParams.has( 'showDomainStep' );
 	const productSlug = queryParams.get( 'plan' );
 
@@ -96,6 +101,7 @@ const hosting: FlowV2< typeof initialize > = {
 	initialize,
 	useStepNavigation( _currentStepSlug, navigate ) {
 		const {
+			setPendingAction,
 			setDomain,
 			setDomainCartItem,
 			setDomainCartItems,
@@ -122,6 +128,7 @@ const hosting: FlowV2< typeof initialize > = {
 
 		const flowName = this.name;
 		const showDomainStep = query.has( 'showDomainStep' );
+		const commercePlanFirst = isPlanFirstCommerce( flowName, query );
 		const isWooPartner = useIsValidWooPartner();
 
 		const getGoBack = () => {
@@ -152,6 +159,20 @@ const hosting: FlowV2< typeof initialize > = {
 					setDomainCartItem( providedDependencies.domainItem as MinimalRequestCartProduct );
 					setDomainCartItems( providedDependencies.domainCart as MinimalRequestCartProduct[] );
 					setSignupDomainOrigin( providedDependencies.signupDomainOrigin as string );
+
+					if ( planCartItem && isPlanFirstCommerceResume( flowName, query ) ) {
+						const siteSlug = query.get( 'siteSlug' )!;
+						const siteId = query.get( 'siteId' )!;
+						setPendingAction( async () => {
+							await resumeCommerceCart(
+								siteSlug,
+								planCartItem,
+								( providedDependencies.domainCart as MinimalRequestCartProduct[] ) ?? []
+							);
+							return { siteId, siteSlug, goToCheckout: true, siteCreated: true };
+						} );
+						return navigate( STEPS.PROCESSING.slug );
+					}
 
 					if ( planCartItem ) {
 						return navigate( STEPS.SITE_CREATION_STEP.slug );
@@ -197,7 +218,7 @@ const hosting: FlowV2< typeof initialize > = {
 				case STEPS.PROCESSING.slug: {
 					if ( providedDependencies.processingResult === ProcessingResult.SUCCESS ) {
 						const siteId = providedDependencies.siteId || getSignupCompleteSiteID();
-						setSignupCompleteSiteID( providedDependencies.siteId );
+						setSignupCompleteSiteID( commercePlanFirst ? siteId : providedDependencies.siteId );
 						const siteSlug = providedDependencies.siteSlug || getSignupCompleteSlug();
 						const destinationParams: Record< string, string > = {
 							siteId,
@@ -226,18 +247,48 @@ const hosting: FlowV2< typeof initialize > = {
 
 						if ( providedDependencies.goToCheckout ) {
 							persistSignupDestination( destination );
-							setSignupCompleteSlug( providedDependencies?.siteSlug );
+							setSignupCompleteSlug(
+								commercePlanFirst ? siteSlug : providedDependencies?.siteSlug
+							);
 							setSignupCompleteFlowName( flowName );
 
 							if ( couponCode ) {
 								resetCouponCode();
 							}
+							const backUrl = pathToUrl(
+								addQueryArgs( '/setup/new-hosted-site/domains', {
+									...Object.fromEntries( query ),
+									siteId,
+									siteSlug,
+								} )
+							);
+							const stepPosition = getOnboardingStepperPosition( 'checkout', true );
+							if ( commercePlanFirst ) {
+								// Browser Back must resume domains rather than rerun site creation.
+								window.history.replaceState( window.history.state, '', backUrl );
+							}
 							return window.location.assign(
 								addQueryArgs(
 									`/checkout/${ encodeURIComponent(
-										( providedDependencies?.siteSlug as string ) ?? ''
+										( commercePlanFirst
+											? siteSlug
+											: ( providedDependencies?.siteSlug as string ) ) ?? ''
 									) }`,
-									{ redirect_to: destination, coupon: couponCode }
+									{
+										redirect_to: destination,
+										coupon: couponCode,
+										...( commercePlanFirst && {
+											flow: NEW_HOSTED_SITE_FLOW,
+											plan_first: 'true',
+											plan: query.get( 'plan' ),
+											showDomainStep: '',
+											signup: 1,
+											checkoutBackUrl: backUrl,
+											checkoutBackUrlDomains: backUrl,
+											steps_current: stepPosition.current,
+											steps_total: stepPosition.total,
+										} ),
+									}
 								)
 							);
 						}
@@ -254,6 +305,20 @@ const hosting: FlowV2< typeof initialize > = {
 		};
 	},
 	useSideEffect( currentStepSlug ) {
+		const commercePlanFirst = isPlanFirstCommerce( NEW_HOSTED_SITE_FLOW, useQuery() );
+		useEffect( () => {
+			if ( ! commercePlanFirst ) {
+				return;
+			}
+			const restorePage = ( event: PageTransitionEvent ) => {
+				if ( event.persisted ) {
+					// A cached processing page must remount at its domain-return URL.
+					window.location.reload();
+				}
+			};
+			window.addEventListener( 'pageshow', restorePage );
+			return () => window.removeEventListener( 'pageshow', restorePage );
+		}, [ commercePlanFirst ] );
 		const studioSiteId = useQuery().get( 'studioSiteId' );
 		const autoOpenPush = useQuery().get( 'autoOpenPush' );
 		const section = useQuery().get( 'section' );
