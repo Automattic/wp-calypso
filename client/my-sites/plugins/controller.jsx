@@ -4,6 +4,7 @@ import { createElement } from 'react';
 import { PluginsScheduledUpdates } from 'calypso/blocks/plugins-scheduled-updates';
 import { PluginsScheduledUpdatesMultisite } from 'calypso/blocks/plugins-scheduled-updates-multisite';
 import { redirectLoggedOut } from 'calypso/controller';
+import { getPluginsPage } from 'calypso/data/marketplace/pagination';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import { navigate } from 'calypso/lib/navigate';
 import { getSiteFragment, sectionify } from 'calypso/lib/route';
@@ -73,9 +74,10 @@ function renderPluginsBrowser( context ) {
 	const category = getCategoryForPluginsBrowser( context );
 
 	context.primary = createElement( PluginBrowser, {
-		path: context.path,
+		path: context.originalUrl || context.path,
 		category,
 		search: searchTerm,
+		page: getPluginsPage( context.query.page ),
 	} );
 }
 

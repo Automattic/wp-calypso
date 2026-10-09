@@ -11,6 +11,7 @@ import {
 	fetchPlugin,
 	validatePlugin,
 	skipIfLoggedIn,
+	setPluginsResultsPageSSR,
 	setBrowsePluginsNoindex,
 } from './controller-logged-out';
 
@@ -24,6 +25,7 @@ export default function ( router ) {
 		skipIfLoggedIn,
 		ssrSetupLocale,
 		setupPreferences,
+		setPluginsResultsPageSSR,
 		fetchPlugins,
 		setEnglishCanonicalUrl,
 		browsePlugins,
@@ -35,6 +37,7 @@ export default function ( router ) {
 		skipIfLoggedIn,
 		ssrSetupLocale,
 		setupPreferences,
+		setPluginsResultsPageSSR,
 		fetchCategoryPlugins,
 		setEnglishCanonicalUrl,
 		setBrowsePluginsNoindex,
