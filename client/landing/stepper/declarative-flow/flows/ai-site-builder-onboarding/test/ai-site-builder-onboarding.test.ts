@@ -323,6 +323,27 @@ describe( 'ai-site-builder-onboarding flow', () => {
 					expect( setIntentOnSite ).not.toHaveBeenCalled();
 				} );
 
+				it( 'still opens the build-wow site spec from a Commerce wait persisted before the skip', async () => {
+					const specUrl = '/setup/ai-site-builder-spec/site-spec?build_wow=1';
+					mockQueryParams = new URLSearchParams( {
+						siteId: '123',
+						siteSlug: 'example.wordpress.com',
+						redirect_to: specUrl,
+					} );
+					const navigate = jest.fn();
+					const { submit } = aiSiteBuilderOnboarding.useStepNavigation(
+						STEPS.WAIT_FOR_COMMERCE_ATOMIC.slug,
+						navigate
+					);
+					await submit?.( {
+						slug: STEPS.WAIT_FOR_COMMERCE_ATOMIC.slug,
+						providedDependencies: { ready: true },
+					} as never );
+
+					expect( window.location.replace ).toHaveBeenCalledWith( specUrl );
+					expect( navigate ).not.toHaveBeenCalled();
+				} );
+
 				it( 'keeps the legacy editor for an account the store rollout does not let in', async () => {
 					storeBuilder( false );
 
