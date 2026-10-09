@@ -1,19 +1,28 @@
-import { useEffect, useMemo, useState } from '@wordpress/element';
+import { useEffect, useMemo, useRef, useState } from '@wordpress/element';
+import { startNewUserRequest } from '../utils/canvas-binding';
 import { getA2uiBatches } from './a2ui-messages';
+import { executeA2uiAction } from './execute-a2ui-action';
 import type { A2uiRuntime } from './runtime';
-import type { UIMessage } from '@automattic/agenttic-client';
+import type { AgentConfig } from '../utils/create-agent-config';
+import type { UIMessage, UseAgentChatReturn } from '@automattic/agenttic-client';
 
 interface Options {
 	messages: UIMessage[];
 	conversationId: string;
 	isProcessing: boolean;
+	agentConfig: AgentConfig | null;
+	onSubmit: UseAgentChatReturn[ 'onSubmit' ];
+	beforeSubmit: () => boolean;
 }
 
 /**
  * Applies completed chat batches once to a conversation's SDK runtime, preserving edits
  * across appends and replaying changed history without introducing another message store.
+ * Surface actions continue the active chat as hidden user messages.
  */
 export default function useA2ui( options: Options ) {
+	const latest = useRef( options );
+	latest.current = options;
 	const [ sdk, setSdk ] = useState< typeof import( '.' ) >();
 	const [ revision, refresh ] = useState( 0 );
 	const batches = useMemo( () => getA2uiBatches( options.messages ), [ options.messages ] );
@@ -58,7 +67,14 @@ export default function useA2ui( options: Options ) {
 			session.applied = [];
 		}
 		if ( batches.length > 0 && ! session.runtime ) {
-			session.runtime = sdk.createA2uiRuntime( async () => {} );
+			session.runtime = sdk.createA2uiRuntime( async ( action ) => {
+				const { agentConfig, isProcessing, onSubmit, beforeSubmit } = latest.current;
+				if ( ! agentConfig || isProcessing || ! beforeSubmit() ) {
+					return;
+				}
+				startNewUserRequest();
+				await executeA2uiAction( action, agentConfig, onSubmit );
+			} );
 		}
 		try {
 			for ( const batch of batches.slice( session.applied.length ) ) {
