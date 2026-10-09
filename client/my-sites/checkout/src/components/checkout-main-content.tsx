@@ -53,7 +53,6 @@ import { createPortal } from 'react-dom';
 import { useBlackboxProtection } from 'calypso/blocks/login/use-blackbox-protection';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import Loading from 'calypso/components/loading';
-import { hasCommercePurchaseSteps } from 'calypso/landing/stepper/declarative-flow/flows/new-hosted-site-flow/commerce-purchase-steps';
 import { ONBOARDING_STEPPER_TOTAL } from 'calypso/landing/stepper/declarative-flow/flows/onboarding/step-counter-config';
 import { OnboardingProgress } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/components/onboarding-progress';
 import { useShowOnboardingProgress } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/components/onboarding-progress/use-show-onboarding-progress';
@@ -505,9 +504,7 @@ export default function CheckoutMainContent( {
 	);
 
 	const searchParams = new URLSearchParams( window.location.search );
-	const isOnboardingFlowCheckout =
-		searchParams.get( 'flow' ) === ONBOARDING_FLOW ||
-		hasCommercePurchaseSteps( searchParams.get( 'flow' ) ?? '', searchParams );
+	const isOnboardingFlowCheckout = searchParams.get( 'flow' ) === ONBOARDING_FLOW;
 	const showProgress = useShowOnboardingProgress( isOnboardingFlowCheckout );
 	const forceCheckoutBackUrlDomains = useValidCheckoutBackUrl(
 		siteUrl ?? '',
@@ -533,7 +530,9 @@ export default function CheckoutMainContent( {
 	// The flow reports how many steps its visit had. Onboarding sends one fewer when the plan
 	// arrived preselected, so the grid was never among them.
 	const shouldHidePlansStep =
-		isOnboardingFlowCheckout && hasStepCount && stepsTotal < ONBOARDING_STEPPER_TOTAL;
+		( isOnboardingFlowCheckout || showProgress ) &&
+		hasStepCount &&
+		stepsTotal < ONBOARDING_STEPPER_TOTAL;
 	const selectedSiteData = useSelector( getSelectedSite );
 	const wpcomDomain = useSiteDomains( selectedSiteData?.ID ).find(
 		( { isWPCOMDomain, isWpcomStagingDomain } ) => isWPCOMDomain || isWpcomStagingDomain

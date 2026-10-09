@@ -31,7 +31,6 @@ import { useQueryHandler } from 'calypso/components/domains/wpcom-domain-search/
 import FormattedHeader from 'calypso/components/formatted-header';
 import { dashboardLink } from 'calypso/dashboard/utils/link';
 import { WOO_HOSTING_SOLUTIONS_REF } from 'calypso/landing/stepper/constants';
-import { hasCommercePurchaseSteps } from 'calypso/landing/stepper/declarative-flow/flows/new-hosted-site-flow/commerce-purchase-steps';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { shouldSkipPlansStep } from 'calypso/landing/stepper/utils/preselected-plan';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
@@ -56,7 +55,10 @@ import { useSiteSlugParam } from '../../../../hooks/use-site-slug-param';
 import { useOnboardingStepCounter } from '../../../flows/onboarding/use-onboarding-step-counter';
 import { shouldUseStepContainerV2 } from '../../../helpers/should-use-step-container-v2';
 import { OnboardingProgress } from '../components/onboarding-progress';
-import { useShowOnboardingProgress } from '../components/onboarding-progress/use-show-onboarding-progress';
+import {
+	hasPreselectedPurchasePlan,
+	useShowOnboardingProgress,
+} from '../components/onboarding-progress/use-show-onboarding-progress';
 import HundredYearPlanStepWrapper from '../hundred-year-plan-step-wrapper';
 import { getSkipSuggestionCopy } from './get-skip-suggestion-copy';
 import { useDomainSearchResultsExperiment } from './results-experiment';
@@ -150,10 +152,7 @@ const DomainSearchStep: StepType< {
 
 	const isCiab = dashboard === 'ciab';
 	const isWooHostingSolutions = queryParams.get( 'ref' ) === WOO_HOSTING_SOLUTIONS_REF;
-	const showCommercePurchaseSteps = hasCommercePurchaseSteps( flow, queryParams );
-	const showProgress = useShowOnboardingProgress(
-		isOnboardingFlow( flow ) || showCommercePurchaseSteps
-	);
+	const showProgress = useShowOnboardingProgress( isOnboardingFlow( flow ) );
 	// WoW funnel: the site is always transferred to Atomic, so there is no free-subdomain
 	// option to offer — show only a "Set up a domain later" skip control.
 	const isWowFunnel = !! queryParams.get( 'wow_funnel' );
@@ -173,7 +172,8 @@ const DomainSearchStep: StepType< {
 		[]
 	);
 	const shouldHidePlansStep =
-		showCommercePurchaseSteps || shouldSkipPlansStep( queryParams, planCartItem );
+		hasPreselectedPurchasePlan( queryParams, planCartItem ) ||
+		shouldSkipPlansStep( queryParams, planCartItem );
 
 	// For CIAB sites, prefer the site title over the slug for domain suggestions
 	// since the slug is often randomly generated.

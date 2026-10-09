@@ -10,7 +10,9 @@ jest.mock( '@automattic/onboarding', () => ( {
 	ONBOARDING_FLOW: 'onboarding',
 } ) );
 jest.mock( '@automattic/calypso-products', () => ( {
-	isEcommercePlan: ( plan: string ) => plan.startsWith( 'ecommerce-' ),
+	isDotComPlan: ( { product_slug }: { product_slug: string } ) =>
+		product_slug.endsWith( 'bundle-2y' ) || product_slug === 'ecommerce-trial-bundle-monthly',
+	isFreeHostingTrial: () => false,
 	PLAN_ECOMMERCE_TRIAL_MONTHLY: 'ecommerce-trial-bundle-monthly',
 } ) );
 jest.mock( 'calypso/landing/stepper/utils/preselected-plan', () => ( {
@@ -24,7 +26,7 @@ jest.mock( '@wordpress/compose', () => ( {
 	useViewportMatch: () => mockMobile,
 } ) );
 jest.mock( '@wordpress/data', () => ( {
-	useSelect: () => null,
+	useSelect: () => ( { product_slug: mockQuery.get( 'plan' ) } ),
 } ) );
 jest.mock( 'calypso/landing/stepper/utils/get-current-query-params', () => ( {
 	getCurrentQueryParams: () => mockQuery,
@@ -56,5 +58,18 @@ it( 'does not change unmarked Commerce visits', () => {
 
 it( 'does not show the paid two-step journey for a Commerce trial', () => {
 	mockQuery.set( 'plan', 'ecommerce-trial-bundle-monthly' );
-	expect( counter() ).toBeNull();
+	expect( counter() ).toEqual( { current: 1, total: 3 } );
+} );
+
+it( 'supports another flow without a preselected plan', () => {
+	mockQuery = new URLSearchParams( 'showPurchaseSteps=true' );
+	expect(
+		renderHook( () => useOnboardingStepCounter( 'another-flow', 'domains' ) ).result.current
+	).toEqual( { current: 1, total: 3 } );
+} );
+
+it( 'does not invent a counter for an unsupported step', () => {
+	expect(
+		renderHook( () => useOnboardingStepCounter( 'another-flow', 'processing' ) ).result.current
+	).toBeNull();
 } );
