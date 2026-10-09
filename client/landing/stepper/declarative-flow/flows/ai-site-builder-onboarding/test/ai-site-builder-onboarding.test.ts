@@ -307,7 +307,7 @@ describe( 'ai-site-builder-onboarding flow', () => {
 					setPlan( 'ecommerce-bundle' );
 				} );
 
-				it( 'waits for Commerce readiness, then opens the build-wow site spec for a store builder account', async () => {
+				it( 'sends a store builder account straight to the build-wow site spec, without the Commerce wait', async () => {
 					storeBuilder( true );
 
 					await runProcessingSubmit();
@@ -316,17 +316,20 @@ describe( 'ai-site-builder-onboarding flow', () => {
 						path: '/sites/123/big-sky/build-wow/store-builder',
 						apiNamespace: 'wpcom/v2',
 					} );
-					const waitUrl = new URL( getRedirectTo(), 'https://wordpress.com' );
-					expect( waitUrl.pathname ).toBe(
-						'/setup/ai-site-builder-onboarding/wait-for-commerce-atomic'
-					);
-					const specUrl = waitUrl.searchParams.get( 'redirect_to' ) as string;
-					const spec = new URL( specUrl, 'https://wordpress.com' );
+					const spec = new URL( getRedirectTo(), 'https://wordpress.com' );
 					expect( spec.pathname ).toBe( '/setup/ai-site-builder-spec/site-spec' );
 					expect( spec.searchParams.get( 'graph' ) ).toBe( 'dsl' );
+					expect( persistSignupDestination ).toHaveBeenCalledWith( getRedirectTo() );
 					expect( setIntentOnSite ).not.toHaveBeenCalled();
+				} );
 
-					mockQueryParams = waitUrl.searchParams;
+				it( 'still opens the build-wow site spec from a Commerce wait persisted before the skip', async () => {
+					const specUrl = '/setup/ai-site-builder-spec/site-spec?build_wow=1';
+					mockQueryParams = new URLSearchParams( {
+						siteId: '123',
+						siteSlug: 'example.wordpress.com',
+						redirect_to: specUrl,
+					} );
 					const navigate = jest.fn();
 					const { submit } = aiSiteBuilderOnboarding.useStepNavigation(
 						STEPS.WAIT_FOR_COMMERCE_ATOMIC.slug,
