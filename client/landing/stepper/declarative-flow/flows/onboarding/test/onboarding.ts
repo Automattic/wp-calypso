@@ -212,6 +212,19 @@ describe( 'onboarding flow domains navigation', () => {
 		expect( navigate ).toHaveBeenCalledWith( 'create-site', undefined, false );
 	} );
 
+	it.each( [
+		'ecommerce-bundle',
+		'ecommerce-bundle-monthly',
+		'ecommerce-bundle-2y',
+		'ecommerce-bundle-3y',
+	] )( 'skips plan selection for paid Commerce %s', ( plan ) => {
+		expect( submitDomains( `plan=${ plan }`, plan ) ).toHaveBeenCalledWith(
+			'create-site',
+			undefined,
+			false
+		);
+	} );
+
 	// A cold step URL never ran the seeding; skipping would hand over a free site.
 	it( 'goes to the plans step when the cart does not hold the named plan', () => {
 		const navigate = submitDomains( 'plan=personal-bundle' );

@@ -11,11 +11,7 @@ function isStorageAddOnSlug( slug: string ): slug is StorageAddOnSlug {
 	return ( AddOns.STORAGE_ADD_ONS as readonly string[] ).includes( slug );
 }
 
-/**
- * The plan named by `?plan=`, or null when it is absent or not one the legacy plan flows
- * preselected. Falling back to null keeps the plans grid as the graceful degradation, which
- * is what an unrecognised flow name already did on the `/start` side.
- */
+/** The paid plan named by `?plan=`, or null when onboarding does not support it. */
 export function getPreselectedPlan( query: URLSearchParams ): PreselectablePlan | null {
 	const productSlug = query.get( 'plan' );
 

@@ -3,6 +3,10 @@ import {
 	PLAN_BUSINESS_2_YEARS,
 	PLAN_BUSINESS_3_YEARS,
 	PLAN_BUSINESS_MONTHLY,
+	PLAN_ECOMMERCE,
+	PLAN_ECOMMERCE_2_YEARS,
+	PLAN_ECOMMERCE_3_YEARS,
+	PLAN_ECOMMERCE_MONTHLY,
 	PLAN_PERSONAL,
 	PLAN_PERSONAL_2_YEARS,
 	PLAN_PERSONAL_3_YEARS,
@@ -44,23 +48,23 @@ export const REDIRECTED_PLAN_FLOWS = {
 } as const;
 
 export type RedirectedPlanFlow = keyof typeof REDIRECTED_PLAN_FLOWS;
-export type PreselectablePlan = ( typeof REDIRECTED_PLAN_FLOWS )[ RedirectedPlanFlow ];
+const PAID_COMMERCE_PLANS = [
+	PLAN_ECOMMERCE,
+	PLAN_ECOMMERCE_MONTHLY,
+	PLAN_ECOMMERCE_2_YEARS,
+	PLAN_ECOMMERCE_3_YEARS,
+] as const;
 
-// Plans onboarding will preselect on request. Today exactly what the redirected flows sold;
-// widening it is a deliberate act, because anything here is selectable by typing a URL.
-const PRESELECTABLE_PLANS: ReadonlySet< string > = new Set(
-	Object.values( REDIRECTED_PLAN_FLOWS )
-);
+export type PreselectablePlan =
+	( typeof REDIRECTED_PLAN_FLOWS )[ RedirectedPlanFlow ] | ( typeof PAID_COMMERCE_PLANS )[ number ];
 
-/**
- * Whether onboarding will preselect a plan on request.
- *
- * Deliberately narrower than "is a WordPress.com plan": a plan reached through its own
- * eligibility gate — the Student plan behind the Education flow's invite check, or an
- * ecommerce plan whose flow arranges an Atomic transfer — must not become selectable by
- * hand-writing a query argument. The backend remains the authority; this only decides what
- * onboarding is willing to preselect.
- */
+// Paid Commerce can also be preselected without changing its existing signup entry points.
+const PRESELECTABLE_PLANS: ReadonlySet< string > = new Set( [
+	...Object.values( REDIRECTED_PLAN_FLOWS ),
+	...PAID_COMMERCE_PLANS,
+] );
+
+/** Paid plans supported by onboarding; gated plans and hosting trials stay in their own flows. */
 export function isPreselectablePlan( slug: string ): slug is PreselectablePlan {
 	return PRESELECTABLE_PLANS.has( slug );
 }

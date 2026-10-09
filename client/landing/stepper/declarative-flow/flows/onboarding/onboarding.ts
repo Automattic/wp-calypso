@@ -1,5 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { isDomainMapping, isDomainTransfer } from '@automattic/calypso-products';
+import { isDomainMapping, isDomainTransfer, isEcommerce } from '@automattic/calypso-products';
 import { OnboardActions, OnboardSelect } from '@automattic/data-stores';
 import { getLanguageSlugs } from '@automattic/i18n-utils';
 import { clearStepPersistedState, ONBOARDING_FLOW, SITE_SETUP_FLOW } from '@automattic/onboarding';
@@ -368,6 +368,8 @@ const onboarding: FlowV2< typeof initialize > = {
 		);
 		const queryParams = useQuery();
 		const shouldSkipPlans = shouldSkipPlansStep( queryParams, planCartItem );
+		const isPreselectedCommercePlan =
+			shouldSkipPlans && !! planCartItem && isEcommerce( planCartItem );
 		const coupon = queryParams.get( 'coupon' );
 		const refParameter = queryParams.get( 'ref' );
 		const siteSlugParam = queryParams.get( 'siteSlug' );
@@ -420,6 +422,13 @@ const onboarding: FlowV2< typeof initialize > = {
 					customThemeBuild: isBlueprintCustomThemeBuild( queryParams ),
 					ref: refParameter,
 					locale,
+				} );
+			}
+
+			if ( isPreselectedCommercePlan ) {
+				return addQueryArgs( withLocale( '/setup/transferring-hosted-site', locale ), {
+					siteId: providedDependencies.siteId,
+					siteSlug: providedDependencies.siteSlug as string,
 				} );
 			}
 
@@ -710,6 +719,9 @@ const onboarding: FlowV2< typeof initialize > = {
 							locale,
 							siteSlug: dependencies.siteSlug as string,
 						} );
+					const domainsBackUrl = isPreselectedCommercePlan
+						? addQueryArgs( backDestinationDomains, { plan: queryParams.get( 'plan' ) } )
+						: backDestinationDomains;
 					const destination = await getPostCheckoutDestination(
 						providedDependencies,
 						planCartItem,
@@ -766,21 +778,19 @@ const onboarding: FlowV2< typeof initialize > = {
 							// replace the location to delete processing step from history.
 							window.location.replace(
 								addQueryArgs( `/checkout/${ encodeURIComponent( siteSlug ) }`, {
-									// build_dest=wow and the WoW funnel (dest=editor) go
-									// straight from checkout to their destination — no
-									// post-checkout-onboarding hop, no chooser.
+									// Paid Commerce keeps its transfer handoff; site-building funnels keep theirs.
 									redirect_to:
-										blueprintArchiveSlug || isKnownWowFunnel( wowFunnelSlug )
+										isPreselectedCommercePlan ||
+										blueprintArchiveSlug ||
+										isKnownWowFunnel( wowFunnelSlug )
 											? destination
 											: redirectTo,
 									signup: 1,
 									flow: ONBOARDING_FLOW,
 									// A skipping visit's last screen was the domain step, so that is where
 									// leaving checkout belongs.
-									checkoutBackUrl: pathToUrl(
-										shouldSkipPlans ? backDestinationDomains : backDestination
-									),
-									checkoutBackUrlDomains: pathToUrl( backDestinationDomains ),
+									checkoutBackUrl: pathToUrl( shouldSkipPlans ? domainsBackUrl : backDestination ),
+									checkoutBackUrlDomains: pathToUrl( domainsBackUrl ),
 									coupon,
 									steps_current: checkoutStepperPosition.current,
 									steps_total: checkoutStepperPosition.total,

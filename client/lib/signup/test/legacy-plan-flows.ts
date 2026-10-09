@@ -1,4 +1,12 @@
-import { PLAN_BUSINESS, PLAN_PERSONAL } from '@automattic/calypso-products';
+import {
+	PLAN_BUSINESS,
+	PLAN_PERSONAL,
+	PLAN_ECOMMERCE,
+	PLAN_ECOMMERCE_MONTHLY,
+	PLAN_ECOMMERCE_2_YEARS,
+	PLAN_ECOMMERCE_3_YEARS,
+	PLAN_ECOMMERCE_TRIAL_MONTHLY,
+} from '@automattic/calypso-products';
 import {
 	getLegacyPlanFlowRedirect,
 	isPreselectablePlan,
@@ -14,7 +22,16 @@ describe( 'legacy plan flows', () => {
 	it( 'preselects only the plans that need no further gate', () => {
 		expect( isPreselectablePlan( PLAN_PERSONAL ) ).toBe( true );
 		expect( isPreselectablePlan( 'wp_bundle_student_yearly' ) ).toBe( false );
-		expect( isPreselectablePlan( 'ecommerce-bundle' ) ).toBe( false );
+		expect( isPreselectablePlan( PLAN_ECOMMERCE_TRIAL_MONTHLY ) ).toBe( false );
+	} );
+
+	it.each( [
+		PLAN_ECOMMERCE,
+		PLAN_ECOMMERCE_MONTHLY,
+		PLAN_ECOMMERCE_2_YEARS,
+		PLAN_ECOMMERCE_3_YEARS,
+	] )( 'accepts paid Commerce term %s', ( plan ) => {
+		expect( isPreselectablePlan( plan ) ).toBe( true );
 	} );
 
 	// The query is handed on whole, but the plan is the flow's to name, not the caller's.
@@ -31,5 +48,6 @@ describe( 'legacy plan flows', () => {
 	it( 'redirects only the flows it maps', () => {
 		expect( shouldRedirectLegacyPlanFlow( 'business-monthly' ) ).toBe( true );
 		expect( shouldRedirectLegacyPlanFlow( 'free' ) ).toBe( false );
+		expect( shouldRedirectLegacyPlanFlow( 'ecommerce' ) ).toBe( false );
 	} );
 } );

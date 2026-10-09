@@ -2,6 +2,7 @@
  * @jest-environment jsdom
  */
 import { renderHook } from '@testing-library/react';
+import { useSelect } from '@wordpress/data';
 import { useExperiment } from 'calypso/lib/explat';
 import { ProcessingResult } from '../../../internals/steps-repository/processing-step/constants';
 import onboarding from '../onboarding';
@@ -95,8 +96,8 @@ jest.mock( 'calypso/lib/url', () => ( { pathToUrl: ( path: string ) => path } ) 
 jest.mock( '../../../helpers/get-onboarding-post-checkout-destination', () => ( {
 	getOnboardingPostCheckoutDestination: jest.fn( () => [
 		'/home/example.wordpress.com',
-		null,
-		null,
+		'/setup/onboarding/plans?siteSlug=example.wordpress.com',
+		'/setup/onboarding/domains?siteSlug=example.wordpress.com',
 	] ),
 } ) );
 
@@ -162,6 +163,7 @@ describe( 'onboarding post-plan-selection email verification (Variant B)', () =>
 		mockLoading = false;
 		mockQueryParams = new URLSearchParams( '' );
 		jest.clearAllMocks();
+		( useSelect as jest.Mock ).mockReturnValue( {} );
 		( useExperiment as jest.Mock ).mockImplementation(
 			( _name: string, opts?: { isEligible?: boolean } ) =>
 				opts?.isEligible ? [ mockLoading, { variationName: mockVariant } ] : [ false, null ]
@@ -245,6 +247,25 @@ describe( 'onboarding post-plan-selection email verification (Variant B)', () =>
 		} as Parameters< NonNullable< typeof result.current.submit > >[ 0 ] );
 
 		expect( navigate ).toHaveBeenCalledWith( 'create-site', undefined, true );
+	} );
+
+	it.each( [
+		'ecommerce-bundle',
+		'ecommerce-bundle-monthly',
+		'ecommerce-bundle-2y',
+		'ecommerce-bundle-3y',
+	] )( 'preserves the hosting transfer destination for preselected Commerce %s', async ( plan ) => {
+		mockQueryParams = new URLSearchParams( { plan } );
+		( useSelect as jest.Mock ).mockReturnValue( { planCartItem: { product_slug: plan } } );
+		const checkoutUrl = await submitPaidProcessing();
+		expect( checkoutUrl ).toContain(
+			'/setup/transferring-hosted-site?siteId=123&siteSlug=example.wordpress.com'
+		);
+		expect( checkoutUrl ).toContain( 'steps_current=2&steps_total=2' );
+		expect( checkoutUrl ).toContain(
+			`/setup/onboarding/domains?siteSlug=example.wordpress.com&plan=${ plan }`
+		);
+		expect( checkoutUrl ).not.toContain( 'post-checkout-onboarding' );
 	} );
 
 	it( 'points a paid order back at the verification step on return from checkout', async () => {
