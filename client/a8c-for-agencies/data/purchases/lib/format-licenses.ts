@@ -29,6 +29,8 @@ export interface APILicenseMeta {
 	a4a_dev_site_period_start?: string;
 	a4a_transferred_subscription_id?: string;
 	a4a_transferred_subscription_expiration?: string;
+	pressable_titan_domain?: string;
+	pressable_titan_plan?: string;
 }
 
 interface APILicenseSubscription {
@@ -39,6 +41,8 @@ interface APILicenseSubscription {
 	billing_interval_unit: string;
 	status: string;
 	expiry: string | null;
+	trial_end: string | null;
+	is_active_trial: boolean;
 	is_auto_renew_enabled: boolean;
 	is_refundable: boolean;
 }
@@ -78,6 +82,9 @@ export function formatLicenseMeta( meta: APILicenseMeta | null ): LicenseMeta {
 	const devSitePeriodStart = meta?.a4a_dev_site_period_start;
 	const transferredSubscriptionId = meta?.a4a_transferred_subscription_id;
 	const transferredSubscriptionExpiration = meta?.a4a_transferred_subscription_expiration;
+	// Stored empty when the subscription carried no valid domain identity.
+	const titanDomain = meta?.pressable_titan_domain || undefined;
+	const titanPlan = meta?.pressable_titan_plan || undefined;
 
 	return {
 		isDevSite,
@@ -86,6 +93,8 @@ export function formatLicenseMeta( meta: APILicenseMeta | null ): LicenseMeta {
 		devSitePeriodStart, // unix timestamp
 		transferredSubscriptionId,
 		transferredSubscriptionExpiration, // e.g.: "2025-09-15"
+		titanDomain,
+		titanPlan,
 	};
 }
 
@@ -104,6 +113,8 @@ function formatLicenseSubscription(
 		billingIntervalUnit: subscription.billing_interval_unit,
 		status: subscription.status,
 		expiry: subscription.expiry,
+		trialEnd: subscription.trial_end,
+		isActiveTrial: subscription.is_active_trial,
 		isAutoRenewEnabled: subscription.is_auto_renew_enabled,
 		isRefundable: subscription.is_refundable,
 	};

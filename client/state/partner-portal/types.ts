@@ -269,6 +269,8 @@ export interface LicenseMeta {
 	devSitePeriodEnd?: string;
 	transferredSubscriptionId?: string;
 	transferredSubscriptionExpiration?: string;
+	titanDomain?: string;
+	titanPlan?: string;
 }
 
 export interface LicenseSubscription {
@@ -279,6 +281,8 @@ export interface LicenseSubscription {
 	billingIntervalUnit: string;
 	status: string;
 	expiry: string | null;
+	trialEnd: string | null;
+	isActiveTrial: boolean;
 	isAutoRenewEnabled: boolean;
 	isRefundable: boolean;
 }

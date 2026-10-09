@@ -22,6 +22,7 @@ import useHelpCenter from 'calypso/a8c-for-agencies/hooks/use-help-center';
 import {
 	isPressableAddonProduct,
 	isPressableHostingProduct,
+	isPressableTitanProduct,
 	isWPCOMHostingProduct,
 } from 'calypso/a8c-for-agencies/sections/marketplace/lib/hosting';
 import ClientSite from 'calypso/a8c-for-agencies/sections/sites/needs-setup-sites/client-site';
@@ -119,6 +120,8 @@ export default function LicensePreview( {
 	const isPressableLicense = isPressableHostingProduct( licenseKey );
 	const isPressableAddonLicense =
 		isPressableAddonProduct( licenseKey ) || isPressableAddonProduct( license.product );
+	const isTitanLicense =
+		isPressableTitanProduct( licenseKey ) || isPressableTitanProduct( license.product );
 	const isWPCOMLicense = isWPCOMHostingProduct( licenseKey );
 
 	const isOwner = useSelector( isAgencyOwner );
@@ -184,15 +187,32 @@ export default function LicensePreview( {
 
 	const isSiteAtomic = site?.is_wpcom_atomic;
 
+	const titanDomain = isTitanLicense ? meta?.titanDomain : undefined;
+
+	// Set whenever the product carries an introductory offer, whether or not that offer is
+	// still running. The backend reports no trial rather than a guessed date when the
+	// subscription cannot be resolved.
+	const trialEnd = license.subscription?.trialEnd;
+	const isActiveTrial = Boolean( license.subscription?.isActiveTrial );
+
 	const bundleCountContent = quantity && (
 		<Badge className="license-preview__license-count" intent="draft">
-			{ translate( '%(quantity)d License Bundle', {
-				context: 'bundle license count',
-				args: {
-					quantity,
-				},
-				textOnly: true,
-			} ) }
+			{ isTitanLicense
+				? translate( '%(quantity)d Inbox', '%(quantity)d Inboxes', {
+						context: 'Titan inbox count',
+						count: quantity,
+						args: {
+							quantity,
+						},
+						textOnly: true,
+					} )
+				: translate( '%(quantity)d License Bundle', {
+						context: 'bundle license count',
+						args: {
+							quantity,
+						},
+						textOnly: true,
+					} ) }
 		</Badge>
 	);
 
@@ -293,6 +313,21 @@ export default function LicensePreview( {
 								</Badge>
 							) }
 						</div>
+						{ trialEnd && (
+							<div className="license-preview__trial-notice">
+								{ isActiveTrial
+									? translate( '90-day trial ends {{date/}}', {
+											components: {
+												date: <FormattedDate date={ trialEnd } format="YYYY-MM-DD" />,
+											},
+										} )
+									: translate( '90-day trial expired {{date/}}', {
+											components: {
+												date: <FormattedDate date={ trialEnd } format="YYYY-MM-DD" />,
+											},
+										} ) }
+							</div>
+						) }
 						{ referral && (
 							<div className="license-preview__client-email">
 								<ClientSite referral={ referral } />
@@ -304,14 +339,18 @@ export default function LicensePreview( {
 				<div>
 					{ quantity ? (
 						<div className="license-preview__bundle">
-							<EmptyValueIndicator className="license-preview__no-value" />
+							{ titanDomain ? (
+								titanDomain
+							) : (
+								<EmptyValueIndicator className="license-preview__no-value" />
+							) }
 							<div className="license-preview__product-small">{ productName }</div>
 							<div>{ bundleCountContent }</div>
 						</div>
 					) : (
 						<>
 							<div className="license-preview__product-small">{ productName }</div>
-							{ domain }
+							{ titanDomain || domain }
 							{ isPressableLicense && ! revokedAt && (
 								<ManageInPressable attachedAt={ attachedAt } />
 							) }
