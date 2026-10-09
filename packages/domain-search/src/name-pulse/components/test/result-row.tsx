@@ -100,7 +100,12 @@ const renderRow = (
 						domainAvailability: fetcher,
 					} ) }
 				>
-					<NamePulseResultRow result={ result } position={ 0 } variant={ variant } />
+					<NamePulseResultRow
+						result={ result }
+						section="exact"
+						position={ 0 }
+						variant={ variant }
+					/>
 				</DomainSearchContext.Provider>
 			</QueryClientProvider>
 		);

@@ -5,8 +5,9 @@ import {
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
+import { useEvent } from '@wordpress/compose';
 import { useI18n } from '@wordpress/react-i18n';
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { parseMatchReasons } from '../../helpers';
 import {
 	DomainSuggestionContainerContext,
@@ -23,7 +24,12 @@ import {
 } from '../../ui';
 import { DomainSuggestionMatchReasons } from '../../ui/domain-suggestion-match-reasons';
 import { bullseyeIcon } from '../../ui/icons/bullseye-icon';
-import { getNamePulseSalePrice } from '../helpers';
+import {
+	getNamePulseSalePrice,
+	NamePulseDomainStatus,
+	toNamePulseTracksSuggestion,
+	type NamePulseDomainResult,
+} from '../helpers';
 import { useNamePulseCartToggle } from '../hooks/use-name-pulse-cart-toggle';
 import { NamePulsePolicyNoticeDialog } from './policy-notice-dialog';
 
@@ -45,6 +51,19 @@ export const NamePulseExactMatchCard = ( {
 	const { events } = useDomainSearch();
 	const { containerRef, activeQuery, currentWidth } = useDomainSuggestionContainer();
 	const isMutating = !! useIsMutating();
+	const result: NamePulseDomainResult = useMemo(
+		() => ( {
+			domain_name: domainName,
+			suffix: tld,
+			source: 'exact',
+			status: NamePulseDomainStatus.AVAILABLE,
+			is_premium: availability.status === DomainAvailabilityStatus.AVAILABLE_PREMIUM,
+			cost: availability.cost,
+			raw_price: availability.raw_price,
+			currency_code: availability.currency_code,
+		} ),
+		[ domainName, tld, availability ]
+	);
 	const {
 		inCart,
 		isPending,
@@ -57,7 +76,15 @@ export const NamePulseExactMatchCard = ( {
 		isPolicyNoticeOpen,
 		confirmPolicyNotice,
 		closePolicyNotice,
-	} = useNamePulseCartToggle( domainName, 0, availability.policy_notices );
+	} = useNamePulseCartToggle( result, 'exact_card', 0, availability.policy_notices );
+
+	const reportRender = useEvent( () => {
+		events.onSuggestionRender( toNamePulseTracksSuggestion( result, 0 ) );
+	} );
+
+	useEffect( () => {
+		reportRender();
+	}, [ reportRender ] );
 
 	const containerContext = useMemo(
 		() =>

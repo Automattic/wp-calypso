@@ -4,7 +4,15 @@ import { useState } from 'react';
 import { convertAvailabilityToSuggestion } from '../../helpers/convert-availability-to-suggestion';
 import { DomainPriceRule } from '../../hooks/use-suggestion';
 import { useDomainSearch } from '../../page/context';
-import { isNamePulseAvailable, toNamePulseRealtimeVerdict } from '../helpers';
+import {
+	getNamePulseResultTracksProps,
+	getNamePulseTracksVendor,
+	isNamePulseAvailable,
+	toNamePulseRealtimeVerdict,
+	toNamePulseTracksSuggestion,
+	type NamePulseDomainResult,
+	type NamePulseTracksSection,
+} from '../helpers';
 import { setNamePulseVerdict } from './use-name-pulse-verdicts';
 import type { DomainAvailability, PolicyNotice } from '@automattic/api-core';
 
@@ -13,16 +21,30 @@ export interface NamePulsePolicyNotice {
 	message: string;
 }
 
+export type NamePulseCartToggleResult = Pick<
+	NamePulseDomainResult,
+	| 'domain_name'
+	| 'suffix'
+	| 'source'
+	| 'status'
+	| 'is_premium'
+	| 'cost'
+	| 'raw_price'
+	| 'currency_code'
+>;
+
 /**
  * Adds a name to the cart, or removes it when it is already there. The row and
  * the exact-match card share it, so both run the same real-time check first,
  * and both confirm the TLD's special requirements before adding.
  */
 export const useNamePulseCartToggle = (
-	domainName: string,
+	result: NamePulseCartToggleResult,
+	section: NamePulseTracksSection,
 	position: number,
 	policyNotices: PolicyNotice[] = []
 ) => {
+	const domainName = result.domain_name;
 	const { __ } = useI18n();
 	const { cart, events, queries } = useDomainSearch();
 	const queryClient = useQueryClient();
@@ -34,6 +56,8 @@ export const useNamePulseCartToggle = (
 	const [ policyNotice, setPolicyNotice ] = useState< NamePulsePolicyNotice >();
 
 	const inCart = cart.hasItem( domainName );
+	const tracksSuggestion = toNamePulseTracksSuggestion( result, position );
+	const tracksVendor = getNamePulseTracksVendor( result.source );
 
 	const {
 		mutate: toggleCart,
@@ -46,7 +70,7 @@ export const useNamePulseCartToggle = (
 				if ( item ) {
 					await cart.onRemoveItem( item.uuid );
 				}
-				return { addedToCart: false };
+				return { addedToCart: false, removedFromCart: true };
 			}
 
 			// Bulk results are zone-file based and approximate; the real-time check runs
@@ -56,7 +80,7 @@ export const useNamePulseCartToggle = (
 			);
 			const suggestion = convertAvailabilityToSuggestion( availability );
 
-			events.onDomainAddAvailabilityPreCheck( availability, domainName, suggestion.vendor );
+			events.onDomainAddAvailabilityPreCheck( availability, domainName, tracksVendor );
 			setNamePulseVerdict( queryClient, domainName, {
 				...toNamePulseRealtimeVerdict( availability ),
 				is_cart_check: true,
@@ -69,6 +93,7 @@ export const useNamePulseCartToggle = (
 			if ( availability.trademark_claims_notice_info && ! acceptedTrademarkClaim ) {
 				events.onTrademarkClaimsNoticeShown( {
 					...suggestion,
+					vendor: tracksVendor,
 					position,
 					price_rule: DomainPriceRule.PRICE,
 				} );
@@ -80,12 +105,27 @@ export const useNamePulseCartToggle = (
 			return { addedToCart: true, suggestion };
 		},
 		onSuccess: ( data ) => {
+			if ( data.removedFromCart ) {
+				events.onNamePulseTracksEvent(
+					'result_remove_from_cart',
+					getNamePulseResultTracksProps( result, section, position )
+				);
+			}
+
 			if ( data.addedToCart && data.suggestion ) {
 				events.onAddDomainToCart(
 					domainName,
 					position,
 					data.suggestion.is_premium ?? false,
-					data.suggestion.vendor
+					tracksVendor
+				);
+				events.onNamePulseTracksEvent(
+					'result_add_to_cart',
+					getNamePulseResultTracksProps(
+						{ ...result, is_premium: data.suggestion.is_premium ?? result.is_premium },
+						section,
+						position
+					)
 				);
 			}
 		},
@@ -98,6 +138,10 @@ export const useNamePulseCartToggle = (
 		isPending,
 		error,
 		toggleCart: () => {
+			if ( ! inCart ) {
+				events.onSuggestionInteract( tracksSuggestion );
+			}
+
 			if ( inCart || policyNotices.length === 0 ) {
 				toggleCart( { acceptedTrademarkClaim: false } );
 				return;
@@ -118,9 +162,13 @@ export const useNamePulseCartToggle = (
 		closePolicyNotice: () => ! isPending && setIsPolicyNoticeOpen( false ),
 		trademarkClaimsNoticeInfo,
 		acceptTrademarkClaim: () => {
+			events.onTrademarkClaimsNoticeAccepted( tracksSuggestion );
 			setTrademarkClaimsNoticeInfo( undefined );
 			toggleCart( { acceptedTrademarkClaim: true } );
 		},
-		closeTrademarkClaims: () => setTrademarkClaimsNoticeInfo( undefined ),
+		closeTrademarkClaims: () => {
+			events.onTrademarkClaimsNoticeClosed( tracksSuggestion );
+			setTrademarkClaimsNoticeInfo( undefined );
+		},
 	};
 };

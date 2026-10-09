@@ -3,7 +3,8 @@ import { getNewRailcarId, recordTracksEvent } from '@automattic/calypso-analytic
 import { DomainSearch, getTld } from '@automattic/domain-search';
 import { debounce, useEvent } from '@wordpress/compose';
 import { type ComponentProps, useEffect, useMemo, useRef } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { recordAddDomainButtonClick } from 'calypso/state/domains/actions';
 import {
 	recordAcknowledgeTrademarkButtonClickInTrademarkNotice,
@@ -26,6 +27,37 @@ import {
 } from './analytics';
 import type { SearchTrigger } from '@automattic/domain-search';
 
+type AnalyticsAction = {
+	type: string;
+	meta?: {
+		analytics?: { payload: { service: string; properties?: Record< string, unknown > } }[];
+	};
+};
+
+export const withNamePulseMarker = < T extends AnalyticsAction >( action: T ): T => {
+	if ( ! action.meta?.analytics ) {
+		return action;
+	}
+
+	return {
+		...action,
+		meta: {
+			...action.meta,
+			analytics: action.meta.analytics.map( ( entry ) =>
+				entry.payload.service === 'tracks'
+					? {
+							...entry,
+							payload: {
+								...entry.payload,
+								properties: { ...entry.payload.properties, is_name_pulse: true },
+							},
+						}
+					: entry
+			),
+		},
+	};
+};
+
 type PendingSearch = {
 	query: string;
 	trigger: SearchTrigger;
@@ -37,13 +69,34 @@ export const useWPCOMDomainSearchEvents = ( {
 	flowName,
 	analyticsSection,
 	query,
+	isNamePulse = false,
 }: {
 	flowName: string;
 	analyticsSection: string;
 	vendor?: string;
 	query?: string;
+	/** Name Pulse sends the classic events too, marked with `is_name_pulse`. */
+	isNamePulse?: boolean;
 } ) => {
-	const dispatch = useDispatch();
+	const reduxDispatch = useDispatch();
+	const isLoggedIn = useSelector( isUserLoggedIn );
+
+	const dispatch = useMemo(
+		() =>
+			isNamePulse
+				? ( action: AnalyticsAction ) => reduxDispatch( withNamePulseMarker( action ) )
+				: reduxDispatch,
+		[ isNamePulse, reduxDispatch ]
+	);
+
+	const recordEvent = useMemo(
+		() =>
+			isNamePulse
+				? ( name: string, properties: Record< string, unknown > ) =>
+						recordTracksEvent( name, { ...properties, is_name_pulse: true } )
+				: recordTracksEvent,
+		[ isNamePulse ]
+	);
 
 	const railcarId = useRef( getNewRailcarId( 'domain-suggestion' ) );
 	const searchCount = useRef( 0 );
@@ -133,7 +186,7 @@ export const useWPCOMDomainSearchEvents = ( {
 						should_hide_free_plan: false,
 					};
 
-					recordTracksEvent( 'calypso_signup_skip_step', tracksProperties );
+					recordEvent( 'calypso_signup_skip_step', tracksProperties );
 				}
 			},
 			onAddDomainToCart: ( domainName, position, isPremium, rootVendor ) => {
@@ -207,7 +260,7 @@ export const useWPCOMDomainSearchEvents = ( {
 					resultSuffix = '#best-alternative';
 				}
 
-				recordTracksEvent( 'calypso_traintracks_render', {
+				recordEvent( 'calypso_traintracks_render', {
 					ui_position: suggestion.position,
 					flow_name: flowName,
 					railcar: `${ railcarId.current }-${ suggestion.position }`,
@@ -220,7 +273,7 @@ export const useWPCOMDomainSearchEvents = ( {
 				} );
 			},
 			onSuggestionInteract: ( suggestion ) => {
-				recordTracksEvent( 'calypso_traintracks_interact', {
+				recordEvent( 'calypso_traintracks_interact', {
 					railcar: `${ railcarId.current }-${ suggestion.position }`,
 					action: 'domain_added_to_cart',
 					domain: suggestion.domain_name,
@@ -257,21 +310,39 @@ export const useWPCOMDomainSearchEvents = ( {
 				);
 			},
 			onBundleShown: ( bundle, placement ) => {
-				recordTracksEvent( 'calypso_domain_bundle_shown', {
+				recordEvent( 'calypso_domain_bundle_shown', {
 					domain_bundle_group_id: bundle.bundle_group_id,
 					domain_count: bundle.domains.length,
 					placement,
 				} );
 			},
 			onBundleAddToCart: ( bundle, placement ) => {
-				recordTracksEvent( 'calypso_domain_bundle_accepted', {
+				recordEvent( 'calypso_domain_bundle_accepted', {
 					domain_bundle_group_id: bundle.bundle_group_id,
 					domain_count: bundle.domains.length,
 					placement,
 				} );
 			},
+			onNamePulseTracksEvent: ( name, properties ) => {
+				recordTracksEvent( `calypso_domain_search_name_pulse_${ name }`, {
+					section: analyticsSection,
+					flow_name: flowName,
+					is_logged_in: isLoggedIn,
+					is_name_pulse: true,
+					...properties,
+				} );
+			},
 		};
-	}, [ flowName, vendor, query, debouncedDomainSearchEvent, analyticsSection, dispatch ] );
+	}, [
+		flowName,
+		vendor,
+		query,
+		debouncedDomainSearchEvent,
+		analyticsSection,
+		dispatch,
+		recordEvent,
+		isLoggedIn,
+	] );
 
 	return events;
 };

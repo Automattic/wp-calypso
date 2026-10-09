@@ -11,6 +11,7 @@ import { NamePulseResultsSection } from './components/results-section';
 import { NamePulseSearchInput } from './components/search-input';
 import { useNamePulseBundle } from './hooks/use-name-pulse-bundle';
 import { useNamePulseSearch } from './hooks/use-name-pulse-search';
+import { useNamePulseSearchTracking } from './hooks/use-name-pulse-search-tracking';
 
 import './components/style.scss';
 
@@ -22,6 +23,7 @@ export const NamePulseResults = () => {
 		events,
 		config: { allowsUsingOwnDomain },
 	} = useDomainSearch();
+	const search = useNamePulseSearch( query );
 	const {
 		layout,
 		notice,
@@ -39,7 +41,8 @@ export const NamePulseResults = () => {
 		isLoadingKeyword,
 		isLoadingCreative,
 		revealExact,
-	} = useNamePulseSearch( query );
+	} = search;
+	useNamePulseSearchTracking( search );
 	// Only the exact-match grid needs the TLD list, so its failure takes down
 	// Top results with it but leaves the suggestion sections alone.
 	const hasTldsError = layout.exactGrid.show && isTldsError;

@@ -48,6 +48,7 @@ export const DEFAULT_CONTEXT_VALUE: DomainSearchContextType = {
 		onPageView: noop,
 		onBundleShown: noop,
 		onBundleAddToCart: noop,
+		onNamePulseTracksEvent: noop,
 	},
 	queries: {
 		availableTlds: ( search?: string, vendor?: string ) => availableTldsQuery( vendor, search ),
