@@ -1,5 +1,3 @@
-import { agencyResourceEventMutation } from '@automattic/api-queries';
-import { useMutation } from '@tanstack/react-query';
 import { __experimentalSpacer as Spacer, __experimentalText as Text } from '@wordpress/components';
 import { getQueryArg, removeQueryArgs } from '@wordpress/url';
 import { useCallback, useMemo, useState } from 'react';
@@ -10,10 +8,8 @@ import ResourceCenter, {
 import { useDispatch, useSelector } from 'calypso/state';
 import { getActiveAgencyId } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import type {
-	AgencyEnablementResource,
-	AgencyEnablementResourcesResponse,
-} from '@automattic/api-core';
+import { useReadResources } from './use-read-resources';
+import type { AgencyEnablementResourcesResponse } from '@automattic/api-core';
 
 import './style.scss';
 
@@ -26,9 +22,7 @@ export default function ResourceCenterOverviewContent( {
 }: ResourceCenterOverviewContentProps ) {
 	const dispatch = useDispatch();
 	const agencyId = useSelector( getActiveAgencyId );
-	const { mutate: recordResourceEvent } = useMutation(
-		agencyResourceEventMutation( agencyId ?? 0 )
-	);
+	const { readIds, setReadIds } = useReadResources();
 
 	const resources = useMemo( () => data?.results ?? [], [ data ] );
 	const [ view, setView ] = useState( DEFAULT_VIEW );
@@ -56,16 +50,6 @@ export default function ResourceCenterOverviewContent( {
 		[ dispatch ]
 	);
 
-	// Record the resource engagement server-side (a8c-specific).
-	const handleResourceClick = useCallback(
-		( resource: AgencyEnablementResource ) => {
-			if ( agencyId ) {
-				recordResourceEvent( { resource_id: resource.id, resource_name: resource.name } );
-			}
-		},
-		[ agencyId, recordResourceEvent ]
-	);
-
 	return (
 		<>
 			<Spacer marginBottom={ 8 }>
@@ -76,7 +60,9 @@ export default function ResourceCenterOverviewContent( {
 				view={ view }
 				onChangeView={ setView }
 				recordTracksEvent={ recordTracks }
-				onResourceClick={ handleResourceClick }
+				agencyId={ agencyId }
+				readIds={ readIds }
+				onReadIdsChange={ setReadIds }
 				selectedId={ selectedId }
 				onSelectedIdChange={ selectResource }
 			/>

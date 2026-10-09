@@ -1,7 +1,8 @@
+import { agencyResourceEventMutation } from '@automattic/api-queries';
+import { useMutation } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
 import { useCallback, useMemo } from 'react';
 import ResourceLibrary from './resource-library';
-import { useReadResources } from './use-read-resources';
 import type { RecordTracksEvent } from './types';
 import type { AgencyEnablementResource } from '@automattic/api-core';
 import type { View } from '@wordpress/dataviews';
@@ -14,7 +15,11 @@ interface ResourceCenterProps {
 	view: View;
 	onChangeView: ( view: View ) => void;
 	recordTracksEvent: RecordTracksEvent;
-	onResourceClick: ( resource: AgencyEnablementResource ) => void;
+	/** The agency opened resources are recorded against, once it has loaded. */
+	agencyId: number | undefined;
+	/** Saved by each host, since the two dashboards don't share a query client. */
+	readIds: number[];
+	onReadIdsChange: ( ids: number[] ) => void;
 	/** The resource whose details are open. */
 	selectedId: number | null;
 	onSelectedIdChange: ( id: number | null ) => void;
@@ -25,7 +30,9 @@ export default function ResourceCenter( {
 	view,
 	onChangeView,
 	recordTracksEvent,
-	onResourceClick,
+	agencyId,
+	readIds,
+	onReadIdsChange,
 	selectedId,
 	onSelectedIdChange,
 }: ResourceCenterProps ) {
@@ -38,6 +45,10 @@ export default function ResourceCenter( {
 		[ recordTracksEvent ]
 	);
 
+	const { mutate: recordResourceEvent } = useMutation(
+		agencyResourceEventMutation( agencyId ?? 0 )
+	);
+
 	const openResource = useCallback(
 		( resource: AgencyEnablementResource ) => {
 			recordTracksEvent( 'calypso_a4a_resource_center_browse_cta_click', {
@@ -45,16 +56,19 @@ export default function ResourceCenter( {
 				resource_name: resource.name,
 			} );
 
-			// Host-specific side effect, such as recording the open server-side.
-			onResourceClick( resource );
+			if ( agencyId ) {
+				recordResourceEvent( { resource_id: resource.id, resource_name: resource.name } );
+			}
 		},
-		[ recordTracksEvent, onResourceClick ]
+		[ recordTracksEvent, agencyId, recordResourceEvent ]
 	);
 
-	const { readIds, setRead } = useReadResources();
-
 	const setResourceRead = ( resource: AgencyEnablementResource, isRead: boolean ) => {
-		setRead( resource.id, isRead );
+		onReadIdsChange(
+			isRead
+				? [ ...new Set( [ ...readIds, resource.id ] ) ]
+				: readIds.filter( ( readId ) => readId !== resource.id )
+		);
 		recordTracksEvent( 'calypso_a4a_resource_center_read_status_change', {
 			resource_id: resource.id,
 			resource_name: resource.name,

@@ -58,18 +58,24 @@ type ResourceCenterProps = ComponentProps< typeof ResourceCenter >;
 
 type LibraryProps = Omit<
 	ResourceCenterProps,
-	'view' | 'onChangeView' | 'selectedId' | 'onSelectedIdChange'
+	'view' | 'onChangeView' | 'selectedId' | 'onSelectedIdChange' | 'readIds'
 > & { initialSelectedId?: number };
 
-function Library( { initialSelectedId, ...props }: LibraryProps ) {
+function Library( { initialSelectedId, onReadIdsChange, ...props }: LibraryProps ) {
 	const [ view, setView ] = useState( DEFAULT_VIEW );
 	const [ selectedId, setSelectedId ] = useState( initialSelectedId ?? null );
+	const [ readIds, setReadIds ] = useState< number[] >( [] );
 	return (
 		<ResourceCenter
 			view={ view }
 			onChangeView={ setView }
 			selectedId={ selectedId }
 			onSelectedIdChange={ setSelectedId }
+			readIds={ readIds }
+			onReadIdsChange={ ( ids ) => {
+				setReadIds( ids );
+				onReadIdsChange( ids );
+			} }
 			{ ...props }
 		/>
 	);
@@ -78,9 +84,9 @@ function Library( { initialSelectedId, ...props }: LibraryProps ) {
 function renderLibrary( props: Partial< LibraryProps > = {} ) {
 	const callbacks = {
 		recordTracksEvent: jest.fn(),
-		onResourceClick: jest.fn(),
+		onReadIdsChange: jest.fn(),
 	};
-	render( <Library resources={ resources } { ...callbacks } { ...props } /> );
+	render( <Library resources={ resources } agencyId={ 1 } { ...callbacks } { ...props } /> );
 	return callbacks;
 }
 
@@ -89,13 +95,6 @@ function getCardTitles() {
 }
 
 describe( '<ResourceCenter>', () => {
-	beforeEach( () => {
-		nock( API )
-			.persist()
-			.get( '/rest/v1.1/me/preferences' )
-			.reply( 200, { calypso_preferences: {} } );
-	} );
-
 	test( 'lists top resources first, then the newest', async () => {
 		renderLibrary();
 
@@ -159,7 +158,14 @@ describe( '<ResourceCenter>', () => {
 	} );
 
 	test( 'previews a resource, then records opening it', async () => {
-		const { recordTracksEvent, onResourceClick } = renderLibrary();
+		const scope = nock( API )
+			.post( '/wpcom/v2/agency/resources/record-event', {
+				agency_id: 1,
+				resource_id: 2,
+				resource_name: 'Jetpack battle card',
+			} )
+			.reply( 200, { success: true } );
+		const { recordTracksEvent } = renderLibrary();
 
 		await userEvent.click( await screen.findByRole( 'link', { name: 'Jetpack battle card' } ) );
 
@@ -168,7 +174,7 @@ describe( '<ResourceCenter>', () => {
 			resource_id: 2,
 			resource_name: 'Jetpack battle card',
 		} );
-		expect( onResourceClick ).not.toHaveBeenCalled();
+		expect( scope.isDone() ).toBe( false );
 
 		await userEvent.click( within( dialog ).getByRole( 'link', { name: 'Open in new tab' } ) );
 
@@ -176,7 +182,7 @@ describe( '<ResourceCenter>', () => {
 			'calypso_a4a_resource_center_browse_cta_click',
 			{ resource_id: 2, resource_name: 'Jetpack battle card' }
 		);
-		expect( onResourceClick ).toHaveBeenCalledWith( expect.objectContaining( { id: 2 } ) );
+		await waitFor( () => expect( scope.isDone() ).toBe( true ) );
 	} );
 
 	test( 'links each resource to its details, so they open in a new tab or can be shared', async () => {
@@ -194,16 +200,8 @@ describe( '<ResourceCenter>', () => {
 		expect( await screen.findByRole( 'dialog', { name: 'Jetpack battle card' } ) ).toBeVisible();
 	} );
 
-	test( 'marks a resource as read in the user preferences', async () => {
-		const scope = nock( API )
-			.post( '/rest/v1.1/me/preferences', ( body ) => {
-				expect( body ).toEqual( {
-					calypso_preferences: { 'a4a-library-read-resources': [ 2 ] },
-				} );
-				return true;
-			} )
-			.reply( 200, { calypso_preferences: { 'a4a-library-read-resources': [ 2 ] } } );
-		const { recordTracksEvent } = renderLibrary();
+	test( 'marks a resource as read', async () => {
+		const { recordTracksEvent, onReadIdsChange } = renderLibrary();
 
 		await userEvent.click( await screen.findByRole( 'link', { name: 'Jetpack battle card' } ) );
 		const dialog = await screen.findByRole( 'dialog', { name: 'Jetpack battle card' } );
@@ -217,7 +215,7 @@ describe( '<ResourceCenter>', () => {
 			'calypso_a4a_resource_center_read_status_change',
 			{ resource_id: 2, resource_name: 'Jetpack battle card', is_read: true }
 		);
-		await waitFor( () => expect( scope.isDone() ).toBe( true ) );
+		expect( onReadIdsChange ).toHaveBeenCalledWith( [ 2 ] );
 	} );
 
 	test( 'reveals more results on request', async () => {
