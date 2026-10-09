@@ -15,6 +15,9 @@ interface ResourceCenterProps {
 	onChangeView: ( view: View ) => void;
 	recordTracksEvent?: RecordTracksEvent;
 	onResourceClick?: ( resource: AgencyEnablementResource ) => void;
+	/** The resource whose details are open. */
+	selectedId: number | null;
+	onSelectedIdChange: ( id: number | null ) => void;
 }
 
 export default function ResourceCenter( {
@@ -23,6 +26,8 @@ export default function ResourceCenter( {
 	onChangeView,
 	recordTracksEvent = () => {},
 	onResourceClick,
+	selectedId,
+	onSelectedIdChange,
 }: ResourceCenterProps ) {
 	const previewResource = useCallback(
 		( resource: AgencyEnablementResource ) =>
@@ -77,6 +82,8 @@ export default function ResourceCenter( {
 			onOpenResource={ openResource }
 			readIds={ readIds }
 			onSetRead={ setResourceRead }
+			selectedId={ selectedId }
+			onSelectedIdChange={ onSelectedIdChange }
 		/>
 	);
 }

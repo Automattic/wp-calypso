@@ -1,6 +1,7 @@
 import { agencyResourceEventMutation } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
 import { __experimentalSpacer as Spacer, __experimentalText as Text } from '@wordpress/components';
+import { getQueryArg } from '@wordpress/url';
 import { useCallback, useMemo, useState } from 'react';
 import { DEFAULT_VIEW } from 'calypso/dashboard/agency/resources/learn/dataviews/views';
 import ResourceCenter, {
@@ -31,6 +32,11 @@ export default function ResourceCenterOverviewContent( {
 
 	const resources = useMemo( () => data?.results ?? [], [ data ] );
 	const [ view, setView ] = useState( DEFAULT_VIEW );
+	// Opens the resource a copied link names.
+	const [ selectedId, setSelectedId ] = useState< number | null >( () => {
+		const id = Number( getQueryArg( window.location.href, 'resource' ) );
+		return Number.isInteger( id ) && id > 0 ? id : null;
+	} );
 
 	const recordTracks = useCallback(
 		( eventName: string, properties?: Record< string, unknown > ) => {
@@ -60,6 +66,8 @@ export default function ResourceCenterOverviewContent( {
 				onChangeView={ setView }
 				recordTracksEvent={ recordTracks }
 				onResourceClick={ handleResourceClick }
+				selectedId={ selectedId }
+				onSelectedIdChange={ setSelectedId }
 			/>
 		</>
 	);

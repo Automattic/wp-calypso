@@ -4,20 +4,25 @@ import type { SelectResource } from './types';
 import type { AgencyEnablementResource } from '@automattic/api-core';
 
 interface UseResourceSelectionOptions {
+	/** The selection is held by the host, so the dashboard can keep it in the URL. */
+	onSelectedIdChange: ( id: number | null ) => void;
 	onPreview: ( resource: AgencyEnablementResource ) => void;
 	onOpen: ( resource: AgencyEnablementResource ) => void;
 }
 
 /**
- * Tracks which resource the details modal shows, and where it was opened from
- * so the modal can grow out of that card or row.
+ * Opens resources in the details modal, noting where each was opened from so
+ * the modal can grow out of that card or row.
  */
-export function useResourceSelection( { onPreview, onOpen }: UseResourceSelectionOptions ) {
-	const [ selectedId, setSelectedId ] = useState< number | null >( null );
+export function useResourceSelection( {
+	onSelectedIdChange,
+	onPreview,
+	onOpen,
+}: UseResourceSelectionOptions ) {
 	const [ origin, setOrigin ] = useState< DOMRect >();
 
 	const preview = ( resource: AgencyEnablementResource ) => {
-		setSelectedId( resource.id );
+		onSelectedIdChange( resource.id );
 		onPreview( resource );
 	};
 
@@ -38,7 +43,7 @@ export function useResourceSelection( { onPreview, onOpen }: UseResourceSelectio
 		preview( resource );
 	} );
 
-	return { selectedId, origin, select, preview, clear: () => setSelectedId( null ) };
+	return { origin, select, preview, clear: () => onSelectedIdChange( null ) };
 }
 
 /** The selected resource and its neighbors among the current results. */
