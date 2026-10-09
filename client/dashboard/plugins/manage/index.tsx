@@ -44,7 +44,11 @@ const searchableFields = [
 export default function PluginsList() {
 	const [ view, setView ] = useState< View >( DEFAULT_VIEW );
 	const isSmallViewport = useViewportMatch( 'xlarge', '<' );
-	const { data: sitesPlugins, isLoading: pluginsQueryLoading } = useQuery( pluginsQuery() );
+	const {
+		data: sitesPlugins,
+		isLoading: pluginsQueryLoading,
+		isError: pluginsQueryError,
+	} = useQuery( pluginsQuery() );
 	const { sitesById, isLoadingSites } = useSitesById();
 	const sitesPluginsLoading = pluginsQueryLoading || isLoadingSites;
 	const { pluginId: pluginSlug } = useParams( { strict: false } );
@@ -156,6 +160,7 @@ export default function PluginsList() {
 						view={ view }
 						onChangeView={ setView }
 						paginationInfo={ paginationInfo }
+						isError={ pluginsQueryError }
 					/>
 				) }
 				{ ! sitesPluginsLoading && <PerformanceTrackerStop /> }
@@ -181,6 +186,7 @@ export default function PluginsList() {
 					view={ view }
 					onChangeView={ setView }
 					paginationInfo={ paginationInfo }
+					isError={ pluginsQueryError }
 				/>
 
 				<PluginSites selectedPluginSlug={ selectedPluginSlug } />
