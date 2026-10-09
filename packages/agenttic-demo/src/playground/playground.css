@@ -176,16 +176,16 @@
 	height: 32px;
 }
 
-/* Credits tool panel content */
+/* Tool panel content (credits, checklist) */
 
-.credits-tool {
+.tool-panel {
 	display: flex;
 	flex-direction: column;
 	gap: 12px;
 	min-width: 200px;
 }
 
-.credits-tool__slider {
+.tool-panel__slider {
 	display: flex;
 	flex-direction: column;
 	gap: 4px;
@@ -198,7 +198,7 @@
 	}
 }
 
-.credits-tool__presets {
+.tool-panel__actions {
 	display: flex;
 	gap: 4px;
 }

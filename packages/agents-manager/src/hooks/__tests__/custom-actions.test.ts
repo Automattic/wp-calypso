@@ -42,7 +42,6 @@ let mockSelectState: {
 	isDocked: false,
 	floatingPosition: '',
 };
-let mockLocation = { pathname: '/chat' };
 
 jest.mock( '@wordpress/data', () => ( {
 	useSelect: jest.fn( () => mockSelectState ),
@@ -55,7 +54,6 @@ jest.mock( '@wordpress/data', () => ( {
 
 jest.mock( 'react-router-dom', () => ( {
 	useNavigate: jest.fn( () => jest.fn() ),
-	useLocation: jest.fn( () => mockLocation ),
 } ) );
 
 jest.mock( '../../contexts', () => ( {
@@ -92,7 +90,6 @@ describe( 'useSetupCustomActions', () => {
 			agentConfig: { agentId: 'reader-chat' },
 		};
 		mockSelectState = { hasLoaded: true, isOpen: false, isDocked: false, floatingPosition: '' };
-		mockLocation = { pathname: '/chat' };
 	} );
 
 	it( 'sets `isReady` on the global after mount', () => {
@@ -403,13 +400,6 @@ describe( 'useSetupCustomActions', () => {
 		rerender();
 
 		expect( window.__agentsManagerActions?.isChatVisible?.() ).toBe( false );
-	} );
-
-	it( 'reports the current route via `getCurrentRoute`', () => {
-		mockLocation = { pathname: '/history' };
-		renderHook( () => useSetupCustomActions( baseProps ) );
-
-		expect( window.__agentsManagerActions?.getCurrentRoute?.() ).toBe( '/history' );
 	} );
 
 	it( 'exposes the tab id the chat events carry via `getTabId`', () => {

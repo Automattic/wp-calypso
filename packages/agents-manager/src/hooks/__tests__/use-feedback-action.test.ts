@@ -6,7 +6,7 @@ import { renderHook, act } from '@testing-library/react';
 import { useAgentsManagerContext } from '../../contexts';
 import { recordAgentsManagerTracksEvent, recordBigSkyTracksEvent } from '../../utils/tracks';
 import useFeedbackAction from '../use-feedback-action';
-import type { Message } from '@automattic/agenttic-ui/dist/types';
+import type { UIMessage as Message } from '@automattic/agenttic-client';
 
 // Capture the onFeedback callback passed to createFeedbackActions
 let capturedOnFeedback: ( messageId: string, feedback: 'up' | 'down' ) => void;

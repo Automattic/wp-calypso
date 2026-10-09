@@ -14,7 +14,7 @@ export const PluginUpdatesFilter = ( {
 	view,
 	onChangeView,
 }: {
-	siteCount: number;
+	siteCount?: number;
 	updatesField: Field< PluginListRow >;
 	view: View;
 	onChangeView: ( newView: View ) => void;
@@ -47,11 +47,14 @@ export const PluginUpdatesFilter = ( {
 		}
 	};
 
-	const label = sprintf(
-		// translators: %(siteCount)d is the number of plugins with updates available.
-		__( 'Update available (%(siteCount)d)' ),
-		{ siteCount }
-	);
+	const label =
+		siteCount === undefined
+			? __( 'Update available' )
+			: sprintf(
+					// translators: %(siteCount)d is the number of plugins with updates available.
+					__( 'Update available (%(siteCount)d)' ),
+					{ siteCount }
+				);
 
 	return currentFilter?.value === true ? (
 		<div

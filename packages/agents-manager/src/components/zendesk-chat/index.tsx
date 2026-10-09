@@ -11,7 +11,7 @@ import { getSiteUrl } from '../../utils/site-url';
 import AgentChat from '../agent-chat';
 import { type Options as ChatHeaderOptions } from '../chat-header';
 import ConcludedConversationFooter from '../concluded-conversation-footer';
-import type { Message } from '@automattic/agenttic-ui/dist/types';
+import type { UIMessage as Message } from '@automattic/agenttic-client';
 import './style.scss';
 
 interface Props {

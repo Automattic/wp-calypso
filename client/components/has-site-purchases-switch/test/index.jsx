@@ -25,12 +25,13 @@ describe( 'HasSitePurchasesSwitch', () => {
 		nock.cleanAll();
 	} );
 
-	it( 'should render the loading state while the purchases are being fetched', () => {
-		mockSitePurchases( [] );
+	it( 'should render the loading state while the purchases are being fetched', async () => {
+		const scope = mockSitePurchases( [] );
 
 		renderWithProvider( <HasSitePurchasesSwitch { ...props } /> );
 
 		expect( screen.getByText( /loading/i ) ).toBeInTheDocument();
+		await waitFor( () => expect( scope.isDone() ).toBe( true ) );
 	} );
 
 	it( 'should render the correct component if site has purchases', async () => {

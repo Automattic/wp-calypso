@@ -137,10 +137,10 @@ export default function FeaturedShowcase( {
 
 	return (
 		<Showcase
-			title={ __( 'Featured products' ) }
+			title={ __( 'Featured plugins and add-ons' ) }
 			arrowLabels={ {
-				previous: __( 'Previous featured products' ),
-				next: __( 'Next featured products' ),
+				previous: __( 'Previous featured plugins and add-ons' ),
+				next: __( 'Next featured plugins and add-ons' ),
 			} }
 			items={ items }
 		/>
