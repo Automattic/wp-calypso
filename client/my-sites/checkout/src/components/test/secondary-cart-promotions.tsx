@@ -4,7 +4,7 @@
 // @ts-nocheck - TODO: Fix TypeScript issues
 
 import { normalizePurchase } from '@automattic/api-core';
-import { sitePurchasesQuery } from '@automattic/api-queries';
+import { siteByIdQuery, sitePurchasesQuery } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
 import { checkoutTheme } from '@automattic/composite-checkout';
 import { RawAPIProductsList, StoreProductSlug } from '@automattic/data-stores/src/products-list';
@@ -19,6 +19,7 @@ import { createStore, applyMiddleware } from 'redux';
 import { thunk } from 'redux-thunk';
 import { WpcomRequestParams } from 'wpcom-proxy-request';
 import {
+	createTestSite,
 	mockGetCartEndpointWith,
 	mockSetCartEndpointWith,
 } from 'calypso/my-sites/checkout/src/test/util';
@@ -62,21 +63,52 @@ jest.mock( 'wpcom-proxy-request', () => async ( data: WpcomRequestParams ) => {
 	}
 } );
 
-function createQueryClientWithPurchases() {
+const CART_SITE_ID = 456;
+
+function createQueryClientWithPurchases( siteId = storeData().ui.selectedSiteId ) {
 	const queryClient = new QueryClient();
-	const { ui, purchases } = storeData();
+	const { purchases } = storeData();
 	// The fixture holds the API's raw response, so run it through the same
 	// normalization the fetcher applies before the component sees it.
 	queryClient.setQueryData(
-		sitePurchasesQuery( ui.selectedSiteId ).queryKey,
+		sitePurchasesQuery( siteId ).queryKey,
 		purchases.data.map( normalizePurchase )
 	);
 	return queryClient;
 }
 
-function TestWrapper( { children, initialCart } ) {
-	const [ reduxStore ] = useState( () => applyMiddleware( thunk )( createStore )( storeData ) );
-	const [ queryClient ] = useState( createQueryClientWithPurchases );
+function createQueryClientWithCartSite() {
+	const queryClient = createQueryClientWithPurchases( CART_SITE_ID );
+	const { queryKey } = siteByIdQuery( CART_SITE_ID );
+	queryClient.setQueryDefaults( queryKey, { staleTime: Infinity } );
+	queryClient.setQueryData(
+		queryKey,
+		createTestSite( {
+			ID: CART_SITE_ID,
+			slug: 'cart-site.example',
+			URL: 'https://cart-site.example',
+		} )
+	);
+	return queryClient;
+}
+
+function expectSiteNeverFetched( queryClient, siteId ) {
+	const state = queryClient.getQueryState( siteByIdQuery( siteId ).queryKey );
+	expect( state?.fetchStatus ?? 'idle' ).toBe( 'idle' );
+	expect( state?.fetchFailureCount ?? 0 ).toBe( 0 );
+	expect( state?.dataUpdatedAt ?? 0 ).toBe( 0 );
+}
+
+const storeDataWithoutSelectedSite = () => ( { ...storeData(), ui: { selectedSiteId: null } } );
+
+function TestWrapper( {
+	children,
+	initialCart,
+	reducer = storeData,
+	queryClient: initialQueryClient,
+} ) {
+	const [ reduxStore ] = useState( () => applyMiddleware( thunk )( createStore )( reducer ) );
+	const [ queryClient ] = useState( () => initialQueryClient ?? createQueryClientWithPurchases() );
 	const mockSetCartEndpoint = mockSetCartEndpointWith( {
 		currency: initialCart.currency,
 		locale: initialCart.locale,
@@ -148,6 +180,81 @@ describe( 'SecondaryCartPromotions', () => {
 						extra: expect.objectContaining( { purchaseId: 2 } ),
 					} )
 				);
+			} );
+
+			test( 'does not fetch the cart site when a site is selected', async () => {
+				const queryClient = createQueryClientWithPurchases();
+				const cart = { ...responseCartWithRenewal, blog_id: CART_SITE_ID };
+				render(
+					<TestWrapper initialCart={ cart } queryClient={ queryClient }>
+						<SecondaryCartPromotions
+							responseCart={ cart }
+							addItemToCart={ jest.fn() }
+							isPurchaseRenewal
+						/>
+					</TestWrapper>
+				);
+				expect( await screen.findByText( 'Renew your products together' ) ).toBeVisible();
+				expectSiteNeverFetched( queryClient, CART_SITE_ID );
+			} );
+
+			describe( 'when no site is selected', () => {
+				test( 'displays the reminder for the site the server assigned to the cart', async () => {
+					const cart = { ...responseCartWithRenewal, blog_id: CART_SITE_ID };
+					render(
+						<TestWrapper
+							initialCart={ cart }
+							reducer={ storeDataWithoutSelectedSite }
+							queryClient={ createQueryClientWithCartSite() }
+						>
+							<SecondaryCartPromotions
+								responseCart={ cart }
+								addItemToCart={ jest.fn() }
+								isPurchaseRenewal
+							/>
+						</TestWrapper>
+					);
+					expect( await screen.findByText( 'Renew your products together' ) ).toBeVisible();
+					expect( screen.getByText( /for cart-site\.example that are available/ ) ).toBeVisible();
+				} );
+
+				test( 'does not display the reminder when the cart has no site', async () => {
+					const queryClient = createQueryClientWithPurchases();
+					const cart = { ...responseCartWithRenewal, blog_id: 0 };
+					render(
+						<TestWrapper
+							initialCart={ cart }
+							reducer={ storeDataWithoutSelectedSite }
+							queryClient={ queryClient }
+						>
+							<SecondaryCartPromotions
+								responseCart={ cart }
+								addItemToCart={ jest.fn() }
+								isPurchaseRenewal
+							/>
+						</TestWrapper>
+					);
+					await expect( screen.findByText( 'Renew your products together' ) ).toNeverAppear();
+					expectSiteNeverFetched( queryClient, 0 );
+				} );
+
+				test( 'does not display the reminder while the cart site is unavailable', async () => {
+					const cart = { ...responseCartWithRenewal, blog_id: CART_SITE_ID };
+					render(
+						<TestWrapper
+							initialCart={ cart }
+							reducer={ storeDataWithoutSelectedSite }
+							queryClient={ createQueryClientWithPurchases( CART_SITE_ID ) }
+						>
+							<SecondaryCartPromotions
+								responseCart={ cart }
+								addItemToCart={ jest.fn() }
+								isPurchaseRenewal
+							/>
+						</TestWrapper>
+					);
+					await expect( screen.findByText( 'Renew your products together' ) ).toNeverAppear();
+				} );
 			} );
 		} );
 
