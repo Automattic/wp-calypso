@@ -24,7 +24,9 @@ function initialize() {
 	const shouldEarlyProvisionSite = queryParams.get( 'early_provision_site' ) === '1';
 	const shouldProvisionAtomicSite = queryParams.get( 'provision_target' ) === 'wpcom-atomic';
 	const shouldBuildWow = queryParams.get( 'build_wow' ) === '1';
-	const shouldImportBlueprint = queryParams.get( 'blueprint_archive_import' ) === '1';
+	const shouldImportBlueprint =
+		queryParams.get( 'blueprint_archive_import' ) === '1' ||
+		queryParams.get( 'blueprint_simple_import' ) === '1';
 
 	if ( specId && ! shouldEarlyProvisionSite && ! shouldProvisionAtomicSite && ! shouldBuildWow ) {
 		// Redirect to main ai-site-builder flow preserving query parameters
@@ -38,9 +40,9 @@ function initialize() {
 		return stepsWithRequiredLogin( [ STEPS.SITE_SPEC, STEPS.SITE_GENERATION, STEPS.ERROR ] );
 	}
 
-	// A blueprint-archive run still has minutes of work to wait on once the spec is confirmed —
-	// the Atomic transfer and the archive restore. That wait belongs on the standard processing
-	// screen, not behind a spec page the customer has already finished with.
+	// A blueprint run still has work to wait on once the spec is confirmed — the Atomic transfer
+	// and the archive restore, or on a Simple site the Playground import. That wait belongs on
+	// the standard processing screen, not behind a spec page the customer has already finished with.
 	if ( shouldImportBlueprint ) {
 		return [ STEPS.SITE_SPEC, STEPS.PROCESSING, STEPS.ERROR ];
 	}
