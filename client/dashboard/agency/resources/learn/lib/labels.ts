@@ -28,16 +28,15 @@ export function getProductLabel( product: AgencyResourceProduct ): string {
 
 export function getContentTypeLabel( contentType: AgencyResourceContentType ): string {
 	const labels: Record< AgencyResourceContentType, string > = {
-		'battle-card': __( 'Battle card' ),
-		blog: __( 'Blog' ),
+		battlecard: __( 'Battlecard' ),
 		'case-study': __( 'Case study' ),
 		checklist: __( 'Checklist' ),
 		guide: __( 'Guide' ),
 		'one-pager': __( 'One-pager' ),
-		'process-guide': __( 'Process guide' ),
-		'reference-guide': __( 'Reference guide' ),
 		'slide-deck': __( 'Slide deck' ),
 		'talk-track': __( 'Talk track' ),
+		'technical-brief': __( 'Technical brief' ),
+		video: __( 'Video' ),
 		webinar: __( 'Webinar' ),
 	};
 
@@ -70,8 +69,9 @@ export function getFormatLabel( format: AgencyResourceFormat ): string {
 	const labels: Record< AgencyResourceFormat, string > = {
 		pdf: __( 'PDF' ),
 		slides: __( 'Slides' ),
-		video: __( 'Video' ),
 		doc: __( 'Document' ),
+		spreadsheet: __( 'Spreadsheet' ),
+		video: __( 'Video' ),
 		webpage: __( 'Webpage' ),
 	};
 

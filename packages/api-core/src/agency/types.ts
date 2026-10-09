@@ -293,25 +293,25 @@ export type AgencyResourceStage = 'learn' | 'sell' | 'manage' | 'grow';
 export type AgencyResourceAudience = 'all' | 'developer' | 'business' | 'client';
 
 /**
- * A new content type means updating this list, so derive filter options from
- * the response rather than from it, and give any slug-keyed lookup a fallback:
- * the API is not validated against this union at runtime.
+ * The resource hub's content types. A new one means updating this list, so
+ * derive filter options from the response rather than from it, and give any
+ * slug-keyed lookup a fallback: the API is not validated against this union at
+ * runtime.
  */
 export type AgencyResourceContentType =
-	| 'battle-card'
-	| 'blog'
+	| 'battlecard'
 	| 'case-study'
 	| 'checklist'
 	| 'guide'
 	| 'one-pager'
-	| 'process-guide'
-	| 'reference-guide'
 	| 'slide-deck'
 	| 'talk-track'
+	| 'technical-brief'
+	| 'video'
 	| 'webinar';
 
 /** The kind of file the resource is, and a filter axis of its own. */
-export type AgencyResourceFormat = 'pdf' | 'slides' | 'video' | 'doc' | 'webpage';
+export type AgencyResourceFormat = 'pdf' | 'slides' | 'doc' | 'spreadsheet' | 'video' | 'webpage';
 
 /**
  * A single resource from the enablement hub, as returned by
@@ -340,18 +340,15 @@ export interface AgencyEnablementResource {
 	stage: AgencyResourceStage | null;
 	audience: AgencyResourceAudience | null;
 	content_type: AgencyResourceContentType | null;
-	format: AgencyResourceFormat;
+	format: AgencyResourceFormat | null;
 
 	/** Surfaced first in every view. Labelled "Top resource" in the UI. */
 	is_featured: boolean;
 	created_at: string;
-	updated_at: string;
 }
 
 export interface AgencyEnablementResourcesResponse {
-	status: string;
 	results: AgencyEnablementResource[];
-	total: number;
 }
 
 /**

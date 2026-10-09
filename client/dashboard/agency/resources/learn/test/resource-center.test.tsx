@@ -28,7 +28,6 @@ function resource( overrides: Partial< AgencyEnablementResource > = {} ) {
 		format: 'pdf',
 		is_featured: false,
 		created_at: '2026-01-01T00:00:00Z',
-		updated_at: '2026-01-01T00:00:00Z',
 		...overrides,
 	} satisfies AgencyEnablementResource;
 }
@@ -41,7 +40,7 @@ const resources = [
 		description: 'How Jetpack compares.',
 		product: 'jetpack',
 		stage: 'sell',
-		content_type: 'battle-card',
+		content_type: 'battlecard',
 		created_at: '2026-02-01T00:00:00Z',
 	} ),
 	resource( {

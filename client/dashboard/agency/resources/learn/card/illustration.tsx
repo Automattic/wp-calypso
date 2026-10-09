@@ -233,31 +233,16 @@ function CaseStudyIllustration() {
 	);
 }
 
-type IllustrationType =
-	'video' | 'guide' | 'checklist' | 'slide-deck' | 'one-pager' | 'talk-track' | 'case-study';
-
-const ILLUSTRATIONS: Record< IllustrationType, ComponentType > = {
-	video: VideoIllustration,
-	guide: GuideIllustration,
-	checklist: ChecklistIllustration,
-	'slide-deck': SlideDeckIllustration,
-	'one-pager': OnePagerIllustration,
-	'talk-track': TalkTrackIllustration,
+// Content types without a drawing of their own fall back to the one-pager.
+const ILLUSTRATIONS: Partial< Record< AgencyResourceContentType, ComponentType > > = {
 	'case-study': CaseStudyIllustration,
-};
-
-const CONTENT_TYPE_ILLUSTRATIONS: Record< AgencyResourceContentType, IllustrationType > = {
-	'battle-card': 'one-pager',
-	blog: 'one-pager',
-	'case-study': 'case-study',
-	checklist: 'checklist',
-	guide: 'guide',
-	'one-pager': 'one-pager',
-	'process-guide': 'guide',
-	'reference-guide': 'guide',
-	'slide-deck': 'slide-deck',
-	'talk-track': 'talk-track',
-	webinar: 'video',
+	checklist: ChecklistIllustration,
+	guide: GuideIllustration,
+	'one-pager': OnePagerIllustration,
+	'slide-deck': SlideDeckIllustration,
+	'talk-track': TalkTrackIllustration,
+	video: VideoIllustration,
+	webinar: VideoIllustration,
 };
 
 /**
@@ -271,13 +256,9 @@ export default function ResourceIllustration( {
 	resource: AgencyEnablementResource;
 } ) {
 	const Illustration =
-		ILLUSTRATIONS[
-			resource.format === 'video'
-				? 'video'
-				: // The API isn't validated against the union, so fall back for new or missing types.
-					( ( resource.content_type && CONTENT_TYPE_ILLUSTRATIONS[ resource.content_type ] ) ??
-					'one-pager' )
-		];
+		( resource.format === 'video'
+			? VideoIllustration
+			: resource.content_type && ILLUSTRATIONS[ resource.content_type ] ) || OnePagerIllustration;
 
 	return (
 		<svg
