@@ -18,6 +18,7 @@ export * from './cancellation-offers';
 export * from './currency-overrides';
 export * from './dashboard-admin-bar';
 export * from './dashboard-site-list';
+export * from './difm-offer';
 export * from './domain';
 export * from './domain-availability';
 export * from './domain-can-redirect';
