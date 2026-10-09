@@ -2,9 +2,9 @@ import { ONBOARDING_FLOW } from '@automattic/onboarding';
 import { useViewportMatch } from '@wordpress/compose';
 import { useSelect } from '@wordpress/data';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
-import { hasCommercePurchaseSteps } from '../../../utils/commerce-purchase-steps';
 import { getCurrentQueryParams } from '../../../utils/get-current-query-params';
 import { shouldSkipPlansStep } from '../../../utils/preselected-plan';
+import { hasCommercePurchaseSteps } from '../new-hosted-site-flow/commerce-purchase-steps';
 import {
 	getOnboardingStepperPosition,
 	ONBOARDING_STEPPER_GROUP_BY_SLUG,
