@@ -4,7 +4,10 @@ import { useSelect } from '@wordpress/data';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { getCurrentQueryParams } from '../../../utils/get-current-query-params';
 import { shouldSkipPlansStep } from '../../../utils/preselected-plan';
-import { hasCommercePurchaseSteps } from '../new-hosted-site-flow/commerce-purchase-steps';
+import {
+	hasPurchaseStepsParameter,
+	hasPreselectedPurchasePlan,
+} from '../../internals/steps-repository/components/onboarding-progress/use-show-onboarding-progress';
 import {
 	getOnboardingStepperPosition,
 	ONBOARDING_STEPPER_GROUP_BY_SLUG,
@@ -35,8 +38,8 @@ export function useOnboardingStepCounter(
 	);
 
 	const query = getCurrentQueryParams();
-	const showCommercePurchaseSteps = hasCommercePurchaseSteps( flow, query );
-	if ( ( flow !== ONBOARDING_FLOW && ! showCommercePurchaseSteps ) || ! isMobileViewport ) {
+	const showPurchaseSteps = hasPurchaseStepsParameter( query );
+	if ( ( flow !== ONBOARDING_FLOW && ! showPurchaseSteps ) || ! isMobileViewport ) {
 		return null;
 	}
 
@@ -50,6 +53,6 @@ export function useOnboardingStepCounter(
 	// `<Router>` — in production too.
 	return getOnboardingStepperPosition(
 		group,
-		showCommercePurchaseSteps || shouldSkipPlansStep( query, planCartItem )
+		hasPreselectedPurchasePlan( query, planCartItem ) || shouldSkipPlansStep( query, planCartItem )
 	);
 }
