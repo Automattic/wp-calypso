@@ -49,12 +49,12 @@ export const OneDone: Story = {
 };
 
 export const InProgressCollapsed: Story = {
-	args: { items: withStatus( { design: 'in_progress' } ), defaultCollapsed: true },
+	args: { items: withStatus( { design: 'in-progress' } ), defaultCollapsed: true },
 };
 
 export const MixedStatuses: Story = {
 	args: {
-		items: withStatus( { design: 'done', about: 'skipped', images: 'in_progress' } ),
+		items: withStatus( { design: 'done', about: 'skipped', images: 'in-progress' } ),
 	},
 };
 
@@ -97,7 +97,7 @@ function InteractiveChecklist( args: React.ComponentProps< typeof Checklist > ) 
 				onSubmit={ ( selected ) =>
 					setItems( ( current ) =>
 						current.map( ( item ) =>
-							item.id === selected.id ? { ...item, status: 'in_progress' } : item
+							item.id === selected.id ? { ...item, status: 'in-progress' } : item
 						)
 					)
 				}

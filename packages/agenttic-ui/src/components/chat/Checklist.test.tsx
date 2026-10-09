@@ -16,7 +16,7 @@ const items: ChecklistItem[] = [
 		id: 'images',
 		label: 'Replace placeholder images',
 		prompt: 'Replace images',
-		status: 'in_progress',
+		status: 'in-progress',
 	},
 	{ id: 'domain', label: 'Add a custom domain', prompt: 'Add a domain', status: 'skipped' },
 	{ id: 'launch', label: 'Launch site', prompt: 'Launch site' },
@@ -195,7 +195,7 @@ describe( 'Checklist', () => {
 					id: 'woo',
 					label: 'Add products',
 					prompt: 'Add products',
-					status: 'in_progress',
+					status: 'in-progress',
 					disabled: true,
 					disabledReason: 'Install WooCommerce first',
 				},
@@ -203,6 +203,45 @@ describe( 'Checklist', () => {
 		} );
 
 		expect( rowFor( 'Add products' ).querySelector( 'button' ) ).toBeNull();
+	} );
+
+	it( 'renders open items inert while busy', async () => {
+		const onSubmit = vi.fn();
+		render( { onSubmit, busy: true } );
+
+		const button = rowFor( 'Launch site' ).querySelector( 'button' ) as HTMLButtonElement;
+		expect( button.getAttribute( 'aria-disabled' ) ).toBe( 'true' );
+		click( button );
+		await flush();
+
+		expect( onSubmit ).not.toHaveBeenCalled();
+	} );
+
+	it( 'folds every row when all of them are in progress', () => {
+		const allInProgress = items.map( ( item ) => ( { ...item, status: 'in-progress' as const } ) );
+		render( { items: allInProgress, defaultCollapsed: true } );
+
+		expect( header().getAttribute( 'aria-expanded' ) ).toBe( 'false' );
+		expect( rowLabels() ).toHaveLength( 0 );
+
+		click( header() );
+
+		expect( rowLabels() ).toHaveLength( 5 );
+	} );
+
+	it( 'does not collapse after selecting the last open item', async () => {
+		const onCollapsedChange = vi.fn();
+		const lastOpen: ChecklistItem[] = [
+			{ id: 'a', label: 'A', prompt: 'A', status: 'in-progress' },
+			{ id: 'b', label: 'B', prompt: 'B' },
+		];
+		render( { items: lastOpen, onSubmit: vi.fn(), onCollapsedChange } );
+
+		click( rowFor( 'B' ).querySelector( 'button' ) );
+		await flush();
+
+		expect( header().getAttribute( 'aria-expanded' ) ).toBe( 'true' );
+		expect( onCollapsedChange ).not.toHaveBeenCalled();
 	} );
 
 	it( 'announces each status to assistive technology', () => {
@@ -306,12 +345,18 @@ describe( 'AgentUIChecklist', () => {
 		prompt: 'Launch',
 		autoSubmit: true,
 	};
+	// A second open task, so a selection has something left to fold.
+	const other: ChecklistItem = { id: 'other', label: 'Other task', prompt: 'Other' };
 
 	const renderWired = ( context: Partial< AgentUIContextValue >, onSelect = vi.fn() ) => {
 		act( () => {
 			root.render(
 				<AgentUIProvider value={ context as AgentUIContextValue }>
-					<AgentUIChecklist title="Launch checklist" items={ [ launch ] } onSelect={ onSelect } />
+					<AgentUIChecklist
+						title="Launch checklist"
+						items={ [ launch, other ] }
+						onSelect={ onSelect }
+					/>
 				</AgentUIProvider>
 			);
 		} );
@@ -325,9 +370,16 @@ describe( 'AgentUIChecklist', () => {
 		click( rowFor( 'Launch site' ).querySelector( 'button' ) );
 		await flush();
 
-		expect( handleSuggestionSubmit ).toHaveBeenCalledWith( launch, [ launch ] );
+		expect( handleSuggestionSubmit ).toHaveBeenCalledWith( launch, [ launch, other ] );
 		expect( onSelect ).toHaveBeenCalledWith( launch );
 		expect( header().getAttribute( 'aria-expanded' ) ).toBe( 'false' );
+	} );
+
+	it( 'marks open items busy while the container is processing', () => {
+		renderWired( { handleSuggestionSubmit: vi.fn( () => true ), isProcessing: true } );
+
+		const button = rowFor( 'Launch site' ).querySelector( 'button' ) as HTMLButtonElement;
+		expect( button.getAttribute( 'aria-disabled' ) ).toBe( 'true' );
 	} );
 
 	it( 'keeps the item open when the container does not send', async () => {
@@ -350,7 +402,7 @@ describe( 'AgentUIChecklist', () => {
 				<AgentUIProvider value={ { handleSuggestionSubmit } as unknown as AgentUIContextValue }>
 					<AgentUIChecklist
 						title="Launch checklist"
-						items={ [ { ...launch, autoSubmit: false } ] }
+						items={ [ { ...launch, autoSubmit: false }, other ] }
 						onSelect={ onSelect }
 					/>
 				</AgentUIProvider>

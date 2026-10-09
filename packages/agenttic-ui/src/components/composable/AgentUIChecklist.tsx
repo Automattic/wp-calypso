@@ -16,7 +16,7 @@ export interface AgentUIChecklistProps extends Omit< ChecklistProps, 'onSubmit' 
  * @param props.onSelect Called with the selected item once its prompt is sent.
  */
 export function AgentUIChecklist( { onSelect, ...props }: AgentUIChecklistProps ) {
-	const { handleSuggestionSubmit } = useAgentUIContext();
+	const { handleSuggestionSubmit, isProcessing } = useAgentUIContext();
 
 	const handleSubmit = useCallback(
 		( selectedItem: ChecklistItem, items: ChecklistItem[] ): boolean => {
@@ -37,5 +37,5 @@ export function AgentUIChecklist( { onSelect, ...props }: AgentUIChecklistProps 
 		[ onSelect, handleSuggestionSubmit ]
 	);
 
-	return <Checklist { ...props } onSubmit={ handleSubmit } />;
+	return <Checklist { ...props } busy={ props.busy || isProcessing } onSubmit={ handleSubmit } />;
 }

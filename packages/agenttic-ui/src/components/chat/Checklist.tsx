@@ -18,6 +18,8 @@ export interface ChecklistProps {
 	collapseOnSelect?: boolean;
 	/** Return false when the prompt was not actually sent; the list then stays open. */
 	onSubmit?: ( selectedItem: ChecklistItem, items: ChecklistItem[] ) => boolean | void;
+	/** While true (e.g. a reply is streaming) open tasks look and act inert. */
+	busy?: boolean;
 	className?: string;
 }
 
@@ -56,7 +58,7 @@ function StatusIcon( { status }: { status: ChecklistItemStatus } ) {
 			focusable="false"
 		>
 			{ status === 'todo' && <path d={ RING_DASHED } /> }
-			{ status === 'in_progress' && <path fillRule="evenodd" clipRule="evenodd" d={ RING_HALF } /> }
+			{ status === 'in-progress' && <path fillRule="evenodd" clipRule="evenodd" d={ RING_HALF } /> }
 			{ status === 'skipped' && <path fillRule="evenodd" clipRule="evenodd" d={ RING } /> }
 			{ status === 'done' && (
 				<>
@@ -89,13 +91,14 @@ interface ChecklistRowProps {
 	/** Per-instance prefix, so two lists sharing task ids don't share DOM ids. */
 	idPrefix: string;
 	statusLabel: string;
+	busy: boolean;
 	onSelect: ( item: ChecklistItem ) => void;
 }
 
-function ChecklistRow( { item, idPrefix, statusLabel, onSelect }: ChecklistRowProps ) {
+function ChecklistRow( { item, idPrefix, statusLabel, busy, onSelect }: ChecklistRowProps ) {
 	const status = getStatus( item );
 	const className = cn( styles.item, {
-		[ styles[ 'item-in_progress' ] ]: status === 'in_progress',
+		[ styles[ 'item-in-progress' ] ]: status === 'in-progress',
 		[ styles.settled ]: isSettled( item ),
 	} );
 	const content = (
@@ -108,13 +111,17 @@ function ChecklistRow( { item, idPrefix, statusLabel, onSelect }: ChecklistRowPr
 
 	switch ( getRowKind( item ) ) {
 		case 'open':
+			// Kept focusable while busy so keyboard position survives a stream.
 			return (
 				<button
 					type="button"
-					className={ cn( className, styles.actionable ) }
+					className={ cn( className, { [ styles.actionable ]: ! busy } ) }
+					aria-disabled={ busy || undefined }
 					onClick={ ( e ) => {
 						e.stopPropagation();
-						onSelect( item );
+						if ( ! busy ) {
+							onSelect( item );
+						}
 					} }
 				>
 					{ content }
@@ -159,6 +166,7 @@ function ChecklistRow( { item, idPrefix, statusLabel, onSelect }: ChecklistRowPr
  * @param props.onCollapsedChange
  * @param props.collapseOnSelect
  * @param props.onSubmit
+ * @param props.busy
  * @param props.className
  */
 export function Checklist( {
@@ -169,11 +177,15 @@ export function Checklist( {
 	onCollapsedChange,
 	collapseOnSelect = true,
 	onSubmit,
+	busy = false,
 	className,
 }: ChecklistProps ) {
 	const [ internalCollapsed, setInternalCollapsed ] = useState( defaultCollapsed );
 	const isControlled = collapsed !== undefined;
 	const isCollapsed = isControlled ? collapsed : internalCollapsed;
+	// Collapsing keeps the in-progress rows; when every row is in progress
+	// that would hide nothing, so it folds them all instead.
+	const foldEverything = items.every( ( item ) => getStatus( item ) === 'in-progress' );
 	const listId = useId();
 	const headerRef = useRef< HTMLButtonElement >( null );
 
@@ -188,7 +200,7 @@ export function Checklist( {
 
 	const statusLabels: Record< ChecklistItemStatus, string > = {
 		todo: __( 'To do', 'a8c-agenttic' ),
-		in_progress: __( 'In progress', 'a8c-agenttic' ),
+		'in-progress': __( 'In progress', 'a8c-agenttic' ),
 		done: __( 'Done', 'a8c-agenttic' ),
 		skipped: __( 'Skipped', 'a8c-agenttic' ),
 	};
@@ -210,7 +222,12 @@ export function Checklist( {
 			if ( started && item.prompt ) {
 				started = onSubmit ? onSubmit( item, items ) !== false : false;
 			}
-			if ( started && collapseOnSelect && ! isCollapsed ) {
+			// Collapsing after the last open task was picked would fold every
+			// row (it is about to be in progress too), so the list stays open.
+			const leavesSomethingToFold = items.some(
+				( other ) => other !== item && getStatus( other ) !== 'in-progress'
+			);
+			if ( started && collapseOnSelect && ! isCollapsed && leavesSomethingToFold ) {
 				setCollapsed( true );
 				// The clicked row folds away under aria-hidden; keep focus somewhere visible.
 				headerRef.current?.focus();
@@ -250,7 +267,7 @@ export function Checklist( {
 			   to zero height and out of the accessibility tree. */ }
 			<ul id={ listId } className={ styles.list }>
 				{ items.map( ( item ) => {
-					const hidden = isCollapsed && getStatus( item ) !== 'in_progress';
+					const hidden = isCollapsed && ( foldEverything || getStatus( item ) !== 'in-progress' );
 					return (
 						<li
 							key={ item.id }
@@ -262,6 +279,7 @@ export function Checklist( {
 									<ChecklistRow
 										item={ item }
 										idPrefix={ listId }
+										busy={ busy }
 										statusLabel={ statusLabels[ getStatus( item ) ] }
 										onSelect={ handleItemClick }
 									/>

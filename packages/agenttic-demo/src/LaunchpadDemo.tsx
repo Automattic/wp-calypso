@@ -111,7 +111,7 @@ const LaunchpadDemo: React.FC< { currentTheme: 'light' | 'dark' } > = ( { curren
 
 	const select = useCallback( ( id: string ) => {
 		setItems( ( current ) =>
-			current.map( ( item ) => ( item.id === id ? { ...item, status: 'in_progress' } : item ) )
+			current.map( ( item ) => ( item.id === id ? { ...item, status: 'in-progress' } : item ) )
 		);
 		setPinned( true );
 	}, [] );
@@ -120,7 +120,7 @@ const LaunchpadDemo: React.FC< { currentTheme: 'light' | 'dark' } > = ( { curren
 	const completeInProgress = () => {
 		setItems( ( current ) =>
 			current.map( ( item ) =>
-				item.status === 'in_progress' ? { ...item, status: 'done' } : item
+				item.status === 'in-progress' ? { ...item, status: 'done' } : item
 			)
 		);
 		setCollapsed( false );

@@ -176,7 +176,7 @@
 		color: inherit;
 	}
 
-	.item-in_progress {
+	.item-in-progress {
 		color: var( --color-foreground );
 
 		.label {

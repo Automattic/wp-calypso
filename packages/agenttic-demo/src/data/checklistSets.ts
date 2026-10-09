@@ -45,9 +45,9 @@ const presetStatuses: Record<
 	Partial< Record< string, ChecklistItemStatus > >
 > = {
 	fresh: {},
-	'in-progress': { design: 'in_progress' },
+	'in-progress': { design: 'in-progress' },
 	'one-done': { design: 'done' },
-	mixed: { design: 'done', about: 'skipped', images: 'in_progress' },
+	mixed: { design: 'done', about: 'skipped', images: 'in-progress' },
 	'all-done': { design: 'done', about: 'done', images: 'done', domain: 'skipped', launch: 'done' },
 };
 
