@@ -39,17 +39,14 @@ afterEach( () => {
 
 describe( 'TagFeedView', () => {
 	it( 'shows a loading status while connections are pending', async () => {
-		const scope = nock( BASE )
-			.get( CONNECTIONS_PATH )
-			.delay( 5000 )
-			.reply( 200, { connections: [] } );
+		nock( BASE ).get( CONNECTIONS_PATH ).delay( 100 ).reply( 200, { connections: [] } );
 
 		renderWithProvider( <TagFeedView connectionId={ 42 } hashtag="rust" /> );
 
 		expect( screen.getByRole( 'status' ) ).toHaveTextContent( /loading/i );
 		expect( page.replace ).not.toHaveBeenCalled();
-		// Wait for nock to match the request so it can't consume the next test's mock.
-		await waitFor( () => expect( scope.isDone() ).toBe( true ) );
+		// Wait for the delayed response so it can't outlive the test.
+		await waitFor( () => expect( page.replace ).toHaveBeenCalledWith( '/reader/atmosphere' ) );
 	} );
 
 	it( 'redirects to /reader/atmosphere when the connection is missing', async () => {
