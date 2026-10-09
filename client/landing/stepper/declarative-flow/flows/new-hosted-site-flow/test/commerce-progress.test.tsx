@@ -126,6 +126,7 @@ it( 'passes a two-step checkout overview and a term-preserving return URL', () =
 	expect( checkout.searchParams.get( 'steps_current' ) ).toBe( '2' );
 	expect( checkout.searchParams.get( 'steps_total' ) ).toBe( '2' );
 	const back = new URL( checkout.searchParams.get( 'checkoutBackUrl' )! );
+	expect( back.origin ).toBe( window.location.origin );
 	expect( back.pathname ).toBe( '/setup/new-hosted-site/domains' );
 	expect( back.searchParams.get( 'plan' ) ).toBe( mockPlan.product_slug );
 	expect( back.searchParams.get( 'siteId' ) ).toBe( mockSite.siteId );
