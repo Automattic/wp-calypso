@@ -36,4 +36,20 @@ describe( 'mapApiPluginsToDataViewPlugins', () => {
 
 		expect( rows.map( ( row ) => row.id ) ).toEqual( [ 'jetpack' ] );
 	} );
+
+	test( 'counts every site when the site list is unavailable', () => {
+		const response: PluginsResponse = {
+			sites: {
+				1: [ makePlugin( 'jetpack' ) ],
+				2: [ makePlugin( 'jetpack' ), makePlugin( 'akismet' ) ],
+			},
+		};
+
+		const rows = mapApiPluginsToDataViewPlugins( undefined, response );
+
+		expect( rows.map( ( row ) => [ row.id, row.siteIds ] ) ).toEqual( [
+			[ 'jetpack', [ 1, 2 ] ],
+			[ 'akismet', [ 2 ] ],
+		] );
+	} );
 } );
