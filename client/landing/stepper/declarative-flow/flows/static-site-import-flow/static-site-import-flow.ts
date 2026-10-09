@@ -96,15 +96,21 @@ const staticSiteImport: FlowV2< typeof initialize > = {
 		}, [ resetOnboardStore, setIntent ] );
 	},
 	useAssertConditions(): AssertConditionResult {
-		const { isAdmin } = useIsSiteAdmin();
-
+		const { isAdmin, isFetching } = useIsSiteAdmin();
+		const query = useQuery();
+		const hasDestinationSite = Boolean( query.get( 'siteId' ) || query.get( 'siteSlug' ) );
 		useEffect( () => {
 			if ( isAdmin === false ) {
 				window.location.assign( '/start' );
 			}
 		}, [ isAdmin ] );
 
-		return { state: AssertConditionState.SUCCESS };
+		return {
+			state:
+				hasDestinationSite && isFetching
+					? AssertConditionState.CHECKING
+					: AssertConditionState.SUCCESS,
+		};
 	},
 
 	useStepNavigation( currentStep, navigate: NavigateV2< typeof BASE_STEPS > ) {
