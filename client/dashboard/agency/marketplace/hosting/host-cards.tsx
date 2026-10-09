@@ -12,7 +12,7 @@ import Divider from '../../../components/divider';
 import RouterLinkButton from '../../../components/router-link-button';
 import { getMarketplaceHostingSectionRoute } from '../paths';
 import { CheckList } from './content-sections';
-import { getHosts } from './hosts';
+import { HOST_ORDER, getHosts } from './hosts';
 import type { HostingSection } from '../paths';
 import type { Host } from './hosts';
 
@@ -52,10 +52,12 @@ export default function HostCards( {
 }: Props ) {
 	// Every brand block keeps room for a badge once one card has it, so the rows line up.
 	const hasBadge = Object.values( owned ).some( Boolean );
+	const hosts = getHosts();
 
 	return (
 		<div className="dashboard-marketplace-hosting__hosts">
-			{ getHosts().map( ( host ) => {
+			{ HOST_ORDER.map( ( key ) => {
+				const host = hosts[ key ];
 				const ownedLabel = owned[ host.key ];
 				// Referrals are for a client, so what the agency owns doesn't change the action.
 				const leadsToMore =

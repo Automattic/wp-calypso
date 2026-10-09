@@ -18,15 +18,12 @@ import { getProductPriceInfo } from '../products/lib/product-pricing';
 import { CheckGrid, HostingFeatures, JetpackComplete, Testimonials } from './content-sections';
 import demoIllustration from './demo-callout-illustration.svg';
 import {
-	PLAN_CATEGORY_ENTERPRISE,
 	PLAN_CATEGORY_PREMIUM,
 	PRESSABLE_PROMOTION_TERMS_URL,
-	PLAN_CATEGORY_SIGNATURE,
-	PLAN_CATEGORY_SIGNATURE_HIGH,
-	PLAN_CATEGORY_STANDARD,
 	areSignaturePlansFor,
 	getDefaultPlanCategoryTab,
 	getMinimumSelectableIndex,
+	getPlanCategories,
 	getPlanCategoryTabs,
 	getPressablePlanInfo,
 	getPressablePlanName,
@@ -162,8 +159,7 @@ export default function PressableSection( {
 
 	const hasPremiumPlans = catalogPlans.some( ( plan ) => plan.category === PLAN_CATEGORY_PREMIUM );
 
-	const lowCategory = areSignaturePlans ? PLAN_CATEGORY_SIGNATURE : PLAN_CATEGORY_STANDARD;
-	const highCategory = areSignaturePlans ? PLAN_CATEGORY_SIGNATURE_HIGH : PLAN_CATEGORY_ENTERPRISE;
+	const { lowCategory, highCategory } = getPlanCategories( areSignaturePlans );
 	const lowOptions = useMemo(
 		() => sortPlansForCategory( catalogPlans, lowCategory ),
 		[ catalogPlans, lowCategory ]

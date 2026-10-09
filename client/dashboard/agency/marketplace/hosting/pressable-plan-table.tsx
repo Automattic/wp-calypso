@@ -5,8 +5,10 @@ import {
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
+import { useEvent } from '@wordpress/compose';
 import { __, sprintf } from '@wordpress/i18n';
 import { Badge } from '@wordpress/ui';
+import { useMemo } from 'react';
 import { DataViews } from '../../../components/dataviews';
 import { getPressablePlanName } from './lib/pressable-plans';
 import type { PressablePlan } from './lib/pressable-plans';
@@ -27,6 +29,8 @@ interface TableRow {
 	visits: string;
 	storage: string;
 	workers: string;
+	isSelected: boolean;
+	isCurrent: boolean;
 }
 
 interface Props {
@@ -77,6 +81,8 @@ export default function PressablePlanTable( {
 				plan.storage
 			),
 			workers: String( plan.worker ),
+			isSelected: plan.slug === selected,
+			isCurrent: plan.slug === currentSlug,
 		} ) ),
 		...( withCustom
 			? [
@@ -88,39 +94,47 @@ export default function PressablePlanTable( {
 						visits: __( '10M+' ),
 						storage: __( 'Custom' ),
 						workers: __( 'Custom' ),
+						isSelected: selected === CUSTOM_PLAN_OPTION,
+						isCurrent: false,
 					},
 				]
 			: [] ),
 	];
 
-	const fields: Field< TableRow >[] = [
-		{
-			id: 'name',
-			label: __( 'Plan' ),
-			enableSorting: false,
-			enableHiding: false,
-			render: ( { item } ) => {
-				const isCurrent = item.value === currentSlug;
-				return (
+	// DataViews renders each field's `render` as a component, so the fields keep one
+	// identity; a new `render` would remount the radios and drop the keyboard focus.
+	const handleSelect = useEvent( onSelect );
+	const fields = useMemo< Field< TableRow >[] >(
+		() => [
+			{
+				id: 'name',
+				label: __( 'Plan' ),
+				enableSorting: false,
+				enableHiding: false,
+				render: ( { item } ) => (
 					<HStack spacing={ 2 } justify="flex-start" wrap>
 						<RadioControl
 							label={ __( 'Plan' ) }
 							hideLabelFromVision
-							selected={ selected }
+							// One name across the rows makes them a single radio group: arrow keys
+							// move between plans and screen readers count every plan.
+							name="dashboard-marketplace-hosting-pressable-plan"
+							selected={ item.isSelected ? item.value : '' }
 							options={ [ { label: item.name, value: item.value } ] }
-							disabled={ isCurrent }
-							onChange={ onSelect }
+							disabled={ item.isCurrent }
+							onChange={ handleSelect }
 						/>
-						{ isCurrent && <Badge intent="stable">{ __( 'Current plan' ) }</Badge> }
+						{ item.isCurrent && <Badge intent="stable">{ __( 'Current plan' ) }</Badge> }
 					</HStack>
-				);
+				),
 			},
-		},
-		{ id: 'installs', label: __( 'Installs' ), enableSorting: false, enableHiding: false },
-		{ id: 'visits', label: __( 'Monthly visits' ), enableSorting: false, enableHiding: false },
-		{ id: 'storage', label: __( 'Storage' ), enableSorting: false, enableHiding: false },
-		{ id: 'workers', label: __( 'PHP workers' ), enableSorting: false, enableHiding: false },
-	];
+			{ id: 'installs', label: __( 'Installs' ), enableSorting: false, enableHiding: false },
+			{ id: 'visits', label: __( 'Monthly visits' ), enableSorting: false, enableHiding: false },
+			{ id: 'storage', label: __( 'Storage' ), enableSorting: false, enableHiding: false },
+			{ id: 'workers', label: __( 'PHP workers' ), enableSorting: false, enableHiding: false },
+		],
+		[ handleSelect ]
+	);
 
 	return (
 		<VStack spacing={ 3 }>

@@ -185,6 +185,12 @@ export function isLowTabDisabled(
 	);
 }
 
+/** The pooled plan types of a catalog: the smaller plans and the larger ones. */
+export const getPlanCategories = ( areSignaturePlans: boolean ) =>
+	areSignaturePlans
+		? { lowCategory: PLAN_CATEGORY_SIGNATURE, highCategory: PLAN_CATEGORY_SIGNATURE_HIGH }
+		: { lowCategory: PLAN_CATEGORY_STANDARD, highCategory: PLAN_CATEGORY_ENTERPRISE };
+
 // Whether the agency can buy a bigger pooled plan than the one it owns, as the
 // plan picker offers it. Premium plans are left out: they are sold through referrals.
 export function hasPressableUpgrade(
@@ -195,8 +201,7 @@ export function hasPressableUpgrade(
 	const plans = catalogPlans.filter(
 		( plan ) => isSignatureCatalogPlan( plan ) === areSignaturePlans
 	);
-	const lowCategory = areSignaturePlans ? PLAN_CATEGORY_SIGNATURE : PLAN_CATEGORY_STANDARD;
-	const highCategory = areSignaturePlans ? PLAN_CATEGORY_SIGNATURE_HIGH : PLAN_CATEGORY_ENTERPRISE;
+	const { lowCategory, highCategory } = getPlanCategories( areSignaturePlans );
 	const lowOptions = sortPlansForCategory( plans, lowCategory );
 	const highOptions = sortPlansForCategory( plans, highCategory );
 	const canMoveUpLow =

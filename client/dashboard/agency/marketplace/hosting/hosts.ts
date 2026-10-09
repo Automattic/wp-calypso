@@ -20,8 +20,8 @@ export interface Host {
 	includes: string[];
 }
 
-export const getHosts = (): Host[] => [
-	{
+export const getHosts = (): Record< HostingSection, Host > => ( {
+	wpcom: {
 		key: 'wpcom',
 		name: 'WordPress.com',
 		logo: wpcomDescriptor,
@@ -37,7 +37,7 @@ export const getHosts = (): Host[] => [
 			__( '24/7 expert support' ),
 		],
 	},
-	{
+	pressable: {
 		key: 'pressable',
 		name: 'Pressable',
 		logo: pressableDescriptor,
@@ -53,7 +53,7 @@ export const getHosts = (): Host[] => [
 			__( 'Free managed migrations' ),
 		],
 	},
-	{
+	vip: {
 		key: 'vip',
 		name: 'WordPress VIP',
 		logo: vipDescriptor,
@@ -69,7 +69,9 @@ export const getHosts = (): Host[] => [
 			__( 'Content guidance' ),
 		],
 	},
-];
+} );
 
-export const getHost = ( key: HostingSection ) =>
-	getHosts().find( ( host ) => host.key === key ) as Host;
+/** The order the Hosting page shows the hosts in. */
+export const HOST_ORDER: HostingSection[] = [ 'wpcom', 'pressable', 'vip' ];
+
+export const getHost = ( key: HostingSection ) => getHosts()[ key ];
