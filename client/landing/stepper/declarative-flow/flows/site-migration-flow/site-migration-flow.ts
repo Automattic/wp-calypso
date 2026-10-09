@@ -5,6 +5,7 @@ import { useLocale } from '@automattic/i18n-utils';
 import { SITE_MIGRATION_FLOW } from '@automattic/onboarding';
 import { SiteExcerptData } from '@automattic/sites';
 import { useDispatch } from '@wordpress/data';
+import { useI18n } from '@wordpress/react-i18n';
 import { useEffect } from 'react';
 import { matchPath } from 'react-router';
 import { HOW_TO_MIGRATE_OPTIONS } from 'calypso/landing/stepper/constants';
@@ -56,6 +57,7 @@ const BASE_STEPS = [
 	STEPS.SITE_MIGRATION_SSH_VERIFICATION,
 	STEPS.SITE_MIGRATION_SSH_SHARE_ACCESS,
 	STEPS.SITE_MIGRATION_SSH_IN_PROGRESS,
+	STEPS.UNIFIED_PLANS,
 	STEPS.PICK_SITE,
 	STEPS.SITE_CREATION_STEP,
 	STEPS.PROCESSING,
@@ -65,10 +67,14 @@ function initialize() {
 	const { pathname, search, hash } = window.location;
 	if (
 		! config.isEnabled( 'migration/reprint-flow' ) &&
-		matchPath( '/setup/:flow/site-migration-check/:lang?', pathname )
+		( matchPath( '/setup/:flow/site-migration-check/:lang?', pathname ) ||
+			matchPath( '/setup/:flow/plans/:lang?', pathname ) )
 	) {
 		window.location.replace(
-			pathname.replace( '/site-migration-check', `/${ STEPS.SITE_MIGRATION_IDENTIFY.slug }` ) +
+			pathname.replace(
+				/\/(site-migration-check|plans)(?=\/|$)/,
+				`/${ STEPS.SITE_MIGRATION_IDENTIFY.slug }`
+			) +
 				search +
 				hash
 		);
@@ -90,7 +96,8 @@ function initialize() {
 		BASE_STEPS.filter(
 			( step ) =>
 				( step.slug !== STEPS.SITE_MIGRATION_BACKUP.slug &&
-					step.slug !== STEPS.SITE_MIGRATION_CHECK.slug ) ||
+					step.slug !== STEPS.SITE_MIGRATION_CHECK.slug &&
+					step.slug !== STEPS.UNIFIED_PLANS.slug ) ||
 				config.isEnabled( 'migration/reprint-flow' )
 		)
 	);
@@ -157,6 +164,22 @@ const siteMigration: FlowV2< typeof initialize > = {
 		return { state: AssertConditionState.SUCCESS };
 	},
 
+	useStepsProps() {
+		const { __ } = useI18n();
+		return {
+			plans: {
+				headerText: __( 'Ready to migrate' ),
+				subHeaderText: __(
+					'Choose a plan for your new site. Every paid plan includes the migration.'
+				),
+				hideFreePlan: true,
+				hideEnterprisePlan: true,
+				showExistingSiteLink: true,
+				disablePlanSelection: true,
+				defaultInterval: 'yearly',
+			},
+		};
+	},
 	useStepNavigation( currentStep, navigate: NavigateV2< typeof BASE_STEPS > ) {
 		const flowName = this.name;
 		const { siteId, siteSlug, site } = useSiteData();
@@ -174,6 +197,33 @@ const siteMigration: FlowV2< typeof initialize > = {
 		const userHasOtherWPComSites = siteCount && siteCount > 1;
 		const entryPoint = get( 'flow' )?.entryPoint;
 		const canInstallPlugins = site?.plan?.features?.active.includes( 'install-plugins' ) ?? false;
+		const isReprintSource =
+			config.isEnabled( 'migration/reprint-flow' ) &&
+			platformQueryParam === 'wordpress' &&
+			!! fromQueryParam &&
+			urlQueryParams.get( 'isWpcom' ) !== 'true' &&
+			urlQueryParams.get( 'how' ) !== HOW_TO_MIGRATE_OPTIONS.DO_IT_FOR_ME;
+		const handoffToWordpress = (
+			destinationId: number,
+			destinationSlug: string,
+			from: string,
+			host: string | undefined,
+			backStep: string
+		) =>
+			window.location.assign(
+				paths.wordpressMigrationPath( {
+					from,
+					siteId: destinationId,
+					siteSlug: destinationSlug,
+					platform: 'wordpress',
+					host,
+					ref: entryPoint || urlQueryParams.get( 'ref' ) || SITE_MIGRATION_FLOW,
+					source: urlQueryParams.get( 'source' ),
+					sessionId,
+					flags: urlQueryParams.get( 'flags' ),
+					backToFlow: `/${ flowPath }/${ backStep }`,
+				} )
+			);
 		const exitFlow = ( to: string, replace = false ) => {
 			if ( replace ) {
 				return window.location.replace(
@@ -237,6 +287,21 @@ const siteMigration: FlowV2< typeof initialize > = {
 						return navigate(
 							paths.siteCheckPath( { from, platform, host: host ?? '', isWpcom: !! isWpcom } )
 						);
+					}
+					if (
+						slug === STEPS.SITE_MIGRATION_CHECK.slug &&
+						urlQueryParams.get( 'how' ) !== HOW_TO_MIGRATE_OPTIONS.DO_IT_FOR_ME
+					) {
+						if ( hasDestinationSite ) {
+							return handoffToWordpress(
+								siteId,
+								siteSlug,
+								from,
+								host,
+								STEPS.SITE_MIGRATION_CHECK.slug
+							);
+						}
+						return navigate( paths.plansPath( { from, platform, host } ) );
 					}
 					const isSSHMigrationAvailable = config.isEnabled( 'migration/ssh-migration' );
 
@@ -304,6 +369,21 @@ const siteMigration: FlowV2< typeof initialize > = {
 				case STEPS.SITE_MIGRATION_BACKUP.slug:
 					return navigate( STEPS.SITE_MIGRATION_IDENTIFY.slug );
 
+				case STEPS.UNIFIED_PLANS.slug: {
+					if ( ! isReprintSource ) {
+						return navigate( STEPS.SITE_MIGRATION_IDENTIFY.slug );
+					}
+					if ( providedDependencies?.action === 'select-existing-site' ) {
+						return navigate(
+							paths.sitePickerPath( {
+								from: fromQueryParam,
+								platform: platformQueryParam,
+								host: hostQueryParam,
+							} )
+						);
+					}
+					return;
+				}
 				case STEPS.PICK_SITE.slug: {
 					switch ( providedDependencies?.action ) {
 						case 'update-query': {
@@ -335,6 +415,16 @@ const siteMigration: FlowV2< typeof initialize > = {
 								selectedSite?.plan?.features?.active.includes( 'install-plugins' ) ?? false;
 							const detectedHost = providedDependencies.host as string | undefined;
 							const host = detectedHost || hostQueryParam;
+
+							if ( isReprintSource && fromQueryParam && hasSite( siteId, siteSlug ) ) {
+								return handoffToWordpress(
+									siteId,
+									siteSlug,
+									fromQueryParam,
+									host,
+									STEPS.PICK_SITE.slug
+								);
+							}
 
 							// Check if this is an SSH migration flow
 							// Either from ssh=true param OR from move-lp with supported hosting and English locale
@@ -410,6 +500,15 @@ const siteMigration: FlowV2< typeof initialize > = {
 							);
 						}
 						case 'create-site': {
+							if ( isReprintSource && fromQueryParam ) {
+								return navigate(
+									paths.plansPath( {
+										from: fromQueryParam,
+										platform: platformQueryParam,
+										host: hostQueryParam,
+									} )
+								);
+							}
 							const detectedHost = providedDependencies.host as string | undefined;
 							const host = detectedHost || hostQueryParam;
 
@@ -564,19 +663,12 @@ const siteMigration: FlowV2< typeof initialize > = {
 						fromQueryParam &&
 						hasSite( siteId, siteSlug )
 					) {
-						return window.location.assign(
-							paths.wordpressMigrationPath( {
-								from: fromQueryParam,
-								siteId,
-								siteSlug,
-								platform: platformQueryParam,
-								host: hostQueryParam,
-								ref: entryPoint || urlQueryParams.get( 'ref' ) || SITE_MIGRATION_FLOW,
-								source: urlQueryParams.get( 'source' ),
-								sessionId,
-								flags: urlQueryParams.get( 'flags' ),
-								backToFlow: `/${ flowPath }/${ STEPS.SITE_MIGRATION_HOW_TO_MIGRATE.slug }`,
-							} )
+						return handoffToWordpress(
+							siteId,
+							siteSlug,
+							fromQueryParam,
+							hostQueryParam,
+							STEPS.SITE_MIGRATION_HOW_TO_MIGRATE.slug
 						);
 					}
 
@@ -919,7 +1011,26 @@ const siteMigration: FlowV2< typeof initialize > = {
 			}
 		};
 
-		return { submit, exitFlow };
+		const goBack =
+			isReprintSource &&
+			fromQueryParam &&
+			( currentStep === STEPS.UNIFIED_PLANS.slug || currentStep === STEPS.PICK_SITE.slug )
+				? () =>
+						navigate(
+							currentStep === STEPS.PICK_SITE.slug
+								? paths.plansPath( {
+										from: fromQueryParam,
+										platform: platformQueryParam,
+										host: hostQueryParam,
+									} )
+								: paths.siteCheckPath( {
+										from: fromQueryParam,
+										platform: platformQueryParam,
+										host: hostQueryParam,
+									} )
+						)
+				: undefined;
+		return { submit, exitFlow, goBack };
 	},
 };
 

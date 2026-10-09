@@ -91,20 +91,23 @@ describe( 'Site Migration Flow', () => {
 			Object.assign( window.location, { pathname: '/', search: '', hash: '' } );
 		} );
 
-		it( 'redirects a direct result URL to address entry without the flag, preserving context', () => {
-			jest.spyOn( config, 'isEnabled' ).mockReturnValue( false );
-			const search =
-				'?from=https%3A%2F%2Fexample.com&platform=wordpress&ref=new-site-popover&sessionId=abc';
-			Object.assign( window.location, {
-				pathname: '/setup/site-migration/site-migration-check',
-				search,
-				hash: '#test',
-			} );
-			expect( siteMigrationFlow.initialize() ).toBe( false );
-			expect( window.location.replace ).toHaveBeenCalledWith(
-				`/setup/site-migration/site-migration-identify${ search }#test`
-			);
-		} );
+		it.each( [ STEPS.SITE_MIGRATION_CHECK.slug, STEPS.UNIFIED_PLANS.slug ] )(
+			'redirects a direct %s URL to address entry without the flag, preserving context',
+			( slug ) => {
+				jest.spyOn( config, 'isEnabled' ).mockReturnValue( false );
+				const search =
+					'?from=https%3A%2F%2Fexample.com&platform=wordpress&ref=new-site-popover&sessionId=abc';
+				Object.assign( window.location, {
+					pathname: `/setup/site-migration/${ slug }`,
+					search,
+					hash: '#test',
+				} );
+				expect( siteMigrationFlow.initialize() ).toBe( false );
+				expect( window.location.replace ).toHaveBeenCalledWith(
+					`/setup/site-migration/site-migration-identify${ search }#test`
+				);
+			}
+		);
 
 		it.each( [ '', '/', '/pt-br', '/pt-br/' ] )(
 			'redirects the legacy choice URL with suffix "%s" while preserving context',
@@ -523,7 +526,7 @@ describe( 'Site Migration Flow', () => {
 				expect( destination ).toMatchDestination( { step: STEPS.SITE_MIGRATION_IDENTIFY } );
 			} );
 
-			it( 'continues from the result page to destination selection without repeating it', () => {
+			it( 'continues from the result page to plans without repeating it', () => {
 				jest
 					.spyOn( config, 'isEnabled' )
 					.mockImplementation( ( flag ) => flag === 'migration/reprint-flow' );
@@ -538,7 +541,7 @@ describe( 'Site Migration Flow', () => {
 					},
 				} );
 				expect( destination ).toMatchDestination( {
-					step: STEPS.PICK_SITE,
+					step: STEPS.UNIFIED_PLANS,
 					query: { from: 'https://example.com', platform: 'wordpress', host: 'bluehost' },
 				} );
 			} );
@@ -761,6 +764,150 @@ describe( 'Site Migration Flow', () => {
 			} );
 
 			expect( result ).toMatchDestination( { step, query: source } );
+		} );
+
+		describe( 'flagged plans and existing destination navigation', () => {
+			const context = {
+				from: 'https://source.example.com',
+				platform: 'wordpress',
+				host: 'bluehost',
+				ref: 'new-site-popover',
+				source: 'sites-dashboard',
+				flags: 'migration/reprint-flow',
+			};
+			beforeEach( () => {
+				jest
+					.spyOn( config, 'isEnabled' )
+					.mockImplementation(
+						( flag ) => flag === 'migration/reprint-flow' || flag === 'migration/ssh-migration'
+					);
+				jest.mocked( goToCheckout ).mockClear();
+			} );
+
+			it.each( [ 0, 1, 2 ] )(
+				'offers plans with %s existing sites before creating anything',
+				( count ) => {
+					jest.mocked( getCurrentUserSiteCount ).mockReturnValue( count );
+					const result = runNavigation( {
+						from: STEPS.SITE_MIGRATION_CHECK,
+						query: context,
+						dependencies: { ...context, action: 'continue' },
+					} );
+					expect( result ).toMatchDestination( {
+						step: STEPS.UNIFIED_PLANS,
+						query: { from: context.from, platform: 'wordpress', host: 'bluehost' },
+					} );
+					expect( goToCheckout ).not.toHaveBeenCalled();
+				}
+			);
+
+			it( 'opens the existing-site picker from plans', () => {
+				const result = runNavigation( {
+					from: STEPS.UNIFIED_PLANS,
+					query: context,
+					dependencies: { stepName: 'plans', cartItems: null, action: 'select-existing-site' },
+				} );
+				expect( result ).toMatchDestination( {
+					step: STEPS.PICK_SITE,
+					query: { from: context.from, platform: 'wordpress', host: 'bluehost' },
+				} );
+			} );
+
+			it( 'ignores plan purchases until checkout is implemented', () => {
+				const result = runNavigation( {
+					from: STEPS.UNIFIED_PLANS,
+					query: context,
+					dependencies: {
+						stepName: 'plans',
+						cartItems: [ { product_slug: PLAN_BUSINESS_MONTHLY } ],
+					},
+				} );
+				expect( result ).toMatchDestination( { step: STEPS.UNIFIED_PLANS } );
+				expect( window.location.assign ).not.toHaveBeenCalled();
+				expect( goToCheckout ).not.toHaveBeenCalled();
+			} );
+
+			it.each( [
+				{ platform: 'unknown' },
+				{ platform: 'wordpress', isWpcom: 'true' },
+				{ from: '' },
+			] )( 'rejects an invalid plans continuation: %j', ( overrides ) => {
+				const result = runNavigation( {
+					from: STEPS.UNIFIED_PLANS,
+					query: { ...context, ...overrides },
+					dependencies: { action: 'select-existing-site' },
+				} );
+				expect( result ).toMatchDestination( { step: STEPS.SITE_MIGRATION_IDENTIFY } );
+			} );
+
+			it( 'returns to plans when creating a site from the picker', () => {
+				const result = runNavigation( {
+					from: STEPS.PICK_SITE,
+					query: context,
+					dependencies: { action: 'create-site' },
+				} );
+				expect( result ).toMatchDestination( { step: STEPS.UNIFIED_PLANS } );
+				expect( goToCheckout ).not.toHaveBeenCalled();
+			} );
+
+			it.each( [
+				[ STEPS.UNIFIED_PLANS, STEPS.SITE_MIGRATION_CHECK ],
+				[ STEPS.PICK_SITE, STEPS.UNIFIED_PLANS ],
+			] )( 'returns from $0.slug to $1.slug', ( from, step ) => {
+				const result = runFlowNavigation( siteMigrationFlow, { from, query: context }, 'back' );
+				expect( result ).toMatchDestination( {
+					step,
+					query: { from: context.from, platform: 'wordpress', host: 'bluehost' },
+				} );
+			} );
+
+			it.each( [ STEPS.SITE_MIGRATION_CHECK, STEPS.PICK_SITE ] )(
+				'hands $slug directly to DIY with the destination and entry context',
+				( step ) => {
+					const destination = { siteId: 123, siteSlug: 'example.wordpress.com' };
+					runNavigation( {
+						from: step,
+						query: { ...context, ...( step === STEPS.SITE_MIGRATION_CHECK ? destination : {} ) },
+						dependencies:
+							step === STEPS.SITE_MIGRATION_CHECK
+								? { ...context, action: 'continue' }
+								: { action: 'select-site', site: { ID: 123, slug: destination.siteSlug } },
+					} );
+					expect( window.location.assign ).toMatchURL( {
+						path: `/setup/${ WORDPRESS_MIGRATION_FLOW }`,
+						query: {
+							...context,
+							...destination,
+							sessionId: '123',
+							backToFlow: `/site-migration/${ step.slug }`,
+						},
+					} );
+					expect( goToCheckout ).not.toHaveBeenCalled();
+				}
+			);
+
+			it( 'keeps explicit assisted migration links on the legacy route', () => {
+				const result = runNavigation( {
+					from: STEPS.PICK_SITE,
+					query: { ...context, how: HOW_TO_MIGRATE_OPTIONS.DO_IT_FOR_ME, action: 'migrate' },
+					dependencies: { action: 'select-site', site: { ID: 123, slug: 'example.wordpress.com' } },
+				} );
+				expect( result ).toMatchDestination( { step: STEPS.SITE_MIGRATION_HOW_TO_MIGRATE } );
+				expect( window.location.assign ).not.toHaveBeenCalled();
+			} );
+
+			it( 'does not expose plans when the flag is off', () => {
+				jest.spyOn( config, 'isEnabled' ).mockReturnValue( false );
+				expect(
+					siteMigrationFlow.initialize().some( ( step ) => step.slug === STEPS.UNIFIED_PLANS.slug )
+				).toBe( false );
+				const result = runNavigation( {
+					from: STEPS.UNIFIED_PLANS,
+					query: context,
+					dependencies: { action: 'select-existing-site' },
+				} );
+				expect( result ).toMatchDestination( { step: STEPS.SITE_MIGRATION_IDENTIFY } );
+			} );
 		} );
 
 		describe( 'PICK_SITE', () => {
