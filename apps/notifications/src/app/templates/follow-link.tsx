@@ -66,7 +66,11 @@ export const FollowLink = ( {
 		<Button
 			variant="link"
 			size="compact"
-			style={ { height: '16px', textDecoration: 'none' } }
+			style={ {
+				height: '16px',
+				textDecoration: 'none',
+				fontWeight: 'var(--wpds-typography-font-weight-emphasis)',
+			} }
 			onClick={ toggleFollowStatus }
 		>
 			{ isFollowing ? __( 'Subscribed' ) : __( 'Subscribe' ) }

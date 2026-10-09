@@ -337,6 +337,12 @@
 	}
 }
 
+// The body's reset pins every element to its parent's font size, which outranks the
+// size the Text component would set.
+.wpnc__body-content .wpnc__user-site {
+	font-size: $font-size-small;
+}
+
 /**
  * Comment
  */
@@ -355,18 +361,9 @@
 .wpnc__note.wpnc__like .wpnc__body .wpnc__body-content,
 .wpnc__note.wpnc__comment_like .wpnc__body .wpnc__body-content,
 .wpnc__note.wpnc__follow .wpnc__body .wpnc__body-content {
-	.wpnc__user {
-		padding: 12px 0;
-		border-bottom: 1px solid var( --wpnc-divider__color, #{$gray-100} );
-
-		&:first-child {
-			padding-top: 0;
-			margin-top: -4px;
-		}
-	}
-
+	// With the list's own gap, this matches the space above the first person.
 	.wpnc__paragraph {
-		padding: 16px 0 0;
+		padding: $grid-unit-10 0 0;
 	}
 }
 

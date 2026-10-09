@@ -1,11 +1,13 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 import {
+	FlexBlock,
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 	__experimentalText as Text,
 } from '@wordpress/components';
 import { Fragment } from 'react';
 import { useSelector } from 'react-redux';
+import { isPeopleListNote } from '../../panel/helpers/notes';
 import getIsNoteApproved from '../../panel/state/selectors/get-is-note-approved';
 import { useAppContext } from '../context';
 import NoteIcon from '../note-icon';
@@ -63,6 +65,10 @@ export default function UserBlock( { note, block }: { note: Note; block: Block }
 			? getDisplayURL( homeLink )
 			: block.meta?.titles?.home;
 
+	// Two layouts: in a list of people the site sits under the name with the follow
+	// link at the far end; elsewhere the details share one line under the name.
+	const isListRow = isPeopleListNote( note );
+
 	// Build the present description items, then interleave a single separator
 	// between them — so there's never a leading, trailing, or doubled separator
 	// when an item is absent.
@@ -97,7 +103,12 @@ export default function UserBlock( { note, block }: { note: Note; block: Block }
 	].filter( ( part ): part is ReactElement => Boolean( part ) );
 
 	return (
-		<HStack className="wpnc__user" justify="flex-start" alignment="flex-start" spacing={ 4 }>
+		<HStack
+			className="wpnc__user"
+			justify="flex-start"
+			alignment={ isListRow ? 'center' : 'flex-start' }
+			spacing={ 4 }
+		>
 			<a
 				href={ readerProfileUrl }
 				target="_blank"
@@ -111,19 +122,52 @@ export default function UserBlock( { note, block }: { note: Note; block: Block }
 			>
 				<NoteIcon icon={ media?.url } alt={ block.text } size={ 36 } />
 			</a>
-			<VStack alignment="flex-start" spacing={ 0 }>
-				<a className="wpnc__user-title" href={ readerProfileUrl } target="_blank" rel="noreferrer">
-					<Text>{ block.text }</Text>
-				</a>
-				<HStack className="wpnc__user-description" spacing={ 1 }>
-					{ descriptionParts.map( ( part, index ) => (
-						<Fragment key={ part.key }>
-							{ index > 0 && <span className="wpnc__user-description-separator">•</span> }
-							{ part }
-						</Fragment>
-					) ) }
-				</HStack>
-			</VStack>
+			{ isListRow ? (
+				<>
+					<FlexBlock>
+						<VStack spacing={ 0.5 }>
+							<a
+								className="wpnc__user-title"
+								href={ readerProfileUrl }
+								target="_blank"
+								rel="noreferrer"
+							>
+								{ /* A line count, since the plain `truncate` loses to Text's own wrapping. */ }
+								<Text truncate numberOfLines={ 1 }>
+									{ block.text }
+								</Text>
+							</a>
+							{ homeTitle && (
+								<a href={ homeLink } target="_blank" rel="noopener noreferrer">
+									<Text className="wpnc__user-site" variant="muted" truncate numberOfLines={ 1 }>
+										{ homeTitle }
+									</Text>
+								</a>
+							) }
+						</VStack>
+					</FlexBlock>
+					{ descriptionParts.find( ( { key } ) => key === 'follow' ) }
+				</>
+			) : (
+				<VStack alignment="flex-start" spacing={ 0 }>
+					<a
+						className="wpnc__user-title"
+						href={ readerProfileUrl }
+						target="_blank"
+						rel="noreferrer"
+					>
+						<Text>{ block.text }</Text>
+					</a>
+					<HStack className="wpnc__user-description" spacing={ 1 }>
+						{ descriptionParts.map( ( part, index ) => (
+							<Fragment key={ part.key }>
+								{ index > 0 && <span className="wpnc__user-description-separator">•</span> }
+								{ part }
+							</Fragment>
+						) ) }
+					</HStack>
+				</VStack>
+			) }
 		</HStack>
 	);
 }
