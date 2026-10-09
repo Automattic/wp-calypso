@@ -75,6 +75,7 @@ import {
 	PARTNER_DIRECTORY_EXPERTISE_SEGMENT,
 	PARTNER_DIRECTORY_ROUTE,
 } from '../../agency/partner-directory/paths';
+import { TEAM_ACCEPT_INVITE_ROUTE } from '../../agency/team/paths';
 import {
 	canOptOutOfWordPressBeta,
 	canSwitchWordPressVersion,
@@ -798,6 +799,39 @@ export const agencyTeamRoute = createRoute( {
 	import( '../../agency/team' ).then( ( d ) =>
 		createLazyRoute( 'agency-team' )( {
 			component: d.default,
+		} )
+	)
+);
+
+// `/team/invite/accept` – accept an invitation to join an agency team. Sits
+// outside the agency routes: the invited user has no agency until it succeeds.
+export const agencyTeamAcceptInviteRoute = createRoute( {
+	staticData: { isFullscreen: true },
+	head: () => ( {
+		meta: [ { title: __( 'Accept team invite' ) } ],
+	} ),
+	getParentRoute: () => rootRoute,
+	path: TEAM_ACCEPT_INVITE_ROUTE,
+	validateSearch: ( search ): { agency_id?: number; invite_id?: number; secret?: string } => {
+		const agencyId = Number( search.agency_id );
+		const inviteId = Number( search.invite_id );
+		return {
+			agency_id: Number.isInteger( agencyId ) && agencyId > 0 ? agencyId : undefined,
+			invite_id: Number.isInteger( inviteId ) && inviteId > 0 ? inviteId : undefined,
+			secret: typeof search.secret === 'string' ? search.secret : undefined,
+		};
+	},
+} ).lazy( () =>
+	import( '../../agency/team/accept-invite' ).then( ( d ) =>
+		createLazyRoute( 'agency-team-accept-invite' )( {
+			component: () => {
+				const {
+					agency_id: agencyId,
+					invite_id: inviteId,
+					secret,
+				} = agencyTeamAcceptInviteRoute.useSearch();
+				return <d.default agencyId={ agencyId } inviteId={ inviteId } secret={ secret } />;
+			},
 		} )
 	)
 );
@@ -2078,6 +2112,7 @@ const agencySiteSettingsTransferSiteRoute = createRoute( {
 );
 
 export const createAgencyRoutes = () => [
+	agencyTeamAcceptInviteRoute,
 	agencyRoute.addChildren( [
 		agencyOverviewRoute,
 		agencyTiersRoute,

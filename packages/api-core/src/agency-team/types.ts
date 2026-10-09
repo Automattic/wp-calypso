@@ -47,3 +47,26 @@ export interface AgencyTeamInviteInput {
 	login: string;
 	message?: string;
 }
+
+export interface AgencyTeamInviteActivationInput {
+	agencyId: number;
+	inviteId: number;
+	secret: string;
+}
+
+/**
+ * The agencies named by the `a4a_user_invite_already_member_of_agency` error:
+ * the ones the user already belongs to, and the one the invite is for.
+ */
+export interface AgencyTeamInviteAgency {
+	id: number;
+	name: string;
+}
+
+export interface AgencyTeamInviteActivationError extends Error {
+	code?: string;
+	data?: {
+		user_agencies?: AgencyTeamInviteAgency[];
+		target_agency?: AgencyTeamInviteAgency;
+	};
+}

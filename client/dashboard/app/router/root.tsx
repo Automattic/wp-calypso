@@ -1,5 +1,6 @@
 import { agencyQuery, jetpackSiteUrlsQuery, queryClient } from '@automattic/api-queries';
 import { createRootRouteWithContext } from '@tanstack/react-router';
+import { TEAM_ACCEPT_INVITE_ROUTE } from '../../agency/team/paths';
 import Root from '../root';
 import NotFoundRoot from '../root/error';
 import { dashboardRedirect } from './redirect';
@@ -28,7 +29,9 @@ export const rootRoute = createRootRouteWithContext< RootRouterContext >()( {
 		if ( context.config.supports.agency ) {
 			const isSignupPath =
 				location.pathname === '/signup' || location.pathname.startsWith( '/signup/' );
-			if ( ! isSignupPath ) {
+			// An invited user only becomes an agency member once they accept.
+			const isTeamInvitePath = location.pathname === TEAM_ACCEPT_INVITE_ROUTE;
+			if ( ! isSignupPath && ! isTeamInvitePath ) {
 				const agency = await queryClient.ensureQueryData( agencyQuery() );
 				if ( ! agency.isClientUser && ! agency.hasAgency ) {
 					throw dashboardRedirect( { href: '/signup', replace: true } );
