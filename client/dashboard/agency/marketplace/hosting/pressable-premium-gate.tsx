@@ -50,7 +50,7 @@ export default function PressablePremiumGate( { label }: Props ) {
 							{ sprintf(
 								/* translators: %d is the commission percentage. */
 								__(
-									'Premium plans are sold through referrals. Turn on Refer products to refer this plan to a client and earn %d%% commission on every payment.'
+									'Premium plans are sold through referrals. Turn on Refer hosting to refer this plan to a client and earn %d%% commission on every payment.'
 								),
 								PRESSABLE_PREMIUM_PLAN_COMMISSION_PERCENTAGE
 							) }
@@ -60,7 +60,7 @@ export default function PressablePremiumGate( { label }: Props ) {
 						__nextHasNoMarginBottom
 						checked={ checked }
 						disabled={ disabled }
-						label={ __( 'Refer products' ) }
+						label={ __( 'Refer hosting' ) }
 						onChange={ onReferToggle }
 					/>
 					<CardDivider />

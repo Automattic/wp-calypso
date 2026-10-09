@@ -31,7 +31,7 @@ describe( '<PressablePremiumGate>', () => {
 	test( 'the toggle switches the marketplace to referral mode', async () => {
 		const { recordTracksEvent } = renderGate();
 
-		const toggle = screen.getByRole( 'checkbox', { name: 'Refer products' } );
+		const toggle = screen.getByRole( 'checkbox', { name: 'Refer hosting' } );
 		expect( toggle ).not.toBeChecked();
 		await userEvent.click( toggle );
 
@@ -44,6 +44,6 @@ describe( '<PressablePremiumGate>', () => {
 	test( 'the toggle is disabled until the agency is approved', () => {
 		renderGate( 'pending' );
 
-		expect( screen.getByRole( 'checkbox', { name: 'Refer products' } ) ).toBeDisabled();
+		expect( screen.getByRole( 'checkbox', { name: 'Refer hosting' } ) ).toBeDisabled();
 	} );
 } );

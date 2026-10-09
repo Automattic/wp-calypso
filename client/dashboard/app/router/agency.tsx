@@ -62,7 +62,6 @@ import { isAgencyApproved } from '../../agency/marketplace/is-agency-approved';
 import { agencyLicensesQuery } from '../../agency/marketplace/lib/wpcom-hosting';
 import {
 	CRM_DOWNLOADS_SEGMENT,
-	getMarketplaceHostingSectionRoute,
 	MARKETPLACE_HOSTING_REFER_SEGMENTS,
 } from '../../agency/marketplace/paths';
 import {
@@ -297,8 +296,22 @@ export const marketplaceHostingRoute = createRoute( {
 	},
 } );
 
+// Host names aren't translated.
+const HOSTING_SECTION_TITLES: Record< HostingSection, string > = {
+	wpcom: 'WordPress.com',
+	pressable: 'Pressable',
+	vip: 'WordPress VIP',
+};
+
 const createMarketplaceHostingSectionRoute = ( section: HostingSection ) =>
 	createRoute( {
+		head: () => ( {
+			meta: [
+				{
+					title: HOSTING_SECTION_TITLES[ section ],
+				},
+			],
+		} ),
 		getParentRoute: () => marketplaceHostingRoute,
 		path: section,
 	} ).lazy( () =>
@@ -309,20 +322,17 @@ const createMarketplaceHostingSectionRoute = ( section: HostingSection ) =>
 		)
 	);
 
-// `/hosting` has no screen of its own. It opens WordPress.com for agencies
-// that signed up with 1-5 sites and Pressable otherwise.
+// `/hosting` – the hosts side by side, each leading to its own page.
 export const marketplaceHostingIndexRoute = createRoute( {
 	getParentRoute: () => marketplaceHostingRoute,
 	path: '/',
-	beforeLoad: async ( { cause } ) => {
-		if ( cause === 'preload' ) {
-			return;
-		}
-		const agency = await queryClient.ensureQueryData( activeAgencyQuery() );
-		const section = agency?.signup_meta?.number_sites === '1-5' ? 'wpcom' : 'pressable';
-		throw dashboardRedirect( { to: getMarketplaceHostingSectionRoute( section ) } );
-	},
-} );
+} ).lazy( () =>
+	import( '../../agency/marketplace/hosting' ).then( ( d ) =>
+		createLazyRoute( 'marketplace-hosting-index' )( {
+			component: () => <d.default />,
+		} )
+	)
+);
 export const marketplaceHostingWpcomRoute = createMarketplaceHostingSectionRoute( 'wpcom' );
 export const marketplaceHostingPressableRoute = createMarketplaceHostingSectionRoute( 'pressable' );
 export const marketplaceHostingVipRoute = createMarketplaceHostingSectionRoute( 'vip' );
