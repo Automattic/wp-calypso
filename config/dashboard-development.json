@@ -16,6 +16,7 @@
 			"survicate_enabled": false,
 			"wpcom_login_url": false,
 			"features": {
+				"a4a-tailored-experience": true,
 				"oauth": true,
 				"always_use_logout_url": true,
 				"checkout/stripe-upi": true,
