@@ -63,8 +63,8 @@ describe( 'credit states', () => {
 		expect( isCreditsLow( free( 21 ) ) ).toBe( false );
 		expect( isCreditsLow( free( 0 ) ) ).toBe( false );
 		expect( isCreditsLow( paid( 5 ) ) ).toBe( true );
-		expect( isCreditsLow( paid( 100, 20000 ) ) ).toBe( false );
-		expect( isCreditsLow( paid( 100, 19999 ) ) ).toBe( true );
+		expect( isCreditsLow( paid( 100, 10000 ) ) ).toBe( false );
+		expect( isCreditsLow( paid( 100, 9999 ) ) ).toBe( true );
 		expect( isCreditsLow( paid( 0, 0 ) ) ).toBe( false );
 		expect( isCreditsLow( { ...paid( 0 ), remaining: 25000 } ) ).toBe( false );
 	} );
@@ -92,8 +92,8 @@ describe( 'getCreditsTone', () => {
 
 	it.each( [
 		[ 25000, 'muted' ],
-		[ 20000, 'muted' ],
-		[ 19999, 'error' ],
+		[ 10000, 'muted' ],
+		[ 9999, 'error' ],
 		[ 800, 'error' ],
 		[ 1, 'error' ],
 		[ 0, 'error' ],
