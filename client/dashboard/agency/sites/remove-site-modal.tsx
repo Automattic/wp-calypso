@@ -40,7 +40,7 @@ export default function RemoveSiteModal( {
 	const [ isRemoving, setIsRemoving ] = useState( false );
 
 	useEffect( () => {
-		recordTracksEvent( 'calypso_dashboard_agency_sites_remove_site_dialog_open' );
+		recordTracksEvent( 'calypso_a4a_sites_remove_site_dialog_open' );
 	}, [ recordTracksEvent ] );
 
 	// The endpoint keys off the agency's own site id, which the profile only
@@ -55,7 +55,7 @@ export default function RemoveSiteModal( {
 			return;
 		}
 
-		recordTracksEvent( 'calypso_dashboard_agency_sites_remove_site_confirm' );
+		recordTracksEvent( 'calypso_a4a_sites_remove_site_confirm' );
 		setIsRemoving( true );
 
 		const notifyFailure = ( message?: string ) => {

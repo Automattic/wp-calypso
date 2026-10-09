@@ -74,6 +74,11 @@ export default function TierOverviewCard( {
 			link={ tiersHref }
 			shouldUseRouterLink={ shouldUseRouterLink }
 			tracksId="agency-overview-tier"
+			onClick={ () =>
+				recordTracksEvent?.( 'calypso_a4a_agency_tier_progress_card_explore_click', {
+					agency_tier: tier.id,
+				} )
+			}
 			bottom={
 				<VStack spacing={ 4 }>
 					<InfluencedRevenue

@@ -187,7 +187,12 @@ export default function CartMenu( {
 									__( 'Remove %s from the cart' ),
 									getCartProductName( product )
 								) }
-								onClick={ () => onRemove( item.slug ) }
+								onClick={ () => {
+									recordTracksEvent( 'calypso_a4a_marketplace_checkout_remove_item_click', {
+										product: item.slug,
+									} );
+									onRemove( item.slug );
+								} }
 							>
 								{ __( 'Remove' ) }
 							</Button>

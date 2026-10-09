@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { useAnalytics } from '../../../app/analytics';
 import { marketplacePurchasesRoute } from '../../../app/router/agency';
 import { clearStoredCart } from '../products/use-shopping-cart';
 import { useMarketplaceType } from '../use-marketplace-type';
@@ -13,6 +14,7 @@ type PurchasesSearch = typeof marketplacePurchasesRoute.types.fullSearchSchema;
  * leaves referral mode once it is.
  */
 export function useCheckoutReturn() {
+	const { recordTracksEvent } = useAnalytics();
 	const navigate = marketplacePurchasesRoute.useNavigate();
 	const { receipt_id: receiptId, cart } = marketplacePurchasesRoute.useSearch();
 	const { updateMarketplaceType } = useMarketplaceType();
@@ -27,6 +29,9 @@ export function useCheckoutReturn() {
 		} else {
 			clearStoredCart( 'regular' );
 		}
+		recordTracksEvent( 'calypso_a4a_marketplace_cart_cleared_on_checkout_success', {
+			receipt_id: receiptId,
+		} );
 		navigate( {
 			// The app shell shows the flash toast once and strips its parameter
 			// from the URL, so this navigation must not write it back.
@@ -39,5 +44,5 @@ export function useCheckoutReturn() {
 			}: PurchasesSearch ) => rest,
 			replace: true,
 		} );
-	}, [ receiptId, cart, navigate, updateMarketplaceType ] );
+	}, [ receiptId, cart, navigate, updateMarketplaceType, recordTracksEvent ] );
 }

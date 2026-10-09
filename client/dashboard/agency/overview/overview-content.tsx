@@ -86,7 +86,12 @@ export default function AgencyOverviewContent( {
 	return (
 		<Grid columns={ isSmallViewport ? 1 : 2 } gap={ isSmallViewport ? 'lg' : 'xl' }>
 			<VStack spacing={ spacing } justify="flex-start">
-				{ isRejected && <RejectedTierCard contactSupport={ links.contactSupport } /> }
+				{ isRejected && (
+					<RejectedTierCard
+						contactSupport={ links.contactSupport }
+						recordTracksEvent={ recordTracksEvent }
+					/>
+				) }
 				{ isPending && (
 					<PendingTierCard
 						onRelaunchTour={ onRelaunchTour }
