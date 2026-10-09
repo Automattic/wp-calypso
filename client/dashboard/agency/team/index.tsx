@@ -69,7 +69,7 @@ export default function AgencyTeam() {
 
 	const onResendInvite = useCallback(
 		( member: TeamMember ) => {
-			recordTracksEvent( 'calypso_dashboard_team_resend_invite_click' );
+			recordTracksEvent( 'calypso_a4a_team_resend_invite_click' );
 			resendInvite( member.id );
 		},
 		[ recordTracksEvent, resendInvite ]
@@ -95,7 +95,7 @@ export default function AgencyTeam() {
 								variant="primary"
 								__next40pxDefaultSize
 								onClick={ () => {
-									recordTracksEvent( 'calypso_dashboard_team_invite_member_click' );
+									recordTracksEvent( 'calypso_a4a_team_invite_team_member_click' );
 									setIsInviteOpen( true );
 								} }
 							>
