@@ -31,8 +31,8 @@ import { useQueryHandler } from 'calypso/components/domains/wpcom-domain-search/
 import FormattedHeader from 'calypso/components/formatted-header';
 import { dashboardLink } from 'calypso/dashboard/utils/link';
 import { WOO_HOSTING_SOLUTIONS_REF } from 'calypso/landing/stepper/constants';
+import { hasCommercePurchaseSteps } from 'calypso/landing/stepper/declarative-flow/flows/new-hosted-site-flow/commerce-purchase-steps';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
-import { hasCommercePurchaseSteps } from 'calypso/landing/stepper/utils/commerce-purchase-steps';
 import { shouldSkipPlansStep } from 'calypso/landing/stepper/utils/preselected-plan';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';

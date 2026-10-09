@@ -23,15 +23,12 @@ import { isUserEligibleForFreeHostingTrial } from 'calypso/state/selectors/is-us
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import { useQuery } from '../../../hooks/use-query';
 import { ONBOARD_STORE } from '../../../stores';
-import {
-	hasCommercePurchaseSteps,
-	isCommercePurchaseResume,
-} from '../../../utils/commerce-purchase-steps';
 import { getCurrentQueryParams } from '../../../utils/get-current-query-params';
 import { stepsWithRequiredLogin } from '../../../utils/steps-with-required-login';
 import { STEPS } from '../../internals/steps';
 import { ProcessingResult } from '../../internals/steps-repository/processing-step/constants';
 import { getOnboardingStepperPosition } from '../onboarding/step-counter-config';
+import { hasCommercePurchaseSteps, isCommercePurchaseResume } from './commerce-purchase-steps';
 import { resumeCommerceCart } from './resume-commerce-cart';
 import type { FlowV2, SubmitHandler } from '../../internals/types';
 import type { DomainSuggestion } from '@automattic/api-core';

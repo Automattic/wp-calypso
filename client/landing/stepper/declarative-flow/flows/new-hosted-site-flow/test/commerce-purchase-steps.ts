@@ -20,7 +20,7 @@ jest.mock( 'calypso/signup/storageUtils', () => ( {
 const makeQuery = ( plan = 'ecommerce-bundle' ) =>
 	new URLSearchParams( { showPurchaseSteps: 'true', showDomainStep: '', plan } );
 
-describe( 'plan-first Commerce progress', () => {
+describe( 'Commerce purchase progress', () => {
 	it.each( [
 		'ecommerce-bundle',
 		'ecommerce-bundle-monthly',
