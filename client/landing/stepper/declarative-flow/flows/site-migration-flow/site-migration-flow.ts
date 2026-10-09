@@ -7,7 +7,7 @@ import { SiteExcerptData } from '@automattic/sites';
 import { useDispatch } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import { useEffect } from 'react';
-import { matchPath } from 'react-router';
+import { matchPath, useNavigate } from 'react-router';
 import { HOW_TO_MIGRATE_OPTIONS } from 'calypso/landing/stepper/constants';
 import { useFlowState } from 'calypso/landing/stepper/declarative-flow/internals/state-manager/store';
 import { STEPS } from 'calypso/landing/stepper/declarative-flow/internals/steps';
@@ -181,6 +181,7 @@ const siteMigration: FlowV2< typeof initialize > = {
 		};
 	},
 	useStepNavigation( currentStep, navigate: NavigateV2< typeof BASE_STEPS > ) {
+		const navigateHistory = useNavigate();
 		const flowName = this.name;
 		const { siteId, siteSlug, site } = useSiteData();
 		const variantSlug = this.variantSlug;
@@ -266,7 +267,7 @@ const siteMigration: FlowV2< typeof initialize > = {
 									isWpcom ||
 									urlQueryParams.get( 'isWpcom' ) === 'true' ) ) )
 					) {
-						return navigate( STEPS.SITE_MIGRATION_IDENTIFY.slug );
+						return replace( STEPS.SITE_MIGRATION_IDENTIFY.slug );
 					}
 					const hasDestinationSite = hasSite( siteId, siteSlug );
 					if ( action === 'backup_file' ) {
@@ -1008,25 +1009,36 @@ const siteMigration: FlowV2< typeof initialize > = {
 			}
 		};
 
-		const goBack =
+		let goBack;
+		if (
+			config.isEnabled( 'migration/reprint-flow' ) &&
+			window.history.length > 1 &&
+			( currentStep === STEPS.SITE_MIGRATION_IDENTIFY.slug ||
+				currentStep === STEPS.SITE_MIGRATION_CHECK.slug ||
+				( isReprintSource &&
+					( currentStep === STEPS.UNIFIED_PLANS.slug || currentStep === STEPS.PICK_SITE.slug ) ) )
+		) {
+			goBack = () => navigateHistory( -1 );
+		} else if (
 			isReprintSource &&
 			fromQueryParam &&
 			( currentStep === STEPS.UNIFIED_PLANS.slug || currentStep === STEPS.PICK_SITE.slug )
-				? () =>
-						navigate(
-							currentStep === STEPS.PICK_SITE.slug
-								? paths.plansPath( {
-										from: fromQueryParam,
-										platform: platformQueryParam,
-										host: hostQueryParam,
-									} )
-								: paths.siteCheckPath( {
-										from: fromQueryParam,
-										platform: platformQueryParam,
-										host: hostQueryParam,
-									} )
-						)
-				: undefined;
+		) {
+			goBack = () =>
+				replace(
+					currentStep === STEPS.PICK_SITE.slug
+						? paths.plansPath( {
+								from: fromQueryParam,
+								platform: platformQueryParam,
+								host: hostQueryParam,
+							} )
+						: paths.siteCheckPath( {
+								from: fromQueryParam,
+								platform: platformQueryParam,
+								host: hostQueryParam,
+							} )
+				);
+		}
 		return { submit, exitFlow, goBack };
 	},
 };

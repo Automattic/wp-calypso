@@ -8,9 +8,10 @@ import { isCurrentUserLoggedIn } from '@automattic/data-stores/src/user/selector
 import { WORDPRESS_MIGRATION_FLOW } from '@automattic/onboarding';
 import { act, waitFor } from '@testing-library/react';
 import nock from 'nock';
-import { MemoryRouter, useLocation } from 'react-router';
+import { MemoryRouter, useLocation, useNavigationType } from 'react-router';
 import { HOW_TO_MIGRATE_OPTIONS } from 'calypso/landing/stepper/constants';
 import { useFlowNavigation } from 'calypso/landing/stepper/declarative-flow/internals/hooks/use-flow-navigation';
+import { useStepNavigationWithTracking } from 'calypso/landing/stepper/declarative-flow/internals/hooks/use-step-navigation-with-tracking';
 import { useFlowState } from 'calypso/landing/stepper/declarative-flow/internals/state-manager/store';
 import { STEPS } from 'calypso/landing/stepper/declarative-flow/internals/steps';
 import registeredFlows from 'calypso/landing/stepper/declarative-flow/registered-flows';
@@ -80,6 +81,126 @@ describe( 'Site Migration Flow', () => {
 		nock( apiBaseUrl ).get( testSettingsEndpoint ).reply( 200, {} );
 		nock( apiBaseUrl ).post( testSettingsEndpoint ).reply( 200, {} );
 		nock( apiBaseUrl ).post( '/wpcom/v2/guides/trigger' ).reply( 200, {} );
+	} );
+
+	describe( 'browser-history Back navigation', () => {
+		afterEach( () => {
+			window.location.search = '';
+		} );
+
+		it( 'returns through picker, plans, result, address and the entry page without a loop', () => {
+			jest
+				.spyOn( config, 'isEnabled' )
+				.mockImplementation( ( flag ) => flag === 'migration/reprint-flow' );
+			jest.spyOn( window.history, 'length', 'get' ).mockReturnValue( 2 );
+			const browserBack = jest.spyOn( window.history, 'back' ).mockImplementation( () => {} );
+			const search =
+				'?source=sites-dashboard&ref=new-site-popover&sessionId=abc&flags=migration%2Freprint-flow';
+			window.location.search = search;
+			const addressPath = '/site-migration/site-migration-identify';
+			const { result } = renderHookWithProvider(
+				() => {
+					const { navigate, params } = useFlowNavigation( siteMigrationFlow );
+					const navigation = useStepNavigationWithTracking( {
+						flow: siteMigrationFlow,
+						currentStepRoute: params.step,
+						navigate,
+					} );
+					return { navigation, location: useLocation() };
+				},
+				{
+					wrapper: ( { children } ) => (
+						<MemoryRouter
+							basename="/setup"
+							initialEntries={ [ '/setup/previous-page', `/setup${ addressPath }${ search }` ] }
+							initialIndex={ 1 }
+						>
+							{ children }
+						</MemoryRouter>
+					),
+				}
+			);
+			const source = {
+				from: 'https://wordpress.org/',
+				platform: 'wordpress',
+				host: 'automattic',
+				isWpcom: false,
+			};
+			act( () => result.current.navigation.submit( { action: 'continue', ...source } ) );
+			expect( result.current.location.pathname ).toBe( '/site-migration/site-migration-check' );
+			act( () => result.current.navigation.submit( { action: 'continue', ...source } ) );
+			expect( result.current.location.pathname ).toBe( '/site-migration/plans' );
+			act( () => result.current.navigation.submit( { action: 'select-existing-site' } ) );
+			expect( result.current.location.pathname ).toBe( '/site-migration/sitePicker' );
+			act( () => result.current.navigation.goBack() );
+			expect( result.current.location.pathname ).toBe( '/site-migration/plans' );
+			act( () => result.current.navigation.goBack() );
+			expect( result.current.location.pathname ).toBe( '/site-migration/site-migration-check' );
+			act( () => result.current.navigation.goBack() );
+			expect( result.current.location.pathname ).toBe( addressPath );
+			expect( result.current.location.search ).toBe( search );
+			act( () => result.current.navigation.goBack() );
+			expect( result.current.location.pathname ).toBe( '/previous-page' );
+			expect( browserBack ).not.toHaveBeenCalled();
+		} );
+
+		it.each( [ true, false ] )(
+			'does not add address Back without history (flag: %s)',
+			( enabled ) => {
+				jest.spyOn( config, 'isEnabled' ).mockReturnValue( enabled );
+				jest.spyOn( window.history, 'length', 'get' ).mockReturnValue( 1 );
+				const { result } = renderHookWithProvider(
+					() =>
+						siteMigrationFlow.useStepNavigation( STEPS.SITE_MIGRATION_IDENTIFY.slug, jest.fn() ),
+					{ wrapper: MemoryRouter }
+				);
+				expect( result.current.goBack ).toBeUndefined();
+			}
+		);
+
+		it( 'replaces a direct result entry with address entry when there is no history', () => {
+			jest.spyOn( config, 'isEnabled' ).mockReturnValue( true );
+			jest.spyOn( window.history, 'length', 'get' ).mockReturnValue( 1 );
+			const search = '?from=https%3A%2F%2Fwordpress.org%2F&platform=wordpress&sessionId=abc';
+			window.location.search = search;
+			const { result } = renderHookWithProvider(
+				() => {
+					const { navigate, params } = useFlowNavigation( siteMigrationFlow );
+					const navigation = useStepNavigationWithTracking( {
+						flow: siteMigrationFlow,
+						currentStepRoute: params.step,
+						navigate,
+					} );
+					return { navigation, location: useLocation(), navigationType: useNavigationType() };
+				},
+				{
+					wrapper: ( { children } ) => (
+						<MemoryRouter
+							basename="/setup"
+							initialEntries={ [ `/setup/site-migration/site-migration-check${ search }` ] }
+						>
+							{ children }
+						</MemoryRouter>
+					),
+				}
+			);
+			act( () => result.current.navigation.submit( { action: 'back' } ) );
+			expect( result.current.location.pathname ).toBe( '/site-migration/site-migration-identify' );
+			expect( new URLSearchParams( result.current.location.search ).get( 'sessionId' ) ).toBe(
+				'abc'
+			);
+			expect( result.current.navigationType ).toBe( 'REPLACE' );
+		} );
+
+		it( 'keeps address Back delegated to Stepper when the flag is off', () => {
+			jest.spyOn( config, 'isEnabled' ).mockReturnValue( false );
+			jest.spyOn( window.history, 'length', 'get' ).mockReturnValue( 2 );
+			const { result } = renderHookWithProvider(
+				() => siteMigrationFlow.useStepNavigation( STEPS.SITE_MIGRATION_IDENTIFY.slug, jest.fn() ),
+				{ wrapper: MemoryRouter }
+			);
+			expect( result.current.goBack ).toBeUndefined();
+		} );
 	} );
 
 	afterEach( () => {
