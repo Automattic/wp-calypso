@@ -2,6 +2,7 @@
  * @jest-environment jsdom
  */
 
+import { getAiCreditsTitle, isAiCreditsProductSlug } from '../ai-credits';
 import {
 	CANCEL_FLOW_TYPE,
 	getCancelIntentFromSearch,
@@ -24,7 +25,6 @@ import {
 	isA4ASubscriptionMeta,
 	isA4ABillingDragonPurchase,
 } from '../purchase';
-import { getStudioCodeAiCreditsTitle } from '../studio-code-ai-credits';
 import type { Purchase } from '@automattic/api-core';
 
 function makePurchase( overrides: Partial< Purchase > = {} ): Purchase {
@@ -676,19 +676,27 @@ describe( 'isWithinRefundWindowDowngradeEligible', () => {
 	} );
 } );
 
-describe( 'getStudioCodeAiCreditsTitle', () => {
+describe( 'isAiCreditsProductSlug', () => {
+	test.each( [ 'studio-code-ai-credits', 'wpcom-ai-credits' ] )( 'is true for %s', ( slug ) => {
+		expect( isAiCreditsProductSlug( slug ) ).toBe( true );
+	} );
+
+	test.each( [ 'business-bundle', '', null, undefined ] )( 'is false for %p', ( slug ) => {
+		expect( isAiCreditsProductSlug( slug ) ).toBe( false );
+	} );
+} );
+
+describe( 'getAiCreditsTitle', () => {
 	const STUDIO_NAME = 'Studio Code AI Credits';
 
 	test( 'uses a separator for thousands of credits', () => {
-		expect( getStudioCodeAiCreditsTitle( STUDIO_NAME, 1000 ) ).toBe(
+		expect( getAiCreditsTitle( STUDIO_NAME, 1000 ) ).toBe(
 			'Studio Code AI Credits (1,000 credits)'
 		);
 	} );
 
 	test( 'uses the singular form for one credit', () => {
-		expect( getStudioCodeAiCreditsTitle( STUDIO_NAME, 1 ) ).toBe(
-			'Studio Code AI Credits (1 credit)'
-		);
+		expect( getAiCreditsTitle( STUDIO_NAME, 1 ) ).toBe( 'Studio Code AI Credits (1 credit)' );
 	} );
 } );
 
@@ -710,6 +718,18 @@ describe( 'getTitleForDisplay', () => {
 				} )
 			)
 		).toBe( 'Studio Code AI Credits (500 credits)' );
+	} );
+
+	test( 'shows credit count for an AI Credits purchase', () => {
+		expect(
+			getTitleForDisplay(
+				makePurchase( {
+					product_slug: 'wpcom-ai-credits',
+					product_name: 'AI Credits',
+					renewal_price_tier_usage_quantity: 2500,
+				} )
+			)
+		).toBe( 'AI Credits (2,500 credits)' );
 	} );
 
 	test.each( [ null, undefined, 0 ] )(

@@ -34,6 +34,19 @@ describe( 'getLabel', () => {
 		} );
 	} );
 
+	describe( 'AI Credits', () => {
+		it( 'includes the credit quantity', () => {
+			expect(
+				getLabel( {
+					...getEmptyResponseCartProduct(),
+					product_slug: 'wpcom-ai-credits',
+					product_name: 'AI Credits',
+					quantity: 2500,
+				} )
+			).toBe( 'AI Credits (2,500 credits)' );
+		} );
+	} );
+
 	describe( 'other products', () => {
 		it( 'returns the product name for a plan', () => {
 			const plan = {

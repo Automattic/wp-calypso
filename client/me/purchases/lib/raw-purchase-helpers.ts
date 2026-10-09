@@ -1,4 +1,4 @@
-import { isPurchaseOneTimePurchase, PRODUCT_STUDIO_CODE_AI_CREDITS } from '@automattic/api-core';
+import { isPurchaseOneTimePurchase } from '@automattic/api-core';
 import {
 	findPlansKeys,
 	getAkismetPro500ProductDisplayName,
@@ -24,13 +24,13 @@ import {
 import { formatNumber } from '@automattic/number-formatters';
 import i18n from 'i18n-calypso';
 import moment from 'moment';
+import { getAiCreditsTitle, isAiCreditsProductSlug } from 'calypso/dashboard/utils/ai-credits';
 import {
 	isA4AHoldingSitePurchase,
 	isAgencyPartnerType,
 	isMarketplaceHoldingSitePurchase,
 	isPartnerPurchase,
 } from 'calypso/dashboard/utils/purchase';
-import { getStudioCodeAiCreditsTitle } from 'calypso/dashboard/utils/studio-code-ai-credits';
 import { addPaymentMethod, changePaymentMethod } from '../paths';
 import type { MarketingSurveyResponses, Purchase } from '@automattic/api-core';
 import type { TranslateResult } from 'i18n-calypso';
@@ -256,8 +256,8 @@ export function getDisplayName( purchase: Purchase ): TranslateResult {
 		return jetpackProductsDisplayNames[ productSlug ];
 	}
 
-	if ( PRODUCT_STUDIO_CODE_AI_CREDITS === productSlug && quantity ) {
-		return getStudioCodeAiCreditsTitle( productName, quantity );
+	if ( isAiCreditsProductSlug( productSlug ) && quantity ) {
+		return getAiCreditsTitle( productName, quantity );
 	}
 
 	if ( isTieredVolumeSpaceAddon( purchase ) ) {

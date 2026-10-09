@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 
-import { PRODUCT_STUDIO_CODE_AI_CREDITS } from '@automattic/api-core';
+import { PRODUCT_STUDIO_CODE_AI_CREDITS, PRODUCT_WPCOM_AI_CREDITS } from '@automattic/api-core';
 import { PLAN_PREMIUM } from '@automattic/calypso-products';
 import { checkoutTheme } from '@automattic/composite-checkout';
 import { getEmptyResponseCart, getEmptyResponseCartProduct } from '@automattic/shopping-cart';
@@ -71,6 +71,14 @@ describe( 'CheckoutPayButtonFooter', () => {
 		expect(
 			screen.getByRole( 'button', { name: 'View billing and renewal details' } )
 		).toBeVisible();
+	} );
+
+	it( 'omits the AI Credits Guidelines for a cart containing AI Credits', () => {
+		renderFooter( cartWith( PRODUCT_WPCOM_AI_CREDITS ) );
+
+		expect(
+			screen.queryByRole( 'link', { name: 'AI Credits Guidelines' } )
+		).not.toBeInTheDocument();
 	} );
 
 	it( 'omits the AI Credits Guidelines for any other cart', () => {
