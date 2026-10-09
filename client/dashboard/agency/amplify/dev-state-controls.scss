@@ -1,0 +1,131 @@
+.dashboard-amplify-dev-controls {
+	position: fixed;
+	z-index: 100000;
+	box-sizing: border-box;
+	width: 224px;
+	padding: 10px;
+	border: 1px solid var( --color-neutral-70 );
+	border-radius: 8px;
+	background: color-mix( in srgb, var( --color-neutral-100 ) 92%, transparent );
+	backdrop-filter: blur( 12px );
+	box-shadow: 0 12px 32px var( --color-neutral-70 );
+	color: var( --color-neutral-0 );
+	font-size: 12px;
+}
+
+.dashboard-amplify-dev-controls[data-collapsed='true'] {
+	width: auto;
+}
+
+#dashboard-amplify-dev-controls-body {
+	max-height: calc( 100dvh - 80px );
+	overflow-y: auto;
+	scrollbar-width: thin;
+}
+
+.dashboard-amplify-dev-controls__handle {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	gap: 8px;
+	margin: -10px -10px 10px;
+	padding: 10px;
+	border-block-end: 1px solid var( --color-neutral-70 );
+	cursor: grab;
+	touch-action: none;
+	user-select: none;
+}
+
+.dashboard-amplify-dev-controls__handle:active {
+	cursor: grabbing;
+}
+
+.dashboard-amplify-dev-controls[data-collapsed='true'] .dashboard-amplify-dev-controls__handle {
+	margin-block-end: -10px;
+	border-block-end: 0;
+}
+
+.dashboard-amplify-dev-controls__collapse {
+	padding: 3px 5px;
+	border: 0;
+	background: transparent;
+	color: var( --color-neutral-20 );
+	font: inherit;
+	cursor: pointer;
+}
+
+.dashboard-amplify-dev-controls__collapse:hover {
+	color: var( --color-neutral-0 );
+}
+
+.dashboard-amplify-dev-controls__collapse:focus-visible {
+	outline: 2px solid var( --color-primary );
+	outline-offset: 2px;
+}
+
+.dashboard-amplify-dev-controls fieldset {
+	margin: 0;
+	padding: 0;
+	border: 0;
+}
+
+.dashboard-amplify-dev-controls fieldset + fieldset {
+	margin-block-start: 12px;
+}
+
+.dashboard-amplify-dev-controls legend {
+	margin-block-end: 6px;
+	font-weight: 600;
+}
+
+.dashboard-amplify-dev-controls__choices {
+	display: grid;
+	grid-template-columns: repeat( 2, minmax( 0, 1fr ) );
+	gap: 4px;
+}
+
+.dashboard-amplify-dev-controls__choices label {
+	display: flex;
+	align-items: center;
+	gap: 5px;
+	min-height: 28px;
+	padding: 3px 5px;
+	border: 1px solid var( --color-neutral-50 );
+	border-radius: 4px;
+	background: var( --color-neutral-90 );
+	cursor: pointer;
+}
+
+.dashboard-amplify-dev-controls__choices label:has( input:checked ) {
+	border-color: var( --color-primary );
+	background: var( --color-neutral-80 );
+}
+
+.dashboard-amplify-dev-controls__choices label:has( input:focus-visible ) {
+	outline: 2px solid var( --color-primary );
+	outline-offset: 2px;
+}
+
+.dashboard-amplify-dev-controls input[type='radio'] {
+	flex: none;
+	margin: 0;
+	accent-color: var( --color-primary );
+}
+
+.dashboard-amplify-dev-controls__reset {
+	width: 100%;
+	margin-block: 10px;
+	padding: 2px;
+	border: 0;
+	background: transparent;
+	color: var( --color-neutral-20 );
+	text-align: start;
+	text-decoration: underline;
+	cursor: pointer;
+}
+
+.dashboard-amplify-dev-controls__reset:focus-visible,
+.dashboard-amplify-dev-controls input:focus-visible {
+	outline: 2px solid var( --color-primary );
+	outline-offset: 2px;
+}
