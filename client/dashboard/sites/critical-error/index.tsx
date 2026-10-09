@@ -20,7 +20,7 @@ import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { SectionHeader } from '../../components/section-header';
 import { Text } from '../../components/text';
-import { canAccessSftpSettings, hasHostingFeature } from '../../utils/site-features';
+import { hasHostingFeature } from '../../utils/site-features';
 import {
 	getJetpackCriticalErrorMessage,
 	getJetpackRecoverySessionErrors,
@@ -78,7 +78,8 @@ const SiteCriticalError = ( { siteSlug }: { siteSlug: string } ) => {
 		isAdmin &&
 		siteTypeSupportsFeature( site, 'logs' ) &&
 		hasHostingFeature( site, HostingFeatures.LOGS );
-	const canAccessSftp = canAccessSftpSettings( site );
+	// Deliberately ignores the plan: the SFTP/SSH settings page upsells sites that lack the feature.
+	const canViewSftpSshSettingsRoute = isAdmin && siteTypeSupportsFeature( site, 'settingsServer' );
 	const hasRecovered = ! isInJetpackCriticalErrorState( site );
 
 	useEffect( () => {
@@ -140,7 +141,7 @@ const SiteCriticalError = ( { siteSlug }: { siteSlug: string } ) => {
 			),
 		} );
 	}
-	if ( canAccessSftp ) {
+	if ( canViewSftpSshSettingsRoute ) {
 		items.push( {
 			icon: file,
 			text: createInterpolateElement(
@@ -150,7 +151,11 @@ const SiteCriticalError = ( { siteSlug }: { siteSlug: string } ) => {
 					sftpLink: (
 						<Link
 							to={ `/sites/${ siteSlug }/settings/sftp-ssh` }
-							onClick={ () => recordTracksEvent( 'calypso_dashboard_critical_error_sftp_click' ) }
+							onClick={ () =>
+								recordTracksEvent( 'calypso_dashboard_critical_error_sftp_click', {
+									has_sftp_feature: hasHostingFeature( site, HostingFeatures.SFTP ),
+								} )
+							}
 						>
 							{ __( 'Connect over SFTP/SSH' ) }
 						</Link>

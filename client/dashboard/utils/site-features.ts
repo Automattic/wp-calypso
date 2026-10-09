@@ -1,5 +1,4 @@
-import { DotcomFeatures, HostingFeatures } from '@automattic/api-core';
-import { siteTypeSupportsFeature } from './site-type-feature-support';
+import { DotcomFeatures } from '@automattic/api-core';
 import type {
 	DotcomFeatureSlug,
 	HostingFeatureSlug,
@@ -30,14 +29,6 @@ export function hasHostingFeature( site: Site, feature: HostingFeatureSlug ) {
 		}
 	}
 	return hasPlanFeature( site, feature );
-}
-
-export function canAccessSftpSettings( site: Site ) {
-	return (
-		!! site.capabilities?.manage_options &&
-		siteTypeSupportsFeature( site, 'settingsServer' ) &&
-		hasHostingFeature( site, HostingFeatures.SFTP )
-	);
 }
 
 export function hasJetpackModule( site: Site, module: `${ JetpackModuleSlug }` ) {
