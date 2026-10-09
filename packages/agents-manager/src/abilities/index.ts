@@ -58,8 +58,7 @@ function loadEditorAbilities(): Promise< EditorAbilitiesModule > | null {
 const ALL_SURFACE_ABILITIES: Ability[] = [ wpAdminNavigateAbility ];
 
 // A failed chunk load (already logged and set up to retry above) degrades to
-// the all-surface list — editor tool calls then fall through to the provider
-// copies.
+// the all-surface list until a later call loads the chunk.
 async function getOwnedAbilities(): Promise< Ability[] > {
 	let editorAbilities: Ability[] = [];
 	try {
@@ -75,11 +74,11 @@ async function getOwnedAbilities(): Promise< Ability[] > {
 /**
  * Serves AM-owned abilities to the agent's tool pipeline. Tool calls resolve
  * through the provider chain first-write-wins by ability name, and this
- * provider is placed before the external ones — so each migrated ability
- * executes through AM even if a provider still ships its copy.
+ * provider is placed before the external ones, so AM's abilities run ahead of
+ * any provider ability with the same name.
  *
- * Off the editor only the all-surface abilities are owned; everything else
- * falls through to the provider copies and the editor chunk stays unloaded.
+ * Off the editor only the all-surface abilities are owned; everything else is
+ * left to the providers and the editor chunk stays unloaded.
  */
 export const amToolProvider: ToolProvider = {
 	getAbilities: getOwnedAbilities,
