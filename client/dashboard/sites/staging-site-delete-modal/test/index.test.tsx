@@ -94,10 +94,9 @@ describe( 'StagingSiteDeleteModal', () => {
 		test( 'displays cancel and delete buttons', async () => {
 			mockProductionSite();
 			render( <StagingSiteDeleteModal site={ mockStagingSite } onClose={ jest.fn() } /> );
-			await waitFor( () => expect( getButton( 'Delete staging site' ) ).toBeEnabled() );
 
 			expect( getButton( 'Cancel' ) ).toBeInTheDocument();
-			expect( getButton( 'Delete staging site' ) ).toBeInTheDocument();
+			await waitFor( () => expect( getButton( 'Delete staging site' ) ).toBeEnabled() );
 		} );
 
 		test( 'returns null when no production site ID is provided', () => {
