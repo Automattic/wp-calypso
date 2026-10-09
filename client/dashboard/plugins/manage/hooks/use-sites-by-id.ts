@@ -8,8 +8,12 @@ export const useSitesById = () => {
 
 	const map = new Map< number, Site >();
 
-	if ( isLoadingSites || ! sites ) {
+	if ( isLoadingSites ) {
 		return { isLoadingSites, sitesById: map };
+	}
+
+	if ( ! sites ) {
+		return { isLoadingSites, sitesById: undefined };
 	}
 
 	const sitesById = sites

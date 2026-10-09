@@ -22,7 +22,7 @@ export const PluginSwitcher = ( {
 	onChangeView,
 	paginationInfo,
 }: {
-	pluginsWithIcon: PluginListRow[];
+	pluginsWithIcon?: PluginListRow[];
 	searchableFields: Field< PluginListRow >[];
 	selectedPluginSlug?: string;
 	view: View;
@@ -131,6 +131,7 @@ export const PluginSwitcher = ( {
 					view={ view }
 					onChangeView={ onChangeView }
 					items={ pluginsWithIcon }
+					loading={ { itemCount: 10, hasMedia: true, hasDescription: true, spacing: 3 } }
 					resetScroll={ false }
 					getItemUrl={ ( item ) => pluginRoute.to.replace( '$pluginId', item.slug ) }
 					renderItem={ renderItem }
@@ -141,7 +142,7 @@ export const PluginSwitcher = ( {
 					filter={
 						<PluginUpdatesFilter
 							siteCount={
-								pluginsWithIcon.filter( ( plugin ) => plugin.sitesWithPluginUpdate.length > 0 )
+								pluginsWithIcon?.filter( ( plugin ) => plugin.sitesWithPluginUpdate.length > 0 )
 									.length
 							}
 							updatesField={ updatesField }
