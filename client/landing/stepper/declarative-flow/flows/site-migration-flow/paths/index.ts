@@ -55,7 +55,14 @@ export const siteCreationPath = buildPathHelper<
 
 export const sitePickerPath = buildPathHelper<
 	{
-		queryParams: { from: string | null; platform: ImporterPlatform; ssh?: string; host?: string };
+		queryParams: {
+			from: string | null;
+			platform: ImporterPlatform;
+			ssh?: string;
+			host?: string;
+			siteId?: number | '';
+			siteSlug?: string;
+		};
 	},
 	typeof STEPS.PICK_SITE.slug
 >( STEPS.PICK_SITE.slug );
@@ -95,7 +102,14 @@ export const wordpressMigrationPath = buildPathHelper< {
 
 export const siteCheckPath = buildPathHelper<
 	{
-		queryParams: { from: string; platform: ImporterPlatform; host?: string; isWpcom?: boolean };
+		queryParams: {
+			from: string;
+			platform: ImporterPlatform;
+			host?: string;
+			isWpcom?: boolean;
+			siteId?: number;
+			siteSlug?: string;
+		};
 	},
 	typeof STEPS.SITE_MIGRATION_CHECK.slug
 >( STEPS.SITE_MIGRATION_CHECK.slug );
