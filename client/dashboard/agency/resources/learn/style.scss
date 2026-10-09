@@ -147,8 +147,9 @@ $resource-brands: (
 	font: inherit;
 	cursor: pointer;
 
+	// Darkened rather than recoloured, so each badge keeps its intent's colour.
 	&:hover > * {
-		background-color: $gray-200;
+		filter: brightness( 0.95 );
 	}
 
 	&:focus-visible {

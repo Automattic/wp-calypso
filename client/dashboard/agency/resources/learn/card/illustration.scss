@@ -14,7 +14,7 @@
 }
 
 @media ( prefers-reduced-motion: no-preference ) {
-	.dashboard-resources-learn__card:is( :hover, :focus-within ),
+	.dashboard-resources-learn__card:is( :hover, :has( :focus-visible ) ),
 	.dashboard-resources-learn__preview[data-loading] {
 		.dashboard-resource-illustration__video-button {
 			transform-origin: 56px 36px;

@@ -1,7 +1,7 @@
 import { agencyResourceEventMutation } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
 import { __experimentalSpacer as Spacer, __experimentalText as Text } from '@wordpress/components';
-import { getQueryArg } from '@wordpress/url';
+import { getQueryArg, removeQueryArgs } from '@wordpress/url';
 import { useCallback, useMemo, useState } from 'react';
 import { DEFAULT_VIEW } from 'calypso/dashboard/agency/resources/learn/dataviews/views';
 import ResourceCenter, {
@@ -37,6 +37,17 @@ export default function ResourceCenterOverviewContent( {
 		const id = Number( getQueryArg( window.location.href, 'resource' ) );
 		return Number.isInteger( id ) && id > 0 ? id : null;
 	} );
+	const selectResource = useCallback( ( id: number | null ) => {
+		setSelectedId( id );
+		// Drop the linked resource from the address once closed, so a reload doesn't reopen it.
+		if ( id === null ) {
+			window.history.replaceState(
+				window.history.state,
+				'',
+				removeQueryArgs( window.location.href, 'resource' )
+			);
+		}
+	}, [] );
 
 	const recordTracks = useCallback(
 		( eventName: string, properties?: Record< string, unknown > ) => {
@@ -67,7 +78,7 @@ export default function ResourceCenterOverviewContent( {
 				recordTracksEvent={ recordTracks }
 				onResourceClick={ handleResourceClick }
 				selectedId={ selectedId }
-				onSelectedIdChange={ setSelectedId }
+				onSelectedIdChange={ selectResource }
 			/>
 		</>
 	);
