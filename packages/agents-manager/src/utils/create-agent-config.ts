@@ -13,7 +13,7 @@ import { getExternalContextEntries } from './external-context';
 import { getAgentsManagerInlineData } from './get-agents-manager-inline-data';
 import { isReaderChatAgent } from './is-reader-chat-agent';
 import { getClientConstructorArguments, getSiteEditorActions } from './site-editor-context';
-import { getIsA11n, getIsTest } from './tracks';
+import { getAgentsManagerSurface, getIsA11n, getIsTest } from './tracks';
 import { getTurnId } from './turn-id';
 import type { ContextEntry, ToolProvider, ContextProvider } from '../extension-types';
 import type { UseAgentChatConfig, Ability as AgenticAbility } from '@automattic/agenttic-client';
@@ -125,12 +125,16 @@ function getProviderIdsContext( providerIds?: string[] ): { loadedProviderIds?: 
 	return providerIds?.length ? { loadedProviderIds: providerIds } : {};
 }
 
-/** Only the host's explicit opt-in is sent: the server records nothing without it. */
+/**
+ * Only the host's explicit opt-in is sent: the server records nothing without it.
+ * `surface` is the browser events' value, so the server's events carry the same one.
+ */
 function getTrackingContext(): {
 	isTrackingAllowed?: boolean;
 	turnId?: string;
 	isTest: boolean;
 	isA11n?: boolean;
+	surface: string;
 } {
 	const isTrackingAllowed = getAgentsManagerInlineData()?.isTrackingAllowed;
 	const turnId = getTurnId();
@@ -140,6 +144,7 @@ function getTrackingContext(): {
 		...( turnId && { turnId } ),
 		isTest: getIsTest(),
 		...( isA11n !== undefined && { isA11n } ),
+		surface: getAgentsManagerSurface(),
 	};
 }
 
