@@ -17,6 +17,7 @@ export default function ResourceLink( { resource, className, onSelect }: Resourc
 		<a
 			className={ className }
 			href={ `?resource=${ resource.id }` }
+			data-resource-id={ resource.id }
 			aria-haspopup="dialog"
 			onClick={ ( event ) => onSelect( resource, event ) }
 		>
