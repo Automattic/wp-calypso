@@ -23,7 +23,11 @@ import {
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import { useQuery } from '../../../hooks/use-query';
 import { ONBOARD_STORE, SITE_STORE } from '../../../stores';
-import { commerceUsesBuildWow, getBuildWowSiteSpecUrl } from '../../../utils/build-wow';
+import {
+	BUILD_WOW_SITE_SPEC_PATH,
+	commerceUsesBuildWow,
+	getBuildWowSiteSpecUrl,
+} from '../../../utils/build-wow';
 import { planSupportsBuildWow } from '../../../utils/build-wow-plans';
 import { stepsWithRequiredLogin } from '../../../utils/steps-with-required-login';
 import { STEPS } from '../../internals/steps';
@@ -189,6 +193,13 @@ const aiSiteBuilderOnboarding: FlowV2< typeof initialize > = {
 					const destination = query.get( 'redirect_to' );
 					if ( ! siteSlug || ! destination ) {
 						return navigate( STEPS.ERROR.slug );
+					}
+
+					// Only for checkouts started before build-wow skipped this wait, which
+					// persisted it as the destination. Remove after one deploy cycle.
+					if ( destination.startsWith( `${ BUILD_WOW_SITE_SPEC_PATH }?` ) ) {
+						window.location.replace( destination );
+						return;
 					}
 
 					let editorUrl: URL;
