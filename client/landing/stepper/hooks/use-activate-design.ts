@@ -6,7 +6,6 @@ import { SITE_STORE } from 'calypso/landing/stepper/stores';
 import { useDispatch as useReduxDispatch } from 'calypso/state';
 import { setActiveTheme, activateOrInstallThenActivate } from 'calypso/state/themes/actions';
 import { useSiteData } from './use-site-data';
-import type { SiteSelect } from '@automattic/data-stores';
 import type { Design, DesignOptions } from '@automattic/design-picker';
 import type { AnyAction } from 'redux';
 import type { ThunkAction } from 'redux-thunk';
@@ -15,12 +14,12 @@ export const useActivateDesign = () => {
 	const reduxDispatch = useReduxDispatch();
 	const { site } = useSiteData();
 	const isJetpack = useSelect(
-		( select ) => site?.ID && ( select( SITE_STORE ) as SiteSelect ).isJetpackSite( site?.ID ),
+		( select ) => site?.ID && select( SITE_STORE ).isJetpackSite( site?.ID ),
 		[ site?.ID ]
 	);
 
 	const isAtomic = useSelect(
-		( select ) => site?.ID && ( select( SITE_STORE ) as SiteSelect ).isSiteAtomic( site.ID ),
+		( select ) => site?.ID && select( SITE_STORE ).isSiteAtomic( site.ID ),
 		[ site?.ID ]
 	);
 
@@ -30,14 +29,17 @@ export const useActivateDesign = () => {
 
 	const activateDesign = useCallback(
 		async ( design: Design, designOptions: DesignOptions ) => {
+			if ( ! site?.ID ) {
+				throw new Error( 'Unable to load site details' );
+			}
 			const themeId = getThemeIdFromStylesheet( design.recipe?.stylesheet ?? '' ) ?? '';
 			if ( design?.is_virtual ) {
 				const activeThemeStylesheet = await reduxDispatch(
-					activateOrInstallThenActivate( themeId, site?.ID ?? 0, {
+					activateOrInstallThenActivate( themeId, site.ID, {
 						source: 'assembler',
 					} ) as ThunkAction< PromiseLike< string >, any, any, AnyAction >
 				);
-				await assembleSite( site?.ID, activeThemeStylesheet, {
+				await assembleSite( site.ID, activeThemeStylesheet, {
 					homeHtml: design.recipe?.pattern_html,
 					headerHtml: design.recipe?.header_html,
 					footerHtml: design.recipe?.footer_html,
@@ -50,7 +52,7 @@ export const useActivateDesign = () => {
 			let isNewlyInstalledTheme = false;
 			if ( isJetpackOrAtomic ) {
 				try {
-					await installTheme( site?.ID, themeId );
+					await installTheme( site.ID, themeId );
 					isNewlyInstalledTheme = true;
 				} catch ( error: any ) {
 					if ( error.error !== 'theme_already_installed' ) {
@@ -59,7 +61,7 @@ export const useActivateDesign = () => {
 				}
 			}
 
-			const activeTheme = await setDesignOnSite( site?.ID, design, {
+			const activeTheme = await setDesignOnSite( String( site.ID ), design, {
 				enableThemeSetup: ! isJetpackOrAtomic,
 				...designOptions,
 				// Prevent resetting global styles when a theme was recently installed generating an fatal error.
@@ -71,7 +73,7 @@ export const useActivateDesign = () => {
 						: designOptions.styleVariation,
 			} );
 
-			await reduxDispatch( setActiveTheme( site?.ID || -1, activeTheme ) );
+			await reduxDispatch( setActiveTheme( site.ID, activeTheme ) );
 		},
 		[
 			site,

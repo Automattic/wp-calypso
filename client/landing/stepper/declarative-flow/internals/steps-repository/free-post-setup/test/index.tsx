@@ -38,6 +38,7 @@ describe( 'Onboarding Free Flow - FreeSetup', () => {
 
 	describe( 'Initial screen render', () => {
 		it( 'should render successfully', async () => {
+			useSiteMock.mockReturnValue( null );
 			useDispatchMock.mockImplementation( () => {
 				return { saveSiteSettings: jest.fn() };
 			} );

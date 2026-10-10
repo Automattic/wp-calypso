@@ -2,7 +2,7 @@ import { useDispatch, useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { useEffect, useRef } from 'react';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
-import { useSite } from 'calypso/landing/stepper/hooks/use-site';
+import { useSiteQuery } from 'calypso/landing/stepper/hooks/use-site';
 import { ONBOARD_STORE, SITE_STORE } from 'calypso/landing/stepper/stores';
 import {
 	createRevertedTransferWatcher,
@@ -12,8 +12,6 @@ import {
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import wpcom from 'calypso/lib/wp';
 import type { Step } from '../../types';
-import type { SiteSelect } from '@automattic/data-stores';
-import type { CurriedSelectorsOf, StoreDescriptor } from '@wordpress/data';
 
 const TIME_CHECK_TRANSFER_STATUS = 3000;
 const TRANSFER_TIMEOUT = 1000 * 300;
@@ -22,32 +20,22 @@ const wait = ( ms: number ) => new Promise( ( res ) => setTimeout( res, ms ) );
 
 const AutomatedCopySite: Step = function AutomatedCopySite( { navigation } ) {
 	const { submit, exitFlow } = navigation;
-	const site = useSite();
+	const { data: site, isError: isDestinationError } = useSiteQuery();
 	const urlQueryParams = useQuery();
 	const siteSlug = urlQueryParams.get( 'siteSlug' );
 	const sourceSlug = urlQueryParams.get( 'sourceSlug' );
-	const { sourceSiteId, hasResolvedDestinationSite } = useSelect(
-		( select ) => {
-			const siteStore = select( SITE_STORE ) as SiteSelect &
-				Pick< CurriedSelectorsOf< StoreDescriptor >, 'hasFinishedResolution' >;
-			return {
-				sourceSiteId: sourceSlug ? siteStore.getSite( sourceSlug )?.ID : undefined,
-				hasResolvedDestinationSite:
-					!! siteSlug && siteStore.hasFinishedResolution( 'getSite', [ siteSlug ] ),
-			};
-		},
-		[ sourceSlug, siteSlug ]
-	);
+	const { data: sourceSite } = useSiteQuery( sourceSlug ?? undefined );
+	const sourceSiteId = sourceSlug ? sourceSite?.ID : undefined;
 	const { setPendingAction, setProgress } = useDispatch( ONBOARD_STORE );
 	const { requestLatestAtomicTransfer } = useDispatch( SITE_STORE );
 	const { getSiteLatestAtomicTransfer, getSiteLatestAtomicTransferError } = useSelect(
-		( select ) => select( SITE_STORE ) as SiteSelect,
+		( select ) => select( SITE_STORE ),
 		[]
 	);
 	const instanceRef = useRef< { siteId?: number; sourceSiteId?: number } >( {} );
 
 	useEffect( () => {
-		if ( hasResolvedDestinationSite && ! site?.ID ) {
+		if ( isDestinationError ) {
 			exitFlow?.( '/sites' );
 			return;
 		}
@@ -158,7 +146,7 @@ const AutomatedCopySite: Step = function AutomatedCopySite( { navigation } ) {
 		exitFlow,
 		getSiteLatestAtomicTransfer,
 		getSiteLatestAtomicTransferError,
-		hasResolvedDestinationSite,
+		isDestinationError,
 		requestLatestAtomicTransfer,
 		setPendingAction,
 		setProgress,

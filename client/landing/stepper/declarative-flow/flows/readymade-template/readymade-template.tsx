@@ -28,6 +28,7 @@ import {
 	ProvidedDependencies,
 } from '../../internals/types';
 import type { GlobalStylesObject } from '@automattic/global-styles';
+import type { ActionCreatorsOf } from '@wordpress/data';
 import type { AnyAction } from 'redux';
 import type { ThunkAction } from 'redux-thunk';
 
@@ -125,8 +126,12 @@ const readymadeTemplateFlow: Flow = {
 					}
 
 					// If the user's site has just been launched.
-					if ( providedDependencies?.siteSlug && providedDependencies?.isLaunched ) {
-						await saveSiteSettings( providedDependencies?.siteSlug, {
+					if (
+						typeof providedDependencies?.siteSlug === 'string' &&
+						providedDependencies.siteSlug &&
+						providedDependencies?.isLaunched
+					) {
+						await saveSiteSettings( siteId, {
 							launchpad_screen: 'off',
 						} );
 						return navigate( 'celebration-step' );
@@ -222,25 +227,7 @@ function enableAssemblerThemeAndConfigureTemplates(
 	siteSlug: string,
 	readymadeTemplate: ReadymadeTemplate & { globalStyles: GlobalStylesObject },
 	navigate: Navigate,
-	assembleSite: (
-		arg0: any,
-		arg1: string,
-		arg2: {
-			/**
-			 * @todo Separate the content in 3 sections. Ideally the entire template configuration should be done one the server, see the above comment.
-			 *
-			 * For now we piggyback on Site Assembler's API endpoint to apply the template on the site.
-			 */
-			homeHtml: any;
-			headerHtml: string;
-			footerHtml: string;
-			pages: never[];
-			globalStyles: object;
-			canReplaceContent: boolean;
-			// All sites using the assembler set the option wpcom_site_setup
-			siteSetupOption: string;
-		}
-	) => Promise< never >,
+	assembleSite: ActionCreatorsOf< typeof SITE_STORE >[ 'assembleSite' ],
 	reduxDispatch: CalypsoDispatch
 ) {
 	/**
