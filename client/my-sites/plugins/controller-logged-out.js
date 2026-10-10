@@ -27,10 +27,7 @@ const PREFETCH_TIMEOUT_BOTS = 10000;
 const PREFETCH_TIMEOUT_ERROR = 'plugins prefetch timeout';
 
 export function setPluginsResultsPageSSR( context, next ) {
-	if (
-		context.query.s ||
-		( getCategoryForPluginsBrowser( context ) && context.query.page !== undefined )
-	) {
+	if ( context.query.s || getCategoryForPluginsBrowser( context ) ) {
 		context.serverSideRender = true;
 	}
 	next();

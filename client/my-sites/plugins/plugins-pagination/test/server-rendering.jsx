@@ -6,6 +6,7 @@ import { Provider } from 'react-redux';
 import { createStore } from 'redux';
 import { getESPluginsQueryParams } from 'calypso/data/marketplace/use-es-query';
 import wpcom from 'calypso/lib/wp';
+import { getPluginsPageUrl } from '..';
 import {
 	fetchCategoryPlugins,
 	fetchPlugins,
@@ -49,13 +50,21 @@ test( 'preserves the default SSR decision for other discovery requests', () => {
 	expect( context.serverSideRender ).toBe( false );
 } );
 
-test.each( [ 'popular', 'seo', 'wpbeginner', 'search', 'paid', 'featured' ] )(
-	'prefetches and renders page 2 of %s using the client query',
-	async ( category ) => {
+test.each( [
+	...[ 'popular', 'seo', 'wpbeginner', 'search', 'paid', 'featured' ].map( ( category ) => ( {
+		category,
+		page: 2,
+	} ) ),
+	{ category: 'seo', page: 1 },
+] )(
+	'prefetches and renders page $page of $category using the client query',
+	async ( { category, page: currentPage } ) => {
 		const isSearch = category === 'search';
-		const path = isSearch
+		const secondPagePath = isSearch
 			? '/es/plugins?s=contact+form&page=2&source=test'
 			: `/es/plugins/browse/${ category }?page=2&source=test`;
+		const path = getPluginsPageUrl( secondPagePath, currentPage );
+		const query = Object.fromEntries( new URL( path, 'https://wordpress.com' ).searchParams );
 		const queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
 		const store = createStore( ( state ) => state, {
 			currentUser: { id: null },
@@ -65,7 +74,8 @@ test.each( [ 'popular', 'seo', 'wpbeginner', 'search', 'paid', 'featured' ] )(
 			path,
 			lang: 'es',
 			params: isSearch ? {} : { category },
-			query: { page: '2', ...( isSearch && { s: 'contact form' } ) },
+			query,
+			serverSideRender: false,
 			queryClient,
 			store,
 			isServerSide: true,
@@ -74,6 +84,8 @@ test.each( [ 'popular', 'seo', 'wpbeginner', 'search', 'paid', 'featured' ] )(
 				req: { useragent: { isBot: false }, logger: { error: jest.fn() } },
 			},
 		};
+		setPluginsResultsPageSSR( context, jest.fn() );
+		expect( context.serverSideRender ).toBe( true );
 		const completeList = Array.from( { length: 45 }, ( _, index ) => ( {
 			slug: `local-${ index }`,
 			name: `Local ${ index }`,
@@ -107,7 +119,7 @@ test.each( [ 'popular', 'seo', 'wpbeginner', 'search', 'paid', 'featured' ] )(
 		const next = jest.fn();
 		await ( isSearch ? fetchPlugins : fetchCategoryPlugins )( context, next );
 		expect( next ).toHaveBeenCalledTimes( 1 );
-		const props = { path, page: 2, sites: [], isLoggedIn: false };
+		const props = { path, page: currentPage, sites: [], isLoggedIn: false };
 		const page = isSearch ? (
 			<PluginsSearchResultPage
 				{ ...props }
@@ -126,10 +138,16 @@ test.each( [ 'popular', 'seo', 'wpbeginner', 'search', 'paid', 'featured' ] )(
 		);
 		i18n.setLocale();
 		const local = [ 'paid', 'featured' ].includes( category );
-		expect( html ).toContain( local ? 'Local 20' : 'Offset 20' );
-		expect( html ).not.toContain( local ? '>Local 0<' : '>Offset 0<' );
-		expect( html ).toContain( 'Page 2 of' );
-		expect( html ).toContain( 'rel="prev"' );
+		const offset = ( currentPage - 1 ) * 20;
+		expect( html ).toContain( local ? `Local ${ offset }` : `Offset ${ offset }` );
+		expect( html.includes( local ? '>Local 0<' : '>Offset 0<' ) ).toBe( currentPage === 1 );
+		expect( html.includes( 'rel="prev"' ) ).toBe( currentPage > 1 );
+		expect( query ).toEqual( {
+			source: 'test',
+			...( currentPage > 1 && { page: String( currentPage ) } ),
+			...( isSearch && { s: 'contact form' } ),
+		} );
+		expect( html ).toContain( `Page ${ currentPage } of` );
 		expect( html ).toContain( 'rel="next"' );
 		expect( html ).toContain( 'source=test' );
 		expect( html ).toContain( isSearch ? 's=contact+form' : `/es/plugins/browse/${ category }?` );
