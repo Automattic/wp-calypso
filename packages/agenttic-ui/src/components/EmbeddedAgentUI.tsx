@@ -232,7 +232,12 @@ export function EmbeddedAgentUINotice( {
 		>
 			<span>{ notice.message }</span>
 			{ notice.action?.href !== undefined ? (
-				<a href={ notice.action.href } target={ notice.action.target } rel={ notice.action.rel }>
+				<a
+					href={ notice.action.href }
+					target={ notice.action.target }
+					rel={ notice.action.rel }
+					onClick={ notice.action.onClick }
+				>
 					{ notice.action.label }
 				</a>
 			) : (

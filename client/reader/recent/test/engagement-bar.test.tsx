@@ -75,7 +75,9 @@ describe( 'EngagementBar', () => {
 				feed_item_ID: 300,
 				global_ID: 'global-1',
 				title: 'Fetched post',
-			} );
+			} )
+			// Persist so that a refetch left in flight by the previous test can't use up the mock.
+			.persist();
 
 		renderWithProviders( queryClient, <EngagementBar feedId={ 200 } postId={ 300 } /> );
 

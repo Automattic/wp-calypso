@@ -17,7 +17,7 @@ interface ResourceCardProps {
 	showLogo?: boolean;
 	showPreviewImage?: boolean;
 	tracksEventName: string;
-	isBorderless?: boolean;
+	isPlain?: boolean;
 }
 
 export default function ResourceCard( {
@@ -28,7 +28,7 @@ export default function ResourceCard( {
 	showLogo = false,
 	showPreviewImage = false,
 	tracksEventName,
-	isBorderless = false,
+	isPlain = false,
 }: ResourceCardProps ) {
 	const ctaLabel = useResourceCtaLabel( resource.format );
 	const isVideo = resource.format === 'Video';
@@ -48,33 +48,48 @@ export default function ResourceCard( {
 		onResourceClick?.( resource );
 	};
 
-	return (
-		<Card isBorderless={ isBorderless } size={ isBorderless ? 'none' : undefined }>
-			<CardBody style={ { display: 'flex', flexDirection: 'column', height: '100%' } }>
-				<VStack spacing={ 4 } style={ { flex: 1, justifyContent: 'flex-start' } }>
-					{ showPreviewImage && resource.previewImage && (
-						<CardMedia style={ { borderRadius: '4px' } }>
-							<img src={ resource.previewImage } alt={ resource.name } />
-						</CardMedia>
-					) }
-					{ showLogo && <HStack>{ resource.logo }</HStack> }
-					<VStack spacing={ 1 }>
-						<Text size={ 13 } weight={ 500 }>
-							{ resource.name }
-						</Text>
-						<Text variant="muted" size={ 12 }>
-							{ resource.description }
-						</Text>
-					</VStack>
+	const content = (
+		<>
+			<VStack spacing={ 4 } style={ { flex: 1, justifyContent: 'flex-start' } }>
+				{ showPreviewImage && resource.previewImage && (
+					<CardMedia style={ { borderRadius: '4px' } }>
+						<img src={ resource.previewImage } alt={ resource.name } />
+					</CardMedia>
+				) }
+				{ showLogo && <HStack>{ resource.logo }</HStack> }
+				<VStack spacing={ 1 }>
+					<Text size={ 13 } weight={ 500 }>
+						{ resource.name }
+					</Text>
+					<Text variant="muted" size={ 12 }>
+						{ resource.description }
+					</Text>
 				</VStack>
-				<Button
-					variant="secondary"
-					{ ...( ! isVideo && { href: resource.externalUrl, target: '_blank' } ) }
-					onClick={ handleClick }
-					style={ { marginTop: '24px', alignSelf: 'flex-start' } }
-				>
-					{ ctaLabel }
-				</Button>
+			</VStack>
+			<Button
+				variant="secondary"
+				{ ...( ! isVideo && { href: resource.externalUrl, target: '_blank' } ) }
+				onClick={ handleClick }
+				style={ { marginTop: '24px', alignSelf: 'flex-start' } }
+			>
+				{ ctaLabel }
+			</Button>
+		</>
+	);
+
+	// A Card paints a white surface even without a border, which shows on the grey page.
+	if ( isPlain ) {
+		return (
+			<VStack spacing={ 0 } justify="flex-start" style={ { height: '100%' } }>
+				{ content }
+			</VStack>
+		);
+	}
+
+	return (
+		<Card>
+			<CardBody style={ { display: 'flex', flexDirection: 'column', height: '100%' } }>
+				{ content }
 			</CardBody>
 		</Card>
 	);

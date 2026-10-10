@@ -21,7 +21,6 @@ Consuming the API? See [Public API](#public-api). Adding a new action? See [Addi
 | `getTurnId`                | `() => string`                                          | The current `turn_id` (the last send's), or `''` before the first send.                                           |
 | `recordBigSkyTracksEvent`  | `(eventName: BigSkyEventName, props?) => void`          | Record a full `jetpack_big_sky_*` event name with family base props.                                              |
 | `isChatVisible`            | `() => boolean`                                         | Whether the chat is visible (open and not minimized).                                                             |
-| `getCurrentRoute`          | `() => string`                                          | The chat's current route, e.g. `/chat`, `/history`, `/support-guides`.                                            |
 | `setChatOpen`              | `(isOpen: boolean) => void`                             | Open or close the chat (closing is ignored when non-dismissible). Opening also expands it from the minimized bar. |
 | `setChatDocked`            | `(isDocked: boolean) => void`                           | Dock or undock the chat.                                                                                          |
 | `setChatEnabled`           | `(isEnabled: boolean) => void`                          | Enable the chat, or disable its input while leaving the chat visible.                                             |
@@ -221,8 +220,7 @@ Both flags default to `true`. `dismissible: false` keeps the chat expanded even
 when the saved preference is closed or minimized, removes Close and Minimize on
 all chat routes, and ignores close requests (including `setChatOpen(false)`).
 `showEntryPoints: false` hides the wp-admin/omnibar and editor toolbar Agent
-toggles. Help menu links still navigate between chat and history, without closing
-a non-dismissible chat. Docking and responsive floating layout remain available.
+toggles. Docking and responsive floating layout remain available.
 
 This configuration lasts only for the current document and is not a user
 preference. It is a bootstrap contract, not a reactive settings API. The host

@@ -1,6 +1,7 @@
 import React from 'react';
 import { cn } from '../utils/classNames';
 import { AgentUIContainer } from './AgentUIContainer';
+import { AgentUIChecklist } from './composable/AgentUIChecklist';
 import { AgentUIConversationView } from './composable/AgentUIConversationView';
 import { AgentUIFooter } from './composable/AgentUIFooter';
 import { AgentUIHeader } from './composable/AgentUIHeader';
@@ -81,6 +82,7 @@ const AgentUINamespace = {
 	Messages: AgentUIMessages,
 	Input: AgentUIInput,
 	Suggestions: AgentUISuggestions,
+	Checklist: AgentUIChecklist,
 	Notice: AgentUINotice,
 	InputToolbar: AgentUIInputToolbar,
 

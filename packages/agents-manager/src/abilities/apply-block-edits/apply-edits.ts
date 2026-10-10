@@ -14,6 +14,7 @@ import {
 	updateBlockAttributes,
 } from '../../utils/editor-blocks';
 import { NAVIGATION_BLOCK } from '../../utils/navigation-menu';
+import { attributesAlreadyMatch } from './already-applied';
 import { syncCoverWithImage } from './cover-image';
 import { createBlockRecursively, mergeAttributes, mergeBlocksRecursively } from './merge-blocks';
 import { getReorderOperations, getUnmappedParentReorder } from './reorder';
@@ -205,11 +206,22 @@ async function applyUpdate(
 	await beforeWrite( clientId );
 
 	const innerBlocks = blockData.innerBlocks ?? [];
+	// The parent's own attributes are left out: children listed by id alone,
+	// as the agent sends them to keep, are no reason to rebuild the parent,
+	// which drops an attribute change where a restricted list refuses it.
 	const reorderOperations = innerBlocks.length
-		? getReorderOperations( target, blockData, resolve )
+		? getReorderOperations( target, { ...blockData, attributes: undefined }, resolve )
 		: null;
 
 	if ( reorderOperations ) {
+		if ( ! attributesAlreadyMatch( target, blockData ) ) {
+			writers.updateAttributes(
+				clientId,
+				mergeAttributes( target.attributes, blockData.attributes )
+			);
+			await syncCoverWithImage( clientId, target, blockData.attributes, writers.updateAttributes );
+		}
+
 		applyReorders( reorderOperations, writers );
 	} else if ( REPLACE_INNER_BLOCKS_STRUCTURAL_PARENTS.has( target.name ) && innerBlocks.length ) {
 		// The parent's own attributes travel with the reorder.
