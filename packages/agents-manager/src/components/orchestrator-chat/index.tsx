@@ -779,9 +779,13 @@ export default function OrchestratorChat( {
 		}
 	}, [ isProcessing, agentConfig?.sessionId ] );
 
-	const { isLoading: isLoadingConversation } = useConversation( {
+	// Retry sends through `submitChatMessage`, declared below.
+	const retryQuestionRef = useRef< ( question: string ) => void >( undefined );
+	const { isLoading: isLoadingConversation, notice: replyNotice } = useConversation( {
 		maxPages: isReaderChat ? 1 : 10,
 		enabled: shouldLoadConversation,
+		waitForReply: ! isProcessing,
+		onRetry: ( question ) => retryQuestionRef.current?.( question ),
 		onSuccess: ( loadedMessages, serverSessionId ) => {
 			if ( isReaderChat && ( hasUserSentMessage || messages.length > 0 || isProcessing ) ) {
 				return;
@@ -1267,7 +1271,8 @@ export default function OrchestratorChat( {
 	const suggestionPromptsRef = useRef< Set< string > >( new Set() );
 
 	const onSubmitWithImages = useCallback(
-		async ( message: string ) => {
+		// Retry asks an earlier question again, so it leaves the composer's images for the draft.
+		async ( message: string, { withImages = true }: { withImages?: boolean } = {} ) => {
 			submitDispatchedRef.current = false;
 			// Taken before the drop below, so a dropped send never labels the next one.
 			const origin = takeActionOrigin( 'send' );
@@ -1289,12 +1294,12 @@ export default function OrchestratorChat( {
 			startTurn();
 			recordBigSkyTracksEvent( 'jetpack_big_sky_chat_input_send_message', {
 				message_length: message?.length || 0,
-				has_images: pendingImages.length > 0,
+				has_images: withImages && pendingImages.length > 0,
 				source,
 			} );
 
 			let imageData;
-			if ( pendingImages.length > 0 && uploadImagesToWordPress ) {
+			if ( withImages && pendingImages.length > 0 && uploadImagesToWordPress ) {
 				isUploadingRef.current = true;
 
 				try {
@@ -1398,6 +1403,12 @@ export default function OrchestratorChat( {
 		]
 	);
 
+	// The composer passes its own files as a second argument; images come from `pendingImages`.
+	const onComposerSubmit = useCallback(
+		( message: string ) => onSubmitWithImages( message ),
+		[ onSubmitWithImages ]
+	);
+
 	const handleAbort = useCallback( () => {
 		// `abortUpload` reports whether it stopped an in-flight batch, so a stop
 		// that lands just after the upload settles still aborts the agent request.
@@ -1411,7 +1422,7 @@ export default function OrchestratorChat( {
 	}, [ abortCurrentRequest, imageUpload ] );
 
 	const submitChatMessage = useCallback(
-		async ( message?: string ) => {
+		async ( message?: string, options?: { withImages?: boolean } ) => {
 			const submittedMessage = typeof message === 'string' ? message : inputValue;
 
 			if ( ! submittedMessage.trim() ) {
@@ -1427,7 +1438,7 @@ export default function OrchestratorChat( {
 				return;
 			}
 
-			await onSubmitWithImages( submittedMessage );
+			await onSubmitWithImages( submittedMessage, options );
 			// Clear only a dispatched message — an aborted or failed send keeps
 			// the composer intact, and the user may have typed a new draft.
 			if ( submitDispatchedRef.current ) {
@@ -1438,6 +1449,11 @@ export default function OrchestratorChat( {
 		},
 		[ inputValue, onSubmitWithImages, credits.beforeSubmit ]
 	);
+
+	retryQuestionRef.current = ( question ) => {
+		markActionOrigin( 'send', 'retry' );
+		submitChatMessage( question, { withImages: false } );
+	};
 
 	const submitChatMessageFromHost = useCallback(
 		async ( message?: string ) => {
@@ -1879,7 +1895,7 @@ export default function OrchestratorChat( {
 				isUploadingImages ? __( 'Uploading images…', __i18n_text_domain__ ) : progressMessage
 			}
 			error={ chatError || uploadError }
-			onSubmit={ onSubmitWithImages }
+			onSubmit={ onComposerSubmit }
 			onAbort={ handleAbort }
 			isLoadingConversation={ isLoadingConversation }
 			isDocked={ isDocked }
@@ -1897,7 +1913,7 @@ export default function OrchestratorChat( {
 			isCompactMode={ isCompactMode }
 			groupWritingSuggestions={ groupWritingSuggestions }
 			imageUpload={ imageUpload }
-			notice={ credits.notice }
+			notice={ credits.notice ?? replyNotice }
 			trailingActions={ credits.trailingActions }
 			beforeSubmit={ credits.beforeSubmit }
 			isChatInputDisabled={ isChatInputDisabled }

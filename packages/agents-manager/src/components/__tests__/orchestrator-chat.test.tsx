@@ -23,6 +23,8 @@ let mockConversationConfig:
 				} >,
 				sessionId: string
 			) => void;
+			waitForReply?: boolean;
+			onRetry?: ( question: string ) => void;
 	  }
 	| undefined;
 const mockUseRegenerateAction = jest.fn();
@@ -4179,6 +4181,47 @@ describe( 'OrchestratorChat', () => {
 			} );
 
 			expect( getBlockingMove() ).toBeNull();
+		} );
+	} );
+
+	describe( 'waiting for a reply after a page change', () => {
+		it( 'shows the wait in the notice slot without locking the composer', () => {
+			const notice = { message: 'Waiting for the reply…' };
+			mockUseConversation.mockReturnValue( { isLoading: false, notice } );
+
+			render( chat() );
+
+			const props = mockAgentChat.mock.calls.at( -1 )![ 0 ] as {
+				notice?: unknown;
+				isProcessing?: boolean;
+			};
+			expect( props.notice ).toEqual( notice );
+			expect( props.isProcessing ).toBe( false );
+			expect( mockConversationConfig?.waitForReply ).toBe( true );
+		} );
+
+		it( 'does not wait while a turn runs in this tab', () => {
+			mockUseAgentChat.mockReturnValue( agentChatReturn( { isProcessing: true } ) );
+
+			render( chat() );
+
+			expect( mockConversationConfig?.waitForReply ).toBe( false );
+		} );
+
+		it( 'retries through the normal send, leaving images staged for the draft', async () => {
+			const onSubmit = jest.fn().mockResolvedValue( undefined );
+			const uploadImagesToWordPress = jest.fn();
+			mockUseAgentChat.mockReturnValue( agentChatReturn( { onSubmit } ) );
+			renderWithImageUpload(
+				createImageUpload( { pendingImages: [ { id: 'p1' } ], uploadImagesToWordPress } )
+			);
+
+			await act( async () => {
+				mockConversationConfig?.onRetry?.( 'ship the sale banner' );
+			} );
+
+			expect( onSubmit ).toHaveBeenCalledWith( 'ship the sale banner' );
+			expect( uploadImagesToWordPress ).not.toHaveBeenCalled();
 		} );
 	} );
 } );
