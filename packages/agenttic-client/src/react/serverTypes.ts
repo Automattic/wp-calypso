@@ -79,8 +79,6 @@ export interface PendingClientTools {
 		toolCallId: string;
 		toolId: string;
 		arguments: unknown;
-		/** When the server stored the call, MySQL datetime in UTC. */
-		createdAt: string;
 	} >;
 }
 

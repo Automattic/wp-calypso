@@ -20,7 +20,6 @@ describe( 'serverChatToLoadResult', () => {
 					toolCallId: 'call-1',
 					toolId: 'top_products',
 					arguments: {},
-					createdAt: '2026-10-01 10:00:00',
 				},
 			],
 		};

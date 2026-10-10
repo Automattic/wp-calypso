@@ -363,7 +363,6 @@ describe( 'useConversation', () => {
 						toolCallId: 'call-top',
 						toolId: 'woocommerce__get_top_products',
 						arguments: { limit: 5 },
-						createdAt: '2026-10-01 10:00:00',
 					},
 				],
 			} );
