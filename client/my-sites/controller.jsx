@@ -19,7 +19,7 @@ import { recordPageView } from 'calypso/lib/analytics/page-view';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { navigate } from 'calypso/lib/navigate';
-import { onboardingUrl } from 'calypso/lib/paths';
+import { login, onboardingUrl } from 'calypso/lib/paths';
 import { addQueryArgs, getSiteFragment, sectionify, trailingslashit } from 'calypso/lib/route';
 import { withoutHttp } from 'calypso/lib/url';
 import { isPathAllowedForDIFMPreSubmitContentCollection } from 'calypso/my-sites/difm-route-utils';
@@ -55,6 +55,7 @@ import {
 import DIFMLiteInProgress from 'calypso/my-sites/marketing/do-it-for-me/difm-lite-in-progress';
 import NavigationComponent from 'calypso/my-sites/navigation';
 import SitesComponent from 'calypso/my-sites/sites';
+import { redirectToLogout } from 'calypso/state/current-user/actions';
 import {
 	getCurrentUser,
 	getCurrentUserId,
@@ -198,6 +199,11 @@ export function renderNoVisibleSites( context ) {
 }
 
 function renderSelectedSiteNotFound( context ) {
+	const { getState, dispatch } = getStore( context );
+	// Checkout only. Support staff see this page on every route, and logging out ends their session.
+	const canSwitchAccount =
+		context.pathname.startsWith( '/checkout/' ) && ! isSupportSession( getState() );
+
 	setSectionMiddleware( { group: 'sites' } )( context );
 
 	recordTracksEvent( 'calypso_site_selection_no_access', {
@@ -211,6 +217,13 @@ function renderSelectedSiteNotFound( context ) {
 		),
 		action: i18n.translate( 'Select a different site' ),
 		actionURL: '/sites',
+		...( canSwitchAccount && {
+			secondaryAction: i18n.translate( 'Log in with a different account' ),
+			secondaryActionCallback: () => {
+				recordTracksEvent( 'calypso_site_selection_no_access_login_click' );
+				dispatch( redirectToLogout( login( { redirectTo: window.location.href } ) ) );
+			},
+		} ),
 	} );
 
 	makeLayout( context, noop );
