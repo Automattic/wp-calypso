@@ -597,7 +597,8 @@ export const maybeRedirectToMultiSiteDashboard =
 		if ( isForcedOptIn || shouldForceRedirect?.( context ) ) {
 			const redirectUrl = typeof path === 'function' ? path( context.params, context.query ) : path;
 			bumpStat( 'dashboard-redirect', isForcedOptIn ? 'forced-opt-in' : 'feature-flag' );
-			return navigate( dashboardLink( redirectUrl ?? context.path ) );
+			window.location.replace( dashboardLink( redirectUrl ?? context.path ) );
+			return;
 		}
 
 		next();

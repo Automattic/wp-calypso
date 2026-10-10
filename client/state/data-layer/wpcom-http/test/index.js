@@ -42,7 +42,7 @@ describe( '#queueRequest', () => {
 
 	test( 'should call `onFailure` when a response returns with an error', () => {
 		return new Promise( ( done ) => {
-			const error = { error: 'bad' };
+			const error = Object.assign( new Error( 'bad' ), { error: 'bad' } );
 			nock( 'https://public-api.wordpress.com:443' ).get( '/rest/v1.1/me' ).replyWithError( error );
 
 			const dispatch = ( action ) => {

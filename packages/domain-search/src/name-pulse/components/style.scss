@@ -1,5 +1,6 @@
 @import '@wordpress/base-styles/breakpoints';
 @import '@wordpress/base-styles/colors';
+@import 'card';
 
 // `.domain-search--results` reserves space for a fixed mobile search form;
 // here the form is in flow.
@@ -224,6 +225,7 @@ html:has( .name-pulse-search-input ) {
 .name-pulse-row--card {
 	display: flex;
 	flex-direction: column;
+	flex-wrap: nowrap;
 	align-items: stretch;
 	justify-content: center;
 	gap: 0;
@@ -270,17 +272,26 @@ html:has( .name-pulse-search-input ) {
 	display: grid;
 	grid-template-columns: repeat( auto-fit, minmax( min( 100%, 24rem ), 1fr ) );
 	gap: 1rem;
+
+	// Both cards stretch to the same bottom edge, so equal footers and
+	// bottom-aligned price rows put the two buttons on the same line, whatever
+	// the height of each price.
+	.domain-suggestion-match-reasons > li,
+	.name-pulse-bundle-card__footer {
+		display: flex;
+		align-items: center;
+		min-height: 24px;
+	}
+
+	@media ( min-width: $break-small ) {
+		.name-pulse-exact-card__price-row {
+			align-items: flex-end;
+		}
+	}
 }
 
-// Matches the bundle card it sits beside: same frame, price row and footer.
 .name-pulse-exact-card {
-	box-sizing: border-box;
-	min-width: 0;
-	padding: 24px;
-	border-radius: 8px;
-	box-shadow:
-		0 0 0 1px rgba( 0, 0, 0, 0.1 ),
-		0 1px 2px rgba( 0, 0, 0, 0.05 );
+	@include name-pulse-card;
 
 	// Stretch to the bundle card's height so both footers sit on the same line.
 	> .components-v-stack {
@@ -320,8 +331,7 @@ html:has( .name-pulse-search-input ) {
 	}
 
 	&__footer {
-		padding-top: 16px;
-		border-top: 1px solid rgba( 0, 0, 0, 0.08 );
+		@include name-pulse-card-footer;
 	}
 
 	// Same as the bundle card: the price sits above a full-width button.
@@ -335,73 +345,6 @@ html:has( .name-pulse-search-input ) {
 		&__cta .components-button {
 			width: 100%;
 			justify-content: center;
-		}
-	}
-}
-
-// Under Top results the bundle card spans the row, so the price and button
-// move beside the TLDs instead of under them. Narrow screens keep the
-// shared card's stacked layout.
-.name-pulse-bundle-wide {
-	.bundle-tld-chips .bundle-tld-chips__tld {
-		font-weight: 400;
-	}
-
-	.bundle-card .bundle-card__cta.is-secondary {
-		color: var( --wp-admin-theme-color, #3858e9 );
-		box-shadow: inset 0 0 0 1px var( --wp-admin-theme-color, #3858e9 );
-	}
-
-	.bundle-card .bundle-price .components-text:not( .bundle-price__sub-text ) {
-		font-size: 20px;
-		line-height: 28px;
-	}
-
-	.bundle-card .bundle-price__sub-text,
-	.bundle-card .bundle-card__tagline {
-		color: $gray-900;
-	}
-
-	.bundle-card .bundle-card__tagline {
-		font-size: 13px;
-	}
-
-	.bundle-card .bundle-card__footer-icon {
-		fill: $gray-900;
-	}
-
-	@media ( min-width: $break-small ) {
-		.bundle-card > .components-v-stack {
-			display: grid;
-			grid-template-columns: minmax( 0, 1fr ) auto;
-			column-gap: 24px;
-
-			> * {
-				grid-column: 1 / -1;
-			}
-		}
-
-		.bundle-card .bundle-card__header {
-			grid-row: 1;
-		}
-
-		.bundle-card .bundle-card__tlds {
-			grid-column: 1;
-			grid-row: 2;
-		}
-
-		// The stack's 16px gap pulls the domains too far from their TLDs.
-		.bundle-card .bundle-card__members {
-			grid-column: 1;
-			grid-row: 3;
-			margin-block-start: -12px;
-		}
-
-		.bundle-card .bundle-card__price-row {
-			grid-column: 2;
-			grid-row: 2 / span 2;
-			align-self: center;
-			gap: 40px;
 		}
 	}
 }

@@ -25,6 +25,7 @@ function BenefitRow( {
 	recordTracksEvent,
 	onScheduleCall,
 	isSchedulingCall,
+	onContactSupport,
 	currentAgencyTierId,
 	links,
 	shouldUseRouterLink,
@@ -36,6 +37,7 @@ function BenefitRow( {
 	recordTracksEvent: RecordTracksEvent;
 	onScheduleCall: () => void;
 	isSchedulingCall?: boolean;
+	onContactSupport?: () => void;
 	currentAgencyTierId?: AgencyTierType;
 	links: TierBenefitLinks;
 	shouldUseRouterLink: boolean;
@@ -75,15 +77,29 @@ function BenefitRow( {
 					</Button>
 				);
 			}
-			const href = links[ action.id ];
-			if ( ! href ) {
-				return null;
-			}
 			const onClick = () =>
 				recordTracksEvent( 'calypso_a4a_agency_tier_benefits_action_click', {
 					agency_tier: currentAgencyTierId,
 					action_id: action.id,
 				} );
+			if ( action.id === 'contact-support' && onContactSupport ) {
+				return (
+					<Button
+						{ ...buttonProps }
+						key={ action.id }
+						onClick={ () => {
+							onClick();
+							onContactSupport();
+						} }
+					>
+						{ action.label }
+					</Button>
+				);
+			}
+			const href = links[ action.id ];
+			if ( ! href ) {
+				return null;
+			}
 			// Only in-app paths go through the router; absolute URLs and hash
 			// links stay plain anchors.
 			if ( shouldUseRouterLink && href.startsWith( '/' ) ) {
@@ -156,6 +172,7 @@ export default function TierBenefits( {
 	recordTracksEvent = () => {},
 	onScheduleCall,
 	isSchedulingCall,
+	onContactSupport,
 	links = {},
 	shouldUseRouterLink = true,
 	renderDownloadBadges,
@@ -164,6 +181,8 @@ export default function TierBenefits( {
 	recordTracksEvent?: RecordTracksEvent;
 	onScheduleCall: () => void;
 	isSchedulingCall?: boolean;
+	/** Opens contact support in-app; without it, the `contact-support` link is used. */
+	onContactSupport?: () => void;
 	links?: TierBenefitLinks;
 	/**
 	 * Set to false in apps without the dashboard's TanStack Router, so the
@@ -237,6 +256,7 @@ export default function TierBenefits( {
 										recordTracksEvent={ recordTracksEvent }
 										onScheduleCall={ onScheduleCall }
 										isSchedulingCall={ isSchedulingCall }
+										onContactSupport={ onContactSupport }
 										currentAgencyTierId={ currentAgencyTierId }
 										links={ links }
 										shouldUseRouterLink={ shouldUseRouterLink }

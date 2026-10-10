@@ -3,10 +3,7 @@ import './help-center.scss';
 import { recordDisconnectedHostTracksEvent } from './tracks';
 
 function initHelpCenterTracking() {
-	// Check for agents-manager-masterbar first, then fall back to help-center
-	const button =
-		document.getElementById( 'wp-admin-bar-agents-manager' ) ||
-		document.getElementById( 'wp-admin-bar-help-center' );
+	const button = document.getElementById( 'wp-admin-bar-help-center' );
 
 	if ( button && ! button.dataset.trackingInitialized ) {
 		button.addEventListener( 'click', () => {

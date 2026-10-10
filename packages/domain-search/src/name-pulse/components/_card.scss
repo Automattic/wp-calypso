@@ -1,0 +1,16 @@
+// The frame and footer divider shared by the exact-match and bundle cards, so
+// the two stay identical side by side.
+@mixin name-pulse-card {
+	box-sizing: border-box;
+	min-width: 0;
+	padding: 24px;
+	border-radius: 8px;
+	box-shadow:
+		0 0 0 1px rgba( 0, 0, 0, 0.1 ),
+		0 1px 2px rgba( 0, 0, 0, 0.05 );
+}
+
+@mixin name-pulse-card-footer {
+	padding-top: 16px;
+	border-top: 1px solid rgba( 0, 0, 0, 0.08 );
+}

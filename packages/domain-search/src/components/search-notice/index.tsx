@@ -1,9 +1,12 @@
 import { DomainAvailability, DomainAvailabilityStatus } from '@automattic/api-core';
 import { useQuery } from '@tanstack/react-query';
-import { __ } from '@wordpress/i18n';
+import { createInterpolateElement } from '@wordpress/element';
+import { __, sprintf } from '@wordpress/i18n';
 import { useMemo } from 'react';
 import { getAvailabilityNotice } from '../../helpers/get-availability-notice';
+import { getRootDomain } from '../../helpers/get-root-domain';
 import { isFqdnShownAsSuggestion } from '../../helpers/is-fqdn-shown-as-suggestion';
+import { isSubdomainWithUnavailableRootDomain } from '../../helpers/is-subdomain-with-unavailable-root-domain';
 import { isSupportedPremiumDomain } from '../../helpers/is-supported-premium-domain';
 import { useDomainSearch } from '../../page/context';
 import { DomainSearchNotice } from '../../ui';
@@ -90,6 +93,24 @@ export const SearchNotice = () => {
 			shouldHideAvailabilityNotice( availability, includeOwnedDomainInSuggestions )
 		) {
 			return null;
+		}
+
+		if ( isSubdomainWithUnavailableRootDomain( availability, query ) ) {
+			const rootDomain = getRootDomain( query );
+
+			return {
+				severity: 'error' as const,
+				message: createInterpolateElement(
+					sprintf(
+						/* translators: %(rootDomain)s is the root domain (e.g. example.com), %(subdomain)s is the searched subdomain (e.g. cms.example.com) */
+						__(
+							'The root domain <strong>%(rootDomain)s</strong> is owned by another account, so only its owner can add <strong>%(subdomain)s</strong>.'
+						),
+						{ rootDomain, subdomain: query }
+					),
+					{ strong: <strong /> }
+				),
+			};
 		}
 
 		if ( shouldReturnGenericMappedMessage( availability ) ) {

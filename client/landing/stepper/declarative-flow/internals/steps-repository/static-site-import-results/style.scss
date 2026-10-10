@@ -1,0 +1,35 @@
+.step-container-v2--static-site-import-results {
+	.static-site-import-results__screenshot {
+		overflow: hidden;
+		aspect-ratio: 2 / 1;
+
+		img {
+			display: block;
+			width: 100%;
+			height: auto;
+		}
+	}
+
+	.static-site-import-results__muted {
+		color: var( --color-text-subtle );
+	}
+
+	.static-site-import-results__warning {
+		display: inline-flex;
+		flex-shrink: 0;
+		align-items: center;
+		justify-content: center;
+		width: 24px;
+		height: 24px;
+		border-radius: 50%;
+		background-color: var( --studio-yellow-5 );
+		color: var( --studio-yellow-70 );
+		font-weight: 600;
+	}
+
+	.static-site-import-results__choices {
+		display: grid;
+		grid-template-columns: repeat( auto-fit, minmax( 220px, 1fr ) );
+		gap: 24px;
+	}
+}

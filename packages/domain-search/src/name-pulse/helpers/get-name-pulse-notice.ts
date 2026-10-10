@@ -1,15 +1,17 @@
 import { DomainAvailabilityStatus, type DomainAvailability } from '@automattic/api-core';
+import { createElement, createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import type { NamePulseResultsLayout } from './get-results-layout';
+import type { ReactNode } from 'react';
 
 export type NamePulseAvailabilityVerdict = Pick<
 	DomainAvailability,
-	'status' | 'domain_name' | 'tld'
+	'status' | 'domain_name' | 'tld' | 'is_supported_premium_domain'
 >;
 
 export interface NamePulseNotice {
 	status: 'warning' | 'neutral' | 'error';
-	message: string;
+	message: ReactNode;
 	/** Set when the domain is registered elsewhere and could be brought over. */
 	transferDomain?: string;
 	/** Only the notices about how the query was read. */
@@ -68,6 +70,25 @@ function fromAvailability( verdict: NamePulseAvailabilityVerdict ): NamePulseNot
 		return {
 			status: 'error',
 			message: __( 'This is a free WordPress.com subdomain. You can’t map it to another site.' ),
+		};
+	}
+
+	if (
+		verdict.status === DomainAvailabilityStatus.AVAILABLE_PREMIUM &&
+		! verdict.is_supported_premium_domain
+	) {
+		return {
+			status: 'error',
+			message: createInterpolateElement(
+				sprintf(
+					/* translators: %(domain)s is the domain name */
+					__(
+						"Sorry, <strong>%(domain)s</strong> is a premium domain. We don't support purchasing this premium domain on WordPress.com."
+					),
+					{ domain: verdict.domain_name }
+				),
+				{ strong: createElement( 'strong' ) }
+			),
 		};
 	}
 

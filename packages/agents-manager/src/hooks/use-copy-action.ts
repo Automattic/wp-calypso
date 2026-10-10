@@ -5,7 +5,7 @@ import {
 	isDisplayableToolMessageTool,
 } from '../utils/tool-message-utils';
 import type { UIMessage } from '@automattic/agenttic-client';
-import type { MessageAction } from '@automattic/agenttic-ui/dist/types';
+import type { MessageAction } from '@automattic/agenttic-ui';
 
 /**
  * Extracts copyable text from a message. For tool messages, only known tools with

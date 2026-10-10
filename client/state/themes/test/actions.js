@@ -2,8 +2,6 @@
  * @jest-environment jsdom
  */
 
-// Importing `jest-fetch-mock` adds a jest-friendly `fetch` polyfill to the global scope.
-import 'jest-fetch-mock';
 import ThemeQueryManager from 'calypso/lib/query-manager/theme';
 import {
 	ACTIVE_THEME_REQUEST,

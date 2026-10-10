@@ -1,3 +1,4 @@
+import { productsQuery } from '@automattic/api-queries';
 import {
 	getPlan,
 	PLAN_PERSONAL,
@@ -5,17 +6,17 @@ import {
 	isDomainTransfer,
 } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
-import { StoreProductSlug, useProducts } from '@automattic/data-stores/src/products-list';
 import { formatCurrency } from '@automattic/number-formatters';
 import {
 	type MinimalRequestCartProduct,
 	type ResponseCartProduct,
 	useShoppingCart,
 } from '@automattic/shopping-cart';
+import { useQuery } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
-import { useDispatch } from 'react-redux';
 import SectionHeader from 'calypso/components/section-header';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import {
 	hasDomainRegistration,
 	hasTransferProduct,
@@ -25,7 +26,6 @@ import {
 } from 'calypso/lib/cart-values/cart-items';
 import { siteHasPaidPlan } from 'calypso/signup/steps/site-picker/site-picker-submit';
 import { useSelector } from 'calypso/state';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import useCartKey from '../use-cart-key';
 
@@ -141,15 +141,11 @@ function UpgradeText( {
 }
 
 function useGetPriceForProduct( productSlug: string ): number | undefined {
-	const { data } = useProducts( [ productSlug as StoreProductSlug ] );
-	if ( ! data ) {
-		return undefined;
-	}
-	const productData = data[ productSlug as keyof typeof data ];
-	if ( ! productData ) {
-		return undefined;
-	}
-	return productData.costSmallestUnit;
+	const { data } = useQuery( {
+		...productsQuery(),
+		select: ( products ) => products[ productSlug ]?.cost_smallest_unit,
+	} );
+	return data;
 }
 
 export default function CartFreeUserPlanUpsell( { addItemToCart }: CartFreeUserPlanUpsellProps ) {
@@ -165,7 +161,6 @@ export default function CartFreeUserPlanUpsell( { addItemToCart }: CartFreeUserP
 	const hasPaidPlan = siteHasPaidPlan( selectedSite );
 	const hasPlanInCart = hasPlan( responseCart );
 	const hasHundredYearDomainInCart = has100YearDomain( responseCart );
-	const dispatch = useDispatch();
 	const upsellProductSlug = PLAN_PERSONAL;
 	const upsellPlan = getPlan( upsellProductSlug );
 	const firstDomainInCart = responseCart.products.find( isRegistrationOrTransfer );
@@ -199,7 +194,7 @@ export default function CartFreeUserPlanUpsell( { addItemToCart }: CartFreeUserP
 
 		if ( planCartItem ) {
 			addItemToCart( planCartItem );
-			dispatch( recordTracksEvent( 'calypso_non_dwpo_checkout_plan_upsell_add_to_cart', {} ) );
+			recordTracksEvent( 'calypso_non_dwpo_checkout_plan_upsell_add_to_cart', {} );
 		}
 	};
 
