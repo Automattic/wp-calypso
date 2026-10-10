@@ -200,9 +200,11 @@ export function renderNoVisibleSites( context ) {
 
 function renderSelectedSiteNotFound( context ) {
 	const { getState, dispatch } = getStore( context );
-	// Checkout only. Support staff see this page on every route, and logging out ends their session.
-	const canSwitchAccount =
+	// Support staff see this page on every route, and logging out ends their session.
+	const showCheckoutAccessHelp =
 		context.pathname.startsWith( '/checkout/' ) && ! isSupportSession( getState() );
+	// Non-admins can renew, so renewals show the "might not have permission" line.
+	const showAdminOnlyLine = showCheckoutAccessHelp && ! context.pathname.includes( '/renew/' );
 
 	setSectionMiddleware( { group: 'sites' } )( context );
 
@@ -212,12 +214,14 @@ function renderSelectedSiteNotFound( context ) {
 
 	context.primary = createElement( EmptyContentComponent, {
 		title: i18n.translate( "You don't have access to that site" ),
-		line: i18n.translate(
-			'You might not have permission to view this site, or it may not exist. Select a different site to continue.'
-		),
+		line: showAdminOnlyLine
+			? i18n.translate( 'Only administrators on this site can make new purchases.' )
+			: i18n.translate(
+					'You might not have permission to view this site, or it may not exist. Select a different site to continue.'
+				),
 		action: i18n.translate( 'Select a different site' ),
 		actionURL: '/sites',
-		...( canSwitchAccount && {
+		...( showCheckoutAccessHelp && {
 			secondaryAction: i18n.translate( 'Log in with a different account' ),
 			secondaryActionCallback: () => {
 				recordTracksEvent( 'calypso_site_selection_no_access_login_click' );
