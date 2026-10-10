@@ -8,6 +8,7 @@ import BusinessPlanBanner from 'calypso/my-sites/plugins/plugins-banners/busines
 import PluginsBrowserList from 'calypso/my-sites/plugins/plugins-browser-list';
 import { PluginsBrowserListVariant } from 'calypso/my-sites/plugins/plugins-browser-list/types';
 import UpgradeNudge from 'calypso/my-sites/plugins/plugins-discovery-page/upgrade-nudge';
+import PluginsPagination from 'calypso/my-sites/plugins/plugins-pagination';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { UNLISTED_PLUGINS } from '../constants';
 import { useIsMarketplaceRedesignEnabled } from '../hooks/use-is-marketplace-redesign-enabled';
@@ -26,14 +27,20 @@ const PluginsSearchResultPage = ( {
 	sites,
 	categoryName,
 	setIsFetchingPluginsBySearchTerm,
+	isLoggedIn,
+	path,
+	page,
 } ) => {
 	const {
 		plugins: pluginsBySearchTerm = [],
 		isFetching: isFetchingPluginsBySearchTerm,
 		pagination: pluginsPagination,
 		fetchNextPage,
+		isError,
+		retry,
 	} = usePlugins( {
-		infinite: true,
+		infinite: isLoggedIn,
+		page: isLoggedIn ? undefined : page,
 		search: searchTerm,
 	} );
 
@@ -50,6 +57,9 @@ const PluginsSearchResultPage = ( {
 	}, [ setIsFetchingPluginsBySearchTerm, isFetchingPluginsBySearchTerm ] );
 
 	useEffect( () => {
+		if ( ! isLoggedIn && ( isFetchingPluginsBySearchTerm || isError ) ) {
+			return;
+		}
 		if ( searchTerm && pluginsPagination?.page === 1 ) {
 			dispatch(
 				recordTracksEvent( 'calypso_plugins_search_results_show', {
@@ -70,11 +80,52 @@ const PluginsSearchResultPage = ( {
 				} )
 			);
 		}
-	}, [ searchTerm, pluginsPagination.page, pluginsPagination.results, dispatch, siteId ] );
+	}, [
+		searchTerm,
+		pluginsPagination.page,
+		pluginsPagination.results,
+		dispatch,
+		siteId,
+		isLoggedIn,
+		isFetchingPluginsBySearchTerm,
+		isError,
+	] );
 
 	const isMarketplaceRedesign = useIsMarketplaceRedesignEnabled();
+	const visiblePlugins = pluginsBySearchTerm.filter( isNotBlocked );
+	const pager = ! isLoggedIn && (
+		<PluginsPagination
+			path={ path }
+			page={ pluginsPagination.page }
+			pages={ pluginsPagination.pages }
+			isFetching={ isFetchingPluginsBySearchTerm }
+			isError={ isError }
+			retry={ retry }
+			isEmpty={ visiblePlugins.length === 0 }
+		/>
+	);
 
-	if ( pluginsBySearchTerm.length > 0 || isFetchingPluginsBySearchTerm ) {
+	if (
+		! isLoggedIn &&
+		( isError ||
+			( ! isFetchingPluginsBySearchTerm &&
+				pluginsPagination.page > 1 &&
+				visiblePlugins.length === 0 ) )
+	) {
+		return (
+			<FullWidthSection
+				className="plugins-browser__search-results"
+				enabled={ isMarketplaceRedesign }
+			>
+				{ pager }
+			</FullWidthSection>
+		);
+	}
+
+	if (
+		( isLoggedIn ? pluginsBySearchTerm.length : visiblePlugins.length ) > 0 ||
+		isFetchingPluginsBySearchTerm
+	) {
 		let title = translate( 'Search results for "%(searchTerm)s"', {
 			textOnly: true,
 			args: { searchTerm },
@@ -118,7 +169,7 @@ const PluginsSearchResultPage = ( {
 			>
 				<UpgradeNudge siteSlug={ siteSlug } paidPlugins />
 				<PluginsBrowserList
-					plugins={ pluginsBySearchTerm.filter( isNotBlocked ) }
+					plugins={ visiblePlugins }
 					listName={ 'plugins-browser-list__search-for_' + searchTerm.replace( /\s/g, '-' ) }
 					listType="search"
 					title={ translate( 'Search Results' ) }
@@ -138,7 +189,7 @@ const PluginsSearchResultPage = ( {
 					injectAfterIndex={ isMarketplaceRedesign ? 12 : undefined }
 					injectElement={ isMarketplaceRedesign ? <BusinessPlanBanner /> : undefined }
 				/>
-				<InfiniteScroll nextPageMethod={ fetchNextPage } />
+				{ isLoggedIn ? <InfiniteScroll nextPageMethod={ fetchNextPage } /> : pager }
 			</FullWidthSection>
 		);
 	}
