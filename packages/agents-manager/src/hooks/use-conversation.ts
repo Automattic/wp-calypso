@@ -3,7 +3,10 @@ import {
 	loadAllMessagesFromServer,
 	loadChatFromServer,
 	type Message,
+	type PendingClientTools,
 	type ServerLoadResult,
+	type ToolResultInput,
+	type TurnToolCall,
 } from '@automattic/agenttic-client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useEffect, useMemo, useRef, useState } from '@wordpress/element';
@@ -13,19 +16,24 @@ import { useAgentsManagerContext } from '../contexts';
 import { isUnsentSession } from '../utils/agent-session';
 import { getConversationBotId } from '../utils/conversation-bot-id';
 import { isReaderChatAgent } from '../utils/is-reader-chat-agent';
+import { buildToolCallResume } from '../utils/tool-call-resume';
 import {
 	getNewestServerId,
 	getUnansweredQuestion,
 	mergeNewestPage,
 } from '../utils/unanswered-question';
+import { getPendingNavigation } from '../utils/wp-admin-navigation-state';
 import type { NoticeConfig } from '@automattic/agenttic-ui';
 
 const REPLY_POLL_INTERVAL_MS = 3000;
 // How long the conversation may stay unchanged, and how old a question may be,
 // and still be waited on.
 export const MAX_REPLY_WAIT_MS = 2 * 60_000;
+// The page that ran a browser tool often still sends its result while this one
+// loads, so a turn paused on one is resumed only after this long.
+export const RESUME_AFTER_MS = 10_000;
 
-type ReplyWait = 'idle' | 'waiting' | 'timed-out';
+type ReplyWait = 'idle' | 'waiting' | 'resuming' | 'timed-out';
 
 interface Config {
 	maxPages?: number;
@@ -33,11 +41,15 @@ interface Config {
 	/** Whether an unanswered question may be waited on; false while a turn runs. */
 	waitForReply?: boolean;
 	onRetry?: ( question: string ) => void;
+	/** Answers a paused turn's browser tool calls; resolves to whether a reply arrived. */
+	onResume?: ( results: ToolResultInput[], turnToolCalls: TurnToolCall[] ) => Promise< boolean >;
 	onSuccess?: ( messages: Message[], sessionId: string ) => void;
 }
 
 interface Result {
-	data: { messages: Message[]; sessionId?: string } | undefined;
+	data:
+		| { messages: Message[]; sessionId?: string; pendingClientTools?: PendingClientTools }
+		| undefined;
 	isLoading: boolean;
 	isError: boolean;
 	notice: NoticeConfig | undefined;
@@ -48,12 +60,18 @@ interface Result {
  *
  * After a page change mid-turn the conversation can load before its reply, so
  * it is reloaded until the reply lands, then offers Retry if none comes.
+ *
+ * A turn paused on a browser-run tool has no page left to send the result, so
+ * after `RESUME_AFTER_MS` this page answers its calls with an "interrupted" result
+ * and the assistant re-runs what it needs. The server takes one result per call, so
+ * a resume that loses to another page just keeps waiting.
  */
 export default function useConversation( {
 	maxPages = 10,
 	enabled = true,
 	waitForReply = false,
 	onRetry,
+	onResume,
 	onSuccess = () => {},
 }: Config ): Result {
 	const { agentConfig } = useAgentsManagerContext();
@@ -71,6 +89,7 @@ export default function useConversation( {
 	const replyWaitRef = useRef( replyWait );
 	replyWaitRef.current = replyWait;
 	const loadedNewestIdRef = useRef( 0 );
+	const resumeAttemptedRef = useRef( false );
 
 	const queryClient = useQueryClient();
 	const queryKey = [ 'agents-manager-conversation', sessionId ];
@@ -111,6 +130,7 @@ export default function useConversation( {
 
 	useEffect( () => {
 		setReplyWait( 'idle' );
+		resumeAttemptedRef.current = false;
 	}, [ sessionId ] );
 
 	useEffect(
@@ -137,7 +157,8 @@ export default function useConversation( {
 
 	useEffect(
 		() => {
-			if ( ! data ) {
+			// The resume streams its reply live; a reload would replace it.
+			if ( ! data || replyWait === 'resuming' ) {
 				return;
 			}
 
@@ -188,6 +209,57 @@ export default function useConversation( {
 		return () => clearTimeout( timer );
 	}, [ replyWait, newestId ] );
 
+	const pendingTools = data?.pendingClientTools;
+	const pendingToolsRef = useRef( pendingTools );
+	pendingToolsRef.current = pendingTools;
+	const canResume =
+		replyWait === 'waiting' &&
+		!! onResume &&
+		pendingTools?.state === 'unanswered' &&
+		! resumeAttemptedRef.current;
+
+	useEffect(
+		() => {
+			if ( ! canResume ) {
+				return;
+			}
+
+			const timer = setTimeout( async () => {
+				const pending = pendingToolsRef.current;
+				// A parked `wp-admin-navigate` is answered by `useNavigationContinuation`.
+				const parkedNavigation = getPendingNavigation()?.toolCallId;
+				if (
+					pending?.state !== 'unanswered' ||
+					pending.calls.some( ( call ) => call.toolCallId === parkedNavigation )
+				) {
+					return;
+				}
+
+				resumeAttemptedRef.current = true;
+				setReplyWait( 'resuming' );
+				const { results, turnToolCalls } = buildToolCallResume( pending );
+				let replied = false;
+				try {
+					replied = ( await onResume?.( results, turnToolCalls ) ) ?? false;
+				} catch ( resumeError ) {
+					// Another page answered first, or the send failed: keep waiting for a reply.
+					// eslint-disable-next-line no-console
+					console.error( '[useConversation] Error resuming the paused turn:', resumeError );
+				}
+				setReplyWait( ( current ) => {
+					if ( current !== 'resuming' ) {
+						return current;
+					}
+					return replied ? 'idle' : 'waiting';
+				} );
+			}, RESUME_AFTER_MS );
+
+			return () => clearTimeout( timer );
+		},
+		// eslint-disable-next-line react-hooks/exhaustive-deps -- the latest calls are read when it fires
+		[ canResume ]
+	);
+
 	useEffect( () => {
 		if ( error ) {
 			// eslint-disable-next-line no-console
@@ -199,6 +271,11 @@ export default function useConversation( {
 
 	if ( replyWait === 'waiting' ) {
 		notice = { message: __( 'Waiting for the reply…', __i18n_text_domain__ ), dismissible: false };
+	} else if ( replyWait === 'resuming' ) {
+		notice = {
+			message: __( 'Picking up your last question…', __i18n_text_domain__ ),
+			dismissible: false,
+		};
 	} else if ( replyWait === 'timed-out' && question ) {
 		notice = {
 			message: __( 'No reply arrived for your last question.', __i18n_text_domain__ ),

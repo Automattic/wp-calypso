@@ -1,4 +1,10 @@
-import { getAgentManager, type TaskUpdate, type UIMessage } from '@automattic/agenttic-client';
+import {
+	getAgentManager,
+	type TaskUpdate,
+	type ToolResultInput,
+	type TurnToolCall,
+	type UIMessage,
+} from '@automattic/agenttic-client';
 import {
 	type Suggestion,
 	type MarkdownComponents,
@@ -781,11 +787,36 @@ export default function OrchestratorChat( {
 
 	// Retry sends through `submitChatMessage`, declared below.
 	const retryQuestionRef = useRef< ( question: string ) => void >( undefined );
+
+	// Answers the browser tool calls a turn paused on before a page change, so the
+	// reply streams in here; resolves to whether one did. The send rewrites
+	// history (drops stale results), so a reply is a message it did not have.
+	const resumeToolCalls = useCallback(
+		async ( toolResults: ToolResultInput[], turnToolCalls: TurnToolCall[] ) => {
+			const agentManager = getAgentManager();
+			const agentKey = agentConfig!.agentId;
+			const before = new Set(
+				agentManager.getConversationHistory( agentKey ).map( ( { messageId } ) => messageId )
+			);
+			await onSubmit( '', { type: 'tool_results', toolResults, turnToolCalls } );
+			return agentManager
+				.getConversationHistory( agentKey )
+				.some(
+					( message ) =>
+						! before.has( message.messageId ) &&
+						message.role === 'agent' &&
+						message.parts.some( ( part ) => part.type === 'text' && part.text.trim() )
+				);
+		},
+		[ agentConfig, onSubmit ]
+	);
+
 	const { isLoading: isLoadingConversation, notice: replyNotice } = useConversation( {
 		maxPages: isReaderChat ? 1 : 10,
 		enabled: shouldLoadConversation,
 		waitForReply: ! isProcessing,
 		onRetry: ( question ) => retryQuestionRef.current?.( question ),
+		onResume: resumeToolCalls,
 		onSuccess: ( loadedMessages, serverSessionId ) => {
 			if ( isReaderChat && ( hasUserSentMessage || messages.length > 0 || isProcessing ) ) {
 				return;
