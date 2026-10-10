@@ -1,4 +1,8 @@
-import type { PendingClientTools, ToolResultInput, TurnToolCall } from '@automattic/agenttic-client';
+import type {
+	PendingClientTools,
+	ToolResultInput,
+	TurnToolCall,
+} from '@automattic/agenttic-client';
 
 /**
  * The result a resume sends for a browser tool call whose page went away before
