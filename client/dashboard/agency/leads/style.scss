@@ -1,0 +1,11 @@
+// PROTOTYPE — Leads dashboard.
+
+// DataViews gives every cell a 15ch minimum. The status, value, and date columns only
+// hold short values, so let them size to their content and leave the room to the client
+// and source columns.
+.a4a-leads-table .dataviews-view-table td:not( .dataviews-view-table__primary-column ),
+.a4a-leads-table .dataviews-view-table th:not( .dataviews-view-table__primary-column ) {
+	.dataviews-view-table__cell-content-wrapper {
+		min-width: auto;
+	}
+}
