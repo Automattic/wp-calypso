@@ -14,11 +14,14 @@
 import SignupTestimonial from './components/signup-testimonial';
 import CustomSignupForm from './custom-signup-form';
 import ForAgenciesLogo from './for-agencies-logo';
+import useSuppressHelpCenter from './hooks/use-suppress-help-center';
 import SignupPitch from './signup-pitch';
 
 import './style.scss';
 
 export default function CustomSignup() {
+	useSuppressHelpCenter();
+
 	return (
 		<div className="a4a-custom-signup">
 			<div className="a4a-custom-signup-layout">

@@ -22,6 +22,7 @@ import { getChallengeOptions } from './lib/options';
 import {
 	PrototypeSignupData,
 	SAMPLE_PROTOTYPE_SIGNUP_DATA,
+	resetOverviewToNewAgency,
 	savePrototypeSignupData,
 } from './lib/prototype-signup-data';
 import AboutAgencyStep from './steps/about-agency-step';
@@ -52,6 +53,7 @@ export default function CustomSignupForm() {
 
 	const finish = ( { value: challenges, otherText: challengesOther }: ChoiceStepAnswer ) => {
 		savePrototypeSignupData( { ...data, challenges, challengesOther } );
+		resetOverviewToNewAgency();
 		// The overview is a separate app section, so do a full navigation.
 		window.location.assign( A4A_OVERVIEW_LINK );
 	};
