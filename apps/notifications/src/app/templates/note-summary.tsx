@@ -13,7 +13,7 @@ import type { CSSProperties } from 'react';
 // whose id differs from the site id links to the Reader profile (some site
 // notifications populate id with the siteId); anything else falls back to the
 // range's own url. Mirrors the legacy `SummaryInSingle` behaviour.
-const getHeaderLink = ( block: Subject ): string | undefined => {
+export const getHeaderLink = ( block: Subject ): string | undefined => {
 	const range = block.ranges?.[ 0 ];
 	if ( ! range ) {
 		return undefined;

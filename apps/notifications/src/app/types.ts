@@ -103,6 +103,7 @@ export type Note = {
 			post?: number;
 			comment?: number;
 			reply_comment?: number;
+			parent_comment?: number;
 			user?: number;
 		};
 		links?: {
@@ -112,6 +113,25 @@ export type Note = {
 			reply_comment?: string;
 			user?: string;
 			home?: string;
+		};
+		// Only on notes about a post or page. Text fields are plain text.
+		post?: {
+			title: string;
+			url: string;
+			date: string | null;
+			author_name: string;
+		};
+		site?: {
+			name: string;
+			icon: string;
+		};
+		/** The comment a reply answers, or the one a like is for, once approved. */
+		parent_comment?: {
+			text: string;
+			author_name: string;
+			author_avatar: string | null;
+			date: string | null;
+			url: string;
 		};
 	};
 	title: string;
