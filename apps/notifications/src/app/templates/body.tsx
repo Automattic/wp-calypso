@@ -165,13 +165,9 @@ export const NoteBody = ( { note }: { note: Note } ) => {
 					<PendingApprovalStrip note={ note } />
 				</div>
 			) }
-			{ isPeopleListNote( note ) ? (
-				<VStack className="wpnc__body-content" spacing={ 4 }>
-					{ body }
-				</VStack>
-			) : (
-				<div className="wpnc__body-content">{ body }</div>
-			) }
+			<VStack className="wpnc__body-content" spacing={ isPeopleListNote( note ) ? 4 : 0 }>
+				{ body }
+			</VStack>
 			<ReplyBlock note={ note } />
 		</VStack>
 	);

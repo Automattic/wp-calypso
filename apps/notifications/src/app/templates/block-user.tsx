@@ -65,8 +65,6 @@ export default function UserBlock( { note, block }: { note: Note; block: Block }
 			? getDisplayURL( homeLink )
 			: block.meta?.titles?.home;
 
-	const isListRow = isPeopleListNote( note );
-
 	// Build the present description items, then interleave a single separator
 	// between them — so there's never a leading, trailing, or doubled separator
 	// when an item is absent.
@@ -99,6 +97,8 @@ export default function UserBlock( { note, block }: { note: Note; block: Block }
 				/>
 			),
 	].filter( ( part ): part is ReactElement => Boolean( part ) );
+
+	const isListRow = isPeopleListNote( note );
 
 	return (
 		<HStack
