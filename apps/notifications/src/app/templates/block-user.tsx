@@ -1,6 +1,5 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 import {
-	FlexBlock,
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 	__experimentalText as Text,
@@ -122,27 +121,25 @@ export default function UserBlock( { note, block }: { note: Note; block: Block }
 			</a>
 			{ isListOfPeople ? (
 				<>
-					<FlexBlock>
-						<VStack spacing={ 0.5 }>
-							<a
-								className="wpnc__user-title"
-								href={ readerProfileUrl }
-								target="_blank"
-								rel="noreferrer"
-							>
-								<Text truncate numberOfLines={ 1 }>
-									{ block.text }
+					<VStack spacing={ 0.5 } style={ { flex: 1, minWidth: 0 } }>
+						<a
+							className="wpnc__user-title"
+							href={ readerProfileUrl }
+							target="_blank"
+							rel="noreferrer"
+						>
+							<Text truncate numberOfLines={ 1 }>
+								{ block.text }
+							</Text>
+						</a>
+						{ homeTitle && (
+							<a href={ homeLink } target="_blank" rel="noopener noreferrer">
+								<Text className="wpnc__user-site" variant="muted" truncate numberOfLines={ 1 }>
+									{ homeTitle }
 								</Text>
 							</a>
-							{ homeTitle && (
-								<a href={ homeLink } target="_blank" rel="noopener noreferrer">
-									<Text className="wpnc__user-site" variant="muted" truncate numberOfLines={ 1 }>
-										{ homeTitle }
-									</Text>
-								</a>
-							) }
-						</VStack>
-					</FlexBlock>
+						) }
+					</VStack>
 					{ descriptionParts.find( ( { key } ) => key === 'follow' ) }
 				</>
 			) : (
