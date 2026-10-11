@@ -196,7 +196,8 @@ const aiSiteBuilderOnboarding: FlowV2< typeof initialize > = {
 					}
 
 					// Only for checkouts started before build-wow skipped this wait, which
-					// persisted it as the destination. Remove after one deploy cycle.
+					// persisted it as the destination. The signup destination cookie lives 24h
+					// and redirect payments return later, so remove it a few days after deploy.
 					if ( destination.startsWith( `${ BUILD_WOW_SITE_SPEC_PATH }?` ) ) {
 						window.location.replace( destination );
 						return;
