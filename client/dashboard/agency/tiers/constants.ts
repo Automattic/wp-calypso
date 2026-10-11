@@ -167,7 +167,7 @@ export const ALL_TIERS: TierItem[] = [
 		progressCardDescription: __(
 			"Congratulations! You've unlocked all Pro Partner benefits including Co-Marketing opportunities and your dedicated partner manager."
 		),
-		influencedRevenue: TARGET_INFLUENCED_REVENUE[ 'premier-partner' ],
+		influencedRevenue: TARGET_INFLUENCED_REVENUE[ 'vip-pro-agency-partner' ],
 		benefits: [
 			{
 				icon: starHalf,
@@ -214,7 +214,7 @@ export const ALL_TIERS: TierItem[] = [
 		progressCardDescription: __(
 			"Congratulations! You've unlocked higher VIP referral commissions, and annual credits for WooCommerce and Jetpack extensions."
 		),
-		influencedRevenue: TARGET_INFLUENCED_REVENUE[ 'vip-pro-agency-partner' ],
+		influencedRevenue: TARGET_INFLUENCED_REVENUE[ 'premier-partner' ],
 		benefits: [
 			{
 				icon: currencyDollar,
