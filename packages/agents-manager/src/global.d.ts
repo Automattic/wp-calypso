@@ -24,7 +24,6 @@ declare const agentsManagerData:
 	| {
 			agentProviders?: ( string | import( './utils/load-external-providers' ).LoadedProviders )[];
 			agentId?: string;
-			helpCenterUrl?: string;
 			/** Dev/internal context (localhost, jurassic, proxied a11ns, internal Atomic). Drives `is_test`. */
 			isDevMode?: boolean;
 			/** Whether the current request is attributed to an Automattician for tracking. */
@@ -149,7 +148,6 @@ interface AgentsManagerActions {
 	chatNavigate: import( 'react-router-dom' ).NavigateFunction;
 	resumeChat: () => void;
 	isChatVisible: () => boolean;
-	getCurrentRoute: () => string;
 	isCompactMode?: boolean;
 	isChatEnabled?: boolean;
 	desktopMediaQuery?: string;

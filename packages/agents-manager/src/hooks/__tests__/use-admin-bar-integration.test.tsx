@@ -4,21 +4,10 @@
 /* eslint-disable import/order -- jest.mock calls must precede imports */
 const mockResumeChat = jest.fn();
 
-jest.mock( '../../stores', () => ( { AGENTS_MANAGER_STORE: 'automattic/agents-manager' } ) );
-jest.mock( '@wordpress/data', () => ( { useSelect: jest.fn( () => false ) } ) );
-jest.mock( 'react-router-dom', () => ( {
-	useLocation: () => ( { pathname: '/chat' } ),
-	useNavigate: () => jest.fn(),
-} ) );
 jest.mock( '../../contexts', () => ( {
 	useAgentsManagerContext: () => ( { resumeChat: mockResumeChat, sectionName: 'wp-admin' } ),
 } ) );
 jest.mock( '../../utils/tracks', () => ( { recordAgentsManagerTracksEvent: jest.fn() } ) );
-jest.mock( '@automattic/calypso-analytics', () => ( {
-	getValidBlogId: () => null,
-	recordTracksEvent: jest.fn(),
-	withSiteContext: ( props: object ) => props,
-} ) );
 jest.mock( '../use-ai-chat-entry-state', () => ( { useAiChatEntryState: jest.fn() } ) );
 jest.mock( '../use-has-ai-chat-entry-button', () => ( {
 	__esModule: true,

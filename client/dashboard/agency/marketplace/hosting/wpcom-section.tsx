@@ -14,20 +14,21 @@ import clsx from 'clsx';
 import { useState } from 'react';
 import { useAnalytics } from '../../../app/analytics';
 import { Callout } from '../../../components/callout';
-import { Card, CardBody, CardDivider, CardHeader } from '../../../components/card';
+import { Card, CardBody, CardDivider } from '../../../components/card';
 import Divider from '../../../components/divider';
-import { SectionHeader } from '../../../components/section-header';
 import { TextBlur } from '../../../components/text-blur';
 import { DomainUpsellIllustraction } from '../../../sites/overview-domain-upsell-card/upsell-illustration';
-import wpcomDescriptor from '../exclusive-offers/images/wordpressdotcom-descriptor.svg';
 import { getWpcomTieredPrice } from '../products/lib/product-pricing';
 import { MAX_CART_ITEM_QUANTITY } from '../products/use-shopping-cart';
 import { DevSiteConfigurationModal } from '../purchases/site-configuration-modal';
-import { BrandMark, CheckGrid, HostingFeatures, Testimonials } from './content-sections';
+import { CheckGrid, HostingFeatures, Testimonials } from './content-sections';
+import { getTermPrice } from './lib/term-price';
 import SelectedPlanCard from './selected-plan-card';
+import StepHeading from './step-heading';
 import { useSessionState } from './use-session-state';
 import type { TermPricing } from '../use-term-pricing';
 import type { AgencyProduct } from '@automattic/api-core';
+import type { CSSProperties } from 'react';
 
 // Past this many owned sites the volume tiers are all reached; the picker goes away.
 const MAX_SITES_FOR_TIER_PICKER = 10;
@@ -167,9 +168,23 @@ export default function WpcomSection( {
 	const quantity = isReferralMode ? 1 : persistedQuantity;
 
 	const pricing = getWpcomTieredPrice( plan, quantity, term, ownedSites );
-	const perSiteLabel = term === 'yearly' ? __( '/site per year' ) : __( '/site per month' );
-	const termSuffix = term === 'yearly' ? __( '/year' ) : __( '/month' );
-	const billedLabel = term === 'yearly' ? __( 'billed annually' ) : __( 'billed monthly' );
+	const termPrice = getTermPrice( pricing.discountedCost, plan.currency, term );
+	const savedAmount = formatCurrency( pricing.actualCost - pricing.discountedCost, plan.currency );
+	const saveNote =
+		term === 'monthly'
+			? sprintf(
+					/* translators: %s is the amount saved, e.g. "US$300.00". */
+					__( 'Save %s · billed monthly' ),
+					savedAmount
+				)
+			: sprintf(
+					/* translators: %s is the amount saved, e.g. "US$300.00". */
+					__( 'Save %s' ),
+					savedAmount
+				);
+	// Per-site prices read per month too.
+	const getMonthlyUnitPrice = ( amount: number ) =>
+		formatCurrency( term === 'yearly' ? amount / 12 : amount, plan.currency );
 
 	const allTiers = getVolumeTiers( plan, term );
 	const tiers = allTiers.filter(
@@ -244,107 +259,100 @@ export default function WpcomSection( {
 	const nudge = getNudge();
 
 	return (
-		<div className="dashboard-marketplace-hosting__layout">
-			<VStack spacing={ 8 } justify="flex-start">
-				<VStack spacing={ 4 }>
-					<Card>
-						<CardHeader>
-							<SectionHeader
-								className="dashboard-marketplace-hosting__card-header"
-								level={ 3 }
-								title={ __( 'Purchase WordPress.com' ) }
-								description={ __(
-									'Managed WordPress priced per site, with volume discounts, staging, backups, and 24/7 expert support.'
-								) }
-								decoration={ <BrandMark src={ wpcomDescriptor } /> }
-							/>
-						</CardHeader>
-						<CardBody>
-							<VStack spacing={ 5 }>
-								<VStack spacing={ 3 }>
-									<HStack justify="space-between" alignment="center">
-										<Heading level={ 4 } size={ 13 }>
-											{ getQuantityHeading() }
-										</Heading>
-										{ ! isReferralMode && ownedSites > 0 && (
-											<Badge>
-												{ sprintf(
-													/* translators: %d is the number of WordPress.com sites the agency owns. */
-													_n( 'You own %d site', 'You own %d sites', ownedSites ),
-													ownedSites
-												) }
-											</Badge>
-										) }
-									</HStack>
-									{ isReferralMode && (
-										<Text variant="muted">
-											{ __(
-												'Refer a single site to your client. They’re billed directly at the standard rate, and you earn commission on every payment, paid out quarterly.'
+		<div className="dashboard-marketplace-hosting__layout has-buy-bar">
+			<VStack spacing={ 4 } className="dashboard-marketplace-hosting__layout-steps">
+				<Card>
+					<CardBody>
+						<VStack spacing={ 5 }>
+							<VStack spacing={ 3 }>
+								<HStack justify="space-between" alignment="center" wrap>
+									<StepHeading step={ 1 }>{ getQuantityHeading() }</StepHeading>
+									{ ! isReferralMode && ownedSites > 0 && (
+										<Badge>
+											{ sprintf(
+												/* translators: %d is the number of WordPress.com sites the agency owns. */
+												_n( 'You own %d site', 'You own %d sites', ownedSites ),
+												ownedSites
 											) }
-										</Text>
+										</Badge>
 									) }
-									{ ! isReferralMode && (
-										<VStack spacing={ 4 }>
-											<HStack
-												justify="flex-start"
-												alignment="flex-start"
-												spacing={ 4 }
-												wrap
-												expanded={ false }
-											>
-												<div className="dashboard-marketplace-hosting__stepper">
-													<NumberControl
-														__next40pxDefaultSize
-														label={ __( 'Number of sites' ) }
-														hideLabelFromVision
-														min={ 1 }
-														max={ MAX_CART_ITEM_QUANTITY }
-														spinControls="custom"
-														value={ String( quantity ) }
-														onChange={ ( value ) =>
-															setQuantity(
-																Math.min(
-																	MAX_CART_ITEM_QUANTITY,
-																	Math.max( 1, parseInt( String( value ), 10 ) || 1 )
-																)
+								</HStack>
+								{ isReferralMode && (
+									<Text variant="muted">
+										{ __(
+											'Refer a single site to your client. They’re billed directly at the standard rate, and you earn commission on every payment, paid out quarterly.'
+										) }
+									</Text>
+								) }
+								{ ! isReferralMode && (
+									<VStack spacing={ 4 }>
+										<HStack
+											justify="flex-start"
+											alignment="flex-start"
+											spacing={ 4 }
+											wrap
+											expanded={ false }
+										>
+											<div className="dashboard-marketplace-hosting__stepper">
+												<NumberControl
+													__next40pxDefaultSize
+													label={ __( 'Number of sites' ) }
+													hideLabelFromVision
+													min={ 1 }
+													max={ MAX_CART_ITEM_QUANTITY }
+													spinControls="custom"
+													value={ String( quantity ) }
+													onChange={ ( value ) =>
+														setQuantity(
+															Math.min(
+																MAX_CART_ITEM_QUANTITY,
+																Math.max( 1, parseInt( String( value ), 10 ) || 1 )
 															)
-														}
-													/>
-												</div>
-												<VStack spacing={ 1 } alignment="flex-start">
-													<Text weight={ 600 }>
-														<span>{ formatCurrency( pricing.pricePerUnit, plan.currency ) }</span>
-														<Text as="span" variant="muted">
-															{ perSiteLabel }
-														</Text>
+														)
+													}
+												/>
+											</div>
+											<VStack spacing={ 1 } alignment="flex-start">
+												<Text weight={ 600 }>
+													<span>{ getMonthlyUnitPrice( pricing.pricePerUnit ) }</span>
+													<Text as="span" variant="muted">
+														{ __( '/site per month' ) }
 													</Text>
-													{ pricing.discountPercentage > 0 && (
-														<HStack
-															spacing={ 2 }
-															justify="flex-start"
-															alignment="center"
-															expanded={ false }
-														>
-															<Text variant="muted">
-																<s>{ formatCurrency( pricing.basePricePerUnit, plan.currency ) }</s>
-															</Text>
-															<Badge intent="stable">
-																{ sprintf(
-																	/* translators: %d is the discount percentage. */
-																	__( '%d%% off' ),
-																	pricing.discountPercentage
-																) }
-															</Badge>
-														</HStack>
-													) }
-												</VStack>
-											</HStack>
-											{ nudge && <Text variant="muted">{ nudge }</Text> }
-											{ showTierPicker && tiers.length > 0 && (
+												</Text>
+												{ pricing.discountPercentage > 0 && (
+													<HStack
+														spacing={ 2 }
+														justify="flex-start"
+														alignment="center"
+														expanded={ false }
+													>
+														<Text variant="muted">
+															<s>{ getMonthlyUnitPrice( pricing.basePricePerUnit ) }</s>
+														</Text>
+														<Badge intent="stable">
+															{ sprintf(
+																/* translators: %d is the discount percentage. */
+																__( '%d%% off' ),
+																pricing.discountPercentage
+															) }
+														</Badge>
+													</HStack>
+												) }
+											</VStack>
+										</HStack>
+										{ nudge && <Text variant="muted">{ nudge }</Text> }
+										{ showTierPicker && tiers.length > 0 && (
+											<VStack className="dashboard-marketplace-hosting__tiers-frame">
 												<div
 													className="dashboard-marketplace-hosting__tiers"
 													role="group"
 													aria-label={ __( 'Volume tiers' ) }
+													style={
+														{
+															'--tier-count': tiers.length,
+															'--tier-narrow-columns': tiers.length % 2 ? 1 : 2,
+														} as CSSProperties
+													}
 												>
 													{ tiers.map( ( tier ) => {
 														const isSelected = tier.units === selectedTierUnits;
@@ -375,7 +383,7 @@ export default function WpcomSection( {
 																			) }
 																		</Text>
 																		<Text variant="muted" size={ 12 }>
-																			{ formatCurrency( tier.pricePerUnit, plan.currency ) }
+																			{ getMonthlyUnitPrice( tier.pricePerUnit ) }
 																		</Text>
 																		<Text
 																			size={ 12 }
@@ -395,35 +403,37 @@ export default function WpcomSection( {
 														);
 													} ) }
 												</div>
-											) }
-										</VStack>
-									) }
-								</VStack>
-								<CardDivider />
-								<VStack spacing={ 3 }>
-									<Heading level={ 4 } size={ 13 }>
-										{ __( 'What’s included' ) }
-									</Heading>
-									<CheckGrid
-										columns={ 3 }
-										items={ [
-											__( '50GB of storage' ),
-											__( 'Free staging site' ),
-											__( 'Unrestricted bandwidth' ),
-											__( 'Global CDN with 28+ locations' ),
-											__( 'Real-time backups' ),
-											__( '24/7 expert support' ),
-										] }
-									/>
-								</VStack>
+											</VStack>
+										) }
+									</VStack>
+								) }
 							</VStack>
-						</CardBody>
-					</Card>
-					<DevSitesCallout
-						availableDevSites={ availableDevSites }
-						isAgencyApproved={ isAgencyApproved }
-					/>
-				</VStack>
+							<CardDivider />
+							<VStack spacing={ 3 }>
+								<Heading level={ 4 } size={ 13 }>
+									{ __( 'What’s included' ) }
+								</Heading>
+								<CheckGrid
+									columns={ 3 }
+									items={ [
+										__( '50GB of storage' ),
+										__( 'Free staging site' ),
+										__( 'Unrestricted bandwidth' ),
+										__( 'Global CDN with 28+ locations' ),
+										__( 'Real-time backups' ),
+										__( '24/7 expert support' ),
+									] }
+								/>
+							</VStack>
+						</VStack>
+					</CardBody>
+				</Card>
+				<DevSitesCallout
+					availableDevSites={ availableDevSites }
+					isAgencyApproved={ isAgencyApproved }
+				/>
+			</VStack>
+			<VStack spacing={ 8 } className="dashboard-marketplace-hosting__layout-more">
 				<Divider style={ { color: 'var(--dashboard-overview__divider-color)' } } />
 				<HostingFeatures brand="wpcom" showFreeDomain={ term !== 'monthly' } />
 				<Testimonials brand="wpcom" />
@@ -434,31 +444,25 @@ export default function WpcomSection( {
 					price={
 						<Text size={ 24 } weight={ 600 } className="dashboard-marketplace-hosting__rail-price">
 							<TextBlur isBlurred={ ! isOwnedSitesReady } length={ 9 }>
-								{ formatCurrency( pricing.discountedCost, plan.currency ) }
+								{ termPrice.price }
 							</TextBlur>
 							<Text as="span" variant="muted" size={ 13 } weight={ 400 }>
-								{ termSuffix }
+								{ __( '/month' ) }
 							</Text>
 						</Text>
 					}
+					compactPrice={ isOwnedSitesReady ? termPrice.price : undefined }
 					notes={
-						isOwnedSitesReady &&
-						pricing.discountPercentage > 0 && (
+						isOwnedSitesReady && (
 							<VStack spacing={ 1 }>
-								<Text variant="muted">
-									<s>{ formatCurrency( pricing.actualCost, plan.currency ) }</s>
-									<span>
-										{ ' · ' +
-											sprintf(
-												/* translators: %s is the amount saved, e.g. "US$300.00". */
-												__( 'Save %s' ),
-												formatCurrency( pricing.actualCost - pricing.discountedCost, plan.currency )
-											) +
-											' · ' +
-											billedLabel }
-									</span>
-								</Text>
-								{ ownedSites > 0 && (
+								{ termPrice.billed && <Text variant="muted">{ termPrice.billed }</Text> }
+								{ pricing.discountPercentage > 0 && (
+									<Text variant="muted">
+										<s>{ formatCurrency( pricing.actualCost, plan.currency ) }</s>
+										<span>{ ' · ' + saveNote }</span>
+									</Text>
+								) }
+								{ pricing.discountPercentage > 0 && ownedSites > 0 && (
 									<Text variant="muted">
 										{ sprintf(
 											/* translators: %1$d is the discount percentage, %2$d the total number of sites, %3$d the sites already owned. */

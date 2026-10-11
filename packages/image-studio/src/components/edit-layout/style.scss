@@ -24,6 +24,10 @@
 		max-height: calc(100vh - #{$footer-height + $header-height});
 	}
 
+	.image-studio-modal--edit:has([data-slot="notice"]) & {
+		max-height: calc(100vh - #{$footer-height + $chat-notice-height + $header-height});
+	}
+
 	.image-studio-placeholder-image {
 		display: block;
 		width: 100%;

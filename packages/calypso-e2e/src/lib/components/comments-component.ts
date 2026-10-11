@@ -40,10 +40,15 @@ export class CommentsComponent {
 		if ( envVariables.TEST_ON_ATOMIC ) {
 			const frame = commentContent.frameLocator( 'iframe[name^="like-comment-frame"]' );
 
-			// Without `exact`, "Like" also matches "Liked by you".
+			// Without `exact`, "Like" also matches "Liked" and "Liked by you".
+			// The widget used to label the liked state "Liked by you"; it now reads
+			// "Liked", followed by "You like this." as plain text.
 			return {
 				notLiked: frame.getByRole( 'link', { name: 'Like', exact: true } ),
-				liked: frame.getByRole( 'link', { name: 'Liked by you' } ),
+				liked: frame
+					.getByRole( 'link', { name: 'Liked by you' } )
+					.or( frame.getByRole( 'link', { name: 'Liked', exact: true } ) )
+					.first(),
 			};
 		}
 

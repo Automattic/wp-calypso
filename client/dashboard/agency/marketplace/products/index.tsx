@@ -18,6 +18,7 @@ import PageLayout from '../../../components/page-layout';
 import { SectionHeader } from '../../../components/section-header';
 import { isPressablePlanLicense, pressableLicensesQuery } from '../hosting/lib/pressable-products';
 import { isAgencyApproved } from '../is-agency-approved';
+import ReferralModeBand from '../referral-mode-band';
 import ReferralToggle from '../referral-toggle';
 import TermPricingToggle from '../term-pricing-toggle';
 import { useMarketplaceType } from '../use-marketplace-type';
@@ -390,7 +391,7 @@ export default function MarketplaceProducts() {
 							<TermPricingToggle short={ isSmallScreen } />
 							{ /* Refer and the cart wrap together, so the cart never sits alone. */ }
 							<HStack spacing={ 4 } expanded={ false }>
-								<ReferralToggle />
+								<ReferralToggle kind="products" />
 								<CartMenu
 									items={ cartItems }
 									products={ allProducts ?? [] }
@@ -408,6 +409,7 @@ export default function MarketplaceProducts() {
 				/>
 			}
 		>
+			{ isReferralMode && <ReferralModeBand kind="products" /> }
 			{ detailsProduct && (
 				<ProductDetailsModal
 					product={ detailsProduct }

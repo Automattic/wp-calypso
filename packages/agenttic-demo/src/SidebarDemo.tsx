@@ -81,7 +81,7 @@ const SidebarDemo: React.FC< { currentTheme: 'light' | 'dark' } > = ( { currentT
 				.sidebar-demo {
 					display: flex;
 					height: 100%;
-					background-color: ${ currentTheme === 'dark' ? '#1e1e1e' : '#f0f0f1' };
+					background-color: ${ currentTheme === 'dark' ? '#1e1e1e' : '#fcfcfc' };
 				}
 
 				.sidebar-demo__content {

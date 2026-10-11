@@ -1,0 +1,4 @@
+// The DataViews wrapper paints its own surface; the filter bar sits on the page background.
+.dashboard-resource-center__filters {
+	--wp-dataviews-color-background: transparent;
+}

@@ -19,18 +19,26 @@ type UpsellCTAButtonProps = ComponentProps< typeof Button > & {
 	 */
 	upsellFeatureId?: string;
 
+	/**
+	 * Extra properties for the impression and click events, for example an experiment variation.
+	 * They cannot replace `upsell_id` or `upsell_feature_id`.
+	 */
+	tracksProperties?: Record< string, string | number | boolean >;
+
 	onClick?: ( event: React.MouseEvent< HTMLButtonElement | HTMLAnchorElement > ) => void;
 };
 
 export default function UpsellCTAButton( props: UpsellCTAButtonProps ) {
-	const { upsellId, upsellFeatureId, onClick, ...buttonProps } = props;
+	const { upsellId, upsellFeatureId, tracksProperties, onClick, ...buttonProps } = props;
 	const { recordTracksEvent } = useAnalytics();
+	const eventProperties = {
+		...tracksProperties,
+		upsell_id: upsellId,
+		upsell_feature_id: upsellFeatureId,
+	};
 
 	const handleClick = ( event: React.MouseEvent< HTMLButtonElement | HTMLAnchorElement > ) => {
-		recordTracksEvent( 'calypso_dashboard_upsell_click', {
-			upsell_id: upsellId,
-			upsell_feature_id: upsellFeatureId,
-		} );
+		recordTracksEvent( 'calypso_dashboard_upsell_click', eventProperties );
 		onClick?.( event );
 	};
 
@@ -38,10 +46,7 @@ export default function UpsellCTAButton( props: UpsellCTAButtonProps ) {
 		<>
 			<ComponentViewTracker
 				eventName="calypso_dashboard_upsell_impression"
-				properties={ {
-					upsell_id: upsellId,
-					upsell_feature_id: upsellFeatureId,
-				} }
+				properties={ eventProperties }
 			/>
 			<Button
 				className="dashboard-upsell-cta-button"

@@ -171,6 +171,7 @@ export * from './site-wordpress-version';
 export * from './site-collision-listener';
 export * from './site';
 export * from './sites';
+export * from './static-site-import-session';
 export * from './transact-vgs';
 export * from './upgrades';
 export * from './user';

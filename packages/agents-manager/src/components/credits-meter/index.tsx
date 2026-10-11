@@ -1,4 +1,4 @@
-import { ProgressRing } from '@automattic/agenttic-ui';
+import { StatusIndicator } from '@automattic/agenttic-ui';
 import { Button, Dropdown } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import {
@@ -22,6 +22,8 @@ interface Props {
 	onAction?: () => void;
 	/** Plans page for a live balance with a supported upgradeable tier. */
 	upgradeUrl?: string;
+	/** Shown instead of a CTA to people who can't upgrade the site themselves. */
+	purchaseHint?: string;
 	/** Full balance and purchases page, when available. */
 	manageUrl?: string;
 }
@@ -111,11 +113,12 @@ function PoolRow( { pool, isExhausted }: { pool: CreditsPool; isExhausted: boole
 }
 
 /**
- * The composer's credits indicator: a ring in the trailing slot, a tooltip
- * on hover or focus, and a popover on click listing each credit pool with a
- * single CTA. The tooltip gives a paid site's credits left as an amount and a
- * free plan's as a percentage. Each pool row leads with its percentage,
- * except top-ups, which have no allowance and show their balance alone.
+ * The composer's credits indicator: a dot in the trailing slot, red when the
+ * balance is low or used up, a tooltip on hover or focus, and a popover on
+ * click listing each credit pool with a single CTA. The tooltip gives a paid
+ * site's credits left as an amount and a free plan's as a percentage. Each
+ * pool row leads with its percentage, except top-ups, which have no allowance
+ * and show their balance alone.
  */
 export default function CreditsMeter( {
 	status,
@@ -123,6 +126,7 @@ export default function CreditsMeter( {
 	onToggle,
 	onAction,
 	upgradeUrl,
+	purchaseHint,
 	manageUrl,
 }: Props ) {
 	const label = getCreditsLabel( status );
@@ -148,8 +152,8 @@ export default function CreditsMeter( {
 			renderToggle={ ( { onToggle: toggle } ) => (
 				<Button
 					className="agents-manager-credits-meter__toggle"
-					icon={ <ProgressRing percent={ status.percent } tone={ tone } /> }
-					iconSize={ 16 }
+					icon={ <StatusIndicator tone={ tone } /> }
+					iconSize={ 12 }
 					label={ label }
 					showTooltip={ ! isOpen }
 					aria-expanded={ isOpen }
@@ -184,6 +188,9 @@ export default function CreditsMeter( {
 								? __( 'You’ve used all your free credits.', __i18n_text_domain__ )
 								: __( 'You’ve used all your site credits.', __i18n_text_domain__ ) }
 						</p>
+					) }
+					{ purchaseHint && (
+						<p className="agents-manager-credits-meter__message">{ purchaseHint }</p>
 					) }
 					{ ( upgradeUrl || onAction ) && (
 						<Button

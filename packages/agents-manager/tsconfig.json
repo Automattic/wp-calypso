@@ -6,7 +6,8 @@
 		"declarationDir": "dist/types",
 		"outDir": "dist/esm",
 		"rootDir": "src",
-		"types": [ "jest", "@testing-library/jest-dom" ]
+		"types": [ "jest", "@testing-library/jest-dom" ],
+		"moduleResolution": "bundler"
 	},
 	"include": [ "src", "src/*.json", "types" ],
 	"references": [

@@ -58,11 +58,15 @@ describe( 'formatPercent', () => {
 } );
 
 describe( 'credit states', () => {
-	it( 'reads low only on free plans within the threshold', () => {
+	it( 'reads low by percentage on free plans and by amount on paid plans', () => {
 		expect( isCreditsLow( free( 20 ) ) ).toBe( true );
 		expect( isCreditsLow( free( 21 ) ) ).toBe( false );
 		expect( isCreditsLow( free( 0 ) ) ).toBe( false );
-		expect( isCreditsLow( paid( 5 ) ) ).toBe( false );
+		expect( isCreditsLow( paid( 5 ) ) ).toBe( true );
+		expect( isCreditsLow( paid( 100, 20000 ) ) ).toBe( false );
+		expect( isCreditsLow( paid( 100, 19999 ) ) ).toBe( true );
+		expect( isCreditsLow( paid( 0, 0 ) ) ).toBe( false );
+		expect( isCreditsLow( { ...paid( 0 ), remaining: 25000 } ) ).toBe( false );
 	} );
 
 	it( 'reads exhausted only at an exact zero, for any plan', () => {
@@ -76,25 +80,36 @@ describe( 'credit states', () => {
 
 describe( 'getCreditsTone', () => {
 	it.each( [
-		[ 100, 'muted', 'primary' ],
-		[ 20.01, 'muted', 'primary' ],
-		[ 20, 'error', 'error' ],
-		[ 19.99, 'error', 'error' ],
-		[ 0.4, 'error', 'error' ],
-		[ 0, 'error', 'error' ],
-	] as const )(
-		'uses the unrounded balance at %s%% for both plans',
-		( percent, paidTone, freeTone ) => {
-			expect( getCreditsTone( paid( percent ) ) ).toBe( paidTone );
-			expect( getCreditsTone( free( percent ) ) ).toBe( freeTone );
-		}
-	);
+		[ 100, 'primary' ],
+		[ 20.01, 'primary' ],
+		[ 20, 'error' ],
+		[ 19.99, 'error' ],
+		[ 0.4, 'error' ],
+		[ 0, 'error' ],
+	] as const )( 'uses the unrounded free share at %s%%', ( percent, tone ) => {
+		expect( getCreditsTone( free( percent ) ) ).toBe( tone );
+	} );
 
-	it( 'respects a custom threshold for both plans', () => {
-		expect( getCreditsTone( paid( 10 ), 10 ) ).toBe( 'error' );
-		expect( getCreditsTone( paid( 10.01 ), 10 ) ).toBe( 'muted' );
+	it.each( [
+		[ 25000, 'muted' ],
+		[ 20000, 'muted' ],
+		[ 19999, 'error' ],
+		[ 800, 'error' ],
+		[ 1, 'error' ],
+		[ 0, 'error' ],
+	] as const )( 'uses the paid amount at %i credits', ( remaining, tone ) => {
+		expect( getCreditsTone( paid( 100, remaining ) ) ).toBe( tone );
+	} );
+
+	it( 'ignores the plan share on paid plans', () => {
+		expect( getCreditsTone( { ...paid( 10 ), remaining: 205000 } ) ).toBe( 'muted' );
+		expect( getCreditsTone( { ...paid( 0 ), remaining: 25000 } ) ).toBe( 'muted' );
+	} );
+
+	it( 'respects a custom threshold on free plans only', () => {
 		expect( getCreditsTone( free( 10 ), 10 ) ).toBe( 'error' );
 		expect( getCreditsTone( free( 10.01 ), 10 ) ).toBe( 'primary' );
+		expect( getCreditsTone( paid( 10, 25000 ), 50 ) ).toBe( 'muted' );
 	} );
 } );
 
