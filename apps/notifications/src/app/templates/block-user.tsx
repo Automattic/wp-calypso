@@ -98,13 +98,13 @@ export default function UserBlock( { note, block }: { note: Note; block: Block }
 			),
 	].filter( ( part ): part is ReactElement => Boolean( part ) );
 
-	const isListRow = isPeopleListNote( note );
+	const isListOfPeople = isPeopleListNote( note );
 
 	return (
 		<HStack
 			className="wpnc__user"
 			justify="flex-start"
-			alignment={ isListRow ? 'center' : 'flex-start' }
+			alignment={ isListOfPeople ? 'center' : 'flex-start' }
 			spacing={ 4 }
 		>
 			<a
@@ -120,7 +120,7 @@ export default function UserBlock( { note, block }: { note: Note; block: Block }
 			>
 				<NoteIcon icon={ media?.url } alt={ block.text } size={ 36 } />
 			</a>
-			{ isListRow ? (
+			{ isListOfPeople ? (
 				<>
 					<FlexBlock>
 						<VStack spacing={ 0.5 }>
