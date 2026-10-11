@@ -104,11 +104,8 @@
 		border-radius: 0;
 	}
 
-	// Stands in for an image that couldn't load, so the reader knows one was there.
 	img.is-unavailable {
 		display: block;
-		// Images often sit in a shrink-to-fit wrapper (a linked or aligned image), where 100%
-		// would collapse to the 1px source; this fills the wrapper's container instead.
 		width: 100vw;
 		max-width: 100%;
 		height: auto;
