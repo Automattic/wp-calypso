@@ -360,7 +360,9 @@
  */
 .wpnc__note.wpnc__like .wpnc__body .wpnc__body-content,
 .wpnc__note.wpnc__comment_like .wpnc__body .wpnc__body-content,
-.wpnc__note.wpnc__follow .wpnc__body .wpnc__body-content {
+.wpnc__note.wpnc__follow .wpnc__body .wpnc__body-content,
+.wpnc__note.wpnc__reblog .wpnc__body .wpnc__body-content,
+.wpnc__note.wpnc__blogger_follow_reco .wpnc__body .wpnc__body-content {
 	.wpnc__user {
 		padding-block: 8px;
 
