@@ -424,6 +424,7 @@ export default function AgencyOverview() {
 							}
 							links={ {
 								partnerDirectory: PARTNER_DIRECTORY_ROUTE,
+								leads: '/leads',
 								wpcomHosting: getMarketplaceHostingSectionRoute( 'wpcom' ),
 								pressableHosting: getMarketplaceHostingSectionRoute( 'pressable' ),
 								referrals: '/referrals',

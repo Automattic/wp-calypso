@@ -1,85 +1,14 @@
 /**
  * PROTOTYPE — proof of concept only.
  *
- * Client leads for the Leads card: sample pipeline data for agencies at Pro
- * tier and above, plus the logic for the empty state below Pro (the unlock
- * path, the IAR gap, and the IAR methods that fit this agency best).
+ * Logic for the Client leads card's empty state below Pro: the unlock
+ * thresholds and the IAR methods that fit this agency best. The leads
+ * themselves live in `../../leads/lead-data.ts`.
  * Thresholds mirror the tier ladder in `../../tiers/constants.ts`.
  */
 import { __ } from '@wordpress/i18n';
 import { TARGET_INFLUENCED_REVENUE } from '../../tiers/constants';
 import type { SignupProfile } from './signup-profile';
-
-export type LeadStatus = 'new' | 'in-progress' | 'closed';
-
-export interface Lead {
-	id: string;
-	client: string;
-	project: string;
-	source: string;
-	/** Estimated project value in USD. */
-	value: number;
-	status: LeadStatus;
-	/** Days ago the lead arrived (or closed). */
-	daysAgo: number;
-}
-
-export const getSampleLeads = (): Lead[] => [
-	{
-		id: 'lead-harbor-coffee',
-		client: 'Harbor Coffee Co.',
-		project: __( 'WooCommerce store rebuild' ),
-		source: __( 'WooCommerce sales team' ),
-		value: 18000,
-		status: 'new',
-		daysAgo: 1,
-	},
-	{
-		id: 'lead-northgate-clinic',
-		client: 'Northgate Clinic',
-		project: __( 'Accessible site redesign' ),
-		source: __( 'WordPress.com directory' ),
-		value: 12500,
-		status: 'new',
-		daysAgo: 3,
-	},
-	{
-		id: 'lead-bluefin-media',
-		client: 'Bluefin Media',
-		project: __( 'Migration of 40 sites to Pressable' ),
-		source: __( 'Pressable sales team' ),
-		value: 32000,
-		status: 'in-progress',
-		daysAgo: 9,
-	},
-	{
-		id: 'lead-orchard-foods',
-		client: 'Orchard Foods',
-		project: __( 'Subscriptions and memberships launch' ),
-		source: __( 'WooCommerce.com directory' ),
-		value: 21000,
-		status: 'in-progress',
-		daysAgo: 16,
-	},
-	{
-		id: 'lead-summit-legal',
-		client: 'Summit Legal',
-		project: __( 'Marketing site on WordPress.com' ),
-		source: __( 'Automattic sales' ),
-		value: 9500,
-		status: 'closed',
-		daysAgo: 24,
-	},
-	{
-		id: 'lead-pine-ridge',
-		client: 'Pine Ridge Outfitters',
-		project: __( 'Black Friday performance work' ),
-		source: __( 'Jetpack directory' ),
-		value: 7800,
-		status: 'closed',
-		daysAgo: 41,
-	},
-];
 
 export const LEAD_UNLOCKS = {
 	directory: TARGET_INFLUENCED_REVENUE[ 'agency-partner' ],

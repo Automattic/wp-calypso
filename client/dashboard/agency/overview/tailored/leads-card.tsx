@@ -25,20 +25,16 @@ import { useState } from 'react';
 import { ButtonStack } from '../../../components/button-stack';
 import { Card, CardBody, CardDivider } from '../../../components/card';
 import { Text } from '../../../components/text';
+import { getLeadStatusLabels, getLeadValue, isOpenLead, useLeads } from '../../leads/lead-data';
 import OverviewLinkButton from '../overview-link-button';
 import StatList from '../stat-list';
-import { LEAD_UNLOCKS, getIarMethods, getSampleLeads } from './leads';
-import type { IarMethodLinks, LeadStatus } from './leads';
+import { LEAD_UNLOCKS, getIarMethods } from './leads';
+import type { IarMethodLinks } from './leads';
 import type { SignupProfile } from './signup-profile';
+import type { LeadStatus } from '../../leads/lead-data';
 import './style.scss';
 
 const money = ( value: number ) => formatCurrency( value, 'USD', { stripZeros: true } );
-
-const getStatusLabels = (): Record< LeadStatus, string > => ( {
-	new: __( 'New' ),
-	'in-progress': __( 'In progress' ),
-	closed: __( 'Closed' ),
-} );
 
 function LeadsSummary( {
 	leadsHref,
@@ -47,16 +43,17 @@ function LeadsSummary( {
 	leadsHref: string;
 	shouldUseRouterLink?: boolean;
 } ) {
-	const leads = getSampleLeads();
-	const labels = getStatusLabels();
+	// Same leads as the Leads dashboard, so edits made there show here too.
+	const leads = useLeads();
+	const labels = getLeadStatusLabels();
 	const countOf = ( status: LeadStatus ) =>
 		leads.filter( ( lead ) => lead.status === status ).length;
 	const openValue = leads
-		.filter( ( lead ) => lead.status !== 'closed' )
-		.reduce( ( total, lead ) => total + lead.value, 0 );
-	const closedValue = leads
-		.filter( ( lead ) => lead.status === 'closed' )
-		.reduce( ( total, lead ) => total + lead.value, 0 );
+		.filter( isOpenLead )
+		.reduce( ( total, lead ) => total + getLeadValue( lead ), 0 );
+	const wonValue = leads
+		.filter( ( lead ) => lead.status === 'won' )
+		.reduce( ( total, lead ) => total + getLeadValue( lead ), 0 );
 
 	return (
 		<VStack spacing={ 4 }>
@@ -77,11 +74,11 @@ function LeadsSummary( {
 					{ label: labels[ 'in-progress' ], value: formatNumber( countOf( 'in-progress' ) ) },
 					{
 						label: sprintf(
-							/* translators: %s is the total value of closed leads */
-							__( 'Closed (%s)' ),
-							money( closedValue )
+							/* translators: %s is the total value of leads won */
+							__( 'Closed won (%s)' ),
+							money( wonValue )
 						),
-						value: formatNumber( countOf( 'closed' ) ),
+						value: formatNumber( countOf( 'won' ) ),
 					},
 				] }
 			/>
@@ -111,7 +108,7 @@ function LeadsEmptyState( {
 	tierLevel: number;
 	profile: SignupProfile | null;
 	lockedNote?: string;
-	links: IarMethodLinks & { partnerDirectory: string };
+	links: IarMethodLinks & { partnerDirectory: string; leads: string };
 	shouldUseRouterLink?: boolean;
 } ) {
 	const hasDirectoryUnlock = tierLevel >= 1;
@@ -254,7 +251,7 @@ interface LeadsCardProps {
 	influencedRevenue: number;
 	profile: SignupProfile | null;
 	lockedNote?: string;
-	links: IarMethodLinks & { partnerDirectory: string };
+	links: IarMethodLinks & { partnerDirectory: string; leads: string };
 	shouldUseRouterLink?: boolean;
 }
 
@@ -273,11 +270,7 @@ export default function LeadsCard( {
 		<Card>
 			<CardBody>
 				{ hasLeads ? (
-					// The lead dashboard is built next; until then this points to the Partner Directory.
-					<LeadsSummary
-						leadsHref={ links.partnerDirectory }
-						shouldUseRouterLink={ shouldUseRouterLink }
-					/>
+					<LeadsSummary leadsHref={ links.leads } shouldUseRouterLink={ shouldUseRouterLink } />
 				) : (
 					<LeadsEmptyState
 						influencedRevenue={ influencedRevenue }
