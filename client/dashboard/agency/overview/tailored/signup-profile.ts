@@ -26,6 +26,7 @@ export const SIGNUP_GOALS: SignupGoal[] = [
 export interface SignupProfile {
 	firstName: string;
 	agencyName: string;
+	agencyUrl: string;
 	agencySize: string;
 	managedSites: string;
 	servicesOffered: string[];
@@ -37,8 +38,9 @@ export interface SignupProfile {
 export const SAMPLE_SIGNUP_PROFILE: SignupProfile = {
 	firstName: 'Jamie',
 	agencyName: 'Northwind Studio',
+	agencyUrl: 'northwindstudio.com',
 	agencySize: '6-10',
-	managedSites: '21-50',
+	managedSites: '101-500',
 	servicesOffered: [
 		'website_design_development',
 		'ecommerce_development',
@@ -69,6 +71,7 @@ function parseSignupProfile( raw: string | null ): SignupProfile | null {
 		return {
 			firstName: asString( parsed.firstName ),
 			agencyName: asString( parsed.agencyName ),
+			agencyUrl: asString( parsed.agencyUrl ),
 			agencySize: asString( parsed.agencySize ),
 			managedSites: asString( parsed.managedSites ),
 			servicesOffered: asStringArray( parsed.servicesOffered ),
@@ -86,6 +89,7 @@ export function saveSignupProfile( profile: SignupProfile ) {
 		...readStoredObject( STORAGE_KEY ),
 		firstName: profile.firstName,
 		agencyName: profile.agencyName,
+		agencyUrl: profile.agencyUrl,
 		agencySize: profile.agencySize,
 		managedSites: profile.managedSites,
 		servicesOffered: profile.servicesOffered,

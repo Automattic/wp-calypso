@@ -102,17 +102,18 @@ const PARTNER_MANAGER_TODOS: Omit< CallTodo, 'dueDate' >[] = [
 	},
 ];
 
+// Due dates are always ahead of today, so no next step shows as overdue in the demo.
 function buildRecap( callDate: Date, goals: SignupGoal[] ): CallRecap {
 	const agencyTodos = getAgencyTodos();
 	const ranked = goals.length ? goals : ( [ 'other' ] as SignupGoal[] );
 	const todos: CallTodo[] = [
 		...ranked.slice( 0, 3 ).map( ( goal, index ) => ( {
 			...agencyTodos[ goal ],
-			dueDate: new Date( callDate.getTime() + ( 14 + index * 7 ) * DAY ),
+			dueDate: daysFromNow( 10 + index * 7 ),
 		} ) ),
 		...PARTNER_MANAGER_TODOS.map( ( todo, index ) => ( {
 			...todo,
-			dueDate: new Date( callDate.getTime() + ( 7 + index * 7 ) * DAY ),
+			dueDate: daysFromNow( 6 + index * 7 ),
 		} ) ),
 	];
 

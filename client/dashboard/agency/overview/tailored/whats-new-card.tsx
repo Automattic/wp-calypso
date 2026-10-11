@@ -138,17 +138,22 @@ function EventLogo( { item, size }: { item: UpdateItem; size: number } ) {
 	);
 }
 
+// Event rows pair the date block with the logo, so both share one square size.
+const EVENT_ROW_TILE_SIZE = 48;
+
 function DateBlock( { iso }: { iso: string } ) {
 	const date = new Date( iso );
 	return (
 		<VStack
 			spacing={ 0 }
 			alignment="center"
+			justify="center"
 			aria-hidden="true"
 			style={ {
 				flexShrink: 0,
-				width: '48px',
-				paddingBlock: '4px',
+				boxSizing: 'border-box',
+				width: `${ EVENT_ROW_TILE_SIZE }px`,
+				height: `${ EVENT_ROW_TILE_SIZE }px`,
 				borderRadius: '8px',
 				border: '1px solid var(--color-gray-100, #dcdcde)',
 			} }
@@ -181,16 +186,19 @@ function FeaturedEvent( {
 				border: '1px solid rgba(56, 88, 233, 0.18)',
 			} }
 		>
-			<HStack spacing={ 2 } justify="flex-start" wrap>
-				<Badge intent="informational">{ getCountdown( item.date ) }</Badge>
-			</HStack>
 			<HStack spacing={ 4 } alignment="flex-start" justify="flex-start">
 				<EventLogo item={ item } size={ 64 } />
-				<VStack spacing={ 1 }>
+				<VStack spacing={ 1 } style={ { flex: 1, minWidth: 0 } }>
 					<Eyebrow item={ item } />
-					<Heading level={ 3 } size={ 17 } weight={ 600 } lineHeight="24px">
-						{ item.title }
-					</Heading>
+					{ /* The countdown pill sits to the right of the title, centered on it. */ }
+					<HStack spacing={ 3 } alignment="center" justify="space-between">
+						<Heading level={ 3 } size={ 17 } weight={ 600 } lineHeight="24px">
+							{ item.title }
+						</Heading>
+						<span style={ { flexShrink: 0 } }>
+							<Badge intent="informational">{ getCountdown( item.date ) }</Badge>
+						</span>
+					</HStack>
 					{ item.host && (
 						<Text variant="muted" size={ 12 } lineHeight="16px">
 							{ item.host }
@@ -226,19 +234,11 @@ function FeaturedEvent( {
 	);
 }
 
-function EventRow( {
-	item,
-	isForYou,
-	onOpen,
-}: {
-	item: UpdateItem;
-	isForYou: boolean;
-	onOpen: ( item: UpdateItem ) => void;
-} ) {
+function EventRow( { item, onOpen }: { item: UpdateItem; onOpen: ( item: UpdateItem ) => void } ) {
 	return (
 		<HStack spacing={ 3 } alignment="center" justify="flex-start">
 			<DateBlock iso={ item.date } />
-			<EventLogo item={ item } size={ 40 } />
+			<EventLogo item={ item } size={ EVENT_ROW_TILE_SIZE } />
 			<VStack spacing={ 1 } style={ { flex: 1, minWidth: 0 } }>
 				<ExternalLink href={ item.url } onClick={ () => onOpen( item ) }>
 					{ item.title }
@@ -247,7 +247,6 @@ function EventRow( {
 					{ [ item.format, item.host, getCountdown( item.date ) ].filter( Boolean ).join( ' · ' ) }
 				</Text>
 			</VStack>
-			{ isForYou && <Badge intent="stable">{ __( 'For you' ) }</Badge> }
 		</HStack>
 	);
 }
@@ -284,20 +283,13 @@ export default function WhatsNewCard( { goals, recordTracksEvent }: WhatsNewCard
 					{ ( tab ) => {
 						const items = getRankedUpdates( tab.name as UpdateKind, goals );
 						const empty = tabs.find( ( { name } ) => name === tab.name )?.empty;
-						const isForYou = ( item: UpdateItem ) =>
-							!! goals[ 0 ] && item.goals.includes( goals[ 0 ] );
 						if ( tab.name === 'event' && items.length ) {
 							const [ featured, ...rest ] = items;
 							return (
 								<VStack spacing={ 5 } style={ { paddingBlockStart: '16px' } }>
 									<FeaturedEvent item={ featured } onOpen={ handleOpen } />
 									{ rest.map( ( item ) => (
-										<EventRow
-											key={ item.id }
-											item={ item }
-											isForYou={ isForYou( item ) }
-											onOpen={ handleOpen }
-										/>
+										<EventRow key={ item.id } item={ item } onOpen={ handleOpen } />
 									) ) }
 								</VStack>
 							);

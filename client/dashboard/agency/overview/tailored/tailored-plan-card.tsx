@@ -9,25 +9,27 @@
  */
 import {
 	Button,
-	__experimentalHeading as Heading,
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 	Icon,
+	VisuallyHidden,
 } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { __, _n, sprintf } from '@wordpress/i18n';
-import { chevronDown, chevronRight, chevronUp } from '@wordpress/icons';
+import { chevronDown, chevronRight, chevronUp, video } from '@wordpress/icons';
 import { Fragment, useState } from 'react';
 import { Card, CardBody, CardDivider, CardHeader } from '../../../components/card';
+import Grid from '../../../components/grid';
 import RouterLinkButton from '../../../components/router-link-button';
 import { SectionHeader } from '../../../components/section-header';
 import { Text } from '../../../components/text';
+import DirectoryDemoModal from './directory-demo-modal';
 import { getTailoredPlan } from './goal-plan';
-import PartnerManagerHub from './partner-manager-hub';
 import type { PlanStep, TailoredPlanLinks } from './goal-plan';
 import type { PartnerCalls } from './partner-calls';
 import type { PartnerManager } from './partner-managers';
 import type { SignupGoal, SignupProfile } from './signup-profile';
+import type { ReactNode } from 'react';
 import './style.scss';
 
 const RANK_SIZE = 28;
@@ -60,9 +62,12 @@ function RankBadge( { rank }: { rank: number } ) {
 function StepRow( {
 	step,
 	shouldUseRouterLink,
+	onActivate,
 }: {
 	step: PlanStep;
 	shouldUseRouterLink?: boolean;
+	/** Called when the agency opens the step, before its action runs. */
+	onActivate?: () => void;
 } ) {
 	const content = (
 		<>
@@ -74,7 +79,11 @@ function StepRow( {
 					{ step.description }
 				</Text>
 			</span>
-			<Icon icon={ chevronRight } size={ 24 } className="a4a-plan-step-row__chevron" />
+			<Icon
+				icon={ step.opensVideo ? video : chevronRight }
+				size={ 24 }
+				className="a4a-plan-step-row__chevron"
+			/>
 		</>
 	);
 	const props = {
@@ -84,21 +93,28 @@ function StepRow( {
 	};
 
 	if ( typeof step.action === 'function' ) {
+		const action = step.action;
 		return (
-			<Button { ...props } onClick={ step.action }>
+			<Button
+				{ ...props }
+				onClick={ () => {
+					onActivate?.();
+					action();
+				} }
+			>
 				{ content }
 			</Button>
 		);
 	}
 	if ( shouldUseRouterLink ) {
 		return (
-			<RouterLinkButton { ...props } to={ step.action }>
+			<RouterLinkButton { ...props } to={ step.action } onClick={ onActivate }>
 				{ content }
 			</RouterLinkButton>
 		);
 	}
 	return (
-		<Button { ...props } href={ step.action }>
+		<Button { ...props } href={ step.action } onClick={ onActivate }>
 			{ content }
 		</Button>
 	);
@@ -122,75 +138,58 @@ const getAdvisorFocus = ( goal: SignupGoal | undefined, agencyName: string ) => 
 	switch ( goal ) {
 		case 'more_leads':
 			/* translators: %s is the agency name */
-			return sprintf( __( 'We’ll map out how %s can unlock more client leads.' ), name );
+			return sprintf( __( '30 minutes to map out how %s can unlock more client leads.' ), name );
 		case 'passive_income':
-			/* translators: %s is the agency name */
-			return sprintf( __( 'We’ll map out how %s can start earning recurring revenue.' ), name );
+			return sprintf(
+				/* translators: %s is the agency name */
+				__( '30 minutes to map out how %s can start earning recurring revenue.' ),
+				name
+			);
 		case 'better_hosting':
-			/* translators: %s is the agency name */
-			return sprintf( __( 'We’ll find the right hosting setup for %s and its clients.' ), name );
+			return sprintf(
+				/* translators: %s is the agency name */
+				__( '30 minutes to find the right hosting setup for %s and its clients.' ),
+				name
+			);
 		case 'optimize_operations':
 			/* translators: %s is the agency name */
-			return sprintf( __( 'We’ll show %s the tools that save the most time.' ), name );
+			return sprintf( __( '30 minutes on the tools that will save %s the most time.' ), name );
 		default:
 			/* translators: %s is the agency name */
-			return sprintf( __( 'We’ll build a growth plan around what %s needs most.' ), name );
+			return sprintf( __( '30 minutes to shape a growth plan around what %s needs most.' ), name );
 	}
 };
 
-function CallSection( {
-	call,
-	profile,
-	onScheduleCall,
-	isSchedulingCall,
+// A tinted tile in the welcome section: what it is, why it helps, and one action.
+function StartTile( {
+	title,
+	description,
+	action,
 }: {
-	call: PlanCall;
-	profile: SignupProfile;
-	onScheduleCall?: () => void;
-	isSchedulingCall?: boolean;
+	title: string;
+	description: string;
+	action: ReactNode;
 } ) {
-	const isSmallViewport = useViewportMatch( 'medium', '<' );
-
-	if ( call.type === 'check-in' ) {
-		return (
-			<PartnerManagerHub
-				manager={ call.manager }
-				calls={ call.calls }
-				completedTodoIds={ call.completedTodoIds }
-				onToggleTodo={ call.onToggleTodo }
-				discussionNotes={ call.discussionNotes }
-				onSaveNotes={ call.onSaveNotes }
-				onScheduleCall={ onScheduleCall }
-				isSchedulingCall={ isSchedulingCall }
-			/>
-		);
-	}
-
 	return (
-		<HStack
-			spacing={ 4 }
-			alignment={ isSmallViewport ? 'flex-start' : 'center' }
+		<VStack
+			spacing={ 3 }
 			justify="space-between"
-			wrap={ isSmallViewport }
+			style={ {
+				padding: '16px',
+				borderRadius: '8px',
+				background: 'var(--color-gray-0, #f6f7f7)',
+			} }
 		>
-			<VStack spacing={ 1 } style={ { flex: 1 } }>
-				<Heading level={ 3 } size={ 15 } weight={ 500 }>
-					{ __( 'Schedule your 30 minute advisor call' ) }
-				</Heading>
-				<Text variant="muted" lineHeight="20px">
-					{ getAdvisorFocus( profile.goals[ 0 ], profile.agencyName ) }
+			<VStack spacing={ 1 }>
+				<Text weight={ 500 } lineHeight="20px">
+					{ title }
+				</Text>
+				<Text variant="muted" size={ 13 } lineHeight="20px">
+					{ description }
 				</Text>
 			</VStack>
-			<Button
-				variant="primary"
-				onClick={ onScheduleCall }
-				isBusy={ isSchedulingCall }
-				disabled={ ! onScheduleCall || isSchedulingCall }
-				style={ { flexShrink: 0 } }
-			>
-				{ __( 'Schedule a call' ) }
-			</Button>
-		</HStack>
+			<HStack justify="flex-start">{ action }</HStack>
+		</VStack>
 	);
 }
 
@@ -203,6 +202,12 @@ interface TailoredPlanCardProps {
 	onScheduleCall?: () => void;
 	isSchedulingCall?: boolean;
 	shouldUseRouterLink?: boolean;
+	/** Compact tier summary for new agencies, shown once `showTierProgress` is true. */
+	tierStrip?: ReactNode;
+	/** The influenced revenue meter waits until the agency acts on its plan. */
+	showTierProgress?: boolean;
+	/** Called the first time the agency opens a step. */
+	onStartPlan?: () => void;
 }
 
 // Compact goal row for established agencies: collapsed to its title and step
@@ -211,12 +216,16 @@ function CompactSection( {
 	section,
 	rank,
 	shouldUseRouterLink,
+	defaultOpen = false,
+	onActivateStep,
 }: {
 	section: ReturnType< typeof getTailoredPlan >[ number ];
 	rank: number;
 	shouldUseRouterLink?: boolean;
+	defaultOpen?: boolean;
+	onActivateStep?: () => void;
 } ) {
-	const [ isOpen, setIsOpen ] = useState( false );
+	const [ isOpen, setIsOpen ] = useState( defaultOpen );
 	const panelId = `a4a-plan-goal-${ section.goal }`;
 
 	return (
@@ -230,6 +239,13 @@ function CompactSection( {
 				<HStack spacing={ 3 } alignment="center" justify="flex-start" style={ { flex: 1 } }>
 					<RankBadge rank={ rank } />
 					<Text weight={ 500 } size={ 15 } lineHeight="20px">
+						<VisuallyHidden as="span">
+							{ sprintf(
+								/* translators: %d is the goal's priority, 1 being the top priority */
+								__( 'Priority %d:' ),
+								rank
+							) }{ ' ' }
+						</VisuallyHidden>
 						{ section.title }
 					</Text>
 				</HStack>
@@ -255,7 +271,12 @@ function CompactSection( {
 					</Text>
 					<div className="a4a-plan-steps">
 						{ section.steps.map( ( step ) => (
-							<StepRow key={ step.id } step={ step } shouldUseRouterLink={ shouldUseRouterLink } />
+							<StepRow
+								key={ step.id }
+								step={ step }
+								shouldUseRouterLink={ shouldUseRouterLink }
+								onActivate={ onActivateStep }
+							/>
 						) ) }
 					</div>
 				</VStack>
@@ -315,97 +336,127 @@ export default function TailoredPlanCard( {
 	onScheduleCall,
 	isSchedulingCall,
 	shouldUseRouterLink,
+	tierStrip,
+	showTierProgress = false,
+	onStartPlan,
 }: TailoredPlanCardProps ) {
 	const isSmallViewport = useViewportMatch( 'medium', '<' );
-	const [ isExpanded, setIsExpanded ] = useState( true );
-	const sections = getTailoredPlan( profile, links, tierLevel );
-	const toggleLabel = isExpanded ? __( 'Hide growth plan steps' ) : __( 'Show growth plan steps' );
+	const [ openVideo, setOpenVideo ] = useState< 'overview' | 'directory' | null >( null );
+	const sections = getTailoredPlan(
+		profile,
+		{ ...links, onWatchDirectoryDemo: () => setOpenVideo( 'directory' ) },
+		tierLevel
+	);
+	const hasTierBlock = showTierProgress && !! tierStrip;
+
+	const demoModal = openVideo && (
+		<DirectoryDemoModal
+			{ ...( openVideo === 'overview' && {
+				title: __( 'How Automattic for Agencies works' ),
+				callPrompt: __( 'Want a walkthrough for your agency?' ),
+			} ) }
+			onClose={ () => setOpenVideo( null ) }
+			scheduleCallLabel={
+				call.type === 'check-in'
+					? sprintf(
+							/* translators: %s is the partner manager's first name */
+							__( 'Schedule a check-in with %s' ),
+							call.manager.name.split( ' ' )[ 0 ]
+						)
+					: __( 'Schedule your free advisor call' )
+			}
+			onScheduleCall={ onScheduleCall }
+			isSchedulingCall={ isSchedulingCall }
+		/>
+	);
 
 	if ( call.type === 'check-in' ) {
 		return (
-			<CompactPlanCard
-				sections={ sections }
-				managerFirstName={ call.manager.name.split( ' ' )[ 0 ] }
-				shouldUseRouterLink={ shouldUseRouterLink }
-			/>
+			<>
+				<CompactPlanCard
+					sections={ sections }
+					managerFirstName={ call.manager.name.split( ' ' )[ 0 ] }
+					shouldUseRouterLink={ shouldUseRouterLink }
+				/>
+				{ demoModal }
+			</>
 		);
 	}
 
 	return (
-		<Card>
-			<CardHeader>
-				{ /* The toggle sits outside SectionHeader so it pins to the card's right edge. */ }
-				<HStack spacing={ 4 } alignment="flex-start" justify="space-between">
-					<SectionHeader
-						level={ 2 }
-						title={ __( 'Your growth plan' ) }
-						description={ __(
-							'Based on what you told us at signup, here’s where to start, with your top priority first.'
-						) }
-					/>
-					<Button
-						size="compact"
-						icon={ isExpanded ? chevronUp : chevronDown }
-						label={ toggleLabel }
-						aria-expanded={ isExpanded }
-						onClick={ () => setIsExpanded( ( value ) => ! value ) }
-						style={ { flexShrink: 0 } }
-					/>
-				</HStack>
-			</CardHeader>
-			<CardBody>
-				<CallSection
-					call={ call }
-					profile={ profile }
-					onScheduleCall={ onScheduleCall }
-					isSchedulingCall={ isSchedulingCall }
-				/>
-			</CardBody>
-			{ isExpanded &&
-				sections.map( ( section, index ) => (
-					<Fragment key={ section.goal }>
-						<CardDivider style={ { borderColor: 'var(--color-gray-100)' } } />
-						<CardBody>
-							<VStack spacing={ 4 }>
-								<HStack spacing={ 3 } alignment="flex-start" justify="flex-start">
-									<RankBadge rank={ index + 1 } />
-									<VStack spacing={ 1 }>
-										<Heading
-											level={ 3 }
-											size={ 15 }
-											weight={ 500 }
-											lineHeight={ `${ RANK_SIZE }px` }
+		<>
+			<Card>
+				<CardHeader>
+					<VStack spacing={ 6 }>
+						<SectionHeader
+							level={ 2 }
+							// The page header already greets them by name.
+							title={ __( 'Welcome to Automattic for Agencies' ) }
+							description={ __(
+								'Your growth plan is below, built from what you told us at signup. Start with your top priority, and we’ll help along the way.'
+							) }
+						/>
+						<VStack spacing={ 3 }>
+							<Text size={ 11 } weight={ 500 } lineHeight="16px" upperCase variant="muted">
+								{ __( 'Get the most out of the program' ) }
+							</Text>
+							<Grid columns={ isSmallViewport ? 1 : 2 } gap="lg">
+								<StartTile
+									title={ __( 'Watch the program overview' ) }
+									description={ __(
+										'A short tour of tiers, referrals, hosting, and leads, and how they add up.'
+									) }
+									action={
+										<Button
+											variant="secondary"
+											size="compact"
+											icon={ video }
+											onClick={ () => setOpenVideo( 'overview' ) }
 										>
-											<span className="screen-reader-text">
-												{ sprintf(
-													/* translators: %d is the goal's priority, 1 being the top priority */
-													__( 'Priority %d:' ),
-													index + 1
-												) }{ ' ' }
-											</span>
-											{ section.title }
-										</Heading>
-										<Text variant="muted" lineHeight="20px">
-											{ section.description }
-										</Text>
-									</VStack>
-								</HStack>
-								<div
-									className="a4a-plan-steps"
-									style={ { marginInlineStart: isSmallViewport ? 0 : `${ RANK_SIZE + 12 }px` } }
-								>
-									{ section.steps.map( ( step ) => (
-										<StepRow
-											key={ step.id }
-											step={ step }
-											shouldUseRouterLink={ shouldUseRouterLink }
-										/>
-									) ) }
-								</div>
-							</VStack>
+											{ __( 'Watch the video' ) }
+										</Button>
+									}
+								/>
+								<StartTile
+									title={ __( 'Schedule your free advisor call' ) }
+									description={ getAdvisorFocus( profile.goals[ 0 ], profile.agencyName ) }
+									action={
+										<Button
+											variant="primary"
+											size="compact"
+											onClick={ onScheduleCall }
+											isBusy={ isSchedulingCall }
+											disabled={ ! onScheduleCall || isSchedulingCall }
+										>
+											{ __( 'Schedule a call' ) }
+										</Button>
+									}
+								/>
+							</Grid>
+						</VStack>
+					</VStack>
+				</CardHeader>
+				{ /* CardHeader draws its own bottom border, so only later blocks get a divider. */ }
+				{ hasTierBlock && <CardBody>{ tierStrip }</CardBody> }
+				{ /* Each goal collapses on its own; the top priority starts open. */ }
+				{ sections.map( ( section, index ) => (
+					<Fragment key={ section.goal }>
+						{ ( index > 0 || hasTierBlock ) && (
+							<CardDivider style={ { borderColor: 'var(--color-gray-100)' } } />
+						) }
+						<CardBody>
+							<CompactSection
+								section={ section }
+								rank={ index + 1 }
+								shouldUseRouterLink={ shouldUseRouterLink }
+								defaultOpen={ index === 0 }
+								onActivateStep={ showTierProgress ? undefined : onStartPlan }
+							/>
 						</CardBody>
 					</Fragment>
 				) ) }
-		</Card>
+			</Card>
+			{ demoModal }
+		</>
 	);
 }

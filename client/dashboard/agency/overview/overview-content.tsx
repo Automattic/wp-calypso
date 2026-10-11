@@ -70,6 +70,8 @@ export interface AgencyOverviewContentProps {
 	learnCard?: ReactNode;
 	/** PROTOTYPE: partner manager card with the tier summary inside; replaces the tier card. */
 	partnerManagerCard?: ReactNode;
+	/** PROTOTYPE: the growth plan already shows the tier, so the tier card is dropped. */
+	tierInPlan?: boolean;
 	sampleEarnings?: {
 		referrals: NonNullable< ComponentProps< typeof ReferralEarningsCard >[ 'sample' ] >;
 		woopayments: NonNullable< ComponentProps< typeof WooPaymentsRevenueCard >[ 'sample' ] >;
@@ -104,6 +106,7 @@ export default function AgencyOverviewContent( {
 	pillarLayout = false,
 	learnCard,
 	partnerManagerCard,
+	tierInPlan = false,
 }: AgencyOverviewContentProps ) {
 	const isSmallViewport = useViewportMatch( 'medium', '<' );
 	const spacing = isSmallViewport ? 4 : 6;
@@ -180,48 +183,76 @@ export default function AgencyOverviewContent( {
 	const gap = isSmallViewport ? 'lg' : 'xl';
 
 	// PROTOTYPE: established agencies, organized by the program's Earn and Grow pillars.
-	if ( tailoredPlan && pillarLayout ) {
+	if ( pillarLayout && ( tailoredPlan || partnerManagerCard ) ) {
 		const pillar = ( title: string, description: string, content: ReactNode ) => (
 			<VStack spacing={ 4 } justify="flex-start">
 				<SectionHeader level={ 2 } title={ title } description={ description } />
 				{ content }
 			</VStack>
 		);
-		return (
-			<VStack spacing={ isSmallViewport ? 8 : 10 }>
-				{ /* With a partner manager, the tier lives inside their card and the plan sits beside it. */ }
-				<Grid columns={ columns } gap={ gap }>
+		// Earn fills the left column, Grow the right.
+		const earnAndGrow = ( growCards: ReactNode, growDescription: string ) => (
+			<Grid columns={ columns } gap={ gap }>
+				{ pillar(
+					__( 'Earn' ),
+					__( 'Leads and recurring income from the program.' ),
 					<VStack spacing={ spacing } justify="flex-start">
-						{ partnerManagerCard ?? tailoredPlan }
+						{ leadsCard }
+						{ earningsCards }
 					</VStack>
+				) }
+				{ pillar(
+					__( 'Grow' ),
+					growDescription,
 					<VStack spacing={ spacing } justify="flex-start">
-						{ partnerManagerCard ? tailoredPlan : tierCard }
+						{ growCards }
 					</VStack>
-				</Grid>
-				{ /* Earn fills the left column, Grow the right. */ }
-				<Grid columns={ columns } gap={ gap }>
-					{ pillar(
-						__( 'Earn' ),
-						__( 'Leads and recurring income from the program.' ),
+				) }
+			</Grid>
+		);
+
+		// With a partner manager (Pro and up), the growth plan phases out: their card, with the
+		// tier inside, sits beside What's new, and Grow keeps Learn.
+		// The same layout applies when the growth plan carries the tier itself.
+		if ( partnerManagerCard || tierInPlan ) {
+			return (
+				<VStack spacing={ isSmallViewport ? 8 : 10 }>
+					<Grid columns={ columns } gap={ gap }>
 						<VStack spacing={ spacing } justify="flex-start">
-							{ leadsCard }
-							{ earningsCards }
+							{ partnerManagerCard ?? tailoredPlan }
 						</VStack>
-					) }
-					{ pillar(
-						__( 'Grow' ),
-						__( 'Events, news, and training to grow your agency.' ),
 						<VStack spacing={ spacing } justify="flex-start">
 							{ whatsNew }
-							{ learnCard }
 						</VStack>
-					) }
+					</Grid>
+					{ earnAndGrow( learnCard, __( 'Training and playbooks to grow your agency.' ) ) }
+				</VStack>
+			);
+		}
+
+		return (
+			<VStack spacing={ isSmallViewport ? 8 : 10 }>
+				<Grid columns={ columns } gap={ gap }>
+					<VStack spacing={ spacing } justify="flex-start">
+						{ tailoredPlan }
+					</VStack>
+					<VStack spacing={ spacing } justify="flex-start">
+						{ tierCard }
+					</VStack>
 				</Grid>
+				{ earnAndGrow(
+					<>
+						{ whatsNew }
+						{ learnCard }
+					</>,
+					__( 'Events, news, and training to grow your agency.' )
+				) }
 			</VStack>
 		);
 	}
 
-	// PROTOTYPE: the tailored plan leads the left column and the tier card moves to the right.
+	// PROTOTYPE: the tailored plan leads the left column. The tier sits at its top, or in a
+	// card on the right for pending and rejected accounts.
 	// Helpful links move to the page header.
 	if ( tailoredPlan ) {
 		return (
@@ -233,7 +264,7 @@ export default function AgencyOverviewContent( {
 						{ ! hideEarningsCards && earningsCards }
 					</VStack>
 					<VStack spacing={ spacing } justify="flex-start">
-						{ tierCard }
+						{ ! tierInPlan && tierCard }
 						{ whatsNew }
 					</VStack>
 				</Grid>

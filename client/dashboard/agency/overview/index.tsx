@@ -1,5 +1,6 @@
 import { activeAgencyQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
+import { useNavigate } from '@tanstack/react-router';
 import { Button, __experimentalHStack as HStack } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { useAnalytics } from '../../app/analytics';
@@ -8,7 +9,8 @@ import FlashMessage from '../../components/flash-message';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { Text } from '../../components/text';
-import { getMarketplaceHostingSectionRoute } from '../marketplace/paths';
+import { MARKETPLACE_HOSTING_ROUTE, getMarketplaceHostingSectionRoute } from '../marketplace/paths';
+import { useMarketplaceType } from '../marketplace/use-marketplace-type';
 import { PARTNER_DIRECTORY_ROUTE } from '../partner-directory/paths';
 import { useContactSupport } from '../support/use-contact-support';
 import getCurrentAgencyTier from '../tiers/get-current-agency-tier';
@@ -38,6 +40,34 @@ import type { SignupProfile } from './tailored/signup-profile';
 import type { RecordTracksEvent } from '../tiers/types';
 import type { PlanCall } from './tailored/tailored-plan-card';
 
+// PROTOTYPE: the signup URL is free text from storage, so only plain domains become links.
+function toSafeUrl( value: string ) {
+	const domain = value.trim().replace( /^https?:\/\//i, '' );
+	return /^[a-z0-9-]+(\.[a-z0-9-]+)+(\/[\w\-./]*)?$/i.test( domain )
+		? `https://${ domain }`
+		: undefined;
+}
+
+// PROTOTYPE: "Good morning, Jamie" by the viewer's local time.
+function getGreeting( firstName: string ) {
+	const hour = new Date().getHours();
+	if ( ! firstName ) {
+		if ( hour < 12 ) {
+			return __( 'Good morning' );
+		}
+		return hour < 18 ? __( 'Good afternoon' ) : __( 'Good evening' );
+	}
+	if ( hour < 12 ) {
+		/* translators: %s is the person's first name */
+		return sprintf( __( 'Good morning, %s' ), firstName );
+	}
+	return hour < 18
+		? /* translators: %s is the person's first name */
+			sprintf( __( 'Good afternoon, %s' ), firstName )
+		: /* translators: %s is the person's first name */
+			sprintf( __( 'Good evening, %s' ), firstName );
+}
+
 // PROTOTYPE: greets the agency with what it told us at signup.
 // The agency URL and joined date stay visible for every agency, whatever the tier.
 function TailoredOverviewHeader( {
@@ -60,15 +90,7 @@ function TailoredOverviewHeader( {
 } ) {
 	return (
 		<PageHeader
-			title={
-				profile.firstName
-					? sprintf(
-							/* translators: %s is the person's first name */
-							__( 'Welcome, %s' ),
-							profile.firstName
-						)
-					: __( 'Welcome' )
-			}
+			title={ getGreeting( profile.firstName ) }
 			description={
 				<HStack spacing={ 1 } justify="flex-start" wrap expanded={ false }>
 					<Text variant="muted" size={ 13 } lineHeight="20px">
@@ -106,6 +128,13 @@ function TailoredOverviewHeader( {
 export default function AgencyOverview() {
 	const { data: agency } = useQuery( activeAgencyQuery() );
 	const { recordTracksEvent } = useAnalytics();
+	const navigate = useNavigate();
+	const { updateMarketplaceType } = useMarketplaceType();
+	// PROTOTYPE: the growth plan's referral step opens hosting with referral mode on.
+	const referInMarketplace = () => {
+		updateMarketplaceType( 'referral' );
+		navigate( { to: MARKETPLACE_HOSTING_ROUTE } );
+	};
 	const { openContactForm } = useContactSupport();
 	const locale = useLocale();
 	const agencyId = agency?.id ?? 0;
@@ -166,6 +195,19 @@ export default function AgencyOverview() {
 	// WooPayments cards yet. Agencies placed manually in a higher tier still do.
 	const hideEarningsCards = experience === 'new' && tierLevel === 0;
 
+	// PROTOTYPE: the tier and influenced revenue sit at the top of the partner manager card
+	// or, for new agencies, the growth plan. Pending and rejected accounts keep their status card.
+	const tierStrip = (
+		<TierStrip
+			tierId={ tierId }
+			influencedRevenue={ influencedRevenue }
+			tiersHref="/tiers"
+			recordTracksEvent={ recordTracksEvent }
+		/>
+	);
+	const isAccountActive = approvalStatus !== 'pending' && approvalStatus !== 'rejected';
+	const hasTierInPlan = isAccountActive && planCall.type !== 'check-in';
+
 	// PROTOTYPE: the partner manager card (established, Pro and up) and the growth plan.
 	const partnerManagerCard =
 		tailoredPlanProfile && planCall.type === 'check-in' ? (
@@ -178,14 +220,7 @@ export default function AgencyOverview() {
 				onSaveNotes={ planCall.onSaveNotes }
 				onScheduleCall={ scheduleCall }
 				isSchedulingCall={ isSchedulingCall }
-				tierStrip={
-					<TierStrip
-						tierId={ tierId }
-						influencedRevenue={ influencedRevenue }
-						tiersHref="/tiers"
-						recordTracksEvent={ recordTracksEvent }
-					/>
-				}
+				tierStrip={ tierStrip }
 			/>
 		) : null;
 	const growthPlanCard = tailoredPlanProfile ? (
@@ -195,6 +230,9 @@ export default function AgencyOverview() {
 			tierLevel={ tierLevel }
 			onScheduleCall={ scheduleCall }
 			isSchedulingCall={ isSchedulingCall }
+			tierStrip={ hasTierInPlan && tierStrip }
+			showTierProgress={ influencedRevenue > 0 || prototypeSettings.hasStartedPlan }
+			onStartPlan={ () => updatePrototypeSettings( { hasStartedPlan: true } ) }
 			links={ {
 				partnerDirectory: PARTNER_DIRECTORY_ROUTE,
 				tiers: '/tiers',
@@ -202,11 +240,12 @@ export default function AgencyOverview() {
 				woopayments: '/woopayments',
 				wpcomHosting: getMarketplaceHostingSectionRoute( 'wpcom' ),
 				pressableHosting: getMarketplaceHostingSectionRoute( 'pressable' ),
-				migrations: '/migrations',
 				sites: '/sites',
 				team: '/agency/team',
 				aiMcp: '/agency/ai',
+				library: '/library',
 				contactSupport: () => openContactForm(),
+				referInMarketplace,
 			} }
 		/>
 	) : null;
@@ -237,7 +276,7 @@ export default function AgencyOverview() {
 					<TailoredOverviewHeader
 						profile={ headerProfile }
 						fallbackName={ agency.name }
-						url={ agency.url }
+						url={ toSafeUrl( headerProfile.agencyUrl ) ?? agency.url }
 						createdAt={ agency.created_at }
 						locale={ locale }
 						links={ helpfulLinks }
@@ -339,10 +378,12 @@ export default function AgencyOverview() {
 					)
 				}
 				partnerManagerCard={ isPillarLayout ? partnerManagerCard : undefined }
+				tierInPlan={ hasTierInPlan }
 				tailoredPlan={
 					tailoredPlanProfile &&
+					// PROTOTYPE: agencies with a partner manager no longer get the growth plan.
 					( isPillarLayout ? (
-						growthPlanCard
+						! partnerManagerCard && growthPlanCard
 					) : (
 						<>
 							{ partnerManagerCard }

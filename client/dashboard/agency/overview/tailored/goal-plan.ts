@@ -12,10 +12,10 @@ import {
 	globe,
 	people,
 	plugins,
+	pages,
 	postComments,
 	search,
 	store,
-	update,
 } from '@wordpress/icons';
 import type { SignupGoal, SignupProfile } from './signup-profile';
 
@@ -26,14 +26,16 @@ export interface TailoredPlanLinks {
 	woopayments: string;
 	wpcomHosting: string;
 	pressableHosting: string;
-	migrations: string;
 	sites: string;
 	team: string;
 	aiMcp: string;
+	library: string;
 	/** A URL, or a callback that opens contact support in-app. */
 	contactSupport: string | ( () => void );
-	/** Demo video for the partner directory application. */
-	directoryDemoVideo?: string;
+	/** Opens the partner directory demo video (a modal on the Overview). */
+	onWatchDirectoryDemo?: () => void;
+	/** Opens the hosting marketplace in referral mode. Falls back to `referrals`. */
+	referInMarketplace?: () => void;
 }
 
 export interface PlanStep {
@@ -43,6 +45,8 @@ export interface PlanStep {
 	description: string;
 	actionLabel: string;
 	action: string | ( () => void );
+	/** Opens a video in a modal, so the row shows a video icon instead of a chevron. */
+	opensVideo?: boolean;
 }
 
 export interface PlanSection {
@@ -54,12 +58,6 @@ export interface PlanSection {
 
 const SMALLEST_BUCKET = '1-5';
 
-/**
- * PROTOTYPE: placeholder until the partner directory demo video is published.
- * Swap in the real video URL here.
- */
-export const PARTNER_DIRECTORY_DEMO_VIDEO_URL = '/library';
-
 function getLeadsSection( links: TailoredPlanLinks, tierLevel: number ): PlanSection {
 	const watchDemoStep: PlanStep = {
 		id: 'watch-partner-directory-demo',
@@ -69,7 +67,8 @@ function getLeadsSection( links: TailoredPlanLinks, tierLevel: number ): PlanSec
 			'A short demo of the directory application, so you’re ready the moment it unlocks.'
 		),
 		actionLabel: __( 'Watch the demo' ),
-		action: links.directoryDemoVideo ?? PARTNER_DIRECTORY_DEMO_VIDEO_URL,
+		action: links.onWatchDirectoryDemo ?? links.partnerDirectory,
+		opensVideo: !! links.onWatchDirectoryDemo,
 	};
 
 	// Account activated: the directories open at Agency Partner, so that comes first.
@@ -142,7 +141,7 @@ function getIncomeSection( profile: SignupProfile, links: TailoredPlanLinks ): P
 			'Earn up to 50% recurring commission when clients buy products and hosting through your referral.'
 		),
 		actionLabel: __( 'Refer' ),
-		action: links.referrals,
+		action: links.referInMarketplace ?? links.referrals,
 	};
 	const wooPaymentsStep: PlanStep = {
 		id: 'set-up-woopayments',
@@ -161,7 +160,7 @@ function getIncomeSection( profile: SignupProfile, links: TailoredPlanLinks ): P
 		goal: 'passive_income',
 		title: __( 'Earn recurring revenue' ),
 		description: __(
-			'Commissions on referrals and payments keep paying out for as long as your clients stay.'
+			'Earn on referrals and WooPayments for as long as client subscriptions are active.'
 		),
 		steps: buildsStores ? [ wooPaymentsStep, referStep ] : [ referStep, wooPaymentsStep ],
 	};
@@ -186,7 +185,7 @@ function getHostingSection( profile: SignupProfile, links: TailoredPlanLinks ): 
 		goal: 'better_hosting',
 		title: __( 'Move your clients to better hosting' ),
 		description: __(
-			'Agency pricing, reliable uptime, and free migrations come with every Automattic hosting plan.'
+			'Agency pricing and reliable uptime come with every Automattic hosting plan.'
 		),
 		steps: [
 			{
@@ -199,16 +198,6 @@ function getHostingSection( profile: SignupProfile, links: TailoredPlanLinks ): 
 				actionLabel: __( 'Compare plans' ),
 				action: isSmallPortfolio ? links.wpcomHosting : links.pressableHosting,
 			},
-			{
-				id: 'request-migration',
-				icon: update,
-				title: __( 'Migrate existing client sites for free' ),
-				description: __(
-					'Our team moves your sites for you, and you can earn a commission on each one you migrate.'
-				),
-				actionLabel: __( 'Start a migration' ),
-				action: links.migrations,
-			},
 		],
 	};
 }
@@ -216,6 +205,16 @@ function getHostingSection( profile: SignupProfile, links: TailoredPlanLinks ): 
 function getOperationsSection( profile: SignupProfile, links: TailoredPlanLinks ): PlanSection {
 	const hasTeam = !! profile.agencySize && profile.agencySize !== SMALLEST_BUCKET;
 	const steps: PlanStep[] = [
+		{
+			id: 'explore-library',
+			icon: pages,
+			title: __( 'Explore the Library' ),
+			description: __(
+				'Guides, playbooks, and training to help your agency work smarter and grow.'
+			),
+			actionLabel: __( 'Browse' ),
+			action: links.library,
+		},
 		{
 			id: 'connect-sites',
 			icon: plugins,
