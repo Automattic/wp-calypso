@@ -72,6 +72,8 @@ export interface AgencyOverviewContentProps {
 	partnerManagerCard?: ReactNode;
 	/** PROTOTYPE: the growth plan already shows the tier, so the tier card is dropped. */
 	tierInPlan?: boolean;
+	/** PROTOTYPE: getting-started agencies get leads and referrals side by side in an Earn section. */
+	earnSection?: boolean;
 	sampleEarnings?: {
 		referrals: NonNullable< ComponentProps< typeof ReferralEarningsCard >[ 'sample' ] >;
 		woopayments: NonNullable< ComponentProps< typeof WooPaymentsRevenueCard >[ 'sample' ] >;
@@ -107,6 +109,7 @@ export default function AgencyOverviewContent( {
 	learnCard,
 	partnerManagerCard,
 	tierInPlan = false,
+	earnSection = false,
 }: AgencyOverviewContentProps ) {
 	const isSmallViewport = useViewportMatch( 'medium', '<' );
 	const spacing = isSmallViewport ? 4 : 6;
@@ -153,15 +156,19 @@ export default function AgencyOverviewContent( {
 				shouldUseRouterLink={ shouldUseRouterLink }
 				recordTracksEvent={ recordTracksEvent }
 			/>
-			<WooPaymentsRevenueCard
-				sample={ sampleEarnings?.woopayments }
-				agencyId={ agencyId }
-				locked={ isLocked }
-				lockedNote={ lockedNote }
-				woopaymentsHref={ links.woopayments }
-				shouldUseRouterLink={ shouldUseRouterLink }
-				recordTracksEvent={ recordTracksEvent }
-			/>
+			{ /* PROTOTYPE: a sample agency with no WooPayments stores skips the setup card; the
+			advisor call covers it. */ }
+			{ sampleEarnings?.woopayments.activeStores !== 0 && (
+				<WooPaymentsRevenueCard
+					sample={ sampleEarnings?.woopayments }
+					agencyId={ agencyId }
+					locked={ isLocked }
+					lockedNote={ lockedNote }
+					woopaymentsHref={ links.woopayments }
+					shouldUseRouterLink={ shouldUseRouterLink }
+					recordTracksEvent={ recordTracksEvent }
+				/>
+			) }
 		</>
 	);
 
@@ -217,13 +224,10 @@ export default function AgencyOverviewContent( {
 		if ( partnerManagerCard || tierInPlan ) {
 			return (
 				<VStack spacing={ isSmallViewport ? 8 : 10 }>
-					<Grid columns={ columns } gap={ gap }>
-						<VStack spacing={ spacing } justify="flex-start">
-							{ partnerManagerCard ?? tailoredPlan }
-						</VStack>
-						<VStack spacing={ spacing } justify="flex-start">
-							{ whatsNew }
-						</VStack>
+					{ /* Both cards stretch to the taller one, so the row reads as one band. */ }
+					<Grid className="a4a-band-row" columns={ columns } gap={ gap }>
+						<div className="a4a-fill-height">{ partnerManagerCard ?? tailoredPlan }</div>
+						<div className="a4a-fill-height">{ whatsNew }</div>
 					</Grid>
 					{ earnAndGrow( learnCard, __( 'Training and playbooks to grow your agency.' ) ) }
 				</VStack>
@@ -254,6 +258,34 @@ export default function AgencyOverviewContent( {
 	// PROTOTYPE: the tailored plan leads the left column. The tier sits at its top, or in a
 	// card on the right for pending and rejected accounts.
 	// Helpful links move to the page header.
+	if ( tailoredPlan && earnSection ) {
+		return (
+			<VStack spacing={ isSmallViewport ? 8 : 10 }>
+				<Grid className="a4a-band-row" columns={ columns } gap={ gap }>
+					<VStack spacing={ spacing } justify="flex-start">
+						{ tailoredPlan }
+					</VStack>
+					<VStack spacing={ spacing } justify="flex-start">
+						{ ! tierInPlan && tierCard }
+						{ whatsNew }
+					</VStack>
+				</Grid>
+				{ /* Like the established Earn section, with leads and referrals side by side. */ }
+				<VStack spacing={ 4 } justify="flex-start">
+					<SectionHeader
+						level={ 2 }
+						title={ __( 'Earn' ) }
+						description={ __( 'Leads and recurring income from the program.' ) }
+					/>
+					<Grid columns={ columns } gap={ gap }>
+						{ leadsCard }
+						{ earningsCards }
+					</Grid>
+				</VStack>
+			</VStack>
+		);
+	}
+
 	if ( tailoredPlan ) {
 		return (
 			<VStack spacing={ spacing }>

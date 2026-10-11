@@ -13,7 +13,12 @@ import type { AgencyApprovalStatus, AgencyTierId } from '@automattic/api-core';
 
 const STORAGE_KEY = 'a4a-prototype-overview';
 
-export type PrototypeExperience = 'new' | 'established';
+/**
+ * - new: brand-new agency, nothing set up yet.
+ * - getting-started: partly invested (some IAR, a referral or two, an advisor call booked).
+ * - established: partner manager relationship.
+ */
+export type PrototypeExperience = 'new' | 'getting-started' | 'established';
 
 /** `real` keeps the value from the logged-in agency. */
 export type ApprovalStatusOverride = 'real' | AgencyApprovalStatus;
@@ -51,7 +56,7 @@ const DEFAULT_SETTINGS: PrototypeSettings = {
 	isPanelOpen: true,
 };
 
-const EXPERIENCES: PrototypeExperience[] = [ 'new', 'established' ];
+const EXPERIENCES: PrototypeExperience[] = [ 'new', 'getting-started', 'established' ];
 const APPROVAL_STATUSES: ApprovalStatusOverride[] = [ 'real', 'pending', 'approved', 'rejected' ];
 export const TIER_OVERRIDES: TierOverride[] = [
 	'real',
@@ -118,7 +123,7 @@ export function resetPrototypeSettings() {
 }
 
 /** One-click demo setups that set every related control at once. */
-export type QuickScenarioId = 'new-emerging' | 'established-pro';
+export type QuickScenarioId = 'new-emerging' | 'getting-started' | 'established-pro';
 
 export const QUICK_SCENARIOS: Record< QuickScenarioId, Partial< PrototypeSettings > > = {
 	// Brand-new agency at Account activated: growth plan with the advisor call.
@@ -131,12 +136,23 @@ export const QUICK_SCENARIOS: Record< QuickScenarioId, Partial< PrototypeSetting
 		completedTodoIds: [],
 		discussionNotes: '',
 	},
+	// Still at Account activated, but earning a little: a small Pressable plan, a couple of
+	// referrals, no WooPayments yet, and an advisor call booked to set it up.
+	'getting-started': {
+		experience: 'getting-started',
+		approvalStatus: 'approved',
+		tierId: 'emerging-partner',
+		influencedRevenue: 780,
+		hasStartedPlan: true,
+		completedTodoIds: [],
+		discussionNotes: '',
+	},
 	// Established Pro Partner with a partner manager and a booked check-in.
 	'established-pro': {
 		experience: 'established',
 		approvalStatus: 'approved',
 		tierId: 'pro-agency-partner',
-		influencedRevenue: 6200,
+		influencedRevenue: 9240,
 		callScenario: 'scheduled',
 		completedTodoIds: [],
 		discussionNotes: '',

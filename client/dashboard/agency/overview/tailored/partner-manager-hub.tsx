@@ -239,7 +239,8 @@ function DiscussionNotes( {
 
 // Compact header for a booked check-in: who, when, and the two actions on one
 // tinted row, with discussion notes underneath.
-function NextCheckIn( {
+/** The booked call row: also used for a new agency's advisor call (`kind="advisor"`). */
+export function NextCheckIn( {
 	manager,
 	date,
 	joinUrl,
@@ -247,8 +248,13 @@ function NextCheckIn( {
 	onSaveNotes,
 	onScheduleCall,
 	isSchedulingCall,
+	kind = 'check-in',
+	topic,
 }: {
 	manager: PartnerManager;
+	kind?: 'check-in' | 'advisor';
+	/** What the call will cover, shown under the date. */
+	topic?: string;
 	date: Date;
 	joinUrl?: string;
 	discussionNotes: string;
@@ -290,16 +296,28 @@ function NextCheckIn( {
 					<ManagerAvatar manager={ manager } />
 					<VStack spacing={ 0 }>
 						<Text size={ 12 } variant="muted" lineHeight="16px">
-							{ sprintf(
-								/* translators: 1: partner manager's name, 2: relative time, e.g. "In 4 days" */
-								__( 'Check-in with %1$s · %2$s' ),
-								manager.name,
-								when
-							) }
+							{ kind === 'advisor'
+								? sprintf(
+										/* translators: 1: advisor's name, 2: relative time, e.g. "In 4 days" */
+										__( 'Advisor call with %1$s · %2$s' ),
+										manager.name,
+										when
+									)
+								: sprintf(
+										/* translators: 1: partner manager's name, 2: relative time, e.g. "In 4 days" */
+										__( 'Check-in with %1$s · %2$s' ),
+										manager.name,
+										when
+									) }
 						</Text>
 						<Heading level={ 3 } size={ 15 } weight={ 600 } lineHeight="24px">
 							{ formatDateTime( date ) }
 						</Heading>
+						{ topic && (
+							<Text size={ 13 } variant="muted" lineHeight="20px">
+								{ topic }
+							</Text>
+						) }
 					</VStack>
 				</HStack>
 				<HStack spacing={ 2 } justify="flex-end" expanded={ false } style={ { flexShrink: 0 } }>

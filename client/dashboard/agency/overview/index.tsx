@@ -21,7 +21,7 @@ import AgencyOverviewContent from './overview-content';
 import AgencyOverviewHeader, { AgencyOverviewHeaderInfo } from './overview-header';
 import LeadsCard from './tailored/leads-card';
 import LearnCard from './tailored/learn-card';
-import { getPartnerCalls } from './tailored/partner-calls';
+import { SAMPLE_JOIN_URL, getPartnerCalls } from './tailored/partner-calls';
 import PartnerManagerCard from './tailored/partner-manager-card';
 import { getPartnerManager } from './tailored/partner-managers';
 import PrototypeControlPanel from './tailored/prototype-control-panel';
@@ -36,9 +36,11 @@ import TierStrip from './tailored/tier-strip';
 import WhatsNewCard from './tailored/whats-new-card';
 import usePressableOfferEligibility from './use-pressable-offer-eligibility';
 import type { HelpfulLink } from './helpful-links-card';
+import type { AgencyOverviewContentProps } from './overview-content';
+import type { PartnerManager } from './tailored/partner-managers';
 import type { SignupProfile } from './tailored/signup-profile';
 import type { RecordTracksEvent } from '../tiers/types';
-import type { PlanCall } from './tailored/tailored-plan-card';
+import type { BookedAdvisorCall, PlanCall } from './tailored/tailored-plan-card';
 
 // PROTOTYPE: the signup URL is free text from storage, so only plain domains become links.
 function toSafeUrl( value: string ) {
@@ -46,6 +48,35 @@ function toSafeUrl( value: string ) {
 	return /^[a-z0-9-]+(\.[a-z0-9-]+)+(\/[\w\-./]*)?$/i.test( domain )
 		? `https://${ domain }`
 		: undefined;
+}
+
+// PROTOTYPE: what the getting-started agency has already done: sent referrals, bought a
+// small Pressable plan, watched the directory demo, browsed the Library, connected their
+// client sites, and invited a teammate.
+const GETTING_STARTED_DONE_STEPS = [
+	'refer-first-client',
+	'compare-hosting',
+	'watch-partner-directory-demo',
+	'explore-library',
+	'connect-sites',
+	'invite-team',
+];
+
+// PROTOTYPE: the getting-started agency's booked advisor call, four days out at 2pm.
+function getSampleAdvisorCall(
+	advisor: PartnerManager,
+	discussionNotes: string
+): BookedAdvisorCall {
+	const date = new Date( Date.now() + 4 * 24 * 60 * 60 * 1000 );
+	date.setHours( 14, 0, 0, 0 );
+	return {
+		advisor,
+		date,
+		joinUrl: SAMPLE_JOIN_URL,
+		topic: __( 'We’ll walk through setting up WooPayments on your client stores.' ),
+		discussionNotes,
+		onSaveNotes: ( notes ) => updatePrototypeSettings( { discussionNotes: notes } ),
+	};
 }
 
 // PROTOTYPE: "Good morning, Jamie" by the viewer's local time.
@@ -125,6 +156,37 @@ function TailoredOverviewHeader( {
 	);
 }
 
+// PROTOTYPE: sample numbers that add up to the established scenario's $9,240 IAR
+// (rolling 12 months): $5,120 in referred product and hosting revenue, plus
+// $4,120 from $412,000 in WooPayments volume ($1 of IAR per $100).
+const ESTABLISHED_SAMPLE_EARNINGS: AgencyOverviewContentProps[ 'sampleEarnings' ] = {
+	referrals: {
+		// Commissions on the $5,120 referred (~30% blended), about $380 a quarter.
+		currentQuarter: 412,
+		activeReferrals: 9,
+		pendingPayout: 376,
+		lifetimeEarnings: 1980,
+	},
+	woopayments: {
+		// 0.05% revenue share on roughly $103,000 processed this quarter.
+		currentQuarter: 51.5,
+		activeStores: 4,
+		totalProcessed: 412000,
+	},
+};
+
+// PROTOTYPE: $780 IAR: their own small Pressable plan plus two referred subscriptions.
+const GETTING_STARTED_SAMPLE_EARNINGS: AgencyOverviewContentProps[ 'sampleEarnings' ] = {
+	referrals: {
+		currentQuarter: 36,
+		activeReferrals: 2,
+		pendingPayout: 24,
+		lifetimeEarnings: 60,
+	},
+	// No WooPayments stores yet, so the card shows its setup state.
+	woopayments: { currentQuarter: 0, activeStores: 0, totalProcessed: 0 },
+};
+
 export default function AgencyOverview() {
 	const { data: agency } = useQuery( activeAgencyQuery() );
 	const { recordTracksEvent } = useAnalytics();
@@ -149,6 +211,9 @@ export default function AgencyOverview() {
 	const storedProfile = useSignupProfile();
 	const prototypeSettings = usePrototypeSettings();
 	const experience = prototypeSettings.experience ?? ( storedProfile ? 'new' : 'established' );
+	// PROTOTYPE: partly invested agencies (a little IAR, a couple of referrals, a small
+	// Pressable plan) still get the new agency layout, with their progress filled in.
+	const isGettingStarted = experience === 'getting-started';
 	// PROTOTYPE: every agency with signup answers gets the “Welcome, {name}” header.
 	const headerProfile = isPrototype ? storedProfile : null;
 	// Both experiences get the growth plan once signup goals exist.
@@ -183,7 +248,15 @@ export default function AgencyOverview() {
 						} );
 					},
 				}
-			: { type: 'advisor' };
+			: {
+					type: 'advisor',
+					booked: isGettingStarted
+						? getSampleAdvisorCall(
+								getPartnerManager( prototypeSettings.partnerManagerId ),
+								prototypeSettings.discussionNotes
+							)
+						: undefined,
+				};
 
 	// PROTOTYPE: the control panel can override IAR to demo tier progress.
 	const influencedRevenue =
@@ -232,6 +305,7 @@ export default function AgencyOverview() {
 			isSchedulingCall={ isSchedulingCall }
 			tierStrip={ hasTierInPlan && tierStrip }
 			showTierProgress={ influencedRevenue > 0 || prototypeSettings.hasStartedPlan }
+			completedStepIds={ isGettingStarted ? GETTING_STARTED_DONE_STEPS : undefined }
 			onStartPlan={ () => updatePrototypeSettings( { hasStartedPlan: true } ) }
 			links={ {
 				partnerDirectory: PARTNER_DIRECTORY_ROUTE,
@@ -264,6 +338,13 @@ export default function AgencyOverview() {
 			isExternal: true,
 		},
 	];
+
+	let sampleEarnings: AgencyOverviewContentProps[ 'sampleEarnings' ];
+	if ( isPrototype && experience === 'established' ) {
+		sampleEarnings = ESTABLISHED_SAMPLE_EARNINGS;
+	} else if ( isPrototype && isGettingStarted ) {
+		sampleEarnings = GETTING_STARTED_SAMPLE_EARNINGS;
+	}
 
 	if ( ! agency ) {
 		return <PageLayout header={ <PageHeader title={ __( 'Overview' ) } /> } />;
@@ -328,30 +409,13 @@ export default function AgencyOverview() {
 						<LearnCard goals={ tailoredPlanProfile.goals } libraryHref="/library" />
 					)
 				}
-				sampleEarnings={
-					isPrototype && experience === 'established'
-						? {
-								referrals: {
-									currentQuarter: 1840,
-									activeReferrals: 12,
-									pendingPayout: 1265.5,
-									lifetimeEarnings: 9420,
-								},
-								woopayments: {
-									currentQuarter: 412.75,
-									activeStores: 4,
-									totalProcessed: 825500,
-								},
-							}
-						: undefined
-				}
+				sampleEarnings={ sampleEarnings }
 				leadsCard={
 					tailoredPlanProfile &&
 					! hideEarningsCards && (
 						<LeadsCard
 							tierLevel={ tierLevel }
 							influencedRevenue={ influencedRevenue }
-							isListed={ hasPartnerDirectoryListing }
 							profile={ tailoredPlanProfile }
 							lockedNote={
 								approvalStatus === 'pending'
@@ -360,7 +424,6 @@ export default function AgencyOverview() {
 							}
 							links={ {
 								partnerDirectory: PARTNER_DIRECTORY_ROUTE,
-								migrations: '/migrations',
 								wpcomHosting: getMarketplaceHostingSectionRoute( 'wpcom' ),
 								pressableHosting: getMarketplaceHostingSectionRoute( 'pressable' ),
 								referrals: '/referrals',
@@ -379,6 +442,7 @@ export default function AgencyOverview() {
 				}
 				partnerManagerCard={ isPillarLayout ? partnerManagerCard : undefined }
 				tierInPlan={ hasTierInPlan }
+				earnSection={ isPrototype && isGettingStarted }
 				tailoredPlan={
 					tailoredPlanProfile &&
 					// PROTOTYPE: agencies with a partner manager no longer get the growth plan.

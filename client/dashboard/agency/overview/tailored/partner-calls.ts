@@ -120,7 +120,7 @@ function buildRecap( callDate: Date, goals: SignupGoal[] ): CallRecap {
 	return {
 		date: callDate,
 		summary: __(
-			'We reviewed your progress toward Pro Partner and agreed to focus on your top priorities this quarter. Next, we’ll line up migrations for your larger clients and look at where referrals can replace reselling.'
+			'We reviewed your progress toward VIP Pro Partner and agreed to focus on your top priorities this quarter. Next, we’ll line up migrations for your larger clients and look at where referrals can replace reselling.'
 		),
 		todos,
 	};

@@ -17,6 +17,7 @@ import {
 import { useViewportMatch } from '@wordpress/compose';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { chevronDown, chevronRight, chevronUp, video } from '@wordpress/icons';
+import { Badge } from '@wordpress/ui';
 import { Fragment, useState } from 'react';
 import { Card, CardBody, CardDivider, CardHeader } from '../../../components/card';
 import Grid from '../../../components/grid';
@@ -25,6 +26,7 @@ import { SectionHeader } from '../../../components/section-header';
 import { Text } from '../../../components/text';
 import DirectoryDemoModal from './directory-demo-modal';
 import { getTailoredPlan } from './goal-plan';
+import { NextCheckIn } from './partner-manager-hub';
 import type { PlanStep, TailoredPlanLinks } from './goal-plan';
 import type { PartnerCalls } from './partner-calls';
 import type { PartnerManager } from './partner-managers';
@@ -63,11 +65,14 @@ function StepRow( {
 	step,
 	shouldUseRouterLink,
 	onActivate,
+	isDone = false,
 }: {
 	step: PlanStep;
 	shouldUseRouterLink?: boolean;
 	/** Called when the agency opens the step, before its action runs. */
 	onActivate?: () => void;
+	/** Already done (e.g. they own a Pressable plan); still links to the destination. */
+	isDone?: boolean;
 } ) {
 	const content = (
 		<>
@@ -79,17 +84,25 @@ function StepRow( {
 					{ step.description }
 				</Text>
 			</span>
-			<Icon
-				icon={ step.opensVideo ? video : chevronRight }
-				size={ 24 }
-				className="a4a-plan-step-row__chevron"
-			/>
+			{ isDone ? (
+				<span style={ { flexShrink: 0 } }>
+					<Badge intent="stable">{ __( 'Done' ) }</Badge>
+				</span>
+			) : (
+				<Icon
+					icon={ step.opensVideo ? video : chevronRight }
+					size={ 24 }
+					className="a4a-plan-step-row__chevron"
+				/>
+			) }
 		</>
 	);
 	const props = {
 		className: 'a4a-plan-step-row',
 		// The visible title already names the destination; the label adds the action.
-		'aria-label': `${ step.title }: ${ step.actionLabel }`,
+		'aria-label': isDone
+			? `${ step.title }: ${ __( 'Done' ) }`
+			: `${ step.title }: ${ step.actionLabel }`,
 	};
 
 	if ( typeof step.action === 'function' ) {
@@ -120,8 +133,19 @@ function StepRow( {
 	);
 }
 
+/** A booked advisor call (the getting-started scenario). */
+export interface BookedAdvisorCall {
+	advisor: PartnerManager;
+	date: Date;
+	joinUrl: string;
+	/** What the call will cover, e.g. setting up WooPayments. */
+	topic: string;
+	discussionNotes: string;
+	onSaveNotes: ( notes: string ) => void;
+}
+
 export type PlanCall =
-	| { type: 'advisor' }
+	| { type: 'advisor'; booked?: BookedAdvisorCall }
 	| {
 			type: 'check-in';
 			manager: PartnerManager;
@@ -208,6 +232,8 @@ interface TailoredPlanCardProps {
 	showTierProgress?: boolean;
 	/** Called the first time the agency opens a step. */
 	onStartPlan?: () => void;
+	/** Steps the agency has already done, shown with a Done badge. */
+	completedStepIds?: string[];
 }
 
 // Compact goal row for established agencies: collapsed to its title and step
@@ -218,14 +244,17 @@ function CompactSection( {
 	shouldUseRouterLink,
 	defaultOpen = false,
 	onActivateStep,
+	completedStepIds = [],
 }: {
 	section: ReturnType< typeof getTailoredPlan >[ number ];
 	rank: number;
 	shouldUseRouterLink?: boolean;
 	defaultOpen?: boolean;
 	onActivateStep?: () => void;
+	completedStepIds?: string[];
 } ) {
 	const [ isOpen, setIsOpen ] = useState( defaultOpen );
+	const doneCount = section.steps.filter( ( step ) => completedStepIds.includes( step.id ) ).length;
 	const panelId = `a4a-plan-goal-${ section.goal }`;
 
 	return (
@@ -251,11 +280,18 @@ function CompactSection( {
 				</HStack>
 				<HStack spacing={ 2 } alignment="center" justify="flex-end" expanded={ false }>
 					<Text variant="muted" size={ 12 } lineHeight="16px">
-						{ sprintf(
-							/* translators: %d is the number of steps for this goal */
-							_n( '%d step', '%d steps', section.steps.length ),
-							section.steps.length
-						) }
+						{ doneCount
+							? sprintf(
+									/* translators: 1: steps done, 2: total steps for this goal */
+									__( '%1$d of %2$d done' ),
+									doneCount,
+									section.steps.length
+								)
+							: sprintf(
+									/* translators: %d is the number of steps for this goal */
+									_n( '%d step', '%d steps', section.steps.length ),
+									section.steps.length
+								) }
 					</Text>
 					<Icon icon={ isOpen ? chevronUp : chevronDown } size={ 24 } />
 				</HStack>
@@ -276,6 +312,7 @@ function CompactSection( {
 								step={ step }
 								shouldUseRouterLink={ shouldUseRouterLink }
 								onActivate={ onActivateStep }
+								isDone={ completedStepIds.includes( step.id ) }
 							/>
 						) ) }
 					</div>
@@ -339,6 +376,7 @@ export default function TailoredPlanCard( {
 	tierStrip,
 	showTierProgress = false,
 	onStartPlan,
+	completedStepIds = [],
 }: TailoredPlanCardProps ) {
 	const isSmallViewport = useViewportMatch( 'medium', '<' );
 	const [ openVideo, setOpenVideo ] = useState< 'overview' | 'directory' | null >( null );
@@ -383,19 +421,85 @@ export default function TailoredPlanCard( {
 		);
 	}
 
+	const booked = call.type === 'advisor' ? call.booked : undefined;
+	const welcomeHeader = (
+		<SectionHeader
+			level={ 2 }
+			// The page header already greets them by name.
+			title={
+				completedStepIds.length
+					? __( 'Your growth plan' )
+					: __( 'Welcome to Automattic for Agencies' )
+			}
+			description={
+				completedStepIds.length
+					? __( 'You’re off to a good start. Here’s what’s next, with your top priority first.' )
+					: __(
+							'Your growth plan is below, built from what you told us at signup. Start with your top priority, and we’ll help along the way.'
+						)
+			}
+		/>
+	);
+	const goalRows = ( dividerBeforeFirst: boolean ) =>
+		sections.map( ( section, index ) => (
+			<Fragment key={ section.goal }>
+				{ ( index > 0 || dividerBeforeFirst ) && (
+					<CardDivider style={ { borderColor: 'var(--color-gray-100)' } } />
+				) }
+				<CardBody>
+					<CompactSection
+						section={ section }
+						rank={ index + 1 }
+						shouldUseRouterLink={ shouldUseRouterLink }
+						// With a booked call they've already started, so every goal starts closed.
+						defaultOpen={ index === 0 && ! booked }
+						onActivateStep={ showTierProgress ? undefined : onStartPlan }
+						completedStepIds={ completedStepIds }
+					/>
+				</CardBody>
+			</Fragment>
+		) );
+
+	// A booked advisor call reads like an established agency's partner manager card:
+	// tier and IAR first, then the call, then the goals.
+	if ( booked ) {
+		return (
+			<>
+				<Card>
+					{ hasTierBlock && (
+						<>
+							<CardBody className="a4a-tier-band">{ tierStrip }</CardBody>
+							<CardDivider />
+						</>
+					) }
+					<CardBody>
+						<NextCheckIn
+							kind="advisor"
+							manager={ booked.advisor }
+							date={ booked.date }
+							joinUrl={ booked.joinUrl }
+							topic={ booked.topic }
+							discussionNotes={ booked.discussionNotes }
+							onSaveNotes={ booked.onSaveNotes }
+							onScheduleCall={ onScheduleCall }
+							isSchedulingCall={ isSchedulingCall }
+						/>
+					</CardBody>
+					<CardDivider />
+					<CardBody>{ welcomeHeader }</CardBody>
+					{ goalRows( true ) }
+				</Card>
+				{ demoModal }
+			</>
+		);
+	}
+
 	return (
 		<>
 			<Card>
 				<CardHeader>
 					<VStack spacing={ 6 }>
-						<SectionHeader
-							level={ 2 }
-							// The page header already greets them by name.
-							title={ __( 'Welcome to Automattic for Agencies' ) }
-							description={ __(
-								'Your growth plan is below, built from what you told us at signup. Start with your top priority, and we’ll help along the way.'
-							) }
-						/>
+						{ welcomeHeader }
 						<VStack spacing={ 3 }>
 							<Text size={ 11 } weight={ 500 } lineHeight="16px" upperCase variant="muted">
 								{ __( 'Get the most out of the program' ) }
@@ -437,24 +541,9 @@ export default function TailoredPlanCard( {
 					</VStack>
 				</CardHeader>
 				{ /* CardHeader draws its own bottom border, so only later blocks get a divider. */ }
-				{ hasTierBlock && <CardBody>{ tierStrip }</CardBody> }
+				{ hasTierBlock && <CardBody className="a4a-tier-band">{ tierStrip }</CardBody> }
 				{ /* Each goal collapses on its own; the top priority starts open. */ }
-				{ sections.map( ( section, index ) => (
-					<Fragment key={ section.goal }>
-						{ ( index > 0 || hasTierBlock ) && (
-							<CardDivider style={ { borderColor: 'var(--color-gray-100)' } } />
-						) }
-						<CardBody>
-							<CompactSection
-								section={ section }
-								rank={ index + 1 }
-								shouldUseRouterLink={ shouldUseRouterLink }
-								defaultOpen={ index === 0 }
-								onActivateStep={ showTierProgress ? undefined : onStartPlan }
-							/>
-						</CardBody>
-					</Fragment>
-				) ) }
+				{ goalRows( hasTierBlock ) }
 			</Card>
 			{ demoModal }
 		</>

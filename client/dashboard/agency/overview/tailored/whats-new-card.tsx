@@ -21,10 +21,11 @@ import { Card, CardBody, CardHeader } from '../../../components/card';
 import { SectionHeader } from '../../../components/section-header';
 import { Text } from '../../../components/text';
 import NewTabLabel from '../new-tab-label';
-import { getRankedUpdates } from './updates';
+import { getEventPitch, getRankedUpdates } from './updates';
 import type { SignupGoal } from './signup-profile';
 import type { UpdateItem, UpdateKind } from './updates';
 import type { RecordTracksEvent } from '../../tiers/types';
+import './style.scss';
 
 const BLOG_URL = 'https://automattic.com/for-agencies/blog/';
 const THUMB_SIZE = 56;
@@ -234,15 +235,26 @@ function FeaturedEvent( {
 	);
 }
 
-function EventRow( { item, onOpen }: { item: UpdateItem; onOpen: ( item: UpdateItem ) => void } ) {
+function EventRow( {
+	item,
+	goals,
+	onOpen,
+}: {
+	item: UpdateItem;
+	goals: SignupGoal[];
+	onOpen: ( item: UpdateItem ) => void;
+} ) {
 	return (
-		<HStack spacing={ 3 } alignment="center" justify="flex-start">
+		<HStack spacing={ 3 } alignment="flex-start" justify="flex-start">
 			<DateBlock iso={ item.date } />
 			<EventLogo item={ item } size={ EVENT_ROW_TILE_SIZE } />
 			<VStack spacing={ 1 } style={ { flex: 1, minWidth: 0 } }>
 				<ExternalLink href={ item.url } onClick={ () => onOpen( item ) }>
 					{ item.title }
 				</ExternalLink>
+				<Text size={ 13 } lineHeight="20px">
+					{ getEventPitch( item, goals ) }
+				</Text>
 				<Text variant="muted" size={ 12 } lineHeight="16px">
 					{ [ item.format, item.host, getCountdown( item.date ) ].filter( Boolean ).join( ' · ' ) }
 				</Text>
@@ -270,32 +282,35 @@ export default function WhatsNewCard( { goals, recordTracksEvent }: WhatsNewCard
 		} );
 
 	return (
-		<Card>
-			<CardHeader>
+		<Card className="a4a-whats-new">
+			{ /* The tabs sit on the header's divider, so the header itself is borderless. */ }
+			<CardHeader isBorderless style={ { paddingBlockEnd: 0 } }>
 				<SectionHeader
 					level={ 2 }
 					title={ __( 'What’s new' ) }
 					description={ __( 'Events, product updates, and more, picked for your agency.' ) }
 				/>
 			</CardHeader>
-			<CardBody>
-				<TabPanel tabs={ tabs }>
-					{ ( tab ) => {
-						const items = getRankedUpdates( tab.name as UpdateKind, goals );
-						const empty = tabs.find( ( { name } ) => name === tab.name )?.empty;
-						if ( tab.name === 'event' && items.length ) {
-							const [ featured, ...rest ] = items;
-							return (
-								<VStack spacing={ 5 } style={ { paddingBlockStart: '16px' } }>
+			<TabPanel className="a4a-whats-new__tabs" tabs={ tabs }>
+				{ ( tab ) => {
+					const items = getRankedUpdates( tab.name as UpdateKind, goals );
+					const empty = tabs.find( ( { name } ) => name === tab.name )?.empty;
+					if ( tab.name === 'event' && items.length ) {
+						const [ featured, ...rest ] = items;
+						return (
+							<CardBody>
+								<VStack spacing={ 5 }>
 									<FeaturedEvent item={ featured } onOpen={ handleOpen } />
 									{ rest.map( ( item ) => (
-										<EventRow key={ item.id } item={ item } onOpen={ handleOpen } />
+										<EventRow key={ item.id } item={ item } goals={ goals } onOpen={ handleOpen } />
 									) ) }
 								</VStack>
-							);
-						}
-						return (
-							<VStack spacing={ 5 } style={ { paddingBlockStart: '16px' } }>
+							</CardBody>
+						);
+					}
+					return (
+						<CardBody>
+							<VStack spacing={ 5 }>
 								{ items.length ? (
 									items.map( ( item ) => (
 										<UpdateRow key={ item.id } item={ item } onOpen={ handleOpen } />
@@ -307,10 +322,10 @@ export default function WhatsNewCard( { goals, recordTracksEvent }: WhatsNewCard
 									<ExternalLink href={ BLOG_URL }>{ __( 'Visit the blog' ) }</ExternalLink>
 								) }
 							</VStack>
-						);
-					} }
-				</TabPanel>
-			</CardBody>
+						</CardBody>
+					);
+				} }
+			</TabPanel>
 		</Card>
 	);
 }

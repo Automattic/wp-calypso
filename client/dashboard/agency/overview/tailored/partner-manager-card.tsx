@@ -20,7 +20,7 @@ export default function PartnerManagerCard( { tierStrip, ...props }: PartnerMana
 		<Card>
 			{ tierStrip && (
 				<>
-					<CardBody>{ tierStrip }</CardBody>
+					<CardBody className="a4a-tier-band">{ tierStrip }</CardBody>
 					<CardDivider />
 				</>
 			) }

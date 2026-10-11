@@ -86,7 +86,7 @@ export const LEAD_UNLOCKS = {
 	qualifiedLeads: TARGET_INFLUENCED_REVENUE[ 'pro-agency-partner' ],
 };
 
-export type IarMethodId = 'migrate' | 'hosting' | 'referrals' | 'woopayments';
+export type IarMethodId = 'hosting' | 'referrals' | 'woopayments';
 
 export interface IarMethod {
 	id: IarMethodId;
@@ -97,7 +97,6 @@ export interface IarMethod {
 }
 
 export interface IarMethodLinks {
-	migrations: string;
 	wpcomHosting: string;
 	pressableHosting: string;
 	referrals: string;
@@ -109,7 +108,7 @@ const SITES_51_PLUS = [ '51-100', '101-500', '500+' ];
 
 /**
  * The top 3 ways for this agency to grow IAR, best fit first. Signals lift a
- * method; ties fall back to migrations, hosting, referrals, then WooPayments.
+ * method; ties fall back to hosting, referrals, then WooPayments.
  */
 export function getIarMethods(
 	profile: SignupProfile | null,
@@ -123,14 +122,6 @@ export function getIarMethods(
 
 	const methods: ( IarMethod & { score: number } )[] = [
 		{
-			id: 'migrate',
-			title: __( 'Migrate client sites to Automattic hosting' ),
-			description: __( 'Every migrated site counts as a hosting purchase toward IAR.' ),
-			actionLabel: __( 'Start a migration' ),
-			href: links.migrations,
-			score: ( managesManySites ? 2 : 0 ) + ( goals.includes( 'better_hosting' ) ? 2 : 0 ),
-		},
-		{
 			id: 'hosting',
 			title: usesPressable
 				? __( 'Move clients onto a Pressable plan' )
@@ -138,7 +129,7 @@ export function getIarMethods(
 			description: __( 'Each dollar spent on hosting adds a dollar of IAR.' ),
 			actionLabel: __( 'Compare hosting' ),
 			href: usesPressable ? links.pressableHosting : links.wpcomHosting,
-			score: ( managesManySites ? 1 : 0 ) + ( goals.includes( 'better_hosting' ) ? 2 : 0 ),
+			score: ( managesManySites ? 2 : 0 ) + ( goals.includes( 'better_hosting' ) ? 2 : 0 ),
 		},
 		{
 			id: 'referrals',

@@ -34,6 +34,8 @@ export interface UpdateItem {
 	host?: string;
 	/** Primary action label for events, e.g. “RSVP”. */
 	ctaLabel?: string;
+	/** Events: a problem-first line per goal, shown under the event for agencies with that goal. */
+	pitch?: Partial< Record< SignupGoal, string > >;
 	imageUrl?: string;
 }
 
@@ -57,6 +59,14 @@ export const getUpdates = (): UpdateItem[] => [
 		date: '2026-10-22T15:00:00Z',
 		url: `${ BLOG }/from-audit-to-action-how-agencies-can-close-the-ai-visibility-gap/`,
 		goals: [ 'optimize_operations', 'more_leads' ],
+		pitch: {
+			optimize_operations: __(
+				'Audits eating your team’s week? See one run start to finish in under an hour.'
+			),
+			more_leads: __(
+				'Clients asking why they don’t show up in AI answers? Turn that question into a paid project.'
+			),
+		},
 	},
 	{
 		id: 'event-pressable-office-hours',
@@ -73,6 +83,14 @@ export const getUpdates = (): UpdateItem[] => [
 		date: '2026-10-29T16:00:00Z',
 		url: `${ BLOG }/moving-client-sites-to-pressable-seven-things-to-get-right/`,
 		goals: [ 'better_hosting', 'passive_income' ],
+		pitch: {
+			better_hosting: __(
+				'Client sites spread across hosts? Plan the move with the Pressable team before peak season.'
+			),
+			passive_income: __(
+				'Hosting client sites at full price? Learn how moving them to Pressable earns you commission.'
+			),
+		},
 	},
 	{
 		id: 'event-referrals-masterclass',
@@ -89,6 +107,14 @@ export const getUpdates = (): UpdateItem[] => [
 		date: '2026-11-05T16:00:00Z',
 		url: `${ BLOG }/referral-invoice-branding/`,
 		goals: [ 'passive_income', 'more_leads' ],
+		pitch: {
+			passive_income: __(
+				'Income stops when projects end? Earn every month on products your clients already pay for.'
+			),
+			more_leads: __(
+				'Retainers hard to sell? Package hosting and products into plans clients renew.'
+			),
+		},
 	},
 	{
 		id: 'event-wordcamp-us',
@@ -103,6 +129,12 @@ export const getUpdates = (): UpdateItem[] => [
 		date: '2026-11-18T14:00:00Z',
 		url: 'https://central.wordcamp.org/schedule/',
 		goals: [ 'more_leads', 'other' ],
+		pitch: {
+			more_leads: __(
+				'Looking for your next clients? Meet partner managers and agencies already growing with A4A.'
+			),
+			other: __( 'Not sure where to start? Talk it through with a partner manager in person.' ),
+		},
 	},
 
 	// Announcements (real posts).
@@ -267,4 +299,10 @@ export function getRankedUpdates( kind: UpdateKind, goals: SignupGoal[], limit =
 				kind === 'blog' ? new Date( b.date ).getTime() - new Date( a.date ).getTime() : 0
 			)
 	);
+}
+
+/** The event's pitch for the agency's highest-ranked goal it speaks to, or its description. */
+export function getEventPitch( item: UpdateItem, goals: SignupGoal[] ) {
+	const goal = goals.find( ( candidate ) => item.pitch?.[ candidate ] );
+	return ( goal && item.pitch?.[ goal ] ) || item.description;
 }

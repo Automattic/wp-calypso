@@ -6,20 +6,22 @@
  * - Pro tier and above: open lead value plus simple status rows (New, In
  *   progress, Closed), matching the Referral and WooPayments cards, with a
  *   link to the lead dashboard (to be built).
- * - Below Pro: an empty state that explains how leads unlock through the tier
- *   ladder, shows the IAR gap, and suggests the IAR methods that fit this
- *   agency best.
+ * - Below Pro: an empty state with the IAR gap to the next unlock (partner
+ *   directory listings at $1,200, then qualified leads at $5,000) and the IAR
+ *   methods that fit this agency best.
  */
 import { formatCurrency, formatNumber } from '@automattic/number-formatters';
 import {
+	Button,
 	Icon,
 	__experimentalHeading as Heading,
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
-import { check } from '@wordpress/icons';
+import { chevronDown, chevronUp } from '@wordpress/icons';
 import { Badge } from '@wordpress/ui';
+import { useState } from 'react';
 import { ButtonStack } from '../../../components/button-stack';
 import { Card, CardBody, CardDivider } from '../../../components/card';
 import { Text } from '../../../components/text';
@@ -28,6 +30,7 @@ import StatList from '../stat-list';
 import { LEAD_UNLOCKS, getIarMethods, getSampleLeads } from './leads';
 import type { IarMethodLinks, LeadStatus } from './leads';
 import type { SignupProfile } from './signup-profile';
+import './style.scss';
 
 const money = ( value: number ) => formatCurrency( value, 'USD', { stripZeros: true } );
 
@@ -96,54 +99,9 @@ function LeadsSummary( {
 	);
 }
 
-function UnlockStep( {
-	isDone,
-	title,
-	detail,
-}: {
-	isDone: boolean;
-	title: string;
-	detail: string;
-} ) {
-	return (
-		<HStack spacing={ 3 } alignment="flex-start" justify="flex-start">
-			<div
-				aria-hidden="true"
-				style={ {
-					display: 'flex',
-					alignItems: 'center',
-					justifyContent: 'center',
-					flexShrink: 0,
-					width: '24px',
-					height: '24px',
-					borderRadius: '50%',
-					background: isDone ? 'var(--wp-admin-theme-color)' : 'transparent',
-					// Same box size checked or not, so the circles line up.
-					boxSizing: 'border-box',
-					border: isDone
-						? '1px solid var(--wp-admin-theme-color)'
-						: '1px solid var(--color-gray-300, #c3c4c7)',
-					color: 'var(--color-text-inverted)',
-				} }
-			>
-				{ isDone && <Icon icon={ check } size={ 18 } style={ { fill: '#fff' } } /> }
-			</div>
-			<VStack spacing={ 0 }>
-				<Text weight={ 500 } lineHeight="20px">
-					{ title }
-				</Text>
-				<Text variant="muted" size={ 12 } lineHeight="16px">
-					{ detail }
-				</Text>
-			</VStack>
-		</HStack>
-	);
-}
-
 function LeadsEmptyState( {
 	influencedRevenue,
 	tierLevel,
-	isListed,
 	profile,
 	lockedNote,
 	links,
@@ -151,20 +109,18 @@ function LeadsEmptyState( {
 }: {
 	influencedRevenue: number;
 	tierLevel: number;
-	isListed: boolean;
 	profile: SignupProfile | null;
 	lockedNote?: string;
 	links: IarMethodLinks & { partnerDirectory: string };
 	shouldUseRouterLink?: boolean;
 } ) {
-	const target = LEAD_UNLOCKS.qualifiedLeads;
+	const hasDirectoryUnlock = tierLevel >= 1;
+	// Directory listings bring in the first leads, so they're the first target.
+	const target = hasDirectoryUnlock ? LEAD_UNLOCKS.qualifiedLeads : LEAD_UNLOCKS.directory;
 	const gap = Math.max( target - influencedRevenue, 0 );
 	const percent = Math.min( ( influencedRevenue / target ) * 100, 100 );
-	const hasDirectoryUnlock = tierLevel >= 1;
-	const unlockedDirectoryDetail = isListed
-		? __( 'Unlocked · You’re listed' )
-		: __( 'Unlocked · Finish your profile to start getting found' );
 	const methods = getIarMethods( profile, links );
+	const [ showMethods, setShowMethods ] = useState( false );
 
 	return (
 		<VStack spacing={ 5 }>
@@ -173,9 +129,18 @@ function LeadsEmptyState( {
 					{ __( 'Client leads' ) }
 				</Heading>
 				<Text variant="muted" lineHeight="20px">
-					{ __(
-						'Automattic sends qualified client leads to partners, and directory listings bring clients to you. Both unlock as your influenced revenue (IAR) grows.'
-					) }
+					{ hasDirectoryUnlock
+						? __(
+								'Automattic sends qualified client leads to partners, and directory listings bring clients to you. Both unlock as your influenced revenue (IAR) grows.'
+							)
+						: // Below Agency Partner, the focus is the first unlock: the directories.
+							sprintf(
+								/* translators: %s is the IAR needed, e.g. $1,200 */
+								__(
+									'Partner directory listings bring clients to you. They unlock at %s in influenced revenue (IAR).'
+								),
+								money( LEAD_UNLOCKS.directory )
+							) }
 				</Text>
 				{ lockedNote && (
 					<HStack justify="flex-start" expanded={ false }>
@@ -184,39 +149,20 @@ function LeadsEmptyState( {
 				) }
 			</VStack>
 
-			<VStack spacing={ 3 }>
-				<UnlockStep
-					isDone={ hasDirectoryUnlock }
-					title={ __( 'Partner Directory listing' ) }
-					detail={
-						hasDirectoryUnlock
-							? unlockedDirectoryDetail
-							: sprintf(
-									/* translators: %s is the IAR needed, e.g. $1,200 */
-									__( 'Agency Partner · %s IAR' ),
-									money( LEAD_UNLOCKS.directory )
-								)
-					}
-				/>
-				<UnlockStep
-					isDone={ false }
-					title={ __( 'Qualified leads from Automattic' ) }
-					detail={ sprintf(
-						/* translators: %s is the IAR needed, e.g. $5,000 */
-						__( 'Pro Partner · %s IAR' ),
-						money( LEAD_UNLOCKS.qualifiedLeads )
-					) }
-				/>
-			</VStack>
-
 			<VStack spacing={ 2 }>
 				<HStack justify="space-between" alignment="baseline">
 					<Text weight={ 500 } lineHeight="20px">
-						{ sprintf(
-							/* translators: %s is the IAR still needed to unlock qualified leads */
-							__( '%s to qualified leads' ),
-							money( gap )
-						) }
+						{ hasDirectoryUnlock
+							? sprintf(
+									/* translators: %s is the IAR still needed to unlock qualified leads */
+									__( '%s to qualified leads' ),
+									money( gap )
+								)
+							: sprintf(
+									/* translators: %s is the IAR still needed to unlock directory listings */
+									__( '%s to partner directory listings' ),
+									money( gap )
+								) }
 					</Text>
 					<Text variant="muted" size={ 12 } lineHeight="16px">
 						{ sprintf(
@@ -229,7 +175,11 @@ function LeadsEmptyState( {
 				</HStack>
 				<div
 					role="progressbar"
-					aria-label={ __( 'Influenced revenue toward qualified leads' ) }
+					aria-label={
+						hasDirectoryUnlock
+							? __( 'Influenced revenue toward qualified leads' )
+							: __( 'Influenced revenue toward partner directory listings' )
+					}
 					aria-valuemin={ 0 }
 					aria-valuemax={ target }
 					aria-valuenow={ influencedRevenue }
@@ -256,31 +206,44 @@ function LeadsEmptyState( {
 			<CardDivider style={ { borderColor: 'var(--color-gray-100)' } } />
 
 			<VStack spacing={ 3 }>
-				<Text weight={ 500 } lineHeight="20px">
-					{ __( 'Ways to close the gap' ) }
-				</Text>
-				{ methods.map( ( method ) => (
-					<HStack key={ method.id } spacing={ 4 } justify="space-between" alignment="center">
-						<VStack spacing={ 0 }>
-							<Text lineHeight="20px">{ method.title }</Text>
-							<Text variant="muted" size={ 12 } lineHeight="16px">
-								{ method.description }
-							</Text>
-						</VStack>
-						{ ! lockedNote && (
-							<span style={ { flexShrink: 0 } }>
-								<OverviewLinkButton
-									size="compact"
-									variant="secondary"
-									href={ method.href }
-									shouldUseRouterLink={ shouldUseRouterLink }
-								>
-									{ method.actionLabel }
-								</OverviewLinkButton>
-							</span>
-						) }
-					</HStack>
-				) ) }
+				{ /* Closed by default, so the card stays close to the referral card's height. */ }
+				<Button
+					className="a4a-plan-goal-toggle"
+					aria-expanded={ showMethods }
+					aria-controls="a4a-leads-iar-methods"
+					onClick={ () => setShowMethods( ( value ) => ! value ) }
+				>
+					<Text weight={ 500 } lineHeight="20px">
+						{ __( 'Ways to close the gap' ) }
+					</Text>
+					<Icon icon={ showMethods ? chevronUp : chevronDown } size={ 24 } />
+				</Button>
+				{ showMethods && (
+					<VStack spacing={ 3 } id="a4a-leads-iar-methods">
+						{ methods.map( ( method ) => (
+							<HStack key={ method.id } spacing={ 4 } justify="space-between" alignment="center">
+								<VStack spacing={ 0 }>
+									<Text lineHeight="20px">{ method.title }</Text>
+									<Text variant="muted" size={ 12 } lineHeight="16px">
+										{ method.description }
+									</Text>
+								</VStack>
+								{ ! lockedNote && (
+									<span style={ { flexShrink: 0 } }>
+										<OverviewLinkButton
+											size="compact"
+											variant="secondary"
+											href={ method.href }
+											shouldUseRouterLink={ shouldUseRouterLink }
+										>
+											{ method.actionLabel }
+										</OverviewLinkButton>
+									</span>
+								) }
+							</HStack>
+						) ) }
+					</VStack>
+				) }
 			</VStack>
 		</VStack>
 	);
@@ -289,7 +252,6 @@ function LeadsEmptyState( {
 interface LeadsCardProps {
 	tierLevel: number;
 	influencedRevenue: number;
-	isListed: boolean;
 	profile: SignupProfile | null;
 	lockedNote?: string;
 	links: IarMethodLinks & { partnerDirectory: string };
@@ -299,7 +261,6 @@ interface LeadsCardProps {
 export default function LeadsCard( {
 	tierLevel,
 	influencedRevenue,
-	isListed,
 	profile,
 	lockedNote,
 	links,
@@ -321,7 +282,6 @@ export default function LeadsCard( {
 					<LeadsEmptyState
 						influencedRevenue={ influencedRevenue }
 						tierLevel={ tierLevel }
-						isListed={ isListed }
 						profile={ profile }
 						lockedNote={ lockedNote }
 						links={ links }

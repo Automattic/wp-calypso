@@ -87,6 +87,11 @@ const getQuickScenarios = (): { id: QuickScenarioId; title: string; detail: stri
 		detail: __( 'Account activated · Advisor call' ),
 	},
 	{
+		id: 'getting-started',
+		title: __( 'Getting started' ),
+		detail: __( 'Account activated · $780 IAR · Advisor call booked' ),
+	},
+	{
 		id: 'established-pro',
 		title: __( 'Established agency' ),
 		detail: __( 'Pro Partner · Check-in scheduled' ),
@@ -274,14 +279,22 @@ export default function PrototypeControlPanel( {
 	showsPartnerManager,
 }: PrototypeControlPanelProps ) {
 	// Highlights a quick scenario while the controls still match it.
-	const activeScenario = ( [ 'new-emerging', 'established-pro' ] as QuickScenarioId[] ).find(
-		( id ) =>
-			id === 'new-emerging'
-				? experience === 'new' && tierId === 'emerging-partner'
-				: experience === 'established' &&
+	const activeScenario = (
+		[ 'new-emerging', 'getting-started', 'established-pro' ] as QuickScenarioId[]
+	 ).find( ( id ) => {
+		switch ( id ) {
+			case 'new-emerging':
+				return experience === 'new' && tierId === 'emerging-partner';
+			case 'getting-started':
+				return experience === 'getting-started' && tierId === 'emerging-partner';
+			default:
+				return (
+					experience === 'established' &&
 					tierId === 'pro-agency-partner' &&
 					callScenario === 'scheduled'
-	);
+				);
+		}
+	} );
 
 	if ( ! isOpen ) {
 		return (
@@ -367,7 +380,8 @@ export default function PrototypeControlPanel( {
 								updatePrototypeSettings( { experience: value as PrototypeExperience } )
 							}
 						>
-							<ToggleGroupControlOption value="new" label={ __( 'New agency' ) } />
+							<ToggleGroupControlOption value="new" label={ __( 'New' ) } />
+							<ToggleGroupControlOption value="getting-started" label={ __( 'Getting started' ) } />
 							<ToggleGroupControlOption value="established" label={ __( 'Established' ) } />
 						</ToggleGroupControl>
 						<SelectControl
