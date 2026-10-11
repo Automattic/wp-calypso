@@ -361,8 +361,9 @@
 .wpnc__note.wpnc__like .wpnc__body .wpnc__body-content,
 .wpnc__note.wpnc__comment_like .wpnc__body .wpnc__body-content,
 .wpnc__note.wpnc__follow .wpnc__body .wpnc__body-content {
+	// The list's own gap already spaces the closing text from the last person.
 	.wpnc__paragraph {
-		padding: 16px 0 0;
+		padding: 0;
 	}
 }
 
