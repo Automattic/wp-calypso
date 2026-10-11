@@ -44,7 +44,7 @@ describe( 'isServerErrorPage', () => {
 	} );
 
 	test( 'does not match a regular page', async () => {
-		const page = buildPage( 'Log In — WordPress.com', 'Log in to your account' );
+		const page = buildPage( 'Log in — WordPress.com', 'Log in to your account' );
 
 		await expect( isServerErrorPage( page ) ).resolves.toBe( false );
 		await expect( isServerErrorPage( page, ServerErrorMatch.AnyServerError ) ).resolves.toBe(
