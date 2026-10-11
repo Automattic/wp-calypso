@@ -65,8 +65,6 @@ export default function UserBlock( { note, block }: { note: Note; block: Block }
 			? getDisplayURL( homeLink )
 			: block.meta?.titles?.home;
 
-	// Two layouts: in a list of people the site sits under the name with the follow
-	// link at the far end; elsewhere the details share one line under the name.
 	const isListRow = isPeopleListNote( note );
 
 	// Build the present description items, then interleave a single separator
@@ -132,7 +130,6 @@ export default function UserBlock( { note, block }: { note: Note; block: Block }
 								target="_blank"
 								rel="noreferrer"
 							>
-								{ /* A line count, since the plain `truncate` loses to Text's own wrapping. */ }
 								<Text truncate numberOfLines={ 1 }>
 									{ block.text }
 								</Text>
