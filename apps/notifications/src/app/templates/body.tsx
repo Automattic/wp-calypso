@@ -166,7 +166,7 @@ export const NoteBody = ( { note }: { note: Note } ) => {
 				</div>
 			) }
 			{ isPeopleListNote( note ) ? (
-				<VStack className="wpnc__body-content" spacing={ 2 }>
+				<VStack className="wpnc__body-content" spacing={ 4 }>
 					{ body }
 				</VStack>
 			) : (
