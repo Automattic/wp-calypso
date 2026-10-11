@@ -1,9 +1,9 @@
 import page from '@automattic/calypso-router';
 import { Gridicon } from '@automattic/components';
-import { localizeUrl } from '@automattic/i18n-utils';
+import { englishLocales, localizeUrl } from '@automattic/i18n-utils';
 import { ExternalLink } from '@wordpress/components';
 import clsx from 'clsx';
-import { localize } from 'i18n-calypso';
+import i18n, { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -354,6 +354,10 @@ export class Login extends Component {
 		} = this.props;
 
 		const canonicalUrl = localizeUrl( 'https://wordpress.com/log-in', locale );
+		const pageTitle =
+			englishLocales.includes( locale ) || i18n.hasTranslation( 'Log in' )
+				? translate( 'Log in', { textOnly: true } )
+				: translate( 'Log In', { textOnly: true } );
 
 		// TODO: remove isGravPoweredClient when login pages are unified.
 		const isSocialFirst = ! isGravPoweredClient;
@@ -377,10 +381,7 @@ export class Login extends Component {
 				{ isGravPoweredClient && this.renderI18nSuggestions() }
 
 				<DocumentHead
-					title={ getPartnerFormattedWindowTitle(
-						translate( 'Log In', { textOnly: true } ),
-						partnerConfig
-					) }
+					title={ getPartnerFormattedWindowTitle( pageTitle, partnerConfig ) }
 					skipTitleFormatting
 					link={ [ { rel: 'canonical', href: canonicalUrl } ] }
 					meta={ [
