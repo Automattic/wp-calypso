@@ -8,7 +8,7 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useState, useEffect, useMemo } from 'react';
 import { useSelector } from 'react-redux';
-import { getModerateCommentsLink, isPeopleListNote } from '../../panel/helpers/notes';
+import { getModerateCommentsLink } from '../../panel/helpers/notes';
 import { html } from '../../panel/indices-to-html';
 import { bumpStat } from '../../panel/rest-client/bump-stat';
 import { wpcom } from '../../panel/rest-client/wpcom';
@@ -21,6 +21,7 @@ import PromptBlock from './block-prompt';
 import User from './block-user';
 import NotePreface from './preface';
 import type { Note, Block, BlockWithSignature } from '../types';
+import type { ReactNode } from 'react';
 
 const isReplyBlock = ( note: Note, block: Block ) =>
 	block.ranges && block.ranges.length > 1 && block.ranges[ 1 ].id === note.meta?.ids?.reply_comment;
@@ -134,24 +135,45 @@ export const NoteBody = ( { note }: { note: Note } ) => {
 	const restBlocks =
 		firstNonTextBlockIndex !== -1 ? blocks.slice( firstNonTextBlockIndex ) : blocks;
 
-	const body = restBlocks
-		.filter( ( block ) => ! isReplyBlock( note, block.block ) )
-		.map( ( block, i ) => {
-			const key = 'block-' + note.id + '-' + i;
+	const renderBlock = ( block: BlockWithSignature, key: string ) => {
+		switch ( block.signature.type ) {
+			case 'user':
+				return <User key={ key } block={ block.block } note={ note } />;
+			case 'comment':
+				return <Comment key={ key } block={ block.block } meta={ note.meta } />;
+			case 'post':
+				return <Post key={ key } block={ block.block } />;
+			case 'prompt':
+				return <PromptBlock key={ key } block={ block.block } />;
+			default:
+				return <div key={ key }>{ p( html( block.block ) ) }</div>;
+		}
+	};
 
-			switch ( block.signature.type ) {
-				case 'user':
-					return <User key={ key } block={ block.block } note={ note } />;
-				case 'comment':
-					return <Comment key={ key } block={ block.block } meta={ note.meta } />;
-				case 'post':
-					return <Post key={ key } block={ block.block } />;
-				case 'prompt':
-					return <PromptBlock key={ key } block={ block.block } />;
-				default:
-					return <div key={ key }>{ p( html( block.block ) ) }</div>;
+	const body: ReactNode[] = [];
+	let people: ReactNode[] = [];
+	const addPeople = () => {
+		if ( people.length ) {
+			body.push(
+				<VStack key={ `people-${ body.length }` } spacing={ 4 }>
+					{ people }
+				</VStack>
+			);
+			people = [];
+		}
+	};
+	restBlocks
+		.filter( ( block ) => ! isReplyBlock( note, block.block ) )
+		.forEach( ( block, i ) => {
+			const element = renderBlock( block, 'block-' + note.id + '-' + i );
+			if ( block.signature.type === 'user' ) {
+				people.push( element );
+			} else {
+				addPeople();
+				body.push( element );
 			}
 		} );
+	addPeople();
 
 	useEffect( () => {
 		bumpStat( 'notes-click-type', note.type );
@@ -165,9 +187,7 @@ export const NoteBody = ( { note }: { note: Note } ) => {
 					<PendingApprovalStrip note={ note } />
 				</div>
 			) }
-			<VStack className="wpnc__body-content" spacing={ isPeopleListNote( note ) ? 4 : 0 }>
-				{ body }
-			</VStack>
+			<div className="wpnc__body-content">{ body }</div>
 			<ReplyBlock note={ note } />
 		</VStack>
 	);
