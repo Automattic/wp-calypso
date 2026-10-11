@@ -5,6 +5,7 @@ import {
 	type ImageUploaderHandle,
 	type MarkdownComponents,
 	type MarkdownExtensions,
+	type NoticeConfig,
 	type Suggestion,
 	type ChatState,
 	type UploadedImage,
@@ -31,7 +32,7 @@ import getSuggestionClickPayload from './get-suggestion-click-payload';
 import GroupedEmptyView from './grouped-empty-view';
 import type { UseImageUploadResult } from '../../hooks/use-image-upload';
 import type { ExternalContextCard, ExternalContextCardAction } from '../../utils/external-context';
-import type { Message, NoticeConfig } from '@automattic/agenttic-ui/dist/types';
+import type { UIMessage as Message } from '@automattic/agenttic-client';
 import type { ComponentProps, RefObject } from 'react';
 
 interface Props {

@@ -209,9 +209,9 @@ function AgentSetup( {
 
 	// Read agent/version overrides from browser URL (?agent=, ?version=).
 	// PersistentRouter (memory router) does not track window.location.search.
-	const { agentId, version, isLoading: isAgentConfigLoading } = useAgentConfig( hostAgentId );
+	const { agentId, version } = useAgentConfig( hostAgentId );
 
-	useSessionHandoffLinks( isAgentConfigLoading ? undefined : agentId );
+	useSessionHandoffLinks( agentId );
 
 	// A handed-off session is stored under its own site scope and resumed only
 	// when this page is in that scope, as a site switch within one origin would.
@@ -234,10 +234,6 @@ function AgentSetup( {
 	} );
 
 	useEffect( () => {
-		// Wait for the agent config to stabilize before initializing.
-		if ( isAgentConfigLoading ) {
-			return;
-		}
 		if ( ! agentConfigRef.current && handoff ) {
 			saveSessionId( handoff.sessionId, agentId, handoffSiteKey, userId );
 		}
@@ -353,7 +349,6 @@ function AgentSetup( {
 	}, [
 		agentId,
 		currentRoute,
-		isAgentConfigLoading,
 		isChatViewShowing,
 		isNewChat,
 		handoff,

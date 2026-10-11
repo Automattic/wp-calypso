@@ -66,7 +66,11 @@ const SiteMigrationHowToMigrate: StepType< {
 
 	const goBack = useCallback( () => {
 		cancelMigration();
-		navigation?.goBack?.();
+		if ( navigation?.goBack ) {
+			navigation.goBack();
+		} else {
+			history.back();
+		}
 	}, [ cancelMigration, navigation ] );
 
 	const handleImport = () => {

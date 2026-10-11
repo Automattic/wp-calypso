@@ -9,13 +9,10 @@ import { useViewportMatch } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
 import { reusableBlock } from '@wordpress/icons';
 import { addQueryArgs } from '@wordpress/url';
-import { useContext } from 'react';
 import { useAnalytics } from '../../app/analytics';
-import { AuthContext } from '../../app/auth';
 import { useHelpCenter } from '../../app/help-center';
 import OfferCard from '../../components/offer-card';
 import { wpcomLink } from '../../utils/link';
-import { userHasFlag } from '../../utils/user';
 import Column from './column';
 import MenuItem from './menu-item';
 import type { AddNewSiteProps } from './types';
@@ -26,9 +23,6 @@ function AddNewSite( {
 	aiSiteBuilderPath = '/setup/ai-site-builder-onboarding',
 }: AddNewSiteProps ) {
 	const { recordTracksEvent } = useAnalytics();
-	const auth = useContext( AuthContext );
-	const user = auth?.user;
-	const isFlexEligible = user ? userHasFlag( user, 'wpcom-flex' ) : false;
 
 	const wordpressClick = () => {
 		recordTracksEvent( 'calypso_dashboard_sites_new_site_action_click_add' );
@@ -61,20 +55,6 @@ function AddNewSite( {
 	return (
 		<Wrapper alignment="flex-start" spacing={ 6 }>
 			<Column title={ __( 'Start a new site' ) }>
-				{ isFlexEligible && (
-					<MenuItem
-						icon={ <WordPressLogo /> }
-						title={ __( 'Create a Flex site' ) }
-						description={ __( 'Provision a flexible WordPress.com environment.' ) }
-						onClick={ () => {
-							recordTracksEvent( 'calypso_dashboard_sites_new_site_action_click_item', {
-								action: 'flex-site',
-							} );
-						} }
-						href={ wpcomLink( `/setup/flex-site?source=${ context }&ref=new-site-popover` ) }
-						aria-label={ __( 'Create a Flex site' ) }
-					/>
-				) }
 				<MenuItem
 					icon={ <WordPressLogo /> }
 					title={ __( 'Create it yourself' ) }

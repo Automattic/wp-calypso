@@ -6,18 +6,32 @@ import { DomainPriceRule } from '../../hooks/use-suggestion';
 import { useDomainSearch } from '../../page/context';
 import { isNamePulseAvailable, toNamePulseRealtimeVerdict } from '../helpers';
 import { setNamePulseVerdict } from './use-name-pulse-verdicts';
-import type { DomainAvailability } from '@automattic/api-core';
+import type { DomainAvailability, PolicyNotice } from '@automattic/api-core';
+
+export interface NamePulsePolicyNotice {
+	title: string;
+	message: string;
+}
 
 /**
  * Adds a name to the cart, or removes it when it is already there. The row and
- * the exact-match card share it, so both run the same real-time check first.
+ * the exact-match card share it, so both run the same real-time check first,
+ * and both confirm the TLD's special requirements before adding.
  */
-export const useNamePulseCartToggle = ( domainName: string, position: number ) => {
+export const useNamePulseCartToggle = (
+	domainName: string,
+	position: number,
+	policyNotices: PolicyNotice[] = []
+) => {
 	const { __ } = useI18n();
 	const { cart, events, queries } = useDomainSearch();
 	const queryClient = useQueryClient();
 	const [ trademarkClaimsNoticeInfo, setTrademarkClaimsNoticeInfo ] =
 		useState< DomainAvailability[ 'trademark_claims_notice_info' ] >();
+	const [ isPolicyNoticeOpen, setIsPolicyNoticeOpen ] = useState( false );
+	// Held from the moment the dialog opens: the real-time check that runs on
+	// confirming can update the name's notices while the dialog is still showing.
+	const [ policyNotice, setPolicyNotice ] = useState< NamePulsePolicyNotice >();
 
 	const inCart = cart.hasItem( domainName );
 
@@ -83,7 +97,25 @@ export const useNamePulseCartToggle = ( domainName: string, position: number ) =
 		inCart,
 		isPending,
 		error,
-		toggleCart: () => toggleCart( { acceptedTrademarkClaim: false } ),
+		toggleCart: () => {
+			if ( inCart || policyNotices.length === 0 ) {
+				toggleCart( { acceptedTrademarkClaim: false } );
+				return;
+			}
+			setPolicyNotice( {
+				title: policyNotices[ 0 ].label,
+				message: policyNotices.map( ( notice ) => notice.message ).join( ' ' ),
+			} );
+			setIsPolicyNoticeOpen( true );
+		},
+		policyNotice,
+		isPolicyNoticeOpen,
+		confirmPolicyNotice: () =>
+			toggleCart(
+				{ acceptedTrademarkClaim: false },
+				{ onSettled: () => setIsPolicyNoticeOpen( false ) }
+			),
+		closePolicyNotice: () => ! isPending && setIsPolicyNoticeOpen( false ),
 		trademarkClaimsNoticeInfo,
 		acceptTrademarkClaim: () => {
 			setTrademarkClaimsNoticeInfo( undefined );

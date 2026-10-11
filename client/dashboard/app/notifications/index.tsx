@@ -14,6 +14,7 @@ import { useAuth } from '../auth';
 import { useHelpCenter } from '../help-center';
 import { useLocale } from '../locale';
 import { omnibarEvents, useOmnibarEvent } from '../omnibar/events';
+import useSubscriberAlerts from './use-subscriber-alerts';
 import type { UserPreferences } from '@automattic/api-core';
 import './style.scss';
 
@@ -34,8 +35,12 @@ export default function Notifications( {
 	const [ isOpen, setIsOpen ] = useState( false );
 	const [ hasUnseenNotifications, setHasUnseenNotifications ] = useState( user.has_unseen_notes );
 	const [ anchorEl, setAnchorEl ] = useState< HTMLElement | null >( null );
-
 	const isViewSettingsEnabled = config.isEnabled( 'notifications/view-settings' );
+	const onNotificationCount = useCallback( ( count: number ) => {
+		setHasUnseenNotifications( count > 0 );
+		omnibarEvents.notificationsUnseenCount.emit( count );
+	}, [] );
+	useSubscriberAlerts( onNotificationCount );
 
 	// Both share one query key, so this is a single request — and it is skipped entirely
 	// without the picker, where nothing reads either value.
@@ -85,25 +90,6 @@ export default function Notifications( {
 	useEffect( () => {
 		omnibarEvents.notificationsOpen.emit( isOpen );
 	}, [ isOpen ] );
-
-	useEffect( () => {
-		let unsubscribe: ( () => void ) | undefined;
-		let cancelled = false;
-
-		import( '@automattic/notifications/src/app/client' ).then( ( { subscribeUnseenCount } ) => {
-			if ( ! cancelled ) {
-				unsubscribe = subscribeUnseenCount( wpcom, ( count ) => {
-					setHasUnseenNotifications( count > 0 );
-					omnibarEvents.notificationsUnseenCount.emit( count );
-				} );
-			}
-		} );
-
-		return () => {
-			cancelled = true;
-			unsubscribe?.();
-		};
-	}, [] );
 
 	const handleClose = () => {
 		handleToggle( false );

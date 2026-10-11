@@ -3,6 +3,7 @@
  */
 import { act, renderHook } from '@testing-library/react';
 import { useCredits } from '../use-credits';
+import type { CreditsPool } from '../../utils/credits';
 
 let mockIsProcessing = false;
 jest.mock(
@@ -161,7 +162,7 @@ describe( 'useCredits', () => {
 			seed( search );
 			const { result } = renderCredits();
 			const meter = result.current.trailingActions as React.ReactElement< {
-				status: { pools: Array< { id: string; remaining?: number; percent: number } > };
+				status: { pools: CreditsPool[] };
 			} >;
 			return Object.fromEntries( meter.props.status.pools.map( ( pool ) => [ pool.id, pool ] ) );
 		};
@@ -180,6 +181,6 @@ describe( 'useCredits', () => {
 
 		const out = pools( '?am_credits=0&am_plan=paid' );
 		expect( out.plan.percent ).toBe( 0 );
-		expect( out.topups.percent ).toBe( 0 );
+		expect( out.topups.remaining ).toBe( 0 );
 	} );
 } );

@@ -21,13 +21,15 @@ export const PluginSwitcher = ( {
 	view,
 	onChangeView,
 	paginationInfo,
+	isError,
 }: {
-	pluginsWithIcon: PluginListRow[];
+	pluginsWithIcon?: PluginListRow[];
 	searchableFields: Field< PluginListRow >[];
 	selectedPluginSlug?: string;
 	view: View;
 	onChangeView: Dispatch< SetStateAction< View > >;
 	paginationInfo: { totalItems: number; totalPages: number };
+	isError: boolean;
 } ) => {
 	const scrollRef = useRef< HTMLDivElement >( null );
 	const [ itemsPerPage ] = useState( view.perPage );
@@ -131,17 +133,22 @@ export const PluginSwitcher = ( {
 					view={ view }
 					onChangeView={ onChangeView }
 					items={ pluginsWithIcon }
+					loading={ { itemCount: 10, hasMedia: true, hasDescription: true, spacing: 3 } }
 					resetScroll={ false }
 					getItemUrl={ ( item ) => pluginRoute.to.replace( '$pluginId', item.slug ) }
 					renderItem={ renderItem }
 					searchableFields={ searchableFields }
-					noResultsText={ __( 'No plugins found.' ) }
+					noResultsText={
+						isError
+							? __( 'Couldn’t load your plugins. Please try again later.' )
+							: __( 'No plugins found.' )
+					}
 					onClose={ () => {} }
 					width="auto"
 					filter={
 						<PluginUpdatesFilter
 							siteCount={
-								pluginsWithIcon.filter( ( plugin ) => plugin.sitesWithPluginUpdate.length > 0 )
+								pluginsWithIcon?.filter( ( plugin ) => plugin.sitesWithPluginUpdate.length > 0 )
 									.length
 							}
 							updatesField={ updatesField }

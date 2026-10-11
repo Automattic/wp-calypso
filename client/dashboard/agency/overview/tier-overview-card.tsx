@@ -88,7 +88,7 @@ export default function TierOverviewCard( {
 							action={
 								<Button
 									size="compact"
-									variant="secondary"
+									variant="primary"
 									isBusy={ isSchedulingCall }
 									onClick={ () => {
 										recordTracksEvent?.( 'calypso_a4a_overview_tier_card_schedule_call_click', {
@@ -109,7 +109,7 @@ export default function TierOverviewCard( {
 							action={
 								<Button
 									size="compact"
-									variant="secondary"
+									variant="primary"
 									isBusy={ isSchedulingCall }
 									onClick={ () => {
 										recordTracksEvent?.(

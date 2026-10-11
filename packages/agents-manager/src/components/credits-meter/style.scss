@@ -82,6 +82,11 @@
 	font-weight: 500;
 }
 
+// A balance-only row leads with its amount, so its label is muted instead.
+.agents-manager-credits-meter__pool.is-balance-only .agents-manager-credits-meter__pool-label {
+	color: var( --color-muted-foreground );
+}
+
 .agents-manager-credits-meter__pool-date,
 .agents-manager-credits-meter__pool-detail {
 	color: var( --color-muted-foreground );

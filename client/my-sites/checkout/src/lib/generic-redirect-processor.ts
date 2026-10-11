@@ -27,7 +27,6 @@ export default async function genericRedirectProcessor(
 		siteSlug,
 		includeDomainDetails,
 		includeGSuiteDetails,
-		reduxDispatch,
 		responseCart,
 		contactDetails,
 		fromSiteSlug,
@@ -53,7 +52,7 @@ export default async function genericRedirectProcessor(
 	} );
 	const cancelUrl = `${ origin }${ pathname }${ search }`;
 
-	reduxDispatch( recordTransactionBeginAnalytics( { paymentMethodId } ) );
+	recordTransactionBeginAnalytics( { paymentMethodId } );
 
 	const formattedTransactionData = prepareRedirectTransaction(
 		paymentMethodId,

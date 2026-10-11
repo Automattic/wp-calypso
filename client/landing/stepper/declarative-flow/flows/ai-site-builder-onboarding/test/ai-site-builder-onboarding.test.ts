@@ -295,6 +295,77 @@ describe( 'ai-site-builder-onboarding flow', () => {
 				}
 			);
 
+			describe( 'Commerce', () => {
+				const storeBuilder = ( enabled: boolean ) =>
+					( wpcom.req.get as jest.Mock ).mockImplementation( ( { path }: { path: string } ) =>
+						Promise.resolve(
+							path.endsWith( '/big-sky/build-wow/store-builder' ) ? { enabled } : [ { id: 7 } ]
+						)
+					);
+
+				beforeEach( () => {
+					setPlan( 'ecommerce-bundle' );
+				} );
+
+				it( 'waits for Commerce readiness, then opens the build-wow site spec for a store builder account', async () => {
+					storeBuilder( true );
+
+					await runProcessingSubmit();
+
+					expect( wpcom.req.get ).toHaveBeenCalledWith( {
+						path: '/sites/123/big-sky/build-wow/store-builder',
+						apiNamespace: 'wpcom/v2',
+					} );
+					const waitUrl = new URL( getRedirectTo(), 'https://wordpress.com' );
+					expect( waitUrl.pathname ).toBe(
+						'/setup/ai-site-builder-onboarding/wait-for-commerce-atomic'
+					);
+					const specUrl = waitUrl.searchParams.get( 'redirect_to' ) as string;
+					const spec = new URL( specUrl, 'https://wordpress.com' );
+					expect( spec.pathname ).toBe( '/setup/ai-site-builder-spec/site-spec' );
+					expect( spec.searchParams.get( 'graph' ) ).toBe( 'dsl' );
+					expect( setIntentOnSite ).not.toHaveBeenCalled();
+
+					mockQueryParams = waitUrl.searchParams;
+					const navigate = jest.fn();
+					const { submit } = aiSiteBuilderOnboarding.useStepNavigation(
+						STEPS.WAIT_FOR_COMMERCE_ATOMIC.slug,
+						navigate
+					);
+					await submit?.( {
+						slug: STEPS.WAIT_FOR_COMMERCE_ATOMIC.slug,
+						providedDependencies: { ready: true },
+					} as never );
+
+					expect( window.location.replace ).toHaveBeenCalledWith( specUrl );
+					expect( navigate ).not.toHaveBeenCalled();
+				} );
+
+				it( 'keeps the legacy editor for an account the store rollout does not let in', async () => {
+					storeBuilder( false );
+
+					await runProcessingSubmit();
+
+					const waitUrl = new URL( getRedirectTo(), 'https://wordpress.com' );
+					const editorUrl = new URL( waitUrl.searchParams.get( 'redirect_to' ) as string );
+					expect( editorUrl.pathname ).toBe( '/wp-admin/site-editor.php' );
+				} );
+
+				it( 'keeps the legacy editor when the store builder check fails', async () => {
+					( wpcom.req.get as jest.Mock ).mockImplementation( ( { path }: { path: string } ) =>
+						path.endsWith( '/big-sky/build-wow/store-builder' )
+							? Promise.reject( new Error( 'network' ) )
+							: Promise.resolve( [ { id: 7 } ] )
+					);
+
+					await runProcessingSubmit();
+
+					const waitUrl = new URL( getRedirectTo(), 'https://wordpress.com' );
+					const editorUrl = new URL( waitUrl.searchParams.get( 'redirect_to' ) as string );
+					expect( editorUrl.pathname ).toBe( '/wp-admin/site-editor.php' );
+				} );
+			} );
+
 			it( 'is not used when the site-spec feature is off', async () => {
 				isEnabled.mockImplementation( ( flag: string ) => flag !== 'site-spec' );
 

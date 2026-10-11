@@ -5,13 +5,15 @@ import {
 	isHundredYearDomainFlow,
 	isHundredYearPlanFlow,
 } from '@automattic/onboarding';
-import { ResponseCartProduct } from '@automattic/shopping-cart';
 import { useMemo, type ComponentProps, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { mergeObjectFunctions } from '../../../lib/merge-object-functions';
 import { recordDomainSearchStepSubmit } from './analytics';
-import { useWPCOMDomainSearchCart } from './use-wpcom-domain-search-cart';
+import {
+	type ContinuedDomainProduct,
+	useWPCOMDomainSearchCart,
+} from './use-wpcom-domain-search-cart';
 import { useWPCOMDomainSearchEvents } from './use-wpcom-domain-search-events';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 
@@ -22,7 +24,7 @@ export type WPCOMDomainSearchProps = Omit<
 	currentSiteId?: number;
 	flowName: string;
 	events: Omit< Required< ComponentProps< typeof DomainSearch > >[ 'events' ], 'onContinue' > & {
-		onContinue: ( items: ResponseCartProduct[] ) => void;
+		onContinue: ( items: ContinuedDomainProduct[] ) => void;
 		beforeAddDomainToCart?: ( domain: MinimalRequestCartProduct ) => MinimalRequestCartProduct;
 	};
 	isFirstDomainFreeForFirstYear?: boolean;
@@ -61,7 +63,7 @@ export const useWPCOMDomainSearchProps = ( {
 	} = externalEvents;
 
 	const onContinueWithStepSubmissionTracking = useCallback(
-		( items: ResponseCartProduct[] ) => {
+		( items: ContinuedDomainProduct[] ) => {
 			const firstItem = items[ 0 ];
 			dispatch( recordDomainSearchStepSubmit( { domain_name: firstItem.meta }, analyticsSection ) );
 			externalOnContinue( items );

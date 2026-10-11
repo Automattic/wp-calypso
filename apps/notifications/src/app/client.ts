@@ -24,13 +24,40 @@ export function getClient() {
 	return client;
 }
 
-export function subscribeUnseenCount( wpcom: any, onCount: ( count: number ) => void ): () => void {
+type SubscriberNotification = {
+	targetSiteId: number;
+	receivedAt: number;
+	type: 'follow';
+	wasVisibleAtReceipt: boolean;
+};
+
+export function subscribeUnseenCount(
+	wpcom: any,
+	onCount: ( count: number ) => void,
+	onSubscriberNotification?: ( notification: SubscriberNotification ) => void | Promise< void >
+): () => void {
 	initClient( wpcom );
 
 	const handlers = {
 		APP_RENDER_NOTES: [
-			( _store: unknown, action: unknown ) =>
-				onCount( ( action as { newNoteCount: number } ).newNoteCount ),
+			( _store: unknown, action: unknown ) => {
+				const { newNoteCount, subscriberNotifications } = action as {
+					newNoteCount: number;
+					subscriberNotifications?: SubscriberNotification[];
+				};
+				onCount( newNoteCount );
+				subscriberNotifications?.forEach( ( notification ) => {
+					if (
+						notification.type === 'follow' &&
+						typeof notification.wasVisibleAtReceipt === 'boolean' &&
+						Number.isSafeInteger( notification.targetSiteId ) &&
+						notification.targetSiteId > 0 &&
+						Number.isSafeInteger( notification.receivedAt )
+					) {
+						void onSubscriberNotification?.( notification );
+					}
+				} );
+			},
 		],
 	};
 

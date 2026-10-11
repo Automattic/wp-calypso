@@ -1,6 +1,7 @@
-import { DotcomFeatures, HostingFeatures, fetchTwoStep } from '@automattic/api-core';
+import { DotcomFeatures, HostingFeatures } from '@automattic/api-core';
 import {
 	activeAgencyQuery,
+	agencyDevSiteLicenseQuery,
 	agencyProductsQuery,
 	agencyQuery,
 	agencyResourcesQuery,
@@ -61,7 +62,6 @@ import { isAgencyApproved } from '../../agency/marketplace/is-agency-approved';
 import { agencyLicensesQuery } from '../../agency/marketplace/lib/wpcom-hosting';
 import {
 	CRM_DOWNLOADS_SEGMENT,
-	getMarketplaceHostingSectionRoute,
 	MARKETPLACE_HOSTING_REFER_SEGMENTS,
 } from '../../agency/marketplace/paths';
 import {
@@ -80,12 +80,14 @@ import {
 	canTransferSite,
 	canViewHundredYearPlanSettings,
 } from '../../sites/features';
-import { reauthRequiredLink } from '../../utils/link';
 import { hasHostingFeature, hasPlanFeature } from '../../utils/site-features';
 import { getSiteTypeFeatureSupports } from '../../utils/site-type-feature-support';
-import { getSiteDisplayUrl } from '../../utils/site-url';
 import { AUTH_QUERY_KEY } from '../auth';
-import { dashboardRedirect, redirectAsNotAllowed } from './redirect';
+import {
+	dashboardRedirect,
+	redirectAsNotAllowed,
+	redirectIfTwoStepReauthRequired,
+} from './redirect';
 import { rootRoute } from './root';
 import type { HostingSection, ReferHostingType } from '../../agency/marketplace/paths';
 import type { AgencySupports } from '../context';
@@ -206,7 +208,8 @@ export const agencyTiersRoute = createRoute( {
 	)
 );
 
-// `/partner-directory` – layout that gates on the partner directory program
+// `/partner-directory` – layout that shows the tier upsell to agencies
+// below Agency Partner
 export const agencyPartnerDirectoryRoute = createRoute( {
 	staticData: { requiresAgencyCapability: 'a4a_read_partner_directory' },
 	head: () => ( {
@@ -218,17 +221,14 @@ export const agencyPartnerDirectoryRoute = createRoute( {
 	} ),
 	getParentRoute: () => agencyRoute,
 	path: PARTNER_DIRECTORY_ROUTE,
-	beforeLoad: async ( { cause } ) => {
-		if ( cause === 'preload' ) {
-			return;
-		}
-
-		const agency = await queryClient.ensureQueryData( activeAgencyQuery() );
-		if ( ! agency?.partner_directory?.allowed ) {
-			throw redirectAsNotAllowed( { to: '/overview' } );
-		}
-	},
-} );
+	loader: () => queryClient.ensureQueryData( activeAgencyQuery() ),
+} ).lazy( () =>
+	import( '../../agency/partner-directory/layout' ).then( ( d ) =>
+		createLazyRoute( 'agency-partner-directory-layout' )( {
+			component: d.default,
+		} )
+	)
+);
 
 const agencyPartnerDirectoryIndexRoute = createRoute( {
 	getParentRoute: () => agencyPartnerDirectoryRoute,
@@ -284,6 +284,9 @@ export const marketplaceHostingRoute = createRoute( {
 			// The cart total counts the owned WordPress.com sites; warm that
 			// query without holding the page on every license the agency has.
 			queryClient.prefetchQuery( agencyLicensesQuery( agency.id ) );
+			// The referral toggle's commission badge only shows before the first
+			// referral, so the page doesn't wait for the full referrals list.
+			queryClient.prefetchQuery( referralsQuery( agency.id ) );
 			await Promise.all( [
 				queryClient.ensureQueryData( agencyProductsQuery( agency.id ) ),
 				queryClient.ensureQueryData( pressableLicensesQuery( agency.id ) ).catch( () => undefined ),
@@ -296,8 +299,22 @@ export const marketplaceHostingRoute = createRoute( {
 	},
 } );
 
+// Host names aren't translated.
+const HOSTING_SECTION_TITLES: Record< HostingSection, string > = {
+	wpcom: 'WordPress.com',
+	pressable: 'Pressable',
+	vip: 'WordPress VIP',
+};
+
 const createMarketplaceHostingSectionRoute = ( section: HostingSection ) =>
 	createRoute( {
+		head: () => ( {
+			meta: [
+				{
+					title: HOSTING_SECTION_TITLES[ section ],
+				},
+			],
+		} ),
 		getParentRoute: () => marketplaceHostingRoute,
 		path: section,
 	} ).lazy( () =>
@@ -308,20 +325,17 @@ const createMarketplaceHostingSectionRoute = ( section: HostingSection ) =>
 		)
 	);
 
-// `/hosting` has no screen of its own. It opens WordPress.com for agencies
-// that signed up with 1-5 sites and Pressable otherwise.
+// `/hosting` – the hosts side by side, each leading to its own page.
 export const marketplaceHostingIndexRoute = createRoute( {
 	getParentRoute: () => marketplaceHostingRoute,
 	path: '/',
-	beforeLoad: async ( { cause } ) => {
-		if ( cause === 'preload' ) {
-			return;
-		}
-		const agency = await queryClient.ensureQueryData( activeAgencyQuery() );
-		const section = agency?.signup_meta?.number_sites === '1-5' ? 'wpcom' : 'pressable';
-		throw dashboardRedirect( { to: getMarketplaceHostingSectionRoute( section ) } );
-	},
-} );
+} ).lazy( () =>
+	import( '../../agency/marketplace/hosting' ).then( ( d ) =>
+		createLazyRoute( 'marketplace-hosting-index' )( {
+			component: () => <d.default />,
+		} )
+	)
+);
 export const marketplaceHostingWpcomRoute = createMarketplaceHostingSectionRoute( 'wpcom' );
 export const marketplaceHostingPressableRoute = createMarketplaceHostingSectionRoute( 'pressable' );
 export const marketplaceHostingVipRoute = createMarketplaceHostingSectionRoute( 'vip' );
@@ -397,7 +411,7 @@ export const marketplaceProductsRoute = createRoute( {
 	head: () => ( {
 		meta: [
 			{
-				title: __( 'Products' ),
+				title: __( 'Plugins and add-ons' ),
 			},
 		],
 	} ),
@@ -412,6 +426,9 @@ export const marketplaceProductsRoute = createRoute( {
 			// The cart total counts the owned WordPress.com sites; warm that
 			// query without holding the page on every license the agency has.
 			queryClient.prefetchQuery( agencyLicensesQuery( agency.id ) );
+			// The referral toggle's commission badge only shows before the first
+			// referral, so the page doesn't wait for the full referrals list.
+			queryClient.prefetchQuery( referralsQuery( agency.id ) );
 			await Promise.all( [
 				queryClient.ensureQueryData( agencyProductsQuery( agency.id ) ),
 				// The cart prices Pressable plans by whether the agency owns one.
@@ -428,9 +445,10 @@ export const marketplaceProductsRoute = createRoute( {
 );
 
 // `/referral-checkout` – request a client's payment for the referral
-// cart. Takes the whole screen, like the WordPress.com checkout the paid cart
-// goes to; `from` is the marketplace page the Back link returns to. An agency
-// that is not approved yet is sent back to the marketplace.
+// cart, or for the plan of one development site when `referral_blog_id`
+// names it. Takes the whole screen, like the WordPress.com checkout the paid
+// cart goes to; `from` is the page the Back link returns to. An agency that is
+// not approved yet is sent back to the marketplace.
 export const marketplaceReferralCheckoutRoute = createRoute( {
 	staticData: { requiresAgencyCapability: 'a4a_read_marketplace', isFullscreen: true },
 	head: () => ( {
@@ -442,11 +460,19 @@ export const marketplaceReferralCheckoutRoute = createRoute( {
 	} ),
 	getParentRoute: () => agencyRoute,
 	path: 'referral-checkout',
-	validateSearch: ( search: Record< string, unknown > ): { from?: string } => ( {
-		from:
-			typeof search.from === 'string' && search.from.startsWith( '/' ) ? search.from : undefined,
-	} ),
-	loader: async () => {
+	validateSearch: (
+		search: Record< string, unknown >
+	): { from?: string; referral_blog_id?: number } => {
+		const referralBlogId = Number( search.referral_blog_id );
+		return {
+			from:
+				typeof search.from === 'string' && search.from.startsWith( '/' ) ? search.from : undefined,
+			referral_blog_id:
+				Number.isInteger( referralBlogId ) && referralBlogId > 0 ? referralBlogId : undefined,
+		};
+	},
+	loaderDeps: ( { search: { referral_blog_id } } ) => ( { referral_blog_id } ),
+	loader: async ( { deps: { referral_blog_id } } ) => {
 		const agency = await queryClient.ensureQueryData( activeAgencyQuery() );
 		if ( ! isAgencyApproved( agency ) ) {
 			throw dashboardRedirect( { to: '/marketplace' } );
@@ -456,6 +482,10 @@ export const marketplaceReferralCheckoutRoute = createRoute( {
 			await Promise.all( [
 				queryClient.ensureQueryData( agencyProductsQuery( agency.id ) ),
 				queryClient.ensureQueryData( pressableLicensesQuery( agency.id ) ).catch( () => undefined ),
+				referral_blog_id &&
+					queryClient
+						.ensureQueryData( agencyDevSiteLicenseQuery( agency.id, referral_blog_id ) )
+						.catch( () => undefined ),
 			] );
 		}
 	},
@@ -488,16 +518,21 @@ export const marketplacePurchasesRoute = createRoute( {
 		search?: string;
 		status?: string;
 		receipt_id?: string;
+		cart?: string;
 		flash?: string;
 		purchased_plan?: string;
 	} => {
 		const page = Number( search.page );
 		const asString = ( value: unknown ) => ( typeof value === 'string' ? value : undefined );
+		// The router parses a numeric value such as `receipt_id=123` into a number.
+		const asId = ( value: unknown ) =>
+			typeof value === 'number' ? String( value ) : asString( value );
 		return {
 			page: Number.isInteger( page ) && page > 0 ? page : undefined,
 			search: asString( search.search ),
 			status: asString( search.status ),
-			receipt_id: asString( search.receipt_id ),
+			receipt_id: asId( search.receipt_id ),
+			cart: asString( search.cart ),
 			flash: asString( search.flash ),
 			purchased_plan: asString( search.purchased_plan ),
 		};
@@ -572,7 +607,11 @@ export type MarketplaceSection = {
 // Purchases is part of the Marketplace feature, so it shares the flag.
 export const marketplaceSections: MarketplaceSection[] = [
 	{ route: marketplaceHostingRoute, supports: 'marketplace', label: () => __( 'Hosting' ) },
-	{ route: marketplaceProductsRoute, supports: 'marketplace', label: () => __( 'Products' ) },
+	{
+		route: marketplaceProductsRoute,
+		supports: 'marketplace',
+		label: () => __( 'Plugins and add-ons' ),
+	},
 	{ route: marketplacePurchasesRoute, supports: 'marketplace', label: () => __( 'Purchases' ) },
 	{
 		route: exclusiveOffersRoute,
@@ -871,9 +910,7 @@ async function isAgencyWooPaymentsSite( siteId: number ): Promise< boolean > {
 	}
 
 	const site = await queryClient.ensureQueryData( siteByIdQuery( siteId ) );
-	const agencySite = await queryClient.ensureQueryData(
-		agencySiteQuery( getSiteDisplayUrl( site ) )
-	);
+	const agencySite = await queryClient.ensureQueryData( agencySiteQuery( site.slug ) );
 	return !! agencySite;
 }
 
@@ -1493,10 +1530,7 @@ const agencySiteSettingsAIToolsRoute = createRoute( {
 		}
 
 		if ( cause === 'enter' ) {
-			const twoStep = await fetchTwoStep();
-			if ( twoStep.two_step_reauthorization_required ) {
-				throw dashboardRedirect( { href: reauthRequiredLink(), reloadDocument: true } );
-			}
+			await redirectIfTwoStepReauthRequired();
 		}
 	},
 	loader: async ( { params: { siteSlug } } ) => {

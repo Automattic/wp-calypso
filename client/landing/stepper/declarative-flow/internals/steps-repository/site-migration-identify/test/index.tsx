@@ -4,6 +4,7 @@
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { MemoryRouter } from 'react-router';
 import { useSiteSlug } from 'calypso/landing/stepper/hooks/use-site-slug';
 import SiteMigrationIdentify from '..';
 import { UrlData } from '../../../../../../../blocks/import/types';
@@ -59,16 +60,21 @@ describe( 'SiteMigrationIdentify', () => {
 		jest.clearAllMocks();
 	} );
 
-	it( 'continues the flow when the platform is wordpress', async () => {
+	it( 'continues for WordPress and resubmits refreshed hosting data', async () => {
 		jest.mocked( useSiteSlug ).mockReturnValue( MOCK_WORDPRESS_SITE_SLUG );
 
 		const submit = jest.fn();
-		render( { navigation: { submit } } );
+		const { rerender } = render( { navigation: { submit } } );
 
 		mockApi()
 			.get( '/wpcom/v2/imports/analyze-url' )
 			.query( { site_url: 'https://example.com' } )
 			.reply( 200, API_RESPONSE_WORDPRESS_PLATFORM );
+		mockApi()
+			.get( '/wpcom/v2/site-profiler/hosting-provider/example.com' )
+			.reply( 200, { hosting_provider: { slug: 'automattic' } } )
+			.get( '/wpcom/v2/site-profiler/hosting-provider/example.com' )
+			.reply( 200, { hosting_provider: { slug: 'wpengine' } } );
 
 		await userEvent.type( getInput(), 'https://example.com' );
 
@@ -82,6 +88,22 @@ describe( 'SiteMigrationIdentify', () => {
 				} )
 			);
 		} );
+		expect( submit ).toHaveBeenCalledTimes( 1 );
+
+		rerender(
+			<MemoryRouter>
+				<SiteMigrationIdentify { ...mockStepProps( { navigation: { submit } } ) } />
+			</MemoryRouter>
+		);
+		expect( submit ).toHaveBeenCalledTimes( 1 );
+
+		await userEvent.clear( getInput() );
+		await userEvent.type( getInput(), 'https://example.com' );
+		await userEvent.click( screen.getByRole( 'button', { name: /Check my site/ } ) );
+		await waitFor( () => expect( submit ).toHaveBeenCalledTimes( 3 ) );
+		await screen.findByRole( 'button', { name: /Check my site/ } );
+		expect( submit ).toHaveBeenCalledTimes( 3 );
+		expect( submit ).toHaveBeenLastCalledWith( expect.objectContaining( { host: 'wpengine' } ) );
 	} );
 
 	it( 'continues the flow when the platform is unknown', async () => {

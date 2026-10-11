@@ -1,5 +1,6 @@
 import { siteBySlugQuery } from '@automattic/api-queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
+import { useSearch } from '@tanstack/react-router';
 import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
@@ -24,9 +25,8 @@ import { isSelfHostedJetpackConnected, isCommerceGarden } from '../../utils/site
 import { SitesNoticeArbiter } from '../notice-arbiter';
 import AgencySiteShareCard from '../overview-agency-site-share-card';
 import BackupCard from '../overview-backup-card';
-import DIFMUpsellCard from '../overview-difm-upsell-card';
+import DIFMOfferCard from '../overview-difm-offer-card';
 import DomainsCard from '../overview-domains-card';
-import OverviewFlexUsageCard from '../overview-flex-usage-card';
 import LatestActivityCard from '../overview-latest-activity-card';
 import MigrateSiteCard from '../overview-migrate-site-card';
 import PerformanceCard from '../overview-performance-card';
@@ -35,6 +35,11 @@ import ScanCard from '../overview-scan-card';
 import SiteActionMenu from '../overview-site-action-menu';
 import SiteOverviewFields from '../overview-site-fields';
 import SitePreviewCard from '../overview-site-preview-card';
+import {
+	StaticSiteImportNotice,
+	StaticSiteImportProgress,
+	useStaticSiteImport,
+} from '../overview-static-site-import';
 import SubscribersCard from '../overview-subscribers-card';
 import VisibilityCard from '../overview-visibility-card';
 import VisibilityCardCiab from '../overview-visibility-card-ciab';
@@ -42,6 +47,7 @@ import { InaccessibleJetpackNotice } from '../site/notices';
 import StagingSiteSyncDropdown from '../staging-site-sync-dropdown';
 import { EmailBlockNotice, getEmailBlock } from './email-block-notice';
 import { StorageWarningBanner, useShouldShowStorageWarningBanner } from './storage-warning-banner';
+import type { StaticSiteImportSearch } from '../overview-static-site-import';
 import type { Site } from '@automattic/api-core';
 import './style.scss';
 
@@ -94,15 +100,10 @@ function SiteOverviewPrimaryCards( { site, gap }: { site: Site; gap: GapSize } )
 	return (
 		<>
 			<PlanCard site={ site } />
-			{ ( () => {
-				const showVisibilityCard = ! site.is_wpcom_flex;
-				return (
-					<Grid columns={ 1 } rows={ showVisibilityCard ? 2 : 1 } gap={ gap }>
-						{ showVisibilityCard && <VisibilityCard site={ site } /> }
-						<BackupCard site={ site } />
-					</Grid>
-				);
-			} )() }
+			<Grid columns={ 1 } rows={ 2 } gap={ gap }>
+				<VisibilityCard site={ site } />
+				<BackupCard site={ site } />
+			</Grid>
 			<Grid columns={ 1 } rows={ 2 } gap={ gap }>
 				{ ( () => {
 					if ( site.is_a4a_dev_site ) {
@@ -134,7 +135,6 @@ function SiteOverviewSecondaryCards( {
 	isSmallViewport: boolean;
 } ) {
 	const isSelfHostedJetpackConnectedSite = isSelfHostedJetpackConnected( site );
-	const showFlexUsageCard = site.is_wpcom_flex;
 	const isCommerceGardenSite = isCommerceGarden( site );
 
 	return (
@@ -154,10 +154,9 @@ function SiteOverviewSecondaryCards( {
 							<LatestActivityCard site={ site } isCompact={ isSmallViewport } />
 						) }
 						<VStack spacing={ spacing } justify="start">
-							{ showFlexUsageCard && <OverviewFlexUsageCard site={ site } /> }
 							{ ! isSelfHostedJetpackConnectedSite && ! site.is_wpcom_staging_site && (
 								<>
-									<DIFMUpsellCard site={ site } />
+									<DIFMOfferCard site={ site } />
 									<DomainsCard site={ site } />
 								</>
 							) }
@@ -201,6 +200,8 @@ function SiteOverview( {
 	const isStorageWarningVisible = useShouldShowStorageWarningBanner( site );
 	const siteRequiresTwoStep = useSiteRequiresTwoStep( site );
 	const showTwoStepRequiredNotice = supports.me && siteRequiresTwoStep;
+	const importSearch: StaticSiteImportSearch = useSearch( { strict: false } );
+	const siteImport = useStaticSiteImport( site, importSearch.importSessionId );
 
 	const renderActions = () => {
 		if ( ! site.options?.admin_url ) {
@@ -259,28 +260,44 @@ function SiteOverview( {
 				/>
 			}
 			notices={
-				<SitesNoticeArbiter>
-					{ site.__inaccessible_jetpack_error && (
-						<InaccessibleJetpackNotice error={ site.__inaccessible_jetpack_error } site={ site } />
+				<>
+					{ siteImport && siteImport.status !== 'moving' && (
+						<StaticSiteImportNotice
+							site={ site }
+							siteImport={ siteImport }
+							search={ importSearch }
+						/>
 					) }
-					{ showTwoStepRequiredNotice && <TwoStepRequiredNotice site={ site } /> }
-					{ !! getEmailBlock( site ) && <EmailBlockNotice site={ site } /> }
-					{ isStorageWarningVisible && <StorageWarningBanner site={ site } /> }
-				</SitesNoticeArbiter>
+					<SitesNoticeArbiter>
+						{ site.__inaccessible_jetpack_error && (
+							<InaccessibleJetpackNotice
+								error={ site.__inaccessible_jetpack_error }
+								site={ site }
+							/>
+						) }
+						{ showTwoStepRequiredNotice && <TwoStepRequiredNotice site={ site } /> }
+						{ !! getEmailBlock( site ) && <EmailBlockNotice site={ site } /> }
+						{ isStorageWarningVisible && <StorageWarningBanner site={ site } /> }
+					</SitesNoticeArbiter>
+				</>
 			}
 		>
-			<VStack alignment="stretch" spacing={ isSmallViewport ? 5 : 10 }>
-				<Grid { ...gridLayout } gap={ gap }>
-					{ showSitePreview && <SitePreviewCard site={ site } /> }
-					<SiteOverviewPrimaryCards site={ site } gap={ gap } />
-				</Grid>
-				<SiteOverviewSecondaryCards
-					site={ site }
-					spacing={ spacing }
-					isLargeViewport={ isLargeViewport }
-					isSmallViewport={ isSmallViewport }
-				/>
-			</VStack>
+			{ siteImport?.status === 'moving' ? (
+				<StaticSiteImportProgress siteImport={ siteImport } search={ importSearch } />
+			) : (
+				<VStack alignment="stretch" spacing={ isSmallViewport ? 5 : 10 }>
+					<Grid { ...gridLayout } gap={ gap }>
+						{ showSitePreview && <SitePreviewCard site={ site } /> }
+						<SiteOverviewPrimaryCards site={ site } gap={ gap } />
+					</Grid>
+					<SiteOverviewSecondaryCards
+						site={ site }
+						spacing={ spacing }
+						isLargeViewport={ isLargeViewport }
+						isSmallViewport={ isSmallViewport }
+					/>
+				</VStack>
+			) }
 			<GuidedTourContextProvider
 				tourId="hosting-dashboard-tours-site-overview"
 				guidedTours={ [

@@ -20,8 +20,6 @@ function renderPrepareProducts( {
 		usePrepareProductsForCart( {
 			productAliasFromUrl,
 			purchaseId,
-			usesJetpackProducts: false,
-			isPrivate: false,
 			siteSlug: undefined,
 			sitelessCheckoutType,
 			// The siteless route controller always sets this, so the 'wpcom' branch

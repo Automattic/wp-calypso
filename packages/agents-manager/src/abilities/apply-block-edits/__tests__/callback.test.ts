@@ -3,11 +3,14 @@ jest.mock( '../../../utils/block-ids', () => ( {
 	resolveClientId: jest.fn(),
 } ) );
 jest.mock( '../../../utils/canvas-binding', () => ( { getBlockingMove: jest.fn() } ) );
-// Only the capture itself is stubbed; the sentences describing what came back
-// are pure and stay real, so the assertions here exercise them.
+// The capture and the layout measurements are stubbed; the sentences describing
+// what came back are pure and stay real, so the assertions here exercise them.
 jest.mock( '../../../utils/canvas-capture', () => ( {
 	...jest.requireActual( '../../../utils/canvas-capture' ),
 	captureCanvas: jest.fn(),
+	describeMeasuredLayout: jest.fn(),
+	describeUnmoved: jest.fn(),
+	snapshotLayout: jest.fn(),
 } ) );
 jest.mock( '../../../utils/checkpoints', () => ( {
 	checkpointKeys: { BLOCKS: 'blocks', CUSTOM_CSS: 'custom_css', NAVIGATION: 'navigation' },
@@ -50,7 +53,12 @@ jest.mock( '../validation-details', () => ( {
 
 import { repointBlockId, resolveClientId } from '../../../utils/block-ids';
 import { getBlockingMove } from '../../../utils/canvas-binding';
-import { captureCanvas } from '../../../utils/canvas-capture';
+import {
+	captureCanvas,
+	describeMeasuredLayout,
+	describeUnmoved,
+	snapshotLayout,
+} from '../../../utils/canvas-capture';
 import { sealCheckpointForSwap, withCheckpoint } from '../../../utils/checkpoints';
 import { getPageBlocks, openUndoLevel } from '../../../utils/editor-blocks';
 import {
@@ -133,6 +141,9 @@ beforeEach( () => {
 		.mocked( applyEdits )
 		.mockResolvedValue( { recoveredTargetIds: new Set(), insertedClientIds: [] } );
 	jest.mocked( captureCanvas ).mockResolvedValue( null );
+	jest.mocked( describeMeasuredLayout ).mockReturnValue( [] );
+	jest.mocked( snapshotLayout ).mockReturnValue( null );
+	jest.mocked( describeUnmoved ).mockReturnValue( '' );
 	// The checkpoint engine is exercised in its own suite; here it runs the write.
 	jest
 		.mocked( withCheckpoint )
@@ -617,6 +628,66 @@ describe( 'applyBlockEditsCallback', () => {
 
 			expect( result.result.message ).toBe( 'Done.' );
 			expect( result.result.captureNotes ).toHaveLength( 2 );
+		} );
+
+		it( 'adds the measured layout of the edited blocks', async () => {
+			jest.mocked( captureCanvas ).mockResolvedValue( [ band() ] );
+			jest.mocked( describeMeasuredLayout ).mockReturnValue( [ 'Row in group (abcd): …' ] );
+
+			const result = await applyBlockEditsCallback( input );
+
+			expect( describeMeasuredLayout ).toHaveBeenCalledWith( [ 'resolved-a1' ] );
+			expect( result.result.captureNotes ).toEqual( [ 'Row in group (abcd): …' ] );
+		} );
+
+		it( 'measures nothing without a capture', async () => {
+			const result = await applyBlockEditsCallback( input );
+
+			expect( describeMeasuredLayout ).not.toHaveBeenCalled();
+			expect( result.result.captureNotes ).toBeUndefined();
+		} );
+
+		describe( 'whether anything moved', () => {
+			const snapshot = { boxes: new Map(), labels: [ 'group (ndP2)' ] };
+			const unmoved = 'No edited block moved: group (ndP2) and its children are where they were.';
+
+			beforeEach( () => {
+				jest.mocked( captureCanvas ).mockResolvedValue( [ band() ] );
+				jest.mocked( snapshotLayout ).mockReturnValue( snapshot );
+				jest.mocked( describeUnmoved ).mockReturnValue( unmoved );
+			} );
+
+			it( 'reads the edited blocks before the writes and compares after them', async () => {
+				jest.mocked( applyEdits ).mockImplementation( async () => {
+					expect( snapshotLayout ).toHaveBeenCalledWith( [ 'resolved-a1' ] );
+					expect( describeUnmoved ).not.toHaveBeenCalled();
+
+					return { recoveredTargetIds: new Set(), insertedClientIds: [] };
+				} );
+
+				const result = await applyBlockEditsCallback( input );
+
+				expect( describeUnmoved ).toHaveBeenCalledWith( snapshot );
+				expect( result.result.captureNotes ).toEqual( [ unmoved ] );
+			} );
+
+			it( 'does not compare an edit that inserts or deletes', async () => {
+				jest.mocked( normalizeEdits ).mockReturnValue( edits( { deletes: [ 'b1' ] } ) );
+
+				await applyBlockEditsCallback( input );
+
+				expect( snapshotLayout ).not.toHaveBeenCalled();
+				expect( describeUnmoved ).not.toHaveBeenCalled();
+			} );
+
+			it( 'does not compare an edit that changed nothing', async () => {
+				jest.mocked( areUpdateEditsAlreadySatisfied ).mockReturnValue( true );
+
+				const result = await applyBlockEditsCallback( input );
+
+				expect( describeUnmoved ).not.toHaveBeenCalled();
+				expect( result.result.captureNotes ).toBeUndefined();
+			} );
 		} );
 	} );
 

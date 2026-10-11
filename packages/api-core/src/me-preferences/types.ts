@@ -49,6 +49,7 @@ export interface UserPreferences {
 	[ key: `hosting-dashboard-time-mismatch-warning-dismissed-${ number }` ]: string | undefined; // Timestamp when the user dismissed the notice
 	[ key: `hosting-dashboard-wp-beta-notice-dismissed-${ number }` ]: string | undefined; // ISO timestamp when the user dismissed the beta notice for a site
 	'hosting-dashboard-welcome-notice-dismissed'?: string; // Timestamp when the user dismissed the notice
+	'hosting-dashboard-difm-offer-dismissed'?: string; // ISO timestamp when the user dismissed the free DIFM offer, on any site
 	'wordpress-labs-opt-in'?: WordPressLabsOptIn;
 	'wordpress-labs-excluded-sites'?: number[]; // Site IDs excluded from an otherwise-opted-in account
 	'account-recovery-interstitial-snoozed-until'?: number; // Unix timestamp (seconds) until which the account-recovery interstitial is snoozed; 0/unset means "never snoozed"
@@ -66,13 +67,14 @@ export interface UserPreferences {
 	'reader-profile-hidden-sites'?: number[];
 	two_step_security_key_reregister_required?: boolean;
 	'a4a-dashboard-pd-not-approved-popover'?: boolean;
-	'a4a-marketplace-referral-guide-seen'?: boolean;
+	'a4a-marketplace-referral-band-folded'?: boolean;
 	'a4a-referrals-bank-details-success-notice-seen'?: boolean;
 	'a4a-marketplace-term-pricing'?: 'monthly' | 'yearly';
 	/** Shared with the classic A4A dashboard: a milestone answered there is not asked again here. */
 	'a4a-feedback'?: Record< string, A4AFeedbackEntry >;
 	'notifications-layout-style'?: 'detailed' | 'simplified';
 	'notifications-view-settings-seen'?: boolean;
+	'notifications-subscriber-alerts-enabled'?: boolean;
 	/** Timestamp of the Pressable usage-limit notification the user dismissed. */
 	'pressable-limit-notification-dismissed'?: number;
 	'a4a-agency-approval-notice-dismissed'?: boolean;

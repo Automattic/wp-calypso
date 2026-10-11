@@ -15,33 +15,38 @@ import { marketplaceReferralCheckoutRoute } from '../../../app/router/agency';
 import { Notice } from '../../../components/notice';
 import RouterLinkButton from '../../../components/router-link-button';
 import { MARKETPLACE_PRODUCTS_ROUTE } from '../paths';
+import { getCheckoutUrl, getLegacyCheckoutUrl } from '../products/lib/checkout-url';
 import { useCartLines } from '../products/use-cart-lines';
 import { useShoppingCart } from '../products/use-shopping-cart';
 import { useTermPricing } from '../use-term-pricing';
 import ReferralEmailPreviewModal from './email-preview-modal';
 import { getReferralLogoPreviewUrl } from './lib/logo';
+import { EmptyCartNotice, MissingSitePlanNotice } from './notices';
 import RequestClientPaymentForm from './request-form';
 import ReferralSummary from './summary';
+import { useDevSiteReferral } from './use-dev-site-referral';
 import { useRequestClientPayment } from './use-request-client-payment';
 import './style.scss';
 
 /**
- * Asks a client to pay for the referral cart. Takes the whole screen like the
- * WordPress.com checkout a paid cart goes to, with a Back link to the
- * marketplace page the cart came from.
+ * Asks a client to pay for the referral cart, or for the plan of one of the
+ * agency's development sites. Takes the whole screen like the WordPress.com
+ * checkout a paid cart goes to, with a Back link to the page it was opened from.
  */
 export default function ReferralCheckout() {
 	const { user } = useAuth();
 	const { recordTracksEvent } = useAnalytics();
-	const { from } = marketplaceReferralCheckoutRoute.useSearch();
+	const { from, referral_blog_id: referralBlogId } = marketplaceReferralCheckoutRoute.useSearch();
 	const { data: agency } = useQuery( activeAgencyQuery() );
 	const agencyId = agency?.id ?? 0;
 	const { data: products } = useQuery( agencyProductsQuery( agencyId ) );
-	const { termPricing } = useTermPricing();
-	const { items } = useShoppingCart( 'referral' );
+	const { termPricing: savedTerm } = useTermPricing();
+	const { items: cartItems } = useShoppingCart( 'referral' );
+	const devSite = useDevSiteReferral( agencyId, referralBlogId, products ?? [] );
+	const termPricing = devSite.term ?? savedTerm;
 
 	const cart = useCartLines( {
-		items,
+		items: referralBlogId ? devSite.items : cartItems,
 		products: products ?? [],
 		term: termPricing,
 		isReferralMode: true,
@@ -54,6 +59,7 @@ export default function ReferralCheckout() {
 		term: termPricing,
 		profileLogoUrl,
 		lastReferralLogoUrl,
+		license: devSite.license,
 	} );
 
 	const [ preview, setPreview ] = useState< { logoUrl?: string } | null >( null );
@@ -63,7 +69,32 @@ export default function ReferralCheckout() {
 	};
 
 	const backTo = from ?? MARKETPLACE_PRODUCTS_ROUTE;
-	const isFreeOnly = cart.lines.length > 0 && cart.lines.every( ( line ) => line.priceInfo.isFree );
+
+	const isSiteLoading = !! referralBlogId && devSite.isLoading;
+	// A cart of free products needs no client, so the agency takes it through its own checkout.
+	const isFreeOnly =
+		! referralBlogId &&
+		cart.lines.length > 0 &&
+		cart.lines.every( ( line ) => line.priceInfo.isFree );
+	const checkoutLines = cart.lines.map( ( { product, item } ) => ( {
+		product,
+		quantity: item.quantity,
+	} ) );
+	const checkoutUrl =
+		agency?.billing_system === 'legacy'
+			? getLegacyCheckoutUrl( checkoutLines )
+			: getCheckoutUrl( checkoutLines, {
+					term: termPricing,
+					hasWpcomHostingPlan: cart.hasWpcomHostingPlan,
+					cart: 'referral',
+				} );
+
+	let notice = null;
+	if ( referralBlogId && devSite.isMissing ) {
+		notice = <MissingSitePlanNotice backTo={ backTo } />;
+	} else if ( cart.lines.length === 0 && ! isSiteLoading ) {
+		notice = <EmptyCartNotice backTo={ backTo } />;
+	}
 
 	return (
 		<div className="referral-checkout">
@@ -73,21 +104,7 @@ export default function ReferralCheckout() {
 					{ __( 'Back' ) }
 				</RouterLinkButton>
 			</HStack>
-			{ cart.lines.length === 0 ? (
-				<div className="referral-checkout__empty">
-					<Notice
-						variant="info"
-						title={ __( 'Your cart is empty.' ) }
-						actions={
-							<RouterLinkButton variant="primary" to={ backTo }>
-								{ __( 'Back to the marketplace' ) }
-							</RouterLinkButton>
-						}
-					>
-						{ __( 'Add the products you want to refer, then come back to request the payment.' ) }
-					</Notice>
-				</div>
-			) : (
+			{ notice ?? (
 				<div className="referral-checkout__body">
 					<VStack className="referral-checkout__main" spacing={ 6 }>
 						<HStack spacing={ 3 } justify="flex-start" alignment="center" expanded={ false }>
@@ -98,14 +115,13 @@ export default function ReferralCheckout() {
 								{ __( 'Request client payment' ) }
 							</Heading>
 						</HStack>
-						{ isFreeOnly && (
+						{ isFreeOnly ? (
 							<Notice variant="info">
 								{ __(
 									'Because your referral includes only free products, you can assign them immediately after purchase — no client payment or approval required.'
 								) }
 							</Notice>
-						) }
-						{ ! isFreeOnly && (
+						) : (
 							<RequestClientPaymentForm
 								email={ request.email }
 								emailError={ request.emailError }
@@ -122,20 +138,29 @@ export default function ReferralCheckout() {
 					<aside className="referral-checkout__aside">
 						<ReferralSummary
 							lines={ cart.lines }
+							siteUrl={ devSite.license?.siteUrl }
 							currency={ cart.currency }
 							term={ termPricing }
 							total={ cart.total }
 							commission={ cart.commission }
-							isTotalReady={ cart.isTotalReady }
+							isLoading={ isSiteLoading }
+							isTotalReady={ cart.isTotalReady && ! isSiteLoading }
 							isFreeOnly={ isFreeOnly }
+							checkoutUrl={ checkoutUrl }
 							isUserUnverified={ ! user.email_verified }
-							canIssueLicenses={ agency?.can_issue_licenses ?? true }
-							canSend={ request.canSend }
-							canCopy={ request.canCopy }
+							canSend={ request.canSend && ! isSiteLoading }
+							canCopy={ request.canCopy && ! isSiteLoading }
 							isBusy={ request.isBusy }
 							onSend={ request.send }
 							onCopy={ request.copy }
-							onPurchase={ request.purchase }
+							onCheckout={ () =>
+								recordTracksEvent(
+									'calypso_a4a_marketplace_referral_checkout_free_purchase_click',
+									{
+										term_pricing: termPricing,
+									}
+								)
+							}
 							onPreview={ openPreview }
 						/>
 					</aside>

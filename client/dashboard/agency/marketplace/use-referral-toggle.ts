@@ -7,7 +7,7 @@ import { useMarketplaceType } from './use-marketplace-type';
 import { useTermPricing } from './use-term-pricing';
 import type { MarketplaceType } from './use-marketplace-type';
 
-/** The state and handler shared by every “Refer products” toggle, so they cannot drift apart. */
+/** The state and handler shared by every “Refer to clients” toggle, so they cannot drift apart. */
 export function useReferralToggle() {
 	const { data: agency } = useQuery( activeAgencyQuery() );
 	const { recordTracksEvent } = useAnalytics();

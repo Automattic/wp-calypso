@@ -1,7 +1,12 @@
 /**
  * @jest-environment jsdom
  */
-import { getCheckoutUrl, getTermProductId, RECEIPT_ID_PLACEHOLDER } from '../checkout-url';
+import {
+	getCheckoutUrl,
+	getSiteLaunchCheckoutUrl,
+	getTermProductId,
+	RECEIPT_ID_PLACEHOLDER,
+} from '../checkout-url';
 import type { AgencyProduct } from '@automattic/api-core';
 
 const wpcomPlan = {
@@ -82,5 +87,25 @@ describe( 'getTermProductId', () => {
 		expect( getTermProductId( wpcomPlan, 'monthly' ) ).toBe( 1009 );
 		expect( getTermProductId( wpcomPlan, 'yearly' ) ).toBe( 1008 );
 		expect( getTermProductId( pressable, 'monthly' ) ).toBe( 3001 );
+	} );
+} );
+
+describe( 'getSiteLaunchCheckoutUrl', () => {
+	beforeEach( () => {
+		window.history.replaceState( {}, '', '/sites/example.wordpress.com/settings/site-visibility' );
+	} );
+
+	it( 'opens the agency checkout for the site and the WordPress.com plan, returning to the site', () => {
+		const url = new URL( getSiteLaunchCheckoutUrl( 'example.wordpress.com' ) );
+		expect( url.origin ).toBe( window.location.origin );
+		expect( url.pathname ).toBe(
+			'/checkout/agency/purchase/example.wordpress.com/wpcom-hosting-business'
+		);
+		expect( url.searchParams.get( 'redirect_to' ) ).toBe(
+			`${ window.location.origin }/sites/example.wordpress.com`
+		);
+		expect( url.searchParams.get( 'cancel_to' ) ).toBe(
+			`${ window.location.origin }/sites/example.wordpress.com/settings/site-visibility`
+		);
 	} );
 } );

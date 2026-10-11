@@ -98,6 +98,12 @@
 		border-radius: $radius-small;
 	}
 
+	// Emojis arrive as images wrapped in an inline span and must stay on the text line.
+	.wpnc__span > .wpnc__image {
+		margin-bottom: 0;
+		border-radius: 0;
+	}
+
 	.wpnc__badge {
 		display: block;
 		margin: 0 auto;

@@ -131,7 +131,7 @@ export function getFields( layoutStyle: LayoutStyle = 'detailed' ): Field< Note 
 			id: 'icon',
 			label: __( 'Icon' ),
 			render: ( { item } ) => (
-				<NoteIcon icon={ item.icon } size={ 32 } badge={ <NoteBadge note={ item } /> } />
+				<NoteIcon icon={ item.icon } size={ 36 } badge={ <NoteBadge note={ item } /> } />
 			),
 		},
 		{

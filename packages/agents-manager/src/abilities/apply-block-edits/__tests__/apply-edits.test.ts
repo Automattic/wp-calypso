@@ -270,6 +270,46 @@ describe( 'updates', () => {
 		expect( replaceBlock ).not.toHaveBeenCalled();
 	} );
 
+	it( 'keeps children listed by id alone and writes the parent attributes in place', async () => {
+		await run( {
+			updates: [
+				{
+					clientId: 'ref-g',
+					name: 'core/group',
+					attributes: { verticalAlignment: 'center' },
+					innerBlocks: [ { clientId: 'ref-a' }, { clientId: 'ref-b' } ],
+				},
+			],
+		} );
+
+		expect( updateBlockAttributes ).toHaveBeenCalledWith( 'g', {
+			className: 'g',
+			verticalAlignment: 'center',
+		} );
+		expect( replaceBlock ).not.toHaveBeenCalled();
+		expect( replaceInnerBlocks ).not.toHaveBeenCalled();
+	} );
+
+	it( 'writes the parent attributes along with a reorder of children listed by id alone', async () => {
+		await run( {
+			updates: [
+				{
+					clientId: 'ref-g',
+					name: 'core/group',
+					attributes: { verticalAlignment: 'center' },
+					innerBlocks: [ { clientId: 'ref-b' }, { clientId: 'ref-a' } ],
+				},
+			],
+		} );
+
+		expect( updateBlockAttributes ).toHaveBeenCalledWith(
+			'g',
+			expect.objectContaining( { verticalAlignment: 'center' } )
+		);
+		expect( replaceInnerBlocks ).toHaveBeenCalledWith( 'g', [ b, a ] );
+		expect( replaceBlock ).not.toHaveBeenCalled();
+	} );
+
 	it( 'gives a structural parent the listed children when the request is more than a reorder', async () => {
 		const paragraphs = [ 0, 1, 2 ].map( ( i ) => block( `p${ i }`, 'core/paragraph' ) );
 
@@ -442,7 +482,10 @@ describe( 'updates', () => {
 					clientId: 'ref-g',
 					name: 'core/group',
 					attributes: { className: 'g2' },
-					innerBlocks: [ { clientId: 'ref-b' }, { clientId: 'ref-a' } ],
+					innerBlocks: [
+						{ clientId: 'ref-b', attributes: { content: 'B2' } },
+						{ clientId: 'ref-a' },
+					],
 				},
 			],
 		} );

@@ -1,14 +1,14 @@
 import { useAgentChat } from '@automattic/agenttic-client';
 import { useCallback, useEffect, useMemo, useRef, useState } from '@wordpress/element';
-import { __, sprintf } from '@wordpress/i18n';
+import { __, _n, sprintf } from '@wordpress/i18n';
 import CreditsMeter from '../components/credits-meter';
 import { API_BASE_URL } from '../constants';
 import { NO_SITE } from '../utils/agent-session';
 import {
 	type CreditsPlan,
-	CREDITS_LOW_THRESHOLD,
 	buildMockCreditsStatus,
 	clampPercent,
+	formatCreditsShort,
 	formatPercent,
 	isCreditsExhausted,
 	isCreditsLow,
@@ -66,7 +66,7 @@ interface UseCreditsOptions {
 
 interface UseCreditsResult {
 	chat: UseAgentChatReturn;
-	/** Ring + popover; hidden until this site returns valid allowance metadata. */
+	/** Dot + popover; hidden until this site returns valid allowance metadata. */
 	trailingActions?: TrailingActions;
 	/** Dismissible low-credit notice, or a persistent exhausted notice. */
 	notice?: NoticeConfig;
@@ -109,6 +109,14 @@ export function useCredits( {
 	currentScope.current = scope;
 	const balanceRequest = useRef< AbortController | undefined >( undefined );
 	const [ balance, setBalance ] = useState< { scope: typeof scope; snapshot: CreditSnapshot } >();
+	// Who may buy, from the balance read. Terminal updates don't carry it.
+	const [ upgradeAccess, setUpgradeAccess ] = useState< {
+		scope: typeof scope;
+		canBuyCredits?: boolean;
+		canUpgrade?: boolean;
+	} >();
+	const upgradeAccessRef = useRef( upgradeAccess );
+	upgradeAccessRef.current = upgradeAccess;
 	const [ seed ] = useState( readMockSeed );
 	const [ percent, setPercent ] = useState( seed?.percent ?? 0 );
 	const [ dismissedNoticeScope, setDismissedNoticeScope ] = useState< typeof scope >();
@@ -206,6 +214,15 @@ export function useCredits( {
 			if ( ! isCurrent() ) {
 				return;
 			}
+			// A failed read keeps the last answer; checkout still enforces it.
+			if ( data ) {
+				setUpgradeAccess( {
+					scope,
+					canBuyCredits:
+						typeof data.can_buy_credits === 'boolean' ? data.can_buy_credits : undefined,
+					canUpgrade: typeof data.can_upgrade === 'boolean' ? data.can_upgrade : undefined,
+				} );
+			}
 			const snapshot = parseCreditSnapshot( data?.ai_credits, scope.siteId );
 			if ( snapshot && Date.parse( snapshot.resets_at ) > Date.now() ) {
 				setBalance( { scope, snapshot } );
@@ -286,6 +303,9 @@ export function useCredits( {
 				if ( previous.validTerminalRevision === scope.validTerminalRevision ) {
 					invalidateBalance();
 					void refreshBalance();
+				} else if ( upgradeAccessRef.current?.scope !== scope ) {
+					// The task brought the balance but not who may buy, so read once more.
+					void refreshBalance();
 				}
 			} else if ( isMockEnabled && seed ) {
 				setPercent( ( current ) => Math.max( 0, current - MOCK_COST_PER_MESSAGE ) );
@@ -313,7 +333,16 @@ export function useCredits( {
 
 	const isExhausted = status ? isCreditsExhausted( status ) : false;
 	const isLow = status ? isCreditsLow( status ) : false;
-	const upgradeUrl = status ? getLiveCreditsUpgradeUrl( status, siteId, site ) : undefined;
+	const planUpgradeUrl = status ? getLiveCreditsUpgradeUrl( status, siteId, site ) : undefined;
+	const access = upgradeAccess?.scope === scope ? upgradeAccess : undefined;
+	// Upgrade only when checkout would accept it; everyone else is told who can buy, or nothing when the server can’t say.
+	const upgradeUrl = access?.canUpgrade === true ? planUpgradeUrl : undefined;
+	let askToUpgrade: 'site-admin' | 'plan-owner' | undefined;
+	if ( planUpgradeUrl && access?.canBuyCredits === false ) {
+		askToUpgrade = 'site-admin';
+	} else if ( planUpgradeUrl && access?.canUpgrade === false ) {
+		askToUpgrade = 'plan-owner';
+	}
 
 	// A known balance draining to zero opens once; initial reads and new visits stay quiet.
 	const wasExhaustedRef = useRef( { scope, hasBalance: !! status, isExhausted } );
@@ -334,6 +363,16 @@ export function useCredits( {
 		setIsPopoverOpen( false );
 	}, [ setIsPopoverOpen ] );
 
+	let purchaseHint: string | undefined;
+	if ( askToUpgrade === 'site-admin' ) {
+		purchaseHint = __( 'Ask a site admin to add more.', __i18n_text_domain__ );
+	} else if ( askToUpgrade === 'plan-owner' ) {
+		purchaseHint = __(
+			'This plan was purchased by a different WordPress.com account. To manage this plan, log in to that account or contact the account owner.',
+			__i18n_text_domain__
+		);
+	}
+
 	const trailingActions = useMemo< TrailingActions | undefined >( () => {
 		if ( ! status ) {
 			return undefined;
@@ -345,9 +384,10 @@ export function useCredits( {
 				onToggle={ setIsPopoverOpen }
 				onAction={ siteId ? undefined : handleAction }
 				upgradeUrl={ upgradeUrl }
+				purchaseHint={ purchaseHint }
 			/>
 		);
-	}, [ status, isPopoverOpen, setIsPopoverOpen, handleAction, siteId, upgradeUrl ] );
+	}, [ status, isPopoverOpen, setIsPopoverOpen, handleAction, siteId, upgradeUrl, purchaseHint ] );
 
 	const notice = useMemo< NoticeConfig | undefined >( () => {
 		if ( siteId && status?.plan === 'paid' ) {
@@ -361,25 +401,50 @@ export function useCredits( {
 				: undefined;
 			// A dismissed low notice must not hide the exhausted state.
 			if ( isExhausted ) {
-				return {
-					icon: false,
-					message: __( 'You’ve used all your site credits.', __i18n_text_domain__ ),
-					action,
-					dismissible: false,
-				};
+				let message: string = __( 'You’ve used all your site credits.', __i18n_text_domain__ );
+				if ( askToUpgrade === 'site-admin' ) {
+					message = __(
+						'You’ve used all your site credits. Ask a site admin to add more.',
+						__i18n_text_domain__
+					);
+				} else if ( askToUpgrade === 'plan-owner' ) {
+					message = __(
+						'You’ve used all your site credits. Ask the plan owner to upgrade.',
+						__i18n_text_domain__
+					);
+				}
+				return { icon: false, message, action, dismissible: false };
 			}
-			if ( status.percent <= CREDITS_LOW_THRESHOLD && ! isLowNoticeDismissed ) {
-				return {
-					icon: false,
-					message: sprintf(
-						/* translators: %s: percentage of site credits left, e.g. "20" or "<1" */
-						__( '%s%% of site credits left.', __i18n_text_domain__ ),
-						formatPercent( status.percent )
-					),
-					action,
-					dismissible: true,
-					onDismiss: dismissLowNotice,
-				};
+			if ( isLow && ! isLowNoticeDismissed ) {
+				let message: string = sprintf(
+					/* translators: %s: site credits left in short form, e.g. "800" or "8.5k" */
+					_n( '%s credit left.', '%s credits left.', status.remaining, __i18n_text_domain__ ),
+					formatCreditsShort( status.remaining )
+				);
+				if ( askToUpgrade === 'site-admin' ) {
+					message = sprintf(
+						/* translators: %s: site credits left in short form, e.g. "800" or "8.5k" */
+						_n(
+							'%s credit left. Ask a site admin to add more.',
+							'%s credits left. Ask a site admin to add more.',
+							status.remaining,
+							__i18n_text_domain__
+						),
+						formatCreditsShort( status.remaining )
+					);
+				} else if ( askToUpgrade === 'plan-owner' ) {
+					message = sprintf(
+						/* translators: %s: site credits left in short form, e.g. "800" or "8.5k" */
+						_n(
+							'%s credit left. Ask the plan owner to upgrade.',
+							'%s credits left. Ask the plan owner to upgrade.',
+							status.remaining,
+							__i18n_text_domain__
+						),
+						formatCreditsShort( status.remaining )
+					);
+				}
+				return { icon: false, message, action, dismissible: true, onDismiss: dismissLowNotice };
 			}
 		}
 		if ( ! status || status.plan !== 'free' ) {
@@ -414,6 +479,7 @@ export function useCredits( {
 		status,
 		siteId,
 		upgradeUrl,
+		askToUpgrade,
 		isExhausted,
 		isLow,
 		isLowNoticeDismissed,
