@@ -8,7 +8,7 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useState, useEffect, useMemo } from 'react';
 import { useSelector } from 'react-redux';
-import { getModerateCommentsLink } from '../../panel/helpers/notes';
+import { getModerateCommentsLink, isPeopleListNote } from '../../panel/helpers/notes';
 import { html } from '../../panel/indices-to-html';
 import { bumpStat } from '../../panel/rest-client/bump-stat';
 import { wpcom } from '../../panel/rest-client/wpcom';
@@ -165,7 +165,13 @@ export const NoteBody = ( { note }: { note: Note } ) => {
 					<PendingApprovalStrip note={ note } />
 				</div>
 			) }
-			<div className="wpnc__body-content">{ body }</div>
+			{ isPeopleListNote( note ) ? (
+				<VStack className="wpnc__body-content" spacing={ 2 }>
+					{ body }
+				</VStack>
+			) : (
+				<div className="wpnc__body-content">{ body }</div>
+			) }
 			<ReplyBlock note={ note } />
 		</VStack>
 	);
