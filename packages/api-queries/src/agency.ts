@@ -129,7 +129,7 @@ export const agencyEnablementResourcesQuery = () =>
  */
 export const agencyResourceEventMutation = ( agencyId: number ) =>
 	mutationOptions( {
-		meta: { statId: 'agcy-resource-event' },
+		meta: { statId: 'agcy-resource-record' },
 		mutationFn: ( event: AgencyResourceEvent ) => recordAgencyResourceEvent( agencyId, event ),
 	} );
 
