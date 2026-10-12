@@ -8,38 +8,24 @@ const __filename = fileURLToPath( import.meta.url );
 const __dirname = dirname( __filename );
 const projectRoot = join( __dirname, '..' );
 
-// Supported locales - same as generate-po-files.js
+// GlotPress locale slugs; WordPress-style codes such as `de_DE` aren't valid here and 404.
 const SUPPORTED_LOCALES = {
 	ar: 'Arabic',
 	de: 'German',
-	de_DE: 'German',
 	es: 'Spanish (Spain)',
-	es_ES: 'Spanish (Spain)',
 	fr: 'French (France)',
-	fr_FR: 'French (France)',
 	he: 'Hebrew',
-	he_IL: 'Hebrew',
 	id: 'Indonesian',
-	id_ID: 'Indonesian',
 	it: 'Italian',
-	it_IT: 'Italian',
 	ja: 'Japanese',
 	ko: 'Korean',
-	ko_KR: 'Korean',
 	nl: 'Dutch',
-	nl_NL: 'Dutch',
 	'pt-br': 'Portuguese (Brazil)',
-	pt_BR: 'Portuguese (Brazil)',
 	ru: 'Russian',
-	ru_RU: 'Russian',
 	sv: 'Swedish',
-	sv_SE: 'Swedish',
 	tr: 'Turkish',
-	tr_TR: 'Turkish',
 	'zh-cn': 'Chinese (China)',
-	zh_CN: 'Chinese (China)',
 	'zh-tw': 'Chinese (Taiwan)',
-	zh_TW: 'Chinese (Taiwan)',
 };
 
 // GlotPress configuration
@@ -128,19 +114,10 @@ async function downloadAllJsonFiles() {
 	cleanupExistingJsonFiles();
 
 	const locales = Object.keys( SUPPORTED_LOCALES );
-	let successCount = 0;
 	const totalCount = locales.length;
 
-	// Download files sequentially to avoid overwhelming the server
-	for ( const locale of locales ) {
-		const success = await downloadJsonFile( locale );
-		if ( success ) {
-			successCount++;
-		}
-
-		// Small delay between requests
-		await new Promise( ( resolve ) => setTimeout( resolve, 100 ) );
-	}
+	const results = await Promise.all( locales.map( downloadJsonFile ) );
+	const successCount = results.filter( Boolean ).length;
 
 	console.log( `\n📊 Download Summary:` );
 	console.log( `✅ Successfully downloaded: ${ successCount }/${ totalCount } files` );
