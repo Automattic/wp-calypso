@@ -257,6 +257,12 @@ it( 'leaves other cached new-hosted-site consumers unchanged', () => {
 	expect( window.location.reload ).not.toHaveBeenCalled();
 } );
 
+it( 'preserves a cached domain search without reloading', () => {
+	renderHook( () => hosting.useSideEffect?.( 'domains', jest.fn() ) );
+	window.dispatchEvent( new PageTransitionEvent( 'pageshow', { persisted: true } ) );
+	expect( window.location.reload ).not.toHaveBeenCalled();
+} );
+
 it( 'supplies the domain screen with the two-step Commerce journey', () => {
 	mockQuery = new URLSearchParams( 'showPurchaseSteps=true&showDomainStep&plan=ecommerce-bundle' );
 	expect( renderHook( () => hosting.useStepsProps!() ).result.current.domains ).toEqual( {

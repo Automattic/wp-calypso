@@ -332,7 +332,7 @@ const hosting: FlowV2< typeof initialize > = {
 	useSideEffect( currentStepSlug ) {
 		const commercePurchaseSteps = hasCommercePurchaseSteps( NEW_HOSTED_SITE_FLOW, useQuery() );
 		useEffect( () => {
-			if ( ! commercePurchaseSteps ) {
+			if ( ! commercePurchaseSteps || currentStepSlug !== STEPS.PROCESSING.slug ) {
 				return;
 			}
 			const restorePage = ( event: PageTransitionEvent ) => {
@@ -343,7 +343,7 @@ const hosting: FlowV2< typeof initialize > = {
 			};
 			window.addEventListener( 'pageshow', restorePage );
 			return () => window.removeEventListener( 'pageshow', restorePage );
-		}, [ commercePurchaseSteps ] );
+		}, [ commercePurchaseSteps, currentStepSlug ] );
 		const studioSiteId = useQuery().get( 'studioSiteId' );
 		const autoOpenPush = useQuery().get( 'autoOpenPush' );
 		const section = useQuery().get( 'section' );
