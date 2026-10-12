@@ -14,12 +14,14 @@ const ThreadItem = ( {
 	author,
 	authorUrl,
 	meta,
+	status,
 	children,
 }: {
 	avatar?: string;
 	author?: string;
 	authorUrl?: string;
 	meta?: ReactNode;
+	status?: ReactNode;
 	children: ReactNode;
 } ) => {
 	const photo = <NoteIcon className="wpnc-simplified__photo" icon={ avatar } size={ 36 } />;
@@ -59,15 +61,17 @@ const ThreadItem = ( {
 				photo
 			) }
 			<VStack className="wpnc-simplified__thread-content" spacing={ 1 }>
-				<HStack
-					className="wpnc-simplified__quiet-links wpnc-simplified__thread-header"
-					alignment="baseline"
-					justify="flex-start"
-					spacing={ 2 }
-					wrap
-				>
-					{ name }
-					{ meta }
+				<HStack className="wpnc-simplified__thread-header">
+					<HStack
+						className="wpnc-simplified__quiet-links"
+						alignment="baseline"
+						justify="flex-start"
+						spacing={ 2 }
+					>
+						{ name }
+						{ meta }
+						{ status }
+					</HStack>
 				</HStack>
 				{ children }
 			</VStack>
@@ -83,12 +87,15 @@ export default function Thread( {
 	repliedTo,
 	commenter,
 	meta,
+	status,
 	children,
 }: {
 	repliedTo?: RepliedTo;
 	commenter?: Commenter;
 	/** When the new comment was made, and anything else worth knowing about its author. */
 	meta?: ReactNode;
+	/** The new comment's moderation state, shown opposite its author. */
+	status?: ReactNode;
 	children?: ReactNode;
 } ) {
 	return (
@@ -115,6 +122,7 @@ export default function Thread( {
 					author={ commenter.name }
 					authorUrl={ commenter.url }
 					meta={ meta }
+					status={ status }
 				>
 					{ children }
 				</ThreadItem>

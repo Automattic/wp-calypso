@@ -10,10 +10,12 @@ export default function Body( {
 	note,
 	hidePeople = false,
 	hidePost = false,
+	hidePendingApproval = false,
 }: {
 	note: Note;
 	hidePeople?: boolean;
 	hidePost?: boolean;
+	hidePendingApproval?: boolean;
 } ) {
 	const isPendingApproval = useIsPendingApproval( note );
 	// Stable, since the body's effects (the reply lookup among them) depend on the note.
@@ -34,10 +36,10 @@ export default function Body( {
 		<div
 			className={ clsx( 'wpnc__note', {
 				[ `wpnc__${ note.type }` ]: note.type !== 'comment',
-				'wpnc__comment-unapproved': isPendingApproval,
+				'wpnc__comment-unapproved': isPendingApproval && ! hidePendingApproval,
 			} ) }
 		>
-			<NoteBody note={ bodyNote } />
+			<NoteBody note={ bodyNote } hidePendingApproval={ hidePendingApproval } />
 		</div>
 	);
 }

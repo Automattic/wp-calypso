@@ -1,3 +1,4 @@
+@use 'calypso/assets/stylesheets/shared/mixins/dark-theme' as ui-mixins;
 @import '@wordpress/base-styles/colors';
 @import '@wordpress/base-styles/variables';
 
@@ -75,7 +76,27 @@ a.wpnc-simplified__quiet-links:visited {
 // As tall as the photo, so the name and date sit level with its middle.
 .wpnc-simplified__thread-header {
 	min-height: 36px;
-	align-content: center;
+}
+
+.wpnc-simplified__pending-approval {
+	flex-shrink: 0;
+	margin-inline-start: auto;
+	font-size: $font-size-medium;
+	font-weight: $font-weight-medium;
+	color: var(--wpds-color-foreground-content-warning-weak, #926300);
+
+	@include ui-mixins.when-dark-theme {
+		color: var(--dashboard__foreground-color-warning, #f5c15c);
+	}
+
+	svg {
+		align-self: center;
+		fill: currentColor;
+	}
+
+	.wpnc-simplified__quiet-links & a {
+		text-decoration: underline;
+	}
 }
 
 // The endpoint sends the whole comment, line breaks included.

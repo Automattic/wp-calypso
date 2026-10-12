@@ -138,11 +138,16 @@ export const ActionBlock = ( { note, goBack }: { note: Note; goBack: () => void 
 	);
 };
 
-export const NoteBody = ( { note }: { note: Note } ) => {
+export const NoteBody = ( {
+	note,
+	hidePendingApproval = false,
+}: {
+	note: Note;
+	hidePendingApproval?: boolean;
+} ) => {
 	const blocks: BlockWithSignature[] = zipWithSignature( note.body, note );
-	const showPendingApprovalBadge = useSelector( ( state ) =>
-		getIsNotePendingApproval( state, note )
-	);
+	const isPendingApproval = useSelector( ( state ) => getIsNotePendingApproval( state, note ) );
+	const showPendingApprovalBadge = isPendingApproval && ! hidePendingApproval;
 
 	const firstNonTextBlockIndex = blocks.findIndex( ( block ) => {
 		return 'text' !== block.signature.type;
