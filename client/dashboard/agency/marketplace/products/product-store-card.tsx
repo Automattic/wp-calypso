@@ -34,21 +34,27 @@ interface Props {
 }
 
 // The products API returns a PHP memory add-on once per Pressable site, so its
-// card names the site it applies to.
-function getCardDescription( product: AgencyProduct ) {
-	const { description } = getProductDescription( product.slug );
-	if ( ! isPressablePhpMemoryAddon( product ) ) {
-		return description ?? undefined;
+// card names the site where others name their maker. Unlike the description,
+// the byline is never clamped.
+function getCardByline( product: AgencyProduct ) {
+	if ( isPressablePhpMemoryAddon( product ) ) {
+		const memoryTarget = getPressableMemoryTarget( product );
+		return memoryTarget
+			? sprintf(
+					/* translators: %(siteDomain)s is the Pressable site the add-on applies to. */
+					__( 'Applies to %(siteDomain)s.' ),
+					{ siteDomain: memoryTarget }
+				)
+			: __( 'Applies to one Pressable site/domain.' );
 	}
-	const memoryTarget = getPressableMemoryTarget( product );
-	const target = memoryTarget
+	const vendorName = getVendorInfo( product.slug )?.vendorName;
+	return vendorName
 		? sprintf(
-				/* translators: %(siteDomain)s is the Pressable site the add-on applies to. */
-				__( 'Applies to %(siteDomain)s.' ),
-				{ siteDomain: memoryTarget }
+				/* translators: %s is the name of the company that makes the product. */
+				__( 'by %s' ),
+				vendorName
 			)
-		: __( 'Applies to one Pressable site/domain.' );
-	return description ? `${ description } ${ target }` : target;
+		: undefined;
 }
 
 // Out of their own section, the backup storage add-ons need their full name:
@@ -73,23 +79,14 @@ export default function ProductStoreCard( {
 
 	const inCart = isInCart( product );
 	const termNote = getTermAvailabilityNote( product, term );
-	const vendorName = getVendorInfo( product.slug )?.vendorName;
 	// The backup storage add-ons have no details to show.
 	const canViewDetails = product.family_slug !== BACKUP_STORAGE_FAMILY_SLUG;
 
 	return (
 		<BodyCard
 			title={ getCardTitle( product, variants.length > 1 ) }
-			byline={
-				vendorName
-					? sprintf(
-							/* translators: %s is the name of the company that makes the product. */
-							__( 'by %s' ),
-							vendorName
-						)
-					: undefined
-			}
-			description={ getCardDescription( product ) }
+			byline={ getCardByline( product ) }
+			description={ getProductDescription( product.slug ).description ?? undefined }
 			tile={ <ProductTile product={ product } /> }
 			actions={
 				<>
