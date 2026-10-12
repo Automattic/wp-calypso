@@ -263,6 +263,12 @@ describe( 'isTemplatePartLoaded', () => {
 		{ case: 'saved with no content', record: { content: '' }, expected: true },
 		{ case: 'edited to no blocks', record: { blocks: [], content: () => '' }, expected: true },
 		{ case: 'missing', record: undefined, expected: true },
+		{ case: 'saved with no raw content', record: { content: { raw: '' } }, expected: true },
+		{
+			case: 'saved with raw blocks the tree does not hold yet',
+			record: { content: { raw: '<!-- wp:site-title /-->' } },
+			expected: false,
+		},
 		{
 			case: 'saved with blocks the tree does not hold yet',
 			record: { content: '<!-- wp:paragraph --><p>Credit</p><!-- /wp:paragraph -->' },

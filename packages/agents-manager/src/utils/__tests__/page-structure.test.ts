@@ -195,10 +195,22 @@ it( 'sends a part with no blocks, wherever it is', () => {
 	} );
 } );
 
-// Its saved blocks are on their way: shown empty, it would pass for a part to fill.
-it( 'sends no region for a part still loading', () => {
+// Its saved blocks are on their way: shown empty, it would pass for a part to
+// fill. A wrapper has children of its own, so it is the part that is asked.
+it.each( [
+	{ case: 'on its own', blocks: [ templatePart( 'footer', 'footer' ) ] },
+	{
+		case: 'inside a wrapper',
+		blocks: [
+			block( 'cover', 'core/cover', {}, [
+				templatePart( 'footer', 'footer' ),
+				block( 'tagline', 'core/paragraph' ),
+			] ),
+		],
+	},
+] )( 'sends no region for a part still loading $case', ( { blocks } ) => {
 	withEditor( {
-		blocks: [ block( 'main', 'core/group' ), templatePart( 'footer', 'footer' ) ],
+		blocks: [ block( 'main', 'core/group' ), ...blocks ],
 		loading: [ 'footer' ],
 		sectionRoot: 'main',
 	} );

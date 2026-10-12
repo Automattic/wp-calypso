@@ -252,7 +252,13 @@ export function isTemplatePartLoaded( clientId: string ): boolean {
 		return ! record.blocks.length;
 	}
 
-	return typeof record?.content !== 'string' || ! record.content.trim();
+	// The record may still hold its content as it came over the wire.
+	const content =
+		record?.content && typeof record.content === 'object'
+			? ( record.content as { raw?: unknown } ).raw
+			: record?.content;
+
+	return typeof content !== 'string' || ! content.trim();
 }
 
 /** The blocks of every template part on the page, by slug. */
