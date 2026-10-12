@@ -46,7 +46,18 @@ a.wpnc-simplified__quiet-links:visited {
 }
 
 .wpnc-simplified__thread-item {
+	position: relative;
 	padding-block: $grid-unit-10;
+
+	&:not(:last-child)::before {
+		content: "";
+		position: absolute;
+		inset-block: #{$grid-unit-10 + 36px + $grid-unit-15} $grid-unit-05;
+		inset-inline-start: 17px;
+		width: 2px;
+		border-radius: $radius-small;
+		background: var(--wpnc-divider__color, #{$gray-200});
+	}
 }
 
 // Without this the text column squeezes the photo under the name.
