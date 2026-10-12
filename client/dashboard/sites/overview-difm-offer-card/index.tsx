@@ -11,7 +11,7 @@ import UpsellCTAButton from '../../components/upsell-cta-button';
 import { getDifmOfferCopy, useDifmOffer } from '../../utils/difm-offer';
 import { useDifmOfferEngagementTracking } from '../../utils/use-difm-offer-engagement-tracking';
 import DIFMUpsellCard from '../overview-difm-upsell-card';
-import illustrationUrl from '../overview-difm-upsell-card/upsell-illustration.svg';
+import illustrationUrl from './difm-offer-illustration.svg';
 import type { Site } from '@automattic/api-core';
 
 import './style.scss';
@@ -85,7 +85,7 @@ export default function DIFMOfferCard( { site }: { site: Site } ) {
 				titleAs="h2"
 				description={ <Text variant="muted">{ copy.description }</Text> }
 				image={ illustrationUrl }
-				imageAlt={ __( 'Responsive website design' ) }
+				imageAlt={ __( 'A designer edits a website in the site editor' ) }
 				imageVariant="full-bleed"
 				actions={
 					<UpsellCTAButton

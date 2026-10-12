@@ -69,7 +69,7 @@ describe( 'DIFMOfferCard', () => {
 	} );
 
 	test( 'shows the offer copy, and not the DIFM upsell, to an eligible user in a treatment', async () => {
-		assignExperiment( 'no_time' );
+		assignExperiment( 'treatment' );
 
 		render( <DIFMOfferCard site={ mockSite } /> );
 
@@ -84,11 +84,11 @@ describe( 'DIFMOfferCard', () => {
 	} );
 
 	test( 'records the variation on the offer impression and click events', async () => {
-		assignExperiment( 'no_time' );
+		assignExperiment( 'treatment' );
 		const expectedProperties = {
 			upsell_id: 'site-overview-difm-offer',
 			upsell_feature_id: 'difm-offer',
-			variation: 'no_time',
+			variation: 'treatment',
 		};
 
 		const { recordTracksEvent } = render( <DIFMOfferCard site={ mockSite } /> );
@@ -105,7 +105,7 @@ describe( 'DIFMOfferCard', () => {
 	} );
 
 	test( 'records a hover on the offer with the location', async () => {
-		assignExperiment( 'no_time' );
+		assignExperiment( 'treatment' );
 
 		const { recordTracksEvent } = render( <DIFMOfferCard site={ mockSite } /> );
 		const heading = await screen.findByRole( 'heading', { name: 'No time to build your site?' } );
@@ -118,7 +118,7 @@ describe( 'DIFMOfferCard', () => {
 		expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_difm_offer_banner_hover', {
 			upsell_id: 'site-overview-difm-offer',
 			upsell_feature_id: 'difm-offer',
-			variation: 'no_time',
+			variation: 'treatment',
 		} );
 	} );
 
@@ -144,7 +144,7 @@ describe( 'DIFMOfferCard', () => {
 	} );
 
 	test( 'does not show the offer on an A4A dev site in a treatment', () => {
-		assignExperiment( 'no_time' );
+		assignExperiment( 'treatment' );
 
 		render( <DIFMOfferCard site={ { ...mockSite, is_a4a_dev_site: true } } /> );
 
@@ -154,7 +154,7 @@ describe( 'DIFMOfferCard', () => {
 	} );
 
 	test( 'shows the DIFM upsell, and not the offer, on a site past the offer age limit in a treatment', () => {
-		assignExperiment( 'no_time' );
+		assignExperiment( 'treatment' );
 		const thirtyDaysAgo = new Date( Date.now() - 30 * 24 * 60 * 60 * 1000 ).toISOString();
 
 		render(
@@ -173,7 +173,7 @@ describe( 'DIFMOfferCard', () => {
 		mockPreferences( {
 			'hosting-dashboard-difm-offer-dismissed': '2026-10-08T12:00:00.000Z',
 		} );
-		assignExperiment( 'no_time' );
+		assignExperiment( 'treatment' );
 
 		const { container, queryClient } = render( <DIFMOfferCard site={ mockSite } /> );
 
@@ -188,7 +188,7 @@ describe( 'DIFMOfferCard', () => {
 	test( 'dismissing hides the offer, saves the dismissal for the user, and records the event', async () => {
 		nock.cleanAll();
 		const { getSavedBody } = mockPreferences();
-		assignExperiment( 'no_time' );
+		assignExperiment( 'treatment' );
 
 		const { recordTracksEvent } = render( <DIFMOfferCard site={ mockSite } /> );
 		await userEvent.click( await screen.findByRole( 'button', { name: 'Dismiss' } ) );
@@ -200,7 +200,7 @@ describe( 'DIFMOfferCard', () => {
 		expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_dashboard_upsell_dismiss', {
 			upsell_id: 'site-overview-difm-offer',
 			upsell_feature_id: 'difm-offer',
-			variation: 'no_time',
+			variation: 'treatment',
 		} );
 		await waitFor( () =>
 			expect( getSavedBody() ).toEqual( {

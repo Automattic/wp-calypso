@@ -11,7 +11,7 @@ import {
 const PROPERTIES = {
 	upsell_id: 'site-overview-difm-offer',
 	upsell_feature_id: 'difm-offer',
-	variation: 'no_time',
+	variation: 'treatment',
 };
 
 function TrackedBanner( { record }: { record: jest.Mock } ) {
