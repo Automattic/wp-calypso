@@ -2,7 +2,6 @@ import {
 	activeAgencyQuery,
 	agencyPartnerDirectoryLogoMutation,
 	createReferralMutation,
-	jetpackAgencyLicensesIssueMutation,
 	referralsQuery,
 } from '@automattic/api-queries';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
@@ -14,9 +13,8 @@ import emailValidator from 'email-validator';
 import { useMemo, useRef, useState } from 'react';
 import { useAnalytics } from '../../../app/analytics';
 import { isPressableAddonProduct } from '../hosting/lib/pressable-plans';
-import { MARKETPLACE_PURCHASES_ROUTE } from '../paths';
 import { getTermProductId } from '../products/lib/checkout-url';
-import { clearStoredCart, useShoppingCart } from '../products/use-shopping-cart';
+import { clearStoredCart } from '../products/use-shopping-cart';
 import { useMarketplaceType } from '../use-marketplace-type';
 import { hasActivePressablePlanForClient } from './lib/has-active-pressable-plan';
 import { getInitialReferralLogo, getReferralLogoOption, getReferralLogoPayload } from './lib/logo';
@@ -53,7 +51,7 @@ async function copyToClipboard( text: string ): Promise< boolean > {
 
 /**
  * The state and actions of the request-payment form: the client's email and
- * message, the logo choice, and the send / copy / purchase actions. Sending
+ * message, the logo choice, and the send / copy actions. Sending
  * creates the referral and returns to Referrals with the link in the URL.
  */
 export function useRequestClientPayment( {
@@ -69,7 +67,6 @@ export function useRequestClientPayment( {
 	const { recordTracksEvent } = useAnalytics();
 	const { createErrorNotice } = useDispatch( noticesStore );
 	const { updateMarketplaceType } = useMarketplaceType();
-	const { removeItem } = useShoppingCart( 'referral' );
 
 	const [ email, setEmail ] = useState( '' );
 	const [ emailError, setEmailError ] = useState< string | null >( null );
@@ -93,9 +90,6 @@ export function useRequestClientPayment( {
 			queryClient.invalidateQueries( { queryKey: activeAgencyQuery().queryKey } );
 		},
 	} );
-	const { mutateAsync: issueLicenses, isPending: isIssuing } = useMutation(
-		jetpackAgencyLicensesIssueMutation( agencyId )
-	);
 
 	const onEmailChange = ( value: string ) => {
 		setEmail( value.trim() );
@@ -215,32 +209,6 @@ export function useRequestClientPayment( {
 		}
 	};
 
-	// A cart of free products needs no client: the licenses are issued to the agency.
-	const purchase = async () => {
-		recordTracksEvent( 'calypso_a4a_marketplace_referral_checkout_free_purchase_click', {
-			term_pricing: term,
-		} );
-		let issuedCount = 0;
-		try {
-			for ( const { product, item } of lines ) {
-				await issueLicenses( { product: product.slug, quantity: item.quantity } );
-				// Leaves only the failed lines for a retry, so none is issued twice.
-				removeItem( item.slug );
-				issuedCount++;
-			}
-			clearStoredCart( 'referral' );
-			updateMarketplaceType( 'regular' );
-			navigate( { to: MARKETPLACE_PURCHASES_ROUTE } );
-		} catch ( error ) {
-			createErrorNotice(
-				issuedCount > 0
-					? __( 'Failed to issue some licenses. The ones issued were removed from the cart.' )
-					: ( error as ApiError )?.message || __( 'Failed to issue the licenses.' ),
-				{ type: 'snackbar' }
-			);
-		}
-	};
-
 	return {
 		email,
 		emailError,
@@ -252,9 +220,8 @@ export function useRequestClientPayment( {
 		onLogoChange: setChosenLogo,
 		canSend: email !== '',
 		canCopy: email !== '',
-		isBusy: isSubmitting || isUploadingLogo || isCreating || isIssuing,
+		isBusy: isSubmitting || isUploadingLogo || isCreating,
 		send: () => runOnce( () => submit( 'send' ) ),
 		copy: () => runOnce( () => submit( 'copy' ) ),
-		purchase: () => runOnce( purchase ),
 	};
 }

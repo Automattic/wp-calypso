@@ -343,9 +343,21 @@ export class EditorToolbarComponent {
 			'[role="menuitemcheckbox"][aria-controls="jetpack-sidebar:jetpack"]'
 		);
 
+		// Gutenberg 24.2 moved plugin sidebar items from the top level of the
+		// Options menu into a "Panels" submenu.
+		const panelsSubmenu = editorParent.getByRole( 'menuitem', {
+			name: await this.translateFromPage( 'Panels' ),
+			exact: true,
+		} );
+
 		const maxAttempts = 3;
 		for ( let attempt = 1; attempt <= maxAttempts; attempt++ ) {
 			await this.openMoreOptionsMenu();
+
+			await menuItem.or( panelsSubmenu ).first().waitFor();
+			if ( await panelsSubmenu.isVisible() ) {
+				await panelsSubmenu.click();
+			}
 
 			if ( await this.targetIsOpen( menuItem ) ) {
 				// The Jetpack entry is already selected; close the menu and let

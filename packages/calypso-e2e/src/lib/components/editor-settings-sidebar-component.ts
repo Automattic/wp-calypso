@@ -1,4 +1,4 @@
-import { Page } from 'playwright';
+import { Frame, Page } from 'playwright';
 import envVariables from '../../env-variables';
 import { EditorComponent } from './editor-component';
 import type { ArticlePublishSchedule, EditorSidebarTab, ArticlePrivacyOptions } from './types';
@@ -432,6 +432,9 @@ export class EditorSettingsSidebarComponent {
 			return;
 		}
 
+		const editorFrame = await ( await editorParent.elementHandle() )?.ownerFrame();
+		const tagIdsBefore = editorFrame ? await this.getEditedTagIds( editorFrame ) : [];
+
 		const existingTerm = editorParent.getByRole( 'option', { name, exact: true } );
 		const newTerm = editorParent.getByRole( 'option', {
 			name: `Create: ${ name }`,
@@ -439,7 +442,77 @@ export class EditorSettingsSidebarComponent {
 		} );
 		await existingTerm.or( newTerm ).first().click();
 
-		await editorParent.getByRole( 'button', { name: `Remove ${ name }`, exact: true } ).waitFor();
+		// Gutenberg < 24.2 names the chip's remove button "Remove <term>". From 24.2 it's
+		// just "Remove", rendered inside the chip, which is labelled by the term name.
+		const legacyRemoveButton = editorParent.getByRole( 'button', {
+			name: `Remove ${ name }`,
+			exact: true,
+		} );
+		const chipRemoveButton = editorParent
+			.locator( panel )
+			.getByLabel( name, { exact: true } )
+			.getByRole( 'button', { name: 'Remove', exact: true } );
+		await legacyRemoveButton.or( chipRemoveButton ).first().waitFor();
+
+		// The chip is not proof the tag is on the post: "Create: <term>" shows it
+		// right away and only assigns the term once its REST request resolves, so
+		// publishing in between saves the post without it.
+		if ( editorFrame ) {
+			await this.waitForTagAssigned( editorFrame, name, tagIdsBefore );
+		}
+	}
+
+	/**
+	 * Returns the IDs of the tags currently assigned to the post in the Editor.
+	 *
+	 * @param {Frame} editorFrame The frame the Editor runs in.
+	 */
+	private async getEditedTagIds( editorFrame: Frame ): Promise< number[] > {
+		return editorFrame.evaluate(
+			() =>
+				// eslint-disable-next-line @typescript-eslint/no-explicit-any
+				( window as any )?.wp?.data?.select( 'core/editor' )?.getEditedPostAttribute( 'tags' ) ?? []
+		);
+	}
+
+	/**
+	 * Waits until a tag that was not assigned before is assigned to the post.
+	 *
+	 * Compares tag IDs only: resolving the tag's name would take another REST
+	 * request, which can fail even though the assignment went through.
+	 *
+	 * @param {Frame} editorFrame The frame the Editor runs in.
+	 * @param {string} name Tag name, for the error message.
+	 * @param {number[]} tagIdsBefore Tag IDs assigned before the tag was picked.
+	 * @param {number} timeout Maximum time to wait, in milliseconds.
+	 */
+	private async waitForTagAssigned(
+		editorFrame: Frame,
+		name: string,
+		tagIdsBefore: number[],
+		timeout = 15 * 1000
+	): Promise< void > {
+		try {
+			await editorFrame.waitForFunction(
+				( before ) => {
+					// eslint-disable-next-line @typescript-eslint/no-explicit-any
+					const select = ( window as any )?.wp?.data?.select;
+
+					// Without the store there is nothing to check against.
+					if ( typeof select !== 'function' ) {
+						return true;
+					}
+
+					const tagIds: number[] = select( 'core/editor' ).getEditedPostAttribute( 'tags' ) ?? [];
+
+					return tagIds.some( ( id ) => ! before.includes( id ) );
+				},
+				tagIdsBefore,
+				{ timeout }
+			);
+		} catch {
+			throw new Error( `Tag "${ name }" was not assigned to the post within ${ timeout }ms.` );
+		}
 	}
 
 	/**

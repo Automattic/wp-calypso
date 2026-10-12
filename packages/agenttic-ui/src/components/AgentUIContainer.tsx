@@ -301,8 +301,10 @@ export function AgentUIContainer( {
 	);
 
 	// Handle suggestion submission
+	// Returns whether the suggestion was handed to the agent: false when the
+	// send was blocked or when the prompt only went into the composer.
 	const handleSuggestionSubmit = useCallback(
-		async ( selectedSuggestion: Suggestion, availableSuggestions: Suggestion[] ) => {
+		( selectedSuggestion: Suggestion, availableSuggestions: Suggestion[] ): boolean => {
 			const value = selectedSuggestion.prompt ?? selectedSuggestion.label;
 
 			if ( selectedSuggestion.autoSubmit ) {
@@ -310,37 +312,36 @@ export function AgentUIContainer( {
 				const message = value.trim();
 
 				// A blocked send is a no-op: the suggestion stays in the list and the
-				// click is not reported, so hosts don't retire it as consumed.
-				if ( message && ! canSubmitMessage( message, 'suggestion' ) ) {
-					return;
+				// click is not reported, so hosts don't retire it as consumed. An empty
+				// prompt and a send while one is in flight (which the agent client
+				// drops) count as blocked too.
+				if ( ! message || isProcessing || ! canSubmitMessage( message, 'suggestion' ) ) {
+					return false;
 				}
 
 				clearSuggestions?.();
 
-				// Report the click before awaiting the send: `onSubmit` may not settle
-				// until the reply finishes streaming (or at all).
+				// Report the click before the send: `onSubmit` may not settle until
+				// the reply finishes streaming (or at all).
 				onSuggestionClick?.( selectedSuggestion, availableSuggestions );
 
-				if ( message ) {
-					await onSubmit( message );
-				}
-			} else {
-				// Default: populate input field for user to edit/submit
-				const valueWithSpace = value.endsWith( ' ' ) ? value : `${ value } `;
-				input.setValue( valueWithSpace );
-				clearSuggestions?.();
-				if ( input.textareaRef.current ) {
-					input.textareaRef.current.focus();
-					input.textareaRef.current.setSelectionRange(
-						valueWithSpace.length,
-						valueWithSpace.length
-					);
-				}
-
-				onSuggestionClick?.( selectedSuggestion, availableSuggestions );
+				void onSubmit( message );
+				return true;
 			}
+
+			// Default: populate input field for user to edit/submit
+			const valueWithSpace = value.endsWith( ' ' ) ? value : `${ value } `;
+			input.setValue( valueWithSpace );
+			clearSuggestions?.();
+			if ( input.textareaRef.current ) {
+				input.textareaRef.current.focus();
+				input.textareaRef.current.setSelectionRange( valueWithSpace.length, valueWithSpace.length );
+			}
+
+			onSuggestionClick?.( selectedSuggestion, availableSuggestions );
+			return false;
 		},
-		[ clearSuggestions, onSubmit, onSuggestionClick, input, canSubmitMessage ]
+		[ clearSuggestions, onSubmit, onSuggestionClick, input, canSubmitMessage, isProcessing ]
 	);
 
 	// Handle opening the chat and call onOpen callback

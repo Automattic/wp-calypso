@@ -99,7 +99,11 @@ export function PendingTierCard( {
 	);
 }
 
-export function RejectedTierCard( { contactSupportHref }: { contactSupportHref: string } ) {
+export function RejectedTierCard( {
+	contactSupport,
+}: {
+	contactSupport: string | ( () => void );
+} ) {
 	return (
 		<ApplicationStatusCard
 			decoration={
@@ -117,7 +121,14 @@ export function RejectedTierCard( { contactSupportHref }: { contactSupportHref: 
 					__(
 						'Please <a>contact support</a> to discuss this further if you think this was done in error.'
 					),
-					{ a: <a href={ contactSupportHref } /> }
+					{
+						a:
+							typeof contactSupport === 'function' ? (
+								<Button variant="link" onClick={ contactSupport } />
+							) : (
+								<a href={ contactSupport } />
+							),
+					}
 				) }
 			</Text>
 		</ApplicationStatusCard>

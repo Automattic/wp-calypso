@@ -259,51 +259,30 @@ describe( '<ReferralCheckout>', () => {
 		expect( requests ).toBe( 1 );
 	} );
 
-	test( 'keeps a free cart from an agency that cannot issue licenses', async () => {
-		fillCart( 'jetpack-stats-free' );
+	test( 'sends a free cart to the agency checkout, even while an invoice is overdue', async () => {
+		fillCart( 'jetpack-stats-free', 'jetpack-boost-free' );
 		mockApi( { agency: { can_issue_licenses: false }, catalog: freeProducts } );
 		render( <ReferralCheckout /> );
 
-		expect( await screen.findByRole( 'button', { name: 'Purchase' } ) ).toBeDisabled();
-	} );
-
-	test( 'lets an agency that can issue licenses purchase a free cart', async () => {
-		fillCart( 'jetpack-stats-free' );
-		mockApi( { catalog: freeProducts } );
-		render( <ReferralCheckout /> );
-
-		expect( await screen.findByRole( 'button', { name: 'Purchase' } ) ).toBeEnabled();
-	} );
-
-	test( 'keeps only the lines that failed after a partial free purchase', async () => {
-		fillCart( 'jetpack-stats-free', 'jetpack-boost-free' );
-		mockApi( { catalog: freeProducts } );
-		const issued: string[] = [];
-		nock( API )
-			.post(
-				'/wpcom/v2/jetpack-licensing/licenses',
-				( body ) => body.product === 'jetpack-stats-free'
-			)
-			.reply( 200, () => {
-				issued.push( 'jetpack-stats-free' );
-				return [];
-			} );
-		nock( API )
-			.post(
-				'/wpcom/v2/jetpack-licensing/licenses',
-				( body ) => body.product === 'jetpack-boost-free'
-			)
-			.reply( 500, { code: 'error', message: 'Nope' } );
-		const user = userEvent.setup();
-		render( <ReferralCheckout /> );
-
-		await user.click( await screen.findByRole( 'button', { name: 'Purchase' } ) );
-
-		await waitFor( () =>
-			expect( sessionStorage.getItem( 'referrals-shopping-card-selected-items' ) ).toBe(
-				'jetpack-boost-free:1'
-			)
+		const url = new URL(
+			( await screen.findByRole( 'link', { name: 'Checkout' } ) ).getAttribute( 'href' ) ?? ''
 		);
-		expect( issued ).toEqual( [ 'jetpack-stats-free' ] );
+		expect( url.pathname ).toBe( '/checkout/agency/purchase' );
+		expect( url.searchParams.get( 'products' ) ).toBe(
+			'jetpack-stats-free:1,jetpack-boost-free:1'
+		);
+		expect( url.searchParams.get( 'redirect_to' ) ).toContain( '/purchases?cart=referral&' );
+	} );
+
+	test( 'sends a free cart from an agency on the previous billing system to its checkout', async () => {
+		fillCart( 'jetpack-stats-free' );
+		mockApi( { agency: { billing_system: 'legacy' }, catalog: freeProducts } );
+		render( <ReferralCheckout /> );
+
+		const url = new URL(
+			( await screen.findByRole( 'link', { name: 'Checkout' } ) ).getAttribute( 'href' ) ?? ''
+		);
+		expect( url.pathname ).toBe( '/marketplace/checkout' );
+		expect( url.searchParams.get( 'product_slug' ) ).toBe( 'jetpack-stats-free' );
 	} );
 } );

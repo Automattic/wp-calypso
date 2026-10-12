@@ -58,7 +58,7 @@ function getImageStudioWindowData(): ImageStudioTrackingData | undefined {
 	return ( window as unknown as { imageStudioData?: ImageStudioTrackingData } ).imageStudioData;
 }
 
-function getTrackingBlogId(): number | null {
+export function getImageStudioBlogId(): number | null {
 	const blogId = getImageStudioWindowData()?.blogId;
 
 	if ( typeof blogId !== 'number' && typeof blogId !== 'string' ) {
@@ -70,7 +70,7 @@ function getTrackingBlogId(): number | null {
 	return Number.isFinite( parsedBlogId ) && parsedBlogId > 0 ? parsedBlogId : null;
 }
 
-function getTrackingSiteType(): ImageStudioSiteType {
+export function getImageStudioSiteType(): ImageStudioSiteType {
 	const siteType = getImageStudioWindowData()?.siteType;
 
 	if ( SITE_TYPES.includes( siteType as ImageStudioSiteType ) ) {
@@ -110,8 +110,8 @@ function recordImageStudioEvent(
 	properties: Record< string, string | number | boolean > = {}
 ): void {
 	const entryPoint = getImageStudioEntryPoint();
-	const blogId = getTrackingBlogId();
-	const siteType = getTrackingSiteType();
+	const blogId = getImageStudioBlogId();
+	const siteType = getImageStudioSiteType();
 	const imageStudioWindowData = getImageStudioWindowData();
 	const sessionId = getSessionId();
 	const baseProps: Record< string, string | number | boolean > = {
@@ -560,27 +560,70 @@ export function trackImageStudioError( {
 	recordImageStudioEvent( 'image_studio_error', properties );
 }
 
+/** What showed the notice: the credits check on open, a re-check after a turn, or a failed request. */
+export type UpgradeNoticeTrigger = 'open' | 'refresh' | 'error';
+
 /**
- * Tracks when the limit-reached upgrade notice is shown
- * @param options      - Tracking options
- * @param options.mode - 'edit' or 'generate'
+ * Details that let the notice events join the Agent's credits events.
+ * `none` marks a detail that doesn't apply.
  */
-export function trackImageStudioUpgradeNoticeShown( { mode }: { mode: ImageStudioMode } ): void {
-	recordImageStudioEvent( 'image_studio_upgrade_notice_shown', { mode } );
+export interface UpgradeNoticeCredits {
+	/** Site AI credits, or the old Jetpack AI request quota. */
+	meter: 'site_credits' | 'jetpack_ai';
+	state: 'low' | 'zero';
+	planTier: string;
+	creditsLeft: number | 'none';
+	ctaType: 'upgrade' | 'none';
+	/** The upgrade link's `source`, which checkout copies onto the purchase. */
+	ref: string;
+}
+
+interface UpgradeNoticeEvent extends UpgradeNoticeCredits {
+	mode: ImageStudioMode;
+	trigger: UpgradeNoticeTrigger;
+}
+
+function getUpgradeNoticeProperties( event: UpgradeNoticeEvent ) {
+	return {
+		mode: event.mode,
+		trigger: event.trigger,
+		meter: event.meter,
+		state: event.state,
+		plan_tier: event.planTier,
+		credits_left: event.creditsLeft,
+		cta_type: event.ctaType,
+		ref: event.ref,
+	};
 }
 
 /**
- * Tracks a click on the upgrade notice action. Also fires the product-wide
- * `jetpack_ai_upgrade_button` event so this surface appears in the same
- * funnel as every other Jetpack AI upgrade button.
- * @param options      - Tracking options
- * @param options.mode - 'edit' or 'generate'
+ * Tracks when an upgrade notice is shown: low or out of site credits, or out
+ * of the Jetpack AI quota. `state` and `meter` tell them apart.
+ * @param event - The notice's mode, trigger and credit details
  */
-export function trackImageStudioUpgradeNoticeClick( { mode }: { mode: ImageStudioMode } ): void {
-	recordImageStudioEvent( 'image_studio_upgrade_notice_click', { mode } );
-	recordTracksEventBase( 'jetpack_ai_upgrade_button', {
-		placement: 'image-studio-limit-notice',
-	} );
+export function trackImageStudioUpgradeNoticeShown( event: UpgradeNoticeEvent ): void {
+	recordImageStudioEvent(
+		'image_studio_upgrade_notice_shown',
+		getUpgradeNoticeProperties( event )
+	);
+}
+
+/**
+ * Tracks a click on the upgrade notice action. For the Jetpack AI quota, also
+ * fires the product-wide `jetpack_ai_upgrade_button` event so this surface
+ * appears in the same funnel as every other Jetpack AI upgrade button.
+ * @param event - The notice's mode, trigger and credit details
+ */
+export function trackImageStudioUpgradeNoticeClick( event: UpgradeNoticeEvent ): void {
+	recordImageStudioEvent(
+		'image_studio_upgrade_notice_click',
+		getUpgradeNoticeProperties( event )
+	);
+	if ( event.meter === 'jetpack_ai' ) {
+		recordTracksEventBase( 'jetpack_ai_upgrade_button', {
+			placement: 'image-studio-limit-notice',
+		} );
+	}
 }
 
 /**

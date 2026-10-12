@@ -65,16 +65,33 @@ function mockEndpoints( {
 const newReferralButton = () => screen.queryByRole( 'link', { name: 'New referral' } );
 
 describe( '<EarnReferrals>', () => {
-	test( 'offers a new referral to an approved agency', async () => {
+	test( 'offers a new referral to an approved agency, on Products in referral mode', async () => {
 		mockEndpoints();
 		const { recordTracksEvent } = render( <EarnReferrals /> );
 
 		const button = await screen.findByRole( 'link', { name: 'New referral' } );
+		expect( button ).toHaveAttribute( 'href', '/products' );
 		await userEvent.click( button );
 
+		expect( sessionStorage.getItem( 'marketplace-type' ) ).toBe( 'referral' );
 		expect( recordTracksEvent ).toHaveBeenCalledWith(
 			'calypso_a4a_referrals_make_a_referral_button_click'
 		);
+	} );
+
+	test( 'sends an agency with no referrals to Products in referral mode', async () => {
+		mockEndpoints( { referrals: [] } );
+		render( <EarnReferrals /> );
+
+		expect( await screen.findByRole( 'link', { name: 'Make a referral' } ) ).toHaveAttribute(
+			'href',
+			'/products'
+		);
+		const getStarted = screen.getByRole( 'link', { name: 'Get started' } );
+		expect( getStarted ).toHaveAttribute( 'href', '/products' );
+		await userEvent.click( getStarted );
+
+		expect( sessionStorage.getItem( 'marketplace-type' ) ).toBe( 'referral' );
 	} );
 
 	test( 'hides the new referral button until the agency is approved', async () => {

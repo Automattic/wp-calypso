@@ -13,7 +13,7 @@ import { TextSkeleton } from '../../../components/text-skeleton';
 export default function FeaturedShowcaseSkeleton() {
 	return (
 		<VStack spacing={ 4 } aria-hidden="true">
-			<SectionHeader level={ 2 } title={ __( 'Featured products' ) } />
+			<SectionHeader level={ 2 } title={ __( 'Featured plugins and add-ons' ) } />
 			<HStack
 				spacing={ 4 }
 				justify="flex-start"

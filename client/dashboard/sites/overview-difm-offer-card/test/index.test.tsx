@@ -1,0 +1,206 @@
+/**
+ * @jest-environment jsdom
+ */
+import '@testing-library/jest-dom';
+import { screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import nock from 'nock';
+import { render } from '../../../test-utils';
+import { DIFM_OFFER_EXPERIMENT } from '../../../utils/difm-offer';
+import DIFMOfferCard from '../index';
+import type { Site } from '@automattic/api-core';
+
+jest.mock( '../../../app/locale', () => ( {
+	useLocale: () => 'en',
+	useIntlLocale: () => 'en',
+} ) );
+
+const FIVE_DAYS_AGO = new Date( Date.now() - 5 * 24 * 60 * 60 * 1000 ).toISOString();
+
+// Passes the old DIFM upsell card's own gates: unlaunched, not an agency site, over four days old.
+const mockSite = {
+	ID: 123,
+	slug: 'example.wordpress.com',
+	launch_status: 'unlaunched',
+	is_wpcom_atomic: false,
+	is_a4a_dev_site: false,
+	plan: { product_slug: 'free_plan' },
+	options: { created_at: FIVE_DAYS_AGO },
+} as Site;
+
+// Seed a live assignment into the storage ExPlat reads from, so the real `useExperiment`
+// hook resolves to the given variation without a network call.
+function assignExperiment( variationName: string | null ) {
+	window.localStorage.setItem(
+		`explat-experiment--${ DIFM_OFFER_EXPERIMENT }`,
+		JSON.stringify( {
+			experimentName: DIFM_OFFER_EXPERIMENT,
+			variationName,
+			retrievedTimestamp: Date.now(),
+			ttl: 3600,
+		} )
+	);
+}
+
+// Serve the user's preferences, and echo any preference update back as saved.
+function mockPreferences( preferences: Record< string, string > = {} ) {
+	let savedBody: Record< string, unknown > | undefined;
+	const scope = nock( 'https://public-api.wordpress.com' )
+		.get( '/rest/v1.1/me/preferences' )
+		.query( true )
+		.reply( 200, { calypso_preferences: preferences } )
+		.post( '/rest/v1.1/me/preferences' )
+		.reply( 200, ( _uri, body ) => {
+			savedBody = body as Record< string, unknown >;
+			return body;
+		} );
+
+	return { scope, getSavedBody: () => savedBody };
+}
+
+describe( 'DIFMOfferCard', () => {
+	beforeEach( () => {
+		mockPreferences();
+	} );
+
+	afterEach( () => {
+		window.localStorage.clear();
+		nock.cleanAll();
+	} );
+
+	test( 'shows the offer copy, and not the DIFM upsell, to an eligible user in a treatment', async () => {
+		assignExperiment( 'no_time' );
+
+		render( <DIFMOfferCard site={ mockSite } /> );
+
+		expect(
+			await screen.findByRole( 'heading', { name: 'No time to build your site?' } )
+		).toBeVisible();
+		expect(
+			screen.getByText( 'Let us take that off your plate. Ready in 4 days and free with Business.' )
+		).toBeVisible();
+		expect( screen.getByRole( 'button', { name: 'See the offer' } ) ).toBeVisible();
+		expect( screen.queryByText( 'We’ll bring your vision to life' ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'records the variation on the offer impression and click events', async () => {
+		assignExperiment( 'no_time' );
+		const expectedProperties = {
+			upsell_id: 'site-overview-difm-offer',
+			upsell_feature_id: 'difm-offer',
+			variation: 'no_time',
+		};
+
+		const { recordTracksEvent } = render( <DIFMOfferCard site={ mockSite } /> );
+		await userEvent.click( await screen.findByRole( 'button', { name: 'See the offer' } ) );
+
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
+			'calypso_dashboard_upsell_impression',
+			expectedProperties
+		);
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
+			'calypso_dashboard_upsell_click',
+			expectedProperties
+		);
+	} );
+
+	test( 'shows the DIFM upsell to a user in control', async () => {
+		assignExperiment( 'control' );
+
+		render( <DIFMOfferCard site={ mockSite } /> );
+
+		expect(
+			await screen.findByRole( 'heading', { name: 'We’ll bring your vision to life' } )
+		).toBeVisible();
+		expect( screen.queryByRole( 'button', { name: 'See the offer' } ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'renders neither card while an eligible user’s assignment loads', () => {
+		nock( 'https://public-api.wordpress.com' )
+			.get( /experiments\/0\.1\.0\/assignments\/calypso/ )
+			.reply( 200, { variations: {}, ttl: 3600 } );
+
+		const { container } = render( <DIFMOfferCard site={ mockSite } /> );
+
+		expect( container ).toBeEmptyDOMElement();
+	} );
+
+	test( 'does not show the offer on an A4A dev site in a treatment', () => {
+		assignExperiment( 'no_time' );
+
+		render( <DIFMOfferCard site={ { ...mockSite, is_a4a_dev_site: true } } /> );
+
+		expect(
+			screen.queryByRole( 'heading', { name: 'No time to build your site?' } )
+		).not.toBeInTheDocument();
+	} );
+
+	test( 'shows the DIFM upsell, and not the offer, on a site past the offer age limit in a treatment', () => {
+		assignExperiment( 'no_time' );
+		const thirtyDaysAgo = new Date( Date.now() - 30 * 24 * 60 * 60 * 1000 ).toISOString();
+
+		render(
+			<DIFMOfferCard site={ { ...mockSite, options: { created_at: thirtyDaysAgo } } as Site } />
+		);
+
+		expect(
+			screen.getByRole( 'heading', { name: 'We’ll bring your vision to life' } )
+		).toBeVisible();
+		expect(
+			screen.queryByRole( 'heading', { name: 'No time to build your site?' } )
+		).not.toBeInTheDocument();
+	} );
+	test( 'hides the offer, and does not show the DIFM upsell, when the user dismissed the offer', async () => {
+		nock.cleanAll();
+		mockPreferences( {
+			'hosting-dashboard-difm-offer-dismissed': '2026-10-08T12:00:00.000Z',
+		} );
+		assignExperiment( 'no_time' );
+
+		const { container, queryClient } = render( <DIFMOfferCard site={ mockSite } /> );
+
+		// Wait until the preferences have loaded, so the check below does not pass on the loading state.
+		await waitFor( () =>
+			expect( queryClient.getQueryState( [ 'me', 'preferences' ] )?.status ).toBe( 'success' )
+		);
+		expect( container ).toBeEmptyDOMElement();
+		expect( screen.queryByText( 'We’ll bring your vision to life' ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'dismissing hides the offer, saves the dismissal for the user, and records the event', async () => {
+		nock.cleanAll();
+		const { getSavedBody } = mockPreferences();
+		assignExperiment( 'no_time' );
+
+		const { recordTracksEvent } = render( <DIFMOfferCard site={ mockSite } /> );
+		await userEvent.click( await screen.findByRole( 'button', { name: 'Dismiss' } ) );
+
+		expect(
+			screen.queryByRole( 'heading', { name: 'No time to build your site?' } )
+		).not.toBeInTheDocument();
+		expect( screen.queryByText( 'We’ll bring your vision to life' ) ).not.toBeInTheDocument();
+		expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_dashboard_upsell_dismiss', {
+			upsell_id: 'site-overview-difm-offer',
+			upsell_feature_id: 'difm-offer',
+			variation: 'no_time',
+		} );
+		await waitFor( () =>
+			expect( getSavedBody() ).toEqual( {
+				calypso_preferences: {
+					'hosting-dashboard-difm-offer-dismissed': expect.any( String ),
+				},
+			} )
+		);
+	} );
+
+	test( 'does not offer a dismiss control to a user in control', async () => {
+		assignExperiment( 'control' );
+
+		render( <DIFMOfferCard site={ mockSite } /> );
+
+		expect(
+			await screen.findByRole( 'heading', { name: 'We’ll bring your vision to life' } )
+		).toBeVisible();
+		expect( screen.queryByRole( 'button', { name: 'Dismiss' } ) ).not.toBeInTheDocument();
+	} );
+} );
