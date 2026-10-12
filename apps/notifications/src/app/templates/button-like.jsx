@@ -1,5 +1,5 @@
 import { __ } from '@wordpress/i18n';
-import { starEmpty, starFilled } from '@wordpress/icons';
+import { starEmpty, starFilled, thumbsUp } from '@wordpress/icons';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { getReferenceId } from '../../panel/helpers/notes';
@@ -7,8 +7,10 @@ import { setLikeStatus } from '../../panel/state/notes/thunks/index';
 import { useAppContext } from '../context';
 import ActionButton from './action-button';
 
+const getStar = ( isLiked ) => ( isLiked ? starFilled : starEmpty );
+
 // eslint-disable-next-line no-shadow
-const LikeButton = ( { commentId, isLiked, note, setLikeStatus } ) => {
+const LikeButton = ( { commentId, isLiked, isQuiet, note, setLikeStatus } ) => {
 	const { client } = useAppContext();
 
 	let title;
@@ -27,8 +29,8 @@ const LikeButton = ( { commentId, isLiked, note, setLikeStatus } ) => {
 
 	return (
 		<ActionButton
-			icon={ isLiked ? starFilled : starEmpty }
-			variant="tertiary"
+			icon={ isQuiet ? getStar( isLiked ) : thumbsUp }
+			isQuiet={ isQuiet }
 			isActive={ isLiked }
 			hotkey="l"
 			onToggle={ () =>
@@ -50,6 +52,7 @@ const LikeButton = ( { commentId, isLiked, note, setLikeStatus } ) => {
 LikeButton.propTypes = {
 	commentId: PropTypes.number,
 	isLiked: PropTypes.bool.isRequired,
+	isQuiet: PropTypes.bool,
 	note: PropTypes.object.isRequired,
 };
 

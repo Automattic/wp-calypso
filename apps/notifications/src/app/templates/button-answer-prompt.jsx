@@ -1,4 +1,5 @@
 import { __ } from '@wordpress/i18n';
+import { pin } from '@wordpress/icons';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { getNewPostLink } from '../../panel/helpers/notes';
@@ -14,6 +15,7 @@ const AnswerPromptButton = ( { answerPrompt, note } ) => {
 	const newPostLink = document.location.protocol + '//' + host + getNewPostLink( note );
 	return (
 		<ActionButton
+			icon={ pin }
 			isActive={ false }
 			hotkey="e"
 			onToggle={ () => answerPrompt( siteId, newPostLink ) }

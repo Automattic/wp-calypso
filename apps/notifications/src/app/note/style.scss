@@ -400,11 +400,11 @@
 	padding-inline-start: 0;
 	font-size: $font-size-medium;
 	font-weight: $font-weight-medium;
-	color: $gray-700;
+	color: var(--wpnc-action__color, #{$gray-700});
 
 	&:hover:not(:disabled) {
 		background: none;
-		color: $gray-900;
+		color: var(--wpnc-action__color-hover, #{$gray-900});
 	}
 
 	&.active-action,
@@ -496,6 +496,8 @@
 		--wpnc-quote__border-color: var( --wp-components-color-gray-600, #758095 );
 		--wpnc-quote__text-color: var( --wp-components-color-gray-700, #9aa2b1 );
 		--wpnc-divider__color: var( --wp-components-color-gray-400, #424855 );
+		--wpnc-action__color: var( --wp-components-color-gray-700, #9aa2b1 );
+		--wpnc-action__color-hover: var( --wp-components-color-gray-100, #f0f0f1 );
 
 		// Code blocks: a subtly raised surface against the dark panel, with a
 		// neutral border and light text that keeps AA contrast.
@@ -504,7 +506,7 @@
 		--wpnc-code__text-color: var( --wp-components-color-gray-100, #f0f0f1 );
 
 		// Two frame-level dividers miss the dashboard's border handling:
-		//   - the reply CardFooter (above the reply box) — the dark card
+		//   - the action-block CardFooter (above Like/Reply) — the dark card
 		//     mixin themes card header/divider but not the footer, so its
 		//     border falls back to a near-invisible rgba(0,0,0,0.1).
 		//   - the list/detail pane separator — $wpnc-pane-border.

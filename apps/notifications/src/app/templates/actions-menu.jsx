@@ -33,7 +33,12 @@ const ActionsMenu = ( {
 			return;
 		}
 		setIsBusy( true );
-		await remove( note, true );
+		try {
+			await remove( note, true );
+		} catch {
+			setIsBusy( false );
+			return;
+		}
 		goBack();
 	};
 

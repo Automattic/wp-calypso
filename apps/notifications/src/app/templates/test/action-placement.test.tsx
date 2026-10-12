@@ -6,6 +6,7 @@ import userEvent from '@testing-library/user-event';
 import { renderWithProvider } from '../../../testing-library';
 import { AppProvider } from '../../context';
 import NoteActions from '../actions';
+import SimplifiedActions from '../simplified-actions';
 
 const noop = () => {};
 
@@ -29,10 +30,25 @@ const note = {
 } as never;
 
 describe( 'comment action placement', () => {
-	it( 'collects the comment actions in the Actions menu', async () => {
+	it( 'renders Spam and Trash as inline action buttons alongside the safe actions', () => {
 		renderWithProvider(
 			<AppProvider client={ null } locale="en">
 				<NoteActions note={ note } goBack={ noop } />
+			</AppProvider>
+		);
+
+		// Buttons expose their tooltip title as the accessible name. The fixture's
+		// comment is already approved, so the approve toggle reads "Unapprove comment".
+		expect( screen.getByRole( 'button', { name: 'Unapprove comment' } ) ).toBeInTheDocument();
+		expect( screen.getByRole( 'button', { name: 'Edit comment' } ) ).toBeInTheDocument();
+		expect( screen.getByRole( 'button', { name: 'Mark comment as spam' } ) ).toBeInTheDocument();
+		expect( screen.getByRole( 'button', { name: 'Trash comment' } ) ).toBeInTheDocument();
+	} );
+
+	it( 'collects the comment actions in the Actions menu in the simplified layout', async () => {
+		renderWithProvider(
+			<AppProvider client={ null } locale="en">
+				<SimplifiedActions note={ note } goBack={ noop } />
 			</AppProvider>
 		);
 
