@@ -5,19 +5,17 @@ import {
 } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { useAnalytics } from '../../../app/analytics';
-import { useHelpCenter } from '../../../app/help-center';
 import { ActionList } from '../../../components/action-list';
+import InlineSupportLink from '../../../components/inline-support-link';
 import Notice from '../../../components/notice';
 import RouterLinkButton from '../../../components/router-link-button';
 import { SectionHeader } from '../../../components/section-header';
+import { useContactSupport } from '../../support/use-contact-support';
 import { TEAM_ROUTE } from '../paths';
 import type { AgencyTeamInviteAgency } from '@automattic/api-core';
 
 const TEAM_MEMBERS_SUPPORT_URL =
 	'https://agencieshelp.automattic.com/knowledge-base/invite-and-manage-team-members/#accepting-an-invitation-a-team-member-s-guide';
-
-// TODO: the MSD dashboard has no contact-support entry point yet (A4A-3422).
-const CONTACT_SUPPORT_URL = '#contact-support';
 
 export default function NoMultiAgencyMessage( {
 	currentAgency,
@@ -27,13 +25,7 @@ export default function NoMultiAgencyMessage( {
 	targetAgency: AgencyTeamInviteAgency;
 } ) {
 	const { recordTracksEvent } = useAnalytics();
-	const { setShowHelpCenter, setNavigateToRoute } = useHelpCenter();
-
-	const openSupportGuide = () => {
-		recordTracksEvent( 'calypso_a4a_team_learn_more_joining_agency_click' );
-		setShowHelpCenter( true );
-		setNavigateToRoute( '/post?link=' + encodeURIComponent( TEAM_MEMBERS_SUPPORT_URL ) );
-	};
+	const { openContactForm } = useContactSupport();
 
 	return (
 		<>
@@ -88,13 +80,19 @@ export default function NoMultiAgencyMessage( {
 			</ActionList>
 			<VStack spacing={ 3 } alignment="flex-start">
 				<SectionHeader level={ 3 } title={ __( 'Learn more about Agency membership' ) } />
-				<Button variant="link" onClick={ openSupportGuide }>
+				<InlineSupportLink
+					supportLink={ TEAM_MEMBERS_SUPPORT_URL }
+					forceOpenInHelpCenter
+					onClick={ () => recordTracksEvent( 'calypso_a4a_team_learn_more_joining_agency_click' ) }
+				>
 					{ __( 'Team members Knowledge Base article' ) }
-				</Button>
+				</InlineSupportLink>
 				<Button
 					variant="link"
-					href={ CONTACT_SUPPORT_URL }
-					onClick={ () => recordTracksEvent( 'calypso_a4a_team_contact_support_click' ) }
+					onClick={ () => {
+						recordTracksEvent( 'calypso_a4a_team_contact_support_click' );
+						openContactForm();
+					} }
 				>
 					{ __( 'Contact support' ) }
 				</Button>

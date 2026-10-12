@@ -66,12 +66,9 @@ describe( '<AcceptTeamInvite>', () => {
 			'/agency/team'
 		);
 		expect(
-			screen.getByRole( 'button', { name: 'Team members Knowledge Base article' } )
-		).toBeVisible();
-		expect( screen.getByRole( 'link', { name: 'Contact support' } ) ).toHaveAttribute(
-			'href',
-			'#contact-support'
-		);
+			screen.getByRole( 'link', { name: 'Team members Knowledge Base article' } )
+		).toHaveAttribute( 'href', expect.stringContaining( 'invite-and-manage-team-members' ) );
+		expect( screen.getByRole( 'button', { name: 'Contact support' } ) ).toBeVisible();
 	} );
 
 	test( 'sends a member of the invited agency to the overview without using the invite', async () => {

@@ -4,7 +4,7 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import { __experimentalHStack as HStack, __experimentalText as Text } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import { useAppContext } from '../../../app/context';
 import Notice from '../../../components/notice';
 import { PageHeader } from '../../../components/page-header';
@@ -64,8 +64,7 @@ export default function AcceptTeamInvite( {
 } ) {
 	const navigate = useNavigate();
 	const { data: activeAgency, isFetched: hasCheckedAgency } = useQuery( activeAgencyQuery() );
-	const { mutate: activateMember } = useMutation( agencyTeamActivateMemberMutation() );
-	const [ error, setError ] = useState< AgencyTeamInviteActivationError | null >( null );
+	const { mutate: activateMember, error } = useMutation( agencyTeamActivateMemberMutation() );
 	const hasActivated = useRef( false );
 
 	// A member of this agency, for example opening the link again after
@@ -97,8 +96,6 @@ export default function AcceptTeamInvite( {
 				onSuccess: () => {
 					navigate( { to: '/overview', replace: true } );
 				},
-				onError: ( activationError ) =>
-					setError( activationError as AgencyTeamInviteActivationError ),
 			}
 		);
 	}, [

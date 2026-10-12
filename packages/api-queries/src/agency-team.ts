@@ -11,6 +11,7 @@ import {
 import { queryOptions, mutationOptions } from '@tanstack/react-query';
 import { queryClient } from './query-client';
 import type {
+	AgencyTeamInviteActivationError,
 	AgencyTeamInviteActivationInput,
 	AgencyTeamInviteInput,
 	TeamMember,
@@ -75,7 +76,11 @@ export const agencyTeamInviteMutation = ( agencyId: number ) =>
  * the invite itself, since the user has no agency until this succeeds.
  */
 export const agencyTeamActivateMemberMutation = () =>
-	mutationOptions( {
+	mutationOptions<
+		{ success: boolean },
+		AgencyTeamInviteActivationError,
+		AgencyTeamInviteActivationInput
+	>( {
 		meta: { statId: 'agcy-team-invite-accept' },
 		mutationFn: ( input: AgencyTeamInviteActivationInput ) => activateAgencyTeamMember( input ),
 		// Reset, not invalidate: nothing here observes these queries, so a cached `hasAgency: false` would survive.
