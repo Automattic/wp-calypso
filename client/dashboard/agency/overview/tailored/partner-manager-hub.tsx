@@ -17,11 +17,12 @@ import {
 } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { __, _n, sprintf } from '@wordpress/i18n';
+import { download } from '@wordpress/icons';
 import { useState } from 'react';
 import { Text } from '../../../components/text';
 import NewTabLabel from '../new-tab-label';
 import { getInitials } from './partner-managers';
-import type { CallTodo, PartnerCalls } from './partner-calls';
+import type { CallRecap, CallTodo, PartnerCalls } from './partner-calls';
 import type { PartnerManager } from './partner-managers';
 import type { CSSProperties } from 'react';
 
@@ -41,6 +42,44 @@ const formatDateTime = ( date: Date ) =>
 	} );
 
 const getFirstName = ( name: string ) => name.split( ' ' )[ 0 ];
+
+// PROTOTYPE: the full call notes as a text file. Real notes will come from the
+// partner manager's call log; this builds them from the sample recap.
+function downloadCallNotes( manager: PartnerManager, call: CallRecap, completedTodoIds: string[] ) {
+	const firstName = getFirstName( manager.name );
+	const lines = [
+		sprintf(
+			/* translators: %s is the date of the call */
+			__( 'Call notes · %s' ),
+			formatDate( call.date )
+		),
+		sprintf(
+			/* translators: %s is the partner manager's name */
+			__( 'With %s, your partner manager' ),
+			manager.name
+		),
+		'',
+		__( 'Summary' ),
+		call.summary,
+		'',
+		__( 'Next steps' ),
+		...call.todos.map( ( todo ) => {
+			const isDone =
+				completedTodoIds.includes( todo.id ) || ( todo.isDoneByPartnerManager ?? false );
+			const owner = todo.owner === 'agency' ? __( 'You' ) : firstName;
+			return `${ isDone ? '[x]' : '[ ]' } ${ todo.title } (${ owner }, ${ formatDate(
+				todo.dueDate
+			) })`;
+		} ),
+	];
+	const blob = new Blob( [ lines.join( '\n' ) ], { type: 'text/plain' } );
+	const url = URL.createObjectURL( blob );
+	const link = document.createElement( 'a' );
+	link.href = url;
+	link.download = `call-notes-${ call.date.toISOString().slice( 0, 10 ) }.txt`;
+	link.click();
+	URL.revokeObjectURL( url );
+}
 
 export function ManagerAvatar( { manager }: { manager: PartnerManager } ) {
 	const style: CSSProperties = {
@@ -484,7 +523,21 @@ export default function PartnerManagerHub( {
 									) }
 						</Button>
 					</HStack>
-					{ isRecapOpen && <Text lineHeight="20px">{ lastCall.summary }</Text> }
+					{ isRecapOpen && (
+						<VStack spacing={ 3 }>
+							<Text lineHeight="20px">{ lastCall.summary }</Text>
+							<HStack justify="flex-start">
+								<Button
+									variant="secondary"
+									size="compact"
+									icon={ download }
+									onClick={ () => downloadCallNotes( manager, lastCall, completedTodoIds ) }
+								>
+									{ __( 'Download full call notes' ) }
+								</Button>
+							</HStack>
+						</VStack>
+					) }
 				</VStack>
 			) }
 		</VStack>

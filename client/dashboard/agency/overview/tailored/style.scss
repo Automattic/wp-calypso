@@ -102,11 +102,16 @@
 // Side-by-side rows (tier + call card beside What's new): the tier block and What's new's
 // header + tabs share one height, so their dividers and the blue panels below line up.
 // Only on wide screens, where the two cards sit next to each other.
-$a4a-band-height: 152px;
-$a4a-whats-new-tabs-height: 57px; // 8px top margin + 49px tab bar, including its border.
+$a4a-band-height: 138px; // The compact tier strip's natural height.
+$a4a-whats-new-tabs-height: 49px; // The tab bar, including its border.
 
 @media ( min-width: 782px ) {
 	.a4a-band-row {
+		// The header's own spacing sits above the tabs here, so drop their top margin.
+		.a4a-whats-new .a4a-whats-new__tabs .components-tab-panel__tabs {
+			margin-block-start: 0;
+		}
+
 		.a4a-tier-band {
 			box-sizing: border-box;
 			min-height: $a4a-band-height;

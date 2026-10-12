@@ -37,8 +37,9 @@ export default function TierStrip( {
 		return null;
 	}
 
+	// Kept compact so What's new's header beside it doesn't need much padding.
 	return (
-		<VStack spacing={ 4 }>
+		<VStack spacing={ 2 }>
 			<HStack justify="space-between" alignment="center">
 				<HStack spacing={ 2 } justify="flex-start" expanded={ false }>
 					<Icon icon={ published } size={ 24 } style={ { fill: 'var(--wp-admin-theme-color)' } } />
