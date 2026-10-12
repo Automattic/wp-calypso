@@ -1,10 +1,10 @@
 import { userPreferenceMutation, userPreferenceQuery } from '@automattic/api-queries';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
-import { useAnalytics } from '../../../app/analytics';
-import { Notice } from '../../../components/notice';
-import RouterLinkButton from '../../../components/router-link-button';
-import { getMarketplaceHostingSectionRoute } from '../paths';
+import { useAnalytics } from '../../app/analytics';
+import { Notice } from '../../components/notice';
+import RouterLinkButton from '../../components/router-link-button';
+import { getMarketplaceHostingSectionRoute } from '../marketplace/paths';
 import type { Agency } from '@automattic/api-core';
 
 // Shared with the classic dashboard so a dismissal carries over.
@@ -14,16 +14,15 @@ const DISMISS_PREFERENCE = 'pressable-limit-notification-dismissed';
 const LIMIT_EXCEEDED_REFERENCE = 'pressable_plan_usage_limit_exeeded';
 const LIMIT_APPROACHING_REFERENCE = 'pressable_plan_usage_limit_approaching';
 
-export default function PressableUsageLimitNotice( {
-	agency,
-}: {
-	agency: Agency | null | undefined;
-} ) {
-	const { recordTracksEvent } = useAnalytics();
+/**
+ * The Pressable usage notification to warn about, unless the agency
+ * dismissed it. Only an exceeded limit is urgent: one that is still being
+ * approached is informational.
+ */
+export function usePressableUsageLimit( agency: Agency | null | undefined ) {
 	const { data: dismissedTimestamp, isFetched } = useQuery(
 		userPreferenceQuery( DISMISS_PREFERENCE )
 	);
-	const { mutate: saveDismissed } = useMutation( userPreferenceMutation( DISMISS_PREFERENCE ) );
 
 	const notifications = agency?.notifications ?? [];
 	const exceeded = notifications.find(
@@ -32,22 +31,39 @@ export default function PressableUsageLimitNotice( {
 	const approaching = notifications.find(
 		( notification ) => notification.reference === LIMIT_APPROACHING_REFERENCE
 	);
-	const notice = exceeded ?? approaching;
+	const notification = exceeded ?? approaching;
 
-	if ( ! notice || ! isFetched || dismissedTimestamp === notice.timestamp ) {
+	return {
+		notification,
+		isUrgent: !! exceeded,
+		isEligible: !! notification && isFetched && dismissedTimestamp !== notification.timestamp,
+		isLoading: !! notification && ! isFetched,
+	};
+}
+
+export default function PressableUsageLimitNotice( {
+	agency,
+}: {
+	agency: Agency | null | undefined;
+} ) {
+	const { recordTracksEvent } = useAnalytics();
+	const { notification, isUrgent: isExceeded, isEligible } = usePressableUsageLimit( agency );
+	const { mutate: saveDismissed } = useMutation( userPreferenceMutation( DISMISS_PREFERENCE ) );
+
+	if ( ! notification || ! isEligible ) {
 		return null;
 	}
 
 	const dismiss = () => {
-		saveDismissed( notice.timestamp );
+		saveDismissed( notification.timestamp );
 		recordTracksEvent( 'calypso_a4a_pressable_limit_notification_dismissed', {
-			type: notice.reference,
+			type: notification.reference,
 		} );
 	};
 
 	return (
 		<Notice
-			variant={ exceeded ? 'warning' : 'info' }
+			variant={ isExceeded ? 'warning' : 'info' }
 			title={ __( 'Upgrade Pressable' ) }
 			onClose={ dismiss }
 			actions={
@@ -63,7 +79,7 @@ export default function PressableUsageLimitNotice( {
 				</RouterLinkButton>
 			}
 		>
-			{ exceeded
+			{ isExceeded
 				? __(
 						'Your Pressable plan has exceeded its allocated limits. Consider upgrading your plan to avoid additional fees.'
 					)

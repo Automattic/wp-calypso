@@ -12,6 +12,10 @@ import { useAnalytics } from '../../../app/analytics';
 import Breadcrumbs from '../../../app/breadcrumbs';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
+import { AgencyNotices } from '../../components/agency-notices';
+import PressableUsageLimitNotice, {
+	usePressableUsageLimit,
+} from '../../components/pressable-usage-limit-notice';
 import { isAgencyApproved } from '../is-agency-approved';
 import { getWpcomPlan } from '../lib/wpcom-hosting';
 import CartMenu from '../products/cart-menu';
@@ -33,7 +37,6 @@ import {
 import { getEffectivePressableOwnership } from './lib/pressable-products';
 import PressableOffers from './pressable-offer-banner';
 import PressableSection from './pressable-section';
-import PressableUsageLimitNotice from './pressable-usage-limit-notice';
 import VipSection from './vip-section';
 import WpcomSection from './wpcom-section';
 import type { HostingSection } from '../paths';
@@ -46,7 +49,6 @@ import './style.scss';
  * `/hosting` shows the hosts side by side; `section` is the page of one host.
  *
  * TODO: Still missing from the classic Hosting page:
- * - the agency approval notice (pending / approved / rejected)
  * - the guided tour
  */
 export default function MarketplaceHosting( { section }: { section?: HostingSection } ) {
@@ -60,6 +62,7 @@ export default function MarketplaceHosting( { section }: { section?: HostingSect
 
 	const { data: agency } = useQuery( activeAgencyQuery() );
 	const agencyId = agency?.id ?? 0;
+	const pressableUsageLimit = usePressableUsageLimit( agency );
 	const agencyApproved = isAgencyApproved( agency );
 
 	const { data: allProducts } = useQuery( agencyProductsQuery( agencyId ) );
@@ -209,11 +212,21 @@ export default function MarketplaceHosting( { section }: { section?: HostingSect
 					}
 				/>
 			}
+			notices={
+				<AgencyNotices
+					candidates={ [
+						{
+							id: 'pressable-usage-limit',
+							...pressableUsageLimit,
+							notice: <PressableUsageLimitNotice agency={ agency } />,
+						},
+					] }
+				/>
+			}
 		>
 			{ isReferralMode && section !== 'vip' && (
 				<ReferralModeBand kind={ section === 'pressable' ? 'pressable' : 'hosting' } />
 			) }
-			<PressableUsageLimitNotice agency={ agency } />
 			<PressableOffers agency={ agency } />
 			{ section ? (
 				renderSection( section )

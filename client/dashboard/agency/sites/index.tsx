@@ -22,6 +22,7 @@ import { DataViews, DataViewsCard, DataViewsEmptyStateLayout } from '../../compo
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { DEFAULT_PER_PAGE, DEFAULT_CONFIG, recordViewChanges } from '../../sites/dataviews/views';
+import { AgencyNotices } from '../components/agency-notices';
 import { DevSiteConfigurationModal } from '../marketplace/purchases/site-configuration-modal';
 import AddNewSite from './add-new-site';
 import ConnectSiteModal from './add-new-site/connect-site-modal';
@@ -183,7 +184,12 @@ export default function AgencySites() {
 					}
 				/>
 			}
-			notices={ <ProvisioningSiteNotices /> }
+			notices={
+				<>
+					<ProvisioningSiteNotices />
+					<AgencyNotices />
+				</>
+			}
 		>
 			{ activeModal === 'menu' && (
 				<Modal title={ __( 'Add new site' ) } onRequestClose={ closeModal }>

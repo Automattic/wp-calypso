@@ -14,6 +14,29 @@ const DISMISS_PREFERENCE = 'a4a-agency-approval-notice-dismissed';
 const APPROVED_NOTICE_WINDOW_MS = 7 * 24 * 60 * 60 * 1000;
 
 /**
+ * Whether the approval notice has something to say: a pending or rejected
+ * application (urgent), or an approval in the agency's first week, until
+ * dismissed.
+ */
+export function useAgencyApprovalNotice( agency: Agency | null | undefined ) {
+	const { data: isDismissed, isFetched } = useQuery( userPreferenceQuery( DISMISS_PREFERENCE ) );
+	const status = agency?.approval_status;
+	const isUrgent = status === 'pending' || status === 'rejected';
+	const isNewlyApproved =
+		status === 'approved' &&
+		! (
+			agency?.created_at &&
+			new Date( agency.created_at ).getTime() < Date.now() - APPROVED_NOTICE_WINDOW_MS
+		);
+
+	return {
+		isEligible: isFetched && ! isDismissed && ( isUrgent || isNewlyApproved ),
+		isLoading: !! status && ! isFetched,
+		isUrgent,
+	};
+}
+
+/**
  * Tells the agency where its application stands: pending agencies can look
  * around but not buy or refer, rejected ones are pointed to support, and newly
  * approved ones get a welcome they can dismiss.
