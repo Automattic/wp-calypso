@@ -48,7 +48,7 @@ describe( '<PaymentRiskNotice>', () => {
 
 		expect( screen.getByRole( 'link', { name: 'Fix payment method' } ) ).toHaveAttribute(
 			'href',
-			'https://wordpress.com/me/purchases/payment-methods'
+			expect.stringMatching( /\/me\/purchases\/payment-methods$/ )
 		);
 	} );
 

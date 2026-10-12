@@ -4,9 +4,8 @@ import { __ } from '@wordpress/i18n';
 import { useEffect, useState } from 'react';
 import { useAnalytics } from '../../../app/analytics';
 import { Notice } from '../../../components/notice';
+import { wpcomLink } from '../../../utils/link';
 import type { Agency } from '@automattic/api-core';
-
-const PAYMENT_METHODS_URL = 'https://wordpress.com/me/purchases/payment-methods';
 
 export function hasPaymentRiskNotice( agency: Agency | null | undefined ) {
 	return !! agency?.payment_notice?.state && !! agency.payment_notice.severity;
@@ -89,7 +88,7 @@ export default function PaymentRiskNotice( {
 	const primaryUrl =
 		notice.primary_action_url ??
 		notice.action_url ??
-		( canManagePaymentMethod ? PAYMENT_METHODS_URL : undefined );
+		( canManagePaymentMethod ? wpcomLink( '/me/purchases/payment-methods' ) : undefined );
 
 	const actions = [
 		primaryLabel && primaryUrl && (
