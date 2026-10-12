@@ -32,14 +32,14 @@ const signature4 = {
 	metadata: { category: 'signature', sites: 10, visits: 100000, storage: 50, php_worker_count: 5 },
 };
 
-function mockAgency() {
+function mockAgency( { capabilities = [ 'a4a_read_marketplace' ] } = {} ) {
 	nock( API )
 		.get( '/wpcom/v2/agency' )
 		.query( true )
 		.reply( 200, [
 			{
 				id: AGENCY_ID,
-				user: { capabilities: [ 'a4a_read_marketplace' ] },
+				user: { capabilities },
 				third_party: {
 					pressable: {
 						pressable_id: 1,
@@ -63,22 +63,67 @@ function mockLicenses( items: unknown[] ) {
 		.reply( 200, { items, total_pages: 1 } );
 }
 
+function mockSitePlanQueries() {
+	nock( API )
+		.get( `/rest/v1.4/sites/${ site.ID }/plans` )
+		.query( true )
+		.reply( 200, {
+			plans: {
+				1: {
+					product_id: 1,
+					product_slug: 'jetpack_free',
+					product_name_short: 'Jetpack Free',
+					current_plan: true,
+					original_price: { amount: 0 },
+					raw_price: 0,
+					raw_price_integer: 0,
+					raw_discount: 0,
+					raw_discount_integer: 0,
+					cost_overrides: [],
+				},
+			},
+		} );
+
+	nock( API ).get( '/rest/v1.2/upgrades' ).query( true ).reply( 200, [] );
+}
+
+const signature4License = {
+	license_key: 'pressable-signature-4_abc',
+	product_id: signature4.product_id,
+	referral: null,
+	revoked_at: null,
+	quantity: null,
+};
+
 describe( '<AgencySitePlanCard>', () => {
 	test( 'shows the agency’s Pressable plan on a Pressable site', async () => {
 		mockAgency();
-		mockLicenses( [
-			{
-				license_key: 'pressable-signature-4_abc',
-				product_id: signature4.product_id,
-				referral: null,
-				revoked_at: null,
-				quantity: null,
-			},
-		] );
+		mockLicenses( [ signature4License ] );
 
 		render( <AgencySitePlanCard agencySite={ pressableAgencySite } site={ site } /> );
 
 		const planLink = await screen.findByRole( 'link', { name: /Pressable Signature 4/ } );
 		expect( planLink ).toHaveAttribute( 'href', '/hosting/pressable' );
+	} );
+
+	test( 'does not link the plan to the marketplace without marketplace access', async () => {
+		mockAgency( { capabilities: [] } );
+		mockLicenses( [ signature4License ] );
+
+		render( <AgencySitePlanCard agencySite={ pressableAgencySite } site={ site } /> );
+
+		expect( await screen.findByText( 'Pressable Signature 4' ) ).toBeVisible();
+		expect( screen.queryByRole( 'link' ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'falls back to the Jetpack card when the agency has no Pressable plan', async () => {
+		mockAgency();
+		mockLicenses( [] );
+		mockSitePlanQueries();
+
+		render( <AgencySitePlanCard agencySite={ pressableAgencySite } site={ site } /> );
+
+		expect( await screen.findByText( 'Jetpack Free' ) ).toBeVisible();
+		expect( screen.queryByText( /Pressable Signature/ ) ).not.toBeInTheDocument();
 	} );
 } );
