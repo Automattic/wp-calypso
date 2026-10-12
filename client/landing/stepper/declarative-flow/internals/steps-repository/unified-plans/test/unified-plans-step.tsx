@@ -4,13 +4,19 @@ jest.mock( 'calypso/signup/step-wrapper', () => () => <div data-testid="start-st
 jest.mock( '@automattic/onboarding/src/step-container', () => () => (
 	<div data-testid="stepper-step-wrapper" />
 ) );
+jest.mock(
+	'@automattic/onboarding/src/step-container-v2/wireframes/WideLayout/WideLayout',
+	() => ( { WideLayout: () => null } )
+);
 jest.mock( 'calypso/components/marketing-message', () => 'marketing-message' );
 jest.mock( 'calypso/lib/wp', () => ( { req: { post: () => {} } } ) );
 
 import { PLAN_BUSINESS } from '@automattic/calypso-products';
+import { EDUCATION_FLOW, SITE_MIGRATION_FLOW } from '@automattic/onboarding';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
+import DocumentHead from 'calypso/components/data/document-head';
 import PlansStepAdaptor from '..';
 import { renderStep } from '../../test/helpers';
 import UnifiedPlansStep, { type UnifiedPlansStepProps } from '../unified-plans-step';
@@ -57,6 +63,25 @@ describe( 'Plans basic tests', () => {
 		expect( stepWrapper ).toBeVisible();
 		expect( stepWrapper.parentNode ).toHaveClass( 'plans-step' );
 	} );
+
+	test.each( [
+		[ SITE_MIGRATION_FLOW, 'Ready to migrate' ],
+		[ EDUCATION_FLOW, 'Existing flow title' ],
+	] )( 'scopes the plans document title to migration (%s)', async ( flowName, expectedTitle ) => {
+		renderStep(
+			<>
+				<DocumentHead title="Existing flow title" />
+				<UnifiedPlansStep
+					{ ...props }
+					flowName={ flowName }
+					headerText="Ready to migrate"
+					useStepperWrapper
+					useStepContainerV2
+				/>
+			</>
+		);
+		await waitFor( () => expect( document.title ).toContain( expectedTitle ) );
+	} );
 } );
 
 describe( 'Plans accepts-props', () => {
@@ -100,7 +125,6 @@ describe( 'Plans existing-site action', () => {
 				flow="site-migration"
 				navigation={ { submit } }
 				showExistingSiteLink
-				disablePlanSelection
 				subHeaderText="Choose a plan for your new site."
 			/>,
 			{

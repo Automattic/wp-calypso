@@ -2,15 +2,12 @@ import { getUrlParts } from '@automattic/calypso-url';
 import { Step } from '@automattic/onboarding';
 import { Notice } from '@wordpress/components';
 import { useTranslate, type TranslateResult } from 'i18n-calypso';
-import { useEffect } from 'react';
-import { convertPlatformName } from 'calypso/blocks/import/util';
+import { useEffect, useState } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
-import { isPlatformImportable } from '../import/helper';
 import { SitePreview } from '../site-migration-instructions/site-preview';
 import successIcon from './success.svg';
 import type { Step as StepType } from '../../types';
-import type { ImporterPlatform } from 'calypso/lib/importer/types';
 
 import './style.scss';
 
@@ -32,7 +29,7 @@ const SiteMigrationCheck: StepType< {
 		isLoadingDestination?: boolean;
 	};
 	submits:
-		| { action: 'back' | 'backup_file' }
+		| { action: 'back' }
 		| {
 				action: 'continue' | 'select-existing-site';
 				from: string;
@@ -48,24 +45,16 @@ const SiteMigrationCheck: StepType< {
 	isLoadingDestination,
 } ) => {
 	const translate = useTranslate();
+	const [ isSubmitting, setIsSubmitting ] = useState( false );
 	const query = useQuery();
 	const from = query.get( 'from' ) || '';
 	const host = query.get( 'host' ) || undefined;
 	const platform = query.get( 'platform' );
-	const isUnknown = platform === 'unknown';
 	const isWpcom = query.get( 'isWpcom' ) === 'true';
-	const isImportable =
-		!! platform &&
-		platform !== 'wordpress' &&
-		platform !== 'wix' &&
-		isPlatformImportable( platform as ImporterPlatform );
-	const showChoices = isUnknown || isWpcom || isImportable;
+	const showChoices = isWpcom;
 	const { protocol, hostname } = getUrlParts( from );
 	const hasSource =
-		!! hostname &&
-		( protocol === 'http:' || protocol === 'https:' ) &&
-		( platform === 'wordpress' || ( ( isUnknown || isImportable ) && ! isWpcom ) );
-	const platformName = convertPlatformName( platform as ImporterPlatform );
+		!! hostname && ( protocol === 'http:' || protocol === 'https:' ) && platform === 'wordpress';
 	const hasDestination = ! showChoices && !! destinationSiteSlug;
 	const showUpgrade = hasDestination && needsUpgrade;
 	const showComparison = hasDestination && ! needsUpgrade;
@@ -79,74 +68,24 @@ const SiteMigrationCheck: StepType< {
 	let subTitle: TranslateResult | undefined;
 	if ( hasDestination ) {
 		title = translate( 'Migrate %(site)s here', { args: { site: hostname } } );
-	} else if ( isUnknown ) {
-		title = translate( 'We couldn’t tell what your site runs on' );
-		subTitle = translate( 'Some hosts and CDNs hide it. Tell us, and we’ll take it from there.' );
 	} else if ( isWpcom ) {
 		title = translate( 'Your site is already on WordPress.com' );
 		subTitle = translate( 'Let’s figure out your next step together.' );
-	} else if ( isImportable ) {
-		title = translate( 'Your site is built with %(platform)s', {
-			args: { platform: platformName },
-		} );
-		subTitle = translate(
-			'We can bring your content across. The design won’t come with it, so the quickest way to a finished site is with a person.'
-		);
 	}
-	let choices: {
-		title: TranslateResult;
-		description: TranslateResult;
-		action?: 'backup_file';
-	}[] = isWpcom
-		? [
-				{
-					title: translate( 'Make a copy of your site' ),
-					description: translate( 'Duplicate it to a new site you can work on.' ),
-				},
-				{
-					title: translate( 'Transfer your domain to WordPress.com' ),
-					description: translate( 'Bring the registration across too.' ),
-				},
-				{
-					title: translate( 'Get access to your site' ),
-					description: translate( 'Get help accessing and managing your site.' ),
-				},
-			]
-		: [
-				{
-					title: translate( 'It’s a WordPress site' ),
-					description: translate(
-						'We’ll connect to it and copy everything, theme, plugins, content.'
-					),
-				},
-				{
-					title: translate( 'It’s built on something else' ),
-					description: translate(
-						'Wix, Squarespace, Blogger, and others, we’ll check what we can bring across.'
-					),
-				},
-				{
-					title: translate( 'I have a backup file' ),
-					description: translate( 'A .zip or .wpress export. We’ll do the rest.' ),
-					action: 'backup_file',
-				},
-			];
-	if ( isImportable ) {
-		choices = [
-			{
-				title: translate( 'Have our team migrate it for you' ),
-				description: translate(
-					'Included with any plan. A person rebuilds your site on WordPress.com and checks it with you.'
-				),
-			},
-			{
-				title: translate( 'Have a designer build you a new site' ),
-				description: translate(
-					'Built By WordPress.com Express: a designer starts from your content and delivers it in about a week.'
-				),
-			},
-		];
-	}
+	const choices = [
+		{
+			title: translate( 'Make a copy of your site' ),
+			description: translate( 'Duplicate it to a new site you can work on.' ),
+		},
+		{
+			title: translate( 'Transfer your domain to WordPress.com' ),
+			description: translate( 'Bring the registration across too.' ),
+		},
+		{
+			title: translate( 'Get access to your site' ),
+			description: translate( 'Get help accessing and managing your site.' ),
+		},
+	];
 	const returnToAddress = () => navigation.submit?.( { action: 'back' } );
 
 	useEffect( () => {
@@ -158,7 +97,7 @@ const SiteMigrationCheck: StepType< {
 	if ( ! hasSource ) {
 		return null;
 	}
-	if ( ! showChoices && isLoadingDestination ) {
+	if ( ! showChoices && ( isLoadingDestination || isSubmitting ) ) {
 		return <Step.Loading />;
 	}
 
@@ -181,24 +120,17 @@ const SiteMigrationCheck: StepType< {
 			>
 				<div className="site-migration-check__summary">
 					<span>{ hasDestination ? `${ hostname } → ${ destinationSiteSlug }` : hostname }</span>
-					{ isUnknown ? (
-						<span className="site-migration-check__platform">
-							{ translate( 'unknown platform' ) }
-						</span>
-					) : (
-						<Step.LinkButton href={ from } target="_blank" rel="noopener noreferrer">
-							{ translate( '%(platform)s site ↗', { args: { platform: platformName } } ) }
-						</Step.LinkButton>
-					) }
+					<Step.LinkButton href={ from } target="_blank" rel="noopener noreferrer">
+						{ translate( 'WordPress site ↗' ) }
+					</Step.LinkButton>
 				</div>
 				{ showChoices ? (
 					<div className="site-migration-check__card">
-						{ choices.map( ( { title, description, action } ) => (
+						{ choices.map( ( { title, description } ) => (
 							<Step.LinkButton
 								key={ String( title ) }
 								className="site-migration-check__choice"
-								disabled={ ! action }
-								onClick={ action ? () => navigation.submit?.( { action } ) : undefined }
+								disabled
 							>
 								<span className="site-migration-check__choice-content">
 									<span className="site-migration-check__choice-title">{ title }</span>
@@ -209,20 +141,9 @@ const SiteMigrationCheck: StepType< {
 								</span>
 							</Step.LinkButton>
 						) ) }
-						{ isImportable ? (
-							<div className="site-migration-check__actions">
-								<Step.PrimaryButton disabled>
-									{ translate( 'I just want to import my content' ) }
-								</Step.PrimaryButton>
-								<Step.SecondaryButton disabled>
-									{ translate( 'Have our team do it' ) }
-								</Step.SecondaryButton>
-							</div>
-						) : (
-							<Step.LinkButton onClick={ returnToAddress }>
-								{ translate( 'Not the site you meant? Enter a different URL' ) }
-							</Step.LinkButton>
-						) }
+						<Step.LinkButton onClick={ returnToAddress }>
+							{ translate( 'Not the site you meant? Enter a different URL' ) }
+						</Step.LinkButton>
 					</div>
 				) : (
 					<>
@@ -306,15 +227,17 @@ const SiteMigrationCheck: StepType< {
 							) }
 							<div className="site-migration-check__actions">
 								<Step.PrimaryButton
-									disabled={ showUpgrade }
-									onClick={ () =>
+									onClick={ () => {
+										if ( showComparison ) {
+											setIsSubmitting( true );
+										}
 										navigation.submit?.( {
 											action: 'continue',
 											from,
 											platform: 'wordpress',
 											host,
-										} )
-									}
+										} );
+									} }
 								>
 									{ continueLabel }
 								</Step.PrimaryButton>

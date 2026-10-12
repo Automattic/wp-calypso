@@ -14,7 +14,6 @@ import DocumentHead from 'calypso/components/data/document-head';
 import { useAnalyzeUrlQuery } from 'calypso/data/site-profiler/use-analyze-url-query';
 import { useHostingProviderQuery } from 'calypso/data/site-profiler/use-hosting-provider-query';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
-import { useSiteSlug } from 'calypso/landing/stepper/hooks/use-site-slug';
 import { urlToDomain } from 'calypso/lib/url';
 import { ChecklistCard } from '../../components/checklist-card';
 import { useSitePreviewMShotImageHandler } from '../site-migration-instructions/site-preview/hooks/use-site-preview-mshot-image-handler';
@@ -262,12 +261,10 @@ export const Analyzer: FC< Props > = ( {
 					onDontHaveSiteAddressClick={ onSkip }
 					placeholder={ translate( 'mygreatnewblog.com' ) }
 					label={ translate( 'Site address' ) }
-					dontHaveSiteAddressLabel={
-						isReprintFlow
-							? translate( '<button>Only have a backup file? Our team will help you</button>' )
-							: translate( 'Or <button>pick your current platform from a list</button>' )
-					}
-					hideImporterListLink={ ! isReprintFlow && hideImporterListLink }
+					dontHaveSiteAddressLabel={ translate(
+						'Or <button>pick your current platform from a list</button>'
+					) }
+					hideImporterListLink={ hideImporterListLink }
 					nextLabelText={ isReprintFlow ? translate( 'Continue' ) : translate( 'Check my site' ) }
 				/>
 			</div>
@@ -281,8 +278,7 @@ export const Analyzer: FC< Props > = ( {
 	);
 };
 
-export type SiteMigrationIdentifyAction =
-	'continue' | 'skip_platform_identification' | 'backup_file';
+export type SiteMigrationIdentifyAction = 'continue' | 'skip_platform_identification';
 
 const SiteMigrationIdentify: StepType< {
 	submits:
@@ -295,7 +291,6 @@ const SiteMigrationIdentify: StepType< {
 		  }
 		| undefined;
 } > = function ( { navigation, flow } ) {
-	const siteSlug = useSiteSlug();
 	const translate = useTranslate();
 	const isReprintFlow = config.isEnabled( 'migration/reprint-flow' );
 	const { createScreenshots } = useSitePreviewMShotImageHandler();
@@ -314,7 +309,7 @@ const SiteMigrationIdentify: StepType< {
 
 			navigation?.submit?.( { action, ...data } );
 		},
-		[ navigation, siteSlug, createScreenshots ]
+		[ navigation, createScreenshots ]
 	);
 
 	const urlQueryParams = useQuery();
@@ -352,7 +347,7 @@ const SiteMigrationIdentify: StepType< {
 			}
 			hideImporterListLink={ urlQueryParams.get( 'hide_importer_link' ) === 'true' }
 			onSkip={ () => {
-				handleSubmit( isReprintFlow ? 'backup_file' : 'skip_platform_identification' );
+				handleSubmit( 'skip_platform_identification' );
 			} }
 			isReprintFlow={ isReprintFlow }
 			siteURL={ siteURL }

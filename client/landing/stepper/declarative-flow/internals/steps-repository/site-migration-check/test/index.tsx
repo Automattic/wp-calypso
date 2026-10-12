@@ -50,9 +50,14 @@ describe( 'SiteMigrationCheck', () => {
 				)
 			).toBeVisible();
 			const upgrade = screen.getByRole( 'button', { name: 'Upgrade and continue' } );
-			expect( upgrade ).toBeDisabled();
+			expect( upgrade ).toBeEnabled();
 			await userEvent.click( upgrade );
-			expect( submit ).not.toHaveBeenCalled();
+			expect( submit ).toHaveBeenCalledWith( {
+				action: 'continue',
+				from: 'https://example.com',
+				platform: 'wordpress',
+				host: undefined,
+			} );
 			expect( screen.queryByRole( 'button', { name: 'Continue' } ) ).not.toBeInTheDocument();
 			expect(
 				screen.queryByText( /runs on WordPress, so we copy all of it/ )
@@ -111,6 +116,13 @@ describe( 'SiteMigrationCheck', () => {
 		).toBeVisible();
 		expect( screen.getByText( 'Your plan and the site’s address stay the same.' ) ).toBeVisible();
 		expect( screen.queryByText( /30 days/ ) ).not.toBeInTheDocument();
+		await userEvent.click( screen.getByRole( 'button', { name: 'Use a different site' } ) );
+		expect( submit ).toHaveBeenLastCalledWith( {
+			action: 'select-existing-site',
+			from: 'https://example.com',
+			platform: 'wordpress',
+			host: undefined,
+		} );
 		const replace = screen.getByRole( 'button', { name: 'Replace and continue' } );
 		expect( replace ).toBeEnabled();
 		await userEvent.click( replace );
@@ -120,13 +132,9 @@ describe( 'SiteMigrationCheck', () => {
 			platform: 'wordpress',
 			host: undefined,
 		} );
-		await userEvent.click( screen.getByRole( 'button', { name: 'Use a different site' } ) );
-		expect( submit ).toHaveBeenLastCalledWith( {
-			action: 'select-existing-site',
-			from: 'https://example.com',
-			platform: 'wordpress',
-			host: undefined,
-		} );
+		expect(
+			screen.queryByRole( 'button', { name: 'Replace and continue' } )
+		).not.toBeInTheDocument();
 		expect(
 			screen.queryByRole( 'button', { name: 'Upgrade and continue' } )
 		).not.toBeInTheDocument();
@@ -176,8 +184,8 @@ describe( 'SiteMigrationCheck', () => {
 		'',
 		'?from=javascript:alert(1)&platform=wordpress',
 		'?from=https://example.com&platform=wix',
-		'?from=https://example.com&platform=unknown&isWpcom=true',
-		'?from=https://example.com&platform=squarespace&isWpcom=true',
+		'?from=https://example.com&platform=unknown',
+		'?from=https://example.com&platform=squarespace',
 	] )( 'returns to address entry instead of rendering an invalid source: %s', ( query ) => {
 		const submit = jest.fn();
 		renderStep( <SiteMigrationCheck { ...mockStepProps( { navigation: { submit } } ) } />, {
@@ -186,25 +194,6 @@ describe( 'SiteMigrationCheck', () => {
 		expect( screen.queryByRole( 'link' ) ).not.toBeInTheDocument();
 		expect( screen.queryByRole( 'heading' ) ).not.toBeInTheDocument();
 		expect( submit ).toHaveBeenCalledWith( { action: 'back' } );
-	} );
-
-	it( 'shows unknown-platform choices, with only the backup action enabled', async () => {
-		const submit = jest.fn();
-		renderStep( <SiteMigrationCheck { ...mockStepProps( { navigation: { submit } } ) } />, {
-			initialEntry: '/site-migration-check?from=https://bzinus.pt/&platform=unknown&isWpcom=false',
-		} );
-		expect(
-			screen.getByRole( 'heading', { name: 'We couldn’t tell what your site runs on' } )
-		).toBeVisible();
-		expect( screen.getByText( 'bzinus.pt' ) ).toBeVisible();
-		expect( screen.getByText( 'unknown platform' ) ).toBeVisible();
-		expect( screen.queryByText( 'Site preview' ) ).not.toBeInTheDocument();
-		expect( screen.queryByRole( 'button', { name: 'Continue' } ) ).not.toBeInTheDocument();
-		expect( screen.getByRole( 'button', { name: /It’s a WordPress site/ } ) ).toBeDisabled();
-		expect( screen.getByRole( 'button', { name: /It’s built on something else/ } ) ).toBeDisabled();
-		expect( submit ).not.toHaveBeenCalled();
-		await userEvent.click( screen.getByRole( 'button', { name: /I have a backup file/ } ) );
-		expect( submit ).toHaveBeenCalledWith( { action: 'backup_file' } );
 	} );
 
 	it( 'shows the WordPress.com result with unfinished choices disabled and no copy promise', async () => {
@@ -238,39 +227,7 @@ describe( 'SiteMigrationCheck', () => {
 		expect( submit ).not.toHaveBeenCalled();
 	} );
 
-	it.each( [
-		[ 'squarespace', 'Squarespace' ],
-		[ 'medium', 'Medium' ],
-	] )( 'shows the %s result with all forward actions disabled', async ( platform, name ) => {
-		const submit = jest.fn();
-		renderStep( <SiteMigrationCheck { ...mockStepProps( { navigation: { submit } } ) } />, {
-			initialEntry: `/site-migration-check?from=https://example.com/&platform=${ platform }`,
-		} );
-		expect(
-			screen.getByRole( 'heading', { name: `Your site is built with ${ name }` } )
-		).toBeVisible();
-		expect( screen.getByRole( 'link', { name: `${ name } site ↗` } ) ).toHaveAttribute(
-			'href',
-			'https://example.com/'
-		);
-		expect( screen.queryByText( 'Site preview' ) ).not.toBeInTheDocument();
-		expect( screen.queryByRole( 'button', { name: 'Continue' } ) ).not.toBeInTheDocument();
-		for ( const name of [
-			/Have our team migrate it for you/,
-			/Have a designer build you a new site/,
-			'I just want to import my content',
-			'Have our team do it',
-		] ) {
-			const button = screen.getByRole( 'button', { name } );
-			expect( button ).toBeDisabled();
-			await userEvent.click( button );
-		}
-		expect( submit ).not.toHaveBeenCalled();
-		await userEvent.click( screen.getByRole( 'button', { name: 'Back' } ) );
-		expect( submit ).toHaveBeenCalledWith( { action: 'back' } );
-	} );
-
-	it.each( [ 'platform=unknown', 'platform=wordpress&isWpcom=true' ] )(
+	it.each( [ 'platform=wordpress&isWpcom=true' ] )(
 		'returns to address entry through Back or changing the URL for %s',
 		async ( query ) => {
 			const submit = jest.fn();

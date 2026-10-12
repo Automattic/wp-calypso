@@ -117,25 +117,6 @@ describe( 'useGenerateActionHook', () => {
 		( Plans.usePricingMetaForGridPlans as jest.Mock ).mockImplementation( () => ( {} ) );
 	} );
 
-	it.each( [ PLAN_PERSONAL, PLAN_BUSINESS, PLAN_ECOMMERCE, PLAN_ENTERPRISE_GRID_WPCOM ] )(
-		'disables purchase callbacks for %s in a preview',
-		( planSlug ) => {
-			const purchase = jest.fn();
-			jest.mocked( useGenerateActionCallback ).mockReturnValue( () => purchase );
-			const { result } = renderHook( () =>
-				useGenerateActionHook( {
-					isInSignup: true,
-					isLaunchPage: false,
-					disablePlanSelection: true,
-				} )
-			);
-			const action = result.current( { planSlug } );
-			expect( action.primary.status ).toBe( 'disabled' );
-			action.primary.callback();
-			expect( purchase ).not.toHaveBeenCalled();
-		}
-	);
-
 	it( 'should handle enterprise plans', () => {
 		const { result } = renderHook( () =>
 			useGenerateActionHook( { isInSignup: false, isLaunchPage: false } )

@@ -48,7 +48,6 @@ const PlansStepAdaptor: StepType< {
 		headerText?: string;
 		subHeaderText?: string;
 		showExistingSiteLink?: boolean;
-		disablePlanSelection?: boolean;
 		hideFreePlan?: boolean;
 		hideEnterprisePlan?: boolean;
 		hidePersonalPlan?: boolean;
@@ -76,7 +75,6 @@ const PlansStepAdaptor: StepType< {
 		headerText,
 		subHeaderText,
 		showExistingSiteLink,
-		disablePlanSelection,
 		hideFreePlan: hideFreePlanOverride,
 		hideEnterprisePlan: hideEnterprisePlanOverride,
 		hidePersonalPlan: hidePersonalPlanOverride,
@@ -265,7 +263,6 @@ const PlansStepAdaptor: StepType< {
 					subHeaderText
 				)
 			}
-			disablePlanSelection={ disablePlanSelection }
 			highlightLabelOverrides={ highlightLabelOverrides }
 			titleBadgeOverrides={ titleBadgeOverrides }
 			taglineOverrides={ taglineOverrides }

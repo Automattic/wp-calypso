@@ -50,11 +50,6 @@ const availableFlows: Record< string, () => Promise< { default: FlowV2< any > } 
 			/* webpackChunkName: "site-migration-flow" */ './flows/site-migration-flow/site-migration-flow'
 		),
 
-	[ WORDPRESS_MIGRATION_FLOW ]: () =>
-		import(
-			/* webpackChunkName: "wordpress-migration-flow" */ './flows/wordpress-migration/wordpress-migration'
-		),
-
 	[ EXAMPLE_FLOW ]: () =>
 		import( /* webpackChunkName: "example-flow" */ './flows/00-example-flow/example' ),
 

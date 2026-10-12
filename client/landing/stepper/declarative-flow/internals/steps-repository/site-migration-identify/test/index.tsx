@@ -230,20 +230,23 @@ describe( 'SiteMigrationIdentify', () => {
 				);
 		} );
 
-		it( 'shows the simplified address screen and submits the backup choice', async () => {
+		it( 'keeps the platform list available on the simplified address screen', async () => {
 			const submit = jest.fn();
 			render( { navigation: { submit } } );
-
 			expect( screen.getByRole( 'button', { name: 'Continue' } ) ).toBeVisible();
 			expect( screen.queryByText( /Why should you host with us/ ) ).not.toBeInTheDocument();
 			expect(
+				screen.queryByRole( 'button', { name: /Only have a backup file/ } )
+			).not.toBeInTheDocument();
+			await userEvent.click( screen.getByRole( 'button', { name: /pick your current platform/ } ) );
+			expect( submit ).toHaveBeenCalledWith( { action: 'skip_platform_identification' } );
+		} );
+
+		it( 'honors the entry point that hides the platform list', () => {
+			render( {}, { initialEntry: '/some-path?hide_importer_link=true' } );
+			expect(
 				screen.queryByRole( 'button', { name: /pick your current platform/ } )
 			).not.toBeInTheDocument();
-
-			await userEvent.click(
-				screen.getByRole( 'button', { name: 'Only have a backup file? Our team will help you' } )
-			);
-			expect( submit ).toHaveBeenCalledWith( { action: 'backup_file' } );
 		} );
 
 		it( 'keeps the supplied address editable and submits the detected source and host', async () => {

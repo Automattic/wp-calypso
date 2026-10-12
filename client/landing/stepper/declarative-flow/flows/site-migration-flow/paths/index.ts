@@ -1,4 +1,3 @@
-import { WORDPRESS_MIGRATION_FLOW } from '@automattic/onboarding';
 import { generatePath } from 'react-router';
 import { Primitive } from 'utility-types';
 import { STEPS } from 'calypso/landing/stepper/declarative-flow/internals/steps';
@@ -84,21 +83,6 @@ export const howToMigratePath = buildPathHelper<
 	},
 	typeof STEPS.SITE_MIGRATION_HOW_TO_MIGRATE.slug
 >( STEPS.SITE_MIGRATION_HOW_TO_MIGRATE.slug );
-
-export const wordpressMigrationPath = buildPathHelper< {
-	queryParams: {
-		from: string;
-		siteId: number;
-		siteSlug: string;
-		platform: ImporterPlatform;
-		host?: string;
-		ref: string;
-		source: string | null;
-		sessionId: string | null;
-		flags: string | null;
-		backToFlow: string;
-	};
-} >( `/setup/${ WORDPRESS_MIGRATION_FLOW }` );
 
 export const siteCheckPath = buildPathHelper<
 	{

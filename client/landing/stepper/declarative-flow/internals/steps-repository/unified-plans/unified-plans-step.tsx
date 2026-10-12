@@ -15,6 +15,7 @@ import {
 	isOnboardingFlow,
 	isTailoredSignupFlow,
 	ONBOARDING_FLOW,
+	SITE_MIGRATION_FLOW,
 	Step,
 	StepContainer,
 } from '@automattic/onboarding';
@@ -128,7 +129,6 @@ export interface UnifiedPlansStepProps {
 	>;
 	headerText?: string;
 	subHeaderText?: TranslateResult;
-	disablePlanSelection?: boolean;
 	highlightLabelOverrides?: { [ K in PlanSlug ]?: TranslateResult };
 	titleBadgeOverrides?: { [ K in PlanSlug ]?: TranslateResult };
 	taglineOverrides?: { [ K in PlanSlug ]?: TranslateResult };
@@ -252,7 +252,6 @@ function UnifiedPlansStep( {
 	displayedIntervals,
 	headerText,
 	subHeaderText,
-	disablePlanSelection,
 	highlightLabelOverrides,
 	titleBadgeOverrides,
 	taglineOverrides,
@@ -687,7 +686,6 @@ function UnifiedPlansStep( {
 				}
 				displayedIntervals={ displayedIntervals }
 				onUpgradeClick={ handleUpgradeClick }
-				disablePlanSelection={ disablePlanSelection }
 				customerType={ customerType }
 				deemphasizeFreePlan={ deemphasizeFreePlan }
 				renderFreePlanCtaInStepContainerV2={ shouldUseModalBackedFreePlanCTA }
@@ -729,7 +727,7 @@ function UnifiedPlansStep( {
 
 		return (
 			<>
-				{ headerText && <DocumentHead title={ headerText } /> }
+				{ flowName === SITE_MIGRATION_FLOW && <DocumentHead title={ headerText } /> }
 				{ /*
 				 * The layout mounts hidden (CSS: visibility:hidden + position:absolute) so
 				 * PlansFeaturesMain's data-fetching hooks run immediately. Step.Loading
