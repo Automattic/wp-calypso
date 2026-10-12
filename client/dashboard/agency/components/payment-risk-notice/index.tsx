@@ -1,7 +1,6 @@
 import { Button } from '@wordpress/components';
-import { useViewportMatch } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useAnalytics } from '../../../app/analytics';
 import { Notice } from '../../../components/notice';
 import { wpcomLink } from '../../../utils/link';
@@ -41,8 +40,7 @@ function ActionButton( {
 
 /**
  * Warns the agency that a subscription payment failed or a card is about to
- * expire. The notice stays until the payment is fixed; on small screens it can
- * be hidden for the rest of the visit.
+ * expire. The notice stays until the payment is fixed.
  */
 export default function PaymentRiskNotice( {
 	agency,
@@ -52,8 +50,6 @@ export default function PaymentRiskNotice( {
 	source: string;
 } ) {
 	const { recordTracksEvent } = useAnalytics();
-	const isLargeViewport = useViewportMatch( 'large' );
-	const [ isHidden, setIsHidden ] = useState( false );
 	const notice = agency?.payment_notice;
 	const state = notice?.state;
 	const severity = notice?.severity;
@@ -68,7 +64,7 @@ export default function PaymentRiskNotice( {
 		}
 	}, [ recordTracksEvent, source, state, severity ] );
 
-	if ( ! notice || ! state || ! severity || isHidden ) {
+	if ( ! notice || ! state || ! severity ) {
 		return null;
 	}
 
@@ -116,7 +112,6 @@ export default function PaymentRiskNotice( {
 			variant={ severity }
 			title={ notice.title ?? __( 'Action required: We’re unable to renew your subscription(s)' ) }
 			actions={ actions.length ? actions : undefined }
-			onClose={ isLargeViewport ? undefined : () => setIsHidden( true ) }
 		>
 			{ notice.content ??
 				__(

@@ -5,17 +5,17 @@ import {
 } from '@automattic/api-queries';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { Button } from '@wordpress/components';
-import { useViewportMatch } from '@wordpress/compose';
 import { useDispatch } from '@wordpress/data';
 import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
-import { useState } from 'react';
+import { useEffect, useRef } from 'react';
 import { useAuth } from '../../../app/auth';
 import { withSnackbar } from '../../../app/snackbars/with-snackbar';
 import { Notice } from '../../../components/notice';
 import {
 	formatCooldown,
 	resendAcceptedRetryAfter,
+	RESEND_MIN_INTERVAL_SECONDS,
 	resendThrottleRetryAfter,
 } from '../../../utils/email-verification-resend';
 import { useResendCooldown } from '../../../utils/use-resend-cooldown';
@@ -49,28 +49,37 @@ export function useEmailToVerify() {
 
 /**
  * Asks the user to verify their account email, or the new address of a
- * pending email change, and lets them resend the link. On small screens it
- * can be hidden for the rest of the visit.
+ * pending email change, and lets them resend the link.
  */
 export default function EmailVerificationNotice() {
 	const { user } = useAuth();
 	const { emailToVerify, isEmailChangePending } = useEmailToVerify();
 	const { createErrorNotice, createSuccessNotice } = useDispatch( noticesStore );
-	const isLargeViewport = useViewportMatch( 'large' );
-	const [ isHidden, setIsHidden ] = useState( false );
-	const { secondsUntilResend, hold: holdResend } = useResendCooldown();
+	// One wait per path: the server rate limits the dedicated send endpoint, and
+	// re-saving a pending address is limited only by us.
+	const originalCooldown = useResendCooldown();
+	const pendingCooldown = useResendCooldown();
+	const { secondsUntilResend } = isEmailChangePending ? pendingCooldown : originalCooldown;
+	const isAwaitingResend = secondsUntilResend > 0;
 
-	// The server rate limits only the dedicated send endpoint, not a re-saved pending address.
-	const isAwaitingResend = ! isEmailChangePending && secondsUntilResend > 0;
+	const pendingEmail = isEmailChangePending ? emailToVerify : null;
+	const pendingEmailRef = useRef( pendingEmail );
+	pendingEmailRef.current = pendingEmail;
+
+	const { reset: resetPendingCooldown } = pendingCooldown;
+	useEffect( () => {
+		resetPendingCooldown();
+	}, [ pendingEmail, resetPendingCooldown ] );
+
 	const genericError = __( 'There was an error while resending the email. Please try again.' );
 
 	const { mutate: sendToOriginal, isPending: isSendPending } = useMutation( {
 		...withSnackbar( sendEmailVerificationMutation(), { success: sentToEmail( user.email ) } ),
-		onSuccess: ( data ) => holdResend( resendAcceptedRetryAfter( data ) ),
+		onSuccess: ( data ) => originalCooldown.hold( resendAcceptedRetryAfter( data ) ),
 		onError: ( error ) => {
 			const retryAfter = resendThrottleRetryAfter( error );
 			if ( retryAfter !== null ) {
-				holdResend( retryAfter );
+				originalCooldown.hold( retryAfter );
 				createErrorNotice( __( 'Too many attempts. Please wait before trying again.' ), {
 					type: 'snackbar',
 				} );
@@ -83,12 +92,17 @@ export default function EmailVerificationNotice() {
 	const { mutate: resendToPending, isPending: isResendPending } = useMutation( {
 		...resendEmailVerificationMutation(),
 		// The address is a mutation variable, so a late response names the address it was sent to.
-		onSuccess: ( _data, email ) =>
-			createSuccessNotice( sentToEmail( email ), { type: 'snackbar' } ),
+		onSuccess: ( _data, email ) => {
+			createSuccessNotice( sentToEmail( email ), { type: 'snackbar' } );
+			// A wait is meaningless once the address has moved on.
+			if ( email === pendingEmailRef.current ) {
+				pendingCooldown.hold( RESEND_MIN_INTERVAL_SECONDS );
+			}
+		},
 		onError: () => createErrorNotice( genericError, { type: 'snackbar' } ),
 	} );
 
-	if ( ! emailToVerify || isHidden ) {
+	if ( ! emailToVerify ) {
 		return null;
 	}
 
@@ -98,7 +112,6 @@ export default function EmailVerificationNotice() {
 		<Notice
 			variant="warning"
 			title={ __( 'Verify your email address' ) }
-			onClose={ isLargeViewport ? undefined : () => setIsHidden( true ) }
 			actions={
 				<Button
 					variant="primary"
