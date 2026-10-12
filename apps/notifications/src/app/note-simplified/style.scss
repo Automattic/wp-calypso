@@ -100,12 +100,8 @@ a.wpnc-simplified__quiet-links:visited {
 	}
 }
 
-// The endpoint sends the whole comment, line breaks included.
+// The endpoint keeps the comment's line breaks and has already shortened it.
 .wpnc-simplified__parent-text {
-	display: -webkit-box;
-	-webkit-box-orient: vertical;
-	-webkit-line-clamp: 4;
-	overflow: hidden;
 	white-space: pre-line;
 }
 
