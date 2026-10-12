@@ -82,9 +82,11 @@ describe( '<PlanCard>', () => {
 				new RegExp( `/purchases/subscriptions/example\\.com/${ PURCHASE_ID }$` )
 			)
 		);
-		expect( await screen.findByRole( 'link', { name: 'See all purchases' } ) ).toHaveAttribute(
+		const purchasesLink = await screen.findByRole( 'link', { name: /See all purchases/ } );
+		expect( purchasesLink ).toHaveAttribute(
 			'href',
 			expect.stringMatching( /\/purchases\/subscriptions\/example\.com$/ )
 		);
+		expect( purchasesLink ).toHaveAttribute( 'target', '_blank' );
 	} );
 } );

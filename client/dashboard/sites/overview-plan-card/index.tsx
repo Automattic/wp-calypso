@@ -4,6 +4,7 @@ import { JetpackLogo } from '@automattic/components/src/logos/jetpack-logo';
 import { useQuery } from '@tanstack/react-query';
 import {
 	Button,
+	ExternalLink,
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
 	Icon,
@@ -64,6 +65,14 @@ function useHasBillingRoutes() {
 	return !! supports.me && !! supports.me.billing;
 }
 
+// Without billing routes, every plan link leaves the app, onboarding ones included,
+// so it opens in a new tab.
+function usePlanLinkProps( site: Site, purchase?: Purchase ) {
+	const hasBillingRoutes = useHasBillingRoutes();
+	const url = getSitePlanUrl( site, purchase, { hasBillingRoutes } );
+	return hasBillingRoutes ? { link: url } : { externalLink: url };
+}
+
 function SeeAllPurchasesLink( { site }: { site: Site } ) {
 	const { recordTracksEvent } = useAnalytics();
 	const hasBillingRoutes = useHasBillingRoutes();
@@ -86,13 +95,12 @@ function SeeAllPurchasesLink( { site }: { site: Site } ) {
 
 	if ( ! hasBillingRoutes ) {
 		return (
-			<Button
-				variant="link"
+			<ExternalLink
 				href={ wpcomLink( `/purchases/subscriptions/${ site.slug }` ) }
 				onClick={ handleClick }
 			>
 				{ __( 'See all purchases' ) }
-			</Button>
+			</ExternalLink>
 		);
 	}
 
@@ -167,7 +175,7 @@ function WpcomPlanCard( {
 	isLoading: boolean;
 } ) {
 	const locale = useLocale();
-	const hasBillingRoutes = useHasBillingRoutes();
+	const planLinkProps = usePlanLinkProps( site, purchase );
 
 	return (
 		<OverviewCard
@@ -175,7 +183,7 @@ function WpcomPlanCard( {
 			icon={ wordpress }
 			heading={ getSitePlanDisplayName( site ) }
 			description={ getCardDescription( site, locale, purchase ) }
-			link={ getSitePlanUrl( site, purchase, { hasBillingRoutes } ) }
+			{ ...planLinkProps }
 			tracksId="site-overview-plan"
 			isLoading={ isLoading }
 			bottom={
@@ -213,13 +221,17 @@ function WpcomStagingSitePlanCard( { site }: { site: Site } ) {
 }
 
 function AgencyPlanCard( { site, isLoading }: { site: Site; isLoading: boolean } ) {
+	const { supports } = useAppContext();
+
 	return (
 		<OverviewCard
 			title={ __( 'Development license' ) }
 			icon={ wordpress }
 			heading={ getSitePlanDisplayName( site ) }
 			description={ __( 'Managed by Automattic for Agencies.' ) }
-			link={ getSitePlanUrl( site ) }
+			link={
+				supports.agency ? `/sites/${ site.slug }/settings/site-visibility` : getSitePlanUrl( site )
+			}
 			tracksId="site-overview-plan"
 			isLoading={ isLoading }
 			bottom={ <SitePlanStats site={ site } /> }
@@ -237,7 +249,7 @@ function CommerceGardenPlanCard( {
 	isLoading: boolean;
 } ) {
 	const locale = useLocale();
-	const hasBillingRoutes = useHasBillingRoutes();
+	const planLinkProps = usePlanLinkProps( site, purchase );
 
 	return (
 		<OverviewCard
@@ -245,7 +257,7 @@ function CommerceGardenPlanCard( {
 			icon={ commerceGardenPlan }
 			heading={ getSitePlanDisplayName( site ) }
 			description={ getCardDescription( site, locale, purchase ) }
-			link={ getSitePlanUrl( site, purchase, { hasBillingRoutes } ) }
+			{ ...planLinkProps }
 			tracksId="plan"
 			isLoading={ isLoading }
 		/>

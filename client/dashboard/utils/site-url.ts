@@ -74,6 +74,8 @@ export function getSiteVisibilityURL( site: Site ) {
  *
  * - If the site is a wpcom site without a purchase, returns the URL to upgrade the site plan.
  * - Otherwise, returns the most appropriate URL to manage the site's current plan.
+ *
+ * Pass `hasBillingRoutes: false` in apps without the `/me/billing` routes, so purchases link to WordPress.com instead.
  */
 export function getSitePlanUrl(
 	site: Site,
