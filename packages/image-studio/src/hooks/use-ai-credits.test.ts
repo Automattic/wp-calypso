@@ -2,6 +2,7 @@
  * Tests for useAiCredits and its reader of the `ai_credits` snapshot that
  * WordPress.com sends for sites on AI credits.
  */
+import { getKnownSiteCredits, setKnownSiteCredits } from '@automattic/agents-manager';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import { ImageStudioMode } from '../types';
 import {
@@ -21,6 +22,7 @@ jest.mock( '@wordpress/i18n', () => ( {
 jest.mock( '@automattic/agents-manager', () => ( {
 	...jest.requireActual( '@automattic/agents-manager/src/utils/credits' ),
 	...jest.requireActual( '@automattic/agents-manager/src/utils/live-credits' ),
+	...jest.requireActual( '@automattic/agents-manager/src/utils/site-credits-availability' ),
 } ) );
 
 jest.mock( '../utils/tracking', () => ( {
@@ -123,6 +125,7 @@ describe( 'useAiCredits', () => {
 		fetchMock = jest.fn();
 		window.fetch = fetchMock;
 		window.imageStudioData = { blogId: BLOG_ID, siteType: 'simple' };
+		window.sessionStorage.clear();
 	} );
 
 	afterEach( () => {
@@ -302,8 +305,8 @@ describe( 'useAiCredits', () => {
 		expect( stateOf( result ) ).toEqual( NOTHING );
 	} );
 
-	it( 'does not ask when the page says the site doesn’t use AI credits', async () => {
-		window.imageStudioData = { blogId: BLOG_ID, siteType: 'simple', usesAiCredits: false };
+	it( 'does not ask when this tab already got a 404 for the site', async () => {
+		setKnownSiteCredits( BLOG_ID, false );
 
 		const { result } = renderCredits();
 		await act( async () => {} );
@@ -312,8 +315,21 @@ describe( 'useAiCredits', () => {
 		expect( stateOf( result ) ).toEqual( NOTHING );
 	} );
 
-	it( 'takes a turn’s balance when the page flag is out of date', async () => {
-		window.imageStudioData = { blogId: BLOG_ID, siteType: 'simple', usesAiCredits: false };
+	it( 'remembers a 404, so the next open doesn’t ask', async () => {
+		fetchMock.mockResolvedValue( { ok: false, status: 404, json: async () => ( {} ) } );
+		const first = renderCredits();
+		await waitFor( () => expect( first.result.current.isLoading ).toBe( false ) );
+		first.unmount();
+
+		const { result } = renderCredits();
+		await act( async () => {} );
+
+		expect( fetchMock ).toHaveBeenCalledTimes( 1 );
+		expect( stateOf( result ) ).toEqual( NOTHING );
+	} );
+
+	it( 'takes a turn’s balance after a 404, and asks again next time', async () => {
+		setKnownSiteCredits( BLOG_ID, false );
 		const { result } = renderCredits();
 		await act( async () => {} );
 
@@ -323,24 +339,7 @@ describe( 'useAiCredits', () => {
 
 		expect( fetchMock ).not.toHaveBeenCalled();
 		expect( result.current.isLimitReached ).toBe( true );
-		expect( result.current.notice?.message ).toBe( 'You’ve used all your site credits.' );
-	} );
-
-	it.each( [
-		{ name: 'the page says the site uses AI credits', usesAiCredits: true },
-		{ name: 'the page can’t tell', usesAiCredits: null },
-		{ name: 'the page comes from a Jetpack version without the flag', usesAiCredits: undefined },
-	] )( 'asks when $name', async ( { usesAiCredits } ) => {
-		window.imageStudioData = {
-			blogId: BLOG_ID,
-			siteType: 'atomic',
-			...( usesAiCredits === undefined ? {} : { usesAiCredits } ),
-		};
-		respondWith( { ai_credits: planSnapshot( 30_000 ) } );
-
-		const { result } = renderCredits();
-
-		await waitFor( () => expect( result.current.meter ).toEqual( meterAt( 75 ) ) );
+		expect( getKnownSiteCredits( BLOG_ID ) ).toBe( true );
 	} );
 
 	it( 'does not ask when the page names no site', () => {

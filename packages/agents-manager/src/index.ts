@@ -50,4 +50,5 @@ export {
 	getCreditsUpgradeUrl,
 	parseLiveCreditsStatus,
 } from './utils/live-credits';
+export { getKnownSiteCredits, setKnownSiteCredits } from './utils/site-credits-availability';
 export type { CreditsStatus } from './utils/credits';

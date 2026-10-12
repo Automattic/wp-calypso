@@ -3,7 +3,9 @@ import {
 	CREDITS_UPGRADE_SOURCE,
 	formatCreditsShort,
 	getCreditsUpgradeUrl,
+	getKnownSiteCredits,
 	parseLiveCreditsStatus,
+	setKnownSiteCredits,
 } from '@automattic/agents-manager';
 import { useEvent } from '@wordpress/compose';
 import { useEffect, useMemo, useRef, useState } from '@wordpress/element';
@@ -70,11 +72,6 @@ function getSiteCreditsBlogId(): number | null {
 	return getImageStudioSiteType() === 'jetpack' ? null : getImageStudioBlogId();
 }
 
-/** The page can say the site doesn't use AI credits, so the balance request would only 404. */
-function isBalanceRequestSkipped(): boolean {
-	return window.imageStudioData?.usesAiCredits === false;
-}
-
 /** Resolves to undefined when the site is not on AI credits or the request fails. */
 async function fetchSiteCredits( blogId: number, authProvider: AuthProvider ): Promise< unknown > {
 	try {
@@ -84,7 +81,10 @@ async function fetchSiteCredits( blogId: number, authProvider: AuthProvider ): P
 			headers,
 			cache: 'no-store',
 		} );
-		// A site that is not on AI credits answers 404.
+		// A site that is not on AI credits answers 404, so other chats in this tab skip asking.
+		if ( response.status === 404 ) {
+			setKnownSiteCredits( blogId, false );
+		}
 		if ( ! response.ok ) {
 			return undefined;
 		}
@@ -116,9 +116,9 @@ export interface AiCreditsState {
 }
 
 /**
- * Reads the site's AI credit balance when the modal opens, unless the page says the site
- * doesn't use AI credits, and after each turn. A turn's balance always applies, in case the
- * site joined AI credits after the page loaded.
+ * Reads the site's AI credit balance when the modal opens, unless this tab already got a 404
+ * for the site, and after each turn. A turn's balance always applies, in case the site joined
+ * AI credits since.
  * @param options              - Hook options
  * @param options.mode         - Image Studio mode ('edit' or 'generate') for tracking
  * @param options.authProvider - The agent's credentials, once its config has loaded
@@ -131,7 +131,9 @@ export function useAiCredits( {
 	authProvider?: AuthProvider;
 } ): AiCreditsState {
 	const [ blogId ] = useState( getSiteCreditsBlogId );
-	const [ isRequestSkipped ] = useState( isBalanceRequestSkipped );
+	const [ isRequestSkipped ] = useState(
+		() => blogId !== null && getKnownSiteCredits( blogId ) === false
+	);
 	const [ status, setStatus ] = useState< PaidCreditsStatus | null >( null );
 	const [ isLoading, setIsLoading ] = useState( blogId !== null && ! isRequestSkipped );
 	const [ isLowNoticeDismissed, setIsLowNoticeDismissed ] = useState( false );
@@ -157,6 +159,7 @@ export function useAiCredits( {
 		if ( next?.plan !== 'paid' ) {
 			return false;
 		}
+		setKnownSiteCredits( blogId, true );
 		const level = getSiteCreditsLevel( next.remaining );
 		// A known balance running out opens the dot's details once. The first read stays quiet.
 		if ( level === 'out' && shown.current.level !== undefined && shown.current.level !== 'out' ) {

@@ -6,7 +6,7 @@ import { ORCHESTRATOR_AGENT_URL } from '../../constants';
 import { creditSnapshot } from '../../utils/__tests__/fixtures/credit-snapshot';
 import { localNumber } from '../../utils/__tests__/fixtures/local-number';
 import { getCreditsLabel, getCreditsTone } from '../../utils/credits';
-import { clearKnownSiteCredits } from '../../utils/site-credits-availability';
+import { clearKnownSiteCredits, setKnownSiteCredits } from '../../utils/site-credits-availability';
 import { useCredits } from '../use-credits';
 import type { AgentConfig } from '../../utils/create-agent-config';
 import type { CreditsStatus } from '../../utils/credits';
@@ -736,39 +736,12 @@ it( 'keeps dismissal within the current visit and ignores previous-site dismiss 
 	expect( view.result.current.notice?.message ).toBe( `${ localNumber( 500 ) } credits left.` );
 } );
 
-it( 'never asks for a balance when the page says the site doesn’t use AI credits', async () => {
-	const { result } = renderCredits( { site: { ...site, usesAiCredits: false } } );
-	await flush();
-	await act( async () => {
-		window.dispatchEvent( new Event( 'focus' ) );
-	} );
-	expect( fetchMock ).not.toHaveBeenCalled();
-	expect( result.current.trailingActions ).toBeUndefined();
-	expect( result.current.notice ).toBeUndefined();
-	expect( result.current.beforeSubmit() ).toBe( true );
-} );
 const newChatConfig = () => ( {
 	...agentConfig,
 	authProvider: jest.fn().mockResolvedValue( { Authorization: 'Bearer site-jwt' } ),
 } );
 const notFound = () =>
 	fetchMock.mockResolvedValue( { ok: false, status: 404, json: async () => ( {} ) } );
-it( 'takes a turn’s balance when the page flag is out of date, then asks again, even in a new chat', async () => {
-	const pageSite = { ...site, usesAiCredits: false };
-	const view = renderCredits( { site: pageSite } );
-	await flush();
-	await receive( creditSnapshot( { plan_tier: 'personal' } ) );
-	expect( props( view.result.current ).status.remaining ).toBe( 2450 );
-	fetchMock.mockResolvedValue( response( creditSnapshot( { plan_tier: 'personal' } ) ) );
-	await act( async () => {
-		window.dispatchEvent( new Event( 'focus' ) );
-	} );
-	expect( fetchMock ).toHaveBeenCalledTimes( 1 );
-	view.unmount();
-	renderCredits( { site: pageSite, agentConfig: newChatConfig() } );
-	await flush();
-	expect( fetchMock ).toHaveBeenCalledTimes( 2 );
-} );
 it( 'stops asking after a 404, even in a reopened or new chat, until the site changes', async () => {
 	notFound();
 	const view = renderCredits();
@@ -788,6 +761,34 @@ it( 'stops asking after a 404, even in a reopened or new chat, until the site ch
 		site: { ID: 456, domain: 'second.wordpress.com' },
 	} );
 	await flush();
+	expect( fetchMock ).toHaveBeenCalledTimes( 2 );
+} );
+it( 'skips the request when this tab already got a 404, until a turn reports a balance', async () => {
+	setKnownSiteCredits( 123, false );
+	const view = renderCredits();
+	await flush();
+	await act( async () => {
+		window.dispatchEvent( new Event( 'focus' ) );
+	} );
+	expect( fetchMock ).not.toHaveBeenCalled();
+	await receive( creditSnapshot( { plan_tier: 'personal' } ) );
+	expect( props( view.result.current ).status.remaining ).toBe( 2450 );
+	view.unmount();
+	fetchMock.mockResolvedValue( response( creditSnapshot( { plan_tier: 'personal' } ) ) );
+	renderCredits( { agentConfig: newChatConfig() } );
+	await flush();
+	expect( fetchMock ).toHaveBeenCalledTimes( 1 );
+} );
+it( 'asks again once a remembered 404 expires', async () => {
+	notFound();
+	renderCredits();
+	await flush();
+	act( () => {
+		jest.advanceTimersByTime( 30 * 60 * 1000 );
+	} );
+	await act( async () => {
+		window.dispatchEvent( new Event( 'focus' ) );
+	} );
 	expect( fetchMock ).toHaveBeenCalledTimes( 2 );
 } );
 it( 'skips the request after each turn once a 404 says the site doesn’t use AI credits', async () => {
@@ -824,17 +825,6 @@ it.each( [
 		window.dispatchEvent( new Event( 'focus' ) );
 	} );
 	expect( fetchMock ).toHaveBeenCalledTimes( 2 );
-} );
-it.each( [
-	[ 'says the site uses AI credits', { ...site, usesAiCredits: true } ],
-	[ 'can’t tell', { ...site, usesAiCredits: null } ],
-	[ 'comes from a Jetpack version without the flag', site ],
-	[ 'describes another site', { ID: 456, domain: 'other.wordpress.com', usesAiCredits: false } ],
-] )( 'still asks for a balance when the page %s', async ( _name, pageSite ) => {
-	fetchMock.mockResolvedValueOnce( response( creditSnapshot( { plan_tier: 'personal' } ) ) );
-	renderCredits( { site: pageSite } );
-	await flush();
-	expect( fetchMock ).toHaveBeenCalledTimes( 1 );
 } );
 it( 'reads the authenticated balance on opening without sending a prompt', async () => {
 	fetchMock.mockResolvedValueOnce( response( creditSnapshot( { plan_tier: 'personal' } ) ) );

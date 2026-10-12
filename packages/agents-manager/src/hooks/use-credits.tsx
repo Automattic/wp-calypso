@@ -79,8 +79,8 @@ interface UseCreditsResult {
  * Loads balances independently of prompts and keeps reads and terminal updates
  * scoped to the current site visit. The chat is composed here so refreshes can
  * avoid reading usage while a task is still running. Sites without AI credits
- * answer the balance request with a 404, so it's skipped for the rest of the page
- * load once the host page or a 404 says so, until a turn reports a balance.
+ * answer the balance request with a 404, so after one the request is skipped for
+ * that site in this tab, until a turn reports a balance or the answer expires.
  */
 export function useCredits( {
 	enabled,
@@ -97,7 +97,6 @@ export function useCredits( {
 		authenticationScope?.siteId === requestedSiteId && authenticationScope?.userId === userId
 			? requestedSiteId
 			: undefined;
-	const isWithoutAiCredits = site?.usesAiCredits === false && String( site.ID ) === siteKey;
 	const scopeIdentity = JSON.stringify( [ siteKey, userId, agentConfig.agentId, enabled ] );
 	const scope = useMemo(
 		() => ( {
@@ -106,9 +105,8 @@ export function useCredits( {
 			authProvider,
 			active: true,
 			validTerminalRevision: 0,
-			isWithoutAiCredits,
 		} ),
-		[ scopeIdentity, siteId, authProvider, isWithoutAiCredits ]
+		[ scopeIdentity, siteId, authProvider ]
 	);
 	const currentScope = useRef( scope );
 	currentScope.current = scope;
@@ -190,7 +188,7 @@ export function useCredits( {
 		if (
 			! isOpen ||
 			! scope.siteId ||
-			! ( getKnownSiteCredits( scope.siteId ) ?? ! scope.isWithoutAiCredits ) ||
+			getKnownSiteCredits( scope.siteId ) === false ||
 			! authProvider ||
 			! scope.active ||
 			currentScope.current !== scope ||
