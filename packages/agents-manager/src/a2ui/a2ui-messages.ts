@@ -7,7 +7,7 @@ export function getA2uiMessagesFromText( text?: string ): A2uiMessage[] | undefi
 	}
 	try {
 		const parsed = JSON.parse( text );
-		const payload = parsed?.tool_id === 'wpcom__a2ui' ? parsed.data : parsed;
+		const payload = parsed?.tool_id === 'wpcom__render_interactive_ui' ? parsed.data : parsed;
 		const messages = typeof payload === 'string' ? JSON.parse( payload ) : payload;
 		return Array.isArray( messages ) && messages[ 0 ]?.version === 'v0.9' ? messages : undefined;
 	} catch {}
