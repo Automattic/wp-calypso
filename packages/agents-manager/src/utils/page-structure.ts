@@ -14,6 +14,7 @@ import {
 	getSectionRootClientId,
 	getSelectedBlockClientId,
 	getTemplatePartClientIds,
+	isTemplatePartLoaded,
 	TEMPLATE_PART_BLOCK,
 	type BlockAttributes,
 	type EditorBlock,
@@ -119,16 +120,22 @@ function getPageRegions(): PageBlock[] {
 		}
 
 		const block = getBlock( clientId );
+		const innerBlocks = withControlledBlocks( getBlocks( clientId ) );
 
 		// An empty part is still sent: the agent can only fill a region it sees,
-		// and the backend names the part by its `slug` and `theme`.
+		// and the backend names the part by its `slug` and `theme`. One still
+		// loading is not, or the agent would plan against blocks yet to arrive.
+		if ( ! innerBlocks.length && ! isTemplatePartLoaded( clientId ) ) {
+			return [];
+		}
+
 		return [
 			{
 				name: block?.name ?? TEMPLATE_PART_BLOCK,
 				type,
 				clientId,
 				attributes: block?.attributes ?? {},
-				innerBlocks: withControlledBlocks( getBlocks( clientId ) ),
+				innerBlocks,
 			},
 		];
 	};
