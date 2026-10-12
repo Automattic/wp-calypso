@@ -14,14 +14,13 @@ const LAYOUTS: Record< NoteKind, ComponentType< { note: Note } > > = {
 	notice: NoticeNote,
 };
 
-/** Whether the note came with the context the simplified layouts are built from. */
 export const hasNoteContext = ( note: Note ) => !! note.meta?.kind && note.meta.kind in LAYOUTS;
 
 export default function SimplifiedNote( { note }: { note: Note } ) {
 	const Layout = LAYOUTS[ note.meta?.kind ?? 'notice' ];
 
 	return (
-		<VStack className="wpnc-simplified" spacing={ 4 }>
+		<VStack spacing={ 4 }>
 			<Layout note={ note } />
 		</VStack>
 	);

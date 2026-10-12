@@ -4,7 +4,6 @@ import { Icon, pending } from '@wordpress/icons';
 import { getModerateCommentsLink } from '../../../panel/helpers/notes';
 import type { Note } from '../../types';
 
-/** Says a comment awaits moderation, linking to where it can be moderated. */
 export default function PendingApproval( { note }: { note: Note } ) {
 	const url = getModerateCommentsLink( note );
 	const label = __( 'Pending approval' );

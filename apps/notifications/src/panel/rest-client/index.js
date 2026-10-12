@@ -884,10 +884,6 @@ function getNoteFields() {
 	return this.includeNoteContext ? `${ NOTE_FIELDS },note_context` : NOTE_FIELDS;
 }
 
-/**
- * Sets whether notes are fetched with the post, site and parent comment they
- * concern, refetching the loaded notes when that is turned on.
- */
 function setIncludeNoteContext( includeNoteContext ) {
 	if ( this.includeNoteContext === includeNoteContext ) {
 		return;

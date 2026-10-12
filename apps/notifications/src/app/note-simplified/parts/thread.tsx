@@ -61,7 +61,7 @@ const ThreadItem = ( {
 			) : (
 				photo
 			) }
-			<VStack className="wpnc-simplified__thread-content" spacing={ 1 }>
+			<VStack spacing={ 1 } expanded>
 				<HStack className="wpnc-simplified__thread-header">
 					<HStack alignment="baseline" spacing={ 2 }>
 						<HStack
@@ -83,10 +83,6 @@ const ThreadItem = ( {
 	);
 };
 
-/**
- * The conversation a note belongs to, oldest first: the comment being answered or
- * liked, then the new comment, passed as children.
- */
 export default function Thread( {
 	repliedTo,
 	commenter,
@@ -96,14 +92,12 @@ export default function Thread( {
 }: {
 	repliedTo?: NoteParentComment;
 	commenter?: NoteActor;
-	/** When the new comment was made, and anything else worth knowing about its author. */
 	meta?: ReactNode;
-	/** The new comment's moderation state, shown opposite its author. */
 	status?: ReactNode;
 	children?: ReactNode;
 } ) {
 	return (
-		<VStack as="ol" className="wpnc-simplified__thread" spacing={ 0 }>
+		<VStack as="ol" className="wpnc-simplified__thread" spacing={ 4 }>
 			{ repliedTo && (
 				<ThreadItem
 					avatar={ repliedTo.author_avatar }

@@ -5,7 +5,6 @@ import { NoteBody } from '../../templates/body';
 import { useIsPendingApproval } from '../use-is-pending-approval';
 import type { BlockWithSignature, Note } from '../../types';
 
-/** The note's own blocks, minus those the layout above already shows. */
 export default function Body( {
 	note,
 	hidePeople = false,

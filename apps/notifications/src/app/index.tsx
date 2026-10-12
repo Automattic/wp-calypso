@@ -152,7 +152,6 @@ const NotificationApp = ( {
 	locale?: string;
 	isDismissible?: boolean;
 	isViewSettingsEnabled?: boolean;
-	/** Lets the simplified layout also restyle the open note, not only the list rows. */
 	isSimplifiedNoteEnabled?: boolean;
 	preferences?: NotificationPreferences;
 	onPreferenceChange?: ( key: string, value: unknown ) => Promise< unknown >;

@@ -3,10 +3,6 @@ const HOUR = 60 * MINUTE;
 const DAY = 24 * HOUR;
 const RELATIVE_WINDOW = 5 * DAY;
 
-/**
- * Relative while the event is recent enough for "3 hours ago" to mean something,
- * a calendar date after that.
- */
 export function formatNoteTime( timestamp: string, locale: string, now = Date.now() ) {
 	const date = new Date( timestamp );
 	const elapsed = now - date.getTime();

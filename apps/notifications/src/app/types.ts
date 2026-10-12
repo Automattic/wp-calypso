@@ -144,7 +144,6 @@ export type Note = {
 			user?: string;
 			home?: string;
 		};
-		/** The rest is note context, present only when the request asks for it. */
 		kind?: NoteKind;
 		post?: NotePost;
 		site?: NoteSite;

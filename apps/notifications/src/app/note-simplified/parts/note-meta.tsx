@@ -17,7 +17,6 @@ export const NoteTime = ( { timestamp, url }: { timestamp: string; url: string }
 	);
 };
 
-/** The site of the one person behind a note, under the same rule the detailed rows use. */
 const getFollow = ( note: Note ) => {
 	if ( note.type === 'comment' || note.meta?.actor_count !== 1 ) {
 		return undefined;
@@ -32,7 +31,6 @@ const getFollow = ( note: Note ) => {
 		: undefined;
 };
 
-/** When it happened, then a Subscribe link when one person with a site did it. */
 export default function NoteMeta( { note }: { note: Note } ) {
 	const follow = getFollow( note );
 
