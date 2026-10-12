@@ -10,6 +10,7 @@
 import { __ } from '@wordpress/i18n';
 import A4ALogo from 'calypso/assets/images/a8c-for-agencies/events/a4a-logo.svg';
 import PressableLogo from 'calypso/assets/images/a8c-for-agencies/events/pressable-logo.svg';
+import VipLogo from 'calypso/assets/images/a8c-for-agencies/events/vip-logo.svg';
 import WooLogo from 'calypso/assets/images/a8c-for-agencies/events/woo-logo.svg';
 import WordPressLogo from 'calypso/assets/images/a8c-for-agencies/events/wporg-logo-green.svg';
 import type { SignupGoal } from './signup-profile';
@@ -27,7 +28,7 @@ export interface UpdateItem {
 	goals: SignupGoal[];
 	/** Event format, shown in the eyebrow (e.g. “Webinar”). */
 	format?: string;
-	/** Square logo shown beside events. */
+	/** Square logo shown beside events and announcements. */
 	logo?: string;
 	logoAlt?: string;
 	/** Short host line under an event title, e.g. “Automattic for Agencies & Pressable”. */
@@ -141,6 +142,8 @@ export const getUpdates = (): UpdateItem[] => [
 	{
 		id: 'announcement-pressable-playbook',
 		kind: 'announcement',
+		logo: PressableLogo,
+		logoAlt: __( 'Pressable' ),
 		title: __( 'New: the Pressable Migration Playbook' ),
 		description: __( 'Seven things to get right when you move client sites to Pressable.' ),
 		date: '2026-10-07',
@@ -150,6 +153,8 @@ export const getUpdates = (): UpdateItem[] => [
 	{
 		id: 'announcement-mcp',
 		kind: 'announcement',
+		logo: A4ALogo,
+		logoAlt: __( 'Automattic for Agencies' ),
 		title: __( 'Our new MCP brings A4A into your AI workflow' ),
 		description: __(
 			'Connect Claude, ChatGPT, Cursor, and more to your account for on-demand answers and reports.'
@@ -161,6 +166,8 @@ export const getUpdates = (): UpdateItem[] => [
 	{
 		id: 'announcement-referral-branding',
 		kind: 'announcement',
+		logo: WooLogo,
+		logoAlt: __( 'WooCommerce' ),
 		title: __( 'Your referrals now look as good as your agency' ),
 		description: __(
 			'Add your logo to referral emails, preview what clients see, and share a direct checkout link.'
@@ -172,14 +179,118 @@ export const getUpdates = (): UpdateItem[] => [
 	{
 		id: 'announcement-radical-speed',
 		kind: 'announcement',
+		logo: WordPressLogo,
+		logoAlt: __( 'WordPress' ),
 		title: __( 'Radical Speed Month: built fast, built for agencies' ),
 		description: __( 'What the A4A team shipped in a month of small, focused pairs.' ),
 		date: '2026-06-05',
 		url: `${ BLOG }/radical-speed-month-built-fast-built-for-agencies/`,
 		goals: [ 'other' ],
 	},
+	{
+		id: 'announcement-what-is-a4a',
+		kind: 'announcement',
+		logo: A4ALogo,
+		logoAlt: __( 'Automattic for Agencies' ),
+		title: __( 'What is Automattic for Agencies?' ),
+		description: __(
+			'The program in one read: how it supports growth, delivery, and client relationships.'
+		),
+		date: '2026-03-03',
+		url: `${ BLOG }/what-is-automattic-for-agencies/`,
+		goals: [ 'other', 'more_leads', 'passive_income' ],
+	},
+	{
+		id: 'announcement-enterprise-ai',
+		kind: 'announcement',
+		logo: VipLogo,
+		logoAlt: __( 'WordPress VIP' ),
+		title: __( 'New from WordPress VIP: where enterprise AI breaks down' ),
+		description: __(
+			'A framework from Americaneagle.com and WordPress VIP, and the projects it points to.'
+		),
+		date: '2026-09-01',
+		url: `${ BLOG }/where-enterprise-ai-breaks-down-and-how-agencies-can-scope-the-fix/`,
+		goals: [ 'more_leads' ],
+	},
+	{
+		id: 'announcement-idc-woo',
+		kind: 'announcement',
+		logo: WooLogo,
+		logoAlt: __( 'WooCommerce' ),
+		title: __( 'New IDC study from WooCommerce on scaling AI' ),
+		description: __(
+			'65% of digital leaders say their platform holds AI back. Here’s the client conversation.'
+		),
+		date: '2026-08-05',
+		url: `${ BLOG }/why-65-of-digital-leaders-say-their-platform-is-a-top-barrier-to-scaling-ai/`,
+		goals: [ 'passive_income', 'more_leads' ],
+	},
+	{
+		id: 'announcement-telex',
+		kind: 'announcement',
+		logo: WordPressLogo,
+		logoAlt: __( 'WordPress' ),
+		title: __( 'Build custom blocks faster with Telex AI' ),
+		description: __( 'Ten tips for turning a prompt into a working WordPress block.' ),
+		date: '2026-03-09',
+		url: `${ BLOG }/from-concept-to-production-10-tips-for-building-custom-wordpress-blocks-with-telex-ai/`,
+		goals: [ 'optimize_operations' ],
+	},
 
 	// Hand-picked blog posts (real posts).
+	{
+		id: 'blog-ai-brand-wrong',
+		kind: 'blog',
+		title: __( 'When AI gets your client’s brand wrong' ),
+		description: __(
+			'Five places to look for the gap between what a client says and what AI tells buyers.'
+		),
+		date: '2026-09-14',
+		url: `${ BLOG }/when-ai-gets-your-clients-brand-wrong-five-places-agencies-should-look/`,
+		imageUrl: `${ UPLOADS }/2026/09/screenshot-2026-09-11-at-3.42.08-pm.png`,
+		goals: [ 'more_leads', 'optimize_operations' ],
+	},
+	{
+		id: 'blog-agent-black-friday',
+		kind: 'blog',
+		title: __( 'An agent built a Black Friday feature in hours' ),
+		description: __( 'Plus four more takeaways from our ecommerce panel on why WooCommerce wins.' ),
+		date: '2026-08-28',
+		url: `${ BLOG }/an-agent-built-a-black-friday-feature-in-hours-plus-four-more-takeaways-from-our-ecommerce-panel/`,
+		imageUrl: `${ UPLOADS }/2026/08/a4a-webinar-social-6vxxitav.png`,
+		goals: [ 'passive_income', 'optimize_operations' ],
+	},
+	{
+		id: 'blog-wordpress-ai',
+		kind: 'blog',
+		title: __( 'Where WordPress fits in the age of AI' ),
+		description: __( 'From MCP-powered maintenance to keeping a human on every change.' ),
+		date: '2026-07-23',
+		url: `${ BLOG }/where-wordpress-fits-in-the-age-of-ai-takeaways-from-our-agency-webinar/`,
+		imageUrl: `${ UPLOADS }/2026/07/a4a-dev-team-july22-email-banner402x.png`,
+		goals: [ 'optimize_operations' ],
+	},
+	{
+		id: 'blog-enterprise-partner',
+		kind: 'blog',
+		title: __( 'From WordPress agency to enterprise partner' ),
+		description: __( 'How rtCamp learned to sell solutions, not platforms.' ),
+		date: '2026-05-08',
+		url: `${ BLOG }/from-wordpress-agency-to-enterprise-partner/`,
+		imageUrl: `${ UPLOADS }/2026/05/image-4.png`,
+		goals: [ 'more_leads' ],
+	},
+	{
+		id: 'blog-scale-delivery',
+		kind: 'blog',
+		title: __( 'How agencies scale delivery and protect margins' ),
+		description: __( 'Managing more clients and sites without the complexity.' ),
+		date: '2026-03-03',
+		url: `${ BLOG }/how-agencies-use-automattic-for-agencies-to-scale-delivery-and-protect-margins/`,
+		imageUrl: `${ UPLOADS }/2026/02/how-agencies-use-automattic-for-agencies-to-scale-delivery-and-protect-margins.png`,
+		goals: [ 'optimize_operations', 'better_hosting' ],
+	},
 	{
 		id: 'blog-super-digital',
 		kind: 'blog',

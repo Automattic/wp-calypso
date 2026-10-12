@@ -439,6 +439,7 @@ export default function AgencyOverview() {
 						<WhatsNewCard
 							goals={ tailoredPlanProfile.goals }
 							recordTracksEvent={ recordTracksEvent }
+							itemLimit={ experience === 'new' ? 6 : undefined }
 						/>
 					)
 				}

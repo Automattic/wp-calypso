@@ -29,6 +29,8 @@ import './style.scss';
 
 const BLOG_URL = 'https://automattic.com/for-agencies/blog/';
 const THUMB_SIZE = 56;
+// Event rows pair the date block with the logo, so both share one square size.
+const EVENT_ROW_TILE_SIZE = 48;
 
 const formatEventDate = ( iso: string ) =>
 	new Date( iso ).toLocaleString( undefined, {
@@ -67,7 +69,9 @@ function Eyebrow( { item }: { item: UpdateItem } ) {
 function UpdateRow( { item, onOpen }: { item: UpdateItem; onOpen: ( item: UpdateItem ) => void } ) {
 	return (
 		<HStack spacing={ 3 } alignment="flex-start" justify="flex-start">
-			{ item.imageUrl && (
+			{ /* Announcements show a product logo, like event rows; blog posts show their image. */ }
+			<EventLogo item={ item } size={ EVENT_ROW_TILE_SIZE } />
+			{ ! item.logo && item.imageUrl && (
 				<img
 					// WordPress.com resizes uploads on the fly; request a 2x thumbnail, not the full image.
 					src={ `${ item.imageUrl }?w=${ THUMB_SIZE * 2 }&h=${ THUMB_SIZE * 2 }&crop=1` }
@@ -138,9 +142,6 @@ function EventLogo( { item, size }: { item: UpdateItem; size: number } ) {
 		/>
 	);
 }
-
-// Event rows pair the date block with the logo, so both share one square size.
-const EVENT_ROW_TILE_SIZE = 48;
 
 function DateBlock( { iso }: { iso: string } ) {
 	const date = new Date( iso );
@@ -266,9 +267,15 @@ function EventRow( {
 interface WhatsNewCardProps {
 	goals: SignupGoal[];
 	recordTracksEvent?: RecordTracksEvent;
+	/** Items per tab. New agencies get more, so the card fills the space beside the growth plan. */
+	itemLimit?: number;
 }
 
-export default function WhatsNewCard( { goals, recordTracksEvent }: WhatsNewCardProps ) {
+export default function WhatsNewCard( {
+	goals,
+	recordTracksEvent,
+	itemLimit = 4,
+}: WhatsNewCardProps ) {
 	const tabs: { name: UpdateKind; title: string; empty: string }[] = [
 		{ name: 'event', title: __( 'Events' ), empty: __( 'No upcoming events right now.' ) },
 		{ name: 'announcement', title: __( 'Announcements' ), empty: __( 'No announcements yet.' ) },
@@ -293,7 +300,7 @@ export default function WhatsNewCard( { goals, recordTracksEvent }: WhatsNewCard
 			</CardHeader>
 			<TabPanel className="a4a-whats-new__tabs" tabs={ tabs }>
 				{ ( tab ) => {
-					const items = getRankedUpdates( tab.name as UpdateKind, goals );
+					const items = getRankedUpdates( tab.name as UpdateKind, goals, itemLimit );
 					const empty = tabs.find( ( { name } ) => name === tab.name )?.empty;
 					if ( tab.name === 'event' && items.length ) {
 						const [ featured, ...rest ] = items;
