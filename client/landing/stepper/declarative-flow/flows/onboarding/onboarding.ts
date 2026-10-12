@@ -517,12 +517,14 @@ const onboarding: FlowV2< typeof initialize > = {
 		 * goes straight to site creation. The free-plan and email-verification branches in the
 		 * plans handler below only apply when no plan was picked, so nothing is skipped here.
 		 */
-		const navigateAfterDomain = () => {
+		const navigateAfterDomain = ( { requiresPaidPlan = false } = {} ) => {
 			// A Simple blueprint build is a free-plan run by definition, so the plans grid has
 			// nothing to ask either. Same bookkeeping as the free branch of the plans handler
 			// below, including its email-verification gate: a fully free order never reaches
-			// checkout, so this is where the gate is met.
-			if ( blueprintSimpleSlug ) {
+			// checkout, so this is where the gate is met. A connected or transferred domain is
+			// the exception: it needs a paid plan, so that run still picks one on the grid and
+			// reaches the same destination through checkout's redirect.
+			if ( blueprintSimpleSlug && ! requiresPaidPlan ) {
 				setPlanCartItem( null );
 				setProductCartItems( [] );
 				setSignupDomainOrigin(
@@ -595,6 +597,8 @@ const onboarding: FlowV2< typeof initialize > = {
 						setSignupDomainOrigin( SIGNUP_DOMAIN_ORIGIN.USE_YOUR_DOMAIN );
 						setHideFreePlan( true );
 						setDomainCartItem( providedDependencies.domainCartItem );
+
+						return navigateAfterDomain( { requiresPaidPlan: true } );
 					}
 
 					return navigateAfterDomain();

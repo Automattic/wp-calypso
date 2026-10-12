@@ -74,6 +74,20 @@ describe( 'getSpecMetaFromQuery', () => {
 		expect( getSpecMetaFromQuery( new URLSearchParams( 'zoom_booking_url=' ) ) ).toEqual( {} );
 		expect( getSpecMetaFromQuery( new URLSearchParams( 'blueprint=zoom' ) ) ).toEqual( {} );
 	} );
+
+	// The widget may render the value as a link, so nothing but a web URL gets that far.
+	it( 'drops values that are not web URLs', () => {
+		for ( const value of [
+			'javascript:alert(document.cookie)',
+			'data:text/html,hi',
+			'scheduler.zoom.us/jason',
+			'not a url',
+		] ) {
+			expect( getSpecMetaFromQuery( new URLSearchParams( { zoom_booking_url: value } ) ) ).toEqual(
+				{}
+			);
+		}
+	} );
 } );
 
 describe( 'startBlueprintSimpleImport', () => {

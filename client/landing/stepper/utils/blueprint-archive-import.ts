@@ -48,14 +48,26 @@ export const SPEC_META_QUERY_PARAMS = [ 'zoom_booking_url' ] as const;
 export type SpecMeta = Partial< Record< ( typeof SPEC_META_QUERY_PARAMS )[ number ], string > >;
 
 /**
- * The spec meta present on a query string. Values are passed through as given: wpcom owns the
- * allow list and the sanitising, and the widget only forwards.
+ * Every spec meta entry today is a link, and the widget may well render it as one. wpcom owns
+ * the allow list and the sanitising of what is stored, but that runs after the value has been
+ * through the browser, so anything that is not a web URL is dropped here.
+ */
+function isWebUrl( value: string ): boolean {
+	try {
+		return [ 'https:', 'http:' ].includes( new URL( value ).protocol );
+	} catch {
+		return false;
+	}
+}
+
+/**
+ * The spec meta present on a query string: the allow-listed keys whose value is a web URL.
  */
 export function getSpecMetaFromQuery( query: URLSearchParams ): SpecMeta {
 	const meta: SpecMeta = {};
 	for ( const key of SPEC_META_QUERY_PARAMS ) {
 		const value = query.get( key )?.trim();
-		if ( value ) {
+		if ( value && isWebUrl( value ) ) {
 			meta[ key ] = value;
 		}
 	}
