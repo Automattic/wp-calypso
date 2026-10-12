@@ -14,9 +14,7 @@ supported post, page, or site editor URL in a browser that implements
 The adapter uses the live merged `ToolProvider` returned by `loadExternalProviders()`. That provider
 combines Agents Manager-owned abilities with external fallback providers, resolves duplicate names
 using the established precedence, and applies the existing canvas guard. WebMCP calls execute with
-the original slash-based ability name through `toolProvider.executeAbility()`. While the experiment
-is eligible, the external provider's ability-setup hook also mounts at the stable Agents Manager
-lifecycle so hook-dependent abilities can register without opening the chat route.
+the original slash-based ability name through `toolProvider.executeAbility()`.
 
 The allowlist contains:
 
