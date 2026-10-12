@@ -115,10 +115,14 @@ async function downloadJsonFile( locale ) {
 async function downloadAllJsonFiles() {
 	console.log( '🌍 Downloading Jed JSON translation files from GlotPress...\n' );
 
-	// Clean up existing files first to ensure fresh downloads
+	const locales = await fetchAvailableLocales();
+
+	if ( locales.length === 0 ) {
+		return;
+	}
+
 	cleanupExistingJsonFiles();
 
-	const locales = await fetchAvailableLocales();
 	const totalCount = locales.length;
 
 	const results = await Promise.all( locales.map( downloadJsonFile ) );
