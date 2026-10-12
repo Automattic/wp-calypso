@@ -28,8 +28,8 @@ export function parseCreditsAccess( data: unknown ): CreditsAccess {
 }
 
 /**
- * Upgrade only when checkout would accept it. Everyone else on a plan with an upgrade is
- * told who can buy, or nothing when the server can't say.
+ * Upgrade only when checkout would accept it. Everyone the server says can't upgrade a plan
+ * that has an upgrade is told who can buy, and nothing shows when the server can't say.
  */
 export function getCreditsPurchaseOptions(
 	planUpgradeUrl: string | undefined,
@@ -41,22 +41,22 @@ export function getCreditsPurchaseOptions(
 	if ( access?.canUpgrade === true ) {
 		return { upgradeUrl: planUpgradeUrl };
 	}
-	if ( access?.canBuyCredits === false ) {
+	if ( access?.canUpgrade !== false ) {
+		return {};
+	}
+	if ( access.canBuyCredits === false ) {
 		return {
 			askToUpgrade: 'site-admin',
 			purchaseHint: __( 'Ask a site admin to add more.', __i18n_text_domain__ ),
 		};
 	}
-	if ( access?.canUpgrade === false ) {
-		return {
-			askToUpgrade: 'plan-owner',
-			purchaseHint: __(
-				'This plan was purchased by a different WordPress.com account. To manage this plan, log in to that account or contact the account owner.',
-				__i18n_text_domain__
-			),
-		};
-	}
-	return {};
+	return {
+		askToUpgrade: 'plan-owner',
+		purchaseHint: __(
+			'This plan was purchased by a different WordPress.com account. To manage this plan, log in to that account or contact the account owner.',
+			__i18n_text_domain__
+		),
+	};
 }
 
 /** The low or zero-balance notice for site credits, with who to ask when the reader can't upgrade. */

@@ -67,10 +67,18 @@ describe( 'getCreditsPurchaseOptions', () => {
 		).toEqual( { askToUpgrade: 'plan-owner', purchaseHint: PLAN_OWNER_HINT } );
 	} );
 
+	it( 'points to the plan owner when the server says only that the user can’t upgrade', () => {
+		expect( getCreditsPurchaseOptions( UPGRADE_URL, { canUpgrade: false } ) ).toEqual( {
+			askToUpgrade: 'plan-owner',
+			purchaseHint: PLAN_OWNER_HINT,
+		} );
+	} );
+
 	it.each( [
 		[ 'no answer', undefined ],
 		[ 'no flags', {} ],
-		[ 'no plan answer', { canBuyCredits: true } ],
+		[ 'no plan answer to an admin', { canBuyCredits: true } ],
+		[ 'no plan answer to someone who can’t buy', { canBuyCredits: false } ],
 	] )( 'offers nothing when the server gives %s', ( _case, access ) => {
 		expect( getCreditsPurchaseOptions( UPGRADE_URL, access ) ).toEqual( {} );
 	} );

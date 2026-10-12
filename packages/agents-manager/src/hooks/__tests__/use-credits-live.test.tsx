@@ -292,6 +292,18 @@ describe( 'purchase access', () => {
 		expect( result.current.notice?.action?.href ).toBe( upgradeUrl );
 	} );
 
+	it( 'offers someone who can’t buy no guidance when the server can’t tell who bought the plan', async () => {
+		fetchMock.mockResolvedValueOnce(
+			response( { ...exhausted(), plan_tier: 'personal' }, false, null )
+		);
+		const { result } = renderCredits();
+		await flush();
+		expect( props( result.current ).upgradeUrl ).toBeUndefined();
+		expect( purchaseHint( result.current ) ).toBeUndefined();
+		expect( result.current.notice?.message ).toBe( 'You’ve used all your site credits.' );
+		expect( result.current.notice?.action ).toBeUndefined();
+	} );
+
 	it( 'offers neither a link nor guidance when the server doesn’t say', async () => {
 		fetchMock.mockResolvedValueOnce( response( { ...exhausted(), plan_tier: 'personal' }, null ) );
 		const { result } = renderCredits();
