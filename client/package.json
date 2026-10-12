@@ -99,7 +99,7 @@
 		"@tanstack/react-query": "^5.83.0",
 		"@tanstack/react-query-devtools": "^5.83.0",
 		"@tanstack/react-query-persist-client": "^5.83.0",
-		"@tanstack/react-router": "^1.114.34",
+		"@tanstack/react-router": "^1.170.42",
 		"@visx/glyph": "^4.0.0",
 		"@wordpress/a11y": "^4.48.0",
 		"@wordpress/abilities": "^0.14.0",

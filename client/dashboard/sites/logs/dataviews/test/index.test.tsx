@@ -303,7 +303,7 @@ describe( 'SiteLogsDataViews', () => {
 		// Role queries cost ~130ms each once the view options popover has opened.
 		await user.click( await screen.findByText( 'Reset view' ) );
 
-		await user.click( screen.getByLabelText( 'Add filter' ) );
+		await user.click( await screen.findByLabelText( 'Add filter' ) );
 		expect( await screen.findByRole( 'menuitem', { name: 'Request URL' } ) ).toBeVisible();
 	} );
 } );

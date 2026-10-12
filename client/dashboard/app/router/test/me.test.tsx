@@ -217,8 +217,9 @@ test( 'redirects to reauthorize when the two-step session has expired', async ()
 	const beforeLoad = meRoute.options.beforeLoad as any;
 
 	await expect( beforeLoad( { cause: 'enter' } ) ).rejects.toMatchObject( {
-		isRedirect: true,
-		href: expect.stringContaining( '/me/reauth-required' ),
-		reloadDocument: true,
+		options: {
+			href: expect.stringContaining( '/me/reauth-required' ),
+			reloadDocument: true,
+		},
 	} );
 } );

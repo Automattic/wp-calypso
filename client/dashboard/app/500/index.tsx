@@ -7,6 +7,7 @@ import Notice from '../../components/notice';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { reauthRequiredLink, wpcomLink } from '../../utils/link';
+import { toError } from '../../utils/to-error';
 import { bumpStat } from '../analytics';
 import { AuthContext, useSessionStateQuery } from '../auth';
 
@@ -165,7 +166,9 @@ function GenericError( { error }: { error: Error } ) {
 	);
 }
 
-function UnknownError( { error }: { error: Error } ) {
+function UnknownError( { error: thrown }: { error: unknown } ) {
+	const error = toError( thrown );
+
 	if ( isWpError( error ) && error.error === 'reauthorization_required' ) {
 		return <ReauthRedirect />;
 	}

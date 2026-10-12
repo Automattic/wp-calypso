@@ -4,7 +4,11 @@ import { createRouter, createRoute } from '@tanstack/react-router';
 import NotFound from '../404';
 import UnknownError from '../500';
 import { handleOnCatch, initLogger } from '../logger';
-import { normalizeRouteId, startPerformanceTracking } from '../performance-tracking';
+import {
+	getLeafRouteId,
+	normalizeRouteId,
+	startPerformanceTracking,
+} from '../performance-tracking';
 import { createAgencyRoutes } from './agency';
 import { createAgencyClientRoutes } from './agency-client';
 import { createDomainsRoutes } from './domains';
@@ -120,7 +124,7 @@ export const getRouter = ( config: AppConfig ) => {
 		},
 		defaultErrorComponent: UnknownError,
 		defaultNotFoundComponent: NotFound,
-		defaultOnCatch: ( error: Error, errorInfo: ErrorInfo ) => {
+		defaultOnCatch: ( error: unknown, errorInfo: ErrorInfo ) => {
 			handleOnCatch( error, errorInfo, router, {
 				severity: calypsoConfig( 'env_id' ) === 'dashboard-production' ? 'error' : 'debug',
 				calypso_section: 'dashboard',
@@ -143,8 +147,8 @@ export const getRouter = ( config: AppConfig ) => {
 	// instead — otherwise the tag names the route the user came from, or is
 	// absent entirely on a cold load of the crashing URL.
 	let previousRouteId: string | undefined;
-	router.subscribe( 'onBeforeLoad', () => {
-		const routeId = router.state.pendingMatches?.at( -1 )?.routeId;
+	router.subscribe( 'onBeforeLoad', ( { toLocation } ) => {
+		const routeId = getLeafRouteId( router, toLocation.pathname );
 		if ( ! routeId ) {
 			return;
 		}

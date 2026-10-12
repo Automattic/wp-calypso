@@ -19,7 +19,7 @@ const defaultUser = {
 function createTestRouter( ui: React.ReactElement ) {
 	const Component = () => ui;
 
-	return createRouter( {
+	const router = createRouter( {
 		routeTree: createRootRoute( {
 			pendingMs: 0,
 			component: () => (
@@ -29,6 +29,16 @@ function createTestRouter( ui: React.ReactElement ) {
 			),
 		} ),
 	} );
+
+	// The router resolves its first matches after mounting. Seed them so the UI
+	// renders synchronously, as tests query it right after `render()`.
+	router.stores.setMatches(
+		router
+			.matchRoutes( router.latestLocation )
+			.map( ( match ) => ( { ...match, status: 'success' as const } ) )
+	);
+
+	return router;
 }
 
 type RenderResult = ReturnType< typeof testingLibraryRender > &

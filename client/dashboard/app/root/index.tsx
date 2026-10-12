@@ -29,6 +29,7 @@ import { useOmnibarEvent } from '../omnibar/events';
 import OmnibarAgentsManager from '../omnibar/omnibar-agents-manager';
 import OmnibarHelpCenter from '../omnibar/omnibar-help-center';
 import { useSyncOmnibarSite } from '../omnibar/site';
+import { getLeafRouteId } from '../performance-tracking';
 import ResponsiveSidebar from '../responsive-sidebar';
 import { ResurrectedWelcomeModalGate } from '../resurrected-welcome-modal';
 import Snackbars from '../snackbars';
@@ -117,7 +118,7 @@ function Root() {
 		if ( isNavigating ) {
 			slowTimeout = setTimeout( () => setNavigationTime( 'slow' ), SLOW_THRESHOLD_MS );
 			verySlowTimeout = setTimeout( () => {
-				const leafRouteId = router.state.pendingMatches?.at( -1 )?.routeId;
+				const leafRouteId = getLeafRouteId( router, router.state.location.pathname );
 				if ( leafRouteId ) {
 					bumpStat(
 						'hd-very-slow-nav',

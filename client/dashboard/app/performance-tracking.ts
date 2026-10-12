@@ -8,6 +8,7 @@ import { getSiteFromCache } from './analytics/super-props';
 import { AUTH_QUERY_KEY } from './auth';
 import type { User } from '@automattic/api-core';
 import type { Collector } from '@automattic/browser-data-collector';
+import type { AnyRouter } from '@tanstack/react-router';
 
 // True until the first page finishes loading (consumed in usePerformanceTrackerStop).
 let isFirstLoad = true;
@@ -65,13 +66,21 @@ export function startPerformanceTracking( routeId: string ) {
 }
 
 /**
+ * The leaf route id for a pathname. While a navigation is pending,
+ * `router.state.location` is already the destination.
+ */
+export function getLeafRouteId( router: AnyRouter, pathname: string ) {
+	return router.getMatchedRoutes( pathname )[ 0 ].at( -1 )?.id;
+}
+
+/**
  * Hook to stop performance tracking.
  * Use in functional components where the page is considered "loaded".
  */
 export function usePerformanceTrackerStop() {
 	const { siteSlug } = useParams( { strict: false } );
 	const router = useRouter();
-	const routeId = ( router.state.pendingMatches ?? router.state.matches ).at( -1 )?.routeId;
+	const routeId = getLeafRouteId( router, router.state.location.pathname );
 
 	const normalizedRouteId = normalizeRouteId( routeId );
 

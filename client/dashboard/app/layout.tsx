@@ -72,14 +72,10 @@ function AnalyticsProviderWithClient( {
 		}
 
 		const recordUnifiedPageView = () => {
-			if ( router.state.matches.some( ( match ) => match.status === 'redirected' ) ) {
-				return;
-			}
-
 			analyticsClient.recordTracksEvent( 'wpcom_unified_admin_page_view', {
 				source: 'msd',
 				app,
-				path: router.state.location.pathname,
+				path: router.history.location.pathname,
 				route: getNormalizedPath( router.state.matches, router.basepath ),
 			} );
 		};

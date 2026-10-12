@@ -7,8 +7,10 @@ import Notice from '../../components/notice';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { DomainPermissionError } from '../../utils/domain-permissions';
+import { toError } from '../../utils/to-error';
 
-export default function DomainError( { error }: { error: Error } ) {
+export default function DomainError( { error: thrown }: { error: unknown } ) {
+	const error = toError( thrown );
 	const { domainName } = domainRoute.useParams();
 
 	if ( error.name === 'InvalidDomainError' ) {
