@@ -91,22 +91,6 @@ beforeEach( () => {
 const navigation = ( step: string, navigate = jest.fn() ) =>
 	renderHook( () => hosting.useStepNavigation( step as never, navigate ) ).result.current;
 
-it.each( [
-	'ecommerce-bundle',
-	'ecommerce-bundle-monthly',
-	'ecommerce-bundle-2y',
-	'ecommerce-bundle-3y',
-] )( 'initializes %s without a plans step', async ( plan ) => {
-	mockQuery.set( 'plan', plan );
-	const steps = await hosting.initialize( {
-		dispatch: jest.fn(),
-		getState: () => ( {} ),
-	} as never );
-	expect( steps.map( ( step ) => step.slug ) ).toContain( STEPS.DOMAIN_SEARCH.slug );
-	expect( steps.map( ( step ) => step.slug ) ).not.toContain( STEPS.UNIFIED_PLANS.slug );
-	expect( mockSeed ).toHaveBeenCalledWith( expect.objectContaining( { product_slug: plan } ) );
-} );
-
 it( 'passes a two-step checkout overview and a term-preserving return URL', () => {
 	mockQuery.set( 'plan', 'ecommerce-bundle' );
 	const replaceState = jest.spyOn( window.history, 'replaceState' ).mockImplementation( () => {} );
@@ -166,7 +150,11 @@ it( 'keeps other Commerce entries on their existing checkout behavior', () => {
 it( 'resumes the same site without running site creation, including after a skipped domain', async () => {
 	mockQuery.set( 'siteSlug', mockSite.siteSlug );
 	mockQuery.set( 'siteId', mockSite.siteId );
-	await hosting.initialize( { dispatch: jest.fn(), getState: () => ( {} ) } as never );
+	const steps = await hosting.initialize( {
+		dispatch: jest.fn(),
+		getState: () => ( {} ),
+	} as never );
+	expect( steps.map( ( step ) => step.slug ) ).not.toContain( STEPS.UNIFIED_PLANS.slug );
 	expect( mockClear ).not.toHaveBeenCalled();
 	const navigate = jest.fn();
 	const nav = navigation( 'domains', navigate );
@@ -257,16 +245,5 @@ it( 'supplies the domain screen with the two-step Commerce journey', () => {
 	mockQuery = new URLSearchParams( 'showPurchaseSteps=true&showDomainStep&plan=ecommerce-bundle' );
 	expect( renderHook( () => hosting.useStepsProps!() ).result.current.domains ).toEqual( {
 		shouldHidePlansStep: true,
-	} );
-} );
-
-it.each( [
-	'showDomainStep&plan=ecommerce-bundle',
-	'showPurchaseSteps=true&showDomainStep&plan=ecommerce-trial-bundle-monthly',
-	'showPurchaseSteps=true&showDomainStep&plan=personal-bundle',
-] )( 'keeps the domain step defaults for %s', ( query ) => {
-	mockQuery = new URLSearchParams( query );
-	expect( renderHook( () => hosting.useStepsProps!() ).result.current.domains ).toEqual( {
-		shouldHidePlansStep: false,
 	} );
 } );

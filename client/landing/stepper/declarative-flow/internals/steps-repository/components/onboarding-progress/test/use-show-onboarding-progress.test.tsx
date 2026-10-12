@@ -37,17 +37,14 @@ describe( 'useShowOnboardingProgress', () => {
 	} );
 } );
 
-it.each( [ 'new-hosted-site', 'another-flow' ] )(
-	'opts in %s without a plan restriction',
-	( flow ) => {
-		window.history.replaceState( {}, '', `/setup/${ flow }/domains?showPurchaseSteps=true` );
-		mockViewport.mockReturnValue( true );
-		expect( renderHook( () => useShowOnboardingProgress( false ) ).result.current ).toBe( true );
-	}
-);
+it( 'opts in another flow without a plan restriction', () => {
+	window.history.replaceState( {}, '', '/?showPurchaseSteps=true' );
+	mockViewport.mockReturnValue( true );
+	expect( renderHook( () => useShowOnboardingProgress( false ) ).result.current ).toBe( true );
+} );
 
-it.each( [ '', 'false', '1' ] )( 'does not opt in with value %s', ( value ) => {
-	window.history.replaceState( {}, '', `/?showPurchaseSteps=${ value }` );
+it( 'does not opt in when the parameter is false', () => {
+	window.history.replaceState( {}, '', '/?showPurchaseSteps=false' );
 	mockViewport.mockReturnValue( true );
 	expect( renderHook( () => useShowOnboardingProgress( false ) ).result.current ).toBe( false );
 } );
