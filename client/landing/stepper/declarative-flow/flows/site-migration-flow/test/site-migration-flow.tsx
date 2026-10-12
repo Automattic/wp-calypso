@@ -2,6 +2,7 @@
  * @jest-environment jsdom
  */
 // @ts-nocheck - TODO: Fix TypeScript issues
+import config from '@automattic/calypso-config';
 import { PLAN_BUSINESS_MONTHLY } from '@automattic/calypso-products';
 import { isCurrentUserLoggedIn } from '@automattic/data-stores/src/user/selectors';
 import { waitFor } from '@testing-library/react';
@@ -60,6 +61,9 @@ describe( 'Site Migration Flow', () => {
 	} );
 
 	beforeEach( () => {
+		// These cases cover the flag-off path for non-WordPress sources. The hand-off to the
+		// static-site import flow has its own cases below and enables the flag itself.
+		config.disable( 'migration/non-wordpress-source' );
 		( window.location.assign as jest.Mock ).mockClear();
 		( window.location.replace as jest.Mock ).mockClear();
 		( isCurrentUserLoggedIn as jest.Mock ).mockReturnValue( true );
@@ -504,6 +508,68 @@ describe( 'Site Migration Flow', () => {
 				expect( window.location.assign ).toMatchURL( {
 					path: '/setup/site-setup/importerSquarespace',
 					query: { from: 'https://site-to-be-migrated.com' },
+				} );
+			} );
+
+			describe( 'with the static-site import flow enabled', () => {
+				beforeEach( () => {
+					config.enable( 'migration/non-wordpress-source' );
+				} );
+
+				it( 'hands a non-WordPress source to the static-site import flow', () => {
+					runNavigation( {
+						from: STEPS.SITE_MIGRATION_IDENTIFY,
+						dependencies: {
+							action: 'continue',
+							platform: 'wix',
+							from: 'https://site-to-be-migrated.com',
+						},
+					} );
+
+					expect( window.location.assign ).toMatchURL( {
+						path: '/setup/static-site-import/static-site-import-reading',
+						query: { from: 'https://site-to-be-migrated.com', platform: 'wix' },
+					} );
+				} );
+
+				it( 'carries the destination site along', () => {
+					runNavigation( {
+						from: STEPS.SITE_MIGRATION_IDENTIFY,
+						dependencies: {
+							action: 'continue',
+							platform: 'squarespace',
+							from: 'https://site-to-be-migrated.com',
+						},
+						query: { siteId: 123, siteSlug: 'example.wordpress.com' },
+					} );
+
+					expect( window.location.assign ).toMatchURL( {
+						path: '/setup/static-site-import/static-site-import-reading',
+						query: {
+							from: 'https://site-to-be-migrated.com',
+							platform: 'squarespace',
+							siteId: '123',
+							siteSlug: 'example.wordpress.com',
+						},
+					} );
+				} );
+
+				it( 'keeps WordPress sources in this flow', async () => {
+					const destination = runNavigation( {
+						from: STEPS.SITE_MIGRATION_IDENTIFY,
+						dependencies: {
+							action: 'continue',
+							platform: 'wordpress',
+							from: 'https://site-to-be-migrated.com',
+						},
+					} );
+
+					await waitFor( () => {
+						expect( destination ).toMatchDestination( {
+							step: STEPS.SITE_CREATION_STEP,
+							query: { from: 'https://site-to-be-migrated.com' },
+						} );
+					} );
 				} );
 			} );
 		} );

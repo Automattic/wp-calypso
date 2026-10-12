@@ -29,8 +29,15 @@ describe( 'useFeedRecommendationsQuery', () => {
 	beforeAll( () => nock.disableNetConnect() );
 	afterEach( () => nock.cleanAll() );
 
-	it( 'returns an empty array while loading', () => {
-		stubItems( { list_ID: 1, items: [], success: true, page: 1, number: 2000, total_items: 0 } );
+	it( 'returns an empty array while loading', async () => {
+		const scope = stubItems( {
+			list_ID: 1,
+			items: [],
+			success: true,
+			page: 1,
+			number: 2000,
+			total_items: 0,
+		} );
 
 		const { result } = renderHook( () => useFeedRecommendationsQuery( 'test' ), {
 			wrapper: makeWrapper( newClient() ),
@@ -38,6 +45,7 @@ describe( 'useFeedRecommendationsQuery', () => {
 
 		expect( result.current.data ).toEqual( [] );
 		expect( result.current.isLoading ).toBe( true );
+		await waitFor( () => expect( scope.isDone() ).toBe( true ) );
 	} );
 
 	it( 'normalizes site-shaped items', async () => {

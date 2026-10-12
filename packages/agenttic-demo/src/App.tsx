@@ -2,9 +2,9 @@ import React, { useEffect, useState } from 'react';
 import PlaygroundShell from './playground/PlaygroundShell';
 import { DEMOS } from './playground/demos';
 
-// The sidebar demo mimics the wp-admin editor sidebar, which is dark.
+// The sidebar demos mimic the wp-admin editor sidebar, which is dark.
 const themeForDemo = ( demoId: string ): 'light' | 'dark' =>
-	demoId === 'sidebar' ? 'dark' : 'light';
+	[ 'sidebar', 'launchpad' ].includes( demoId ) ? 'dark' : 'light';
 
 const App: React.FC = () => {
 	const [ currentDemoId, setCurrentDemoId ] = useState< string >( () => {

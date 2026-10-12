@@ -29,6 +29,7 @@ jobs:
       - name: Install dependencies
         env:
           PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
+          ELECTRON_SKIP_BINARY_DOWNLOAD: 1
           SKIP_TSC: true
           SKIP_CALYPSO_POSTINSTALL: true
           YARN_ENABLE_HARDENED_MODE: false

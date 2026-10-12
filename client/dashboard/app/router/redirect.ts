@@ -1,5 +1,8 @@
+import { fetchTwoStep } from '@automattic/api-core';
 // eslint-disable-next-line no-restricted-imports
 import { redirect } from '@tanstack/react-router';
+import { reauthRequiredLink } from '../../utils/link';
+import type { TwoStep } from '@automattic/api-core';
 
 /**
  * A wrapper around TanStack Router's `redirect()` that disables view transitions.
@@ -24,4 +27,24 @@ export function redirectAsNotAllowed( options: {
 			flash: 'route-not-allowed',
 		},
 	} );
+}
+
+/**
+ * Throws a redirect to reauthorization when the session's two-step login has expired.
+ *
+ * A failed check is ignored rather than thrown: from a `beforeLoad`, an error leaves every route
+ * below that one pending, and the router never settles to show an error screen. The check is only
+ * a shortcut to reauthorization, so the routes are left to report their own errors.
+ */
+export async function redirectIfTwoStepReauthRequired() {
+	let twoStep: TwoStep;
+	try {
+		twoStep = await fetchTwoStep();
+	} catch {
+		return;
+	}
+
+	if ( twoStep.two_step_reauthorization_required ) {
+		throw dashboardRedirect( { href: reauthRequiredLink(), reloadDocument: true } );
+	}
 }

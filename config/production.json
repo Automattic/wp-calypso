@@ -108,6 +108,7 @@
 		"me/account/color-scheme-picker": true,
 		"me/legacy-contact": false,
 		"migration-flow/introductory-offer": true,
+		"migration/non-wordpress-source": false,
 		"migration/ssh-migration": false,
 		"oauth/unified-experience": false,
 		"onboarding/create-course": false,

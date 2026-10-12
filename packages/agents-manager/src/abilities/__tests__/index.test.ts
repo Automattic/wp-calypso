@@ -2,10 +2,8 @@
  * @jest-environment jsdom
  */
 jest.mock( '@wordpress/abilities', () => ( {
-	getAbility: jest.fn(),
 	registerAbility: jest.fn(),
 	registerAbilityCategory: jest.fn(),
-	unregisterAbility: jest.fn(),
 } ) );
 jest.mock( '@wordpress/data', () => ( {
 	select: () => undefined,
@@ -45,15 +43,13 @@ async function load() {
 	const editorAbilities = await import( '../editor-abilities' );
 	return { ...facade, editorAbilities, ...abilities } as typeof facade & {
 		editorAbilities: typeof editorAbilities;
-		getAbility: jest.Mock;
 		registerAbility: jest.Mock;
 		registerAbilityCategory: jest.Mock;
-		unregisterAbility: jest.Mock;
 	};
 }
 
 // The editor count reads the real editor list, so it stays correct as
-// abilities migrate in; the all-surface names are mirrored by hand (the
+// abilities are added; the all-surface names are mirrored by hand (the
 // facade does not export its list).
 // Compared by name: `load()` resets modules, so instances never match.
 const ALL_SURFACE_ABILITY_NAMES = [ 'wp-admin/navigate' ];
@@ -300,8 +296,7 @@ describe( 'executeAbilityFromList', () => {
 
 describe( 'registerEditorAbilities', () => {
 	it( 'registers the category, then the abilities, exactly once', async () => {
-		const { editorAbilities, registerAbility, registerAbilityCategory, unregisterAbility } =
-			await load();
+		const { editorAbilities, registerAbility, registerAbilityCategory } = await load();
 
 		await editorAbilities.registerEditorAbilities();
 		await editorAbilities.registerEditorAbilities();
@@ -337,34 +332,15 @@ describe( 'registerEditorAbilities', () => {
 		expect( registerAbilityCategory.mock.invocationCallOrder[ 0 ] ).toBeLessThan(
 			registerAbility.mock.invocationCallOrder[ 0 ]
 		);
-		expect( unregisterAbility ).not.toHaveBeenCalled();
 	} );
 
-	it( 'replaces a provider copy when the name is already registered', async () => {
-		const { editorAbilities, getAbility, registerAbility, unregisterAbility } = await load();
-		// The first registration is the one made to collide.
-		const { name } = editorAbilities.EDITOR_ABILITIES[ 0 ];
-		registerAbility.mockRejectedValueOnce(
-			new Error( `Ability "${ name }" is already registered` )
-		);
-		getAbility.mockReturnValue( { name } );
-
-		await editorAbilities.registerEditorAbilities();
-
-		expect( unregisterAbility ).toHaveBeenCalledWith( name );
-		// One extra call: the collision is retried after unregistering.
-		expect( registerAbility ).toHaveBeenCalledTimes( editorAbilities.EDITOR_ABILITIES.length + 1 );
-	} );
-
-	it( 'does not unregister when the failure is not a collision', async () => {
+	it( 'warns and registers the rest when one registration fails', async () => {
 		const warn = jest.spyOn( console, 'warn' ).mockImplementation( () => {} );
-		const { editorAbilities, getAbility, registerAbility, unregisterAbility } = await load();
+		const { editorAbilities, registerAbility } = await load();
 		registerAbility.mockRejectedValueOnce( new Error( 'Invalid ability definition' ) );
-		getAbility.mockReturnValue( undefined );
 
 		await editorAbilities.registerEditorAbilities();
 
-		expect( unregisterAbility ).not.toHaveBeenCalled();
 		expect( registerAbility ).toHaveBeenCalledTimes( editorAbilities.EDITOR_ABILITIES.length );
 		expect( warn ).toHaveBeenCalled();
 		warn.mockRestore();

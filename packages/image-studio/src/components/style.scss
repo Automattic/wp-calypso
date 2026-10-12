@@ -108,7 +108,9 @@ body.js.is-image-studio-open {
 		color: #fff;
 	}
 
-	a {
+	// agenttic-ui colours its own links, such as the credits notice's Upgrade link.
+	// `:where()` keeps this rule's specificity unchanged.
+	a:where(:not(.agenttic *)) {
 		color: $color-link;
 	}
 
@@ -187,11 +189,6 @@ body.js.is-image-studio-open {
 
 .image-studio-sr-only {
 	@include visually-hidden();
-}
-
-.image-studio-modal__input-toolbar {
-	display: flex;
-	gap: 8px;
 }
 
 .image-studio-modal__media-library-disclaimer {
@@ -365,7 +362,7 @@ body.js.is-image-studio-open {
 	}
 
 	.ChatFooter-module_container {
-		padding: 4px 4px 4px 8px;
+		padding: $chat-footer-padding;
 		transition: margin-top 0.3s ease;
 		border-radius: var(--radius-lg, 8px);
 		z-index: 100;
@@ -374,15 +371,9 @@ body.js.is-image-studio-open {
 			margin-top: 42px;
 		}
 
-		// Generate mode only: when picker toolbar is present
-		&:has(.image-studio-input-toolbar-item) {
-			padding: 12px;
-			position: relative !important;
-
-			// Make ChatInput container not use flex positioning for the button
-			.ChatInput-module_container {
-				position: static !important;
-			}
+		// agenttic-ui pulls the notice out by its default 8px footer padding. Match ours so it sits flush on the input.
+		[data-slot="notice"] {
+			margin: (-$chat-footer-padding) (-$chat-footer-padding) 0;
 		}
 	}
 
