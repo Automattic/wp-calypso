@@ -544,8 +544,7 @@ object RunAllUnitTests : BuildType({
 					exit 1
 				fi
 
-				# Tests import agenttic-ui's built CSS, and Storybook needs calypso-color-schemes' output.
-				yarn workspaces foreach --recursive --topological --parallel --from '{@automattic/agenttic-ui,@automattic/calypso-color-schemes}' run prepare
+				yarn build-packages:unit-tests
 			"""
 		}
 		bashNodeScript {
