@@ -20,7 +20,7 @@ import {
 	getAmPageStructure,
 } from '../abilities';
 import { findAbilityByName } from '../abilities/ability-name';
-import { withPageDesignStream } from '../abilities/stream-page-design/stream';
+import { handlePageDesignTaskUpdate } from '../abilities/stream-page-design/stream';
 import { withAbilityCompletionBroadcast } from './ability-completion-broadcast';
 import { withCanvasBinding, withCanvasGuard } from './canvas-guard';
 import { getAgentsManagerInlineData } from './get-agents-manager-inline-data';
@@ -52,7 +52,6 @@ export type AbilitiesSetupHook = ( actions: {
 	getAgentManager: typeof getAgentManager;
 	isProcessing?: boolean;
 	setIsThinking: ( isThinking: boolean ) => void;
-	deleteMarkedMessages: ( messages: Record< 'id', string >[] ) => void;
 	getSessionId: () => string | undefined;
 	setIsBuildingSite: ( isBuildingSite: boolean ) => void;
 	setThinkingMessage: ( message: string | null ) => void;
@@ -74,25 +73,11 @@ export type SiteBuildUtils = {
 };
 
 /**
- * Supported chat component types for agent messages.
- */
-type ChatComponentType =
-	// TODO (ability-migration): The picker and Help Center button types resolve
-	// to AM's own components first; drop them here once Big Sky deletes its copies.
-	| 'button-picker'
-	| 'font-picker'
-	| 'color-picker'
-	| 'chat-suggestions'
-	| 'open-help-center-button'
-	| 'title-picker'
-	| 'seo-title-picker';
-
-/**
  * Get a chat component by type for rendering in agent messages.
  * @param type - The type of chat component to get
  * @returns The React component for the specified type, or `null` if unknown
  */
-export type GetChatComponent = ( type: ChatComponentType ) => React.ComponentType< unknown > | null;
+export type GetChatComponent = ( type: string ) => React.ComponentType< unknown > | null;
 
 /**
  * Rewrite the visible transcript.
@@ -189,10 +174,7 @@ export interface LoadedProviders {
 	useCheckpoint?: UseCheckpointHook;
 	/**
 	 * Streamed task-update callback, forwarded to useAgentChat's `onTaskUpdate`.
-	 * Lets a provider react to streamed tool-argument deltas as they arrive — e.g.
-	 * paint streamed page-design block markup into the editor. First-write-wins
-	 * across providers (a singleton: the delta stream must be processed once, not
-	 * fanned out to every provider).
+	 * On editor pages it paints the streamed page-design markup as it arrives.
 	 */
 	onTaskUpdate?: ( update: unknown ) => void | Promise< void >;
 	capabilities?: ProviderCapabilities;
@@ -440,15 +422,13 @@ function withAmCheckpointActions(
 // the editor's clientIds as they are.
 const JETPACK_AI_SIDEBAR_ENVIRONMENT = 'gutenberg';
 
-// TODO (ability-migration): Big Sky's client context feeds the same keys;
-// these win by running last. Once it stops, describe the page where no
-// provider has a context too — until then Big Sky's always does.
+// Big Sky's client context feeds the same keys; these win by running last.
+// With no provider context, nothing describes the page.
 /**
  * Adds what AM knows of the page: `currentPageContent` and
  * `selectedBlockClientId` under the short ids AM's abilities resolve,
  * `currentPageContentMarkup` for the backend's page-design agent, and AM's
- * `availableCheckpoints`. A provider's list stays while AM holds none, as after
- * a failed chunk load, when its copies restore their own.
+ * `availableCheckpoints` while it holds any.
  */
 function withPageContext(
 	contextProvider: ContextProvider | undefined
@@ -626,15 +606,14 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 	let mergedAbilitiesSetup: AbilitiesSetupHook | undefined;
 	let mergedGetChatComponent: GetChatComponent | undefined;
 	let mergedSiteBuildUtils: SiteBuildUtils | undefined;
-	let mergedOnTaskUpdate: LoadedProviders[ 'onTaskUpdate' ] | undefined;
 	// OR-merged across all providers.
 	const mergedCapabilities: ProviderCapabilities = {};
 	let mergedSuppressEmptyViewDefaults = false;
 
 	// Collect exports that need to be merged across all providers.
 	// AM's own provider goes first: tool execution resolves first-write-wins
-	// by ability name, so a migrated ability executes through AM even if an
-	// external provider still ships its copy.
+	// by ability name, so AM's abilities run ahead of any provider ability with
+	// the same name.
 	const allToolProviders: ToolProvider[] = [ amToolProvider ];
 	const allContextProviders: ContextProvider[] = [];
 	const allMarkdownComponents: MarkdownComponents[] = [];
@@ -717,12 +696,9 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 			allMarkdownExtensions.push( module.markdownExtensions );
 		}
 
-		// First-write-wins for singleton exports.
+		// First-write-wins for the singleton export.
 		if ( module.siteBuildUtils && ! mergedSiteBuildUtils ) {
 			mergedSiteBuildUtils = module.siteBuildUtils;
-		}
-		if ( module.onTaskUpdate && ! mergedOnTaskUpdate ) {
-			mergedOnTaskUpdate = module.onTaskUpdate;
 		}
 
 		mergeCapabilitiesInto( mergedCapabilities, module.capabilities );
@@ -823,7 +799,7 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 	} else if ( allGetChatComponents.length > 1 ) {
 		mergedGetChatComponent = ( ( type: string ) => {
 			for ( const fn of allGetChatComponents ) {
-				const result = fn( type as ChatComponentType );
+				const result = fn( type );
 				if ( result ) {
 					return result;
 				}
@@ -883,7 +859,7 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 		markdownExtensions: { ...defaultMarkdownExtensions, ...mergedMarkdownExtensions },
 		providerIds: allProviderIds.length ? allProviderIds : undefined,
 		useAbilitiesSetup: mergedAbilitiesSetup,
-		onTaskUpdate: isEditor ? withPageDesignStream( mergedOnTaskUpdate ) : mergedOnTaskUpdate,
+		onTaskUpdate: isEditor ? handlePageDesignTaskUpdate : undefined,
 		useSuggestions: mergedUseSuggestions,
 		getChatComponent: mergedGetChatComponent,
 		transformMessages: mergedTransformMessages,
