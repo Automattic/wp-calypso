@@ -360,7 +360,7 @@ export interface AgencyResourceEvent {
 }
 
 export interface AgencyResourceEventResponse {
-	success: boolean;
+	status: 'success';
 }
 
 export interface TipaltiIFrameUrl {

@@ -164,7 +164,7 @@ describe( '<ResourceCenter>', () => {
 				resource_id: 2,
 				resource_name: 'Jetpack battle card',
 			} )
-			.reply( 200, { success: true } );
+			.reply( 200, { status: 'success' } );
 		const { recordTracksEvent } = renderLibrary();
 
 		await userEvent.click( await screen.findByRole( 'link', { name: 'Jetpack battle card' } ) );
