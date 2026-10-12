@@ -19,6 +19,7 @@ import {
 	getLiveCreditsUpgradeUrl,
 	parseCreditSnapshot,
 } from '../utils/live-credits';
+import { getKnownSiteCredits, setKnownSiteCredits } from '../utils/site-credits-availability';
 import type { AgentConfig } from '../utils/create-agent-config';
 import type { CreditSnapshot } from '../utils/live-credits';
 import type { TaskUpdate, UseAgentChatReturn } from '@automattic/agenttic-client';
@@ -77,7 +78,9 @@ interface UseCreditsResult {
 /**
  * Loads balances independently of prompts and keeps reads and terminal updates
  * scoped to the current site visit. The chat is composed here so refreshes can
- * avoid reading usage while a task is still running.
+ * avoid reading usage while a task is still running. Sites without AI credits
+ * answer the balance request with a 404, so it's skipped for the rest of the page
+ * load once the host page or a 404 says so, until a turn reports a balance.
  */
 export function useCredits( {
 	enabled,
@@ -88,15 +91,13 @@ export function useCredits( {
 	isOpen,
 }: UseCreditsOptions ): UseCreditsResult {
 	const isMockEnabled = enabled && siteKey === NO_SITE;
-	// The host page can say the site doesn't use AI credits, so its balance request would only 404.
-	const isWithoutAiCredits = site?.usesAiCredits === false && String( site.ID ) === siteKey;
-	const requestedSiteId =
-		enabled && ! isWithoutAiCredits ? getLiveCreditSiteId( siteKey, agentConfig ) : undefined;
+	const requestedSiteId = enabled ? getLiveCreditSiteId( siteKey, agentConfig ) : undefined;
 	const { authProvider, authenticationScope } = agentConfig;
 	const siteId =
 		authenticationScope?.siteId === requestedSiteId && authenticationScope?.userId === userId
 			? requestedSiteId
 			: undefined;
+	const isWithoutAiCredits = site?.usesAiCredits === false && String( site.ID ) === siteKey;
 	const scopeIdentity = JSON.stringify( [ siteKey, userId, agentConfig.agentId, enabled ] );
 	const scope = useMemo(
 		() => ( {
@@ -105,8 +106,9 @@ export function useCredits( {
 			authProvider,
 			active: true,
 			validTerminalRevision: 0,
+			isWithoutAiCredits,
 		} ),
-		[ scopeIdentity, siteId, authProvider ]
+		[ scopeIdentity, siteId, authProvider, isWithoutAiCredits ]
 	);
 	const currentScope = useRef( scope );
 	currentScope.current = scope;
@@ -161,6 +163,7 @@ export function useCredits( {
 			const snapshot = parseCreditSnapshot( update.aiCredits, scope.siteId );
 			if ( snapshot && Date.parse( snapshot.resets_at ) > Date.now() ) {
 				scope.validTerminalRevision++;
+				setKnownSiteCredits( scope.siteId, true );
 				setBalance( { scope, snapshot } );
 			} else {
 				invalidateBalance();
@@ -187,6 +190,7 @@ export function useCredits( {
 		if (
 			! isOpen ||
 			! scope.siteId ||
+			! ( getKnownSiteCredits( scope.siteId ) ?? ! scope.isWithoutAiCredits ) ||
 			! authProvider ||
 			! scope.active ||
 			currentScope.current !== scope ||
@@ -225,6 +229,9 @@ export function useCredits( {
 						typeof data.can_buy_credits === 'boolean' ? data.can_buy_credits : undefined,
 					canUpgrade: typeof data.can_upgrade === 'boolean' ? data.can_upgrade : undefined,
 				} );
+			}
+			if ( response.status === 404 ) {
+				setKnownSiteCredits( scope.siteId, false );
 			}
 			const snapshot = parseCreditSnapshot( data?.ai_credits, scope.siteId );
 			if ( snapshot && Date.parse( snapshot.resets_at ) > Date.now() ) {

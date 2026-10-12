@@ -65,15 +65,14 @@ function getNoticeCredits(
 	};
 }
 
-/**
- * Only Simple and Atomic sites can be on AI credits. Self-hosted sites skip the check, as do
- * sites the page says don't use AI credits, such as free Simple sites outside the rollout.
- */
+/** Only Simple and Atomic sites can be on AI credits, so self-hosted sites skip the check. */
 function getSiteCreditsBlogId(): number | null {
-	if ( getImageStudioSiteType() === 'jetpack' || window.imageStudioData?.usesAiCredits === false ) {
-		return null;
-	}
-	return getImageStudioBlogId();
+	return getImageStudioSiteType() === 'jetpack' ? null : getImageStudioBlogId();
+}
+
+/** The page can say the site doesn't use AI credits, so the balance request would only 404. */
+function isBalanceRequestSkipped(): boolean {
+	return window.imageStudioData?.usesAiCredits === false;
 }
 
 /** Resolves to undefined when the site is not on AI credits or the request fails. */
@@ -117,7 +116,9 @@ export interface AiCreditsState {
 }
 
 /**
- * Reads the site's AI credit balance when the modal opens and after each turn.
+ * Reads the site's AI credit balance when the modal opens, unless the page says the site
+ * doesn't use AI credits, and after each turn. A turn's balance always applies, in case the
+ * site joined AI credits after the page loaded.
  * @param options              - Hook options
  * @param options.mode         - Image Studio mode ('edit' or 'generate') for tracking
  * @param options.authProvider - The agent's credentials, once its config has loaded
@@ -130,8 +131,9 @@ export function useAiCredits( {
 	authProvider?: AuthProvider;
 } ): AiCreditsState {
 	const [ blogId ] = useState( getSiteCreditsBlogId );
+	const [ isRequestSkipped ] = useState( isBalanceRequestSkipped );
 	const [ status, setStatus ] = useState< PaidCreditsStatus | null >( null );
-	const [ isLoading, setIsLoading ] = useState( blogId !== null );
+	const [ isLoading, setIsLoading ] = useState( blogId !== null && ! isRequestSkipped );
 	const [ isLowNoticeDismissed, setIsLowNoticeDismissed ] = useState( false );
 	const [ isMeterOpen, setIsMeterOpen ] = useState( false );
 	const turnBalanceCount = useRef( 0 );
@@ -172,7 +174,7 @@ export function useAiCredits( {
 	} );
 
 	useEffect( () => {
-		if ( blogId === null || ! authProvider ) {
+		if ( blogId === null || isRequestSkipped || ! authProvider ) {
 			return;
 		}
 
@@ -196,7 +198,7 @@ export function useAiCredits( {
 			isCancelled = true;
 			clearTimeout( timeout );
 		};
-	}, [ blogId, authProvider, applyCredits ] );
+	}, [ blogId, isRequestSkipped, authProvider, applyCredits ] );
 
 	// Only a turn's last update has its final balance.
 	const onTaskUpdate = useEvent( ( update: TaskUpdate ) => {

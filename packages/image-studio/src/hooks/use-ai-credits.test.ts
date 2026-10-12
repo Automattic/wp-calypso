@@ -292,22 +292,38 @@ describe( 'useAiCredits', () => {
 		consoleError.mockRestore();
 	} );
 
-	it( 'does not ask on a self-hosted site, which can’t be on AI credits', () => {
+	it( 'does not ask on a self-hosted site, which can’t be on AI credits', async () => {
 		window.imageStudioData = { blogId: BLOG_ID, siteType: 'jetpack' };
 
 		const { result } = renderCredits();
+		await act( async () => {} );
 
 		expect( fetchMock ).not.toHaveBeenCalled();
 		expect( stateOf( result ) ).toEqual( NOTHING );
 	} );
 
-	it( 'does not ask when the page says the site doesn’t use AI credits', () => {
+	it( 'does not ask when the page says the site doesn’t use AI credits', async () => {
 		window.imageStudioData = { blogId: BLOG_ID, siteType: 'simple', usesAiCredits: false };
 
 		const { result } = renderCredits();
+		await act( async () => {} );
 
 		expect( fetchMock ).not.toHaveBeenCalled();
 		expect( stateOf( result ) ).toEqual( NOTHING );
+	} );
+
+	it( 'takes a turn’s balance when the page flag is out of date', async () => {
+		window.imageStudioData = { blogId: BLOG_ID, siteType: 'simple', usesAiCredits: false };
+		const { result } = renderCredits();
+		await act( async () => {} );
+
+		act( () => {
+			result.current.onTaskUpdate( finalUpdate( planSnapshot( 0 ) ) );
+		} );
+
+		expect( fetchMock ).not.toHaveBeenCalled();
+		expect( result.current.isLimitReached ).toBe( true );
+		expect( result.current.notice?.message ).toBe( 'You’ve used all your site credits.' );
 	} );
 
 	it.each( [

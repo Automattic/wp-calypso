@@ -6,6 +6,7 @@ import { ORCHESTRATOR_AGENT_URL } from '../../constants';
 import { creditSnapshot } from '../../utils/__tests__/fixtures/credit-snapshot';
 import { localNumber } from '../../utils/__tests__/fixtures/local-number';
 import { getCreditsLabel, getCreditsTone } from '../../utils/credits';
+import { clearKnownSiteCredits } from '../../utils/site-credits-availability';
 import { useCredits } from '../use-credits';
 import type { AgentConfig } from '../../utils/create-agent-config';
 import type { CreditsStatus } from '../../utils/credits';
@@ -124,6 +125,7 @@ beforeEach( () => {
 	authProvider.mockReset().mockResolvedValue( { Authorization: 'Bearer site-jwt' } );
 	Object.defineProperty( document, 'visibilityState', { configurable: true, value: 'visible' } );
 	globalThis.fetch = fetchMock;
+	clearKnownSiteCredits();
 } );
 afterEach( () => {
 	jest.useRealTimers();
@@ -744,6 +746,84 @@ it( 'never asks for a balance when the page says the site doesn’t use AI credi
 	expect( result.current.trailingActions ).toBeUndefined();
 	expect( result.current.notice ).toBeUndefined();
 	expect( result.current.beforeSubmit() ).toBe( true );
+} );
+const newChatConfig = () => ( {
+	...agentConfig,
+	authProvider: jest.fn().mockResolvedValue( { Authorization: 'Bearer site-jwt' } ),
+} );
+const notFound = () =>
+	fetchMock.mockResolvedValue( { ok: false, status: 404, json: async () => ( {} ) } );
+it( 'takes a turn’s balance when the page flag is out of date, then asks again, even in a new chat', async () => {
+	const pageSite = { ...site, usesAiCredits: false };
+	const view = renderCredits( { site: pageSite } );
+	await flush();
+	await receive( creditSnapshot( { plan_tier: 'personal' } ) );
+	expect( props( view.result.current ).status.remaining ).toBe( 2450 );
+	fetchMock.mockResolvedValue( response( creditSnapshot( { plan_tier: 'personal' } ) ) );
+	await act( async () => {
+		window.dispatchEvent( new Event( 'focus' ) );
+	} );
+	expect( fetchMock ).toHaveBeenCalledTimes( 1 );
+	view.unmount();
+	renderCredits( { site: pageSite, agentConfig: newChatConfig() } );
+	await flush();
+	expect( fetchMock ).toHaveBeenCalledTimes( 2 );
+} );
+it( 'stops asking after a 404, even in a reopened or new chat, until the site changes', async () => {
+	notFound();
+	const view = renderCredits();
+	await flush();
+	await act( async () => {
+		window.dispatchEvent( new Event( 'focus' ) );
+	} );
+	expect( fetchMock ).toHaveBeenCalledTimes( 1 );
+	view.unmount();
+	const reopened = renderCredits( { agentConfig: newChatConfig() } );
+	await flush();
+	expect( fetchMock ).toHaveBeenCalledTimes( 1 );
+	reopened.rerender( {
+		...defaultOptions,
+		siteKey: '456',
+		agentConfig: { ...agentConfig, authenticationScope: { siteId: 456, userId: 1 } },
+		site: { ID: 456, domain: 'second.wordpress.com' },
+	} );
+	await flush();
+	expect( fetchMock ).toHaveBeenCalledTimes( 2 );
+} );
+it( 'skips the request after each turn once a 404 says the site doesn’t use AI credits', async () => {
+	notFound();
+	const view = renderCredits();
+	await flush();
+	mockIsProcessing = true;
+	view.rerender( defaultOptions );
+	await receive( undefined );
+	mockIsProcessing = false;
+	view.rerender( defaultOptions );
+	await flush();
+	expect( fetchMock ).toHaveBeenCalledTimes( 1 );
+} );
+it( 'asks again once a turn reports a balance after a 404', async () => {
+	notFound();
+	const view = renderCredits();
+	await flush();
+	await receive( creditSnapshot( { plan_tier: 'personal' } ) );
+	expect( props( view.result.current ).status.remaining ).toBe( 2450 );
+	await act( async () => {
+		window.dispatchEvent( new Event( 'focus' ) );
+	} );
+	expect( fetchMock ).toHaveBeenCalledTimes( 2 );
+} );
+it.each( [
+	[ 'a server error', () => fetchMock.mockResolvedValue( { ok: false, status: 503 } ) ],
+	[ 'a network failure', () => fetchMock.mockRejectedValue( new Error( 'offline' ) ) ],
+] )( 'asks again on focus after %s', async ( _name, fail ) => {
+	fail();
+	renderCredits();
+	await flush();
+	await act( async () => {
+		window.dispatchEvent( new Event( 'focus' ) );
+	} );
+	expect( fetchMock ).toHaveBeenCalledTimes( 2 );
 } );
 it.each( [
 	[ 'says the site uses AI credits', { ...site, usesAiCredits: true } ],
