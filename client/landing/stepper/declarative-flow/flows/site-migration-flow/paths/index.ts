@@ -256,6 +256,21 @@ export const identifyPath = buildPathHelper<
 	typeof STEPS.SITE_MIGRATION_IDENTIFY.slug
 >( STEPS.SITE_MIGRATION_IDENTIFY.slug );
 
+export const importListPath = buildPathHelper<
+	{
+		queryParams: {
+			from: string;
+			platform: ImporterPlatform;
+			host: string;
+			isWpcom: '';
+			ssh: string;
+			action: string;
+			how: string;
+		};
+	},
+	typeof STEPS.IMPORT_LIST.slug
+>( STEPS.IMPORT_LIST.slug );
+
 export const siteSetupImportListPath = buildPathHelper< {
 	queryParams: {
 		from: string | null;

@@ -45,6 +45,7 @@ import type {
 
 const BASE_STEPS = [
 	STEPS.SITE_MIGRATION_IDENTIFY,
+	STEPS.IMPORT_LIST,
 	STEPS.SITE_MIGRATION_CHECK,
 	STEPS.SITE_MIGRATION_HOW_TO_MIGRATE,
 	STEPS.SITE_MIGRATION_UPGRADE_PLAN,
@@ -70,11 +71,12 @@ function initialize() {
 	if (
 		! config.isEnabled( 'migration/reprint-flow' ) &&
 		( matchPath( '/setup/:flow/site-migration-check/:lang?', pathname ) ||
+			matchPath( '/setup/:flow/importList/:lang?', pathname ) ||
 			matchPath( '/setup/:flow/plans/:lang?', pathname ) )
 	) {
 		window.location.replace(
 			pathname.replace(
-				/\/(site-migration-check|plans)(?=\/|$)/,
+				/\/(site-migration-check|importList|plans)(?=\/|$)/,
 				`/${ STEPS.SITE_MIGRATION_IDENTIFY.slug }`
 			) +
 				search +
@@ -98,6 +100,7 @@ function initialize() {
 		BASE_STEPS.filter(
 			( step ) =>
 				( step.slug !== STEPS.SITE_MIGRATION_CHECK.slug &&
+					step.slug !== STEPS.IMPORT_LIST.slug &&
 					step.slug !== STEPS.UNIFIED_PLANS.slug ) ||
 				config.isEnabled( 'migration/reprint-flow' )
 		)
@@ -222,6 +225,11 @@ const siteMigration: FlowV2< typeof initialize > = {
 			!! fromQueryParam &&
 			urlQueryParams.get( 'isWpcom' ) !== 'true' &&
 			urlQueryParams.get( 'how' ) !== HOW_TO_MIGRATE_OPTIONS.DO_IT_FOR_ME;
+		const isManualImport =
+			config.isEnabled( 'migration/reprint-flow' ) &&
+			! fromQueryParam &&
+			platformQueryParam !== 'unknown' &&
+			platformQueryParam !== 'wordpress';
 		const configureAndContinue = async (
 			destinationId: number,
 			destinationSlug: string,
@@ -363,28 +371,16 @@ const siteMigration: FlowV2< typeof initialize > = {
 						config.isEnabled( 'migration/reprint-flow' ) &&
 						action === 'skip_platform_identification'
 					) {
-						if ( hasDestinationSite ) {
-							return exitFlow(
-								paths.siteSetupImportListPath( {
-									siteId,
-									siteSlug,
-									from: '',
-									origin: STEPS.SITE_MIGRATION_IDENTIFY.slug,
-									backToFlow: `/${ flowPath }/${ STEPS.SITE_MIGRATION_IDENTIFY.slug }`,
-								} )
-							);
-						}
-						const context = {
-							from: '',
-							platform: 'unknown',
-							host: '',
-							isWpcom: '',
-							ssh: '',
-						} as const;
 						return navigate(
-							userHasOtherWPComSites
-								? paths.sitePickerPath( context )
-								: paths.siteCreationPath( context )
+							paths.importListPath( {
+								from: '',
+								platform: 'unknown',
+								host: '',
+								isWpcom: '',
+								ssh: '',
+								action: '',
+								how: '',
+							} )
 						);
 					}
 
@@ -493,6 +489,25 @@ const siteMigration: FlowV2< typeof initialize > = {
 					return navigate( paths.siteCreationPath( { from, platform, host } ) );
 				}
 
+				case STEPS.IMPORT_LIST.slug: {
+					if ( ! config.isEnabled( 'migration/reprint-flow' ) ) {
+						return navigate( STEPS.SITE_MIGRATION_IDENTIFY.slug );
+					}
+					const { platform } = providedDependencies;
+					if ( platform === 'wordpress' ) {
+						return navigate( paths.identifyPath( { from: '' } ) );
+					}
+					if ( hasSite( siteId, siteSlug ) ) {
+						return exitFlow( getFullImporterUrl( platform, siteSlug, '' ) );
+					}
+					const context = { from: '', platform };
+					return navigate(
+						userHasOtherWPComSites
+							? paths.sitePickerPath( context )
+							: paths.siteCreationPath( context )
+					);
+				}
+
 				case STEPS.UNIFIED_PLANS.slug: {
 					if ( ! isReprintSource ) {
 						return navigate( STEPS.SITE_MIGRATION_IDENTIFY.slug );
@@ -554,6 +569,9 @@ const siteMigration: FlowV2< typeof initialize > = {
 
 							if ( isReprintSource && fromQueryParam && hasSite( siteId, siteSlug ) ) {
 								return showWordpressDestination( siteId, siteSlug, fromQueryParam, host );
+							}
+							if ( isManualImport ) {
+								return exitFlow( getFullImporterUrl( platformQueryParam, siteSlug, '' ) );
 							}
 
 							// Check if this is an SSH migration flow
@@ -698,6 +716,9 @@ const siteMigration: FlowV2< typeof initialize > = {
 					}
 
 					recordSignupComplete( { siteId } );
+					if ( isManualImport ) {
+						return exitFlow( getFullImporterUrl( platformQueryParam, siteSlug, '' ), true );
+					}
 
 					if ( isReprintSource && fromQueryParam ) {
 						return configureAndContinue( siteId, siteSlug, fromQueryParam, true );
@@ -1144,11 +1165,17 @@ const siteMigration: FlowV2< typeof initialize > = {
 			config.isEnabled( 'migration/reprint-flow' ) &&
 			window.history.length > 1 &&
 			( currentStep === STEPS.SITE_MIGRATION_IDENTIFY.slug ||
+				currentStep === STEPS.IMPORT_LIST.slug ||
 				currentStep === STEPS.SITE_MIGRATION_CHECK.slug ||
+				( isManualImport &&
+					( currentStep === STEPS.PICK_SITE.slug ||
+						currentStep === STEPS.SITE_CREATION_STEP.slug ) ) ||
 				( isReprintSource &&
 					( currentStep === STEPS.UNIFIED_PLANS.slug || currentStep === STEPS.PICK_SITE.slug ) ) )
 		) {
 			goBack = () => navigateHistory( -1 );
+		} else if ( currentStep === STEPS.IMPORT_LIST.slug ) {
+			goBack = () => replace( STEPS.SITE_MIGRATION_IDENTIFY.slug );
 		} else if (
 			isReprintSource &&
 			fromQueryParam &&
