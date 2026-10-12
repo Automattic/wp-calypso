@@ -39,8 +39,6 @@ export interface PrototypeSettings {
 	discussionNotes: string;
 	/** Overrides the account's influenced revenue (IAR); null keeps the real value. */
 	influencedRevenue: number | null;
-	/** Set once a new agency opens a growth plan step; reveals the influenced revenue meter. */
-	hasStartedPlan: boolean;
 	isPanelOpen: boolean;
 }
 
@@ -52,7 +50,6 @@ const DEFAULT_SETTINGS: PrototypeSettings = {
 	completedTodoIds: [],
 	discussionNotes: '',
 	influencedRevenue: null,
-	hasStartedPlan: false,
 	isPanelOpen: true,
 };
 
@@ -108,7 +105,6 @@ function parseSettings( raw: string | null ): PrototypeSettings {
 			parsed.influencedRevenue >= 0
 				? Math.min( parsed.influencedRevenue, 10_000_000 )
 				: null,
-		hasStartedPlan: parsed.hasStartedPlan === true,
 		isPanelOpen:
 			typeof parsed.isPanelOpen === 'boolean' ? parsed.isPanelOpen : DEFAULT_SETTINGS.isPanelOpen,
 	};
@@ -132,7 +128,6 @@ export const QUICK_SCENARIOS: Record< QuickScenarioId, Partial< PrototypeSetting
 		approvalStatus: 'approved',
 		tierId: 'emerging-partner',
 		influencedRevenue: 0,
-		hasStartedPlan: false,
 		completedTodoIds: [],
 		discussionNotes: '',
 	},
@@ -143,7 +138,6 @@ export const QUICK_SCENARIOS: Record< QuickScenarioId, Partial< PrototypeSetting
 		approvalStatus: 'approved',
 		tierId: 'emerging-partner',
 		influencedRevenue: 780,
-		hasStartedPlan: true,
 		completedTodoIds: [],
 		discussionNotes: '',
 	},

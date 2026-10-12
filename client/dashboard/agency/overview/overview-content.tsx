@@ -286,6 +286,20 @@ export default function AgencyOverviewContent( {
 		);
 	}
 
+	// PROTOTYPE: a new agency with nothing else in the left column gets a plan and What's
+	// new of the same height.
+	if ( tailoredPlan && ! leadsCard && hideEarningsCards ) {
+		return (
+			<Grid columns={ columns } gap={ gap }>
+				<div className="a4a-fill-height">{ tailoredPlan }</div>
+				<VStack spacing={ spacing } justify="flex-start" className="a4a-fill-height">
+					{ ! tierInPlan && tierCard }
+					{ whatsNew }
+				</VStack>
+			</Grid>
+		);
+	}
+
 	if ( tailoredPlan ) {
 		return (
 			<VStack spacing={ spacing }>

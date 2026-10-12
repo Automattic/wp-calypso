@@ -304,9 +304,10 @@ export default function AgencyOverview() {
 			onScheduleCall={ scheduleCall }
 			isSchedulingCall={ isSchedulingCall }
 			tierStrip={ hasTierInPlan && tierStrip }
-			showTierProgress={ influencedRevenue > 0 || prototypeSettings.hasStartedPlan }
+			// PROTOTYPE: new agencies never see the tier and IAR meter; getting-started and
+			// established agencies do.
+			showTierProgress={ experience !== 'new' }
 			completedStepIds={ isGettingStarted ? GETTING_STARTED_DONE_STEPS : undefined }
-			onStartPlan={ () => updatePrototypeSettings( { hasStartedPlan: true } ) }
 			links={ {
 				partnerDirectory: PARTNER_DIRECTORY_ROUTE,
 				tiers: '/tiers',

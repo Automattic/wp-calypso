@@ -64,13 +64,10 @@ function RankBadge( { rank }: { rank: number } ) {
 function StepRow( {
 	step,
 	shouldUseRouterLink,
-	onActivate,
 	isDone = false,
 }: {
 	step: PlanStep;
 	shouldUseRouterLink?: boolean;
-	/** Called when the agency opens the step, before its action runs. */
-	onActivate?: () => void;
 	/** Already done (e.g. they own a Pressable plan); still links to the destination. */
 	isDone?: boolean;
 } ) {
@@ -106,28 +103,21 @@ function StepRow( {
 	};
 
 	if ( typeof step.action === 'function' ) {
-		const action = step.action;
 		return (
-			<Button
-				{ ...props }
-				onClick={ () => {
-					onActivate?.();
-					action();
-				} }
-			>
+			<Button { ...props } onClick={ step.action }>
 				{ content }
 			</Button>
 		);
 	}
 	if ( shouldUseRouterLink ) {
 		return (
-			<RouterLinkButton { ...props } to={ step.action } onClick={ onActivate }>
+			<RouterLinkButton { ...props } to={ step.action }>
 				{ content }
 			</RouterLinkButton>
 		);
 	}
 	return (
-		<Button { ...props } href={ step.action } onClick={ onActivate }>
+		<Button { ...props } href={ step.action }>
 			{ content }
 		</Button>
 	);
@@ -226,12 +216,10 @@ interface TailoredPlanCardProps {
 	onScheduleCall?: () => void;
 	isSchedulingCall?: boolean;
 	shouldUseRouterLink?: boolean;
-	/** Compact tier summary for new agencies, shown once `showTierProgress` is true. */
+	/** Compact tier summary, shown when `showTierProgress` is true. */
 	tierStrip?: ReactNode;
-	/** The influenced revenue meter waits until the agency acts on its plan. */
+	/** Shows the tier and influenced revenue meter (partly invested agencies only). */
 	showTierProgress?: boolean;
-	/** Called the first time the agency opens a step. */
-	onStartPlan?: () => void;
 	/** Steps the agency has already done, shown with a Done badge. */
 	completedStepIds?: string[];
 }
@@ -243,14 +231,12 @@ function CompactSection( {
 	rank,
 	shouldUseRouterLink,
 	defaultOpen = false,
-	onActivateStep,
 	completedStepIds = [],
 }: {
 	section: ReturnType< typeof getTailoredPlan >[ number ];
 	rank: number;
 	shouldUseRouterLink?: boolean;
 	defaultOpen?: boolean;
-	onActivateStep?: () => void;
 	completedStepIds?: string[];
 } ) {
 	const [ isOpen, setIsOpen ] = useState( defaultOpen );
@@ -311,7 +297,6 @@ function CompactSection( {
 								key={ step.id }
 								step={ step }
 								shouldUseRouterLink={ shouldUseRouterLink }
-								onActivate={ onActivateStep }
 								isDone={ completedStepIds.includes( step.id ) }
 							/>
 						) ) }
@@ -375,7 +360,6 @@ export default function TailoredPlanCard( {
 	shouldUseRouterLink,
 	tierStrip,
 	showTierProgress = false,
-	onStartPlan,
 	completedStepIds = [],
 }: TailoredPlanCardProps ) {
 	const isSmallViewport = useViewportMatch( 'medium', '<' );
@@ -435,7 +419,7 @@ export default function TailoredPlanCard( {
 				completedStepIds.length
 					? __( 'You’re off to a good start. Here’s what’s next, with your top priority first.' )
 					: __(
-							'Your growth plan is below, built from what you told us at signup. Start with your top priority, and we’ll help along the way.'
+							'To get the most out of the program, start with a quick overview and a free call with an advisor. Your growth plan below is built from what you told us at signup, top priority first.'
 						)
 			}
 		/>
@@ -451,9 +435,8 @@ export default function TailoredPlanCard( {
 						section={ section }
 						rank={ index + 1 }
 						shouldUseRouterLink={ shouldUseRouterLink }
-						// With a booked call they've already started, so every goal starts closed.
-						defaultOpen={ index === 0 && ! booked }
-						onActivateStep={ showTierProgress ? undefined : onStartPlan }
+						// The top priority starts open; the rest start closed.
+						defaultOpen={ index === 0 }
 						completedStepIds={ completedStepIds }
 					/>
 				</CardBody>
@@ -500,44 +483,39 @@ export default function TailoredPlanCard( {
 				<CardHeader>
 					<VStack spacing={ 6 }>
 						{ welcomeHeader }
-						<VStack spacing={ 3 }>
-							<Text size={ 11 } weight={ 500 } lineHeight="16px" upperCase variant="muted">
-								{ __( 'Get the most out of the program' ) }
-							</Text>
-							<Grid columns={ isSmallViewport ? 1 : 2 } gap="lg">
-								<StartTile
-									title={ __( 'Watch the program overview' ) }
-									description={ __(
-										'A short tour of tiers, referrals, hosting, and leads, and how they add up.'
-									) }
-									action={
-										<Button
-											variant="secondary"
-											size="compact"
-											icon={ video }
-											onClick={ () => setOpenVideo( 'overview' ) }
-										>
-											{ __( 'Watch the video' ) }
-										</Button>
-									}
-								/>
-								<StartTile
-									title={ __( 'Schedule your free advisor call' ) }
-									description={ getAdvisorFocus( profile.goals[ 0 ], profile.agencyName ) }
-									action={
-										<Button
-											variant="primary"
-											size="compact"
-											onClick={ onScheduleCall }
-											isBusy={ isSchedulingCall }
-											disabled={ ! onScheduleCall || isSchedulingCall }
-										>
-											{ __( 'Schedule a call' ) }
-										</Button>
-									}
-								/>
-							</Grid>
-						</VStack>
+						<Grid columns={ isSmallViewport ? 1 : 2 } gap="lg">
+							<StartTile
+								title={ __( 'Watch the program overview' ) }
+								description={ __(
+									'A short tour of tiers, referrals, hosting, and leads, and how they add up.'
+								) }
+								action={
+									<Button
+										variant="secondary"
+										size="compact"
+										icon={ video }
+										onClick={ () => setOpenVideo( 'overview' ) }
+									>
+										{ __( 'Watch the video' ) }
+									</Button>
+								}
+							/>
+							<StartTile
+								title={ __( 'Schedule your free advisor call' ) }
+								description={ getAdvisorFocus( profile.goals[ 0 ], profile.agencyName ) }
+								action={
+									<Button
+										variant="primary"
+										size="compact"
+										onClick={ onScheduleCall }
+										isBusy={ isSchedulingCall }
+										disabled={ ! onScheduleCall || isSchedulingCall }
+									>
+										{ __( 'Schedule a call' ) }
+									</Button>
+								}
+							/>
+						</Grid>
 					</VStack>
 				</CardHeader>
 				{ /* CardHeader draws its own bottom border, so only later blocks get a divider. */ }

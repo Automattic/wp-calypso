@@ -161,7 +161,6 @@ export function resetOverviewToNewAgency() {
 				approvalStatus: 'approved',
 				tierId: 'emerging-partner',
 				influencedRevenue: 0,
-				hasStartedPlan: false,
 				completedTodoIds: [],
 				discussionNotes: '',
 			} )
