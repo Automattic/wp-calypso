@@ -21,10 +21,12 @@ import {
 } from 'calypso/signup/storageUtils';
 import { isUserEligibleForFreeHostingTrial } from 'calypso/state/selectors/is-user-eligible-for-free-hosting-trial';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
+import { useFlowLocale } from '../../../hooks/use-flow-locale';
 import { useQuery } from '../../../hooks/use-query';
 import { ONBOARD_STORE } from '../../../stores';
 import { getCurrentQueryParams } from '../../../utils/get-current-query-params';
 import { stepsWithRequiredLogin } from '../../../utils/steps-with-required-login';
+import { withLocale } from '../../helpers/with-locale';
 import { STEPS } from '../../internals/steps';
 import { ProcessingResult } from '../../internals/steps-repository/processing-step/constants';
 import { getOnboardingStepperPosition } from '../onboarding/step-counter-config';
@@ -135,6 +137,7 @@ const hosting: FlowV2< typeof initialize > = {
 
 		const query = useQuery();
 
+		const locale = useFlowLocale();
 		const utmSource = query.get( 'utm_source' );
 		const studioSiteId = query.get( 'studioSiteId' );
 		const autoOpenPush = query.get( 'autoOpenPush' );
@@ -276,7 +279,7 @@ const hosting: FlowV2< typeof initialize > = {
 								resetCouponCode();
 							}
 							const backUrl = new URL(
-								addQueryArgs( '/setup/new-hosted-site/domains', {
+								addQueryArgs( withLocale( '/setup/new-hosted-site/domains', locale ), {
 									...Object.fromEntries( query ),
 									plan: planCartItem?.product_slug ?? query.get( 'plan' ),
 									siteId,

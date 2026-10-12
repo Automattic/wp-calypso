@@ -1,3 +1,4 @@
+import { TITAN_MAIL_MONTHLY_SLUG } from '@automattic/calypso-products';
 import cartManagerClient from '@automattic/onboarding/src/cart/create-cart-manager-client';
 import { resumeCommerceCart } from '../resume-commerce-cart';
 
@@ -18,11 +19,25 @@ beforeEach( () => {
 			products: [
 				plan,
 				{ product_slug: 'domain_reg', meta: 'old-example.com', is_domain_registration: true },
+				{ product_slug: 'gapps', meta: 'old-example.com' },
+				{ product_slug: TITAN_MAIL_MONTHLY_SLUG, meta: 'old-example.com' },
 				{ product_slug: 'gapps', meta: 'example.com' },
 			],
 		} ),
 		actions: { replaceProductsInCart },
 	} as unknown as ReturnType< typeof cartManagerClient.forCartKey > );
+} );
+
+it( 'keeps email products when their domain is selected again', async () => {
+	await resumeCommerceCart( 'example.wordpress.com', plan, [
+		{ ...domain, meta: 'old-example.com' },
+	] );
+	expect( replaceProductsInCart.mock.calls[ 0 ][ 0 ] ).toEqual(
+		expect.arrayContaining( [
+			expect.objectContaining( { product_slug: 'gapps', meta: 'old-example.com' } ),
+			expect.objectContaining( { product_slug: TITAN_MAIL_MONTHLY_SLUG, meta: 'old-example.com' } ),
+		] )
+	);
 } );
 
 it( 'replaces the selected domain while keeping other products and the plan term', async () => {

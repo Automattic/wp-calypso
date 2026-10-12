@@ -23,6 +23,7 @@ jest.mock( '@automattic/calypso-products', () => ( {
 jest.mock( 'calypso/landing/stepper/stores', () => ( { ONBOARD_STORE: 'ONBOARD_STORE' } ) );
 
 let mockQuery = new URLSearchParams();
+let mockLocale = 'en';
 let mockPendingAction: () => Promise< unknown >;
 const mockPlan = { product_slug: 'ecommerce-bundle-2y' };
 const mockReset = jest.fn();
@@ -48,6 +49,9 @@ jest.mock( '@wordpress/data', () => ( {
 	dispatch: () => ( { resetOnboardStore: mockReset, setPlanCartItem: mockSeed } ),
 } ) );
 jest.mock( 'calypso/landing/stepper/hooks/use-query', () => ( { useQuery: () => mockQuery } ) );
+jest.mock( 'calypso/landing/stepper/hooks/use-flow-locale', () => ( {
+	useFlowLocale: () => mockLocale,
+} ) );
 jest.mock( 'calypso/landing/stepper/utils/get-current-query-params', () => ( {
 	getCurrentQueryParams: () => mockQuery,
 } ) );
@@ -75,6 +79,7 @@ jest.mock( '../resume-commerce-cart', () => ( { resumeCommerceCart: jest.fn() } 
 
 beforeEach( () => {
 	jest.clearAllMocks();
+	mockLocale = 'en';
 	jest.mocked( resumeCommerceCart ).mockResolvedValue( mockPlan );
 	mockSavedFlow = NEW_HOSTED_SITE_FLOW;
 	mockQuery = new URLSearchParams( {
@@ -91,40 +96,48 @@ beforeEach( () => {
 const navigation = ( step: string, navigate = jest.fn() ) =>
 	renderHook( () => hosting.useStepNavigation( step as never, navigate ) ).result.current;
 
-it( 'passes a two-step checkout overview and a term-preserving return URL', () => {
-	mockQuery.set( 'plan', 'ecommerce-bundle' );
-	const replaceState = jest.spyOn( window.history, 'replaceState' ).mockImplementation( () => {} );
-	const nav = navigation( 'processing' );
-	act( () =>
-		nav.submit( {
-			slug: 'processing',
-			providedDependencies: {
-				processingResult: ProcessingResult.SUCCESS,
-				...mockSite,
-				goToCheckout: true,
-			},
-		} as never )
-	);
-	const checkout = new URL(
-		jest.mocked( window.location.assign ).mock.calls[ 0 ][ 0 ] as string,
-		'https://wordpress.com'
-	);
-	expect( checkout.searchParams.get( 'flow' ) ).toBe( NEW_HOSTED_SITE_FLOW );
-	expect( checkout.searchParams.get( 'steps_current' ) ).toBe( '2' );
-	expect( checkout.searchParams.get( 'steps_total' ) ).toBe( '2' );
-	const back = new URL( checkout.searchParams.get( 'checkoutBackUrl' )! );
-	expect( back.origin ).toBe( window.location.origin );
-	expect( back.pathname ).toBe( '/setup/new-hosted-site/domains' );
-	expect( back.searchParams.get( 'plan' ) ).toBe( mockPlan.product_slug );
-	expect( back.searchParams.get( 'siteId' ) ).toBe( mockSite.siteId );
-	expect( back.searchParams.get( 'siteSlug' ) ).toBe( mockSite.siteSlug );
-	expect( back.searchParams.get( 'showPurchaseSteps' ) ).toBe( 'true' );
-	expect( checkout.searchParams.get( 'redirect_to' ) ).toContain(
-		'/setup/transferring-hosted-site'
-	);
-	expect( replaceState ).toHaveBeenCalledWith( window.history.state, '', back.href );
-	replaceState.mockRestore();
-} );
+it.each( [ 'en', 'fr' ] )(
+	'preserves the checkout steps, billing term, and %s locale',
+	( locale ) => {
+		mockLocale = locale;
+		mockQuery.set( 'plan', 'ecommerce-bundle' );
+		const replaceState = jest
+			.spyOn( window.history, 'replaceState' )
+			.mockImplementation( () => {} );
+		const nav = navigation( 'processing' );
+		act( () =>
+			nav.submit( {
+				slug: 'processing',
+				providedDependencies: {
+					processingResult: ProcessingResult.SUCCESS,
+					...mockSite,
+					goToCheckout: true,
+				},
+			} as never )
+		);
+		const checkout = new URL(
+			jest.mocked( window.location.assign ).mock.calls[ 0 ][ 0 ] as string,
+			'https://wordpress.com'
+		);
+		expect( checkout.searchParams.get( 'flow' ) ).toBe( NEW_HOSTED_SITE_FLOW );
+		expect( checkout.searchParams.get( 'steps_current' ) ).toBe( '2' );
+		expect( checkout.searchParams.get( 'steps_total' ) ).toBe( '2' );
+		const back = new URL( checkout.searchParams.get( 'checkoutBackUrl' )! );
+		expect( back.origin ).toBe( window.location.origin );
+		expect( back.pathname ).toBe(
+			`/setup/new-hosted-site/domains${ locale === 'en' ? '' : '/fr' }`
+		);
+		expect( back.searchParams.get( 'plan' ) ).toBe( mockPlan.product_slug );
+		expect( back.searchParams.get( 'siteId' ) ).toBe( mockSite.siteId );
+		expect( back.searchParams.get( 'siteSlug' ) ).toBe( mockSite.siteSlug );
+		expect( back.searchParams.get( 'showPurchaseSteps' ) ).toBe( 'true' );
+		expect( checkout.searchParams.get( 'redirect_to' ) ).toContain(
+			'/setup/transferring-hosted-site'
+		);
+		expect( replaceState ).toHaveBeenCalledWith( window.history.state, '', back.href );
+		replaceState.mockRestore();
+	}
+);
 
 it( 'keeps other Commerce entries on their existing checkout behavior', () => {
 	mockQuery.delete( 'showPurchaseSteps' );

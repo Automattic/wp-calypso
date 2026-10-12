@@ -4,6 +4,8 @@ import {
 	isDomainTransfer,
 	isDotComPlan,
 	isEcommercePlan,
+	isGSuiteOrExtraLicenseOrGoogleWorkspace,
+	isTitanMail,
 	PLAN_ECOMMERCE_TRIAL_MONTHLY,
 } from '@automattic/calypso-products';
 import { NEW_HOSTED_SITE_FLOW } from '@automattic/onboarding';
@@ -25,12 +27,27 @@ export async function resumeCommerceCart(
 				isEcommercePlan( product.product_slug ) &&
 				product.product_slug !== PLAN_ECOMMERCE_TRIAL_MONTHLY
 		) ?? plan;
+	const discardedDomains = new Set(
+		cart.products
+			.filter(
+				( product ) =>
+					( isDomainRegistration( product ) ||
+						isDomainMapping( product ) ||
+						isDomainTransfer( product ) ) &&
+					! domains.some( ( domain ) => domain.meta === product.meta )
+			)
+			.map( ( product ) => product.meta )
+	);
 	const otherProducts = cart.products.filter(
 		( product ) =>
 			! isDotComPlan( product ) &&
 			! isDomainRegistration( product ) &&
 			! isDomainMapping( product ) &&
-			! isDomainTransfer( product )
+			! isDomainTransfer( product ) &&
+			! (
+				discardedDomains.has( product.meta ) &&
+				( isGSuiteOrExtraLicenseOrGoogleWorkspace( product ) || isTitanMail( product ) )
+			)
 	);
 	await manager.actions.replaceProductsInCart(
 		[ ...otherProducts, selectedPlan, ...domains ].map( ( product ) =>
