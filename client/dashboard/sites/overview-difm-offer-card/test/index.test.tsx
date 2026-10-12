@@ -89,17 +89,19 @@ describe( 'DIFMOfferCard', () => {
 			upsell_id: 'site-overview-difm-offer',
 			upsell_feature_id: 'difm-offer',
 			variation: 'treatment',
+			cta_name: 'site-overview-difm-offer',
+			cta_size: 'regular',
 		};
 
 		const { recordTracksEvent } = render( <DIFMOfferCard site={ mockSite } /> );
 		await userEvent.click( await screen.findByRole( 'button', { name: 'See the offer' } ) );
 
 		expect( recordTracksEvent ).toHaveBeenCalledWith(
-			'calypso_dashboard_upsell_impression',
+			'calypso_banner_cta_impression',
 			expectedProperties
 		);
 		expect( recordTracksEvent ).toHaveBeenCalledWith(
-			'calypso_dashboard_upsell_click',
+			'calypso_banner_cta_click',
 			expectedProperties
 		);
 	} );
@@ -197,7 +199,8 @@ describe( 'DIFMOfferCard', () => {
 			screen.queryByRole( 'heading', { name: 'No time to build your site?' } )
 		).not.toBeInTheDocument();
 		expect( screen.queryByText( 'We’ll bring your vision to life' ) ).not.toBeInTheDocument();
-		expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_dashboard_upsell_dismiss', {
+		expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_banner_dismiss', {
+			cta_name: 'site-overview-difm-offer',
 			upsell_id: 'site-overview-difm-offer',
 			upsell_feature_id: 'difm-offer',
 			variation: 'treatment',

@@ -18,6 +18,13 @@ import './style.scss';
 
 const UPSELL_ID = 'site-overview-difm-offer';
 const UPSELL_FEATURE_ID = 'difm-offer';
+// The themes banner and the Site Setup banner record these names through Calypso's Banner,
+// so one query covers every DIFM offer surface.
+const TRACKS_EVENT_NAMES = {
+	impression: 'calypso_banner_cta_impression',
+	click: 'calypso_banner_cta_click',
+};
+const DISMISS_EVENT = 'calypso_banner_dismiss';
 
 /**
  * Fills the DIFM slot in the site overview. A user in a treatment arm of the DIFM
@@ -66,13 +73,15 @@ export default function DIFMOfferCard( { site }: { site: Site } ) {
 		return null;
 	}
 
-	const tracksProperties = { variation };
+	// Banner adds cta_name and cta_size to its impression and click, and cta_name to its dismiss.
+	const tracksProperties = { variation, cta_name: UPSELL_ID, cta_size: 'regular' };
 
 	const handleDismiss = () => {
 		setIsDismissedLocally( true );
 		saveDismissal( new Date().toISOString() );
-		recordTracksEvent( 'calypso_dashboard_upsell_dismiss', {
-			...tracksProperties,
+		recordTracksEvent( DISMISS_EVENT, {
+			variation,
+			cta_name: UPSELL_ID,
 			upsell_id: UPSELL_ID,
 			upsell_feature_id: UPSELL_FEATURE_ID,
 		} );
@@ -94,6 +103,7 @@ export default function DIFMOfferCard( { site }: { site: Site } ) {
 						upsellId={ UPSELL_ID }
 						upsellFeatureId={ UPSELL_FEATURE_ID }
 						tracksProperties={ tracksProperties }
+						tracksEventNames={ TRACKS_EVENT_NAMES }
 						onClick={ () => {
 							// The offer modal opens here in a follow-up.
 						} }
