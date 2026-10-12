@@ -10,6 +10,7 @@ import { useEffect, useMemo, useRef, useState } from '@wordpress/element';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import {
 	getImageStudioBlogId,
+	getImageStudioIsA11n,
 	getImageStudioSiteType,
 	trackImageStudioUpgradeNoticeShown,
 	trackImageStudioUpgradeNoticeClick,
@@ -111,7 +112,9 @@ export interface AiCreditsState {
 }
 
 /**
- * Reads the site's AI credit balance when the modal opens and after each turn.
+ * Reads the site's AI credit balance when the modal opens and after each turn. While AI
+ * credits are only on internal test sites, it doesn't ask for people the page says aren't
+ * Automatticians, since their sites answer 404; a turn's balance still shows.
  * @param options              - Hook options
  * @param options.mode         - Image Studio mode ('edit' or 'generate') for tracking
  * @param options.authProvider - The agent's credentials, once its config has loaded
@@ -124,8 +127,10 @@ export function useAiCredits( {
 	authProvider?: AuthProvider;
 } ): AiCreditsState {
 	const [ blogId ] = useState( getSiteCreditsBlogId );
+	// TODO: Remove the Automattician check before AI credits reach customers (FORNO-538).
+	const [ isRequestSkipped ] = useState( () => getImageStudioIsA11n() === false );
 	const [ status, setStatus ] = useState< PaidCreditsStatus | null >( null );
-	const [ isLoading, setIsLoading ] = useState( blogId !== null );
+	const [ isLoading, setIsLoading ] = useState( blogId !== null && ! isRequestSkipped );
 	const [ isLowNoticeDismissed, setIsLowNoticeDismissed ] = useState( false );
 	const [ isMeterOpen, setIsMeterOpen ] = useState( false );
 	const turnBalanceCount = useRef( 0 );
@@ -166,7 +171,7 @@ export function useAiCredits( {
 	} );
 
 	useEffect( () => {
-		if ( blogId === null || ! authProvider ) {
+		if ( blogId === null || isRequestSkipped || ! authProvider ) {
 			return;
 		}
 
@@ -190,7 +195,7 @@ export function useAiCredits( {
 			isCancelled = true;
 			clearTimeout( timeout );
 		};
-	}, [ blogId, authProvider, applyCredits ] );
+	}, [ blogId, isRequestSkipped, authProvider, applyCredits ] );
 
 	// Only a turn's last update has its final balance.
 	const onTaskUpdate = useEvent( ( update: TaskUpdate ) => {

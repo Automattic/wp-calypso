@@ -19,6 +19,7 @@ import {
 	getLiveCreditsUpgradeUrl,
 	parseCreditSnapshot,
 } from '../utils/live-credits';
+import { getIsA11n } from '../utils/tracks';
 import type { AgentConfig } from '../utils/create-agent-config';
 import type { CreditSnapshot } from '../utils/live-credits';
 import type { TaskUpdate, UseAgentChatReturn } from '@automattic/agenttic-client';
@@ -77,7 +78,9 @@ interface UseCreditsResult {
 /**
  * Loads balances independently of prompts and keeps reads and terminal updates
  * scoped to the current site visit. The chat is composed here so refreshes can
- * avoid reading usage while a task is still running.
+ * avoid reading usage while a task is still running. While AI credits are only
+ * on internal test sites, people the host says aren't Automatticians don't ask,
+ * since their sites answer 404; a balance a turn reports still shows.
  */
 export function useCredits( {
 	enabled,
@@ -181,9 +184,11 @@ export function useCredits( {
 	processingRef.current = isProcessing;
 	const refreshBalance = useCallback( async () => {
 		const { authProvider } = scope;
+		// TODO: Remove the Automattician check before AI credits reach customers (FORNO-538).
 		if (
 			! isOpen ||
 			! scope.siteId ||
+			getIsA11n() === false ||
 			! authProvider ||
 			! scope.active ||
 			currentScope.current !== scope ||

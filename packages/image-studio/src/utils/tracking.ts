@@ -70,6 +70,12 @@ export function getImageStudioBlogId(): number | null {
 	return Number.isFinite( parsedBlogId ) && parsedBlogId > 0 ? parsedBlogId : null;
 }
 
+/** Whether the page says the user is an Automattician, or undefined when it doesn't say. */
+export function getImageStudioIsA11n(): boolean | undefined {
+	const isA11n = getImageStudioWindowData()?.isA11n;
+	return typeof isA11n === 'boolean' ? isA11n : undefined;
+}
+
 export function getImageStudioSiteType(): ImageStudioSiteType {
 	const siteType = getImageStudioWindowData()?.siteType;
 

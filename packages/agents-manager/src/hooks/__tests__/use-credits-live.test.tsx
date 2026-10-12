@@ -734,6 +734,48 @@ it( 'keeps dismissal within the current visit and ignores previous-site dismiss 
 	expect( view.result.current.notice?.message ).toBe( `${ localNumber( 500 ) } credits left.` );
 } );
 
+describe( 'for a user who isn’t an Automattician', () => {
+	beforeEach( () => {
+		( window as { agentsManagerData?: unknown } ).agentsManagerData = { isA11n: false };
+	} );
+	afterEach( () => {
+		delete ( window as { agentsManagerData?: unknown } ).agentsManagerData;
+	} );
+
+	it( 'never asks for a balance on opening, focus or after a turn', async () => {
+		const view = renderCredits();
+		await flush();
+		await act( async () => {
+			window.dispatchEvent( new Event( 'focus' ) );
+		} );
+		mockIsProcessing = true;
+		view.rerender( defaultOptions );
+		await receive( undefined );
+		mockIsProcessing = false;
+		view.rerender( defaultOptions );
+		await flush();
+		expect( fetchMock ).not.toHaveBeenCalled();
+		expect( view.result.current.trailingActions ).toBeUndefined();
+	} );
+
+	it( 'still shows a balance a turn reports', async () => {
+		const { result } = renderCredits();
+		await receive( creditSnapshot( { plan_tier: 'personal' } ) );
+		expect( props( result.current ).status.remaining ).toBe( 2450 );
+		expect( fetchMock ).not.toHaveBeenCalled();
+	} );
+} );
+it.each( [
+	[ 'an Automattician', { isA11n: true } ],
+	[ 'a host that can’t tell, like Calypso', undefined ],
+] )( 'asks for a balance for %s', async ( _name, inlineData ) => {
+	( window as { agentsManagerData?: unknown } ).agentsManagerData = inlineData;
+	fetchMock.mockResolvedValueOnce( response( creditSnapshot( { plan_tier: 'personal' } ) ) );
+	renderCredits();
+	await flush();
+	expect( fetchMock ).toHaveBeenCalledTimes( 1 );
+	delete ( window as { agentsManagerData?: unknown } ).agentsManagerData;
+} );
 it( 'reads the authenticated balance on opening without sending a prompt', async () => {
 	fetchMock.mockResolvedValueOnce( response( creditSnapshot( { plan_tier: 'personal' } ) ) );
 	const { result } = renderCredits();

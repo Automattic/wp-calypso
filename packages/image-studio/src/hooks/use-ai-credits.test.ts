@@ -26,6 +26,7 @@ jest.mock( '@automattic/agents-manager', () => ( {
 jest.mock( '../utils/tracking', () => ( {
 	getImageStudioBlogId: jest.requireActual( '../utils/tracking' ).getImageStudioBlogId,
 	getImageStudioSiteType: jest.requireActual( '../utils/tracking' ).getImageStudioSiteType,
+	getImageStudioIsA11n: jest.requireActual( '../utils/tracking' ).getImageStudioIsA11n,
 	trackImageStudioUpgradeNoticeShown: jest.fn(),
 	trackImageStudioUpgradeNoticeClick: jest.fn(),
 } ) );
@@ -290,6 +291,30 @@ describe( 'useAiCredits', () => {
 		expect( stateOf( result ) ).toEqual( NOTHING );
 		expect( consoleError ).toHaveBeenCalled();
 		consoleError.mockRestore();
+	} );
+
+	it( 'does not ask for a user who isn’t an Automattician, but shows a turn’s balance', async () => {
+		window.imageStudioData = { blogId: BLOG_ID, siteType: 'simple', isA11n: false };
+		const { result } = renderCredits();
+		await act( async () => {} );
+
+		expect( fetchMock ).not.toHaveBeenCalled();
+		expect( stateOf( result ) ).toEqual( NOTHING );
+
+		act( () => {
+			result.current.onTaskUpdate( finalUpdate( planSnapshot( 0 ) ) );
+		} );
+
+		expect( result.current.isLimitReached ).toBe( true );
+	} );
+
+	it( 'asks for an Automattician', async () => {
+		window.imageStudioData = { blogId: BLOG_ID, siteType: 'simple', isA11n: true };
+		respondWith( { ai_credits: planSnapshot( 30_000 ) } );
+
+		const { result } = renderCredits();
+
+		await waitFor( () => expect( result.current.meter ).toEqual( meterAt( 75 ) ) );
 	} );
 
 	it( 'does not ask on a self-hosted site, which can’t be on AI credits', () => {
