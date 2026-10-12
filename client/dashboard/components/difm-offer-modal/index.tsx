@@ -1,28 +1,38 @@
-import { Modal } from '@wordpress/components';
-import { __ } from '@wordpress/i18n';
-import { useRef, useState } from 'react';
+import { DotcomPlans } from '@automattic/api-core';
+import { useId, useRef, useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
-import { DIFM_OFFER_TERM_PRODUCT_SLUGS, OfferStep, type DifmOfferTerm } from './offer-step';
+import { DifmOfferModalFrame, DifmOfferProgress } from './frame';
+import { OfferStep } from './offer-step';
 import { RequestStep } from './request-step';
 import type { DifmOfferVariation } from '../../utils/difm-offer';
 import type { DifmOfferSource, Site } from '@automattic/api-core';
 
+export { default as DifmOfferThankYouModal } from './thank-you-modal';
+export { DIFM_OFFER_PURCHASED_SEARCH } from './request-step';
+
 export interface DifmOfferModalProps {
-	site: Site;
+	site: Pick< Site, 'ID' | 'slug' >;
+	userEmail: string;
 	variation: Exclude< DifmOfferVariation, 'control' >;
 	source: DifmOfferSource;
+	/**
+	 * Where checkout returns on cancel. Defaults to the current dashboard page.
+	 */
+	cancelTo?: string;
 	onClose: () => void;
 }
 
 export default function DifmOfferModal( {
 	site,
+	userEmail,
 	variation,
 	source,
+	cancelTo,
 	onClose,
 }: DifmOfferModalProps ) {
 	const { recordTracksEvent } = useAnalytics();
+	const titleId = useId();
 	const [ step, setStep ] = useState< 'offer' | 'request' >( 'offer' );
-	const [ term, setTerm ] = useState< DifmOfferTerm >( '1y' );
 	// A ref, not state, because the close handler only reads it and nothing renders from it.
 	const hasSentRequest = useRef( false );
 	// A close during a pending request would drop the cart step, or redirect after the close.
@@ -53,27 +63,24 @@ export default function DifmOfferModal( {
 	};
 
 	return (
-		<Modal
-			title={ __( 'Let our experts build your site' ) }
+		<DifmOfferModalFrame
+			labelledBy={ titleId }
+			isBusy={ isBusy }
+			headerStart={ <DifmOfferProgress step={ step === 'offer' ? 1 : 2 } /> }
 			onRequestClose={ handleClose }
-			isDismissible={ ! isBusy }
-			shouldCloseOnEsc={ ! isBusy }
-			shouldCloseOnClickOutside={ ! isBusy }
-			size="medium"
 		>
 			{ step === 'offer' ? (
-				<OfferStep
-					term={ term }
-					tracksProps={ tracksProps }
-					onTermChange={ setTerm }
-					onContinue={ handleContinue }
-				/>
+				<OfferStep titleId={ titleId } tracksProps={ tracksProps } onContinue={ handleContinue } />
 			) : (
 				<RequestStep
+					titleId={ titleId }
 					site={ site }
+					userEmail={ userEmail }
 					source={ source }
 					variation={ variation }
-					productSlug={ DIFM_OFFER_TERM_PRODUCT_SLUGS[ term ] }
+					// The offer is for an annual Business plan.
+					productSlug={ DotcomPlans.BUSINESS }
+					cancelTo={ cancelTo }
 					onSubmit={ () =>
 						recordTracksEvent( 'calypso_dashboard_upsell_click', {
 							...tracksProps,
@@ -84,9 +91,8 @@ export default function DifmOfferModal( {
 						hasSentRequest.current = true;
 					} }
 					onBusyChange={ setIsBusy }
-					onCancel={ handleClose }
 				/>
 			) }
-		</Modal>
+		</DifmOfferModalFrame>
 	);
 }

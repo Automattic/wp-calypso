@@ -1,73 +1,106 @@
-import { DotcomPlans } from '@automattic/api-core';
-import {
-	Button,
-	ExternalLink,
-	RadioControl,
-	__experimentalVStack as VStack,
-	__experimentalHStack as HStack,
-} from '@wordpress/components';
-import { __ } from '@wordpress/i18n';
+import { WPCOM_DIFM_LITE } from '@automattic/api-core';
+import { productsQuery } from '@automattic/api-queries';
+import { formatCurrency } from '@automattic/number-formatters';
+import { useQuery } from '@tanstack/react-query';
+import { Button, ExternalLink, __experimentalVStack as VStack } from '@wordpress/components';
+import { createInterpolateElement } from '@wordpress/element';
+import { __, sprintf } from '@wordpress/i18n';
+import { Icon, published } from '@wordpress/icons';
 import { Badge } from '@wordpress/ui';
-import { ButtonStack } from '../button-stack';
 import ComponentViewTracker from '../component-view-tracker';
 import { Text } from '../text';
 
-export type DifmOfferTerm = '1y' | '2y' | '3y';
+export const DIFM_OFFER_FAQ_URL = 'https://difmrequest.com/faq/';
 
-// The offer needs a Business plan billed yearly or longer, so there is no monthly term.
-export const DIFM_OFFER_TERM_PRODUCT_SLUGS: Record< DifmOfferTerm, string > = {
-	'1y': DotcomPlans.BUSINESS,
-	'2y': DotcomPlans.BUSINESS_2_YEARS,
-	'3y': DotcomPlans.BUSINESS_3_YEARS,
-};
+/**
+ * The saving is the price of the paid DIFM service, in the currency the user pays in.
+ */
+function useDifmOfferSaving() {
+	const { data: difmProduct } = useQuery( {
+		...productsQuery(),
+		select: ( products ) => products[ WPCOM_DIFM_LITE ],
+	} );
 
-const DIFM_OFFER_FAQ_URL = 'https://difmrequest.com/faq/';
+	if ( ! difmProduct?.cost_smallest_unit || ! difmProduct.currency_code ) {
+		return null;
+	}
+
+	return formatCurrency( difmProduct.cost_smallest_unit, difmProduct.currency_code, {
+		isSmallestUnit: true,
+		stripZeros: true,
+	} );
+}
 
 export function OfferStep( {
-	term,
+	titleId,
 	tracksProps,
-	onTermChange,
 	onContinue,
 }: {
-	term: DifmOfferTerm;
+	titleId: string;
 	tracksProps: Record< string, unknown >;
-	onTermChange: ( term: DifmOfferTerm ) => void;
 	onContinue: () => void;
 } ) {
+	const saving = useDifmOfferSaving();
+
+	const features = [
+		createInterpolateElement( __( 'Backed by a <strong>14-day</strong> money-back guarantee' ), {
+			strong: <strong />,
+		} ),
+		createInterpolateElement(
+			__( 'Includes <strong>5 pages</strong>, with more available to purchase if needed' ),
+			{ strong: <strong /> }
+		),
+		createInterpolateElement(
+			__(
+				'Plus the <strong>full Business plan</strong>: built-in site assistant, business email, email marketing, real-time backups, and more'
+			),
+			{ strong: <strong /> }
+		),
+	];
+
 	return (
-		<VStack spacing={ 6 }>
+		<div className="difm-offer-modal__body">
 			<ComponentViewTracker
 				eventName="calypso_dashboard_upsell_impression"
 				properties={ tracksProps }
 			/>
-			<VStack spacing={ 3 }>
-				<HStack justify="flex-start">
-					<Badge intent="high">{ __( 'Save $499' ) }</Badge>
-				</HStack>
-				<Text>
-					{ __(
-						'Get a Business plan and our experts will build your site for free. This offer is available for a limited time.'
-					) }
-				</Text>
-				<Text variant="muted">{ __( '14-day money-back guarantee.' ) }</Text>
-				<ExternalLink href={ DIFM_OFFER_FAQ_URL }>{ __( 'Learn more' ) }</ExternalLink>
+			<VStack spacing={ 4 }>
+				<div>
+					<Badge intent="informational">
+						{ saving
+							? sprintf(
+									/* translators: %s is the price of the DIFM service, for example $499. */
+									__( 'Save %s · Limited-time offer' ),
+									saving
+								)
+							: __( 'Limited-time offer' ) }
+					</Badge>
+				</div>
+				<VStack spacing={ 3 }>
+					<Text id={ titleId } as="h1" size={ 20 } weight={ 600 } lineHeight="24px">
+						{ __( 'We’ll build your site for free' ) }
+					</Text>
+					<Text>
+						{ __(
+							'Upgrade to an annual Business plan and our human WordPress.com design experts will build your site for free. Once we have your content, your design will be ready within 4 business days.'
+						) }
+					</Text>
+				</VStack>
+				<ul className="difm-offer-modal__features">
+					{ features.map( ( feature, index ) => (
+						<li key={ index }>
+							<Icon icon={ published } size={ 24 } />
+							<Text>{ feature }</Text>
+						</li>
+					) ) }
+				</ul>
 			</VStack>
-			{ /* Trustpilot review cards go here (DOTCOM-18833). */ }
-			<RadioControl
-				label={ __( 'Business plan billing' ) }
-				selected={ term }
-				onChange={ ( value: string ) => onTermChange( value as DifmOfferTerm ) }
-				options={ [
-					{ label: __( '1 year' ), value: '1y' },
-					{ label: __( '2 years' ), value: '2y' },
-					{ label: __( '3 years' ), value: '3y' },
-				] }
-			/>
-			<ButtonStack justify="flex-end">
+			<div className="difm-offer-modal__footer">
+				<ExternalLink href={ DIFM_OFFER_FAQ_URL }>{ __( 'How it works' ) }</ExternalLink>
 				<Button variant="primary" __next40pxDefaultSize onClick={ onContinue }>
-					{ __( 'Continue' ) }
+					{ __( 'Tell us about your site' ) }
 				</Button>
-			</ButtonStack>
-		</VStack>
+			</div>
+		</div>
 	);
 }

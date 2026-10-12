@@ -2,22 +2,27 @@ import { difmOfferBuildRequestMutation } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
 import {
 	Button,
-	TextControl,
+	ExternalLink,
 	TextareaControl,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
+import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
 import { useEffect, useState } from 'react';
-import { useAuth } from '../../app/auth';
-import { redirectToDashboardLink, wpcomLink } from '../../utils/link';
-import { ButtonStack } from '../button-stack';
+import { getCurrentDashboard } from '../../app/routing';
+import { dashboardLink, redirectToDashboardLink, wpcomLink } from '../../utils/link';
 import Notice from '../notice';
 import { Text } from '../text';
+import { DIFM_OFFER_FAQ_URL } from './offer-step';
 import type { DifmOfferBuildRequestVariation, DifmOfferSource, Site } from '@automattic/api-core';
 
-const NAME_MAX_LENGTH = 100;
 const DESCRIPTION_MAX_LENGTH = 5000;
+
+/**
+ * The site overview opens the thank-you modal when it loads with this search param.
+ */
+export const DIFM_OFFER_PURCHASED_SEARCH = { difmOffer: 'purchased' } as const;
 
 function getRequestErrorMessage( error: Error & { code?: string } ) {
 	switch ( error.code ) {
@@ -41,30 +46,32 @@ function getRequestErrorMessage( error: Error & { code?: string } ) {
 }
 
 export function RequestStep( {
+	titleId,
 	site,
+	userEmail,
 	source,
 	variation,
 	productSlug,
+	cancelTo,
 	onSubmit,
 	onRequestSent,
 	onBusyChange,
-	onCancel,
 }: {
-	site: Site;
+	titleId: string;
+	site: Pick< Site, 'ID' | 'slug' >;
+	userEmail: string;
 	source: DifmOfferSource;
 	variation: DifmOfferBuildRequestVariation;
 	productSlug: string;
+	cancelTo?: string;
 	onSubmit: () => void;
 	onRequestSent: () => void;
 	onBusyChange: ( isBusy: boolean ) => void;
-	onCancel: () => void;
 } ) {
-	const { user } = useAuth();
-	const [ name, setName ] = useState( '' );
 	const [ description, setDescription ] = useState( '' );
 	const [ errorMessage, setErrorMessage ] = useState< string | null >( null );
 	// After the build request succeeds, a retry adds the plan to the cart again but does
-	// not send a second build request, so the request fields lock.
+	// not send a second build request, so the description locks.
 	const [ hasSentRequest, setHasSentRequest ] = useState( false );
 	const [ isAddingToCart, setIsAddingToCart ] = useState( false );
 	const buildRequest = useMutation( difmOfferBuildRequestMutation( site.ID ) );
@@ -101,7 +108,13 @@ export function RequestStep( {
 
 		// isAddingToCart stays true so the button stays busy until the page unloads.
 		window.location.href = addQueryArgs( wpcomLink( `/checkout/${ site.slug }` ), {
-			cancel_to: redirectToDashboardLink( { supportBackport: true } ),
+			cancel_to: cancelTo ?? redirectToDashboardLink( { supportBackport: true } ),
+			// Every entry point returns to the site overview, which thanks the user.
+			redirect_to: addQueryArgs(
+				dashboardLink( `/sites/${ site.slug }` ),
+				DIFM_OFFER_PURCHASED_SEARCH
+			),
+			dashboard: getCurrentDashboard(),
 		} );
 	};
 
@@ -119,7 +132,7 @@ export function RequestStep( {
 		}
 
 		buildRequest.mutate(
-			{ description: description.trim(), name: name.trim(), source, variation },
+			{ description: description.trim(), source, variation },
 			{
 				onSuccess: () => {
 					setHasSentRequest( true );
@@ -133,55 +146,59 @@ export function RequestStep( {
 	};
 
 	return (
-		<form onSubmit={ handleSubmit }>
+		<form className="difm-offer-modal__body" onSubmit={ handleSubmit }>
 			<VStack spacing={ 4 }>
+				<VStack spacing={ 3 }>
+					<Text id={ titleId } as="h1" size={ 20 } weight={ 600 } lineHeight="24px">
+						{ __( 'Tell us about your project' ) }
+					</Text>
+					<Text>{ __( 'We’ll be in touch within 24 hours to go over your needs.' ) }</Text>
+				</VStack>
 				{ errorMessage && <Notice variant="error">{ errorMessage }</Notice> }
-				<TextControl
-					__next40pxDefaultSize
-					label={ __( 'Email' ) }
-					value={ user.email }
-					readOnly
-					onChange={ () => {} }
-				/>
-				<TextControl
-					__next40pxDefaultSize
-					label={ __( 'Site address' ) }
-					value={ site.slug }
-					readOnly
-					onChange={ () => {} }
-				/>
-				<TextControl
-					__next40pxDefaultSize
-					label={ __( 'Name (optional)' ) }
-					value={ name }
-					maxLength={ NAME_MAX_LENGTH }
-					readOnly={ hasSentRequest }
-					onChange={ setName }
-				/>
+				<div className="difm-offer-modal__site-summary">
+					<Text>
+						{ createInterpolateElement(
+							sprintf(
+								/* translators: %s is the site address. */
+								__( '<strong>Site:</strong> %s' ),
+								site.slug
+							),
+							{ strong: <strong /> }
+						) }
+					</Text>
+					<Text>
+						{ createInterpolateElement(
+							sprintf(
+								/* translators: %s is the email address of the user's account. */
+								__( '<strong>Email:</strong> %s' ),
+								userEmail
+							),
+							{ strong: <strong /> }
+						) }
+					</Text>
+				</div>
 				<TextareaControl
-					label={ __( 'Describe the site you want' ) }
+					label={ __( 'Site details' ) }
 					value={ description }
 					maxLength={ DESCRIPTION_MAX_LENGTH }
 					readOnly={ hasSentRequest }
 					required
+					rows={ 5 }
 					onChange={ setDescription }
 				/>
-				<Text variant="muted">{ __( "We'll be in touch within one business day." ) }</Text>
-				<ButtonStack justify="flex-end">
-					<Button variant="tertiary" __next40pxDefaultSize disabled={ isBusy } onClick={ onCancel }>
-						{ __( 'Cancel' ) }
-					</Button>
-					<Button
-						variant="primary"
-						type="submit"
-						__next40pxDefaultSize
-						isBusy={ isBusy }
-						disabled={ ! canSubmit }
-					>
-						{ __( 'Send request' ) }
-					</Button>
-				</ButtonStack>
 			</VStack>
+			<div className="difm-offer-modal__footer">
+				<ExternalLink href={ DIFM_OFFER_FAQ_URL }>{ __( 'How it works' ) }</ExternalLink>
+				<Button
+					variant="primary"
+					type="submit"
+					__next40pxDefaultSize
+					isBusy={ isBusy }
+					disabled={ ! canSubmit }
+				>
+					{ __( 'Submit request' ) }
+				</Button>
+			</div>
 		</form>
 	);
 }
