@@ -47,7 +47,7 @@ export default function SimplifiedActions( { note, goBack }: { note: Note; goBac
 							note={ note }
 							commentId={ getReferenceId( note, 'comment' ) }
 							isLiked={ isLiked }
-							isQuiet
+							isMinimal
 						/>
 					) }
 					{ hasAnswerPrompt && <AnswerPromptButton note={ note } /> }

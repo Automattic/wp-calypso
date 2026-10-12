@@ -10,7 +10,7 @@ import ActionButton from './action-button';
 const getStar = ( isLiked ) => ( isLiked ? starFilled : starEmpty );
 
 // eslint-disable-next-line no-shadow
-const LikeButton = ( { commentId, isLiked, isQuiet, note, setLikeStatus } ) => {
+const LikeButton = ( { commentId, isLiked, isMinimal, note, setLikeStatus } ) => {
 	const { client } = useAppContext();
 
 	let title;
@@ -29,8 +29,8 @@ const LikeButton = ( { commentId, isLiked, isQuiet, note, setLikeStatus } ) => {
 
 	return (
 		<ActionButton
-			icon={ isQuiet ? getStar( isLiked ) : thumbsUp }
-			isQuiet={ isQuiet }
+			icon={ isMinimal ? getStar( isLiked ) : thumbsUp }
+			isMinimal={ isMinimal }
 			isActive={ isLiked }
 			hotkey="l"
 			onToggle={ () =>
@@ -52,7 +52,7 @@ const LikeButton = ( { commentId, isLiked, isQuiet, note, setLikeStatus } ) => {
 LikeButton.propTypes = {
 	commentId: PropTypes.number,
 	isLiked: PropTypes.bool.isRequired,
-	isQuiet: PropTypes.bool,
+	isMinimal: PropTypes.bool,
 	note: PropTypes.object.isRequired,
 };
 

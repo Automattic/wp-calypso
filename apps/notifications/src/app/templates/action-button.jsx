@@ -10,7 +10,7 @@ const ActionButton = ( {
 	isActive,
 	isBusy,
 	isDestructive,
-	isQuiet,
+	isMinimal,
 	hotkey,
 	onToggle,
 	text,
@@ -24,8 +24,8 @@ const ActionButton = ( {
 			} ) }
 			title={ title }
 			size="compact"
-			icon={ isQuiet ? icon : undefined }
-			variant={ isQuiet ? 'tertiary' : getVariant( isActive ) }
+			icon={ isMinimal ? icon : undefined }
+			variant={ isMinimal ? 'tertiary' : getVariant( isActive ) }
 			isDestructive={ isDestructive }
 			isBusy={ isBusy }
 			disabled={ isBusy }
@@ -44,7 +44,7 @@ ActionButton.propTypes = {
 	isActive: PropTypes.bool.isRequired,
 	hotkey: PropTypes.string,
 	isDestructive: PropTypes.bool,
-	isQuiet: PropTypes.bool,
+	isMinimal: PropTypes.bool,
 	onToggle: PropTypes.func.isRequired,
 	text: PropTypes.string.isRequired,
 	title: PropTypes.string.isRequired,
