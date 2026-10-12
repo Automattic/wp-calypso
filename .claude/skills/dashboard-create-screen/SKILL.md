@@ -10,36 +10,45 @@ Creates new screens in `client/dashboard` with automatic route discovery and reg
 
 ## Step 1: Discover Available Routes
 
-First, find all router files and extract available routes.
+The dashboard is migrating to file-based routing (see `client/dashboard/docs/file-based-routing.md`). During the migration, routes live in two places:
 
-### Find Router Files
+- **Migrated routes:** one file per route under `client/dashboard/routes/`, mirroring the URL, each exporting `Route`.
+- **Not yet migrated:** `export const xRoute = createRoute( … )` in `client/dashboard/app/router/*.ts(x)`.
 
-Use Glob to discover router files:
+Discover both.
+
+### Find Route Files
+
+Use Glob:
 ```
+client/dashboard/routes/**/*.tsx
 client/dashboard/app/router/*.tsx
 client/dashboard/app/router/*.ts
 ```
 
-### Extract Routes from Each File
+### Extract Routes
 
-For each router file, use Grep to extract route information.
+**Migrated route files** each export one route:
+```regex
+export\s+const\s+Route\s*=\s*createRoute
+```
 
-**Find exported route constants:**
+**Not-yet-migrated routes:**
 ```regex
 export\s+const\s+(\w+Route)\s*=\s*createRoute
 ```
 
-**Extract parent relationships:**
+**Parent relationships** (both kinds):
 ```regex
-getParentRoute:\s*\(\)\s*=>\s*(\w+Route)
+getParentRoute:\s*\(\)\s*=>\s*(\w+)
 ```
 
-**Extract path segments:**
+**Path segments:**
 ```regex
 path:\s*['"]([^'"]+)['"]
 ```
 
-**Extract component import paths:**
+**Component import paths:**
 ```regex
 import\(\s*['"]([^'"]+)['"]\s*\)
 ```
@@ -47,7 +56,7 @@ import\(\s*['"]([^'"]+)['"]\s*\)
 ### Build Route Information
 
 For each discovered route, record:
-- Route variable name (e.g., `siteBackupsRoute`)
+- Route variable name (e.g., `siteBackupsRoute`), or the route file path for migrated routes
 - Parent route name (e.g., `siteRoute`)
 - Path segment (e.g., `'backups'`)
 - Source file path
@@ -59,7 +68,7 @@ Menu discovery happens after the user selects a parent route. Find menus relativ
 
 ### Determine Menu Search Path
 
-Based on the selected parent route's import path, determine where to search for menus:
+Based on the selected parent route's screen import path, determine where to search for menus:
 
 1. Extract the component directory from the parent route's lazy import
    - Example: `import('../../sites/backups')` → search in `client/dashboard/sites/`
@@ -159,14 +168,25 @@ export default function {ComponentName}() {
 
 ## Step 6: Register the Route
 
-Add the route definition to the same router file as the parent route.
+New routes always go in a route file under `client/dashboard/routes/`, even when the parent hasn't been migrated yet. Follow the conventions in `client/dashboard/docs/file-based-routing.md`.
 
-### Route Definition Pattern
+### Choose the File
 
-Add after other route exports in the file:
+Build the full URL from the parent's URL and the new path segment, then map it to a file:
+
+- A leaf route: `routes/{url segments}.tsx`, e.g. `/sites/$siteSlug/analytics` → `routes/sites/$siteSlug/analytics.tsx`.
+- If the parent is migrated and has no `route.tsx` yet (it was a leaf), it has just gained a child: move it from `{segment}.tsx` to `{segment}/route.tsx`.
+
+### Route File Pattern
 
 ```typescript
-export const {routeName}Route = createRoute( {
+import { createRoute, lazyRouteComponent } from '@tanstack/react-router';
+import { __ } from '@wordpress/i18n';
+import { Route as ParentRoute } from '{parentRouteFile}'; // or: import { {parentRoute} } from '{app/router file}';
+
+const {ComponentName} = lazyRouteComponent( () => import( '{componentImportPath}' ) );
+
+export const Route = createRoute( {
 	head: () => ( {
 		meta: [
 			{
@@ -174,34 +194,35 @@ export const {routeName}Route = createRoute( {
 			},
 		],
 	} ),
-	getParentRoute: () => {parentRoute},
+	getParentRoute: () => ParentRoute,
 	path: '{routePath}',
-} ).lazy( () =>
-	import( '{componentImportPath}' ).then( ( d ) =>
-		createLazyRoute( '{routeId}' )( {
-			component: d.default,
-		} )
-	)
-);
+	component: {ComponentName},
+} );
 ```
+
+- Export only `Route`.
+- Lazy-load the screen with a module-level `lazyRouteComponent` const. Don't use `.lazy()` or `createLazyRoute`.
+- If the screen needs data before it renders, add a `loader` that `await`s `queryClient.ensureQueryData( … )`, and read that data in the component with `useSuspenseQuery`.
+- If the route should only exist in some dashboard apps, guard it: `beforeLoad: ( { context } ) => requireSupport( context.config, '{supportsKey}' )` from `app/router/per-app`.
 
 ### Wire into Route Tree
 
-Find where the parent route is used in the `create*Routes()` function and add the new route.
+Route files don't assemble the tree. Add the route to the parent's assembly in `client/dashboard/app/router/*`:
 
 **For standalone routes** (direct child of main area route):
 ```typescript
-// Find the routes array (e.g., siteRoutes, meRoutes)
-// Add the new route to the array
+import { Route as newScreenRoute } from '../../routes/{file}';
 siteRoutes.push( newScreenRoute );
 ```
 
 **For nested routes** (child of a feature route):
 ```typescript
-// Find where parent uses .addChildren()
-// Add the new route to the children array
 parentRoute.addChildren( [ existingRoute, newScreenRoute ] )
 ```
+
+### Update the Tracker
+
+Add a row for the new file to `client/dashboard/docs/file-based-routing-tracker.md`, in the parent's group, with **A** set to `done`.
 
 ## Step 7: Add Navigation Menu Entry (Optional)
 

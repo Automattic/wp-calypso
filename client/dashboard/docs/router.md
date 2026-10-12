@@ -1,5 +1,8 @@
 # Router and Route Management
 
+> [!IMPORTANT]
+> The dashboard is migrating to file-based routing. For where routes live, how to add one, and the data-loading rule, follow [file-based-routing.md](./file-based-routing.md). Parts of this page describe the old code-based setup.
+
 ## Overview
 
 The dashboard uses the [@tanstack/react-router](https://tanstack.router.dev/) library for routing. This is a modern, type-safe routing solution that provides a declarative API for defining routes, with support for features like nested routes, loaders, and more.
@@ -22,20 +25,15 @@ loader: () =>
   queryClient.ensureQueryData(userSettingsQuery()),
 ```
 
-later the component can use the `useQuery` hook to access the data:
+later the component reads the data with `useSuspenseQuery`. It's already cached, so it doesn't suspend:
 
 ```typescript
-const { data: profile } = useQuery(userSettingsQuery());
+const { data: profile } = useSuspenseQuery( userSettingsQuery() );
 ```
 
 ## Adding New Routes
 
-To add a new route to the dashboard:
-
-1. Create a new component for the route in an appropriate directory.
-2. Export a named `Route` component from the module (using `createLazyRoute`).
-3. Import the new route in the router configuration file and complete the route configuration (e.g., `router.tsx`).
-4. Define loaders for any data requirements.
+See [file-based-routing.md](./file-based-routing.md#conventions). New routes go in a route file under `client/dashboard/routes/`.
 
 ## Authorization and Protection
 

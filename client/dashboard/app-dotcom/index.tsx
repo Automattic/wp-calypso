@@ -18,6 +18,7 @@ import './style.scss';
 
 boot( {
 	name: 'WordPress.com',
+	app: 'dotcom',
 	unifiedAdminPageViewApp: 'msd',
 	basePath: '/',
 	mainRoute: '/sites',

@@ -19,6 +19,7 @@ import './style.scss';
 
 boot( {
 	name: 'CIAB',
+	app: 'ciab',
 	posthog: getPostHogConfig(),
 	basePath: '/',
 	mainRoute: '/sites',

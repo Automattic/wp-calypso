@@ -19,6 +19,7 @@ import './style.scss';
 
 boot( {
 	name: 'Automattic for Agencies',
+	app: 'a4a',
 	unifiedAdminPageViewApp: 'a4a',
 	basePath: '/',
 	mainRoute: '/overview',
