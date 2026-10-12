@@ -118,20 +118,19 @@ function getPageRegions(): PageBlock[] {
 			return [];
 		}
 
-		const innerBlocks = withControlledBlocks( getBlocks( clientId ) );
 		const block = getBlock( clientId );
 
-		return innerBlocks.length
-			? [
-					{
-						name: block?.name ?? TEMPLATE_PART_BLOCK,
-						type,
-						clientId,
-						attributes: block?.attributes ?? {},
-						innerBlocks,
-					},
-				]
-			: [];
+		// An empty part is still sent: the agent can only fill a region it sees,
+		// and the backend names the part by its `slug` and `theme`.
+		return [
+			{
+				name: block?.name ?? TEMPLATE_PART_BLOCK,
+				type,
+				clientId,
+				attributes: block?.attributes ?? {},
+				innerBlocks: withControlledBlocks( getBlocks( clientId ) ),
+			},
+		];
 	};
 
 	const content = withControlledBlocks(

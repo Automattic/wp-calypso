@@ -143,13 +143,12 @@ it( 'splits a templated page into header, content and footer, under short ids', 
 	} );
 } );
 
-it( 'takes the hero header over the plain one, and leaves out a part with no blocks', () => {
+it( 'takes the hero header over the plain one', () => {
 	withEditor( {
 		blocks: [
 			templatePart( 'header', 'header' ),
 			templatePart( 'header-hero', 'header-hero' ),
 			block( 'main', 'core/group' ),
-			templatePart( 'footer', 'footer' ),
 		],
 		controlled: {
 			header: [ block( 'logo', 'core/site-logo' ) ],
@@ -162,6 +161,39 @@ it( 'takes the hero header over the plain one, and leaves out a part with no blo
 		[ 'header', 's:header-hero', [ 's:headline' ] ],
 		[ 'content', 's:main' ],
 	] );
+} );
+
+// The agent can only fill a part it sees, and the backend names the part by its attributes.
+it( 'sends a part with no blocks, wherever it is', () => {
+	withEditor( {
+		blocks: [
+			block( 'header', 'core/template-part', { slug: 'header', theme: 'assembler' } ),
+			block( 'main', 'core/group', {}, [ templatePart( 'sidebar', 'sidebar' ) ] ),
+			block( 'footer', 'core/template-part', { slug: 'footer', theme: 'assembler' } ),
+		],
+		sectionRoot: 'main',
+	} );
+
+	const { currentPageContent } = getPageStructure()!;
+
+	expect( outline( currentPageContent ) ).toEqual( [
+		[ 'header', 's:header' ],
+		[ 'content', 's:main', [ 's:sidebar' ] ],
+		[ 'footer', 's:footer' ],
+	] );
+	expect( currentPageContent[ 2 ] ).toEqual( {
+		name: 'core/template-part',
+		type: 'footer',
+		clientId: 's:footer',
+		attributes: { slug: 'footer', theme: 'assembler' },
+		innerBlocks: [],
+	} );
+} );
+
+it( 'sends no region for a part the template does not have', () => {
+	withEditor( { blocks: [ block( 'main', 'core/group' ) ], sectionRoot: 'main' } );
+
+	expect( pageOutline() ).toEqual( [ [ 'content', 's:main' ] ] );
 } );
 
 // No section root, as in the post editor: no regions, whatever the page holds.
