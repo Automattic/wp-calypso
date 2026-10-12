@@ -177,6 +177,19 @@ describe( 'purchase access', () => {
 			} >
 		 )?.props.purchaseHint;
 
+	it( 'shows Upgrade with no guidance to someone who can upgrade the plan but can’t buy credits', async () => {
+		fetchMock.mockResolvedValueOnce(
+			response( { ...exhausted(), plan_tier: 'personal' }, false, true )
+		);
+		const { result } = renderCredits();
+		await flush();
+		expect( props( result.current ).upgradeUrl ).toBe(
+			'https://wordpress.com/plans/example.wordpress.com?source=wp_ai_credits'
+		);
+		expect( purchaseHint( result.current ) ).toBeUndefined();
+		expect( result.current.notice?.message ).toBe( 'You’ve used all your site credits.' );
+	} );
+
 	it( 'points someone who can’t buy to a site admin, with no purchase link', async () => {
 		fetchMock.mockResolvedValueOnce( response( { ...exhausted(), plan_tier: 'personal' }, false ) );
 		const { result } = renderCredits();

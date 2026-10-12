@@ -50,4 +50,15 @@ export {
 	getCreditsUpgradeUrl,
 	parseLiveCreditsStatus,
 } from './utils/live-credits';
+// Who may buy, and what to tell everyone else, so every chat offers Upgrade the same way
+export {
+	getCreditsNoticeMessage,
+	getCreditsPurchaseOptions,
+	parseCreditsAccess,
+} from './utils/credits-access';
 export type { CreditsStatus } from './utils/credits';
+export type {
+	CreditsAccess,
+	CreditsAskToUpgrade,
+	CreditsPurchaseOptions,
+} from './utils/credits-access';

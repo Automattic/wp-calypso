@@ -21,6 +21,7 @@ jest.mock( '@wordpress/i18n', () => ( {
 jest.mock( '@automattic/agents-manager', () => ( {
 	...jest.requireActual( '@automattic/agents-manager/src/utils/credits' ),
 	...jest.requireActual( '@automattic/agents-manager/src/utils/live-credits' ),
+	...jest.requireActual( '@automattic/agents-manager/src/utils/credits-access' ),
 } ) );
 
 jest.mock( '../utils/tracking', () => ( {
@@ -53,6 +54,13 @@ const planSnapshot = ( remaining: number, overrides: Record< string, unknown > =
 	resets_at: '2026-11-01T00:00:00Z',
 	...overrides,
 } );
+
+/** The flags WordPress.com sends with the balance for the person who bought the plan. */
+const PLAN_BUYER = { can_buy_credits: true, can_upgrade: true };
+const SECOND_ADMIN = { can_buy_credits: true, can_upgrade: false };
+const EDITOR = { can_buy_credits: false, can_upgrade: false };
+const PLAN_OWNER_HINT =
+	'This plan was purchased by a different WordPress.com account. To manage this plan, log in to that account or contact the account owner.';
 
 const UPGRADE_URL = 'https://wordpress.com/plans/123?source=wp_ai_credits';
 const upgradeAction = {
@@ -132,7 +140,7 @@ describe( 'useAiCredits', () => {
 	} );
 
 	it( 'waits for the agent credentials, then asks WordPress.com for the site balance', async () => {
-		respondWith( { ai_credits: planSnapshot( 30_000 ) } );
+		respondWith( { ai_credits: planSnapshot( 30_000 ), ...PLAN_BUYER } );
 
 		const { result, rerender } = renderCredits( ImageStudioMode.Generate, undefined );
 		expect( fetchMock ).not.toHaveBeenCalled();
@@ -150,7 +158,7 @@ describe( 'useAiCredits', () => {
 	} );
 
 	it( 'shows a persistent notice at zero, and Send opens the dot’s details instead', async () => {
-		respondWith( { ai_credits: planSnapshot( 0 ) } );
+		respondWith( { ai_credits: planSnapshot( 0 ), ...PLAN_BUYER } );
 
 		const { result } = renderCredits( ImageStudioMode.Edit );
 
@@ -190,7 +198,7 @@ describe( 'useAiCredits', () => {
 	} );
 
 	it( 'lets Send through and shows the amount left when credits are low', async () => {
-		respondWith( { ai_credits: planSnapshot( 6_000 ) } );
+		respondWith( { ai_credits: planSnapshot( 6_000 ), ...PLAN_BUYER } );
 
 		const { result } = renderCredits();
 
@@ -210,7 +218,7 @@ describe( 'useAiCredits', () => {
 	} );
 
 	it( 'uses the singular for the last credit', async () => {
-		respondWith( { ai_credits: planSnapshot( 1 ) } );
+		respondWith( { ai_credits: planSnapshot( 1 ), ...PLAN_BUYER } );
 
 		const { result } = renderCredits();
 
@@ -218,7 +226,7 @@ describe( 'useAiCredits', () => {
 	} );
 
 	it( 'hides a dismissed low notice until the credits run out', async () => {
-		respondWith( { ai_credits: planSnapshot( 6_000 ) } );
+		respondWith( { ai_credits: planSnapshot( 6_000 ), ...PLAN_BUYER } );
 		const { result } = renderCredits();
 		await waitFor( () => expect( result.current.notice ).toBeDefined() );
 
@@ -235,7 +243,7 @@ describe( 'useAiCredits', () => {
 	} );
 
 	it( 'offers no upgrade on the top plan', async () => {
-		respondWith( { ai_credits: planSnapshot( 0, { plan_tier: 'commerce' } ) } );
+		respondWith( { ai_credits: planSnapshot( 0, { plan_tier: 'commerce' } ), ...PLAN_BUYER } );
 
 		const { result } = renderCredits();
 
@@ -245,6 +253,211 @@ describe( 'useAiCredits', () => {
 		expect( trackImageStudioUpgradeNoticeShown ).toHaveBeenCalledWith(
 			expect.objectContaining( { planTier: 'commerce', ctaType: 'none', ref: 'none' } )
 		);
+	} );
+
+	describe( 'for people who can’t upgrade the plan', () => {
+		it.each( [
+			{
+				who: 'an admin who didn’t buy the plan',
+				flags: SECOND_ADMIN,
+				zero: 'You’ve used all your site credits. Ask the plan owner to upgrade.',
+				low: '6k credits left. Ask the plan owner to upgrade.',
+				purchaseHint: PLAN_OWNER_HINT,
+			},
+			{
+				who: 'someone who can’t buy',
+				flags: EDITOR,
+				zero: 'You’ve used all your site credits. Ask a site admin to add more.',
+				low: '6k credits left. Ask a site admin to add more.',
+				purchaseHint: 'Ask a site admin to add more.',
+			},
+		] )( 'tells $who who to ask, with no Upgrade', async ( { flags, zero, low, purchaseHint } ) => {
+			respondWith( { ai_credits: planSnapshot( 6_000 ), ...flags } );
+			const { result } = renderCredits( ImageStudioMode.Edit );
+			await waitFor( () => expect( result.current.notice ).toBeDefined() );
+
+			expect( result.current.notice ).toMatchObject( { message: low, dismissible: true } );
+			expect( result.current.notice?.action ).toBeUndefined();
+			expect( result.current.meter ).toEqual( {
+				status: expect.objectContaining( { plan: 'paid', percent: 15 } ),
+				purchaseHint,
+				isOpen: false,
+				onToggle: expect.any( Function ),
+			} );
+			expect( trackImageStudioUpgradeNoticeShown ).toHaveBeenCalledWith( {
+				mode: ImageStudioMode.Edit,
+				trigger: 'open',
+				...noticeCredits( 'low', 6_000 ),
+				ctaType: 'none',
+				ref: 'none',
+			} );
+
+			act( () => {
+				result.current.onTaskUpdate( finalUpdate( planSnapshot( 0 ) ) );
+			} );
+			expect( result.current.notice ).toMatchObject( { message: zero, dismissible: false } );
+			expect( result.current.notice?.action ).toBeUndefined();
+			expect( result.current.meter?.purchaseHint ).toBe( purchaseHint );
+			expect( trackImageStudioUpgradeNoticeShown ).toHaveBeenLastCalledWith( {
+				mode: ImageStudioMode.Edit,
+				trigger: 'refresh',
+				...noticeCredits( 'zero', 0 ),
+				ctaType: 'none',
+				ref: 'none',
+			} );
+		} );
+
+		it.each( [
+			{ name: 'sends no flags', flags: {} },
+			{
+				name: 'can’t tell who bought the plan',
+				flags: { can_buy_credits: true, can_upgrade: null },
+			},
+		] )( 'offers neither Upgrade nor guidance when the server $name', async ( { flags } ) => {
+			respondWith( { ai_credits: planSnapshot( 0 ), ...flags } );
+			const { result } = renderCredits();
+			await waitFor( () => expect( result.current.notice ).toBeDefined() );
+
+			expect( result.current.notice?.message ).toBe( 'You’ve used all your site credits.' );
+			expect( result.current.notice?.action ).toBeUndefined();
+			expect( result.current.meter?.upgradeUrl ).toBeUndefined();
+			expect( result.current.meter?.purchaseHint ).toBeUndefined();
+		} );
+
+		it.each( [
+			{ who: 'an admin who didn’t buy the plan', flags: SECOND_ADMIN },
+			{ who: 'someone who can’t buy', flags: EDITOR },
+		] )( 'tells $who nothing on the top plan', async ( { flags } ) => {
+			respondWith( { ai_credits: planSnapshot( 0, { plan_tier: 'commerce' } ), ...flags } );
+			const { result } = renderCredits();
+			await waitFor( () => expect( result.current.notice ).toBeDefined() );
+
+			expect( result.current.notice?.message ).toBe( 'You’ve used all your site credits.' );
+			expect( result.current.meter?.purchaseHint ).toBeUndefined();
+		} );
+
+		it( 'keeps who may buy from an opening check that answers after a turn', async () => {
+			let resolveFetch: ( value: unknown ) => void = () => {};
+			fetchMock.mockReturnValue(
+				new Promise( ( resolve ) => {
+					resolveFetch = resolve;
+				} )
+			);
+			const { result } = renderCredits();
+			await waitFor( () => expect( fetchMock ).toHaveBeenCalled() );
+
+			act( () => {
+				result.current.onTaskUpdate( finalUpdate( planSnapshot( 0 ) ) );
+			} );
+			expect( result.current.notice?.action ).toBeUndefined();
+			// Until the check says who may buy, the event can't say whether Upgrade shows.
+			expect( trackImageStudioUpgradeNoticeShown ).not.toHaveBeenCalled();
+
+			await act( async () => {
+				resolveFetch( {
+					ok: true,
+					json: async () => ( { ai_credits: planSnapshot( 30_000 ), ...PLAN_BUYER } ),
+				} );
+			} );
+
+			// The turn's balance stays, and the check still says who may buy.
+			expect( result.current.isLimitReached ).toBe( true );
+			expect( result.current.notice?.action ).toEqual( upgradeAction );
+			expect( result.current.meter?.upgradeUrl ).toBe( UPGRADE_URL );
+			expect( trackImageStudioUpgradeNoticeShown ).toHaveBeenCalledTimes( 1 );
+			expect( trackImageStudioUpgradeNoticeShown ).toHaveBeenCalledWith( {
+				mode: ImageStudioMode.Generate,
+				trigger: 'refresh',
+				...noticeCredits( 'zero', 0 ),
+			} );
+		} );
+
+		it( 'records the notice with Upgrade when a slow opening check answers after 5 seconds', async () => {
+			jest.useFakeTimers();
+			let resolveFetch: ( value: unknown ) => void = () => {};
+			fetchMock.mockReturnValue(
+				new Promise( ( resolve ) => {
+					resolveFetch = resolve;
+				} )
+			);
+			const { result } = renderCredits();
+			await act( async () => {} );
+
+			act( () => {
+				result.current.onTaskUpdate( finalUpdate( planSnapshot( 6_000 ) ) );
+			} );
+			act( () => {
+				jest.advanceTimersByTime( 5000 );
+			} );
+			expect( trackImageStudioUpgradeNoticeShown ).not.toHaveBeenCalled();
+
+			await act( async () => {
+				resolveFetch( {
+					ok: true,
+					json: async () => ( { ai_credits: planSnapshot( 30_000 ), ...PLAN_BUYER } ),
+				} );
+			} );
+			expect( result.current.notice?.action ).toEqual( upgradeAction );
+			expect( trackImageStudioUpgradeNoticeShown ).toHaveBeenCalledTimes( 1 );
+			expect( trackImageStudioUpgradeNoticeShown ).toHaveBeenCalledWith( {
+				mode: ImageStudioMode.Generate,
+				trigger: 'refresh',
+				...noticeCredits( 'low', 6_000 ),
+			} );
+		} );
+
+		it( 'records the notice with no Upgrade when the opening check fails', async () => {
+			let resolveFetch: ( value: unknown ) => void = () => {};
+			fetchMock.mockReturnValue(
+				new Promise( ( resolve ) => {
+					resolveFetch = resolve;
+				} )
+			);
+			const { result } = renderCredits();
+			await waitFor( () => expect( fetchMock ).toHaveBeenCalled() );
+
+			act( () => {
+				result.current.onTaskUpdate( finalUpdate( planSnapshot( 6_000 ) ) );
+			} );
+			await act( async () => {
+				resolveFetch( { ok: false, json: async () => ( {} ) } );
+			} );
+
+			expect( result.current.notice?.action ).toBeUndefined();
+			expect( trackImageStudioUpgradeNoticeShown ).toHaveBeenCalledWith( {
+				mode: ImageStudioMode.Generate,
+				trigger: 'refresh',
+				...noticeCredits( 'low', 6_000 ),
+				ctaType: 'none',
+				ref: 'none',
+			} );
+		} );
+
+		it( 'records only the latest notice from turns that end before the opening check', async () => {
+			let resolveFetch: ( value: unknown ) => void = () => {};
+			fetchMock.mockReturnValue(
+				new Promise( ( resolve ) => {
+					resolveFetch = resolve;
+				} )
+			);
+			const { result } = renderCredits();
+			await waitFor( () => expect( fetchMock ).toHaveBeenCalled() );
+
+			act( () => {
+				result.current.onTaskUpdate( finalUpdate( planSnapshot( 6_000 ) ) );
+			} );
+			act( () => {
+				result.current.onTaskUpdate( finalUpdate( planSnapshot( 30_000 ) ) );
+			} );
+			await act( async () => {
+				resolveFetch( {
+					ok: true,
+					json: async () => ( { ai_credits: planSnapshot( 30_000 ), ...PLAN_BUYER } ),
+				} );
+			} );
+
+			expect( trackImageStudioUpgradeNoticeShown ).not.toHaveBeenCalled();
+		} );
 	} );
 
 	it.each( [
@@ -257,7 +470,7 @@ describe( 'useAiCredits', () => {
 		{
 			name: 'the balance doesn’t match the Agent’s shape',
 			ok: true,
-			body: { ai_credits: planSnapshot( 0, { resets_at: 'soon' } ) },
+			body: { ai_credits: planSnapshot( 0, { resets_at: 'soon' } ), ...PLAN_BUYER },
 		},
 		{
 			name: 'the site’s plan includes no credits',
@@ -325,8 +538,26 @@ describe( 'useAiCredits', () => {
 			expect( fetchMock ).not.toHaveBeenCalled();
 		} );
 
+		it( 'records a turn’s notice at once, with no Upgrade, since nobody says who may buy', async () => {
+			const { result } = renderCredits();
+			await act( async () => {} );
+
+			act( () => {
+				result.current.onTaskUpdate( finalUpdate( planSnapshot( 6_000 ) ) );
+			} );
+
+			expect( result.current.notice?.action ).toBeUndefined();
+			expect( trackImageStudioUpgradeNoticeShown ).toHaveBeenCalledWith( {
+				mode: ImageStudioMode.Generate,
+				trigger: 'refresh',
+				...noticeCredits( 'low', 6_000 ),
+				ctaType: 'none',
+				ref: 'none',
+			} );
+		} );
+
 		it( 'keeps the choice it made on opening until it opens again', async () => {
-			respondWith( { ai_credits: planSnapshot( 30_000 ) } );
+			respondWith( { ai_credits: planSnapshot( 30_000 ), ...PLAN_BUYER } );
 			const first = renderCredits();
 			window.imageStudioData = { blogId: BLOG_ID, siteType: 'simple', isDevMode: true };
 			first.rerender( { mode: ImageStudioMode.Generate, authProvider } );
@@ -403,14 +634,17 @@ describe( 'useAiCredits', () => {
 		expect( stateOf( result ) ).toEqual( NOTHING );
 
 		await act( async () => {
-			resolveFetch( { ok: true, json: async () => ( { ai_credits: planSnapshot( 0 ) } ) } );
+			resolveFetch( {
+				ok: true,
+				json: async () => ( { ai_credits: planSnapshot( 0 ), ...PLAN_BUYER } ),
+			} );
 		} );
 
 		await waitFor( () => expect( result.current.isLimitReached ).toBe( true ) );
 	} );
 
 	it( 'takes the new balance from a turn’s final update, and opens the dot’s details at zero', async () => {
-		respondWith( { ai_credits: planSnapshot( 30_000 ) } );
+		respondWith( { ai_credits: planSnapshot( 30_000 ), ...PLAN_BUYER } );
 		const { result } = renderCredits();
 		await waitFor( () => expect( result.current.isLoading ).toBe( false ) );
 
@@ -432,7 +666,7 @@ describe( 'useAiCredits', () => {
 		{ name: 'a running update', final: false, state: 'working' },
 		{ name: 'an update that only names a running state', final: undefined, state: 'working' },
 	] as const )( 'waits for the turn to end before using $name', async ( { final, state } ) => {
-		respondWith( { ai_credits: planSnapshot( 30_000 ) } );
+		respondWith( { ai_credits: planSnapshot( 30_000 ), ...PLAN_BUYER } );
 		const { result } = renderCredits();
 		await waitFor( () => expect( result.current.isLoading ).toBe( false ) );
 
@@ -449,7 +683,7 @@ describe( 'useAiCredits', () => {
 	} );
 
 	it( 'takes the balance from a failed turn that has no final flag', async () => {
-		respondWith( { ai_credits: planSnapshot( 30_000 ) } );
+		respondWith( { ai_credits: planSnapshot( 30_000 ), ...PLAN_BUYER } );
 		const { result } = renderCredits();
 		await waitFor( () => expect( result.current.isLoading ).toBe( false ) );
 
@@ -468,7 +702,7 @@ describe( 'useAiCredits', () => {
 		{ name: 'carries no balance', aiCredits: undefined },
 		{ name: 'carries an unreadable balance', aiCredits: { nope: true } },
 	] )( 'keeps the last known balance when an update $name', async ( { aiCredits } ) => {
-		respondWith( { ai_credits: planSnapshot( 6_000 ) } );
+		respondWith( { ai_credits: planSnapshot( 6_000 ), ...PLAN_BUYER } );
 		const { result } = renderCredits();
 		await waitFor( () => expect( result.current.notice ).toBeDefined() );
 
@@ -493,7 +727,10 @@ describe( 'useAiCredits', () => {
 			result.current.onTaskUpdate( finalUpdate( planSnapshot( 0 ) ) );
 		} );
 		await act( async () => {
-			resolveFetch( { ok: true, json: async () => ( { ai_credits: planSnapshot( 30_000 ) } ) } );
+			resolveFetch( {
+				ok: true,
+				json: async () => ( { ai_credits: planSnapshot( 30_000 ), ...PLAN_BUYER } ),
+			} );
 		} );
 
 		expect( result.current.isLimitReached ).toBe( true );
@@ -516,7 +753,7 @@ describe( 'useAiCredits', () => {
 	} );
 
 	it( 'opens the dot’s details only once when the credits run out', async () => {
-		respondWith( { ai_credits: planSnapshot( 30_000 ) } );
+		respondWith( { ai_credits: planSnapshot( 30_000 ), ...PLAN_BUYER } );
 		const { result } = renderCredits();
 		await waitFor( () => expect( result.current.isLoading ).toBe( false ) );
 
@@ -534,7 +771,7 @@ describe( 'useAiCredits', () => {
 	} );
 
 	it( 'returns the same result between renders, so the memoised chat doesn’t re-render', async () => {
-		respondWith( { ai_credits: planSnapshot( 30_000 ) } );
+		respondWith( { ai_credits: planSnapshot( 30_000 ), ...PLAN_BUYER } );
 		const { result, rerender } = renderCredits();
 		await waitFor( () => expect( result.current.isLoading ).toBe( false ) );
 
@@ -557,7 +794,10 @@ describe( 'useAiCredits', () => {
 		unmount();
 
 		await act( async () => {
-			resolveFetch( { ok: true, json: async () => ( { ai_credits: planSnapshot( 0 ) } ) } );
+			resolveFetch( {
+				ok: true,
+				json: async () => ( { ai_credits: planSnapshot( 0 ), ...PLAN_BUYER } ),
+			} );
 		} );
 
 		expect( trackImageStudioUpgradeNoticeShown ).not.toHaveBeenCalled();

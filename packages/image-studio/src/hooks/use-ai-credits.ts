@@ -1,13 +1,15 @@
 import {
 	CREDITS_LOW_BALANCE,
 	CREDITS_UPGRADE_SOURCE,
-	formatCreditsShort,
+	getCreditsNoticeMessage,
+	getCreditsPurchaseOptions,
 	getCreditsUpgradeUrl,
+	parseCreditsAccess,
 	parseLiveCreditsStatus,
 } from '@automattic/agents-manager';
 import { useEvent } from '@wordpress/compose';
 import { useEffect, useMemo, useRef, useState } from '@wordpress/element';
-import { __, _n, sprintf } from '@wordpress/i18n';
+import { __ } from '@wordpress/i18n';
 import {
 	getImageStudioBlogId,
 	getImageStudioIsDevMode,
@@ -18,7 +20,7 @@ import {
 	type UpgradeNoticeTrigger,
 } from '../utils/tracking';
 import type { ImageStudioMode } from '../types';
-import type { CreditsStatus } from '@automattic/agents-manager';
+import type { CreditsAccess, CreditsStatus } from '@automattic/agents-manager';
 import type { AuthProvider, TaskState, TaskUpdate } from '@automattic/agenttic-client';
 import type { NoticeConfig } from '@automattic/agenttic-ui';
 
@@ -38,17 +40,6 @@ export function getSiteCreditsLevel( remaining: number ): SiteCreditsLevel | nul
 		return 'out';
 	}
 	return remaining < CREDITS_LOW_BALANCE ? 'low' : null;
-}
-
-function getNoticeMessage( level: SiteCreditsLevel, remaining: number ): string {
-	if ( level === 'out' ) {
-		return __( 'You’ve used all your site credits.', __i18n_text_domain__ );
-	}
-	return sprintf(
-		/* translators: %s: site credits left in short form, e.g. "800" or "8.5k" */
-		_n( '%s credit left.', '%s credits left.', remaining, __i18n_text_domain__ ),
-		formatCreditsShort( remaining )
-	);
 }
 
 function getNoticeCredits(
@@ -72,7 +63,10 @@ function getSiteCreditsBlogId(): number | null {
 }
 
 /** Resolves to undefined when the site is not on AI credits or the request fails. */
-async function fetchSiteCredits( blogId: number, authProvider: AuthProvider ): Promise< unknown > {
+async function fetchSiteCredits(
+	blogId: number,
+	authProvider: AuthProvider
+): Promise< { aiCredits: unknown; access: CreditsAccess } | undefined > {
 	try {
 		const headers = await authProvider();
 		const response = await window.fetch( `${ WPCOM_SITES_API }/${ blogId }/ai/credits`, {
@@ -85,7 +79,7 @@ async function fetchSiteCredits( blogId: number, authProvider: AuthProvider ): P
 			return undefined;
 		}
 		const data = await response.json();
-		return data?.ai_credits;
+		return { aiCredits: data?.ai_credits, access: parseCreditsAccess( data ) };
 	} catch ( error ) {
 		window.console?.error?.( '[Image Studio] Failed to fetch site AI credits:', error );
 		return undefined;
@@ -106,6 +100,8 @@ export interface AiCreditsState {
 	meter?: {
 		status: CreditsStatus;
 		upgradeUrl?: string;
+		/** Shown instead of Upgrade to people who can't upgrade the plan. */
+		purchaseHint?: string;
 		isOpen: boolean;
 		onToggle: ( isOpen: boolean ) => void;
 	};
@@ -133,6 +129,18 @@ export function useAiCredits( {
 	const [ isLoading, setIsLoading ] = useState( blogId !== null && ! isRequestSkipped );
 	const [ isLowNoticeDismissed, setIsLowNoticeDismissed ] = useState( false );
 	const [ isMeterOpen, setIsMeterOpen ] = useState( false );
+	// Only the opening check says who may buy; a turn's balance doesn't.
+	const [ access, setAccess ] = useState< CreditsAccess >();
+	const accessRef = useRef< CreditsAccess | undefined >( undefined );
+	// A notice event waits for the opening check to answer or fail, so it can say whether
+	// Upgrade shows; a skipped check leaves nothing to wait for. Its 5-second timeout doesn't
+	// count: a late answer can still add Upgrade.
+	const isAccessSettled = useRef( isRequestSkipped );
+	const heldNotice = useRef< {
+		status: PaidCreditsStatus;
+		level: SiteCreditsLevel;
+		trigger: UpgradeNoticeTrigger;
+	} | null >( null );
 	const turnBalanceCount = useRef( 0 );
 	// `undefined` until a balance is known. Updated as each balance arrives, so two in one render
 	// still compare with each other.
@@ -142,6 +150,32 @@ export function useAiCredits( {
 	} >( {
 		level: undefined,
 		trigger: 'open',
+	} );
+
+	const trackNoticeShown = useEvent(
+		( next: PaidCreditsStatus, level: SiteCreditsLevel, trigger: UpgradeNoticeTrigger ) => {
+			if ( blogId === null ) {
+				return;
+			}
+			const { upgradeUrl } = getCreditsPurchaseOptions(
+				getCreditsUpgradeUrl( next, blogId ),
+				accessRef.current
+			);
+			trackImageStudioUpgradeNoticeShown( {
+				mode,
+				trigger,
+				...getNoticeCredits( next, level, upgradeUrl ),
+			} );
+		}
+	);
+
+	const settleAccess = useEvent( () => {
+		isAccessSettled.current = true;
+		const held = heldNotice.current;
+		heldNotice.current = null;
+		if ( held ) {
+			trackNoticeShown( held.status, held.level, held.trigger );
+		}
 	} );
 
 	// The Agent's parser, so the notice, the send block and the dot always agree. An unreadable
@@ -160,9 +194,12 @@ export function useAiCredits( {
 			setIsMeterOpen( true );
 		}
 		if ( level !== shown.current.level ) {
-			if ( level ) {
-				const credits = getNoticeCredits( next, level, getCreditsUpgradeUrl( next, blogId ) );
-				trackImageStudioUpgradeNoticeShown( { mode, trigger, ...credits } );
+			if ( ! level ) {
+				heldNotice.current = null;
+			} else if ( isAccessSettled.current ) {
+				trackNoticeShown( next, level, trigger );
+			} else {
+				heldNotice.current = { status: next, level, trigger };
 			}
 			shown.current = { level, trigger };
 		}
@@ -176,6 +213,7 @@ export function useAiCredits( {
 		}
 
 		let isCancelled = false;
+		isAccessSettled.current = false;
 		const turnBalancesBefore = turnBalanceCount.current;
 		const timeout = setTimeout( () => setIsLoading( false ), SITE_CREDITS_TIMEOUT_MS );
 
@@ -185,9 +223,14 @@ export function useAiCredits( {
 			}
 			clearTimeout( timeout );
 			setIsLoading( false );
+			if ( result ) {
+				accessRef.current = result.access;
+				setAccess( result.access );
+			}
+			settleAccess();
 			// A turn that finished while this check ran already reported a newer balance.
 			if ( turnBalanceCount.current === turnBalancesBefore ) {
-				applyCredits( result, 'open' );
+				applyCredits( result?.aiCredits, 'open' );
 			}
 		} );
 
@@ -195,7 +238,7 @@ export function useAiCredits( {
 			isCancelled = true;
 			clearTimeout( timeout );
 		};
-	}, [ blogId, isRequestSkipped, authProvider, applyCredits ] );
+	}, [ blogId, isRequestSkipped, authProvider, applyCredits, settleAccess ] );
 
 	// Only a turn's last update has its final balance.
 	const onTaskUpdate = useEvent( ( update: TaskUpdate ) => {
@@ -206,7 +249,10 @@ export function useAiCredits( {
 	} );
 
 	const level = status ? getSiteCreditsLevel( status.remaining ) : null;
-	const upgradeUrl = status && blogId !== null ? getCreditsUpgradeUrl( status, blogId ) : undefined;
+	const { upgradeUrl, askToUpgrade, purchaseHint } = getCreditsPurchaseOptions(
+		status && blogId !== null ? getCreditsUpgradeUrl( status, blogId ) : undefined,
+		access
+	);
 	const isNoticeHidden = level === 'low' && isLowNoticeDismissed;
 
 	const beforeSubmit = useEvent( () => {
@@ -225,13 +271,13 @@ export function useAiCredits( {
 			onTaskUpdate,
 			beforeSubmit,
 			meter: status
-				? { status, upgradeUrl, isOpen: isMeterOpen, onToggle: setIsMeterOpen }
+				? { status, upgradeUrl, purchaseHint, isOpen: isMeterOpen, onToggle: setIsMeterOpen }
 				: undefined,
 			notice:
 				status && level && ! isNoticeHidden
 					? {
 							icon: false,
-							message: getNoticeMessage( level, status.remaining ),
+							message: getCreditsNoticeMessage( level, status.remaining, askToUpgrade ),
 							dismissible: level === 'low',
 							onDismiss: () => setIsLowNoticeDismissed( true ),
 							action: upgradeUrl
@@ -255,6 +301,8 @@ export function useAiCredits( {
 			status,
 			level,
 			upgradeUrl,
+			askToUpgrade,
+			purchaseHint,
 			isNoticeHidden,
 			isMeterOpen,
 			isLoading,
