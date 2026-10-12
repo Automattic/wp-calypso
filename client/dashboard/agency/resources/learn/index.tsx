@@ -33,7 +33,7 @@ export default function Learn() {
 	);
 	const { mutate: saveReadIds } = useMutation(
 		withSnackbar( userPreferenceOptimisticMutation( READ_RESOURCES_PREFERENCE ), {
-			error: __( 'Your reading status couldn’t be saved. Please try again.' ),
+			error: __( 'Failed to save reading status.' ),
 		} )
 	);
 

@@ -38,7 +38,7 @@ export function useReadResources() {
 		onError: ( _error, _ids, context ) => {
 			queryClient.setQueryData( preferencesKey, context?.previous );
 			queryClient.invalidateQueries( { queryKey: preferencesKey } );
-			dispatch( errorNotice( __( 'Your reading status couldn’t be saved. Please try again.' ) ) );
+			dispatch( errorNotice( __( 'Failed to save reading status.' ) ) );
 		},
 	} );
 
