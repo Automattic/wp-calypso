@@ -7,7 +7,7 @@ import { setSignupCompleteSiteID, setSignupCompleteSlug } from 'calypso/signup/s
 import { STEPS } from '../../../internals/steps';
 import { ProcessingResult } from '../../../internals/steps-repository/processing-step/constants';
 import hosting from '../new-hosted-site-flow';
-import { resumeCommerceCart } from '../resume-commerce-cart';
+import { resumePurchaseCart } from '../resume-purchase-cart';
 
 jest.mock( '@automattic/onboarding', () => ( {
 	NEW_HOSTED_SITE_FLOW: 'new-hosted-site',
@@ -15,10 +15,8 @@ jest.mock( '@automattic/onboarding', () => ( {
 } ) );
 
 jest.mock( '@automattic/calypso-products', () => ( {
-	isEcommercePlan: ( plan: string ) => plan.startsWith( 'ecommerce-' ),
 	isDotComPlan: () => true,
 	isFreeHostingTrial: () => false,
-	PLAN_ECOMMERCE_TRIAL_MONTHLY: 'ecommerce-trial-bundle-monthly',
 } ) );
 jest.mock( 'calypso/landing/stepper/stores', () => ( { ONBOARD_STORE: 'ONBOARD_STORE' } ) );
 
@@ -75,12 +73,12 @@ jest.mock( 'calypso/signup/storageUtils', () => ( {
 	setSignupCompleteFlowName: jest.fn(),
 	persistSignupDestination: jest.fn(),
 } ) );
-jest.mock( '../resume-commerce-cart', () => ( { resumeCommerceCart: jest.fn() } ) );
+jest.mock( '../resume-purchase-cart', () => ( { resumePurchaseCart: jest.fn() } ) );
 
 beforeEach( () => {
 	jest.clearAllMocks();
 	mockLocale = 'en';
-	jest.mocked( resumeCommerceCart ).mockResolvedValue( mockPlan );
+	jest.mocked( resumePurchaseCart ).mockResolvedValue( mockPlan );
 	mockSavedFlow = NEW_HOSTED_SITE_FLOW;
 	mockQuery = new URLSearchParams( {
 		plan: mockPlan.product_slug,
@@ -187,7 +185,7 @@ it( 'resumes the same site without running site creation, including after a skip
 		goToCheckout: true,
 		siteCreated: true,
 	} );
-	expect( resumeCommerceCart ).toHaveBeenCalledWith( mockSite.siteSlug, mockPlan, [] );
+	expect( resumePurchaseCart ).toHaveBeenCalledWith( mockSite.siteSlug, mockPlan, [] );
 	expect( mockSeed ).toHaveBeenLastCalledWith( mockPlan );
 } );
 

@@ -3,17 +3,15 @@ import {
 	isDomainRegistration,
 	isDomainTransfer,
 	isDotComPlan,
-	isEcommercePlan,
 	isGSuiteOrExtraLicenseOrGoogleWorkspace,
 	isTitanMail,
-	PLAN_ECOMMERCE_TRIAL_MONTHLY,
 } from '@automattic/calypso-products';
 import { NEW_HOSTED_SITE_FLOW } from '@automattic/onboarding';
 import cartManagerClient from '@automattic/onboarding/src/cart/create-cart-manager-client';
 import { createRequestCartProduct } from '@automattic/shopping-cart';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 
-export async function resumeCommerceCart(
+export async function resumePurchaseCart(
 	siteSlug: string,
 	plan: MinimalRequestCartProduct,
 	domains: MinimalRequestCartProduct[]
@@ -21,12 +19,7 @@ export async function resumeCommerceCart(
 	const cartKey = await cartManagerClient.getCartKeyForSiteSlug( siteSlug );
 	const manager = cartManagerClient.forCartKey( cartKey );
 	const cart = await manager.fetchInitialCart();
-	const selectedPlan =
-		cart.products.find(
-			( product ) =>
-				isEcommercePlan( product.product_slug ) &&
-				product.product_slug !== PLAN_ECOMMERCE_TRIAL_MONTHLY
-		) ?? plan;
+	const selectedPlan = cart.products.find( isDotComPlan ) ?? plan;
 	const discardedDomains = new Set(
 		cart.products
 			.filter(
