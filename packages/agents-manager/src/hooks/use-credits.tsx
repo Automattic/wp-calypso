@@ -23,6 +23,7 @@ import {
 	getTaskRefusalCode,
 	recordCreditsTracksEvent,
 } from '../utils/credits-tracks';
+import { getAgentsManagerInlineData } from '../utils/get-agents-manager-inline-data';
 import {
 	buildLiveCreditsStatus,
 	getLiveCreditSiteId,
@@ -104,7 +105,9 @@ interface UseCreditsResult {
  * scoped to the current site visit. The chat is composed here so refreshes can
  * avoid reading usage while a task is still running. Live balances also record
  * the credits Tracks events, and failed replies keep their refusal code, since
- * the chat's error only carries the reply's text.
+ * the chat's error only carries the reply's text. While AI credits are only
+ * on internal test sites, pages the host says aren't in dev mode don't ask,
+ * since nearly every site answers 404; a balance a turn reports still shows.
  */
 export function useCredits( {
 	enabled,
@@ -237,9 +240,11 @@ export function useCredits( {
 	processingRef.current = isProcessing;
 	const refreshBalance = useCallback( async () => {
 		const { authProvider } = scope;
+		// TODO: Remove the dev mode check before AI credits reach customers (FORNO-538).
 		if (
 			! isOpen ||
 			! scope.siteId ||
+			getAgentsManagerInlineData()?.isDevMode === false ||
 			! authProvider ||
 			! scope.active ||
 			currentScope.current !== scope ||
