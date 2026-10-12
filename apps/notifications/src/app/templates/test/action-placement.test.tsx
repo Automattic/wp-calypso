@@ -56,7 +56,6 @@ describe( 'comment action placement', () => {
 
 		await userEvent.click( screen.getByRole( 'button', { name: 'Actions' } ) );
 
-		// The fixture's comment is already approved, so the approve toggle reads "Unapprove".
 		expect( await screen.findByRole( 'menuitem', { name: 'Edit' } ) ).toBeInTheDocument();
 		expect( screen.getByRole( 'menuitem', { name: 'Unapprove' } ) ).toBeInTheDocument();
 		expect( screen.getByRole( 'menuitem', { name: 'Mark as spam' } ) ).toBeInTheDocument();

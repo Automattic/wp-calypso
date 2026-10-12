@@ -22,7 +22,6 @@ export const NoteReply = ( { note }: { note: Note } ) => (
 	<ReplyInput note={ note } defaultValue={ getInitialReplyValue( note ) } />
 );
 
-/** The Like button and Actions menu shown under a note in the simplified layout. */
 export default function SimplifiedActions( { note, goBack }: { note: Note; goBack: () => void } ) {
 	const isApproved = useSelector( ( state ) => getIsNoteApproved( state, note ) );
 	const isLiked = useSelector( ( state ) => getIsNoteLiked( state, note ) );

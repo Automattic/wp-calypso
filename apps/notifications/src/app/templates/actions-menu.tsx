@@ -21,7 +21,6 @@ type MenuAction = {
 
 type RemoveNote = typeof spamNote | typeof trashNote;
 
-/** The comment moderation actions for a note, collected in one dropdown. */
 export default function ActionsMenu( {
 	hasAction,
 	isApproved,
