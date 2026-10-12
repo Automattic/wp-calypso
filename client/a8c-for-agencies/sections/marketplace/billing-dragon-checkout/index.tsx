@@ -21,6 +21,7 @@ import getSite from 'calypso/state/sites/selectors/get-site';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import ClientCheckoutError from './checkout-error';
 import ClientCheckoutPlaceholder from './checkout-placeholder';
+import getPressableTitanReturnUrl from './lib/get-pressable-titan-return-url';
 import getPurchasedWPCOMPlanSlug from './lib/get-purchased-wpcom-plan-slug';
 import getSuccessRedirectUrl from './lib/get-success-redirect-url';
 import usePreparedCart from './use-prepared-cart';
@@ -78,6 +79,11 @@ function BillingDragonCheckoutContent( {
 	const prepared = usePreparedCart( cartKey, skipActiveCart );
 	const isReady = skipActiveCart ? prepared.isReady : isFilled;
 	const error = skipActiveCart ? prepared.error : fillError;
+
+	// A cart the WordPress.com backend prepared for a buyer arriving from Pressable's Titan
+	// email flow carries the ordered domain. That buyer returns to Pressable after paying.
+	const isPressableTitanCheckout =
+		skipActiveCart && responseCart.products.some( ( product ) => !! product.extra?.titan_domain );
 
 	const {
 		productsForCart,
@@ -274,11 +280,15 @@ function BillingDragonCheckoutContent( {
 			) }
 			<CheckoutMain
 				sitelessCheckoutType="a4a"
-				redirectTo={ getSuccessRedirectUrl(
-					window.location.origin,
-					shouldClearCartOnSuccess && ! isPlanCheckout,
-					isPlanCheckout ? null : getPurchasedWPCOMPlanSlug( cartItems )
-				) }
+				redirectTo={
+					isPressableTitanCheckout
+						? getPressableTitanReturnUrl()
+						: getSuccessRedirectUrl(
+								window.location.origin,
+								shouldClearCartOnSuccess && ! isPlanCheckout,
+								isPlanCheckout ? null : getPurchasedWPCOMPlanSlug( cartItems )
+							)
+				}
 				customizedPreviousPath="/marketplace"
 				siteSlug={ siteSlug ?? '' }
 				siteId={ siteId ?? 0 }

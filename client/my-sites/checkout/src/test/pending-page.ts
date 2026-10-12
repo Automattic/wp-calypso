@@ -297,6 +297,17 @@ describe( 'getRedirectFromPendingPage', () => {
 		} );
 	} );
 
+	it( 'returns the Pressable Titan return url with the receipt interpolated if there is also a receipt', () => {
+		const actual = getRedirectFromPendingPage( {
+			isLoadingOrder: false,
+			redirectTo: 'https://my.pressable.com/titan_email/checkout_return?receipt_id=:receiptId',
+			receiptId: 12345,
+		} );
+		expect( actual ).toEqual( {
+			url: 'https://my.pressable.com/titan_email/checkout_return?receipt_id=12345',
+		} );
+	} );
+
 	it( 'returns a generic no-site url for an absolute url if it is not allowed and there is also a receipt', () => {
 		const actual = getRedirectFromPendingPage( {
 			isLoadingOrder: false,

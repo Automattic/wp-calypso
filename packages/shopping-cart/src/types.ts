@@ -971,6 +971,13 @@ export interface ResponseCartProductExtra {
 	a4a_pressable_site_domain?: string;
 
 	/**
+	 * Root domain of an A4A Titan inbox order the WordPress.com backend prepared
+	 * for a buyer arriving from Pressable. Marks the cart as a Pressable Titan
+	 * checkout, which returns to Pressable after purchase.
+	 */
+	titan_domain?: string;
+
+	/**
 	 * Marketplace properties
 	 *
 	 * These extra properties are always set for marketplace products.

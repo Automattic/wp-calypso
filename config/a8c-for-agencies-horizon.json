@@ -2,6 +2,7 @@
 	"env": "production",
 	"env_id": "a8c-for-agencies-horizon",
 	"favicon_url": "/calypso/images/favicons/favicon-a4a-stage.ico",
+	"checkout_additional_allowed_redirect_hosts": [ "my.pressable.com" ],
 	"client_slug": "browser",
 	"hostname": "agencies.automattic.com",
 	"i18n_default_locale_slug": "en",

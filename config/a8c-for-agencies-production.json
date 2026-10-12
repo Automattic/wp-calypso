@@ -2,6 +2,7 @@
 	"env": "production",
 	"env_id": "a8c-for-agencies-production",
 	"favicon_url": "/calypso/images/favicons/favicon-a4a-prod.ico",
+	"checkout_additional_allowed_redirect_hosts": [ "my.pressable.com" ],
 	"client_slug": "browser",
 	"protocol": "http",
 	"hostname": "agencies.automattic.com",

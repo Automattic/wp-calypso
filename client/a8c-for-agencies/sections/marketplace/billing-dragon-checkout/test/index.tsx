@@ -42,9 +42,13 @@ jest.mock( '@automattic/composite-checkout', () => ( { CheckoutErrorBoundary: pa
 jest.mock( 'calypso/my-sites/checkout/calypso-shopping-cart-provider', () => passthrough );
 jest.mock( 'calypso/my-sites/checkout/checkout-query-client-provider', () => passthrough );
 jest.mock( 'calypso/my-sites/checkout/src/components/cart-message-cleanup', () => () => null );
-jest.mock( 'calypso/my-sites/checkout/src/components/checkout-main', () => () => (
-	<div data-testid="checkout-main" />
-) );
+jest.mock(
+	'calypso/my-sites/checkout/src/components/checkout-main',
+	() =>
+		( { redirectTo }: { redirectTo?: string } ) => (
+			<div data-testid="checkout-main" data-redirect-to={ redirectTo } />
+		)
+);
 
 const replaceProductsInCart = jest.fn();
 
@@ -88,6 +92,32 @@ describe( 'BillingDragonCheckout in prepared cart mode', () => {
 
 		expect( screen.getByTestId( 'checkout-main' ) ).toBeInTheDocument();
 		expect( replaceProductsInCart ).not.toHaveBeenCalled();
+	} );
+
+	it( 'returns a Pressable Titan order to Pressable after purchase', () => {
+		mockCart( {
+			products: [
+				{
+					extra: { isA4ASitelessCheckout: true, agency_id: 42, titan_domain: 'example.com' },
+				},
+			],
+		} );
+		renderPrepared();
+
+		expect( screen.getByTestId( 'checkout-main' ) ).toHaveAttribute(
+			'data-redirect-to',
+			'https://my.pressable.com/titan_email/checkout_return?receipt_id=:receiptId'
+		);
+	} );
+
+	it( 'keeps the licenses page for a prepared cart that is not a Titan order', () => {
+		mockCart( { products: [ { extra: { isA4ASitelessCheckout: true, agency_id: 42 } } ] } );
+		renderPrepared();
+
+		expect( screen.getByTestId( 'checkout-main' ) ).toHaveAttribute(
+			'data-redirect-to',
+			'https://example.com/purchases/licenses'
+		);
 	} );
 
 	it( 'shows the error card when there is no prepared cart', () => {
