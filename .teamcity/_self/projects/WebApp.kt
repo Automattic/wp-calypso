@@ -876,8 +876,10 @@ object Translate : BuildType({
 		bashNodeScript {
 			name = "Prepare environment"
 			scriptContent = """
-				# String extraction only reads source files, so skip building workspace packages.
+				# String extraction only reads source files, so skip building workspace packages
+				# and downloading the Playwright browsers this image would otherwise fetch.
 				export SKIP_CALYPSO_POSTINSTALL=true
+				export PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1
 
 				# Install modules
 				${_self.yarn_install_cmd}
