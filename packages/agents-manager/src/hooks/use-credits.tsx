@@ -6,6 +6,7 @@ import { API_BASE_URL } from '../constants';
 import { NO_SITE } from '../utils/agent-session';
 import {
 	type CreditsPlan,
+	type CreditsStatus,
 	buildMockCreditsStatus,
 	clampPercent,
 	formatCreditsShort,
@@ -13,6 +14,15 @@ import {
 	isCreditsExhausted,
 	isCreditsLow,
 } from '../utils/credits';
+import {
+	type CreditsState,
+	type CreditsTracksEventName,
+	getCreditsCtaType,
+	getCreditsState,
+	getCreditsUserRole,
+	getTaskRefusalCode,
+	recordCreditsTracksEvent,
+} from '../utils/credits-tracks';
 import {
 	buildLiveCreditsStatus,
 	getLiveCreditSiteId,
@@ -55,6 +65,17 @@ function readMockSeed(): MockCreditsSeed | null {
 	return { plan, percent: clampPercent( Number( params.get( 'am_credits' ) ) ) };
 }
 
+// The chat can unmount on close, so the notice states already recorded live
+// here, keyed by visit identity and state, until the page reloads.
+const recordedNoticeStates = new Set< string >();
+
+function isTerminalUpdate( update: TaskUpdate ): boolean {
+	return (
+		update.final !== false &&
+		( !! update.final || [ 'completed', 'failed', 'canceled' ].includes( update.status.state ) )
+	);
+}
+
 interface UseCreditsOptions {
 	/** Surfaces without metering (Reader chat) pass false and get nothing. */
 	enabled: boolean;
@@ -63,6 +84,8 @@ interface UseCreditsOptions {
 	site?: AgentsManagerSite | null;
 	userId?: number;
 	isOpen: boolean;
+	/** Whether the chat draws the notice; the compact composer never does. */
+	isNoticeVisible: boolean;
 }
 
 interface UseCreditsResult {
@@ -73,12 +96,16 @@ interface UseCreditsResult {
 	notice?: NoticeConfig;
 	/** Blocks Send and suggestions at zero, keeping the typed text. */
 	beforeSubmit: () => boolean;
+	/** The last failed reply's refusal code, cleared once read so it labels one error only. */
+	takeRefusalCode: () => string | undefined;
 }
 
 /**
  * Loads balances independently of prompts and keeps reads and terminal updates
  * scoped to the current site visit. The chat is composed here so refreshes can
- * avoid reading usage while a task is still running. While AI credits are only
+ * avoid reading usage while a task is still running. Live balances also record
+ * the credits Tracks events, and failed replies keep their refusal code, since
+ * the chat's error only carries the reply's text. While AI credits are only
  * on internal test sites, people the host says aren't Automatticians don't ask,
  * since their sites answer 404; a balance a turn reports still shows.
  */
@@ -89,6 +116,7 @@ export function useCredits( {
 	site,
 	userId,
 	isOpen,
+	isNoticeVisible,
 }: UseCreditsOptions ): UseCreditsResult {
 	const isMockEnabled = enabled && siteKey === NO_SITE;
 	const requestedSiteId = enabled ? getLiveCreditSiteId( siteKey, agentConfig ) : undefined;
@@ -122,13 +150,32 @@ export function useCredits( {
 	upgradeAccessRef.current = upgradeAccess;
 	const [ seed ] = useState( readMockSeed );
 	const [ percent, setPercent ] = useState( seed?.percent ?? 0 );
+	// The live balance the credits events describe, set once it is known below.
+	const liveCredits = useRef<
+		{ status: CreditsStatus; siteId: number; agentConfig: AgentConfig } | undefined
+	>( undefined );
+	const recordCreditsEvent = useCallback(
+		( eventName: CreditsTracksEventName, props?: Record< string, string > ) => {
+			if ( currentScope.current !== scope || ! scope.active || ! liveCredits.current ) {
+				return;
+			}
+			const { status, siteId, agentConfig: config } = liveCredits.current;
+			recordCreditsTracksEvent(
+				eventName,
+				{ status, siteId, contextProvider: config.contextProvider },
+				props
+			);
+		},
+		[ scope ]
+	);
 	const [ dismissedNoticeScope, setDismissedNoticeScope ] = useState< typeof scope >();
 	const isLowNoticeDismissed = dismissedNoticeScope === scope;
 	const dismissLowNotice = useCallback( () => {
 		if ( currentScope.current === scope && scope.active ) {
+			recordCreditsEvent( 'calypso_agents_manager_credits_notice_dismissed' );
 			setDismissedNoticeScope( scope );
 		}
-	}, [ scope ] );
+	}, [ scope, recordCreditsEvent ] );
 	const [ popoverScope, setPopoverScope ] = useState< typeof scope >();
 	const isPopoverOpen = popoverScope === scope;
 	const setIsPopoverOpen = useCallback(
@@ -151,8 +198,7 @@ export function useCredits( {
 				! scope.active ||
 				currentScope.current !== scope ||
 				! scope.siteId ||
-				update.final === false ||
-				! ( update.final || [ 'completed', 'failed', 'canceled' ].includes( update.status.state ) )
+				! isTerminalUpdate( update )
 			) {
 				return;
 			}
@@ -168,10 +214,20 @@ export function useCredits( {
 		},
 		[ scope, invalidateBalance ]
 	);
+	// Kept for whichever chat shows the failure, so not scoped to the visit.
+	const refusalCode = useRef< string | undefined >( undefined );
+	const takeRefusalCode = useCallback( () => {
+		const code = refusalCode.current;
+		refusalCode.current = undefined;
+		return code;
+	}, [] );
 	const chatConfig = useMemo(
 		() => ( {
 			...agentConfig,
 			onTaskUpdate: async ( update: TaskUpdate ) => {
+				if ( isTerminalUpdate( update ) ) {
+					refusalCode.current = getTaskRefusalCode( update );
+				}
 				observeTaskUpdate( update );
 				await agentConfig.onTaskUpdate?.( update );
 			},
@@ -275,6 +331,8 @@ export function useCredits( {
 		if ( isProcessing ) {
 			balanceRequest.current?.abort();
 			balanceRequest.current = undefined;
+			// A new turn's error must not take an earlier reply's code.
+			refusalCode.current = undefined;
 		}
 	}, [ isProcessing ] );
 	const snapshot = balance?.scope === scope ? balance.snapshot : undefined;
@@ -348,6 +406,8 @@ export function useCredits( {
 	} else if ( planUpgradeUrl && access?.canUpgrade === false ) {
 		askToUpgrade = 'plan-owner';
 	}
+	// Mock and free balances send no events.
+	liveCredits.current = siteId && status ? { status, siteId, agentConfig } : undefined;
 
 	// A known balance draining to zero opens once; initial reads and new visits stay quiet.
 	const wasExhaustedRef = useRef( { scope, hasBalance: !! status, isExhausted } );
@@ -368,6 +428,17 @@ export function useCredits( {
 		setIsPopoverOpen( false );
 	}, [ setIsPopoverOpen ] );
 
+	// Only the dot opens the popover by a click; opening on depletion above records nothing.
+	const toggleMeter = useCallback(
+		( open: boolean ) => {
+			if ( open && ! isPopoverOpen ) {
+				recordCreditsEvent( 'calypso_agents_manager_credits_meter_opened', { trigger: 'click' } );
+			}
+			setIsPopoverOpen( open );
+		},
+		[ isPopoverOpen, recordCreditsEvent, setIsPopoverOpen ]
+	);
+
 	let purchaseHint: string | undefined;
 	if ( askToUpgrade === 'site-admin' ) {
 		purchaseHint = __( 'Ask a site admin to add more.', __i18n_text_domain__ );
@@ -386,13 +457,13 @@ export function useCredits( {
 			<CreditsMeter
 				status={ status }
 				isOpen={ isPopoverOpen }
-				onToggle={ setIsPopoverOpen }
+				onToggle={ toggleMeter }
 				onAction={ siteId ? undefined : handleAction }
 				upgradeUrl={ upgradeUrl }
 				purchaseHint={ purchaseHint }
 			/>
 		);
-	}, [ status, isPopoverOpen, setIsPopoverOpen, handleAction, siteId, upgradeUrl, purchaseHint ] );
+	}, [ status, isPopoverOpen, toggleMeter, handleAction, siteId, upgradeUrl, purchaseHint ] );
 
 	const notice = useMemo< NoticeConfig | undefined >( () => {
 		if ( siteId && status?.plan === 'paid' ) {
@@ -492,6 +563,26 @@ export function useCredits( {
 		dismissLowNotice,
 	] );
 
+	// Once per state for this site, user and agent, and only while the notice is drawn.
+	const shownNoticeState: CreditsState | undefined =
+		siteId && status && notice && isNoticeVisible ? getCreditsState( status ) : undefined;
+	const userRole = getCreditsUserRole( access?.canBuyCredits );
+	const ctaType = getCreditsCtaType( !! upgradeUrl, askToUpgrade );
+	useEffect( () => {
+		if ( ! shownNoticeState ) {
+			return;
+		}
+		const key = JSON.stringify( [ scopeIdentity, shownNoticeState ] );
+		if ( recordedNoticeStates.has( key ) ) {
+			return;
+		}
+		recordedNoticeStates.add( key );
+		recordCreditsEvent( 'calypso_agents_manager_credits_notice_shown', {
+			user_role: userRole,
+			cta_type: ctaType,
+		} );
+	}, [ shownNoticeState, scopeIdentity, userRole, ctaType, recordCreditsEvent ] );
+
 	// A known zero opens the existing details without discarding the draft.
 	const beforeSubmit = useCallback( () => {
 		if ( snapshot && Date.parse( snapshot.resets_at ) <= Date.now() ) {
@@ -504,15 +595,27 @@ export function useCredits( {
 		}
 
 		if ( isExhausted ) {
+			// Every blocked send counts, even with the popover already open.
+			recordCreditsEvent( 'calypso_agents_manager_credits_meter_opened', {
+				trigger: 'submit_blocked',
+			} );
 			setIsPopoverOpen( true );
 			return false;
 		}
 
 		return true;
-	}, [ status, isExhausted, snapshot, invalidateBalance, refreshBalance, setIsPopoverOpen ] );
+	}, [
+		status,
+		isExhausted,
+		snapshot,
+		invalidateBalance,
+		refreshBalance,
+		setIsPopoverOpen,
+		recordCreditsEvent,
+	] );
 
 	return useMemo(
-		() => ( { chat, trailingActions, notice, beforeSubmit } ),
-		[ chat, trailingActions, notice, beforeSubmit ]
+		() => ( { chat, trailingActions, notice, beforeSubmit, takeRefusalCode } ),
+		[ chat, trailingActions, notice, beforeSubmit, takeRefusalCode ]
 	);
 }

@@ -416,12 +416,24 @@ jest.mock( '../../hooks/use-sources-action', () => () => {} );
 // Returns `undefined` after a mock reset, which the wrapper reads as allowed.
 const mockCreditsBeforeSubmit = jest.fn( (): boolean | undefined => true );
 const mockCreditsVisibility = jest.fn();
+const mockCreditsNoticeVisibility = jest.fn();
+const mockTakeRefusalCode = jest.fn( (): string | undefined => undefined );
 jest.mock( '../../hooks/use-credits', () => ( {
-	useCredits: ( { agentConfig, isOpen }: { agentConfig: unknown; isOpen: boolean } ) => {
+	useCredits: ( {
+		agentConfig,
+		isOpen,
+		isNoticeVisible,
+	}: {
+		agentConfig: unknown;
+		isOpen: boolean;
+		isNoticeVisible: boolean;
+	} ) => {
 		mockCreditsVisibility( isOpen );
+		mockCreditsNoticeVisibility( isNoticeVisible );
 		return {
 			chat: jest.requireMock( '@automattic/agenttic-client' ).useAgentChat( agentConfig ),
 			beforeSubmit: () => mockCreditsBeforeSubmit() !== false,
+			takeRefusalCode: mockTakeRefusalCode,
 		};
 	},
 } ) );
@@ -731,6 +743,19 @@ describe( 'OrchestratorChat', () => {
 		render( chat( options ) );
 		expect( mockCreditsVisibility ).toHaveBeenLastCalledWith( visible );
 	} );
+
+	it.each( [
+		[ 'docked', { isOpen: true, isDocked: true }, true ],
+		[ 'floating', { isOpen: true, isDocked: false }, true ],
+		[ 'compact', { isOpen: false, isDocked: false, isCompactMode: true }, false ],
+		[ 'closed', { isOpen: false, isDocked: false, isCompactMode: false }, false ],
+	] as const )(
+		'tells credits whether the %s chat draws the notice',
+		( _name, options, visible ) => {
+			render( chat( options ) );
+			expect( mockCreditsNoticeVisibility ).toHaveBeenLastCalledWith( visible );
+		}
+	);
 
 	it( 'ignores a conversation result for a discarded agent', () => {
 		mockManagerHasAgent = false;
@@ -1828,6 +1853,26 @@ describe( 'OrchestratorChat', () => {
 			render( chat() );
 
 			expect( chatErrorCalls() ).toEqual( [] );
+		} );
+
+		it( 'labels a credits refusal by its code, and reads the code once per error', () => {
+			mockTakeRefusalCode.mockReturnValueOnce( 'ai_credit_allowance_exhausted' );
+			mockUseAgentChat.mockReturnValue(
+				agentChatReturn( { error: 'Streaming error: You’ve used all your site credits.' } )
+			);
+			const { rerender } = render( chat() );
+			rerender( chat() );
+
+			mockUseAgentChat.mockReturnValue( agentChatReturn( { error: null } ) );
+			rerender( chat() );
+			mockUseAgentChat.mockReturnValue( agentChatReturn( { error: 'Some other error.' } ) );
+			rerender( chat() );
+
+			expect( mockTakeRefusalCode ).toHaveBeenCalledTimes( 2 );
+			expect( chatErrorCalls() ).toEqual( [
+				[ 'calypso_agents_manager_chat_error', { error_type: 'credits' } ],
+				[ 'calypso_agents_manager_chat_error', { error_type: 'other' } ],
+			] );
 		} );
 	} );
 
