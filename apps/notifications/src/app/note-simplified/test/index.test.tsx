@@ -63,7 +63,7 @@ describe( 'SimplifiedNote', () => {
 						date: null,
 						url: 'https://site.example/post/#comment-30',
 					},
-					actors: [ { name: 'Ben', avatar: '' } ],
+					actor: { name: 'Ben', avatar: '' },
 					actor_count: 1,
 				},
 				body: [
@@ -86,7 +86,7 @@ describe( 'SimplifiedNote', () => {
 				meta: {
 					ids: { site: SITE, post: POST },
 					kind: 'comment',
-					actors: [ { name: 'Kwame', avatar: '' } ],
+					actor: { name: 'Kwame', avatar: '' },
 					actor_count: 1,
 				},
 				body: [

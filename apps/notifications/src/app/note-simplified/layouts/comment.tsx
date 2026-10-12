@@ -8,14 +8,14 @@ import type { Note } from '../../types';
 
 export default function CommentNote( { note }: { note: Note } ) {
 	const isPendingApproval = useIsPendingApproval( note );
-	const { post, site, parent_comment: repliedTo, actors } = note.meta ?? {};
+	const { post, site, parent_comment: repliedTo, actor } = note.meta ?? {};
 
 	return (
 		<>
 			{ post && <PostCard post={ post } site={ site } /> }
 			<Thread
 				repliedTo={ repliedTo }
-				commenter={ actors?.[ 0 ] }
+				commenter={ actor }
 				meta={ <NoteMeta note={ note } /> }
 				status={ isPendingApproval && <PendingApproval note={ note } /> }
 			>

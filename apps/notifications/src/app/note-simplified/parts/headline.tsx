@@ -11,19 +11,19 @@ import type { Note } from '../../types';
 
 export default function Headline( { note }: { note: Note } ) {
 	const isPendingApproval = useIsPendingApproval( note );
-	const { actors = [], summary } = note.meta ?? {};
-	if ( ! summary || ! actors.length ) {
+	const { actor, summary } = note.meta ?? {};
+	if ( ! summary || ! actor ) {
 		return null;
 	}
 	const icon = <NoteIcon icon={ note.icon } size={ 36 } />;
 
 	return (
 		<HStack alignment="top" justify="flex-start" spacing={ 3 }>
-			{ actors[ 0 ].url ? (
+			{ actor.url ? (
 				// The sentence beside it links to the same person, so the photo stays out of the tab order.
 				<a
 					className="wpnc-simplified__photo"
-					href={ actors[ 0 ].url }
+					href={ actor.url }
 					target="_blank"
 					rel="noreferrer"
 					tabIndex={ -1 }

@@ -45,7 +45,6 @@ export type NotePost = {
 export type NoteSite = {
 	name: string;
 	icon: string;
-	url?: string;
 };
 
 export type NoteParentComment = {
@@ -148,7 +147,7 @@ export type Note = {
 		post?: NotePost;
 		site?: NoteSite;
 		parent_comment?: NoteParentComment;
-		actors?: NoteActor[];
+		actor?: NoteActor;
 		actor_count?: number;
 		summary?: Subject;
 		heading?: string;
