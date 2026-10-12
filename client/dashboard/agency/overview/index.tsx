@@ -23,7 +23,7 @@ import LeadsCard from './tailored/leads-card';
 import LearnCard from './tailored/learn-card';
 import { SAMPLE_JOIN_URL, getPartnerCalls } from './tailored/partner-calls';
 import PartnerManagerCard from './tailored/partner-manager-card';
-import { getPartnerManager } from './tailored/partner-managers';
+import { GETTING_STARTED_ADVISOR_ID, getPartnerManager } from './tailored/partner-managers';
 import PrototypeControlPanel from './tailored/prototype-control-panel';
 import {
 	isOverviewPrototypeEnabled,
@@ -252,7 +252,7 @@ export default function AgencyOverview() {
 					type: 'advisor',
 					booked: isGettingStarted
 						? getSampleAdvisorCall(
-								getPartnerManager( prototypeSettings.partnerManagerId ),
+								getPartnerManager( GETTING_STARTED_ADVISOR_ID ),
 								prototypeSettings.discussionNotes
 							)
 						: undefined,

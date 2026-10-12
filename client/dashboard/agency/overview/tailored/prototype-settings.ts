@@ -147,6 +147,7 @@ export const QUICK_SCENARIOS: Record< QuickScenarioId, Partial< PrototypeSetting
 		approvalStatus: 'approved',
 		tierId: 'pro-agency-partner',
 		influencedRevenue: 9240,
+		partnerManagerId: 'shane-tabrizi',
 		callScenario: 'scheduled',
 		completedTodoIds: [],
 		discussionNotes: '',
