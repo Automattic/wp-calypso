@@ -18,6 +18,9 @@ import {
 	clearSignupCompleteFlowName,
 	clearSignupCompleteSlug,
 	clearSignupCompleteSiteID,
+	getSignupCompleteFlowName,
+	retrieveSignupDestination,
+	wasSignupCheckoutPageUnloaded,
 } from 'calypso/signup/storageUtils';
 import { isUserEligibleForFreeHostingTrial } from 'calypso/state/selectors/is-user-eligible-for-free-hosting-trial';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
@@ -31,8 +34,6 @@ import { STEPS } from '../../internals/steps';
 import { hasPurchaseStepsParameter } from '../../internals/steps-repository/components/onboarding-progress/use-show-onboarding-progress';
 import { ProcessingResult } from '../../internals/steps-repository/processing-step/constants';
 import { getOnboardingStepperPosition } from '../onboarding/step-counter-config';
-import { isPurchaseResume } from './purchase-resume';
-import { resumePurchaseCart } from './resume-purchase-cart';
 import type { FlowV2, SubmitHandler } from '../../internals/types';
 import type { DomainSuggestion } from '@automattic/api-core';
 import type { OnboardActions, OnboardSelect } from '@automattic/data-stores';
@@ -41,12 +42,18 @@ import type { Store } from 'redux';
 async function initialize( reduxStore: Store ) {
 	const { resetOnboardStore, setPlanCartItem } = dispatch( ONBOARD_STORE ) as OnboardActions;
 
-	await resetOnboardStore();
-	// @ts-expect-error We're using the thunk middleware but TS doesn't know that.
-	reduxStore.dispatch( setSelectedSiteId( null ) );
-	clearStepPersistedState( NEW_HOSTED_SITE_FLOW );
 	const queryParams = getCurrentQueryParams();
-	if ( ! isPurchaseResume( queryParams ) ) {
+	const isReturningFromCheckout =
+		hasPurchaseStepsParameter( queryParams ) &&
+		wasSignupCheckoutPageUnloaded() &&
+		getSignupCompleteFlowName() === NEW_HOSTED_SITE_FLOW &&
+		retrieveSignupDestination();
+
+	if ( ! isReturningFromCheckout ) {
+		await resetOnboardStore();
+		// @ts-expect-error We're using the thunk middleware but TS doesn't know that.
+		reduxStore.dispatch( setSelectedSiteId( null ) );
+		clearStepPersistedState( NEW_HOSTED_SITE_FLOW );
 		clearSignupDestinationCookie();
 		clearSignupCompleteFlowName();
 		clearSignupCompleteSlug();
@@ -92,9 +99,6 @@ async function initialize( reduxStore: Store ) {
 	}
 
 	steps.push( STEPS.SITE_CREATION_STEP, STEPS.PROCESSING );
-	if ( hasPurchaseStepsParameter( queryParams ) ) {
-		steps.push( STEPS.ERROR );
-	}
 
 	return stepsWithRequiredLogin( steps );
 }
@@ -110,14 +114,10 @@ const hosting: FlowV2< typeof initialize > = {
 			[ STEPS.DOMAIN_SEARCH.slug ]: {
 				shouldHidePlansStep: hasPurchaseStepsParameter( query ),
 			},
-			[ STEPS.PROCESSING.slug ]: {
-				skipSignupComplete: isPurchaseResume( query ),
-			},
 		};
 	},
 	useStepNavigation( _currentStepSlug, navigate ) {
 		const {
-			setPendingAction,
 			setDomain,
 			setDomainCartItem,
 			setDomainCartItems,
@@ -177,21 +177,6 @@ const hosting: FlowV2< typeof initialize > = {
 					setDomainCartItems( providedDependencies.domainCart as MinimalRequestCartProduct[] );
 					setSignupDomainOrigin( providedDependencies.signupDomainOrigin as string );
 
-					if ( planCartItem && isPurchaseResume( query ) ) {
-						const siteSlug = query.get( 'siteSlug' )!;
-						const siteId = query.get( 'siteId' )!;
-						setPendingAction( async () => {
-							const selectedPlan = await resumePurchaseCart(
-								siteSlug,
-								planCartItem,
-								( providedDependencies.domainCart as MinimalRequestCartProduct[] ) ?? []
-							);
-							await setPlanCartItem( selectedPlan );
-							return { siteId, siteSlug, goToCheckout: true, siteCreated: true };
-						} );
-						return navigate( STEPS.PROCESSING.slug );
-					}
-
 					if ( planCartItem ) {
 						return navigate( STEPS.SITE_CREATION_STEP.slug );
 					}
@@ -231,15 +216,9 @@ const hosting: FlowV2< typeof initialize > = {
 				}
 
 				case STEPS.SITE_CREATION_STEP.slug:
-					return navigate( STEPS.PROCESSING.slug );
+					return navigate( STEPS.PROCESSING.slug, undefined, showPurchaseSteps );
 
 				case STEPS.PROCESSING.slug: {
-					if (
-						showPurchaseSteps &&
-						providedDependencies.processingResult === ProcessingResult.FAILURE
-					) {
-						return navigate( STEPS.ERROR.slug );
-					}
 					if ( providedDependencies.processingResult === ProcessingResult.SUCCESS ) {
 						const siteId = providedDependencies.siteId || getSignupCompleteSiteID();
 						setSignupCompleteSiteID( showPurchaseSteps ? siteId : providedDependencies.siteId );
@@ -271,9 +250,7 @@ const hosting: FlowV2< typeof initialize > = {
 
 						if ( providedDependencies.goToCheckout ) {
 							persistSignupDestination( destination );
-							setSignupCompleteSlug(
-								showPurchaseSteps ? siteSlug : providedDependencies?.siteSlug
-							);
+							setSignupCompleteSlug( providedDependencies?.siteSlug );
 							setSignupCompleteFlowName( flowName );
 
 							if ( couponCode ) {
@@ -289,34 +266,27 @@ const hosting: FlowV2< typeof initialize > = {
 								window.location.origin
 							).href;
 							const stepPosition = getOnboardingStepperPosition( 'checkout', true );
-							if ( showPurchaseSteps ) {
-								// Browser Back must resume domains rather than rerun site creation.
-								window.history.replaceState( window.history.state, '', backUrl );
-							}
-							return window.location.assign(
-								addQueryArgs(
-									`/checkout/${ encodeURIComponent(
-										( showPurchaseSteps
-											? siteSlug
-											: ( providedDependencies?.siteSlug as string ) ) ?? ''
-									) }`,
-									{
-										redirect_to: destination,
-										coupon: couponCode,
-										...( showPurchaseSteps && {
-											flow: NEW_HOSTED_SITE_FLOW,
-											showPurchaseSteps: 'true',
-											plan: planCartItem?.product_slug ?? query.get( 'plan' ),
-											showDomainStep: '',
-											signup: 1,
-											checkoutBackUrl: backUrl,
-											checkoutBackUrlDomains: backUrl,
-											steps_current: stepPosition.current,
-											steps_total: stepPosition.total,
-										} ),
-									}
-								)
+							const checkoutUrl = addQueryArgs(
+								`/checkout/${ encodeURIComponent( ( providedDependencies?.siteSlug as string ) ?? '' ) }`,
+								{
+									redirect_to: destination,
+									coupon: couponCode,
+									...( showPurchaseSteps && {
+										flow: NEW_HOSTED_SITE_FLOW,
+										showPurchaseSteps: 'true',
+										plan: planCartItem?.product_slug ?? query.get( 'plan' ),
+										showDomainStep: '',
+										signup: 1,
+										checkoutBackUrl: backUrl,
+										checkoutBackUrlDomains: backUrl,
+										steps_current: stepPosition.current,
+										steps_total: stepPosition.total,
+									} ),
+								}
 							);
+							return showPurchaseSteps
+								? window.location.replace( checkoutUrl )
+								: window.location.assign( checkoutUrl );
 						}
 
 						return navigate( STEPS.UNIFIED_PLANS.slug );
@@ -331,20 +301,6 @@ const hosting: FlowV2< typeof initialize > = {
 		};
 	},
 	useSideEffect( currentStepSlug ) {
-		const showPurchaseSteps = hasPurchaseStepsParameter( useQuery() );
-		useEffect( () => {
-			if ( ! showPurchaseSteps || currentStepSlug !== STEPS.PROCESSING.slug ) {
-				return;
-			}
-			const restorePage = ( event: PageTransitionEvent ) => {
-				if ( event.persisted ) {
-					// A cached processing page must remount at its domain-return URL.
-					window.location.reload();
-				}
-			};
-			window.addEventListener( 'pageshow', restorePage );
-			return () => window.removeEventListener( 'pageshow', restorePage );
-		}, [ showPurchaseSteps, currentStepSlug ] );
 		const studioSiteId = useQuery().get( 'studioSiteId' );
 		const autoOpenPush = useQuery().get( 'autoOpenPush' );
 		const section = useQuery().get( 'section' );

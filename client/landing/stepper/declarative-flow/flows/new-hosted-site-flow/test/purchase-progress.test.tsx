@@ -3,11 +3,9 @@
  */
 import { NEW_HOSTED_SITE_FLOW } from '@automattic/onboarding';
 import { renderHook, act } from '@testing-library/react';
-import { setSignupCompleteSiteID, setSignupCompleteSlug } from 'calypso/signup/storageUtils';
 import { STEPS } from '../../../internals/steps';
 import { ProcessingResult } from '../../../internals/steps-repository/processing-step/constants';
 import hosting from '../new-hosted-site-flow';
-import { resumePurchaseCart } from '../resume-purchase-cart';
 
 jest.mock( '@automattic/onboarding', () => ( {
 	NEW_HOSTED_SITE_FLOW: 'new-hosted-site',
@@ -22,13 +20,13 @@ jest.mock( 'calypso/landing/stepper/stores', () => ( { ONBOARD_STORE: 'ONBOARD_S
 
 let mockQuery = new URLSearchParams();
 let mockLocale = 'en';
-let mockPendingAction: () => Promise< unknown >;
 const mockPlan = { product_slug: 'ecommerce-bundle-2y' };
 const mockReset = jest.fn();
 const mockSeed = jest.fn();
 const mockClear = jest.fn();
 const mockSite = { siteSlug: 'example.wordpress.com', siteId: '123' };
 let mockSavedFlow = NEW_HOSTED_SITE_FLOW;
+let mockCheckoutUnloaded = false;
 
 jest.mock( '@wordpress/data', () => ( {
 	useSelect: ( callback: ( select: () => unknown ) => unknown ) =>
@@ -40,9 +38,6 @@ jest.mock( '@wordpress/data', () => ( {
 		setSiteUrl: jest.fn(),
 		setSignupDomainOrigin: jest.fn(),
 		setPlanCartItem: mockSeed,
-		setPendingAction: ( action: () => Promise< unknown > ) => {
-			mockPendingAction = action;
-		},
 	} ),
 	dispatch: () => ( { resetOnboardStore: mockReset, setPlanCartItem: mockSeed } ),
 } ) );
@@ -63,6 +58,7 @@ jest.mock( 'calypso/signup/storageUtils', () => ( {
 	getSignupCompleteSiteID: () => mockSite.siteId,
 	getSignupCompleteSlug: () => mockSite.siteSlug,
 	getSignupCompleteFlowName: () => mockSavedFlow,
+	wasSignupCheckoutPageUnloaded: () => mockCheckoutUnloaded,
 	retrieveSignupDestination: () => '/setup/transferring-hosted-site',
 	clearSignupDestinationCookie: () => mockClear(),
 	clearSignupCompleteFlowName: jest.fn(),
@@ -73,12 +69,11 @@ jest.mock( 'calypso/signup/storageUtils', () => ( {
 	setSignupCompleteFlowName: jest.fn(),
 	persistSignupDestination: jest.fn(),
 } ) );
-jest.mock( '../resume-purchase-cart', () => ( { resumePurchaseCart: jest.fn() } ) );
 
 beforeEach( () => {
 	jest.clearAllMocks();
 	mockLocale = 'en';
-	jest.mocked( resumePurchaseCart ).mockResolvedValue( mockPlan );
+	mockCheckoutUnloaded = false;
 	mockSavedFlow = NEW_HOSTED_SITE_FLOW;
 	mockQuery = new URLSearchParams( {
 		plan: mockPlan.product_slug,
@@ -86,7 +81,7 @@ beforeEach( () => {
 		showDomainStep: '',
 	} );
 	Object.defineProperty( window, 'location', {
-		value: { ...window.location, assign: jest.fn(), reload: jest.fn() },
+		value: { ...window.location, assign: jest.fn(), replace: jest.fn() },
 		writable: true,
 	} );
 } );
@@ -94,48 +89,38 @@ beforeEach( () => {
 const navigation = ( step: string, navigate = jest.fn() ) =>
 	renderHook( () => hosting.useStepNavigation( step as never, navigate ) ).result.current;
 
-it.each( [ 'en', 'fr' ] )(
-	'preserves the checkout steps, billing term, and %s locale',
-	( locale ) => {
-		mockLocale = locale;
-		mockQuery.set( 'plan', 'ecommerce-bundle' );
-		const replaceState = jest
-			.spyOn( window.history, 'replaceState' )
-			.mockImplementation( () => {} );
-		const nav = navigation( 'processing' );
-		act( () =>
-			nav.submit( {
-				slug: 'processing',
-				providedDependencies: {
-					processingResult: ProcessingResult.SUCCESS,
-					...mockSite,
-					goToCheckout: true,
-				},
-			} as never )
-		);
-		const checkout = new URL(
-			jest.mocked( window.location.assign ).mock.calls[ 0 ][ 0 ] as string,
-			'https://wordpress.com'
-		);
-		expect( checkout.searchParams.get( 'flow' ) ).toBe( NEW_HOSTED_SITE_FLOW );
-		expect( checkout.searchParams.get( 'steps_current' ) ).toBe( '2' );
-		expect( checkout.searchParams.get( 'steps_total' ) ).toBe( '2' );
-		const back = new URL( checkout.searchParams.get( 'checkoutBackUrl' )! );
-		expect( back.origin ).toBe( window.location.origin );
-		expect( back.pathname ).toBe(
-			`/setup/new-hosted-site/domains${ locale === 'en' ? '' : '/fr' }`
-		);
-		expect( back.searchParams.get( 'plan' ) ).toBe( mockPlan.product_slug );
-		expect( back.searchParams.get( 'siteId' ) ).toBe( mockSite.siteId );
-		expect( back.searchParams.get( 'siteSlug' ) ).toBe( mockSite.siteSlug );
-		expect( back.searchParams.get( 'showPurchaseSteps' ) ).toBe( 'true' );
-		expect( checkout.searchParams.get( 'redirect_to' ) ).toContain(
-			'/setup/transferring-hosted-site'
-		);
-		expect( replaceState ).toHaveBeenCalledWith( window.history.state, '', back.href );
-		replaceState.mockRestore();
-	}
-);
+it.each( [ 'en', 'fr' ] )( 'passes checkout steps and a domain return URL in %s', ( locale ) => {
+	mockLocale = locale;
+	mockQuery.set( 'plan', 'ecommerce-bundle' );
+	const nav = navigation( 'processing' );
+	act( () =>
+		nav.submit( {
+			slug: 'processing',
+			providedDependencies: {
+				processingResult: ProcessingResult.SUCCESS,
+				...mockSite,
+				goToCheckout: true,
+			},
+		} as never )
+	);
+	const checkout = new URL(
+		jest.mocked( window.location.replace ).mock.calls[ 0 ][ 0 ] as string,
+		'https://wordpress.com'
+	);
+	expect( checkout.searchParams.get( 'flow' ) ).toBe( NEW_HOSTED_SITE_FLOW );
+	expect( checkout.searchParams.get( 'steps_current' ) ).toBe( '2' );
+	expect( checkout.searchParams.get( 'steps_total' ) ).toBe( '2' );
+	const back = new URL( checkout.searchParams.get( 'checkoutBackUrl' )! );
+	expect( back.origin ).toBe( window.location.origin );
+	expect( back.pathname ).toBe( `/setup/new-hosted-site/domains${ locale === 'en' ? '' : '/fr' }` );
+	expect( back.searchParams.get( 'plan' ) ).toBe( mockPlan.product_slug );
+	expect( back.searchParams.get( 'siteId' ) ).toBe( mockSite.siteId );
+	expect( back.searchParams.get( 'siteSlug' ) ).toBe( mockSite.siteSlug );
+	expect( back.searchParams.get( 'showPurchaseSteps' ) ).toBe( 'true' );
+	expect( checkout.searchParams.get( 'redirect_to' ) ).toContain(
+		'/setup/transferring-hosted-site'
+	);
+} );
 
 it( 'keeps other Commerce entries on their existing checkout behavior', () => {
 	mockQuery.delete( 'showPurchaseSteps' );
@@ -158,115 +143,40 @@ it( 'keeps other Commerce entries on their existing checkout behavior', () => {
 	expect( checkout.searchParams.has( 'checkoutBackUrl' ) ).toBe( false );
 } );
 
-it( 'resumes the same site without running site creation, including after a skipped domain', async () => {
-	mockQuery.set( 'siteSlug', mockSite.siteSlug );
-	mockQuery.set( 'siteId', mockSite.siteId );
-	expect( renderHook( () => hosting.useStepsProps!() ).result.current.processing ).toEqual( {
-		skipSignupComplete: true,
-	} );
-	const steps = await hosting.initialize( {
-		dispatch: jest.fn(),
-		getState: () => ( {} ),
-	} as never );
-	expect( steps.map( ( step ) => step.slug ) ).not.toContain( STEPS.UNIFIED_PLANS.slug );
+it.each( [ true, false ] )(
+	'uses the existing site-creation path with progress=%s',
+	( enabled ) => {
+		mockQuery.set( 'showPurchaseSteps', String( enabled ) );
+		const navigate = jest.fn();
+		const nav = navigation( 'domains', navigate );
+		act( () =>
+			nav.submit( { slug: 'domains', providedDependencies: { domainCart: [] } } as never )
+		);
+		expect( navigate ).toHaveBeenLastCalledWith( STEPS.SITE_CREATION_STEP.slug );
+		act( () => nav.submit( { slug: 'create-site', providedDependencies: {} } as never ) );
+		expect( navigate ).toHaveBeenLastCalledWith( STEPS.PROCESSING.slug, undefined, enabled );
+	}
+);
+
+it( 'preserves signup state for the shared checkout-return path', async () => {
+	mockCheckoutUnloaded = true;
+	await hosting.initialize( { dispatch: jest.fn(), getState: () => ( {} ) } as never );
+	expect( mockReset ).not.toHaveBeenCalled();
 	expect( mockClear ).not.toHaveBeenCalled();
-	const navigate = jest.fn();
-	const nav = navigation( 'domains', navigate );
-	act( () =>
-		nav.submit( {
-			slug: 'domains',
-			providedDependencies: { domainCart: [] },
-		} as never )
-	);
-	expect( navigate ).toHaveBeenCalledWith( STEPS.PROCESSING.slug );
-	expect( navigate ).not.toHaveBeenCalledWith( STEPS.SITE_CREATION_STEP.slug );
-	await expect( mockPendingAction() ).resolves.toEqual( {
-		...mockSite,
-		goToCheckout: true,
-		siteCreated: true,
-	} );
-	expect( resumePurchaseCart ).toHaveBeenCalledWith( mockSite.siteSlug, mockPlan, [] );
-	expect( mockSeed ).toHaveBeenLastCalledWith( mockPlan );
 } );
 
-it( 'shows an error if the opted-in cart update fails', async () => {
-	const steps = await hosting.initialize( {
-		dispatch: jest.fn(),
-		getState: () => ( {} ),
-	} as never );
-	expect( steps.map( ( step ) => step.slug ) ).toContain( STEPS.ERROR.slug );
-	const navigate = jest.fn();
-	const nav = navigation( 'processing', navigate );
-	act( () =>
-		nav.submit( {
-			slug: 'processing',
-			providedDependencies: { processingResult: ProcessingResult.FAILURE },
-		} as never )
-	);
-	expect( navigate ).toHaveBeenCalledWith( STEPS.ERROR.slug );
-	expect( window.location.assign ).not.toHaveBeenCalled();
-} );
-
-it( 'keeps the error handling of other flow entries unchanged', async () => {
-	mockQuery.delete( 'showPurchaseSteps' );
-	const steps = await hosting.initialize( {
-		dispatch: jest.fn(),
-		getState: () => ( {} ),
-	} as never );
-	expect( steps.map( ( step ) => step.slug ) ).not.toContain( STEPS.ERROR.slug );
-	const navigate = jest.fn();
-	const nav = navigation( 'processing', navigate );
-	act( () =>
-		nav.submit( {
-			slug: 'processing',
-			providedDependencies: { processingResult: ProcessingResult.FAILURE },
-		} as never )
-	);
-	expect( navigate ).not.toHaveBeenCalled();
-} );
-
-it( 'retains fallback site identifiers when processing returns only checkout status', () => {
-	const replaceState = jest.spyOn( window.history, 'replaceState' ).mockImplementation( () => {} );
-	const nav = navigation( 'processing' );
-	act( () =>
-		nav.submit( {
-			slug: 'processing',
-			providedDependencies: { processingResult: ProcessingResult.SUCCESS, goToCheckout: true },
-		} as never )
-	);
-	expect( setSignupCompleteSiteID ).toHaveBeenCalledWith( mockSite.siteId );
-	expect( setSignupCompleteSlug ).toHaveBeenCalledWith( mockSite.siteSlug );
-	expect( jest.mocked( window.location.assign ).mock.calls[ 0 ][ 0 ] ).toContain(
-		'/checkout/example.wordpress.com?'
-	);
-	replaceState.mockRestore();
-} );
-
-it( 'remounts cached Commerce pages at the saved return URL', () => {
-	renderHook( () => hosting.useSideEffect?.( 'processing', jest.fn() ) );
-	window.dispatchEvent( new PageTransitionEvent( 'pageshow', { persisted: true } ) );
-	expect( window.location.reload ).toHaveBeenCalledTimes( 1 );
-} );
-
-it( 'leaves other cached new-hosted-site consumers unchanged', () => {
-	mockQuery.delete( 'showPurchaseSteps' );
-	renderHook( () => hosting.useSideEffect?.( 'processing', jest.fn() ) );
-	window.dispatchEvent( new PageTransitionEvent( 'pageshow', { persisted: true } ) );
-	expect( window.location.reload ).not.toHaveBeenCalled();
-} );
-
-it( 'preserves a cached domain search without reloading', () => {
-	renderHook( () => hosting.useSideEffect?.( 'domains', jest.fn() ) );
-	window.dispatchEvent( new PageTransitionEvent( 'pageshow', { persisted: true } ) );
-	expect( window.location.reload ).not.toHaveBeenCalled();
-} );
-
-it( 'supplies the domain screen with the two-step Commerce journey', () => {
-	mockQuery = new URLSearchParams( 'showPurchaseSteps=true&showDomainStep&plan=ecommerce-bundle' );
-	expect( renderHook( () => hosting.useStepsProps!() ).result.current.domains ).toEqual( {
-		shouldHidePlansStep: true,
-	} );
-	expect( renderHook( () => hosting.useStepsProps!() ).result.current.processing ).toEqual( {
-		skipSignupComplete: false,
-	} );
-} );
+it.each( [ 'fresh', 'other-flow', 'without-progress' ] )(
+	'resets signup state for %s visits',
+	async ( entry ) => {
+		mockCheckoutUnloaded = entry !== 'fresh';
+		if ( entry === 'other-flow' ) {
+			mockSavedFlow = 'onboarding';
+		}
+		if ( entry === 'without-progress' ) {
+			mockQuery.delete( 'showPurchaseSteps' );
+		}
+		await hosting.initialize( { dispatch: jest.fn(), getState: () => ( {} ) } as never );
+		expect( mockReset ).toHaveBeenCalled();
+		expect( mockClear ).toHaveBeenCalled();
+	}
+);
