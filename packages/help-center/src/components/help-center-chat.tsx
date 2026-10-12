@@ -9,6 +9,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useFeatureConfig, useHelpCenterContext } from '../contexts/HelpCenterContext';
 import { useSupportStatus } from '../data/use-support-status';
 import { useChatStatus, useShouldUseWapuu } from '../hooks';
+import { useHasOpenZendeskChat } from '../hooks/use-has-open-zendesk-chat';
 import { useHelpCenterTracksEvent } from '../hooks/use-help-center-tracks-event';
 import type { JSX } from 'react';
 import './help-center-chat.scss';
@@ -53,6 +54,7 @@ export function HelpCenterChat( {
 	const userFieldFlowName = featureConfig.chat.flowName || data?.eligibility?.user_field_flow_name;
 
 	const { forceEmailSupport, isChatRestricted } = useChatStatus();
+	const hasOpenZendeskChat = useHasOpenZendeskChat();
 
 	useEffect( () => {
 		if ( preventOdieAccess ) {
@@ -79,6 +81,7 @@ export function HelpCenterChat( {
 			externalChatProvider={ externalChatProvider }
 			externalChatId={ externalChatId }
 			isUserEligibleForPaidSupport={ isUserEligibleForPaidSupport }
+			hasOpenZendeskChat={ hasOpenZendeskChat }
 			forceEmailSupport={ Boolean( forceEmailSupport ) }
 			isChatRestricted={ Boolean( isChatRestricted ) }
 			launcherContext={ launcherContext }
