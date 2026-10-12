@@ -29,9 +29,14 @@ export default function Body( {
 	);
 
 	return (
-		// Only the classes the body's own styles need: the type classes would bring in the
-		// detailed layout's comment bar and list dividers.
-		<div className={ clsx( 'wpnc__note', { 'wpnc__comment-unapproved': isPendingApproval } ) }>
+		// Every type class but the comment's, which would bring in the detailed layout's
+		// comment bar.
+		<div
+			className={ clsx( 'wpnc__note', {
+				[ `wpnc__${ note.type }` ]: note.type !== 'comment',
+				'wpnc__comment-unapproved': isPendingApproval,
+			} ) }
+		>
 			<NoteBody note={ bodyNote } />
 		</div>
 	);
