@@ -95,7 +95,6 @@ beforeEach( () => {
 } );
 
 afterEach( () => {
-	nock.cleanAll();
 	Object.defineProperty( window, 'location', { value: originalLocation, writable: true } );
 } );
 
