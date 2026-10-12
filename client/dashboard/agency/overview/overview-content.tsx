@@ -50,6 +50,9 @@ export interface AgencyOverviewContentProps {
 	onScheduleCall?: () => void;
 	isSchedulingCall?: boolean;
 	onRelaunchTour?: () => void;
+	/** The welcome band is open and already says what the review card would. */
+	hidesPendingCard?: boolean;
+	tourLabel?: string;
 	recordTracksEvent?: RecordTracksEvent;
 }
 
@@ -72,6 +75,8 @@ export default function AgencyOverviewContent( {
 	onScheduleCall,
 	isSchedulingCall,
 	onRelaunchTour,
+	hidesPendingCard,
+	tourLabel,
 	recordTracksEvent,
 }: AgencyOverviewContentProps ) {
 	const isSmallViewport = useViewportMatch( 'medium', '<' );
@@ -82,13 +87,25 @@ export default function AgencyOverviewContent( {
 	// A rejection is already spelled out by the tier card, so only pending accounts get the note.
 	const isLocked = isPending || isRejected || ! canAccessEarnings;
 	const lockedNote = isPending ? __( 'Unlocks when your account is activated' ) : undefined;
+	const growthCard = (
+		<GrowthCard
+			isPending={ isPending }
+			capabilities={ capabilities }
+			hasPartnerDirectoryListing={ hasPartnerDirectoryListing }
+			tierId={ tierId }
+			links={ links }
+			shouldUseRouterLink={ shouldUseRouterLink }
+			recordTracksEvent={ recordTracksEvent }
+		/>
+	);
 
 	return (
 		<Grid columns={ isSmallViewport ? 1 : 2 } gap={ isSmallViewport ? 'lg' : 'xl' }>
 			<VStack spacing={ spacing } justify="flex-start">
 				{ isRejected && <RejectedTierCard contactSupport={ links.contactSupport } /> }
-				{ isPending && (
+				{ isPending && ! hidesPendingCard && (
 					<PendingTierCard
+						tourLabel={ tourLabel }
 						onRelaunchTour={ onRelaunchTour }
 						recordTracksEvent={ recordTracksEvent }
 					/>
@@ -104,17 +121,7 @@ export default function AgencyOverviewContent( {
 						recordTracksEvent={ recordTracksEvent }
 					/>
 				) }
-				{ ! isRejected && (
-					<GrowthCard
-						isPending={ isPending }
-						capabilities={ capabilities }
-						hasPartnerDirectoryListing={ hasPartnerDirectoryListing }
-						tierId={ tierId }
-						links={ links }
-						shouldUseRouterLink={ shouldUseRouterLink }
-						recordTracksEvent={ recordTracksEvent }
-					/>
-				) }
+				{ ! isRejected && growthCard }
 				<ReferralEarningsCard
 					agencyId={ agencyId }
 					locked={ isLocked }

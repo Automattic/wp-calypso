@@ -61,7 +61,7 @@ function getPendingContent( links: GrowthCardLinks ): GrowthContent {
 				id: 'program-guide',
 				icon: help,
 				title: __( 'Read the partner program guide' ),
-				description: __( 'Learn how tiers, IAR and benefits work' ),
+				description: __( 'Learn how tiers and benefits work' ),
 				actionLabel: __( 'Read' ),
 				href: PARTNER_PROGRAM_GUIDE_URL,
 				isExternal: true,

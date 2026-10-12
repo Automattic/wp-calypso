@@ -52,9 +52,12 @@ function ApplicationStatusCard( {
 export function PendingTierCard( {
 	onRelaunchTour,
 	recordTracksEvent,
+	tourLabel = __( 'Relaunch welcome tour' ),
 }: {
 	onRelaunchTour?: () => void;
 	recordTracksEvent?: RecordTracksEvent;
+	/** What the tour button says; the in-page welcome never opens the tour itself. */
+	tourLabel?: string;
 } ) {
 	return (
 		<ApplicationStatusCard
@@ -91,7 +94,7 @@ export function PendingTierCard( {
 							onRelaunchTour();
 						} }
 					>
-						{ __( 'Relaunch welcome tour' ) }
+						{ tourLabel }
 					</Button>
 				) }
 			</ButtonStack>

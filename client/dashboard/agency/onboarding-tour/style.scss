@@ -1,0 +1,187 @@
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+
+$banner-height: 260px;
+$banner-height-mobile: 200px;
+$aside-width: 220px;
+
+.a4a-onboarding-tour-modal {
+	max-width: 700px;
+
+	// The modal focuses its own frame on open so screen readers announce the dialog; the
+	// frame is not a control, so it gets no ring. Controls inside keep theirs.
+	&:focus {
+		outline: none;
+	}
+
+	.components-modal__content {
+		padding: 0;
+	}
+}
+
+.a4a-onboarding-tour {
+	display: flex;
+	flex-direction: column;
+
+	@include break-mobile {
+		flex-direction: row;
+	}
+}
+
+.a4a-onboarding-tour__aside {
+	display: none;
+	flex-direction: column;
+	gap: 4px;
+	flex: none;
+	inline-size: $aside-width;
+	padding: 12px;
+
+	@include break-mobile {
+		display: flex;
+	}
+}
+
+.a4a-onboarding-tour__aside-item.is-active {
+	background-color: var( --color-primary-0 );
+	color: var( --color-primary-60 );
+}
+
+.a4a-onboarding-tour__main {
+	position: relative;
+	flex: 1;
+	min-inline-size: 0;
+
+	@include break-mobile {
+		border-inline-start: 1px solid var( --color-neutral-0 );
+	}
+}
+
+.a4a-onboarding-tour__close {
+	position: absolute;
+	inset-block-start: 8px;
+	inset-inline-end: 8px;
+	z-index: 2;
+}
+
+.a4a-onboarding-tour__banner-container {
+	position: relative;
+	overflow: hidden;
+	block-size: $banner-height-mobile;
+
+	@include break-medium {
+		block-size: $banner-height;
+	}
+}
+
+.a4a-onboarding-tour__banner {
+	position: absolute;
+	inset-block-start: 0;
+	inset-inline-start: 0;
+	inline-size: 100%;
+	opacity: 0;
+	transition: opacity 0.2s ease-out;
+
+	&.is-visible {
+		opacity: 1;
+	}
+
+	@media ( prefers-reduced-motion: reduce ) {
+		transition: none;
+	}
+}
+
+// The field behind every drawing: one soft gradient in the Brand OS blues, brightest behind
+// the drawing and bluer toward the edges (banner.tsx sets the image), under a grain tile. The grain is the A4A dark blue, not black, so the field
+// keeps its colour instead of turning grey.
+.a4a-onboarding-tour-field {
+	block-size: 100%;
+	background-color: #e5f1ff; // the drawings' soft blue, until the image loads
+	background-size: cover;
+	background-position: center;
+
+	&::before {
+		content: '';
+		position: absolute;
+		inset: 0;
+		background-image: url( data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20width%3D%27160%27%20height%3D%27160%27%3E%3Cfilter%20id%3D%27n%27%3E%3CfeTurbulence%20type%3D%27fractalNoise%27%20baseFrequency%3D%270.9%27%20numOctaves%3D%273%27%20stitchTiles%3D%27stitch%27%2F%3E%3CfeColorMatrix%20values%3D%270%200%200%200%200.008%200%200%200%200%200.251%200%200%200%200%200.894%200%200%200%200.6%200%27%2F%3E%3C%2Ffilter%3E%3Crect%20width%3D%27100%25%27%20height%3D%27100%25%27%20filter%3D%27url%28%23n%29%27%2F%3E%3C%2Fsvg%3E );
+		opacity: 0.3;
+		pointer-events: none;
+	}
+}
+
+// White cards with no shadow in the file; the shadow is added here so it follows the
+// cards' own corners at any size.
+.a4a-onboarding-tour-field__drawing {
+	position: relative;
+	display: block;
+	inline-size: 100%;
+	block-size: auto;
+	filter: drop-shadow( 0 10px 24px rgba( 0, 0, 0, 0.1 ) )
+		drop-shadow( 0 1px 3px rgba( 0, 0, 0, 0.06 ) );
+}
+
+.a4a-onboarding-tour__content {
+	overflow: hidden;
+	padding-block: 24px;
+}
+
+.a4a-onboarding-tour__slides {
+	display: flex;
+	transition: transform 0.2s ease-out;
+
+	@media ( prefers-reduced-motion: reduce ) {
+		transition: none;
+	}
+}
+
+.a4a-onboarding-tour__slide {
+	flex: none;
+	inline-size: 100%;
+	padding-inline: 24px;
+	text-wrap: pretty;
+}
+
+// The drawings' flat light blue field (welcome-band.scss), so the hint reads as a surface.
+.a4a-onboarding-tour__hint {
+	padding: 12px 16px;
+	border-radius: 8px;
+	background-color: #e5f1ff;
+}
+
+.a4a-onboarding-tour__footer {
+	display: flex;
+	flex-direction: column-reverse;
+	gap: 8px;
+	margin-block-start: 24px;
+	padding-inline: 24px;
+
+	@include break-mobile {
+		flex-direction: row;
+		justify-content: flex-end;
+	}
+
+	.components-button {
+		justify-content: center;
+	}
+}
+
+.a4a-onboarding-tour__dots {
+	display: flex;
+	justify-content: center;
+	gap: 8px;
+	margin-block-start: 16px;
+}
+
+.a4a-onboarding-tour__dot {
+	inline-size: 8px;
+	block-size: 8px;
+	padding: 0;
+	border: 0;
+	border-radius: 50%;
+	background-color: var( --color-neutral-5 );
+	cursor: pointer;
+
+	&.is-active {
+		background-color: var( --color-primary-50 );
+	}
+}
