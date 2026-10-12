@@ -697,9 +697,6 @@ object CheckCodeStyle : BuildType({
 		bashNodeScript {
 			name = "Prepare environment"
 			scriptContent = """
-				# ESLint only reads source files, so skip building workspace packages.
-				export SKIP_CALYPSO_POSTINSTALL=true
-
 				# Install modules
 				${_self.yarn_install_cmd}
 			"""
