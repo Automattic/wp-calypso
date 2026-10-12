@@ -1,4 +1,5 @@
 import {
+	CardDivider,
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
@@ -45,6 +46,8 @@ const ActionsPane = ( { isApproved, isLiked, note, goBack } ) => {
 	const hasAction = ( types ) =>
 		[].concat( types ).some( ( type ) => actions.hasOwnProperty( type ) );
 
+	const hasLike = hasAction( [ 'like-post', 'like-comment' ] );
+	const hasAnswerPrompt = hasAction( 'answer-prompt' );
 	const hasMenu = hasAction( [
 		'approve-comment',
 		'edit-comment',
@@ -52,14 +55,17 @@ const ActionsPane = ( { isApproved, isLiked, note, goBack } ) => {
 		'trash-comment',
 	] );
 
+	if ( ! hasLike && ! hasAnswerPrompt && ! hasMenu ) {
+		return null;
+	}
+
 	return (
-		<VStack spacing={ 2 } style={ { width: '100%' } }>
+		<VStack spacing={ 4 }>
+			<CardDivider />
 			<HStack spacing={ 2 }>
 				<HStack spacing={ 2 } justify="flex-start" expanded={ false }>
-					{ hasAction( [ 'like-post', 'like-comment' ] ) && (
-						<LikeButton note={ note } isLiked={ isLiked } />
-					) }
-					{ hasAction( 'answer-prompt' ) && <AnswerPromptButton note={ note } /> }
+					{ hasLike && <LikeButton note={ note } isLiked={ isLiked } /> }
+					{ hasAnswerPrompt && <AnswerPromptButton note={ note } /> }
 				</HStack>
 				{ hasMenu && (
 					<ActionsMenu
@@ -70,11 +76,18 @@ const ActionsPane = ( { isApproved, isLiked, note, goBack } ) => {
 					/>
 				) }
 			</HStack>
-			{ !! actions[ 'replyto-comment' ] && (
-				<ReplyInput note={ note } defaultValue={ getInitialReplyValue( note ) } />
-			) }
 		</VStack>
 	);
+};
+
+export const canReply = ( note ) => !! getActions( note )[ 'replyto-comment' ];
+
+export const NoteReply = ( { note } ) => (
+	<ReplyInput note={ note } defaultValue={ getInitialReplyValue( note ) } />
+);
+
+NoteReply.propTypes = {
+	note: PropTypes.object.isRequired,
 };
 
 ActionsPane.propTypes = {

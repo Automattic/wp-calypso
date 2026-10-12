@@ -17,7 +17,7 @@ import actions from '../../panel/state/actions';
 import getAllNotes from '../../panel/state/selectors/get-all-notes';
 import getIsNotePendingApproval from '../../panel/state/selectors/get-is-note-pending-approval';
 import getIsNoteRead from '../../panel/state/selectors/get-is-note-read';
-import { NoteBody, ActionBlock } from '../templates/body';
+import { NoteBody, ActionBlock, ReplyFooter } from '../templates/body';
 import CloseButton from '../templates/close-button';
 import NoteSummary from '../templates/note-summary';
 import './style.scss';
@@ -160,9 +160,10 @@ const Note = ( { isDismissible, noteId, setSelectedNoteId, noteNavigation }: Not
 					<div className={ getClasses( { note, isPendingApproval, isRead } ) }>
 						<NoteBody note={ note } />
 					</div>
+					<ActionBlock note={ note } goBack={ goBack } />
 				</VStack>
 			</CardBody>
-			<ActionBlock note={ note } goBack={ goBack } />
+			<ReplyFooter note={ note } />
 		</>
 	);
 };

@@ -14,7 +14,7 @@ import { bumpStat } from '../../panel/rest-client/bump-stat';
 import { wpcom } from '../../panel/rest-client/wpcom';
 import getIsNotePendingApproval from '../../panel/state/selectors/get-is-note-pending-approval';
 import { p, zipWithSignature } from '../../panel/templates/functions';
-import NoteActions from './actions';
+import NoteActions, { NoteReply, canReply } from './actions';
 import Comment from './block-comment';
 import Post from './block-post';
 import PromptBlock from './block-prompt';
@@ -97,13 +97,21 @@ const ReplyBlock = ( { note }: { note: Note } ) => {
 	return null;
 };
 
-export const ActionBlock = ( { note, goBack }: { note: Note; goBack: () => void } ) => {
-	const blocks: BlockWithSignature[] = zipWithSignature( note.body, note );
-	const actionBlock = blocks.findLast(
-		( block ) => block.block.actions && 'user' !== block.signature.type
+const hasActionBlock = ( note: Note ) =>
+	zipWithSignature( note.body, note ).some(
+		( block: BlockWithSignature ) => block.block.actions && 'user' !== block.signature.type
 	);
 
-	if ( ! actionBlock ) {
+export const ActionBlock = ( { note, goBack }: { note: Note; goBack: () => void } ) => {
+	if ( ! hasActionBlock( note ) ) {
+		return null;
+	}
+
+	return <NoteActions note={ note } goBack={ goBack } />;
+};
+
+export const ReplyFooter = ( { note }: { note: Note } ) => {
+	if ( ! hasActionBlock( note ) || ! canReply( note ) ) {
 		return null;
 	}
 
@@ -111,8 +119,8 @@ export const ActionBlock = ( { note, goBack }: { note: Note; goBack: () => void 
 		// The body above is the scroll region; this footer is a non-scrolling
 		// sibling below it, so it stays visible without sticky positioning. When the
 		// reply is short the body sizes to its content and this sits right beneath it.
-		<CardFooter size="small" style={ { paddingBlockStart: 8 } }>
-			<NoteActions note={ note } goBack={ goBack } />
+		<CardFooter size="small">
+			<NoteReply note={ note } />
 		</CardFooter>
 	);
 };

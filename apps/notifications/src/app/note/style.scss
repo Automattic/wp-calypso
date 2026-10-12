@@ -504,7 +504,7 @@
 		--wpnc-code__text-color: var( --wp-components-color-gray-100, #f0f0f1 );
 
 		// Two frame-level dividers miss the dashboard's border handling:
-		//   - the action-block CardFooter (above Like/Reply) — the dark card
+		//   - the reply CardFooter (above the reply box) — the dark card
 		//     mixin themes card header/divider but not the footer, so its
 		//     border falls back to a near-invisible rgba(0,0,0,0.1).
 		//   - the list/detail pane separator — $wpnc-pane-border.
