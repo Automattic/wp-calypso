@@ -265,6 +265,11 @@ function getNotes( before, livePushMessages = [] ) {
 			return;
 		}
 
+		if ( this.includeNoteContext && ! parameters.fields.includes( 'note_context' ) ) {
+			this.getNotes( before, livePushMessages );
+			return;
+		}
+
 		const previousNotes = getAllNotes( store.getState() );
 		store.dispatch( actions.ui.loadedNotes() );
 
