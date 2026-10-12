@@ -1,7 +1,7 @@
 import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { Card, FormInputValidation, FormLabel, Gridicon } from '@automattic/components';
-import { englishLocales, localizeUrl } from '@automattic/i18n-utils';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { capitalize } from '@automattic/js-utils';
 import { suggestEmailCorrection } from '@automattic/onboarding';
 import { Button } from '@wordpress/components';
@@ -10,7 +10,7 @@ import { Badge } from '@wordpress/ui';
 import clsx from 'clsx';
 import cookie from 'cookie';
 import emailValidator from 'email-validator';
-import i18n, { localize } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
@@ -445,7 +445,7 @@ export class LoginForm extends Component {
 	};
 
 	getLoginButtonText = () => {
-		const { translate, loginButtonText, locale } = this.props;
+		const { translate, loginButtonText } = this.props;
 
 		if ( loginButtonText ) {
 			return loginButtonText;
@@ -455,9 +455,7 @@ export class LoginForm extends Component {
 			return translate( 'Continue' );
 		}
 
-		return englishLocales.includes( locale ) || i18n.hasTranslation( 'Log in' )
-			? translate( 'Log in' )
-			: translate( 'Log In' );
+		return translate( 'Log in' );
 	};
 
 	showJetpackConnectSiteOnly = () => {
