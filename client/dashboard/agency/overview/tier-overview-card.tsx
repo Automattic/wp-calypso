@@ -30,8 +30,7 @@ interface TierOverviewCardProps {
 
 const AVATAR_SIZE = 32;
 
-// A partner manager without a photo, or whose photo fails to load, gets the
-// generic person icon at the same size, so the row doesn't shift.
+// Keep the fallback the same size as the photo so the row height is stable.
 function PartnerManagerAvatar( { avatarUrl }: { avatarUrl?: string | null } ) {
 	const [ hasFailed, setHasFailed ] = useState( false );
 
