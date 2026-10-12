@@ -85,6 +85,7 @@ export default function AgencyOverview() {
 				} }
 				onScheduleCall={ scheduleCall }
 				isSchedulingCall={ isSchedulingCall }
+				partnerManager={ agency.partner_manager }
 				recordTracksEvent={ recordTracksEvent }
 			/>
 		</PageLayout>
