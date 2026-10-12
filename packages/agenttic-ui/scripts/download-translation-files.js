@@ -8,31 +8,36 @@ const __filename = fileURLToPath( import.meta.url );
 const __dirname = dirname( __filename );
 const projectRoot = join( __dirname, '..' );
 
-// GlotPress locale slugs; WordPress-style codes such as `de_DE` aren't valid here and 404.
-const SUPPORTED_LOCALES = {
-	ar: 'Arabic',
-	de: 'German',
-	es: 'Spanish (Spain)',
-	fr: 'French (France)',
-	he: 'Hebrew',
-	id: 'Indonesian',
-	it: 'Italian',
-	ja: 'Japanese',
-	ko: 'Korean',
-	nl: 'Dutch',
-	'pt-br': 'Portuguese (Brazil)',
-	ru: 'Russian',
-	sv: 'Swedish',
-	tr: 'Turkish',
-	'zh-cn': 'Chinese (China)',
-	'zh-tw': 'Chinese (Taiwan)',
-};
-
 // GlotPress configuration
 const GLOTPRESS_PROJECT = 'wpcom/agenttic';
 const GLOTPRESS_SLUG = 'default';
 const GLOTPRESS_FORMAT = 'jed1x';
 const GLOTPRESS_BASE_URL = 'https://translate.wordpress.com/projects';
+const GLOTPRESS_API_URL = 'https://translate.wordpress.com/api/projects';
+
+/**
+ * Fetch the locales the GlotPress project has a translation set for.
+ * Runs on every install, so an unreachable API skips translations instead of failing it.
+ * @returns {Promise<string[]>} GlotPress locale slugs, e.g. `de`, `pt-br`
+ */
+async function fetchAvailableLocales() {
+	try {
+		const response = await fetch( `${ GLOTPRESS_API_URL }/${ GLOTPRESS_PROJECT }` );
+
+		if ( ! response.ok ) {
+			throw new Error( `HTTP ${ response.status }` );
+		}
+
+		const { translation_sets: translationSets = [] } = await response.json();
+
+		return translationSets
+			.filter( ( set ) => set.slug === GLOTPRESS_SLUG )
+			.map( ( set ) => set.locale );
+	} catch ( error ) {
+		console.warn( `⚠️  Could not fetch available locales from GlotPress -`, error.message );
+		return [];
+	}
+}
 
 /**
  * Clean up existing Jed JSON files to ensure fresh downloads
@@ -113,7 +118,7 @@ async function downloadAllJsonFiles() {
 	// Clean up existing files first to ensure fresh downloads
 	cleanupExistingJsonFiles();
 
-	const locales = Object.keys( SUPPORTED_LOCALES );
+	const locales = await fetchAvailableLocales();
 	const totalCount = locales.length;
 
 	const results = await Promise.all( locales.map( downloadJsonFile ) );
