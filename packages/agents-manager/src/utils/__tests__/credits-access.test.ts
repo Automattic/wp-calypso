@@ -48,7 +48,7 @@ describe( 'getCreditsPurchaseOptions', () => {
 		).toEqual( { upgradeUrl: UPGRADE_URL } );
 	} );
 
-	// For example, a plan buyer who is now an Editor: the server's answer on the plan wins.
+	// The server sends `can_upgrade: true` only to admins today; if that changes, the plan answer wins.
 	it( 'offers Upgrade to someone who can upgrade the plan but can’t buy credits', () => {
 		expect(
 			getCreditsPurchaseOptions( UPGRADE_URL, { canBuyCredits: false, canUpgrade: true } )
