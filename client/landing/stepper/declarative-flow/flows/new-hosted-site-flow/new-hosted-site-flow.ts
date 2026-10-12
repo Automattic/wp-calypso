@@ -89,6 +89,9 @@ async function initialize( reduxStore: Store ) {
 	}
 
 	steps.push( STEPS.SITE_CREATION_STEP, STEPS.PROCESSING );
+	if ( hasCommercePurchaseSteps( NEW_HOSTED_SITE_FLOW, queryParams ) ) {
+		steps.push( STEPS.ERROR );
+	}
 
 	return stepsWithRequiredLogin( steps );
 }
@@ -170,11 +173,12 @@ const hosting: FlowV2< typeof initialize > = {
 						const siteSlug = query.get( 'siteSlug' )!;
 						const siteId = query.get( 'siteId' )!;
 						setPendingAction( async () => {
-							await resumeCommerceCart(
+							const selectedPlan = await resumeCommerceCart(
 								siteSlug,
 								planCartItem,
 								( providedDependencies.domainCart as MinimalRequestCartProduct[] ) ?? []
 							);
+							await setPlanCartItem( selectedPlan );
 							return { siteId, siteSlug, goToCheckout: true, siteCreated: true };
 						} );
 						return navigate( STEPS.PROCESSING.slug );
@@ -222,6 +226,12 @@ const hosting: FlowV2< typeof initialize > = {
 					return navigate( STEPS.PROCESSING.slug );
 
 				case STEPS.PROCESSING.slug: {
+					if (
+						commercePurchaseSteps &&
+						providedDependencies.processingResult === ProcessingResult.FAILURE
+					) {
+						return navigate( STEPS.ERROR.slug );
+					}
 					if ( providedDependencies.processingResult === ProcessingResult.SUCCESS ) {
 						const siteId = providedDependencies.siteId || getSignupCompleteSiteID();
 						setSignupCompleteSiteID( commercePurchaseSteps ? siteId : providedDependencies.siteId );
@@ -264,6 +274,7 @@ const hosting: FlowV2< typeof initialize > = {
 							const backUrl = new URL(
 								addQueryArgs( '/setup/new-hosted-site/domains', {
 									...Object.fromEntries( query ),
+									plan: planCartItem?.product_slug ?? query.get( 'plan' ),
 									siteId,
 									siteSlug,
 								} ),
@@ -287,7 +298,7 @@ const hosting: FlowV2< typeof initialize > = {
 										...( commercePurchaseSteps && {
 											flow: NEW_HOSTED_SITE_FLOW,
 											showPurchaseSteps: 'true',
-											plan: query.get( 'plan' ),
+											plan: planCartItem?.product_slug ?? query.get( 'plan' ),
 											showDomainStep: '',
 											signup: 1,
 											checkoutBackUrl: backUrl,

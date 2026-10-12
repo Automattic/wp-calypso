@@ -49,3 +49,26 @@ it( 'propagates cart write failures so processing cannot advance to checkout', a
 		'Cart update failed'
 	);
 } );
+
+it( 'keeps a billing term changed at checkout when the cart was saved', async () => {
+	const selectedPlan = await resumeCommerceCart(
+		'example.wordpress.com',
+		{ product_slug: 'ecommerce-bundle' },
+		[ domain ]
+	);
+	expect( selectedPlan.product_slug ).toBe( 'ecommerce-bundle-2y' );
+	expect( replaceProductsInCart.mock.calls[ 0 ][ 0 ] ).toEqual(
+		expect.arrayContaining( [ expect.objectContaining( { product_slug: 'ecommerce-bundle-2y' } ) ] )
+	);
+} );
+
+it( 'restores the preselected plan after the cart was emptied', async () => {
+	jest.mocked( cartManagerClient.forCartKey ).mockReturnValue( {
+		fetchInitialCart: jest.fn().mockResolvedValue( { products: [] } ),
+		actions: { replaceProductsInCart },
+	} as unknown as ReturnType< typeof cartManagerClient.forCartKey > );
+	await expect( resumeCommerceCart( 'example.wordpress.com', plan, [] ) ).resolves.toEqual( plan );
+	expect( replaceProductsInCart ).toHaveBeenCalledWith( [
+		expect.objectContaining( { product_slug: plan.product_slug } ),
+	] );
+} );

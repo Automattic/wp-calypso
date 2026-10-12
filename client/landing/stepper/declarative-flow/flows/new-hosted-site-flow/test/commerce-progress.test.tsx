@@ -40,6 +40,7 @@ jest.mock( '@wordpress/data', () => ( {
 		setDomainCartItems: jest.fn(),
 		setSiteUrl: jest.fn(),
 		setSignupDomainOrigin: jest.fn(),
+		setPlanCartItem: mockSeed,
 		setPendingAction: ( action: () => Promise< unknown > ) => {
 			mockPendingAction = action;
 		},
@@ -74,6 +75,7 @@ jest.mock( '../resume-commerce-cart', () => ( { resumeCommerceCart: jest.fn() } 
 
 beforeEach( () => {
 	jest.clearAllMocks();
+	jest.mocked( resumeCommerceCart ).mockResolvedValue( mockPlan );
 	mockSavedFlow = NEW_HOSTED_SITE_FLOW;
 	mockQuery = new URLSearchParams( {
 		plan: mockPlan.product_slug,
@@ -106,6 +108,7 @@ it.each( [
 } );
 
 it( 'passes a two-step checkout overview and a term-preserving return URL', () => {
+	mockQuery.set( 'plan', 'ecommerce-bundle' );
 	const replaceState = jest.spyOn( window.history, 'replaceState' ).mockImplementation( () => {} );
 	const nav = navigation( 'processing' );
 	act( () =>
@@ -181,6 +184,43 @@ it( 'resumes the same site without running site creation, including after a skip
 		siteCreated: true,
 	} );
 	expect( resumeCommerceCart ).toHaveBeenCalledWith( mockSite.siteSlug, mockPlan, [] );
+	expect( mockSeed ).toHaveBeenLastCalledWith( mockPlan );
+} );
+
+it( 'shows an error if the opted-in cart update fails', async () => {
+	const steps = await hosting.initialize( {
+		dispatch: jest.fn(),
+		getState: () => ( {} ),
+	} as never );
+	expect( steps.map( ( step ) => step.slug ) ).toContain( STEPS.ERROR.slug );
+	const navigate = jest.fn();
+	const nav = navigation( 'processing', navigate );
+	act( () =>
+		nav.submit( {
+			slug: 'processing',
+			providedDependencies: { processingResult: ProcessingResult.FAILURE },
+		} as never )
+	);
+	expect( navigate ).toHaveBeenCalledWith( STEPS.ERROR.slug );
+	expect( window.location.assign ).not.toHaveBeenCalled();
+} );
+
+it( 'keeps the error handling of other flow entries unchanged', async () => {
+	mockQuery.delete( 'showPurchaseSteps' );
+	const steps = await hosting.initialize( {
+		dispatch: jest.fn(),
+		getState: () => ( {} ),
+	} as never );
+	expect( steps.map( ( step ) => step.slug ) ).not.toContain( STEPS.ERROR.slug );
+	const navigate = jest.fn();
+	const nav = navigation( 'processing', navigate );
+	act( () =>
+		nav.submit( {
+			slug: 'processing',
+			providedDependencies: { processingResult: ProcessingResult.FAILURE },
+		} as never )
+	);
+	expect( navigate ).not.toHaveBeenCalled();
 } );
 
 it( 'retains fallback site identifiers when processing returns only checkout status', () => {
