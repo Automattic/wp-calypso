@@ -247,6 +247,15 @@ export const Analyzer: FC< Props > = ( {
 				className="import__capture-container"
 				hidden={ isReprintFlow && ( isScanning || !! connectionIssue ) }
 			>
+				{ isReprintFlow && siteURL && hasError && ! isScanning && ! connectionIssue && (
+					<Notice
+						status="error"
+						isDismissible={ false }
+						className="site-migration-identify__analysis-error"
+					>
+						<span role="alert">{ translate( 'We couldn’t check your site. Try again.' ) }</span>
+					</Notice>
+				) }
 				<CaptureInput
 					onInputEnter={ ( url ) => {
 						if ( isReprintFlow && url === siteURL ) {
@@ -256,7 +265,7 @@ export const Analyzer: FC< Props > = ( {
 						}
 					} }
 					onInputChange={ () => onSiteURLChange( '' ) }
-					hasError={ hasError }
+					hasError={ ! isReprintFlow && hasError }
 					skipInitialChecking
 					onDontHaveSiteAddressClick={ onSkip }
 					placeholder={ translate( 'mygreatnewblog.com' ) }

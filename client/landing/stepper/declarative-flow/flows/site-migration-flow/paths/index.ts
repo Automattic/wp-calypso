@@ -47,6 +47,7 @@ export const siteCreationPath = buildPathHelper<
 			platform: ImporterPlatform;
 			ssh?: string;
 			host?: string;
+			isWpcom?: boolean | '';
 		};
 	},
 	typeof STEPS.SITE_CREATION_STEP.slug
@@ -59,6 +60,7 @@ export const sitePickerPath = buildPathHelper<
 			platform: ImporterPlatform;
 			ssh?: string;
 			host?: string;
+			isWpcom?: boolean | '';
 			siteId?: number | '';
 			siteSlug?: string;
 		};

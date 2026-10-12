@@ -43,7 +43,19 @@ describe( 'SiteMigrationCheck', () => {
 			);
 			expect( screen.getByRole( 'heading', { name: 'Migrate example.com here' } ) ).toBeVisible();
 			expect( screen.getByText( 'example.com → destination.wordpress.com' ) ).toBeVisible();
-			expect( screen.getByText( 'Site preview' ) ).toBeVisible();
+			expect( screen.getByRole( 'img', { name: 'Current destination site' } ) ).toHaveAttribute(
+				'data-url',
+				'https://destination.wordpress.com'
+			);
+			expect( screen.getByRole( 'img', { name: 'Source site to be copied' } ) ).toHaveAttribute(
+				'data-url',
+				'https://example.com'
+			);
+			expect( screen.getByText( 'destination.wordpress.com today' ) ).toBeVisible();
+			expect( screen.getByText( 'destination.wordpress.com after the migration' ) ).toBeVisible();
+			expect(
+				screen.queryByText( 'Your plan and the site’s address stay the same.' )
+			).not.toBeInTheDocument();
 			expect(
 				screen.getByText(
 					`destination.wordpress.com is on the ${ destinationPlanName } plan, which can’t run plugins. Upgrade it, and we prepare its hosting and copy example.com into it.`

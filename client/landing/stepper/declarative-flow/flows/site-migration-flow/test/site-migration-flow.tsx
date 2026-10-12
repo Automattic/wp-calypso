@@ -95,6 +95,111 @@ describe( 'Site Migration Flow', () => {
 			window.location.search = '';
 		} );
 
+		it.each( [ 0, 2 ] )(
+			'clears stale detection through Stepper when skipping identification with %s sites',
+			( siteCount ) => {
+				jest.spyOn( config, 'isEnabled' ).mockReturnValue( true );
+				jest.mocked( getCurrentUserSiteCount ).mockReturnValue( siteCount );
+				const context = new URLSearchParams( {
+					from: 'https://old.example.com',
+					platform: 'wordpress',
+					host: 'bluehost',
+					isWpcom: 'false',
+					ssh: 'true',
+					source: 'sites-dashboard',
+					ref: 'new-site-popover',
+					sessionId: 'platform-escape',
+					flags: 'migration/reprint-flow',
+				} );
+				const { result } = renderHookWithProvider(
+					() => {
+						const location = useLocation();
+						window.location.search = location.search;
+						const { navigate, params } = useFlowNavigation( siteMigrationFlow );
+						const navigation = useStepNavigationWithTracking( {
+							flow: siteMigrationFlow,
+							currentStepRoute: params.step,
+							navigate,
+						} );
+						return { navigation, location };
+					},
+					{
+						wrapper: ( { children } ) => (
+							<MemoryRouter
+								basename="/setup"
+								initialEntries={ [ `/setup/site-migration/site-migration-identify?${ context }` ] }
+							>
+								{ children }
+							</MemoryRouter>
+						),
+					}
+				);
+				act( () => result.current.navigation.submit( { action: 'skip_platform_identification' } ) );
+				expect( result.current.location.pathname ).toBe(
+					siteCount ? '/site-migration/sitePicker' : '/site-migration/create-site'
+				);
+				const query = new URLSearchParams( result.current.location.search );
+				expect( query.get( 'platform' ) ).toBe( 'unknown' );
+				for ( const key of [ 'from', 'host', 'isWpcom', 'ssh' ] ) {
+					expect( query.get( key ) ).toBe( '' );
+				}
+				for ( const key of [ 'source', 'ref', 'sessionId', 'flags' ] ) {
+					expect( query.get( key ) ).toBe( context.get( key ) );
+				}
+				if ( siteCount ) {
+					act( () =>
+						result.current.navigation.submit( {
+							action: 'select-site',
+							site: { ID: 123, slug: 'destination.wordpress.com' },
+						} )
+					);
+				}
+				expect(
+					window.location.assign.mock.calls.map( ( [ url ] ) => {
+						const { pathname, searchParams } = new URL( url, 'https://example.com' );
+						return {
+							path: pathname,
+							from: searchParams.get( 'from' ),
+							siteId: searchParams.get( 'siteId' ),
+						};
+					} )
+				).toEqual(
+					siteCount ? [ { path: '/setup/site-setup/importList', from: '', siteId: '123' } ] : []
+				);
+			}
+		);
+
+		it( 'opens the importer list without stale detection when the destination is supplied', () => {
+			jest.spyOn( config, 'isEnabled' ).mockReturnValue( true );
+			runNavigation( {
+				from: STEPS.SITE_MIGRATION_IDENTIFY,
+				dependencies: { action: 'skip_platform_identification' },
+				query: {
+					siteId: 123,
+					siteSlug: 'destination.wordpress.com',
+					from: 'https://old.example.com',
+					platform: 'wordpress',
+					host: 'bluehost',
+					isWpcom: 'false',
+				},
+			} );
+			expect( window.location.assign ).toMatchURL( {
+				path: '/setup/site-setup/importList',
+				query: {
+					siteId: '123',
+					siteSlug: 'destination.wordpress.com',
+					from: '',
+					origin: STEPS.SITE_MIGRATION_IDENTIFY.slug,
+					backToFlow: '/site-migration/site-migration-identify',
+				},
+			} );
+			const query = new URL( window.location.assign.mock.calls[ 0 ][ 0 ], 'https://example.com' )
+				.searchParams;
+			for ( const key of [ 'platform', 'host', 'isWpcom' ] ) {
+				expect( query.has( key ) ).toBe( false );
+			}
+		} );
+
 		it( 'clears the destination through real Stepper navigation and restores it with Back', () => {
 			jest
 				.spyOn( config, 'isEnabled' )

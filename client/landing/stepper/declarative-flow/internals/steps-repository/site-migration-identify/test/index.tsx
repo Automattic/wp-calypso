@@ -366,7 +366,7 @@ describe( 'SiteMigrationIdentify', () => {
 			expect( goBack ).not.toHaveBeenCalled();
 		} );
 
-		it( 'keeps generic API failures on the address form instead of claiming the source is unreachable', async () => {
+		it( 'explains generic analysis failures and allows retrying the same address', async () => {
 			const submit = jest.fn();
 			render( { navigation: { submit } } );
 			mockApi()
@@ -375,9 +375,11 @@ describe( 'SiteMigrationIdentify', () => {
 				.reply( 500 );
 			await userEvent.type( getInput(), 'https://example.com' );
 			await userEvent.click( screen.getByRole( 'button', { name: 'Continue' } ) );
-			await waitFor( () =>
-				expect( screen.getByText( /Please enter a valid website/ ) ).toBeVisible()
+			expect( await screen.findByRole( 'alert' ) ).toHaveTextContent(
+				'We couldn’t check your site. Try again.'
 			);
+			expect( screen.queryByText( /Please enter a valid website/ ) ).not.toBeInTheDocument();
+			expect( getInput() ).not.toHaveClass( 'is-error' );
 			expect( getInput() ).toBeVisible();
 			expect( getInput() ).toHaveValue( 'https://example.com' );
 			expect(
@@ -398,6 +400,20 @@ describe( 'SiteMigrationIdentify', () => {
 					expect.objectContaining( { from: 'https://example.com', host: 'bluehost' } )
 				)
 			);
+			expect( screen.queryByRole( 'alert' ) ).not.toBeInTheDocument();
+		} );
+
+		it( 'clears the analysis failure notice when editing the address', async () => {
+			render();
+			mockApi()
+				.get( '/wpcom/v2/imports/analyze-url' )
+				.query( { site_url: 'https://example.com' } )
+				.reply( 500 );
+			await userEvent.type( getInput(), 'https://example.com' );
+			await userEvent.click( screen.getByRole( 'button', { name: 'Continue' } ) );
+			await screen.findByRole( 'alert' );
+			await userEvent.type( getInput(), '/edited' );
+			expect( screen.queryByRole( 'alert' ) ).not.toBeInTheDocument();
 		} );
 
 		it.each( [ 'unreachable', 'server_error', 'blocked', 'auth_required', 'not_found' ] as const )(

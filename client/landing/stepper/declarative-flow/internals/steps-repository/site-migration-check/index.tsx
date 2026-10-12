@@ -147,7 +147,7 @@ const SiteMigrationCheck: StepType< {
 					</div>
 				) : (
 					<>
-						{ showComparison ? (
+						{ hasDestination ? (
 							<div className="site-migration-check__comparison">
 								<div className="site-migration-check__comparison-site">
 									<p className="site-migration-check__preview-label">

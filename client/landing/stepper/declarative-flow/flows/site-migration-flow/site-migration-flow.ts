@@ -359,6 +359,34 @@ const siteMigration: FlowV2< typeof initialize > = {
 						return replace( STEPS.SITE_MIGRATION_IDENTIFY.slug );
 					}
 					const hasDestinationSite = hasSite( siteId, siteSlug );
+					if (
+						config.isEnabled( 'migration/reprint-flow' ) &&
+						action === 'skip_platform_identification'
+					) {
+						if ( hasDestinationSite ) {
+							return exitFlow(
+								paths.siteSetupImportListPath( {
+									siteId,
+									siteSlug,
+									from: '',
+									origin: STEPS.SITE_MIGRATION_IDENTIFY.slug,
+									backToFlow: `/${ flowPath }/${ STEPS.SITE_MIGRATION_IDENTIFY.slug }`,
+								} )
+							);
+						}
+						const context = {
+							from: '',
+							platform: 'unknown',
+							host: '',
+							isWpcom: '',
+							ssh: '',
+						} as const;
+						return navigate(
+							userHasOtherWPComSites
+								? paths.sitePickerPath( context )
+								: paths.siteCreationPath( context )
+						);
+					}
 
 					if (
 						slug === STEPS.SITE_MIGRATION_IDENTIFY.slug &&

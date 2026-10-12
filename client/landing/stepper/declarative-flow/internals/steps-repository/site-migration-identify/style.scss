@@ -226,13 +226,18 @@
 			text-align: start;
 			font-size: $font-size-medium;
 			line-height: 1.54;
-			color: var( --color-link );
+			color: var( --color-neutral-100 );
 
 			button {
 				font-size: inherit;
 				line-height: inherit;
+				color: var( --color-link );
 			}
 		}
+	}
+
+	.site-migration-identify__analysis-error {
+		margin: 0 0 16px;
 	}
 
 	.site-migration-identify__checking {
