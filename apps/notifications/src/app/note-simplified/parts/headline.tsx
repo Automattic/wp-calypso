@@ -4,10 +4,13 @@ import {
 } from '@wordpress/components';
 import { html } from '../../../panel/indices-to-html';
 import NoteIcon from '../../note-icon';
+import { useIsPendingApproval } from '../use-is-pending-approval';
 import NoteMeta from './note-meta';
+import PendingApproval from './pending-approval';
 import type { Note } from '../../types';
 
 export default function Headline( { note }: { note: Note } ) {
+	const isPendingApproval = useIsPendingApproval( note );
 	const { actors = [], summary } = note.meta ?? {};
 	if ( ! summary || ! actors.length ) {
 		return null;
@@ -31,7 +34,7 @@ export default function Headline( { note }: { note: Note } ) {
 			) : (
 				<div className="wpnc-simplified__photo">{ icon }</div>
 			) }
-			<VStack className="wpnc-simplified__quiet-links" spacing={ 0 }>
+			<VStack className="wpnc-simplified__quiet-links" spacing={ 0 } expanded>
 				<div
 					className="wpnc-simplified__sentence"
 					// eslint-disable-next-line react/no-danger
@@ -39,6 +42,7 @@ export default function Headline( { note }: { note: Note } ) {
 				/>
 				<NoteMeta note={ note } />
 			</VStack>
+			{ isPendingApproval && <PendingApproval note={ note } /> }
 		</HStack>
 	);
 }

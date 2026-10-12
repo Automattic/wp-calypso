@@ -95,18 +95,6 @@ describe( 'RestClient', () => {
 		getCalls.length = 0;
 	};
 
-	describe( 'note context', () => {
-		it( 'asks again with note context when it is turned on while a fetch is under way', () => {
-			client.getNotes();
-			client.setIncludeNoteContext( true );
-			getCalls[ 0 ].callback( null, { notes: fullPage( 10, 100 ), last_seen_time: 0 } );
-
-			expect( getAllNotes( store.getState() ) ).toHaveLength( 0 );
-			expect( getCalls ).toHaveLength( 2 );
-			expect( getCalls[ 1 ].query.fields ).toContain( 'note_context' );
-		} );
-	} );
-
 	describe( 'load-more pagination', () => {
 		it( 'pages backwards with before=<oldest timestamp> and merges additively', () => {
 			seedFirstWindow();

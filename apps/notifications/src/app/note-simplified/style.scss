@@ -3,9 +3,7 @@
 @import '@wordpress/base-styles/variables';
 
 .wpnc-simplified__quiet-links a,
-.wpnc-simplified__quiet-links a:visited,
-a.wpnc-simplified__quiet-links,
-a.wpnc-simplified__quiet-links:visited {
+.wpnc-simplified__quiet-links a:visited {
 	color: inherit;
 	text-decoration: none;
 

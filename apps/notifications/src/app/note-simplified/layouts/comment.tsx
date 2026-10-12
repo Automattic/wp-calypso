@@ -19,7 +19,7 @@ export default function CommentNote( { note }: { note: Note } ) {
 				meta={ <NoteMeta note={ note } /> }
 				status={ isPendingApproval && <PendingApproval note={ note } /> }
 			>
-				<Body note={ note } hidePeople hidePendingApproval />
+				<Body note={ note } hidePeople />
 			</Thread>
 		</>
 	);
