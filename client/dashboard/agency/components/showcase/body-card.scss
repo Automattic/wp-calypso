@@ -14,6 +14,12 @@
 	block-size: 100%;
 }
 
+// Lets the byline shrink, so a long one, such as a site domain, ends in an
+// ellipsis instead of overflowing the card.
+.dashboard-body-card__heading {
+	min-inline-size: 0;
+}
+
 .dashboard-body-card__byline {
 	color: $studio-gray-60;
 }
