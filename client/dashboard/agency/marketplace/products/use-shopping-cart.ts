@@ -25,8 +25,7 @@ const isSameItem = ( a: CartItemRef, b: CartItemRef ) =>
 
 // Same keys and `slug:quantity` format as the classic marketplace cart, which
 // may append a license id and site targets for its own flows. A PHP memory
-// add-on carries its site in the fifth field, `slug:quantity:::domain`, as
-// classic writes it.
+// add-on carries its site in the fifth field, `slug:quantity:::domain`.
 const STORAGE_KEYS: Record< MarketplaceType, string > = {
 	regular: 'shopping-card-selected-items',
 	referral: 'referrals-shopping-card-selected-items',

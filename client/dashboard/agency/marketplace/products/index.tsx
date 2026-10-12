@@ -148,7 +148,9 @@ export default function MarketplaceProducts() {
 	} );
 
 	// `?product_slug=a,b` and `?products=a:2,b:1` replace the cart with those
-	// products, as the classic products page does.
+	// products, as the classic products page does. `products` uses the cart
+	// storage layout, so a PHP memory add-on's site is the fifth field
+	// (`slug:quantity:::domain`), not the third as in the checkout link.
 	const hasPreselected = useRef( false );
 	useEffect( () => {
 		if ( hasPreselected.current || ! allProducts ) {

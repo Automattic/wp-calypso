@@ -38,7 +38,7 @@ describe( 'useShoppingCart', () => {
 		);
 	} );
 
-	it( 'reads the site from a cart entry the classic marketplace stored', () => {
+	it( 'reads the site from a stored cart entry with site targets', () => {
 		expect(
 			parseCartEntries( `${ MEMORY_ADDON }:1::site%2Ccom:three%2Eexample.com,jetpack-scan:1` )
 		).toEqual( [

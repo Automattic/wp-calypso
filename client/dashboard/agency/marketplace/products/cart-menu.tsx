@@ -193,11 +193,20 @@ export default function CartMenu( {
 							<Button
 								variant="link"
 								isDestructive
-								aria-label={ sprintf(
-									/* translators: %s is the product name. */
-									__( 'Remove %s from the cart' ),
-									getCartProductName( product )
-								) }
+								aria-label={
+									item.siteDomain
+										? sprintf(
+												/* translators: %1$s is the product name, %2$s the site the add-on applies to. */
+												__( 'Remove %1$s for %2$s from the cart' ),
+												getCartProductName( product ),
+												item.siteDomain
+											)
+										: sprintf(
+												/* translators: %s is the product name. */
+												__( 'Remove %s from the cart' ),
+												getCartProductName( product )
+											)
+								}
 								onClick={ () => onRemove( item ) }
 							>
 								{ __( 'Remove' ) }

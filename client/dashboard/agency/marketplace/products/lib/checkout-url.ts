@@ -58,10 +58,11 @@ function getCurrentPageUrl(): string {
 
 /**
  * The checkout link for a regular cart: the products, their quantities (and a
- * PHP memory add-on's site, as `slug:quantity:domain`) and the billing term. The checkout works out the agency and the billing products
- * from the account of the user who is logged in. Referral carts stay in the
- * dashboard, on the referral checkout route, except a cart of free products,
- * which the agency takes for itself through this checkout.
+ * PHP memory add-on's site, as `slug:quantity:domain`) and the billing term.
+ * The checkout works out the agency and the billing products from the account
+ * of the user who is logged in. Referral carts stay in the dashboard, on the
+ * referral checkout route, except a cart of free products, which the agency
+ * takes for itself through this checkout.
  */
 export function getCheckoutUrl(
 	lines: CheckoutLine[],
