@@ -11,6 +11,8 @@ import { fetchNote, listNotes, sendLastSeenTime, subscribeToNoteStream } from '.
 
 const debug = debugFactory( 'notifications:rest-client' );
 
+const NOTE_FIELDS = 'id,type,unread,body,subject,timestamp,meta,note_hash,variant';
+
 const settings = {
 	max_refresh_ms: 180000,
 	refresh_ms: 30000,
@@ -46,6 +48,7 @@ export function Client() {
 	this.subscribed = false;
 	this.firstRender = true;
 	this.locale = null;
+	this.includeNoteContext = false;
 	this.inbox = [];
 
 	window.addEventListener( 'storage', handleStorageEvent.bind( this ) );
@@ -175,7 +178,7 @@ function getNote( note_id, livePushMessage ) {
 	}
 
 	const parameters = {
-		fields: 'id,type,unread,body,subject,timestamp,meta,note_hash,variant,note_context',
+		fields: getNoteFields.call( this ),
 	};
 
 	fetchNote( note_id, parameters, ( error, data ) => {
@@ -210,7 +213,7 @@ function getNotes( before, livePushMessages = [] ) {
 	const loaded = this.noteList.length || notes.length;
 
 	const parameters = {
-		fields: 'id,type,unread,body,subject,timestamp,meta,note_hash,variant,note_context',
+		fields: getNoteFields.call( this ),
 		// Older pages request what's left under the cap, plus one for the anchor an
 		// inclusive `before` echoes back (de-duped below); the no-`before` refresh
 		// requests a small fixed head window.
@@ -469,7 +472,7 @@ function getFilteredNotes( before ) {
 	const filteredIds = getFilteredNoteIds( store.getState(), key ) ?? [];
 
 	const parameters = {
-		fields: 'id,type,unread,body,subject,timestamp,meta,note_hash,variant,note_context',
+		fields: getNoteFields.call( this ),
 		// No `before`: re-request a small fixed head window. With it: page an older
 		// slice, capped to what's left under max_limit plus one for the anchor an
 		// inclusive `before` echoes back (de-duped below).
@@ -872,6 +875,24 @@ function setLocale( locale ) {
 	this.locale = locale;
 }
 
+function getNoteFields() {
+	return this.includeNoteContext ? `${ NOTE_FIELDS },note_context` : NOTE_FIELDS;
+}
+
+/**
+ * Sets whether notes are fetched with the post, site and parent comment they
+ * concern, refetching the loaded notes when that is turned on.
+ */
+function setIncludeNoteContext( includeNoteContext ) {
+	if ( this.includeNoteContext === includeNoteContext ) {
+		return;
+	}
+	this.includeNoteContext = includeNoteContext;
+	if ( includeNoteContext ) {
+		this.getNotes();
+	}
+}
+
 Client.prototype.main = main;
 Client.prototype.reschedule = reschedule;
 Client.prototype.getNote = getNote;
@@ -885,5 +906,6 @@ Client.prototype.hasMoreNotes = hasMoreNotes;
 Client.prototype.refreshNotes = refreshNotes;
 Client.prototype.setVisibility = setVisibility;
 Client.prototype.setLocale = setLocale;
+Client.prototype.setIncludeNoteContext = setIncludeNoteContext;
 
 export default Client;

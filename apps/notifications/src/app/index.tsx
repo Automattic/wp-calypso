@@ -17,6 +17,7 @@ import ErrorBoundary from './error-boundary';
 import Note from './note';
 import { useNoteNavigation } from './note/hooks';
 import NotePanel from './note-panel';
+import { useIsSimplifiedNote } from './use-is-simplified-note';
 import type { FilterName, LayoutStyle } from './types';
 
 import './style.scss';
@@ -71,6 +72,11 @@ const NotificationContent = ( { isDismissible }: { isDismissible: boolean } ) =>
 	const [ filterName, setFilterName ] = useState< FilterName >( 'all' );
 	const [ selectedNoteId, setSelectedNoteId ] = useState< string | undefined >( undefined );
 	const isDetailOpen = selectedNoteId !== undefined;
+	const isSimplifiedNote = useIsSimplifiedNote();
+
+	useEffect( () => {
+		getClient()?.setIncludeNoteContext( isSimplifiedNote );
+	}, [ isSimplifiedNote ] );
 
 	// Hold the last selected note id so it keeps rendering through the
 	// slide-out animation, then clear it on transitionend.
