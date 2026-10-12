@@ -10,7 +10,7 @@ import { useEffect, useMemo, useRef, useState } from '@wordpress/element';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import {
 	getImageStudioBlogId,
-	getImageStudioIsA11n,
+	getImageStudioIsDevMode,
 	getImageStudioSiteType,
 	trackImageStudioUpgradeNoticeShown,
 	trackImageStudioUpgradeNoticeClick,
@@ -112,9 +112,9 @@ export interface AiCreditsState {
 }
 
 /**
- * Reads the site's AI credit balance when the modal opens and after each turn. While AI
- * credits are only on internal test sites, it doesn't ask for people the page says aren't
- * Automatticians, since their sites answer 404; a turn's balance still shows.
+ * Reads the site's AI credit balance when the modal opens; each turn's final update brings
+ * the next one. While credits are only on internal test sites, pages outside dev mode don't
+ * ask, since nearly every site answers 404; a turn's balance still shows.
  * @param options              - Hook options
  * @param options.mode         - Image Studio mode ('edit' or 'generate') for tracking
  * @param options.authProvider - The agent's credentials, once its config has loaded
@@ -127,8 +127,8 @@ export function useAiCredits( {
 	authProvider?: AuthProvider;
 } ): AiCreditsState {
 	const [ blogId ] = useState( getSiteCreditsBlogId );
-	// TODO: Remove the Automattician check before AI credits reach customers (FORNO-538).
-	const [ isRequestSkipped ] = useState( () => getImageStudioIsA11n() === false );
+	// TODO: Remove the dev mode check before AI credits reach customers (FORNO-538).
+	const [ isRequestSkipped ] = useState( () => getImageStudioIsDevMode() === false );
 	const [ status, setStatus ] = useState< PaidCreditsStatus | null >( null );
 	const [ isLoading, setIsLoading ] = useState( blogId !== null && ! isRequestSkipped );
 	const [ isLowNoticeDismissed, setIsLowNoticeDismissed ] = useState( false );

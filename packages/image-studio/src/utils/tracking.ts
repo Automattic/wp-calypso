@@ -70,10 +70,10 @@ export function getImageStudioBlogId(): number | null {
 	return Number.isFinite( parsedBlogId ) && parsedBlogId > 0 ? parsedBlogId : null;
 }
 
-/** Whether the page says the user is an Automattician, or undefined when it doesn't say. */
-export function getImageStudioIsA11n(): boolean | undefined {
-	const isA11n = getImageStudioWindowData()?.isA11n;
-	return typeof isA11n === 'boolean' ? isA11n : undefined;
+/** Whether the page says it's in dev mode, or undefined when it doesn't say. */
+export function getImageStudioIsDevMode(): boolean | undefined {
+	const isDevMode = getImageStudioWindowData()?.isDevMode;
+	return typeof isDevMode === 'boolean' ? isDevMode : undefined;
 }
 
 export function getImageStudioSiteType(): ImageStudioSiteType {

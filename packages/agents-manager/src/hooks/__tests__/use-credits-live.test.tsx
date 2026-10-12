@@ -738,47 +738,112 @@ it( 'keeps dismissal within the current visit and ignores previous-site dismiss 
 	expect( view.result.current.notice?.message ).toBe( `${ localNumber( 500 ) } credits left.` );
 } );
 
-describe( 'for a user who isn’t an Automattician', () => {
+describe( 'while the host says the page isn’t in dev mode', () => {
+	const purchaseHint = ( value: ReturnType< typeof useCredits > ) =>
+		( value.trailingActions as ReactElement< { purchaseHint?: string } > | undefined )?.props
+			.purchaseHint;
+
 	beforeEach( () => {
-		( window as { agentsManagerData?: unknown } ).agentsManagerData = { isA11n: false };
+		( window as { agentsManagerData?: unknown } ).agentsManagerData = { isDevMode: false };
 	} );
 	afterEach( () => {
 		delete ( window as { agentsManagerData?: unknown } ).agentsManagerData;
 	} );
 
-	it( 'never asks for a balance on opening, focus or after a turn', async () => {
+	it( 'never reads on opening, reopening, focus, coming online, becoming visible or after a turn', async () => {
 		const view = renderCredits();
 		await flush();
 		await act( async () => {
 			window.dispatchEvent( new Event( 'focus' ) );
+			window.dispatchEvent( new Event( 'online' ) );
+			document.dispatchEvent( new Event( 'visibilitychange' ) );
 		} );
-		mockIsProcessing = true;
-		view.rerender( defaultOptions );
-		await receive( undefined );
-		mockIsProcessing = false;
+		view.rerender( { ...defaultOptions, isOpen: false } );
 		view.rerender( defaultOptions );
 		await flush();
+		// In dev mode, a valid turn reads again for who may buy, and a turn without a balance reads instead.
+		for ( const snapshot of [ creditSnapshot( { plan_tier: 'personal' } ), undefined ] ) {
+			mockIsProcessing = true;
+			view.rerender( defaultOptions );
+			await receive( snapshot );
+			mockIsProcessing = false;
+			view.rerender( defaultOptions );
+			await flush();
+		}
+		expect( authProvider ).not.toHaveBeenCalled();
 		expect( fetchMock ).not.toHaveBeenCalled();
-		expect( view.result.current.trailingActions ).toBeUndefined();
 	} );
 
-	it( 'still shows a balance a turn reports', async () => {
+	it( 'shows a turn’s balance without a purchase link or hint, since only a read says who may buy', async () => {
+		const low = creditSnapshot( {
+			credits_remaining: 5,
+			credits_used: 2495,
+			plan_tier: 'personal',
+		} );
+		fetchMock.mockResolvedValue( response( low ) );
 		const { result } = renderCredits();
-		await receive( creditSnapshot( { plan_tier: 'personal' } ) );
-		expect( props( result.current ).status.remaining ).toBe( 2450 );
+		await flush();
+		await receive( low );
+		expect( authProvider ).not.toHaveBeenCalled();
+		expect( props( result.current ).status.remaining ).toBe( 5 );
+		expect( props( result.current ).upgradeUrl ).toBeUndefined();
+		expect( purchaseHint( result.current ) ).toBeUndefined();
+		expect( result.current.notice ).toBeDefined();
+		expect( result.current.notice?.action ).toBeUndefined();
+		expect( fetchMock ).not.toHaveBeenCalled();
+	} );
+
+	it( 'blocks sends after a turn’s zero until the period resets, with no read on focus', async () => {
+		const { result } = renderCredits();
+		await receive(
+			creditSnapshot( {
+				...exhausted(),
+				policy_id: 'wpcom-site-plan-period-v1',
+				resets_at: '2026-09-21T12:00:01Z',
+			} )
+		);
+		act( () => expect( result.current.beforeSubmit() ).toBe( false ) );
+		await act( async () => {
+			window.dispatchEvent( new Event( 'focus' ) );
+		} );
+		act( () => expect( result.current.beforeSubmit() ).toBe( false ) );
+		await act( async () => jest.advanceTimersByTime( 1000 ) );
+		expect( result.current.trailingActions ).toBeUndefined();
+		expect( result.current.beforeSubmit() ).toBe( true );
+		await receive( exhausted() );
+		jest.setSystemTime( new Date( '2026-10-01T00:00:00Z' ) );
+		// Timers can be throttled in a hidden tab; the submit gate also checks expiry.
+		act( () => expect( result.current.beforeSubmit() ).toBe( true ) );
 		expect( fetchMock ).not.toHaveBeenCalled();
 	} );
 } );
-it.each( [
-	[ 'an Automattician', { isA11n: true } ],
-	[ 'a host that can’t tell, like Calypso', undefined ],
-] )( 'asks for a balance for %s', async ( _name, inlineData ) => {
-	( window as { agentsManagerData?: unknown } ).agentsManagerData = inlineData;
-	fetchMock.mockResolvedValueOnce( response( creditSnapshot( { plan_tier: 'personal' } ) ) );
-	renderCredits();
-	await flush();
-	expect( fetchMock ).toHaveBeenCalledTimes( 1 );
-	delete ( window as { agentsManagerData?: unknown } ).agentsManagerData;
+describe( 'the dev mode gate', () => {
+	afterEach( () => {
+		delete ( window as { agentsManagerData?: unknown } ).agentsManagerData;
+	} );
+
+	it.each( [
+		[ 'never reads outside dev mode', { isDevMode: false }, 0 ],
+		[
+			'never reads outside dev mode, even for an Automattician',
+			{ isDevMode: false, isA11n: true },
+			0,
+		],
+		[ 'reads in dev mode', { isDevMode: true }, 1 ],
+		[
+			'reads in dev mode for someone who isn’t an Automattician',
+			{ isDevMode: true, isA11n: false },
+			1,
+		],
+		[ 'reads when the host leaves the flag out', {}, 1 ],
+		[ 'reads with no host data, like Calypso', undefined, 1 ],
+	] )( '%s', async ( _name, inlineData, reads ) => {
+		( window as { agentsManagerData?: unknown } ).agentsManagerData = inlineData;
+		fetchMock.mockResolvedValueOnce( response( creditSnapshot( { plan_tier: 'personal' } ) ) );
+		renderCredits();
+		await flush();
+		expect( fetchMock ).toHaveBeenCalledTimes( reads );
+	} );
 } );
 it( 'reads the authenticated balance on opening without sending a prompt', async () => {
 	fetchMock.mockResolvedValueOnce( response( creditSnapshot( { plan_tier: 'personal' } ) ) );
@@ -1588,6 +1653,37 @@ describe( 'credits Tracks events', () => {
 		renderCredits( freshScope() );
 		await flush();
 		expect( creditsEvents() ).toHaveLength( 2 );
+	} );
+
+	describe( 'outside dev mode', () => {
+		beforeEach( () => {
+			( window as { agentsManagerData?: unknown } ).agentsManagerData = { isDevMode: false };
+		} );
+		afterEach( () => {
+			delete ( window as { agentsManagerData?: unknown } ).agentsManagerData;
+		} );
+
+		it( 'records a turn’s notice with who may buy unknown', async () => {
+			fetchMock.mockResolvedValue( response( low() ) );
+			renderCredits( freshScope() );
+			await flush();
+			await receive( low() );
+			expect( authProvider ).not.toHaveBeenCalled();
+			expect( fetchMock ).not.toHaveBeenCalled();
+			expect( creditsEvents() ).toEqual( [
+				[
+					'calypso_agents_manager_credits_notice_shown',
+					{
+						...base,
+						state: 'low',
+						credits_left: 5,
+						plan_tier: 'personal',
+						user_role: 'none',
+						cta_type: 'none',
+					},
+				],
+			] );
+		} );
 	} );
 
 	it( 'waits until the chat draws the notice', async () => {
