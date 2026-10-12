@@ -63,6 +63,7 @@ import {
 	attachHead,
 	attachI18n,
 	bumpStat,
+	customizeClientDataForRequest,
 } from 'calypso/server/render';
 import sanitize from 'calypso/server/sanitize';
 import stateCache from 'calypso/server/state-cache';
@@ -1410,6 +1411,19 @@ export default function pages() {
 		app.get( '/robots.txt', ( _req, res ) => {
 			res.setHeader( 'Content-Type', 'text/plain' );
 			res.send( 'User-agent: *\nDisallow: /\n' );
+		} );
+
+		// Redirect bots probing the non-existent `/wp-login.php` to the real login page.
+		app.get( '/wp-login.php', ( req, res, next ) => {
+			const { wpcom_login_url: loginUrl } = customizeClientDataForRequest( req, config.clientData );
+			if ( ! loginUrl ) {
+				return next();
+			}
+			const url = new URL( loginUrl );
+			if ( typeof req.query.redirect_to === 'string' ) {
+				url.searchParams.set( 'redirect_to', req.query.redirect_to );
+			}
+			res.redirect( url.toString() );
 		} );
 
 		// Serve the dashboard shell for any otherwise-unmatched path so the client
