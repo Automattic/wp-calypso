@@ -150,6 +150,9 @@ it( 'keeps other Commerce entries on their existing checkout behavior', () => {
 it( 'resumes the same site without running site creation, including after a skipped domain', async () => {
 	mockQuery.set( 'siteSlug', mockSite.siteSlug );
 	mockQuery.set( 'siteId', mockSite.siteId );
+	expect( renderHook( () => hosting.useStepsProps!() ).result.current.processing ).toEqual( {
+		skipSignupComplete: true,
+	} );
 	const steps = await hosting.initialize( {
 		dispatch: jest.fn(),
 		getState: () => ( {} ),
@@ -245,5 +248,8 @@ it( 'supplies the domain screen with the two-step Commerce journey', () => {
 	mockQuery = new URLSearchParams( 'showPurchaseSteps=true&showDomainStep&plan=ecommerce-bundle' );
 	expect( renderHook( () => hosting.useStepsProps!() ).result.current.domains ).toEqual( {
 		shouldHidePlansStep: true,
+	} );
+	expect( renderHook( () => hosting.useStepsProps!() ).result.current.processing ).toEqual( {
+		skipSignupComplete: false,
 	} );
 } );

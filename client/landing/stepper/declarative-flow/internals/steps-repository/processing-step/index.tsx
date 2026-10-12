@@ -91,6 +91,7 @@ const ProcessingStep: StepType< {
 		title?: string;
 		subtitle?: string;
 		loadingMessages?: ProcessingLoadingMessage[];
+		skipSignupComplete?: boolean;
 	};
 } > = function ( props ) {
 	const { submit } = props.navigation;
@@ -238,7 +239,11 @@ const ProcessingStep: StepType< {
 		if ( hasActionSuccessfullyRun && ! isSubmittedRef.current ) {
 			// We should only trigger signup completion for signup flows, so check if we have one.
 
-			if ( availableFlows[ flow ] && ! isNewSiteMigrationFlow( flow ) ) {
+			if (
+				! props.skipSignupComplete &&
+				availableFlows[ flow ] &&
+				! isNewSiteMigrationFlow( flow )
+			) {
 				availableFlows[ flow ]().then( ( flowExport ) => {
 					if ( flowExport.default.isSignupFlow ) {
 						recordSignupComplete( { ...destinationState } );
@@ -274,7 +279,7 @@ const ProcessingStep: StepType< {
 		}
 		// A change in submit() doesn't cause this effect to rerun.
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ hasActionSuccessfullyRun, recordSignupComplete, flow ] );
+	}, [ hasActionSuccessfullyRun, recordSignupComplete, flow, props.skipSignupComplete ] );
 
 	const getSubtitle = () => {
 		return props.subtitle || loadingMessages[ safeMessageIndex ]?.subtitle;

@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 import { TRANSFERRING_HOSTED_SITE_FLOW, ONBOARDING_FLOW } from '@automattic/onboarding';
-import { act, screen } from '@testing-library/react';
+import { act, screen, waitFor } from '@testing-library/react';
 import { dispatch } from '@wordpress/data';
 import React from 'react';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
@@ -13,8 +13,12 @@ import { recordStepComponentType, recordStepRouteMount } from '../../../step-mou
 import { mockStepProps, renderStep } from '../../test/helpers/index';
 import type { OnboardActions } from '@automattic/data-stores';
 
+const mockRecordSignupComplete = jest.fn();
 jest.mock( 'calypso/landing/stepper/hooks/use-record-signup-complete', () => ( {
-	useRecordSignupComplete: () => jest.fn(),
+	useRecordSignupComplete: () => mockRecordSignupComplete,
+} ) );
+jest.mock( 'calypso/landing/stepper/declarative-flow/registered-flows', () => ( {
+	onboarding: () => Promise.resolve( { default: { isSignupFlow: true } } ),
 } ) );
 jest.mock( 'calypso/lib/analytics/signup', () => ( {
 	recordSignupProcessingScreen: jest.fn(),
@@ -35,10 +39,22 @@ describe( 'ProcessingStep', () => {
 
 	beforeEach( () => {
 		jest.clearAllMocks();
+		onboardActions().setPendingAction( undefined );
 		onboardActions().setTransferStatus( null );
 		onboardActions().setTransferStartedAt( null );
 		onboardActions().setTransferTimedOut( false );
 	} );
+
+	it.each( [ undefined, true ] )(
+		'only skips signup completion when requested (%s)',
+		async ( skipSignupComplete ) => {
+			const submit = jest.fn();
+			onboardActions().setPendingAction( async () => ( { siteId: 123 } ) );
+			render( { flow: ONBOARDING_FLOW, navigation: { submit }, skipSignupComplete } );
+			await waitFor( () => expect( submit ).toHaveBeenCalled() );
+			expect( mockRecordSignupComplete ).toHaveBeenCalledTimes( skipSignupComplete ? 0 : 1 );
+		}
+	);
 
 	it( 'shows the transfer wait for a transferring hosted site creation flow', () => {
 		onboardActions().setTransferStatus( transferStates.ACTIVE );

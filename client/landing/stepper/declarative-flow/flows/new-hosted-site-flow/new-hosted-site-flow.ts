@@ -102,9 +102,13 @@ const hosting: FlowV2< typeof initialize > = {
 	isSignupFlow: true,
 	initialize,
 	useStepsProps() {
+		const query = useQuery();
 		return {
 			[ STEPS.DOMAIN_SEARCH.slug ]: {
-				shouldHidePlansStep: hasCommercePurchaseSteps( this.name, useQuery() ),
+				shouldHidePlansStep: hasCommercePurchaseSteps( this.name, query ),
+			},
+			[ STEPS.PROCESSING.slug ]: {
+				skipSignupComplete: isCommercePurchaseResume( this.name, query ),
 			},
 		};
 	},
