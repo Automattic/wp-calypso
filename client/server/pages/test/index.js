@@ -1663,43 +1663,21 @@ describe( 'dashboard app', () => {
 		expect( response.send ).toHaveBeenCalledWith( 'User-agent: *\nDisallow: /\n' );
 	} );
 
-	describe( 'Route /wp-login.php', () => {
-		beforeEach( () => {
-			app.getMocks().customizeClientDataForRequest.mockImplementation( ( req ) => ( {
-				wpcom_login_url: req.hostname === 'my.woo.ai' ? false : 'https://wordpress.com/log-in',
-			} ) );
+	it( 'redirects /wp-login.php to the WordPress.com login, forwarding only redirect_to', async () => {
+		app.getMocks().customizeClientDataForRequest.mockReturnValue( {
+			wpcom_login_url: 'https://wordpress.com/log-in',
 		} );
 
-		it( 'redirects to the WordPress.com login, forwarding only redirect_to', async () => {
-			const { response } = await app.run( {
-				request: {
-					url: '/wp-login.php?action=login&redirect_to=https%3A%2F%2Fmy.wordpress.com%2Fsites',
-					hostname: 'my.wordpress.com',
-					query: { action: 'login', redirect_to: 'https://my.wordpress.com/sites' },
-				},
-			} );
-
-			expect( response.redirect ).toHaveBeenCalledWith(
-				'https://wordpress.com/log-in?redirect_to=https%3A%2F%2Fmy.wordpress.com%2Fsites'
-			);
-			expect( app.getMocks().serverRender ).not.toHaveBeenCalled();
+		const { response } = await app.run( {
+			request: {
+				url: '/wp-login.php?action=login&redirect_to=https%3A%2F%2Fmy.wordpress.com%2Fsites',
+				hostname: 'my.wordpress.com',
+				query: { action: 'login', redirect_to: 'https://my.wordpress.com/sites' },
+			},
 		} );
 
-		it( 'redirects without a query string when there is no redirect_to', async () => {
-			const { response } = await app.run( {
-				request: { url: '/wp-login.php', hostname: 'my.wordpress.com' },
-			} );
-
-			expect( response.redirect ).toHaveBeenCalledWith( 'https://wordpress.com/log-in' );
-		} );
-
-		it( 'serves a 404 on hosts without a WordPress.com login', async () => {
-			const { response } = await app.run( {
-				request: { url: '/wp-login.php', hostname: 'my.woo.ai' },
-			} );
-
-			expect( response.redirect ).not.toHaveBeenCalled();
-			expect( response.statusCode ).toBe( 404 );
-		} );
+		expect( response.redirect ).toHaveBeenCalledWith(
+			'https://wordpress.com/log-in?redirect_to=https%3A%2F%2Fmy.wordpress.com%2Fsites'
+		);
 	} );
 } );

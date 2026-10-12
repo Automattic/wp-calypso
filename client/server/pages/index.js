@@ -1413,7 +1413,7 @@ export default function pages() {
 			res.send( 'User-agent: *\nDisallow: /\n' );
 		} );
 
-		// Hosts that log in through OAuth set `wpcom_login_url` to false and keep the 404.
+		// Redirect bots probing the non-existent `/wp-login.php` to the real login page.
 		app.get( '/wp-login.php', ( req, res, next ) => {
 			const { wpcom_login_url: loginUrl } = customizeClientDataForRequest( req, config.clientData );
 			if ( ! loginUrl ) {
