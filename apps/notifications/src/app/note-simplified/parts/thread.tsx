@@ -62,14 +62,17 @@ const ThreadItem = ( {
 			) }
 			<VStack className="wpnc-simplified__thread-content" spacing={ 1 }>
 				<HStack className="wpnc-simplified__thread-header">
-					<HStack
-						className="wpnc-simplified__quiet-links"
-						alignment="baseline"
-						justify="flex-start"
-						spacing={ 2 }
-					>
-						{ name }
-						{ meta }
+					<HStack alignment="baseline" spacing={ 2 }>
+						<HStack
+							className="wpnc-simplified__quiet-links"
+							alignment="baseline"
+							justify="flex-start"
+							spacing={ 2 }
+							wrap
+						>
+							{ name }
+							{ meta }
+						</HStack>
 						{ status }
 					</HStack>
 				</HStack>

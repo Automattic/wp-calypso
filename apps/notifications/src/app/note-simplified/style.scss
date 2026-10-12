@@ -80,7 +80,6 @@ a.wpnc-simplified__quiet-links:visited {
 
 .wpnc-simplified__pending-approval {
 	flex-shrink: 0;
-	margin-inline-start: auto;
 	font-size: $font-size-medium;
 	font-weight: $font-weight-medium;
 	color: var(--wpds-color-foreground-content-warning-weak, #926300);
@@ -94,7 +93,9 @@ a.wpnc-simplified__quiet-links:visited {
 		fill: currentColor;
 	}
 
-	.wpnc-simplified__quiet-links & a {
+	a,
+	a:visited {
+		color: inherit;
 		text-decoration: underline;
 	}
 }
