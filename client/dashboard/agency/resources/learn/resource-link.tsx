@@ -2,7 +2,10 @@ import type { SelectResource } from './types';
 import type { AgencyEnablementResource } from '@automattic/api-core';
 import type { ComponentProps } from 'react';
 
-interface ResourceLinkProps extends Omit< ComponentProps< 'a' >, 'href' | 'onSelect' > {
+interface ResourceLinkProps extends Omit<
+	ComponentProps< 'a' >,
+	'href' | 'onSelect' | 'resource'
+> {
 	resource: AgencyEnablementResource;
 	onSelect: SelectResource;
 }
