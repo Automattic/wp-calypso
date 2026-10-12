@@ -54,7 +54,9 @@ TanStack's `queryClient.ensureQueryData` checks if data is already cached before
 
 ### Component-level queries
 
-At the component level, we use the `useQuery` and `useSuspenseQuery` hooks to fetch data. This includes the data that we preloaded in the route loader:
+The rule: **if the route loader `await`s a query with `ensureQueryData`, the route's components read it with `useSuspenseQuery`.** The data is already cached, so it doesn't suspend, and it stays up to date after refetches and mutations. Data the loader only starts with `prefetchQuery`, or doesn't load at all, uses `useQuery` and shows its own loading state. See [file-based-routing.md](./file-based-routing.md) (decision 1).
+
+Data preloaded in the route loader:
 
 ```typescript
 const { data: currentVersion } = useSuspenseQuery( {

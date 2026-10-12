@@ -54,8 +54,15 @@ export type SiteOverviewSupports = {
 	preview: boolean;
 };
 
+export type AppName = 'dotcom' | 'ciab' | 'a4a';
+
 export type AppConfig = {
 	name: string;
+	/**
+	 * Which dashboard app this is. Only the `perApp` helpers used by route files
+	 * read it; branch on `supports` everywhere else.
+	 */
+	app: AppName;
 	unifiedAdminPageViewApp?: 'msd' | 'a4a';
 	basePath: string;
 	mainRoute: string;
@@ -108,6 +115,7 @@ export type AppConfig = {
 
 export const APP_CONTEXT_DEFAULT_CONFIG: AppConfig = {
 	name: '',
+	app: 'dotcom',
 	basePath: '',
 	mainRoute: '',
 	Logo: null,
