@@ -190,7 +190,7 @@ export const agencyPressablePremiumPlanReferralMutation = ( agencyId: number ) =
 
 export const agencyResourceEventMutation = ( agencyId: number ) =>
 	mutationOptions( {
-		meta: { statId: 'agcy-resource-event' },
+		meta: { statId: 'agcy-resource-record' },
 		mutationFn: ( resource: { id: number; name: string } ) =>
 			recordAgencyResourceEvent( agencyId, resource.id, resource.name ),
 	} );
