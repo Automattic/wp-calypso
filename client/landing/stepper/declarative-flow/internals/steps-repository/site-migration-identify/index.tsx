@@ -77,7 +77,11 @@ export const Analyzer: FC< Props > = ( {
 				( error.code === 'http_request_failed' || error.code === 'rest_invalid_param' ) )
 		) {
 			connectionIssue = 'unreachable';
-		} else if ( ! hasError && siteInfo && getUrlParts( siteInfo.url ).protocol === 'http:' ) {
+		} else if (
+			! hasError &&
+			siteInfo?.platform === 'wordpress' &&
+			getUrlParts( siteInfo.url ).protocol === 'http:'
+		) {
 			connectionIssue = 'http';
 		}
 	}

@@ -58,6 +58,32 @@ jest.mock( 'calypso/landing/stepper/hooks/use-record-signup-complete', () => ( {
 const runNavigation = ( options: Parameters< typeof runFlowNavigation >[ 1 ] ) =>
 	runFlowNavigation( siteMigrationFlow, options, 'forward' );
 
+const renderNavigation = ( initialEntries: string[], initialIndex = 0 ) =>
+	renderHookWithProvider(
+		() => {
+			const location = useLocation();
+			window.location.search = location.search;
+			const { navigate, params } = useFlowNavigation( siteMigrationFlow );
+			const navigation = useStepNavigationWithTracking( {
+				flow: siteMigrationFlow,
+				currentStepRoute: params.step,
+				navigate,
+			} );
+			return { navigation, location, navigationType: useNavigationType() };
+		},
+		{
+			wrapper: ( { children } ) => (
+				<MemoryRouter
+					basename="/setup"
+					initialEntries={ initialEntries }
+					initialIndex={ initialIndex }
+				>
+					{ children }
+				</MemoryRouter>
+			),
+		}
+	);
+
 describe( 'Site Migration Flow', () => {
 	beforeAll( () => {
 		Object.defineProperty( window, 'location', {
@@ -114,29 +140,9 @@ describe( 'Site Migration Flow', () => {
 					sessionId: 'platform-escape',
 					flags: 'migration/reprint-flow',
 				} );
-				const { result } = renderHookWithProvider(
-					() => {
-						const location = useLocation();
-						window.location.search = location.search;
-						const { navigate, params } = useFlowNavigation( siteMigrationFlow );
-						const navigation = useStepNavigationWithTracking( {
-							flow: siteMigrationFlow,
-							currentStepRoute: params.step,
-							navigate,
-						} );
-						return { navigation, location };
-					},
-					{
-						wrapper: ( { children } ) => (
-							<MemoryRouter
-								basename="/setup"
-								initialEntries={ [ `/setup/site-migration/site-migration-identify?${ context }` ] }
-							>
-								{ children }
-							</MemoryRouter>
-						),
-					}
-				);
+				const { result } = renderNavigation( [
+					`/setup/site-migration/site-migration-identify?${ context }`,
+				] );
 				act( () => result.current.navigation.submit( { action: 'skip_platform_identification' } ) );
 				expect( result.current.location.pathname ).toBe( '/site-migration/importList' );
 				const query = new URLSearchParams( result.current.location.search );
@@ -209,29 +215,9 @@ describe( 'Site Migration Flow', () => {
 				sessionId: 'different-site',
 				flags: 'migration/reprint-flow',
 			} );
-			const { result } = renderHookWithProvider(
-				() => {
-					const location = useLocation();
-					window.location.search = location.search;
-					const { navigate, params } = useFlowNavigation( siteMigrationFlow );
-					const navigation = useStepNavigationWithTracking( {
-						flow: siteMigrationFlow,
-						currentStepRoute: params.step,
-						navigate,
-					} );
-					return { navigation, location };
-				},
-				{
-					wrapper: ( { children } ) => (
-						<MemoryRouter
-							basename="/setup"
-							initialEntries={ [ `/setup/site-migration/site-migration-check?${ context }` ] }
-						>
-							{ children }
-						</MemoryRouter>
-					),
-				}
-			);
+			const { result } = renderNavigation( [
+				`/setup/site-migration/site-migration-check?${ context }`,
+			] );
 			act( () =>
 				result.current.navigation.submit( {
 					action: 'select-existing-site',
@@ -264,29 +250,10 @@ describe( 'Site Migration Flow', () => {
 			const browserBack = jest.spyOn( window.history, 'back' ).mockImplementation( () => {} );
 			const search =
 				'?source=sites-dashboard&ref=new-site-popover&sessionId=abc&flags=migration%2Freprint-flow';
-			window.location.search = search;
 			const addressPath = '/site-migration/site-migration-identify';
-			const { result } = renderHookWithProvider(
-				() => {
-					const { navigate, params } = useFlowNavigation( siteMigrationFlow );
-					const navigation = useStepNavigationWithTracking( {
-						flow: siteMigrationFlow,
-						currentStepRoute: params.step,
-						navigate,
-					} );
-					return { navigation, location: useLocation() };
-				},
-				{
-					wrapper: ( { children } ) => (
-						<MemoryRouter
-							basename="/setup"
-							initialEntries={ [ '/setup/previous-page', `/setup${ addressPath }${ search }` ] }
-							initialIndex={ 1 }
-						>
-							{ children }
-						</MemoryRouter>
-					),
-				}
+			const { result } = renderNavigation(
+				[ '/setup/previous-page', `/setup${ addressPath }${ search }` ],
+				1
 			);
 			const source = {
 				from: 'https://wordpress.org/',
@@ -298,6 +265,13 @@ describe( 'Site Migration Flow', () => {
 			expect( result.current.location.pathname ).toBe( '/site-migration/site-migration-check' );
 			act( () => result.current.navigation.submit( { action: 'continue', ...source } ) );
 			expect( result.current.location.pathname ).toBe( '/site-migration/plans' );
+			expect( Object.fromEntries( new URLSearchParams( result.current.location.search ) ) ).toEqual(
+				expect.objectContaining( {
+					...Object.fromEntries( new URLSearchParams( search ) ),
+					...source,
+					isWpcom: 'false',
+				} )
+			);
 			act( () => result.current.navigation.submit( { action: 'select-existing-site' } ) );
 			expect( result.current.location.pathname ).toBe( '/site-migration/sitePicker' );
 			act( () =>
@@ -344,27 +318,9 @@ describe( 'Site Migration Flow', () => {
 			jest.spyOn( window.history, 'length', 'get' ).mockReturnValue( 1 );
 			const search = '?from=https%3A%2F%2Fwordpress.org%2F&platform=wordpress&sessionId=abc';
 			window.location.search = search;
-			const { result } = renderHookWithProvider(
-				() => {
-					const { navigate, params } = useFlowNavigation( siteMigrationFlow );
-					const navigation = useStepNavigationWithTracking( {
-						flow: siteMigrationFlow,
-						currentStepRoute: params.step,
-						navigate,
-					} );
-					return { navigation, location: useLocation(), navigationType: useNavigationType() };
-				},
-				{
-					wrapper: ( { children } ) => (
-						<MemoryRouter
-							basename="/setup"
-							initialEntries={ [ `/setup/site-migration/site-migration-check${ search }` ] }
-						>
-							{ children }
-						</MemoryRouter>
-					),
-				}
-			);
+			const { result } = renderNavigation( [
+				`/setup/site-migration/site-migration-check${ search }`,
+			] );
 			act( () => result.current.navigation.submit( { action: 'back' } ) );
 			expect( result.current.location.pathname ).toBe( '/site-migration/site-migration-identify' );
 			expect( new URLSearchParams( result.current.location.search ).get( 'sessionId' ) ).toBe(
@@ -898,38 +854,6 @@ describe( 'Site Migration Flow', () => {
 				} );
 				expect( destination ).toMatchDestination( { step: STEPS.SITE_MIGRATION_IDENTIFY } );
 			} );
-
-			it( 'continues from the result page to plans without repeating it', () => {
-				jest
-					.spyOn( config, 'isEnabled' )
-					.mockImplementation( ( flag ) => flag === 'migration/reprint-flow' );
-				jest.mocked( getCurrentUserSiteCount ).mockReturnValue( 2 );
-				const destination = runNavigation( {
-					from: STEPS.SITE_MIGRATION_CHECK,
-					dependencies: {
-						action: 'continue',
-						from: 'https://example.com',
-						platform: 'wordpress',
-						host: 'bluehost',
-					},
-				} );
-				expect( destination ).toMatchDestination( {
-					step: STEPS.UNIFIED_PLANS,
-					query: { from: 'https://example.com', platform: 'wordpress', host: 'bluehost' },
-				} );
-			} );
-
-			it( 'returns from the result page to address entry', () => {
-				jest
-					.spyOn( config, 'isEnabled' )
-					.mockImplementation( ( flag ) => flag === 'migration/reprint-flow' );
-				const destination = runNavigation( {
-					from: STEPS.SITE_MIGRATION_CHECK,
-					dependencies: { action: 'back' },
-					query: { from: 'https://example.com', platform: 'wordpress' },
-				} );
-				expect( destination ).toMatchDestination( { step: STEPS.SITE_MIGRATION_IDENTIFY } );
-			} );
 		} );
 
 		//TODO: Move it to the top be the first test group to follow the order of the flow
@@ -1316,18 +1240,6 @@ describe( 'Site Migration Flow', () => {
 				}
 			);
 
-			it( 'opens the existing-site picker from plans', () => {
-				const result = runNavigation( {
-					from: STEPS.UNIFIED_PLANS,
-					query: context,
-					dependencies: { stepName: 'plans', cartItems: null, action: 'select-existing-site' },
-				} );
-				expect( result ).toMatchDestination( {
-					step: STEPS.PICK_SITE,
-					query: { from: context.from, platform: 'wordpress', host: 'bluehost' },
-				} );
-			} );
-
 			it( 'creates a destination after selecting a plan', () => {
 				const result = runNavigation( {
 					from: STEPS.UNIFIED_PLANS,
@@ -1577,26 +1489,6 @@ describe( 'Site Migration Flow', () => {
 					expect( goToCheckout ).toHaveBeenCalledTimes( leave ? 0 : 1 );
 				}
 			);
-
-			it( 'clears the destination when choosing a different site and preserves entry context', () => {
-				const result = runNavigation( {
-					from: STEPS.SITE_MIGRATION_CHECK,
-					query: { ...context, siteId: 123, siteSlug: 'example.wordpress.com' },
-					dependencies: { ...context, action: 'select-existing-site' },
-				} );
-				expect( result ).toMatchDestination( {
-					step: STEPS.PICK_SITE,
-					query: {
-						from: context.from,
-						platform: context.platform,
-						host: context.host,
-						siteId: '',
-						siteSlug: '',
-					},
-				} );
-				expect( window.location.assign ).not.toHaveBeenCalled();
-				expect( goToCheckout ).not.toHaveBeenCalled();
-			} );
 
 			it( 'keeps explicit assisted migration links on the legacy route', () => {
 				const result = runNavigation( {

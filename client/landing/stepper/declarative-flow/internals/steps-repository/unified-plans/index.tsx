@@ -1,6 +1,12 @@
 import { getIntervalTypeForTerm, getPlan, isFreePlan } from '@automattic/calypso-products';
 import { OnboardSelect } from '@automattic/data-stores';
-import { DOMAIN_FLOW, ONBOARDING_FLOW, Step, useStepPersistedState } from '@automattic/onboarding';
+import {
+	DOMAIN_FLOW,
+	ONBOARDING_FLOW,
+	SITE_MIGRATION_FLOW,
+	Step,
+	useStepPersistedState,
+} from '@automattic/onboarding';
 import { useSelect, useDispatch as useWPDispatch } from '@wordpress/data';
 import { useTranslate, type TranslateResult } from 'i18n-calypso';
 import { useState, useEffect } from 'react';
@@ -88,7 +94,11 @@ const PlansStepAdaptor: StepType< {
 	} = props;
 	const translate = useTranslate();
 	const [ stepState, setStepState ] = useStepPersistedState< ProvidedDependencies >( 'plans-step' );
-	const siteSlug = useSiteSlug();
+	const query = useQuery();
+	const isMigrationFlow = props.flow === SITE_MIGRATION_FLOW;
+	const hasMigrationDestination = !! ( query.get( 'siteId' ) || query.get( 'siteSlug' ) );
+	const resolvedSiteSlug = useSiteSlug();
+	const siteSlug = isMigrationFlow && ! hasMigrationDestination ? null : resolvedSiteSlug;
 
 	const { siteTitle, domainItem, domainItems, selectedDesign, hideFreePlan } = useSelect(
 		( select: ( key: string ) => OnboardSelect ) => {
@@ -141,7 +151,10 @@ const PlansStepAdaptor: StepType< {
 	const postSignUpSiteSlugParam = getSignupCompleteSlug();
 	const postSignUpSiteIdParam = getSignupCompleteSiteID();
 
-	const site = useSite( postSignUpSiteSlugParam || postSignUpSiteIdParam );
+	const resolvedSite = useSite(
+		isMigrationFlow ? undefined : postSignUpSiteSlugParam || postSignUpSiteIdParam
+	);
+	const site = isMigrationFlow && ! hasMigrationDestination ? null : resolvedSite;
 	const customerType = useQuery().get( 'customerType' ) ?? undefined;
 
 	// A blueprint import narrows the grid to the plans the blueprint suggests

@@ -15,9 +15,18 @@ import { PLAN_BUSINESS } from '@automattic/calypso-products';
 import { EDUCATION_FLOW, SITE_MIGRATION_FLOW } from '@automattic/onboarding';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { dispatch } from '@wordpress/data';
 import React from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
+import { SITE_STORE } from 'calypso/landing/stepper/stores';
+import {
+	clearSignupCompleteSiteID,
+	clearSignupCompleteSlug,
+	setSignupCompleteSiteID,
+	setSignupCompleteSlug,
+} from 'calypso/signup/storageUtils';
 import PlansStepAdaptor from '..';
+import * as flowState from '../../../state-manager/store';
 import { renderStep } from '../../test/helpers';
 import UnifiedPlansStep, { type UnifiedPlansStepProps } from '../unified-plans-step';
 import * as unifiedPlansModule from '../unified-plans-step';
@@ -161,4 +170,64 @@ describe( 'Plans existing-site action', () => {
 			screen.queryByRole( 'button', { name: 'migrate to a site you already have' } )
 		).not.toBeInTheDocument();
 	} );
+} );
+
+describe( 'Plans site context', () => {
+	const previousSite = { ID: 987, URL: 'https://previous.wordpress.com' };
+	const destination = { ID: 654, URL: 'https://destination.wordpress.com' };
+
+	beforeEach( () => {
+		setSignupCompleteSlug( 'previous.wordpress.com' );
+		setSignupCompleteSiteID( previousSite.ID );
+		jest.spyOn( flowState, 'useFlowState' ).mockReturnValue( {
+			get: ( key ) => ( key === 'site' ? { siteId: previousSite.ID } : undefined ),
+		} );
+		for ( const site of [ previousSite, destination ] ) {
+			dispatch( SITE_STORE ).receiveSite( site.ID, site );
+			for ( const fragment of [ site.ID, String( site.ID ), new URL( site.URL ).host ] ) {
+				dispatch( SITE_STORE ).finishResolution( 'getSite', [ fragment ] );
+			}
+		}
+	} );
+
+	afterEach( () => {
+		clearSignupCompleteSlug();
+		clearSignupCompleteSiteID();
+		jest.restoreAllMocks();
+	} );
+
+	it.each( [
+		[
+			SITE_MIGRATION_FLOW,
+			'siteId=654&siteSlug=destination.wordpress.com',
+			destination,
+			'destination.wordpress.com',
+		],
+		[ SITE_MIGRATION_FLOW, 'siteId=654', destination, 'destination.wordpress.com' ],
+		[
+			SITE_MIGRATION_FLOW,
+			'siteSlug=destination.wordpress.com',
+			destination,
+			'destination.wordpress.com',
+		],
+		[ SITE_MIGRATION_FLOW, '', undefined, null ],
+		[ 'onboarding', '', previousSite, 'previous.wordpress.com' ],
+	] )(
+		'resolves %s plans with destination "%s" despite saved signup state',
+		async ( flow, query, expectedSite, expectedSlug ) => {
+			const plans = jest.spyOn( unifiedPlansModule, 'default' ).mockImplementation( () => null );
+			renderStep( <PlansStepAdaptor flow={ flow } navigation={ { submit: jest.fn() } } />, {
+				initialEntry: `/setup/${ flow }/plans?${ query }`,
+				initialState: {
+					sites: { items: { [ previousSite.ID ]: previousSite, [ destination.ID ]: destination } },
+				},
+			} );
+			await waitFor( () =>
+				expect( plans.mock.lastCall?.[ 0 ] ).toMatchObject( {
+					selectedSite: expectedSite,
+					signupDependencies: { siteSlug: expectedSlug },
+				} )
+			);
+		}
+	);
 } );
