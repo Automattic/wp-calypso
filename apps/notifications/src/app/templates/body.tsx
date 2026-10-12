@@ -27,7 +27,7 @@ const TRANSPARENT_PIXEL =
 	'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
 
 // Images from the note's markup. React-rendered ones, such as avatars, are left alone.
-const CONTENT_IMAGE = 'img.wpnc__image';
+const CONTENT_IMAGE = ':not(.wpnc__span) > img.wpnc__image';
 
 const isReplyBlock = ( note: Note, block: Block ) =>
 	block.ranges && block.ranges.length > 1 && block.ranges[ 1 ].id === note.meta?.ids?.reply_comment;
