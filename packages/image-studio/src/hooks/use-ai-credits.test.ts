@@ -80,8 +80,8 @@ const meterAt = ( percent: number, isOpen = false ) => ( {
 
 describe( 'getSiteCreditsLevel', () => {
 	it.each( [
-		{ name: 'low below 20,000', remaining: 19_999, level: 'low' },
-		{ name: 'nothing from 20,000', remaining: 20_000, level: null },
+		{ name: 'low below 10,000', remaining: 9_999, level: 'low' },
+		{ name: 'nothing from 10,000', remaining: 10_000, level: null },
 	] )( '$name', ( { remaining, level } ) => {
 		expect( getSiteCreditsLevel( remaining ) ).toBe( level );
 	} );
