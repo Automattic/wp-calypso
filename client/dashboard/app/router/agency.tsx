@@ -1114,7 +1114,7 @@ const agencySiteOverviewRoute = createRoute( {
 			const agency = await queryClient.ensureQueryData( activeAgencyQuery() );
 			if ( agency?.id ) {
 				await Promise.all( [
-					queryClient.ensureQueryData( agencyProductsQuery( agency.id ) ),
+					queryClient.ensureQueryData( agencyProductsQuery( agency.id ) ).catch( () => undefined ),
 					queryClient
 						.ensureQueryData( pressableLicensesQuery( agency.id ) )
 						.catch( () => undefined ),
