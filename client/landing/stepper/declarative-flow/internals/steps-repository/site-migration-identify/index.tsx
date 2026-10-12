@@ -71,7 +71,10 @@ export const Analyzer: FC< Props > = ( {
 	if ( isReprintFlow && siteURL && ! isFetching ) {
 		if (
 			( typeof siteHealth === 'string' && siteHealth !== 'ok' ) ||
-			( hasError && error && 'code' in error && error.code === 'http_request_failed' )
+			( hasError &&
+				error &&
+				'code' in error &&
+				( error.code === 'http_request_failed' || error.code === 'rest_invalid_param' ) )
 		) {
 			connectionIssue = 'unreachable';
 		} else if ( ! hasError && siteInfo && getUrlParts( siteInfo.url ).protocol === 'http:' ) {

@@ -444,6 +444,12 @@ describe( 'SiteMigrationIdentify', () => {
 
 		it.each( [
 			{ code: 'http_request_failed', status: 500 },
+			{
+				code: 'rest_invalid_param',
+				message: 'Site url is not valid.',
+				status: 400,
+				data: { status: 400 },
+			},
 			{ code: 'rest_invalid_param', status: 400, data: { site_health: 'not_found' } },
 		] )(
 			'retries a source-fetch error without losing the entered address: %j',
