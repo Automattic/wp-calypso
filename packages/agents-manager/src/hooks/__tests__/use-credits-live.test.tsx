@@ -6,7 +6,10 @@ import { ORCHESTRATOR_AGENT_URL } from '../../constants';
 import { creditSnapshot } from '../../utils/__tests__/fixtures/credit-snapshot';
 import { localNumber } from '../../utils/__tests__/fixtures/local-number';
 import { getCreditsLabel, getCreditsTone } from '../../utils/credits';
-import { clearKnownSiteCredits, setKnownSiteCredits } from '../../utils/site-credits-availability';
+import {
+	isSiteWithoutAiCredits,
+	markSiteWithoutAiCredits,
+} from '../../utils/site-credits-availability';
 import { useCredits } from '../use-credits';
 import type { AgentConfig } from '../../utils/create-agent-config';
 import type { CreditsStatus } from '../../utils/credits';
@@ -125,7 +128,7 @@ beforeEach( () => {
 	authProvider.mockReset().mockResolvedValue( { Authorization: 'Bearer site-jwt' } );
 	Object.defineProperty( document, 'visibilityState', { configurable: true, value: 'visible' } );
 	globalThis.fetch = fetchMock;
-	clearKnownSiteCredits();
+	window.sessionStorage.clear();
 } );
 afterEach( () => {
 	jest.useRealTimers();
@@ -764,7 +767,7 @@ it( 'stops asking after a 404, even in a reopened or new chat, until the site ch
 	expect( fetchMock ).toHaveBeenCalledTimes( 2 );
 } );
 it( 'skips the request when this tab already got a 404, until a turn reports a balance', async () => {
-	setKnownSiteCredits( 123, false );
+	markSiteWithoutAiCredits( 123 );
 	const view = renderCredits();
 	await flush();
 	await act( async () => {
@@ -809,6 +812,40 @@ it( 'asks again once a turn reports a balance after a 404', async () => {
 	await flush();
 	await receive( creditSnapshot( { plan_tier: 'personal' } ) );
 	expect( props( view.result.current ).status.remaining ).toBe( 2450 );
+	await act( async () => {
+		window.dispatchEvent( new Event( 'focus' ) );
+	} );
+	expect( fetchMock ).toHaveBeenCalledTimes( 2 );
+} );
+it( 'ignores a 404 that arrives after a turn reported a balance', async () => {
+	const pending = deferred< unknown >();
+	fetchMock.mockReturnValueOnce( pending.promise );
+	renderCredits();
+	await flush();
+	expect( fetchMock ).toHaveBeenCalledTimes( 1 );
+	await receive( creditSnapshot( { plan_tier: 'personal' } ) );
+	await act( async () => {
+		pending.resolve( { ok: false, status: 404, json: async () => ( {} ) } );
+	} );
+	expect( isSiteWithoutAiCredits( 123 ) ).toBe( false );
+} );
+it( 'doesn’t ask again when focus comes back from a frame on the page, like the editor canvas', async () => {
+	fetchMock.mockResolvedValue( response( creditSnapshot( { plan_tier: 'personal' } ) ) );
+	renderCredits();
+	await flush();
+	const canvas = document.body.appendChild( document.createElement( 'iframe' ) );
+	canvas.focus();
+	act( () => {
+		window.dispatchEvent( new Event( 'blur' ) );
+	} );
+	await act( async () => {
+		window.dispatchEvent( new Event( 'focus' ) );
+	} );
+	expect( fetchMock ).toHaveBeenCalledTimes( 1 );
+	canvas.remove();
+	act( () => {
+		window.dispatchEvent( new Event( 'blur' ) );
+	} );
 	await act( async () => {
 		window.dispatchEvent( new Event( 'focus' ) );
 	} );

@@ -1,17 +1,19 @@
 import {
-	clearKnownSiteCredits,
-	getKnownSiteCredits,
-	setKnownSiteCredits,
+	forgetSiteWithoutAiCredits,
+	isSiteWithoutAiCredits,
+	markSiteWithoutAiCredits,
 } from '../site-credits-availability';
 
-const STORAGE_KEY = 'agents-manager-site-credits';
+const STORAGE_KEY = 'agents-manager-sites-without-ai-credits';
 const TTL_MS = 30 * 60 * 1000;
+
+const storedMarks = () => JSON.parse( window.sessionStorage.getItem( STORAGE_KEY ) ?? '{}' );
 
 describe( 'site credits availability', () => {
 	beforeEach( () => {
 		jest.useFakeTimers();
 		jest.setSystemTime( new Date( '2026-10-12T00:00:00Z' ) );
-		clearKnownSiteCredits();
+		window.sessionStorage.clear();
 	} );
 
 	afterEach( () => {
@@ -19,61 +21,71 @@ describe( 'site credits availability', () => {
 		jest.useRealTimers();
 	} );
 
-	it( 'knows nothing about a site until it learns', () => {
-		expect( getKnownSiteCredits( 123 ) ).toBeUndefined();
+	it( 'knows nothing about a site until it answers 404', () => {
+		expect( isSiteWithoutAiCredits( 123 ) ).toBe( false );
 	} );
 
-	it( 'remembers each site’s answer', () => {
-		setKnownSiteCredits( 123, false );
-		setKnownSiteCredits( 456, true );
+	it( 'remembers each site that answered 404', () => {
+		markSiteWithoutAiCredits( 123 );
 
-		expect( getKnownSiteCredits( 123 ) ).toBe( false );
-		expect( getKnownSiteCredits( 456 ) ).toBe( true );
+		expect( isSiteWithoutAiCredits( 123 ) ).toBe( true );
+		expect( isSiteWithoutAiCredits( 456 ) ).toBe( false );
 	} );
 
-	it( 'reads an answer another bundle stored in this tab', () => {
-		window.sessionStorage.setItem(
-			STORAGE_KEY,
-			JSON.stringify( { 123: { usesAiCredits: false, at: Date.now() } } )
-		);
+	it( 'reads a mark another bundle stored in this tab', () => {
+		window.sessionStorage.setItem( STORAGE_KEY, JSON.stringify( { 123: Date.now() } ) );
 
-		expect( getKnownSiteCredits( 123 ) ).toBe( false );
+		expect( isSiteWithoutAiCredits( 123 ) ).toBe( true );
 	} );
 
-	it( 'forgets an answer after 30 minutes', () => {
-		setKnownSiteCredits( 123, false );
+	it( 'forgets a site once it reports a balance', () => {
+		markSiteWithoutAiCredits( 123 );
+		markSiteWithoutAiCredits( 456 );
+
+		forgetSiteWithoutAiCredits( 123 );
+
+		expect( isSiteWithoutAiCredits( 123 ) ).toBe( false );
+		expect( isSiteWithoutAiCredits( 456 ) ).toBe( true );
+	} );
+
+	it( 'leaves storage alone when a site with no mark reports a balance', () => {
+		const setItem = jest.spyOn( Storage.prototype, 'setItem' );
+
+		forgetSiteWithoutAiCredits( 123 );
+
+		expect( setItem ).not.toHaveBeenCalled();
+	} );
+
+	it( 'forgets a mark after 30 minutes', () => {
+		markSiteWithoutAiCredits( 123 );
 
 		jest.advanceTimersByTime( TTL_MS - 1 );
-		expect( getKnownSiteCredits( 123 ) ).toBe( false );
+		expect( isSiteWithoutAiCredits( 123 ) ).toBe( true );
 
 		jest.advanceTimersByTime( 1 );
-		expect( getKnownSiteCredits( 123 ) ).toBeUndefined();
+		expect( isSiteWithoutAiCredits( 123 ) ).toBe( false );
 	} );
 
-	it( 'drops expired answers when it learns a new one', () => {
-		setKnownSiteCredits( 123, false );
+	it( 'drops expired marks when it adds one', () => {
+		markSiteWithoutAiCredits( 123 );
 		jest.advanceTimersByTime( TTL_MS );
-		setKnownSiteCredits( 456, false );
 
-		expect(
-			Object.keys( JSON.parse( window.sessionStorage.getItem( STORAGE_KEY ) ?? '' ) )
-		).toEqual( [ '456' ] );
+		markSiteWithoutAiCredits( 456 );
+
+		expect( Object.keys( storedMarks() ) ).toEqual( [ '456' ] );
 	} );
 
 	it.each( [
 		[ 'not JSON', () => 'not json' ],
-		[ 'the wrong shape', () => JSON.stringify( { 123: { usesAiCredits: 'no', at: Date.now() } } ) ],
-		[
-			'from the future',
-			() => JSON.stringify( { 123: { usesAiCredits: false, at: Date.now() + 1 } } ),
-		],
-	] )( 'ignores a stored answer that is %s', ( _name, stored ) => {
+		[ 'not a time', () => JSON.stringify( { 123: 'yesterday' } ) ],
+		[ 'from the future', () => JSON.stringify( { 123: Date.now() + 1 } ) ],
+	] )( 'ignores a stored mark that is %s', ( _name, stored ) => {
 		window.sessionStorage.setItem( STORAGE_KEY, stored() );
 
-		expect( getKnownSiteCredits( 123 ) ).toBeUndefined();
+		expect( isSiteWithoutAiCredits( 123 ) ).toBe( false );
 	} );
 
-	it( 'keeps answers for the page load when storage is blocked', () => {
+	it( 'remembers nothing when storage is blocked', () => {
 		jest.spyOn( Storage.prototype, 'getItem' ).mockImplementation( () => {
 			throw new Error( 'blocked' );
 		} );
@@ -81,8 +93,21 @@ describe( 'site credits availability', () => {
 			throw new Error( 'blocked' );
 		} );
 
-		setKnownSiteCredits( 123, false );
+		markSiteWithoutAiCredits( 123 );
 
-		expect( getKnownSiteCredits( 123 ) ).toBe( false );
+		expect( isSiteWithoutAiCredits( 123 ) ).toBe( false );
+	} );
+
+	it( 'drops every mark when storage reads but refuses a write, so none outlives its answer', () => {
+		markSiteWithoutAiCredits( 123 );
+		markSiteWithoutAiCredits( 456 );
+		jest.spyOn( Storage.prototype, 'setItem' ).mockImplementation( () => {
+			throw new Error( 'full' );
+		} );
+
+		forgetSiteWithoutAiCredits( 123 );
+
+		expect( isSiteWithoutAiCredits( 123 ) ).toBe( false );
+		expect( isSiteWithoutAiCredits( 456 ) ).toBe( false );
 	} );
 } );

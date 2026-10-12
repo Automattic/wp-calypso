@@ -19,7 +19,11 @@ import {
 	getLiveCreditsUpgradeUrl,
 	parseCreditSnapshot,
 } from '../utils/live-credits';
-import { getKnownSiteCredits, setKnownSiteCredits } from '../utils/site-credits-availability';
+import {
+	forgetSiteWithoutAiCredits,
+	isSiteWithoutAiCredits,
+	markSiteWithoutAiCredits,
+} from '../utils/site-credits-availability';
 import type { AgentConfig } from '../utils/create-agent-config';
 import type { CreditSnapshot } from '../utils/live-credits';
 import type { TaskUpdate, UseAgentChatReturn } from '@automattic/agenttic-client';
@@ -161,7 +165,7 @@ export function useCredits( {
 			const snapshot = parseCreditSnapshot( update.aiCredits, scope.siteId );
 			if ( snapshot && Date.parse( snapshot.resets_at ) > Date.now() ) {
 				scope.validTerminalRevision++;
-				setKnownSiteCredits( scope.siteId, true );
+				forgetSiteWithoutAiCredits( scope.siteId );
 				setBalance( { scope, snapshot } );
 			} else {
 				invalidateBalance();
@@ -188,7 +192,7 @@ export function useCredits( {
 		if (
 			! isOpen ||
 			! scope.siteId ||
-			getKnownSiteCredits( scope.siteId ) === false ||
+			isSiteWithoutAiCredits( scope.siteId ) ||
 			! authProvider ||
 			! scope.active ||
 			currentScope.current !== scope ||
@@ -229,7 +233,7 @@ export function useCredits( {
 				} );
 			}
 			if ( response.status === 404 ) {
-				setKnownSiteCredits( scope.siteId, false );
+				markSiteWithoutAiCredits( scope.siteId );
 			}
 			const snapshot = parseCreditSnapshot( data?.ai_credits, scope.siteId );
 			if ( snapshot && Date.parse( snapshot.resets_at ) > Date.now() ) {
@@ -263,13 +267,27 @@ export function useCredits( {
 				void refreshBalance();
 			}
 		};
-		window.addEventListener( 'focus', onFocus );
+		// The editor canvas is a frame, so clicking from it back to the chat focuses the
+		// window again. That isn't a return to the page, so it doesn't read the balance.
+		let isFocusInFrame = false;
+		const onBlur = () => {
+			isFocusInFrame = document.activeElement instanceof HTMLIFrameElement;
+		};
+		const onWindowFocus = () => {
+			if ( ! isFocusInFrame ) {
+				onFocus();
+			}
+			isFocusInFrame = false;
+		};
+		window.addEventListener( 'blur', onBlur );
+		window.addEventListener( 'focus', onWindowFocus );
 		window.addEventListener( 'online', onFocus );
 		document.addEventListener( 'visibilitychange', onFocus );
 		return () => {
 			balanceRequest.current?.abort();
 			balanceRequest.current = undefined;
-			window.removeEventListener( 'focus', onFocus );
+			window.removeEventListener( 'blur', onBlur );
+			window.removeEventListener( 'focus', onWindowFocus );
 			window.removeEventListener( 'online', onFocus );
 			document.removeEventListener( 'visibilitychange', onFocus );
 		};

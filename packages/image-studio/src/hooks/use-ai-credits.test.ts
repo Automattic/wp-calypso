@@ -2,7 +2,7 @@
  * Tests for useAiCredits and its reader of the `ai_credits` snapshot that
  * WordPress.com sends for sites on AI credits.
  */
-import { getKnownSiteCredits, setKnownSiteCredits } from '@automattic/agents-manager';
+import { isSiteWithoutAiCredits, markSiteWithoutAiCredits } from '@automattic/agents-manager';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import { ImageStudioMode } from '../types';
 import {
@@ -306,7 +306,7 @@ describe( 'useAiCredits', () => {
 	} );
 
 	it( 'does not ask when this tab already got a 404 for the site', async () => {
-		setKnownSiteCredits( BLOG_ID, false );
+		markSiteWithoutAiCredits( BLOG_ID );
 
 		const { result } = renderCredits();
 		await act( async () => {} );
@@ -329,17 +329,69 @@ describe( 'useAiCredits', () => {
 	} );
 
 	it( 'takes a turn’s balance after a 404, and asks again next time', async () => {
-		setKnownSiteCredits( BLOG_ID, false );
-		const { result } = renderCredits();
+		markSiteWithoutAiCredits( BLOG_ID );
+		const first = renderCredits();
 		await act( async () => {} );
 
 		act( () => {
-			result.current.onTaskUpdate( finalUpdate( planSnapshot( 0 ) ) );
+			first.result.current.onTaskUpdate( finalUpdate( planSnapshot( 0 ) ) );
 		} );
 
 		expect( fetchMock ).not.toHaveBeenCalled();
-		expect( result.current.isLimitReached ).toBe( true );
-		expect( getKnownSiteCredits( BLOG_ID ) ).toBe( true );
+		expect( first.result.current.isLimitReached ).toBe( true );
+		first.unmount();
+
+		respondWith( { ai_credits: planSnapshot( 30_000 ) } );
+		const { result } = renderCredits();
+
+		await waitFor( () => expect( result.current.meter ).toEqual( meterAt( 75 ) ) );
+		expect( fetchMock ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it.each( [
+		{
+			name: 'a server error',
+			fail: () =>
+				fetchMock.mockResolvedValue( { ok: false, status: 503, json: async () => ( {} ) } ),
+		},
+		{
+			name: 'a network failure',
+			fail: () => fetchMock.mockRejectedValue( new Error( 'offline' ) ),
+		},
+	] )( 'asks again on the next open after $name', async ( { fail } ) => {
+		const consoleError = jest.spyOn( console, 'error' ).mockImplementation( () => {} );
+		fail();
+		const first = renderCredits();
+		await waitFor( () => expect( first.result.current.isLoading ).toBe( false ) );
+		first.unmount();
+
+		renderCredits();
+		await act( async () => {} );
+
+		expect( fetchMock ).toHaveBeenCalledTimes( 2 );
+		expect( isSiteWithoutAiCredits( BLOG_ID ) ).toBe( false );
+		consoleError.mockRestore();
+	} );
+
+	it( 'ignores a 404 that arrives after a turn reported a balance', async () => {
+		let resolveFetch: ( value: unknown ) => void = () => {};
+		fetchMock.mockReturnValue(
+			new Promise( ( resolve ) => {
+				resolveFetch = resolve;
+			} )
+		);
+		const { result } = renderCredits();
+		await waitFor( () => expect( fetchMock ).toHaveBeenCalled() );
+
+		act( () => {
+			result.current.onTaskUpdate( finalUpdate( planSnapshot( 30_000 ) ) );
+		} );
+		await act( async () => {
+			resolveFetch( { ok: false, status: 404, json: async () => ( {} ) } );
+		} );
+
+		expect( isSiteWithoutAiCredits( BLOG_ID ) ).toBe( false );
+		expect( result.current.meter ).toEqual( meterAt( 75 ) );
 	} );
 
 	it( 'does not ask when the page names no site', () => {

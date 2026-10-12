@@ -2,10 +2,11 @@ import {
 	CREDITS_LOW_BALANCE,
 	CREDITS_UPGRADE_SOURCE,
 	formatCreditsShort,
+	forgetSiteWithoutAiCredits,
 	getCreditsUpgradeUrl,
-	getKnownSiteCredits,
+	isSiteWithoutAiCredits,
+	markSiteWithoutAiCredits,
 	parseLiveCreditsStatus,
-	setKnownSiteCredits,
 } from '@automattic/agents-manager';
 import { useEvent } from '@wordpress/compose';
 import { useEffect, useMemo, useRef, useState } from '@wordpress/element';
@@ -72,8 +73,14 @@ function getSiteCreditsBlogId(): number | null {
 	return getImageStudioSiteType() === 'jetpack' ? null : getImageStudioBlogId();
 }
 
-/** Resolves to undefined when the site is not on AI credits or the request fails. */
-async function fetchSiteCredits( blogId: number, authProvider: AuthProvider ): Promise< unknown > {
+/**
+ * Resolves to the site's `ai_credits` snapshot, or says the site answered 404 because it isn't
+ * on AI credits. Resolves to neither when the request fails.
+ */
+async function fetchSiteCredits(
+	blogId: number,
+	authProvider: AuthProvider
+): Promise< { aiCredits?: unknown; isWithoutAiCredits?: boolean } > {
 	try {
 		const headers = await authProvider();
 		const response = await window.fetch( `${ WPCOM_SITES_API }/${ blogId }/ai/credits`, {
@@ -81,18 +88,14 @@ async function fetchSiteCredits( blogId: number, authProvider: AuthProvider ): P
 			headers,
 			cache: 'no-store',
 		} );
-		// A site that is not on AI credits answers 404, so other chats in this tab skip asking.
-		if ( response.status === 404 ) {
-			setKnownSiteCredits( blogId, false );
-		}
 		if ( ! response.ok ) {
-			return undefined;
+			return { isWithoutAiCredits: response.status === 404 };
 		}
 		const data = await response.json();
-		return data?.ai_credits;
+		return { aiCredits: data?.ai_credits };
 	} catch ( error ) {
 		window.console?.error?.( '[Image Studio] Failed to fetch site AI credits:', error );
-		return undefined;
+		return {};
 	}
 }
 
@@ -132,7 +135,7 @@ export function useAiCredits( {
 } ): AiCreditsState {
 	const [ blogId ] = useState( getSiteCreditsBlogId );
 	const [ isRequestSkipped ] = useState(
-		() => blogId !== null && getKnownSiteCredits( blogId ) === false
+		() => blogId !== null && isSiteWithoutAiCredits( blogId )
 	);
 	const [ status, setStatus ] = useState< PaidCreditsStatus | null >( null );
 	const [ isLoading, setIsLoading ] = useState( blogId !== null && ! isRequestSkipped );
@@ -159,7 +162,7 @@ export function useAiCredits( {
 		if ( next?.plan !== 'paid' ) {
 			return false;
 		}
-		setKnownSiteCredits( blogId, true );
+		forgetSiteWithoutAiCredits( blogId );
 		const level = getSiteCreditsLevel( next.remaining );
 		// A known balance running out opens the dot's details once. The first read stays quiet.
 		if ( level === 'out' && shown.current.level !== undefined && shown.current.level !== 'out' ) {
@@ -185,7 +188,7 @@ export function useAiCredits( {
 		const turnBalancesBefore = turnBalanceCount.current;
 		const timeout = setTimeout( () => setIsLoading( false ), SITE_CREDITS_TIMEOUT_MS );
 
-		fetchSiteCredits( blogId, authProvider ).then( ( result ) => {
+		fetchSiteCredits( blogId, authProvider ).then( ( { aiCredits, isWithoutAiCredits } ) => {
 			if ( isCancelled ) {
 				return;
 			}
@@ -193,7 +196,11 @@ export function useAiCredits( {
 			setIsLoading( false );
 			// A turn that finished while this check ran already reported a newer balance.
 			if ( turnBalanceCount.current === turnBalancesBefore ) {
-				applyCredits( result, 'open' );
+				// Other chats in this tab skip asking a site that answered 404.
+				if ( isWithoutAiCredits ) {
+					markSiteWithoutAiCredits( blogId );
+				}
+				applyCredits( aiCredits, 'open' );
 			}
 		} );
 
