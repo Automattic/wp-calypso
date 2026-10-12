@@ -26,11 +26,12 @@ import SiteIcon from '../../../components/site-icon';
 import { getTitleForDisplay, isDotcomPlan } from '../../../utils/purchase';
 import { getSiteDisplayUrl } from '../../../utils/site-url';
 import {
-	getBundledDomainKey,
 	getCompanionItems,
 	getDefaultSelection,
 	getSelectedSubscriptionIds,
 	getVisibleWarnings,
+	isBundledItem,
+	isItemSelected,
 } from './selection';
 import type {
 	Purchase,
@@ -54,7 +55,9 @@ function IssueList( { issues }: { issues: SiteTransferIssue[] } ) {
 	return (
 		<ul className="move-purchase__issue-list">
 			{ issues.map( ( issue ) => (
-				<li key={ `${ issue.code }:${ issue.item_key ?? '' }` }>{ issue.message }</li>
+				<li key={ `${ issue.code }:${ issue.subscription_ids?.join( ',' ) ?? '' }` }>
+					{ issue.message }
+				</li>
 			) ) }
 		</ul>
 	);
@@ -129,7 +132,7 @@ export function SiteTransferReview( { purchase, targetSite, onChangeSite }: Prop
 		purchaseSiteTransferMutation( purchase.ID )
 	);
 	// Null until the user changes it, so the default can follow the preview.
-	const [ chosenKeys, setChosenKeys ] = useState< Set< string > | null >( null );
+	const [ chosenSelection, setChosenSelection ] = useState< Set< number > | null >( null );
 
 	const productTitle = getTitleForDisplay( purchase );
 
@@ -172,24 +175,27 @@ export function SiteTransferReview( { purchase, targetSite, onChangeSite }: Prop
 		);
 	}
 
-	const companions = getCompanionItems( preview, purchase );
-	const bundledDomainKey = getBundledDomainKey( purchase );
-	const selectedKeys = chosenKeys ?? getDefaultSelection( preview, purchase );
-	const warnings = getVisibleWarnings( preview, selectedKeys );
+	const bundledDomainSubscriptionId = purchase.included_domain_purchase_id;
+	const companions = getCompanionItems( preview, bundledDomainSubscriptionId );
+	const selection =
+		chosenSelection ?? getDefaultSelection( companions, bundledDomainSubscriptionId );
+	const warnings = getVisibleWarnings( preview, companions, selection );
 	const sourceName = purchase.site_slug || purchase.domain;
 
-	const toggleCompanion = ( key: string, isSelected: boolean ) => {
-		const next = new Set( selectedKeys );
-		if ( isSelected ) {
-			next.add( key );
-		} else {
-			next.delete( key );
+	const toggleCompanion = ( item: SiteTransferItem, isSelected: boolean ) => {
+		const next = new Set( selection );
+		for ( const id of item.subscription_ids ) {
+			if ( isSelected ) {
+				next.add( id );
+			} else {
+				next.delete( id );
+			}
 		}
-		setChosenKeys( next );
+		setChosenSelection( next );
 	};
 
 	const onConfirm = () => {
-		const subscriptionIds = getSelectedSubscriptionIds( companions, selectedKeys );
+		const subscriptionIds = getSelectedSubscriptionIds( companions, selection );
 		const trackingProps = {
 			product_slug: purchase.product_slug,
 			target_blog_id: targetSite.ID,
@@ -311,12 +317,15 @@ export function SiteTransferReview( { purchase, targetSite, onChangeSite }: Prop
 								</VStack>
 								{ companions.map( ( item ) => (
 									<CheckboxControl
-										key={ item.key }
+										key={ item.subscription_ids[ 0 ] }
 										label={ item.label }
-										help={ getCompanionHelp( item, item.key === bundledDomainKey ) }
-										checked={ ! item.blocker && selectedKeys.has( item.key ) }
+										help={ getCompanionHelp(
+											item,
+											isBundledItem( item, bundledDomainSubscriptionId )
+										) }
+										checked={ ! item.blocker && isItemSelected( item, selection ) }
 										disabled={ !! item.blocker || isTransferring || ! preview.can_transfer }
-										onChange={ ( isSelected ) => toggleCompanion( item.key, isSelected ) }
+										onChange={ ( isSelected ) => toggleCompanion( item, isSelected ) }
 									/>
 								) ) }
 							</VStack>

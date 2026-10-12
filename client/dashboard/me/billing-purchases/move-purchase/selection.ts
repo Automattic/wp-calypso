@@ -1,18 +1,25 @@
 import type {
-	Purchase,
 	SiteTransferIssue,
 	SiteTransferItem,
 	SiteTransferPreview,
 } from '@automattic/api-core';
 
 /**
- * The key of the domain registered with the plan's free domain credit, in the
- * form the preview uses for domain items.
+ * Items are identified by their subscriptions. An item is selected when any of
+ * its subscriptions is in the selection.
  */
-export function getBundledDomainKey( purchase: Purchase ): string | undefined {
-	return purchase.included_domain
-		? `domain:${ purchase.included_domain.toLowerCase() }`
-		: undefined;
+export function isItemSelected( item: SiteTransferItem, selection: Set< number > ): boolean {
+	return item.subscription_ids.some( ( id ) => selection.has( id ) );
+}
+
+export function isBundledItem(
+	item: SiteTransferItem,
+	bundledDomainSubscriptionId: number | null
+): boolean {
+	return (
+		bundledDomainSubscriptionId !== null &&
+		item.subscription_ids.includes( bundledDomainSubscriptionId )
+	);
 }
 
 /**
@@ -22,18 +29,17 @@ export function getBundledDomainKey( purchase: Purchase ): string | undefined {
  */
 export function getCompanionItems(
 	preview: SiteTransferPreview,
-	purchase: Purchase
+	bundledDomainSubscriptionId: number | null
 ): SiteTransferItem[] {
 	if ( preview.primary?.type !== 'plan' ) {
 		return [];
 	}
 
-	const bundledDomainKey = getBundledDomainKey( purchase );
 	const domains = preview.items.filter( ( item ) => item.type === 'domain' );
 
 	return [
-		...domains.filter( ( item ) => item.key === bundledDomainKey ),
-		...domains.filter( ( item ) => item.key !== bundledDomainKey ),
+		...domains.filter( ( item ) => isBundledItem( item, bundledDomainSubscriptionId ) ),
+		...domains.filter( ( item ) => ! isBundledItem( item, bundledDomainSubscriptionId ) ),
 	];
 }
 
@@ -42,15 +48,14 @@ export function getCompanionItems(
  * plan bought on the wrong site usually means its domain was too.
  */
 export function getDefaultSelection(
-	preview: SiteTransferPreview,
-	purchase: Purchase
-): Set< string > {
-	const bundledDomainKey = getBundledDomainKey( purchase );
-	const bundledDomain = getCompanionItems( preview, purchase ).find(
-		( item ) => item.key === bundledDomainKey
+	companions: SiteTransferItem[],
+	bundledDomainSubscriptionId: number | null
+): Set< number > {
+	const bundledDomain = companions.find( ( item ) =>
+		isBundledItem( item, bundledDomainSubscriptionId )
 	);
 
-	return new Set( bundledDomain && ! bundledDomain.blocker ? [ bundledDomain.key ] : [] );
+	return new Set( bundledDomain && ! bundledDomain.blocker ? bundledDomain.subscription_ids : [] );
 }
 
 /**
@@ -58,10 +63,17 @@ export function getDefaultSelection(
  */
 export function getVisibleWarnings(
 	preview: SiteTransferPreview,
-	selectedKeys: Set< string >
+	companions: SiteTransferItem[],
+	selection: Set< number >
 ): SiteTransferIssue[] {
+	const movingIds = new Set(
+		companions
+			.filter( ( item ) => ! item.blocker && isItemSelected( item, selection ) )
+			.flatMap( ( item ) => item.subscription_ids )
+	);
+
 	return preview.warnings.filter(
-		( warning ) => ! warning.item_key || ! selectedKeys.has( warning.item_key )
+		( warning ) => ! warning.subscription_ids?.some( ( id ) => movingIds.has( id ) )
 	);
 }
 
@@ -71,9 +83,9 @@ export function getVisibleWarnings(
  */
 export function getSelectedSubscriptionIds(
 	items: SiteTransferItem[],
-	selectedKeys: Set< string >
+	selection: Set< number >
 ): number[] {
 	return items
-		.filter( ( item ) => selectedKeys.has( item.key ) && ! item.blocker )
+		.filter( ( item ) => ! item.blocker && isItemSelected( item, selection ) )
 		.map( ( item ) => item.subscription_ids[ 0 ] );
 }

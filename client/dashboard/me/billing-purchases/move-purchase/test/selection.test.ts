@@ -4,11 +4,10 @@ import {
 	getSelectedSubscriptionIds,
 	getVisibleWarnings,
 } from '../selection';
-import type { Purchase, SiteTransferItem, SiteTransferPreview } from '@automattic/api-core';
+import type { SiteTransferItem, SiteTransferPreview } from '@automattic/api-core';
 
 function makeItem( overrides: Partial< SiteTransferItem > ): SiteTransferItem {
 	return {
-		key: 'domain:example.com',
 		type: 'domain',
 		label: 'example.com',
 		subscription_ids: [ 20 ],
@@ -20,28 +19,17 @@ function makeItem( overrides: Partial< SiteTransferItem > ): SiteTransferItem {
 }
 
 const plan = makeItem( {
-	key: 'plan:10',
 	type: 'plan',
 	label: 'Business',
 	subscription_ids: [ 10 ],
 	product_names: [ 'Business' ],
 } );
-const bundledDomain = makeItem( {
-	key: 'domain:bundled.com',
-	label: 'bundled.com',
-	subscription_ids: [ 21, 22 ],
-} );
-const otherDomain = makeItem( {
-	key: 'domain:other.com',
-	label: 'other.com',
-	subscription_ids: [ 23 ],
-} );
-const storage = makeItem( {
-	key: 'storage_add_on:30',
-	type: 'storage_add_on',
-	label: 'Storage',
-	subscription_ids: [ 30 ],
-} );
+const bundledDomain = makeItem( { label: 'bundled.com', subscription_ids: [ 21, 22 ] } );
+const otherDomain = makeItem( { label: 'other.com', subscription_ids: [ 23 ] } );
+const storage = makeItem( { type: 'storage_add_on', label: 'Storage', subscription_ids: [ 30 ] } );
+
+// The plan's `included_domain_purchase_id`.
+const BUNDLED_ID = 21;
 
 function makePreview( overrides: Partial< SiteTransferPreview > = {} ): SiteTransferPreview {
 	return {
@@ -57,11 +45,9 @@ function makePreview( overrides: Partial< SiteTransferPreview > = {} ): SiteTran
 	};
 }
 
-const planPurchase = { ID: 10, included_domain: 'Bundled.com' } as Purchase;
-
 describe( 'getCompanionItems', () => {
 	test( 'offers only domains when moving a plan, bundled domain first', () => {
-		expect( getCompanionItems( makePreview(), planPurchase ) ).toEqual( [
+		expect( getCompanionItems( makePreview(), BUNDLED_ID ) ).toEqual( [
 			bundledDomain,
 			otherDomain,
 		] );
@@ -69,42 +55,46 @@ describe( 'getCompanionItems', () => {
 
 	test( 'offers nothing when moving a domain', () => {
 		const preview = makePreview( { primary: bundledDomain, items: [ plan, otherDomain ] } );
-		expect( getCompanionItems( preview, { ID: 21 } as Purchase ) ).toEqual( [] );
+		expect( getCompanionItems( preview, null ) ).toEqual( [] );
 	} );
 } );
 
 describe( 'getDefaultSelection', () => {
 	test( 'selects the bundled domain', () => {
-		expect( getDefaultSelection( makePreview(), planPurchase ) ).toEqual(
-			new Set( [ 'domain:bundled.com' ] )
-		);
+		const companions = getCompanionItems( makePreview(), BUNDLED_ID );
+		expect(
+			getSelectedSubscriptionIds( companions, getDefaultSelection( companions, BUNDLED_ID ) )
+		).toEqual( [ 21 ] );
 	} );
 
 	test( 'selects nothing when the bundled domain cannot move', () => {
 		const blocked = { ...bundledDomain, blocker: { code: 'x', message: 'No.' } };
-		const preview = makePreview( { items: [ blocked, otherDomain ] } );
-		expect( getDefaultSelection( preview, planPurchase ) ).toEqual( new Set() );
+		expect( getDefaultSelection( [ blocked, otherDomain ], BUNDLED_ID ) ).toEqual( new Set() );
 	} );
 
 	test( 'selects nothing for a plan without a bundled domain', () => {
-		expect( getDefaultSelection( makePreview(), { ID: 10 } as Purchase ) ).toEqual( new Set() );
+		const companions = getCompanionItems( makePreview(), null );
+		expect( getDefaultSelection( companions, null ) ).toEqual( new Set() );
 	} );
 } );
 
 describe( 'getVisibleWarnings', () => {
-	test( 'hides warnings about selected items', () => {
+	test( 'hides warnings about items that are moving too', () => {
 		const general = { code: 'source_loses_custom_primary_domain', message: 'A' };
+		// A warning can name any of the item's subscriptions.
 		const aboutDomain = {
 			code: 'bundled_domain_on_source',
 			message: 'B',
-			item_key: 'domain:bundled.com',
+			subscription_ids: [ 22 ],
 		};
 		const preview = makePreview( { warnings: [ general, aboutDomain ] } );
+		const companions = [ bundledDomain, otherDomain ];
 
-		expect( getVisibleWarnings( preview, new Set() ) ).toEqual( [ general, aboutDomain ] );
-		expect( getVisibleWarnings( preview, new Set( [ 'domain:bundled.com' ] ) ) ).toEqual( [
+		expect( getVisibleWarnings( preview, companions, new Set() ) ).toEqual( [
 			general,
+			aboutDomain,
 		] );
+		expect( getVisibleWarnings( preview, companions, new Set( [ 21 ] ) ) ).toEqual( [ general ] );
 	} );
 } );
 
@@ -112,10 +102,7 @@ describe( 'getSelectedSubscriptionIds', () => {
 	test( 'names each selected, movable item by its first subscription', () => {
 		const blocked = { ...otherDomain, blocker: { code: 'x', message: 'No.' } };
 		expect(
-			getSelectedSubscriptionIds(
-				[ bundledDomain, blocked ],
-				new Set( [ 'domain:bundled.com', 'domain:other.com' ] )
-			)
+			getSelectedSubscriptionIds( [ bundledDomain, blocked ], new Set( [ 22, 23 ] ) )
 		).toEqual( [ 21 ] );
 	} );
 } );

@@ -21,6 +21,7 @@ const purchase = {
 	is_plan: true,
 	is_jetpack_plan_or_product: false,
 	included_domain: 'bundled.com',
+	included_domain_purchase_id: 21,
 	subscription_status: 'active',
 	expiry_status: 'auto-renewing',
 } as Purchase;
@@ -36,7 +37,6 @@ const targetSite = {
 function makePreview( overrides: Partial< SiteTransferPreview > = {} ): SiteTransferPreview {
 	return {
 		primary: {
-			key: 'plan:10',
 			type: 'plan',
 			label: 'Business',
 			subscription_ids: [ 10 ],
@@ -52,12 +52,11 @@ function makePreview( overrides: Partial< SiteTransferPreview > = {} ): SiteTran
 			{
 				code: 'bundled_domain_on_source',
 				message: 'bundled.com stays bundled with the plan unless it moves too.',
-				item_key: 'domain:bundled.com',
+				subscription_ids: [ 21, 22 ],
 			},
 		],
 		items: [
 			{
-				key: 'domain:bundled.com',
 				type: 'domain',
 				label: 'bundled.com',
 				subscription_ids: [ 21, 22 ],
@@ -66,7 +65,6 @@ function makePreview( overrides: Partial< SiteTransferPreview > = {} ): SiteTran
 				blocker: null,
 			},
 			{
-				key: 'domain:other.com',
 				type: 'domain',
 				label: 'other.com',
 				subscription_ids: [ 23 ],

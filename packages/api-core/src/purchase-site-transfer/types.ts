@@ -29,23 +29,21 @@ export interface SiteTransferIssue {
 	 */
 	message: string;
 	/**
-	 * For a warning, the key of the item it's about, so it can be hidden once
-	 * that item is selected to move too (e.g. `bundled_domain_on_source` no
-	 * longer applies once the domain moves with the plan). Absent when the
-	 * warning applies regardless of the selection.
+	 * For a warning about one of the preview's `items`, that item's
+	 * subscriptions, so the warning can be hidden once the item is selected to
+	 * move too (e.g. `bundled_domain_on_source` no longer applies once the
+	 * domain moves with the plan). Absent when the warning applies regardless
+	 * of the selection.
 	 */
-	item_key?: string;
+	subscription_ids?: number[];
 }
 
 /**
- * Subscriptions on a site that can only move together. Mirrors `Transfer_Item`.
+ * Subscriptions on a site that can only move together. Mirrors `Transfer_Item`,
+ * except for its key, which is internal to `Site_Transfer`: an item is
+ * identified by its subscriptions.
  */
 export interface SiteTransferItem {
-	/**
-	 * Stable identifier, `{type}:{id}`, e.g. `plan:123` or `domain:example.com`.
-	 * Domain keys use the lowercased domain name.
-	 */
-	key: string;
 	type: SiteTransferItemType;
 	/**
 	 * Short description, e.g. the plan's name or the domain name.
@@ -127,7 +125,7 @@ export interface SiteTransferRequest {
  * Response of `POST /wpcom/v2/upgrades/{purchase_id}/site-transfer`. Mirrors
  * `Site_Transfer_Result`.
  *
- * Failures reject with a WP error whose `error` code is one of
+ * Failures reject with a WP REST error whose `code` is one of
  * `SiteTransferErrorCode`.
  */
 export interface SiteTransferResult {
