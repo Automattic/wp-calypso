@@ -12,7 +12,7 @@ import type { Subject } from '../types';
 // whose id differs from the site id links to the Reader profile (some site
 // notifications populate id with the siteId); anything else falls back to the
 // range's own url. Mirrors the legacy `SummaryInSingle` behaviour.
-export const getHeaderLink = ( block: Subject ): string | undefined => {
+const getHeaderLink = ( block: Subject ): string | undefined => {
 	const range = block.ranges?.[ 0 ];
 	if ( ! range ) {
 		return undefined;

@@ -1,7 +1,3 @@
-import { hasComment } from '../data/blocks';
-import { getFollow, getCommenter, hasSinglePerson } from '../data/person';
-import { getCommentedPost } from '../data/post';
-import { getRepliedTo } from '../data/replied-to';
 import Body from '../parts/body';
 import NoteMeta from '../parts/note-meta';
 import PendingApproval from '../parts/pending-approval';
@@ -12,23 +8,18 @@ import type { Note } from '../../types';
 
 export default function CommentNote( { note }: { note: Note } ) {
 	const isPendingApproval = useIsPendingApproval( note );
-	const repliedTo = getRepliedTo( note );
-	const post = getCommentedPost( note, repliedTo?.text );
+	const { post, site, parent_comment: repliedTo, actors } = note.meta ?? {};
 
 	return (
 		<>
-			{ post && <PostCard { ...post } /> }
+			{ post && <PostCard post={ post } site={ site } /> }
 			<Thread
 				repliedTo={ repliedTo }
-				commenter={ getCommenter( note ) }
-				meta={ <NoteMeta note={ note } follow={ getFollow( note ) } /> }
+				commenter={ actors?.[ 0 ] }
+				meta={ <NoteMeta note={ note } /> }
 				status={ isPendingApproval && <PendingApproval note={ note } /> }
 			>
-				<Body
-					note={ note }
-					hidePeople={ hasComment( note ) || hasSinglePerson( note ) }
-					hidePendingApproval
-				/>
+				<Body note={ note } hidePeople hidePendingApproval />
 			</Thread>
 		</>
 	);

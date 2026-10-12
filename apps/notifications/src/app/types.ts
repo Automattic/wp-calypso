@@ -33,6 +33,36 @@ export type Subject = {
 	media?: Media[];
 };
 
+export type NoteKind = 'comment' | 'reactions' | 'new_post' | 'notice';
+
+export type NotePost = {
+	title: string;
+	url: string;
+	date: string | null;
+	author_name: string;
+};
+
+export type NoteSite = {
+	name: string;
+	icon: string;
+	url?: string;
+};
+
+export type NoteParentComment = {
+	text: string;
+	author_name: string;
+	author_avatar: string | null;
+	author_url?: string | null;
+	date: string | null;
+	url: string;
+};
+
+export type NoteActor = {
+	name: string;
+	avatar: string;
+	url?: string | null;
+};
+
 type PostActions = { 'replyto-comment'?: boolean; 'like-post'?: boolean };
 
 type CommentActions = {
@@ -114,25 +144,15 @@ export type Note = {
 			user?: string;
 			home?: string;
 		};
-		// Only on notes about a post or page. Text fields are plain text.
-		post?: {
-			title: string;
-			url: string;
-			date: string | null;
-			author_name: string;
-		};
-		site?: {
-			name: string;
-			icon: string;
-		};
-		/** The comment a reply answers, or the one a like is for, once approved. */
-		parent_comment?: {
-			text: string;
-			author_name: string;
-			author_avatar: string | null;
-			date: string | null;
-			url: string;
-		};
+		/** The rest is note context, present only when the request asks for it. */
+		kind?: NoteKind;
+		post?: NotePost;
+		site?: NoteSite;
+		parent_comment?: NoteParentComment;
+		actors?: NoteActor[];
+		actor_count?: number;
+		summary?: Subject;
+		heading?: string;
 	};
 	title: string;
 	note_hash: number;

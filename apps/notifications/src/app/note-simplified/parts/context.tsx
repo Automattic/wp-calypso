@@ -1,23 +1,15 @@
-import ContextCard from './context-card';
 import PostCard from './post-card';
 import Thread from './thread';
-import type { Context as ContextData } from '../data/context';
+import type { Note } from '../../types';
 
-/** What the note concerns: the comment it is for, the post, or the card its header describes. */
-export default function Context( { context }: { context?: ContextData } ) {
-	switch ( context?.kind ) {
-		case 'comment':
-			return (
-				<>
-					{ context.post && <PostCard { ...context.post } /> }
-					<Thread repliedTo={ context.repliedTo } />
-				</>
-			);
-		case 'post':
-			return context.post ? <PostCard { ...context.post } /> : null;
-		case 'card':
-			return <ContextCard { ...context.card } />;
-		default:
-			return null;
-	}
+/** What the note concerns: the post, and the comment on it when there is one. */
+export default function Context( { note }: { note: Note } ) {
+	const { post, site, parent_comment: comment } = note.meta ?? {};
+
+	return (
+		<>
+			{ post && <PostCard post={ post } site={ site } /> }
+			{ comment && <Thread repliedTo={ comment } /> }
+		</>
+	);
 }

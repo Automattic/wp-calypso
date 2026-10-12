@@ -5,8 +5,7 @@ import {
 } from '@wordpress/components';
 import NoteIcon from '../../note-icon';
 import { NoteTime } from './note-meta';
-import type { Commenter } from '../data/person';
-import type { RepliedTo } from '../data/replied-to';
+import type { NoteActor, NoteParentComment } from '../../types';
 import type { ReactNode } from 'react';
 
 const ThreadItem = ( {
@@ -17,14 +16,16 @@ const ThreadItem = ( {
 	status,
 	children,
 }: {
-	avatar?: string;
+	avatar?: string | null;
 	author?: string;
-	authorUrl?: string;
+	authorUrl?: string | null;
 	meta?: ReactNode;
 	status?: ReactNode;
 	children: ReactNode;
 } ) => {
-	const photo = <NoteIcon className="wpnc-simplified__photo" icon={ avatar } size={ 36 } />;
+	const photo = (
+		<NoteIcon className="wpnc-simplified__photo" icon={ avatar ?? undefined } size={ 36 } />
+	);
 	const name = author && (
 		<Text size={ 15 } weight={ 600 }>
 			{ authorUrl ? (
@@ -93,8 +94,8 @@ export default function Thread( {
 	status,
 	children,
 }: {
-	repliedTo?: RepliedTo;
-	commenter?: Commenter;
+	repliedTo?: NoteParentComment;
+	commenter?: NoteActor;
 	/** When the new comment was made, and anything else worth knowing about its author. */
 	meta?: ReactNode;
 	/** The new comment's moderation state, shown opposite its author. */
@@ -105,9 +106,9 @@ export default function Thread( {
 		<VStack as="ol" className="wpnc-simplified__thread" spacing={ 0 }>
 			{ repliedTo && (
 				<ThreadItem
-					avatar={ repliedTo.avatar }
-					author={ repliedTo.author }
-					authorUrl={ repliedTo.authorUrl }
+					avatar={ repliedTo.author_avatar }
+					author={ repliedTo.author_name }
+					authorUrl={ repliedTo.author_url }
 					meta={
 						repliedTo.date && (
 							<Text className="wpnc-simplified__quiet-links" size={ 12 } variant="muted">

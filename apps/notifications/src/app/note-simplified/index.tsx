@@ -1,23 +1,24 @@
 import { __experimentalVStack as VStack } from '@wordpress/components';
-import { getNoteKind } from './kind';
 import CommentNote from './layouts/comment';
 import NewPostNote from './layouts/new-post';
 import NoticeNote from './layouts/notice';
 import ReactionsNote from './layouts/reactions';
-import type { NoteKind } from './kind';
-import type { Note } from '../types';
+import type { Note, NoteKind } from '../types';
 import type { ComponentType } from 'react';
 import './style.scss';
 
 const LAYOUTS: Record< NoteKind, ComponentType< { note: Note } > > = {
 	comment: CommentNote,
-	'new-post': NewPostNote,
+	new_post: NewPostNote,
 	reactions: ReactionsNote,
 	notice: NoticeNote,
 };
 
+/** Whether the note came with the context the simplified layouts are built from. */
+export const hasNoteContext = ( note: Note ) => !! note.meta?.kind && note.meta.kind in LAYOUTS;
+
 export default function SimplifiedNote( { note }: { note: Note } ) {
-	const Layout = LAYOUTS[ getNoteKind( note ) ];
+	const Layout = LAYOUTS[ note.meta?.kind ?? 'notice' ];
 
 	return (
 		<VStack className="wpnc-simplified" spacing={ 4 }>

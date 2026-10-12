@@ -4,13 +4,10 @@ import {
 } from '@wordpress/components';
 import { html } from '../../../panel/indices-to-html';
 import NoteIcon from '../../note-icon';
-import { getHeaderLink } from '../../templates/note-summary';
 import NoteMeta from './note-meta';
-import type { Note, Subject } from '../../types';
-import type { Follow } from '../data/person';
-import type { Item } from '../data/sentence';
+import type { Note } from '../../types';
 
-const Avatars = ( { avatars, link }: { avatars: string[]; link?: string } ) => {
+const Avatars = ( { avatars, link }: { avatars: string[]; link?: string | null } ) => {
 	const icons = avatars.map( ( url, index ) => (
 		// eslint-disable-next-line react/no-array-index-key -- placeholder avatars repeat.
 		<NoteIcon key={ index } icon={ url } size={ 36 } />
@@ -35,39 +32,26 @@ const Avatars = ( { avatars, link }: { avatars: string[]; link?: string } ) => {
 	return <div className="wpnc-simplified__avatars">{ icons }</div>;
 };
 
-/** Who did it and what they did, when no one's words or list of people says so. */
-export default function Headline( {
-	note,
-	whatHappened,
-	item,
-	avatars,
-	site,
-	follow,
-}: {
-	note: Note;
-	whatHappened: Subject;
-	item?: Item;
-	avatars: string[];
-	site?: string;
-	follow?: Follow;
-} ) {
+/** Who did it and what they did, for notes with someone behind them. */
+export default function Headline( { note }: { note: Note } ) {
+	const { actors = [], summary } = note.meta ?? {};
+	if ( ! summary || ! actors.length ) {
+		return null;
+	}
+
 	return (
 		<HStack alignment="top" justify="flex-start" spacing={ 3 }>
-			<Avatars avatars={ avatars } link={ getHeaderLink( whatHappened ) } />
+			<Avatars
+				avatars={ actors.length > 1 ? actors.map( ( { avatar } ) => avatar ) : [ note.icon ] }
+				link={ actors[ 0 ].url }
+			/>
 			<VStack className="wpnc-simplified__quiet-links" spacing={ 0 }>
-				<div>
-					<div
-						className="wpnc-simplified__sentence"
-						// eslint-disable-next-line react/no-danger
-						dangerouslySetInnerHTML={ { __html: html( whatHappened ) } }
-					/>
-					{ item && (
-						<a href={ item.url ?? note.url } target="_blank" rel="noreferrer">
-							{ item.title }
-						</a>
-					) }
-				</div>
-				<NoteMeta note={ note } site={ site } follow={ follow } />
+				<div
+					className="wpnc-simplified__sentence"
+					// eslint-disable-next-line react/no-danger
+					dangerouslySetInnerHTML={ { __html: html( summary ) } }
+				/>
+				<NoteMeta note={ note } />
 			</VStack>
 		</HStack>
 	);

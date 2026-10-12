@@ -1,9 +1,9 @@
 import clsx from 'clsx';
 import { useMemo } from 'react';
+import { zipWithSignature } from '../../../panel/templates/functions';
 import { NoteBody } from '../../templates/body';
-import { getBlocksWithout } from '../data/blocks';
 import { useIsPendingApproval } from '../use-is-pending-approval';
-import type { Note } from '../../types';
+import type { BlockWithSignature, Note } from '../../types';
 
 /** The note's own blocks, minus those the layout above already shows. */
 export default function Body( {
@@ -22,10 +22,12 @@ export default function Body( {
 	const bodyNote = useMemo(
 		() => ( {
 			...note,
-			body: getBlocksWithout( note, [
-				...( hidePeople ? ( [ 'user' ] as const ) : [] ),
-				...( hidePost ? ( [ 'post' ] as const ) : [] ),
-			] ),
+			body: ( zipWithSignature( note.body, note ) as BlockWithSignature[] )
+				.filter(
+					( { signature: { type } } ) =>
+						! ( hidePeople && type === 'user' ) && ! ( hidePost && type === 'post' )
+				)
+				.map( ( { block } ) => block ),
 		} ),
 		[ note, hidePeople, hidePost ]
 	);

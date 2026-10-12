@@ -17,7 +17,7 @@ import actions from '../../panel/state/actions';
 import getAllNotes from '../../panel/state/selectors/get-all-notes';
 import getIsNotePendingApproval from '../../panel/state/selectors/get-is-note-pending-approval';
 import getIsNoteRead from '../../panel/state/selectors/get-is-note-read';
-import SimplifiedNote from '../note-simplified';
+import SimplifiedNote, { hasNoteContext } from '../note-simplified';
 import { getTemporaryNoteTitle } from '../note-simplified/labels';
 import { NoteBody, ActionBlock, ReplyFooter, SimplifiedActionBlock } from '../templates/body';
 import CloseButton from '../templates/close-button';
@@ -96,6 +96,8 @@ const Note = ( { isDismissible, noteId, setSelectedNoteId, noteNavigation }: Not
 		return null;
 	}
 
+	const isSimplifiedNote = isSimplified && hasNoteContext( note );
+
 	return (
 		<>
 			<CardHeader
@@ -118,7 +120,7 @@ const Note = ( { isDismissible, noteId, setSelectedNoteId, noteNavigation }: Not
 							/>
 						) }
 						<Heading level={ 3 } size={ 15 } weight={ 500 }>
-							{ isSimplified ? getTemporaryNoteTitle( note ) : note.title }
+							{ isSimplifiedNote ? getTemporaryNoteTitle( note ) : note.title }
 						</Heading>
 					</HStack>
 					<HStack justify="flex-end" style={ { width: 'auto', flexShrink: 0 } }>
@@ -148,8 +150,8 @@ const Note = ( { isDismissible, noteId, setSelectedNoteId, noteNavigation }: Not
 			</CardHeader>
 			<CardBody size="small" style={ { maxHeight: 'unset' } }>
 				<VStack justify="flex-start" spacing={ 4 }>
-					{ isSimplified && <SimplifiedNote note={ note } /> }
-					{ ! isSimplified && !! note.header?.length && (
+					{ isSimplifiedNote && <SimplifiedNote note={ note } /> }
+					{ ! isSimplifiedNote && !! note.header?.length && (
 						<>
 							<NoteSummary header={ note.header } url={ note.url } />
 							<hr
@@ -162,7 +164,7 @@ const Note = ( { isDismissible, noteId, setSelectedNoteId, noteNavigation }: Not
 							/>
 						</>
 					) }
-					{ ! isSimplified && (
+					{ ! isSimplifiedNote && (
 						<div className={ getClasses( { note, isPendingApproval, isRead } ) }>
 							<NoteBody note={ note } />
 						</div>

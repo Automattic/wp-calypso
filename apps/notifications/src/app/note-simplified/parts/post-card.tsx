@@ -7,34 +7,27 @@ import {
 import { wordpress } from '@wordpress/icons';
 import { useAppContext } from '../../context';
 import { formatDate } from '../format-note-time';
-import CardLink from './card-link';
-import type { Post } from '../data/post';
+import type { NotePost, NoteSite } from '../../types';
 
-/** The post a note is about: its site and author, then its title and how it opens. */
-export default function PostCard( {
-	title,
-	excerpt,
-	url,
-	siteName,
-	siteIcon,
-	author,
-	date,
-}: Post ) {
+/** The post a note is about: its site and author, then its title. */
+export default function PostCard( { post, site }: { post: NotePost; site?: NoteSite } ) {
 	const { locale } = useAppContext();
-	const byline = [ author, date && formatDate( date, locale ) ].filter( Boolean ).join( ' · ' );
+	const byline = [ post.author_name, post.date && formatDate( post.date, locale ) ]
+		.filter( Boolean )
+		.join( ' · ' );
 
 	return (
-		<CardLink url={ url }>
+		<a className="wpnc-simplified__card" href={ post.url } target="_blank" rel="noreferrer">
 			<VStack className="wpnc-simplified__card-text" spacing={ 4 }>
 				<span className="wpnc-simplified__card-arrow" aria-hidden="true">
 					&#8599;
 				</span>
-				{ ( siteName || byline ) && (
+				{ site && (
 					<HStack justify="flex-start" spacing={ 3 }>
-						{ siteIcon ? (
+						{ site.icon ? (
 							<img
 								className="wpnc-simplified__site-icon"
-								src={ siteIcon }
+								src={ site.icon }
 								alt=""
 								width={ 36 }
 								height={ 36 }
@@ -48,11 +41,9 @@ export default function PostCard( {
 							/>
 						) }
 						<VStack spacing={ 0 }>
-							{ siteName && (
-								<Text size={ 13 } weight={ 600 } truncate>
-									{ siteName }
-								</Text>
-							) }
+							<Text size={ 13 } weight={ 600 } truncate>
+								{ site.name }
+							</Text>
 							{ byline && (
 								<Text size={ 12 } variant="muted">
 									{ byline }
@@ -61,21 +52,10 @@ export default function PostCard( {
 						</VStack>
 					</HStack>
 				) }
-				{ ( title || excerpt ) && (
-					<VStack spacing={ 2 }>
-						{ title && (
-							<Text size={ 15 } weight={ 600 }>
-								{ title }
-							</Text>
-						) }
-						{ excerpt && (
-							<Text variant="muted" truncate numberOfLines={ 2 }>
-								{ excerpt }
-							</Text>
-						) }
-					</VStack>
-				) }
+				<Text size={ 15 } weight={ 600 }>
+					{ post.title }
+				</Text>
 			</VStack>
-		</CardLink>
+		</a>
 	);
 }

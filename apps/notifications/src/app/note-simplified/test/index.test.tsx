@@ -53,8 +53,19 @@ describe( 'SimplifiedNote', () => {
 	it( 'shows a reply under the comment it answers, each with its author', () => {
 		renderNote(
 			makeNote( {
-				meta: { ids: { site: SITE, post: POST, comment: 31, parent_comment: 30 } },
-				header: [ person( 'Steve', 1 ), text( 'The original comment' ) ],
+				meta: {
+					ids: { site: SITE, post: POST, comment: 31, parent_comment: 30 },
+					kind: 'comment',
+					parent_comment: {
+						text: 'The original comment',
+						author_name: 'Steve',
+						author_avatar: null,
+						date: null,
+						url: 'https://site.example/post/#comment-30',
+					},
+					actors: [ { name: 'Ben', avatar: '' } ],
+					actor_count: 1,
+				},
 				body: [
 					person( 'Ben', 2 ),
 					text( 'The reply', { meta: { ids: { site: SITE, post: POST, comment: 31 } } } ),
@@ -68,10 +79,16 @@ describe( 'SimplifiedNote', () => {
 		expect( screen.getByText( 'Ben' ) ).toBeInTheDocument();
 	} );
 
-	it( 'keeps the Subscribe link of the person who mentioned you in a post', () => {
+	it( 'offers to subscribe to the one person behind a note when they have a site', () => {
 		renderNote(
 			makeNote( {
 				type: 'automattcher',
+				meta: {
+					ids: { site: SITE, post: POST },
+					kind: 'comment',
+					actors: [ { name: 'Kwame', avatar: '' } ],
+					actor_count: 1,
+				},
 				body: [
 					person( 'Kwame', 3, {
 						actions: { follow: false },
@@ -89,7 +106,7 @@ describe( 'SimplifiedNote', () => {
 		renderNote(
 			makeNote( {
 				type: 'achievement',
-				meta: { ids: {} },
+				meta: { ids: {}, kind: 'notice' },
 				subject: [ text( 'Achievement unlocked: The Headliner' ) ],
 				body: [ text( 'Change a post title five times before publishing it.' ) ],
 			} )
@@ -103,6 +120,7 @@ describe( 'SimplifiedNote', () => {
 		const { container } = renderNote(
 			makeNote( {
 				type: 'new_post',
+				meta: { ids: { site: SITE, post: POST }, kind: 'new_post' },
 				body: [
 					text( '', {
 						meta: { ids: { site: SITE, post: POST } },
