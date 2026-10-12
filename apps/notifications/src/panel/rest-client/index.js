@@ -175,7 +175,7 @@ function getNote( note_id, livePushMessage ) {
 	}
 
 	const parameters = {
-		fields: 'id,type,unread,body,subject,timestamp,meta,note_hash,variant',
+		fields: 'id,type,unread,body,subject,timestamp,meta,note_hash,variant,note_context',
 	};
 
 	fetchNote( note_id, parameters, ( error, data ) => {
@@ -210,7 +210,7 @@ function getNotes( before, livePushMessages = [] ) {
 	const loaded = this.noteList.length || notes.length;
 
 	const parameters = {
-		fields: 'id,type,unread,body,subject,timestamp,meta,note_hash,variant',
+		fields: 'id,type,unread,body,subject,timestamp,meta,note_hash,variant,note_context',
 		// Older pages request what's left under the cap, plus one for the anchor an
 		// inclusive `before` echoes back (de-duped below); the no-`before` refresh
 		// requests a small fixed head window.
@@ -469,7 +469,7 @@ function getFilteredNotes( before ) {
 	const filteredIds = getFilteredNoteIds( store.getState(), key ) ?? [];
 
 	const parameters = {
-		fields: 'id,type,unread,body,subject,timestamp,meta,note_hash,variant',
+		fields: 'id,type,unread,body,subject,timestamp,meta,note_hash,variant,note_context',
 		// No `before`: re-request a small fixed head window. With it: page an older
 		// slice, capped to what's left under max_limit plus one for the anchor an
 		// inclusive `before` echoes back (de-duped below).
