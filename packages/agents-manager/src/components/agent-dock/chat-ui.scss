@@ -52,10 +52,6 @@ body.wp-admin.modal-open .agents-manager-chat--docked {
 // Shared styles for the docked and undocked chat.
 .agenttic {
 	.Messages-module_container {
-		.big-sky__completed-plan:first-child {
-			margin-top: 0;
-		}
-
 		.button-module_button:has( .agents-manager-message-action-icon ) {
 			width: 32px;
 			height: 32px;
