@@ -22,6 +22,7 @@ import useItemPrice from 'calypso/my-sites/plans/jetpack-plans/use-item-price';
 import { useSelector, useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
+import { isProductOnSale, isProductsListFetching } from 'calypso/state/products-list/selectors';
 import { getRawSitePurchases, isFetchingSitePurchases } from 'calypso/state/purchases/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { PURCHASE_FLOW_UPSELLS_MATRIX } from '../constants';
@@ -70,6 +71,11 @@ const JetpackUpsellPage: React.FC< Props > = ( {
 		() => ( upsellSlug ? buildCheckoutURL( siteSlug, upsellSlug, urlQueryArgs ) : '' ),
 		[ siteSlug, upsellSlug, urlQueryArgs ]
 	);
+	const isFetchingProductsList = useSelector( isProductsListFetching );
+	const isUpsellOnSale = useSelector(
+		( state ) => !! upsellSlug && isProductOnSale( state, upsellSlug )
+	);
+	const isUpsellOffSale = ! isFetchingProductsList && ! isUpsellOnSale;
 	const isUpsellOwned = useMemo(
 		() =>
 			isFetchingPurchases ? false : !! purchases?.find( ( p ) => p.product_slug === upsellSlug ),
@@ -146,12 +152,13 @@ const JetpackUpsellPage: React.FC< Props > = ( {
 			page.redirect( `${ rootUrl }/${ siteSlug }` );
 		}
 
-		if ( ( ! upsellSlug || isUpsellOwned ) && productCheckoutURL ) {
+		if ( ( ! upsellSlug || isUpsellOwned || isUpsellOffSale ) && productCheckoutURL ) {
 			page.redirect( productCheckoutURL );
 		}
 	}, [
 		upsellSlug,
 		isUpsellOwned,
+		isUpsellOffSale,
 		productCheckoutURL,
 		isLoadingUpsellPageExperiment,
 		experimentAssignment,
@@ -159,7 +166,13 @@ const JetpackUpsellPage: React.FC< Props > = ( {
 		siteSlug,
 	] );
 
-	if ( isLoadingUpsellPageExperiment || ! upsellSlug || isFetchingPurchases || isUpsellOwned ) {
+	if (
+		isLoadingUpsellPageExperiment ||
+		! upsellSlug ||
+		isFetchingPurchases ||
+		isUpsellOwned ||
+		isUpsellOffSale
+	) {
 		return null;
 	}
 
