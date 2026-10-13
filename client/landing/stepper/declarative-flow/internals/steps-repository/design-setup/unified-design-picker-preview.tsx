@@ -44,7 +44,7 @@ import { goToCheckout } from '../../../../utils/checkout';
 import { shouldUseStepContainerV2 } from '../../../helpers/should-use-step-container-v2';
 import { STEP_NAME } from './constants';
 import DesignPickerDesignTitle from './design-picker-design-title';
-import type { SiteSelect, GlobalStyles, OnboardSelect } from '@automattic/data-stores';
+import type { GlobalStyles, OnboardSelect } from '@automattic/data-stores';
 import type { Design, StyleVariation } from '@automattic/design-picker';
 import type { GlobalStylesObject } from '@automattic/global-styles';
 
@@ -161,11 +161,11 @@ const UnifiedDesignPickerPreview = ( {
 	const [ showEligibility, setShowEligibility ] = useState( false );
 
 	const isJetpack = useSelect(
-		( select ) => site && ( select( SITE_STORE ) as SiteSelect ).isJetpackSite( site.ID ),
+		( select ) => site && select( SITE_STORE ).isJetpackSite( site.ID ),
 		[ site ]
 	);
 	const isAtomic = useSelect(
-		( select ) => site && ( select( SITE_STORE ) as SiteSelect ).isSiteAtomic( site.ID ),
+		( select ) => site && select( SITE_STORE ).isSiteAtomic( site.ID ),
 		[ site ]
 	);
 
