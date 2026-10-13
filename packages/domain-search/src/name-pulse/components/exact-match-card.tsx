@@ -78,14 +78,14 @@ export const NamePulseExactMatchCard = ( {
 	} = useNamePulseCartToggle( result, 0, availability.policy_notices );
 
 	const resultSetId = useNamePulseResultSetId();
-	const hasReportedRender = useRef( false );
+	const reportedResultSetId = useRef< string | undefined >( undefined );
 
 	useEffect( () => {
-		if ( ! resultSetId || hasReportedRender.current ) {
+		if ( ! resultSetId || reportedResultSetId.current === resultSetId ) {
 			return;
 		}
 
-		hasReportedRender.current = true;
+		reportedResultSetId.current = resultSetId;
 		events.onSuggestionRender(
 			toNamePulseTracksSuggestion( result, 0 ),
 			undefined,

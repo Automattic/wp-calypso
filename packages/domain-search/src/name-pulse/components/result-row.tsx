@@ -167,7 +167,7 @@ export const NamePulseResultRow = ( {
 	const isUnknown = status === NamePulseDomainStatus.UNKNOWN;
 	const isAvailable = status === NamePulseDomainStatus.AVAILABLE;
 	const isUnavailable = ! isWaiting && ! isUnknown && ! isAvailable;
-	const reportedPosition = useRef< number | undefined >( undefined );
+	const reported = useRef< { resultSetId: string; position: number } | undefined >( undefined );
 	// A failed check leaves the row on its badge alone: no price, and no skeleton
 	// waiting for one that is not coming.
 	const isPremiumPriceMissing = needsPremiumPrice && ! realtimeVerdict;
@@ -186,16 +186,16 @@ export const NamePulseResultRow = ( {
 		isPolicyNoticeOpen,
 		confirmPolicyNotice,
 		closePolicyNotice,
-	} = useNamePulseCartToggle( row, reportedPosition.current ?? position, row.policy_notices );
+	} = useNamePulseCartToggle( row, reported.current?.position ?? position, row.policy_notices );
 
-	// Reported once the row has a verdict, taken names included. Later events
-	// reuse this position so they match the render.
+	// Reported once per result set, when the row has a verdict, taken names
+	// included. Later events reuse this position so they match the render.
 	useEffect( () => {
-		if ( isWaiting || ! resultSetId || reportedPosition.current !== undefined ) {
+		if ( isWaiting || ! resultSetId || reported.current?.resultSetId === resultSetId ) {
 			return;
 		}
 
-		reportedPosition.current = position;
+		reported.current = { resultSetId, position };
 		events.onSuggestionRender(
 			toNamePulseTracksSuggestion( row, position ),
 			undefined,

@@ -52,13 +52,13 @@ export const useNamePulseCartToggle = (
 				const item = cart.items.find( ( i ) => `${ i.domain }.${ i.tld }` === domainName );
 				if ( item ) {
 					await cart.onRemoveItem( item.uuid );
+					events.onNamePulseTracksEvent( 'remove_button_click', {
+						domain_name: domainName,
+						remove_source: 'row',
+						position,
+						root_vendor: tracksVendor,
+					} );
 				}
-				events.onNamePulseTracksEvent( 'remove_button_click', {
-					domain_name: domainName,
-					remove_source: 'row',
-					position,
-					root_vendor: tracksVendor,
-				} );
 				return { addedToCart: false };
 			}
 

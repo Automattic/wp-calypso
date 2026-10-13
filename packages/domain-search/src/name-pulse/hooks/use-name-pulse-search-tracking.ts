@@ -52,7 +52,11 @@ export const useNamePulseSearchTracking = ( search: ReturnType< typeof useNamePu
 	const reportResults = useEvent( ( timedOut: boolean ) => {
 		const current = state.current;
 
-		if ( ! current || current.hasReportedResults ) {
+		if (
+			current?.query !== settledQuery ||
+			current.filterKey !== filterKey ||
+			current.hasReportedResults
+		) {
 			return;
 		}
 

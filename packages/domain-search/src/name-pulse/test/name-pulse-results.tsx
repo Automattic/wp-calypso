@@ -1205,9 +1205,11 @@ describe( 'NamePulseResults', () => {
 			);
 		} );
 
-		it( 'records a new search when the filter changes', async () => {
+		it( 'records a new search when the filter changes, and renders the rows that stay under it', async () => {
 			const user = userEvent.setup();
 			const events = buildEvents();
+			let id = 0;
+			jest.spyOn( crypto, 'randomUUID' ).mockImplementation( () => `id-${ ++id }` as never );
 
 			render( <NamePulseTestSearch query="ice cream" events={ events } /> );
 
@@ -1218,6 +1220,19 @@ describe( 'NamePulseResults', () => {
 
 			await waitFor( () => expect( events.onNamePulseSearch ).toHaveBeenCalledTimes( 2 ) );
 			expect( events.onNamePulseSearch.mock.calls[ 1 ][ 1 ] ).toBe( 'filter_apply' );
+			await waitFor( () => expect( events.onSuggestionsReceive ).toHaveBeenCalledTimes( 2 ) );
+
+			const renderedIn = ( resultSetId: string ) =>
+				events.onSuggestionRender.mock.calls
+					.filter( ( [ , , properties ] ) => properties.result_set_id === resultSetId )
+					.map( ( [ suggestion ] ) => suggestion.domain_name );
+			const [ first, second ] = events.onSuggestionsReceive.mock.calls.map(
+				( [ , , , properties ] ) => properties.result_set_id
+			);
+
+			expect( first ).not.toBe( second );
+			expect( renderedIn( first ) ).toContain( 'icecream.com' );
+			expect( renderedIn( second ) ).toContain( 'icecream.com' );
 		} );
 
 		it( 'adds to the cart with the classic events, at the position it rendered at', async () => {
