@@ -198,6 +198,10 @@ export default function WordPressAgentTelegram( {
 		} );
 	};
 
+	const showConfirmation = Boolean(
+		pendingAuth || ( hasCompleteCallback && ! pairingDismissed && ! pairingComplete )
+	);
+
 	const error =
 		statusQuery.error || connectMutation.error || tokenMutation.error || disconnectMutation.error;
 	let errorFallback: string = __( 'Could not load your Telegram connection.' );
@@ -214,7 +218,7 @@ export default function WordPressAgentTelegram( {
 					{ __( 'This Telegram connection link is invalid or incomplete.' ) }
 				</Notice>
 			) }
-			{ ( pendingAuth || ( hasCompleteCallback && ! pairingDismissed && ! pairingComplete ) ) && (
+			{ showConfirmation && (
 				<Card>
 					<CardBody className="wordpress-agent-connection__row">
 						<SectionHeader
@@ -291,7 +295,7 @@ export default function WordPressAgentTelegram( {
 					{ getErrorMessage( error, errorFallback ) }
 				</Notice>
 			) }
-			<Card>
+			<Card style={ showConfirmation ? { display: 'none' } : undefined }>
 				<CardBody className="wordpress-agent-connection__row">
 					<SectionHeader
 						level={ 3 }

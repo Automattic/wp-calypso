@@ -46,6 +46,7 @@ describe( '<WordPressAgentTelegram />', () => {
 		act( () => window.wordpressAgentOnTelegramAuth?.( TELEGRAM_USER ) );
 
 		expect( screen.getByText( 'Telegram account: @telegram-user (ID: 123)' ) ).toBeVisible();
+		expect( screen.queryByRole( 'heading', { name: 'Telegram' } ) ).not.toBeInTheDocument();
 		expect( connectRequest.isDone() ).toBe( false );
 		await userEvent.click( screen.getByRole( 'button', { name: 'Connect' } ) );
 
@@ -70,6 +71,10 @@ describe( '<WordPressAgentTelegram />', () => {
 		act( () => window.wordpressAgentOnTelegramAuth?.( TELEGRAM_USER ) );
 		await userEvent.click( screen.getByRole( 'button', { name: 'Cancel' } ) );
 		expect( screen.queryByRole( 'button', { name: 'Connect' } ) ).not.toBeInTheDocument();
+		expect( screen.getByRole( 'heading', { name: 'Telegram' } ) ).toBeVisible();
+		await waitFor( () =>
+			expect( document.querySelector( 'script[data-telegram-login]' ) ).toBeInTheDocument()
+		);
 		expect( connectRequest.isDone() ).toBe( false );
 		act( () => window.wordpressAgentOnTelegramAuth?.( { ...TELEGRAM_USER, id: 456 } ) );
 		expect( screen.getByText( 'Telegram account: @telegram-user (ID: 456)' ) ).toBeVisible();
@@ -142,6 +147,7 @@ describe( '<WordPressAgentTelegram />', () => {
 			} )
 		).toBeVisible();
 		expect( tokenRequest.isDone() ).toBe( false );
+		expect( screen.queryByRole( 'heading', { name: 'Telegram' } ) ).not.toBeInTheDocument();
 		expect( window.wordpressAgentOnTelegramAuth ).toBeUndefined();
 		await userEvent.click( screen.getByRole( 'button', { name: 'Connect' } ) );
 
