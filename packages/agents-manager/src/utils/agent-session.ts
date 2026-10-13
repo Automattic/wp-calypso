@@ -38,6 +38,14 @@ export function setSessionSiteKey( siteKey: string ): void {
 	activeSiteKey = siteKey;
 }
 
+/**
+ * The published site scope, for callers without React context (ability
+ * callbacks). `NO_SITE` when the chat has no selected site.
+ */
+export function getSessionSiteKey(): string {
+	return activeSiteKey;
+}
+
 /** Set the user scope for the storage key. Published alongside the site scope. */
 export function setSessionUserId( userId?: string | number ): void {
 	activeUserId = normalizeUserId( userId );

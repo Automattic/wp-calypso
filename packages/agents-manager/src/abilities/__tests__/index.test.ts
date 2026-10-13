@@ -52,7 +52,7 @@ async function load() {
 // abilities are added; the all-surface names are mirrored by hand (the
 // facade does not export its list).
 // Compared by name: `load()` resets modules, so instances never match.
-const ALL_SURFACE_ABILITY_NAMES = [ 'wp-admin/navigate' ];
+const ALL_SURFACE_ABILITY_NAMES = [ 'wp-admin/navigate', 'agents-manager/get-site-setup-tasks' ];
 
 async function ownedAbilityNames( provider: {
 	getAbilities: () => Promise< { name: string }[] >;

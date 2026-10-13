@@ -63,6 +63,7 @@ The editor abilities (`abilities/editor-abilities.ts`) load as an async chunk on
 - **Provider order decides execution** — tool calls resolve first-write-wins by ability name, and `amToolProvider` runs first.
 - **Add an ability** as a folder under `src/abilities/` plus an entry in `EDITOR_ABILITIES`, or in the facade's `ALL_SURFACE_ABILITIES` for a light ability every surface needs. Shared chat code reaches the editor chunk only through the facade. Chat components go in the converter's `AM_COMPONENTS`, through `lazyComponent()` when they carry editor code.
 - **Return `successResult()` / `errorResult()`** (`abilities/ability-result.ts`) — the backend reads that envelope.
+- **An ability that reads the WordPress.com API branches on `canAccessWpcomApis()`** — `wpcomRequest` against the public API with the site id on wordpress.com origins, `apiFetch` against the site's own `/wpcom/v2/...` route elsewhere (Atomic, Jetpack), as `get-site-setup-tasks` does. The site id comes from the wp-admin inline payload or, in Calypso, from `getSessionSiteKey()` (`utils/agent-session.ts`); `@automattic/api-core` is not a dependency and its fetcher is Calypso-only.
 - **Never rename an ability** — the route settings match on the name, so a rename silently drops it everywhere.
 - **Guard callbacks that change editor state** with an `isEditorPage()` early return, as `set-site-logo` does.
 - **Validate arguments in the callback** — nothing enforces the `input_schema` at runtime: a stringified `"false"` is truthy, and an empty object arrives as `[]`.

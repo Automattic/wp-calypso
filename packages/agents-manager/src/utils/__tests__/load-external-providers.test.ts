@@ -8,6 +8,7 @@ import { captureCanvasAbility } from '../../abilities/capture-canvas';
 import { editEntityRecordAbility } from '../../abilities/edit-entity-record';
 import { editorNavigateAbility } from '../../abilities/editor-navigate';
 import { getBlockTreeAbility } from '../../abilities/get-block-tree';
+import { getSiteSetupTasksAbility } from '../../abilities/get-site-setup-tasks';
 import { openHelpCenterAbility } from '../../abilities/open-help-center';
 import { restoreCheckpointAbility } from '../../abilities/restore-checkpoint';
 import { setSiteLogoAbility } from '../../abilities/set-site-logo';
@@ -283,6 +284,7 @@ describe( 'loadExternalProviders', () => {
 		expect( abilityShapes( await providers.toolProvider?.getAbilities() ) ).toEqual(
 			abilityShapes( [
 				wpAdminNavigateAbility,
+				getSiteSetupTasksAbility,
 				applyBlockEditsAbility,
 				applyUpdateThemeAbility,
 				captureCanvasAbility,
@@ -326,6 +328,7 @@ describe( 'loadExternalProviders', () => {
 		expect( abilityShapes( await providers.toolProvider?.getAbilities() ) ).toEqual(
 			abilityShapes( [
 				wpAdminNavigateAbility,
+				getSiteSetupTasksAbility,
 				applyBlockEditsAbility,
 				applyUpdateThemeAbility,
 				captureCanvasAbility,
@@ -388,6 +391,7 @@ describe( 'loadExternalProviders', () => {
 		expect( abilityShapes( await providers.toolProvider?.getAbilities() ) ).toEqual(
 			abilityShapes( [
 				wpAdminNavigateAbility,
+				getSiteSetupTasksAbility,
 				applyBlockEditsAbility,
 				applyUpdateThemeAbility,
 				captureCanvasAbility,
@@ -984,6 +988,7 @@ describe( 'loadExternalProviders', () => {
 		expect( abilityShapes( await providers.toolProvider?.getAbilities() ) ).toEqual(
 			abilityShapes( [
 				wpAdminNavigateAbility,
+				getSiteSetupTasksAbility,
 				applyBlockEditsAbility,
 				applyUpdateThemeAbility,
 				captureCanvasAbility,

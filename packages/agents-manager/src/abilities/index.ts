@@ -9,6 +9,7 @@
 
 import { isEditorPage } from '../utils/is-editor-page';
 import { executeAbilityFromList } from './execute-ability';
+import { getSiteSetupTasksAbility } from './get-site-setup-tasks';
 import { wpAdminNavigateAbility } from './wp-admin-navigate';
 import type { ToolProvider } from '../extension-types';
 import type { Ability } from './types';
@@ -55,7 +56,7 @@ function loadEditorAbilities(): Promise< EditorAbilitiesModule > | null {
 
 // All-surface abilities stay in the main bundle and run on every surface —
 // only the editor stack earns the lazy chunk.
-const ALL_SURFACE_ABILITIES: Ability[] = [ wpAdminNavigateAbility ];
+const ALL_SURFACE_ABILITIES: Ability[] = [ wpAdminNavigateAbility, getSiteSetupTasksAbility ];
 
 // A failed chunk load (already logged and set up to retry above) degrades to
 // the all-surface list until a later call loads the chunk.
