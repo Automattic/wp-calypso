@@ -161,7 +161,9 @@ interface BaseContextEntry {
 The `wpcom/render-interactive-ui` tool returns an envelope with
 `tool_id: wpcom__render_interactive_ui` and an ordered array of A2UI v0.9 messages
 in `data`. Agents Manager also accepts raw A2UI message arrays. The renderer uses
-the A2UI SDK, so its internal functions, types, and module names retain A2UI naming.
+the A2UI SDK internally. Application helpers, components, and modules use
+interactive UI naming; imported SDK types and protocol identifiers retain their
+A2UI names.
 
 ## Development
 

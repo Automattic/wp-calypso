@@ -3,7 +3,9 @@ import { catalog } from './catalog';
 import type { ReactComponentImplementation } from '@a2ui/react/v0_9';
 import type { A2uiClientAction, A2uiMessage } from '@a2ui/web_core/v0_9';
 
-export function createA2uiRuntime( onAction: ( action: A2uiClientAction ) => Promise< void > ) {
+export function createInteractiveUiRuntime(
+	onAction: ( action: A2uiClientAction ) => Promise< void >
+) {
 	const processor = new MessageProcessor< ReactComponentImplementation >( [ catalog ], onAction );
 	const placements = new Map< string, string >();
 	let messageId = '';
@@ -29,4 +31,4 @@ export function createA2uiRuntime( onAction: ( action: A2uiClientAction ) => Pro
 	};
 }
 
-export type A2uiRuntime = ReturnType< typeof createA2uiRuntime >;
+export type InteractiveUiRuntime = ReturnType< typeof createInteractiveUiRuntime >;

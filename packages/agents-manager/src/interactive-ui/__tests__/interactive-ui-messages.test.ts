@@ -1,4 +1,7 @@
-import { getA2uiBatches, getA2uiMessagesFromText } from '../a2ui-messages';
+import {
+	getInteractiveUiBatches,
+	getInteractiveUiMessagesFromText,
+} from '../interactive-ui-messages';
 import type { UIMessage } from '@automattic/agenttic-client';
 
 const operations = [
@@ -25,12 +28,12 @@ const envelope = JSON.stringify( {
 
 describe( 'interactive UI response messages', () => {
 	it( 'extracts ordered surface operations from the renamed tool envelope', () => {
-		expect( getA2uiMessagesFromText( envelope ) ).toEqual( operations );
+		expect( getInteractiveUiMessagesFromText( envelope ) ).toEqual( operations );
 	} );
 
 	it( 'accepts stringified envelope data', () => {
 		expect(
-			getA2uiMessagesFromText(
+			getInteractiveUiMessagesFromText(
 				JSON.stringify( {
 					tool_id: 'wpcom__render_interactive_ui',
 					data: JSON.stringify( operations ),
@@ -40,12 +43,14 @@ describe( 'interactive UI response messages', () => {
 	} );
 
 	it( 'accepts raw protocol message arrays', () => {
-		expect( getA2uiMessagesFromText( JSON.stringify( operations ) ) ).toEqual( operations );
+		expect( getInteractiveUiMessagesFromText( JSON.stringify( operations ) ) ).toEqual(
+			operations
+		);
 	} );
 
 	it( 'leaves unrelated tool responses as ordinary message content', () => {
 		expect(
-			getA2uiMessagesFromText(
+			getInteractiveUiMessagesFromText(
 				JSON.stringify( { tool_id: 'wpcom__other_tool', data: operations } )
 			)
 		).toBeUndefined();
@@ -73,7 +78,7 @@ describe( 'interactive UI response messages', () => {
 				showIcon: true,
 			},
 		];
-		expect( getA2uiBatches( messages ) ).toEqual( [
+		expect( getInteractiveUiBatches( messages ) ).toEqual( [
 			{ messageId: 'agent', operations, signature: JSON.stringify( [ 'agent', 1, envelope ] ) },
 		] );
 	} );

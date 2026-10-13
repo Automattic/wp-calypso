@@ -1,7 +1,7 @@
 import type { A2uiMessage } from '@a2ui/web_core/v0_9';
 import type { UIMessage } from '@automattic/agenttic-client';
 
-export function getA2uiMessagesFromText( text?: string ): A2uiMessage[] | undefined {
+export function getInteractiveUiMessagesFromText( text?: string ): A2uiMessage[] | undefined {
 	if ( ! text ) {
 		return undefined;
 	}
@@ -14,11 +14,11 @@ export function getA2uiMessagesFromText( text?: string ): A2uiMessage[] | undefi
 	return undefined;
 }
 
-export function getA2uiBatches( messages: UIMessage[] ) {
+export function getInteractiveUiBatches( messages: UIMessage[] ) {
 	return messages.flatMap( ( message ) =>
 		message.role === 'agent'
 			? message.content.flatMap( ( content, index ) => {
-					const operations = getA2uiMessagesFromText( content.text );
+					const operations = getInteractiveUiMessagesFromText( content.text );
 					return operations
 						? [
 								{

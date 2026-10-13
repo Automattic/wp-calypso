@@ -14,10 +14,6 @@ import {
 	useRef,
 } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import convertA2uiMessagesToComponents, {
-	attachA2uiPresentation,
-} from '../../a2ui/convert-a2ui-messages-to-components';
-import useA2ui from '../../a2ui/use-a2ui';
 import { LOCAL_TOOL_RUNNING_MESSAGE } from '../../constants';
 import { useAgentsManagerContext } from '../../contexts';
 import { useRegisterCustomActions } from '../../hooks/custom-actions';
@@ -41,6 +37,10 @@ import { useNavigationContinuation } from '../../hooks/use-navigation-continuati
 import useRegenerateAction from '../../hooks/use-regenerate-action';
 import useSourcesAction from '../../hooks/use-sources-action';
 import useSuggestionsRenderedTracking from '../../hooks/use-suggestions-rendered-tracking';
+import convertInteractiveUiMessagesToComponents, {
+	attachInteractiveUiPresentation,
+} from '../../interactive-ui/convert-interactive-ui-messages-to-components';
+import useInteractiveUi from '../../interactive-ui/use-interactive-ui';
 import { markActionOrigin, takeActionOrigin } from '../../utils/action-origin';
 import { markSessionSent } from '../../utils/agent-session';
 import {
@@ -1576,7 +1576,7 @@ export default function OrchestratorChat( {
 
 	useAbilitiesRegistration();
 
-	const a2uiPresentation = useA2ui( {
+	const interactiveUiPresentation = useInteractiveUi( {
 		messages,
 		conversationId: checkpointSessionIdentity,
 		isProcessing,
@@ -1670,7 +1670,7 @@ export default function OrchestratorChat( {
 			);
 		}
 
-		currentMessages = convertA2uiMessagesToComponents( currentMessages );
+		currentMessages = convertInteractiveUiMessagesToComponents( currentMessages );
 
 		currentMessages = convertToolMessagesToComponents( {
 			messages: currentMessages,
@@ -1758,8 +1758,8 @@ export default function OrchestratorChat( {
 		transformMessages,
 	] );
 	const displayedMessages = useMemo(
-		() => attachA2uiPresentation( convertedMessages, a2uiPresentation ),
-		[ convertedMessages, a2uiPresentation ]
+		() => attachInteractiveUiPresentation( convertedMessages, interactiveUiPresentation ),
+		[ convertedMessages, interactiveUiPresentation ]
 	);
 
 	// Notify parent when has-messages state changes.

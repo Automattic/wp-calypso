@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useRef, useState } from '@wordpress/element';
 import { startNewUserRequest } from '../utils/canvas-binding';
-import { getA2uiBatches } from './a2ui-messages';
-import { executeA2uiAction } from './execute-a2ui-action';
-import type { A2uiRuntime } from './runtime';
+import { executeInteractiveUiAction } from './execute-interactive-ui-action';
+import { getInteractiveUiBatches } from './interactive-ui-messages';
+import type { InteractiveUiRuntime } from './runtime';
 import type { AgentConfig } from '../utils/create-agent-config';
 import type { UIMessage, UseAgentChatReturn } from '@automattic/agenttic-client';
 
@@ -20,17 +20,20 @@ interface Options {
  * across appends and replaying changed history without introducing another message store.
  * Surface actions continue the active chat as hidden user messages.
  */
-export default function useA2ui( options: Options ) {
+export default function useInteractiveUi( options: Options ) {
 	const latest = useRef( options );
 	latest.current = options;
 	const [ sdk, setSdk ] = useState< typeof import( '.' ) >();
 	const [ revision, refresh ] = useState( 0 );
-	const batches = useMemo( () => getA2uiBatches( options.messages ), [ options.messages ] );
+	const batches = useMemo(
+		() => getInteractiveUiBatches( options.messages ),
+		[ options.messages ]
+	);
 	const hasBatches = batches.length > 0;
 	const session = useMemo(
 		() => ( {
 			conversationId: options.conversationId,
-			runtime: undefined as A2uiRuntime | undefined,
+			runtime: undefined as InteractiveUiRuntime | undefined,
 			applied: [] as string[],
 		} ),
 		[ options.conversationId ]
@@ -40,7 +43,7 @@ export default function useA2ui( options: Options ) {
 			return;
 		}
 		let active = true;
-		void import( /* webpackChunkName: "am-a2ui" */ '.' ).then(
+		void import( /* webpackChunkName: "am-interactive-ui" */ '.' ).then(
 			( module ) => active && setSdk( module ),
 			() => {}
 		);
@@ -67,13 +70,13 @@ export default function useA2ui( options: Options ) {
 			session.applied = [];
 		}
 		if ( batches.length > 0 && ! session.runtime ) {
-			session.runtime = sdk.createA2uiRuntime( async ( action ) => {
+			session.runtime = sdk.createInteractiveUiRuntime( async ( action ) => {
 				const { agentConfig, isProcessing, onSubmit, beforeSubmit } = latest.current;
 				if ( ! agentConfig || isProcessing || ! beforeSubmit() ) {
 					return;
 				}
 				startNewUserRequest();
-				await executeA2uiAction( action, agentConfig, onSubmit );
+				await executeInteractiveUiAction( action, agentConfig, onSubmit );
 			} );
 		}
 		try {
@@ -95,4 +98,4 @@ export default function useA2ui( options: Options ) {
 	);
 }
 
-export type A2uiPresentation = ReturnType< typeof useA2ui >;
+export type InteractiveUiPresentation = ReturnType< typeof useInteractiveUi >;

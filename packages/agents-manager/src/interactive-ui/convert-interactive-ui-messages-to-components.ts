@@ -1,10 +1,10 @@
-import A2UI from './a2ui';
-import { getA2uiMessagesFromText } from './a2ui-messages';
-import type { A2uiPresentation } from './use-a2ui';
+import InteractiveUi from './interactive-ui';
+import { getInteractiveUiMessagesFromText } from './interactive-ui-messages';
+import type { InteractiveUiPresentation } from './use-interactive-ui';
 import type { AgentsManagerUIMessage } from '../utils/convert-tool-messages-to-components';
 import type { ComponentType } from 'react';
 
-export default function convertA2uiMessagesToComponents(
+export default function convertInteractiveUiMessagesToComponents(
 	messages: AgentsManagerUIMessage[]
 ): AgentsManagerUIMessage[] {
 	return messages.map( ( message ) => {
@@ -15,7 +15,7 @@ export default function convertA2uiMessagesToComponents(
 		return {
 			...message,
 			content: ( message.content ?? [] ).flatMap( ( content ) => {
-				if ( ! getA2uiMessagesFromText( content.text ) ) {
+				if ( ! getInteractiveUiMessagesFromText( content.text ) ) {
 					return [ content ];
 				}
 				if ( rendered ) {
@@ -25,7 +25,7 @@ export default function convertA2uiMessagesToComponents(
 				return [
 					{
 						type: 'component' as const,
-						component: A2UI as ComponentType,
+						component: InteractiveUi as ComponentType,
 						componentProps: { messageId: message.id },
 					},
 				];
@@ -34,14 +34,14 @@ export default function convertA2uiMessagesToComponents(
 	} );
 }
 
-export function attachA2uiPresentation(
+export function attachInteractiveUiPresentation(
 	messages: AgentsManagerUIMessage[],
-	presentation: A2uiPresentation
+	presentation: InteractiveUiPresentation
 ): AgentsManagerUIMessage[] {
 	return messages.map( ( message ) => ( {
 		...message,
 		content: message.content.map( ( content ) =>
-			content.type === 'component' && content.component === A2UI
+			content.type === 'component' && content.component === InteractiveUi
 				? { ...content, componentProps: { ...content.componentProps, presentation } }
 				: content
 		),

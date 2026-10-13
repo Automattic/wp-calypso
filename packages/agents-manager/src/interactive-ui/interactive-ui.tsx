@@ -1,5 +1,5 @@
 import { Component } from '@wordpress/element';
-import type { A2uiPresentation } from './use-a2ui';
+import type { InteractiveUiPresentation } from './use-interactive-ui';
 import type { ReactNode } from 'react';
 
 class SurfaceBoundary extends Component<
@@ -23,18 +23,18 @@ class SurfaceBoundary extends Component<
 	}
 }
 
-export default function A2UI( {
+export default function InteractiveUi( {
 	messageId,
 	presentation,
 }: {
 	messageId: string;
-	presentation: A2uiPresentation;
+	presentation: InteractiveUiPresentation;
 } ) {
 	const { runtime, sdk, revision, isDisabled } = presentation;
 	if ( ! runtime || ! sdk ) {
 		return null;
 	}
-	const { A2uiSurface: Surface, MarkdownContext, renderMarkdown } = sdk;
+	const { InteractiveUiSurface: Surface, MarkdownContext, renderMarkdown } = sdk;
 	return runtime.getSurfaceIds( messageId ).map( ( surfaceId ) => {
 		const surface = runtime.getSurface( surfaceId );
 		return surface?.componentsModel.has( surface.rootId ) ? (

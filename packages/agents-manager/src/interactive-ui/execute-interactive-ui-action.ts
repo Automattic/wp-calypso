@@ -2,7 +2,7 @@ import type { AgentConfig } from '../utils/create-agent-config';
 import type { A2uiClientAction } from '@a2ui/web_core/v0_9';
 import type { UseAgentChatReturn } from '@automattic/agenttic-client';
 
-export async function executeA2uiAction(
+export async function executeInteractiveUiAction(
 	action: A2uiClientAction,
 	config: AgentConfig,
 	onSubmit: UseAgentChatReturn[ 'onSubmit' ]
