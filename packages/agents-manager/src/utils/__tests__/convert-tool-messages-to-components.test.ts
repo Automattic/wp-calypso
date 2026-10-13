@@ -932,6 +932,56 @@ describe( 'convertToolMessagesToComponents', () => {
 			'user',
 			'later-outcome',
 		] );
+
+		const resultWhileProcessing = convertToolMessagesToComponents( {
+			messages: [ noChangeOutcome, userMessage, laterOutcome ],
+			isProcessing: true,
+		} );
+
+		expect( resultWhileProcessing.map( ( message ) => message.id ) ).toEqual( [
+			'no-change-outcome',
+			'user',
+			'later-outcome',
+		] );
+	} );
+
+	it( 'keeps an earlier turn’s no-changes summary while a later request runs', () => {
+		const noChangeOutcome = createApplyBlockEditsMessage(
+			'tool-call-1',
+			{ result: { success: true, outcome: 'no-changes' } },
+			{ id: 'no-change-outcome' }
+		);
+		const userMessage = createMessage( {
+			id: 'user',
+			role: 'user',
+			content: [ { type: 'text', text: 'Now make it bold.' } ],
+		} );
+
+		const result = convertToolMessagesToComponents( {
+			messages: [ noChangeOutcome, userMessage ],
+			isProcessing: true,
+		} );
+
+		expect( result.map( ( message ) => message.id ) ).toEqual( [ 'no-change-outcome', 'user' ] );
+	} );
+
+	it( 'still withholds a no-changes summary when only a context message follows', () => {
+		const noChangeOutcome = createApplyBlockEditsMessage( 'tool-call-1', {
+			result: { success: true, outcome: 'no-changes' },
+		} );
+		const contextMessage = createMessage( {
+			id: 'context',
+			role: 'user',
+			content: [ { type: 'text', text: 'Navigated to the About page.' } ],
+			context: { flags: { context_only: true } },
+		} as Partial< UIMessage > );
+
+		const result = convertToolMessagesToComponents( {
+			messages: [ noChangeOutcome, contextMessage ],
+			isProcessing: true,
+		} );
+
+		expect( result ).toEqual( [] );
 	} );
 
 	it( 'hides a block edit summary the server replaced with a retry', () => {

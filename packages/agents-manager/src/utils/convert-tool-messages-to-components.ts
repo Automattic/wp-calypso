@@ -204,6 +204,15 @@ function hasLaterApplyBlockEditsOutcome(
 	return false;
 }
 
+// Hidden context messages (e.g. navigation continuations) do not start a turn.
+function isInLatestTurn( messages: UIMessage[], currentIndex: number ): boolean {
+	return ! messages
+		.slice( currentIndex + 1 )
+		.some(
+			( laterMessage ) => laterMessage.role === 'user' && ! isContextOnlyMessage( laterMessage )
+		);
+}
+
 /**
  * Whether the deferred reply for a promised visual check is still outstanding.
  *
@@ -497,7 +506,7 @@ export default function convertToolMessagesToComponents( {
 			}
 			// The server may answer a no-change with a retry, which would hide the
 			// summary again; withhold it until the turn ends so it never flashes.
-			if ( isProcessing && blockEditOutcome === 'no-changes' ) {
+			if ( isProcessing && blockEditOutcome === 'no-changes' && isInLatestTurn( array, index ) ) {
 				return [];
 			}
 			const summary = getDisplayMessageFromToolData( textData.data );
