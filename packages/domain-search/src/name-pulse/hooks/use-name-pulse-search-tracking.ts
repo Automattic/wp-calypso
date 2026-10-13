@@ -97,8 +97,9 @@ export const useNamePulseSearchTracking = ( search: ReturnType< typeof useNamePu
 		);
 	} );
 
-	const track = useEvent( () => {
-		if ( ! settledQuery || ! isSettled || ! hasTlds ) {
+	// `force` records a search whose TLD list never arrived.
+	const track = useEvent( ( force = false ) => {
+		if ( ! settledQuery || ! isSettled || ( ! hasTlds && ! force ) ) {
 			return;
 		}
 
@@ -153,10 +154,13 @@ export const useNamePulseSearchTracking = ( search: ReturnType< typeof useNamePu
 			return;
 		}
 
-		const timer = setTimeout( () => reportResults( true ), NAME_PULSE_SKELETON_TIMEOUT_MS );
+		const timer = setTimeout( () => {
+			track( true );
+			reportResults( true );
+		}, NAME_PULSE_SKELETON_TIMEOUT_MS );
 
 		return () => clearTimeout( timer );
-	}, [ settledQuery, filterKey, isSettled, reportResults ] );
+	}, [ settledQuery, filterKey, isSettled, track, reportResults ] );
 
 	return isSettled ? ids.resultSetId : undefined;
 };

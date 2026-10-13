@@ -134,7 +134,11 @@ export interface DomainSearchEvents {
 		reason?: FeaturedSuggestionReason,
 		properties?: DomainSearchTracksProps
 	) => void;
-	onSuggestionInteract: ( suggestion: ReturnType< typeof useSuggestion > ) => void;
+	/** `resultSetId` keeps the railcar the same as the render's, on Name Pulse. */
+	onSuggestionInteract: (
+		suggestion: ReturnType< typeof useSuggestion >,
+		resultSetId?: string
+	) => void;
 	onSuggestionNotFound: ( domainName: string ) => void;
 	onTrademarkClaimsNoticeShown: ( suggestion: ReturnType< typeof useSuggestion > ) => void;
 	onTrademarkClaimsNoticeAccepted: ( suggestion: ReturnType< typeof useSuggestion > ) => void;

@@ -23,16 +23,16 @@ Changes to classic events:
 | `calypso_traintracks_render`                        | Once per name, when its availability is known, taken names included | `result_set_id`, `result_group` (`featured`, `top`, `exact`, `related`, `creative`), `is_ai_generated`, `availability_at_render` (`available`, `unavailable`, `unknown`) |
 | `calypso_domain_search_show_more_results`           | "Show more" in a section; `page_number` counts per section          | `result_group`                                                                                                                                                           |
 
-`ui_position` counts down the whole page as if every section were expanded, so railcars never collide, and later events for a name reuse the position it rendered at. `root_vendor` is `name_pulse_exact`, `name_pulse_keyword` or `name_pulse_ai`.
+`ui_position` counts down the whole page as if every section were expanded, and the railcar is built from `result_set_id`, so railcars never collide. Later events for a name reuse the position and result set it rendered with. As on the classic page, `results` and `result_count` list only the suggestions (Related and Creative matches); the per-group counts cover every section. `root_vendor` is `name_pulse_exact`, `name_pulse_keyword` or `name_pulse_ai`.
 
 New events, each with `section` and `flow_name`:
 
-| Event                                       | When                                                      | Props                                                                                                                                                      |
-| ------------------------------------------- | --------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `calypso_domain_search_results_error`       | A search ends with nothing to show after an error or 10 s | `search_id`, `error_type` (`timeout`, `tlds_failed`, `suggestions_failed`, `availability_failed`)                                                          |
-| `calypso_domain_search_view_cart_click`     | View cart                                                 |                                                                                                                                                            |
-| `calypso_domain_search_remove_button_click` | A name leaves the cart                                    | `remove_source` (`row`, `cart`), `domain_name`; from a row `position` and `root_vendor`; from the cart `is_bundle` and, for a whole bundle, `domain_count` |
-| `calypso_domain_search_query_clear`         | The input is emptied                                      | `previous_query_length`, `previous_word_count`                                                                                                             |
+| Event                                   | When                                                      | Props                                                                                                                                                      |
+| --------------------------------------- | --------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `calypso_domain_search_results_error`   | A search ends with nothing to show after an error or 10 s | `search_id`, `error_type` (`timeout`, `tlds_failed`, `suggestions_failed`, `availability_failed`)                                                          |
+| `calypso_domain_search_view_cart_click` | View cart                                                 |                                                                                                                                                            |
+| `calypso_domain_remove_button_click`    | A name leaves the cart                                    | `remove_source` (`row`, `cart`), `domain_name`; from a row `position` and `root_vendor`; from the cart `is_bundle` and, for a whole bundle, `domain_count` |
+| `calypso_domain_search_query_clear`     | The input is emptied                                      | `previous_query_length`, `previous_word_count`                                                                                                             |
 
 ## Imports
 

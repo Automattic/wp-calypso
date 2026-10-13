@@ -64,7 +64,7 @@ export const withNamePulseMarker = < T extends AnalyticsAction >( action: T ): T
 const NAME_PULSE_TRACKS_EVENTS = {
 	results_error: 'calypso_domain_search_results_error',
 	view_cart_click: 'calypso_domain_search_view_cart_click',
-	remove_button_click: 'calypso_domain_search_remove_button_click',
+	remove_button_click: 'calypso_domain_remove_button_click',
 	query_clear: 'calypso_domain_search_query_clear',
 } as const;
 
@@ -301,7 +301,7 @@ export const useWPCOMDomainSearchEvents = ( {
 				recordEvent( 'calypso_traintracks_render', {
 					ui_position: suggestion.position,
 					flow_name: flowName,
-					railcar: `${ railcarId.current }-${ suggestion.position }`,
+					railcar: `${ properties?.result_set_id ?? railcarId.current }-${ suggestion.position }`,
 					fetch_algo: `/domains/search/${ vendor }/${ analyticsSection }/${ suggestion.vendor }`,
 					root_vendor: suggestion.vendor,
 					rec_result: `${ suggestion.domain_name }${ resultSuffix }`,
@@ -311,9 +311,9 @@ export const useWPCOMDomainSearchEvents = ( {
 					...properties,
 				} );
 			},
-			onSuggestionInteract: ( suggestion ) => {
+			onSuggestionInteract: ( suggestion, resultSetId ) => {
 				recordEvent( 'calypso_traintracks_interact', {
-					railcar: `${ railcarId.current }-${ suggestion.position }`,
+					railcar: `${ resultSetId ?? railcarId.current }-${ suggestion.position }`,
 					action: 'domain_added_to_cart',
 					domain: suggestion.domain_name,
 					root_vendor: suggestion.vendor,

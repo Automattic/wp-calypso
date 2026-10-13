@@ -1256,7 +1256,8 @@ describe( 'NamePulseResults', () => {
 				)
 			);
 			expect( events.onSuggestionInteract ).toHaveBeenCalledWith(
-				expect.objectContaining( { domain_name: 'icecream.net', position: 3 } )
+				expect.objectContaining( { domain_name: 'icecream.net', position: 3 } ),
+				events.onSuggestionsReceive.mock.calls[ 0 ][ 3 ].result_set_id
 			);
 		} );
 

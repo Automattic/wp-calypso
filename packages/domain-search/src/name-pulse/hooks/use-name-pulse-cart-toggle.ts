@@ -9,6 +9,7 @@ import {
 	toNamePulseRealtimeVerdict,
 	toNamePulseTracksSuggestion,
 } from '../helpers';
+import { useNamePulseResultSetId } from './use-name-pulse-result-set-id';
 import { setNamePulseVerdict } from './use-name-pulse-verdicts';
 import type { DomainAvailability, PolicyNotice } from '@automattic/api-core';
 
@@ -30,6 +31,7 @@ export const useNamePulseCartToggle = (
 	const domainName = result.domain_name;
 	const { __ } = useI18n();
 	const { cart, events, queries } = useDomainSearch();
+	const resultSetId = useNamePulseResultSetId();
 	const queryClient = useQueryClient();
 	const [ trademarkClaimsNoticeInfo, setTrademarkClaimsNoticeInfo ] =
 		useState< DomainAvailability[ 'trademark_claims_notice_info' ] >();
@@ -113,7 +115,7 @@ export const useNamePulseCartToggle = (
 		error,
 		toggleCart: () => {
 			if ( ! inCart ) {
-				events.onSuggestionInteract( tracksSuggestion );
+				events.onSuggestionInteract( tracksSuggestion, resultSetId );
 			}
 
 			if ( inCart || policyNotices.length === 0 ) {
