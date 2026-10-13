@@ -34,7 +34,7 @@ export default function Headline( { note }: { note: Note } ) {
 			) : (
 				<div className="wpnc-simplified__photo">{ icon }</div>
 			) }
-			<VStack className="wpnc-simplified__quiet-links" spacing={ 0 } expanded>
+			<VStack className="wpnc-simplified__quiet-links" spacing={ 0 } style={ { width: '100%' } }>
 				<div
 					className="wpnc-simplified__sentence"
 					// eslint-disable-next-line react/no-danger

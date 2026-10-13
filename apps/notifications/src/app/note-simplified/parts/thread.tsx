@@ -61,7 +61,7 @@ const ThreadItem = ( {
 			) : (
 				photo
 			) }
-			<VStack spacing={ 1 } expanded>
+			<VStack spacing={ 1 } style={ { width: '100%' } }>
 				<HStack className="wpnc-simplified__thread-header">
 					<HStack alignment="baseline" spacing={ 2 }>
 						<HStack
