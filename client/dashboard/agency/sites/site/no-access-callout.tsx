@@ -29,6 +29,7 @@ export default function NoAccessCallout() {
 			actions={
 				<Button
 					variant="primary"
+					size="compact"
 					href={ TEAM_MEMBER_PERMISSIONS_URL }
 					target="_blank"
 					rel="noreferrer"

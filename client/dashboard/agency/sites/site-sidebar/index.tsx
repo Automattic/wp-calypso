@@ -1,4 +1,4 @@
-import { agencySiteQuery, siteBySlugQuery } from '@automattic/api-queries';
+import { activeAgencyQuery, agencySiteQuery, siteBySlugQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { __experimentalVStack as VStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
@@ -20,6 +20,7 @@ import {
 	SidebarMenuItem,
 } from '../../../components/sidebar';
 import { siteTypeSupportsFeature } from '../../../utils/site-type-feature-support';
+import { isTeamMemberWithoutSiteAccess } from '../site/access';
 import AgencySiteSwitcherItem from './site-switcher-item';
 import type { SiteTypeFeature } from '../../../utils/site-type-feature-support';
 
@@ -27,15 +28,16 @@ export default function AgencySiteSidebar() {
 	const { siteSlug } = agencySiteRoute.useParams();
 	const { data: site } = useQuery( agencySiteQuery( siteSlug ) );
 	const { data: fullSite } = useQuery( siteBySlugQuery( siteSlug ) );
-	// Without manage_options the overview is the only page offered; it explains
-	// how to get access.
-	const canManage = !! fullSite?.capabilities?.manage_options;
+	const { data: agency } = useQuery( activeAgencyQuery() );
+	// Team members without access to the site only get the overview, which
+	// explains how to get access.
+	const canManage = !! fullSite && ! isTeamMemberWithoutSiteAccess( fullSite, agency );
 	const supports = ( feature: SiteTypeFeature ) =>
 		!! fullSite && canManage && siteTypeSupportsFeature( fullSite, feature );
 	const supportsPerformance = supports( 'performance' );
 	const supportsMonitoring = supports( 'monitoring' );
 	const supportsDeployments = supports( 'deployments' );
-	const supportsSettings = supports( 'settings' );
+	const supportsSettings = supports( 'settings' ) && !! fullSite?.capabilities?.manage_options;
 
 	return (
 		<VStack spacing={ 2 }>

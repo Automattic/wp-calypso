@@ -94,7 +94,7 @@ export function getLicenseActions( {
 			},
 		},
 		// No capability check here: `/sites/$siteSlug/settings` redirects users without
-		// `manage_options` back to the site, which explains it with a flash message.
+		// `manage_options` back to the site overview, which explains it.
 		{
 			id: 'hosting-configuration',
 			label: __( 'Hosting configuration' ),

@@ -75,6 +75,7 @@ import {
 	PARTNER_DIRECTORY_ROUTE,
 } from '../../agency/partner-directory/paths';
 import { isPressableSite } from '../../agency/sites/lib';
+import { isTeamMemberWithoutSiteAccess } from '../../agency/sites/site/access';
 import { TEAM_ACCEPT_INVITE_ROUTE } from '../../agency/team/paths';
 import {
 	canOptOutOfWordPressBeta,
@@ -1072,11 +1073,12 @@ export const agencySiteRoute = createRoute( {
 		}
 
 		// Keep the router in sync with the sidebar, which only offers the overview
-		// to users without manage_options on the site. The overview explains how
+		// to team members without access to the site. The overview explains how
 		// to get access.
+		const agency = await queryClient.ensureQueryData( activeAgencyQuery() );
 		if (
-			! site.capabilities?.manage_options &&
-			matches.at( -1 )?.routeId !== agencySiteOverviewRoute.id
+			isTeamMemberWithoutSiteAccess( site, agency ) &&
+			! isOnAgencySiteOverviewRoute( matches.at( -1 )?.routeId )
 		) {
 			throw dashboardRedirect( { to: `/sites/${ siteSlug }` } );
 		}
@@ -1112,11 +1114,12 @@ const agencySiteOverviewRoute = createRoute( {
 	getParentRoute: () => agencySiteRoute,
 	path: '/',
 	loader: async ( { params: { siteSlug } } ) => {
-		const [ site, agencySite ] = await Promise.all( [
+		const [ site, agencySite, agency ] = await Promise.all( [
 			queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) ),
 			queryClient.ensureQueryData( agencySiteQuery( siteSlug ) ),
+			queryClient.ensureQueryData( activeAgencyQuery() ),
 		] );
-		if ( ! site.capabilities?.manage_options ) {
+		if ( isTeamMemberWithoutSiteAccess( site, agency ) ) {
 			return;
 		}
 
@@ -1522,6 +1525,18 @@ export const agencySiteSettingsRoute = createRoute( {
 	head: () => ( { meta: [ { title: __( 'Settings' ) } ] } ),
 	getParentRoute: () => agencySiteRoute,
 	path: 'settings',
+	beforeLoad: async ( { cause, params: { siteSlug } } ) => {
+		if ( cause === 'preload' ) {
+			return;
+		}
+
+		// Keep the router in sync with the sidebar, which only offers Settings
+		// to users with manage_options on the site.
+		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+		if ( ! site.capabilities?.manage_options ) {
+			throw redirectAsNotAllowed( { to: `/sites/${ siteSlug }` } );
+		}
+	},
 	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
 
@@ -2278,3 +2293,7 @@ export const createAgencyRoutes = () => [
 		] ),
 	] ),
 ];
+
+function isOnAgencySiteOverviewRoute( routeId: string | undefined ) {
+	return routeId === agencySiteOverviewRoute.id;
+}
