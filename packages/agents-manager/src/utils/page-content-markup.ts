@@ -5,8 +5,8 @@ import type { Block } from '@wordpress/blocks';
 /**
  * The page body as block markup, from the live editor rather than the saved
  * `post_content`: the backend's page-design agent reads it to redesign the page
- * as it is, wrappers and image urls included. As in Big Sky, only the body of
- * a `core/post-content` block counts, so the post editor, whose body is the
+ * as it is, wrappers and image urls included. Only the body of a
+ * `core/post-content` block counts, so the post editor, whose body is the
  * document itself, sends none.
  */
 export function getPageContentMarkup(): string {

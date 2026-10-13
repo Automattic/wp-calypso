@@ -33,12 +33,12 @@ Follow the classic Calypso development setup. Run `yarn start` and edit away. No
 
 #### In Atomic sites
 
-If you only interested in making JS and CSS changes, you're in luck; you don't need to worry about running Jetpack. You can follow the same instructions of simple sites.
+For JS and CSS changes you don't need Jetpack running: follow the Simple-site steps above.
 
 > [!IMPORTANT]
-> If you make changes to the \*.asset.json files, i.e add or remove dependencies, these files won't be synced with the site as Jetpack pulls these files via network. And since Jetpack pulls from production and not your sandbox, you'll have to deploy first for these changes to take effect.
+> Adding or removing a dependency changes the `*.asset.json` files, which Jetpack fetches from production, not your sandbox. Deploy before such a change takes effect on Atomic.
 
-If you do want to modify PHP files. Please follow the development process of [`jetpack-mu-plugin`](https://github.com/Automattic/jetpack/blob/trunk/projects/packages/jetpack-mu-wpcom/README.md).
+The PHP lives in Jetpack's [`projects/packages/agents-manager`](https://github.com/Automattic/jetpack/blob/trunk/projects/packages/agents-manager/README.md) package.
 
 ### Translations
 

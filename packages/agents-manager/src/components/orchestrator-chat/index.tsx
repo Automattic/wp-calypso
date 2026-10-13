@@ -1734,7 +1734,7 @@ export default function OrchestratorChat( {
 	const showProcessingIndicator =
 		( isProcessing || ( isThinking && ! isBuildingSite ) ) && ! shouldSuppressTransientThinking;
 
-	// Determine which suggestions to feed Agenttic following Big Sky's logic:
+	// Which suggestions to feed Agenttic:
 	// - Empty chat: provider empty-view chips plus dynamic chips.
 	// - Active chat/input: dynamic suggestions only.
 	let displayedEmptyViewSuggestions: Suggestion[] = [];
