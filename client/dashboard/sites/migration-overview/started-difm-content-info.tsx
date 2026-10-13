@@ -36,7 +36,15 @@ const GUIDE_LIST = [
 	},
 ];
 
-function CancellationModal( { site, onClose }: { site: Site; onClose: () => void } ) {
+function CancellationModal( {
+	site,
+	hasTicket,
+	onClose,
+}: {
+	site: Site;
+	hasTicket: boolean;
+	onClose: () => void;
+} ) {
 	const navigate = useNavigate();
 	const { recordTracksEvent } = useAnalytics();
 	const { createErrorNotice, createSuccessNotice } = useDispatch( noticesStore );
@@ -53,10 +61,14 @@ function CancellationModal( { site, onClose }: { site: Site; onClose: () => void
 			}
 		: {
 				title: __( 'Cancel migration' ),
-				description: __(
-					'If you cancel now, our Happiness Engineers will be notified that you’ve chosen not to move your site to WordPress.com, and your current site will remain exactly as it is.'
-				),
-				buttonText: __( 'Send request' ),
+				description: hasTicket
+					? __(
+							'If you cancel now, our Happiness Engineers will be notified that you’ve chosen not to move your site to WordPress.com, and your current site will remain exactly as it is.'
+						)
+					: __(
+							'When you cancel your migration your original site will stay as is. You can always restart the migration when you’re ready.'
+						),
+				buttonText: hasTicket ? __( 'Send request' ) : __( 'Cancel migration' ),
 			};
 
 	const handleConfirmCancel = () => {
@@ -125,6 +137,8 @@ export function StartedDIFMContentInfo( { site }: { site: Site } ) {
 		...siteMigrationZendeskTicketQuery( site.ID ),
 		enabled: ! site.site_migration?.is_complete,
 	} );
+	const canCancelMigration =
+		! site.site_migration?.is_complete && ( ! site.site_migration?.in_progress || !! ticketId );
 
 	return (
 		<>
@@ -148,7 +162,7 @@ export function StartedDIFMContentInfo( { site }: { site: Site } ) {
 						</Fragment>
 					) ) }
 				</Card>
-				{ ticketId && (
+				{ canCancelMigration && (
 					<ButtonStack justify="flex-start">
 						<Button
 							variant="link"
@@ -165,7 +179,11 @@ export function StartedDIFMContentInfo( { site }: { site: Site } ) {
 				) }
 			</VStack>
 			{ isCancellationModalOpen && (
-				<CancellationModal site={ site } onClose={ () => setIsCancellationModalOpen( false ) } />
+				<CancellationModal
+					site={ site }
+					hasTicket={ !! ticketId }
+					onClose={ () => setIsCancellationModalOpen( false ) }
+				/>
 			) }
 		</>
 	);

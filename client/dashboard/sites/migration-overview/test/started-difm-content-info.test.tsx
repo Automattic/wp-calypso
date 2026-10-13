@@ -1,0 +1,140 @@
+/**
+ * @jest-environment jsdom
+ */
+
+import { screen, waitFor, within } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import nock from 'nock';
+import { render } from '../../../test-utils';
+import { StartedDIFMContentInfo } from '../started-difm-content-info';
+import type { Site } from '@automattic/api-core';
+
+const mockNavigate = jest.fn();
+const mockCreateSuccessNotice = jest.fn();
+const mockCreateErrorNotice = jest.fn();
+
+jest.mock( '@tanstack/react-router', () => ( {
+	...jest.requireActual( '@tanstack/react-router' ),
+	useNavigate: () => mockNavigate,
+} ) );
+
+jest.mock( '@wordpress/data', () => ( {
+	useDispatch: () => ( {
+		createSuccessNotice: mockCreateSuccessNotice,
+		createErrorNotice: mockCreateErrorNotice,
+	} ),
+	combineReducers: jest.fn( ( reducers ) => reducers ),
+	createReduxStore: jest.fn(),
+	register: jest.fn(),
+	createSelector: jest.fn(),
+	keyedReducer: () => () => ( {} ),
+} ) );
+
+jest.mock( '@automattic/survicate', () => ( { invokeSurvicateEvent: jest.fn() } ) );
+
+const site = {
+	ID: 123,
+	slug: 'migration.wordpress.com',
+	site_migration: {
+		migration_status: 'migration-started-difm',
+		in_progress: false,
+		is_complete: false,
+	},
+} as Site;
+
+function mockTicket( ticketId: number | null ) {
+	return nock( 'https://public-api.wordpress.com' )
+		.get( '/wpcom/v2/sites/123/automated-migration/find-ticket' )
+		.query( true )
+		.reply( 200, { ticket_id: ticketId } );
+}
+
+beforeEach( () => jest.clearAllMocks() );
+
+it( 'keeps the existing cancellation message when a ticket exists', async () => {
+	mockTicket( 456 );
+	render( <StartedDIFMContentInfo site={ site } /> );
+
+	await userEvent.click( await screen.findByRole( 'button', { name: 'Cancel migration' } ) );
+	expect( await screen.findByText( /our Happiness Engineers will be notified/i ) ).toBeVisible();
+	expect(
+		within( screen.getByRole( 'dialog' ) ).getByRole( 'button', { name: 'Send request' } )
+	).toBeVisible();
+} );
+
+it( 'cancels an inactive migration without a ticket', async () => {
+	mockTicket( null );
+	const cancellation = nock( 'https://public-api.wordpress.com' )
+		.post( '/wpcom/v2/sites/123/automated-migration/cancel-migration' )
+		.reply( 200, { success: true } );
+	render( <StartedDIFMContentInfo site={ site } /> );
+
+	await userEvent.click( await screen.findByRole( 'button', { name: 'Cancel migration' } ) );
+	expect( screen.getByText( /your original site will stay as is/i ) ).toBeVisible();
+	await userEvent.click(
+		within( screen.getByRole( 'dialog' ) ).getByRole( 'button', { name: 'Cancel migration' } )
+	);
+
+	await waitFor( () =>
+		expect( mockNavigate ).toHaveBeenCalledWith( {
+			to: '/sites/$siteSlug',
+			params: { siteSlug: site.slug },
+		} )
+	);
+	expect( cancellation.isDone() ).toBe( true );
+	expect( mockCreateSuccessNotice ).toHaveBeenCalledWith( 'Migration cancelled.', {
+		type: 'snackbar',
+	} );
+} );
+
+it( 'requests support cancellation for an active transfer with a ticket', async () => {
+	mockTicket( 456 );
+	const cancellation = nock( 'https://public-api.wordpress.com' )
+		.post( '/wpcom/v2/sites/123/automated-migration/cancel-migration' )
+		.reply( 200, { success: true } );
+	render(
+		<StartedDIFMContentInfo
+			site={ { ...site, site_migration: { ...site.site_migration, in_progress: true } } }
+		/>
+	);
+
+	await userEvent.click(
+		await screen.findByRole( 'button', { name: 'Request migration cancellation' } )
+	);
+	expect( screen.getByText( /send us a cancellation request/i ) ).toBeVisible();
+	await userEvent.click(
+		within( screen.getByRole( 'dialog' ) ).getByRole( 'button', { name: 'Cancel migration' } )
+	);
+
+	await waitFor( () =>
+		expect( mockCreateSuccessNotice ).toHaveBeenCalledWith(
+			'Migration cancellation request sent.',
+			{ type: 'snackbar' }
+		)
+	);
+	expect( cancellation.isDone() ).toBe( true );
+	expect( mockNavigate ).not.toHaveBeenCalled();
+} );
+
+it( 'does not offer cancellation for an active transfer without a ticket', async () => {
+	const ticket = mockTicket( null );
+	render(
+		<StartedDIFMContentInfo
+			site={ { ...site, site_migration: { ...site.site_migration, in_progress: true } } }
+		/>
+	);
+
+	await waitFor( () => expect( ticket.isDone() ).toBe( true ) );
+	expect( screen.queryByRole( 'button', { name: /cancellation/i } ) ).toBeNull();
+} );
+
+it( 'does not offer cancellation for a completed migration', async () => {
+	render(
+		<StartedDIFMContentInfo
+			site={ { ...site, site_migration: { ...site.site_migration, is_complete: true } } }
+		/>
+	);
+
+	await screen.findByRole( 'heading', { name: 'We’ve received your migration request' } );
+	expect( screen.queryByRole( 'button', { name: /cancel migration/i } ) ).toBeNull();
+} );
