@@ -20,7 +20,11 @@ export function isListedProductOnSale(
  * items, a failed refresh or a slug-filtered list are not returned.
  */
 export function getFreshProductsList( state: AppState ): ListedAvailability | undefined {
-	return state.productsList?.hasFullListThisSession ? state.productsList.items : undefined;
+	return state.productsList?.sessionListStatus === 'full' ? state.productsList.items : undefined;
+}
+
+export function hasProductsListRequestFailed( state: AppState ): boolean {
+	return state.productsList?.sessionListStatus === 'failed';
 }
 
 export function isProductOnSale( state: AppState, productSlug: string ): boolean {

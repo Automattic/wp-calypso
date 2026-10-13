@@ -34,16 +34,16 @@ describe( 'isListedProductOnSale', () => {
 } );
 
 describe( 'isProductOnSale', () => {
-	const stateWith = ( hasFullListThisSession: boolean ) =>
+	const stateWith = ( sessionListStatus: string ) =>
 		( {
-			productsList: { hasFullListThisSession, items: pro( true ) },
+			productsList: { sessionListStatus, items: pro( true ) },
 		} ) as unknown as AppState;
 
 	it( 'trusts a full list received in this session', () => {
-		expect( isProductOnSale( stateWith( true ), 'jetpack_pro_yearly' ) ).toBe( true );
+		expect( isProductOnSale( stateWith( 'full' ), 'jetpack_pro_yearly' ) ).toBe( true );
 	} );
 
-	it( 'ignores a persisted, failed or slug-filtered list', () => {
-		expect( isProductOnSale( stateWith( false ), 'jetpack_pro_yearly' ) ).toBe( false );
+	it.each( [ 'none', 'failed' ] )( 'ignores the list when the session status is %s', ( status ) => {
+		expect( isProductOnSale( stateWith( status ), 'jetpack_pro_yearly' ) ).toBe( false );
 	} );
 } );

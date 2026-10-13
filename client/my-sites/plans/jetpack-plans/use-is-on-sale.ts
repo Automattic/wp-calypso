@@ -1,51 +1,14 @@
-import { useCallback, useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'calypso/state';
-import { requestProductsList } from 'calypso/state/products-list/actions';
+import { useCallback } from 'react';
+import { useSelector } from 'calypso/state';
 import {
 	getFreshProductsList,
+	hasProductsListRequestFailed,
 	isListedProductOnSale,
 	isProductsListFetching,
 } from 'calypso/state/products-list/selectors';
-import type { CalypsoDispatch } from 'calypso/state/types';
-import type { AppState } from 'calypso/types';
-
-const requestJetpackProductsListIfIdle =
-	() =>
-	( dispatch: CalypsoDispatch, getState: () => AppState ): boolean => {
-		const state = getState();
-		if ( isProductsListFetching( state ) || getFreshProductsList( state ) ) {
-			return false;
-		}
-
-		dispatch( requestProductsList( { type: 'jetpack' } ) );
-		return true;
-	};
-
-/*
- * The page's own QueryProductsList is skipped while another products request is
- * in flight. If that one settles without a full list, request it once more here.
- */
-function useFreshProductsList() {
-	const dispatch = useDispatch();
-	const productsList = useSelector( getFreshProductsList );
-	const isFetching = useSelector( isProductsListFetching );
-	const [ hasRetried, setHasRetried ] = useState( false );
-
-	useEffect( () => {
-		if ( productsList || isFetching || hasRetried ) {
-			return;
-		}
-
-		if ( dispatch( requestJetpackProductsListIfIdle() ) ) {
-			setHasRetried( true );
-		}
-	}, [ dispatch, productsList, isFetching, hasRetried ] );
-
-	return { productsList, hasGivenUp: hasRetried && ! isFetching && ! productsList };
-}
 
 export default function useIsOnSale() {
-	const { productsList } = useFreshProductsList();
+	const productsList = useSelector( getFreshProductsList );
 
 	return useCallback(
 		( productSlug: string ) => isListedProductOnSale( productsList, productSlug ),
@@ -58,9 +21,12 @@ export default function useIsOnSale() {
  * it has failed, for pages that must wait before skipping an offer.
  */
 export function useOnSaleStatus( productSlug?: string ): 'unknown' | 'on-sale' | 'off-sale' {
-	const { productsList, hasGivenUp } = useFreshProductsList();
+	const productsList = useSelector( getFreshProductsList );
+	const hasFailed = useSelector(
+		( state ) => hasProductsListRequestFailed( state ) && ! isProductsListFetching( state )
+	);
 
-	if ( ! productsList && ! hasGivenUp ) {
+	if ( ! productsList && ! hasFailed ) {
 		return 'unknown';
 	}
 

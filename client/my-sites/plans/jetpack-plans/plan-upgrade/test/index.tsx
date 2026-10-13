@@ -97,7 +97,7 @@ describe( '<PlanUpgradeSection />', () => {
 					...initialState,
 					productsList: {
 						isFetching: false,
-						hasFullListThisSession: true,
+						sessionListStatus: 'full',
 						items: { jetpack_security_t1_yearly: { available: false } },
 					},
 				},
