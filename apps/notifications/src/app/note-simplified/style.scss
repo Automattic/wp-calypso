@@ -66,7 +66,11 @@
 	a,
 	a:visited {
 		color: inherit;
-		text-decoration: underline;
+		text-decoration: none;
+
+		&:hover {
+			text-decoration: underline;
+		}
 	}
 }
 
@@ -82,6 +86,11 @@
 	&:visited {
 		color: inherit;
 		text-decoration: none;
+	}
+
+	&:focus-visible {
+		outline: var(--wp-admin-border-width-focus, 2px) solid var(--wp-admin-theme-color);
+		outline-offset: 2px;
 	}
 }
 
