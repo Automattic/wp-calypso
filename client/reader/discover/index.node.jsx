@@ -23,7 +23,9 @@ const discoverSsr = ( context, next ) => {
 
 function redirectRetiredReddit( context ) {
 	const localePrefix = context.params.lang ? `/${ context.params.lang }` : '';
-	const query = context.querystring ? `?${ context.querystring }` : '';
+	// Server route context exposes originalUrl, not querystring.
+	const queryIndex = context.originalUrl.indexOf( '?' );
+	const query = queryIndex >= 0 ? context.originalUrl.slice( queryIndex ) : '';
 	context.res.redirect( 301, `${ localePrefix }/discover/add-new${ query }` );
 }
 
