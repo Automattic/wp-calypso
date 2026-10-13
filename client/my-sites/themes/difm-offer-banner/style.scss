@@ -11,7 +11,7 @@
 
 	// Keep the call to action clear of the dismiss icon, and center the icon beside it.
 	&.is-dismissible {
-		padding-right: 56px;
+		padding-inline-end: 56px;
 	}
 
 	.banner__close-icon {
@@ -25,7 +25,7 @@
 	}
 
 	.banner__title {
-		color: $gray-900;
+		color: var(--color-text);
 		font-size: 13px;
 		font-weight: 500;
 		line-height: 20px;
