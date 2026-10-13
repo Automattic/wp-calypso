@@ -18,7 +18,7 @@ interface NamePulseSearchTrackingState {
 	hasReportedAvailability: boolean;
 }
 
-/** Sections list a page of rows until "Show more"; Top results are capped already. */
+/** Rows shown before "Show more". */
 const countShown = ( results: NamePulseDomainResult[] ) =>
 	Math.min( results.length, NAME_PULSE_PAGE_SIZE );
 
@@ -26,9 +26,8 @@ const hasVerdict = ( results: NamePulseDomainResult[] ) =>
 	results.some( ( result ) => result.status !== NamePulseDomainStatus.WAITING );
 
 /**
- * Reports each settled search once: what was searched, when the first result
- * and the full page showed up, and the classic suggestions and typed-domain
- * availability events the classic results page sends.
+ * Reports each settled search once, plus the classic suggestions and
+ * typed-domain availability events.
  */
 export const useNamePulseSearchTracking = ( search: ReturnType< typeof useNamePulseSearch > ) => {
 	const { events, filter } = useDomainSearch();
@@ -147,8 +146,7 @@ export const useNamePulseSearchTracking = ( search: ReturnType< typeof useNamePu
 		track();
 	} );
 
-	// A section that never loads gives up on its skeletons after this long; the
-	// page is reported as it stands then.
+	// Report the page as it stands if a section never loads.
 	useEffect( () => {
 		if ( ! settledQuery || ! isSettled ) {
 			return;

@@ -111,7 +111,7 @@ const useNamePulseSuggestions = ( {
 		} );
 	} );
 
-	// Once per response: `data` and `isError` change when a new one lands.
+	// Once per response.
 	useEffect( () => {
 		reportFailure();
 	}, [ data, isError, reportFailure ] );

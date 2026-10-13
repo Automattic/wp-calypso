@@ -105,7 +105,7 @@ class NamePulseAvailabilityBatcher {
 	}
 
 	private send( batch: string[], waiters: Map< string, Waiter > ) {
-		// A batch that times out is reported once, whatever it does when it lands.
+		// Report a timed-out batch once, even if it lands later.
 		let hasTimedOut = false;
 		const timer = setTimeout( () => {
 			hasTimedOut = true;

@@ -75,7 +75,7 @@ export const useWPCOMDomainSearchEvents = ( {
 	analyticsSection: string;
 	vendor?: string;
 	query?: string;
-	/** Name Pulse sends the classic events too, marked with `is_name_pulse`. */
+	/** Adds `is_name_pulse: true` to every classic event. */
 	isNamePulse?: boolean;
 } ) => {
 	const reduxDispatch = useDispatch();

@@ -31,7 +31,7 @@ interface NamePulseResultsSectionProps {
 	showMoreLabel?: string;
 	/** Rows revealed by "Show more", so the caller can check their availability. */
 	onReveal?: ( rows: NamePulseDomainResult[] ) => void;
-	/** Rows on the page before this section's first, so positions count across the page. */
+	/** Rows on the page before this section. */
 	positionOffset?: number;
 	/** `card` lays each result out as its own larger card instead of a table row; phones keep the table. */
 	variant?: NamePulseResultRowVariant;

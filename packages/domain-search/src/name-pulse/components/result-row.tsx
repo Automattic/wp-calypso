@@ -28,7 +28,7 @@ export type NamePulseResultRowVariant = 'row' | 'card';
 interface NamePulseResultRowProps {
 	result: NamePulseDomainResult;
 	section: NamePulseTracksSection;
-	/** Counted across the whole page, so render and interact events pair up. */
+	/** Position on the whole page. */
 	position: number;
 	sectionPosition: number;
 	variant?: NamePulseResultRowVariant;
@@ -193,9 +193,8 @@ export const NamePulseResultRow = ( {
 		row.policy_notices
 	);
 
-	// Only names on offer count as rendered, as on the classic page, and only
-	// once they have a verdict, so the event knows whether the name is premium.
-	// Later events reuse the position reported here, in case sections above shift.
+	// Like the classic page, only names on offer count as rendered. Later events
+	// reuse this position so they match the render.
 	useEffect( () => {
 		if ( ! isAvailable || reportedPosition.current !== undefined ) {
 			return;

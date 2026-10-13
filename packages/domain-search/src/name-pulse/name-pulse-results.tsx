@@ -27,7 +27,7 @@ export const NamePulseResults = () => {
 	} = context;
 	const search = useNamePulseSearch( query );
 	const searchMode = search.settledLayout.mode;
-	// Every Name Pulse event from the page below says what kind of search it was.
+	// Adds `search_mode` to every Name Pulse event below.
 	const contextValue = useMemo(
 		() => ( {
 			...context,
@@ -68,8 +68,8 @@ export const NamePulseResults = () => {
 	// Top results with it but leaves the suggestion sections alone.
 	const hasTldsError = layout.exactGrid.show && isTldsError;
 	const { bundle, isLoading: isLoadingBundle } = useNamePulseBundle( bundleAnchors );
-	// Positions count down the page as if every section were expanded, so they
-	// stay unique when one grows. A typed domain keeps position 0 for its card.
+	// Page-wide positions, as if every section were expanded, so "Show more"
+	// never shifts them. A typed domain's card is 0.
 	const topOffset = layout.fqdn ? 1 : 0;
 	const exactOffset = topOffset + topResults.length;
 	const suggestionsOffset = exactOffset + ( layout.exactGrid.show ? exactList.length : 0 );

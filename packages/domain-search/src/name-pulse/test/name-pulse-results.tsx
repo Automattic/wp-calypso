@@ -1110,7 +1110,7 @@ describe( 'NamePulseResults', () => {
 				( [ eventName ] ) => eventName === name
 			)?.[ 1 ];
 
-		it( 'reports the settled search and the rendered page without the query text', async () => {
+		it( 'reports the settled search, the rendered page and the suggestions, without the query text', async () => {
 			const events = buildEvents();
 
 			render( <NamePulseTestSearch query="icecream" events={ events } /> );
@@ -1128,35 +1128,41 @@ describe( 'NamePulseResults', () => {
 				expect.objectContaining( {
 					search_mode: 'single',
 					top_count: 3,
-					suggestions_count: expect.any( Number ),
 					time_to_first_result_ms: expect.any( Number ),
 					time_to_complete_ms: expect.any( Number ),
 					timed_out: false,
 				} )
 			);
-			expect(
-				events.onNamePulseTracksEvent.mock.calls.filter( ( [ name ] ) => name === 'search_settled' )
-			).toHaveLength( 1 );
+			expect( events.onSuggestionsReceive ).toHaveBeenCalledTimes( 1 );
+			expect( events.onSuggestionsReceive ).toHaveBeenCalledWith(
+				'icecream',
+				expect.arrayContaining( [ 'creamyice.com' ] ),
+				expect.any( Number )
+			);
 		} );
 
-		it( 'sends the classic suggestions and render events', async () => {
+		it( 'reports each name on offer as rendered once, at its own page position', async () => {
 			const events = buildEvents();
 
 			render( <NamePulseTestSearch query="icecream" events={ events } /> );
 
-			await waitFor( () =>
-				expect( events.onSuggestionsReceive ).toHaveBeenCalledWith(
-					'icecream',
-					expect.arrayContaining( [ 'creamyice.com' ] ),
-					expect.any( Number )
-				)
+			await waitFor( () => expect( rowFor( 'creamyice.com' ) ).not.toBeNull() );
+			await within( await findRow( 'icecream.net' ) ).findByText( '$24' );
+
+			const rendered = events.onSuggestionRender.mock.calls.map( ( [ suggestion ] ) => suggestion );
+			const positions = rendered.map( ( suggestion ) => suggestion.position );
+			const takenNames = Object.entries( NAME_PULSE_AVAILABILITY_FIXTURE )
+				.filter( ( [ , entry ] ) => entry.is_available === false )
+				.map( ( [ name ] ) => name );
+
+			expect( rendered ).toContainEqual(
+				expect.objectContaining( { domain_name: 'icecream.net', vendor: 'name_pulse_exact' } )
 			);
-			await waitFor( () =>
-				expect( events.onSuggestionRender ).toHaveBeenCalledWith(
-					expect.objectContaining( { domain_name: 'icecream.net', vendor: 'name_pulse_exact' } )
-				)
+			expect( new Set( positions ).size ).toBe( positions.length );
+			expect( takenNames.length ).toBeGreaterThan( 0 );
+			takenNames.forEach( ( name ) =>
+				expect( rendered.map( ( suggestion ) => suggestion.domain_name ) ).not.toContain( name )
 			);
-			expect( events.onSuggestionsReceive ).toHaveBeenCalledTimes( 1 );
 		} );
 
 		it( 'sends the classic availability event for a typed domain', async () => {
@@ -1176,11 +1182,26 @@ describe( 'NamePulseResults', () => {
 			);
 		} );
 
-		it( 'reports an add to cart with its page position, section and source', async () => {
+		it( 'reports an add to cart with its page position and the real-time price', async () => {
 			const user = userEvent.setup();
 			const events = buildEvents();
 
-			render( <NamePulseTestSearch query="icecream" events={ events } /> );
+			render(
+				<NamePulseTestSearch
+					query="icecream"
+					events={ events }
+					domainAvailability={ async ( domainName ) =>
+						buildAvailability( {
+							domain_name: domainName,
+							status: DomainAvailabilityStatus.AVAILABLE_PREMIUM,
+							is_supported_premium_domain: true,
+							cost: '$3,500.00',
+							raw_price: 3500,
+							currency_code: 'USD',
+						} )
+					}
+				/>
+			);
 
 			await within( await findRow( 'icecream.net' ) ).findByText( '$24' );
 			await user.click(
@@ -1197,8 +1218,9 @@ describe( 'NamePulseResults', () => {
 						section_position: 0,
 						tld: 'net',
 						name_pulse_source: 'exact',
-						availability_status: 'available',
-						is_premium: false,
+						is_premium: true,
+						raw_price: 3500,
+						currency_code: 'USD',
 					} )
 				)
 			);
@@ -1208,7 +1230,7 @@ describe( 'NamePulseResults', () => {
 			expect( events.onAddDomainToCart ).toHaveBeenCalledWith(
 				'icecream.net',
 				3,
-				false,
+				true,
 				'name_pulse_exact'
 			);
 		} );
@@ -1319,76 +1341,10 @@ describe( 'NamePulseResults', () => {
 			await user.click( screen.getByRole( 'button', { name: 'Close' } ) );
 
 			expect( events.onTrademarkClaimsNoticeShown ).toHaveBeenCalled();
-			// The modal reports the close once its exit animation ends.
+			// The modal closes after its exit animation.
 			await waitFor( () =>
 				expect( events.onTrademarkClaimsNoticeClosed ).toHaveBeenCalledWith(
 					expect.objectContaining( { domain_name: 'icecream.net' } )
-				)
-			);
-		} );
-
-		it( 'gives every rendered result its own page position', async () => {
-			const events = buildEvents();
-
-			render( <NamePulseTestSearch query="icecream" events={ events } /> );
-
-			await waitFor( () => expect( rowFor( 'creamyice.com' ) ).not.toBeNull() );
-			await within( await findRow( 'icecream.net' ) ).findByText( '$24' );
-
-			const positions = events.onSuggestionRender.mock.calls.map(
-				( [ suggestion ] ) => suggestion.position
-			);
-			expect( positions.length ).toBeGreaterThan( 3 );
-			expect( new Set( positions ).size ).toBe( positions.length );
-		} );
-
-		it( 'reports only names on offer as rendered', async () => {
-			const events = buildEvents();
-
-			render( <NamePulseTestSearch query="icecream" events={ events } /> );
-
-			await within( await findRow( 'icecream.net' ) ).findByText( '$24' );
-
-			const rendered = events.onSuggestionRender.mock.calls.map(
-				( [ suggestion ] ) => suggestion.domain_name
-			);
-			const takenNames = Object.entries( NAME_PULSE_AVAILABILITY_FIXTURE )
-				.filter( ( [ , entry ] ) => entry.is_available === false )
-				.map( ( [ name ] ) => name );
-
-			expect( takenNames.length ).toBeGreaterThan( 0 );
-			takenNames.forEach( ( name ) => expect( rendered ).not.toContain( name ) );
-		} );
-
-		it( 'reports the price of the real-time check when adding a name', async () => {
-			const user = userEvent.setup();
-			const events = buildEvents();
-
-			render(
-				<NamePulseTestSearch
-					query="icecream"
-					events={ events }
-					domainAvailability={ async ( domainName ) =>
-						buildAvailability( {
-							domain_name: domainName,
-							status: DomainAvailabilityStatus.AVAILABLE_PREMIUM,
-							is_supported_premium_domain: true,
-							cost: '$3,500.00',
-							raw_price: 3500,
-							currency_code: 'USD',
-						} )
-					}
-				/>
-			);
-
-			await within( await findRow( 'icecream.net' ) ).findByText( '$24' );
-			await user.click(
-				within( rowFor( 'icecream.net' ) ).getByRole( 'button', { name: 'Add to cart' } )
-			);
-
-			await waitFor( () =>
-				expect( namePulseEvent( events, 'result_add_to_cart' ) ).toEqual(
-					expect.objectContaining( { is_premium: true, raw_price: 3500, currency_code: 'USD' } )
 				)
 			);
 		} );

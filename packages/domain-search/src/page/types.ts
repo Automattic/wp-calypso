@@ -134,10 +134,7 @@ export interface DomainSearchEvents {
 	 */
 	onBundleShown: ( bundle: BundleSuggestion, placement: BundlePlacement ) => void;
 	onBundleAddToCart: ( bundle: BundleSuggestion, placement: BundlePlacement ) => void;
-	/**
-	 * Name Pulse only. Records `calypso_domain_search_name_pulse_<name>`; the
-	 * classic results page never calls it.
-	 */
+	/** Name Pulse only. Records `calypso_domain_search_name_pulse_<name>`. */
 	onNamePulseTracksEvent: (
 		name: string,
 		properties: Record< string, string | number | boolean | undefined >

@@ -2,10 +2,7 @@ import { DomainPriceRule } from '../../hooks/use-suggestion';
 import { NamePulseDomainStatus, type NamePulseDomainResult, type NamePulseSource } from './types';
 import type { DomainSuggestion } from '@automattic/api-core';
 
-/**
- * Sent as `calypso_domain_search_name_pulse_<name>`. The event list and its
- * props are documented in the Name Pulse README.
- */
+/** Sent as `calypso_domain_search_name_pulse_<name>`; listed in the README. */
 export type NamePulseTracksEventName =
 	| 'search_settled'
 	| 'results_rendered'
@@ -18,16 +15,12 @@ export type NamePulseTracksEventName =
 
 export type NamePulseTracksProps = Record< string, string | number | boolean | undefined >;
 
-/** Matches the `data-section` of each results section, plus the full-domain card. */
+/** The `data-section` of each section, plus the exact-match card. */
 export type NamePulseTracksSection = 'top' | 'exact' | 'suggestions' | 'creative' | 'exact_card';
 
-/** Stands in for `root_vendor` on the classic events, which only know `availability` otherwise. */
 export const getNamePulseTracksVendor = ( source: NamePulseSource ) => `name_pulse_${ source }`;
 
-/**
- * The classic render and interact events expect a suggestion from the classic
- * results. Only the fields they read are meaningful here.
- */
+/** A result shaped like the classic suggestion the render and interact events read. */
 export const toNamePulseTracksSuggestion = (
 	result: Pick<
 		NamePulseDomainResult,
@@ -51,10 +44,7 @@ export const toNamePulseTracksSuggestion = (
 	price_rule: DomainPriceRule.PRICE,
 } );
 
-/**
- * Props shared by every event about one result. `position` counts across the
- * whole page, like the classic events; `section_position` within its section.
- */
+/** Props for any event about one result. `position` is page-wide. */
 export const getNamePulseResultTracksProps = (
 	result: Pick<
 		NamePulseDomainResult,
