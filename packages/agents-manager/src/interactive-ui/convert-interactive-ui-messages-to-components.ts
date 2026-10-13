@@ -15,7 +15,7 @@ export default function convertInteractiveUiMessagesToComponents(
 		return {
 			...message,
 			content: ( message.content ?? [] ).flatMap( ( content ) => {
-				if ( ! getInteractiveUiMessagesFromText( content.text ) ) {
+				if ( content.type !== 'text' || ! getInteractiveUiMessagesFromText( content.text ) ) {
 					return [ content ];
 				}
 				if ( rendered ) {
@@ -40,10 +40,17 @@ export function attachInteractiveUiPresentation(
 ): AgentsManagerUIMessage[] {
 	return messages.map( ( message ) => ( {
 		...message,
-		content: message.content.map( ( content ) =>
-			content.type === 'component' && content.component === InteractiveUi
-				? { ...content, componentProps: { ...content.componentProps, presentation } }
-				: content
-		),
+		content: message.content
+			.filter(
+				( content ) =>
+					content.type !== 'component' ||
+					content.component !== InteractiveUi ||
+					presentation.runtime?.getSurfaceIds( message.id ).length
+			)
+			.map( ( content ) =>
+				content.type === 'component' && content.component === InteractiveUi
+					? { ...content, componentProps: { ...content.componentProps, presentation } }
+					: content
+			),
 	} ) );
 }
