@@ -1,4 +1,5 @@
 import { DotcomPlans } from '@automattic/api-core';
+import config from '@automattic/calypso-config';
 import { englishLocales } from '@automattic/i18n-utils';
 import { __ } from '@wordpress/i18n';
 import { useExperiment } from 'calypso/lib/explat';
@@ -10,6 +11,13 @@ import { useExperiment } from 'calypso/lib/explat';
 export const DIFM_OFFER_EXPERIMENT = 'wpcom_difm_post_signup_offer_placeholder';
 
 /**
+ * A QA flag that puts an eligible user in `treatment` without an ExPlat assignment.
+ * Calypso applies `?flags=` only in development, the stage environments and calypso.live,
+ * so the production build cannot turn it on. No config file enables it.
+ */
+export const DIFM_OFFER_FORCE_TREATMENT_FLAG = 'difm-offer/force-treatment';
+
+/**
  * The upper bound on site age is an open question for product and data.
  */
 export const DIFM_OFFER_MAX_SITE_AGE_DAYS = 7;
@@ -17,9 +25,10 @@ export const DIFM_OFFER_MAX_SITE_AGE_DAYS = 7;
 const MS_PER_DAY = 24 * 60 * 60 * 1000;
 
 /**
- * Placeholder variations for copy angles A, B and C.
+ * One treatment arm with one copy. Rotating copy angles are left for a later iteration.
+ * `treatment` is ExPlat's default name until the experiment is registered.
  */
-export type DifmOfferVariation = 'control' | 'skip_setup' | 'expert_help' | 'no_time';
+export type DifmOfferVariation = 'control' | 'treatment';
 
 export interface DifmOfferEligibilityInput {
 	planSlug?: string;
@@ -49,16 +58,7 @@ export interface DifmOfferResult {
 export function normalizeDifmOfferVariation(
 	variationName: string | null | undefined
 ): DifmOfferVariation {
-	switch ( variationName ) {
-		case 'skip_setup':
-			return 'skip_setup';
-		case 'expert_help':
-			return 'expert_help';
-		case 'no_time':
-			return 'no_time';
-		default:
-			return 'control';
-	}
+	return variationName === 'treatment' ? 'treatment' : 'control';
 }
 
 const ELIGIBLE_PLAN_SLUGS = new Set< string >( [
@@ -126,14 +126,19 @@ export function isEligibleForDifmOffer(
  */
 export function useDifmOffer( input: DifmOfferEligibilityInput ): DifmOfferResult {
 	const isEligible = isEligibleForDifmOffer( input );
+	const isForcedTreatment = isEligible && config.isEnabled( DIFM_OFFER_FORCE_TREATMENT_FLAG );
 
-	// Always call the hook, and let `isEligible` keep ineligible users out of the experiment.
+	// Always call the hook. Keep ineligible users and forced testers out of the experiment.
 	const [ isLoading, experimentAssignment ] = useExperiment( DIFM_OFFER_EXPERIMENT, {
-		isEligible,
+		isEligible: isEligible && ! isForcedTreatment,
 	} );
 
 	if ( ! isEligible ) {
 		return { isEligible, isLoading: false, variation: 'control' };
+	}
+
+	if ( isForcedTreatment ) {
+		return { isEligible, isLoading: false, variation: 'treatment' };
 	}
 
 	return {
@@ -150,37 +155,17 @@ export interface DifmOfferCopy {
 }
 
 /**
- * Banner copy for each variation, from the copy review on the design post. Every
- * placement renders this copy with its own surface's components, so the variations
- * differ only in copy. `control` gets no banner.
+ * Banner copy for the treatment, from the Figma copy variations. Every placement renders
+ * this copy with its own surface's components. `control` gets no banner.
  */
 export function getDifmOfferCopy( variation: DifmOfferVariation ): DifmOfferCopy | null {
-	const ctaText = __( 'See the offer' );
-
-	switch ( variation ) {
-		case 'skip_setup':
-			return {
-				title: __( 'Skip the setup' ),
-				description: __(
-					'For a limited time, our experts will bring your vision to life. Free with Business.'
-				),
-				ctaText,
-			};
-		case 'expert_help':
-			return {
-				title: __( 'Expert help to get you started' ),
-				description: __( 'A human builds your site based on your needs — free with Business.' ),
-				ctaText,
-			};
-		case 'no_time':
-			return {
-				title: __( 'No time to build your site?' ),
-				description: __(
-					'Let us take that off your plate. Ready in 4 days and free with Business.'
-				),
-				ctaText,
-			};
-		default:
-			return null;
+	if ( variation !== 'treatment' ) {
+		return null;
 	}
+
+	return {
+		title: __( 'No time to build your site?' ),
+		description: __( 'Let us take that off your plate. Ready in 4 days and free with Business.' ),
+		ctaText: __( 'See the offer' ),
+	};
 }

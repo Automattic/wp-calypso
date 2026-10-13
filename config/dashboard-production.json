@@ -48,6 +48,7 @@
 		"dashboard/enable-percentage-rollout": true,
 		"dashboard/simulate-full-rollout": false,
 		"dashboard/wp-beta-program": true,
+		"difm-offer/force-treatment": false,
 		"dolly/telegram": true,
 		"domain-search/name-pulse": false,
 		"domain-transfer-redesign": true,

@@ -1,0 +1,64 @@
+@import "@wordpress/base-styles/colors";
+
+// Matches the DIFM offer banner in Figma: a neutral surface without the accent border.
+.banner.card.themes__difm-offer-banner {
+	gap: 16px;
+	padding: 16px 24px;
+	border: 0;
+	border-radius: 8px;
+	box-shadow: none;
+	background: var(--wpds-color-background-surface-neutral-weak, #f4f4f4);
+
+	// Keep the call to action clear of the dismiss icon, and center the icon beside it.
+	&.is-dismissible {
+		padding-inline-end: 56px;
+	}
+
+	.banner__close-icon {
+		top: 50%;
+		margin-top: -12px;
+	}
+
+	.banner__content {
+		align-items: center;
+		gap: 16px;
+	}
+
+	.banner__title {
+		color: var(--color-text);
+		font-size: 13px;
+		font-weight: 500;
+		line-height: 20px;
+	}
+
+	.banner__description {
+		margin-top: 4px;
+		color: var(--color-text-subtle);
+		line-height: 16px;
+	}
+
+	// The gap on the content spaces the action, so drop the margins Banner adds.
+	.banner__action {
+		margin: 0;
+	}
+
+	.banner__action .button {
+		min-height: 32px;
+		padding: 4px 12px;
+		border-color: var(--wpds-color-stroke-interactive-neutral, #8d8d8d);
+		background: transparent;
+		color: var(--wpds-color-foreground-interactive-neutral, $gray-900);
+		font-size: 13px;
+		font-weight: 500;
+		line-height: 20px;
+	}
+}
+
+.themes__difm-offer-banner-image {
+	flex-shrink: 0;
+	width: 80px;
+	height: 56px;
+	border-radius: 4px;
+	// The illustration is 260x192. Cover crops it to the thumbnail without distortion.
+	object-fit: cover;
+}

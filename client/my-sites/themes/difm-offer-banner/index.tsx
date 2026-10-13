@@ -1,11 +1,16 @@
 import Banner from 'calypso/components/banner';
+import illustrationUrl from 'calypso/dashboard/sites/overview-difm-offer-card/difm-offer-illustration.svg';
 import { getDifmOfferCopy, useDifmOffer } from 'calypso/dashboard/utils/difm-offer';
+import { useDifmOfferEngagementTracking } from 'calypso/dashboard/utils/use-difm-offer-engagement-tracking';
 import { useDispatch, useSelector } from 'calypso/state';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference, hasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
 import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
 import { getSite } from 'calypso/state/sites/selectors';
 import { isUpsellCardDisplayed } from 'calypso/state/themes/selectors';
+
+import './style.scss';
 
 const UPSELL_ID = 'themes-difm-offer';
 const UPSELL_FEATURE_ID = 'difm-offer';
@@ -35,6 +40,16 @@ export default function DifmOfferBanner( { siteId }: DifmOfferBannerProps ) {
 
 	const copy = getDifmOfferCopy( variation );
 
+	const tracksProperties = {
+		upsell_id: UPSELL_ID,
+		upsell_feature_id: UPSELL_FEATURE_ID,
+		variation,
+	};
+	const engagementRef = useDifmOfferEngagementTracking(
+		( eventName, properties ) => dispatch( recordTracksEvent( eventName, properties ) ),
+		tracksProperties
+	);
+
 	if (
 		! site ||
 		! hasPreferences ||
@@ -47,29 +62,31 @@ export default function DifmOfferBanner( { siteId }: DifmOfferBannerProps ) {
 		return null;
 	}
 
-	const tracksProperties = {
-		upsell_id: UPSELL_ID,
-		upsell_feature_id: UPSELL_FEATURE_ID,
-		variation,
-	};
-
 	return (
-		<Banner
-			className="themes__difm-offer-banner"
-			title={ copy.title }
-			description={ copy.description }
-			callToAction={ copy.ctaText }
-			event={ UPSELL_ID }
-			disableHref
-			// The offer modal opens here in a follow-up.
-			onClick={ () => {} }
-			tracksImpressionProperties={ tracksProperties }
-			tracksClickProperties={ tracksProperties }
-			tracksDismissProperties={ tracksProperties }
-			dismissWithoutSavingPreference
-			onDismiss={ () =>
-				dispatch( savePreference( DISMISSED_PREFERENCE, new Date().toISOString() ) )
-			}
-		/>
+		// Banner does not forward a ref, so the wrapper holds it.
+		<div ref={ engagementRef }>
+			<Banner
+				className="themes__difm-offer-banner"
+				title={ copy.title }
+				description={ copy.description }
+				callToAction={ copy.ctaText }
+				// The thumbnail takes the place of the icon.
+				showIcon={ false }
+				primaryButton={ false }
+				event={ UPSELL_ID }
+				disableHref
+				// The offer modal opens here in a follow-up.
+				onClick={ () => {} }
+				tracksImpressionProperties={ tracksProperties }
+				tracksClickProperties={ tracksProperties }
+				tracksDismissProperties={ tracksProperties }
+				dismissWithoutSavingPreference
+				onDismiss={ () =>
+					dispatch( savePreference( DISMISSED_PREFERENCE, new Date().toISOString() ) )
+				}
+			>
+				<img className="themes__difm-offer-banner-image" src={ illustrationUrl } alt="" />
+			</Banner>
+		</div>
 	);
 }
