@@ -225,9 +225,8 @@ function SiteOverview( {
 			);
 		}
 
-		// The header row aligns to the top; the stack centres the 36px menu against the 40px buttons.
 		return (
-			<HStack spacing={ 3 }>
+			<>
 				<StagingSiteSyncDropdown siteSlug={ siteSlug } />
 				<Button
 					ref={ wpAdminButtonRef }
@@ -246,7 +245,7 @@ function SiteOverview( {
 				<PageHeader.ActionMenu>
 					<SiteActionMenu site={ site } />
 				</PageHeader.ActionMenu>
-			</HStack>
+			</>
 		);
 	};
 
