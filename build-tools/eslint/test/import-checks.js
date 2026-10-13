@@ -1,6 +1,7 @@
 /**
  * @jest-environment node
  */
+const fs = require( 'fs' );
 const path = require( 'path' );
 const { loadESLint } = require( 'eslint' );
 
@@ -31,3 +32,24 @@ test( 'import rules check workspace packages from source', async () => {
 		"missingClsxExport not found in 'clsx'",
 	] );
 }, 60000 );
+
+// Without this, a new package that needs a build but has no `calypso:src` entry would leave
+// its imports silently unchecked in CI, where packages aren't built before linting.
+test( 'packages that need a build declare their source', () => {
+	const packagesDir = path.join( repoRoot, 'packages' );
+	const withoutSource = fs
+		.readdirSync( packagesDir )
+		.map( ( dir ) => path.join( packagesDir, dir, 'package.json' ) )
+		.filter( ( file ) => fs.existsSync( file ) )
+		.map( ( file ) => JSON.parse( fs.readFileSync( file, 'utf8' ) ) )
+		.filter( ( pkg ) => pkg.scripts?.prepare && ! pkg[ 'calypso:src' ] )
+		.map( ( pkg ) => pkg.name );
+
+	expect( withoutSource ).toEqual( [
+		// Published from built output only; no JavaScript file imports them.
+		'@automattic/agenttic-client',
+		'@automattic/agenttic-ui',
+		// A stylesheet package with nothing for import rules to check.
+		'@automattic/calypso-color-schemes',
+	] );
+} );
