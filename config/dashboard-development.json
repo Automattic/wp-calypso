@@ -49,6 +49,7 @@
 		"dev/auth-helper": true,
 		"dev/preferences-helper": true,
 		"dev/store-sandbox-helper": true,
+		"difm-offer/force-treatment": false,
 		"dolly/telegram": true,
 		"domain-search/name-pulse": true,
 		"domain-transfer-redesign": true,
