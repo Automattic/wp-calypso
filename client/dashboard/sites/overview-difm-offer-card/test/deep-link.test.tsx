@@ -3,6 +3,7 @@
  */
 import '@testing-library/jest-dom';
 import { act, screen, waitFor } from '@testing-library/react';
+import nock from 'nock';
 import { render } from '../../../test-utils';
 import { DIFM_OFFER_EXPERIMENT } from '../../../utils/difm-offer';
 import DifmOfferDeepLink from '../deep-link';
@@ -40,6 +41,7 @@ function assignExperiment( variationName: string | null ) {
 }
 
 afterEach( () => {
+	nock.cleanAll();
 	window.localStorage.clear();
 	window.history.replaceState( null, '', originalUrl );
 } );
@@ -59,6 +61,19 @@ describe( 'DifmOfferDeepLink', () => {
 			expect.objectContaining( { upsell_id: 'difm-offer-modal', source: 'site-setup' } )
 		);
 		await waitFor( () => expect( window.location.search ).toBe( '' ) );
+	} );
+
+	test( 'keeps the params while the assignment loads', async () => {
+		nock( 'https://public-api.wordpress.com' )
+			.get( /experiments\/0\.1\.0\/assignments\/calypso/ )
+			.reply( 200, { variations: {}, ttl: 3600 } );
+		window.history.replaceState( null, '', '/?difmOffer=open&source=site-setup' );
+
+		render( <DifmOfferDeepLink site={ mockSite } /> );
+		await act( () => Promise.resolve() );
+
+		expect( window.location.search ).toBe( '?difmOffer=open&source=site-setup' );
+		expect( screen.queryByRole( 'dialog' ) ).not.toBeInTheDocument();
 	} );
 
 	test( 'records the site overview as the source for an unknown source', async () => {
