@@ -357,7 +357,11 @@ export default function AgentChat( {
 			<AgentUI.ConversationView ref={ conversationViewRef }>
 				{ isSiteEditorContext() && <EditorHistoryBridge /> }
 				<ChatHeader onClose={ onClose } options={ chatHeaderOptions } isDocked={ isDocked } />
-				{ isLoadingConversation ? <ChatMessageSkeleton count={ 3 } /> : <AgentUI.Messages /> }
+				{ isLoadingConversation && messages.length === 0 ? (
+					<ChatMessageSkeleton count={ 3 } />
+				) : (
+					<AgentUI.Messages />
+				) }
 				{ ( onContextCardAction || onContextCardDismiss ) && (
 					<ContextCards onAction={ onContextCardAction } onDismiss={ onContextCardDismiss } />
 				) }
