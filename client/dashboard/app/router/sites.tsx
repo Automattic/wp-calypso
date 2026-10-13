@@ -231,7 +231,11 @@ export const siteOverviewRoute = createRoute( {
 			from: asString( search.from ),
 			platform: asString( search.platform ),
 			domainChoice: asString( search.domainChoice ),
-			difmOffer: search.difmOffer === 'purchased' ? 'purchased' : undefined,
+			difmOffer:
+				search.difmOffer === 'purchased' || search.difmOffer === 'open'
+					? search.difmOffer
+					: undefined,
+			source: asString( search.source ),
 		};
 	},
 	loader: async ( { params: { siteSlug }, preload } ) => {
