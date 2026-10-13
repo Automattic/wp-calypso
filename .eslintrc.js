@@ -380,8 +380,11 @@ module.exports = {
 			[ path.join( __dirname, 'bin/eslint-import-resolver-calypso-src.js' ) ]: {},
 			node: {},
 		},
-		// Workspace packages resolve to TypeScript source, which import rules must parse.
-		'import/extensions': [ '.js', '.jsx', '.ts', '.tsx' ],
+		// Workspace packages resolve to source, which can be JSX or TypeScript.
+		'import/extensions': [ '.js', '.mjs', '.cjs', '.jsx' ],
+		'import/parsers': {
+			[ path.join( __dirname, 'bin/eslint-import-parser-value-exports.js' ) ]: [ '.ts', '.tsx' ],
+		},
 	},
 	rules: {
 		...wpI18nConfig.rules,
