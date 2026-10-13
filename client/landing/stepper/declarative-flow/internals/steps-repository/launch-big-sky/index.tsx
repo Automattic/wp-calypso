@@ -116,7 +116,6 @@ const LaunchBigSky: StepType = function ( props ) {
 
 			const siteRequest = resolveSelect( SITE_STORE ).getSite( selectedSiteId );
 			let pageRequest: Promise< { id: number } > | undefined;
-			const pendingActions: Promise< unknown >[] = [ siteRequest ];
 
 			// Set the Assembler theme on the site.
 			if ( ! assemblerThemeActive ) {
@@ -125,7 +124,7 @@ const LaunchBigSky: StepType = function ( props ) {
 
 			// Create a new home page if one is not set yet.
 			if ( ! hasStaticHomepage ) {
-				const request: Promise< { id: number } > = wpcom.req.post(
+				pageRequest = wpcom.req.post(
 					{
 						path: '/sites/' + selectedSiteId + '/pages',
 						apiNamespace: 'wp/v2',
@@ -137,23 +136,27 @@ const LaunchBigSky: StepType = function ( props ) {
 						content: '<!-- wp:paragraph -->\n<p>Hello world!</p>\n<!-- /wp:paragraph -->',
 					}
 				);
-				pageRequest = request;
-				pendingActions.push( request );
 			}
 
 			// Delete the existing boilerplate about page, always has a page ID of 1
-			pendingActions.push( deletePage( selectedSiteId, 1 ) );
+			const deletePageRequest = deletePage( selectedSiteId, 1 );
 
 			try {
-				await Promise.all( pendingActions );
-				const site = await siteRequest;
+				const [ site, pageCreationResult ] = await Promise.all( [
+					siteRequest,
+					pageRequest,
+					deletePageRequest,
+				] );
 				if ( ! site ) {
 					throw new Error( 'Unable to load site details' );
 				}
 				const siteURL = site.URL;
 
 				if ( pageRequest ) {
-					const homePagePostId = ( await pageRequest ).id;
+					if ( ! pageCreationResult ) {
+						throw new Error( 'Unable to create home page' );
+					}
+					const homePagePostId = pageCreationResult.id;
 					await setStaticHomepageOnSite( selectedSiteId, homePagePostId );
 				}
 

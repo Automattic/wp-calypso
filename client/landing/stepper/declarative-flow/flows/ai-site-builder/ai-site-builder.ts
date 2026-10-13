@@ -222,14 +222,13 @@ const aiSiteBuilder: FlowV2< typeof initialize > = {
 
 							const siteRequest = resolveSelect( SITE_STORE ).getSite( siteId );
 							let pageRequest: Promise< { id: number } > | undefined;
-							const pendingActions: Promise< unknown >[] = [ siteRequest ];
 
 							if ( ! gardenName ) {
 								// Add blog sticker - this runs independently and errors are handled by the mutation's onError callback (only for non-garden sites)
 								addBlogSticker( siteId, 'big-sky-free-trial' );
 
 								// Create a new home page if one is not set yet (only for non-garden sites)
-								const request: Promise< { id: number } > = wpcom.req.post(
+								pageRequest = wpcom.req.post(
 									{
 										path: '/sites/' + siteId + '/pages',
 										apiNamespace: 'wp/v2',
@@ -241,36 +240,32 @@ const aiSiteBuilder: FlowV2< typeof initialize > = {
 										content: '<!-- wp:paragraph -->\n<p>Hello world!</p>\n<!-- /wp:paragraph -->',
 									}
 								);
-								pageRequest = request;
-								pendingActions.push( request );
 							}
 
 							// Only apply design and delete page for non-garden sites
-							if ( ! gardenName ) {
-								pendingActions.push( deletePage( siteId || '', 1 ) );
-							}
-							pendingActions.push( setIntentOnSite( siteSlug, SiteIntent.AIAssembler ) );
-
-							try {
-								await Promise.all( pendingActions );
-							} catch ( error ) {
+							const deletePageRequest = ! gardenName ? deletePage( siteId || '', 1 ) : undefined;
+							const intentRequest = setIntentOnSite( siteSlug, SiteIntent.AIAssembler );
+							const results = await Promise.all( [
+								siteRequest,
+								pageRequest,
+								deletePageRequest,
+								intentRequest,
+							] ).catch( () => null );
+							if ( ! results ) {
 								return;
 							}
+							const [ siteData, pageCreationResult ] = results;
 
 							// Defensive check for site data (always first)
-							const siteData = await siteRequest;
 							if ( ! siteData || ! siteData.URL ) {
 								return;
 							}
 							const siteURL = siteData.URL;
 
 							// Handle page creation result (only exists for non-garden sites)
-							if ( pageRequest ) {
-								const pageCreationResult = await pageRequest;
-								if ( pageCreationResult && pageCreationResult.id ) {
-									const homePagePostId = pageCreationResult.id;
-									await setStaticHomepageOnSite( siteId, homePagePostId );
-								}
+							if ( pageCreationResult && pageCreationResult.id ) {
+								const homePagePostId = pageCreationResult.id;
+								await setStaticHomepageOnSite( siteId, homePagePostId );
 							}
 
 							const storedPrompt = window.sessionStorage.getItem( 'stored_ai_prompt' );
