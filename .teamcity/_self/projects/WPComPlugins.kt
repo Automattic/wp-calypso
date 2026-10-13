@@ -122,7 +122,6 @@ object CalypsoApps: BuildType({
 		bashNodeScript {
 			name = "Install dependencies"
 			scriptContent = """
-				composer install
 				ELECTRON_SKIP_BINARY_DOWNLOAD=1 yarn install
 			"""
 		}
