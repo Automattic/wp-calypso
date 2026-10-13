@@ -124,14 +124,18 @@ function SiteCell( {
 	license,
 	isAgencyOwner,
 	isProvisioning,
+	onManageInPressable,
 }: {
 	license: JetpackLicense;
 	isAgencyOwner: boolean;
 	isProvisioning: boolean;
+	onManageInPressable: ( license: JetpackLicense ) => void;
 } ) {
 	if ( isPressableLicense( license ) && ! license.revoked_at ) {
 		return isAgencyOwner ? (
-			<ExternalLink href={ PRESSABLE_AGENCY_URL }>{ __( 'Manage in Pressable' ) }</ExternalLink>
+			<ExternalLink href={ PRESSABLE_AGENCY_URL } onClick={ () => onManageInPressable( license ) }>
+				{ __( 'Manage in Pressable' ) }
+			</ExternalLink>
 		) : (
 			<Text variant="muted">{ __( 'Managed by agency owner' ) }</Text>
 		);
@@ -233,10 +237,12 @@ export function getLicenseFields( {
 	locale,
 	isAgencyOwner,
 	provisioningLicenseKeys,
+	onManageInPressable,
 }: {
 	locale: string;
 	isAgencyOwner: boolean;
 	provisioningLicenseKeys: Set< string >;
+	onManageInPressable: ( license: JetpackLicense ) => void;
 } ): Field< JetpackLicense >[] {
 	const statusLabels = getLicenseStatusLabels();
 	const renderDate = ( value: string | null ) => (
@@ -284,6 +290,7 @@ export function getLicenseFields( {
 					license={ item }
 					isAgencyOwner={ isAgencyOwner }
 					isProvisioning={ provisioningLicenseKeys.has( item.license_key ) }
+					onManageInPressable={ onManageInPressable }
 				/>
 			),
 		},
