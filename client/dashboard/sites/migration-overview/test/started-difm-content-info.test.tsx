@@ -90,12 +90,14 @@ it( 'waits for fresh site data before navigating after cancelling a ticketless m
 
 	await userEvent.click( await screen.findByRole( 'button', { name: 'Cancel migration' } ) );
 	expect( screen.getByText( /your original site will stay as is/i ) ).toBeVisible();
-	await userEvent.click(
-		within( screen.getByRole( 'dialog' ) ).getByRole( 'button', { name: 'Cancel migration' } )
-	);
+	const confirmButton = within( screen.getByRole( 'dialog' ) ).getByRole( 'button', {
+		name: 'Cancel migration',
+	} );
+	await userEvent.click( confirmButton );
 
 	await waitFor( () => expect( siteRefresh.isDone() ).toBe( true ) );
 	expect( mockNavigate ).not.toHaveBeenCalled();
+	expect( confirmButton ).toHaveClass( 'is-busy' );
 	resolveSiteResponse( cancelledSite );
 
 	await waitFor( () =>
@@ -109,6 +111,29 @@ it( 'waits for fresh site data before navigating after cancelling a ticketless m
 	expect( mockCreateSuccessNotice ).toHaveBeenCalledWith( 'Migration cancelled.', {
 		type: 'snackbar',
 	} );
+} );
+
+it( 'clears the busy state if refreshing the site fails', async () => {
+	mockTicket( null );
+	nock( 'https://public-api.wordpress.com' )
+		.post( '/wpcom/v2/sites/123/automated-migration/cancel-migration' )
+		.reply( 200, { success: true } );
+	nock( 'https://public-api.wordpress.com' )
+		.get( `/rest/v1.1/sites/${ site.slug }` )
+		.query( true )
+		.reply( 404, { error: 'unknown_blog', message: 'Unable to load site' } );
+	render( <StartedDIFMContentInfo site={ site } /> );
+
+	await userEvent.click( await screen.findByRole( 'button', { name: 'Cancel migration' } ) );
+	const confirmButton = within( screen.getByRole( 'dialog' ) ).getByRole( 'button', {
+		name: 'Cancel migration',
+	} );
+	await userEvent.click( confirmButton );
+
+	await waitFor( () => expect( mockCreateErrorNotice ).toHaveBeenCalled() );
+	expect( confirmButton ).not.toHaveClass( 'is-busy' );
+	expect( mockNavigate ).not.toHaveBeenCalled();
+	expect( mockCreateSuccessNotice ).not.toHaveBeenCalled();
 } );
 
 it( 'requests support cancellation for an active transfer with a ticket', async () => {
