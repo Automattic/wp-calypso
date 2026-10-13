@@ -62,7 +62,7 @@ const toolCall = update( {
 	delta: { deltaType: 'tool_argument', content: '{}', toolCallId: 'call-1' },
 	text: 'Done.',
 } );
-const final = update( { status: { state: 'completed' }, final: true, kind: 'status' } );
+const finalUpdate = update( { status: { state: 'completed' }, final: true, kind: 'status' } );
 
 // Lets the stream run until it awaits its next pause.
 const flush = () => new Promise( ( resolve ) => setTimeout( resolve, 0 ) );
@@ -130,7 +130,7 @@ describe( 'useAgentChat — isReplying', () => {
 			yield toolCall;
 			await pause();
 
-			yield final;
+			yield finalUpdate;
 		} );
 		await renderHarness( true );
 
@@ -166,7 +166,7 @@ describe( 'useAgentChat — isReplying', () => {
 		sendMessageStream.mockImplementationOnce( async function* () {
 			await pause();
 
-			yield final;
+			yield finalUpdate;
 		} );
 		await renderHarness( true );
 
@@ -196,7 +196,7 @@ describe( 'useAgentChat — isReplying', () => {
 			yield replyText;
 			await pause();
 
-			yield final;
+			yield finalUpdate;
 		} );
 		await renderHarness();
 

@@ -728,17 +728,17 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 
 					// Reply text means the agent is talking; any other update means it's working.
 					// An empty content delta is a keep-alive and changes nothing.
-					const isReplying = update.delta?.deltaType === 'content';
-					const isKeepAlive = isReplying && ! update.delta?.content;
+					const isContentDelta = update.delta?.deltaType === 'content';
+					const isKeepAlive = isContentDelta && ! update.delta?.content;
 					if ( trackReplyingRef.current && ! isKeepAlive ) {
 						setState( ( prev ) =>
-							prev.isReplying === isReplying
+							prev.isReplying === isContentDelta
 								? prev
 								: {
 										...prev,
-										isReplying,
+										isReplying: isContentDelta,
 										// The progress text is stale once the reply starts.
-										...( isReplying && { progressMessage: null, progressPhase: null } ),
+										...( isContentDelta && { progressMessage: null, progressPhase: null } ),
 									}
 						);
 					}
