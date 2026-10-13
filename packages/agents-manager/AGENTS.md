@@ -28,7 +28,7 @@ cd apps/agents-manager && yarn dev --sync
 - **i18n**: Use `@wordpress/i18n` with the `__i18n_text_domain__` text domain placeholder — passed unquoted as it is a global constant, not a string literal. The webpack `DefinePlugin` replaces it with `'default'` at build time.
 - **Curly quotes**: Preserve `“”` `‘’` exactly as they appear. Do not convert to unicode escapes or ASCII equivalents.
 - **Docs move with the code**: any change to code, styles, config, or behavior MUST update every doc that describes it, in the same PR — `README.md` and `AGENTS.md` files, other Markdown docs, docblocks, and comments. Find them by searching for the names you changed (files, exports, props, classes, flags) instead of relying on memory, and check the docs again before finishing.
-- **Changes clean up after themselves**: a change or removal MUST update or remove everything it leaves behind, in the same PR — callers, types, tests, mocks, styles, dependencies, and code nothing else uses any more. Find them by searching for the names you changed. For anything other repos read (the provider contract, `window.__agentsManagerActions`, window events), search Big Sky, Jetpack, WooCommerce AI and wpcom too, and keep it until no deployed build reads it.
+- **Changes clean up after themselves**: a change or removal MUST update or remove everything it leaves behind, in the same PR — callers, types, tests, mocks, styles, dependencies, and code nothing else uses any more. Search for the names you changed, as for docs, and search again before finishing: only the references you mean to keep should remain. Before removing anything other repos read (the provider contract, `window.__agentsManagerActions`, window events), search Big Sky, Jetpack, WooCommerce AI and wpcom too; while a deployed build still reads it, keep it and say in the PR's deploy dependencies when it can go.
 
 ## Working in Heavily Shared Components
 
@@ -60,13 +60,16 @@ The editor abilities (`abilities/editor-abilities.ts`) load as an async chunk on
 
 - **The backend route settings decide scope** (`wpcom` repo, `lib/ai/agents/route-settings/wp-orchestrator/`). Client-side registration never makes an ability callable.
 - **Provider order decides execution** — tool calls resolve first-write-wins by ability name, and `amToolProvider` runs first.
-- **Adding an ability**: a folder under `src/abilities/` plus an entry in `EDITOR_ABILITIES`, or in the facade's `ALL_SURFACE_ABILITIES` for a light ability every surface needs. Shared chat code reaches the editor chunk only through the facade. Chat components go in the converter's `AM_COMPONENTS`, through `lazyComponent()` when they carry editor code.
+- **Add an ability** as a folder under `src/abilities/` plus an entry in `EDITOR_ABILITIES`, or in the facade's `ALL_SURFACE_ABILITIES` for a light ability every surface needs. Shared chat code reaches the editor chunk only through the facade. Chat components go in the converter's `AM_COMPONENTS`, through `lazyComponent()` when they carry editor code.
 - **Return `successResult()` / `errorResult()`** (`abilities/ability-result.ts`) — the backend reads that envelope.
 - **Never rename an ability** — the route settings match on the name, so a rename silently drops it everywhere.
 - **Guard callbacks that change editor state** with an `isEditorPage()` early return, as `set-site-logo` does.
 - **Validate arguments in the callback** — nothing enforces the `input_schema` at runtime: a stringified `"false"` is truthy, and an empty object arrives as `[]`.
 - **Resolve block ids with `resolveClientId()`** — the agent knows blocks by the short ids AM's page context hands out (`utils/block-ids.ts`).
-- **Take checkpoints through `withCheckpoint()`** (`utils/checkpoints.ts`); a write that lands later or outside a callback (a picker pick, the streamed page design) uses `setCheckpoint()` guarded by `hasCheckpoint()`, taken while the state is still the user's. A new domain needs a scoped key, a snapshot/restore and redo support. A batch records through the `CheckpointRecorder` it is handed — `markWritten()` for an up-front domain it changed, `capturePageRename()` / `captureMenu()` as it reaches pages and menus — and returns a partial failure instead of throwing, so the checkpoint survives.
+- **Take checkpoints through `withCheckpoint()`** (`utils/checkpoints.ts`):
+  - A write that lands later or outside a callback (a picker pick, the streamed page design) uses `setCheckpoint()` guarded by `hasCheckpoint()`, taken while the state is still the user's.
+  - A new domain needs a scoped key, a snapshot/restore and redo support.
+  - A batch records through the `CheckpointRecorder` it is handed — `markWritten()` for an up-front domain it changed, `capturePageRename()` / `captureMenu()` as it reaches pages and menus — and returns a partial failure instead of throwing, so the checkpoint survives.
 
 ## Pitfalls
 
