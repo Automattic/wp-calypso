@@ -12,11 +12,12 @@ import {
 import { __, sprintf } from '@wordpress/i18n';
 import { wordpress } from '@wordpress/icons';
 import { useAnalytics } from '../../app/analytics';
+import { useLocale } from '../../app/locale';
 import { purchasesRoute } from '../../app/router/me';
 import Grid from '../../components/grid';
 import { commerceGardenPlan } from '../../components/icons';
 import OverviewCard from '../../components/overview-card';
-import { PurchaseExpiryStatus } from '../../components/purchase-expiry-status';
+import { getPurchaseExpiryStatusText } from '../../components/purchase-expiry-status';
 import RouterLinkButton from '../../components/router-link-button';
 import { isDashboardBackport } from '../../utils/is-dashboard-backport';
 import {
@@ -96,6 +97,7 @@ function JetpackPlanCard( {
 	purchase?: Purchase;
 	isLoading: boolean;
 } ) {
+	const locale = useLocale();
 	const products = getJetpackProductsForSite( site );
 	const productsToDisplay = products.length > 0 ? products : JETPACK_PRODUCTS;
 
@@ -104,7 +106,7 @@ function JetpackPlanCard( {
 			title={ __( 'Subscriptions' ) }
 			icon={ <JetpackLogo /> }
 			heading={ getSitePlanDisplayName( site ) }
-			description={ getCardDescription( site, purchase ) }
+			description={ getCardDescription( site, locale, purchase ) }
 			link={ getSitePlanUrl( site ) }
 			tracksId="site-overview-plan"
 			isLoading={ isLoading }
@@ -144,12 +146,13 @@ function WpcomPlanCard( {
 	hasPurchases: boolean;
 	isLoading: boolean;
 } ) {
+	const locale = useLocale();
 	return (
 		<OverviewCard
 			title={ __( 'Plan' ) }
 			icon={ wordpress }
 			heading={ getSitePlanDisplayName( site ) }
-			description={ getCardDescription( site, purchase ) }
+			description={ getCardDescription( site, locale, purchase ) }
 			link={ getSitePlanUrl( site, purchase ) }
 			tracksId="site-overview-plan"
 			isLoading={ isLoading }
@@ -211,12 +214,13 @@ function CommerceGardenPlanCard( {
 	purchase?: Purchase;
 	isLoading: boolean;
 } ) {
+	const locale = useLocale();
 	return (
 		<OverviewCard
 			title={ __( 'Plan' ) }
 			icon={ commerceGardenPlan }
 			heading={ getSitePlanDisplayName( site ) }
-			description={ getCardDescription( site, purchase ) }
+			description={ getCardDescription( site, locale, purchase ) }
 			link={ getSitePlanUrl( site, purchase ) }
 			tracksId="plan"
 			isLoading={ isLoading }
@@ -259,7 +263,7 @@ export default function PlanCard( { site }: { site: Site } ) {
 	);
 }
 
-function getCardDescription( site: Site, purchase?: Purchase ) {
+function getCardDescription( site: Site, locale: string, purchase?: Purchase ) {
 	switch ( site.plan?.product_slug ) {
 		case DotcomPlans.FREE_PLAN:
 			return __( 'Upgrade to access all hosting features.' );
@@ -272,7 +276,7 @@ function getCardDescription( site: Site, purchase?: Purchase ) {
 	}
 
 	if ( purchase ) {
-		return <PurchaseExpiryStatus purchase={ purchase } isInsideLink />;
+		return getPurchaseExpiryStatusText( purchase, locale );
 	}
 
 	return undefined;

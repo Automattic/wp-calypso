@@ -14,10 +14,9 @@ import { cart } from '@wordpress/icons';
 import { useAnalytics } from '../../../app/analytics';
 import RouterLinkButton from '../../../components/router-link-button';
 import { TextBlur } from '../../../components/text-blur';
-import { a4aLink } from '../../../utils/link';
 import { WPCOM_CREATOR_PLAN_SLUG, WPCOM_HOSTING_FAMILY_SLUG } from '../lib/wpcom-hosting';
 import { MARKETPLACE_REFERRAL_CHECKOUT_ROUTE } from '../paths';
-import { getCheckoutUrl } from './lib/checkout-url';
+import { getCheckoutUrl, getLegacyCheckoutUrl } from './lib/checkout-url';
 import { getTermSuffix } from './lib/product-pricing';
 import { getProductShortTitle } from './lib/product-title';
 import { useCartLines } from './use-cart-lines';
@@ -67,12 +66,10 @@ export default function CartMenu( {
 		term,
 		isReferralMode,
 	} );
-	// TODO: The dashboard assumes every agency is on Billing Dragon. Until the
-	// last agencies move off the previous billing system, their carts go to the
-	// checkout that can charge them, with the products pre-selected.
-	const legacyCheckoutUrl = a4aLink(
-		`/marketplace/checkout?product_slug=${ lines.map( ( { product } ) => product.slug ).join( ',' ) }`
-	);
+	const checkoutLines = lines.map( ( { product, item } ) => ( {
+		product,
+		quantity: item.quantity,
+	} ) );
 
 	const checkoutButtonProps = {
 		variant: 'primary' as const,
@@ -99,11 +96,8 @@ export default function CartMenu( {
 			{ ...checkoutButtonProps }
 			href={
 				isLegacyBilling
-					? legacyCheckoutUrl
-					: getCheckoutUrl(
-							lines.map( ( { product, item } ) => ( { product, quantity: item.quantity } ) ),
-							{ term, hasWpcomHostingPlan }
-						)
+					? getLegacyCheckoutUrl( checkoutLines )
+					: getCheckoutUrl( checkoutLines, { term, hasWpcomHostingPlan } )
 			}
 		/>
 	);
@@ -113,6 +107,8 @@ export default function CartMenu( {
 			open={ open }
 			onToggle={ onToggle }
 			popoverProps={ { placement: 'bottom-end' } }
+			// Focuses the panel, not its first Remove button, which Enter would trigger.
+			focusOnMount
 			expandOnMobile
 			renderToggle={ ( { isOpen, onToggle } ) => (
 				<Button

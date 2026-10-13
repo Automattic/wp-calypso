@@ -130,7 +130,7 @@ describe( 'CreditsMeter', () => {
 		const onToggle = jest.fn();
 		render( <CreditsMeter status={ paid } isOpen={ false } onToggle={ onToggle } /> );
 		const toggle = screen.getByRole( 'button', { name: `${ localNumber( 11.6 ) }k credits left` } );
-		expect( screen.getByTestId( 'dot' ) ).toHaveAttribute( 'data-tone', 'error' );
+		expect( screen.getByTestId( 'dot' ) ).toHaveAttribute( 'data-tone', 'muted' );
 		expect( screen.getByTestId( 'dot' ) ).toHaveAttribute( 'data-size', '12' );
 		fireEvent.click( toggle );
 		expect( onToggle ).toHaveBeenCalledWith( true );
@@ -209,6 +209,31 @@ describe( 'CreditsMeter', () => {
 		expect( screen.getByText( 'Monthly plan' ) ).toBeInTheDocument();
 		expect( screen.getByText( 'Resets Oct 8 (UTC)' ) ).toBeInTheDocument();
 		expect( screen.getByRole( 'link', { name: 'Upgrade' } ) ).toHaveClass( 'is-primary' );
+	} );
+
+	it.each( [
+		[ 'someone who can’t buy', 'Ask a site admin to add more.' ],
+		[
+			'an admin who didn’t buy the plan',
+			'This plan was purchased by a different WordPress.com account. To manage this plan, log in to that account or contact the account owner.',
+		],
+	] )( 'shows the purchase hint instead of a CTA to %s', ( _who, purchaseHint ) => {
+		render(
+			<CreditsMeter
+				status={ livePaid( 0 ) }
+				isOpen
+				onToggle={ () => {} }
+				purchaseHint={ purchaseHint }
+			/>
+		);
+		expect( screen.getByText( 'You’ve used all your site credits.' ) ).toBeInTheDocument();
+		expect( screen.getByText( purchaseHint ) ).toHaveClass(
+			'agents-manager-credits-meter__message'
+		);
+		expect( screen.queryByRole( 'link' ) ).not.toBeInTheDocument();
+		expect(
+			screen.queryByRole( 'button', { name: /Upgrade|Add credits/ } )
+		).not.toBeInTheDocument();
 	} );
 
 	it( 'keeps the detail and neutral percent on a paid plan with one credit left', () => {

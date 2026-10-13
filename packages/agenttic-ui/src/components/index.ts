@@ -13,6 +13,8 @@ export type { DiffCardProps, DiffCardChange, DiffCardContent, DiffDecision } fro
 
 // Feature components
 export { Suggestions } from './chat/Suggestions';
+export { Checklist } from './chat/Checklist';
+export type { ChecklistProps } from './chat/Checklist';
 
 // View components
 export { CollapsedView } from './views/CollapsedView';

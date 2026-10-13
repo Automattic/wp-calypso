@@ -1,0 +1,221 @@
+/* Nested under .checklist on purpose: the component renders inside a message,
+   whose markdown rules (.message *, .message ul, .message li) would otherwise
+   win on specificity. Values follow the Setup Guide prototype. */
+.checklist {
+	--checklist-card: color-mix( in srgb, var( --color-foreground ) 6%, var( --color-background ) );
+	--checklist-settled: color-mix( in srgb, var( --color-foreground ) 37%, var( --color-background ) );
+	--checklist-open: color-mix( in srgb, var( --color-foreground ) 88%, var( --color-background ) );
+
+	width: 100%;
+	padding: var( --spacing-2 );
+	border-radius: var( --radius-sm );
+	background-color: var( --checklist-card );
+	color: var( --color-foreground );
+	overflow: clip;
+
+	.header {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: var( --spacing-2 );
+		width: 100%;
+		padding: 0 var( --spacing );
+		border-radius: var( --radius-sm );
+		cursor: pointer;
+		text-align: start;
+
+		&:hover .chevron {
+			color: var( --color-foreground );
+		}
+
+		&:focus-visible {
+			outline: 2px solid var( --color-primary );
+			outline-offset: 2px;
+		}
+	}
+
+	.title {
+		flex: 1;
+		min-width: 0;
+		font-size: var( --text-sm );
+		font-weight: var( --font-weight-bold );
+		line-height: 1.6;
+		letter-spacing: -0.15px;
+		color: var( --color-foreground );
+	}
+
+	.meta {
+		display: flex;
+		align-items: center;
+		gap: var( --spacing );
+	}
+
+	.badge {
+		padding: var( --spacing ) var( --spacing-2 );
+		border-radius: var( --radius-sm );
+		background-color: var( --checklist-settled );
+		color: color-mix( in srgb, var( --color-background ) 8%, var( --color-foreground ) );
+		font-size: 12px;
+		font-weight: 400;
+		line-height: 16px;
+	}
+
+	.chevron {
+		flex-shrink: 0;
+		color: var( --color-muted-foreground );
+		transition: var( --transition-colors );
+
+		* {
+			color: inherit;
+		}
+	}
+
+	.list {
+		display: flex;
+		flex-direction: column;
+		margin: 0;
+		padding: 0 var( --spacing ) var( --spacing-2 );
+		list-style: none;
+		transition: padding 0.25s cubic-bezier( 0.2, 0.7, 0.3, 1 );
+
+		/* Rows fold through the grid track so height animates without JS. */
+		li {
+			display: grid;
+			grid-template-rows: 1fr;
+			margin: 0;
+			padding: 0;
+			transition:
+				grid-template-rows 0.25s cubic-bezier( 0.2, 0.7, 0.3, 1 ),
+				opacity 0.2s,
+				visibility 0s;
+		}
+
+		li.hidden {
+			grid-template-rows: 0fr;
+			opacity: 0;
+			visibility: hidden;
+			transition:
+				grid-template-rows 0.25s cubic-bezier( 0.2, 0.7, 0.3, 1 ),
+				opacity 0.2s,
+				visibility 0s 0.25s;
+		}
+	}
+
+	.roll {
+		min-height: 0;
+		margin: 0 0 -2px;
+		overflow: hidden;
+	}
+
+	.pad {
+		padding: var( --spacing-2 ) var( --spacing ) 2px;
+	}
+
+	&.collapsed .list {
+		padding-block-end: 0;
+	}
+
+	/* The row pulls its own padding back over the list gutter so the hover
+	   surface spans the full card width while text stays aligned. */
+	.item {
+		display: flex;
+		align-items: center;
+		gap: var( --spacing-2 );
+		width: calc( 100% + 2 * var( --spacing ) );
+		margin: -2px calc( -1 * var( --spacing ) );
+		padding: 2px var( --spacing );
+		border-radius: var( --radius-sm );
+		font-size: var( --text-xs );
+		line-height: 1.5;
+		letter-spacing: -0.08px;
+		text-align: start;
+		color: var( --checklist-open );
+
+		&[aria-disabled='true'] {
+			color: var( --color-muted-foreground );
+			cursor: not-allowed;
+		}
+	}
+
+	.actionable {
+		cursor: pointer;
+		transition: var( --transition-colors );
+
+		&:hover {
+			background-color: var( --color-muted );
+		}
+
+		&:focus-visible {
+			outline: 2px solid var( --color-primary );
+			outline-offset: -2px;
+		}
+	}
+
+	/* .message * styles every descendant directly, so the row's color and
+	   type never reach the label or the icon paths unless restored here. */
+	/* Read by assistive technology only: the glyph and strike-through are
+	   the visual status. */
+	.status {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		margin: -1px;
+		padding: 0;
+		overflow: hidden;
+		clip-path: inset( 50% );
+		white-space: nowrap;
+	}
+
+	.label {
+		flex: 1;
+		min-width: 0;
+		font-size: inherit;
+		font-weight: 400;
+		line-height: inherit;
+		letter-spacing: inherit;
+		color: inherit;
+	}
+
+	.item-in-progress {
+		color: var( --color-foreground );
+
+		.label {
+			font-weight: var( --font-weight-semibold );
+		}
+	}
+
+	.settled {
+		color: var( --checklist-settled );
+
+		.label {
+			text-decoration: line-through;
+		}
+	}
+
+	.icon {
+		flex-shrink: 0;
+		color: inherit;
+		fill: currentColor;
+
+		* {
+			color: inherit;
+		}
+	}
+
+	.icon-done {
+		color: var( --color-primary );
+
+		.icon-check {
+			fill: none;
+			stroke: var( --color-primary-foreground );
+		}
+	}
+}
+
+@media ( prefers-reduced-motion: reduce ) {
+	.checklist .list,
+	.checklist .list li,
+	.checklist .list li.hidden {
+		transition: none;
+	}
+}

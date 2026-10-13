@@ -67,7 +67,7 @@ export default function ResourceSection( {
 						showLogo={ showLogo }
 						showPreviewImage
 						tracksEventName={ tracksEventName }
-						isBorderless
+						isPlain
 					/>
 				) ) }
 			</Grid>

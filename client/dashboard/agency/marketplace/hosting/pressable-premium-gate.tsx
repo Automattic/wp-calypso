@@ -11,9 +11,8 @@ import { useAnalytics } from '../../../app/analytics';
 import { Card, CardBody, CardDivider, CardHeader } from '../../../components/card';
 import { SectionHeader } from '../../../components/section-header';
 import { useScheduleCall } from '../../tiers/use-schedule-call';
+import { HOSTING_REFERRAL_COMMISSION_PERCENTAGE } from '../lib/referral-commission';
 import { useReferralToggle } from '../use-referral-toggle';
-
-const PRESSABLE_PREMIUM_PLAN_COMMISSION_PERCENTAGE = 20;
 
 interface Props {
 	/** The selected plan, e.g. "Pressable Premium 3". */
@@ -50,9 +49,9 @@ export default function PressablePremiumGate( { label }: Props ) {
 							{ sprintf(
 								/* translators: %d is the commission percentage. */
 								__(
-									'Premium plans are sold through referrals. Turn on Refer products to refer this plan to a client and earn %d%% commission on every payment.'
+									'Premium plans are sold through referrals. Turn on “Refer to clients” to refer this plan to a client and earn %d%% commission on every payment.'
 								),
-								PRESSABLE_PREMIUM_PLAN_COMMISSION_PERCENTAGE
+								HOSTING_REFERRAL_COMMISSION_PERCENTAGE
 							) }
 						</Text>
 					</VStack>
@@ -60,7 +59,7 @@ export default function PressablePremiumGate( { label }: Props ) {
 						__nextHasNoMarginBottom
 						checked={ checked }
 						disabled={ disabled }
-						label={ __( 'Refer products' ) }
+						label={ __( 'Refer to clients' ) }
 						onChange={ onReferToggle }
 					/>
 					<CardDivider />

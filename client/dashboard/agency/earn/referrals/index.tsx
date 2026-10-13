@@ -15,6 +15,8 @@ import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
 import RouterLinkButton from '../../../components/router-link-button';
 import { isAgencyApproved } from '../../marketplace/is-agency-approved';
+import { MARKETPLACE_PRODUCTS_ROUTE } from '../../marketplace/paths';
+import { useMarketplaceType } from '../../marketplace/use-marketplace-type';
 import MissingPaymentSettingsNotice from '../missing-payment-settings-notice';
 import BankDetailsNotice from './bank-details-notice';
 import ConsolidatedViews from './consolidated-views';
@@ -37,6 +39,7 @@ export default function EarnReferrals() {
 	);
 	const { data: products } = useQuery( agencyProductsQuery( agencyId ) );
 	const { recordTracksEvent } = useAnalytics();
+	const { updateMarketplaceType } = useMarketplaceType();
 
 	const [ view, setView ] = useState< View >( DEFAULT_VIEW );
 
@@ -51,15 +54,16 @@ export default function EarnReferrals() {
 					title={ __( 'Referrals' ) }
 					description={ __( 'Refer products and services and earn commissions.' ) }
 					actions={
-						hasReferrals && isAgencyApproved( agency ) ? (
+						! isLoading && isAgencyApproved( agency ) ? (
 							<RouterLinkButton
 								variant="primary"
-								to="/exclusive-offers"
-								onClick={ () =>
-									recordTracksEvent( 'calypso_a4a_referrals_make_a_referral_button_click' )
-								}
+								to={ MARKETPLACE_PRODUCTS_ROUTE }
+								onClick={ () => {
+									updateMarketplaceType( 'referral' );
+									recordTracksEvent( 'calypso_a4a_referrals_make_a_referral_button_click' );
+								} }
 							>
-								{ __( 'New referral' ) }
+								{ hasReferrals ? __( 'New referral' ) : __( 'Make a referral' ) }
 							</RouterLinkButton>
 						) : undefined
 					}

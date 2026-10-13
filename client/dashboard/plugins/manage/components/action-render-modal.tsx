@@ -192,7 +192,7 @@ function getConfirmText( actionId: string, extraActions: string[], items: Plugin
 	}
 }
 
-function getSiteList( actionId: string, items: PluginListRow[], sitesById: Map< number, Site > ) {
+function getSiteList( actionId: string, items: PluginListRow[], sitesById?: Map< number, Site > ) {
 	if ( items.length !== 1 ) {
 		return null;
 	}
@@ -230,7 +230,7 @@ function getSiteList( actionId: string, items: PluginListRow[], sitesById: Map< 
 	return (
 		<ul>
 			{ sites.map( ( siteId ) => {
-				const site = sitesById.get( siteId );
+				const site = sitesById?.get( siteId );
 
 				if ( ! site ) {
 					return null;

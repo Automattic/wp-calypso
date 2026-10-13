@@ -24,7 +24,6 @@ declare const agentsManagerData:
 	| {
 			agentProviders?: ( string | import( './utils/load-external-providers' ).LoadedProviders )[];
 			agentId?: string;
-			helpCenterUrl?: string;
 			/** Dev/internal context (localhost, jurassic, proxied a11ns, internal Atomic). Drives `is_test`. */
 			isDevMode?: boolean;
 			/** Whether the current request is attributed to an Automattician for tracking. */
@@ -45,6 +44,8 @@ declare const agentsManagerData:
 			site?: { ID?: number; domain?: string };
 			emptyViewHeading?: string;
 			emptyViewHelp?: string;
+			/** Set where Big Sky is enabled; AM then sends Big Sky's page context. */
+			bigSkyEnabled?: boolean;
 	  }
 	| undefined;
 
@@ -126,6 +127,8 @@ interface AgentsManagerActions {
 	getTabId?: () => string;
 	/** The current turn's `turn_id`, or '' before the first send, so a host's requests can name the turn behind them. */
 	getTurnId?: () => string;
+	/** The id the agent knows a block by, so a host can name the block to it. */
+	getAgentBlockId?: ( clientId: string ) => string;
 	/**
 	 * Records a Tracks event in the `jetpack_big_sky_` family with its base
 	 * props. `eventName` includes the family prefix.
@@ -149,7 +152,6 @@ interface AgentsManagerActions {
 	chatNavigate: import( 'react-router-dom' ).NavigateFunction;
 	resumeChat: () => void;
 	isChatVisible: () => boolean;
-	getCurrentRoute: () => string;
 	isCompactMode?: boolean;
 	isChatEnabled?: boolean;
 	desktopMediaQuery?: string;
