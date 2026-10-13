@@ -173,13 +173,18 @@ const JetpackUpsellPage: React.FC< Props > = ( {
 		isUpsellOffSale ||
 		isUpsellAvailabilityUnknown
 	) {
-		return <QueryProductsList type="jetpack" currency={ currencyCode ?? undefined } />;
+		// Same position as below, so the query is not remounted once the page renders.
+		return (
+			<>
+				<QueryProductsList type="jetpack" currency={ currencyCode ?? undefined } />
+			</>
+		);
 	}
 
 	return (
 		<>
-			{ siteId && <QuerySiteProducts siteId={ siteId } /> }
 			<QueryProductsList type="jetpack" currency={ currencyCode ?? undefined } />
+			{ siteId && <QuerySiteProducts siteId={ siteId } /> }
 			<QueryIntroOffers siteId={ siteId ?? 'none' } />
 
 			<main className="jetpack-upsell">
