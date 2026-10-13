@@ -57,6 +57,12 @@ describe( 'siteOverviewRoute search', () => {
 		expect( search.source ).toBe( 'site-setup' );
 	} );
 
+	test( 'keeps the param the DIFM offer thank-you modal opens with', () => {
+		const search = validateSearch( defaultParseSearch( '?difmOffer=purchased' ) );
+
+		expect( search.difmOffer ).toBe( 'purchased' );
+	} );
+
 	test( 'drops an unknown DIFM offer value', () => {
 		const search = validateSearch( defaultParseSearch( '?difmOffer=unknown' ) );
 
