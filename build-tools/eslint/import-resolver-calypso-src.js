@@ -1,22 +1,22 @@
 const fs = require( 'fs' );
 const path = require( 'path' );
-const { ResolverFactory, CachedInputFileSystem } = require( 'enhanced-resolve' );
+const typescriptResolver = require( 'eslint-import-resolver-typescript' );
 
 const repoRoot = path.resolve( __dirname, '../..' );
 
-// Resolves workspace packages to their `calypso:src` entry, like webpack and Jest do,
-// so import rules check package source and don't depend on `yarn build-packages`.
-// Relative imports are handled only within workspace packages, whose source may be
-// TypeScript. Anything else falls through to the next resolver.
-const resolver = ResolverFactory.createResolver( {
-	fileSystem: new CachedInputFileSystem( fs, 4000 ),
-	useSyncFileSystemCalls: true,
-	// Keep the `node_modules` path so `import/order` still sees workspace packages as external.
-	symlinks: false,
-	extensions: [ '.json', '.js', '.mjs', '.jsx', '.ts', '.tsx' ],
+// Resolves workspace packages to their `calypso:src` entry, like webpack and Jest do, so
+// import rules check package source and don't depend on `yarn build-packages`. Gutenberg
+// solves the same problem the same way (tools/eslint/import-resolver.cjs).
+//
+// Only workspace packages are handled here. Anything else, including third-party packages,
+// falls through to the `node` resolver, since the TypeScript resolver would point those at
+// `@types` declarations rather than the runtime code a JavaScript file imports.
+const options = {
+	conditionNames: [ 'calypso:src', 'import', 'require', 'node', 'browser', 'default' ],
 	mainFields: [ 'calypso:src', 'module', 'main' ],
-	conditionNames: [ 'calypso:src', 'import', 'module', 'require' ],
-} );
+	extensions: [ '.ts', '.tsx', '.js', '.jsx', '.mjs', '.cjs', '.json' ],
+	alwaysTryTypes: false,
+};
 
 // Returns the workspace package folder (e.g. `packages/foo`) containing `file`, if any.
 // Files reached through a `node_modules` symlink count as part of their package.
@@ -35,19 +35,19 @@ function getWorkspacePackage( file ) {
 exports.interfaceVersion = 2;
 
 exports.resolve = function ( source, file ) {
-	try {
-		const fromPackage = getWorkspacePackage( file );
-		const isRelative = source.startsWith( '.' ) || path.isAbsolute( source );
-		if ( isRelative && ! fromPackage ) {
-			return { found: false };
-		}
-		const resolved = resolver.resolveSync( {}, path.dirname( file ), source );
-		const toPackage = resolved && getWorkspacePackage( resolved );
-		// A package importing itself by name resolves to its own folder, which `import/order`
-		// would treat as internal; leave those to the next resolver.
-		if ( toPackage && ( isRelative || toPackage !== fromPackage ) ) {
-			return { found: true, path: resolved };
-		}
-	} catch {}
+	const fromPackage = getWorkspacePackage( file );
+	const isRelative = source.startsWith( '.' ) || path.isAbsolute( source );
+	// Relative imports are resolved within workspace packages only, whose `export *`
+	// chains run through TypeScript files the `node` resolver can't find.
+	if ( isRelative && ! fromPackage ) {
+		return { found: false };
+	}
+	const result = typescriptResolver.resolve( source, file, options );
+	const toPackage = result.found && result.path && getWorkspacePackage( result.path );
+	// A package importing itself by name would resolve to its own folder, which
+	// `import/order` treats as internal; leave those to the `node` resolver.
+	if ( toPackage && ( isRelative || toPackage !== fromPackage ) ) {
+		return result;
+	}
 	return { found: false };
 };

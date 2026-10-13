@@ -34995,6 +34995,7 @@ __metadata:
     eslint: "npm:^9.0.0"
     eslint-config-prettier: "npm:^9.1.0"
     eslint-formatter-checkstyle: "npm:^9.0.1"
+    eslint-import-resolver-typescript: "npm:^4.4.4"
     eslint-plugin-import: "npm:^2.31.0"
     eslint-plugin-inclusive-language: "npm:^2.2.1"
     eslint-plugin-jest: "npm:^28.0.0"

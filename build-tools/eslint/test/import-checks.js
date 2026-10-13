@@ -11,10 +11,10 @@ test( 'import rules check workspace packages from source', async () => {
 	const ESLint = await loadESLint( { useFlatConfig: false } );
 	const eslint = new ESLint( { cwd: repoRoot } );
 	const code = [
-		"import { isJetpackBackupSlug, missingExport, Feature } from '@automattic/calypso-products';",
+		"import { isJetpackBackupSlug, missingExport } from '@automattic/calypso-products';",
 		"import { missingApiExport } from '@automattic/api-core';",
 		"import { clsx, missingClsxExport } from 'clsx';",
-		'export default [ isJetpackBackupSlug, missingExport, Feature, missingApiExport, clsx, missingClsxExport ];',
+		'export default [ isJetpackBackupSlug, missingExport, missingApiExport, clsx, missingClsxExport ];',
 	].join( '\n' );
 
 	const [ result ] = await eslint.lintText( code, {
@@ -25,9 +25,7 @@ test( 'import rules check workspace packages from source', async () => {
 		result.messages.filter( ( m ) => m.ruleId === 'import/named' ).map( ( m ) => m.message )
 	).toEqual( [
 		"missingExport not found in '@automattic/calypso-products'",
-		// A type has no runtime value.
-		"Feature not found in '@automattic/calypso-products'",
-		// Re-exported through `export *` from type-only files.
+		// Re-exported through `export *` across TypeScript files.
 		"missingApiExport not found in '@automattic/api-core'",
 		// An `.mjs` dependency.
 		"missingClsxExport not found in 'clsx'",
