@@ -1,9 +1,9 @@
 import { useCallback } from 'react';
 import { useSelector } from 'calypso/state';
-import { getProductsList, isListedProductOnSale } from 'calypso/state/products-list/selectors';
+import { getFreshProductsList, isListedProductOnSale } from 'calypso/state/products-list/selectors';
 
 export default function useIsOnSale() {
-	const productsList = useSelector( getProductsList );
+	const productsList = useSelector( getFreshProductsList );
 
 	return useCallback(
 		( productSlug: string ) => isListedProductOnSale( productsList, productSlug ),

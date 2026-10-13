@@ -1,4 +1,5 @@
-import { isListedProductOnSale } from '../is-product-on-sale';
+import { isListedProductOnSale, isProductOnSale } from '../is-product-on-sale';
+import type { AppState } from 'calypso/types';
 
 // Response subsets from the JETPACK-2825 client contract fixtures.
 const pro = ( available: unknown ) => ( {
@@ -29,5 +30,20 @@ describe( 'isListedProductOnSale', () => {
 		[ 'numeric availability', pro( 1 ) ],
 	] )( 'offers nothing for %s', ( _name, productsList ) => {
 		expect( onSale( productsList ) ).toEqual( [] );
+	} );
+} );
+
+describe( 'isProductOnSale', () => {
+	const stateWith = ( hasReceivedThisSession: boolean ) =>
+		( {
+			productsList: { hasReceivedThisSession, items: pro( true ) },
+		} ) as unknown as AppState;
+
+	it( 'trusts a list received in this session', () => {
+		expect( isProductOnSale( stateWith( true ), 'jetpack_pro_yearly' ) ).toBe( true );
+	} );
+
+	it( 'ignores a persisted list or one kept after a failed refresh', () => {
+		expect( isProductOnSale( stateWith( false ), 'jetpack_pro_yearly' ) ).toBe( false );
 	} );
 } );

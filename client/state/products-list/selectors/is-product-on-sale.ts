@@ -2,17 +2,27 @@ import 'calypso/state/products-list/init';
 import type { ProductListItem } from './get-products-list';
 import type { AppState } from 'calypso/types';
 
+type ListedAvailability = Record< string, Pick< ProductListItem, 'available' > >;
+
 /**
  * Whether new buyers can purchase the product. Missing, loading or malformed
  * data counts as off sale, so a stale card never offers a retired product.
  */
 export function isListedProductOnSale(
-	productsList: Record< string, Pick< ProductListItem, 'available' > > | undefined,
+	productsList: ListedAvailability | undefined,
 	productSlug: string
 ): boolean {
 	return productsList?.[ productSlug ]?.available === true;
 }
 
+/**
+ * The products list, only once this session has received it. Persisted items
+ * from an earlier session, or kept after a failed refresh, are not returned.
+ */
+export function getFreshProductsList( state: AppState ): ListedAvailability | undefined {
+	return state.productsList?.hasReceivedThisSession ? state.productsList.items : undefined;
+}
+
 export function isProductOnSale( state: AppState, productSlug: string ): boolean {
-	return isListedProductOnSale( state.productsList?.items, productSlug );
+	return isListedProductOnSale( getFreshProductsList( state ), productSlug );
 }

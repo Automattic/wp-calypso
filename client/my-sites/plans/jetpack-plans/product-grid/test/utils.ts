@@ -9,6 +9,7 @@ import {
 	PLAN_JETPACK_PRO_YEARLY,
 	PLAN_JETPACK_SECURITY_T1_MONTHLY,
 	PLAN_JETPACK_SECURITY_T1_YEARLY,
+	PLAN_JETPACK_SECURITY_T2_YEARLY,
 	TERM_ANNUALLY,
 	TERM_MONTHLY,
 } from '@automattic/calypso-products';
@@ -83,4 +84,17 @@ describe( 'getPlansToDisplay', () => {
 			).toEqual( [ currentPlanSlug, PLAN_JETPACK_COMPLETE_MONTHLY ] );
 		}
 	);
+	it( 'shows a retired T2 subscription once to its owner', () => {
+		expect(
+			displayedSlugs( {
+				duration: TERM_ANNUALLY,
+				currentPlanSlug: PLAN_JETPACK_SECURITY_T2_YEARLY,
+				isOnSale: slugsOnSale( PLAN_JETPACK_PRO_YEARLY, PLAN_JETPACK_COMPLETE ),
+			} )
+		).toEqual( [
+			PLAN_JETPACK_SECURITY_T2_YEARLY,
+			PLAN_JETPACK_PRO_YEARLY,
+			PLAN_JETPACK_COMPLETE,
+		] );
+	} );
 } );

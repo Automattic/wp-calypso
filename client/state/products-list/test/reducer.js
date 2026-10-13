@@ -5,7 +5,7 @@ import {
 	PRODUCTS_LIST_REQUEST_FAILURE,
 } from 'calypso/state/action-types';
 import { serialize, deserialize } from 'calypso/state/utils';
-import reducer, { items, isFetching, type } from '../reducer';
+import reducer, { hasReceivedThisSession, items, isFetching, type } from '../reducer';
 
 describe( 'reducer', () => {
 	jest.spyOn( console, 'warn' ).mockImplementation();
@@ -118,6 +118,38 @@ describe( 'reducer', () => {
 		test( 'should be false when a request fails', () => {
 			const state = isFetching( true, { type: PRODUCTS_LIST_REQUEST_FAILURE } );
 			expect( state ).toEqual( false );
+		} );
+	} );
+
+	describe( '#hasReceivedThisSession()', () => {
+		test( 'should default to false', () => {
+			expect( hasReceivedThisSession( undefined, {} ) ).toBe( false );
+		} );
+
+		test( 'should be true once a list is received', () => {
+			expect( hasReceivedThisSession( false, { type: PRODUCTS_LIST_RECEIVE } ) ).toBe( true );
+		} );
+
+		test( 'should stay true while a refresh is pending', () => {
+			expect( hasReceivedThisSession( true, { type: PRODUCTS_LIST_REQUEST } ) ).toBe( true );
+		} );
+
+		test( 'should be false after a failed refresh', () => {
+			expect( hasReceivedThisSession( true, { type: PRODUCTS_LIST_REQUEST_FAILURE } ) ).toBe(
+				false
+			);
+		} );
+
+		test( 'should not be persisted', () => {
+			const state = reducer( undefined, {
+				type: PRODUCTS_LIST_RECEIVE,
+				productsList: {},
+				productsListType: 'jetpack',
+			} );
+
+			expect( state.hasReceivedThisSession ).toBe( true );
+			expect( serialize( reducer, state ).root() ).not.toHaveProperty( 'hasReceivedThisSession' );
+			expect( deserialize( reducer, { items: {} } ).hasReceivedThisSession ).toBe( false );
 		} );
 	} );
 
