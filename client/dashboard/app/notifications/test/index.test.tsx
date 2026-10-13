@@ -2,9 +2,12 @@
  * @jest-environment jsdom
  */
 import config from '@automattic/calypso-config';
+import { captureException } from '@automattic/calypso-sentry';
 import { useQuery } from '@tanstack/react-query';
 import { act, render, waitFor } from '@testing-library/react';
 import { StrictMode } from 'react';
+import { logToLogstash } from 'calypso/lib/logstash';
+import { bumpStat } from '../../analytics';
 import { useAuth } from '../../auth';
 import { omnibarEvents } from '../../omnibar/events';
 import Notifications from '../index';
@@ -25,10 +28,26 @@ const mockUnsubscribe = jest.fn();
 const mockUser = { ID: 1, has_unseen_notes: false };
 let mockOnNotificationCount: ( count: number ) => void = () => {};
 let mockOnConfirmed: ( candidate: Candidate ) => boolean | void = () => {};
+let mockAlertCallbacks: {
+	onSound: ( result: string, candidate: Candidate ) => void;
+	onError: ( error: unknown, stage: string ) => void;
+};
+const mockRecordTracksEvent = jest.fn();
 
 jest.mock( '@automattic/calypso-config', () => ( {
 	__esModule: true,
-	default: { isEnabled: jest.fn() },
+	default: Object.assign(
+		jest.fn( () => 'test-env' ),
+		{ isEnabled: jest.fn() }
+	),
+} ) );
+jest.mock( '@automattic/calypso-sentry', () => ( { captureException: jest.fn() } ) );
+jest.mock( 'calypso/lib/logstash', () => ( {
+	logToLogstash: jest.fn( () => Promise.resolve() ),
+} ) );
+jest.mock( '../../analytics', () => ( {
+	bumpStat: jest.fn(),
+	useAnalytics: () => ( { recordTracksEvent: mockRecordTracksEvent } ),
 } ) );
 jest.mock( '@tanstack/react-query', () => ( {
 	useMutation: jest.fn( () => ( { mutateAsync: jest.fn() } ) ),
@@ -85,6 +104,7 @@ const configure = ( featureEnabled: boolean, preferenceEnabled: boolean ) => {
 				data: preferenceEnabled,
 				isSuccess: true,
 				isFetching: false,
+				isFetchedAfterMount: true,
 				isError: false,
 			} as ReturnType< typeof useQuery >;
 		}
@@ -93,11 +113,14 @@ const configure = ( featureEnabled: boolean, preferenceEnabled: boolean ) => {
 	mockUseAuth.mockReturnValue( {
 		user: mockUser,
 	} as ReturnType< typeof useAuth > );
-	mockSubscribeSubscriberNotifications.mockImplementation( ( _wpcom, onCount, onConfirmed ) => {
-		mockOnNotificationCount = onCount;
-		mockOnConfirmed = onConfirmed;
-		return mockUnsubscribe;
-	} );
+	mockSubscribeSubscriberNotifications.mockImplementation(
+		( _wpcom, onCount, onConfirmed, callbacks ) => {
+			mockOnNotificationCount = onCount;
+			mockOnConfirmed = onConfirmed;
+			mockAlertCallbacks = callbacks;
+			return mockUnsubscribe;
+		}
+	);
 	mockSubscribeUnseenCount.mockReturnValue( mockUnsubscribe );
 };
 
@@ -155,6 +178,178 @@ describe( 'Notifications subscriber alerts', () => {
 		expect( omnibarEvents.notificationsUnseenCount.emit ).toHaveBeenCalledWith( 3 );
 		expect( omnibarEvents.notificationsSubscriberReceived.emit ).toHaveBeenCalledTimes( 1 );
 		expect( mockSitesQuery ).not.toHaveBeenCalled();
+	} );
+
+	it( 'records the sound result of a subscriber alert', async () => {
+		configure( true, true );
+		render( <Notifications /> );
+		await waitFor( () =>
+			expect( mockSubscribeSubscriberNotifications ).toHaveBeenCalledTimes( 1 )
+		);
+
+		act( () => mockAlertCallbacks.onSound( 'played', candidate() ) );
+
+		expect( mockRecordTracksEvent ).toHaveBeenCalledWith(
+			'calypso_dashboard_notifications_subscriber_alert',
+			{ sound_result: 'played' }
+		);
+	} );
+
+	it( 'logs sound errors to logstash', async () => {
+		configure( true, true );
+		render( <Notifications /> );
+		await waitFor( () =>
+			expect( mockSubscribeSubscriberNotifications ).toHaveBeenCalledTimes( 1 )
+		);
+
+		mockAlertCallbacks.onError( new DOMException( 'blocked', 'NotAllowedError' ), 'resume' );
+
+		expect( logToLogstash ).toHaveBeenCalledWith(
+			expect.objectContaining( {
+				message: 'blocked',
+				tags: [ 'dashboard', 'subscriber-alerts' ],
+				properties: expect.objectContaining( {
+					stage: 'resume',
+					error_name: 'NotAllowedError',
+					env_id: 'test-env',
+				} ),
+			} )
+		);
+	} );
+
+	it( 'does not record sound results that every tab or burst would repeat', async () => {
+		configure( true, true );
+		render( <Notifications /> );
+		await waitFor( () =>
+			expect( mockSubscribeSubscriberNotifications ).toHaveBeenCalledTimes( 1 )
+		);
+
+		act( () => {
+			mockAlertCallbacks.onSound( 'hidden', candidate() );
+			mockAlertCallbacks.onSound( 'cooldown', candidate() );
+			mockAlertCallbacks.onSound( 'disposed', candidate() );
+		} );
+
+		expect( mockRecordTracksEvent ).not.toHaveBeenCalled();
+	} );
+
+	it( 'reports a failure to start monitoring subscriber notes to Sentry', async () => {
+		configure( true, true );
+		mockSubscribeSubscriberNotifications.mockImplementationOnce( () => {
+			throw new Error( 'init failed' );
+		} );
+		render( <Notifications /> );
+
+		await waitFor( () =>
+			expect( captureException ).toHaveBeenCalledWith(
+				expect.objectContaining( { message: 'init failed' } ),
+				{ tags: { calypso_section: 'dashboard', notifications_stage: 'subscriber_alerts' } }
+			)
+		);
+	} );
+
+	it( 'counts chunk load failures instead of reporting them', async () => {
+		configure( true, true );
+		mockSubscribeSubscriberNotifications.mockImplementationOnce( () => {
+			throw Object.assign( new Error( 'Loading chunk 123 failed' ), { name: 'ChunkLoadError' } );
+		} );
+		render( <Notifications /> );
+
+		await waitFor( () =>
+			expect( bumpStat ).toHaveBeenCalledWith(
+				'dashboard-notifications-chunk',
+				'subscriber_alerts'
+			)
+		);
+		expect( captureException ).not.toHaveBeenCalled();
+	} );
+
+	it( 'does not trust a cached preference until the server answers', async () => {
+		configure( true, true );
+		mockUseQuery.mockImplementation(
+			() =>
+				( {
+					data: true,
+					isSuccess: true,
+					isFetching: true,
+					isFetchedAfterMount: false,
+					isError: false,
+				} ) as ReturnType< typeof useQuery >
+		);
+		render( <Notifications /> );
+
+		await waitFor( () => expect( mockSubscribeUnseenCount ).toHaveBeenCalledTimes( 1 ) );
+		expect( mockSubscribeSubscriberNotifications ).not.toHaveBeenCalled();
+	} );
+
+	it( 'stops monitoring subscriber notes when the preference refetch fails', async () => {
+		configure( true, true );
+		mockUseQuery.mockImplementation(
+			() =>
+				( {
+					data: true,
+					isSuccess: false,
+					isFetching: false,
+					isFetchedAfterMount: true,
+					isError: true,
+				} ) as ReturnType< typeof useQuery >
+		);
+		render( <Notifications /> );
+
+		await waitFor( () => expect( mockSubscribeUnseenCount ).toHaveBeenCalledTimes( 1 ) );
+		expect( mockSubscribeSubscriberNotifications ).not.toHaveBeenCalled();
+	} );
+
+	it( 'reports a failure to start the unseen count to Sentry', async () => {
+		configure( false, false );
+		mockSubscribeUnseenCount.mockImplementationOnce( () => {
+			throw new Error( 'init failed' );
+		} );
+		render( <Notifications /> );
+
+		await waitFor( () =>
+			expect( captureException ).toHaveBeenCalledWith(
+				expect.objectContaining( { message: 'init failed' } ),
+				{ tags: { calypso_section: 'dashboard', notifications_stage: 'unseen_count' } }
+			)
+		);
+	} );
+
+	it( 'keeps the subscription while the preference refetches on focus', async () => {
+		configure( true, true );
+		const { rerender } = render( <Notifications /> );
+		await waitFor( () =>
+			expect( mockSubscribeSubscriberNotifications ).toHaveBeenCalledTimes( 1 )
+		);
+
+		mockUseQuery.mockImplementation(
+			() =>
+				( {
+					data: true,
+					isSuccess: true,
+					isFetching: true,
+					isFetchedAfterMount: true,
+					isError: false,
+				} ) as ReturnType< typeof useQuery >
+		);
+		rerender( <Notifications /> );
+		await new Promise( ( resolve ) => setTimeout( resolve, 0 ) );
+
+		expect( mockSubscribeSubscriberNotifications ).toHaveBeenCalledTimes( 1 );
+		expect( mockUnsubscribe ).not.toHaveBeenCalled();
+	} );
+
+	it( 'does not record a sound result after unmount', async () => {
+		configure( true, true );
+		const { unmount } = render( <Notifications /> );
+		await waitFor( () =>
+			expect( mockSubscribeSubscriberNotifications ).toHaveBeenCalledTimes( 1 )
+		);
+
+		unmount();
+		mockAlertCallbacks.onSound( 'played', candidate() );
+
+		expect( mockRecordTracksEvent ).not.toHaveBeenCalled();
 	} );
 
 	it( 'ignores a note whose live push predates enabling the preference', async () => {
