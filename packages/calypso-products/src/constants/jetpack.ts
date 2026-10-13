@@ -768,7 +768,9 @@ export const JETPACK_RESET_PLANS = < const >[
 	...JETPACK_SECURITY_PLANS,
 	...JETPACK_COMPLETE_PLANS,
 	...JETPACK_GROWTH_PLANS,
-	...JETPACK_PRO_PLANS,
+	// Pro monthly exists for billing only and is never sold.
+	PLAN_JETPACK_PRO_YEARLY,
+	PLAN_JETPACK_PRO_BI_YEARLY,
 	PLAN_JETPACK_GOLDEN_TOKEN,
 ];
 export const JETPACK_RESET_PLANS_BY_TERM = < const >[
