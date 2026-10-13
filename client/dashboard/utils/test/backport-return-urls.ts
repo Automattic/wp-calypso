@@ -26,6 +26,7 @@ const purchase = {
 	ID: 123,
 	site_slug: 'example.com',
 	product_slug: 'jetpack_backup_t1_yearly',
+	subscription_status: 'active',
 } as Purchase;
 
 function setEnvironment( {
@@ -111,5 +112,25 @@ describe( 'getRenewUrlForPurchases', () => {
 		expect( url.searchParams.get( 'redirect_to' ) ).toBe(
 			`${ window.location.origin }/purchases/subscriptions/example.com/123`
 		);
+	} );
+
+	test( 'returns to the new subscription after renewing a removed one', () => {
+		setEnvironment( { backport: true, jetpackCloud: false } );
+		const removedPurchase = { ...purchase, subscription_status: 'inactive' } as Purchase;
+		const url = new URL( getRenewUrlForPurchases( [ removedPurchase ] ) );
+		expect( url.searchParams.get( 'redirect_to' ) ).toBe(
+			'/purchases/subscriptions/example.com/:purchaseId'
+		);
+		expect( url.searchParams.get( 'cancel_to' ) ).toBe(
+			'/purchases/subscriptions/example.com/123'
+		);
+	} );
+
+	test( 'keeps an explicit return URL when renewing a removed subscription', () => {
+		setEnvironment( { backport: true, jetpackCloud: false } );
+		const removedPurchase = { ...purchase, subscription_status: 'inactive' } as Purchase;
+		const url = new URL( getRenewUrlForPurchases( [ removedPurchase ], '/sites/example.com' ) );
+		expect( url.searchParams.get( 'redirect_to' ) ).toBe( '/sites/example.com' );
+		expect( url.searchParams.get( 'cancel_to' ) ).toBe( '/sites/example.com' );
 	} );
 } );

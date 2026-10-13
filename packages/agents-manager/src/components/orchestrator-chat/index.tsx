@@ -533,6 +533,7 @@ export default function OrchestratorChat( {
 		userId: currentUser?.ID,
 		site,
 		isOpen: isOpen || ( ! isDocked && isCompactMode ),
+		isNoticeVisible: isOpen,
 	} );
 	const {
 		addMessage,
@@ -746,13 +747,14 @@ export default function OrchestratorChat( {
 
 	// One event per error the chat shows. `error` returns to null between
 	// attempts, so the same failure repeating on a later send counts again.
+	const { takeRefusalCode } = credits;
 	useEffect( () => {
 		if ( error ) {
 			recordAgentsManagerTracksEvent( 'calypso_agents_manager_chat_error', {
-				error_type: getOrchestratorErrorType( error ),
+				error_type: getOrchestratorErrorType( error, takeRefusalCode() ),
 			} );
 		}
-	}, [ error ] );
+	}, [ error, takeRefusalCode ] );
 
 	// Resume the conversation after a `wp-admin-navigate` full page reload;
 	// while such a resume is pending, hydration below must not replace the
@@ -1732,7 +1734,7 @@ export default function OrchestratorChat( {
 	const showProcessingIndicator =
 		( isProcessing || ( isThinking && ! isBuildingSite ) ) && ! shouldSuppressTransientThinking;
 
-	// Determine which suggestions to feed Agenttic following Big Sky's logic:
+	// Which suggestions to feed Agenttic:
 	// - Empty chat: provider empty-view chips plus dynamic chips.
 	// - Active chat/input: dynamic suggestions only.
 	let displayedEmptyViewSuggestions: Suggestion[] = [];

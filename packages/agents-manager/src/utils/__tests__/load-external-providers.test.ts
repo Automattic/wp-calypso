@@ -18,6 +18,8 @@ import { setStreamHandler } from '../../abilities/stream-page-design/stream';
 import { wpAdminNavigateAbility } from '../../abilities/wp-admin-navigate';
 import * as canvasBinding from '../canvas-binding';
 import { getAvailableCheckpoints } from '../checkpoints';
+import { getEditorPostContext } from '../editor-post-context';
+import { waitForEditedGlobalStyles } from '../global-styles';
 import {
 	loadExternalProviders,
 	mergeCapabilitiesInto,
@@ -41,6 +43,11 @@ jest.mock( '../canvas-binding', () => ( {
 	...jest.requireActual( '../canvas-binding' ),
 	bindToOpenCanvas: jest.fn(),
 	getBlockingMove: jest.fn( () => null ),
+} ) );
+jest.mock( '../editor-post-context', () => ( { getEditorPostContext: jest.fn( () => ( {} ) ) } ) );
+jest.mock( '../global-styles', () => ( {
+	...jest.requireActual( '../global-styles' ),
+	waitForEditedGlobalStyles: jest.fn( async () => undefined ),
 } ) );
 jest.mock( '../page-content-markup', () => ( { getPageContentMarkup: jest.fn( () => '' ) } ) );
 jest.mock( '../page-structure', () => ( { getPageStructure: jest.fn( () => null ) } ) );
@@ -848,6 +855,78 @@ describe( 'loadExternalProviders', () => {
 				...context,
 				...expected,
 			} );
+		} );
+	} );
+
+	describe( 'Big Sky page context', () => {
+		const postContext = {
+			current_page_id: 42,
+			id: 'post',
+			type: 'entity',
+			entityType: 'post',
+			entityId: '42',
+		};
+
+		const pageContext = () => ( {
+			url: window.location.href,
+			pathname: window.location.pathname,
+			search: window.location.search,
+			environment: 'wp-admin',
+			...postContext,
+		} );
+
+		beforeEach( () => {
+			jest.mocked( getEditorPostContext ).mockReturnValue( postContext );
+			jest.mocked( waitForEditedGlobalStyles ).mockClear();
+		} );
+
+		afterEach( () => jest.mocked( getEditorPostContext ).mockReturnValue( {} ) );
+
+		it( 'goes first where Big Sky is enabled', async () => {
+			const sidebarContext = { environment: 'gutenberg', titleSuggestionCount: 3 };
+			setAgentsManagerData( {
+				bigSkyEnabled: true,
+				agentProviders: [ { contextProvider: { getClientContext: () => sidebarContext } } ],
+			} );
+
+			const providers = await loadExternalProviders();
+
+			expect( providers.contextProvider?.getClientContext() ).toEqual( {
+				...pageContext(),
+				titleSuggestionCount: 3,
+			} );
+		} );
+
+		it( 'is sent with no provider registered', async () => {
+			setAgentsManagerData( { bigSkyEnabled: true, agentProviders: [] } );
+
+			const providers = await loadExternalProviders();
+
+			expect( providers.contextProvider?.getClientContext() ).toEqual( pageContext() );
+		} );
+
+		// The post editor fetches them only when asked, and the first message needs them.
+		it( 'starts loading the global styles where Big Sky is enabled', async () => {
+			setAgentsManagerData( { bigSkyEnabled: true, agentProviders: [] } );
+
+			await loadExternalProviders();
+
+			// The editor chunk resolves in a later task — let it settle.
+			await new Promise( ( resolve ) => setTimeout( resolve, 0 ) );
+
+			expect( waitForEditedGlobalStyles ).toHaveBeenCalled();
+		} );
+
+		it( 'is not sent where Big Sky is off', async () => {
+			const context = { url: 'https://example.com/woo' };
+			setAgentsManagerData( {
+				agentProviders: [ { contextProvider: { getClientContext: () => context } } ],
+			} );
+
+			const providers = await loadExternalProviders();
+
+			expect( providers.contextProvider?.getClientContext() ).toEqual( context );
+			expect( waitForEditedGlobalStyles ).not.toHaveBeenCalled();
 		} );
 	} );
 

@@ -1,4 +1,5 @@
 import { ODIE_ALLOWED_BOTS, ODIE_ALL_BOT_SLUGS } from './constants';
+import type { CheckoutSupportVariation } from '@automattic/data-stores';
 import type { ZendeskConversation } from '@automattic/zendesk-client';
 import type { ReactNode, PropsWithChildren, SetStateAction } from 'react';
 
@@ -28,6 +29,8 @@ export type OdieAssistantContextInterface = {
 	forceEmailSupport: boolean;
 	isChatRestricted: boolean;
 	launcherContext?: string;
+	// Set while the Help Center is open from checkout as part of the checkout support experiment.
+	checkoutSupportVariation?: CheckoutSupportVariation;
 	setExperimentVariationName: ( variationName: string | null | undefined ) => void;
 	setChat: ( chat: Chat | SetStateAction< Chat > ) => void;
 	setChatStatus: ( status: ChatStatus ) => void;
