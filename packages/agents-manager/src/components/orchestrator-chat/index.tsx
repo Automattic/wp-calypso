@@ -337,9 +337,13 @@ export default function OrchestratorChat( {
 	const [ isThinking, setIsThinking ] = useState( false );
 	const [ thinkingMessage, setThinkingMessage ] = useState< string | null >( null );
 	const [ isBuildingSite, setIsBuildingSite ] = useState( false );
-	const [ retriedToolCallIds, setRetriedToolCallIds ] = useState< ReadonlySet< string > >(
-		new Set()
-	);
+	// Tool-call ids are only unique within a transcript, so retries are tagged with
+	// the stream generation, which survives the temporary-to-server session id
+	// bootstrap but changes with any other session switch.
+	const [ retriedToolCalls, setRetriedToolCalls ] = useState< {
+		streamGeneration?: symbol;
+		ids: ReadonlySet< string >;
+	} >( { ids: new Set() } );
 	const [ sourceDriftInvalidatedCheckpointIds, setSourceDriftInvalidatedCheckpointIds ] = useState<
 		Set< string >
 	>( new Set() );
@@ -458,6 +462,13 @@ export default function OrchestratorChat( {
 			);
 	}, [ checkpointScopeIdentity, checkpointSessionId, checkpointSessionIdentity ] );
 	const checkpointStreamGeneration = streamedCheckpointMessagesRef.current.streamGeneration;
+	const retriedToolCallIds = useMemo(
+		() =>
+			retriedToolCalls.streamGeneration === checkpointStreamGeneration
+				? retriedToolCalls.ids
+				: new Set< string >(),
+		[ retriedToolCalls, checkpointStreamGeneration ]
+	);
 	const reportedResponseTaskIdsRef = useRef( new Set< string >() );
 	const agentChatConfig = useMemo( () => {
 		if ( ! agentConfig ) {
@@ -468,18 +479,24 @@ export default function OrchestratorChat( {
 		return {
 			...agentConfig,
 			onTaskUpdate: async ( update: TaskUpdate ) => {
-				const retryingToolCallId = getRetryingToolCallId( update.status?.message );
-				if ( retryingToolCallId ) {
-					setRetriedToolCallIds( ( previous ) =>
-						previous.has( retryingToolCallId )
-							? previous
-							: new Set( [ ...previous, retryingToolCallId ] )
-					);
-				}
-
 				const streamedMessages = streamedCheckpointMessagesRef.current;
 				const isCurrentStreamGeneration =
 					streamedMessages.streamGeneration === checkpointStreamGeneration;
+
+				const retryingToolCallId = getRetryingToolCallId( update.status?.message );
+				if ( isCurrentStreamGeneration && retryingToolCallId ) {
+					setRetriedToolCalls( ( previous ) => {
+						if ( previous.streamGeneration !== checkpointStreamGeneration ) {
+							return {
+								streamGeneration: checkpointStreamGeneration,
+								ids: new Set( [ retryingToolCallId ] ),
+							};
+						}
+						return previous.ids.has( retryingToolCallId )
+							? previous
+							: { ...previous, ids: new Set( [ ...previous.ids, retryingToolCallId ] ) };
+					} );
+				}
 				const blockEditAgentMessageText = getBlockEditAgentMessageText( update );
 				if ( isCurrentStreamGeneration && blockEditAgentMessageText ) {
 					const message: UIMessage = {
