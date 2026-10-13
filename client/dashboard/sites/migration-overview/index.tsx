@@ -5,10 +5,15 @@ import { getSiteMigrationState } from '../../utils/site-status';
 import { InProgressContentInfo } from './in-progress-content-info';
 import { PendingContentInfo } from './pending-content-info';
 import { StartedDIFMContentInfo } from './started-difm-content-info';
+import { WordPressMigration } from './wordpress';
 
 export default function SiteMigrationOverview( { siteSlug }: { siteSlug: string } ) {
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 	const migrationState = getSiteMigrationState( site );
+
+	if ( site.site_migration.type === 'wordpress' ) {
+		return <WordPressMigration site={ site } />;
+	}
 
 	if ( migrationState?.status === 'pending' ) {
 		return (
