@@ -50,6 +50,7 @@ const initialState = {
 		},
 	},
 	currentUser: {
+		user: { ID: 1, email: 'test@example.com' },
 		capabilities: { [ SITE_ID ]: { manage_options: true } },
 	},
 	ui: { language: { localeSlug: 'en' }, selectedSiteId: SITE_ID },
@@ -140,6 +141,24 @@ describe( 'DifmOfferBanner', () => {
 			upsell_id: 'themes-difm-offer',
 			upsell_feature_id: 'difm-offer',
 			variation: 'treatment',
+		} );
+	} );
+
+	test( 'opens the offer modal and records its events with the Themes source', async () => {
+		mockOffer( { isEligible: true, isLoading: false, variation: 'treatment' } );
+		renderBanner();
+
+		await userEvent.click( screen.getByRole( 'button', { name: 'See the offer' } ) );
+
+		expect(
+			await screen.findByRole( 'dialog', { name: 'We’ll build your site for free' } )
+		).toBeVisible();
+		expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_dashboard_upsell_impression', {
+			path: '/themes/:site',
+			source: 'themes',
+			variation: 'treatment',
+			upsell_id: 'difm-offer-modal',
+			upsell_feature_id: 'difm-offer',
 		} );
 	} );
 

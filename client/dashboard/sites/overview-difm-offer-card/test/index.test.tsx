@@ -124,6 +124,17 @@ describe( 'DIFMOfferCard', () => {
 		} );
 	} );
 
+	test( 'opens the offer modal from the call to action', async () => {
+		assignExperiment( 'treatment' );
+
+		render( <DIFMOfferCard site={ mockSite } /> );
+		await userEvent.click( await screen.findByRole( 'button', { name: 'See the offer' } ) );
+
+		expect(
+			await screen.findByRole( 'dialog', { name: 'We’ll build your site for free' } )
+		).toBeVisible();
+	} );
+
 	test( 'shows the DIFM upsell to a user in control', async () => {
 		assignExperiment( 'control' );
 

@@ -5,8 +5,10 @@ import { __ } from '@wordpress/i18n';
 import { close } from '@wordpress/icons';
 import { useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
+import { useAuth } from '../../app/auth';
 import { useLocale } from '../../app/locale';
 import { Callout } from '../../components/callout';
+import DifmOfferModal from '../../components/difm-offer-modal';
 import UpsellCTAButton from '../../components/upsell-cta-button';
 import { getDifmOfferCopy, useDifmOffer } from '../../utils/difm-offer';
 import { useDifmOfferEngagementTracking } from '../../utils/use-difm-offer-engagement-tracking';
@@ -39,6 +41,7 @@ const DISMISS_EVENT = 'calypso_banner_dismiss';
 export default function DIFMOfferCard( { site }: { site: Site } ) {
 	const localeSlug = useLocale();
 	const { recordTracksEvent } = useAnalytics();
+	const { user } = useAuth();
 	const { isLoading, variation } = useDifmOffer( {
 		planSlug: site.plan?.product_slug,
 		siteCreatedAt: site.options?.created_at,
@@ -60,12 +63,13 @@ export default function DIFMOfferCard( { site }: { site: Site } ) {
 		upsell_feature_id: UPSELL_FEATURE_ID,
 		variation,
 	} );
+	const [ isModalOpen, setIsModalOpen ] = useState( false );
 
 	if ( isLoading ) {
 		return null;
 	}
 
-	if ( ! copy ) {
+	if ( ! copy || variation === 'control' ) {
 		return <DIFMUpsellCard site={ site } />;
 	}
 
@@ -104,9 +108,7 @@ export default function DIFMOfferCard( { site }: { site: Site } ) {
 						upsellFeatureId={ UPSELL_FEATURE_ID }
 						tracksProperties={ tracksProperties }
 						tracksEventNames={ TRACKS_EVENT_NAMES }
-						onClick={ () => {
-							// The offer modal opens here in a follow-up.
-						} }
+						onClick={ () => setIsModalOpen( true ) }
 					/>
 				}
 			/>
@@ -117,6 +119,15 @@ export default function DIFMOfferCard( { site }: { site: Site } ) {
 				size="small"
 				onClick={ handleDismiss }
 			/>
+			{ isModalOpen && (
+				<DifmOfferModal
+					site={ site }
+					userEmail={ user.email }
+					variation={ variation }
+					source="site-overview"
+					onClose={ () => setIsModalOpen( false ) }
+				/>
+			) }
 		</div>
 	);
 }

@@ -12,8 +12,8 @@ export const DIFM_OFFER_EXPERIMENT = 'wpcom_difm_post_signup_offer_placeholder';
 
 /**
  * A QA flag that puts an eligible user in `treatment` without an ExPlat assignment.
- * Calypso applies `?flags=` only in development, the stage environments and calypso.live,
- * so the production build cannot turn it on. No config file enables it.
+ * Every config file sets it to false. Turn it on with `?flags=difm-offer/force-treatment`,
+ * which Calypso honours only for Automatticians, so real users cannot turn it on.
  */
 export const DIFM_OFFER_FORCE_TREATMENT_FLAG = 'difm-offer/force-treatment';
 
