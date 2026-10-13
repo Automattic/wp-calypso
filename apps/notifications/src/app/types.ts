@@ -33,8 +33,6 @@ export type Subject = {
 	media?: Media[];
 };
 
-export type NoteKind = 'comment' | 'reactions' | 'new_post' | 'notice';
-
 export type NotePost = {
 	title: string;
 	url: string;
@@ -143,7 +141,6 @@ export type Note = {
 			user?: string;
 			home?: string;
 		};
-		kind?: NoteKind;
 		post?: NotePost;
 		site?: NoteSite;
 		parent_comment?: NoteParentComment;

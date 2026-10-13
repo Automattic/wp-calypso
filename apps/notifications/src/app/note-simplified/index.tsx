@@ -3,21 +3,24 @@ import CommentNote from './layouts/comment';
 import NewPostNote from './layouts/new-post';
 import NoticeNote from './layouts/notice';
 import ReactionsNote from './layouts/reactions';
-import type { Note, NoteKind } from '../types';
+import type { Note } from '../types';
 import type { ComponentType } from 'react';
 import './style.scss';
 
-const LAYOUTS: Record< NoteKind, ComponentType< { note: Note } > > = {
+const LAYOUT_BY_TYPE: Record< string, ComponentType< { note: Note } > > = {
 	comment: CommentNote,
+	automattcher: CommentNote,
+	like: ReactionsNote,
+	comment_like: ReactionsNote,
+	reblog: ReactionsNote,
+	follow: ReactionsNote,
 	new_post: NewPostNote,
-	reactions: ReactionsNote,
-	notice: NoticeNote,
 };
 
-export const hasNoteContext = ( note: Note ) => !! note.meta?.kind && note.meta.kind in LAYOUTS;
+export const hasNoteContext = ( note: Note ) => !! note.meta?.actor;
 
 export default function SimplifiedNote( { note }: { note: Note } ) {
-	const Layout = LAYOUTS[ note.meta?.kind ?? 'notice' ];
+	const Layout = LAYOUT_BY_TYPE[ note.type ] ?? NoticeNote;
 
 	return (
 		<VStack spacing={ 4 }>

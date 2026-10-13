@@ -55,7 +55,6 @@ describe( 'SimplifiedNote', () => {
 			makeNote( {
 				meta: {
 					ids: { site: SITE, post: POST, comment: 31, parent_comment: 30 },
-					kind: 'comment',
 					parent_comment: {
 						text: 'The original comment',
 						author_name: 'Steve',
@@ -85,7 +84,6 @@ describe( 'SimplifiedNote', () => {
 				type: 'automattcher',
 				meta: {
 					ids: { site: SITE, post: POST },
-					kind: 'comment',
 					actor: { name: 'Kwame', avatar: '' },
 					actor_count: 1,
 				},
@@ -106,7 +104,7 @@ describe( 'SimplifiedNote', () => {
 		renderNote(
 			makeNote( {
 				type: 'achievement',
-				meta: { ids: {}, kind: 'notice' },
+				meta: { ids: {} },
 				subject: [ text( 'Achievement unlocked: The Headliner' ) ],
 				body: [ text( 'Change a post title five times before publishing it.' ) ],
 			} )
@@ -120,7 +118,7 @@ describe( 'SimplifiedNote', () => {
 		const { container } = renderNote(
 			makeNote( {
 				type: 'new_post',
-				meta: { ids: { site: SITE, post: POST }, kind: 'new_post' },
+				meta: { ids: { site: SITE, post: POST } },
 				body: [
 					text( '', {
 						meta: { ids: { site: SITE, post: POST } },
