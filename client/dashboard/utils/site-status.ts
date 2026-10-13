@@ -55,7 +55,7 @@ export function getSiteMigrationState( item: Site ): SiteMigrationStatus | null 
 export function isSiteMigrationInProgress( item: Site ) {
 	// A WordPress (Reprint) migration reports its own state. The others still go by their flow sticker.
 	if ( item.site_migration.type === 'wordpress' ) {
-		return item.site_migration.status_v2 === 'started';
+		return item.site_migration.status_v2 !== 'completed';
 	}
 
 	const { status } = getSiteMigrationState( item ) ?? {};

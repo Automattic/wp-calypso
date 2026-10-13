@@ -40,6 +40,7 @@ export function Running( { phase, sourceHost }: { phase: Phase; sourceHost: stri
 						<VStack key={ label } spacing={ 2 }>
 							<ProgressBar
 								className="wordpress-migration__progress-bar"
+								aria-label={ label }
 								// No value animates the bar, which marks the step in progress.
 								value={ index === currentStep ? undefined : settledValue }
 							/>

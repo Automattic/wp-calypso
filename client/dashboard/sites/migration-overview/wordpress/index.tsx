@@ -14,12 +14,16 @@ import { Text } from '../../../components/text';
 import { getSiteDisplayName } from '../../../utils/site-name';
 import { isSiteMigrationInProgress } from '../../../utils/site-status';
 import { getSiteDisplayUrl } from '../../../utils/site-url';
-import { getSourceHost } from '../../overview-static-site-import/use-static-site-import';
 import { Connect } from './connect';
 import { Findings } from './findings';
 import { MigrationCard } from './migration-card';
 import { Running } from './running';
 import type { Site, WordPressMigrationStatus } from '@automattic/api-core';
+
+// How long a completed migration can leave its site locked before we stop asking the user to wait.
+const UNLOCK_GRACE_PERIOD = 30000;
+
+const KNOWN_STATUSES = [ 'not_started', 'running', 'paused', 'failed', 'completed' ];
 
 export function WordPressMigration( { site }: { site: Site } ) {
 	const navigate = useNavigate();
@@ -43,7 +47,7 @@ export function WordPressMigration( { site }: { site: Site } ) {
 	// Whatever was last read stays on screen through a failed refresh, so these only cover a migration never read.
 	const isUnreadable = ! migration && !! error;
 	const isForbidden = isUnreadable && isWpError( error ) && error.statusCode === 403;
-	const sourceHost = getSourceHost( migration?.source_url ?? undefined );
+	const sourceHost = getSourceHost( migration?.source_url );
 
 	// Going back to connect the source is remembered against the run that failed, so the next run starts clean.
 	const [ reconnectingRun, setReconnectingRun ] = useState< string | null >();
@@ -70,6 +74,29 @@ export function WordPressMigration( { site }: { site: Site } ) {
 		return () => clearInterval( interval );
 	}, [ isCompleted, isSiteUnlocked, queryClient, navigate, site.ID, site.slug ] );
 
+	// The site should unlock within moments of the migration completing. Past that, offer a way out.
+	const completedAt = migration?.completed_at;
+	const [ isUnlockOverdue, setIsUnlockOverdue ] = useState( false );
+	useEffect( () => {
+		if ( ! isCompleted ) {
+			return;
+		}
+
+		const overdueAt =
+			( completedAt ? Date.parse( completedAt ) : Date.now() ) + UNLOCK_GRACE_PERIOD;
+		const timeout = setTimeout(
+			() => setIsUnlockOverdue( true ),
+			Math.max( 0, overdueAt - Date.now() )
+		);
+		return () => clearTimeout( timeout );
+	}, [ isCompleted, completedAt ] );
+
+	const contactUs = (
+		<Button variant="link" onClick={ () => setShowHelpCenter( true ) }>
+			{ __( 'Contact us' ) }
+		</Button>
+	);
+
 	return (
 		<PageLayout
 			size="small"
@@ -83,9 +110,7 @@ export function WordPressMigration( { site }: { site: Site } ) {
 								<Button variant="primary" onClick={ () => refetch() }>
 									{ __( 'Try again' ) }
 								</Button>
-								<Button variant="link" onClick={ () => setShowHelpCenter( true ) }>
-									{ __( 'Contact us' ) }
-								</Button>
+								{ contactUs }
 							</>
 						}
 					>
@@ -133,11 +158,41 @@ export function WordPressMigration( { site }: { site: Site } ) {
 			{ isCompleted && (
 				<MigrationCard
 					title={ __( 'Your site has been migrated' ) }
-					description={ __( 'One moment while we finish up and load your site.' ) }
+					description={
+						isUnlockOverdue
+							? __( 'Loading your site is taking longer than it should.' )
+							: __( 'One moment while we finish up and load your site.' )
+					}
+					actions={
+						isUnlockOverdue && (
+							<>
+								<Button
+									__next40pxDefaultSize
+									variant="primary"
+									onClick={ () => window.location.reload() }
+								>
+									{ __( 'Reload' ) }
+								</Button>
+								{ contactUs }
+							</>
+						)
+					}
 				/>
+			) }
+			{ /* A status this page doesn't know yet. */ }
+			{ migration && ! KNOWN_STATUSES.includes( migration.status ) && (
+				<MigrationCard title={ __( 'Your site is being migrated' ) } actions={ contactUs } />
 			) }
 		</PageLayout>
 	);
+}
+
+function getSourceHost( sourceUrl?: string | null ) {
+	try {
+		return new URL( sourceUrl ?? '' ).hostname.replace( /^www\./, '' );
+	} catch {
+		return '';
+	}
 }
 
 function getSummary( status: WordPressMigrationStatus[ 'status' ], sourceHost: string ) {
@@ -151,6 +206,9 @@ function getSummary( status: WordPressMigrationStatus[ 'status' ], sourceHost: s
 		case 'failed':
 			/* translators: %s: the domain of the site being migrated, e.g. example.com. */
 			return sprintf( __( 'the migration from %s stopped' ), sourceHost );
+		case 'completed':
+			/* translators: %s: the domain of the site that was migrated, e.g. example.com. */
+			return sprintf( __( 'migrated from %s' ), sourceHost );
 		default:
 			/* translators: %s: the domain of the site being migrated, e.g. example.com. */
 			return sprintf( __( 'migrating from %s' ), sourceHost );

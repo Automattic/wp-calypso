@@ -192,6 +192,30 @@ describe( 'WordPressMigration', () => {
 		expect( screen.queryByText( /We couldn’t load your migration/ ) ).not.toBeInTheDocument();
 	} );
 
+	it( 'offers a way out when a completed migration leaves the site locked', async () => {
+		const completed = migration( 'completed', {
+			completed_at: new Date( Date.now() - 60000 ).toISOString(),
+		} );
+		mockApi().get( statusPath ).query( true ).reply( 200, completed );
+
+		render( <WordPressMigration site={ site } />, { queryClient } );
+
+		expect( await screen.findByText( 'migrated from example.com' ) ).toBeVisible();
+		expect( await screen.findByRole( 'button', { name: 'Reload' } ) ).toBeVisible();
+		expect( screen.getByRole( 'button', { name: 'Contact us' } ) ).toBeVisible();
+	} );
+
+	it( 'still says a migration is underway for a status it doesn’t know', async () => {
+		mockApi().get( statusPath ).query( true ).reply( 200, migration( 'assisted' ) );
+
+		render( <WordPressMigration site={ site } />, { queryClient } );
+
+		expect(
+			await screen.findByRole( 'heading', { name: 'Your site is being migrated' } )
+		).toBeVisible();
+		expect( screen.getByRole( 'button', { name: 'Contact us' } ) ).toBeVisible();
+	} );
+
 	it( 'tells people who can’t manage the migration that one is underway', async () => {
 		mockApi().get( statusPath ).query( true ).reply( 403, { code: 'rest_forbidden' } );
 
