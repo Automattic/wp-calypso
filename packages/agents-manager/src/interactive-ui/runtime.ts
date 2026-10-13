@@ -1,7 +1,19 @@
-import { MessageProcessor } from '@a2ui/web_core/v0_9';
-import { catalog } from './catalog';
+import { basicCatalog } from '@a2ui/react/v0_9';
+import { Catalog, MessageProcessor } from '@a2ui/web_core/v0_9';
+import Button from './button';
+import Column from './column';
+import Text from './text';
+import TextField from './text-field';
 import type { ReactComponentImplementation } from '@a2ui/react/v0_9';
 import type { A2uiClientAction, A2uiMessage } from '@a2ui/web_core/v0_9';
+
+const catalog = new Catalog(
+	basicCatalog.id,
+	'0.9',
+	[ Text, TextField, Button, Column ],
+	[],
+	basicCatalog.themeSchema
+);
 
 export function createInteractiveUiRuntime(
 	onAction: ( action: A2uiClientAction ) => Promise< void >
