@@ -1,4 +1,5 @@
 import { SiteResetContentSummary } from '@automattic/api-core';
+import { formatNumber } from '@automattic/number-formatters';
 import { __experimentalText as Text } from '@wordpress/components';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { wpcomLink } from '../../utils/link';
@@ -29,10 +30,10 @@ export default function ContentInfo( {
 		.map( ( [ key, label, url ]: ContentType ): ContentItem => {
 			const count: number = siteContent[ key ];
 			const text: string = sprintf(
-				/* translators: %(count)d: number of items, %(label)s: content type label (post, page) */
-				_n( '%(count)d %(label)s', '%(count)d %(label)ss', count ),
+				/* translators: %(count)s: formatted number of items, %(label)s: content type label (post, page) */
+				_n( '%(count)s %(label)s', '%(count)s %(label)ss', count ),
 				{
-					count,
+					count: formatNumber( count ),
 					label,
 				}
 			);
