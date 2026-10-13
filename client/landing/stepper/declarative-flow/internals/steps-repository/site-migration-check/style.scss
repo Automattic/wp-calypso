@@ -232,10 +232,10 @@
 			width: 100%;
 			margin: 0;
 			padding: 12px;
-			border: 1px solid #94d29e;
+			border: 1px solid var( --wp-components-notice-border-color );
 			border-radius: 8px;
-			background: #ebffed;
-			color: #002900;
+			background: var( --wp-components-notice-background-color );
+			color: var( --wp-components-notice-text-color );
 		}
 
 		.components-notice__content {
