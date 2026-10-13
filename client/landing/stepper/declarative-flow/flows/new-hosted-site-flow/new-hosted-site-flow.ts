@@ -256,28 +256,32 @@ const hosting: FlowV2< typeof initialize > = {
 							if ( couponCode ) {
 								resetCouponCode();
 							}
-							const backUrl = new URL(
-								addQueryArgs( withLocale( '/setup/new-hosted-site/domains', locale ), {
-									...Object.fromEntries( query ),
-									plan: planCartItem?.product_slug ?? query.get( 'plan' ),
-								} ),
-								window.location.origin
-							).href;
-							const stepPosition = getOnboardingStepperPosition( 'checkout', true );
+							const purchaseStepArgs: Record< string, string | number > = {};
+							if ( showPurchaseSteps ) {
+								const backUrl = new URL(
+									addQueryArgs( withLocale( '/setup/new-hosted-site/domains', locale ), {
+										...Object.fromEntries( query ),
+										plan: planCartItem?.product_slug ?? query.get( 'plan' ),
+									} ),
+									window.location.origin
+								).href;
+								const stepPosition = getOnboardingStepperPosition( 'checkout', true );
+								Object.assign( purchaseStepArgs, {
+									flow: NEW_HOSTED_SITE_FLOW,
+									showPurchaseSteps: 'true',
+									signup: 1,
+									checkoutBackUrl: backUrl,
+									checkoutBackUrlDomains: backUrl,
+									steps_current: stepPosition.current,
+									steps_total: stepPosition.total,
+								} );
+							}
 							const checkoutUrl = addQueryArgs(
 								`/checkout/${ encodeURIComponent( ( providedDependencies?.siteSlug as string ) ?? '' ) }`,
 								{
 									redirect_to: destination,
 									coupon: couponCode,
-									...( showPurchaseSteps && {
-										flow: NEW_HOSTED_SITE_FLOW,
-										showPurchaseSteps: 'true',
-										signup: 1,
-										checkoutBackUrl: backUrl,
-										checkoutBackUrlDomains: backUrl,
-										steps_current: stepPosition.current,
-										steps_total: stepPosition.total,
-									} ),
+									...purchaseStepArgs,
 								}
 							);
 							return showPurchaseSteps
