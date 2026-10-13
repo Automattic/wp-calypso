@@ -44,7 +44,23 @@ export const isFetching = ( state = false, action ) => {
 	return state;
 };
 
+/*
+ * Unlike `items`, this is not persisted: availability is only trusted once the
+ * current session has received the list, so a stale cache cannot offer a product.
+ */
+export const hasReceivedThisSession = ( state = false, action ) => {
+	switch ( action.type ) {
+		case PRODUCTS_LIST_RECEIVE:
+			return true;
+		case PRODUCTS_LIST_REQUEST_FAILURE:
+			return false;
+	}
+
+	return state;
+};
+
 const combinedReducer = combineReducers( {
+	hasReceivedThisSession,
 	isFetching,
 	items,
 	type,

@@ -12,6 +12,7 @@ import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
 import { useEffect, useMemo, useCallback } from 'react';
 import QueryIntroOffers from 'calypso/components/data/query-intro-offers';
+import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySiteProducts from 'calypso/components/data/query-site-products';
 import { useExperiment } from 'calypso/lib/explat';
 import { preventWidows } from 'calypso/lib/formatting';
@@ -76,6 +77,7 @@ const JetpackUpsellPage: React.FC< Props > = ( {
 		( state ) => !! upsellSlug && isProductOnSale( state, upsellSlug )
 	);
 	const isUpsellOffSale = ! isFetchingProductsList && ! isUpsellOnSale;
+	const isUpsellAvailabilityUnknown = isFetchingProductsList && ! isUpsellOnSale;
 	const isUpsellOwned = useMemo(
 		() =>
 			isFetchingPurchases ? false : !! purchases?.find( ( p ) => p.product_slug === upsellSlug ),
@@ -171,14 +173,16 @@ const JetpackUpsellPage: React.FC< Props > = ( {
 		! upsellSlug ||
 		isFetchingPurchases ||
 		isUpsellOwned ||
-		isUpsellOffSale
+		isUpsellOffSale ||
+		isUpsellAvailabilityUnknown
 	) {
-		return null;
+		return <QueryProductsList type="jetpack" currency={ currencyCode ?? undefined } />;
 	}
 
 	return (
 		<>
 			{ siteId && <QuerySiteProducts siteId={ siteId } /> }
+			<QueryProductsList type="jetpack" currency={ currencyCode ?? undefined } />
 			<QueryIntroOffers siteId={ siteId ?? 'none' } />
 
 			<main className="jetpack-upsell">
