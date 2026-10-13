@@ -1579,10 +1579,10 @@ export default function OrchestratorChat( {
 	const interactiveUiPresentation = useInteractiveUi( {
 		messages,
 		conversationId: checkpointSessionIdentity,
-		isProcessing,
+		isProcessing: isProcessing || isUploadingImages,
 		agentConfig,
 		onSubmit,
-		beforeSubmit: credits.beforeSubmit,
+		beforeSubmit: () => ! isUploadingRef.current && credits.beforeSubmit(),
 	} );
 	const convertedMessages = useMemo< AgentsManagerUIMessage[] >( () => {
 		// The stable checkpoint getter reads these values through refs.
