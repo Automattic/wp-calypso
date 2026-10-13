@@ -171,7 +171,7 @@ const hosting: FlowV2< typeof initialize > = {
 					setDomainCartItems( providedDependencies.domainCart as MinimalRequestCartProduct[] );
 					setSignupDomainOrigin( providedDependencies.signupDomainOrigin as string );
 
-					if ( showPurchaseSteps ? shouldSkipPlans : planCartItem ) {
+					if ( planCartItem ) {
 						return navigate( STEPS.SITE_CREATION_STEP.slug );
 					}
 
