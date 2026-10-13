@@ -108,6 +108,7 @@ describe( 'useAgentChat — isReplying', () => {
 		sendMessageStream = getAgentManager().sendMessageStream as MockedFunction<
 			ReturnType< typeof getAgentManager >[ 'sendMessageStream' ]
 		>;
+		sendMessageStream.mockReset();
 	} );
 
 	afterEach( async () => {

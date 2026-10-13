@@ -142,7 +142,7 @@ export interface AgentUIProps {
 	isProcessing: boolean;
 	/** Whether the latest reply is still streaming. Defaults to `isProcessing`. */
 	isStreaming?: boolean;
-	/** Whether reply text is streaming in. When set, it drives the thinking indicator instead of pauses in the text. */
+	/** Whether reply text is streaming in. When set, it drives the thinking indicator. */
 	isReplying?: boolean;
 	error?: string | null;
 	onSubmit: ( message: string, files?: File[] ) => void | Promise< void >;

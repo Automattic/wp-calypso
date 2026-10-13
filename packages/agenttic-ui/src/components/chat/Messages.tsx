@@ -16,7 +16,7 @@ interface MessagesProps {
 	isProcessing?: boolean;
 	/** Whether the latest reply is still streaming. Defaults to `isProcessing`. */
 	isStreaming?: boolean;
-	/** Whether reply text is streaming in. When set, it drives the thinking indicator instead of pauses in the text. */
+	/** Whether reply text is streaming in. When set, it drives the thinking indicator. */
 	isReplying?: boolean;
 	error?: string | null;
 	emptyView?: React.ReactNode;
@@ -92,8 +92,8 @@ export function Messages( {
 	// shadow: equal means streaming has paused (indicator visible during tool-call
 	// gaps); unequal means deltas are flowing (indicator hidden). The 1s window
 	// is chosen to comfortably exceed typical inter-delta cadence (~430ms) so
-	// the indicator does not flicker during steady streaming. `isReplying` comes
-	// from the stream itself, so it wins when set.
+	// the indicator does not flicker during steady streaming. `isReplying`, when
+	// set, overrides this.
 	const isAgentTextStreaming = isReplying ?? liveRegionText !== settledText;
 
 	// Announce the rendered reply once it finishes: what is on screen rather than

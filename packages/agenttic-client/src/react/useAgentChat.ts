@@ -339,7 +339,7 @@ export interface UseAgentChatConfig {
 	onTaskUpdate?: ( update: TaskUpdate ) => void | Promise< void >;
 	odieBotId?: string; // Odie bot ID for server-based conversation storage (e.g., 'wpcom-agent-wp_orchestrator'). When set, enables server storage.
 	credentials?: RequestCredentials; // Set 'include' to send cookies with cross-origin requests.
-	trackReplying?: boolean; // Set to get `isReplying`. Reply text then also clears the progress text.
+	trackReplying?: boolean; // Set to get `isReplying` (needs `enableStreaming`). Reply text then also clears the progress text.
 }
 
 // Hook return interface
@@ -352,7 +352,7 @@ export interface UseAgentChatReturn {
 	suggestions: Suggestion[];
 	progressMessage: string | null;
 	progressPhase: string | null;
-	isReplying?: boolean; // Whether reply text is streaming in. Set only with `trackReplying`, during a request.
+	isReplying?: boolean; // Whether reply text is streaming in. Only with `trackReplying`, during a request.
 
 	// UI management methods
 	registerSuggestions: ( suggestions: Suggestion[] ) => void;
@@ -449,12 +449,16 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 		stateRef.current = state;
 	}, [ state ] );
 
-	// Keep the raw task-update observer fresh without reinitializing the agent
-	// or changing the stable onSubmit callback identity.
+	// Keep the raw task-update observer and `trackReplying` fresh without
+	// reinitializing the agent or changing the stable onSubmit callback identity.
 	const onTaskUpdateRef = useRef( config.onTaskUpdate );
 	useEffect( () => {
 		onTaskUpdateRef.current = config.onTaskUpdate;
 	}, [ config.onTaskUpdate ] );
+	const trackReplyingRef = useRef( config.trackReplying );
+	useEffect( () => {
+		trackReplyingRef.current = config.trackReplying;
+	}, [ config.trackReplying ] );
 
 	// Use a ref to always have access to the latest registrations
 	const registrationsRef = useRef( registrations );
@@ -591,7 +595,6 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 
 			// Keep in-flight updates attached to the site and agent that started the request.
 			const onTaskUpdate = onTaskUpdateRef.current;
-			const trackReplying = config.trackReplying;
 			const agentManager = getAgentManager();
 			const agentKey = agentConfig.agentId;
 			const preserveUiOnlyMessages = internalOptions?.preserveUiOnlyMessages ?? true;
@@ -727,14 +730,14 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 					// An empty content delta is a keep-alive and changes nothing.
 					const isReplying = update.delta?.deltaType === 'content';
 					const isKeepAlive = isReplying && ! update.delta?.content;
-					if ( trackReplying && ! isKeepAlive ) {
+					if ( trackReplyingRef.current && ! isKeepAlive ) {
 						setState( ( prev ) =>
 							prev.isReplying === isReplying
 								? prev
 								: {
 										...prev,
 										isReplying,
-										// The progress text from before the reply is stale after it.
+										// The progress text is stale once the reply starts.
 										...( isReplying && { progressMessage: null, progressPhase: null } ),
 									}
 						);
@@ -935,7 +938,7 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 				isSendingRef.current = false;
 			}
 		},
-		[ agentConfig.agentId, isValidConfig, config.trackReplying ]
+		[ agentConfig.agentId, isValidConfig ]
 	);
 
 	const onSubmit = useCallback(

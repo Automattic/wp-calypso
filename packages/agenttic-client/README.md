@@ -183,7 +183,7 @@ const {
 - `contextProvider?: ContextProvider` - Dynamic context injection
 - `toolProvider?: ToolProvider` - Tool execution capabilities
 - `authProvider?: AuthProvider` - Authentication headers
-- `trackReplying?: boolean` - Return `isReplying` during a request, e.g. for AgentUI's `isReplying` prop. Reply text then also clears `progressMessage` and `progressPhase`
+- `trackReplying?: boolean` - Return `isReplying` during a request, e.g. for AgentUI's `isReplying` prop. Needs `enableStreaming`. Reply text then also clears `progressMessage` and `progressPhase`
 
 ### useClientContext Hook
 

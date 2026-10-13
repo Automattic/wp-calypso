@@ -1,5 +1,3 @@
-import type { StreamDelta } from '../utils/internal/streaming';
-
 // Protocol Type Definitions
 // Originally based on https://google.github.io/A2A/specification/ but no longer tied to that protocol.
 
@@ -325,6 +323,37 @@ export interface SendMessageParams {
 	enableStreaming?: boolean; // Override client's default streaming setting for this request
 	imageUrls?: ( string | ImageData )[]; // Optional: array of image URLs or image objects with metadata
 }
+
+/**
+ * Delta message types emitted by the server in `message/delta` events.
+ */
+export interface ContentStreamDelta {
+	type?: 'delta';
+	deltaType: 'content';
+	content: string;
+}
+
+export interface ToolNameStreamDelta {
+	type?: 'delta';
+	deltaType: 'tool_name';
+	content: string;
+	toolCallId: string;
+	toolCallName?: string;
+	toolCallIndex?: number;
+}
+
+export interface ToolArgumentStreamDelta {
+	type?: 'delta';
+	deltaType: 'tool_argument';
+	content: string;
+	toolCallId: string;
+	toolCallName?: string;
+	toolCallIndex?: number;
+}
+
+export type ToolCallStreamDelta = ToolNameStreamDelta | ToolArgumentStreamDelta;
+
+export type StreamDelta = ContentStreamDelta | ToolNameStreamDelta | ToolArgumentStreamDelta;
 
 export interface TaskUpdate {
 	id: string;
