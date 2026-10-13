@@ -56,6 +56,7 @@
 		"marketplace-redesign": true,
 		"mcp-settings": true,
 		"me/legacy-contact": false,
+		"migration/reprint-flow": false,
 		"notifications/subscriber-alerts": true,
 		"onboarding/interval-dropdown": true,
 		"performance/apm": false,

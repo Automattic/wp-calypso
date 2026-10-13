@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import type { SiteBlockingStatus, SiteMigrationStatus } from '../types';
 import type { Site } from '@automattic/api-core';
 
@@ -52,9 +53,15 @@ export function getSiteMigrationState( item: Site ): SiteMigrationStatus | null 
 	};
 }
 
+// A WordPress (Reprint) migration, which has its own views. Until the flow launches, these sites
+// are treated as whatever their flow sticker says.
+export function isWordPressMigration( item: Site ) {
+	return config.isEnabled( 'migration/reprint-flow' ) && item.site_migration.type === 'wordpress';
+}
+
 export function isSiteMigrationInProgress( item: Site ) {
 	// A WordPress (Reprint) migration reports its own state. The others still go by their flow sticker.
-	if ( item.site_migration.type === 'wordpress' ) {
+	if ( isWordPressMigration( item ) ) {
 		return item.site_migration.status_v2 !== 'completed';
 	}
 
