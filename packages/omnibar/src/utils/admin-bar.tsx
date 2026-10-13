@@ -31,10 +31,13 @@ export function buildOmnibarNodesFromAdminBarNodes(
 		}
 
 		switch ( node.id ) {
-			case 'wp-logo':
+			case 'wp-logo': {
+				const doc = new DOMParser().parseFromString( node.title || '', 'text/html' );
+				omnibarNode.title = undefined;
+				omnibarNode.label = doc.querySelector( '.screen-reader-text' )?.textContent?.trim();
 				omnibarNodes.home = omnibarNode;
-				omnibarNodes.home.title = undefined;
 				break;
+			}
 			case 'site-name': {
 				const doc = new DOMParser().parseFromString( node.title || '', 'text/html' );
 				const siteIcon = doc.querySelector( 'img' );

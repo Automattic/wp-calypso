@@ -478,7 +478,16 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 			const agentManager = getAgentManager();
 			const agentKey = agentConfig.agentId;
 
-			const hasAgent = agentManager.hasAgent( agentKey );
+			let hasAgent = agentManager.hasAgent( agentKey );
+			if (
+				hasAgent &&
+				agentManager.getAgentSessionId( agentKey ) !== ( agentConfig.sessionId || null )
+			) {
+				agentManager.abortCurrentRequest( agentKey );
+				agentManager.removeAgent( agentKey );
+				hasAgent = false;
+				setState( ( prev ) => ( { ...prev, clientMessages: [], uiMessages: [] } ) );
+			}
 
 			// Always ensure agent exists, even for new chats with empty sessionId
 			if ( ! hasAgent ) {

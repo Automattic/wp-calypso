@@ -6,6 +6,11 @@ import type { ComponentProps } from 'react';
 
 import './style.scss';
 
+const DEFAULT_EVENT_NAMES = {
+	impression: 'calypso_dashboard_upsell_impression',
+	click: 'calypso_dashboard_upsell_click',
+};
+
 type UpsellCTAButtonProps = ComponentProps< typeof Button > & {
 	/**
 	 * A unique ID for the upsell. Should also indicate the location where the upsell is being shown.
@@ -25,11 +30,24 @@ type UpsellCTAButtonProps = ComponentProps< typeof Button > & {
 	 */
 	tracksProperties?: Record< string, string | number | boolean >;
 
+	/**
+	 * Event names for the impression and click. The default is the dashboard upsell pair. An upsell
+	 * that runs on other surfaces too can pass the names those surfaces record.
+	 */
+	tracksEventNames?: { impression: string; click: string };
+
 	onClick?: ( event: React.MouseEvent< HTMLButtonElement | HTMLAnchorElement > ) => void;
 };
 
 export default function UpsellCTAButton( props: UpsellCTAButtonProps ) {
-	const { upsellId, upsellFeatureId, tracksProperties, onClick, ...buttonProps } = props;
+	const {
+		upsellId,
+		upsellFeatureId,
+		tracksProperties,
+		tracksEventNames = DEFAULT_EVENT_NAMES,
+		onClick,
+		...buttonProps
+	} = props;
 	const { recordTracksEvent } = useAnalytics();
 	const eventProperties = {
 		...tracksProperties,
@@ -38,14 +56,14 @@ export default function UpsellCTAButton( props: UpsellCTAButtonProps ) {
 	};
 
 	const handleClick = ( event: React.MouseEvent< HTMLButtonElement | HTMLAnchorElement > ) => {
-		recordTracksEvent( 'calypso_dashboard_upsell_click', eventProperties );
+		recordTracksEvent( tracksEventNames.click, eventProperties );
 		onClick?.( event );
 	};
 
 	return (
 		<>
 			<ComponentViewTracker
-				eventName="calypso_dashboard_upsell_impression"
+				eventName={ tracksEventNames.impression }
 				properties={ eventProperties }
 			/>
 			<Button

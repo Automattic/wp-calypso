@@ -86,7 +86,7 @@ export default function ThankYouPlanProduct( {
 				setLetsWorkButtonBusy( true );
 
 				const redirect = async () => {
-					if ( launchpad.launchpad_screen === 'skipped' ) {
+					if ( siteId && launchpad.launchpad_screen === 'skipped' ) {
 						await saveSiteSettings( siteId, { launchpad_screen: 'full' } );
 					}
 					setLetsWorkButtonBusy( false );

@@ -9,6 +9,7 @@ import { __, sprintf } from '@wordpress/i18n';
 import { check } from '@wordpress/icons';
 import { useState } from 'react';
 import BodyCard from '../../components/showcase/body-card';
+import { getPressableMemoryTarget, isPressablePhpMemoryAddon } from './lib/pressable-memory-addon';
 import { getCartActionLabel } from './lib/product-copy';
 import { getProductDescription } from './lib/product-descriptions';
 import { getItemProducts } from './lib/product-groups';
@@ -26,10 +27,34 @@ interface Props {
 	item: ProductListItem;
 	term: TermPricing;
 	isReferralMode: boolean;
-	isInCart: ( slug: string ) => boolean;
+	isInCart: ( product: AgencyProduct ) => boolean;
 	onToggleCart: ( product: AgencyProduct ) => void;
 	onViewDetails: ( product: AgencyProduct ) => void;
 	onSelectVariant?: ( product: AgencyProduct ) => void;
+}
+
+// The products API returns a PHP memory add-on once per Pressable site, so its
+// card names the site where others name their maker. Unlike the description,
+// the byline is never clamped.
+function getCardByline( product: AgencyProduct ) {
+	if ( isPressablePhpMemoryAddon( product ) ) {
+		const memoryTarget = getPressableMemoryTarget( product );
+		return memoryTarget
+			? sprintf(
+					/* translators: %(siteDomain)s is the Pressable site the add-on applies to. */
+					__( 'Applies to %(siteDomain)s.' ),
+					{ siteDomain: memoryTarget }
+				)
+			: __( 'Applies to one Pressable site/domain.' );
+	}
+	const vendorName = getVendorInfo( product.slug )?.vendorName;
+	return vendorName
+		? sprintf(
+				/* translators: %s is the name of the company that makes the product. */
+				__( 'by %s' ),
+				vendorName
+			)
+		: undefined;
 }
 
 // Out of their own section, the backup storage add-ons need their full name:
@@ -52,24 +77,15 @@ export default function ProductStoreCard( {
 	const [ selectedSlug, setSelectedSlug ] = useState( variants[ 0 ].slug );
 	const product = variants.find( ( variant ) => variant.slug === selectedSlug ) ?? variants[ 0 ];
 
-	const inCart = isInCart( product.slug );
+	const inCart = isInCart( product );
 	const termNote = getTermAvailabilityNote( product, term );
-	const vendorName = getVendorInfo( product.slug )?.vendorName;
 	// The backup storage add-ons have no details to show.
 	const canViewDetails = product.family_slug !== BACKUP_STORAGE_FAMILY_SLUG;
 
 	return (
 		<BodyCard
 			title={ getCardTitle( product, variants.length > 1 ) }
-			byline={
-				vendorName
-					? sprintf(
-							/* translators: %s is the name of the company that makes the product. */
-							__( 'by %s' ),
-							vendorName
-						)
-					: undefined
-			}
+			byline={ getCardByline( product ) }
 			description={ getProductDescription( product.slug ).description ?? undefined }
 			tile={ <ProductTile product={ product } /> }
 			actions={

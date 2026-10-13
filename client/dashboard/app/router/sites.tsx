@@ -77,6 +77,7 @@ import {
 	redirectIfTwoStepReauthRequired,
 } from './redirect';
 import { rootRoute } from './root';
+import type { DifmOfferSearch } from '../../sites/overview-difm-offer-card/thank-you';
 import type { StaticSiteImportSearch } from '../../sites/overview-static-site-import';
 import type { AppConfig } from '../context';
 import type { DifmWebsiteContentResponse, Site, User } from '@automattic/api-core';
@@ -223,13 +224,14 @@ export const siteOverviewRoute = createRoute( {
 	staticData: { availableToInaccessibleJetpackSites: true },
 	getParentRoute: () => siteRoute,
 	path: '/',
-	validateSearch: ( search ): StaticSiteImportSearch => {
+	validateSearch: ( search ): StaticSiteImportSearch & DifmOfferSearch => {
 		const asString = ( value: unknown ) => ( typeof value === 'string' ? value : undefined );
 		return {
 			importSessionId: asString( search.importSessionId ),
 			from: asString( search.from ),
 			platform: asString( search.platform ),
 			domainChoice: asString( search.domainChoice ),
+			difmOffer: search.difmOffer === 'purchased' ? 'purchased' : undefined,
 		};
 	},
 	loader: async ( { params: { siteSlug }, preload } ) => {

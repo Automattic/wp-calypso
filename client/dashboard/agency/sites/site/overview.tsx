@@ -12,13 +12,35 @@ import { siteTypeSupportsFeature } from '../../../utils/site-type-feature-suppor
 import { getSiteName } from '../dataviews/site-data';
 import ActivityCard from './activity-card';
 import BackupCard from './backup-card';
+import AgencySitePlanCard from './plan-card';
 import ScanCard from './scan-card';
+
+// Mirrors the WordPress.com site overview: the tall plan card sits beside
+// columns of two shorter cards, so it doesn't stretch its row neighbor.
+function getGridLayout( {
+	isLargeViewport,
+	isSmallViewport,
+}: {
+	isLargeViewport: boolean;
+	isSmallViewport: boolean;
+} ) {
+	if ( isLargeViewport ) {
+		return { columns: 3, rows: 1 };
+	}
+	if ( isSmallViewport ) {
+		return { columns: 1, rows: 3 };
+	}
+	return { columns: 2, rows: 2 };
+}
 
 export default function AgencySiteOverview() {
 	const { siteSlug } = agencySiteRoute.useParams();
 	const site = agencySiteRoute.useLoaderData();
 	const { data: fullSite } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 	const isSmallViewport = useViewportMatch( 'medium', '<' );
+	const isLargeViewport = useViewportMatch( 'xlarge' );
+	const gap = isSmallViewport ? 'lg' : 'xl';
+	const gridLayout = getGridLayout( { isLargeViewport, isSmallViewport } );
 
 	return (
 		<PageLayout
@@ -29,13 +51,18 @@ export default function AgencySiteOverview() {
 				/>
 			}
 		>
-			<Grid columns={ isSmallViewport ? 1 : 2 } gap={ isSmallViewport ? 'lg' : 'xl' }>
-				<VisibilityCard site={ fullSite } />
-				<BackupCard site={ site } />
-				<ScanCard site={ site } siteSlug={ siteSlug } />
-				{ siteTypeSupportsFeature( fullSite, 'performance' ) && (
-					<PerformanceCard site={ fullSite } />
-				) }
+			<Grid { ...gridLayout } gap={ gap }>
+				<AgencySitePlanCard agencySite={ site } site={ fullSite } />
+				<Grid columns={ 1 } rows={ 2 } gap={ gap }>
+					<VisibilityCard site={ fullSite } />
+					<BackupCard site={ site } />
+				</Grid>
+				<Grid columns={ 1 } rows={ 2 } gap={ gap }>
+					{ siteTypeSupportsFeature( fullSite, 'performance' ) && (
+						<PerformanceCard site={ fullSite } />
+					) }
+					<ScanCard site={ site } siteSlug={ siteSlug } />
+				</Grid>
 			</Grid>
 			<ActivityCard />
 		</PageLayout>
