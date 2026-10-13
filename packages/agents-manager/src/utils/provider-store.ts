@@ -1,10 +1,9 @@
 import { dispatch, select } from '@wordpress/data';
 
 /**
- * Big Sky's data store, for the state Big Sky's app keeps beside AM's (its
- * site metadata copy, its legacy CSS dialog). Absent on surfaces without Big
- * Sky, so both accessors answer `undefined` rather than lean on the registry's
- * contract for an unregistered store.
+ * Big Sky's data store, for what Big Sky still keeps beside AM: its site
+ * metadata copy and its legacy CSS dialog. Both accessors return `undefined`
+ * where Big Sky isn't loaded.
  */
 const PROVIDER_STORE = 'ai-assembler';
 

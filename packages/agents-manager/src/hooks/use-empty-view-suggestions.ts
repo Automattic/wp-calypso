@@ -75,17 +75,6 @@ export const DEFAULT_EMPTY_VIEW_SUGGESTION_IDS = {
 } as const;
 
 /**
- * Hook to manage empty view suggestions, including providers' theme-dependent ones
- *
- * If a provider supplies getEmptyViewSuggestions, this hook waits for WordPress core store
- * (specifically theme data) to be ready before calling it. This prevents the suggestions
- * from "jumping" as the theme data loads.
- * If no provider supplies custom suggestions, returns translated default suggestions.
- * @param params - Hook parameters
- * @param params.loadedProviders - External providers loaded from plugins (e.g., Big Sky)
- * @returns The computed suggestions (either from a provider or defaults), or null while loading
- */
-/**
  * Direct override path: a host that renders AgentsManager (e.g. reader-chat
  * on a blog frontend) can set
  * `window.agentsManagerData.readerSuggestions` to a
@@ -229,6 +218,16 @@ function filterEmptyViewSuggestions(
 	);
 }
 
+/**
+ * The empty view's suggestions: a provider's own when one supplies
+ * `getEmptyViewSuggestions`, otherwise the translated defaults. A provider's
+ * are read once the theme has loaded, since they can depend on it (Big Sky's
+ * do) and would otherwise jump.
+ *
+ * @param params                 - Hook parameters
+ * @param params.loadedProviders - External providers loaded from plugins
+ * @returns The suggestions, or null while loading
+ */
 export function useEmptyViewSuggestions( {
 	loadedProviders,
 }: UseEmptyViewSuggestionsOptions ): Suggestion[] | null {

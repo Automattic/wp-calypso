@@ -43,7 +43,7 @@ import type { Block } from '@wordpress/blocks';
  * Plain functions rather than a hook, since abilities execute as plain
  * callbacks. Every domain they write restores here: global styles, custom CSS,
  * the site logo, the site title, site metadata, pages, navigation and the
- * page's blocks. The entity snapshot alone restores the full visual state.
+ * page's blocks.
  */
 
 // Scoped checkpoint keys — they gate which domains a restore applies. The
