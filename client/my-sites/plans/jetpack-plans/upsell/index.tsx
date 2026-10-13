@@ -23,12 +23,12 @@ import useItemPrice from 'calypso/my-sites/plans/jetpack-plans/use-item-price';
 import { useSelector, useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
-import { isProductOnSale, isProductsListFetching } from 'calypso/state/products-list/selectors';
 import { getRawSitePurchases, isFetchingSitePurchases } from 'calypso/state/purchases/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { PURCHASE_FLOW_UPSELLS_MATRIX } from '../constants';
 import getViewTrackerPath from '../get-view-tracker-path';
 import slugToSelectorProduct from '../slug-to-selector-product';
+import { useOnSaleStatus } from '../use-is-on-sale';
 import type { QueryArgs } from 'calypso/my-sites/plans/jetpack-plans/types';
 
 import './style.scss';
@@ -72,12 +72,9 @@ const JetpackUpsellPage: React.FC< Props > = ( {
 		() => ( upsellSlug ? buildCheckoutURL( siteSlug, upsellSlug, urlQueryArgs ) : '' ),
 		[ siteSlug, upsellSlug, urlQueryArgs ]
 	);
-	const isFetchingProductsList = useSelector( isProductsListFetching );
-	const isUpsellOnSale = useSelector(
-		( state ) => !! upsellSlug && isProductOnSale( state, upsellSlug )
-	);
-	const isUpsellOffSale = ! isFetchingProductsList && ! isUpsellOnSale;
-	const isUpsellAvailabilityUnknown = isFetchingProductsList && ! isUpsellOnSale;
+	const upsellSaleStatus = useOnSaleStatus( upsellSlug );
+	const isUpsellOffSale = upsellSaleStatus === 'off-sale';
+	const isUpsellAvailabilityUnknown = upsellSaleStatus === 'unknown';
 	const isUpsellOwned = useMemo(
 		() =>
 			isFetchingPurchases ? false : !! purchases?.find( ( p ) => p.product_slug === upsellSlug ),
