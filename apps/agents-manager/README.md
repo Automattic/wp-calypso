@@ -38,7 +38,7 @@ For JS and CSS changes you don't need Jetpack running: follow the Simple-site st
 > [!IMPORTANT]
 > Adding or removing a dependency changes the `*.asset.json` files, which Jetpack fetches from production, not your sandbox. Deploy before such a change takes effect on Atomic.
 
-The PHP lives in Jetpack's `projects/packages/agents-manager` package. To change it, follow [`jetpack-mu-wpcom`'s development process](https://github.com/Automattic/jetpack/blob/trunk/projects/packages/jetpack-mu-wpcom/README.md).
+The PHP lives in Jetpack's [`projects/packages/agents-manager`](https://github.com/Automattic/jetpack/blob/trunk/projects/packages/agents-manager/README.md) package.
 
 ### Translations
 
