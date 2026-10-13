@@ -33,6 +33,20 @@ test( 'import rules check workspace packages from source', async () => {
 	] );
 }, 60000 );
 
+// Packages with a build step that need no `calypso:src` entry.
+const packagesWithoutSource = new Set( [
+	// Published from built output only. Imported only from TypeScript, which checks those
+	// imports itself.
+	'@automattic/agenttic-client',
+	'@automattic/agenttic-ui',
+	// A demo app, not imported by anything.
+	'@automattic/agenttic-demo',
+	// A stylesheet package, with nothing for import rules to check.
+	'@automattic/calypso-color-schemes',
+	// Its `main` is already source; the build only makes an SVG sprite.
+	'@automattic/material-design-icons',
+] );
+
 // Without this, a package that needs a build but has no `calypso:src` entry, or one pointing
 // at a missing file, would leave its imports silently unchecked in CI, where packages aren't
 // built before linting.
@@ -46,18 +60,14 @@ test( 'packages that need a build point to their source', () => {
 			dir,
 			pkg: JSON.parse( fs.readFileSync( path.join( dir, 'package.json' ), 'utf8' ) ),
 		} ) )
-		.filter( ( { pkg } ) => pkg.scripts?.prepare )
+		// `yarn build-packages` runs `prepare`, and builds the rest through `tsc --build`.
+		.filter( ( { pkg } ) => [ 'prepare', 'build', 'prepack' ].some( ( s ) => pkg.scripts?.[ s ] ) )
+		.filter( ( { pkg } ) => ! packagesWithoutSource.has( pkg.name ) )
 		.filter(
 			( { dir, pkg } ) =>
 				! pkg[ 'calypso:src' ] || ! fs.existsSync( path.join( dir, pkg[ 'calypso:src' ] ) )
 		)
 		.map( ( { pkg } ) => pkg.name );
 
-	expect( withoutSource ).toEqual( [
-		// Published from built output only; no JavaScript file imports them.
-		'@automattic/agenttic-client',
-		'@automattic/agenttic-ui',
-		// A stylesheet package with nothing for import rules to check.
-		'@automattic/calypso-color-schemes',
-	] );
+	expect( withoutSource ).toEqual( [] );
 } );
