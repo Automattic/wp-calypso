@@ -2,7 +2,7 @@ import { DomainAvailabilityStatus } from '@automattic/api-core';
 import { getNewRailcarId, recordTracksEvent } from '@automattic/calypso-analytics';
 import { DomainSearch, getTld } from '@automattic/domain-search';
 import { debounce, useEvent } from '@wordpress/compose';
-import { type ComponentProps, useEffect, useMemo, useRef } from 'react';
+import { type ComponentProps, useCallback, useEffect, useMemo, useRef } from 'react';
 import { useDispatch } from 'react-redux';
 import { recordAddDomainButtonClick } from 'calypso/state/domains/actions';
 import {
@@ -33,10 +33,16 @@ type AnalyticsAction = {
 	};
 };
 
-const NAME_PULSE_TRACKS_PROPERTIES = { search_ui_version: 'i4_v1' };
+type SearchUiVersion = 'legacy_v1' | 'i4_v1';
 
-/** Marks the Tracks entry of an analytics action as Name Pulse. */
-export const withNamePulseMarker = < T extends AnalyticsAction >( action: T ): T => {
+export const getSearchUiVersion = ( isNamePulse: boolean ): SearchUiVersion =>
+	isNamePulse ? 'i4_v1' : 'legacy_v1';
+
+/** Adds the search UI version to the Tracks entry of an analytics action. */
+export const withSearchUiVersion = < T extends AnalyticsAction >(
+	action: T,
+	searchUiVersion: SearchUiVersion
+): T => {
 	if ( ! action.meta?.analytics ) {
 		return action;
 	}
@@ -51,7 +57,7 @@ export const withNamePulseMarker = < T extends AnalyticsAction >( action: T ): T
 							...entry,
 							payload: {
 								...entry.payload,
-								properties: { ...entry.payload.properties, ...NAME_PULSE_TRACKS_PROPERTIES },
+								properties: { ...entry.payload.properties, search_ui_version: searchUiVersion },
 							},
 						}
 					: entry
@@ -90,21 +96,17 @@ export const useWPCOMDomainSearchEvents = ( {
 } ) => {
 	const reduxDispatch = useDispatch();
 
-	const dispatch = useMemo(
-		() =>
-			isNamePulse
-				? ( action: AnalyticsAction ) => reduxDispatch( withNamePulseMarker( action ) )
-				: reduxDispatch,
-		[ isNamePulse, reduxDispatch ]
+	const searchUiVersion = getSearchUiVersion( isNamePulse );
+
+	const dispatch = useCallback(
+		( action: AnalyticsAction ) => reduxDispatch( withSearchUiVersion( action, searchUiVersion ) ),
+		[ reduxDispatch, searchUiVersion ]
 	);
 
-	const recordEvent = useMemo(
-		() =>
-			isNamePulse
-				? ( name: string, properties: Record< string, unknown > ) =>
-						recordTracksEvent( name, { ...properties, ...NAME_PULSE_TRACKS_PROPERTIES } )
-				: recordTracksEvent,
-		[ isNamePulse ]
+	const recordEvent = useCallback(
+		( name: string, properties: Record< string, unknown > ) =>
+			recordTracksEvent( name, { ...properties, search_ui_version: searchUiVersion } ),
+		[ searchUiVersion ]
 	);
 
 	const railcarId = useRef( getNewRailcarId( 'domain-suggestion' ) );

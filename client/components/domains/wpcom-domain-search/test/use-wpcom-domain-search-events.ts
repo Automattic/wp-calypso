@@ -6,7 +6,7 @@ import { getNewRailcarId, recordTracksEvent } from '@automattic/calypso-analytic
 import { act } from '@testing-library/react';
 import { createElement, useEffect } from 'react';
 import { renderHookWithProvider, renderWithProvider } from 'calypso/test-helpers/testing-library';
-import { recordSearchFormSubmit } from '../analytics';
+import { recordSearchFormSubmit, recordSearchFormView } from '../analytics';
 import { useWPCOMDomainSearchEvents } from '../use-wpcom-domain-search-events';
 
 jest.mock( '@automattic/calypso-analytics', () => ( {
@@ -313,22 +313,28 @@ describe( 'useWPCOMDomainSearchEvents', () => {
 			jest.mocked( recordTracksEvent ).mockClear();
 		} );
 
-		it( 'sends the classic events unchanged when Name Pulse is off', () => {
+		it( 'marks every classic Tracks event as legacy_v1 when Name Pulse is off', () => {
 			const { events, store } = renderEvents();
 
 			events.onPageView();
 			events.onShowMoreResults( 2 );
 			events.onBundleShown( bundle, 'card' );
 
-			const dispatched = getDispatchedTracksProperties( store );
-			expect( dispatched ).toHaveLength( 2 );
-			dispatched.forEach( ( properties ) =>
-				expect( properties ).not.toHaveProperty( 'search_ui_version' )
-			);
+			expect( getDispatchedTracksProperties( store ) ).toEqual( [
+				{ section: 'analytics-section', flow_name: 'flow-name', search_ui_version: 'legacy_v1' },
+				{
+					search_query: '',
+					page_number: 2,
+					section: 'analytics-section',
+					flow_name: 'flow-name',
+					search_ui_version: 'legacy_v1',
+				},
+			] );
 			expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_domain_bundle_shown', {
 				domain_bundle_group_id: 'group',
 				domain_count: 2,
 				placement: 'card',
+				search_ui_version: 'legacy_v1',
 			} );
 		} );
 
@@ -356,6 +362,19 @@ describe( 'useWPCOMDomainSearchEvents', () => {
 				search_ui_version: 'i4_v1',
 			} );
 		} );
+
+		it.each( [ false, true ] )(
+			'leaves the Google Analytics entries untouched (Name Pulse: %s)',
+			( isNamePulse ) => {
+				const { events, store } = renderEvents( isNamePulse );
+
+				events.onPageView();
+
+				const [ googleEntry ] = recordSearchFormView( 'analytics-section', 'flow-name' ).meta
+					.analytics;
+				expect( store.dispatch.mock.calls[ 0 ][ 0 ].meta.analytics[ 0 ] ).toEqual( googleEntry );
+			}
+		);
 
 		it( 'builds the railcar of a Name Pulse result from its result set', () => {
 			const { events } = renderEvents( true );
