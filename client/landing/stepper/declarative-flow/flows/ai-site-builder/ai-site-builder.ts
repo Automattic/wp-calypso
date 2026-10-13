@@ -229,21 +229,20 @@ const aiSiteBuilder: FlowV2< typeof initialize > = {
 								addBlogSticker( siteId, 'big-sky-free-trial' );
 
 								// Create a new home page if one is not set yet (only for non-garden sites)
-								pageRequest = Promise.resolve(
-									wpcom.req.post(
-										{
-											path: '/sites/' + siteId + '/pages',
-											apiNamespace: 'wp/v2',
-										},
-										{},
-										{
-											title: 'Home',
-											status: 'publish',
-											content: '<!-- wp:paragraph -->\n<p>Hello world!</p>\n<!-- /wp:paragraph -->',
-										}
-									)
+								const request: Promise< { id: number } > = wpcom.req.post(
+									{
+										path: '/sites/' + siteId + '/pages',
+										apiNamespace: 'wp/v2',
+									},
+									{},
+									{
+										title: 'Home',
+										status: 'publish',
+										content: '<!-- wp:paragraph -->\n<p>Hello world!</p>\n<!-- /wp:paragraph -->',
+									}
 								);
-								pendingActions.push( pageRequest );
+								pageRequest = request;
+								pendingActions.push( request );
 							}
 
 							// Only apply design and delete page for non-garden sites
@@ -252,12 +251,8 @@ const aiSiteBuilder: FlowV2< typeof initialize > = {
 							}
 							pendingActions.push( setIntentOnSite( siteSlug, SiteIntent.AIAssembler ) );
 
-							// Execute operations individually to identify which one fails
 							try {
-								// Execute all actions sequentially with logging
-								for ( const action of pendingActions ) {
-									await action;
-								}
+								await Promise.all( pendingActions );
 							} catch ( error ) {
 								return;
 							}

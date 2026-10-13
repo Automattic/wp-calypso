@@ -13,14 +13,15 @@ import type { ThunkAction } from 'redux-thunk';
 export const useActivateDesign = () => {
 	const reduxDispatch = useReduxDispatch();
 	const { site } = useSiteData();
+	const siteId = site?.ID;
 	const isJetpack = useSelect(
-		( select ) => site?.ID && select( SITE_STORE ).isJetpackSite( site?.ID ),
-		[ site?.ID ]
+		( select ) => siteId && select( SITE_STORE ).isJetpackSite( siteId ),
+		[ siteId ]
 	);
 
 	const isAtomic = useSelect(
-		( select ) => site?.ID && select( SITE_STORE ).isSiteAtomic( site.ID ),
-		[ site?.ID ]
+		( select ) => siteId && select( SITE_STORE ).isSiteAtomic( siteId ),
+		[ siteId ]
 	);
 
 	const isJetpackOrAtomic = isJetpack || isAtomic;
@@ -29,17 +30,17 @@ export const useActivateDesign = () => {
 
 	const activateDesign = useCallback(
 		async ( design: Design, designOptions: DesignOptions ) => {
-			if ( ! site?.ID ) {
+			if ( ! siteId ) {
 				throw new Error( 'Unable to load site details' );
 			}
 			const themeId = getThemeIdFromStylesheet( design.recipe?.stylesheet ?? '' ) ?? '';
 			if ( design?.is_virtual ) {
 				const activeThemeStylesheet = await reduxDispatch(
-					activateOrInstallThenActivate( themeId, site.ID, {
+					activateOrInstallThenActivate( themeId, siteId, {
 						source: 'assembler',
 					} ) as ThunkAction< PromiseLike< string >, any, any, AnyAction >
 				);
-				await assembleSite( site.ID, activeThemeStylesheet, {
+				await assembleSite( siteId, activeThemeStylesheet, {
 					homeHtml: design.recipe?.pattern_html,
 					headerHtml: design.recipe?.header_html,
 					footerHtml: design.recipe?.footer_html,
@@ -52,7 +53,7 @@ export const useActivateDesign = () => {
 			let isNewlyInstalledTheme = false;
 			if ( isJetpackOrAtomic ) {
 				try {
-					await installTheme( site.ID, themeId );
+					await installTheme( siteId, themeId );
 					isNewlyInstalledTheme = true;
 				} catch ( error: any ) {
 					if ( error.error !== 'theme_already_installed' ) {
@@ -61,7 +62,7 @@ export const useActivateDesign = () => {
 				}
 			}
 
-			const activeTheme = await setDesignOnSite( String( site.ID ), design, {
+			const activeTheme = await setDesignOnSite( String( siteId ), design, {
 				enableThemeSetup: ! isJetpackOrAtomic,
 				...designOptions,
 				// Prevent resetting global styles when a theme was recently installed generating an fatal error.
@@ -73,19 +74,9 @@ export const useActivateDesign = () => {
 						: designOptions.styleVariation,
 			} );
 
-			await reduxDispatch( setActiveTheme( site.ID, activeTheme ) );
+			await reduxDispatch( setActiveTheme( siteId, activeTheme ) );
 		},
-		[
-			site,
-			getThemeIdFromStylesheet,
-			reduxDispatch,
-			activateOrInstallThenActivate,
-			assembleSite,
-			installTheme,
-			setDesignOnSite,
-			setActiveTheme,
-			isJetpackOrAtomic,
-		]
+		[ siteId, reduxDispatch, assembleSite, installTheme, setDesignOnSite, isJetpackOrAtomic ]
 	);
 
 	return activateDesign;

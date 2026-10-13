@@ -167,4 +167,53 @@ describe( 'useSiteQuery', () => {
 		expect( wpcomRequest ).not.toHaveBeenCalled();
 		expect( requestSite ).not.toHaveBeenCalled();
 	} );
+
+	it.each( [ undefined, 123, 'source.wordpress.com' ] )(
+		'only loads %s while enabled and hides its data when disabled',
+		async ( fragment ) => {
+			mockCreatedSiteId = 456;
+			const requestedSite = {
+				...site,
+				URL: typeof fragment === 'string' ? `https://${ fragment }` : site.URL,
+			};
+			jest.mocked( wpcomRequest ).mockResolvedValue( requestedSite );
+			const { result, rerender } = renderHookWithProvider(
+				( { enabled }: { enabled: boolean } ) => useSiteQuery( fragment, { enabled } ),
+				{
+					initialProps: { enabled: false },
+					wrapper: ( { children }: PropsWithChildren ) => (
+						<MemoryRouter initialEntries={ [ '/setup?siteId=123' ] }>{ children }</MemoryRouter>
+					),
+				}
+			);
+
+			const idleResult = {
+				data: null,
+				isLoading: false,
+				isError: false,
+				refetch: expect.any( Function ),
+			};
+			expect( result.current ).toEqual( idleResult );
+			act( () => result.current.refetch() );
+			expect( wpcomRequest ).not.toHaveBeenCalled();
+			expect( requestSite ).not.toHaveBeenCalled();
+
+			rerender( { enabled: true } );
+			await waitFor( () => expect( result.current.data ).toEqual( requestedSite ) );
+			expect( wpcomRequest ).toHaveBeenCalledWith( {
+				path: `/sites/${ fragment ?? '123' }`,
+				apiVersion: '1.1',
+				query: 'force=wpcom',
+			} );
+			expect( requestSite ).toHaveBeenCalledWith( fragment ?? '123' );
+			jest.mocked( wpcomRequest ).mockClear();
+			jest.mocked( requestSite ).mockClear();
+
+			rerender( { enabled: false } );
+			expect( result.current ).toEqual( idleResult );
+			act( () => result.current.refetch() );
+			expect( wpcomRequest ).not.toHaveBeenCalled();
+			expect( requestSite ).not.toHaveBeenCalled();
+		}
+	);
 } );

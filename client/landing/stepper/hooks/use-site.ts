@@ -12,13 +12,18 @@ export function useSite( siteFragment?: number | string ) {
 	return useSiteQuery( siteFragment ).data;
 }
 
-export function useSiteQuery( siteFragment?: number | string ) {
+export function useSiteQuery(
+	siteFragment?: number | string,
+	{ enabled = true }: { enabled?: boolean } = {}
+) {
 	const dispatch = useDispatch();
 	const { invalidateResolution } = useStoreDispatch( SITE_STORE );
 	const siteSlug = useSiteSlugParam();
 	const siteIdParam = useSiteIdParam();
 	const createdSiteID = useFlowState().get( 'site' )?.siteId;
-	const siteIdOrSlug = siteFragment || siteIdParam || siteSlug || createdSiteID;
+	const siteIdOrSlug = enabled
+		? siteFragment || siteIdParam || siteSlug || createdSiteID
+		: undefined;
 
 	const { data, hasResolved } = useSelect(
 		( select ) => {

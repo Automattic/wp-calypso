@@ -194,6 +194,26 @@ describe( 'SiteMigrationHowToMigrate', () => {
 		expect( navigation.submit ).not.toHaveBeenCalled();
 	} );
 
+	it.each( [ '/some-path?siteId=123', '/some-path' ] )(
+		'uses browser Back without cancelling when the destination is unavailable at %s',
+		async ( initialEntry ) => {
+			setSite( null );
+			jest.mocked( wpcomRequest ).mockRejectedValue( {
+				error: 'http_request_failed',
+				message: 'Request failed',
+			} );
+			const back = jest.spyOn( history, 'back' ).mockImplementation( () => {} );
+			render( { navigation: { submit: navigation.submit } }, { initialEntry } );
+			await screen.findByRole( 'heading', { name: "We couldn't load your site" } );
+
+			await userEvent.click( screen.getByRole( 'button', { name: 'Back' } ) );
+
+			expect( back ).toHaveBeenCalledTimes( 1 );
+			expect( mockCancelMigration ).not.toHaveBeenCalled();
+			expect( navigation.submit ).not.toHaveBeenCalled();
+		}
+	);
+
 	it.each( [
 		[ 'Get started', 'difm' ],
 		[ "I'll do it myself", 'myself' ],

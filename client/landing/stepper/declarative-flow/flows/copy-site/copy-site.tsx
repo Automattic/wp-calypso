@@ -13,7 +13,7 @@ import {
 	persistSignupDestination,
 	setSignupCompleteFlowName,
 } from 'calypso/signup/storageUtils';
-import { useSite, useSiteQuery } from '../../../hooks/use-site';
+import { useSiteQuery } from '../../../hooks/use-site';
 import { useSiteCopy } from '../../../hooks/use-site-copy';
 import { STEPS } from '../../internals/steps';
 import {
@@ -28,14 +28,14 @@ import type { OnboardActions } from '@automattic/data-stores';
 function useIsValidSite() {
 	const urlQueryParams = useQuery();
 	const sourceSlug = urlQueryParams.get( 'sourceSlug' );
-	const sourceQuery = useSiteQuery( sourceSlug ?? undefined );
-	const sourceSite = sourceSlug ? ( sourceQuery.data ?? undefined ) : undefined;
+	const sourceQuery = useSiteQuery( sourceSlug ?? undefined, { enabled: !! sourceSlug } );
+	const sourceSite = sourceQuery.data ?? undefined;
 
 	const { shouldShowSiteCopyItem, isFetching: isFetchingSiteCopy } = useSiteCopy( sourceSite );
 	return {
 		isValidSite: shouldShowSiteCopyItem,
 		hasFetchedSiteDetails: !! sourceSite?.ID && ! isFetchingSiteCopy,
-		isFetchingError: !! sourceSlug && sourceQuery.isError,
+		isFetchingError: sourceQuery.isError,
 	};
 }
 
@@ -65,7 +65,7 @@ const copySite: Flow = {
 		const flowName = this.name;
 		const urlQueryParams = useQuery();
 		const sourceSiteSlug = urlQueryParams.get( 'sourceSlug' ) ?? '';
-		const sourceSite = useSite( sourceSiteSlug );
+		const { data: sourceSite } = useSiteQuery( sourceSiteSlug, { enabled: !! sourceSiteSlug } );
 		const {
 			setHideFreePlan,
 			setSignupDomainOrigin,

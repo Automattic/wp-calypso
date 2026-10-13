@@ -65,13 +65,15 @@ const SiteMigrationHowToMigrate: StepType< {
 	};
 
 	const goBack = useCallback( () => {
-		cancelMigration();
+		if ( site?.ID ) {
+			cancelMigration();
+		}
 		if ( navigation?.goBack ) {
 			navigation.goBack();
 		} else {
 			history.back();
 		}
-	}, [ cancelMigration, navigation ] );
+	}, [ cancelMigration, navigation, site?.ID ] );
 
 	const handleImport = () => {
 		if ( site?.ID ) {
@@ -119,11 +121,7 @@ const SiteMigrationHowToMigrate: StepType< {
 				<DocumentHead title={ errorTitle } />
 				<Step.CenteredColumnLayout
 					columnWidth={ 6 }
-					topBar={
-						<Step.TopBar
-							leftElement={ navigation.goBack && <Step.BackButton onClick={ navigation.goBack } /> }
-						/>
-					}
+					topBar={ <Step.TopBar leftElement={ <Step.BackButton onClick={ goBack } /> } /> }
 					heading={
 						<Step.Heading
 							text={ errorTitle }

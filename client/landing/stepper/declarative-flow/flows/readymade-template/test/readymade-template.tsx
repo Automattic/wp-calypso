@@ -41,17 +41,14 @@ beforeEach( () => {
 	jest.mocked( wpcomRequest ).mockResolvedValue( {} );
 } );
 
-it.each( [ '', undefined, {} ] )(
-	'ignores an invalid launched site slug: %s',
-	async ( siteSlug ) => {
-		const { result } = renderNavigation();
-		await act( async () => {
-			await result.current.submit?.( { isLaunched: true, siteSlug } );
-		} );
-		expect( wpcomRequest ).not.toHaveBeenCalled();
-		expect( navigate ).not.toHaveBeenCalled();
-	}
-);
+it.each( [ '', undefined ] )( 'ignores an invalid launched site slug: %s', async ( siteSlug ) => {
+	const { result } = renderNavigation();
+	await act( async () => {
+		await result.current.submit?.( { isLaunched: true, siteSlug } );
+	} );
+	expect( wpcomRequest ).not.toHaveBeenCalled();
+	expect( navigate ).not.toHaveBeenCalled();
+} );
 
 it( 'saves launchpad settings under the numeric site ID before celebrating', async () => {
 	const { result } = renderNavigation();

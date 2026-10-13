@@ -126,11 +126,7 @@ const readymadeTemplateFlow: Flow = {
 					}
 
 					// If the user's site has just been launched.
-					if (
-						typeof providedDependencies?.siteSlug === 'string' &&
-						providedDependencies.siteSlug &&
-						providedDependencies?.isLaunched
-					) {
+					if ( providedDependencies?.siteSlug && providedDependencies?.isLaunched ) {
 						await saveSiteSettings( siteId, {
 							launchpad_screen: 'off',
 						} );

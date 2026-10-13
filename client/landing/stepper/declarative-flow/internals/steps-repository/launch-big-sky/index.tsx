@@ -125,21 +125,20 @@ const LaunchBigSky: StepType = function ( props ) {
 
 			// Create a new home page if one is not set yet.
 			if ( ! hasStaticHomepage ) {
-				pageRequest = Promise.resolve(
-					wpcom.req.post(
-						{
-							path: '/sites/' + selectedSiteId + '/pages',
-							apiNamespace: 'wp/v2',
-						},
-						{},
-						{
-							title: 'Home',
-							status: 'publish',
-							content: '<!-- wp:paragraph -->\n<p>Hello world!</p>\n<!-- /wp:paragraph -->',
-						}
-					)
+				const request: Promise< { id: number } > = wpcom.req.post(
+					{
+						path: '/sites/' + selectedSiteId + '/pages',
+						apiNamespace: 'wp/v2',
+					},
+					{},
+					{
+						title: 'Home',
+						status: 'publish',
+						content: '<!-- wp:paragraph -->\n<p>Hello world!</p>\n<!-- /wp:paragraph -->',
+					}
 				);
-				pendingActions.push( pageRequest );
+				pageRequest = request;
+				pendingActions.push( request );
 			}
 
 			// Delete the existing boilerplate about page, always has a page ID of 1
