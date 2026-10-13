@@ -40,6 +40,7 @@ yarn test-client --findRelatedTests <file>  # Find + run related tests
 ### UI
 
 - Prefer `@wordpress/components` primitives (Button, Modal, Card, etc.).
+- Pass `__next40pxDefaultSize` to every new `Button` (including `size="compact"` ones) and other controls that accept it, so they're ready for when 40px becomes the default upstream. `DropdownMenu` renders its own toggle button, so pass it via `toggleProps={ { __next40pxDefaultSize: true } }`; otherwise the toggle stays 36px and misaligns next to 40px buttons.
 - Avoid `__experimental*` components unless already used in the codebase.
 - Prefer `VStack`, `HStack` over `Flex` components.
 - Use the `Heading` component for headings, not `Text` (or raw elements) styled with heading mixins.
