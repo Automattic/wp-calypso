@@ -377,13 +377,16 @@ module.exports = {
 		},
 		'import/internal-regex': '^calypso/',
 		'import/resolver': {
-			[ path.join( __dirname, 'bin/eslint-import-resolver-calypso-src.js' ) ]: {},
+			[ path.join( __dirname, 'build-tools/eslint/import-resolver-calypso-src.js' ) ]: {},
 			node: {},
 		},
 		// Workspace packages resolve to source, which can be JSX or TypeScript.
 		'import/extensions': [ '.js', '.mjs', '.cjs', '.jsx' ],
 		'import/parsers': {
-			[ path.join( __dirname, 'bin/eslint-import-parser-value-exports.js' ) ]: [ '.ts', '.tsx' ],
+			[ path.join( __dirname, 'build-tools/eslint/import-parser-value-exports.js' ) ]: [
+				'.ts',
+				'.tsx',
+			],
 		},
 	},
 	rules: {

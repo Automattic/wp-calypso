@@ -2,7 +2,7 @@ const fs = require( 'fs' );
 const path = require( 'path' );
 const { ResolverFactory, CachedInputFileSystem } = require( 'enhanced-resolve' );
 
-const repoRoot = path.resolve( __dirname, '..' );
+const repoRoot = path.resolve( __dirname, '../..' );
 
 // Resolves workspace packages to their `calypso:src` entry, like webpack and Jest do,
 // so import rules check package source and don't depend on `yarn build-packages`.
@@ -19,8 +19,13 @@ const resolver = ResolverFactory.createResolver( {
 } );
 
 // Returns the workspace package folder (e.g. `packages/foo`) containing `file`, if any.
+// Files reached through a `node_modules` symlink count as part of their package.
 function getWorkspacePackage( file ) {
-	const relative = path.relative( repoRoot, fs.realpathSync( file ) );
+	let realFile = path.resolve( file );
+	try {
+		realFile = fs.realpathSync( realFile );
+	} catch {}
+	const relative = path.relative( repoRoot, realFile );
 	if ( relative.includes( 'node_modules' ) ) {
 		return null;
 	}
