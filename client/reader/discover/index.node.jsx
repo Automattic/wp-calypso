@@ -21,8 +21,17 @@ const discoverSsr = ( context, next ) => {
 	next();
 };
 
+function redirectRetiredReddit( context ) {
+	const localePrefix = context.params.lang ? `/${ context.params.lang }` : '';
+	const query = context.querystring ? `?${ context.querystring }` : '';
+	context.res.redirect( 301, `${ localePrefix }/discover/add-new${ query }` );
+}
+
 export default function ( router ) {
 	const anyLangParam = getAnyLanguageRouteParam();
+
+	// Reddit ended RSS. Old Discover links land on the generic add-a-feed form.
+	router( [ '/discover/reddit', `/${ anyLangParam }/discover/reddit` ], redirectRetiredReddit );
 
 	router(
 		getLocalizedRoutes( anyLangParam ),

@@ -89,5 +89,9 @@ describe( 'reader discover routes', () => {
 
 		expect( router ).toHaveBeenCalledWith( '/discover/*', readerNotFound );
 		expect( page ).not.toHaveBeenCalledWith( '/discover/*', readerNotFound );
+		expect( router ).toHaveBeenCalledWith(
+			[ '/discover/reddit', '/:lang([a-z]{2,3}|[a-z]{2}-[a-z]{2})/discover/reddit' ],
+			expect.any( Function )
+		);
 	} );
 } );
