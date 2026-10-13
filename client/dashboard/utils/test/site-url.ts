@@ -103,6 +103,18 @@ describe( 'getSitePurchaseUpgradeUrl', () => {
 		expect( url ).toContain( '/plans/example.com' );
 		expect( url ).not.toContain( '/checkout/' );
 	} );
+
+	test( 'keeps the Dashboard return destinations for the store checkout', () => {
+		const url = new URL(
+			getSitePurchaseUpgradeUrl(
+				makePurchase( { product_slug: 'jetpack_growth_yearly' } ),
+				'/me/billing/purchases/1'
+			) as string,
+			'https://wordpress.com'
+		);
+		expect( url.searchParams.get( 'redirect_to' ) ).toBe( '/me/billing/purchases/1' );
+		expect( url.searchParams.get( 'cancel_to' ) ).toBeTruthy();
+	} );
 } );
 
 describe( 'getWpcomPlanChangeUrl', () => {

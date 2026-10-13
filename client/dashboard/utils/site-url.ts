@@ -200,7 +200,11 @@ export function getSitePurchaseUpgradeUrl( purchase: Purchase, redirectTo?: stri
 
 	// The Jetpack store offers only bundles on sale, so it can retire or add upgrade targets.
 	if ( purchase.is_jetpack_plan_or_product ) {
-		return wpcomLink( `/plans/${ purchase.site_slug }` );
+		const backUrl = redirectToDashboardLink( { supportBackport: true } );
+		return addQueryArgs( wpcomLink( `/plans/${ purchase.site_slug }` ), {
+			redirect_to: redirectTo ?? backUrl,
+			cancel_to: backUrl,
+		} );
 	}
 
 	return buildSitePlanUpgradeUrl( {
