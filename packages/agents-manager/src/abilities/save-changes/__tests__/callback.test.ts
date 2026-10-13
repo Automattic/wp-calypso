@@ -25,6 +25,7 @@ function makeIO( overrides: Partial< SaveChangesIO > = {} ): SaveChangesIO {
 		getDirtyEntityRecords: () => [ { kind: 'postType', name: 'page', key: 12 } ],
 		getSiteEdits: () => ( {} ),
 		isSavingEntityRecord: () => false,
+		isAutosavingEntityRecord: () => false,
 		editEntityRecord,
 		saveEditedEntityRecord,
 		saveSpecifiedSiteEdits,
@@ -121,6 +122,37 @@ describe( 'saveChanges', () => {
 		expect( result.result.error ).toContain( 'already saving' );
 	} );
 
+	it( 'saves while a background autosave is in progress', async () => {
+		const result = await saveChanges(
+			makeIO( {
+				isSavingEntityRecord: () => true,
+				isAutosavingEntityRecord: () => true,
+			} )
+		);
+
+		expect( saveEditedEntityRecord ).toHaveBeenCalledWith( 'postType', 'page', 12, {
+			throwOnError: true,
+		} );
+		expect( result.result.success ).toBe( true );
+	} );
+
+	it( 'still refuses a real save when another dirty entity is autosaving', async () => {
+		const result = await saveChanges(
+			makeIO( {
+				getDirtyEntityRecords: () => [
+					{ kind: 'postType', name: 'page', key: 12 },
+					{ kind: 'postType', name: 'wp_template', key: 'theme//home' },
+				],
+				isSavingEntityRecord: () => true,
+				isAutosavingEntityRecord: ( kind, name, key ) =>
+					kind === 'postType' && name === 'page' && key === 12,
+			} )
+		);
+
+		expect( saveEditedEntityRecord ).not.toHaveBeenCalled();
+		expect( result.result.success ).toBe( false );
+	} );
+
 	it( 'reports partial failures without hiding successful saves', async () => {
 		saveEditedEntityRecord
 			.mockResolvedValueOnce( {} )
@@ -140,9 +172,22 @@ describe( 'saveChanges', () => {
 				success: false,
 				error: 'Template save failed.',
 				message:
-					'One or more changes could not be saved. The unsaved changes remain staged in the editor.',
+					'Some changes were saved, but others could not be saved. Only the unsaved changes remain staged in the editor.',
 				details: { savedEntityCount: 1, failedEntityCount: 1 },
 			},
+		} );
+	} );
+
+	it( 'reports when no changes could be saved', async () => {
+		saveEditedEntityRecord.mockRejectedValueOnce( new Error( 'Page save failed.' ) );
+
+		const result = await saveChanges( makeIO() );
+
+		expect( result.result ).toMatchObject( {
+			success: false,
+			error: 'Page save failed.',
+			message: 'Your changes could not be saved. They remain staged in the editor.',
+			details: { savedEntityCount: 0, failedEntityCount: 1 },
 		} );
 	} );
 } );
@@ -161,7 +206,8 @@ describe( 'saveChangesCallback', () => {
 		jest.mocked( select ).mockReturnValue( {
 			__experimentalGetDirtyEntityRecords: () => [ { kind: 'postType', name: 'page', key: 12 } ],
 			getEntityRecordEdits: () => ( {} ),
-			isSavingEntityRecord: () => false,
+			isSavingEntityRecord: () => true,
+			isAutosavingEntityRecord: () => true,
 		} as never );
 		jest.mocked( dispatch ).mockImplementation( ( store ) => {
 			if ( store === 'core/block-editor' ) {

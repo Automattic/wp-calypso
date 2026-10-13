@@ -16,6 +16,7 @@ export interface SaveChangesIO {
 	getDirtyEntityRecords: () => DirtyEntityRecord[];
 	getSiteEdits: () => Record< string, unknown >;
 	isSavingEntityRecord: ( kind: string, name: string, key?: EntityKey ) => boolean;
+	isAutosavingEntityRecord: ( kind: string, name: string, key?: EntityKey ) => boolean;
 	editEntityRecord: (
 		kind: string,
 		name: string,
@@ -53,7 +54,11 @@ export async function saveChanges( io: SaveChangesIO ): Promise< AbilityResult >
 	}
 
 	if (
-		dirtyEntityRecords.some( ( { kind, name, key } ) => io.isSavingEntityRecord( kind, name, key ) )
+		dirtyEntityRecords.some(
+			( { kind, name, key } ) =>
+				io.isSavingEntityRecord( kind, name, key ) &&
+				! io.isAutosavingEntityRecord( kind, name, key )
+		)
 	) {
 		return errorResult(
 			'The editor is already saving these changes.',
@@ -97,7 +102,9 @@ export async function saveChanges( io: SaveChangesIO ): Promise< AbilityResult >
 
 		return errorResult(
 			reason,
-			'One or more changes could not be saved. The unsaved changes remain staged in the editor.',
+			savedEntityCount > 0
+				? 'Some changes were saved, but others could not be saved. Only the unsaved changes remain staged in the editor.'
+				: 'Your changes could not be saved. They remain staged in the editor.',
 			{ savedEntityCount, failedEntityCount: failed.length }
 		);
 	}
@@ -115,6 +122,7 @@ type CoreSelectors = {
 		key?: EntityKey
 	) => Record< string, unknown > | undefined;
 	isSavingEntityRecord?: ( kind: string, name: string, key?: EntityKey ) => boolean;
+	isAutosavingEntityRecord?: ( kind: string, name: string, key?: EntityKey ) => boolean;
 };
 
 type CoreActions = {
@@ -138,12 +146,15 @@ export async function saveChangesCallback(): Promise< AbilityResult > {
 		// Editor passes to __experimentalSaveSpecifiedEntityEdits.
 		const coreActions = dispatch( coreStore ) as unknown as CoreActions | undefined;
 		const blockEditorActions = dispatch( 'core/block-editor' ) as
-			| { __unstableMarkLastChangeAsPersistent?: () => void }
+			| {
+					__unstableMarkLastChangeAsPersistent?: () => void;
+			  }
 			| undefined;
 
 		if (
 			! core?.__experimentalGetDirtyEntityRecords ||
 			! core.isSavingEntityRecord ||
+			! core.isAutosavingEntityRecord ||
 			! coreActions?.editEntityRecord ||
 			! coreActions.saveEditedEntityRecord
 		) {
@@ -157,6 +168,7 @@ export async function saveChangesCallback(): Promise< AbilityResult > {
 			getDirtyEntityRecords: core.__experimentalGetDirtyEntityRecords,
 			getSiteEdits: () => core.getEntityRecordEdits?.( 'root', 'site' ) ?? {},
 			isSavingEntityRecord: core.isSavingEntityRecord,
+			isAutosavingEntityRecord: core.isAutosavingEntityRecord,
 			editEntityRecord: coreActions.editEntityRecord,
 			saveEditedEntityRecord: coreActions.saveEditedEntityRecord,
 			saveSpecifiedSiteEdits: coreActions.__experimentalSaveSpecifiedEntityEdits,
