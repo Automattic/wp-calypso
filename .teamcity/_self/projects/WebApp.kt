@@ -504,6 +504,10 @@ object RunAllUnitTests : BuildType({
 				echo -n "Yarn version: " && yarn --version
 				echo -n "NPM version: " && npm --version
 
+				# Jest and tsc read workspace packages from source, so skip the full
+				# postinstall build; the packages that still need theirs are built below.
+				export SKIP_CALYPSO_POSTINSTALL=true
+
 				# Install modules
 				${_self.yarn_install_cmd}
 
@@ -539,6 +543,8 @@ object RunAllUnitTests : BuildType({
 					echo "##teamcity[buildProblem description='${'$'}num_errors error${'$'}s occurred during yarn install.' identity='yarn_problem']"
 					exit 1
 				fi
+
+				yarn build-packages:unit-tests
 			"""
 		}
 		bashNodeScript {
