@@ -4,7 +4,6 @@ import { getAddOn } from '@automattic/data-stores/src/add-ons/add-ons-list';
 import { NEW_HOSTED_SITE_FLOW } from '@automattic/onboarding';
 import { isPreselectablePlan, supportsStorageAddOn } from 'calypso/lib/signup/legacy-plan-flows';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
-import type { PreselectablePlan } from 'calypso/lib/signup/legacy-plan-flows';
 
 type StorageAddOnSlug = ( typeof AddOns.STORAGE_ADD_ONS )[ number ];
 
@@ -13,14 +12,21 @@ function isStorageAddOnSlug( slug: string ): slug is StorageAddOnSlug {
 }
 
 /**
- * The plan named by `?plan=`, or null when it is absent or not one the legacy plan flows
- * preselected. Falling back to null keeps the plans grid as the graceful degradation, which
- * is what an unrecognised flow name already did on the `/start` side.
+ * The plan named by `?plan=`, when the flow accepts it. Standard onboarding keeps its
+ * legacy plan allowlist; new-hosted-site accepts its valid non-trial plans.
  */
-export function getPreselectedPlan( query: URLSearchParams ): PreselectablePlan | null {
+export function getPreselectedPlan( query: URLSearchParams, flow?: string ): string | null {
 	const productSlug = query.get( 'plan' );
 
-	return productSlug && isPreselectablePlan( productSlug ) ? productSlug : null;
+	if ( ! productSlug ) {
+		return null;
+	}
+	if ( flow === NEW_HOSTED_SITE_FLOW ) {
+		return isDotComPlan( { product_slug: productSlug } ) && ! isFreeHostingTrial( productSlug )
+			? productSlug
+			: null;
+	}
+	return isPreselectablePlan( productSlug ) ? productSlug : null;
 }
 
 /**
@@ -71,16 +77,7 @@ export function shouldSkipPlansStep(
 	planCartItem: MinimalRequestCartProduct | null | undefined,
 	flow?: string
 ): boolean {
-	const productSlug = query.get( 'plan' );
-	if ( flow === NEW_HOSTED_SITE_FLOW ) {
-		return !! (
-			productSlug &&
-			isDotComPlan( { product_slug: productSlug } ) &&
-			! isFreeHostingTrial( productSlug ) &&
-			planCartItem?.product_slug === productSlug
-		);
-	}
-	const plan = getPreselectedPlan( query );
+	const plan = getPreselectedPlan( query, flow );
 
 	return !! plan && planCartItem?.product_slug === plan;
 }
