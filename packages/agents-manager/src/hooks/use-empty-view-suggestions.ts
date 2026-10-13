@@ -238,7 +238,6 @@ export function useEmptyViewSuggestions( {
 		isEditedPostEmpty,
 	} = usePageOrSiteEditorSurface();
 
-	// Default suggestions - used when no provider supplies custom ones
 	const defaultSuggestions = useMemo(
 		() => [
 			{
@@ -259,21 +258,18 @@ export function useEmptyViewSuggestions( {
 		],
 		[]
 	);
-	// Check if a provider supplies suggestions
 	const hasProviderSuggestions = !! loadedProviders?.getEmptyViewSuggestions;
 
-	// Wait for WordPress core store to be ready (specifically theme data)
-	// This is needed because a provider's suggestions can filter by theme (Big Sky's do)
+	// A provider's suggestions can depend on the theme (Big Sky's do), so wait for it to load.
 	const isCoreStoreReady = useSelect(
 		( select ) => {
 			if ( ! hasProviderSuggestions ) {
-				return true; // No need to wait without provider suggestions
+				return true;
 			}
 			try {
 				const coreStore = select( 'core' ) as {
 					getCurrentTheme?: () => unknown;
 				};
-				// Check if getCurrentTheme returns a value (meaning store is ready)
 				const theme = coreStore?.getCurrentTheme?.();
 				return !! theme;
 			} catch {
@@ -283,7 +279,6 @@ export function useEmptyViewSuggestions( {
 		[ hasProviderSuggestions ]
 	);
 
-	// Compute empty view suggestions when store/context is ready.
 	const [ emptyViewSuggestions, setEmptyViewSuggestions ] = useState< Suggestion[] | null >( null );
 
 	// Signal that bumps whenever the host dispatches
@@ -338,10 +333,8 @@ export function useEmptyViewSuggestions( {
 		const fallbackSuggestions = suppressDefaults ? [] : defaultSuggestions;
 
 		if ( ! hasProviderSuggestions ) {
-			// No provider suggestions, use defaults immediately
 			setSuggestionsIfChanged( fallbackSuggestions );
 		} else {
-			// A provider supplies suggestions and the store is ready - get filtered suggestions
 			const providerSuggestions = loadedProviders.getEmptyViewSuggestions?.() ?? [];
 			const suggestions = filterEmptyViewSuggestions(
 				providerSuggestions,

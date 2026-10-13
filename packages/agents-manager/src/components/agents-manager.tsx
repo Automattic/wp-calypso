@@ -336,7 +336,6 @@ function AgentSetup( {
 
 	const loadedProviders = loadedProvidersRef.current;
 
-	// Load empty view suggestions (including providers' theme-dependent ones)
 	const emptyViewSuggestions = useEmptyViewSuggestions( { loadedProviders } );
 
 	// Don't render until the setup is complete AND suggestions are ready
