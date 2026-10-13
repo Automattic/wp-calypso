@@ -38,10 +38,6 @@ function ActionButton( {
 	);
 }
 
-/**
- * Warns the agency that a subscription payment failed or a card is about to
- * expire. The notice stays until the payment is fixed.
- */
 export default function PaymentRiskNotice( {
 	agency,
 	source,

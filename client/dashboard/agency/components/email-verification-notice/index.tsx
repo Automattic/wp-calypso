@@ -1,36 +1,12 @@
-import {
-	resendEmailVerificationMutation,
-	sendEmailVerificationMutation,
-	userSettingsQuery,
-} from '@automattic/api-queries';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { userSettingsQuery } from '@automattic/api-queries';
+import { useQuery } from '@tanstack/react-query';
 import { Button } from '@wordpress/components';
-import { useDispatch } from '@wordpress/data';
 import { __, sprintf } from '@wordpress/i18n';
-import { store as noticesStore } from '@wordpress/notices';
-import { useEffect, useRef } from 'react';
 import { useAuth } from '../../../app/auth';
-import { withSnackbar } from '../../../app/snackbars/with-snackbar';
 import { Notice } from '../../../components/notice';
-import {
-	formatCooldown,
-	resendAcceptedRetryAfter,
-	RESEND_MIN_INTERVAL_SECONDS,
-	resendThrottleRetryAfter,
-} from '../../../utils/email-verification-resend';
-import { useResendCooldown } from '../../../utils/use-resend-cooldown';
+import { formatCooldown } from '../../../utils/email-verification-resend';
+import { useEmailVerificationResend } from '../../../utils/use-email-verification-resend';
 
-const sentToEmail = ( email: string ) =>
-	sprintf(
-		/* translators: %s is the email address awaiting verification */
-		__( 'We sent an email to %s. Please check your inbox to verify your email.' ),
-		email
-	);
-
-/**
- * The address waiting to be verified: the new one of a pending email change,
- * else the account email while it is unverified.
- */
 export function useEmailToVerify() {
 	const { user } = useAuth();
 	const { data: userSettings, isLoading } = useQuery( userSettingsQuery() );
@@ -47,66 +23,20 @@ export function useEmailToVerify() {
 	return { emailToVerify, isEmailChangePending, isLoading };
 }
 
-/**
- * Asks the user to verify their account email, or the new address of a
- * pending email change, and lets them resend the link.
- */
 export default function EmailVerificationNotice() {
 	const { user } = useAuth();
 	const { emailToVerify, isEmailChangePending } = useEmailToVerify();
-	const { createErrorNotice, createSuccessNotice } = useDispatch( noticesStore );
-	// One wait per path: the server rate limits the dedicated send endpoint, and
-	// re-saving a pending address is limited only by us.
-	const originalCooldown = useResendCooldown();
-	const pendingCooldown = useResendCooldown();
-	const { secondsUntilResend } = isEmailChangePending ? pendingCooldown : originalCooldown;
+	const { resend, isResending, secondsUntilResend } = useEmailVerificationResend( {
+		originalEmail: user.email,
+		pendingEmail: isEmailChangePending ? ( emailToVerify ?? undefined ) : undefined,
+		isEmailChangePending,
+		errorMessage: __( 'There was an error while resending the email. Please try again.' ),
+	} );
 	const isAwaitingResend = secondsUntilResend > 0;
-
-	const pendingEmail = isEmailChangePending ? emailToVerify : null;
-	const pendingEmailRef = useRef( pendingEmail );
-	pendingEmailRef.current = pendingEmail;
-
-	const { reset: resetPendingCooldown } = pendingCooldown;
-	useEffect( () => {
-		resetPendingCooldown();
-	}, [ pendingEmail, resetPendingCooldown ] );
-
-	const genericError = __( 'There was an error while resending the email. Please try again.' );
-
-	const { mutate: sendToOriginal, isPending: isSendPending } = useMutation( {
-		...withSnackbar( sendEmailVerificationMutation(), { success: sentToEmail( user.email ) } ),
-		onSuccess: ( data ) => originalCooldown.hold( resendAcceptedRetryAfter( data ) ),
-		onError: ( error ) => {
-			const retryAfter = resendThrottleRetryAfter( error );
-			if ( retryAfter !== null ) {
-				originalCooldown.hold( retryAfter );
-				createErrorNotice( __( 'Too many attempts. Please wait before trying again.' ), {
-					type: 'snackbar',
-				} );
-				return;
-			}
-			createErrorNotice( genericError, { type: 'snackbar' } );
-		},
-	} );
-
-	const { mutate: resendToPending, isPending: isResendPending } = useMutation( {
-		...resendEmailVerificationMutation(),
-		// The address is a mutation variable, so a late response names the address it was sent to.
-		onSuccess: ( _data, email ) => {
-			createSuccessNotice( sentToEmail( email ), { type: 'snackbar' } );
-			// A wait is meaningless once the address has moved on.
-			if ( email === pendingEmailRef.current ) {
-				pendingCooldown.hold( RESEND_MIN_INTERVAL_SECONDS );
-			}
-		},
-		onError: () => createErrorNotice( genericError, { type: 'snackbar' } ),
-	} );
 
 	if ( ! emailToVerify ) {
 		return null;
 	}
-
-	const isSending = isSendPending || isResendPending;
 
 	return (
 		<Notice
@@ -116,11 +46,9 @@ export default function EmailVerificationNotice() {
 				<Button
 					variant="primary"
 					size="compact"
-					onClick={ () =>
-						isEmailChangePending ? resendToPending( emailToVerify ) : sendToOriginal()
-					}
-					disabled={ isAwaitingResend || isSending }
-					isBusy={ isSending }
+					onClick={ resend }
+					disabled={ isAwaitingResend || isResending }
+					isBusy={ isResending }
 				>
 					{ isAwaitingResend
 						? sprintf(

@@ -14,11 +14,7 @@ const DISMISS_PREFERENCE = 'pressable-limit-notification-dismissed';
 const LIMIT_EXCEEDED_REFERENCE = 'pressable_plan_usage_limit_exeeded';
 const LIMIT_APPROACHING_REFERENCE = 'pressable_plan_usage_limit_approaching';
 
-/**
- * The Pressable usage notification to warn about, unless the agency
- * dismissed it. Only an exceeded limit is urgent: one that is still being
- * approached is informational.
- */
+// Only an exceeded limit is urgent; one still being approached is informational.
 export function usePressableUsageLimit( agency: Agency | null | undefined ) {
 	const { data: dismissedTimestamp, isFetched } = useQuery(
 		userPreferenceQuery( DISMISS_PREFERENCE )

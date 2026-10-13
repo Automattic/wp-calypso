@@ -4,7 +4,6 @@ import type { ReactNode } from 'react';
 export interface NoticeCandidate {
 	id: string;
 	isEligible: boolean;
-	/** True until the data that decides `isEligible` has loaded. */
 	isLoading?: boolean;
 	/** Urgent candidates outrank the notices every agency page shares. */
 	isUrgent?: boolean;
@@ -13,10 +12,6 @@ export interface NoticeCandidate {
 
 const SharedNoticesContext = createContext< NoticeCandidate[] >( [] );
 
-/**
- * Provides the notices every agency page shows, such as the email
- * verification notice.
- */
 export function SharedNoticesProvider( {
 	candidates,
 	children,
@@ -30,13 +25,9 @@ export function SharedNoticesProvider( {
 }
 
 /**
- * Shows the agency page's notices one below the other, until the MSD notice
- * stack (top notice + "Review all") is available.
- *
- * Pages pass their candidates in priority order. The shared candidates go after
- * the page's urgent ones and before the rest. Nothing shows until every
- * candidate has loaded, so the notices don't appear one by one and push each
- * other around.
+ * Stacks the page's notices in priority order until the MSD notice stack
+ * component is available. Notices show from the top down as their data loads,
+ * so none appears above one already on screen.
  */
 export function AgencyNotices( { candidates = [] }: { candidates?: NoticeCandidate[] } ) {
 	const sharedCandidates = useContext( SharedNoticesContext );
@@ -46,19 +37,24 @@ export function AgencyNotices( { candidates = [] }: { candidates?: NoticeCandida
 		...candidates.filter( ( candidate ) => ! candidate.isUrgent ),
 	];
 
-	const isSettled = ordered.every( ( candidate ) => ! candidate.isLoading );
-	const [ hasSettled, setHasSettled ] = useState( isSettled );
+	// A notice that has loaded once keeps its place when its data refetches.
+	const [ loadedIds, setLoadedIds ] = useState< ReadonlySet< string > >( () => new Set() );
+	const newlyLoaded = ordered
+		.filter( ( candidate ) => ! candidate.isLoading && ! loadedIds.has( candidate.id ) )
+		.map( ( candidate ) => candidate.id )
+		.join( ',' );
 	useEffect( () => {
-		if ( isSettled ) {
-			setHasSettled( true );
+		if ( newlyLoaded ) {
+			setLoadedIds( ( ids ) => new Set( [ ...ids, ...newlyLoaded.split( ',' ) ] ) );
 		}
-	}, [ isSettled ] );
+	}, [ newlyLoaded ] );
 
-	if ( ! hasSettled && ! isSettled ) {
-		return null;
-	}
+	const isReady = ( candidate: NoticeCandidate ) =>
+		! candidate.isLoading || loadedIds.has( candidate.id );
+	const firstPending = ordered.findIndex( ( candidate ) => ! isReady( candidate ) );
+	const ready = firstPending === -1 ? ordered : ordered.slice( 0, firstPending );
 
-	return ordered
+	return ready
 		.filter( ( candidate ) => candidate.isEligible )
 		.map( ( candidate ) => <Fragment key={ candidate.id }>{ candidate.notice }</Fragment> );
 }

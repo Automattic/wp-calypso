@@ -7,11 +7,7 @@ import {
 import { useQuery } from '@tanstack/react-query';
 import useFetchTaggedSitesForMigration from './migrations/hooks/use-fetch-tagged-sites-for-migration';
 
-/**
- * Whether the agency has done anything that earns a commission: sent a
- * referral, migrated a site, or set up WooPayments. Pages outside Earn use it
- * so the payout notice doesn't show to agencies with nothing to be paid for.
- */
+// Keeps the payout notice away from agencies with nothing to be paid for.
 export function useHasCommissionActivity( agencyId: number ) {
 	const enabled = !! agencyId;
 	const { data: referrals, isLoading: isLoadingReferrals } = useQuery( {

@@ -28,10 +28,7 @@ function getDescription( commissionType?: CommissionType ) {
 	}
 }
 
-/**
- * Whether the agency is due commissions but has not given its payout details.
- * Stays loading until the commission activity is known.
- */
+// Stays loading until the commission activity is known, so the notice doesn't pop in late.
 export function useMissingPaymentSettings( {
 	hasCommissionActivity,
 	isLoadingActivity = false,

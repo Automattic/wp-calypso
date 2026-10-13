@@ -15,14 +15,20 @@ const candidate = ( id: string, overrides: Partial< NoticeCandidate > = {} ): No
 	...overrides,
 } );
 
-function LoadingHarness( { initiallyLoading }: { initiallyLoading: boolean } ) {
+function LoadingHarness( {
+	loadingId,
+	initiallyLoading,
+}: {
+	loadingId: string;
+	initiallyLoading: boolean;
+} ) {
 	const [ isLoading, setIsLoading ] = useState( initiallyLoading );
+	const withLoading = ( id: string ) =>
+		candidate( id, { isLoading: id === loadingId && isLoading } );
 	return (
 		<>
 			<button onClick={ () => setIsLoading( ( value ) => ! value ) }>Toggle loading</button>
-			<AgencyNotices
-				candidates={ [ candidate( 'payment-risk' ), candidate( 'payout', { isLoading } ) ] }
-			/>
+			<AgencyNotices candidates={ [ withLoading( 'payment-risk' ), withLoading( 'payout' ) ] } />
 		</>
 	);
 }
@@ -52,21 +58,27 @@ describe( '<AgencyNotices>', () => {
 		expect( renderedIds() ).toEqual( [ 'payout' ] );
 	} );
 
-	test( 'shows nothing until every notice has loaded', async () => {
-		render( <LoadingHarness initiallyLoading /> );
+	test( 'shows the notices above the first one still loading', async () => {
+		render( <LoadingHarness loadingId="payout" initiallyLoading /> );
 
-		expect( renderedIds() ).toEqual( [] );
+		expect( renderedIds() ).toEqual( [ 'payment-risk' ] );
 
 		await userEvent.click( screen.getByRole( 'button', { name: 'Toggle loading' } ) );
 
 		expect( renderedIds() ).toEqual( [ 'payment-risk', 'payout' ] );
 	} );
 
-	test( 'keeps showing the notices when one starts loading again', async () => {
-		render( <LoadingHarness initiallyLoading={ false } /> );
+	test( 'holds a notice back while one above it is still loading', () => {
+		render( <LoadingHarness loadingId="payment-risk" initiallyLoading /> );
+
+		expect( renderedIds() ).toEqual( [] );
+	} );
+
+	test( 'keeps showing a notice when its data loads again', async () => {
+		render( <LoadingHarness loadingId="payment-risk" initiallyLoading={ false } /> );
 
 		await userEvent.click( screen.getByRole( 'button', { name: 'Toggle loading' } ) );
 
-		expect( renderedIds() ).toContain( 'payment-risk' );
+		expect( renderedIds() ).toEqual( [ 'payment-risk', 'payout' ] );
 	} );
 } );

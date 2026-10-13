@@ -13,11 +13,6 @@ const DISMISS_PREFERENCE = 'a4a-agency-approval-notice-dismissed';
 // Once approved, the welcome only shows for the agency's first week.
 const APPROVED_NOTICE_WINDOW_MS = 7 * 24 * 60 * 60 * 1000;
 
-/**
- * Whether the approval notice has something to say: a pending or rejected
- * application (urgent), or an approval in the agency's first week, until
- * dismissed.
- */
 export function useAgencyApprovalNotice( agency: Agency | null | undefined ) {
 	const { data: isDismissed, isFetched } = useQuery( userPreferenceQuery( DISMISS_PREFERENCE ) );
 	const status = agency?.approval_status;
@@ -42,14 +37,14 @@ export function useAgencyApprovalNotice( agency: Agency | null | undefined ) {
  * approved ones get a welcome they can dismiss.
  */
 export default function AgencyApprovalNotice( { agency }: { agency: Agency | null | undefined } ) {
-	const { data: isDismissed, isFetched } = useQuery( userPreferenceQuery( DISMISS_PREFERENCE ) );
+	const { isEligible } = useAgencyApprovalNotice( agency );
 	const { mutate: saveDismissed } = useMutation(
 		userPreferenceOptimisticMutation( DISMISS_PREFERENCE )
 	);
 	const { openContactForm } = useContactSupport();
 
 	const status = agency?.approval_status;
-	if ( ! status || ! isFetched || isDismissed ) {
+	if ( ! isEligible ) {
 		return null;
 	}
 
@@ -74,13 +69,6 @@ export default function AgencyApprovalNotice( { agency }: { agency: Agency | nul
 				) }
 			</Notice>
 		);
-	}
-
-	if (
-		agency?.created_at &&
-		new Date( agency.created_at ).getTime() < Date.now() - APPROVED_NOTICE_WINDOW_MS
-	) {
-		return null;
 	}
 
 	return (
