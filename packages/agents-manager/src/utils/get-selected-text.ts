@@ -43,7 +43,6 @@ export function getAttributePlainText( value: unknown ): string | null {
 
 /**
  * The text the user selected inside one attribute of one block, or `null`.
- * Mirror of big-sky-plugin's `src/ai/utils/text-selection.ts` — keep in sync.
  */
 export function getSelectedTextContext(
 	// Accepts both the registry `select` and the one given to `useSelect`.
