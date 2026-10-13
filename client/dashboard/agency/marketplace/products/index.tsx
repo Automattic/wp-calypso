@@ -27,6 +27,7 @@ import CartMenu from './cart-menu';
 import CategoryTiles, { CategoryMark, isProductCategory, isTileValue } from './category-tiles';
 import FeaturedShowcase from './featured-showcase';
 import FeaturedShowcaseSkeleton from './featured-showcase-skeleton';
+import { matchesCartEntry } from './lib/pressable-memory-addon';
 import {
 	getBrandLabels,
 	getCategoryShortLabels,
@@ -40,6 +41,7 @@ import {
 	getFeaturedProducts,
 	getItemId,
 	getMarketplaceProducts,
+	getProductId,
 	getProductListItems,
 	getProductSections,
 } from './lib/product-groups';
@@ -48,7 +50,12 @@ import { getProductSearchText } from './lib/product-search';
 import ProductCardSkeleton from './product-card-skeleton';
 import ProductDetailsModal from './product-details-modal';
 import ProductStoreCard from './product-store-card';
-import { parseCartEntries, useCartOpen, useShoppingCart } from './use-shopping-cart';
+import {
+	getProductCartRef,
+	parseCartEntries,
+	useCartOpen,
+	useShoppingCart,
+} from './use-shopping-cart';
 import type { TileValue } from './category-tiles';
 import type { ProductBrand, ProductCategory } from './lib/product-categories';
 import type { ProductListItem, ProductSection } from './lib/product-groups';
@@ -95,7 +102,6 @@ const PRODUCT_GRID_COLUMNS = 'repeat( auto-fill, minmax( 300px, 1fr ) )';
 // - the agency approval notice (pending / approved / rejected)
 // - the overdue invoice notice
 // - the guided tour
-// - Pressable PHP memory add-ons targeting a specific site
 export default function MarketplaceProducts() {
 	const { recordTracksEvent } = useAnalytics();
 	const isSmallScreen = useViewportMatch( 'small', '<' );
@@ -142,7 +148,9 @@ export default function MarketplaceProducts() {
 	} );
 
 	// `?product_slug=a,b` and `?products=a:2,b:1` replace the cart with those
-	// products, as the classic products page does.
+	// products, as the classic products page does. `products` uses the cart
+	// storage layout, so a PHP memory add-on's site is the fifth field
+	// (`slug:quantity:::domain`), not the third as in the checkout link.
 	const hasPreselected = useRef( false );
 	useEffect( () => {
 		if ( hasPreselected.current || ! allProducts ) {
@@ -162,13 +170,17 @@ export default function MarketplaceProducts() {
 		}
 		const entries = productSlug
 			? productSlug.split( ',' ).map( ( slug ) => ( { slug, quantity: 1 } ) )
-			: parseCartEntries( productsParam ).map( ( { slug, quantity } ) => ( { slug, quantity } ) );
+			: parseCartEntries( productsParam ).map( ( { slug, quantity, siteDomain } ) => ( {
+					slug,
+					quantity,
+					...( siteDomain ? { siteDomain } : {} ),
+				} ) );
 		// Like classic, only WordPress.com hosting takes a quantity; bundles are not
 		// sold under Billing Dragon.
 		const known = entries.filter(
-			( { slug, quantity } ) =>
-				allProducts.some( ( product ) => product.slug === slug ) &&
-				( quantity === 1 || slug.startsWith( 'wpcom-hosting' ) )
+			( entry ) =>
+				allProducts.some( ( product ) => matchesCartEntry( product, entry ) ) &&
+				( entry.quantity === 1 || entry.slug.startsWith( 'wpcom-hosting' ) )
 		);
 		hasPreselected.current = true;
 		replaceItems( known );
@@ -328,11 +340,12 @@ export default function MarketplaceProducts() {
 
 	const toggleCart = useCallback(
 		( product: AgencyProduct ) => {
-			const wasInCart = hasItem( product.slug );
+			const cartRef = getProductCartRef( product );
+			const wasInCart = hasItem( cartRef );
 			if ( wasInCart ) {
-				removeItem( product.slug );
+				removeItem( cartRef );
 			} else {
-				addItem( product.slug );
+				addItem( cartRef );
 			}
 			recordTracksEvent(
 				wasInCart
@@ -347,6 +360,11 @@ export default function MarketplaceProducts() {
 			);
 		},
 		[ hasItem, addItem, removeItem, recordTracksEvent, marketplaceType, termPricing ]
+	);
+
+	const isProductInCart = useCallback(
+		( product: AgencyProduct ) => hasItem( getProductCartRef( product ) ),
+		[ hasItem ]
 	);
 
 	const openDetails = ( product: AgencyProduct ) => {
@@ -364,7 +382,7 @@ export default function MarketplaceProducts() {
 					item={ item }
 					term={ termPricing }
 					isReferralMode={ isReferralMode }
-					isInCart={ hasItem }
+					isInCart={ isProductInCart }
 					onToggleCart={ toggleCart }
 					onViewDetails={ openDetails }
 					onSelectVariant={ ( product ) =>
@@ -415,7 +433,7 @@ export default function MarketplaceProducts() {
 					product={ detailsProduct }
 					term={ termPricing }
 					isReferralMode={ isReferralMode }
-					inCart={ hasItem( detailsProduct.slug ) }
+					inCart={ isProductInCart( detailsProduct ) }
 					onToggleCart={ () => toggleCart( detailsProduct ) }
 					onClose={ () => setDetailsProduct( null ) }
 				/>
@@ -426,7 +444,7 @@ export default function MarketplaceProducts() {
 					products={ featuredProducts }
 					term={ termPricing }
 					isReferralMode={ isReferralMode }
-					isInCart={ hasItem }
+					isInCart={ isProductInCart }
 					onToggleCart={ toggleCart }
 					onViewDetails={ openDetails }
 				/>
@@ -434,7 +452,7 @@ export default function MarketplaceProducts() {
 			<div className="dashboard-marketplace-products__filters">
 				<DataViews< AgencyProduct >
 					data={ products }
-					getItemId={ ( item ) => item.slug }
+					getItemId={ getProductId }
 					fields={ fields }
 					view={ view }
 					onChangeView={ handleViewChange }
