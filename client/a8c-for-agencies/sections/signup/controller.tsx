@@ -15,6 +15,7 @@ import {
 } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { hideMasterbar } from 'calypso/state/ui/actions';
+import CustomSignup from './custom-signup';
 import AgencySignUp from './primary/agency-signup';
 import AgencySignupFinish from './primary/agency-signup-finish';
 import AgencySignupV2 from './signup-v2';
@@ -73,6 +74,20 @@ export const signupV2Context: Callback = ( context, next ) => {
 			<AgencySignupV2 />
 		</>
 	);
+	next();
+};
+
+/**
+ * PROTOTYPE: proof-of-concept signup flow at `/custom-signup`.
+ *
+ * Unlike `signupV2Context`, this skips the agency session check (so it renders
+ * for logged-in users) and the page-view tracker (so demo traffic doesn't
+ * pollute signup analytics). Intended to eventually replace the logged-out
+ * `/signup` flow.
+ */
+export const customSignupContext: Callback = ( context, next ) => {
+	context.store.dispatch( hideMasterbar() );
+	context.primary = <CustomSignup />;
 	next();
 };
 

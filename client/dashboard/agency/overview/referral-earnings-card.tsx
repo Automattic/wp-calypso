@@ -19,6 +19,13 @@ import type { RecordTracksEvent } from '../tiers/types';
 
 interface ReferralEarningsCardProps {
 	agencyId: number;
+	/** PROTOTYPE: shows these numbers instead of fetching the agency's referrals. */
+	sample?: {
+		currentQuarter: number;
+		activeReferrals: number;
+		pendingPayout: number;
+		lifetimeEarnings: number;
+	};
 	locked?: boolean;
 	lockedNote?: string;
 	referralsHref: string;
@@ -77,6 +84,7 @@ function ReferralEarningsEmptyState( {
 // needs inline actions and non-interactive stat rows.
 export default function ReferralEarningsCard( {
 	agencyId,
+	sample,
 	locked,
 	lockedNote,
 	referralsHref,
@@ -85,17 +93,17 @@ export default function ReferralEarningsCard( {
 }: ReferralEarningsCardProps ) {
 	const { data: referrals = [], isLoading: isLoadingReferrals } = useQuery( {
 		...referralsQuery( agencyId ),
-		enabled: !! agencyId && ! locked,
+		enabled: !! agencyId && ! locked && ! sample,
 	} );
 	const { data: referralCommissionPayout, isLoading: isLoadingPayout } = useQuery( {
 		...referralCommissionPayoutQuery( agencyId ),
-		enabled: !! agencyId && ! locked,
+		enabled: !! agencyId && ! locked && ! sample,
 	} );
-	const isLoading = isLoadingReferrals || isLoadingPayout;
+	const isLoading = ! sample && ( isLoadingReferrals || isLoadingPayout );
 	const { previousQuarterExpectedCommission, currentQuarterExpectedCommission } =
 		useConsolidatedPayoutData( referrals );
 
-	const hasReferrals = referrals.length > 0;
+	const hasReferrals = !! sample || referrals.length > 0;
 
 	if ( locked || ( ! hasReferrals && ! isLoading ) ) {
 		return (
@@ -113,9 +121,13 @@ export default function ReferralEarningsCard( {
 		);
 	}
 
-	const activeReferrals = referrals.filter( ( referral ) =>
-		referral.referralStatuses.includes( 'active' )
-	).length;
+	const activeReferrals =
+		sample?.activeReferrals ??
+		referrals.filter( ( referral ) => referral.referralStatuses.includes( 'active' ) ).length;
+	const quarterEstimate = sample?.currentQuarter ?? currentQuarterExpectedCommission;
+	const pendingPayout = sample?.pendingPayout ?? previousQuarterExpectedCommission;
+	const lifetimeEarnings =
+		sample?.lifetimeEarnings ?? referralCommissionPayout?.total_commission ?? 0;
 
 	return (
 		<Card>
@@ -127,7 +139,7 @@ export default function ReferralEarningsCard( {
 					<HStack spacing={ 2 } justify="flex-start" alignment="baseline" expanded={ false }>
 						<Text size={ 20 } weight={ 500 } lineHeight="24px">
 							<TextBlur isBlurred={ isLoading } length={ 6 }>
-								{ formatCurrency( currentQuarterExpectedCommission, 'USD' ) }
+								{ formatCurrency( quarterEstimate, 'USD' ) }
 							</TextBlur>
 						</Text>
 						<Text intent="success" size={ 12 } lineHeight="16px">
@@ -140,11 +152,11 @@ export default function ReferralEarningsCard( {
 							{ label: __( 'Active referrals' ), value: formatNumber( activeReferrals ) },
 							{
 								label: __( 'Pending payout' ),
-								value: formatCurrency( previousQuarterExpectedCommission, 'USD' ),
+								value: formatCurrency( pendingPayout, 'USD' ),
 							},
 							{
 								label: __( 'Lifetime earnings' ),
-								value: formatCurrency( referralCommissionPayout?.total_commission ?? 0, 'USD' ),
+								value: formatCurrency( lifetimeEarnings, 'USD' ),
 							},
 						] }
 					/>

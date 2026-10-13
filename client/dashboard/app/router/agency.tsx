@@ -972,6 +972,20 @@ export const earnWooPaymentsSetupRoute = createRoute( {
 	)
 );
 
+// `/leads` – client leads from the partner directories and Automattic.
+// PROTOTYPE: sample data only; the sidebar only links here while the tailored
+// Overview prototype is enabled.
+export const agencyLeadsRoute = createRoute( {
+	staticData: { requiresAgencyCapability: 'a4a_read_partner_directory' },
+	head: () => ( { meta: [ { title: __( 'Leads' ) } ] } ),
+	getParentRoute: () => agencyRoute,
+	path: 'leads',
+} ).lazy( () =>
+	import( '../../agency/leads' ).then( ( d ) =>
+		createLazyRoute( 'agency-leads' )( { component: d.default } )
+	)
+);
+
 // `/migrations` – migration commissions
 export const earnMigrationsRoute = createRoute( {
 	staticData: { requiresAgencyCapability: 'a4a_read_migrations' },
@@ -2190,6 +2204,7 @@ export const createAgencyRoutes = () => [
 			mcpConnectRoute,
 		] ),
 		agencySitesRoute,
+		agencyLeadsRoute,
 		agencyTeamRoute,
 		earnReferralsRoute,
 		earnWooPaymentsRoute,

@@ -2,6 +2,7 @@ import { __experimentalVStack as VStack } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
 import Grid from '../../components/grid';
+import { SectionHeader } from '../../components/section-header';
 import { PendingTierCard, RejectedTierCard } from './application-status-cards';
 import EventCard from './event-card';
 import GrowthCard from './growth-card';
@@ -12,6 +13,7 @@ import WooPaymentsRevenueCard from './woopayments-revenue-card';
 import type { HelpfulLink } from './helpful-links-card';
 import type { AgencyTierType, RecordTracksEvent } from '../tiers/types';
 import type { AgencyApprovalStatus } from '@automattic/api-core';
+import type { ComponentProps, ReactNode } from 'react';
 
 // The WooPayments routes gate on the referrals capability too (see
 // a8c-for-agencies/lib/permission.ts), so one capability locks both earning cards.
@@ -51,6 +53,31 @@ export interface AgencyOverviewContentProps {
 	isSchedulingCall?: boolean;
 	onRelaunchTour?: () => void;
 	recordTracksEvent?: RecordTracksEvent;
+	/** PROTOTYPE: a tailored plan shown above the grid in place of the Growth card. */
+	tailoredPlan?: ReactNode;
+	/** PROTOTYPE: the tabbed “What’s new” card, replacing the event card in the tailored layout. */
+	whatsNew?: ReactNode;
+	/** PROTOTYPE: the client leads card, shown above the earnings cards in the tailored layout. */
+	leadsCard?: ReactNode;
+	/** PROTOTYPE: hides the Referral and WooPayments cards (new agencies that aren't relevant to yet). */
+	hideEarningsCards?: boolean;
+	/** PROTOTYPE: sample earnings for the established-agency demo. */
+	/**
+	 * PROTOTYPE: established agencies get a page organized by program pillar:
+	 * a primary section (partner manager, growth plan, tier), then Earn and Grow.
+	 */
+	pillarLayout?: boolean;
+	learnCard?: ReactNode;
+	/** PROTOTYPE: partner manager card with the tier summary inside; replaces the tier card. */
+	partnerManagerCard?: ReactNode;
+	/** PROTOTYPE: the growth plan already shows the tier, so the tier card is dropped. */
+	tierInPlan?: boolean;
+	/** PROTOTYPE: getting-started agencies get leads and referrals side by side in an Earn section. */
+	earnSection?: boolean;
+	sampleEarnings?: {
+		referrals: NonNullable< ComponentProps< typeof ReferralEarningsCard >[ 'sample' ] >;
+		woopayments: NonNullable< ComponentProps< typeof WooPaymentsRevenueCard >[ 'sample' ] >;
+	};
 }
 
 /**
@@ -73,6 +100,16 @@ export default function AgencyOverviewContent( {
 	isSchedulingCall,
 	onRelaunchTour,
 	recordTracksEvent,
+	tailoredPlan,
+	whatsNew,
+	leadsCard,
+	hideEarningsCards = false,
+	sampleEarnings,
+	pillarLayout = false,
+	learnCard,
+	partnerManagerCard,
+	tierInPlan = false,
+	earnSection = false,
 }: AgencyOverviewContentProps ) {
 	const isSmallViewport = useViewportMatch( 'medium', '<' );
 	const spacing = isSmallViewport ? 4 : 6;
@@ -83,27 +120,208 @@ export default function AgencyOverviewContent( {
 	const isLocked = isPending || isRejected || ! canAccessEarnings;
 	const lockedNote = isPending ? __( 'Unlocks when your account is activated' ) : undefined;
 
+	const tierCard = (
+		<>
+			{ isRejected && <RejectedTierCard contactSupport={ links.contactSupport } /> }
+			{ isPending && (
+				<PendingTierCard
+					onRelaunchTour={ onRelaunchTour }
+					recordTracksEvent={ recordTracksEvent }
+				/>
+			) }
+			{ ! isRejected && ! isPending && (
+				<TierOverviewCard
+					tierId={ tierId }
+					influencedRevenue={ influencedRevenue }
+					tiersHref={ links.tiers }
+					shouldUseRouterLink={ shouldUseRouterLink }
+					// PROTOTYPE: the growth plan owns the call CTA, so the tier card drops its copy.
+					onScheduleCall={ tailoredPlan ? undefined : onScheduleCall }
+					isSchedulingCall={ isSchedulingCall }
+					recordTracksEvent={ recordTracksEvent }
+				/>
+			) }
+		</>
+	);
+
+	// PROTOTYPE: `sample` swaps in demo numbers for the established-agency experience.
+	const earningsCards = (
+		<>
+			<ReferralEarningsCard
+				sample={ sampleEarnings?.referrals }
+				agencyId={ agencyId }
+				locked={ isLocked }
+				lockedNote={ lockedNote }
+				referralsHref={ links.referrals }
+				shouldUseRouterLink={ shouldUseRouterLink }
+				recordTracksEvent={ recordTracksEvent }
+			/>
+			{ /* PROTOTYPE: a sample agency with no WooPayments stores skips the setup card; the
+			advisor call covers it. */ }
+			{ sampleEarnings?.woopayments.activeStores !== 0 && (
+				<WooPaymentsRevenueCard
+					sample={ sampleEarnings?.woopayments }
+					agencyId={ agencyId }
+					locked={ isLocked }
+					lockedNote={ lockedNote }
+					woopaymentsHref={ links.woopayments }
+					shouldUseRouterLink={ shouldUseRouterLink }
+					recordTracksEvent={ recordTracksEvent }
+				/>
+			) }
+		</>
+	);
+
+	const sideCards = (
+		<>
+			<HelpfulLinksCard links={ links.helpful } recordTracksEvent={ recordTracksEvent } />
+			<EventCard
+				isEligibleForPressableIntroOffer={ isEligibleForPressableIntroOffer }
+				isEligibleForPressableExpansionOffer={ isEligibleForPressableExpansionOffer }
+				aiMcpHref={ links.aiMcp }
+				pressableHostingHref={ links.pressableHosting }
+				shouldUseRouterLink={ shouldUseRouterLink }
+				recordTracksEvent={ recordTracksEvent }
+			/>
+		</>
+	);
+
+	const columns = isSmallViewport ? 1 : 2;
+	const gap = isSmallViewport ? 'lg' : 'xl';
+
+	// PROTOTYPE: established agencies, organized by the program's Earn and Grow pillars.
+	if ( pillarLayout && ( tailoredPlan || partnerManagerCard ) ) {
+		const pillar = ( title: string, description: string, content: ReactNode ) => (
+			<VStack spacing={ 4 } justify="flex-start">
+				<SectionHeader level={ 2 } title={ title } description={ description } />
+				{ content }
+			</VStack>
+		);
+		// Earn fills the left column, Grow the right.
+		const earnAndGrow = ( growCards: ReactNode, growDescription: string ) => (
+			<Grid columns={ columns } gap={ gap }>
+				{ pillar(
+					__( 'Earn' ),
+					__( 'Leads and recurring income from the program.' ),
+					<VStack spacing={ spacing } justify="flex-start">
+						{ leadsCard }
+						{ earningsCards }
+					</VStack>
+				) }
+				{ pillar(
+					__( 'Grow' ),
+					growDescription,
+					<VStack spacing={ spacing } justify="flex-start">
+						{ growCards }
+					</VStack>
+				) }
+			</Grid>
+		);
+
+		// With a partner manager (Pro and up), the growth plan phases out: their card, with the
+		// tier inside, sits beside What's new, and Grow keeps Learn.
+		// The same layout applies when the growth plan carries the tier itself.
+		if ( partnerManagerCard || tierInPlan ) {
+			return (
+				<VStack spacing={ isSmallViewport ? 8 : 10 }>
+					{ /* Both cards stretch to the taller one, so the row reads as one band. */ }
+					<Grid className="a4a-band-row" columns={ columns } gap={ gap }>
+						<div className="a4a-fill-height">{ partnerManagerCard ?? tailoredPlan }</div>
+						<div className="a4a-fill-height">{ whatsNew }</div>
+					</Grid>
+					{ earnAndGrow( learnCard, __( 'Training and playbooks to grow your agency.' ) ) }
+				</VStack>
+			);
+		}
+
+		return (
+			<VStack spacing={ isSmallViewport ? 8 : 10 }>
+				<Grid columns={ columns } gap={ gap }>
+					<VStack spacing={ spacing } justify="flex-start">
+						{ tailoredPlan }
+					</VStack>
+					<VStack spacing={ spacing } justify="flex-start">
+						{ tierCard }
+					</VStack>
+				</Grid>
+				{ earnAndGrow(
+					<>
+						{ whatsNew }
+						{ learnCard }
+					</>,
+					__( 'Events, news, and training to grow your agency.' )
+				) }
+			</VStack>
+		);
+	}
+
+	// PROTOTYPE: the tailored plan leads the left column. The tier sits at its top, or in a
+	// card on the right for pending and rejected accounts.
+	// Helpful links move to the page header.
+	if ( tailoredPlan && earnSection ) {
+		return (
+			<VStack spacing={ isSmallViewport ? 8 : 10 }>
+				<Grid className="a4a-band-row" columns={ columns } gap={ gap }>
+					<VStack spacing={ spacing } justify="flex-start">
+						{ tailoredPlan }
+					</VStack>
+					<VStack spacing={ spacing } justify="flex-start">
+						{ ! tierInPlan && tierCard }
+						{ whatsNew }
+					</VStack>
+				</Grid>
+				{ /* Like the established Earn section, with leads and referrals side by side. */ }
+				<VStack spacing={ 4 } justify="flex-start">
+					<SectionHeader
+						level={ 2 }
+						title={ __( 'Earn' ) }
+						description={ __( 'Leads and recurring income from the program.' ) }
+					/>
+					<Grid columns={ columns } gap={ gap }>
+						{ leadsCard }
+						{ earningsCards }
+					</Grid>
+				</VStack>
+			</VStack>
+		);
+	}
+
+	// PROTOTYPE: a new agency with nothing else in the left column gets a plan and What's
+	// new of the same height.
+	if ( tailoredPlan && ! leadsCard && hideEarningsCards ) {
+		return (
+			<Grid columns={ columns } gap={ gap }>
+				<div className="a4a-fill-height">{ tailoredPlan }</div>
+				<VStack spacing={ spacing } justify="flex-start" className="a4a-fill-height">
+					{ ! tierInPlan && tierCard }
+					{ whatsNew }
+				</VStack>
+			</Grid>
+		);
+	}
+
+	if ( tailoredPlan ) {
+		return (
+			<VStack spacing={ spacing }>
+				<Grid columns={ columns } gap={ gap }>
+					<VStack spacing={ spacing } justify="flex-start">
+						{ tailoredPlan }
+						{ leadsCard }
+						{ ! hideEarningsCards && earningsCards }
+					</VStack>
+					<VStack spacing={ spacing } justify="flex-start">
+						{ ! tierInPlan && tierCard }
+						{ whatsNew }
+					</VStack>
+				</Grid>
+			</VStack>
+		);
+	}
+
 	return (
-		<Grid columns={ isSmallViewport ? 1 : 2 } gap={ isSmallViewport ? 'lg' : 'xl' }>
+		<Grid columns={ columns } gap={ gap }>
 			<VStack spacing={ spacing } justify="flex-start">
-				{ isRejected && <RejectedTierCard contactSupport={ links.contactSupport } /> }
-				{ isPending && (
-					<PendingTierCard
-						onRelaunchTour={ onRelaunchTour }
-						recordTracksEvent={ recordTracksEvent }
-					/>
-				) }
-				{ ! isRejected && ! isPending && (
-					<TierOverviewCard
-						tierId={ tierId }
-						influencedRevenue={ influencedRevenue }
-						tiersHref={ links.tiers }
-						shouldUseRouterLink={ shouldUseRouterLink }
-						onScheduleCall={ onScheduleCall }
-						isSchedulingCall={ isSchedulingCall }
-						recordTracksEvent={ recordTracksEvent }
-					/>
-				) }
+				{ tierCard }
 				{ ! isRejected && (
 					<GrowthCard
 						isPending={ isPending }
@@ -115,33 +333,10 @@ export default function AgencyOverviewContent( {
 						recordTracksEvent={ recordTracksEvent }
 					/>
 				) }
-				<ReferralEarningsCard
-					agencyId={ agencyId }
-					locked={ isLocked }
-					lockedNote={ lockedNote }
-					referralsHref={ links.referrals }
-					shouldUseRouterLink={ shouldUseRouterLink }
-					recordTracksEvent={ recordTracksEvent }
-				/>
-				<WooPaymentsRevenueCard
-					agencyId={ agencyId }
-					locked={ isLocked }
-					lockedNote={ lockedNote }
-					woopaymentsHref={ links.woopayments }
-					shouldUseRouterLink={ shouldUseRouterLink }
-					recordTracksEvent={ recordTracksEvent }
-				/>
+				{ earningsCards }
 			</VStack>
 			<VStack spacing={ spacing } justify="flex-start">
-				<HelpfulLinksCard links={ links.helpful } recordTracksEvent={ recordTracksEvent } />
-				<EventCard
-					isEligibleForPressableIntroOffer={ isEligibleForPressableIntroOffer }
-					isEligibleForPressableExpansionOffer={ isEligibleForPressableExpansionOffer }
-					aiMcpHref={ links.aiMcp }
-					pressableHostingHref={ links.pressableHosting }
-					shouldUseRouterLink={ shouldUseRouterLink }
-					recordTracksEvent={ recordTracksEvent }
-				/>
+				{ sideCards }
 			</VStack>
 		</Grid>
 	);

@@ -2,10 +2,12 @@ import { agencyQuery, activeAgencyQuery } from '@automattic/api-queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
 import { home, globe, people, tag, trendingUp, currencyDollar } from '@wordpress/icons';
+import { isOverviewPrototypeEnabled } from '../../agency/overview/tailored/prototype-settings';
 import { SidebarExpandableMenuItem, SidebarMenuItem } from '../../components/sidebar';
 import { a4aLink } from '../../utils/link';
 import { useAppContext } from '../context';
 import {
+	agencyLeadsRoute,
 	agencyPartnerDirectoryRoute,
 	agencySitesRoute,
 	agencyTeamRoute,
@@ -41,6 +43,8 @@ export default function AgencySidebar() {
 	const canAccess = ( route: AnyRoute ) => isRouteAllowedByCapabilities( route, capabilities );
 
 	const canAccessSites = !! supports.agency.sites && canAccess( agencySitesRoute );
+	// PROTOTYPE: the Leads dashboard ships with the tailored Overview prototype.
+	const canAccessLeads = isOverviewPrototypeEnabled() && canAccess( agencyLeadsRoute );
 	const canAccessPlugins =
 		!! supports.agency.plugins && hasAnyCapability( capabilities, 'a4a_read_managed_sites' );
 	const canAccessDevTools = !! supports.agency.devTools && canAccess( devToolsRoute );
@@ -62,6 +66,7 @@ export default function AgencySidebar() {
 		!! supports.agency.billing && hasAnyCapability( capabilities, 'a4a_jetpack_licensing' );
 
 	const canAccessClients =
+		canAccessLeads ||
 		canAccessSites ||
 		canAccessPlugins ||
 		canAccessDevTools ||
@@ -80,8 +85,9 @@ export default function AgencySidebar() {
 					label={ __( 'Clients' ) }
 					icon={ people }
 					to="/sites"
-					activePaths={ [ '/dev-tools', '/migrations' ] }
+					activePaths={ [ '/leads', '/dev-tools', '/migrations' ] }
 				>
+					{ canAccessLeads && <SidebarMenuItem to="/leads">{ __( 'Leads' ) }</SidebarMenuItem> }
 					{ canAccessSites && <SidebarMenuItem to="/sites">{ __( 'Sites' ) }</SidebarMenuItem> }
 					{ /* Plugins lives in the WP.com dashboard; the gate mirrors the classic app's. */ }
 					{ canAccessPlugins && (

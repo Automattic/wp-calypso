@@ -8,6 +8,8 @@ export const A4A_DASHBOARD_SECTION_PATHS = [
 	'/oauth/token',
 	'/overview',
 	'/sites',
+	// PROTOTYPE: client leads dashboard (see client/dashboard/agency/leads).
+	'/leads',
 	'/dev-tools',
 	'/migrations',
 	'/marketplace',

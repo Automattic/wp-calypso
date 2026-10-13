@@ -21,6 +21,12 @@ import type { RecordTracksEvent } from '../tiers/types';
 
 interface WooPaymentsRevenueCardProps {
 	agencyId: number;
+	/** PROTOTYPE: shows these numbers instead of fetching the agency's WooPayments data. */
+	sample?: {
+		currentQuarter: number;
+		activeStores: number;
+		totalProcessed: number;
+	};
 	locked?: boolean;
 	lockedNote?: string;
 	woopaymentsHref: string;
@@ -86,25 +92,27 @@ function WooPaymentsEmptyState( {
 // needs inline actions and non-interactive stat rows.
 export default function WooPaymentsRevenueCard( {
 	agencyId,
+	sample,
 	locked,
 	lockedNote,
 	woopaymentsHref,
 	shouldUseRouterLink,
 	recordTracksEvent,
 }: WooPaymentsRevenueCardProps ) {
-	const { storeCount, isLoading: isLoadingStoreCount } = useWooPaymentsStoreCount(
+	const { storeCount: realStoreCount, isLoading: isLoadingStoreCount } = useWooPaymentsStoreCount(
 		agencyId,
-		! locked
+		! locked && ! sample
 	);
+	const storeCount = sample?.activeStores ?? realStoreCount;
 	const { data: wooPaymentsData, isPending: isPendingData } = useQuery( {
 		...agencyWooPaymentsDataQuery( agencyId ),
 		// The revenue payload can't distinguish "no stores", so gate on the store count.
-		enabled: !! agencyId && ! locked && storeCount > 0,
+		enabled: !! agencyId && ! locked && ! sample && storeCount > 0,
 	} );
 	// isPending rather than isLoading: on the render where the store count resolves
 	// and the query flips enabled, isFetching is still false — isLoading would show
 	// $0 stats for that frame.
-	const isLoading = isLoadingStoreCount || ( storeCount > 0 && isPendingData );
+	const isLoading = ! sample && ( isLoadingStoreCount || ( storeCount > 0 && isPendingData ) );
 
 	const total = wooPaymentsData?.data?.total;
 	const currentQuarter = wooPaymentsData?.data?.estimated?.current_quarter;
@@ -121,7 +129,7 @@ export default function WooPaymentsRevenueCard( {
 		);
 	}
 
-	const totalProcessed = total?.tpv ?? 0;
+	const totalProcessed = sample?.totalProcessed ?? total?.tpv ?? 0;
 	const averagePerStore = storeCount > 0 ? totalProcessed / storeCount : 0;
 
 	return (
@@ -134,7 +142,7 @@ export default function WooPaymentsRevenueCard( {
 					<HStack spacing={ 2 } justify="flex-start" alignment="baseline" expanded={ false }>
 						<Text size={ 20 } weight={ 500 } lineHeight="24px">
 							<TextBlur isBlurred={ isLoading } length={ 6 }>
-								{ formatCurrency( currentQuarter?.payout ?? 0, 'USD' ) }
+								{ formatCurrency( sample?.currentQuarter ?? currentQuarter?.payout ?? 0, 'USD' ) }
 							</TextBlur>
 						</Text>
 						<Text intent="success" size={ 12 } lineHeight="16px">

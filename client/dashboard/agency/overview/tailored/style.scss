@@ -1,0 +1,128 @@
+// PROTOTYPE — proof of concept only.
+// Growth plan steps as clickable rows (see tailored-plan-card.tsx).
+
+.a4a-plan-steps {
+	border: 1px solid var( --color-gray-100, #dcdcde );
+	border-radius: 8px;
+	overflow: hidden;
+}
+
+.a4a-plan-step-row.components-button {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 16px;
+	width: 100%;
+	height: auto;
+	padding: 12px 16px;
+	border-radius: 0;
+	color: inherit;
+	text-align: start;
+	white-space: normal;
+	text-decoration: none;
+
+	& + & {
+		border-block-start: 1px solid var( --color-gray-100, #dcdcde );
+	}
+
+	&:hover:not( :disabled ),
+	&:focus-visible {
+		background: var( --color-gray-0, #f6f7f7 );
+		color: inherit;
+	}
+
+	&:focus-visible {
+		box-shadow: inset 0 0 0 2px var( --wp-admin-theme-color );
+	}
+}
+
+.a4a-plan-step-row__text {
+	display: flex;
+	flex: 1;
+	flex-direction: column;
+	gap: 2px;
+	min-width: 0;
+}
+
+.a4a-plan-step-row__chevron {
+	flex-shrink: 0;
+	fill: var( --color-gray-400, #8c8f94 );
+}
+
+.a4a-plan-step-row:hover .a4a-plan-step-row__chevron {
+	fill: var( --wp-admin-theme-color );
+}
+
+// Collapsible goal rows in the compact growth plan (established agencies).
+.a4a-plan-goal-toggle.components-button {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 16px;
+	width: 100%;
+	height: auto;
+	padding: 0;
+	color: inherit;
+	text-align: start;
+	white-space: normal;
+
+	&:hover:not( :disabled ) {
+		color: var( --wp-admin-theme-color );
+	}
+
+	&:focus-visible {
+		box-shadow: 0 0 0 2px var( --wp-admin-theme-color );
+		border-radius: 4px;
+	}
+}
+
+// What's new: the tab bar spans the card and its bottom border is the header divider,
+// so the selected tab's underline sits right on the line.
+.a4a-whats-new .a4a-whats-new__tabs .components-tab-panel__tabs {
+	margin-block-start: 8px;
+	padding-inline: 24px;
+	// Same color as CardHeader's own divider.
+	border-block-end: 1px solid rgba( 0, 0, 0, 0.1 );
+
+	@media ( max-width: 781px ) {
+		padding-inline: 16px;
+	}
+}
+
+// Stretches a card to fill its grid cell, so side-by-side cards share one height.
+.a4a-fill-height {
+	display: flex;
+	flex-direction: column;
+
+	> .components-card {
+		flex: 1;
+	}
+}
+
+// Side-by-side rows (tier + call card beside What's new): the tier block and What's new's
+// header + tabs share one height, so their dividers and the blue panels below line up.
+// Only on wide screens, where the two cards sit next to each other.
+$a4a-band-height: 138px; // The compact tier strip's natural height.
+$a4a-whats-new-tabs-height: 49px; // The tab bar, including its border.
+
+@media ( min-width: 782px ) {
+	.a4a-band-row {
+		// The header's own spacing sits above the tabs here, so drop their top margin.
+		.a4a-whats-new .a4a-whats-new__tabs .components-tab-panel__tabs {
+			margin-block-start: 0;
+		}
+
+		.a4a-tier-band {
+			box-sizing: border-box;
+			min-height: $a4a-band-height;
+		}
+
+		// The tier block's divider sits below it; the tab bar's border is inside the tabs, so the
+		// header is 1px taller to land both lines on the same pixel row.
+		.a4a-whats-new .components-card__header {
+			box-sizing: border-box;
+			min-height: $a4a-band-height + 1px - $a4a-whats-new-tabs-height;
+			align-items: flex-start;
+		}
+	}
+}
