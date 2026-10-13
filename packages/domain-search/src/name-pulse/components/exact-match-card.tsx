@@ -30,7 +30,10 @@ import {
 	toNamePulseTracksSuggestion,
 } from '../helpers';
 import { useNamePulseCartToggle } from '../hooks/use-name-pulse-cart-toggle';
-import { useNamePulseResultSetId } from '../hooks/use-name-pulse-result-set-id';
+import {
+	useNamePulseResultSetId,
+	type NamePulseRenderReport,
+} from '../hooks/use-name-pulse-result-set-id';
 import { NamePulsePolicyNoticeDialog } from './policy-notice-dialog';
 
 /**
@@ -63,6 +66,8 @@ export const NamePulseExactMatchCard = ( {
 		} ),
 		[ domainName, availability ]
 	);
+	const resultSetId = useNamePulseResultSetId();
+	const reported = useRef< NamePulseRenderReport | undefined >( undefined );
 	const {
 		inCart,
 		isPending,
@@ -75,17 +80,14 @@ export const NamePulseExactMatchCard = ( {
 		isPolicyNoticeOpen,
 		confirmPolicyNotice,
 		closePolicyNotice,
-	} = useNamePulseCartToggle( result, 0, availability.policy_notices );
-
-	const resultSetId = useNamePulseResultSetId();
-	const reportedResultSetId = useRef< string | undefined >( undefined );
+	} = useNamePulseCartToggle( result, 0, reported, availability.policy_notices );
 
 	useEffect( () => {
-		if ( ! resultSetId || reportedResultSetId.current === resultSetId ) {
+		if ( ! resultSetId || reported.current?.resultSetId === resultSetId ) {
 			return;
 		}
 
-		reportedResultSetId.current = resultSetId;
+		reported.current = { resultSetId, position: 0 };
 		events.onSuggestionRender(
 			toNamePulseTracksSuggestion( result, 0 ),
 			undefined,

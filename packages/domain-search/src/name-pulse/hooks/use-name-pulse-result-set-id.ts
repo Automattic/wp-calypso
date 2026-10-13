@@ -7,3 +7,9 @@ import { createContext, useContext } from 'react';
 export const NamePulseResultSetContext = createContext< string | undefined >( undefined );
 
 export const useNamePulseResultSetId = () => useContext( NamePulseResultSetContext );
+
+/** Where a name was reported as rendered. Later events for it reuse this. */
+export interface NamePulseRenderReport {
+	resultSetId: string;
+	position: number;
+}

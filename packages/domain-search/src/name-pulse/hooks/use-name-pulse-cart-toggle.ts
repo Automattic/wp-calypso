@@ -5,12 +5,13 @@ import { convertAvailabilityToSuggestion } from '../../helpers/convert-availabil
 import { DomainPriceRule } from '../../hooks/use-suggestion';
 import { useDomainSearch } from '../../page/context';
 import {
+	getNamePulseTracksVendor,
 	isNamePulseAvailable,
 	toNamePulseRealtimeVerdict,
 	toNamePulseTracksSuggestion,
 } from '../helpers';
-import { useNamePulseResultSetId } from './use-name-pulse-result-set-id';
 import { setNamePulseVerdict } from './use-name-pulse-verdicts';
+import type { NamePulseRenderReport } from './use-name-pulse-result-set-id';
 import type { DomainAvailability, PolicyNotice } from '@automattic/api-core';
 
 export interface NamePulsePolicyNotice {
@@ -26,12 +27,13 @@ export interface NamePulsePolicyNotice {
 export const useNamePulseCartToggle = (
 	result: Parameters< typeof toNamePulseTracksSuggestion >[ 0 ],
 	position: number,
+	// Read on click: the render is reported in an effect, after this hook runs.
+	rendered: { current?: NamePulseRenderReport },
 	policyNotices: PolicyNotice[] = []
 ) => {
 	const domainName = result.domain_name;
 	const { __ } = useI18n();
 	const { cart, events, queries } = useDomainSearch();
-	const resultSetId = useNamePulseResultSetId();
 	const queryClient = useQueryClient();
 	const [ trademarkClaimsNoticeInfo, setTrademarkClaimsNoticeInfo ] =
 		useState< DomainAvailability[ 'trademark_claims_notice_info' ] >();
@@ -41,8 +43,9 @@ export const useNamePulseCartToggle = (
 	const [ policyNotice, setPolicyNotice ] = useState< NamePulsePolicyNotice >();
 
 	const inCart = cart.hasItem( domainName );
-	const tracksSuggestion = toNamePulseTracksSuggestion( result, position );
-	const tracksVendor = tracksSuggestion.vendor;
+	const tracksVendor = getNamePulseTracksVendor( result.source );
+	const getRenderedPosition = () => rendered.current?.position ?? position;
+	const getTracksSuggestion = () => toNamePulseTracksSuggestion( result, getRenderedPosition() );
 
 	const {
 		mutate: toggleCart,
@@ -57,7 +60,7 @@ export const useNamePulseCartToggle = (
 					events.onNamePulseTracksEvent( 'remove_button_click', {
 						domain_name: domainName,
 						remove_source: 'row',
-						position,
+						position: getRenderedPosition(),
 						root_vendor: tracksVendor,
 					} );
 				}
@@ -85,7 +88,7 @@ export const useNamePulseCartToggle = (
 				events.onTrademarkClaimsNoticeShown( {
 					...suggestion,
 					vendor: tracksVendor,
-					position,
+					position: getRenderedPosition(),
 					price_rule: DomainPriceRule.PRICE,
 				} );
 				setTrademarkClaimsNoticeInfo( availability.trademark_claims_notice_info );
@@ -99,7 +102,7 @@ export const useNamePulseCartToggle = (
 			if ( data.addedToCart && data.suggestion ) {
 				events.onAddDomainToCart(
 					domainName,
-					position,
+					getRenderedPosition(),
 					data.suggestion.is_premium ?? false,
 					tracksVendor
 				);
@@ -115,7 +118,7 @@ export const useNamePulseCartToggle = (
 		error,
 		toggleCart: () => {
 			if ( ! inCart ) {
-				events.onSuggestionInteract( tracksSuggestion, resultSetId );
+				events.onSuggestionInteract( getTracksSuggestion(), rendered.current?.resultSetId );
 			}
 
 			if ( inCart || policyNotices.length === 0 ) {
@@ -138,12 +141,12 @@ export const useNamePulseCartToggle = (
 		closePolicyNotice: () => ! isPending && setIsPolicyNoticeOpen( false ),
 		trademarkClaimsNoticeInfo,
 		acceptTrademarkClaim: () => {
-			events.onTrademarkClaimsNoticeAccepted( tracksSuggestion );
+			events.onTrademarkClaimsNoticeAccepted( getTracksSuggestion() );
 			setTrademarkClaimsNoticeInfo( undefined );
 			toggleCart( { acceptedTrademarkClaim: true } );
 		},
 		closeTrademarkClaims: () => {
-			events.onTrademarkClaimsNoticeClosed( tracksSuggestion );
+			events.onTrademarkClaimsNoticeClosed( getTracksSuggestion() );
 			setTrademarkClaimsNoticeInfo( undefined );
 		},
 	};

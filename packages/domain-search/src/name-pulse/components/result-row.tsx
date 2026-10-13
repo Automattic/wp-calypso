@@ -21,7 +21,10 @@ import {
 } from '../helpers';
 import { useNamePulseCartToggle } from '../hooks/use-name-pulse-cart-toggle';
 import { useNamePulseLabelLimit } from '../hooks/use-name-pulse-label-limit';
-import { useNamePulseResultSetId } from '../hooks/use-name-pulse-result-set-id';
+import {
+	useNamePulseResultSetId,
+	type NamePulseRenderReport,
+} from '../hooks/use-name-pulse-result-set-id';
 import { setNamePulseVerdict } from '../hooks/use-name-pulse-verdicts';
 import { NamePulsePolicyNoticeDialog } from './policy-notice-dialog';
 
@@ -167,7 +170,7 @@ export const NamePulseResultRow = ( {
 	const isUnknown = status === NamePulseDomainStatus.UNKNOWN;
 	const isAvailable = status === NamePulseDomainStatus.AVAILABLE;
 	const isUnavailable = ! isWaiting && ! isUnknown && ! isAvailable;
-	const reported = useRef< { resultSetId: string; position: number } | undefined >( undefined );
+	const reported = useRef< NamePulseRenderReport | undefined >( undefined );
 	// A failed check leaves the row on its badge alone: no price, and no skeleton
 	// waiting for one that is not coming.
 	const isPremiumPriceMissing = needsPremiumPrice && ! realtimeVerdict;
@@ -186,10 +189,9 @@ export const NamePulseResultRow = ( {
 		isPolicyNoticeOpen,
 		confirmPolicyNotice,
 		closePolicyNotice,
-	} = useNamePulseCartToggle( row, reported.current?.position ?? position, row.policy_notices );
+	} = useNamePulseCartToggle( row, position, reported, row.policy_notices );
 
-	// Reported once per result set, when the row has a verdict, taken names
-	// included. Later events reuse this position so they match the render.
+	// Reported once per result set, when the row has a verdict, taken names included.
 	useEffect( () => {
 		if ( isWaiting || ! resultSetId || reported.current?.resultSetId === resultSetId ) {
 			return;
