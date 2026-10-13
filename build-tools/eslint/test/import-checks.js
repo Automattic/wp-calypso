@@ -33,17 +33,25 @@ test( 'import rules check workspace packages from source', async () => {
 	] );
 }, 60000 );
 
-// Without this, a new package that needs a build but has no `calypso:src` entry would leave
-// its imports silently unchecked in CI, where packages aren't built before linting.
-test( 'packages that need a build declare their source', () => {
+// Without this, a package that needs a build but has no `calypso:src` entry, or one pointing
+// at a missing file, would leave its imports silently unchecked in CI, where packages aren't
+// built before linting.
+test( 'packages that need a build point to their source', () => {
 	const packagesDir = path.join( repoRoot, 'packages' );
 	const withoutSource = fs
 		.readdirSync( packagesDir )
-		.map( ( dir ) => path.join( packagesDir, dir, 'package.json' ) )
-		.filter( ( file ) => fs.existsSync( file ) )
-		.map( ( file ) => JSON.parse( fs.readFileSync( file, 'utf8' ) ) )
-		.filter( ( pkg ) => pkg.scripts?.prepare && ! pkg[ 'calypso:src' ] )
-		.map( ( pkg ) => pkg.name );
+		.map( ( dir ) => path.join( packagesDir, dir ) )
+		.filter( ( dir ) => fs.existsSync( path.join( dir, 'package.json' ) ) )
+		.map( ( dir ) => ( {
+			dir,
+			pkg: JSON.parse( fs.readFileSync( path.join( dir, 'package.json' ), 'utf8' ) ),
+		} ) )
+		.filter( ( { pkg } ) => pkg.scripts?.prepare )
+		.filter(
+			( { dir, pkg } ) =>
+				! pkg[ 'calypso:src' ] || ! fs.existsSync( path.join( dir, pkg[ 'calypso:src' ] ) )
+		)
+		.map( ( { pkg } ) => pkg.name );
 
 	expect( withoutSource ).toEqual( [
 		// Published from built output only; no JavaScript file imports them.
