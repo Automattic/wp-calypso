@@ -1,4 +1,4 @@
-import { isJetpackProductOnSale, isListedProductOnSale } from '../is-product-on-sale';
+import { isListedProductOnSale, isProductOnSale } from '../is-product-on-sale';
 import type { AppState } from 'calypso/types';
 
 // Response subsets from the JETPACK-2825 client contract fixtures.
@@ -33,22 +33,17 @@ describe( 'isListedProductOnSale', () => {
 	} );
 } );
 
-describe( 'isJetpackProductOnSale', () => {
-	const stateWith = ( receivedTypeThisSession: string | null ) =>
+describe( 'isProductOnSale', () => {
+	const stateWith = ( hasFullListThisSession: boolean ) =>
 		( {
-			productsList: { receivedTypeThisSession, items: pro( true ) },
+			productsList: { hasFullListThisSession, items: pro( true ) },
 		} ) as unknown as AppState;
 
-	it( 'trusts the Jetpack list received in this session', () => {
-		expect( isJetpackProductOnSale( stateWith( 'jetpack' ), 'jetpack_pro_yearly' ) ).toBe( true );
+	it( 'trusts a full list received in this session', () => {
+		expect( isProductOnSale( stateWith( true ), 'jetpack_pro_yearly' ) ).toBe( true );
 	} );
 
-	it.each( [
-		[ 'a persisted list or one kept after a failed refresh', null ],
-		[ 'a different list type', 'all' ],
-	] )( 'ignores %s', ( _name, receivedType ) => {
-		expect( isJetpackProductOnSale( stateWith( receivedType ), 'jetpack_pro_yearly' ) ).toBe(
-			false
-		);
+	it( 'ignores a persisted, failed or slug-filtered list', () => {
+		expect( isProductOnSale( stateWith( false ), 'jetpack_pro_yearly' ) ).toBe( false );
 	} );
 } );

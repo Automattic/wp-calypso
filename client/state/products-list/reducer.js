@@ -45,22 +45,22 @@ export const isFetching = ( state = false, action ) => {
 };
 
 /*
- * The type of the list received in this session. Unlike `type`, it is not persisted,
- * so availability from a stale cache or a failed refresh is never trusted.
+ * Whether this session received a full (not slug-filtered) list. Not persisted, so
+ * availability from a stale cache, a failed refresh or a partial list is never trusted.
  */
-export const receivedTypeThisSession = ( state = null, action ) => {
+export const hasFullListThisSession = ( state = false, action ) => {
 	switch ( action.type ) {
 		case PRODUCTS_LIST_RECEIVE:
-			return action.productsListType ?? null;
+			return ! action.isPartialList;
 		case PRODUCTS_LIST_REQUEST_FAILURE:
-			return null;
+			return false;
 	}
 
 	return state;
 };
 
 const combinedReducer = combineReducers( {
-	receivedTypeThisSession,
+	hasFullListThisSession,
 	isFetching,
 	items,
 	type,
