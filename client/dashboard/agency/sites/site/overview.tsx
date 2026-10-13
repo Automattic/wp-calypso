@@ -60,7 +60,7 @@ export default function AgencySiteOverview() {
 				<PageHeader
 					title={ getSiteName( site ) }
 					description={ <SiteOverviewFields site={ fullSite } /> }
-					actions={ <AgencySiteHeaderActions site={ site } /> }
+					actions={ <AgencySiteHeaderActions site={ site } fullSite={ fullSite } /> }
 				/>
 			}
 		>

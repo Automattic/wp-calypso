@@ -6,32 +6,43 @@ import { __ } from '@wordpress/i18n';
 import { moreVertical, wordpress } from '@wordpress/icons';
 import { lazy, Suspense, useState } from 'react';
 import { useAnalytics } from '../../../app/analytics';
-import { agencySiteActivityRoute, hasAnyCapability } from '../../../app/router/agency';
+import {
+	agencySiteActivityRoute,
+	agencySitesRoute,
+	hasAnyCapability,
+} from '../../../app/router/agency';
 import { PageHeader } from '../../../components/page-header';
 import { OWNER_ROLE } from '../../team/constants';
 import { canActOnSite, getAdminUrl, isDevSite, isUrlOnlySite } from '../dataviews/site-data';
-import type { AgencySite } from '@automattic/api-core';
+import { isPressableSite } from '../lib';
+import type { AgencySite, Site } from '@automattic/api-core';
 
 const RemoveSiteModal = lazy( () => import( '../remove-site-modal' ) );
 
 // Pressable has no per-site link yet, so this opens the agency's dashboard.
 const PRESSABLE_AGENCY_URL = 'https://my.pressable.com/agency/auth';
 
-export default function AgencySiteHeaderActions( { site }: { site: AgencySite } ) {
+export default function AgencySiteHeaderActions( {
+	site,
+	fullSite,
+}: {
+	site: AgencySite;
+	fullSite: Site;
+} ) {
 	const navigate = useNavigate();
 	const { recordTracksEvent } = useAnalytics();
 	const { data: agency } = useQuery( activeAgencyQuery() );
 	const [ isRemoveModalOpen, setIsRemoveModalOpen ] = useState( false );
-
-	if ( ! canActOnSite( site ) || isUrlOnlySite( site ) ) {
-		return null;
-	}
+	const [ isRemoving, setIsRemoving ] = useState( false );
 
 	const track = ( action: string ) =>
 		recordTracksEvent( 'calypso_dashboard_agency_site_overview_action_click', { action } );
 
-	const adminUrl = getAdminUrl( site );
-	const isPressableSite = site.hosting_provider_guess === 'pressable';
+	// Honors a custom admin path where the site reports one.
+	const adminUrl = fullSite.options?.admin_url || getAdminUrl( site );
+	// wp-admin is reachable even when the agency can't act on the site through
+	// the connection, so only the menu depends on it.
+	const canUseMenu = canActOnSite( site ) && ! isUrlOnlySite( site );
 	// Only the agency owner can sign in to the Pressable account.
 	const isAgencyOwner = agency?.user?.role === OWNER_ROLE;
 	// Removal keys off the agency's own site id, which a site still being set up
@@ -52,66 +63,80 @@ export default function AgencySiteHeaderActions( { site }: { site: AgencySite } 
 			>
 				{ __( 'WP Admin' ) }
 			</Button>
-			<PageHeader.ActionMenu>
-				<DropdownMenu icon={ moreVertical } label={ __( 'Quick actions' ) }>
-					{ ( { onClose } ) => (
-						<MenuGroup>
-							<MenuItem
-								onClick={ () => {
-									track( 'settings' );
-									window.open(
-										`${ adminUrl }options-general.php`,
-										'_blank',
-										'noreferrer,noopener'
-									);
-								} }
-							>
-								{ __( 'Settings ↗' ) }
-							</MenuItem>
-							<MenuItem
-								onClick={ () => {
-									track( 'view-activity' );
-									navigate( {
-										to: agencySiteActivityRoute.fullPath,
-										params: { siteSlug: site.url },
-									} );
-								} }
-							>
-								{ __( 'View activity' ) }
-							</MenuItem>
-							{ isPressableSite && isAgencyOwner && (
+			{ canUseMenu && (
+				<PageHeader.ActionMenu>
+					<DropdownMenu icon={ moreVertical } label={ __( 'Quick actions' ) }>
+						{ ( { onClose } ) => (
+							<MenuGroup>
 								<MenuItem
 									onClick={ () => {
-										track( 'manage-in-pressable' );
-										window.open( PRESSABLE_AGENCY_URL, '_blank', 'noreferrer,noopener' );
+										track( 'settings' );
+										window.open(
+											`${ adminUrl }options-general.php`,
+											'_blank',
+											'noreferrer,noopener'
+										);
 									} }
 								>
-									{ __( 'Manage in Pressable ↗' ) }
+									{ __( 'Settings ↗' ) }
 								</MenuItem>
-							) }
-							{ canRemoveSite && (
 								<MenuItem
-									isDestructive
 									onClick={ () => {
-										track( 'remove-site' );
-										onClose();
-										setIsRemoveModalOpen( true );
+										track( 'view-activity' );
+										navigate( {
+											to: agencySiteActivityRoute.fullPath,
+											params: { siteSlug: site.url },
+										} );
 									} }
 								>
-									{ __( 'Remove site' ) }
+									{ __( 'View activity' ) }
 								</MenuItem>
-							) }
-						</MenuGroup>
-					) }
-				</DropdownMenu>
-			</PageHeader.ActionMenu>
+								{ isPressableSite( site ) && isAgencyOwner && (
+									<MenuItem
+										onClick={ () => {
+											track( 'manage-in-pressable' );
+											window.open( PRESSABLE_AGENCY_URL, '_blank', 'noreferrer,noopener' );
+										} }
+									>
+										{ __( 'Manage in Pressable ↗' ) }
+									</MenuItem>
+								) }
+								{ canRemoveSite && (
+									<MenuItem
+										isDestructive
+										onClick={ () => {
+											track( 'remove-site' );
+											onClose();
+											setIsRemoveModalOpen( true );
+										} }
+									>
+										{ __( 'Remove site' ) }
+									</MenuItem>
+								) }
+							</MenuGroup>
+						) }
+					</DropdownMenu>
+				</PageHeader.ActionMenu>
+			) }
 			{ isRemoveModalOpen && (
-				<Modal title={ __( 'Remove site' ) } onRequestClose={ () => setIsRemoveModalOpen( false ) }>
+				<Modal
+					title={ __( 'Remove site' ) }
+					// Closing mid-removal would unmount the modal before it can report the
+					// result and leave the page.
+					isDismissible={ ! isRemoving }
+					shouldCloseOnEsc={ ! isRemoving }
+					shouldCloseOnClickOutside={ ! isRemoving }
+					onRequestClose={ () => setIsRemoveModalOpen( false ) }
+				>
 					<Suspense fallback={ null }>
 						<RemoveSiteModal
 							site={ site }
-							closeModal={ () => setIsRemoveModalOpen( false ) }
-							onRemoved={ () => navigate( { to: '/sites' } ) }
+							closeModal={ () => {
+								setIsRemoving( false );
+								setIsRemoveModalOpen( false );
+							} }
+							onRemovingChange={ setIsRemoving }
+							onRemoved={ () => navigate( { to: agencySitesRoute.fullPath } ) }
 						/>
 					</Suspense>
 				</Modal>
