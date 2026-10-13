@@ -155,7 +155,8 @@ class NamePulseAvailabilityBatcher {
  */
 export const useNamePulseVerdicts = (
 	domainNames: string[],
-	enabled: boolean
+	enabled: boolean,
+	searchMode?: string
 ): Record< string, NamePulseVerdictState > => {
 	const queryClient = useQueryClient();
 	const { queries, events } = useDomainSearch();
@@ -168,6 +169,7 @@ export const useNamePulseVerdicts = (
 	const reportFailure = useEvent(
 		( reason: NamePulseBatchFailureReason, failedCount: number, batchSize: number ) =>
 			events.onNamePulseTracksEvent( 'availability_failed', {
+				search_mode: searchMode,
 				reason,
 				failed_count: failedCount,
 				batch_size: batchSize,

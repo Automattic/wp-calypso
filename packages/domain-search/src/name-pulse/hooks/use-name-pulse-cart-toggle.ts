@@ -42,6 +42,7 @@ export const useNamePulseCartToggle = (
 	result: NamePulseCartToggleResult,
 	section: NamePulseTracksSection,
 	position: number,
+	sectionPosition: number,
 	policyNotices: PolicyNotice[] = []
 ) => {
 	const domainName = result.domain_name;
@@ -106,10 +107,10 @@ export const useNamePulseCartToggle = (
 		},
 		onSuccess: ( data ) => {
 			if ( data.removedFromCart ) {
-				events.onNamePulseTracksEvent(
-					'result_remove_from_cart',
-					getNamePulseResultTracksProps( result, section, position )
-				);
+				events.onNamePulseTracksEvent( 'result_remove_from_cart', {
+					...getNamePulseResultTracksProps( result, section, position, sectionPosition ),
+					remove_source: 'row',
+				} );
 			}
 
 			if ( data.addedToCart && data.suggestion ) {
@@ -122,9 +123,15 @@ export const useNamePulseCartToggle = (
 				events.onNamePulseTracksEvent(
 					'result_add_to_cart',
 					getNamePulseResultTracksProps(
-						{ ...result, is_premium: data.suggestion.is_premium ?? result.is_premium },
+						{
+							...result,
+							is_premium: data.suggestion.is_premium ?? false,
+							raw_price: data.suggestion.raw_price,
+							currency_code: data.suggestion.currency_code,
+						},
 						section,
-						position
+						position,
+						sectionPosition
 					)
 				);
 			}

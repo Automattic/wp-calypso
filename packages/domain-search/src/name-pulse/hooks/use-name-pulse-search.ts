@@ -67,10 +67,12 @@ const useNamePulseSuggestions = ( {
 	isSettled,
 	show,
 	source,
+	searchMode,
 }: {
 	suggestionsQuery: string;
 	isSettled: boolean;
 	show: boolean;
+	searchMode: string;
 	source: Extract< NamePulseSource, 'keyword' | 'ai' >;
 } ) => {
 	const { queries, filter, events } = useDomainSearch();
@@ -101,6 +103,7 @@ const useNamePulseSuggestions = ( {
 		}
 
 		events.onNamePulseTracksEvent( 'suggestions_failed', {
+			search_mode: searchMode,
 			use_ai: useAi,
 			request_failed: isError,
 			provider_error_codes: providerErrorCodes,
@@ -217,7 +220,7 @@ export const useNamePulseSearch = ( query: string ) => {
 			.map( ( row ) => row.domain_name );
 	}, [ exactRows, initialCheckCount, requestedNames ] );
 
-	const exactVerdicts = useNamePulseVerdicts( checkedNames, isSettled );
+	const exactVerdicts = useNamePulseVerdicts( checkedNames, isSettled, settledLayout.mode );
 
 	// The bulk check is zone-file based: it says a domain is taken, not why.
 	// Both wait for the query to settle, so half-typed input is not checked or flagged.
@@ -251,12 +254,14 @@ export const useNamePulseSearch = ( query: string ) => {
 		isSettled,
 		show: layout.suggestions.show,
 		source: 'keyword',
+		searchMode: settledLayout.mode,
 	} );
 	const { results: rawCreativeResults, isLoading: isLoadingCreative } = useNamePulseSuggestions( {
 		suggestionsQuery,
 		isSettled,
 		show: layout.creative.show,
 		source: 'ai',
+		searchMode: settledLayout.mode,
 	} );
 
 	const isLoadingTop = isAiMode ? isLoadingKeyword || isLoadingCreative : isLoadingTlds;
@@ -398,6 +403,7 @@ export const useNamePulseSearch = ( query: string ) => {
 		isSettled,
 		hasTlds: tlds !== undefined || isTldsError,
 		typedDomainAvailability,
+		isTypedDomainError,
 		suggestionResults,
 		notice,
 		exactMatch,

@@ -28,7 +28,9 @@ export type NamePulseResultRowVariant = 'row' | 'card';
 interface NamePulseResultRowProps {
 	result: NamePulseDomainResult;
 	section: NamePulseTracksSection;
+	/** Counted across the whole page, so render and interact events pair up. */
 	position: number;
+	sectionPosition: number;
 	variant?: NamePulseResultRowVariant;
 }
 
@@ -115,6 +117,7 @@ export const NamePulseResultRow = ( {
 	result,
 	section,
 	position,
+	sectionPosition,
 	variant = 'row',
 }: NamePulseResultRowProps ) => {
 	const { __ } = useI18n();
@@ -163,6 +166,7 @@ export const NamePulseResultRow = ( {
 	const isUnknown = status === NamePulseDomainStatus.UNKNOWN;
 	const isAvailable = status === NamePulseDomainStatus.AVAILABLE;
 	const isUnavailable = ! isWaiting && ! isUnknown && ! isAvailable;
+	const reportedPosition = useRef< number | undefined >( undefined );
 	// A failed check leaves the row on its badge alone: no price, and no skeleton
 	// waiting for one that is not coming.
 	const isPremiumPriceMissing = needsPremiumPrice && ! realtimeVerdict;
@@ -181,18 +185,23 @@ export const NamePulseResultRow = ( {
 		isPolicyNoticeOpen,
 		confirmPolicyNotice,
 		closePolicyNotice,
-	} = useNamePulseCartToggle( row, section, position, row.policy_notices );
+	} = useNamePulseCartToggle(
+		row,
+		section,
+		reportedPosition.current ?? position,
+		sectionPosition,
+		row.policy_notices
+	);
 
-	// Reported once the row has a verdict, so the classic render event knows
-	// whether the name is premium. A row still waiting has not been shown yet.
-	const hasReportedRender = useRef( false );
-
+	// Only names on offer count as rendered, as on the classic page, and only
+	// once they have a verdict, so the event knows whether the name is premium.
+	// Later events reuse the position reported here, in case sections above shift.
 	useEffect( () => {
-		if ( isWaiting || hasReportedRender.current ) {
+		if ( ! isAvailable || reportedPosition.current !== undefined ) {
 			return;
 		}
 
-		hasReportedRender.current = true;
+		reportedPosition.current = position;
 		events.onSuggestionRender( toNamePulseTracksSuggestion( row, position ) );
 	} );
 	const { nameRef, labelRef, limit: labelLimit } = useNamePulseLabelLimit( label );

@@ -51,17 +51,22 @@ export const toNamePulseTracksSuggestion = (
 	price_rule: DomainPriceRule.PRICE,
 } );
 
-/** Props shared by every event about one result. */
+/**
+ * Props shared by every event about one result. `position` counts across the
+ * whole page, like the classic events; `section_position` within its section.
+ */
 export const getNamePulseResultTracksProps = (
 	result: Pick<
 		NamePulseDomainResult,
 		'suffix' | 'source' | 'status' | 'is_premium' | 'raw_price' | 'currency_code'
 	>,
 	section: NamePulseTracksSection,
-	position: number
+	position: number,
+	sectionPosition: number
 ): NamePulseTracksProps => ( {
 	results_section: section,
 	position,
+	section_position: sectionPosition,
 	tld: result.suffix,
 	name_pulse_source: result.source,
 	availability_status: NamePulseDomainStatus[ result.status ].toLowerCase(),

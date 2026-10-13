@@ -76,7 +76,7 @@ export const NamePulseExactMatchCard = ( {
 		isPolicyNoticeOpen,
 		confirmPolicyNotice,
 		closePolicyNotice,
-	} = useNamePulseCartToggle( result, 'exact_card', 0, availability.policy_notices );
+	} = useNamePulseCartToggle( result, 'exact_card', 0, 0, availability.policy_notices );
 
 	const reportRender = useEvent( () => {
 		events.onSuggestionRender( toNamePulseTracksSuggestion( result, 0 ) );

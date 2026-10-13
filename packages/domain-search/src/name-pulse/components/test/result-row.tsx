@@ -104,6 +104,7 @@ const renderRow = (
 						result={ result }
 						section="exact"
 						position={ 0 }
+						sectionPosition={ 0 }
 						variant={ variant }
 					/>
 				</DomainSearchContext.Provider>

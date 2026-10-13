@@ -40,6 +40,7 @@ export const useNamePulseSearchTracking = ( search: ReturnType< typeof useNamePu
 		isSettled,
 		hasTlds,
 		typedDomainAvailability,
+		isTypedDomainError,
 		suggestionResults,
 		exactMatch,
 		topResults,
@@ -134,7 +135,7 @@ export const useNamePulseSearchTracking = ( search: ReturnType< typeof useNamePu
 			! isLoadingTop &&
 			! isLoadingTlds &&
 			! isLoadingSuggestions &&
-			( ! typedDomain || typedDomainAvailability ) &&
+			( ! typedDomain || typedDomainAvailability || isTypedDomainError ) &&
 			! topResults.some( ( result ) => result.status === NamePulseDomainStatus.WAITING );
 
 		if ( isComplete ) {
