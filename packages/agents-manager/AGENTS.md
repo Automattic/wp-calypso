@@ -5,9 +5,10 @@
 ## Cross-Repo Boundaries
 
 - **Frontend** lives here (`packages/agents-manager/`) and is bundled by `apps/agents-manager/`.
-- **Backend** lives in the Jetpack monorepo at `jetpack-mu-wpcom/src/features/agents-manager/`. New API endpoints or loading contexts require changes there, not here.
-- **Extension providers** (like Big Sky) register via the PHP filter `agents_manager_agent_providers`. The loading flow crosses repos: PHP injects provider URLs → `loadExternalProviders()` dynamically imports them → they export `toolProvider`, `contextProvider`, etc. See `src/extension-types.ts` for the provider contract.
-- **Chat runtime** comes from `@automattic/agenttic-client` (hooks, auth, message types) and `@automattic/agenttic-ui` (UI components, renderers). These are external NPM packages, not in this repo.
+- **Backend** lives in the Jetpack monorepo at `projects/packages/agents-manager/` (`automattic/jetpack-agents-manager`), started by `jetpack-mu-wpcom` and by the plugins that host the chat (Jetpack, WooCommerce AI). New API endpoints or loading contexts require changes there, not here.
+- **Extension providers** (Big Sky, the Jetpack AI sidebar, WooCommerce AI, the Jetpack AI Hub) register via the PHP filter `agents_manager_agent_providers`. The loading flow crosses repos: PHP injects provider URLs → `loadExternalProviders()` dynamically imports them → they export `toolProvider`, `contextProvider`, etc. See `src/extension-types.ts` for the provider contract.
+- **Hosts** drive the chat from outside the React tree through `window.__agentsManagerActions` and window events — see `src/hooks/custom-actions/README.md`.
+- **Chat runtime** comes from `@automattic/agenttic-client` (hooks, auth, message types) and `@automattic/agenttic-ui` (UI components, renderers). Both live in this repo under `packages/` and are also published to npm.
 
 ## Testing
 
@@ -20,7 +21,7 @@ cd apps/agents-manager && yarn dev --sync
 # Then visit any site — only widgets.wp.com needs sandboxing, not the site itself
 ```
 
-**Every PR** must include testing instructions for both Calypso (`yarn start`) and sandbox environments. See the PR template in `packages/help-center/AGENTS.md` for the pattern.
+**Every PR** must include testing instructions for both Calypso (`yarn start`) and sandbox environments. See the PR template in `packages/help-center/AGENTS.md` for the pattern. Releasing to `widgets.wp.com` is covered in `apps/agents-manager/README.md`.
 
 ## Conventions
 
@@ -78,5 +79,5 @@ The editor abilities (`abilities/editor-abilities.ts`) load as an async chunk on
 - **asset.json sync gap**: Adding/removing `@wordpress/*` dependencies changes `.asset.json` files, which Jetpack fetches from production — not your sandbox. Dependency changes require a deploy to take effect on Atomic.
 - **Unregistered script handles**: `@wordpress/*` packages WordPress doesn't register as scripts (e.g. `@wordpress/abilities`, `@wordpress/ui`) must stay force-bundled in `apps/agents-manager/webpack.config.js` — an externalized unregistered dependency makes `WP_Scripts` silently drop the whole bundle.
 - **Disconnected variant**: The `gutenberg-disconnected` entry point shows minimal UI. Changes to shared code can silently break it.
-- **Help Center dequeue**: On Gutenberg pages, the Agents Manager dequeues Help Center scripts to prevent duplicate UI. If debugging missing Help Center behavior, check this interaction.
-- **Extension interface changes**: Modifying `extension-types.ts` affects all provider plugins (Big Sky, etc.) across repos.
+- **Help Center overlap**: the Help Center and the floating chat can both be open. The panel touched last stays on top (`hooks/use-raise-on-focus.ts`, shared with the Help Center), and in wp-admin the Help Center mounts into `#agents-manager-masterbar` when it exists.
+- **Extension interface changes**: Modifying `extension-types.ts` affects every provider plugin listed under Cross-Repo Boundaries.
