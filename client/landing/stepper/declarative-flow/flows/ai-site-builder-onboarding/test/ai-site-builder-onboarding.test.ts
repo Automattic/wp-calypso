@@ -349,6 +349,9 @@ describe( 'ai-site-builder-onboarding flow', () => {
 					await runProcessingSubmit();
 
 					const waitUrl = new URL( getRedirectTo(), 'https://wordpress.com' );
+					expect( waitUrl.pathname ).toBe(
+						'/setup/ai-site-builder-onboarding/wait-for-commerce-atomic'
+					);
 					const editorUrl = new URL( waitUrl.searchParams.get( 'redirect_to' ) as string );
 					expect( editorUrl.pathname ).toBe( '/wp-admin/site-editor.php' );
 				} );
@@ -363,6 +366,9 @@ describe( 'ai-site-builder-onboarding flow', () => {
 					await runProcessingSubmit();
 
 					const waitUrl = new URL( getRedirectTo(), 'https://wordpress.com' );
+					expect( waitUrl.pathname ).toBe(
+						'/setup/ai-site-builder-onboarding/wait-for-commerce-atomic'
+					);
 					const editorUrl = new URL( waitUrl.searchParams.get( 'redirect_to' ) as string );
 					expect( editorUrl.pathname ).toBe( '/wp-admin/site-editor.php' );
 				} );
