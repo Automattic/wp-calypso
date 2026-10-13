@@ -5,7 +5,7 @@ import {
 	PRODUCTS_LIST_REQUEST_FAILURE,
 } from 'calypso/state/action-types';
 import { serialize, deserialize } from 'calypso/state/utils';
-import reducer, { hasReceivedThisSession, items, isFetching, type } from '../reducer';
+import reducer, { items, isFetching, receivedTypeThisSession, type } from '../reducer';
 
 describe( 'reducer', () => {
 	jest.spyOn( console, 'warn' ).mockImplementation();
@@ -121,23 +121,30 @@ describe( 'reducer', () => {
 		} );
 	} );
 
-	describe( '#hasReceivedThisSession()', () => {
-		test( 'should default to false', () => {
-			expect( hasReceivedThisSession( undefined, {} ) ).toBe( false );
+	describe( '#receivedTypeThisSession()', () => {
+		test( 'should default to null', () => {
+			expect( receivedTypeThisSession( undefined, {} ) ).toBeNull();
 		} );
 
-		test( 'should be true once a list is received', () => {
-			expect( hasReceivedThisSession( false, { type: PRODUCTS_LIST_RECEIVE } ) ).toBe( true );
+		test( 'should store the type of a received list', () => {
+			expect(
+				receivedTypeThisSession( null, {
+					type: PRODUCTS_LIST_RECEIVE,
+					productsListType: 'jetpack',
+				} )
+			).toBe( 'jetpack' );
 		} );
 
-		test( 'should stay true while a refresh is pending', () => {
-			expect( hasReceivedThisSession( true, { type: PRODUCTS_LIST_REQUEST } ) ).toBe( true );
-		} );
-
-		test( 'should be false after a failed refresh', () => {
-			expect( hasReceivedThisSession( true, { type: PRODUCTS_LIST_REQUEST_FAILURE } ) ).toBe(
-				false
+		test( 'should keep the type while a refresh is pending', () => {
+			expect( receivedTypeThisSession( 'jetpack', { type: PRODUCTS_LIST_REQUEST } ) ).toBe(
+				'jetpack'
 			);
+		} );
+
+		test( 'should reset after a failed refresh', () => {
+			expect(
+				receivedTypeThisSession( 'jetpack', { type: PRODUCTS_LIST_REQUEST_FAILURE } )
+			).toBeNull();
 		} );
 
 		test( 'should not be persisted', () => {
@@ -147,9 +154,9 @@ describe( 'reducer', () => {
 				productsListType: 'jetpack',
 			} );
 
-			expect( state.hasReceivedThisSession ).toBe( true );
-			expect( serialize( reducer, state ).root() ).not.toHaveProperty( 'hasReceivedThisSession' );
-			expect( deserialize( reducer, { items: {} } ).hasReceivedThisSession ).toBe( false );
+			expect( state.receivedTypeThisSession ).toBe( 'jetpack' );
+			expect( serialize( reducer, state ).root() ).not.toHaveProperty( 'receivedTypeThisSession' );
+			expect( deserialize( reducer, { items: {} } ).receivedTypeThisSession ).toBeNull();
 		} );
 	} );
 

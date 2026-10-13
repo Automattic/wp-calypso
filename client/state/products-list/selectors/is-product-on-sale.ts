@@ -16,13 +16,15 @@ export function isListedProductOnSale(
 }
 
 /**
- * The products list, only once this session has received it. Persisted items
- * from an earlier session, or kept after a failed refresh, are not returned.
+ * The Jetpack products list, only once this session has received it. Persisted
+ * items, a failed refresh or a different list type are not returned.
  */
-export function getFreshProductsList( state: AppState ): ListedAvailability | undefined {
-	return state.productsList?.hasReceivedThisSession ? state.productsList.items : undefined;
+export function getFreshJetpackProductsList( state: AppState ): ListedAvailability | undefined {
+	return state.productsList?.receivedTypeThisSession === 'jetpack'
+		? state.productsList.items
+		: undefined;
 }
 
-export function isProductOnSale( state: AppState, productSlug: string ): boolean {
-	return isListedProductOnSale( getFreshProductsList( state ), productSlug );
+export function isJetpackProductOnSale( state: AppState, productSlug: string ): boolean {
+	return isListedProductOnSale( getFreshJetpackProductsList( state ), productSlug );
 }
