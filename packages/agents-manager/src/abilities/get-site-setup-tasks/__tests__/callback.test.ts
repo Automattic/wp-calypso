@@ -25,7 +25,7 @@ import { getSiteSetupTasksCallback } from '../callback';
 
 const RESPONSE = {
 	tasks: [
-		{ id: 'design', title: 'Customize the design', completed: true, calypso_path: '/design' },
+		{ id: 'design', title: 'Customize the design', completed: true, calypso_path: '/themes/x' },
 		{ id: 'about', title: 'Publish the About page', completed: true, skipped: true },
 		{
 			id: 'images',
@@ -68,7 +68,12 @@ describe( 'getSiteSetupTasksCallback', () => {
 					eligible: true,
 					progress: { completed: 2, total: 5 },
 					tasks: [
-						{ id: 'design', title: 'Customize the design', status: 'done', url: '/design' },
+						{
+							id: 'design',
+							title: 'Customize the design',
+							status: 'done',
+							url: 'https://wordpress.com/themes/x',
+						},
 						{ id: 'about', status: 'skipped' },
 						{ id: 'images', status: 'in-progress', subtitle: 'Draft saved' },
 						{ id: 'domain', status: 'todo', disabled: true },
@@ -152,6 +157,34 @@ describe( 'getSiteSetupTasksCallback', () => {
 		const result = await getSiteSetupTasksCallback();
 
 		expect( result ).toMatchObject( { result: { success: false, error: 'boom' } } );
+	} );
+
+	it( 'resolves task destinations into absolute URLs', async () => {
+		mockWpcomRequest.mockResolvedValue( {
+			tasks: [
+				{ id: 'theme', calypso_path: '/themes/x' },
+				{ id: 'editor', calypso_path: 'https://x.wpcomstaging.com/wp-admin/site-editor.php' },
+				{ id: 'pay', calypso_path: 'https://connect.stripe.com/oauth' },
+				{ id: 'odd', calypso_path: 'javascript:alert(1)' },
+				{ id: 'none', calypso_path: null },
+			],
+			is_eligible: true,
+		} );
+
+		const result = await getSiteSetupTasksCallback();
+
+		expect( result.result.details ).toMatchObject( {
+			tasks: [
+				{ id: 'theme', url: 'https://wordpress.com/themes/x' },
+				{ id: 'editor', url: 'https://x.wpcomstaging.com/wp-admin/site-editor.php' },
+				{ id: 'pay', url: 'https://connect.stripe.com/oauth' },
+				{ id: 'odd' },
+				{ id: 'none' },
+			],
+		} );
+		const [ , , , odd, none ] = ( result.result.details as { tasks: { url?: string }[] } ).tasks;
+		expect( odd.url ).toBeUndefined();
+		expect( none.url ).toBeUndefined();
 	} );
 
 	it( 'skips malformed tasks and uses the id when a title is missing', async () => {

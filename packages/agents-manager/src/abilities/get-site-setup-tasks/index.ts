@@ -65,7 +65,8 @@ export const getSiteSetupTasksAbility: Ability = {
 										},
 										url: {
 											type: 'string',
-											description: 'Where the task is done, when it has a destination.',
+											description:
+												'Absolute URL where the task is done, when it has a destination.',
 										},
 									},
 									required: [ 'id', 'title', 'status' ],

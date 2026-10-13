@@ -41,6 +41,21 @@ interface AiLaunchpadResponse {
 
 const NOT_ELIGIBLE_CODE = 'ai_launchpad_not_eligible';
 
+// `calypso_path` is either an absolute URL (wp-admin, Stripe) or a path on
+// wordpress.com. The Site Setup page can follow the path as-is because it runs
+// on that origin; this ability also runs on Atomic, so it resolves it first.
+const CALYPSO_ORIGIN = 'https://wordpress.com';
+
+function toTaskUrl( value: unknown ): string | undefined {
+	if ( typeof value !== 'string' || ! value ) {
+		return undefined;
+	}
+	if ( /^https?:\/\//.test( value ) ) {
+		return value;
+	}
+	return value.startsWith( '/' ) ? `${ CALYPSO_ORIGIN }${ value }` : undefined;
+}
+
 /**
  * The site the chat is scoped to: the wp-admin inline payload on Simple and
  * Atomic, the published session scope in Calypso. `null` when the chat has
@@ -129,8 +144,7 @@ function toTasks( response: AiLaunchpadResponse ): SiteSetupTask[] {
 			...( typeof task.subtitle === 'string' && task.subtitle && { subtitle: task.subtitle } ),
 			status: toStatus( task ),
 			disabled: task.disabled === true,
-			...( typeof task.calypso_path === 'string' &&
-				task.calypso_path && { url: task.calypso_path } ),
+			...( ( url ) => url && { url } )( toTaskUrl( task.calypso_path ) ),
 		} );
 	}
 
