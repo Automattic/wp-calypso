@@ -45,22 +45,22 @@ export const isFetching = ( state = false, action ) => {
 };
 
 /*
- * Unlike `items`, this is not persisted: availability is only trusted once the
- * current session has received the list, so a stale cache cannot offer a product.
+ * The type of the list received in this session. Unlike `type`, it is not persisted,
+ * so availability from a stale cache or a failed refresh is never trusted.
  */
-export const hasReceivedThisSession = ( state = false, action ) => {
+export const receivedTypeThisSession = ( state = null, action ) => {
 	switch ( action.type ) {
 		case PRODUCTS_LIST_RECEIVE:
-			return true;
+			return action.productsListType ?? null;
 		case PRODUCTS_LIST_REQUEST_FAILURE:
-			return false;
+			return null;
 	}
 
 	return state;
 };
 
 const combinedReducer = combineReducers( {
-	hasReceivedThisSession,
+	receivedTypeThisSession,
 	isFetching,
 	items,
 	type,

@@ -1,13 +1,13 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useSelector } from 'calypso/state';
 import {
-	getFreshProductsList,
+	getFreshJetpackProductsList,
 	isListedProductOnSale,
 	isProductsListFetching,
 } from 'calypso/state/products-list/selectors';
 
 export default function useIsOnSale() {
-	const productsList = useSelector( getFreshProductsList );
+	const productsList = useSelector( getFreshJetpackProductsList );
 
 	return useCallback(
 		( productSlug: string ) => isListedProductOnSale( productsList, productSlug ),
@@ -21,7 +21,9 @@ export default function useIsOnSale() {
  */
 export function useOnSaleStatus( productSlug?: string ): 'unknown' | 'on-sale' | 'off-sale' {
 	const isOnSale = useIsOnSale();
-	const hasReceived = useSelector( ( state ) => getFreshProductsList( state ) !== undefined );
+	const hasReceived = useSelector(
+		( state ) => getFreshJetpackProductsList( state ) !== undefined
+	);
 	const isFetching = useSelector( isProductsListFetching );
 	const [ hasRequested, setHasRequested ] = useState( false );
 
