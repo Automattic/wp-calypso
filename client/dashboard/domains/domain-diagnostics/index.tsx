@@ -129,7 +129,14 @@ export default function DomainDiagnostics() {
 		}
 
 		return (
-			<Card className="domain-diagnostics-card">
+			<Card
+				size={ {
+					blockStart: 'medium',
+					blockEnd: 'medium',
+					inlineStart: 'medium',
+					inlineEnd: 'medium',
+				} }
+			>
 				<CardBody>
 					<VStack spacing={ 6 }>
 						{ /* Safari drops list semantics from a <ul> whose list-style is none. */ }
