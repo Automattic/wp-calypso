@@ -39,6 +39,13 @@ export type StreamImage = {
 	aspectRatio: string | null;
 };
 
+export type StreamPreview = {
+	route: string;
+	documentId: string;
+	epoch: string;
+	ready: boolean;
+};
+
 export type BuildWowStreamState = {
 	runId: string;
 	cursor: number;
@@ -50,6 +57,7 @@ export type BuildWowStreamState = {
 	plan: StreamPlan | null;
 	sections: Record< string, Record< number, StreamSection > >;
 	images: Record< string, StreamImage >;
+	previews: Record< string, StreamPreview >;
 	// The Engine finished its own work. Never a reason to navigate: Build Wow
 	// still has to deliver the result, and only the status endpoint says live.
 	engineTerminal: 'completed' | 'failed' | 'paused' | null;
@@ -71,6 +79,7 @@ export function initialStreamState( runId: string ): BuildWowStreamState {
 		plan: null,
 		sections: {},
 		images: {},
+		previews: {},
 		engineTerminal: null,
 	};
 }
@@ -179,9 +188,9 @@ function resetAttempt( state: BuildWowStreamState, attempt: number ): BuildWowSt
 // What each Build Wow phase produces, mirroring the host's snapshot fold
 // (Build_Stream_Store::reset_for_retry in wpcom): a retried phase drops its
 // earlier output, so a re-planned site cannot keep stale sections.
-const PHASE_OUTPUTS: Record< string, Array< 'plan' | 'sections' | 'images' > > = {
-	prepare: [ 'plan', 'sections', 'images' ],
-	finish_apply: [ 'sections', 'images' ],
+const PHASE_OUTPUTS: Record< string, Array< 'plan' | 'sections' | 'images' | 'previews' > > = {
+	prepare: [ 'plan', 'sections', 'images', 'previews' ],
+	finish_apply: [ 'sections', 'images', 'previews' ],
 };
 
 function resetPhase( state: BuildWowStreamState, phase: string ): BuildWowStreamState {
@@ -266,6 +275,29 @@ export function applyStreamEvent(
 							partial: data.partial === true,
 						},
 					},
+				},
+			};
+		}
+		case 'preview.available': {
+			const { route, document_id: documentId, epoch } = data;
+			if (
+				data.format !== 'dsl-html' ||
+				typeof route !== 'string' ||
+				route.length > 200 ||
+				! /^\/[^\s?#\\]*$/.test( route ) ||
+				typeof documentId !== 'string' ||
+				! /^[a-f0-9]{64}$/.test( documentId ) ||
+				typeof epoch !== 'string' ||
+				! /^\d+:\d+$/.test( epoch ) ||
+				( ! state.previews[ route ] && Object.keys( state.previews ).length >= MAX_ITEMS )
+			) {
+				return state;
+			}
+			return {
+				...state,
+				previews: {
+					...state.previews,
+					[ route ]: { route, documentId, epoch, ready: data.ready === true },
 				},
 			};
 		}
@@ -374,6 +406,13 @@ export function stateFromSnapshot(
 		const data = record( image );
 		if ( data ) {
 			state = applyStreamEvent( state, 'image.updated', data );
+		}
+	}
+
+	for ( const preview of values( snapshot.previews ) ) {
+		const data = record( preview );
+		if ( data ) {
+			state = applyStreamEvent( state, 'preview.available', data );
 		}
 	}
 
