@@ -260,8 +260,6 @@ const hosting: FlowV2< typeof initialize > = {
 								addQueryArgs( withLocale( '/setup/new-hosted-site/domains', locale ), {
 									...Object.fromEntries( query ),
 									plan: planCartItem?.product_slug ?? query.get( 'plan' ),
-									siteId,
-									siteSlug,
 								} ),
 								window.location.origin
 							).href;
@@ -274,8 +272,6 @@ const hosting: FlowV2< typeof initialize > = {
 									...( showPurchaseSteps && {
 										flow: NEW_HOSTED_SITE_FLOW,
 										showPurchaseSteps: 'true',
-										plan: planCartItem?.product_slug ?? query.get( 'plan' ),
-										showDomainStep: '',
 										signup: 1,
 										checkoutBackUrl: backUrl,
 										checkoutBackUrlDomains: backUrl,

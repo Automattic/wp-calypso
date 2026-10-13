@@ -114,8 +114,6 @@ it.each( [ 'en', 'fr' ] )( 'passes checkout steps and a domain return URL in %s'
 	expect( back.origin ).toBe( window.location.origin );
 	expect( back.pathname ).toBe( `/setup/new-hosted-site/domains${ locale === 'en' ? '' : '/fr' }` );
 	expect( back.searchParams.get( 'plan' ) ).toBe( mockPlan.product_slug );
-	expect( back.searchParams.get( 'siteId' ) ).toBe( mockSite.siteId );
-	expect( back.searchParams.get( 'siteSlug' ) ).toBe( mockSite.siteSlug );
 	expect( back.searchParams.get( 'showPurchaseSteps' ) ).toBe( 'true' );
 	expect( checkout.searchParams.get( 'redirect_to' ) ).toContain(
 		'/setup/transferring-hosted-site'
