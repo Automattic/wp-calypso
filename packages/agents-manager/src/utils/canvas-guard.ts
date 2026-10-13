@@ -8,7 +8,7 @@
  *
  * The policy is installed on both dispatch paths. agenttic-client calls an
  * ability's own `callback` when it has one and falls back to `executeAbility`
- * only when it does not, and every Big Sky ability has a callback — so guarding
+ * only when it does not, and every editor ability has a callback — so guarding
  * `executeAbility` alone would leave the guard inert.
  */
 
@@ -272,7 +272,7 @@ function guardAbilityCallback( ability: Ability ): Ability {
  * Refuses a canvas write whose canvas has moved since the model asked for it.
  *
  * Applied to the merged tool provider, so it is indifferent to which provider owns
- * a given ability — including after an ability migrates into AM.
+ * a given ability.
  * @param toolProvider The merged tool provider, if any.
  * @returns The wrapped provider, or undefined when there is nothing to wrap.
  */

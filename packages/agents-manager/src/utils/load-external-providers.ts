@@ -424,8 +424,6 @@ function withAmCheckpointActions(
 // the editor's clientIds as they are.
 const JETPACK_AI_SIDEBAR_ENVIRONMENT = 'gutenberg';
 
-// Big Sky's client context feeds the same keys; these win by running last.
-// With no provider context, nothing describes the page.
 /**
  * Adds what AM knows of the page: `currentPageContent` and
  * `selectedBlockClientId` under the short ids AM's abilities resolve,
