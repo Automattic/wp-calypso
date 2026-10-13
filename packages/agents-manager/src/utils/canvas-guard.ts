@@ -8,7 +8,7 @@
  *
  * The policy is installed on both dispatch paths. agenttic-client calls an
  * ability's own `callback` when it has one and falls back to `executeAbility`
- * only when it does not, and every Big Sky ability has a callback — so guarding
+ * only when it does not, and every editor ability has a callback — so guarding
  * `executeAbility` alone would leave the guard inert.
  */
 

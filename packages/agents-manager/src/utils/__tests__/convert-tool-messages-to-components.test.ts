@@ -280,10 +280,10 @@ describe( 'convertToolMessagesToComponents', () => {
 		expect( result[ 0 ].suppressThinking ).toBe( false );
 	} );
 
-	it( 'renders the provider pattern picker disabled for history rows', () => {
+	it( 'renders a provider component disabled for history rows', () => {
 		const message = createToolMessage( BIG_SKY_SHOW_COMPONENT_TOOL_ID, {
-			type: 'pattern-picker',
-			props: { patterns: [] },
+			type: 'title-picker',
+			props: { titles: [] },
 		} );
 		const getChatComponent = jest.fn().mockReturnValue( MockComponent );
 
