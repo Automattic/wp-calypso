@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import Banner from 'calypso/components/banner';
-import illustrationUrl from 'calypso/dashboard/sites/overview-difm-offer-card/difm-offer-illustration.svg';
 import { AnalyticsProvider } from 'calypso/dashboard/app/analytics';
 import DifmOfferModal from 'calypso/dashboard/components/difm-offer-modal';
+import illustrationUrl from 'calypso/dashboard/sites/overview-difm-offer-card/difm-offer-illustration.svg';
 import { getDifmOfferCopy, useDifmOffer } from 'calypso/dashboard/utils/difm-offer';
 import { useDifmOfferEngagementTracking } from 'calypso/dashboard/utils/use-difm-offer-engagement-tracking';
 import { useAnalyticsClient } from 'calypso/sites/v2/hooks/use-analytics-client';
@@ -65,7 +65,8 @@ export default function DifmOfferBanner( { siteId }: DifmOfferBannerProps ) {
 		isUpsellCardShown ||
 		! isEligible ||
 		isLoading ||
-		! copy
+		! copy ||
+		variation === 'control'
 	) {
 		return null;
 	}

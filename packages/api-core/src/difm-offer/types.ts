@@ -1,6 +1,6 @@
 export type DifmOfferSource = 'home' | 'site-overview' | 'themes';
 
-export type DifmOfferBuildRequestVariation = 'skip_setup' | 'expert_help' | 'no_time';
+export type DifmOfferBuildRequestVariation = 'treatment';
 
 export interface DifmOfferBuildRequest {
 	description: string;

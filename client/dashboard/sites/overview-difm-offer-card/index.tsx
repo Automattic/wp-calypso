@@ -69,7 +69,7 @@ export default function DIFMOfferCard( { site }: { site: Site } ) {
 		return null;
 	}
 
-	if ( ! copy ) {
+	if ( ! copy || variation === 'control' ) {
 		return <DIFMUpsellCard site={ site } />;
 	}
 

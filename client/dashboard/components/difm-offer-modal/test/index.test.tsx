@@ -28,7 +28,7 @@ const site = { ID: 123, slug: 'example.wordpress.com' } as Site;
 
 const expectedTracksProps = {
 	source: 'site-overview',
-	variation: 'expert_help',
+	variation: 'treatment',
 	upsell_id: 'difm-offer-modal',
 	upsell_feature_id: 'difm-offer',
 };
@@ -40,7 +40,7 @@ function renderModal( onClose = jest.fn() ) {
 		<DifmOfferModal
 			site={ site }
 			userEmail="test@example.com"
-			variation="expert_help"
+			variation="treatment"
 			source="site-overview"
 			onClose={ onClose }
 		/>
@@ -172,7 +172,7 @@ describe( '<DifmOfferModal>', () => {
 			.post( BUILD_REQUEST_PATH, {
 				description: 'A bakery site with an online menu.',
 				source: 'site-overview',
-				variation: 'expert_help',
+				variation: 'treatment',
 			} )
 			.reply( 200, { success: true } );
 		const { recordTracksEvent } = renderModal( onClose );

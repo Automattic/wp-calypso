@@ -158,15 +158,15 @@ export function RequestStep( {
 				<div className="difm-offer-modal__site-summary">
 					<Text>
 						{ createInterpolateElement(
-							/* translators: <slug /> is the site address. */
-							__( '<strong>Site:</strong> <slug />' ),
+							/* translators: <slug/> is the site address. */
+							__( '<strong>Site:</strong> <slug/>' ),
 							{ strong: <strong />, slug: <>{ site.slug }</> }
 						) }
 					</Text>
 					<Text>
 						{ createInterpolateElement(
-							/* translators: <email /> is the email address of the user's account. */
-							__( '<strong>Email:</strong> <email />' ),
+							/* translators: <email/> is the email address of the user's account. */
+							__( '<strong>Email:</strong> <email/>' ),
 							{ strong: <strong />, email: <>{ userEmail }</> }
 						) }
 					</Text>

@@ -9,7 +9,7 @@ describe( 'sendDifmOfferBuildRequest', () => {
 			description: 'A bakery site with an online menu.',
 			name: 'Ada',
 			source: 'site-overview' as const,
-			variation: 'expert_help' as const,
+			variation: 'treatment' as const,
 		};
 		const scope = nock( 'https://public-api.wordpress.com' )
 			.post( '/wpcom/v2/sites/123/difm-offer/build-request', body )
