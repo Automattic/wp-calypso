@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 import '@testing-library/jest-dom';
-import { screen, waitFor } from '@testing-library/react';
+import { act, fireEvent, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { render } from '../../../test-utils';
@@ -102,6 +102,24 @@ describe( 'DIFMOfferCard', () => {
 			'calypso_dashboard_upsell_click',
 			expectedProperties
 		);
+	} );
+
+	test( 'records a hover on the offer with the location', async () => {
+		assignExperiment( 'no_time' );
+
+		const { recordTracksEvent } = render( <DIFMOfferCard site={ mockSite } /> );
+		const heading = await screen.findByRole( 'heading', { name: 'No time to build your site?' } );
+		jest.useFakeTimers();
+
+		fireEvent.pointerEnter( heading.closest( '.dashboard-difm-offer-card' ) as Element );
+		act( () => jest.advanceTimersByTime( 500 ) );
+		jest.useRealTimers();
+
+		expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_difm_offer_banner_hover', {
+			upsell_id: 'site-overview-difm-offer',
+			upsell_feature_id: 'difm-offer',
+			variation: 'no_time',
+		} );
 	} );
 
 	test( 'shows the DIFM upsell to a user in control', async () => {

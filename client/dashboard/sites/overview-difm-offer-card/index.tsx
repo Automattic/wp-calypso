@@ -9,6 +9,7 @@ import { useLocale } from '../../app/locale';
 import { Callout } from '../../components/callout';
 import UpsellCTAButton from '../../components/upsell-cta-button';
 import { getDifmOfferCopy, useDifmOffer } from '../../utils/difm-offer';
+import { useDifmOfferEngagementTracking } from '../../utils/use-difm-offer-engagement-tracking';
 import DIFMUpsellCard from '../overview-difm-upsell-card';
 import illustrationUrl from '../overview-difm-upsell-card/upsell-illustration.svg';
 import type { Site } from '@automattic/api-core';
@@ -47,6 +48,11 @@ export default function DIFMOfferCard( { site }: { site: Site } ) {
 	const { mutate: saveDismissal } = useMutation( userPreferenceMutation( preferenceName ) );
 	// Hide the offer as soon as it is dismissed, without waiting for the preference to save.
 	const [ isDismissedLocally, setIsDismissedLocally ] = useState( false );
+	const engagementRef = useDifmOfferEngagementTracking( recordTracksEvent, {
+		upsell_id: UPSELL_ID,
+		upsell_feature_id: UPSELL_FEATURE_ID,
+		variation,
+	} );
 
 	if ( isLoading ) {
 		return null;
@@ -73,7 +79,7 @@ export default function DIFMOfferCard( { site }: { site: Site } ) {
 	};
 
 	return (
-		<div className="dashboard-difm-offer-card">
+		<div className="dashboard-difm-offer-card" ref={ engagementRef }>
 			<Callout
 				title={ copy.title }
 				titleAs="h2"
