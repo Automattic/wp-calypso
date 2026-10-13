@@ -85,6 +85,7 @@ const props = ( value: ReturnType< typeof useCredits > ) =>
 			onToggle: ( open: boolean ) => void;
 			onAction?: unknown;
 			upgradeUrl?: string;
+			onUpgradeClick?: () => void;
 			manageUrl?: string;
 		} >
 	 )?.props;
@@ -153,6 +154,7 @@ it.each( [ 'personal', 'premium', 'business' ] as const )(
 			href: props( result.current ).upgradeUrl,
 			target: '_blank',
 			rel: 'noopener noreferrer',
+			onClick: expect.any( Function ),
 		} );
 		act( () => expect( result.current.beforeSubmit() ).toBe( false ) );
 	}
@@ -1840,6 +1842,78 @@ describe( 'credits Tracks events', () => {
 		expect( result.current.trailingActions ).toBeUndefined();
 		act( () => expect( result.current.beforeSubmit() ).toBe( true ) );
 		expect( creditsEvents() ).toEqual( [] );
+	} );
+
+	describe( 'Upgrade clicks', () => {
+		const clicked = 'calypso_agents_manager_credits_cta_clicked';
+		const clicks = () => creditsEvents().filter( ( [ name ] ) => name === clicked );
+		const upgrade = { cta_type: 'upgrade', ref: 'wp_ai_credits' };
+
+		it( 'records every click on the notice’s link with the balance’s state at the click', async () => {
+			fetchMock.mockResolvedValueOnce( response( low() ) );
+			const { result } = renderCredits( freshScope() );
+			await flush();
+			act( () => result.current.notice?.action?.onClick?.() );
+			act( () => result.current.notice?.action?.onClick?.() );
+			await receive( { ...exhausted(), plan_tier: 'personal' } );
+			act( () => result.current.notice?.action?.onClick?.() );
+			const lowClick = {
+				...base,
+				state: 'low',
+				credits_left: 5,
+				plan_tier: 'personal',
+				...upgrade,
+			};
+			expect( clicks() ).toEqual( [
+				[ clicked, lowClick ],
+				[ clicked, lowClick ],
+				[ clicked, { ...lowClick, state: 'zero', credits_left: 0 } ],
+			] );
+		} );
+
+		it( 'records a click on the popover’s link, as ok on a healthy balance', async () => {
+			fetchMock.mockResolvedValueOnce( response( healthy() ) );
+			const { result } = renderCredits( freshScope() );
+			await flush();
+			expect( result.current.notice ).toBeUndefined();
+			expect( props( result.current ).upgradeUrl ).toBeDefined();
+			act( () => props( result.current ).onUpgradeClick?.() );
+			expect( clicks() ).toEqual( [
+				[
+					clicked,
+					{
+						...base,
+						state: 'ok',
+						credits_left: CREDITS_LOW_BALANCE,
+						plan_tier: 'business',
+						...upgrade,
+					},
+				],
+			] );
+		} );
+
+		it( 'records nothing from a previous site’s links', async () => {
+			const scope = freshScope();
+			fetchMock.mockResolvedValueOnce( response( low() ) );
+			const view = renderCredits( scope );
+			await flush();
+			const oldNoticeClick = view.result.current.notice?.action?.onClick;
+			const oldMeterClick = props( view.result.current ).onUpgradeClick;
+			expect( oldNoticeClick ).toBeDefined();
+			expect( oldMeterClick ).toBeDefined();
+			view.rerender( {
+				...defaultOptions,
+				siteKey: '456',
+				userId: scope.userId,
+				agentConfig: { ...agentConfig, authenticationScope: { siteId: 456, userId: scope.userId } },
+			} );
+			await receive( { ...low(), blog_id: 456 } );
+			act( () => {
+				oldNoticeClick?.();
+				oldMeterClick?.();
+			} );
+			expect( clicks() ).toEqual( [] );
+		} );
 	} );
 } );
 

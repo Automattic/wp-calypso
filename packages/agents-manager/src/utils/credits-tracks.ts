@@ -1,5 +1,5 @@
 /**
- * Tracks props for the site credits notice, its dismissal and the credits popover.
+ * Tracks props for the site credits notice, its dismissal, the credits popover and their Upgrade clicks.
  */
 import { type CreditsStatus, isCreditsExhausted, isCreditsLow } from './credits';
 import { recordAgentsManagerTracksEvent } from './tracks';
@@ -10,7 +10,8 @@ export type CreditsState = 'ok' | 'low' | 'zero';
 export type CreditsTracksEventName =
 	| 'calypso_agents_manager_credits_notice_shown'
 	| 'calypso_agents_manager_credits_notice_dismissed'
-	| 'calypso_agents_manager_credits_meter_opened';
+	| 'calypso_agents_manager_credits_meter_opened'
+	| 'calypso_agents_manager_credits_cta_clicked';
 
 /** By the same rules as the dot and the notices, so it follows `CREDITS_LOW_BALANCE`. */
 export function getCreditsState( status: CreditsStatus ): CreditsState {

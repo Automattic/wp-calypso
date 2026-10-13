@@ -25,6 +25,7 @@ import {
 } from '../utils/credits-tracks';
 import { getAgentsManagerInlineData } from '../utils/get-agents-manager-inline-data';
 import {
+	CREDITS_UPGRADE_SOURCE,
 	buildLiveCreditsStatus,
 	getLiveCreditSiteId,
 	getLiveCreditsUpgradeUrl,
@@ -439,6 +440,14 @@ export function useCredits( {
 		[ isPopoverOpen, recordCreditsEvent, setIsPopoverOpen ]
 	);
 
+	// Every click counts; the link opens in a new tab without waiting for the event.
+	const recordUpgradeClick = useCallback( () => {
+		recordCreditsEvent( 'calypso_agents_manager_credits_cta_clicked', {
+			cta_type: 'upgrade',
+			ref: CREDITS_UPGRADE_SOURCE,
+		} );
+	}, [ recordCreditsEvent ] );
+
 	let purchaseHint: string | undefined;
 	if ( askToUpgrade === 'site-admin' ) {
 		purchaseHint = __( 'Ask a site admin to add more.', __i18n_text_domain__ );
@@ -460,10 +469,20 @@ export function useCredits( {
 				onToggle={ toggleMeter }
 				onAction={ siteId ? undefined : handleAction }
 				upgradeUrl={ upgradeUrl }
+				onUpgradeClick={ recordUpgradeClick }
 				purchaseHint={ purchaseHint }
 			/>
 		);
-	}, [ status, isPopoverOpen, toggleMeter, handleAction, siteId, upgradeUrl, purchaseHint ] );
+	}, [
+		status,
+		isPopoverOpen,
+		toggleMeter,
+		handleAction,
+		siteId,
+		upgradeUrl,
+		recordUpgradeClick,
+		purchaseHint,
+	] );
 
 	const notice = useMemo< NoticeConfig | undefined >( () => {
 		if ( siteId && status?.plan === 'paid' ) {
@@ -473,6 +492,7 @@ export function useCredits( {
 						href: upgradeUrl,
 						target: '_blank',
 						rel: 'noopener noreferrer',
+						onClick: recordUpgradeClick,
 					}
 				: undefined;
 			// A dismissed low notice must not hide the exhausted state.
@@ -555,6 +575,7 @@ export function useCredits( {
 		status,
 		siteId,
 		upgradeUrl,
+		recordUpgradeClick,
 		askToUpgrade,
 		isExhausted,
 		isLow,
