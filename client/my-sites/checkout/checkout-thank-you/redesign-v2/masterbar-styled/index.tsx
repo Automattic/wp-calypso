@@ -25,9 +25,7 @@ const MasterbarStyled = ( {
 	<Masterbar className="checkout-thank-you__masterbar">
 		<Global
 			styles={ css`
-				/* Must outrank the omnibar's body:has( .omnibar ) declaration of this variable,
-				   but not the mobile app's body.is-mobile-app-view, which hides the bar. */
-				body:not( .is-mobile-app-view ):has( .masterbar.checkout-thank-you__masterbar ) {
+				body {
 					--masterbar-height: 72px;
 				}
 			` }
