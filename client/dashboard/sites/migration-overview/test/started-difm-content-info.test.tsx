@@ -2,6 +2,7 @@
  * @jest-environment jsdom
  */
 
+import { siteBySlugQuery } from '@automattic/api-queries';
 import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
@@ -62,18 +63,40 @@ it( 'keeps the existing cancellation message when a ticket exists', async () => 
 	).toBeVisible();
 } );
 
-it( 'cancels an inactive migration without a ticket', async () => {
+it( 'waits for fresh site data before navigating after cancelling a ticketless migration', async () => {
 	mockTicket( null );
 	const cancellation = nock( 'https://public-api.wordpress.com' )
 		.post( '/wpcom/v2/sites/123/automated-migration/cancel-migration' )
 		.reply( 200, { success: true } );
-	render( <StartedDIFMContentInfo site={ site } /> );
+	const cancelledSite = {
+		...site,
+		site_migration: { ...site.site_migration, migration_status: 'migration-cancelled-difm' },
+	};
+	let resolveSiteResponse: ( site: Site ) => void = () => {};
+	const siteResponse = new Promise< Site >( ( resolve ) => {
+		resolveSiteResponse = resolve;
+	} );
+	const siteRefresh = nock( 'https://public-api.wordpress.com' )
+		.get( `/rest/v1.1/sites/${ site.slug }` )
+		.query( true )
+		.reply( 200, () => siteResponse );
+	const { queryClient } = render( <StartedDIFMContentInfo site={ site } /> );
+	const siteQueryKey = siteBySlugQuery( site.slug ).queryKey;
+	queryClient.setQueryData( siteQueryKey, site );
+	const siteAtNavigation = jest.fn();
+	mockNavigate.mockImplementationOnce( () => {
+		siteAtNavigation( queryClient.getQueryData( siteQueryKey ) );
+	} );
 
 	await userEvent.click( await screen.findByRole( 'button', { name: 'Cancel migration' } ) );
 	expect( screen.getByText( /your original site will stay as is/i ) ).toBeVisible();
 	await userEvent.click(
 		within( screen.getByRole( 'dialog' ) ).getByRole( 'button', { name: 'Cancel migration' } )
 	);
+
+	await waitFor( () => expect( siteRefresh.isDone() ).toBe( true ) );
+	expect( mockNavigate ).not.toHaveBeenCalled();
+	resolveSiteResponse( cancelledSite );
 
 	await waitFor( () =>
 		expect( mockNavigate ).toHaveBeenCalledWith( {
@@ -82,6 +105,7 @@ it( 'cancels an inactive migration without a ticket', async () => {
 		} )
 	);
 	expect( cancellation.isDone() ).toBe( true );
+	expect( siteAtNavigation ).toHaveBeenCalledWith( cancelledSite );
 	expect( mockCreateSuccessNotice ).toHaveBeenCalledWith( 'Migration cancelled.', {
 		type: 'snackbar',
 	} );
