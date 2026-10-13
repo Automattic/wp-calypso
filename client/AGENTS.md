@@ -56,6 +56,7 @@ yarn test-client --findRelatedTests <file>  # Find + run related tests
 ### Internationalization
 
 - Use `@wordpress/i18n` for translations.
+- Format displayed counts and quantities with `formatNumber()` from `@automattic/number-formatters`; preserve required decimal precision, use `%s` for formatted values, and keep numeric counts for plural selection. Use compact notation only when the layout needs it. See [number formatting guidance](../docs/i18n.md#formatting-displayed-quantities).
 
 ### Testing
 
