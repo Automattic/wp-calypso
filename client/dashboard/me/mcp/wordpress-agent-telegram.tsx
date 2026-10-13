@@ -49,6 +49,9 @@ export default function WordPressAgentTelegram( {
 	const queryClient = useQueryClient();
 	const containerRef = useRef< HTMLDivElement | null >( null );
 	const injectedContainerRef = useRef< HTMLDivElement | null >( null );
+	const [ pendingAuth, setPendingAuth ] = useState< WordPressAgentTelegramAuthPayload | null >(
+		null
+	);
 	const [ pairingDismissed, setPairingDismissed ] = useState( false );
 	const [ pairingComplete, setPairingComplete ] = useState( false );
 	const statusQuery = useQuery( wordpressAgentTelegramStatusQuery() );
@@ -96,7 +99,7 @@ export default function WordPressAgentTelegram( {
 		: __( 'Connect your WordPress.com account to Telegram?' );
 
 	useEffect( () => {
-		if ( ! isConfigured || isConnected || ! isStatusReady ) {
+		if ( ! isConfigured || isConnected || ! isStatusReady || hasAnyCallbackParam ) {
 			return;
 		}
 
@@ -105,7 +108,7 @@ export default function WordPressAgentTelegram( {
 				has_username: payload.username ? 1 : 0,
 				auth_date: payload.auth_date,
 			} );
-			connectTelegram( payload );
+			setPendingAuth( ( current ) => current ?? payload );
 		};
 
 		const timeoutId = window.setTimeout( () => {
@@ -143,7 +146,7 @@ export default function WordPressAgentTelegram( {
 			delete window.wordpressAgentOnTelegramAuth;
 		};
 	}, [
-		connectTelegram,
+		hasAnyCallbackParam,
 		isConfigured,
 		isConnected,
 		isStatusReady,
@@ -211,30 +214,51 @@ export default function WordPressAgentTelegram( {
 					{ __( 'This Telegram connection link is invalid or incomplete.' ) }
 				</Notice>
 			) }
-			{ hasCompleteCallback && ! pairingDismissed && ! pairingComplete && (
+			{ ( pendingAuth || ( hasCompleteCallback && ! pairingDismissed && ! pairingComplete ) ) && (
 				<Card>
 					<CardBody className="wordpress-agent-connection__row">
 						<SectionHeader
 							level={ 3 }
 							title={ pairingTitle }
-							description={ __(
-								'Connect your account to use WordPress Agent when you message it in Telegram.'
-							) }
+							description={
+								pendingAuth
+									? sprintf(
+											/* translators: 1: Telegram name or username, 2: Telegram user ID. */
+											__( 'Telegram account: %1$s (ID: %2$s)' ),
+											pendingAuth.username
+												? `@${ pendingAuth.username }`
+												: pendingAuth.first_name || '',
+											String( pendingAuth.id )
+										)
+									: __(
+											'Connect your account to use WordPress Agent when you message it in Telegram.'
+										)
+							}
 						/>
 						<div className="wordpress-agent-connection__actions">
 							<Button
 								__next40pxDefaultSize
 								variant="secondary"
-								onClick={ () => setPairingDismissed( true ) }
+								onClick={ () => {
+									setPendingAuth( null );
+									setPairingDismissed( true );
+								} }
+								disabled={ connectMutation.isPending || tokenMutation.isPending }
 							>
 								{ __( 'Cancel' ) }
 							</Button>
 							<Button
 								__next40pxDefaultSize
 								variant="primary"
-								onClick={ connectViaToken }
-								isBusy={ tokenMutation.isPending }
-								disabled={ tokenMutation.isPending }
+								onClick={ () => {
+									if ( pendingAuth ) {
+										connectTelegram( pendingAuth, { onSuccess: () => setPendingAuth( null ) } );
+									} else {
+										connectViaToken();
+									}
+								} }
+								isBusy={ connectMutation.isPending || tokenMutation.isPending }
+								disabled={ connectMutation.isPending || tokenMutation.isPending }
 							>
 								{ __( 'Connect' ) }
 							</Button>
