@@ -80,4 +80,5 @@ export interface UserPreferences {
 	'a4a-agency-approval-notice-dismissed'?: boolean;
 	/** The welcome tour section to pick back up at after leaving the tour to explore a page. */
 	'a4a-dashboard-onboarding-tour-section'?: string;
+	'a4a-overview-welcome-band-dismissed'?: boolean;
 }

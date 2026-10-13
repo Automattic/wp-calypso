@@ -1,0 +1,252 @@
+import { userPreferenceOptimisticMutation, userPreferenceQuery } from '@automattic/api-queries';
+import { useMutation, useQuery } from '@tanstack/react-query';
+import {
+	Button,
+	__experimentalHeading as Heading,
+	__experimentalHStack as HStack,
+	__experimentalVStack as VStack,
+} from '@wordpress/components';
+import { createInterpolateElement } from '@wordpress/element';
+import { __ } from '@wordpress/i18n';
+import { close } from '@wordpress/icons';
+import clsx from 'clsx';
+import { useEffect, useRef } from 'react';
+import { Card } from '../../components/card';
+import RouterLinkButton from '../../components/router-link-button';
+import { Text } from '../../components/text';
+import NewTabLabel from '../overview/new-tab-label';
+import callArt from './images/welcome/call.svg';
+import productArt from './images/welcome/product.svg';
+import siteArt from './images/welcome/site.svg';
+import type { AgencyTierType, RecordTracksEvent } from '../tiers/types';
+import type { AgencyApprovalStatus } from '@automattic/api-core';
+import type { ReactNode } from 'react';
+
+import './welcome-band.scss';
+
+export const WELCOME_BAND_DISMISSED_PREFERENCE = 'a4a-overview-welcome-band-dismissed';
+
+/**
+ * Who sees the band on Overview: new agencies, under review or at the first tier, until they
+ * close it. A rejected application gets its own card instead.
+ */
+export function useWelcomeBandVisibility(
+	approvalStatus?: AgencyApprovalStatus | '',
+	tierId?: AgencyTierType
+) {
+	const isEligible =
+		approvalStatus !== 'rejected' &&
+		( approvalStatus === 'pending' || tierId === 'emerging-partner' );
+	const { data: isDismissed, isFetched } = useQuery( {
+		...userPreferenceQuery( WELCOME_BAND_DISMISSED_PREFERENCE ),
+		enabled: isEligible,
+	} );
+
+	return { isEligible, isVisible: isEligible && isFetched && ! isDismissed };
+}
+
+type StepId = 'call' | 'site' | 'product';
+
+// The muted grey that still reads on the blue field; the components' muted grey is under AA there.
+const MUTED_ON_FIELD = 'var( --a4a-welcome-band-muted )';
+
+interface WelcomeBandProps {
+	/** Under review, buying and referring unlock on activation. */
+	isPending: boolean;
+	sitesHref: string;
+	marketplaceHref: string;
+	onScheduleCall: () => void;
+	isSchedulingCall?: boolean;
+	onTakeTour: () => void;
+	recordTracksEvent: RecordTracksEvent;
+}
+
+/**
+ * Greets new agencies on Overview with three first steps and the full tour one click
+ * away. Closing it hides it for good.
+ */
+export default function WelcomeBand( {
+	isPending,
+	sitesHref,
+	marketplaceHref,
+	onScheduleCall,
+	isSchedulingCall,
+	onTakeTour,
+	recordTracksEvent,
+}: WelcomeBandProps ) {
+	const { data: isDismissed, isFetched } = useQuery(
+		userPreferenceQuery( WELCOME_BAND_DISMISSED_PREFERENCE )
+	);
+	const { mutate: saveDismissed } = useMutation(
+		userPreferenceOptimisticMutation( WELCOME_BAND_DISMISSED_PREFERENCE )
+	);
+	const state = isPending ? 'under-review' : 'approved';
+	const isVisible = isFetched && ! isDismissed;
+
+	const hasRecordedView = useRef( false );
+	useEffect( () => {
+		if ( isVisible && ! hasRecordedView.current ) {
+			hasRecordedView.current = true;
+			recordTracksEvent( 'calypso_a4a_overview_welcome_band_view', { state } );
+		}
+	}, [ isVisible, state, recordTracksEvent ] );
+
+	// Wait for the preference, so a closed band never flashes open first.
+	if ( ! isVisible ) {
+		return null;
+	}
+
+	const recordStep = ( step: StepId ) =>
+		recordTracksEvent( 'calypso_a4a_overview_welcome_band_step_click', { state, step } );
+
+	const steps: {
+		id: StepId;
+		art: string;
+		title: string;
+		description: string;
+		action: ReactNode;
+		isLocked?: boolean;
+	}[] = [
+		{
+			id: 'call',
+			art: callArt,
+			title: __( 'Plan your growth with an advisor' ),
+			description: __( 'A free 30-minute call about your goals and new ways to win clients.' ),
+			action: (
+				<Button
+					variant="primary"
+					size="compact"
+					isBusy={ isSchedulingCall }
+					disabled={ isSchedulingCall }
+					onClick={ () => {
+						recordStep( 'call' );
+						onScheduleCall();
+					} }
+				>
+					<span className="a4a-welcome-band-cta-label">
+						<NewTabLabel justify="flex-start">{ __( 'Book your free advisor call' ) }</NewTabLabel>
+					</span>
+				</Button>
+			),
+		},
+		{
+			id: 'site',
+			art: siteArt,
+			title: __( 'Manage every site in one place' ),
+			description: __( 'Wherever they’re hosted. Our plugin connects a site in seconds.' ),
+			action: (
+				<RouterLinkButton
+					to={ sitesHref }
+					variant="secondary"
+					size="compact"
+					onClick={ () => recordStep( 'site' ) }
+				>
+					<span className="a4a-welcome-band-cta-label">{ __( 'Connect your first site' ) }</span>
+				</RouterLinkButton>
+			),
+		},
+		{
+			id: 'product',
+			art: productArt,
+			isLocked: isPending,
+			title: __( 'Earn on every plugin and plan' ),
+			description: __( 'Buy at agency prices, or let your client pay and earn on each renewal.' ),
+			action: (
+				<RouterLinkButton
+					to={ marketplaceHref }
+					variant="secondary"
+					size="compact"
+					onClick={ () => recordStep( 'product' ) }
+				>
+					<span className="a4a-welcome-band-cta-label">{ __( 'Explore products & hosting' ) }</span>
+				</RouterLinkButton>
+			),
+		},
+	];
+
+	return (
+		<Card>
+			<section className="a4a-welcome-band-layout" aria-label={ __( 'Welcome' ) }>
+				<div className="a4a-welcome-band-close">
+					<Button
+						icon={ close }
+						size="small"
+						label={ __( 'Close' ) }
+						onClick={ () => {
+							recordTracksEvent( 'calypso_a4a_overview_welcome_band_dismiss_click', { state } );
+							saveDismissed( true );
+						} }
+					/>
+				</div>
+				<div className="a4a-welcome-band-grid">
+					<div className="a4a-welcome-band-intro">
+						<VStack spacing={ 2 }>
+							<Heading level={ 2 } size={ 20 } weight={ 500 } lineHeight="28px">
+								{ isPending
+									? __( 'Welcome to Automattic for Agencies' )
+									: __( 'Your account is ready' ) }
+							</Heading>
+							{ isPending && (
+								<Text variant="muted" lineHeight="20px">
+									{ __(
+										'We’re reviewing your account, and you can book your advisor call now. Most are activated within one business day.'
+									) }
+								</Text>
+							) }
+							<Text lineHeight="20px">
+								{ createInterpolateElement(
+									__( 'Start with these three steps, or <tour>take the full tour</tour>.' ),
+									{
+										tour: (
+											<Button
+												variant="link"
+												onClick={ () => {
+													recordTracksEvent( 'calypso_a4a_overview_welcome_band_full_tour_click', {
+														state,
+													} );
+													onTakeTour();
+												} }
+											/>
+										),
+									}
+								) }
+							</Text>
+						</VStack>
+					</div>
+					<ol className="a4a-welcome-band-steps">
+						{ steps.map( ( step, index ) => (
+							<li
+								key={ step.id }
+								className={ clsx( 'a4a-welcome-band-step', { 'is-locked': step.isLocked } ) }
+							>
+								<img className="a4a-welcome-band-art" src={ step.art } alt="" />
+								<span className="a4a-welcome-band-number" aria-hidden="true">
+									{ index + 1 }
+								</span>
+								<div className="a4a-welcome-band-text">
+									<VStack spacing={ 0.5 }>
+										<Heading level={ 3 } size={ 13 } weight={ 600 } lineHeight="18px">
+											{ step.title }
+										</Heading>
+										<Text size={ 13 } lineHeight="18px" color={ MUTED_ON_FIELD }>
+											{ step.description }
+										</Text>
+									</VStack>
+								</div>
+								<div className="a4a-welcome-band-action">
+									{ step.isLocked ? (
+										<Text size={ 12 } lineHeight="16px" color={ MUTED_ON_FIELD }>
+											{ __( 'Unlocks when your account is activated' ) }
+										</Text>
+									) : (
+										<HStack justify="flex-start">{ step.action }</HStack>
+									) }
+								</div>
+							</li>
+						) ) }
+					</ol>
+				</div>
+			</section>
+		</Card>
+	);
+}
