@@ -215,13 +215,22 @@ function ConditionalContactDetailsMessage( {
 	}
 	return (
 		<ContactDetailsFormDescription>
-			{ isMobileCheckoutStickySummary
-				? translate(
-						'Required for domain registration. Your details are protected for eligible domains.'
-					)
-				: translate(
+			{ isMobileCheckoutStickySummary ? (
+				translate(
+					'Required for domain registration. Your details are protected for eligible domains.'
+				)
+			) : (
+				<>
+					{ translate(
 						'Registering a domain name requires valid contact information. Privacy Protection is included for all eligible domains to protect your personal information.'
-					) }
+					) }{ ' ' }
+					<InlineSupportLink
+						supportContext="domain-contact-information-requirements"
+						showText={ false }
+						linkTitle={ translate( 'Learn more' ) }
+					/>
+				</>
+			) }
 		</ContactDetailsFormDescription>
 	);
 }
@@ -262,15 +271,7 @@ const ContactFormTitle = () => {
 				? translate( 'Contact information' )
 				: translate( 'Enter your contact information' );
 
-		return (
-			<>
-				{ titleText }{ ' ' }
-				<InlineSupportLink
-					supportContext="domain-contact-information-requirements"
-					showIcon={ false }
-				/>
-			</>
-		);
+		return <>{ titleText }</>;
 	}
 
 	if ( contactDetailsType === 'gsuite' ) {
