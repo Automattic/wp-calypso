@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 
-import { screen } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import nock from 'nock';
 import { render } from '../../../../test-utils';
 import AgencySitePlanCard from '../plan-card';
@@ -123,7 +123,8 @@ describe( '<AgencySitePlanCard>', () => {
 
 		render( <AgencySitePlanCard agencySite={ pressableAgencySite } site={ site } /> );
 
-		expect( await screen.findByText( 'Jetpack Free' ) ).toBeVisible();
+		await waitFor( () => expect( nock.isDone() ).toBe( true ) );
+		expect( screen.getByText( 'Jetpack Free' ) ).toBeVisible();
 		expect( screen.queryByText( /Pressable Signature/ ) ).not.toBeInTheDocument();
 	} );
 } );
