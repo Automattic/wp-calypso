@@ -39,12 +39,8 @@ const packagesWithoutSource = new Set( [
 	// imports itself.
 	'@automattic/agenttic-client',
 	'@automattic/agenttic-ui',
-	// A demo app, not imported by anything.
-	'@automattic/agenttic-demo',
 	// A stylesheet package, with nothing for import rules to check.
 	'@automattic/calypso-color-schemes',
-	// Its `main` is already source; the build only makes an SVG sprite.
-	'@automattic/material-design-icons',
 ] );
 
 // Without this, a package that needs a build but has no `calypso:src` entry, or one pointing
@@ -62,6 +58,8 @@ test( 'packages that need a build point to their source', () => {
 		} ) )
 		// `yarn build-packages` runs `prepare`, and builds the rest through `tsc --build`.
 		.filter( ( { pkg } ) => [ 'prepare', 'build', 'prepack' ].some( ( s ) => pkg.scripts?.[ s ] ) )
+		// Without an entry point, nothing imports the package (e.g. a demo app).
+		.filter( ( { pkg } ) => pkg.main || pkg.module || pkg.exports )
 		.filter( ( { pkg } ) => ! packagesWithoutSource.has( pkg.name ) )
 		.filter(
 			( { dir, pkg } ) =>
