@@ -1,3 +1,5 @@
+import { receiveProductsList } from '../../actions';
+import reducer from '../../reducer';
 import { isListedProductOnSale, isProductOnSale } from '../is-product-on-sale';
 import type { AppState } from 'calypso/types';
 
@@ -45,5 +47,22 @@ describe( 'isProductOnSale', () => {
 
 	it.each( [ 'none', 'failed' ] )( 'ignores the list when the session status is %s', ( status ) => {
 		expect( isProductOnSale( stateWith( status ), 'jetpack_pro_yearly' ) ).toBe( false );
+	} );
+} );
+
+describe( 'isProductOnSale after a full response', () => {
+	it( 'does not keep cached availability for a product the response omits', () => {
+		const cached = {
+			productsList: { items: pro( true ), sessionListStatus: 'none' },
+		};
+		const state = {
+			productsList: reducer(
+				cached.productsList as ReturnType< typeof reducer >,
+				receiveProductsList( { jetpack_complete: { available: true } } )
+			),
+		} as unknown as AppState;
+
+		expect( isProductOnSale( state, 'jetpack_complete' ) ).toBe( true );
+		expect( isProductOnSale( state, 'jetpack_pro_yearly' ) ).toBe( false );
 	} );
 } );
