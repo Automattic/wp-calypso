@@ -1,4 +1,3 @@
-const fs = require( 'fs' );
 const path = require( 'path' );
 const typescriptResolver = require( 'eslint-import-resolver-typescript' );
 
@@ -19,13 +18,8 @@ const options = {
 };
 
 // Returns the workspace package folder (e.g. `packages/foo`) containing `file`, if any.
-// Files reached through a `node_modules` symlink count as part of their package.
 function getWorkspacePackage( file ) {
-	let realFile = path.resolve( file );
-	try {
-		realFile = fs.realpathSync( realFile );
-	} catch {}
-	const relative = path.relative( repoRoot, realFile );
+	const relative = path.relative( repoRoot, file );
 	if ( relative.includes( 'node_modules' ) ) {
 		return null;
 	}
