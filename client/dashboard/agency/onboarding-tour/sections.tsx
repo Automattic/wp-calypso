@@ -93,14 +93,14 @@ export function getOnboardingTourSections( links: OnboardingTourLinks ): Onboard
 				),
 			],
 			hint: createInterpolateElement(
-				sprintf(
-					/* translators: %s is the yearly value of Jetpack Complete per site, e.g. "$800+". */
-					__(
-						'<b>Pro tip:</b> Sites hosted on Pressable come with Jetpack Complete (a %s value per site, annually) at no extra cost.'
-					),
-					`${ formatCurrency( 800, 'USD', { stripZeros: true } ) }+`
+				/* translators: <value/> is the yearly value of Jetpack Complete per site, e.g. "$800+". */
+				__(
+					'<b>Pro tip:</b> Sites hosted on Pressable come with Jetpack Complete (a <value/> value per site, annually) at no extra cost.'
 				),
-				bold
+				{
+					b: <b />,
+					value: <>{ `${ formatCurrency( 800, 'USD', { stripZeros: true } ) }+` }</>,
+				}
 			),
 			drawing: sitesDrawing,
 			explore: { label: __( 'Connect your first site' ), href: links.sites },
