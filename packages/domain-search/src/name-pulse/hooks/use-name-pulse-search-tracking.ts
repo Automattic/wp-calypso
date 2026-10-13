@@ -1,36 +1,24 @@
 import { useEvent } from '@wordpress/compose';
-import { useEffect, useRef } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import { useDomainSearch } from '../../page/context';
-import {
-	NAME_PULSE_PAGE_SIZE,
-	NAME_PULSE_SKELETON_TIMEOUT_MS,
-	NamePulseDomainStatus,
-	type NamePulseDomainResult,
-} from '../helpers';
+import { NAME_PULSE_SKELETON_TIMEOUT_MS, NamePulseDomainStatus } from '../helpers';
 import type { useNamePulseSearch } from './use-name-pulse-search';
 
 interface NamePulseSearchTrackingState {
 	query: string;
+	filterKey: string;
 	settledAt: number;
-	firstResultAt?: number;
 	hasReportedResults: boolean;
-	hasReportedSuggestions: boolean;
 	hasReportedAvailability: boolean;
 }
 
-/** Rows shown before "Show more". */
-const countShown = ( results: NamePulseDomainResult[] ) =>
-	Math.min( results.length, NAME_PULSE_PAGE_SIZE );
-
-const hasVerdict = ( results: NamePulseDomainResult[] ) =>
-	results.some( ( result ) => result.status !== NamePulseDomainStatus.WAITING );
-
 /**
- * Reports each settled search once, plus the classic suggestions and
- * typed-domain availability events.
+ * Records one logical search per settled query or filter change, and the
+ * result set it commits to the page. Returns the result set's id once the
+ * query on screen has settled, for the TrainTracks renders to carry.
  */
 export const useNamePulseSearchTracking = ( search: ReturnType< typeof useNamePulseSearch > ) => {
-	const { events, filter } = useDomainSearch();
+	const { events, filter, lastSearchTrigger } = useDomainSearch();
 	const state = useRef< NamePulseSearchTrackingState | null >( null );
 
 	const {
@@ -40,7 +28,8 @@ export const useNamePulseSearchTracking = ( search: ReturnType< typeof useNamePu
 		hasTlds,
 		typedDomainAvailability,
 		isTypedDomainError,
-		suggestionResults,
+		isSuggestionsError,
+		hasTldsError,
 		exactMatch,
 		topResults,
 		exactList,
@@ -52,6 +41,14 @@ export const useNamePulseSearchTracking = ( search: ReturnType< typeof useNamePu
 		isLoadingCreative,
 	} = search;
 
+	const filterKey = [ ...filter.tlds ].sort().join( ',' );
+	// Created during render, so rows rendering in the same commit already have them.
+	const ids = useMemo(
+		() => ( { searchId: crypto.randomUUID(), resultSetId: crypto.randomUUID() } ),
+		// eslint-disable-next-line react-hooks/exhaustive-deps -- each search gets new ids.
+		[ settledQuery, filterKey ]
+	);
+
 	const reportResults = useEvent( ( timedOut: boolean ) => {
 		const current = state.current;
 
@@ -60,18 +57,40 @@ export const useNamePulseSearchTracking = ( search: ReturnType< typeof useNamePu
 		}
 
 		current.hasReportedResults = true;
-		events.onNamePulseTracksEvent( 'results_rendered', {
-			search_mode: settledLayout.mode,
-			top_count: topResults.length,
-			exact_count: countShown( exactList ),
-			suggestions_count: countShown( keywordResults ),
-			creative_count: countShown( creativeResults ),
-			has_exact_card: Boolean( exactMatch?.availability ),
-			time_to_first_result_ms:
-				current.firstResultAt !== undefined ? current.firstResultAt - current.settledAt : undefined,
-			time_to_complete_ms: Date.now() - current.settledAt,
-			timed_out: timedOut,
-		} );
+
+		const counts = {
+			result_count_featured: exactMatch?.availability ? 1 : 0,
+			result_count_top: settledLayout.top.show ? topResults.length : 0,
+			result_count_exact: settledLayout.exactGrid.show ? exactList.length : 0,
+			result_count_related: settledLayout.suggestions.show ? keywordResults.length : 0,
+			result_count_creative: settledLayout.creative.show ? creativeResults.length : 0,
+		};
+		const total = Object.values( counts ).reduce( ( sum, count ) => sum + count, 0 );
+
+		if ( total === 0 && ( timedOut || hasTldsError || isSuggestionsError || isTypedDomainError ) ) {
+			let errorType = 'availability_failed';
+
+			if ( timedOut ) {
+				errorType = 'timeout';
+			} else if ( hasTldsError ) {
+				errorType = 'tlds_failed';
+			} else if ( isSuggestionsError ) {
+				errorType = 'suggestions_failed';
+			}
+
+			events.onNamePulseTracksEvent( 'results_error', {
+				search_id: ids.searchId,
+				error_type: errorType,
+			} );
+			return;
+		}
+
+		events.onSuggestionsReceive(
+			current.query,
+			[ ...keywordResults, ...creativeResults ].map( ( result ) => result.domain_name ),
+			Date.now() - current.settledAt,
+			{ search_id: ids.searchId, result_set_id: ids.resultSetId, ...counts }
+		);
 	} );
 
 	const track = useEvent( () => {
@@ -79,44 +98,21 @@ export const useNamePulseSearchTracking = ( search: ReturnType< typeof useNamePu
 			return;
 		}
 
-		if ( state.current?.query !== settledQuery ) {
-			state.current = {
+		let current = state.current;
+
+		if ( current?.query !== settledQuery || current.filterKey !== filterKey ) {
+			current = {
 				query: settledQuery,
+				filterKey,
 				settledAt: Date.now(),
 				hasReportedResults: false,
-				hasReportedSuggestions: false,
 				hasReportedAvailability: false,
 			};
-			events.onNamePulseTracksEvent( 'search_settled', {
-				query_length: settledQuery.length,
-				word_count: settledLayout.wordCount,
-				search_mode: settledLayout.mode,
-				detected_tld: settledLayout.fqdn?.tld,
-				filter_tlds_count: filter.tlds.length,
+			state.current = current;
+			events.onNamePulseSearch( settledQuery, lastSearchTrigger.current ?? 'prefilled', {
+				search_id: ids.searchId,
+				query_shape: settledLayout.mode,
 			} );
-		}
-
-		const current = state.current;
-		const now = Date.now();
-
-		if (
-			current.firstResultAt === undefined &&
-			( exactMatch?.availability ||
-				[ topResults, exactList, keywordResults, creativeResults ].some( hasVerdict ) )
-		) {
-			current.firstResultAt = now;
-		}
-
-		const isLoadingSuggestions = isLoadingKeyword || isLoadingCreative;
-		const showsSuggestions = settledLayout.suggestions.show || settledLayout.creative.show;
-
-		if ( showsSuggestions && ! isLoadingSuggestions && ! current.hasReportedSuggestions ) {
-			current.hasReportedSuggestions = true;
-			events.onSuggestionsReceive(
-				settledQuery,
-				suggestionResults.map( ( result ) => result.domain_name ),
-				now - current.settledAt
-			);
 		}
 
 		const typedDomain = settledLayout.fqdn?.fullDomain;
@@ -126,14 +122,15 @@ export const useNamePulseSearchTracking = ( search: ReturnType< typeof useNamePu
 			events.onQueryAvailabilityCheck(
 				typedDomainAvailability.status,
 				typedDomain,
-				now - current.settledAt
+				Date.now() - current.settledAt
 			);
 		}
 
 		const isComplete =
 			! isLoadingTop &&
 			! isLoadingTlds &&
-			! isLoadingSuggestions &&
+			! isLoadingKeyword &&
+			! isLoadingCreative &&
 			( ! typedDomain || typedDomainAvailability || isTypedDomainError ) &&
 			! topResults.some( ( result ) => result.status === NamePulseDomainStatus.WAITING );
 
@@ -155,5 +152,7 @@ export const useNamePulseSearchTracking = ( search: ReturnType< typeof useNamePu
 		const timer = setTimeout( () => reportResults( true ), NAME_PULSE_SKELETON_TIMEOUT_MS );
 
 		return () => clearTimeout( timer );
-	}, [ settledQuery, isSettled, reportResults ] );
+	}, [ settledQuery, filterKey, isSettled, reportResults ] );
+
+	return isSettled ? ids.resultSetId : undefined;
 };

@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { useEvent, useViewportMatch } from '@wordpress/compose';
+import { useViewportMatch } from '@wordpress/compose';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { getTld } from '../../helpers/get-tld';
 import { useDomainSearch } from '../../page/context';
@@ -67,15 +67,13 @@ const useNamePulseSuggestions = ( {
 	isSettled,
 	show,
 	source,
-	searchMode,
 }: {
 	suggestionsQuery: string;
 	isSettled: boolean;
 	show: boolean;
-	searchMode: string;
 	source: Extract< NamePulseSource, 'keyword' | 'ai' >;
 } ) => {
-	const { queries, filter, events } = useDomainSearch();
+	const { queries, filter } = useDomainSearch();
 	const useAi = source === 'ai';
 	const active = show && isSettled;
 	// Sorted so the same endings in any order share a cache entry.
@@ -93,29 +91,6 @@ const useNamePulseSuggestions = ( {
 		enabled: active,
 	} );
 
-	const providerErrorCodes = data?.errors
-		?.map( ( error ) => `${ error.provider }:${ error.code }` )
-		.join( ',' );
-
-	const reportFailure = useEvent( () => {
-		if ( ! active || ( ! isError && ! providerErrorCodes ) ) {
-			return;
-		}
-
-		events.onNamePulseTracksEvent( 'suggestions_failed', {
-			search_mode: searchMode,
-			use_ai: useAi,
-			request_failed: isError,
-			provider_error_codes: providerErrorCodes,
-			result_count: data?.suggestions.length ?? 0,
-		} );
-	} );
-
-	// Once per response.
-	useEffect( () => {
-		reportFailure();
-	}, [ data, isError, reportFailure ] );
-
 	const rows = useMemo( () => {
 		if ( ! active ) {
 			return EMPTY_RESULTS;
@@ -132,7 +107,7 @@ const useNamePulseSuggestions = ( {
 		[ rows, verdicts ]
 	);
 
-	return { results, isLoading: show && ( ! isSettled || isPending ) };
+	return { results, isLoading: show && ( ! isSettled || isPending ), isError: active && isError };
 };
 
 /**
@@ -220,7 +195,7 @@ export const useNamePulseSearch = ( query: string ) => {
 			.map( ( row ) => row.domain_name );
 	}, [ exactRows, initialCheckCount, requestedNames ] );
 
-	const exactVerdicts = useNamePulseVerdicts( checkedNames, isSettled, settledLayout.mode );
+	const exactVerdicts = useNamePulseVerdicts( checkedNames, isSettled );
 
 	// The bulk check is zone-file based: it says a domain is taken, not why.
 	// Both wait for the query to settle, so half-typed input is not checked or flagged.
@@ -249,19 +224,25 @@ export const useNamePulseSearch = ( query: string ) => {
 		[ exactRows, exactVerdicts, exactMatchName ]
 	);
 
-	const { results: rawKeywordResults, isLoading: isLoadingKeyword } = useNamePulseSuggestions( {
+	const {
+		results: rawKeywordResults,
+		isLoading: isLoadingKeyword,
+		isError: isKeywordError,
+	} = useNamePulseSuggestions( {
 		suggestionsQuery,
 		isSettled,
 		show: layout.suggestions.show,
 		source: 'keyword',
-		searchMode: settledLayout.mode,
 	} );
-	const { results: rawCreativeResults, isLoading: isLoadingCreative } = useNamePulseSuggestions( {
+	const {
+		results: rawCreativeResults,
+		isLoading: isLoadingCreative,
+		isError: isCreativeError,
+	} = useNamePulseSuggestions( {
 		suggestionsQuery,
 		isSettled,
 		show: layout.creative.show,
 		source: 'ai',
-		searchMode: settledLayout.mode,
 	} );
 
 	const isLoadingTop = isAiMode ? isLoadingKeyword || isLoadingCreative : isLoadingTlds;
@@ -386,11 +367,6 @@ export const useNamePulseSearch = ( query: string ) => {
 		rawCreativeResults,
 	] );
 
-	const suggestionResults = useMemo(
-		() => [ ...rawKeywordResults, ...rawCreativeResults ],
-		[ rawKeywordResults, rawCreativeResults ]
-	);
-
 	const revealExact = useCallback(
 		( rows: NamePulseDomainResult[] ) => requestNames( rows.map( ( row ) => row.domain_name ) ),
 		[ requestNames ]
@@ -404,7 +380,10 @@ export const useNamePulseSearch = ( query: string ) => {
 		hasTlds: tlds !== undefined || isTldsError,
 		typedDomainAvailability,
 		isTypedDomainError,
-		suggestionResults,
+		isSuggestionsError: isKeywordError || isCreativeError,
+		// Only the exact-match grid needs the TLD list, so its failure takes down
+		// Top results with it but leaves the suggestion sections alone.
+		hasTldsError: layout.exactGrid.show && isTldsError,
 		notice,
 		exactMatch,
 		bundleAnchors,

@@ -14,12 +14,14 @@ import {
 	getNamePulseSalePrice,
 	NamePulseDomainStatus,
 	toNamePulseRealtimeVerdict,
+	getNamePulseRenderTracksProps,
 	toNamePulseTracksSuggestion,
 	type NamePulseDomainResult,
-	type NamePulseTracksSection,
+	type NamePulseResultGroup,
 } from '../helpers';
 import { useNamePulseCartToggle } from '../hooks/use-name-pulse-cart-toggle';
 import { useNamePulseLabelLimit } from '../hooks/use-name-pulse-label-limit';
+import { useNamePulseResultSetId } from '../hooks/use-name-pulse-result-set-id';
 import { setNamePulseVerdict } from '../hooks/use-name-pulse-verdicts';
 import { NamePulsePolicyNoticeDialog } from './policy-notice-dialog';
 
@@ -27,10 +29,9 @@ export type NamePulseResultRowVariant = 'row' | 'card';
 
 interface NamePulseResultRowProps {
 	result: NamePulseDomainResult;
-	section: NamePulseTracksSection;
+	group: NamePulseResultGroup;
 	/** Position on the whole page. */
 	position: number;
-	sectionPosition: number;
 	variant?: NamePulseResultRowVariant;
 }
 
@@ -115,13 +116,13 @@ const Price = ( {
 
 export const NamePulseResultRow = ( {
 	result,
-	section,
+	group,
 	position,
-	sectionPosition,
 	variant = 'row',
 }: NamePulseResultRowProps ) => {
 	const { __ } = useI18n();
 	const { queries, events } = useDomainSearch();
+	const resultSetId = useNamePulseResultSetId();
 	const queryClient = useQueryClient();
 	// Below wide desktop the row is too narrow to truncate without losing most of
 	// the name, so the name wraps onto a second line instead.
@@ -185,23 +186,21 @@ export const NamePulseResultRow = ( {
 		isPolicyNoticeOpen,
 		confirmPolicyNotice,
 		closePolicyNotice,
-	} = useNamePulseCartToggle(
-		row,
-		section,
-		reportedPosition.current ?? position,
-		sectionPosition,
-		row.policy_notices
-	);
+	} = useNamePulseCartToggle( row, reportedPosition.current ?? position, row.policy_notices );
 
-	// Like the classic page, only names on offer count as rendered. Later events
+	// Reported once the row has a verdict, taken names included. Later events
 	// reuse this position so they match the render.
 	useEffect( () => {
-		if ( ! isAvailable || reportedPosition.current !== undefined ) {
+		if ( isWaiting || ! resultSetId || reportedPosition.current !== undefined ) {
 			return;
 		}
 
 		reportedPosition.current = position;
-		events.onSuggestionRender( toNamePulseTracksSuggestion( row, position ) );
+		events.onSuggestionRender(
+			toNamePulseTracksSuggestion( row, position ),
+			undefined,
+			getNamePulseRenderTracksProps( row, group, resultSetId )
+		);
 	} );
 	const { nameRef, labelRef, limit: labelLimit } = useNamePulseLabelLimit( label );
 	const isCard = variant === 'card';

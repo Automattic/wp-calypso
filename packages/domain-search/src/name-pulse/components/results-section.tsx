@@ -10,8 +10,9 @@ import { useDomainSearch } from '../../page/context';
 import {
 	NAME_PULSE_PAGE_SIZE,
 	NAME_PULSE_SKELETON_TIMEOUT_MS,
+	getNamePulseResultGroup,
 	type NamePulseDomainResult,
-	type NamePulseTracksSection,
+	type NamePulseSectionId,
 } from '../helpers';
 import {
 	NamePulseResultRow,
@@ -20,7 +21,7 @@ import {
 } from './result-row';
 
 interface NamePulseResultsSectionProps {
-	id: Exclude< NamePulseTracksSection, 'exact_card' >;
+	id: NamePulseSectionId;
 	/** Omitted while the heading text is not known yet (the skeletons still render). */
 	title?: string;
 	results: NamePulseDomainResult[];
@@ -50,6 +51,7 @@ export const NamePulseResultsSection = ( {
 	variant = 'row',
 }: NamePulseResultsSectionProps ) => {
 	const { events } = useDomainSearch();
+	const group = getNamePulseResultGroup( id );
 	const [ visibleCount, setVisibleCount ] = useState( NAME_PULSE_PAGE_SIZE );
 	const [ skeletonsTimedOut, setSkeletonsTimedOut ] = useState( false );
 	const isPhone = useViewportMatch( 'small', '<' );
@@ -95,9 +97,8 @@ export const NamePulseResultsSection = ( {
 					<div role="listitem" key={ result.domain_name }>
 						<NamePulseResultRow
 							result={ result }
-							section={ id }
+							group={ group }
 							position={ positionOffset + index }
-							sectionPosition={ index }
 							variant={ layout }
 						/>
 					</div>
@@ -114,12 +115,7 @@ export const NamePulseResultsSection = ( {
 						variant="link"
 						onClick={ () => {
 							const nextCount = visibleCount + NAME_PULSE_PAGE_SIZE;
-							events.onShowMoreResults( nextCount / NAME_PULSE_PAGE_SIZE );
-							events.onNamePulseTracksEvent( 'show_more_click', {
-								results_section: id,
-								visible_before: visible.length,
-								visible_after: Math.min( nextCount, total ),
-							} );
+							events.onShowMoreResults( nextCount / NAME_PULSE_PAGE_SIZE, { result_group: group } );
 							onReveal?.( results.slice( visibleCount, nextCount ) );
 							setVisibleCount( nextCount );
 						} }

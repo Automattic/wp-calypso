@@ -46,7 +46,7 @@ export const NamePulseSearchInput = ( { showFilter = false }: { showFilter?: boo
 						setQuery( trimmedValue, 'input_changed' );
 					} else {
 						if ( query ) {
-							events.onNamePulseTracksEvent( 'search_cleared', {
+							events.onNamePulseTracksEvent( 'query_clear', {
 								previous_query_length: query.length,
 								previous_word_count: getWordCount( query ),
 							} );

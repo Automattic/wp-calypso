@@ -323,7 +323,7 @@ describe( 'useWPCOMDomainSearchEvents', () => {
 			const dispatched = getDispatchedTracksProperties( store );
 			expect( dispatched ).toHaveLength( 2 );
 			dispatched.forEach( ( properties ) =>
-				expect( properties ).not.toHaveProperty( 'is_name_pulse' )
+				expect( properties ).not.toHaveProperty( 'search_ui_version' )
 			);
 			expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_domain_bundle_shown', {
 				domain_bundle_group_id: 'group',
@@ -332,39 +332,55 @@ describe( 'useWPCOMDomainSearchEvents', () => {
 			} );
 		} );
 
-		it( 'marks every classic event with is_name_pulse on Name Pulse', () => {
+		it( 'marks every Tracks event as Name Pulse, and adds the props it is given', () => {
 			const { events, store } = renderEvents( true );
 
 			events.onPageView();
-			events.onShowMoreResults( 2 );
+			events.onShowMoreResults( 2, { result_group: 'exact' } );
 			events.onBundleShown( bundle, 'card' );
+			events.onNamePulseTracksEvent( 'view_cart_click', {} );
 
 			const dispatched = getDispatchedTracksProperties( store );
 			expect( dispatched ).toHaveLength( 2 );
 			dispatched.forEach( ( properties ) =>
-				expect( properties ).toHaveProperty( 'is_name_pulse', true )
+				expect( properties ).toHaveProperty( 'search_ui_version', 'i4_v1' )
 			);
+			expect( dispatched[ 1 ] ).toHaveProperty( 'result_group', 'exact' );
 			expect( recordTracksEvent ).toHaveBeenCalledWith(
 				'calypso_domain_bundle_shown',
-				expect.objectContaining( { is_name_pulse: true } )
+				expect.objectContaining( { search_ui_version: 'i4_v1' } )
 			);
+			expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_domain_search_view_cart_click', {
+				section: 'analytics-section',
+				flow_name: 'flow-name',
+				search_ui_version: 'i4_v1',
+			} );
 		} );
 
-		it( 'records Name Pulse events with the section, flow and login state', () => {
-			const { events } = renderEvents( true );
+		it( 'records a Name Pulse search right away and ignores the debounced one', () => {
+			jest.useFakeTimers();
+			jest
+				.mocked( recordSearchFormSubmit )
+				.mockImplementationOnce( jest.requireActual( '../analytics' ).recordSearchFormSubmit );
+			const { events, store } = renderEvents( true );
 
-			events.onNamePulseTracksEvent( 'search_settled', { query_length: 5 } );
+			events.onSearchStart( 'coffee', 'input_changed' );
+			events.onNamePulseSearch( 'coffee', 'input_changed', {
+				search_id: 'search-1',
+				query_shape: 'single',
+			} );
+			jest.advanceTimersByTime( 10_000 );
+			jest.useRealTimers();
 
-			expect( recordTracksEvent ).toHaveBeenCalledWith(
-				'calypso_domain_search_name_pulse_search_settled',
-				{
-					section: 'analytics-section',
-					flow_name: 'flow-name',
-					is_logged_in: false,
-					is_name_pulse: true,
-					query_length: 5,
-				}
-			);
+			expect( getDispatchedTracksProperties( store ) ).toEqual( [
+				expect.objectContaining( {
+					search_box_value: 'coffee',
+					search_count: 1,
+					trigger: 'input_changed',
+					search_id: 'search-1',
+					query_shape: 'single',
+				} ),
+			] );
 		} );
 	} );
 } );

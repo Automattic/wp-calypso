@@ -5,13 +5,9 @@ import { convertAvailabilityToSuggestion } from '../../helpers/convert-availabil
 import { DomainPriceRule } from '../../hooks/use-suggestion';
 import { useDomainSearch } from '../../page/context';
 import {
-	getNamePulseResultTracksProps,
-	getNamePulseTracksVendor,
 	isNamePulseAvailable,
 	toNamePulseRealtimeVerdict,
 	toNamePulseTracksSuggestion,
-	type NamePulseDomainResult,
-	type NamePulseTracksSection,
 } from '../helpers';
 import { setNamePulseVerdict } from './use-name-pulse-verdicts';
 import type { DomainAvailability, PolicyNotice } from '@automattic/api-core';
@@ -21,28 +17,14 @@ export interface NamePulsePolicyNotice {
 	message: string;
 }
 
-export type NamePulseCartToggleResult = Pick<
-	NamePulseDomainResult,
-	| 'domain_name'
-	| 'suffix'
-	| 'source'
-	| 'status'
-	| 'is_premium'
-	| 'cost'
-	| 'raw_price'
-	| 'currency_code'
->;
-
 /**
  * Adds a name to the cart, or removes it when it is already there. The row and
  * the exact-match card share it, so both run the same real-time check first,
  * and both confirm the TLD's special requirements before adding.
  */
 export const useNamePulseCartToggle = (
-	result: NamePulseCartToggleResult,
-	section: NamePulseTracksSection,
+	result: Parameters< typeof toNamePulseTracksSuggestion >[ 0 ],
 	position: number,
-	sectionPosition: number,
 	policyNotices: PolicyNotice[] = []
 ) => {
 	const domainName = result.domain_name;
@@ -58,7 +40,7 @@ export const useNamePulseCartToggle = (
 
 	const inCart = cart.hasItem( domainName );
 	const tracksSuggestion = toNamePulseTracksSuggestion( result, position );
-	const tracksVendor = getNamePulseTracksVendor( result.source );
+	const tracksVendor = tracksSuggestion.vendor;
 
 	const {
 		mutate: toggleCart,
@@ -71,7 +53,13 @@ export const useNamePulseCartToggle = (
 				if ( item ) {
 					await cart.onRemoveItem( item.uuid );
 				}
-				return { addedToCart: false, removedFromCart: true };
+				events.onNamePulseTracksEvent( 'remove_button_click', {
+					domain_name: domainName,
+					remove_source: 'row',
+					position,
+					root_vendor: tracksVendor,
+				} );
+				return { addedToCart: false };
 			}
 
 			// Bulk results are zone-file based and approximate; the real-time check runs
@@ -106,33 +94,12 @@ export const useNamePulseCartToggle = (
 			return { addedToCart: true, suggestion };
 		},
 		onSuccess: ( data ) => {
-			if ( data.removedFromCart ) {
-				events.onNamePulseTracksEvent( 'result_remove_from_cart', {
-					...getNamePulseResultTracksProps( result, section, position, sectionPosition ),
-					remove_source: 'row',
-				} );
-			}
-
 			if ( data.addedToCart && data.suggestion ) {
 				events.onAddDomainToCart(
 					domainName,
 					position,
 					data.suggestion.is_premium ?? false,
 					tracksVendor
-				);
-				events.onNamePulseTracksEvent(
-					'result_add_to_cart',
-					getNamePulseResultTracksProps(
-						{
-							...result,
-							is_premium: data.suggestion.is_premium ?? false,
-							raw_price: data.suggestion.raw_price,
-							currency_code: data.suggestion.currency_code,
-						},
-						section,
-						position,
-						sectionPosition
-					)
 				);
 			}
 		},

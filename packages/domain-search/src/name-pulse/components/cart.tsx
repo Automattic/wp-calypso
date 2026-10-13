@@ -3,18 +3,22 @@ import { Cart } from '../../components/cart';
 import { DomainSearchContext, useDomainSearch } from '../../page/context';
 
 /**
- * The classic cart, reporting removals. Rows use the outer context, so a
- * removal is never counted twice.
+ * The classic cart, reporting View cart and removals. Rows use the outer
+ * context, so a removal is never counted twice.
  */
 export const NamePulseCart = () => {
 	const context = useDomainSearch();
 
 	const value = useMemo( () => {
-		const { cart, events } = context;
+		const { cart, events, openFullCart } = context;
 		const { onRemoveBundle } = cart;
 
 		return {
 			...context,
+			openFullCart: () => {
+				events.onNamePulseTracksEvent( 'view_cart_click', {} );
+				openFullCart();
+			},
 			cart: {
 				...cart,
 				onRemoveItem: async ( uuid: string ) => {
@@ -22,9 +26,9 @@ export const NamePulseCart = () => {
 					const result = await cart.onRemoveItem( uuid );
 
 					if ( item ) {
-						events.onNamePulseTracksEvent( 'result_remove_from_cart', {
+						events.onNamePulseTracksEvent( 'remove_button_click', {
+							domain_name: `${ item.domain }.${ item.tld }`,
 							remove_source: 'cart',
-							tld: item.tld,
 							is_bundle: Boolean( item.bundle ),
 						} );
 					}
@@ -35,7 +39,7 @@ export const NamePulseCart = () => {
 					onRemoveBundle: async ( groupId: string ) => {
 						const result = await onRemoveBundle( groupId );
 
-						events.onNamePulseTracksEvent( 'result_remove_from_cart', {
+						events.onNamePulseTracksEvent( 'remove_button_click', {
 							remove_source: 'cart',
 							is_bundle: true,
 							domain_count: cart.items.filter( ( item ) => item.bundle?.groupId === groupId )

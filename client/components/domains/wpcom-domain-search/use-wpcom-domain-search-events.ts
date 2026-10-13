@@ -3,8 +3,7 @@ import { getNewRailcarId, recordTracksEvent } from '@automattic/calypso-analytic
 import { DomainSearch, getTld } from '@automattic/domain-search';
 import { debounce, useEvent } from '@wordpress/compose';
 import { type ComponentProps, useEffect, useMemo, useRef } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { useDispatch } from 'react-redux';
 import { recordAddDomainButtonClick } from 'calypso/state/domains/actions';
 import {
 	recordAcknowledgeTrademarkButtonClickInTrademarkNotice,
@@ -34,6 +33,9 @@ type AnalyticsAction = {
 	};
 };
 
+const NAME_PULSE_TRACKS_PROPERTIES = { search_ui_version: 'i4_v1' };
+
+/** Marks the Tracks entry of an analytics action as Name Pulse. */
 export const withNamePulseMarker = < T extends AnalyticsAction >( action: T ): T => {
 	if ( ! action.meta?.analytics ) {
 		return action;
@@ -49,7 +51,7 @@ export const withNamePulseMarker = < T extends AnalyticsAction >( action: T ): T
 							...entry,
 							payload: {
 								...entry.payload,
-								properties: { ...entry.payload.properties, is_name_pulse: true },
+								properties: { ...entry.payload.properties, ...NAME_PULSE_TRACKS_PROPERTIES },
 							},
 						}
 					: entry
@@ -57,6 +59,14 @@ export const withNamePulseMarker = < T extends AnalyticsAction >( action: T ): T
 		},
 	};
 };
+
+// Hardcoded so every event name can be searched for.
+const NAME_PULSE_TRACKS_EVENTS = {
+	results_error: 'calypso_domain_search_results_error',
+	view_cart_click: 'calypso_domain_search_view_cart_click',
+	remove_button_click: 'calypso_domain_search_remove_button_click',
+	query_clear: 'calypso_domain_search_query_clear',
+} as const;
 
 type PendingSearch = {
 	query: string;
@@ -75,11 +85,10 @@ export const useWPCOMDomainSearchEvents = ( {
 	analyticsSection: string;
 	vendor?: string;
 	query?: string;
-	/** Adds `is_name_pulse: true` to every classic event. */
+	/** Marks every Tracks event as Name Pulse. */
 	isNamePulse?: boolean;
 } ) => {
 	const reduxDispatch = useDispatch();
-	const isLoggedIn = useSelector( isUserLoggedIn );
 
 	const dispatch = useMemo(
 		() =>
@@ -93,7 +102,7 @@ export const useWPCOMDomainSearchEvents = ( {
 		() =>
 			isNamePulse
 				? ( name: string, properties: Record< string, unknown > ) =>
-						recordTracksEvent( name, { ...properties, is_name_pulse: true } )
+						recordTracksEvent( name, { ...properties, ...NAME_PULSE_TRACKS_PROPERTIES } )
 				: recordTracksEvent,
 		[ isNamePulse ]
 	);
@@ -104,6 +113,38 @@ export const useWPCOMDomainSearchEvents = ( {
 
 	const pendingSearch = useRef< PendingSearch | undefined >( undefined );
 
+	const recordSearch = useEvent(
+		(
+			query: string,
+			trigger: SearchTrigger,
+			startedAt: number,
+			properties?: Record< string, unknown >
+		) => {
+			searchCount.current++;
+			const timeDiffFromLastSearchInSeconds = Math.floor(
+				( startedAt - lastSearchTime.current ) / 1000
+			);
+			lastSearchTime.current = startedAt;
+
+			const args = [
+				query,
+				analyticsSection,
+				searchCount.current === 1 ? 0 : timeDiffFromLastSearchInSeconds,
+				searchCount.current,
+				vendor,
+				flowName,
+				trigger,
+				startedAt,
+			] as const;
+
+			dispatch(
+				properties
+					? recordSearchFormSubmit( ...args, properties )
+					: recordSearchFormSubmit( ...args )
+			);
+		}
+	);
+
 	const triggerDomainSearchEvent = useEvent( () => {
 		if ( ! pendingSearch.current ) {
 			return;
@@ -112,24 +153,7 @@ export const useWPCOMDomainSearchEvents = ( {
 		const { query, trigger, startedAt } = pendingSearch.current;
 		pendingSearch.current = undefined;
 
-		searchCount.current++;
-		const timeDiffFromLastSearchInSeconds = Math.floor(
-			( startedAt - lastSearchTime.current ) / 1000
-		);
-		lastSearchTime.current = startedAt;
-
-		dispatch(
-			recordSearchFormSubmit(
-				query,
-				analyticsSection,
-				searchCount.current === 1 ? 0 : timeDiffFromLastSearchInSeconds,
-				searchCount.current,
-				vendor,
-				flowName,
-				trigger,
-				startedAt
-			)
-		);
+		recordSearch( query, trigger, startedAt );
 	} );
 
 	// Created during render, not in an effect, because DomainSearch reports its mount search
@@ -159,6 +183,11 @@ export const useWPCOMDomainSearchEvents = ( {
 				railcarId.current = getNewRailcarId( 'domain-suggestion' );
 			},
 			onSearchStart: ( query, trigger ) => {
+				// Name Pulse records each settled search itself, through onNamePulseSearch.
+				if ( isNamePulse ) {
+					return;
+				}
+
 				pendingSearch.current = { query, trigger, startedAt: Date.now() };
 				debouncedDomainSearchEvent();
 			},
@@ -244,15 +273,24 @@ export const useWPCOMDomainSearchEvents = ( {
 			onFilterReset: ( filter, keysToReset ) => {
 				dispatch( recordFiltersReset( filter, keysToReset, analyticsSection, flowName ) );
 			},
-			onShowMoreResults: ( pageNumber ) => {
-				dispatch( recordShowMoreResults( query ?? '', pageNumber, analyticsSection, flowName ) );
-			},
-			onSuggestionsReceive: ( query, suggestions, responseTime ) => {
+			onShowMoreResults: ( pageNumber, properties ) => {
 				dispatch(
-					recordSearchResultsReceive( query, suggestions, responseTime, analyticsSection, flowName )
+					recordShowMoreResults( query ?? '', pageNumber, analyticsSection, flowName, properties )
 				);
 			},
-			onSuggestionRender: ( suggestion, reason ) => {
+			onSuggestionsReceive: ( query, suggestions, responseTime, properties ) => {
+				dispatch(
+					recordSearchResultsReceive(
+						query,
+						suggestions,
+						responseTime,
+						analyticsSection,
+						flowName,
+						properties
+					)
+				);
+			},
+			onSuggestionRender: ( suggestion, reason, properties ) => {
 				let resultSuffix = '';
 				if ( reason === 'recommended' ) {
 					resultSuffix = '#recommended';
@@ -270,6 +308,7 @@ export const useWPCOMDomainSearchEvents = ( {
 					fetch_query: query,
 					domain_type: suggestion.is_premium ? 'premium' : 'standard',
 					tld: getTld( suggestion.domain_name ),
+					...properties,
 				} );
 			},
 			onSuggestionInteract: ( suggestion ) => {
@@ -323,12 +362,13 @@ export const useWPCOMDomainSearchEvents = ( {
 					placement,
 				} );
 			},
+			onNamePulseSearch: ( query, trigger, properties ) => {
+				recordSearch( query, trigger, Date.now(), properties );
+			},
 			onNamePulseTracksEvent: ( name, properties ) => {
-				recordTracksEvent( `calypso_domain_search_name_pulse_${ name }`, {
+				recordEvent( NAME_PULSE_TRACKS_EVENTS[ name ], {
 					section: analyticsSection,
 					flow_name: flowName,
-					is_logged_in: isLoggedIn,
-					is_name_pulse: true,
 					...properties,
 				} );
 			},
@@ -341,7 +381,8 @@ export const useWPCOMDomainSearchEvents = ( {
 		analyticsSection,
 		dispatch,
 		recordEvent,
-		isLoggedIn,
+		recordSearch,
+		isNamePulse,
 	] );
 
 	return events;

@@ -2,25 +2,18 @@ import { DomainPriceRule } from '../../hooks/use-suggestion';
 import { NamePulseDomainStatus, type NamePulseDomainResult, type NamePulseSource } from './types';
 import type { DomainSuggestion } from '@automattic/api-core';
 
-/** Sent as `calypso_domain_search_name_pulse_<name>`; listed in the README. */
-export type NamePulseTracksEventName =
-	| 'search_settled'
-	| 'results_rendered'
-	| 'search_cleared'
-	| 'show_more_click'
-	| 'result_add_to_cart'
-	| 'result_remove_from_cart'
-	| 'availability_failed'
-	| 'suggestions_failed';
+/** The `data-section` of each results section. */
+export type NamePulseSectionId = 'top' | 'exact' | 'suggestions' | 'creative';
 
-export type NamePulseTracksProps = Record< string, string | number | boolean | undefined >;
+/** The heading a result is shown under, as sent in `result_group`. */
+export type NamePulseResultGroup = 'featured' | 'top' | 'exact' | 'related' | 'creative';
 
-/** The `data-section` of each section, plus the exact-match card. */
-export type NamePulseTracksSection = 'top' | 'exact' | 'suggestions' | 'creative' | 'exact_card';
+export const getNamePulseResultGroup = ( section: NamePulseSectionId ): NamePulseResultGroup =>
+	section === 'suggestions' ? 'related' : section;
 
 export const getNamePulseTracksVendor = ( source: NamePulseSource ) => `name_pulse_${ source }`;
 
-/** A result shaped like the classic suggestion the render and interact events read. */
+/** A result shaped like the classic suggestion the TrainTracks events read. */
 export const toNamePulseTracksSuggestion = (
 	result: Pick<
 		NamePulseDomainResult,
@@ -44,23 +37,24 @@ export const toNamePulseTracksSuggestion = (
 	price_rule: DomainPriceRule.PRICE,
 } );
 
-/** Props for any event about one result. `position` is page-wide. */
-export const getNamePulseResultTracksProps = (
-	result: Pick<
-		NamePulseDomainResult,
-		'suffix' | 'source' | 'status' | 'is_premium' | 'raw_price' | 'currency_code'
-	>,
-	section: NamePulseTracksSection,
-	position: number,
-	sectionPosition: number
-): NamePulseTracksProps => ( {
-	results_section: section,
-	position,
-	section_position: sectionPosition,
-	tld: result.suffix,
-	name_pulse_source: result.source,
-	availability_status: NamePulseDomainStatus[ result.status ].toLowerCase(),
-	is_premium: !! result.is_premium,
-	raw_price: result.raw_price,
-	currency_code: result.currency_code,
-} );
+/** What Name Pulse adds to `calypso_traintracks_render`. */
+export const getNamePulseRenderTracksProps = (
+	result: Pick< NamePulseDomainResult, 'source' | 'status' >,
+	group: NamePulseResultGroup,
+	resultSetId: string
+) => {
+	let availability = 'unknown';
+
+	if ( result.status === NamePulseDomainStatus.AVAILABLE ) {
+		availability = 'available';
+	} else if ( result.status === NamePulseDomainStatus.TAKEN ) {
+		availability = 'unavailable';
+	}
+
+	return {
+		result_set_id: resultSetId,
+		result_group: group,
+		is_ai_generated: result.source === 'ai',
+		availability_at_render: availability,
+	};
+};

@@ -84,6 +84,13 @@ export type SearchTrigger =
 	| 'prefilled'
 	| 'cached';
 
+/** Extra Tracks props a caller adds to an event. */
+export type DomainSearchTracksProps = Record< string, string | number | boolean | undefined >;
+
+/** Name Pulse events with no classic equivalent. */
+export type NamePulseTracksEventName =
+	'results_error' | 'view_cart_click' | 'remove_button_click' | 'query_clear';
+
 export interface DomainSearchEvents {
 	onContinue: () => void;
 	onSkip: ( suggestion?: FreeDomainSuggestion ) => void;
@@ -115,11 +122,17 @@ export interface DomainSearchEvents {
 	) => void;
 	onFilterApplied: ( filter: FilterState ) => void;
 	onFilterReset: ( filter: FilterState, keysToReset: string[] ) => void;
-	onShowMoreResults: ( pageNumber: number ) => void;
-	onSuggestionsReceive: ( query: string, suggestions: string[], responseTime: number ) => void;
+	onShowMoreResults: ( pageNumber: number, properties?: DomainSearchTracksProps ) => void;
+	onSuggestionsReceive: (
+		query: string,
+		suggestions: string[],
+		responseTime: number,
+		properties?: DomainSearchTracksProps
+	) => void;
 	onSuggestionRender: (
 		suggestion: ReturnType< typeof useSuggestion >,
-		reason?: FeaturedSuggestionReason
+		reason?: FeaturedSuggestionReason,
+		properties?: DomainSearchTracksProps
 	) => void;
 	onSuggestionInteract: ( suggestion: ReturnType< typeof useSuggestion > ) => void;
 	onSuggestionNotFound: ( domainName: string ) => void;
@@ -134,10 +147,15 @@ export interface DomainSearchEvents {
 	 */
 	onBundleShown: ( bundle: BundleSuggestion, placement: BundlePlacement ) => void;
 	onBundleAddToCart: ( bundle: BundleSuggestion, placement: BundlePlacement ) => void;
-	/** Name Pulse only. Records `calypso_domain_search_name_pulse_<name>`. */
+	/** Name Pulse only. Records `calypso_domain_search` once per settled search. */
+	onNamePulseSearch: (
+		query: string,
+		trigger: SearchTrigger,
+		properties: DomainSearchTracksProps
+	) => void;
 	onNamePulseTracksEvent: (
-		name: string,
-		properties: Record< string, string | number | boolean | undefined >
+		name: NamePulseTracksEventName,
+		properties: DomainSearchTracksProps
 	) => void;
 }
 
@@ -223,6 +241,8 @@ export interface DomainSearchContextType extends Omit<
 	filter: FilterState;
 	setFilter: ( filter: FilterState ) => void;
 	resetFilter: () => void;
+	/** What started the latest search, for Name Pulse, which reports searches once they settle. */
+	lastSearchTrigger: { current?: SearchTrigger };
 	queries: {
 		availableTlds: ( query?: string, vendor?: string ) => ReturnType< typeof availableTldsQuery >;
 		domainSuggestions: (

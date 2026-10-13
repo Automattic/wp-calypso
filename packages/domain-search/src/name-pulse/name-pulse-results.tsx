@@ -1,8 +1,7 @@
 import { Button, VisuallyHidden, __experimentalVStack as VStack } from '@wordpress/components';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
-import { useMemo } from 'react';
-import { DomainSearchContext, useDomainSearch } from '../page/context';
+import { useDomainSearch } from '../page/context';
 import { DomainSearchNotice, DomainSuggestion } from '../ui';
 import { NamePulseBundleCard } from './components/bundle-card';
 import { NamePulseCart } from './components/cart';
@@ -11,6 +10,7 @@ import { NamePulseSearchNotice } from './components/notice';
 import { NamePulseResultsSection } from './components/results-section';
 import { NamePulseSearchInput } from './components/search-input';
 import { useNamePulseBundle } from './hooks/use-name-pulse-bundle';
+import { NamePulseResultSetContext } from './hooks/use-name-pulse-result-set-id';
 import { useNamePulseSearch } from './hooks/use-name-pulse-search';
 import { useNamePulseSearchTracking } from './hooks/use-name-pulse-search-tracking';
 
@@ -18,33 +18,13 @@ import './components/style.scss';
 
 export const NamePulseResults = () => {
 	const { __ } = useI18n();
-	const context = useDomainSearch();
 	const {
 		query,
 		slots,
 		events,
 		config: { allowsUsingOwnDomain },
-	} = context;
+	} = useDomainSearch();
 	const search = useNamePulseSearch( query );
-	const searchMode = search.settledLayout.mode;
-	// Adds `search_mode` to every Name Pulse event below.
-	const contextValue = useMemo(
-		() => ( {
-			...context,
-			events: {
-				...context.events,
-				onNamePulseTracksEvent: (
-					name: string,
-					properties: Parameters< typeof context.events.onNamePulseTracksEvent >[ 1 ]
-				) =>
-					context.events.onNamePulseTracksEvent( name, {
-						search_mode: searchMode,
-						...properties,
-					} ),
-			},
-		} ),
-		[ context, searchMode ]
-	);
 	const {
 		layout,
 		notice,
@@ -57,16 +37,14 @@ export const NamePulseResults = () => {
 		topResultsCount,
 		isLoadingTlds,
 		isTldsError,
+		hasTldsError,
 		refetchTlds,
 		isLoadingTop,
 		isLoadingKeyword,
 		isLoadingCreative,
 		revealExact,
 	} = search;
-	useNamePulseSearchTracking( search );
-	// Only the exact-match grid needs the TLD list, so its failure takes down
-	// Top results with it but leaves the suggestion sections alone.
-	const hasTldsError = layout.exactGrid.show && isTldsError;
+	const resultSetId = useNamePulseSearchTracking( search );
 	const { bundle, isLoading: isLoadingBundle } = useNamePulseBundle( bundleAnchors );
 	// Page-wide positions, as if every section were expanded, so "Show more"
 	// never shifts them. A typed domain's card is 0.
@@ -80,7 +58,7 @@ export const NamePulseResults = () => {
 	) : null;
 
 	return (
-		<DomainSearchContext.Provider value={ contextValue }>
+		<NamePulseResultSetContext.Provider value={ resultSetId }>
 			<VStack spacing={ 8 } className="domain-search--results domain-search--name-pulse">
 				<NamePulseSearchInput showFilter />
 				{ /* Keyed by the query so a new search brings back a dismissed notice. VStack
@@ -184,6 +162,6 @@ export const NamePulseResults = () => {
 				</VStack>
 				<NamePulseCart />
 			</VStack>
-		</DomainSearchContext.Provider>
+		</NamePulseResultSetContext.Provider>
 	);
 };
