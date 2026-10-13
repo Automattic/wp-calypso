@@ -30,9 +30,10 @@ jest.mock( '../../site-migration-instructions/site-preview', () => ( {
 describe( 'SiteMigrationCheck', () => {
 	const renderDestination = ( needsUpgrade = false ) => {
 		const submit = jest.fn();
+		const goBack = jest.fn();
 		renderStep(
 			<SiteMigrationCheck
-				{ ...mockStepProps( { navigation: { submit } } ) }
+				{ ...mockStepProps( { navigation: { submit, goBack } } ) }
 				destinationSiteSlug="destination.wordpress.com"
 				destinationSiteUrl={ needsUpgrade ? undefined : 'https://destination.wordpress.com' }
 				destinationPlanName="Personal"
@@ -40,7 +41,7 @@ describe( 'SiteMigrationCheck', () => {
 			/>,
 			{ initialEntry: '/site-migration-check?from=https://example.com&platform=wordpress' }
 		);
-		return submit;
+		return { submit, goBack };
 	};
 
 	const expectSiteComparison = () => {
@@ -58,7 +59,7 @@ describe( 'SiteMigrationCheck', () => {
 	};
 
 	it( 'offers an upgrade for an ineligible destination', async () => {
-		const submit = renderDestination( true );
+		const { submit } = renderDestination( true );
 		expectSiteComparison();
 		expect( submit ).not.toHaveBeenCalled();
 		expect( screen.getByText( /Personal plan, which can’t run plugins/ ) ).toBeVisible();
@@ -82,8 +83,10 @@ describe( 'SiteMigrationCheck', () => {
 	} );
 
 	it( 'offers another destination or submits replacement once for an eligible site', async () => {
-		const submit = renderDestination();
+		const { submit, goBack } = renderDestination();
 		expectSiteComparison();
+		await userEvent.click( screen.getByRole( 'button', { name: 'Back' } ) );
+		expect( goBack ).toHaveBeenCalledTimes( 1 );
 		expect( submit ).not.toHaveBeenCalled();
 		await userEvent.click( screen.getByRole( 'button', { name: 'Use a different site' } ) );
 		expect( submit ).toHaveBeenLastCalledWith( {
@@ -106,17 +109,6 @@ describe( 'SiteMigrationCheck', () => {
 		expect(
 			screen.queryByRole( 'button', { name: 'Upgrade and continue' } )
 		).not.toBeInTheDocument();
-	} );
-
-	it( 'uses the flow Back handler without submitting a new navigation', async () => {
-		const goBack = jest.fn();
-		const submit = jest.fn();
-		renderStep( <SiteMigrationCheck { ...mockStepProps( { navigation: { submit, goBack } } ) } />, {
-			initialEntry: '/site-migration-check?from=https://wordpress.org/&platform=wordpress',
-		} );
-		await userEvent.click( screen.getByRole( 'button', { name: 'Back' } ) );
-		expect( goBack ).toHaveBeenCalledTimes( 1 );
-		expect( submit ).not.toHaveBeenCalled();
 	} );
 
 	it( 'shows the supplied site and waits for Continue, with the expert link disabled', async () => {
