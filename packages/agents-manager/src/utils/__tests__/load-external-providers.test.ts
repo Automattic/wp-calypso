@@ -842,7 +842,7 @@ describe( 'loadExternalProviders', () => {
 			} );
 		} );
 
-		it( 'clears stale provider content and markup when the editor is unavailable', async () => {
+		it( 'clears stale provider content, markup and text selection when the editor is unavailable', async () => {
 			jest.mocked( getPageStructure ).mockReturnValue( null );
 			jest.mocked( getPageContentMarkup ).mockReturnValueOnce( 'stale AM markup' );
 			const context = {
@@ -850,6 +850,7 @@ describe( 'loadExternalProviders', () => {
 				...providerStructure,
 				currentPageContentMarkup: 'stale provider markup',
 				pageContentStatus: 'ready',
+				selectedText: { text: 'departed text', attributeKey: 'content', start: 0, end: 13 },
 			};
 			setAgentsManagerData( {
 				agentProviders: [ { contextProvider: { getClientContext: () => context } } ],
@@ -860,7 +861,28 @@ describe( 'loadExternalProviders', () => {
 			expect( providers.contextProvider?.getClientContext() ).toEqual( {
 				...context,
 				...unavailablePageContext,
+				selectedText: null,
 			} );
+		} );
+
+		it( 'refreshes availability on each context read as the editor recovers', async () => {
+			setAgentsManagerData( {
+				agentProviders: [ { contextProvider: { getClientContext: () => providerContext } } ],
+			} );
+			const providers = await loadExternalProviders();
+
+			expect( providers.contextProvider?.getClientContext() ).toMatchObject(
+				unavailablePageContext
+			);
+			jest.mocked( getPageStructure ).mockReturnValue( pageStructure );
+			expect( providers.contextProvider?.getClientContext() ).toMatchObject( {
+				...pageStructure,
+				pageContentStatus: 'ready',
+			} );
+			jest.mocked( getPageStructure ).mockReturnValue( null );
+			expect( providers.contextProvider?.getClientContext() ).toMatchObject(
+				unavailablePageContext
+			);
 		} );
 
 		it( 'keeps a loaded empty document ready instead of restoring provider blocks', async () => {

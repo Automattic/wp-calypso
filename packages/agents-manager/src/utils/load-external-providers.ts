@@ -428,7 +428,8 @@ const JETPACK_AI_SIDEBAR_ENVIRONMENT = 'gutenberg';
  * Adds what AM knows of the page: `currentPageContent` and
  * `selectedBlockClientId` under the short ids AM's abilities resolve,
  * `currentPageContentMarkup` for the backend's page-design agent, and AM's
- * `availableCheckpoints` while it holds any.
+ * `availableCheckpoints` while it holds any. Unreadable editor context clears
+ * the page content and selection and sends `pageContentStatus: "unavailable"`.
  */
 function withPageContext(
 	contextProvider: ContextProvider | undefined
@@ -453,6 +454,7 @@ function withPageContext(
 					selectedBlockClientId: structure?.selectedBlockClientId ?? '',
 					currentPageContentMarkup: structure ? currentPageContentMarkup : '',
 					pageContentStatus: structure ? 'ready' : 'unavailable',
+					...( ! structure && context.selectedText && { selectedText: null } ),
 				} ),
 				...( availableCheckpoints.length && { availableCheckpoints } ),
 			};

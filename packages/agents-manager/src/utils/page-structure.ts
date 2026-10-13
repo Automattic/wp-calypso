@@ -135,7 +135,7 @@ function getPageRegions(): PageBlock[] | null {
 						attributes: block?.attributes ?? {},
 						innerBlocks,
 					},
-			  ]
+				]
 			: [];
 	};
 

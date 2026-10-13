@@ -72,17 +72,20 @@ describe( 'editorNavigate', () => {
 		expect( navigate ).toHaveBeenCalledWith( '/page' );
 	} );
 
-	it( 'rejects a post returned for a page route through the real resolver', async () => {
-		jest.mocked( isEditorPage ).mockReturnValue( true );
-		const getEntityRecord = jest.fn().mockResolvedValue( { id: 967, type: 'post' } );
-		( resolveSelect as jest.Mock ).mockReturnValue( { getEntityRecord } );
+	it.each( [ undefined, { id: 967, type: 'post' }, { id: 123, type: 'page' } ] )(
+		'rejects an unavailable or mismatched page through the real resolver: %s',
+		async ( page ) => {
+			jest.mocked( isEditorPage ).mockReturnValue( true );
+			const getEntityRecord = jest.fn().mockResolvedValue( page );
+			( resolveSelect as jest.Mock ).mockReturnValue( { getEntityRecord } );
 
-		const result = await editorNavigateCallback( { path: '/page/967' } );
+			const result = await editorNavigateCallback( { path: '/page/967' } );
 
-		expect( getEntityRecord ).toHaveBeenCalledWith( 'postType', 'page', 967 );
-		expect( result.result.success ).toBe( false );
-		expect( navigate ).not.toHaveBeenCalled();
-	} );
+			expect( getEntityRecord ).toHaveBeenCalledWith( 'postType', 'page', 967 );
+			expect( result.result.success ).toBe( false );
+			expect( navigate ).not.toHaveBeenCalled();
+		}
+	);
 
 	it( 'saves, navigates, and reports the arrival once the editor has the page', async () => {
 		const io = createIO();

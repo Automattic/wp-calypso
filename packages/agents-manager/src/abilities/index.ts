@@ -15,7 +15,7 @@ import type { Ability } from './types';
 import type { CheckpointContextItem } from '../utils/checkpoints';
 import type { PageStructure } from '../utils/page-structure';
 
-type EditorAbilitiesModule = typeof import('./editor-abilities');
+type EditorAbilitiesModule = typeof import( './editor-abilities' );
 
 type CheckpointActions = EditorAbilitiesModule[ 'checkpointActions' ];
 
