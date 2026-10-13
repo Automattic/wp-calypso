@@ -190,10 +190,8 @@ describe( 'normalizeDifmOfferVariation', () => {
 		expect( normalizeDifmOfferVariation( 'rotating' ) ).toBe( 'control' );
 	} );
 
-	it( 'returns known variation names unchanged', () => {
-		expect( normalizeDifmOfferVariation( 'skip_setup' ) ).toBe( 'skip_setup' );
-		expect( normalizeDifmOfferVariation( 'expert_help' ) ).toBe( 'expert_help' );
-		expect( normalizeDifmOfferVariation( 'no_time' ) ).toBe( 'no_time' );
+	it( 'returns treatment for the treatment variation', () => {
+		expect( normalizeDifmOfferVariation( 'treatment' ) ).toBe( 'treatment' );
 	} );
 } );
 
@@ -220,7 +218,7 @@ describe( 'useDifmOffer', () => {
 	} );
 
 	it( 'returns the assigned variation for an eligible user', () => {
-		mockUseExperiment.mockReturnValue( [ false, createExperimentAssignment( 'expert_help' ) ] );
+		mockUseExperiment.mockReturnValue( [ false, createExperimentAssignment( 'treatment' ) ] );
 
 		const { result } = renderHook( () => useDifmOffer( eligibleInput( Date.now() ) ) );
 
@@ -230,7 +228,7 @@ describe( 'useDifmOffer', () => {
 		expect( result.current ).toEqual( {
 			isEligible: true,
 			isLoading: false,
-			variation: 'expert_help',
+			variation: 'treatment',
 		} );
 	} );
 
@@ -268,25 +266,8 @@ describe( 'getDifmOfferCopy', () => {
 		expect( getDifmOfferCopy( 'control' ) ).toBeNull();
 	} );
 
-	it( 'returns the skip_setup copy', () => {
-		expect( getDifmOfferCopy( 'skip_setup' ) ).toEqual( {
-			title: 'Skip the setup',
-			description:
-				'For a limited time, our experts will bring your vision to life. Free with Business.',
-			ctaText: 'See the offer',
-		} );
-	} );
-
-	it( 'returns the expert_help copy', () => {
-		expect( getDifmOfferCopy( 'expert_help' ) ).toEqual( {
-			title: 'Expert help to get you started',
-			description: 'A human builds your site based on your needs — free with Business.',
-			ctaText: 'See the offer',
-		} );
-	} );
-
-	it( 'returns the no_time copy', () => {
-		expect( getDifmOfferCopy( 'no_time' ) ).toEqual( {
+	it( 'returns the treatment copy', () => {
+		expect( getDifmOfferCopy( 'treatment' ) ).toEqual( {
 			title: 'No time to build your site?',
 			description: 'Let us take that off your plate. Ready in 4 days and free with Business.',
 			ctaText: 'See the offer',

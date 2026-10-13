@@ -1,4 +1,5 @@
 import Banner from 'calypso/components/banner';
+import illustrationUrl from 'calypso/dashboard/sites/overview-difm-offer-card/difm-offer-illustration.svg';
 import { getDifmOfferCopy, useDifmOffer } from 'calypso/dashboard/utils/difm-offer';
 import { useDifmOfferEngagementTracking } from 'calypso/dashboard/utils/use-difm-offer-engagement-tracking';
 import { useDispatch, useSelector } from 'calypso/state';
@@ -8,6 +9,8 @@ import { getPreference, hasReceivedRemotePreferences } from 'calypso/state/prefe
 import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
 import { getSite } from 'calypso/state/sites/selectors';
 import { isUpsellCardDisplayed } from 'calypso/state/themes/selectors';
+
+import './style.scss';
 
 const UPSELL_ID = 'themes-difm-offer';
 const UPSELL_FEATURE_ID = 'difm-offer';
@@ -67,6 +70,9 @@ export default function DifmOfferBanner( { siteId }: DifmOfferBannerProps ) {
 				title={ copy.title }
 				description={ copy.description }
 				callToAction={ copy.ctaText }
+				// The thumbnail takes the place of the icon.
+				showIcon={ false }
+				primaryButton={ false }
 				event={ UPSELL_ID }
 				disableHref
 				// The offer modal opens here in a follow-up.
@@ -78,7 +84,9 @@ export default function DifmOfferBanner( { siteId }: DifmOfferBannerProps ) {
 				onDismiss={ () =>
 					dispatch( savePreference( DISMISSED_PREFERENCE, new Date().toISOString() ) )
 				}
-			/>
+			>
+				<img className="themes__difm-offer-banner-image" src={ illustrationUrl } alt="" />
+			</Banner>
 		</div>
 	);
 }
