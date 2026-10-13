@@ -1,3 +1,5 @@
+import type { StreamDelta } from '../utils/internal/streaming';
+
 // Protocol Type Definitions
 // Originally based on https://google.github.io/A2A/specification/ but no longer tied to that protocol.
 
@@ -339,6 +341,7 @@ export interface TaskUpdate {
 	// Wire source: 'delta' (message/delta) or 'status' (TaskStatusUpdateEvent).
 	// Non-final text-bearing 'status' updates mark utterance boundaries.
 	kind?: 'delta' | 'status';
+	delta?: StreamDelta; // The wire delta, on 'delta' updates.
 }
 
 export interface Client {

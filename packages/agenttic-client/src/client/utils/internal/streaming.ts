@@ -234,6 +234,7 @@ export async function* parseSSEStream(
 								final: false,
 								text: accumulator.getTextContent(),
 								kind: 'delta',
+								delta,
 							};
 						}
 					}

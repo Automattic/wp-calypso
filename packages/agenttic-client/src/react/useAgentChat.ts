@@ -339,6 +339,7 @@ export interface UseAgentChatConfig {
 	onTaskUpdate?: ( update: TaskUpdate ) => void | Promise< void >;
 	odieBotId?: string; // Odie bot ID for server-based conversation storage (e.g., 'wpcom-agent-wp_orchestrator'). When set, enables server storage.
 	credentials?: RequestCredentials; // Set 'include' to send cookies with cross-origin requests.
+	trackReplying?: boolean; // Set to get `isReplying`. Reply text then also clears the progress text.
 }
 
 // Hook return interface
@@ -351,6 +352,7 @@ export interface UseAgentChatReturn {
 	suggestions: Suggestion[];
 	progressMessage: string | null;
 	progressPhase: string | null;
+	isReplying?: boolean; // Whether reply text is streaming in. Set only with `trackReplying`, during a request.
 
 	// UI management methods
 	registerSuggestions: ( suggestions: Suggestion[] ) => void;
@@ -384,6 +386,7 @@ export interface AgentChatState {
 	suggestions: Suggestion[];
 	progressMessage: string | null;
 	progressPhase: string | null;
+	isReplying: boolean;
 }
 
 export interface InternalSubmitOptions {
@@ -427,6 +430,7 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 		suggestions: [],
 		progressMessage: null,
 		progressPhase: null,
+		isReplying: false,
 	} );
 
 	// Initialize message actions
@@ -587,6 +591,7 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 
 			// Keep in-flight updates attached to the site and agent that started the request.
 			const onTaskUpdate = onTaskUpdateRef.current;
+			const trackReplying = config.trackReplying;
 			const agentManager = getAgentManager();
 			const agentKey = agentConfig.agentId;
 			const preserveUiOnlyMessages = internalOptions?.preserveUiOnlyMessages ?? true;
@@ -650,12 +655,14 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 						? [ ...( internalOptions?.initialUiMessages ?? prev.uiMessages ), userMessage ]
 						: ( internalOptions?.initialUiMessages ?? prev.uiMessages ),
 					isProcessing: true,
+					isReplying: false,
 					error: null,
 				} ) );
 			} else {
 				setState( ( prev ) => ( {
 					...prev,
 					isProcessing: true,
+					isReplying: false,
 					error: null,
 				} ) );
 			}
@@ -714,6 +721,23 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 						} catch ( observerError ) {
 							logger( 'Error in onTaskUpdate callback: %O', observerError );
 						}
+					}
+
+					// Reply text means the agent is talking; any other update means it's working.
+					// An empty content delta is a keep-alive and changes nothing.
+					const isReplying = update.delta?.deltaType === 'content';
+					const isKeepAlive = isReplying && ! update.delta?.content;
+					if ( trackReplying && ! isKeepAlive ) {
+						setState( ( prev ) =>
+							prev.isReplying === isReplying
+								? prev
+								: {
+										...prev,
+										isReplying,
+										// The progress text from before the reply is stale after it.
+										...( isReplying && { progressMessage: null, progressPhase: null } ),
+									}
+						);
 					}
 
 					// Update progress message and phase if present
@@ -911,7 +935,7 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 				isSendingRef.current = false;
 			}
 		},
-		[ agentConfig.agentId, isValidConfig ]
+		[ agentConfig.agentId, isValidConfig, config.trackReplying ]
 	);
 
 	const onSubmit = useCallback(
@@ -1028,6 +1052,7 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 		suggestions: state.suggestions,
 		progressMessage: state.progressMessage,
 		progressPhase: state.progressPhase,
+		isReplying: config.trackReplying && state.isProcessing ? state.isReplying : undefined,
 
 		// UI management methods
 		registerSuggestions,
