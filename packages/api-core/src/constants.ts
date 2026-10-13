@@ -277,14 +277,6 @@ export const AkismetUpgradesProductMap: Record< string, string > = {
 	[ AkismetPlans.PRODUCT_AKISMET_ENTERPRISE_25K_BI_YEARLY ]: 'https://akismet.com/enterprise',
 };
 
-export const ProductUpgradeMap: Record< string, string > = {
-	[ JetpackPlans.PLAN_JETPACK_STARTER_YEARLY ]: JetpackPlans.PLAN_JETPACK_SECURITY_T1_YEARLY,
-	[ JetpackPlans.PLAN_JETPACK_STARTER_MONTHLY ]: JetpackPlans.PLAN_JETPACK_SECURITY_T1_MONTHLY,
-	[ JetpackPlans.PLAN_JETPACK_GROWTH_BI_YEARLY ]: JetpackPlans.PLAN_JETPACK_COMPLETE_BI_YEARLY,
-	[ JetpackPlans.PLAN_JETPACK_GROWTH_YEARLY ]: JetpackPlans.PLAN_JETPACK_COMPLETE,
-	[ JetpackPlans.PLAN_JETPACK_GROWTH_MONTHLY ]: JetpackPlans.PLAN_JETPACK_COMPLETE_MONTHLY,
-};
-
 export const DomainProductSlugs = {
 	TRANSFER_IN: 'domain_transfer',
 	DOTCOM_DOMAIN_REGISTRATION: 'domain_reg',
