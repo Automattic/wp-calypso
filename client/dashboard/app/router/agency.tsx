@@ -1071,6 +1071,16 @@ export const agencySiteRoute = createRoute( {
 			return;
 		}
 
+		// Keep the router in sync with the sidebar, which only offers the overview
+		// to users without manage_options on the site. The overview explains how
+		// to get access.
+		if (
+			! site.capabilities?.manage_options &&
+			matches.at( -1 )?.routeId !== agencySiteOverviewRoute.id
+		) {
+			throw dashboardRedirect( { to: `/sites/${ siteSlug }` } );
+		}
+
 		const siteTypeSupports = getSiteTypeFeatureSupports( site );
 		for ( const match of matches ) {
 			const required = match.staticData?.requiresSiteTypeSupport;
@@ -1106,6 +1116,10 @@ const agencySiteOverviewRoute = createRoute( {
 			queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) ),
 			queryClient.ensureQueryData( agencySiteQuery( siteSlug ) ),
 		] );
+		if ( ! site.capabilities?.manage_options ) {
+			return;
+		}
+
 		queryClient.prefetchQuery( sitePerformancePagesQuery( site.ID ) );
 
 		// Settle the plan card before first paint, so a Pressable site does not
@@ -1508,18 +1522,6 @@ export const agencySiteSettingsRoute = createRoute( {
 	head: () => ( { meta: [ { title: __( 'Settings' ) } ] } ),
 	getParentRoute: () => agencySiteRoute,
 	path: 'settings',
-	beforeLoad: async ( { cause, params: { siteSlug } } ) => {
-		if ( cause === 'preload' ) {
-			return;
-		}
-
-		// Keep the router in sync with the sidebar, which only offers Settings
-		// to users with manage_options on the site.
-		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
-		if ( ! site.capabilities?.manage_options ) {
-			throw redirectAsNotAllowed( { to: `/sites/${ siteSlug }` } );
-		}
-	},
 	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
 

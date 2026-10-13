@@ -12,6 +12,7 @@ import { siteTypeSupportsFeature } from '../../../utils/site-type-feature-suppor
 import { getSiteName } from '../dataviews/site-data';
 import ActivityCard from './activity-card';
 import BackupCard from './backup-card';
+import NoAccessCallout from './no-access-callout';
 import AgencySitePlanCard from './plan-card';
 import ScanCard from './scan-card';
 
@@ -41,6 +42,14 @@ export default function AgencySiteOverview() {
 	const isLargeViewport = useViewportMatch( 'xlarge' );
 	const gap = isSmallViewport ? 'lg' : 'xl';
 	const gridLayout = getGridLayout( { isLargeViewport, isSmallViewport } );
+
+	if ( ! fullSite.capabilities?.manage_options ) {
+		return (
+			<PageLayout header={ <PageHeader title={ getSiteName( site ) } /> }>
+				<NoAccessCallout />
+			</PageLayout>
+		);
+	}
 
 	return (
 		<PageLayout
