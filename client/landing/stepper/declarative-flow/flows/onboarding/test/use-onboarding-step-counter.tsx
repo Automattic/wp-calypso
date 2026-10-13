@@ -32,12 +32,4 @@ describe( 'useOnboardingStepCounter', () => {
 		rerender();
 		expect( result.current ).toBeNull();
 	} );
-
-	it( 'lets the flow hide the preselected plan step', () => {
-		window.history.replaceState( {}, '', '/?showPurchaseSteps=true' );
-		expect(
-			renderHook( () => useOnboardingStepCounter( 'new-hosted-site', 'domains', true ) ).result
-				.current
-		).toEqual( { current: 1, total: 2 } );
-	} );
 } );

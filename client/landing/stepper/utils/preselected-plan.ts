@@ -1,6 +1,7 @@
-import { PRODUCT_1GB_SPACE } from '@automattic/calypso-products';
+import { isDotComPlan, isFreeHostingTrial, PRODUCT_1GB_SPACE } from '@automattic/calypso-products';
 import { AddOns } from '@automattic/data-stores';
 import { getAddOn } from '@automattic/data-stores/src/add-ons/add-ons-list';
+import { NEW_HOSTED_SITE_FLOW } from '@automattic/onboarding';
 import { isPreselectablePlan, supportsStorageAddOn } from 'calypso/lib/signup/legacy-plan-flows';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import type { PreselectablePlan } from 'calypso/lib/signup/legacy-plan-flows';
@@ -67,8 +68,18 @@ export function getPreselectedStorageAddOn(
  */
 export function shouldSkipPlansStep(
 	query: URLSearchParams,
-	planCartItem: MinimalRequestCartProduct | null | undefined
+	planCartItem: MinimalRequestCartProduct | null | undefined,
+	flow?: string
 ): boolean {
+	const productSlug = query.get( 'plan' );
+	if ( flow === NEW_HOSTED_SITE_FLOW ) {
+		return !! (
+			productSlug &&
+			isDotComPlan( { product_slug: productSlug } ) &&
+			! isFreeHostingTrial( productSlug ) &&
+			planCartItem?.product_slug === productSlug
+		);
+	}
 	const plan = getPreselectedPlan( query );
 
 	return !! plan && planCartItem?.product_slug === plan;

@@ -28,6 +28,7 @@ import { useFlowLocale } from '../../../hooks/use-flow-locale';
 import { useQuery } from '../../../hooks/use-query';
 import { ONBOARD_STORE } from '../../../stores';
 import { getCurrentQueryParams } from '../../../utils/get-current-query-params';
+import { shouldSkipPlansStep } from '../../../utils/preselected-plan';
 import { stepsWithRequiredLogin } from '../../../utils/steps-with-required-login';
 import { withLocale } from '../../helpers/with-locale';
 import { STEPS } from '../../internals/steps';
@@ -108,14 +109,6 @@ const hosting: FlowV2< typeof initialize > = {
 	__experimentalUseBuiltinAuth: true,
 	isSignupFlow: true,
 	initialize,
-	useStepsProps() {
-		const query = useQuery();
-		return {
-			[ STEPS.DOMAIN_SEARCH.slug ]: {
-				shouldHidePlansStep: hasPurchaseStepsParameter( query ),
-			},
-		};
-	},
 	useStepNavigation( _currentStepSlug, navigate ) {
 		const {
 			setDomain,
@@ -146,6 +139,7 @@ const hosting: FlowV2< typeof initialize > = {
 		const flowName = this.name;
 		const showDomainStep = query.has( 'showDomainStep' );
 		const showPurchaseSteps = hasPurchaseStepsParameter( query );
+		const shouldSkipPlans = shouldSkipPlansStep( query, planCartItem, NEW_HOSTED_SITE_FLOW );
 		const isWooPartner = useIsValidWooPartner();
 
 		const getGoBack = () => {
@@ -177,7 +171,7 @@ const hosting: FlowV2< typeof initialize > = {
 					setDomainCartItems( providedDependencies.domainCart as MinimalRequestCartProduct[] );
 					setSignupDomainOrigin( providedDependencies.signupDomainOrigin as string );
 
-					if ( planCartItem ) {
+					if ( shouldSkipPlans ) {
 						return navigate( STEPS.SITE_CREATION_STEP.slug );
 					}
 
@@ -258,20 +252,25 @@ const hosting: FlowV2< typeof initialize > = {
 							}
 							const purchaseStepArgs: Record< string, string | number > = {};
 							if ( showPurchaseSteps ) {
-								const backUrl = new URL(
+								const domainBackUrl = new URL(
 									addQueryArgs( withLocale( '/setup/new-hosted-site/domains', locale ), {
 										...Object.fromEntries( query ),
-										plan: planCartItem?.product_slug ?? query.get( 'plan' ),
 									} ),
 									window.location.origin
 								).href;
-								const stepPosition = getOnboardingStepperPosition( 'checkout', true );
+								const planBackUrl = new URL(
+									addQueryArgs( withLocale( '/setup/new-hosted-site/plans', locale ), {
+										...Object.fromEntries( query ),
+									} ),
+									window.location.origin
+								).href;
+								const stepPosition = getOnboardingStepperPosition( 'checkout', shouldSkipPlans );
 								Object.assign( purchaseStepArgs, {
 									flow: NEW_HOSTED_SITE_FLOW,
 									showPurchaseSteps: 'true',
 									signup: 1,
-									checkoutBackUrl: backUrl,
-									checkoutBackUrlDomains: backUrl,
+									checkoutBackUrl: shouldSkipPlans ? domainBackUrl : planBackUrl,
+									checkoutBackUrlDomains: domainBackUrl,
 									steps_current: stepPosition.current,
 									steps_total: stepPosition.total,
 								} );

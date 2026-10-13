@@ -96,7 +96,6 @@ const DomainSearchStep: StepType< {
 		headerText?: string;
 		subHeaderText?: string;
 		hideUseMyDomainLink?: boolean;
-		shouldHidePlansStep?: boolean;
 		hideFreeDomainPromo?: boolean;
 		freeDomainPromoTitle?: string;
 		freeDomainPromoSubtitle?: string;
@@ -111,7 +110,6 @@ const DomainSearchStep: StepType< {
 	headerText: headerTextOverride,
 	subHeaderText: subHeaderTextOverride,
 	hideUseMyDomainLink,
-	shouldHidePlansStep: hidePlansStep = false,
 	hideFreeDomainPromo,
 	freeDomainPromoTitle,
 	freeDomainPromoSubtitle,
@@ -156,7 +154,7 @@ const DomainSearchStep: StepType< {
 	// option to offer — show only a "Set up a domain later" skip control.
 	const isWowFunnel = !! queryParams.get( 'wow_funnel' );
 	const wowSkipCopy = isWowFunnel ? __( 'Set up a domain later' ) : undefined;
-	const stepCounter = useOnboardingStepCounter( flow, 'domains', hidePlansStep );
+	const stepCounter = useOnboardingStepCounter( flow, 'domains' );
 	const { isLoading: isLoadingResultsExperiment, variation: resultsVariation } =
 		useDomainSearchResultsExperiment( flow );
 	const isCustomDomainBannerCopyVariation = resultsVariation === 'custom_domain_banner_copy';
@@ -170,7 +168,7 @@ const DomainSearchStep: StepType< {
 		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getPlanCartItem(),
 		[]
 	);
-	const shouldHidePlansStep = hidePlansStep || shouldSkipPlansStep( queryParams, planCartItem );
+	const shouldHidePlansStep = shouldSkipPlansStep( queryParams, planCartItem, flow );
 
 	// For CIAB sites, prefer the site title over the slug for domain suggestions
 	// since the slug is often randomly generated.

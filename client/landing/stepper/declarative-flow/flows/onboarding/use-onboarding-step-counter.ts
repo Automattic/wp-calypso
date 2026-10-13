@@ -26,8 +26,7 @@ import type { OnboardSelect } from '@automattic/data-stores';
  */
 export function useOnboardingStepCounter(
 	flow: string,
-	slug: string,
-	hidePlansStep = false
+	slug: string
 ): { current: number; total: number } | null {
 	const isMobileViewport = useViewportMatch( 'small', '<' );
 	const planCartItem = useSelect(
@@ -49,8 +48,5 @@ export function useOnboardingStepCounter(
 	// No router hook here: `calypso/signup/steps/plans` re-exports the plans step into the
 	// legacy `/start` framework, which is page.js-routed, and `useLocation` throws outside a
 	// `<Router>` — in production too.
-	return getOnboardingStepperPosition(
-		group,
-		hidePlansStep || shouldSkipPlansStep( query, planCartItem )
-	);
+	return getOnboardingStepperPosition( group, shouldSkipPlansStep( query, planCartItem, flow ) );
 }
