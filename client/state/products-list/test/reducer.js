@@ -5,7 +5,7 @@ import {
 	PRODUCTS_LIST_REQUEST_FAILURE,
 } from 'calypso/state/action-types';
 import { serialize, deserialize } from 'calypso/state/utils';
-import reducer, { hasFullListThisSession, items, isFetching, type } from '../reducer';
+import reducer, { items, isFetching, sessionListStatus, type } from '../reducer';
 
 describe( 'reducer', () => {
 	jest.spyOn( console, 'warn' ).mockImplementation();
@@ -121,28 +121,28 @@ describe( 'reducer', () => {
 		} );
 	} );
 
-	describe( '#hasFullListThisSession()', () => {
-		test( 'should default to false', () => {
-			expect( hasFullListThisSession( undefined, {} ) ).toBe( false );
+	describe( '#sessionListStatus()', () => {
+		test( 'should default to none', () => {
+			expect( sessionListStatus( undefined, {} ) ).toBe( 'none' );
 		} );
 
-		test( 'should be true once a full list is received', () => {
-			expect( hasFullListThisSession( false, { type: PRODUCTS_LIST_RECEIVE } ) ).toBe( true );
+		test( 'should be full once a full list is received', () => {
+			expect( sessionListStatus( 'none', { type: PRODUCTS_LIST_RECEIVE } ) ).toBe( 'full' );
 		} );
 
-		test( 'should be false after a slug-filtered list is received', () => {
+		test( 'should be none after a slug-filtered list is received', () => {
 			expect(
-				hasFullListThisSession( true, { type: PRODUCTS_LIST_RECEIVE, isPartialList: true } )
-			).toBe( false );
+				sessionListStatus( 'full', { type: PRODUCTS_LIST_RECEIVE, isPartialList: true } )
+			).toBe( 'none' );
 		} );
 
-		test( 'should stay true while a refresh is pending', () => {
-			expect( hasFullListThisSession( true, { type: PRODUCTS_LIST_REQUEST } ) ).toBe( true );
+		test( 'should keep its value while a refresh is pending', () => {
+			expect( sessionListStatus( 'full', { type: PRODUCTS_LIST_REQUEST } ) ).toBe( 'full' );
 		} );
 
-		test( 'should be false after a failed refresh', () => {
-			expect( hasFullListThisSession( true, { type: PRODUCTS_LIST_REQUEST_FAILURE } ) ).toBe(
-				false
+		test( 'should be failed after a failed request', () => {
+			expect( sessionListStatus( 'full', { type: PRODUCTS_LIST_REQUEST_FAILURE } ) ).toBe(
+				'failed'
 			);
 		} );
 
@@ -153,9 +153,9 @@ describe( 'reducer', () => {
 				productsListType: 'jetpack',
 			} );
 
-			expect( state.hasFullListThisSession ).toBe( true );
-			expect( serialize( reducer, state ).root() ).not.toHaveProperty( 'hasFullListThisSession' );
-			expect( deserialize( reducer, { items: {} } ).hasFullListThisSession ).toBe( false );
+			expect( state.sessionListStatus ).toBe( 'full' );
+			expect( serialize( reducer, state ).root() ).not.toHaveProperty( 'sessionListStatus' );
+			expect( deserialize( reducer, { items: {} } ).sessionListStatus ).toBe( 'none' );
 		} );
 	} );
 
