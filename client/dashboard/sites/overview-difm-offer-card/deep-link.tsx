@@ -17,14 +17,7 @@ function getDeepLinkSource( source: string | undefined ): DifmOfferSource {
 	return deepLinkSource ?? 'site-overview';
 }
 
-/**
- * Opens the DIFM offer modal when another surface links to the site overview with
- * `?difmOffer=open`. The Site Setup banner in wp-admin is the first such surface.
- *
- * The modal opens only for a user the overview card would show the offer to. It opens
- * even if the user dismissed the card, because the user just clicked the offer elsewhere.
- * The params are removed once the assignment loads, so a reload does not open it again.
- */
+// Opens even if the user dismissed the overview card, because the click came from another surface.
 export default function DifmOfferDeepLink( { site }: { site: Site } ) {
 	const navigate = useNavigate();
 	const localeSlug = useLocale();
