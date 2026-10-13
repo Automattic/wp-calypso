@@ -4,7 +4,11 @@ import { getBlockingMove } from '../../utils/canvas-binding';
 import {
 	captureCanvas,
 	describeCaptureShape,
+	describeMeasuredLayout,
+	describeUnmoved,
 	getUnframedClientIds,
+	snapshotLayout,
+	type LayoutSnapshot,
 } from '../../utils/canvas-capture';
 import { checkpointKeys, sealCheckpointForSwap, withCheckpoint } from '../../utils/checkpoints';
 import { deepClone } from '../../utils/deep-clone';
@@ -341,9 +345,16 @@ export async function applyBlockEditsCallback(
 	let edits: BlockEdits | undefined;
 	let result: ApplyBlockEditsResultData;
 	let insertedClientIds: string[] = [];
+	let layoutBefore: LayoutSnapshot | null = null;
 
 	try {
 		edits = normalizeEdits( input );
+		// Read before the writes, to say afterwards whether anything moved. An
+		// insert or delete moves something by definition.
+		layoutBefore =
+			edits.inserts.length || edits.deletes.length
+				? null
+				: snapshotLayout( getEditedClientIds( edits, resolver.resolve ) );
 		( { result, insertedClientIds } = await applyEditsAction( edits, {
 			toolCallId,
 			summary,
@@ -398,12 +409,17 @@ export async function applyBlockEditsCallback(
 	// Two separate facts about the pictures that came back. The shape says how
 	// many there are and what they cover, which the rasterizer decides from how
 	// far apart the blocks turned out to be; the reference note says whether a
-	// comparison can be judged from them at all. Kept out of `message`, which
-	// the user may see as the reply.
+	// comparison can be judged from them at all. The measurements are what a
+	// picture cannot settle: an offset of a few dozen pixels, or an image
+	// sitting at the top of a centred block, or an edit that changed settings
+	// and moved nothing. Kept out of `message`, which the user may see as the
+	// reply.
 	if ( fileParts ) {
 		const captureNotes = [
 			describeCaptureShape( fileParts ),
 			describeReferenceFraming( referenceClientIds, getUnframedClientIds( referenceClientIds ) ),
+			...describeMeasuredLayout( changedClientIds ),
+			layoutBefore && result.outcome === 'updated' ? describeUnmoved( layoutBefore ) : '',
 		].filter( Boolean );
 
 		if ( captureNotes.length ) {
