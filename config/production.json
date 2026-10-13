@@ -49,6 +49,7 @@
 		"dashboard/rollout-advance-notice": true,
 		"dashboard/simulate-full-rollout": false,
 		"dashboard/wp-beta-program": true,
+		"difm-offer/force-treatment": false,
 		"dolly/telegram": true,
 		"domain-bundling": true,
 		"domain-search/name-pulse": false,

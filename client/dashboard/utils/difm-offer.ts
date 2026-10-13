@@ -1,4 +1,5 @@
 import { DotcomPlans } from '@automattic/api-core';
+import config from '@automattic/calypso-config';
 import { englishLocales } from '@automattic/i18n-utils';
 import { __ } from '@wordpress/i18n';
 import { useExperiment } from 'calypso/lib/explat';
@@ -8,6 +9,13 @@ import { useExperiment } from 'calypso/lib/explat';
  * assignment for an unregistered experiment, so every caller gets `control`.
  */
 export const DIFM_OFFER_EXPERIMENT = 'wpcom_difm_post_signup_offer_placeholder';
+
+/**
+ * A QA flag that puts an eligible user in `treatment` without an ExPlat assignment.
+ * Calypso applies `?flags=` only in development, the stage environments and calypso.live,
+ * so the production build cannot turn it on. No config file enables it.
+ */
+export const DIFM_OFFER_FORCE_TREATMENT_FLAG = 'difm-offer/force-treatment';
 
 /**
  * The upper bound on site age is an open question for product and data.
@@ -118,14 +126,19 @@ export function isEligibleForDifmOffer(
  */
 export function useDifmOffer( input: DifmOfferEligibilityInput ): DifmOfferResult {
 	const isEligible = isEligibleForDifmOffer( input );
+	const isForcedTreatment = isEligible && config.isEnabled( DIFM_OFFER_FORCE_TREATMENT_FLAG );
 
-	// Always call the hook, and let `isEligible` keep ineligible users out of the experiment.
+	// Always call the hook. Keep ineligible users and forced testers out of the experiment.
 	const [ isLoading, experimentAssignment ] = useExperiment( DIFM_OFFER_EXPERIMENT, {
-		isEligible,
+		isEligible: isEligible && ! isForcedTreatment,
 	} );
 
 	if ( ! isEligible ) {
 		return { isEligible, isLoading: false, variation: 'control' };
+	}
+
+	if ( isForcedTreatment ) {
+		return { isEligible, isLoading: false, variation: 'treatment' };
 	}
 
 	return {

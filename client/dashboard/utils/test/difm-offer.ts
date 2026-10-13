@@ -3,10 +3,12 @@
  */
 
 import { DotcomPlans, JetpackPlans, WooHostedPlans } from '@automattic/api-core';
+import config from '@automattic/calypso-config';
 import { renderHook } from '@testing-library/react';
 import { useExperiment } from 'calypso/lib/explat';
 import {
 	DIFM_OFFER_EXPERIMENT,
+	DIFM_OFFER_FORCE_TREATMENT_FLAG,
 	DIFM_OFFER_MAX_SITE_AGE_DAYS,
 	getDifmOfferCopy,
 	isEligibleForDifmOffer,
@@ -200,6 +202,10 @@ describe( 'useDifmOffer', () => {
 		mockUseExperiment.mockReset();
 	} );
 
+	afterEach( () => {
+		config.disable( DIFM_OFFER_FORCE_TREATMENT_FLAG );
+	} );
+
 	it( 'keeps an ineligible user out of the experiment and returns control', () => {
 		mockUseExperiment.mockReturnValue( [ false, null ] );
 
@@ -244,6 +250,33 @@ describe( 'useDifmOffer', () => {
 		mockUseExperiment.mockReturnValue( [ false, createExperimentAssignment( 'rotating' ) ] );
 
 		const { result } = renderHook( () => useDifmOffer( eligibleInput( Date.now() ) ) );
+
+		expect( result.current.variation ).toBe( 'control' );
+	} );
+
+	it( 'returns treatment without an assignment when the QA flag is on', () => {
+		config.enable( DIFM_OFFER_FORCE_TREATMENT_FLAG );
+		mockUseExperiment.mockReturnValue( [ true, null ] );
+
+		const { result } = renderHook( () => useDifmOffer( eligibleInput( Date.now() ) ) );
+
+		expect( mockUseExperiment ).toHaveBeenCalledWith( DIFM_OFFER_EXPERIMENT, {
+			isEligible: false,
+		} );
+		expect( result.current ).toEqual( {
+			isEligible: true,
+			isLoading: false,
+			variation: 'treatment',
+		} );
+	} );
+
+	it( 'keeps an ineligible user in control when the QA flag is on', () => {
+		config.enable( DIFM_OFFER_FORCE_TREATMENT_FLAG );
+		mockUseExperiment.mockReturnValue( [ false, null ] );
+
+		const { result } = renderHook( () =>
+			useDifmOffer( { ...eligibleInput( Date.now() ), localeSlug: 'fr' } )
+		);
 
 		expect( result.current.variation ).toBe( 'control' );
 	} );
