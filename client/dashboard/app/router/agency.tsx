@@ -64,6 +64,7 @@ import {
 	CRM_DOWNLOADS_SEGMENT,
 	MARKETPLACE_HOSTING_REFER_SEGMENTS,
 } from '../../agency/marketplace/paths';
+import AgencyOnboardingTour from '../../agency/onboarding-tour';
 import {
 	mayBeEligibleForPressableExpansionOffer,
 	pressableOfferLicensesQuery,
@@ -147,10 +148,19 @@ export function isRouteAllowedByCapabilities(
 	return satisfiesStaticData( route.options.staticData, capabilities );
 }
 
+function AgencyLayout() {
+	return (
+		<AgencyOnboardingTour>
+			<Outlet />
+		</AgencyOnboardingTour>
+	);
+}
+
 // Pathless layout route that guards every agency route (blocks client users).
 const agencyRoute = createRoute( {
 	getParentRoute: () => rootRoute,
 	id: 'agency',
+	component: AgencyLayout,
 	beforeLoad: async ( { cause, matches } ) => {
 		if ( cause === 'preload' ) {
 			return; // Don't redirect on hover/intent preloads.

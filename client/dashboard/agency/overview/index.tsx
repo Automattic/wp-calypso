@@ -16,6 +16,7 @@ import MissingPaymentSettingsNotice, {
 } from '../earn/missing-payment-settings-notice';
 import { useHasCommissionActivity } from '../earn/use-has-commission-activity';
 import { getMarketplaceHostingSectionRoute } from '../marketplace/paths';
+import { useOnboardingTour } from '../onboarding-tour';
 import { PARTNER_DIRECTORY_ROUTE } from '../partner-directory/paths';
 import { useContactSupport } from '../support/use-contact-support';
 import { useScheduleCall } from '../tiers/use-schedule-call';
@@ -31,6 +32,7 @@ export default function AgencyOverview() {
 	const locale = useLocale();
 	const agencyId = agency?.id ?? 0;
 	const approvalStatus = agency?.approval_status;
+	const { openTour } = useOnboardingTour();
 	const hasPartnerDirectoryListing =
 		!! agency?.profile?.partner_directory_application?.directories.some(
 			( { status } ) => status === 'approved'
@@ -113,6 +115,11 @@ export default function AgencyOverview() {
 							onClick: () => openContactForm(),
 						},
 						{
+							id: 'relaunch-welcome-tour',
+							label: __( 'Take the full tour' ),
+							onClick: openTour,
+						},
+						{
 							id: 'program-incentives',
 							label: __( 'Program incentive details' ),
 							href: PROGRAM_INCENTIVES_URL,
@@ -122,6 +129,8 @@ export default function AgencyOverview() {
 				} }
 				onScheduleCall={ scheduleCall }
 				isSchedulingCall={ isSchedulingCall }
+				onRelaunchTour={ openTour }
+				tourLabel={ __( 'Take the full tour' ) }
 				recordTracksEvent={ recordTracksEvent }
 			/>
 		</PageLayout>

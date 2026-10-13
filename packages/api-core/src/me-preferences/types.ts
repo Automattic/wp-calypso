@@ -78,4 +78,6 @@ export interface UserPreferences {
 	/** Timestamp of the Pressable usage-limit notification the user dismissed. */
 	'pressable-limit-notification-dismissed'?: number;
 	'a4a-agency-approval-notice-dismissed'?: boolean;
+	/** The welcome tour section to pick back up at after leaving the tour to explore a page. */
+	'a4a-dashboard-onboarding-tour-section'?: string;
 }
