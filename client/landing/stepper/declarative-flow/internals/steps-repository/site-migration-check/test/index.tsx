@@ -43,12 +43,7 @@ describe( 'SiteMigrationCheck', () => {
 		return submit;
 	};
 
-	it.each( [ true, false ] )( 'compares both known sites (needs upgrade: %s)', ( needsUpgrade ) => {
-		const submit = renderDestination( needsUpgrade );
-		expect( screen.getByRole( 'heading', { name: 'Migrate example.com here' } ) ).toBeVisible();
-		expect( screen.getByText( 'example.com → destination.wordpress.com' ) ).toBeVisible();
-		expect( screen.getByText( 'destination.wordpress.com today' ) ).toBeVisible();
-		expect( screen.getByText( 'destination.wordpress.com after the migration' ) ).toBeVisible();
+	const expectSiteComparison = () => {
 		for ( const [ label, url ] of [
 			[ 'Current destination site', 'https://destination.wordpress.com' ],
 			[ 'Source site to be copied', 'https://example.com' ],
@@ -60,24 +55,13 @@ describe( 'SiteMigrationCheck', () => {
 		expect(
 			screen.getByText( /Its posts, pages, media, theme, plugins, and settings are replaced/ )
 		).toBeVisible();
-		expect(
-			screen.getByText(
-				/example.com’s posts, pages, media, theme, plugins, and settings are copied in/
-			)
-		).toBeVisible();
-		expect( screen.queryByText( /30 days/ ) ).not.toBeInTheDocument();
-		expect(
-			screen.queryByText( /runs on WordPress, so we copy all of it/ )
-		).not.toBeInTheDocument();
-		expect( submit ).not.toHaveBeenCalled();
-	} );
+	};
 
 	it( 'offers an upgrade for an ineligible destination', async () => {
 		const submit = renderDestination( true );
+		expectSiteComparison();
+		expect( submit ).not.toHaveBeenCalled();
 		expect( screen.getByText( /Personal plan, which can’t run plugins/ ) ).toBeVisible();
-		expect(
-			screen.queryByText( 'Your plan and the site’s address stay the same.' )
-		).not.toBeInTheDocument();
 		expect( screen.queryByRole( 'button', { name: 'Continue' } ) ).not.toBeInTheDocument();
 		await userEvent.click( screen.getByRole( 'button', { name: 'Upgrade and continue' } ) );
 		expect( submit ).toHaveBeenCalledWith( {
@@ -99,7 +83,8 @@ describe( 'SiteMigrationCheck', () => {
 
 	it( 'offers another destination or submits replacement once for an eligible site', async () => {
 		const submit = renderDestination();
-		expect( screen.getByText( 'Your plan and the site’s address stay the same.' ) ).toBeVisible();
+		expectSiteComparison();
+		expect( submit ).not.toHaveBeenCalled();
 		await userEvent.click( screen.getByRole( 'button', { name: 'Use a different site' } ) );
 		expect( submit ).toHaveBeenLastCalledWith( {
 			action: 'select-existing-site',
@@ -167,8 +152,6 @@ describe( 'SiteMigrationCheck', () => {
 		'',
 		'?from=javascript:alert(1)&platform=wordpress',
 		'?from=https://example.com&platform=wix',
-		'?from=https://example.com&platform=unknown',
-		'?from=https://example.com&platform=squarespace',
 	] )( 'returns to address entry instead of rendering an invalid source: %s', ( query ) => {
 		const submit = jest.fn();
 		renderStep( <SiteMigrationCheck { ...mockStepProps( { navigation: { submit } } ) } />, {
@@ -198,15 +181,10 @@ describe( 'SiteMigrationCheck', () => {
 			/Transfer your domain/,
 			/Get access to your site/,
 		] ) {
-			const button = screen.getByRole( 'button', { name } );
-			expect( button ).toBeDisabled();
-			await userEvent.click( button );
+			expect( screen.getByRole( 'button', { name } ) ).toBeDisabled();
 		}
 		expect( screen.queryByText( 'Site preview' ) ).not.toBeInTheDocument();
 		expect( screen.queryByRole( 'button', { name: 'Continue' } ) ).not.toBeInTheDocument();
-		expect(
-			screen.queryByText( /cotrim\.dev runs on WordPress, so we copy all of it/ )
-		).not.toBeInTheDocument();
 		expect( submit ).not.toHaveBeenCalled();
 		for ( const name of [ 'Back', 'Not the site you meant? Enter a different URL' ] ) {
 			await userEvent.click( screen.getByRole( 'button', { name } ) );

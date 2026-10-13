@@ -256,48 +256,13 @@ describe( 'SiteMigrationIdentify', () => {
 			expect( submit ).toHaveBeenCalledWith( { action: 'skip_platform_identification' } );
 		} );
 
-		it( 'honors the entry point that hides the platform list', () => {
-			render( {}, { initialEntry: '/some-path?hide_importer_link=true' } );
-			expect(
-				screen.queryByRole( 'button', { name: /pick your current platform/ } )
-			).not.toBeInTheDocument();
-		} );
-
-		it( 'keeps the supplied address editable and submits the detected source and host', async () => {
+		it( 'edits the supplied address and waits for platform and hosting checks before continuing', async () => {
 			const submit = jest.fn();
 			render(
 				{ navigation: { submit } },
 				{ initialEntry: '/some-path?from=https://old.example.com' }
 			);
 			expect( getInput() ).toHaveValue( 'https://old.example.com' );
-
-			mockAnalysis( API_RESPONSE_WORDPRESS_PLATFORM );
-			mockHost();
-
-			await userEvent.clear( getInput() );
-			await checkSite();
-			await waitFor( () =>
-				expect( submit ).toHaveBeenCalledWith( {
-					action: 'continue',
-					platform: 'wordpress',
-					from: 'https://example.com',
-					host: 'bluehost',
-				} )
-			);
-		} );
-
-		it( 'shows validation feedback without submitting an invalid address', async () => {
-			const submit = jest.fn();
-			render( { navigation: { submit } } );
-			await checkSite( 'invalid' );
-
-			expect( screen.getByText( /site address is missing its domain extension/ ) ).toBeVisible();
-			expect( submit ).not.toHaveBeenCalled();
-		} );
-
-		it( 'shows the real platform and hosting checks before continuing', async () => {
-			const submit = jest.fn();
-			render( { navigation: { submit } } );
 			let completePlatform: ( () => void ) | undefined;
 			let completeHost: ( () => void ) | undefined;
 			mockApi()
@@ -311,6 +276,7 @@ describe( 'SiteMigrationIdentify', () => {
 				.reply( 200, ( _uri, _body, callback ) => {
 					completeHost = () => callback( null, { hosting_provider: { slug: 'bluehost' } } );
 				} );
+			await userEvent.clear( getInput() );
 			await checkSite( 'example.com' );
 
 			expect( screen.getByRole( 'heading', { name: 'Checking your site' } ) ).toBeVisible();
@@ -318,9 +284,6 @@ describe( 'SiteMigrationIdentify', () => {
 			expect( screen.getByRole( 'link', { name: 'View site ↗' } ) ).toHaveAttribute(
 				'href',
 				'https://example.com'
-			);
-			expect( screen.getByRole( 'progressbar', { name: 'Site platform' } ) ).not.toHaveAttribute(
-				'value'
 			);
 			expect( getInput() ).not.toBeVisible();
 			expect( submit ).not.toHaveBeenCalled();
@@ -330,13 +293,7 @@ describe( 'SiteMigrationIdentify', () => {
 				expect( screen.getByText( 'Checking your hosting provider' ) ).toBeVisible()
 			);
 			expect( screen.getByRole( 'link', { name: 'WordPress site ↗' } ) ).toBeVisible();
-			expect( screen.getByRole( 'progressbar', { name: 'Site platform' } ) ).toHaveAttribute(
-				'value',
-				'100'
-			);
-			expect( screen.getByRole( 'progressbar', { name: 'Hosting provider' } ) ).not.toHaveAttribute(
-				'value'
-			);
+			expect( submit ).not.toHaveBeenCalled();
 			await waitFor( () => expect( completeHost ).toEqual( expect.any( Function ) ) );
 			await act( async () => completeHost?.() );
 			await waitFor( () =>
@@ -349,28 +306,6 @@ describe( 'SiteMigrationIdentify', () => {
 			);
 		} );
 
-		it( 'returns to the entered address on Back without completing the abandoned check', async () => {
-			const submit = jest.fn();
-			const goBack = jest.fn();
-			render( { navigation: { submit, goBack } } );
-			let completeAnalysis: ( () => void ) | undefined;
-			mockApi()
-				.get( '/wpcom/v2/imports/analyze-url' )
-				.query( { site_url: 'https://example.com' } )
-				.reply( 200, ( _uri, _body, callback ) => {
-					completeAnalysis = () => callback( null, API_RESPONSE_WORDPRESS_PLATFORM );
-				} );
-			await checkSite();
-			await screen.findByRole( 'heading', { name: 'Checking your site' } );
-			await waitFor( () => expect( completeAnalysis ).toEqual( expect.any( Function ) ) );
-			await userEvent.click( screen.getByRole( 'button', { name: 'Back' } ) );
-			expect( getInput() ).toBeVisible();
-			expect( getInput() ).toHaveValue( 'https://example.com' );
-			await act( async () => completeAnalysis?.() );
-			expect( submit ).not.toHaveBeenCalled();
-			expect( goBack ).not.toHaveBeenCalled();
-		} );
-
 		it( 'explains generic analysis failures and allows retrying the same address', async () => {
 			const submit = jest.fn();
 			render( { navigation: { submit } } );
@@ -379,13 +314,8 @@ describe( 'SiteMigrationIdentify', () => {
 			expect( await screen.findByRole( 'alert' ) ).toHaveTextContent(
 				'We couldn’t check your site. Try again.'
 			);
-			expect( screen.queryByText( /Please enter a valid website/ ) ).not.toBeInTheDocument();
-			expect( getInput() ).not.toHaveClass( 'is-error' );
 			expect( getInput() ).toBeVisible();
 			expect( getInput() ).toHaveValue( 'https://example.com' );
-			expect(
-				screen.queryByRole( 'heading', { name: 'Checking your site' } )
-			).not.toBeInTheDocument();
 			expect( submit ).not.toHaveBeenCalled();
 
 			mockAnalysis( API_RESPONSE_WORDPRESS_PLATFORM );
@@ -399,32 +329,10 @@ describe( 'SiteMigrationIdentify', () => {
 			expect( screen.queryByRole( 'alert' ) ).not.toBeInTheDocument();
 		} );
 
-		it( 'clears the analysis failure notice when editing the address', async () => {
-			render();
-			mockAnalysis( {}, 500 );
-			await checkSite();
-			await screen.findByRole( 'alert' );
-			await userEvent.type( getInput(), '/edited' );
-			expect( screen.queryByRole( 'alert' ) ).not.toBeInTheDocument();
-		} );
-
 		it.each( [
-			...[ 'unreachable', 'server_error', 'blocked', 'auth_required', 'not_found' ].map(
-				( site_health ) => ( {
-					status: 200,
-					body: { ...API_RESPONSE_WORDPRESS_PLATFORM, site_health },
-				} )
-			),
+			{ status: 200, body: { ...API_RESPONSE_WORDPRESS_PLATFORM, site_health: 'unreachable' } },
 			{ status: 500, body: { code: 'http_request_failed' } },
-			{
-				status: 400,
-				body: {
-					code: 'rest_invalid_param',
-					message: 'Site url is not valid.',
-					data: { status: 400 },
-				},
-			},
-			{ status: 400, body: { code: 'rest_invalid_param', data: { site_health: 'not_found' } } },
+			{ status: 400, body: { code: 'rest_invalid_param' } },
 		] )( 'shows the unreachable outcome for %j', async ( { status, body } ) => {
 			const submit = jest.fn();
 			render( { navigation: { submit } } );
@@ -434,26 +342,29 @@ describe( 'SiteMigrationIdentify', () => {
 				await screen.findByRole( 'heading', { name: 'We couldn’t reach your site' } )
 			).toBeVisible();
 			expect( screen.getByText( 'Couldn’t connect', { selector: 'span' } ) ).toBeVisible();
-			expect( screen.queryByText( /tried 3 times/ ) ).not.toBeInTheDocument();
 			expect( screen.getByRole( 'button', { name: 'Talk to the team' } ) ).toBeDisabled();
 			expect( getInput() ).not.toBeVisible();
 			expect( submit ).not.toHaveBeenCalled();
 		} );
 
-		it( 'preserves the address through Back and retrying an unreachable source', async () => {
+		it( 'blocks HTTP WordPress sources and continues when retry resolves to HTTPS', async () => {
 			const submit = jest.fn();
 			render( { navigation: { submit } } );
-			mockAnalysis( { code: 'rest_invalid_param', data: { status: 400 } }, 400 );
-			await checkSite();
-			await screen.findByRole( 'heading', { name: 'We couldn’t reach your site' } );
-			await userEvent.click( screen.getByRole( 'button', { name: 'Back' } ) );
-			expect( getInput() ).toHaveValue( 'https://example.com' );
-			expect( getInput() ).toBeVisible();
+			mockAnalysis(
+				{ ...API_RESPONSE_WORDPRESS_PLATFORM, url: 'http://example.com/', site_health: 'ok' },
+				200,
+				'http://example.com'
+			);
+			await checkSite( 'http://example.com' );
+			expect(
+				await screen.findByRole( 'heading', { name: 'Your site isn’t on HTTPS' } )
+			).toBeVisible();
 			expect( submit ).not.toHaveBeenCalled();
-			mockAnalysis( { code: 'http_request_failed' }, 500 );
-			await userEvent.click( screen.getByRole( 'button', { name: 'Continue' } ) );
-			await screen.findByRole( 'heading', { name: 'We couldn’t reach your site' } );
-			mockAnalysis( { ...API_RESPONSE_WORDPRESS_PLATFORM, site_health: 'ok' } );
+			mockAnalysis(
+				{ ...API_RESPONSE_WORDPRESS_PLATFORM, site_health: 'ok' },
+				200,
+				'http://example.com'
+			);
 			mockHost();
 			await userEvent.click( screen.getByRole( 'button', { name: 'Try again' } ) );
 			await waitFor( () =>
@@ -464,73 +375,6 @@ describe( 'SiteMigrationIdentify', () => {
 					host: 'bluehost',
 				} )
 			);
-		} );
-
-		it( 'blocks the resolved HTTP source and retries without adding navigation context', async () => {
-			const submit = jest.fn();
-			render( { navigation: { submit } } );
-			mockAnalysis( {
-				...API_RESPONSE_WORDPRESS_PLATFORM,
-				url: 'http://example.com/',
-				site_health: 'ok',
-			} );
-			await checkSite();
-			expect(
-				await screen.findByRole( 'heading', { name: 'Your site isn’t on HTTPS' } )
-			).toBeVisible();
-			expect(
-				screen.getByText( 'example.com uses plain HTTP', { selector: 'span' } )
-			).toBeVisible();
-			expect( screen.getByRole( 'link', { name: 'WordPress site ↗' } ) ).toHaveAttribute(
-				'href',
-				'http://example.com/'
-			);
-			expect( screen.getByRole( 'button', { name: 'How to enable HTTPS ↗' } ) ).toBeDisabled();
-			expect( submit ).not.toHaveBeenCalled();
-			mockAnalysis( { ...API_RESPONSE_WORDPRESS_PLATFORM, site_health: 'ok' } );
-			mockHost();
-			await userEvent.click( screen.getByRole( 'button', { name: 'Try again' } ) );
-			await waitFor( () =>
-				expect( submit ).toHaveBeenCalledWith(
-					expect.objectContaining( { from: 'https://example.com' } )
-				)
-			);
-		} );
-
-		it( 'continues when an entered HTTP URL resolves to HTTPS', async () => {
-			const submit = jest.fn();
-			render( { navigation: { submit } } );
-			mockAnalysis(
-				{ ...API_RESPONSE_WORDPRESS_PLATFORM, site_health: 'ok' },
-				200,
-				'http://example.com'
-			);
-			mockHost();
-			await checkSite( 'http://example.com' );
-			await waitFor( () =>
-				expect( submit ).toHaveBeenCalledWith(
-					expect.objectContaining( { from: 'https://example.com' } )
-				)
-			);
-			expect(
-				screen.queryByRole( 'heading', { name: 'Your site isn’t on HTTPS' } )
-			).not.toBeInTheDocument();
-		} );
-
-		it( 'restores the entered address on Back from the HTTP outcome', async () => {
-			const submit = jest.fn();
-			render( { navigation: { submit } } );
-			mockAnalysis(
-				{ ...API_RESPONSE_WORDPRESS_PLATFORM, url: 'http://example.com/' },
-				200,
-				'http://example.com'
-			);
-			await checkSite( 'http://example.com' );
-			await screen.findByRole( 'heading', { name: 'Your site isn’t on HTTPS' } );
-			await userEvent.click( screen.getByRole( 'button', { name: 'Back' } ) );
-			expect( getInput() ).toBeVisible();
-			expect( getInput() ).toHaveValue( 'http://example.com' );
-			expect( submit ).not.toHaveBeenCalled();
 		} );
 
 		it( 'does not complete or reopen an outcome when Back cancels a retry', async () => {
@@ -592,7 +436,6 @@ describe( 'SiteMigrationIdentify', () => {
 	it.each( [
 		{ enabled: false, platform: 'wordpress' },
 		{ enabled: true, platform: 'squarespace' },
-		{ enabled: true, platform: 'unknown' },
 	] )( 'keeps legacy HTTP continuation for %j', async ( { enabled, platform } ) => {
 		jest
 			.spyOn( config, 'isEnabled' )

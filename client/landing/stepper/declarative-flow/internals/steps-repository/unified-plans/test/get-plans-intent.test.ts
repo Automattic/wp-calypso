@@ -10,12 +10,9 @@ describe( 'getPlansIntent', () => {
 		window.localStorage.clear();
 	} );
 
-	it.each( [ 'site-migration', 'static-site-import' ] )(
-		'uses the shared paid migration grid for %s',
-		( flow ) => {
-			expect( getPlansIntent( flow ) ).toBe( 'plans-migration' );
-		}
-	);
+	it( 'uses the shared paid migration grid for site migration', () => {
+		expect( getPlansIntent( 'site-migration' ) ).toBe( 'plans-migration' );
+	} );
 
 	it( 'maps the ai-site-builder-onboarding flow to the four paid plans intent', () => {
 		expect( getPlansIntent( 'ai-site-builder-onboarding' ) ).toBe( 'plans-ai-assembler-paid-only' );

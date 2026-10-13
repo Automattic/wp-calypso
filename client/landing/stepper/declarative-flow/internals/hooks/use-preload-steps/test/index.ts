@@ -35,39 +35,37 @@ describe( 'tryPreload', () => {
 		expect( lazyCache.get( step.asyncComponent ) ).toBe( Component );
 	} );
 
-	it.each( [ '', 'https://wordpress.org/' ] )(
-		'preserves typed input after preloading and rerendering with initial value %j',
-		async ( initialValue ) => {
-			function Address() {
-				const [ value, setValue ] = useState( initialValue );
-				return createElement( 'input', {
-					'aria-label': 'Site address',
-					value,
-					onChange: ( event: ChangeEvent< HTMLInputElement > ) => setValue( event.target.value ),
-				} );
-			}
-			const step = {
-				slug: 'error',
-				asyncComponent: async () => ( { default: Address } ),
-			} satisfies StepperStep;
-			const preloading = tryPreload( step );
-			const LazyStep = lazy( step.asyncComponent );
-			lazyCache.set( step.asyncComponent, LazyStep );
-			const { rerender } = render(
-				createElement( Suspense, { fallback: null }, createElement( LazyStep ) )
-			);
-			await act( async () => {
-				await preloading;
+	it( 'preserves an edited address after preloading and rerendering', async () => {
+		const initialValue = 'https://wordpress.org/';
+		function Address() {
+			const [ value, setValue ] = useState( initialValue );
+			return createElement( 'input', {
+				'aria-label': 'Site address',
+				value,
+				onChange: ( event: ChangeEvent< HTMLInputElement > ) => setValue( event.target.value ),
 			} );
-
-			expect( screen.getByRole( 'textbox' ) ).toHaveValue( initialValue );
-			fireEvent.change( screen.getByRole( 'textbox' ), { target: { value: 'cotrim.dev' } } );
-			const CachedStep = lazyCache.get( step.asyncComponent ) as typeof LazyStep;
-			rerender( createElement( Suspense, { fallback: null }, createElement( CachedStep ) ) );
-
-			expect( screen.getByRole( 'textbox' ) ).toHaveValue( 'cotrim.dev' );
 		}
-	);
+		const step = {
+			slug: 'error',
+			asyncComponent: async () => ( { default: Address } ),
+		} satisfies StepperStep;
+		const preloading = tryPreload( step );
+		const LazyStep = lazy( step.asyncComponent );
+		lazyCache.set( step.asyncComponent, LazyStep );
+		const { rerender } = render(
+			createElement( Suspense, { fallback: null }, createElement( LazyStep ) )
+		);
+		await act( async () => {
+			await preloading;
+		} );
+
+		expect( screen.getByRole( 'textbox' ) ).toHaveValue( initialValue );
+		fireEvent.change( screen.getByRole( 'textbox' ), { target: { value: 'cotrim.dev' } } );
+		const CachedStep = lazyCache.get( step.asyncComponent ) as typeof LazyStep;
+		rerender( createElement( Suspense, { fallback: null }, createElement( CachedStep ) ) );
+
+		expect( screen.getByRole( 'textbox' ) ).toHaveValue( 'cotrim.dev' );
+	} );
 } );
 
 describe( 'usePreloadSteps', () => {

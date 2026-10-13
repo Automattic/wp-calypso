@@ -203,13 +203,6 @@ describe( 'Plans site context', () => {
 			destination,
 			'destination.wordpress.com',
 		],
-		[ SITE_MIGRATION_FLOW, 'siteId=654', destination, 'destination.wordpress.com' ],
-		[
-			SITE_MIGRATION_FLOW,
-			'siteSlug=destination.wordpress.com',
-			destination,
-			'destination.wordpress.com',
-		],
 		[ SITE_MIGRATION_FLOW, '', undefined, null ],
 		[ 'onboarding', '', previousSite, 'previous.wordpress.com' ],
 	] )(

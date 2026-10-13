@@ -22,7 +22,7 @@ jest.mock( 'i18n-calypso', () => ( {
 	translate: jest.fn(),
 } ) );
 jest.mock( '@wordpress/data' );
-jest.mock( '../use-generate-action-callback' );
+jest.mock( '../use-generate-action-callback', () => () => jest.fn() );
 
 import {
 	PLAN_BUSINESS,
@@ -40,7 +40,6 @@ import {
 import { Plans } from '@automattic/data-stores';
 import { renderHook } from '@testing-library/react';
 import { useSelector } from 'react-redux';
-import useGenerateActionCallback from '../use-generate-action-callback';
 import useGenerateActionHook from '../use-generate-action-hook';
 
 describe( 'useGenerateActionHook', () => {
@@ -95,7 +94,6 @@ describe( 'useGenerateActionHook', () => {
 
 	beforeEach( () => {
 		jest.resetAllMocks();
-		jest.mocked( useGenerateActionCallback ).mockReturnValue( jest.fn() );
 
 		( useSelector as jest.Mock ).mockImplementation( ( selector ) =>
 			selector( {
