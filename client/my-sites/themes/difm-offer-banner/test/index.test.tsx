@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import { screen } from '@testing-library/react';
+import { act, fireEvent, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useDifmOffer } from 'calypso/dashboard/utils/difm-offer';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -123,6 +123,24 @@ describe( 'DifmOfferBanner', () => {
 			'calypso_banner_cta_click',
 			expectedProperties
 		);
+	} );
+
+	test( 'records a hover on the banner with the location', () => {
+		mockOffer( { isEligible: true, isLoading: false, variation: 'no_time' } );
+		const { container } = renderBanner();
+		jest.useFakeTimers();
+
+		fireEvent.pointerEnter(
+			container.querySelector( '.themes__difm-offer-banner' )?.parentElement as Element
+		);
+		act( () => jest.advanceTimersByTime( 500 ) );
+		jest.useRealTimers();
+
+		expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_difm_offer_banner_hover', {
+			upsell_id: 'themes-difm-offer',
+			upsell_feature_id: 'difm-offer',
+			variation: 'no_time',
+		} );
 	} );
 
 	test( 'saves the dismissal and hides the banner when closed', async () => {
