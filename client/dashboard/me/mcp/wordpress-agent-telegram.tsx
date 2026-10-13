@@ -85,6 +85,7 @@ export default function WordPressAgentTelegram( {
 	);
 	const hasAnyCallbackParam = Boolean( telegramId || token || timestamp || bot );
 	const hasCompleteCallback = Boolean( telegramId && token && timestamp );
+	const hasPendingTokenConnection = hasCompleteCallback && ! pairingDismissed && ! pairingComplete;
 	const displayName = user.display_name;
 	const username =
 		displayName && user.username && displayName !== user.username
@@ -99,7 +100,7 @@ export default function WordPressAgentTelegram( {
 		: __( 'Connect your WordPress.com account to Telegram?' );
 
 	useEffect( () => {
-		if ( ! isConfigured || isConnected || ! isStatusReady || hasAnyCallbackParam ) {
+		if ( ! isConfigured || isConnected || ! isStatusReady || hasPendingTokenConnection ) {
 			return;
 		}
 
@@ -146,7 +147,7 @@ export default function WordPressAgentTelegram( {
 			delete window.wordpressAgentOnTelegramAuth;
 		};
 	}, [
-		hasAnyCallbackParam,
+		hasPendingTokenConnection,
 		isConfigured,
 		isConnected,
 		isStatusReady,
@@ -198,9 +199,7 @@ export default function WordPressAgentTelegram( {
 		} );
 	};
 
-	const showConfirmation = Boolean(
-		pendingAuth || ( hasCompleteCallback && ! pairingDismissed && ! pairingComplete )
-	);
+	const showConfirmation = Boolean( pendingAuth || hasPendingTokenConnection );
 
 	const error =
 		statusQuery.error || connectMutation.error || tokenMutation.error || disconnectMutation.error;

@@ -98,6 +98,46 @@ describe( '<WordPressAgentTelegram />', () => {
 		await waitFor( () => expect( connectRequest.isDone() ).toBe( true ) );
 	} );
 
+	test.each( [ { telegramId: '123' }, { bot: 'wordpressagentbot' } ] )(
+		'allows widget login after an incomplete token callback: %o',
+		async ( props ) => {
+			interceptStatus( false );
+			const connectRequest = nock( API ).post( '/wpcom/v2/telegram-bot/connect' ).reply( 200, {} );
+			render( <WordPressAgentTelegram { ...props } />, { user: USER } );
+			expect(
+				screen.getByText( 'This Telegram connection link is invalid or incomplete.', {
+					selector: '.components-notice__content',
+				} )
+			).toBeVisible();
+			await waitFor( () =>
+				expect( document.querySelector( 'script[data-telegram-login]' ) ).toBeInTheDocument()
+			);
+			act( () => window.wordpressAgentOnTelegramAuth?.( TELEGRAM_USER ) );
+			expect( screen.getByText( 'Telegram account: @telegram-user (ID: 123)' ) ).toBeVisible();
+			expect( connectRequest.isDone() ).toBe( false );
+			await userEvent.click( screen.getByRole( 'button', { name: 'Connect' } ) );
+			await waitFor( () => expect( connectRequest.isDone() ).toBe( true ) );
+		}
+	);
+
+	test( 'restores the widget after cancelling a token connection', async () => {
+		interceptStatus( false );
+		const tokenRequest = nock( API )
+			.post( '/wpcom/v2/telegram-bot/connect-via-token' )
+			.reply( 200, {} );
+		render( <WordPressAgentTelegram telegramId="123" token="token" timestamp="456" />, {
+			user: USER,
+		} );
+		await userEvent.click( screen.getByRole( 'button', { name: 'Cancel' } ) );
+		expect( tokenRequest.isDone() ).toBe( false );
+		expect( screen.getByRole( 'heading', { name: 'Telegram' } ) ).toBeVisible();
+		await waitFor( () =>
+			expect( document.querySelector( 'script[data-telegram-login]' ) ).toBeInTheDocument()
+		);
+		act( () => window.wordpressAgentOnTelegramAuth?.( TELEGRAM_USER ) );
+		expect( screen.getByText( 'Telegram account: @telegram-user (ID: 123)' ) ).toBeVisible();
+	} );
+
 	test( 'disconnects Telegram and shows the login widget again', async () => {
 		interceptStatus( true );
 		const disconnectRequest = nock( API )
