@@ -15,6 +15,7 @@ export type BuildWowStreamInfo = {
 	capabilities: string[];
 	eventsUrl: string;
 	snapshotUrl: string;
+	previewUrl?: string;
 };
 
 export type BuildWowStreamEnvelope = {
@@ -80,6 +81,8 @@ export function parseStreamInfo( raw: unknown ): BuildWowStreamInfo | null {
 		return null;
 	}
 
+	const previewUrl = parseFeedUrl( raw.preview_url );
+
 	return {
 		protocol: raw.protocol,
 		blogId,
@@ -92,6 +95,7 @@ export function parseStreamInfo( raw: unknown ): BuildWowStreamInfo | null {
 			: [],
 		eventsUrl: eventsUrl.href,
 		snapshotUrl: snapshotUrl.href,
+		previewUrl: previewUrl?.origin === snapshotUrl.origin ? previewUrl.href : undefined,
 	};
 }
 
@@ -140,6 +144,7 @@ export function isStreamInfoEqual(
 		a.blogId === b.blogId &&
 		a.eventsUrl === b.eventsUrl &&
 		a.snapshotUrl === b.snapshotUrl &&
+		a.previewUrl === b.previewUrl &&
 		a.resultKind === b.resultKind &&
 		a.capabilities.join( ' ' ) === b.capabilities.join( ' ' )
 	);

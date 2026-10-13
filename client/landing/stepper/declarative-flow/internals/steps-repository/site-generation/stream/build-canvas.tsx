@@ -2,6 +2,7 @@ import { Tabs } from '@automattic/components';
 import { Icon, caution, image as imageIcon } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
+import { BuildHtmlPreview } from './html-preview';
 import { useBuildImagePreview } from './use-build-image-preview';
 import type {
 	StreamImage,
@@ -225,7 +226,7 @@ export function BuildWowStreamCanvas( {
 	const plan = state?.plan;
 	// Older Build Wow hosts may advertise only `progress` while still forwarding
 	// the Engine's structured plan fields. Render those fields when present; the
-	// payload itself is the evidence, and this UI never renders generated markup.
+	// payload itself is the evidence.
 	const canPlan =
 		hasCapability( stream, 'planning' ) ||
 		Boolean( plan?.direction || plan?.pages || plan?.images?.length );
@@ -336,6 +337,10 @@ export function BuildWowStreamCanvas( {
 					<span>{ statusLabel }</span>
 				</p>
 			</div>
+
+			{ stream?.info.previewUrl && hasCapability( stream, 'preview:dsl-html' ) && (
+				<BuildHtmlPreview key={ stream.info.runId } stream={ stream } />
+			) }
 
 			<div className="site-generation-live__stage">
 				<div className="site-generation-live__direction">
