@@ -90,7 +90,7 @@ For example:
 
 ```js
 window.addEventListener( 'agents-manager-turn-started', () => {
-	// the agent is working — attribute what changes next to it
+	// the agent is working
 } );
 window.addEventListener( 'agents-manager-ability-completed', ( event ) => {
 	const { name, ok } = event.detail;

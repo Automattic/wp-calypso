@@ -14,7 +14,7 @@
 /** A turn began: the user sent a message and the agent is working on it. */
 export const AGENT_TURN_STARTED_EVENT = 'agents-manager-turn-started';
 
-/** The turn finished, was aborted, or the chat unmounted with it open. */
+/** The turn finished or was aborted. */
 export const AGENT_TURN_ENDED_EVENT = 'agents-manager-turn-ended';
 
 /**
