@@ -326,7 +326,6 @@ describe( 'ai-site-builder-onboarding flow', () => {
 				it( 'still opens the build-wow site spec from a Commerce wait persisted before the skip', async () => {
 					const specUrl = '/setup/ai-site-builder-spec/site-spec?build_wow=1';
 					mockQueryParams = new URLSearchParams( {
-						siteId: '123',
 						siteSlug: 'example.wordpress.com',
 						redirect_to: specUrl,
 					} );
