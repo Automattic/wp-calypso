@@ -37,6 +37,7 @@
 		"@automattic/calypso-config": "workspace:^",
 		"@automattic/help-center": "workspace:^",
 		"@automattic/i18n-utils": "workspace:^",
+		"@automattic/odie-client": "workspace:^",
 		"@automattic/zendesk-client": "workspace:^",
 		"@tanstack/react-query": "^5.83.0",
 		"@wordpress/api-fetch": "^7.48.0",

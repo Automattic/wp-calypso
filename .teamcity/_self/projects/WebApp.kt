@@ -701,6 +701,9 @@ object CheckCodeStyleBranch : BuildType({
 			scriptContent = """
 				export NODE_ENV="test"
 
+				# Linters read workspace packages from source, so skip building them.
+				export SKIP_CALYPSO_POSTINSTALL=true
+
 				# Install modules
 				${_self.yarn_install_cmd}
 			"""

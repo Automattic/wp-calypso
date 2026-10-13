@@ -376,6 +376,12 @@ module.exports = {
 			mode: 'typescript',
 		},
 		'import/internal-regex': '^calypso/',
+		'import/resolver': {
+			[ path.join( __dirname, 'bin/eslint-import-resolver-calypso-src.js' ) ]: {},
+			node: {},
+		},
+		// Workspace packages resolve to TypeScript source, which import rules must parse.
+		'import/extensions': [ '.js', '.jsx', '.ts', '.tsx' ],
 	},
 	rules: {
 		...wpI18nConfig.rules,
