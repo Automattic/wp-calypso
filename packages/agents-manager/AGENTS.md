@@ -28,6 +28,7 @@ cd apps/agents-manager && yarn dev --sync
 - **i18n**: Use `@wordpress/i18n` with the `__i18n_text_domain__` text domain placeholder — passed unquoted as it is a global constant, not a string literal. The webpack `DefinePlugin` replaces it with `'default'` at build time.
 - **Curly quotes**: Preserve `“”` `‘’` exactly as they appear. Do not convert to unicode escapes or ASCII equivalents.
 - **Docs move with the code**: any change to code, styles, config, or behavior MUST update every doc that describes it, in the same PR — `README.md` and `AGENTS.md` files, other Markdown docs, docblocks, and comments. Find them by searching for the names you changed (files, exports, props, classes, flags) instead of relying on memory, and check the docs again before finishing.
+- **Changes clean up after themselves**: a change or removal MUST update or remove everything it leaves behind, in the same PR — callers, types, tests, mocks, styles, dependencies, and code nothing else uses any more. Find them by searching for the names you changed. For anything other repos read (the provider contract, `window.__agentsManagerActions`, window events), search Big Sky, Jetpack, WooCommerce AI and wpcom too, and keep it until no deployed build reads it.
 
 ## Working in Heavily Shared Components
 
