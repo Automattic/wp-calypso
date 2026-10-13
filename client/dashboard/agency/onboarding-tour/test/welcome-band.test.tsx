@@ -38,7 +38,6 @@ function renderBand( isPending = false ) {
 
 describe( '<WelcomeBand>', () => {
 	afterEach( () => {
-		nock.cleanAll();
 		queryClient.clear();
 	} );
 
@@ -96,7 +95,6 @@ describe( 'useWelcomeBandVisibility', () => {
 	);
 
 	afterEach( () => {
-		nock.cleanAll();
 		queryClient.clear();
 	} );
 
