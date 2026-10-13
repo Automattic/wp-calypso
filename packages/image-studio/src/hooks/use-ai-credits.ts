@@ -1,6 +1,7 @@
 import {
 	CREDITS_LOW_BALANCE,
 	CREDITS_UPGRADE_SOURCE,
+	getCreditsCtaType,
 	getCreditsNoticeMessage,
 	getCreditsPurchaseOptions,
 	getCreditsUpgradeUrl,
@@ -20,7 +21,11 @@ import {
 	type UpgradeNoticeTrigger,
 } from '../utils/tracking';
 import type { ImageStudioMode } from '../types';
-import type { CreditsAccess, CreditsStatus } from '@automattic/agents-manager';
+import type {
+	CreditsAccess,
+	CreditsPurchaseOptions,
+	CreditsStatus,
+} from '@automattic/agents-manager';
 import type { AuthProvider, TaskState, TaskUpdate } from '@automattic/agenttic-client';
 import type { NoticeConfig } from '@automattic/agenttic-ui';
 
@@ -45,14 +50,14 @@ export function getSiteCreditsLevel( remaining: number ): SiteCreditsLevel | nul
 function getNoticeCredits(
 	status: PaidCreditsStatus,
 	level: SiteCreditsLevel,
-	upgradeUrl: string | undefined
+	{ upgradeUrl, askToUpgrade }: CreditsPurchaseOptions
 ): UpgradeNoticeCredits {
 	return {
 		meter: 'site_credits',
 		state: level === 'out' ? 'zero' : 'low',
 		planTier: status.planTier ?? 'none',
 		creditsLeft: status.remaining,
-		ctaType: upgradeUrl ? 'upgrade' : 'none',
+		ctaType: getCreditsCtaType( !! upgradeUrl, askToUpgrade ),
 		ref: upgradeUrl ? CREDITS_UPGRADE_SOURCE : 'none',
 	};
 }
@@ -157,14 +162,14 @@ export function useAiCredits( {
 			if ( blogId === null ) {
 				return;
 			}
-			const { upgradeUrl } = getCreditsPurchaseOptions(
+			const purchaseOptions = getCreditsPurchaseOptions(
 				getCreditsUpgradeUrl( next, blogId ),
 				accessRef.current
 			);
 			trackImageStudioUpgradeNoticeShown( {
 				mode,
 				trigger,
-				...getNoticeCredits( next, level, upgradeUrl ),
+				...getNoticeCredits( next, level, purchaseOptions ),
 			} );
 		}
 	);
@@ -290,7 +295,7 @@ export function useAiCredits( {
 											trackImageStudioUpgradeNoticeClick( {
 												mode,
 												trigger: shown.current.trigger,
-												...getNoticeCredits( status, level, upgradeUrl ),
+												...getNoticeCredits( status, level, { upgradeUrl } ),
 											} ),
 									}
 								: undefined,

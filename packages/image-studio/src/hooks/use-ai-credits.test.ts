@@ -263,6 +263,7 @@ describe( 'useAiCredits', () => {
 				zero: 'You’ve used all your site credits. Ask the plan owner to upgrade.',
 				low: '6k credits left. Ask the plan owner to upgrade.',
 				purchaseHint: PLAN_OWNER_HINT,
+				ctaType: 'contact_plan_owner',
 			},
 			{
 				who: 'someone who can’t buy',
@@ -270,42 +271,46 @@ describe( 'useAiCredits', () => {
 				zero: 'You’ve used all your site credits. Ask a site admin to add more.',
 				low: '6k credits left. Ask a site admin to add more.',
 				purchaseHint: 'Ask a site admin to add more.',
+				ctaType: 'contact_admin',
 			},
-		] )( 'tells $who who to ask, with no Upgrade', async ( { flags, zero, low, purchaseHint } ) => {
-			respondWith( { ai_credits: planSnapshot( 6_000 ), ...flags } );
-			const { result } = renderCredits( ImageStudioMode.Edit );
-			await waitFor( () => expect( result.current.notice ).toBeDefined() );
+		] )(
+			'tells $who who to ask, with no Upgrade',
+			async ( { flags, zero, low, purchaseHint, ctaType } ) => {
+				respondWith( { ai_credits: planSnapshot( 6_000 ), ...flags } );
+				const { result } = renderCredits( ImageStudioMode.Edit );
+				await waitFor( () => expect( result.current.notice ).toBeDefined() );
 
-			expect( result.current.notice ).toMatchObject( { message: low, dismissible: true } );
-			expect( result.current.notice?.action ).toBeUndefined();
-			expect( result.current.meter ).toEqual( {
-				status: expect.objectContaining( { plan: 'paid', percent: 15 } ),
-				purchaseHint,
-				isOpen: false,
-				onToggle: expect.any( Function ),
-			} );
-			expect( trackImageStudioUpgradeNoticeShown ).toHaveBeenCalledWith( {
-				mode: ImageStudioMode.Edit,
-				trigger: 'open',
-				...noticeCredits( 'low', 6_000 ),
-				ctaType: 'none',
-				ref: 'none',
-			} );
+				expect( result.current.notice ).toMatchObject( { message: low, dismissible: true } );
+				expect( result.current.notice?.action ).toBeUndefined();
+				expect( result.current.meter ).toEqual( {
+					status: expect.objectContaining( { plan: 'paid', percent: 15 } ),
+					purchaseHint,
+					isOpen: false,
+					onToggle: expect.any( Function ),
+				} );
+				expect( trackImageStudioUpgradeNoticeShown ).toHaveBeenCalledWith( {
+					mode: ImageStudioMode.Edit,
+					trigger: 'open',
+					...noticeCredits( 'low', 6_000 ),
+					ctaType,
+					ref: 'none',
+				} );
 
-			act( () => {
-				result.current.onTaskUpdate( finalUpdate( planSnapshot( 0 ) ) );
-			} );
-			expect( result.current.notice ).toMatchObject( { message: zero, dismissible: false } );
-			expect( result.current.notice?.action ).toBeUndefined();
-			expect( result.current.meter?.purchaseHint ).toBe( purchaseHint );
-			expect( trackImageStudioUpgradeNoticeShown ).toHaveBeenLastCalledWith( {
-				mode: ImageStudioMode.Edit,
-				trigger: 'refresh',
-				...noticeCredits( 'zero', 0 ),
-				ctaType: 'none',
-				ref: 'none',
-			} );
-		} );
+				act( () => {
+					result.current.onTaskUpdate( finalUpdate( planSnapshot( 0 ) ) );
+				} );
+				expect( result.current.notice ).toMatchObject( { message: zero, dismissible: false } );
+				expect( result.current.notice?.action ).toBeUndefined();
+				expect( result.current.meter?.purchaseHint ).toBe( purchaseHint );
+				expect( trackImageStudioUpgradeNoticeShown ).toHaveBeenLastCalledWith( {
+					mode: ImageStudioMode.Edit,
+					trigger: 'refresh',
+					...noticeCredits( 'zero', 0 ),
+					ctaType,
+					ref: 'none',
+				} );
+			}
+		);
 
 		it.each( [
 			{ name: 'sends no flags', flags: {} },

@@ -15,6 +15,7 @@ import {
 } from '../utils/credits';
 import {
 	type CreditsAccess,
+	getCreditsCtaType,
 	getCreditsNoticeMessage,
 	getCreditsPurchaseOptions,
 	parseCreditsAccess,
@@ -22,7 +23,6 @@ import {
 import {
 	type CreditsState,
 	type CreditsTracksEventName,
-	getCreditsCtaType,
 	getCreditsState,
 	getCreditsUserRole,
 	getTaskRefusalCode,

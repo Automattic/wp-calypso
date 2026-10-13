@@ -1,4 +1,5 @@
 import {
+	getCreditsCtaType,
 	getCreditsNoticeMessage,
 	getCreditsPurchaseOptions,
 	parseCreditsAccess,
@@ -89,6 +90,18 @@ describe( 'getCreditsPurchaseOptions', () => {
 		[ 'an admin who didn’t buy the plan', { canBuyCredits: true, canUpgrade: false } ],
 	] )( 'offers %s nothing on a plan without an upgrade', ( _who, access ) => {
 		expect( getCreditsPurchaseOptions( undefined, access ) ).toEqual( {} );
+	} );
+} );
+
+describe( 'getCreditsCtaType', () => {
+	it.each( [
+		[ 'upgrade', true, undefined ],
+		[ 'upgrade', true, 'site-admin' ],
+		[ 'contact_admin', false, 'site-admin' ],
+		[ 'contact_plan_owner', false, 'plan-owner' ],
+		[ 'none', false, undefined ],
+	] as const )( 'reports %s', ( ctaType, hasUpgradeLink, askToUpgrade ) => {
+		expect( getCreditsCtaType( hasUpgradeLink, askToUpgrade ) ).toBe( ctaType );
 	} );
 } );
 

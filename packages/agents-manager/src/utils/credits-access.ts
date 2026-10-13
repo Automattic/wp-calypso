@@ -10,6 +10,9 @@ export interface CreditsAccess {
 /** Who to ask, for people who can't upgrade the plan themselves. */
 export type CreditsAskToUpgrade = 'site-admin' | 'plan-owner';
 
+/** The call to action a credits notice shows, as Tracks events report it. */
+export type CreditsCtaType = 'upgrade' | 'contact_admin' | 'contact_plan_owner' | 'none';
+
 export interface CreditsPurchaseOptions {
 	upgradeUrl?: string;
 	askToUpgrade?: CreditsAskToUpgrade;
@@ -57,6 +60,24 @@ export function getCreditsPurchaseOptions(
 			__i18n_text_domain__
 		),
 	};
+}
+
+/** The call to action the notice shows: the Upgrade link, or who to ask. */
+export function getCreditsCtaType(
+	hasUpgradeLink: boolean,
+	askToUpgrade?: CreditsAskToUpgrade
+): CreditsCtaType {
+	if ( hasUpgradeLink ) {
+		return 'upgrade';
+	}
+	if ( askToUpgrade === 'site-admin' ) {
+		return 'contact_admin';
+	}
+	if ( askToUpgrade === 'plan-owner' ) {
+		return 'contact_plan_owner';
+	}
+
+	return 'none';
 }
 
 /** The low or zero-balance notice for site credits, with who to ask when the reader can't upgrade. */
