@@ -1,6 +1,5 @@
-import { basicCatalog, createComponentImplementation, MarkdownContext } from '@a2ui/react/v0_9';
+import { basicCatalog, createComponentImplementation } from '@a2ui/react/v0_9';
 import {
-	ButtonApi,
 	Catalog,
 	ColumnApi,
 	DataBindingSchema,
@@ -8,18 +7,12 @@ import {
 	TextApi,
 	TextFieldApi,
 } from '@a2ui/web_core/v0_9';
-import { Button as GutenbergButton, TextControl, TextareaControl } from '@wordpress/components';
+import { TextControl, TextareaControl } from '@wordpress/components';
 import { useEffect, useRef, useState } from '@wordpress/element';
 import { z } from 'zod';
+import Button from './button';
 
 const dynamicString = z.union( [ z.string(), DataBindingSchema ] );
-const actionContextValue = z.union( [
-	z.string(),
-	z.number(),
-	z.boolean(),
-	z.array( z.unknown() ),
-	DataBindingSchema,
-] );
 const textFieldApi = {
 	name: TextFieldApi.name,
 	schema: TextFieldApi.schema.pick( { label: true, value: true, variant: true } ).extend( {
@@ -28,24 +21,6 @@ const textFieldApi = {
 		variant: z.enum( [ 'shortText', 'longText' ] ).optional(),
 	} ),
 };
-const buttonApi = {
-	name: ButtonApi.name,
-	schema: ButtonApi.schema.pick( { child: true, action: true, variant: true } ).extend( {
-		variant: z.enum( [ 'default', 'primary' ] ).optional(),
-		action: z
-			.object( {
-				event: z
-					.object( {
-						name: z.string(),
-						context: z.record( actionContextValue ).optional(),
-					} )
-					.strict(),
-			} )
-			.strict()
-			.describe( 'REF:#/$defs/Action' ),
-	} ),
-};
-
 const TextField = createComponentImplementation( textFieldApi, ( { props, context } ) => {
 	const [ localValue, setLocalValue ] = useState( props.value ?? '' );
 	const previousValue = useRef( context.componentModel.properties.value );
@@ -81,17 +56,6 @@ const TextField = createComponentImplementation( textFieldApi, ( { props, contex
 		<TextControl { ...inputProps } />
 	);
 } );
-
-const Button = createComponentImplementation( buttonApi, ( { props, buildChild } ) => (
-	<GutenbergButton
-		variant={ props.variant === 'primary' ? 'primary' : 'secondary' }
-		onClick={ props.action }
-	>
-		<MarkdownContext.Provider value={ undefined }>
-			{ buildChild( props.child ) }
-		</MarkdownContext.Provider>
-	</GutenbergButton>
-) );
 
 const Text = {
 	...basicCatalog.components.get( 'Text' )!,
