@@ -146,6 +146,15 @@ it( 'keeps other Commerce entries on their existing checkout behavior', () => {
 	expect( checkout.searchParams.has( 'checkoutBackUrl' ) ).toBe( false );
 } );
 
+it( 'keeps existing navigation after choosing a plan from the grid without progress', () => {
+	mockQuery.delete( 'plan' );
+	mockQuery.delete( 'showPurchaseSteps' );
+	const navigate = jest.fn();
+	const nav = navigation( 'domains', navigate );
+	act( () => nav.submit( { slug: 'domains', providedDependencies: { domainCart: [] } } as never ) );
+	expect( navigate ).toHaveBeenLastCalledWith( STEPS.SITE_CREATION_STEP.slug );
+} );
+
 it( 'keeps the plan step when a visit chooses its plan from the grid', () => {
 	mockQuery.delete( 'plan' );
 	const navigate = jest.fn();
