@@ -1,4 +1,4 @@
-import { getAmEditorPostContext } from '../abilities';
+import { getAmEditorContentContext, getAmEditorPostContext } from '../abilities';
 import { getAgentsManagerInlineData } from './get-agents-manager-inline-data';
 import type { ContextProvider } from '../extension-types';
 
@@ -25,7 +25,7 @@ function getPostEditorClient(): string | undefined {
 	return classList.contains( 'post-type-post' ) ? 'post-editor' : undefined;
 }
 
-/** Big Sky's page context: where the user is, which editor, and the open post. */
+/** Big Sky's page context: where the user is, which editor, and what it holds. */
 export const bigSkyPageContextProvider: ContextProvider = {
 	getClientContext: () => {
 		const client = getPostEditorClient();
@@ -37,6 +37,7 @@ export const bigSkyPageContextProvider: ContextProvider = {
 			// The backend picks its routes by environment; Big Sky's are under this one.
 			environment: 'wp-admin',
 			...getAmEditorPostContext(),
+			...getAmEditorContentContext(),
 			...( client && { constructorArguments: { client } } ),
 		};
 	},

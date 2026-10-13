@@ -18,6 +18,7 @@ import {
 	getAmCheckpointContext,
 	getAmPageContentMarkup,
 	getAmPageStructure,
+	preloadAmEditorContentContext,
 } from '../abilities';
 import { findAbilityByName } from '../abilities/ability-name';
 import { handlePageDesignTaskUpdate } from '../abilities/stream-page-design/stream';
@@ -603,6 +604,10 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 	if ( agentProviders.length === 0 && ! isBigSkySite ) {
 		setLoadedProviderIds( [] );
 		return { markdownExtensions: defaultMarkdownExtensions };
+	}
+
+	if ( isBigSkySite ) {
+		void preloadAmEditorContentContext();
 	}
 
 	let mergedToolProvider: ToolProvider | undefined;

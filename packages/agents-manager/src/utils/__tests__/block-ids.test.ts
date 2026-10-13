@@ -40,6 +40,18 @@ it( 'mints four characters, a letter first, past an id already taken', () => {
 	expect( providerMap ).toEqual( { aaaa: 'uuid-taken', z999: 'uuid-hero' } );
 } );
 
+// A host names a block to the agent: the id must be the one the page structure lists.
+it( 'gives a host the short id the agent knows a block by', () => {
+	const { createShortIdLookup, getAgentBlockId, resolveClientId } = loadBlockIds();
+
+	const hero = createShortIdLookup().toShortId( 'uuid-hero' );
+	const footer = getAgentBlockId( 'uuid-footer' );
+
+	expect( getAgentBlockId( 'uuid-hero' ) ).toBe( hero );
+	expect( createShortIdLookup().findShortId( 'uuid-footer' ) ).toBe( footer );
+	expect( resolveClientId( footer ) ).toBe( 'uuid-footer' );
+} );
+
 it( 'finds a short id only once the block has one', () => {
 	const { toShortId, findShortId } = loadBlockIds().createShortIdLookup();
 
