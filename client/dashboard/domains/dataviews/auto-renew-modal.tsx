@@ -1,4 +1,5 @@
 import { bulkDomainsActionMutation } from '@automattic/api-queries';
+import { formatNumber } from '@automattic/number-formatters';
 import { useMutation } from '@tanstack/react-query';
 import {
 	__experimentalVStack as VStack,
@@ -43,9 +44,9 @@ export const AutoRenewModal = ( { items, onSuccess }: AutoRenewModalProps ) => {
 		);
 	};
 
-	/* translators: %(domainCount)d: the number of domains to update */
-	const helperText = sprintf( __( 'Managing auto-renewal settings for %(domainCount)d domains:' ), {
-		domainCount: items.length,
+	/* translators: %(domainCount)s: the formatted number of domains to update */
+	const helperText = sprintf( __( 'Managing auto-renewal settings for %(domainCount)s domains:' ), {
+		domainCount: formatNumber( items.length ),
 	} );
 
 	return (

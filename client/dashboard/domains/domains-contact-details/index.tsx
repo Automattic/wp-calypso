@@ -7,6 +7,7 @@ import {
 	type Domain,
 } from '@automattic/api-core';
 import { bulkDomainsActionMutation, domainWhoisValidateMutation } from '@automattic/api-queries';
+import { formatNumber } from '@automattic/number-formatters';
 import { useMutation } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import { useDispatch } from '@wordpress/data';
@@ -210,10 +211,10 @@ export default function DomainsContactInfo() {
 	};
 
 	const editingMessage =
-		/* translators: %(domainCount)d: the number of domains */
+		/* translators: %(domainCount)s: the formatted number of domains */
 		_n(
-			'Editing contact details for %(domainCount)d domain:',
-			'Editing contact details for %(domainCount)d domains:',
+			'Editing contact details for %(domainCount)s domain:',
+			'Editing contact details for %(domainCount)s domains:',
 			selectedDomains.length
 		);
 
@@ -234,7 +235,9 @@ export default function DomainsContactInfo() {
 				beforeForm={
 					<Notice
 						variant="warning"
-						title={ sprintf( editingMessage, { domainCount: selectedDomains.length } ) }
+						title={ sprintf( editingMessage, {
+							domainCount: formatNumber( selectedDomains.length ),
+						} ) }
 					>
 						<ul style={ { paddingLeft: 0 } }>
 							{ selectedDomains.map( ( domain ) => (
