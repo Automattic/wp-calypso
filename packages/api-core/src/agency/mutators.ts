@@ -88,3 +88,18 @@ export async function submitAgencyPressablePremiumPlanReferral(
 		body: { agency_id: agencyId, ...referral },
 	} );
 }
+
+/**
+ * Records that the agency opened a Library resource.
+ */
+export async function recordAgencyResourceEvent(
+	agencyId: number,
+	resourceId: number,
+	resourceName: string
+): Promise< { success: boolean } > {
+	return wpcom.req.post( {
+		path: '/agency/resources/record-event',
+		apiNamespace: 'wpcom/v2',
+		body: { agency_id: agencyId, resource_id: resourceId, resource_name: resourceName },
+	} );
+}
