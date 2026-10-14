@@ -618,7 +618,12 @@ const SiteSpec: StepType = function SiteSpec( { navigation } ) {
 		// converts the site to Atomic, which a Simple build must never do.
 		const siteId = Number( queryParams.get( 'siteId' ) ) || null;
 		const start = isSimpleImport
-			? startBlueprintSimpleImport( blueprintArchiveSiteIdentifier, blueprintArchiveSlug, siteId )
+			? startBlueprintSimpleImport(
+					blueprintArchiveSiteIdentifier,
+					blueprintArchiveSlug,
+					siteId,
+					getSpecMetaFromQuery( queryParams )
+				)
 			: startBlueprintArchiveImport( blueprintArchiveSiteIdentifier, blueprintArchiveSlug );
 
 		start

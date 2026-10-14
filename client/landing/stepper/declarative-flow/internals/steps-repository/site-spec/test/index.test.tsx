@@ -472,13 +472,31 @@ describe( 'SiteSpec blueprint archive import', () => {
 		it( 'starts the Simple import when the interview opens, never the archive restore', () => {
 			renderSiteSpec();
 
+			// The booking URL from the entry link rides along, so the import can write it into
+			// the blueprint content's placeholder without an agent.
 			expect( startBlueprintSimpleImport ).toHaveBeenCalledWith(
 				'example.wordpress.com',
 				'zoom',
-				123
+				123,
+				{ zoom_booking_url: 'https://scheduler.zoom.us/jason' }
 			);
 			// The archive restore converts the site to Atomic, which a Simple build must never do.
 			expect( startBlueprintArchiveImport ).not.toHaveBeenCalled();
+		} );
+
+		it( 'starts the import with no site values when the entry link carried none', () => {
+			mockQueryParams = new URLSearchParams(
+				'blueprint_simple_import=1&blueprint_slug=zoom&siteSlug=example.wordpress.com&siteId=123'
+			);
+
+			renderSiteSpec();
+
+			expect( startBlueprintSimpleImport ).toHaveBeenCalledWith(
+				'example.wordpress.com',
+				'zoom',
+				123,
+				{}
+			);
 		} );
 
 		it( 'waits on the import alone, applies the spec and hands over to the site editor directly', async () => {

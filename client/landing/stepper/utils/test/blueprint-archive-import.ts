@@ -121,6 +121,22 @@ describe( 'startBlueprintSimpleImport', () => {
 		] );
 	} );
 
+	// The job fills the blueprint content's placeholders from these, so they have to be on
+	// the request that queues it, not on a later call.
+	it( 'sends the site values with the import request', async () => {
+		mockPost.mockResolvedValue( {} );
+
+		await startBlueprintSimpleImport( 'example.wordpress.com', 'zoom', 123, {
+			zoom_booking_url: 'https://scheduler.zoom.us/jason',
+		} );
+
+		const [ params ] = mockPost.mock.calls[ 0 ];
+		expect( params.formData ).toContainEqual( [
+			'site_values[zoom_booking_url]',
+			'https://scheduler.zoom.us/jason',
+		] );
+	} );
+
 	it( 'resolves the blog id first when the caller only has a slug', async () => {
 		mockGet.mockResolvedValue( { ID: 456 } );
 		mockPost.mockResolvedValue( {} );

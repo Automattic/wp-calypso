@@ -10,7 +10,7 @@ import { NamePulseSearchNotice } from './components/notice';
 import { NamePulseResultsSection } from './components/results-section';
 import { NamePulseSearchInput } from './components/search-input';
 import { useNamePulseBundle } from './hooks/use-name-pulse-bundle';
-import { NamePulseResultSetContext } from './hooks/use-name-pulse-result-set-id';
+import { NamePulseResultSetContext } from './hooks/use-name-pulse-result-set';
 import { useNamePulseSearch } from './hooks/use-name-pulse-search';
 import { useNamePulseSearchTracking } from './hooks/use-name-pulse-search-tracking';
 
@@ -44,14 +44,14 @@ export const NamePulseResults = () => {
 		isLoadingCreative,
 		revealExact,
 	} = search;
-	const resultSetId = useNamePulseSearchTracking( search );
+	const resultSet = useNamePulseSearchTracking( search );
 	const { bundle, isLoading: isLoadingBundle } = useNamePulseBundle( bundleAnchors );
 	const bundleCard = bundle ? (
 		<NamePulseBundleCard key={ bundle.bundle_group_id } bundle={ bundle } isWide={ ! exactMatch } />
 	) : null;
 
 	return (
-		<NamePulseResultSetContext.Provider value={ resultSetId }>
+		<NamePulseResultSetContext.Provider value={ resultSet }>
 			<VStack spacing={ 8 } className="domain-search--results domain-search--name-pulse">
 				<NamePulseSearchInput showFilter />
 				{ /* Keyed by the query so a new search brings back a dismissed notice. VStack

@@ -6,7 +6,7 @@ import {
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
-import { useEffect, useMemo, useRef } from 'react';
+import { useEffect, useMemo } from 'react';
 import { parseMatchReasons } from '../../helpers';
 import {
 	DomainSuggestionContainerContext,
@@ -31,9 +31,10 @@ import {
 } from '../helpers';
 import { useNamePulseCartToggle } from '../hooks/use-name-pulse-cart-toggle';
 import {
-	useNamePulseResultSetId,
-	type NamePulseRenderReport,
-} from '../hooks/use-name-pulse-result-set-id';
+	getNamePulseRenderKey,
+	recordNamePulseRender,
+	useNamePulseResultSet,
+} from '../hooks/use-name-pulse-result-set';
 import { NamePulsePolicyNoticeDialog } from './policy-notice-dialog';
 
 /**
@@ -66,8 +67,9 @@ export const NamePulseExactMatchCard = ( {
 		} ),
 		[ domainName, availability ]
 	);
-	const resultSetId = useNamePulseResultSetId();
-	const reported = useRef< NamePulseRenderReport | undefined >( undefined );
+	const resultSet = useNamePulseResultSet();
+	const renderKey = getNamePulseRenderKey( 'exact', domainName );
+	const getRendered = () => resultSet?.rendered.get( renderKey );
 	const {
 		inCart,
 		isPending,
@@ -80,18 +82,20 @@ export const NamePulseExactMatchCard = ( {
 		isPolicyNoticeOpen,
 		confirmPolicyNotice,
 		closePolicyNotice,
-	} = useNamePulseCartToggle( result, 0, reported, availability.policy_notices );
+	} = useNamePulseCartToggle( result, 0, getRendered, availability.policy_notices );
 
 	useEffect( () => {
-		if ( ! resultSetId || reported.current?.resultSetId === resultSetId ) {
+		const id = resultSet?.id;
+
+		if ( ! id || resultSet.rendered.has( renderKey ) ) {
 			return;
 		}
 
-		reported.current = { resultSetId, group: 'exact', position: 0 };
+		const report = recordNamePulseRender( { ...resultSet, id }, renderKey, 'exact', 0 );
 		events.onSuggestionRender(
 			toNamePulseTracksSuggestion( result, 0 ),
 			undefined,
-			getNamePulseRenderTracksProps( result, 'exact', resultSetId )
+			getNamePulseRenderTracksProps( result, report )
 		);
 	} );
 

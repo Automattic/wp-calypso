@@ -12,6 +12,7 @@ import { buildCart } from '../../../test-helpers/factories/cart';
 import { withNamePulseQueries } from '../../../test-helpers/factories/name-pulse';
 import { queryClient } from '../../../test-helpers/renderer';
 import { NamePulseDomainStatus, type NamePulseDomainResult } from '../../helpers';
+import { NamePulseResultSetContext } from '../../hooks/use-name-pulse-result-set';
 import { NamePulseResultRow, type NamePulseResultRowVariant } from '../result-row';
 import type { DomainAvailability } from '@automattic/api-core';
 
@@ -112,6 +113,44 @@ const renderRow = (
 describe( 'NamePulseResultRow', () => {
 	beforeEach( () => {
 		queryClient.clear();
+	} );
+
+	it( 'gives each name its own railcar when several show in the same slot', () => {
+		const onSuggestionRender = jest.fn();
+		const resultSet = { id: 'set-1', rendered: new Map() };
+
+		const Wrapper = ( { result }: { result: NamePulseDomainResult } ) => {
+			const contextValue = useDomainSearchContextValue( {
+				cart: buildCart(),
+				events: { onSuggestionRender },
+				config: { showNamePulseSearch: true },
+			} );
+
+			return (
+				<QueryClientProvider client={ queryClient }>
+					<DomainSearchContext.Provider value={ contextValue }>
+						<NamePulseResultSetContext.Provider value={ resultSet }>
+							<NamePulseResultRow
+								key={ result.domain_name }
+								result={ result }
+								group="top"
+								position={ 2 }
+							/>
+						</NamePulseResultSetContext.Provider>
+					</DomainSearchContext.Provider>
+				</QueryClientProvider>
+			);
+		};
+
+		const { rerender } = render(
+			<Wrapper result={ buildResult( { domain_name: 'test.art' } ) } />
+		);
+		rerender( <Wrapper result={ buildResult( { domain_name: 'test.store' } ) } /> );
+
+		expect( onSuggestionRender.mock.calls.map( ( [ , , props ] ) => props.railcar ) ).toEqual( [
+			'set-1-0',
+			'set-1-1',
+		] );
 	} );
 
 	it( 'falls back to the server-formatted cost, without a sale, when currency_code is missing', () => {

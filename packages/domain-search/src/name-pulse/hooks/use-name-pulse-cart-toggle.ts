@@ -11,7 +11,7 @@ import {
 	toNamePulseTracksSuggestion,
 } from '../helpers';
 import { setNamePulseVerdict } from './use-name-pulse-verdicts';
-import type { NamePulseRenderReport } from './use-name-pulse-result-set-id';
+import type { NamePulseRenderReport } from './use-name-pulse-result-set';
 import type { DomainAvailability, PolicyNotice } from '@automattic/api-core';
 
 export interface NamePulsePolicyNotice {
@@ -27,8 +27,8 @@ export interface NamePulsePolicyNotice {
 export const useNamePulseCartToggle = (
 	result: Parameters< typeof toNamePulseTracksSuggestion >[ 0 ],
 	position: number,
-	// Read on click: the render is reported in an effect, after this hook runs.
-	rendered: { current?: NamePulseRenderReport },
+	// Read on click, as the render is reported after this hook runs.
+	getRendered: () => NamePulseRenderReport | undefined,
 	policyNotices: PolicyNotice[] = []
 ) => {
 	const domainName = result.domain_name;
@@ -44,7 +44,7 @@ export const useNamePulseCartToggle = (
 
 	const inCart = cart.hasItem( domainName );
 	const tracksVendor = getNamePulseTracksVendor( result.source );
-	const getRenderedPosition = () => rendered.current?.position ?? position;
+	const getRenderedPosition = () => getRendered()?.position ?? position;
 	const getTracksSuggestion = () => toNamePulseTracksSuggestion( result, getRenderedPosition() );
 
 	const {
@@ -60,7 +60,7 @@ export const useNamePulseCartToggle = (
 					events.onNamePulseTracksEvent( 'remove_button_click', {
 						domain_name: domainName,
 						remove_source: 'row',
-						result_group: rendered.current?.group,
+						result_group: getRendered()?.group,
 						position: getRenderedPosition(),
 						root_vendor: tracksVendor,
 					} );
@@ -118,14 +118,11 @@ export const useNamePulseCartToggle = (
 		isPending,
 		error,
 		toggleCart: () => {
-			if ( ! inCart ) {
-				events.onSuggestionInteract(
-					getTracksSuggestion(),
-					rendered.current && {
-						result_set_id: rendered.current.resultSetId,
-						result_group: rendered.current.group,
-					}
-				);
+			const rendered = getRendered();
+
+			// Only a rendered card has a railcar to match.
+			if ( ! inCart && rendered ) {
+				events.onSuggestionInteract( getTracksSuggestion(), rendered.railcar );
 			}
 
 			if ( inCart || policyNotices.length === 0 ) {

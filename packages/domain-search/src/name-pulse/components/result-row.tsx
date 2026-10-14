@@ -6,7 +6,7 @@ import { cautionFilled, cart as cartIcon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { Badge } from '@wordpress/ui';
 import clsx from 'clsx';
-import { useEffect, useMemo, useRef } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useDomainSearch } from '../../page/context';
 import { DomainSearchTrademarkClaimsModal } from '../../ui';
 import {
@@ -22,9 +22,10 @@ import {
 import { useNamePulseCartToggle } from '../hooks/use-name-pulse-cart-toggle';
 import { useNamePulseLabelLimit } from '../hooks/use-name-pulse-label-limit';
 import {
-	useNamePulseResultSetId,
-	type NamePulseRenderReport,
-} from '../hooks/use-name-pulse-result-set-id';
+	getNamePulseRenderKey,
+	recordNamePulseRender,
+	useNamePulseResultSet,
+} from '../hooks/use-name-pulse-result-set';
 import { setNamePulseVerdict } from '../hooks/use-name-pulse-verdicts';
 import { NamePulsePolicyNoticeDialog } from './policy-notice-dialog';
 
@@ -124,7 +125,7 @@ export const NamePulseResultRow = ( {
 }: NamePulseResultRowProps ) => {
 	const { __ } = useI18n();
 	const { queries, events } = useDomainSearch();
-	const resultSetId = useNamePulseResultSetId();
+	const resultSet = useNamePulseResultSet();
 	const queryClient = useQueryClient();
 	// Below wide desktop the row is too narrow to truncate without losing most of
 	// the name, so the name wraps onto a second line instead.
@@ -169,7 +170,8 @@ export const NamePulseResultRow = ( {
 	const isUnknown = status === NamePulseDomainStatus.UNKNOWN;
 	const isAvailable = status === NamePulseDomainStatus.AVAILABLE;
 	const isUnavailable = ! isWaiting && ! isUnknown && ! isAvailable;
-	const reported = useRef< NamePulseRenderReport | undefined >( undefined );
+	const renderKey = getNamePulseRenderKey( group, domainName );
+	const getRendered = () => resultSet?.rendered.get( renderKey );
 	// A failed check leaves the row on its badge alone: no price, and no skeleton
 	// waiting for one that is not coming.
 	const isPremiumPriceMissing = needsPremiumPrice && ! realtimeVerdict;
@@ -188,19 +190,21 @@ export const NamePulseResultRow = ( {
 		isPolicyNoticeOpen,
 		confirmPolicyNotice,
 		closePolicyNotice,
-	} = useNamePulseCartToggle( row, position, reported, row.policy_notices );
+	} = useNamePulseCartToggle( row, position, getRendered, row.policy_notices );
 
 	// Reported once per result set, when the row has a verdict, taken names included.
 	useEffect( () => {
-		if ( isWaiting || ! resultSetId || reported.current?.resultSetId === resultSetId ) {
+		const id = resultSet?.id;
+
+		if ( isWaiting || ! id || resultSet.rendered.has( renderKey ) ) {
 			return;
 		}
 
-		reported.current = { resultSetId, group, position };
+		const report = recordNamePulseRender( { ...resultSet, id }, renderKey, group, position );
 		events.onSuggestionRender(
 			toNamePulseTracksSuggestion( row, position ),
 			undefined,
-			getNamePulseRenderTracksProps( row, group, resultSetId )
+			getNamePulseRenderTracksProps( row, report )
 		);
 	} );
 	const { nameRef, labelRef, limit: labelLimit } = useNamePulseLabelLimit( label );
