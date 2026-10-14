@@ -186,12 +186,12 @@ describe( 'getLaunchCheckoutUrl', () => {
 
 	it( 'passes through ref, coupon and dashboard', () => {
 		const url = parse(
-			getLaunchCheckoutUrl( { siteSlug, ref: 'my-home', coupon: 'SAVE', dashboard: 'ciab' } )
+			getLaunchCheckoutUrl( { siteSlug, ref: 'my-home', coupon: 'SAVE', dashboard: 'a4a' } )
 		);
 
 		expect( url.searchParams.get( 'ref' ) ).toBe( 'my-home' );
 		expect( url.searchParams.get( 'coupon' ) ).toBe( 'SAVE' );
-		expect( url.searchParams.get( 'dashboard' ) ).toBe( 'ciab' );
+		expect( url.searchParams.get( 'dashboard' ) ).toBe( 'a4a' );
 	} );
 
 	it( 'drops a dashboard it does not know', () => {
