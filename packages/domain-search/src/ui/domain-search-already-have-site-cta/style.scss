@@ -8,3 +8,8 @@
 		text-align: left;
 	}
 }
+
+.domain-search-already-have-site-cta__icon {
+	// Turn the diagonal `update` arrows into a horizontal, clockwise repeat glyph.
+	transform: scaleX( -1 ) rotate( -45deg );
+}
