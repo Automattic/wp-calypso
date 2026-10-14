@@ -43,14 +43,14 @@ export function getStandaloneBlueprintSimpleSlug(
  * keys are kept, and each is sanitised there). Carried from the CTA through to the site-spec URL,
  * since the stepper's redirects do not keep them otherwise.
  */
-export const SPEC_META_QUERY_PARAMS = [ 'zoom_booking_url' ] as const;
+export const SPEC_META_QUERY_PARAMS = [ 'zoom_booking_url', 'site_title' ] as const;
 
 export type SpecMeta = Partial< Record< ( typeof SPEC_META_QUERY_PARAMS )[ number ], string > >;
 
 /**
- * Every spec meta entry today is a link, and the widget may well render it as one. wpcom owns
- * the allow list and the sanitising of what is stored, but that runs after the value has been
- * through the browser, so anything that is not a web URL is dropped here.
+ * A link the widget may well render as one. wpcom owns the allow list and the sanitising of
+ * what is stored, but that runs after the value has been through the browser, so anything
+ * that is not a web URL is dropped here.
  */
 function isWebUrl( value: string ): boolean {
 	try {
@@ -61,13 +61,32 @@ function isWebUrl( value: string ): boolean {
 }
 
 /**
- * The spec meta present on a query string: the allow-listed keys whose value is a web URL.
+ * One line of plain text, as a partner names a business or a person: no markup, a sane length.
+ */
+function isPlainTitle( value: string ): boolean {
+	return value.length <= 120 && ! /[<>\n\r]/.test( value );
+}
+
+/**
+ * What each allow-listed entry has to look like to be forwarded at all. wpcom sanitises again
+ * when it stores the value; this keeps anything hostile from reaching the widget.
+ */
+const SPEC_META_ACCEPTS: Record<
+	( typeof SPEC_META_QUERY_PARAMS )[ number ],
+	( value: string ) => boolean
+> = {
+	zoom_booking_url: isWebUrl,
+	site_title: isPlainTitle,
+};
+
+/**
+ * The spec meta present on a query string: the allow-listed keys whose value passes its check.
  */
 export function getSpecMetaFromQuery( query: URLSearchParams ): SpecMeta {
 	const meta: SpecMeta = {};
 	for ( const key of SPEC_META_QUERY_PARAMS ) {
 		const value = query.get( key )?.trim();
-		if ( value && isWebUrl( value ) ) {
+		if ( value && SPEC_META_ACCEPTS[ key ]( value ) ) {
 			meta[ key ] = value;
 		}
 	}
