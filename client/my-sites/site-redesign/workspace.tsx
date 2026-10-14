@@ -166,6 +166,7 @@ export function RedesignWorkspace( {
 		!! run?.brief_draft &&
 		!! run.brief_revision &&
 		!! run.eligibility.can_preview &&
+		( ! hasPreview || pendingBrief ) &&
 		! busy &&
 		! [ 'generating', 'applying', 'applied', 'superseded', 'rolled_back' ].includes( run.status );
 	// Starting over makes a fresh run and conversation; the live site is untouched.
@@ -797,7 +798,7 @@ function BriefDirection( { brief, pending }: { brief: DesignBrief; pending: bool
 		<article className="site-redesign-direction">
 			<header className="site-redesign-direction-mast">
 				<span className={ `site-redesign-direction-status${ pending ? ' is-pending' : '' }` }>
-					{ pending ? __( 'Ready to generate' ) : __( 'Behind your current design' ) }
+					{ pending ? __( 'Ready to generate' ) : __( 'Behind your new design' ) }
 				</span>
 				<h1 className="site-redesign-direction-title">{ brief.goal }</h1>
 			</header>

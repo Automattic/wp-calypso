@@ -451,8 +451,8 @@ test( 'starts a new brief as a fresh run without a chat message, generation, or 
 	renderWorkspace();
 	await user.click( screen.getByRole( 'radio', { name: 'Design' } ) );
 	await user.click( screen.getByRole( 'radio', { name: 'Design brief' } ) );
-	expect( screen.getByText( /brief behind your current design/ ) ).toBeVisible();
-	expect( screen.getByRole( 'button', { name: 'Generate design' } ) ).toBeVisible();
+	expect( screen.getByText( /brief behind this design/ ) ).toBeVisible();
+	expect( screen.queryByRole( 'button', { name: 'Generate design' } ) ).toBeNull();
 	await user.click( screen.getByRole( 'button', { name: 'Start a new brief' } ) );
 	expect( mockRestart ).toHaveBeenCalledTimes( 1 );
 	expect( submitChatMessage ).not.toHaveBeenCalled();
@@ -666,4 +666,21 @@ describe( 'route access', () => {
 		render( <SiteRedesign /> );
 		expect( mockRedirect ).toHaveBeenCalledWith( '/themes/example.wordpress.com' );
 	} );
+} );
+
+test( 'a brief that already produced its preview offers no Generate design button', async () => {
+	mockState = {
+		...mockState,
+		run: {
+			...mockRun,
+			brief_draft: mockRun.brief,
+			brief_revision: 2,
+			generation: { id: 'gen_1', status: 'succeeded', brief_revision: 2, error: null },
+			can_restart: true,
+		},
+	};
+	renderWorkspace();
+	await userEvent.setup().click( screen.getByRole( 'radio', { name: 'Design brief' } ) );
+	expect( screen.queryByRole( 'button', { name: 'Generate design' } ) ).toBeNull();
+	expect( screen.getByRole( 'button', { name: 'Start a new brief' } ) ).toBeEnabled();
 } );

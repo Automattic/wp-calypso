@@ -179,7 +179,7 @@
 
 /* Design brief: the direction, its type and palette, and who it is for. */
 .site-redesign-panel.is-brief {
-	max-inline-size: 520px;
+	max-inline-size: 880px;
 	container-type: inline-size;
 	.site-redesign-brief-next {
 		margin-block-start: 24px !important;
@@ -193,7 +193,7 @@
 	flex-direction: column;
 	align-items: flex-start;
 	justify-content: space-between;
-	gap: 12px 24px;
+	gap: 24px;
 }
 .site-redesign-direction-title {
 	inline-size: 100%;
@@ -217,6 +217,7 @@
 	color: var( --color-text-subtle );
 	font-size: 12px;
 	font-weight: 500;
+	line-height: 20px;
 	white-space: nowrap;
 	&::before {
 		content: '';
@@ -410,9 +411,17 @@
 	}
 }
 
+/* Keep the empty interview and generation titles anchored through the transition. */
+.site-redesign-panel.is-welcome,
+.site-redesign-panel.site-redesign-progress-panel {
+	box-sizing: border-box;
+	max-inline-size: 520px;
+	min-block-size: 480px;
+}
+
 /* Welcome: the empty interview view reads as one sequence that starts in the chat. */
 .site-redesign-panel.is-welcome {
-	max-inline-size: 720px;
+	padding-block-start: 60px;
 	h1 {
 		margin-block-end: 12px;
 	}
@@ -455,7 +464,7 @@
 	max-inline-size: 520px;
 	container-type: inline-size;
 	> .site-redesign-direction-status {
-		margin-block: 0 16px;
+		margin-block: 0 32px;
 	}
 }
 .site-redesign-progress-panel .site-redesign-progress-bar {
