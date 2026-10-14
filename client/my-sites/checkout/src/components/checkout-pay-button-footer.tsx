@@ -4,7 +4,6 @@ import { Icon } from '@wordpress/components';
 import { lock, reusableBlock } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
-import CheckoutProcessorNotice from './checkout-processor-notice';
 import CheckoutTermsModal from './checkout-terms-modal';
 import { getRefundWindowCopy } from './refund-policies';
 import {
@@ -128,8 +127,6 @@ export default function CheckoutPayButtonFooter( { cart }: { cart: ResponseCart 
 							{ components }
 						) }
 			</LegalNotice>
-
-			<CheckoutProcessorNotice />
 
 			<CheckoutTermsModal
 				cart={ cart }

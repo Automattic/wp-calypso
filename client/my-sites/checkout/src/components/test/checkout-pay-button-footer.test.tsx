@@ -43,9 +43,9 @@ describe( 'CheckoutPayButtonFooter', () => {
 		const { container } = renderFooter( cart );
 
 		expect( screen.getByText( /money back guarantee/i ) ).toBeInTheDocument();
-		// 5 direct children: SSL trust line, refund trust line, divider, legal notice, processor notice.
+		// 4 direct children: SSL trust line, refund trust line, divider, legal notice.
 		const wrapper = container.querySelector( '.checkout-pay-button-footer' );
-		expect( wrapper?.childElementCount ).toBe( 5 );
+		expect( wrapper?.childElementCount ).toBe( 4 );
 	} );
 
 	it( 'omits the entire refund row for a cart with no refund window', () => {
@@ -56,8 +56,8 @@ describe( 'CheckoutPayButtonFooter', () => {
 		// refund row in the DOM would add dead space above the divider. Confirm
 		// the row's wrapper element is gone, not just its inner content.
 		const wrapper = container.querySelector( '.checkout-pay-button-footer' );
-		// 4 direct children: SSL trust line, divider, legal notice, processor notice (modal is closed).
-		expect( wrapper?.childElementCount ).toBe( 4 );
+		// 3 direct children: SSL trust line, divider, legal notice (modal is closed).
+		expect( wrapper?.childElementCount ).toBe( 3 );
 	} );
 
 	it( 'links the AI Credits Guidelines for a cart containing Studio Code AI Credits', () => {
@@ -79,13 +79,5 @@ describe( 'CheckoutPayButtonFooter', () => {
 		expect(
 			screen.queryByRole( 'link', { name: 'AI Credits Guidelines' } )
 		).not.toBeInTheDocument();
-	} );
-
-	it( 'shows the payment processor disclosure below the terms notice', () => {
-		const { container } = renderFooter( cartWith( PLAN_PREMIUM ) );
-
-		const wrapper = container.querySelector( '.checkout-pay-button-footer' );
-		expect( screen.getByText( /Your payment will be processed by/ ) ).toBeVisible();
-		expect( wrapper?.lastElementChild ).toHaveClass( 'checkout-processor-notice' );
 	} );
 } );

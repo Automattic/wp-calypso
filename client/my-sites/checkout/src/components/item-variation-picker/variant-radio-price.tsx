@@ -67,10 +67,10 @@ const PriceSuffix = styled.span`
 const Variant = styled.div< { isMobileCheckoutStickySummary?: boolean } >`
 	align-items: center;
 	display: flex;
-	font-size: 16px;
+	font-size: 14px;
 	font-weight: 400;
 	justify-content: space-between;
-	line-height: 24px;
+	line-height: 20px;
 	width: 100%;
 
 	${ ( props ) =>
@@ -92,9 +92,9 @@ const VariantTermLabel = styled.span< { isCheckoutUiRedesignV1?: boolean } >`
 const PriceArea = styled.span< { inlineDiscount?: boolean; isCheckoutUiRedesignV1?: boolean } >`
 	text-align: right;
 	display: flex;
-	flex-direction: ${ ( props ) => ( props.inlineDiscount ? 'row' : 'column' ) };
-	gap: ${ ( props ) => ( props.inlineDiscount ? '8px' : '2px' ) };
-	align-items: ${ ( props ) => ( props.inlineDiscount ? 'center' : 'flex-end' ) };
+	flex-direction: ${ ( props ) => ( props.inlineDiscount ? 'row' : 'row-reverse' ) };
+	gap: 8px;
+	align-items: center;
 	${ ( props ) =>
 		props.isCheckoutUiRedesignV1 &&
 		`

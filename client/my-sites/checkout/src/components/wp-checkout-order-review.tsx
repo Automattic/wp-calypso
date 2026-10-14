@@ -187,14 +187,15 @@ export default function WPCheckoutOrderReview( {
 					)
 				) : (
 					<>
-						{ domainUrl && (
+						{ /* Site and account lines only show in the redesign experiment, which restyles them. */ }
+						{ isCheckoutUiRedesignV1 && domainUrl && (
 							<SiteSummary className="checkout-review-order__site">
 								{ isCheckoutUiRedesignV1
 									? domainUrl
 									: translate( 'Site: %s', { args: domainUrl } ) }
 							</SiteSummary>
 						) }
-						{ currentUserEmail && ! isGiftPurchase && (
+						{ isCheckoutUiRedesignV1 && currentUserEmail && ! isGiftPurchase && (
 							<EmailSummary className="checkout-review-order__email">
 								{ isCheckoutUiRedesignV1
 									? currentUserEmail

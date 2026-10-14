@@ -114,6 +114,7 @@ import badge7Src from './assets/icons/badge-7.svg';
 import badgeGenericSrc from './assets/icons/badge-generic.svg';
 import badgeSecurity from './assets/icons/security.svg';
 import CheckoutNextSteps from './checkout-next-steps';
+import CheckoutProcessorNotice from './checkout-processor-notice';
 import { CheckoutSidebarPlanUpsell } from './checkout-sidebar-plan-upsell';
 import DIFMOfferRequestNotice from './difm-offer-request-notice';
 import { EmptyCart, shouldShowEmptyCartPage } from './empty-cart';
@@ -1103,10 +1104,13 @@ export default function CheckoutMainContent( {
 					) }
 					<PaymentMethodStep
 						activeStepHeader={
-							<PaymentMethodFilter
-								areStoredCardsFiltered={ areStoredCardsFiltered }
-								isBusinessCardsFilterEmpty={ isBusinessCardsFilterEmpty }
-							/>
+							<>
+								<CheckoutProcessorNotice />
+								<PaymentMethodFilter
+									areStoredCardsFiltered={ areStoredCardsFiltered }
+									isBusinessCardsFilterEmpty={ isBusinessCardsFilterEmpty }
+								/>
+							</>
 						}
 						canEditStep={ canEditPaymentStep() }
 						editButtonText={ isCheckoutUiRedesignV1 ? undefined : String( translate( 'Edit' ) ) }
@@ -1133,12 +1137,15 @@ export default function CheckoutMainContent( {
 							   above activeStepContent, so the default methods card is
 							   left untouched. */
 							activeStepHeader: (
-								<p className="checkout-payment-method__secure-notice">
-									{ translate( 'All transactions are secure and encrypted.' ) }
-									{ /* getRefundWindowCopy is a badge label (no terminal stop), so it
-									     needs one to sit in prose here. */ }
-									{ paymentStepRefundCopy ? <> { paymentStepRefundCopy }.</> : null }
-								</p>
+								<>
+									<p className="checkout-payment-method__secure-notice">
+										{ translate( 'All transactions are secure and encrypted.' ) }
+										{ /* getRefundWindowCopy is a badge label (no terminal stop), so it
+										     needs one to sit in prose here. */ }
+										{ paymentStepRefundCopy ? <> { paymentStepRefundCopy }.</> : null }
+									</p>
+									<CheckoutProcessorNotice />
+								</>
 							),
 						} ) }
 						isCompleteCallback={ () => {
@@ -2398,7 +2405,7 @@ const CheckoutSidebarNudgeWrapper = styled.div`
 	}
 
 	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
-		row-gap: 36px;
+		row-gap: 16px;
 	}
 `;
 
@@ -2653,6 +2660,19 @@ const WPCheckoutWrapper = styled.div< {
 	& *:focus {
 		outline: ${ ( props ) => props.theme.colors.outline } solid 2px;
 	}
+
+	${ ( props ) =>
+		! props.isCheckoutUiRedesignV1 &&
+		css`
+			/* Flat sidebar cards: a hairline one step lighter than the plan
+			   option borders (Gray 10), with the same 3px radius. */
+			.checkout__summary-card,
+			.checkout-sidebar-plan-upsell.card {
+				box-shadow: none;
+				border: 1px solid var( --studio-gray-5 );
+				border-radius: 3px;
+			}
+		` }
 
 	.checkout__summary-area {
 		position: sticky;
@@ -3085,6 +3105,40 @@ const WPCheckoutMainContent = styled.div< {
 	${ ( props ) => css`
 		.checkout-line-item .checkout-line-item__remove-product {
 			font-size: 14px;
+		}
+		${
+			! props.isMobileCheckoutStickySummary &&
+			css`
+				/* Keep the step's green check but drop the "Your order" title, so the
+				   check sits beside the first product row. The title stays readable
+				   to screen readers. */
+				.wp-checkout__review-order-step .checkout-step__header {
+					/* Phones have no gutter for the check, so drop the header there. */
+					display: none;
+
+					@media ( ${ props.theme.breakpoints.tabletUp } ) {
+						display: flex;
+						margin-bottom: 0;
+						height: 0;
+						overflow: visible;
+						/* Moves the check down to sit centred on the first product title. */
+						transform: translateY( 31px );
+						position: relative;
+						z-index: 1;
+					}
+				}
+				.wp-checkout__review-order-step .checkout-step__header h2 > span {
+					position: absolute;
+					width: 1px;
+					height: 1px;
+					overflow: hidden;
+					clip: rect( 0 0 0 0 );
+					white-space: nowrap;
+				}
+				.wp-checkout__review-order-step .order-review-line-items {
+					margin-top: 0;
+				}
+			`
 		}
 		.form-fieldset.contact-details-form-fields .form__hidden-input a {
 			font-weight: 500;
