@@ -1,4 +1,24 @@
 /* Docked chat base */
+.agents-manager-chat--embedded {
+	position: relative;
+	block-size: 100%;
+	min-block-size: 0;
+	inline-size: 100%;
+	background-color: $gray-900;
+	padding: $layout-spacing;
+	box-sizing: border-box;
+
+	.agenttic.Chat-module_container {
+		position: relative;
+		block-size: 100%;
+	}
+}
+
+// Calypso's global quote background does not use Agenttic's theme tokens.
+.agents-manager-chat--embedded .agenttic.dark .Message-module_content blockquote {
+	background-color: var( --color-muted );
+}
+
 // A hidden, fixed strip at the right edge, plus the FAB that reopens a
 // closed docked chat.
 .agents-manager-chat--docked {

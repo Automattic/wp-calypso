@@ -95,7 +95,7 @@ export default function AgentDock( {
 	capabilities,
 }: Props ) {
 	const { agentConfig, siteKey, currentUser } = useAgentsManagerContext();
-	const { dismissible } = getChatPresentation();
+	const { dismissible, embeddedContainer } = getChatPresentation();
 
 	const [ isCompactMode, setIsCompactMode ] = useState(
 		window.__agentsManagerActions?.isCompactMode ?? false
@@ -147,6 +147,7 @@ export default function AgentDock( {
 		portalNode,
 		createAgentPortal,
 	} = useAgentLayoutManager( {
+		embeddedContainer,
 		defaultDocked: isReaderChat ? false : isPersistedDocked,
 		defaultOpen: isOpen,
 		desktopMediaQuery,
@@ -364,7 +365,8 @@ export default function AgentDock( {
 		// Public reader-chat frontends have no sidebar layout to dock into —
 		// the click would do nothing, so hide the switch option there.
 		const switchOptions = [
-			! isReaderChat &&
+			! embeddedContainer &&
+				! isReaderChat &&
 				isDocked && {
 					icon: <SwitchToFloating />,
 					title: __( 'Switch to floating', __i18n_text_domain__ ),
@@ -377,7 +379,8 @@ export default function AgentDock( {
 						setIsDocked( false );
 					},
 				},
-			! isReaderChat &&
+			! embeddedContainer &&
+				! isReaderChat &&
 				! isDocked &&
 				canDock && {
 					icon: drawerRight,

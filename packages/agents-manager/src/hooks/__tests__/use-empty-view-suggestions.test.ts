@@ -109,6 +109,27 @@ describe( 'useEmptyViewSuggestions', () => {
 		window.history.pushState( {}, '', '/' );
 	} );
 
+	it( 'renders theme-independent native suggestions without a Gutenberg core store', async () => {
+		mockContext.sectionName = 'site-redesign';
+		mockCoreStoreReady( false );
+		const loadedProviders = {
+			getEmptyViewSuggestions: () => [ bigSkySuggestion ],
+			emptyViewSuggestionsThemeIndependent: true,
+		} as unknown as LoadedProviders;
+		const { result } = renderHook( () => useEmptyViewSuggestions( { loadedProviders } ) );
+		await waitFor( () => expect( result.current ).toEqual( [ bigSkySuggestion ] ) );
+	} );
+
+	it( 'keeps theme-dependent provider suggestions gated without a theme', () => {
+		mockCoreStoreReady( false );
+		const loadedProviders = {
+			getEmptyViewSuggestions: () => [ bigSkySuggestion ],
+			emptyViewSuggestionsThemeIndependent: false,
+		} as unknown as LoadedProviders;
+		const { result } = renderHook( () => useEmptyViewSuggestions( { loadedProviders } ) );
+		expect( result.current ).toBeNull();
+	} );
+
 	it( 'uses Reader Chat overrides before waiting for the core store', async () => {
 		mockCoreStoreReady( false );
 		setReaderSuggestions( [ readerSuggestion ] );

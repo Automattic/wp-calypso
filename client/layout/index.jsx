@@ -158,7 +158,7 @@ function CalypsoAgentsManagerLoader( { sectionName, currentRoute, siteId } ) {
 		sectionName === 'plugins'
 	);
 
-	if ( ! routeIsEnabled ) {
+	if ( ! routeIsEnabled || sectionName === 'site-redesign' ) {
 		return null;
 	}
 

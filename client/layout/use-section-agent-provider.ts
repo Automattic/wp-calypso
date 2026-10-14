@@ -7,10 +7,19 @@ import {
 import { useStore } from 'calypso/state';
 import { getSelectedSite, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
-type InlineProvider = { toolProvider: object };
+type InlineProvider = { toolProvider?: object; contextProvider?: object };
 type Store = ReturnType< typeof useStore >;
 
 const providerLoaders = new Map< string, ( store: Store ) => Promise< InlineProvider > >( [
+	[
+		'site-redesign',
+		async ( store ) => {
+			const { createRedesignProvider } = await import(
+				/* webpackChunkName: "site-redesign-agent-provider" */ 'calypso/my-sites/site-redesign/agent-provider'
+			);
+			return createRedesignProvider( () => getSelectedSite( store.getState() )?.ID );
+		},
+	],
 	[
 		'plugins',
 		async ( store ) => {

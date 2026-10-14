@@ -612,3 +612,28 @@ body.is-mobile-app-view {
 .layout.is-section-plugins:not( .is-logged-in ):has( .plugins-browser ):has( .x-nav--2026-redesign ) .layout__header-section {
 	min-height: 0;
 }
+
+body .layout.is-section-site-redesign.is-group-sites {
+	.layout__content {
+		padding: var( --masterbar-height ) 0 0 var( --sidebar-width-max );
+		margin: 0;
+		min-block-size: 100vh;
+	}
+	&.has-no-sidebar .layout__content {
+		padding-inline-start: 0;
+	}
+	.layout__primary {
+		margin: 0;
+		max-inline-size: none;
+	}
+	@media ( max-width: 781px ) {
+		.layout__content {
+			padding-inline-start: 0;
+		}
+	}
+}
+
+body:has( #wpcom-omnibar ) .layout.is-section-site-redesign.is-group-sites .layout__content {
+	padding-block-start: 0;
+	min-block-size: calc( 100vh - var( --masterbar-height ) );
+}

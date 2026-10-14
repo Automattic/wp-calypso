@@ -123,6 +123,10 @@ export type UseCheckpointHook = () => UseCheckpointReturn;
 
 /** Optional flags providers can declare to opt into AM chat-dock features. */
 export interface ProviderCapabilities {
+	/** This provider's empty-view suggestions do not need the editor's current theme. */
+	themeIndependentSuggestions?: boolean;
+	/** Omit client credit meters and notices for server-authorized unmetered surfaces. */
+	unmeteredChat?: boolean;
 	/** Adds the "Split screen sidebar" chat-header menu item when true. */
 	supportsSplitScreen?: boolean;
 	/** Adds Agenttic's built-in regenerate action to agent messages when true. */
@@ -138,6 +142,9 @@ export function mergeCapabilitiesInto( merged: ProviderCapabilities, capabilitie
 		return;
 	}
 	const caps = capabilities as ProviderCapabilities;
+	if ( caps.unmeteredChat === true ) {
+		merged.unmeteredChat = true;
+	}
 	// Strict `=== true` because `capabilities` arrives as `unknown` from
 	// runtime-imported modules; a stray `'false'` string would otherwise opt in.
 	if ( caps.supportsSplitScreen === true ) {
@@ -149,6 +156,8 @@ export function mergeCapabilitiesInto( merged: ProviderCapabilities, capabilitie
 }
 
 export interface LoadedProviders {
+	/** True only when every suggestion-contributing provider can run without an editor theme. */
+	emptyViewSuggestionsThemeIndependent?: boolean;
 	/** Optional stable provider identifier exported by a provider module. */
 	providerId?: string;
 	/** Stable IDs for the provider modules that were successfully loaded. */
@@ -467,17 +476,25 @@ export function mergeContextProviders(
 	return {
 		getClientContext: () => {
 			const contexts: ClientContextType[] = [];
+			let ownedEnvironment: string | undefined;
 
 			for ( const contextProvider of contextProviders ) {
 				try {
-					contexts.push( contextProvider.getClientContext() );
+					const context = contextProvider.getClientContext();
+					contexts.push( context );
+					if ( contextProvider.ownsEnvironment === true && ! ownedEnvironment ) {
+						ownedEnvironment = context.environment;
+					}
 				} catch ( error ) {
 					// eslint-disable-next-line no-console
 					console.warn( '[AgentsManager] Failed to load context from provider:', error );
 				}
 			}
 
-			return contexts.length ? mergeClientContexts( contexts ) : getFallbackClientContext();
+			const context = contexts.length
+				? mergeClientContexts( contexts )
+				: getFallbackClientContext();
+			return ownedEnvironment ? { ...context, environment: ownedEnvironment } : context;
 		},
 	};
 }
@@ -632,6 +649,7 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 	const allAbilitiesSetups: AbilitiesSetupHook[] = [];
 	const allUseSuggestions: UseSuggestionsHook[] = [];
 	const allGetEmptyViewSuggestions: ( () => Suggestion[] )[] = [];
+	let allSuggestionsThemeIndependent = true;
 	const allUseCheckpoints: UseCheckpointHook[] = [];
 	const allProviderIds: string[] = [];
 
@@ -691,6 +709,7 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 		}
 		if ( module.getEmptyViewSuggestions ) {
 			allGetEmptyViewSuggestions.push( module.getEmptyViewSuggestions );
+			allSuggestionsThemeIndependent &&= module.capabilities?.themeIndependentSuggestions === true;
 		}
 		if ( module.useCheckpoint ) {
 			allUseCheckpoints.push( module.useCheckpoint );
@@ -864,6 +883,8 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 		toolProvider: mergedToolProvider,
 		contextProvider: mergedContextProvider,
 		getEmptyViewSuggestions: mergedGetEmptyViewSuggestions,
+		emptyViewSuggestionsThemeIndependent:
+			allGetEmptyViewSuggestions.length > 0 && allSuggestionsThemeIndependent,
 		markdownComponents: mergedMarkdownComponents,
 		markdownExtensions: { ...defaultMarkdownExtensions, ...mergedMarkdownExtensions },
 		providerIds: allProviderIds.length ? allProviderIds : undefined,

@@ -40,6 +40,8 @@ export interface ToolProvider {
  * including navigation state, entity data, and sitemap information.
  */
 export interface ContextProvider {
+	/** An embedded host can own its environment even when editor providers are also loaded. */
+	ownsEnvironment?: boolean;
 	/**
 	 * Get the current client context.
 	 */

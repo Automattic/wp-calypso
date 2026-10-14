@@ -1,0 +1,617 @@
+@import '@wordpress/base-styles/colors';
+
+.site-redesign-workspace {
+	display: grid;
+	grid-template-columns: minmax( 0, 1fr ) var( --am-sidebar-width, 350px );
+	block-size: calc( 100dvh - var( --masterbar-height, 48px ) );
+	min-block-size: 0;
+	color: var( --color-text );
+	background: var( --color-surface-backdrop );
+	overflow: hidden;
+}
+.site-redesign-interview {
+	grid-column: 2;
+	grid-row: 1;
+	position: relative;
+	min-block-size: 0;
+	background: $gray-900;
+	#site-redesign-agent {
+		block-size: 100%;
+	}
+}
+.site-redesign-agent-loading {
+	position: absolute;
+	inset: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+	color: $white;
+}
+.site-redesign-main,
+.site-redesign-preview {
+	display: flex;
+	flex-direction: column;
+	min-block-size: 0;
+	min-inline-size: 0;
+}
+.site-redesign-main {
+	grid-column: 1;
+	grid-row: 1;
+	background: var( --color-surface-backdrop );
+}
+.site-redesign-preview {
+	flex: 1;
+	overflow: auto;
+}
+
+/* Toolbar: view switcher and the primary action. */
+// One grouped track with a filled selection, as the native segmented control reads elsewhere
+// in WordPress. The focus ring belongs to keyboard focus only.
+.site-redesign-toolbar .components-toggle-group-control.components-toggle-group-control {
+	border-color: var( --color-neutral-10 );
+	border-radius: 4px;
+	background: var( --color-surface );
+	&,
+	&:focus-within {
+		outline: none;
+	}
+	&:has( :focus-visible ) {
+		outline: 2px solid var( --color-primary );
+		outline-offset: 1px;
+	}
+	&::before {
+		border: 0;
+		border-radius: 3px;
+		background: var( --color-neutral-100 );
+	}
+	.components-toggle-group-control-option-base {
+		color: var( --color-text-subtle );
+		&:hover {
+			color: var( --color-text );
+		}
+		&[aria-checked='true'] {
+			color: var( --color-text-inverted );
+			&:hover {
+				color: var( --color-text-inverted );
+			}
+		}
+	}
+}
+.site-redesign-toolbar {
+	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
+	gap: 8px 16px;
+	min-block-size: 64px;
+	padding: 12px 24px;
+	box-sizing: border-box;
+	background: var( --color-surface );
+	border-block-end: 1px solid var( --color-border-subtle );
+}
+.site-redesign-view-controls {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	min-inline-size: 0;
+}
+.site-redesign-apply.components-button {
+	margin-inline-start: auto;
+}
+.site-redesign-applying-banner {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	padding: 12px 24px;
+	background: var( --color-surface );
+	border-block-end: 1px solid var( --color-border-subtle );
+	.components-spinner {
+		margin: 0;
+	}
+}
+.site-redesign-banner-stage {
+	margin-inline-start: 8px;
+	color: var( --color-text-subtle );
+}
+.site-redesign-notices:empty {
+	display: none;
+}
+
+/* Stage: brief, onboarding and progress share one reading column. */
+.site-redesign-stage {
+	display: flex;
+	flex: 1;
+	flex-direction: column;
+	align-items: center;
+	// Safe, so a brief taller than the canvas scrolls from its top instead of being cut off.
+	justify-content: safe center;
+	padding: 48px 40px;
+}
+.site-redesign-panel {
+	inline-size: 100%;
+	max-inline-size: 560px;
+	h1 {
+		margin-block: 0 16px;
+		line-height: 1.2;
+		text-wrap: balance;
+	}
+	p {
+		margin-block: 0;
+		overflow-wrap: anywhere;
+	}
+	.components-notice {
+		margin: 24px 0 0;
+	}
+}
+.site-redesign-lead {
+	font-size: 18px;
+	line-height: 1.55;
+	color: var( --color-text );
+}
+.site-redesign-brief-style {
+	margin-block-start: 8px !important;
+	font-size: 16px;
+	line-height: 1.6;
+	color: var( --color-text-subtle );
+}
+.site-redesign-brief-next {
+	margin-block-start: 28px !important;
+	font-size: 14px;
+	line-height: 1.6;
+	color: var( --color-text );
+}
+.site-redesign-hint {
+	margin-block-start: 16px !important;
+	font-size: 13px;
+	line-height: 1.5;
+	color: var( --color-text-subtle );
+}
+.site-redesign-panel-actions {
+	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
+	gap: 12px 16px;
+	margin-block-start: 32px;
+	.site-redesign-hint {
+		margin-block-start: 0 !important;
+	}
+}
+
+/* Design brief: the direction, its type and palette, and who it is for. */
+.site-redesign-panel.is-brief {
+	max-inline-size: 520px;
+	container-type: inline-size;
+	.site-redesign-brief-next {
+		margin-block-start: 24px !important;
+	}
+	.site-redesign-panel-actions {
+		margin-block-start: 16px;
+	}
+}
+.site-redesign-direction-mast {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: 12px 24px;
+}
+.site-redesign-direction-title {
+	inline-size: 100%;
+	margin: 0;
+	font-size: clamp( 1.25rem, 2vw, 1.75rem );
+	font-weight: 500;
+	line-height: 1.2;
+	letter-spacing: -0.01em;
+	text-wrap: balance;
+}
+.site-redesign-direction-status {
+	display: inline-flex;
+	flex: none;
+	align-items: center;
+	gap: 8px;
+	margin-block-start: 6px;
+	padding: 4px 12px;
+	border-radius: 24px;
+	background: var( --color-surface );
+	box-shadow: inset 0 0 0 1px var( --color-border-subtle );
+	color: var( --color-text-subtle );
+	font-size: 12px;
+	font-weight: 500;
+	white-space: nowrap;
+	&::before {
+		content: '';
+		inline-size: 6px;
+		block-size: 6px;
+		border-radius: 50%;
+		background: var( --color-text-subtle );
+	}
+	&.is-pending {
+		color: var( --color-primary );
+		box-shadow: inset 0 0 0 1px color-mix( in srgb, var( --color-primary ) 30%, transparent );
+		&::before {
+			background: var( --color-primary );
+		}
+	}
+}
+.site-redesign-panel p.site-redesign-direction-lede {
+	max-inline-size: 44rem;
+	margin-block-start: 12px;
+	color: var( --color-text-subtle );
+	font-size: 16px;
+	line-height: 1.55;
+}
+.site-redesign-direction-rows {
+	margin: 28px 0 0;
+	border-block-start: 1px solid var( --color-border-subtle );
+}
+.site-redesign-direction-row {
+	display: grid;
+	grid-template-columns: minmax( 0, 1fr );
+	gap: 8px;
+	padding-block: 16px;
+	border-block-end: 1px solid var( --color-border-subtle );
+	> dt {
+		color: var( --color-text-subtle );
+		font-size: 13px;
+		font-weight: 500;
+		line-height: 1.5;
+	}
+	> dd {
+		min-inline-size: 0;
+		margin: 0;
+		font-size: 15px;
+		line-height: 1.5;
+		overflow-wrap: anywhere;
+	}
+}
+@container ( min-width: 560px ) {
+	.site-redesign-direction-row {
+		grid-template-columns: 8rem minmax( 0, 1fr );
+		gap: 24px;
+		// Labels line up with the first line of their detail, chips included.
+		> dt {
+			padding-block-start: 4px;
+		}
+	}
+}
+.site-redesign-chips {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+	li {
+		padding: 4px 12px;
+		border-radius: 24px;
+		background: var( --color-surface );
+		box-shadow: inset 0 0 0 1px var( --color-border-subtle );
+		font-size: 13px;
+		line-height: 1.5;
+	}
+}
+.site-redesign-faces {
+	display: grid;
+	grid-template-columns: 1fr;
+	gap: 12px 32px;
+	margin: 0;
+	dt {
+		color: var( --color-text-subtle );
+		font-size: 12px;
+		line-height: 1.5;
+	}
+	dd {
+		margin: 2px 0 0;
+		font-size: 15px;
+		font-weight: 500;
+		line-height: 1.4;
+	}
+}
+.site-redesign-palette {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 12px 32px;
+}
+.site-redesign-swatches {
+	display: flex;
+	flex: none;
+	gap: 8px;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+	li {
+		display: grid;
+		gap: 6px;
+		inline-size: 64px;
+	}
+}
+.site-redesign-swatch-chip {
+	display: block;
+	block-size: 40px;
+	border-radius: 8px;
+	box-shadow: inset 0 0 0 1px var( --color-border-subtle );
+}
+.site-redesign-swatch-hex {
+	color: var( --color-text-subtle );
+	font-size: 12px;
+	font-variant-numeric: tabular-nums;
+}
+.site-redesign-panel p.site-redesign-direction-note {
+	padding-block-start: 2px;
+	color: var( --color-text-subtle );
+	font-size: 14px;
+	line-height: 1.5;
+}
+.site-redesign-references {
+	display: grid;
+	gap: 4px;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+@media ( prefers-reduced-motion: no-preference ) {
+	.site-redesign-direction-title,
+	.site-redesign-direction-lede,
+	.site-redesign-direction-rows {
+		animation: site-redesign-rise 480ms cubic-bezier( 0.16, 1, 0.3, 1 ) both;
+	}
+	.site-redesign-direction-lede {
+		animation-delay: 60ms;
+	}
+	.site-redesign-direction-rows {
+		animation-delay: 120ms;
+	}
+}
+@keyframes site-redesign-rise {
+	from {
+		opacity: 0;
+		transform: translateY( 6px );
+	}
+}
+
+/* Getting started */
+.site-redesign-steps {
+	display: grid;
+	gap: 16px;
+	margin: 32px 0 0;
+	padding: 0;
+	list-style: none;
+	counter-reset: site-redesign-step;
+	li {
+		display: grid;
+		grid-template-columns: 28px minmax( 0, 1fr );
+		column-gap: 12px;
+		counter-increment: site-redesign-step;
+		&::before {
+			content: counter( site-redesign-step );
+			grid-row: span 2;
+			display: grid;
+			place-items: center;
+			inline-size: 28px;
+			block-size: 28px;
+			border-radius: 50%;
+			background: var( --color-surface );
+			box-shadow: inset 0 0 0 1px var( --color-border-subtle );
+			font-size: 13px;
+			font-weight: 500;
+			font-variant-numeric: tabular-nums;
+		}
+	}
+	strong {
+		font-size: 15px;
+		font-weight: 500;
+		line-height: 28px;
+	}
+	span {
+		font-size: 14px;
+		line-height: 1.5;
+		color: var( --color-text-subtle );
+	}
+}
+
+/* Welcome: the empty interview view reads as one sequence that starts in the chat. */
+.site-redesign-panel.is-welcome {
+	max-inline-size: 720px;
+	h1 {
+		margin-block-end: 12px;
+	}
+	.site-redesign-lead {
+		color: var( --color-text-subtle );
+		text-wrap: wrap;
+	}
+	.site-redesign-steps {
+		gap: 0;
+		margin-block-start: 40px;
+		li {
+			position: relative;
+			padding-block-end: 24px;
+			&:last-child {
+				padding-block-end: 0;
+			}
+			// The rail joins each marker to the next.
+			&:not( :last-child )::after {
+				content: '';
+				position: absolute;
+				inset-block: 32px 4px;
+				inset-inline-start: 13.5px;
+				inline-size: 1px;
+				background: var( --color-border-subtle );
+			}
+		}
+		li.is-current::before {
+			background: var( --color-primary );
+			box-shadow: none;
+			color: var( --color-text-inverted );
+		}
+		li:not( .is-current ) strong {
+			color: var( --color-text-subtle );
+		}
+	}
+}
+
+/* Progress */
+.site-redesign-panel.site-redesign-progress-panel {
+	max-inline-size: 520px;
+	container-type: inline-size;
+	> .site-redesign-direction-status {
+		margin-block: 0 16px;
+	}
+}
+.site-redesign-progress-panel .site-redesign-progress-bar {
+	// The track is the component's root; it defaults to a 160px hairline.
+	inline-size: 100%;
+	block-size: 6px;
+	margin-block: 20px 8px;
+	background-color: color-mix( in srgb, var( --color-primary ) 14%, transparent );
+	> div {
+		inset-inline-start: 0;
+		background-color: var( --color-primary );
+	}
+}
+.site-redesign-progress-detail {
+	display: grid;
+	gap: 28px;
+	margin-block-start: 24px;
+}
+.site-redesign-stages {
+	display: grid;
+	gap: 0;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+.site-redesign-stage-item {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	padding: 14px 0;
+	border-block-end: 1px solid var( --color-border-subtle );
+	font-size: 15px;
+	line-height: 1.4;
+	color: var( --color-text-subtle );
+	transition: color 0.2s ease-out;
+	&:first-child {
+		padding-block-start: 0;
+	}
+	&:last-child {
+		padding-block-end: 0;
+		border-block-end: 0;
+	}
+	&.is-current {
+		color: var( --color-text );
+		font-weight: 500;
+	}
+	&.is-done {
+		color: var( --color-text );
+	}
+}
+.site-redesign-stage-marker {
+	display: grid;
+	flex: none;
+	place-items: center;
+	inline-size: 20px;
+	block-size: 20px;
+	border-radius: 50%;
+	box-shadow: inset 0 0 0 1.5px var( --color-border-subtle );
+	.is-done & {
+		background: var( --color-primary );
+		box-shadow: none;
+		color: var( --color-text-inverted );
+		fill: currentColor;
+	}
+	.is-current & {
+		box-shadow: inset 0 0 0 1.5px var( --color-primary );
+		&::after {
+			content: '';
+			inline-size: 8px;
+			block-size: 8px;
+			border-radius: 50%;
+			background: var( --color-primary );
+		}
+	}
+}
+@media ( prefers-reduced-motion: no-preference ) {
+	.is-current .site-redesign-stage-marker::after {
+		animation: site-redesign-pulse 1.6s cubic-bezier( 0.16, 1, 0.3, 1 ) infinite;
+	}
+}
+@keyframes site-redesign-pulse {
+	0%,
+	100% {
+		opacity: 1;
+		transform: scale( 1 );
+	}
+	50% {
+		opacity: 0.45;
+		transform: scale( 0.7 );
+	}
+}
+
+.site-redesign-canvas {
+	display: flex;
+	flex: 1;
+	min-block-size: 400px;
+	padding: 24px 24px 0;
+	background: var( --color-surface-backdrop );
+	iframe {
+		inline-size: 100%;
+		max-inline-size: 1440px;
+		min-block-size: 400px;
+		margin-inline: auto;
+		box-sizing: border-box;
+		border: 1px solid transparent;
+		border-radius: 8px 8px 0 0;
+		background:
+			linear-gradient( var( --color-surface ), var( --color-surface ) ) padding-box,
+			linear-gradient( to bottom, var( --color-border-subtle ), transparent ) border-box;
+	}
+	> [role='status'] {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		gap: 8px;
+		flex: 1;
+		color: var( --color-text-subtle );
+	}
+}
+
+@media ( max-width: 1199px ) {
+	.site-redesign-workspace {
+		grid-template-columns: 1fr;
+		grid-template-rows: auto minmax( 0, 1fr );
+	}
+	.site-redesign-main {
+		display: contents;
+	}
+	.site-redesign-toolbar {
+		grid-row: 1;
+		padding: 8px 16px;
+	}
+	// Below the first row: the view switcher spans the width, then the action.
+	.site-redesign-view-controls {
+		display: contents;
+		> * {
+			order: 3;
+			flex-basis: 100%;
+		}
+	}
+	.site-redesign-apply.components-button {
+		order: 5;
+	}
+	.site-redesign-interview,
+	.site-redesign-preview {
+		grid-column: 1;
+		grid-row: 2;
+	}
+	.site-redesign-stage {
+		padding: 32px 20px;
+	}
+	.site-redesign-canvas {
+		padding: 8px 8px 0;
+	}
+}
+.site-redesign-interview[hidden],
+.site-redesign-preview[hidden] {
+	display: none;
+}

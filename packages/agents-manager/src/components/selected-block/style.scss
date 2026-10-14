@@ -54,7 +54,7 @@
 }
 
 // Docked chat overrides
-.agents-manager-chat--docked {
+:is( .agents-manager-chat--docked, .agents-manager-chat--embedded ) {
 	.agents-manager-selected-block {
 		margin-top: $grid-unit-10;
 	}

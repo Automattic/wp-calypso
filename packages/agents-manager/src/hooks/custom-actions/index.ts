@@ -1,3 +1,4 @@
+import { getAgentManager } from '@automattic/agenttic-client';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useCallback, useEffect, useRef } from '@wordpress/element';
 import { useNavigate } from 'react-router-dom';
@@ -13,6 +14,7 @@ import {
 	setExternalContextEntry,
 } from '../../utils/external-context';
 import { isReaderChatAgent } from '../../utils/is-reader-chat-agent';
+import { requestNewChat } from '../../utils/new-chat-requests';
 import { setSiteEditorAction } from '../../utils/site-editor-context';
 import { getTabId } from '../../utils/tab-id';
 import {
@@ -275,6 +277,15 @@ export function useSetupCustomActions( {
 		[ isChatVisible ]
 	);
 
+	const startNewChat = useCallback( () => requestNewChat( navigate ), [ navigate ] );
+	// Asked of the manager that runs the stream: the turn events are edges only,
+	// so a host that loads mid-turn cannot learn the current state from them.
+	const agentId = agentConfig?.agentId;
+	const isTurnInFlight = useCallback(
+		() => !! agentId && getAgentManager().isTurnInFlight( agentId ),
+		[ agentId ]
+	);
+
 	useRegisterCustomActions( {
 		getChatState,
 		isChatVisible: getIsChatVisible,
@@ -295,6 +306,8 @@ export function useSetupCustomActions( {
 		setSiteEditorAction,
 		chatNavigate: navigate,
 		resumeChat,
+		startNewChat,
+		isTurnInFlight,
 		isReady: true,
 	} );
 

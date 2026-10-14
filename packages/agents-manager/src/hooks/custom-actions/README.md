@@ -36,6 +36,8 @@ Consuming the API? See [Public API](#public-api). Adding a new action? See [Addi
 | `setSiteEditorAction`      | `(name, value) => void`                                 | Record a Site Editor action (name → value) for the chat to read.                                                  |
 | `chatNavigate`             | `NavigateFunction`                                      | The `react-router-dom` navigate function (path with options, or delta).                                           |
 | `resumeChat`               | `() => void`                                            | Reopen the chat, resuming this tab's conversation (not a new one).                                                |
+| `startNewChat`             | `() => Promise<void>`                                   | Start a new chat. Resolves once the previous agent is aborted and removed and its stored session cleared.        |
+| `isTurnInFlight`           | `() => boolean`                                         | Whether the agent has a turn in flight now. The turn events are edges only; read this for the current state.     |
 | `isReady`                  | `boolean`                                               | `true` once the API is fully populated and safe to call.                                                          |
 
 \* Available only while the chat panel is mounted. Always optional-chain these calls — they can be `undefined` even after `isReady` is `true`.
@@ -225,3 +227,10 @@ preference. It is a bootstrap contract, not a reactive settings API. The host
 must provide an accessible exit from its experience and hide server-rendered
 entry controls before first paint if needed. Calypso, Reader and other hosts
 that omit the configuration retain their existing behavior.
+
+`chatPresentation.embeddedContainer` optionally names a host element for an
+embedded chat. The host must mount that element before loading the manager and
+restore its previous presentation when leaving an SPA route. Embedding stays
+in place on mobile; the host must remove hidden panels from keyboard navigation
+and the accessibility tree. It hides the floating/sidebar switch controls and
+leaves saved docking preferences unchanged.

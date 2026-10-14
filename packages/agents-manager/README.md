@@ -172,3 +172,23 @@ yarn clean
 ## License
 
 GPL-2.0-or-later
+
+Hosts can bootstrap an embedded manager through
+`window.__agentsManagerConfig.chatPresentation.embeddedContainer`; see the
+[document presentation contract](src/hooks/custom-actions/README.md#document-scoped-presentation).
+Providers can opt into `capabilities.unmeteredChat: true` for a surface whose
+backend authorizes unmetered chat. This omits client credit meters, notices and
+Send gating; it does not change server authorization or plan requirements.
+
+An embedded host context provider may set `ownsEnvironment: true` to keep its
+environment when editor providers are also present. Other context fields retain
+registration-order merging; hosts that omit the flag retain existing precedence.
+
+Providers may declare `capabilities.themeIndependentSuggestions: true` when their
+empty-view suggestions do not use an editor theme. The loader skips Gutenberg's
+current-theme readiness gate only when **every suggestion-contributing provider**
+declares it. Providers without suggestions do not affect that decision. Native
+embedded chat shares the docked dark strip's padding, colors and component overrides;
+its host owns placement and dimensions without changing the page's docking classes.
+Its dark Markdown quotes use Agenttic's muted surface so Calypso's global quote
+background cannot obscure the native foreground text.

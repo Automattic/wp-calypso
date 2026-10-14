@@ -151,6 +151,10 @@ interface AgentsManagerActions {
 	setSiteEditorAction: ( name: string, value: string | number | boolean | null ) => void;
 	chatNavigate: import( 'react-router-dom' ).NavigateFunction;
 	resumeChat: () => void;
+	/** Starts a new chat; resolves once the previous conversation has been discarded. */
+	startNewChat?: () => Promise< void >;
+	/** Whether the agent has a turn in flight right now, tool follow-ups included. */
+	isTurnInFlight?: () => boolean;
 	isChatVisible: () => boolean;
 	isCompactMode?: boolean;
 	isChatEnabled?: boolean;
@@ -170,6 +174,8 @@ interface Window {
 	/** Host configuration set before loading Agents Manager; applies to this document only. */
 	__agentsManagerConfig?: {
 		chatPresentation?: {
+			/** Host-owned element receiving an embedded chat at every viewport size. */
+			embeddedContainer?: string;
 			/** Allow closing or minimizing the chat. Defaults to true. */
 			dismissible?: boolean;
 			/** Show wp-admin and editor toolbar chat toggles. Defaults to true. */

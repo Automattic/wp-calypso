@@ -53,7 +53,7 @@
 	}
 }
 
-.agents-manager-chat--docked {
+:is( .agents-manager-chat--docked, .agents-manager-chat--embedded ) {
 	.zendesk-csat-form__feedback {
 		// Increase specificity.
 		.components-button.components-button {

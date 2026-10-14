@@ -557,7 +557,7 @@ export default function OrchestratorChat( {
 
 	const isReaderChat = isReaderChatAgent( agentConfig?.agentId );
 	const credits = useCredits( {
-		enabled: ! isReaderChat,
+		enabled: ! isReaderChat && capabilities?.unmeteredChat !== true,
 		agentConfig: agentChatConfig!,
 		siteKey,
 		userId: currentUser?.ID,

@@ -60,6 +60,7 @@ const useCanDock = ( { desktopMediaQuery }: { desktopMediaQuery: string } ) => {
 };
 
 interface Options {
+	embeddedContainer?: string;
 	sidebarContainer?: string | HTMLElement;
 	isReady?: boolean;
 	defaultDocked?: boolean;
@@ -86,7 +87,9 @@ interface ReturnValue {
 	createAgentPortal: ( children: React.ReactNode ) => React.ReactNode | React.ReactPortal;
 }
 
+/** Owns portal placement and responsive docking; embedding leaves layout to the host. */
 export default function useAgentLayoutManager( {
+	embeddedContainer,
 	sidebarContainer = 'body',
 	isReady = true,
 	defaultDocked = true,
@@ -104,7 +107,8 @@ export default function useAgentLayoutManager( {
 	const [ portalNode, setPortalNode ] = useState< HTMLElement | null >( null );
 	const [ isDocked, setIsDocked ] = useState< boolean | null >( null );
 	const { canDock, isDesktop } = useCanDock( { desktopMediaQuery } );
-	const shouldRenderSidebar = canDock && isDocked;
+	const isEmbedded = !! embeddedContainer;
+	const shouldRenderSidebar = isEmbedded || ( canDock && isDocked );
 	const openSidebarTimeoutRef = useRef< ReturnType< typeof setTimeout > | undefined >( undefined );
 
 	// Floating because the viewport is narrow, with the docked preference still on.
@@ -127,13 +131,14 @@ export default function useAgentLayoutManager( {
 	onOpenSidebarRef.current = onOpenSidebar;
 	onCloseSidebarRef.current = onCloseSidebar;
 
-	const container = useMemo(
-		() =>
-			typeof sidebarContainer === 'string'
-				? document.querySelector< HTMLElement >( sidebarContainer )
-				: sidebarContainer,
-		[ sidebarContainer ]
-	);
+	const container = useMemo( () => {
+		if ( embeddedContainer ) {
+			return document.querySelector< HTMLElement >( embeddedContainer );
+		}
+		return typeof sidebarContainer === 'string'
+			? document.querySelector< HTMLElement >( sidebarContainer )
+			: sidebarContainer;
+	}, [ embeddedContainer, sidebarContainer ] );
 	const [ isSidebarOpen, setIsSidebarOpen ] = useState(
 		() => defaultOpen || container?.classList.contains( SIDEBAR_OPEN_CLASS ) || false
 	);
@@ -153,14 +158,16 @@ export default function useAgentLayoutManager( {
 		// Create portal element if it doesn't exist
 		if ( ! portalRef.current ) {
 			portalRef.current = document.createElement( 'div' );
-			portalRef.current.className = CHAT_PORTAL_CLASS;
+			portalRef.current.className = isEmbedded
+				? `${ CHAT_PORTAL_CLASS } agents-manager-chat--embedded`
+				: CHAT_PORTAL_CLASS;
 			container.appendChild( portalRef.current );
 
 			// Apply initial classes
-			if ( shouldRenderSidebar ) {
+			if ( shouldRenderSidebar && ! isEmbedded ) {
 				container.classList.add( SIDEBAR_CONTAINER_CLASS );
 				portalRef.current.classList.add( 'agents-manager-chat--docked' );
-			} else {
+			} else if ( ! isEmbedded ) {
 				portalRef.current.classList.add( 'agents-manager-chat--undocked' );
 			}
 
@@ -170,6 +177,9 @@ export default function useAgentLayoutManager( {
 		}
 
 		// Handle dock/undock state changes
+		if ( isEmbedded ) {
+			return;
+		}
 		if ( shouldRenderSidebar ) {
 			container.classList.add( SIDEBAR_CONTAINER_CLASS );
 			portalRef.current.classList.add( 'agents-manager-chat--docked' );
@@ -191,7 +201,7 @@ export default function useAgentLayoutManager( {
 
 			onUndockRef.current();
 		}
-	}, [ container, isDocked, isReady, shouldRenderSidebar ] );
+	}, [ container, isDocked, isEmbedded, isReady, shouldRenderSidebar ] );
 
 	// Losing the desktop viewport takes the docked sidebar away. The count
 	// triggers the floating panel's layout command, moving it to the right
@@ -207,16 +217,18 @@ export default function useAgentLayoutManager( {
 	}, [ isDesktop, isDocked ] );
 
 	useLayoutEffect( () => {
-		container?.classList.toggle( SIDEBAR_OPEN_CLASS, !! shouldRenderSidebar && isSidebarOpen );
-	}, [ container, isSidebarOpen, shouldRenderSidebar ] );
+		if ( ! isEmbedded ) {
+			container?.classList.toggle( SIDEBAR_OPEN_CLASS, !! shouldRenderSidebar && isSidebarOpen );
+		}
+	}, [ container, isEmbedded, isSidebarOpen, shouldRenderSidebar ] );
 
 	// Reflect split-screen state on the container as `is-split-screen`.
 	useLayoutEffect( () => {
-		if ( ! container ) {
+		if ( ! container || isEmbedded ) {
 			return;
 		}
 		container.classList.toggle( 'is-split-screen', !! isSplitScreen );
-	}, [ container, isSplitScreen ] );
+	}, [ container, isEmbedded, isSplitScreen ] );
 
 	// Cleanup on unmount
 	// Use `useLayoutEffect` to prevent flickering
@@ -298,7 +310,7 @@ export default function useAgentLayoutManager( {
 
 			return createPortal(
 				<ResponsiveUndockContext.Provider value={ responsiveUndock }>
-					{ shouldRenderSidebar ? (
+					{ shouldRenderSidebar && ! isEmbedded ? (
 						<>
 							{ children }
 							<Button
@@ -315,13 +327,13 @@ export default function useAgentLayoutManager( {
 				portalNode
 			);
 		},
-		[ handleOpenSidebar, portalNode, responsiveUndock, shouldRenderSidebar ]
+		[ handleOpenSidebar, isEmbedded, portalNode, responsiveUndock, shouldRenderSidebar ]
 	);
 
 	return {
 		isDocked: !! shouldRenderSidebar,
-		isSidebarOpen: !! shouldRenderSidebar && isSidebarOpen,
-		canDock,
+		isSidebarOpen: isEmbedded || ( !! shouldRenderSidebar && isSidebarOpen ),
+		canDock: ! isEmbedded && canDock,
 		dock,
 		undock,
 		openSidebar: handleOpenSidebar,

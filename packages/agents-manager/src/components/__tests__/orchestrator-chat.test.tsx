@@ -416,18 +416,22 @@ jest.mock( '../../hooks/use-sources-action', () => () => {} );
 // Returns `undefined` after a mock reset, which the wrapper reads as allowed.
 const mockCreditsBeforeSubmit = jest.fn( (): boolean | undefined => true );
 const mockCreditsVisibility = jest.fn();
+const mockCreditsEnabled = jest.fn();
 const mockCreditsNoticeVisibility = jest.fn();
 const mockTakeRefusalCode = jest.fn( (): string | undefined => undefined );
 jest.mock( '../../hooks/use-credits', () => ( {
 	useCredits: ( {
+		enabled,
 		agentConfig,
 		isOpen,
 		isNoticeVisible,
 	}: {
+		enabled: boolean;
 		agentConfig: unknown;
 		isOpen: boolean;
 		isNoticeVisible: boolean;
 	} ) => {
+		mockCreditsEnabled( enabled );
 		mockCreditsVisibility( isOpen );
 		mockCreditsNoticeVisibility( isNoticeVisible );
 		return {
@@ -4333,4 +4337,14 @@ describe( 'OrchestratorChat', () => {
 			expect( getBlockingMove() ).toBeNull();
 		} );
 	} );
+} );
+
+it( 'omits credit metering only when a provider declares unmetered chat', () => {
+	render( chat( { capabilities: { unmeteredChat: true } } ) );
+	expect( mockCreditsEnabled ).toHaveBeenLastCalledWith( false );
+} );
+
+it( 'preserves credit metering for ordinary orchestrator chat', () => {
+	render( chat() );
+	expect( mockCreditsEnabled ).toHaveBeenLastCalledWith( true );
 } );

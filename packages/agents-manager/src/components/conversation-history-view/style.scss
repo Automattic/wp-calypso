@@ -78,7 +78,7 @@
 }
 
 // Docked chat overrides
-.agents-manager-chat--docked {
+:is( .agents-manager-chat--docked, .agents-manager-chat--embedded ) {
 	.agents-manager-conversation-history-view {
 		&__content {
 			padding-top: 0;

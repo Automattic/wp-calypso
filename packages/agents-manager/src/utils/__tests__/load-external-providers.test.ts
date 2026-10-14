@@ -24,6 +24,7 @@ import { waitForEditedGlobalStyles } from '../global-styles';
 import {
 	loadExternalProviders,
 	mergeCapabilitiesInto,
+	mergeContextProviders,
 	mergeUseSuggestionsHooks,
 } from '../load-external-providers';
 import { getLoadedProviderIds, setLoadedProviderIds } from '../loaded-provider-ids';
@@ -128,7 +129,7 @@ describe( 'mergeCapabilitiesInto', () => {
 		}
 	);
 
-	it.each( [ 'supportsSplitScreen', 'supportsRegenerateAction' ] as const )(
+	it.each( [ 'supportsSplitScreen', 'supportsRegenerateAction', 'unmeteredChat' ] as const )(
 		'sets %s when the provider declares it',
 		( flag ) => {
 			const merged: ProviderCapabilities = {};
@@ -934,6 +935,38 @@ describe( 'loadExternalProviders', () => {
 		} );
 	} );
 
+	it.each( [
+		[
+			[
+				{ getEmptyViewSuggestions: () => [], capabilities: { themeIndependentSuggestions: true } },
+			],
+			true,
+		],
+		[
+			[
+				{ getEmptyViewSuggestions: () => [], capabilities: { themeIndependentSuggestions: true } },
+				{ getEmptyViewSuggestions: () => [] },
+			],
+			false,
+		],
+		[ [ { getEmptyViewSuggestions: () => [] } ], false ],
+		[
+			[
+				{ getEmptyViewSuggestions: () => [], capabilities: { themeIndependentSuggestions: true } },
+				{ contextProvider: { getClientContext: () => ( {} ) } },
+			],
+			true,
+		],
+		[ [], false ],
+	] )(
+		'requires every suggestion contributor to opt out of the theme gate: %p',
+		async ( agentProviders, expected ) => {
+			setAgentsManagerData( { agentProviders } );
+			const providers = await loadExternalProviders();
+			expect( providers.emptyViewSuggestionsThemeIndependent ?? false ).toBe( expected );
+		}
+	);
+
 	it( 'merges empty view suggestions from multiple providers and dedupes by id', async () => {
 		setAgentsManagerData( {
 			agentProviders: [
@@ -1245,4 +1278,28 @@ describe( 'canvas guard wiring', () => {
 		// store, so what the server receives is exactly what the provider built.
 		expect( context ).toEqual( providerContext );
 	} );
+} );
+
+test( 'lets an embedded host own environment while retaining earlier editor context', () => {
+	const editorContext = {
+		url: 'https://example.com',
+		pathname: '/wp-admin/',
+		search: '',
+		environment: 'wp-admin',
+		editor: true,
+	};
+	const hostContext = {
+		url: 'https://example.com',
+		pathname: '/site-redesign/example.com',
+		search: '',
+		environment: 'site-redesign',
+		site_redesign: { redesign_id: 'rd_1' },
+	};
+	const provider = mergeContextProviders( [
+		{ getClientContext: () => editorContext },
+		{ ownsEnvironment: true, getClientContext: () => hostContext },
+	] );
+	expect( provider?.getClientContext().environment ).toBe( 'site-redesign' );
+	expect( provider?.getClientContext().editor ).toBe( true );
+	expect( provider?.getClientContext().site_redesign ).toEqual( { redesign_id: 'rd_1' } );
 } );

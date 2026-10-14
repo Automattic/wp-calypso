@@ -112,3 +112,22 @@ The editor abilities (`abilities/editor-abilities.ts`) load as an async chunk on
 - **Unregistered script handles**: `@wordpress/*` packages WordPress doesn't register as scripts (e.g. `@wordpress/abilities`, `@wordpress/ui`) must stay force-bundled in `apps/agents-manager/webpack.config.js` — an externalized unregistered dependency makes `WP_Scripts` silently drop the whole bundle.
 - **Disconnected variant**: The `gutenberg-disconnected` entry point shows minimal UI. Changes to shared code can silently break it.
 - **Help Center overlap**: The Help Center and the floating chat can both be open; the one touched last stays on top (`hooks/use-raise-on-focus.ts`).
+
+## Host presentation
+
+The bootstrap `chatPresentation.embeddedContainer` selector places the existing
+manager inside a host-owned element; the host must create the element before
+loading the manager and restore prior config on SPA exit. Ordinary hosts omit
+it and retain responsive docking. Provider capability `unmeteredChat` suppresses
+client credit meters/notices for server-authorized unmetered chat surfaces.
+Neither presentation nor capabilities bypass server authorization.
+
+A context provider with `ownsEnvironment: true` owns the merged client environment.
+Use this only for a host surface whose server route expects its own environment;
+ordinary editor providers retain their registration-order precedence.
+
+Theme-independent provider suggestions must opt in with
+`capabilities.themeIndependentSuggestions: true`. This is AND-merged across
+suggestion contributors, unlike the ordinary OR-merged capability flags. A
+co-loaded theme-dependent provider keeps the editor theme gate. Embedded chat
+paints the native dark docked ground; the host chooses its side and size.

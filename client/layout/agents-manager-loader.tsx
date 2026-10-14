@@ -22,7 +22,7 @@ export default function AgentsManagerLoader( {
 	const user = useSelector( getCurrentUser );
 	const isSiteSpecific = useSelector( isSiteSection );
 	const { selectedSite, site } = useHelpCenterSite();
-	const isPlugins = sectionName === 'plugins';
+	const isSiteProvider = sectionName === 'plugins' || sectionName === 'site-redesign';
 	const isReady = useSectionAgentProvider( sectionName, !! user );
 
 	useEffect( () => {
@@ -46,8 +46,9 @@ export default function AgentsManagerLoader( {
 			placeholder={ null }
 			currentUser={ user }
 			sectionName={ sectionName }
-			site={ isPlugins ? ( selectedSite ?? null ) : site }
-			currentSiteId={ isPlugins || isSiteSpecific ? selectedSite?.ID : undefined }
+			agentId={ sectionName === 'site-redesign' ? 'wp-orchestrator' : undefined }
+			site={ isSiteProvider ? ( selectedSite ?? null ) : site }
+			currentSiteId={ isSiteProvider || isSiteSpecific ? selectedSite?.ID : undefined }
 			isInternalOnly={ isInternalOnly }
 		/>
 	);

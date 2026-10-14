@@ -52,9 +52,18 @@ jest.mock( '@wordpress/data', () => ( {
 	} ) ),
 } ) );
 
+const mockNavigate = jest.fn();
 jest.mock( 'react-router-dom', () => ( {
-	useNavigate: jest.fn( () => jest.fn() ),
+	useNavigate: jest.fn( () => mockNavigate ),
 } ) );
+
+const mockIsTurnInFlight = jest.fn( ( key: string ) => key === 'wp-orchestrator' );
+// Jest can't resolve the package in this environment.
+jest.mock(
+	'@automattic/agenttic-client',
+	() => ( { getAgentManager: () => ( { isTurnInFlight: mockIsTurnInFlight } ) } ),
+	{ virtual: true }
+);
 
 jest.mock( '../../contexts', () => ( {
 	useAgentsManagerContext: jest.fn( () => mockContext ),
@@ -90,6 +99,33 @@ describe( 'useSetupCustomActions', () => {
 			agentConfig: { agentId: 'reader-chat' },
 		};
 		mockSelectState = { hasLoaded: true, isOpen: false, isDocked: false, floatingPosition: '' };
+	} );
+
+	it( 'starts a new chat through the native new-chat route and settles once it is handled', async () => {
+		const { settleNewChatRequest } = jest.requireActual( '../../utils/new-chat-requests' );
+		renderHook( () => useSetupCustomActions( baseProps ) );
+		let settled = false;
+		const request = window.__agentsManagerActions!.startNewChat!().then( () => {
+			settled = true;
+		} );
+		expect( mockNavigate ).toHaveBeenCalledWith( '/chat', {
+			state: { isNewChat: true, newChatRequestId: expect.any( String ) },
+			replace: true,
+		} );
+		await Promise.resolve();
+		expect( settled ).toBe( false );
+		settleNewChatRequest( mockNavigate.mock.calls[ 0 ][ 1 ].state.newChatRequestId );
+		await request;
+		expect( settled ).toBe( true );
+	} );
+
+	it( "reads whether the chat's agent has a turn in flight from the manager", () => {
+		mockContext = { ...mockContext, agentConfig: { agentId: 'wp-orchestrator' } };
+		const { rerender } = renderHook( () => useSetupCustomActions( baseProps ) );
+		expect( window.__agentsManagerActions?.isTurnInFlight?.() ).toBe( true );
+		mockContext = { ...mockContext, agentConfig: { agentId: 'reader-chat' } };
+		rerender();
+		expect( window.__agentsManagerActions?.isTurnInFlight?.() ).toBe( false );
 	} );
 
 	it( 'sets `isReady` on the global after mount', () => {

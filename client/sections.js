@@ -332,6 +332,13 @@ const sections = [
 	// Since we're using find() and startsWith() on paths, 'themes' needs to go before 'theme',
 	// or it'll be falsely associated with the latter section.
 	{
+		name: 'site-redesign',
+		paths: [ '/site-redesign' ],
+		module: 'calypso/my-sites/site-redesign',
+		group: 'sites',
+		title: 'Design Your Own',
+	},
+	{
 		name: 'themes',
 		paths: [ '/themes', `/([a-z]{2,3}|[a-z]{2}-[a-z]{2})/themes`, '/design' ],
 		module: 'calypso/my-sites/themes',

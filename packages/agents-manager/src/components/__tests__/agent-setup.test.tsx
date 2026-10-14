@@ -13,6 +13,7 @@ let mockIsOpen = true;
 let mockHasAiChatEntry = false;
 let mockIsStoreReady = true;
 let mockAgentDockCatchAll = false;
+const mockNewChatSettled = jest.fn();
 let mockAgentConfig = { agentId: 'wp-orchestrator' };
 const mockCreateAgentConfig = jest.fn(
 	async ( { sessionId, agentId }: { sessionId: string; agentId: string } ) => ( {
@@ -62,6 +63,7 @@ jest.mock( '../../hooks/use-empty-view-suggestions', () => ( {
 jest.mock( '../agent-dock', () => {
 	const { useAgentsManagerContext } = jest.requireActual( '../../contexts' );
 	const { Navigate, Route, Routes, useNavigate } = jest.requireActual( 'react-router-dom' );
+	const { requestNewChat } = jest.requireActual( '../../utils/new-chat-requests' );
 	function MockAgentDock() {
 		const { agentConfig } = useAgentsManagerContext();
 		const navigate = useNavigate();
@@ -72,6 +74,9 @@ jest.mock( '../agent-dock', () => {
 				<button onClick={ () => navigate( '/chat' ) }>go-chat</button>
 				<button onClick={ () => navigate( '/chat', { state: { isNewChat: true } } ) }>
 					go-new-chat
+				</button>
+				<button onClick={ () => requestNewChat( navigate ).then( mockNewChatSettled ) }>
+					host-new-chat
 				</button>
 			</>
 		);
@@ -330,6 +335,33 @@ describe( 'AgentSetup', () => {
 		expect( mockCreateAgentConfig ).toHaveBeenLastCalledWith(
 			expect.objectContaining( { sessionId: 'fake-uuid' } )
 		);
+	} );
+
+	it( 'settles a host new-chat request only after the old agent and session are gone', async () => {
+		render( manager( 111 ) );
+		await waitFor( () => expect( mockCreateAgentConfig ).toHaveBeenCalledTimes( 1 ) );
+
+		saveSessionId( 'session-live' );
+		mockAgentManager.abortCurrentRequest.mockClear();
+		mockAgentManager.removeAgent.mockClear();
+		mockAgentManager.hasAgent.mockReturnValue( true );
+		// What the host relies on when the promise resolves.
+		let atSettle: { aborted: number; removed: number; session: string } | undefined;
+		mockNewChatSettled.mockImplementation( () => {
+			atSettle = {
+				aborted: mockAgentManager.abortCurrentRequest.mock.calls.length,
+				removed: mockAgentManager.removeAgent.mock.calls.length,
+				session: getSessionId(),
+			};
+		} );
+
+		fireEvent.click( screen.getByText( 'host-new-chat' ) );
+
+		await waitFor( () => expect( mockNewChatSettled ).toHaveBeenCalledTimes( 1 ) );
+		expect( atSettle?.aborted ).toBeGreaterThan( 0 );
+		expect( atSettle?.removed ).toBeGreaterThan( 0 );
+		expect( atSettle?.session ).not.toBe( 'session-live' );
+		await waitFor( () => expect( getSessionId() ).toBe( 'fake-uuid' ) );
 	} );
 
 	it( 're-initializes when the agent no longer exists', async () => {

@@ -307,3 +307,26 @@ describe( 'useAgentLayoutManager — responsive undock', () => {
 		expect( probe.context() ).toEqual( { isResponsiveUndocked: true, undockCount: 0 } );
 	} );
 } );
+
+describe( 'useAgentLayoutManager — host embedding', () => {
+	it.each( [ true, false ] )(
+		'keeps the portal in the host at desktop=%s and cleans it up',
+		( desktop ) => {
+			mockIsDesktop = desktop;
+			container.id = 'embedded-agent-test';
+			const { result, unmount } = render( {
+				embeddedContainer: '#embedded-agent-test',
+				defaultDocked: false,
+				defaultOpen: false,
+			} );
+			expect( result.current.isDocked ).toBe( true );
+			expect( result.current.isSidebarOpen ).toBe( true );
+			expect( result.current.canDock ).toBe( false );
+			expect( result.current.portalNode?.parentElement ).toBe( container );
+			expect( result.current.portalNode ).toHaveClass( 'agents-manager-chat--embedded' );
+			expect( document.body ).not.toHaveClass( 'agents-manager-sidebar-container' );
+			unmount();
+			expect( container.querySelector( '.agents-manager-chat' ) ).toBeNull();
+		}
+	);
+} );

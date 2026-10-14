@@ -51,6 +51,30 @@ describe( 'MySitesSidebar', () => {
 	} );
 
 	describe( '#itemLinkMatches() edge cases', () => {
+		test.each( [ '/site-redesign/example.wordpress.com', '/site-redesign/123?redesign=rd_1' ] )(
+			'selects the native Themes item for redesign subpage %s',
+			( currentPath ) => {
+				expect( itemLinkMatches( '/themes/example.wordpress.com', currentPath ) ).toBe( true );
+				expect( itemLinkMatches( '/customize/example.wordpress.com', currentPath ) ).toBe( false );
+				expect( itemLinkMatches( '/posts/example.wordpress.com', currentPath ) ).toBe( false );
+			}
+		);
+
+		test( 'does not retain Themes selection after leaving redesign or match similarly named routes', () => {
+			expect(
+				itemLinkMatches( '/themes/example.wordpress.com', '/pages/example.wordpress.com' )
+			).toBe( false );
+			expect(
+				itemLinkMatches(
+					'/themes/example.wordpress.com',
+					'/site-redesign-other/example.wordpress.com'
+				)
+			).toBe( false );
+			expect(
+				itemLinkMatches( '/themes/example.wordpress.com', '/themes/example.wordpress.com' )
+			).toBe( true );
+		} );
+
 		test( 'clicking a settings panel should not activate the posts menu', () => {
 			const isSelected = itemLinkMatches(
 				'/settings/general/example.wordpress.com',

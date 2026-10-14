@@ -5,9 +5,11 @@
 export function getChatPresentation( config = window.__agentsManagerConfig?.chatPresentation ): {
 	dismissible: boolean;
 	showEntryPoints: boolean;
+	embeddedContainer?: string;
 } {
 	return {
 		dismissible: config?.dismissible !== false,
 		showEntryPoints: config?.showEntryPoints !== false,
+		embeddedContainer: config?.embeddedContainer,
 	};
 }

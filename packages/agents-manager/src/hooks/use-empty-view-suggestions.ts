@@ -223,7 +223,6 @@ function filterEmptyViewSuggestions(
  * `getEmptyViewSuggestions`, otherwise the translated defaults. A provider's
  * are read once the theme has loaded, since they can depend on it (Big Sky's
  * do) and would otherwise jump.
- *
  * @param params                 - Hook parameters
  * @param params.loadedProviders - External providers loaded from plugins
  * @returns The suggestions, or null while loading
@@ -259,11 +258,13 @@ export function useEmptyViewSuggestions( {
 		[]
 	);
 	const hasProviderSuggestions = !! loadedProviders?.getEmptyViewSuggestions;
+	const needsTheme =
+		hasProviderSuggestions && ! loadedProviders?.emptyViewSuggestionsThemeIndependent;
 
 	// A provider's suggestions can depend on the theme (Big Sky's do), so wait for it to load.
 	const isCoreStoreReady = useSelect(
 		( select ) => {
-			if ( ! hasProviderSuggestions ) {
+			if ( ! needsTheme ) {
 				return true;
 			}
 			try {
@@ -276,7 +277,7 @@ export function useEmptyViewSuggestions( {
 				return false;
 			}
 		},
-		[ hasProviderSuggestions ]
+		[ needsTheme ]
 	);
 
 	const [ emptyViewSuggestions, setEmptyViewSuggestions ] = useState< Suggestion[] | null >( null );

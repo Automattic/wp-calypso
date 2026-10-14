@@ -154,3 +154,11 @@ The hook returns an object with the following properties:
 - **`portalNode`** (`HTMLElement | null`) - The node the chat renders into, e.g. to pass to `useRaiseOnFocus`. `null` until it is created.
 
 - **`createAgentPortal`** (`(children: React.ReactNode) => React.ReactNode | React.ReactPortal`) - Creates a React Portal for the chat UI. When docked, wraps children in a portal rendered inside the sidebar element and adds a FAB (floating action button) to reopen the sidebar when closed. When undocked, returns children in a portal without the FAB. Returns `null` if the portal element is not yet created (first render only). Portal children can call `useResponsiveUndock()` from `./responsive-undock-context` to read `isResponsiveUndocked` (the chat is floating only because the viewport is below `desktopMediaQuery` while the docked preference is on) and `undockCount` (bumped on each responsive undock — `useFloatingPanelProps` uses it as the floating panel's `layoutCommand` id).
+
+### Host embedding
+
+`embeddedContainer` accepts a selector for a host-owned element that exists before
+this hook mounts. The portal stays embedded at desktop and mobile sizes, returns
+`isDocked: true`, and disables docking controls. It does not add layout classes to
+`body` or persist a docking preference. The host owns sizing, responsive visibility,
+and an accessible exit. Unmount removes the portal.

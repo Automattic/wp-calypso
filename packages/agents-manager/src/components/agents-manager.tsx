@@ -28,6 +28,7 @@ import {
 import { createAgentConfig } from '../utils/create-agent-config';
 import { isReaderChatAgent } from '../utils/is-reader-chat-agent';
 import { loadExternalProviders, type LoadedProviders } from '../utils/load-external-providers';
+import { settleNewChatRequest } from '../utils/new-chat-requests';
 import { isHandoffAgent, type SessionHandoff } from '../utils/session-handoff';
 import AgentDock from './agent-dock';
 import { PersistentRouter } from './persistent-router';
@@ -164,6 +165,8 @@ function AgentSetup( {
 
 	// Detect new chat requests via `state.isNewChat` on the `/chat` route.
 	const isNewChat = pathname.startsWith( '/chat' ) && !! state?.isNewChat;
+	// Set when a host asked for this new chat through `startNewChat` and is waiting on it.
+	const newChatRequestId: unknown = isNewChat ? state?.newChatRequestId : undefined;
 
 	// Mirrors `AgentDock`'s visibility: with an AI entry button the chat
 	// unmounts on close, so closing must count as leaving the chat view.
@@ -251,6 +254,8 @@ function AgentSetup( {
 				}
 
 				clearSessionId( agentId, siteKey, userId );
+				// The old conversation is gone: a waiting host may now move on.
+				settleNewChatRequest( newChatRequestId );
 				// Clear route state to prevent repeated new chat initialization
 				navigate( '/chat', { replace: true } );
 				return;
@@ -322,6 +327,7 @@ function AgentSetup( {
 		currentRoute,
 		isChatViewShowing,
 		isNewChat,
+		newChatRequestId,
 		handoff,
 		handoffSiteKey,
 		navigate,
