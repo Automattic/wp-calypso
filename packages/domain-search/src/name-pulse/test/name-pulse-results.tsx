@@ -19,11 +19,7 @@ import {
 	withNamePulseQueries,
 } from '../../test-helpers/factories/name-pulse';
 import { queryClient } from '../../test-helpers/renderer';
-import {
-	NAME_PULSE_AI_TIMEOUT_MS,
-	NAME_PULSE_INITIAL_CHECK_SINGLE_WORD,
-	NAME_PULSE_PAGE_SIZE,
-} from '../helpers';
+import { NAME_PULSE_INITIAL_CHECK_SINGLE_WORD, NAME_PULSE_PAGE_SIZE } from '../helpers';
 import type { DomainSearchCart, DomainSearchEvents, DomainSearchProps } from '../../page/types';
 import type {
 	BundleSuggestion,
@@ -368,7 +364,7 @@ describe( 'NamePulseResults', () => {
 
 		expect( requested ).toEqual( [
 			{ query: 'a blog about icecream', use_ai: false },
-			{ query: 'a blog about icecream', use_ai: true, timeout: NAME_PULSE_AI_TIMEOUT_MS },
+			{ query: 'a blog about icecream', use_ai: true },
 		] );
 
 		// Cheapest first-year price across both lists, ties broken by name.

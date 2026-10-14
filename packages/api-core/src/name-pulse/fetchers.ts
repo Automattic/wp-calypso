@@ -6,20 +6,15 @@ import type {
 } from './types';
 
 /**
- * Domain Engine (`donuts`) joins each mode's provider. The endpoint interleaves
- * providers in this order, so donuts leads.
- */
-const KEYWORD_PROVIDERS = 'donuts,domainsbot';
-const AI_PROVIDERS = 'donuts,verisign';
-
-/**
+ * Providers and timeout are left to the endpoint's defaults; `use_ai` switches
+ * the providers to their AI engines.
+ *
  * Provider errors ride along in `errors[]`; only when every provider fails does
  * the endpoint reply with a 400.
  */
 export async function fetchNamePulseSuggestions( {
 	query,
 	use_ai = false,
-	timeout,
 	tlds,
 }: NamePulseSuggestionsQuery ): Promise< NamePulseSuggestionsResponse > {
 	const response: Partial< NamePulseSuggestionsResponse > = await wpcom.req.get(
@@ -29,10 +24,8 @@ export async function fetchNamePulseSuggestions( {
 		},
 		{
 			query,
-			use_ai: use_ai ? 1 : 0,
 			allow_premium: 'true',
-			providers: use_ai ? AI_PROVIDERS : KEYWORD_PROVIDERS,
-			...( timeout ? { timeout } : {} ),
+			...( use_ai ? { use_ai: 1 } : {} ),
 			...( tlds?.length ? { tlds: tlds.join( ',' ) } : {} ),
 		}
 	);
