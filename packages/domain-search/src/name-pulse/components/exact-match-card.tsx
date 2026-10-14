@@ -151,7 +151,7 @@ export const NamePulseExactMatchCard = ( {
 								{ __( 'Exact match' ) }
 							</Text>
 						</HStack>
-						<Badge>{ __( "It's available!" ) }</Badge>
+						<Badge intent="stable">{ __( "It's available!" ) }</Badge>
 						{ availability.status === DomainAvailabilityStatus.AVAILABLE_PREMIUM && (
 							<Badge intent="informational">{ __( 'Premium' ) }</Badge>
 						) }
