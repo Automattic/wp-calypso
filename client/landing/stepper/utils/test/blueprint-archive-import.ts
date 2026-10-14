@@ -3,6 +3,7 @@
  */
 import wpcom from 'calypso/lib/wp';
 import {
+	isPrefillComplete,
 	applyBlueprintSpec,
 	checkBlueprintExists,
 	getBlueprintArchiveSiteSpecUrl,
@@ -75,8 +76,18 @@ describe( 'getSpecMetaFromQuery', () => {
 		expect( getSpecMetaFromQuery( new URLSearchParams( 'blueprint=zoom' ) ) ).toEqual( {} );
 	} );
 
-	// The widget may render the value as a link, so nothing but a web URL gets that far.
-	it( 'drops values that are not web URLs', () => {
+	// A partner can hand over the site title (a business or person's name) as plain text.
+	it( 'picks up a plain site title and drops one with markup or line breaks', () => {
+		expect(
+			getSpecMetaFromQuery( new URLSearchParams( { site_title: '  Cedar & Keel Boat School ' } ) )
+		).toEqual( { site_title: 'Cedar & Keel Boat School' } );
+		for ( const value of [ 'Cedar <b>Keel</b>', 'Cedar\nKeel', 'a'.repeat( 121 ) ] ) {
+			expect( getSpecMetaFromQuery( new URLSearchParams( { site_title: value } ) ) ).toEqual( {} );
+		}
+	} );
+
+	// The widget may render the booking URL as a link, so nothing but a web URL gets that far.
+	it( 'drops booking URL values that are not web URLs', () => {
 		for ( const value of [
 			'javascript:alert(document.cookie)',
 			'data:text/html,hi',
@@ -87,6 +98,44 @@ describe( 'getSpecMetaFromQuery', () => {
 				{}
 			);
 		}
+	} );
+} );
+
+describe( 'lookupBlueprintArchive prefill', () => {
+	beforeEach( () => {
+		mockGet.mockReset();
+	} );
+
+	it( 'keeps only the names the server lists, and reads a missing field as none', async () => {
+		mockGet.mockResolvedValue( {
+			slug: 'zoom',
+			exists: true,
+			prefill: [ 123, '', 'site_title', null, 'zoom_booking_url' ],
+		} );
+		await expect( lookupBlueprintArchive( 'zoom', { target: 'simple' } ) ).resolves.toMatchObject( {
+			prefill: [ 'site_title', 'zoom_booking_url' ],
+		} );
+
+		mockGet.mockResolvedValue( { slug: 'zoom', exists: true } );
+		await expect( lookupBlueprintArchive( 'zoom', { target: 'simple' } ) ).resolves.toMatchObject( {
+			prefill: [],
+		} );
+	} );
+} );
+
+describe( 'isPrefillComplete', () => {
+	it( 'is complete only when the blueprint declares names and the link carries all of them', () => {
+		expect( isPrefillComplete( [], { site_title: 'Cedar' } ) ).toBe( false );
+		expect( isPrefillComplete( [ 'site_title' ], {} ) ).toBe( false );
+		expect(
+			isPrefillComplete( [ 'site_title', 'zoom_booking_url' ], { site_title: 'Cedar' } )
+		).toBe( false );
+		expect(
+			isPrefillComplete( [ 'site_title', 'zoom_booking_url' ], {
+				site_title: 'Cedar',
+				zoom_booking_url: 'https://scheduler.zoom.us/c',
+			} )
+		).toBe( true );
 	} );
 } );
 
@@ -119,6 +168,40 @@ describe( 'startBlueprintSimpleImport', () => {
 			],
 			[ 'blueprint', 'zoom' ],
 		] );
+	} );
+
+	// The job fills the blueprint content's placeholders from these, so they have to be on
+	// the request that queues it, not on a later call.
+	it( 'sends the site values with the import request', async () => {
+		mockPost.mockResolvedValue( {} );
+
+		await startBlueprintSimpleImport( 'example.wordpress.com', 'zoom', 123, {
+			zoom_booking_url: 'https://scheduler.zoom.us/jason',
+		} );
+
+		const [ params ] = mockPost.mock.calls[ 0 ];
+		expect( params.formData ).toContainEqual( [
+			'site_values[zoom_booking_url]',
+			'https://scheduler.zoom.us/jason',
+		] );
+	} );
+
+	// With no site-spec step to follow, the import is asked to confirm the spec itself.
+	it( 'asks the import to apply the partner spec when told to', async () => {
+		mockPost.mockResolvedValue( {} );
+
+		await startBlueprintSimpleImport(
+			'example.wordpress.com',
+			'zoom',
+			123,
+			{},
+			{ applySpec: true }
+		);
+		expect( mockPost.mock.calls[ 0 ][ 0 ].formData ).toContainEqual( [ 'apply_spec', '1' ] );
+
+		mockPost.mockClear();
+		await startBlueprintSimpleImport( 'example.wordpress.com', 'zoom', 123 );
+		expect( mockPost.mock.calls[ 0 ][ 0 ].formData ).not.toContainEqual( [ 'apply_spec', '1' ] );
 	} );
 
 	it( 'resolves the blog id first when the caller only has a slug', async () => {
@@ -549,6 +632,7 @@ describe( 'lookupBlueprintArchive title', () => {
 			exists: true,
 			title: 'Punk',
 			suggestedPlans: [ 'value_bundle' ],
+			prefill: [],
 		} );
 	} );
 
@@ -559,6 +643,7 @@ describe( 'lookupBlueprintArchive title', () => {
 			exists: true,
 			title: '',
 			suggestedPlans: [],
+			prefill: [],
 		} );
 	} );
 
@@ -569,6 +654,7 @@ describe( 'lookupBlueprintArchive title', () => {
 			exists: false,
 			title: '',
 			suggestedPlans: [],
+			prefill: [],
 		} );
 	} );
 } );

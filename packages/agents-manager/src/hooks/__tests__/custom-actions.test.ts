@@ -355,21 +355,20 @@ describe( 'useSetupCustomActions', () => {
 		} );
 	} );
 
-	it( 'resolves a pending `getChatState` once the store finishes loading', async () => {
+	it( 'resolves every pending `getChatState` once the store finishes loading', async () => {
 		mockSelectState = { hasLoaded: false, isOpen: true, isDocked: false, floatingPosition: 'br' };
 		const { rerender } = renderHook( () => useSetupCustomActions( baseProps ) );
 
-		// Called before the store loads: the promise must stay pending.
-		const pending = window.__agentsManagerActions!.getChatState();
+		// Called before the store loads: the promises must stay pending.
+		const first = window.__agentsManagerActions!.getChatState();
+		const second = window.__agentsManagerActions!.getChatState();
 
 		mockSelectState = { hasLoaded: true, isOpen: true, isDocked: false, floatingPosition: 'br' };
 		rerender();
 
-		await expect( pending ).resolves.toEqual( {
-			isOpen: true,
-			isDocked: false,
-			floatingPosition: 'br',
-		} );
+		const expected = { isOpen: true, isDocked: false, floatingPosition: 'br' };
+		await expect( first ).resolves.toEqual( expected );
+		await expect( second ).resolves.toEqual( expected );
 	} );
 
 	it( 'exposes a site editor action recorder on the actions API', () => {

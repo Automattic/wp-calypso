@@ -12,6 +12,11 @@ import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
 import RouterLinkButton from '../../../components/router-link-button';
 import { DEFAULT_CONFIG } from '../../../sites/dataviews/views';
+import { AgencyNotices } from '../../components/agency-notices';
+import PaymentRiskNotice, { hasPaymentRiskNotice } from '../../components/payment-risk-notice';
+import PressableUsageLimitNotice, {
+	usePressableUsageLimit,
+} from '../../components/pressable-usage-limit-notice';
 import { MilestoneFeedbackModal, useMilestoneFeedback } from '../../feedback';
 import { OWNER_ROLE } from '../../team/constants';
 import { useLicenseActions } from './actions';
@@ -34,6 +39,7 @@ export default function MarketplacePurchases() {
 	const agencyId = agency?.id ?? 0;
 	const canRevoke = hasAnyCapability( agency?.user?.capabilities ?? [], 'a4a_revoke_licenses' );
 	const isAgencyOwner = agency?.user?.role === OWNER_ROLE;
+	const pressableUsageLimit = usePressableUsageLimit( agency );
 	const currentSearchParams = marketplacePurchasesRoute.useSearch();
 	useCheckoutReturn();
 
@@ -100,6 +106,23 @@ export default function MarketplacePurchases() {
 							{ __( 'Issue new license' ) }
 						</RouterLinkButton>
 					}
+				/>
+			}
+			notices={
+				<AgencyNotices
+					candidates={ [
+						{
+							id: 'payment-risk',
+							isUrgent: true,
+							isEligible: hasPaymentRiskNotice( agency ),
+							notice: <PaymentRiskNotice agency={ agency } source="purchases_licenses" />,
+						},
+						{
+							id: 'pressable-usage-limit',
+							...pressableUsageLimit,
+							notice: <PressableUsageLimitNotice agency={ agency } />,
+						},
+					] }
 				/>
 			}
 		>

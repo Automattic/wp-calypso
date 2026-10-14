@@ -6,7 +6,8 @@ import {
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
-import { useMemo } from 'react';
+import { Badge } from '@wordpress/ui';
+import { useEffect, useMemo } from 'react';
 import { parseMatchReasons } from '../../helpers';
 import {
 	DomainSuggestionContainerContext,
@@ -15,7 +16,6 @@ import {
 import { useDomainSearch } from '../../page/context';
 import {
 	DomainSearchTrademarkClaimsModal,
-	DomainSuggestionBadge,
 	DomainSuggestionContinueCTA,
 	DomainSuggestionErrorCTA,
 	DomainSuggestionPrice,
@@ -23,8 +23,18 @@ import {
 } from '../../ui';
 import { DomainSuggestionMatchReasons } from '../../ui/domain-suggestion-match-reasons';
 import { bullseyeIcon } from '../../ui/icons/bullseye-icon';
-import { getNamePulseSalePrice } from '../helpers';
+import {
+	getNamePulseRenderTracksProps,
+	getNamePulseSalePrice,
+	NamePulseDomainStatus,
+	toNamePulseTracksSuggestion,
+} from '../helpers';
 import { useNamePulseCartToggle } from '../hooks/use-name-pulse-cart-toggle';
+import {
+	getNamePulseRenderKey,
+	recordNamePulseRender,
+	useNamePulseResultSet,
+} from '../hooks/use-name-pulse-result-set';
 import { NamePulsePolicyNoticeDialog } from './policy-notice-dialog';
 
 /**
@@ -45,6 +55,21 @@ export const NamePulseExactMatchCard = ( {
 	const { events } = useDomainSearch();
 	const { containerRef, activeQuery, currentWidth } = useDomainSuggestionContainer();
 	const isMutating = !! useIsMutating();
+	const result = useMemo(
+		() => ( {
+			domain_name: domainName,
+			source: 'exact' as const,
+			status: NamePulseDomainStatus.AVAILABLE,
+			is_premium: availability.status === DomainAvailabilityStatus.AVAILABLE_PREMIUM,
+			cost: availability.cost,
+			raw_price: availability.raw_price,
+			currency_code: availability.currency_code,
+		} ),
+		[ domainName, availability ]
+	);
+	const resultSet = useNamePulseResultSet();
+	const renderKey = getNamePulseRenderKey( 'exact', domainName );
+	const getRendered = () => resultSet?.rendered.get( renderKey );
 	const {
 		inCart,
 		isPending,
@@ -57,7 +82,22 @@ export const NamePulseExactMatchCard = ( {
 		isPolicyNoticeOpen,
 		confirmPolicyNotice,
 		closePolicyNotice,
-	} = useNamePulseCartToggle( domainName, 0, availability.policy_notices );
+	} = useNamePulseCartToggle( result, 0, getRendered, availability.policy_notices );
+
+	useEffect( () => {
+		const id = resultSet?.id;
+
+		if ( ! id || resultSet.rendered.has( renderKey ) ) {
+			return;
+		}
+
+		const report = recordNamePulseRender( { ...resultSet, id }, renderKey, 'exact', 0 );
+		events.onSuggestionRender(
+			toNamePulseTracksSuggestion( result, 0 ),
+			undefined,
+			getNamePulseRenderTracksProps( result, report )
+		);
+	} );
 
 	const containerContext = useMemo(
 		() =>
@@ -111,9 +151,9 @@ export const NamePulseExactMatchCard = ( {
 								{ __( 'Exact match' ) }
 							</Text>
 						</HStack>
-						<DomainSuggestionBadge>{ __( "It's available!" ) }</DomainSuggestionBadge>
+						<Badge>{ __( "It's available!" ) }</Badge>
 						{ availability.status === DomainAvailabilityStatus.AVAILABLE_PREMIUM && (
-							<DomainSuggestionBadge variation="premium">{ __( 'Premium' ) }</DomainSuggestionBadge>
+							<Badge intent="informational">{ __( 'Premium' ) }</Badge>
 						) }
 					</HStack>
 

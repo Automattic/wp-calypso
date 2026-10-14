@@ -3,6 +3,7 @@
  */
 
 import { queryClient } from '@automattic/api-queries';
+import { defaultParseSearch } from '@tanstack/react-router';
 import nock from 'nock';
 import { siteOverviewRoute } from '../sites';
 
@@ -39,4 +40,32 @@ test( 'loads the site overview when the user cannot read media storage', async (
 	await expect(
 		loader( { params: { siteSlug: site.slug }, preload: false } )
 	).resolves.toBeUndefined();
+} );
+
+describe( 'siteOverviewRoute search', () => {
+	type ValidateSearch = ( search: Record< string, unknown > ) => {
+		difmOffer?: string;
+		source?: string;
+	};
+
+	const validateSearch = siteOverviewRoute.options.validateSearch as unknown as ValidateSearch;
+
+	test( 'keeps the params the DIFM offer deep link opens the modal with', () => {
+		const search = validateSearch( defaultParseSearch( '?difmOffer=open&source=site-setup' ) );
+
+		expect( search.difmOffer ).toBe( 'open' );
+		expect( search.source ).toBe( 'site-setup' );
+	} );
+
+	test( 'keeps the param the DIFM offer thank-you modal opens with', () => {
+		const search = validateSearch( defaultParseSearch( '?difmOffer=purchased' ) );
+
+		expect( search.difmOffer ).toBe( 'purchased' );
+	} );
+
+	test( 'drops an unknown DIFM offer value', () => {
+		const search = validateSearch( defaultParseSearch( '?difmOffer=unknown' ) );
+
+		expect( search.difmOffer ).toBeUndefined();
+	} );
 } );

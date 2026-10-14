@@ -3,7 +3,7 @@ import {
 	JetpackLicenseSortDirection,
 	JetpackLicenseSortField,
 } from '@automattic/api-core';
-import { formatCurrency } from '@automattic/number-formatters';
+import { formatCurrency, formatNumber } from '@automattic/number-formatters';
 import {
 	ExternalLink,
 	__experimentalHStack as HStack,
@@ -208,7 +208,9 @@ function ProductCell( { license, locale }: { license: JetpackLicense; locale: st
 		<VStack spacing={ 0 }>
 			<HStack justify="flex-start" spacing={ 2 } expanded={ false } wrap>
 				<Text weight={ 500 }>{ getLicenseProductName( license ) }</Text>
-				{ isBundleParent( license ) && <Text variant="muted">×{ license.quantity }</Text> }
+				{ isBundleParent( license ) && (
+					<Text variant="muted">×{ formatNumber( license.quantity ?? 0 ) }</Text>
+				) }
 				{ getLicenseTags( license ).map( ( tag ) => (
 					<Badge key={ tag }>{ tag }</Badge>
 				) ) }

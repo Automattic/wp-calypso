@@ -177,6 +177,22 @@ export interface Agency {
 		};
 	};
 	notifications?: AgencyNotification[];
+	payment_notice?: AgencyPaymentNotice | null;
+}
+
+export interface AgencyPaymentNotice {
+	state: 'card_expiry' | 'renewal_failure';
+	severity: 'warning' | 'error';
+	title?: string;
+	content?: string;
+	/** Older name for the primary action, still sent alongside it. */
+	action_label?: string;
+	action_url?: string;
+	primary_action_label?: string;
+	primary_action_url?: string;
+	secondary_action_label?: string;
+	secondary_action_url?: string;
+	can_current_user_manage_payment_method?: boolean;
 }
 
 export interface AgencyPressableUsage {
