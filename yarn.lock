@@ -31899,12 +31899,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"stream-json@npm:^3.0.0":
-  version: 3.6.0
-  resolution: "stream-json@npm:3.6.0"
+"stream-json@npm:^3.5.0":
+  version: 3.7.0
+  resolution: "stream-json@npm:3.7.0"
   dependencies:
     stream-chain: "npm:^4.2.5"
-  checksum: 3215fdecefff103e761bab0f01b7dd88b6bf137b01e392ebe68bc0c28465c07a87dbec7a039893003c6e993b317e0444f48ace459f771bacdc65dc6b80f48658
+  checksum: 5f56acbd01245580f947697de546f469c67714656ee31765631972841aed336984a25ebeb70fcb6cccf1c638827a9655d552a4f7a4ab9687bf26463e0cf24394
   languageName: node
   linkType: hard
 
@@ -35362,7 +35362,7 @@ __metadata:
     stackframe: "npm:^1.1.1"
     stacktrace-gps: "npm:^3.0.3"
     storybook: "npm:^9.1.20"
-    stream-json: "npm:^3.0.0"
+    stream-json: "npm:^3.5.0"
     stylelint: "npm:^16.15.0"
     stylelint-scss: "npm:^6.4.0"
     swiper: "npm:^12.1.2"
