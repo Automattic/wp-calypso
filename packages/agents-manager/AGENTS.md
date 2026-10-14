@@ -29,7 +29,7 @@ cd apps/agents-manager && yarn dev --sync
 - **i18n**: Use `@wordpress/i18n` with the global `__i18n_text_domain__` as the text domain, unquoted: `__( 'Close', __i18n_text_domain__ )`. Webpack replaces it with `'default'` at build time.
 - **Curly quotes**: Preserve `“”` `‘’` exactly as they appear. Do not convert to unicode escapes or ASCII equivalents.
 - **Styles**: Prefix new CSS classes with `agents-manager-`, BEM-style (`agents-manager-sources-display__link`), so they don't collide with wp-admin and editor styles.
-- **Accessibility**: Use `Button` from `@wordpress/components` for anything clickable, never a `div` with `onClick`, and give icon-only buttons a translated `label`.
+- **Accessibility**: Make anything clickable a real button (`Button` from `@wordpress/components`, or `<button type="button">` for a custom-styled control), never a `div` with `onClick`. Give icon-only buttons a translated label.
 - **Tests**: Put unit tests in a `__tests__/` folder beside the code, named after what they test (`chat-header.test.tsx`).
 - **Readable code**: Write for the next reader, and match the file you're in.
   - **Names**: Say what a thing holds or does, in full words (`message`, not `msg`; `id` and `url` are fine). Booleans read as questions (`hasProviderSuggestions`), functions start with a verb (`syncProviderMetadata`), components are nouns (`ChatHeader`), hooks start with `use`, and files are kebab-case. Magic strings and numbers become `SCREAMING_SNAKE_CASE` constants (`AGENTS_MANAGER_STORE`). Rename what a change makes inaccurate.
