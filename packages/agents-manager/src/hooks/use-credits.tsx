@@ -177,12 +177,19 @@ export function useCredits( {
 			setDismissedNoticeScope( scope );
 		}
 	}, [ scope, recordCreditsEvent ] );
-	const [ popoverScope, setPopoverScope ] = useState< typeof scope >();
-	const isPopoverOpen = popoverScope === scope;
+	// A new object per opening, so an opening by itself records once and a close drops it unrecorded.
+	const [ popover, setPopover ] = useState< { scope: typeof scope; byItself: boolean } >();
+	const isPopoverOpen = popover?.scope === scope;
 	const setIsPopoverOpen = useCallback(
-		( open: boolean ) => {
+		( open: boolean, { byItself = false } = {} ) => {
 			if ( currentScope.current === scope && scope.active ) {
-				setPopoverScope( open ? scope : undefined );
+				// Read through the updater, so this callback, and the chat config built on it, stays stable.
+				setPopover( ( current ) => {
+					if ( ! open ) {
+						return undefined;
+					}
+					return current?.scope === scope ? current : { scope, byItself };
+				} );
 			}
 		},
 		[ scope ]
@@ -420,16 +427,29 @@ export function useCredits( {
 			isExhausted &&
 			! previous.isExhausted
 		) {
-			setIsPopoverOpen( true );
+			setIsPopoverOpen( true, { byItself: true } );
 		}
 		wasExhaustedRef.current = { scope, hasBalance: !! status, isExhausted };
 	}, [ scope, status, isExhausted, setIsPopoverOpen ] );
+
+	// That opening records once, when the chat first draws it, since a reply can
+	// drain the balance while the chat is collapsed or minimised.
+	const recordedOpeningRef = useRef< typeof popover >( undefined );
+	useEffect( () => {
+		if ( ! isOpen || ! isPopoverOpen || ! popover?.byItself ) {
+			return;
+		}
+		if ( recordedOpeningRef.current !== popover ) {
+			recordedOpeningRef.current = popover;
+			recordCreditsEvent( 'calypso_agents_manager_credits_meter_opened', { trigger: 'exhausted' } );
+		}
+	}, [ isOpen, isPopoverOpen, popover, recordCreditsEvent ] );
 
 	const handleAction = useCallback( () => {
 		setIsPopoverOpen( false );
 	}, [ setIsPopoverOpen ] );
 
-	// Only the dot opens the popover by a click; opening on depletion above records nothing.
+	// Only a click that opens the popover records here; an opening by itself records above.
 	const toggleMeter = useCallback(
 		( open: boolean ) => {
 			if ( open && ! isPopoverOpen ) {
