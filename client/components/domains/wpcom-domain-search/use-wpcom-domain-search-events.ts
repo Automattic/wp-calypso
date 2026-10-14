@@ -26,6 +26,47 @@ import {
 } from './analytics';
 import type { SearchTrigger } from '@automattic/domain-search';
 
+type AnalyticsAction = {
+	type: string;
+	meta?: {
+		analytics?: { payload: { service: string; properties?: Record< string, unknown > } }[];
+	};
+};
+
+const NAME_PULSE_TRACKS_PROPERTIES = { search_ui_version: 'i4_v1' };
+
+export const withNamePulseMarker = < T extends AnalyticsAction >( action: T ): T => {
+	if ( ! action.meta?.analytics ) {
+		return action;
+	}
+
+	return {
+		...action,
+		meta: {
+			...action.meta,
+			analytics: action.meta.analytics.map( ( entry ) =>
+				entry.payload.service === 'tracks'
+					? {
+							...entry,
+							payload: {
+								...entry.payload,
+								properties: { ...entry.payload.properties, ...NAME_PULSE_TRACKS_PROPERTIES },
+							},
+						}
+					: entry
+			),
+		},
+	};
+};
+
+// Hardcoded so every event name can be searched for.
+const NAME_PULSE_TRACKS_EVENTS = {
+	results_error: 'calypso_domain_search_results_error',
+	view_cart_click: 'calypso_domain_search_view_cart_click',
+	remove_button_click: 'calypso_domain_remove_button_click',
+	query_clear: 'calypso_domain_search_query_clear',
+} as const;
+
 type PendingSearch = {
 	query: string;
 	trigger: SearchTrigger;
@@ -37,19 +78,71 @@ export const useWPCOMDomainSearchEvents = ( {
 	flowName,
 	analyticsSection,
 	query,
+	isNamePulse = false,
 }: {
 	flowName: string;
 	analyticsSection: string;
 	vendor?: string;
 	query?: string;
+	isNamePulse?: boolean;
 } ) => {
-	const dispatch = useDispatch();
+	const reduxDispatch = useDispatch();
+
+	const dispatch = useMemo(
+		() =>
+			isNamePulse
+				? ( action: AnalyticsAction ) => reduxDispatch( withNamePulseMarker( action ) )
+				: reduxDispatch,
+		[ isNamePulse, reduxDispatch ]
+	);
+
+	const recordEvent = useMemo(
+		() =>
+			isNamePulse
+				? ( name: string, properties: Record< string, unknown > ) =>
+						recordTracksEvent( name, { ...properties, ...NAME_PULSE_TRACKS_PROPERTIES } )
+				: recordTracksEvent,
+		[ isNamePulse ]
+	);
 
 	const railcarId = useRef( getNewRailcarId( 'domain-suggestion' ) );
 	const searchCount = useRef( 0 );
+
 	const lastSearchTime = useRef( Date.now() );
 
 	const pendingSearch = useRef< PendingSearch | undefined >( undefined );
+
+	const recordSearch = useEvent(
+		(
+			query: string,
+			trigger: SearchTrigger,
+			startedAt: number,
+			properties?: Record< string, unknown >
+		) => {
+			searchCount.current++;
+			const timeDiffFromLastSearchInSeconds = Math.floor(
+				( startedAt - lastSearchTime.current ) / 1000
+			);
+			lastSearchTime.current = startedAt;
+
+			const args = [
+				query,
+				analyticsSection,
+				searchCount.current === 1 ? 0 : timeDiffFromLastSearchInSeconds,
+				searchCount.current,
+				vendor,
+				flowName,
+				trigger,
+				startedAt,
+			] as const;
+
+			dispatch(
+				properties
+					? recordSearchFormSubmit( ...args, properties )
+					: recordSearchFormSubmit( ...args )
+			);
+		}
+	);
 
 	const triggerDomainSearchEvent = useEvent( () => {
 		if ( ! pendingSearch.current ) {
@@ -59,24 +152,7 @@ export const useWPCOMDomainSearchEvents = ( {
 		const { query, trigger, startedAt } = pendingSearch.current;
 		pendingSearch.current = undefined;
 
-		searchCount.current++;
-		const timeDiffFromLastSearchInSeconds = Math.floor(
-			( startedAt - lastSearchTime.current ) / 1000
-		);
-		lastSearchTime.current = startedAt;
-
-		dispatch(
-			recordSearchFormSubmit(
-				query,
-				analyticsSection,
-				searchCount.current === 1 ? 0 : timeDiffFromLastSearchInSeconds,
-				searchCount.current,
-				vendor,
-				flowName,
-				trigger,
-				startedAt
-			)
-		);
+		recordSearch( query, trigger, startedAt );
 	} );
 
 	// Created during render, not in an effect, because DomainSearch reports its mount search
@@ -106,6 +182,11 @@ export const useWPCOMDomainSearchEvents = ( {
 				railcarId.current = getNewRailcarId( 'domain-suggestion' );
 			},
 			onSearchStart: ( query, trigger ) => {
+				// Name Pulse records settled searches through onNamePulseSearch.
+				if ( isNamePulse ) {
+					return;
+				}
+
 				pendingSearch.current = { query, trigger, startedAt: Date.now() };
 				debouncedDomainSearchEvent();
 			},
@@ -133,7 +214,7 @@ export const useWPCOMDomainSearchEvents = ( {
 						should_hide_free_plan: false,
 					};
 
-					recordTracksEvent( 'calypso_signup_skip_step', tracksProperties );
+					recordEvent( 'calypso_signup_skip_step', tracksProperties );
 				}
 			},
 			onAddDomainToCart: ( domainName, position, isPremium, rootVendor ) => {
@@ -191,15 +272,24 @@ export const useWPCOMDomainSearchEvents = ( {
 			onFilterReset: ( filter, keysToReset ) => {
 				dispatch( recordFiltersReset( filter, keysToReset, analyticsSection, flowName ) );
 			},
-			onShowMoreResults: ( pageNumber ) => {
-				dispatch( recordShowMoreResults( query ?? '', pageNumber, analyticsSection, flowName ) );
-			},
-			onSuggestionsReceive: ( query, suggestions, responseTime ) => {
+			onShowMoreResults: ( pageNumber, properties ) => {
 				dispatch(
-					recordSearchResultsReceive( query, suggestions, responseTime, analyticsSection, flowName )
+					recordShowMoreResults( query ?? '', pageNumber, analyticsSection, flowName, properties )
 				);
 			},
-			onSuggestionRender: ( suggestion, reason ) => {
+			onSuggestionsReceive: ( query, suggestions, responseTime, properties ) => {
+				dispatch(
+					recordSearchResultsReceive(
+						query,
+						suggestions,
+						responseTime,
+						analyticsSection,
+						flowName,
+						properties
+					)
+				);
+			},
+			onSuggestionRender: ( suggestion, reason, properties ) => {
 				let resultSuffix = '';
 				if ( reason === 'recommended' ) {
 					resultSuffix = '#recommended';
@@ -207,9 +297,10 @@ export const useWPCOMDomainSearchEvents = ( {
 					resultSuffix = '#best-alternative';
 				}
 
-				recordTracksEvent( 'calypso_traintracks_render', {
+				recordEvent( 'calypso_traintracks_render', {
 					ui_position: suggestion.position,
 					flow_name: flowName,
+					// Name Pulse sends its own railcar in `properties`.
 					railcar: `${ railcarId.current }-${ suggestion.position }`,
 					fetch_algo: `/domains/search/${ vendor }/${ analyticsSection }/${ suggestion.vendor }`,
 					root_vendor: suggestion.vendor,
@@ -217,11 +308,12 @@ export const useWPCOMDomainSearchEvents = ( {
 					fetch_query: query,
 					domain_type: suggestion.is_premium ? 'premium' : 'standard',
 					tld: getTld( suggestion.domain_name ),
+					...properties,
 				} );
 			},
-			onSuggestionInteract: ( suggestion ) => {
-				recordTracksEvent( 'calypso_traintracks_interact', {
-					railcar: `${ railcarId.current }-${ suggestion.position }`,
+			onSuggestionInteract: ( suggestion, railcar ) => {
+				recordEvent( 'calypso_traintracks_interact', {
+					railcar: railcar ?? `${ railcarId.current }-${ suggestion.position }`,
 					action: 'domain_added_to_cart',
 					domain: suggestion.domain_name,
 					root_vendor: suggestion.vendor,
@@ -257,21 +349,41 @@ export const useWPCOMDomainSearchEvents = ( {
 				);
 			},
 			onBundleShown: ( bundle, placement ) => {
-				recordTracksEvent( 'calypso_domain_bundle_shown', {
+				recordEvent( 'calypso_domain_bundle_shown', {
 					domain_bundle_group_id: bundle.bundle_group_id,
 					domain_count: bundle.domains.length,
 					placement,
 				} );
 			},
 			onBundleAddToCart: ( bundle, placement ) => {
-				recordTracksEvent( 'calypso_domain_bundle_accepted', {
+				recordEvent( 'calypso_domain_bundle_accepted', {
 					domain_bundle_group_id: bundle.bundle_group_id,
 					domain_count: bundle.domains.length,
 					placement,
 				} );
 			},
+			onNamePulseSearch: ( query, trigger, properties ) => {
+				recordSearch( query, trigger, Date.now(), properties );
+			},
+			onNamePulseTracksEvent: ( name, properties ) => {
+				recordEvent( NAME_PULSE_TRACKS_EVENTS[ name ], {
+					section: analyticsSection,
+					flow_name: flowName,
+					...properties,
+				} );
+			},
 		};
-	}, [ flowName, vendor, query, debouncedDomainSearchEvent, analyticsSection, dispatch ] );
+	}, [
+		flowName,
+		vendor,
+		query,
+		debouncedDomainSearchEvent,
+		analyticsSection,
+		dispatch,
+		recordEvent,
+		recordSearch,
+		isNamePulse,
+	] );
 
 	return events;
 };

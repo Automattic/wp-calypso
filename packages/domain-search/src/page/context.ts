@@ -11,7 +11,7 @@ import {
 	namePulseTldsQuery,
 } from '@automattic/api-queries';
 import { useEvent } from '@wordpress/compose';
-import { createContext, useCallback, useContext, useMemo, useState } from 'react';
+import { createContext, useCallback, useContext, useMemo, useRef, useState } from 'react';
 import { isBlogSubdomainQuery } from '../helpers';
 import { DEFAULT_FILTER } from './constants';
 import { type DomainSearchProps, type DomainSearchContextType, type SearchTrigger } from './types';
@@ -48,6 +48,8 @@ export const DEFAULT_CONTEXT_VALUE: DomainSearchContextType = {
 		onPageView: noop,
 		onBundleShown: noop,
 		onBundleAddToCart: noop,
+		onNamePulseSearch: noop,
+		onNamePulseTracksEvent: noop,
 	},
 	queries: {
 		availableTlds: ( search?: string, vendor?: string ) => availableTldsQuery( vendor, search ),
@@ -98,6 +100,7 @@ export const DEFAULT_CONTEXT_VALUE: DomainSearchContextType = {
 	},
 	setFilter: () => {},
 	resetFilter: () => {},
+	lastSearchTrigger: {},
 };
 
 export const DomainSearchContext =
@@ -135,10 +138,17 @@ export const useDomainSearchContextValue = ( {
 		setIsFullCartOpen( true );
 	}, [] );
 
+	const lastSearchTrigger = useRef< SearchTrigger | undefined >( undefined );
+
 	const normalizedEvents = useMemo( () => {
+		const merged = { ...DEFAULT_CONTEXT_VALUE.events, ...events };
+
 		return {
-			...DEFAULT_CONTEXT_VALUE.events,
-			...events,
+			...merged,
+			onSearchStart: ( query: string, trigger: SearchTrigger ) => {
+				lastSearchTrigger.current = trigger;
+				merged.onSearchStart( query, trigger );
+			},
 		};
 	}, [ events ] );
 
@@ -277,6 +287,7 @@ export const useDomainSearchContextValue = ( {
 				normalizedEvents.onFilterApplied( filter );
 				normalizedEvents.onSearchStart( externalQuery ?? '', 'filter_apply' );
 			},
+			lastSearchTrigger,
 			resetFilter: () => {
 				setFilter( DEFAULT_FILTER );
 				normalizedEvents.onFilterReset( DEFAULT_FILTER, [ 'tlds', 'exactSldMatchesOnly' ] );
