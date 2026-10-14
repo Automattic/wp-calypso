@@ -15,6 +15,8 @@ export interface NamePulseResultSet {
 	id?: string;
 	/** Kept per result set, as rows remount on every keystroke. */
 	rendered: Map< string, NamePulseRenderReport >;
+	/** Bundle groups reported as shown, kept here for the same reason. */
+	shownBundles: Set< string >;
 }
 
 export const NamePulseResultSetContext = createContext< NamePulseResultSet | undefined >(

@@ -10,6 +10,7 @@ interface NamePulseSearchIds {
 	searchId: string;
 	resultSetId: string;
 	rendered: Map< string, NamePulseRenderReport >;
+	shownBundles: Set< string >;
 }
 
 const createSearchIds = ( key: string ): NamePulseSearchIds => ( {
@@ -17,6 +18,7 @@ const createSearchIds = ( key: string ): NamePulseSearchIds => ( {
 	searchId: crypto.randomUUID(),
 	resultSetId: crypto.randomUUID(),
 	rendered: new Map(),
+	shownBundles: new Set(),
 } );
 
 interface NamePulseSearchTrackingState {
@@ -180,5 +182,8 @@ export const useNamePulseSearchTracking = (
 
 	const id = isSettled && searchedIds === ids ? ids.resultSetId : undefined;
 
-	return useMemo( () => ( { id, rendered: ids.rendered } ), [ id, ids ] );
+	return useMemo(
+		() => ( { id, rendered: ids.rendered, shownBundles: ids.shownBundles } ),
+		[ id, ids ]
+	);
 };

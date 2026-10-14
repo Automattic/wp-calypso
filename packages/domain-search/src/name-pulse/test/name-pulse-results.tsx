@@ -1035,6 +1035,27 @@ describe( 'NamePulseResults', () => {
 			expect( bundle ).toHaveClass( 'name-pulse-bundle-card--wide' );
 		} );
 
+		it( 'reports the bundle once when a letter is typed and deleted before the query settles', async () => {
+			const onBundleShown = jest.fn();
+
+			const { rerender } = render(
+				<NamePulseTestSearch query="icecream" showBundleSuggestions events={ { onBundleShown } } />
+			);
+
+			await findBundleCard();
+			expect( onBundleShown ).toHaveBeenCalledTimes( 1 );
+
+			rerender(
+				<NamePulseTestSearch query="icecreamx" showBundleSuggestions events={ { onBundleShown } } />
+			);
+			rerender(
+				<NamePulseTestSearch query="icecream" showBundleSuggestions events={ { onBundleShown } } />
+			);
+			await findBundleCard();
+
+			expect( onBundleShown ).toHaveBeenCalledTimes( 1 );
+		} );
+
 		it( 'renders nothing when no anchor has a bundle', async () => {
 			const bundleForDomain = jest.fn( async () => null );
 

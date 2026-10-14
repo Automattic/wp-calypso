@@ -11,6 +11,7 @@ import { getTld } from '../../helpers/get-tld';
 import { DOMAIN_BUNDLE_UNAVAILABLE_ERROR_CODE } from '../../page/constants';
 import { useDomainSearch } from '../../page/context';
 import { DomainSearchNotice } from '../../ui';
+import { useNamePulseResultSet } from '../hooks/use-name-pulse-result-set';
 import type { BundleSuggestion } from '@automattic/api-core';
 
 import './bundle-card.scss';
@@ -38,6 +39,7 @@ interface NamePulseBundleCardProps {
 export const NamePulseBundleCard = ( { bundle, isWide = false }: NamePulseBundleCardProps ) => {
 	const { __ } = useI18n();
 	const { cart, events } = useDomainSearch();
+	const resultSet = useNamePulseResultSet();
 	const isMutating = !! useIsMutating();
 
 	const {
@@ -63,6 +65,12 @@ export const NamePulseBundleCard = ( { bundle, isWide = false }: NamePulseBundle
 	} );
 
 	useEffect( () => {
+		// The card remounts on every keystroke, so the search remembers what it reported.
+		if ( resultSet?.shownBundles.has( bundle.bundle_group_id ) ) {
+			return;
+		}
+
+		resultSet?.shownBundles.add( bundle.bundle_group_id );
 		events.onBundleShown( bundle, 'card' );
 		// One event per bundle that appears, not one per render or `events` identity.
 		// eslint-disable-next-line react-hooks/exhaustive-deps

@@ -117,7 +117,7 @@ describe( 'NamePulseResultRow', () => {
 
 	it( 'gives each name its own railcar when several show in the same slot', () => {
 		const onSuggestionRender = jest.fn();
-		const resultSet = { id: 'set-1', rendered: new Map() };
+		const resultSet = { id: 'set-1', rendered: new Map(), shownBundles: new Set< string >() };
 
 		const Wrapper = ( { result }: { result: NamePulseDomainResult } ) => {
 			const contextValue = useDomainSearchContextValue( {
