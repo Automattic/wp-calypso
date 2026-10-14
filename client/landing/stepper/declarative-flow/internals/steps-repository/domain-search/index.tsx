@@ -12,6 +12,7 @@ import {
 	isNewHostedSiteCreationFlow,
 	isNewsletterFlow,
 	isOnboardingFlow,
+	SITE_MIGRATION_FLOW,
 	Step,
 	StepContainer,
 } from '@automattic/onboarding';
@@ -491,6 +492,17 @@ const DomainSearchStep: StepType< {
 
 		if ( isCiab ) {
 			return __( 'Choose a site address that puts your brand front and center.' );
+		}
+
+		if ( isOnboardingFlow( flow ) ) {
+			return createInterpolateElement(
+				__(
+					'Make it yours with a .com, .blog, or one of 350+ domain options. Have a site already? <a>Migrate it</a>.'
+				),
+				{
+					a: <a href={ `/setup/${ SITE_MIGRATION_FLOW }?ref=${ flow }` } />,
+				}
+			);
 		}
 
 		return __( 'Make it yours with a .com, .blog, or one of 350+ domain options.' );
