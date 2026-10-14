@@ -50,16 +50,18 @@
 	@media ( min-width: #{ $break-small } ) {
 		flex-direction: row;
 		justify-content: center;
-	}
 
-	// With both cards, split the row evenly instead of sizing each card to its content.
-	&:has( > :nth-child( 2 ) ) > * {
-		flex: 1 1 0;
-		min-width: 0;
+		// With both cards, split the row evenly instead of sizing each card to its content.
+		// Kept to the row layout: below this breakpoint the stepper hides the domain card,
+		// which still matches `:nth-child( 2 )` while hidden.
+		&:has( > :nth-child( 2 ) ) > * {
+			flex: 1 1 0;
+			min-width: 0;
 
-		.summary-button.components-button {
-			width: 100%;
-			height: 100%;
+			.summary-button.components-button {
+				width: 100%;
+				height: 100%;
+			}
 		}
 	}
 }
