@@ -84,9 +84,19 @@
 	}
 }
 
-// Pull the actions row up one row height to sit beside the pagination row
-// instead of stacking below it as a large gap.
+// Pull a visible actions row up beside the pagination row. Hover-only actions
+// take no space until pressed, so they stay below it.
 .Message-module_content:has( .agents-manager-variation-picker__arrows )
 	.MessageActions-module_container {
-	margin-top: -32px;
+	&:has(
+		> :not( .MessageActions-module_dock, [aria-hidden='true'] ),
+		> .MessageActions-module_docked
+	) {
+		margin-top: -32px;
+	}
+
+	// Without hover, hover-only actions are always visible.
+	@media ( hover: none ) {
+		margin-top: -32px;
+	}
 }
