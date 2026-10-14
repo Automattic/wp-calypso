@@ -1,4 +1,4 @@
-import { activeAgencyQuery } from '@automattic/api-queries';
+import { activeAgencyQuery, userPreferenceQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
 import { useAnalytics } from '../../app/analytics';
@@ -7,6 +7,8 @@ import FlashMessage from '../../components/flash-message';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { getMarketplaceHostingSectionRoute } from '../marketplace/paths';
+import OnboardingTour, { useOnboardingTour } from '../onboarding-tour';
+import WelcomeBand, { DISMISSED_PREFERENCE } from '../onboarding-tour/welcome-band';
 import { PARTNER_DIRECTORY_ROUTE } from '../partner-directory/paths';
 import { useContactSupport } from '../support/use-contact-support';
 import { useScheduleCall } from '../tiers/use-schedule-call';
@@ -22,6 +24,17 @@ export default function AgencyOverview() {
 	const locale = useLocale();
 	const agencyId = agency?.id ?? 0;
 	const approvalStatus = agency?.approval_status;
+	const tierId = agency?.tier?.id;
+	// New agencies start in review, then at the first tier.
+	const showsWelcomeBand = approvalStatus === 'pending' || tierId === 'emerging-partner';
+	const { data: isBandDismissed } = useQuery( {
+		...userPreferenceQuery( DISMISSED_PREFERENCE ),
+		enabled: showsWelcomeBand,
+	} );
+	const isWelcomeBandOpen = showsWelcomeBand && ! isBandDismissed;
+	// The welcome band greets new agencies, so the tour never opens on its own and nothing
+	// is “relaunched”.
+	const tourLabel = __( 'Take the full tour' );
 	const hasPartnerDirectoryListing =
 		!! agency?.profile?.partner_directory_application?.directories.some(
 			( { status } ) => status === 'approved'
@@ -29,6 +42,12 @@ export default function AgencyOverview() {
 	const { scheduleCall, isLoading: isSchedulingCall } = useScheduleCall( agency?.id );
 	const { isEligibleForPressableIntroOffer, isEligibleForPressableExpansionOffer } =
 		usePressableOfferEligibility( agency );
+	const {
+		isOpen: isTourOpen,
+		initialSectionId: tourSectionId,
+		open: openTour,
+		onClose: closeTour,
+	} = useOnboardingTour( { opensFromSignUpLink: false } );
 
 	if ( ! agency ) {
 		return <PageLayout header={ <PageHeader title={ __( 'Overview' ) } /> } />;
@@ -50,9 +69,20 @@ export default function AgencyOverview() {
 				type="error"
 				message={ __( 'You don’t have permission to view the requested page.' ) }
 			/>
+			{ showsWelcomeBand && (
+				<WelcomeBand
+					isPending={ approvalStatus === 'pending' }
+					sitesHref="/sites"
+					marketplaceHref="/marketplace"
+					onScheduleCall={ scheduleCall }
+					isSchedulingCall={ isSchedulingCall }
+					onTakeTour={ openTour }
+					recordTracksEvent={ recordTracksEvent }
+				/>
+			) }
 			<AgencyOverviewContent
 				agencyId={ agencyId }
-				tierId={ agency.tier?.id }
+				tierId={ tierId }
 				influencedRevenue={ agency.influenced_revenue ?? 0 }
 				approvalStatus={ approvalStatus }
 				capabilities={ agency.user?.capabilities }
@@ -76,6 +106,11 @@ export default function AgencyOverview() {
 							onClick: () => openContactForm(),
 						},
 						{
+							id: 'relaunch-welcome-tour',
+							label: tourLabel,
+							onClick: openTour,
+						},
+						{
 							id: 'program-incentives',
 							label: __( 'Program incentive details' ),
 							href: PROGRAM_INCENTIVES_URL,
@@ -85,8 +120,18 @@ export default function AgencyOverview() {
 				} }
 				onScheduleCall={ scheduleCall }
 				isSchedulingCall={ isSchedulingCall }
+				onRelaunchTour={ openTour }
+				hidesPendingCard={ isWelcomeBandOpen }
+				tourLabel={ tourLabel }
 				recordTracksEvent={ recordTracksEvent }
 			/>
+			{ isTourOpen && (
+				<OnboardingTour
+					agencyId={ agencyId }
+					initialSectionId={ tourSectionId }
+					onClose={ closeTour }
+				/>
+			) }
 		</PageLayout>
 	);
 }

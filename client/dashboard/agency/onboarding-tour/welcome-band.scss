@@ -1,0 +1,237 @@
+// The drawings' palette, from Figma “Marketplace Graphics” › Welcome steps v2: the flat
+// light blue field, the numbered pins and the drop shadow the SVGs leave to CSS.
+.welcome-band-shell {
+	--welcome-field: #e5f1ff;
+	--welcome-pin: #0240e4;
+	--welcome-pin-ring: rgba( 2, 64, 228, 0.18 );
+	--welcome-pin-ink: #fff;
+	--welcome-card-shadow: drop-shadow( 0 10px 24px rgba( 0, 0, 0, 0.1 ) )
+		drop-shadow( 0 1px 3px rgba( 0, 0, 0, 0.06 ) );
+	--welcome-card-shadow-hover: drop-shadow( 0 14px 32px rgba( 0, 0, 0, 0.14 ) )
+		drop-shadow( 0 2px 4px rgba( 0, 0, 0, 0.08 ) );
+	--welcome-move: 320ms cubic-bezier( 0.32, 0.72, 0, 1 );
+
+	position: relative;
+	overflow: hidden;
+	// The layout follows the band's own width, not the window's: the sidebar decides
+	// how much room it really has.
+	container: welcome-band / inline-size;
+
+	// Motion only answers the close button, never a page load.
+	&.is-closing {
+		opacity: 0;
+		transition:
+			height var( --welcome-move ),
+			opacity 160ms ease-out;
+	}
+}
+
+.welcome-band {
+	position: relative;
+	display: grid;
+	grid-template-columns: minmax( 0, 1fr );
+
+	// Wide: the welcome beside the three steps.
+	@container welcome-band ( min-width: 1080px ) {
+		grid-template-columns: minmax( 240px, 300px ) minmax( 0, 1fr );
+	}
+}
+
+.welcome-band-intro {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	justify-content: center;
+	gap: 8px;
+	padding: 24px;
+
+	// Stacked above the steps, the intro keeps clear of the corner button.
+	@container welcome-band ( max-width: 1079px ) {
+		padding-inline-end: 48px;
+	}
+}
+
+// Leaving is one quiet click away, out of the reading path: the corner, not the intro.
+.welcome-band .welcome-band-close {
+	color: var( --wp-components-color-gray-700 );
+	position: absolute;
+	inset-block-start: 8px;
+	inset-inline-end: 8px;
+	z-index: 1;
+}
+
+.welcome-band-intro-text {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+}
+
+.welcome-band-intro-actions {
+	display: flex;
+	align-items: center;
+	gap: 16px;
+}
+
+.welcome-band .welcome-band-title {
+	margin: 0;
+	font-size: 20px;
+	font-weight: 500;
+	line-height: 28px;
+	text-wrap: balance;
+}
+
+.welcome-band-field {
+	display: grid;
+	grid-template-columns: repeat( 3, minmax( 0, 1fr ) );
+	gap: 24px;
+	align-items: stretch;
+	margin: 0;
+	padding: 32px;
+	list-style: none;
+	background: var( --welcome-field );
+
+	// Medium: a full row of steps under the welcome, never narrower than a drawing
+	// can be read at.
+	@container welcome-band ( max-width: 1079px ) {
+		grid-template-columns: repeat( 3, minmax( 200px, 1fr ) );
+		padding: 24px;
+	}
+
+	// Narrow: the steps as a numbered list without their drawings.
+	@container welcome-band ( max-width: 719px ) {
+		grid-template-columns: minmax( 0, 1fr );
+		gap: 12px;
+
+		.welcome-band-art {
+			display: none;
+		}
+
+		.welcome-band-step {
+			max-inline-size: none;
+			justify-self: stretch;
+		}
+	}
+}
+
+.welcome-band-step {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	gap: 14px;
+	justify-self: center;
+	inline-size: 100%;
+	max-inline-size: 280px;
+	min-inline-size: 0;
+}
+
+// The drawings: Figma SVGs, white on the field.
+.welcome-band-art {
+	display: block;
+	inline-size: 100%;
+	// About 85% of the step, so the drawing supports the step instead of leading it.
+	max-inline-size: 240px;
+	block-size: auto;
+	// One or two cards on a transparent canvas, so the shadow follows the cards' own shapes.
+	filter: var( --welcome-card-shadow );
+	transition:
+		transform 160ms ease-out,
+		filter 160ms ease-out;
+
+	// Locked steps keep their drawing as a preview, faded and flat.
+	.welcome-band-step.is-locked & {
+		opacity: 0.5;
+		filter: none;
+	}
+}
+
+// The caption fills the rest of the step, so the three actions share one line however
+// the copy wraps.
+.welcome-band-caption {
+	flex: 1;
+	display: flex;
+	align-items: flex-start;
+	gap: 8px;
+	font-size: 13px;
+	line-height: 18px;
+}
+
+.welcome-band-caption-text {
+	align-self: stretch;
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	min-inline-size: 0;
+	padding-block-start: 4px;
+	text-wrap: balance;
+}
+
+.welcome-band .welcome-band-step-title {
+	margin: 0;
+	font-size: 13px;
+	font-weight: 600;
+	line-height: 18px;
+	text-wrap: balance;
+}
+
+// Muted text on the soft blue field: the components' gray-700 is 4.0:1 there, under AA;
+// gray-60 is 6.4:1.
+.welcome-band-field .welcome-band-muted {
+	color: #50575e;
+}
+
+.welcome-band-caption-text > :not( .welcome-band-step-title ) {
+	text-wrap: pretty;
+}
+
+// The action sits under the benefit, a beat apart.
+.welcome-band-caption .welcome-band-action {
+	margin-block-start: auto;
+	padding-block-start: 10px;
+}
+
+// The whole step answers a click, drawing included, so a drawing that looks like the
+// product never sits there doing nothing.
+.welcome-band-step .welcome-band-cta {
+	position: static;
+
+	&::after {
+		content: '';
+		position: absolute;
+		inset: 0;
+	}
+}
+
+.welcome-band-step:has( .welcome-band-cta ):hover .welcome-band-art {
+	transform: translateY( -2px );
+	filter: var( --welcome-card-shadow-hover );
+}
+
+.welcome-band-pin {
+	flex: none;
+	display: grid;
+	place-items: center;
+	inline-size: 26px;
+	block-size: 26px;
+	border-radius: 50%;
+	background: var( --welcome-pin-ring );
+
+	span {
+		display: grid;
+		place-items: center;
+		inline-size: 18px;
+		block-size: 18px;
+		border-radius: 50%;
+		background: var( --welcome-pin );
+		font-size: 10px;
+		font-weight: 600;
+		line-height: 1;
+		color: var( --welcome-pin-ink );
+	}
+}
+
+@media ( prefers-reduced-motion: reduce ) {
+	.welcome-band-shell,
+	.welcome-band-shell * {
+		transition: none !important;
+	}
+}

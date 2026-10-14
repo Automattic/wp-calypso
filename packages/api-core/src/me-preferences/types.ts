@@ -78,4 +78,7 @@ export interface UserPreferences {
 	/** Timestamp of the Pressable usage-limit notification the user dismissed. */
 	'pressable-limit-notification-dismissed'?: number;
 	'a4a-agency-approval-notice-dismissed'?: boolean;
+	/** Shared with the classic A4A dashboard, so the welcome tour resumes where it was left in either one. */
+	'a4a-onboarding-tours-current-section'?: string;
+	'a4a-overview-welcome-band-dismissed'?: boolean;
 }
