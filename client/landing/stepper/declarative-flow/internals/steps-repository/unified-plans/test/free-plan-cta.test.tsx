@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 import { DOMAIN_FLOW, LAUNCH_SITE_FLOW, ONBOARDING_FLOW } from '@automattic/onboarding';
-import { screen } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import { renderStep } from '../../test/helpers';
 import UnifiedPlansStep, { type UnifiedPlansStepProps } from '../unified-plans-step';
 
@@ -15,6 +15,12 @@ jest.mock( 'calypso/my-sites/plans-features-main', () => ( {
 		return null;
 	},
 } ) );
+jest.mock(
+	'calypso/signup/step-wrapper',
+	() =>
+		( { stepContent }: { stepContent: React.ReactNode } ) =>
+			stepContent
+);
 jest.mock( 'calypso/components/marketing-message', () => () => null );
 jest.mock( 'calypso/lib/wp', () => ( { req: { post: () => {} } } ) );
 
@@ -23,9 +29,11 @@ const noop = () => {};
 const renderV2Step = ( {
 	flowName,
 	paidDomainName,
+	useStepContainerV2 = true,
 }: {
 	flowName: string;
 	paidDomainName?: string;
+	useStepContainerV2?: boolean;
 } ) => {
 	const props = {
 		flowName,
@@ -37,7 +45,7 @@ const renderV2Step = ( {
 			domainItem: paidDomainName ? { meta: paidDomainName } : undefined,
 		},
 		deemphasizeFreePlan: true,
-		useStepContainerV2: true,
+		useStepContainerV2,
 		wrapperProps: { goBack: noop },
 	} as unknown as UnifiedPlansStepProps;
 
@@ -50,20 +58,25 @@ describe( 'UnifiedPlansStep free plan CTA', () => {
 	} );
 
 	describe( 'launch-site flow', () => {
-		it( 'does not offer a free plan CTA without a paid domain', () => {
+		it( 'offers the free plan in the heading without a paid domain', () => {
 			renderV2Step( { flowName: LAUNCH_SITE_FLOW } );
 
-			expect( screen.queryByText( /start with a free plan/i ) ).not.toBeInTheDocument();
+			expect( screen.getByText( /start with a free plan/i ) ).toBeVisible();
 			expect( mockPlansFeaturesMainProps.renderFreePlanCtaInStepContainerV2 ).toBe( false );
-			expect( mockPlansFeaturesMainProps.deemphasizeFreePlan ).toBe( true );
+			expect( mockPlansFeaturesMainProps.isInStepContainerV2 ).toBe( true );
 		} );
 
-		it( 'does not offer a free plan CTA with a paid domain', () => {
+		it( 'hands the free plan CTA to the plans grid with a paid domain', () => {
 			renderV2Step( { flowName: LAUNCH_SITE_FLOW, paidDomainName: 'example.com' } );
 
 			expect( screen.queryByText( /start with a free plan/i ) ).not.toBeInTheDocument();
-			expect( mockPlansFeaturesMainProps.renderFreePlanCtaInStepContainerV2 ).toBe( false );
-			expect( mockPlansFeaturesMainProps.paidDomainName ).toBe( 'example.com' );
+			expect( mockPlansFeaturesMainProps.renderFreePlanCtaInStepContainerV2 ).toBe( true );
+		} );
+
+		it( 'tells the plans grid that legacy /start/launch-site is not in StepContainerV2', async () => {
+			renderV2Step( { flowName: LAUNCH_SITE_FLOW, useStepContainerV2: false } );
+
+			await waitFor( () => expect( mockPlansFeaturesMainProps.isInStepContainerV2 ).toBe( false ) );
 		} );
 	} );
 

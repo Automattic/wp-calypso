@@ -492,14 +492,8 @@ function UnifiedPlansStep( {
 			( paidDomainName != null || isPaidTheme ) ) ||
 		deemphasizeFreePlanFromProps;
 
-	// Like legacy /start/launch-site, Free is only offered through Compare plans.
-	const hideV2FreePlanCta = flowName === LAUNCH_SITE_FLOW;
-
 	const shouldUseModalBackedFreePlanCTA =
-		useStepContainerV2 &&
-		deemphasizeFreePlan &&
-		! hideV2FreePlanCta &&
-		( paidDomainName != null || isPaidTheme );
+		useStepContainerV2 && deemphasizeFreePlan && ( paidDomainName != null || isPaidTheme );
 
 	const getSubheaderText = () => {
 		if ( subHeaderText ) {
@@ -596,12 +590,7 @@ function UnifiedPlansStep( {
 
 		// Keep the non-modal CTA in Step.Heading. Paid-domain/theme flows use
 		// <PlansPageSubheader> so the CTA can open PlanUpsellModal first.
-		if (
-			useStepContainerV2 &&
-			deemphasizeFreePlan &&
-			! hideV2FreePlanCta &&
-			! shouldUseModalBackedFreePlanCTA
-		) {
+		if ( useStepContainerV2 && deemphasizeFreePlan && ! shouldUseModalBackedFreePlanCTA ) {
 			return translate(
 				'Unlock a powerful bundle of features. Or {{link}}start with a free plan{{/link}}.',
 				{ components: { link: freePlanButton } }
@@ -701,6 +690,9 @@ function UnifiedPlansStep( {
 				customerType={ customerType }
 				deemphasizeFreePlan={ deemphasizeFreePlan }
 				renderFreePlanCtaInStepContainerV2={ shouldUseModalBackedFreePlanCTA }
+				// Legacy /start/launch-site shares its flow name with the Stepper flow, so the name
+				// alone can't tell which container the plans render in.
+				isInStepContainerV2={ flowName === LAUNCH_SITE_FLOW ? !! useStepContainerV2 : undefined }
 				plansWithScroll={ isDesktop }
 				intent={ intent }
 				flowName={ flowName }
