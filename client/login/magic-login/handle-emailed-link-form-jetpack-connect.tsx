@@ -104,11 +104,15 @@ const HandleEmailedLinkFormJetpackConnect: FC< Props > = ( { emailAddress, token
 		handleValidToken();
 	}, [ authError, dispatch, handleValidToken, hasSubmitted, isAuthenticated, isFetching ] );
 
+	useEffect( () => {
+		if ( ! isExpired ) {
+			dispatch( recordTracksEvent( 'calypso_login_email_link_handle_click_view' ) );
+		}
+	}, [] );
+
 	if ( isExpired ) {
 		return <EmailedLoginLinkExpired emailAddress={ emailAddress } isJetpack />;
 	}
-
-	dispatch( recordTracksEvent( 'calypso_login_email_link_handle_click_view' ) );
 
 	return isWooFlow || isFromAutomatticForAgenciesPlugin ? (
 		<EmptyContent className="magic-login__handle-link jetpack" title={ null }>
