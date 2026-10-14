@@ -1,5 +1,5 @@
 import config from '@automattic/calypso-config';
-import { isSiteMigrationInProgress } from '../site-status';
+import { getSiteBlockingStatus, isSiteMigrationInProgress } from '../site-status';
 import type { Site } from '@automattic/api-core';
 
 const siteWith = ( site_migration: Partial< Site[ 'site_migration' ] > ) =>
@@ -28,6 +28,20 @@ describe( 'isSiteMigrationInProgress', () => {
 			)
 		).toBe( false );
 
+		// What the site is labelled as follows the lock.
+		expect(
+			getSiteBlockingStatus(
+				siteWith( {
+					type: 'wordpress',
+					status_v2: 'completed',
+					migration_status: 'migration-started-diy',
+				} )
+			)
+		).toBe( null );
+		expect( getSiteBlockingStatus( siteWith( { type: 'wordpress', status_v2: 'started' } ) ) ).toBe(
+			'migration_started'
+		);
+
 		expect(
 			isSiteMigrationInProgress( siteWith( { migration_status: 'migration-started-difm' } ) )
 		).toBe( true );
@@ -50,5 +64,14 @@ describe( 'isSiteMigrationInProgress', () => {
 		expect(
 			isSiteMigrationInProgress( siteWith( { type: 'wordpress', status_v2: 'started' } ) )
 		).toBe( false );
+		expect(
+			getSiteBlockingStatus(
+				siteWith( {
+					type: 'wordpress',
+					status_v2: 'completed',
+					migration_status: 'migration-started-diy',
+				} )
+			)
+		).toBe( 'migration_started' );
 	} );
 } );

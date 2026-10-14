@@ -72,9 +72,9 @@ export function Findings( {
 				</>
 			}
 		>
-			{ findings.map( ( { code, severity, label, message } ) => (
+			{ findings.map( ( { code, severity, label, message }, index ) => (
 				<Notice
-					key={ code }
+					key={ `${ code }-${ index }` }
 					variant={ severity === 'failure' ? 'error' : 'warning' }
 					title={ label }
 				>

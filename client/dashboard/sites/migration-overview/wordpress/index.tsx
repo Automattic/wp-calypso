@@ -36,11 +36,14 @@ export function WordPressMigration( { site }: { site: Site } ) {
 	} = useQuery( {
 		...siteWordPressMigrationStatusQuery( site.ID ),
 		refetchInterval: ( { state } ) => {
-			// Keep trying while it can't be read: access to the site can drop out and come back mid-migration.
-			if ( state.error ) {
-				return 30000;
+			const status = state.data?.status;
+			if ( status === 'running' ) {
+				return 5000;
 			}
-			return state.data?.status === 'running' ? 5000 : false;
+
+			// Keep trying while it can't be read: access to the site can drop out and come back mid-migration.
+			// And keep an eye on a status this page doesn't know, which may be on its way to one it does.
+			return state.error || ( status && ! KNOWN_STATUSES.includes( status ) ) ? 30000 : false;
 		},
 	} );
 
@@ -58,6 +61,21 @@ export function WordPressMigration( { site }: { site: Site } ) {
 	// and keep checking in case it lags behind the migration's own status.
 	const isCompleted = migration?.status === 'completed';
 	const isSiteUnlocked = ! isSiteMigrationInProgress( site );
+
+	// The site should unlock within moments of this page seeing the migration complete. Past that, offer a way out.
+	const [ isUnlockOverdue, setIsUnlockOverdue ] = useState( false );
+	useEffect( () => {
+		if ( ! isCompleted ) {
+			return;
+		}
+
+		const timeout = setTimeout( () => setIsUnlockOverdue( true ), UNLOCK_GRACE_PERIOD );
+		return () => {
+			clearTimeout( timeout );
+			setIsUnlockOverdue( false );
+		};
+	}, [ isCompleted ] );
+
 	useEffect( () => {
 		if ( ! isCompleted ) {
 			return;
@@ -68,28 +86,15 @@ export function WordPressMigration( { site }: { site: Site } ) {
 			return;
 		}
 
-		const reloadSite = () => queryClient.invalidateQueries( siteQueryFilter( site.ID ) );
+		const reloadSite = () => {
+			if ( ! document.hidden ) {
+				queryClient.invalidateQueries( siteQueryFilter( site.ID ) );
+			}
+		};
 		reloadSite();
-		const interval = setInterval( reloadSite, 5000 );
+		const interval = setInterval( reloadSite, isUnlockOverdue ? 30000 : 5000 );
 		return () => clearInterval( interval );
-	}, [ isCompleted, isSiteUnlocked, queryClient, navigate, site.ID, site.slug ] );
-
-	// The site should unlock within moments of the migration completing. Past that, offer a way out.
-	const completedAt = migration?.completed_at;
-	const [ isUnlockOverdue, setIsUnlockOverdue ] = useState( false );
-	useEffect( () => {
-		if ( ! isCompleted ) {
-			return;
-		}
-
-		const overdueAt =
-			( completedAt ? Date.parse( completedAt ) : Date.now() ) + UNLOCK_GRACE_PERIOD;
-		const timeout = setTimeout(
-			() => setIsUnlockOverdue( true ),
-			Math.max( 0, overdueAt - Date.now() )
-		);
-		return () => clearTimeout( timeout );
-	}, [ isCompleted, completedAt ] );
+	}, [ isCompleted, isSiteUnlocked, isUnlockOverdue, queryClient, navigate, site.ID, site.slug ] );
 
 	const contactUs = (
 		<Button variant="link" onClick={ () => setShowHelpCenter( true ) }>
@@ -128,7 +133,9 @@ export function WordPressMigration( { site }: { site: Site } ) {
 							</MetadataItem>
 							{ migration && sourceHost && (
 								<MetadataItem>
-									<Text variant="muted">{ getSummary( migration.status, sourceHost ) }</Text>
+									<Text variant="muted">
+										{ getSummary( isReconnecting ? 'not_started' : migration.status, sourceHost ) }
+									</Text>
 								</MetadataItem>
 							) }
 						</MetadataList>
@@ -195,6 +202,7 @@ function getSourceHost( sourceUrl?: string | null ) {
 	}
 }
 
+// The line after the site's address in the header, e.g. "example.wordpress.com · waiting for access to example.com".
 function getSummary( status: WordPressMigrationStatus[ 'status' ], sourceHost: string ) {
 	switch ( status ) {
 		case 'not_started':

@@ -2,7 +2,8 @@
  * @jest-environment jsdom
  */
 import { queryClient } from '@automattic/api-queries';
-import { screen, waitFor } from '@testing-library/react';
+import config from '@automattic/calypso-config';
+import { act, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { render } from '../../../../test-utils';
@@ -54,7 +55,13 @@ const configurePath = '/wpcom/v2/sites/42/wordpress-migration/configure';
 const runPath = '/wpcom/v2/sites/42/wordpress-migration/run';
 
 describe( 'WordPressMigration', () => {
-	afterEach( () => queryClient.clear() );
+	// The site only reads as locked by its own state while the flow is switched on.
+	beforeEach( () => config.enable( 'migration/reprint-flow' ) );
+	afterEach( () => {
+		config.disable( 'migration/reprint-flow' );
+		queryClient.clear();
+		window.history.replaceState( {}, '', '/' );
+	} );
 
 	it( 'shows the key to install, then follows the migration once it starts', async () => {
 		mockApi().get( statusPath ).query( true ).reply( 200, migration( 'not_started' ) );
@@ -192,17 +199,37 @@ describe( 'WordPressMigration', () => {
 		expect( screen.queryByText( /We couldn’t load your migration/ ) ).not.toBeInTheDocument();
 	} );
 
-	it( 'offers a way out when a completed migration leaves the site locked', async () => {
-		const completed = migration( 'completed', {
-			completed_at: new Date( Date.now() - 60000 ).toISOString(),
-		} );
-		mockApi().get( statusPath ).query( true ).reply( 200, completed );
+	it( 'waits on a completed migration whose site is still locked, then offers a way out', async () => {
+		jest.useFakeTimers( { advanceTimers: true } );
+		mockApi().get( statusPath ).query( true ).reply( 200, migration( 'completed' ) );
 
-		render( <WordPressMigration site={ site } />, { queryClient } );
+		const { router } = render( <WordPressMigration site={ site } />, { queryClient } );
 
 		expect( await screen.findByText( 'migrated from example.com' ) ).toBeVisible();
+		expect( screen.getByText( /One moment while we finish up/ ) ).toBeVisible();
+		expect( screen.queryByRole( 'button', { name: 'Reload' } ) ).not.toBeInTheDocument();
+		expect( router.state.location.pathname ).toBe( '/' );
+
+		act( () => jest.advanceTimersByTime( 30000 ) );
+
 		expect( await screen.findByRole( 'button', { name: 'Reload' } ) ).toBeVisible();
 		expect( screen.getByRole( 'button', { name: 'Contact us' } ) ).toBeVisible();
+		expect( router.state.location.pathname ).toBe( '/' );
+		jest.useRealTimers();
+	} );
+
+	it( 'hands over to the site once a completed migration has unlocked it', async () => {
+		const unlockedSite = {
+			...site,
+			site_migration: { type: 'wordpress', status_v2: 'completed' },
+		} as unknown as Site;
+		mockApi().get( statusPath ).query( true ).reply( 200, migration( 'completed' ) );
+
+		const { router } = render( <WordPressMigration site={ unlockedSite } />, { queryClient } );
+
+		await waitFor( () =>
+			expect( router.state.location.pathname ).toBe( '/sites/example.wordpress.com' )
+		);
 	} );
 
 	it( 'still says a migration is underway for a status it doesn’t know', async () => {

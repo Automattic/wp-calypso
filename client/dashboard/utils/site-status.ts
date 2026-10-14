@@ -10,11 +10,15 @@ export function getSiteBlockingStatus( item: Site ): SiteBlockingStatus {
 		return 'deleted';
 	}
 
-	const { migration_status } = item.site_migration;
-	if ( migration_status?.startsWith( 'migration-pending' ) ) {
+	const { migration_status, status_v2 } = item.site_migration;
+	if ( isWordPressMigration( item ) ) {
+		// Goes by the same state as the lock, so the two can't disagree when the flow sticker lags.
+		if ( isSiteMigrationInProgress( item ) ) {
+			return status_v2 === 'pending' ? 'migration_pending' : 'migration_started';
+		}
+	} else if ( migration_status?.startsWith( 'migration-pending' ) ) {
 		return 'migration_pending';
-	}
-	if (
+	} else if (
 		migration_status?.startsWith( 'migration-started' ) ||
 		migration_status?.startsWith( 'migration-in-progress' )
 	) {
