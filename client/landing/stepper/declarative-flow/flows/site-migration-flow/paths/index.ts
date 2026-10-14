@@ -73,7 +73,15 @@ export const sitePickerPath = buildPathHelper<
 >( STEPS.PICK_SITE.slug );
 
 export const plansPath = buildPathHelper<
-	{ queryParams: { from: string; platform: ImporterPlatform; host?: string } },
+	{
+		queryParams: {
+			from: string;
+			platform: ImporterPlatform;
+			host?: string;
+			siteId?: number;
+			siteSlug?: string;
+		};
+	},
 	typeof STEPS.UNIFIED_PLANS.slug
 >( STEPS.UNIFIED_PLANS.slug );
 
@@ -105,6 +113,11 @@ export const siteCheckPath = buildPathHelper<
 	},
 	typeof STEPS.SITE_MIGRATION_CHECK.slug
 >( STEPS.SITE_MIGRATION_CHECK.slug );
+
+export const errorPath = buildPathHelper<
+	{ queryParams: { siteId: number; siteSlug: string } },
+	typeof STEPS.ERROR.slug
+>( STEPS.ERROR.slug );
 
 export const processingPath = buildPathHelper<
 	{

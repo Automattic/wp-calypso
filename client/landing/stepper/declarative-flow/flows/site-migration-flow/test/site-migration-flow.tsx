@@ -5,10 +5,11 @@
 import config from '@automattic/calypso-config';
 import { PLAN_BUSINESS_MONTHLY } from '@automattic/calypso-products';
 import { isCurrentUserLoggedIn } from '@automattic/data-stores/src/user/selectors';
+import { QueryClient, useQueryClient } from '@tanstack/react-query';
 import { act, waitFor } from '@testing-library/react';
 import { select } from '@wordpress/data';
 import nock from 'nock';
-import { MemoryRouter, useLocation, useNavigationType } from 'react-router';
+import { MemoryRouter, useLocation, useNavigate, useNavigationType } from 'react-router';
 import { dashboardLink } from 'calypso/dashboard/utils/link';
 import { HOW_TO_MIGRATE_OPTIONS } from 'calypso/landing/stepper/constants';
 import { useFlowNavigation } from 'calypso/landing/stepper/declarative-flow/internals/hooks/use-flow-navigation';
@@ -17,13 +18,12 @@ import { useFlowState } from 'calypso/landing/stepper/declarative-flow/internals
 import { STEPS } from 'calypso/landing/stepper/declarative-flow/internals/steps';
 import {
 	getAssertionConditionResult,
-	getFlowLocation,
 	renderFlow,
 	runFlowNavigation,
 } from 'calypso/landing/stepper/declarative-flow/test/helpers';
 import { useIsSiteAdmin } from 'calypso/landing/stepper/hooks/use-is-site-admin';
 import * as siteData from 'calypso/landing/stepper/hooks/use-site-data';
-import { ONBOARD_STORE, SITE_STORE } from 'calypso/landing/stepper/stores';
+import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { goToCheckout } from 'calypso/landing/stepper/utils/checkout';
 import { leaveCheckout } from 'calypso/my-sites/checkout/src/lib/leave-checkout';
 import { getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
@@ -34,6 +34,10 @@ import siteMigrationFlow from '../site-migration-flow';
 // we need to save the original object for later to not affect tests from other files
 const originalLocation = window.location;
 
+jest.mock( '@tanstack/react-query', () => ( {
+	...jest.requireActual( '@tanstack/react-query' ),
+	useQueryClient: jest.fn( jest.requireActual( '@tanstack/react-query' ).useQueryClient ),
+} ) );
 jest.mock( 'calypso/landing/stepper/utils/checkout' );
 jest.mock( '@automattic/data-stores/src/user/selectors' );
 jest.mock( 'calypso/state/current-user/selectors' );
@@ -47,6 +51,7 @@ jest.mock( 'calypso/landing/stepper/declarative-flow/internals/state-manager/sto
 		get: jest.fn(),
 		set: jest.fn(),
 		sessionId: '123',
+		queryKey: [ 'stepper-state-item', 'site-migration', '123', 'v1' ],
 	} ),
 } ) );
 
@@ -62,6 +67,7 @@ const renderNavigation = ( initialEntries: string[], initialIndex = 0 ) =>
 	renderHookWithProvider(
 		() => {
 			const location = useLocation();
+			const navigateHistory = useNavigate();
 			window.location.search = location.search;
 			const { navigate, params } = useFlowNavigation( siteMigrationFlow );
 			const navigation = useStepNavigationWithTracking( {
@@ -69,7 +75,12 @@ const renderNavigation = ( initialEntries: string[], initialIndex = 0 ) =>
 				currentStepRoute: params.step,
 				navigate,
 			} );
-			return { navigation, location, navigationType: useNavigationType() };
+			return {
+				navigation,
+				location,
+				navigationType: useNavigationType(),
+				back: () => navigateHistory( -1 ),
+			};
 		},
 		{
 			wrapper: ( { children } ) => (
@@ -96,6 +107,9 @@ describe( 'Site Migration Flow', () => {
 	} );
 
 	beforeEach( () => {
+		jest
+			.mocked( useQueryClient )
+			.mockImplementation( jest.requireActual( '@tanstack/react-query' ).useQueryClient );
 		// These cases cover the flag-off path for non-WordPress sources. The hand-off to the
 		// static-site import flow has its own cases below and enables the flag itself.
 		config.disable( 'migration/non-wordpress-source' );
@@ -1054,12 +1068,21 @@ describe( 'Site Migration Flow', () => {
 				source: 'sites-dashboard',
 				flags: 'migration/reprint-flow',
 			};
+			let recoveryClient: QueryClient;
 			beforeEach( () => {
 				jest
 					.spyOn( config, 'isEnabled' )
 					.mockImplementation(
 						( flag ) => flag === 'migration/reprint-flow' || flag === 'migration/ssh-migration'
 					);
+				recoveryClient = new QueryClient();
+				jest.mocked( useQueryClient ).mockReturnValue( recoveryClient );
+				jest
+					.mocked( useFlowState().get )
+					.mockImplementation(
+						( key ) => recoveryClient.getQueryData( useFlowState().queryKey )?.[ key ]
+					);
+
 				jest.mocked( goToCheckout ).mockClear();
 			} );
 
@@ -1228,66 +1251,202 @@ describe( 'Site Migration Flow', () => {
 				}
 			);
 
-			it( 'shows the shared error screen after configure fails', async () => {
-				const step = STEPS.UNIFIED_PLANS;
-				const destination = { siteId: 123, siteSlug: 'example.wordpress.com' };
-				jest.spyOn( siteData, 'useSiteData' ).mockReturnValue( {
-					...destination,
-					site: { plan: { features: { active: [ 'install-plugins' ] } } },
-				} );
-				const configure = nock( 'https://public-api.wordpress.com' )
-					.post( '/wpcom/v2/sites/123/wordpress-migration/configure', {
-						source_url: context.from,
-					} )
-					.reply( 403, { error: 'forbidden', message: 'Not allowed' } );
-				runNavigation( {
-					from: step,
-					query: { ...context, ...destination },
-					dependencies: {
-						...context,
+			it.each( [ STEPS.PROCESSING, STEPS.UNIFIED_PLANS, STEPS.SITE_MIGRATION_CHECK ] )(
+				'recovers a configure failure after $slug with an explicit retry on the same destination',
+				async ( step ) => {
+					const destination = { siteId: 123, siteSlug: 'example.wordpress.com' };
+					jest.spyOn( siteData, 'useSiteData' ).mockReturnValue( {
 						...destination,
-						action: 'continue',
-						siteCreated: true,
-						cartItems: [ { product_slug: PLAN_BUSINESS_MONTHLY } ],
-					},
-				} );
-				await waitFor( () => expect( getFlowLocation().path ).toContain( '/error' ) );
-				expect( select( SITE_STORE ).getSiteSetupError().error ).toBe(
-					'migration_configuration_failed'
-				);
-				expect( configure.isDone() ).toBe( true );
-				expect( goToCheckout ).not.toHaveBeenCalled();
-				expect( window.location.assign ).not.toHaveBeenCalled();
-			} );
-
-			it( 'does not configure on mount or reload at processing', () => {
-				const step = STEPS.PROCESSING;
-				const configure = nock( 'https://public-api.wordpress.com' )
-					.post( '/wpcom/v2/sites/123/wordpress-migration/configure' )
-					.reply( 200, {} );
-				const mount = () =>
-					renderHookWithProvider(
-						() => siteMigrationFlow.useStepNavigation( step.slug, jest.fn() ),
+						site: { plan: { features: { active: [ 'install-plugins' ] } } },
+					} );
+					const configure = nock( 'https://public-api.wordpress.com' )
+						.post( '/wpcom/v2/sites/123/wordpress-migration/configure', {
+							source_url: context.from,
+						} )
+						.reply( 503, {} );
+					const query = new URLSearchParams( {
+						...context,
+						...( step !== STEPS.PROCESSING && destination ),
+					} );
+					const createdSite = { ...destination, requestedName: '' };
+					const initial = renderNavigation( [ `/setup/site-migration/${ step.slug }?${ query }` ] );
+					recoveryClient.setQueryData( useFlowState().queryKey, { createdSite } );
+					// Model a setter captured before the asynchronous creation completed.
+					jest.mocked( useFlowState().set ).mockImplementation( ( key, value ) => {
+						recoveryClient.setQueryData( useFlowState().queryKey, { [ key ]: value } );
+						return value;
+					} );
+					const submissions = {
+						[ STEPS.PROCESSING.slug ]: { ...destination, siteCreated: true },
+						[ STEPS.UNIFIED_PLANS.slug ]: {
+							cartItems: [ { product_slug: PLAN_BUSINESS_MONTHLY } ],
+						},
+						[ STEPS.SITE_MIGRATION_CHECK.slug ]: { ...context, action: 'continue' },
+					};
+					act( () => initial.result.current.navigation.submit( submissions[ step.slug ] ) );
+					await waitFor( () =>
+						expect( initial.result.current.location.pathname ).toBe( '/site-migration/error' )
+					);
+					expect( configure.isDone() ).toBe( true );
+					expect( recoveryClient.getQueryData( useFlowState().queryKey ).createdSite ).toEqual(
+						createdSite
+					);
+					expect( initial.result.current.navigationType ).toBe( 'REPLACE' );
+					const errorUrl = `/setup${ initial.result.current.location.pathname }${ initial.result.current.location.search }`;
+					expect(
+						new URLSearchParams( initial.result.current.location.search ).get( 'siteId' )
+					).toBe( '123' );
+					expect( goToCheckout ).not.toHaveBeenCalled();
+					expect( window.location.assign ).not.toHaveBeenCalled();
+					initial.unmount();
+					const reloaded = renderNavigation( [ errorUrl ] );
+					const { result: stepProps } = renderHookWithProvider(
+						() => siteMigrationFlow.useStepsProps(),
 						{
 							wrapper: ( { children } ) => (
-								<MemoryRouter
-									initialEntries={ [
-										`/site-migration/${ step.slug }?${ new URLSearchParams( { ...context, siteId: '123', siteSlug: 'example.wordpress.com' } ) }`,
-									] }
-								>
-									{ children }
-								</MemoryRouter>
+								<MemoryRouter initialEntries={ [ errorUrl ] }>{ children }</MemoryRouter>
 							),
 						}
 					);
-				const first = mount();
-				first.rerender();
-				first.unmount();
-				mount();
-				expect( configure.isDone() ).toBe( false );
+					expect( stepProps.current.error.showRetry ).toBe( true );
+					const retry = nock( 'https://public-api.wordpress.com' )
+						.post( '/wpcom/v2/sites/123/wordpress-migration/configure', {
+							source_url: context.from,
+						} )
+						.reply( 200, {} );
+					expect( retry.isDone() ).toBe( false );
+					act( () => {
+						reloaded.result.current.navigation.submit( { action: 'retry' } );
+						reloaded.result.current.navigation.submit( { action: 'retry' } );
+					} );
+					await waitFor( () => expect( retry.isDone() ).toBe( true ) );
+					await waitFor( () =>
+						expect(
+							goToCheckout.mock.calls.length + window.location.assign.mock.calls.length
+						).toBe( 1 )
+					);
+					expect( goToCheckout ).toHaveBeenCalledTimes(
+						step === STEPS.SITE_MIGRATION_CHECK ? 0 : 1
+					);
+					expect( window.location.assign ).toHaveBeenCalledTimes(
+						step === STEPS.SITE_MIGRATION_CHECK ? 1 : 0
+					);
+					const checkout = goToCheckout.mock.calls[ 0 ]?.[ 0 ];
+					expect( checkout?.siteSlug ).toBe(
+						step === STEPS.SITE_MIGRATION_CHECK ? undefined : destination.siteSlug
+					);
+					expect( checkout?.plan ).toBe(
+						step === STEPS.UNIFIED_PLANS ? PLAN_BUSINESS_MONTHLY : undefined
+					);
+				}
+			);
+
+			it( 'restores the created destination on browser Back and reuses it from plans', async () => {
+				jest
+					.spyOn( siteData, 'useSiteData' )
+					.mockReturnValue( { siteId: 0, siteSlug: '', site: null } );
+				const destination = { siteId: 123, siteSlug: 'example.wordpress.com' };
+				const query = new URLSearchParams( context );
+				const configure = nock( 'https://public-api.wordpress.com' )
+					.post( '/wpcom/v2/sites/123/wordpress-migration/configure' )
+					.reply( 503, {} );
+				const { result } = renderNavigation(
+					[
+						`/setup/site-migration/plans?${ query }`,
+						`/setup/site-migration/processing?${ query }`,
+					],
+					1
+				);
+				act( () => result.current.navigation.submit( { ...destination, siteCreated: true } ) );
+				await waitFor( () =>
+					expect( result.current.location.pathname ).toBe( '/site-migration/error' )
+				);
+				expect( configure.isDone() ).toBe( true );
+				act( () => result.current.back() );
+				expect( result.current.location.pathname ).toBe( '/site-migration/plans' );
+				const plansQuery = new URLSearchParams( result.current.location.search );
+				expect( plansQuery.get( 'siteId' ) ).toBe( '123' );
+				expect( plansQuery.get( 'siteSlug' ) ).toBe( destination.siteSlug );
+				const retry = nock( 'https://public-api.wordpress.com' )
+					.post( '/wpcom/v2/sites/123/wordpress-migration/configure' )
+					.reply( 200, {} );
+				expect( retry.isDone() ).toBe( false );
+				act( () =>
+					result.current.navigation.submit( {
+						cartItems: [ { product_slug: PLAN_BUSINESS_MONTHLY } ],
+					} )
+				);
+				await waitFor( () => expect( goToCheckout ).toHaveBeenCalledTimes( 1 ) );
+				expect( result.current.location.pathname ).toBe( '/site-migration/plans' );
+				expect( goToCheckout ).toHaveBeenCalledWith(
+					expect.objectContaining( { siteSlug: destination.siteSlug } )
+				);
+			} );
+
+			it.each( [ STEPS.PROCESSING, STEPS.ERROR ] )(
+				'does not configure on mount or reload at $slug',
+				( step ) => {
+					recoveryClient.setQueryData( useFlowState().queryKey, {
+						migrationHandoff: {
+							siteId: 123,
+							siteSlug: 'example.wordpress.com',
+							from: context.from,
+							shouldGoToCheckout: true,
+						},
+					} );
+					const configure = nock( 'https://public-api.wordpress.com' )
+						.post( '/wpcom/v2/sites/123/wordpress-migration/configure' )
+						.reply( 200, {} );
+					const mount = () =>
+						renderHookWithProvider(
+							() => siteMigrationFlow.useStepNavigation( step.slug, jest.fn() ),
+							{
+								wrapper: ( { children } ) => (
+									<MemoryRouter
+										initialEntries={ [
+											`/site-migration/${ step.slug }?${ new URLSearchParams( { ...context, siteId: '123', siteSlug: 'example.wordpress.com' } ) }`,
+										] }
+									>
+										{ children }
+									</MemoryRouter>
+								),
+							}
+						);
+					const first = mount();
+					first.rerender();
+					first.unmount();
+					mount();
+					expect( configure.isDone() ).toBe( false );
+					expect( goToCheckout ).not.toHaveBeenCalled();
+					expect( window.location.assign ).not.toHaveBeenCalled();
+					nock.removeInterceptor( configure.interceptors[ 0 ] );
+				}
+			);
+
+			it( 'disables migration recovery with the flag off', () => {
+				jest.spyOn( config, 'isEnabled' ).mockReturnValue( false );
+				const destination = { siteId: 123, siteSlug: 'example.wordpress.com' };
+				recoveryClient.setQueryData( useFlowState().queryKey, {
+					migrationHandoff: { ...destination, from: context.from, shouldGoToCheckout: true },
+				} );
+				jest.spyOn( siteData, 'useSiteData' ).mockReturnValue( { ...destination, site: null } );
+				const query = new URLSearchParams( { ...context, ...destination } );
+				const { result: props } = renderHookWithProvider( () => siteMigrationFlow.useStepsProps(), {
+					wrapper: ( { children } ) => (
+						<MemoryRouter initialEntries={ [ `/setup/site-migration/error?${ query }` ] }>
+							{ children }
+						</MemoryRouter>
+					),
+				} );
+				expect( props.current.error.showRetry ).toBe( false );
+				const result = runNavigation( {
+					from: STEPS.ERROR,
+					query: { ...context, ...destination },
+					dependencies: { action: 'retry' },
+				} );
+				expect( result.step ).toBe( STEPS.ERROR.slug );
 				expect( goToCheckout ).not.toHaveBeenCalled();
 				expect( window.location.assign ).not.toHaveBeenCalled();
-				nock.removeInterceptor( configure.interceptors[ 0 ] );
 			} );
 
 			it.each( [ false, true ] )(

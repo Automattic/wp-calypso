@@ -5,6 +5,7 @@ import { Onboard, type OnboardActions } from '@automattic/data-stores';
 import { useLocale } from '@automattic/i18n-utils';
 import { SITE_MIGRATION_FLOW, STATIC_SITE_IMPORT_FLOW } from '@automattic/onboarding';
 import { canInstallPlugins, type SiteExcerptData } from '@automattic/sites';
+import { useQueryClient } from '@tanstack/react-query';
 import { useDispatch } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import { useEffect, useRef } from 'react';
@@ -36,6 +37,7 @@ import { useSelector } from 'calypso/state';
 import { getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
 import { canUseStaticSiteImport } from '../static-site-import-flow/helpers';
 import * as paths from './paths';
+import type { FlowStateManifest } from '../../internals/state-manager/stepper-state-manifest';
 import type {
 	AssertConditionResult,
 	FlowV2,
@@ -172,11 +174,23 @@ const siteMigration: FlowV2< typeof initialize > = {
 		const { __ } = useI18n();
 		const { siteId, siteSlug, site } = useSiteData();
 		const query = useQuery();
+		const handoff = useFlowState().get( 'migrationHandoff' );
 		const hasDestination =
 			config.isEnabled( 'migration/reprint-flow' ) &&
 			query.get( 'how' ) !== HOW_TO_MIGRATE_OPTIONS.DO_IT_FOR_ME &&
 			!! ( siteId || siteSlug );
 		return {
+			error: {
+				showRetry:
+					config.isEnabled( 'migration/reprint-flow' ) &&
+					handoff?.from === query.get( 'from' ) &&
+					handoff?.siteId === Number( query.get( 'siteId' ) ) &&
+					handoff?.siteSlug === query.get( 'siteSlug' ) &&
+					query.get( 'platform' ) === 'wordpress' &&
+					query.get( 'isWpcom' ) !== 'true' &&
+					query.get( 'how' ) !== HOW_TO_MIGRATE_OPTIONS.DO_IT_FOR_ME &&
+					query.get( 'action' ) !== 'import',
+			},
 			'site-migration-check': {
 				destinationSiteSlug: hasDestination ? siteSlug : undefined,
 				destinationSiteUrl: hasDestination ? site?.URL : undefined,
@@ -215,7 +229,8 @@ const siteMigration: FlowV2< typeof initialize > = {
 		const platformQueryParam = ( urlQueryParams.get( 'platform' ) ||
 			'unknown' ) as ImporterPlatform;
 		const hostQueryParam = urlQueryParams.get( 'host' ) || undefined;
-		const { get, sessionId } = useFlowState();
+		const { get, sessionId, queryKey } = useFlowState();
+		const queryClient = useQueryClient();
 		const userHasOtherWPComSites = siteCount && siteCount > 1;
 		const entryPoint = get( 'flow' )?.entryPoint;
 		const siteCanInstallPlugins = canInstallPlugins( site );
@@ -232,6 +247,24 @@ const siteMigration: FlowV2< typeof initialize > = {
 				( ! fromQueryParam &&
 					platformQueryParam !== 'unknown' &&
 					platformQueryParam !== 'wordpress' ) );
+		const handoff = get( 'migrationHandoff' );
+		const savedHandoff =
+			isReprintSource &&
+			handoff?.from === fromQueryParam &&
+			( ! urlQueryParams.has( 'siteId' ) ||
+				urlQueryParams.get( 'siteId' ) === String( handoff.siteId ) ) &&
+			( ! urlQueryParams.has( 'siteSlug' ) ||
+				urlQueryParams.get( 'siteSlug' ) === handoff.siteSlug )
+				? handoff
+				: undefined;
+		const recoveryPlansPath = savedHandoff
+			? paths.plansPath( {
+					from: savedHandoff.from,
+					platform: 'wordpress',
+					siteId: savedHandoff.siteId,
+					siteSlug: savedHandoff.siteSlug,
+				} )
+			: undefined;
 		const configureAndContinue = async (
 			destinationId: number,
 			destinationSlug: string,
@@ -243,6 +276,17 @@ const siteMigration: FlowV2< typeof initialize > = {
 				return;
 			}
 			handoffStarted.current = true;
+			// Preserve the created-site record written after this navigation handler rendered.
+			queryClient.setQueryData< Partial< FlowStateManifest > >( queryKey, ( state ) => ( {
+				...state,
+				migrationHandoff: {
+					siteId: destinationId,
+					siteSlug: destinationSlug,
+					from,
+					shouldGoToCheckout,
+					plan,
+				},
+			} ) );
 			const version = handoffVersion.current;
 			clearSiteSetupError();
 			try {
@@ -286,7 +330,11 @@ const siteMigration: FlowV2< typeof initialize > = {
 							'We couldn’t prepare your site for migration. Please try again or contact support.'
 						)
 					);
-					navigate( STEPS.ERROR.slug );
+					navigate(
+						paths.errorPath( { siteId: destinationId, siteSlug: destinationSlug } ),
+						undefined,
+						true
+					);
 				}
 			}
 		};
@@ -324,6 +372,19 @@ const siteMigration: FlowV2< typeof initialize > = {
 			},
 			[ currentStep, queryString ]
 		);
+
+		useEffect( () => {
+			if (
+				recoveryPlansPath &&
+				! handoffStarted.current &&
+				! urlQueryParams.has( 'siteId' ) &&
+				! urlQueryParams.has( 'siteSlug' ) &&
+				( currentStep === STEPS.UNIFIED_PLANS.slug ||
+					currentStep === STEPS.SITE_CREATION_STEP.slug )
+			) {
+				navigate( recoveryPlansPath, undefined, true );
+			}
+		}, [ currentStep, recoveryPlansPath, navigate, urlQueryParams ] );
 
 		const exitFlow = ( to: string, replace = false ) => {
 			if ( replace ) {
@@ -538,10 +599,12 @@ const siteMigration: FlowV2< typeof initialize > = {
 					if ( ! planCartItem ) {
 						return;
 					}
-					if ( hasSite( siteId, siteSlug ) ) {
+					const destinationId = siteId || savedHandoff?.siteId || 0;
+					const destinationSlug = siteSlug || savedHandoff?.siteSlug || '';
+					if ( hasSite( destinationId, destinationSlug ) ) {
 						return configureAndContinue(
-							siteId,
-							siteSlug,
+							destinationId,
+							destinationSlug,
 							fromQueryParam!,
 							true,
 							planCartItem.product_slug
@@ -705,6 +768,12 @@ const siteMigration: FlowV2< typeof initialize > = {
 				}
 
 				case STEPS.SITE_CREATION_STEP.slug: {
+					if ( recoveryPlansPath ) {
+						if ( handoffStarted.current ) {
+							return;
+						}
+						return replace( recoveryPlansPath );
+					}
 					return replace(
 						paths.processingPath( {
 							from: fromQueryParam,
@@ -716,6 +785,12 @@ const siteMigration: FlowV2< typeof initialize > = {
 				}
 
 				case STEPS.PROCESSING.slug: {
+					if ( recoveryPlansPath ) {
+						if ( handoffStarted.current ) {
+							return;
+						}
+						return replace( recoveryPlansPath );
+					}
 					const { siteCreated, siteId, siteSlug } = providedDependencies as {
 						siteCreated: boolean;
 						siteId: number;
@@ -818,6 +893,19 @@ const siteMigration: FlowV2< typeof initialize > = {
 							host: hostQueryParam,
 						} )
 					);
+				}
+
+				case STEPS.ERROR.slug: {
+					if ( providedDependencies?.action === 'retry' && savedHandoff ) {
+						return configureAndContinue(
+							savedHandoff.siteId,
+							savedHandoff.siteSlug,
+							savedHandoff.from,
+							savedHandoff.shouldGoToCheckout,
+							savedHandoff.plan
+						);
+					}
+					return;
 				}
 
 				case STEPS.SITE_MIGRATION_HOW_TO_MIGRATE.slug: {
