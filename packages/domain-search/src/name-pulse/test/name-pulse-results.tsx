@@ -1133,14 +1133,14 @@ describe( 'NamePulseResults', () => {
 				expect.objectContaining( {
 					search_id: searchId,
 					result_set_id: expect.any( String ),
-					result_count_featured: 0,
+					result_count_exact: 0,
 					result_count_top: 3,
 					result_count_related: NAME_PULSE_SUGGESTIONS_FIXTURE.length,
 				} )
 			);
 		} );
 
-		it( 'reports every name with a verdict once, taken ones included, at its own page position', async () => {
+		it( 'reports every name with a verdict once, taken ones included, at its own position in its section', async () => {
 			const events = buildEvents();
 
 			render( <NamePulseTestSearch query="icecream" events={ events } /> );
@@ -1153,19 +1153,22 @@ describe( 'NamePulseResults', () => {
 				( [ suggestion, , properties ] ) => ( { ...suggestion, ...properties } )
 			);
 			const names = rendered.map( ( suggestion ) => suggestion.domain_name );
-			const positions = rendered.map( ( suggestion ) => suggestion.position );
+			const slots = rendered.map(
+				( suggestion ) => `${ suggestion.result_group }-${ suggestion.position }`
+			);
 			const takenName = Object.entries( NAME_PULSE_AVAILABILITY_FIXTURE ).find(
 				( [ name, entry ] ) => entry.is_available === false && names.includes( name )
 			)?.[ 0 ];
 
 			expect( new Set( names ).size ).toBe( names.length );
-			expect( new Set( positions ).size ).toBe( positions.length );
+			expect( new Set( slots ).size ).toBe( slots.length );
 			expect( rendered ).toContainEqual(
 				expect.objectContaining( {
 					domain_name: 'icecream.net',
 					vendor: 'name_pulse_exact',
+					position: 0,
 					result_set_id: resultSetId,
-					result_group: 'exact',
+					result_group: 'exact_tlds',
 					is_ai_generated: false,
 					availability_at_render: 'available',
 				} )
@@ -1200,7 +1203,7 @@ describe( 'NamePulseResults', () => {
 				expect( events.onSuggestionRender ).toHaveBeenCalledWith(
 					expect.objectContaining( { domain_name: 'icecream.com', position: 0 } ),
 					undefined,
-					expect.objectContaining( { result_group: 'featured' } )
+					expect.objectContaining( { result_group: 'exact' } )
 				)
 			);
 		} );
@@ -1246,18 +1249,20 @@ describe( 'NamePulseResults', () => {
 				within( rowFor( 'icecream.net' ) ).getByRole( 'button', { name: 'Add to cart' } )
 			);
 
-			// Three Top results come first.
 			await waitFor( () =>
 				expect( events.onAddDomainToCart ).toHaveBeenCalledWith(
 					'icecream.net',
-					3,
+					0,
 					false,
 					'name_pulse_exact'
 				)
 			);
 			expect( events.onSuggestionInteract ).toHaveBeenCalledWith(
-				expect.objectContaining( { domain_name: 'icecream.net', position: 3 } ),
-				events.onSuggestionsReceive.mock.calls[ 0 ][ 3 ].result_set_id
+				expect.objectContaining( { domain_name: 'icecream.net', position: 0 } ),
+				{
+					result_set_id: events.onSuggestionsReceive.mock.calls[ 0 ][ 3 ].result_set_id,
+					result_group: 'exact_tlds',
+				}
 			);
 		} );
 
@@ -1272,8 +1277,8 @@ describe( 'NamePulseResults', () => {
 			await user.click( screen.getByRole( 'button', { name: 'Show more exact matches' } ) );
 
 			expect( events.onShowMoreResults.mock.calls ).toEqual( [
-				[ 2, { result_group: 'exact' } ],
-				[ 3, { result_group: 'exact' } ],
+				[ 2, { result_group: 'exact_tlds' } ],
+				[ 3, { result_group: 'exact_tlds' } ],
 			] );
 		} );
 
@@ -1390,7 +1395,8 @@ describe( 'NamePulseResults', () => {
 				expect( namePulseEvent( events, 'remove_button_click' ) ).toEqual( {
 					domain_name: 'icecream.net',
 					remove_source: 'row',
-					position: 3,
+					result_group: 'exact_tlds',
+					position: 0,
 					root_vendor: 'name_pulse_exact',
 				} )
 			);

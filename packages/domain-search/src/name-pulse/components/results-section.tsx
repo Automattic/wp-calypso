@@ -32,8 +32,6 @@ interface NamePulseResultsSectionProps {
 	showMoreLabel?: string;
 	/** Rows revealed by "Show more", so the caller can check their availability. */
 	onReveal?: ( rows: NamePulseDomainResult[] ) => void;
-	/** Rows on the page before this section. */
-	positionOffset?: number;
 	/** `card` lays each result out as its own larger card instead of a table row; phones keep the table. */
 	variant?: NamePulseResultRowVariant;
 }
@@ -47,7 +45,6 @@ export const NamePulseResultsSection = ( {
 	skeletonCount = NAME_PULSE_PAGE_SIZE,
 	showMoreLabel,
 	onReveal,
-	positionOffset = 0,
 	variant = 'row',
 }: NamePulseResultsSectionProps ) => {
 	const { events } = useDomainSearch();
@@ -98,7 +95,7 @@ export const NamePulseResultsSection = ( {
 						<NamePulseResultRow
 							result={ result }
 							group={ group }
-							position={ positionOffset + index }
+							position={ index }
 							variant={ layout }
 						/>
 					</div>

@@ -35,7 +35,6 @@ type AnalyticsAction = {
 
 const NAME_PULSE_TRACKS_PROPERTIES = { search_ui_version: 'i4_v1' };
 
-/** Marks the Tracks entry of an analytics action as Name Pulse. */
 export const withNamePulseMarker = < T extends AnalyticsAction >( action: T ): T => {
 	if ( ! action.meta?.analytics ) {
 		return action;
@@ -85,7 +84,6 @@ export const useWPCOMDomainSearchEvents = ( {
 	analyticsSection: string;
 	vendor?: string;
 	query?: string;
-	/** Marks every Tracks event as Name Pulse. */
 	isNamePulse?: boolean;
 } ) => {
 	const reduxDispatch = useDispatch();
@@ -109,6 +107,14 @@ export const useWPCOMDomainSearchEvents = ( {
 
 	const railcarId = useRef( getNewRailcarId( 'domain-suggestion' ) );
 	const searchCount = useRef( 0 );
+
+	// Name Pulse positions restart per section, so its railcars include the section.
+	const getRailcar = useEvent(
+		( position: number, resultSet?: { result_set_id?: unknown; result_group?: unknown } ) =>
+			resultSet?.result_set_id
+				? `${ resultSet.result_set_id }-${ resultSet.result_group }-${ position }`
+				: `${ railcarId.current }-${ position }`
+	);
 	const lastSearchTime = useRef( Date.now() );
 
 	const pendingSearch = useRef< PendingSearch | undefined >( undefined );
@@ -183,7 +189,7 @@ export const useWPCOMDomainSearchEvents = ( {
 				railcarId.current = getNewRailcarId( 'domain-suggestion' );
 			},
 			onSearchStart: ( query, trigger ) => {
-				// Name Pulse records each settled search itself, through onNamePulseSearch.
+				// Name Pulse records settled searches through onNamePulseSearch.
 				if ( isNamePulse ) {
 					return;
 				}
@@ -301,7 +307,7 @@ export const useWPCOMDomainSearchEvents = ( {
 				recordEvent( 'calypso_traintracks_render', {
 					ui_position: suggestion.position,
 					flow_name: flowName,
-					railcar: `${ properties?.result_set_id ?? railcarId.current }-${ suggestion.position }`,
+					railcar: getRailcar( suggestion.position, properties ),
 					fetch_algo: `/domains/search/${ vendor }/${ analyticsSection }/${ suggestion.vendor }`,
 					root_vendor: suggestion.vendor,
 					rec_result: `${ suggestion.domain_name }${ resultSuffix }`,
@@ -311,9 +317,9 @@ export const useWPCOMDomainSearchEvents = ( {
 					...properties,
 				} );
 			},
-			onSuggestionInteract: ( suggestion, resultSetId ) => {
+			onSuggestionInteract: ( suggestion, resultSet ) => {
 				recordEvent( 'calypso_traintracks_interact', {
-					railcar: `${ resultSetId ?? railcarId.current }-${ suggestion.position }`,
+					railcar: getRailcar( suggestion.position, resultSet ),
 					action: 'domain_added_to_cart',
 					domain: suggestion.domain_name,
 					root_vendor: suggestion.vendor,
@@ -382,6 +388,7 @@ export const useWPCOMDomainSearchEvents = ( {
 		dispatch,
 		recordEvent,
 		recordSearch,
+		getRailcar,
 		isNamePulse,
 	] );
 

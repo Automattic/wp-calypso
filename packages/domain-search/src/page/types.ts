@@ -84,10 +84,8 @@ export type SearchTrigger =
 	| 'prefilled'
 	| 'cached';
 
-/** Extra Tracks props a caller adds to an event. */
 export type DomainSearchTracksProps = Record< string, string | number | boolean | undefined >;
 
-/** Name Pulse events with no classic equivalent. */
 export type NamePulseTracksEventName =
 	'results_error' | 'view_cart_click' | 'remove_button_click' | 'query_clear';
 
@@ -134,10 +132,10 @@ export interface DomainSearchEvents {
 		reason?: FeaturedSuggestionReason,
 		properties?: DomainSearchTracksProps
 	) => void;
-	/** `resultSetId` keeps the railcar the same as the render's, on Name Pulse. */
+	/** Name Pulse: where the name rendered, so the railcar matches the render's. */
 	onSuggestionInteract: (
 		suggestion: ReturnType< typeof useSuggestion >,
-		resultSetId?: string
+		resultSet?: { result_set_id: string; result_group: string }
 	) => void;
 	onSuggestionNotFound: ( domainName: string ) => void;
 	onTrademarkClaimsNoticeShown: ( suggestion: ReturnType< typeof useSuggestion > ) => void;
@@ -245,7 +243,7 @@ export interface DomainSearchContextType extends Omit<
 	filter: FilterState;
 	setFilter: ( filter: FilterState ) => void;
 	resetFilter: () => void;
-	/** What started the latest search, for Name Pulse, which reports searches once they settle. */
+	/** What started the latest search. Name Pulse reports searches once they settle. */
 	lastSearchTrigger: { current?: SearchTrigger };
 	queries: {
 		availableTlds: ( query?: string, vendor?: string ) => ReturnType< typeof availableTldsQuery >;

@@ -357,20 +357,26 @@ describe( 'useWPCOMDomainSearchEvents', () => {
 			} );
 		} );
 
-		it( 'builds the railcar of a Name Pulse result from its result set', () => {
+		it( 'builds the railcar of a Name Pulse result from its result set and section', () => {
 			const { events } = renderEvents( true );
 			const suggestion = { domain_name: 'coffee.com', position: 4, vendor: 'name_pulse_exact' };
 
-			events.onSuggestionRender( suggestion, undefined, { result_set_id: 'set-1' } );
-			events.onSuggestionInteract( suggestion, 'set-1' );
+			events.onSuggestionRender( suggestion, undefined, {
+				result_set_id: 'set-1',
+				result_group: 'related',
+			} );
+			events.onSuggestionInteract( suggestion, {
+				result_set_id: 'set-1',
+				result_group: 'related',
+			} );
 
 			expect( recordTracksEvent ).toHaveBeenCalledWith(
 				'calypso_traintracks_render',
-				expect.objectContaining( { railcar: 'set-1-4' } )
+				expect.objectContaining( { railcar: 'set-1-related-4' } )
 			);
 			expect( recordTracksEvent ).toHaveBeenCalledWith(
 				'calypso_traintracks_interact',
-				expect.objectContaining( { railcar: 'set-1-4' } )
+				expect.objectContaining( { railcar: 'set-1-related-4' } )
 			);
 		} );
 

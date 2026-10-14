@@ -3,8 +3,8 @@ import { Cart } from '../../components/cart';
 import { DomainSearchContext, useDomainSearch } from '../../page/context';
 
 /**
- * The classic cart, reporting View cart and removals. Rows use the outer
- * context, so a removal is never counted twice.
+ * The classic cart, reporting View cart and removals. Rows sit outside it, so
+ * a removal is reported once.
  */
 export const NamePulseCart = () => {
 	const context = useDomainSearch();
