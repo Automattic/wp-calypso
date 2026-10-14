@@ -72,7 +72,11 @@ export default function MigrationsCommissionsEmptyState( {
 									</>
 								}
 								actions={
-									<Button variant="primary" onClick={ onTagMySelfMigratedSitesClick }>
+									<Button
+										variant="primary"
+										size="compact"
+										onClick={ onTagMySelfMigratedSitesClick }
+									>
 										{ __( 'Tag my self-migrated sites' ) }
 									</Button>
 								}

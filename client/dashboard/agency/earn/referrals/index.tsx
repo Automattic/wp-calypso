@@ -57,6 +57,7 @@ export default function EarnReferrals() {
 						! isLoading && isAgencyApproved( agency ) ? (
 							<RouterLinkButton
 								variant="primary"
+								__next40pxDefaultSize
 								to={ MARKETPLACE_PRODUCTS_ROUTE }
 								onClick={ () => {
 									updateMarketplaceType( 'referral' );
