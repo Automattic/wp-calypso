@@ -106,17 +106,7 @@ export default function UserBlock( { note, block }: { note: Note; block: Block }
 			alignment={ isListItem ? 'center' : 'flex-start' }
 			spacing={ 4 }
 		>
-			<a
-				href={ readerProfileUrl }
-				target="_blank"
-				rel="noreferrer"
-				style={ {
-					display: 'flex',
-					flexShrink: 0,
-					borderRadius: '50%',
-					overflow: 'hidden',
-				} }
-			>
+			<a className="wpnc__user-icon" href={ readerProfileUrl } target="_blank" rel="noreferrer">
 				<NoteIcon icon={ media?.url } alt={ block.text } size={ 36 } />
 			</a>
 			{ isListItem ? (
