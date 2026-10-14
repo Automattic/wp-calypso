@@ -135,7 +135,9 @@ export function useSetupCustomActions( {
 	const { setIsOpen, setIsDocked, setIsMinimized } = useDispatch( AGENTS_MANAGER_STORE );
 	const { agentConfig, getTabSessionId, resumeChat } = useAgentsManagerContext();
 	const navigate = useNavigate();
-	const resolveRef = useRef< ( ( state: AgentsManagerChatState ) => void ) | null >( null );
+	const pendingChatStateResolversRef = useRef< ( ( state: AgentsManagerChatState ) => void )[] >(
+		[]
+	);
 	const shouldPersistOpenState = ! isReaderChatAgent( agentConfig?.agentId );
 
 	const setChatOpen = useCallback(
@@ -242,31 +244,35 @@ export function useSetupCustomActions( {
 		[ setDesktopMediaQuery ]
 	);
 
+	const readChatState = useCallback(
+		(): AgentsManagerChatState => ( {
+			isOpen: isOpen || ! getChatPresentation().dismissible,
+			isDocked,
+			floatingPosition,
+		} ),
+		[ isOpen, isDocked, floatingPosition ]
+	);
+
 	const getChatState = useCallback( (): Promise< AgentsManagerChatState > => {
 		if ( hasLoaded ) {
-			return Promise.resolve( {
-				isOpen: isOpen || ! getChatPresentation().dismissible,
-				isDocked,
-				floatingPosition,
-			} );
+			return Promise.resolve( readChatState() );
 		}
 
 		return new Promise( ( resolve ) => {
-			resolveRef.current = resolve;
+			pendingChatStateResolversRef.current.push( resolve );
 		} );
-	}, [ hasLoaded, isOpen, isDocked, floatingPosition ] );
+	}, [ hasLoaded, readChatState ] );
 
-	// Resolve any pending `getChatState()` call once the store has loaded.
+	// Resolve every `getChatState()` call made before the store loaded.
 	useEffect( () => {
-		if ( hasLoaded && resolveRef.current ) {
-			resolveRef.current( {
-				isOpen: isOpen || ! getChatPresentation().dismissible,
-				isDocked,
-				floatingPosition,
-			} );
-			resolveRef.current = null;
+		if ( ! hasLoaded || ! pendingChatStateResolversRef.current.length ) {
+			return;
 		}
-	}, [ hasLoaded, isOpen, isDocked, floatingPosition ] );
+
+		const chatState = readChatState();
+		pendingChatStateResolversRef.current.forEach( ( resolve ) => resolve( chatState ) );
+		pendingChatStateResolversRef.current = [];
+	}, [ hasLoaded, readChatState ] );
 
 	// Entry points outside the bundle (the omnibar AI button, Jetpack's AI
 	// sidebar) read this to decide whether a click closes or opens.

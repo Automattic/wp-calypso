@@ -201,7 +201,6 @@ function MyComponent() {
 
 - The global is reachable by any script on the page — don't expose privileged operations or carry secret data.
 - External callers should re-read `window.__agentsManagerActions.foo` on each call rather than caching the function — references can change when the owner re-registers.
-- Before the store loads, only the latest pending `getChatState()` call resolves; await one call at a time.
 - A `'conversation'` context entry stays until it is removed (`removeContextEntry`, or dismissing a linked card); a `'next-message'` one (the default) is used up by the next send.
 
 ## Document-scoped presentation
