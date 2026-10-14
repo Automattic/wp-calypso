@@ -3,7 +3,8 @@
  */
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import deterministicStringify from 'fast-json-stable-stringify';
+import { getRequestKey } from 'calypso/state/data-layer/wpcom-http/utils';
+import { requestSubscribers } from 'calypso/state/memberships/subscribers/actions';
 import PaidSubscriptionsSection from '..';
 
 const mockDispatch = jest.fn();
@@ -26,16 +27,31 @@ jest.mock( 'calypso/components/localized-moment', () => ( {
 
 jest.mock( 'calypso/components/data/query-memberships-earnings', () => () => null );
 jest.mock( 'calypso/components/data/query-memberships-settings', () => () => null );
+jest.mock( 'calypso/components/gravatar', () => () => null );
 jest.mock( 'calypso/lib/jetpack/is-jetpack-cloud', () => () => false );
 
 const site = { ID: 1, slug: 'example.wordpress.com' };
 
+const paidSubscriberList = {
+	total: 1,
+	ownerships: {
+		10: {
+			id: '10',
+			user: { ID: 5, name: 'Ada Lovelace', user_email: 'ada@example.com' },
+			plan: {
+				title: 'Newsletter',
+				renew_interval: '1 month',
+				renewal_price: 5,
+				currency: 'USD',
+			},
+			all_time_total: 5,
+			start_date: '2020-01-01 00:00:00',
+		},
+	},
+};
+
 function createState( subscribers?: object, requestStatus?: string ) {
-	const requestKey = deterministicStringify( {
-		offset: 0,
-		siteId: site.ID,
-		type: 'MEMBERSHIPS_SUBSCRIBERS_LIST',
-	} );
+	const requestKey = getRequestKey( requestSubscribers( site.ID, 0 ) );
 
 	return {
 		ui: { selectedSiteId: site.ID },
@@ -55,7 +71,9 @@ describe( 'PaidSubscriptionsSection', () => {
 
 		render( <PaidSubscriptionsSection /> );
 
-		expect( screen.getByRole( 'status', { name: 'Loading paid subscribers' } ) ).toBeVisible();
+		const status = screen.getByRole( 'status' );
+		expect( status ).toBeVisible();
+		expect( status ).toHaveTextContent( 'Loading paid subscribers' );
 		expect(
 			screen.queryByText( /You don't have any paid subscribers yet/ )
 		).not.toBeInTheDocument();
@@ -67,6 +85,30 @@ describe( 'PaidSubscriptionsSection', () => {
 		render( <PaidSubscriptionsSection /> );
 
 		expect( screen.getByText( /You don't have any paid subscribers yet/ ) ).toBeVisible();
+	} );
+
+	test( 'shows subscribers after a populated response', () => {
+		mockState = createState( paidSubscriberList, 'success' );
+
+		render( <PaidSubscriptionsSection /> );
+
+		expect( screen.getByText( 'Ada Lovelace' ) ).toBeVisible();
+		expect(
+			screen.queryByText( /You don't have any paid subscribers yet/ )
+		).not.toBeInTheDocument();
+		expect( screen.queryByRole( 'alert' ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'keeps the subscriber list when a later request fails', () => {
+		mockState = createState( paidSubscriberList, 'failure' );
+
+		render( <PaidSubscriptionsSection /> );
+
+		expect( screen.getByText( 'Ada Lovelace' ) ).toBeVisible();
+		expect( screen.queryByRole( 'alert' ) ).not.toBeInTheDocument();
+		expect(
+			screen.queryByText( /You don't have any paid subscribers yet/ )
+		).not.toBeInTheDocument();
 	} );
 
 	test( 'shows a retryable error after the first request fails', async () => {

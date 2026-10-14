@@ -1,8 +1,8 @@
-import { bypassDataLayer } from 'calypso/state/data-layer/utils';
+import { getRequestKey, reducer as dataRequests } from 'calypso/state/data-layer/wpcom-http/utils';
 import { requestSubscribers } from 'calypso/state/memberships/subscribers/actions';
-import { handleMembershipSubscribersError } from '..';
+import { handleMembershipGetSubscribers } from '..';
 
-test( 'subscriber request errors remain dispatchable for request tracking', () => {
+test( 'subscriber request errors are recorded as request failures', () => {
 	const request = requestSubscribers( 1, 0 );
 	const failure = {
 		...request,
@@ -13,6 +13,31 @@ test( 'subscriber request errors remain dispatchable for request tracking', () =
 			},
 		},
 	};
+	const dispatched = [];
 
-	expect( handleMembershipSubscribersError( failure ) ).toEqual( bypassDataLayer( failure ) );
+	handleMembershipGetSubscribers(
+		{
+			dispatch: ( action ) => {
+				dispatched.push( action );
+			},
+		},
+		failure
+	);
+
+	const requestKey = getRequestKey( request );
+
+	expect( dispatched ).toHaveLength( 1 );
+	expect( dispatched[ 0 ] ).toMatchObject( {
+		type: request.type,
+		meta: {
+			dataLayer: {
+				doBypass: true,
+				requestKey,
+				status: 'failure',
+			},
+		},
+	} );
+	expect( dataRequests( {}, dispatched[ 0 ] ) ).toMatchObject( {
+		[ requestKey ]: { status: 'failure' },
+	} );
 } );

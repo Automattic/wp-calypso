@@ -1,4 +1,4 @@
-import { Card, Button, Gridicon } from '@automattic/components';
+import { Card, Button, Gridicon, ScreenReaderText } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { orderBy } from '@automattic/js-utils';
 import { formatCurrency } from '@automattic/number-formatters';
@@ -100,7 +100,8 @@ const PaidSubscriptionsSection = ( { query }: PaidSubscriptionsSectionProps ) =>
 
 		if ( ! hasLoadedSubscribers ) {
 			return (
-				<div role="status" aria-label={ translate( 'Loading paid subscribers' ) }>
+				<div role="status">
+					<ScreenReaderText>{ translate( 'Loading paid subscribers' ) }</ScreenReaderText>
 					<LoadingEllipsis />
 				</div>
 			);
