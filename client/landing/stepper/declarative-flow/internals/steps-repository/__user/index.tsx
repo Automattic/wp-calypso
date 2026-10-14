@@ -182,8 +182,8 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 		from: partnerConfig?.id ?? queryArgs.get( 'from' ) ?? undefined,
 	} );
 
-	// `origin` tells the top bar (V2), the footer (V1) and the in-form link apart.
-	const recordLoginLinkClick = ( origin: 'top-bar' | 'footer' | 'form' ) =>
+	// V1 and V2 both put the link in the top bar; `flow` tells the two layouts apart.
+	const recordLoginLinkClick = ( origin: 'top-bar' | 'form' ) =>
 		recordTracksEvent( 'calypso_signup_login_link_click', { flow, step: stepName, origin } );
 
 	const returnToGate = () => setEditing( null );
@@ -487,7 +487,7 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 						<Button
 							className="step-wrapper__navigation-link forward"
 							href={ loginLink }
-							onClick={ () => recordLoginLinkClick( 'footer' ) }
+							onClick={ () => recordLoginLinkClick( 'top-bar' ) }
 							variant="link"
 						>
 							<span>{ translate( 'Log in' ) }</span>
