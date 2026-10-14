@@ -21,7 +21,7 @@ cd apps/agents-manager && yarn dev --sync
 # Then visit any site — only widgets.wp.com needs sandboxing, not the site itself
 ```
 
-**Every PR** must include testing instructions for both Calypso (`yarn start`) and sandbox environments. See the PR template in `packages/help-center/AGENTS.md` for the pattern. Releasing to `widgets.wp.com` is covered in `apps/agents-manager/README.md`.
+Releasing to `widgets.wp.com` is covered in `apps/agents-manager/README.md`.
 
 ## Conventions
 
@@ -50,6 +50,7 @@ Write for the next reader.
 
 ### Every change
 
+- **Testing instructions**: Every PR MUST include testing steps for both Calypso (`yarn start`) and a sandbox, following the template in `packages/help-center/AGENTS.md`.
 - **Docs move with the code**: A change MUST update every doc that describes it, in the same PR: `README.md` and `AGENTS.md` files, other Markdown, docblocks and comments. Search the whole repo for the names you changed (files, exports, props, classes, flags) instead of relying on memory, and check again before finishing.
 - **Changes clean up after themselves**: A change or removal MUST update or remove everything it leaves behind, in the same PR: callers, types, tests, mocks, styles, dependencies and code nothing uses any more. Search the whole repo again before finishing; only the references you mean to keep should remain. Before removing anything other repos read (the provider contract, `window.__agentsManagerActions`, window events), also search Big Sky, Jetpack, WooCommerce AI and wpcom. While a deployed build still reads it, keep it, and say in the PR description when it can go.
 
