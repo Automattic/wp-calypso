@@ -132,10 +132,10 @@ export interface DomainSearchEvents {
 		reason?: FeaturedSuggestionReason,
 		properties?: DomainSearchTracksProps
 	) => void;
-	/** Name Pulse: where the name rendered, so the railcar matches the render's. */
+	/** Name Pulse passes the railcar its card was rendered with. */
 	onSuggestionInteract: (
 		suggestion: ReturnType< typeof useSuggestion >,
-		resultSet?: { result_set_id: string; result_group: string }
+		railcar?: string
 	) => void;
 	onSuggestionNotFound: ( domainName: string ) => void;
 	onTrademarkClaimsNoticeShown: ( suggestion: ReturnType< typeof useSuggestion > ) => void;

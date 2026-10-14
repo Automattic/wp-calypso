@@ -59,8 +59,7 @@ export const useNamePulseSearchTracking = (
 
 	const filterKey = [ ...filter.tlds ].sort().join( ',' );
 	const searchKey = `${ settledQuery }|${ filterKey }`;
-	// Kept in state so they last the whole search, and replaced during render so
-	// rows rendering in the same commit already have the new ones.
+	// In state so they last the whole search; set during render so rows in the same commit get them.
 	const [ ids, setIds ] = useState( () => createSearchIds( searchKey ) );
 
 	if ( ids.key !== searchKey ) {

@@ -27,7 +27,7 @@ export interface NamePulsePolicyNotice {
 export const useNamePulseCartToggle = (
 	result: Parameters< typeof toNamePulseTracksSuggestion >[ 0 ],
 	position: number,
-	// Read on click: the render is reported in an effect, after this hook runs.
+	// Read on click, as the render is reported after this hook runs.
 	getRendered: () => NamePulseRenderReport | undefined,
 	policyNotices: PolicyNotice[] = []
 ) => {
@@ -120,13 +120,9 @@ export const useNamePulseCartToggle = (
 		toggleCart: () => {
 			const rendered = getRendered();
 
-			// A click before the render is reported matches no render, so it is
-			// left to the add-to-cart events alone.
+			// Only a rendered card has a railcar to match.
 			if ( ! inCart && rendered ) {
-				events.onSuggestionInteract( getTracksSuggestion(), {
-					result_set_id: rendered.resultSetId,
-					result_group: rendered.group,
-				} );
+				events.onSuggestionInteract( getTracksSuggestion(), rendered.railcar );
 			}
 
 			if ( inCart || policyNotices.length === 0 ) {

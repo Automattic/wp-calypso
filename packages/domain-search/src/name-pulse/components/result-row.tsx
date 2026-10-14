@@ -21,7 +21,11 @@ import {
 } from '../helpers';
 import { useNamePulseCartToggle } from '../hooks/use-name-pulse-cart-toggle';
 import { useNamePulseLabelLimit } from '../hooks/use-name-pulse-label-limit';
-import { getNamePulseRenderKey, useNamePulseResultSet } from '../hooks/use-name-pulse-result-set';
+import {
+	getNamePulseRenderKey,
+	recordNamePulseRender,
+	useNamePulseResultSet,
+} from '../hooks/use-name-pulse-result-set';
 import { setNamePulseVerdict } from '../hooks/use-name-pulse-verdicts';
 import { NamePulsePolicyNoticeDialog } from './policy-notice-dialog';
 
@@ -190,17 +194,17 @@ export const NamePulseResultRow = ( {
 
 	// Reported once per result set, when the row has a verdict, taken names included.
 	useEffect( () => {
-		const resultSetId = resultSet?.id;
+		const id = resultSet?.id;
 
-		if ( isWaiting || ! resultSetId || resultSet.rendered.has( renderKey ) ) {
+		if ( isWaiting || ! id || resultSet.rendered.has( renderKey ) ) {
 			return;
 		}
 
-		resultSet.rendered.set( renderKey, { resultSetId, group, position } );
+		const report = recordNamePulseRender( { ...resultSet, id }, renderKey, group, position );
 		events.onSuggestionRender(
 			toNamePulseTracksSuggestion( row, position ),
 			undefined,
-			getNamePulseRenderTracksProps( row, group, resultSetId )
+			getNamePulseRenderTracksProps( row, report )
 		);
 	} );
 	const { nameRef, labelRef, limit: labelLimit } = useNamePulseLabelLimit( label );

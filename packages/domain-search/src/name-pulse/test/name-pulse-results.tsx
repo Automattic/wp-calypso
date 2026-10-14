@@ -1140,7 +1140,7 @@ describe( 'NamePulseResults', () => {
 			);
 		} );
 
-		it( 'reports every name with a verdict once, taken ones included, at its own position in its section', async () => {
+		it( 'reports every name with a verdict once, taken ones included, each with its own railcar', async () => {
 			const events = buildEvents();
 
 			render( <NamePulseTestSearch query="icecream" events={ events } /> );
@@ -1153,15 +1153,13 @@ describe( 'NamePulseResults', () => {
 				( [ suggestion, , properties ] ) => ( { ...suggestion, ...properties } )
 			);
 			const names = rendered.map( ( suggestion ) => suggestion.domain_name );
-			const slots = rendered.map(
-				( suggestion ) => `${ suggestion.result_group }-${ suggestion.position }`
-			);
+			const railcars = rendered.map( ( suggestion ) => suggestion.railcar );
 			const takenName = Object.entries( NAME_PULSE_AVAILABILITY_FIXTURE ).find(
 				( [ name, entry ] ) => entry.is_available === false && names.includes( name )
 			)?.[ 0 ];
 
 			expect( new Set( names ).size ).toBe( names.length );
-			expect( new Set( slots ).size ).toBe( slots.length );
+			expect( new Set( railcars ).size ).toBe( railcars.length );
 			expect( rendered ).toContainEqual(
 				expect.objectContaining( {
 					domain_name: 'icecream.net',
@@ -1303,12 +1301,12 @@ describe( 'NamePulseResults', () => {
 					'name_pulse_exact'
 				)
 			);
+			const renderCall = events.onSuggestionRender.mock.calls.find(
+				( [ suggestion ] ) => suggestion.domain_name === 'icecream.net'
+			);
 			expect( events.onSuggestionInteract ).toHaveBeenCalledWith(
 				expect.objectContaining( { domain_name: 'icecream.net', position: 0 } ),
-				{
-					result_set_id: events.onSuggestionsReceive.mock.calls[ 0 ][ 3 ].result_set_id,
-					result_group: 'exact_tlds',
-				}
+				renderCall?.[ 2 ].railcar
 			);
 		} );
 

@@ -30,7 +30,11 @@ import {
 	toNamePulseTracksSuggestion,
 } from '../helpers';
 import { useNamePulseCartToggle } from '../hooks/use-name-pulse-cart-toggle';
-import { getNamePulseRenderKey, useNamePulseResultSet } from '../hooks/use-name-pulse-result-set';
+import {
+	getNamePulseRenderKey,
+	recordNamePulseRender,
+	useNamePulseResultSet,
+} from '../hooks/use-name-pulse-result-set';
 import { NamePulsePolicyNoticeDialog } from './policy-notice-dialog';
 
 /**
@@ -81,17 +85,17 @@ export const NamePulseExactMatchCard = ( {
 	} = useNamePulseCartToggle( result, 0, getRendered, availability.policy_notices );
 
 	useEffect( () => {
-		const resultSetId = resultSet?.id;
+		const id = resultSet?.id;
 
-		if ( ! resultSetId || resultSet.rendered.has( renderKey ) ) {
+		if ( ! id || resultSet.rendered.has( renderKey ) ) {
 			return;
 		}
 
-		resultSet.rendered.set( renderKey, { resultSetId, group: 'exact', position: 0 } );
+		const report = recordNamePulseRender( { ...resultSet, id }, renderKey, 'exact', 0 );
 		events.onSuggestionRender(
 			toNamePulseTracksSuggestion( result, 0 ),
 			undefined,
-			getNamePulseRenderTracksProps( result, 'exact', resultSetId )
+			getNamePulseRenderTracksProps( result, report )
 		);
 	} );
 

@@ -48,8 +48,11 @@ export const toNamePulseTracksSuggestion = (
 
 export const getNamePulseRenderTracksProps = (
 	result: Pick< NamePulseDomainResult, 'source' | 'status' >,
-	group: NamePulseResultGroup,
-	resultSetId: string
+	{
+		resultSetId,
+		railcar,
+		group,
+	}: { resultSetId: string; railcar: string; group: NamePulseResultGroup }
 ) => {
 	let availability = 'unknown';
 
@@ -60,6 +63,7 @@ export const getNamePulseRenderTracksProps = (
 	}
 
 	return {
+		railcar,
 		result_set_id: resultSetId,
 		result_group: group,
 		is_ai_generated: result.source === 'ai',
