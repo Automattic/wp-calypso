@@ -75,8 +75,18 @@ describe( 'getSpecMetaFromQuery', () => {
 		expect( getSpecMetaFromQuery( new URLSearchParams( 'blueprint=zoom' ) ) ).toEqual( {} );
 	} );
 
-	// The widget may render the value as a link, so nothing but a web URL gets that far.
-	it( 'drops values that are not web URLs', () => {
+	// A partner can hand over the site title (a business or person's name) as plain text.
+	it( 'picks up a plain site title and drops one with markup or line breaks', () => {
+		expect(
+			getSpecMetaFromQuery( new URLSearchParams( { site_title: '  Cedar & Keel Boat School ' } ) )
+		).toEqual( { site_title: 'Cedar & Keel Boat School' } );
+		for ( const value of [ 'Cedar <b>Keel</b>', 'Cedar\nKeel', 'a'.repeat( 121 ) ] ) {
+			expect( getSpecMetaFromQuery( new URLSearchParams( { site_title: value } ) ) ).toEqual( {} );
+		}
+	} );
+
+	// The widget may render the booking URL as a link, so nothing but a web URL gets that far.
+	it( 'drops booking URL values that are not web URLs', () => {
 		for ( const value of [
 			'javascript:alert(document.cookie)',
 			'data:text/html,hi',
