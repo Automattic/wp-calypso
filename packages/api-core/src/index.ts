@@ -126,6 +126,7 @@ export * from './reader-mastodon';
 export * from './reader-social';
 export * from './signups-validation-user';
 export * from './site';
+export * from './site-abilities';
 export * from './site-activity-log';
 export * from './site-activity-log-backup';
 export * from './site-address-change';

@@ -67,6 +67,7 @@ import {
 	getAgentEmailVCardFileName,
 } from '../../utils/wordpress-agent-email';
 import UpsellCallout from '../hosting-feature-gated-with-callout/upsell';
+import RemoteAbilitiesCard from './remote-abilities-card';
 import upsellIllustrationUrl from './upsell-illustration.svg';
 
 export { getAgentEmailAddress, getAgentEmailVCard } from '../../utils/wordpress-agent-email';
@@ -497,6 +498,7 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 								decoration={ <Icon icon={ connection } size={ 24 } /> }
 							/>
 						) }
+						{ isMcpEnabled && site.jetpack && <RemoteAbilitiesCard site={ site } /> }
 					</>
 				) }
 				{ isFreeTrial && (

@@ -105,6 +105,38 @@ export function getSiteMcpAbilities( userSettings, siteId ) {
 }
 
 /**
+ * Get the remote-ability allowlist (AI-1329) for a specific site
+ * @param {Object} userSettings - The user settings object
+ * @param {string|number} siteId - The site ID
+ * @returns {Record<string, boolean>} Remote-group map ("{read|write|destructive}:{namespace}" -> true)
+ */
+export function getSiteRemoteGroups( userSettings, siteId ) {
+	const mcpSites = userSettings?.mcp_abilities?.sites || [];
+	const siteEntry = mcpSites.find( ( site ) => site.blog_id === parseInt( siteId ) );
+	return siteEntry?.remote_groups || {};
+}
+
+/**
+ * The allowlist group key of a remote ability: "{read|write|destructive}:{namespace}".
+ * Mirrors SettingsHelper::remote_group_key() — destructive wins over readonly, only a
+ * strict readonly counts as Read, and the namespace is lowercased — so the UI groups
+ * abilities exactly the way the server enforces them.
+ * @param {string} name - Ability name, e.g. "jetpack-boost/get-modules"
+ * @param {Object} [annotations] - Published annotations (readonly, destructive)
+ * @returns {string} Group key
+ */
+export function getRemoteAbilityGroupKey( name, annotations = {} ) {
+	const namespace = String( name ).split( '/' )[ 0 ].toLowerCase();
+	if ( annotations?.destructive === true ) {
+		return `destructive:${ namespace }`;
+	}
+	if ( annotations?.readonly === true ) {
+		return `read:${ namespace }`;
+	}
+	return `write:${ namespace }`;
+}
+
+/**
  * Merge account-level MCP abilities with site-level overrides
  * @param {Record<string, Object>} accountAbilities - Account-level abilities from getAccountMcpAbilities
  * @param {Record<string, boolean>} siteAbilities - Site-level overrides from getSiteMcpAbilities

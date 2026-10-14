@@ -111,6 +111,7 @@ export * from './site-comments';
 export * from './reader-atmosphere';
 export * from './reader-fediverse';
 export * from './reader-mastodon';
+export * from './site-abilities';
 export * from './site-activity-log';
 export * from './site-activity-log-backup';
 export * from './site-address-change';
