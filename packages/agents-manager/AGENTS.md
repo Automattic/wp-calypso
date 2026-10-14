@@ -25,9 +25,11 @@ cd apps/agents-manager && yarn dev --sync
 
 ## Conventions
 
-- **`@wordpress/*` imports**: In new code, import React APIs from `@wordpress/element` (bare `react` for types only), UI primitives from `@wordpress/components` and icons from `@wordpress/icons`. WordPress registers these as script externals, so any other source ships a second copy. Chat UI stays on `@automattic/agenttic-ui`, and existing imports don't need churning.
+- **`@wordpress/*` imports**: In new code, import React APIs from `@wordpress/element` (bare `react` for types only) and UI primitives from `@wordpress/components`: WordPress loads both as script externals, so another source ships a second copy. Take icons from `@wordpress/icons` and chat UI from `@automattic/agenttic-ui`. Existing imports don't need churning.
 - **i18n**: Use `@wordpress/i18n` with the global `__i18n_text_domain__` as the text domain, unquoted: `__( 'Close', __i18n_text_domain__ )`. Webpack replaces it with `'default'` at build time.
 - **Curly quotes**: Preserve `“”` `‘’` exactly as they appear. Do not convert to unicode escapes or ASCII equivalents.
+- **Styles**: Prefix new CSS classes with `agents-manager-`. The chat shares the page with wp-admin and the editor, so generic class names collide.
+- **Tests**: Put unit tests in a `__tests__/` folder beside the code, named after what they test (`chat-header.test.tsx`).
 - **Readable code**: Write for the next reader, and match the file you're in.
   - **Names**: Say what a thing holds or does, in full words (`message`, not `msg`; `id` and `url` are fine). Booleans read as questions (`hasProviderSuggestions`), functions start with a verb (`syncProviderMetadata`), components are nouns (`ChatHeader`), hooks start with `use` (`useEmptyViewSuggestions`), and files are kebab-case (`use-empty-view-suggestions.ts`). Name magic strings and numbers as module-level `SCREAMING_SNAKE_CASE` constants (`AGENTS_MANAGER_STORE`). Rename what a change makes inaccurate.
   - **Blank lines**: Separate the steps of a function or test with a blank line, not every statement.
