@@ -99,36 +99,11 @@ it( 'keeps pending and failed payments away from the return page', () => {
 	).not.toContain( '/marketplace/pressable-return' );
 } );
 
-it( 'honors the prepared cancel_to URL used by the existing checkout close modal', () => {
-	const cancelPath = getPressableReturnPath( 42, true );
-	const originalLocation = window.location;
-	const search = `?skip_active_cart=1&cancel_to=${ encodeURIComponent( cancelPath ) }`;
-	Object.defineProperty( window, 'location', {
-		value: {
-			href: `https://example.com/marketplace/checkout${ search }`,
-			origin: 'https://example.com',
-			search,
-		},
-		configurable: true,
-	} );
-	try {
-		leaveCheckout( {
-			previousPath: '/marketplace',
-			tracksEvent: 'calypso_masterbar_close_clicked',
-			userHasClearedCart: true,
-		} );
-		expect( window.location.href ).toBe( cancelPath );
-	} finally {
-		Object.defineProperty( window, 'location', { value: originalLocation, configurable: true } );
-	}
-} );
-
-it( 'uses the same cancellation page when the last item is removed', () => {
-	const cancelPath = getPressableReturnPath( 42, true );
+it( 'keeps the default Marketplace destination when the last item is removed', () => {
 	leaveCheckout( {
-		previousPath: cancelPath,
+		previousPath: '/marketplace',
 		tracksEvent: 'calypso_empty_cart_redirect',
 		userHasClearedCart: true,
 	} );
-	expect( navigate ).toHaveBeenCalledWith( cancelPath );
+	expect( navigate ).toHaveBeenCalledWith( '/marketplace' );
 } );

@@ -49,7 +49,7 @@ it( 'keeps an error on the return page and retries with a fresh request', async 
 	fetchReturn
 		.mockRejectedValueOnce( new Error( 'Unavailable.' ) )
 		.mockResolvedValueOnce( signedUrl );
-	const { result } = renderHook( () => usePressableReturn( { agencyId: '42', canceled: '1' } ), {
+	const { result } = renderHook( () => usePressableReturn( { agencyId: '42', receiptId: '99' } ), {
 		wrapper,
 	} );
 	await waitFor( () => expect( result.current.isError ).toBe( true ) );

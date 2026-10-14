@@ -1,19 +1,14 @@
 import { useEffect, useState } from 'react';
-import {
-	clearOriginalReturnUrl,
-	getOriginalReturnUrl,
-	getPressableReturnPath,
-	storeOriginalReturnUrl,
-} from '../pressable-return/lib';
+import { getOriginalReturnUrl, getPressableReturnPath } from '../pressable-return/lib';
 import type { ResponseCartProduct } from '@automattic/shopping-cart';
 
-export default function usePressableReturnPaths(
+export default function usePressableCheckoutReturn(
 	products: ResponseCartProduct[],
 	agencyId: number | undefined,
 	isPreparedCart: boolean,
 	isReady: boolean
 ) {
-	const [ previousUrl, setPreviousUrl ] = useState< string >();
+	const [ context, setContext ] = useState< { agencyId: number; url: string } >();
 	const originalUrl =
 		isPreparedCart && isReady && agencyId ? getOriginalReturnUrl( products, agencyId ) : undefined;
 
@@ -22,22 +17,24 @@ export default function usePressableReturnPaths(
 			return;
 		}
 		if ( originalUrl ) {
-			setPreviousUrl( originalUrl );
-			storeOriginalReturnUrl( agencyId, originalUrl );
+			setContext( { agencyId, url: originalUrl } );
 		} else if ( ! isPreparedCart || isReady ) {
-			setPreviousUrl( undefined );
-			clearOriginalReturnUrl( agencyId );
+			setContext( undefined );
 		}
 	}, [ agencyId, isPreparedCart, isReady, originalUrl ] );
 
-	// Removing the last item clears the cart before the existing checkout hook navigates.
-	const hasReturnUrl = originalUrl || ( isPreparedCart && ! products.length && previousUrl );
-	if ( ! agencyId || ! hasReturnUrl ) {
+	// Keep the original cart URL available if this checkout reports an error.
+	const checkoutUrl =
+		originalUrl ??
+		( isPreparedCart && ! isReady && context && context.agencyId === agencyId
+			? context.url
+			: undefined );
+	if ( ! agencyId || ! checkoutUrl ) {
 		return {};
 	}
 	return {
 		// A4A payment completion passes through the pending page on WordPress.com.
 		successPath: `${ window.location.origin }${ getPressableReturnPath( agencyId ) }`,
-		cancelPath: getPressableReturnPath( agencyId, true ),
+		originalUrl: checkoutUrl,
 	};
 }
