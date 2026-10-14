@@ -192,7 +192,7 @@ const aiSiteBuilderOnboarding: FlowV2< typeof initialize > = {
 					const siteSlug = query.get( 'siteSlug' );
 					const destination = query.get( 'redirect_to' );
 					if ( ! siteSlug || ! destination ) {
-						return navigate( STEPS.ERROR.slug );
+						return navigate( STEPS.ERROR.slug, { errorReason: 'commerce_atomic_missing_params' } );
 					}
 
 					// Only for checkouts started before build-wow skipped this wait, which
@@ -207,7 +207,9 @@ const aiSiteBuilderOnboarding: FlowV2< typeof initialize > = {
 					try {
 						editorUrl = new URL( destination );
 					} catch {
-						return navigate( STEPS.ERROR.slug );
+						return navigate( STEPS.ERROR.slug, {
+							errorReason: 'commerce_atomic_invalid_redirect',
+						} );
 					}
 					if (
 						! siteSlug.endsWith( '.wordpress.com' ) ||
@@ -215,7 +217,9 @@ const aiSiteBuilderOnboarding: FlowV2< typeof initialize > = {
 						editorUrl.hostname !== siteSlug ||
 						editorUrl.pathname !== '/wp-admin/site-editor.php'
 					) {
-						return navigate( STEPS.ERROR.slug );
+						return navigate( STEPS.ERROR.slug, {
+							errorReason: 'commerce_atomic_unexpected_editor_url',
+						} );
 					}
 
 					window.location.replace( editorUrl.toString() );
@@ -274,13 +278,13 @@ const aiSiteBuilderOnboarding: FlowV2< typeof initialize > = {
 					const siteSlug = ( providedDependencies.siteSlug || getSignupCompleteSlug() ) as string;
 
 					if ( ! siteId || ! siteSlug ) {
-						return navigate( STEPS.ERROR.slug );
+						return navigate( STEPS.ERROR.slug, { errorReason: 'processing_missing_site' } );
 					}
 
 					const site = await resolveSelect( SITE_STORE ).getSite( siteId );
 
 					if ( ! site || ! site.URL ) {
-						return navigate( STEPS.ERROR.slug );
+						return navigate( STEPS.ERROR.slug, { errorReason: 'site_lookup_failed' } );
 					}
 
 					// The build-wow endpoint prepares the site itself, so the Big Sky editor

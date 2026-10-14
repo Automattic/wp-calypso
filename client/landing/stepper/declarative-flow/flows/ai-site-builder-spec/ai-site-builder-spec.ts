@@ -10,6 +10,12 @@ import { STEPS } from '../../internals/steps';
 import { ProcessingResult } from '../../internals/steps-repository/processing-step/constants';
 import { FlowV2 } from '../../internals/types';
 
+const PROCESSING_ERROR_REASONS: Record< ProcessingResult, string > = {
+	[ ProcessingResult.FAILURE ]: 'processing_failed',
+	[ ProcessingResult.NO_ACTION ]: 'processing_no_action',
+	[ ProcessingResult.SUCCESS ]: 'processing_no_redirect',
+};
+
 function initialize() {
 	// Check if site-spec feature flag is enabled
 	if ( ! config.isEnabled( 'site-spec' ) ) {
@@ -95,7 +101,15 @@ const aiSiteBuilderSpec: FlowV2< typeof initialize > = {
 
 						// The pending action reports a failed or timed-out build by throwing, and
 						// the processing step has already stashed its message for the error step.
-						return navigate( 'error', undefined, true );
+						// The other outcomes store nothing, so the reason names the cause.
+						return navigate(
+							'error',
+							{
+								errorReason:
+									PROCESSING_ERROR_REASONS[ result.processingResult as ProcessingResult ],
+							},
+							true
+						);
 					}
 				}
 			},
