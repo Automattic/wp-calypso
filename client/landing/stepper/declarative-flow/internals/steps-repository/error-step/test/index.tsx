@@ -186,6 +186,8 @@ describe( 'ErrorStep', () => {
 				message: undefined,
 			} );
 			( isOnlyStepMounted as jest.Mock ).mockImplementation( ( slug ) => slug === 'error' );
+			// The first location of a document is a POP.
+			( useNavigationType as jest.Mock ).mockReturnValue( NavigationType.Pop );
 		} );
 
 		afterEach( () => {
