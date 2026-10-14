@@ -114,7 +114,6 @@ import badge7Src from './assets/icons/badge-7.svg';
 import badgeGenericSrc from './assets/icons/badge-generic.svg';
 import badgeSecurity from './assets/icons/security.svg';
 import CheckoutNextSteps from './checkout-next-steps';
-import CheckoutProcessorNotice from './checkout-processor-notice';
 import { CheckoutSidebarPlanUpsell } from './checkout-sidebar-plan-upsell';
 import DIFMOfferRequestNotice from './difm-offer-request-notice';
 import { EmptyCart, shouldShowEmptyCartPage } from './empty-cart';
@@ -1104,13 +1103,10 @@ export default function CheckoutMainContent( {
 					) }
 					<PaymentMethodStep
 						activeStepHeader={
-							<>
-								<CheckoutProcessorNotice />
-								<PaymentMethodFilter
-									areStoredCardsFiltered={ areStoredCardsFiltered }
-									isBusinessCardsFilterEmpty={ isBusinessCardsFilterEmpty }
-								/>
-							</>
+							<PaymentMethodFilter
+								areStoredCardsFiltered={ areStoredCardsFiltered }
+								isBusinessCardsFilterEmpty={ isBusinessCardsFilterEmpty }
+							/>
 						}
 						canEditStep={ canEditPaymentStep() }
 						editButtonText={ isCheckoutUiRedesignV1 ? undefined : String( translate( 'Edit' ) ) }
@@ -1137,15 +1133,12 @@ export default function CheckoutMainContent( {
 							   above activeStepContent, so the default methods card is
 							   left untouched. */
 							activeStepHeader: (
-								<>
-									<p className="checkout-payment-method__secure-notice">
-										{ translate( 'All transactions are secure and encrypted.' ) }
-										{ /* getRefundWindowCopy is a badge label (no terminal stop), so it
-										     needs one to sit in prose here. */ }
-										{ paymentStepRefundCopy ? <> { paymentStepRefundCopy }.</> : null }
-									</p>
-									<CheckoutProcessorNotice />
-								</>
+								<p className="checkout-payment-method__secure-notice">
+									{ translate( 'All transactions are secure and encrypted.' ) }
+									{ /* getRefundWindowCopy is a badge label (no terminal stop), so it
+									     needs one to sit in prose here. */ }
+									{ paymentStepRefundCopy ? <> { paymentStepRefundCopy }.</> : null }
+								</p>
 							),
 						} ) }
 						isCompleteCallback={ () => {
@@ -3105,40 +3098,6 @@ const WPCheckoutMainContent = styled.div< {
 	${ ( props ) => css`
 		.checkout-line-item .checkout-line-item__remove-product {
 			font-size: 14px;
-		}
-		${
-			! props.isMobileCheckoutStickySummary &&
-			css`
-				/* Keep the step's green check but drop the "Your order" title, so the
-				   check sits beside the first product row. The title stays readable
-				   to screen readers. */
-				.wp-checkout__review-order-step .checkout-step__header {
-					/* Phones have no gutter for the check, so drop the header there. */
-					display: none;
-
-					@media ( ${ props.theme.breakpoints.tabletUp } ) {
-						display: flex;
-						margin-bottom: 0;
-						height: 0;
-						overflow: visible;
-						/* Moves the check down to sit centred on the first product title. */
-						transform: translateY( 31px );
-						position: relative;
-						z-index: 1;
-					}
-				}
-				.wp-checkout__review-order-step .checkout-step__header h2 > span {
-					position: absolute;
-					width: 1px;
-					height: 1px;
-					overflow: hidden;
-					clip: rect( 0 0 0 0 );
-					white-space: nowrap;
-				}
-				.wp-checkout__review-order-step .order-review-line-items {
-					margin-top: 0;
-				}
-			`
 		}
 		.form-fieldset.contact-details-form-fields .form__hidden-input a {
 			font-weight: 500;

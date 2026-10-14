@@ -2,15 +2,16 @@ import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 
 const Notice = styled.p`
-	margin: 0 0 12px;
+	margin: 0;
 	font-size: 12px;
 	line-height: 1.5;
 	color: ${ ( props ) => props.theme.colors.textColorLight };
+	white-space: pre-line;
 `;
 
 // Legal disclosure; must not be translated. The en-dashes (U+2013) are intentional.
-// The newline between "Inc." and "60" collapses to a space, so the notice reads
-// as one sentence under the payment method heading.
+// The newline between "Inc." and "60" renders as a line break via the
+// `white-space: pre-line` rule on Notice above.
 const PROCESSOR_ADDRESS =
 	'Automattic Inc.\n60 29th Street #343 – San Francisco, CA 94110 – United States of America';
 

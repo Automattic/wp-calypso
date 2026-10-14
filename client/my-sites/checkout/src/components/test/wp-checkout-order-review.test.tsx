@@ -20,9 +20,8 @@ jest.mock( '../wp-order-review-line-items', () => ( {
 	WPOrderReviewLineItems: () => null,
 	WPOrderReviewSection: ( { children }: { children: React.ReactNode } ) => children,
 } ) );
-let mockIsCheckoutUiRedesignV1 = false;
 jest.mock( '../../hooks/use-checkout-ui-redesign-experiment', () => ( {
-	useCheckoutUiRedesignExperiment: () => [ false, mockIsCheckoutUiRedesignV1 ],
+	useCheckoutUiRedesignExperiment: () => [ false, false ],
 } ) );
 jest.mock( '../../hooks/use-mobile-checkout-sticky-summary-experiment', () => ( {
 	useMobileCheckoutStickySummaryExperiment: () => ( { isMobileCheckoutStickySummary: false } ),
@@ -54,26 +53,7 @@ function renderOrderReview( cart: ResponseCart, queryClient: QueryClient ) {
 }
 
 describe( 'WPCheckoutOrderReview', () => {
-	beforeEach( () => {
-		mockIsCheckoutUiRedesignV1 = false;
-	} );
-
-	it( 'does not show the site and account lines in the default checkout', async () => {
-		const queryClient = new QueryClient();
-		queryClient.setQueryData( siteByIdQuery( 456 ).queryKey, {
-			ID: 456,
-			slug: 'renewing.example',
-		} as Site );
-
-		renderOrderReview( { ...getEmptyResponseCart(), blog_id: 456 }, queryClient );
-
-		expect( screen.queryByText( /renewing\.example/ ) ).not.toBeInTheDocument();
-		expect( screen.queryByText( /buyer@example\.com/ ) ).not.toBeInTheDocument();
-	} );
-
-	// The checkout UI redesign experiment still shows the site and account lines.
 	it( 'shows the site the server assigned to a cart that has no site in its key', async () => {
-		mockIsCheckoutUiRedesignV1 = true;
 		const queryClient = new QueryClient();
 		queryClient.setQueryData( siteByIdQuery( 456 ).queryKey, {
 			ID: 456,
@@ -82,14 +62,13 @@ describe( 'WPCheckoutOrderReview', () => {
 
 		renderOrderReview( { ...getEmptyResponseCart(), blog_id: 456 }, queryClient );
 
-		expect( await screen.findByText( 'renewing.example' ) ).toBeInTheDocument();
+		expect( await screen.findByText( 'Site: renewing.example' ) ).toBeInTheDocument();
 	} );
 
 	it( 'shows no site when the cart has no blog ID', () => {
-		mockIsCheckoutUiRedesignV1 = true;
 		renderOrderReview( { ...getEmptyResponseCart(), blog_id: 0 }, new QueryClient() );
 
-		expect( screen.getByText( 'buyer@example.com' ) ).toBeInTheDocument();
-		expect( document.querySelector( '.checkout-review-order__site' ) ).not.toBeInTheDocument();
+		expect( screen.getByText( /^Account:/ ) ).toBeInTheDocument();
+		expect( screen.queryByText( /^Site:/ ) ).not.toBeInTheDocument();
 	} );
 } );
