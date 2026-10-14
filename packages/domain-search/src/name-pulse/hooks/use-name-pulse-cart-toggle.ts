@@ -118,15 +118,15 @@ export const useNamePulseCartToggle = (
 		isPending,
 		error,
 		toggleCart: () => {
-			if ( ! inCart ) {
-				const rendered = getRendered();
-				events.onSuggestionInteract(
-					getTracksSuggestion(),
-					rendered && {
-						result_set_id: rendered.resultSetId,
-						result_group: rendered.group,
-					}
-				);
+			const rendered = getRendered();
+
+			// A click before the render is reported matches no render, so it is
+			// left to the add-to-cart events alone.
+			if ( ! inCart && rendered ) {
+				events.onSuggestionInteract( getTracksSuggestion(), {
+					result_set_id: rendered.resultSetId,
+					result_group: rendered.group,
+				} );
 			}
 
 			if ( inCart || policyNotices.length === 0 ) {

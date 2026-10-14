@@ -1312,6 +1312,35 @@ describe( 'NamePulseResults', () => {
 			);
 		} );
 
+		it( 'adds to the cart without an interaction when the name has not reported its render', async () => {
+			const user = userEvent.setup();
+			const events = buildEvents();
+
+			render(
+				<NamePulseTestSearch
+					query="icecream"
+					events={ events }
+					tldsResponse={ () => new Promise< string[] >( () => {} ) }
+				/>
+			);
+
+			await within( await findRow( 'creamyice.com' ) ).findByText( '$24' );
+			expect( events.onSuggestionRender ).not.toHaveBeenCalled();
+			await user.click(
+				within( rowFor( 'creamyice.com' ) ).getByRole( 'button', { name: 'Add to cart' } )
+			);
+
+			await waitFor( () =>
+				expect( events.onAddDomainToCart ).toHaveBeenCalledWith(
+					'creamyice.com',
+					expect.any( Number ),
+					false,
+					expect.any( String )
+				)
+			);
+			expect( events.onSuggestionInteract ).not.toHaveBeenCalled();
+		} );
+
 		it( 'reports "Show more" with its result group', async () => {
 			const user = userEvent.setup();
 			const events = buildEvents();
