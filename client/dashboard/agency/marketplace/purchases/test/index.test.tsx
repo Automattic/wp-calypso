@@ -152,6 +152,26 @@ describe( '<MarketplacePurchases>', () => {
 		expect( sessionStorage.getItem( 'shopping-card-selected-items' ) ).toBeNull();
 	} );
 
+	test( 'empties the referral cart and leaves referral mode when a free referral cart was bought', async () => {
+		mockAgency();
+		mockPreferences();
+		mockLicenses();
+		mockPendingSites( 'pending' );
+		sessionStorage.setItem( 'shopping-card-selected-items', 'jetpack-backup-t1:1' );
+		sessionStorage.setItem( 'referrals-shopping-card-selected-items', 'jetpack-stats-free:1' );
+		sessionStorage.setItem( 'marketplace-type', 'referral' );
+		window.history.replaceState( {}, '', '/purchases?cart=referral&receipt_id=123' );
+
+		render( <MarketplacePurchases /> );
+
+		await waitFor( () => expect( window.location.search ).toBe( '' ) );
+		expect( sessionStorage.getItem( 'referrals-shopping-card-selected-items' ) ).toBeNull();
+		expect( sessionStorage.getItem( 'marketplace-type' ) ).toBe( 'regular' );
+		expect( sessionStorage.getItem( 'shopping-card-selected-items' ) ).toBe(
+			'jetpack-backup-t1:1'
+		);
+	} );
+
 	test( 'leaves the cart alone without a receipt', async () => {
 		mockAgency();
 		mockPreferences();

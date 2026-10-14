@@ -22,7 +22,6 @@ describe( 'useAgentConfig', () => {
 	it( 'returns `ORCHESTRATOR_AGENT_ID` by default', () => {
 		const { result } = renderHook( () => useAgentConfig() );
 		expect( result.current.agentId ).toBe( ORCHESTRATOR_AGENT_ID );
-		expect( result.current.isLoading ).toBe( false );
 	} );
 
 	it( 'returns `version` from URL `?version=` param', () => {
@@ -70,6 +69,5 @@ describe( 'useAgentConfig', () => {
 		const { result } = renderHook( () => useAgentConfig( 'reader-chat' ) );
 
 		expect( result.current.agentId ).toBe( 'reader-chat' );
-		expect( result.current.isLoading ).toBe( false );
 	} );
 } );

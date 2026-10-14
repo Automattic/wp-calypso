@@ -133,7 +133,7 @@ const findNotice = () => findElement( '.name-pulse-notice' );
 
 const findExactMatchCard = () => findElement( '.name-pulse-exact-card[data-domain]' );
 
-const findBundleCard = () => findElement( '.bundle-card' );
+const findBundleCard = () => findElement( '.name-pulse-bundle-card' );
 
 const isAfterTopResults = ( element: HTMLElement ) =>
 	Boolean(
@@ -953,7 +953,7 @@ describe( 'NamePulseResults', () => {
 			await waitFor( () => expect( domainsIn( 'top' ) ).toHaveLength( 3 ) );
 
 			expect( bundleForDomain ).not.toHaveBeenCalled();
-			expect( document.querySelector( '.bundle-card' ) ).toBeNull();
+			expect( document.querySelector( '.name-pulse-bundle-card' ) ).toBeNull();
 		} );
 
 		it( 'sits beside the exact-match card of a typed .com, anchored on it', async () => {
@@ -974,6 +974,7 @@ describe( 'NamePulseResults', () => {
 			expect( bundle.closest( '.name-pulse-featured' ) ).toContainElement(
 				await findExactMatchCard()
 			);
+			expect( bundle ).not.toHaveClass( 'name-pulse-bundle-card--wide' );
 			expect( within( bundle ).getByText( 'Protect your brand' ) ).toBeVisible();
 			expect( bundleForDomain ).toHaveBeenCalledWith( 'icecream.com' );
 			expect( onBundleShown ).toHaveBeenCalledTimes( 1 );
@@ -999,10 +1000,7 @@ describe( 'NamePulseResults', () => {
 			expect( bundle.closest( '.name-pulse-featured' ) ).not.toBeNull();
 			expect( domainsIn( 'top' ) ).toEqual( [ 'icecream.com', 'icecream.org', 'icecream.net' ] );
 			expect( bundleForDomain.mock.calls.map( ( [ fqdn ] ) => fqdn ) ).toEqual( [
-				'icecream.blog',
 				'icecream.com',
-				'icecream.org',
-				'icecream.net',
 			] );
 		} );
 
@@ -1033,6 +1031,8 @@ describe( 'NamePulseResults', () => {
 
 			expect( document.querySelector( '.name-pulse-featured' ) ).toBeNull();
 			expect( isAfterTopResults( bundle ) ).toBe( true );
+			// Spans the row, so it lays the price out beside the TLDs.
+			expect( bundle ).toHaveClass( 'name-pulse-bundle-card--wide' );
 		} );
 
 		it( 'renders nothing when no anchor has a bundle', async () => {
@@ -1046,9 +1046,10 @@ describe( 'NamePulseResults', () => {
 				/>
 			);
 
-			await waitFor( () => expect( bundleForDomain ).toHaveBeenCalledTimes( 3 ) );
+			await waitFor( () => expect( bundleForDomain ).toHaveBeenCalledWith( 'icecream.com' ) );
 
-			expect( document.querySelector( '.bundle-card' ) ).toBeNull();
+			expect( bundleForDomain ).toHaveBeenCalledTimes( 1 );
+			expect( document.querySelector( '.name-pulse-bundle-card' ) ).toBeNull();
 		} );
 
 		it( 'adds every member to the cart in one go, and explains a bundle that is gone', async () => {

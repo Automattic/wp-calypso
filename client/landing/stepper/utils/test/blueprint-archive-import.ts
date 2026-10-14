@@ -4,10 +4,15 @@
 import wpcom from 'calypso/lib/wp';
 import {
 	applyBlueprintSpec,
+	checkBlueprintExists,
 	getBlueprintArchiveSiteSpecUrl,
+	getSimpleSiteEditorUrl,
 	getSiteEditorUrl,
+	getSpecMetaFromQuery,
 	getStandaloneBlueprintArchiveSlug,
+	getStandaloneBlueprintSimpleSlug,
 	lookupBlueprintArchive,
+	startBlueprintSimpleImport,
 	waitForAtomicTransferComplete,
 	waitForBlueprintImportComplete,
 } from '../blueprint-archive-import';
@@ -36,6 +41,146 @@ describe( 'getStandaloneBlueprintArchiveSlug', () => {
 	it( 'ignores retained Blueprint values after a Playground ID exists', () => {
 		expect( getStandaloneBlueprintArchiveSlug( '945', 'playground-uuid', null ) ).toBeNull();
 		expect( getStandaloneBlueprintArchiveSlug( '945', 'playground-uuid', 'wow' ) ).toBeNull();
+	} );
+} );
+
+describe( 'getStandaloneBlueprintSimpleSlug', () => {
+	it( 'returns the blueprint for a build_dest=simple run', () => {
+		expect( getStandaloneBlueprintSimpleSlug( 'zoom', null, 'simple' ) ).toBe( 'zoom' );
+	} );
+
+	it( 'is not the archive destination, and vice versa', () => {
+		expect( getStandaloneBlueprintSimpleSlug( 'zoom', null, 'wow' ) ).toBeNull();
+		expect( getStandaloneBlueprintArchiveSlug( 'zoom', null, 'simple' ) ).toBeNull();
+	} );
+
+	it( 'yields to a Playground id, as the archive slug does', () => {
+		expect( getStandaloneBlueprintSimpleSlug( 'zoom', 'playground-uuid', 'simple' ) ).toBeNull();
+	} );
+} );
+
+describe( 'getSpecMetaFromQuery', () => {
+	it( 'picks up the allow-listed entry parameters and nothing else', () => {
+		expect(
+			getSpecMetaFromQuery(
+				new URLSearchParams(
+					'blueprint=zoom&zoom_booking_url=https%3A%2F%2Fscheduler.zoom.us%2Fjason&other=1'
+				)
+			)
+		).toEqual( { zoom_booking_url: 'https://scheduler.zoom.us/jason' } );
+	} );
+
+	it( 'drops empty values', () => {
+		expect( getSpecMetaFromQuery( new URLSearchParams( 'zoom_booking_url=' ) ) ).toEqual( {} );
+		expect( getSpecMetaFromQuery( new URLSearchParams( 'blueprint=zoom' ) ) ).toEqual( {} );
+	} );
+
+	// The widget may render the value as a link, so nothing but a web URL gets that far.
+	it( 'drops values that are not web URLs', () => {
+		for ( const value of [
+			'javascript:alert(document.cookie)',
+			'data:text/html,hi',
+			'scheduler.zoom.us/jason',
+			'not a url',
+		] ) {
+			expect( getSpecMetaFromQuery( new URLSearchParams( { zoom_booking_url: value } ) ) ).toEqual(
+				{}
+			);
+		}
+	} );
+} );
+
+describe( 'startBlueprintSimpleImport', () => {
+	beforeEach( () => {
+		mockPost.mockReset();
+		mockGet.mockReset();
+	} );
+
+	it( 'starts the v1.1 library import with the blog id the endpoint checks against', async () => {
+		mockPost.mockResolvedValue( { importId: 'import-1', importStatus: 'importing' } );
+
+		await startBlueprintSimpleImport( 'example.wordpress.com', 'zoom', 123 );
+
+		expect( mockGet ).not.toHaveBeenCalled();
+		expect( mockPost ).toHaveBeenCalledTimes( 1 );
+		const [ params ] = mockPost.mock.calls[ 0 ];
+		expect( params ).toMatchObject( {
+			path: '/sites/example.wordpress.com/imports/library/new',
+			apiVersion: '1.1',
+		} );
+		expect( params.formData ).toEqual( [
+			[
+				'importStatus',
+				JSON.stringify( {
+					importStatus: 'importer-ready-for-upload',
+					siteId: 123,
+					type: 'wordpress',
+				} ),
+			],
+			[ 'blueprint', 'zoom' ],
+		] );
+	} );
+
+	it( 'resolves the blog id first when the caller only has a slug', async () => {
+		mockGet.mockResolvedValue( { ID: 456 } );
+		mockPost.mockResolvedValue( {} );
+
+		await startBlueprintSimpleImport( 'example.wordpress.com', 'zoom' );
+
+		expect( mockGet ).toHaveBeenCalledWith(
+			{ path: '/sites/example.wordpress.com', apiVersion: '1.1' },
+			{ fields: 'ID' }
+		);
+		const [ params ] = mockPost.mock.calls[ 0 ];
+		expect( JSON.parse( params.formData[ 0 ][ 1 ] ).siteId ).toBe( 456 );
+	} );
+
+	it( 'refuses to start without a blog id rather than sending one the endpoint will reject', async () => {
+		mockGet.mockResolvedValue( {} );
+
+		await expect( startBlueprintSimpleImport( 'example.wordpress.com', 'zoom' ) ).rejects.toThrow(
+			'blog id'
+		);
+		expect( mockPost ).not.toHaveBeenCalled();
+	} );
+} );
+
+describe( 'getSimpleSiteEditorUrl', () => {
+	it( 'lands on the site editor directly, with no SSO hop and no Big Sky parameters', () => {
+		expect( getSimpleSiteEditorUrl( 'https://example.wordpress.com/wp-admin/' ) ).toBe(
+			'https://example.wordpress.com/wp-admin/site-editor.php'
+		);
+	} );
+
+	it( 'tolerates an admin URL without a trailing slash', () => {
+		expect( getSimpleSiteEditorUrl( 'https://example.wordpress.com/wp-admin' ) ).toBe(
+			'https://example.wordpress.com/wp-admin/site-editor.php'
+		);
+	} );
+} );
+
+describe( 'lookupBlueprintArchive target', () => {
+	beforeEach( () => {
+		mockGet.mockReset();
+		mockGet.mockResolvedValue( { exists: true, title: 'Zoom', suggested_plans: [] } );
+	} );
+
+	it( 'asks for the Simple lookup when told to', async () => {
+		await expect( checkBlueprintExists( 'zoom', { target: 'simple' } ) ).resolves.toBe( true );
+
+		expect( mockGet ).toHaveBeenCalledWith(
+			{ path: '/blueprint-archive/zoom', apiNamespace: 'wpcom/v2' },
+			{ target: 'simple' }
+		);
+	} );
+
+	it( 'sends nothing for the default, so an older wpcom sees the request it always did', async () => {
+		await lookupBlueprintArchive( 'zoom' );
+		await lookupBlueprintArchive( 'zoom', { target: 'atomic' } );
+
+		for ( const call of mockGet.mock.calls ) {
+			expect( call[ 1 ] ).toBeUndefined();
+		}
 	} );
 } );
 
@@ -241,6 +386,24 @@ describe( 'getBlueprintArchiveSiteSpecUrl', () => {
 			'build=custom-theme'
 		);
 		expect( getBlueprintArchiveSiteSpecUrl( base ) ).not.toContain( 'build=' );
+	} );
+
+	it( 'marks a Simple build with its own parameter and carries the spec meta', () => {
+		const url = getBlueprintArchiveSiteSpecUrl( {
+			siteSlug: 'example.wordpress.com',
+			siteId: 123,
+			blueprintSlug: 'zoom',
+			simpleImport: true,
+			specMeta: { zoom_booking_url: 'https://scheduler.zoom.us/jason' },
+		} );
+		const params = new URL( url, 'https://wordpress.com' ).searchParams;
+
+		expect( params.get( 'blueprint_simple_import' ) ).toBe( '1' );
+		// Its own parameter, not a value of the archive one: a site-spec that predates it must
+		// ignore the run rather than start an Atomic transfer for it.
+		expect( params.get( 'blueprint_archive_import' ) ).toBeNull();
+		expect( params.get( 'blueprint_slug' ) ).toBe( 'zoom' );
+		expect( params.get( 'zoom_booking_url' ) ).toBe( 'https://scheduler.zoom.us/jason' );
 	} );
 
 	it( 'omits the funnel for a standalone run', () => {

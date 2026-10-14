@@ -11,6 +11,7 @@ import {
 	OWNER_ID,
 	SITE_ID,
 	expiryInDays,
+	grace,
 	makePurchase,
 	renewing,
 	revertedTransfer,
@@ -130,17 +131,54 @@ describe( 'useSiteExpiryNotice: purchase states', () => {
 		await waitFor( () => expect( on.result.current ).toMatchObject( { stage: 'early-warning' } ) );
 	} );
 
-	test( 'a plan past its date but still active is grace, and the transfer is never asked for', async () => {
-		mockApi( {
-			purchases: [ makePurchase( { expiry_date: expiryInDays( -45 ), expiry_status: 'expired' } ) ],
-		} );
-		const { result, queryClient } = renderNotice( { isAtomic: true } );
-		await waitFor( () =>
-			expect( result.current ).toMatchObject( { kind: 'purchase', stage: 'grace' } )
-		);
-		const transferState = queryClient.getQueryState( TRANSFER_KEY );
-		expect( transferState?.fetchStatus ).toBe( 'idle' );
-		expect( transferState?.dataUpdatedAt ).toBe( 0 );
+	test.each( [
+		[
+			'grace on an Atomic site',
+			makePurchase( { expiry_date: expiryInDays( -45 ), expiry_status: 'expired' } ),
+			true,
+			'grace',
+		],
+		[
+			'the final week on a Simple site',
+			makePurchase( { expiry_date: expiryInDays( 3 ) } ),
+			false,
+			'final-window',
+		],
+	] )(
+		'%s is not dismissible, and neither the transfer nor the meta is asked for',
+		async ( _, purchase, isAtomic, stage ) => {
+			mockApi( { purchases: [ purchase ], meta: { [ DISMISS_KEY ]: 0 } } );
+			const { result, queryClient } = renderNotice( { isAtomic } );
+			await waitFor( () => expect( result.current ).toMatchObject( { kind: 'purchase', stage } ) );
+			expect( result.current ).not.toHaveProperty( 'dismissMetaKey' );
+			for ( const key of [ TRANSFER_KEY, CURRENT_USER_KEY ] ) {
+				const queryState = queryClient.getQueryState( key );
+				expect( queryState?.fetchStatus ).toBe( 'idle' );
+				expect( queryState?.dataUpdatedAt ).toBe( 0 );
+			}
+		}
+	);
+} );
+
+describe( 'useSiteExpiryNotice: grace on a Simple site', () => {
+	// `grace()` expires on 2026-02-23, so its term ends at that day's last UTC second.
+	const cutoffSeconds = Date.UTC( 2026, 1, 23, 23, 59, 59 ) / 1000;
+
+	const shown = expect.objectContaining( {
+		kind: 'purchase',
+		stage: 'grace',
+		dismissMetaKey: DISMISS_KEY,
+	} );
+
+	test.each( [
+		[ 'no stamp', 0, shown ],
+		[ 'a stamp from before the expiry day ended', cutoffSeconds - 1, shown ],
+		[ 'a stamp from after the expiry day ended', cutoffSeconds + 3600, null ],
+	] )( 'with %s, the dismissible notice is honoured', async ( _, stamp, expected ) => {
+		mockApi( { purchases: [ grace() ], meta: { [ DISMISS_KEY ]: stamp } } );
+		const { result, waitForSettled } = renderNotice();
+		await waitForSettled( CURRENT_USER_KEY );
+		await waitFor( () => expect( result.current ).toEqual( expected ) );
 	} );
 } );
 
@@ -258,6 +296,21 @@ describe( 'useSiteExpiryNotice: reverted state', () => {
 		mockApi( { purchases: [], transfer, meta: { [ DISMISS_KEY ]: revertedAtSeconds - 3600 } } );
 		const { result } = renderNotice();
 		await waitFor( () => expect( result.current ).toMatchObject( { kind: 'reverted' } ) );
+	} );
+
+	test.each( [
+		[ 'grace on a Simple site', { purchases: [ grace() ] } ],
+		[ 'post-grace', { purchases: [], transfer: revertedTransfer( 10 ) } ],
+	] )( 'in %s a failed meta fetch hides the notice', async ( _, api ) => {
+		mockApi( api );
+		nock( 'https://public-api.wordpress.com' )
+			.get( `/wp/v2/sites/${ SITE_ID }/users/me` )
+			.query( true )
+			.reply( 500, { message: 'nope' } );
+		const { result, queryClient, waitForSettled } = renderNotice();
+		await waitForSettled( CURRENT_USER_KEY );
+		expect( queryClient.getQueryState( CURRENT_USER_KEY )?.status ).toBe( 'error' );
+		expect( result.current ).toBeNull();
 	} );
 
 	test( 'with no dismiss key on the site the state is still shown, without a key', async () => {

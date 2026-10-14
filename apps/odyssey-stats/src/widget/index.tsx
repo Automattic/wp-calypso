@@ -1,36 +1,86 @@
 import '@automattic/calypso-polyfills';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { createRoot } from '@wordpress/element';
+import { trendingUp } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
+import { useState } from 'react';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import useWPAdminTheme from 'calypso/my-sites/stats/hooks/use-wp-admin-theme';
 import config from '../lib/config-api';
+import {
+	DEFAULT_DATE_RANGE_ID,
+	DateRangeId,
+	isDateRangeId,
+	resolveDateRange,
+} from '../lib/date-ranges';
+import getExploreMoreUrl from '../lib/get-explore-more-url';
+import { loadWpComponentsStyleForWidget } from '../lib/load-wp-components-style';
 import getSiteAdminUrl from '../lib/selectors/get-site-admin-url';
 import getSiteStatsBaseUrl from '../lib/selectors/get-site-stats-base-url';
 import setLocale from '../lib/set-locale';
+import DateRangeControl from './date-range-control';
 import Highlights from './highlights';
 import MiniChart from './mini-chart';
 import Modules from './modules';
+import recordWidgetEvent, { recordWidgetEventThenFollow } from './record-widget-event';
 import useStatsLink from './use-stats-link';
+import WidgetSection from './widget-section';
 import type { FunctionComponent } from 'react';
 
 import './index.scss';
+
+// Per site, matching the convention the full Stats app uses for its chart type
+// preference (`jetpack_stats_chart_type_<siteId>`).
+const rangeStorageKey = ( siteId: number ) => `jetpack_stats_widget_date_range_${ siteId }`;
+
+/**
+ * The range stored for a site, or the default.
+ * @param siteId The current site id.
+ */
+function readStoredRangeId( siteId: number ): DateRangeId {
+	try {
+		const stored = localStorage.getItem( rangeStorageKey( siteId ) );
+		return isDateRangeId( stored ) ? stored : DEFAULT_DATE_RANGE_ID;
+	} catch {
+		// `localStorage` throws outright where site data is blocked; fall back quietly.
+		return DEFAULT_DATE_RANGE_ID;
+	}
+}
+
+/**
+ * Remember the selected range for a site.
+ * @param siteId The current site id.
+ * @param id     The range to remember.
+ */
+function storeRangeId( siteId: number, id: DateRangeId ) {
+	try {
+		localStorage.setItem( rangeStorageKey( siteId ), id );
+	} catch {
+		// Remembering the choice is a convenience, not a requirement.
+	}
+}
 
 /**
  * Loads and runs the main chunk for Stats Widget.
  */
 export function init() {
 	const currentSiteId = config( 'blog_id' );
+	const gmtOffset = config( 'gmt_offset' );
 	const localeSlug = config( 'i18n_locale_slug' ) || config( 'i18n_default_locale_slug' ) || 'en';
 
 	const statsBaseUrl = getSiteStatsBaseUrl();
 	const adminBaseUrl = getSiteAdminUrl( currentSiteId );
+	const exploreMore = getExploreMoreUrl( `${ statsBaseUrl }/stats/day/${ currentSiteId }` );
 
 	const queryClient = new QueryClient();
 
-	// Ensure locale files are loaded before rendering.
-	setLocale( localeSlug ).then( () => {
+	// Locale files and, below WP 6.9, the components' base CSS, before anything renders. A
+	// stylesheet that fails to load still leaves a working, if unstyled, widget.
+	Promise.all( [
+		setLocale( localeSlug ),
+		loadWpComponentsStyleForWidget().catch( () => undefined ),
+	] ).then( () => {
 		const statsWidgetEl = document.getElementById( 'dashboard_stats' );
 		if ( ! statsWidgetEl ) {
 			return;
@@ -39,21 +89,37 @@ export function init() {
 			const translate = useTranslate();
 			const customTheme = useWPAdminTheme();
 			const statsLink = useStatsLink( currentSiteId );
+			const [ rangeId, setRangeId ] = useState< DateRangeId >( () =>
+				readStoredRangeId( currentSiteId )
+			);
+			const range = resolveDateRange( rangeId, gmtOffset );
+
+			const onRangeChange = ( nextRangeId: DateRangeId ) => {
+				if ( nextRangeId !== rangeId ) {
+					recordWidgetEvent( 'date_range_changed', { range: nextRangeId } );
+				}
+				setRangeId( nextRangeId );
+				storeRangeId( currentSiteId, nextRangeId );
+			};
+
 			return (
 				<div
 					id="stats-widget-content"
 					className={ clsx( 'stats-widget-content', 'color-scheme', customTheme ) }
 				>
-					<MiniChart
-						siteId={ currentSiteId }
-						gmtOffset={ config( 'gmt_offset' ) }
-						statsBaseUrl={ statsBaseUrl }
-					/>
 					<div className="stats-widget-wrapper">
+						<WidgetSection
+							title={ translate( 'Overview' ) }
+							icon={ trendingUp }
+							action={ <DateRangeControl value={ rangeId } onChange={ onRangeChange } /> }
+						>
+							<MiniChart siteId={ currentSiteId } range={ range } />
+						</WidgetSection>
 						<Highlights
 							siteId={ currentSiteId }
-							gmtOffset={ config( 'gmt_offset' ) }
 							statsBaseUrl={ statsBaseUrl }
+							range={ range }
+							gmtOffset={ gmtOffset }
 						/>
 						<Modules siteId={ currentSiteId } adminBaseUrl={ adminBaseUrl } />
 						<div className="stats-widget-footer">
@@ -65,8 +131,19 @@ export function init() {
 							>
 								<JetpackLogo size={ 20 } monochrome full />
 							</a>
-							<a href={ statsLink( `${ statsBaseUrl }/stats/day/${ currentSiteId }`, '/' ) }>
-								{ translate( 'View all stats' ) }
+							<a
+								href={
+									// Without a Jetpack menu to point at, the link falls back to Stats, which
+									// opens Premium Analytics instead where the site has it switched on.
+									'stats' === exploreMore.destination
+										? statsLink( exploreMore.url, '/' )
+										: exploreMore.url
+								}
+								onClick={ recordWidgetEventThenFollow( 'explore_more_clicked', {
+									destination: exploreMore.destination,
+								} ) }
+							>
+								{ translate( 'Explore more' ) }
 							</a>
 						</div>
 					</div>

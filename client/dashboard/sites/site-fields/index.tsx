@@ -6,6 +6,7 @@ import {
 	siteEngagementStatsQuery,
 	siteUptimeQuery,
 } from '@automattic/api-queries';
+import { formatNumber } from '@automattic/number-formatters';
 import { useQuery } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
 import {
@@ -37,7 +38,7 @@ import { PlanAwaitingCheckout, useSiteAwaitingCheckout } from './plan-awaiting-c
 import { PlanExpiryStatus } from './plan-expiry-status';
 import { useIsSiteUnreachable } from './site-unreachable-status';
 import type { SiteBadge, SiteBlockingStatus, SiteVisibility } from '../../types';
-import type { Site } from '@automattic/api-core';
+import type { Site, WowFunnelPendingSite } from '@automattic/api-core';
 import type { ComponentProps } from 'react';
 
 function IneligibleIndicator() {
@@ -236,7 +237,8 @@ export function AsyncEngagementStat( {
 			return <IneligibleIndicator />;
 		}
 
-		return stats?.currentData[ type ];
+		const value = stats?.currentData[ type ];
+		return typeof value === 'number' ? formatNumber( value ) : value;
 	};
 
 	return (
@@ -418,6 +420,28 @@ export function Visibility( {
 	);
 }
 
+/**
+ * The line under the plan name: where to finish buying a site held for checkout, or else how the
+ * plan's expiry stands. One place that decides which, so the plan cell does not.
+ *
+ * This does not keep the page's own elements stable when the held-site lookup answers: one of the
+ * two is still unmounted for the other, as the expiry status already mounts once its purchase
+ * loads. The span above is what stays put.
+ */
+function PlanSubStatus( {
+	site,
+	awaitingCheckout,
+}: {
+	site: Site;
+	awaitingCheckout: WowFunnelPendingSite | undefined;
+} ) {
+	if ( awaitingCheckout ) {
+		return <PlanAwaitingCheckout pending={ awaitingCheckout } />;
+	}
+
+	return <PlanExpiryStatus site={ site } />;
+}
+
 export function Plan( {
 	site,
 	isSelfHostedJetpackConnected,
@@ -444,11 +468,7 @@ export function Plan( {
 			     first paint, and swapping elements across that boundary crashes under Google
 			     Translate (react/react#11538). */ }
 			<span>{ awaitingCheckout ? __( 'Awaiting checkout' ) : value }</span>
-			{ awaitingCheckout ? (
-				<PlanAwaitingCheckout pending={ awaitingCheckout } />
-			) : (
-				<PlanExpiryStatus site={ site } />
-			) }
+			<PlanSubStatus site={ site } awaitingCheckout={ awaitingCheckout } />
 		</VStack>
 	);
 }

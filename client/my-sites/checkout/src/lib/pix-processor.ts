@@ -49,13 +49,12 @@ export async function pixProcessor(
 		siteId,
 		includeDomainDetails,
 		includeGSuiteDetails,
-		reduxDispatch,
 		responseCart,
 		contactDetails,
 	} = options;
 	const paymentMethodId = 'pix';
 
-	reduxDispatch( recordTransactionBeginAnalytics( { paymentMethodId } ) );
+	recordTransactionBeginAnalytics( { paymentMethodId } );
 
 	if ( ! isValidBrazilianTaxId( submitData.document ) ) {
 		return makeErrorResponse(

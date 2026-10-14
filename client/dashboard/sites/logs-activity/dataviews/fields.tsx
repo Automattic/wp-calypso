@@ -1,3 +1,4 @@
+import { formatNumber } from '@automattic/number-formatters';
 import { useViewportMatch } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
 import { useMemo } from 'react';
@@ -58,20 +59,15 @@ export function useActivityFields( {
 	const dateTimeLabel = getDateTimeLabel( { timezoneString, gmtOffset, isLargeScreen } );
 	const localIsUTC = gmtOffset === 0;
 
-	const activityLogTypeElements = useMemo< ActivityLogTypeOption[] >( () => {
-		if ( ! activityLogTypes ) {
-			return [];
-		}
-
-		return Object.entries( activityLogTypes )
+	return useMemo( () => {
+		const activityLogTypeElements: ActivityLogTypeOption[] = Object.entries(
+			activityLogTypes ?? {}
+		)
 			.map( ( [ value, { name, count } ] ) => ( {
 				value,
-				label: `${ name } (${ count })`,
+				label: `${ name } (${ formatNumber( count ) })`,
 			} ) )
 			.sort( ( a, b ) => a.label.localeCompare( b.label ) );
-	}, [ activityLogTypes ] );
-
-	return useMemo( () => {
 		return [
 			{
 				id: 'published',
@@ -152,13 +148,5 @@ export function useActivityFields( {
 				filterBy: { operators: [ 'isAny' as Operator ] },
 			},
 		];
-	}, [
-		timezoneString,
-		gmtOffset,
-		locale,
-		dateTimeLabel,
-		activityLogTypeElements,
-		activityLogTypes,
-		localIsUTC,
-	] );
+	}, [ timezoneString, gmtOffset, locale, dateTimeLabel, activityLogTypes, localIsUTC ] );
 }

@@ -10,7 +10,7 @@ import { useState, useEffect } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
 import debugFactory from 'debug';
 import { useDispatch } from 'react-redux';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { useVgsFormSubmit } from '../../hooks/use-vgs-form-submit';
 import { useVgsFormValidation } from '../../hooks/use-vgs-form-validation';
@@ -97,11 +97,9 @@ export default function CreditCardPayButton( {
 								'Something seems to be wrong with the credit card form. Please try again or contact support for help.'
 							)
 						);
-						reduxDispatch(
-							recordTracksEvent( 'calypso_checkout_card_missing_element', {
-								error: 'No card number element found on page when submtting form.',
-							} )
-						);
+						recordTracksEvent( 'calypso_checkout_card_missing_element', {
+							error: 'No card number element found on page when submtting form.',
+						} );
 						logStashEvent( 'calypso_checkout_card_missing_element', {
 							error: 'No card number element found on page when submtting form.',
 						} );

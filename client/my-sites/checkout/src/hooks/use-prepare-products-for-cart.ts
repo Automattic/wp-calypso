@@ -41,8 +41,6 @@ const initialPreparedProductsState: PreparedProductsForCart = {
 export default function usePrepareProductsForCart( {
 	productAliasFromUrl,
 	purchaseId: originalPurchaseId,
-	usesJetpackProducts,
-	isPrivate,
 	siteSlug,
 	sitelessCheckoutType,
 	isLoggedOutCart,
@@ -55,8 +53,6 @@ export default function usePrepareProductsForCart( {
 }: {
 	productAliasFromUrl: string | null | undefined;
 	purchaseId: string | number | null | undefined;
-	usesJetpackProducts: boolean;
-	isPrivate: boolean;
 	siteSlug: string | undefined;
 	sitelessCheckoutType: SitelessCheckoutType;
 	isLoggedOutCart?: boolean;
@@ -111,8 +107,6 @@ export default function usePrepareProductsForCart( {
 	useAddProductFromSlug( {
 		productAliasFromUrl,
 		dispatch,
-		usesJetpackProducts,
-		isPrivate,
 		addHandler,
 		sitelessCheckoutType,
 		jetpackSiteSlug,
@@ -529,8 +523,6 @@ function useAddRenewalBySubscriptionId( {
 function useAddProductFromSlug( {
 	productAliasFromUrl,
 	dispatch,
-	usesJetpackProducts,
-	isPrivate,
 	addHandler,
 	sitelessCheckoutType,
 	jetpackSiteSlug,
@@ -540,8 +532,6 @@ function useAddProductFromSlug( {
 }: {
 	productAliasFromUrl: string | undefined | null;
 	dispatch: ( action: PreparedProductsAction ) => void;
-	usesJetpackProducts: boolean;
-	isPrivate: boolean;
 	addHandler: AddHandler;
 	sitelessCheckoutType: SitelessCheckoutType;
 	jetpackSiteSlug?: string;
@@ -604,17 +594,11 @@ function useAddProductFromSlug( {
 			} );
 			return;
 		}
-		debug(
-			'preparing products that were requested in url',
-			{ productAliasFromUrl, usesJetpackProducts },
-			cartProducts
-		);
+		debug( 'preparing products that were requested in url', productAliasFromUrl, cartProducts );
 		dispatch( { type: 'PRODUCTS_ADD', products: cartProducts } );
 	}, [
 		addHandler,
 		translate,
-		isPrivate,
-		usesJetpackProducts,
 		productAliasFromUrl,
 		validProducts,
 		sitelessCheckoutType,

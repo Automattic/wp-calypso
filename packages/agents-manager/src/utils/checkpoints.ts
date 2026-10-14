@@ -40,19 +40,14 @@ import type { Block } from '@wordpress/blocks';
 /**
  * AM-owned checkpoint store: in-memory, per page load, keyed by tool call id.
  *
- * Ported from Big Sky's `use-checkpoint` as plain functions, since AM abilities
- * execute as plain callbacks. Every migrated domain restores here: global
- * styles, custom CSS, the site logo, the site title, site metadata, pages,
- * navigation and the page's blocks.
- *
- * Big Sky also re-applies the checkpoint's variation titles after a restore, to
- * sync its variation-selection store. AM has no such store, and the entity
- * snapshot alone restores the full visual state.
+ * Plain functions rather than a hook, since abilities execute as plain
+ * callbacks. Every domain they write restores here: global styles, custom CSS,
+ * the site logo, the site title, site metadata, pages, navigation and the
+ * page's blocks.
  */
 
-// Big Sky's scoped checkpoint keys — they gate which domains a restore
-// applies. The theme domain restores the full global-styles snapshot
-// wholesale, matching Big Sky.
+// Scoped checkpoint keys — they gate which domains a restore applies. The
+// theme domain restores the full global-styles snapshot wholesale.
 export const checkpointKeys = {
 	COLOR: 'color',
 	FONT: 'font',

@@ -2,15 +2,18 @@
  * @jest-environment jsdom
  */
 import { recordPurchase } from 'calypso/lib/analytics/record-purchase';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { recordCompletedPurchaseAnalytics } from '../record-completed-purchase-analytics';
 import type { Receipt, ReceiptItem } from '@automattic/api-core';
 
 jest.mock( 'calypso/lib/analytics/record-purchase', () => ( {
 	recordPurchase: jest.fn(),
 } ) );
-jest.mock( 'calypso/state/analytics/actions', () => ( {
-	recordTracksEvent: jest.fn( ( name, props ) => ( { type: 'TRACKS', name, props } ) ),
+jest.mock( 'calypso/lib/analytics/tracks', () => ( {
+	recordTracksEvent: jest.fn(),
+} ) );
+jest.mock( 'calypso/lib/logstash', () => ( {
+	logToLogstash: jest.fn(),
 } ) );
 
 const mockRecordPurchase = recordPurchase as jest.MockedFunction< typeof recordPurchase >;
@@ -30,27 +33,25 @@ describe( 'recordCompletedPurchaseAnalytics', () => {
 
 	it( 'records the purchase from the receipt', async () => {
 		const receipt = makeReceipt( 1 );
-		await recordCompletedPurchaseAnalytics( receipt, jest.fn() );
+		await recordCompletedPurchaseAnalytics( receipt );
 		expect( mockRecordPurchase ).toHaveBeenCalledWith( receipt );
 	} );
 
 	it( 'records each receipt only once', async () => {
-		await recordCompletedPurchaseAnalytics( makeReceipt( 1 ), jest.fn() );
-		await recordCompletedPurchaseAnalytics( makeReceipt( 1 ), jest.fn() );
-		await recordCompletedPurchaseAnalytics( makeReceipt( 2 ), jest.fn() );
+		await recordCompletedPurchaseAnalytics( makeReceipt( 1 ) );
+		await recordCompletedPurchaseAnalytics( makeReceipt( 1 ) );
+		await recordCompletedPurchaseAnalytics( makeReceipt( 2 ) );
 		expect( mockRecordPurchase ).toHaveBeenCalledTimes( 2 );
 	} );
 
 	it( 'records one event per domain bundle', async () => {
-		const dispatch = jest.fn();
 		await recordCompletedPurchaseAnalytics(
 			makeReceipt( 1, [
 				{ domain_bundle_group_id: 'group-a' },
 				{ domain_bundle_group_id: 'group-a' },
 				{ domain_bundle_group_id: 'group-b' },
 				{ domain_bundle_group_id: null },
-			] ),
-			dispatch
+			] )
 		);
 		expect( recordTracksEvent ).toHaveBeenCalledTimes( 2 );
 		expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_domain_bundle_purchased', {
@@ -66,17 +67,17 @@ describe( 'recordCompletedPurchaseAnalytics', () => {
 	it( 'resolves and reports the error when recording fails', async () => {
 		jest.spyOn( console, 'error' ).mockImplementation( () => {} );
 		mockRecordPurchase.mockRejectedValue( new Error( 'script failed' ) );
-		const dispatch = jest.fn();
-		await expect(
-			recordCompletedPurchaseAnalytics( makeReceipt( 1 ), dispatch )
-		).resolves.toBeUndefined();
-		expect( dispatch ).toHaveBeenCalledWith( expect.any( Function ) );
+		await expect( recordCompletedPurchaseAnalytics( makeReceipt( 1 ) ) ).resolves.toBeUndefined();
+		expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_checkout_composite_error', {
+			error_message: 'script failed',
+			action_type: 'recordCompletedPurchaseAnalytics',
+		} );
 	} );
 
 	it( 'resolves after a timeout if recording does not finish', async () => {
 		jest.useFakeTimers();
 		mockRecordPurchase.mockReturnValue( new Promise( () => {} ) );
-		const result = recordCompletedPurchaseAnalytics( makeReceipt( 1 ), jest.fn() );
+		const result = recordCompletedPurchaseAnalytics( makeReceipt( 1 ) );
 		jest.advanceTimersByTime( 3000 );
 		await expect( result ).resolves.toBeUndefined();
 		jest.useRealTimers();

@@ -25,8 +25,7 @@ export function hasPlanFeature(
 // which is a feature that requires Atomic or self-hosted infrastructure.
 export function hasHostingFeature( site: Site, feature: HostingFeatureSlug ) {
 	if ( hasPlanFeature( site, DotcomFeatures.ATOMIC ) ) {
-		const isWoAOrFlexSite = site.is_wpcom_atomic || site.is_wpcom_flex;
-		if ( site.plan?.expired || ! isWoAOrFlexSite ) {
+		if ( site.plan?.expired || ! site.is_wpcom_atomic ) {
 			return false;
 		}
 	}

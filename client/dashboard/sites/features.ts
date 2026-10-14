@@ -44,16 +44,13 @@ export function canViewHundredYearPlanSettings( site: Site ) {
 export function canSwitchWordPressVersion( site: Site ) {
 	if ( isEnabled( 'dashboard/wp-beta-program' ) ) {
 		// Atomic-only API.
-		return (
-			( site.is_wpcom_atomic || site.is_wpcom_flex ) &&
-			hasHostingFeature( site, HostingFeatures.BACKUPS_SELF_SERVE )
-		);
+		return site.is_wpcom_atomic && hasHostingFeature( site, HostingFeatures.BACKUPS_SELF_SERVE );
 	}
 	return site.is_wpcom_staging_site;
 }
 
 /**
- * Atomic/Flex sites without self-serve backups can't switch the WordPress
+ * Atomic sites without self-serve backups can't switch the WordPress
  * version manually, but if they were auto-enrolled in the beta program we
  * still want to give them a one-way path back to the stable release.
  *
@@ -65,7 +62,7 @@ export function canOptOutOfWordPressBeta( site: Site, versionTag: string | undef
 	if ( ! isEnabled( 'dashboard/wp-beta-program' ) ) {
 		return false;
 	}
-	if ( ! site.is_wpcom_atomic && ! site.is_wpcom_flex ) {
+	if ( ! site.is_wpcom_atomic ) {
 		return false;
 	}
 	if ( hasHostingFeature( site, HostingFeatures.BACKUPS_SELF_SERVE ) ) {

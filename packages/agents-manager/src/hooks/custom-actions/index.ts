@@ -1,9 +1,11 @@
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useCallback, useEffect, useRef } from '@wordpress/element';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import { getAmAgentBlockId } from '../../abilities';
 import { useAgentsManagerContext } from '../../contexts';
 import { AGENTS_MANAGER_STORE } from '../../stores';
 import { markActionOrigin } from '../../utils/action-origin';
+import { getChatPresentation } from '../../utils/chat-presentation';
 import {
 	removeExternalContextCard,
 	removeExternalContextEntry,
@@ -133,17 +135,15 @@ export function useSetupCustomActions( {
 	const { setIsOpen, setIsDocked, setIsMinimized } = useDispatch( AGENTS_MANAGER_STORE );
 	const { agentConfig, getTabSessionId, resumeChat } = useAgentsManagerContext();
 	const navigate = useNavigate();
-	const location = useLocation();
-	// Keep the latest location in a ref so `getCurrentRoute` stays a stable
-	// reference while always reporting the chat's current route.
-	const locationRef = useRef( location );
-	locationRef.current = location;
 	const resolveRef = useRef< ( ( state: AgentsManagerChatState ) => void ) | null >( null );
 	const shouldPersistOpenState = ! isReaderChatAgent( agentConfig?.agentId );
 
 	const setChatOpen = useCallback(
 		( shouldOpen: boolean ) => {
-			if ( typeof shouldOpen !== 'boolean' ) {
+			if (
+				typeof shouldOpen !== 'boolean' ||
+				( ! shouldOpen && ! getChatPresentation().dismissible )
+			) {
 				return;
 			}
 
@@ -245,7 +245,7 @@ export function useSetupCustomActions( {
 	const getChatState = useCallback( (): Promise< AgentsManagerChatState > => {
 		if ( hasLoaded ) {
 			return Promise.resolve( {
-				isOpen,
+				isOpen: isOpen || ! getChatPresentation().dismissible,
 				isDocked,
 				floatingPosition,
 			} );
@@ -260,7 +260,7 @@ export function useSetupCustomActions( {
 	useEffect( () => {
 		if ( hasLoaded && resolveRef.current ) {
 			resolveRef.current( {
-				isOpen,
+				isOpen: isOpen || ! getChatPresentation().dismissible,
 				isDocked,
 				floatingPosition,
 			} );
@@ -268,20 +268,20 @@ export function useSetupCustomActions( {
 		}
 	}, [ hasLoaded, isOpen, isDocked, floatingPosition ] );
 
-	// Entry points outside the bundle (the omnibar AI and Help buttons, Jetpack's
-	// AI sidebar) read this to decide whether a click closes or opens.
-	const getIsChatVisible = useCallback( () => isChatVisible, [ isChatVisible ] );
-
-	// The chat's current route (e.g. `/chat`), so callers can detect a same-route re-click.
-	const getCurrentRoute = useCallback( () => locationRef.current.pathname, [] );
+	// Entry points outside the bundle (the omnibar AI button, Jetpack's AI
+	// sidebar) read this to decide whether a click closes or opens.
+	const getIsChatVisible = useCallback(
+		() => isChatVisible || ! getChatPresentation().dismissible,
+		[ isChatVisible ]
+	);
 
 	useRegisterCustomActions( {
 		getChatState,
 		isChatVisible: getIsChatVisible,
-		getCurrentRoute,
 		getSessionId: getTabSessionId,
 		getTabId,
 		getTurnId,
+		getAgentBlockId: getAmAgentBlockId,
 		recordBigSkyTracksEvent: recordGuardedBigSkyTracksEvent,
 		setChatOpen,
 		setChatDocked,
@@ -296,9 +296,6 @@ export function useSetupCustomActions( {
 		chatNavigate: navigate,
 		resumeChat,
 		isReady: true,
-		// See the field's doc in global.d.ts. Advertised here, where the API
-		// is assembled, so a host reading it can trust the events are wired.
-		broadcastsAgentActivity: true,
 	} );
 
 	// Hosts listen for `agents-manager-ready` to invoke actions without polling.

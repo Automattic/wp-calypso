@@ -24,6 +24,7 @@ export const omnibarEvents = {
 	notifications: createOmnibarEvent(),
 	notificationsUnseenCount: createOmnibarEvent< number >(),
 	notificationsOpen: createOmnibarEvent< boolean >(),
+	notificationsSubscriberReceived: createOmnibarEvent(),
 };
 
 type OmnibarEvents = typeof omnibarEvents;

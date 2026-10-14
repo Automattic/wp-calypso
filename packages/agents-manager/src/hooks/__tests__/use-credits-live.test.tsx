@@ -4,7 +4,9 @@
 import { act, renderHook } from '@testing-library/react';
 import { ORCHESTRATOR_AGENT_URL } from '../../constants';
 import { creditSnapshot } from '../../utils/__tests__/fixtures/credit-snapshot';
-import { getCreditsTone } from '../../utils/credits';
+import { localNumber } from '../../utils/__tests__/fixtures/local-number';
+import { CREDITS_LOW_BALANCE, getCreditsLabel, getCreditsTone } from '../../utils/credits';
+import { recordAgentsManagerTracksEvent } from '../../utils/tracks';
 import { useCredits } from '../use-credits';
 import type { AgentConfig } from '../../utils/create-agent-config';
 import type { CreditsStatus } from '../../utils/credits';
@@ -28,6 +30,7 @@ jest.mock( '@wordpress/element', () => jest.requireActual( 'react' ) );
 jest.mock( 'i18n-calypso', () => ( { getBrowserSafeLocale: () => 'en' } ) );
 jest.mock( '@wordpress/i18n', () => ( {
 	__: ( text: string ) => text,
+	_n: ( single: string, plural: string, count: number ) => ( count === 1 ? single : plural ),
 	sprintf: ( format: string, ...values: unknown[] ) => {
 		let index = 0;
 		return format
@@ -36,6 +39,7 @@ jest.mock( '@wordpress/i18n', () => ( {
 	},
 } ) );
 jest.mock( '../../components/credits-meter', () => () => null );
+jest.mock( '../../utils/tracks', () => ( { recordAgentsManagerTracksEvent: jest.fn() } ) );
 
 const authProvider = jest.fn();
 const agentConfig: AgentConfig = {
@@ -53,6 +57,7 @@ const defaultOptions = {
 	site: site as AgentsManagerSite | null | undefined,
 	userId: 1,
 	isOpen: true,
+	isNoticeVisible: true,
 };
 const terminal = (
 	aiCredits?: unknown,
@@ -88,10 +93,21 @@ const exhausted = ( blocked = false ) =>
 const receive = ( snapshot: unknown, state: 'completed' | 'failed' | 'canceled' = 'completed' ) =>
 	act( async () => mockConfig.onTaskUpdate?.( terminal( snapshot, state ) ) );
 const fetchMock = jest.fn();
-const response = ( snapshot: unknown ) => ( {
+// `null` leaves a field out, as an older server does; the server itself sends
+// `can_upgrade: null` when it can't tell who bought the plan.
+const response = (
+	snapshot: unknown,
+	canBuyCredits: boolean | null = true,
+	canUpgrade: boolean | null = canBuyCredits
+) => ( {
 	ok: true,
-	json: async () => ( { ai_credits: snapshot } ),
+	json: async () => ( {
+		ai_credits: snapshot,
+		...( canBuyCredits === null ? {} : { can_buy_credits: canBuyCredits } ),
+		...( canUpgrade === null ? {} : { can_upgrade: canUpgrade } ),
+	} ),
 } );
+
 function deferred< T >() {
 	let resolve!: ( value: T ) => void;
 	let reject!: ( reason?: unknown ) => void;
@@ -111,6 +127,7 @@ beforeEach( () => {
 	authProvider.mockReset().mockResolvedValue( { Authorization: 'Bearer site-jwt' } );
 	Object.defineProperty( document, 'visibilityState', { configurable: true, value: 'visible' } );
 	globalThis.fetch = fetchMock;
+	jest.mocked( recordAgentsManagerTracksEvent ).mockClear();
 } );
 afterEach( () => {
 	jest.useRealTimers();
@@ -123,12 +140,12 @@ it.each( [ 'personal', 'premium', 'business' ] as const )(
 		const { result } = renderCredits();
 		await flush();
 		expect( props( result.current ).upgradeUrl ).toBe(
-			'https://wordpress.com/plans/example.wordpress.com'
+			'https://wordpress.com/plans/example.wordpress.com?source=wp_ai_credits'
 		);
 		expect( props( result.current ).onAction ).toBeUndefined();
 		await receive( { ...exhausted(), plan_tier } );
 		expect( props( result.current ).upgradeUrl ).toBe(
-			'https://wordpress.com/plans/example.wordpress.com'
+			'https://wordpress.com/plans/example.wordpress.com?source=wp_ai_credits'
 		);
 		expect( result.current.notice?.message ).toBe( 'You’ve used all your site credits.' );
 		expect( result.current.notice?.action ).toEqual( {
@@ -148,22 +165,288 @@ it.each( [ 'commerce', undefined, null, 'unsupported' ] )(
 		expect( props( result.current ).status.remaining ).toBe( 2450 );
 		expect( props( result.current ).upgradeUrl ).toBeUndefined();
 		expect( props( result.current ).onAction ).toBeUndefined();
-		expect( result.current.notice ).toBeUndefined();
+		expect( result.current.notice?.message ).toBe( `${ localNumber( 2.4 ) }k credits left.` );
+		expect( result.current.notice?.action ).toBeUndefined();
 	}
 );
+describe( 'purchase access', () => {
+	const purchaseHint = ( value: ReturnType< typeof useCredits > ) =>
+		(
+			value.trailingActions as ReactElement< {
+				purchaseHint?: string;
+			} >
+		 )?.props.purchaseHint;
+
+	it( 'points someone who can’t buy to a site admin, with no purchase link', async () => {
+		fetchMock.mockResolvedValueOnce( response( { ...exhausted(), plan_tier: 'personal' }, false ) );
+		const { result } = renderCredits();
+		await flush();
+		expect( props( result.current ).status.remaining ).toBe( 0 );
+		expect( props( result.current ).upgradeUrl ).toBeUndefined();
+		expect( purchaseHint( result.current ) ).toBe( 'Ask a site admin to add more.' );
+		expect( result.current.notice?.message ).toBe(
+			'You’ve used all your site credits. Ask a site admin to add more.'
+		);
+		expect( result.current.notice?.action ).toBeUndefined();
+	} );
+
+	it( 'keeps the low-balance notice for someone who can’t buy, without a link', async () => {
+		fetchMock.mockResolvedValueOnce(
+			response(
+				creditSnapshot( {
+					credits_limit: 10000,
+					credits_remaining: 1999,
+					credits_used: 8001,
+					plan_tier: 'personal',
+				} ),
+				false
+			)
+		);
+		const { result } = renderCredits();
+		await flush();
+		expect( purchaseHint( result.current ) ).toBe( 'Ask a site admin to add more.' );
+		expect( result.current.notice?.message ).toBe(
+			`${ localNumber( 1.9 ) }k credits left. Ask a site admin to add more.`
+		);
+		expect( result.current.notice?.action ).toBeUndefined();
+		expect( result.current.notice?.dismissible ).toBe( true );
+	} );
+
+	it( 'tells an admin who didn’t buy the plan who did, and points the notice to the plan owner', async () => {
+		fetchMock.mockResolvedValueOnce(
+			response( { ...exhausted(), plan_tier: 'personal' }, true, false )
+		);
+		const { result } = renderCredits();
+		await flush();
+		expect( props( result.current ).status.remaining ).toBe( 0 );
+		expect( props( result.current ).upgradeUrl ).toBeUndefined();
+		expect( purchaseHint( result.current ) ).toBe(
+			'This plan was purchased by a different WordPress.com account. To manage this plan, log in to that account or contact the account owner.'
+		);
+		expect( result.current.notice?.message ).toBe(
+			'You’ve used all your site credits. Ask the plan owner to upgrade.'
+		);
+		expect( result.current.notice?.action ).toBeUndefined();
+	} );
+
+	it( 'keeps the low-balance notice for an admin who didn’t buy the plan, without a link', async () => {
+		fetchMock.mockResolvedValueOnce(
+			response(
+				creditSnapshot( {
+					credits_limit: 10000,
+					credits_remaining: 1999,
+					credits_used: 8001,
+					plan_tier: 'personal',
+				} ),
+				true,
+				false
+			)
+		);
+		const { result } = renderCredits();
+		await flush();
+		expect( purchaseHint( result.current ) ).toBe(
+			'This plan was purchased by a different WordPress.com account. To manage this plan, log in to that account or contact the account owner.'
+		);
+		expect( result.current.notice?.message ).toBe(
+			`${ localNumber( 1.9 ) }k credits left. Ask the plan owner to upgrade.`
+		);
+		expect( result.current.notice?.action ).toBeUndefined();
+		expect( result.current.notice?.dismissible ).toBe( true );
+	} );
+
+	it( 'shows Upgrade with no guidance to the plan buyer on every surface', async () => {
+		fetchMock.mockResolvedValueOnce(
+			response(
+				creditSnapshot( {
+					credits_limit: 10000,
+					credits_remaining: 1999,
+					credits_used: 8001,
+					plan_tier: 'personal',
+				} )
+			)
+		);
+		const { result } = renderCredits();
+		await flush();
+		const upgradeUrl = 'https://wordpress.com/plans/example.wordpress.com?source=wp_ai_credits';
+		expect( props( result.current ).upgradeUrl ).toBe( upgradeUrl );
+		expect( purchaseHint( result.current ) ).toBeUndefined();
+		expect( result.current.notice?.message ).toBe( `${ localNumber( 1.9 ) }k credits left.` );
+		expect( result.current.notice?.action?.href ).toBe( upgradeUrl );
+		await receive( { ...exhausted(), plan_tier: 'personal' } );
+		expect( props( result.current ).upgradeUrl ).toBe( upgradeUrl );
+		expect( purchaseHint( result.current ) ).toBeUndefined();
+		expect( result.current.notice?.message ).toBe( 'You’ve used all your site credits.' );
+		expect( result.current.notice?.action?.href ).toBe( upgradeUrl );
+	} );
+
+	it( 'offers neither a link nor guidance when the server doesn’t say', async () => {
+		fetchMock.mockResolvedValueOnce( response( { ...exhausted(), plan_tier: 'personal' }, null ) );
+		const { result } = renderCredits();
+		await flush();
+		expect( props( result.current ).upgradeUrl ).toBeUndefined();
+		expect( purchaseHint( result.current ) ).toBeUndefined();
+		expect( result.current.notice?.message ).toBe( 'You’ve used all your site credits.' );
+		expect( result.current.notice?.action ).toBeUndefined();
+	} );
+
+	it.each( [
+		[ 'omits', response( { ...exhausted(), plan_tier: 'personal' }, true, null ) ],
+		[
+			'nulls',
+			{
+				ok: true,
+				json: async () => ( {
+					ai_credits: { ...exhausted(), plan_tier: 'personal' },
+					can_buy_credits: true,
+					can_upgrade: null,
+				} ),
+			},
+		],
+	] )(
+		'offers an admin neither a link nor guidance when the server %s who bought the plan',
+		async ( _case, read ) => {
+			fetchMock.mockResolvedValueOnce( read );
+			const { result } = renderCredits();
+			await flush();
+			expect( props( result.current ).upgradeUrl ).toBeUndefined();
+			expect( purchaseHint( result.current ) ).toBeUndefined();
+			expect( result.current.notice?.message ).toBe( 'You’ve used all your site credits.' );
+			expect( result.current.notice?.action ).toBeUndefined();
+		}
+	);
+
+	it( 'keeps the balance read’s answer through terminal updates', async () => {
+		fetchMock.mockResolvedValueOnce(
+			response( creditSnapshot( { plan_tier: 'personal' } ), false )
+		);
+		const { result } = renderCredits();
+		await flush();
+		await receive( { ...exhausted(), plan_tier: 'personal' } );
+		expect( props( result.current ).upgradeUrl ).toBeUndefined();
+		expect( purchaseHint( result.current ) ).toBe( 'Ask a site admin to add more.' );
+	} );
+
+	it.each( [
+		[ 'someone who can’t buy', false, false ],
+		[ 'an admin who didn’t buy the plan', true, false ],
+	] )(
+		'shows no guidance to %s on a tier without an upgrade',
+		async ( _who, canBuy, canUpgrade ) => {
+			fetchMock.mockResolvedValueOnce(
+				response( { ...exhausted(), plan_tier: 'commerce' }, canBuy, canUpgrade )
+			);
+			const { result } = renderCredits();
+			await flush();
+			expect( purchaseHint( result.current ) ).toBeUndefined();
+			expect( result.current.notice?.message ).toBe( 'You’ve used all your site credits.' );
+		}
+	);
+
+	it.each( [
+		[
+			'user',
+			{
+				userId: 2,
+				agentConfig: { ...agentConfig, authenticationScope: { siteId: 123, userId: 2 } },
+			},
+		],
+		[
+			'auth provider',
+			{
+				agentConfig: {
+					...agentConfig,
+					authProvider: jest.fn().mockResolvedValue( { Authorization: 'Bearer other' } ),
+				},
+			},
+		],
+	] )( 'drops the answer when the visit changes its %s', async ( _case, next ) => {
+		fetchMock.mockResolvedValueOnce( response( creditSnapshot( { plan_tier: 'personal' } ) ) );
+		const view = renderCredits();
+		await flush();
+		expect( props( view.result.current ).upgradeUrl ).toBeDefined();
+		// The new visit's read hangs, so a task delivers its balance before anyone says who may buy.
+		view.rerender( { ...defaultOptions, ...next } );
+		await flush();
+		await receive( creditSnapshot( { plan_tier: 'personal' } ) );
+		expect( props( view.result.current ).status.remaining ).toBe( 2450 );
+		expect( props( view.result.current ).upgradeUrl ).toBeUndefined();
+		expect( purchaseHint( view.result.current ) ).toBeUndefined();
+	} );
+
+	it( 'reads who may buy again on returning to a site', async () => {
+		fetchMock.mockResolvedValueOnce( response( creditSnapshot( { plan_tier: 'personal' } ) ) );
+		const view = renderCredits();
+		await flush();
+		expect( props( view.result.current ).upgradeUrl ).toBe(
+			'https://wordpress.com/plans/example.wordpress.com?source=wp_ai_credits'
+		);
+		fetchMock.mockResolvedValueOnce(
+			response( creditSnapshot( { blog_id: 456, plan_tier: 'personal' } ), false )
+		);
+		view.rerender( {
+			...defaultOptions,
+			siteKey: '456',
+			site: { ID: 456, domain: 'second.wordpress.com' },
+			agentConfig: { ...agentConfig, authenticationScope: { siteId: 456, userId: 1 } },
+		} );
+		await flush();
+		expect( props( view.result.current ).upgradeUrl ).toBeUndefined();
+		expect( purchaseHint( view.result.current ) ).toBe( 'Ask a site admin to add more.' );
+		// Back on A, its new read hangs: neither the old answer for A nor B's applies.
+		view.rerender( defaultOptions );
+		await flush();
+		expect( view.result.current.trailingActions ).toBeUndefined();
+		await receive( creditSnapshot( { plan_tier: 'personal' } ) );
+		expect( props( view.result.current ).status.remaining ).toBe( 2450 );
+		expect( props( view.result.current ).upgradeUrl ).toBeUndefined();
+		expect( purchaseHint( view.result.current ) ).toBeUndefined();
+		fetchMock.mockResolvedValueOnce( response( creditSnapshot( { plan_tier: 'personal' } ) ) );
+		act( () => window.dispatchEvent( new Event( 'focus' ) ) );
+		await flush();
+		expect( props( view.result.current ).upgradeUrl ).toBe(
+			'https://wordpress.com/plans/example.wordpress.com?source=wp_ai_credits'
+		);
+		expect( purchaseHint( view.result.current ) ).toBeUndefined();
+	} );
+
+	it.each( [
+		[ 'a failed read', () => Promise.resolve( { ok: false, status: 503 } ) ],
+		[ 'a network error', () => Promise.reject( new Error( 'Offline' ) ) ],
+	] )( 'keeps the answer for the visit through %s', async ( _case, read ) => {
+		fetchMock.mockResolvedValueOnce( response( creditSnapshot( { plan_tier: 'personal' } ) ) );
+		const { result } = renderCredits();
+		await flush();
+		expect( props( result.current ).upgradeUrl ).toBeDefined();
+		fetchMock.mockImplementationOnce( read );
+		act( () => window.dispatchEvent( new Event( 'focus' ) ) );
+		await flush();
+		expect( result.current.trailingActions ).toBeUndefined();
+		await receive( { ...exhausted(), plan_tier: 'personal' } );
+		expect( props( result.current ).upgradeUrl ).toBe(
+			'https://wordpress.com/plans/example.wordpress.com?source=wp_ai_credits'
+		);
+		expect( purchaseHint( result.current ) ).toBeUndefined();
+		expect( result.current.notice?.action?.href ).toBe(
+			'https://wordpress.com/plans/example.wordpress.com?source=wp_ai_credits'
+		);
+	} );
+} );
+
 it( 'waits for matching site data and follows a domain change for the same site', async () => {
+	fetchMock.mockResolvedValueOnce( response( creditSnapshot() ) );
 	const view = renderCredits( { site: undefined } );
+	await flush();
 	await receive( creditSnapshot( { plan_tier: 'personal' } ) );
 	expect( props( view.result.current ).upgradeUrl ).toBeUndefined();
 	view.rerender( { ...defaultOptions, site: { ID: 456, domain: 'other.wordpress.com' } } );
 	expect( props( view.result.current ).upgradeUrl ).toBeUndefined();
 	view.rerender( defaultOptions );
 	expect( props( view.result.current ).upgradeUrl ).toBe(
-		'https://wordpress.com/plans/example.wordpress.com'
+		'https://wordpress.com/plans/example.wordpress.com?source=wp_ai_credits'
 	);
 	view.rerender( { ...defaultOptions, site: { ID: '123', domain: 'mapped.example::blog' } } );
 	expect( props( view.result.current ).upgradeUrl ).toBe(
-		'https://wordpress.com/plans/mapped.example%3A%3Ablog'
+		'https://wordpress.com/plans/mapped.example%3A%3Ablog?source=wp_ai_credits'
 	);
 } );
 it.each( [ '', '.', '..', ' ' ] )(
@@ -176,7 +459,9 @@ it.each( [ '', '.', '..', ' ' ] )(
 	}
 );
 it( 'never uses a previous site destination during a site switch', async () => {
+	fetchMock.mockResolvedValueOnce( response( creditSnapshot() ) );
 	const view = renderCredits();
+	await flush();
 	await receive( creditSnapshot( { plan_tier: 'personal' } ) );
 	const oldObserver = mockConfig.onTaskUpdate;
 	const next = {
@@ -184,20 +469,24 @@ it( 'never uses a previous site destination during a site switch', async () => {
 		siteKey: '456',
 		agentConfig: { ...agentConfig, authenticationScope: { siteId: 456, userId: 1 } },
 	};
+	fetchMock.mockResolvedValueOnce( response( creditSnapshot( { blog_id: 456 } ) ) );
 	view.rerender( next );
 	expect( view.result.current.trailingActions ).toBeUndefined();
+	await flush();
 	await receive( creditSnapshot( { blog_id: 456, plan_tier: 'premium' } ) );
 	expect( props( view.result.current ).upgradeUrl ).toBeUndefined();
 	view.rerender( { ...next, site: { ID: 456, domain: 'second.wordpress.com' } } );
 	await act( async () => oldObserver?.( terminal( creditSnapshot( { plan_tier: 'commerce' } ) ) ) );
 	expect( props( view.result.current ).upgradeUrl ).toBe(
-		'https://wordpress.com/plans/second.wordpress.com'
+		'https://wordpress.com/plans/second.wordpress.com?source=wp_ai_credits'
 	);
 } );
 it.each( [ { userId: 2 }, { agentConfig: { ...agentConfig, authProvider: jest.fn() } } ] )(
 	'drops the upgrade action when the authenticated visit changes: %p',
 	async ( next ) => {
+		fetchMock.mockResolvedValueOnce( response( creditSnapshot() ) );
 		const view = renderCredits();
+		await flush();
 		await receive( creditSnapshot( { plan_tier: 'personal' } ) );
 		expect( props( view.result.current ).upgradeUrl ).toBeDefined();
 		view.rerender( { ...defaultOptions, ...next } );
@@ -234,20 +523,23 @@ it( 'refreshes an upgraded balance on return focus and removes the action at Com
 } );
 
 it.each( [
-	[ 2001, undefined, undefined ],
-	[ 2000, '20% of site credits left.', true ],
-	[ 1999, '19% of site credits left.', true ],
-	[ 1, '<1% of site credits left.', true ],
-	[ 0, 'You’ve used all your site credits.', false ],
+	[ 15000, 15000, undefined, undefined ],
+	[ 10001, 40000, undefined, undefined ],
+	[ 10000, 40000, undefined, undefined ],
+	[ 9999, 40000, `${ localNumber( 9.9 ) }k credits left.`, true ],
+	[ 8500, 40000, `${ localNumber( 8.5 ) }k credits left.`, true ],
+	[ 800, 40000, `${ localNumber( 800 ) } credits left.`, true ],
+	[ 1, 40000, `${ localNumber( 1 ) } credit left.`, true ],
+	[ 0, 40000, 'You’ve used all your site credits.', false ],
 ] as const )(
-	'shows an initial live warning at %i of 10000 credits',
-	async ( remaining, message, dismissible ) => {
+	'shows an initial live warning at %i of %i credits',
+	async ( remaining, limit, message, dismissible ) => {
 		fetchMock.mockResolvedValueOnce(
 			response(
 				creditSnapshot( {
-					credits_limit: 10000,
+					credits_limit: limit,
 					credits_remaining: remaining,
-					credits_used: 10000 - remaining,
+					credits_used: limit - remaining,
 					exhausted: remaining === 0,
 				} )
 			)
@@ -263,34 +555,128 @@ it.each( [
 	}
 );
 
-it( 'updates the paid ring and warning together through live depletion and replenishment', async () => {
+it( 'turns the dot red by amount through depletion and replenishment', async () => {
 	const balance = ( remaining: number ) =>
 		creditSnapshot( {
+			credits_limit: 100000,
 			credits_remaining: remaining,
-			credits_used: 2500 - remaining,
+			credits_used: 100000 - remaining,
 			exhausted: remaining === 0,
 		} );
-	fetchMock.mockResolvedValueOnce( response( balance( 525 ) ) );
+	fetchMock.mockResolvedValueOnce( response( balance( 25000 ) ) );
 	const { result } = renderCredits();
 	await flush();
-	expect( getCreditsTone( props( result.current ).status ) ).toBe( 'muted' );
-	for ( const [ remaining, message ] of [
-		[ 500, '20% of site credits left.' ],
-		[ 499, '19% of site credits left.' ],
-		[ 1, '<1% of site credits left.' ],
-		[ 0, 'You’ve used all your site credits.' ],
+	// The dot and the notice share one rule, so the dot is red exactly when a notice would show.
+	const expectDot = ( tone: 'muted' | 'error', message?: string ) => {
+		const actual = getCreditsTone( props( result.current ).status );
+		expect( actual ).toBe( tone );
+		expect( result.current.notice?.message ).toBe( message );
+		expect( result.current.notice !== undefined ).toBe( actual === 'error' );
+	};
+	expectDot( 'muted' );
+	for ( const [ remaining, tone, message ] of [
+		[ 10000, 'muted', undefined ],
+		[ 9999, 'error', `${ localNumber( 9.9 ) }k credits left.` ],
+		[ 800, 'error', `${ localNumber( 800 ) } credits left.` ],
+		[ 0, 'error', 'You’ve used all your site credits.' ],
 	] as const ) {
 		await receive( balance( remaining ) );
 		expect( props( result.current ).status.remaining ).toBe( remaining );
-		expect( getCreditsTone( props( result.current ).status ) ).toBe( 'error' );
-		expect( result.current.notice?.message ).toBe( message );
+		expectDot( tone, message );
 	}
-	fetchMock.mockResolvedValueOnce( response( balance( 525 ) ) );
+	fetchMock.mockResolvedValueOnce( response( balance( 25000 ) ) );
 	act( () => window.dispatchEvent( new Event( 'focus' ) ) );
 	await flush();
-	expect( getCreditsTone( props( result.current ).status ) ).toBe( 'muted' );
+	expectDot( 'muted' );
+} );
+
+it.each( [ 'GET', 'terminal' ] )(
+	'keeps a site with top-ups but no plan credits open to sending through %s',
+	async ( source ) => {
+		const topUpsOnly = creditSnapshot( {
+			plan_tier: 'personal',
+			credits_used: 2500,
+			credits_remaining: 0,
+			credits_available: 67000,
+		} );
+		fetchMock.mockResolvedValueOnce( response( creditSnapshot( { plan_tier: 'personal' } ) ) );
+		const { result } = renderCredits();
+		await flush();
+		if ( source === 'GET' ) {
+			fetchMock.mockResolvedValueOnce( response( topUpsOnly ) );
+			act( () => window.dispatchEvent( new Event( 'focus' ) ) );
+			await flush();
+		} else {
+			await receive( topUpsOnly );
+		}
+		expect( props( result.current ).status ).toMatchObject( {
+			percent: 0,
+			remaining: 67000,
+			pools: [ { id: 'plan', percent: 0, remaining: 0 } ],
+		} );
+		expect( props( result.current ).isOpen ).toBe( false );
+		expect( result.current.notice ).toBeUndefined();
+		act( () => expect( result.current.beforeSubmit() ).toBe( true ) );
+	}
+);
+
+// A 15,000-credit plan with 67,000 of 100,000 top-up credits left.
+const withTopUps = ( planRemaining: number ) =>
+	creditSnapshot( {
+		plan_tier: 'personal',
+		credits_limit: 15000,
+		credits_used: 15000 - planRemaining,
+		credits_remaining: planRemaining,
+		credits_available: planRemaining + 67000,
+		top_up_credits_purchased: 100000,
+		top_up_credits_used: 33000,
+		top_up_credits_remaining: 67000,
+	} );
+
+it( 'shows no low notice while top-ups keep a low plan balance above the limit', async () => {
+	fetchMock.mockResolvedValueOnce( response( withTopUps( 5000 ) ) );
+	const { result } = renderCredits();
+	await flush();
+	expect( props( result.current ).status ).toMatchObject( {
+		remaining: 72000,
+		pools: [
+			{ id: 'plan', remaining: 5000 },
+			{ id: 'topups', remaining: 67000 },
+		],
+	} );
+	expect( getCreditsLabel( props( result.current ).status ) ).toBe(
+		`${ localNumber( 72 ) }k credits left`
+	);
 	expect( result.current.notice ).toBeUndefined();
 } );
+
+it.each( [ 'GET', 'terminal' ] )(
+	'spends top-ups once plan credits run out, without blocking Send, through %s',
+	async ( source ) => {
+		fetchMock.mockResolvedValueOnce( response( withTopUps( 5000 ) ) );
+		const { result } = renderCredits();
+		await flush();
+		if ( source === 'GET' ) {
+			fetchMock.mockResolvedValueOnce( response( withTopUps( 0 ) ) );
+			act( () => window.dispatchEvent( new Event( 'focus' ) ) );
+			await flush();
+		} else {
+			await receive( withTopUps( 0 ) );
+		}
+		const { status } = props( result.current );
+		expect( status ).toMatchObject( {
+			remaining: 67000,
+			pools: [
+				{ id: 'plan', percent: 0, remaining: 0 },
+				{ id: 'topups', remaining: 67000 },
+			],
+		} );
+		expect( getCreditsLabel( status ) ).toBe( `${ localNumber( 67 ) }k credits left` );
+		expect( props( result.current ).isOpen ).toBe( false );
+		expect( result.current.notice ).toBeUndefined();
+		act( () => expect( result.current.beforeSubmit() ).toBe( true ) );
+	}
+);
 
 it.each( [ 'commerce', undefined, 'unsupported' ] )(
 	'shows the exhausted notice without an upgrade for tier %p',
@@ -304,7 +690,9 @@ it.each( [ 'commerce', undefined, 'unsupported' ] )(
 );
 
 it( 'uses the meter destination as site details become available or change', async () => {
+	fetchMock.mockResolvedValueOnce( response( creditSnapshot() ) );
 	const view = renderCredits( { site: undefined } );
+	await flush();
 	await receive( { ...exhausted(), plan_tier: 'personal' } );
 	expect( view.result.current.notice?.action ).toBeUndefined();
 	view.rerender( { ...defaultOptions, site: { ID: 456, domain: 'other.wordpress.com' } } );
@@ -315,7 +703,7 @@ it( 'uses the meter destination as site details become available or change', asy
 	);
 	view.rerender( { ...defaultOptions, site: { ID: 123, domain: 'mapped.example' } } );
 	expect( view.result.current.notice?.action?.href ).toBe(
-		'https://wordpress.com/plans/mapped.example'
+		'https://wordpress.com/plans/mapped.example?source=wp_ai_credits'
 	);
 } );
 
@@ -343,13 +731,120 @@ it( 'keeps dismissal within the current visit and ignores previous-site dismiss 
 	expect( view.result.current.notice ).toBeUndefined();
 	await receive( { ...low, blog_id: 456 } );
 	act( () => oldDismiss?.() );
-	expect( view.result.current.notice?.message ).toBe( '20% of site credits left.' );
+	expect( view.result.current.notice?.message ).toBe( `${ localNumber( 500 ) } credits left.` );
 	view.rerender( defaultOptions );
 	await receive( low );
 	act( () => oldDismiss?.() );
-	expect( view.result.current.notice?.message ).toBe( '20% of site credits left.' );
+	expect( view.result.current.notice?.message ).toBe( `${ localNumber( 500 ) } credits left.` );
 } );
 
+describe( 'while the host says the page isn’t in dev mode', () => {
+	const purchaseHint = ( value: ReturnType< typeof useCredits > ) =>
+		( value.trailingActions as ReactElement< { purchaseHint?: string } > | undefined )?.props
+			.purchaseHint;
+
+	beforeEach( () => {
+		( window as { agentsManagerData?: unknown } ).agentsManagerData = { isDevMode: false };
+	} );
+	afterEach( () => {
+		delete ( window as { agentsManagerData?: unknown } ).agentsManagerData;
+	} );
+
+	it( 'never reads on opening, reopening, focus, coming online, becoming visible or after a turn', async () => {
+		const view = renderCredits();
+		await flush();
+		await act( async () => {
+			window.dispatchEvent( new Event( 'focus' ) );
+			window.dispatchEvent( new Event( 'online' ) );
+			document.dispatchEvent( new Event( 'visibilitychange' ) );
+		} );
+		view.rerender( { ...defaultOptions, isOpen: false } );
+		view.rerender( defaultOptions );
+		await flush();
+		// In dev mode, a valid turn reads again for who may buy, and a turn without a balance reads instead.
+		for ( const snapshot of [ creditSnapshot( { plan_tier: 'personal' } ), undefined ] ) {
+			mockIsProcessing = true;
+			view.rerender( defaultOptions );
+			await receive( snapshot );
+			mockIsProcessing = false;
+			view.rerender( defaultOptions );
+			await flush();
+		}
+		expect( authProvider ).not.toHaveBeenCalled();
+		expect( fetchMock ).not.toHaveBeenCalled();
+	} );
+
+	it( 'shows a turn’s balance without a purchase link or hint, since only a read says who may buy', async () => {
+		const low = creditSnapshot( {
+			credits_remaining: 5,
+			credits_used: 2495,
+			plan_tier: 'personal',
+		} );
+		fetchMock.mockResolvedValue( response( low ) );
+		const { result } = renderCredits();
+		await flush();
+		await receive( low );
+		expect( authProvider ).not.toHaveBeenCalled();
+		expect( props( result.current ).status.remaining ).toBe( 5 );
+		expect( props( result.current ).upgradeUrl ).toBeUndefined();
+		expect( purchaseHint( result.current ) ).toBeUndefined();
+		expect( result.current.notice ).toBeDefined();
+		expect( result.current.notice?.action ).toBeUndefined();
+		expect( fetchMock ).not.toHaveBeenCalled();
+	} );
+
+	it( 'blocks sends after a turn’s zero until the period resets, with no read on focus', async () => {
+		const { result } = renderCredits();
+		await receive(
+			creditSnapshot( {
+				...exhausted(),
+				policy_id: 'wpcom-site-plan-period-v1',
+				resets_at: '2026-09-21T12:00:01Z',
+			} )
+		);
+		act( () => expect( result.current.beforeSubmit() ).toBe( false ) );
+		await act( async () => {
+			window.dispatchEvent( new Event( 'focus' ) );
+		} );
+		act( () => expect( result.current.beforeSubmit() ).toBe( false ) );
+		await act( async () => jest.advanceTimersByTime( 1000 ) );
+		expect( result.current.trailingActions ).toBeUndefined();
+		expect( result.current.beforeSubmit() ).toBe( true );
+		await receive( exhausted() );
+		jest.setSystemTime( new Date( '2026-10-01T00:00:00Z' ) );
+		// Timers can be throttled in a hidden tab; the submit gate also checks expiry.
+		act( () => expect( result.current.beforeSubmit() ).toBe( true ) );
+		expect( fetchMock ).not.toHaveBeenCalled();
+	} );
+} );
+describe( 'the dev mode gate', () => {
+	afterEach( () => {
+		delete ( window as { agentsManagerData?: unknown } ).agentsManagerData;
+	} );
+
+	it.each( [
+		[ 'never reads outside dev mode', { isDevMode: false }, 0 ],
+		[
+			'never reads outside dev mode, even for an Automattician',
+			{ isDevMode: false, isA11n: true },
+			0,
+		],
+		[ 'reads in dev mode', { isDevMode: true }, 1 ],
+		[
+			'reads in dev mode for someone who isn’t an Automattician',
+			{ isDevMode: true, isA11n: false },
+			1,
+		],
+		[ 'reads when the host leaves the flag out', {}, 1 ],
+		[ 'reads with no host data, like Calypso', undefined, 1 ],
+	] )( '%s', async ( _name, inlineData, reads ) => {
+		( window as { agentsManagerData?: unknown } ).agentsManagerData = inlineData;
+		fetchMock.mockResolvedValueOnce( response( creditSnapshot( { plan_tier: 'personal' } ) ) );
+		renderCredits();
+		await flush();
+		expect( fetchMock ).toHaveBeenCalledTimes( reads );
+	} );
+} );
 it( 'reads the authenticated balance on opening without sending a prompt', async () => {
 	fetchMock.mockResolvedValueOnce( response( creditSnapshot( { plan_tier: 'personal' } ) ) );
 	const { result } = renderCredits();
@@ -637,11 +1132,71 @@ it( 'uses the terminal balance and avoids reads while an Agent task is running',
 	await flush();
 	expect( fetchMock ).toHaveBeenCalledTimes( 1 );
 	await receive( creditSnapshot() );
+	expect( fetchMock ).toHaveBeenCalledTimes( 1 );
 	mockIsProcessing = false;
 	view.rerender( defaultOptions );
 	await flush();
 	expect( props( view.result.current ).status.remaining ).toBe( 2450 );
+} );
+it.each( [
+	[ 'the opening read was aborted by the task', false ],
+	[ 'the chat opened during the task', true ],
+] )(
+	'reads who may buy after a task delivers the balance when %s',
+	async ( _case, openedMidTask ) => {
+		mockIsProcessing = openedMidTask;
+		const view = renderCredits();
+		await flush();
+		mockIsProcessing = true;
+		view.rerender( defaultOptions );
+		const openingReads = openedMidTask ? 0 : 1;
+		expect( fetchMock ).toHaveBeenCalledTimes( openingReads );
+		expect( fetchMock.mock.calls.every( ( [ , init ] ) => init.signal.aborted ) ).toBe( true );
+		await receive( creditSnapshot( { plan_tier: 'personal' } ) );
+		expect( props( view.result.current ).status.remaining ).toBe( 2450 );
+		expect( props( view.result.current ).upgradeUrl ).toBeUndefined();
+		const read = deferred< ReturnType< typeof response > >();
+		fetchMock.mockReturnValueOnce( read.promise );
+		mockIsProcessing = false;
+		view.rerender( defaultOptions );
+		await flush();
+		expect( fetchMock ).toHaveBeenCalledTimes( openingReads + 1 );
+		// The terminal balance stays while the read is pending; only the access is missing.
+		expect( props( view.result.current ).status.remaining ).toBe( 2450 );
+		expect( props( view.result.current ).upgradeUrl ).toBeUndefined();
+		read.resolve( response( creditSnapshot( { plan_tier: 'personal' } ) ) );
+		await flush();
+		expect( props( view.result.current ).upgradeUrl ).toBe(
+			'https://wordpress.com/plans/example.wordpress.com?source=wp_ai_credits'
+		);
+		await receive( { ...exhausted(), plan_tier: 'personal' } );
+		expect( props( view.result.current ).isOpen ).toBe( true );
+		expect( view.result.current.notice?.action?.href ).toBe(
+			'https://wordpress.com/plans/example.wordpress.com?source=wp_ai_credits'
+		);
+		expect( fetchMock ).toHaveBeenCalledTimes( openingReads + 1 );
+	}
+);
+it( 'does not read again after a task when the opening read already said who may buy', async () => {
+	fetchMock.mockResolvedValueOnce( response( creditSnapshot( { plan_tier: 'personal' } ) ) );
+	const view = renderCredits();
+	await flush();
 	expect( fetchMock ).toHaveBeenCalledTimes( 1 );
+	mockIsProcessing = true;
+	view.rerender( defaultOptions );
+	await receive( { ...exhausted(), plan_tier: 'personal' } );
+	mockIsProcessing = false;
+	view.rerender( defaultOptions );
+	await flush();
+	expect( fetchMock ).toHaveBeenCalledTimes( 1 );
+	expect( props( view.result.current ).status.remaining ).toBe( 0 );
+	expect( props( view.result.current ).isOpen ).toBe( true );
+	expect( props( view.result.current ).upgradeUrl ).toBe(
+		'https://wordpress.com/plans/example.wordpress.com?source=wp_ai_credits'
+	);
+	expect( view.result.current.notice?.action?.href ).toBe(
+		'https://wordpress.com/plans/example.wordpress.com?source=wp_ai_credits'
+	);
 } );
 it.each( [ 'no update', 'missing metadata', 'invalid metadata' ] )(
 	'reads again when a task ends with %s',
@@ -675,7 +1230,7 @@ it( 'feeds the existing interactive meter one real plan pool without fabricated 
 	expect( props( result.current ).manageUrl ).toBeUndefined();
 	act( () => props( result.current ).onToggle( true ) );
 	expect( props( result.current ).isOpen ).toBe( true );
-	expect( result.current.notice ).toBeUndefined();
+	expect( result.current.notice?.action ).toBeUndefined();
 } );
 it.each( [ false, true ] )(
 	'gates exact exhaustion and opens existing details (blocked=%s)',
@@ -779,7 +1334,7 @@ it( 'clears old amounts after cancellation/error without terminal metadata, incl
 	expect( fetchMock ).not.toHaveBeenCalled();
 } );
 it.each( [ 'focus', 'online', 'visibilitychange' ] )(
-	'keeps the ring and its open popover visible during a %s refresh',
+	'keeps the dot and its open popover visible during a %s refresh',
 	async ( event ) => {
 		const read = deferred< ReturnType< typeof response > >();
 		fetchMock
@@ -787,7 +1342,7 @@ it.each( [ 'focus', 'online', 'visibilitychange' ] )(
 			.mockReturnValueOnce( read.promise );
 		const { result } = renderCredits();
 		await flush();
-		// Clicking the ring can focus the sidebar's window before opening the popover.
+		// Clicking the dot can focus the sidebar's window before opening the popover.
 		act( () => {
 			( event === 'visibilitychange' ? document : window ).dispatchEvent( new Event( event ) );
 			props( result.current ).onToggle( true );
@@ -1019,4 +1574,323 @@ it( 'accepts the first terminal snapshot after the server assigns the same conve
 	} );
 	await act( async () => observer?.( terminal( creditSnapshot() ) ) );
 	expect( props( view.result.current ).status.remaining ).toBe( 2450 );
+} );
+describe( 'credits Tracks events', () => {
+	// Recorded notice states last for the page, so each case uses its own user.
+	let nextUserId = 1000;
+	const freshScope = ( overrides: Partial< AgentConfig > = {} ) => {
+		const scopedUserId = nextUserId++;
+		return {
+			userId: scopedUserId,
+			agentConfig: {
+				...agentConfig,
+				...overrides,
+				authenticationScope: { siteId: 123, userId: scopedUserId },
+			},
+		};
+	};
+	const creditsEvents = () =>
+		jest
+			.mocked( recordAgentsManagerTracksEvent )
+			.mock.calls.filter( ( [ eventName ] ) => eventName.includes( '_credits_' ) );
+	const low = () =>
+		creditSnapshot( { credits_remaining: 5, credits_used: 2495, plan_tier: 'personal' } );
+	const healthy = () =>
+		creditSnapshot( {
+			credits_limit: CREDITS_LOW_BALANCE * 2,
+			credits_remaining: CREDITS_LOW_BALANCE,
+			credits_used: CREDITS_LOW_BALANCE,
+			plan_tier: 'business',
+		} );
+	const base = { blog_id: 123, site_type: 'none', agent_environment: 'none' };
+
+	it( 'records the notice once per state, not on re-renders or a repeated state', async () => {
+		const scope = freshScope();
+		fetchMock.mockResolvedValueOnce( response( low() ) );
+		const view = renderCredits( scope );
+		await flush();
+		view.rerender( { ...defaultOptions, ...scope } );
+		expect( creditsEvents() ).toEqual( [
+			[
+				'calypso_agents_manager_credits_notice_shown',
+				{
+					...base,
+					state: 'low',
+					credits_left: 5,
+					plan_tier: 'personal',
+					user_role: 'admin',
+					cta_type: 'upgrade',
+				},
+			],
+		] );
+		await receive( { ...exhausted(), plan_tier: 'personal' } );
+		await receive( low() );
+		await receive( { ...exhausted(), plan_tier: 'personal' } );
+		expect(
+			creditsEvents().map( ( [ name, eventProps ] ) => [ name, eventProps?.state ] )
+		).toEqual( [
+			[ 'calypso_agents_manager_credits_notice_shown', 'low' ],
+			[ 'calypso_agents_manager_credits_notice_shown', 'zero' ],
+		] );
+	} );
+
+	it( 'keeps a recorded notice across a remount and a new conversation, but not for another user', async () => {
+		const scope = freshScope();
+		fetchMock.mockResolvedValue( response( low() ) );
+		const first = renderCredits( scope );
+		await flush();
+		first.unmount();
+		const second = renderCredits( scope );
+		await flush();
+		second.rerender( {
+			...defaultOptions,
+			...scope,
+			agentConfig: { ...scope.agentConfig, authProvider: jest.fn( authProvider ) },
+		} );
+		await flush();
+		expect( second.result.current.notice ).toBeDefined();
+		expect( creditsEvents() ).toHaveLength( 1 );
+		renderCredits( freshScope() );
+		await flush();
+		expect( creditsEvents() ).toHaveLength( 2 );
+	} );
+
+	describe( 'outside dev mode', () => {
+		beforeEach( () => {
+			( window as { agentsManagerData?: unknown } ).agentsManagerData = { isDevMode: false };
+		} );
+		afterEach( () => {
+			delete ( window as { agentsManagerData?: unknown } ).agentsManagerData;
+		} );
+
+		it( 'records a turn’s notice with who may buy unknown', async () => {
+			fetchMock.mockResolvedValue( response( low() ) );
+			renderCredits( freshScope() );
+			await flush();
+			await receive( low() );
+			expect( authProvider ).not.toHaveBeenCalled();
+			expect( fetchMock ).not.toHaveBeenCalled();
+			expect( creditsEvents() ).toEqual( [
+				[
+					'calypso_agents_manager_credits_notice_shown',
+					{
+						...base,
+						state: 'low',
+						credits_left: 5,
+						plan_tier: 'personal',
+						user_role: 'none',
+						cta_type: 'none',
+					},
+				],
+			] );
+		} );
+	} );
+
+	it( 'waits until the chat draws the notice', async () => {
+		const scope = freshScope();
+		fetchMock.mockResolvedValueOnce( response( low() ) );
+		const view = renderCredits( { ...scope, isNoticeVisible: false } );
+		await flush();
+		expect( view.result.current.notice ).toBeDefined();
+		expect( creditsEvents() ).toEqual( [] );
+		view.rerender( { ...defaultOptions, ...scope, isNoticeVisible: true } );
+		expect( creditsEvents() ).toHaveLength( 1 );
+	} );
+
+	it.each( [
+		[ true, true, 'admin', 'upgrade' ],
+		[ false, false, 'non_admin', 'contact_admin' ],
+		[ true, false, 'admin', 'contact_plan_owner' ],
+		[ null, null, 'none', 'none' ],
+	] as const )(
+		'records who may buy (%p, %p) as %s with the %s call to action the notice shows',
+		async ( canBuyCredits, canUpgrade, userRole, ctaType ) => {
+			fetchMock.mockResolvedValueOnce( response( low(), canBuyCredits, canUpgrade ) );
+			renderCredits( freshScope() );
+			await flush();
+			expect( creditsEvents() ).toEqual( [
+				[
+					'calypso_agents_manager_credits_notice_shown',
+					expect.objectContaining( { user_role: userRole, cta_type: ctaType } ),
+				],
+			] );
+		}
+	);
+
+	it( 'sends the client context environment unchanged and the tier as none when unknown', async () => {
+		fetchMock.mockResolvedValueOnce( response( { ...low(), plan_tier: undefined } ) );
+		renderCredits(
+			freshScope( {
+				contextProvider: { getClientContext: () => ( { environment: 'site-editor' } ) },
+			} )
+		);
+		await flush();
+		expect( creditsEvents()[ 0 ][ 1 ] ).toMatchObject( {
+			agent_environment: 'site-editor',
+			plan_tier: 'none',
+		} );
+	} );
+
+	it( 'sends the editor’s site type when the page sets it', async () => {
+		window._currentSiteType = 'atomic';
+		try {
+			fetchMock.mockResolvedValueOnce( response( low() ) );
+			renderCredits( freshScope() );
+			await flush();
+			expect( creditsEvents()[ 0 ][ 1 ] ).toMatchObject( { site_type: 'atomic' } );
+		} finally {
+			delete window._currentSiteType;
+		}
+	} );
+
+	it( 'records a dismissal once, and nothing from a previous site’s handler', async () => {
+		const scope = freshScope();
+		fetchMock.mockResolvedValueOnce( response( low() ) );
+		const view = renderCredits( scope );
+		await flush();
+		const oldDismiss = view.result.current.notice?.onDismiss;
+		act( () => oldDismiss?.() );
+		expect( creditsEvents().at( -1 ) ).toEqual( [
+			'calypso_agents_manager_credits_notice_dismissed',
+			{ ...base, state: 'low', credits_left: 5, plan_tier: 'personal' },
+		] );
+		view.rerender( {
+			...defaultOptions,
+			siteKey: '456',
+			userId: scope.userId,
+			agentConfig: { ...agentConfig, authenticationScope: { siteId: 456, userId: scope.userId } },
+		} );
+		await receive( { ...low(), blog_id: 456 } );
+		const count = creditsEvents().length;
+		act( () => oldDismiss?.() );
+		expect( creditsEvents() ).toHaveLength( count );
+		expect(
+			creditsEvents().filter(
+				( [ name ] ) => name === 'calypso_agents_manager_credits_notice_dismissed'
+			)
+		).toHaveLength( 1 );
+	} );
+
+	it( 'records a click on the dot as ok on a healthy balance, only when it opens', async () => {
+		fetchMock.mockResolvedValueOnce( response( healthy() ) );
+		const { result } = renderCredits( freshScope() );
+		await flush();
+		expect( result.current.notice ).toBeUndefined();
+		act( () => props( result.current ).onToggle( true ) );
+		act( () => props( result.current ).onToggle( true ) );
+		act( () => props( result.current ).onToggle( false ) );
+		expect( creditsEvents() ).toEqual( [
+			[
+				'calypso_agents_manager_credits_meter_opened',
+				{
+					...base,
+					state: 'ok',
+					credits_left: CREDITS_LOW_BALANCE,
+					plan_tier: 'business',
+					trigger: 'click',
+				},
+			],
+		] );
+	} );
+
+	it( 'records every blocked send, even with the popover already open', async () => {
+		fetchMock.mockResolvedValueOnce( response( { ...exhausted(), plan_tier: 'personal' } ) );
+		const { result } = renderCredits( freshScope() );
+		await flush();
+		act( () => expect( result.current.beforeSubmit() ).toBe( false ) );
+		expect( props( result.current ).isOpen ).toBe( true );
+		act( () => expect( result.current.beforeSubmit() ).toBe( false ) );
+		const opened = creditsEvents().filter(
+			( [ name ] ) => name === 'calypso_agents_manager_credits_meter_opened'
+		);
+		expect( opened ).toEqual( [
+			[
+				'calypso_agents_manager_credits_meter_opened',
+				{
+					...base,
+					state: 'zero',
+					credits_left: 0,
+					plan_tier: 'personal',
+					trigger: 'submit_blocked',
+				},
+			],
+			[
+				'calypso_agents_manager_credits_meter_opened',
+				expect.objectContaining( { trigger: 'submit_blocked' } ),
+			],
+		] );
+	} );
+
+	it( 'records no popover opening when a reply uses the last credits', async () => {
+		fetchMock.mockResolvedValueOnce( response( healthy() ) );
+		const { result } = renderCredits( freshScope() );
+		await flush();
+		await receive( { ...exhausted(), plan_tier: 'business' } );
+		expect( props( result.current ).isOpen ).toBe( true );
+		expect(
+			creditsEvents().filter(
+				( [ name ] ) => name === 'calypso_agents_manager_credits_meter_opened'
+			)
+		).toEqual( [] );
+	} );
+
+	it( 'records nothing without a live balance', async () => {
+		const { result } = renderCredits( { ...freshScope(), siteKey: '456' } );
+		await flush();
+		expect( result.current.trailingActions ).toBeUndefined();
+		act( () => expect( result.current.beforeSubmit() ).toBe( true ) );
+		expect( creditsEvents() ).toEqual( [] );
+	} );
+} );
+
+describe( 'refusal code', () => {
+	const failed = ( parts: unknown[] ): TaskUpdate =>
+		( {
+			id: 'task',
+			status: {
+				state: 'failed',
+				message: { role: 'agent', kind: 'message', messageId: 'm', parts },
+			},
+			final: true,
+			text: '',
+		} ) as TaskUpdate;
+	const refusal = failed( [
+		{ type: 'text', text: 'You’ve used all your site credits.' },
+		{ type: 'data', data: { code: 'ai_credit_allowance_exhausted' } },
+	] );
+
+	it( 'keeps the failed reply’s code for one read', async () => {
+		const { result } = renderCredits();
+		await act( async () => mockConfig.onTaskUpdate?.( refusal ) );
+		expect( result.current.takeRefusalCode() ).toBe( 'ai_credit_allowance_exhausted' );
+		expect( result.current.takeRefusalCode() ).toBeUndefined();
+	} );
+
+	it( 'drops the code once a later reply finishes without one', async () => {
+		const { result } = renderCredits();
+		await act( async () => mockConfig.onTaskUpdate?.( refusal ) );
+		await act( async () =>
+			mockConfig.onTaskUpdate?.( { ...refusal, status: { state: 'working' }, final: false } )
+		);
+		await receive( creditSnapshot() );
+		expect( result.current.takeRefusalCode() ).toBeUndefined();
+		await act( async () =>
+			mockConfig.onTaskUpdate?.( failed( [ { type: 'text', text: 'Oops' } ] ) )
+		);
+		expect( result.current.takeRefusalCode() ).toBeUndefined();
+	} );
+
+	it( 'drops the code when the next turn starts', async () => {
+		const view = renderCredits();
+		await act( async () => mockConfig.onTaskUpdate?.( refusal ) );
+		mockIsProcessing = true;
+		view.rerender( defaultOptions );
+		expect( view.result.current.takeRefusalCode() ).toBeUndefined();
+	} );
+
+	it( 'keeps the code without a live balance, since every chat shows the error', async () => {
+		const { result } = renderCredits( { siteKey: '456' } );
+		await act( async () => mockConfig.onTaskUpdate?.( refusal ) );
+		expect( result.current.takeRefusalCode() ).toBe( 'ai_credit_allowance_exhausted' );
+	} );
 } );

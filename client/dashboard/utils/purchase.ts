@@ -19,6 +19,7 @@ import { isAkismetPro500Plan } from './akismet';
 import { isWithinLast, isWithinNext, getDateFromCreditCardExpiry } from './datetime';
 import { isGSuiteProductSlug } from './gsuite';
 import { redirectToDashboardLink, wpcomLink } from './link';
+import { getPurchaseSettingsRedirectBase } from './site-url';
 import { getStudioCodeAiCreditsTitle } from './studio-code-ai-credits';
 import type { MonetizeSubscription, Product, Purchase } from '@automattic/api-core';
 
@@ -639,10 +640,6 @@ export function isSiteRedirect( purchase: Purchase ): boolean {
 	return purchase.product_slug === OFFSITE_REDIRECT;
 }
 
-export function isWpcomFlexSubscription( purchase: Purchase ): boolean {
-	return purchase.product_slug === 'flex-hosting-plan-monthly';
-}
-
 /**
  * Checks if a product is a DIFM (Do It For Me) product.
  */
@@ -731,11 +728,12 @@ export function getRenewalUrlFromPurchase( purchase: Purchase, backUrl?: string 
  * `backUrl` is where checkout returns to, whether the renewal goes through or is
  * abandoned. It defaults to the dashboard page the user is on, so surfaces
  * outside the dashboard have to say where they are.
+ *
+ * Checkout turns a renewal of a removed subscription into a new purchase, so by
+ * default a successful one returns to the new subscription's page rather than
+ * to the removed one.
  */
-export function getRenewUrlForPurchases(
-	purchases: Purchase[],
-	backUrl: string = redirectToDashboardLink( { supportBackport: true } )
-): string {
+export function getRenewUrlForPurchases( purchases: Purchase[], backUrl?: string ): string {
 	if ( purchases.length < 1 ) {
 		throw new Error( 'Could not find product slug or purchase id for renewal.' );
 	}
@@ -745,9 +743,16 @@ export function getRenewUrlForPurchases(
 	// experience. Everything else renews from the subscription ID alone.
 	const servicePath = getServicePathForCheckoutFromPurchase( purchases[ 0 ] );
 
+	const cancelTo = backUrl ?? redirectToDashboardLink( { supportBackport: true } );
+	const redirectTo =
+		backUrl ??
+		( purchases.length === 1 && isRemoved( purchases[ 0 ] )
+			? getPurchaseSettingsRedirectBase( purchases[ 0 ] )
+			: cancelTo );
+
 	return addQueryArgs( wpcomLink( `/checkout/${ servicePath }renew/${ purchaseIds }` ), {
-		cancel_to: backUrl,
-		redirect_to: backUrl,
+		cancel_to: cancelTo,
+		redirect_to: redirectTo,
 	} );
 }
 

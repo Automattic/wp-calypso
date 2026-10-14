@@ -1,0 +1,22 @@
+// `--dashboard-accent` is the brand colour, `-ink` its text on light, `-tint`
+// its pale field, `-on` the colour of words on the full brand colour.
+[data-accent='woo'] {
+	--dashboard-accent: var( --dashboard-marketplace-woo__color );
+	--dashboard-accent-ink: var( --dashboard-marketplace-woo__ink-color );
+	--dashboard-accent-tint: var( --dashboard-marketplace-woo__tint-color );
+	--dashboard-accent-on: var( --dashboard-marketplace-woo__on-color );
+}
+
+[data-accent='jetpack'] {
+	--dashboard-accent: var( --dashboard-marketplace-jetpack__color );
+	--dashboard-accent-ink: var( --dashboard-marketplace-jetpack__ink-color );
+	--dashboard-accent-tint: var( --dashboard-marketplace-jetpack__tint-color );
+	--dashboard-accent-on: var( --dashboard-marketplace-jetpack__on-color );
+}
+
+[data-accent='neutral'] {
+	--dashboard-accent: var( --dashboard-marketplace-neutral__color );
+	--dashboard-accent-ink: var( --dashboard-marketplace-neutral__ink-color );
+	--dashboard-accent-tint: var( --dashboard-marketplace-neutral__tint-color );
+	--dashboard-accent-on: var( --dashboard-marketplace-neutral__on-color );
+}

@@ -27,7 +27,7 @@ import { useNotificationsPlugin } from './plugin-notifications';
 import { useReaderPlugin } from './plugin-reader';
 import { useShoppingCartPlugin } from './plugin-shopping-cart';
 import { buildSiteBadgeNode } from './plugin-site-badges';
-import { useStatsSparklinePlugin } from './plugin-stats-sparkline';
+import { removeUndrawnStatsNode, useStatsSparklineNodeBuilder } from './plugin-stats-sparkline';
 import { buildWpcomAccountNode } from './plugin-wpcom-account';
 import { RESPONSIVE_MENU_NODE_ID, trackOmnibarNodes, useRecordOmnibarNodeClick } from './tracking';
 import { useOmnibarUser } from './user';
@@ -115,25 +115,30 @@ function ConnectedOmnibar( {
 		enabled: hydrated && !! siteId,
 	} );
 
+	const adminBarNodes = useMemo(
+		() => siteNodes ?? dashboardNodes ?? [],
+		[ siteNodes, dashboardNodes ]
+	);
+	const statsSparklineNodeBuilder = useStatsSparklineNodeBuilder( { site, adminBarNodes } );
+
 	const nodeBuilders = useMemo< OmnibarNodeBuilders >(
 		() => ( {
 			'my-wpcom-account': buildWpcomAccountNode,
 			'site-plan-badge': buildSiteBadgeNode,
 			'site-status-badge': buildSiteBadgeNode,
 			'free-domain-upsell': createFreeDomainUpsellNodeBuilder( { sectionName, recordTracksEvent } ),
+			...( statsSparklineNodeBuilder ? { stats: statsSparklineNodeBuilder } : {} ),
 			...( authUser ? { logout: createLogoutNodeBuilder( authUser ) } : {} ),
 		} ),
-		[ authUser, sectionName, recordTracksEvent ]
-	);
-
-	const adminBarNodes = useMemo(
-		() => siteNodes ?? dashboardNodes ?? [],
-		[ siteNodes, dashboardNodes ]
+		[ authUser, sectionName, recordTracksEvent, statsSparklineNodeBuilder ]
 	);
 
 	const baseOmnibarNodes = useMemo( () => {
 		const result = buildOmnibarNodesFromAdminBarNodes(
-			removeUnsupportedNodes( adminBarNodes, supports ),
+			removeUndrawnStatsNode(
+				removeUnsupportedNodes( adminBarNodes, supports ),
+				statsSparklineNodeBuilder
+			),
 			nodeBuilders,
 			createHrefResolver( siteNodes ? site?.options?.admin_url : undefined )
 		);
@@ -161,7 +166,7 @@ function ConnectedOmnibar( {
 		}
 
 		return result;
-	}, [ adminBarNodes, siteNodes, site, supports, nodeBuilders ] );
+	}, [ adminBarNodes, siteNodes, site, supports, nodeBuilders, statsSparklineNodeBuilder ] );
 
 	const readerPluginNode = useReaderPlugin( { sectionGroup } );
 	const helpCenterPluginNode = useHelpCenterPlugin( { sectionName, adminBarNodes } );
@@ -170,7 +175,6 @@ function ConnectedOmnibar( {
 		user,
 	} );
 	const { node: shoppingCartNode, panel: shoppingCartPanel } = useShoppingCartPlugin( { site } );
-	const statsSparklineNode = useStatsSparklinePlugin( { site } );
 	const { node: launchSiteNode, panel: launchSitePanel } = useLaunchSitePlugin( { site } );
 	const dashboardNode = useDashboardPlugin( { site, sectionGroup } );
 	const aiChatPluginNode = buildAiChatPluginNode( {
@@ -179,11 +183,9 @@ function ConnectedOmnibar( {
 		adminBarNodes,
 	} );
 	const siteNode = addDashboardNode( baseOmnibarNodes.site, dashboardNode );
-	const siteActions = [
-		...( baseOmnibarNodes.siteActions ?? [] ),
-		statsSparklineNode,
-		launchSiteNode,
-	].filter( ( node ) => node !== undefined );
+	const siteActions = [ ...( baseOmnibarNodes.siteActions ?? [] ), launchSiteNode ].filter(
+		( node ) => node !== undefined
+	);
 
 	const plugins = baseOmnibarNodes.user
 		? [

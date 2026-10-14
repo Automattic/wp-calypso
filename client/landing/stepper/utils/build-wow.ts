@@ -3,7 +3,7 @@ import { logToLogstash } from 'calypso/lib/logstash';
 import wpcom from 'calypso/lib/wp';
 import { pollUntil, PollTimeoutError } from './poll-until';
 
-const BUILD_WOW_SITE_SPEC_PATH = '/setup/ai-site-builder-spec/site-spec';
+export const BUILD_WOW_SITE_SPEC_PATH = '/setup/ai-site-builder-spec/site-spec';
 
 /**
  * Generation graphs a build may ask for. The server takes this as an enum and
@@ -94,6 +94,23 @@ export function getBuildWowSiteSpecUrl( {
 		...( prompt ? { prompt } : {} ),
 		...( graph ? { graph } : {} ),
 	} );
+}
+
+/**
+ * Whether a Commerce purchase on this site builds a store through build-wow.
+ * The server lets in only the accounts on the store rollout, and answers
+ * before checkout, while the site has no Commerce plan yet.
+ */
+export async function commerceUsesBuildWow( siteIdentifier: string | number ): Promise< boolean > {
+	try {
+		const response = ( await wpcom.req.get( {
+			path: `/sites/${ siteIdentifier }/big-sky/build-wow/store-builder`,
+			apiNamespace: 'wpcom/v2',
+		} ) ) as { enabled?: boolean };
+		return response?.enabled === true;
+	} catch {
+		return false;
+	}
 }
 
 export function isBuildWowSiteEditorReady( response: BuildWowResponse ): boolean {

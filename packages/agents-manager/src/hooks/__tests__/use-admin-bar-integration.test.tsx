@@ -4,21 +4,10 @@
 /* eslint-disable import/order -- jest.mock calls must precede imports */
 const mockResumeChat = jest.fn();
 
-jest.mock( '../../stores', () => ( { AGENTS_MANAGER_STORE: 'automattic/agents-manager' } ) );
-jest.mock( '@wordpress/data', () => ( { useSelect: jest.fn( () => false ) } ) );
-jest.mock( 'react-router-dom', () => ( {
-	useLocation: () => ( { pathname: '/chat' } ),
-	useNavigate: () => jest.fn(),
-} ) );
 jest.mock( '../../contexts', () => ( {
 	useAgentsManagerContext: () => ( { resumeChat: mockResumeChat, sectionName: 'wp-admin' } ),
 } ) );
 jest.mock( '../../utils/tracks', () => ( { recordAgentsManagerTracksEvent: jest.fn() } ) );
-jest.mock( '@automattic/calypso-analytics', () => ( {
-	getValidBlogId: () => null,
-	recordTracksEvent: jest.fn(),
-	withSiteContext: ( props: object ) => props,
-} ) );
 jest.mock( '../use-ai-chat-entry-state', () => ( { useAiChatEntryState: jest.fn() } ) );
 jest.mock( '../use-has-ai-chat-entry-button', () => ( {
 	__esModule: true,
@@ -57,7 +46,29 @@ describe( 'useAdminBarIntegration', () => {
 		document.body.append( aiChatButton );
 	} );
 
-	afterEach( () => aiChatButton.remove() );
+	afterEach( () => {
+		aiChatButton.remove();
+		delete window.__agentsManagerConfig;
+	} );
+
+	it( 'hides the host-disabled toggle without wiring a click listener and restores it on unmount', () => {
+		window.__agentsManagerConfig = { chatPresentation: { showEntryPoints: false } };
+		const { unmount } = renderWithChatVisible( true );
+		expect( aiChatButton.hidden ).toBe( true );
+		aiChatButton.click();
+		expect( closeChat ).not.toHaveBeenCalled();
+		expect( openChat ).not.toHaveBeenCalled();
+		unmount();
+		expect( aiChatButton.hidden ).toBe( false );
+	} );
+
+	it( 'does not close a non-dismissible chat from a visible toggle', () => {
+		window.__agentsManagerConfig = { chatPresentation: { dismissible: false } };
+		renderWithChatVisible( true );
+		aiChatButton.click();
+		expect( closeChat ).not.toHaveBeenCalled();
+		expect( openChat ).toHaveBeenCalled();
+	} );
 
 	it( 'leaves a page-painted label alone while the chat stays hidden', () => {
 		renderWithChatVisible( false );

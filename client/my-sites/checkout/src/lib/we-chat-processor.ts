@@ -44,13 +44,12 @@ export default async function weChatProcessor(
 		siteId,
 		includeDomainDetails,
 		includeGSuiteDetails,
-		reduxDispatch,
 		responseCart,
 		contactDetails,
 	} = options;
 	const paymentMethodId = 'wechat';
 
-	reduxDispatch( recordTransactionBeginAnalytics( { paymentMethodId } ) );
+	recordTransactionBeginAnalytics( { paymentMethodId } );
 
 	const baseURL = new URL(
 		typeof window !== 'undefined' ? window.location.href : 'https://wordpress.com'

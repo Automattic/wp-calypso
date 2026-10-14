@@ -27,7 +27,7 @@ const getHeaderLink = ( block: Subject ): string | undefined => {
 const iconWrapStyle: CSSProperties = { display: 'flex', flexShrink: 0 };
 
 const NoteSummaryIcon = ( { iconUrl, link }: { iconUrl?: string; link?: string } ) => {
-	const content = <NoteIcon icon={ iconUrl } size={ 32 } />;
+	const content = <NoteIcon icon={ iconUrl } size={ 36 } />;
 	if ( ! link ) {
 		return <div style={ iconWrapStyle }>{ content }</div>;
 	}

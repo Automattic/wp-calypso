@@ -1,7 +1,12 @@
 /**
  * @jest-environment jsdom
  */
-import { getCheckoutUrl, getTermProductId, RECEIPT_ID_PLACEHOLDER } from '../checkout-url';
+import {
+	getCheckoutUrl,
+	getSiteLaunchCheckoutUrl,
+	getTermProductId,
+	RECEIPT_ID_PLACEHOLDER,
+} from '../checkout-url';
 import type { AgencyProduct } from '@automattic/api-core';
 
 const wpcomPlan = {
@@ -49,6 +54,26 @@ describe( 'getCheckoutUrl', () => {
 		expect( url.searchParams.get( 'term' ) ).toBe( 'yearly' );
 	} );
 
+	it( 'names the site a PHP memory add-on applies to', () => {
+		const memoryAddon = {
+			slug: 'pressable-addon-php-memory-512',
+			product_id: 4001,
+			family_slug: 'pressable-addon',
+		} as AgencyProduct;
+		const url = new URL(
+			getCheckoutUrl(
+				[
+					{ product: memoryAddon, quantity: 1, siteDomain: 'one.example.com' },
+					{ product: backup, quantity: 1 },
+				],
+				{ term: 'yearly' }
+			)
+		);
+		expect( url.searchParams.get( 'products' ) ).toBe(
+			'pressable-addon-php-memory-512:1:one.example.com,jetpack-backup-t1:1'
+		);
+	} );
+
 	it( 'leaves the agency and the billing products out of the link', () => {
 		const url = new URL( getCheckoutUrl( lines, { term: 'monthly' } ) );
 		expect( url.searchParams.has( 'agency_id' ) ).toBe( false );
@@ -82,5 +107,25 @@ describe( 'getTermProductId', () => {
 		expect( getTermProductId( wpcomPlan, 'monthly' ) ).toBe( 1009 );
 		expect( getTermProductId( wpcomPlan, 'yearly' ) ).toBe( 1008 );
 		expect( getTermProductId( pressable, 'monthly' ) ).toBe( 3001 );
+	} );
+} );
+
+describe( 'getSiteLaunchCheckoutUrl', () => {
+	beforeEach( () => {
+		window.history.replaceState( {}, '', '/sites/example.wordpress.com/settings/site-visibility' );
+	} );
+
+	it( 'opens the agency checkout for the site and the WordPress.com plan, returning to the site', () => {
+		const url = new URL( getSiteLaunchCheckoutUrl( 'example.wordpress.com' ) );
+		expect( url.origin ).toBe( window.location.origin );
+		expect( url.pathname ).toBe(
+			'/checkout/agency/purchase/example.wordpress.com/wpcom-hosting-business'
+		);
+		expect( url.searchParams.get( 'redirect_to' ) ).toBe(
+			`${ window.location.origin }/sites/example.wordpress.com`
+		);
+		expect( url.searchParams.get( 'cancel_to' ) ).toBe(
+			`${ window.location.origin }/sites/example.wordpress.com/settings/site-visibility`
+		);
 	} );
 } );

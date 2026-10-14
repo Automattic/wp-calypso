@@ -6,6 +6,7 @@ import {
 	applyBlueprintSpec,
 	getSiteAdminUrl,
 	startBlueprintArchiveImport,
+	startBlueprintSimpleImport,
 	waitForAtomicTransferComplete,
 	waitForBlueprintImportComplete,
 } from 'calypso/landing/stepper/utils/blueprint-archive-import';
@@ -83,17 +84,26 @@ jest.mock( 'calypso/landing/stepper/stores', () => ( {
 // The wow-funnel helpers stay real so the funnel's readiness rules are exercised; only the
 // requests they make are stubbed.
 jest.mock( 'calypso/landing/stepper/utils/blueprint-archive-import', () => ( {
+	BLUEPRINT_SIMPLE_IMPORT_QUERY_PARAM: 'blueprint_simple_import',
 	applyBlueprintSpec: jest.fn( () => Promise.resolve( { applied: true, adminUrl: null } ) ),
 	getBlueprintArchiveSiteIdentifier: jest.fn(
 		( { siteSlug, siteId }: { siteSlug?: string | null; siteId?: string | null } ) =>
 			siteSlug || ( siteId && String( siteId ) !== '0' ? String( siteId ) : null )
 	),
+	getSimpleSiteEditorUrl: jest.fn(
+		( adminUrl: string ) => `${ adminUrl }site-editor.php?simple=1`
+	),
 	getSiteAdminUrl: jest.fn( () => Promise.resolve( 'https://example.wordpress.com/wp-admin/' ) ),
 	getSiteEditorUrl: jest.fn( () => 'https://example.wordpress.com/wp-admin/site-editor.php' ),
+	getSpecMetaFromQuery: ( queryParams: URLSearchParams ) => {
+		const url = queryParams.get( 'zoom_booking_url' );
+		return url ? { zoom_booking_url: url } : {};
+	},
 	isBlueprintCustomThemeBuild: ( queryParams: URLSearchParams ) =>
 		queryParams.get( 'build' ) === 'custom-theme',
 	logBlueprintArchiveEvent: jest.fn(),
 	startBlueprintArchiveImport: jest.fn( () => Promise.resolve() ),
+	startBlueprintSimpleImport: jest.fn( () => Promise.resolve() ),
 	waitForAtomicTransferComplete: jest.fn( () => Promise.resolve() ),
 	waitForBlueprintImportComplete: jest.fn( () => Promise.resolve() ),
 } ) );
@@ -369,6 +379,8 @@ describe( 'SiteSpec blueprint archive import', () => {
 		mockQueryParams = new URLSearchParams(
 			'blueprint_archive_import=1&blueprint_slug=961&siteSlug=example.wordpress.com&wow_funnel=blueprint'
 		);
+		// The funnel's readiness wait ends by asking whether the customer can sign in to the site.
+		( wpcom.req.get as jest.Mock ).mockResolvedValue( { ready: true } );
 	} );
 
 	it( 'leaves the spec page for the waiting screen without waiting on the import first', async () => {
@@ -450,6 +462,55 @@ describe( 'SiteSpec blueprint archive import', () => {
 		expect( startBlueprintArchiveImport ).not.toHaveBeenCalled();
 	} );
 
+	describe( 'Simple build (blueprint_simple_import=1)', () => {
+		beforeEach( () => {
+			mockQueryParams = new URLSearchParams(
+				'blueprint_simple_import=1&blueprint_slug=zoom&siteSlug=example.wordpress.com&siteId=123&zoom_booking_url=https%3A%2F%2Fscheduler.zoom.us%2Fjason'
+			);
+		} );
+
+		it( 'starts the Simple import when the interview opens, never the archive restore', () => {
+			renderSiteSpec();
+
+			expect( startBlueprintSimpleImport ).toHaveBeenCalledWith(
+				'example.wordpress.com',
+				'zoom',
+				123
+			);
+			// The archive restore converts the site to Atomic, which a Simple build must never do.
+			expect( startBlueprintArchiveImport ).not.toHaveBeenCalled();
+		} );
+
+		it( 'waits on the import alone, applies the spec and hands over to the site editor directly', async () => {
+			await confirmSpec();
+
+			const pendingAction = mockSetPendingAction.mock.calls[ 0 ][ 0 ];
+			await expect( pendingAction() ).resolves.toEqual( {
+				redirectTo: 'https://example.wordpress.com/wp-admin/site-editor.php?simple=1',
+			} );
+
+			// No Atomic transfer to wait for on a Simple site.
+			expect( waitForAtomicTransferComplete ).not.toHaveBeenCalled();
+			expect( waitForBlueprintImportComplete ).toHaveBeenCalledWith( 'example.wordpress.com' );
+			// Applied only after the import, with the blueprint named so the apply need not
+			// rely on the provenance the import stamped.
+			expect( applyBlueprintSpec ).toHaveBeenCalledWith(
+				'example.wordpress.com',
+				'spec-789',
+				'zoom'
+			);
+		} );
+
+		it( 'runs the blueprint-aware interview with the spec meta the entry URL carried', () => {
+			renderSiteSpec();
+
+			expect( getBlueprintSiteSpecConfig ).toHaveBeenCalledWith( {
+				blueprintId: 'zoom',
+				specMeta: { zoom_booking_url: 'https://scheduler.zoom.us/jason' },
+			} );
+		} );
+	} );
+
 	describe( 'build=custom-theme', () => {
 		const wpcomPostMock = wpcom.req.post as jest.Mock;
 
@@ -488,7 +549,9 @@ describe( 'SiteSpec blueprint archive import', () => {
 		it( 'keeps the blueprint out of the interview so the full design brief is asked', () => {
 			renderSiteSpec();
 
-			expect( getBlueprintSiteSpecConfig ).toHaveBeenCalledWith( { blueprintId: undefined } );
+			expect( getBlueprintSiteSpecConfig ).toHaveBeenCalledWith(
+				expect.objectContaining( { blueprintId: undefined } )
+			);
 		} );
 
 		it( 'still never starts a second import', async () => {
