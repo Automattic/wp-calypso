@@ -154,6 +154,11 @@ function SiteDeleteConfirmContent( { site, onClose }: { site: Site; onClose: () 
 	} );
 	const isSyncing = isStagingSiteSyncing( stagingSiteSyncState );
 
+	const isClassicView =
+		( site.jetpack && ! site.is_wpcom_atomic ) ||
+		site.options?.wpcom_admin_interface === 'wp-admin';
+	const siteAdminUrl = site.options?.admin_url;
+
 	const fields: Field< SiteDeleteFormData >[] = [
 		{
 			id: 'domain',
@@ -214,7 +219,14 @@ function SiteDeleteConfirmContent( { site, onClose }: { site: Site; onClose: () 
 						),
 						{
 							link: (
-								<ExternalLink href={ wpcomLink( `/export/${ site.slug }` ) } children={ null } />
+								<ExternalLink
+									href={
+										isClassicView && siteAdminUrl
+											? `${ siteAdminUrl }export.php`
+											: wpcomLink( `/export/${ site.slug }` )
+									}
+									children={ null }
+								/>
 							),
 						}
 					) }
