@@ -196,7 +196,11 @@ describe( 'onboarding flow use-my-domain navigation', () => {
 } );
 
 describe( 'onboarding flow domains navigation', () => {
-	const submitDomains = ( search: string, cartPlan?: string ) => {
+	const submitDomains = (
+		search: string,
+		cartPlan?: string,
+		providedDependencies: Record< string, unknown > = { siteUrl: 'example.wordpress.com' }
+	) => {
 		const query = new URLSearchParams( search );
 		( useQuery as jest.Mock ).mockReturnValue( query );
 		( useSelect as jest.Mock ).mockReturnValue( {
@@ -217,7 +221,7 @@ describe( 'onboarding flow domains navigation', () => {
 
 		result.current.submit?.( {
 			slug: 'domains',
-			providedDependencies: { siteUrl: 'example.wordpress.com' },
+			providedDependencies,
 		} as Parameters< NonNullable< typeof result.current.submit > >[ 0 ] );
 
 		return navigate;
@@ -247,13 +251,26 @@ describe( 'onboarding flow domains navigation', () => {
 		expect( navigate ).toHaveBeenCalledWith( 'plans' );
 	} );
 
-	// A Simple blueprint build is a free-plan run: the grid has nothing to ask.
+	// A Simple blueprint build on a free subdomain is a free-plan run: the grid has nothing to ask.
 	it( 'skips the plans step with an empty cart on a Simple blueprint build', () => {
 		const navigate = submitDomains( 'blueprint=zoom&build_dest=simple' );
 
 		expect( navigate ).toHaveBeenCalledWith( 'create-site', undefined, false );
 		expect( mockSetPlanCartItem ).toHaveBeenCalledWith( null );
 		expect( mockSetProductCartItems ).toHaveBeenCalledWith( [] );
+	} );
+
+	// A domain that costs money is bought with a plan: the grid and checkout are shown, and
+	// the run reaches site-spec through checkout's redirect instead of the free shortcut.
+	it( 'goes to the plans step when a paid domain was picked on a Simple blueprint build', () => {
+		const navigate = submitDomains( 'blueprint=zoom&build_dest=simple', undefined, {
+			siteUrl: 'example.com',
+			domainItem: { product_slug: 'domain_reg', meta: 'example.com' },
+			signupDomainOrigin: 'custom',
+		} );
+
+		expect( navigate ).toHaveBeenCalledWith( 'plans' );
+		expect( mockSetPlanCartItem ).not.toHaveBeenCalled();
 	} );
 } );
 
