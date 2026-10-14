@@ -281,7 +281,8 @@ export async function checkBlueprintExists(
 export async function startBlueprintSimpleImport(
 	siteIdentifier: string,
 	blueprintSlug: string,
-	siteId?: number | null
+	siteId?: number | null,
+	siteValues: SpecMeta = {}
 ): Promise< ImportStatusResponse > {
 	const blogId = siteId && siteId > 0 ? siteId : await getSiteBlogId( siteIdentifier );
 
@@ -299,6 +300,13 @@ export async function startBlueprintSimpleImport(
 					} ),
 				],
 				[ 'blueprint', blueprintSlug ],
+				// What the entry URL already knows (a booking page, say) travels with the
+				// import: the job writes it into the blueprint content's `{{site.<name>}}`
+				// placeholders once that content has landed, with no agent involved. wpcom
+				// keeps only allow-listed names it can sanitise.
+				...Object.entries( siteValues )
+					.filter( ( entry ): entry is [ string, string ] => typeof entry[ 1 ] === 'string' )
+					.map( ( [ name, value ] ) => [ `site_values[${ name }]`, value ] ),
 			],
 		},
 		{}
