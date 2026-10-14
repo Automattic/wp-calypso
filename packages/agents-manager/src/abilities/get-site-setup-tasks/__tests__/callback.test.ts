@@ -1,24 +1,10 @@
 /**
  * @jest-environment jsdom
  */
-const mockWpcomRequest = jest.fn();
-const mockCanAccessWpcomApis = jest.fn();
-jest.mock( 'wpcom-proxy-request', () => ( {
-	__esModule: true,
-	default: ( ...args: unknown[] ) => mockWpcomRequest( ...args ),
-	canAccessWpcomApis: () => mockCanAccessWpcomApis(),
-} ) );
-
 const mockApiFetch = jest.fn();
 jest.mock( '@wordpress/api-fetch', () => ( {
 	__esModule: true,
 	default: ( ...args: unknown[] ) => mockApiFetch( ...args ),
-} ) );
-
-const mockGetSessionSiteKey = jest.fn();
-jest.mock( '../../../utils/agent-session', () => ( {
-	NO_SITE: 'no-site',
-	getSessionSiteKey: () => mockGetSessionSiteKey(),
 } ) );
 
 import { getSiteSetupTasksCallback } from '../callback';
@@ -40,26 +26,17 @@ const RESPONSE = {
 	is_eligible: true,
 };
 
-type WindowWithInlineData = Window & { agentsManagerData?: { site?: { ID?: number } } };
-
 beforeEach( () => {
 	jest.clearAllMocks();
-	mockCanAccessWpcomApis.mockReturnValue( true );
-	mockGetSessionSiteKey.mockReturnValue( '123' );
-	delete ( window as WindowWithInlineData ).agentsManagerData;
 } );
 
 describe( 'getSiteSetupTasksCallback', () => {
-	it( 'reads the public API for the session site in Calypso', async () => {
-		mockWpcomRequest.mockResolvedValue( RESPONSE );
+	it( 'reads the site’s own REST route and maps the tasks', async () => {
+		mockApiFetch.mockResolvedValue( RESPONSE );
 
 		const result = await getSiteSetupTasksCallback();
 
-		expect( mockWpcomRequest ).toHaveBeenCalledWith( {
-			path: '/sites/123/ai-launchpad',
-			apiNamespace: 'wpcom/v2',
-		} );
-		expect( mockApiFetch ).not.toHaveBeenCalled();
+		expect( mockApiFetch ).toHaveBeenCalledWith( { path: '/wpcom/v2/ai-launchpad' } );
 		expect( result ).toMatchObject( {
 			result: {
 				success: true,
@@ -85,31 +62,8 @@ describe( 'getSiteSetupTasksCallback', () => {
 		} );
 	} );
 
-	it( 'prefers the wp-admin inline site over the session scope', async () => {
-		( window as WindowWithInlineData ).agentsManagerData = { site: { ID: 456 } };
-		mockGetSessionSiteKey.mockReturnValue( 'no-site' );
-		mockWpcomRequest.mockResolvedValue( RESPONSE );
-
-		await getSiteSetupTasksCallback();
-
-		expect( mockWpcomRequest ).toHaveBeenCalledWith(
-			expect.objectContaining( { path: '/sites/456/ai-launchpad' } )
-		);
-	} );
-
-	it( 'reads the site’s own REST route off wordpress.com', async () => {
-		mockCanAccessWpcomApis.mockReturnValue( false );
-		mockApiFetch.mockResolvedValue( RESPONSE );
-
-		const result = await getSiteSetupTasksCallback();
-
-		expect( mockApiFetch ).toHaveBeenCalledWith( { path: '/wpcom/v2/ai-launchpad' } );
-		expect( mockWpcomRequest ).not.toHaveBeenCalled();
-		expect( result.result.success ).toBe( true );
-	} );
-
 	it( 'answers with an empty, ineligible list for a site without one', async () => {
-		mockWpcomRequest.mockRejectedValue( { error: 'ai_launchpad_not_eligible', statusCode: 404 } );
+		mockApiFetch.mockRejectedValue( { code: 'ai_launchpad_not_eligible', data: { status: 404 } } );
 
 		const result = await getSiteSetupTasksCallback();
 
@@ -122,37 +76,16 @@ describe( 'getSiteSetupTasksCallback', () => {
 		} );
 	} );
 
-	it( 'recognizes the not-eligible code from api-fetch too', async () => {
-		mockCanAccessWpcomApis.mockReturnValue( false );
-		mockApiFetch.mockRejectedValue( { code: 'ai_launchpad_not_eligible', data: { status: 404 } } );
-
-		const result = await getSiteSetupTasksCallback();
-
-		expect( result.result ).toMatchObject( { success: true, details: { eligible: false } } );
-	} );
-
 	it( 'treats a dismissed list as ineligible', async () => {
-		mockWpcomRequest.mockResolvedValue( { ...RESPONSE, dismissed: true } );
+		mockApiFetch.mockResolvedValue( { ...RESPONSE, dismissed: true } );
 
 		const result = await getSiteSetupTasksCallback();
 
 		expect( result.result ).toMatchObject( { success: true, details: { eligible: false } } );
-	} );
-
-	it( 'fails when the Calypso chat has no selected site', async () => {
-		mockGetSessionSiteKey.mockReturnValue( 'no-site' );
-
-		const result = await getSiteSetupTasksCallback();
-
-		expect( mockWpcomRequest ).not.toHaveBeenCalled();
-		expect( result ).toMatchObject( {
-			result: { success: false, error: expect.stringContaining( 'No site is selected' ) },
-			returnToAgent: true,
-		} );
 	} );
 
 	it( 'reports a failed request as an error', async () => {
-		mockWpcomRequest.mockRejectedValue( new Error( 'boom' ) );
+		mockApiFetch.mockRejectedValue( new Error( 'boom' ) );
 
 		const result = await getSiteSetupTasksCallback();
 
@@ -160,7 +93,7 @@ describe( 'getSiteSetupTasksCallback', () => {
 	} );
 
 	it( 'resolves task destinations into absolute URLs', async () => {
-		mockWpcomRequest.mockResolvedValue( {
+		mockApiFetch.mockResolvedValue( {
 			tasks: [
 				{ id: 'theme', calypso_path: '/themes/x' },
 				{ id: 'editor', calypso_path: 'https://x.wpcomstaging.com/wp-admin/site-editor.php' },
@@ -188,7 +121,7 @@ describe( 'getSiteSetupTasksCallback', () => {
 	} );
 
 	it( 'skips malformed tasks and uses the id when a title is missing', async () => {
-		mockWpcomRequest.mockResolvedValue( {
+		mockApiFetch.mockResolvedValue( {
 			tasks: [ { id: 'launch' }, { title: 'No id' }, null ],
 			is_eligible: true,
 		} );

@@ -1,8 +1,5 @@
 import apiFetch from '@wordpress/api-fetch';
 import { __, _n, sprintf } from '@wordpress/i18n';
-import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
-import { getSessionSiteKey, NO_SITE } from '../../utils/agent-session';
-import { getAgentsManagerInlineData } from '../../utils/get-agents-manager-inline-data';
 import { errorResult, successResult } from '../ability-result';
 import type { AbilityResult } from '../types';
 
@@ -56,59 +53,13 @@ function toTaskUrl( value: unknown ): string | undefined {
 	return value.startsWith( '/' ) ? `${ CALYPSO_ORIGIN }${ value }` : undefined;
 }
 
-/**
- * The site the chat is scoped to: the wp-admin inline payload on Simple and
- * Atomic, the published session scope in Calypso. `null` when the chat has
- * no selected site (Calypso screens that are not site-specific).
- */
-function resolveSiteId(): number | null {
-	const inlineSiteId = getAgentsManagerInlineData()?.site?.ID;
-
-	if ( typeof inlineSiteId === 'number' && inlineSiteId > 0 ) {
-		return inlineSiteId;
-	}
-
-	const siteKey = getSessionSiteKey();
-
-	if ( siteKey === NO_SITE ) {
-		return null;
-	}
-
-	const siteId = Number( siteKey );
-
-	return Number.isInteger( siteId ) && siteId > 0 ? siteId : null;
-}
-
-// wordpress.com origins reach the public API through the proxy; a wp-admin
-// off wordpress.com (Atomic, Jetpack) only has the site's own REST route.
-async function fetchSiteSetup(): Promise< AiLaunchpadResponse > {
-	if ( ! canAccessWpcomApis() ) {
-		return apiFetch< AiLaunchpadResponse >( { path: '/wpcom/v2/ai-launchpad' } );
-	}
-
-	const siteId = resolveSiteId();
-
-	if ( siteId === null ) {
-		throw new Error( 'no_site' );
-	}
-
-	return wpcomRequest< AiLaunchpadResponse >( {
-		path: `/sites/${ siteId }/ai-launchpad`,
-		apiNamespace: 'wpcom/v2',
-	} );
-}
-
-// The endpoint answers 404 `ai_launchpad_not_eligible` for a site without a
-// list. `wpcom-proxy-request` surfaces it as `error`, `@wordpress/api-fetch`
-// as `code`.
+// The endpoint answers 404 `ai_launchpad_not_eligible` for a site without a list.
 function isNotEligibleError( error: unknown ): boolean {
-	if ( ! error || typeof error !== 'object' ) {
-		return false;
-	}
-
-	const { code, error: errorCode } = error as { code?: unknown; error?: unknown };
-
-	return code === NOT_ELIGIBLE_CODE || errorCode === NOT_ELIGIBLE_CODE;
+	return (
+		!! error &&
+		typeof error === 'object' &&
+		( error as { code?: unknown } ).code === NOT_ELIGIBLE_CODE
+	);
 }
 
 function toStatus(
@@ -168,18 +119,14 @@ function notEligibleResult(): AbilityResult {
 export async function getSiteSetupTasksCallback(): Promise< AbilityResult > {
 	let response: AiLaunchpadResponse;
 
+	// The site's own REST route, as the Site Setup page reads it. The ability only
+	// runs in the editor for now; a Calypso chat would need the public API with the
+	// session's site id instead.
 	try {
-		response = await fetchSiteSetup();
+		response = await apiFetch< AiLaunchpadResponse >( { path: '/wpcom/v2/ai-launchpad' } );
 	} catch ( error ) {
 		if ( isNotEligibleError( error ) ) {
 			return notEligibleResult();
-		}
-
-		if ( error instanceof Error && error.message === 'no_site' ) {
-			return errorResult(
-				'No site is selected in this chat, so there is no setup list to read.',
-				__( 'Select a site to see its setup tasks.', __i18n_text_domain__ )
-			);
 		}
 
 		return errorResult(
