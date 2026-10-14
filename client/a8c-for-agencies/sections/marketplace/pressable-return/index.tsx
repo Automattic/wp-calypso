@@ -32,6 +32,7 @@ function PressableReturnContent( params: ReturnParams ) {
 				{ __( 'We couldn’t return you to Pressable. Try again.' ) }
 			</Notice>
 			<Button
+				__next40pxDefaultSize
 				variant="primary"
 				onClick={ () => {
 					dispatch(

@@ -42,6 +42,7 @@ export default function PressableCheckoutBack( {
 	return (
 		<VStack spacing={ 2 }>
 			<Button
+				__next40pxDefaultSize
 				variant="tertiary"
 				icon={ arrowLeft }
 				disabled={ isBusy }
