@@ -59,6 +59,7 @@ function AssignToSiteModal( {
 		<AssignLicenseModal
 			licenseKey={ purchase.license.license_key }
 			productName={ getProductName( purchase, products ) }
+			issuedAt={ purchase.license.issued_at }
 			closeModal={ closeModal }
 		/>
 	);
@@ -143,7 +144,7 @@ export default function ReferralPurchases() {
 				label: __( 'Assign to site' ),
 				isPrimary: true,
 				isEligible: ( item ) => canPlacePurchase( item ) && ! isWpcomHostingPurchase( item ),
-				modalHeader: __( 'Which site would you like to assign this license to?' ),
+				modalHeader: __( 'Assign a license to a site' ),
 				modalSize: 'medium',
 				RenderModal: ( { items, closeModal } ) => (
 					<AssignToSiteModal

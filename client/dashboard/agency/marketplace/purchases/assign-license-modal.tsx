@@ -8,6 +8,8 @@ import { Link } from '@tanstack/react-router';
 import {
 	Button,
 	RadioControl,
+	__experimentalHStack as HStack,
+	__experimentalHeading as Heading,
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
@@ -18,14 +20,15 @@ import { store as noticesStore } from '@wordpress/notices';
 import { useMemo, useState } from 'react';
 import { useAnalytics } from '../../../app/analytics';
 import { useAuth } from '../../../app/auth';
+import { useIntlLocale } from '../../../app/locale';
 import { ButtonStack } from '../../../components/button-stack';
-import { DataViews } from '../../../components/dataviews';
+import { DataViews, DataViewsCard } from '../../../components/dataviews';
+import { formatDate, parseDateAsUTC } from '../../../utils/datetime';
 import type { AgencySite } from '@automattic/api-core';
 import type { Field, View } from '@wordpress/dataviews';
 
-import './style.scss';
-
-const SITES_PER_PAGE = 10;
+// Few enough rows that the modal fits on a laptop screen without scrolling.
+const SITES_PER_PAGE = 5;
 
 const CONNECT_USER_HELP_URL =
 	'https://agencieshelp.automattic.com/knowledge-base/invite-and-manage-team-members/#limitations-for-the-team-member-role';
@@ -43,6 +46,7 @@ const DEFAULT_SITES_VIEW: View = {
 interface Props {
 	licenseKey: string;
 	productName: string;
+	issuedAt: string;
 	closeModal?: () => void;
 	onAssigned?: () => void;
 }
@@ -50,11 +54,13 @@ interface Props {
 export default function AssignLicenseModal( {
 	licenseKey,
 	productName,
+	issuedAt,
 	closeModal,
 	onAssigned,
 }: Props ) {
 	const { recordTracksEvent } = useAnalytics();
 	const { user } = useAuth();
+	const locale = useIntlLocale();
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const { data: agency } = useQuery( activeAgencyQuery() );
 	const agencyId = agency?.id;
@@ -153,32 +159,68 @@ export default function AssignLicenseModal( {
 
 	return (
 		<VStack spacing={ 6 }>
-			<Text>
-				{ createInterpolateElement(
-					__(
-						'If you don’t see the site in the list, connect it first via the <a>Sites Dashboard</a>.'
-					),
-					{ a: <Link to="/sites" /> }
-				) }
-			</Text>
-			<div className="dashboard-marketplace-purchases__site-picker">
-				<DataViews< AgencySite >
-					data={ sites }
-					fields={ fields }
-					view={ view }
-					onChangeView={ setView }
-					getItemId={ ( item ) => String( item.blog_id ) }
-					isItemClickable={ () => true }
-					onClickItem={ setSelectedSite }
-					isLoading={ isLoading }
-					isPlaceholderData={ isPlaceholderData }
-					paginationInfo={ {
-						totalItems,
-						totalPages: Math.ceil( totalItems / ( view.perPage ?? SITES_PER_PAGE ) ),
-					} }
-					defaultLayouts={ { table: {} } }
-				/>
-			</div>
+			<VStack spacing={ 1 }>
+				<Heading level={ 2 } size={ 15 } weight={ 500 }>
+					{ productName }
+				</Heading>
+				<Text variant="muted">
+					{ sprintf(
+						/* translators: %s is the date the license was issued. */
+						__( 'Issued %s' ),
+						formatDate( parseDateAsUTC( issuedAt ), locale )
+					) }
+				</Text>
+				<Text variant="muted">
+					{ sprintf(
+						/* translators: %s is the license key. */
+						__( 'License key: %s' ),
+						licenseKey
+					) }
+				</Text>
+			</VStack>
+			<VStack spacing={ 3 }>
+				<VStack spacing={ 1 }>
+					<Heading level={ 2 } size={ 15 } weight={ 500 }>
+						{ __( 'Select a site' ) }
+					</Heading>
+					<Text variant="muted">
+						{ createInterpolateElement(
+							__(
+								'If you don’t see the site in the list, connect it first via the <a>Sites Dashboard</a>.'
+							),
+							{ a: <Link to="/sites" /> }
+						) }
+					</Text>
+				</VStack>
+				<DataViewsCard>
+					<DataViews< AgencySite >
+						data={ sites }
+						fields={ fields }
+						view={ view }
+						onChangeView={ setView }
+						getItemId={ ( item ) => String( item.blog_id ) }
+						isItemClickable={ () => true }
+						onClickItem={ setSelectedSite }
+						isLoading={ isLoading }
+						isPlaceholderData={ isPlaceholderData }
+						paginationInfo={ {
+							totalItems,
+							totalPages: Math.ceil( totalItems / ( view.perPage ?? SITES_PER_PAGE ) ),
+						} }
+						defaultLayouts={ { table: {} } }
+					>
+						{ /* Composed by hand to keep only the search: a one-column site list
+						     has nothing to filter or configure. */ }
+						<HStack className="dataviews__view-actions" alignment="top" justify="space-between">
+							<HStack className="dataviews__search" justify="flex-start">
+								<DataViews.Search />
+							</HStack>
+						</HStack>
+						<DataViews.Layout />
+						<DataViews.Pagination />
+					</DataViews>
+				</DataViewsCard>
+			</VStack>
 			<ButtonStack justify="flex-end">
 				<Button
 					__next40pxDefaultSize
