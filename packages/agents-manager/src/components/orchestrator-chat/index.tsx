@@ -482,6 +482,7 @@ export default function OrchestratorChat( {
 		const { onTaskUpdate } = agentConfig;
 		return {
 			...agentConfig,
+			trackReplying: true,
 			onTaskUpdate: async ( update: TaskUpdate ) => {
 				const streamedMessages = streamedCheckpointMessagesRef.current;
 				const isCurrentStreamGeneration =
@@ -582,6 +583,7 @@ export default function OrchestratorChat( {
 		registerMessageActions,
 		getRegenerateHandler,
 		progressMessage,
+		isReplying,
 	} = credits.chat;
 	const getTraceIdForMessage = useAgentTraceIds( agentConfig );
 	const previousMessagesRef = useRef( messages );
@@ -1890,6 +1892,7 @@ export default function OrchestratorChat( {
 			// The indicator above hides mid-reply and covers uploads; response actions
 			// follow the raw streaming state.
 			isStreaming={ isProcessing }
+			isReplying={ isReplying }
 			thinkingMessage={
 				isUploadingImages ? __( 'Uploading images…', __i18n_text_domain__ ) : progressMessage
 			}
