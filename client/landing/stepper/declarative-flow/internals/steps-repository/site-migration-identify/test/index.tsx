@@ -256,6 +256,27 @@ describe( 'SiteMigrationIdentify', () => {
 			expect( submit ).toHaveBeenCalledWith( { action: 'skip_platform_identification' } );
 		} );
 
+		it( 'preserves the current address when opening the platform list before checking', async () => {
+			const submit = jest.fn();
+			render(
+				{ navigation: { submit } },
+				{ initialEntry: '/some-path?from=https://old.example.com' }
+			);
+			const platformLink = screen.getByRole( 'button', { name: /pick your current platform/ } );
+			await userEvent.click( platformLink );
+			expect( submit ).toHaveBeenLastCalledWith( {
+				action: 'skip_platform_identification',
+				from: 'https://old.example.com',
+			} );
+			await userEvent.clear( getInput() );
+			await userEvent.type( getInput(), 'new.example.com' );
+			await userEvent.click( platformLink );
+			expect( submit ).toHaveBeenLastCalledWith( {
+				action: 'skip_platform_identification',
+				from: 'https://new.example.com',
+			} );
+		} );
+
 		it( 'edits the supplied address and waits for platform and hosting checks before continuing', async () => {
 			const submit = jest.fn();
 			render(
@@ -308,12 +329,13 @@ describe( 'SiteMigrationIdentify', () => {
 
 		it( 'explains generic analysis failures and allows retrying the same address', async () => {
 			const submit = jest.fn();
-			render( { navigation: { submit } } );
+			render( { navigation: { submit } }, { initialEntry: '/some-path?hide_importer_link=true' } );
 			mockAnalysis( {}, 500 );
 			await checkSite();
 			expect( await screen.findByRole( 'alert' ) ).toHaveTextContent(
 				'We couldn’t check your site. Try again.'
 			);
+			expect( screen.getByRole( 'button', { name: /pick your current platform/ } ) ).toBeVisible();
 			expect( getInput() ).toBeVisible();
 			expect( getInput() ).toHaveValue( 'https://example.com' );
 			expect( submit ).not.toHaveBeenCalled();
@@ -342,7 +364,8 @@ describe( 'SiteMigrationIdentify', () => {
 				await screen.findByRole( 'heading', { name: 'We couldn’t reach your site' } )
 			).toBeVisible();
 			expect( screen.getByText( 'Couldn’t connect', { selector: 'span' } ) ).toBeVisible();
-			expect( screen.getByRole( 'button', { name: 'Talk to the team' } ) ).toBeDisabled();
+			expect( screen.getByRole( 'button', { name: 'Try again' } ) ).toBeEnabled();
+			expect( screen.getByRole( 'button', { name: /pick your current platform/ } ) ).toBeEnabled();
 			expect( getInput() ).not.toBeVisible();
 			expect( submit ).not.toHaveBeenCalled();
 		} );
@@ -375,6 +398,21 @@ describe( 'SiteMigrationIdentify', () => {
 					host: 'bluehost',
 				} )
 			);
+		} );
+
+		it( 'retains the failed address when opening the platform list', async () => {
+			const submit = jest.fn();
+			render( { navigation: { submit } } );
+			mockAnalysis( { code: 'http_request_failed' }, 500, 'example.com' );
+			await checkSite( 'example.com' );
+			await screen.findByRole( 'heading', { name: 'We couldn’t reach your site' } );
+			expect( submit ).not.toHaveBeenCalled();
+			await userEvent.click( screen.getByRole( 'button', { name: /pick your current platform/ } ) );
+			expect( submit ).toHaveBeenCalledTimes( 1 );
+			expect( submit ).toHaveBeenCalledWith( {
+				action: 'skip_platform_identification',
+				from: 'https://example.com',
+			} );
 		} );
 
 		it( 'does not complete or reopen an outcome when Back cancels a retry', async () => {
@@ -451,7 +489,7 @@ describe( 'SiteMigrationIdentify', () => {
 				...API_RESPONSE_WORDPRESS_PLATFORM,
 				url: 'http://example.com/',
 				platform,
-				site_health: enabled ? 'ok' : 'blocked',
+				site_health: 'blocked',
 			} );
 		mockApi()
 			.get( '/wpcom/v2/site-profiler/hosting-provider/example.com' )

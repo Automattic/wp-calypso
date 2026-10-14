@@ -121,6 +121,63 @@ describe( 'Site Migration Flow', () => {
 			window.location.search = '';
 		} );
 
+		it.each( [ 'wordpress', 'squarespace' ] )(
+			'keeps the failed address through platform selection, Back and creation for %s',
+			( platform ) => {
+				jest.spyOn( config, 'isEnabled' ).mockReturnValue( true );
+				jest.spyOn( window.history, 'length', 'get' ).mockReturnValue( 2 );
+				const { result } = renderNavigation( [
+					'/setup/site-migration/site-migration-identify?source=sites-dashboard&ref=new-site-popover&sessionId=escape&host=bluehost&ssh=true&isWpcom=true',
+				] );
+				const escape = {
+					action: 'skip_platform_identification',
+					from: 'https://unreachable.example.com',
+				};
+				act( () => result.current.navigation.submit( escape ) );
+				expect( result.current.location.pathname ).toBe( '/site-migration/importList' );
+				act( () => result.current.navigation.goBack() );
+				expect( result.current.location.pathname ).toBe(
+					'/site-migration/site-migration-identify'
+				);
+				expect( new URLSearchParams( result.current.location.search ).get( 'from' ) ).toBe(
+					escape.from
+				);
+				act( () => result.current.navigation.submit( escape ) );
+				act( () => result.current.navigation.submit( { platform } ) );
+				expect( result.current.location.pathname ).toBe( '/site-migration/create-site' );
+				const query = new URLSearchParams( result.current.location.search );
+				expect( query.get( 'from' ) ).toBe( escape.from );
+				expect( query.get( 'sessionId' ) ).toBe( 'escape' );
+				for ( const key of [ 'host', 'ssh', 'isWpcom' ] ) {
+					expect( query.get( key ) ).toBe( '' );
+				}
+				act( () => result.current.navigation.goBack() );
+				expect( result.current.location.pathname ).toBe( '/site-migration/importList' );
+				act( () => result.current.navigation.submit( { platform } ) );
+				act( () => result.current.navigation.submit( {} ) );
+				act( () =>
+					result.current.navigation.submit( {
+						siteCreated: true,
+						siteId: 123,
+						siteSlug: 'destination.wordpress.com',
+					} )
+				);
+				const destination = new URL(
+					window.location.replace.mock.lastCall?.[ 0 ] ||
+						`${ result.current.location.pathname }${ result.current.location.search }`,
+					'https://example.com'
+				);
+				expect( destination.pathname ).toBe(
+					platform === 'wordpress'
+						? '/site-migration/site-migration-how-to-migrate'
+						: '/setup/site-setup/importerSquarespace'
+				);
+				expect( destination.searchParams.get( 'from' ) ).toBe( escape.from );
+				expect( window.location.assign ).not.toHaveBeenCalled();
+				expect( goToCheckout ).not.toHaveBeenCalled();
+			}
+		);
+
 		it.each( [ 0, 2 ] )(
 			'opens platforms before the destination and supports Back with %s sites',
 			( siteCount ) => {
@@ -413,7 +470,7 @@ describe( 'Site Migration Flow', () => {
 					.mockImplementation( ( flag ) => flag === 'migration/reprint-flow' );
 			} );
 
-			it( 'returns WordPress selection to address entry with the supplied destination', () => {
+			it( 'opens the WordPress migration offer without a source address', () => {
 				const destination = { siteId: 123, siteSlug: 'destination.wordpress.com' };
 				const result = runNavigation( {
 					from: STEPS.IMPORT_LIST,
@@ -421,8 +478,14 @@ describe( 'Site Migration Flow', () => {
 					dependencies: { platform: 'wordpress', url: 'unused' },
 				} );
 				expect( result ).toMatchDestination( {
-					step: STEPS.SITE_MIGRATION_IDENTIFY,
-					query: { from: '' },
+					step: STEPS.SITE_MIGRATION_HOW_TO_MIGRATE,
+					query: {
+						...destination,
+						from: '',
+						platform: 'wordpress',
+						action: 'migrate',
+						how: HOW_TO_MIGRATE_OPTIONS.DO_IT_FOR_ME,
+					},
 				} );
 				expect( window.location.assign ).not.toHaveBeenCalled();
 			} );
@@ -668,6 +731,36 @@ describe( 'Site Migration Flow', () => {
 		} );
 
 		describe( 'Reprint address routes', () => {
+			it.each( [ 'wordpress', 'squarespace' ] )(
+				'opens the existing %s path after manual selection for a supplied destination',
+				( platform ) => {
+					jest.spyOn( config, 'isEnabled' ).mockReturnValue( true );
+					const result = runNavigation( {
+						from: STEPS.IMPORT_LIST,
+						dependencies: { platform },
+						query: {
+							from: 'https://unreachable.example.com',
+							action: 'import',
+							siteId: 123,
+							siteSlug: 'destination.wordpress.com',
+						},
+					} );
+					const destination = new URL(
+						window.location.assign.mock.lastCall?.[ 0 ] || `/${ result.step }?${ result.query }`,
+						'https://example.com'
+					);
+					expect( destination.pathname ).toBe(
+						platform === 'wordpress'
+							? '/site-migration-how-to-migrate'
+							: '/setup/site-setup/importerSquarespace'
+					);
+					expect( destination.searchParams.get( 'siteSlug' ) ).toBe( 'destination.wordpress.com' );
+					expect( destination.searchParams.get( 'from' ) ).toBe(
+						'https://unreachable.example.com'
+					);
+					expect( goToCheckout ).not.toHaveBeenCalled();
+				}
+			);
 			it.each( [ 'wordpress', 'unknown', 'squarespace' ] )(
 				'routes a detected %s source with the flag enabled',
 				( platform ) => {
@@ -1348,10 +1441,16 @@ describe( 'Site Migration Flow', () => {
 			} );
 
 			it( 'redirects to HOW_TO_MIGRATE step if a site is selected and the query action is migrate', () => {
+				jest
+					.spyOn( config, 'isEnabled' )
+					.mockImplementation( ( flag ) => flag === 'migration/reprint-flow' );
 				const destination = runNavigation( {
 					from: STEPS.PICK_SITE,
 					query: {
 						action: 'migrate',
+						how: HOW_TO_MIGRATE_OPTIONS.DO_IT_FOR_ME,
+						from: 'https://unreachable.example.com',
+						platform: 'wordpress',
 					},
 					dependencies: {
 						action: 'select-site',
@@ -1383,33 +1482,65 @@ describe( 'Site Migration Flow', () => {
 					step: STEPS.SITE_CREATION_STEP,
 				} );
 			} );
-			it( 'redirects to the importer when the platform is importable', () => {
-				runNavigation( {
-					from: STEPS.PICK_SITE,
-					dependencies: {
-						action: 'select-site',
-						site: { ID: 123, slug: 'example.wordpress.com' },
-					},
-					query: {
-						platform: 'squarespace',
-						from: 'https://site-to-be-migrated.com',
-						siteId: 123,
-						siteSlug: 'example.wordpress.com',
-					},
-				} );
+			it.each( [ 'squarespace', 'wordpress' ] )(
+				'opens the %s importer for a selected destination',
+				( platform ) => {
+					jest
+						.spyOn( config, 'isEnabled' )
+						.mockImplementation( ( flag ) => flag === 'migration/reprint-flow' );
+					runNavigation( {
+						from: STEPS.PICK_SITE,
+						dependencies: {
+							action: 'select-site',
+							site: { ID: 123, slug: 'example.wordpress.com' },
+						},
+						query: {
+							platform,
+							action: platform === 'wordpress' ? 'import' : '',
+							from: 'https://site-to-be-migrated.com',
+							siteId: 123,
+							siteSlug: 'example.wordpress.com',
+						},
+					} );
 
-				expect( window.location.assign ).toMatchURL( {
-					path: '/setup/site-setup/importerSquarespace',
-					query: {
-						from: 'https://site-to-be-migrated.com',
-						siteSlug: 'example.wordpress.com',
-						sessionId: '123',
-					},
-				} );
-			} );
+					expect( window.location.assign ).toMatchURL( {
+						path:
+							platform === 'wordpress'
+								? '/setup/site-setup/importerWordpress'
+								: '/setup/site-setup/importerSquarespace',
+						query: {
+							from: 'https://site-to-be-migrated.com',
+							siteSlug: 'example.wordpress.com',
+							sessionId: '123',
+						},
+					} );
+				}
+			);
 		} );
 
 		describe( 'SITE_MIGRATION_HOW_TO_MIGRATE', () => {
+			it( 'requires a fresh source check when switching from assisted migration to DIY', () => {
+				jest
+					.spyOn( config, 'isEnabled' )
+					.mockImplementation( ( flag ) => flag === 'migration/reprint-flow' );
+				const destination = runNavigation( {
+					from: STEPS.SITE_MIGRATION_HOW_TO_MIGRATE,
+					dependencies: { how: HOW_TO_MIGRATE_OPTIONS.DO_IT_MYSELF, destination: 'migrate' },
+					query: {
+						from: 'https://unreachable.example.com',
+						platform: 'wordpress',
+						siteId: 123,
+						siteSlug: 'example.wordpress.com',
+						how: HOW_TO_MIGRATE_OPTIONS.DO_IT_FOR_ME,
+					},
+				} );
+				expect( destination ).toMatchDestination( {
+					step: STEPS.SITE_MIGRATION_IDENTIFY,
+					query: { from: 'https://unreachable.example.com', how: '' },
+				} );
+				expect( window.location.assign ).not.toHaveBeenCalled();
+				expect( goToCheckout ).not.toHaveBeenCalled();
+			} );
 			it.each( [ undefined, 'https://source.example.com' ] )(
 				'opens the WordPress file importer with source %s and a return path to the offer',
 				( from ) => {

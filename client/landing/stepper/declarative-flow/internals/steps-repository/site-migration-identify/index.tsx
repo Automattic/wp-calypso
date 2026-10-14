@@ -28,7 +28,7 @@ type ConnectionIssue = 'unreachable' | 'http';
 interface Props {
 	hasError?: boolean;
 	onComplete: ( siteInfo: UrlData, hostingProviderSlug?: string ) => void;
-	onSkip: () => void;
+	onSkip: ( from?: string ) => void;
 	hideImporterListLink: boolean;
 	flowName: string;
 	onVisibilityChange: ( isVisible: boolean, issue?: ConnectionIssue ) => void;
@@ -70,11 +70,12 @@ export const Analyzer: FC< Props > = ( {
 	let connectionIssue: ConnectionIssue | undefined;
 	if ( isReprintFlow && siteURL && ! isFetching ) {
 		if (
-			( typeof siteHealth === 'string' && siteHealth !== 'ok' ) ||
-			( hasError &&
-				error &&
-				'code' in error &&
-				( error.code === 'http_request_failed' || error.code === 'rest_invalid_param' ) )
+			( ! siteInfo || hasError || [ 'wordpress', 'unknown' ].includes( siteInfo.platform ) ) &&
+			( ( typeof siteHealth === 'string' && siteHealth !== 'ok' ) ||
+				( hasError &&
+					error &&
+					'code' in error &&
+					( error.code === 'http_request_failed' || error.code === 'rest_invalid_param' ) ) )
 		) {
 			connectionIssue = 'unreachable';
 		} else if (
@@ -213,7 +214,9 @@ export const Analyzer: FC< Props > = ( {
 									</Step.SecondaryButton>
 								) }
 							</div>
-							<Step.LinkButton disabled>{ translate( 'Talk to the team' ) }</Step.LinkButton>
+							<Step.LinkButton onClick={ () => onSkip( sourceURL ) }>
+								{ translate( 'pick your current platform from a list' ) }
+							</Step.LinkButton>
 						</div>
 					) : (
 						<div className="site-migration-identify__status" role="status" aria-live="polite">
@@ -274,13 +277,20 @@ export const Analyzer: FC< Props > = ( {
 					onInputChange={ () => onSiteURLChange( '' ) }
 					hasError={ ! isReprintFlow && hasError }
 					skipInitialChecking
-					onDontHaveSiteAddressClick={ onSkip }
+					onDontHaveSiteAddressClick={ ( url ) => {
+						if ( ! isReprintFlow || ! url ) {
+							return onSkip();
+						}
+						onSkip( /^https?:\/\//i.test( url ) ? url : `https://${ url }` );
+					} }
 					placeholder={ translate( 'mygreatnewblog.com' ) }
 					label={ translate( 'Site address' ) }
 					dontHaveSiteAddressLabel={ translate(
 						'Or <button>pick your current platform from a list</button>'
 					) }
-					hideImporterListLink={ hideImporterListLink }
+					hideImporterListLink={
+						hideImporterListLink && ! ( isReprintFlow && siteURL && hasError )
+					}
 					nextLabelText={ isReprintFlow ? translate( 'Continue' ) : translate( 'Check my site' ) }
 				/>
 			</div>
@@ -362,9 +372,12 @@ const SiteMigrationIdentify: StepType< {
 				} )
 			}
 			hideImporterListLink={ urlQueryParams.get( 'hide_importer_link' ) === 'true' }
-			onSkip={ () => {
-				handleSubmit( 'skip_platform_identification' );
-			} }
+			onSkip={ ( from ) =>
+				navigation.submit?.( {
+					action: 'skip_platform_identification',
+					...( from ? { from } : {} ),
+				} )
+			}
 			isReprintFlow={ isReprintFlow }
 			siteURL={ siteURL }
 			onSiteURLChange={ setSiteURL }

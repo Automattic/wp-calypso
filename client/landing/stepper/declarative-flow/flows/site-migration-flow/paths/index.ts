@@ -48,6 +48,8 @@ export const siteCreationPath = buildPathHelper<
 			ssh?: string;
 			host?: string;
 			isWpcom?: boolean | '';
+			action?: string;
+			how?: string;
 		};
 	},
 	typeof STEPS.SITE_CREATION_STEP.slug
@@ -61,6 +63,8 @@ export const sitePickerPath = buildPathHelper<
 			ssh?: string;
 			host?: string;
 			isWpcom?: boolean | '';
+			action?: string;
+			how?: string;
 			siteId?: number | '';
 			siteSlug?: string;
 		};
@@ -81,6 +85,8 @@ export const howToMigratePath = buildPathHelper<
 			siteId?: number | string;
 			platform?: ImporterPlatform;
 			host?: string;
+			action?: string;
+			how?: string;
 		};
 	},
 	typeof STEPS.SITE_MIGRATION_HOW_TO_MIGRATE.slug
@@ -251,7 +257,7 @@ export const sshInProgressPath = buildPathHelper<
 
 export const identifyPath = buildPathHelper<
 	{
-		queryParams: { from: string | null };
+		queryParams: { from: string | null; how?: string };
 	},
 	typeof STEPS.SITE_MIGRATION_IDENTIFY.slug
 >( STEPS.SITE_MIGRATION_IDENTIFY.slug );
