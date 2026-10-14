@@ -24,7 +24,7 @@ const settings = {
 	max_limit: 1000,
 };
 
-export function Client() {
+export function Client( { includeNoteContext = false } = {} ) {
 	this.noteList = [];
 	this.gettingNotes = false;
 	this.timeout = false;
@@ -48,7 +48,7 @@ export function Client() {
 	this.subscribed = false;
 	this.firstRender = true;
 	this.locale = null;
-	this.includeNoteContext = false;
+	this.includeNoteContext = includeNoteContext;
 	this.inbox = [];
 
 	window.addEventListener( 'storage', handleStorageEvent.bind( this ) );
@@ -262,11 +262,6 @@ function getNotes( before, livePushMessages = [] ) {
 			debug( 'getNotes error, using backoff_ms=%d', backoff_ms );
 			this.noteList = [];
 			this.reschedule( backoff_ms );
-			return;
-		}
-
-		if ( this.includeNoteContext && ! parameters.fields.includes( 'note_context' ) ) {
-			this.getNotes( before, livePushMessages );
 			return;
 		}
 
@@ -884,16 +879,6 @@ function getNoteFields() {
 	return this.includeNoteContext ? `${ NOTE_FIELDS },note_context` : NOTE_FIELDS;
 }
 
-function setIncludeNoteContext( includeNoteContext ) {
-	if ( this.includeNoteContext === includeNoteContext ) {
-		return;
-	}
-	this.includeNoteContext = includeNoteContext;
-	if ( includeNoteContext ) {
-		this.getNotes();
-	}
-}
-
 Client.prototype.main = main;
 Client.prototype.reschedule = reschedule;
 Client.prototype.getNote = getNote;
@@ -907,6 +892,5 @@ Client.prototype.hasMoreNotes = hasMoreNotes;
 Client.prototype.refreshNotes = refreshNotes;
 Client.prototype.setVisibility = setVisibility;
 Client.prototype.setLocale = setLocale;
-Client.prototype.setIncludeNoteContext = setIncludeNoteContext;
 
 export default Client;

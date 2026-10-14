@@ -40,7 +40,7 @@ export default function Notifications( {
 		setHasUnseenNotifications( count > 0 );
 		omnibarEvents.notificationsUnseenCount.emit( count );
 	}, [] );
-	useSubscriberAlerts( onNotificationCount );
+	useSubscriberAlerts( onNotificationCount, isViewSettingsEnabled );
 
 	// Both share one query key, so this is a single request — and it is skipped entirely
 	// without the picker, where nothing reads either value.
