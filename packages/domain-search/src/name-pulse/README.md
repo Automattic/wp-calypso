@@ -12,7 +12,7 @@ A typed `name.tld` leaves the grid for its own card (`components/exact-match-car
 
 ## Tracks events
 
-Name Pulse follows the domain search Tracks proposal for i4: it keeps the classic events and adds props to them, and adds an event only where none fits. Every Tracks event it sends carries `search_ui_version: 'i4_v1'`. On the classic page nothing changes.
+Name Pulse follows the domain search Tracks proposal for i4: it keeps the classic events and adds props to them, and adds an event only where none fits. Every Tracks event it sends carries `search_ui_version: 'i4_v1'`; the classic page sends the same events with `search_ui_version: 'legacy_v1'`, as a baseline.
 
 Changes to classic events:
 

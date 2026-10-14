@@ -14,7 +14,11 @@ import {
 	type ContinuedDomainProduct,
 	useWPCOMDomainSearchCart,
 } from './use-wpcom-domain-search-cart';
-import { useWPCOMDomainSearchEvents, withNamePulseMarker } from './use-wpcom-domain-search-events';
+import {
+	getSearchUiVersion,
+	useWPCOMDomainSearchEvents,
+	withSearchUiVersion,
+} from './use-wpcom-domain-search-events';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 
 export type WPCOMDomainSearchProps = Omit<
@@ -70,7 +74,7 @@ export const useWPCOMDomainSearchProps = ( {
 				{ domain_name: firstItem.meta },
 				analyticsSection
 			);
-			dispatch( isNamePulse ? withNamePulseMarker( action ) : action );
+			dispatch( withSearchUiVersion( action, getSearchUiVersion( isNamePulse ) ) );
 			externalOnContinue( items );
 		},
 		[ dispatch, analyticsSection, externalOnContinue, isNamePulse ]
