@@ -35,10 +35,10 @@ These are the standard for new and changed code, even where older code falls sho
 - **Tracks**: Record events through the helpers in `utils/tracks.ts` (`recordAgentsManagerTracksEvent()`, or `recordBigSkyTracksEvent()` for Big Sky parity events), never `recordTracksEvent` directly. They honor the tracking opt-out and add the shared props.
 - **Styles**: Prefix CSS classes with `agents-manager-`, BEM-style (`agents-manager-sources-display__link`), so they don't collide with wp-admin and editor styles.
 - **Accessibility**: Make every control a real button (`Button` from `@wordpress/components`, or `<button type="button">` for a custom-styled one) and every link to a URL an `<a>` with `href`. Never use a clickable `div`, except a backdrop that closes something. Give icon-only buttons a translated label.
-- **Effects**: Clean up everything an effect starts (listeners, timers, subscriptions) in its cleanup function. The chat mounts and unmounts inside host pages, so leaks outlive it.
-- **Tests**: Put unit tests in the area's `__tests__/` folder (`components/__tests__/chat-header.test.tsx`, `abilities/<name>/__tests__/`), one behavior per test, named after what it checks. Jest runs every file directly in `__tests__/`, so fixtures go in a subfolder.
+- **Untrusted content**: Agent replies and page content are untrusted. Render them as text or through agenttic-ui's message renderers, never with `dangerouslySetInnerHTML`.
+- **Tests**: Put unit tests in the area's `__tests__/` folder (`components/__tests__/chat-header.test.tsx`, `abilities/<name>/__tests__/`), one behavior per test, named after what it checks. Query the UI by role or label as a user would; `getByTestId` is the last resort. Jest runs every file directly in `__tests__/`, so fixtures go in a subfolder.
 
-### Readable code
+### Code quality
 
 Write for the next reader.
 
@@ -46,6 +46,8 @@ Write for the next reader.
 - **Blank lines**: Separate the steps of a function or test with a blank line, not every statement.
 - **Functions**: Return early instead of nesting, avoid nested ternaries, and give each function one job. If a block needs a comment to say what it does, make it a named helper.
 - **Structure**: Keep components thin, so they mostly wire things up and render. A behavior with effects or several pieces of state goes in a hook named after it, under `hooks/`; logic with no React state is a pure function in `utils/`. Simple local UI state can stay in the component. Heavily shared components have stricter rules below.
+- **Effects**: Clean up everything an effect starts (listeners, timers, subscriptions) in its cleanup function. The chat mounts and unmounts inside host pages, so leaks outlive it.
+- **Errors**: Never swallow an error. Recover where you can and tell the user what failed; `console.error` the rest. Don't leave `console.log` calls in.
 - **Exports and types**: Use named exports in new files, and `unknown` with narrowing instead of `any`.
 
 ### Every change
