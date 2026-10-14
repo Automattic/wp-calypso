@@ -171,7 +171,7 @@ test( 'keeps the original comparison hidden before a generated preview exists', 
 		preview: null,
 	};
 	renderWorkspace();
-	expect( screen.getByRole( 'heading', { name: 'Design your own' } ) ).toBeVisible();
+	expect( screen.getByRole( 'heading', { name: 'Design your own theme' } ) ).toBeVisible();
 	expect( screen.queryByRole( 'radio', { name: 'Original' } ) ).toBeNull();
 	expect( screen.queryByRole( 'radio', { name: 'Design brief' } ) ).toBeNull();
 	expect( screen.queryByTitle( 'Original site' ) ).toBeNull();

@@ -512,12 +512,10 @@ export function RedesignWorkspace( {
 									) : (
 										<>
 											<CardHeading tagName="h1" size={ 32 }>
-												{ __( 'Design your own' ) }
+												{ __( 'Design your own theme' ) }
 											</CardHeading>
 											<p className="site-redesign-lead">
-												{ __(
-													'Give your site a new look built around the content you already have.'
-												) }
+												{ __( 'Give your site a fresh look with your existing content.' ) }
 											</p>
 											<ol className="site-redesign-steps">
 												{ /* Without a brief, the interview is where the user is now. */ }
