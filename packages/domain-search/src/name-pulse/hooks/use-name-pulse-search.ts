@@ -13,7 +13,6 @@ import {
 	getNamePulseNotice,
 	getResultsLayout,
 	getTopResults,
-	NAME_PULSE_AI_TIMEOUT_MS,
 	NAME_PULSE_INITIAL_CHECK_MULTI_WORD,
 	NAME_PULSE_INITIAL_CHECK_SINGLE_WORD,
 	NAME_PULSE_QUERY_SETTLE_MS,
@@ -85,7 +84,6 @@ const useNamePulseSuggestions = ( {
 		...queries.namePulseSuggestions( {
 			query: active ? suggestionsQuery : '',
 			use_ai: useAi,
-			...( useAi ? { timeout: NAME_PULSE_AI_TIMEOUT_MS } : {} ),
 			...( requestTlds.length > 0 ? { tlds: requestTlds } : {} ),
 		} ),
 		enabled: active,
