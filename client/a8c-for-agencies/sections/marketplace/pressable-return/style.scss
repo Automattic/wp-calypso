@@ -1,0 +1,14 @@
+.pressable-return {
+	.hosting-dashboard-layout__container {
+		height: 100%;
+	}
+
+	.hosting-dashboard-layout__body {
+		box-sizing: border-box;
+		display: flex;
+		flex: 1;
+		align-items: center;
+		justify-content: center;
+		padding-block: 32px;
+	}
+}
