@@ -36,8 +36,8 @@ import {
 import { css, keyframes } from '@emotion/react';
 import { Icon } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
-import { useSelect, useDispatch } from '@wordpress/data';
-import { pencil } from '@wordpress/icons';
+import { help, pencil } from '@wordpress/icons';
+import clsx from 'clsx';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
 import {
@@ -50,16 +50,21 @@ import {
 	type ReactNode,
 } from 'react';
 import { createPortal } from 'react-dom';
+import { useBlackboxProtection } from 'calypso/blocks/login/use-blackbox-protection';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import Loading from 'calypso/components/loading';
+import { ONBOARDING_STEPPER_TOTAL } from 'calypso/landing/stepper/declarative-flow/flows/onboarding/step-counter-config';
 import { OnboardingProgress } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/components/onboarding-progress';
 import { useShowOnboardingProgress } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/components/onboarding-progress/use-show-onboarding-progress';
 import { useInitialIsInStepContainerV2FlowContext } from 'calypso/layout/utils';
 import isAkismetCheckout from 'calypso/lib/akismet/is-akismet-checkout';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import {
 	hasGoogleApps,
 	hasDomainRegistration,
 	hasTransferProduct,
 	hasDIFMProduct,
+	hasDIFMOfferPlan,
 	has100YearPlan as cartHas100YearPlan,
 	ObjectWithProducts,
 	hasPlan,
@@ -86,18 +91,22 @@ import SitePreview from 'calypso/my-sites/customer-home/cards/features/site-prev
 import useOneDollarOfferTrack from 'calypso/my-sites/plans/hooks/use-onedollar-offer-track';
 import { siteHasPaidPlan } from 'calypso/signup/steps/site-picker/site-picker-submit';
 import { useDispatch as useReduxDispatch, useSelector } from 'calypso/state';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice, removeNotice } from 'calypso/state/notices/actions';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import { getIsOnboardingAffiliateFlow } from 'calypso/state/signup/flow/selectors';
-import { getWpComDomainBySiteId } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { useUpdateCachedContactDetails } from '../hooks/use-cached-contact-details';
 import { useCheckoutHelpCenter } from '../hooks/use-checkout-help-center';
 import useCouponFieldState from '../hooks/use-coupon-field-state';
+import useSiteDomains from '../hooks/use-site-domains';
+import {
+	contactDetailsActions,
+	useContactDetails,
+	vatDetailsInFormStore,
+} from '../lib/checkout-stores';
 import { validateContactDetails } from '../lib/contact-validation';
 import { updateCartContactDetailsForCheckout } from '../lib/update-cart-contact-details-for-checkout';
-import { CHECKOUT_STORE } from '../lib/wpcom-store';
+import { useValueStore } from '../lib/value-store';
 import { CheckoutMoneyBackGuarantee } from './CheckoutMoneyBackGuarantee';
 import AcceptTermsOfServiceCheckbox from './accept-terms-of-service-checkbox';
 import badge14Src from './assets/icons/badge-14.svg';
@@ -105,15 +114,15 @@ import badge7Src from './assets/icons/badge-7.svg';
 import badgeGenericSrc from './assets/icons/badge-generic.svg';
 import badgeSecurity from './assets/icons/security.svg';
 import CheckoutNextSteps from './checkout-next-steps';
-import CheckoutProcessorNotice from './checkout-processor-notice';
 import { CheckoutSidebarPlanUpsell } from './checkout-sidebar-plan-upsell';
-import CheckoutTrustCards from './checkout-trust-cards';
+import DIFMOfferRequestNotice from './difm-offer-request-notice';
 import { EmptyCart, shouldShowEmptyCartPage } from './empty-cart';
 import { handleProgressStepSelect } from './handle-progress-step-select';
 import JetpackAkismetCheckoutSidebarPlanUpsell from './jetpack-akismet-checkout-sidebar-plan-upsell';
 import { LeaveCheckoutModal, useCheckoutLeaveModal } from './leave-checkout-modal';
 import { MobileCheckoutStickySummary } from './mobile-checkout-sticky-summary';
 import { mobileCheckoutStickySummaryRadioDotStyles } from './mobile-checkout-sticky-summary-styles';
+import { NonRenewableDomain, SearchForNewDomainButton } from './non-renewable-domain';
 import BeforeSubmitCheckoutHeader from './payment-method-step';
 import { PaymentMethodFilter } from './payment-methods-filter';
 import { getRefundWindowCopy } from './refund-policies';
@@ -125,6 +134,7 @@ import {
 } from './wp-checkout-order-summary';
 import WPContactForm from './wp-contact-form';
 import WPContactFormSummary from './wp-contact-form-summary';
+import { LogInToCorrectAccountButton, WrongAccountRenewal } from './wrong-account-renewal';
 import type { OnChangeItemVariant } from './item-variation-picker';
 import type {
 	CheckoutPageErrorCallback,
@@ -204,13 +214,22 @@ function ConditionalContactDetailsMessage( {
 	}
 	return (
 		<ContactDetailsFormDescription>
-			{ isMobileCheckoutStickySummary
-				? translate(
-						'Required for domain registration. Your details are protected for eligible domains.'
-				  )
-				: translate(
+			{ isMobileCheckoutStickySummary ? (
+				translate(
+					'Required for domain registration. Your details are protected for eligible domains.'
+				)
+			) : (
+				<>
+					{ translate(
 						'Registering a domain name requires valid contact information. Privacy Protection is included for all eligible domains to protect your personal information.'
-				  ) }
+					) }{ ' ' }
+					<InlineSupportLink
+						supportContext="domain-contact-information-requirements"
+						showText={ false }
+						linkTitle={ translate( 'Learn more' ) }
+					/>
+				</>
+			) }
 		</ContactDetailsFormDescription>
 	);
 }
@@ -245,13 +264,13 @@ const ContactFormTitle = () => {
 		if ( isMobileCheckoutStickySummary ) {
 			return <>{ String( translate( 'Contact information' ) ) }</>;
 		}
-		return (
-			<>
-				{ ! isActive && isComplete
-					? String( translate( 'Contact information' ) )
-					: String( translate( 'Enter your contact information' ) ) }
-			</>
-		);
+
+		const titleText =
+			! isActive && isComplete
+				? translate( 'Contact information' )
+				: translate( 'Enter your contact information' );
+
+		return <>{ titleText }</>;
 	}
 
 	if ( contactDetailsType === 'gsuite' ) {
@@ -265,7 +284,7 @@ const ContactFormTitle = () => {
 								},
 								comment: '%(googleMailService)s can be either "G Suite" or "Google Workspace"',
 							} )
-					  )
+						)
 					: String(
 							translate( 'Enter your %(googleMailService)s account information', {
 								args: {
@@ -273,7 +292,7 @@ const ContactFormTitle = () => {
 								},
 								comment: '%(googleMailService)s can be either "G Suite" or "Google Workspace"',
 							} )
-					  ) }
+						) }
 			</>
 		);
 	}
@@ -342,7 +361,7 @@ function CheckoutSidebarNudge( {
 		return null;
 	}
 
-	if ( isDIFMInCart ) {
+	if ( isDIFMInCart || hasDIFMOfferPlan( responseCart ) ) {
 		return (
 			<CheckoutSidebarNudgeWrapper>
 				<CheckoutNextSteps responseCart={ responseCart } />
@@ -381,9 +400,13 @@ function CheckoutSidebarNudge( {
 function PortaledCheckoutFormSubmit( {
 	validateForm,
 	submitButtonHeader,
+	disableSubmitButton,
+	disableContinueButton,
 }: {
 	validateForm?: () => Promise< boolean >;
 	submitButtonHeader?: ReactNode;
+	disableSubmitButton?: boolean;
+	disableContinueButton?: boolean;
 } ) {
 	const { slotEl } = useSubmitButtonSlot();
 	if ( ! slotEl ) {
@@ -394,6 +417,8 @@ function PortaledCheckoutFormSubmit( {
 			validateForm={ validateForm }
 			continueToNextIncompleteStep
 			submitButtonHeader={ submitButtonHeader }
+			disableSubmitButton={ disableSubmitButton }
+			disableContinueButton={ disableContinueButton }
 		/>,
 		slotEl
 	);
@@ -416,6 +441,8 @@ export default function CheckoutMainContent( {
 	siteUrl,
 	isRemovingProductFromCart,
 	areThereErrors,
+	isWrongAccountRenewal,
+	isNonRenewableDomain,
 	isInitialCartLoading,
 	customizedPreviousPath,
 	loadingHeader,
@@ -439,6 +466,8 @@ export default function CheckoutMainContent( {
 	siteUrl: string | undefined;
 	isRemovingProductFromCart: boolean;
 	areThereErrors: boolean;
+	isWrongAccountRenewal: boolean;
+	isNonRenewableDomain: boolean;
 	isInitialCartLoading: boolean;
 	customizedPreviousPath?: string;
 	loadingHeader?: ReactNode;
@@ -458,6 +487,10 @@ export default function CheckoutMainContent( {
 	} = useShoppingCart( cartKey );
 
 	const leaveModalProps = useCheckoutLeaveModal( { siteUrl: siteUrl ?? '' } );
+	const blackbox = useBlackboxProtection( {
+		feature: 'blackbox-userless-checkout',
+		suspended: ! isLoggedOutCart,
+	} );
 
 	// Shared sidebar slot for the active payment-method submit button. We render
 	// <CheckoutFormSubmit> inside <CheckoutStepGroup> so it keeps full step-state
@@ -486,18 +519,21 @@ export default function CheckoutMainContent( {
 	const isMobileViewport = useViewportMatch( 'small', '<' );
 	const stepsCurrent = Number( searchParams.get( 'steps_current' ) );
 	const stepsTotal = Number( searchParams.get( 'steps_total' ) );
-	const stepCounter =
-		isMobileViewport &&
+	const hasStepCount =
 		Number.isInteger( stepsCurrent ) &&
 		stepsCurrent > 0 &&
 		Number.isInteger( stepsTotal ) &&
 		stepsTotal > 0 &&
-		stepsCurrent <= stepsTotal
-			? { current: stepsCurrent, total: stepsTotal }
-			: null;
+		stepsCurrent <= stepsTotal;
+	const stepCounter =
+		isMobileViewport && hasStepCount ? { current: stepsCurrent, total: stepsTotal } : null;
+	// The flow reports how many steps its visit had. Onboarding sends one fewer when the plan
+	// arrived preselected, so the grid was never among them.
+	const shouldHidePlansStep =
+		isOnboardingFlowCheckout && hasStepCount && stepsTotal < ONBOARDING_STEPPER_TOTAL;
 	const selectedSiteData = useSelector( getSelectedSite );
-	const wpcomDomain = useSelector( ( state ) =>
-		getWpComDomainBySiteId( state, selectedSiteData?.ID )
+	const wpcomDomain = useSiteDomains( selectedSiteData?.ID ).find(
+		( { isWPCOMDomain, isWpcomStagingDomain } ) => isWPCOMDomain || isWpcomStagingDomain
 	);
 
 	// Only show the site preview for WPCOM domains that have a site connected to the site id
@@ -523,12 +559,10 @@ export default function CheckoutMainContent( {
 
 	const contactDetailsType = getContactDetailsType( responseCart );
 
-	const contactInfo = useSelect( ( select ) => select( CHECKOUT_STORE ).getContactInfo(), [] );
+	const contactInfo = useContactDetails();
 
-	const vatDetailsInForm = useSelect( ( select ) => select( CHECKOUT_STORE ).getVatDetails(), [] );
+	const vatDetailsInForm = useValueStore( vatDetailsInFormStore );
 	const { setVatDetails, vatDetails: vatDetailsFromServer } = useVatDetails();
-
-	const checkoutActions = useDispatch( CHECKOUT_STORE );
 
 	const [
 		shouldShowContactDetailsValidationErrors,
@@ -548,6 +582,12 @@ export default function CheckoutMainContent( {
 		shouldShowContactDetailsValidationErrorsRef.current = value;
 		setShouldShowContactDetailsValidationErrorsState( value );
 	}, [] );
+
+	// While the contact form waits for cached contact details it is hidden, so the
+	// portaled Continue must not validate it: that would flag errors on fields the
+	// shopper has not seen. This is not form status, because `LOADING` replaces the
+	// whole step group (unmounting the contact form doing the prefill).
+	const [ isContactPrefillPending, setIsContactPrefillPending ] = useState( false );
 
 	// The "Summary" view is displayed in the sidebar at desktop (wide) widths
 	// and before the first step at mobile (smaller) widths. At smaller widths it
@@ -635,17 +675,14 @@ export default function CheckoutMainContent( {
 	);
 	const hasDiscountForHeader = originalPriceForHeader > responseCart.total_cost_integer;
 
-	const { helpCenterButtonCopy, helpCenterButtonLink, toggleHelpCenter } = useCheckoutHelpCenter();
-
-	if ( ! checkoutActions ) {
-		return null;
-	}
+	const { helpCenterButtonCopy, helpCenterButtonLink, toggleHelpCenter, showHelpIcon } =
+		useCheckoutHelpCenter();
 
 	const {
 		touchContactFields,
 		applyDomainContactValidationResults,
 		clearDomainContactErrorMessages,
-	} = checkoutActions;
+	} = contactDetailsActions;
 
 	if ( transactionStatus === TransactionStatus.COMPLETE ) {
 		if ( isStepContainerV2 ) {
@@ -666,6 +703,45 @@ export default function CheckoutMainContent( {
 					<Loading className="checkout__pending-content" title={ headingText } />
 				</WPCheckoutCompletedMainContent>
 			</WPCheckoutCompletedWrapper>
+		);
+	}
+
+	// This must be checked before the empty cart page below: the renewal was
+	// rejected by the cart, so the cart is also empty, but "you have no items in
+	// your cart" tells the customer nothing they can act on.
+	if ( isWrongAccountRenewal ) {
+		debug( 'rendering wrong account renewal page' );
+		return (
+			<WPCheckoutWrapper>
+				<WPCheckoutSidebarContent></WPCheckoutSidebarContent>
+				<WPCheckoutMainContent isMobileCheckoutStickySummary={ isMobileCheckoutStickySummary }>
+					<PerformanceTrackerStop />
+					<WPCheckoutTitle className="checkout__main-title">
+						{ translate( 'Checkout' ) }
+					</WPCheckoutTitle>
+					<WrongAccountRenewal />
+					<CheckoutFormSubmit submitButton={ <LogInToCorrectAccountButton /> } />
+				</WPCheckoutMainContent>
+			</WPCheckoutWrapper>
+		);
+	}
+
+	// Same reasoning as above: the domain renewal was rejected, so the cart is
+	// empty, and "you have no items in your cart" explains none of it.
+	if ( isNonRenewableDomain ) {
+		debug( 'rendering non-renewable domain page' );
+		return (
+			<WPCheckoutWrapper>
+				<WPCheckoutSidebarContent></WPCheckoutSidebarContent>
+				<WPCheckoutMainContent isMobileCheckoutStickySummary={ isMobileCheckoutStickySummary }>
+					<PerformanceTrackerStop />
+					<WPCheckoutTitle className="checkout__main-title">
+						{ translate( 'Checkout' ) }
+					</WPCheckoutTitle>
+					<NonRenewableDomain />
+					<CheckoutFormSubmit submitButton={ <SearchForNewDomainButton /> } />
+				</WPCheckoutMainContent>
+			</WPCheckoutWrapper>
 		);
 	}
 
@@ -822,7 +898,22 @@ export default function CheckoutMainContent( {
 	// money-back guarantee is surfaced up in the payment step instead (see
 	// paymentStepRefundCopy) — reassurance at the moment of entering card
 	// details — so the footer slot below the CTA stays empty.
-	const portaledSubmitButtonHeader = isLargeViewport ? undefined : <SubmitButtonHeader />;
+	const blackboxChallengeHeader =
+		isLoggedOutCart && blackbox.challenge ? (
+			<BlackboxChallengeWrapper>{ blackbox.challenge }</BlackboxChallengeWrapper>
+		) : null;
+	const portaledSubmitButtonHeader = (
+		<>
+			{ isLargeViewport ? null : <SubmitButtonHeader /> }
+			{ blackboxChallengeHeader }
+		</>
+	);
+	const mobileSubmitButtonHeader = (
+		<>
+			<SubmitButtonHeader />
+			{ blackboxChallengeHeader }
+		</>
+	);
 	// Refund copy, no icon, that continues the secure-encryption notice at payment
 	// entry. getRefundWindowCopy is null when no refund window applies; mirror
 	// CheckoutMoneyBackGuarantee's all-domains guard.
@@ -840,6 +931,7 @@ export default function CheckoutMainContent( {
 				isMobileCheckoutStickySummary={ isMobileCheckoutStickySummary }
 			>
 				<CheckoutOrderBanner />
+				<DIFMOfferRequestNotice responseCart={ responseCart } />
 				{ isStepContainerV2 ? (
 					<Step.Heading
 						text={ translate( 'Checkout' ) }
@@ -905,7 +997,6 @@ export default function CheckoutMainContent( {
 									showErrorMessageBriefly,
 									applyDomainContactValidationResults,
 									clearDomainContactErrorMessages,
-									reduxDispatch,
 									translate,
 									shouldDisplayValidationErrors
 								);
@@ -930,7 +1021,7 @@ export default function CheckoutMainContent( {
 													? `${ vatError.message } ${ translate(
 															'You can uncheck “Add VAT details” to finish your purchase now without a VAT ID.',
 															{ textOnly: true }
-													  ) }`
+														) }`
 													: vatError.message;
 											reduxDispatch( errorNotice( vatErrorMessage, { id: 'vat_info_notice' } ) );
 										}
@@ -962,12 +1053,10 @@ export default function CheckoutMainContent( {
 										prepareDomainContactValidationRequest( contactInfo )
 									);
 
-									reduxDispatch(
-										recordTracksEvent( 'calypso_checkout_composite_step_complete', {
-											step: 1,
-											step_name: 'contact-form',
-										} )
-									);
+									recordTracksEvent( 'calypso_checkout_composite_step_complete', {
+										step: 1,
+										step_name: 'contact-form',
+									} );
 								}
 								return validationResponse;
 							} }
@@ -984,6 +1073,7 @@ export default function CheckoutMainContent( {
 										setShouldShowContactDetailsValidationErrors={
 											setShouldShowContactDetailsValidationErrors
 										}
+										setIsPrefillPending={ setIsContactPrefillPending }
 									/>
 								</>
 							}
@@ -1083,12 +1173,15 @@ export default function CheckoutMainContent( {
 						<PortaledCheckoutFormSubmit
 							validateForm={ validateForm }
 							submitButtonHeader={ portaledSubmitButtonHeader }
+							disableSubmitButton={ blackbox.isSubmitBlocked }
+							disableContinueButton={ isContactPrefillPending }
 						/>
 					) : (
 						<CheckoutFormSubmit
 							validateForm={ validateForm }
-							submitButtonHeader={ <SubmitButtonHeader /> }
+							submitButtonHeader={ mobileSubmitButtonHeader }
 							submitButtonFooter={ mobileSubmitButtonFooter }
+							disableSubmitButton={ blackbox.isSubmitBlocked }
 						/>
 					) }
 				</CheckoutStepGroup>
@@ -1111,12 +1204,6 @@ export default function CheckoutMainContent( {
 					) }
 					{ checkoutSummary }
 					{ checkoutMainContent }
-					{ isLargeViewport && (
-						<>
-							<CheckoutProcessorNotice />
-							<CheckoutTrustCards cart={ responseCart } />
-						</>
-					) }
 				</WPCheckoutWrapper>
 			</SubmitButtonSlotContext.Provider>
 		);
@@ -1136,6 +1223,8 @@ export default function CheckoutMainContent( {
 						showProgress ? (
 							<OnboardingProgress
 								currentStep="checkout"
+								shouldHidePlansStep={ shouldHidePlansStep }
+								isStepSelectDisabled={ leaveModalProps.isLeaveDisabled }
 								onStepSelect={ ( step ) =>
 									handleProgressStepSelect( step, {
 										forceCheckoutBackUrlDomains,
@@ -1152,7 +1241,11 @@ export default function CheckoutMainContent( {
 							<Step.TopBar
 								leftElement={
 									showProgress ? undefined : (
-										<Step.BackButton onClick={ leaveModalProps.clickClose } />
+										<Step.BackButton
+											onClick={ leaveModalProps.clickClose }
+											disabled={ leaveModalProps.isLeaveDisabled }
+											accessibleWhenDisabled
+										/>
 									)
 								}
 								rightElement={
@@ -1163,9 +1256,14 @@ export default function CheckoutMainContent( {
 												total={ stepCounter.total }
 											/>
 										) }
-										<span className="checkout-skip-button">
+										<span
+											className={ clsx( 'checkout-skip-button', {
+												'has-help-entry-label': showHelpIcon,
+											} ) }
+										>
 											{ helpCenterButtonCopy && <label>{ helpCenterButtonCopy }</label> }
 											<Step.LinkButton onClick={ toggleHelpCenter }>
+												{ showHelpIcon && <Icon icon={ help } size={ 20 } /> }
 												{ helpCenterButtonLink }
 											</Step.LinkButton>
 										</span>
@@ -1193,11 +1291,7 @@ export default function CheckoutMainContent( {
 						if ( isLargeViewport ) {
 							return (
 								<>
-									<div className="checkout-main-column">
-										{ checkoutMainContent }
-										<CheckoutProcessorNotice />
-										<CheckoutTrustCards cart={ responseCart } />
-									</div>
+									<div className="checkout-main-column">{ checkoutMainContent }</div>
 									{ checkoutSummary }
 								</>
 							);
@@ -1663,6 +1757,13 @@ const StepContainerV2CheckoutFixer = styled.div< {
 			@media ( ${ ( props ) => props.theme.breakpoints.bigPhoneUp } ) {
 				display: inline;
 			}
+		}
+
+		/* The labelled entry point puts an icon beside the text, as in the admin bar. */
+		&.has-help-entry-label button {
+			display: inline-flex;
+			align-items: center;
+			gap: 2px;
 		}
 	}
 
@@ -2314,6 +2415,11 @@ const CheckoutTermsAndCheckboxesWrapper = styled.div`
 		padding-inline-start: 40px;
 		padding-inline-end: 0;
 	}
+
+	/* On desktop without a consent checkbox the terms live in the sidebar and nothing renders here. */
+	&:empty {
+		display: none;
+	}
 `;
 
 function CheckoutTermsAndCheckboxes( {
@@ -2373,6 +2479,12 @@ function CheckoutTermsAndCheckboxes( {
 		</CheckoutTermsAndCheckboxesWrapper>
 	);
 }
+
+const BlackboxChallengeWrapper = styled.div`
+	.login__form-blackbox-challenge.has-visible-challenge {
+		margin-block-end: 8px;
+	}
+`;
 
 function SubmitButtonHeader() {
 	const translate = useTranslate();
@@ -2521,9 +2633,7 @@ const WPCheckoutWrapper = styled.div< {
 	grid-template-columns: 1fr;
 	grid-template-areas:
 		'sidebar-content'
-		'main-content'
-		'processor-notice'
-		'trust-cards';
+		'main-content';
 	align-content: start;
 	justify-content: center;
 	justify-items: center;
@@ -2531,26 +2641,13 @@ const WPCheckoutWrapper = styled.div< {
 
 	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
 		grid-template-columns: 1fr minmax( 500px, 688px ) 475px 1fr;
-		grid-template-areas:
-			'main-content main-content sidebar-content sidebar-content'
-			'. processor-notice sidebar-content sidebar-content'
-			'. trust-cards sidebar-content sidebar-content';
+		grid-template-areas: 'main-content main-content sidebar-content sidebar-content';
 		justify-items: end;
 	}
 
 	& > * {
 		box-sizing: border-box;
 		width: 100%;
-	}
-
-	& > .checkout-trust-cards {
-		grid-area: trust-cards;
-		justify-self: center;
-	}
-
-	& > .checkout-processor-notice {
-		grid-area: processor-notice;
-		justify-self: center;
 	}
 
 	& *:focus {
@@ -2609,9 +2706,7 @@ const WPCheckoutWrapper = styled.div< {
 			grid-template-areas:
 				'checkout-title-area'
 				'sidebar-content'
-				'main-content'
-				'processor-notice'
-				'trust-cards';
+				'main-content';
 			.checkout-sidebar-content {
 				background: ${ colorStudio.colors[ 'White' ] };
 			}
@@ -2963,7 +3058,7 @@ const WPCheckoutMainContent = styled.div< {
 	isMobileCheckoutStickySummary?: boolean;
 } >`
 	grid-area: main-content;
-	margin-top: 50px;
+	margin-top: 48px;
 
 	@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
 		padding: 0 24px;
@@ -2976,6 +3071,7 @@ const WPCheckoutMainContent = styled.div< {
 		padding-block: 0;
 		padding-inline-start: 24px;
 		padding-inline-end: 64px;
+		margin-bottom: 48px;
 	}
 
 	/* On narrower desktops the 64px between form and sidebar is too tight
@@ -3003,129 +3099,122 @@ const WPCheckoutMainContent = styled.div< {
 		.form-fieldset.contact-details-form-fields .contact-details-form-fields__field {
 			margin-bottom: ${ props.isMobileCheckoutStickySummary ? '0' : '10px' };
 		}
-		${ props.isMobileCheckoutStickySummary &&
-		css`
-			.form-fieldset.contact-details-form-fields .contact-details-form-fields__field,
-			.form-fieldset.contact-details-form-fields .contact-details-form-fields__country {
-				margin-top: 0;
-			}
-			/* "+ Add Address Line 2" / "+ Add organization name" toggles
-			   come from .form__hidden-input. Reset its 5px margin-top so
-			   the link sits at the parent's flex-gap rhythm, and match the
-			   "Remove plan" link typography (13/20/regular/Gray 100/underline)
-			   so all destructive/secondary links read as one family. */
-			.form-fieldset.contact-details-form-fields .form__hidden-input a {
-				margin-top: 0;
-				font-size: 13px;
-				line-height: 20px;
-				font-weight: 400;
-				color: ${ colorStudio.colors[ 'Gray 100' ] };
-				text-decoration: underline;
-			}
-			/* .vat-form__row carries its own 16px margin-top (plus a
+		${
+			props.isMobileCheckoutStickySummary &&
+			css`
+				.form-fieldset.contact-details-form-fields .contact-details-form-fields__field,
+				.form-fieldset.contact-details-form-fields .contact-details-form-fields__country {
+					margin-top: 0;
+				}
+				/* The "+ Add Address Line 2" toggle comes from .form__hidden-input.
+			   Reset its 5px margin-top so the link sits at the parent's flex-gap
+			   rhythm, and match the "Remove plan" link typography
+			   (13/20/regular/Gray 100/underline) so all destructive/secondary
+			   links read as one family. */
+				.form-fieldset.contact-details-form-fields .form__hidden-input a {
+					margin-top: 0;
+					font-size: 13px;
+					line-height: 20px;
+					font-weight: 400;
+					color: ${ colorStudio.colors[ 'Gray 100' ] };
+					text-decoration: underline;
+				}
+				/* .vat-form__row carries its own 16px margin-top (plus a
 			   16px margin-block-start on stacked rows on mobile) — both
 			   redundant now that we drive spacing through column gaps. */
-			.checkout-contact-form-step .vat-form__row,
-			.checkout-contact-form-step .vat-form__row > div:not( :first-child ) {
-				margin-top: 0;
-				margin-block-start: 0;
-			}
-			/* The VAT form lives inside .__extra-fields (not flex by default)
+				.checkout-contact-form-step .vat-form__row,
+				.checkout-contact-form-step .vat-form__row > div:not( :first-child ) {
+					margin-top: 0;
+					margin-block-start: 0;
+				}
+				/* The VAT form lives inside .__extra-fields (not flex by default)
 			   and each .vat-form__row stacks fields on mobile. Promote both
 			   plus the expanded-fields wrapper to flex columns with the
 			   unified 16px gap so the whole block matches the rest of the
 			   contact form's rhythm. */
-			.checkout-contact-form-step .contact-details-form-fields__extra-fields,
-			.checkout-contact-form-step .vat-form__expanded,
-			.checkout-contact-form-step .vat-form__row {
-				display: flex;
-				flex-direction: column;
-				gap: 16px;
-			}
-			/* Expanded VAT fields render as a quiet card to signal they
+				.checkout-contact-form-step .contact-details-form-fields__extra-fields,
+				.checkout-contact-form-step .vat-form__expanded,
+				.checkout-contact-form-step .vat-form__row {
+					display: flex;
+					flex-direction: column;
+					gap: 16px;
+				}
+				/* Expanded VAT fields render as a quiet card to signal they
 			   form a distinct section toggled by the checkbox above. */
-			.checkout-contact-form-step .vat-form__expanded {
-				background: ${ colorStudio.colors[ 'Gray 0' ] };
-				border: 1px solid ${ colorStudio.colors[ 'Gray 5' ] };
-				border-radius: 4px;
-				padding: 16px;
-				margin-top: 8px;
-			}
-			/* Figma 2392:15444 — VAT details checkbox renders at 16x16.
+				.checkout-contact-form-step .vat-form__expanded {
+					background: ${ colorStudio.colors[ 'Gray 0' ] };
+					border: 1px solid ${ colorStudio.colors[ 'Gray 5' ] };
+					border-radius: 4px;
+					padding: 16px;
+					margin-top: 8px;
+				}
+				/* Figma 2392:15444 — VAT details checkbox renders at 16x16.
 			   WPDS' .components-checkbox-control drives every dimension
 			   (input, checkmark icon, hover/active/disabled outlines)
 			   off --checkbox-input-size, so a single var override gives
 			   a properly-scaled checkbox with all states intact. */
-			.checkout-contact-form-step .vat-form__expand-button.components-checkbox-control {
-				--checkbox-input-size: 16px;
-			}
-			/* CheckboxControl's HStack ships with alignment="top" which makes
+				.checkout-contact-form-step .vat-form__expand-button.components-checkbox-control {
+					--checkbox-input-size: 16px;
+				}
+				/* CheckboxControl's HStack ships with alignment="top" which makes
 			   the box sit at the line-box top while the text's cap-height
 			   sits a few pixels lower — visible misalignment. Center the
 			   pair instead. */
-			.checkout-contact-form-step
-				.vat-form__expand-button.components-checkbox-control
-				.components-h-stack {
-				align-items: center;
-			}
-			/* Figma 2392:15431 — contact form labels render in Gray 100. Scoped to
+				.checkout-contact-form-step
+					.vat-form__expand-button.components-checkbox-control
+					.components-h-stack {
+					align-items: center;
+				}
+				/* Figma 2392:15431 — contact form labels render in Gray 100. Scoped to
 			   the contact step: the payment step's own labels are handled by the
 			   .credit-card-fields-inner-wrapper rules. */
-			.checkout-contact-form-step .form-label {
-				color: ${ colorStudio.colors[ 'Gray 100' ] };
-			}
-			/* The VAT form (Field from @automattic/wpcom-checkout) renders
+				.checkout-contact-form-step .form-label {
+					color: ${ colorStudio.colors[ 'Gray 100' ] };
+				}
+				/* The VAT form (Field from @automattic/wpcom-checkout) renders
 			   a plain <label> via emotion, not .form-label, so it doesn't
 			   pick up the contact-form label styling. Match it here. */
-			.checkout-contact-form-step .vat-form__row label {
-				font-size: 13px;
-				line-height: 20px;
-				font-weight: 500;
-				color: ${ colorStudio.colors[ 'Gray 100' ] };
-				margin-bottom: 6px;
-			}
-			/* The "ES"/country-code prefix in front of the VAT ID input
+				.checkout-contact-form-step .vat-form__row label {
+					font-size: 13px;
+					line-height: 20px;
+					font-weight: 500;
+					color: ${ colorStudio.colors[ 'Gray 100' ] };
+					margin-bottom: 6px;
+				}
+				/* The "ES"/country-code prefix in front of the VAT ID input
 			   carries a 3.5rem min-width and 14px font that push the input
 			   over and leave a yawning gap. Match it to the input rhythm. */
-			.checkout-contact-form-step .vat-form__row .field__overlay-prefix {
-				font-size: 13px;
-				min-width: 0;
-				padding-inline: 12px;
-			}
-			/* Figma 2461:4947 — "Continue to payment" spans the full column. */
-			.checkout-next-step-button {
-				width: 100%;
-			}
-			/* Unified 16px vertical rhythm between every row. The outer
+				.checkout-contact-form-step .vat-form__row .field__overlay-prefix {
+					font-size: 13px;
+					min-width: 0;
+					padding-inline: 12px;
+				}
+				/* Figma 2461:4947 — "Continue to payment" spans the full column. */
+				.checkout-next-step-button {
+					width: 100%;
+				}
+				/* Unified 16px vertical rhythm between every row. The outer
 			   FormFieldset is already flex-column but ships without a gap,
 			   and First/Last name is rendered as its sibling — not inside
 			   __contact-details. So the gap needs to live on all of:
 			   the outer FormFieldset, __contact-details itself, and both
 			   wrapper divs from RegionAddressFieldsets. */
-			.form-fieldset.contact-details-form-fields,
-			.form-fieldset.contact-details-form-fields .contact-details-form-fields__contact-details,
-			.form-fieldset.contact-details-form-fields .region-address-fieldsets,
-			.form-fieldset.contact-details-form-fields .region-address-fieldsets__street-address {
-				display: flex;
-				flex-direction: column;
-				gap: 16px;
-			}
-			/* …except the street-address wrapper, which pairs an input with its
+				.form-fieldset.contact-details-form-fields,
+				.form-fieldset.contact-details-form-fields .contact-details-form-fields__contact-details,
+				.form-fieldset.contact-details-form-fields .region-address-fieldsets,
+				.form-fieldset.contact-details-form-fields .region-address-fieldsets__street-address {
+					display: flex;
+					flex-direction: column;
+					gap: 16px;
+				}
+				/* …except the street-address wrapper, which pairs an input with its
 			   toggle link ("+ Add Address Line 2") as a "Field + Action" group —
 			   Figma 2392:15432 puts those 8px apart, not 16. */
-			.form-fieldset.contact-details-form-fields .region-address-fieldsets__street-address {
-				gap: 8px;
-			}
-			/* Same rhythm for the "Add organization name" row — it sits in
-			   its own __row but is conceptually a Field+Action paired with
-			   the Last name field above. Negative margin compensates the
-			   parent's 16px column gap down to 8px. Only fires while the
-			   HiddenInput link is showing; once toggled to an input the
-			   row drops back to full 16px spacing. */
-			.contact-details-form-fields__row:has( .form__hidden-input ) {
-				margin-top: -8px;
-			}
-		` }
+				.form-fieldset.contact-details-form-fields .region-address-fieldsets__street-address {
+					gap: 8px;
+				}
+			`
+		}
 		.checkout-terms-and-checkboxes a {
 			color: ${ props.theme.colors.textColorDark };
 		}

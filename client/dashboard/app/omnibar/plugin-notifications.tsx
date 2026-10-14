@@ -1,4 +1,5 @@
 import { __ } from '@wordpress/i18n';
+import clsx from 'clsx';
 import { useEffect, useRef, useState } from 'react';
 import { wpcomLink } from '../../utils/link';
 import { omnibarEvents, useOmnibarEvent } from './events';
@@ -22,9 +23,20 @@ export function useNotificationsPlugin( { user }: { user?: User } ): OmnibarNode
 	const [ hasUnseenNotifications, setHasUnseenNotifications ] = useState(
 		!! user?.has_unseen_notes
 	);
+	const [ subscriberAlertPulse, setSubscriberAlertPulse ] = useState( 0 );
 
 	useOmnibarEvent( 'notificationsUnseenCount', ( count ) =>
 		setHasUnseenNotifications( count > 0 )
+	);
+
+	useOmnibarEvent( 'notificationsOpen', ( isOpen ) => {
+		if ( isOpen ) {
+			setHasUnseenNotifications( false );
+		}
+	} );
+
+	useOmnibarEvent( 'notificationsSubscriberReceived', () =>
+		setSubscriberAlertPulse( ( pulse ) => pulse + 1 )
 	);
 
 	const bellRef = useRef< HTMLSpanElement >( null );
@@ -36,15 +48,24 @@ export function useNotificationsPlugin( { user }: { user?: User } ): OmnibarNode
 
 	return {
 		id: 'notifications',
+		className: 'omnibar__notifications',
 		label: __( 'Notifications' ),
 		icon: (
-			<span ref={ bellRef } className="omnibar__notifications-icon">
+			<span
+				key={ subscriberAlertPulse }
+				ref={ bellRef }
+				className={ clsx(
+					'omnibar__notifications-icon',
+					subscriberAlertPulse > 0 && 'omnibar__notifications-icon--subscriber-pulse'
+				) }
+			>
 				<BellIcon hasUnread={ hasUnseenNotifications } />
 			</span>
 		),
 		href: wpcomLink( '/notifications' ),
 		onClick: ( event ) => {
 			event.preventDefault();
+			event.stopPropagation();
 			omnibarEvents.notifications.emit();
 		},
 	};

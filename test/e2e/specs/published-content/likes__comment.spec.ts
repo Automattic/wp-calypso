@@ -9,7 +9,7 @@ import {
 	envToFeatureKey,
 	getTestAccountByFeature,
 } from '@automattic/calypso-e2e';
-import { tags, test } from '../../lib/pw-base';
+import { expect, tags, test } from '../../lib/pw-base';
 
 test.describe( 'Likes: Comment', { tag: [ tags.GUTENBERG ] }, () => {
 	const features = envToFeatureKey( envVariables );
@@ -35,6 +35,11 @@ test.describe( 'Likes: Comment', { tag: [ tags.GUTENBERG ] }, () => {
 	} );
 
 	test( 'As a user, I can like and unlike a comment', async ( { page } ) => {
+		if ( envVariables.TEST_ON_ATOMIC ) {
+			test.setTimeout( 450_000 );
+		}
+		const commentSyncTimeout = envVariables.TEST_ON_ATOMIC ? 150_000 : 15_000;
+
 		testAccount = new TestAccount( accountName );
 		restAPIClient = new RestAPIClient( testAccount.credentials );
 		let commentToBeLiked: NewCommentResponse;
@@ -63,23 +68,25 @@ test.describe( 'Likes: Comment', { tag: [ tags.GUTENBERG ] }, () => {
 				DataHelper.getRandomPhrase()
 			);
 
-			// The comment takes some time to settle. Retry to handle `unknown_comment` errors.
-			const likeRetryCount = 10;
-			for ( let i = 0; i <= likeRetryCount; i++ ) {
-				try {
-					await restAPIClient.commentAction(
-						'like',
+			// On Atomic the comment is created on the site and reaches WordPress.com
+			// only once Jetpack sync mirrors it, which can take over two minutes. Until then the
+			// likes endpoint answers `unknown_comment` and no like button renders. Reading the
+			// comment is not a usable readiness signal: the GET succeeds while `likes/new` still
+			// answers `unknown_comment`, so each comment has to prove itself by being liked.
+			await expect( async () => {
+				for ( const comment of [ commentToBeLiked, commentToBeUnliked ] ) {
+					await restAPIClient.likeComment(
 						testAccount.credentials.testSites?.primary.id as number,
-						commentToBeUnliked.ID
+						comment.ID
 					);
-					break;
-				} catch ( error ) {
-					if ( i === likeRetryCount ) {
-						throw error;
-					}
-					await page.waitForTimeout( 1000 );
 				}
-			}
+			} ).toPass( { timeout: commentSyncTimeout, intervals: [ 5000 ] } );
+
+			// Liking the first comment was only the readiness proof; the test likes it via the UI.
+			await restAPIClient.unlikeComment(
+				testAccount.credentials.testSites?.primary.id as number,
+				commentToBeLiked.ID
+			);
 
 			await testAccount.authenticate( page );
 		} );

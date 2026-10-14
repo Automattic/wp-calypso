@@ -12,7 +12,7 @@ import {
 } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { AI } from '../../components/icons';
-import observeEditorCanvasPointerDown from '../../utils/observe-editor-canvas-pointerdown';
+import { ResponsiveUndockContext } from './responsive-undock-context';
 
 // On Gutenberg editor screens, only dock when fullscreen mode is on —
 // otherwise wp-admin's chrome leaves too little room for the editor.
@@ -56,7 +56,7 @@ const useCanDock = ( { desktopMediaQuery }: { desktopMediaQuery: string } ) => {
 		getIsFullscreenGateOpen
 	);
 
-	return isDesktop && isFullscreenGateOpen;
+	return { canDock: isDesktop && isFullscreenGateOpen, isDesktop };
 };
 
 interface Options {
@@ -81,6 +81,8 @@ interface ReturnValue {
 	undock: () => void;
 	openSidebar: () => void;
 	closeSidebar: () => void;
+	/** The node the chat renders into. `null` until it is created. */
+	portalNode: HTMLElement | null;
 	createAgentPortal: ( children: React.ReactNode ) => React.ReactNode | React.ReactPortal;
 }
 
@@ -97,11 +99,17 @@ export default function useAgentLayoutManager( {
 	isSplitScreen = false,
 }: Options = {} ): ReturnValue {
 	const portalRef = useRef< HTMLDivElement | undefined >( undefined );
-	const [ isPortalReady, setIsPortalReady ] = useState( false );
+	// The same node as `portalRef`, which the layout effect reads synchronously.
+	// As state, it re-renders the consumers once the node exists.
+	const [ portalNode, setPortalNode ] = useState< HTMLElement | null >( null );
 	const [ isDocked, setIsDocked ] = useState< boolean | null >( null );
-	const canDock = useCanDock( { desktopMediaQuery } );
+	const { canDock, isDesktop } = useCanDock( { desktopMediaQuery } );
 	const shouldRenderSidebar = canDock && isDocked;
 	const openSidebarTimeoutRef = useRef< ReturnType< typeof setTimeout > | undefined >( undefined );
+
+	// Floating because the viewport is narrow, with the docked preference still on.
+	const isResponsiveUndocked = !! isDocked && ! isDesktop;
+	const [ responsiveUndockCount, setResponsiveUndockCount ] = useState( 0 );
 
 	// Store default state refs to avoid stale closures and prevent unnecessary re-renders
 	const defaultDockedRef = useRef( defaultDocked );
@@ -156,7 +164,7 @@ export default function useAgentLayoutManager( {
 				portalRef.current.classList.add( 'agents-manager-chat--undocked' );
 			}
 
-			setIsPortalReady( true );
+			setPortalNode( portalRef.current );
 
 			return;
 		}
@@ -185,50 +193,22 @@ export default function useAgentLayoutManager( {
 		}
 	}, [ container, isDocked, isReady, shouldRenderSidebar ] );
 
+	// Losing the desktop viewport takes the docked sidebar away. The count
+	// triggers the floating panel's layout command, moving it to the right
+	// corner — where the sidebar just was.
+	const wasDesktopRef = useRef( isDesktop );
+	useEffect( () => {
+		const wasDesktop = wasDesktopRef.current;
+		wasDesktopRef.current = isDesktop;
+
+		if ( wasDesktop && ! isDesktop && isDocked ) {
+			setResponsiveUndockCount( ( count ) => count + 1 );
+		}
+	}, [ isDesktop, isDocked ] );
+
 	useLayoutEffect( () => {
 		container?.classList.toggle( SIDEBAR_OPEN_CLASS, !! shouldRenderSidebar && isSidebarOpen );
 	}, [ container, isSidebarOpen, shouldRenderSidebar ] );
-
-	// Track focus on the chat panel so the floating chat can raise its z-index. `pointerdown` also
-	// covers clicks on non-focusable regions (e.g. scroll areas) that skip `focusin`
-	useEffect( () => {
-		const node = portalRef.current;
-
-		if ( ! isPortalReady || ! node || shouldRenderSidebar ) {
-			node?.classList.remove( 'is-focused' );
-			return;
-		}
-
-		const setFocused = () => {
-			node.classList.add( 'is-focused' );
-		};
-
-		const handleFocusOut = ( e: FocusEvent ) => {
-			if ( ! node.contains( e.relatedTarget as Node | null ) ) {
-				node.classList.remove( 'is-focused' );
-			}
-		};
-
-		const handleDocumentPointerDown = ( e: PointerEvent ) => {
-			if ( ! node.contains( e.target as Node | null ) ) {
-				node.classList.remove( 'is-focused' );
-			}
-		};
-
-		node.addEventListener( 'focusin', setFocused );
-		node.addEventListener( 'focusout', handleFocusOut );
-		node.addEventListener( 'pointerdown', setFocused );
-		document.addEventListener( 'pointerdown', handleDocumentPointerDown );
-		const stopCanvasObserver = observeEditorCanvasPointerDown( handleDocumentPointerDown );
-
-		return () => {
-			node.removeEventListener( 'focusin', setFocused );
-			node.removeEventListener( 'focusout', handleFocusOut );
-			node.removeEventListener( 'pointerdown', setFocused );
-			document.removeEventListener( 'pointerdown', handleDocumentPointerDown );
-			stopCanvasObserver();
-		};
-	}, [ isPortalReady, shouldRenderSidebar ] );
 
 	// Reflect split-screen state on the container as `is-split-screen`.
 	useLayoutEffect( () => {
@@ -244,7 +224,7 @@ export default function useAgentLayoutManager( {
 		() => () => {
 			clearTimeout( openSidebarTimeoutRef.current );
 			setIsDocked( null );
-			setIsPortalReady( false );
+			setPortalNode( null );
 
 			if ( container ) {
 				container.classList.remove(
@@ -305,30 +285,37 @@ export default function useAgentLayoutManager( {
 		setIsDocked( false );
 	}, [ container, isReady ] );
 
+	const responsiveUndock = useMemo(
+		() => ( { isResponsiveUndocked, undockCount: responsiveUndockCount } ),
+		[ isResponsiveUndocked, responsiveUndockCount ]
+	);
+
 	const createAgentPortal = useCallback(
 		( children: React.ReactNode ) => {
-			if ( ! isPortalReady || ! portalRef.current ) {
+			if ( ! portalNode ) {
 				return null;
 			}
 
 			return createPortal(
-				shouldRenderSidebar ? (
-					<>
-						{ children }
-						<Button
-							className="agents-manager-sidebar-fab"
-							icon={ AI }
-							onClick={ handleOpenSidebar }
-							label={ __( 'Open Chat', __i18n_text_domain__ ) }
-						/>
-					</>
-				) : (
-					children
-				),
-				portalRef.current
+				<ResponsiveUndockContext.Provider value={ responsiveUndock }>
+					{ shouldRenderSidebar ? (
+						<>
+							{ children }
+							<Button
+								className="agents-manager-sidebar-fab"
+								icon={ AI }
+								onClick={ handleOpenSidebar }
+								label={ __( 'Open Chat', __i18n_text_domain__ ) }
+							/>
+						</>
+					) : (
+						children
+					) }
+				</ResponsiveUndockContext.Provider>,
+				portalNode
 			);
 		},
-		[ handleOpenSidebar, isPortalReady, shouldRenderSidebar ]
+		[ handleOpenSidebar, portalNode, responsiveUndock, shouldRenderSidebar ]
 	);
 
 	return {
@@ -339,6 +326,7 @@ export default function useAgentLayoutManager( {
 		undock,
 		openSidebar: handleOpenSidebar,
 		closeSidebar: handleCloseSidebar,
+		portalNode,
 		createAgentPortal,
 	};
 }

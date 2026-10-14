@@ -112,10 +112,6 @@ export interface UrlBasicMetricsQueryResponse {
 	token: string;
 }
 
-export interface LeadMutationResponse {
-	success: boolean;
-}
-
 export interface UrlSecurityMetricsQueryResponse {
 	wpscan: {
 		report: {
@@ -160,7 +156,6 @@ export type PerformanceReport = {
 	screenshots?: ScreenShotsTimeLine[];
 	history: PerformanceMetricsHistory;
 	timestamp?: string;
-	share_link: string | '';
 } & BasicMetrics;
 
 export type ScreenshotNode = {

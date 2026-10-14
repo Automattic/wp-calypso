@@ -65,7 +65,7 @@ export function getStepUrl(
 	const url =
 		flowName === defaultFlowName && framework === '/start'
 			? // we don't include the default flow name in the route in /start
-			  framework + step + section + locale
+				framework + step + section + locale
 			: framework + flow + step + section + locale;
 	return addQueryArgs( params, url );
 }
@@ -172,7 +172,12 @@ export function getCompletedSteps( flowName, progress, options = {}, isUserLogge
 }
 
 export function canResumeFlow( flowName, progress, isUserLoggedIn ) {
+	// Persisted signup state can name a flow that no longer exists.
 	const flow = flows.getFlow( flowName, isUserLoggedIn );
+	if ( ! flow ) {
+		return false;
+	}
+
 	const flowStepsInProgressStore = getCompletedSteps(
 		flowName,
 		progress,

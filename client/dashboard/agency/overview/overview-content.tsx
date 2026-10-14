@@ -1,8 +1,10 @@
-import { __experimentalGrid as Grid, __experimentalVStack as VStack } from '@wordpress/components';
+import { __experimentalVStack as VStack } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
+import Grid from '../../components/grid';
 import { PendingTierCard, RejectedTierCard } from './application-status-cards';
 import EventCard from './event-card';
+import GrowthCard from './growth-card';
 import HelpfulLinksCard from './helpful-links-card';
 import ReferralEarningsCard from './referral-earnings-card';
 import TierOverviewCard from './tier-overview-card';
@@ -17,9 +19,15 @@ const REFERRALS_CAPABILITY = 'a4a_read_referrals';
 
 export interface AgencyOverviewLinks {
 	tiers: string;
+	sites: string;
 	referrals: string;
 	woopayments: string;
-	contactSupport: string;
+	marketplace: string;
+	partnerDirectory: string;
+	/** A URL, or a callback that opens contact support in-app. */
+	contactSupport: string | ( () => void );
+	aiMcp: string;
+	pressableHosting: string;
 	helpful: HelpfulLink[];
 }
 
@@ -31,6 +39,12 @@ export interface AgencyOverviewContentProps {
 	approvalStatus?: AgencyApprovalStatus | '';
 	/** The current user's agency capabilities; the earning cards lock without referrals access. */
 	capabilities?: string[];
+	/** Whether the agency already has an approved Partner Directory listing. */
+	hasPartnerDirectoryListing?: boolean;
+	/** Shows the Pressable introductory offer in the news column. */
+	isEligibleForPressableIntroOffer?: boolean;
+	/** Shows the Pressable expansion offer in the news column. */
+	isEligibleForPressableExpansionOffer?: boolean;
 	links: AgencyOverviewLinks;
 	shouldUseRouterLink?: boolean;
 	onScheduleCall?: () => void;
@@ -50,6 +64,9 @@ export default function AgencyOverviewContent( {
 	influencedRevenue,
 	approvalStatus,
 	capabilities,
+	hasPartnerDirectoryListing,
+	isEligibleForPressableIntroOffer,
+	isEligibleForPressableExpansionOffer,
 	links,
 	shouldUseRouterLink,
 	onScheduleCall,
@@ -67,9 +84,14 @@ export default function AgencyOverviewContent( {
 	const lockedNote = isPending ? __( 'Unlocks when your account is activated' ) : undefined;
 
 	return (
-		<Grid columns={ isSmallViewport ? 1 : 2 } gap={ spacing }>
+		<Grid columns={ isSmallViewport ? 1 : 2 } gap={ isSmallViewport ? 'lg' : 'xl' }>
 			<VStack spacing={ spacing } justify="flex-start">
-				{ isRejected && <RejectedTierCard contactSupportHref={ links.contactSupport } /> }
+				{ isRejected && (
+					<RejectedTierCard
+						contactSupport={ links.contactSupport }
+						recordTracksEvent={ recordTracksEvent }
+					/>
+				) }
 				{ isPending && (
 					<PendingTierCard
 						onRelaunchTour={ onRelaunchTour }
@@ -84,6 +106,17 @@ export default function AgencyOverviewContent( {
 						shouldUseRouterLink={ shouldUseRouterLink }
 						onScheduleCall={ onScheduleCall }
 						isSchedulingCall={ isSchedulingCall }
+						recordTracksEvent={ recordTracksEvent }
+					/>
+				) }
+				{ ! isRejected && (
+					<GrowthCard
+						isPending={ isPending }
+						capabilities={ capabilities }
+						hasPartnerDirectoryListing={ hasPartnerDirectoryListing }
+						tierId={ tierId }
+						links={ links }
+						shouldUseRouterLink={ shouldUseRouterLink }
 						recordTracksEvent={ recordTracksEvent }
 					/>
 				) }
@@ -105,8 +138,15 @@ export default function AgencyOverviewContent( {
 				/>
 			</VStack>
 			<VStack spacing={ spacing } justify="flex-start">
-				<EventCard recordTracksEvent={ recordTracksEvent } />
 				<HelpfulLinksCard links={ links.helpful } recordTracksEvent={ recordTracksEvent } />
+				<EventCard
+					isEligibleForPressableIntroOffer={ isEligibleForPressableIntroOffer }
+					isEligibleForPressableExpansionOffer={ isEligibleForPressableExpansionOffer }
+					aiMcpHref={ links.aiMcp }
+					pressableHostingHref={ links.pressableHosting }
+					shouldUseRouterLink={ shouldUseRouterLink }
+					recordTracksEvent={ recordTracksEvent }
+				/>
 			</VStack>
 		</Grid>
 	);

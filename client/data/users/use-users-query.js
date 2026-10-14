@@ -11,11 +11,29 @@ export const defaults = {
 const extractPages = ( pages = [] ) => pages.flatMap( ( page ) => page.users );
 const compareUnique = ( a, b ) => a.ID === b.ID;
 
+// Every fetch option changes the response, so all of them belong in the key.
+// The `[ 'users', siteId ]` prefix is kept stable for invalidation.
+export const getUsersQueryKey = ( siteId, fetchOptions = {} ) => {
+	const options = { ...defaults, ...fetchOptions };
+	const normalized = Object.fromEntries(
+		Object.keys( options )
+			.sort()
+			.filter( ( key ) => options[ key ] !== undefined )
+			.map( ( key ) => [ key, options[ key ] ] )
+	);
+	return [ 'users', siteId, normalized ];
+};
+
+const hasMorePages = ( pages, pageSize ) => {
+	const lastPage = pages[ pages.length - 1 ];
+	return !! lastPage && lastPage.found > pages.length * pageSize;
+};
+
 const useUsersQuery = ( siteId, fetchOptions = {}, queryOptions = {} ) => {
-	const { search } = fetchOptions;
+	const pageSize = fetchOptions.number ?? defaults.number;
 
 	return useInfiniteQuery( {
-		queryKey: [ 'users', siteId, search ],
+		queryKey: getUsersQueryKey( siteId, fetchOptions ),
 		queryFn: ( { pageParam } ) =>
 			wpcom.req.get( `/sites/${ siteId }/users`, {
 				...defaults,
@@ -25,11 +43,10 @@ const useUsersQuery = ( siteId, fetchOptions = {}, queryOptions = {} ) => {
 		enabled: !! siteId,
 		initialPageParam: 0,
 		getNextPageParam: ( lastPage, allPages ) => {
-			const n = fetchOptions.number ?? defaults.number;
-			if ( lastPage.found <= allPages.length * n ) {
+			if ( ! hasMorePages( allPages, pageSize ) ) {
 				return;
 			}
-			return allPages.length * n;
+			return allPages.length * pageSize;
 		},
 		select: ( data ) => {
 			/* @TODO:
@@ -38,9 +55,12 @@ const useUsersQuery = ( siteId, fetchOptions = {}, queryOptions = {} ) => {
 			 * such as Administrator and Editor, and has also been added as a "Viewer" .
 			 */
 			const users = uniqueBy( extractPages( data.pages ), compareUnique );
+			// While pages remain, the server count is the best total we have.
+			// Once everything is loaded, the deduplicated length is exact.
+			const total = hasMorePages( data.pages, pageSize ) ? data.pages[ 0 ].found : users.length;
 			return {
-				users: uniqueBy( extractPages( data.pages ), compareUnique ),
-				total: users?.length ?? data.pages[ 0 ].found,
+				users,
+				total,
 				...data,
 			};
 		},

@@ -30,7 +30,7 @@ export default function SuggestedPlanSection( {
 	const suggestedPlans = [
 		{
 			planSlug: PLAN_PERSONAL,
-			description: translate( 'Free one-year domain and some premium themes' ),
+			description: translate( 'Free one-year domain and all premium themes' ),
 			disabled: hidePersonalPlan,
 		},
 		{

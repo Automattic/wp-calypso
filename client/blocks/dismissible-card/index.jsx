@@ -10,13 +10,14 @@ import { isCardDismissed } from './selectors';
 import './style.scss';
 
 /**
- * @param {{ className?: string; highlight?: 'error' | 'info' | 'success' | 'warning'; temporary?: boolean; onClick?: ( event: import('react').MouseEvent ) => void; preferenceName: string; href?: string; children?: import('react').ReactNode; }} props
+ * @param {{ className?: string; highlight?: 'error' | 'info' | 'success' | 'warning'; temporary?: boolean; onClick?: ( event: import('react').MouseEvent ) => void; onCardClick?: ( event: import('react').MouseEvent ) => void; preferenceName: string; href?: string; children?: import('react').ReactNode; }} props
  */
 function DismissibleCard( {
 	className,
 	highlight,
 	temporary,
 	onClick,
+	onCardClick,
 	preferenceName,
 	href,
 	children,
@@ -36,8 +37,21 @@ function DismissibleCard( {
 		event.preventDefault();
 	}
 
+	function handleCardClick( event ) {
+		// The dismiss button prevents default, so its click bubbling up here must not count as a card click.
+		if ( ! event.defaultPrevented ) {
+			onCardClick?.( event );
+		}
+	}
+
 	return (
-		<Card className={ className } highlight={ highlight } href={ href } showLinkIcon={ false }>
+		<Card
+			className={ className }
+			highlight={ highlight }
+			href={ href }
+			onClick={ onCardClick ? handleCardClick : undefined }
+			showLinkIcon={ false }
+		>
 			<QueryPreferences />
 			<button
 				className="dismissible-card__close-button"
@@ -56,6 +70,7 @@ DismissibleCard.propTypes = {
 	highlight: PropTypes.oneOf( [ 'error', 'info', 'success', 'warning' ] ),
 	temporary: PropTypes.bool,
 	onClick: PropTypes.func,
+	onCardClick: PropTypes.func,
 	preferenceName: PropTypes.string.isRequired,
 	href: PropTypes.string,
 };

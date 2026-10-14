@@ -51,7 +51,7 @@ function buildCollector( siteSlug?: string ): Collector {
  * TanStack Router routeIds have a trailing slash (e.g. "/plugins/manage/")
  * but we want a canonical form without one for metrics.
  */
-function normalizeRouteId( routeId?: string ): string {
+export function normalizeRouteId( routeId?: string ): string {
 	return routeId?.replace( /\/$/, '' ) ?? '';
 }
 

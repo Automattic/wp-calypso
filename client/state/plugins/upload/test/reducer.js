@@ -12,6 +12,7 @@ import {
 import {
 	inProgress,
 	progressPercent,
+	uploadFile,
 	uploadedPluginId,
 	uploadError,
 	uploadMethod,
@@ -69,6 +70,30 @@ describe( 'uploadMethod', () => {
 		expect( uploadMethod( {}, initiateAutomatedTransferWithPluginZip( siteId ) )[ siteId ] ).toBe(
 			'transfer'
 		);
+	} );
+} );
+
+describe( 'uploadFile', () => {
+	const file = { name: 'plugin.zip' };
+
+	test( 'should contain the file after upload starts', () => {
+		const state = uploadFile( {}, uploadPlugin( siteId, file ) );
+		expect( state[ siteId ] ).toBe( file );
+	} );
+
+	test( 'should retain the file after a failed upload', () => {
+		const state = uploadFile( { [ siteId ]: file }, pluginUploadError( siteId, error ) );
+		expect( state[ siteId ] ).toBe( file );
+	} );
+
+	test( 'should clear the file after a successful upload', () => {
+		const state = uploadFile( { [ siteId ]: file }, completePluginUpload( siteId, pluginId ) );
+		expect( state[ siteId ] ).toBeUndefined();
+	} );
+
+	test( 'should clear the file when the upload is cleared', () => {
+		const state = uploadFile( { [ siteId ]: file }, clearPluginUpload( siteId ) );
+		expect( state[ siteId ] ).toBeUndefined();
 	} );
 } );
 

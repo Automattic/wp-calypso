@@ -17,6 +17,7 @@ import { __ } from '@wordpress/i18n';
  */
 import { notifySuggestionActionComplete } from '../utils/suggestion-events';
 import BaseSuggestionPicker from './base-suggestion-picker';
+import type { OnResponseAction } from '../utils/response-action';
 
 /**
  * Props for the TitlePicker component.
@@ -27,16 +28,13 @@ interface TitleOption {
 }
 
 interface TitlePickerProps {
-	titles: TitleOption[];
+	titles?: TitleOption[];
 	onComplete?: () => void;
+	onResponseAction?: OnResponseAction;
 }
 
-/**
- * TitlePicker component for the chat sidebar.
- * @param {TitlePickerProps} props - Component props.
- * @returns {import('react').ReactElement} The rendered component.
- */
-export default function TitlePicker( { titles, onComplete }: TitlePickerProps ) {
+/** Renders title suggestions and applies the selected title to the post. */
+export default function TitlePicker( { titles, onComplete, onResponseAction }: TitlePickerProps ) {
 	const { editPost } = useDispatch( 'core/editor' );
 	const currentTitle = useSelect(
 		( select ) =>
@@ -52,18 +50,27 @@ export default function TitlePicker( { titles, onComplete }: TitlePickerProps ) 
 		( title: string ) => {
 			editPost( { title } );
 			notifySuggestionActionComplete();
-			onComplete?.();
 		},
-		[ editPost, onComplete ]
+		[ editPost ]
 	);
+
+	// The props arrive from an orchestrator tool payload, so guard the shape
+	// instead of trusting the TypeScript type.
+	const options = Array.isArray( titles )
+		? titles
+				.map( ( option ) => option?.title )
+				.filter( ( title ): title is string => typeof title === 'string' && title.trim() !== '' )
+		: [];
 
 	return (
 		<BaseSuggestionPicker
 			intro={ __( 'Choose a title for your post:', __i18n_text_domain__ ) }
-			options={ titles.map( ( option ) => option.title ) }
+			options={ options }
 			onApply={ handleApply }
+			onComplete={ onComplete }
 			appliedMessage={ __( 'Title updated.', __i18n_text_domain__ ) }
 			currentValue={ typeof currentTitle === 'string' ? currentTitle : undefined }
+			onResponseAction={ onResponseAction }
 		/>
 	);
 }

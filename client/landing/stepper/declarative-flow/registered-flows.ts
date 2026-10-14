@@ -8,6 +8,7 @@ import {
 	HUNDRED_YEAR_DOMAIN_TRANSFER,
 	REBLOGGING_FLOW,
 	SITE_MIGRATION_FLOW,
+	STATIC_SITE_IMPORT_FLOW,
 	ENTREPRENEUR_FLOW,
 	ONBOARDING_FLOW,
 	HUNDRED_YEAR_DOMAIN_FLOW,
@@ -156,7 +157,17 @@ const aiSiteBuilderFlows: Record< string, () => Promise< { default: FlowV2< any 
 	config.isEnabled( 'calypso/ai-site-builder-flow' )
 		? {
 				[ AI_SITE_BUILDER_FLOW ]: () => import( './flows/ai-site-builder/ai-site-builder' ),
-		  }
+			}
+		: {};
+
+const staticSiteImportFlow: Record< string, () => Promise< { default: FlowV2< any > } > > =
+	config.isEnabled( 'migration/non-wordpress-source' )
+		? {
+				[ STATIC_SITE_IMPORT_FLOW ]: () =>
+					import(
+						/* webpackChunkName: "static-site-import-flow" */ './flows/static-site-import-flow/static-site-import-flow'
+					),
+			}
 		: {};
 
 const aiSiteBuilderOnboardingFlows: Record< string, () => Promise< { default: FlowV2< any > } > > =
@@ -184,4 +195,5 @@ export default {
 	...hundredYearDomainFlow,
 	...aiSiteBuilderFlows,
 	...aiSiteBuilderOnboardingFlows,
+	...staticSiteImportFlow,
 };

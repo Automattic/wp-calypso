@@ -119,7 +119,7 @@ export default function useOnboardingTours() {
 							title: translate( "Boost your agency's visibility across our Partner Directories" ),
 							useCalypsoPath: true,
 						},
-				  ]
+					]
 				: [] ),
 			{
 				calypso_path: A4A_TEAM_LINK,

@@ -68,10 +68,17 @@ export const OdieSendMessageButton = () => {
 	const isLiveChat = chat.provider?.startsWith( 'zendesk' );
 	const [ searchParams ] = useSearchParams();
 	const queryFromParam = searchParams.get( 'query' ) || '';
-	const chatIdFromParam = searchParams.get( 'chatId' );
-	const queryForNewChat = chatIdFromParam ? '' : queryFromParam;
+	// The query only starts a new conversation. It stays in the persisted route after the chat
+	// gets an interaction (and after an escalation), so it must not be applied to that chat again.
+	const isExistingChat = !! (
+		searchParams.get( 'chatId' ) ||
+		searchParams.get( 'id' ) ||
+		searchParams.get( 'odieInteractionId' )
+	);
+	const queryForNewChat = isExistingChat ? '' : queryFromParam;
 	const [ initialQuery, setInitialQuery ] = useState( queryForNewChat );
 	const [ inputValue, setInputValue ] = useState( initialQuery );
+	const handledInitialQueryRef = useRef< string | null >( null );
 	const messageSizeNotice = useMessageSizeErrorNotice( inputValue.trim().length );
 
 	const connectionStatus = useSelect( ( select ) => {
@@ -82,12 +89,12 @@ export const OdieSendMessageButton = () => {
 	const connectionNotice = useConnectionStatusNotice( connectionStatus, isLiveChat );
 
 	useEffect( () => {
-		// Only process query param for new conversations (no chatId)
+		// Only process query param for new conversations
 		// This prevents refilling the input when navigating back to an existing chat
-		if ( ! chatIdFromParam ) {
+		if ( ! isExistingChat ) {
 			setInitialQuery( queryFromParam );
 		}
-	}, [ queryFromParam, chatIdFromParam ] );
+	}, [ queryFromParam, isExistingChat ] );
 
 	// I'm only using adjustHeight from agenttic-ui
 	const { textareaRef } = useInput( {
@@ -200,12 +207,22 @@ export const OdieSendMessageButton = () => {
 	const isProcessing = ( isChatBusy || isAttachingFile || cantTransferToZendesk ) && ! isDisabled;
 
 	useEffect( () => {
-		if ( initialQuery && ! isProcessing && chat.status !== 'loading' ) {
-			setInputValue( initialQuery );
-			setInitialQuery( '' );
-			if ( chat.messages.length === 0 ) {
-				sendMessageHandler();
-			}
+		if (
+			! initialQuery ||
+			handledInitialQueryRef.current === initialQuery ||
+			isProcessing ||
+			chat.status === 'loading'
+		) {
+			return;
+		}
+		// Tracked in a ref because `setInitialQuery( '' )` can land too late: with React 18 (wp-admin),
+		// sending re-renders synchronously first, so this effect ran again with the same query and sent
+		// it on every render until React bailed out, leaving dozens of retrying copies behind.
+		handledInitialQueryRef.current = initialQuery;
+		setInputValue( initialQuery );
+		setInitialQuery( '' );
+		if ( chat.messages.length === 0 ) {
+			sendMessageHandler();
 		}
 	}, [
 		initialQuery,

@@ -1,4 +1,6 @@
+import { isMonthly } from '@automattic/calypso-products';
 import { HelpCenter } from '@automattic/data-stores';
+import { DomainSuggestionBadge } from '@automattic/domain-search';
 import {
 	isAIBuilderFlow,
 	isAIBuilderOnboardingFlow,
@@ -10,13 +12,13 @@ import {
 	isNewHostedSiteCreationFlow,
 	isNewsletterFlow,
 	isOnboardingFlow,
-	EDUCATION_FLOW,
 	Step,
 	StepContainer,
 } from '@automattic/onboarding';
 import { Button } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { useDispatch, useSelect } from '@wordpress/data';
+import { createInterpolateElement } from '@wordpress/element';
 import { help } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { useMemo } from 'react';
@@ -29,6 +31,7 @@ import { dashboardLink, dashboardOrigins } from 'calypso/dashboard/utils/link';
 import { isRelativeUrl } from 'calypso/dashboard/utils/url';
 import { WOO_HOSTING_SOLUTIONS_REF } from 'calypso/landing/stepper/constants';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
+import { shouldSkipPlansStep } from 'calypso/landing/stepper/utils/preselected-plan';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
@@ -53,13 +56,13 @@ import { OnboardingProgress } from '../components/onboarding-progress';
 import { useShowOnboardingProgress } from '../components/onboarding-progress/use-show-onboarding-progress';
 import HundredYearPlanStepWrapper from '../hundred-year-plan-step-wrapper';
 import { getSkipSuggestionCopy } from './get-skip-suggestion-copy';
+import { useDomainSearchResultsExperiment } from './results-experiment';
 import type { Step as StepType } from '../../types';
 import type { FreeDomainSuggestion } from '@automattic/api-core';
 import type { HelpCenterSelect, OnboardSelect } from '@automattic/data-stores';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 
 const HUNDRED_YEAR_DOMAIN_TLDS = [ 'com', 'net', 'org', 'blog' ];
-const EDUCATION_BUNDLED_TLDS = [ 'blog', 'art' ];
 
 const HELP_CENTER_STORE = HelpCenter.register();
 
@@ -94,7 +97,10 @@ const DomainSearchStep: StepType< {
 		hideFreeDomainPromo?: boolean;
 		freeDomainPromoTitle?: string;
 		freeDomainPromoSubtitle?: string;
+		freeSubdomainTitle?: string;
+		freeSubdomainButtonLabel?: string;
 		allowedTlds?: string[];
+		freeForFirstYearTlds?: string[];
 	};
 } > = function DomainSearchStep( {
 	navigation,
@@ -105,7 +111,10 @@ const DomainSearchStep: StepType< {
 	hideFreeDomainPromo,
 	freeDomainPromoTitle,
 	freeDomainPromoSubtitle,
+	freeSubdomainTitle,
+	freeSubdomainButtonLabel,
 	allowedTlds: allowedTldsProp,
+	freeForFirstYearTlds: freeForFirstYearTldsProp,
 } ) {
 	const userSiteCount = useSelector( getCurrentUserSiteCount );
 	const isLoggedIn = useSelector( isUserLoggedIn );
@@ -139,12 +148,25 @@ const DomainSearchStep: StepType< {
 	const isCiab = dashboard === 'ciab';
 	const isWooHostingSolutions = queryParams.get( 'ref' ) === WOO_HOSTING_SOLUTIONS_REF;
 	const showProgress = useShowOnboardingProgress( isOnboardingFlow( flow ) );
+	// WoW funnel: the site is always transferred to Atomic, so there is no free-subdomain
+	// option to offer — show only a "Set up a domain later" skip control.
+	const isWowFunnel = !! queryParams.get( 'wow_funnel' );
+	const wowSkipCopy = isWowFunnel ? __( 'Set up a domain later' ) : undefined;
 	const stepCounter = useOnboardingStepCounter( flow, 'domains' );
+	const { isLoading: isLoadingResultsExperiment, variation: resultsVariation } =
+		useDomainSearchResultsExperiment( flow );
+	const isCustomDomainBannerCopyVariation = resultsVariation === 'custom_domain_banner_copy';
 
 	const storedSiteTitle = useSelect(
 		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedSiteTitle(),
 		[]
 	);
+
+	const planCartItem = useSelect(
+		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getPlanCartItem(),
+		[]
+	);
+	const shouldHidePlansStep = shouldSkipPlansStep( queryParams, planCartItem );
 
 	// For CIAB sites, prefer the site title over the slug for domain suggestions
 	// since the slug is often randomly generated.
@@ -190,16 +212,27 @@ const DomainSearchStep: StepType< {
 			priceRules: {
 				hidePrice: isHundredYearPlanFlow( flow ),
 				oneTimePrice: isHundredYearDomainFlow( flow ),
-				freeForFirstYearTlds: flow === EDUCATION_FLOW ? EDUCATION_BUNDLED_TLDS : undefined,
+				freeForFirstYearTlds: freeForFirstYearTldsProp,
 			},
 			skippable:
 				! isHundredYearPlanFlow( flow ) &&
 				! isHundredYearDomainFlow( flow ) &&
 				! isDomainFlow( flow ) &&
 				! isDomainAndPlanFlow( flow ),
-			// AI Website Builder onboarding requires a paid plan, so skipping the
-			// domain doesn't start a free site — drop the "start free" framing.
-			skipSuggestionCopy: getSkipSuggestionCopy( flow, __ ),
+			// Free-subdomain skip card copy, in order of precedence: per-flow
+			// `freeSubdomainTitle` / `freeSubdomainButtonLabel` overrides, then the WoW
+			// funnel default (no free-subdomain option to offer, see `isWowFunnel` above),
+			// then the flow default resolved by `getSkipSuggestionCopy`.
+			skipSuggestionCopy: getSkipSuggestionCopy( flow, __, {
+				title: freeSubdomainTitle ?? wowSkipCopy,
+				buttonText: freeSubdomainButtonLabel ?? wowSkipCopy,
+			} ),
+			// WoW funnel: hide the free *.wordpress.com subdomain card entirely and offer only
+			// the skip control.
+			hideFreeSubdomainSuggestion: isWowFunnel,
+			skipSuggestionPlacement:
+				resultsVariation === 'free_banner_top' ? ( 'top' as const ) : undefined,
+			showSelectCta: resultsVariation === 'tone_down_purchase',
 			includeDotBlogSubdomain:
 				! isHundredYearPlanFlow( flow ) &&
 				! isHundredYearDomainFlow( flow ) &&
@@ -214,7 +247,21 @@ const DomainSearchStep: StepType< {
 				! isHundredYearPlanFlow( flow ) &&
 				( isHundredYearDomainFlow( flow ) ? !! query : true ),
 		};
-	}, [ __, flow, isCiab, isWooHostingSolutions, tldQuery, query, allowedTldsProp ] );
+	}, [
+		__,
+		flow,
+		isCiab,
+		isWooHostingSolutions,
+		isWowFunnel,
+		wowSkipCopy,
+		resultsVariation,
+		tldQuery,
+		query,
+		allowedTldsProp,
+		freeForFirstYearTldsProp,
+		freeSubdomainTitle,
+		freeSubdomainButtonLabel,
+	] );
 
 	const { submit } = navigation;
 
@@ -331,18 +378,43 @@ const DomainSearchStep: StepType< {
 			return ! site || ! siteHasPaidPlan( site );
 		}
 
+		// A plan chosen before this step never reaches the shopping cart, so the cart's own
+		// monthly check cannot see it. Monthly plans do not carry the free first year.
+		if ( planCartItem?.product_slug && isMonthly( planCartItem.product_slug ) ) {
+			return false;
+		}
+
 		if ( site || sourceSlug || isHundredYearPlanFlow( flow ) || isHundredYearDomainFlow( flow ) ) {
 			return false;
 		}
 
 		return true;
-	}, [ flow, isCiab, site, sourceSlug ] );
+	}, [ flow, isCiab, site, sourceSlug, planCartItem ] );
 
 	const slots = useMemo( () => {
 		return {
 			BeforeResults: () => {
 				if ( hideFreeDomainPromo || ! isFirstDomainFreeForFirstYear ) {
 					return null;
+				}
+
+				if ( isCustomDomainBannerCopyVariation ) {
+					return (
+						<FreeDomainForAYearPromo
+							title={ __( 'Look professional for less' ) }
+							subtitle={ createInterpolateElement(
+								__(
+									'When you purchase an annual plan, the first year of domain name registration is on us.<br />Discount automatically applied at checkout.'
+								),
+								{ br: <br /> }
+							) }
+							badge={
+								<DomainSuggestionBadge variation="success">
+									{ __( 'First year free' ) }
+								</DomainSuggestionBadge>
+							}
+						/>
+					);
 				}
 
 				return (
@@ -369,6 +441,8 @@ const DomainSearchStep: StepType< {
 		hideFreeDomainPromo,
 		freeDomainPromoTitle,
 		freeDomainPromoSubtitle,
+		isCustomDomainBannerCopyVariation,
+		__,
 	] );
 
 	const headerText = useMemo( () => {
@@ -422,7 +496,11 @@ const DomainSearchStep: StepType< {
 		return __( 'Make it yours with a .com, .blog, or one of 350+ domain options.' );
 	}, [ flow, isCiab, isWooHostingSolutions, __, subHeaderTextOverride ] );
 
-	const domainSearchElement = (
+	// Holding the search until the experiment is assigned keeps users from seeing control
+	// and then switching to their variation.
+	const domainSearchElement = isLoadingResultsExperiment ? (
+		<></>
+	) : (
 		<WPCOMDomainSearch
 			className={
 				shouldUseStepContainerV2( flow )
@@ -593,7 +671,12 @@ const DomainSearchStep: StepType< {
 					// high-quality results can fill the limited vertical space.
 					// The empty/initial state keeps the heading on mobile.
 					<>
-						{ showProgress && <OnboardingProgress currentStep="domains" /> }
+						{ showProgress && (
+							<OnboardingProgress
+								currentStep="domains"
+								shouldHidePlansStep={ shouldHidePlansStep }
+							/>
+						) }
 						{ ! ( isMobileViewport && query ) && (
 							<Step.Heading text={ headerText } subText={ subHeaderText } />
 						) }

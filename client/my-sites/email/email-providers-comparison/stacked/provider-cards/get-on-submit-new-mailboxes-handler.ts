@@ -93,7 +93,7 @@ const getOnSubmitNewMailboxesHandler =
 					domain,
 					emailProduct as ProductListItem,
 					numberOfMailboxes
-			  )
+				)
 			: getEmailProductPropertiesForUpsell( emailProduct, numberOfMailboxes );
 
 		const checkoutPath = getEmailCheckoutPath(

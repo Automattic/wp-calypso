@@ -1,14 +1,14 @@
 declare module '@wordpress/block-editor' {
-	export const BlockControls: import('react').ComponentType< {
-		children?: import('react').ReactNode;
+	export const BlockControls: import( 'react' ).ComponentType< {
+		children?: import( 'react' ).ReactNode;
 		group?: string;
 	} >;
 	export const RichText: {
-		Content: import('react').ComponentType<
+		Content: import( 'react' ).ComponentType<
 			{
-				tagName?: keyof import('react').JSX.IntrinsicElements;
+				tagName?: keyof import( 'react' ).JSX.IntrinsicElements;
 				value: string;
-			} & import('react').HTMLAttributes< HTMLElement >
+			} & import( 'react' ).HTMLAttributes< HTMLElement >
 		>;
 	};
 }
@@ -25,6 +25,10 @@ declare const __i18n_text_domain__: string;
 declare const agentsManagerData:
 	| {
 			isDevMode?: boolean;
+			/** Whether the current request is attributed to an Automattician for tracking. */
+			isA11n?: boolean;
+			/** The site's canonical identity; injected on wp-admin. */
+			site?: { ID?: number; domain?: string };
 			jetpackAiSidebar?: {
 				enabled: boolean;
 				features?: {
@@ -40,15 +44,6 @@ declare const agentsManagerData:
 			};
 	  }
 	| undefined;
-
-interface Window {
-	/** Big Sky injects this on editor surfaces. Narrowed to the fields used for Tracks context. */
-	bigSkyInitialState?: {
-		bigSkyVersion?: string;
-		isFreeTrial?: string;
-		currentScreen?: { screen?: string };
-	};
-}
 
 declare module '@wordpress/block-editor' {
 	import type { StoreDescriptor } from '@wordpress/data';

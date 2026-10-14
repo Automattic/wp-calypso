@@ -17,7 +17,7 @@ import type { AgencyTierType, RecordTracksEvent } from './types';
 import './style.scss';
 
 const LEARN_MORE_URL =
-	'https://agencieshelp.automattic.com/knowledge-base/automattic-for-agencies-earnings/';
+	'https://agencieshelp.automattic.com/knowledge-base/agency-tiers-and-benefits/';
 
 function InfluencedRevenueStrapline( {
 	recordTracksEvent,
@@ -51,25 +51,27 @@ function InfluencedRevenueStrapline( {
 					onClose={ () => setShowPopover( false ) }
 				>
 					<VStack spacing={ 3 } style={ { width: '280px', padding: '8px' } }>
-						<Text>
+						<Text size={ 13 } lineHeight="20px">
 							{ __(
 								'Influenced revenue is revenue connected to your agency’s direct influence through referrals, client purchases, and managed sites using Automattic products.'
 							) }
 						</Text>
-						<Text>
+						<Text size={ 13 } lineHeight="20px">
 							{ __(
 								'Earn commissions by referring Automattic products to your clients, receive revenue share from WooPayments transactions, and unlock savings through volume discounts on bulk purchases.'
 							) }
 						</Text>
-						<InlineSupportLink
-							supportLink={ LEARN_MORE_URL }
-							forceOpenInHelpCenter
-							onClick={ () =>
-								recordTracksEvent( 'calypso_a4a_agency_tier_influenced_revenue_learn_more_click' )
-							}
-						>
-							{ __( 'Learn more' ) }
-						</InlineSupportLink>
+						<Text size={ 13 } lineHeight="20px">
+							<InlineSupportLink
+								supportLink={ LEARN_MORE_URL }
+								forceOpenInHelpCenter
+								onClick={ () =>
+									recordTracksEvent( 'calypso_a4a_agency_tier_influenced_revenue_learn_more_click' )
+								}
+							>
+								{ __( 'Learn more' ) }
+							</InlineSupportLink>
+						</Text>
 					</VStack>
 				</Popover>
 			) }

@@ -35,3 +35,10 @@ export function getLoadingTabs( state, siteId, date, period, quantity ) {
 		( type ) => state?.stats?.chartTabs?.isLoading?.[ siteId ]?.[ requestKey ]?.[ type ]
 	);
 }
+
+export function getFailedTabs( state, siteId, date, period, quantity ) {
+	const requestKey = `${ date }-${ period }-${ quantity }`;
+	return QUERY_FIELDS.filter(
+		( type ) => state?.stats?.chartTabs?.errors?.[ siteId ]?.[ requestKey ]?.[ type ]
+	);
+}

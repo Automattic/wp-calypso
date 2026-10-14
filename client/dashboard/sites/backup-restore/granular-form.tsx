@@ -10,6 +10,7 @@ import { ButtonStack } from '../../components/button-stack';
 import Notice from '../../components/notice';
 import { Text } from '../../components/text';
 import FileSectionPanelBody from './file-section-panel-body';
+import WooSubscriptionsNotice from './woo-subscriptions-notice';
 
 function SiteBackupGranularRestoreForm( {
 	siteId,
@@ -72,10 +73,10 @@ function SiteBackupGranularRestoreForm( {
 	const restoreWarning = hasSelectedTables
 		? __(
 				'This action will replace all settings, posts, pages and other site content with the information from the selected restore point.'
-		  )
+			)
 		: __(
 				'This action will replace the selected content with the content from the selected restore point.'
-		  );
+			);
 
 	return (
 		<form onSubmit={ handleSubmit }>
@@ -100,6 +101,12 @@ function SiteBackupGranularRestoreForm( {
 				<Notice variant="info" title={ __( 'Important' ) }>
 					{ restoreWarning }
 				</Notice>
+
+				<WooSubscriptionsNotice
+					siteId={ siteId }
+					rewindId={ rewindId }
+					includesDatabase={ hasSelectedTables }
+				/>
 
 				<ButtonStack justify="flex-start">
 					<Button

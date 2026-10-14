@@ -50,17 +50,14 @@ export const ALL_TIERS: TierItem[] = [
 					{
 						id: 'manage-sites',
 						label: __( 'Manage sites' ),
-						href: '/sites',
 					},
 					{
 						id: 'create-client-reports',
 						label: __( 'Create Client Reports' ),
-						href: '/reports',
 					},
 					{
 						id: 'manage-purchases',
 						label: __( 'Manage purchase' ),
-						href: '/purchases',
 					},
 				],
 			},
@@ -74,12 +71,10 @@ export const ALL_TIERS: TierItem[] = [
 					{
 						id: 'make-client-referral',
 						label: __( 'Make a client referral' ),
-						href: '/referrals/dashboard',
 					},
 					{
 						id: 'add-woopayments-to-store',
 						label: __( 'Add WooPayments to a store' ),
-						href: '/woopayments',
 					},
 				],
 			},
@@ -93,9 +88,6 @@ export const ALL_TIERS: TierItem[] = [
 					{
 						id: 'contact-support',
 						label: __( 'Contact support' ),
-						// TODO: '#contact-support' is a placeholder anchor — wire this up to the
-						// Help Center / support flow on both a8c and the dashboard.
-						href: '#contact-support',
 					},
 				],
 			},
@@ -143,7 +135,6 @@ export const ALL_TIERS: TierItem[] = [
 					{
 						id: 'manage-profile',
 						label: __( 'Manage your profile' ),
-						href: '/partner-directory/dashboard',
 					},
 					{
 						id: 'download-badge',

@@ -7,6 +7,7 @@ const Head = ( {
 	children,
 	branchName,
 	faviconUrl,
+	faviconBrand,
 	shouldPrefetchRestProxy = true,
 	allowZoom = false,
 } ) => {
@@ -38,7 +39,10 @@ const Head = ( {
 				/>
 			) }
 
-			<Favicons environmentFaviconURL={ faviconUrl || config( 'favicon_url' ) } />
+			<Favicons
+				environmentFaviconURL={ faviconUrl || config( 'favicon_url' ) }
+				brand={ faviconBrand }
+			/>
 
 			<link rel="profile" href="http://gmpg.org/xfn/11" />
 
@@ -60,6 +64,7 @@ Head.propTypes = {
 	children: PropTypes.node,
 	branchName: PropTypes.string,
 	faviconUrl: PropTypes.string,
+	faviconBrand: PropTypes.oneOf( [ 'a4a', 'jetpack', 'wordpress' ] ),
 	shouldPrefetchRestProxy: PropTypes.bool,
 	allowZoom: PropTypes.bool,
 };

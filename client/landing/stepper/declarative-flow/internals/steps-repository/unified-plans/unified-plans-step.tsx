@@ -71,6 +71,7 @@ export interface UnifiedPlansStepProps {
 	hideFreePlan?: boolean;
 	hidePersonalPlan?: boolean;
 	hidePremiumPlan?: boolean;
+	hideBusinessPlan?: boolean;
 	hideEnterprisePlan?: boolean;
 	hideEcommercePlan?: boolean;
 	hidePlanTypeSelector?: boolean;
@@ -225,6 +226,7 @@ function UnifiedPlansStep( {
 	hideEcommercePlan,
 	hidePersonalPlan,
 	hidePremiumPlan,
+	hideBusinessPlan,
 	hideEnterprisePlan,
 	hidePlanTypeSelector,
 	saveSignupStep: saveSignupStepFromProps,
@@ -692,6 +694,7 @@ function UnifiedPlansStep( {
 				hideFreePlan={ hideFreePlan && ! deemphasizeFreePlan }
 				hidePersonalPlan={ hidePersonalPlan }
 				hidePremiumPlan={ hidePremiumPlan }
+				hideBusinessPlan={ hideBusinessPlan }
 				hideEcommercePlan={ shouldHideEcommercePlan() }
 				hideEnterprisePlan={ hideEnterprisePlan }
 				hidePlanTypeSelector={ hidePlanTypeSelector }

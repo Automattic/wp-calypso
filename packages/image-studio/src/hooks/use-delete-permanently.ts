@@ -59,7 +59,7 @@ export function useDeletePermanently( {
 
 	const { deleteEntityRecord } = useDispatch(
 		coreStore
-	) as unknown as import('../types/wordpress').CoreDataDispatch;
+	) as unknown as import( '../types/wordpress' ).CoreDataDispatch;
 
 	// Get draft cleanup utilities for cleaning up temporary images before exit
 	const { deleteDraftsExcept } = useDraftCleanup();

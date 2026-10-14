@@ -1,3 +1,7 @@
+## Unreleased
+
+- Expose the matched route pattern through the read-only `page.currentRoutePattern` getter.
+
 ## 0.7.0
 
 - Initial fork of page.js with conversion to ES module and ES syntax.

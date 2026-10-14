@@ -1,31 +1,54 @@
-import { getAgentManager, useAgentChat, type UIMessage } from '@automattic/agenttic-client';
+import { getAgentManager, type TaskUpdate, type UIMessage } from '@automattic/agenttic-client';
 import {
 	type Suggestion,
 	type MarkdownComponents,
 	type MarkdownExtensions,
 } from '@automattic/agenttic-ui';
-import { useSelect } from '@wordpress/data';
-import { useState, useCallback, useMemo, useEffect, useRef } from '@wordpress/element';
+import { select as selectDataStore, useSelect } from '@wordpress/data';
+import {
+	useState,
+	useCallback,
+	useMemo,
+	useEffect,
+	useLayoutEffect,
+	useRef,
+} from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { useNavigate } from 'react-router-dom';
 import { LOCAL_TOOL_RUNNING_MESSAGE } from '../../constants';
 import { useAgentsManagerContext } from '../../contexts';
 import { useRegisterCustomActions } from '../../hooks/custom-actions';
 import useAbilitiesRegistration from '../../hooks/use-abilities-registration';
 import useAgentTraceIds from '../../hooks/use-agent-trace-ids';
 import { useBroadcastConversationActivity } from '../../hooks/use-broadcast-conversation-activity';
-import useCheckpointAction from '../../hooks/use-checkpoint-action';
+import { useBroadcastTurnActivity } from '../../hooks/use-broadcast-turn-activity';
+import useCheckpointAction, {
+	getCheckpointIdForMessage,
+	invalidateCheckpointAction,
+	isCheckpointActionInvalidated,
+	setCheckpointActionReverted,
+} from '../../hooks/use-checkpoint-action';
 import useConversation from '../../hooks/use-conversation';
 import useCopyAction from '../../hooks/use-copy-action';
+import { useCredits } from '../../hooks/use-credits';
 import { usePageOrSiteEditorSurface } from '../../hooks/use-empty-view-suggestions';
 import useFeedbackAction from '../../hooks/use-feedback-action';
 import { useImageUpload } from '../../hooks/use-image-upload';
+import { useNavigationContinuation } from '../../hooks/use-navigation-continuation';
 import useRegenerateAction from '../../hooks/use-regenerate-action';
-import useSaveNewChatRoute from '../../hooks/use-save-new-chat-route';
 import useSourcesAction from '../../hooks/use-sources-action';
-import { markSessionUsed } from '../../utils/agent-session';
+import useSuggestionsRenderedTracking from '../../hooks/use-suggestions-rendered-tracking';
+import { markActionOrigin, takeActionOrigin } from '../../utils/action-origin';
+import { markSessionSent } from '../../utils/agent-session';
+import {
+	blockCurrentRequest,
+	buildCanvasKey,
+	getCanvasMove,
+	isCanvasWritingAgent,
+	startNewUserRequest,
+} from '../../utils/canvas-binding';
 import convertToolMessagesToComponents, {
 	type AgentsManagerUIMessage,
+	isContextOnlyMessage,
 } from '../../utils/convert-tool-messages-to-components';
 import {
 	consumeNextMessageExternalContextEntries,
@@ -34,19 +57,24 @@ import {
 	type ExternalContextCard,
 	type ExternalContextCardAction,
 } from '../../utils/external-context';
+import formatSuggestionIds from '../../utils/format-suggestion-ids';
+import { generateUUID } from '../../utils/generate-uuid';
 import { isReaderChatAgent } from '../../utils/is-reader-chat-agent';
+import { isWooAiProvider } from '../../utils/is-woo-ai-provider';
 import { mergeEmptyViewSuggestions } from '../../utils/merge-empty-view-suggestions';
-import { getOrchestratorErrorMessage } from '../../utils/orchestrator-error-message';
-import { persistLastActivity } from '../../utils/persist-last-activity';
-import { setProviderCheckpoints } from '../../utils/provider-checkpoints';
+import {
+	getOrchestratorErrorMessage,
+	getOrchestratorErrorType,
+} from '../../utils/orchestrator-error-message';
 import { getReaderChatErrorMessage } from '../../utils/reader-chat-error-message';
 import { isShowComponentTool } from '../../utils/show-component-tools';
-import { recordBigSkyTracksEvent } from '../../utils/tracks';
+import { getRetryingToolCallId, isBlockEditToolId } from '../../utils/tool-message-utils';
+import { recordAgentsManagerTracksEvent, recordBigSkyTracksEvent } from '../../utils/tracks';
+import { startTurn } from '../../utils/turn-id';
 import AgentChat from '../agent-chat';
 import { type Options as ChatHeaderOptions } from '../chat-header';
 import type { BigSkyMessage } from '../../types';
 import type {
-	NavigationContinuationHook,
 	AbilitiesSetupHook,
 	GetChatComponent,
 	UseSuggestionsHook,
@@ -55,6 +83,61 @@ import type {
 	UseCheckpointHook,
 	ProviderCapabilities,
 } from '../../utils/load-external-providers';
+
+const streamedCheckpointMessagesBySession = new Map< string, Map< string, UIMessage > >();
+let activeStreamedCheckpointSession:
+	| {
+			scopeIdentity: string;
+			sessionId: string;
+			sessionIdentity: string;
+			liveFinalMessageIds: Set< string >;
+	  }
+	| undefined;
+
+function getStreamedCheckpointMessages( sessionIdentity: string ): Map< string, UIMessage > {
+	const existing = streamedCheckpointMessagesBySession.get( sessionIdentity );
+	if ( existing ) {
+		return existing;
+	}
+
+	const messages = new Map< string, UIMessage >();
+	streamedCheckpointMessagesBySession.set( sessionIdentity, messages );
+	return messages;
+}
+
+function getLiveStreamedCheckpointMessageIds( sessionIdentity: string ): Set< string > {
+	return activeStreamedCheckpointSession?.sessionIdentity === sessionIdentity
+		? activeStreamedCheckpointSession.liveFinalMessageIds
+		: new Set< string >();
+}
+
+function activateLiveStreamedCheckpointSession(
+	scopeIdentity: string,
+	sessionId: string,
+	sessionIdentity: string,
+	liveFinalMessageIds: Set< string >
+): Set< string > {
+	const previousSession = activeStreamedCheckpointSession;
+	if ( previousSession?.sessionIdentity === sessionIdentity ) {
+		return previousSession.liveFinalMessageIds;
+	}
+
+	const isSessionBootstrap =
+		previousSession?.scopeIdentity === scopeIdentity &&
+		previousSession.sessionId === '' &&
+		sessionId !== '';
+	const nextLiveFinalMessageIds =
+		previousSession && isSessionBootstrap
+			? previousSession.liveFinalMessageIds
+			: liveFinalMessageIds;
+	activeStreamedCheckpointSession = {
+		scopeIdentity,
+		sessionId,
+		sessionIdentity,
+		liveFinalMessageIds: nextLiveFinalMessageIds,
+	};
+	return nextLiveFinalMessageIds;
+}
 
 function getLatestAgentMessageId( messages: UIMessage[] ): string | null {
 	for ( let index = messages.length - 1; index >= 0; index-- ) {
@@ -66,12 +149,14 @@ function getLatestAgentMessageId( messages: UIMessage[] ): string | null {
 	return null;
 }
 
-/**
- * Pipe-delimited list of suggestion ids (e.g. `|id1|id2|`), matching Big Sky's
- * `suggestions` / `available_suggestions` tracks-prop format.
- */
-function formatSuggestionIds( suggestions: Suggestion[] ): string {
-	return '|' + suggestions.map( ( s ) => s.id ).join( '|' ) + '|';
+function getLatestUserMessageIndex( messages: UIMessage[] ): number {
+	for ( let index = messages.length - 1; index >= 0; index-- ) {
+		if ( messages[ index ].role === 'user' && ! isContextOnlyMessage( messages[ index ] ) ) {
+			return index;
+		}
+	}
+
+	return -1;
 }
 
 /**
@@ -83,11 +168,8 @@ function formatSuggestionIds( suggestions: Suggestion[] ): string {
  */
 function getSelectedOptionId(
 	selectedSuggestion: Suggestion,
-	availableSuggestions: Suggestion[]
+	originalSuggestion: Suggestion | undefined
 ): string | undefined {
-	const originalSuggestion = availableSuggestions.find(
-		( suggestion ) => suggestion.id === selectedSuggestion.id
-	);
 	return originalSuggestion?.options?.find(
 		( option ) => option.value === selectedSuggestion.prompt
 	)?.id;
@@ -117,6 +199,41 @@ function getToolMessageData( message: Pick< UIMessage, 'content' > ):
 	} catch ( _error ) {
 		return undefined;
 	}
+}
+
+function getBlockEditAgentMessageText( update: TaskUpdate ): string | undefined {
+	const candidateTexts = update.text ? [ update.text ] : [];
+
+	for ( const message of [ update.status.message, update.agentMessage ] ) {
+		for ( const part of message?.parts ?? [] ) {
+			if ( part.type !== 'data' || typeof part.data !== 'object' || part.data === null ) {
+				continue;
+			}
+
+			if ( ! ( 'result' in part.data ) ) {
+				continue;
+			}
+
+			const result = part.data.result;
+			if ( typeof result !== 'object' || result === null ) {
+				continue;
+			}
+
+			const agentMessage = ( result as { agentMessage?: unknown } ).agentMessage;
+			if ( typeof agentMessage === 'string' ) {
+				candidateTexts.push( agentMessage );
+			}
+		}
+	}
+
+	for ( const candidateText of candidateTexts ) {
+		const candidateMessage = { content: [ { type: 'text' as const, text: candidateText } ] };
+		if ( isBlockEditToolId( getToolMessageData( candidateMessage )?.toolId ) ) {
+			return candidateText;
+		}
+	}
+
+	return undefined;
 }
 
 function isShowComponentMessage( message: Pick< UIMessage, 'content' > ): boolean {
@@ -173,8 +290,6 @@ interface Props {
 	markdownExtensions: MarkdownExtensions;
 	/** Indicates if the floating chat is in compact mode. */
 	isCompactMode: boolean;
-	/** Navigation continuation hook for post-navigation conversation resumption. */
-	useNavigationContinuation?: NavigationContinuationHook;
 	/** The external providers' abilities-setup hook (e.g. Big Sky, jetpack-ai-sidebar). Invoked after custom actions registration. */
 	useProviderAbilitiesSetup?: AbilitiesSetupHook;
 	/** Hook for providing dynamic suggestions based on context (e.g., selected block). */
@@ -206,7 +321,6 @@ export default function OrchestratorChat( {
 	markdownComponents,
 	markdownExtensions,
 	isCompactMode,
-	useNavigationContinuation,
 	useProviderAbilitiesSetup,
 	useSuggestions,
 	getChatComponent,
@@ -217,14 +331,25 @@ export default function OrchestratorChat( {
 	isChatInputDisabled,
 	onHasMessagesChange,
 }: Props ) {
-	const { agentConfig, getActiveSessionId, siteKey } = useAgentsManagerContext();
+	const { agentConfig, getTabSessionId, siteKey, site, currentUser } = useAgentsManagerContext();
 
-	const navigate = useNavigate();
 	const [ inputValue, setInputValue ] = useState( '' );
 	const [ isThinking, setIsThinking ] = useState( false );
 	const [ thinkingMessage, setThinkingMessage ] = useState< string | null >( null );
 	const [ isBuildingSite, setIsBuildingSite ] = useState( false );
-	const [ deletedMessageIds, setDeletedMessageIds ] = useState< Set< string > >( new Set() );
+	// Tool-call ids are only unique within a transcript, so retries are tagged with
+	// the stream generation, which survives the temporary-to-server session id
+	// bootstrap but changes with any other session switch.
+	const [ retriedToolCalls, setRetriedToolCalls ] = useState< {
+		streamGeneration?: symbol;
+		ids: ReadonlySet< string >;
+	} >( { ids: new Set() } );
+	const [ sourceDriftInvalidatedCheckpointIds, setSourceDriftInvalidatedCheckpointIds ] = useState<
+		Set< string >
+	>( new Set() );
+	const pendingCheckpointActionIdsRef = useRef( new Set< string >() );
+	const completedInlineUndoCheckpointIdRef = useRef< string | undefined >( undefined );
+	const [ checkpointActionRevision, setCheckpointActionRevision ] = useState( 0 );
 	const [ retainedShowComponentMessages, setRetainedShowComponentMessages ] = useState<
 		Map< string, UIMessage >
 	>( new Map() );
@@ -233,6 +358,17 @@ export default function OrchestratorChat( {
 	const currentPostId = useSelect( ( select ) => {
 		const editor = select( 'core/editor' ) as { getCurrentPostId?: () => number | string };
 		return editor?.getCurrentPostId?.();
+	}, [] );
+	// The canvas the editor has open, as the value the abort effect watches. A
+	// separate select from `currentPostId` above: that one feeds message rendering
+	// and stays a bare id, while this needs the post type too — a page and a
+	// template can share an id, and a move between them must not read as a stay.
+	const canvasKey = useSelect( ( select ) => {
+		const editor = select( 'core/editor' ) as {
+			getCurrentPostId?: () => number | string | undefined;
+			getCurrentPostType?: () => string | undefined;
+		};
+		return buildCanvasKey( editor?.getCurrentPostType?.(), editor?.getCurrentPostId?.() );
 	}, [] );
 	const selectedBlockType = useSelect( ( select ) => {
 		try {
@@ -245,8 +381,190 @@ export default function OrchestratorChat( {
 			return undefined;
 		}
 	}, [] );
+	const hasEditorRedo = useSelect( ( select ) => {
+		try {
+			const editor = select( 'core/editor' ) as { hasEditorRedo?: () => boolean };
+			return editor?.hasEditorRedo?.() ?? false;
+		} catch {
+			return false;
+		}
+	}, [] );
+	const previousHasEditorRedoRef = useRef( hasEditorRedo );
 	const { isPageOrSiteEditorSurface: groupWritingSuggestions } = usePageOrSiteEditorSurface();
+	const checkpointAgentId = agentConfig?.agentId ?? '';
+	const checkpointSessionId = agentConfig?.sessionId ?? getTabSessionId() ?? '';
+	const checkpointScopeIdentity = JSON.stringify( [
+		siteKey,
+		currentUser?.ID ?? null,
+		checkpointAgentId,
+	] );
+	const checkpointSessionIdentity = JSON.stringify( [
+		siteKey,
+		currentUser?.ID ?? null,
+		checkpointAgentId,
+		checkpointSessionId,
+	] );
+	const liveFinalMessageIds = getLiveStreamedCheckpointMessageIds( checkpointSessionIdentity );
+	const streamedCheckpointMessagesRef = useRef( {
+		scopeIdentity: checkpointScopeIdentity,
+		sessionId: checkpointSessionId,
+		sessionIdentity: checkpointSessionIdentity,
+		streamGeneration: Symbol(),
+		pendingByTaskId: new Map< string, UIMessage >(),
+		byFinalMessageId: getStreamedCheckpointMessages( checkpointSessionIdentity ),
+		liveFinalMessageIds,
+		regeneratingMessageId: undefined as string | undefined,
+	} );
+	if ( streamedCheckpointMessagesRef.current.sessionIdentity !== checkpointSessionIdentity ) {
+		const previousStreamedMessages = streamedCheckpointMessagesRef.current;
+		const byFinalMessageId = getStreamedCheckpointMessages( checkpointSessionIdentity );
+		const isSessionBootstrap =
+			previousStreamedMessages.scopeIdentity === checkpointScopeIdentity &&
+			previousStreamedMessages.sessionId === '' &&
+			checkpointSessionId !== '';
 
+		if ( isSessionBootstrap ) {
+			previousStreamedMessages.byFinalMessageId.forEach( ( message, messageId ) => {
+				if ( ! byFinalMessageId.has( messageId ) ) {
+					byFinalMessageId.set( messageId, message );
+				}
+			} );
+			if (
+				streamedCheckpointMessagesBySession.get( previousStreamedMessages.sessionIdentity ) ===
+				previousStreamedMessages.byFinalMessageId
+			) {
+				streamedCheckpointMessagesBySession.delete( previousStreamedMessages.sessionIdentity );
+			}
+		}
+
+		streamedCheckpointMessagesRef.current = {
+			scopeIdentity: checkpointScopeIdentity,
+			sessionId: checkpointSessionId,
+			sessionIdentity: checkpointSessionIdentity,
+			streamGeneration: isSessionBootstrap ? previousStreamedMessages.streamGeneration : Symbol(),
+			pendingByTaskId: isSessionBootstrap ? previousStreamedMessages.pendingByTaskId : new Map(),
+			byFinalMessageId,
+			liveFinalMessageIds: isSessionBootstrap
+				? previousStreamedMessages.liveFinalMessageIds
+				: liveFinalMessageIds,
+			regeneratingMessageId: isSessionBootstrap
+				? previousStreamedMessages.regeneratingMessageId
+				: undefined,
+		};
+	}
+	useLayoutEffect( () => {
+		streamedCheckpointMessagesRef.current.liveFinalMessageIds =
+			activateLiveStreamedCheckpointSession(
+				checkpointScopeIdentity,
+				checkpointSessionId,
+				checkpointSessionIdentity,
+				streamedCheckpointMessagesRef.current.liveFinalMessageIds
+			);
+	}, [ checkpointScopeIdentity, checkpointSessionId, checkpointSessionIdentity ] );
+	const checkpointStreamGeneration = streamedCheckpointMessagesRef.current.streamGeneration;
+	const retriedToolCallIds = useMemo(
+		() =>
+			retriedToolCalls.streamGeneration === checkpointStreamGeneration
+				? retriedToolCalls.ids
+				: new Set< string >(),
+		[ retriedToolCalls, checkpointStreamGeneration ]
+	);
+	const reportedResponseTaskIdsRef = useRef( new Set< string >() );
+	const agentChatConfig = useMemo( () => {
+		if ( ! agentConfig ) {
+			return null;
+		}
+
+		const { onTaskUpdate } = agentConfig;
+		return {
+			...agentConfig,
+			trackReplying: true,
+			onTaskUpdate: async ( update: TaskUpdate ) => {
+				const streamedMessages = streamedCheckpointMessagesRef.current;
+				const isCurrentStreamGeneration =
+					streamedMessages.streamGeneration === checkpointStreamGeneration;
+
+				const retryingToolCallId = getRetryingToolCallId( update.status?.message );
+				if ( isCurrentStreamGeneration && retryingToolCallId ) {
+					setRetriedToolCalls( ( previous ) => {
+						if ( previous.streamGeneration !== checkpointStreamGeneration ) {
+							return {
+								streamGeneration: checkpointStreamGeneration,
+								ids: new Set( [ retryingToolCallId ] ),
+							};
+						}
+						return previous.ids.has( retryingToolCallId )
+							? previous
+							: { ...previous, ids: new Set( [ ...previous.ids, retryingToolCallId ] ) };
+					} );
+				}
+				const blockEditAgentMessageText = getBlockEditAgentMessageText( update );
+				if ( isCurrentStreamGeneration && blockEditAgentMessageText ) {
+					const message: UIMessage = {
+						id: update.status.message?.messageId ?? update.agentMessage?.messageId ?? update.id,
+						role: 'agent',
+						content: [ { type: 'text', text: blockEditAgentMessageText } ],
+						timestamp: Date.now(),
+						archived: false,
+						showIcon: true,
+					};
+					streamedMessages.pendingByTaskId.set( update.id, message );
+				}
+
+				const isTerminal =
+					update.final === true ||
+					[ 'completed', 'canceled', 'failed' ].includes( update.status.state );
+				if ( isTerminal && isCurrentStreamGeneration ) {
+					const finalMessageId = update.status.message?.messageId ?? update.agentMessage?.messageId;
+					const completedSuccessfully =
+						update.status.state === 'completed' ||
+						( update.final === true && ! [ 'canceled', 'failed' ].includes( update.status.state ) );
+					const checkpointMessage = streamedMessages.pendingByTaskId.get( update.id );
+					const regeneratingMessageId = streamedMessages.regeneratingMessageId;
+					if ( completedSuccessfully && regeneratingMessageId ) {
+						streamedMessages.byFinalMessageId.delete( regeneratingMessageId );
+						streamedMessages.liveFinalMessageIds.delete( regeneratingMessageId );
+					}
+					if ( finalMessageId && completedSuccessfully && checkpointMessage ) {
+						streamedMessages.byFinalMessageId.set( finalMessageId, checkpointMessage );
+						streamedMessages.liveFinalMessageIds.add( finalMessageId );
+					} else if ( completedSuccessfully && regeneratingMessageId ) {
+						if ( finalMessageId ) {
+							streamedMessages.byFinalMessageId.delete( finalMessageId );
+							streamedMessages.liveFinalMessageIds.delete( finalMessageId );
+						}
+					}
+					streamedMessages.pendingByTaskId.delete( update.id );
+					streamedMessages.regeneratingMessageId = undefined;
+				}
+
+				// One outcome per agent turn; a stream can repeat its terminal update.
+				if ( isTerminal && ! reportedResponseTaskIdsRef.current.has( update.id ) ) {
+					reportedResponseTaskIdsRef.current.add( update.id );
+					const messageId = update.status.message?.messageId ?? update.agentMessage?.messageId;
+					recordAgentsManagerTracksEvent( 'calypso_agents_manager_chat_response_completed', {
+						status: [ 'canceled', 'failed' ].includes( update.status.state )
+							? update.status.state
+							: 'completed',
+						...( messageId ? { message_id: messageId } : {} ),
+					} );
+				}
+
+				await onTaskUpdate?.( update );
+			},
+		};
+	}, [ agentConfig, checkpointStreamGeneration ] );
+
+	const isReaderChat = isReaderChatAgent( agentConfig?.agentId );
+	const credits = useCredits( {
+		enabled: ! isReaderChat,
+		agentConfig: agentChatConfig!,
+		siteKey,
+		userId: currentUser?.ID,
+		site,
+		isOpen: isOpen || ( ! isDocked && isCompactMode ),
+		isNoticeVisible: isOpen,
+	} );
 	const {
 		addMessage,
 		messages,
@@ -261,14 +579,60 @@ export default function OrchestratorChat( {
 		registerMessageActions,
 		getRegenerateHandler,
 		progressMessage,
-	} = useAgentChat( agentConfig! );
-	const messagesRef = useRef( messages );
+		isReplying,
+	} = credits.chat;
 	const getTraceIdForMessage = useAgentTraceIds( agentConfig );
 	const previousMessagesRef = useRef( messages );
 	const showComponentOrderRef = useRef< Map< string, number > >( new Map() );
 	const nextShowComponentOrderRef = useRef( 0 );
 	const wasProcessingRef = useRef( isProcessing );
-	messagesRef.current = messages;
+
+	// Stop a request the moment the canvas it was made for goes away. The guard in
+	// `load-external-providers` would refuse the eventual write anyway, but only
+	// once the model got there — the user would sit and watch a request run against
+	// a page they have already left.
+	//
+	// Driven by the editor store rather than a host event: AM runs in the same
+	// realm as the editor, so `useSelect` is the whole signal. It lands a tick
+	// later than a synchronous listener would, which is why `blockCurrentRequest()`
+	// below is not optional — the guard is what actually stops the write.
+	useEffect( () => {
+		// Keyed off the live move rather than `getBlockingMove()`: a request already
+		// blocked would otherwise abort again on every later canvas change.
+		if ( ! isCanvasWritingAgent( agentConfig?.agentId ) || ! isProcessing || ! getCanvasMove() ) {
+			return;
+		}
+
+		// Blocked as well as aborted: an abort that loses the race to an in-flight
+		// tool call must not let that call land on the new page.
+		blockCurrentRequest();
+		abortCurrentRequest();
+
+		recordAgentsManagerTracksEvent( 'calypso_agents_manager_editor_canvas_move_request_aborted', {
+			agent_id: agentConfig?.agentId,
+		} );
+
+		// Say why, or the reply just stops mid-sentence and reads as a failure.
+		// UI-only: the message carries an id the agent's client history does not
+		// have, so `filterUiOnlyMessages` keeps it on screen and it is never sent
+		// back to the server as conversation history.
+		addMessage( {
+			id: `canvas-move-abort-${ generateUUID() }`,
+			role: 'agent',
+			content: [
+				{
+					type: 'text',
+					text: __(
+						'You navigated away from that page, so I stopped the request before it changed the wrong one. Open the page you want and ask again.',
+						__i18n_text_domain__
+					),
+				},
+			],
+			timestamp: Date.now(),
+			archived: false,
+			showIcon: true,
+		} );
+	}, [ agentConfig?.agentId, canvasKey, isProcessing, abortCurrentRequest, addMessage ] );
 
 	// Drop all retained placeholders, keeping the map reference stable when
 	// already empty so no re-render is triggered.
@@ -300,15 +664,36 @@ export default function OrchestratorChat( {
 			}
 
 			return async () => {
+				// A regeneration is a new agent request, so it takes the same
+				// credits gate as a send.
+				if ( ! credits.beforeSubmit() ) {
+					return;
+				}
+				// A regenerate says the reply was not good enough: the clearest
+				// quality signal the chat has after a thumbs down.
+				recordAgentsManagerTracksEvent( 'calypso_agents_manager_response_action_regenerate', {
+					...( message?.id ? { message_id: message.id } : {} ),
+				} );
 				setIsRegenerating( true );
+				streamedCheckpointMessagesRef.current.pendingByTaskId.clear();
+				streamedCheckpointMessagesRef.current.regeneratingMessageId = message?.id;
 				// Drop any retained placeholders up front; the turn is being
 				// rewound, so a leftover picker would otherwise reappear once
 				// regeneration settles if the new response omits the component.
 				clearRetainedShowComponentMessages();
-				await handler();
+				// A regeneration is a fresh dispatch that rebinds via
+				// `getClientContext()` on its own outbound message, so it starts a
+				// new request for the binding too — carrying a previous request's
+				// block into it would refuse writes the new canvas is bound to.
+				startNewUserRequest();
+				try {
+					await handler();
+				} finally {
+					streamedCheckpointMessagesRef.current.regeneratingMessageId = undefined;
+				}
 			};
 		},
-		[ clearRetainedShowComponentMessages, getRegenerateHandler ]
+		[ clearRetainedShowComponentMessages, getRegenerateHandler, credits.beforeSubmit ]
 	);
 
 	const getShowComponentOrder = useCallback( ( message: UIMessage ): number | undefined => {
@@ -385,12 +770,44 @@ export default function OrchestratorChat( {
 
 	// Reader-chat sessions are short (usually < 50 messages) — don't waste
 	// time paginating 10 pages deep. One page covers typical use.
-	const isReaderChat = isReaderChatAgent( agentConfig?.agentId );
 	const shouldLoadConversation =
 		! isReaderChat || ( ! hasUserSentMessage && messages.length === 0 && ! isProcessing );
 	const chatError = isReaderChat
 		? getReaderChatErrorMessage( error )
 		: getOrchestratorErrorMessage( error );
+
+	// One event per error the chat shows. `error` returns to null between
+	// attempts, so the same failure repeating on a later send counts again.
+	const { takeRefusalCode } = credits;
+	useEffect( () => {
+		if ( error ) {
+			recordAgentsManagerTracksEvent( 'calypso_agents_manager_chat_error', {
+				error_type: getOrchestratorErrorType( error, takeRefusalCode() ),
+			} );
+		}
+	}, [ error, takeRefusalCode ] );
+
+	// Resume the conversation after a `wp-admin-navigate` full page reload;
+	// while such a resume is pending, hydration below must not replace the
+	// client-held history (see the hook's docblock).
+	const { hadParkedNavigation, flushPendingNavigation } = useNavigationContinuation( {
+		isProcessing,
+		sendToolResult: async ( params ) => {
+			await onSubmit( params.message, {
+				type: 'tool_result',
+				toolCallId: params.toolCallId,
+				toolId: params.toolId,
+				sessionId: params.sessionId,
+			} );
+		},
+	} );
+
+	// Every send path runs a turn.
+	useEffect( () => {
+		if ( isProcessing && agentConfig?.sessionId ) {
+			markSessionSent( agentConfig.sessionId );
+		}
+	}, [ isProcessing, agentConfig?.sessionId ] );
 
 	const { isLoading: isLoadingConversation } = useConversation( {
 		maxPages: isReaderChat ? 1 : 10,
@@ -400,23 +817,61 @@ export default function OrchestratorChat( {
 				return;
 			}
 
-			// Update the UI with the loaded messages
-			loadMessages( loadedMessages );
-			// Make sure future messages go to the right session
-			getAgentManager().updateSessionId( agentConfig!.agentId, serverSessionId );
+			// The agent may have been discarded (e.g. a site switch) while this
+			// fetch was in flight — its result belongs to the previous scope.
+			const agentManager = getAgentManager();
+			if ( ! agentManager.hasAgent( agentConfig!.agentId ) ) {
+				return;
+			}
 
-			// Sync local session ID with the server's
+			loadedMessages.forEach( ( message ) => {
+				const checkpointMessage = streamedCheckpointMessagesRef.current.byFinalMessageId.get(
+					message.messageId
+				) ?? {
+					id: message.messageId,
+					role: message.role,
+					content: message.parts
+						.filter( ( part ) => part.type === 'text' )
+						.map( ( part ) => ( { type: 'text', text: part.text } ) ),
+				};
+				const checkpointId = getCheckpointIdForMessage( checkpointMessage );
+				const isCurrentLiveMessage = streamedCheckpointMessagesRef.current.liveFinalMessageIds.has(
+					message.messageId
+				);
+				if ( checkpointId && ! isCurrentLiveMessage ) {
+					invalidateCheckpointAction( checkpointId );
+				}
+			} );
+
+			// With a resume pending, the tab's own store holds the conversation
+			// the parked call lives in — hydrate only if its restore came up
+			// empty (e.g. a quota-failed persist). Read the manager, not React
+			// state: `messages` stays empty until the async agent init lands.
+			// A remount mid-turn (History and back, reopening the panel) fetches a
+			// transcript without the reply yet, so the live history stays.
+			if (
+				! agentManager.isTurnInFlight( agentConfig!.agentId ) &&
+				( ! hadParkedNavigation ||
+					agentManager.getConversationHistory( agentConfig!.agentId ).length === 0 )
+			) {
+				loadMessages( loadedMessages );
+			}
+
+			// Make sure future messages go to the right session
+			agentManager.updateSessionId( agentConfig!.agentId, serverSessionId );
+
+			// Persist the server's canonical ID as this tab's session through the
+			// config's callback, so it writes under the site the config was
+			// created for.
 			if ( agentConfig!.sessionId !== serverSessionId ) {
-				navigate( '/chat', { state: { sessionId: serverSessionId }, replace: true } );
+				agentConfig!.onSessionIdChange?.( serverSessionId );
 			}
 		},
 	} );
 
 	// Use dynamic suggestions from the external provider (e.g., Big Sky block-based suggestions)
 	const maxDynamicSuggestions = isDocked ? undefined : 3;
-	const dynamicSuggestions = useSuggestions?.( maxDynamicSuggestions, {
-		suggestionsVisible,
-	} );
+	const dynamicSuggestions = useSuggestions?.( maxDynamicSuggestions );
 	const dynamicSuggestionsList = dynamicSuggestions?.suggestions ?? [];
 	const replaceEmptyViewSuggestions = dynamicSuggestions?.replaceEmptyViewSuggestions === true;
 	const dynamicSuggestionsKey = JSON.stringify(
@@ -445,20 +900,344 @@ export default function OrchestratorChat( {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ dynamicSuggestionsKey, registerSuggestions, clearSuggestions ] );
 
-	// Persist the chat route so the conversation can be resumed later.
-	useSaveNewChatRoute( hasUserSentMessage );
-
 	// Register an "Undo" action on agent messages with checkpoints.
 	const checkpoint = useCheckpoint?.();
-	const getCheckpointActionsForMessage = useCheckpointAction( registerMessageActions, checkpoint );
+	const checkpointRef = useRef( checkpoint );
+	checkpointRef.current = checkpoint;
+	const handleCheckpointActionPendingChange = useCallback(
+		( checkpointId: string, isPending: boolean, completedAction?: 'undo' | 'redo' ) => {
+			if ( isPending ) {
+				completedInlineUndoCheckpointIdRef.current = undefined;
+				pendingCheckpointActionIdsRef.current.add( checkpointId );
+				return;
+			}
 
-	// TODO (ability-migration): Remove once the last checkpoint-writing Big Sky
-	// ability migrates. Keeps the provider checkpoint store reachable for the
-	// `restore-checkpoint` delegation while Big Sky still writes checkpoints.
+			if ( pendingCheckpointActionIdsRef.current.delete( checkpointId ) ) {
+				let hasEditorRedoNow = false;
+				try {
+					const editor = selectDataStore( 'core/editor' ) as {
+						hasEditorRedo?: () => boolean;
+					};
+					hasEditorRedoNow = editor?.hasEditorRedo?.() ?? false;
+				} catch {
+					// The editor store is optional outside Gutenberg.
+				}
+				// The provider can settle after history renders but before the history effect processes it.
+				completedInlineUndoCheckpointIdRef.current =
+					completedAction === 'undo' && ! previousHasEditorRedoRef.current && hasEditorRedoNow
+						? checkpointId
+						: undefined;
+				setCheckpointActionRevision( ( revision ) => revision + 1 );
+			}
+		},
+		[]
+	);
+	const handleCheckpointActionInvalidated = useCallback( () => {
+		setCheckpointActionRevision( ( revision ) => revision + 1 );
+	}, [] );
+	const checkpointIdsByTurn = useMemo( () => {
+		// Session promotion changes the ref-backed messages without changing the raw message list.
+		void checkpointSessionIdentity;
+		const latestUserMessageIndex = getLatestUserMessageIndex( messages );
+		const current = new Set< string >();
+		const userMessageIdByCheckpointId = new Map< string, string | undefined >();
+		let userMessageId: string | undefined;
+
+		messages.forEach( ( message, index ) => {
+			if ( message.role === 'user' && ! isContextOnlyMessage( message ) ) {
+				userMessageId = message.id;
+			}
+			const checkpointMessage =
+				streamedCheckpointMessagesRef.current.byFinalMessageId.get( message.id ) ?? message;
+			const checkpointId = getCheckpointIdForMessage( checkpointMessage );
+			if ( checkpointId ) {
+				userMessageIdByCheckpointId.set( checkpointId, userMessageId );
+			}
+			if ( checkpointId && index > latestUserMessageIndex ) {
+				current.add( checkpointId );
+			}
+		} );
+
+		return {
+			current,
+			userMessageIdByCheckpointId,
+			userMessageId: messages[ latestUserMessageIndex ]?.id,
+		};
+	}, [ checkpointSessionIdentity, messages ] );
+	const nativeUndoInvalidatedTurnRef = useRef(
+		hasEditorRedo ? checkpointIdsByTurn.userMessageId : undefined
+	);
+	const [ nativeUndoRevertedTurn, setNativeUndoRevertedTurn ] = useState< string | undefined >();
+	const pendingNativeUndoTurnRef = useRef< string | undefined >( undefined );
+	const pendingNativeRedoTurnRef = useRef< string | undefined >( undefined );
+	const supportsCheckpointSwap =
+		typeof checkpoint?.canSwapCheckpoint === 'function' &&
+		typeof checkpoint.swapCheckpoint === 'function';
+	const isWatchingNativeHistory =
+		!! checkpointIdsByTurn.userMessageId &&
+		( nativeUndoRevertedTurn === checkpointIdsByTurn.userMessageId ||
+			pendingNativeUndoTurnRef.current === checkpointIdsByTurn.userMessageId );
+	const hasPendingCheckpointSwap =
+		supportsCheckpointSwap &&
+		( isWatchingNativeHistory ||
+			[ ...checkpointIdsByTurn.current ].some(
+				( checkpointId ) =>
+					! sourceDriftInvalidatedCheckpointIds.has( checkpointId ) &&
+					! isCheckpointActionInvalidated( checkpointId )
+			) );
+	const checkpointEditorBlocks = useSelect(
+		( select ) => {
+			if ( ! hasPendingCheckpointSwap ) {
+				return undefined;
+			}
+
+			try {
+				const blockEditor = select( 'core/block-editor' ) as { getBlocks?: () => unknown[] };
+				return blockEditor?.getBlocks?.();
+			} catch {
+				return undefined;
+			}
+		},
+		[ checkpointIdsByTurn, checkpointSessionIdentity, hasPendingCheckpointSwap, useCheckpoint ]
+	);
 	useEffect( () => {
-		setProviderCheckpoints( checkpoint );
-		return () => setProviderCheckpoints( undefined );
-	}, [ checkpoint ] );
+		void checkpointActionRevision;
+		void checkpointEditorBlocks;
+		void checkpointSessionIdentity;
+		void useCheckpoint;
+		const currentCheckpoint = checkpointRef.current;
+		const nextInvalidatedCheckpointIds = new Set(
+			[ ...sourceDriftInvalidatedCheckpointIds ].filter( ( checkpointId ) =>
+				checkpointIdsByTurn.current.has( checkpointId )
+			)
+		);
+		let didChange = nextInvalidatedCheckpointIds.size !== sourceDriftInvalidatedCheckpointIds.size;
+		const shouldDeferSourceDriftInvalidation =
+			hasEditorRedo &&
+			!! checkpointIdsByTurn.userMessageId &&
+			( previousHasEditorRedoRef.current === false ||
+				pendingNativeUndoTurnRef.current === checkpointIdsByTurn.userMessageId ||
+				nativeUndoInvalidatedTurnRef.current === checkpointIdsByTurn.userMessageId );
+		if ( supportsCheckpointSwap && currentCheckpoint ) {
+			for ( const checkpointId of checkpointIdsByTurn.current ) {
+				if (
+					! shouldDeferSourceDriftInvalidation &&
+					! nextInvalidatedCheckpointIds.has( checkpointId ) &&
+					! pendingCheckpointActionIdsRef.current.has( checkpointId ) &&
+					currentCheckpoint.canSwapCheckpoint?.( checkpointId ) === false
+				) {
+					nextInvalidatedCheckpointIds.add( checkpointId );
+					invalidateCheckpointAction( checkpointId );
+					didChange = true;
+				}
+			}
+		}
+		if ( didChange ) {
+			setSourceDriftInvalidatedCheckpointIds( nextInvalidatedCheckpointIds );
+		}
+	}, [
+		checkpointActionRevision,
+		checkpointEditorBlocks,
+		checkpointIdsByTurn,
+		checkpointSessionIdentity,
+		hasEditorRedo,
+		sourceDriftInvalidatedCheckpointIds,
+		supportsCheckpointSwap,
+		useCheckpoint,
+	] );
+	const getCheckpointActionsForMessage = useCheckpointAction(
+		registerMessageActions,
+		checkpoint,
+		( checkpointId ) => {
+			if ( sourceDriftInvalidatedCheckpointIds.has( checkpointId ) ) {
+				return 'hidden';
+			}
+			const checkpointUserMessageId =
+				checkpointIdsByTurn.userMessageIdByCheckpointId.get( checkpointId );
+			if (
+				checkpointUserMessageId &&
+				( pendingNativeUndoTurnRef.current === checkpointUserMessageId ||
+					nativeUndoInvalidatedTurnRef.current === checkpointUserMessageId )
+			) {
+				return 'hidden';
+			}
+			if ( ! checkpointIdsByTurn.current.has( checkpointId ) ) {
+				return 'disabled';
+			}
+			if ( hasEditorRedo && checkpointRef.current?.canSwapCheckpoint?.( checkpointId ) !== true ) {
+				return 'hidden';
+			}
+
+			return 'enabled';
+		},
+		handleCheckpointActionPendingChange,
+		handleCheckpointActionInvalidated
+	);
+	const previousCheckpointEditorBlocksRef = useRef( checkpointEditorBlocks );
+
+	useEffect( () => {
+		// Native history can notify before block content; a later or combined block change confirms Undo.
+		const didCheckpointEditorBlocksChange =
+			previousCheckpointEditorBlocksRef.current !== undefined &&
+			checkpointEditorBlocks !== undefined &&
+			previousCheckpointEditorBlocksRef.current !== checkpointEditorBlocks;
+		previousCheckpointEditorBlocksRef.current = checkpointEditorBlocks;
+		const currentCheckpointIds = [ ...checkpointIdsByTurn.current ];
+		const latestCheckpointId = currentCheckpointIds[ currentCheckpointIds.length - 1 ];
+		const latestCheckpointCanSwap = latestCheckpointId
+			? checkpointRef.current?.canSwapCheckpoint?.( latestCheckpointId )
+			: undefined;
+		const hasPendingCheckpointAction = currentCheckpointIds.some( ( checkpointId ) =>
+			pendingCheckpointActionIdsRef.current.has( checkpointId )
+		);
+		let didInvalidateCheckpointAction = false;
+		const didEditorRedoBecomeAvailable =
+			previousHasEditorRedoRef.current === false && hasEditorRedo;
+		const didEditorRedoBecomeUnavailable =
+			previousHasEditorRedoRef.current === true && ! hasEditorRedo;
+		const didInlineUndoCreateEditorRedo =
+			didEditorRedoBecomeAvailable &&
+			completedInlineUndoCheckpointIdRef.current !== undefined &&
+			checkpointIdsByTurn.current.has( completedInlineUndoCheckpointIdRef.current );
+		const wasPendingNativeUndo =
+			!! checkpointIdsByTurn.userMessageId &&
+			pendingNativeUndoTurnRef.current === checkpointIdsByTurn.userMessageId;
+		let shouldConfirmNativeUndo = false;
+		let didCheckpointActionAvailabilityChange = false;
+		const supersededPendingNativeUndoTurn =
+			pendingNativeUndoTurnRef.current &&
+			pendingNativeUndoTurnRef.current !== checkpointIdsByTurn.userMessageId
+				? pendingNativeUndoTurnRef.current
+				: undefined;
+		if ( supersededPendingNativeUndoTurn ) {
+			pendingNativeUndoTurnRef.current = undefined;
+			nativeUndoInvalidatedTurnRef.current = supersededPendingNativeUndoTurn;
+			didCheckpointActionAvailabilityChange = true;
+			for ( const [
+				checkpointId,
+				userMessageId,
+			] of checkpointIdsByTurn.userMessageIdByCheckpointId ) {
+				if (
+					userMessageId === supersededPendingNativeUndoTurn &&
+					! isCheckpointActionInvalidated( checkpointId )
+				) {
+					invalidateCheckpointAction( checkpointId );
+					didInvalidateCheckpointAction = true;
+				}
+			}
+		}
+		if ( hasPendingCheckpointAction ) {
+			if ( pendingNativeUndoTurnRef.current !== undefined ) {
+				didCheckpointActionAvailabilityChange = true;
+			}
+			pendingNativeUndoTurnRef.current = undefined;
+			pendingNativeRedoTurnRef.current = undefined;
+		}
+		if ( didEditorRedoBecomeAvailable ) {
+			completedInlineUndoCheckpointIdRef.current = undefined;
+			pendingNativeRedoTurnRef.current = undefined;
+			if ( pendingNativeUndoTurnRef.current !== undefined ) {
+				didCheckpointActionAvailabilityChange = true;
+			}
+			pendingNativeUndoTurnRef.current = undefined;
+			if (
+				! didInlineUndoCreateEditorRedo &&
+				! hasPendingCheckpointAction &&
+				latestCheckpointId &&
+				checkpointIdsByTurn.userMessageId
+			) {
+				if ( didCheckpointEditorBlocksChange && latestCheckpointCanSwap === false ) {
+					shouldConfirmNativeUndo = true;
+				} else if ( latestCheckpointCanSwap !== undefined ) {
+					pendingNativeUndoTurnRef.current = checkpointIdsByTurn.userMessageId;
+					didCheckpointActionAvailabilityChange = true;
+				} else {
+					nativeUndoInvalidatedTurnRef.current = checkpointIdsByTurn.userMessageId;
+				}
+			} else if (
+				! didInlineUndoCreateEditorRedo &&
+				! hasPendingCheckpointAction &&
+				latestCheckpointCanSwap === undefined
+			) {
+				nativeUndoInvalidatedTurnRef.current = checkpointIdsByTurn.userMessageId;
+			}
+		}
+		if (
+			hasEditorRedo &&
+			! hasPendingCheckpointAction &&
+			didCheckpointEditorBlocksChange &&
+			latestCheckpointId &&
+			checkpointIdsByTurn.userMessageId &&
+			wasPendingNativeUndo
+		) {
+			pendingNativeUndoTurnRef.current = undefined;
+			didCheckpointActionAvailabilityChange = true;
+			if ( latestCheckpointCanSwap === false ) {
+				shouldConfirmNativeUndo = true;
+			}
+		}
+		if ( shouldConfirmNativeUndo && latestCheckpointId && checkpointIdsByTurn.userMessageId ) {
+			nativeUndoInvalidatedTurnRef.current = checkpointIdsByTurn.userMessageId;
+			if (
+				! sourceDriftInvalidatedCheckpointIds.has( latestCheckpointId ) &&
+				! isCheckpointActionInvalidated( latestCheckpointId )
+			) {
+				if ( setCheckpointActionReverted( latestCheckpointId, true ) ) {
+					setCheckpointActionRevision( ( revision ) => revision + 1 );
+				}
+				setNativeUndoRevertedTurn( checkpointIdsByTurn.userMessageId );
+			}
+		}
+		if (
+			didEditorRedoBecomeUnavailable &&
+			checkpointIdsByTurn.userMessageId &&
+			nativeUndoRevertedTurn === checkpointIdsByTurn.userMessageId
+		) {
+			// Exact checkpoint content confirms Updated, even when the user recreates it manually.
+			pendingNativeRedoTurnRef.current = checkpointIdsByTurn.userMessageId;
+		}
+		if ( didEditorRedoBecomeUnavailable ) {
+			if ( pendingNativeUndoTurnRef.current !== undefined ) {
+				didCheckpointActionAvailabilityChange = true;
+			}
+			pendingNativeUndoTurnRef.current = undefined;
+		}
+		previousHasEditorRedoRef.current = hasEditorRedo;
+
+		if (
+			! hasEditorRedo &&
+			latestCheckpointId &&
+			checkpointIdsByTurn.userMessageId &&
+			pendingNativeRedoTurnRef.current === checkpointIdsByTurn.userMessageId &&
+			checkpointRef.current?.canSwapCheckpoint?.( latestCheckpointId ) === true
+		) {
+			if ( setCheckpointActionReverted( latestCheckpointId, false ) ) {
+				setCheckpointActionRevision( ( revision ) => revision + 1 );
+			}
+			setNativeUndoRevertedTurn( undefined );
+			pendingNativeRedoTurnRef.current = undefined;
+		}
+
+		for ( const checkpointId of currentCheckpointIds ) {
+			if (
+				checkpointIdsByTurn.userMessageId &&
+				nativeUndoInvalidatedTurnRef.current === checkpointIdsByTurn.userMessageId &&
+				! isCheckpointActionInvalidated( checkpointId )
+			) {
+				invalidateCheckpointAction( checkpointId );
+				didInvalidateCheckpointAction = true;
+			}
+		}
+		if ( didInvalidateCheckpointAction || didCheckpointActionAvailabilityChange ) {
+			setCheckpointActionRevision( ( revision ) => revision + 1 );
+		}
+	}, [
+		checkpointEditorBlocks,
+		checkpointIdsByTurn,
+		hasEditorRedo,
+		nativeUndoRevertedTurn,
+		sourceDriftInvalidatedCheckpointIds,
+	] );
 
 	// Register thumbs-up/down feedback actions on agent messages.
 	const { showFeedbackInput, submitFeedbackText, resetFeedback, getFeedbackActionsForMessage } =
@@ -513,9 +1292,19 @@ export default function OrchestratorChat( {
 	// programmatic submit) lands before the `isUploadingImages` state does.
 	const isUploadingRef = useRef( false );
 
+	// The prompts on screen, so a send can be told apart from a typed one:
+	// Agenttic submits a clicked suggestion before the click handler runs.
+	const suggestionPromptsRef = useRef< Set< string > >( new Set() );
+
 	const onSubmitWithImages = useCallback(
 		async ( message: string ) => {
 			submitDispatchedRef.current = false;
+			// Taken before the drop below, so a dropped send never labels the next one.
+			const origin = takeActionOrigin( 'send' );
+			const source =
+				origin === 'composer' && suggestionPromptsRef.current.has( message )
+					? 'suggestion'
+					: origin;
 
 			// The composer is committed while a batch uploads — drop re-entrant
 			// sends (suggestion clicks, programmatic submits) instead of
@@ -526,11 +1315,12 @@ export default function OrchestratorChat( {
 
 			setHasUserSentMessage( true );
 			setUploadError( null );
-			persistLastActivity( siteKey );
 
-			recordBigSkyTracksEvent( 'chat_input_send_message', {
+			startTurn();
+			recordBigSkyTracksEvent( 'jetpack_big_sky_chat_input_send_message', {
 				message_length: message?.length || 0,
 				has_images: pendingImages.length > 0,
+				source,
 			} );
 
 			let imageData;
@@ -551,7 +1341,7 @@ export default function OrchestratorChat( {
 
 					const mediaObjects = await uploadImagesToWordPress();
 
-					recordBigSkyTracksEvent( 'file_upload_success', {
+					recordBigSkyTracksEvent( 'jetpack_big_sky_file_upload_success', {
 						count: mediaObjects.length,
 					} );
 
@@ -574,13 +1364,13 @@ export default function OrchestratorChat( {
 					// composer-typed message stays in the input — the composer is
 					// back to its pre-send state.
 					if ( caughtError instanceof Error && caughtError.name === 'AbortError' ) {
-						recordBigSkyTracksEvent( 'file_upload_cancel', {
+						recordBigSkyTracksEvent( 'jetpack_big_sky_file_upload_cancel', {
 							count: pendingImages.length,
 						} );
 						return;
 					}
 
-					recordBigSkyTracksEvent( 'file_upload_error', {
+					recordBigSkyTracksEvent( 'jetpack_big_sky_file_upload_error', {
 						count: pendingImages.length,
 					} );
 					setUploadError(
@@ -597,8 +1387,23 @@ export default function OrchestratorChat( {
 				setInputValue( ( currentValue ) => ( currentValue === message ? '' : currentValue ) );
 			}
 
+			// A new user message is a new intent, so it starts unbound and unblocked:
+			// the previous turn's canvas must not judge this one (the effect above
+			// would abort it on sight if the user has navigated since), and any block
+			// that turn left behind must not refuse this one's writes.
+			//
+			// This sits on the dispatch path rather than in `submitChatMessage` — the
+			// composer calls this callback directly, and the sends above that bail out
+			// early must not disturb a binding that still belongs to a running request.
+			startNewUserRequest();
+
 			submitDispatchedRef.current = true;
 			try {
+				// Answer a still-parked `wp-admin-navigate` call before this
+				// message goes out, so it meets an already-truthful conversation.
+				// A fast no-op otherwise, and it never throws.
+				await flushPendingNavigation();
+
 				// Images dispatch via agenttic's `imageUrls` option — the resulting
 				// `FilePart`s persist in conversation history with their metadata.
 				await ( imageData ? onSubmit( message, { imageUrls: imageData } ) : onSubmit( message ) );
@@ -611,20 +1416,14 @@ export default function OrchestratorChat( {
 			}
 
 			consumeNextMessageExternalContextEntries();
-
-			if ( isReaderChat ) {
-				markSessionUsed( agentConfig?.agentId );
-			}
 		},
 		[
-			agentConfig?.agentId,
+			flushPendingNavigation,
 			inputValue,
-			isReaderChat,
 			isUploadingImages,
 			onSubmit,
 			pendingImages.length,
 			setChatInput,
-			siteKey,
 			uploadImagesToWordPress,
 		]
 	);
@@ -632,10 +1431,13 @@ export default function OrchestratorChat( {
 	const handleAbort = useCallback( () => {
 		// `abortUpload` reports whether it stopped an in-flight batch, so a stop
 		// that lands just after the upload settles still aborts the agent request.
-		if ( imageUpload?.abortUpload?.() ) {
-			return;
+		const stoppedUpload = imageUpload?.abortUpload?.();
+		if ( ! stoppedUpload ) {
+			abortCurrentRequest();
 		}
-		abortCurrentRequest();
+		recordAgentsManagerTracksEvent( 'calypso_agents_manager_chat_response_stopped', {
+			stopped_during: stoppedUpload ? 'upload' : 'response',
+		} );
 	}, [ abortCurrentRequest, imageUpload ] );
 
 	const submitChatMessage = useCallback(
@@ -643,6 +1445,15 @@ export default function OrchestratorChat( {
 			const submittedMessage = typeof message === 'string' ? message : inputValue;
 
 			if ( ! submittedMessage.trim() ) {
+				return;
+			}
+
+			// Composer sends are gated by Agenttic before reaching `onSubmitWithImages`;
+			// context cards and the host bridge arrive here instead, so gate them too.
+			// A blocked send consumes any origin the bridge marked for it, so it
+			// can't label the next successful send.
+			if ( ! credits.beforeSubmit() ) {
+				takeActionOrigin( 'send' );
 				return;
 			}
 
@@ -655,14 +1466,36 @@ export default function OrchestratorChat( {
 				);
 			}
 		},
-		[ inputValue, onSubmitWithImages ]
+		[ inputValue, onSubmitWithImages, credits.beforeSubmit ]
 	);
 
-	useRegisterCustomActions( { setChatInput, submitChatMessage } );
+	const submitChatMessageFromHost = useCallback(
+		async ( message?: string ) => {
+			const submittedMessage = typeof message === 'string' ? message : inputValue;
+
+			if ( ! submittedMessage.trim() ) {
+				return;
+			}
+
+			// Only the bridge wrapper marks: the composer, suggestion chips, and
+			// context-card submit buttons go through `submitChatMessage` unmarked.
+			markActionOrigin( 'send', 'host' );
+			await submitChatMessage( submittedMessage );
+		},
+		[ inputValue, submitChatMessage ]
+	);
+
+	useRegisterCustomActions( { setChatInput, submitChatMessage: submitChatMessageFromHost } );
 
 	const handleContextCardAction = useCallback(
 		( card: ExternalContextCard, action: ExternalContextCardAction ) => {
 			if ( ! action.prompt ) {
+				return;
+			}
+
+			// A send blocked on credits keeps the card, so it can be retried once
+			// credits are back; the gate opens the popover itself.
+			if ( action.type === 'submit' && ! credits.beforeSubmit() ) {
 				return;
 			}
 
@@ -679,7 +1512,7 @@ export default function OrchestratorChat( {
 
 			setChatInput( action.prompt );
 		},
-		[ setChatInput, submitChatMessage ]
+		[ setChatInput, submitChatMessage, credits.beforeSubmit ]
 	);
 
 	const dismissContextCard = useCallback( ( card: ExternalContextCard ) => {
@@ -688,22 +1521,6 @@ export default function OrchestratorChat( {
 			removeExternalContextEntry( entryId );
 		} );
 	}, [] );
-
-	// Handle navigation continuation if hook is provided
-	// This allows to resume conversations after full page navigation
-	useNavigationContinuation?.( {
-		isProcessing,
-		sendToolResult: async ( params ) => {
-			await onSubmit( params.message, {
-				type: 'tool_result',
-				toolCallId: params.toolCallId,
-				toolId: params.toolId,
-				sessionId: params.sessionId,
-			} );
-		},
-		sessionId: getActiveSessionId(),
-		pathname: window.location.pathname,
-	} );
 
 	// Listen for inline suggestion clicks dispatched by external providers or the Agenttic bridge below.
 	useEffect( () => {
@@ -732,56 +1549,12 @@ export default function OrchestratorChat( {
 		};
 	}, [] );
 
-	const handleSuggestionClick = useCallback(
-		( suggestion: Suggestion | string, availableSuggestions?: Suggestion[] ) => {
-			const value =
-				typeof suggestion === 'string' ? suggestion : suggestion.prompt ?? suggestion.label;
-
-			const autoSubmit = typeof suggestion !== 'string' && !! suggestion.autoSubmit;
-			const suggestionId = typeof suggestion !== 'string' ? suggestion.id : undefined;
-			const optionId =
-				typeof suggestion !== 'string'
-					? getSelectedOptionId( suggestion, availableSuggestions ?? [] )
-					: undefined;
-			const blockType =
-				typeof suggestion !== 'string' && contextualSuggestionIds.has( suggestion.id )
-					? selectedBlockType
-					: undefined;
-
-			if ( typeof suggestion !== 'string' ) {
-				recordBigSkyTracksEvent( 'chat_suggestion_click', {
-					suggestion_text: suggestion.prompt || '',
-					suggestion_id: suggestion.id || '',
-					available_suggestions: formatSuggestionIds( availableSuggestions ?? [] ),
-					...( optionId ? { option_id: optionId } : {} ),
-					...( blockType ? { block_type: blockType } : {} ),
-				} );
-			}
-
-			// Always dispatch so click listeners (e.g. the Jetpack sidebar hiding the
-			// clicked chip) still fire. `autoSubmit` tells the input listener to skip
-			// repopulating the composer, which the AgentUI already submitted and cleared.
-			window.dispatchEvent(
-				new CustomEvent( 'big-sky-inline-suggestion-click', {
-					detail: {
-						value,
-						autoSubmit,
-						...( suggestionId ? { suggestionId } : {} ),
-					},
-				} )
-			);
-		},
-		[ contextualSuggestionIds, selectedBlockType ]
-	);
-
 	// Invoke abilities setup hook to register hook-based abilities that utilize React context.
 	// Provides chat action handlers to the external providers' ability setups
 	// (Big Sky, jetpack-ai-sidebar) — permanent provider infrastructure. The hook
 	// is stable as `OrchestratorChat` only renders after providers have loaded.
-	// TODO (ability-migration): After Big Sky's abilities migrate, prune this object to
-	// the fields other providers consume (jetpack-ai-sidebar reads only
-	// `clearSuggestions` and `isProcessing`) and drop the `BigSkyMessage`
-	// conversion.
+	// Big Sky reads every handler but `isProcessing`; jetpack-ai-sidebar reads
+	// `clearSuggestions` and `isProcessing`.
 	useProviderAbilitiesSetup?.( {
 		addMessage: ( message: BigSkyMessage ) => {
 			// Transform Big Sky message format to `UIMessage` format and add to chat.
@@ -792,38 +1565,9 @@ export default function OrchestratorChat( {
 		getAgentManager,
 		isProcessing,
 		setIsThinking,
-		deleteMarkedMessages: ( msgs ) => {
-			const deleteDecisions = msgs.map( ( msg ) => {
-				const messageFromRequest = msg as Pick< UIMessage, 'id' > &
-					Partial< Pick< UIMessage, 'content' > >;
-				const fullMessage = messageFromRequest.content
-					? ( messageFromRequest as UIMessage )
-					: messagesRef.current.find( ( message ) => message.id === msg.id );
-				const isShowComponent = !! fullMessage && isShowComponentMessage( fullMessage );
-
-				return {
-					id: msg.id,
-					foundMessage: !! fullMessage,
-					isShowComponent,
-					tool: fullMessage ? getToolMessageData( fullMessage ) : undefined,
-					shouldDelete: fullMessage ? ! isShowComponent : false,
-				};
-			} );
-
-			const deletableMessages = msgs.filter(
-				( msg ) => deleteDecisions.find( ( decision ) => decision.id === msg.id )?.shouldDelete
-			);
-			if ( deletableMessages.length === 0 ) {
-				return;
-			}
-
-			setDeletedMessageIds(
-				( prevIds ) => new Set( [ ...prevIds, ...deletableMessages.map( ( msg ) => msg.id ) ] )
-			);
-		},
 		// This ensures the same session ID is used between Big Sky and Calypso agents,
 		// so that messages will be stored in the same conversation.
-		getSessionId: getActiveSessionId,
+		getSessionId: getTabSessionId,
 		setIsBuildingSite,
 		setThinkingMessage,
 	} );
@@ -831,6 +1575,11 @@ export default function OrchestratorChat( {
 	useAbilitiesRegistration();
 
 	const displayedMessages = useMemo< AgentsManagerUIMessage[] >( () => {
+		// The stable checkpoint getter reads these values through refs.
+		void checkpointActionRevision;
+		void checkpointSessionIdentity;
+		void hasEditorRedo;
+		void sourceDriftInvalidatedCheckpointIds;
 		let currentMessages: AgentsManagerUIMessage[] = messages;
 
 		// Let the provider rewrite the transcript first, while the messages are
@@ -843,7 +1592,6 @@ export default function OrchestratorChat( {
 
 		currentMessages = currentMessages.filter(
 			( message ) =>
-				! deletedMessageIds.has( message.id ) &&
 				! message.content?.some( ( content ) => content?.text === LOCAL_TOOL_RUNNING_MESSAGE )
 		);
 
@@ -880,8 +1628,24 @@ export default function OrchestratorChat( {
 		const checkpointActionsByMessageId = new Map(
 			currentMessages.map( ( message ) => [
 				message.id,
-				getCheckpointActionsForMessage( message ),
+				getCheckpointActionsForMessage(
+					streamedCheckpointMessagesRef.current.byFinalMessageId.get( message.id ) ?? message
+				),
 			] )
+		);
+		const latestUserMessageIndex = getLatestUserMessageIndex( currentMessages );
+		const supersededCheckpointMessageIds = new Set(
+			currentMessages
+				.filter(
+					( message, messageIndex ) =>
+						messageIndex < latestUserMessageIndex &&
+						( getCheckpointIdForMessage(
+							streamedCheckpointMessagesRef.current.byFinalMessageId.get( message.id ) ?? message
+						) !== null ||
+							( checkpointActionsByMessageId.get( message.id )?.length ?? 0 ) > 0 ||
+							message.actions?.some( ( action ) => action.id === 'checkpoint' ) )
+				)
+				.map( ( message ) => message.id )
 		);
 
 		// Group site-build messages only when needed
@@ -900,21 +1664,39 @@ export default function OrchestratorChat( {
 			messages: currentMessages,
 			getChatComponent,
 			currentPostId,
+			isProcessing,
+			canEscalateToHuman: isWooAiProvider(),
+			retriedToolCallIds,
 		} );
 
 		const latestAgentMessageId = getLatestAgentMessageId( currentMessages );
 
 		currentMessages = currentMessages.map( ( message ) => {
+			const checkpointActions = checkpointActionsByMessageId.get( message.id ) ?? [];
+			const hasDisabledCheckpointAction = checkpointActions.some(
+				( action ) =>
+					action.type === 'component' &&
+					action.id === 'checkpoint' &&
+					action.componentProps?.disabled === true
+			);
+			const shouldDisableCheckpointMessage =
+				hasDisabledCheckpointAction || supersededCheckpointMessageIds.has( message.id );
 			const traceId = getTraceIdForMessage( message.id );
-			const messageWithTraceId = traceId ? { ...message, traceId } : message;
+			const messageWithTraceId =
+				traceId || shouldDisableCheckpointMessage
+					? {
+							...message,
+							...( traceId && { traceId } ),
+							...( shouldDisableCheckpointMessage && { disabled: true } ),
+						}
+					: message;
 
 			const directActions = [
-				...( checkpointActionsByMessageId.get( message.id ) ?? [] ),
+				...checkpointActions,
 				...getFeedbackActionsForMessage( message ),
 				...getCopyActionsForMessage( message ),
 				...getRegenerateActionsForMessage( message, {
 					isLatestAgentMessage: message.id === latestAgentMessageId,
-					isStreaming: isProcessing,
 				} ),
 			];
 			const hasRegisteredCheckpointAction = message.actions?.some(
@@ -942,8 +1724,9 @@ export default function OrchestratorChat( {
 
 		return currentMessages;
 	}, [
+		checkpointActionRevision,
+		checkpointSessionIdentity,
 		currentPostId,
-		deletedMessageIds,
 		getChatComponent,
 		getCopyActionsForMessage,
 		getCheckpointActionsForMessage,
@@ -951,11 +1734,14 @@ export default function OrchestratorChat( {
 		getFeedbackActionsForMessage,
 		getTraceIdForMessage,
 		getRegenerateActionsForMessage,
+		hasEditorRedo,
 		isBuildingSite,
 		isProcessing,
 		messages,
 		retainedShowComponentMessages,
+		retriedToolCallIds,
 		siteBuildUtils,
+		sourceDriftInvalidatedCheckpointIds,
 		thinkingMessage,
 		transformMessages,
 	] );
@@ -970,6 +1756,10 @@ export default function OrchestratorChat( {
 	// Broadcast conversation activity so other bundles can re-sync transcript cards.
 	useBroadcastConversationActivity( messageCount );
 
+	// Broadcast the turn's edges so a host editing surface can tell the agent's
+	// writes from a block settling itself on mount.
+	useBroadcastTurnActivity( agentConfig?.agentId, isProcessing );
+
 	const latestDisplayedMessage = displayedMessages[ displayedMessages.length - 1 ];
 	const shouldSuppressTransientThinking = Boolean(
 		latestDisplayedMessage?.role === 'agent' && latestDisplayedMessage.suppressThinking
@@ -977,13 +1767,13 @@ export default function OrchestratorChat( {
 	const showProcessingIndicator =
 		( isProcessing || ( isThinking && ! isBuildingSite ) ) && ! shouldSuppressTransientThinking;
 
-	// Determine which suggestions to show following Big Sky's logic:
-	// - Empty chat: show provider empty-view chips plus dynamic chips.
-	// - Active chat/input: show dynamic suggestions only.
+	// Which suggestions to feed Agenttic:
+	// - Empty chat: provider empty-view chips plus dynamic chips.
+	// - Active chat/input: dynamic suggestions only.
 	let displayedEmptyViewSuggestions: Suggestion[] = [];
 	if ( ! suggestionsVisible ) {
-		// Minimized/collapsed: the chat renders no suggestions, so leave the list
-		// empty to avoid firing chat_suggestions_rendered for hidden chips.
+		// Minimized/collapsed, or docked with the sidebar closed: the layout hides
+		// the chat, which Agenttic cannot tell, so feed it no chips at all.
 		displayedEmptyViewSuggestions = [];
 	} else if (
 		! isLoadingConversation &&
@@ -1005,34 +1795,86 @@ export default function OrchestratorChat( {
 	} else if ( suggestions.length > 0 ) {
 		displayedEmptyViewSuggestions = suggestions;
 	}
+	suggestionPromptsRef.current = new Set(
+		displayedEmptyViewSuggestions.map( ( s ) => s.prompt ?? s.label )
+	);
 
-	// Track when a set of suggestions is rendered — the dynamic block-context
-	// suggestions or, on an empty chat, the empty-view starter chips. Mirrors
-	// Big Sky, which tracked the empty view too. Dedupe on the rendered ids so
-	// re-renders with the same set don't re-fire; a set that empties and returns
-	// to the same content isn't re-tracked.
-	const displayedSuggestionIds = displayedEmptyViewSuggestions.map( ( s ) => s.id ).join( '|' );
-	const lastTrackedSuggestionsRef = useRef< string | null >( null );
-	useEffect( () => {
-		if ( displayedEmptyViewSuggestions.length === 0 ) {
-			return;
-		}
-		if ( lastTrackedSuggestionsRef.current !== displayedSuggestionIds ) {
-			recordBigSkyTracksEvent( 'chat_suggestions_rendered', {
-				suggestions: formatSuggestionIds( displayedEmptyViewSuggestions ),
-			} );
-			lastTrackedSuggestionsRef.current = displayedSuggestionIds;
-		}
-		// `displayedEmptyViewSuggestions` identity is unstable; key on its ids.
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ displayedSuggestionIds ] );
+	const { onSuggestionsRendered: handleSuggestionsRendered, renderedSuggestionsRef } =
+		useSuggestionsRenderedTracking( {
+			selectedBlockType,
+			contextualSuggestionIds,
+			hasSuggestionsToRender: ! isLoadingConversation && displayedEmptyViewSuggestions.length > 0,
+		} );
+
+	const handleSuggestionClick = useCallback(
+		( suggestion: Suggestion | string, availableSuggestions?: Suggestion[] ) => {
+			const value =
+				typeof suggestion === 'string' ? suggestion : ( suggestion.prompt ?? suggestion.label );
+
+			const autoSubmit = typeof suggestion !== 'string' && !! suggestion.autoSubmit;
+			const suggestionId = typeof suggestion !== 'string' ? suggestion.id : undefined;
+			// A click routed through Agenttic's own container reports the footer list,
+			// which is empty while the chips live in the empty view.
+			const renderedSuggestions = renderedSuggestionsRef.current;
+			const knownSuggestions = availableSuggestions?.length
+				? availableSuggestions
+				: renderedSuggestions;
+			const originalSuggestion =
+				typeof suggestion !== 'string'
+					? knownSuggestions.find( ( available ) => available.id === suggestion.id )
+					: undefined;
+			const optionId =
+				typeof suggestion !== 'string'
+					? getSelectedOptionId( suggestion, originalSuggestion )
+					: undefined;
+			const blockType =
+				typeof suggestion !== 'string' && contextualSuggestionIds.has( suggestion.id )
+					? selectedBlockType
+					: undefined;
+
+			if ( typeof suggestion !== 'string' ) {
+				// The empty view hands over its untruncated list; what Agenttic reported as
+				// rendered is what was on screen, so it wins whenever it holds the chip.
+				const shownSuggestions = renderedSuggestions.some(
+					( rendered ) => rendered.id === suggestion.id
+				)
+					? renderedSuggestions
+					: knownSuggestions;
+				recordBigSkyTracksEvent( 'jetpack_big_sky_chat_suggestion_click', {
+					suggestion_text: suggestion.prompt || '',
+					suggestion_id: suggestion.id || '',
+					available_suggestions: formatSuggestionIds( shownSuggestions ),
+					...( optionId ? { option_id: optionId } : {} ),
+					...( blockType ? { block_type: blockType } : {} ),
+				} );
+			}
+
+			// Always dispatch so click listeners (e.g. the Jetpack sidebar hiding the
+			// clicked chip) still fire. `autoSubmit` tells the input listener to skip
+			// repopulating the composer, which the AgentUI already submitted and cleared.
+			window.dispatchEvent(
+				new CustomEvent( 'big-sky-inline-suggestion-click', {
+					detail: {
+						value,
+						autoSubmit,
+						...( suggestionId ? { suggestionId } : {} ),
+					},
+				} )
+			);
+		},
+		[ contextualSuggestionIds, renderedSuggestionsRef, selectedBlockType ]
+	);
 
 	return (
 		<AgentChat
 			messages={ displayedMessages }
-			suggestions={ suggestions }
+			suggestions={ suggestionsVisible ? suggestions : [] }
 			emptyViewSuggestions={ displayedEmptyViewSuggestions }
 			isProcessing={ showProcessingIndicator || isUploadingImages }
+			// The indicator above hides mid-reply and covers uploads; response actions
+			// follow the raw streaming state.
+			isStreaming={ isProcessing }
+			isReplying={ isReplying }
 			thinkingMessage={
 				isUploadingImages ? __( 'Uploading images…', __i18n_text_domain__ ) : progressMessage
 			}
@@ -1046,6 +1888,7 @@ export default function OrchestratorChat( {
 			onExpand={ onExpand }
 			clearSuggestions={ clearSuggestions }
 			onSuggestionClick={ handleSuggestionClick }
+			onSuggestionsRendered={ handleSuggestionsRendered }
 			chatHeaderOptions={ chatHeaderOptions }
 			markdownComponents={ markdownComponents }
 			markdownExtensions={ markdownExtensions }
@@ -1054,6 +1897,9 @@ export default function OrchestratorChat( {
 			isCompactMode={ isCompactMode }
 			groupWritingSuggestions={ groupWritingSuggestions }
 			imageUpload={ imageUpload }
+			notice={ credits.notice }
+			trailingActions={ credits.trailingActions }
+			beforeSubmit={ credits.beforeSubmit }
 			isChatInputDisabled={ isChatInputDisabled }
 			showFeedbackInput={ showFeedbackInput }
 			onSubmitFeedbackText={ submitFeedbackText }

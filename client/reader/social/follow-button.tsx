@@ -77,7 +77,7 @@ export function FollowButton( {
 		const cancelLabel = actorHandle
 			? translate( 'Cancel follow request to @%(handle)s', {
 					args: { handle: actorHandle },
-			  } )
+				} )
 			: translate( 'Cancel follow request' );
 		return (
 			<Button

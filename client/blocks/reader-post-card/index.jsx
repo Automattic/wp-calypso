@@ -1,10 +1,8 @@
 import { Card } from '@automattic/components';
-import { localeRegexString } from '@automattic/i18n-utils';
 import { truncate } from '@automattic/js-utils';
 import clsx from 'clsx';
-import closest from 'component-closest';
 import PropTypes from 'prop-types';
-import { createRef, Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
 import ReaderPostActions from 'calypso/blocks/reader-post-actions';
@@ -13,13 +11,14 @@ import ReaderSuggestedFollowsDialog from 'calypso/blocks/reader-suggested-follow
 import { withReaderTeams } from 'calypso/components/data/with-reader-teams';
 import { useFeedQuery } from 'calypso/reader/data/feed';
 import DisplayTypes from 'calypso/reader/data/post/display-types';
-import { useIsSeenEnabled } from 'calypso/reader/data/seen-posts';
+import { useIsSeenVisible } from 'calypso/reader/data/seen-posts';
 import * as stats from 'calypso/reader/stats';
 import { expandCard as expandCardAction } from 'calypso/state/reader-ui/card-expansions/actions';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import isReaderCardExpanded from 'calypso/state/selectors/is-reader-card-expanded';
 import PostByline from './byline';
 import ConversationPost from './conversation-post';
+import { getFreshlyPressedOn } from './freshly-pressed-badge';
 import GalleryPost from './gallery';
 import PostPhoto from './photo';
 import PostCardComments from './post-card-comments';
@@ -42,7 +41,7 @@ class ReaderPostCard extends Component {
 		postKey: PropTypes.object,
 		compact: PropTypes.bool,
 		teams: PropTypes.array,
-		isSeenEnabled: PropTypes.bool,
+		isSeenVisible: PropTypes.bool,
 		fixedHeaderHeight: PropTypes.number,
 		streamKey: PropTypes.string,
 		commentsApiDisabled: PropTypes.bool,
@@ -56,20 +55,6 @@ class ReaderPostCard extends Component {
 		isSelected: false,
 		showSiteName: true,
 		showBylineSecondarySiteLink: true,
-	};
-
-	cardRef = createRef();
-
-	// Merge the internal card ref with an optional `itemRef` from InfiniteList so the
-	// parent list can measure this item's DOM node without `findDOMNode`.
-	setCardRef = ( node ) => {
-		this.cardRef.current = node;
-		const { itemRef } = this.props;
-		if ( typeof itemRef === 'function' ) {
-			itemRef( node );
-		} else if ( itemRef ) {
-			itemRef.current = node;
-		}
 	};
 
 	state = {
@@ -89,48 +74,44 @@ class ReaderPostCard extends Component {
 	};
 
 	handleCardClick = ( event ) => {
-		const rootNode = this.cardRef.current;
 		const selection = window.getSelection && window.getSelection();
 
 		// if the click has modifier or was not primary, ignore it
 		if ( event.button > 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey ) {
-			if ( closest( event.target, '.reader-post-card__title-link', rootNode ) ) {
+			if ( event.target.closest( '.reader-post-card__title-link' ) ) {
 				stats.recordPermalinkClick( 'card_title_with_modifier', this.props.post );
 			}
 			return;
 		}
 
-		if ( closest( event.target, '.should-scroll', rootNode ) ) {
+		if ( event.target.closest( '.should-scroll' ) ) {
 			setTimeout( function () {
 				window.scrollTo( 0, 0 );
 			}, 100 );
 		}
 
 		// declarative ignore
-		if ( closest( event.target, '.ignore-click, [rel~=external]', rootNode ) ) {
+		if ( event.target.closest( '.ignore-click, [rel~=external]' ) ) {
 			return;
 		}
 
 		// ignore clicks on comments
-		if ( closest( event.target, '.conversations__comment-list', rootNode ) ) {
+		if ( event.target.closest( '.conversations__comment-list' ) ) {
 			return;
 		}
 
 		// ignore clicks on inline comments
-		if ( closest( event.target, '.comments__comment-list', rootNode ) ) {
+		if ( event.target.closest( '.comments__comment-list' ) ) {
 			return;
 		}
 
 		// ignore clicks on anchors inside inline content
-		if (
-			closest( event.target, 'a', rootNode ) &&
-			closest( event.target, '.reader-excerpt', rootNode )
-		) {
+		if ( event.target.closest( 'a' ) && event.target.closest( '.reader-excerpt' ) ) {
 			return;
 		}
 
 		// ignore clicks to close a dialog backdrop
-		if ( closest( event.target, '.dialog__backdrop', rootNode ) ) {
+		if ( event.target.closest( '.dialog__backdrop' ) ) {
 			return;
 		}
 
@@ -169,19 +150,17 @@ class ReaderPostCard extends Component {
 		const title = truncate( post.title, { length: 140, separator: /,? +/ } );
 		const isConversations = currentRoute.startsWith( '/reader/conversations' );
 		const isDiscoverPage = currentRoute.startsWith( '/discover' );
-		const isReaderSearchPage = new RegExp( `^(/${ localeRegexString })?/reader/search` ).test(
-			currentRoute
-		);
 
 		const shouldShowPostCardComments = ! isConversations;
-		const showSuggestedFollows = isReaderSearchPage || isDiscoverPage;
+		const showSuggestedFollows = isDiscoverPage;
+		const freshlyPressedOn = getFreshlyPressedOn( this.props.streamKey, post );
 
 		const classes = clsx( 'reader-post-card', {
 			'has-thumbnail': !! post.canonical_media,
 			'is-photo': isPostPhoto,
 			'is-gallery': isGalleryPost,
 			'is-selected': isSelected,
-			'is-seen': this.props.isSeenEnabled && post?.is_seen,
+			'is-seen': this.props.isSeenVisible,
 			'is-expanded-video': isVideo && isExpanded,
 			'is-compact': compact,
 		} );
@@ -239,6 +218,7 @@ class ReaderPostCard extends Component {
 					site={ site }
 					postKey={ postKey }
 					postByline={ postByline }
+					freshlyPressedOn={ freshlyPressedOn }
 					onClick={ this.handleCardClick }
 					openSuggestedFollows={ this.openSuggestedFollowsModal }
 				>
@@ -282,7 +262,7 @@ class ReaderPostCard extends Component {
 
 		const onClick = ! isPostPhoto ? this.handleCardClick : noop;
 		return (
-			<Card ref={ this.setCardRef } className={ classes } onClick={ onClick } tagName="article">
+			<Card ref={ this.props.itemRef } className={ classes } onClick={ onClick } tagName="article">
 				{ ! compact && postByline }
 				{ readerPostCard }
 				{ this.props.children }
@@ -324,7 +304,7 @@ export default function ReaderPostCardContainer( props ) {
 	const { data: fetchedFeed } = useFeedQuery( feedId );
 	const feed = props.feed ?? fetchedFeed;
 	const blogId = props.postKey?.blogId ?? props.post?.site_ID ?? feed?.blog_ID;
-	const isSeenEnabled = useIsSeenEnabled( { feedId, blogId, post: props.post } );
+	const isSeenVisible = useIsSeenVisible( { feedId, blogId, post: props.post } );
 
-	return <ConnectedReaderPostCard { ...props } feed={ feed } isSeenEnabled={ isSeenEnabled } />;
+	return <ConnectedReaderPostCard { ...props } feed={ feed } isSeenVisible={ isSeenVisible } />;
 }

@@ -6,7 +6,7 @@ describe( 'getReloadStep', () => {
 	} );
 
 	it( 'returns null when no recognised reload param is present', () => {
-		expect( getReloadStep( '?flags=reader%2Fonboarding-rsm' ) ).toBeNull();
+		expect( getReloadStep( '?flags=reader%2Fforce-onboarding' ) ).toBeNull();
 	} );
 
 	it( 'maps reloadSubscriptionOnboarding to the "discover" step', () => {
@@ -26,7 +26,7 @@ describe( 'getReloadStep', () => {
 
 	it( 'preserves other query params in the cleaned search string', () => {
 		const result = getReloadStep(
-			'?flags=reader%2Fonboarding-rsm&reloadSubscriptionOnboarding=true'
+			'?flags=reader%2Fforce-onboarding&reloadSubscriptionOnboarding=true'
 		);
 		expect( result?.cleanedSearch ).toContain( 'flags=' );
 		expect( result?.cleanedSearch ).not.toContain( 'reloadSubscriptionOnboarding' );

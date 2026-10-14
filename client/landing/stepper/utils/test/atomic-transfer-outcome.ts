@@ -56,6 +56,31 @@ describe( 'createRevertedTransferWatcher', () => {
 		expect( isRevertOfThisTransfer( { atomic_transfer_id: 2, status: 'reverted' } ) ).toBe( true );
 	} );
 
+	it( 'does not take ownership from a previous transfer tidying itself up', () => {
+		const isRevertOfThisTransfer = createRevertedTransferWatcher();
+
+		// The site was Atomic before and its old transfer is still in the lossless-revert pipeline,
+		// which is the state a re-transfer starts from.
+		expect( isRevertOfThisTransfer( { atomic_transfer_id: 1, status: 'renaming' } ) ).toBe( false );
+		expect( isRevertOfThisTransfer( { atomic_transfer_id: 1, status: 'exporting' } ) ).toBe(
+			false
+		);
+		expect( isRevertOfThisTransfer( { atomic_transfer_id: 1, status: 'cleanup' } ) ).toBe( false );
+		expect( isRevertOfThisTransfer( { atomic_transfer_id: 1, status: 'reverted' } ) ).toBe( false );
+
+		// Ours arrives and is the only one whose revert counts.
+		expect( isRevertOfThisTransfer( { atomic_transfer_id: 2, status: 'pending' } ) ).toBe( false );
+		expect( isRevertOfThisTransfer( { atomic_transfer_id: 2, status: 'reverting' } ) ).toBe( true );
+	} );
+
+	it( 'still reports our own transfer reverting through the lossless pipeline', () => {
+		const isRevertOfThisTransfer = createRevertedTransferWatcher();
+
+		expect( isRevertOfThisTransfer( { atomic_transfer_id: 5, status: 'active' } ) ).toBe( false );
+		expect( isRevertOfThisTransfer( { atomic_transfer_id: 5, status: 'renaming' } ) ).toBe( false );
+		expect( isRevertOfThisTransfer( { atomic_transfer_id: 5, status: 'reverted' } ) ).toBe( true );
+	} );
+
 	it( 'does not fire on an empty poll', () => {
 		const isRevertOfThisTransfer = createRevertedTransferWatcher();
 

@@ -45,8 +45,45 @@ export function getDisplayMessageFromToolData( data: unknown ): string | undefin
 
 export type ApplyBlockEditsOutcome = 'updated' | 'no-changes';
 
+/**
+ * Whether a visual check of this edit is actually coming: the server sets the
+ * flag when the filter is on, and `apply-block-edits` forwards it only once a
+ * canvas capture exists to check against, so a refused or blank capture reads
+ * as no check at all and the summary is never withheld for a reply that never
+ * arrives.
+ */
+export function isVisualCheckPending( toolId: unknown, data: unknown ): boolean {
+	if ( ! isBlockEditToolId( toolId ) || typeof data !== 'object' || data === null ) {
+		return false;
+	}
+
+	return ( data as { visualCheckPending?: unknown } ).visualCheckPending === true;
+}
+
 export function isBlockEditToolId( toolId: unknown ): boolean {
 	return typeof toolId === 'string' && BLOCK_EDIT_TOOL_IDS.has( toolId );
+}
+
+/**
+ * The tool call the server is retrying, sent on its "Adjusting my approach…"
+ * progress part. The client renders a block edit's outcome before the server
+ * sees it, so this is how an interim "No changes needed" learns it was not final.
+ */
+export function getRetryingToolCallId( message: unknown ): string | undefined {
+	const parts = ( message as { parts?: unknown } | null | undefined )?.parts;
+	if ( ! Array.isArray( parts ) ) {
+		return undefined;
+	}
+
+	for ( const part of parts ) {
+		const retryingToolCallId = ( part as { data?: { retryingToolCallId?: unknown } } | null )?.data
+			?.retryingToolCallId;
+		if ( typeof retryingToolCallId === 'string' && retryingToolCallId ) {
+			return retryingToolCallId;
+		}
+	}
+
+	return undefined;
 }
 
 export function getApplyBlockEditsOutcome(

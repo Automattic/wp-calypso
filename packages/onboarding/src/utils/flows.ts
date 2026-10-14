@@ -10,6 +10,7 @@ export const DOMAIN_FLOW = 'domain';
 export const ENTREPRENEUR_FLOW = 'entrepreneur';
 export const FREE_FLOW = 'free';
 export const SITE_MIGRATION_FLOW = 'site-migration';
+export const STATIC_SITE_IMPORT_FLOW = 'static-site-import';
 export const COPY_SITE_FLOW = 'copy-site';
 export const BUILD_FLOW = 'build';
 export const WRITE_FLOW = 'write';
@@ -32,6 +33,7 @@ export const HUNDRED_YEAR_PLAN_FLOW = 'hundred-year-plan';
 export const BLOG_FLOW = 'blog';
 export const REBLOGGING_FLOW = 'reblogging';
 export const READER_FLOW = 'reader';
+export const WPCC_FLOW = 'wpcc';
 export const DOMAIN_FOR_GRAVATAR_FLOW = 'domain-for-gravatar';
 export const ONBOARDING_FLOW = 'onboarding';
 export const EXAMPLE_FLOW = 'example';
@@ -75,7 +77,7 @@ export const isTransferringHostedSiteCreationFlow = ( flowName: string | null ) 
 export const isAnyHostingFlow = ( flowName?: string | null ) => {
 	return Boolean(
 		flowName &&
-			[ HOSTING_LP_FLOW, NEW_HOSTED_SITE_FLOW, TRANSFERRING_HOSTED_SITE_FLOW ].includes( flowName )
+		[ HOSTING_LP_FLOW, NEW_HOSTED_SITE_FLOW, TRANSFERRING_HOSTED_SITE_FLOW ].includes( flowName )
 	);
 };
 
@@ -92,7 +94,9 @@ export const isEcommerceFlow = ( flowName: string | null ) => {
 };
 
 export const isNewSiteMigrationFlow = ( flowName: string | null ) => {
-	return Boolean( flowName && [ SITE_MIGRATION_FLOW ].includes( flowName ) );
+	return Boolean(
+		flowName && [ SITE_MIGRATION_FLOW, STATIC_SITE_IMPORT_FLOW ].includes( flowName )
+	);
 };
 
 export const isBuildFlow = ( flowName: string | null ) => {

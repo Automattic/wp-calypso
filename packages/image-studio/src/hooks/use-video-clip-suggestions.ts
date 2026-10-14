@@ -56,39 +56,6 @@ Each chip MAY also include an optional closing-direction sub-clause (a short phr
 - Free of crowds, on-screen text, signage, dialogue, or copyrighted properties — these are non-negotiable for the safety pipeline.`;
 }
 
-/**
- * Suggestions for the Highlights style. The post's content and structure reach
- * the model via the server-resolved page context in the system prompt (the
- * same channel the image suggestions use), so this prompt carries only the
- * editorial-steering instructions — no inlined post body. Each chip weaves 2-3
- * of six editorial axes (lead / audience / voice / structure / emphasis /
- * closer), never cinematography.
- */
-export function buildHighlightsClipSuggestionsPrompt(): string {
-	return `Using the WordPress post's content and structure available to you in context [[client.gutenberg_page.simple_structure]], propose 3 short editorial steers a user could pick to shape a 20-second summary video derived from this post.
-
-The video is rendered automatically from the post's content — these steers DO NOT describe what it should look like. They tell the composer WHICH parts to emphasize and HOW to frame them. Editorial direction, never cinematography.
-
-There are six steering axes. Each one you use MUST be concrete and specific to THIS post (never generic blog advice):
-- **Lead**: which aspect opens the video ("Open on how the caves formed", "Start with the family's first reaction").
-- **Audience**: who it's for ("For someone who's never visited", "For experienced cooks").
-- **Voice**: tone register ("Punchier, drop the hedges", "More contemplative").
-- **Structure**: how it's organized ("Three things to try", "Before-and-after", "What I'd do differently").
-- **Emphasis**: which beats to dwell on or cut ("Spend most of it on the payoff, skip the setup", "Quick equal hits, no deep dive").
-- **Closer**: how it lands ("End on the conservation note", "Close on a call to action").
-
-Each steer MUST:
-- Weave 2-3 of the six axes into ONE coherent direction — never only one axis, never more than three (a 20-second, 4-6-scene recap can't honor an over-stuffed steer).
-- For EVERY axis you include, name a concrete detail lifted from THIS post — a specific activity, place, moment, person, or term the reader would recognize. A generic editorial phrase ("focus on the theme", "make it engaging", just "a contemplative tone" with nothing attached) does NOT fill an axis; each axis must carry a pointable specific from the post.
-- Use 2-8 words for the chip label, 12-30 words for the steer sentence — long enough that every axis names its concrete detail, no longer.
-- Stay actionable — never "Make it good" or "Be engaging".
-- Carry NO camera, lighting, or visual description (those don't apply to this render path).
-
-Well-formed example (for a post about an autumn family weekend): "For families with young kids, structure it as three weekend outings and emphasize the orchard apple-picking and the lantern-lit harvest festival" — Audience + Structure + Emphasis, each axis naming a pointable detail from the post.
-
-Across the 3 chips, cover distinct axis combinations and distinct angles on the post — don't let two chips lean on the same pair.`;
-}
-
 function buildVideoClipSystemPrompt( suggestionPrompt: string, locale: string ): string {
 	return `You generate suggestion chips for a short video clip composer. You DO NOT call any tools. You DO NOT generate, edit, or modify any media. You return only JSON.
 
@@ -98,28 +65,6 @@ Output ONLY valid JSON matching this exact structure (no markdown, no explanatio
 {"suggestions":[{"label":"2-4 word chip A","prompt":"60-120-word directional prose weaving 5-7 axes (plus an optional closing-direction clause)"},{"label":"2-4 word chip B","prompt":"60-120-word directional prose weaving 5-7 axes (plus an optional closing-direction clause)"},{"label":"2-4 word chip C","prompt":"60-120-word directional prose weaving 5-7 axes (plus an optional closing-direction clause)"}]}
 
 The chip "label" stays 2-4 words (it's tight UI real estate). The "prompt" is the rich one — 60-120 words, 5-7 axes woven into prose, with an optional closing-direction clause in 1-2 of the 3 chips.
-
-Generate all text in the language corresponding to locale code "${ locale }" (e.g. en = English, fr = French, es = Spanish).
-
-Output valid JSON only, nothing else.`;
-}
-
-/**
- * Highlights-specific system prompt. Constraints match the editorial user
- * prompt in buildHighlightsClipSuggestionsPrompt — 2-8 word labels, 12-30
- * word steers each weaving 2-3 of the six editorial axes with a concrete
- * post detail per axis, no cinematography. The cinematic prompt's
- * multi-axis directional language is wrong here.
- */
-function buildHighlightsClipSystemPrompt( suggestionPrompt: string, locale: string ): string {
-	return `You generate suggestion chips for a short summary-video composer. You DO NOT call any tools. You DO NOT generate, edit, or modify any media. You return only JSON.
-
-${ suggestionPrompt }
-
-Output ONLY valid JSON matching this exact structure (no markdown, no explanation, no tool calls). The "suggestions" array MUST contain exactly 3 items:
-{"suggestions":[{"label":"2-8 word chip A","prompt":"12-30 word editorial steer weaving 2-3 axes, each naming a concrete post detail"},{"label":"2-8 word chip B","prompt":"12-30 word editorial steer weaving 2-3 axes, each naming a concrete post detail"},{"label":"2-8 word chip C","prompt":"12-30 word editorial steer weaving 2-3 axes, each naming a concrete post detail"}]}
-
-The chip "label" stays 2-8 words. The "prompt" is a short editorial steer — 12-30 words weaving 2-3 of the six axes (lead / audience / voice / structure / emphasis / closer), each axis naming a concrete detail from the post. NOT cinematography.
 
 Generate all text in the language corresponding to locale code "${ locale }" (e.g. en = English, fr = French, es = Spanish).
 
@@ -138,16 +83,6 @@ interface UseVideoClipSuggestionsParams {
 	 */
 	inputValue?: string;
 	disabled?: boolean;
-	/**
-	 * The currently-selected video style. Determines which prompt variant
-	 * the loader uses — Cinematic gets cinematography-flavored chips
-	 * (camera/lighting/audio direction for the Veo render path);
-	 * Highlights gets framing/steering chips that nudge the agent's
-	 * editorial angle when it composes the cloud-rendered recap. Cache
-	 * key includes the style so toggling between them reuses prior
-	 * results without re-fetching.
-	 */
-	style?: string | null;
 }
 
 interface UseVideoClipSuggestionsReturn {
@@ -165,7 +100,6 @@ export function useVideoClipSuggestions( {
 	messages,
 	inputValue,
 	disabled = false,
-	style = null,
 }: UseVideoClipSuggestionsParams ): UseVideoClipSuggestionsReturn {
 	const lastTrackedSuggestionsRef = useRef< string >( '' );
 
@@ -203,27 +137,8 @@ export function useVideoClipSuggestions( {
 	);
 
 	const enabled = ! disabled && postBodyText.length > 0;
-	// Style flavor is part of the cache key so toggling between Cinematic and
-	// Highlights reuses prior results instead of refetching, and so chips
-	// generated for one style never leak into the other.
-	const styleKey = style === 'highlights' ? 'highlights' : 'cinematic';
-	const cacheKey = enabled && postId ? `video-clip-post-${ postId }-${ styleKey }` : null;
-	let prompt = '';
-	if ( enabled ) {
-		prompt =
-			styleKey === 'highlights'
-				? buildHighlightsClipSuggestionsPrompt()
-				: buildVideoClipSuggestionsPrompt();
-	}
-
-	// Pair the right system-prompt builder with the user-prompt variant.
-	// Both return exactly 3 suggestion items, but the constraints differ:
-	// the cinematic system prompt mandates 2-4 word labels and 60-120-word
-	// prompts weaving 5-7 cinematography axes, whereas Highlights needs
-	// 2-8 word labels and 12-30-word multi-axis editorial steers. Using the
-	// cinematic builder for Highlights would force the wrong shape/length.
-	const buildSystemPrompt =
-		styleKey === 'highlights' ? buildHighlightsClipSystemPrompt : buildVideoClipSystemPrompt;
+	const cacheKey = enabled && postId ? `video-clip-post-${ postId }` : null;
+	const prompt = enabled ? buildVideoClipSuggestionsPrompt() : '';
 
 	const {
 		suggestions: asyncSuggestions,
@@ -233,7 +148,7 @@ export function useVideoClipSuggestions( {
 		prompt,
 		cacheKey,
 		enabled,
-		buildSystemPrompt,
+		buildSystemPrompt: buildVideoClipSystemPrompt,
 		fallbackSuggestions: EMPTY_SUGGESTIONS,
 	} );
 

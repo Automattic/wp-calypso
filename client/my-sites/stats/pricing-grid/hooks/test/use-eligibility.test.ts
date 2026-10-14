@@ -4,8 +4,7 @@
 
 import { renderHook } from '@testing-library/react';
 import { getPurchasesError } from 'calypso/state/purchases/selectors';
-import { getSiteOption } from 'calypso/state/sites/selectors';
-import getIsSimpleSite from 'calypso/state/sites/selectors/is-simple-site';
+import { getSiteOption, isWpcomSite } from 'calypso/state/sites/selectors';
 import useStatsPurchases from '../../../hooks/use-stats-purchases';
 import useIsPricingGridEligible from '../use-eligibility';
 
@@ -14,7 +13,6 @@ jest.mock( 'calypso/state', () => ( {
 } ) );
 jest.mock( 'calypso/state/purchases/selectors' );
 jest.mock( 'calypso/state/sites/selectors' );
-jest.mock( 'calypso/state/sites/selectors/is-simple-site' );
 jest.mock( '../../../hooks/use-stats-purchases' );
 
 const SITE_ID = 123;
@@ -25,11 +23,11 @@ function mockSite( {
 	connectedAt = POST_LAUNCH_DATE as string | number | null,
 	hasAnyPlan = false,
 	isLoadingPurchases = false,
-	isSimpleSite = false,
+	isWpcom = false,
 	purchasesError = null as object | null,
 } = {} ) {
 	( getSiteOption as jest.Mock ).mockReturnValue( connectedAt );
-	( getIsSimpleSite as unknown as jest.Mock ).mockReturnValue( isSimpleSite );
+	( isWpcomSite as unknown as jest.Mock ).mockReturnValue( isWpcom );
 	( getPurchasesError as unknown as jest.Mock ).mockReturnValue( purchasesError );
 	( useStatsPurchases as jest.Mock ).mockReturnValue( {
 		hasAnyPlan,
@@ -63,8 +61,8 @@ describe( 'useIsPricingGridEligible', () => {
 		expect( result.current.isApplicable ).toBe( false );
 	} );
 
-	it( 'is not eligible for a WordPress.com Simple site', () => {
-		mockSite( { isSimpleSite: true } );
+	it( 'is not eligible for a WordPress.com site', () => {
+		mockSite( { isWpcom: true } );
 
 		const { result } = renderHook( () => useIsPricingGridEligible( SITE_ID ) );
 
@@ -118,10 +116,10 @@ describe( 'useIsPricingGridEligible', () => {
 
 		expect( preLaunch.current.isLoading ).toBe( false );
 
-		mockSite( { isSimpleSite: true, isLoadingPurchases: true } );
+		mockSite( { isWpcom: true, isLoadingPurchases: true } );
 
-		const { result: simple } = renderHook( () => useIsPricingGridEligible( SITE_ID ) );
+		const { result: wpcom } = renderHook( () => useIsPricingGridEligible( SITE_ID ) );
 
-		expect( simple.current.isLoading ).toBe( false );
+		expect( wpcom.current.isLoading ).toBe( false );
 	} );
 } );

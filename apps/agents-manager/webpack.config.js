@@ -22,7 +22,7 @@ function applyPostCssConfig( rules, config ) {
 								config,
 							},
 						},
-				  }
+					}
 				: loader
 		),
 	} ) );
@@ -77,7 +77,6 @@ function getIndividualConfig( options = {} ) {
 				...( webpackConfig.resolve?.alias || {} ),
 				// Share one Smooch instance with the Help Center bundle when both load
 				// together (e.g. the Site Editor). See smooch-shim.js.
-				// TODO: Remove once Agents Manager takes over the Help Center.
 				smooch$: path.join( __dirname, '../../build-tools/webpack/smooch-shim.js' ),
 			},
 		},
@@ -124,6 +123,12 @@ function getIndividualConfig( options = {} ) {
 					if ( request === '@wordpress/ui' ) {
 						return null;
 					}
+					// No branch for @wordpress/router or @wordpress/private-apis —
+					// core registers both handles and they must stay external. Each
+					// keeps module-scope state the editor already owns (the router's
+					// history, `unlock()`'s WeakMap); a bundled second copy forks it
+					// and silently breaks `editor-navigate`.
+
 					// The plugin maps `react`/`react-dom` but not this deep import,
 					// so it would get bundled — a second react-dom copy (v19) that
 					// crashes against the page's external React. WordPress's
@@ -194,14 +199,12 @@ function getReaderConfig( options = {} ) {
 			alias: {
 				...( webpackConfig.resolve?.alias || {} ),
 				// Share one Smooch instance across bundles (see smooch-shim.js).
-				// TODO: Remove once Agents Manager takes over the Help Center.
 				smooch$: path.join( __dirname, '../../build-tools/webpack/smooch-shim.js' ),
 				// Keep libvips' inlined WASM out of the frontend bundle. See
 				// reader-chat-vips-stub.js.
 				'@wordpress/vips/worker$': path.join( __dirname, 'reader-chat-vips-stub.js' ),
 				'../agent-history': path.join( __dirname, 'reader-chat-route-stub.js' ),
 				'../support-guide': path.join( __dirname, 'reader-chat-route-stub.js' ),
-				'../support-guides': path.join( __dirname, 'reader-chat-route-stub.js' ),
 				'../zendesk-chat': path.join( __dirname, 'reader-chat-route-stub.js' ),
 			},
 		},
@@ -262,8 +265,6 @@ function getWebpackConfig( env = { source: '' }, argv = {} ) {
 		getIndividualConfig( { env, argv, name: 'image-studio' } ),
 		getIndividualConfig( { env, argv, name: 'jetpack-ai-sidebar' } ),
 		getIndividualConfig( { env, argv, name: 'agents-manager-gutenberg-disconnected' } ),
-		getIndividualConfig( { env, argv, name: 'agents-manager-wp-admin-disconnected' } ),
-		getIndividualConfig( { env, argv, name: 'agents-manager-ciab' } ),
 		getIndividualConfig( { env, argv, name: 'agents-manager-wooai' } ),
 		getReaderConfig( { env, argv } ),
 	];

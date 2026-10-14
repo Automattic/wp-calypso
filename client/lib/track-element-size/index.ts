@@ -1,6 +1,5 @@
 import { throttle } from '@wordpress/compose';
-import { useRef, useEffect, useState } from 'react';
-import * as React from 'react';
+import { useRef, useEffect } from 'react';
 
 export type NullableDOMRect = ClientRect | DOMRect | null;
 type NullableElement = Element | null;
@@ -88,20 +87,4 @@ export function useWindowResizeCallback(
 	}, [ elementRef.current, callback ] );
 
 	return elementRef;
-}
-
-/**
- * React hook that subscribes a consumer to changes to the bounding client rect of an element, based
- * on window resize events.
- * Does not notify when an element resizes due to reasons other than the window resizing.
- * Uses throttling on the events, to avoid making changes too often.
- * @returns A tuple with the ref to be set on the consumer component, and the current rect.
- */
-export function useWindowResizeRect(): [
-	React.MutableRefObject< NullableElement >,
-	NullableDOMRect,
-] {
-	const [ rect, setRect ] = useState< NullableDOMRect >( null );
-	const callbackRef = useWindowResizeCallback( setRect );
-	return [ callbackRef, rect ];
 }

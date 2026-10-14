@@ -2,7 +2,7 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import page from '@automattic/calypso-router';
 import { translate } from 'i18n-calypso';
 import { Store, UnknownAction } from 'redux';
-import { READER_ONBOARDING_TRACKS_EVENT_PREFIX } from 'calypso/reader/onboarding/constants';
+import { READER_ONBOARDING_TRACKS_EVENT_PREFIX } from 'calypso/reader/onboarding-rsm/constants';
 import { USER_SETTINGS_SAVE_SUCCESS, GRAVATAR_DETAILS_RECEIVE } from 'calypso/state/action-types';
 import { successNotice } from 'calypso/state/notices/actions';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';

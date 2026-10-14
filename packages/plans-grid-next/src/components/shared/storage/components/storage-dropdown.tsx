@@ -49,11 +49,11 @@ const StorageDropdownOption = ( {
 					addOnStorageString,
 				},
 				comment: 'Storage option with add-on. Example: "50GB + 100GB storage"',
-		  } )
+			} )
 		: translate( '%(planStorageString)s storage', {
 				args: { planStorageString },
 				comment: 'Storage option. Example: "50GB storage"',
-		  } );
+			} );
 
 	// Only show price for add-on options, not for the base plan storage
 	const priceString =
@@ -62,7 +62,7 @@ const StorageDropdownOption = ( {
 					args: { price },
 					comment:
 						'The cost of a storage add on per month. Example reads as "$50/month, billed yearly"',
-			  } )
+				} )
 			: null;
 
 	return priceOnSeparateLine ? (
@@ -180,11 +180,11 @@ const StorageDropdown = ( {
 					addOnStorageString: selectedAddOnStorageString,
 				},
 				comment: 'Storage amount display with add-on. Example: "50GB + 100GB storage"',
-		  } )
+			} )
 		: translate( '%(planStorageString)s storage', {
 				args: { planStorageString },
 				comment: 'Storage amount display. Example: "50GB storage"',
-		  } );
+			} );
 
 	const selectedOption = {
 		key: selectedStorageOptionForPlan,

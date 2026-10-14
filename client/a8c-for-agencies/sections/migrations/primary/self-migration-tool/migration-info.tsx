@@ -2,7 +2,8 @@ import { ExternalLink } from '@wordpress/components';
 import { external, download } from '@wordpress/icons';
 import { CONTACT_URL_HASH_FRAGMENT_WITH_PRODUCT } from 'calypso/a8c-for-agencies/components/a4a-contact-support-widget';
 import {
-	A4A_MARKETPLACE_LINK,
+	A4A_MARKETPLACE_HOSTING_PRESSABLE_LINK,
+	A4A_MARKETPLACE_HOSTING_WPCOM_LINK,
 	A4A_MIGRATIONS_COMMISSIONS_LINK,
 	A4A_MIGRATIONS_PAYMENT_SETTINGS,
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
@@ -21,7 +22,7 @@ const pressableSteps = (
 		buttonProps: {
 			variant: 'primary',
 			label: translate( 'Go to Marketplace' ),
-			href: A4A_MARKETPLACE_LINK,
+			href: A4A_MARKETPLACE_HOSTING_PRESSABLE_LINK,
 			eventName: 'calypso_a4a_migrate_to_pressable_go_to_marketplace_click',
 		},
 	},
@@ -161,7 +162,7 @@ const wpcomSteps = (
 		buttonProps: {
 			variant: 'primary',
 			label: translate( 'Go to Marketplace' ),
-			href: A4A_MARKETPLACE_LINK,
+			href: A4A_MARKETPLACE_HOSTING_WPCOM_LINK,
 			eventName: 'calypso_a4a_migrate_to_wpcom_go_to_marketplace_click',
 		},
 	},

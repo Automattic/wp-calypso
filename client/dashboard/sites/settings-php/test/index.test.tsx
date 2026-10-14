@@ -95,20 +95,6 @@ describe( '<PHPVersionSettings>', () => {
 		).not.toBeInTheDocument();
 	} );
 
-	test( 'offers PHP 8.2 to allowlisted sites', async () => {
-		const allowlistedSite = { ...site, ID: 255633016 } as Site;
-		mockSite( allowlistedSite );
-		mockPHPVersion( '8.3', allowlistedSite.ID );
-
-		const queryClient = new QueryClient();
-		await queryClient.ensureQueryData( sitePHPVersionQuery( allowlistedSite.ID ) );
-
-		render( <PHPVersionSettings siteSlug={ allowlistedSite.slug } />, { queryClient } );
-
-		const versionSelect = await screen.findByRole( 'combobox', { name: 'PHP version' } );
-		expect( within( versionSelect ).getByRole( 'option', { name: '8.2' } ) ).toBeVisible();
-	} );
-
 	test( 'renders upsell when the site does not have the plan feature', async () => {
 		mockSite( {
 			...site,

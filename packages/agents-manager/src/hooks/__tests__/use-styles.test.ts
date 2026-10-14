@@ -382,7 +382,7 @@ describe( 'useStyles', () => {
 		} );
 
 		expect( recordBigSkyTracksEvent ).toHaveBeenCalledTimes( 1 );
-		expect( recordBigSkyTracksEvent ).toHaveBeenCalledWith( 'legacy_css_found', {
+		expect( recordBigSkyTracksEvent ).toHaveBeenCalledWith( 'jetpack_big_sky_legacy_css_found', {
 			block_count: 1,
 		} );
 		expect( warn ).toHaveBeenCalled();

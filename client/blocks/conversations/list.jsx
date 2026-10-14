@@ -266,7 +266,7 @@ export class ConversationCommentList extends Component {
 		const commentCount = isDoneLoadingComments
 			? Object.values( commentsTree ?? {} ).filter(
 					( comment ) => comment?.data?.type === 'comment'
-			  ).length // filter out pingbacks/trackbacks
+				).length // filter out pingbacks/trackbacks
 			: post.discussion.comment_count;
 
 		const showCaterpillar =

@@ -1,4 +1,5 @@
 import { __, sprintf } from '@wordpress/i18n';
+import { getIntlLocale } from '../../utils/locale';
 import { TimeSlot, Frequency, Weekday, ScheduleCollisions, ScheduledUpdateRow } from './types';
 import type { Site } from '@automattic/api-core';
 
@@ -200,7 +201,7 @@ export function normalizeScheduleId( id: string ): string {
 }
 
 export function prepareScheduleName( locale: string, schedule: ScheduledUpdateRow ) {
-	const time = new Intl.DateTimeFormat( locale, { timeStyle: 'short' } ).format(
+	const time = new Intl.DateTimeFormat( getIntlLocale( locale ), { timeStyle: 'short' } ).format(
 		schedule.nextUpdate * 1000
 	);
 	const dayNumber = new Date( schedule.nextUpdate * 1000 ).getDay();

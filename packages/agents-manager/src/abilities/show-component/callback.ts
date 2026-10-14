@@ -3,6 +3,7 @@ import { __ } from '@wordpress/i18n';
 import { checkpointKeys, hasCheckpoint, setCheckpoint } from '../../utils/checkpoints';
 import { BIG_SKY_SHOW_COMPONENT_TOOL_ID } from '../../utils/show-component-tools';
 import { getToolCallIdFromConversationHistory } from '../../utils/tool-call-history';
+import { errorResult } from '../ability-result';
 import type { AbilityResult } from '../types';
 import type { ShowComponentType } from './index';
 
@@ -17,20 +18,6 @@ export interface ShowComponentInput {
 	props: Record< string, unknown >;
 	summary?: string;
 	followUpTasks?: boolean;
-}
-
-function errorResult( error: string ): AbilityResult {
-	return {
-		result: {
-			success: false,
-			message: __(
-				'There was an error with this request. Please try again.',
-				__i18n_text_domain__
-			),
-			error,
-		},
-		returnToAgent: true,
-	};
 }
 
 /**

@@ -28,7 +28,7 @@ All exports live in `src/index.ts`. This is intentionally a single-file provider
 ## Critical Patterns (Don't Break These)
 
 - **Module-level state**: `addMessageFn`, `clearSuggestionsFn`, and `moduleCheckpointApi` are captured once via their respective hooks. These are module singletons — do NOT move them into React state or a store.
-- **`returnToAgent: false`**: The `handleUpdateBlockContent` and `handleShowComponent` handlers return `{ returnToAgent: false }`. This prevents the AM orchestrator from continuing automatically after the tool executes. Removing this breaks the UX flow.
+- **Return-to-agent policy**: `handleUpdateBlockContent` returns `{ returnToAgent: false }` because the editor action completes locally. `handleShowComponent` returns structured success and failure results with `{ returnToAgent: true }` so the backend can record the originating ability as complete, continue multi-step requests, or recover from a component error.
 - **Tool ID normalization**: AM normalizes tool IDs (`wpcom/update-block-content` → `wpcom__update_block_content`). The `isUpdateBlockContentTool` / `isShowComponentTool` helpers handle both forms. Any new tool must follow this pattern.
 - **Show-component via `agentMessage` escape hatch**: `handleShowComponent` returns `{ agentMessage: JSON }` — it does NOT call `addMessageFn` directly. agenttic-client wraps the JSON in an `{ role: 'agent', parts: [text] }` message, AM's `convert-tool-messages-to-components` resolves the component via `getChatComponent`, and AgentChat's action bar (thumbs/Undo) attaches because the original message had a text content part. See "Show-component pattern" below.
 - **Role transformation**: AM's `useAbilitiesSetup` handler maps `role: 'assistant'` → `'agent'` and everything else → `'user'`. When injecting messages directly via `addMessageFn`, always use `'assistant'` — passing `'agent'` would make the message render as user content and get filtered out of the agent message list.
@@ -36,11 +36,11 @@ All exports live in `src/index.ts`. This is intentionally a single-file provider
 
 ## Tools
 
-| Tool ID                      | Handler                     | UI Component           | Description                                              |
-| ---------------------------- | --------------------------- | ---------------------- | -------------------------------------------------------- |
-| `jetpack_ai__show_component` | `handleShowComponent`       | via `getChatComponent` | Renders Jetpack AI chat components                       |
-| `big_sky__show_component`    | `handleLegacyShowComponent` | Jetpack or Big Sky     | Temporary migration support; delegates non-Jetpack types |
-| `wpcom/update-block-content` | `handleUpdateBlockContent`  | _(chat text)_          | Updates block content with shimmer effect                |
+| Tool ID                      | Handler                     | UI Component           | Description                               |
+| ---------------------------- | --------------------------- | ---------------------- | ----------------------------------------- |
+| `jetpack_ai__show_component` | `handleShowComponent`       | via `getChatComponent` | Renders Jetpack AI chat components        |
+| `big_sky__show_component`    | `handleLegacyShowComponent` | Jetpack or Big Sky     | Legacy name; delegates non-Jetpack types  |
+| `wpcom/update-block-content` | `handleUpdateBlockContent`  | _(chat text)_          | Updates block content with shimmer effect |
 
 ### Show-component pattern
 
@@ -51,8 +51,7 @@ Used for Jetpack AI interactive components. The wpcom ability returns an `Input_
   type: '<component-type>',
   props: { ... },
   calypsoCheckpointId: '<id>',
-  isCurrent: true,
-  hideZoomAction: true
+  isCurrent: true
 }
 ```
 
@@ -60,12 +59,10 @@ On the client, `handleShowComponent`:
 
 1. Looks up the component via `getChatComponent(type)` to verify the type is supported.
 2. Snapshots state via the module-level `moduleCheckpointApi.setCheckpoint()` so AM's native Undo action can restore it later.
-3. Returns `{ agentMessage: JSON.stringify({ tool_id, data }) }`. agenttic-client re-emits this as an `{ role: 'agent', parts: [text] }` message.
+3. Returns `{ agentMessage: JSON.stringify({ tool_id, data }), result, returnToAgent: true }`. agenttic-client re-emits the message as an `{ role: 'agent', parts: [text] }` message and returns the structured result to the backend.
 4. AM's `convert-tool-messages-to-components` matches the tool_id, calls `getChatComponent(data.type)`, and replaces the text content with a component render. Because the original message had text content, AgentChat renders its action bar (thumbs, Undo) on the resulting bubble.
 
-Jetpack show-component messages still send `hideZoomAction: true`, but AM's zoom action was removed — the flag is write-only legacy, kept only until the provider payload cleanup lands.
-
-The provider temporarily accepts legacy `big_sky__show_component` executions for Jetpack-owned component types during the migration, but new Jetpack AI component responses should use `jetpack_ai__show_component`. Unknown legacy component types should remain owned by the provider that registered them.
+The provider also accepts legacy `big_sky__show_component` executions for Jetpack-owned component types, but new Jetpack AI component responses should use `jetpack_ai__show_component`. Unknown legacy component types should remain owned by the provider that registered them.
 
 ### Adding a new component type
 

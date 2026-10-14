@@ -28,8 +28,7 @@ export function BackupsListPage() {
 	const searchParams = siteBackupsRoute.useSearch();
 
 	const routeParams = useParams( { strict: false, shouldThrow: false } ) as
-		| { rewindId?: string }
-		| undefined;
+		{ rewindId?: string } | undefined;
 	const rewindId = routeParams?.rewindId;
 
 	const navigation = useMemo< BackupsNavigation >(
@@ -40,12 +39,12 @@ export function BackupsListPage() {
 							to: siteBackupDetailRoute.fullPath,
 							params: { siteSlug, rewindId: id },
 							search: ( query: Record< string, string > ) => query,
-					  } )
+						} )
 					: router.navigate( {
 							to: siteBackupsIndexRoute.fullPath,
 							params: { siteSlug },
 							search: ( query: Record< string, string > ) => query,
-					  } ),
+						} ),
 			requestRestore: ( id ) =>
 				router.navigate( {
 					to: siteBackupRestoreRoute.fullPath,
@@ -57,11 +56,11 @@ export function BackupsListPage() {
 							to: siteBackupDownloadRoute.fullPath,
 							params: { siteSlug, rewindId: id },
 							search: { downloadId },
-					  } )
+						} )
 					: router.navigate( {
 							to: siteBackupDownloadRoute.fullPath,
 							params: { siteSlug, rewindId: id },
-					  } ),
+						} ),
 		} ),
 		[ router, siteSlug ]
 	);

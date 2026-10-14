@@ -2,9 +2,11 @@ import config from '@automattic/calypso-config';
 import { isAllowedRedirectUrl } from '@automattic/calypso-url';
 import { getLanguageSlugs } from '@automattic/i18n-utils';
 import { useMemo } from 'react';
+import { isCommerceGarden } from 'calypso/dashboard/utils/site-types';
 import { useSelector } from 'calypso/state';
 import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
-import { getSiteId, isCommerceGardenSite, isJetpackSite } from 'calypso/state/sites/selectors';
+import { getSiteId } from 'calypso/state/sites/selectors';
+import { isJetpackNotAtomicSite, useCheckoutSite } from './use-checkout-site';
 
 const getAllowedHosts = ( siteSlug?: string ): string[] => {
 	const hostname = config< string >( 'hostname' );
@@ -34,12 +36,9 @@ const useValidCheckoutBackUrl = (
 	const selectedSiteId = useSelector(
 		( state ) => siteId ?? getSiteId( state, siteSlug as string | null )
 	);
-	const jetpackSite = useSelector( ( state ) =>
-		isJetpackSite( state, selectedSiteId, { treatAtomicAsJetpackSite: false } )
-	);
-	const isCommerce = useSelector( ( state ) =>
-		selectedSiteId ? isCommerceGardenSite( state, selectedSiteId ) : false
-	);
+	const { data: site } = useCheckoutSite( selectedSiteId );
+	const jetpackSite = isJetpackNotAtomicSite( site );
+	const isCommerce = site ? isCommerceGarden( site ) : false;
 
 	return useMemo( () => {
 		if ( ! backUrl ) {

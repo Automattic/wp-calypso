@@ -1,8 +1,8 @@
 import {
 	userPaymentMethodsQuery,
-	userPaymentMethodSetBackupQuery,
-	userPaymentMethodDeleteQuery,
-	userPaymentMethodSetTaxInfoQuery,
+	userPaymentMethodSetBackupMutation,
+	userPaymentMethodDeleteMutation,
+	userPaymentMethodSetTaxInfoMutation,
 } from '@automattic/api-queries';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useQuery, useMutation } from '@tanstack/react-query';
@@ -110,12 +110,12 @@ export default function PaymentMethods() {
 	);
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const { mutate: setPaymentMethodBackup, isPending: isSettingPaymentMethodBackup } = useMutation(
-		userPaymentMethodSetBackupQuery()
+		userPaymentMethodSetBackupMutation()
 	);
 	const { mutate: deletePaymentMethod, isPending: isDeletingPaymentMethod } = useMutation(
-		userPaymentMethodDeleteQuery()
+		userPaymentMethodDeleteMutation()
 	);
-	const { mutate: setPaymentMethodTaxInfo } = useMutation( userPaymentMethodSetTaxInfoQuery() );
+	const { mutate: setPaymentMethodTaxInfo } = useMutation( userPaymentMethodSetTaxInfoMutation() );
 	const { recordTracksEvent } = useAnalytics();
 	const recordActionClick = (
 		paymentMethod: StoredPaymentMethod,
@@ -475,9 +475,9 @@ function getFields( {
 				return item.tax_location
 					? `${ item.tax_location.organization ?? '' } ${ item.tax_location.address ?? '' } ${
 							item.tax_location.postal_code ?? ''
-					  } ${ item.tax_location.city ?? '' } ${ item.tax_location.subdivision_code ?? '' } ${
+						} ${ item.tax_location.city ?? '' } ${ item.tax_location.subdivision_code ?? '' } ${
 							item.tax_location.country_code ?? ''
-					  } ${ item.tax_location.is_for_business ? 'business-use' : '' }`
+						} ${ item.tax_location.is_for_business ? 'business-use' : '' }`
 					: 'no-tax-information';
 			},
 			render: ( { item }: { item: StoredPaymentMethod } ) => {

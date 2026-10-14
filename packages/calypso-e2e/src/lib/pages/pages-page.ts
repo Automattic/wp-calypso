@@ -1,10 +1,15 @@
 import { Page, Response } from 'playwright';
 import { getCalypsoURL } from '../../data-helper';
+import envVariables from '../../env-variables';
+import { completeJetpackSso } from './wp-admin/jetpack-sso';
 
 const selectors = {
 	// General
 	addNewPageButton: 'a.page-title-action, span.split-page-title-action>a',
 };
+
+// Cap for Calypso's hop to wp-admin; the chain took ~13s under CI load, which runs ~1.7x slower than local.
+const PAGES_LIST_TIMEOUT = 30 * 1000;
 
 /**
  * Represents the Pages page
@@ -29,13 +34,9 @@ export class PagesPage {
 	async visit( { siteSlug = '' }: { siteSlug?: string } = {} ): Promise< Response | null > {
 		const response = await this.page.goto( getCalypsoURL( 'pages' ) );
 
-		if ( siteSlug ) {
-			// On single-site accounts, the server-side redirect already lands on /pages/<siteSlug>, so we
-			// can skip the selector click.
-			if ( new URL( this.page.url() ).pathname === `/pages/${ siteSlug }` ) {
-				return response;
-			}
-
+		// On single-site accounts, the server-side redirect already lands on /pages/<siteSlug>, so we
+		// can skip the selector click.
+		if ( siteSlug && new URL( this.page.url() ).pathname !== `/pages/${ siteSlug }` ) {
 			const siteLink = this.page
 				.locator( `.site-selector__sites a:has-text("${ siteSlug }")` )
 				.first();
@@ -60,6 +61,16 @@ export class PagesPage {
 				} );
 			}
 		}
+
+		// Calypso answers the Pages route with the site's own wp-admin list, and an Atomic site
+		// carrying local users answers that with the Jetpack SSO screen first.
+		await this.page.waitForURL( /\/wp-admin\/edit\.php\?post_type=page|\/wp-login\.php/, {
+			timeout: PAGES_LIST_TIMEOUT,
+		} );
+		await completeJetpackSso( this.page );
+		await this.page.waitForURL( /\/wp-admin\/edit\.php\?post_type=page/, {
+			timeout: PAGES_LIST_TIMEOUT,
+		} );
 
 		return response;
 	}
@@ -93,7 +104,7 @@ export class PagesPage {
 		if ( addNewVisible ) {
 			await Promise.all( [
 				this.page.waitForFunction(
-					() => {
+					( onAtomic ) => {
 						const u = new URL( window.location.href );
 						if ( /^\/page(?:\/[^/?#]+)?\/?$/.test( u.pathname ) ) {
 							return true;
@@ -104,9 +115,15 @@ export class PagesPage {
 						) {
 							return true;
 						}
+						// The Jetpack SSO screen is where an Atomic site carrying local users settles
+						// instead. Count it as settled so the caller can clear it; leaving it out
+						// spends this whole timeout on a page that was never going to change.
+						if ( onAtomic && u.pathname === '/wp-login.php' ) {
+							return true;
+						}
 						return false;
 					},
-					undefined,
+					envVariables.TEST_ON_ATOMIC,
 					{ timeout: 20 * 1000 }
 				),
 				locator.click( { noWaitAfter: true } ),
@@ -116,6 +133,12 @@ export class PagesPage {
 				timeout: 30 * 1000,
 				waitUntil: 'domcontentloaded',
 			} );
+		}
+
+		// An Atomic site carrying local users answers the wp-admin editor route with the Jetpack
+		// SSO screen, which is a route of its own and would fail the check below.
+		if ( envVariables.TEST_ON_ATOMIC ) {
+			await completeJetpackSso( this.page );
 		}
 
 		if ( ! hasPageEditorUrl() ) {

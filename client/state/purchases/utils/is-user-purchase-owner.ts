@@ -1,9 +1,9 @@
-import type { Purchase } from 'calypso/lib/purchases/types';
+import type { Purchase } from '@automattic/api-core';
 
 export const isUserPurchaseOwner = ( userId?: number | null ) => ( purchase?: Purchase ) => {
 	if ( ! userId || ! purchase ) {
 		return false;
 	}
 
-	return purchase.userIsOwner || userId === purchase.userId;
+	return userId === purchase.user_id;
 };

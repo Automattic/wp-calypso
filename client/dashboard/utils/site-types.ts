@@ -1,9 +1,7 @@
 import type { Site } from '@automattic/api-core';
 
 export function isSelfHostedJetpackConnected( site: Site ) {
-	return (
-		site.jetpack_connection && ! site.is_wpcom_atomic && ! site.is_wpcom_flex && ! site.is_garden
-	);
+	return site.jetpack_connection && ! site.is_wpcom_atomic && ! site.is_garden;
 }
 
 export function isP2( site: Site ) {
@@ -20,4 +18,10 @@ export function isCommerceGarden( site: Site ) {
 
 export function isStagingSite( site: Site ) {
 	return site.is_wpcom_staging_site;
+}
+
+export function usesWpAdminInterface( site: Site ) {
+	return (
+		( site.jetpack && ! site.is_wpcom_atomic ) || site.options?.wpcom_admin_interface === 'wp-admin'
+	);
 }

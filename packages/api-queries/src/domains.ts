@@ -50,11 +50,16 @@ export const freeSuggestionQuery = (
 // `with_bundles=1` `/domains/suggestions` call, so they share a query key and
 // React Query dedupes them to a single network request even when both consumers
 // are enabled on the same query. The two exports below spread this query and add
-// a `select` picking their half of the response.
-export const bundleMetadataQuery = ( query: string ) =>
+// a `select` picking their half of the response. `params` mirror the plain
+// suggestions request so the two lists match (DOMAINS-2238); they are part of
+// the key because a different filter is a different list.
+export const bundleMetadataQuery = (
+	query: string,
+	params: Partial< DomainSuggestionQuery > = {}
+) =>
 	queryOptions( {
-		queryKey: [ 'domain-bundle-metadata', query ],
-		queryFn: () => fetchBundleMetadata( query ),
+		queryKey: [ 'domain-bundle-metadata', query, params ],
+		queryFn: () => fetchBundleMetadata( query, params ),
 		meta: { persist: false },
 	} );
 
@@ -63,13 +68,19 @@ export const bundleMetadataQuery = ( query: string ) =>
 const selectBundleSuggestion = ( data: BundleMetadata ) => data.bundle_suggestion;
 const selectBundleTriggers = ( data: BundleMetadata ) => data.bundle_triggers;
 
-export const bundleSuggestionQuery = ( query: string ) => ( {
-	...bundleMetadataQuery( query ),
+export const bundleSuggestionQuery = (
+	query: string,
+	params: Partial< DomainSuggestionQuery > = {}
+) => ( {
+	...bundleMetadataQuery( query, params ),
 	select: selectBundleSuggestion,
 } );
 
-export const bundleTriggersQuery = ( query: string ) => ( {
-	...bundleMetadataQuery( query ),
+export const bundleTriggersQuery = (
+	query: string,
+	params: Partial< DomainSuggestionQuery > = {}
+) => ( {
+	...bundleMetadataQuery( query, params ),
 	select: selectBundleTriggers,
 } );
 

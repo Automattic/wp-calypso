@@ -74,6 +74,11 @@ export default function TierOverviewCard( {
 			link={ tiersHref }
 			shouldUseRouterLink={ shouldUseRouterLink }
 			tracksId="agency-overview-tier"
+			onClick={ () =>
+				recordTracksEvent?.( 'calypso_a4a_agency_tier_progress_card_explore_click', {
+					agency_tier: tierId,
+				} )
+			}
 			bottom={
 				<VStack spacing={ 4 }>
 					<InfluencedRevenue
@@ -88,7 +93,7 @@ export default function TierOverviewCard( {
 							action={
 								<Button
 									size="compact"
-									variant="secondary"
+									variant="primary"
 									isBusy={ isSchedulingCall }
 									onClick={ () => {
 										recordTracksEvent?.( 'calypso_a4a_overview_tier_card_schedule_call_click', {
@@ -109,7 +114,7 @@ export default function TierOverviewCard( {
 							action={
 								<Button
 									size="compact"
-									variant="secondary"
+									variant="primary"
 									isBusy={ isSchedulingCall }
 									onClick={ () => {
 										recordTracksEvent?.(

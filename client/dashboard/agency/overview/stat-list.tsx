@@ -1,11 +1,11 @@
 import {
-	__experimentalDivider as Divider,
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { Fragment } from 'react';
+import Divider from '../../components/divider';
 import { Text } from '../../components/text';
-import { TextSkeleton } from '../../components/text-skeleton';
+import { TextBlur } from '../../components/text-blur';
 
 interface Stat {
 	label: string;
@@ -22,7 +22,9 @@ export default function StatList( { stats, isLoading }: { stats: Stat[]; isLoadi
 							{ stat.label }
 						</Text>
 						<Text weight={ 500 } size={ 13 } lineHeight="20px">
-							{ isLoading ? <TextSkeleton length={ 5 } /> : stat.value }
+							<TextBlur isBlurred={ !! isLoading } length={ 5 }>
+								{ stat.value }
+							</TextBlur>
 						</Text>
 					</HStack>
 					<Divider style={ { color: 'var(--dashboard-header__divider-color)' } } />

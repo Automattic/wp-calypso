@@ -1,4 +1,5 @@
 import { ODIE_ALLOWED_BOTS, ODIE_ALL_BOT_SLUGS } from './constants';
+import type { CheckoutSupportVariation } from '@automattic/data-stores';
 import type { ZendeskConversation } from '@automattic/zendesk-client';
 import type { ReactNode, PropsWithChildren, SetStateAction } from 'react';
 
@@ -16,9 +17,9 @@ export type OdieAssistantContextInterface = {
 	currentUser: CurrentUser;
 	experimentVariationName: string | undefined | null;
 	hasUserEverEscalatedToHumanSupport: boolean;
+	isLoadingZendeskHistory: boolean;
 	isMinimized?: boolean;
 	isUserEligibleForPaidSupport: boolean;
-	odieBroadcastClientId: string;
 	selectedSiteId?: number | null;
 	selectedSiteURL?: string | null;
 	userFieldMessage?: string | null;
@@ -27,6 +28,9 @@ export type OdieAssistantContextInterface = {
 	externalChatId?: string | null;
 	forceEmailSupport: boolean;
 	isChatRestricted: boolean;
+	launcherContext?: string;
+	// Set while the Help Center is open from checkout as part of the checkout support experiment.
+	checkoutSupportVariation?: CheckoutSupportVariation;
 	setExperimentVariationName: ( variationName: string | null | undefined ) => void;
 	setChat: ( chat: Chat | SetStateAction< Chat > ) => void;
 	setChatStatus: ( status: ChatStatus ) => void;
@@ -53,6 +57,7 @@ export type OdieAssistantProviderProps = {
 	version?: string | null;
 	forceEmailSupport?: boolean;
 	isChatRestricted?: boolean;
+	launcherContext?: string;
 	children?: ReactNode;
 	setChatStatus?: ( status: ChatStatus ) => void;
 } & PropsWithChildren;
@@ -136,6 +141,7 @@ export type MessageType =
 	| 'conversation-feedback'
 	| 'help-link'
 	| 'file'
+	| 'file-placeholder'
 	| 'image'
 	| 'image-placeholder'
 	| 'introduction'
@@ -212,6 +218,7 @@ export type MessageAction = {
 	metadata: ChatFeedbackActions;
 	label: string;
 	onClick: () => void;
+	uri?: string;
 };
 
 export type OdieMessage = {

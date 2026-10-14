@@ -15,7 +15,7 @@ jest.mock( '@automattic/calypso-analytics', () => ( {
 
 const REQUEST_EVENT = 'calypso_helpcenter_zendesk_config_request';
 const ERROR_EVENT = 'calypso_helpcenter_zendesk_config_error';
-const REPORTING_VERSION = 2;
+const REPORTING_VERSION = 4;
 const fetchMock = jest.fn();
 const originalFetch = globalThis.fetch;
 
@@ -67,6 +67,99 @@ describe( 'useCanConnectToZendeskMessaging', () => {
 			status_text: undefined,
 			failure_count: 0,
 			reporting_version: REPORTING_VERSION,
+			site_context_source: 'none',
+		} );
+	} );
+
+	it( 'attaches the site a consumer supplied', async () => {
+		const queryClient = makeQueryClient();
+		const { result } = renderHook( () => useCanConnectToZendeskMessaging( true, 123 ), {
+			wrapper: makeWrapper( queryClient ),
+		} );
+
+		await waitFor( () => expect( result.current.isSuccess ).toBe( true ) );
+
+		expect( getEventCalls( REQUEST_EVENT )[ 0 ][ 1 ] ).toEqual( {
+			status: 'success',
+			status_text: undefined,
+			failure_count: 0,
+			reporting_version: REPORTING_VERSION,
+			blog_id: 123,
+			site_context_source: 'help_center_context',
+		} );
+	} );
+
+	it( 'coerces a string site id', async () => {
+		const queryClient = makeQueryClient();
+		const { result } = renderHook( () => useCanConnectToZendeskMessaging( true, '123' ), {
+			wrapper: makeWrapper( queryClient ),
+		} );
+
+		await waitFor( () => expect( result.current.isSuccess ).toBe( true ) );
+
+		expect( getEventCalls( REQUEST_EVENT )[ 0 ][ 1 ] ).toMatchObject( {
+			blog_id: 123,
+			site_context_source: 'help_center_context',
+		} );
+	} );
+
+	it( 'declares no site context for an invalid site id', async () => {
+		const queryClient = makeQueryClient();
+		const { result } = renderHook( () => useCanConnectToZendeskMessaging( true, 0 ), {
+			wrapper: makeWrapper( queryClient ),
+		} );
+
+		await waitFor( () => expect( result.current.isSuccess ).toBe( true ) );
+
+		expect( getEventCalls( REQUEST_EVENT )[ 0 ][ 1 ] ).toEqual( {
+			status: 'success',
+			status_text: undefined,
+			failure_count: 0,
+			reporting_version: REPORTING_VERSION,
+			site_context_source: 'none',
+		} );
+	} );
+
+	it( 'does not attribute a site that arrives after the resolution was reported', async () => {
+		// Pins a known limitation: the query resolves once, so a site the consumer learns
+		// later cannot be attached retroactively for that page load.
+		const queryClient = makeQueryClient();
+		const wrapper = makeWrapper( queryClient );
+		const { result, rerender } = renderHook(
+			( { siteId }: { siteId?: number } = {} ) => useCanConnectToZendeskMessaging( true, siteId ),
+			{ wrapper, initialProps: {} }
+		);
+
+		await waitFor( () => expect( result.current.isSuccess ).toBe( true ) );
+		rerender( { siteId: 789 } );
+
+		expect( getEventCalls( REQUEST_EVENT ) ).toHaveLength( 1 );
+		expect( getEventCalls( REQUEST_EVENT )[ 0 ][ 1 ] ).toEqual( {
+			status: 'success',
+			status_text: undefined,
+			failure_count: 0,
+			reporting_version: REPORTING_VERSION,
+			site_context_source: 'none',
+		} );
+	} );
+
+	it( 'uses the site any observer supplied, not just the reporting one', async () => {
+		const queryClient = makeQueryClient();
+		const wrapper = makeWrapper( queryClient );
+		const siteAware = renderHook( () => useCanConnectToZendeskMessaging( true, 456 ), {
+			wrapper,
+		} );
+		const siteless = renderHook( () => useCanConnectToZendeskMessaging(), { wrapper } );
+
+		await waitFor( () => {
+			expect( siteAware.result.current.isSuccess ).toBe( true );
+			expect( siteless.result.current.isSuccess ).toBe( true );
+		} );
+
+		expect( getEventCalls( REQUEST_EVENT ) ).toHaveLength( 1 );
+		expect( getEventCalls( REQUEST_EVENT )[ 0 ][ 1 ] ).toMatchObject( {
+			blog_id: 456,
+			site_context_source: 'help_center_context',
 		} );
 	} );
 
@@ -100,7 +193,7 @@ describe( 'useCanConnectToZendeskMessaging', () => {
 		expect( getEventCalls( REQUEST_EVENT ) ).toHaveLength( 1 );
 	} );
 
-	it( 'reports the error event when a successful response carries falsy data', async () => {
+	it( 'does not report the retired error event when a successful response carries falsy data', async () => {
 		fetchMock.mockResolvedValue( makeResponse( false ) );
 		const queryClient = makeQueryClient();
 		const { result } = renderHook( () => useCanConnectToZendeskMessaging(), {
@@ -110,12 +203,7 @@ describe( 'useCanConnectToZendeskMessaging', () => {
 		await waitFor( () => expect( result.current.isSuccess ).toBe( true ) );
 
 		expect( getEventCalls( REQUEST_EVENT ) ).toHaveLength( 1 );
-		expect( getEventCalls( ERROR_EVENT ) ).toHaveLength( 1 );
-		expect( getEventCalls( ERROR_EVENT )[ 0 ][ 1 ] ).toEqual( {
-			status: 'success',
-			status_text: undefined,
-			reporting_version: REPORTING_VERSION,
-		} );
+		expect( getEventCalls( ERROR_EVENT ) ).toHaveLength( 0 );
 	} );
 
 	it( 'reports once after retries reach a final error', async () => {
@@ -129,17 +217,13 @@ describe( 'useCanConnectToZendeskMessaging', () => {
 
 		expect( fetchMock ).toHaveBeenCalledTimes( 4 );
 		expect( getEventCalls( REQUEST_EVENT ) ).toHaveLength( 1 );
-		expect( getEventCalls( ERROR_EVENT ) ).toHaveLength( 1 );
+		expect( getEventCalls( ERROR_EVENT ) ).toHaveLength( 0 );
 		expect( getEventCalls( REQUEST_EVENT )[ 0 ][ 1 ] ).toEqual( {
 			status: 'error',
 			status_text: 'Zendesk unavailable',
 			failure_count: 4,
 			reporting_version: REPORTING_VERSION,
-		} );
-		expect( getEventCalls( ERROR_EVENT )[ 0 ][ 1 ] ).toEqual( {
-			status: 'error',
-			status_text: 'Zendesk unavailable',
-			reporting_version: REPORTING_VERSION,
+			site_context_source: 'none',
 		} );
 	} );
 
@@ -162,6 +246,7 @@ describe( 'useCanConnectToZendeskMessaging', () => {
 			status_text: undefined,
 			failure_count: 2,
 			reporting_version: REPORTING_VERSION,
+			site_context_source: 'none',
 		} );
 	} );
 
@@ -215,6 +300,7 @@ describe( 'useCanConnectToZendeskMessaging', () => {
 			status_text: undefined,
 			failure_count: 2,
 			reporting_version: REPORTING_VERSION,
+			site_context_source: 'none',
 		} );
 	} );
 
@@ -248,7 +334,7 @@ describe( 'useCanConnectToZendeskMessaging', () => {
 		} );
 
 		await waitFor( () => expect( getEventCalls( REQUEST_EVENT ) ).toHaveLength( 2 ) );
-		expect( getEventCalls( ERROR_EVENT ) ).toHaveLength( 2 );
+		expect( getEventCalls( ERROR_EVENT ) ).toHaveLength( 0 );
 	}, 15000 );
 
 	it( 'reports again after the query is reset', async () => {

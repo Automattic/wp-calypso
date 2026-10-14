@@ -1,3 +1,4 @@
+import { fetchStripeConfiguration } from '@automattic/api-core';
 import page from '@automattic/calypso-router';
 import { StripeHookProvider } from '@automattic/calypso-stripe';
 import { CheckoutErrorBoundary } from '@automattic/composite-checkout';
@@ -7,8 +8,9 @@ import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import A4ALogo from 'calypso/a8c-for-agencies/components/a4a-logo';
 import { A4A_MARKETPLACE_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
-import { getStripeConfiguration } from 'calypso/lib/store-transactions';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
+import CheckoutQueryClientProvider from 'calypso/my-sites/checkout/checkout-query-client-provider';
+import CartMessageCleanup from 'calypso/my-sites/checkout/src/components/cart-message-cleanup';
 import CheckoutMain from 'calypso/my-sites/checkout/src/components/checkout-main';
 import usePrepareProductsForCart from 'calypso/my-sites/checkout/src/hooks/use-prepare-products-for-cart';
 import { useDispatch, useSelector } from 'calypso/state';
@@ -17,10 +19,11 @@ import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import hasLoadedSites from 'calypso/state/selectors/has-loaded-sites';
 import getSite from 'calypso/state/sites/selectors/get-site';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
-import CartMessageCleanup from './cart-message-cleanup';
 import ClientCheckoutError from './checkout-error';
 import ClientCheckoutPlaceholder from './checkout-placeholder';
+import getPurchasedWPCOMPlanSlug from './lib/get-purchased-wpcom-plan-slug';
 import getSuccessRedirectUrl from './lib/get-success-redirect-url';
+import usePreparedCart from './use-prepared-cart';
 import type { ShoppingCartItem } from '../types';
 
 import './style.scss';
@@ -35,17 +38,19 @@ function BillingDragonCheckoutContent( {
 	withA8cLogo = true,
 	siteSlug,
 	planSlug,
+	skipActiveCart = false,
 	shouldClearCartOnSuccess = false,
 }: {
 	cartItems: ShoppingCartItem[];
 	withA8cLogo?: boolean;
 	siteSlug?: string;
 	planSlug?: string;
+	skipActiveCart?: boolean;
 	shouldClearCartOnSuccess?: boolean;
 } ) {
 	const translate = useTranslate();
-	const [ isReady, setIsReady ] = useState( false );
-	const [ error, setError ] = useState< string | null >( null );
+	const [ isFilled, setIsFilled ] = useState( false );
+	const [ fillError, setFillError ] = useState< string | null >( null );
 
 	const dispatch = useDispatch();
 	const agency = useSelector( getActiveAgency );
@@ -68,6 +73,12 @@ function BillingDragonCheckoutContent( {
 	const cartKey = siteId || 'no-site';
 	const { replaceProductsInCart, responseCart } = useShoppingCart( cartKey );
 
+	// Prepared Cart Flow: the WordPress.com backend already saved the cart (`skip_active_cart=1`
+	// in the URL). Load it as it is; the fill flows below must not run.
+	const prepared = usePreparedCart( cartKey, skipActiveCart );
+	const isReady = skipActiveCart ? prepared.isReady : isFilled;
+	const error = skipActiveCart ? prepared.error : fillError;
+
 	const {
 		productsForCart,
 		isLoading: areProductsPreparing,
@@ -75,8 +86,6 @@ function BillingDragonCheckoutContent( {
 	} = usePrepareProductsForCart( {
 		productAliasFromUrl: planSlug,
 		purchaseId: null,
-		usesJetpackProducts: false,
-		isPrivate: false,
 		siteSlug,
 		sitelessCheckoutType: 'a4a',
 	} );
@@ -89,7 +98,7 @@ function BillingDragonCheckoutContent( {
 	// 2. Adding agency metadata to the products
 	// 3. Replacing the cart with the prepared products
 	useEffect( () => {
-		if ( ! isPlanCheckout || areProductsPreparing ) {
+		if ( skipActiveCart || ! isPlanCheckout || areProductsPreparing ) {
 			return;
 		}
 
@@ -123,7 +132,7 @@ function BillingDragonCheckoutContent( {
 		replaceProductsInCart( productsWithAgency )
 			.then( () => {
 				debug( '[A4A Checkout] Products added to cart successfully (plan slug)' );
-				setIsReady( true );
+				setIsFilled( true );
 			} )
 			.catch( ( err ) => {
 				debug( '[A4A Checkout] Failed to add products to cart:', err );
@@ -138,6 +147,7 @@ function BillingDragonCheckoutContent( {
 		site,
 		siteSlug,
 		sitesLoaded,
+		skipActiveCart,
 	] );
 
 	// Cart Items Flow: This flow is used when cartItems are provided via props (the traditional A4A cart flow).
@@ -147,12 +157,12 @@ function BillingDragonCheckoutContent( {
 	// 3. Replacing the cart with the converted products
 	// This is the original flow used when users add items to their cart first, then navigate to checkout.
 	useEffect( () => {
-		if ( isPlanCheckout ) {
+		if ( skipActiveCart || isPlanCheckout ) {
 			return;
 		}
 
 		// Skip if we're already ready
-		if ( isReady ) {
+		if ( isFilled ) {
 			debug( '[A4A Checkout] Already ready' );
 			return;
 		}
@@ -167,8 +177,8 @@ function BillingDragonCheckoutContent( {
 		if ( ! cartItems || cartItems.length === 0 ) {
 			debug( '[A4A Checkout] Cart items not loaded yet, waiting...' );
 			// Reset error state when waiting for cart items
-			if ( error ) {
-				setError( null );
+			if ( fillError ) {
+				setFillError( null );
 			}
 			return;
 		}
@@ -206,39 +216,51 @@ function BillingDragonCheckoutContent( {
 				.then( () => {
 					debug( '[A4A Checkout] Products added to cart successfully' );
 					debug( '[A4A Checkout] Cart', responseCart );
-					setIsReady( true );
+					setIsFilled( true );
 				} )
 				.catch( ( err ) => {
 					debug( '[A4A Checkout] Failed to add products to cart:', err );
-					setError( 'Failed to add products to cart' );
+					setFillError( 'Failed to add products to cart' );
 				} );
 		} else {
 			debug( '[A4A Checkout] No matching products found to add to cart' );
-			setError( 'Could not find the requested products' );
+			setFillError( 'Could not find the requested products' );
 		}
-	}, [ isReady, error, replaceProductsInCart, responseCart, agency, cartItems, isPlanCheckout ] );
+	}, [
+		isFilled,
+		fillError,
+		replaceProductsInCart,
+		responseCart,
+		agency,
+		cartItems,
+		isPlanCheckout,
+		skipActiveCart,
+	] );
 
 	// Debugging: Set a timeout to force showing the checkout after 2 seconds
 	// Todo: This was reduced from 10 seconds to 2 seconds to check if it works well. Better UX.
+	// A prepared cart is shown only once it has loaded and been checked, so no forcing there.
 	useEffect( () => {
-		if ( isReady || error ) {
+		if ( skipActiveCart || isFilled || fillError ) {
 			return;
 		}
 
 		const timeoutId = setTimeout( () => {
 			debug( '[A4A Checkout] Timeout reached, showing checkout anyway' );
-			setIsReady( true );
+			setIsFilled( true );
 		}, 2000 );
 
 		return () => clearTimeout( timeoutId );
-	}, [ isReady, error ] );
+	}, [ skipActiveCart, isFilled, fillError ] );
+
+	// An error is checked first: a prepared cart that failed is never ready, and there is no
+	// timeout to force the checkout open, so the placeholder would otherwise show forever.
+	if ( error ) {
+		return <ClientCheckoutError title={ translate( 'Error' ) } message={ error } />;
+	}
 
 	if ( ! isReady ) {
 		return <ClientCheckoutPlaceholder />;
-	}
-
-	if ( error ) {
-		return <ClientCheckoutError title={ translate( 'Error' ) } message={ error } />;
 	}
 
 	return (
@@ -254,7 +276,8 @@ function BillingDragonCheckoutContent( {
 				sitelessCheckoutType="a4a"
 				redirectTo={ getSuccessRedirectUrl(
 					window.location.origin,
-					shouldClearCartOnSuccess && ! isPlanCheckout
+					shouldClearCartOnSuccess && ! isPlanCheckout,
+					isPlanCheckout ? null : getPurchasedWPCOMPlanSlug( cartItems )
 				) }
 				customizedPreviousPath="/marketplace"
 				siteSlug={ siteSlug ?? '' }
@@ -269,12 +292,14 @@ export default function BillingDragonCheckout( {
 	withA8cLogo = true,
 	siteSlug,
 	planSlug,
+	skipActiveCart = false,
 	shouldClearCartOnSuccess = false,
 }: {
 	cartItems: ShoppingCartItem[];
 	withA8cLogo?: boolean;
 	siteSlug?: string;
 	planSlug?: string;
+	skipActiveCart?: boolean;
 	shouldClearCartOnSuccess?: boolean;
 } ) {
 	const translate = useTranslate();
@@ -284,18 +309,24 @@ export default function BillingDragonCheckout( {
 		<CheckoutErrorBoundary
 			errorMessage={ translate( 'Sorry, there was an error loading the checkout page.' ) }
 		>
-			<CalypsoShoppingCartProvider shouldShowPersistentErrors>
-				<CartMessageCleanup />
-				<StripeHookProvider fetchStripeConfiguration={ getStripeConfiguration } locale={ locale }>
-					<BillingDragonCheckoutContent
-						cartItems={ cartItems }
-						withA8cLogo={ withA8cLogo }
-						siteSlug={ siteSlug }
-						planSlug={ planSlug }
-						shouldClearCartOnSuccess={ shouldClearCartOnSuccess }
-					/>
-				</StripeHookProvider>
-			</CalypsoShoppingCartProvider>
+			<CheckoutQueryClientProvider>
+				<CalypsoShoppingCartProvider shouldShowPersistentErrors>
+					<CartMessageCleanup />
+					<StripeHookProvider
+						fetchStripeConfiguration={ fetchStripeConfiguration }
+						locale={ locale }
+					>
+						<BillingDragonCheckoutContent
+							cartItems={ cartItems }
+							withA8cLogo={ withA8cLogo }
+							siteSlug={ siteSlug }
+							planSlug={ planSlug }
+							skipActiveCart={ skipActiveCart }
+							shouldClearCartOnSuccess={ shouldClearCartOnSuccess }
+						/>
+					</StripeHookProvider>
+				</CalypsoShoppingCartProvider>
+			</CheckoutQueryClientProvider>
 		</CheckoutErrorBoundary>
 	);
 }

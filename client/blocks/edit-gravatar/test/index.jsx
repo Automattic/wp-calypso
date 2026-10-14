@@ -46,7 +46,7 @@ const setup = ( overrides = {} ) =>
 	renderWithProvider( <EditGravatar { ...baseProps } { ...overrides } /> );
 
 const clickEditAvatarLink = () =>
-	fireEvent.click( screen.getByRole( 'button', { name: /Edit your public avatar/i } ) );
+	fireEvent.click( screen.getByRole( 'button', { name: 'Edit your avatar' } ) );
 
 describe( 'EditGravatar', () => {
 	afterEach( jest.clearAllMocks );
@@ -55,7 +55,7 @@ describe( 'EditGravatar', () => {
 		test( 'editable Gravatar', () => {
 			setup();
 			expect( screen.getByAltText( user.display_name ) ).toBeVisible();
-			expect( screen.getByRole( 'button', { name: /Edit your public avatar/i } ) ).toBeVisible();
+			expect( screen.getByRole( 'button', { name: 'Edit your avatar' } ) ).toBeVisible();
 		} );
 
 		test( 'unverified email', () => {
@@ -64,12 +64,6 @@ describe( 'EditGravatar', () => {
 			expect(
 				screen.getByRole( 'button', { name: /Verify your email to edit your avatar/i } )
 			).toBeVisible();
-		} );
-
-		test( 'Gravatar disabled', () => {
-			setup( { isGravatarProfileHidden: true } );
-			expect( screen.getByTestId( 'hidden-avatar' ) ).toBeVisible();
-			expect( screen.getByText( /Your avatar is hidden\./ ) ).toBeVisible();
 		} );
 	} );
 

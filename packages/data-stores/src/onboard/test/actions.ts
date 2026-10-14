@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 
-import { setProfilerData } from '../actions';
+import { setProfilerData, setTransferStartedAt, setTransferStatus } from '../actions';
 import { ProfilerData } from '../types';
 
 describe( 'actions', () => {
@@ -21,5 +21,16 @@ describe( 'actions', () => {
 		};
 
 		expect( setProfilerData( expectedProfilerData ) ).toEqual( expected );
+	} );
+
+	it( 'should return transfer wait actions', () => {
+		expect( setTransferStatus( 'active' ) ).toEqual( {
+			type: 'SET_TRANSFER_STATUS',
+			transferStatus: 'active',
+		} );
+		expect( setTransferStartedAt( 123 ) ).toEqual( {
+			type: 'SET_TRANSFER_STARTED_AT',
+			transferStartedAt: 123,
+		} );
 	} );
 } );

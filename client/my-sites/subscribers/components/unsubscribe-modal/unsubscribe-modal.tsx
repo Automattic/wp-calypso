@@ -18,8 +18,8 @@ type UnsubscribeModalProps = {
 const UnsubscribeModal = ( { subscribers, onCancel, onConfirm }: UnsubscribeModalProps ) => {
 	const translate = useTranslate();
 	const subscriber = subscribers?.[ 0 ];
-	const someSubscriberHasPlans = !! subscribers?.some(
-		( subscriber ) => subscriber.plans?.some( ( plan ) => ! plan.is_comp )
+	const someSubscriberHasPlans = !! subscribers?.some( ( subscriber ) =>
+		subscriber.plans?.some( ( plan ) => ! plan.is_comp )
 	);
 	const recordRemoveModal = useRecordRemoveModal();
 

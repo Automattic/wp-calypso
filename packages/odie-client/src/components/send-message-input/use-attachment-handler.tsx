@@ -15,23 +15,52 @@ import { AttachmentPreviews } from '../attachment-preview';
 
 const NOTICE_BAD_FORMAT = {
 	icon: <Icon size={ 24 } icon={ error } />,
-	message: __( 'Only .jpg, .png, or .gif files are supported.', __i18n_text_domain__ ),
+	message: __(
+		'Only images, .txt, .log, .csv, .pdf, or .zip files are supported.',
+		__i18n_text_domain__
+	),
 	dismissible: true,
 	onDismiss: () => {},
 };
 
-const SUPPORTED_IMAGE_TYPES = [ 'image/png', 'image/jpg', 'image/jpeg', 'image/gif' ];
+const SUPPORTED_ATTACHMENT_MIME_TYPES = [
+	'image/png',
+	'image/jpg',
+	'image/jpeg',
+	'image/gif',
+	'text/plain',
+	'text/csv',
+	'application/pdf',
+	'application/zip',
+	'application/x-zip-compressed',
+];
+const SUPPORTED_IMAGE_MIME_TYPES = [ 'image/png', 'image/jpg', 'image/jpeg', 'image/gif' ];
+const SUPPORTED_ATTACHMENT_EXTENSIONS = [
+	'.png',
+	'.jpg',
+	'.jpeg',
+	'.gif',
+	'.txt',
+	'.log',
+	'.csv',
+	'.pdf',
+	'.zip',
+];
 const MAX_ATTACHMENTS = 5;
 
-function isSupportedImageType( type: string ) {
-	return SUPPORTED_IMAGE_TYPES.includes( type );
+function isSupportedAttachment( file: File ) {
+	const lowerCaseName = file.name.toLowerCase();
+	return (
+		SUPPORTED_ATTACHMENT_MIME_TYPES.includes( file.type ) ||
+		SUPPORTED_ATTACHMENT_EXTENSIONS.some( ( extension ) => lowerCaseName.endsWith( extension ) )
+	);
 }
 
 const getFileType = ( file: File ) => {
 	if ( file.type.startsWith( 'image/' ) ) {
 		return 'image-placeholder';
 	}
-	return 'text';
+	return 'file-placeholder';
 };
 
 const getPlaceholderAttachmentMessage = ( file: File ) => {
@@ -47,6 +76,7 @@ const getPlaceholderAttachmentMessage = ( file: File ) => {
 		},
 		source: { type: 'web', id: '', integrationId: '' },
 		mediaUrl: URL.createObjectURL( file ),
+		altText: file.name,
 	} );
 };
 
@@ -81,7 +111,7 @@ export const useAttachmentHandler = () => {
 			const newAttachmentPreviewFiles = [ ...attachmentPreviewFiles ];
 			let anyUnsupportedFormats = false;
 			for ( const file of limitedFiles ) {
-				if ( isSupportedImageType( file.type ) ) {
+				if ( isSupportedAttachment( file ) ) {
 					// Avoid duplicates.
 					if ( ! newAttachmentPreviewFiles.some( ( f ) => f.name === file.name ) ) {
 						newAttachmentPreviewFiles.push( file );
@@ -158,7 +188,7 @@ export const useAttachmentHandler = () => {
 						.then( ( items ) => {
 							for ( const item of items ) {
 								for ( const type of item.types ) {
-									if ( isSupportedImageType( type ) ) {
+									if ( SUPPORTED_IMAGE_MIME_TYPES.includes( type ) ) {
 										item.getType( type ).then( ( blob ) => {
 											const file = new File( [ blob ], 'pasted-image.png', { type } );
 											handleFileUpload( [ file ] );
@@ -185,7 +215,7 @@ export const useAttachmentHandler = () => {
 		return (
 			<DropZone
 				onFilesDrop={ onFilesDrop }
-				label={ __( 'Share this image with our Happiness Engineers', __i18n_text_domain__ ) }
+				label={ __( 'Share this file with our Happiness Engineers', __i18n_text_domain__ ) }
 			/>
 		);
 	};
@@ -197,7 +227,9 @@ export const useAttachmentHandler = () => {
 			const input = document.createElement( 'input' );
 			input.type = 'file';
 			input.multiple = true;
-			input.accept = 'image/png, image/jpg, image/jpeg, image/gif';
+			input.accept = SUPPORTED_ATTACHMENT_MIME_TYPES.concat( SUPPORTED_ATTACHMENT_EXTENSIONS ).join(
+				', '
+			);
 			input.onchange = ( e ) => {
 				const files = ( e.target as HTMLInputElement ).files;
 				if ( files?.length ) {

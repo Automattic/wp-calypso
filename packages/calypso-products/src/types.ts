@@ -177,12 +177,9 @@ export type JetpackYearlyLegacyPlanSlug = ( typeof JETPACK_YEARLY_LEGACY_PLANS )
 export type JetpackMonthlyLegacyPlanSlug = ( typeof JETPACK_MONTHLY_LEGACY_PLANS )[ number ];
 export type JetpackResetPlanSlug = ( typeof JETPACK_RESET_PLANS )[ number ];
 export type JetpackPlanSlug =
-	| typeof PLAN_JETPACK_FREE
-	| JetpackLegacyPlanSlug
-	| JetpackResetPlanSlug;
+	typeof PLAN_JETPACK_FREE | JetpackLegacyPlanSlug | JetpackResetPlanSlug;
 export type JetpackPurchasableItemSlug =
-	| JetpackProductSlug
-	| Exclude< JetpackPlanSlug, typeof PLAN_JETPACK_FREE >;
+	JetpackProductSlug | Exclude< JetpackPlanSlug, typeof PLAN_JETPACK_FREE >;
 
 /**
  * WooCommerce
@@ -397,7 +394,7 @@ export type Plan = BillingTerm & {
 	getWhatIsIncluded?: () => Array< TranslateResult >;
 	getBenefits?: () => Array< TranslateResult >;
 	getRecommendedFor?: () => Array< JetpackTag >;
-	getTagline?: () => TranslateResult;
+	getTagline?: ( siteFeatures?: string[] ) => TranslateResult;
 	getPlanCardFeatures?: () => Feature[];
 	/**
 	 * Features that are included as part of this plan.

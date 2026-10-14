@@ -13,7 +13,6 @@
 		var( --jetpack-ai-feedback-list-primary ) 12%,
 		transparent
 	);
-	--jetpack-ai-feedback-list-applied: #079d2c;
 
 	// Agenttic's message row has a spacing-4 inline gutter. Let the review
 	// content fill that gutter, then restore it only for non-card content.
@@ -154,7 +153,6 @@
 			var( --jetpack-ai-feedback-list-primary ) 12%,
 			transparent
 		);
-		--jetpack-ai-feedback-list-applied: #079d2c;
 
 		border: 1px solid var( --jetpack-ai-feedback-list-border );
 		border-radius: 8px;
@@ -405,31 +403,44 @@
 		fill: currentColor;
 	}
 
-	// Applied / Dismissed resolution chip that replaces the card body.
+	// Applied / Dismissed status that replaces the card body: a circled icon
+	// plus a plain label, matching the inline-edit confirmation badge in
+	// agents-manager (agent-dock/chat-ui.scss).
 	&__resolution {
 		display: inline-flex;
 		align-items: center;
-		gap: 0.25rem;
+		gap: 0.5rem;
 		min-height: 32px;
-		padding: 0.4rem 0.75rem;
-		border-radius: 4px;
+		padding: 0.4rem 0.75rem 0.4rem 0;
 		font-size: 13px;
-		font-weight: 600;
+		font-weight: 500;
 
-		&.is-accepted {
-			background: color-mix( in srgb, var( --jetpack-ai-feedback-list-applied ) 20%, transparent );
-			color: var( --jetpack-ai-feedback-list-applied );
+		&.is-accepted .jetpack-ai-feedback-list__resolution-icon {
+			background-color: #3858e8;
 		}
 
-		&.is-dismissed {
-			background: color-mix( in srgb, currentColor 8%, transparent );
-			opacity: 0.75;
+		&.is-dismissed .jetpack-ai-feedback-list__resolution-icon {
+			padding: 3.5px;
+			background-color: #5e5e5e;
 		}
 	}
 
-	&__resolution-check {
+	// Scoped to the badge (two classes) so the white glyph outranks agenttic's
+	// same-specificity `color` rule on message descendants.
+	&__resolution &__resolution-icon {
 		flex: 0 0 auto;
+		width: 22px;
+		height: 22px;
+		padding: 1px;
+		border-radius: 50%;
+		color: var( --color-white, #fff );
 		fill: currentColor;
+
+		// Agenttic sets `color` directly on every message descendant.
+		path {
+			color: inherit;
+			fill: currentColor;
+		}
 	}
 
 	&__status {

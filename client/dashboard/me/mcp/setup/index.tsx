@@ -30,13 +30,7 @@ function McpSetupComponent() {
 	const tracksAudienceProps = useMcpTracksAudienceProps();
 
 	type McpClient =
-		| 'claude'
-		| 'claude-code'
-		| 'chatgpt'
-		| 'cursor'
-		| 'vscode'
-		| 'continue'
-		| 'default';
+		'claude' | 'claude-code' | 'chatgpt' | 'cursor' | 'vscode' | 'continue' | 'default';
 
 	const [ selectedMcpClient, setSelectedMcpClient ] = useState< McpClient >( 'claude' );
 	const [ copyStatus, setCopyStatus ] = useState( 'idle' );

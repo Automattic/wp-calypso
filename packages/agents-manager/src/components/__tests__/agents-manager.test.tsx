@@ -35,7 +35,6 @@ jest.mock( '../../hooks/use-agent-config', () => ( {} ) );
 jest.mock( '../../hooks/use-open-chat-url-param', () => ( {
 	useOpenChatUrlParam: () => true,
 } ) );
-jest.mock( '../../utils/agent-session', () => ( {} ) );
 jest.mock( '../../utils/load-external-providers', () => ( {} ) );
 jest.mock( '../../hooks/use-empty-view-suggestions', () => ( {} ) );
 jest.mock( '../agent-dock', () => ( { __esModule: true, default: () => null } ) );
@@ -66,6 +65,7 @@ describe( 'AgentsManager', () => {
 				site={ mockSite }
 				currentRoute="/sites/fulltest.com"
 				currentSiteId={ 999 }
+				isInternalOnly
 				zendeskTicketProductFieldValue="woocommerce_core_product"
 			/>
 		);
@@ -77,6 +77,7 @@ describe( 'AgentsManager', () => {
 				site: mockSite,
 				currentRoute: '/sites/fulltest.com',
 				siteKey: '999',
+				isInternalOnly: true,
 				zendeskTicketProductFieldValue: 'woocommerce_core_product',
 			} )
 		);

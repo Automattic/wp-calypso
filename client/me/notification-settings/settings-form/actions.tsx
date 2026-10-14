@@ -5,8 +5,7 @@ import { useSelector } from 'calypso/state';
 import { isFetchingNotificationsSettings } from 'calypso/state/notification-settings/selectors';
 
 type AllSitesProps =
-	| { isApplyAllVisible: never | false }
-	| { isApplyAllVisible: true; onSaveToAll(): void };
+	{ isApplyAllVisible: never | false } | { isApplyAllVisible: true; onSaveToAll(): void };
 
 type NotificationSettingsFormActionsProps = {
 	disabled: boolean;

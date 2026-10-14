@@ -4,17 +4,11 @@
 // @ts-nocheck - TODO: Fix TypeScript issues
 import page from '@automattic/calypso-router';
 import {
-	SUCCESS,
-	ERROR,
-	FAILURE,
-	UNKNOWN,
-	PROCESSING,
-} from 'calypso/state/order-transactions/constants';
-import {
 	addUrlToPendingPageRedirect,
 	redirectThroughPending,
 	getRedirectFromPendingPage,
 } from '../lib/pending-page';
+import { SUCCESS, ERROR, FAILURE, UNKNOWN, PROCESSING } from '../types/order-transaction';
 
 jest.mock( '@automattic/calypso-router' );
 
@@ -200,6 +194,36 @@ describe( 'getRedirectFromPendingPage', () => {
 		expect( actual ).toEqual( { url: '/home' } );
 	} );
 
+	it( 'returns the thank-you page when the redirect is a bare root', () => {
+		const actual = getRedirectFromPendingPage( {
+			isLoadingOrder: false,
+			redirectTo: '/',
+			receiptId: 12345,
+			siteSlug: 'example.com',
+		} );
+		expect( actual ).toEqual( { url: '/checkout/thank-you/example.com/12345' } );
+	} );
+
+	it( 'returns the thank-you page when the bare root carries a query or hash', () => {
+		expect(
+			getRedirectFromPendingPage( {
+				isLoadingOrder: false,
+				redirectTo: '/?checkout_type=unified',
+				receiptId: 12345,
+				siteSlug: 'example.com',
+			} )
+		).toEqual( { url: '/checkout/thank-you/example.com/12345?checkout_type=unified' } );
+
+		expect(
+			getRedirectFromPendingPage( {
+				isLoadingOrder: false,
+				redirectTo: '/#section',
+				receiptId: 12345,
+				siteSlug: 'example.com',
+			} )
+		).toEqual( { url: '/checkout/thank-you/example.com/12345#section' } );
+	} );
+
 	it( 'returns a receipt interpolated relative url if there is also a receipt', () => {
 		const actual = getRedirectFromPendingPage( {
 			isLoadingOrder: false,
@@ -207,6 +231,19 @@ describe( 'getRedirectFromPendingPage', () => {
 			receiptId: 12345,
 		} );
 		expect( actual ).toEqual( { url: '/home/12345' } );
+	} );
+
+	it( 'preserves Studio query args while interpolating the receipt id', () => {
+		const studioSiteId = 'b419d647-95e0-4b32-95fc-6ee255aa465d';
+		const actual = getRedirectFromPendingPage( {
+			isLoadingOrder: false,
+			redirectTo: `/checkout/thank-you/example.com/:receiptId?studioSiteId=${ studioSiteId }&studioReturnTo=publish-site`,
+			receiptId: 12345,
+			siteSlug: 'example.com',
+		} );
+		expect( actual ).toEqual( {
+			url: `/checkout/thank-you/example.com/12345?studioSiteId=${ studioSiteId }&studioReturnTo=publish-site`,
+		} );
 	} );
 
 	it( 'returns a simple absolute url if it is allowed and there is also a receipt', () => {
@@ -249,10 +286,35 @@ describe( 'getRedirectFromPendingPage', () => {
 		expect( actual ).toEqual( { url: 'https://wordpress.com/home/12345' } );
 	} );
 
+	it( 'returns the agency dashboard url with the receipt interpolated if there is also a receipt', () => {
+		const actual = getRedirectFromPendingPage( {
+			isLoadingOrder: false,
+			redirectTo: 'https://agencies-beta.automattic.com/purchases?receipt_id=:receiptId',
+			receiptId: 12345,
+		} );
+		expect( actual ).toEqual( {
+			url: 'https://agencies-beta.automattic.com/purchases?receipt_id=12345',
+		} );
+	} );
+
 	it( 'returns a generic no-site url for an absolute url if it is not allowed and there is also a receipt', () => {
 		const actual = getRedirectFromPendingPage( {
 			isLoadingOrder: false,
 			redirectTo: 'https://example.com/home',
+			receiptId: 12345,
+		} );
+		expect( actual ).toEqual( { url: '/checkout/thank-you/no-site/12345' } );
+	} );
+
+	it.each( [
+		'//example.com/home',
+		'/\\example.com/home',
+		'/\t/example.com/home',
+		'\\/example.com',
+	] )( 'returns a generic no-site url for the scheme-relative url %p', ( redirectTo ) => {
+		const actual = getRedirectFromPendingPage( {
+			isLoadingOrder: false,
+			redirectTo,
 			receiptId: 12345,
 		} );
 		expect( actual ).toEqual( { url: '/checkout/thank-you/no-site/12345' } );
@@ -478,17 +540,6 @@ describe( 'getRedirectFromPendingPage', () => {
 			},
 		} );
 		expect( actual ).toEqual( { url: '/checkout/no-site', isError: true } );
-	} );
-
-	it( 'returns a checkout url if there was an HTTP error', () => {
-		const actual = getRedirectFromPendingPage( {
-			isLoadingOrder: false,
-			redirectTo: '/home',
-			siteSlug: 'example.com',
-			error: new Error( 'test error' ),
-			orderId: 1,
-		} );
-		expect( actual ).toEqual( { url: '/checkout/example.com', isError: true } );
 	} );
 
 	it( 'returns a checkout url if the transaction is unknown', () => {

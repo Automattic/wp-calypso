@@ -127,7 +127,7 @@ const useLoadingSteps = ( {
 					translate( 'Fetching historic data' ),
 					translate( 'Identifying performance improvements' ),
 					translate( 'Finalizing your results' ),
-			  ];
+				];
 	}
 
 	useInterval(

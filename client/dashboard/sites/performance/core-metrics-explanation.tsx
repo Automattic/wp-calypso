@@ -16,7 +16,7 @@ const metricsExplanations = {
 				learnMore: (
 					<ExternalLink
 						href={ localizeUrl(
-							'https://developer.wordpress.com/docs/site-performance/speed-test/#first-contentful-paint-fcp-'
+							'https://wordpress.com/support/check-your-sites-performance/#understanding-your-site-s-performance-score'
 						) }
 					>
 						{ __( 'Learn more' ) }
@@ -35,7 +35,7 @@ const metricsExplanations = {
 				learnMore: (
 					<ExternalLink
 						href={ localizeUrl(
-							'https://developer.wordpress.com/docs/site-performance/speed-test/#largest-contentful-paint-lcp-'
+							'https://wordpress.com/support/check-your-sites-performance/#understanding-your-site-s-performance-score'
 						) }
 					>
 						{ __( 'Learn more' ) }
@@ -54,7 +54,7 @@ const metricsExplanations = {
 				learnMore: (
 					<ExternalLink
 						href={ localizeUrl(
-							'https://developer.wordpress.com/docs/site-performance/speed-test/#cumulative-layout-shift-cls-'
+							'https://wordpress.com/support/check-your-sites-performance/#understanding-your-site-s-performance-score'
 						) }
 					>
 						{ __( 'Learn more' ) }
@@ -71,13 +71,7 @@ const metricsExplanations = {
 			),
 			{
 				learnMore: (
-					<ExternalLink
-						href={ localizeUrl(
-							'https://developer.wordpress.com/docs/site-performance/speed-test/#interaction-to-next-paint-inp-'
-						) }
-					>
-						{ __( 'Learn more' ) }
-					</ExternalLink>
+					<ExternalLink href="https://web.dev/articles/inp">{ __( 'Learn more' ) }</ExternalLink>
 				),
 			}
 		),
@@ -92,7 +86,7 @@ const metricsExplanations = {
 				learnMore: (
 					<ExternalLink
 						href={ localizeUrl(
-							'https://developer.wordpress.com/docs/site-performance/speed-test/#time-to-first-byte-ttfb-'
+							'https://wordpress.com/support/check-your-sites-performance/#understanding-your-site-s-performance-score'
 						) }
 					>
 						{ __( 'Learn more' ) }
@@ -111,7 +105,7 @@ const metricsExplanations = {
 				learnMore: (
 					<ExternalLink
 						href={ localizeUrl(
-							'https://developer.wordpress.com/docs/site-performance/speed-test/#total-blocking-time-tbt-'
+							'https://wordpress.com/support/check-your-sites-performance/#understanding-your-site-s-performance-score'
 						) }
 					>
 						{ __( 'Learn more' ) }
@@ -130,7 +124,7 @@ const metricsExplanations = {
 				learnMore: (
 					<ExternalLink
 						href={ localizeUrl(
-							'https://developer.wordpress.com/docs/site-performance/speed-test/#performance-score'
+							'https://wordpress.com/support/check-your-sites-performance/#understanding-your-site-s-performance-score'
 						) }
 					>
 						{ __( 'Learn more' ) }

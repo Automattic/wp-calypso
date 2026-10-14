@@ -75,6 +75,24 @@ This document outlines all the analytics events tracked during the login process
 - `is_magic_login` (boolean): Whether magic login was used
 - `login_method` (string): The method used for login
 
+### `calypso_login_logo_click`
+
+**Description**: Tracks when user clicks the WordPress.com logo in the top bar, which links to the homepage (plain WordPress.com logins only)
+
+**Properties**:
+
+- `page` (string): The current route
+
+### `calypso_signup_logo_click`
+
+**Description**: Tracks when user clicks the WordPress.com logo in the top bar of the `/start/account` or `/setup/onboarding/user` signup screens, which links to the homepage
+
+**Properties**:
+
+- `page` (string): The current route (`/start/account` only)
+- `flow` (string): The stepper flow (`/setup/onboarding/user` only)
+- `step` (string): The stepper step (`/setup/onboarding/user` only)
+
 ## Event Flow
 
 1. **Email Request**: `calypso_login_email_link_submit` → `calypso_login_email_link_success`/`calypso_login_email_link_failure`

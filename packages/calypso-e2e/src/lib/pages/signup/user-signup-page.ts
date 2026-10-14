@@ -1,6 +1,13 @@
-import { Page, Locator, Frame } from 'playwright';
+import { APIResponse, Page, Locator, Frame } from 'playwright';
 import { getCalypsoURL } from '../../../data-helper';
-import type { NewSiteResponse, NewUserResponse } from '../../../types/rest-api-client.types';
+import { handleActiveThrottles } from '../../throttle-flags';
+import {
+	ServerErrorMatch,
+	TRANSIENT_RETRY_DELAYS,
+	TRANSIENT_UPSTREAM_STATUSES,
+	isServerErrorPage,
+} from '../../transient-server-error';
+import type { NewUserResponse } from '../../../types/rest-api-client.types';
 
 /**
  * Signals a transient upstream failure during signup (a 502/503/504 server-error
@@ -9,12 +16,33 @@ import type { NewSiteResponse, NewUserResponse } from '../../../types/rest-api-c
  */
 class TransientSignupError extends Error {}
 
-// Upstream gateway statuses that indicate a transient infra failure rather than
-// the app itself. 500 (Internal Server Error) and 501 are deliberately excluded:
-// they usually mean the app crashed or a genuine bug, which we want to fail on
-// fast rather than mask by retrying. Mirrors the phrases isServerErrorPage()
-// matches (Bad Gateway / Service Unavailable / Gateway Timeout).
-const TRANSIENT_UPSTREAM_STATUSES = [ 502, 503, 504 ];
+// The user creation endpoint. A pattern rather than a predicate: Playwright
+// collapses a route matched by a function to `**\/*` and hands every request in
+// the context to Node.
+const NEW_USER_ENDPOINT = /\/users\/new\?/;
+
+const HTTP_POST = 'POST';
+
+// The form load, the fill and the round trip together can take a while on a
+// loaded CI runner, so this sits well clear of them and only catches a response
+// that is never coming.
+const NEW_USER_RESPONSE_TIMEOUT = 60_000;
+
+/**
+ * Whether a `/users/new` response is the endpoint's answer to a signup.
+ *
+ * Not `ok()`: a refused signup carries the reason it was refused, and waiting
+ * for an ok response that is never coming turns it into a timeout. Still not a
+ * 5xx, which `captureUsersNewServerError` races the capture to reject with the
+ * retryable error the caller keys on, and not a redirect, whose body is no
+ * answer to parse.
+ *
+ * @param {APIResponse} response Response to the `/users/new` POST.
+ * @returns {boolean} True when the response answers the signup.
+ */
+function isSignupAnswer( response: APIResponse ): boolean {
+	return response.status() < 300 || ( response.status() >= 400 && response.status() < 500 );
+}
 
 /** Returns whether a value is a non-null object (arrays included). */
 function isRecord( value: unknown ): value is Record< string, unknown > {
@@ -126,7 +154,7 @@ export class UserSignupPage {
 			// everything else so it surfaces instead of being masked behind a reload.
 			if (
 				( error as Error ).name !== 'TimeoutError' ||
-				( await this.isServerErrorPage( false ) )
+				( await isServerErrorPage( this.page, ServerErrorMatch.AnyServerError ) )
 			) {
 				throw error;
 			}
@@ -214,25 +242,84 @@ export class UserSignupPage {
 	 */
 	async visit( { path }: { path: string } = { path: '' } ): Promise< void > {
 		const targetUrl = path ? `start/${ path }` : 'start';
-		await this.page.goto( getCalypsoURL( targetUrl ), { waitUntil: 'networkidle' } );
+		// Not 'networkidle': the bot-protection client keeps the signup page
+		// busy, and no navigationTimeout is configured, so waiting for idle
+		// burns the whole test budget. waitForSignupForm() does the real
+		// readiness wait, bounded.
+		await this.page.goto( getCalypsoURL( targetUrl ), { waitUntil: 'domcontentloaded' } );
 	}
+	/**
+	 * Captures the body of the next `/users/new` response, buffered in Node.
+	 *
+	 * A page-side `response.json()` reads through the browser cache, which the
+	 * navigation that follows a signup — the accept-invite redirect, the next
+	 * step of a flow, the hop to WooCommerce — empties first: the read then fails
+	 * with "No resource with given identifier found". Fetching the request from
+	 * Node and buffering the answer before handing it back to the page leaves
+	 * nothing for the navigation to take away.
+	 *
+	 * Call before the click that triggers the request. The handler stays
+	 * registered for the life of the page; unrouting it while it holds a request
+	 * releases that request, and the fulfill below then dies with "Route is
+	 * already handled!".
+	 *
+	 * @param {Function} accepts Whether a response is the answer being waited
+	 * for. Anything else is handed back to the page and the capture goes on
+	 * waiting.
+	 * @returns {Promise<unknown>} Body of the first accepted response.
+	 */
+	private captureNewUserBody( accepts: ( response: APIResponse ) => boolean ): Promise< unknown > {
+		let captured = false;
+		let onBody: ( body: unknown ) => void = () => undefined;
+		let onFailure: ( error: Error ) => void = () => undefined;
+
+		const body = new Promise< unknown >( ( resolve, reject ) => {
+			onBody = resolve;
+			onFailure = reject;
+		} );
+
+		const routeRegistered = this.page.route( NEW_USER_ENDPOINT, async ( route ) => {
+			if ( captured || route.request().method() !== HTTP_POST ) {
+				return route.fallback();
+			}
+
+			try {
+				const response = await route.fetch();
+				const text = await response.text();
+				await route.fulfill( { response, body: text } );
+
+				if ( ! accepts( response ) ) {
+					return;
+				}
+
+				captured = true;
+				onBody( JSON.parse( text ) );
+			} catch ( error ) {
+				onFailure( error as Error );
+			}
+		} );
+
+		// A registration that never lands would otherwise surface as the capture
+		// timeout below rather than as the reason it failed.
+		routeRegistered.catch( ( error ) => onFailure( error as Error ) );
+
+		let timer: ReturnType< typeof setTimeout > | undefined;
+		const timeout = new Promise< never >( ( _, reject ) => {
+			timer = setTimeout(
+				() => reject( new Error( 'Timed out waiting for a /users/new response.' ) ),
+				NEW_USER_RESPONSE_TIMEOUT
+			);
+		} );
+
+		return Promise.race( [ body, timeout ] ).finally( () => clearTimeout( timer ) );
+	}
+
 	/**
 	 * Captures the response from the user creation API endpoint.
 	 * @returns {Promise<NewUserResponse>}
 	 */
 	private captureNewUserResponse(): Promise< NewUserResponse > {
-		return this.page
-			.waitForResponse(
-				( response ) =>
-					/\/users\/new\?/.test( response.url() ) &&
-					response.ok() &&
-					response.request().method() === 'POST',
-				// Use an explicit timeout so the global actionTimeout (10s) does not
-				// apply here. The form load + fill + network round-trip can easily
-				// exceed 10s on a slow CI runner.
-				{ timeout: 60_000 }
-			)
-			.then( async ( response ) => assertSuccessfulNewUserResponse( await response.json() ) );
+		return this.captureNewUserBody( isSignupAnswer ).then( assertSuccessfulNewUserResponse );
 	}
 
 	/**
@@ -244,6 +331,7 @@ export class UserSignupPage {
 	 * @returns Response from the REST API.
 	 */
 	async signup( email: string, username: string, password: string ): Promise< NewUserResponse > {
+		handleActiveThrottles( [ 'signup' ] );
 		await this.waitForSignupForm();
 		await this.emailInput.fill( email );
 		await this.usernameInput.fill( username );
@@ -274,19 +362,28 @@ export class UserSignupPage {
 		// exception is a 504 where the backend created the user before the gateway
 		// timed out; the same-email retry then surfaces a "user exists" error
 		// instead of recovering, which is still preferable to masking the failure.
-		// Retry a bounded number of times before giving up.
-		const maxAttempts = 3;
+		// Retry with backoff (TRANSIENT_RETRY_DELAYS) before giving up.
+		//
+		// Outside the loop: the policy skips or fails by throwing, and the catch
+		// below turns a throw met on a server-error page into a retry.
+		handleActiveThrottles( [ 'signup' ] );
+		const maxAttempts = TRANSIENT_RETRY_DELAYS.length + 1;
 		for ( let attempt = 1; attempt <= maxAttempts; attempt++ ) {
 			try {
 				return await this.attemptSignupWithEmail( email );
 			} catch ( error ) {
 				// Only retry transient upstream failures; surface anything else so
 				// genuine bugs are not masked by reloads.
-				if ( attempt < maxAttempts && error instanceof TransientSignupError ) {
-					await this.page.reload( { waitUntil: 'domcontentloaded' } );
-					continue;
+				if ( attempt >= maxAttempts || ! ( error instanceof TransientSignupError ) ) {
+					throw error;
 				}
-				throw error;
+
+				const delay = TRANSIENT_RETRY_DELAYS[ attempt - 1 ];
+				console.warn(
+					`Signup attempt ${ attempt }/${ maxAttempts } failed, reloading in ${ delay }ms: ${ error.message }`
+				);
+				await this.page.waitForTimeout( delay );
+				await this.page.reload( { waitUntil: 'domcontentloaded' } );
 			}
 		}
 
@@ -307,7 +404,7 @@ export class UserSignupPage {
 		// a reload that landed on another 502). This keeps a retry cheap instead of
 		// burning the ~60s of form-wait timeouts in waitForSignupForm() before it
 		// gives up, which would otherwise risk blowing the per-test budget.
-		if ( await this.isServerErrorPage() ) {
+		if ( await isServerErrorPage( this.page ) ) {
 			throw new TransientSignupError( 'Signup page returned a transient server error.' );
 		}
 
@@ -337,7 +434,10 @@ export class UserSignupPage {
 			return await Promise.race( [ responsePromise, serverErrorPromise ] );
 		} catch ( error ) {
 			// The form never loaded because the page itself is a 5xx error page.
-			if ( ! ( error instanceof TransientSignupError ) && ( await this.isServerErrorPage() ) ) {
+			if (
+				! ( error instanceof TransientSignupError ) &&
+				( await isServerErrorPage( this.page ) )
+			) {
 				throw new TransientSignupError( 'Signup page returned a transient server error.' );
 			}
 			throw error;
@@ -372,80 +472,6 @@ export class UserSignupPage {
 				}
 				throw new Error( message );
 			} );
-	}
-
-	/**
-	 * Detects whether the page is currently showing a server-error page.
-	 *
-	 * By default matches only the transient upstream errors (502/503/504), e.g.
-	 * the nginx "502 Bad Gateway" page, which the retry machinery keys on. Pass
-	 * transientUpstreamServerErrorOnly=false to also match the 500 "Internal
-	 * Server Error" app-crash page (used by the hydration reload-retry so it does
-	 * not mask a genuine error page behind a reload).
-	 *
-	 * @param {boolean} transientUpstreamServerErrorOnly When true (default),
-	 * match only 502/503/504; when false, also match 500 Internal Server Error.
-	 * @returns {Promise<boolean>} True when a matching server-error page is detected.
-	 */
-	private async isServerErrorPage( transientUpstreamServerErrorOnly = true ): Promise< boolean > {
-		return this.page
-			.evaluate( ( transientOnly ) => {
-				const title = document.title || '';
-				const heading = document.querySelector( 'h1' )?.textContent || '';
-				const haystack = `${ title } ${ heading }`;
-				// Match the upstream error phrases (e.g. nginx "502 Bad Gateway")
-				// rather than a bare status number, which could appear incidentally
-				// in legitimate page text.
-				const transient = /Bad Gateway|Service (Temporarily )?Unavailable|Gateway Time-?out/i;
-				if ( transientOnly ) {
-					return transient.test( haystack );
-				}
-				return transient.test( haystack ) || /Internal Server Error/i.test( haystack );
-			}, transientUpstreamServerErrorOnly )
-			.catch( () => false );
-	}
-
-	/**
-	 * Signup with email and wait for site creation.
-	 *
-	 * This happens in the domain-only flow, where site creation happens after user login.
-	 *
-	 * @param email {string} Email address of the new user.
-	 * @returns {NewUserResponse, NewSiteResponse} Details of the new user and the newly created site.
-	 */
-	async signupWithEmailAndWaitForSiteCreation(
-		email: string
-	): Promise< [ NewUserResponse, NewSiteResponse ] > {
-		const newUserDetails = await this.signupWithEmail( email );
-		const newSiteDetails = await this.waitForSiteCreation();
-		return [ newUserDetails, newSiteDetails ];
-	}
-
-	/**
-	 * Waits for the site creation response and returns the details of the newly created site.
-	 *
-	 * Site creation happens with the `/sites/new` endpoint call
-	 *
-	 * @returns {NewSiteResponse} Details of the newly created site.
-	 */
-	private async waitForSiteCreation(): Promise< NewSiteResponse > {
-		const response = await this.page.waitForResponse( /.*sites\/new\?.*/, { timeout: 30 * 1000 } );
-
-		if ( ! response ) {
-			throw new Error( 'Failed to intercept response for new site creation.' );
-		}
-
-		const responseJSON = await response.json();
-		const body = responseJSON.body;
-
-		if ( ! body.blog_details.blogid ) {
-			console.error( body );
-			throw new Error( 'Failed to locate blog ID for the created site.' );
-		}
-
-		// Cast the blogID value to a number, in case it comes in as a string.
-		body.blog_details.blogid = Number( body.blog_details.blogid );
-		return body;
 	}
 
 	/**
@@ -495,6 +521,9 @@ export class UserSignupPage {
 	 * @returns {NewUserResponse} Response from the REST API.
 	 */
 	async signupWoo( email: string ): Promise< NewUserResponse > {
+		// This flow drives the form itself instead of going through `signupWithEmail`,
+		// so the ban has to be met here or it is not met at all.
+		handleActiveThrottles( [ 'signup' ] );
 		await this.waitForSignupForm();
 		await this.emailInput.fill( email );
 
@@ -510,11 +539,7 @@ export class UserSignupPage {
 			this.page.on( 'framenavigated', handler );
 		} );
 
-		// Read the response body as soon as it arrives; waiting for the redirect
-		// first lets the navigation evict the body from the browser cache.
-		const responseBodyPromise = this.page
-			.waitForResponse( /\/users\/new\?[^?]*$/ )
-			.then( ( response ): Promise< NewUserResponse > => response.json() );
+		const responseBodyPromise = this.captureNewUserBody( () => true );
 
 		const [ responseBody ] = await Promise.all( [
 			responseBodyPromise,
@@ -536,15 +561,19 @@ export class UserSignupPage {
 	 * @returns {NewUserResponse} Response from the REST API.
 	 */
 	async signupThroughInvite( email: string ): Promise< NewUserResponse > {
+		// This flow drives the form itself instead of going through `signupWithEmail`,
+		// so the ban has to be met here or it is not met at all.
+		handleActiveThrottles( [ 'signup' ] );
 		await this.emailInput.fill( email );
 
-		const responsePromise = this.page.waitForResponse(
-			( response ) => /\/users\/new\?[^?]*$/.test( response.url() ) && response.ok()
-		);
-		await this.continueButton.click();
-		const response = await responsePromise;
+		// A refused invite signup is an answer the caller asserts on, so capture it
+		// the way every other flow does rather than waiting out an ok response the
+		// server is never going to send.
+		const responseBodyPromise = this.captureNewUserBody( isSignupAnswer );
 
-		return await response.json();
+		await this.continueButton.click();
+
+		return ( await responseBodyPromise ) as NewUserResponse;
 	}
 
 	/**

@@ -1,9 +1,5 @@
 import { Onboard } from '@automattic/data-stores';
-import {
-	isAIBuilderOnboardingFlow,
-	isNewHostedSiteCreationFlow,
-	isTransferringHostedSiteCreationFlow,
-} from '@automattic/onboarding';
+import { isAIBuilderOnboardingFlow, isNewHostedSiteCreationFlow } from '@automattic/onboarding';
 import { useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import { STEPPER_INTERNAL_STORE } from 'calypso/landing/stepper/stores';
@@ -32,17 +28,6 @@ export function useProcessingLoadingMessages( flow?: string | null ): LoadingMes
 			{ title: __( 'Getting things ready' ), duration: 4000 },
 			{ title: __( 'Waking up the website builder' ), duration: 5000 },
 			{ title: __( 'Heading to checkout' ), duration: Infinity },
-		];
-	}
-
-	if ( flow && isTransferringHostedSiteCreationFlow( flow ) ) {
-		return [
-			{ title: __( 'Preparing your new server' ), duration: 14000 },
-			{ title: __( 'Installing WordPress' ), duration: 6000 },
-			{ title: __( 'Copying your site' ), duration: 9000 },
-			{ title: __( 'Securing your connection' ), duration: 5000 },
-			{ title: __( 'Distributing your site worldwide' ), duration: 6000 },
-			{ title: __( 'Finishing up — this can take a few minutes' ), duration: Infinity },
 		];
 	}
 

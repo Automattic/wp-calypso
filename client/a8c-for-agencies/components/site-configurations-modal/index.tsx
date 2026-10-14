@@ -39,13 +39,12 @@ export default function SiteConfigurationsModal( {
 	siteId,
 }: SiteConfigurationsModalProps ) {
 	const isDevSite = ! siteId;
-	const [ allowClientsToUseSiteHelpCenter, setAllowClientsToUseSiteHelpCenter ] = useState(
-		! isDevSite
-	);
+	const [ allowClientsToUseSiteHelpCenter, setAllowClientsToUseSiteHelpCenter ] =
+		useState( ! isDevSite );
 	const [ isSubmitting, setIsSubmitting ] = useState( false );
 	const translate = useTranslate();
 	const dataCenterOptions = getDataCenterOptions();
-	const { phpVersions, recommendedValue } = getPHPVersions( siteId );
+	const { phpVersions, recommendedValue } = getPHPVersions();
 	const siteName = useSiteName( randomSiteName, isRandomSiteNameLoading );
 	const { mutate: createWPCOMSite } = useCreateWPCOMSiteMutation();
 	const { mutate: createWPCOMDevSite } = useCreateWPCOMDevSiteMutation();

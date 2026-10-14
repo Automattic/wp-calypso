@@ -5,7 +5,6 @@
 import * as page from '@automattic/calypso-router';
 import configureStore from 'redux-mock-store';
 import { dashboardLink } from 'calypso/dashboard/utils/link';
-import { navigate } from 'calypso/lib/navigate';
 import addQueryArgs from 'calypso/lib/url/add-query-args';
 import {
 	maybeRedirectToMultiSiteDashboard,
@@ -17,7 +16,6 @@ jest.mock( '@automattic/calypso-router' );
 jest.mock( 'wpcom-proxy-request', () => ( {
 	isCookieAuthMissing: jest.fn( () => false ),
 } ) );
-jest.mock( 'calypso/lib/navigate', () => ( { navigate: jest.fn() } ) );
 jest.mock( 'calypso/dashboard/utils/link', () => ( {
 	dashboardLink: jest.fn( ( path ) => `https://my.wordpress.com${ path }` ),
 } ) );
@@ -26,9 +24,8 @@ jest.mock( 'calypso/lib/analytics/mc', () => ( { bumpStat: jest.fn() } ) );
 const mockStore = configureStore();
 
 describe( 'maybeRedirectToMultiSiteDashboard', () => {
-	// `config/test.json` enables `dashboard/enable-percentage-rollout`, so the
-	// user ID has to fall outside the cohort (`id % 100 >= 50`, below the
-	// new-user threshold) for enrollment to be driven by the preference alone.
+	// `config/test.json` enables `dashboard/enable-percentage-rollout`, which now
+	// enrols every user, so `forced-opt-out` is the only way to be unenrolled.
 	const targetPath = ( params ) => `/emails/choose-email-solution/${ params.domain }`;
 
 	const buildContext = ( optIn ) => ( {
@@ -43,25 +40,39 @@ describe( 'maybeRedirectToMultiSiteDashboard', () => {
 		path: '/email/example.com/purchase/example.wordpress.com',
 	} );
 
+	const originalLocation = Object.getOwnPropertyDescriptor( window, 'location' );
 	let next;
+	let locationReplace;
 
 	beforeEach( () => {
 		next = jest.fn();
-		navigate.mockClear();
+		locationReplace = jest.fn();
+		Object.defineProperty( window, 'location', {
+			configurable: true,
+			writable: true,
+			value: { replace: locationReplace },
+		} );
 		dashboardLink.mockClear();
 	} );
 
-	it( 'does not redirect when the flag is disabled and the user is not force-enrolled', () => {
-		maybeRedirectToMultiSiteDashboard( targetPath, () => false )( buildContext(), next );
+	afterEach( () => {
+		Object.defineProperty( window, 'location', originalLocation );
+	} );
 
-		expect( navigate ).not.toHaveBeenCalled();
+	it( 'does not redirect when the flag is disabled and the user is not enrolled', () => {
+		maybeRedirectToMultiSiteDashboard( targetPath, () => false )(
+			buildContext( 'forced-opt-out' ),
+			next
+		);
+
+		expect( locationReplace ).not.toHaveBeenCalled();
 		expect( next ).toHaveBeenCalled();
 	} );
 
 	it( 'redirects to the flag target when the predicate returns true', () => {
 		maybeRedirectToMultiSiteDashboard( targetPath, () => true )( buildContext(), next );
 
-		expect( navigate ).toHaveBeenCalledWith(
+		expect( locationReplace ).toHaveBeenCalledWith(
 			'https://my.wordpress.com/emails/choose-email-solution/example.com'
 		);
 		expect( next ).not.toHaveBeenCalled();
@@ -73,7 +84,7 @@ describe( 'maybeRedirectToMultiSiteDashboard', () => {
 			next
 		);
 
-		expect( navigate ).toHaveBeenCalledWith(
+		expect( locationReplace ).toHaveBeenCalledWith(
 			'https://my.wordpress.com/emails/choose-email-solution/example.com'
 		);
 		expect( next ).not.toHaveBeenCalled();
@@ -171,6 +182,56 @@ describe( 'redirectLoggedOut', () => {
 		expect( next ).toHaveBeenCalled();
 
 		replaceState.mockRestore();
+	} );
+
+	describe( 'immediate login prefill', () => {
+		const buildImmediateLoginContext = ( { query = {}, immediateLogin = {} } = {} ) => ( {
+			store: mockStore( {
+				currentUser: { id: null },
+				immediateLogin,
+			} ),
+			query,
+			params: {},
+			path: '/me/purchases',
+			pathname: '/me/purchases',
+		} );
+
+		it( 'prefills the email and locale from the query before ROUTE_SET has run', async () => {
+			// `setupRoutes()` registers this middleware ahead of the `ROUTE_SET`
+			// catch-all, so an immediate login link reaches it with an empty store.
+			const context = buildImmediateLoginContext( {
+				query: {
+					immediate_login_attempt: '1',
+					login_email: 'jane@example.com',
+					login_locale: 'fr',
+				},
+			} );
+
+			await redirectLoggedOut( context, next );
+
+			expect( window.location ).toBe(
+				'/log-in/fr?redirect_to=%2Fme%2Fpurchases&email_address=jane%40example.com'
+			);
+			expect( next ).not.toHaveBeenCalled();
+		} );
+
+		it( 'falls back to the stored values once the query has been stripped', async () => {
+			const context = buildImmediateLoginContext( {
+				immediateLogin: { email: 'jane@example.com', locale: 'fr' },
+			} );
+
+			await redirectLoggedOut( context, next );
+
+			expect( window.location ).toBe(
+				'/log-in/fr?redirect_to=%2Fme%2Fpurchases&email_address=jane%40example.com'
+			);
+		} );
+
+		it( 'omits both parameters when neither the query nor the store has them', async () => {
+			await redirectLoggedOut( buildImmediateLoginContext(), next );
+
+			expect( window.location ).toBe( '/log-in?redirect_to=%2Fme%2Fpurchases' );
+		} );
 	} );
 } );
 

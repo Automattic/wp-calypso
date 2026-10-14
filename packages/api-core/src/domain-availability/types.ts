@@ -1,3 +1,5 @@
+import type { PolicyNotice } from '../domain-suggestions/types';
+
 export interface DomainAvailabilityQuery {
 	blog_id?: number;
 	is_cart_pre_check?: boolean;
@@ -58,6 +60,11 @@ export interface DomainAvailability {
 	dot_gay_notice_required?: true;
 
 	/**
+	 * Policy notices associated with the domain
+	 */
+	policy_notices?: PolicyNotice[];
+
+	/**
 	 * Rendered formatted cost
 	 * @example "Free" or "€15.00"
 	 */
@@ -86,6 +93,13 @@ export interface DomainAvailability {
 	 * @example "1714857600"
 	 */
 	maintenance_end_time?: string;
+
+	/**
+	 * Whether the root domain of a queried subdomain is registered or mapped on
+	 * WordPress.com by a different account than the current user
+	 * @example true
+	 */
+	root_domain_owned_by_other_user?: boolean;
 
 	/**
 	 * Primary domain of other site

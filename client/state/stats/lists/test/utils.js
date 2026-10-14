@@ -196,7 +196,22 @@ describe( 'utils', () => {
 					label: 'Chicken and "Ribs"',
 					value: 10,
 				} )
-			).toEqual( [ [ '"Chicken and ""Ribs""', 10, 'https://example.com/chicken' ] ] );
+			).toEqual( [ [ '"Chicken and ""Ribs"""', 10, 'https://example.com/chicken' ] ] );
+		} );
+
+		test( 'should escape every quote in a label', () => {
+			expect(
+				buildExportArray( {
+					actions: [
+						{
+							type: 'link',
+							data: 'https://example.com/chicken',
+						},
+					],
+					label: 'Chicken "and" "Ribs"',
+					value: 10,
+				} )
+			).toEqual( [ [ '"Chicken ""and"" ""Ribs"""', 10, 'https://example.com/chicken' ] ] );
 		} );
 
 		test( 'should modify each row in csv by a modifier function', () => {
@@ -1535,6 +1550,41 @@ describe( 'utils', () => {
 					years: [],
 				} );
 			} );
+
+			test( 'should not surface null day or hour values when there are no views', () => {
+				expect(
+					normalizers.statsInsights( {
+						highest_hour: null,
+						highest_day_percent: null,
+						highest_day_of_week: null,
+						highest_hour_percent: null,
+						hourly_views: [],
+						years: [],
+					} )
+				).toEqual( { hourlyViews: [], years: [] } );
+			} );
+
+			test( 'should keep the day group when only the hour group is null', () => {
+				expect(
+					normalizers.statsInsights( {
+						highest_hour: null,
+						highest_day_percent: 10,
+						highest_day_of_week: 6,
+						highest_hour_percent: null,
+					} )
+				).toEqual( { day: 'Sunday', percent: 10 } );
+			} );
+
+			test( 'should keep the hour group when only the day group is null', () => {
+				expect(
+					normalizers.statsInsights( {
+						highest_hour: 11,
+						highest_day_percent: null,
+						highest_day_of_week: null,
+						highest_hour_percent: 5,
+					} )
+				).toEqual( { hour: '11:00 AM', hourPercent: 5 } );
+			} );
 		} );
 
 		describe( 'statsPublicize()', () => {
@@ -1623,11 +1673,86 @@ describe( 'utils', () => {
 								type: 'link',
 							},
 						],
+						poster: '',
 						label: 'Press This!',
 						page: '/stats/day/videodetails/en.blog.wordpress.com?post=111111111',
 						value: 32,
 					},
 				] );
+			} );
+
+			test( 'should pass the API poster through', () => {
+				expect(
+					normalizers.statsVideoPlays(
+						{
+							date: '2017-01-12',
+							days: {
+								'2017-01-12': {
+									plays: [
+										{
+											plays: 32,
+											post_id: 111111111,
+											title: 'Press This!',
+											url: 'http://en.blog.wordpress.com/wp-admin/media.php?action=edit&attachment_id=111111111',
+											poster: 'https://videos.files.wordpress.com/abc123/poster.jpg',
+										},
+									],
+								},
+							},
+						},
+						{
+							period: 'day',
+							date: '2017-01-12',
+						},
+						10,
+						{
+							slug: 'en.blog.wordpress.com',
+						}
+					)
+				).toEqual( [
+					{
+						actions: [
+							{
+								data: 'http://en.blog.wordpress.com/wp-admin/media.php?action=edit&attachment_id=111111111',
+								type: 'link',
+							},
+						],
+						poster: 'https://videos.files.wordpress.com/abc123/poster.jpg',
+						label: 'Press This!',
+						page: '/stats/day/videodetails/en.blog.wordpress.com?post=111111111',
+						value: 32,
+					},
+				] );
+			} );
+
+			test( 'should fall back to an empty poster when the API sends none', () => {
+				const [ item ] = normalizers.statsVideoPlays(
+					{
+						date: '2017-01-12',
+						days: {
+							'2017-01-12': {
+								plays: [
+									{
+										plays: 32,
+										post_id: 111111111,
+										title: 'Press This!',
+										url: 'http://en.blog.wordpress.com/wp-admin/media.php?action=edit&attachment_id=111111111',
+									},
+								],
+							},
+						},
+					},
+					{
+						period: 'day',
+						date: '2017-01-12',
+					},
+					10,
+					{
+						slug: 'en.blog.wordpress.com',
+					}
+				);
+
+				expect( item.poster ).toBe( '' );
 			} );
 		} );
 
@@ -1773,6 +1898,17 @@ describe( 'utils', () => {
 					rows: [ { period: '2026-07-01', impressions: 7 } ],
 					total: null,
 				} );
+			} );
+
+			test( 'should keep an unknown metric as null instead of 0 in range-mode rows', () => {
+				const result = normalizers.statsVideo( {
+					fields: [ 'period', 'plays', 'retention_rate' ],
+					data: [ [ '2026-07-01', 3, null ] ],
+					pages: [],
+				} );
+				expect( result.rows ).toEqual( [
+					{ period: '2026-07-01', plays: 3, retention_rate: null },
+				] );
 			} );
 		} );
 
@@ -2534,6 +2670,106 @@ describe( 'utils', () => {
 						label: '/2019/01/awesome.mov',
 						shortLabel: 'awesome.mov',
 						labelIcon: 'external',
+					},
+				] );
+			} );
+		} );
+
+		describe( 'statsEmailsSummary()', () => {
+			const site = { slug: 'en.blog.wordpress.com' };
+
+			test( 'should return an empty array if data is null', () => {
+				expect( normalizers.statsEmailsSummary() ).toEqual( [] );
+			} );
+
+			test( 'should render every row the API returns, including all-zero rows', () => {
+				// Filtering never-emailed posts is a server-side concern (STATS-452):
+				// dropping rows after pagination would leave the card short-handed
+				// and out of sync with the CSV export.
+				expect(
+					normalizers.statsEmailsSummary(
+						{
+							posts: [
+								{
+									id: 1,
+									title: 'Never emailed',
+									date: '2020-01-01 00:00:00',
+									total_sends: 0,
+									opens: 0,
+									clicks: 0,
+								},
+								{
+									id: 3,
+									title: 'Legacy send with engagement',
+									date: '2020-01-01 00:00:00',
+									total_sends: 0,
+									opens: 5,
+									clicks: 2,
+								},
+							],
+						},
+						{},
+						10,
+						site
+					)
+				).toMatchObject( [ { id: 1 }, { id: 3, opens: 5, clicks: 2 } ] );
+			} );
+
+			test( 'should map fields and default missing counts to zero strings', () => {
+				expect(
+					normalizers.statsEmailsSummary(
+						{
+							posts: [
+								{
+									id: 4,
+									title: 'Tracked send',
+									date: '2024-01-01 00:00:00',
+									total_sends: 100,
+									opens: 26,
+									clicks: 5,
+									opens_rate: 0.11,
+									clicks_rate: 0.03,
+									unique_opens: 11,
+									unique_clicks: 3,
+								},
+							],
+						},
+						{},
+						10,
+						site
+					)
+				).toMatchObject( [
+					{
+						id: 4,
+						label: 'Tracked send',
+						value: 0.03,
+						opens: 26,
+						clicks: 5,
+						opens_rate: 0.11,
+						clicks_rate: 0.03,
+						unique_opens: 11,
+						unique_clicks: 3,
+						total_sends: 100,
+						page: '/stats/email/opens/day/4/en.blog.wordpress.com',
+					},
+				] );
+
+				expect(
+					normalizers.statsEmailsSummary(
+						{ posts: [ { id: 5, title: 'Untracked send', date: '2024-01-01', total_sends: 100 } ] },
+						{},
+						10,
+						site
+					)
+				).toMatchObject( [
+					{
+						id: 5,
+						value: '0',
+						opens: '0',
+						clicks: '0',
+						unique_opens: '0',
+						unique_clicks: '0',
+						total_sends: 100,
 					},
 				] );
 			} );

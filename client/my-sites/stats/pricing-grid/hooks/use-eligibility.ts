@@ -1,7 +1,6 @@
 import { useSelector } from 'calypso/state';
 import { getPurchasesError } from 'calypso/state/purchases/selectors';
-import { getSiteOption } from 'calypso/state/sites/selectors';
-import getIsSimpleSite from 'calypso/state/sites/selectors/is-simple-site';
+import { getSiteOption, isWpcomSite } from 'calypso/state/sites/selectors';
 import useStatsPurchases from '../../hooks/use-stats-purchases';
 
 /**
@@ -12,18 +11,18 @@ const LAUNCH_DATE = Date.parse( '2026-08-07T00:00:00Z' );
 
 /**
  * Whether the pricing grid applies to this site: a newly connected site, other than a
- * WordPress.com Simple one, that hasn't picked a Stats plan yet. Bundled plans
- * (Complete, Growth, Business) count as having one, which is why this defers to
+ * WordPress.com one, that hasn't picked a Stats plan yet. Bundled plans (Complete,
+ * Growth, Business) count as having one, which is why this defers to
  * `useStatsPurchases` rather than scanning products.
  */
 export default function useIsPricingGridEligible( siteId: number | null ) {
 	const { hasAnyPlan, isLoading: isLoadingPurchases } = useStatsPurchases( siteId );
 
-	// Simple sites upgrade through WP.com plans, prompted inside the Stats dashboard
-	// itself, so the Jetpack Stats products this grid sells are not their upgrade path.
-	// Odyssey serves Simple Classic's wp-admin as well, so being an Odyssey route says
-	// nothing about the site type on its own.
-	const isSimpleSite = useSelector( ( state ) => !! getIsSimpleSite( state, siteId ) );
+	// WordPress.com sites — Simple and Atomic alike — upgrade through WP.com plans, prompted
+	// inside the Stats dashboard itself, so the Jetpack Stats products this grid sells are
+	// not their upgrade path. Odyssey serves their wp-admin as well, so being an Odyssey
+	// route says nothing about the site type on its own.
+	const isWpcom = useSelector( ( state ) => !! isWpcomSite( state, siteId ) );
 
 	// A failed purchases fetch reads as "loaded, no plan" upstream (FETCH_FAILED marks
 	// the store loaded with an empty list), which would show the grid to a site that
@@ -51,7 +50,7 @@ export default function useIsPricingGridEligible( siteId: number | null ) {
 
 	// Both checks read site data the store already holds, so ruling a site out here costs
 	// nothing — only an applicable site goes on to wait for its purchases.
-	const isApplicable = isNewConnection && ! isSimpleSite;
+	const isApplicable = isNewConnection && ! isWpcom;
 
 	return {
 		isEligible: isApplicable && ! hasAnyPlan && ! purchasesError,

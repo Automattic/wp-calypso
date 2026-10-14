@@ -504,6 +504,10 @@ object RunAllUnitTests : BuildType({
 				echo -n "Yarn version: " && yarn --version
 				echo -n "NPM version: " && npm --version
 
+				# Jest and tsc read workspace packages from source, so skip the full
+				# postinstall build; the packages that still need theirs are built below.
+				export SKIP_CALYPSO_POSTINSTALL=true
+
 				# Install modules
 				${_self.yarn_install_cmd}
 
@@ -539,6 +543,8 @@ object RunAllUnitTests : BuildType({
 					echo "##teamcity[buildProblem description='${'$'}num_errors error${'$'}s occurred during yarn install.' identity='yarn_problem']"
 					exit 1
 				fi
+
+				yarn build-packages:unit-tests
 			"""
 		}
 		bashNodeScript {
@@ -694,6 +700,9 @@ object CheckCodeStyleBranch : BuildType({
 			name = "Prepare environment"
 			scriptContent = """
 				export NODE_ENV="test"
+
+				# Linters read workspace packages from source, so skip building them.
+				export SKIP_CALYPSO_POSTINSTALL=true
 
 				# Install modules
 				${_self.yarn_install_cmd}
@@ -873,6 +882,11 @@ object Translate : BuildType({
 		bashNodeScript {
 			name = "Prepare environment"
 			scriptContent = """
+				# String extraction only reads source files, so skip building workspace packages
+				# and downloading the Playwright browsers this image would otherwise fetch.
+				export SKIP_CALYPSO_POSTINSTALL=true
+				export PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1
+
 				# Install modules
 				${_self.yarn_install_cmd}
 			"""
@@ -981,9 +995,6 @@ object PlaywrightTestPRMatrix : BuildType({
 		param("TEST_GROUP", "@calypso-pr")
         param("DOCKER_IMAGE_BUILD_NUMBER", "${BuildDockerImage.depParamRefs.buildNumber}")
 		param("IGNORE_TEST_GROUP_FOR_E2E_CHANGES", "true")
-		// calypsoPreReleaseUser is left out: the only @calypso-pr spec that logs in as it runs
-		// on trunk alone, and this build type never builds trunk.
-		param("env.AUTHENTICATE_ACCOUNTS", "atomicUser,commentingUser,defaultUser,gutenbergSimpleSiteUser,notificationsUser,siteEditorSimpleSiteUser,simpleSiteFreePlanUser,simpleSitePersonalPlanUser")
 	}
 
 	features {
@@ -1036,7 +1047,6 @@ object PreReleaseE2ETests : BuildType({
 		text("TEST_GROUP", "@calypso-release")
 		param("CALYPSO_BASE_URL", "https://wpcalypso.wordpress.com")
 		param("DASHBOARD_BASE_URL", "https://my.wordpress.com")
-		param("env.AUTHENTICATE_ACCOUNTS", "atomicUser,calypsoPreReleaseUser,defaultUser,simpleSiteFreePlanUser,simpleSitePersonalPlanUser")
 	}
 
 	features {
@@ -1056,7 +1066,8 @@ object PreReleaseE2ETests : BuildType({
 			}
 			branchFilter = "+:<default>"
 			buildFailedToStart = true
-			buildFailed = true
+			// Glorybot posts failures here, but only for the run that gates the currently staged commit.
+			buildFailed = false
 			buildFinishedSuccessfully = false
 			buildProbablyHanging = true
 		}
@@ -1073,10 +1084,6 @@ object PlaywrightTestDashboardPRMatrix : BuildType({
 	params {
 		param("TEST_GROUP", "@dashboard-pr")
 		param("DOCKER_IMAGE_BUILD_NUMBER", "${BuildDockerImage.depParamRefs.buildNumber}")
-		// Every @dashboard-pr spec takes the account this environment resolves to, and
-		// nothing else. Naming it costs no extra login: prime-logins adds the resolved
-		// account to whatever is listed here and logs in as each account once.
-		param("env.AUTHENTICATE_ACCOUNTS", "gutenbergSimpleSiteUser")
 	}
 
 	features {
@@ -1131,8 +1138,6 @@ object PlaywrightTestA4APRMatrix : BuildType({
 	params {
 		param("TEST_GROUP", "@a8c-for-agencies")
 		param("DOCKER_IMAGE_BUILD_NUMBER", "${BuildDockerImage.depParamRefs.buildNumber}")
-		// The @a8c-for-agencies specs sign up their own users and log in as no test account.
-		param("env.AUTHENTICATE_ACCOUNTS", "")
 	}
 
 	features {

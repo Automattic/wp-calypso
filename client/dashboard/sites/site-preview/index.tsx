@@ -5,11 +5,13 @@ export default function SitePreview( {
 	scale = 1,
 	width = 1200,
 	height = 800,
+	onLoad,
 }: {
 	url: string;
 	scale?: number;
 	width?: number;
 	height?: number;
+	onLoad?: () => void;
 } ) {
 	// The /sites endpoint may return non-secure URLs. Often these _can_ be
 	// loaded securely, so it's worth trying to load over https. If it fails,
@@ -30,6 +32,7 @@ export default function SitePreview( {
 			// @ts-expect-error For some reason there's no inert type.
 			inert="true"
 			title={ __( 'Site Preview' ) }
+			onLoad={ onLoad }
 			// Hide banners + `preview` hides cookie banners + `iframe` hides
 			// admin bar for atomic sites.
 			src={ `${ secureUrl }/?hide_banners=true&preview=true&iframe=true` }

@@ -1,3 +1,4 @@
+import { __ } from '@wordpress/i18n';
 import { OmnibarHomeNode } from './omnibar-home';
 import { OmnibarPluginsNode } from './omnibar-plugins';
 import { OmnibarResponsiveMenu } from './omnibar-responsive-menu';
@@ -12,7 +13,7 @@ export function Omnibar( { nodes, onClickResponsiveMenu, className }: OmnibarPro
 		<div
 			className={ className ? `omnibar ${ className }` : 'omnibar' }
 			role="navigation"
-			aria-label="Toolbar"
+			aria-label={ __( 'Toolbar' ) }
 		>
 			{ onClickResponsiveMenu && (
 				<OmnibarResponsiveMenu onClickResponsiveMenu={ onClickResponsiveMenu } />

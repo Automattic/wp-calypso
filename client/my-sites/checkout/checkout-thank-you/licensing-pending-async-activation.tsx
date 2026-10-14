@@ -154,7 +154,7 @@ const LicensingPendingAsyncActivation: FC< Props > = ( {
 		) {
 			// If there is some sort of error, we redirect to the user license activation page where we can display an error.
 			dispatch(
-				recordTracksEvent( 'calypso_siteless_checkout_auto-activate-license', {
+				recordTracksEvent( 'calypso_siteless_checkout_auto_activate_license', {
 					product_slug: productSlug,
 					site_url: initialSelectedSite,
 					receipt_id: receiptId,
@@ -175,7 +175,7 @@ const LicensingPendingAsyncActivation: FC< Props > = ( {
 			productConfirmationInfo.buttonUrl
 		);
 		dispatch(
-			recordTracksEvent( 'calypso_siteless_checkout_auto-activate-license', {
+			recordTracksEvent( 'calypso_siteless_checkout_auto_activate_license', {
 				product_slug: productSlug,
 				site_url: initialSelectedSite,
 				receipt_id: receiptId,

@@ -10,6 +10,6 @@ export default function getJetpackWpAdminUrl( state ) {
 				...getUrlParts( adminUrl + 'admin.php' ),
 				search: '?page=jetpack',
 				hash: '/my-plan',
-		  } ).href
+			} ).href
 		: undefined;
 }

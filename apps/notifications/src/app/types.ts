@@ -2,6 +2,8 @@ import type { getFilters } from '../panel/templates/filters';
 
 export type FilterName = keyof ReturnType< typeof getFilters >;
 
+export type LayoutStyle = 'detailed' | 'simplified';
+
 type Range = {
 	type: string;
 	indices: [ number, number ];
@@ -76,6 +78,7 @@ export type Block = {
 	type?: 'post' | 'comment' | 'user';
 	nest_level?: number;
 	edit_comment_link?: string;
+	moderate_comments_link?: string;
 };
 
 export type BlockWithSignature = {

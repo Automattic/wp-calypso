@@ -12,21 +12,31 @@ set -o pipefail
 #   E2E_CHANGED_FILES Optional newline-separated changed-file list. Testing seam; when unset,
 #                     falls back to `git diff` against trunk.
 #
-# Prints the flag to stdout: "--grep=<value>", or "" to run every test.
+# Prints the flag to stdout: "--grep=<value>", "--grep-invert=<value>", or "" to run every test.
 #
 #   - no test/e2e or packages/calypso-e2e change -> keep TEST_GROUP
 #   - documentation and package unit-test files do not affect Playwright selection
 #   - a changed E2E file is not a Playwright spec (POM, util, config, fixtures,
-#     production packages/calypso-e2e code) -> clear the group, run all tests
+#     production packages/calypso-e2e code) -> run all tests except @p2, which has its own
+#     scheduled job. If every changed non-spec file is P2-only code (see P2_PATH_RE), run
+#     TEST_GROUP plus @p2 and any changed specs instead; if P2 code (a P2 spec included) is
+#     mixed with other non-spec changes, run all tests.
 #   - Playwright specs changed (test/e2e/specs/**/*.spec.ts) -> run TEST_GROUP plus those specs
 #     in a single pass. Playwright's `--grep` matches the spec path relative to test/e2e/specs/,
 #     so a test selected by both the tag and a changed path runs once.
 #
 # Run the built-in checks with:  ./bin/e2e-grep-flag.sh --self-test
 
+# Anchored so a future tag such as "@p2-foo" is not skipped by accident.
+readonly P2_TAG_GREP='@p2(\s|$)'
+
+# P2-only files. P2 lines in shared files (the accountP2 fixture, p2User secrets) can't be
+# matched by path; such a change skips P2 here and relies on the scheduled P2 job.
+readonly P2_PATH_RE='(^|/)(p2[/_-]|isolated-block-editor)'
+
 compute_flag() {
 	local group="${TEST_GROUP:-}"
-	local changed e2e_changed relevant_changed pw_specs grep_value file rel
+	local changed e2e_changed relevant_changed runtime_changed pw_specs grep_value file rel
 
 	changed="${E2E_CHANGED_FILES-$(git diff --name-only refs/remotes/origin/trunk...HEAD)}"
 	e2e_changed="$(grep -E "^(test/e2e/|packages/calypso-e2e/)" <<<"$changed" || true)"
@@ -44,12 +54,26 @@ compute_flag() {
 		return 0
 	fi
 
-	# Runtime helpers and configuration can affect any test, so run everything.
-	if grep -qvE '^test/e2e/specs/.*\.spec\.ts$' <<<"$relevant_changed"; then
-		return 0
+	# Runtime helpers and configuration can affect any test, so run everything. Skip the P2
+	# suite, which has its own scheduled job, unless the change touches P2 code.
+	runtime_changed="$(grep -vE '^test/e2e/specs/.*\.spec\.ts$' <<<"$relevant_changed" || true)"
+	grep_value="$group"
+	if [[ -n "$runtime_changed" ]]; then
+		if grep -qvE "$P2_PATH_RE" <<<"$runtime_changed"; then
+			# P2 code mixed with other runtime changes: anything may break, P2 included.
+			if grep -qE "$P2_PATH_RE" <<<"$relevant_changed"; then
+				return 0
+			fi
+
+			printf -- '--grep-invert=%s' "$P2_TAG_GREP"
+			return 0
+		fi
+
+		# Only P2 runtime code changed (e.g. p2-page.ts): P2 alone is affected, so add it.
+		grep_value+="|$P2_TAG_GREP"
 	fi
 
-	# Only Playwright specs changed, so keep the group and add their paths.
+	# Keep the group and add the changed specs' paths.
 	pw_specs="$(grep -E '^test/e2e/specs/.*\.spec\.ts$' <<<"$relevant_changed" || true)"
 
 	# With no group set the build already runs everything, so keep clear.
@@ -59,7 +83,6 @@ compute_flag() {
 
 	# Union the group tag with each changed Playwright spec, addressed by its path relative to
 	# test/e2e/specs/. Only "." is regex-special in these paths (verified against the spec tree).
-	grep_value="$group"
 	while IFS= read -r file; do
 		[[ -z "$file" ]] && continue
 		rel="${file#test/e2e/specs/}"
@@ -88,22 +111,26 @@ self_test() {
 	local POM=test/e2e/lib/pages/some-page.ts
 	local SHARED=test/e2e/specs/shared/login.ts
 	local PW_GREP='--grep=@calypso-pr|(^|\s)tools/import__sites-squarespace\.spec\.ts'
+	local NO_P2='--grep-invert=@p2(\s|$)'
+	local GROUP_P2='--grep=@calypso-pr|@p2(\s|$)'
+	local P2_SPEC=test/e2e/specs/p2/p2__post.spec.ts
+	local P2_POM=packages/calypso-e2e/src/lib/pages/p2-page.ts
 
 	# No relevant change: keep the group.
 	check "no e2e change keeps group"   "--grep=@calypso-pr" $'client/foo.ts\ndocs/bar.md'
 	check "empty change keeps group"    "--grep=@calypso-pr" ""
 
 	# Single-kind changes.
-	check "POM/util clears group"       "" "$POM"
-	check "packages/calypso-e2e clears" "" "packages/calypso-e2e/src/lib/foo.ts"
-	check "pw-base clears group"        "" "test/e2e/pw-base.ts"
-	check "Playwright config clears"    "" "test/e2e/playwright.config.ts"
-	check "Playwright setup clears"     "" "test/e2e/setup/global.ts"
-	check "fixture clears group"        "" "test/e2e/fixtures/site.ts"
-	check "flow clears group"           "" "test/e2e/flows/signup.ts"
-	check "shared spec helper clears"   "" "$SHARED"
-	check "non-spec file clears group"   "" "test/e2e/specs/blocks/blocks__core.ts"
-	check "double-underscore helper clears group" "" "test/e2e/specs/shared/api__close-account.ts"
+	check "POM/util skips P2"             "$NO_P2" "$POM"
+	check "packages/calypso-e2e skips P2" "$NO_P2" "packages/calypso-e2e/src/lib/foo.ts"
+	check "pw-base skips P2"              "$NO_P2" "test/e2e/pw-base.ts"
+	check "Playwright config skips P2"    "$NO_P2" "test/e2e/playwright.config.ts"
+	check "Playwright setup skips P2"     "$NO_P2" "test/e2e/setup/global.ts"
+	check "fixture skips P2"              "$NO_P2" "test/e2e/fixtures/site.ts"
+	check "flow skips P2"                 "$NO_P2" "test/e2e/flows/signup.ts"
+	check "shared spec helper skips P2"   "$NO_P2" "$SHARED"
+	check "non-spec file skips P2"        "$NO_P2" "test/e2e/specs/blocks/blocks__core.ts"
+	check "double-underscore helper skips P2" "$NO_P2" "test/e2e/specs/shared/api__close-account.ts"
 	check "single PW spec unions path"  "$PW_GREP" "$PW"
 	check "two PW specs union all" \
 		'--grep=@calypso-pr|(^|\s)tools/import__sites-squarespace\.spec\.ts|(^|\s)tools/import__sites-wordpress\.spec\.ts' \
@@ -118,9 +145,27 @@ self_test() {
 	check "ignored files + PW union path" "$PW_GREP" $'test/e2e/README.md\npackages/calypso-e2e/src/test/foo.test.ts\ntest/e2e/specs/tools/import__sites-squarespace.spec.ts'
 
 	# Mix-and-match.
-	check "PW + POM clears group"           "" $'test/e2e/specs/tools/import__sites-squarespace.spec.ts\ntest/e2e/lib/pages/some-page.ts'
-	check "PW + non-spec clears group"      "" $'test/e2e/specs/tools/import__sites-squarespace.spec.ts\ntest/e2e/specs/blocks/blocks__core.ts'
-	check "ignored + runtime clears group"  "" $'test/e2e/README.md\npackages/calypso-e2e/src/lib/foo.ts'
+	check "PW + POM skips P2"               "$NO_P2" $'test/e2e/specs/tools/import__sites-squarespace.spec.ts\ntest/e2e/lib/pages/some-page.ts'
+	check "PW + non-spec skips P2"          "$NO_P2" $'test/e2e/specs/tools/import__sites-squarespace.spec.ts\ntest/e2e/specs/blocks/blocks__core.ts'
+	check "ignored + runtime skips P2"      "$NO_P2" $'test/e2e/README.md\npackages/calypso-e2e/src/lib/foo.ts'
+
+	# P2-only changes add the P2 suite to the group; mixed with other runtime changes, run all.
+	check "P2 POM adds P2 to group"         "$GROUP_P2" "$P2_POM"
+	check "P2 editor adds P2 to group"      "$GROUP_P2" "packages/calypso-e2e/src/lib/components/isolated-block-editor-component.ts"
+	check "P2 spec + P2 POM adds P2" \
+		'--grep=@calypso-pr|@p2(\s|$)|(^|\s)p2/p2__post\.spec\.ts' \
+		"$P2_SPEC"$'\n'"$P2_POM"
+	check "P2 POM, empty group runs all"    "" "$P2_POM" ""
+	check "POM, empty group skips P2"       "$NO_P2" "$POM" ""
+	check "P2 POM + POM runs all"           "" "$P2_POM"$'\n'"$POM"
+	check "P2 POM + PW spec unions both" \
+		'--grep=@calypso-pr|@p2(\s|$)|(^|\s)tools/import__sites-squarespace\.spec\.ts' \
+		"$P2_POM"$'\n'"$PW"
+	check "P2 spec + POM runs all"          "" "$P2_SPEC"$'\n'"$POM"
+	check "P2 spec alone unions path" \
+		'--grep=@calypso-pr|(^|\s)p2/p2__post\.spec\.ts' \
+		"$P2_SPEC"
+	check "p2 substring is not P2 code"     "$NO_P2" "test/e2e/lib/pages/mp2-page.ts"
 
 	# Group edge cases.
 	check "PW spec, empty group runs all" "" "$PW" ""

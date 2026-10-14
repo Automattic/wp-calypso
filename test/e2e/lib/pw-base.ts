@@ -29,9 +29,9 @@
  */
 /* eslint-disable react-hooks/rules-of-hooks */
 import {
+	abandonPendingLoginLockWaits,
 	AddPeoplePage,
 	AdvertisingPage,
-	AppleLoginPage,
 	BlazeCampaignPage,
 	BlockWidgetEditorComponent,
 	CartCheckoutPage,
@@ -55,7 +55,6 @@ import {
 	ImportContentFromSubstackPage,
 	ImportContentFromWordPressPage,
 	ImportContentPage,
-	ImportContentWordPressQuestionPage,
 	ImportLetsFindYourSitePage,
 	ImportLetUsMigrateYourSitePage,
 	ImportPlansPage,
@@ -66,17 +65,14 @@ import {
 	LOHPThemeSignupFlow,
 	MarketingPage,
 	MediaHelper,
-	MeSidebarComponent,
-	MyProfilePage,
 	NewSiteResponse,
-	NoticeComponent,
 	PeoplePage,
 	PostCheckoutSetupSitePage,
 	PreviewComponent,
-	PurchasesPage,
 	RestAPIClient,
 	Secrets,
 	SecretsManager,
+	setRunningSpecFile,
 	SidebarComponent,
 	SiteSelectComponent,
 	SignupPickPlanPage,
@@ -89,8 +85,24 @@ import {
 	PlansPage,
 	UseADomainIOwnPage,
 	SelectItemsComponent,
+	THROTTLED_PATH_PATTERN,
+	activeThrottleForUrl,
+	flushThrottleWrites,
+	mayBeThrottled,
+	recordResponseThrottle,
+	registerThrottleActionHandler,
+	throttleActionMessage,
+	throttleRefusalBody,
+	withDeadline,
 } from '@automattic/calypso-e2e';
-import { test as base, expect, type Page } from '@playwright/test';
+import {
+	test as base,
+	expect,
+	type BrowserContext,
+	type Page,
+	type Response,
+	type Route,
+} from '@playwright/test';
 import {
 	apiCloseAccount,
 	apiWaitForBearerTokenAcceptance,
@@ -106,15 +118,14 @@ export type CustomOptions = {
 	 * Set per-project in playwright.config.ts. Valid values: 'desktop' | 'mobile'.
 	 */
 	viewportName: string;
+	sitePublicSiteCount: 1 | 2;
 };
 
 /**
  * Test accounts exposed as a fixture of the same name, logged in on first use.
  *
- * The `prime-logins` setup project logs in as each of these before the suite starts, so
- * an account added here is primed rather than logged in inline. Two accounts are fixtures
- * without belonging here: `accountGivenByEnvironment`, which resolves at run time, and
- * `accountSMS`, whose 2FA code costs a Mailosaur email only a couple of specs need.
+ * One account is a fixture without belonging here: `accountGivenByEnvironment`, which
+ * resolves at run time.
  */
 export const fixtureAccounts = {
 	accountAtomic: 'atomicUser',
@@ -131,18 +142,129 @@ type AccountFixture = (
 	use: ( account: TestAccount ) => Promise< void >
 ) => Promise< void >;
 
+const WPCOM_HOST = /^https?:\/\/([^/]*\.)?wordpress\.com(?::\d+)?\//;
+
+// A regular expression, and one object for the life of the module: a route
+// matched by a function makes Playwright intercept every request in the context
+// and hand it back to Node, and `unroute` finds a pattern by identity.
+const BANNED_ENDPOINT = new RegExp(
+	`${ WPCOM_HOST.source }.*(?:${ THROTTLED_PATH_PATTERN.source })`,
+	'i'
+);
+
+// The flush covers a body read and the two tag POSTs a detection makes, which is
+// what has to land before a worker exits: a flag whose tag never landed leaves
+// its line in a build no peer can find. Charged to the test's own timeout, so it
+// must stay well under it and must not fail a spec that had already passed.
+const FLUSH_TIMEOUT = 7 * 1000;
+
+/**
+ * Records a throttle whenever wpcom rate-limits one of the endpoints the suite
+ * depends on, including calls the app makes in the background.
+ *
+ * Watches the whole context, not one page: a signup popup or a tab a spec opens
+ * reaches the same endpoints, and the context reports for all of them.
+ *
+ * The host and path are filtered first so that only a handful of responses are
+ * ever read, and the path comes from detection itself: an endpoint nothing can be
+ * concluded about is one whose body is better left unread. Anything from 400 up
+ * is read — wpcom refuses these with a 403 or a 429 — and a success only when
+ * Calypso asked for the answer to be enveloped, which is how a refusal comes back
+ * as a 200. The body is never logged: a failed `/sites/new` carries the
+ * credentials of the user it was creating a site for.
+ *
+ * Recording and refusing, never skipping or failing. This sees every call the
+ * app makes, and most of them are ones the test never depended on — a page that
+ * renders a domain upsell hits `/domains/suggestions` whatever the test is
+ * about. Those calls are answered here while a ban is in force, so a test the
+ * ban does not affect goes on passing without spending the endpoint on a request
+ * that would be refused. A test that did depend on a banned call has already
+ * failed on the answer it got, so the policy belongs at the page objects that
+ * make those calls, not here.
+ *
+ * Returns the teardown for the listener and the route. It drains recording;
+ * without it, a worker can exit between detecting a throttle and tagging the
+ * build for it.
+ */
+async function watchForThrottle( context: BrowserContext ): Promise< () => Promise< void > > {
+	const pending = new Set< Promise< unknown > >();
+
+	const onResponse = ( response: Response ) => {
+		const url = response.url();
+		const status = response.status();
+		if (
+			! WPCOM_HOST.test( url ) ||
+			! mayBeThrottled( url ) ||
+			( status < 400 && ! /[?&]http_envelope=1/.test( url ) )
+		) {
+			return;
+		}
+
+		const reading = ( async () => {
+			try {
+				// Whether this is a ban at all is detection's to say: an
+				// invalid-domain 400 on `is-available` reaches here too. Recording is
+				// all it does; the test's outcome is no business of this listener.
+				await recordResponseThrottle( response );
+			} catch {
+				// Detection never fails a test.
+			}
+		} )();
+		pending.add( reading );
+		void reading.finally( () => pending.delete( reading ) );
+	};
+	context.on( 'response', onResponse );
+
+	// A ban we already know about answers here rather than at wpcom: the call
+	// would be refused anyway, and the endpoint has better uses for it. Every
+	// other request, banned endpoint or not, falls through to the network.
+	const refuseBanned = async ( route: Route ) => {
+		const id = activeThrottleForUrl( route.request().url() );
+		if ( ! id ) {
+			return route.fallback();
+		}
+		await route.fulfill( {
+			status: 429,
+			contentType: 'application/json',
+			body: throttleRefusalBody( id ),
+		} );
+	};
+	await context.route( BANNED_ENDPOINT, refuseBanned );
+
+	return async () => {
+		// Off first: a response arriving while this drains would start a read
+		// nothing is waiting for, and print its line into the next test.
+		context.off( 'response', onResponse );
+		await context.unroute( BANNED_ENDPOINT, refuseBanned ).catch( () => {} );
+
+		// A listener can be mid-read when the test ends, so settle until the set
+		// is empty rather than settling a snapshot of it. Raced rather than
+		// checked between rounds: this runs inside the test's own timeout, and a
+		// lost flag costs a peer build a warning where an overrun costs this
+		// build a spec that had already passed.
+		// The listeners above, and the writes they and the REST client started:
+		// a worker that exits with one in flight leaves the build untagged.
+		const drain = ( async () => {
+			while ( pending.size ) {
+				await Promise.allSettled( [ ...pending ] );
+			}
+			await flushThrottleWrites();
+		} )();
+		await withDeadline( drain, FLUSH_TIMEOUT ).catch( () => {} );
+	};
+}
+
 export const test = base.extend<
 	CustomOptions & {
 		[ K in keyof typeof fixtureAccounts ]: TestAccount;
 	} & {
+		_abandonLoginLockWaits: void;
+		_runningSpecFile: void;
+		_throttleActionHandler: void;
 		/**
 		 * Test account selected based on the current environment variables.
 		 */
 		accountGivenByEnvironment: TestAccount;
-		/**
-		 * Test account used for SMS-based 2FA.
-		 */
-		accountSMS: TestAccount;
 		/**
 		 * Client for interacting with emails during tests.
 		 */
@@ -180,14 +302,6 @@ export const test = base.extend<
 		 */
 		componentDashboardSnackbar: DashboardSnackbarComponent;
 		/**
-		 * Component for the Me sidebar (profile/settings)
-		 */
-		componentMeSidebar: MeSidebarComponent;
-		/**
-		 * Component for displaying notices (e.g., success/error messages).
-		 */
-		componentNotice: NoticeComponent;
-		/**
 		 * Component for selecting items in various flows.
 		 */
 		componentSelectItems: SelectItemsComponent;
@@ -215,10 +329,6 @@ export const test = base.extend<
 		 * Page object representing the WordPress.com Advertising page.
 		 */
 		pageAdvertising: AdvertisingPage;
-		/**
-		 * Page object representing the Apple login page.
-		 */
-		pageAppleLogin: AppleLoginPage;
 		/**
 		 * Page object representing the Blaze campaign page.
 		 */
@@ -276,10 +386,6 @@ export const test = base.extend<
 		 */
 		pageImportContentFromWordPress: ImportContentFromWordPressPage;
 		/**
-		 * Page object representing the Import Content WordPress Question page.
-		 */
-		pageImportContentWordpressQuestion: ImportContentWordPressQuestionPage;
-		/**
 		 * Page object representing the Import Content from Another Platform or File page.
 		 */
 		pageImportContentFromAnotherPlatformOrFile: ImportContentFromAnotherPlatformOrFilePage;
@@ -308,10 +414,6 @@ export const test = base.extend<
 		 */
 		pageMarketing: MarketingPage;
 		/**
-		 * Page object representing the WordPress.com My Profile page.
-		 */
-		pageMyProfile: MyProfilePage;
-		/**
 		 * Page object representing the WordPress.com Add People page.
 		 */
 		pageAddPeople: AddPeoplePage;
@@ -328,13 +430,9 @@ export const test = base.extend<
 		 */
 		pagePlans: PlansPage;
 		/**
-		 * Page object representing the post-checkout "Set up your site" choice screen.
+		 * Page object representing the post-checkout "Let’s design your site" choice screen.
 		 */
 		pagePostCheckoutSetupSite: PostCheckoutSetupSitePage;
-		/**
-		 * Page object representing the WordPress.com purchases page.
-		 */
-		pagePurchases: PurchasesPage;
 		/**
 		 * Page object representing the Multi-site Dashboard Billing > Active upgrades screens.
 		 */
@@ -371,6 +469,56 @@ export const test = base.extend<
 	}
 >( {
 	viewportName: [ 'desktop', { option: true } ],
+	sitePublicSiteCount: [ 1, { option: true } ],
+	_abandonLoginLockWaits: [
+		async ( {}, use ) => {
+			await use();
+			// A timed-out test's await is abandoned, not cancelled, so a withLoginLock call it
+			// left waiting would keep polling and could take the lock during worker teardown.
+			// Any teardown running means the test body is over: a wait still pending belongs to
+			// no live test, so abandoning it here cannot fail one.
+			abandonPendingLoginLockWaits();
+		},
+		{ auto: true },
+	],
+	_runningSpecFile: [
+		async ( {}, use, testInfo ) => {
+			// Lets a mixed Atomic run resolve the test's variation from fixtures, which run
+			// outside the spec file: `accountGivenByEnvironment` has to pick that site's account.
+			// The title path starts with the spec file Playwright loaded; `testInfo.file` would
+			// name the shared helper that declares the test, as `block-smoke-testing.ts` does.
+			setRunningSpecFile( testInfo.titlePath[ 0 ] );
+			try {
+				await use();
+			} finally {
+				setRunningSpecFile( undefined );
+			}
+		},
+		{ auto: true },
+	],
+	_throttleActionHandler: [
+		async ( {}, use, testInfo ) => {
+			const unregister = registerThrottleActionHandler( ( action, ids ) => {
+				const message = throttleActionMessage( action, ids, testInfo );
+				// Nothing to say to a test that already stopped for a reason of its own.
+				if ( ! message ) {
+					return;
+				}
+				if ( action === 'skip' ) {
+					base.skip( true, message );
+					return;
+				}
+				throw new Error( message );
+			} );
+
+			try {
+				await use();
+			} finally {
+				unregister();
+			}
+		},
+		{ auto: true },
+	],
 	page: async ( { page, viewportName }, use, testInfo ) => {
 		// Set process.env.VIEWPORT_NAME so page objects/components can access it via envVariables.
 		process.env.VIEWPORT_NAME = viewportName;
@@ -383,11 +531,15 @@ export const test = base.extend<
 			},
 		] );
 
-		if ( testInfo.project.name === 'authentication' ) {
+		if ( [ 'authentication', 'chrome', 'mobile' ].includes( testInfo.project.name ) ) {
 			await useBlackboxTestKeyForCollect( page );
 		}
 
+		const flushThrottleWatchers = await watchForThrottle( page.context() );
+
 		await use( page );
+
+		await flushThrottleWatchers();
 	},
 	...( Object.fromEntries(
 		Object.entries( fixtureAccounts ).map( ( [ fixtureName, accountName ] ) => [
@@ -401,10 +553,6 @@ export const test = base.extend<
 	accountGivenByEnvironment: async ( { page }, use ) => {
 		const accountName = getTestAccountByFeature( envToFeatureKey( envVariables ) );
 		const testAccount = await getAccount( page, accountName );
-		await use( testAccount );
-	},
-	accountSMS: async ( { page }, use ) => {
-		const testAccount = await getAccount( page, 'smsUser' );
 		await use( testAccount );
 	},
 	clientEmail: async ( {}, use ) => {
@@ -426,14 +574,6 @@ export const test = base.extend<
 	componentDashboardSnackbar: async ( { page }, use ) => {
 		const dashboardSnackbarComponent = new DashboardSnackbarComponent( page );
 		await use( dashboardSnackbarComponent );
-	},
-	componentMeSidebar: async ( { page }, use ) => {
-		const meSidebarComponent = new MeSidebarComponent( page );
-		await use( meSidebarComponent );
-	},
-	componentNotice: async ( { page }, use ) => {
-		const noticeComponent = new NoticeComponent( page );
-		await use( noticeComponent );
 	},
 	componentPreview: async ( { page }, use ) => {
 		const previewComponent = new PreviewComponent( page );
@@ -479,10 +619,6 @@ export const test = base.extend<
 	pageAdvertising: async ( { page }, use ) => {
 		const advertisingPage = new AdvertisingPage( page );
 		await use( advertisingPage );
-	},
-	pageAppleLogin: async ( { page }, use ) => {
-		const appleLoginPage = new AppleLoginPage( page );
-		await use( appleLoginPage );
 	},
 	pageDashboard: async ( { page }, use ) => {
 		const dashboardPage = new DashboardPage( page );
@@ -549,14 +685,12 @@ export const test = base.extend<
 		const importPlansPage = new ImportPlansPage( page );
 		await use( importPlansPage );
 	},
-	pageImportContentWordpressQuestion: async ( { page }, use ) => {
-		const importContentWordpressQuestionPage = new ImportContentWordPressQuestionPage( page );
-		await use( importContentWordpressQuestionPage );
-	},
 	pageIncognito: async ( { browser }, use ) => {
 		const incognitoPage = new IncognitoPage( browser );
 		await incognitoPage.spawn();
+		const flushThrottleWatchers = await watchForThrottle( incognitoPage.getPage().context() );
 		await use( incognitoPage );
+		await flushThrottleWatchers();
 		await incognitoPage.close();
 	},
 	pageJetpackTraffic: async ( { page }, use ) => {
@@ -575,10 +709,6 @@ export const test = base.extend<
 		const myHomePage = new MyHomePage( page );
 		await use( myHomePage );
 	},
-	pageMyProfile: async ( { page }, use ) => {
-		const myProfilePage = new MyProfilePage( page );
-		await use( myProfilePage );
-	},
 	pageAddPeople: async ( { page }, use ) => {
 		const addPeoplePage = new AddPeoplePage( page );
 		await use( addPeoplePage );
@@ -594,10 +724,6 @@ export const test = base.extend<
 	pagePostCheckoutSetupSite: async ( { page }, use ) => {
 		const postCheckoutSetupSitePage = new PostCheckoutSetupSitePage( page );
 		await use( postCheckoutSetupSitePage );
-	},
-	pagePurchases: async ( { page }, use ) => {
-		const purchasesPage = new PurchasesPage( page );
-		await use( purchasesPage );
 	},
 	pageDashboardPurchases: async ( { page }, use ) => {
 		const dashboardPurchasesPage = new DashboardPurchasesPage( page );
@@ -623,7 +749,10 @@ export const test = base.extend<
 		const secrets = SecretsManager.secrets;
 		await use( secrets );
 	},
-	sitePublic: async ( { page, clientEmail, helperData, pageLogin, pageUserSignUp }, use ) => {
+	sitePublic: async (
+		{ page, clientEmail, helperData, pageLogin, pageUserSignUp, sitePublicSiteCount },
+		use
+	) => {
 		const testUser = helperData.getNewTestUser( { useMailosaur: true } );
 		const siteName = helperData.getBlogName();
 		await pageLogin.visit();
@@ -643,6 +772,13 @@ export const test = base.extend<
 				name: siteName,
 				title: siteName,
 			} );
+			if ( sitePublicSiteCount === 2 ) {
+				const companionSiteName = helperData.getBlogName();
+				await restAPIClient.createSite( {
+					name: companionSiteName,
+					title: companionSiteName,
+				} );
+			}
 			const message = await clientEmail.getLastMatchingMessage( {
 				inboxId: testUser.inboxId,
 				sentTo: testUser.email,

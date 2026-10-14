@@ -1,7 +1,6 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 @import "@automattic/typography/styles/variables";
-@import "calypso/assets/stylesheets/shared/mixins/placeholder";
 @import "@automattic/components/src/styles/typography";
 
 .navigation-header.developer__header {
@@ -41,68 +40,3 @@
 	}
 }
 
-.card.developer__is-dev-account-card {
-	margin: 0 auto 30px;
-
-	.components-toggle-control {
-		font-family: $font-sf-pro-text;
-		font-size: rem(14px);
-		display: inline-block;
-	}
-
-	.components-h-stack {
-		align-items: start;
-	}
-
-	.components-toggle-control__label {
-		display:flex;
-		flex-flow: column wrap;
-	}
-
-	.components-toggle-control__label span {
-		font-size: rem(14px);
-		color: var(--color-text-subtle);
-		line-height: 20px;
-		letter-spacing: -0.15px;
-		margin-top: 10px;
-	}
-
-	.form-fieldset {
-		margin-bottom: 5px;
-	}
-
-	&.is-loading {
-		.components-form-toggle {
-			.components-form-toggle__thumb {
-				visibility: hidden;
-			}
-
-			.components-form-toggle__track {
-				border: none;
-				@include placeholder( --color-neutral-10 );
-			}
-		}
-
-		.components-toggle-control__label {
-			@include placeholder();
-			a {
-				color: inherit;
-			}
-		}
-	}
-
-	@media (max-width: $break-large) {
-		margin: 0 32px 24px 32px;
-	}
-
-	@media (max-width: $break-medium) {
-		position: fixed;
-		left: 0;
-		bottom: 0;
-		width: 100%;
-		margin: 0 auto;
-		text-align: left;
-		padding: 16px 32px;
-		z-index: 2;
-	}
-}

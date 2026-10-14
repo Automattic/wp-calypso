@@ -73,6 +73,7 @@ export type MessageAction = {
 	tooltip?: string;
 	icon?: React.ReactNode;
 	pressed?: boolean;
+	uri?: string;
 };
 
 export type ZendeskContentType =
@@ -82,6 +83,7 @@ export type ZendeskContentType =
 	| 'form'
 	| 'formResponse'
 	| 'image'
+	| 'file-placeholder'
 	| 'image-placeholder'
 	| 'list'
 	| 'location'
@@ -140,6 +142,7 @@ export type MessageType =
 	| 'conversation-feedback'
 	| 'help-link'
 	| 'file'
+	| 'file-placeholder'
 	| 'image'
 	| 'image-placeholder'
 	| 'introduction'

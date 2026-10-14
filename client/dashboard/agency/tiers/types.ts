@@ -4,10 +4,28 @@ import type { IconType } from '@wordpress/components';
 export type AgencyTierType = AgencyTierId;
 export type { AgencyTierStatus };
 
+export type BenefitActionId =
+	| 'manage-sites'
+	| 'create-client-reports'
+	| 'manage-purchases'
+	| 'make-client-referral'
+	| 'add-woopayments-to-store'
+	| 'contact-support'
+	| 'manage-profile'
+	| 'download-badge'
+	| 'schedule-call';
+
+export type BenefitLinkActionId = Exclude< BenefitActionId, 'download-badge' | 'schedule-call' >;
+
+/**
+ * Where each navigating benefit action goes. Each host app passes its own
+ * routes; an action with no link is not rendered.
+ */
+export type TierBenefitLinks = Partial< Record< BenefitLinkActionId, string > >;
+
 export interface BenefitAction {
-	id: string;
+	id: BenefitActionId;
 	label: string;
-	href?: string;
 }
 
 export interface Benefit {

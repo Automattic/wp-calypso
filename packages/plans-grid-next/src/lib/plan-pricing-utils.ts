@@ -119,14 +119,16 @@ export function fromPricingMetaForGridPlan(
 		// intro offer is active the intro structure already captures the discounted period, so
 		// using discountedPrice here would contaminate the post-intro "regular" rate used by
 		// getPlanPriceForDuration — producing incorrect totals for the non-intro months.
-		discountedPricePerMonth: isIntroActive ? undefined : meta.discountedPrice.monthly ?? undefined,
+		discountedPricePerMonth: isIntroActive
+			? undefined
+			: ( meta.discountedPrice.monthly ?? undefined ),
 		introOffer: meta.introOffer
 			? {
 					pricePerMonth: meta.introOffer.rawPrice.monthly,
 					durationMonths:
 						meta.introOffer.intervalCount * ( meta.introOffer.intervalUnit === 'year' ? 12 : 1 ),
 					isActive: isIntroActive,
-			  }
+				}
 			: undefined,
 	};
 }

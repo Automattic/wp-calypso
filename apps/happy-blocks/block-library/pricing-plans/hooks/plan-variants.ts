@@ -25,13 +25,13 @@ const usePlanVariants = ( plans: BlockPlan[], selectedPlan: BlockPlan ) => {
 		? selectedPlan
 		: plans.find(
 				( plan ) => isWpComMonthlyPlan( plan.productSlug ) && plan.type === selectedPlan.type
-		  );
+			);
 
 	const annualPlan = isWpComAnnualPlan( selectedPlan.productSlug )
 		? selectedPlan
 		: plans.find(
 				( plan ) => isWpComAnnualPlan( plan.productSlug ) && plan.type === selectedPlan.type
-		  );
+			);
 
 	const annualDiscount = getAnnualDiscount( annualPlan, monthlyPlan );
 

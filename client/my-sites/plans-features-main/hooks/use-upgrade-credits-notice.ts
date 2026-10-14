@@ -4,10 +4,7 @@ import { usePlanUpgradeCreditsApplicable } from 'calypso/my-sites/plans-features
 import { useMaxPlanUpgradeCredits } from './use-max-plan-upgrade-credits';
 
 export type UpgradeCreditsNoticeSource =
-	| 'plan'
-	| 'domain'
-	| 'other-upgrades'
-	| 'domain-and-other-upgrades';
+	'plan' | 'domain' | 'other-upgrades' | 'domain-and-other-upgrades';
 
 export type UpgradeCreditsNoticeData = {
 	credits: number;

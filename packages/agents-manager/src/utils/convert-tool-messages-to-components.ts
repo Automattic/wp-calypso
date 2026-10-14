@@ -1,6 +1,9 @@
 import { __ } from '@wordpress/i18n';
+import ChatResponseRenderedTracker, {
+	createChatResponseActionCallback,
+} from '../components/chat-response-tracking';
 import { EscalationButton } from '../components/escalation-button';
-import isAmAbilitiesDisabled from './is-am-abilities-disabled';
+import OpenHelpCenterButton from '../components/open-help-center-button';
 import lazyComponent from './lazy-component';
 import { isShowComponentTool } from './show-component-tools';
 import {
@@ -9,8 +12,10 @@ import {
 	getDisplayMessageFromToolData,
 	isBlockEditToolId,
 	isDisplayableToolMessageTool,
+	isVisualCheckPending,
 } from './tool-message-utils';
 import type { GetChatComponent } from './load-external-providers';
+import type { OPEN_HELP_CENTER_BUTTON_TYPE } from '../abilities/open-help-center';
 import type { ShowComponentType } from '../abilities/show-component';
 import type { UIMessage } from '@automattic/agenttic-client';
 
@@ -21,13 +26,15 @@ export interface AgentsManagerUIMessage extends UIMessage {
 	suppressThinking?: boolean;
 }
 
-// AM-owned components by `ShowComponentType`. These take precedence over
-// provider components — AM is the single source of truth for each migrated type.
+type AmComponentType = ShowComponentType | typeof OPEN_HELP_CENTER_BUTTON_TYPE;
+
+// AM-owned components by type. These take precedence over provider
+// components — AM is the single source of truth for each of these types.
 //
 // The pickers carry the block-editor preview stack, so they load on demand:
 // a picker row fetches its chunk when it first renders, and other chats never
-// download it.
-const AM_COMPONENTS: Record< ShowComponentType, React.ComponentType > = {
+// download it. The Help Center button is a plain button and ships inline.
+const AM_COMPONENTS: Record< AmComponentType, React.ComponentType > = {
 	'button-picker': lazyComponent(
 		() => import( /* webpackChunkName: "am-button-picker" */ '../components/button-picker' )
 	),
@@ -37,18 +44,24 @@ const AM_COMPONENTS: Record< ShowComponentType, React.ComponentType > = {
 	'font-picker': lazyComponent(
 		() => import( /* webpackChunkName: "am-font-picker" */ '../components/font-picker' )
 	),
+	'open-help-center-button': OpenHelpCenterButton,
 };
 
 function getAmComponent( type: string ): React.ComponentType | null {
 	// Own-property check so degenerate types (e.g. `toString`) can't resolve
 	// to `Object.prototype` members.
-	return Object.hasOwn( AM_COMPONENTS, type ) ? AM_COMPONENTS[ type as ShowComponentType ] : null;
+	return Object.hasOwn( AM_COMPONENTS, type ) ? AM_COMPONENTS[ type as AmComponentType ] : null;
 }
 
 interface Options {
 	messages: UIMessage[];
 	getChatComponent?: GetChatComponent;
 	currentPostId?: number | string;
+	/** Whether the agent's turn is still running, so a promised check may still land. */
+	isProcessing?: boolean;
+	canEscalateToHuman?: boolean;
+	/** Block-edit tool calls the server has replaced with a retry. */
+	retriedToolCallIds?: ReadonlySet< string >;
 }
 
 interface MessageWithContextFlags extends UIMessage {
@@ -59,7 +72,7 @@ interface MessageWithContextFlags extends UIMessage {
 	};
 }
 
-function isContextOnlyMessage( message: UIMessage ): boolean {
+export function isContextOnlyMessage( message: UIMessage ): boolean {
 	return (
 		( message as MessageWithContextFlags ).context?.flags?.context_only === true ||
 		message.content?.some( ( content ) => {
@@ -90,6 +103,19 @@ function getShowComponentSummary( message: UIMessage ): string | undefined {
 		return typeof summary === 'string' ? summary.trim() || undefined : undefined;
 	} catch ( _error ) {
 		return undefined;
+	}
+}
+
+function isBlockEditToolMessage( message: UIMessage ): boolean {
+	const firstText = message.content?.[ 0 ]?.text;
+	if ( ! hasAgentRole( message ) || ! firstText ) {
+		return false;
+	}
+
+	try {
+		return isBlockEditToolId( JSON.parse( firstText )?.tool_id );
+	} catch ( _error ) {
+		return false;
 	}
 }
 
@@ -178,6 +204,47 @@ function hasLaterApplyBlockEditsOutcome(
 	return false;
 }
 
+// Hidden context messages (e.g. navigation continuations) do not start a turn.
+function isInLatestTurn( messages: UIMessage[], currentIndex: number ): boolean {
+	return ! messages
+		.slice( currentIndex + 1 )
+		.some(
+			( laterMessage ) => laterMessage.role === 'user' && ! isContextOnlyMessage( laterMessage )
+		);
+}
+
+/**
+ * Whether the deferred reply for a promised visual check is still outstanding.
+ *
+ * The reply is plain agent prose following the tool result, so the wait lasts
+ * only while nothing follows this message. It ends two ways: the prose arrives,
+ * or the turn ends without it. Either way the summary comes back, which is what
+ * a flag that over-promises — the per-turn look budget the ability cannot see —
+ * falls back to, with no timer and no stale state in rehydrated history.
+ */
+function isAwaitingVisualCheckReply( messages: UIMessage[], currentIndex: number ): boolean {
+	for ( const laterMessage of messages.slice( currentIndex + 1 ) ) {
+		if ( laterMessage.role === 'user' ) {
+			return false;
+		}
+
+		const laterText = laterMessage.content?.[ 0 ]?.text?.trim();
+		if ( ! hasAgentRole( laterMessage ) || ! laterText || isContextOnlyMessage( laterMessage ) ) {
+			continue;
+		}
+
+		try {
+			if ( typeof JSON.parse( laterText )?.tool_id === 'string' ) {
+				continue;
+			}
+		} catch ( _error ) {}
+
+		return false;
+	}
+
+	return true;
+}
+
 function followsTerminalApplyBlockEditsOutcome(
 	messages: UIMessage[],
 	currentIndex: number
@@ -199,9 +266,13 @@ function followsTerminalApplyBlockEditsOutcome(
 				continue;
 			}
 
+			// A promised visual check makes the following prose the deferred reply
+			// rather than redundant narration, so it has to survive. Suppressing it
+			// alongside the withheld summary would leave the turn with nothing.
 			return (
 				!! getApplyBlockEditsOutcome( earlierData.tool_id, earlierData.data ) &&
-				earlierData.data?.followUpTasks !== true
+				earlierData.data?.followUpTasks !== true &&
+				! isVisualCheckPending( earlierData.tool_id, earlierData.data )
 			);
 		} catch ( _error ) {
 			return false;
@@ -218,8 +289,15 @@ export default function convertToolMessagesToComponents( {
 	messages,
 	getChatComponent,
 	currentPostId,
+	isProcessing,
+	canEscalateToHuman = true,
+	retriedToolCallIds,
 }: Options ): AgentsManagerUIMessage[] {
-	return messages.flatMap( ( message, index, array ) => {
+	const convertMessage = (
+		message: UIMessage,
+		index: number,
+		array: UIMessage[]
+	): AgentsManagerUIMessage | AgentsManagerUIMessage[] => {
 		if ( isContextOnlyMessage( message ) ) {
 			return [];
 		}
@@ -235,15 +313,23 @@ export default function convertToolMessagesToComponents( {
 		}
 
 		// The user asked for human support
-		if (
-			message.content.find(
-				( content ) =>
-					content.type === 'data' &&
-					content.data?.flags &&
-					typeof content.data.flags === 'object' &&
-					'forward_to_human_support' in content.data.flags
-			)
-		) {
+		const forwardToHumanSupportContent = message.content.find(
+			( content ) =>
+				content.type === 'data' &&
+				content.data?.flags &&
+				typeof content.data.flags === 'object' &&
+				'forward_to_human_support' in content.data.flags
+		);
+		if ( forwardToHumanSupportContent ) {
+			if ( ! canEscalateToHuman ) {
+				return {
+					...message,
+					content: message.content.filter(
+						( content ) => content !== forwardToHumanSupportContent
+					),
+				};
+			}
+
 			return {
 				...message,
 				content: [
@@ -277,10 +363,20 @@ export default function convertToolMessagesToComponents( {
 		// Handle `show-component` tool message
 		if ( isShowComponentTool( textData.tool_id ) ) {
 			const toolData = textData.data ?? {};
-			const { type: contentType, props, followUpTasks, isCurrent, postId, summary } = toolData;
-			// The testing switch flips rendering to the provider components too,
-			// so the comparison covers the whole flow.
-			const amComponent = isAmAbilitiesDisabled() ? null : getAmComponent( contentType );
+			const {
+				type: contentType,
+				props,
+				followUpTasks,
+				isCurrent,
+				postId,
+				summary,
+				responseTrackingProperties,
+			} = toolData;
+			const toolCallId =
+				typeof textData.tool_call_id === 'string' && textData.tool_call_id
+					? textData.tool_call_id
+					: undefined;
+			const amComponent = getAmComponent( contentType );
 			// AM components take precedence; other types resolve through the external
 			// providers (e.g. jetpack-ai-sidebar's title pickers) via `getChatComponent`.
 			const Component = amComponent ?? getChatComponent?.( contentType );
@@ -323,6 +419,19 @@ export default function convertToolMessagesToComponents( {
 			const isPageChanged =
 				!! postId && !! currentPostId && String( postId ) !== String( currentPostId );
 			const isStale = hasUserReplied || ! isCurrent || isPageChanged;
+			const shouldTrackResponse = ! isStale;
+			let responseActionProps = {};
+			if ( ! amComponent ) {
+				responseActionProps = {
+					onResponseAction: shouldTrackResponse
+						? createChatResponseActionCallback( {
+								componentType: contentType,
+								toolId: textData.tool_id,
+								...( toolCallId ? { toolCallId } : {} ),
+							} )
+						: undefined,
+				};
+			}
 
 			const componentMessage: AgentsManagerUIMessage = {
 				...message,
@@ -333,7 +442,7 @@ export default function convertToolMessagesToComponents( {
 									type: 'text' as const,
 									text: summaryText,
 								},
-						  ]
+							]
 						: [] ),
 					{
 						type: 'component' as const,
@@ -342,9 +451,25 @@ export default function convertToolMessagesToComponents( {
 							...props,
 							...( summaryText && { summary: summaryText } ),
 							...ownerProps,
+							...( toolCallId ? { toolCallId } : {} ),
+							...responseActionProps,
 							...( isStale && { isMessageStale: true } ),
 						},
 					},
+					...( shouldTrackResponse
+						? [
+								{
+									type: 'component' as const,
+									component: ChatResponseRenderedTracker as React.ComponentType,
+									componentProps: {
+										componentType: contentType,
+										toolId: textData.tool_id,
+										...( toolCallId ? { toolCallId } : {} ),
+										...( responseTrackingProperties ? { responseTrackingProperties } : {} ),
+									},
+								},
+							]
+						: [] ),
 				],
 				disabled: isStale,
 				suppressThinking: followUpTasks !== true,
@@ -369,6 +494,21 @@ export default function convertToolMessagesToComponents( {
 			) {
 				return [];
 			}
+			// Retries are known only from the live stream: rehydrated history has no
+			// `retryingToolCallId`, so after a reload a retried no-change reappears. A
+			// later edit in the same turn is not proof of a retry, so none is inferred.
+			if (
+				isBlockEditToolId( textData.tool_id ) &&
+				typeof textData.tool_call_id === 'string' &&
+				retriedToolCallIds?.has( textData.tool_call_id )
+			) {
+				return [];
+			}
+			// The server may answer a no-change with a retry, which would hide the
+			// summary again; withhold it until the turn ends so it never flashes.
+			if ( isProcessing && blockEditOutcome === 'no-changes' && isInLatestTurn( array, index ) ) {
+				return [];
+			}
 			const summary = getDisplayMessageFromToolData( textData.data );
 			if ( ! summary && blockEditOutcome !== 'no-changes' ) {
 				return [];
@@ -379,6 +519,18 @@ export default function convertToolMessagesToComponents( {
 			) {
 				return [];
 			}
+			// While a promised check is still running, the transient thinking indicator
+			// already reads as the agent working, so the summary is withheld rather than
+			// replaced by a second, static one. The summary returns as soon as any
+			// of the three ends the wait — the reply lands, the turn ends, or the stream
+			// stops — so a flag that over-promises cannot swallow the edit.
+			if (
+				isProcessing &&
+				isVisualCheckPending( textData.tool_id, textData.data ) &&
+				isAwaitingVisualCheckReply( array, index )
+			) {
+				return [];
+			}
 			const content =
 				blockEditOutcome === 'no-changes'
 					? [
@@ -386,13 +538,13 @@ export default function convertToolMessagesToComponents( {
 								type: 'text' as const,
 								text: __( '✓ No changes needed', __i18n_text_domain__ ),
 							},
-					  ]
+						]
 					: [
 							{
 								type: 'text' as const,
 								text: summary as string,
 							},
-					  ];
+						];
 
 			// Tool summaries with follow-up tasks are intermediate status updates. When
 			// rehydrating history, a later tool message in the same user turn (for example,
@@ -408,7 +560,9 @@ export default function convertToolMessagesToComponents( {
 			return [
 				{
 					...message,
-					suppressThinking: true,
+					// Block edits always return to the agent, which keeps working after the
+					// summary (often on further edits), so the indicator must stay visible.
+					suppressThinking: ! isBlockEditToolId( textData.tool_id ),
 					content,
 				},
 			];
@@ -432,31 +586,34 @@ export default function convertToolMessagesToComponents( {
 			];
 		}
 
-		// Handle start over tool message
-		// TODO (ability-migration): Double-check whether this branch is still needed when the
-		// `client-assistants` ability migrates. No agent offers that tool
-		// today — only old conversation history still contains it.
-		if (
-			textData.tool_id === 'big_sky__client_assistants' &&
-			textData.data?.assistantId === 'big-sky-site-admin'
-		) {
-			return [
-				{
-					...message,
-					content: [
-						{
-							type: 'text' as const,
-							text: __( 'To start over, please send your request again.', __i18n_text_domain__ ),
-						},
-					],
-					suppressThinking: true,
-				},
-			];
-		}
-
 		// Remove unhandled tool messages to avoid displaying raw JSON to the user.
 		// eslint-disable-next-line no-console
 		console.warn( `[AgentsManager] Unhandled tool message with tool_id: ${ textData.tool_id }` );
 		return [];
+	};
+
+	const converted: AgentsManagerUIMessage[] = [];
+	// A block edit always returns to the agent, so one that renders nothing (a
+	// retried or withheld outcome, a failure, a pending check) still means the
+	// agent is working.
+	let hasHiddenBlockEditSinceLatest = false;
+	messages.forEach( ( message, index, array ) => {
+		const result = [ convertMessage( message, index, array ) ].flat();
+		if ( result.length > 0 ) {
+			converted.push( ...result );
+			hasHiddenBlockEditSinceLatest = false;
+		} else if ( isBlockEditToolMessage( message ) ) {
+			hasHiddenBlockEditSinceLatest = true;
+		}
 	} );
+
+	// Without this, an earlier message (e.g. a logo summary) would become the
+	// latest one and its `suppressThinking` would hide the indicator, and the
+	// retry progress with it, while the turn is still running.
+	const latest = converted[ converted.length - 1 ];
+	if ( isProcessing && hasHiddenBlockEditSinceLatest && latest?.suppressThinking ) {
+		converted[ converted.length - 1 ] = { ...latest, suppressThinking: false };
+	}
+
+	return converted;
 }

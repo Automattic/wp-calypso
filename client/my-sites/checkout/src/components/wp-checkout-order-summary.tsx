@@ -44,8 +44,7 @@ import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import useEquivalentMonthlyTotals, {
 	getSubtotalBeforeDiscounts,
 } from 'calypso/my-sites/checkout/utils/use-equivalent-monthly-totals';
-import { useSelector } from 'calypso/state';
-import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
+import { getActivePlanSlug, useCheckoutSite } from '../hooks/use-checkout-site';
 import { useCheckoutUiRedesignExperiment } from '../hooks/use-checkout-ui-redesign-experiment';
 import getAkismetProductFeatures from '../lib/get-akismet-product-features';
 import getJetpackProductFeatures from '../lib/get-jetpack-product-features';
@@ -614,11 +613,8 @@ function CheckoutSummarySupportIfAvailable( props: {
 	const translate = useTranslate();
 	const hasEnTranslation = useHasEnTranslation();
 
-	const currentPlan = useSelector( ( state ) =>
-		props.siteId ? getCurrentPlan( state, props.siteId ) : undefined
-	);
-
-	const currentPlanSlug = currentPlan?.productSlug;
+	const { data: site } = useCheckoutSite( props.siteId );
+	const currentPlanSlug = getActivePlanSlug( site );
 
 	const isSupportAvailable =
 		props.hasDomainTransferInCart ||
@@ -636,7 +632,7 @@ function CheckoutSummarySupportIfAvailable( props: {
 		return (
 			<CheckoutSummaryFeaturesListItem>
 				<WPCheckoutCheckIcon />
-				{ isWpComPremiumPlan( currentPlanSlug )
+				{ isWpComPremiumPlan( currentPlanSlug ?? '' )
 					? translate( 'Fast support' )
 					: translate( 'Priority support 24/7' ) }
 			</CheckoutSummaryFeaturesListItem>
@@ -700,13 +696,13 @@ function CheckoutSummaryAnnualUpsell( props: {
 									? translate( 'Fast support' )
 									: translate( 'Priority support 24/7' ) }
 							</CheckoutSummaryFeaturesListItem>
-					  )
+						)
 					: ! isWpComPersonalPlan( productSlug ) && (
 							<CheckoutSummaryFeaturesListItem isSupported={ false }>
 								<WPCheckoutCheckIcon />
 								{ translate( 'Live chat support' ) }
 							</CheckoutSummaryFeaturesListItem>
-					  ) }
+						) }
 			</CheckoutSummaryFeaturesListWrapper>
 			{ props.onChangeSelection && (
 				<SwitchToAnnualPlan plan={ props.plan } onChangeSelection={ props.onChangeSelection } />
@@ -754,6 +750,11 @@ const CheckoutSummaryPayButtonSlot = styled.div`
 		width: 100%;
 		height: 50px;
 		box-sizing: border-box;
+	}
+
+	/* The portaled wrapper keeps the form's 24px padding; the sidebar card already pads it. */
+	.checkout-steps__submit-button-wrapper {
+		padding: 0;
 	}
 `;
 const CheckoutSummaryFeatures = styled.div`

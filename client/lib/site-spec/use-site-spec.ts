@@ -1,5 +1,8 @@
+import { createCalypsoAuthProvider } from '@automattic/agents-manager/src/auth/calypso-auth-provider';
 import { useLocale } from '@automattic/i18n-utils';
 import { useEffect } from 'react';
+import { useSelector } from 'calypso/state';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { loadSiteSpecScriptAndCSS, resetSiteSpecScriptState } from './script-loader';
 import { getDefaultSiteSpecConfig, isSiteSpecEnabled, SiteSpecConfig } from './utils';
 
@@ -11,6 +14,7 @@ declare global {
 				agentUrl?: string;
 				agentId?: string;
 				buildSiteUrl?: string;
+				authProvider?: SiteSpecConfig[ 'authProvider' ];
 				locale?: string;
 				onMessage?: ( message: unknown ) => void;
 				onSpecConfirm?: ( specData: unknown ) => void | Promise< void >;
@@ -54,6 +58,7 @@ export function useSiteSpec( options: UseSiteSpecOptions = {} ) {
 	} = options;
 
 	const locale = useLocale();
+	const isLoggedIn = useSelector( isUserLoggedIn );
 
 	useEffect( () => {
 		// SSR/Non-browser guard
@@ -88,6 +93,17 @@ export function useSiteSpec( options: UseSiteSpecOptions = {} ) {
 
 				window.SiteSpec.init( {
 					container: containerEl,
+					// Sign the widget's agent requests as the logged-in user so spec
+					// sessions aren't anonymous (anonymous specs are only fetchable
+					// for 60 minutes). Resolves without an Authorization header for
+					// logged-out visitors, which is the expected initial state here:
+					// the flow is a signup flow with builtin auth. That's also why
+					// JWT failures are only reported when the user is logged in; a
+					// logged-out token miss is normal, a logged-in one is a bug.
+					// Before ...config so flow configs can override the default.
+					authProvider: createCalypsoAuthProvider( undefined, {
+						logWpcomJwtFailure: isLoggedIn,
+					} ),
 					...config,
 					locale,
 					onMessage,
@@ -110,6 +126,7 @@ export function useSiteSpec( options: UseSiteSpecOptions = {} ) {
 			// If the loader manages a global "loaded" flag, reset it so
 			resetSiteSpecScriptState();
 		};
-		// Re-run only if the container target, handlers, locale, or config change.
-	}, [ container, onMessage, onSpecConfirm, onError, locale, siteSpecConfig ] );
+		// Re-run only if the container target, handlers, locale, config, or
+		// session state change.
+	}, [ container, onMessage, onSpecConfirm, onError, locale, siteSpecConfig, isLoggedIn ] );
 }

@@ -5,6 +5,7 @@ import { createRef, PureComponent } from 'react';
 import { createRoot } from 'react-dom/client';
 import DotPager from '../dot-pager';
 import { addImageCarousel } from '../image-carousel';
+import { sanitizeEmbedData, sanitizeSlideshowGalleries } from './sanitize-embed-data';
 
 const noop = () => {};
 const debug = debugFactory( 'calypso:components:embed-container' );
@@ -180,6 +181,8 @@ function embedTumblr( domNode ) {
 }
 
 function triggerJQueryLoadEvent() {
+	sanitizeSlideshowGalleries( document );
+
 	// force JetpackSlideshow to initialize, in case navigation hasn't caused ready event on document
 	window.jQuery( 'body' ).trigger( 'post-load' );
 }
@@ -346,7 +349,12 @@ export default class EmbedContainer extends PureComponent {
 	};
 
 	processEmbeds = () => {
-		this.getContentNodes().forEach( processEmbeds );
+		const contentNodes = this.getContentNodes();
+
+		// Every root has to be clean before the first provider script runs, because those scripts
+		// rescan the whole document rather than the node we handed them.
+		contentNodes.forEach( sanitizeEmbedData );
+		contentNodes.forEach( processEmbeds );
 	};
 
 	componentDidMount() {

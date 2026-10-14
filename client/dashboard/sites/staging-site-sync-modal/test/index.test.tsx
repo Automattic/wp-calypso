@@ -24,6 +24,7 @@ jest.mock( '../../../../data/activity-log/use-rewindable-activity-log-query', ()
 
 jest.mock( '../../../app/locale', () => ( {
 	useLocale: () => 'en',
+	useIntlLocale: () => 'en',
 } ) );
 
 jest.mock( '../../../components/inline-support-link', () => {
@@ -121,7 +122,8 @@ function mockSite( site: Site ) {
 	nock( 'https://public-api.wordpress.com' )
 		.get( `/rest/v1.1/sites/${ site.ID }` )
 		.query( true )
-		.reply( 200, site );
+		.reply( 200, site )
+		.persist();
 }
 
 function mockBackupContents() {

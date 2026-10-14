@@ -19,8 +19,7 @@ test.describe(
 		} ) => {
 			await test.step( `Given I am authenticated as '${ accountGivenByEnvironment.accountName }'`, async function () {
 				await snoozeAccountRecoveryInterstitial( clientRestAPI );
-				// Skip waiting for Calypso sidebar — we navigate to the dashboard immediately after.
-				await accountGivenByEnvironment.authenticate( page, { waitUntilStable: false } );
+				await accountGivenByEnvironment.authenticate( page );
 			} );
 
 			await test.step( 'When I navigate to /me', async function () {
@@ -29,22 +28,24 @@ test.describe(
 			} );
 
 			const meEndpoints = [
-				'Account',
-				'Preferences',
-				'Billing',
-				'Security',
-				'Notifications',
-				'Apps',
+				{ label: 'Account', path: 'account' },
+				{ label: 'Preferences', path: 'preferences' },
+				{ label: 'Billing', path: 'billing' },
+				{ label: 'Security', path: 'security' },
+				{ label: 'Notifications', path: 'notifications' },
+				{ label: 'Apps', path: 'apps' },
 			] as const;
 
 			for ( const target of meEndpoints ) {
-				await test.step( `Then I can navigate to Me > ${ target }`, async function () {
+				await test.step( `Then I can navigate to Me > ${ target.label }`, async function () {
 					await componentDashboardMeSidebar.openMobileMenu();
-					await componentDashboardMeSidebar.navigate( target );
+					await componentDashboardMeSidebar.navigate( target.label );
 
-					await expect( page ).toHaveURL( new RegExp( `/me/${ target.toLowerCase() }` ) );
+					await expect( page ).toHaveURL( new RegExp( `/me/${ target.path }` ) );
 					await expect(
-						page.getByRole( 'main' ).getByRole( 'heading', { name: target, exact: true, level: 1 } )
+						page
+							.getByRole( 'main' )
+							.getByRole( 'heading', { name: target.label, exact: true, level: 1 } )
 					).toBeVisible();
 				} );
 			}

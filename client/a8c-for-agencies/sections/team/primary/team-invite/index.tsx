@@ -82,10 +82,20 @@ export default function TeamInvite() {
 				},
 
 				onError: ( error ) => {
-					dispatch( errorNotice( error.message ) );
+					let errorMessage: string;
+					if ( error.code === 'a4a_user_invite_automattician' ) {
+						errorMessage = translate(
+							'Automattician accounts cannot be invited as agency team members.'
+						);
+					} else {
+						errorMessage =
+							error.message ||
+							translate( 'Something went wrong sending the invite. Please try again.' );
+					}
+					dispatch( errorNotice( errorMessage ) );
 					dispatch(
 						recordTracksEvent( 'calypso_a4a_team_invite_error', {
-							error: 'api_error',
+							error: error.code || 'api_error',
 						} )
 					);
 				},

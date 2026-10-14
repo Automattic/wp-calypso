@@ -440,6 +440,11 @@ body.is-section-earn.theme-default.color-scheme {
 	margin-top: 10px;
 	margin-left: -5px;
 }
+.memberships__products-product-read-only {
+	flex-shrink: 0;
+	margin-inline-start: 8px;
+	cursor: help;
+}
 .memberships__coupons-coupon-badge {
 	float: left;
 	margin-top: 10px;

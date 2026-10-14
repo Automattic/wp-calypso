@@ -1,8 +1,4 @@
-import {
-	cancelPendingEmailChangeMutation,
-	resendEmailVerificationMutation,
-	sendEmailVerificationMutation,
-} from '@automattic/api-queries';
+import { cancelPendingEmailChangeMutation } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
 import { Button } from '@wordpress/components';
@@ -10,16 +6,11 @@ import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { withSnackbar } from '../../../app/snackbars/with-snackbar';
 import Notice from '../../../components/notice';
-import {
-	formatCooldown,
-	resendAcceptedRetryAfter,
-	RESEND_MIN_INTERVAL_SECONDS,
-	resendThrottleRetryAfter,
-} from '../../../utils/email-verification-resend';
-import { useResendCooldown } from '../../../utils/use-resend-cooldown';
+import { formatCooldown } from '../../../utils/email-verification-resend';
+import { useEmailVerificationResend } from '../../../utils/use-email-verification-resend';
 import { useIsEmailWritePending } from '../use-email-write-pending';
 import type { UserSettings } from '@automattic/api-core';
 
@@ -77,7 +68,7 @@ export default function EmailVerificationBanner( {
 	userSettings,
 	isEmailVerified,
 }: EmailVerificationBannerProps ) {
-	const { createErrorNotice, createSuccessNotice } = useDispatch( noticesStore );
+	const { createErrorNotice } = useDispatch( noticesStore );
 
 	// Extract verification params to avoid multiple URL parsing calls
 	const {
@@ -105,20 +96,18 @@ export default function EmailVerificationBanner( {
 
 	const pendingEmail = userSettings.new_user_email;
 	const isEmailChangePending = !! userSettings.user_email_change_pending && !! pendingEmail;
-	// One wait per path: the server rate limits the dedicated endpoint, and re-saving a pending
-	// address is limited only by us.
-	const originalCooldown = useResendCooldown();
-	const pendingCooldown = useResendCooldown();
-	const { secondsUntilResend } = isEmailChangePending ? pendingCooldown : originalCooldown;
+	const {
+		resend: resendEmail,
+		isSendPending,
+		isResending: isResendPending,
+		secondsUntilResend,
+	} = useEmailVerificationResend( {
+		originalEmail: userSettings.user_email,
+		pendingEmail,
+		isEmailChangePending,
+		errorMessage: __( 'Failed to resend verification email.' ),
+	} );
 	const isAwaitingResend = secondsUntilResend > 0;
-
-	const pendingEmailRef = useRef( pendingEmail );
-	pendingEmailRef.current = pendingEmail;
-
-	const { reset: resetPendingCooldown } = pendingCooldown;
-	useEffect( () => {
-		resetPendingCooldown();
-	}, [ pendingEmail, resetPendingCooldown ] );
 	const shouldShowVerifyNotice = isEmailChangePending || ! isEmailVerified;
 	const unverifiedEmail = isEmailChangePending ? pendingEmail : userSettings.user_email;
 
@@ -146,63 +135,6 @@ export default function EmailVerificationBanner( {
 		emailChangeError,
 	] );
 
-	// One mutation per endpoint: TanStack hands a request in flight whatever options the latest
-	// render produced, so a shared one settles against the wrong endpoint's callbacks and copy.
-	const sentToEmail = ( email?: string ) =>
-		email
-			? sprintf(
-					/* translators: %s is the email address awaiting verification */
-					__( 'We sent an email to %s. Please check your inbox to verify your email.' ),
-					email
-			  )
-			: __( 'Verification email sent.' );
-
-	// Honour a refusal whenever it lands, but only mention it while that endpoint is on screen,
-	// or the notice contradicts an enabled button.
-	const isThrottledPathActiveRef = useRef( ! isEmailChangePending );
-	isThrottledPathActiveRef.current = ! isEmailChangePending;
-
-	const { mutate: sendToOriginal, isPending: isSendPending } = useMutation( {
-		...withSnackbar( sendEmailVerificationMutation(), {
-			success: sentToEmail( userSettings.user_email ),
-		} ),
-		onSuccess: ( data ) => originalCooldown.hold( resendAcceptedRetryAfter( data ) ),
-		onError: ( error ) => {
-			const retryAfter = resendThrottleRetryAfter( error );
-			if ( retryAfter !== null ) {
-				originalCooldown.hold( retryAfter );
-				if ( isThrottledPathActiveRef.current ) {
-					createErrorNotice( __( 'Too many attempts. Please wait before trying again.' ), {
-						type: 'snackbar',
-					} );
-				}
-				return;
-			}
-			createErrorNotice( __( 'Failed to resend verification email.' ), { type: 'snackbar' } );
-		},
-	} );
-
-	// The address is a mutation variable, so a response that lands late is still reported against
-	// the address it was sent to rather than whichever one is on screen by then.
-	const { mutate: resendToPending, isPending: isPendingResendPending } = useMutation( {
-		...resendEmailVerificationMutation(),
-		// Deliberately not passed to `mutate()`, where these would usually go: TanStack skips
-		// per-call callbacks once the observer loses its listeners, so a resend outliving the
-		// banner would report nothing at all.
-		onSuccess: ( _data, email ) => {
-			createSuccessNotice( sentToEmail( email ), { type: 'snackbar' } );
-			// A wait is meaningless once the address has moved on.
-			if ( email === pendingEmailRef.current ) {
-				pendingCooldown.hold( RESEND_MIN_INTERVAL_SECONDS );
-			}
-		},
-		onError: () =>
-			createErrorNotice( __( 'Failed to resend verification email.' ), { type: 'snackbar' } ),
-	} );
-
-	const resendEmail = () =>
-		isEmailChangePending ? resendToPending( pendingEmail || '' ) : sendToOriginal();
-	const isResendPending = isSendPending || isPendingResendPending;
 	const isEmailWritePending = useIsEmailWritePending();
 
 	const { mutate: cancelPendingEmail, isPending: isCancelPending } = useMutation(
@@ -245,55 +177,53 @@ export default function EmailVerificationBanner( {
 	}
 
 	return (
-		<>
-			<Notice
-				variant="warning"
-				title={ __( 'Verify your email' ) }
-				actions={
-					<>
+		<Notice
+			variant="warning"
+			title={ __( 'Verify your email' ) }
+			actions={
+				<>
+					<Button
+						className="dashboard-email-verification-resend"
+						variant="primary"
+						__next40pxDefaultSize
+						onClick={ resendEmail }
+						disabled={ isEmailWritePending || isSendPending || isAwaitingResend }
+						isBusy={ isResendPending }
+					>
+						{ isAwaitingResend
+							? sprintf(
+									/* translators: %s is a countdown to when the email can be resent, e.g. 4:59 */
+									__( 'Resend email (%s)' ),
+									formatCooldown( secondsUntilResend )
+								)
+							: __( 'Resend email' ) }
+					</Button>
+					{ isEmailChangePending && (
 						<Button
-							className="dashboard-email-verification-resend"
-							variant="primary"
+							variant="secondary"
 							__next40pxDefaultSize
-							onClick={ resendEmail }
-							disabled={ isEmailWritePending || isSendPending || isAwaitingResend }
-							isBusy={ isResendPending }
+							onClick={ () => cancelPendingEmail() }
+							disabled={ isEmailWritePending }
+							isBusy={ isCancelPending }
 						>
-							{ isAwaitingResend
-								? sprintf(
-										/* translators: %s is a countdown to when the email can be resent, e.g. 4:59 */
-										__( 'Resend email (%s)' ),
-										formatCooldown( secondsUntilResend )
-								  )
-								: __( 'Resend email' ) }
+							{ __( 'Cancel the pending email change' ) }
 						</Button>
-						{ isEmailChangePending && (
-							<Button
-								variant="secondary"
-								__next40pxDefaultSize
-								onClick={ () => cancelPendingEmail() }
-								disabled={ isEmailWritePending }
-								isBusy={ isCancelPending }
-							>
-								{ __( 'Cancel the pending email change' ) }
-							</Button>
-						) }
-					</>
-				}
-			>
-				{ createInterpolateElement(
-					sprintf(
-						/* translators: %s is the email address awaiting verification */
-						__(
-							'Check your inbox at <strong>%s</strong> for the confirmation email, or click "Resend email" to get a new one.'
-						),
-						unverifiedEmail
+					) }
+				</>
+			}
+		>
+			{ createInterpolateElement(
+				sprintf(
+					/* translators: %s is the email address awaiting verification */
+					__(
+						'Check your inbox at <strong>%s</strong> for the confirmation email, or click "Resend email" to get a new one.'
 					),
-					{
-						strong: <strong />,
-					}
-				) }
-			</Notice>
-		</>
+					unverifiedEmail
+				),
+				{
+					strong: <strong />,
+				}
+			) }
+		</Notice>
 	);
 }

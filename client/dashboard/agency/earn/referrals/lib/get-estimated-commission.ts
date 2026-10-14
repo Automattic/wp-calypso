@@ -22,8 +22,8 @@ export const getEstimatedCommission = (
 				continue;
 			}
 			acc += usePreviousQuarter
-				? purchase.commissions.estimated_commission_previous_quarter ?? 0
-				: purchase.commissions.estimated_commission_current_quarter ?? 0;
+				? ( purchase.commissions.estimated_commission_previous_quarter ?? 0 )
+				: ( purchase.commissions.estimated_commission_current_quarter ?? 0 );
 		}
 		return acc;
 	}, 0 );

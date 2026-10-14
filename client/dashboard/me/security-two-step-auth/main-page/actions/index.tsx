@@ -48,7 +48,7 @@ export default function TwoStepAuthActions() {
 						two_step_enhanced_security_forced
 							? __(
 									'Two-step authentication is currently required by your organization. To make changes, please contact your administrator.'
-							  )
+								)
 							: undefined
 					}
 					actions={

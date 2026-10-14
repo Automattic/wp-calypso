@@ -5,7 +5,10 @@ import { SearchNotice } from '..';
 import { buildAvailability } from '../../../test-helpers/factories/availability';
 import { buildSuggestion } from '../../../test-helpers/factories/suggestions';
 import { mockGetAvailabilityQuery } from '../../../test-helpers/queries/availability';
-import { mockGetSuggestionsQuery } from '../../../test-helpers/queries/suggestions';
+import {
+	mockGetSuggestionsQuery,
+	mockGetSuggestionsQueryEmptyResults,
+} from '../../../test-helpers/queries/suggestions';
 import { TestDomainSearchWithSuggestions } from '../../../test-helpers/renderer';
 
 const AVAILABLE_DOMAIN_STATUSES = [
@@ -65,6 +68,44 @@ describe( 'SearchNotice', () => {
 		const [ notice ] = screen.getAllByText( 'Failed to fetch the suggestions' );
 
 		expect( notice ).toBeInTheDocument();
+	} );
+
+	it( 'renders the error notice from the suggestion query for a bare-term query when it returns empty results', async () => {
+		mockGetSuggestionsQueryEmptyResults( { params: { query: 'foo' } } );
+
+		render(
+			<TestDomainSearchWithSuggestions query="foo">
+				<SearchNotice />
+			</TestDomainSearchWithSuggestions>
+		);
+
+		expect( await screen.findByText( 'Error notice' ) ).toBeInTheDocument();
+
+		const [ notice ] = screen.getAllByText( 'No available domains for that search.' );
+
+		expect( notice ).toBeInTheDocument();
+	} );
+
+	it( 'does not render the error notice from the suggestion query if the queried FQDN is available', async () => {
+		mockGetSuggestionsQueryEmptyResults( { params: { query: 'foo.live' } } );
+		mockGetAvailabilityQuery( {
+			params: { domainName: 'foo.live' },
+			availability: buildAvailability( {
+				domain_name: 'foo.live',
+				tld: 'live',
+				status: DomainAvailabilityStatus.AVAILABLE,
+			} ),
+		} );
+
+		const { container } = render(
+			<TestDomainSearchWithSuggestions query="foo.live">
+				<SearchNotice />
+			</TestDomainSearchWithSuggestions>
+		);
+
+		await waitForElementToBeRemoved( () => screen.getByText( 'LOADING_TEST_CONTENT' ) );
+
+		expect( container ).toBeEmptyDOMElement();
 	} );
 
 	it( 'renders the error notice from the availability query if that query failed', async () => {
@@ -1147,6 +1188,149 @@ describe( 'SearchNotice', () => {
 				).not.toBeInTheDocument();
 			}
 		);
+	} );
+
+	describe( 'subdomain with an unavailable root domain', () => {
+		it( 'renders the ownership message when the root is mapped by another account', async () => {
+			// A mapped root comes back with the searched subdomain in domain_name.
+			mockNoSuggestionsAndAvailability(
+				'cms.example.com',
+				buildAvailability( {
+					domain_name: 'cms.example.com',
+					tld: 'com',
+					status: DomainAvailabilityStatus.MAPPED,
+					root_domain_owned_by_other_user: true,
+				} )
+			);
+
+			render(
+				<TestDomainSearchWithSuggestions query="cms.example.com">
+					<SearchNotice />
+				</TestDomainSearchWithSuggestions>
+			);
+
+			expect( await screen.findByText( 'Error notice' ) ).toBeInTheDocument();
+
+			expect( screen.getAllByText( /owned by another account/ )[ 0 ] ).toBeInTheDocument();
+			expect( screen.getAllByText( /only its owner can add/ )[ 0 ] ).toBeInTheDocument();
+
+			expect( screen.getAllByText( 'example.com' )[ 0 ] ).toBeInTheDocument();
+			expect( screen.getAllByText( 'cms.example.com' )[ 0 ] ).toBeInTheDocument();
+
+			expect(
+				screen.queryByText( 'This domain is already connected to a WordPress.com site.' )
+			).not.toBeInTheDocument();
+		} );
+
+		it( 'renders the ownership message when the root is registered by another account', async () => {
+			// A registered root comes back with the root itself in domain_name.
+			mockNoSuggestionsAndAvailability(
+				'cms.example.com',
+				buildAvailability( {
+					domain_name: 'example.com',
+					tld: 'com',
+					status: DomainAvailabilityStatus.REGISTERED,
+					root_domain_owned_by_other_user: true,
+				} )
+			);
+
+			render(
+				<TestDomainSearchWithSuggestions query="cms.example.com">
+					<SearchNotice />
+				</TestDomainSearchWithSuggestions>
+			);
+
+			expect( await screen.findByText( 'Error notice' ) ).toBeInTheDocument();
+
+			expect( screen.getAllByText( /owned by another account/ )[ 0 ] ).toBeInTheDocument();
+
+			expect(
+				screen.queryByText( 'This domain is already connected to a WordPress.com site.' )
+			).not.toBeInTheDocument();
+		} );
+
+		it( 'does not show the ownership message when the root is not owned by another account', async () => {
+			// The user's own already-mapped subdomain of an externally-registered root: the
+			// backend reports root_domain_owned_by_other_user = false, so no ownership notice.
+			mockNoSuggestionsAndAvailability(
+				'cms.example.com',
+				buildAvailability( {
+					domain_name: 'cms.example.com',
+					tld: 'com',
+					status: DomainAvailabilityStatus.MAPPED,
+					mappable: DomainAvailabilityStatus.FORBIDDEN,
+					root_domain_owned_by_other_user: false,
+				} )
+			);
+
+			const { container } = render(
+				<TestDomainSearchWithSuggestions query="cms.example.com">
+					<SearchNotice />
+				</TestDomainSearchWithSuggestions>
+			);
+
+			await waitForElementToBeRemoved( () => screen.getByText( 'LOADING_TEST_CONTENT' ) );
+
+			expect( container ).toBeEmptyDOMElement();
+		} );
+
+		it( "shows the generic already-connected message, not the breakdown, for the user's own already-mapped subdomain", async () => {
+			// A subdomain the current user has already mapped comes back (after the
+			// backend rewrite) as status=mappable, mappable=mapped_domain. It must fall
+			// through to the generic "already connected" message, not the breakdown that
+			// would wrongly blame another account.
+			mockNoSuggestionsAndAvailability(
+				'cms.example.com',
+				buildAvailability( {
+					domain_name: 'example.com',
+					tld: 'com',
+					status: DomainAvailabilityStatus.MAPPABLE,
+					mappable: DomainAvailabilityStatus.MAPPED,
+				} )
+			);
+
+			render(
+				<TestDomainSearchWithSuggestions query="cms.example.com">
+					<SearchNotice />
+				</TestDomainSearchWithSuggestions>
+			);
+
+			expect( await screen.findByText( 'Error notice' ) ).toBeInTheDocument();
+
+			expect(
+				screen.getAllByText( 'This domain is already connected to a WordPress.com site.' )[ 0 ]
+			).toBeInTheDocument();
+
+			expect( screen.queryByText( /owned by another account/ ) ).not.toBeInTheDocument();
+		} );
+
+		it( 'still renders the generic message for a mapped root domain', async () => {
+			mockNoSuggestionsAndAvailability(
+				'example.com',
+				buildAvailability( {
+					domain_name: 'example.com',
+					tld: 'com',
+					status: DomainAvailabilityStatus.MAPPED,
+					mappable: DomainAvailabilityStatus.MAPPED,
+				} )
+			);
+
+			render(
+				<TestDomainSearchWithSuggestions query="example.com">
+					<SearchNotice />
+				</TestDomainSearchWithSuggestions>
+			);
+
+			expect( await screen.findByText( 'Error notice' ) ).toBeInTheDocument();
+
+			const [ notice ] = screen.getAllByText(
+				'This domain is already connected to a WordPress.com site.'
+			);
+
+			expect( notice ).toBeInTheDocument();
+
+			expect( screen.queryByText( /owned by another account/ ) ).not.toBeInTheDocument();
+		} );
 	} );
 
 	describe( 'notice hidden scenarios', () => {

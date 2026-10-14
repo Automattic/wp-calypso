@@ -1,5 +1,6 @@
 @import "@wordpress/base-styles/variables";
 @import "@wordpress/base-styles/mixins";
+@import "@automattic/typography/styles/variables";
 @import "calypso/assets/stylesheets/shared/mixins/breakpoints";
 
 // custom properties for a8c-for-agencies
@@ -7,6 +8,9 @@
 	// border-radius
 	--a4a-corners-sharp: 0;
 	--a4a-corners-soft: 4px;
+
+	// Match the classic .tooltip.popover layer so wp-ui tooltips render above the sidebar.
+	--wp-ui-tooltip-z-index: 100000;
 
 	--color-surface-backdrop: #021a23;
 	--color-overview-header-background: #05374a;
@@ -444,6 +448,13 @@
 		border: none;
 		background: var(--color-surface);
 	}
+}
+
+// A4A checkout finishes on the wordpress.com pending page, which ships its own 24px rule for this title. That
+// stylesheet belongs to the checkout section and is never loaded here, so without this the title would jump from
+// 32px to 24px as the browser crosses over.
+.theme-a8c-for-agencies .checkout__pending-content .wpcom__loading-title {
+	font-size: $font-title-medium;
 }
 
 // Universal Text Styles

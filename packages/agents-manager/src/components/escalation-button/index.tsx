@@ -1,12 +1,13 @@
 import { loadAllMessagesFromServer, type UseAgentChatConfig } from '@automattic/agenttic-client';
 import { SummaryButton, TimeSince } from '@automattic/components';
-import { useGetZendeskConversations } from '@automattic/zendesk-client';
 import { createInterpolateElement, useMemo, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useNavigate } from 'react-router-dom';
 import { API_BASE_URL } from '../../constants';
 import { useAgentsManagerContext } from '../../contexts';
+import useWooZendeskConversations from '../../hooks/use-woo-zendesk-conversations';
 import { getConversationBotId } from '../../utils/conversation-bot-id';
+import { isWooAiProvider } from '../../utils/is-woo-ai-provider';
 import type { ZendeskConversation } from '../../types';
 import './style.scss';
 
@@ -107,24 +108,24 @@ async function getAiChatIdFromSession(
 }
 
 export function EscalationButton( { messageId }: { messageId: string } ) {
-	const { agentConfig, getActiveSessionId, site, zendeskSmoochIntegrationKey } =
-		useAgentsManagerContext();
+	const { agentConfig, getTabSessionId } = useAgentsManagerContext();
 	const navigate = useNavigate();
-	const activeSessionId = getActiveSessionId();
+	const tabSessionId = getTabSessionId();
 	const [ isStartingNewConversation, setIsStartingNewConversation ] = useState( false );
+	const isWooAi = isWooAiProvider();
 
-	const { conversations, isLoading } = useGetZendeskConversations(
-		!! activeSessionId,
-		zendeskSmoochIntegrationKey,
-		site?.ID
-	);
+	const { conversations, isLoading } = useWooZendeskConversations( isWooAi && !! tabSessionId );
 	const existingConversation = useMemo(
-		() => findConversationByChatSessionId( conversations, activeSessionId ),
-		[ conversations, activeSessionId ]
+		() => findConversationByChatSessionId( conversations, tabSessionId ),
+		[ conversations, tabSessionId ]
 	);
 	const existingConversationStartedAt = existingConversation
 		? getConversationStartedAt( existingConversation )
 		: undefined;
+
+	if ( ! isWooAi ) {
+		return null;
+	}
 
 	return (
 		<SummaryButton
@@ -139,7 +140,7 @@ export function EscalationButton( { messageId }: { messageId: string } ) {
 			}
 			disabled={ isLoading || isStartingNewConversation }
 			onClick={ async () => {
-				const currentChatSessionId = getActiveSessionId();
+				const currentChatSessionId = getTabSessionId();
 				const currentExistingConversation = findConversationByChatSessionId(
 					conversations,
 					currentChatSessionId

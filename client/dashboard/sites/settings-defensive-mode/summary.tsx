@@ -32,7 +32,7 @@ export default function DefensiveModeSettingsSummary( {
 			return [
 				{
 					text: __( 'Enabled' ),
-					intent: 'info' as const,
+					intent: 'informational' as const,
 				},
 			];
 		}

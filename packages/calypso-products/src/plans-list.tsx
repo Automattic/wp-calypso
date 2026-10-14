@@ -452,7 +452,6 @@ import {
 	FEATURE_SENSEI_JETPACK,
 	WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
 	FEATURE_PREMIUM_THEMES,
-	WPCOM_FEATURES_PREMIUM_THEMES_LIMITED,
 	WPCOM_FEATURES_BACKUPS_RESTORE,
 	FEATURE_REAL_TIME_SECURITY_SCANS,
 	FEATURE_TIERED_STORAGE_PLANS_AVAILABLE,
@@ -562,11 +561,17 @@ function compact( elements: ( string | false | undefined | null )[] ): string[] 
 }
 
 const WPComGetBillingTimeframe = (): TranslateResult =>
-	i18n.translate( 'per month, billed annually' );
+	i18n.translate( 'per month, billed yearly, excl. taxes', {
+		comment: 'Excl. Taxes is short for excluding taxes',
+	} );
 const WPComGetBiennialBillingTimeframe = (): TranslateResult =>
-	i18n.translate( '/month, billed every two years' );
+	i18n.translate( '/month, billed every two years, excl. taxes', {
+		comment: 'Excl. Taxes is short for excluding taxes',
+	} );
 const WPComGetTriennialBillingTimeframe = (): TranslateResult =>
-	i18n.translate( '/month, billed every three years' );
+	i18n.translate( '/month, billed every three years, excl. taxes', {
+		comment: 'Excl. Taxes is short for excluding taxes',
+	} );
 
 const getBiAnnualTimeframe = (): BillingTerm => ( {
 	term: TERM_BIENNIALLY,
@@ -580,7 +585,10 @@ const getAnnualTimeframe = (): BillingTerm => ( {
 
 const getMonthlyTimeframe = (): BillingTerm => ( {
 	term: TERM_MONTHLY,
-	getBillingTimeFrame: () => translate( 'per month, billed monthly' ),
+	getBillingTimeFrame: () =>
+		translate( 'per month, billed monthly, excl. taxes', {
+			comment: 'Excl. Taxes is short for excluding taxes',
+		} ),
 } );
 const getJetpackCommonPlanDetails = () => ( {
 	getRecommendedFor: () => [
@@ -876,7 +884,7 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 	getSignupFeatures: () => [
 		FEATURE_FREE_DOMAIN,
 		FEATURE_FAST_SUPPORT_FROM_EXPERTS,
-		FEATURE_FREE_THEMES,
+		WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
 		FEATURE_STYLE_CUSTOMIZATION,
 	],
 	getBlogSignupFeatures: () => [
@@ -902,7 +910,7 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_UNLIMITED_ENTITIES,
 		FEATURE_CUSTOM_DOMAIN,
 		FEATURE_AD_FREE_EXPERIENCE,
-		WPCOM_FEATURES_PREMIUM_THEMES_LIMITED,
+		WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
 		FEATURE_SUPPORT_FROM_EXPERTS,
 		FEATURE_STATS_BASIC_20250206,
 		FEATURE_UPLOAD_PLUGINS,
@@ -916,7 +924,7 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_CUSTOM_DOMAIN,
 		FEATURE_AD_FREE_EXPERIENCE,
 		FEATURE_GUIDED_WEBSITE_BUILDER_LIMITED,
-		WPCOM_FEATURES_PREMIUM_THEMES_LIMITED,
+		WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
 		FEATURE_SUPPORT_FROM_EXPERTS,
 		FEATURE_UPLOAD_PLUGINS,
 	],
@@ -960,7 +968,7 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 	getStorageFeature: () => FEATURE_6GB_STORAGE,
 	getPlanComparisonFeatureLabels: ( { isExperimentVariant } = {} ) => {
 		const baseFeatures = {
-			[ FEATURE_PREMIUM_THEMES ]: i18n.translate( 'Dozens of premium themes' ),
+			[ FEATURE_PREMIUM_THEMES ]: i18n.translate( 'All premium themes' ),
 			[ FEATURE_SHARES_SOCIAL_MEDIA_JP ]: i18n.translate( '%d shares per month', { args: [ 30 ] } ),
 			[ FEATURE_COMMISSION_FEE_STANDARD_FEATURES ]: formatNumber( 0.08, {
 				numberFormatOptions: { style: 'percent' },
@@ -979,7 +987,7 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 			? {
 					...baseFeatures,
 					[ FEATURE_STATS_JP ]: i18n.translate( 'Full history, filters & peak times' ),
-			  }
+				}
 			: baseFeatures;
 	},
 
@@ -1025,6 +1033,7 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_AUDIO_UPLOADS,
 		WPCOM_FEATURES_FULL_ACTIVITY_LOG,
 		WPCOM_FEATURES_BIG_SKY,
+		WPCOM_FEATURES_LOGS,
 	],
 	getInferiorFeatures: () => [],
 	getCancellationFeatures: () => [
@@ -1267,7 +1276,7 @@ const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 					[ FEATURE_STATS_JP ]: i18n.translate(
 						'Advanced insights, including UTM & device analytics'
 					),
-			  }
+				}
 			: baseFeatures;
 	},
 	getHostingSignupFeatures: ( term ) => () =>
@@ -1816,7 +1825,7 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 					[ FEATURE_STATS_JP ]: i18n.translate(
 						'Advanced insights, including UTM & device analytics'
 					),
-			  }
+				}
 			: baseFeatures;
 	},
 	get2023PlanComparisonJetpackFeatureOverride: () => {
@@ -1844,6 +1853,7 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 		WPCOM_FEATURES_ANTISPAM,
 		WPCOM_FEATURES_FULL_ACTIVITY_LOG,
 		WPCOM_FEATURES_BIG_SKY,
+		WPCOM_FEATURES_LOGS,
 	],
 	getInferiorFeatures: () => [],
 	getCancellationFeatures: () => [
@@ -2144,7 +2154,7 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 					[ FEATURE_STATS_JP ]: i18n.translate(
 						'Advanced insights, including UTM & device analytics'
 					),
-			  }
+				}
 			: featureLabels;
 	},
 
@@ -2518,12 +2528,12 @@ const getJetpackBusinessDetails = (): IncompleteJetpackPlan => ( {
 			? i18n.translate(
 					'{{strong}}Best for organizations:{{/strong}} The most powerful WordPress sites.',
 					plansDescriptionHeadingComponent
-			  )
+				)
 			: i18n.translate(
 					'{{strong}}Best for organizations:{{/strong}} The most powerful WordPress sites: real-time backups ' +
 						'and premium themes.',
 					plansDescriptionHeadingComponent
-			  ),
+				),
 	getTagline: () => i18n.translate( 'You have the full suite of security and performance tools.' ),
 	getPlanCardFeatures: () => [
 		FEATURE_BACKUP_REALTIME_V2,
@@ -3940,7 +3950,7 @@ PLANS_LIST[ PLAN_WPCOM_STARTER ] = {
 	getStoreSlug: () => PLAN_WPCOM_STARTER,
 	getDescription: () =>
 		i18n.translate( 'Start with a custom domain name, simple payments, and extra storage.' ),
-	getBillingTimeFrame: () => i18n.translate( 'per month, billed yearly' ),
+	getBillingTimeFrame: WPComGetBillingTimeframe,
 	getPlanCompareFeatures: () => [
 		FEATURE_UNLIMITED_TRAFFIC,
 		FEATURE_MANAGED_HOSTING,
@@ -3972,7 +3982,7 @@ PLANS_LIST[ PLAN_WPCOM_PRO ] = {
 	term: TERM_ANNUALLY,
 	getProductId: () => 1032,
 	getStoreSlug: () => PLAN_WPCOM_PRO,
-	getBillingTimeFrame: () => i18n.translate( 'per month, billed yearly' ),
+	getBillingTimeFrame: WPComGetBillingTimeframe,
 };
 
 PLANS_LIST[ PLAN_WPCOM_PRO_MONTHLY ] = {

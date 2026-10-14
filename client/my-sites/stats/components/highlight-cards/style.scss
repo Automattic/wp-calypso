@@ -272,6 +272,56 @@ $highlight-card-tooltip-font: Inter, $sans !default;
 				}
 			}
 
+			// Actions listed under the module toggles
+			.page-modules-settings-menu {
+				margin-block-start: 14px;
+				padding-block-start: 14px;
+				border-block-start: 1px solid var(--studio-gray-5);
+			}
+
+			.page-modules-settings-menu-item {
+				display: flex;
+				align-items: flex-start;
+				width: 100%;
+				padding: 0;
+				border: 0;
+				background: none;
+				cursor: pointer;
+				color: var(--color-link);
+				font: inherit;
+				letter-spacing: inherit;
+				text-align: start;
+
+				&:not(:first-child) {
+					margin-block-start: 12px;
+				}
+
+				&:hover,
+				&:focus {
+					color: var(--color-link-dark);
+				}
+
+				svg {
+					flex-shrink: 0;
+					margin-inline-end: 14px;
+					fill: currentColor;
+				}
+
+				&__text {
+					display: flex;
+					flex-direction: column;
+				}
+
+				&__description {
+					margin-block-start: 2px;
+					color: var(--studio-gray-50);
+					font-size: $font-body-extra-small;
+					font-weight: 400;
+					line-height: 16px;
+					letter-spacing: normal;
+				}
+			}
+
 			// Highlights settings controls
 			& > button {
 				width: 100%;

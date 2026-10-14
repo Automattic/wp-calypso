@@ -1,4 +1,4 @@
-import type { Badge } from '@automattic/ui';
+import type { Badge } from '@wordpress/ui';
 
 export type Density = 'low' | 'medium-low' | 'medium';
 
@@ -14,7 +14,7 @@ export type SummaryButtonBadgeProps = {
 	text: string;
 	/**
 	 * Optional property to specify the intent of the badge.
-	 * @default 'default'
+	 * @default 'draft'
 	 */
 	intent?: React.ComponentProps< typeof Badge >[ 'intent' ];
 };

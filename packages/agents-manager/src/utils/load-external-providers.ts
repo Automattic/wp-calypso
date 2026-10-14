@@ -12,15 +12,23 @@
  */
 
 import { getAgentManager, UIMessage } from '@automattic/agenttic-client';
-import { amToolProvider, getAmCheckpointContext } from '../abilities';
-import { findAbilityByName } from '../abilities/ability-name';
-import { getAgentsManagerInlineData } from './get-agents-manager-inline-data';
-import { isReaderChatAgent } from './is-reader-chat-agent';
 import {
-	getProviderCheckpointObservedAt,
-	getProviderCheckpointRecords,
-	stampProviderCheckpointObservations,
-} from './provider-checkpoints';
+	amToolProvider,
+	getAmCheckpointActions,
+	getAmCheckpointContext,
+	getAmPageContentMarkup,
+	getAmPageStructure,
+	preloadAmEditorContentContext,
+} from '../abilities';
+import { findAbilityByName } from '../abilities/ability-name';
+import { handlePageDesignTaskUpdate } from '../abilities/stream-page-design/stream';
+import { withAbilityCompletionBroadcast } from './ability-completion-broadcast';
+import { bigSkyPageContextProvider, isBigSkyEnabled } from './big-sky-page-context';
+import { withCanvasBinding, withCanvasGuard } from './canvas-guard';
+import { getAgentsManagerInlineData } from './get-agents-manager-inline-data';
+import { isEditorPage } from './is-editor-page';
+import { isReaderChatAgent } from './is-reader-chat-agent';
+import { setLoadedProviderIds } from './loaded-provider-ids';
 import { useReaderFollowupSuggestions } from './reader-followup-hook';
 import type {
 	ToolProvider,
@@ -35,22 +43,6 @@ import type { MarkdownComponents, MarkdownExtensions } from '@automattic/agentti
 import type { ReactNode } from 'react';
 
 /**
- * Hook that resumes the conversation after a full page navigation
- * (e.g., `wp-admin/navigate`) by sending a tool result.
- */
-export type NavigationContinuationHook = ( props: {
-	isProcessing: boolean;
-	sendToolResult: ( params: {
-		toolCallId: string;
-		toolId: string;
-		message: string;
-		sessionId: string;
-	} ) => Promise< void >;
-	sessionId: string;
-	pathname: string;
-} ) => void;
-
-/**
  * Abilities setup hook type - for registering hook-based abilities that utilize React
  * context. Invoked after custom actions registration with Big Sky's AI store. Receives
  * action handlers that will be used for agent and chat interaction.
@@ -62,7 +54,6 @@ export type AbilitiesSetupHook = ( actions: {
 	getAgentManager: typeof getAgentManager;
 	isProcessing?: boolean;
 	setIsThinking: ( isThinking: boolean ) => void;
-	deleteMarkedMessages: ( messages: Record< 'id', string >[] ) => void;
 	getSessionId: () => string | undefined;
 	setIsBuildingSite: ( isBuildingSite: boolean ) => void;
 	setThinkingMessage: ( message: string | null ) => void;
@@ -72,10 +63,7 @@ export type AbilitiesSetupHook = ( actions: {
  * Suggestions hook type - for providing dynamic suggestions based on context
  * (e.g., selected block in editor). Returns an array of suggestions.
  */
-export type UseSuggestionsHook = (
-	maxSuggestions?: number,
-	options?: { suggestionsVisible?: boolean }
-) => {
+export type UseSuggestionsHook = ( maxSuggestions?: number ) => {
 	suggestions: Suggestion[];
 	/** Whether contextual suggestions replace, rather than extend, the empty-view suggestions. */
 	replaceEmptyViewSuggestions?: boolean;
@@ -87,25 +75,11 @@ export type SiteBuildUtils = {
 };
 
 /**
- * Supported chat component types for agent messages.
- */
-type ChatComponentType =
-	// The picker types resolve to AM's own components first; kept for
-	// provider back-compat until Big Sky drops its copies.
-	| 'button-picker'
-	| 'font-picker'
-	| 'color-picker'
-	| 'chat-suggestions'
-	| 'open-help-center-button'
-	| 'title-picker'
-	| 'seo-title-picker';
-
-/**
  * Get a chat component by type for rendering in agent messages.
  * @param type - The type of chat component to get
  * @returns The React component for the specified type, or `null` if unknown
  */
-export type GetChatComponent = ( type: ChatComponentType ) => React.ComponentType< unknown > | null;
+export type GetChatComponent = ( type: string ) => React.ComponentType< unknown > | null;
 
 /**
  * Rewrite the visible transcript.
@@ -130,6 +104,8 @@ export type UseCheckpointReturn = {
 	setCheckpoint: ( id: string, keys?: string[], metadata?: Record< string, unknown > ) => void;
 	addCheckpointKeys: ( id: string, keys: string[] ) => void;
 	restoreCheckpoint: ( id: string ) => Promise< void >;
+	canSwapCheckpoint?: ( id: string ) => boolean | undefined;
+	swapCheckpoint?: ( id: string ) => Promise< void >;
 	addNewPageToCheckpoint: ( pageId: string ) => void;
 	addPageRenameToCheckpoint: ( pageId: string, oldTitle: string, newTitle: string ) => void;
 	addPageRemovalToCheckpoint: (
@@ -137,7 +113,6 @@ export type UseCheckpointReturn = {
 		pageTitle: string,
 		options?: { shouldRestoreNavigation?: boolean }
 	) => void;
-	addNavigationToCheckpoint?: ( id: string, navigationId: string ) => void;
 	getLatestUserMessageId: () => string | undefined;
 	clearCheckpoint: ( userMessageId: string ) => void;
 	hasCheckpoint: ( id: string ) => boolean;
@@ -193,7 +168,6 @@ export interface LoadedProviders {
 	suppressEmptyViewDefaults?: boolean;
 	markdownComponents?: MarkdownComponents;
 	markdownExtensions?: MarkdownExtensions;
-	useNavigationContinuation?: NavigationContinuationHook;
 	useAbilitiesSetup?: AbilitiesSetupHook;
 	useSuggestions?: UseSuggestionsHook;
 	getChatComponent?: GetChatComponent;
@@ -202,10 +176,7 @@ export interface LoadedProviders {
 	useCheckpoint?: UseCheckpointHook;
 	/**
 	 * Streamed task-update callback, forwarded to useAgentChat's `onTaskUpdate`.
-	 * Lets a provider react to streamed tool-argument deltas as they arrive — e.g.
-	 * paint streamed page-design block markup into the editor. First-write-wins
-	 * across providers (a singleton: the delta stream must be processed once, not
-	 * fanned out to every provider).
+	 * On editor pages it paints the streamed page-design markup as it arrives.
 	 */
 	onTaskUpdate?: ( update: unknown ) => void | Promise< void >;
 	capabilities?: ProviderCapabilities;
@@ -227,10 +198,10 @@ export function mergeUseSuggestionsHooks(
 		return hooks[ 0 ];
 	}
 
-	return ( maxSuggestions?: number, options?: { suggestionsVisible?: boolean } ) => {
+	return ( maxSuggestions?: number ) => {
 		const combined: Suggestion[] = [];
 		const seenIds = new Set< string >();
-		const results = hooks.map( ( hook ) => hook( maxSuggestions, options ) );
+		const results = hooks.map( ( hook ) => hook( maxSuggestions ) );
 		const replaceEmptyViewSuggestions = results.some(
 			( result ) => result?.replaceEmptyViewSuggestions === true
 		);
@@ -283,6 +254,14 @@ export function mergeUseCheckpointHooks(
 				instances.some( ( instance ) => instance?.hasCheckpoint?.( id ) ),
 			restoreCheckpoint: async ( id: string ) => {
 				await findOwner( id )?.restoreCheckpoint?.( id );
+			},
+			canSwapCheckpoint: ( id: string ) => findOwner( id )?.canSwapCheckpoint?.( id ),
+			swapCheckpoint: async ( id: string ) => {
+				const owner = findOwner( id );
+				if ( owner?.canSwapCheckpoint?.( id ) !== true || ! owner.swapCheckpoint ) {
+					throw new Error( `Checkpoint "${ id }" does not support swapping.` );
+				}
+				await owner.swapCheckpoint( id );
 			},
 			clearCheckpoint: ( id: string ) => {
 				for ( const instance of instances ) {
@@ -398,57 +377,77 @@ function getFallbackClientContext(): ClientContextType {
 	};
 }
 
-// TODO (ability-migration): Remove the merge once Big Sky deletes its
-// checkpoint context feed — AM's list then stands alone.
 /**
- * Appends AM's checkpoints to the provider-advertised `availableCheckpoints`,
- * so the agent sees every restorable id — the provider's (restored through
- * the provider-checkpoints bridge) and AM's own.
+ * Puts AM's checkpoint store ahead of the providers' for the chat's Undo: an
+ * id AM holds restores and swaps there, any other passes through, and a clear
+ * reaches both. The chat calls nothing else of the hook, so the rest of its
+ * surface may be absent. Not merged into `mergeUseCheckpointHooks`, whose
+ * `setCheckpoint` drops the metadata AM's records carry.
  */
-function withAmCheckpoints(
+function withAmCheckpointActions(
+	useCheckpoint: UseCheckpointHook | undefined
+): UseCheckpointHook {
+	return () => {
+		const provider = useCheckpoint?.();
+		const am = getAmCheckpointActions();
+
+		return {
+			...provider,
+			hasCheckpoint: ( id ) => !! am?.hasCheckpoint( id ) || !! provider?.hasCheckpoint( id ),
+			restoreCheckpoint: async ( id ) => {
+				if ( am?.hasCheckpoint( id ) ) {
+					await am.restoreCheckpoint( id );
+				} else {
+					await provider?.restoreCheckpoint( id );
+				}
+			},
+			canSwapCheckpoint: ( id ) =>
+				am?.hasCheckpoint( id ) ? am.canSwapCheckpoint( id ) : provider?.canSwapCheckpoint?.( id ),
+			swapCheckpoint: async ( id ) => {
+				if ( am?.hasCheckpoint( id ) ) {
+					await am.swapCheckpoint( id );
+				} else if ( provider?.swapCheckpoint ) {
+					await provider.swapCheckpoint( id );
+				} else {
+					throw new Error( `Checkpoint "${ id }" does not support swapping.` );
+				}
+			},
+			clearCheckpoint: ( id ) => {
+				am?.clearCheckpoint( id );
+				provider?.clearCheckpoint( id );
+			},
+		} as UseCheckpointReturn;
+	};
+}
+
+// The Jetpack AI sidebar describes the post editor itself, and its tools take
+// the editor's clientIds as they are.
+const JETPACK_AI_SIDEBAR_ENVIRONMENT = 'gutenberg';
+
+/**
+ * Adds what AM knows of the page: `currentPageContent` and
+ * `selectedBlockClientId` under the short ids AM's abilities resolve,
+ * `currentPageContentMarkup` for the backend's page-design agent, and AM's
+ * `availableCheckpoints` while it holds any.
+ */
+function withPageContext(
 	contextProvider: ContextProvider | undefined
 ): ContextProvider | undefined {
 	if ( ! contextProvider ) {
-		return undefined;
+		return contextProvider;
 	}
 
 	return {
 		getClientContext: () => {
 			const context = contextProvider.getClientContext();
-			const amCheckpoints = getAmCheckpointContext();
-			if ( ! amCheckpoints.length ) {
-				return context;
-			}
-
-			const providerCheckpoints: { checkpointId?: string }[] = Array.isArray(
-				context.availableCheckpoints
-			)
-				? context.availableCheckpoints
-				: [];
-
-			// Order the merged list chronologically: AM records carry `createdAt`,
-			// provider records sort by when the loader first saw them (the stores
-			// share no clock). The agent picks "the most recent" by position.
-			stampProviderCheckpointObservations(
-				providerCheckpoints
-					.map( ( { checkpointId } ) => checkpointId )
-					.filter( ( id ): id is string => !! id )
-			);
-			const merged = [
-				...providerCheckpoints.map( ( item ) => ( {
-					item,
-					at: getProviderCheckpointObservedAt( item.checkpointId ?? '' ),
-				} ) ),
-				...amCheckpoints.map( ( item ) => ( { item, at: item.createdAt } ) ),
-			];
-			merged.sort( ( a, b ) => a.at - b.at );
+			const currentPageContentMarkup = getAmPageContentMarkup();
+			const availableCheckpoints = getAmCheckpointContext();
 
 			return {
 				...context,
-				availableCheckpoints: merged.map( ( { item }, index ) => ( {
-					...item,
-					checkpointIndex: index,
-				} ) ),
+				...( currentPageContentMarkup && { currentPageContentMarkup } ),
+				...( context.environment !== JETPACK_AI_SIDEBAR_ENVIRONMENT && getAmPageStructure() ),
+				...( availableCheckpoints.length && { availableCheckpoints } ),
 			};
 		},
 	};
@@ -574,11 +573,12 @@ export function mergeMarkdownExtensionsFromProviders(
  * Both shapes feed the same downstream merge: any of `toolProvider`,
  * `contextProvider`, `getChatComponent`, `useSuggestions`, etc. are picked
  * up from each entry and merged across all entries.
- * @returns Promise resolving to merged providers or empty object if none found.
+ * @returns Promise resolving to merged providers with default markdown extensions.
  */
 export async function loadExternalProviders(): Promise< LoadedProviders > {
 	const rawAgentProviders = getAgentsManagerInlineData()?.agentProviders;
 	const agentProviders = Array.isArray( rawAgentProviders ) ? rawAgentProviders : [];
+	const defaultMarkdownExtensions: MarkdownExtensions = { gfm: { enabled: true } };
 
 	// Only the public reader-chat entry registers the follow-up chip globals
 	// (`window.__jetpackReaderFollowupChips` / `reader-chat-followups-updated`).
@@ -589,30 +589,42 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 	if ( registerReaderFollowups ) {
 		// Reader Chat runs on the public frontend and should not inherit editor providers
 		// such as the Jetpack AI sidebar.
-		return { useSuggestions: useReaderFollowupSuggestions };
+		setLoadedProviderIds( [] );
+		return {
+			markdownExtensions: defaultMarkdownExtensions,
+			useSuggestions: useReaderFollowupSuggestions,
+		};
 	}
 
-	if ( agentProviders.length === 0 ) {
-		return {};
+	// A Big Sky site needs AM's abilities and page context even with no provider.
+	const isBigSkySite = isBigSkyEnabled();
+
+	if ( agentProviders.length === 0 && ! isBigSkySite ) {
+		setLoadedProviderIds( [] );
+		return { markdownExtensions: defaultMarkdownExtensions };
+	}
+
+	if ( isBigSkySite ) {
+		void preloadAmEditorContentContext();
 	}
 
 	let mergedToolProvider: ToolProvider | undefined;
 	let mergedGetEmptyViewSuggestions: ( () => Suggestion[] ) | undefined;
-	let mergedNavigationContinuation: NavigationContinuationHook | undefined;
 	let mergedAbilitiesSetup: AbilitiesSetupHook | undefined;
 	let mergedGetChatComponent: GetChatComponent | undefined;
 	let mergedSiteBuildUtils: SiteBuildUtils | undefined;
-	let mergedOnTaskUpdate: LoadedProviders[ 'onTaskUpdate' ] | undefined;
 	// OR-merged across all providers.
 	const mergedCapabilities: ProviderCapabilities = {};
 	let mergedSuppressEmptyViewDefaults = false;
 
 	// Collect exports that need to be merged across all providers.
 	// AM's own provider goes first: tool execution resolves first-write-wins
-	// by ability name, so a migrated ability executes through AM even if an
-	// external provider still ships its copy.
+	// by ability name, so AM's abilities run ahead of any provider ability with
+	// the same name.
 	const allToolProviders: ToolProvider[] = [ amToolProvider ];
-	const allContextProviders: ContextProvider[] = [];
+	// Big Sky's page context goes first, so its `wp-admin` environment wins over
+	// the Jetpack AI sidebar's `gutenberg`.
+	const allContextProviders: ContextProvider[] = isBigSkySite ? [ bigSkyPageContextProvider ] : [];
 	const allMarkdownComponents: MarkdownComponents[] = [];
 	const allMarkdownExtensions: MarkdownExtensions[] = [];
 	const allGetChatComponents: GetChatComponent[] = [];
@@ -693,15 +705,9 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 			allMarkdownExtensions.push( module.markdownExtensions );
 		}
 
-		// First-write-wins for singleton exports.
-		if ( module.useNavigationContinuation && ! mergedNavigationContinuation ) {
-			mergedNavigationContinuation = module.useNavigationContinuation;
-		}
+		// First-write-wins for the singleton export.
 		if ( module.siteBuildUtils && ! mergedSiteBuildUtils ) {
 			mergedSiteBuildUtils = module.siteBuildUtils;
-		}
-		if ( module.onTaskUpdate && ! mergedOnTaskUpdate ) {
-			mergedOnTaskUpdate = module.onTaskUpdate;
 		}
 
 		mergeCapabilitiesInto( mergedCapabilities, module.capabilities );
@@ -713,7 +719,13 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 		}
 	}
 
-	const mergedContextProvider = withAmCheckpoints( mergeContextProviders( allContextProviders ) );
+	// Where AM's editor abilities run, it also describes the page, answers the
+	// chat's Undo first and paints the page-design stream.
+	const isEditor = isEditorPage();
+	const contextProvider = mergeContextProviders( allContextProviders );
+	const mergedContextProvider = withCanvasBinding(
+		isEditor ? withPageContext( contextProvider ) : contextProvider
+	);
 	const mergedMarkdownComponents = mergeMarkdownComponentsFromProviders( allMarkdownComponents );
 	const mergedMarkdownExtensions = mergeMarkdownExtensionsFromProviders( allMarkdownExtensions );
 
@@ -725,10 +737,10 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 	} else if ( allToolProviders.length > 1 ) {
 		// Query providers live on each call rather than snapshotting at load.
 		// agenttic-client calls getAbilities()/executeAbility() fresh every turn,
-		// so abilities registered later stay visible. Big Sky, for one, registers
-		// its editor abilities (big-sky/apply-block-edits and friends) from a
-		// React effect that runs after loadExternalProviders(); a captured list
-		// would freeze those out and the agent's calls would silently not dispatch.
+		// so abilities registered later stay visible. A provider may register its
+		// abilities from a React effect that runs after loadExternalProviders();
+		// a captured list would freeze those out and the agent's calls would
+		// silently not dispatch.
 		const collectAbilityResults = async () =>
 			Promise.all(
 				allToolProviders.map( async ( tp ) => {
@@ -762,23 +774,21 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 				const results = await collectAbilityResults();
 				for ( let i = 0; i < allToolProviders.length; i++ ) {
 					if ( findAbilityByName( results[ i ], name ) ) {
-						const result = await allToolProviders[ i ].executeAbility( name, args );
-
-						// TODO (ability-migration): Delete with the provider-checkpoints
-						// bridge. Stamping right after execution times a Big Sky record
-						// within the turn that created it — the context-build stamp
-						// alone would time it one message late.
-						stampProviderCheckpointObservations(
-							getProviderCheckpointRecords().map( ( { id } ) => id )
-						);
-
-						return result;
+						return allToolProviders[ i ].executeAbility( name, args );
 					}
 				}
 				throw new Error( `No provider handled ability: ${ name }` );
 			},
 		};
 	}
+
+	// After the branch, deliberately: the single-provider path above assigns
+	// `allToolProviders[ 0 ]` straight through, so a guard applied inside the
+	// multi-provider closure would silently not exist on those surfaces.
+	//
+	// Announcement inside the guard: an ability the guard refuses never ran,
+	// so there is no completion to announce for it.
+	mergedToolProvider = withCanvasGuard( withAbilityCompletionBroadcast( mergedToolProvider ) );
 
 	// Merge transformMessages: compose in registration order, so each provider
 	// rewrites what the previous one produced. Unlike the singleton exports this
@@ -798,7 +808,7 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 	} else if ( allGetChatComponents.length > 1 ) {
 		mergedGetChatComponent = ( ( type: string ) => {
 			for ( const fn of allGetChatComponents ) {
-				const result = fn( type as ChatComponentType );
+				const result = fn( type );
 				if ( result ) {
 					return result;
 				}
@@ -822,7 +832,12 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 	const mergedUseSuggestions = mergeUseSuggestionsHooks( allUseSuggestions );
 
 	// Merge useCheckpoint: run every provider's hook, search all stores by id.
-	const mergedUseCheckpoint = mergeUseCheckpointHooks( allUseCheckpoints );
+	// On editor pages AM's own store answers first, so the chat's Undo sees the
+	// checkpoints its abilities write.
+	const providerUseCheckpoint = mergeUseCheckpointHooks( allUseCheckpoints );
+	const mergedUseCheckpoint = isEditor
+		? withAmCheckpointActions( providerUseCheckpoint )
+		: providerUseCheckpoint;
 
 	// Merge getEmptyViewSuggestions: combine from all providers, dedupe by id.
 	if ( allGetEmptyViewSuggestions.length === 1 ) {
@@ -843,16 +858,17 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 		};
 	}
 
+	setLoadedProviderIds( allProviderIds );
+
 	return {
 		toolProvider: mergedToolProvider,
 		contextProvider: mergedContextProvider,
 		getEmptyViewSuggestions: mergedGetEmptyViewSuggestions,
 		markdownComponents: mergedMarkdownComponents,
-		markdownExtensions: mergedMarkdownExtensions,
+		markdownExtensions: { ...defaultMarkdownExtensions, ...mergedMarkdownExtensions },
 		providerIds: allProviderIds.length ? allProviderIds : undefined,
-		useNavigationContinuation: mergedNavigationContinuation,
 		useAbilitiesSetup: mergedAbilitiesSetup,
-		onTaskUpdate: mergedOnTaskUpdate,
+		onTaskUpdate: isEditor ? handlePageDesignTaskUpdate : undefined,
 		useSuggestions: mergedUseSuggestions,
 		getChatComponent: mergedGetChatComponent,
 		transformMessages: mergedTransformMessages,

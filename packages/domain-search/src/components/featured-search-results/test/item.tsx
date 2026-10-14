@@ -635,6 +635,31 @@ describe( 'FeaturedSearchResultsItem', () => {
 			expect( cta ).toHaveTextContent( 'Add to cart' );
 		} );
 
+		it( 'renders the select cta as primary and with text when the select cta is enabled', async () => {
+			mockGetSuggestionsQuery( {
+				params: { query: 'test-select.com' },
+				suggestions: [ buildSuggestion( { domain_name: 'test-select.com' } ) ],
+			} );
+
+			render(
+				<TestDomainSearchWithSuggestions query="test-select.com" config={ { showSelectCta: true } }>
+					<FeaturedSearchResultsItem
+						reason="recommended"
+						domainName="test-select.com"
+						isSingleFeaturedSuggestion={ false }
+					/>
+				</TestDomainSearchWithSuggestions>
+			);
+
+			await waitFor( () => screen.getByTitle( 'test-select.com' ) );
+
+			const cta = screen.getByRole( 'button', { name: 'Select' } );
+
+			expect( cta ).toHaveClass( 'is-primary' );
+			expect( cta ).toHaveTextContent( 'Select' );
+			expect( screen.queryByRole( 'button', { name: 'Add to cart' } ) ).not.toBeInTheDocument();
+		} );
+
 		it( 'renders continue cta with text', async () => {
 			mockGetSuggestionsQuery( {
 				params: { query: 'test-continue.com' },

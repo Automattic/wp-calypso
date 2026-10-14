@@ -1,5 +1,6 @@
 import fs from 'fs';
 import FormData from 'form-data';
+import { handleActiveThrottles, recordThrottle } from './lib/throttle-flags';
 import { SecretsManager } from './secrets';
 import {
 	BearerTokenErrorResponse,
@@ -42,10 +43,13 @@ import type {
 	CommentLikeResponse,
 	JetpackSearchResponse,
 	JetpackSearchParams,
+	SiteSettingsParams,
+	SiteSettingsResponse,
 	Subscriber,
 	SitePostState,
 	AllPurchasesResponse,
 	PurchaseCancelParams,
+	ShoppingCartResponse,
 } from './types';
 
 /* Internal types and interfaces */
@@ -53,7 +57,7 @@ import type {
 /**
  * Specifies the version of WordPress.com REST API.
  */
-type EndpointVersions = '1' | '1.1' | '1.2' | '1.3' | '2';
+type EndpointVersions = '1' | '1.1' | '1.2' | '1.3' | '1.4' | '2';
 type EndpointNamespace = 'rest' | 'wpcom' | 'wp';
 
 /**
@@ -247,6 +251,8 @@ export class RestAPIClient {
 	 * @throws {ErrorResponse} If API responded with an error.
 	 */
 	async createSite( newSiteParams: NewSiteParams ): Promise< NewSiteResponse > {
+		handleActiveThrottles( [ 'signup' ] );
+
 		const body = {
 			client_id: SecretsManager.secrets.calypsoOauthApplication.client_id,
 			client_secret: SecretsManager.secrets.calypsoOauthApplication.client_secret,
@@ -268,7 +274,30 @@ export class RestAPIClient {
 			body: JSON.stringify( body ),
 		};
 
-		const response = await this.sendRequest( this.getRequestURL( '1.1', '/sites/new' ), params );
+		const url = this.getRequestURL( '1.1', '/sites/new' );
+
+		let response;
+		try {
+			response = await this.sendRequest( url, params );
+		} catch ( error ) {
+			// A refusal that is not JSON is something `sendRequest` cannot parse, so
+			// the throttle reaches us as a thrown error rather than a response body.
+			// Recorded either way, and rethrown untouched. The endpoint travels
+			// alongside: neither shape names it, and a bare `throttled` code means
+			// nothing without it.
+			const throttle = await recordThrottle( error, url.href );
+			if ( throttle ) {
+				// `raiseFlag` writes what this reads before `recordThrottle` returns,
+				// so the ban the throw is about is applied to this test rather than to
+				// the next one that happens to check.
+				handleActiveThrottles( [ throttle ] );
+			}
+			throw error;
+		}
+		const throttle = await recordThrottle( response, url.href );
+		if ( throttle ) {
+			handleActiveThrottles( [ throttle ] );
+		}
 
 		if ( response.hasOwnProperty( 'error' ) ) {
 			throw new Error(
@@ -1092,17 +1121,12 @@ export class RestAPIClient {
 	}
 
 	/**
-	 * Method to perform two similar operations - like and unlike a comment.
+	 * Likes a comment.
 	 *
-	 * @param {'like'|'unlike'} action Action to perform on the comment.
 	 * @param {number} siteID Target site ID.
 	 * @param {number} commentID Target comment ID.
 	 */
-	async commentAction(
-		action: 'like' | 'unlike',
-		siteID: number,
-		commentID: number
-	): Promise< CommentLikeResponse > {
+	async likeComment( siteID: number, commentID: number ): Promise< CommentLikeResponse > {
 		const params: RequestParams = {
 			method: 'post',
 			headers: {
@@ -1111,33 +1135,50 @@ export class RestAPIClient {
 			},
 		};
 
-		let endpoint: URL;
-		if ( action === 'like' ) {
-			endpoint = this.getRequestURL(
-				'1.1',
-				`/sites/${ siteID }/comments/${ commentID }/likes/new`
+		const response = await this.sendRequest(
+			this.getRequestURL( '1.1', `/sites/${ siteID }/comments/${ commentID }/likes/new` ),
+			params
+		);
+
+		if ( ! response.i_like ) {
+			throw new Error(
+				`Failed to like ${ commentID } on site ${ siteID }. Response: ${ JSON.stringify(
+					response
+				) }`
 			);
-		} else {
-			endpoint = this.getRequestURL(
-				'1.1',
-				`/sites/${ siteID }/comments/${ commentID }/likes/mine/delete`
+		}
+
+		return response;
+	}
+
+	/**
+	 * Unlikes a comment.
+	 *
+	 * @param {number} siteID Target site ID.
+	 * @param {number} commentID Target comment ID.
+	 */
+	async unlikeComment( siteID: number, commentID: number ): Promise< CommentLikeResponse > {
+		const params: RequestParams = {
+			method: 'post',
+			headers: {
+				Authorization: await this.getAuthorizationHeader( 'bearer' ),
+				'Content-Type': this.getContentTypeHeader( 'json' ),
+			},
+		};
+
+		const response = await this.sendRequest(
+			this.getRequestURL( '1.1', `/sites/${ siteID }/comments/${ commentID }/likes/mine/delete` ),
+			params
+		);
+
+		if ( response.i_like ) {
+			throw new Error(
+				`Failed to unlike ${ commentID } on site ${ siteID }. Response: ${ JSON.stringify(
+					response
+				) }`
 			);
 		}
 
-		const response = await this.sendRequest( endpoint, params );
-
-		// Tried to like the comment, but failed to do so
-		// and the user still has not liked the comment.
-		if ( action === 'like' && response.like_count !== 1 ) {
-			throw new Error( `Failed to like ${ commentID } on site ${ siteID }` );
-		}
-		// Tried to unlike the comment, but failed to do so
-		// and the user still likes the comment.
-		if ( action === 'unlike' && response.like_count !== 0 ) {
-			throw new Error( `Failed to unlike ${ commentID } on site ${ siteID }` );
-		}
-
-		// Otherwise, consider it a success.
 		return response;
 	}
 
@@ -1242,6 +1283,72 @@ export class RestAPIClient {
 		return response.media[ 0 ];
 	}
 
+	/* Site Settings */
+
+	/**
+	 * Gets the settings of a site.
+	 *
+	 * @param {number|string} siteID Site ID or slug.
+	 * @returns {Promise<SiteSettingsResponse>} The site name and its settings.
+	 * @throws {Error} If API responded with an error.
+	 */
+	async getSiteSettings( siteID: number | string ): Promise< SiteSettingsResponse > {
+		const params: RequestParams = {
+			method: 'get',
+			headers: {
+				Authorization: await this.getAuthorizationHeader( 'bearer' ),
+			},
+		};
+
+		const response = await this.sendRequest(
+			this.getRequestURL( '1.4', `/sites/${ siteID }/settings` ),
+			params
+		);
+
+		if ( response.hasOwnProperty( 'error' ) ) {
+			throw new Error(
+				`${ ( response as ErrorResponse ).error }: ${ ( response as ErrorResponse ).message }`
+			);
+		}
+
+		return response;
+	}
+
+	/**
+	 * Updates the settings of a site.
+	 *
+	 * @param {number|string} siteID Site ID or slug.
+	 * @param {SiteSettingsParams} settings Key/value attributes to be set for the site.
+	 * @returns {Promise<SiteSettingsParams>} The settings that were updated.
+	 * @throws {Error} If API responded with an error.
+	 */
+	async setSiteSettings(
+		siteID: number | string,
+		settings: SiteSettingsParams
+	): Promise< SiteSettingsParams > {
+		const params: RequestParams = {
+			method: 'post',
+			headers: {
+				Authorization: await this.getAuthorizationHeader( 'bearer' ),
+				'Content-Type': this.getContentTypeHeader( 'json' ),
+			},
+			body: JSON.stringify( settings ),
+		};
+
+		const response = await this.sendRequest(
+			this.getRequestURL( '1.4', `/sites/${ siteID }/settings` ),
+			params
+		);
+
+		if ( response.hasOwnProperty( 'error' ) ) {
+			throw new Error(
+				`${ ( response as ErrorResponse ).error }: ${ ( response as ErrorResponse ).message }`
+			);
+		}
+
+		return response.updated;
+	}
+
 	/* Shopping Cart */
 
 	/**
@@ -1292,6 +1399,107 @@ export class RestAPIClient {
 				blog_id: siteId === 'no-site' ? 0 : siteId,
 				products: [],
 				temporary: false,
+			} ),
+		};
+
+		const response = await this.sendRequest(
+			this.getRequestURL( '1.1', `/me/shopping-cart/${ siteId }` ),
+			params
+		);
+
+		if ( response.hasOwnProperty( 'error' ) ) {
+			throw new Error(
+				`${ ( response as ErrorResponse ).error }: ${ ( response as ErrorResponse ).message }`
+			);
+		}
+
+		return response;
+	}
+
+	/**
+	 * Gets the current user's shopping cart for a site.
+	 *
+	 * @param {number} siteId Site that has the shopping cart.
+	 * @throws {Error} If the API responded with an error.
+	 * @returns {Promise<ShoppingCartResponse>} The saved cart.
+	 */
+	async getShoppingCart( siteId: number ): Promise< ShoppingCartResponse > {
+		const params: RequestParams = {
+			method: 'get',
+			headers: {
+				Authorization: await this.getAuthorizationHeader( 'bearer' ),
+				'Content-Type': this.getContentTypeHeader( 'json' ),
+			},
+		};
+
+		const response = await this.sendRequest(
+			this.getRequestURL( '1.1', `/me/shopping-cart/${ siteId }` ),
+			params
+		);
+
+		if ( response.hasOwnProperty( 'error' ) ) {
+			throw new Error(
+				`${ ( response as ErrorResponse ).error }: ${ ( response as ErrorResponse ).message }`
+			);
+		}
+
+		return response;
+	}
+
+	/**
+	 * Removes the products whose `meta` contains a keyword from the current
+	 * user's shopping cart for a site, e.g. every domain a search for
+	 * `example` added (`example.blog`, `getexample.com`).
+	 *
+	 * The rest of the cart is posted back in the request shape Calypso's
+	 * shopping-cart package sends (`convertResponseCartToRequestCart`), so the
+	 * other products, the coupon and the tax location survive.
+	 *
+	 * @param {number} siteId Site that has the shopping cart.
+	 * @param {string} keyword Text the `meta` of the products to remove contains.
+	 * @throws {Error} If the API responded with an error.
+	 * @returns {Promise<ShoppingCartResponse>} The saved cart.
+	 */
+	async removeCartProducts( siteId: number, keyword: string ): Promise< ShoppingCartResponse > {
+		const cart = await this.getShoppingCart( siteId );
+
+		const products = cart.products
+			.filter( ( product ) => ! product.meta?.includes( keyword ) )
+			.map( ( { product_slug, meta, product_id, extra, volume, quantity } ) => ( {
+				product_slug,
+				meta,
+				product_id,
+				extra,
+				volume,
+				quantity,
+			} ) );
+
+		// Calypso sends only these location fields, and a null tax when none is
+		// set. The response location also carries fields such as `ip_address`.
+		const location = {
+			country_code: cart.tax.location.country_code,
+			postal_code: cart.tax.location.postal_code,
+			subdivision_code: cart.tax.location.subdivision_code,
+			vat_id: cart.tax.location.vat_id,
+			organization: cart.tax.location.organization,
+			address: cart.tax.location.address,
+			city: cart.tax.location.city,
+			is_for_business: cart.tax.location.is_for_business,
+		};
+		const tax = Object.values( location ).some( Boolean ) ? { location } : null;
+
+		const params: RequestParams = {
+			method: 'post',
+			headers: {
+				Authorization: await this.getAuthorizationHeader( 'bearer' ),
+				'Content-Type': this.getContentTypeHeader( 'json' ),
+			},
+			body: JSON.stringify( {
+				blog_id: cart.blog_id,
+				coupon: cart.coupon,
+				products,
+				temporary: false,
+				tax,
 			} ),
 		};
 
@@ -1497,7 +1705,7 @@ export class RestAPIClient {
 	async deleteAllWidgets( siteID: number ): Promise< void > {
 		const widgets = await this.getAllWidgets( siteID );
 
-		widgets.map( async ( widget ) => await this.deleteWidget( siteID, widget.id ) );
+		await Promise.all( widgets.map( ( widget ) => this.deleteWidget( siteID, widget.id ) ) );
 	}
 
 	/* Search */

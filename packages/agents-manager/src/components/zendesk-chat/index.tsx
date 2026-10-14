@@ -7,10 +7,11 @@ import {
 } from '@automattic/zendesk-client';
 import { useMemo } from '@wordpress/element';
 import { useAgentsManagerContext } from '../../contexts';
+import { getSiteUrl } from '../../utils/site-url';
 import AgentChat from '../agent-chat';
 import { type Options as ChatHeaderOptions } from '../chat-header';
 import ConcludedConversationFooter from '../concluded-conversation-footer';
-import type { Message } from '@automattic/agenttic-ui/dist/types';
+import type { UIMessage as Message } from '@automattic/agenttic-client';
 import './style.scss';
 
 interface Props {
@@ -28,22 +29,6 @@ interface Props {
 	markdownComponents?: MarkdownComponents;
 	/** Custom markdown extensions. */
 	markdownExtensions?: MarkdownExtensions;
-}
-
-function withHttpsProtocol( domain: string ) {
-	return /^https?:\/\//.test( domain ) ? domain : `https://${ domain }`;
-}
-
-function getSiteUrl( site: ReturnType< typeof useAgentsManagerContext >[ 'site' ] ) {
-	if ( site?.URL ) {
-		return site.URL;
-	}
-
-	if ( site?.domain ) {
-		return withHttpsProtocol( site.domain );
-	}
-
-	return window.location.href;
 }
 
 export default function ZendeskChat( {
@@ -69,7 +54,7 @@ export default function ZendeskChat( {
 						[ ZENDESK_CUSTOM_FIELD_WEBSITE_URL ]: siteUrl,
 						[ ZENDESK_SOURCE_URL_TICKET_FIELD_ID ]: window.location.href,
 						[ ZENDESK_CUSTOM_FIELD_PRODUCT ]: zendeskTicketProductFieldValue,
-				  }
+					}
 				: {},
 		[ siteUrl, zendeskTicketProductFieldValue ]
 	);

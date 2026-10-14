@@ -1,3 +1,4 @@
+import { TitanMailSlugs } from '@automattic/api-core';
 import { createRequestCartProduct } from '@automattic/shopping-cart';
 import { decodeProductFromUrl, isValueTruthy } from '@automattic/wpcom-checkout';
 import debugFactory from 'debug';
@@ -40,8 +41,6 @@ const initialPreparedProductsState: PreparedProductsForCart = {
 export default function usePrepareProductsForCart( {
 	productAliasFromUrl,
 	purchaseId: originalPurchaseId,
-	usesJetpackProducts,
-	isPrivate,
 	siteSlug,
 	sitelessCheckoutType,
 	isLoggedOutCart,
@@ -54,8 +53,6 @@ export default function usePrepareProductsForCart( {
 }: {
 	productAliasFromUrl: string | null | undefined;
 	purchaseId: string | number | null | undefined;
-	usesJetpackProducts: boolean;
-	isPrivate: boolean;
 	siteSlug: string | undefined;
 	sitelessCheckoutType: SitelessCheckoutType;
 	isLoggedOutCart?: boolean;
@@ -110,8 +107,6 @@ export default function usePrepareProductsForCart( {
 	useAddProductFromSlug( {
 		productAliasFromUrl,
 		dispatch,
-		usesJetpackProducts,
-		isPrivate,
 		addHandler,
 		sitelessCheckoutType,
 		jetpackSiteSlug,
@@ -134,6 +129,7 @@ export default function usePrepareProductsForCart( {
 	} );
 	useAddRenewalBySubscriptionId( {
 		originalPurchaseId,
+		sitelessCheckoutType,
 		dispatch,
 		addHandler,
 	} );
@@ -147,14 +143,15 @@ export default function usePrepareProductsForCart( {
 	// recreate the cart from the URL again.
 	const doNotStripProducts = Boolean(
 		! areProductsRetrievedFromUrl ||
-			addHandler === 'doNotAdd' ||
-			addHandler === 'addRenewalBySubscriptionId' ||
-			sitelessCheckoutType === 'jetpack' ||
-			sitelessCheckoutType === 'akismet' ||
-			sitelessCheckoutType === 'marketplace' ||
-			sitelessCheckoutType === 'a4a' ||
-			sitelessCheckoutType === 'unified' ||
-			isGiftPurchase
+		addHandler === 'doNotAdd' ||
+		addHandler === 'addRenewalBySubscriptionId' ||
+		sitelessCheckoutType === 'jetpack' ||
+		sitelessCheckoutType === 'akismet' ||
+		sitelessCheckoutType === 'marketplace' ||
+		sitelessCheckoutType === 'a4a' ||
+		sitelessCheckoutType === 'unified' ||
+		sitelessCheckoutType === 'wpcom' ||
+		isGiftPurchase
 	);
 	useStripProductsFromUrl( siteSlug, doNotStripProducts );
 
@@ -225,18 +222,22 @@ function chooseAddHandler( {
 	isNoSiteCart?: boolean;
 	isGiftPurchase?: boolean;
 } ): AddHandler {
-	// Akismet and some Marketplace products can be renewed in a "siteless" context
+	// Akismet and some Marketplace products can be renewed in a "siteless" context.
+	// Without a product slug in the URL there is nothing for `addRenewalItems` to
+	// build a cart product from, so fall back to the subscription ID and let the
+	// backend derive the product from the subscription record.
 	if (
 		( sitelessCheckoutType === 'akismet' || sitelessCheckoutType === 'marketplace' ) &&
 		originalPurchaseId
 	) {
-		return 'addRenewalItems';
+		return productAliasFromUrl ? 'addRenewalItems' : 'addRenewalBySubscriptionId';
 	}
 
 	if (
 		sitelessCheckoutType === 'jetpack' ||
 		sitelessCheckoutType === 'akismet' ||
-		sitelessCheckoutType === 'unified'
+		sitelessCheckoutType === 'unified' ||
+		sitelessCheckoutType === 'wpcom'
 	) {
 		return 'addProductFromSlug';
 	}
@@ -460,10 +461,12 @@ function useAddRenewalItems( {
  */
 function useAddRenewalBySubscriptionId( {
 	originalPurchaseId,
+	sitelessCheckoutType,
 	dispatch,
 	addHandler,
 }: {
 	originalPurchaseId: string | number | null | undefined;
+	sitelessCheckoutType: SitelessCheckoutType;
 	dispatch: ( action: PreparedProductsAction ) => void;
 	addHandler: AddHandler;
 } ) {
@@ -505,19 +508,21 @@ function useAddRenewalBySubscriptionId( {
 				extra: {
 					purchaseId: subscriptionId,
 					purchaseType: 'renewal',
+					// The backend decides whether the cart is a siteless one from these
+					// flags alone, and rejects Akismet plans in a cart without them.
+					isAkismetSitelessCheckout: sitelessCheckoutType === 'akismet',
+					isMarketplaceSitelessCheckout: sitelessCheckoutType === 'marketplace',
 				},
 			} )
 		);
 		debug( 'preparing renewals from subscription IDs', originalPurchaseId );
 		dispatch( { type: 'RENEWALS_ADD', products: cartItems } );
-	}, [ addHandler, dispatch, originalPurchaseId, translate ] );
+	}, [ addHandler, dispatch, originalPurchaseId, sitelessCheckoutType, translate ] );
 }
 
 function useAddProductFromSlug( {
 	productAliasFromUrl,
 	dispatch,
-	usesJetpackProducts,
-	isPrivate,
 	addHandler,
 	sitelessCheckoutType,
 	jetpackSiteSlug,
@@ -527,8 +532,6 @@ function useAddProductFromSlug( {
 }: {
 	productAliasFromUrl: string | undefined | null;
 	dispatch: ( action: PreparedProductsAction ) => void;
-	usesJetpackProducts: boolean;
-	isPrivate: boolean;
 	addHandler: AddHandler;
 	sitelessCheckoutType: SitelessCheckoutType;
 	jetpackSiteSlug?: string;
@@ -591,17 +594,11 @@ function useAddProductFromSlug( {
 			} );
 			return;
 		}
-		debug(
-			'preparing products that were requested in url',
-			{ productAliasFromUrl, usesJetpackProducts },
-			cartProducts
-		);
+		debug( 'preparing products that were requested in url', productAliasFromUrl, cartProducts );
 		dispatch( { type: 'PRODUCTS_ADD', products: cartProducts } );
 	}, [
 		addHandler,
 		translate,
-		isPrivate,
-		usesJetpackProducts,
 		productAliasFromUrl,
 		validProducts,
 		sitelessCheckoutType,
@@ -714,6 +711,20 @@ function createRenewalItemToAddToCart( {
 	};
 }
 
+const TITAN_MAIL_PRODUCT_SLUGS: string[] = Object.values( TitanMailSlugs );
+
+/**
+ * On a first purchase WordPress.com orders exactly `new_quantity` Titan mailboxes
+ * and Titan rejects 0. For an existing account WordPress.com recalculates it.
+ */
+function getTitanNewQuantity( quantity: number | null ): number {
+	if ( quantity && quantity >= 1 ) {
+		return quantity;
+	}
+
+	return 1;
+}
+
 function createItemToAddToCart( {
 	productSlug,
 	productAlias,
@@ -756,6 +767,7 @@ function createItemToAddToCart( {
 			sitelessCheckoutType,
 			isDomainOnlySitelessCheckout: sitelessCheckoutType === 'domainonly',
 			isUnifiedSitelessCheckout: sitelessCheckoutType === 'unified',
+			isWpcomSitelessCheckout: sitelessCheckoutType === 'wpcom',
 			isAkismetSitelessCheckout: sitelessCheckoutType === 'akismet',
 			isJetpackCheckout: sitelessCheckoutType === 'jetpack',
 			jetpackSiteSlug,
@@ -763,6 +775,9 @@ function createItemToAddToCart( {
 			context: 'calypstore',
 			source: source ?? undefined,
 			hosting_intent: hostingIntent,
+			...( TITAN_MAIL_PRODUCT_SLUGS.includes( productSlug )
+				? { new_quantity: getTitanNewQuantity( quantity ) }
+				: {} ),
 		},
 		...( cartMeta ? { meta: cartMeta } : {} ),
 	} );

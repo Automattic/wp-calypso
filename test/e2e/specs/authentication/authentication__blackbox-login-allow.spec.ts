@@ -1,3 +1,4 @@
+import { TestAccount } from '@automattic/calypso-e2e';
 import { useBlackboxTestKeyForCollect } from '../../lib/blackbox-test-key';
 import { expect, tags, test } from '../../lib/pw-base';
 
@@ -13,6 +14,7 @@ test.describe( 'Authentication: Blackbox login allow', { tag: [ tags.AUTHENTICAT
 		);
 
 		const credentials = secrets.testAccounts.defaultUser;
+		const testAccount = new TestAccount( 'defaultUser' );
 
 		await test.step( 'Given Blackbox collect uses the public allow test key', async function () {
 			await useBlackboxTestKeyForCollect( page, 'allow' );
@@ -33,39 +35,41 @@ test.describe( 'Authentication: Blackbox login allow', { tag: [ tags.AUTHENTICAT
 			expect( body?.data?.session_id ).toBe( 'bbtest_allow__________' );
 		} );
 
-		await test.step( 'And I submit valid credentials', async function () {
-			await pageLogin.fillUsername( credentials.username as string );
-			await pageLogin.clickSubmit();
-			await pageLogin.fillPassword( credentials.password );
+		await testAccount.logInExclusively( async () => {
+			await test.step( 'And I submit valid credentials', async function () {
+				await pageLogin.fillUsername( credentials.username as string );
+				await pageLogin.clickSubmit();
+				await pageLogin.fillPassword( credentials.password );
 
-			const loginResponse = page.waitForResponse(
-				( response ) =>
-					response.request().method() === 'POST' &&
-					response.url().includes( 'action=login-endpoint' )
-			);
-			const loginRequest = page.waitForRequest(
-				( request ) =>
-					request.method() === 'POST' && request.url().includes( 'action=login-endpoint' )
-			);
+				const loginResponse = page.waitForResponse(
+					( response ) =>
+						response.request().method() === 'POST' &&
+						response.url().includes( 'action=login-endpoint' )
+				);
+				const loginRequest = page.waitForRequest(
+					( request ) =>
+						request.method() === 'POST' && request.url().includes( 'action=login-endpoint' )
+				);
 
-			await pageLogin.clickSubmit();
-			const request = await loginRequest;
-			const response = await loginResponse;
-			const body = await response.json();
-			const postData = new URLSearchParams( request.postData() ?? '' );
+				await pageLogin.clickSubmit();
+				const request = await loginRequest;
+				const response = await loginResponse;
+				const body = await response.json();
+				const postData = new URLSearchParams( request.postData() ?? '' );
 
-			expect( postData.get( 'blackbox_session_id' ) ).toBe( 'bbtest_allow__________' );
-			expect( response.status() ).toBe( 200 );
-			expect( body?.success ).toBe( true );
-		} );
+				expect( postData.get( 'blackbox_session_id' ) ).toBe( 'bbtest_allow__________' );
+				expect( response.status() ).toBe( 200 );
+				expect( body?.success ).toBe( true );
+			} );
 
-		await test.step( 'Then I leave the login page', async function () {
-			// The redirect only fires once remoteLoginUser has settled its token-link
-			// iframes, which it allows 25s each, and is then a full page load. Budget
-			// past that and wait for the URL to change rather than for it to load.
-			await page.waitForURL( ( url ) => ! url.pathname.includes( '/log-in' ), {
-				waitUntil: 'commit',
-				timeout: 60 * 1000,
+			await test.step( 'Then I leave the login page', async function () {
+				// The redirect only fires once remoteLoginUser has settled its token-link
+				// iframes, which it allows 25s each, and is then a full page load. Budget
+				// past that and wait for the URL to change rather than for it to load.
+				await page.waitForURL( ( url ) => ! url.pathname.includes( '/log-in' ), {
+					waitUntil: 'commit',
+					timeout: 60 * 1000,
+				} );
 			} );
 		} );
 	} );

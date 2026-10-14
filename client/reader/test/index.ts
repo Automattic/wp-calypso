@@ -2,6 +2,8 @@
  * @jest-environment jsdom
  */
 import page from '@automattic/calypso-router';
+import { redirectLoggedOutToSignup } from 'calypso/controller';
+import { setupRedirectRoutes } from 'calypso/utils';
 import initReader from '../index';
 import { readerNotFound } from '../lib/reader-router';
 
@@ -75,6 +77,9 @@ jest.mock( '../list/controller', () => ( {
 	listListing: jest.fn(),
 } ) );
 
+jest.mock( '../four-for-four/controller', () => ( {
+	fourForFour: jest.fn(),
+} ) );
 jest.mock( '../on-this-day/controller', () => ( {
 	onThisDay: jest.fn(),
 } ) );
@@ -83,6 +88,13 @@ jest.mock( '../user-profile/controller', () => ( {
 	redirectMeToCurrentUser: jest.fn(),
 	userProfile: jest.fn(),
 } ) );
+
+type RouteCall = [ string | string[], ...unknown[] ];
+
+// `page` is a bare jest.fn(), so its recorded calls are typed as an empty tuple.
+function registeredRoutes(): RouteCall[] {
+	return jest.mocked( page ).mock.calls as unknown as RouteCall[];
+}
 
 describe( 'reader routes', () => {
 	beforeEach( () => {
@@ -94,5 +106,40 @@ describe( 'reader routes', () => {
 
 		expect( page ).toHaveBeenCalledWith( '/reader/*', readerNotFound );
 		expect( page ).toHaveBeenCalledWith( '/read/*', readerNotFound );
+	} );
+
+	it.each( [
+		'/reader/list/new',
+		'/reader/list/:user/:list/edit',
+		'/reader/list/:user/:list/edit/items',
+		'/reader/list/:user/:list/export',
+		'/reader/list/:user/:list/delete',
+	] )( 'requires a logged-in user for %s', async ( path ) => {
+		await initReader();
+
+		const call = registeredRoutes().find( ( [ route ] ) => route === path );
+		expect( call ).toBeDefined();
+		expect( call?.slice( 1 ) ).toContain( redirectLoggedOutToSignup );
+	} );
+
+	it( 'redirects the retired Reddit add-a-feed page to the generic form', async () => {
+		await initReader();
+
+		const redirects = jest
+			.mocked( setupRedirectRoutes )
+			.mock.calls.flatMap( ( [ routes ] ) => routes );
+		const reddit = redirects.find( ( route ) => route.path === '/reader/new/reddit' );
+
+		expect( reddit?.getRedirect() ).toBe( '/reader/new' );
+	} );
+
+	it( 'keeps list viewing available to logged-out users', async () => {
+		await initReader();
+
+		const call = registeredRoutes().find(
+			( [ route ] ) => Array.isArray( route ) && route.includes( '/reader/list/:user/:list' )
+		);
+		expect( call ).toBeDefined();
+		expect( call?.slice( 1 ) ).not.toContain( redirectLoggedOutToSignup );
 	} );
 } );

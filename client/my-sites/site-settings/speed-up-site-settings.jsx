@@ -72,7 +72,7 @@ class SpeedUpSiteSettings extends Component {
 		const lazyImagesSupportUrl = siteIsAtomic
 			? localizeUrl(
 					'https://wordpress.com/support/settings/performance-settings/#lazy-load-images'
-			  )
+				)
 			: 'https://jetpack.com/support/lazy-images/';
 		const lazyImagesDescription = translate(
 			'Jetpack’s Lazy Loading feature is no longer necessary.'
@@ -80,10 +80,10 @@ class SpeedUpSiteSettings extends Component {
 		const lazyImagesRecommendation = lazyImagesModuleActive
 			? translate(
 					'You have the option to disable it on your website, and you will immediately begin benefiting from the native lazy loading feature offered by WordPress itself.'
-			  )
+				)
 			: translate(
 					'It is now disabled on your website. You now benefit from the native lazy loading feature offered by WordPress itself.'
-			  );
+				);
 
 		return (
 			<div className="site-settings__module-settings site-settings__speed-up-site-settings">
@@ -99,7 +99,7 @@ class SpeedUpSiteSettings extends Component {
 								siteIsAtomic
 									? localizeUrl(
 											'https://wordpress.com/support/settings/performance-settings/#enable-site-accelerator'
-									  )
+										)
 									: 'https://jetpack.com/support/site-accelerator/'
 							}
 							privacyLink={ ! siteIsAtomic }

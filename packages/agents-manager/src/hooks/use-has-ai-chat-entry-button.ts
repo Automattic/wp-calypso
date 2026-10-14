@@ -1,4 +1,5 @@
 import { useSyncExternalStore } from '@wordpress/element';
+import { getChatPresentation } from '../utils/chat-presentation';
 import { isAdminBarInEditor, isEditorAiEntryEnabled } from '../utils/editor-entry-points';
 import { isSiteEditorContext, isSiteEditorNavigationView } from '../utils/site-editor-context';
 
@@ -12,6 +13,9 @@ const MASTERBAR_AI_CHAT_BUTTON_SELECTOR = '.masterbar__item-agents-manager-ai-ch
  * present. If so, the chat hides on close and reopens from it instead of a floating bubble.
  */
 export function hasAiChatEntryButton(): boolean {
+	if ( ! getChatPresentation().showEntryPoints ) {
+		return false;
+	}
 	// The Site Editor navigation view hides the editor toolbar and — unless the
 	// omnibar experiment shows it — the admin bar, whose markup can still sit
 	// hidden in the DOM. Only the omnibar's admin-bar button counts as an entry.

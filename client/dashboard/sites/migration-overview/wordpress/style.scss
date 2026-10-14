@@ -1,0 +1,5 @@
+.wordpress-migration__progress-bar {
+	// !important because the component's own styles can load after ours.
+	width: 100% !important;
+	--wp-components-color-foreground: var(--wp-admin-theme-color);
+}

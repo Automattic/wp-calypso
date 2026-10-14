@@ -23,7 +23,7 @@ export function useOpenChatUrlParam(): boolean {
 	const [ isHandled, setIsHandled ] = useState( () => ! hasOpenChatUrlParam() );
 	const hasOpenedRef = useRef( false );
 	const { setIsOpen, setIsMinimized } = useDispatch( AGENTS_MANAGER_STORE );
-	const { hasLoaded, isOpen, isMinimized } = useSelect( ( select ) => {
+	const { hasLoaded, isOpen, isMinimized, isChatVisible } = useSelect( ( select ) => {
 		const store: AgentsManagerSelect = select( AGENTS_MANAGER_STORE );
 		return store.getAgentsManagerState();
 	}, [] );
@@ -42,7 +42,7 @@ export function useOpenChatUrlParam(): boolean {
 			const isReaderChat = isReaderChatHost();
 
 			if ( ! isReaderChat ) {
-				recordBigSkyTracksEvent( 'ai_editor_menu_opened' );
+				recordBigSkyTracksEvent( 'jetpack_big_sky_ai_editor_menu_opened' );
 			}
 
 			if ( ! isOpen ) {
@@ -60,12 +60,12 @@ export function useOpenChatUrlParam(): boolean {
 			}
 		}
 
-		// Handled only once the store reflects the open state; the dispatches
-		// above re-run this effect via the `isOpen`/`isMinimized` deps.
-		if ( isOpen && ! isMinimized ) {
+		// Handled only once the store shows the chat, which the dispatches above
+		// bring about by re-running this effect.
+		if ( isChatVisible ) {
 			setIsHandled( true );
 		}
-	}, [ hasLoaded, isHandled, isMinimized, isOpen, setIsMinimized, setIsOpen ] );
+	}, [ hasLoaded, isChatVisible, isHandled, isMinimized, isOpen, setIsMinimized, setIsOpen ] );
 
 	return isHandled;
 }

@@ -103,7 +103,7 @@ export const CollapsibleCard = ( {
 										event.preventDefault();
 										handleCollapsedChange();
 									}
-							  }
+								}
 					}
 					aria-expanded={ disabled ? undefined : isExpanded }
 					aria-disabled={ disabled || undefined }

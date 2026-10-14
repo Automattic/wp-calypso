@@ -31,6 +31,22 @@ export class ImportFailureError extends Error {
 	}
 }
 
+export async function startPlaygroundImportIfReady(
+	siteId: number,
+	status: ReturnType< typeof fromApi >
+): Promise< boolean > {
+	if (
+		status.importerState !== appStates.UPLOAD_SUCCESS ||
+		status.importerFileType !== 'playground'
+	) {
+		return false;
+	}
+
+	const startPayload = toApi( { ...status, importerState: appStates.IMPORTING } );
+	await updateImporter( siteId, startPayload );
+	return true;
+}
+
 export async function getSiteZip( playgroundSlug: string ) {
 	const apiIframe = document.createElement( 'iframe' );
 	apiIframe.hidden = true;
@@ -102,9 +118,9 @@ foreach ( $plugins as $slug ) {
  * Export the current Playground state and import it to a wp.com site.
  *
  * Pass waitForCompletion: true when the caller has no surrounding Redux
- * importer machinery to handle the uploadSuccess → startImporting trigger
- * (e.g. the entrepreneur flow). Leave false (default) for flows that route
- * to importerWordpress afterwards — that step's Redux monitoring handles it.
+ * importer machinery (e.g. the entrepreneur flow). The default path starts
+ * ready uploads immediately, then routes to importerWordpress for fallback
+ * state transitions and completion monitoring.
  */
 export async function importPlaygroundSite(
 	playgroundSlug: string,
@@ -116,7 +132,18 @@ export async function importPlaygroundSite(
 	const importer = await uploadExportFile( siteId, {
 		importStatus: { importStatus: 'importer-ready-for-upload', siteId, type: 'wordpress' },
 		file: siteZip,
+		autoStart: true,
 	} );
+	const importerStatus = fromApi( importer );
+	let started = false;
+
+	try {
+		started = await startPlaygroundImportIfReady( siteId, importerStatus );
+	} catch ( error ) {
+		if ( waitForCompletion ) {
+			throw error;
+		}
+	}
 
 	if ( ! waitForCompletion ) {
 		return importer.importId;
@@ -128,11 +155,7 @@ export async function importPlaygroundSite(
 	// — the backup_import job requires an explicit POST before beginning the
 	// Atomic restore. Uses fromApi/toApi/appStates to match the rest of the
 	// importer codebase rather than comparing raw API strings.
-	let started = false;
-
 	for ( let attempt = 0; attempt < MAX_POLL_ATTEMPTS; attempt++ ) {
-		await new Promise( ( resolve ) => setTimeout( resolve, POLL_INTERVAL_MS ) );
-
 		const raw = await wpcomRequest< Record< string, unknown > >( {
 			path: `/sites/${ siteId }/imports/${ importId }`,
 			apiVersion: '1.1',
@@ -149,10 +172,12 @@ export async function importPlaygroundSite(
 			return importId;
 		}
 
-		if ( status.importerState === appStates.UPLOAD_SUCCESS && ! started ) {
-			started = true;
-			const startPayload = toApi( { ...status, importerState: appStates.IMPORTING } );
-			await updateImporter( siteId, startPayload );
+		if ( ! started ) {
+			started = await startPlaygroundImportIfReady( siteId, status );
+		}
+
+		if ( attempt < MAX_POLL_ATTEMPTS - 1 ) {
+			await new Promise( ( resolve ) => setTimeout( resolve, POLL_INTERVAL_MS ) );
 		}
 	}
 

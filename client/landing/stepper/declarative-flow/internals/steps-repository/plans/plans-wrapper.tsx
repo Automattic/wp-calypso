@@ -187,6 +187,10 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 	};
 
 	const getHeaderText = () => {
+		if ( isDomainAndPlanFlow( flowName ) && domainCartItem?.meta ) {
+			return __( 'Your domain name is ready' );
+		}
+
 		if ( isDomainAndPlanFlow( flowName ) ) {
 			return __( 'Choose the perfect plan' );
 		}
@@ -212,27 +216,16 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 		}
 
 		if ( isDomainAndPlanFlow( flowName ) && domainCartItem?.meta ) {
-			return (
-				<>
-					<p>
-						{ translate(
-							'With your annual plan, you’ll get %(domainName)s {{strong}}free for the first year{{/strong}}.',
-							{
-								args: {
-									domainName: domainCartItem.meta,
-								},
-								components: {
-									strong: <strong />,
-								},
-							}
-						) }
-					</p>
-					<p>
-						{ translate(
-							'You’ll also unlock advanced features that make it easy to build and grow your site.'
-						) }
-					</p>
-				</>
+			return translate(
+				'Get {{strong}}%(domainName)s{{/strong}} free for the first year with any annual plan.',
+				{
+					args: {
+						domainName: domainCartItem.meta,
+					},
+					components: {
+						strong: <strong />,
+					},
+				}
 			);
 		}
 
