@@ -27,7 +27,7 @@ function PressableReturnContent( params: ReturnParams ) {
 				onClick={ () => {
 					dispatch(
 						recordTracksEvent( 'calypso_a4a_pressable_checkout_return_retry', {
-							checkout_status: params.canceled === '1' ? 'CANCELED' : 'SUCCESS',
+							checkout_status: 'SUCCESS',
 						} )
 					);
 					retry();

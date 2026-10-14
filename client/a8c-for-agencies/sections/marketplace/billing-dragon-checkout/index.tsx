@@ -23,8 +23,9 @@ import ClientCheckoutError from './checkout-error';
 import ClientCheckoutPlaceholder from './checkout-placeholder';
 import getPurchasedWPCOMPlanSlug from './lib/get-purchased-wpcom-plan-slug';
 import getSuccessRedirectUrl from './lib/get-success-redirect-url';
+import PressableCheckoutBack from './pressable-checkout-back';
 import usePreparedCart from './use-prepared-cart';
-import usePressableReturnPaths from './use-pressable-return-paths';
+import usePressableCheckoutReturn from './use-pressable-return-paths';
 import type { ShoppingCartItem } from '../types';
 
 import './style.scss';
@@ -79,7 +80,7 @@ function BillingDragonCheckoutContent( {
 	const prepared = usePreparedCart( cartKey, skipActiveCart );
 	const isReady = skipActiveCart ? prepared.isReady : isFilled;
 	const error = skipActiveCart ? prepared.error : fillError;
-	const { successPath, cancelPath } = usePressableReturnPaths(
+	const { successPath, originalUrl } = usePressableCheckoutReturn(
 		responseCart.products,
 		agency?.id,
 		skipActiveCart && ! isPlanCheckout,
@@ -262,23 +263,18 @@ function BillingDragonCheckoutContent( {
 
 	// An error is checked first: a prepared cart that failed is never ready, and there is no
 	// timeout to force the checkout open, so the placeholder would otherwise show forever.
-	if ( error ) {
+	if ( error && ! originalUrl ) {
 		return <ClientCheckoutError title={ translate( 'Error' ) } message={ error } />;
 	}
 
-	if ( ! isReady ) {
+	if ( ! isReady && ! originalUrl ) {
 		return <ClientCheckoutPlaceholder />;
 	}
-
-	return (
-		<div className="client-checkout-v2">
-			{ withA8cLogo && (
-				<div className="client-checkout-v2__top-bar">
-					<div className="client-checkout-v2__top-bar-logo">
-						<A4ALogo full size={ 14 } />
-					</div>
-				</div>
-			) }
+	let checkoutContent = <ClientCheckoutPlaceholder />;
+	if ( error ) {
+		checkoutContent = <ClientCheckoutError title={ translate( 'Error' ) } message={ error } />;
+	} else if ( isReady ) {
+		checkoutContent = (
 			<CheckoutMain
 				sitelessCheckoutType="a4a"
 				redirectTo={
@@ -289,10 +285,36 @@ function BillingDragonCheckoutContent( {
 						isPlanCheckout ? null : getPurchasedWPCOMPlanSlug( cartItems )
 					)
 				}
-				customizedPreviousPath={ cancelPath ?? '/marketplace' }
+				customizedPreviousPath="/marketplace"
 				siteSlug={ siteSlug ?? '' }
 				siteId={ siteId ?? 0 }
 			/>
+		);
+	}
+
+	return (
+		<div className="client-checkout-v2">
+			{ ( withA8cLogo || originalUrl ) && (
+				<div
+					className={
+						originalUrl ? 'client-checkout-v2-pressable-top-bar' : 'client-checkout-v2__top-bar'
+					}
+				>
+					{ originalUrl && agency && (
+						<PressableCheckoutBack
+							key={ originalUrl }
+							agencyId={ agency.id }
+							afterPurchaseUrl={ originalUrl }
+						/>
+					) }
+					{ withA8cLogo && (
+						<div className="client-checkout-v2__top-bar-logo">
+							<A4ALogo full size={ 14 } />
+						</div>
+					) }
+				</div>
+			) }
+			{ checkoutContent }
 		</div>
 	);
 }

@@ -1,14 +1,9 @@
 import { useMutation } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
-import { clearOriginalReturnUrl, fetchPressableReturn } from './lib';
+import { fetchPressableReturn } from './lib';
 import type { ReturnParams } from './lib';
 
-export default function usePressableReturn( {
-	agencyId,
-	receiptId,
-	orderId,
-	canceled,
-}: ReturnParams ) {
+export default function usePressableReturn( { agencyId, receiptId, orderId }: ReturnParams ) {
 	const [ attempt, setAttempt ] = useState( 0 );
 	const { mutateAsync, isError } = useMutation( {
 		mutationFn: fetchPressableReturn,
@@ -18,10 +13,9 @@ export default function usePressableReturn( {
 
 	useEffect( () => {
 		let active = true;
-		mutateAsync( { agencyId, receiptId, orderId, canceled } )
+		mutateAsync( { agencyId, receiptId, orderId } )
 			.then( ( url ) => {
 				if ( active ) {
-					clearOriginalReturnUrl( Number( agencyId ) );
 					window.location.assign( url );
 				}
 			} )
@@ -31,7 +25,7 @@ export default function usePressableReturn( {
 		return () => {
 			active = false;
 		};
-	}, [ agencyId, receiptId, orderId, canceled, attempt, mutateAsync ] );
+	}, [ agencyId, receiptId, orderId, attempt, mutateAsync ] );
 
 	return { isError, retry: () => setAttempt( ( value ) => value + 1 ) };
 }

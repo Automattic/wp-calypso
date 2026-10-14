@@ -7,18 +7,16 @@ export type ReturnParams = {
 	agencyId?: string;
 	receiptId?: string;
 	orderId?: string;
-	canceled?: string;
 };
 
-type ReturnRequest = {
-	agency_id: number;
-	checkout_status: 'SUCCESS' | 'CANCELED';
-	receipt_id?: number;
-	order_id?: number;
-	afterPurchaseUrl?: string;
-};
-
-const storageKey = ( agencyId: number ) => `a4a-pressable-return-${ agencyId }`;
+type ReturnRequest =
+	| {
+			agency_id: number;
+			checkout_status: 'SUCCESS';
+			receipt_id?: number;
+			order_id?: number;
+	  }
+	| { agency_id: number; checkout_status: 'CANCELED'; afterPurchaseUrl: string };
 
 export function isPressableReturnUrl( value: unknown ): value is string {
 	if ( typeof value !== 'string' ) {
@@ -66,26 +64,8 @@ export function getOriginalReturnUrl(
 	}
 }
 
-export function storeOriginalReturnUrl( agencyId: number, url: string ) {
-	try {
-		window.sessionStorage.setItem( storageKey( agencyId ), url );
-	} catch {
-		// Cancellation will show an error if tab storage is unavailable.
-	}
-}
-
-export function clearOriginalReturnUrl( agencyId: number ) {
-	try {
-		window.sessionStorage.removeItem( storageKey( agencyId ) );
-	} catch {
-		// Storage may be disabled in this browser.
-	}
-}
-
-export function getPressableReturnPath( agencyId: number, canceled = false ): string {
-	return `${ A4A_MARKETPLACE_PRESSABLE_RETURN_LINK }?agency_id=${ agencyId }&${
-		canceled ? 'canceled=1' : `receipt_id=${ RECEIPT_ID_PLACEHOLDER }`
-	}`;
+export function getPressableReturnPath( agencyId: number ): string {
+	return `${ A4A_MARKETPLACE_PRESSABLE_RETURN_LINK }?agency_id=${ agencyId }&receipt_id=${ RECEIPT_ID_PLACEHOLDER }`;
 }
 
 function parseId( value?: string ): number | undefined {
@@ -104,20 +84,9 @@ export function getReturnRequest( params: ReturnParams ): ReturnRequest {
 	if ( ! agencyId ) {
 		throw new Error( 'Missing agency.' );
 	}
-	if ( params.canceled === '1' && ! params.receiptId && ! params.orderId ) {
-		const afterPurchaseUrl = window.sessionStorage.getItem( storageKey( agencyId ) );
-		if ( ! isPressableReturnUrl( afterPurchaseUrl ) ) {
-			throw new Error( 'Missing original return URL.' );
-		}
-		return { agency_id: agencyId, checkout_status: 'CANCELED', afterPurchaseUrl };
-	}
 	const receiptId = parseId( params.receiptId );
 	const orderId = parseId( params.orderId );
-	if (
-		params.canceled ||
-		!! params.receiptId === !! params.orderId ||
-		! ( receiptId || orderId )
-	) {
+	if ( !! params.receiptId === !! params.orderId || ! ( receiptId || orderId ) ) {
 		throw new Error( 'Missing purchase.' );
 	}
 	return {
@@ -127,15 +96,40 @@ export function getReturnRequest( params: ReturnParams ): ReturnRequest {
 	};
 }
 
-export async function fetchPressableReturn( params: ReturnParams ): Promise< string > {
+async function postReturnRequest( body: ReturnRequest ): Promise< string > {
 	const response: { afterPurchaseUrl?: unknown } = await wpcom.req.post( {
 		apiNamespace: 'wpcom/v2',
 		path: '/agency/pressable/titan-checkout-return',
 		method: 'POST',
-		body: getReturnRequest( params ),
+		body,
 	} );
 	if ( ! isPressableReturnUrl( response.afterPurchaseUrl ) ) {
 		throw new Error( 'Invalid return destination.' );
 	}
 	return response.afterPurchaseUrl;
+}
+
+export async function fetchPressableReturn( params: ReturnParams ): Promise< string > {
+	return postReturnRequest( getReturnRequest( params ) );
+}
+
+export function fetchCanceledPressableReturn( {
+	agencyId,
+	afterPurchaseUrl,
+}: {
+	agencyId: number;
+	afterPurchaseUrl: string;
+} ): Promise< string > {
+	if (
+		! Number.isSafeInteger( agencyId ) ||
+		agencyId <= 0 ||
+		! isPressableReturnUrl( afterPurchaseUrl )
+	) {
+		return Promise.reject( new Error( 'Missing original checkout context.' ) );
+	}
+	return postReturnRequest( {
+		agency_id: agencyId,
+		checkout_status: 'CANCELED',
+		afterPurchaseUrl,
+	} );
 }

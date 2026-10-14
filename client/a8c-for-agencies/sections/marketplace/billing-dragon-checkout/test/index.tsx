@@ -3,8 +3,8 @@
  */
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { render, screen } from '@testing-library/react';
+import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import BillingDragonCheckout from '..';
-import { getReturnRequest } from '../../pressable-return/lib';
 import type { ReactNode } from 'react';
 
 jest.mock( '@automattic/shopping-cart', () => ( {
@@ -21,9 +21,10 @@ jest.mock( 'calypso/state', () => ( {
 	useDispatch: () => jest.fn(),
 	useSelector: ( selector: ( state: unknown ) => unknown ) => selector( {} ),
 } ) );
+jest.mock( 'calypso/state/analytics/actions', () => ( { recordTracksEvent: jest.fn() } ) );
 
 jest.mock( 'calypso/state/a8c-for-agencies/agency/selectors', () => ( {
-	getActiveAgency: () => ( { id: 42 } ),
+	getActiveAgency: jest.fn( () => ( { id: 42 } ) ),
 } ) );
 jest.mock( 'calypso/state/current-user/selectors', () => ( {
 	getCurrentUserLocale: () => 'en',
@@ -41,7 +42,12 @@ const passthrough = ( { children }: { children?: ReactNode } ) => <>{ children }
 jest.mock( '@automattic/calypso-stripe', () => ( { StripeHookProvider: passthrough } ) );
 jest.mock( '@automattic/composite-checkout', () => ( { CheckoutErrorBoundary: passthrough } ) );
 jest.mock( 'calypso/my-sites/checkout/calypso-shopping-cart-provider', () => passthrough );
-jest.mock( 'calypso/my-sites/checkout/checkout-query-client-provider', () => passthrough );
+jest.mock( 'calypso/my-sites/checkout/checkout-query-client-provider', () => {
+	const { QueryClient, QueryClientProvider } = jest.requireActual( '@tanstack/react-query' );
+	return ( { children }: { children?: ReactNode } ) => (
+		<QueryClientProvider client={ new QueryClient() }>{ children }</QueryClientProvider>
+	);
+} );
 jest.mock( 'calypso/my-sites/checkout/src/components/cart-message-cleanup', () => () => null );
 jest.mock(
 	'calypso/my-sites/checkout/src/components/checkout-main',
@@ -80,7 +86,7 @@ function renderPrepared() {
 describe( 'BillingDragonCheckout in prepared cart mode', () => {
 	beforeEach( () => {
 		replaceProductsInCart.mockReset();
-		window.sessionStorage.clear();
+		( getActiveAgency as jest.Mock ).mockReturnValue( { id: 42 } );
 	} );
 
 	it( 'shows the placeholder while the prepared cart loads', () => {
@@ -89,6 +95,14 @@ describe( 'BillingDragonCheckout in prepared cart mode', () => {
 
 		expect( container.querySelector( '.client-checkout-placeholder' ) ).toBeInTheDocument();
 		expect( screen.queryByTestId( 'checkout-main' ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'loads safely before an agency and prepared cart are available', () => {
+		( getActiveAgency as jest.Mock ).mockReturnValue( null );
+		mockCart( { isLoading: true } );
+		const { container } = renderPrepared();
+		expect( container.querySelector( '.client-checkout-placeholder' ) ).toBeInTheDocument();
+		expect( screen.queryByRole( 'button', { name: 'Back to Pressable' } ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'shows the checkout once the prepared cart has loaded, without replacing it', () => {
@@ -125,7 +139,7 @@ describe( 'BillingDragonCheckout in prepared cart mode', () => {
 		afterPurchaseUrl: originalUrl,
 	};
 
-	it( 'uses internal success and cancellation paths for a Pressable-prepared Titan cart', () => {
+	it( 'uses the success return page and explicit Back to Pressable action for a prepared Titan cart', () => {
 		mockCart( { products: [ { extra: titanExtra } ] } );
 		renderPrepared();
 
@@ -135,25 +149,23 @@ describe( 'BillingDragonCheckout in prepared cart mode', () => {
 		);
 		expect( screen.getByTestId( 'checkout-main' ) ).toHaveAttribute(
 			'data-cancel-path',
-			'/marketplace/pressable-return?agency_id=42&canceled=1'
+			'/marketplace'
 		);
+		expect( screen.getByRole( 'button', { name: 'Back to Pressable' } ) ).toBeInTheDocument();
 		expect( replaceProductsInCart ).not.toHaveBeenCalled();
 	} );
 
-	it( 'preserves the original URL when removing the last item clears the cart', () => {
+	it( 'keeps Back to Pressable available after this checkout reports an error', () => {
 		mockCart( { products: [ { extra: titanExtra } ] } );
 		const { rerender } = renderPrepared();
-		mockCart( { products: [] } );
+		mockCart( { loadingError: 'boom', products: [] } );
 		rerender( <BillingDragonCheckout cartItems={ [] } skipActiveCart withA8cLogo={ false } /> );
 
-		expect( getReturnRequest( { agencyId: '42', canceled: '1' } ) ).toEqual( {
-			agency_id: 42,
-			checkout_status: 'CANCELED',
-			afterPurchaseUrl: originalUrl,
-		} );
+		expect( screen.getByText( 'Unable to load your prepared order.' ) ).toBeInTheDocument();
+		expect( screen.getByRole( 'button', { name: 'Back to Pressable' } ) ).toBeInTheDocument();
 	} );
 
-	it( 'leaves ordinary prepared checkout unchanged and clears stale cancellation context', () => {
+	it( 'leaves ordinary prepared checkout unchanged without a Pressable action', () => {
 		mockCart( { products: [ { extra: titanExtra } ] } );
 		const { rerender } = renderPrepared();
 		mockCart( { products: [ { extra: { isA4ASitelessCheckout: true, agency_id: 42 } } ] } );
@@ -167,6 +179,6 @@ describe( 'BillingDragonCheckout in prepared cart mode', () => {
 			'data-cancel-path',
 			'/marketplace'
 		);
-		expect( () => getReturnRequest( { agencyId: '42', canceled: '1' } ) ).toThrow();
+		expect( screen.queryByRole( 'button', { name: 'Back to Pressable' } ) ).not.toBeInTheDocument();
 	} );
 } );

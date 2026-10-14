@@ -4,10 +4,10 @@
 import wpcom from 'calypso/lib/wp';
 import {
 	fetchPressableReturn,
+	fetchCanceledPressableReturn,
 	getOriginalReturnUrl,
 	getReturnRequest,
 	isPressableReturnUrl,
-	storeOriginalReturnUrl,
 } from '../lib';
 
 jest.mock( 'calypso/lib/wp', () => ( {
@@ -22,7 +22,6 @@ const signedUrl = `${ originalUrl }&checkout_status=SUCCESS&timestamp=123`;
 
 beforeEach( () => {
 	post.mockReset();
-	window.sessionStorage.clear();
 } );
 
 describe( 'Pressable return context', () => {
@@ -51,16 +50,6 @@ describe( 'Pressable return context', () => {
 		);
 	} );
 
-	it( 'keeps cancellation context isolated by agency and preserves the original quantity', () => {
-		storeOriginalReturnUrl( 42, originalUrl );
-		expect( getReturnRequest( { agencyId: '42', canceled: '1' } ) ).toEqual( {
-			agency_id: 42,
-			checkout_status: 'CANCELED',
-			afterPurchaseUrl: originalUrl,
-		} );
-		expect( () => getReturnRequest( { agencyId: '43', canceled: '1' } ) ).toThrow();
-	} );
-
 	it.each( [
 		{},
 		{ agencyId: '42', receiptId: ':receiptId' },
@@ -68,9 +57,7 @@ describe( 'Pressable return context', () => {
 		{ agencyId: '42', receiptId: '0' },
 		{ agencyId: '42', receiptId: '1e2' },
 		{ agencyId: '42', receiptId: '9007199254740992' },
-		{ agencyId: '42', canceled: '2' },
-		{ agencyId: '42', canceled: '1', receiptId: '1' },
-		{ agencyId: '42', canceled: '1' },
+		{ agencyId: '42' },
 	] )( 'rejects missing or ambiguous context %p', ( params ) => {
 		expect( () => getReturnRequest( params ) ).toThrow();
 	} );
@@ -101,9 +88,8 @@ describe( 'Pressable return request', () => {
 	} );
 
 	it( 'sends only the preserved original URL for authenticated cancellation', async () => {
-		storeOriginalReturnUrl( 42, originalUrl );
 		post.mockResolvedValue( { afterPurchaseUrl: signedUrl } );
-		await fetchPressableReturn( { agencyId: '42', canceled: '1' } );
+		await fetchCanceledPressableReturn( { agencyId: 42, afterPurchaseUrl: originalUrl } );
 		expect( post.mock.calls[ 0 ][ 0 ].body ).toEqual( {
 			agency_id: 42,
 			checkout_status: 'CANCELED',
@@ -122,7 +108,9 @@ describe( 'Pressable return request', () => {
 	} );
 
 	it( 'does not request a signing action when cancellation context is missing', async () => {
-		await expect( fetchPressableReturn( { agencyId: '42', canceled: '1' } ) ).rejects.toThrow();
+		await expect(
+			fetchCanceledPressableReturn( { agencyId: 42, afterPurchaseUrl: '' } )
+		).rejects.toThrow();
 		expect( post ).not.toHaveBeenCalled();
 	} );
 
