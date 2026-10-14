@@ -3,6 +3,7 @@
  */
 
 import { siteBySlugQuery } from '@automattic/api-queries';
+import { useQuery } from '@tanstack/react-query';
 import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
@@ -43,6 +44,15 @@ const site = {
 	},
 } as Site;
 
+function MigrationOverview() {
+	const { data } = useQuery( {
+		...siteBySlugQuery( site.slug ),
+		initialData: site,
+		staleTime: Infinity,
+	} );
+	return <StartedDIFMContentInfo site={ data } />;
+}
+
 function mockTicket( ticketId: number | null ) {
 	return nock( 'https://public-api.wordpress.com' )
 		.get( '/wpcom/v2/sites/123/automated-migration/find-ticket' )
@@ -80,7 +90,7 @@ it( 'waits for fresh site data before navigating after cancelling a ticketless m
 		.get( `/rest/v1.1/sites/${ site.slug }` )
 		.query( true )
 		.reply( 200, () => siteResponse );
-	const { queryClient } = render( <StartedDIFMContentInfo site={ site } /> );
+	const { queryClient } = render( <MigrationOverview /> );
 	const siteQueryKey = siteBySlugQuery( site.slug ).queryKey;
 	queryClient.setQueryData( siteQueryKey, site );
 	const siteAtNavigation = jest.fn();
@@ -97,7 +107,7 @@ it( 'waits for fresh site data before navigating after cancelling a ticketless m
 
 	await waitFor( () => expect( siteRefresh.isDone() ).toBe( true ) );
 	expect( mockNavigate ).not.toHaveBeenCalled();
-	expect( confirmButton ).toHaveClass( 'is-busy' );
+	expect( confirmButton ).not.toHaveClass( 'is-busy' );
 	resolveSiteResponse( cancelledSite );
 
 	await waitFor( () =>
@@ -113,7 +123,7 @@ it( 'waits for fresh site data before navigating after cancelling a ticketless m
 	} );
 } );
 
-it( 'clears the busy state if refreshing the site fails', async () => {
+it( 'does not navigate if refreshing the site fails', async () => {
 	mockTicket( null );
 	nock( 'https://public-api.wordpress.com' )
 		.post( '/wpcom/v2/sites/123/automated-migration/cancel-migration' )
@@ -122,7 +132,7 @@ it( 'clears the busy state if refreshing the site fails', async () => {
 		.get( `/rest/v1.1/sites/${ site.slug }` )
 		.query( true )
 		.reply( 404, { error: 'unknown_blog', message: 'Unable to load site' } );
-	render( <StartedDIFMContentInfo site={ site } /> );
+	render( <MigrationOverview /> );
 
 	await userEvent.click( await screen.findByRole( 'button', { name: 'Cancel migration' } ) );
 	const confirmButton = within( screen.getByRole( 'dialog' ) ).getByRole( 'button', {
@@ -130,7 +140,12 @@ it( 'clears the busy state if refreshing the site fails', async () => {
 	} );
 	await userEvent.click( confirmButton );
 
-	await waitFor( () => expect( mockCreateErrorNotice ).toHaveBeenCalled() );
+	await waitFor( () =>
+		expect( mockCreateErrorNotice ).toHaveBeenCalledWith(
+			'We couldn’t cancel your migration. Please try again or contact support.',
+			{ type: 'snackbar' }
+		)
+	);
 	expect( confirmButton ).not.toHaveClass( 'is-busy' );
 	expect( mockNavigate ).not.toHaveBeenCalled();
 	expect( mockCreateSuccessNotice ).not.toHaveBeenCalled();

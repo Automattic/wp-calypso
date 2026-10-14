@@ -55,7 +55,6 @@ function CancellationModal( {
 	const { createErrorNotice, createSuccessNotice } = useDispatch( noticesStore );
 	const isMigrationInProgress = site.site_migration?.in_progress;
 	const mutation = useMutation( cancelSiteMigrationQuery( site.ID ) );
-	const [ isRefreshingSite, setIsRefreshingSite ] = useState( false );
 
 	const modalProps = isMigrationInProgress
 		? {
@@ -89,18 +88,15 @@ function CancellationModal( {
 				return;
 			}
 
-			setIsRefreshingSite( true );
-			await queryClient.fetchQuery( siteBySlugQuery( site.slug ) );
+			await queryClient.invalidateQueries( siteBySlugQuery( site.slug ), { throwOnError: true } );
 			createSuccessNotice( __( 'Migration cancelled.' ), { type: 'snackbar' } );
 			navigate( { to: '/sites/$siteSlug', params: { siteSlug: site.slug } } );
 		} catch {
 			recordTracksEvent( 'calypso_dashboard_migration_started_difm_cancellation_modal_failure' );
 			createErrorNotice(
-				__( 'We couldn’t cancel your migration. Our support team will reach out to help.' ),
+				__( 'We couldn’t cancel your migration. Please try again or contact support.' ),
 				{ type: 'snackbar' }
 			);
-		} finally {
-			setIsRefreshingSite( false );
 		}
 	};
 
@@ -124,7 +120,7 @@ function CancellationModal( {
 					<Button
 						__next40pxDefaultSize
 						variant="primary"
-						isBusy={ mutation.isPending || isRefreshingSite }
+						isBusy={ mutation.isPending }
 						onClick={ handleConfirmCancel }
 					>
 						{ modalProps.buttonText }

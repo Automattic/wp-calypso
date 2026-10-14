@@ -144,9 +144,7 @@ const CancelDifmMigrationForm = ( { siteId }: { siteId: number } ) => {
 			setCancellationStatus( 'error' );
 			dispatch(
 				errorNotice(
-					translate(
-						"We couldn't cancel your migration. Our support team will reach out to help."
-					),
+					translate( "We couldn't cancel your migration. Please try again or contact support." ),
 					{ duration: 5000 }
 				)
 			);
