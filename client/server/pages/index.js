@@ -18,17 +18,12 @@ import express from 'express';
 import { stringify } from 'qs';
 // eslint-disable-next-line no-restricted-imports
 import superagent from 'superagent'; // Don't have Node.js fetch lib yet.
-import { getDashboardFromHostname, isAllowedDashboardRoute } from 'calypso/dashboard/app/routing';
+import { getDashboardFromHostname } from 'calypso/dashboard/app/routing';
 import { isAllowedA4ADashboardHostname } from 'calypso/dashboard/app-a4a/routing';
 import {
 	A4A_DASHBOARD_SECTION_DEFINITION,
 	A4A_DASHBOARD_SECTION_PATHS,
 } from 'calypso/dashboard/app-a4a/section';
-import { isAllowedCiabDashboardHostname } from 'calypso/dashboard/app-ciab/routing';
-import {
-	CIAB_DASHBOARD_SECTION_DEFINITION,
-	CIAB_DASHBOARD_SECTION_PATHS,
-} from 'calypso/dashboard/app-ciab/section';
 import { isAllowedDotcomDashboardHostname } from 'calypso/dashboard/app-dotcom/routing';
 import {
 	DOTCOM_DASHBOARD_SECTION_DEFINITION,
@@ -907,6 +902,13 @@ const render404 =
 		res.status( 404 ).send( renderJsx( '404', ctx ) );
 	};
 
+const render404ForUnknownHostname = ( req, res, next ) => {
+	if ( getDashboardFromHostname( req.hostname ) ) {
+		return next();
+	}
+	render404()( req, res );
+};
+
 const DASHBOARD_VARIANTS = [
 	{
 		definition: DOTCOM_DASHBOARD_SECTION_DEFINITION,
@@ -914,13 +916,6 @@ const DASHBOARD_VARIANTS = [
 		entrypoint: 'entry-dashboard-dotcom',
 		devEnv: 'development',
 		isAllowedHostname: isAllowedDotcomDashboardHostname,
-	},
-	{
-		definition: CIAB_DASHBOARD_SECTION_DEFINITION,
-		paths: CIAB_DASHBOARD_SECTION_PATHS,
-		entrypoint: 'entry-dashboard-ciab',
-		devEnv: 'development',
-		isAllowedHostname: isAllowedCiabDashboardHostname,
 	},
 	{
 		definition: A4A_DASHBOARD_SECTION_DEFINITION,
@@ -1313,18 +1308,22 @@ export default function pages() {
 		);
 	}
 
+	if ( isDashboardEnv() ) {
+		app.use( render404ForUnknownHostname );
+	}
+
 	// Special Calypso routes which also appear on `my.wordpress.com`
 	if ( isDashboardEnv() || calypsoEnv === 'development' ) {
 		const signupSectionDefinition = sections.find( ( s ) => s.name === 'signup' );
 		handleSectionPath( signupSectionDefinition, '/start', undefined, ( req ) =>
-			isAllowedDashboardRoute( { hostname: req.hostname, path: req.path } )
+			getDashboardFromHostname( req.hostname )
 		);
 		const checkoutSectionDefinition = sections.find( ( s ) => s.name === 'checkout' );
 		handleSectionPath( checkoutSectionDefinition, '/checkout', undefined, ( req ) =>
-			isAllowedDashboardRoute( { hostname: req.hostname, path: req.path } )
+			getDashboardFromHostname( req.hostname )
 		);
 		handleSectionPath( STEPPER_SECTION_DEFINITION, '/setup', 'entry-stepper', ( req ) =>
-			isAllowedDashboardRoute( { hostname: req.hostname, path: req.path } )
+			getDashboardFromHostname( req.hostname )
 		);
 	}
 
