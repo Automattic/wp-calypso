@@ -11,7 +11,6 @@ import {
 	uploadAgencyPartnerDirectoryLogo,
 	fetchTipaltiIFrameUrl,
 	fetchTipaltiPayee,
-	recordAgencyResourceEvent,
 	submitAgencyPressablePremiumPlanReferral,
 	submitAgencyVipPartnerOpportunity,
 } from '@automattic/api-core';
@@ -203,13 +202,6 @@ export const agencyPressablePremiumPlanReferralMutation = ( agencyId: number ) =
 		meta: { statId: 'agcy-press-prem-submit' },
 		mutationFn: ( referral: AgencyHostingReferral ) =>
 			submitAgencyPressablePremiumPlanReferral( agencyId, referral ),
-	} );
-
-export const agencyResourceEventMutation = ( agencyId: number ) =>
-	mutationOptions( {
-		meta: { statId: 'agcy-resource-record' },
-		mutationFn: ( resource: { id: number; name: string } ) =>
-			recordAgencyResourceEvent( agencyId, resource.id, resource.name ),
 	} );
 
 export const mcpSettingsQuery = ( agencyId: number ) =>
