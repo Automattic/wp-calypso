@@ -6,6 +6,7 @@ import {
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
+import { Badge } from '@wordpress/ui';
 import { useEffect, useMemo } from 'react';
 import { parseMatchReasons } from '../../helpers';
 import {
@@ -153,7 +154,7 @@ export const NamePulseExactMatchCard = ( {
 						</HStack>
 						<DomainSuggestionBadge>{ __( "It's available!" ) }</DomainSuggestionBadge>
 						{ availability.status === DomainAvailabilityStatus.AVAILABLE_PREMIUM && (
-							<DomainSuggestionBadge variation="premium">{ __( 'Premium' ) }</DomainSuggestionBadge>
+							<Badge intent="informational">{ __( 'Premium' ) }</Badge>
 						) }
 					</HStack>
 
