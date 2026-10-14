@@ -2,18 +2,12 @@
  * @jest-environment jsdom
  */
 
+import { siteBySlugQuery } from '@automattic/api-queries';
 import { screen, waitFor } from '@testing-library/react';
 import nock from 'nock';
 import { render } from '../../../test-utils';
 import SiteMigrationOverview from '../index';
 import type { Site } from '@automattic/api-core';
-
-const mockNavigate = jest.fn();
-
-jest.mock( '@tanstack/react-router', () => ( {
-	...jest.requireActual( '@tanstack/react-router' ),
-	useNavigate: () => mockNavigate,
-} ) );
 
 const siteSlug = 'test-site.wordpress.com';
 
@@ -38,42 +32,28 @@ function mockSiteApi( site: Site ) {
 }
 
 describe( '<SiteMigrationOverview>', () => {
-	beforeEach( () => {
-		mockNavigate.mockClear();
-	} );
-
 	test( 'shows migration content when migration is in progress', async () => {
 		mockSiteApi( createSite( 'migration-started-diy' ) );
 
-		render( <SiteMigrationOverview siteSlug={ siteSlug } /> );
+		const { router } = render( <SiteMigrationOverview siteSlug={ siteSlug } /> );
 
-		await waitFor( () =>
-			expect( screen.getByText( 'Your migration is underway' ) ).toBeVisible()
-		);
+		await waitFor( () => expect( screen.getByText( 'Your migration is underway' ) ).toBeVisible() );
 
-		expect( mockNavigate ).not.toHaveBeenCalled();
+		expect( router.state.location.pathname ).toBe( '/' );
 	} );
 
 	test( 'redirects to site overview when migration is no longer in progress', async () => {
 		mockSiteApi( createSite( 'migration-started-diy' ) );
 
-		const { queryClient } = render( <SiteMigrationOverview siteSlug={ siteSlug } /> );
+		const { queryClient, router } = render( <SiteMigrationOverview siteSlug={ siteSlug } /> );
 
-		await waitFor( () =>
-			expect( screen.getByText( 'Your migration is underway' ) ).toBeVisible()
-		);
+		await waitFor( () => expect( screen.getByText( 'Your migration is underway' ) ).toBeVisible() );
 
-		// Simulate migration completing: update the cached site data
+		const historyLength = router.history.length;
 		mockSiteApi( createSite( null ) );
-		await queryClient.invalidateQueries( { queryKey: [ 'site-by-slug', siteSlug ] } );
+		await queryClient.invalidateQueries( { queryKey: siteBySlugQuery( siteSlug ).queryKey } );
 
-		await waitFor( () =>
-			expect( mockNavigate ).toHaveBeenCalledWith( {
-				to: '/sites/$siteSlug',
-				params: { siteSlug },
-				replace: true,
-				viewTransition: false,
-			} )
-		);
+		await waitFor( () => expect( router.state.location.pathname ).toBe( `/sites/${ siteSlug }` ) );
+		expect( router.history.length ).toBe( historyLength );
 	} );
 } );

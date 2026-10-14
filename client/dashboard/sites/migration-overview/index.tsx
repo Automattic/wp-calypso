@@ -14,12 +14,8 @@ export default function SiteMigrationOverview( { siteSlug }: { siteSlug: string 
 	const navigate = useNavigate();
 	const migrationInProgress = isSiteMigrationInProgress( site );
 
-	// The router-level redirect in `beforeLoad` only runs on navigation, not on
-	// data updates. When a migration completes while the tab is in the background,
-	// the site query is refetched on window focus and the sidebar populates with
-	// regular links — but the main content area keeps showing the migration screen.
-	// This effect watches the live query data and redirects as soon as
-	// `isSiteMigrationInProgress` returns false.
+	// The `beforeLoad` redirect only runs on navigation, so this handles the
+	// migration completing while the page is open (e.g. refetch on window focus).
 	useEffect( () => {
 		if ( ! migrationInProgress ) {
 			navigate( {
