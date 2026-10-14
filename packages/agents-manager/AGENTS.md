@@ -25,19 +25,21 @@ cd apps/agents-manager && yarn dev --sync
 
 ## Conventions
 
-- **`@wordpress/*` imports**: Take React APIs from `@wordpress/element` (bare `react` for types only), UI from `@wordpress/components` and icons from `@wordpress/icons`; chat UI comes from `@automattic/agenttic-ui`. Don't add a new UI dependency, or rewrite existing imports just to comply.
+These are the standard for new and changed code, even where older code falls short. Don't rewrite untouched code just to comply.
+
+- **`@wordpress/*` imports**: Take React APIs from `@wordpress/element` (bare `react` for types only), UI from `@wordpress/components` and icons from `@wordpress/icons`; chat UI comes from `@automattic/agenttic-ui`. Don't add a new UI dependency.
 - **i18n**: Use `@wordpress/i18n` with the global `__i18n_text_domain__` as the text domain, unquoted: `__( 'Close', __i18n_text_domain__ )`. Webpack replaces it with `'default'` at build time. Fill placeholders with `sprintf()`, not by joining translated pieces, and add a `/* translators: */` comment.
 - **Curly quotes**: Preserve `“”` `‘’` exactly as they appear. Do not convert to unicode escapes or ASCII equivalents.
 - **Tracks**: Record events through the helpers in `utils/tracks.ts` (`recordAgentsManagerTracksEvent()`, or `recordBigSkyTracksEvent()` for Big Sky parity events), never `recordTracksEvent` directly: they honor the tracking opt-out and add the shared props.
 - **Styles**: Prefix new CSS classes with `agents-manager-`, BEM-style (`agents-manager-sources-display__link`), so they don't collide with wp-admin and editor styles.
 - **Accessibility**: Make every control a real button (`Button` from `@wordpress/components`, or `<button type="button">` for a custom-styled one) and every link to a URL an `<a>` with `href`. Never use a clickable `div`, except a backdrop that closes something. Give icon-only buttons a translated label.
 - **Tests**: Put unit tests in the area's `__tests__/` folder (`components/__tests__/chat-header.test.tsx`, `abilities/<name>/__tests__/`), named after what they test. Jest runs every file directly in `__tests__/`, so fixtures go in a subfolder.
-- **Readable code**: Write for the next reader, and match the file you're in.
+- **Readable code**: Write for the next reader.
   - **Names**: Say what a thing holds or does, in full words (`message`, not `msg`; `id` and `url` are fine). Booleans read as questions (`hasProviderSuggestions`), functions start with a verb (`syncProviderMetadata`), components are nouns (`ChatHeader`), hooks start with `use`, and files are kebab-case. Name unexplained numbers and repeated strings as module-level `SCREAMING_SNAKE_CASE` constants (`AGENTS_MANAGER_STORE`). Rename what a change makes inaccurate.
   - **Blank lines**: Separate the steps of a function or test with a blank line, not every statement.
   - **Functions**: Return early instead of nesting, avoid nested ternaries, and give each function one job. If a block needs a comment to say what it does, make it a named helper.
   - **Structure**: Keep components thin, so they mostly wire things up and render. A behavior with effects or several pieces of state goes in a hook named after it, under `hooks/`; logic with no React state is a pure function in `utils/`. Simple local UI state can stay in the component. Heavily shared components have stricter rules below.
-  - **Types**: Use `unknown` with narrowing instead of `any`.
+  - **Exports and types**: Use named exports in new files, and `unknown` with narrowing instead of `any`.
 - **Leave nothing stale**: In the same PR, a change MUST update or remove everything that describes or depends on it: callers, types, tests, mocks, styles, dependencies, code nothing uses any more, and docs (`README.md` and `AGENTS.md` files, other Markdown, docblocks, comments). Find them by searching the whole repo for the names you changed (files, exports, props, classes, flags), not from memory, and again before finishing; only the references you mean to keep should remain. Before removing anything other repos read (the provider contract, `window.__agentsManagerActions`, window events), also search Big Sky, Jetpack, WooCommerce AI and wpcom. While a deployed build still reads it, keep it, and say in the PR description when it can go.
 
 ## Working in Heavily Shared Components
