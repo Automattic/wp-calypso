@@ -103,6 +103,17 @@ describe( 'useAiCredits', () => {
 	const respondWith = ( body: unknown, ok = true ) =>
 		fetchMock.mockResolvedValue( { ok, json: async () => body } );
 
+	/** Holds the next credits request open; call the result to answer it. */
+	const deferFetch = () => {
+		let resolve: ( value: unknown ) => void = () => {};
+		fetchMock.mockReturnValueOnce(
+			new Promise( ( settle ) => {
+				resolve = settle;
+			} )
+		);
+		return ( body: unknown, ok = true ) => resolve( { ok, json: async () => body } );
+	};
+
 	const renderCredits = (
 		mode = ImageStudioMode.Generate,
 		auth: AuthProvider | undefined = authProvider
@@ -435,6 +446,77 @@ describe( 'useAiCredits', () => {
 				...noticeCredits( 'low', 6_000 ),
 				ctaType: 'none',
 				ref: 'none',
+			} );
+		} );
+
+		it( 'checks again after a turn when the opening check failed, and records what it finds', async () => {
+			fetchMock.mockResolvedValueOnce( { ok: false, json: async () => ( {} ) } );
+			const { result } = renderCredits();
+			await waitFor( () => expect( result.current.isLoading ).toBe( false ) );
+			expect( fetchMock ).toHaveBeenCalledTimes( 1 );
+
+			const answer = deferFetch();
+			act( () => {
+				result.current.onTaskUpdate( finalUpdate( planSnapshot( 6_000 ) ) );
+			} );
+			await waitFor( () => expect( fetchMock ).toHaveBeenCalledTimes( 2 ) );
+			expect( trackImageStudioUpgradeNoticeShown ).not.toHaveBeenCalled();
+
+			await act( async () => {
+				answer( { ai_credits: planSnapshot( 6_000 ), ...PLAN_BUYER } );
+			} );
+
+			expect( result.current.notice?.action ).toEqual( upgradeAction );
+			expect( result.current.meter?.upgradeUrl ).toBe( UPGRADE_URL );
+			expect( trackImageStudioUpgradeNoticeShown ).toHaveBeenCalledTimes( 1 );
+			expect( trackImageStudioUpgradeNoticeShown ).toHaveBeenCalledWith( {
+				mode: ImageStudioMode.Generate,
+				trigger: 'refresh',
+				...noticeCredits( 'low', 6_000 ),
+			} );
+		} );
+
+		it( 'records the notice with no Upgrade when the check after a turn fails too', async () => {
+			fetchMock.mockResolvedValue( { ok: false, json: async () => ( {} ) } );
+			const { result } = renderCredits();
+			await waitFor( () => expect( result.current.isLoading ).toBe( false ) );
+
+			act( () => {
+				result.current.onTaskUpdate( finalUpdate( planSnapshot( 6_000 ) ) );
+			} );
+			await waitFor( () => expect( trackImageStudioUpgradeNoticeShown ).toHaveBeenCalled() );
+
+			expect( fetchMock ).toHaveBeenCalledTimes( 2 );
+			expect( result.current.notice?.action ).toBeUndefined();
+			expect( trackImageStudioUpgradeNoticeShown ).toHaveBeenCalledWith( {
+				mode: ImageStudioMode.Generate,
+				trigger: 'refresh',
+				...noticeCredits( 'low', 6_000 ),
+				ctaType: 'none',
+				ref: 'none',
+			} );
+		} );
+
+		it( 'records the latest balance when turns at the same level end before the opening check', async () => {
+			const answer = deferFetch();
+			const { result } = renderCredits();
+			await waitFor( () => expect( fetchMock ).toHaveBeenCalled() );
+
+			act( () => {
+				result.current.onTaskUpdate( finalUpdate( planSnapshot( 6_000 ) ) );
+			} );
+			act( () => {
+				result.current.onTaskUpdate( finalUpdate( planSnapshot( 5_000 ) ) );
+			} );
+			await act( async () => {
+				answer( { ai_credits: planSnapshot( 30_000 ), ...PLAN_BUYER } );
+			} );
+
+			expect( trackImageStudioUpgradeNoticeShown ).toHaveBeenCalledTimes( 1 );
+			expect( trackImageStudioUpgradeNoticeShown ).toHaveBeenCalledWith( {
+				mode: ImageStudioMode.Generate,
+				trigger: 'refresh',
+				...noticeCredits( 'low', 5_000 ),
 			} );
 		} );
 

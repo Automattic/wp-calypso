@@ -137,15 +137,17 @@ export function useAiCredits( {
 	// Only the opening check says who may buy; a turn's balance doesn't.
 	const [ access, setAccess ] = useState< CreditsAccess >();
 	const accessRef = useRef< CreditsAccess | undefined >( undefined );
-	// A notice event waits for the opening check to answer or fail, so it can say whether
-	// Upgrade shows; a skipped check leaves nothing to wait for. Its 5-second timeout doesn't
-	// count: a late answer can still add Upgrade.
+	const canCheck = blogId !== null && ! isRequestSkipped && !! authProvider;
+	// Cancelled when the credentials change or the modal closes, so an older check's answer is dropped.
+	const checkToken = useRef( { isCancelled: false } );
+	// A notice event waits for a running check to answer or fail, so it can say whether
+	// Upgrade shows; a skipped check leaves nothing to wait for. The opening check's 5-second
+	// timeout doesn't count: a late answer can still add Upgrade.
 	const isAccessSettled = useRef( isRequestSkipped );
-	const heldNotice = useRef< {
-		status: PaidCreditsStatus;
-		level: SiteCreditsLevel;
-		trigger: UpgradeNoticeTrigger;
-	} | null >( null );
+	const heldNotice = useRef< { level: SiteCreditsLevel; trigger: UpgradeNoticeTrigger } | null >(
+		null
+	);
+	const latestStatus = useRef< PaidCreditsStatus | null >( null );
 	const turnBalanceCount = useRef( 0 );
 	// `undefined` until a balance is known. Updated as each balance arrives, so two in one render
 	// still compare with each other.
@@ -178,55 +180,58 @@ export function useAiCredits( {
 		isAccessSettled.current = true;
 		const held = heldNotice.current;
 		heldNotice.current = null;
-		if ( held ) {
-			trackNoticeShown( held.status, held.level, held.trigger );
+		// A level change replaces or clears the held notice, so the latest balance is at its level.
+		if ( held && latestStatus.current ) {
+			trackNoticeShown( latestStatus.current, held.level, held.trigger );
 		}
 	} );
 
 	// The Agent's parser, so the notice, the send block and the dot always agree. An unreadable
 	// balance keeps whatever was known, so a fluke never clears or shows a notice.
-	const applyCredits = useEvent( ( snapshot: unknown, trigger: UpgradeNoticeTrigger ) => {
-		if ( blogId === null ) {
-			return false;
-		}
-		const next = parseLiveCreditsStatus( snapshot, blogId );
-		if ( next?.plan !== 'paid' ) {
-			return false;
-		}
-		const level = getSiteCreditsLevel( next.remaining );
-		// A known balance running out opens the dot's details once. The first read stays quiet.
-		if ( level === 'out' && shown.current.level !== undefined && shown.current.level !== 'out' ) {
-			setIsMeterOpen( true );
-		}
-		if ( level !== shown.current.level ) {
-			if ( ! level ) {
-				heldNotice.current = null;
-			} else if ( isAccessSettled.current ) {
-				trackNoticeShown( next, level, trigger );
-			} else {
-				heldNotice.current = { status: next, level, trigger };
+	const applyCredits = useEvent(
+		( snapshot: unknown, trigger: UpgradeNoticeTrigger, holdNotice = false ) => {
+			if ( blogId === null ) {
+				return false;
 			}
-			shown.current = { level, trigger };
+			const next = parseLiveCreditsStatus( snapshot, blogId );
+			if ( next?.plan !== 'paid' ) {
+				return false;
+			}
+			latestStatus.current = next;
+			const level = getSiteCreditsLevel( next.remaining );
+			// A known balance running out opens the dot's details once. The first read stays quiet.
+			if ( level === 'out' && shown.current.level !== undefined && shown.current.level !== 'out' ) {
+				setIsMeterOpen( true );
+			}
+			if ( level !== shown.current.level ) {
+				if ( ! level ) {
+					heldNotice.current = null;
+				} else if ( isAccessSettled.current && ! holdNotice ) {
+					trackNoticeShown( next, level, trigger );
+				} else {
+					heldNotice.current = { level, trigger };
+				}
+				shown.current = { level, trigger };
+			}
+			setStatus( next );
+			return true;
 		}
-		setStatus( next );
-		return true;
-	} );
+	);
 
-	useEffect( () => {
-		if ( blogId === null || isRequestSkipped || ! authProvider ) {
-			return;
+	/** Reads the balance and who may buy; a notice event waits for the answer. */
+	const checkCredits = useEvent( ( trigger: UpgradeNoticeTrigger ) => {
+		// Callers check `canCheck`; this narrows the types.
+		if ( blogId === null || ! authProvider ) {
+			return Promise.resolve();
 		}
-
-		let isCancelled = false;
-		isAccessSettled.current = false;
+		const token = checkToken.current;
 		const turnBalancesBefore = turnBalanceCount.current;
-		const timeout = setTimeout( () => setIsLoading( false ), SITE_CREDITS_TIMEOUT_MS );
+		isAccessSettled.current = false;
 
-		fetchSiteCredits( blogId, authProvider ).then( ( result ) => {
-			if ( isCancelled ) {
+		return fetchSiteCredits( blogId, authProvider ).then( ( result ) => {
+			if ( token.isCancelled ) {
 				return;
 			}
-			clearTimeout( timeout );
 			setIsLoading( false );
 			if ( result ) {
 				accessRef.current = result.access;
@@ -235,21 +240,40 @@ export function useAiCredits( {
 			settleAccess();
 			// A turn that finished while this check ran already reported a newer balance.
 			if ( turnBalanceCount.current === turnBalancesBefore ) {
-				applyCredits( result?.aiCredits, 'open' );
+				applyCredits( result?.aiCredits, trigger );
 			}
 		} );
+	} );
+
+	useEffect( () => {
+		if ( ! canCheck ) {
+			return;
+		}
+		const token = { isCancelled: false };
+		checkToken.current = token;
+		const timeout = setTimeout( () => setIsLoading( false ), SITE_CREDITS_TIMEOUT_MS );
+		checkCredits( 'open' ).then( () => clearTimeout( timeout ) );
 
 		return () => {
-			isCancelled = true;
+			token.isCancelled = true;
 			clearTimeout( timeout );
 		};
-	}, [ blogId, isRequestSkipped, authProvider, applyCredits, settleAccess ] );
+	}, [ canCheck, authProvider, checkCredits ] );
 
 	// Only a turn's last update has its final balance.
 	const onTaskUpdate = useEvent( ( update: TaskUpdate ) => {
 		const isTurnEnd = update.final ?? TURN_END_STATES.includes( update.status.state );
-		if ( isTurnEnd && applyCredits( update.aiCredits, 'refresh' ) ) {
+		if ( ! isTurnEnd ) {
+			return;
+		}
+		// A failed check left who may buy unknown, and a turn's balance doesn't say. Check
+		// again, and hold this turn's notice event for the answer.
+		const recheck = canCheck && ! accessRef.current && isAccessSettled.current;
+		if ( applyCredits( update.aiCredits, 'refresh', recheck ) ) {
 			turnBalanceCount.current++;
+			if ( recheck ) {
+				checkCredits( 'refresh' );
+			}
 		}
 	} );
 
