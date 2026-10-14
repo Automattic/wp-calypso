@@ -14,10 +14,12 @@ const buildMigrationSite = ( {
 	status,
 	how,
 	canInstallPlugins = false,
+	inProgress,
 }: {
 	status: string;
 	how?: string;
 	canInstallPlugins?: boolean;
+	inProgress?: boolean;
 } ) =>
 	( {
 		ID: 123,
@@ -25,6 +27,7 @@ const buildMigrationSite = ( {
 
 		site_migration: {
 			migration_status: [ 'migration', status, how ].filter( Boolean ).join( '-' ),
+			...( inProgress === undefined ? {} : { in_progress: inProgress } ),
 		},
 
 		name: 'Bold Apps',
@@ -200,6 +203,30 @@ describe( 'MigrationOverview', () => {
 	} );
 
 	describe( 'DIFM started migration', () => {
+		it.each( [ false, undefined ] )(
+			'shows the credentials reminder when in_progress is %s',
+			( inProgress ) => {
+				const site = buildMigrationSite( { status: 'started', how: 'difm', inProgress } );
+
+				render( <MigrationOverview site={ site } /> );
+
+				expect(
+					screen.getByText( /Heads up: if it has been more than 3 business days/ )
+				).toBeVisible();
+			}
+		);
+
+		it( 'hides the credentials reminder once the migration is in progress', () => {
+			const site = buildMigrationSite( { status: 'started', how: 'difm', inProgress: true } );
+
+			render( <MigrationOverview site={ site } /> );
+
+			expect( screen.getByText( /We've received your migration request/ ) ).toBeVisible();
+			expect(
+				screen.queryByText( /Heads up: if it has been more than 3 business days/ )
+			).not.toBeInTheDocument();
+		} );
+
 		it( 'shows the migrating started instructions', () => {
 			const site = buildMigrationSite( { status: 'started', how: 'difm' } );
 
