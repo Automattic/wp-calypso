@@ -1127,16 +1127,11 @@ const agencySiteOverviewRoute = createRoute( {
 
 		// Settle the plan card before first paint, so a Pressable site does not
 		// show the Jetpack card first and then swap to the Pressable one.
-		if ( isPressableSite( agencySite ) ) {
-			const agency = await queryClient.ensureQueryData( activeAgencyQuery() );
-			if ( agency?.id ) {
-				await Promise.all( [
-					queryClient.ensureQueryData( agencyProductsQuery( agency.id ) ).catch( () => undefined ),
-					queryClient
-						.ensureQueryData( pressableLicensesQuery( agency.id ) )
-						.catch( () => undefined ),
-				] );
-			}
+		if ( isPressableSite( agencySite ) && agency?.id ) {
+			await Promise.all( [
+				queryClient.ensureQueryData( agencyProductsQuery( agency.id ) ).catch( () => undefined ),
+				queryClient.ensureQueryData( pressableLicensesQuery( agency.id ) ).catch( () => undefined ),
+			] );
 		}
 	},
 } ).lazy( () =>
