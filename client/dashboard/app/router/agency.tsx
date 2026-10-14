@@ -759,6 +759,11 @@ export const learnRoute = createRoute( {
 	} ),
 	getParentRoute: () => agencyRoute,
 	path: 'library',
+	// The view's search. The library reveals more results in place rather than
+	// paging, so there's no page.
+	validateSearch: ( search: Record< string, unknown > ): { search?: string } => ( {
+		search: typeof search.search === 'string' ? search.search : undefined,
+	} ),
 	loader: () => queryClient.ensureQueryData( agencyEnablementResourcesQuery() ),
 } ).lazy( () =>
 	import( '../../agency/resources/learn' ).then( ( d ) =>
