@@ -6,8 +6,7 @@ import type {
 } from './types';
 
 /**
- * Providers and timeout are left to the endpoint's defaults; `use_ai` switches
- * the providers to their AI engines.
+ * The endpoint picks providers and timeout from `use_ai`.
  *
  * Provider errors ride along in `errors[]`; only when every provider fails does
  * the endpoint reply with a 400.
