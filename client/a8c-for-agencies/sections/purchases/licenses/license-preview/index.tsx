@@ -183,7 +183,9 @@ export default function LicensePreview( {
 		}
 	}, [ isHighlighted ] );
 
-	const isParentLicense = quantity && parentLicenseId;
+	// A Titan quantity is the inbox count on a single subscription, not a bundle of child licenses.
+	const isBundle = !! quantity && ! isTitanLicense;
+	const isParentLicense = isBundle && parentLicenseId;
 
 	const isSiteAtomic = site?.is_wpcom_atomic;
 
@@ -313,7 +315,7 @@ export default function LicensePreview( {
 								</Badge>
 							) }
 						</div>
-						{ trialEnd && (
+						{ isTitanLicense && trialEnd && (
 							<div className="license-preview__trial-notice">
 								{ isActiveTrial
 									? translate( '90-day trial ends {{date/}}', {
@@ -337,13 +339,9 @@ export default function LicensePreview( {
 				</div>
 
 				<div>
-					{ quantity ? (
+					{ isBundle ? (
 						<div className="license-preview__bundle">
-							{ titanDomain ? (
-								titanDomain
-							) : (
-								<EmptyValueIndicator className="license-preview__no-value" />
-							) }
+							<EmptyValueIndicator className="license-preview__no-value" />
 							<div className="license-preview__product-small">{ productName }</div>
 							<div>{ bundleCountContent }</div>
 						</div>
@@ -351,7 +349,7 @@ export default function LicensePreview( {
 						<>
 							<div className="license-preview__product-small">{ productName }</div>
 							{ titanDomain || domain }
-							{ isPressableLicense && ! revokedAt && (
+							{ isPressableLicense && ! isTitanLicense && ! revokedAt && (
 								<ManageInPressable attachedAt={ attachedAt } />
 							) }
 							{ ! domain && licenseState === LicenseState.Detached && ! isPressableAddonLicense && (
@@ -379,7 +377,7 @@ export default function LicensePreview( {
 				</div>
 
 				<div>
-					{ quantity ? (
+					{ isBundle ? (
 						<EmptyValueIndicator className="license-preview__no-value" />
 					) : (
 						<>
@@ -418,7 +416,7 @@ export default function LicensePreview( {
 
 				<div className="license-preview__badge-container-wrapper">
 					<div className="license-preview__badge-container">
-						{ !! isParentLicense && bundleCountContent }
+						{ ( !! isParentLicense || isTitanLicense ) && bundleCountContent }
 						{ isDevelopmentSite && <Badge intent="draft">{ translate( 'Development' ) }</Badge> }
 						{ shouldShowTransferredBadge() && <TransferredBadge /> }
 					</div>
