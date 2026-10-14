@@ -1,3 +1,10 @@
+import type {
+	AgencyResourceAudience,
+	AgencyResourceContentType,
+	AgencyResourceFormat,
+	AgencyResourceProduct,
+	AgencyResourceStage,
+} from '@automattic/api-core';
 import type { ReactNode } from 'react';
 
 export type ResourceItem = {
@@ -5,14 +12,13 @@ export type ResourceItem = {
 	name: string;
 	description: string;
 	externalUrl: string;
-	format: string;
-	relatedProduct: string;
-	relatedProductType: string;
-	resourceType: string;
-	previewImage: string;
-	section: string;
+	product: AgencyResourceProduct;
+	stage: AgencyResourceStage | null;
+	audience: AgencyResourceAudience | null;
+	contentType: AgencyResourceContentType | null;
+	format: AgencyResourceFormat | null;
+	isFeatured: boolean;
 	createdAt: string;
-	updatedAt: string;
 	// Computed field
 	logo: ReactNode | null;
 };
