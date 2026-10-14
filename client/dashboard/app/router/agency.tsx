@@ -75,6 +75,7 @@ import {
 	PARTNER_DIRECTORY_ROUTE,
 } from '../../agency/partner-directory/paths';
 import { isPressableSite } from '../../agency/sites/lib';
+import { isTeamMemberWithoutSiteAccess } from '../../agency/sites/site/access';
 import { TEAM_ACCEPT_INVITE_ROUTE } from '../../agency/team/paths';
 import {
 	canOptOutOfWordPressBeta,
@@ -1071,6 +1072,17 @@ export const agencySiteRoute = createRoute( {
 			return;
 		}
 
+		// Keep the router in sync with the sidebar, which only offers the overview
+		// to team members without access to the site. The overview explains how
+		// to get access.
+		const agency = await queryClient.ensureQueryData( activeAgencyQuery() );
+		if (
+			isTeamMemberWithoutSiteAccess( site, agency ) &&
+			! isOnAgencySiteOverviewRoute( matches.at( -1 )?.routeId )
+		) {
+			throw dashboardRedirect( { to: `/sites/${ siteSlug }` } );
+		}
+
 		const siteTypeSupports = getSiteTypeFeatureSupports( site );
 		for ( const match of matches ) {
 			const required = match.staticData?.requiresSiteTypeSupport;
@@ -1102,24 +1114,24 @@ const agencySiteOverviewRoute = createRoute( {
 	getParentRoute: () => agencySiteRoute,
 	path: '/',
 	loader: async ( { params: { siteSlug } } ) => {
-		const [ site, agencySite ] = await Promise.all( [
+		const [ site, agencySite, agency ] = await Promise.all( [
 			queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) ),
 			queryClient.ensureQueryData( agencySiteQuery( siteSlug ) ),
+			queryClient.ensureQueryData( activeAgencyQuery() ),
 		] );
+		if ( isTeamMemberWithoutSiteAccess( site, agency ) ) {
+			return;
+		}
+
 		queryClient.prefetchQuery( sitePerformancePagesQuery( site.ID ) );
 
 		// Settle the plan card before first paint, so a Pressable site does not
 		// show the Jetpack card first and then swap to the Pressable one.
-		if ( isPressableSite( agencySite ) ) {
-			const agency = await queryClient.ensureQueryData( activeAgencyQuery() );
-			if ( agency?.id ) {
-				await Promise.all( [
-					queryClient.ensureQueryData( agencyProductsQuery( agency.id ) ).catch( () => undefined ),
-					queryClient
-						.ensureQueryData( pressableLicensesQuery( agency.id ) )
-						.catch( () => undefined ),
-				] );
-			}
+		if ( isPressableSite( agencySite ) && agency?.id ) {
+			await Promise.all( [
+				queryClient.ensureQueryData( agencyProductsQuery( agency.id ) ).catch( () => undefined ),
+				queryClient.ensureQueryData( pressableLicensesQuery( agency.id ) ).catch( () => undefined ),
+			] );
 		}
 	},
 } ).lazy( () =>
@@ -2276,3 +2288,7 @@ export const createAgencyRoutes = () => [
 		] ),
 	] ),
 ];
+
+function isOnAgencySiteOverviewRoute( routeId: string | undefined ) {
+	return routeId === agencySiteOverviewRoute.id;
+}
