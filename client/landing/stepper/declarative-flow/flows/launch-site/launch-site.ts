@@ -1,3 +1,4 @@
+import { launchSite } from '@automattic/api-core';
 import {
 	addProductsToCart,
 	clearStepPersistedState,
@@ -10,7 +11,6 @@ import { useEffect } from 'react';
 import { useQueryProductsList } from 'calypso/components/data/query-products-list';
 import { useMyDomainInputMode } from 'calypso/components/domains/connect-domain-step/constants';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
-import { useRecordSignupComplete } from 'calypso/landing/stepper/hooks/use-record-signup-complete';
 import { ONBOARD_STORE, SITE_STORE } from 'calypso/landing/stepper/stores';
 import { getCurrentQueryParams } from 'calypso/landing/stepper/utils/get-current-query-params';
 import { stepsWithRequiredLogin } from 'calypso/landing/stepper/utils/steps-with-required-login';
@@ -39,6 +39,7 @@ import { useSelector } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { getProductsList } from 'calypso/state/products-list/selectors/get-products-list';
 import { STEPS } from '../../internals/steps';
+import { ProcessingResult } from '../../internals/steps-repository/processing-step/constants';
 import { getLaunchSiteSteps } from './get-launch-site-steps';
 import type { FlowV2, SubmitHandler } from '../../internals/types';
 import type { OnboardActions, OnboardSelect, SiteSelect } from '@automattic/data-stores';
@@ -202,7 +203,6 @@ const launchSiteFlow: FlowV2< typeof initialize > = {
 		const launchParams = useLaunchParams();
 		const stepSlugs = getStepSlugs( this );
 		const productsList = useSelector( getProductsList );
-		const recordSignupComplete = useRecordSignupComplete( LAUNCH_SITE_FLOW );
 		const { getDomainCartItem, getDomainCartItems, getPlanCartItem } = useSelect(
 			( select ) => ( {
 				getDomainCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getDomainCartItem,
@@ -211,15 +211,42 @@ const launchSiteFlow: FlowV2< typeof initialize > = {
 			} ),
 			[]
 		);
-		const { setDomainCartItem, setDomainCartItems, setPlanCartItem, setSignupDomainOrigin } =
-			useDispatch( ONBOARD_STORE ) as OnboardActions;
+		const {
+			setDomainCartItem,
+			setDomainCartItems,
+			setPendingAction,
+			setPlanCartItem,
+			setProgressTitle,
+			setSignupDomainOrigin,
+		} = useDispatch( ONBOARD_STORE ) as OnboardActions;
+		const siteId = useSelect(
+			( select ) =>
+				launchParams.siteSlug
+					? ( select( SITE_STORE ) as SiteSelect ).getSite( launchParams.siteSlug )?.ID
+					: undefined,
+			[ launchParams.siteSlug ]
+		);
+
+		// The processing step runs the launch and submits its result.
+		const launch = () => {
+			setProgressTitle( __( 'Your site will be live shortly.' ) );
+			setPendingAction( async () => {
+				if ( ! siteId ) {
+					throw new Error( 'Unknown site' );
+				}
+
+				await launchSite( siteId );
+
+				return { siteSlug: launchParams.siteSlug };
+			} );
+
+			return navigate( STEPS.PROCESSING.slug );
+		};
 
 		const goPastDomains = () => {
-			return navigate(
-				stepSlugs.includes( STEPS.UNIFIED_PLANS.slug )
-					? STEPS.UNIFIED_PLANS.slug
-					: STEPS.LAUNCH_SITE.slug
-			);
+			return stepSlugs.includes( STEPS.UNIFIED_PLANS.slug )
+				? navigate( STEPS.UNIFIED_PLANS.slug )
+				: launch();
 		};
 
 		const addPrivacyIfSupported = ( item: MinimalRequestCartProduct ) =>
@@ -253,12 +280,6 @@ const launchSiteFlow: FlowV2< typeof initialize > = {
 			} catch {
 				// Unknown contents: let checkout show whatever the cart already holds.
 				cartItems = null;
-			}
-
-			try {
-				recordSignupComplete( {} );
-			} catch {
-				// Analytics must not change where the user goes.
 			}
 
 			if ( cartItems?.length === 0 ) {
@@ -333,11 +354,21 @@ const launchSiteFlow: FlowV2< typeof initialize > = {
 				case STEPS.UNIFIED_PLANS.slug: {
 					setPlanCartItem( providedDependencies?.cartItems?.[ 0 ] ?? null );
 
-					return navigate( STEPS.LAUNCH_SITE.slug );
+					return launch();
 				}
 
-				case STEPS.LAUNCH_SITE.slug:
+				case STEPS.PROCESSING.slug: {
+					if ( providedDependencies?.processingResult === ProcessingResult.FAILURE ) {
+						return navigate( STEPS.ERROR.slug );
+					}
+
+					// Nothing was queued: the flow started here (no domain or plan step) or was refreshed.
+					if ( providedDependencies?.processingResult === ProcessingResult.NO_ACTION ) {
+						return launch();
+					}
+
 					return finishLaunch();
+				}
 			}
 		};
 

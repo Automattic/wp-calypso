@@ -21,7 +21,8 @@ const ALL_STEPS = [
 	STEPS.DOMAIN_SEARCH.slug,
 	STEPS.USE_MY_DOMAIN.slug,
 	STEPS.UNIFIED_PLANS.slug,
-	STEPS.LAUNCH_SITE.slug,
+	STEPS.PROCESSING.slug,
+	STEPS.ERROR.slug,
 ];
 
 describe( 'getLaunchSiteSteps', () => {
@@ -32,7 +33,8 @@ describe( 'getLaunchSiteSteps', () => {
 	it( 'skips the domain step when the site already has a custom domain', () => {
 		expect( slugs( { plan: plan( PLAN_FREE, true ) }, [ wpcomDomain, customDomain ] ) ).toEqual( [
 			STEPS.UNIFIED_PLANS.slug,
-			STEPS.LAUNCH_SITE.slug,
+			STEPS.PROCESSING.slug,
+			STEPS.ERROR.slug,
 		] );
 	} );
 
@@ -40,7 +42,8 @@ describe( 'getLaunchSiteSteps', () => {
 		expect( slugs( { plan: plan( PLAN_PERSONAL ) }, [ wpcomDomain ] ) ).toEqual( [
 			STEPS.DOMAIN_SEARCH.slug,
 			STEPS.USE_MY_DOMAIN.slug,
-			STEPS.LAUNCH_SITE.slug,
+			STEPS.PROCESSING.slug,
+			STEPS.ERROR.slug,
 		] );
 	} );
 
@@ -59,13 +62,15 @@ describe( 'getLaunchSiteSteps', () => {
 	] )( 'keeps the plan step on the %s trial', ( trialSlug ) => {
 		expect( slugs( { plan: plan( trialSlug ) }, [ customDomain ] ) ).toEqual( [
 			STEPS.UNIFIED_PLANS.slug,
-			STEPS.LAUNCH_SITE.slug,
+			STEPS.PROCESSING.slug,
+			STEPS.ERROR.slug,
 		] );
 	} );
 
 	it( 'goes straight to the launch with a paid plan and a custom domain', () => {
 		expect( slugs( { plan: plan( PLAN_PERSONAL ) }, [ customDomain ] ) ).toEqual( [
-			STEPS.LAUNCH_SITE.slug,
+			STEPS.PROCESSING.slug,
+			STEPS.ERROR.slug,
 		] );
 	} );
 

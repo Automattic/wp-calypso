@@ -7,7 +7,7 @@ The Stepper replacement for `/start/launch-site`. It takes the owner of a privat
 1. **Domains** (`domains`) – search for a domain, or skip.
 2. **Use my domain** (`use-my-domain`) – connect or transfer a domain the user already owns.
 3. **Plans** (`plans`) – the launch plans grid: "Keep this plan" or pick a paid plan. A custom domain stays allowed on the free plan.
-4. **Launch** (`launch-site`) – launches the site.
+4. **Launch** (`processing`) – launches the site; a failure goes to the `error` step.
 
 `initialize` drops the steps legacy signup would auto-skip, and records `calypso_signup_actions_exclude_step` for each of them:
 
@@ -23,6 +23,7 @@ Logged-out users log in first; the steps are then worked out for their site.
 - `redirect_to` – Where the user lands after launch (and after checkout).
 
   `back_to` and `redirect_to` are only followed when they are a relative path, a URL on one of the dashboards, or a URL on the site being launched (such as the wp-admin screen the launch started from); anything else is ignored.
+
 - `ref` – Passed on to checkout. `wp-admin` (or `wp-admin/…`) lands the user on that wp-admin screen after launch, ahead of `back_to`.
 - `coupon` – Applied at checkout.
 - `dashboard` – Passed on to checkout when it is `a4a`, `ciab` or `dotcom`.

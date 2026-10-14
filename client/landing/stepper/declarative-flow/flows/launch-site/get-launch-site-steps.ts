@@ -32,6 +32,7 @@ export function getLaunchSiteSteps(
 	return [
 		...( hasCustomDomain ? [] : [ STEPS.DOMAIN_SEARCH, STEPS.USE_MY_DOMAIN ] ),
 		...( isPaidPlan && ! isFreeTrial ? [] : [ STEPS.UNIFIED_PLANS ] ),
-		STEPS.LAUNCH_SITE,
+		STEPS.PROCESSING,
+		STEPS.ERROR,
 	];
 }

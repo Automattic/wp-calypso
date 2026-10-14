@@ -203,12 +203,6 @@ export const STEPS = {
 		asyncComponent: () => import( './steps-repository/site-launch' ),
 	},
 
-	LAUNCH_SITE: {
-		slug: 'launch-site',
-		asyncComponent: () =>
-			import( /* webpackChunkName: 'async-step-launch-site' */ './steps-repository/launch-site' ),
-	},
-
 	SITE_PICKER: {
 		slug: 'site-picker',
 		asyncComponent: () => import( './steps-repository/site-picker-list' ),

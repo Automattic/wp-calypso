@@ -1,6 +1,7 @@
 /**
  * @jest-environment jsdom
  */
+import { launchSite } from '@automattic/api-core';
 import { addProductsToCart, clearStepPersistedState } from '@automattic/onboarding';
 import { renderHook } from '@testing-library/react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -12,6 +13,7 @@ import {
 	persistSignupDestination,
 } from 'calypso/signup/storageUtils';
 import { STEPS } from '../../../internals/steps';
+import { ProcessingResult } from '../../../internals/steps-repository/processing-step/constants';
 import launchSiteFlow from '../launch-site';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import type { Store } from 'redux';
@@ -23,6 +25,8 @@ let mockOnboard: {
 	planCartItem?: MinimalRequestCartProduct | null;
 	signupDomainOrigin?: string;
 	siteUrl?: string;
+	pendingAction?: () => Promise< unknown >;
+	progressTitle?: string;
 } = {};
 let mockProductsList: Record< string, unknown > = {};
 let mockSite: unknown = null;
@@ -45,11 +49,12 @@ jest.mock( '@automattic/onboarding', () =>
 );
 
 const mockResetOnboardStore = jest.fn();
-const mockRecordSignupComplete = jest.fn();
 
-jest.mock( 'calypso/landing/stepper/hooks/use-record-signup-complete', () => ( {
-	useRecordSignupComplete: () => mockRecordSignupComplete,
-} ) );
+jest.mock( '@automattic/api-core', () =>
+	lazilyOverride( '@automattic/api-core', {
+		launchSite: jest.fn( () => Promise.resolve() ),
+	} )
+);
 
 jest.mock( 'calypso/landing/stepper/stores', () => ( {
 	ONBOARD_STORE: 'ONBOARD_STORE',
@@ -78,6 +83,12 @@ jest.mock( '@wordpress/data', () => {
 		},
 		setSiteUrl: ( siteUrl: string ) => {
 			mockOnboard.siteUrl = siteUrl;
+		},
+		setPendingAction: ( action: () => Promise< unknown > ) => {
+			mockOnboard.pendingAction = action;
+		},
+		setProgressTitle: ( title: string ) => {
+			mockOnboard.progressTitle = title;
 		},
 		resetOnboardStore: () => mockResetOnboardStore(),
 	};
@@ -131,12 +142,14 @@ const ALL_STEPS = [
 	STEPS.DOMAIN_SEARCH,
 	STEPS.USE_MY_DOMAIN,
 	STEPS.UNIFIED_PLANS,
-	STEPS.LAUNCH_SITE,
+	STEPS.PROCESSING,
+	STEPS.ERROR,
 ];
 
 const domainItem = { product_slug: 'domain_reg', meta: 'example.com' };
 const transferItem = { product_slug: 'domain_transfer', meta: 'example.org' };
 const planItem = { product_slug: 'personal-bundle' };
+const launched = { processingResult: ProcessingResult.SUCCESS };
 
 // The submit handler is typed per step; the tests drive it with whatever each step submits.
 const submit = ( currentStep: string, providedDependencies?: unknown, navigate = jest.fn() ) => {
@@ -182,7 +195,6 @@ const originalLocation = window.location;
 describe( 'launch-site flow', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
-		mockRecordSignupComplete.mockReset();
 		mockQuery = { siteSlug: 'example.wordpress.com' };
 		mockUserId = 1;
 		mockOnboard = {};
@@ -257,11 +269,12 @@ describe( 'launch-site flow', () => {
 		} );
 
 		it( 'goes straight to the launch when the site already has a paid plan', () => {
-			setFlowSteps( [ STEPS.DOMAIN_SEARCH, STEPS.USE_MY_DOMAIN, STEPS.LAUNCH_SITE ] );
+			setFlowSteps( [ STEPS.DOMAIN_SEARCH, STEPS.USE_MY_DOMAIN, STEPS.PROCESSING, STEPS.ERROR ] );
 
 			const { navigate } = submit( STEPS.DOMAIN_SEARCH.slug, { domainCart: [ domainItem ] } );
 
-			expect( navigate ).toHaveBeenCalledWith( STEPS.LAUNCH_SITE.slug );
+			expect( mockOnboard.pendingAction ).toBeDefined();
+			expect( navigate ).toHaveBeenCalledWith( STEPS.PROCESSING.slug );
 		} );
 	} );
 
@@ -352,7 +365,9 @@ describe( 'launch-site flow', () => {
 			} );
 
 			expect( mockOnboard.planCartItem ).toEqual( planItem );
-			expect( navigate ).toHaveBeenCalledWith( STEPS.LAUNCH_SITE.slug );
+			expect( mockOnboard.pendingAction ).toBeDefined();
+			expect( mockOnboard.progressTitle ).toBe( 'Your site will be live shortly.' );
+			expect( navigate ).toHaveBeenCalledWith( STEPS.PROCESSING.slug );
 		} );
 
 		it( 'clears the plan when the user keeps the one they have', () => {
@@ -364,7 +379,7 @@ describe( 'launch-site flow', () => {
 			} );
 
 			expect( mockOnboard.planCartItem ).toBeNull();
-			expect( navigate ).toHaveBeenCalledWith( STEPS.LAUNCH_SITE.slug );
+			expect( navigate ).toHaveBeenCalledWith( STEPS.PROCESSING.slug );
 		} );
 
 		it( 'passes the launch page props, keeping the free plan', () => {
@@ -381,7 +396,7 @@ describe( 'launch-site flow', () => {
 		} );
 
 		it( 'returns to where the user came from on Back when plans is the first step', () => {
-			setFlowSteps( [ STEPS.UNIFIED_PLANS, STEPS.LAUNCH_SITE ] );
+			setFlowSteps( [ STEPS.UNIFIED_PLANS, STEPS.PROCESSING, STEPS.ERROR ] );
 			mockQuery.back_to = '/sites';
 
 			launchSiteFlow.useStepsProps?.()[ STEPS.UNIFIED_PLANS.slug ]?.wrapperProps?.goBack?.();
@@ -392,8 +407,45 @@ describe( 'launch-site flow', () => {
 	} );
 
 	describe( 'launch', () => {
+		it( 'launches the site in the processing step', async () => {
+			mockSite = freeSite;
+			submit( STEPS.UNIFIED_PLANS.slug, { cartItems: null } );
+
+			await expect( mockOnboard.pendingAction?.() ).resolves.toEqual( {
+				siteSlug: 'example.wordpress.com',
+			} );
+			expect( launchSite ).toHaveBeenCalledWith( 1 );
+		} );
+
+		it( 'lets the processing step see a failed launch', async () => {
+			mockSite = freeSite;
+			( launchSite as jest.Mock ).mockRejectedValueOnce( new Error( 'launch failed' ) );
+			submit( STEPS.UNIFIED_PLANS.slug, { cartItems: null } );
+
+			await expect( mockOnboard.pendingAction?.() ).rejects.toThrow( 'launch failed' );
+		} );
+
+		it( 'shows the error step when the launch fails', () => {
+			const { navigate } = submit( STEPS.PROCESSING.slug, {
+				processingResult: ProcessingResult.FAILURE,
+			} );
+
+			expect( navigate ).toHaveBeenCalledWith( STEPS.ERROR.slug );
+			expect( window.location.replace ).not.toHaveBeenCalled();
+		} );
+
+		it( 'starts the launch when the flow begins at processing', () => {
+			const { navigate } = submit( STEPS.PROCESSING.slug, {
+				processingResult: ProcessingResult.NO_ACTION,
+			} );
+
+			expect( mockOnboard.pendingAction ).toBeDefined();
+			expect( navigate ).toHaveBeenCalledWith( STEPS.PROCESSING.slug );
+			expect( window.location.replace ).not.toHaveBeenCalled();
+		} );
+
 		it( 'lands on the destination when there is nothing to buy', async () => {
-			await submit( STEPS.LAUNCH_SITE.slug ).result;
+			await submit( STEPS.PROCESSING.slug, launched ).result;
 
 			expect( window.location.assign ).not.toHaveBeenCalled();
 			expect( addProductsToCart ).not.toHaveBeenCalled();
@@ -404,7 +456,7 @@ describe( 'launch-site flow', () => {
 			mockQuery.redirect_to = '/plugins/example.wordpress.com';
 			mockQuery.back_to = '/sites';
 
-			await submit( STEPS.LAUNCH_SITE.slug ).result;
+			await submit( STEPS.PROCESSING.slug, launched ).result;
 
 			expect( replaced() ).toBe( '/plugins/example.wordpress.com?celebrateLaunch=true' );
 		} );
@@ -414,7 +466,7 @@ describe( 'launch-site flow', () => {
 			mockOnboard.planCartItem = planItem;
 			mockQuery.redirect_to = '/plugins/example.wordpress.com';
 
-			await submit( STEPS.LAUNCH_SITE.slug ).result;
+			await submit( STEPS.PROCESSING.slug, launched ).result;
 
 			expect( addProductsToCart ).toHaveBeenCalledWith( 'example.wordpress.com', 'launch-site', [
 				{ ...domainItem, extra: { privacy: true } },
@@ -435,7 +487,7 @@ describe( 'launch-site flow', () => {
 		it( 'keeps the chosen domain through a refresh, which only persists the single item', async () => {
 			mockOnboard.domainCartItem = domainItem;
 
-			await submit( STEPS.LAUNCH_SITE.slug ).result;
+			await submit( STEPS.PROCESSING.slug, launched ).result;
 
 			expect( addProductsToCart ).toHaveBeenCalledWith( 'example.wordpress.com', 'launch-site', [
 				{ ...domainItem, extra: { privacy: true } },
@@ -446,35 +498,8 @@ describe( 'launch-site flow', () => {
 			mockOnboard.planCartItem = planItem;
 			( addProductsToCart as jest.Mock ).mockRejectedValueOnce( new Error( 'no cart key' ) );
 
-			await submit( STEPS.LAUNCH_SITE.slug ).result;
+			await submit( STEPS.PROCESSING.slug, launched ).result;
 
-			expect( new URL( replaced(), 'http://localhost/' ).pathname ).toBe(
-				'/checkout/example.wordpress.com'
-			);
-		} );
-
-		it( 'records the signup as complete before leaving', async () => {
-			mockRecordSignupComplete.mockImplementationOnce( () =>
-				expect( window.location.replace ).not.toHaveBeenCalled()
-			);
-
-			await submit( STEPS.LAUNCH_SITE.slug ).result;
-
-			expect( mockRecordSignupComplete ).toHaveBeenCalled();
-			expect( window.location.replace ).toHaveBeenCalled();
-		} );
-
-		it( 'goes where the cart says even when recording the signup fails', async () => {
-			mockRecordSignupComplete.mockImplementation( () => {
-				throw new Error( 'tracks failed' );
-			} );
-
-			await submit( STEPS.LAUNCH_SITE.slug ).result;
-			expect( replaced() ).toBe( '/home/example.wordpress.com?celebrateLaunch=true' );
-
-			( window.location.replace as jest.Mock ).mockClear();
-			mockOnboard.planCartItem = planItem;
-			await submit( STEPS.LAUNCH_SITE.slug ).result;
 			expect( new URL( replaced(), 'http://localhost/' ).pathname ).toBe(
 				'/checkout/example.wordpress.com'
 			);
@@ -483,7 +508,7 @@ describe( 'launch-site flow', () => {
 		it( 'only adds privacy to the products that support it', async () => {
 			mockOnboard.domainCartItems = [ transferItem ];
 
-			await submit( STEPS.LAUNCH_SITE.slug ).result;
+			await submit( STEPS.PROCESSING.slug, launched ).result;
 
 			expect( addProductsToCart ).toHaveBeenCalledWith( 'example.wordpress.com', 'launch-site', [
 				transferItem,
@@ -497,7 +522,7 @@ describe( 'launch-site flow', () => {
 				() => new Promise< void >( ( resolve ) => ( finishAdding = resolve ) )
 			);
 
-			const { result } = submit( STEPS.LAUNCH_SITE.slug );
+			const { result } = submit( STEPS.PROCESSING.slug, launched );
 
 			expect( window.location.replace ).not.toHaveBeenCalled();
 			finishAdding();
@@ -618,7 +643,10 @@ describe( 'launch-site flow', () => {
 		it( 'skips the steps the site has no use for, and records it', async () => {
 			const steps = await initializeWith( paidSite, [ wpcomDomain, customDomain ] );
 
-			expect( steps && steps.map( ( step ) => step.slug ) ).toEqual( [ STEPS.LAUNCH_SITE.slug ] );
+			expect( steps && steps.map( ( step ) => step.slug ) ).toEqual( [
+				STEPS.PROCESSING.slug,
+				STEPS.ERROR.slug,
+			] );
 			expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_signup_actions_exclude_step', {
 				flow: 'launch-site',
 				step: 'domains-launch',
