@@ -15,7 +15,7 @@ export default function ReactionsNote( { note }: { note: Note } ) {
 		<>
 			<Context note={ note } />
 			{ heading && heading !== getTemporaryNoteTitle( note ) && (
-				<VStack spacing={ 3 }>
+				<VStack className="wpnc-simplified__heading" spacing={ 3 }>
 					<Heading level={ 3 } size={ 15 } weight={ 600 }>
 						{ heading }
 					</Heading>

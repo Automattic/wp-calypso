@@ -31,21 +31,23 @@ export default function PostCard( { post, site }: { post: NotePost; site?: NoteS
 					<VStack spacing={ 4 }>
 						{ site && (
 							<HStack justify="flex-start" spacing={ 3 }>
-								{ site.icon ? (
-									<img
-										className="wpnc-simplified__site-icon"
-										src={ site.icon }
-										alt=""
-										width={ 36 }
-										height={ 36 }
-									/>
-								) : (
-									<Icon
-										className="wpnc-simplified__site-icon is-placeholder"
-										icon={ wordpress }
-										size={ 36 }
-									/>
-								) }
+								<span className="wpnc-simplified__site-icon-frame">
+									{ site.icon ? (
+										<img
+											className="wpnc-simplified__site-icon"
+											src={ site.icon }
+											alt=""
+											width={ 36 }
+											height={ 36 }
+										/>
+									) : (
+										<Icon
+											className="wpnc-simplified__site-icon is-placeholder"
+											icon={ wordpress }
+											size={ 36 }
+										/>
+									) }
+								</span>
 								<VStack spacing={ 0 }>
 									<Text size={ 13 } weight={ 600 } truncate>
 										{ site.name }
@@ -58,7 +60,7 @@ export default function PostCard( { post, site }: { post: NotePost; site?: NoteS
 								</VStack>
 							</HStack>
 						) }
-						<Text size={ 15 } weight={ 600 }>
+						<Text size={ 15 } weight={ 600 } lineHeight="24px">
 							{ post.title }
 						</Text>
 					</VStack>
