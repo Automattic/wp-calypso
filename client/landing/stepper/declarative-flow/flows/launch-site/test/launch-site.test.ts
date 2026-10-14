@@ -299,6 +299,51 @@ describe( 'launch-site flow', () => {
 		} );
 	} );
 
+	describe( 'back', () => {
+		const goBack = ( currentStep: string, search: string ) => {
+			window.location.href = `http://localhost/setup/launch-site/${ currentStep }?siteSlug=example.wordpress.com${ search }`;
+			const navigate = jest.fn();
+			const { goBack: goBackStep } = launchSiteFlow.useStepNavigation(
+				currentStep as Parameters< typeof launchSiteFlow.useStepNavigation >[ 0 ],
+				navigate
+			);
+			goBackStep?.();
+			return navigate;
+		};
+
+		it( 'returns from transfer-or-connect to the domain input', () => {
+			const navigate = goBack(
+				STEPS.USE_MY_DOMAIN.slug,
+				'&step=transfer-or-connect&initialQuery=example.com'
+			);
+
+			expect( navigate ).toHaveBeenCalledWith( `${ STEPS.USE_MY_DOMAIN.slug }?step=domain-input` );
+		} );
+
+		it.each( [ 'transfer-domain', 'ownership-verification' ] )(
+			'returns from %s to transfer-or-connect',
+			( mode ) => {
+				const navigate = goBack( STEPS.USE_MY_DOMAIN.slug, `&step=${ mode }` );
+
+				expect( navigate ).toHaveBeenCalledWith(
+					`${ STEPS.USE_MY_DOMAIN.slug }?step=transfer-or-connect`
+				);
+			}
+		);
+
+		it( 'returns from the domain input to the domain search', () => {
+			const navigate = goBack( STEPS.USE_MY_DOMAIN.slug, '&step=domain-input' );
+
+			expect( navigate ).toHaveBeenCalledWith( STEPS.DOMAIN_SEARCH.slug );
+		} );
+
+		it( 'returns from plans to the domain search', () => {
+			const navigate = goBack( STEPS.UNIFIED_PLANS.slug, '' );
+
+			expect( navigate ).toHaveBeenCalledWith( STEPS.DOMAIN_SEARCH.slug );
+		} );
+	} );
+
 	describe( 'plans', () => {
 		it( 'stores the chosen plan and launches the site', () => {
 			const { navigate } = submit( STEPS.UNIFIED_PLANS.slug, {

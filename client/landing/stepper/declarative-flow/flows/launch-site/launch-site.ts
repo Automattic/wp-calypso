@@ -8,6 +8,7 @@ import { __ } from '@wordpress/i18n';
 import { addQueryArgs, getQueryArgs } from '@wordpress/url';
 import { useEffect } from 'react';
 import { useQueryProductsList } from 'calypso/components/data/query-products-list';
+import { useMyDomainInputMode } from 'calypso/components/domains/connect-domain-step/constants';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useRecordSignupComplete } from 'calypso/landing/stepper/hooks/use-record-signup-complete';
 import { ONBOARD_STORE, SITE_STORE } from 'calypso/landing/stepper/stores';
@@ -340,7 +341,38 @@ const launchSiteFlow: FlowV2< typeof initialize > = {
 			}
 		};
 
-		return { submit };
+		// Explicit rather than `history.back()`, so Back works the same when the user lands on a
+		// use-my-domain screen directly or after a refresh.
+		const goBack = () => {
+			switch ( currentStepSlug ) {
+				case STEPS.USE_MY_DOMAIN.slug: {
+					const mode = getQueryArgs( window.location.href ).step;
+
+					if ( mode === useMyDomainInputMode.transferOrConnect ) {
+						return navigate(
+							addQueryArgs( STEPS.USE_MY_DOMAIN.slug, {
+								step: useMyDomainInputMode.domainInput,
+							} ) as typeof currentStepSlug
+						);
+					}
+
+					if ( mode && mode !== useMyDomainInputMode.domainInput ) {
+						return navigate(
+							addQueryArgs( STEPS.USE_MY_DOMAIN.slug, {
+								step: useMyDomainInputMode.transferOrConnect,
+							} ) as typeof currentStepSlug
+						);
+					}
+
+					return navigate( STEPS.DOMAIN_SEARCH.slug );
+				}
+
+				case STEPS.UNIFIED_PLANS.slug:
+					return navigate( STEPS.DOMAIN_SEARCH.slug );
+			}
+		};
+
+		return { submit, goBack };
 	},
 };
 
