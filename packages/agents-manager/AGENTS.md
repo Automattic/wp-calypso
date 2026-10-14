@@ -25,8 +25,8 @@ cd apps/agents-manager && yarn dev --sync
 
 ## Conventions
 
-- **`@wordpress/*` for React APIs, generic UI, and icons**: In new code, import React APIs from `@wordpress/element` (keep bare `react` imports type-only), generic UI primitives from `@wordpress/components`, and icons from `@wordpress/icons` — matching the script externals WordPress registers on wp-admin/editor surfaces, where a different source ships a duplicate copy. Chat UI comes from `@automattic/agenttic-ui` (the chat runtime above); this rule is not a license to replace it or to churn existing compliant imports.
-- **i18n**: Use `@wordpress/i18n` with the `__i18n_text_domain__` text domain placeholder — passed unquoted as it is a global constant, not a string literal. The webpack `DefinePlugin` replaces it with `'default'` at build time.
+- **`@wordpress/*` imports**: In new code, import React APIs from `@wordpress/element` (bare `react` for types only), UI primitives from `@wordpress/components` and icons from `@wordpress/icons`. WordPress registers these as script externals, so any other source ships a second copy. Chat UI stays on `@automattic/agenttic-ui`, and existing imports don't need churning.
+- **i18n**: Use `@wordpress/i18n` with the global `__i18n_text_domain__` as the text domain, unquoted: `__( 'Close', __i18n_text_domain__ )`. Webpack replaces it with `'default'` at build time.
 - **Curly quotes**: Preserve `“”` `‘’` exactly as they appear. Do not convert to unicode escapes or ASCII equivalents.
 - **Readable code**: Match the file you're in.
   - **Names**: Say what a thing holds or does, in full words (`message`, not `msg`; `id` and `url` are fine). Booleans read as questions (`hasProviderSuggestions`), functions start with a verb (`syncProviderMetadata`), and fixed values are `SCREAMING_SNAKE_CASE` constants (`AGENTS_MANAGER_STORE`). Rename what a change makes inaccurate.
