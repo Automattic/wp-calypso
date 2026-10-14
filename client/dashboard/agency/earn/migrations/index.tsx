@@ -43,7 +43,7 @@ export default function EarnMigrations() {
 	);
 
 	const onOpenAddSitesModal = useCallback( () => {
-		recordTracksEvent( 'calypso_a8c_migrations_commissions_tag_sites_click' );
+		recordTracksEvent( 'calypso_a4a_migrations_commissions_tag_sites_click' );
 		setIsAddSitesModalOpen( true );
 	}, [ recordTracksEvent ] );
 
@@ -55,7 +55,7 @@ export default function EarnMigrations() {
 					description={ __( 'Earn commissions for migrating sites to Automattic hosting.' ) }
 					actions={
 						canTagSitesForCommission ? (
-							<Button variant="primary" onClick={ onOpenAddSitesModal }>
+							<Button variant="primary" __next40pxDefaultSize onClick={ onOpenAddSitesModal }>
 								{ __( 'Tag sites for commission' ) }
 							</Button>
 						) : undefined

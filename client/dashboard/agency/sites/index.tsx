@@ -141,7 +141,7 @@ export default function AgencySites() {
 
 	const handleSiteClick = useCallback(
 		( site: AgencySite ) =>
-			recordTracksEvent( 'calypso_dashboard_sites_item_click', { site_id: site.blog_id } ),
+			recordTracksEvent( 'calypso_a4a_sites_item_click', { site_id: site.blog_id } ),
 		[ recordTracksEvent ]
 	);
 
@@ -173,7 +173,7 @@ export default function AgencySites() {
 						<Button
 							variant="primary"
 							onClick={ () => {
-								recordTracksEvent( 'calypso_dashboard_agency_sites_add_new_site_clicked' );
+								recordTracksEvent( 'calypso_a4a_sites_add_new_site_clicked' );
 								setActiveModal( 'menu' );
 							} }
 							__next40pxDefaultSize

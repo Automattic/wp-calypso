@@ -17,7 +17,7 @@ import { useComingFromThemeActivationParam } from '../../../../hooks/use-coming-
 import { useCountries } from '../../../../hooks/use-countries';
 import SupportCard from './support-card';
 import type { Step } from '../../types';
-import type { OnboardSelect, SiteSelect, UserSelect } from '@automattic/data-stores';
+import type { OnboardSelect, UserSelect } from '@automattic/data-stores';
 import './style.scss';
 
 type FormFields =
@@ -55,8 +55,7 @@ const StoreAddress: Step = function StoreAddress( { navigation } ) {
 	);
 	const site = useSite();
 	const settings = useSelect(
-		( select ) =>
-			( site?.ID && ( select( SITE_STORE ) as SiteSelect ).getSiteSettings( site.ID ) ) || {},
+		( select ) => ( site?.ID && select( SITE_STORE ).getSiteSettings( site.ID ) ) || {},
 		[ site ]
 	);
 	const currentUser = useSelect(

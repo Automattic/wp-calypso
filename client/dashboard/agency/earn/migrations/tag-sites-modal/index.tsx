@@ -86,7 +86,7 @@ export default function MigrationsTagSitesModal( {
 					queryClient.invalidateQueries( {
 						queryKey: agencyMigrationCommissionSitesQuery( agencyId ).queryKey,
 					} );
-					recordTracksEvent( 'calypso_a8c_migrations_tag_sites_modal_add_sites_success', {
+					recordTracksEvent( 'calypso_a4a_migrations_tag_sites_modal_add_sites_success', {
 						count: selectedSites.length,
 						migration_source_host: finalMigrationSourceHost,
 					} );
@@ -112,7 +112,7 @@ export default function MigrationsTagSitesModal( {
 				},
 			}
 		);
-		recordTracksEvent( 'calypso_a8c_migrations_tag_sites_modal_add_sites_click', {
+		recordTracksEvent( 'calypso_a4a_migrations_tag_sites_modal_add_sites_click', {
 			count: selectedSites.length,
 			migration_source_host: finalMigrationSourceHost,
 		} );
@@ -120,7 +120,7 @@ export default function MigrationsTagSitesModal( {
 
 	const handleOnClose = () => {
 		onClose();
-		recordTracksEvent( 'calypso_a8c_migrations_tag_sites_modal_close' );
+		recordTracksEvent( 'calypso_a4a_migrations_tag_sites_modal_close' );
 	};
 
 	const handleMigrationSourceHostChange = ( value: string ) => {

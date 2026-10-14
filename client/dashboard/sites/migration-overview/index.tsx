@@ -3,10 +3,15 @@ import { useSuspenseQuery } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import { useEffect } from 'react';
 import PageLayout from '../../components/page-layout';
-import { getSiteMigrationState, isSiteMigrationInProgress } from '../../utils/site-status';
+import {
+	getSiteMigrationState,
+	isSiteMigrationInProgress,
+	isWordPressMigration,
+} from '../../utils/site-status';
 import { InProgressContentInfo } from './in-progress-content-info';
 import { PendingContentInfo } from './pending-content-info';
 import { StartedDIFMContentInfo } from './started-difm-content-info';
+import { WordPressMigration } from './wordpress';
 
 export default function SiteMigrationOverview( { siteSlug }: { siteSlug: string } ) {
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
@@ -26,6 +31,10 @@ export default function SiteMigrationOverview( { siteSlug }: { siteSlug: string 
 			} );
 		}
 	}, [ migrationInProgress, navigate, siteSlug ] );
+
+	if ( isWordPressMigration( site ) ) {
+		return <WordPressMigration site={ site } />;
+	}
 
 	if ( migrationState?.status === 'pending' ) {
 		return (

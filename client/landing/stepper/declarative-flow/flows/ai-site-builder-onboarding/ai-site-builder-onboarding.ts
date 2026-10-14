@@ -195,6 +195,9 @@ const aiSiteBuilderOnboarding: FlowV2< typeof initialize > = {
 						return navigate( STEPS.ERROR.slug );
 					}
 
+					// Only for checkouts started before build-wow skipped this wait, which
+					// persisted it as the destination. The signup destination cookie lives 24h
+					// and redirect payments return later, so remove it a few days after deploy.
 					if ( destination.startsWith( `${ BUILD_WOW_SITE_SPEC_PATH }?` ) ) {
 						window.location.replace( destination );
 						return;
@@ -337,12 +340,15 @@ const aiSiteBuilderOnboarding: FlowV2< typeof initialize > = {
 					setSignupCompleteFlowName( flowName );
 					setSignupCompleteSiteID( siteId );
 
-					const checkoutDestination = isCommerce
-						? addQueryArgs(
-								`/setup/${ AI_SITE_BUILDER_ONBOARDING_FLOW }/${ STEPS.WAIT_FOR_COMMERCE_ATOMIC.slug }`,
-								{ siteId, siteSlug, redirect_to: destination }
-							)
-						: destination;
+					// Only the legacy editor lives on the site, so only it waits for the
+					// Commerce transfer. Build-wow reuses that transfer and builds once it ends.
+					const checkoutDestination =
+						isCommerce && ! useBuildWow
+							? addQueryArgs(
+									`/setup/${ AI_SITE_BUILDER_ONBOARDING_FLOW }/${ STEPS.WAIT_FOR_COMMERCE_ATOMIC.slug }`,
+									{ siteId, siteSlug, redirect_to: destination }
+								)
+							: destination;
 					persistSignupDestination( checkoutDestination );
 
 					return window.location.assign(
