@@ -47,6 +47,7 @@ Write for the next reader.
 - **Functions**: Return early instead of nesting, avoid nested ternaries, and give each function one job. If a block needs a comment to say what it does, make it a named helper.
 - **Structure**: Keep components thin, so they mostly wire things up and render. A behavior with effects or several pieces of state goes in a hook named after it, under `hooks/`; logic with no React state is a pure function in `utils/`. Simple local UI state can stay in the component. Heavily shared components have stricter rules below.
 - **Reuse**: Before writing a helper, hook or component, search `hooks/`, `utils/`, `components/`, `@wordpress/*` and agenttic for one that already does it. Extract shared code once a second caller needs it, not before, and don't add options or abstractions nothing uses yet.
+- **State**: Never mutate state, props or store data; create new values. Derive what you can during render instead of copying it into more state and syncing it with an effect.
 - **Effects**: Clean up everything an effect starts (listeners, timers, subscriptions) in its cleanup function. The chat mounts and unmounts inside host pages, so leaks outlive it.
 - **Errors**: Never swallow an error. Recover where you can and tell the user what failed; `console.error` the rest. Don't leave `console.log` calls in.
 - **Exports and types**: Use named exports in new files, and `unknown` with narrowing instead of `any`.
