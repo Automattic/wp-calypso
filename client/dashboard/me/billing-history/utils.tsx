@@ -3,6 +3,7 @@ import { formatCurrency, formatNumber } from '@automattic/number-formatters';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { isAkismetPro500Plan } from '../../utils/akismet';
 import {
+	isA4ATitanInbox,
 	isDIFMProduct,
 	isGoogleWorkspace,
 	isTitanMail,
@@ -128,6 +129,51 @@ function renderTransactionQuantitySummaryForMailboxes(
 	return sprintf(
 		/* translators: %s: formatted number of mailboxes */
 		_n( 'Purchase of %s mailbox', 'Purchase of %s mailboxes', licensedQuantity ),
+		formatNumber( licensedQuantity )
+	);
+}
+
+/**
+ * Pressable Titan inboxes bought through Automattic for Agencies. An increase
+ * bills only the added inboxes, so it names both the added count and the
+ * resulting total, in the same words the emailed receipt uses. Refunds and
+ * cancellations carry the quantities of the transaction they reverse, so the
+ * wording stays neutral for them.
+ */
+function renderA4ATitanInboxQuantitySummary(
+	licensedQuantity: number,
+	newQuantity: number,
+	isRenewal: boolean,
+	isNewPurchase: boolean
+) {
+	if ( isRenewal ) {
+		return sprintf(
+			/* translators: %s: formatted number of inboxes */
+			_n( 'Renewal for %s inbox', 'Renewal for %s inboxes', licensedQuantity ),
+			formatNumber( licensedQuantity )
+		);
+	}
+
+	if ( newQuantity > 0 ) {
+		return sprintf(
+			/* translators: 1: formatted number of inboxes added by this transaction, 2: formatted total number of inboxes after it */
+			__( '%1$s added; %2$s total' ),
+			formatNumber( newQuantity ),
+			formatNumber( licensedQuantity )
+		);
+	}
+
+	if ( isNewPurchase ) {
+		return sprintf(
+			/* translators: %s: formatted number of inboxes */
+			_n( 'Purchase of %s inbox', 'Purchase of %s inboxes', licensedQuantity ),
+			formatNumber( licensedQuantity )
+		);
+	}
+
+	return sprintf(
+		/* translators: %s: formatted number of inboxes */
+		_n( '%s inbox', '%s inboxes', licensedQuantity ),
 		formatNumber( licensedQuantity )
 	);
 }
@@ -278,6 +324,15 @@ export function renderTransactionQuantitySummary( {
 	const product = { product_slug: wpcom_product_slug };
 	const isRenewal = 'recurring' === type;
 	const isUpgrade = 'new purchase' === type && newQuantity > 0;
+
+	if ( isA4ATitanInbox( product ) ) {
+		return renderA4ATitanInboxQuantitySummary(
+			licensedQuantity,
+			Number.isFinite( newQuantity ) ? newQuantity : 0,
+			isRenewal,
+			'new purchase' === type
+		);
+	}
 
 	if ( isJetpackSearch( product ) ) {
 		return renderJetpackSearchQuantitySummary( licensedQuantity, isRenewal );

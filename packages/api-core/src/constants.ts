@@ -291,6 +291,15 @@ export const TitanMailSlugs = {
 	TITAN_MAIL_ULTRA_YEARLY_SLUG: 'wp_titan_mail_ultra_yearly',
 } as const;
 
+/**
+ * Pressable Titan inbox add-ons sold through Automattic for Agencies. Monthly
+ * only; the Standard and Premium plans are separate products.
+ */
+export const A4ATitanInboxSlugs = {
+	A4A_TITAN_INBOX_STANDARD_SLUG: 'pressable-addon-titan-inbox',
+	A4A_TITAN_INBOX_PREMIUM_SLUG: 'pressable-addon-titan-inbox-premium',
+} as const;
+
 export const GoogleWorkspaceSlugs = {
 	GOOGLE_WORKSPACE_BUSINESS_STARTER_MONTHLY: 'wp_google_workspace_business_starter_monthly',
 	GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY: 'wp_google_workspace_business_starter_yearly',
