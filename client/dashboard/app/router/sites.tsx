@@ -1750,7 +1750,15 @@ export const siteMigrationOverviewRoute = createRoute( {
 			return;
 		}
 
-		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+		let site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+		if ( ! isSiteMigrationInProgress( site ) ) {
+			// A cached site can predate its migration, as when arriving from the flow that just started one.
+			// So read it again before turning anyone away, unless it was read moments ago for this navigation.
+			site = await queryClient
+				.fetchQuery( { ...siteBySlugQuery( siteSlug ), staleTime: 1000, retry: false } )
+				.catch( () => site );
+		}
+
 		if ( ! isSiteMigrationInProgress( site ) ) {
 			throw dashboardRedirect( { to: siteOverviewRoute.fullPath, params: { siteSlug } } );
 		}
