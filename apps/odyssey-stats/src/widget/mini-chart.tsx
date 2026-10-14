@@ -1,6 +1,7 @@
 import { Notice } from '@wordpress/ui';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { lazy, Suspense, useMemo, useState, FunctionComponent, ReactNode } from 'react';
+import { lazy, Suspense, useMemo, useState, FunctionComponent } from 'react';
 import useCssVariable from 'calypso/my-sites/stats/hooks/use-css-variable';
 import { buildChartData } from 'calypso/my-sites/stats/stats-chart-tabs/utility';
 import StatsModulePlaceholder from 'calypso/my-sites/stats/stats-module/placeholder';
@@ -9,6 +10,8 @@ import useVisitsQuery from '../hooks/use-visits-query';
 import { ResolvedDateRange } from '../lib/date-ranges';
 import ChartBoundary from './chart-boundary';
 import MetricValue from './metric-value';
+import { recordWidgetEventThenFollow } from './record-widget-event';
+import useStatsLink from './use-stats-link';
 
 const OverviewChart = lazy( () => import( './overview-chart' ) );
 
@@ -16,9 +19,9 @@ import './mini-chart.scss';
 
 interface MiniChartProps {
 	siteId: number;
+	statsBaseUrl: string;
 	range: ResolvedDateRange;
-	/** Shown under the chart, and only with it: not while loading, for an empty range or on an error. */
-	footer?: ReactNode;
+	gmtOffset: number;
 }
 
 interface VisitRecord {
@@ -29,9 +32,22 @@ interface VisitRecord {
 
 const CHART_HEIGHT = 160;
 
-const MiniChart: FunctionComponent< MiniChartProps > = ( { siteId, range, footer } ) => {
+const MiniChart: FunctionComponent< MiniChartProps > = ( {
+	siteId,
+	statsBaseUrl,
+	range,
+	gmtOffset,
+} ) => {
 	const translate = useTranslate();
-	const { unit, quantity, endDate } = range;
+	const statsLink = useStatsLink( siteId );
+	const { id: rangeId, unit, quantity, startDate, endDate } = range;
+
+	// "More stats" opens the days the chart shows, on Stats or Premium Analytics.
+	const moreStatsUrl = statsLink(
+		`${ statsBaseUrl }/stats/${ unit }/${ siteId }?chartStart=${ startDate }&chartEnd=${ endDate }`,
+		'/',
+		{ from: startDate, to: endDate, gmtOffset }
+	);
 
 	// The admin colour scheme's series colours, as on the Stats page's line chart. Read from the
 	// widget's own element, since the scheme class that sets them is on the widget root.
@@ -83,7 +99,8 @@ const MiniChart: FunctionComponent< MiniChartProps > = ( { siteId, range, footer
 	const isPending = status === 'pending';
 	const isEmpty = status === 'success' && totals.views === 0 && totals.visitors === 0;
 	const hasChart = status === 'success' && ! isEmpty;
-	// Fixed, so the card keeps its height from the placeholder to the chart.
+	// Fixed, so the card keeps its height from the placeholder to the chart. The footer below
+	// holds its place the same way, by staying mounted while the data loads.
 	const chartBoxStyle = { blockSize: `${ CHART_HEIGHT }px` };
 	// One placeholder for both waits: for the data, and for the chart's chunk.
 	const chartPlaceholder = (
@@ -149,14 +166,25 @@ const MiniChart: FunctionComponent< MiniChartProps > = ( { siteId, range, footer
 			{ hasChart && (
 				// Around the chart alone, so a failed chart takes only its own box with it.
 				<ChartBoundary fallback={ noData }>
-					{ /* The footer waits with the chart: data can arrive before the chart's chunk does. */ }
 					<Suspense fallback={ chartPlaceholder }>
 						<div className="stats-widget-chart" style={ chartBoxStyle }>
 							<OverviewChart series={ series } height={ CHART_HEIGHT } unit={ unit } />
 						</div>
-						{ footer }
 					</Suspense>
 				</ChartBoundary>
+			) }
+			{ /* The link follows the data, as the totals do, not the chart: Stats is still there when
+			     the chart's chunk fails. Hidden rather than unmounted while the data loads, so the
+			     sections below don't jump as the footer comes and goes. */ }
+			{ ( isPending || hasChart ) && (
+				<div className={ clsx( 'stats-widget-minichart__footer', { 'is-loading': isPending } ) }>
+					<a
+						href={ moreStatsUrl }
+						onClick={ recordWidgetEventThenFollow( 'more_stats_clicked', { range: rangeId } ) }
+					>
+						{ translate( 'More stats' ) }
+					</a>
+				</div>
 			) }
 		</div>
 	);

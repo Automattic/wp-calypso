@@ -2,6 +2,7 @@
  * @jest-environment jsdom
  */
 import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import useVisitsQuery from '../../hooks/use-visits-query';
 import {
 	getDateRange,
@@ -9,12 +10,19 @@ import {
 	DATE_RANGE_LAST_90_DAYS,
 } from '../../lib/date-ranges';
 import MiniChart from '../mini-chart';
+import { recordWidgetEventThenFollow } from '../record-widget-event';
 
 let mockChartFails = false;
 let mockChartLoading = false;
 
 jest.mock( '../../hooks/use-visits-query' );
 jest.mock( 'calypso/my-sites/stats/hooks/use-css-variable', () => () => '#3858e9' );
+jest.mock( '../use-stats-link', () => () => ( url ) => url );
+jest.mock( '../record-widget-event', () => ( {
+	__esModule: true,
+	default: jest.fn(),
+	recordWidgetEventThenFollow: jest.fn( () => jest.fn() ),
+} ) );
 jest.mock( '../overview-chart', () => ( {
 	__esModule: true,
 	default: () => {
@@ -42,11 +50,21 @@ const pending = () => ( { status: 'pending' } );
 function renderMiniChart( state, rangeId = DATE_RANGE_LAST_7_DAYS ) {
 	useVisitsQuery.mockReturnValue( state );
 	const range = { ...getDateRange( rangeId ), startDate: '2026-10-01', endDate: '2026-10-07' };
-	return <MiniChart siteId={ 1 } range={ range } footer={ <a href="#stats">More stats</a> } />;
+	return (
+		<MiniChart
+			siteId={ 1 }
+			statsBaseUrl="https://example.com/wp-admin/admin.php?page=stats"
+			range={ range }
+			gmtOffset={ 0 }
+		/>
+	);
 }
+
+const moreStats = () => screen.queryByRole( 'link', { name: 'More stats' } );
 
 describe( 'MiniChart', () => {
 	beforeEach( () => {
+		jest.clearAllMocks();
 		mockChartFails = false;
 		mockChartLoading = false;
 		// Reduced motion lands the totals on their value without counting up.
@@ -59,38 +77,58 @@ describe( 'MiniChart', () => {
 		console.error.mockRestore();
 	} );
 
-	it( 'shows the footer under a drawn chart', async () => {
+	it( 'opens "More stats" on the days the chart shows', async () => {
+		// Each tracked link gets its own handler, so the click can be traced to this one.
+		recordWidgetEventThenFollow.mockImplementation( () =>
+			jest.fn( ( event ) => event.preventDefault() )
+		);
 		render( renderMiniChart( success( days( [ 20, 8 ] ) ) ) );
-
 		expect( await screen.findByText( 'Chart' ) ).toBeInTheDocument();
-		expect( screen.getByRole( 'link', { name: 'More stats' } ) ).toBeInTheDocument();
+
+		const link = moreStats();
+		expect( link ).toHaveAttribute(
+			'href',
+			'https://example.com/wp-admin/admin.php?page=stats/stats/day/1?chartStart=2026-10-01&chartEnd=2026-10-07'
+		);
+		expect( recordWidgetEventThenFollow ).toHaveBeenCalledWith( 'more_stats_clicked', {
+			range: DATE_RANGE_LAST_7_DAYS,
+		} );
+
+		// The handler from the latest render: the chart's arrival rendered the link again.
+		await userEvent.setup().click( link );
+		expect( recordWidgetEventThenFollow.mock.results.at( -1 ).value ).toHaveBeenCalled();
+	} );
+
+	it( 'keeps the place of "More stats" while loading, without showing it', () => {
+		render( renderMiniChart( pending() ) );
+
+		expect( moreStats().closest( '.stats-widget-minichart__footer' ) ).toHaveClass( 'is-loading' );
 	} );
 
 	it.each( [
-		[ 'while loading', pending() ],
 		[ 'for an empty range', success( days( [ 0, 0 ] ) ) ],
 		[ 'when the request failed', failed() ],
-	] )( 'hides the footer %s, with no chart to follow', ( _, state ) => {
+	] )( 'drops "More stats" %s, with nothing to look further into', ( _, state ) => {
 		render( renderMiniChart( state ) );
 
-		expect( screen.queryByRole( 'link', { name: 'More stats' } ) ).not.toBeInTheDocument();
+		expect( moreStats() ).not.toBeInTheDocument();
 	} );
 
-	it( 'holds the footer back while the chart itself is still loading', async () => {
+	it( 'shows "More stats" while the chart itself is still loading', async () => {
 		mockChartLoading = true;
 		render( renderMiniChart( success( days( [ 20, 8 ] ) ) ) );
 
 		expect( await screen.findByText( '20' ) ).toBeInTheDocument();
 		expect( screen.queryByText( 'Chart' ) ).not.toBeInTheDocument();
-		expect( screen.queryByRole( 'link', { name: 'More stats' } ) ).not.toBeInTheDocument();
+		expect( moreStats() ).toBeVisible();
 	} );
 
-	it( 'hides the footer when the chart itself fails', async () => {
+	it( 'keeps "More stats" when the chart itself fails', async () => {
 		mockChartFails = true;
 		render( renderMiniChart( success( days( [ 20, 8 ] ) ) ) );
 
 		expect( await screen.findByText( 'No data to show' ) ).toBeInTheDocument();
-		expect( screen.queryByRole( 'link', { name: 'More stats' } ) ).not.toBeInTheDocument();
+		expect( moreStats() ).toBeVisible();
 	} );
 
 	it( 'sums the range into the totals and draws the chart', async () => {
