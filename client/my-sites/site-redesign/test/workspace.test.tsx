@@ -163,7 +163,7 @@ test( 'offers an optional Generate design for a durable draft, never a manual fo
 	expect( mockApply ).not.toHaveBeenCalled();
 } );
 
-test( 'keeps the original comparison hidden until a saved brief exists', () => {
+test( 'keeps the original comparison hidden before a generated preview exists', () => {
 	mockState = {
 		...mockState,
 		run: { ...mockRun, status: 'interview', brief: null, brief_draft: null, generation: null },
@@ -281,6 +281,8 @@ test( 'shows generation stages from the reported progress', () => {
 	expect( screen.queryByText( /of 19/ ) ).toBeNull();
 	expect( screen.queryByRole( 'region', { name: 'Your design direction' } ) ).toBeNull();
 	expect( screen.queryByRole( 'progressbar' ) ).toBeNull();
+	expect( screen.queryByRole( 'radio', { name: 'Original' } ) ).toBeNull();
+	expect( screen.queryByRole( 'radio', { name: 'Design brief' } ) ).toBeNull();
 	expect( screen.getByRole( 'list', { name: 'Design stages' } ).children ).toHaveLength( 4 );
 } );
 

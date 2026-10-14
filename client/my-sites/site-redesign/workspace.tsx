@@ -200,7 +200,9 @@ export function RedesignWorkspace( {
 	const originalUrl = getOriginalPreviewUrl( siteUrl, path, stylesheet, frameNonce );
 	const isRolledBack = run?.status === 'rolled_back';
 	const showOriginal =
-		!! brief && ( comparison === 'original' || ( isRolledBack && comparison !== 'brief' ) );
+		!! brief &&
+		( hasPreview || isRolledBack ) &&
+		( comparison === 'original' || ( isRolledBack && comparison !== 'brief' ) );
 	const showCandidate = ! showOriginal && hasPreview && comparison !== 'brief';
 	const showCanvas = showOriginal || showCandidate;
 	// One view at a time: the generated design, the live site, or the brief and its progress.
@@ -221,7 +223,8 @@ export function RedesignWorkspace( {
 	if ( ! hasPreview || run?.status === 'preview_ready' || canStartNewBrief ) {
 		views.push( { value: 'brief', label: __( 'Design brief' ) } );
 	}
-	const canSwitchView = views.length > 1 && ( ! isRolledBack || canStartNewBrief );
+	const canSwitchView =
+		( hasPreview || isRolledBack ) && views.length > 1 && ( ! isRolledBack || canStartNewBrief );
 
 	return (
 		<div className="site-redesign-workspace">
@@ -242,67 +245,69 @@ export function RedesignWorkspace( {
 				) }
 			</section>
 			<main className="site-redesign-main">
-				<header className="site-redesign-toolbar">
-					{ isMobile && (
-						<ToggleGroupControl
-							__next40pxDefaultSize
-							__nextHasNoMarginBottom
-							className="site-redesign-panel-switch"
-							hideLabelFromVision
-							label={ __( 'Panel' ) }
-							value={ mobilePanel }
-							onChange={ ( next ) => setMobilePanel( String( next ) ) }
-						>
-							<ToggleGroupControlOption
-								value="interview"
-								label={ __( 'Agent' ) }
-								aria-label={ __( 'WordPress Agent' ) }
-							/>
-							<ToggleGroupControlOption value="preview" label={ __( 'Design' ) } />
-						</ToggleGroupControl>
-					) }
-					{ canSwitchView && (
-						<div className="site-redesign-view-controls">
-							{ canSwitchView && (
-								<ToggleGroupControl
-									__next40pxDefaultSize
-									__nextHasNoMarginBottom
-									hideLabelFromVision
-									isAdaptiveWidth
-									label={ __( 'View' ) }
-									value={ view }
-									onChange={ ( next ) => {
-										if ( next === 'brief' ) {
-											setComparison( hasPreview || isRolledBack ? 'brief' : null );
-										} else {
-											setComparison( next === 'original' ? 'original' : 'new' );
-										}
-										setMobilePanel( 'preview' );
-									} }
-								>
-									{ views.map( ( option ) => (
-										<ToggleGroupControlOption
-											key={ option.value }
-											value={ option.value }
-											label={ option.label }
-										/>
-									) ) }
-								</ToggleGroupControl>
-							) }
-						</div>
-					) }
-					{ run?.status === 'preview_ready' && (
-						<Button
-							__next40pxDefaultSize
-							className="site-redesign-apply"
-							variant="primary"
-							disabled={ busy || ! preview || requiresSourceConfirmation }
-							onClick={ () => void apply() }
-						>
-							{ __( 'Use this design' ) }
-						</Button>
-					) }
-				</header>
+				{ ( isMobile || hasPreview || isRolledBack ) && (
+					<header className="site-redesign-toolbar">
+						{ isMobile && (
+							<ToggleGroupControl
+								__next40pxDefaultSize
+								__nextHasNoMarginBottom
+								className="site-redesign-panel-switch"
+								hideLabelFromVision
+								label={ __( 'Panel' ) }
+								value={ mobilePanel }
+								onChange={ ( next ) => setMobilePanel( String( next ) ) }
+							>
+								<ToggleGroupControlOption
+									value="interview"
+									label={ __( 'Agent' ) }
+									aria-label={ __( 'WordPress Agent' ) }
+								/>
+								<ToggleGroupControlOption value="preview" label={ __( 'Design' ) } />
+							</ToggleGroupControl>
+						) }
+						{ canSwitchView && (
+							<div className="site-redesign-view-controls">
+								{ canSwitchView && (
+									<ToggleGroupControl
+										__next40pxDefaultSize
+										__nextHasNoMarginBottom
+										hideLabelFromVision
+										isAdaptiveWidth
+										label={ __( 'View' ) }
+										value={ view }
+										onChange={ ( next ) => {
+											if ( next === 'brief' ) {
+												setComparison( hasPreview || isRolledBack ? 'brief' : null );
+											} else {
+												setComparison( next === 'original' ? 'original' : 'new' );
+											}
+											setMobilePanel( 'preview' );
+										} }
+									>
+										{ views.map( ( option ) => (
+											<ToggleGroupControlOption
+												key={ option.value }
+												value={ option.value }
+												label={ option.label }
+											/>
+										) ) }
+									</ToggleGroupControl>
+								) }
+							</div>
+						) }
+						{ run?.status === 'preview_ready' && (
+							<Button
+								__next40pxDefaultSize
+								className="site-redesign-apply"
+								variant="primary"
+								disabled={ busy || ! preview || requiresSourceConfirmation }
+								onClick={ () => void apply() }
+							>
+								{ __( 'Use this design' ) }
+							</Button>
+						) }
+					</header>
+				) }
 				<section
 					className="site-redesign-preview"
 					aria-label={ __( 'Site preview' ) }
