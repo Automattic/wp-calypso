@@ -209,6 +209,12 @@ export function getBlueprintArchiveSiteSpecUrl( {
 export type BlueprintArchiveLookup = {
 	exists: boolean;
 	/**
+	 * The spec-meta names a partner's entry link can supply up front, as the blueprint declares
+	 * them. When the link carries all of them the flow needs no site-spec step: the import
+	 * confirms the spec itself. Empty when the blueprint declares none, or on an older wpcom.
+	 */
+	prefill: string[];
+	/**
 	 * The blueprint's display name (e.g. "Punk"), as plain text, for naming it to the customer.
 	 * Empty when the server does not send one.
 	 */
@@ -228,6 +234,8 @@ type BlueprintArchiveLookupResponse = {
 	suggested_plans?: unknown;
 	// Absent on a wpcom that predates the field.
 	title?: unknown;
+	// Absent on a wpcom that predates the field.
+	prefill?: unknown;
 };
 
 /**
@@ -247,7 +255,7 @@ export async function lookupBlueprintArchive(
 	{ target }: { target?: BlueprintLookupTarget } = {}
 ): Promise< BlueprintArchiveLookup > {
 	if ( ! blueprintSlug ) {
-		return { exists: false, title: '', suggestedPlans: [] };
+		return { exists: false, title: '', suggestedPlans: [], prefill: [] };
 	}
 
 	try {
@@ -270,10 +278,27 @@ export async function lookupBlueprintArchive(
 
 		const title = typeof response?.title === 'string' ? response.title.trim() : '';
 
-		return { exists: true, title, suggestedPlans };
+		const prefill = Array.isArray( response?.prefill )
+			? response.prefill.filter(
+					( name ): name is string => typeof name === 'string' && name !== ''
+				)
+			: [];
+
+		return { exists: true, title, suggestedPlans, prefill };
 	} catch {
-		return { exists: false, title: '', suggestedPlans: [] };
+		return { exists: false, title: '', suggestedPlans: [], prefill: [] };
 	}
+}
+
+/**
+ * Whether the partner's entry link settled everything the blueprint's interview would ask: the
+ * blueprint declares at least one prefill name, and the spec meta carries every one of them.
+ */
+export function isPrefillComplete( prefill: string[], specMeta: SpecMeta ): boolean {
+	return (
+		prefill.length > 0 &&
+		prefill.every( ( name ) => typeof specMeta[ name as keyof SpecMeta ] === 'string' )
+	);
 }
 
 /**
@@ -301,7 +326,8 @@ export async function startBlueprintSimpleImport(
 	siteIdentifier: string,
 	blueprintSlug: string,
 	siteId?: number | null,
-	siteValues: SpecMeta = {}
+	siteValues: SpecMeta = {},
+	{ applySpec = false }: { applySpec?: boolean } = {}
 ): Promise< ImportStatusResponse > {
 	const blogId = siteId && siteId > 0 ? siteId : await getSiteBlogId( siteIdentifier );
 
@@ -326,6 +352,9 @@ export async function startBlueprintSimpleImport(
 				...Object.entries( siteValues )
 					.filter( ( entry ): entry is [ string, string ] => typeof entry[ 1 ] === 'string' )
 					.map( ( [ name, value ] ) => [ `site_values[${ name }]`, value ] ),
+				// No site-spec step will follow: the import confirms the partner's spec itself
+				// once the content is in (identity, provenance, the configuration passes).
+				...( applySpec ? [ [ 'apply_spec', '1' ] as [ string, string ] ] : [] ),
 			],
 		},
 		{}

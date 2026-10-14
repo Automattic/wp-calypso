@@ -3,6 +3,7 @@
  */
 import wpcom from 'calypso/lib/wp';
 import {
+	isPrefillComplete,
 	applyBlueprintSpec,
 	checkBlueprintExists,
 	getBlueprintArchiveSiteSpecUrl,
@@ -100,6 +101,44 @@ describe( 'getSpecMetaFromQuery', () => {
 	} );
 } );
 
+describe( 'lookupBlueprintArchive prefill', () => {
+	beforeEach( () => {
+		mockGet.mockReset();
+	} );
+
+	it( 'keeps only the names the server lists, and reads a missing field as none', async () => {
+		mockGet.mockResolvedValue( {
+			slug: 'zoom',
+			exists: true,
+			prefill: [ 123, '', 'site_title', null, 'zoom_booking_url' ],
+		} );
+		await expect( lookupBlueprintArchive( 'zoom', { target: 'simple' } ) ).resolves.toMatchObject( {
+			prefill: [ 'site_title', 'zoom_booking_url' ],
+		} );
+
+		mockGet.mockResolvedValue( { slug: 'zoom', exists: true } );
+		await expect( lookupBlueprintArchive( 'zoom', { target: 'simple' } ) ).resolves.toMatchObject( {
+			prefill: [],
+		} );
+	} );
+} );
+
+describe( 'isPrefillComplete', () => {
+	it( 'is complete only when the blueprint declares names and the link carries all of them', () => {
+		expect( isPrefillComplete( [], { site_title: 'Cedar' } ) ).toBe( false );
+		expect( isPrefillComplete( [ 'site_title' ], {} ) ).toBe( false );
+		expect(
+			isPrefillComplete( [ 'site_title', 'zoom_booking_url' ], { site_title: 'Cedar' } )
+		).toBe( false );
+		expect(
+			isPrefillComplete( [ 'site_title', 'zoom_booking_url' ], {
+				site_title: 'Cedar',
+				zoom_booking_url: 'https://scheduler.zoom.us/c',
+			} )
+		).toBe( true );
+	} );
+} );
+
 describe( 'startBlueprintSimpleImport', () => {
 	beforeEach( () => {
 		mockPost.mockReset();
@@ -145,6 +184,24 @@ describe( 'startBlueprintSimpleImport', () => {
 			'site_values[zoom_booking_url]',
 			'https://scheduler.zoom.us/jason',
 		] );
+	} );
+
+	// With no site-spec step to follow, the import is asked to confirm the spec itself.
+	it( 'asks the import to apply the partner spec when told to', async () => {
+		mockPost.mockResolvedValue( {} );
+
+		await startBlueprintSimpleImport(
+			'example.wordpress.com',
+			'zoom',
+			123,
+			{},
+			{ applySpec: true }
+		);
+		expect( mockPost.mock.calls[ 0 ][ 0 ].formData ).toContainEqual( [ 'apply_spec', '1' ] );
+
+		mockPost.mockClear();
+		await startBlueprintSimpleImport( 'example.wordpress.com', 'zoom', 123 );
+		expect( mockPost.mock.calls[ 0 ][ 0 ].formData ).not.toContainEqual( [ 'apply_spec', '1' ] );
 	} );
 
 	it( 'resolves the blog id first when the caller only has a slug', async () => {
@@ -575,6 +632,7 @@ describe( 'lookupBlueprintArchive title', () => {
 			exists: true,
 			title: 'Punk',
 			suggestedPlans: [ 'value_bundle' ],
+			prefill: [],
 		} );
 	} );
 
@@ -585,6 +643,7 @@ describe( 'lookupBlueprintArchive title', () => {
 			exists: true,
 			title: '',
 			suggestedPlans: [],
+			prefill: [],
 		} );
 	} );
 
@@ -595,6 +654,7 @@ describe( 'lookupBlueprintArchive title', () => {
 			exists: false,
 			title: '',
 			suggestedPlans: [],
+			prefill: [],
 		} );
 	} );
 } );
