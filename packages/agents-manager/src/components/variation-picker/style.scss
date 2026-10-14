@@ -87,16 +87,13 @@
 // Pull the actions row, or the hover-only panel, up beside the pagination row.
 .Message-module_content:has( .agents-manager-variation-picker__arrows )
 	.MessageActions-module_container {
-	// The height of the pagination row's `compact` buttons.
-	$pagination-row-height: 32px;
-
-	margin-top: -$pagination-row-height;
+	margin-top: -32px;
 
 	// Hover-only actions take no space until pressed, so reserve the pagination
 	// row and the usual gap below it.
 	@media ( hover: hover ) {
 		&:has( > .MessageActions-module_dock:not( .MessageActions-module_docked ):first-child ) {
-			padding-bottom: calc( #{$pagination-row-height} + var( --spacing-2 ) );
+			padding-bottom: calc( 32px + var( --spacing-2 ) );
 		}
 	}
 }
