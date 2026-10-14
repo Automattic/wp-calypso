@@ -15,7 +15,7 @@ import type { Field } from '@wordpress/dataviews';
  * Fields for filtering the library and for the list layout's columns. The
  * grid renders its own cards, so only the list uses the `render` callbacks.
  */
-export function useResourceFields( resources: AgencyEnablementResource[] ) {
+export function useResourceFields( resources: AgencyEnablementResource[], readIds: number[] ) {
 	return useMemo( (): Field< AgencyEnablementResource >[] => {
 		// Only offer values that occur in the data.
 		const toElements = < T extends string >(
@@ -72,6 +72,19 @@ export function useResourceFields( resources: AgencyEnablementResource[] ) {
 				enableHiding: true,
 			},
 			{
+				id: 'read_status',
+				label: __( 'Reading status' ),
+				type: 'text',
+				getValue: ( { item } ) => ( readIds.includes( item.id ) ? 'read' : 'unread' ),
+				elements: [
+					{ value: 'unread', label: __( 'Unread' ) },
+					{ value: 'read', label: __( 'Read' ) },
+				],
+				filterBy: { operators: [ 'is' ] },
+				enableSorting: false,
+				enableHiding: true,
+			},
+			{
 				...filterField( 'product', __( 'Product' ), ( item ) => item.product, getProductLabel ),
 				render: ( { item } ) => <ResourceListProduct resource={ item } />,
 			},
@@ -89,5 +102,5 @@ export function useResourceFields( resources: AgencyEnablementResource[] ) {
 				filterBy: false,
 			},
 		];
-	}, [ resources ] );
+	}, [ resources, readIds ] );
 }

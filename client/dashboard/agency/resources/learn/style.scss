@@ -1,6 +1,9 @@
 @import '@automattic/color-studio/dist/color-variables';
 @import '@wordpress/base-styles/colors';
 @import '@wordpress/base-styles/variables';
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+@import '@wordpress/base-styles/animations';
 
 // Product brand colors. Most come from Color Studio; VIP's gold is from its brand
 // palette and Pressable's red-orange from https://pressable.com/press-kit/.
@@ -13,8 +16,9 @@ $resource-brands: (
 	'wordpress-vip': #d8a45f,
 );
 
-// Each product's brand color, for the card header tint.
-.dashboard-resources-learn__card-header {
+// Each product's brand color, for the card header and preview tints.
+.dashboard-resources-learn__card-header,
+.dashboard-resources-learn__preview {
 	--resource-brand: #{$studio-gray-100};
 
 	@each $product, $color in $resource-brands {
@@ -78,4 +82,139 @@ $resource-brands: (
 .dashboard-resources-learn__list-brand .dashboard-resources-learn__product-logo {
 	block-size: 16px;
 	inline-size: calc( var( --resource-logo-width ) * 0.8 );
+}
+
+// Joins the previous and next buttons into one bordered control; no core
+// component draws a connected pair of icon buttons.
+.dashboard-resources-learn__modal-navigation {
+	border: 1px solid var( --wpds-color-stroke-surface-neutral, #{$gray-300} );
+	border-radius: $radius-medium;
+	background: var( --wpds-color-background-surface-neutral-strong, #{$white} );
+
+	> .components-button + .components-button {
+		border-inline-start: 1px solid var( --wpds-color-stroke-surface-neutral, #{$gray-300} );
+	}
+}
+
+// Heading has no letter-spacing prop. Nested for specificity over its runtime styles.
+.dashboard-resources-learn__modal .dashboard-resources-learn__modal-title {
+	letter-spacing: -0.035em;
+	text-wrap: pretty;
+}
+
+// The preview runs to the modal's edges, cancelling its content padding, with
+// the navigation and close button over it.
+.dashboard-resources-learn__modal-media {
+	position: relative;
+	margin: calc( -1 * #{$grid-unit-30} ) calc( -1 * #{$grid-unit-30} ) 0;
+}
+
+.dashboard-resources-learn__modal-controls {
+	position: absolute;
+	inset: $grid-unit-15 $grid-unit-15 auto;
+}
+
+.dashboard-resources-learn__modal-close {
+	background: var( --wpds-color-background-surface-neutral-strong, #{$white} );
+	border-radius: 50%;
+}
+
+.dashboard-resources-learn__preview {
+	position: relative;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	block-size: clamp( 200px, 32dvh, 280px );
+	box-sizing: border-box;
+	// Insets the thumbnail like a sheet of paper, cropped where the frame ends.
+	padding: 36px clamp( 36px, 13%, 72px ) 0;
+	overflow: hidden;
+	color: var( --resource-brand );
+	background: var( --wpds-color-background-surface-neutral, #{$gray-100} );
+	border-block-end: 1px solid var( --wpds-color-stroke-surface-neutral, #{$gray-300} );
+	text-decoration: none;
+
+	&:focus-visible {
+		outline: 2px solid var( --wpds-color-stroke-focus, var( --wp-admin-theme-color ) );
+		outline-offset: -4px;
+	}
+
+	.dashboard-resource-illustration {
+		inline-size: 120px;
+		block-size: 120px;
+	}
+}
+
+.dashboard-resources-learn__preview-image {
+	align-self: flex-start;
+	inline-size: 100%;
+	min-block-size: 100%;
+	object-fit: cover;
+	object-position: top;
+	border-radius: $radius-large $radius-large 0 0;
+	box-shadow:
+		0 0 0 1px rgba( $black, 0.08 ),
+		0 8px 24px rgba( $black, 0.1 );
+}
+
+// The open affordance shows on hover and focus; videos always show their play
+// button. Neither shows while the thumbnail loads.
+.dashboard-resources-learn__preview-open {
+	position: absolute;
+	inset: 0;
+	display: grid;
+	place-items: center;
+	opacity: 0;
+
+	svg {
+		box-sizing: content-box;
+		padding: 14px;
+		border-radius: 50%;
+		color: var( --wpds-color-foreground-content-neutral, #{$gray-900} );
+		fill: currentColor;
+		background: var( --wpds-color-background-surface-neutral-strong, #{$white} );
+		box-shadow: 0 2px 16px rgba( $black, 0.18 );
+	}
+
+	.dashboard-resources-learn__preview:is( :hover, :focus-visible, [data-video] ) & {
+		opacity: 1;
+	}
+
+	.dashboard-resources-learn__preview[data-loading] & {
+		opacity: 0;
+	}
+}
+
+.dashboard-resources-learn__preview-open-label {
+	position: absolute;
+	inset-block-start: calc( 50% + 38px );
+	padding: 6px 10px;
+	border-radius: $radius-medium;
+	color: var( --wpds-color-background-surface-neutral-strong, #{$white} );
+	background: var( --wpds-color-foreground-content-neutral, #{$gray-900} );
+	font-size: 12px;
+	line-height: 1.4;
+	white-space: nowrap;
+	opacity: 0;
+
+	.dashboard-resources-learn__preview:is( :hover, :focus-visible ) & {
+		opacity: 1;
+	}
+}
+
+// Doubled up for specificity over the Modal's own frame rules; its closing
+// animation is more specific still, so it keeps working.
+.dashboard-resources-learn__modal.components-modal__frame {
+	@include break-small() {
+		// Pinned near the top rather than centered, so it doesn't jump as content
+		// height changes between resources.
+		margin: 10vh auto auto;
+		max-block-size: calc( 90vh - #{$grid-unit-50} );
+		// Replaced by growing out of the card it was opened from.
+		animation-name: none;
+	}
+}
+
+.dashboard-resources-learn__modal-fade {
+	@include animation__fade-in( 0.15s, 0s, ease-out );
 }
