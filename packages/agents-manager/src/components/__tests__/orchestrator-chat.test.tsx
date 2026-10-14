@@ -416,18 +416,30 @@ jest.mock( '../../hooks/use-sources-action', () => () => {} );
 // Returns `undefined` after a mock reset, which the wrapper reads as allowed.
 const mockCreditsBeforeSubmit = jest.fn( (): boolean | undefined => true );
 const mockCreditsVisibility = jest.fn();
+const mockCreditsNoticeVisibility = jest.fn();
+const mockTakeRefusalCode = jest.fn( (): string | undefined => undefined );
 jest.mock( '../../hooks/use-credits', () => ( {
-	useCredits: ( { agentConfig, isOpen }: { agentConfig: unknown; isOpen: boolean } ) => {
+	useCredits: ( {
+		agentConfig,
+		isOpen,
+		isNoticeVisible,
+	}: {
+		agentConfig: unknown;
+		isOpen: boolean;
+		isNoticeVisible: boolean;
+	} ) => {
 		mockCreditsVisibility( isOpen );
+		mockCreditsNoticeVisibility( isNoticeVisible );
 		return {
 			chat: jest.requireMock( '@automattic/agenttic-client' ).useAgentChat( agentConfig ),
 			beforeSubmit: () => mockCreditsBeforeSubmit() !== false,
+			takeRefusalCode: mockTakeRefusalCode,
 		};
 	},
 } ) );
 jest.mock( '../../utils/convert-tool-messages-to-components', () => ( {
 	__esModule: true,
-	default: ( { messages }: { messages: unknown[] } ) => messages,
+	default: jest.fn( ( { messages }: { messages: unknown[] } ) => messages ),
 	isContextOnlyMessage: ( message: {
 		context?: { flags?: { context_only?: boolean } };
 		content?: Array< { type?: string; data?: { flags?: { context_only?: boolean } } } >;
@@ -731,6 +743,19 @@ describe( 'OrchestratorChat', () => {
 		render( chat( options ) );
 		expect( mockCreditsVisibility ).toHaveBeenLastCalledWith( visible );
 	} );
+
+	it.each( [
+		[ 'docked', { isOpen: true, isDocked: true }, true ],
+		[ 'floating', { isOpen: true, isDocked: false }, true ],
+		[ 'compact', { isOpen: false, isDocked: false, isCompactMode: true }, false ],
+		[ 'closed', { isOpen: false, isDocked: false, isCompactMode: false }, false ],
+	] as const )(
+		'tells credits whether the %s chat draws the notice',
+		( _name, options, visible ) => {
+			render( chat( options ) );
+			expect( mockCreditsNoticeVisibility ).toHaveBeenLastCalledWith( visible );
+		}
+	);
 
 	it( 'ignores a conversation result for a discarded agent', () => {
 		mockManagerHasAgent = false;
@@ -1828,6 +1853,26 @@ describe( 'OrchestratorChat', () => {
 			render( chat() );
 
 			expect( chatErrorCalls() ).toEqual( [] );
+		} );
+
+		it( 'labels a credits refusal by its code, and reads the code once per error', () => {
+			mockTakeRefusalCode.mockReturnValueOnce( 'ai_credit_allowance_exhausted' );
+			mockUseAgentChat.mockReturnValue(
+				agentChatReturn( { error: 'Streaming error: You’ve used all your site credits.' } )
+			);
+			const { rerender } = render( chat() );
+			rerender( chat() );
+
+			mockUseAgentChat.mockReturnValue( agentChatReturn( { error: null } ) );
+			rerender( chat() );
+			mockUseAgentChat.mockReturnValue( agentChatReturn( { error: 'Some other error.' } ) );
+			rerender( chat() );
+
+			expect( mockTakeRefusalCode ).toHaveBeenCalledTimes( 2 );
+			expect( chatErrorCalls() ).toEqual( [
+				[ 'calypso_agents_manager_chat_error', { error_type: 'credits' } ],
+				[ 'calypso_agents_manager_chat_error', { error_type: 'other' } ],
+			] );
 		} );
 	} );
 
@@ -3362,6 +3407,113 @@ describe( 'OrchestratorChat', () => {
 				'onUndo'
 			);
 		}
+	} );
+
+	describe( 'retried block edits', () => {
+		const noChangeOutcome = {
+			id: 'no-change-outcome',
+			role: 'agent' as const,
+			content: [
+				{
+					type: 'text' as const,
+					text: JSON.stringify( {
+						tool_id: 'big_sky__apply_block_edits',
+						tool_call_id: 'tool-call-1',
+						data: { result: { success: true, outcome: 'no-changes' } },
+					} ),
+				},
+			],
+			timestamp: 1,
+			archived: false,
+			showIcon: true,
+		};
+		const retryUpdate = {
+			id: 'task-retry',
+			status: {
+				state: 'working',
+				message: {
+					messageId: 'retry-progress',
+					role: 'agent',
+					kind: 'message',
+					parts: [
+						{
+							type: 'data',
+							data: { summary: 'Adjusting my approach…', retryingToolCallId: 'tool-call-1' },
+						},
+					],
+				},
+			},
+			final: false,
+			kind: 'status',
+		} as unknown as TaskUpdate;
+		// The converter is mocked, so check the retries the chat hands it.
+		const isToolCallRetried = () => {
+			const convert = jest.requireMock( '../../utils/convert-tool-messages-to-components' )
+				.default as jest.Mock;
+			const { retriedToolCallIds } = convert.mock.calls.at( -1 )![ 0 ] as {
+				retriedToolCallIds?: ReadonlySet< string >;
+			};
+			return retriedToolCallIds?.has( 'tool-call-1' ) === true;
+		};
+
+		beforeEach( () => {
+			mockUseAgentChat.mockReturnValue(
+				agentChatReturn( { messages: [ userMessage, noChangeOutcome ] } )
+			);
+		} );
+
+		it( 'hides the summary the server retried', async () => {
+			mockAgentConfig = { agentId: 'wp-orchestrator', sessionId: 'session-a' };
+			render( chat() );
+			expect( isToolCallRetried() ).toBe( false );
+
+			await act( async () => {
+				await mockAgentChatConfig?.onTaskUpdate?.( retryUpdate );
+			} );
+
+			expect( isToolCallRetried() ).toBe( true );
+		} );
+
+		it( 'forgets retries when the conversation changes', async () => {
+			mockAgentConfig = { agentId: 'wp-orchestrator', sessionId: 'session-a' };
+			const view = render( chat() );
+
+			await act( async () => {
+				await mockAgentChatConfig?.onTaskUpdate?.( retryUpdate );
+			} );
+			mockAgentConfig = { agentId: 'wp-orchestrator', sessionId: 'session-b' };
+			view.rerender( chat() );
+
+			expect( isToolCallRetried() ).toBe( false );
+		} );
+
+		it( 'keeps retries when a fresh session is promoted', async () => {
+			mockAgentConfig = { agentId: 'wp-orchestrator', sessionId: '' };
+			mockTabSessionId = '';
+			const view = render( chat() );
+
+			await act( async () => {
+				await mockAgentChatConfig?.onTaskUpdate?.( retryUpdate );
+			} );
+			mockAgentConfig = { agentId: 'wp-orchestrator', sessionId: 'server-session' };
+			view.rerender( chat() );
+
+			expect( isToolCallRetried() ).toBe( true );
+		} );
+
+		it( 'ignores a retry from a previous conversation’s stream', async () => {
+			mockAgentConfig = { agentId: 'wp-orchestrator', sessionId: 'session-a' };
+			const view = render( chat() );
+			const onTaskUpdateBeforeSwitch = mockAgentChatConfig?.onTaskUpdate;
+
+			mockAgentConfig = { agentId: 'wp-orchestrator', sessionId: 'session-b' };
+			view.rerender( chat() );
+			await act( async () => {
+				await onTaskUpdateBeforeSwitch?.( retryUpdate );
+			} );
+
+			expect( isToolCallRetried() ).toBe( false );
+		} );
 	} );
 
 	it( 'drops in-flight streamed checkpoints when the tab session scope changes', async () => {

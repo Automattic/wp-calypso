@@ -77,6 +77,7 @@ import {
 	redirectIfTwoStepReauthRequired,
 } from './redirect';
 import { rootRoute } from './root';
+import type { DifmOfferSearch } from '../../sites/overview-difm-offer-card/thank-you';
 import type { StaticSiteImportSearch } from '../../sites/overview-static-site-import';
 import type { AppConfig } from '../context';
 import type { DifmWebsiteContentResponse, Site, User } from '@automattic/api-core';
@@ -223,13 +224,18 @@ export const siteOverviewRoute = createRoute( {
 	staticData: { availableToInaccessibleJetpackSites: true },
 	getParentRoute: () => siteRoute,
 	path: '/',
-	validateSearch: ( search ): StaticSiteImportSearch => {
+	validateSearch: ( search ): StaticSiteImportSearch & DifmOfferSearch => {
 		const asString = ( value: unknown ) => ( typeof value === 'string' ? value : undefined );
 		return {
 			importSessionId: asString( search.importSessionId ),
 			from: asString( search.from ),
 			platform: asString( search.platform ),
 			domainChoice: asString( search.domainChoice ),
+			difmOffer:
+				search.difmOffer === 'purchased' || search.difmOffer === 'open'
+					? search.difmOffer
+					: undefined,
+			source: asString( search.source ),
 		};
 	},
 	loader: async ( { params: { siteSlug }, preload } ) => {
@@ -1748,7 +1754,15 @@ export const siteMigrationOverviewRoute = createRoute( {
 			return;
 		}
 
-		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+		let site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+		if ( ! isSiteMigrationInProgress( site ) ) {
+			// A cached site can predate its migration, as when arriving from the flow that just started one.
+			// So read it again before turning anyone away, unless it was read moments ago for this navigation.
+			site = await queryClient
+				.fetchQuery( { ...siteBySlugQuery( siteSlug ), staleTime: 1000, retry: false } )
+				.catch( () => site );
+		}
+
 		if ( ! isSiteMigrationInProgress( site ) ) {
 			throw dashboardRedirect( { to: siteOverviewRoute.fullPath, params: { siteSlug } } );
 		}

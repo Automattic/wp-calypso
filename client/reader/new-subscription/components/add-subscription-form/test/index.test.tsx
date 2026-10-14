@@ -145,22 +145,22 @@ describe( 'AddSubscriptionForm', () => {
 
 	describe( 'platform specific tabs', () => {
 		it( 'shows instructions when the config provides them', () => {
-			renderWithProvider( <AddSubscriptionForm type="reddit" /> );
+			renderWithProvider( <AddSubscriptionForm type="youtube" /> );
 
 			expect(
 				screen.queryByRole( 'region', { name: 'Site subscriptions list' } )
 			).not.toBeInTheDocument();
-			expect( screen.getByLabelText( 'Reddit Icon' ) ).toBeInTheDocument();
-			expect( screen.getByRole( 'heading', { name: 'Common Reddit URLs' } ) ).toBeInTheDocument();
-			expect( screen.getByText( 'Front page:' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'www.reddit.com/.rss' ) ).toBeInTheDocument();
+			expect( screen.getByLabelText( 'YouTube Icon' ) ).toBeInTheDocument();
+			expect( screen.getByRole( 'heading', { name: 'Common YouTube URLs' } ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Channel:' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'www.youtube.com/@YT_HANDLE' ) ).toBeInTheDocument();
 		} );
 
 		it( 'invalidates follows on subscribe toggle', async () => {
 			const user = userEvent.setup();
 			const queryClient = new QueryClient();
 			const invalidateQueries = jest.spyOn( queryClient, 'invalidateQueries' );
-			renderWithProvider( <AddSubscriptionForm type="reddit" />, { queryClient } );
+			renderWithProvider( <AddSubscriptionForm type="youtube" />, { queryClient } );
 
 			await user.click( screen.getByRole( 'button', { name: 'Toggle subscription' } ) );
 
@@ -171,33 +171,33 @@ describe( 'AddSubscriptionForm', () => {
 
 		it( 'hides instructions when a feed preview becomes active', async () => {
 			const user = userEvent.setup();
-			renderWithProvider( <AddSubscriptionForm type="reddit" /> );
+			renderWithProvider( <AddSubscriptionForm type="youtube" /> );
 
-			expect( screen.getByRole( 'heading', { name: 'Common Reddit URLs' } ) ).toBeInTheDocument();
+			expect( screen.getByRole( 'heading', { name: 'Common YouTube URLs' } ) ).toBeInTheDocument();
 
 			await user.click( screen.getByRole( 'button', { name: 'Show feed preview' } ) );
 
 			expect( screen.queryByTestId( 'instructions-icon' ) ).not.toBeInTheDocument();
 			expect(
-				screen.queryByRole( 'heading', { name: 'Common Reddit URLs' } )
+				screen.queryByRole( 'heading', { name: 'Common YouTube URLs' } )
 			).not.toBeInTheDocument();
 		} );
 
 		it( 'closes the feed preview when the subscription is toggled', async () => {
 			const user = userEvent.setup();
-			renderWithProvider( <AddSubscriptionForm type="reddit" /> );
+			renderWithProvider( <AddSubscriptionForm type="youtube" /> );
 
 			await user.click( screen.getByRole( 'button', { name: 'Show feed preview' } ) );
 
 			// Instructions are hidden while feed preview is open.
 			expect(
-				screen.queryByRole( 'heading', { name: 'Common Reddit URLs' } )
+				screen.queryByRole( 'heading', { name: 'Common YouTube URLs' } )
 			).not.toBeInTheDocument();
 
 			await user.click( screen.getByRole( 'button', { name: 'Toggle subscription' } ) );
 
 			// Instructions are restored after subscribe toggle closes the preview.
-			expect( screen.getByRole( 'heading', { name: 'Common Reddit URLs' } ) ).toBeInTheDocument();
+			expect( screen.getByRole( 'heading', { name: 'Common YouTube URLs' } ) ).toBeInTheDocument();
 		} );
 	} );
 } );

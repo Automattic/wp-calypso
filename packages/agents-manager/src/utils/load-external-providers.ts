@@ -18,10 +18,12 @@ import {
 	getAmCheckpointContext,
 	getAmPageContentMarkup,
 	getAmPageStructure,
+	preloadAmEditorContentContext,
 } from '../abilities';
 import { findAbilityByName } from '../abilities/ability-name';
 import { handlePageDesignTaskUpdate } from '../abilities/stream-page-design/stream';
 import { withAbilityCompletionBroadcast } from './ability-completion-broadcast';
+import { bigSkyPageContextProvider, isBigSkyEnabled } from './big-sky-page-context';
 import { withCanvasBinding, withCanvasGuard } from './canvas-guard';
 import { getAgentsManagerInlineData } from './get-agents-manager-inline-data';
 import { isEditorPage } from './is-editor-page';
@@ -422,8 +424,6 @@ function withAmCheckpointActions(
 // the editor's clientIds as they are.
 const JETPACK_AI_SIDEBAR_ENVIRONMENT = 'gutenberg';
 
-// Big Sky's client context feeds the same keys; these win by running last.
-// With no provider context, nothing describes the page.
 /**
  * Adds what AM knows of the page: `currentPageContent` and
  * `selectedBlockClientId` under the short ids AM's abilities resolve,
@@ -596,9 +596,16 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 		};
 	}
 
-	if ( agentProviders.length === 0 ) {
+	// A Big Sky site needs AM's abilities and page context even with no provider.
+	const isBigSkySite = isBigSkyEnabled();
+
+	if ( agentProviders.length === 0 && ! isBigSkySite ) {
 		setLoadedProviderIds( [] );
 		return { markdownExtensions: defaultMarkdownExtensions };
+	}
+
+	if ( isBigSkySite ) {
+		void preloadAmEditorContentContext();
 	}
 
 	let mergedToolProvider: ToolProvider | undefined;
@@ -615,7 +622,9 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 	// by ability name, so AM's abilities run ahead of any provider ability with
 	// the same name.
 	const allToolProviders: ToolProvider[] = [ amToolProvider ];
-	const allContextProviders: ContextProvider[] = [];
+	// Big Sky's page context goes first, so its `wp-admin` environment wins over
+	// the Jetpack AI sidebar's `gutenberg`.
+	const allContextProviders: ContextProvider[] = isBigSkySite ? [ bigSkyPageContextProvider ] : [];
 	const allMarkdownComponents: MarkdownComponents[] = [];
 	const allMarkdownExtensions: MarkdownExtensions[] = [];
 	const allGetChatComponents: GetChatComponent[] = [];

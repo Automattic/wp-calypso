@@ -26,6 +26,7 @@ jest.mock( '@automattic/agents-manager', () => ( {
 jest.mock( '../utils/tracking', () => ( {
 	getImageStudioBlogId: jest.requireActual( '../utils/tracking' ).getImageStudioBlogId,
 	getImageStudioSiteType: jest.requireActual( '../utils/tracking' ).getImageStudioSiteType,
+	getImageStudioIsDevMode: jest.requireActual( '../utils/tracking' ).getImageStudioIsDevMode,
 	trackImageStudioUpgradeNoticeShown: jest.fn(),
 	trackImageStudioUpgradeNoticeClick: jest.fn(),
 } ) );
@@ -80,8 +81,8 @@ const meterAt = ( percent: number, isOpen = false ) => ( {
 
 describe( 'getSiteCreditsLevel', () => {
 	it.each( [
-		{ name: 'low below 20,000', remaining: 19_999, level: 'low' },
-		{ name: 'nothing from 20,000', remaining: 20_000, level: null },
+		{ name: 'low below 10,000', remaining: 9_999, level: 'low' },
+		{ name: 'nothing from 10,000', remaining: 10_000, level: null },
 	] )( '$name', ( { remaining, level } ) => {
 		expect( getSiteCreditsLevel( remaining ) ).toBe( level );
 	} );
@@ -290,6 +291,78 @@ describe( 'useAiCredits', () => {
 		expect( stateOf( result ) ).toEqual( NOTHING );
 		expect( consoleError ).toHaveBeenCalled();
 		consoleError.mockRestore();
+	} );
+
+	describe( 'while the page says it isn’t in dev mode', () => {
+		beforeEach( () => {
+			window.imageStudioData = { blogId: BLOG_ID, siteType: 'simple', isDevMode: false };
+		} );
+
+		it( 'doesn’t ask or hold suggestions back, even before the credentials arrive', async () => {
+			const { result, rerender } = renderCredits( ImageStudioMode.Generate, undefined );
+			expect( stateOf( result ) ).toEqual( NOTHING );
+
+			rerender( { mode: ImageStudioMode.Generate, authProvider } );
+			await act( async () => {} );
+
+			expect( fetchMock ).not.toHaveBeenCalled();
+			expect( stateOf( result ) ).toEqual( NOTHING );
+		} );
+
+		it( 'shows a turn’s balance, and a turn’s zero blocks Send', async () => {
+			const { result } = renderCredits();
+			await act( async () => {} );
+
+			act( () => {
+				result.current.onTaskUpdate( finalUpdate( planSnapshot( 0 ) ) );
+			} );
+
+			expect( result.current.isLimitReached ).toBe( true );
+			act( () => {
+				expect( result.current.beforeSubmit() ).toBe( false );
+			} );
+			expect( result.current.meter?.isOpen ).toBe( true );
+			expect( fetchMock ).not.toHaveBeenCalled();
+		} );
+
+		it( 'keeps the choice it made on opening until it opens again', async () => {
+			respondWith( { ai_credits: planSnapshot( 30_000 ) } );
+			const first = renderCredits();
+			window.imageStudioData = { blogId: BLOG_ID, siteType: 'simple', isDevMode: true };
+			first.rerender( { mode: ImageStudioMode.Generate, authProvider } );
+			await act( async () => {} );
+			expect( fetchMock ).not.toHaveBeenCalled();
+
+			first.unmount();
+			const second = renderCredits();
+
+			await waitFor( () => expect( second.result.current.meter ).toEqual( meterAt( 75 ) ) );
+			expect( fetchMock ).toHaveBeenCalledTimes( 1 );
+		} );
+	} );
+
+	it.each( [
+		[ 'doesn’t ask outside dev mode', { isDevMode: false }, 0 ],
+		[
+			'doesn’t ask outside dev mode, even for an Automattician',
+			{ isDevMode: false, isA11n: true },
+			0,
+		],
+		[ 'asks in dev mode', { isDevMode: true }, 1 ],
+		[
+			'asks in dev mode for someone who isn’t an Automattician',
+			{ isDevMode: true, isA11n: false },
+			1,
+		],
+		[ 'asks when the page leaves the flag out', {}, 1 ],
+	] )( '%s', async ( _name, flags, requests ) => {
+		window.imageStudioData = { blogId: BLOG_ID, siteType: 'simple', ...flags };
+		respondWith( { ai_credits: planSnapshot( 30_000 ) } );
+
+		renderCredits();
+		await act( async () => {} );
+
+		expect( fetchMock ).toHaveBeenCalledTimes( requests );
 	} );
 
 	it( 'does not ask on a self-hosted site, which can’t be on AI credits', () => {

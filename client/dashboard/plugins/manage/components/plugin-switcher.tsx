@@ -1,3 +1,4 @@
+import { formatNumber } from '@automattic/number-formatters';
 import { throttle } from '@wordpress/compose';
 import { Field, View } from '@wordpress/dataviews';
 import { decodeEntities } from '@wordpress/html-entities';
@@ -84,20 +85,20 @@ export const PluginSwitcher = ( {
 
 	const renderItem = useCallback( ( { item }: { item: PluginListRow } ) => {
 		const sitesText = sprintf(
-			// translators: %(siteCount)d is the number of sites the plugin is installed on.
-			_n( '%(siteCount)d site', '%(siteCount)d sites', item.sitesCount ),
-			{ siteCount: item.sitesCount }
+			// translators: %(siteCount)s is the formatted number of sites the plugin is installed on.
+			_n( '%(siteCount)s site', '%(siteCount)s sites', item.sitesCount ),
+			{ siteCount: formatNumber( item.sitesCount ) }
 		);
 
 		const updatesText = item.sitesWithPluginUpdate.length
 			? sprintf(
-					// translators: %(updateCount)d is the number of updates available.
+					// translators: %(updateCount)s is the formatted number of updates available.
 					_n(
-						'%(updateCount)d update available',
-						'%(updateCount)d updates available',
+						'%(updateCount)s update available',
+						'%(updateCount)s updates available',
 						item.sitesWithPluginUpdate.length
 					),
-					{ updateCount: item.sitesWithPluginUpdate.length }
+					{ updateCount: formatNumber( item.sitesWithPluginUpdate.length ) }
 				)
 			: '';
 

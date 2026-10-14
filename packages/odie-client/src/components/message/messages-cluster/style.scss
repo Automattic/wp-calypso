@@ -80,6 +80,8 @@
 .odie-chatbox-messages-cluster__history-loading {
 	display: flex;
 	justify-content: center;
+	// The message list doesn't stretch its children, so take the full width to center the spinner.
+	width: 100%;
 	padding: 8px 0;
 
 	.components-spinner {

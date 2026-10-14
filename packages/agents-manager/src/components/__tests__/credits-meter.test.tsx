@@ -130,7 +130,7 @@ describe( 'CreditsMeter', () => {
 		const onToggle = jest.fn();
 		render( <CreditsMeter status={ paid } isOpen={ false } onToggle={ onToggle } /> );
 		const toggle = screen.getByRole( 'button', { name: `${ localNumber( 11.6 ) }k credits left` } );
-		expect( screen.getByTestId( 'dot' ) ).toHaveAttribute( 'data-tone', 'error' );
+		expect( screen.getByTestId( 'dot' ) ).toHaveAttribute( 'data-tone', 'muted' );
 		expect( screen.getByTestId( 'dot' ) ).toHaveAttribute( 'data-size', '12' );
 		fireEvent.click( toggle );
 		expect( onToggle ).toHaveBeenCalledWith( true );

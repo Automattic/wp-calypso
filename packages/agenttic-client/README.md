@@ -156,6 +156,7 @@ const {
 	// Chat state
 	messages, // UIMessage[] - formatted for display
 	isProcessing, // boolean - request in progress
+	isReplying, // boolean | undefined - reply text is streaming in (with `trackReplying`, during a request)
 	error, // string | null - last error
 
 	// Core methods
@@ -182,6 +183,7 @@ const {
 - `contextProvider?: ContextProvider` - Dynamic context injection
 - `toolProvider?: ToolProvider` - Tool execution capabilities
 - `authProvider?: AuthProvider` - Authentication headers
+- `trackReplying?: boolean` - Return `isReplying` during a request, e.g. for AgentUI's `isReplying` prop. Needs `enableStreaming`. Reply text then also clears `progressMessage` and `progressPhase`
 
 ### useClientContext Hook
 

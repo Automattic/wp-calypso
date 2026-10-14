@@ -13,7 +13,7 @@ import {
 	transferStates,
 } from '../utils/atomic-transfer-outcome';
 import { useSiteData } from './use-site-data';
-import type { SiteSelect, SiteDetails } from '@automattic/data-stores';
+import type { SiteDetails } from '@automattic/data-stores';
 
 const wait = ( ms: number ) => new Promise( ( res ) => setTimeout( res, ms ) );
 
@@ -60,7 +60,7 @@ export const useWaitForAtomic = ( {
 
 	const { requestLatestAtomicTransfer } = useDispatch( SITE_STORE );
 	const { getSiteLatestAtomicTransfer, getSiteLatestAtomicTransferError } = useSelect(
-		( select ) => select( SITE_STORE ) as SiteSelect,
+		( select ) => select( SITE_STORE ),
 		[]
 	);
 

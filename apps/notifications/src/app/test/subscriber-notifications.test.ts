@@ -44,6 +44,32 @@ describe( 'subscribeSubscriberNotifications', () => {
 		expect( sound.dispose ).toHaveBeenCalledTimes( 1 );
 	} );
 
+	it( 'reports the sound result and forwards the error reporter', () => {
+		sound.play.mockReturnValueOnce( 'cooldown' );
+		const onSound = jest.fn();
+		const onError = jest.fn();
+		const stop = subscribeSubscriberNotifications( {}, jest.fn(), jest.fn(), {
+			onSound,
+			onError,
+		} );
+
+		onLiveNotification( candidate );
+
+		expect( createNotificationSound ).toHaveBeenCalledWith( { onError } );
+		expect( onSound ).toHaveBeenCalledWith( 'cooldown', candidate );
+		stop();
+	} );
+
+	it( 'does not report a sound result for a rejected candidate', () => {
+		const onSound = jest.fn();
+		const stop = subscribeSubscriberNotifications( {}, jest.fn(), () => false, { onSound } );
+
+		onLiveNotification( candidate );
+
+		expect( onSound ).not.toHaveBeenCalled();
+		stop();
+	} );
+
 	it( 'does not play audio when the alert consumer rejects a stale candidate', () => {
 		const onConfirmed = jest.fn().mockReturnValue( false );
 		const stop = subscribeSubscriberNotifications( {}, jest.fn(), onConfirmed );

@@ -5,6 +5,7 @@
 	"main": "dist/cjs/src/index.js",
 	"module": "dist/esm/src/index.js",
 	"types": "dist/types/src/index.d.ts",
+	"calypso:src": "src/index.ts",
 	"publishConfig": {
 		"access": "public"
 	},

@@ -7,6 +7,7 @@ export interface AgentUIContextValue {
 	messages: Message[];
 	isProcessing: boolean;
 	isStreaming?: boolean;
+	isReplying?: boolean;
 	error?: string | null;
 
 	// Input state

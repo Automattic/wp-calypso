@@ -52,6 +52,8 @@ interface Props {
 	isProcessing: boolean;
 	/** Whether the latest reply is still streaming. Defaults to `isProcessing`. */
 	isStreaming?: boolean;
+	/** Whether reply text is streaming in. When set, it drives the thinking indicator. */
+	isReplying?: boolean;
 	/** Custom thinking message to display while the agent is processing. */
 	thinkingMessage?: string | null;
 	/** Indicates if a conversation is being loaded. */
@@ -179,6 +181,7 @@ export default function AgentChat( {
 	groupWritingSuggestions = false,
 	isProcessing,
 	isStreaming,
+	isReplying,
 	thinkingMessage,
 	isLoadingConversation,
 	isDocked,
@@ -316,6 +319,7 @@ export default function AgentChat( {
 			messages={ messages }
 			isProcessing={ isProcessing }
 			isStreaming={ isStreaming }
+			isReplying={ isReplying }
 			thinkingMessage={ thinkingMessage ?? undefined }
 			error={ error }
 			onSubmit={ onSubmit }
@@ -357,7 +361,11 @@ export default function AgentChat( {
 			<AgentUI.ConversationView ref={ conversationViewRef }>
 				{ isSiteEditorContext() && <EditorHistoryBridge /> }
 				<ChatHeader onClose={ onClose } options={ chatHeaderOptions } isDocked={ isDocked } />
-				{ isLoadingConversation ? <ChatMessageSkeleton count={ 3 } /> : <AgentUI.Messages /> }
+				{ isLoadingConversation && messages.length === 0 ? (
+					<ChatMessageSkeleton count={ 3 } />
+				) : (
+					<AgentUI.Messages />
+				) }
 				{ ( onContextCardAction || onContextCardDismiss ) && (
 					<ContextCards onAction={ onContextCardAction } onDismiss={ onContextCardDismiss } />
 				) }

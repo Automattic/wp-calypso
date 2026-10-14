@@ -44,6 +44,8 @@ declare const agentsManagerData:
 			site?: { ID?: number; domain?: string };
 			emptyViewHeading?: string;
 			emptyViewHelp?: string;
+			/** Set where Big Sky is enabled; AM then sends Big Sky's page context. */
+			bigSkyEnabled?: boolean;
 	  }
 	| undefined;
 
@@ -125,6 +127,8 @@ interface AgentsManagerActions {
 	getTabId?: () => string;
 	/** The current turn's `turn_id`, or '' before the first send, so a host's requests can name the turn behind them. */
 	getTurnId?: () => string;
+	/** The id the agent knows a block by, so a host can name the block to it. */
+	getAgentBlockId?: ( clientId: string ) => string;
 	/**
 	 * Records a Tracks event in the `jetpack_big_sky_` family with its base
 	 * props. `eventName` includes the family prefix.
@@ -157,15 +161,6 @@ interface AgentsManagerActions {
 	 * instead of waiting for the `agents-manager-ready` event.
 	 */
 	isReady?: boolean;
-	/**
-	 * Set to `true` by builds that broadcast the agent's activity as window
-	 * events — `agents-manager-turn-started`, `agents-manager-turn-ended` and
-	 * `agents-manager-ability-completed`; see `utils/agent-activity-events.ts`.
-	 * A host that acts on the agent's silence (Big Sky's easy mode writes over
-	 * edits it can attribute to nobody) must check this first: against a build
-	 * without it, the agent is always silent.
-	 */
-	broadcastsAgentActivity?: boolean;
 }
 
 /**

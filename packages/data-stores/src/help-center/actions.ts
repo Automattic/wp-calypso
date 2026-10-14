@@ -6,7 +6,12 @@ import { SiteDetails } from '../site';
 import { CurrentUser } from '../user/types';
 import { STORE_KEY } from './constants';
 import { persistPreference } from './utils';
-import type { HelpCenterOptions, HelpCenterShowOptions, LoggedOutOdieChat } from './types';
+import type {
+	CheckoutSupportVariation,
+	HelpCenterOptions,
+	HelpCenterShowOptions,
+	LoggedOutOdieChat,
+} from './types';
 
 declare global {
 	interface Window {
@@ -139,6 +144,12 @@ export const setHelpCenterOptions = ( options: HelpCenterOptions ) => ( {
 	options,
 } );
 
+export const setCheckoutSupportVariation = ( variation: CheckoutSupportVariation | undefined ) =>
+	( {
+		type: 'HELP_CENTER_SET_CHECKOUT_SUPPORT_VARIATION',
+		variation,
+	} ) as const;
+
 /**
  * Set the current user in the help center store.
  * This value is needed because the store makes decisions based on the logged in status.
@@ -190,6 +201,9 @@ export const setShowHelpCenter = function* (
 
 	yield setShowMessagingWidget( false );
 	yield setContextTerm( options?.contextTerm || '' );
+	// Only opening from checkout passes a variation, so opening from anywhere else clears it
+	// and the experiment's treatment doesn't follow the user around Calypso.
+	yield setCheckoutSupportVariation( options?.checkoutSupportVariation );
 
 	if ( isMinimized ) {
 		yield setIsMinimized( false );
@@ -200,7 +214,9 @@ export const setShowHelpCenter = function* (
 	}
 
 	if ( options ) {
-		yield setHelpCenterOptions( options );
+		// Keep the variation out of the options, which are merged and never reset.
+		const { checkoutSupportVariation, ...helpCenterOptions } = options;
+		yield setHelpCenterOptions( helpCenterOptions );
 	}
 
 	// Close any Survicate survey that may already be visible.
@@ -333,6 +349,7 @@ export type HelpCenterAction =
 			| typeof setOdieBotNameSlug
 			| typeof setHasPremiumSupport
 			| typeof setHelpCenterOptions
+			| typeof setCheckoutSupportVariation
 			| typeof setCurrentUser
 	  >
 	| GeneratorReturnType< typeof setShowHelpCenter >;
