@@ -68,7 +68,7 @@ export default function MarketplacePurchases() {
 			setIsFeedbackOpen( true );
 		}
 	}, [ shouldAsk ] );
-	const onManageInPressable = useCallback(
+	const onManageSite = useCallback(
 		( license: JetpackLicense ) => {
 			if ( shouldAsk && isWithinFeedbackWindow( license.attached_at ) ) {
 				setIsFeedbackOpen( true );
@@ -77,9 +77,8 @@ export default function MarketplacePurchases() {
 		[ shouldAsk ]
 	);
 	const fields = useMemo(
-		() =>
-			getLicenseFields( { locale, isAgencyOwner, provisioningLicenseKeys, onManageInPressable } ),
-		[ locale, isAgencyOwner, provisioningLicenseKeys, onManageInPressable ]
+		() => getLicenseFields( { locale, isAgencyOwner, provisioningLicenseKeys, onManageSite } ),
+		[ locale, isAgencyOwner, provisioningLicenseKeys, onManageSite ]
 	);
 	const actions = useLicenseActions( {
 		agencyId,
