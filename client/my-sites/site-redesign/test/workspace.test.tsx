@@ -277,7 +277,16 @@ test( 'shows generation stages from the reported progress', () => {
 	};
 	renderWorkspace();
 	expect( screen.getByRole( 'heading', { name: 'Generating your design' } ) ).toBeVisible();
-	expect( screen.getByText( 'Planning the look' ) ).toHaveAttribute( 'aria-current', 'step' );
+	expect( screen.getByText( 'Planning the look' ).closest( 'li' ) ).toHaveAttribute(
+		'aria-current',
+		'step'
+	);
+	expect( screen.getByText( 'Reading your pages and menus' ).closest( 'li' ) ).toHaveTextContent(
+		'Done'
+	);
+	expect( screen.getByText( 'Building your preview' ).closest( 'li' ) ).not.toHaveAttribute(
+		'aria-current'
+	);
 	expect( screen.queryByText( /of 19/ ) ).toBeNull();
 	expect( screen.queryByRole( 'region', { name: 'Your design direction' } ) ).toBeNull();
 	expect( screen.queryByRole( 'progressbar' ) ).toBeNull();
@@ -561,7 +570,7 @@ test( 'keeps the native secondary button disabled and busy until restart settles
 	const button = screen.getByRole( 'button', { name: 'Start a new brief' } );
 	await user.click( button );
 	expect( button ).toBeDisabled();
-	expect( button ).toHaveClass( 'button', 'is-busy' );
+	expect( button ).toHaveClass( 'components-button', 'is-busy' );
 	await act( async () => finishRestart() );
 	expect( button ).toBeEnabled();
 	expect( button ).not.toHaveClass( 'is-busy' );

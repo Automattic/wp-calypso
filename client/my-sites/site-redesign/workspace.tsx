@@ -1,30 +1,36 @@
 import page from '@automattic/calypso-router';
-import { Button as CalypsoButton } from '@automattic/components';
 import { formatNumber } from '@automattic/number-formatters';
 import {
 	Button,
+	Card,
+	CardBody,
+	CardDivider,
+	FlexItem,
 	Notice,
 	ProgressBar,
 	Spinner,
+	__experimentalHeading as Heading,
+	__experimentalHStack as HStack,
+	__experimentalText as Text,
 	__experimentalToggleGroupControl as ToggleGroupControl,
 	__experimentalToggleGroupControlOption as ToggleGroupControlOption,
+	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { useMediaQuery } from '@wordpress/compose';
 import { __, sprintf } from '@wordpress/i18n';
-import { check, Icon } from '@wordpress/icons';
+import { Badge } from '@wordpress/ui';
 import { useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
-import CardHeading from 'calypso/components/card-heading';
 import AgentsManagerLoader from 'calypso/layout/agents-manager-loader';
 import { getSiteOption } from 'calypso/state/sites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
+import BriefDirection from './brief-direction';
 import { useRedesignRouteAccess } from './eligibility';
 import { usePreviewNavigation } from './use-preview-navigation';
 import { canRestart, useRedesign } from './use-redesign';
 import { useAgentTurnActivity, useRedesignAgent } from './use-redesign-agent';
 import { useStartDesigning } from './use-start-designing';
-import type { DesignBrief, Redesign } from './api';
-import type { ReactNode } from 'react';
+import type { Redesign } from './api';
 
 import './style.scss';
 
@@ -91,6 +97,21 @@ export function getOriginalPreviewUrl(
 	}
 	return url.href;
 }
+
+const getWelcomeSteps = () => [
+	{
+		title: __( 'Chat with the WordPress Agent' ),
+		description: __( 'Answer a few questions about your goals and style.' ),
+	},
+	{
+		title: __( 'Approve your design brief' ),
+		description: __( 'Review it here, then approve it in the chat. The agent starts your design.' ),
+	},
+	{
+		title: __( 'Preview the new design' ),
+		description: __( 'Compare it with your current site, then choose Use this design.' ),
+	},
+];
 
 export function RedesignWorkspace( {
 	siteId,
@@ -457,92 +478,112 @@ export function RedesignWorkspace( {
 								>
 									{ brief ? (
 										<>
-											<BriefDirection brief={ brief } pending={ pendingBrief } />
-											<p className="site-redesign-brief-next">
-												{ applyOnly &&
-													__(
-														'This is the brief behind your design. Review the new design, then choose Use this design to make it live.'
-													) }
-												{ ! applyOnly &&
-													pendingBrief &&
-													__(
-														'Approve this brief in the chat, or generate it here. You can also ask the WordPress Agent for changes.'
-													) }
-												{ ! applyOnly &&
-													! pendingBrief &&
-													canGenerate &&
-													__(
-														'This is the brief behind your current design. Generate it again, or start a new brief to try a different direction.'
-													) }
-												{ ! applyOnly &&
-													! pendingBrief &&
-													! canGenerate &&
-													__(
-														'This is the brief behind this design. Start a new brief to try a different direction; your live site stays as it is.'
-													) }
-											</p>
-											{ ( canGenerate || canStartNewBrief ) && (
-												<div className="site-redesign-panel-actions">
-													{ canGenerate && (
-														<Button
-															__next40pxDefaultSize
-															variant="primary"
-															disabled={ agentAnswering }
-															onClick={ () => {
-																setComparison( null );
-																setMobilePanel( 'preview' );
-																void generate();
-															} }
-														>
-															{ __( 'Generate design' ) }
-														</Button>
-													) }
-													{ canStartNewBrief && (
-														<CalypsoButton
-															busy={ restarting }
-															disabled={ restarting || busy || agentAnswering }
-															onClick={ () => void startNewBrief() }
-														>
-															{ __( 'Start a new brief' ) }
-														</CalypsoButton>
-													) }
-												</div>
-											) }
+											<BriefDirection brief={ brief } pending={ pendingBrief }>
+												<Text
+													as="p"
+													variant="muted"
+													size={ 14 }
+													className="site-redesign-brief-next"
+												>
+													{ applyOnly &&
+														__(
+															'This is the brief behind your design. Review the new design, then choose Use this design to make it live.'
+														) }
+													{ ! applyOnly &&
+														pendingBrief &&
+														__(
+															'Approve this brief in the chat, or generate it here. You can also ask the WordPress Agent for changes.'
+														) }
+													{ ! applyOnly &&
+														! pendingBrief &&
+														canGenerate &&
+														__(
+															'This is the brief behind your current design. Generate it again, or start a new brief to try a different direction.'
+														) }
+													{ ! applyOnly &&
+														! pendingBrief &&
+														! canGenerate &&
+														__(
+															'This is the brief behind this design. Start a new brief to try a different direction; your live site stays as it is.'
+														) }
+												</Text>
+												{ ( canGenerate || canStartNewBrief ) && (
+													<HStack
+														justify="flex-end"
+														expanded={ false }
+														spacing={ 2 }
+														className="site-redesign-panel-actions"
+													>
+														{ canStartNewBrief && (
+															<Button
+																__next40pxDefaultSize
+																variant="secondary"
+																isBusy={ restarting }
+																disabled={ restarting || busy || agentAnswering }
+																onClick={ () => void startNewBrief() }
+															>
+																{ __( 'Start a new brief' ) }
+															</Button>
+														) }
+														{ canGenerate && (
+															<Button
+																__next40pxDefaultSize
+																variant="primary"
+																disabled={ agentAnswering }
+																onClick={ () => {
+																	setComparison( null );
+																	setMobilePanel( 'preview' );
+																	void generate();
+																} }
+															>
+																{ __( 'Generate design' ) }
+															</Button>
+														) }
+													</HStack>
+												) }
+											</BriefDirection>
 										</>
 									) : (
-										<>
-											<CardHeading tagName="h1" size={ 32 }>
-												{ __( 'Design your own theme' ) }
-											</CardHeading>
-											<p className="site-redesign-lead">
-												{ __( 'Give your site a fresh look with your existing content.' ) }
-											</p>
-											<ol className="site-redesign-steps">
-												{ /* Without a brief, the interview is where the user is now. */ }
-												<li className="is-current" aria-current="step">
-													<strong>{ __( 'Chat with the WordPress Agent' ) }</strong>
-													<span>
-														{ __( 'Answer a few questions about your goals and style.' ) }
-													</span>
-												</li>
-												<li>
-													<strong>{ __( 'Approve your design brief' ) }</strong>
-													<span>
-														{ __(
-															'Review it here, then approve it in the chat. The agent starts your design.'
-														) }
-													</span>
-												</li>
-												<li>
-													<strong>{ __( 'Preview the new design' ) }</strong>
-													<span>
-														{ __(
-															'Compare it with your current site, then choose Use this design.'
-														) }
-													</span>
-												</li>
-											</ol>
-										</>
+										<Card size="large">
+											<CardBody>
+												<VStack spacing={ 2 }>
+													<Heading level={ 1 } size={ 24 } weight={ 400 }>
+														{ __( 'Design your own theme' ) }
+													</Heading>
+													<Text as="p" variant="muted" size={ 14 }>
+														{ __( 'Give your site a fresh look with your existing content.' ) }
+													</Text>
+												</VStack>
+											</CardBody>
+											<CardDivider />
+											<CardBody>
+												<VStack as="ol" spacing={ 5 } className="site-redesign-steps">
+													{ getWelcomeSteps().map( ( step, index ) => (
+														<HStack
+															as="li"
+															key={ step.title }
+															alignment="topLeft"
+															spacing={ 3 }
+															aria-current={ index === 0 ? 'step' : undefined }
+														>
+															<FlexItem className="site-redesign-step-number">
+																<Badge intent={ index === 0 ? 'informational' : 'draft' }>
+																	{ formatNumber( index + 1 ) }
+																</Badge>
+															</FlexItem>
+															<VStack spacing={ 1 }>
+																<Text size={ 14 } weight={ 500 }>
+																	{ step.title }
+																</Text>
+																<Text variant="muted" size={ 13 }>
+																	{ step.description }
+																</Text>
+															</VStack>
+														</HStack>
+													) ) }
+												</VStack>
+											</CardBody>
+										</Card>
 									) }
 									{ run?.status === 'failed' && (
 										<Notice status="error" isDismissible={ false }>
@@ -623,22 +664,26 @@ export function isRollingBack( run: Redesign ): boolean {
 	return run.status === 'applying' && run.apply?.status === 'rolling_back';
 }
 
-const SWATCH = /^#(?:[0-9a-f]{3}|[0-9a-f]{6})$/i;
-
 function ProgressPanel( { run }: { run: Redesign } ) {
 	if ( isRollingBack( run ) ) {
 		return (
 			<div className="site-redesign-panel site-redesign-progress-panel">
-				<CardHeading tagName="h1" size={ 32 }>
-					{ __( 'Restoring your previous design' ) }
-				</CardHeading>
-				<ProgressBar
-					className="site-redesign-progress-bar"
-					aria-label={ __( 'Restore progress' ) }
-				/>
-				<p className="site-redesign-hint">
-					{ __( 'Your site is switching back to the design it had before this redesign.' ) }
-				</p>
+				<Card size="large">
+					<CardBody>
+						<VStack spacing={ 4 }>
+							<Heading level={ 1 } size={ 24 } weight={ 400 }>
+								{ __( 'Restoring your previous design' ) }
+							</Heading>
+							<ProgressBar
+								className="site-redesign-progress-bar"
+								aria-label={ __( 'Restore progress' ) }
+							/>
+							<Text as="p" variant="muted" size={ 14 }>
+								{ __( 'Your site is switching back to the design it had before this redesign.' ) }
+							</Text>
+						</VStack>
+					</CardBody>
+				</Card>
 			</div>
 		);
 	}
@@ -651,168 +696,80 @@ function ProgressPanel( { run }: { run: Redesign } ) {
 
 	return (
 		<div className="site-redesign-panel site-redesign-progress-panel">
-			<span className="site-redesign-direction-status is-pending">
-				{ isApplying ? __( 'Applying' ) : __( 'In progress' ) }
-			</span>
-			<CardHeading tagName="h1" size={ 32 }>
-				{ isApplying ? __( 'Using your new design' ) : __( 'Generating your design' ) }
-			</CardHeading>
-			{ isApplying && (
-				<ProgressBar className="site-redesign-progress-bar" aria-label={ __( 'Apply progress' ) } />
-			) }
-			<div className="site-redesign-progress-detail">
-				<ol
-					className="site-redesign-stages"
-					aria-label={ __( 'Design stages' ) }
-					aria-live="polite"
-				>
-					{ stages.map( ( stage, index ) => {
-						let state = 'current';
-						if ( currentIndex === null || index > currentIndex ) {
-							state = 'upcoming';
-						} else if ( index < currentIndex ) {
-							state = 'done';
-						}
-						return (
-							<li
-								key={ stage.key }
-								className={ `site-redesign-stage-item is-${ state }` }
-								aria-current={ state === 'current' ? 'step' : undefined }
-							>
-								<span className="site-redesign-stage-marker" aria-hidden="true">
-									{ state === 'done' && <Icon icon={ check } size={ 16 } /> }
-								</span>
-								{ stage.label }
-							</li>
-						);
-					} ) }
-				</ol>
-			</div>
-			{ isApplying && run.apply?.status === 'awaiting_atomic' && (
-				<p className="site-redesign-hint">
-					{ __( 'Preparing your site for its new design. This can take up to two hours.' ) }
-				</p>
-			) }
-			{ isApplying && (
-				<p className="site-redesign-hint">
-					{ __( 'Your current design stays live until the new one is ready.' ) }
-				</p>
-			) }
+			<Card size="large">
+				<CardBody>
+					<VStack spacing={ 4 }>
+						<Heading level={ 1 } size={ 24 } weight={ 400 }>
+							{ isApplying ? __( 'Using your new design' ) : __( 'Generating your design' ) }
+						</Heading>
+						{ isApplying && (
+							<ProgressBar
+								className="site-redesign-progress-bar"
+								aria-label={ __( 'Apply progress' ) }
+							/>
+						) }
+					</VStack>
+				</CardBody>
+				<CardDivider />
+				<CardBody>
+					<VStack
+						as="ol"
+						spacing={ 4 }
+						className="site-redesign-stages"
+						aria-label={ __( 'Design stages' ) }
+						aria-live="polite"
+					>
+						{ stages.map( ( stage, index ) => {
+							let state = 'current';
+							if ( currentIndex === null || index > currentIndex ) {
+								state = 'upcoming';
+							} else if ( index < currentIndex ) {
+								state = 'done';
+							}
+							return (
+								<HStack
+									as="li"
+									key={ stage.key }
+									spacing={ 3 }
+									aria-current={ state === 'current' ? 'step' : undefined }
+								>
+									<Text
+										size={ 14 }
+										weight={ state === 'current' ? 500 : 400 }
+										variant={ state === 'upcoming' ? 'muted' : undefined }
+									>
+										{ stage.label }
+									</Text>
+									{ state === 'done' && <Badge intent="stable">{ __( 'Done' ) }</Badge> }
+									{ state === 'current' && (
+										<Badge intent="informational">{ __( 'In progress' ) }</Badge>
+									) }
+								</HStack>
+							);
+						} ) }
+					</VStack>
+				</CardBody>
+				{ isApplying && (
+					<>
+						<CardDivider />
+						<CardBody>
+							<VStack spacing={ 2 }>
+								{ run.apply?.status === 'awaiting_atomic' && (
+									<Text as="p" variant="muted" size={ 13 }>
+										{ __(
+											'Preparing your site for its new design. This can take up to two hours.'
+										) }
+									</Text>
+								) }
+								<Text as="p" variant="muted" size={ 13 }>
+									{ __( 'Your current design stays live until the new one is ready.' ) }
+								</Text>
+							</VStack>
+						</CardBody>
+					</>
+				) }
+			</Card>
 		</div>
-	);
-}
-
-/**
- * A generic family the visitor's own words name, so the specimen hints at the voice without
- * claiming a typeface the brief does not choose.
- */
-function genericFamily( description?: string ): string | undefined {
-	const text = description?.toLowerCase() ?? '';
-	if ( /mono/.test( text ) ) {
-		return 'ui-monospace, monospace';
-	}
-	if ( /sans/.test( text ) ) {
-		return 'ui-sans-serif, system-ui, sans-serif';
-	}
-	if ( /serif/.test( text ) ) {
-		return 'ui-serif, Georgia, serif';
-	}
-	return undefined;
-}
-
-function BriefDirection( { brief, pending }: { brief: DesignBrief; pending: boolean } ) {
-	const colors = brief.palette?.colors?.filter( ( color ) => SWATCH.test( color ) ) ?? [];
-	const headings = brief.typography?.headings;
-	const body = brief.typography?.body;
-	const rows: [ string, ReactNode ][] = [];
-	if ( brief.mood_keywords?.length ) {
-		rows.push( [
-			__( 'The feeling' ),
-			<ul className="site-redesign-chips" key="feeling">
-				{ brief.mood_keywords.map( ( mood ) => (
-					<li key={ mood }>{ mood }</li>
-				) ) }
-			</ul>,
-		] );
-	}
-	if ( headings || body ) {
-		rows.push( [
-			__( 'The type' ),
-			<dl className="site-redesign-faces" key="type">
-				{ headings && (
-					<div>
-						<dt>{ __( 'Headings' ) }</dt>
-						<dd style={ { fontFamily: genericFamily( headings ) } }>{ headings }</dd>
-					</div>
-				) }
-				{ body && (
-					<div>
-						<dt>{ __( 'Body' ) }</dt>
-						<dd style={ { fontFamily: genericFamily( body ) } }>{ body }</dd>
-					</div>
-				) }
-			</dl>,
-		] );
-	}
-	if ( colors.length > 0 || brief.palette?.description ) {
-		rows.push( [
-			__( 'The palette' ),
-			<div className="site-redesign-palette" key="palette">
-				{ brief.palette?.description && (
-					<p className="site-redesign-direction-note">{ brief.palette.description }</p>
-				) }
-				{ colors.length > 0 && (
-					<ul className="site-redesign-swatches">
-						{ colors.map( ( color ) => (
-							<li key={ color } aria-label={ color }>
-								<span
-									aria-hidden="true"
-									className="site-redesign-swatch-chip"
-									style={ { backgroundColor: color } }
-								/>
-								<span className="site-redesign-swatch-hex">{ color.toUpperCase() }</span>
-							</li>
-						) ) }
-					</ul>
-				) }
-			</div>,
-		] );
-	}
-	if ( brief.audience ) {
-		rows.push( [ __( 'Audience' ), brief.audience ] );
-	}
-	if ( brief.references?.length ) {
-		rows.push( [
-			__( 'References' ),
-			<ul className="site-redesign-references" key="references">
-				{ brief.references.map( ( reference ) => (
-					<li key={ reference }>{ reference }</li>
-				) ) }
-			</ul>,
-		] );
-	}
-
-	return (
-		<article className="site-redesign-direction">
-			<header className="site-redesign-direction-mast">
-				<span className={ `site-redesign-direction-status${ pending ? ' is-pending' : '' }` }>
-					{ pending ? __( 'Ready to generate' ) : __( 'Behind your new design' ) }
-				</span>
-				<h1 className="site-redesign-direction-title">{ brief.goal }</h1>
-			</header>
-			<p className="site-redesign-direction-lede">{ brief.style }</p>
-			{ rows.length > 0 && (
-				// One group per row: a quiet label, then the detail at a readable width.
-				<dl className="site-redesign-direction-rows">
-					{ rows.map( ( [ label, detail ] ) => (
-						<div key={ label } className="site-redesign-direction-row">
-							<dt>{ label }</dt>
-							<dd>{ detail }</dd>
-						</div>
-					) ) }
-				</dl>
-			) }
-		</article>
 	);
 }
 
