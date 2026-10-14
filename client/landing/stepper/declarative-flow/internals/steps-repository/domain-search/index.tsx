@@ -500,7 +500,12 @@ const DomainSearchStep: StepType< {
 					'Make it yours with a .com, .blog, or one of 350+ domain options. Have a site already? <a>Migrate it</a>.'
 				),
 				{
-					a: <a href={ `/setup/${ SITE_MIGRATION_FLOW }?ref=${ flow }` } />,
+					a: (
+						<a
+							className="domain-search__migrate-link"
+							href={ `/setup/${ SITE_MIGRATION_FLOW }?ref=${ flow }` }
+						/>
+					),
 				}
 			);
 		}

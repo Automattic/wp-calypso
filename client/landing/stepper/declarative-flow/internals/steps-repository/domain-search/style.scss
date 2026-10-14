@@ -1,5 +1,5 @@
-@import "@wordpress/base-styles/breakpoints";
-@import "@wordpress/base-styles/mixins";
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
 
 .domain-search--top-bar-divider {
 	inline-size: 1px;
@@ -97,5 +97,16 @@
 					var( --step-container-v2-top-bar-height, 0px )
 			);
 		}
+	}
+}
+
+.domain-search__migrate-link {
+	color: var( --color-text );
+	text-decoration: underline;
+	text-underline-offset: 3px;
+
+	&:hover,
+	&:focus {
+		color: var( --color-text );
 	}
 }
