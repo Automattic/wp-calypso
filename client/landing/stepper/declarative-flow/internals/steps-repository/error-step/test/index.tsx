@@ -10,6 +10,7 @@ import { useSiteSetupError } from 'calypso/landing/stepper/hooks/use-site-setup-
 import { bumpStat } from 'calypso/lib/analytics/mc';
 import { logToLogstash } from 'calypso/lib/logstash';
 import ErrorStep from '../';
+import { isOnlyStepMounted } from '../../../step-mount-registry';
 import { StepProps } from '../../../types';
 import { mockStepProps, renderStep, RenderStepOptions } from '../../test/helpers/index';
 
@@ -19,11 +20,20 @@ jest.mock( 'calypso/lib/analytics/mc', () => ( {
 	bumpStat: jest.fn(),
 } ) );
 jest.mock( 'calypso/lib/logstash' );
+jest.mock( '../../../step-mount-registry', () => ( {
+	isOnlyStepMounted: jest.fn(),
+} ) );
 
 describe( 'ErrorStep', () => {
 	const render = ( props?: Partial< StepProps >, renderOptions?: RenderStepOptions ) => {
+		// `mockStepProps` writes into shared defaults, so every render sets its own `data`.
 		const combinedProps = {
-			...mockStepProps( { flow: 'onboarding', showRetry: false, ...props } ),
+			...mockStepProps( {
+				flow: 'onboarding',
+				showRetry: false,
+				data: { previousStep: 'processing' },
+				...props,
+			} ),
 		};
 		return renderStep( <ErrorStep { ...combinedProps } />, {
 			initialState: { currentUser: { user: { localeSlug: 'en' } } },
@@ -34,6 +44,7 @@ describe( 'ErrorStep', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
 		( useSiteDomains as jest.Mock ).mockReturnValue( null );
+		( isOnlyStepMounted as jest.Mock ).mockReturnValue( false );
 		( useSiteSetupError as jest.Mock ).mockReturnValue( {
 			error: 'site_setup_failed',
 			message: 'Something went wrong',
@@ -78,6 +89,8 @@ describe( 'ErrorStep', () => {
 				message: 'Something went wrong',
 				flow: 'onboarding',
 				variant: undefined,
+				previous_step: 'processing',
+				error_reason: undefined,
 			},
 			properties: {
 				flow: 'onboarding',
@@ -104,6 +117,8 @@ describe( 'ErrorStep', () => {
 				message: undefined,
 				flow: 'onboarding',
 				variant: undefined,
+				previous_step: 'processing',
+				error_reason: undefined,
 			},
 			properties: {
 				flow: 'onboarding',
@@ -111,5 +126,106 @@ describe( 'ErrorStep', () => {
 				error: 'no_stored_error',
 			},
 		} );
+	} );
+
+	const loggedError = () => ( logToLogstash as jest.Mock ).mock.calls[ 0 ][ 0 ].properties.error;
+
+	it( 'logs the errorReason from the step data when nothing is stored', () => {
+		( useSiteSetupError as jest.Mock ).mockReturnValue( { error: undefined, message: undefined } );
+
+		render( { data: { previousStep: 'processing', errorReason: 'processing_failed' } } );
+
+		expect( loggedError() ).toBe( 'processing_failed' );
+	} );
+
+	it( 'logs a stored error code over the errorReason', () => {
+		render( { data: { previousStep: 'processing', errorReason: 'processing_failed' } } );
+
+		expect( loggedError() ).toBe( 'site_setup_failed' );
+	} );
+
+	it( 'logs stored_message_without_code when a message is stored without a code', () => {
+		( useSiteSetupError as jest.Mock ).mockReturnValue( {
+			error: undefined,
+			message: 'Request failed',
+		} );
+
+		render( { data: { previousStep: 'processing', errorReason: 'processing_failed' } } );
+
+		expect( loggedError() ).toBe( 'stored_message_without_code' );
+	} );
+
+	describe( 'when the error step is the only route mounted in the document', () => {
+		const originalGetEntriesByType = performance.getEntriesByType;
+
+		const setNavigationType = ( type?: string ) => {
+			performance.getEntriesByType = jest.fn( () => ( type ? [ { type } ] : [] ) ) as never;
+		};
+
+		beforeEach( () => {
+			( useSiteSetupError as jest.Mock ).mockReturnValue( {
+				error: undefined,
+				message: undefined,
+			} );
+			( isOnlyStepMounted as jest.Mock ).mockImplementation( ( slug ) => slug === 'error' );
+		} );
+
+		afterEach( () => {
+			performance.getEntriesByType = originalGetEntriesByType;
+		} );
+
+		it( 'logs document_reload over a persisted errorReason', () => {
+			setNavigationType( 'reload' );
+
+			render( { data: { previousStep: 'processing', errorReason: 'processing_failed' } } );
+
+			expect( loggedError() ).toBe( 'document_reload' );
+		} );
+
+		it( 'logs document_back_forward for a history arrival', () => {
+			setNavigationType( 'back_forward' );
+
+			render();
+
+			expect( loggedError() ).toBe( 'document_back_forward' );
+		} );
+
+		it( 'logs document_load for a navigation or a missing entry', () => {
+			setNavigationType( 'navigate' );
+			render();
+			expect( loggedError() ).toBe( 'document_load' );
+
+			jest.clearAllMocks();
+			setNavigationType();
+			render();
+			expect( loggedError() ).toBe( 'document_load' );
+		} );
+	} );
+
+	it( 'adds the previous step and the raw errorReason to the extra data', () => {
+		render( {
+			data: { previousStep: 'setup-your-site-ai', errorReason: 'build_wow_start_failed' },
+		} );
+
+		expect( logToLogstash ).toHaveBeenCalledWith(
+			expect.objectContaining( {
+				extra: expect.objectContaining( {
+					previous_step: 'setup-your-site-ai',
+					error_reason: 'build_wow_start_failed',
+				} ),
+			} )
+		);
+	} );
+
+	it( 'does not show the errorReason to the customer', () => {
+		( useSiteSetupError as jest.Mock ).mockReturnValue( { error: undefined, message: undefined } );
+
+		const { container } = render( {
+			data: { previousStep: 'processing', errorReason: 'processing_failed' },
+		} );
+
+		expect( loggedError() ).toBe( 'processing_failed' );
+		expect( container.querySelector( '.error-step__message' ) ).toBeNull();
+		expect( container ).not.toHaveTextContent( 'processing_failed' );
 	} );
 } );

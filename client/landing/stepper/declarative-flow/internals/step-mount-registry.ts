@@ -41,3 +41,11 @@ export function describeStepMount( slug: string ): {
 			mountedAt === undefined ? null : Math.round( performance.now() - mountedAt ),
 	};
 }
+
+/**
+ * Whether `slug` is the only step route this document has mounted. A step that is first in its
+ * document was reached by a load, a reload or history, not by navigation from another step.
+ */
+export function isOnlyStepMounted( slug: string ): boolean {
+	return routeMounts.size === 1 && routeMounts.has( slug );
+}
