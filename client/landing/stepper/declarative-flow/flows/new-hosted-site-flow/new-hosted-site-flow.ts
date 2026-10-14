@@ -304,6 +304,7 @@ const hosting: FlowV2< typeof initialize > = {
 		useEffect( () => {
 			if ( studioSiteId && currentStepSlug ) {
 				recordTracksEvent( 'calypso_studio_sync_step', {
+					flow: NEW_HOSTED_SITE_FLOW,
 					step: currentStepSlug,
 					section: section || undefined,
 					auto_open_push: autoOpenPush === 'true',
