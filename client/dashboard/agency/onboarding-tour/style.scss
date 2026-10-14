@@ -21,7 +21,12 @@ $modal-padding: $grid-unit-30;
 	}
 }
 
+// The section list stays in view while a long section scrolls: it takes its own height and
+// sticks over the modal's own padding at the top.
 .a4a-onboarding-tour-aside {
+	position: sticky;
+	inset-block-start: -$modal-padding;
+	align-self: start;
 	padding: 16px 12px;
 }
 
@@ -109,6 +114,18 @@ $modal-padding: $grid-unit-30;
 	&.is-current {
 		visibility: visible;
 	}
+}
+
+// The buttons stay in view when the modal is too short for the whole section and scrolls,
+// set apart by a line. The row reaches the panel's edges and takes the place of the content's
+// padding below; it sticks over the modal's own padding so no text shows under it.
+.a4a-onboarding-tour-actions {
+	position: sticky;
+	inset-block-end: -$modal-padding;
+	margin: 0 ( -$modal-padding ) ( -$modal-padding );
+	padding: 16px $modal-padding $modal-padding;
+	border-block-start: 1px solid $gray-100;
+	background-color: $white;
 }
 
 .a4a-onboarding-tour-button-label {

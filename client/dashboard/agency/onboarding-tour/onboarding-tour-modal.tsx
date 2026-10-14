@@ -228,29 +228,34 @@ export default function OnboardingTourModal( {
 								</div>
 							</VStack>
 
-							{ isMobile ? (
-								<VStack spacing={ 2 }>
-									{ primaryAction }
-									{ secondaryAction }
-									<PageDots
-										count={ sections.length }
-										current={ currentIndex }
-										label={ __( 'Tour sections' ) }
-										getDotLabel={ ( index ) => sections[ index ].title }
-										onChange={ ( index ) => {
-											recordTracksEvent( 'calypso_onboarding_tour_modal_section_menu_item_swipe', {
-												section: sections[ index ].id,
-											} );
-											goToSection( sections[ index ].id );
-										} }
-									/>
-								</VStack>
-							) : (
-								<ButtonStack justify="flex-end">
-									{ secondaryAction }
-									{ primaryAction }
-								</ButtonStack>
-							) }
+							<div className="a4a-onboarding-tour-actions">
+								{ isMobile ? (
+									<VStack spacing={ 2 }>
+										{ primaryAction }
+										{ secondaryAction }
+										<PageDots
+											count={ sections.length }
+											current={ currentIndex }
+											label={ __( 'Tour sections' ) }
+											getDotLabel={ ( index ) => sections[ index ].title }
+											onChange={ ( index ) => {
+												recordTracksEvent(
+													'calypso_onboarding_tour_modal_section_menu_item_swipe',
+													{
+														section: sections[ index ].id,
+													}
+												);
+												goToSection( sections[ index ].id );
+											} }
+										/>
+									</VStack>
+								) : (
+									<ButtonStack justify="flex-end">
+										{ secondaryAction }
+										{ primaryAction }
+									</ButtonStack>
+								) }
+							</div>
 						</VStack>
 					</div>
 				</div>
