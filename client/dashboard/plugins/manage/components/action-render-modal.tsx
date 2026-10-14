@@ -1,5 +1,6 @@
 import { Site } from '@automattic/api-core';
 import { formatNumber } from '@automattic/number-formatters';
+import { invokeSurvicateEventAfterModalsClose } from '@automattic/survicate';
 import {
 	__experimentalVStack as VStack,
 	__experimentalHStack as HStack,
@@ -26,6 +27,12 @@ export type ActionRenderModalProps = RenderModalProps< PluginListRow > & {
 	listItems?: boolean;
 	// Function that executes the underlying action (e.g., existing callback)
 	onExecute: ( items: PluginListRow[] ) => Promise< ActionOnExecuteResponse >;
+};
+
+const SURVICATE_EVENTS: Record< string, string > = {
+	activate: 'pluginActivated',
+	deactivate: 'pluginDeactivated',
+	update: 'pluginUpdated',
 };
 
 function getConfirmButtonLabel( actionId: string ) {
@@ -418,6 +425,10 @@ export default function ActionRenderModal( {
 				createSuccessNotice( buildSuccessMessage( actionId, items, successCount ), {
 					type: 'snackbar',
 				} );
+				if ( SURVICATE_EVENTS[ actionId ] ) {
+					// This modal is still mounted here; the event would be dropped without waiting.
+					invokeSurvicateEventAfterModalsClose( SURVICATE_EVENTS[ actionId ] );
+				}
 			}
 			if ( errorCount > 0 ) {
 				createErrorNotice( buildErrorMessage( actionId, items, errorCount ), {

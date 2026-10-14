@@ -1,3 +1,4 @@
+import { invokeSurvicateEvent } from '@automattic/survicate';
 import { __, sprintf } from '@wordpress/i18n';
 import FieldActionToggle from './field-action-toggle';
 import type { SiteWithPluginData } from '../use-plugin';
@@ -50,15 +51,20 @@ export const ActiveToggle = ( {
 					: deactivateMutate( { siteId: item.ID, pluginId: plugin?.id || '' } );
 
 				// Return the promise so FieldActionToggle can show notices
-				return mutation.catch( ( error: unknown ) => {
-					setOptimisticActive( ( prev ) => ( {
-						...prev,
-						[ item.ID ]: previous,
-					} ) );
+				return mutation
+					.then( ( result ) => {
+						invokeSurvicateEvent( next ? 'pluginActivated' : 'pluginDeactivated' );
+						return result;
+					} )
+					.catch( ( error: unknown ) => {
+						setOptimisticActive( ( prev ) => ( {
+							...prev,
+							[ item.ID ]: previous,
+						} ) );
 
-					// rethrow so FieldActionToggle shows error notice
-					throw error;
-				} );
+						// rethrow so FieldActionToggle shows error notice
+						throw error;
+					} );
 			} }
 			successOn={ sprintf(
 				// translators: %s is the name of the plugin.
