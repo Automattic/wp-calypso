@@ -1182,6 +1182,23 @@ describe( 'NamePulseResults', () => {
 			);
 		} );
 
+		it( 'reports no name twice when a letter is typed and deleted before the query settles', async () => {
+			const events = buildEvents();
+
+			const { rerender } = render( <NamePulseTestSearch query="icecream" events={ events } /> );
+
+			await waitFor( () => expect( events.onSuggestionsReceive ).toHaveBeenCalled() );
+			await within( await findRow( 'icecream.net' ) ).findByText( '$24' );
+			const renderCount = events.onSuggestionRender.mock.calls.length;
+
+			rerender( <NamePulseTestSearch query="icecreamx" events={ events } /> );
+			rerender( <NamePulseTestSearch query="icecream" events={ events } /> );
+			await within( await findRow( 'icecream.net' ) ).findByText( '$24' );
+
+			expect( events.onNamePulseSearch ).toHaveBeenCalledTimes( 1 );
+			expect( events.onSuggestionRender ).toHaveBeenCalledTimes( renderCount );
+		} );
+
 		it( 'reports a typed domain as a full-domain search, its availability and its card', async () => {
 			const events = buildEvents();
 

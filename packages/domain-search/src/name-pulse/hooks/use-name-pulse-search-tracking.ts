@@ -2,6 +2,7 @@ import { useEvent } from '@wordpress/compose';
 import { useEffect, useMemo, useRef } from 'react';
 import { useDomainSearch } from '../../page/context';
 import { NAME_PULSE_SKELETON_TIMEOUT_MS, NamePulseDomainStatus } from '../helpers';
+import type { NamePulseRenderReport, NamePulseResultSet } from './use-name-pulse-result-set';
 import type { useNamePulseSearch } from './use-name-pulse-search';
 
 interface NamePulseSearchTrackingState {
@@ -14,9 +15,11 @@ interface NamePulseSearchTrackingState {
 
 /**
  * Records one search per settled query or filter change, and the result set
- * it shows. Returns the result set id once the query has settled.
+ * it shows. Returns the result set, with its id once the query has settled.
  */
-export const useNamePulseSearchTracking = ( search: ReturnType< typeof useNamePulseSearch > ) => {
+export const useNamePulseSearchTracking = (
+	search: ReturnType< typeof useNamePulseSearch >
+): NamePulseResultSet => {
 	const { events, filter, lastSearchTrigger } = useDomainSearch();
 	const state = useRef< NamePulseSearchTrackingState | null >( null );
 
@@ -43,7 +46,11 @@ export const useNamePulseSearchTracking = ( search: ReturnType< typeof useNamePu
 	const filterKey = [ ...filter.tlds ].sort().join( ',' );
 	// Created during render, so rows rendering in the same commit already have them.
 	const ids = useMemo(
-		() => ( { searchId: crypto.randomUUID(), resultSetId: crypto.randomUUID() } ),
+		() => ( {
+			searchId: crypto.randomUUID(),
+			resultSetId: crypto.randomUUID(),
+			rendered: new Map< string, NamePulseRenderReport >(),
+		} ),
 		// eslint-disable-next-line react-hooks/exhaustive-deps -- each search gets new ids.
 		[ settledQuery, filterKey ]
 	);
@@ -161,5 +168,7 @@ export const useNamePulseSearchTracking = ( search: ReturnType< typeof useNamePu
 		return () => clearTimeout( timer );
 	}, [ settledQuery, filterKey, isSettled, track, reportResults ] );
 
-	return isSettled ? ids.resultSetId : undefined;
+	const id = isSettled ? ids.resultSetId : undefined;
+
+	return useMemo( () => ( { id, rendered: ids.rendered } ), [ id, ids ] );
 };
