@@ -44,6 +44,27 @@ function isOnSiteHost( url: string, siteUrl: string | null | undefined ) {
 	}
 }
 
+const RELATIVE_BASE = 'https://relative.invalid';
+
+/**
+ * A relative URL as the path it resolves to on this origin, or null when it leaves it. Resolving
+ * first matters: `/..//evil.example` reads as a path, but normalizes to `//evil.example`, which a
+ * browser treats as another host.
+ */
+function getSafeRelativeUrl( url: string ) {
+	try {
+		const { origin, pathname, search, hash } = new URL( url, RELATIVE_BASE );
+
+		if ( origin !== RELATIVE_BASE || pathname.startsWith( '//' ) ) {
+			return null;
+		}
+
+		return `${ pathname }${ search }${ hash }`;
+	} catch {
+		return null;
+	}
+}
+
 // The query can point anywhere, so only same-origin paths, the dashboards and the launched site are
 // followed.
 export function getSafeUrl( url: string | null | undefined, siteUrl?: string | null ) {
@@ -51,11 +72,11 @@ export function getSafeUrl( url: string | null | undefined, siteUrl?: string | n
 		return null;
 	}
 
-	if (
-		isRelativeUrl( url ) ||
-		dashboardOrigins().includes( getOrigin( url ) ?? '' ) ||
-		isOnSiteHost( url, siteUrl )
-	) {
+	if ( isRelativeUrl( url ) ) {
+		return getSafeRelativeUrl( url );
+	}
+
+	if ( dashboardOrigins().includes( getOrigin( url ) ?? '' ) || isOnSiteHost( url, siteUrl ) ) {
 		return url;
 	}
 

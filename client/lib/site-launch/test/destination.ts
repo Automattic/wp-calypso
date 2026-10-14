@@ -29,6 +29,12 @@ describe( 'getLaunchReturnUrl', () => {
 		expect( getLaunchReturnUrl( { siteSlug } ) ).toBe( '/home/test-site' );
 	} );
 
+	it( 'returns a relative back_to as the path it resolves to', () => {
+		expect( getLaunchReturnUrl( { siteSlug, backTo: '/sites/../home/test-site?tab=1' } ) ).toBe(
+			'/home/test-site?tab=1'
+		);
+	} );
+
 	it( 'returns a back_to on the dashboard', () => {
 		expect(
 			getLaunchReturnUrl( { siteSlug, backTo: 'https://my.wordpress.com/sites/test-site' } )
@@ -63,6 +69,8 @@ describe( 'getLaunchReturnUrl', () => {
 	it.each( [
 		'https://evil.example/',
 		'//evil.example/',
+		'/..//evil.example/',
+		'/./..//evil.example/',
 		'/\\evil.example/',
 		'javascript:alert(1)',
 		'https://my.wordpress.com.evil.example/',
@@ -97,6 +105,8 @@ describe( 'getLaunchDestination', () => {
 	it.each( [
 		'https://evil.example/',
 		'//evil.example/',
+		'/..//evil.example/',
+		'/./..//evil.example/',
 		'javascript:alert(1)',
 		'https://my.wordpress.com.evil.example/',
 	] )( 'ignores the unsafe redirect_to %s', ( redirectTo ) => {
