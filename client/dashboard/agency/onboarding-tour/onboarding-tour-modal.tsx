@@ -8,7 +8,7 @@ import { useViewportMatch } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
 import { close } from '@wordpress/icons';
 import clsx from 'clsx';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo } from 'react';
 import { ButtonStack } from '../../components/button-stack';
 import { Notice } from '../../components/notice';
 import PageDots from '../../components/page-dots';
@@ -16,7 +16,6 @@ import RouterLinkButton from '../../components/router-link-button';
 import { Text } from '../../components/text';
 import NewTabLabel from '../overview/new-tab-label';
 import glow from './images/tour/glow.jpg';
-import { ONBOARDING_TOUR_HASH, replaceHash } from './onboarding-tour-hash';
 import { getOnboardingTourSections } from './sections';
 import type { OnboardingTourLinks, OnboardingTourSectionId } from './sections';
 import type { RecordTracksEvent } from '../tiers/types';
@@ -26,7 +25,8 @@ import './style.scss';
 
 export interface OnboardingTourModalProps {
 	links: OnboardingTourLinks;
-	initialSectionId?: OnboardingTourSectionId;
+	sectionId: OnboardingTourSectionId;
+	onSectionChange: ( sectionId: OnboardingTourSectionId ) => void;
 	/** Called when an explore button leaves the tour, so the host can offer to resume it. */
 	onExplore: ( sectionId: OnboardingTourSectionId ) => void;
 	onClose: () => void;
@@ -40,27 +40,16 @@ export interface OnboardingTourModalProps {
  */
 export default function OnboardingTourModal( {
 	links,
-	initialSectionId,
+	sectionId: currentSectionId,
+	onSectionChange: goToSection,
 	onExplore,
 	onClose,
 	onScheduleCall,
 	isSchedulingCall,
 	recordTracksEvent,
 }: OnboardingTourModalProps ) {
-	const isMobile = useViewportMatch( 'mobile', '<' );
+	const isMobile = useViewportMatch( 'small', '<' );
 	const sections = useMemo( () => getOnboardingTourSections( links ), [ links ] );
-	const [ currentSectionId, setCurrentSectionId ] = useState< OnboardingTourSectionId >( () =>
-		sections.some( ( { id } ) => id === initialSectionId ) && initialSectionId
-			? initialSectionId
-			: sections[ 0 ].id
-	);
-
-	// A link to a section this tour doesn't have opens on the first one; the URL says so too.
-	useEffect( () => {
-		if ( initialSectionId && initialSectionId !== currentSectionId ) {
-			replaceHash( `${ ONBOARDING_TOUR_HASH }-${ currentSectionId }` );
-		}
-	}, [ initialSectionId, currentSectionId ] );
 
 	const currentIndex = sections.findIndex( ( { id } ) => id === currentSectionId );
 	const currentSection = sections[ currentIndex ];
@@ -71,11 +60,6 @@ export default function OnboardingTourModal( {
 			section: currentSectionId,
 		} );
 	}, [ currentSectionId, recordTracksEvent ] );
-
-	const goToSection = ( sectionId: OnboardingTourSectionId ) => {
-		setCurrentSectionId( sectionId );
-		replaceHash( `${ ONBOARDING_TOUR_HASH }-${ sectionId }` );
-	};
 
 	const onNext = () => {
 		recordTracksEvent( 'calypso_a4a_onboarding_tour_next_benefit_click', {

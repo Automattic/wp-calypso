@@ -30,6 +30,22 @@ function mockSavedSection( section?: string, delay = 0 ) {
 		.reply( 200, { calypso_preferences: section ? { [ PREFERENCE ]: section } : {} } );
 }
 
+// Resolves when the given section is saved on the server.
+function expectSectionSaved( section: string ) {
+	return new Promise< void >( ( resolve ) => {
+		nock( API )
+			.post( '/rest/v1.1/me/preferences', ( body ) => {
+				if ( body.calypso_preferences?.[ PREFERENCE ] === section ) {
+					resolve();
+					return true;
+				}
+				return false;
+			} )
+			.query( true )
+			.reply( 200, { calypso_preferences: { [ PREFERENCE ]: section } } );
+	} );
+}
+
 // Resolves when the saved section is cleared on the server.
 function expectSavedSectionCleared() {
 	return new Promise< void >( ( resolve ) => {
@@ -70,6 +86,25 @@ describe( '<AgencyOnboardingTour>', () => {
 			dispatch( noticesStore ).removeAllNotices( 'snackbar' );
 		} );
 		window.history.replaceState( null, '', '/' );
+	} );
+
+	test( 'saves the section and offers to pick the tour back up after an explore click', async () => {
+		window.history.replaceState( null, '', '/overview#onboarding-tour-sites' );
+		mockSavedSection();
+		const saved = expectSectionSaved( 'sites' );
+		renderTour();
+
+		await userEvent.click( await screen.findByRole( 'link', { name: 'Connect your first site' } ) );
+
+		await saved;
+		await waitFor( () =>
+			expect(
+				screen.queryByRole( 'heading', {
+					name: 'One dashboard. Every site. Seamless management.',
+				} )
+			).not.toBeInTheDocument()
+		);
+		expect( await screen.findByRole( 'button', { name: 'Continue tour' } ) ).toBeInTheDocument();
 	} );
 
 	test( 'offers to pick the tour back up at the saved section', async () => {

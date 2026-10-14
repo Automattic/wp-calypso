@@ -22,8 +22,9 @@ import { MARKETPLACE_PURCHASES_ROUTE } from '../marketplace/paths';
 import { PARTNER_DIRECTORY_ROUTE } from '../partner-directory/paths';
 import { TEAM_ROUTE } from '../team/paths';
 import { useScheduleCall } from '../tiers/use-schedule-call';
+import { isOnboardingTourSectionId } from './section-ids';
 import { useOnboardingTourHash } from './use-onboarding-tour-hash';
-import type { OnboardingTourLinks, OnboardingTourSectionId } from './sections';
+import type { OnboardingTourLinks } from './sections';
 import type { ReactNode } from 'react';
 
 const OnboardingTourModal = lazy( () => import( './onboarding-tour-modal' ) );
@@ -62,7 +63,7 @@ export function useOnboardingTour() {
  */
 export default function AgencyOnboardingTour( { children }: { children: ReactNode } ) {
 	const { recordTracksEvent } = useAnalytics();
-	const { isOpen, initialSectionId, open, close } = useOnboardingTourHash();
+	const { isOpen, sectionId, open, close } = useOnboardingTourHash();
 	const { data: agency } = useQuery( activeAgencyQuery() );
 	const { scheduleCall, isLoading: isSchedulingCall } = useScheduleCall( agency?.id );
 	const { data: currentSection, isFetched: hasFetchedPreferences } = useQuery(
@@ -109,7 +110,7 @@ export default function AgencyOnboardingTour( { children }: { children: ReactNod
 						recordTracksEvent( 'calypso_a4a_onboarding_tour_snackbar_continue_clicked', {
 							section: currentSection,
 						} );
-						open( currentSection as OnboardingTourSectionId );
+						open( isOnboardingTourSectionId( currentSection ) ? currentSection : undefined );
 					},
 				},
 			],
@@ -142,7 +143,8 @@ export default function AgencyOnboardingTour( { children }: { children: ReactNod
 				<Suspense fallback={ null }>
 					<OnboardingTourModal
 						links={ LINKS }
-						initialSectionId={ initialSectionId }
+						sectionId={ sectionId }
+						onSectionChange={ open }
 						onExplore={ saveCurrentSection }
 						onClose={ close }
 						onScheduleCall={ onScheduleCall }

@@ -13,20 +13,10 @@ import referralsDrawing from './images/tour/referrals.svg';
 import sitesDrawing from './images/tour/sites.svg';
 import teamDrawing from './images/tour/team.svg';
 import woopaymentsDrawing from './images/tour/woopayments.svg';
+import type { OnboardingTourSectionId } from './section-ids';
 import type { ReactNode } from 'react';
 
-export type OnboardingTourSectionId =
-	| 'overview'
-	| 'sites'
-	| 'marketplace'
-	| 'purchases'
-	| 'referrals'
-	| 'migrations'
-	| 'woopayments'
-	| 'partner-directory'
-	| 'agency-tiers'
-	| 'team'
-	| 'growth-call';
+export type { OnboardingTourSectionId };
 
 export interface OnboardingTourLinks {
 	overview: string;

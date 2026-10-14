@@ -16,7 +16,7 @@ $modal-padding: $grid-unit-30;
 	max-inline-size: calc( 100% + #{$modal-padding * 2} );
 	margin: -$modal-padding;
 
-	@include break-mobile {
+	@include break-small {
 		grid-template-columns: 220px minmax( 0, 1fr );
 	}
 }
@@ -28,7 +28,7 @@ $modal-padding: $grid-unit-30;
 .a4a-onboarding-tour-main {
 	min-inline-size: 0;
 
-	@include break-mobile {
+	@include break-small {
 		border-inline-start: 1px solid $gray-100;
 	}
 }

@@ -26,7 +26,27 @@ describe( 'useOnboardingTourHash', () => {
 		const { result } = renderHook( () => useOnboardingTourHash() );
 
 		expect( result.current.isOpen ).toBe( true );
-		expect( result.current.initialSectionId ).toBe( 'referrals' );
+		expect( result.current.sectionId ).toBe( 'referrals' );
+	} );
+
+	test( 'opens an unknown section link on the first section', () => {
+		setHash( '#onboarding-tour-reports' );
+		const { result } = renderHook( () => useOnboardingTourHash() );
+
+		expect( result.current.isOpen ).toBe( true );
+		expect( result.current.sectionId ).toBe( 'overview' );
+		expect( window.location.hash ).toBe( '#onboarding-tour-overview' );
+	} );
+
+	test( 'follows a section link while the tour is open', () => {
+		setHash( '#onboarding-tour-team' );
+		const { result } = renderHook( () => useOnboardingTourHash() );
+
+		act( () => {
+			setHash( '#onboarding-tour-sites' );
+			window.dispatchEvent( new HashChangeEvent( 'hashchange' ) );
+		} );
+		expect( result.current.sectionId ).toBe( 'sites' );
 	} );
 
 	test( 'opens on request and clears the hash on close', () => {
