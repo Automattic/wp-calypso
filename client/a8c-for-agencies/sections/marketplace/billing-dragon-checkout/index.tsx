@@ -24,6 +24,7 @@ import ClientCheckoutPlaceholder from './checkout-placeholder';
 import getPurchasedWPCOMPlanSlug from './lib/get-purchased-wpcom-plan-slug';
 import getSuccessRedirectUrl from './lib/get-success-redirect-url';
 import usePreparedCart from './use-prepared-cart';
+import usePressableReturnPaths from './use-pressable-return-paths';
 import type { ShoppingCartItem } from '../types';
 
 import './style.scss';
@@ -78,6 +79,12 @@ function BillingDragonCheckoutContent( {
 	const prepared = usePreparedCart( cartKey, skipActiveCart );
 	const isReady = skipActiveCart ? prepared.isReady : isFilled;
 	const error = skipActiveCart ? prepared.error : fillError;
+	const { successPath, cancelPath } = usePressableReturnPaths(
+		responseCart.products,
+		agency?.id,
+		skipActiveCart && ! isPlanCheckout,
+		isReady
+	);
 
 	const {
 		productsForCart,
@@ -274,12 +281,15 @@ function BillingDragonCheckoutContent( {
 			) }
 			<CheckoutMain
 				sitelessCheckoutType="a4a"
-				redirectTo={ getSuccessRedirectUrl(
-					window.location.origin,
-					shouldClearCartOnSuccess && ! isPlanCheckout,
-					isPlanCheckout ? null : getPurchasedWPCOMPlanSlug( cartItems )
-				) }
-				customizedPreviousPath="/marketplace"
+				redirectTo={
+					successPath ??
+					getSuccessRedirectUrl(
+						window.location.origin,
+						shouldClearCartOnSuccess && ! isPlanCheckout,
+						isPlanCheckout ? null : getPurchasedWPCOMPlanSlug( cartItems )
+					)
+				}
+				customizedPreviousPath={ cancelPath ?? '/marketplace' }
 				siteSlug={ siteSlug ?? '' }
 				siteId={ siteId ?? 0 }
 			/>

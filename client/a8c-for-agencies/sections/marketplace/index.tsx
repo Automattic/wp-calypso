@@ -2,6 +2,7 @@ import page from '@automattic/calypso-router';
 import {
 	A4A_MARKETPLACE_ASSIGN_LICENSE_LINK,
 	A4A_MARKETPLACE_CHECKOUT_LINK,
+	A4A_MARKETPLACE_PRESSABLE_RETURN_LINK,
 	A4A_MARKETPLACE_HOSTING_LINK,
 	A4A_MARKETPLACE_LINK,
 	A4A_MARKETPLACE_PRODUCTS_LINK,
@@ -14,6 +15,7 @@ import { makeLayout, render as clientRender } from 'calypso/controller';
 import {
 	assignLicenseContext,
 	checkoutContext,
+	pressableReturnContext,
 	marketplaceContext,
 	marketplaceHostingContext,
 	marketplaceProductsContext,
@@ -23,6 +25,14 @@ import {
 } from './controller';
 
 export default function () {
+	page(
+		A4A_MARKETPLACE_PRESSABLE_RETURN_LINK,
+		requireAccessContext,
+		pressableReturnContext,
+		makeLayout,
+		clientRender
+	);
+
 	page( A4A_MARKETPLACE_LINK, requireAccessContext, marketplaceContext, makeLayout, clientRender );
 
 	page(
