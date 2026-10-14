@@ -17,6 +17,12 @@ export default function PostCard( { post, site }: { post: NotePost; site?: NoteS
 		.filter( Boolean )
 		.join( ' · ' );
 
+	const title = (
+		<Text size={ 15 } weight={ 600 } lineHeight="24px" truncate numberOfLines={ 1 }>
+			{ post.title }
+		</Text>
+	);
+
 	return (
 		<Card
 			as="a"
@@ -27,9 +33,9 @@ export default function PostCard( { post, site }: { post: NotePost; site?: NoteS
 			size="small"
 		>
 			<CardBody>
-				<HStack alignment="top" justify="space-between" spacing={ 3 }>
-					<VStack spacing={ 3 }>
-						{ site && (
+				<VStack spacing={ 3 }>
+					<HStack alignment="top" justify="space-between" spacing={ 3 }>
+						{ site ? (
 							<HStack justify="flex-start" spacing={ 3 }>
 								{ site.icon ? (
 									<img
@@ -57,13 +63,13 @@ export default function PostCard( { post, site }: { post: NotePost; site?: NoteS
 									) }
 								</VStack>
 							</HStack>
+						) : (
+							title
 						) }
-						<Text size={ 15 } weight={ 600 } lineHeight="24px">
-							{ post.title }
-						</Text>
-					</VStack>
-					<Icon className="wpnc-simplified__card-arrow" icon={ arrowUpRight } size={ 20 } />
-				</HStack>
+						<Icon className="wpnc-simplified__card-arrow" icon={ arrowUpRight } size={ 20 } />
+					</HStack>
+					{ site && title }
+				</VStack>
 			</CardBody>
 		</Card>
 	);
