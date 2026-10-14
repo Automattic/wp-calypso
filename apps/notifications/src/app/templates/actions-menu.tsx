@@ -109,7 +109,7 @@ export default function ActionsMenu( {
 					isBusy,
 					disabled: isBusy,
 				} }
-				popoverProps={ { placement: 'bottom-end' } }
+				popoverProps={ { placement: 'bottom-end', className: 'wpnc__actions-menu' } }
 			>
 				{ ( { onClose } ) =>
 					groups.map( ( group ) => (
