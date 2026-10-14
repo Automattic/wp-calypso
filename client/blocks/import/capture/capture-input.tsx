@@ -19,6 +19,7 @@ interface Props {
 	dontHaveSiteAddressLabel?: string;
 	hasError?: boolean;
 	hideImporterListLink?: boolean;
+	initialUrl?: string;
 	label?: ReactNode;
 	nextLabelText?: string;
 	onDontHaveSiteAddressClick?: () => void;
@@ -38,6 +39,7 @@ const CaptureInput: FunctionComponent< Props > = ( props ) => {
 		placeholder = 'artfulbaker.blog',
 		dontHaveSiteAddressLabel,
 		hideImporterListLink = false,
+		initialUrl,
 		nextLabelText,
 	} = props;
 
@@ -53,7 +55,7 @@ const CaptureInput: FunctionComponent< Props > = ( props ) => {
 	useEffect( () => checkInitSubmissionState(), [] );
 
 	function checkInitSubmissionState() {
-		const urlValue = new URLSearchParams( search ).get( 'from' ) || '';
+		const urlValue = initialUrl ?? new URLSearchParams( search ).get( 'from' ) ?? '';
 		if ( skipInitialChecking ) {
 			setUrlValue( urlValue );
 			if ( urlValue ) {
