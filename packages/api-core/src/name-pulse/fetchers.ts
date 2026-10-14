@@ -6,11 +6,11 @@ import type {
 } from './types';
 
 /**
- * One provider per mode, matching leandomainsearch.com. `donuts` is filtered
- * out server-side, so naming it has no effect.
+ * Domain Engine (`donuts`) joins each mode's provider. The endpoint interleaves
+ * providers in this order, so donuts leads.
  */
-const KEYWORD_PROVIDERS = 'domainsbot';
-const AI_PROVIDERS = 'verisign';
+const KEYWORD_PROVIDERS = 'donuts,domainsbot';
+const AI_PROVIDERS = 'donuts,verisign';
 
 /**
  * Provider errors ride along in `errors[]`; only when every provider fails does

@@ -14,10 +14,18 @@ import {
 	getNamePulseSalePrice,
 	NamePulseDomainStatus,
 	toNamePulseRealtimeVerdict,
+	getNamePulseRenderTracksProps,
+	toNamePulseTracksSuggestion,
 	type NamePulseDomainResult,
+	type NamePulseResultGroup,
 } from '../helpers';
 import { useNamePulseCartToggle } from '../hooks/use-name-pulse-cart-toggle';
 import { useNamePulseLabelLimit } from '../hooks/use-name-pulse-label-limit';
+import {
+	getNamePulseRenderKey,
+	recordNamePulseRender,
+	useNamePulseResultSet,
+} from '../hooks/use-name-pulse-result-set';
 import { setNamePulseVerdict } from '../hooks/use-name-pulse-verdicts';
 import { NamePulsePolicyNoticeDialog } from './policy-notice-dialog';
 
@@ -25,6 +33,7 @@ export type NamePulseResultRowVariant = 'row' | 'card';
 
 interface NamePulseResultRowProps {
 	result: NamePulseDomainResult;
+	group: NamePulseResultGroup;
 	position: number;
 	variant?: NamePulseResultRowVariant;
 }
@@ -110,11 +119,13 @@ const Price = ( {
 
 export const NamePulseResultRow = ( {
 	result,
+	group,
 	position,
 	variant = 'row',
 }: NamePulseResultRowProps ) => {
 	const { __ } = useI18n();
-	const { queries } = useDomainSearch();
+	const { queries, events } = useDomainSearch();
+	const resultSet = useNamePulseResultSet();
 	const queryClient = useQueryClient();
 	// Below wide desktop the row is too narrow to truncate without losing most of
 	// the name, so the name wraps onto a second line instead.
@@ -159,6 +170,8 @@ export const NamePulseResultRow = ( {
 	const isUnknown = status === NamePulseDomainStatus.UNKNOWN;
 	const isAvailable = status === NamePulseDomainStatus.AVAILABLE;
 	const isUnavailable = ! isWaiting && ! isUnknown && ! isAvailable;
+	const renderKey = getNamePulseRenderKey( group, domainName );
+	const getRendered = () => resultSet?.rendered.get( renderKey );
 	// A failed check leaves the row on its badge alone: no price, and no skeleton
 	// waiting for one that is not coming.
 	const isPremiumPriceMissing = needsPremiumPrice && ! realtimeVerdict;
@@ -177,7 +190,23 @@ export const NamePulseResultRow = ( {
 		isPolicyNoticeOpen,
 		confirmPolicyNotice,
 		closePolicyNotice,
-	} = useNamePulseCartToggle( domainName, position, row.policy_notices );
+	} = useNamePulseCartToggle( row, position, getRendered, row.policy_notices );
+
+	// Reported once per result set, when the row has a verdict, taken names included.
+	useEffect( () => {
+		const id = resultSet?.id;
+
+		if ( isWaiting || ! id || resultSet.rendered.has( renderKey ) ) {
+			return;
+		}
+
+		const report = recordNamePulseRender( { ...resultSet, id }, renderKey, group, position );
+		events.onSuggestionRender(
+			toNamePulseTracksSuggestion( row, position ),
+			undefined,
+			getNamePulseRenderTracksProps( row, report )
+		);
+	} );
 	const { nameRef, labelRef, limit: labelLimit } = useNamePulseLabelLimit( label );
 	const isCard = variant === 'card';
 	const nameSize = isCard ? 20 : undefined;

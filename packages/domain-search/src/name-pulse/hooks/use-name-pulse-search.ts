@@ -81,7 +81,7 @@ const useNamePulseSuggestions = ( {
 		() => ( useAi || filter.tlds.length === 0 ? [] : [ ...filter.tlds ].sort() ),
 		[ useAi, filter.tlds ]
 	);
-	const { data, isPending } = useQuery( {
+	const { data, isPending, isError } = useQuery( {
 		...queries.namePulseSuggestions( {
 			query: active ? suggestionsQuery : '',
 			use_ai: useAi,
@@ -107,7 +107,7 @@ const useNamePulseSuggestions = ( {
 		[ rows, verdicts ]
 	);
 
-	return { results, isLoading: show && ( ! isSettled || isPending ) };
+	return { results, isLoading: show && ( ! isSettled || isPending ), isError: active && isError };
 };
 
 /**
@@ -224,13 +224,21 @@ export const useNamePulseSearch = ( query: string ) => {
 		[ exactRows, exactVerdicts, exactMatchName ]
 	);
 
-	const { results: rawKeywordResults, isLoading: isLoadingKeyword } = useNamePulseSuggestions( {
+	const {
+		results: rawKeywordResults,
+		isLoading: isLoadingKeyword,
+		isError: isKeywordError,
+	} = useNamePulseSuggestions( {
 		suggestionsQuery,
 		isSettled,
 		show: layout.suggestions.show,
 		source: 'keyword',
 	} );
-	const { results: rawCreativeResults, isLoading: isLoadingCreative } = useNamePulseSuggestions( {
+	const {
+		results: rawCreativeResults,
+		isLoading: isLoadingCreative,
+		isError: isCreativeError,
+	} = useNamePulseSuggestions( {
 		suggestionsQuery,
 		isSettled,
 		show: layout.creative.show,
@@ -366,6 +374,16 @@ export const useNamePulseSearch = ( query: string ) => {
 
 	return {
 		layout,
+		settledQuery,
+		settledLayout,
+		isSettled,
+		hasTlds: tlds !== undefined || isTldsError,
+		typedDomainAvailability,
+		isTypedDomainError,
+		isSuggestionsError: isKeywordError || isCreativeError,
+		// Only the exact-match grid needs the TLD list, so its failure takes down
+		// Top results with it but leaves the suggestion sections alone.
+		hasTldsError: layout.exactGrid.show && isTldsError,
 		notice,
 		exactMatch,
 		bundleAnchors,
