@@ -1068,7 +1068,7 @@ describe( 'Site Migration Flow', () => {
 				await waitFor( () => expect( window.location.assign ).toHaveBeenCalled() );
 				expect( configure.isDone() ).toBe( true );
 				expect( window.location.assign ).toMatchURL( {
-					path: dashboardLink( '/sites/example.wordpress.com' ),
+					path: dashboardLink( '/sites/example.wordpress.com/migration-overview' ),
 					query: {
 						ref: 'move-lp',
 						source: context.source,
@@ -1110,8 +1110,10 @@ describe( 'Site Migration Flow', () => {
 					);
 					const returnUrl = new URL( checkout.destination, 'https://example.com' );
 					expect( returnUrl.pathname ).toBe(
-						new URL( dashboardLink( `/sites/${ destination.siteSlug }` ), 'https://example.com' )
-							.pathname
+						new URL(
+							dashboardLink( `/sites/${ destination.siteSlug }/migration-overview` ),
+							'https://example.com'
+						).pathname
 					);
 					expect( returnUrl.searchParams.get( 'ref' ) ).toBe( context.ref );
 					const cancelUrl = new URL( checkout.cancelDestination, 'https://example.com' );

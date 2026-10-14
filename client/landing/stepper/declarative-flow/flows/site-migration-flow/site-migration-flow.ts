@@ -244,7 +244,7 @@ const siteMigration: FlowV2< typeof initialize > = {
 			const version = handoffVersion.current;
 			clearSiteSetupError();
 			try {
-				await configureWordPressMigration( destinationId, from );
+				await configureWordPressMigration( destinationId, { source_url: from } );
 				if ( version !== handoffVersion.current ) {
 					return;
 				}
@@ -255,7 +255,7 @@ const siteMigration: FlowV2< typeof initialize > = {
 						sessionId,
 						flags: urlQueryParams.get( 'flags' ),
 					},
-					dashboardLink( `/sites/${ destinationSlug }` )
+					dashboardLink( `/sites/${ destinationSlug }/migration-overview` )
 				);
 				if ( shouldGoToCheckout ) {
 					return goToCheckout( {

@@ -160,7 +160,6 @@ export * from './site-logs';
 export * from './site-marketplace';
 export * from './site-media-storage';
 export * from './site-migration-status';
-export * from './site-wordpress-migration';
 export * from './site-owner-transfer';
 export * from './site-plans';
 export * from './site-post-by-email';

@@ -108,9 +108,9 @@ describe( 'SiteMigrationIdentify', () => {
 		await userEvent.clear( getInput() );
 		await userEvent.type( getInput(), 'https://example.com' );
 		await userEvent.click( screen.getByRole( 'button', { name: /Check my site/ } ) );
-		await waitFor( () => expect( submit ).toHaveBeenCalledTimes( 3 ) );
+		await waitFor( () => expect( submit ).toHaveBeenCalledTimes( 2 ) );
 		await screen.findByRole( 'button', { name: /Check my site/ } );
-		expect( submit ).toHaveBeenCalledTimes( 3 );
+		expect( submit ).toHaveBeenCalledTimes( 2 );
 		expect( submit ).toHaveBeenLastCalledWith( expect.objectContaining( { host: 'wpengine' } ) );
 	} );
 
