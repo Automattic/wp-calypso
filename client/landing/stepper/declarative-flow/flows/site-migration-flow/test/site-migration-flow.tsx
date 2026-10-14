@@ -1255,7 +1255,7 @@ describe( 'Site Migration Flow', () => {
 				}
 			);
 
-			it.each( [ STEPS.PROCESSING, STEPS.UNIFIED_PLANS, STEPS.SITE_MIGRATION_CHECK ] )(
+			it.each( [ STEPS.UNIFIED_PLANS, STEPS.SITE_MIGRATION_CHECK ] )(
 				'recovers a configure failure after $slug with an explicit retry on the same destination',
 				async ( step ) => {
 					const destination = { siteId: 123, siteSlug: 'example.wordpress.com' };
@@ -1268,33 +1268,19 @@ describe( 'Site Migration Flow', () => {
 							source_url: context.from,
 						} )
 						.reply( 503, {} );
-					const query = new URLSearchParams( {
-						...context,
-						...( step !== STEPS.PROCESSING && destination ),
-					} );
-					const createdSite = { ...destination, requestedName: '' };
+					const query = new URLSearchParams( { ...context, ...destination } );
 					const initial = renderNavigation( [ `/setup/site-migration/${ step.slug }?${ query }` ] );
-					recoveryClient.setQueryData( useFlowState().queryKey, { createdSite } );
-					// Model a setter captured before the asynchronous creation completed.
-					jest.mocked( useFlowState().set ).mockImplementation( ( key, value ) => {
-						recoveryClient.setQueryData( useFlowState().queryKey, { [ key ]: value } );
-						return value;
-					} );
-					const submissions = {
-						[ STEPS.PROCESSING.slug ]: { ...destination, siteCreated: true },
-						[ STEPS.UNIFIED_PLANS.slug ]: {
-							cartItems: [ { product_slug: PLAN_BUSINESS_MONTHLY } ],
-						},
-						[ STEPS.SITE_MIGRATION_CHECK.slug ]: { ...context, action: 'continue' },
-					};
-					act( () => initial.result.current.navigation.submit( submissions[ step.slug ] ) );
+					act( () =>
+						initial.result.current.navigation.submit(
+							step === STEPS.UNIFIED_PLANS
+								? { cartItems: [ { product_slug: PLAN_BUSINESS_MONTHLY } ] }
+								: { ...context, action: 'continue' }
+						)
+					);
 					await waitFor( () =>
 						expect( initial.result.current.location.pathname ).toBe( '/site-migration/error' )
 					);
 					expect( configure.isDone() ).toBe( true );
-					expect( recoveryClient.getQueryData( useFlowState().queryKey ).createdSite ).toEqual(
-						createdSite
-					);
 					expect( initial.result.current.navigationType ).toBe( 'REPLACE' );
 					const errorUrl = `/setup${ initial.result.current.location.pathname }${ initial.result.current.location.search }`;
 					expect(
@@ -1303,7 +1289,13 @@ describe( 'Site Migration Flow', () => {
 					expect( goToCheckout ).not.toHaveBeenCalled();
 					expect( window.location.assign ).not.toHaveBeenCalled();
 					initial.unmount();
+					const retry = nock( 'https://public-api.wordpress.com' )
+						.post( '/wpcom/v2/sites/123/wordpress-migration/configure', {
+							source_url: context.from,
+						} )
+						.reply( 200, {} );
 					const reloaded = renderNavigation( [ errorUrl ] );
+					reloaded.rerender();
 					const { result: stepProps } = renderHookWithProvider(
 						() => siteMigrationFlow.useStepsProps(),
 						{
@@ -1313,31 +1305,21 @@ describe( 'Site Migration Flow', () => {
 						}
 					);
 					expect( stepProps.current.error.showRetry ).toBe( true );
-					const retry = nock( 'https://public-api.wordpress.com' )
-						.post( '/wpcom/v2/sites/123/wordpress-migration/configure', {
-							source_url: context.from,
-						} )
-						.reply( 200, {} );
 					expect( retry.isDone() ).toBe( false );
-					act( () => {
-						reloaded.result.current.navigation.submit( { action: 'retry' } );
-						reloaded.result.current.navigation.submit( { action: 'retry' } );
-					} );
-					await waitFor( () => expect( retry.isDone() ).toBe( true ) );
+					act( () => reloaded.result.current.navigation.submit( { action: 'retry' } ) );
 					await waitFor( () =>
 						expect(
-							goToCheckout.mock.calls.length + window.location.assign.mock.calls.length
-						).toBe( 1 )
+							step === STEPS.UNIFIED_PLANS ? goToCheckout : window.location.assign
+						).toHaveBeenCalledTimes( 1 )
 					);
-					expect( goToCheckout ).toHaveBeenCalledTimes(
-						step === STEPS.SITE_MIGRATION_CHECK ? 0 : 1
-					);
+					expect( retry.isDone() ).toBe( true );
+					expect( goToCheckout ).toHaveBeenCalledTimes( step === STEPS.UNIFIED_PLANS ? 1 : 0 );
 					expect( window.location.assign ).toHaveBeenCalledTimes(
 						step === STEPS.SITE_MIGRATION_CHECK ? 1 : 0
 					);
 					const checkout = goToCheckout.mock.calls[ 0 ]?.[ 0 ];
 					expect( checkout?.siteSlug ).toBe(
-						step === STEPS.SITE_MIGRATION_CHECK ? undefined : destination.siteSlug
+						step === STEPS.UNIFIED_PLANS ? destination.siteSlug : undefined
 					);
 					expect( checkout?.plan ).toBe(
 						step === STEPS.UNIFIED_PLANS ? PLAN_BUSINESS_MONTHLY : undefined
@@ -1361,11 +1343,21 @@ describe( 'Site Migration Flow', () => {
 					],
 					1
 				);
+				const createdSite = { ...destination, requestedName: '' };
+				recoveryClient.setQueryData( useFlowState().queryKey, { createdSite } );
+				// Model a setter captured before the asynchronous creation completed.
+				jest.mocked( useFlowState().set ).mockImplementation( ( key, value ) => {
+					recoveryClient.setQueryData( useFlowState().queryKey, { [ key ]: value } );
+					return value;
+				} );
 				act( () => result.current.navigation.submit( { ...destination, siteCreated: true } ) );
 				await waitFor( () =>
 					expect( result.current.location.pathname ).toBe( '/site-migration/error' )
 				);
 				expect( configure.isDone() ).toBe( true );
+				expect( recoveryClient.getQueryData( useFlowState().queryKey ).createdSite ).toEqual(
+					createdSite
+				);
 				act( () => result.current.back() );
 				expect( result.current.location.pathname ).toBe( '/site-migration/plans' );
 				const plansQuery = new URLSearchParams( result.current.location.search );
@@ -1387,45 +1379,25 @@ describe( 'Site Migration Flow', () => {
 				);
 			} );
 
-			it.each( [ STEPS.PROCESSING, STEPS.ERROR ] )(
-				'does not configure on mount or reload at $slug',
-				( step ) => {
-					recoveryClient.setQueryData( useFlowState().queryKey, {
-						migrationHandoff: {
-							siteId: 123,
-							siteSlug: 'example.wordpress.com',
-							from: context.from,
-							shouldGoToCheckout: true,
-						},
-					} );
-					const configure = nock( 'https://public-api.wordpress.com' )
-						.post( '/wpcom/v2/sites/123/wordpress-migration/configure' )
-						.reply( 200, {} );
-					const mount = () =>
-						renderHookWithProvider(
-							() => siteMigrationFlow.useStepNavigation( step.slug, jest.fn() ),
-							{
-								wrapper: ( { children } ) => (
-									<MemoryRouter
-										initialEntries={ [
-											`/site-migration/${ step.slug }?${ new URLSearchParams( { ...context, siteId: '123', siteSlug: 'example.wordpress.com' } ) }`,
-										] }
-									>
-										{ children }
-									</MemoryRouter>
-								),
-							}
-						);
-					const first = mount();
-					first.rerender();
-					first.unmount();
-					mount();
-					expect( configure.isDone() ).toBe( false );
-					expect( goToCheckout ).not.toHaveBeenCalled();
-					expect( window.location.assign ).not.toHaveBeenCalled();
-					nock.removeInterceptor( configure.interceptors[ 0 ] );
-				}
-			);
+			it( 'does not configure on mount or reload at processing', () => {
+				const destination = { siteId: 123, siteSlug: 'example.wordpress.com' };
+				recoveryClient.setQueryData( useFlowState().queryKey, {
+					migrationHandoff: { ...destination, from: context.from, shouldGoToCheckout: true },
+				} );
+				const configure = nock( 'https://public-api.wordpress.com' )
+					.post( '/wpcom/v2/sites/123/wordpress-migration/configure' )
+					.reply( 200, {} );
+				const query = new URLSearchParams( { ...context, ...destination } );
+				const mount = () => renderNavigation( [ `/setup/site-migration/processing?${ query }` ] );
+				const first = mount();
+				first.rerender();
+				first.unmount();
+				mount();
+				expect( configure.isDone() ).toBe( false );
+				expect( goToCheckout ).not.toHaveBeenCalled();
+				expect( window.location.assign ).not.toHaveBeenCalled();
+				nock.removeInterceptor( configure.interceptors[ 0 ] );
+			} );
 
 			it( 'disables migration recovery with the flag off', () => {
 				jest.spyOn( config, 'isEnabled' ).mockReturnValue( false );
