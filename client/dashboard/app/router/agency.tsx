@@ -1,4 +1,4 @@
-import { DotcomFeatures, HostingFeatures, fetchTwoStep } from '@automattic/api-core';
+import { DotcomFeatures, HostingFeatures } from '@automattic/api-core';
 import {
 	activeAgencyQuery,
 	agencyDevSiteLicenseQuery,
@@ -62,7 +62,6 @@ import { isAgencyApproved } from '../../agency/marketplace/is-agency-approved';
 import { agencyLicensesQuery } from '../../agency/marketplace/lib/wpcom-hosting';
 import {
 	CRM_DOWNLOADS_SEGMENT,
-	getMarketplaceHostingSectionRoute,
 	MARKETPLACE_HOSTING_REFER_SEGMENTS,
 } from '../../agency/marketplace/paths';
 import {
@@ -75,17 +74,23 @@ import {
 	PARTNER_DIRECTORY_EXPERTISE_SEGMENT,
 	PARTNER_DIRECTORY_ROUTE,
 } from '../../agency/partner-directory/paths';
+import { isPressableSite } from '../../agency/sites/lib';
+import { isTeamMemberWithoutSiteAccess } from '../../agency/sites/site/access';
+import { TEAM_ACCEPT_INVITE_ROUTE } from '../../agency/team/paths';
 import {
 	canOptOutOfWordPressBeta,
 	canSwitchWordPressVersion,
 	canTransferSite,
 	canViewHundredYearPlanSettings,
 } from '../../sites/features';
-import { reauthRequiredLink } from '../../utils/link';
 import { hasHostingFeature, hasPlanFeature } from '../../utils/site-features';
 import { getSiteTypeFeatureSupports } from '../../utils/site-type-feature-support';
 import { AUTH_QUERY_KEY } from '../auth';
-import { dashboardRedirect, redirectAsNotAllowed } from './redirect';
+import {
+	dashboardRedirect,
+	redirectAsNotAllowed,
+	redirectIfTwoStepReauthRequired,
+} from './redirect';
 import { rootRoute } from './root';
 import type { HostingSection, ReferHostingType } from '../../agency/marketplace/paths';
 import type { AgencySupports } from '../context';
@@ -164,7 +169,13 @@ const agencyRoute = createRoute( {
 			throw redirectAsNotAllowed( { to: '/overview' } );
 		}
 	},
-} );
+} ).lazy( () =>
+	import( '../../agency/layout' ).then( ( d ) =>
+		createLazyRoute( 'agency' )( {
+			component: d.default,
+		} )
+	)
+);
 
 // `/overview` – agency overview
 const agencyOverviewRoute = createRoute( {
@@ -282,6 +293,9 @@ export const marketplaceHostingRoute = createRoute( {
 			// The cart total counts the owned WordPress.com sites; warm that
 			// query without holding the page on every license the agency has.
 			queryClient.prefetchQuery( agencyLicensesQuery( agency.id ) );
+			// The referral toggle's commission badge only shows before the first
+			// referral, so the page doesn't wait for the full referrals list.
+			queryClient.prefetchQuery( referralsQuery( agency.id ) );
 			await Promise.all( [
 				queryClient.ensureQueryData( agencyProductsQuery( agency.id ) ),
 				queryClient.ensureQueryData( pressableLicensesQuery( agency.id ) ).catch( () => undefined ),
@@ -294,8 +308,22 @@ export const marketplaceHostingRoute = createRoute( {
 	},
 } );
 
+// Host names aren't translated.
+const HOSTING_SECTION_TITLES: Record< HostingSection, string > = {
+	wpcom: 'WordPress.com',
+	pressable: 'Pressable',
+	vip: 'WordPress VIP',
+};
+
 const createMarketplaceHostingSectionRoute = ( section: HostingSection ) =>
 	createRoute( {
+		head: () => ( {
+			meta: [
+				{
+					title: HOSTING_SECTION_TITLES[ section ],
+				},
+			],
+		} ),
 		getParentRoute: () => marketplaceHostingRoute,
 		path: section,
 	} ).lazy( () =>
@@ -306,20 +334,17 @@ const createMarketplaceHostingSectionRoute = ( section: HostingSection ) =>
 		)
 	);
 
-// `/hosting` has no screen of its own. It opens WordPress.com for agencies
-// that signed up with 1-5 sites and Pressable otherwise.
+// `/hosting` – the hosts side by side, each leading to its own page.
 export const marketplaceHostingIndexRoute = createRoute( {
 	getParentRoute: () => marketplaceHostingRoute,
 	path: '/',
-	beforeLoad: async ( { cause } ) => {
-		if ( cause === 'preload' ) {
-			return;
-		}
-		const agency = await queryClient.ensureQueryData( activeAgencyQuery() );
-		const section = agency?.signup_meta?.number_sites === '1-5' ? 'wpcom' : 'pressable';
-		throw dashboardRedirect( { to: getMarketplaceHostingSectionRoute( section ) } );
-	},
-} );
+} ).lazy( () =>
+	import( '../../agency/marketplace/hosting' ).then( ( d ) =>
+		createLazyRoute( 'marketplace-hosting-index' )( {
+			component: () => <d.default />,
+		} )
+	)
+);
 export const marketplaceHostingWpcomRoute = createMarketplaceHostingSectionRoute( 'wpcom' );
 export const marketplaceHostingPressableRoute = createMarketplaceHostingSectionRoute( 'pressable' );
 export const marketplaceHostingVipRoute = createMarketplaceHostingSectionRoute( 'vip' );
@@ -395,7 +420,7 @@ export const marketplaceProductsRoute = createRoute( {
 	head: () => ( {
 		meta: [
 			{
-				title: __( 'Products' ),
+				title: __( 'Plugins and add-ons' ),
 			},
 		],
 	} ),
@@ -410,6 +435,9 @@ export const marketplaceProductsRoute = createRoute( {
 			// The cart total counts the owned WordPress.com sites; warm that
 			// query without holding the page on every license the agency has.
 			queryClient.prefetchQuery( agencyLicensesQuery( agency.id ) );
+			// The referral toggle's commission badge only shows before the first
+			// referral, so the page doesn't wait for the full referrals list.
+			queryClient.prefetchQuery( referralsQuery( agency.id ) );
 			await Promise.all( [
 				queryClient.ensureQueryData( agencyProductsQuery( agency.id ) ),
 				// The cart prices Pressable plans by whether the agency owns one.
@@ -499,16 +527,21 @@ export const marketplacePurchasesRoute = createRoute( {
 		search?: string;
 		status?: string;
 		receipt_id?: string;
+		cart?: string;
 		flash?: string;
 		purchased_plan?: string;
 	} => {
 		const page = Number( search.page );
 		const asString = ( value: unknown ) => ( typeof value === 'string' ? value : undefined );
+		// The router parses a numeric value such as `receipt_id=123` into a number.
+		const asId = ( value: unknown ) =>
+			typeof value === 'number' ? String( value ) : asString( value );
 		return {
 			page: Number.isInteger( page ) && page > 0 ? page : undefined,
 			search: asString( search.search ),
 			status: asString( search.status ),
-			receipt_id: asString( search.receipt_id ),
+			receipt_id: asId( search.receipt_id ),
+			cart: asString( search.cart ),
 			flash: asString( search.flash ),
 			purchased_plan: asString( search.purchased_plan ),
 		};
@@ -583,7 +616,11 @@ export type MarketplaceSection = {
 // Purchases is part of the Marketplace feature, so it shares the flag.
 export const marketplaceSections: MarketplaceSection[] = [
 	{ route: marketplaceHostingRoute, supports: 'marketplace', label: () => __( 'Hosting' ) },
-	{ route: marketplaceProductsRoute, supports: 'marketplace', label: () => __( 'Products' ) },
+	{
+		route: marketplaceProductsRoute,
+		supports: 'marketplace',
+		label: () => __( 'Plugins and add-ons' ),
+	},
 	{ route: marketplacePurchasesRoute, supports: 'marketplace', label: () => __( 'Purchases' ) },
 	{
 		route: exclusiveOffersRoute,
@@ -799,6 +836,39 @@ export const agencyTeamRoute = createRoute( {
 	)
 );
 
+// `/team/invite/accept` – accept an invitation to join an agency team. Sits
+// outside the agency routes: the invited user has no agency until it succeeds.
+export const agencyTeamAcceptInviteRoute = createRoute( {
+	staticData: { isFullscreen: true },
+	head: () => ( {
+		meta: [ { title: __( 'Accept team invite' ) } ],
+	} ),
+	getParentRoute: () => rootRoute,
+	path: TEAM_ACCEPT_INVITE_ROUTE,
+	validateSearch: ( search ): { agency_id?: number; invite_id?: number; secret?: string } => {
+		const agencyId = Number( search.agency_id );
+		const inviteId = Number( search.invite_id );
+		return {
+			agency_id: Number.isInteger( agencyId ) && agencyId > 0 ? agencyId : undefined,
+			invite_id: Number.isInteger( inviteId ) && inviteId > 0 ? inviteId : undefined,
+			secret: typeof search.secret === 'string' ? search.secret : undefined,
+		};
+	},
+} ).lazy( () =>
+	import( '../../agency/team/accept-invite' ).then( ( d ) =>
+		createLazyRoute( 'agency-team-accept-invite' )( {
+			component: () => {
+				const {
+					agency_id: agencyId,
+					invite_id: inviteId,
+					secret,
+				} = agencyTeamAcceptInviteRoute.useSearch();
+				return <d.default agencyId={ agencyId } inviteId={ inviteId } secret={ secret } />;
+			},
+		} )
+	)
+);
+
 // `/referrals` – referral commissions
 export const earnReferralsRoute = createRoute( {
 	staticData: { requiresAgencyCapability: 'a4a_read_referrals' },
@@ -1008,6 +1078,17 @@ export const agencySiteRoute = createRoute( {
 			return;
 		}
 
+		// Keep the router in sync with the sidebar, which only offers the overview
+		// to team members without access to the site. The overview explains how
+		// to get access.
+		const agency = await queryClient.ensureQueryData( activeAgencyQuery() );
+		if (
+			isTeamMemberWithoutSiteAccess( site, agency ) &&
+			! isOnAgencySiteOverviewRoute( matches.at( -1 )?.routeId )
+		) {
+			throw dashboardRedirect( { to: `/sites/${ siteSlug }` } );
+		}
+
 		const siteTypeSupports = getSiteTypeFeatureSupports( site );
 		for ( const match of matches ) {
 			const required = match.staticData?.requiresSiteTypeSupport;
@@ -1039,8 +1120,25 @@ const agencySiteOverviewRoute = createRoute( {
 	getParentRoute: () => agencySiteRoute,
 	path: '/',
 	loader: async ( { params: { siteSlug } } ) => {
-		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+		const [ site, agencySite, agency ] = await Promise.all( [
+			queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) ),
+			queryClient.ensureQueryData( agencySiteQuery( siteSlug ) ),
+			queryClient.ensureQueryData( activeAgencyQuery() ),
+		] );
+		if ( isTeamMemberWithoutSiteAccess( site, agency ) ) {
+			return;
+		}
+
 		queryClient.prefetchQuery( sitePerformancePagesQuery( site.ID ) );
+
+		// Settle the plan card before first paint, so a Pressable site does not
+		// show the Jetpack card first and then swap to the Pressable one.
+		if ( isPressableSite( agencySite ) && agency?.id ) {
+			await Promise.all( [
+				queryClient.ensureQueryData( agencyProductsQuery( agency.id ) ).catch( () => undefined ),
+				queryClient.ensureQueryData( pressableLicensesQuery( agency.id ) ).catch( () => undefined ),
+			] );
+		}
 	},
 } ).lazy( () =>
 	import( '../../agency/sites/site/overview' ).then( ( d ) =>
@@ -1502,10 +1600,7 @@ const agencySiteSettingsAIToolsRoute = createRoute( {
 		}
 
 		if ( cause === 'enter' ) {
-			const twoStep = await fetchTwoStep();
-			if ( twoStep.two_step_reauthorization_required ) {
-				throw dashboardRedirect( { href: reauthRequiredLink(), reloadDocument: true } );
-			}
+			await redirectIfTwoStepReauthRequired();
 		}
 	},
 	loader: async ( { params: { siteSlug } } ) => {
@@ -2078,6 +2173,7 @@ const agencySiteSettingsTransferSiteRoute = createRoute( {
 );
 
 export const createAgencyRoutes = () => [
+	agencyTeamAcceptInviteRoute,
 	agencyRoute.addChildren( [
 		agencyOverviewRoute,
 		agencyTiersRoute,
@@ -2198,3 +2294,7 @@ export const createAgencyRoutes = () => [
 		] ),
 	] ),
 ];
+
+function isOnAgencySiteOverviewRoute( routeId: string | undefined ) {
+	return routeId === agencySiteOverviewRoute.id;
+}

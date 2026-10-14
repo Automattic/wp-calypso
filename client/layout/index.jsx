@@ -326,6 +326,13 @@ class Layout extends Component {
 			return null;
 		}
 
+		// These pages render their own masterbar.
+		if (
+			[ 'checkout-thank-you', 'professional-email-upsell' ].includes( this.props.sectionName )
+		) {
+			return null;
+		}
+
 		let MasterbarComponent = MasterbarLoggedIn;
 		if ( config.isEnabled( 'jetpack-cloud' ) ) {
 			MasterbarComponent = JetpackCloudMasterbar;

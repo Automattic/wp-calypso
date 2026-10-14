@@ -162,12 +162,47 @@ describe( 'SubscribeModal – verification nudge', () => {
 		expect( onFinish ).toHaveBeenCalledTimes( 1 );
 	} );
 
+	it( 'keeps subscribe controls inside an inert container while verification is required', () => {
+		const recommendations = [
+			{
+				feed_ID: 100,
+				site_ID: 200,
+				site_URL: 'https://site-0.example',
+				site_name: 'Site 0',
+				feed_URL: 'https://site-0.example/feed',
+				has_icon: true,
+			},
+			{
+				feed_ID: 101,
+				site_ID: 201,
+				site_URL: 'https://site-1.example',
+				site_name: 'Site 1',
+				feed_URL: 'https://site-1.example/feed',
+				has_icon: true,
+			},
+		];
+		mockedRecommendationsHook.mockReturnValue( {
+			...defaultRecommendationsHookValue,
+			combinedRecommendations: recommendations,
+			recommendations,
+		} );
+
+		renderWithProvider( <SubscribeModal onFinish={ jest.fn() } promptVerification /> );
+
+		const content = document.querySelector( '.subscribe-modal__content' );
+		expect( content ).toHaveAttribute( 'inert' );
+		expect( content ).toContainElement( screen.getByTestId( 'reader-list-item-101' ) );
+		expect( content ).not.toContainElement( screen.getByRole( 'button', { name: 'Finish' } ) );
+		expect( content ).not.toContainElement( screen.getByTestId( 'subscribe-verification-nudge' ) );
+	} );
+
 	it( 'enables the Finish button when promptVerification is false', () => {
 		renderWithProvider( <SubscribeModal onFinish={ jest.fn() } promptVerification={ false } /> );
 
 		const button = screen.getByRole( 'button', { name: 'Finish' } );
 		expect( button ).not.toHaveAttribute( 'aria-disabled', 'true' );
 		expect( button ).not.toBeDisabled();
+		expect( document.querySelector( '.subscribe-modal__content' ) ).not.toHaveAttribute( 'inert' );
 	} );
 } );
 

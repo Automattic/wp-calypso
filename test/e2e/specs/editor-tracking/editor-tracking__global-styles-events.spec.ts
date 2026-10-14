@@ -25,11 +25,8 @@ test.describe.fixme(
 		//     but the CLOSE event does not — trackDisableComplementaryArea only fires
 		//     for scope === 'core/edit-site', while the panel now disables under
 		//     'core/editor'.
-		//   - menu_selected: dead. wpcom-block-editor-global-styles-menu-selected.js
-		//     keys its delegated click selector and its isAtTopLevel guard on the old
-		//     '.edit-site-global-styles-sidebar' class, which no longer exists.
 		//   - update / save: rely on the same global-styles surface and were not
-		//     re-verified once the above two proved dead.
+		//     re-verified once panel_toggle proved broken.
 		// Re-enabling needs the wpcom tracking (apps/wpcom-block-editor) re-pointed at
 		// the new editor scope/classes; that is product code, out of scope here. The
 		// helper fixes are kept so this only needs the product tracking once fixed.
@@ -81,70 +78,6 @@ test.describe.fixme(
 					'wpcom_block_editor_global_styles_panel_toggle',
 					{
 						matchingProperties: { open: false },
-					}
-				);
-				expect( eventDidFire ).toBe( true );
-			} );
-		} );
-
-		// .fixme: depends on the same global-styles panel flow as the
-		// panel_toggle test above. Re-enable once the styles helpers are
-		// updated for the new site-editor navigation. See TESTOPS-49.
-		test( '"wpcom_block_editor_global_styles_menu_selected" event fires for Typography and Blocks', async ( {
-			page,
-		} ) => {
-			const accountName = getTestAccountByFeature( { ...features, variant: 'siteEditor' } );
-			let testAccount: TestAccount;
-			let fullSiteEditorPage: FullSiteEditorPage;
-			let editorTracksEventManager: EditorTracksEventManager;
-
-			await test.step( 'Given I am authenticated', async () => {
-				testAccount = new TestAccount( accountName );
-				await testAccount.authenticate( page );
-				editorTracksEventManager = new EditorTracksEventManager( page );
-				fullSiteEditorPage = new FullSiteEditorPage( page );
-			} );
-
-			await test.step( 'When I visit the site editor', async () => {
-				await fullSiteEditorPage.visit( testAccount!.getSiteURL( { protocol: true } ) );
-				await fullSiteEditorPage.prepareForInteraction( { leaveWithoutSaving: true } );
-			} );
-
-			await test.step( 'When I close the navigation sidebar', async () => {
-				await fullSiteEditorPage.closeNavSidebar();
-			} );
-
-			await test.step( 'When I open site styles', async () => {
-				await fullSiteEditorPage.openSiteStyles();
-			} );
-
-			await test.step( 'When I click on "Typography" menu button', async () => {
-				await fullSiteEditorPage.clickStylesMenuButton( 'Typography' );
-			} );
-
-			await test.step( 'Then "wpcom_block_editor_global_styles_menu_selected" event fires with "menu" === "typography"', async () => {
-				const eventDidFire = await editorTracksEventManager!.didEventFire(
-					'wpcom_block_editor_global_styles_menu_selected',
-					{
-						matchingProperties: { menu: 'typography' },
-					}
-				);
-				expect( eventDidFire ).toBe( true );
-			} );
-
-			await test.step( 'When I return to top menu level', async () => {
-				await fullSiteEditorPage.returnToStylesTopMenu();
-			} );
-
-			await test.step( 'When I click on "Blocks" menu button', async () => {
-				await fullSiteEditorPage.clickStylesMenuButton( 'Blocks' );
-			} );
-
-			await test.step( 'Then "wpcom_block_editor_global_styles_menu_selected" event fires with "menu" === "blocks"', async () => {
-				const eventDidFire = await editorTracksEventManager!.didEventFire(
-					'wpcom_block_editor_global_styles_menu_selected',
-					{
-						matchingProperties: { menu: 'blocks' },
 					}
 				);
 				expect( eventDidFire ).toBe( true );

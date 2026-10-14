@@ -33,6 +33,8 @@ export interface AgencyProduct {
 	metadata?: AgencyProductMetadata;
 	/** The product's icon, where the catalog has one (WooCommerce products). */
 	icon_url?: string;
+	/** The Pressable site a PHP memory add-on applies to; the API returns one entry per site. */
+	site_domain?: string;
 	/** Not in the API response — added client-side from the parent family. */
 	family_slug: string;
 }

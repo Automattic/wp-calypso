@@ -70,7 +70,7 @@ export interface ClientContextType {
 	/**
 	 * Environment identifier
 	 */
-	environment: 'wp-admin' | 'calypso' | 'wp-admin-disconnected' | 'gutenberg-disconnected' | string;
+	environment: 'wp-admin' | 'calypso' | 'gutenberg-disconnected' | string;
 
 	/**
 	 * Optional context entries (sitemap, entities, etc.).

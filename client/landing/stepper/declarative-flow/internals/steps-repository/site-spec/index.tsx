@@ -10,12 +10,16 @@ import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { ONBOARD_STORE, SITE_STORE } from 'calypso/landing/stepper/stores';
 import {
 	applyBlueprintSpec,
+	BLUEPRINT_SIMPLE_IMPORT_QUERY_PARAM,
 	getBlueprintArchiveSiteIdentifier,
+	getSimpleSiteEditorUrl,
 	getSiteAdminUrl,
 	getSiteEditorUrl,
+	getSpecMetaFromQuery,
 	isBlueprintCustomThemeBuild,
 	logBlueprintArchiveEvent,
 	startBlueprintArchiveImport,
+	startBlueprintSimpleImport,
 	waitForAtomicTransferComplete,
 	waitForBlueprintImportComplete,
 } from 'calypso/landing/stepper/utils/blueprint-archive-import';
@@ -147,7 +151,12 @@ const SiteSpec: StepType = function SiteSpec( { navigation } ) {
 	} );
 
 	const ciabSiteCreationPromiseRef = useRef< Promise< number | null > | null >( null );
-	const shouldImportBlueprint = queryParams.get( 'blueprint_archive_import' ) === '1';
+	// A Simple-site blueprint build: the Playground import on the site itself, no Atomic
+	// transfer, and a hand-off to the site's own wp-admin. Everything else about the run — the
+	// blueprint-aware interview, the wait on the processing screen, the spec apply — is shared.
+	const isSimpleImport = queryParams.get( BLUEPRINT_SIMPLE_IMPORT_QUERY_PARAM ) === '1';
+	const shouldImportBlueprint =
+		queryParams.get( 'blueprint_archive_import' ) === '1' || isSimpleImport;
 	// A wow-funnel run already started the import server-side, before checkout. This page still
 	// waits on it and hands over, but must not start a second one.
 	// An unregistered slug is not a funnel run: the server never enrolled the blog, so nothing
@@ -461,12 +470,15 @@ const SiteSpec: StepType = function SiteSpec( { navigation } ) {
 					// As a funnel interstitial this step owns the funnel's readiness wait, so it
 					// goes through the shared helper — one definition of "ready" per funnel, and one
 					// timeout. Outside a funnel this is a plain blueprint-archive run, which keeps
-					// its own unbounded waits.
+					// its own unbounded waits. A Simple build has no transfer to wait for: the
+					// import record is the whole story.
 					if ( wowFunnelSlug ) {
 						await waitForWowFunnelReady( {
 							funnelSlug: wowFunnelSlug,
 							siteIdentifier: blueprintArchiveSiteIdentifier,
 						} );
+					} else if ( isSimpleImport ) {
+						await waitForBlueprintImportComplete( blueprintArchiveSiteIdentifier );
 					} else {
 						await waitForAtomicTransferComplete( blueprintArchiveSiteIdentifier );
 						await waitForBlueprintImportComplete( blueprintArchiveSiteIdentifier );
@@ -524,16 +536,27 @@ const SiteSpec: StepType = function SiteSpec( { navigation } ) {
 					// saves a /sites/<id> round trip here — on the one path where the customer is
 					// watching a spinner. Null on an older wpcom, or when the apply failed, in which
 					// case the helper fetches it as before.
-					const siteEditorUrl = wowFunnelSlug
-						? await getWowFunnelHandoffUrl( {
-								dest: wowFunnelDest,
-								siteIdentifier: blueprintArchiveSiteIdentifier,
-								adminUrl,
-							} )
-						: getSiteEditorUrl(
-								adminUrl ?? ( await getSiteAdminUrl( blueprintArchiveSiteIdentifier ) ),
-								{ canvasEdit: applied }
-							);
+					//
+					// A Simple site is reached directly: its wp-admin is WordPress.com, so the
+					// customer is already signed in, and the Atomic SSO hop would point at a host
+					// the site does not have.
+					let siteEditorUrl: string;
+					if ( wowFunnelSlug ) {
+						siteEditorUrl = await getWowFunnelHandoffUrl( {
+							dest: wowFunnelDest,
+							siteIdentifier: blueprintArchiveSiteIdentifier,
+							adminUrl,
+						} );
+					} else if ( isSimpleImport ) {
+						siteEditorUrl = getSimpleSiteEditorUrl(
+							adminUrl ?? ( await getSiteAdminUrl( blueprintArchiveSiteIdentifier ) )
+						);
+					} else {
+						siteEditorUrl = getSiteEditorUrl(
+							adminUrl ?? ( await getSiteAdminUrl( blueprintArchiveSiteIdentifier ) ),
+							{ canvasEdit: applied }
+						);
+					}
 
 					logBlueprintArchiveEvent( 'redirect_site_editor', {
 						site_identifier: blueprintArchiveSiteIdentifier,
@@ -563,6 +586,7 @@ const SiteSpec: StepType = function SiteSpec( { navigation } ) {
 			wowFunnelSlug,
 			wowFunnelDest,
 			isCustomThemeBuild,
+			isSimpleImport,
 			queryParams,
 			setPendingAction,
 		]
@@ -587,9 +611,22 @@ const SiteSpec: StepType = function SiteSpec( { navigation } ) {
 
 		logBlueprintArchiveEvent( 'start_request', {
 			site_identifier: blueprintArchiveSiteIdentifier,
+			simple: isSimpleImport,
 		} );
 
-		startBlueprintArchiveImport( blueprintArchiveSiteIdentifier, blueprintArchiveSlug )
+		// A Simple build runs the Playground import on the site itself; the archive restore
+		// converts the site to Atomic, which a Simple build must never do.
+		const siteId = Number( queryParams.get( 'siteId' ) ) || null;
+		const start = isSimpleImport
+			? startBlueprintSimpleImport(
+					blueprintArchiveSiteIdentifier,
+					blueprintArchiveSlug,
+					siteId,
+					getSpecMetaFromQuery( queryParams )
+				)
+			: startBlueprintArchiveImport( blueprintArchiveSiteIdentifier, blueprintArchiveSlug );
+
+		start
 			.then( () => {
 				logBlueprintArchiveEvent( 'start_success', {
 					site_identifier: blueprintArchiveSiteIdentifier,
@@ -604,8 +641,10 @@ const SiteSpec: StepType = function SiteSpec( { navigation } ) {
 	}, [
 		shouldImportBlueprint,
 		isWowFunnelRun,
+		isSimpleImport,
 		blueprintArchiveSlug,
 		blueprintArchiveSiteIdentifier,
+		queryParams,
 	] );
 
 	let siteSpecStep = <SiteSpecContainer />;
@@ -642,6 +681,9 @@ const SiteSpec: StepType = function SiteSpec( { navigation } ) {
 				// design brief.
 				siteSpecConfig={ getBlueprintSiteSpecConfig( {
 					blueprintId: isCustomThemeBuild ? undefined : blueprintArchiveSlug,
+					// What the entry URL already knows (a booking page, say), stamped into
+					// the spec for the blueprint's configuration pass to use.
+					specMeta: getSpecMetaFromQuery( queryParams ),
 				} ) }
 				onSpecConfirm={ handleBlueprintArchiveSpecConfirm }
 			/>

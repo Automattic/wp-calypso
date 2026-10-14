@@ -269,7 +269,7 @@ const isPageDesignPart = ( part: Part ): part is ToolCallDataPart => {
 	return data?.toolId === STREAM_PAGE_DESIGN_TOOL_ID && typeof data.toolCallId === 'string';
 };
 
-// Wire data: a provider may hand over an update whose parts are not a list.
+// Wire data: an update's parts may not be a list.
 const getParts = ( update: TaskUpdate ): Part[] => {
 	const parts = update.status?.message?.parts;
 
@@ -277,7 +277,9 @@ const getParts = ( update: TaskUpdate ): Part[] => {
 };
 
 /** Hands the markup each page-design part carries to the renderer. */
-export async function handlePageDesignTaskUpdate( update: TaskUpdate ): Promise< void > {
+export async function handlePageDesignTaskUpdate( wireUpdate: unknown ): Promise< void > {
+	const update = wireUpdate as TaskUpdate;
+
 	if ( update.sessionId && lastSessionId && update.sessionId !== lastSessionId ) {
 		forgetStreams();
 	}
@@ -335,39 +337,4 @@ export async function finalizePendingStreams( toolCallId?: string ): Promise< bo
 	}
 
 	return finalized;
-}
-
-type OnTaskUpdate = ( update: unknown ) => void | Promise< void >;
-
-// TODO (ability-migration): Pass updates straight through once Big Sky drops its
-// `onTaskUpdate` export; nothing will be left to keep the stream from.
-/**
- * Runs the transport ahead of the providers' `onTaskUpdate` and strips the
- * stream's parts, so a provider's own renderer never paints the same frames.
- */
-export function withPageDesignStream( next: OnTaskUpdate | undefined ): OnTaskUpdate {
-	return async ( update ) => {
-		const taskUpdate = update as TaskUpdate;
-		const parts = getParts( taskUpdate );
-
-		await handlePageDesignTaskUpdate( taskUpdate );
-
-		if ( ! next ) {
-			return;
-		}
-
-		const rest = parts.filter( ( part ) => ! isPageDesignPart( part ) );
-		const stripped =
-			rest.length !== parts.length
-				? {
-						...taskUpdate,
-						status: {
-							...taskUpdate.status,
-							message: { ...taskUpdate.status.message, parts: rest },
-						},
-					}
-				: update;
-
-		await next( stripped );
-	};
 }

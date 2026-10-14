@@ -15,6 +15,7 @@ import { marketplaceReferralCheckoutRoute } from '../../../app/router/agency';
 import { Notice } from '../../../components/notice';
 import RouterLinkButton from '../../../components/router-link-button';
 import { MARKETPLACE_PRODUCTS_ROUTE } from '../paths';
+import { getCheckoutUrl, getLegacyCheckoutUrl } from '../products/lib/checkout-url';
 import { useCartLines } from '../products/use-cart-lines';
 import { useShoppingCart } from '../products/use-shopping-cart';
 import { useTermPricing } from '../use-term-pricing';
@@ -68,9 +69,25 @@ export default function ReferralCheckout() {
 	};
 
 	const backTo = from ?? MARKETPLACE_PRODUCTS_ROUTE;
-	const isFreeOnly = cart.lines.length > 0 && cart.lines.every( ( line ) => line.priceInfo.isFree );
 
 	const isSiteLoading = !! referralBlogId && devSite.isLoading;
+	// A cart of free products needs no client, so the agency takes it through its own checkout.
+	const isFreeOnly =
+		! referralBlogId &&
+		cart.lines.length > 0 &&
+		cart.lines.every( ( line ) => line.priceInfo.isFree );
+	const checkoutLines = cart.lines.map( ( { product, item } ) => ( {
+		product,
+		quantity: item.quantity,
+	} ) );
+	const checkoutUrl =
+		agency?.billing_system === 'legacy'
+			? getLegacyCheckoutUrl( checkoutLines )
+			: getCheckoutUrl( checkoutLines, {
+					term: termPricing,
+					hasWpcomHostingPlan: cart.hasWpcomHostingPlan,
+					cart: 'referral',
+				} );
 
 	let notice = null;
 	if ( referralBlogId && devSite.isMissing ) {
@@ -98,14 +115,13 @@ export default function ReferralCheckout() {
 								{ __( 'Request client payment' ) }
 							</Heading>
 						</HStack>
-						{ isFreeOnly && (
+						{ isFreeOnly ? (
 							<Notice variant="info">
 								{ __(
 									'Because your referral includes only free products, you can assign them immediately after purchase — no client payment or approval required.'
 								) }
 							</Notice>
-						) }
-						{ ! isFreeOnly && (
+						) : (
 							<RequestClientPaymentForm
 								email={ request.email }
 								emailError={ request.emailError }
@@ -130,14 +146,21 @@ export default function ReferralCheckout() {
 							isLoading={ isSiteLoading }
 							isTotalReady={ cart.isTotalReady && ! isSiteLoading }
 							isFreeOnly={ isFreeOnly }
+							checkoutUrl={ checkoutUrl }
 							isUserUnverified={ ! user.email_verified }
-							canIssueLicenses={ agency?.can_issue_licenses ?? true }
 							canSend={ request.canSend && ! isSiteLoading }
 							canCopy={ request.canCopy && ! isSiteLoading }
 							isBusy={ request.isBusy }
 							onSend={ request.send }
 							onCopy={ request.copy }
-							onPurchase={ request.purchase }
+							onCheckout={ () =>
+								recordTracksEvent(
+									'calypso_a4a_marketplace_referral_checkout_free_purchase_click',
+									{
+										term_pricing: termPricing,
+									}
+								)
+							}
 							onPreview={ openPreview }
 						/>
 					</aside>

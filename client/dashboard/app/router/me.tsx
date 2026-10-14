@@ -1,4 +1,3 @@
-import { fetchTwoStep } from '@automattic/api-core';
 import {
 	accountRecoveryQuery,
 	allowedPaymentMethodsQuery,
@@ -48,7 +47,6 @@ import {
 import { getAppSetupTitle, getSMSSetupTitle } from '../../me/security-two-step-auth/title';
 import { isOptInToggleVisible } from '../../utils/hosting-dashboard-enrollment';
 import { isDashboardBackport } from '../../utils/is-dashboard-backport';
-import { reauthRequiredLink } from '../../utils/link';
 import {
 	getTitleForDisplay,
 	getPurchaseCancellationFlowType,
@@ -60,7 +58,7 @@ import {
 	type CancelIntent,
 } from '../../utils/purchase';
 import { AUTH_QUERY_KEY } from '../auth';
-import { dashboardRedirect } from './redirect';
+import { dashboardRedirect, redirectIfTwoStepReauthRequired } from './redirect';
 import { rootRoute } from './root';
 import type { AppConfig } from '../context';
 import type { Purchase, User } from '@automattic/api-core';
@@ -78,12 +76,8 @@ export const meRoute = createRoute( {
 	path: 'me',
 	loader: () => queryClient.ensureQueryData( userSettingsQuery() ),
 	beforeLoad: async ( { cause } ) => {
-		if ( cause !== 'enter' ) {
-			return;
-		}
-		const twoStep = await fetchTwoStep();
-		if ( twoStep.two_step_reauthorization_required ) {
-			window.location.href = reauthRequiredLink();
+		if ( cause === 'enter' ) {
+			await redirectIfTwoStepReauthRequired();
 		}
 	},
 	component: Outlet,

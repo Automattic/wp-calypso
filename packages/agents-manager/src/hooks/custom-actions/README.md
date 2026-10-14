@@ -1,6 +1,6 @@
 # Custom Actions
 
-> **Warning:** Cross-bundle bridge for the Big Sky migration. Actions live on `window.__agentsManagerActions` — don't expose anything sensitive.
+> **Warning:** Cross-bundle bridge. Actions live on `window.__agentsManagerActions` — don't expose anything sensitive.
 
 This folder publishes `window.__agentsManagerActions` so code outside the React tree (other bundles, external scripts) can drive the Agents Manager.
 
@@ -19,9 +19,9 @@ Consuming the API? See [Public API](#public-api). Adding a new action? See [Addi
 | `getSessionId`             | `() => string`                                          | Active session ID.                                                                                                |
 | `getTabId`                 | `() => string`                                          | The `tab_id` on the chat's Tracks events, so host events can join on it.                                          |
 | `getTurnId`                | `() => string`                                          | The current `turn_id` (the last send's), or `''` before the first send.                                           |
+| `getAgentBlockId`          | `(clientId: string) => string`                          | The id the agent knows a block by, so a host can name the block to it.                                            |
 | `recordBigSkyTracksEvent`  | `(eventName: BigSkyEventName, props?) => void`          | Record a full `jetpack_big_sky_*` event name with family base props.                                              |
 | `isChatVisible`            | `() => boolean`                                         | Whether the chat is visible (open and not minimized).                                                             |
-| `getCurrentRoute`          | `() => string`                                          | The chat's current route, e.g. `/chat`, `/history`, `/support-guides`.                                            |
 | `setChatOpen`              | `(isOpen: boolean) => void`                             | Open or close the chat (closing is ignored when non-dismissible). Opening also expands it from the minimized bar. |
 | `setChatDocked`            | `(isDocked: boolean) => void`                           | Dock or undock the chat.                                                                                          |
 | `setChatEnabled`           | `(isEnabled: boolean) => void`                          | Enable the chat, or disable its input while leaving the chat visible.                                             |
@@ -37,11 +37,10 @@ Consuming the API? See [Public API](#public-api). Adding a new action? See [Addi
 | `chatNavigate`             | `NavigateFunction`                                      | The `react-router-dom` navigate function (path with options, or delta).                                           |
 | `resumeChat`               | `() => void`                                            | Reopen the chat, resuming this tab's conversation (not a new one).                                                |
 | `isReady`                  | `boolean`                                               | `true` once the API is fully populated and safe to call.                                                          |
-| `broadcastsAgentActivity`  | `boolean`                                               | Whether this build fires the [agent activity](#agent-activity) events.                                            |
 
 \* Available only while the chat panel is mounted. Always optional-chain these calls — they can be `undefined` even after `isReady` is `true`.
 
-`recordBigSkyTracksEvent` is absent on older Agents Manager bundles — optional-chain it too.
+`recordBigSkyTracksEvent` and `getAgentBlockId` are absent on older Agents Manager bundles — optional-chain them too.
 `BigSkyEventName` is `` `jetpack_big_sky_${ string }` `` — the full prefix is required. The bare prefix alone, or any non-conforming name, is dropped without recording.
 Chat and feedback events (message send, suggestions, responses, thumbs) are also recorded as `calypso_agents_manager_<same suffix>` with the shared properties; other names are recorded under the Big Sky name only.
 
@@ -77,7 +76,7 @@ Dispatched by `OrchestratorChat` as the transcript grows. Prefer this over the p
 
 ## Agent activity
 
-Three more window events say what the agent is _doing_, for hosts that render their own editing surface around the chat and have to tell the agent's writes apart from the user's. Nothing else on the page can see that difference: an editor's own dirty state also changes on mount, so a page opening reads the same as an agent editing it.
+Three more window events say what the agent is _doing_, for hosts that render their own editing surface around the chat: whether a turn is in flight, and when an ability has finished, so anything it wrote has landed. Big Sky's easy mode, for example, holds its own navigation while the agent works, shows what changed once the turn ends, and follows an ability that moves the editor.
 
 | Event                              | `detail`                        | Fires when                                                                                                                                            |
 | ---------------------------------- | ------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -87,17 +86,15 @@ Three more window events say what the agent is _doing_, for hosts that render th
 
 The turn events are edges, not state: they fire on the change, so a listener that arrives mid-turn hears nothing until that turn ends. The turn is taken from the agent manager rather than from the chat, which is one route in the dock and can unmount while the stream carries on — a turn that ends while the chat is away has its end announced when the chat comes back, and until then a listener is told the agent is still working.
 
-Check `broadcastsAgentActivity` before relying on any of this. Against a build without it no events arrive, and the agent looks permanently silent:
+For example:
 
 ```js
-if ( window.__agentsManagerActions?.broadcastsAgentActivity ) {
-	window.addEventListener( 'agents-manager-turn-started', () => {
-		// the agent is working — attribute what changes next to it
-	} );
-	window.addEventListener( 'agents-manager-ability-completed', ( event ) => {
-		const { name, ok } = event.detail;
-	} );
-}
+window.addEventListener( 'agents-manager-turn-started', () => {
+	// the agent is working
+} );
+window.addEventListener( 'agents-manager-ability-completed', ( event ) => {
+	const { name, ok } = event.detail;
+} );
 ```
 
 Defined in `utils/agent-activity-events.ts`.
@@ -221,8 +218,7 @@ Both flags default to `true`. `dismissible: false` keeps the chat expanded even
 when the saved preference is closed or minimized, removes Close and Minimize on
 all chat routes, and ignores close requests (including `setChatOpen(false)`).
 `showEntryPoints: false` hides the wp-admin/omnibar and editor toolbar Agent
-toggles. Help menu links still navigate between chat and history, without closing
-a non-dismissible chat. Docking and responsive floating layout remain available.
+toggles. Docking and responsive floating layout remain available.
 
 This configuration lasts only for the current document and is not a user
 preference. It is a bootstrap contract, not a reactive settings API. The host

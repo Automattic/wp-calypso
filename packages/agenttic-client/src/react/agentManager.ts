@@ -213,6 +213,7 @@ export interface AgentManager {
 	resetConversation: ( key: string ) => Promise< void >;
 	replaceMessages: ( key: string, messages: Message[] ) => Promise< void >;
 	getConversationHistory: ( key: string ) => Message[];
+	getAgentSessionId: ( key: string ) => string | null;
 	updateSessionId: ( key: string, sessionId: string ) => void;
 	abortCurrentRequest: ( key: string ) => void;
 	/**
@@ -851,6 +852,10 @@ function createAgentManager(): AgentManager {
 			}
 
 			return [ ...managedAgent.conversationHistory ];
+		},
+
+		getAgentSessionId( key: string ): string | null {
+			return agents.get( key )?.sessionId || null;
 		},
 
 		updateSessionId( key: string, sessionId: string ): void {
