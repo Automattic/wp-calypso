@@ -16,85 +16,115 @@ interface Options {
 }
 
 /**
- * Applies completed chat batches once to a conversation's SDK runtime, preserving edits
- * across appends and replaying changed history without introducing another message store.
- * Surface actions continue the active chat as hidden user messages.
+ * Updates the interactive UI after the agent finishes responding. Keeps the user's
+ * input when new messages arrive, and rebuilds the UI if earlier messages change.
+ * Sends UI actions back to the agent without showing them as chat messages.
  */
 export default function useInteractiveUi( options: Options ) {
-	const latest = useRef( options );
-	latest.current = options;
-	const [ sdk, setSdk ] = useState< typeof import( '.' ) >();
-	const [ revision, refresh ] = useState( 0 );
-	const batches = useMemo(
+	const latestOptionsRef = useRef( options );
+	latestOptionsRef.current = options;
+
+	const [ interactiveUiSdk, setInteractiveUiSdk ] = useState< typeof import( '.' ) >();
+	const [ runtimeRevision, setRuntimeRevision ] = useState( 0 );
+
+	const messageBatches = useMemo(
 		() => getInteractiveUiBatches( options.messages ),
 		[ options.messages ]
 	);
-	const hasBatches = batches.length > 0;
-	const session = useMemo(
+	const hasMessageBatches = messageBatches.length > 0;
+
+	const conversationSession = useMemo(
 		() => ( {
 			conversationId: options.conversationId,
 			runtime: undefined as InteractiveUiRuntime | undefined,
-			applied: [] as string[],
+			appliedBatchSignatures: [] as string[],
 		} ),
 		[ options.conversationId ]
 	);
+
+	// Load the interactive UI SDK dynamically to reduce the initial bundle size.
 	useEffect( () => {
-		if ( ! hasBatches || sdk ) {
+		if ( ! hasMessageBatches || interactiveUiSdk ) {
 			return;
 		}
-		let active = true;
+
+		let isUiLoadCancelled = false;
 		void import( /* webpackChunkName: "am-interactive-ui" */ '.' ).then(
-			( module ) => active && setSdk( module ),
+			( interactiveUiModule ) => ! isUiLoadCancelled && setInteractiveUiSdk( interactiveUiModule ),
 			() => {}
 		);
+
 		return () => {
-			active = false;
+			isUiLoadCancelled = true;
 		};
-	}, [ hasBatches, sdk ] );
+	}, [ hasMessageBatches, interactiveUiSdk ] );
+
+	// Dispose of the interactive UI runtime when the conversation session changes or the component unmounts.
 	useEffect( () => {
 		return () => {
-			session.runtime?.dispose();
-			session.runtime = undefined;
-			session.applied = [];
+			conversationSession.runtime?.dispose();
+			conversationSession.runtime = undefined;
+			conversationSession.appliedBatchSignatures = [];
 		};
-	}, [ session ] );
+	}, [ conversationSession ] );
+
+	// Update the interactive UI runtime when new message batches arrive or the processing state changes.
 	useEffect( () => {
-		if ( ! sdk || options.isProcessing ) {
+		if ( ! interactiveUiSdk || options.isProcessing ) {
 			return;
 		}
+
+		// Dispose of the current runtime if any of the applied batch signatures have changed.
 		if (
-			session.applied.some( ( signature, index ) => signature !== batches[ index ]?.signature )
+			conversationSession.appliedBatchSignatures.some(
+				( signature, index ) => signature !== messageBatches[ index ]?.signature
+			)
 		) {
-			session.runtime?.dispose();
-			session.runtime = undefined;
-			session.applied = [];
+			conversationSession.runtime?.dispose();
+			conversationSession.runtime = undefined;
+			conversationSession.appliedBatchSignatures = [];
 		}
-		if ( batches.length > 0 && ! session.runtime ) {
-			session.runtime = sdk.createInteractiveUiRuntime( async ( action ) => {
-				const { agentConfig, isProcessing, onSubmit, beforeSubmit } = latest.current;
-				if ( ! agentConfig || isProcessing || ! beforeSubmit() ) {
-					return;
+
+		// Create a new runtime if there are message batches and no current runtime.
+		if ( messageBatches.length > 0 && ! conversationSession.runtime ) {
+			conversationSession.runtime = interactiveUiSdk.createInteractiveUiRuntime(
+				async ( action ) => {
+					const { agentConfig, isProcessing, onSubmit, beforeSubmit } = latestOptionsRef.current;
+
+					if ( ! agentConfig || isProcessing || ! beforeSubmit() ) {
+						return;
+					}
+
+					startNewUserRequest();
+					await executeInteractiveUiAction( action, agentConfig, onSubmit );
 				}
-				startNewUserRequest();
-				await executeInteractiveUiAction( action, agentConfig, onSubmit );
-			} );
+			);
 		}
+
 		try {
-			for ( const batch of batches.slice( session.applied.length ) ) {
-				session.runtime?.processMessages( batch.operations, batch.messageId );
+			// Process any new message batches that have not been applied yet.
+			for ( const batch of messageBatches.slice(
+				conversationSession.appliedBatchSignatures.length
+			) ) {
+				conversationSession.runtime?.processMessages( batch.operations, batch.messageId );
 			}
 		} catch {
-			session.runtime?.dispose();
-			session.runtime = undefined;
+			conversationSession.runtime?.dispose();
+			conversationSession.runtime = undefined;
 		}
-		session.applied = batches.map( ( batch ) => batch.signature );
-		refresh( ( value ) => value + 1 );
-	}, [ batches, options.isProcessing, sdk, session ] );
-	const runtime = session.runtime;
-	const isDisabled = options.isProcessing;
+
+		conversationSession.appliedBatchSignatures = messageBatches.map( ( batch ) => batch.signature );
+		setRuntimeRevision( ( currentRevision ) => currentRevision + 1 );
+	}, [ messageBatches, options.isProcessing, interactiveUiSdk, conversationSession ] );
+
 	return useMemo(
-		() => ( { runtime, sdk, revision, isDisabled } ),
-		[ runtime, sdk, revision, isDisabled ]
+		() => ( {
+			runtime: conversationSession.runtime,
+			sdk: interactiveUiSdk,
+			revision: runtimeRevision,
+			isDisabled: options.isProcessing,
+		} ),
+		[ conversationSession.runtime, interactiveUiSdk, runtimeRevision, options.isProcessing ]
 	);
 }
 
