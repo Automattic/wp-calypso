@@ -28,7 +28,7 @@ export default function PostCard( { post, site }: { post: NotePost; site?: NoteS
 		>
 			<CardBody>
 				<HStack alignment="top" justify="space-between" spacing={ 3 }>
-					<VStack spacing={ 4 }>
+					<VStack spacing={ 3 }>
 						{ site && (
 							<HStack justify="flex-start" spacing={ 3 }>
 								{ site.icon ? (
@@ -46,7 +46,7 @@ export default function PostCard( { post, site }: { post: NotePost; site?: NoteS
 										size={ 36 }
 									/>
 								) }
-								<VStack spacing={ 0 }>
+								<VStack spacing={ 1 }>
 									<Text size={ 13 } weight={ 600 } truncate>
 										{ site.name }
 									</Text>
