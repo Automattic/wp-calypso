@@ -484,10 +484,10 @@ export function getTitleForDisplay( purchase: Purchase, includeProductType = tru
 		purchase.renewal_price_tier_usage_quantity &&
 		purchase.renewal_price_tier_usage_quantity > 1
 	) {
-		/* translators: %(productName)s is the product name "Akismet Pro", %(requests)d is a number of requests/month */
-		return sprintf( __( '%(productName)s (%(requests)d requests/month)' ), {
+		/* translators: %(productName)s is the product name "Akismet Pro", %(requests)s is a formatted number of requests/month */
+		return sprintf( __( '%(productName)s (%(requests)s requests/month)' ), {
 			productName: purchase.product_name.replace( /\s*\(.*$/, '' ).trim(),
-			requests: 500 * purchase.renewal_price_tier_usage_quantity,
+			requests: formatNumber( 500 * purchase.renewal_price_tier_usage_quantity ),
 		} );
 	}
 
