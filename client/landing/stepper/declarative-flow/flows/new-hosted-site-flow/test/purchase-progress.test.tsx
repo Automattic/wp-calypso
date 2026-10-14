@@ -27,6 +27,7 @@ const mockClear = jest.fn();
 const mockSite = { siteSlug: 'example.wordpress.com', siteId: '123' };
 let mockSavedFlow = NEW_HOSTED_SITE_FLOW;
 let mockCheckoutUnloaded = false;
+let mockDestination: string | undefined = '/setup/transferring-hosted-site';
 
 jest.mock( '@wordpress/data', () => ( {
 	useSelect: ( callback: ( select: () => unknown ) => unknown ) =>
@@ -63,7 +64,7 @@ jest.mock( 'calypso/signup/storageUtils', () => ( {
 	getSignupCompleteSlug: () => mockSite.siteSlug,
 	getSignupCompleteFlowName: () => mockSavedFlow,
 	wasSignupCheckoutPageUnloaded: () => mockCheckoutUnloaded,
-	retrieveSignupDestination: () => '/setup/transferring-hosted-site',
+	retrieveSignupDestination: () => mockDestination,
 	clearSignupDestinationCookie: () => mockClear(),
 	clearSignupCompleteFlowName: jest.fn(),
 	clearSignupCompleteSlug: jest.fn(),
@@ -79,6 +80,7 @@ beforeEach( () => {
 	mockLocale = 'en';
 	mockCheckoutUnloaded = false;
 	mockSavedFlow = NEW_HOSTED_SITE_FLOW;
+	mockDestination = '/setup/transferring-hosted-site';
 	mockPlan = { product_slug: 'ecommerce-bundle-2y' };
 	mockQuery = new URLSearchParams( {
 		plan: mockPlan.product_slug,
@@ -86,7 +88,12 @@ beforeEach( () => {
 		showDomainStep: '',
 	} );
 	Object.defineProperty( window, 'location', {
-		value: { ...window.location, assign: jest.fn(), replace: jest.fn() },
+		value: {
+			...window.location,
+			pathname: '/setup/new-hosted-site/domains',
+			assign: jest.fn(),
+			replace: jest.fn(),
+		},
 		writable: true,
 	} );
 } );
@@ -214,7 +221,7 @@ it( 'preserves signup state for the shared checkout-return path', async () => {
 	expect( mockClear ).not.toHaveBeenCalled();
 } );
 
-it.each( [ 'fresh', 'other-flow', 'without-progress' ] )(
+it.each( [ 'fresh', 'other-flow', 'without-progress', 'expired', 'flow-root', 'locale-root' ] )(
 	'resets signup state for %s visits',
 	async ( entry ) => {
 		mockCheckoutUnloaded = entry !== 'fresh';
@@ -223,6 +230,15 @@ it.each( [ 'fresh', 'other-flow', 'without-progress' ] )(
 		}
 		if ( entry === 'without-progress' ) {
 			mockQuery.delete( 'showPurchaseSteps' );
+		}
+		if ( entry === 'expired' ) {
+			mockDestination = undefined;
+		}
+		if ( entry === 'flow-root' ) {
+			window.location.pathname = '/setup/new-hosted-site';
+		}
+		if ( entry === 'locale-root' ) {
+			window.location.pathname = '/setup/new-hosted-site/fr';
 		}
 		await hosting.initialize( { dispatch: jest.fn(), getState: () => ( {} ) } as never );
 		expect( mockReset ).toHaveBeenCalled();

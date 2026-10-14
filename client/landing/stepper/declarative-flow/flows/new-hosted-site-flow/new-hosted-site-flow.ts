@@ -1,9 +1,11 @@
 import { isFreeHostingTrial, isDotComPlan } from '@automattic/calypso-products';
+import { getLanguageSlugs } from '@automattic/i18n-utils';
 import { clearStepPersistedState, NEW_HOSTED_SITE_FLOW } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { useDispatch, useSelect, dispatch } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
 import { useEffect } from 'react';
+import { matchPath } from 'react-router';
 import { useIsValidWooPartner } from 'calypso/landing/stepper/hooks/use-is-valid-woo-partner';
 import { recordFreeHostingTrialStarted } from 'calypso/lib/analytics/ad-tracking/ad-track-trial-start';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -40,11 +42,24 @@ import type { DomainSuggestion } from '@automattic/api-core';
 import type { OnboardActions, OnboardSelect } from '@automattic/data-stores';
 import type { Store } from 'redux';
 
+/**
+ * The step named in the URL, if any. A visit to the flow root carries none; a checkout return
+ * or browser Back always lands on a step.
+ */
+function getEntryStepFromURL(): string | undefined {
+	const step = matchPath( { path: '/setup/:flow/:step/:lang?' }, window.location.pathname ?? '' )
+		?.params?.step;
+
+	return step && ! getLanguageSlugs().includes( step ) ? step : undefined;
+}
+
 async function initialize( reduxStore: Store ) {
 	const { resetOnboardStore, setPlanCartItem } = dispatch( ONBOARD_STORE ) as OnboardActions;
 
 	const queryParams = getCurrentQueryParams();
+	// Like onboarding, only a step URL resumes; the flow root always starts over.
 	const isReturningFromCheckout =
+		!! getEntryStepFromURL() &&
 		hasPurchaseStepsParameter( queryParams ) &&
 		wasSignupCheckoutPageUnloaded() &&
 		getSignupCompleteFlowName() === NEW_HOSTED_SITE_FLOW &&
