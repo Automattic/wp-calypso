@@ -88,6 +88,11 @@ export interface DomainSearchEvents {
 	onContinue: () => void;
 	onSkip: ( suggestion?: FreeDomainSuggestion ) => void;
 	onExternalDomainClick: ( domainName?: string ) => void;
+	/**
+	 * Shows the "Already have a site?" card on the initial state when provided. Left out of the
+	 * default events so flows without a migration entry point don't render the card.
+	 */
+	onMigrateSiteClick?: () => void;
 	onMakePrimaryAddressClick: ( domainName: string ) => void;
 	onMoveDomainToSiteClick: ( otherSiteDomain: string, domainName: string ) => void;
 	onRegisterDomainClick: ( otherSiteDomain: string, domainName: string ) => void;
