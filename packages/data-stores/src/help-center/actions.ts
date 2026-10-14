@@ -150,17 +150,32 @@ export const setCheckoutSupportVariation = ( variation: CheckoutSupportVariation
 		variation,
 	} ) as const;
 
-/**
- * Set the current user in the help center store.
- * This value is needed because the store makes decisions based on the logged in status.
- * @param user - The current user to set.
- * @returns The action object.
- */
-export const setCurrentUser = ( user: CurrentUser | undefined ) =>
+const receiveCurrentUser = ( user: CurrentUser | undefined ) =>
 	( {
 		type: 'HELP_CENTER_SET_CURRENT_USER',
 		user,
 	} ) as const;
+
+/**
+ * Set the current user in the help center store.
+ * This value is needed because the store makes decisions based on the logged in status.
+ *
+ * A page can ask whether the Help Center is open before the Help Center knows the user (checkout
+ * does, on load). Those first reads come from local storage instead of the user's preferences, so
+ * they're restored again once the user is known.
+ * @param user - The current user to set.
+ * @yields The action that sets the user, then the ones that restore the open state.
+ */
+export const setCurrentUser = function* ( user: CurrentUser | undefined ) {
+	const wasLoggedIn: boolean = yield controls.select( STORE_KEY, 'getIsLoggedIn' );
+
+	yield receiveCurrentUser( user );
+
+	if ( ! wasLoggedIn && user?.ID ) {
+		yield controls.dispatch( STORE_KEY, 'invalidateResolution', 'isHelpCenterShown', [] );
+		yield controls.dispatch( STORE_KEY, 'invalidateResolution', 'getHelpCenterRouterHistory', [] );
+	}
+};
 
 export const showHelpCenter = function ( show: boolean ) {
 	persistPreference( 'help_center_open', show );
@@ -350,6 +365,6 @@ export type HelpCenterAction =
 			| typeof setHasPremiumSupport
 			| typeof setHelpCenterOptions
 			| typeof setCheckoutSupportVariation
-			| typeof setCurrentUser
+			| typeof receiveCurrentUser
 	  >
 	| GeneratorReturnType< typeof setShowHelpCenter >;
