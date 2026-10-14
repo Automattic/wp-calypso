@@ -99,8 +99,6 @@ const getSectionTitle = ( key: ProductSection[ 'key' ] | ProductBrand ) => {
 const PRODUCT_GRID_COLUMNS = 'repeat( auto-fill, minmax( 300px, 1fr ) )';
 
 // TODO: Still missing from the classic Products page:
-// - the agency approval notice (pending / approved / rejected)
-// - the overdue invoice notice
 // - the guided tour
 export default function MarketplaceProducts() {
 	const { recordTracksEvent } = useAnalytics();

@@ -6,6 +6,15 @@ import { useLocale } from '../../app/locale';
 import FlashMessage from '../../components/flash-message';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
+import { AgencyNotices } from '../components/agency-notices';
+import PaymentRiskNotice, { hasPaymentRiskNotice } from '../components/payment-risk-notice';
+import PressableUsageLimitNotice, {
+	usePressableUsageLimit,
+} from '../components/pressable-usage-limit-notice';
+import MissingPaymentSettingsNotice, {
+	useMissingPaymentSettings,
+} from '../earn/missing-payment-settings-notice';
+import { useHasCommissionActivity } from '../earn/use-has-commission-activity';
 import { getMarketplaceHostingSectionRoute } from '../marketplace/paths';
 import { PARTNER_DIRECTORY_ROUTE } from '../partner-directory/paths';
 import { useContactSupport } from '../support/use-contact-support';
@@ -29,6 +38,12 @@ export default function AgencyOverview() {
 	const { scheduleCall, isLoading: isSchedulingCall } = useScheduleCall( agency?.id );
 	const { isEligibleForPressableIntroOffer, isEligibleForPressableExpansionOffer } =
 		usePressableOfferEligibility( agency );
+	const { hasActivity, isLoading: isLoadingActivity } = useHasCommissionActivity( agencyId );
+	const pressableUsageLimit = usePressableUsageLimit( agency );
+	const missingPaymentSettings = useMissingPaymentSettings( {
+		hasCommissionActivity: hasActivity,
+		isLoadingActivity,
+	} );
 
 	if ( ! agency ) {
 		return <PageLayout header={ <PageHeader title={ __( 'Overview' ) } /> } />;
@@ -42,6 +57,28 @@ export default function AgencyOverview() {
 					url={ agency.url }
 					createdAt={ agency.created_at }
 					locale={ locale }
+				/>
+			}
+			notices={
+				<AgencyNotices
+					candidates={ [
+						{
+							id: 'payment-risk',
+							isUrgent: true,
+							isEligible: hasPaymentRiskNotice( agency ),
+							notice: <PaymentRiskNotice agency={ agency } source="overview" />,
+						},
+						{
+							id: 'pressable-usage-limit',
+							...pressableUsageLimit,
+							notice: <PressableUsageLimitNotice agency={ agency } />,
+						},
+						{
+							id: 'missing-payment-settings',
+							...missingPaymentSettings,
+							notice: <MissingPaymentSettingsNotice hasCommissionActivity={ hasActivity } />,
+						},
+					] }
 				/>
 			}
 		>

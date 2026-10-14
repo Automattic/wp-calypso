@@ -10,7 +10,10 @@ import { useLocale } from '../../../app/locale';
 import { DataViewsCard } from '../../../components/dataviews';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
-import MissingPaymentSettingsNotice from '../missing-payment-settings-notice';
+import { AgencyNotices } from '../../components/agency-notices';
+import MissingPaymentSettingsNotice, {
+	useMissingPaymentSettings,
+} from '../missing-payment-settings-notice';
 import MigrationsCommissionsContent from './commissions-content';
 import useCanTagSitesForCommission from './hooks/use-can-tag-sites-for-commission';
 import useFetchTaggedSitesForMigration from './hooks/use-fetch-tagged-sites-for-migration';
@@ -23,6 +26,10 @@ export default function EarnMigrations() {
 	const { data: sites = [] } = useQuery( allSitesQuery() );
 	const { data, isLoading } = useFetchTaggedSitesForMigration();
 	const taggedSites = data ?? [];
+	const missingPaymentSettings = useMissingPaymentSettings( {
+		hasCommissionActivity: taggedSites.length > 0,
+		isLoadingActivity: isLoading,
+	} );
 
 	const [ isAddSitesModalOpen, setIsAddSitesModalOpen ] = useState( false );
 
@@ -63,9 +70,19 @@ export default function EarnMigrations() {
 				/>
 			}
 			notices={
-				<MissingPaymentSettingsNotice
-					hasCommissionActivity={ taggedSites.length > 0 }
-					commissionType="migrations"
+				<AgencyNotices
+					candidates={ [
+						{
+							id: 'missing-payment-settings',
+							...missingPaymentSettings,
+							notice: (
+								<MissingPaymentSettingsNotice
+									hasCommissionActivity={ taggedSites.length > 0 }
+									commissionType="migrations"
+								/>
+							),
+						},
+					] }
 				/>
 			}
 		>

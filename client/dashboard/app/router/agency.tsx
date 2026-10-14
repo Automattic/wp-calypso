@@ -169,7 +169,13 @@ const agencyRoute = createRoute( {
 			throw redirectAsNotAllowed( { to: '/overview' } );
 		}
 	},
-} );
+} ).lazy( () =>
+	import( '../../agency/layout' ).then( ( d ) =>
+		createLazyRoute( 'agency' )( {
+			component: d.default,
+		} )
+	)
+);
 
 // `/overview` – agency overview
 const agencyOverviewRoute = createRoute( {
