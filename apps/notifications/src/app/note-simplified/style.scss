@@ -101,36 +101,6 @@
 	&:hover {
 		background-color: color-mix(in srgb, var(--wp-admin-theme-color) 2%, transparent);
 		box-shadow: 0 0 0 1px color-mix(in srgb, var(--wp-admin-theme-color) 12%, transparent);
-
-		span {
-			color: var(--wp-admin-theme-color);
-		}
-
-		.wpnc-simplified__card-arrow {
-			fill: var(--wp-admin-theme-color);
-		}
-
-		.wpnc-simplified__site-icon-frame::after {
-			opacity: 1;
-		}
-	}
-}
-
-.wpnc-simplified__site-icon-frame {
-	position: relative;
-	display: flex;
-	flex-shrink: 0;
-	border-radius: $radius-medium;
-
-	&::after {
-		content: "";
-		position: absolute;
-		inset: 0;
-		border-radius: inherit;
-		background: var(--wp-admin-theme-color);
-		mix-blend-mode: color;
-		opacity: 0;
-		pointer-events: none;
 	}
 }
 
@@ -140,6 +110,7 @@
 }
 
 .wpnc-simplified__site-icon {
+	flex-shrink: 0;
 	border-radius: $radius-medium;
 
 	&.is-placeholder {
