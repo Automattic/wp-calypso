@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import { screen, waitFor } from '@testing-library/react';
+import { fireEvent, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { MemoryRouter } from 'react-router';
@@ -53,6 +53,11 @@ const API_RESPONSE_WITH_OTHER_PLATFORM: UrlData = {
 
 const MOCK_WORDPRESS_SITE_SLUG = 'test-example.wordpress.com';
 const getInput = () => screen.getByLabelText( /Site address/ );
+const restoreFromBfcache = () => {
+	const pageshow = new Event( 'pageshow' ) as PageTransitionEvent;
+	Object.defineProperty( pageshow, 'persisted', { value: true } );
+	fireEvent( window, pageshow );
+};
 
 describe( 'SiteMigrationIdentify', () => {
 	beforeAll( () => nock.disableNetConnect() );
@@ -97,13 +102,35 @@ describe( 'SiteMigrationIdentify', () => {
 		);
 		expect( submit ).toHaveBeenCalledTimes( 1 );
 
+		restoreFromBfcache();
 		await userEvent.clear( getInput() );
 		await userEvent.type( getInput(), 'https://example.com' );
 		await userEvent.click( screen.getByRole( 'button', { name: /Check my site/ } ) );
 		await waitFor( () => expect( submit ).toHaveBeenCalledTimes( 3 ) );
-		await screen.findByRole( 'button', { name: /Check my site/ } );
+		await screen.findByText( 'Scanning your site' );
 		expect( submit ).toHaveBeenCalledTimes( 3 );
 		expect( submit ).toHaveBeenLastCalledWith( expect.objectContaining( { host: 'wpengine' } ) );
+	} );
+
+	it( 'keeps the scanning screen after the analysis completes', async () => {
+		const submit = jest.fn();
+		render( { navigation: { submit } } );
+
+		mockApi()
+			.get( '/wpcom/v2/imports/analyze-url' )
+			.query( { site_url: 'https://example.com' } )
+			.reply( 200, API_RESPONSE_WITH_OTHER_PLATFORM );
+		mockApi()
+			.get( '/wpcom/v2/site-profiler/hosting-provider/example.com' )
+			.reply( 200, { hosting_provider: { slug: 'wix' } } );
+
+		await userEvent.type( getInput(), 'https://example.com' );
+		await userEvent.click( screen.getByRole( 'button', { name: /Check my site/ } ) );
+
+		await waitFor( () => expect( submit ).toHaveBeenCalledTimes( 1 ) );
+		expect( screen.getByText( 'Scanning your site' ) ).toBeVisible();
+		expect( screen.queryByText( "Let's find your site" ) ).not.toBeInTheDocument();
+		expect( screen.queryByRole( 'button', { name: /Check my site/ } ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'continues the flow when the platform is unknown', async () => {

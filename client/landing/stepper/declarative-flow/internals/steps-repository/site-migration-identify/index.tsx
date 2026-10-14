@@ -52,11 +52,20 @@ export const Analyzer: FC< Props > = ( {
 		isError: hasHostingError,
 	} = useHostingProviderQuery( domain, !! domain );
 
-	// Update loading state to include hosting check
-	const isScanning =
-		isFetching ||
-		isFetchingHosting ||
-		( isFetched && ! hasError && ! hostingProviderData && ! hasHostingError );
+	// Keep scanning after both checks finish: the flow can leave with a full page
+	// load, and the form would show again until the next page renders.
+	const isScanning = isFetching || isFetchingHosting || ( isFetched && ! hasError );
+
+	// Back can restore this page from bfcache mid-scan; show the form again.
+	useEffect( () => {
+		const onPageShow = ( event: PageTransitionEvent ) => {
+			if ( event.persisted ) {
+				setSiteURL( '' );
+			}
+		};
+		window.addEventListener( 'pageshow', onPageShow );
+		return () => window.removeEventListener( 'pageshow', onPageShow );
+	}, [] );
 
 	useEffect( () => {
 		// Only complete when we have both site info AND hosting info (or hosting check failed)
