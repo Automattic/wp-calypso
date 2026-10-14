@@ -24,6 +24,12 @@ interface ResourceCenterProps {
 	recordTracksEvent: RecordTracksEvent;
 	/** The agency opened resources are recorded against, once it has loaded. */
 	agencyId: number | undefined;
+	/** Saved by each host, since the two dashboards don't share a query client. */
+	readIds: number[];
+	onReadIdsChange: ( ids: number[] ) => void;
+	/** The resource whose details are open. */
+	selectedId: number | null;
+	onSelectedIdChange: ( id: number | null ) => void;
 }
 
 export default function ResourceCenter( {
@@ -32,7 +38,20 @@ export default function ResourceCenter( {
 	onChangeView,
 	recordTracksEvent,
 	agencyId,
+	readIds,
+	onReadIdsChange,
+	selectedId,
+	onSelectedIdChange,
 }: ResourceCenterProps ) {
+	const previewResource = useCallback(
+		( resource: AgencyEnablementResource ) =>
+			recordTracksEvent( 'calypso_a4a_resource_center_preview', {
+				resource_id: resource.id,
+				resource_name: resource.name,
+			} ),
+		[ recordTracksEvent ]
+	);
+
 	const { mutate: recordResourceEvent } = useMutation(
 		agencyResourceEventMutation( agencyId ?? 0 )
 	);
@@ -63,6 +82,19 @@ export default function ResourceCenter( {
 		onChangeView( nextView );
 	};
 
+	const setResourceRead = ( resource: AgencyEnablementResource, isRead: boolean ) => {
+		onReadIdsChange(
+			isRead
+				? [ ...new Set( [ ...readIds, resource.id ] ) ]
+				: readIds.filter( ( readId ) => readId !== resource.id )
+		);
+		recordTracksEvent( 'calypso_a4a_resource_center_read_status_change', {
+			resource_id: resource.id,
+			resource_name: resource.name,
+			is_read: isRead,
+		} );
+	};
+
 	const resources = useMemo(
 		() =>
 			// Featured first, then by created_at descending (newest first).
@@ -79,8 +111,13 @@ export default function ResourceCenter( {
 			resources={ resources }
 			view={ view }
 			onChangeView={ changeView }
+			onPreviewResource={ previewResource }
 			onOpenResource={ openResource }
 			onLoadMore={ () => recordTracksEvent( 'calypso_a4a_resource_center_load_more' ) }
+			readIds={ readIds }
+			onSetRead={ setResourceRead }
+			selectedId={ selectedId }
+			onSelectedIdChange={ onSelectedIdChange }
 		/>
 	);
 }
