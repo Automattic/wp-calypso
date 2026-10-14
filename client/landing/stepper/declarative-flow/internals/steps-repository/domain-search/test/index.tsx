@@ -106,6 +106,17 @@ describe( 'DomainSearchStep back button', () => {
 		);
 	} );
 
+	it( 'ignores a back_to on a host that only starts with a dashboard origin', () => {
+		renderDomainSearch( LAUNCH_SITE_FLOW, {
+			query: '&back_to=https%3A%2F%2Fmy.wordpress.com.evil.example%2F',
+		} );
+
+		expect( screen.getByRole( 'link', { name: 'Back to sites' } ) ).toHaveAttribute(
+			'href',
+			'/sites'
+		);
+	} );
+
 	it( 'keeps honoring `source` in other flows', () => {
 		renderDomainSearch( DOMAIN_FLOW, { query: '&source=my-home' } );
 

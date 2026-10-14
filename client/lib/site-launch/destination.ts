@@ -24,7 +24,7 @@ function getOrigin( url: string ) {
 }
 
 // The query can point anywhere, so only same-origin paths and the dashboards are followed.
-function getSafeUrl( url: string | null | undefined ) {
+export function getSafeUrl( url: string | null | undefined ) {
 	if ( ! url ) {
 		return null;
 	}

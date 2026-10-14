@@ -29,14 +29,14 @@ import { WPCOMDomainSearch } from 'calypso/components/domains/wpcom-domain-searc
 import { FreeDomainForAYearPromo } from 'calypso/components/domains/wpcom-domain-search/free-domain-for-a-year-promo';
 import { useQueryHandler } from 'calypso/components/domains/wpcom-domain-search/use-query-handler';
 import FormattedHeader from 'calypso/components/formatted-header';
-import { dashboardLink, dashboardOrigins } from 'calypso/dashboard/utils/link';
-import { isRelativeUrl } from 'calypso/dashboard/utils/url';
+import { dashboardLink } from 'calypso/dashboard/utils/link';
 import { WOO_HOSTING_SOLUTIONS_REF } from 'calypso/landing/stepper/constants';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { shouldSkipPlansStep } from 'calypso/landing/stepper/utils/preselected-plan';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
+import { getSafeUrl } from 'calypso/lib/site-launch/destination';
 import {
 	domainAddNew,
 	domainManagementList,
@@ -576,9 +576,7 @@ const DomainSearchStep: StepType< {
 				return;
 			}
 
-			const isSafeBackTo =
-				isRelativeUrl( backTo ) ||
-				dashboardOrigins().some( ( origin ) => backTo?.startsWith( origin ) );
+			const isSafeBackTo = !! getSafeUrl( backTo );
 
 			// Matches legacy /start/launch-site, which ignores `source`.
 			if ( flow === LAUNCH_SITE_FLOW ) {
