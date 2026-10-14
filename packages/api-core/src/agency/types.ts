@@ -177,6 +177,13 @@ export interface Agency {
 		};
 	};
 	notifications?: AgencyNotification[];
+	/** The partner manager the agency's HubSpot record assigns; null when none is assigned. */
+	partner_manager?: AgencyPartnerManager | null;
+}
+
+export interface AgencyPartnerManager {
+	name: string;
+	avatar_url?: string | null;
 }
 
 export interface AgencyPressableUsage {
