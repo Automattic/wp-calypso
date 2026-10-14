@@ -262,10 +262,15 @@ const launchSiteFlow: FlowV2< typeof initialize > = {
 			return domainCartItems.length > 0 || ! domainCartItem ? domainCartItems : [ domainCartItem ];
 		};
 
+		// The onboarding store is shared with other flows and survives a visit that skips this flow's
+		// root, so only pick up what this flow's own steps could have chosen.
 		const getLaunchCartItems = () => {
-			const planCartItem = getPlanCartItem();
+			const domainItems = stepSlugs.includes( STEPS.DOMAIN_SEARCH.slug ) ? getDomainItems() : [];
+			const planCartItem = stepSlugs.includes( STEPS.UNIFIED_PLANS.slug )
+				? getPlanCartItem()
+				: null;
 
-			return [ ...getDomainItems(), ...( planCartItem ? [ planCartItem ] : [] ) ].map(
+			return [ ...domainItems, ...( planCartItem ? [ planCartItem ] : [] ) ].map(
 				addPrivacyIfSupported
 			);
 		};

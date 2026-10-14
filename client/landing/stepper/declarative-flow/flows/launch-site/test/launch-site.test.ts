@@ -505,6 +505,37 @@ describe( 'launch-site flow', () => {
 			);
 		} );
 
+		it( 'ignores a plan and domain saved by another flow when this one skips those steps', async () => {
+			setFlowSteps( [ STEPS.PROCESSING, STEPS.ERROR ] );
+			mockOnboard.domainCartItems = [ domainItem ];
+			mockOnboard.planCartItem = planItem;
+
+			await submit( STEPS.PROCESSING.slug, launched ).result;
+
+			expect( addProductsToCart ).not.toHaveBeenCalled();
+			expect( replaced() ).toBe( '/home/example.wordpress.com?celebrateLaunch=true' );
+		} );
+
+		it( 'ignores a saved plan when this flow skips the plan step', async () => {
+			setFlowSteps( [ STEPS.DOMAIN_SEARCH, STEPS.USE_MY_DOMAIN, STEPS.PROCESSING, STEPS.ERROR ] );
+			mockOnboard.domainCartItems = [ domainItem ];
+			mockOnboard.planCartItem = planItem;
+
+			await submit( STEPS.PROCESSING.slug, launched ).result;
+
+			expect( addProductsToCart ).toHaveBeenCalledWith( 'example.wordpress.com', 'launch-site', [
+				{ ...domainItem, extra: { privacy: true } },
+			] );
+		} );
+
+		it( 'never lands on another host through a redirect_to that only looks like a path', async () => {
+			mockQuery.redirect_to = '/..//evil.example';
+
+			await submit( STEPS.PROCESSING.slug, launched ).result;
+
+			expect( replaced() ).toBe( '/home/example.wordpress.com?celebrateLaunch=true' );
+		} );
+
 		it( 'only adds privacy to the products that support it', async () => {
 			mockOnboard.domainCartItems = [ transferItem ];
 
