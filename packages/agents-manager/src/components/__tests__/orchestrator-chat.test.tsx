@@ -439,7 +439,7 @@ jest.mock( '../../hooks/use-credits', () => ( {
 } ) );
 jest.mock( '../../utils/convert-tool-messages-to-components', () => ( {
 	__esModule: true,
-	default: ( { messages }: { messages: unknown[] } ) => messages,
+	default: jest.fn( ( { messages }: { messages: unknown[] } ) => messages ),
 	isContextOnlyMessage: ( message: {
 		context?: { flags?: { context_only?: boolean } };
 		content?: Array< { type?: string; data?: { flags?: { context_only?: boolean } } } >;
@@ -3407,6 +3407,113 @@ describe( 'OrchestratorChat', () => {
 				'onUndo'
 			);
 		}
+	} );
+
+	describe( 'retried block edits', () => {
+		const noChangeOutcome = {
+			id: 'no-change-outcome',
+			role: 'agent' as const,
+			content: [
+				{
+					type: 'text' as const,
+					text: JSON.stringify( {
+						tool_id: 'big_sky__apply_block_edits',
+						tool_call_id: 'tool-call-1',
+						data: { result: { success: true, outcome: 'no-changes' } },
+					} ),
+				},
+			],
+			timestamp: 1,
+			archived: false,
+			showIcon: true,
+		};
+		const retryUpdate = {
+			id: 'task-retry',
+			status: {
+				state: 'working',
+				message: {
+					messageId: 'retry-progress',
+					role: 'agent',
+					kind: 'message',
+					parts: [
+						{
+							type: 'data',
+							data: { summary: 'Adjusting my approach…', retryingToolCallId: 'tool-call-1' },
+						},
+					],
+				},
+			},
+			final: false,
+			kind: 'status',
+		} as unknown as TaskUpdate;
+		// The converter is mocked, so check the retries the chat hands it.
+		const isToolCallRetried = () => {
+			const convert = jest.requireMock( '../../utils/convert-tool-messages-to-components' )
+				.default as jest.Mock;
+			const { retriedToolCallIds } = convert.mock.calls.at( -1 )![ 0 ] as {
+				retriedToolCallIds?: ReadonlySet< string >;
+			};
+			return retriedToolCallIds?.has( 'tool-call-1' ) === true;
+		};
+
+		beforeEach( () => {
+			mockUseAgentChat.mockReturnValue(
+				agentChatReturn( { messages: [ userMessage, noChangeOutcome ] } )
+			);
+		} );
+
+		it( 'hides the summary the server retried', async () => {
+			mockAgentConfig = { agentId: 'wp-orchestrator', sessionId: 'session-a' };
+			render( chat() );
+			expect( isToolCallRetried() ).toBe( false );
+
+			await act( async () => {
+				await mockAgentChatConfig?.onTaskUpdate?.( retryUpdate );
+			} );
+
+			expect( isToolCallRetried() ).toBe( true );
+		} );
+
+		it( 'forgets retries when the conversation changes', async () => {
+			mockAgentConfig = { agentId: 'wp-orchestrator', sessionId: 'session-a' };
+			const view = render( chat() );
+
+			await act( async () => {
+				await mockAgentChatConfig?.onTaskUpdate?.( retryUpdate );
+			} );
+			mockAgentConfig = { agentId: 'wp-orchestrator', sessionId: 'session-b' };
+			view.rerender( chat() );
+
+			expect( isToolCallRetried() ).toBe( false );
+		} );
+
+		it( 'keeps retries when a fresh session is promoted', async () => {
+			mockAgentConfig = { agentId: 'wp-orchestrator', sessionId: '' };
+			mockTabSessionId = '';
+			const view = render( chat() );
+
+			await act( async () => {
+				await mockAgentChatConfig?.onTaskUpdate?.( retryUpdate );
+			} );
+			mockAgentConfig = { agentId: 'wp-orchestrator', sessionId: 'server-session' };
+			view.rerender( chat() );
+
+			expect( isToolCallRetried() ).toBe( true );
+		} );
+
+		it( 'ignores a retry from a previous conversation’s stream', async () => {
+			mockAgentConfig = { agentId: 'wp-orchestrator', sessionId: 'session-a' };
+			const view = render( chat() );
+			const onTaskUpdateBeforeSwitch = mockAgentChatConfig?.onTaskUpdate;
+
+			mockAgentConfig = { agentId: 'wp-orchestrator', sessionId: 'session-b' };
+			view.rerender( chat() );
+			await act( async () => {
+				await onTaskUpdateBeforeSwitch?.( retryUpdate );
+			} );
+
+			expect( isToolCallRetried() ).toBe( false );
+		} );
 	} );
 
 	it( 'drops in-flight streamed checkpoints when the tab session scope changes', async () => {

@@ -179,6 +179,7 @@ export * from './site-suggestions';
 export * from './site-themes';
 export * from './site-update-schedules';
 export * from './site-users';
+export * from './site-wordpress-migration';
 export * from './sites-comments';
 export * from './sites-comments-likes';
 export * from './sites-comments-replies';

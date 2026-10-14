@@ -324,6 +324,37 @@ export interface SendMessageParams {
 	imageUrls?: ( string | ImageData )[]; // Optional: array of image URLs or image objects with metadata
 }
 
+/**
+ * Delta message types emitted by the server in `message/delta` events.
+ */
+export interface ContentStreamDelta {
+	type?: 'delta';
+	deltaType: 'content';
+	content: string;
+}
+
+export interface ToolNameStreamDelta {
+	type?: 'delta';
+	deltaType: 'tool_name';
+	content: string;
+	toolCallId: string;
+	toolCallName?: string;
+	toolCallIndex?: number;
+}
+
+export interface ToolArgumentStreamDelta {
+	type?: 'delta';
+	deltaType: 'tool_argument';
+	content: string;
+	toolCallId: string;
+	toolCallName?: string;
+	toolCallIndex?: number;
+}
+
+export type ToolCallStreamDelta = ToolNameStreamDelta | ToolArgumentStreamDelta;
+
+export type StreamDelta = ContentStreamDelta | ToolNameStreamDelta | ToolArgumentStreamDelta;
+
 export interface TaskUpdate {
 	id: string;
 	sessionId?: string; // Session ID from server
@@ -339,6 +370,7 @@ export interface TaskUpdate {
 	// Wire source: 'delta' (message/delta) or 'status' (TaskStatusUpdateEvent).
 	// Non-final text-bearing 'status' updates mark utterance boundaries.
 	kind?: 'delta' | 'status';
+	delta?: StreamDelta; // The wire delta, on 'delta' updates.
 }
 
 export interface Client {

@@ -350,7 +350,11 @@ function PurchaseActionMenu( { actions }: { actions: PurchaseHeaderAction[] } ) 
 	}
 
 	return (
-		<DropdownMenu icon={ moreVertical } label={ __( 'Quick actions' ) }>
+		<DropdownMenu
+			toggleProps={ { __next40pxDefaultSize: true } }
+			icon={ moreVertical }
+			label={ __( 'Quick actions' ) }
+		>
 			{ () => (
 				<MenuGroup>
 					{ actions.map( ( action ) => (
@@ -393,7 +397,7 @@ export function PurchaseHeaderActions( {
 		: actions.filter( ( action ) => action !== promotedAction );
 
 	return (
-		<HStack justify="space-between">
+		<>
 			{ promotedAction && (
 				<Button
 					__next40pxDefaultSize
@@ -409,7 +413,7 @@ export function PurchaseHeaderActions( {
 					<PurchaseActionMenu actions={ overflowActions } />
 				</PageHeader.ActionMenu>
 			) }
-		</HStack>
+		</>
 	);
 }
 
