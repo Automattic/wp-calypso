@@ -1199,6 +1199,35 @@ describe( 'NamePulseResults', () => {
 			expect( events.onSuggestionRender ).toHaveBeenCalledTimes( renderCount );
 		} );
 
+		it( 'reports no render before its search, even while the TLD list loads', async () => {
+			const events = buildEvents();
+			let resolveTlds: ( tlds: string[] ) => void = () => {};
+
+			render(
+				<NamePulseTestSearch
+					query="icecream"
+					events={ events }
+					tldsResponse={ () =>
+						new Promise< string[] >( ( resolve ) => {
+							resolveTlds = resolve;
+						} )
+					}
+				/>
+			);
+
+			await findRow( 'creamyice.com' );
+			expect( events.onNamePulseSearch ).not.toHaveBeenCalled();
+			expect( events.onSuggestionRender ).not.toHaveBeenCalled();
+
+			await act( async () => resolveTlds( NAME_PULSE_TLDS_FIXTURE ) );
+			await waitFor( () => expect( events.onSuggestionRender ).toHaveBeenCalled() );
+
+			const [ searchOrder ] = events.onNamePulseSearch.mock.invocationCallOrder;
+			expect( Math.min( ...events.onSuggestionRender.mock.invocationCallOrder ) ).toBeGreaterThan(
+				searchOrder
+			);
+		} );
+
 		it( 'reports a typed domain as a full-domain search, its availability and its card', async () => {
 			const events = buildEvents();
 

@@ -1,13 +1,27 @@
 import { useEvent } from '@wordpress/compose';
-import { useEffect, useMemo, useRef } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useDomainSearch } from '../../page/context';
 import { NAME_PULSE_SKELETON_TIMEOUT_MS, NamePulseDomainStatus } from '../helpers';
 import type { NamePulseRenderReport, NamePulseResultSet } from './use-name-pulse-result-set';
 import type { useNamePulseSearch } from './use-name-pulse-search';
 
+interface NamePulseSearchIds {
+	key: string;
+	searchId: string;
+	resultSetId: string;
+	rendered: Map< string, NamePulseRenderReport >;
+}
+
+const createSearchIds = ( key: string ): NamePulseSearchIds => ( {
+	key,
+	searchId: crypto.randomUUID(),
+	resultSetId: crypto.randomUUID(),
+	rendered: new Map(),
+} );
+
 interface NamePulseSearchTrackingState {
+	ids: NamePulseSearchIds;
 	query: string;
-	filterKey: string;
 	settledAt: number;
 	hasReportedResults: boolean;
 	hasReportedAvailability: boolean;
@@ -15,7 +29,7 @@ interface NamePulseSearchTrackingState {
 
 /**
  * Records one search per settled query or filter change, and the result set
- * it shows. Returns the result set, with its id once the query has settled.
+ * it shows. Returns the result set, with its id once its search is recorded.
  */
 export const useNamePulseSearchTracking = (
 	search: ReturnType< typeof useNamePulseSearch >
@@ -44,25 +58,21 @@ export const useNamePulseSearchTracking = (
 	} = search;
 
 	const filterKey = [ ...filter.tlds ].sort().join( ',' );
-	// Created during render, so rows rendering in the same commit already have them.
-	const ids = useMemo(
-		() => ( {
-			searchId: crypto.randomUUID(),
-			resultSetId: crypto.randomUUID(),
-			rendered: new Map< string, NamePulseRenderReport >(),
-		} ),
-		// eslint-disable-next-line react-hooks/exhaustive-deps -- each search gets new ids.
-		[ settledQuery, filterKey ]
-	);
+	const searchKey = `${ settledQuery }|${ filterKey }`;
+	// Kept in state so they last the whole search, and replaced during render so
+	// rows rendering in the same commit already have the new ones.
+	const [ ids, setIds ] = useState( () => createSearchIds( searchKey ) );
+
+	if ( ids.key !== searchKey ) {
+		setIds( createSearchIds( searchKey ) );
+	}
+	// Rows report their render only once the search they belong to is recorded.
+	const [ searchedIds, setSearchedIds ] = useState< typeof ids >();
 
 	const reportResults = useEvent( ( timedOut: boolean ) => {
 		const current = state.current;
 
-		if (
-			current?.query !== settledQuery ||
-			current.filterKey !== filterKey ||
-			current.hasReportedResults
-		) {
+		if ( current?.ids !== ids || current.hasReportedResults ) {
 			return;
 		}
 
@@ -111,10 +121,10 @@ export const useNamePulseSearchTracking = (
 
 		let current = state.current;
 
-		if ( current?.query !== settledQuery || current.filterKey !== filterKey ) {
+		if ( current?.ids !== ids ) {
 			current = {
+				ids,
 				query: settledQuery,
-				filterKey,
 				settledAt: Date.now(),
 				hasReportedResults: false,
 				hasReportedAvailability: false,
@@ -124,6 +134,7 @@ export const useNamePulseSearchTracking = (
 				search_id: ids.searchId,
 				query_shape: settledLayout.mode,
 			} );
+			setSearchedIds( ids );
 		}
 
 		const typedDomain = settledLayout.fqdn?.fullDomain;
@@ -168,7 +179,7 @@ export const useNamePulseSearchTracking = (
 		return () => clearTimeout( timer );
 	}, [ settledQuery, filterKey, isSettled, track, reportResults ] );
 
-	const id = isSettled ? ids.resultSetId : undefined;
+	const id = isSettled && searchedIds === ids ? ids.resultSetId : undefined;
 
 	return useMemo( () => ( { id, rendered: ids.rendered } ), [ id, ids ] );
 };
