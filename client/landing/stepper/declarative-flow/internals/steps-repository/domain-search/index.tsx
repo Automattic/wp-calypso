@@ -576,16 +576,19 @@ const DomainSearchStep: StepType< {
 				return;
 			}
 
-			const isSafeBackTo = !! getSafeUrl( backTo );
-
-			// Matches legacy /start/launch-site, which ignores `source`.
+			// Matches legacy /start/launch-site, which ignores `source` and also follows a `back_to` on
+			// the site, such as the wp-admin screen the launch started from.
 			if ( flow === LAUNCH_SITE_FLOW ) {
+				const launchBackTo = getSafeUrl( backTo, site?.URL );
+
 				return (
-					<Step.BackButton href={ isSafeBackTo ? backTo : defaultBackUrl }>
-						{ isSafeBackTo ? __( 'Back' ) : sitesBackLabelText }
+					<Step.BackButton href={ launchBackTo ?? defaultBackUrl }>
+						{ launchBackTo ? __( 'Back' ) : sitesBackLabelText }
 					</Step.BackButton>
 				);
 			}
+
+			const isSafeBackTo = !! getSafeUrl( backTo );
 
 			let backDestination: string | typeof navigation.goBack = '';
 			let backLabelText = '';

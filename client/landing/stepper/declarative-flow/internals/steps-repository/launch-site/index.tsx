@@ -38,6 +38,7 @@ const LaunchSiteStep: StepType = function LaunchSiteStep( { navigation } ) {
 
 	const returnUrl = getLaunchReturnUrl( {
 		siteSlug: query.get( 'siteSlug' ) ?? '',
+		siteUrl: site?.URL,
 		backTo: query.get( 'back_to' ),
 		ref: query.get( 'ref' ),
 	} );

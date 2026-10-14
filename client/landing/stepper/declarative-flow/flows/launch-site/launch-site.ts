@@ -115,9 +115,16 @@ function getHostname( url: string | undefined ) {
 
 function useLaunchParams(): LaunchParams {
 	const query = useQuery();
+	const siteSlug = query.get( 'siteSlug' ) ?? '';
+	const siteUrl = useSelect(
+		( select ) =>
+			siteSlug ? ( select( SITE_STORE ) as SiteSelect ).getSite( siteSlug )?.URL : undefined,
+		[ siteSlug ]
+	);
 
 	return {
-		siteSlug: query.get( 'siteSlug' ) ?? '',
+		siteSlug,
+		siteUrl,
 		backTo: query.get( 'back_to' ),
 		redirectTo: query.get( 'redirect_to' ),
 		ref: query.get( 'ref' ),
@@ -140,12 +147,7 @@ const launchSiteFlow: FlowV2< typeof initialize > = {
 
 	useSideEffect( currentStepSlug ) {
 		const { resetOnboardStore, setSiteUrl } = useDispatch( ONBOARD_STORE ) as OnboardActions;
-		const { siteSlug } = useLaunchParams();
-		const siteUrl = useSelect(
-			( select ) =>
-				siteSlug ? ( select( SITE_STORE ) as SiteSelect ).getSite( siteSlug )?.URL : undefined,
-			[ siteSlug ]
-		);
+		const { siteSlug, siteUrl } = useLaunchParams();
 
 		useQueryProductsList();
 

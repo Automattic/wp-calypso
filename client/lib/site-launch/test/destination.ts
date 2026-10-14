@@ -35,6 +35,31 @@ describe( 'getLaunchReturnUrl', () => {
 		).toBe( 'https://my.wordpress.com/sites/test-site' );
 	} );
 
+	it( 'returns a back_to on the site being launched', () => {
+		expect(
+			getLaunchReturnUrl( {
+				siteSlug,
+				siteUrl: 'https://test-site',
+				backTo: 'https://test-site/wp-admin/post.php?post=1&action=edit',
+			} )
+		).toBe( 'https://test-site/wp-admin/post.php?post=1&action=edit' );
+	} );
+
+	it.each( [ 'https://test-site.evil.example/wp-admin/', 'http://test-site/wp-admin/' ] )(
+		'ignores %s, which is not on the site being launched',
+		( backTo ) => {
+			expect( getLaunchReturnUrl( { siteSlug, siteUrl: 'https://test-site', backTo } ) ).toBe(
+				'/home/test-site'
+			);
+		}
+	);
+
+	it( 'ignores a site-host back_to when the site is unknown', () => {
+		expect( getLaunchReturnUrl( { siteSlug, backTo: 'https://test-site/wp-admin/' } ) ).toBe(
+			'/home/test-site'
+		);
+	} );
+
 	it.each( [
 		'https://evil.example/',
 		'//evil.example/',
@@ -87,6 +112,27 @@ describe( 'getLaunchDestination', () => {
 				redirectTo: 'https://my.wordpress.com/sites/test-site',
 			} )
 		).toBe( 'https://my.wordpress.com/sites/test-site?celebrateLaunch=true' );
+	} );
+
+	it( 'lands on the wp-admin screen ref names, not on back_to', () => {
+		expect(
+			getLaunchDestination( {
+				siteSlug,
+				siteUrl: 'https://test-site',
+				ref: 'wp-admin/options-reading.php',
+				backTo: 'https://test-site/wp-admin/post.php?post=1',
+			} )
+		).toBe( 'https://test-site/wp-admin/options-reading.php?celebrate-launch=true' );
+	} );
+
+	it( 'uses wp-admin’s celebrate argument for a wp-admin back_to', () => {
+		expect(
+			getLaunchDestination( {
+				siteSlug,
+				siteUrl: 'https://test-site',
+				backTo: 'https://test-site/wp-admin/tools.php',
+			} )
+		).toBe( 'https://test-site/wp-admin/tools.php?celebrate-launch=true' );
 	} );
 
 	it( 'uses wp-admin’s celebrate argument', () => {

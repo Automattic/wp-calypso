@@ -22,8 +22,8 @@ Logged-out users log in first; the steps are then worked out for their site.
 - `back_to` – Where Back returns to. Also where the user lands after launch, when there is no `redirect_to`.
 - `redirect_to` – Where the user lands after launch (and after checkout).
 
-  `back_to` and `redirect_to` are only followed when they are a path on this site or a URL on one of the dashboards; anything else is ignored.
-- `ref` – Passed on to checkout. `wp-admin` (or `wp-admin/…`) returns the user to the site's wp-admin.
+  `back_to` and `redirect_to` are only followed when they are a relative path, a URL on one of the dashboards, or a URL on the site being launched (such as the wp-admin screen the launch started from); anything else is ignored.
+- `ref` – Passed on to checkout. `wp-admin` (or `wp-admin/…`) lands the user on that wp-admin screen after launch, ahead of `back_to`.
 - `coupon` – Applied at checkout.
 - `dashboard` – Passed on to checkout when it is `a4a`, `ciab` or `dotcom`.
 - `new` – Pre-fills the domain search.
@@ -33,7 +33,7 @@ Logged-out users log in first; the steps are then worked out for their site.
 
 The site is launched **before** checkout, as in legacy `/start/launch-site`. Then:
 
-- **Nothing to buy** – the user goes straight to the destination: `redirect_to`, else `back_to`, else My Home, with the launch celebration on.
+- **Nothing to buy** – the user goes straight to the destination: `redirect_to`, else the wp-admin screen `ref` names, else `back_to`, else My Home, with the launch celebration on.
 - **A domain or plan picked** – they go into the cart (domains get privacy protection where it's supported), and the user goes to checkout. Checkout returns them to the same destination, and skipping checkout still celebrates the launch.
 
 ## Testing instructions

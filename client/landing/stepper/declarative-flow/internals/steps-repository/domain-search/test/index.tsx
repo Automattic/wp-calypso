@@ -106,6 +106,16 @@ describe( 'DomainSearchStep back button', () => {
 		);
 	} );
 
+	it( 'follows a back_to on the site being launched', () => {
+		const backTo = `${ site.URL }/wp-admin/options-reading.php`;
+
+		renderDomainSearch( LAUNCH_SITE_FLOW, {
+			query: `&back_to=${ encodeURIComponent( backTo ) }`,
+		} );
+
+		expect( screen.getByRole( 'link', { name: 'Back' } ) ).toHaveAttribute( 'href', backTo );
+	} );
+
 	it( 'ignores a back_to on a host that only starts with a dashboard origin', () => {
 		renderDomainSearch( LAUNCH_SITE_FLOW, {
 			query: '&back_to=https%3A%2F%2Fmy.wordpress.com.evil.example%2F',
