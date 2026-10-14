@@ -39,11 +39,6 @@ const selectors = {
 	// Details popover
 	detailsButton: `${ panel } button[aria-label="Details"]`,
 
-	// Document Actions dropdown
-	documentActionsDropdown: `${ panel } button[aria-label="Show template details"]`,
-	documentActionsDropdownItem: ( itemSelector: string ) => `.popover-slot ${ itemSelector }`,
-	documentActionsDropdownShowAll: '.popover-slot .edit-site-template-details__show-all-button',
-
 	// Undo/Redo
 	undoButton: 'button[aria-disabled=false][aria-label="Undo"]',
 	redoButton: 'button[aria-disabled=false][aria-label="Redo"]',
@@ -691,24 +686,6 @@ export class EditorToolbarComponent {
 	async saveSiteEditor(): Promise< void > {
 		const editorParent = await this.editor.parent();
 		const locator = editorParent.locator( selectors.saveSiteEditorButton );
-		await locator.click();
-	}
-
-	/**
-	 * Click the document actions icon for the full site editor.
-	 */
-	async clickDocumentActionsIcon(): Promise< void > {
-		const editorParent = await this.editor.parent();
-		const locator = editorParent.locator( selectors.documentActionsDropdown );
-		await locator.click();
-	}
-
-	/**
-	 * Click the document actions icon for the full site editor.
-	 */
-	async clickDocumentActionsDropdownItem( itemName: string ): Promise< void > {
-		const editorParent = await this.editor.parent();
-		const locator = editorParent.locator( selectors.documentActionsDropdownItem( itemName ) );
 		await locator.click();
 	}
 }
