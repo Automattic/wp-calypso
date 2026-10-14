@@ -16,7 +16,12 @@ export async function tryPreload( step?: StepperStep, followingStep?: StepperSte
 	if ( step && 'asyncComponent' in step ) {
 		debug( 'Preloading step:', step.slug );
 		const { default: component } = await step.asyncComponent();
-		lazyCache.set( step.asyncComponent, component );
+		// The renderer may have cached a `lazy()` wrapper for this step while the import was in
+		// flight and handed it to React. Replacing it with the raw component changes the element
+		// type on the next render, and React remounts the step, which reruns its mount effects.
+		if ( ! lazyCache.has( step.asyncComponent ) ) {
+			lazyCache.set( step.asyncComponent, component );
+		}
 	}
 	// Flows are indeterminate, they often pick one of the two next steps based on user input, so load two steps ahead.
 	if ( followingStep ) {
