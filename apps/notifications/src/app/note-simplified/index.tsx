@@ -23,7 +23,7 @@ export default function SimplifiedNote( { note }: { note: Note } ) {
 	const Layout = LAYOUT_BY_TYPE[ note.type ] ?? NoticeNote;
 
 	return (
-		<VStack spacing={ 4 }>
+		<VStack className="wpnc-simplified" spacing={ 4 }>
 			<Layout note={ note } />
 		</VStack>
 	);

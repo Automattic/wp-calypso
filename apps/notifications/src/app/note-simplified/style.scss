@@ -119,3 +119,17 @@
 		fill: var(--wp-components-color-gray-700, #{$gray-700});
 	}
 }
+
+.wpnc-simplified .wpnc__body .wpnc__body-content > :last-child > .wpnc__paragraph:last-child {
+	padding-bottom: 0;
+}
+
+.wpnc-simplified .wpnc__reply {
+	.wpnc__gridicon {
+		margin-inline-end: 2px;
+	}
+
+	a {
+		font-weight: 400;
+	}
+}
