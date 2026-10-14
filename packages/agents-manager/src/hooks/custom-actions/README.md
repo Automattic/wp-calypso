@@ -220,6 +220,10 @@ all chat routes, and ignores close requests (including `setChatOpen(false)`).
 `showEntryPoints: false` hides the wp-admin/omnibar and editor toolbar Agent
 toggles. Docking and responsive floating layout remain available.
 
+`dismissible: false` only applies where the chat can dock (desktop width and,
+in the editors, fullscreen mode). Below that the chat floats over the page, so
+it can always be closed there.
+
 This configuration lasts only for the current document and is not a user
 preference. It is a bootstrap contract, not a reactive settings API. The host
 must provide an accessible exit from its experience and hide server-rendered

@@ -8,6 +8,11 @@ import { clearSiteEditorActions, getSiteEditorActions } from '../../utils/site-e
 import { recordAgentsManagerTracksEvent, recordBigSkyTracksEvent } from '../../utils/tracks';
 import { useRegisterCustomActions, useSetupCustomActions } from '../custom-actions';
 
+// The lock only holds where the chat can dock.
+jest.mock( '../../utils/can-dock', () => ( {
+	...jest.requireActual( '../../utils/can-dock' ),
+	getCanDock: () => true,
+} ) );
 jest.mock( '../../utils/tracks', () => ( {
 	BIG_SKY_EVENT_PREFIX: jest.requireActual( '../../utils/tracks' ).BIG_SKY_EVENT_PREFIX,
 	recordAgentsManagerTracksEvent: jest.fn(),

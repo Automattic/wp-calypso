@@ -4,6 +4,11 @@
 /* eslint-disable import/order -- jest.mock calls must precede imports */
 const mockResumeChat = jest.fn();
 
+// The lock only holds where the chat can dock.
+jest.mock( '../../utils/can-dock', () => ( {
+	...jest.requireActual( '../../utils/can-dock' ),
+	getCanDock: () => true,
+} ) );
 jest.mock( '../../contexts', () => ( {
 	useAgentsManagerContext: () => ( { resumeChat: mockResumeChat, sectionName: 'wp-admin' } ),
 } ) );
