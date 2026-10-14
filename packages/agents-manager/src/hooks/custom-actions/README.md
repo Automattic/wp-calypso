@@ -62,7 +62,7 @@ if ( window.__agentsManagerActions?.isReady ) {
 
 ## Conversation activity
 
-`agents-manager-conversation-changed` fires on `window` whenever the number of messages in the transcript changes — a message is sent, received or added mid-turn, or a non-empty conversation is shown. It doesn't mark the end of a turn; use `agents-manager-turn-ended` for that. Use it to re-sync state a host bundle renders inside the chat transcript (e.g. a card reflecting an action run from chat) without a page reload. The event carries no detail; read whatever you need from your own state or the API when it fires.
+`agents-manager-conversation-changed` fires on `window` when the chat mounts with messages and whenever the transcript's message count changes to a non-zero value — a message is sent, received or added mid-turn, or a conversation of a different length is shown. It doesn't fire when the transcript is cleared or for a switch to a conversation of the same length, and it doesn't mark the end of a turn; use `agents-manager-turn-ended` for that. Use it to re-sync state a host bundle renders inside the chat transcript (e.g. a card reflecting an action run from chat) without a page reload. The event carries no detail; read whatever you need from your own state or the API when it fires.
 
 ```js
 function resync() {
