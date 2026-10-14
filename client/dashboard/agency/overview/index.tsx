@@ -34,7 +34,7 @@ export default function AgencyOverview() {
 	const agencyId = agency?.id ?? 0;
 	const approvalStatus = agency?.approval_status;
 	const isPending = approvalStatus === 'pending';
-	const { isEligible: showsWelcomeBand, isVisible: isWelcomeBandVisible } =
+	const { isVisible: isWelcomeBandVisible, isLoading: isWelcomeBandLoading } =
 		useWelcomeBandVisibility( approvalStatus, agency?.tier?.id, agency?.created_at );
 	const { openTour } = useOnboardingTour();
 	const hasPartnerDirectoryListing =
@@ -93,7 +93,7 @@ export default function AgencyOverview() {
 				type="error"
 				message={ __( 'You don’t have permission to view the requested page.' ) }
 			/>
-			{ showsWelcomeBand && (
+			{ isWelcomeBandVisible && (
 				<WelcomeBand
 					isPending={ isPending }
 					sitesHref="/sites"
@@ -146,7 +146,7 @@ export default function AgencyOverview() {
 				isSchedulingCall={ isSchedulingCall }
 				onRelaunchTour={ openTour }
 				tourLabel={ __( 'Take the full tour' ) }
-				hidesPendingCard={ isWelcomeBandVisible }
+				hidesPendingCard={ isWelcomeBandVisible || isWelcomeBandLoading }
 				recordTracksEvent={ recordTracksEvent }
 			/>
 		</PageLayout>

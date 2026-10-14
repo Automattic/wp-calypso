@@ -32,6 +32,8 @@ const NEW_AGENCY_WINDOW_MS = 60 * 24 * 60 * 60 * 1000;
 /**
  * Who sees the band on Overview, until they close it: agencies under review, and agencies at
  * the first tier that joined in the last 60 days. A rejected application gets its own card.
+ * While `isLoading`, the band may still show, so Overview holds back the Pending card instead
+ * of swapping it for the band.
  */
 export function useWelcomeBandVisibility(
 	approvalStatus?: AgencyApprovalStatus | '',
@@ -48,7 +50,10 @@ export function useWelcomeBandVisibility(
 		enabled: isEligible,
 	} );
 
-	return { isEligible, isVisible: isEligible && isFetched && ! isDismissed };
+	return {
+		isVisible: isEligible && isFetched && ! isDismissed,
+		isLoading: isEligible && ! isFetched,
+	};
 }
 
 type StepId = 'call' | 'site' | 'product';
@@ -69,7 +74,7 @@ interface WelcomeBandProps {
 
 /**
  * Greets new agencies on Overview with three first steps and the full tour one click
- * away. Closing it hides it for good.
+ * away. Overview shows it per `useWelcomeBandVisibility`; closing it hides it for good.
  */
 export default function WelcomeBand( {
 	isPending,
@@ -80,27 +85,18 @@ export default function WelcomeBand( {
 	onTakeTour,
 	recordTracksEvent,
 }: WelcomeBandProps ) {
-	const { data: isDismissed, isFetched } = useQuery(
-		userPreferenceQuery( WELCOME_BAND_DISMISSED_PREFERENCE )
-	);
 	const { mutate: saveDismissed } = useMutation(
 		userPreferenceOptimisticMutation( WELCOME_BAND_DISMISSED_PREFERENCE )
 	);
 	const state = isPending ? 'under-review' : 'approved';
-	const isVisible = isFetched && ! isDismissed;
 
 	const hasRecordedView = useRef( false );
 	useEffect( () => {
-		if ( isVisible && ! hasRecordedView.current ) {
+		if ( ! hasRecordedView.current ) {
 			hasRecordedView.current = true;
 			recordTracksEvent( 'calypso_a4a_overview_welcome_band_view', { state } );
 		}
-	}, [ isVisible, state, recordTracksEvent ] );
-
-	// Wait for the preference, so a closed band never flashes open first.
-	if ( ! isVisible ) {
-		return null;
-	}
+	}, [ state, recordTracksEvent ] );
 
 	const recordStep = ( step: StepId ) =>
 		recordTracksEvent( 'calypso_a4a_overview_welcome_band_step_click', { state, step } );
