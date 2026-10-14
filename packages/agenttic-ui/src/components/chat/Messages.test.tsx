@@ -29,7 +29,7 @@ function agentMessage( text: string, id = 'agent-1' ): MessageType {
 	};
 }
 
-describe( 'Messages screen reader announcements', () => {
+describe( 'Messages', () => {
 	let container: HTMLDivElement;
 	let root: Root;
 
@@ -102,5 +102,28 @@ describe( 'Messages screen reader announcements', () => {
 		} );
 
 		expect( announcement() ).toBe( 'Price updated done' );
+	} );
+
+	it( 'shows the thinking indicator from `isReplying` rather than pauses in the text', async () => {
+		const question = userMessage( 'Make it orange' );
+		const thinking = () => container.querySelector( '[data-slot="thinking"]' );
+
+		// Settled text alone would show the indicator.
+		await render( {
+			messages: [ question, agentMessage( 'Done.' ) ],
+			isProcessing: true,
+			isReplying: true,
+		} );
+
+		expect( thinking() ).toBeNull();
+
+		// Changing text alone would hide it.
+		await render( {
+			messages: [ question, agentMessage( 'Done. Checking the page.' ) ],
+			isProcessing: true,
+			isReplying: false,
+		} );
+
+		expect( thinking() ).not.toBeNull();
 	} );
 } );

@@ -1,4 +1,4 @@
-import { siteBySlugQuery } from '@automattic/api-queries';
+import { activeAgencyQuery, siteBySlugQuery } from '@automattic/api-queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { useViewportMatch } from '@wordpress/compose';
 import { agencySiteRoute } from '../../../app/router/agency';
@@ -10,8 +10,10 @@ import SiteOverviewFields from '../../../sites/overview-site-fields';
 import VisibilityCard from '../../../sites/overview-visibility-card';
 import { siteTypeSupportsFeature } from '../../../utils/site-type-feature-support';
 import { getSiteName } from '../dataviews/site-data';
+import { isTeamMemberWithoutSiteAccess } from './access';
 import ActivityCard from './activity-card';
 import BackupCard from './backup-card';
+import NoAccessCallout from './no-access-callout';
 import AgencySitePlanCard from './plan-card';
 import ScanCard from './scan-card';
 
@@ -37,10 +39,19 @@ export default function AgencySiteOverview() {
 	const { siteSlug } = agencySiteRoute.useParams();
 	const site = agencySiteRoute.useLoaderData();
 	const { data: fullSite } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
+	const { data: agency } = useSuspenseQuery( activeAgencyQuery() );
 	const isSmallViewport = useViewportMatch( 'medium', '<' );
 	const isLargeViewport = useViewportMatch( 'xlarge' );
 	const gap = isSmallViewport ? 'lg' : 'xl';
 	const gridLayout = getGridLayout( { isLargeViewport, isSmallViewport } );
+
+	if ( isTeamMemberWithoutSiteAccess( fullSite, agency ) ) {
+		return (
+			<PageLayout header={ <PageHeader title={ getSiteName( site ) } /> }>
+				<NoAccessCallout />
+			</PageLayout>
+		);
+	}
 
 	return (
 		<PageLayout

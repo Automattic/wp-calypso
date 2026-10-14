@@ -1,3 +1,4 @@
+import { formatNumber } from '@automattic/number-formatters';
 import { __experimentalHStack as HStack, Button, Icon, Tooltip } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { closeSmall } from '@wordpress/icons';
@@ -51,9 +52,9 @@ export const PluginUpdatesFilter = ( {
 		siteCount === undefined
 			? __( 'Update available' )
 			: sprintf(
-					// translators: %(siteCount)d is the number of plugins with updates available.
-					__( 'Update available (%(siteCount)d)' ),
-					{ siteCount }
+					// translators: %(siteCount)s is the formatted number of plugins with updates available.
+					__( 'Update available (%(siteCount)s)' ),
+					{ siteCount: formatNumber( siteCount ) }
 				);
 
 	return currentFilter?.value === true ? (
