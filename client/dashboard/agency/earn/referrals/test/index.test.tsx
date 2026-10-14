@@ -102,18 +102,11 @@ describe( '<EarnReferrals>', () => {
 		await waitFor( () => expect( newReferralButton() ).not.toBeInTheDocument() );
 	} );
 
-	test( 'asks for payout details with referral-specific copy, and lets it be dismissed', async () => {
+	test( 'asks for payout details with referral-specific copy, and keeps it on screen', async () => {
 		mockEndpoints( { isPayable: false } );
 		render( <EarnReferrals /> );
 
 		expect( await screen.findByText( /You’ve successfully made a client referral/ ) ).toBeVisible();
-
-		await userEvent.click( screen.getByRole( 'button', { name: 'Dismiss' } ) );
-
-		await waitFor( () =>
-			expect(
-				screen.queryByText( /You’ve successfully made a client referral/ )
-			).not.toBeInTheDocument()
-		);
+		expect( screen.queryByRole( 'button', { name: 'Dismiss' } ) ).not.toBeInTheDocument();
 	} );
 } );

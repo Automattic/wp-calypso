@@ -91,6 +91,7 @@ function PartnerOfferCard( {
 						{ shouldUseRouterLink && isDashboardPath( item.cta.url ) ? (
 							<RouterLinkButton
 								variant="secondary"
+								size="compact"
 								to={ item.cta.url.split( '?' )[ 0 ] }
 								search={ getQueryArgs( item.cta.url ) }
 								onClick={ handleCTAClick }
@@ -100,6 +101,7 @@ function PartnerOfferCard( {
 						) : (
 							<Button
 								variant="secondary"
+								size="compact"
 								href={ item.cta.url }
 								target={ item.cta.external ? '_blank' : undefined }
 								rel={ item.cta.external ? 'noopener noreferrer' : undefined }

@@ -21,6 +21,7 @@ export function Chat( {
 	messages,
 	isProcessing,
 	isStreaming,
+	isReplying,
 	error,
 	onSubmit,
 	beforeSubmit,
@@ -283,6 +284,7 @@ export function Chat( {
 					trailingActions={ trailingActions }
 					isProcessing={ isProcessing }
 					isStreaming={ isStreaming }
+					isReplying={ isReplying }
 					onStop={ onStop }
 					showHeader={ false }
 					notice={ notice }
@@ -439,6 +441,7 @@ export function Chat( {
 								trailingActions={ trailingActions }
 								isProcessing={ isProcessing }
 								isStreaming={ isStreaming }
+								isReplying={ isReplying }
 								onStop={ onStop }
 								showHeader
 								onClose={ handleClose }

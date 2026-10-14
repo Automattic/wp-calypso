@@ -42,6 +42,7 @@ export function AgentUIContainer( {
 	messages,
 	isProcessing,
 	isStreaming,
+	isReplying,
 	error,
 	onSubmit,
 	variant = 'floating',
@@ -499,6 +500,7 @@ export function AgentUIContainer( {
 		messages,
 		isProcessing,
 		isStreaming,
+		isReplying,
 		error,
 
 		// Input state

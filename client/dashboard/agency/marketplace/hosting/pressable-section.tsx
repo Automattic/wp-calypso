@@ -322,7 +322,14 @@ export default function PressableSection( {
 							: undefined
 					}
 					action={
-						<Button variant="primary" __next40pxDefaultSize onClick={ () => openContactForm() }>
+						<Button
+							variant="primary"
+							__next40pxDefaultSize
+							onClick={ () => {
+								recordTracksEvent( 'calypso_a4a_marketplace_hosting_pressable_contact_us_click' );
+								openContactForm();
+							} }
+						>
 							{ isReferralMode ? __( 'Contact us to refer' ) : __( 'Contact us' ) }
 						</Button>
 					}

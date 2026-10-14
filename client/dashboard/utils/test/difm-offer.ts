@@ -3,10 +3,12 @@
  */
 
 import { DotcomPlans, JetpackPlans, WooHostedPlans } from '@automattic/api-core';
+import config from '@automattic/calypso-config';
 import { renderHook } from '@testing-library/react';
 import { useExperiment } from 'calypso/lib/explat';
 import {
 	DIFM_OFFER_EXPERIMENT,
+	DIFM_OFFER_FORCE_TREATMENT_FLAG,
 	DIFM_OFFER_MAX_SITE_AGE_DAYS,
 	getDifmOfferCopy,
 	isEligibleForDifmOffer,
@@ -190,16 +192,18 @@ describe( 'normalizeDifmOfferVariation', () => {
 		expect( normalizeDifmOfferVariation( 'rotating' ) ).toBe( 'control' );
 	} );
 
-	it( 'returns known variation names unchanged', () => {
-		expect( normalizeDifmOfferVariation( 'skip_setup' ) ).toBe( 'skip_setup' );
-		expect( normalizeDifmOfferVariation( 'expert_help' ) ).toBe( 'expert_help' );
-		expect( normalizeDifmOfferVariation( 'no_time' ) ).toBe( 'no_time' );
+	it( 'returns treatment for the treatment variation', () => {
+		expect( normalizeDifmOfferVariation( 'treatment' ) ).toBe( 'treatment' );
 	} );
 } );
 
 describe( 'useDifmOffer', () => {
 	beforeEach( () => {
 		mockUseExperiment.mockReset();
+	} );
+
+	afterEach( () => {
+		config.disable( DIFM_OFFER_FORCE_TREATMENT_FLAG );
 	} );
 
 	it( 'keeps an ineligible user out of the experiment and returns control', () => {
@@ -220,7 +224,7 @@ describe( 'useDifmOffer', () => {
 	} );
 
 	it( 'returns the assigned variation for an eligible user', () => {
-		mockUseExperiment.mockReturnValue( [ false, createExperimentAssignment( 'expert_help' ) ] );
+		mockUseExperiment.mockReturnValue( [ false, createExperimentAssignment( 'treatment' ) ] );
 
 		const { result } = renderHook( () => useDifmOffer( eligibleInput( Date.now() ) ) );
 
@@ -230,7 +234,7 @@ describe( 'useDifmOffer', () => {
 		expect( result.current ).toEqual( {
 			isEligible: true,
 			isLoading: false,
-			variation: 'expert_help',
+			variation: 'treatment',
 		} );
 	} );
 
@@ -246,6 +250,33 @@ describe( 'useDifmOffer', () => {
 		mockUseExperiment.mockReturnValue( [ false, createExperimentAssignment( 'rotating' ) ] );
 
 		const { result } = renderHook( () => useDifmOffer( eligibleInput( Date.now() ) ) );
+
+		expect( result.current.variation ).toBe( 'control' );
+	} );
+
+	it( 'returns treatment without an assignment when the QA flag is on', () => {
+		config.enable( DIFM_OFFER_FORCE_TREATMENT_FLAG );
+		mockUseExperiment.mockReturnValue( [ true, null ] );
+
+		const { result } = renderHook( () => useDifmOffer( eligibleInput( Date.now() ) ) );
+
+		expect( mockUseExperiment ).toHaveBeenCalledWith( DIFM_OFFER_EXPERIMENT, {
+			isEligible: false,
+		} );
+		expect( result.current ).toEqual( {
+			isEligible: true,
+			isLoading: false,
+			variation: 'treatment',
+		} );
+	} );
+
+	it( 'keeps an ineligible user in control when the QA flag is on', () => {
+		config.enable( DIFM_OFFER_FORCE_TREATMENT_FLAG );
+		mockUseExperiment.mockReturnValue( [ false, null ] );
+
+		const { result } = renderHook( () =>
+			useDifmOffer( { ...eligibleInput( Date.now() ), localeSlug: 'fr' } )
+		);
 
 		expect( result.current.variation ).toBe( 'control' );
 	} );
@@ -268,25 +299,8 @@ describe( 'getDifmOfferCopy', () => {
 		expect( getDifmOfferCopy( 'control' ) ).toBeNull();
 	} );
 
-	it( 'returns the skip_setup copy', () => {
-		expect( getDifmOfferCopy( 'skip_setup' ) ).toEqual( {
-			title: 'Skip the setup',
-			description:
-				'For a limited time, our experts will bring your vision to life. Free with Business.',
-			ctaText: 'See the offer',
-		} );
-	} );
-
-	it( 'returns the expert_help copy', () => {
-		expect( getDifmOfferCopy( 'expert_help' ) ).toEqual( {
-			title: 'Expert help to get you started',
-			description: 'A human builds your site based on your needs — free with Business.',
-			ctaText: 'See the offer',
-		} );
-	} );
-
-	it( 'returns the no_time copy', () => {
-		expect( getDifmOfferCopy( 'no_time' ) ).toEqual( {
+	it( 'returns the treatment copy', () => {
+		expect( getDifmOfferCopy( 'treatment' ) ).toEqual( {
 			title: 'No time to build your site?',
 			description: 'Let us take that off your plate. Ready in 4 days and free with Business.',
 			ctaText: 'See the offer',

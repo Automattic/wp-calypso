@@ -68,7 +68,7 @@ import {
 } from '../../utils/orchestrator-error-message';
 import { getReaderChatErrorMessage } from '../../utils/reader-chat-error-message';
 import { isShowComponentTool } from '../../utils/show-component-tools';
-import { isBlockEditToolId } from '../../utils/tool-message-utils';
+import { getRetryingToolCallId, isBlockEditToolId } from '../../utils/tool-message-utils';
 import { recordAgentsManagerTracksEvent, recordBigSkyTracksEvent } from '../../utils/tracks';
 import { startTurn } from '../../utils/turn-id';
 import AgentChat from '../agent-chat';
@@ -337,6 +337,13 @@ export default function OrchestratorChat( {
 	const [ isThinking, setIsThinking ] = useState( false );
 	const [ thinkingMessage, setThinkingMessage ] = useState< string | null >( null );
 	const [ isBuildingSite, setIsBuildingSite ] = useState( false );
+	// Tool-call ids are only unique within a transcript, so retries are tagged with
+	// the stream generation, which survives the temporary-to-server session id
+	// bootstrap but changes with any other session switch.
+	const [ retriedToolCalls, setRetriedToolCalls ] = useState< {
+		streamGeneration?: symbol;
+		ids: ReadonlySet< string >;
+	} >( { ids: new Set() } );
 	const [ sourceDriftInvalidatedCheckpointIds, setSourceDriftInvalidatedCheckpointIds ] = useState<
 		Set< string >
 	>( new Set() );
@@ -455,6 +462,13 @@ export default function OrchestratorChat( {
 			);
 	}, [ checkpointScopeIdentity, checkpointSessionId, checkpointSessionIdentity ] );
 	const checkpointStreamGeneration = streamedCheckpointMessagesRef.current.streamGeneration;
+	const retriedToolCallIds = useMemo(
+		() =>
+			retriedToolCalls.streamGeneration === checkpointStreamGeneration
+				? retriedToolCalls.ids
+				: new Set< string >(),
+		[ retriedToolCalls, checkpointStreamGeneration ]
+	);
 	const reportedResponseTaskIdsRef = useRef( new Set< string >() );
 	const agentChatConfig = useMemo( () => {
 		if ( ! agentConfig ) {
@@ -464,10 +478,26 @@ export default function OrchestratorChat( {
 		const { onTaskUpdate } = agentConfig;
 		return {
 			...agentConfig,
+			trackReplying: true,
 			onTaskUpdate: async ( update: TaskUpdate ) => {
 				const streamedMessages = streamedCheckpointMessagesRef.current;
 				const isCurrentStreamGeneration =
 					streamedMessages.streamGeneration === checkpointStreamGeneration;
+
+				const retryingToolCallId = getRetryingToolCallId( update.status?.message );
+				if ( isCurrentStreamGeneration && retryingToolCallId ) {
+					setRetriedToolCalls( ( previous ) => {
+						if ( previous.streamGeneration !== checkpointStreamGeneration ) {
+							return {
+								streamGeneration: checkpointStreamGeneration,
+								ids: new Set( [ retryingToolCallId ] ),
+							};
+						}
+						return previous.ids.has( retryingToolCallId )
+							? previous
+							: { ...previous, ids: new Set( [ ...previous.ids, retryingToolCallId ] ) };
+					} );
+				}
 				const blockEditAgentMessageText = getBlockEditAgentMessageText( update );
 				if ( isCurrentStreamGeneration && blockEditAgentMessageText ) {
 					const message: UIMessage = {
@@ -549,6 +579,7 @@ export default function OrchestratorChat( {
 		registerMessageActions,
 		getRegenerateHandler,
 		progressMessage,
+		isReplying,
 	} = credits.chat;
 	const getTraceIdForMessage = useAgentTraceIds( agentConfig );
 	const previousMessagesRef = useRef( messages );
@@ -1635,6 +1666,7 @@ export default function OrchestratorChat( {
 			currentPostId,
 			isProcessing,
 			canEscalateToHuman: isWooAiProvider(),
+			retriedToolCallIds,
 		} );
 
 		const latestAgentMessageId = getLatestAgentMessageId( currentMessages );
@@ -1707,6 +1739,7 @@ export default function OrchestratorChat( {
 		isProcessing,
 		messages,
 		retainedShowComponentMessages,
+		retriedToolCallIds,
 		siteBuildUtils,
 		sourceDriftInvalidatedCheckpointIds,
 		thinkingMessage,
@@ -1841,6 +1874,7 @@ export default function OrchestratorChat( {
 			// The indicator above hides mid-reply and covers uploads; response actions
 			// follow the raw streaming state.
 			isStreaming={ isProcessing }
+			isReplying={ isReplying }
 			thinkingMessage={
 				isUploadingImages ? __( 'Uploading images…', __i18n_text_domain__ ) : progressMessage
 			}

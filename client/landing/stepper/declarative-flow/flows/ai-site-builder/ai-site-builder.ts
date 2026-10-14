@@ -127,6 +127,9 @@ const aiSiteBuilder: FlowV2< typeof initialize > = {
 
 		const goToCheckout = async () => {
 			const site = await resolveSelect( SITE_STORE ).getSite( siteIdFromSiteData );
+			if ( ! site ) {
+				return;
+			}
 			const bigSkyUrl = `${ site.URL }/wp-admin/site-editor.php?canvas=edit&p=%2F`;
 			const siteLaunchUrl = addQueryArgs( '/setup/ai-site-builder/site-launch', {
 				siteId: siteIdFromSiteData,
@@ -217,63 +220,52 @@ const aiSiteBuilder: FlowV2< typeof initialize > = {
 								? triggerBackendBuildParam !== '0' // Garden sites: default to /wp-admin/, opt-out with =0
 								: triggerBackendBuildParam === '1'; // Non-garden: default to site-editor, opt-in with =1
 
-							const pendingActions = [
-								resolveSelect( SITE_STORE ).getSite( siteId ), // To get the URL.
-							];
+							const siteRequest = resolveSelect( SITE_STORE ).getSite( siteId );
+							let pageRequest: Promise< { id: number } > | undefined;
 
 							if ( ! gardenName ) {
 								// Add blog sticker - this runs independently and errors are handled by the mutation's onError callback (only for non-garden sites)
 								addBlogSticker( siteId, 'big-sky-free-trial' );
 
 								// Create a new home page if one is not set yet (only for non-garden sites)
-								pendingActions.push(
-									wpcom.req.post(
-										{
-											path: '/sites/' + siteId + '/pages',
-											apiNamespace: 'wp/v2',
-										},
-										{},
-										{
-											title: 'Home',
-											status: 'publish',
-											content: '<!-- wp:paragraph -->\n<p>Hello world!</p>\n<!-- /wp:paragraph -->',
-										}
-									)
+								pageRequest = wpcom.req.post(
+									{
+										path: '/sites/' + siteId + '/pages',
+										apiNamespace: 'wp/v2',
+									},
+									{},
+									{
+										title: 'Home',
+										status: 'publish',
+										content: '<!-- wp:paragraph -->\n<p>Hello world!</p>\n<!-- /wp:paragraph -->',
+									}
 								);
 							}
 
 							// Only apply design and delete page for non-garden sites
-							if ( ! gardenName ) {
-								pendingActions.push( deletePage( siteId || '', 1 ) );
-							}
-							pendingActions.push( setIntentOnSite( siteSlug, SiteIntent.AIAssembler ) );
-
-							// Execute operations individually to identify which one fails
-							const results = [];
-							try {
-								// Execute all actions sequentially with logging
-								for ( let i = 0; i < pendingActions.length; i++ ) {
-									const result = await pendingActions[ i ];
-									results.push( result );
-								}
-							} catch ( error ) {
+							const deletePageRequest = ! gardenName ? deletePage( siteId || '', 1 ) : undefined;
+							const intentRequest = setIntentOnSite( siteSlug, SiteIntent.AIAssembler );
+							const results = await Promise.all( [
+								siteRequest,
+								pageRequest,
+								deletePageRequest,
+								intentRequest,
+							] ).catch( () => null );
+							if ( ! results ) {
 								return;
 							}
+							const [ siteData, pageCreationResult ] = results;
 
 							// Defensive check for site data (always first)
-							const siteData = results[ 0 ];
 							if ( ! siteData || ! siteData.URL ) {
 								return;
 							}
 							const siteURL = siteData.URL;
 
 							// Handle page creation result (only exists for non-garden sites)
-							if ( ! gardenName && results.length > 1 ) {
-								const pageCreationResult = results[ 1 ];
-								if ( pageCreationResult && pageCreationResult.id ) {
-									const homePagePostId = pageCreationResult.id;
-									await setStaticHomepageOnSite( siteId, homePagePostId );
-								}
+							if ( pageCreationResult && pageCreationResult.id ) {
+								const homePagePostId = pageCreationResult.id;
+								await setStaticHomepageOnSite( siteId, homePagePostId );
 							}
 
 							const storedPrompt = window.sessionStorage.getItem( 'stored_ai_prompt' );
@@ -315,10 +307,13 @@ const aiSiteBuilder: FlowV2< typeof initialize > = {
 
 								window.location.replace( siteEditorUrl );
 							}
-						} else if ( providedDependencies.isLaunched ) {
+						} else if ( providedDependencies.isLaunched && providedDependencies.siteSlug ) {
 							const site = await resolveSelect( SITE_STORE ).getSite(
 								providedDependencies.siteSlug
 							);
+							if ( ! site ) {
+								return;
+							}
 							let bigSkyUrl = `${ site.URL }/wp-admin/site-editor.php?canvas=edit&p=%2F`;
 							const checkout = queryParams.get( 'checkout' );
 							if ( checkout ) {
