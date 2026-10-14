@@ -2,15 +2,13 @@ import { useEvent } from '@wordpress/compose';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useDomainSearch } from '../../page/context';
 import { NAME_PULSE_SKELETON_TIMEOUT_MS, NamePulseDomainStatus } from '../helpers';
-import type { NamePulseRenderReport, NamePulseResultSet } from './use-name-pulse-result-set';
+import type { NamePulseResultSet } from './use-name-pulse-result-set';
 import type { useNamePulseSearch } from './use-name-pulse-search';
 
-interface NamePulseSearchIds {
+interface NamePulseSearchIds extends Pick< NamePulseResultSet, 'rendered' | 'shownBundles' > {
 	key: string;
 	searchId: string;
 	resultSetId: string;
-	rendered: Map< string, NamePulseRenderReport >;
-	shownBundles: Set< string >;
 }
 
 const createSearchIds = ( key: string ): NamePulseSearchIds => ( {

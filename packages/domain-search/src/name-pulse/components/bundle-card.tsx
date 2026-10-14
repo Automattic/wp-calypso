@@ -39,7 +39,7 @@ interface NamePulseBundleCardProps {
 export const NamePulseBundleCard = ( { bundle, isWide = false }: NamePulseBundleCardProps ) => {
 	const { __ } = useI18n();
 	const { cart, events } = useDomainSearch();
-	const resultSet = useNamePulseResultSet();
+	const shownBundles = useNamePulseResultSet()?.shownBundles;
 	const isMutating = !! useIsMutating();
 
 	const {
@@ -64,17 +64,16 @@ export const NamePulseBundleCard = ( { bundle, isWide = false }: NamePulseBundle
 		retry: false,
 	} );
 
+	// Once per search: the card remounts while a query is typed, and stays mounted
+	// across a filter change, so the search remembers what it reported.
 	useEffect( () => {
-		// The card remounts on every keystroke, so the search remembers what it reported.
-		if ( resultSet?.shownBundles.has( bundle.bundle_group_id ) ) {
+		if ( ! shownBundles || shownBundles.has( bundle.bundle_group_id ) ) {
 			return;
 		}
 
-		resultSet?.shownBundles.add( bundle.bundle_group_id );
+		shownBundles.add( bundle.bundle_group_id );
 		events.onBundleShown( bundle, 'card' );
-		// One event per bundle that appears, not one per render or `events` identity.
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ bundle.bundle_group_id ] );
+	} );
 
 	let errorMessage: string | undefined;
 

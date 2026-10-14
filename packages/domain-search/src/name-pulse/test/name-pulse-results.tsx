@@ -1056,6 +1056,23 @@ describe( 'NamePulseResults', () => {
 			expect( onBundleShown ).toHaveBeenCalledTimes( 1 );
 		} );
 
+		it( 'reports the bundle again for the new search a filter change records', async () => {
+			const user = userEvent.setup();
+			const onBundleShown = jest.fn();
+
+			render(
+				<NamePulseTestSearch query="icecream" showBundleSuggestions events={ { onBundleShown } } />
+			);
+
+			await findBundleCard();
+			await user.click( screen.getByRole( 'button', { name: 'Filter, no filters applied' } ) );
+			await user.click( await screen.findByRole( 'option', { name: '.com' } ) );
+			await user.click( screen.getByRole( 'button', { name: 'Apply' } ) );
+			await findBundleCard();
+
+			await waitFor( () => expect( onBundleShown ).toHaveBeenCalledTimes( 2 ) );
+		} );
+
 		it( 'renders nothing when no anchor has a bundle', async () => {
 			const bundleForDomain = jest.fn( async () => null );
 
