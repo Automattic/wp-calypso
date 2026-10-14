@@ -327,8 +327,12 @@ describe( 'Site Migration Flow', () => {
 				} )
 			);
 			expect( result.current.location.pathname ).toBe( '/site-migration/site-migration-check' );
-			expect( new URLSearchParams( result.current.location.search ).get( 'siteSlug' ) ).toBe(
-				'destination.wordpress.com'
+			expect( Object.fromEntries( new URLSearchParams( result.current.location.search ) ) ).toEqual(
+				expect.objectContaining( {
+					...source,
+					isWpcom: 'false',
+					siteSlug: 'destination.wordpress.com',
+				} )
 			);
 			act( () => result.current.navigation.goBack() );
 			expect( result.current.location.pathname ).toBe( '/site-migration/sitePicker' );
@@ -627,7 +631,7 @@ describe( 'Site Migration Flow', () => {
 				} );
 
 				expect( navigate ).toHaveBeenCalledWith(
-					'site-migration-how-to-migrate?from=https%3A%2F%2Fsource.com&siteSlug=example.wordpress.com&siteId=123&platform=wordpress&host=bluehost',
+					'site-migration-how-to-migrate?from=https%3A%2F%2Fsource.com&siteSlug=example.wordpress.com&siteId=123',
 					undefined,
 					true
 				);
@@ -1846,21 +1850,22 @@ describe( 'Site Migration Flow', () => {
 				} );
 
 				it( 'shows the destination comparison before a legacy DIY handoff', () => {
-					const result = runNavigation( {
-						from: STEPS.SITE_MIGRATION_HOW_TO_MIGRATE,
-						dependencies: { how: HOW_TO_MIGRATE_OPTIONS.DO_IT_MYSELF, destination: 'migrate' },
-						query: context,
-					} );
-					expect( result ).toMatchDestination( {
-						step: STEPS.SITE_MIGRATION_CHECK,
-						query: {
-							from: context.from,
-							platform: 'wordpress',
-							host: context.host,
-							siteId: context.siteId,
-							siteSlug: context.siteSlug,
-						},
-					} );
+					const search = new URLSearchParams(
+						Object.entries( context ).map( ( [ key, value ] ) => [ key, String( value ) ] )
+					);
+					const { result } = renderNavigation( [
+						`/setup/site-migration/site-migration-how-to-migrate?${ search }`,
+					] );
+					act( () =>
+						result.current.navigation.submit( {
+							how: HOW_TO_MIGRATE_OPTIONS.DO_IT_MYSELF,
+							destination: 'migrate',
+						} )
+					);
+					expect( result.current.location.pathname ).toBe( '/site-migration/site-migration-check' );
+					expect(
+						Object.fromEntries( new URLSearchParams( result.current.location.search ) )
+					).toEqual( expect.objectContaining( Object.fromEntries( search ) ) );
 					expect( window.location.assign ).not.toHaveBeenCalled();
 					expect( goToCheckout ).not.toHaveBeenCalled();
 				} );

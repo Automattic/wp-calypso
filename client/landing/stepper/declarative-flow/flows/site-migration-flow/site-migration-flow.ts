@@ -260,7 +260,6 @@ const siteMigration: FlowV2< typeof initialize > = {
 		const recoveryPlansPath = savedHandoff
 			? paths.plansPath( {
 					from: savedHandoff.from,
-					platform: 'wordpress',
 					siteId: savedHandoff.siteId,
 					siteSlug: savedHandoff.siteSlug,
 				} )
@@ -341,15 +340,12 @@ const siteMigration: FlowV2< typeof initialize > = {
 		const showWordpressDestination = (
 			destinationId: number,
 			destinationSlug: string,
-			from: string,
-			host: string | undefined
+			from: string
 		) => {
 			if ( currentStep !== STEPS.SITE_MIGRATION_CHECK.slug ) {
 				return navigate(
 					paths.siteCheckPath( {
 						from,
-						platform: 'wordpress',
-						host,
 						siteId: destinationId,
 						siteSlug: destinationSlug,
 						isWpcom: false,
@@ -360,7 +356,7 @@ const siteMigration: FlowV2< typeof initialize > = {
 				return;
 			}
 			if ( ! siteCanInstallPlugins ) {
-				return navigate( paths.plansPath( { from, platform: 'wordpress', host } ) );
+				return navigate( paths.plansPath( { from } ) );
 			}
 			return configureAndContinue( destinationId, destinationSlug, from );
 		};
@@ -466,14 +462,12 @@ const siteMigration: FlowV2< typeof initialize > = {
 						urlQueryParams.get( 'how' ) !== HOW_TO_MIGRATE_OPTIONS.DO_IT_FOR_ME
 					) {
 						if ( action === 'select-existing-site' ) {
-							return navigate(
-								paths.sitePickerPath( { from, platform, host, siteId: '', siteSlug: '' } )
-							);
+							return navigate( paths.sitePickerPath( { from, siteId: '', siteSlug: '' } ) );
 						}
 						if ( hasDestinationSite ) {
-							return showWordpressDestination( siteId, siteSlug, from, host );
+							return showWordpressDestination( siteId, siteSlug, from );
 						}
-						return navigate( paths.plansPath( { from, platform, host } ) );
+						return navigate( paths.plansPath( { from } ) );
 					}
 					const isSSHMigrationAvailable = config.isEnabled( 'migration/ssh-migration' );
 
@@ -590,8 +584,6 @@ const siteMigration: FlowV2< typeof initialize > = {
 								siteId: '',
 								siteSlug: '',
 								from: fromQueryParam,
-								platform: platformQueryParam,
-								host: hostQueryParam,
 							} )
 						);
 					}
@@ -642,7 +634,7 @@ const siteMigration: FlowV2< typeof initialize > = {
 							const host = detectedHost || hostQueryParam;
 
 							if ( isReprintSource && fromQueryParam && hasSite( siteId, siteSlug ) ) {
-								return showWordpressDestination( siteId, siteSlug, fromQueryParam, host );
+								return showWordpressDestination( siteId, siteSlug, fromQueryParam );
 							}
 							if ( isManualImport ) {
 								return exitFlow(
@@ -689,8 +681,6 @@ const siteMigration: FlowV2< typeof initialize > = {
 										siteSlug,
 										siteId,
 										from: fromQueryParam,
-										platform: platformQueryParam,
-										host,
 									} )
 								);
 							}
@@ -718,20 +708,12 @@ const siteMigration: FlowV2< typeof initialize > = {
 									siteSlug,
 									siteId,
 									from: fromQueryParam,
-									platform: platformQueryParam,
-									host,
 								} )
 							);
 						}
 						case 'create-site': {
 							if ( isReprintSource && fromQueryParam ) {
-								return navigate(
-									paths.plansPath( {
-										from: fromQueryParam,
-										platform: platformQueryParam,
-										host: hostQueryParam,
-									} )
-								);
+								return navigate( paths.plansPath( { from: fromQueryParam } ) );
 							}
 							const detectedHost = providedDependencies.host as string | undefined;
 							const host = detectedHost || hostQueryParam;
@@ -851,8 +833,6 @@ const siteMigration: FlowV2< typeof initialize > = {
 								siteId,
 								siteSlug,
 								from: fromQueryParam,
-								platform: platformQueryParam,
-								host: hostQueryParam,
 							} )
 						);
 					}
@@ -889,8 +869,6 @@ const siteMigration: FlowV2< typeof initialize > = {
 							from: fromQueryParam,
 							siteSlug,
 							siteId,
-							platform: platformQueryParam,
-							host: hostQueryParam,
 						} )
 					);
 				}
@@ -934,7 +912,7 @@ const siteMigration: FlowV2< typeof initialize > = {
 						fromQueryParam &&
 						hasSite( siteId, siteSlug )
 					) {
-						return showWordpressDestination( siteId, siteSlug, fromQueryParam, hostQueryParam );
+						return showWordpressDestination( siteId, siteSlug, fromQueryParam );
 					}
 
 					// Take the user to the upgrade plan step.
@@ -1301,16 +1279,8 @@ const siteMigration: FlowV2< typeof initialize > = {
 			goBack = () =>
 				replace(
 					currentStep === STEPS.PICK_SITE.slug
-						? paths.plansPath( {
-								from: fromQueryParam,
-								platform: platformQueryParam,
-								host: hostQueryParam,
-							} )
-						: paths.siteCheckPath( {
-								from: fromQueryParam,
-								platform: platformQueryParam,
-								host: hostQueryParam,
-							} )
+						? paths.plansPath( { from: fromQueryParam } )
+						: paths.siteCheckPath( { from: fromQueryParam } )
 				);
 		}
 		return { submit, exitFlow, goBack };

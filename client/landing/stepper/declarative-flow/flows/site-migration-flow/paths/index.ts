@@ -59,7 +59,7 @@ export const sitePickerPath = buildPathHelper<
 	{
 		queryParams: {
 			from: string | null;
-			platform: ImporterPlatform;
+			platform?: ImporterPlatform;
 			ssh?: string;
 			host?: string;
 			isWpcom?: boolean | '';
@@ -76,8 +76,6 @@ export const plansPath = buildPathHelper<
 	{
 		queryParams: {
 			from: string;
-			platform: ImporterPlatform;
-			host?: string;
 			siteId?: number;
 			siteSlug?: string;
 		};
@@ -104,7 +102,7 @@ export const siteCheckPath = buildPathHelper<
 	{
 		queryParams: {
 			from: string;
-			platform: ImporterPlatform;
+			platform?: ImporterPlatform;
 			host?: string;
 			isWpcom?: boolean;
 			siteId?: number;
