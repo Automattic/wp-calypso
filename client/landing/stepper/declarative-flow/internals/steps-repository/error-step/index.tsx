@@ -2,6 +2,7 @@ import { Step } from '@automattic/onboarding';
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
 import { useEffect } from 'react';
+import { NavigationType, useNavigationType } from 'react-router';
 import DocumentHead from 'calypso/components/data/document-head';
 import { bumpStat } from 'calypso/lib/analytics/mc';
 import { logToLogstash } from 'calypso/lib/logstash';
@@ -34,13 +35,15 @@ const documentArrivalReason = () => {
 
 /**
  * Why the customer is on this step, for the log line. A stored error names it best. Without one,
- * a step that is the first route in its document was reached by a load or a reload, and the
+ * a step that is the first route in its document was reached by a load or a reload, and a step
+ * reached by in-document Back or Forward was not navigated to by the flow. In both cases the
  * `errorReason` in its step data is the persisted one from an earlier arrival, so it comes after.
  */
 const getArrivalReason = (
 	error: string | undefined,
 	message: string | undefined,
-	errorReason: unknown
+	errorReason: unknown,
+	navigationType: NavigationType
 ) => {
 	if ( error ) {
 		return error;
@@ -50,6 +53,9 @@ const getArrivalReason = (
 	}
 	if ( isOnlyStepMounted( 'error' ) ) {
 		return documentArrivalReason();
+	}
+	if ( navigationType === NavigationType.Pop ) {
+		return 'history_back_forward';
 	}
 	if ( typeof errorReason === 'string' && errorReason ) {
 		return errorReason;
@@ -67,6 +73,7 @@ const ErrorStep: StepType< {
 	const { error, message } = useSiteSetupError();
 	const errorReason = data?.errorReason;
 	const previousStep = data?.previousStep;
+	const navigationType = useNavigationType();
 
 	let domain = '';
 
@@ -94,10 +101,10 @@ const ErrorStep: StepType< {
 			properties: {
 				flow,
 				locale,
-				error: getArrivalReason( error, message, errorReason ),
+				error: getArrivalReason( error, message, errorReason, navigationType ),
 			},
 		} );
-	}, [ error, errorReason, flow, locale, message, previousStep, variantSlug ] );
+	}, [ error, errorReason, flow, locale, message, navigationType, previousStep, variantSlug ] );
 
 	const getContent = () => {
 		const errorMessage = [ error, message ].filter( Boolean ).join( ': ' );

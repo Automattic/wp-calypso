@@ -5,6 +5,7 @@
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
+import { NavigationType, useNavigationType } from 'react-router';
 import { useSiteDomains } from 'calypso/landing/stepper/hooks/use-site-domains';
 import { useSiteSetupError } from 'calypso/landing/stepper/hooks/use-site-setup-error';
 import { bumpStat } from 'calypso/lib/analytics/mc';
@@ -22,6 +23,10 @@ jest.mock( 'calypso/lib/analytics/mc', () => ( {
 jest.mock( 'calypso/lib/logstash' );
 jest.mock( '../../../step-mount-registry', () => ( {
 	isOnlyStepMounted: jest.fn(),
+} ) );
+jest.mock( 'react-router', () => ( {
+	...jest.requireActual( 'react-router' ),
+	useNavigationType: jest.fn(),
 } ) );
 
 describe( 'ErrorStep', () => {
@@ -45,6 +50,8 @@ describe( 'ErrorStep', () => {
 		jest.clearAllMocks();
 		( useSiteDomains as jest.Mock ).mockReturnValue( null );
 		( isOnlyStepMounted as jest.Mock ).mockReturnValue( false );
+		// `MemoryRouter` starts on a POP, but a flow reaches the error step with a push.
+		( useNavigationType as jest.Mock ).mockReturnValue( NavigationType.Push );
 		( useSiteSetupError as jest.Mock ).mockReturnValue( {
 			error: 'site_setup_failed',
 			message: 'Something went wrong',
@@ -155,6 +162,17 @@ describe( 'ErrorStep', () => {
 		expect( loggedError() ).toBe( 'stored_message_without_code' );
 	} );
 
+	it( 'logs history_back_forward over a persisted errorReason for an in-document history arrival', () => {
+		( useSiteSetupError as jest.Mock ).mockReturnValue( { error: undefined, message: undefined } );
+		( useNavigationType as jest.Mock ).mockReturnValue( NavigationType.Pop );
+
+		render( {
+			data: { previousStep: 'setup-your-site-ai', errorReason: 'build_wow_start_failed' },
+		} );
+
+		expect( loggedError() ).toBe( 'history_back_forward' );
+	} );
+
 	describe( 'when the error step is the only route mounted in the document', () => {
 		const originalGetEntriesByType = performance.getEntriesByType;
 
@@ -172,6 +190,15 @@ describe( 'ErrorStep', () => {
 
 		afterEach( () => {
 			performance.getEntriesByType = originalGetEntriesByType;
+		} );
+
+		it( 'logs a stored error code over a document arrival', () => {
+			( useSiteSetupError as jest.Mock ).mockReturnValue( { error: 'site_setup_failed' } );
+			setNavigationType( 'reload' );
+
+			render();
+
+			expect( loggedError() ).toBe( 'site_setup_failed' );
 		} );
 
 		it( 'logs document_reload over a persisted errorReason', () => {

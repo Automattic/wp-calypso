@@ -1,5 +1,9 @@
 /**
- * How each step came to mount, for the wait heartbeat to report.
+ * How each step came to mount, for the wait heartbeat to report, and which step routes this
+ * document has mounted, for the error step to tell a document load from a navigation.
+ *
+ * `routeMounts` only grows for the life of the document. `isOnlyStepMounted` relies on that, so
+ * do not prune or reset it.
  *
  * The processing step is seen mounting twice for one signup in production, a second or less
  * apart and only for translated locales, and the second mount reruns the pending action. Nothing
