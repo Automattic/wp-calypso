@@ -34,7 +34,7 @@ function CheckoutV2( { siteSlug, planSlug, skipActiveCart = false }: CheckoutV2P
 
 	return (
 		<Layout
-			className="checkout"
+			className="checkout checkout-v2"
 			title={ title }
 			withBorder
 			wide
