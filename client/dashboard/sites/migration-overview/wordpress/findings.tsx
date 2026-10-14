@@ -8,11 +8,6 @@ import Notice from '../../../components/notice';
 import { MigrationCard } from './migration-card';
 import type { Site, WordPressMigrationStatus } from '@automattic/api-core';
 
-/**
- * Where a migration rests whenever it needs its owner: warnings to look over before the copy, or
- * whatever stopped a run. Either way the findings are shown as the API sent them, and continuing
- * accepts them and runs again, unless one of them sends its owner back to connect the source.
- */
 export function Findings( {
 	site,
 	migration,

@@ -112,7 +112,7 @@ export function WordPressMigration( { site }: { site: Site } ) {
 						variant="error"
 						actions={
 							<>
-								<Button variant="primary" onClick={ () => refetch() }>
+								<Button __next40pxDefaultSize variant="primary" onClick={ () => refetch() }>
 									{ __( 'Try again' ) }
 								</Button>
 								{ contactUs }
