@@ -98,15 +98,42 @@ describe( 'useWelcomeBandVisibility', () => {
 		queryClient.clear();
 	} );
 
+	// In the API's format, "YYYY-MM-DD HH:MM:SS".
+	const daysAgo = ( days: number ) =>
+		new Date( Date.now() - days * 24 * 60 * 60 * 1000 )
+			.toISOString()
+			.slice( 0, 19 )
+			.replace( 'T', ' ' );
+
 	test.each( [
-		[ 'shows for an agency under review', 'pending', undefined, true ],
-		[ 'shows for an agency at Emerging Partner', 'approved', 'emerging-partner', true ],
-		[ 'hides for a rejected agency at Emerging Partner', 'rejected', 'emerging-partner', false ],
-		[ 'hides for an agency at a higher tier', 'approved', 'agency-partner', false ],
-	] as const )( '%s', ( _, approvalStatus, tierId, expected ) => {
-		const { result } = renderHook( () => useWelcomeBandVisibility( approvalStatus, tierId ), {
-			wrapper,
-		} );
+		[ 'shows for an agency under review', 'pending', undefined, undefined, true ],
+		[
+			'shows for an agency at Emerging Partner that joined recently',
+			'approved',
+			'emerging-partner',
+			daysAgo( 10 ),
+			true,
+		],
+		[
+			'hides for an agency at Emerging Partner that joined over 60 days ago',
+			'approved',
+			'emerging-partner',
+			daysAgo( 90 ),
+			false,
+		],
+		[
+			'hides for a rejected agency at Emerging Partner',
+			'rejected',
+			'emerging-partner',
+			daysAgo( 10 ),
+			false,
+		],
+		[ 'hides for an agency at a higher tier', 'approved', 'agency-partner', daysAgo( 10 ), false ],
+	] as const )( '%s', ( _, approvalStatus, tierId, createdAt, expected ) => {
+		const { result } = renderHook(
+			() => useWelcomeBandVisibility( approvalStatus, tierId, createdAt ),
+			{ wrapper }
+		);
 
 		expect( result.current.isEligible ).toBe( expected );
 	} );

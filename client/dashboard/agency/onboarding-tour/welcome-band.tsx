@@ -26,17 +26,23 @@ import './welcome-band.scss';
 
 export const WELCOME_BAND_DISMISSED_PREFERENCE = 'a4a-overview-welcome-band-dismissed';
 
+// How long an agency at the first tier counts as new.
+const NEW_AGENCY_WINDOW_MS = 60 * 24 * 60 * 60 * 1000;
+
 /**
- * Who sees the band on Overview: new agencies, under review or at the first tier, until they
- * close it. A rejected application gets its own card instead.
+ * Who sees the band on Overview, until they close it: agencies under review, and agencies at
+ * the first tier that joined in the last 60 days. A rejected application gets its own card.
  */
 export function useWelcomeBandVisibility(
 	approvalStatus?: AgencyApprovalStatus | '',
-	tierId?: AgencyTierType
+	tierId?: AgencyTierType,
+	createdAt?: string
 ) {
+	const isNewAgency =
+		!! createdAt && new Date( createdAt ).getTime() >= Date.now() - NEW_AGENCY_WINDOW_MS;
 	const isEligible =
 		approvalStatus !== 'rejected' &&
-		( approvalStatus === 'pending' || tierId === 'emerging-partner' );
+		( approvalStatus === 'pending' || ( tierId === 'emerging-partner' && isNewAgency ) );
 	const { data: isDismissed, isFetched } = useQuery( {
 		...userPreferenceQuery( WELCOME_BAND_DISMISSED_PREFERENCE ),
 		enabled: isEligible,

@@ -35,7 +35,7 @@ export default function AgencyOverview() {
 	const approvalStatus = agency?.approval_status;
 	const isPending = approvalStatus === 'pending';
 	const { isEligible: showsWelcomeBand, isVisible: isWelcomeBandVisible } =
-		useWelcomeBandVisibility( approvalStatus, agency?.tier?.id );
+		useWelcomeBandVisibility( approvalStatus, agency?.tier?.id, agency?.created_at );
 	const { openTour } = useOnboardingTour();
 	const hasPartnerDirectoryListing =
 		!! agency?.profile?.partner_directory_application?.directories.some(
