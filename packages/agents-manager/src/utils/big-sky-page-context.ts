@@ -2,9 +2,14 @@ import { getAmEditorContentContext, getAmEditorPostContext } from '../abilities'
 import { getAgentsManagerInlineData } from './get-agents-manager-inline-data';
 import type { ContextProvider } from '../extension-types';
 
-/** Whether Big Sky is enabled on the site, as Big Sky's PHP tells AM. */
+/** Whether to load Big Sky's page context for the current host. */
 export function isBigSkyEnabled(): boolean {
-	return getAgentsManagerInlineData()?.bigSkyEnabled === true;
+	return (
+		getAgentsManagerInlineData()?.bigSkyEnabled === true ||
+		( typeof window !== 'undefined' &&
+			new URLSearchParams( window.location.search ).get( 'am-force-editor-context' ) === 'true' &&
+			document.body.classList.contains( 'site-editor-php' ) )
+	);
 }
 
 /**

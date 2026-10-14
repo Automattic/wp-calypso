@@ -33,6 +33,8 @@ function MyApp() {
 
 Custom tools, context providers, suggestions, and markdown extensions are loaded automatically from external plugins via the `loadExternalProviders()` utility. Plugins can register their providers by implementing the extension API.
 
+On this test branch, add `am-force-editor-context=true` to the Site Editor URL to load Big Sky's built-in page context even when `bigSkyEnabled` is missing or false. This forces the `wp-admin` environment and AM's editor content for picker regression testing. It is a diagnostic override, not a production rollout change.
+
 See `src/extension-types.ts` for the full API documentation on creating custom:
 
 - **Tool Providers**: Register custom abilities the agent can execute
