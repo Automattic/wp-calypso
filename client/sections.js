@@ -970,6 +970,7 @@ const sections = [
 			'/client/payment-methods/add',
 			'/client/invoices',
 			'/client/checkout',
+			'/client/pressable-return',
 		],
 		module: 'calypso/a8c-for-agencies/sections/client',
 		group: 'a8c-for-agencies',
