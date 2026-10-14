@@ -1090,6 +1090,25 @@ describe( 'Site Migration Flow', () => {
 				jest.mocked( goToCheckout ).mockClear();
 			} );
 
+			it.each( [
+				[ {}, true ],
+				[ { platform: 'squarespace' }, false ],
+				[ { from: '' }, false ],
+				[ { isWpcom: 'true' }, false ],
+				[ { action: 'import' }, false ],
+				[ { how: HOW_TO_MIGRATE_OPTIONS.DO_IT_FOR_ME }, false ],
+			] )( 'skips picker confirmation only for WordPress DIY: %j', ( overrides, expected ) => {
+				const query = new URLSearchParams( { ...context, ...overrides } );
+				const { result } = renderHookWithProvider( () => siteMigrationFlow.useStepsProps(), {
+					wrapper: ( { children } ) => (
+						<MemoryRouter initialEntries={ [ `/setup/site-migration/sitePicker?${ query }` ] }>
+							{ children }
+						</MemoryRouter>
+					),
+				} );
+				expect( result.current.sitePicker.skipConfirmation ).toBe( expected );
+			} );
+
 			it.each( [ null, { features: { active: [] }, product_name_short: 'Free' } ] )(
 				'waits for plan data or opens plans for an ineligible supplied destination: %j',
 				( plan ) => {
@@ -1415,6 +1434,7 @@ describe( 'Site Migration Flow', () => {
 					),
 				} );
 				expect( props.current.error.showRetry ).toBe( false );
+				expect( props.current.sitePicker.skipConfirmation ).toBe( false );
 				const result = runNavigation( {
 					from: STEPS.ERROR,
 					query: { ...context, ...destination },

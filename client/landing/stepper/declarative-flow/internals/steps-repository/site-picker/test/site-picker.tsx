@@ -134,7 +134,10 @@ describe( 'SitePicker', () => {
 		expect( allLinks[ 0 ] ).toHaveAttribute( 'href', initialState.sites.items[ 1 ].URL );
 	} );
 
-	const renderTrackedPicker = ( initialEntry = '/site-migration/sitePicker' ) => {
+	const renderTrackedPicker = (
+		initialEntry = '/site-migration/sitePicker',
+		skipConfirmation?: boolean
+	) => {
 		const submit = jest.fn();
 		const flow: Flow = {
 			name: 'site-migration',
@@ -148,7 +151,13 @@ describe( 'SitePicker', () => {
 				currentStepRoute: 'sitePicker',
 				navigate: noop,
 			} );
-			return <SitePickerStep { ...mockStepProps() } navigation={ navigation } />;
+			return (
+				<SitePickerStep
+					{ ...mockStepProps() }
+					navigation={ navigation }
+					skipConfirmation={ skipConfirmation }
+				/>
+			);
 		};
 		renderStep( <TrackedPicker />, {
 			initialEntry,
@@ -180,25 +189,32 @@ describe( 'SitePicker', () => {
 		expect( recordStepNavigation ).not.toHaveBeenCalled();
 	} );
 
-	test( 'confirming a destination updates the flow and records only the dedicated selection event', async () => {
-		const submit = renderTrackedPicker();
-		await userEvent.click( screen.getAllByRole( 'button', { name: 'Select this site' } )[ 0 ] );
-		await userEvent.click( screen.getByRole( 'button', { name: 'Continue' } ) );
-		await waitFor( () =>
-			expect( submit ).toHaveBeenCalledWith(
-				expect.objectContaining( {
-					action: 'select-site',
-					site: expect.objectContaining( { ID: 1 } ),
-				} )
-			)
-		);
-		expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_import_site_picker_select_site', {
-			id: 1,
-			slug: 'example.wordpress.com',
-			title: 'A Test Site',
-		} );
-		expect( recordStepNavigation ).not.toHaveBeenCalled();
-	} );
+	test.each( [ undefined, true ] )(
+		'selecting a destination preserves tracking with skipConfirmation=%s',
+		async ( skipConfirmation ) => {
+			const submit = renderTrackedPicker( '/site-migration/sitePicker', skipConfirmation );
+			await userEvent.click( screen.getAllByRole( 'button', { name: 'Select this site' } )[ 0 ] );
+			expect( screen.queryByRole( 'dialog' ) !== null ).toBe( ! skipConfirmation );
+			expect( submit ).toHaveBeenCalledTimes( skipConfirmation ? 1 : 0 );
+			if ( ! skipConfirmation ) {
+				await userEvent.click( screen.getByRole( 'button', { name: 'Continue' } ) );
+			}
+			await waitFor( () =>
+				expect( submit ).toHaveBeenCalledWith(
+					expect.objectContaining( {
+						action: 'select-site',
+						site: expect.objectContaining( { ID: 1 } ),
+					} )
+				)
+			);
+			expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_import_site_picker_select_site', {
+				id: 1,
+				slug: 'example.wordpress.com',
+				title: 'A Test Site',
+			} );
+			expect( recordStepNavigation ).not.toHaveBeenCalled();
+		}
+	);
 
 	test( 'renders with correctly sorted list of sites', () => {
 		const state = {

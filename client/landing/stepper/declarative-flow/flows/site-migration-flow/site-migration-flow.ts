@@ -180,6 +180,15 @@ const siteMigration: FlowV2< typeof initialize > = {
 			query.get( 'how' ) !== HOW_TO_MIGRATE_OPTIONS.DO_IT_FOR_ME &&
 			!! ( siteId || siteSlug );
 		return {
+			sitePicker: {
+				skipConfirmation:
+					config.isEnabled( 'migration/reprint-flow' ) &&
+					query.get( 'platform' ) === 'wordpress' &&
+					!! query.get( 'from' ) &&
+					query.get( 'isWpcom' ) !== 'true' &&
+					query.get( 'how' ) !== HOW_TO_MIGRATE_OPTIONS.DO_IT_FOR_ME &&
+					query.get( 'action' ) !== 'import',
+			},
 			error: {
 				showRetry:
 					config.isEnabled( 'migration/reprint-flow' ) &&

@@ -22,13 +22,14 @@ import type { SiteExcerptData } from '@automattic/sites';
 import './styles.scss';
 
 const SitePickerStep: Step< {
+	accepts: { skipConfirmation?: boolean };
 	submits: {
 		action: 'update-query' | 'create-site' | 'select-site';
 		queryParams?: Partial< SitesDashboardQueryParams >;
 		site?: SiteExcerptData;
 		host?: string;
 	};
-} > = function SitePickerStep( { navigation } ) {
+} > = function SitePickerStep( { navigation, skipConfirmation = false } ) {
 	const { __ } = useI18n();
 	const urlQueryParams = useQuery();
 	const page = Number( urlQueryParams.get( 'page' ) ) || 1;
@@ -90,6 +91,9 @@ const SitePickerStep: Step< {
 	};
 
 	const onSelectSite = ( site: SiteExcerptData ) => {
+		if ( skipConfirmation ) {
+			return selectSite( site );
+		}
 		setDestinationSite( site );
 		setShowConfirmModal( true );
 	};
