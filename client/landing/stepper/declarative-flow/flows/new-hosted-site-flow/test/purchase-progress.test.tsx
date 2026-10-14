@@ -112,7 +112,6 @@ it.each( [ 'en', 'fr' ] )( 'passes checkout steps and a domain return URL in %s'
 		jest.mocked( window.location.replace ).mock.calls[ 0 ][ 0 ] as string,
 		'https://wordpress.com'
 	);
-	expect( checkout.searchParams.get( 'flow' ) ).toBe( NEW_HOSTED_SITE_FLOW );
 	expect( checkout.searchParams.get( 'steps_current' ) ).toBe( '2' );
 	expect( checkout.searchParams.get( 'steps_total' ) ).toBe( '2' );
 	const back = new URL( checkout.searchParams.get( 'checkoutBackUrl' )! );
@@ -142,7 +141,7 @@ it( 'keeps other Commerce entries on their existing checkout behavior', () => {
 		jest.mocked( window.location.assign ).mock.calls[ 0 ][ 0 ] as string,
 		'https://wordpress.com'
 	);
-	expect( checkout.searchParams.has( 'flow' ) ).toBe( false );
+	expect( checkout.searchParams.has( 'showPurchaseSteps' ) ).toBe( false );
 	expect( checkout.searchParams.has( 'checkoutBackUrl' ) ).toBe( false );
 } );
 

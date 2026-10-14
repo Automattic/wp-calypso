@@ -5,8 +5,13 @@ export function hasPurchaseStepsParameter( query: URLSearchParams ): boolean {
 	return query.get( 'showPurchaseSteps' ) === 'true';
 }
 
-// Desktop uses the progress overview; mobile keeps the top-bar step counter.
+/**
+ * Single source of truth for whether the onboarding progress indicator shows.
+ *
+ * Desktop-only. Mobile keeps the existing top-bar step counter.
+ */
 export function useShowOnboardingProgress( isOnboardingFlow: boolean ): boolean {
 	const isDesktop = useViewportMatch( 'large' );
+
 	return ( isOnboardingFlow || hasPurchaseStepsParameter( getCurrentQueryParams() ) ) && isDesktop;
 }

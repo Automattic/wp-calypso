@@ -12,21 +12,24 @@ function isStorageAddOnSlug( slug: string ): slug is StorageAddOnSlug {
 }
 
 /**
- * The plan named by `?plan=`, when the flow accepts it. Standard onboarding keeps its
- * legacy plan allowlist; new-hosted-site accepts its valid non-trial plans.
+ * The plan named by `?plan=`, or null when it is absent or not one the legacy plan flows
+ * preselected. Falling back to null keeps the plans grid as the graceful degradation, which
+ * is what an unrecognised flow name already did on the `/start` side.
+ *
+ * The new-hosted-site flow accepts any of its valid non-trial plans instead of that allowlist.
  */
 export function getPreselectedPlan( query: URLSearchParams, flow?: string ): string | null {
 	const productSlug = query.get( 'plan' );
 
-	if ( ! productSlug ) {
-		return null;
-	}
 	if ( flow === NEW_HOSTED_SITE_FLOW ) {
-		return isDotComPlan( { product_slug: productSlug } ) && ! isFreeHostingTrial( productSlug )
+		return productSlug &&
+			isDotComPlan( { product_slug: productSlug } ) &&
+			! isFreeHostingTrial( productSlug )
 			? productSlug
 			: null;
 	}
-	return isPreselectablePlan( productSlug ) ? productSlug : null;
+
+	return productSlug && isPreselectablePlan( productSlug ) ? productSlug : null;
 }
 
 /**

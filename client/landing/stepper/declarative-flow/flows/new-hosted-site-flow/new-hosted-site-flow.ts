@@ -266,9 +266,7 @@ const hosting: FlowV2< typeof initialize > = {
 								).href;
 								const stepPosition = getOnboardingStepperPosition( 'checkout', shouldSkipPlans );
 								Object.assign( purchaseStepArgs, {
-									flow: NEW_HOSTED_SITE_FLOW,
 									showPurchaseSteps: 'true',
-									signup: 1,
 									checkoutBackUrl: shouldSkipPlans ? domainBackUrl : planBackUrl,
 									checkoutBackUrlDomains: domainBackUrl,
 									steps_current: stepPosition.current,
@@ -306,7 +304,6 @@ const hosting: FlowV2< typeof initialize > = {
 		useEffect( () => {
 			if ( studioSiteId && currentStepSlug ) {
 				recordTracksEvent( 'calypso_studio_sync_step', {
-					flow: NEW_HOSTED_SITE_FLOW,
 					step: currentStepSlug,
 					section: section || undefined,
 					auto_open_push: autoOpenPush === 'true',

@@ -2,7 +2,6 @@
  * @jest-environment jsdom
  */
 jest.mock( '@wordpress/compose', () => ( {
-	...jest.requireActual( '@wordpress/compose' ),
 	useViewportMatch: jest.fn(),
 } ) );
 
