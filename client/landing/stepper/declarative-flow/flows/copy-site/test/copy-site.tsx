@@ -16,7 +16,7 @@ import wpcom from 'calypso/lib/wp';
 import { initialSiteState } from 'calypso/state/sites/features/reducer';
 import { renderHookWithProvider, renderWithProvider } from 'calypso/test-helpers/testing-library';
 import copySite from '../copy-site';
-import type { OnboardActions, SiteActions, SiteDetails, SiteSelect } from '@automattic/data-stores';
+import type { OnboardActions, SiteDetails } from '@automattic/data-stores';
 
 const mockLegacySiteGet = jest.fn();
 
@@ -70,20 +70,17 @@ const destination = { ID: 2, URL: `https://${ destinationSlug }` };
 const locationDescriptor = Object.getOwnPropertyDescriptor( window, 'location' )!;
 const navigate = jest.fn();
 
-function renderAssertions() {
+function renderAssertions( source = sourceSlug ) {
 	return renderHookWithProvider(
 		() => {
-			useSelect(
-				( select ) => ( select( SITE_STORE ) as SiteSelect ).getSite( destinationSlug ),
-				[]
-			);
+			useSelect( ( select ) => select( SITE_STORE ).getSite( destinationSlug ), [] );
 			return copySite.useAssertConditions?.();
 		},
 		{
 			wrapper: ( { children }: { children: React.ReactNode } ) => (
 				<MemoryRouter
 					initialEntries={ [
-						`/setup/copy-site/automated-copy?sourceSlug=${ sourceSlug }&siteSlug=${ destinationSlug }`,
+						`/setup/copy-site/automated-copy?sourceSlug=${ source }&siteSlug=${ destinationSlug }`,
 					] }
 				>
 					{ children }
@@ -144,9 +141,7 @@ afterAll( () => Object.defineProperty( window, 'location', locationDescriptor ) 
 
 beforeEach( () => {
 	jest.clearAllMocks();
-	const siteActions = dispatch( SITE_STORE ) as SiteActions & {
-		invalidateResolutionForStore: () => void;
-	};
+	const siteActions = dispatch( SITE_STORE );
 	siteActions.reset();
 	siteActions.invalidateResolutionForStore();
 	( dispatch( ONBOARD_STORE ) as OnboardActions ).resetOnboardStore();
@@ -157,6 +152,16 @@ beforeEach( () => {
 } );
 
 describe( 'copy site source validation', () => {
+	it( 'rejects a missing source without validating the destination as the source', async () => {
+		jest.mocked( wpcomRequest ).mockResolvedValue( destination );
+		const { result } = renderAssertions( '' );
+		await waitFor( () => expect( result.current?.state ).toBe( AssertConditionState.FAILURE ) );
+		expect( result.current?.message ).toBe( 'Copy Site flow requires a valid source site.' );
+		expect( window.location.assign ).toHaveBeenCalledWith( '/sites' );
+		expect( wpcom.req.get ).not.toHaveBeenCalled();
+		expect( wpcom.req.post ).not.toHaveBeenCalled();
+	} );
+
 	it.each( [ 'destination first', 'source first', 'destination fails' ] )(
 		'waits for source details and features when %s',
 		async ( order ) => {
@@ -303,7 +308,7 @@ describe( 'copy site failure handling', () => {
 					Promise.resolve( path === `/sites/${ destinationSlug }` ? destination : source )
 				);
 			jest.mocked( wpcom.req.get ).mockReturnValue( request.promise );
-			( dispatch( SITE_STORE ) as SiteActions ).receiveSite( source.ID, source );
+			dispatch( SITE_STORE ).receiveSite( source.ID, source );
 			const features = {
 				[ source.ID ]: {
 					...initialSiteState,

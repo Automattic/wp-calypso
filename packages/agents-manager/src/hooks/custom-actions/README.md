@@ -37,7 +37,6 @@ Consuming the API? See [Public API](#public-api). Adding a new action? See [Addi
 | `chatNavigate`             | `NavigateFunction`                                      | The `react-router-dom` navigate function (path with options, or delta).                                           |
 | `resumeChat`               | `() => void`                                            | Reopen the chat, resuming this tab's conversation (not a new one).                                                |
 | `isReady`                  | `boolean`                                               | `true` once the API is fully populated and safe to call.                                                          |
-| `broadcastsAgentActivity`  | `boolean`                                               | Whether this build fires the [agent activity](#agent-activity) events.                                            |
 
 \* Available only while the chat panel is mounted. Always optional-chain these calls — they can be `undefined` even after `isReady` is `true`.
 
@@ -77,7 +76,7 @@ Dispatched by `OrchestratorChat` as the transcript grows. Prefer this over the p
 
 ## Agent activity
 
-Three more window events say what the agent is _doing_, for hosts that render their own editing surface around the chat and have to tell the agent's writes apart from the user's. Nothing else on the page can see that difference: an editor's own dirty state also changes on mount, so a page opening reads the same as an agent editing it.
+Three more window events say what the agent is _doing_, for hosts that render their own editing surface around the chat: whether a turn is in flight, and when an ability has finished, so anything it wrote has landed. Big Sky's easy mode, for example, holds its own navigation while the agent works, shows what changed once the turn ends, and follows an ability that moves the editor.
 
 | Event                              | `detail`                        | Fires when                                                                                                                                            |
 | ---------------------------------- | ------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -87,17 +86,15 @@ Three more window events say what the agent is _doing_, for hosts that render th
 
 The turn events are edges, not state: they fire on the change, so a listener that arrives mid-turn hears nothing until that turn ends. The turn is taken from the agent manager rather than from the chat, which is one route in the dock and can unmount while the stream carries on — a turn that ends while the chat is away has its end announced when the chat comes back, and until then a listener is told the agent is still working.
 
-Check `broadcastsAgentActivity` before relying on any of this. Against a build without it no events arrive, and the agent looks permanently silent:
+For example:
 
 ```js
-if ( window.__agentsManagerActions?.broadcastsAgentActivity ) {
-	window.addEventListener( 'agents-manager-turn-started', () => {
-		// the agent is working — attribute what changes next to it
-	} );
-	window.addEventListener( 'agents-manager-ability-completed', ( event ) => {
-		const { name, ok } = event.detail;
-	} );
-}
+window.addEventListener( 'agents-manager-turn-started', () => {
+	// the agent is working
+} );
+window.addEventListener( 'agents-manager-ability-completed', ( event ) => {
+	const { name, ok } = event.detail;
+} );
 ```
 
 Defined in `utils/agent-activity-events.ts`.

@@ -33,7 +33,6 @@ export type NamePulseResultRowVariant = 'row' | 'card';
 interface NamePulseResultRowProps {
 	result: NamePulseDomainResult;
 	group: NamePulseResultGroup;
-	/** Position on the whole page. */
 	position: number;
 	variant?: NamePulseResultRowVariant;
 }
@@ -197,7 +196,7 @@ export const NamePulseResultRow = ( {
 			return;
 		}
 
-		reported.current = { resultSetId, position };
+		reported.current = { resultSetId, group, position };
 		events.onSuggestionRender(
 			toNamePulseTracksSuggestion( row, position ),
 			undefined,

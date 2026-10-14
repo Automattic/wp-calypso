@@ -120,6 +120,8 @@ export interface Site {
 	lang: string;
 	launch_status: string | boolean;
 	site_migration: {
+		type?: 'wordpress' | 'blogvault' | 'assisted';
+		status_v2?: 'pending' | 'started' | 'in_progress' | 'completed';
 		migration_status?: string;
 		in_progress: boolean;
 		is_complete: boolean;

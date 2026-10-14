@@ -46,13 +46,6 @@ export const NamePulseResults = () => {
 	} = search;
 	const resultSetId = useNamePulseSearchTracking( search );
 	const { bundle, isLoading: isLoadingBundle } = useNamePulseBundle( bundleAnchors );
-	// Page-wide positions, as if every section were expanded, so "Show more"
-	// never shifts them. A typed domain's card is 0.
-	const topOffset = layout.fqdn ? 1 : 0;
-	const exactOffset = topOffset + topResults.length;
-	const suggestionsOffset = exactOffset + ( layout.exactGrid.show ? exactList.length : 0 );
-	const creativeOffset =
-		suggestionsOffset + ( layout.suggestions.show ? keywordResults.length : 0 );
 	const bundleCard = bundle ? (
 		<NamePulseBundleCard key={ bundle.bundle_group_id } bundle={ bundle } isWide={ ! exactMatch } />
 	) : null;
@@ -115,7 +108,6 @@ export const NamePulseResults = () => {
 							isLoading={ isLoadingTop }
 							maxVisible={ topResultsCount }
 							skeletonCount={ topResultsCount }
-							positionOffset={ topOffset }
 							variant="card"
 						/>
 					) }
@@ -135,7 +127,6 @@ export const NamePulseResults = () => {
 							results={ exactList }
 							isLoading={ isLoadingTlds }
 							showMoreLabel={ __( 'Show more exact matches' ) }
-							positionOffset={ exactOffset }
 							onReveal={ revealExact }
 						/>
 					) }
@@ -146,7 +137,6 @@ export const NamePulseResults = () => {
 							results={ keywordResults }
 							isLoading={ isLoadingKeyword }
 							showMoreLabel={ __( 'Show more related matches' ) }
-							positionOffset={ suggestionsOffset }
 						/>
 					) }
 					{ layout.creative.show && (
@@ -156,7 +146,6 @@ export const NamePulseResults = () => {
 							results={ creativeResults }
 							isLoading={ isLoadingCreative }
 							showMoreLabel={ __( 'Show more creative matches' ) }
-							positionOffset={ creativeOffset }
 						/>
 					) }
 				</VStack>

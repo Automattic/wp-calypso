@@ -68,7 +68,7 @@ interface Props {
 	products: AgencyProduct[];
 	term: TermPricing;
 	isReferralMode: boolean;
-	isInCart: ( slug: string ) => boolean;
+	isInCart: ( product: AgencyProduct ) => boolean;
 	onToggleCart: ( product: AgencyProduct ) => void;
 	onViewDetails: ( product: AgencyProduct ) => void;
 }
@@ -86,7 +86,7 @@ export default function FeaturedShowcase( {
 		const drawing = getProductDrawing( product );
 		const category = getProductCategories( product )[ 0 ];
 		const isWooPayments = product.slug === WOOPAYMENTS_PRODUCT_SLUG;
-		const inCart = isInCart( product.slug );
+		const inCart = isInCart( product );
 		return {
 			id: product.slug,
 			accent: getProductMaker( product.slug ),

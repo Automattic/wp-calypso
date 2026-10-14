@@ -13,9 +13,8 @@ interface NamePulseSearchTrackingState {
 }
 
 /**
- * Records one logical search per settled query or filter change, and the
- * result set it commits to the page. Returns the result set's id once the
- * query on screen has settled, for the TrainTracks renders to carry.
+ * Records one search per settled query or filter change, and the result set
+ * it shows. Returns the result set id once the query has settled.
  */
 export const useNamePulseSearchTracking = ( search: ReturnType< typeof useNamePulseSearch > ) => {
 	const { events, filter, lastSearchTrigger } = useDomainSearch();
@@ -63,9 +62,9 @@ export const useNamePulseSearchTracking = ( search: ReturnType< typeof useNamePu
 		current.hasReportedResults = true;
 
 		const counts = {
-			result_count_featured: exactMatch?.availability ? 1 : 0,
+			result_count_exact: exactMatch?.availability ? 1 : 0,
 			result_count_top: settledLayout.top.show ? topResults.length : 0,
-			result_count_exact: settledLayout.exactGrid.show ? exactList.length : 0,
+			result_count_exact_tlds: settledLayout.exactGrid.show ? exactList.length : 0,
 			result_count_related: settledLayout.suggestions.show ? keywordResults.length : 0,
 			result_count_creative: settledLayout.creative.show ? creativeResults.length : 0,
 		};

@@ -98,7 +98,8 @@ function middleware( app ) {
 	}
 
 	app.use( waitForCompiler );
-	app.use( webpackMiddleware( compiler, { stats: 'errors-warnings' } ) );
+	// ETags let reloads revalidate the unhashed dev bundles with a 304 instead of re-downloading them.
+	app.use( webpackMiddleware( compiler, { stats: 'errors-warnings', etag: 'weak' } ) );
 	app.use( hotMiddleware( compiler ) );
 }
 

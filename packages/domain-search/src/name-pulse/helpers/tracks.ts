@@ -2,18 +2,27 @@ import { DomainPriceRule } from '../../hooks/use-suggestion';
 import { NamePulseDomainStatus, type NamePulseDomainResult, type NamePulseSource } from './types';
 import type { DomainSuggestion } from '@automattic/api-core';
 
-/** The `data-section` of each results section. */
 export type NamePulseSectionId = 'top' | 'exact' | 'suggestions' | 'creative';
 
-/** The heading a result is shown under, as sent in `result_group`. */
-export type NamePulseResultGroup = 'featured' | 'top' | 'exact' | 'related' | 'creative';
+/**
+ * `exact` is the typed domain's card and `exact_tlds` the typed name with
+ * other endings; the rest match their section headings.
+ */
+export type NamePulseResultGroup = 'exact' | 'top' | 'exact_tlds' | 'related' | 'creative';
 
-export const getNamePulseResultGroup = ( section: NamePulseSectionId ): NamePulseResultGroup =>
-	section === 'suggestions' ? 'related' : section;
+const NAME_PULSE_RESULT_GROUPS: Record< NamePulseSectionId, NamePulseResultGroup > = {
+	top: 'top',
+	exact: 'exact_tlds',
+	suggestions: 'related',
+	creative: 'creative',
+};
+
+export const getNamePulseResultGroup = ( section: NamePulseSectionId ) =>
+	NAME_PULSE_RESULT_GROUPS[ section ];
 
 export const getNamePulseTracksVendor = ( source: NamePulseSource ) => `name_pulse_${ source }`;
 
-/** A result shaped like the classic suggestion the TrainTracks events read. */
+/** Shaped like a classic suggestion, which the TrainTracks events read. */
 export const toNamePulseTracksSuggestion = (
 	result: Pick<
 		NamePulseDomainResult,
@@ -37,7 +46,6 @@ export const toNamePulseTracksSuggestion = (
 	price_rule: DomainPriceRule.PRICE,
 } );
 
-/** What Name Pulse adds to `calypso_traintracks_render`. */
 export const getNamePulseRenderTracksProps = (
 	result: Pick< NamePulseDomainResult, 'source' | 'status' >,
 	group: NamePulseResultGroup,

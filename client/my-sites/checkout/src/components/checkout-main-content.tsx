@@ -115,7 +115,6 @@ import badgeGenericSrc from './assets/icons/badge-generic.svg';
 import badgeSecurity from './assets/icons/security.svg';
 import CheckoutNextSteps from './checkout-next-steps';
 import { CheckoutSidebarPlanUpsell } from './checkout-sidebar-plan-upsell';
-import CheckoutTrustCards from './checkout-trust-cards';
 import DIFMOfferRequestNotice from './difm-offer-request-notice';
 import { EmptyCart, shouldShowEmptyCartPage } from './empty-cart';
 import { handleProgressStepSelect } from './handle-progress-step-select';
@@ -215,13 +214,22 @@ function ConditionalContactDetailsMessage( {
 	}
 	return (
 		<ContactDetailsFormDescription>
-			{ isMobileCheckoutStickySummary
-				? translate(
-						'Required for domain registration. Your details are protected for eligible domains.'
-					)
-				: translate(
+			{ isMobileCheckoutStickySummary ? (
+				translate(
+					'Required for domain registration. Your details are protected for eligible domains.'
+				)
+			) : (
+				<>
+					{ translate(
 						'Registering a domain name requires valid contact information. Privacy Protection is included for all eligible domains to protect your personal information.'
-					) }
+					) }{ ' ' }
+					<InlineSupportLink
+						supportContext="domain-contact-information-requirements"
+						showText={ false }
+						linkTitle={ translate( 'Learn more' ) }
+					/>
+				</>
+			) }
 		</ContactDetailsFormDescription>
 	);
 }
@@ -262,15 +270,7 @@ const ContactFormTitle = () => {
 				? translate( 'Contact information' )
 				: translate( 'Enter your contact information' );
 
-		return (
-			<>
-				{ titleText }{ ' ' }
-				<InlineSupportLink
-					supportContext="domain-contact-information-requirements"
-					showIcon={ false }
-				/>
-			</>
-		);
+		return <>{ titleText }</>;
 	}
 
 	if ( contactDetailsType === 'gsuite' ) {
@@ -1204,7 +1204,6 @@ export default function CheckoutMainContent( {
 					) }
 					{ checkoutSummary }
 					{ checkoutMainContent }
-					{ isLargeViewport && <CheckoutTrustCards cart={ responseCart } /> }
 				</WPCheckoutWrapper>
 			</SubmitButtonSlotContext.Provider>
 		);
@@ -1292,10 +1291,7 @@ export default function CheckoutMainContent( {
 						if ( isLargeViewport ) {
 							return (
 								<>
-									<div className="checkout-main-column">
-										{ checkoutMainContent }
-										<CheckoutTrustCards cart={ responseCart } />
-									</div>
+									<div className="checkout-main-column">{ checkoutMainContent }</div>
 									{ checkoutSummary }
 								</>
 							);
@@ -2637,8 +2633,7 @@ const WPCheckoutWrapper = styled.div< {
 	grid-template-columns: 1fr;
 	grid-template-areas:
 		'sidebar-content'
-		'main-content'
-		'trust-cards';
+		'main-content';
 	align-content: start;
 	justify-content: center;
 	justify-items: center;
@@ -2646,20 +2641,13 @@ const WPCheckoutWrapper = styled.div< {
 
 	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
 		grid-template-columns: 1fr minmax( 500px, 688px ) 475px 1fr;
-		grid-template-areas:
-			'main-content main-content sidebar-content sidebar-content'
-			'. trust-cards sidebar-content sidebar-content';
+		grid-template-areas: 'main-content main-content sidebar-content sidebar-content';
 		justify-items: end;
 	}
 
 	& > * {
 		box-sizing: border-box;
 		width: 100%;
-	}
-
-	& > .checkout-trust-cards {
-		grid-area: trust-cards;
-		justify-self: center;
 	}
 
 	& *:focus {
@@ -2718,8 +2706,7 @@ const WPCheckoutWrapper = styled.div< {
 			grid-template-areas:
 				'checkout-title-area'
 				'sidebar-content'
-				'main-content'
-				'trust-cards';
+				'main-content';
 			.checkout-sidebar-content {
 				background: ${ colorStudio.colors[ 'White' ] };
 			}
@@ -3071,7 +3058,7 @@ const WPCheckoutMainContent = styled.div< {
 	isMobileCheckoutStickySummary?: boolean;
 } >`
 	grid-area: main-content;
-	margin-top: 50px;
+	margin-top: 48px;
 
 	@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
 		padding: 0 24px;
@@ -3084,6 +3071,7 @@ const WPCheckoutMainContent = styled.div< {
 		padding-block: 0;
 		padding-inline-start: 24px;
 		padding-inline-end: 64px;
+		margin-bottom: 48px;
 	}
 
 	/* On narrower desktops the 64px between form and sidebar is too tight

@@ -60,6 +60,7 @@ export const useNamePulseCartToggle = (
 					events.onNamePulseTracksEvent( 'remove_button_click', {
 						domain_name: domainName,
 						remove_source: 'row',
+						result_group: rendered.current?.group,
 						position: getRenderedPosition(),
 						root_vendor: tracksVendor,
 					} );
@@ -118,7 +119,13 @@ export const useNamePulseCartToggle = (
 		error,
 		toggleCart: () => {
 			if ( ! inCart ) {
-				events.onSuggestionInteract( getTracksSuggestion(), rendered.current?.resultSetId );
+				events.onSuggestionInteract(
+					getTracksSuggestion(),
+					rendered.current && {
+						result_set_id: rendered.current.resultSetId,
+						result_group: rendered.current.group,
+					}
+				);
 			}
 
 			if ( inCart || policyNotices.length === 0 ) {

@@ -26,6 +26,7 @@ import { SitesNoticeArbiter } from '../notice-arbiter';
 import AgencySiteShareCard from '../overview-agency-site-share-card';
 import BackupCard from '../overview-backup-card';
 import DIFMOfferCard from '../overview-difm-offer-card';
+import DifmOfferThankYou from '../overview-difm-offer-card/thank-you';
 import DomainsCard from '../overview-domains-card';
 import LatestActivityCard from '../overview-latest-activity-card';
 import MigrateSiteCard from '../overview-migrate-site-card';
@@ -319,6 +320,7 @@ function SiteOverview( {
 					/>
 				) }
 			</GuidedTourContextProvider>
+			<DifmOfferThankYou />
 			<PerformanceTrackerStop />
 		</PageLayout>
 	);

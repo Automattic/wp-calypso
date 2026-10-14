@@ -87,11 +87,11 @@ export const NamePulseExactMatchCard = ( {
 			return;
 		}
 
-		reported.current = { resultSetId, position: 0 };
+		reported.current = { resultSetId, group: 'exact', position: 0 };
 		events.onSuggestionRender(
 			toNamePulseTracksSuggestion( result, 0 ),
 			undefined,
-			getNamePulseRenderTracksProps( result, 'featured', resultSetId )
+			getNamePulseRenderTracksProps( result, 'exact', resultSetId )
 		);
 	} );
 
