@@ -1,16 +1,19 @@
 import { Badge } from '@wordpress/ui';
-import { getLicenseStatusLabels } from './license-status';
-import type { LicenseStatus } from './license-status';
+import { getLicenseDisplayStatusLabels } from './license-status';
+import type { LicenseDisplayStatus } from './license-status';
 import type { ComponentProps } from 'react';
 
 type BadgeIntent = ComponentProps< typeof Badge >[ 'intent' ];
 
-const STATUS_INTENT: Record< LicenseStatus, BadgeIntent > = {
+const STATUS_INTENT: Record< LicenseDisplayStatus, BadgeIntent > = {
+	active: 'stable',
 	assigned: 'stable',
 	unassigned: 'medium',
 	revoked: 'high',
 };
 
-export default function LicenseStatusBadge( { status }: { status: LicenseStatus } ) {
-	return <Badge intent={ STATUS_INTENT[ status ] }>{ getLicenseStatusLabels()[ status ] }</Badge>;
+export default function LicenseStatusBadge( { status }: { status: LicenseDisplayStatus } ) {
+	return (
+		<Badge intent={ STATUS_INTENT[ status ] }>{ getLicenseDisplayStatusLabels()[ status ] }</Badge>
+	);
 }

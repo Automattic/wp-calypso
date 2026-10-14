@@ -18,6 +18,7 @@ import { DEFAULT_PER_PAGE } from '../../../sites/dataviews/views';
 import { formatDate, parseDateAsUTC } from '../../../utils/datetime';
 import {
 	LICENSE_STATUS_FILTERS,
+	PRESSABLE_AGENCY_URL,
 	getLicenseDisplayStatus,
 	getLicenseRenewalDate,
 	getLicenseStatus,
@@ -47,6 +48,26 @@ export const DEFAULT_VIEW: View = {
 	fields: [ 'status', 'site', 'issued_at', 'renewal', 'cost' ],
 	sort: { field: 'issued_at', direction: 'desc' },
 };
+
+// Wide enough for the renewal date and one badge on a line; two badges move below it together.
+const RENEWAL_COLUMN_MIN_WIDTH = 240;
+
+// Applied on top of the saved view, which replaces the default view rather than merging with it.
+export function withLicenseColumnStyles( view: View ): View {
+	if ( view.type !== 'table' ) {
+		return view;
+	}
+	return {
+		...view,
+		layout: {
+			...view.layout,
+			styles: {
+				...view.layout?.styles,
+				renewal: { ...view.layout?.styles?.renewal, minWidth: RENEWAL_COLUMN_MIN_WIDTH },
+			},
+		},
+	};
+}
 
 // The endpoint only sorts by these date fields.
 const SORTABLE_FIELDS = [
@@ -118,8 +139,6 @@ export function recordLicenseViewChanges(
 
 export const getLicenseId = ( license: JetpackLicense ) => String( license.license_id );
 
-const PRESSABLE_AGENCY_URL = 'https://my.pressable.com/agency/auth';
-
 function SiteCell( {
 	license,
 	isAgencyOwner,
@@ -189,18 +208,22 @@ export function RenewalCell( { license, locale }: { license: JetpackLicense; loc
 	const badges = getRenewalBadges( license );
 	const labels = getRenewalBadgeLabels();
 	return (
-		<HStack justify="flex-start" spacing={ 2 } expanded={ false }>
+		<HStack justify="flex-start" spacing={ 2 } expanded={ false } wrap>
 			<DashboardText
 				intent={ badges.includes( 'expired' ) ? 'error' : undefined }
 				style={ { whiteSpace: 'nowrap' } }
 			>
 				{ formatDate( parseDateAsUTC( expiry ), locale, { dateStyle: 'medium', timeZone: 'UTC' } ) }
 			</DashboardText>
-			{ badges.map( ( badge ) => (
-				<Badge key={ badge } intent={ RENEWAL_BADGE_INTENT[ badge ] }>
-					{ labels[ badge ] }
-				</Badge>
-			) ) }
+			{ badges.length > 0 && (
+				<HStack justify="flex-start" spacing={ 2 } expanded={ false }>
+					{ badges.map( ( badge ) => (
+						<Badge key={ badge } intent={ RENEWAL_BADGE_INTENT[ badge ] }>
+							{ labels[ badge ] }
+						</Badge>
+					) ) }
+				</HStack>
+			) }
 		</HStack>
 	);
 }

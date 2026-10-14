@@ -64,11 +64,14 @@ describe( 'getLicenseStatus', () => {
 } );
 
 describe( 'getLicenseDisplayStatus', () => {
-	it( 'shows no assignment status for Pressable add-ons and bundle parents', () => {
-		const addon = license( { license_key: 'pressable-addon-storage_x' } );
-		const bundle = license( { quantity: 5 } );
-		expect( getLicenseDisplayStatus( addon ) ).toBeNull();
-		expect( getLicenseDisplayStatus( bundle ) ).toBeNull();
+	it( 'shows Pressable add-ons as active', () => {
+		expect(
+			getLicenseDisplayStatus( license( { license_key: 'pressable-addon-storage_x' } ) )
+		).toBe( 'active' );
+	} );
+
+	it( 'shows no assignment status for bundle parents', () => {
+		expect( getLicenseDisplayStatus( license( { quantity: 5 } ) ) ).toBeNull();
 	} );
 
 	it( 'still shows revoked for them', () => {
