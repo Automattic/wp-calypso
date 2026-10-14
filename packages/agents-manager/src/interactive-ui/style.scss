@@ -1,0 +1,12 @@
+.agents-manager-interactive-ui {
+	// Other chat widgets can load older Agenttic typography rules on the same page.
+	.components-checkbox-control__label,
+	.components-radio-control__label {
+		font-size: 13px;
+		line-height: 20px;
+	}
+
+	.components-checkbox-control .components-h-stack {
+		align-items: center;
+	}
+}

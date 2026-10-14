@@ -1,7 +1,16 @@
 import { basicCatalog } from '@a2ui/react/v0_9';
 import { Catalog, MessageProcessor } from '@a2ui/web_core/v0_9';
 import Button from './button';
+import Card from './card';
+import CheckBox from './check-box';
+import ChoicePicker from './choice-picker';
 import Column from './column';
+import DateTimeInput from './date-time-input';
+import Divider from './divider';
+import Icon from './icon';
+import Image from './image';
+import List from './list';
+import Row from './row';
 import Text from './text';
 import TextField from './text-field';
 import type { ReactComponentImplementation } from '@a2ui/react/v0_9';
@@ -10,7 +19,21 @@ import type { A2uiClientAction, A2uiMessage } from '@a2ui/web_core/v0_9';
 const catalog = new Catalog(
 	basicCatalog.id,
 	'0.9',
-	[ Text, TextField, Button, Column ],
+	[
+		Text,
+		TextField,
+		Button,
+		Column,
+		Image,
+		Icon,
+		Row,
+		List,
+		Card,
+		Divider,
+		CheckBox,
+		ChoicePicker,
+		DateTimeInput,
+	],
 	[],
 	basicCatalog.themeSchema
 );

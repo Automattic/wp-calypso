@@ -3,6 +3,7 @@ import { Component } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import type { InteractiveUiPresentation } from '../hooks/use-interactive-ui';
 import type { ReactNode } from 'react';
+import './style.scss';
 
 class SurfaceBoundary extends Component<
 	{ children: ReactNode; revision: number },
@@ -53,6 +54,7 @@ export default function InteractiveUi( {
 			<fieldset
 				key={ surfaceId }
 				data-agenttic-isolated
+				className="agents-manager-interactive-ui"
 				disabled={ isDisabled }
 				style={ { border: 0, padding: 0, margin: 0, minWidth: 0 } }
 			>

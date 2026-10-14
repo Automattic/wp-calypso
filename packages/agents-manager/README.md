@@ -138,6 +138,22 @@ the A2UI SDK internally. Application helpers, components, and modules use
 interactive UI naming; imported SDK types and protocol identifiers retain their
 A2UI names.
 
+The demo catalog supports `Text`, `TextField`, `Button`, `Column`, `Image`, `Icon`,
+`Row`, `List`, `Card`, `Divider`, `CheckBox`, `ChoicePicker`, and `DateTimeInput`.
+Layouts use arrays of child IDs; cards wrap a single child and follow the chat
+theme colors. Icons map supported
+Basic catalog names to WordPress icons. Choice pickers support single and multiple
+selection and store selected values as string arrays. Bind input values and button
+action context to the same data paths to submit edits. Date/time inputs use local
+ISO date/time strings and enable date, time, or both with `enableDate`/`enableTime`.
+Input and choice-group labels use WordPress control typography and spacing.
+Interactive surfaces use `data-agenttic-isolated` so their controls retain their
+own typography while normal replies keep the chat's default typography reset.
+Choice-label alignment is scoped to the interactive surface because other chat
+widgets can load older Agenttic typography styles on the same page.
+Rebuild `@automattic/agenttic-ui` before the app when its styles change; the app
+consumes that package's built CSS.
+
 ## Development
 
 Calypso, the Dashboard and `apps/agents-manager` import `src/` directly (`calypso:src`), so no build is needed during development. See `AGENTS.md` → Testing for tests, type-checks, lint and sandbox testing. `yarn build`, `yarn watch` and `yarn clean`, run in this package, only manage `dist/`.
