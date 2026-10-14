@@ -21,7 +21,7 @@ import { STEPS } from '../../internals/steps';
 import { ProcessingResult } from '../../internals/steps-repository/processing-step/constants';
 import type { FlowV2, SubmitHandler } from '../../internals/types';
 
-// Only a failed pending action stores an error, so the reason names every other cause.
+// Only a failed pending action stores an error. The reason tags every outcome, failure included.
 const PROCESSING_ERROR_REASONS: Record< ProcessingResult, string > = {
 	[ ProcessingResult.FAILURE ]: 'processing_failed',
 	[ ProcessingResult.NO_ACTION ]: 'processing_no_action',

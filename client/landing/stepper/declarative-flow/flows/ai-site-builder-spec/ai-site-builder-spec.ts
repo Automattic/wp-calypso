@@ -101,7 +101,7 @@ const aiSiteBuilderSpec: FlowV2< typeof initialize > = {
 
 						// The pending action reports a failed or timed-out build by throwing, and
 						// the processing step has already stashed its message for the error step.
-						// The other outcomes store nothing, so the reason names the cause.
+						// The other outcomes store nothing. The reason tags every outcome, failure included.
 						return navigate(
 							'error',
 							{
