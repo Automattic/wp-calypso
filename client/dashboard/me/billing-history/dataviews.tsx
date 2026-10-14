@@ -1,4 +1,5 @@
 import { sendReceiptEmailMutation } from '@automattic/api-queries';
+import { formatNumber } from '@automattic/number-formatters';
 import { useMutation } from '@tanstack/react-query';
 import { Link, useNavigate } from '@tanstack/react-router';
 import { __experimentalText as Text, __experimentalVStack as VStack } from '@wordpress/components';
@@ -388,10 +389,10 @@ function renderServiceNameDescription( receipt: Receipt ) {
 		receiptItem.licensed_quantity && isAkismetPro500Plan( receiptItem.wpcom_product_slug );
 	const displayLabel = isAkismet
 		? sprintf(
-				/* translators: 1: product name like "Akismet Pro", 2: number of requests per month */
-				__( '%1$s (%2$d requests/month)' ),
+				/* translators: 1: product name like "Akismet Pro", 2: formatted number of requests per month */
+				__( '%1$s (%2$s requests/month)' ),
 				label.replace( /\s*\(.*$/, '' ).trim(),
-				500 * parseInt( String( receiptItem.licensed_quantity ) )
+				formatNumber( 500 * parseInt( String( receiptItem.licensed_quantity ) ) )
 			)
 		: label;
 

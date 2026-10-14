@@ -1,3 +1,4 @@
+import { formatNumber } from '@automattic/number-formatters';
 import {
 	Button,
 	Spinner,
@@ -47,7 +48,11 @@ function MovingChecklist( { session }: { session?: StaticSiteImportSession } ) {
 		{
 			label: __( 'Pages' ),
 			total: pages
-				? sprintf( /* translators: %d: number of pages. */ __( '%d pages' ), pages )
+				? sprintf(
+						/* translators: %s: formatted number of pages. */
+						__( '%s pages' ),
+						formatNumber( pages )
+					)
 				: '',
 		},
 		{ label: __( 'Images' ) },
