@@ -23,11 +23,7 @@ import {
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import { useQuery } from '../../../hooks/use-query';
 import { ONBOARD_STORE, SITE_STORE } from '../../../stores';
-import {
-	BUILD_WOW_SITE_SPEC_PATH,
-	commerceUsesBuildWow,
-	getBuildWowSiteSpecUrl,
-} from '../../../utils/build-wow';
+import { getBuildWowSiteSpecUrl } from '../../../utils/build-wow';
 import { planSupportsBuildWow } from '../../../utils/build-wow-plans';
 import { stepsWithRequiredLogin } from '../../../utils/steps-with-required-login';
 import { STEPS } from '../../internals/steps';
@@ -82,7 +78,6 @@ async function initialize( reduxStore: Store ) {
 		STEPS.UNIFIED_PLANS,
 		STEPS.SITE_CREATION_STEP,
 		STEPS.PROCESSING,
-		STEPS.WAIT_FOR_COMMERCE_ATOMIC,
 		STEPS.ERROR,
 	] );
 }
@@ -184,43 +179,6 @@ const aiSiteBuilderOnboarding: FlowV2< typeof initialize > = {
 			const { slug, providedDependencies } = submittedStep;
 
 			switch ( slug ) {
-				case STEPS.WAIT_FOR_COMMERCE_ATOMIC.slug: {
-					if ( ! providedDependencies.ready ) {
-						return navigate( STEPS.ERROR.slug );
-					}
-
-					const siteSlug = query.get( 'siteSlug' );
-					const destination = query.get( 'redirect_to' );
-					if ( ! siteSlug || ! destination ) {
-						return navigate( STEPS.ERROR.slug );
-					}
-
-					// Only for checkouts started before build-wow skipped this wait, which
-					// persisted it as the destination. The signup destination cookie lives 24h
-					// and redirect payments return later, so remove it a few days after deploy.
-					if ( destination.startsWith( `${ BUILD_WOW_SITE_SPEC_PATH }?` ) ) {
-						window.location.replace( destination );
-						return;
-					}
-
-					let editorUrl: URL;
-					try {
-						editorUrl = new URL( destination );
-					} catch {
-						return navigate( STEPS.ERROR.slug );
-					}
-					if (
-						! siteSlug.endsWith( '.wordpress.com' ) ||
-						editorUrl.protocol !== 'https:' ||
-						editorUrl.hostname !== siteSlug ||
-						editorUrl.pathname !== '/wp-admin/site-editor.php'
-					) {
-						return navigate( STEPS.ERROR.slug );
-					}
-
-					window.location.replace( editorUrl.toString() );
-					return;
-				}
 				case STEPS.DOMAIN_SEARCH.slug: {
 					if ( ! providedDependencies ) {
 						throw new Error( 'No provided dependencies found' );
@@ -287,11 +245,11 @@ const aiSiteBuilderOnboarding: FlowV2< typeof initialize > = {
 					// preparation is only for the legacy site editor destination. The build-wow
 					// destination lives in the ai-site-builder-spec flow, which bounces to plain
 					// onboarding without the site-spec feature.
-					const isCommerce = !! planCartItem && isEcommercePlan( planCartItem.product_slug );
+					const planSlug = planCartItem?.product_slug;
 					const useBuildWow =
 						config.isEnabled( 'site-spec' ) &&
-						( planSupportsBuildWow( planCartItem?.product_slug ) ||
-							( isCommerce && ( await commerceUsesBuildWow( siteId ) ) ) );
+						!! planSlug &&
+						( planSupportsBuildWow( planSlug ) || isEcommercePlan( planSlug ) );
 
 					const prompt =
 						query.get( 'prompt' ) || window.sessionStorage.getItem( 'stored_ai_prompt' ) || '';
@@ -340,20 +298,11 @@ const aiSiteBuilderOnboarding: FlowV2< typeof initialize > = {
 					setSignupCompleteFlowName( flowName );
 					setSignupCompleteSiteID( siteId );
 
-					// Only the legacy editor lives on the site, so only it waits for the
-					// Commerce transfer. Build-wow reuses that transfer and builds once it ends.
-					const checkoutDestination =
-						isCommerce && ! useBuildWow
-							? addQueryArgs(
-									`/setup/${ AI_SITE_BUILDER_ONBOARDING_FLOW }/${ STEPS.WAIT_FOR_COMMERCE_ATOMIC.slug }`,
-									{ siteId, siteSlug, redirect_to: destination }
-								)
-							: destination;
-					persistSignupDestination( checkoutDestination );
+					persistSignupDestination( destination );
 
 					return window.location.assign(
 						addQueryArgs( `/checkout/${ encodeURIComponent( siteSlug ) }`, {
-							redirect_to: checkoutDestination,
+							redirect_to: destination,
 							checkoutBackUrl,
 							checkoutBackUrlDomains,
 							signup: 1,
