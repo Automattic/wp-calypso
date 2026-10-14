@@ -1,3 +1,4 @@
+import { useRegisterMasterbarAiChatButton } from '@automattic/agents-manager';
 import {
 	dashboardAdminBarQuery,
 	omnibarAgentsManagerEnabledQuery,
@@ -109,7 +110,8 @@ function ConnectedOmnibar( {
 	} );
 	const { data: showAiChat = false } = useQuery( omnibarAgentsManagerEnabledQuery() );
 
-	const { data: { nodes: dashboardNodes } = {} } = useQuery( dashboardAdminBarQuery() );
+	const { data: { nodes: dashboardNodes } = {}, isPending: isDashboardAdminBarPending } =
+		useQuery( dashboardAdminBarQuery() );
 	const { data: { nodes: siteNodes } = {} } = useQuery( {
 		...siteAdminBarQuery( siteId ?? 0 ),
 		enabled: hydrated && !! siteId,
@@ -182,6 +184,10 @@ function ConnectedOmnibar( {
 		sectionName,
 		adminBarNodes,
 	} );
+	// Register before the admin-bar nodes load, so the chat doesn't render without its button.
+	useRegisterMasterbarAiChatButton(
+		!! aiChatPluginNode && ( isDashboardAdminBarPending || !! baseOmnibarNodes.user )
+	);
 	const siteNode = addDashboardNode( baseOmnibarNodes.site, dashboardNode );
 	const siteActions = [ ...( baseOmnibarNodes.siteActions ?? [] ), launchSiteNode ].filter(
 		( node ) => node !== undefined

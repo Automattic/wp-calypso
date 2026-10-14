@@ -14,22 +14,18 @@ jest.mock( '../../utils/editor-entry-points', () => ( {
 	isAdminBarInEditor: () => mockIsAdminBarInEditor(),
 } ) );
 
-import useHasAiChatEntryButton, { hasAiChatEntryButton } from '../use-has-ai-chat-entry-button';
+import useHasAiChatEntryButton, {
+	hasAiChatEntryButton,
+	useRegisterMasterbarAiChatButton,
+} from '../use-has-ai-chat-entry-button';
 
 const AI_CHAT_BUTTON_ID = 'wp-admin-bar-agents-manager-ai-chat';
-const MASTERBAR_BUTTON_CLASS = 'masterbar__item-agents-manager-ai-chat';
 
 const setUrl = ( path: string ) => window.history.replaceState( {}, '', path );
 
 const installAdminBarButton = () => {
 	const button = document.createElement( 'div' );
 	button.id = AI_CHAT_BUTTON_ID;
-	document.body.appendChild( button );
-};
-
-const installMasterbarButton = () => {
-	const button = document.createElement( 'div' );
-	button.className = MASTERBAR_BUTTON_CLASS;
 	document.body.appendChild( button );
 };
 
@@ -96,12 +92,6 @@ describe( 'hasAiChatEntryButton', () => {
 			expect( hasAiChatEntryButton() ).toBe( true );
 		} );
 
-		it( 'counts the Calypso masterbar button', () => {
-			installMasterbarButton();
-
-			expect( hasAiChatEntryButton() ).toBe( true );
-		} );
-
 		it( 'is false without any entry button', () => {
 			expect( hasAiChatEntryButton() ).toBe( false );
 		} );
@@ -121,5 +111,19 @@ describe( 'useHasAiChatEntryButton', () => {
 
 		act( () => window.history.pushState( {}, '', '/wp-admin/site-editor.php?canvas=edit' ) );
 		expect( result.current ).toBe( true );
+	} );
+
+	it( 'reacts to the Calypso masterbar registering and unregistering its button', () => {
+		const { result } = renderHook( () => useHasAiChatEntryButton() );
+		expect( result.current ).toBe( false );
+
+		const masterbar = renderHook(
+			( { hasAiChatButton } ) => useRegisterMasterbarAiChatButton( hasAiChatButton ),
+			{ initialProps: { hasAiChatButton: true } }
+		);
+		expect( result.current ).toBe( true );
+
+		masterbar.rerender( { hasAiChatButton: false } );
+		expect( result.current ).toBe( false );
 	} );
 } );

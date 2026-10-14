@@ -1,12 +1,41 @@
-import { useSyncExternalStore } from '@wordpress/element';
+import { useEffect, useSyncExternalStore } from '@wordpress/element';
 import { getChatPresentation } from '../utils/chat-presentation';
 import { isAdminBarInEditor, isEditorAiEntryEnabled } from '../utils/editor-entry-points';
 import { isSiteEditorContext, isSiteEditorNavigationView } from '../utils/site-editor-context';
 
 // The standalone AI chat button — the chat's entry point, separate from the Help
-// menu. The wp-admin bar exposes it by ID; Calypso's masterbar by class.
+// menu. wp-admin renders it server-side, so it's found by ID.
 export const ADMIN_BAR_AI_CHAT_BUTTON_ID = 'wp-admin-bar-agents-manager-ai-chat';
-const MASTERBAR_AI_CHAT_BUTTON_SELECTOR = '.masterbar__item-agents-manager-ai-chat';
+
+const ENTRY_BUTTON_CHANGE_EVENT = 'agentsManagerEntryButtonChange';
+
+function dispatchEntryButtonChange(): void {
+	window.dispatchEvent( new Event( ENTRY_BUTTON_CHANGE_EVENT ) );
+}
+
+let registeredMasterbarAiChatButtonCount = 0;
+
+/**
+ * Registers the Calypso masterbar's AI chat button while `hasAiChatButton` is true.
+ * The masterbar renders the button only after its admin-bar nodes load, often after
+ * the chat mounts, so it registers the button up front instead of the chat looking
+ * for it in the DOM.
+ */
+export function useRegisterMasterbarAiChatButton( hasAiChatButton: boolean ): void {
+	useEffect( () => {
+		if ( ! hasAiChatButton ) {
+			return;
+		}
+
+		registeredMasterbarAiChatButtonCount++;
+		dispatchEntryButtonChange();
+
+		return () => {
+			registeredMasterbarAiChatButtonCount--;
+			dispatchEntryButtonChange();
+		};
+	}, [ hasAiChatButton ] );
+}
 
 /**
  * Whether an AI chat entry button (wp-admin bar, Calypso masterbar, or editor toolbar) is
@@ -28,15 +57,13 @@ export function hasAiChatEntryButton(): boolean {
 	return (
 		isEditorAiEntryEnabled() ||
 		!! document.getElementById( ADMIN_BAR_AI_CHAT_BUTTON_ID ) ||
-		!! document.querySelector( MASTERBAR_AI_CHAT_BUTTON_SELECTOR )
+		registeredMasterbarAiChatButtonCount > 0
 	);
 }
 
-const LOCATION_CHANGE_EVENT = 'agentsManagerLocationChange';
-
 // `pushState`/`replaceState` fire no event, so Site Editor navigation would
 // otherwise go unnoticed. Patch them once to also dispatch
-// `LOCATION_CHANGE_EVENT`; never restored, to avoid clobbering another
+// `ENTRY_BUTTON_CHANGE_EVENT`; never restored, to avoid clobbering another
 // library's patch.
 let historyPatched = false;
 function patchHistoryOnce(): void {
@@ -49,36 +76,29 @@ function patchHistoryOnce(): void {
 		const original = window.history[ method ];
 		window.history[ method ] = function ( ...args ) {
 			const result = original.apply( this, args );
-			window.dispatchEvent( new Event( LOCATION_CHANGE_EVENT ) );
+			dispatchEntryButtonChange();
 			return result;
 		};
 	} );
 }
 
-/**
- * Subscribes `notify` to the Site Editor's client-side navigation (`pushState`,
- * `replaceState`, and `popstate`). No-op off the Site Editor — the only surface
- * where an entry button appears or disappears without a full page load.
- */
-function subscribeToSiteEditorLocation( notify: () => void ): () => void {
-	if ( ! isSiteEditorContext() ) {
-		return () => {};
+function subscribeToEntryButtonChange( notify: () => void ): () => void {
+	window.addEventListener( ENTRY_BUTTON_CHANGE_EVENT, notify );
+	if ( isSiteEditorContext() ) {
+		patchHistoryOnce();
+		window.addEventListener( 'popstate', notify );
 	}
 
-	patchHistoryOnce();
-	window.addEventListener( 'popstate', notify );
-	window.addEventListener( LOCATION_CHANGE_EVENT, notify );
-
 	return () => {
+		window.removeEventListener( ENTRY_BUTTON_CHANGE_EVENT, notify );
 		window.removeEventListener( 'popstate', notify );
-		window.removeEventListener( LOCATION_CHANGE_EVENT, notify );
 	};
 }
 
 /**
  * Reactive `hasAiChatEntryButton()` — re-evaluates on the Site Editor's client-side
- * navigation, where the toolbar entry appears and disappears without a page load.
+ * navigation and the masterbar button's registration.
  */
 export default function useHasAiChatEntryButton(): boolean {
-	return useSyncExternalStore( subscribeToSiteEditorLocation, hasAiChatEntryButton );
+	return useSyncExternalStore( subscribeToEntryButtonChange, hasAiChatEntryButton );
 }

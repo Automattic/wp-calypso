@@ -30,6 +30,7 @@ export type {
 
 export { useAiChatEntryState } from './hooks/use-ai-chat-entry-state';
 export { default as AiChatEntryLabel } from './components/ai-chat-entry-label';
+export { useRegisterMasterbarAiChatButton } from './hooks/use-has-ai-chat-entry-button';
 
 // Feedback exports
 export {
