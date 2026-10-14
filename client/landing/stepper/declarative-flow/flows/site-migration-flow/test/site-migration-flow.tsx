@@ -18,6 +18,7 @@ import { useFlowState } from 'calypso/landing/stepper/declarative-flow/internals
 import { STEPS } from 'calypso/landing/stepper/declarative-flow/internals/steps';
 import {
 	getAssertionConditionResult,
+	getFlowLocation,
 	renderFlow,
 	runFlowNavigation,
 } from 'calypso/landing/stepper/declarative-flow/test/helpers';
@@ -705,6 +706,19 @@ describe( 'Site Migration Flow', () => {
 		} );
 
 		describe( 'PROCESSING', () => {
+			it( 'names the cause when the site was not created', () => {
+				const destination = runNavigation( {
+					from: STEPS.PROCESSING,
+					dependencies: { siteCreated: false },
+				} );
+
+				expect( destination ).toMatchDestination( { step: STEPS.ERROR, query: null } );
+				expect( getFlowLocation().state ).toEqual( {
+					message: 'Site not created',
+					errorReason: 'site_not_created',
+				} );
+			} );
+
 			it( 'redirects to SITE_MIGRATION_HOW_TO_MIGRATE when the platform is wordpress', () => {
 				const destination = runNavigation( {
 					from: STEPS.PROCESSING,

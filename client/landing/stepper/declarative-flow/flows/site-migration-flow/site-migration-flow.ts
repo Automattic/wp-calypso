@@ -891,6 +891,7 @@ const siteMigration: FlowV2< typeof initialize > = {
 					if ( ! siteCreated ) {
 						return navigate( STEPS.ERROR.slug, {
 							message: 'Site not created',
+							errorReason: 'site_not_created',
 						} );
 					}
 
