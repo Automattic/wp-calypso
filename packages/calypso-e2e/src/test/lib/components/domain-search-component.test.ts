@@ -28,16 +28,20 @@ function suggestionsFor( query: string ): Response {
  *
  * `waitForResponse` answers with the first carried response that satisfies the
  * predicate, and times out straight away when none does. The last title stands
- * for every read after it, so a single title is a list that never changes.
+ * for every read after it, so a single title is a list that never changes. Name
+ * Pulse lists, read as their rows' domains, take turns the same way; without
+ * them the page shows the classic list.
  */
 function searchPage( {
 	prefill = '',
 	responses = [],
 	titles = [],
+	namePulseLists = [],
 }: {
 	prefill?: string;
 	responses?: Response[];
 	titles?: string[];
+	namePulseLists?: string[][];
 } ) {
 	const searchbox = {
 		inputValue: jest.fn( async () => prefill ),
@@ -53,6 +57,14 @@ function searchPage( {
 		first: jest.fn(),
 	};
 	listitem.first.mockReturnValue( listitem );
+	const remainingNamePulseLists = [ ...namePulseLists ];
+	const namePulseRows = {
+		evaluateAll: jest.fn( async () =>
+			remainingNamePulseLists.length > 1
+				? ( remainingNamePulseLists.shift() as string[] )
+				: ( remainingNamePulseLists[ 0 ] ?? [] )
+		),
+	};
 
 	// Waiting is what a search spends, so the waits a test does not really make
 	// still move a clock it can read back through `Date.now`.
@@ -66,6 +78,7 @@ function searchPage( {
 
 			return role === 'searchbox' ? searchbox : {};
 		} ),
+		locator: jest.fn( () => namePulseRows ),
 		reload: jest.fn( async () => null ),
 		waitForTimeout: jest.fn( async ( timeout: number ) => {
 			clock.elapsed += timeout;
@@ -84,7 +97,14 @@ function searchPage( {
 		),
 	};
 
-	return { page: page as unknown as Page, searchbox, listitem, clock, reload: page.reload };
+	return {
+		page: page as unknown as Page,
+		searchbox,
+		listitem,
+		namePulseRows,
+		clock,
+		reload: page.reload,
+	};
 }
 
 beforeEach( () => {
@@ -198,6 +218,31 @@ describe( 'DomainSearchComponent.search', () => {
 			'exceeded its 60s budget'
 		);
 		expect( handler ).toHaveBeenCalledWith( 'skip', [ 'domain-suggestions' ] );
+	} );
+
+	test( 'takes a Name Pulse list once any of its rows is for the keyword', async () => {
+		// Name Pulse remounts its results for each query, and its first row can be
+		// a related name rather than the keyword itself.
+		const { page, listitem, namePulseRows } = searchPage( {
+			responses: [ suggestionsFor( KEYWORD ) ],
+			namePulseLists: [ [ `${ SITE_SLUG }.blog` ], [ 'flowtesting.blog', `${ KEYWORD }.com` ] ],
+		} );
+
+		await new DomainSearchComponent( page ).search( KEYWORD );
+
+		expect( namePulseRows.evaluateAll ).toHaveBeenCalledTimes( 2 );
+		expect( listitem.getAttribute ).not.toHaveBeenCalled();
+	} );
+
+	test( 'gives up when the Name Pulse list never shows the keyword', async () => {
+		const { page } = searchPage( {
+			responses: [ suggestionsFor( KEYWORD ) ],
+			namePulseLists: [ [ `${ SITE_SLUG }.blog`, `${ SITE_SLUG }.com` ] ],
+		} );
+
+		await expect( new DomainSearchComponent( page ).search( KEYWORD ) ).rejects.toThrow(
+			`Domain suggestions did not update for "${ KEYWORD }": first suggestion is "${ SITE_SLUG }.blog".`
+		);
 	} );
 
 	test( 'reads a suggestion title through the punctuation a keyword loses', async () => {
