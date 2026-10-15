@@ -870,14 +870,16 @@ const CheckoutSummaryAmountWrapper = styled.div`
 `;
 
 const CheckoutSummaryLineItem = styled.div< { isDiscount?: boolean } >`
-	display: flex;
-	flex-wrap: wrap;
 	font-size: 14px;
 	justify-content: space-between;
 	line-height: 20px;
 	margin-bottom: 4px;
 
 	color: ${ ( props ) => ( props.isDiscount ? props.theme.colors.discount : 'inherit' ) };
+
+	& > span:last-child {
+		white-space: nowrap;
+	}
 `;
 
 export const PriceLoadingIndicator = styled.span< { width?: string; height?: string } >`
@@ -912,6 +914,7 @@ const CheckoutSummarySubtotal = styled( CheckoutSummaryLineItem )< {
 		flex: 0 0 auto;
 		gap: 4px;
 		margin-left: auto;
+		white-space: nowrap;
 
 		.rtl & {
 			margin-right: auto;
@@ -932,6 +935,7 @@ const CheckoutSummaryTotalDiscount = styled( CheckoutSummaryLineItem )`
 	& .wp-checkout-order-summary__subtotal-discount {
 		color: ${ COLOR_GREEN_60 };
 		font-weight: 500;
+		white-space: nowrap;
 	}
 `;
 
@@ -941,6 +945,10 @@ const CheckoutSummaryTotal = styled( CheckoutSummaryLineItem )`
 	line-height: 26px;
 	margin-bottom: 0px;
 	font-size: 20px;
+
+	.wp-checkout-order-summary__total-price {
+		white-space: nowrap;
+	}
 `;
 
 const LoadingCopy = styled.p`
