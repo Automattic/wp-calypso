@@ -154,33 +154,50 @@ describe( 'SiteMigrationCheck', () => {
 		expect( submit ).toHaveBeenCalledWith( { action: 'back' } );
 	} );
 
-	it( 'shows the WordPress.com result with unfinished choices disabled and no copy promise', async () => {
-		const submit = jest.fn();
-		renderStep( <SiteMigrationCheck { ...mockStepProps( { navigation: { submit } } ) } />, {
-			initialEntry:
-				'/site-migration-check?from=https://cotrim.dev/&platform=wordpress&isWpcom=true',
-		} );
-		expect(
-			screen.getByRole( 'heading', { name: 'Your site is already on WordPress.com' } )
-		).toBeVisible();
-		expect( screen.getByText( 'cotrim.dev' ) ).toBeVisible();
-		expect( screen.getByRole( 'link', { name: 'WordPress site ↗' } ) ).toHaveAttribute(
-			'href',
-			'https://cotrim.dev/'
-		);
-		for ( const name of [
-			/Make a copy of your site/,
-			/Transfer your domain/,
-			/Get access to your site/,
-		] ) {
-			expect( screen.getByRole( 'button', { name } ) ).toBeDisabled();
+	it.each( [ false, true ] )(
+		'shows the WordPress.com actions with copy eligibility %s',
+		async ( canCopySite ) => {
+			const submit = jest.fn();
+			renderStep(
+				<SiteMigrationCheck
+					{ ...mockStepProps( { navigation: { submit } } ) }
+					canCopySite={ canCopySite }
+				/>,
+				{
+					initialEntry:
+						'/site-migration-check?from=https://cotrim.dev/&platform=wordpress&isWpcom=true',
+				}
+			);
+			expect(
+				screen.getByRole( 'heading', { name: 'Your site is already on WordPress.com' } )
+			).toBeVisible();
+			expect( screen.getByText( 'cotrim.dev' ) ).toBeVisible();
+			expect( screen.getByRole( 'link', { name: 'WordPress site ↗' } ) ).toHaveAttribute(
+				'href',
+				'https://cotrim.dev/'
+			);
+			expect(
+				screen.queryAllByRole( 'button', { name: /Make a copy of your site/ } )
+			).toHaveLength( canCopySite ? 1 : 0 );
+			for ( const [ name, action ] of [
+				...( canCopySite ? [ [ /Make a copy of your site/, 'copy-site' ] as const ] : [] ),
+				[ /Transfer your domain/, 'transfer-domain' ],
+				[ /Get access to your site/, 'get-access' ],
+			] ) {
+				await userEvent.click( screen.getByRole( 'button', { name } ) );
+				expect( submit ).toHaveBeenLastCalledWith( {
+					action,
+					from: 'https://cotrim.dev/',
+					platform: 'wordpress',
+					host: undefined,
+				} );
+			}
+			expect( screen.queryByText( 'Site preview' ) ).not.toBeInTheDocument();
+			expect( screen.queryByRole( 'button', { name: 'Continue' } ) ).not.toBeInTheDocument();
+			for ( const name of [ 'Back', 'Not the site you meant? Enter a different URL' ] ) {
+				await userEvent.click( screen.getByRole( 'button', { name } ) );
+				expect( submit ).toHaveBeenLastCalledWith( { action: 'back' } );
+			}
 		}
-		expect( screen.queryByText( 'Site preview' ) ).not.toBeInTheDocument();
-		expect( screen.queryByRole( 'button', { name: 'Continue' } ) ).not.toBeInTheDocument();
-		expect( submit ).not.toHaveBeenCalled();
-		for ( const name of [ 'Back', 'Not the site you meant? Enter a different URL' ] ) {
-			await userEvent.click( screen.getByRole( 'button', { name } ) );
-			expect( submit ).toHaveBeenLastCalledWith( { action: 'back' } );
-		}
-	} );
+	);
 } );

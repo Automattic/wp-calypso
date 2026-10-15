@@ -22,6 +22,8 @@ import {
 	runFlowNavigation,
 } from 'calypso/landing/stepper/declarative-flow/test/helpers';
 import { useIsSiteAdmin } from 'calypso/landing/stepper/hooks/use-is-site-admin';
+import { useSiteQuery } from 'calypso/landing/stepper/hooks/use-site';
+import { useSiteCopy } from 'calypso/landing/stepper/hooks/use-site-copy';
 import * as siteData from 'calypso/landing/stepper/hooks/use-site-data';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { goToCheckout } from 'calypso/landing/stepper/utils/checkout';
@@ -42,6 +44,11 @@ jest.mock( 'calypso/landing/stepper/utils/checkout' );
 jest.mock( '@automattic/data-stores/src/user/selectors' );
 jest.mock( 'calypso/state/current-user/selectors' );
 jest.mock( 'calypso/landing/stepper/hooks/use-is-site-admin' );
+jest.mock( 'calypso/landing/stepper/hooks/use-site', () => ( {
+	...jest.requireActual( 'calypso/landing/stepper/hooks/use-site' ),
+	useSiteQuery: jest.fn(),
+} ) );
+jest.mock( 'calypso/landing/stepper/hooks/use-site-copy' );
 jest.mock( 'calypso/lib/guides/trigger-guides-for-step', () => ( {
 	triggerGuidesForStep: jest.fn(),
 } ) );
@@ -121,6 +128,10 @@ describe( 'Site Migration Flow', () => {
 		} );
 		( getSiteOption as jest.Mock ).mockReturnValue( 'https://example.wpcomstaging.com/wp-admin/' );
 		jest.mocked( getCurrentUserSiteCount ).mockReturnValue( 0 );
+		jest.mocked( useSiteQuery ).mockReturnValue( { data: null, isLoading: false } );
+		jest
+			.mocked( useSiteCopy )
+			.mockReturnValue( { shouldShowSiteCopyItem: false, isFetching: false } );
 		jest.mocked( useFlowState().get ).mockReturnValue( undefined );
 
 		const apiBaseUrl = 'https://public-api.wordpress.com';
@@ -749,6 +760,58 @@ describe( 'Site Migration Flow', () => {
 		} );
 
 		describe( 'Reprint address routes', () => {
+			it.each( [
+				[ true, false, false, true ],
+				[ false, false, false, false ],
+				[ true, true, false, false ],
+				[ true, false, true, false ],
+			] )(
+				'checks copy eligibility on the source: eligible=%s, loading=%s, fetching=%s',
+				( eligible, isLoading, isFetching, expected ) => {
+					jest.spyOn( config, 'isEnabled' ).mockReturnValue( true );
+					const source = { ID: 456, site_owner: 789 };
+					jest.mocked( useSiteQuery ).mockReturnValue( { data: source, isLoading } );
+					jest
+						.mocked( useSiteCopy )
+						.mockReturnValue( { shouldShowSiteCopyItem: eligible, isFetching } );
+					const { result } = renderHookWithProvider( () => siteMigrationFlow.useStepsProps(), {
+						wrapper: ( { children } ) => (
+							<MemoryRouter
+								initialEntries={ [
+									'/setup/site-migration/site-migration-check?from=https://cotrim.dev/path&platform=wordpress&isWpcom=true&siteSlug=destination.wordpress.com',
+								] }
+							>
+								{ children }
+							</MemoryRouter>
+						),
+					} );
+					expect( useSiteQuery ).toHaveBeenLastCalledWith( 'cotrim.dev', { enabled: true } );
+					expect( useSiteCopy ).toHaveBeenLastCalledWith( source, { enabled: true } );
+					expect( result.current[ STEPS.SITE_MIGRATION_CHECK.slug ].canCopySite ).toBe( expected );
+				}
+			);
+
+			it.each( [
+				[ 'copy-site', '/setup/copy-site', { sourceSlug: 'cotrim.dev' } ],
+				[ 'transfer-domain', '/setup/domain-transfer/intro', { new: 'cotrim.dev' } ],
+				[ 'get-access', 'https://wordpress.com/support/account-recovery/', {} ],
+			] )( 'opens the existing destination for %s', ( action, path, query ) => {
+				jest.spyOn( config, 'isEnabled' ).mockReturnValue( true );
+				runNavigation( {
+					from: STEPS.SITE_MIGRATION_CHECK,
+					query: {
+						from: 'https://cotrim.dev/path',
+						platform: 'wordpress',
+						isWpcom: 'true',
+						siteSlug: 'destination.wordpress.com',
+						siteId: 123,
+					},
+					dependencies: { action, from: 'https://cotrim.dev/path', platform: 'wordpress' },
+				} );
+				expect( window.location.assign ).toMatchURL( { path, query } );
+				expect( goToCheckout ).not.toHaveBeenCalled();
+			} );
+
 			it.each( [ 'wordpress', 'squarespace' ] )(
 				'opens the existing %s path after manual selection for a supplied destination',
 				( platform ) => {
@@ -1124,6 +1187,7 @@ describe( 'Site Migration Flow', () => {
 						}
 					);
 					expect( props.current[ STEPS.SITE_MIGRATION_CHECK.slug ] ).toEqual( {
+						canCopySite: false,
 						destinationSiteSlug: 'example.wordpress.com',
 						destinationPlanName: plan?.product_name_short,
 						needsUpgrade: !! plan,
@@ -1191,6 +1255,7 @@ describe( 'Site Migration Flow', () => {
 					wrapper: MemoryRouter,
 				} );
 				expect( props.current[ STEPS.SITE_MIGRATION_CHECK.slug ] ).toEqual( {
+					canCopySite: false,
 					destinationSiteSlug: destination.siteSlug,
 					destinationPlanName: 'Personal',
 					needsUpgrade: false,
