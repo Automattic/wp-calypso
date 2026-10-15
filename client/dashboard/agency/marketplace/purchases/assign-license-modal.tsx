@@ -9,11 +9,11 @@ import {
 	Button,
 	RadioControl,
 	__experimentalHStack as HStack,
+	__experimentalHeading as Heading,
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
-import { DataViews as WPDataViews } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
@@ -23,7 +23,6 @@ import { useAuth } from '../../../app/auth';
 import { useLocale } from '../../../app/locale';
 import { ButtonStack } from '../../../components/button-stack';
 import { DataViews, DataViewsCard } from '../../../components/dataviews';
-import { SectionHeader } from '../../../components/section-header';
 import { formatDate, parseDateAsUTC } from '../../../utils/datetime';
 import type { AgencySite } from '@automattic/api-core';
 import type { Field, View } from '@wordpress/dataviews';
@@ -166,9 +165,9 @@ export default function AssignLicenseModal( {
 	return (
 		<VStack spacing={ 6 }>
 			<VStack spacing={ 1 }>
-				<Text size={ 15 } weight={ 500 }>
+				<Heading level={ 2 } size={ 15 } weight={ 500 }>
 					{ productName }
-				</Text>
+				</Heading>
 				{ issuedDate && (
 					<Text variant="muted">
 						{ sprintf(
@@ -196,16 +195,19 @@ export default function AssignLicenseModal( {
 				) }
 			</VStack>
 			<VStack spacing={ 3 }>
-				<SectionHeader
-					level={ 3 }
-					title={ __( 'Select a site' ) }
-					description={ createInterpolateElement(
-						__(
-							'If you don’t see the site in the list, connect it first via the <a>Sites Dashboard</a>.'
-						),
-						{ a: <Link to="/sites" /> }
-					) }
-				/>
+				<VStack spacing={ 1 }>
+					<Heading level={ 2 } size={ 15 } weight={ 500 }>
+						{ __( 'Select a site' ) }
+					</Heading>
+					<Text variant="muted">
+						{ createInterpolateElement(
+							__(
+								'If you don’t see the site in the list, connect it first via the <a>Sites Dashboard</a>.'
+							),
+							{ a: <Link to="/sites" /> }
+						) }
+					</Text>
+				</VStack>
 				<VStack className="dashboard-marketplace-purchases__site-list" justify="flex-start">
 					<DataViewsCard>
 						<DataViews< AgencySite >
@@ -225,13 +227,11 @@ export default function AssignLicenseModal( {
 							defaultLayouts={ { table: {} } }
 						>
 							{ /* A one-column site list has nothing to filter or configure, so only the search is kept. */ }
-							<HStack className="dataviews__view-actions" alignment="top" justify="space-between">
-								<HStack className="dataviews__search" justify="flex-start">
-									<WPDataViews.Search />
-								</HStack>
+							<HStack className="dashboard-marketplace-purchases__site-search" justify="flex-start">
+								<DataViews.Search />
 							</HStack>
-							<WPDataViews.Layout />
-							<WPDataViews.Pagination />
+							<DataViews.Layout />
+							<DataViews.Pagination />
 						</DataViews>
 					</DataViewsCard>
 				</VStack>

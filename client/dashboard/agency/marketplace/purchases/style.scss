@@ -3,3 +3,7 @@
 .dashboard-marketplace-purchases__site-list {
 	min-block-size: 309px;
 }
+
+.dashboard-marketplace-purchases__site-search {
+	padding: var( --wpds-dimension-padding-lg ) var( --wpds-dimension-padding-2xl );
+}
