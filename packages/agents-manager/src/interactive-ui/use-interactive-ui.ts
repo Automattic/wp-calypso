@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from '@wordpress/element';
 import { startNewUserRequest } from '../utils/canvas-binding';
+import { startTurn } from '../utils/turn-id';
 import { executeInteractiveUiAction } from './execute-interactive-ui-action';
 import { getInteractiveUiBatches } from './interactive-ui-messages';
 import type { InteractiveUiRuntime } from './runtime';
@@ -95,6 +96,7 @@ export default function useInteractiveUi( options: Options ) {
 						return;
 					}
 
+					startTurn();
 					startNewUserRequest();
 					await executeInteractiveUiAction( action, agentConfig, onSubmit );
 				}
@@ -108,7 +110,9 @@ export default function useInteractiveUi( options: Options ) {
 			) ) {
 				conversationSession.runtime?.processMessages( batch.operations, batch.messageId );
 			}
-		} catch {
+		} catch ( error ) {
+			// eslint-disable-next-line no-console
+			console.error( '[AgentsManager] Failed to process an interactive UI batch:', error );
 			conversationSession.runtime?.dispose();
 			conversationSession.runtime = undefined;
 		}
