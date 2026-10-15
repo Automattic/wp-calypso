@@ -49,9 +49,15 @@ jest.mock( 'wpcom-proxy-request', () => ( {
 
 jest.mock( '@wordpress/api-fetch' );
 
-const render = ( el ) => {
+jest.mock( 'calypso/components/pre-launch-site-modal', () => ( {
+	__esModule: true,
+	default: ( { isOpen, launchUrl } ) =>
+		isOpen ? <div data-testid="pre-launch-modal">{ launchUrl }</div> : null,
+} ) );
+
+const render = ( el, state = initialState ) => {
 	return renderWithProvider( el, {
-		initialState,
+		initialState: state,
 		reducers: { ui },
 	} );
 };
@@ -195,6 +201,94 @@ describe( 'CustomerHomeLaunchPad', () => {
 			render( <CustomerHomeLaunchPad checklistSlug="some-check-list" /> );
 
 			expect( screen.queryByTitle( 'Dismiss settings' ) ).not.toBeInTheDocument();
+		} );
+	} );
+
+	describe( 'when a launch task is clicked', () => {
+		const LAUNCH_URL = '/start/launch-site?siteSlug=example.wordpress.com';
+		const assign = jest.fn();
+
+		const launchTask = {
+			id: 'site_launched',
+			title: 'Launch your site',
+			completed: false,
+			disabled: false,
+			subtitle: '',
+			badge_text: '',
+			isLaunchTask: true,
+		};
+
+		const stateWithPlan = ( plan ) => ( {
+			...initialState,
+			sites: {
+				...initialState.sites,
+				items: [ {}, { ...sites[ 1 ], plan } ],
+			},
+		} );
+
+		beforeEach( () => {
+			assign.mockClear();
+			Object.defineProperty( window, 'location', {
+				configurable: true,
+				value: { assign, href: 'https://wordpress.com/home/example.wordpress.com' },
+			} );
+			jest.mocked( apiFetch ).mockResolvedValue( {
+				...DEFAULT_TAKS_RESPONSE,
+				checklist: [ launchTask ],
+			} );
+		} );
+
+		it( 'sends a free site straight to the launch flow', async () => {
+			render(
+				<CustomerHomeLaunchPad checklistSlug="some-check-list" />,
+				stateWithPlan( { product_slug: 'free_plan', is_free: true } )
+			);
+
+			await userEvent.click( await screen.findByText( 'Launch your site' ) );
+
+			expect( assign ).toHaveBeenCalledWith( LAUNCH_URL );
+			expect( screen.queryByTestId( 'pre-launch-modal' ) ).not.toBeInTheDocument();
+		} );
+
+		it( 'opens the pre-launch modal for a paid site', async () => {
+			render(
+				<CustomerHomeLaunchPad checklistSlug="some-check-list" />,
+				stateWithPlan( { product_slug: 'business-bundle', is_free: false } )
+			);
+
+			await userEvent.click( await screen.findByText( 'Launch your site' ) );
+
+			expect( await screen.findByTestId( 'pre-launch-modal' ) ).toHaveTextContent( LAUNCH_URL );
+			expect( assign ).not.toHaveBeenCalled();
+		} );
+
+		it( 'also gates the blog_launched task', async () => {
+			jest.mocked( apiFetch ).mockResolvedValue( {
+				...DEFAULT_TAKS_RESPONSE,
+				checklist: [ { ...launchTask, id: 'blog_launched', title: 'Launch your blog' } ],
+			} );
+			render(
+				<CustomerHomeLaunchPad checklistSlug="some-check-list" />,
+				stateWithPlan( { product_slug: 'business-bundle', is_free: false } )
+			);
+
+			await userEvent.click( await screen.findByText( 'Launch your blog' ) );
+
+			expect( await screen.findByTestId( 'pre-launch-modal' ) ).toBeVisible();
+		} );
+
+		it( 'lets a caller onTaskClick that returns false stop the launch gate', async () => {
+			const onTaskClick = jest.fn( () => false );
+			render(
+				<CustomerHomeLaunchPad checklistSlug="some-check-list" onTaskClick={ onTaskClick } />,
+				stateWithPlan( { product_slug: 'business-bundle', is_free: false } )
+			);
+
+			await userEvent.click( await screen.findByText( 'Launch your site' ) );
+
+			expect( onTaskClick ).toHaveBeenCalledTimes( 1 );
+			expect( screen.queryByTestId( 'pre-launch-modal' ) ).not.toBeInTheDocument();
+			expect( assign ).not.toHaveBeenCalled();
 		} );
 	} );
 } );
