@@ -16,7 +16,7 @@ export default function ReactionsNote( { note }: { note: Note } ) {
 			<Context note={ note } />
 			{ heading && heading !== getTemporaryNoteTitle( note ) && (
 				<VStack className="wpnc-simplified__heading" spacing={ 3 }>
-					<Heading level={ 3 } size={ 15 } weight={ 600 }>
+					<Heading level={ 3 } size={ 15 } weight="var(--wpds-typography-font-weight-emphasis)">
 						{ heading }
 					</Heading>
 					<CardDivider />
