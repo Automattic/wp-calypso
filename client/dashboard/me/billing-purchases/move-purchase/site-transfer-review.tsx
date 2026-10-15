@@ -7,6 +7,7 @@ import { useNavigate } from '@tanstack/react-router';
 import {
 	Button,
 	CheckboxControl,
+	__experimentalHeading as Heading,
 	Spinner,
 	__experimentalHStack as HStack,
 	__experimentalText as Text,
@@ -158,7 +159,7 @@ export function SiteTransferReview( { purchase, targetSite, onChangeSite }: Prop
 		return (
 			<Notice
 				variant="error"
-				title={ __( 'We couldn’t check whether this purchase can move' ) }
+				title={ __( 'Failed to check whether this purchase can move' ) }
 				actions={
 					<>
 						<Button variant="secondary" onClick={ () => refetchPreview() }>
@@ -263,9 +264,17 @@ export function SiteTransferReview( { purchase, targetSite, onChangeSite }: Prop
 						return;
 					}
 
-					createErrorNotice( error.message || __( 'We couldn’t move this purchase. Try again.' ), {
-						type: 'snackbar',
-					} );
+					createErrorNotice(
+						error.message ||
+							sprintf(
+								// translators: %s is a product name, e.g. "Business plan".
+								__( 'Failed to move %s. Try again.' ),
+								productTitle
+							),
+						{
+							type: 'snackbar',
+						}
+					);
 				},
 			}
 		);
@@ -308,12 +317,12 @@ export function SiteTransferReview( { purchase, targetSite, onChangeSite }: Prop
 							</SiteSummary>
 						</HStack>
 						<VStack spacing={ 2 }>
-							<Text weight={ 500 }>
+							<Heading level={ 4 } size={ 13 } weight={ 500 }>
 								{
 									// translators: Heading for the list of subscriptions that will be moved to another site.
 									__( 'What moves' )
 								}
-							</Text>
+							</Heading>
 							<ul className="move-purchase__product-list">
 								{ ( preview.primary?.product_names ?? [ productTitle ] ).map( ( name ) => (
 									<li key={ name }>{ name }</li>
@@ -324,12 +333,12 @@ export function SiteTransferReview( { purchase, targetSite, onChangeSite }: Prop
 						{ companions.length > 0 && (
 							<VStack spacing={ 3 }>
 								<VStack spacing={ 1 }>
-									<Text weight={ 500 }>
+									<Heading level={ 4 } size={ 13 } weight={ 500 }>
 										{
 											// translators: Heading for optional domains that can be moved to another site along with a plan.
 											__( 'Move domains too' )
 										}
-									</Text>
+									</Heading>
 									<Text variant="muted">
 										{ __( 'Domains you don’t select stay on the current site.' ) }
 									</Text>
