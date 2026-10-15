@@ -53,7 +53,7 @@ function response( url: string, body: string, status = 200 ) {
 	};
 }
 
-/** The classic results list: no Name Pulse rows on the page. */
+/** No Name Pulse rows, so the helper uses the classic list. */
 const noNamePulseRows = () => ( {
 	count: jest.fn( async () => 0 ),
 	evaluateAll: jest.fn( async () => [] ),

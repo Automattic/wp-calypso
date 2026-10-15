@@ -28,9 +28,8 @@ function suggestionsFor( query: string ): Response {
  *
  * `waitForResponse` answers with the first carried response that satisfies the
  * predicate, and times out straight away when none does. The last title stands
- * for every read after it, so a single title is a list that never changes. Name
- * Pulse lists, read as their rows' domains, take turns the same way; without
- * them the page shows the classic list.
+ * for every read after it, so a single title is a list that never changes.
+ * `namePulseLists` work the same way for Name Pulse rows.
  */
 function searchPage( {
 	prefill = '',
@@ -221,8 +220,7 @@ describe( 'DomainSearchComponent.search', () => {
 	} );
 
 	test( 'takes a Name Pulse list once any of its rows is for the keyword', async () => {
-		// Name Pulse remounts its results for each query, and its first row can be
-		// a related name rather than the keyword itself.
+		// The first Name Pulse row can be a related name, not the keyword.
 		const { page, listitem, namePulseRows } = searchPage( {
 			responses: [ suggestionsFor( KEYWORD ) ],
 			namePulseLists: [ [ `${ SITE_SLUG }.blog` ], [ 'flowtesting.blog', `${ KEYWORD }.com` ] ],
@@ -273,11 +271,9 @@ interface FakeQuery {
 }
 
 /**
- * A page listing Name Pulse rows, answering the locators selectFirstSuggestion
- * builds from the rows' state. A row has "Add to cart" while available and not
- * yet added; adding it puts it in the cart or, when it fails to add, swaps the
- * button for the error one. `onDomainRead` runs after the picked row's domain is
- * read, so a test can change the list between the read and the click.
+ * A fake page with Name Pulse rows. Clicking "Add to cart" puts a row in the
+ * cart, or marks it failed when `failsToAdd` is set. `onDomainRead` lets a test
+ * change the rows between reading the domain and clicking.
  */
 function namePulsePage(
 	rows: FakeNamePulseRow[],
@@ -365,7 +361,7 @@ function namePulsePage(
 	return { page: page as unknown as Page, rows };
 }
 
-/** A component that searched for `label`, as `search()` leaves it. */
+/** A component as `search()` leaves it after searching for `label`. */
 function searchedFor( page: Page, label: string ) {
 	const component = new DomainSearchComponent( page );
 	component[ 'searchedLabel' ] = label;
@@ -376,7 +372,6 @@ describe( 'DomainSearchComponent.selectFirstSuggestion on Name Pulse', () => {
 	const LABEL = 'e2eflowtesting1788792390563630';
 
 	test( 'prefers a row for the keyword over an earlier unrelated one', async () => {
-		// Related matches can be checked before the Top results.
 		const { page, rows } = namePulsePage( [
 			{ domain: 'flowtesting.blog', available: true },
 			{ domain: `${ LABEL }.blog`, available: true },

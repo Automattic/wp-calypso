@@ -20,8 +20,7 @@ const isShoppingCartResponse = ( response: Response ): boolean => {
 	}
 };
 
-// Name Pulse rows carry their domain on `data-domain` rather than on the list
-// item's `title`; skeleton rows have no `data-domain`.
+// Name Pulse rows have their domain in `data-domain`, not in `title`.
 const NAME_PULSE_ROW_SELECTOR = '.name-pulse-row[data-domain]';
 
 // `reloadAndRetry` runs the search closure three times, inside a 120s test.
@@ -193,10 +192,9 @@ export class DomainSearchComponent {
 			await recordResponseThrottle( response );
 
 			// The response resolves before React re-renders the list, and a
-			// pre-fill response can land after it. Wait until the list shows a
-			// suggestion for this keyword, so selectFirstSuggestion never reads a
-			// row from another search: the first row in the classic list, any row
-			// in Name Pulse, which remounts its results for each query.
+			// pre-fill response can land after it. Wait until the list shows the
+			// keyword: the first row in the classic list, any row in Name Pulse,
+			// which renders fresh results for each search.
 			const namePulseRows = container.locator( NAME_PULSE_ROW_SELECTOR );
 			let seenDomain: string | null = null;
 			for ( let attempt = 0; attempt < 50; attempt++ ) {
@@ -444,14 +442,8 @@ export class DomainSearchComponent {
 	}
 
 	/**
-	 * Adds the first available Name Pulse row to the cart, preferring rows for the
-	 * searched keyword.
-	 *
-	 * Rows get their cart button once checked, so a later row can be ready before
-	 * the first one, and the first can be taken: without the keyword the pick could
-	 * land on an unrelated name. An added row keeps its button, toggled to "Remove
-	 * from cart", and a failed add swaps it for a disabled error button, so a retry
-	 * moves on to the next row. The Continue button sits in the cart.
+	 * Adds the first available Name Pulse row to the cart, preferring rows that
+	 * contain the searched keyword. If adding fails, tries the next row.
 	 *
 	 * @param {boolean} waitForContinueButton Whether to wait for the continue button.
 	 * @returns {string} Domain that was selected.
@@ -494,9 +486,7 @@ export class DomainSearchComponent {
 				}
 
 				const domain = ( await candidate.getAttribute( 'data-domain' ) ) as string;
-				// By domain from here on: the candidate locator resolves again on every
-				// action, so an earlier row turning available would take the click, and a
-				// name can be listed in more than one section.
+				// Target the row by domain: `candidate` could match another row by now.
 				const rowsForDomain = container.locator( `.name-pulse-row[data-domain="${ domain }"]` );
 				const added = rowsForDomain.getByRole( 'button', { name: 'Remove from cart' } );
 				const failed = rowsForDomain.locator( '.name-pulse-row__cart--error' );
@@ -522,7 +512,6 @@ export class DomainSearchComponent {
 					return domain;
 				}
 
-				// The ban can be raised by this worker or a peer's while adding.
 				handleActiveThrottles( [ 'domain-availability' ] );
 				failedDomains.push( domain );
 				errors.push(
@@ -532,7 +521,7 @@ export class DomainSearchComponent {
 
 			throw new Error( 'Every attempt to add a domain to the cart failed.' );
 		} catch ( error ) {
-			// Skipping or failing for a ban is thrown; answer it before wrapping.
+			// A ban skips the test; don't report it as a failure.
 			handleActiveThrottles( [ 'domain-availability' ] );
 
 			const cartResponses = ( await Promise.allSettled( cartResponseSummaries ) ).map(
