@@ -43,7 +43,7 @@ const HelpCenter: React.FC< Container > = ( {
 		! isLoadingOpenInteractions && supportInteractionsOpen
 			? supportInteractionsOpen?.length > 0
 			: false;
-	const hasOpenZendeskChat = useHasOpenZendeskChat();
+	const { hasOpenZendeskChat } = useHasOpenZendeskChat();
 	// Only check connectivity when the answer can matter: the panel is open, or Smooch
 	// may need to mount for unread notifications.
 	const { data: canConnectToZendesk } = useCanConnectToZendeskMessaging(

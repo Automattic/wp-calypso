@@ -23,8 +23,15 @@ export function HelpCenterChat( {
 } ): JSX.Element {
 	const navigate = useNavigate();
 	const shouldUseWapuu = useShouldUseWapuu();
-	// Before issuing a redirect, make sure the status is loaded.
-	const preventOdieAccess = ! shouldUseWapuu && ! isUserEligibleForPaidSupport && ! isLoadingStatus;
+	const { hasOpenZendeskChat, isLoading: isLoadingOpenZendeskChat } = useHasOpenZendeskChat();
+	// Before issuing a redirect, make sure the status is loaded. An open human chat is always
+	// reachable, so wait for that check too.
+	const preventOdieAccess =
+		! shouldUseWapuu &&
+		! isUserEligibleForPaidSupport &&
+		! hasOpenZendeskChat &&
+		! isLoadingStatus &&
+		! isLoadingOpenZendeskChat;
 	const {
 		currentUser,
 		site,
@@ -54,7 +61,6 @@ export function HelpCenterChat( {
 	const userFieldFlowName = featureConfig.chat.flowName || data?.eligibility?.user_field_flow_name;
 
 	const { forceEmailSupport, isChatRestricted } = useChatStatus();
-	const hasOpenZendeskChat = useHasOpenZendeskChat();
 
 	useEffect( () => {
 		if ( preventOdieAccess ) {
@@ -73,7 +79,11 @@ export function HelpCenterChat( {
 			newInteractionsBotVersion={ newInteractionsBotVersion }
 			currentUser={ currentUser }
 			canConnectToZendesk={ canConnectToZendesk }
-			isLoadingCanConnectToZendesk={ isLoading }
+			// Without paid support, whether the chat loads from Zendesk depends on the open-chat check,
+			// so don't settle on an AI-only chat before it's in.
+			isLoadingCanConnectToZendesk={
+				isLoading || ( ! isUserEligibleForPaidSupport && isLoadingOpenZendeskChat )
+			}
 			selectedSiteId={ selectedSiteId }
 			selectedSiteURL={ siteUrl || ( site?.URL as string ) }
 			userFieldMessage={ userFieldMessage }
