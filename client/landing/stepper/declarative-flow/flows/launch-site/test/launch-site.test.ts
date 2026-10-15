@@ -15,6 +15,7 @@ import {
 import { STEPS } from '../../../internals/steps';
 import { ProcessingResult } from '../../../internals/steps-repository/processing-step/constants';
 import launchSiteFlow from '../launch-site';
+import type { BaseNavigationControls } from '../../../internals/types';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import type { Store } from 'redux';
 
@@ -319,7 +320,7 @@ describe( 'launch-site flow', () => {
 			const { goBack: goBackStep } = launchSiteFlow.useStepNavigation(
 				currentStep as Parameters< typeof launchSiteFlow.useStepNavigation >[ 0 ],
 				navigate
-			);
+			) as ReturnType< typeof launchSiteFlow.useStepNavigation > & BaseNavigationControls;
 			goBackStep?.();
 			return navigate;
 		};
