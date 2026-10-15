@@ -578,22 +578,34 @@ const ImageStudioContent = withInstanceId(
 			activeToolbarOption === ToolbarOption.Crop &&
 			!! finalDisplayUrl;
 
-		const handleCropCancel = useCallback( () => setActiveToolbarOption( null ), [] );
+		const cropButtonRef = useRef< HTMLButtonElement >( null );
+
+		const leaveCropMode = useCallback( () => {
+			setActiveToolbarOption( null );
+			cropButtonRef.current?.focus();
+		}, [] );
+
+		// The cropper would hide the processing state of a chat request.
+		useEffect( () => {
+			if ( isCropMode && isAiProcessing ) {
+				setActiveToolbarOption( null );
+			}
+		}, [ isCropMode, isAiProcessing ] );
 
 		const handleCropLoadError = useCallback( () => {
-			setActiveToolbarOption( null );
+			leaveCropMode();
 			addNotice(
 				__( 'Could not open the crop tool. Please try again.', __i18n_text_domain__ ),
 				'error'
 			);
-		}, [ addNotice ] );
+		}, [ addNotice, leaveCropMode ] );
 
 		const handleCropApply = useCallback(
 			( transform: ImageTransform ) => {
-				setActiveToolbarOption( null );
+				leaveCropMode();
 				applyImageTransform( transform );
 			},
-			[ applyImageTransform ]
+			[ applyImageTransform, leaveCropMode ]
 		);
 
 		const cropOverlay = isCropMode ? (
@@ -601,7 +613,7 @@ const ImageStudioContent = withInstanceId(
 				imageUrl={ finalDisplayUrl }
 				disabled={ isAiProcessing || isSaving }
 				onApply={ handleCropApply }
-				onCancel={ handleCropCancel }
+				onCancel={ leaveCropMode }
 				onLoadError={ handleCropLoadError }
 			/>
 		) : null;
@@ -717,6 +729,7 @@ const ImageStudioContent = withInstanceId(
 							onAnnotationUndo={ handleAnnotationUndo }
 							onAnnotationRedo={ handleAnnotationRedo }
 							onTransform={ applyImageTransform }
+							cropButtonRef={ cropButtonRef }
 							// Any close from Header flows into the same confirmation logic
 							onClose={ handleRequestClose }
 							hasPendingAnnotations={ hasAnnotations }

@@ -1,12 +1,12 @@
 /* eslint-disable import/order */
-import '@testing-library/jest-dom';
 import { fireEvent, render, screen } from '@testing-library/react';
+import { vi } from 'vitest';
 import userEvent from '@testing-library/user-event';
 
-const mockSetCropperState = jest.fn();
+const mockSetCropperState = vi.fn();
 let mockCropperState: Record< string, unknown >;
 
-jest.mock( '@wordpress/image-cropper', () => ( {
+vi.mock( '@wordpress/image-cropper', () => ( {
 	ImageCropperProvider: ( { children }: { children: React.ReactNode } ) => <>{ children }</>,
 	ImageCropper: ( { src }: { src: string } ) => <img src={ src } alt="" />,
 	useImageCropper: () => ( {
@@ -18,8 +18,8 @@ jest.mock( '@wordpress/image-cropper', () => ( {
 import { CropOverlay } from './index';
 
 describe( 'CropOverlay', () => {
-	const onApply = jest.fn();
-	const onCancel = jest.fn();
+	const onApply = vi.fn();
+	const onCancel = vi.fn();
 
 	const renderOverlay = ( props = {} ) =>
 		render(
@@ -32,7 +32,7 @@ describe( 'CropOverlay', () => {
 		);
 
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		mockCropperState = {
 			zoom: 1,
 			mediaSize: { width: 400, height: 200, naturalWidth: 800, naturalHeight: 400 },
@@ -77,18 +77,17 @@ describe( 'CropOverlay', () => {
 		expect( onApply ).not.toHaveBeenCalled();
 	} );
 
-	it( 'cancels from the Cancel button and the Escape key', async () => {
+	it( 'cancels from the Cancel button', async () => {
 		const user = userEvent.setup();
 		renderOverlay();
 
 		await user.click( screen.getByRole( 'button', { name: 'Cancel' } ) );
-		fireEvent.keyDown( document.body, { key: 'Escape' } );
 
-		expect( onCancel ).toHaveBeenCalledTimes( 2 );
+		expect( onCancel ).toHaveBeenCalledTimes( 1 );
 	} );
 
 	it( 'cancels on Escape before the unsaved-changes close handler sees it', () => {
-		const closeHandler = jest.fn();
+		const closeHandler = vi.fn();
 		document.addEventListener( 'keydown', closeHandler, true );
 		renderOverlay();
 
@@ -97,6 +96,23 @@ describe( 'CropOverlay', () => {
 
 		expect( onCancel ).toHaveBeenCalledTimes( 1 );
 		expect( closeHandler ).not.toHaveBeenCalled();
+	} );
+
+	it( 'leaves Escape to a dialog opened over Image Studio', () => {
+		const dialogHandler = vi.fn();
+		renderOverlay();
+		const dialog = document.createElement( 'div' );
+		dialog.className = 'components-modal__screen-overlay';
+		const dialogButton = document.createElement( 'button' );
+		dialog.appendChild( dialogButton );
+		document.body.appendChild( dialog );
+		dialog.addEventListener( 'keydown', dialogHandler );
+
+		fireEvent.keyDown( dialogButton, { key: 'Escape' } );
+		dialog.remove();
+
+		expect( onCancel ).not.toHaveBeenCalled();
+		expect( dialogHandler ).toHaveBeenCalled();
 	} );
 
 	it( 'sets the cropper aspect ratio from the chosen option', async () => {
