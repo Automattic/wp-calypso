@@ -122,8 +122,10 @@ $modal-padding: $grid-unit-30;
 .a4a-onboarding-tour-actions {
 	position: sticky;
 	inset-block-end: -$modal-padding;
-	margin: 0 ( -$modal-padding ) ( -$modal-padding );
-	padding: 16px $modal-padding $modal-padding;
+	margin-block: 0 ( -$modal-padding );
+	margin-inline: ( -$modal-padding );
+	padding-block: 16px $modal-padding;
+	padding-inline: $modal-padding;
 	border-block-start: 1px solid $gray-100;
 	background-color: $white;
 }
