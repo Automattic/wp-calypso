@@ -94,8 +94,20 @@ export function ConversationList( {
 					onChange={ setSearch }
 					label={ translate( 'Search conversations' ) }
 				/>
-				<Button icon={ <Icon icon={ funnel } /> } label={ translate( 'Filter' ) } />
-				<Button icon={ <Icon icon={ cog } /> } label={ translate( 'Settings' ) } />
+				<Button
+					icon={ <Icon icon={ funnel } /> }
+					label={ translate( 'Filters are coming soon' ) }
+					showTooltip
+					disabled
+					accessibleWhenDisabled
+				/>
+				<Button
+					icon={ <Icon icon={ cog } /> }
+					label={ translate( 'Settings are coming soon' ) }
+					showTooltip
+					disabled
+					accessibleWhenDisabled
+				/>
 			</div>
 			{ unreadNoteIds.length > 0 && (
 				<Button

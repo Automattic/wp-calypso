@@ -105,6 +105,19 @@ describe( 'ConversationList', () => {
 		expect( onSelect ).toHaveBeenCalledWith( expect.objectContaining( { postId: 200 } ) );
 	} );
 
+	it( 'shows filter and settings as disabled until they are built', () => {
+		renderList();
+
+		expect( screen.getByRole( 'button', { name: 'Filters are coming soon' } ) ).toHaveAttribute(
+			'aria-disabled',
+			'true'
+		);
+		expect( screen.getByRole( 'button', { name: 'Settings are coming soon' } ) ).toHaveAttribute(
+			'aria-disabled',
+			'true'
+		);
+	} );
+
 	it( 'shows an empty state when there are no conversations', () => {
 		renderList( { conversations: [] } );
 
