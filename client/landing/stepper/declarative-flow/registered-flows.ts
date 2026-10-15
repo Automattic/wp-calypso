@@ -26,6 +26,7 @@ import {
 	WRITE_ON_FLOW,
 	WRITE_NEW_SITE_FLOW,
 	EDUCATION_FLOW,
+	LAUNCH_SITE_FLOW,
 } from '@automattic/onboarding';
 import type { Flow, FlowV2 } from '../declarative-flow/internals/types';
 
@@ -83,6 +84,9 @@ const availableFlows: Record< string, () => Promise< { default: FlowV2< any > } 
 
 	[ WRITE_NEW_SITE_FLOW ]: () =>
 		import( /* webpackChunkName: "write-new-site-flow" */ './flows/write-new-site/write-new-site' ),
+
+	[ LAUNCH_SITE_FLOW ]: () =>
+		import( /* webpackChunkName: "launch-site-flow" */ './flows/launch-site/launch-site' ),
 };
 
 /**

@@ -316,6 +316,26 @@ Simple sites pick up the new bundle immediately; Atomic sites within an hour (Je
 4. <feature-specific checks, e.g. what should close a survey or set `window._sva.disableTargeting`>
 ```
 
+## Seeing a real survey while testing
+
+Use the shared test survey,
+[`572afd0e9cd810f6`](https://panel.survicate.com/o/1314199/w/1280163/surveys/572afd0e9cd810f6)
+("Test Survey - Used for Quake's tests"). It only targets pages whose URL contains
+`test_survey=true`, so add that query parameter to the page you are testing (e.g.
+`/plugins/manage?test_survey=true`). Without it no survey shows, even when the event
+fires correctly. The rule lives in the Survicate panel, not in our code.
+
+- **Which events trigger it**: edit the survey's targeting in the panel to add the event
+  you are testing. To check what is configured, open the workspace's
+  `web_surveys.js` (see the page's network requests) and search it for the event name.
+  A paused survey is missing from that file entirely.
+- **Showing it again**: once the survey has been shown, the SDK's single-tab lock
+  `localStorage['survi::e4794374cce15378101b63de24117572::singleTabId:572afd0e9cd810f6']`
+  blocks it on later pages. Remove that key and reload before testing again.
+- **Confirming the event without the survey**: wrap `window._sva.invokeEvent` in the
+  console to log each call along with `window._sva.disableTargeting`. An event
+  invoked while targeting is disabled never shows an event-triggered survey.
+
 ## Conventions & gotchas
 
 - **Always guard `window._sva`** — it's `undefined` until the SDK loads.

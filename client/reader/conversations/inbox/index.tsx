@@ -1,0 +1,72 @@
+import page from '@automattic/calypso-router';
+import { useTranslate } from 'i18n-calypso';
+import { useEffect, useMemo } from 'react';
+import DocumentHead from 'calypso/components/data/document-head';
+import ReaderMain from 'calypso/reader/components/reader-main';
+import { ConversationDetail } from './conversation-detail';
+import { ConversationList } from './conversation-list';
+import { getConversationKey, groupNotesByPost, type Conversation } from './group-notes';
+import { useCommentNotes, useMarkNotesRead } from './use-comment-notes';
+
+import './style.scss';
+
+interface Props {
+	siteId?: string;
+	postId?: string;
+}
+
+const getConversationPath = ( { siteId, postId }: Pick< Conversation, 'siteId' | 'postId' > ) =>
+	`/reader/conversations/inbox/${ siteId }/${ postId }`;
+
+export function ConversationsInbox( { siteId, postId }: Props ) {
+	const translate = useTranslate();
+	const { data: notes = [], isLoading } = useCommentNotes();
+	const { mutate: markRead } = useMarkNotesRead();
+
+	const conversations = useMemo( () => groupNotesByPost( notes ), [ notes ] );
+	const selectedKey = siteId && postId ? getConversationKey( siteId, postId ) : undefined;
+	const selectedIndex = conversations.findIndex( ( { key } ) => key === selectedKey );
+	const selected = selectedIndex >= 0 ? conversations[ selectedIndex ] : undefined;
+
+	useEffect( () => {
+		if ( ! selectedKey && conversations.length ) {
+			page.replace( getConversationPath( conversations[ 0 ] ) );
+		}
+	}, [ selectedKey, conversations ] );
+
+	const selectedUnreadIds = selected?.unreadNoteIds.join( ',' );
+	useEffect( () => {
+		if ( selectedUnreadIds ) {
+			markRead( selectedUnreadIds.split( ',' ).map( Number ) );
+		}
+	}, [ selectedUnreadIds, markRead ] );
+
+	const goTo = ( index: number ) => {
+		const target = conversations[ index ];
+		return target ? () => page.show( getConversationPath( target ) ) : undefined;
+	};
+
+	return (
+		<ReaderMain className="conversations-inbox-main no-padding" wideLayout>
+			<DocumentHead title={ translate( 'Conversations' ) } />
+			<div className="conversations-inbox">
+				<ConversationList
+					conversations={ conversations }
+					isLoading={ isLoading }
+					selectedKey={ selectedKey }
+					onSelect={ ( conversation ) => page.show( getConversationPath( conversation ) ) }
+					onMarkAllRead={ markRead }
+				/>
+				{ siteId && postId && (
+					<ConversationDetail
+						siteId={ Number( siteId ) }
+						postId={ Number( postId ) }
+						conversation={ selected }
+						onPrevious={ selectedIndex > 0 ? goTo( selectedIndex - 1 ) : undefined }
+						onNext={ selectedIndex >= 0 ? goTo( selectedIndex + 1 ) : undefined }
+					/>
+				) }
+			</div>
+		</ReaderMain>
+	);
+}

@@ -36,7 +36,6 @@ import PlanCard from '../overview-plan-card';
 import ScanCard from '../overview-scan-card';
 import SiteActionMenu from '../overview-site-action-menu';
 import SiteOverviewFields from '../overview-site-fields';
-import SitePreviewCard from '../overview-site-preview-card';
 import {
 	StaticSiteImportNotice,
 	StaticSiteImportProgress,
@@ -186,12 +185,11 @@ function SiteOverview( {
 	const { supports } = useAppContext();
 	const isLargeViewport = useViewportMatch( breakpoints?.large ?? 'xlarge' );
 	const isSmallViewport = useViewportMatch( breakpoints?.small ?? 'medium', '<' );
-	const showSitePreview = ! isSmallViewport && supports.siteOverview.preview;
 	const spacing = isSmallViewport ? SPACING.SMALL : SPACING.DEFAULT;
 	const gap = isSmallViewport ? 'lg' : 'xl';
 	const isCommerceGardenSite = isCommerceGarden( site );
 	const gridLayout = getGridLayout( {
-		count: ( isCommerceGardenSite ? 1 : 3 ) + Number( showSitePreview ),
+		count: isCommerceGardenSite ? 1 : 3,
 		isLargeViewport,
 		isSmallViewport,
 	} );
@@ -289,7 +287,6 @@ function SiteOverview( {
 			) : (
 				<VStack alignment="stretch" spacing={ isSmallViewport ? 5 : 10 }>
 					<Grid { ...gridLayout } gap={ gap }>
-						{ showSitePreview && <SitePreviewCard site={ site } /> }
 						<SiteOverviewPrimaryCards site={ site } gap={ gap } />
 					</Grid>
 					<SiteOverviewSecondaryCards

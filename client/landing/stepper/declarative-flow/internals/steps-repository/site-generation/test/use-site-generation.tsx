@@ -5,11 +5,17 @@
 import { act, renderHook } from '@testing-library/react';
 import { logBuildWowEvent, requestBuildWowSite } from 'calypso/landing/stepper/utils/build-wow';
 import { pollForBuildWowStatus } from '../build-status-poller';
+import { getBuildWowApiOverride } from '../poller';
 import { useSiteGeneration } from '../use-site-generation';
 
 jest.mock( '../build-status-poller', () => ( {
 	...jest.requireActual( '../build-status-poller' ),
 	pollForBuildWowStatus: jest.fn( () => jest.fn() ),
+} ) );
+
+jest.mock( '../poller', () => ( {
+	...jest.requireActual( '../poller' ),
+	getBuildWowApiOverride: jest.fn( () => null ),
 } ) );
 
 jest.mock( 'calypso/landing/stepper/utils/build-wow', () => ( {
@@ -247,6 +253,92 @@ describe( 'useSiteGeneration', () => {
 				value: originalLocation,
 				configurable: true,
 			} );
+		}
+	} );
+
+	it( 'stays on the wait screen when a local status server reports the build live', () => {
+		Object.defineProperty( window, 'location', {
+			value: { ...originalLocation, assign: jest.fn() },
+			configurable: true,
+		} );
+		( getBuildWowApiOverride as jest.Mock ).mockReturnValueOnce(
+			'http://127.0.0.1:4001/api/calypso'
+		);
+
+		try {
+			const { result } = renderHook( () =>
+				useSiteGeneration( {
+					siteIdentifier: 'amber-brook',
+					steps: STEPS,
+				} )
+			);
+
+			const { onReady } = statusPollMock.mock.calls[ 0 ][ 0 ];
+			act( () => {
+				onReady( { build_status: 'live' } );
+			} );
+
+			expect( window.location.assign ).not.toHaveBeenCalled();
+			expect( result.current.status ).toBe( 'working' );
+			expect( result.current.failureReason ).toBeUndefined();
+		} finally {
+			Object.defineProperty( window, 'location', {
+				value: originalLocation,
+				configurable: true,
+			} );
+		}
+	} );
+
+	it( 'does not time out after a local status server reports the build live', () => {
+		jest.useFakeTimers();
+		( getBuildWowApiOverride as jest.Mock ).mockReturnValueOnce(
+			'http://127.0.0.1:4001/api/calypso'
+		);
+
+		try {
+			const { result } = renderHook( () =>
+				useSiteGeneration( {
+					siteIdentifier: 'amber-brook',
+					graph: 'dsl',
+					steps: STEPS,
+				} )
+			);
+
+			const { onReady } = statusPollMock.mock.calls[ 0 ][ 0 ];
+			act( () => {
+				onReady( { build_status: 'live' } );
+			} );
+			act( () => {
+				jest.advanceTimersByTime( 31 * 60 * 1000 );
+			} );
+
+			expect( result.current.status ).toBe( 'working' );
+			expect( result.current.failureReason ).toBeUndefined();
+		} finally {
+			jest.useRealTimers();
+		}
+	} );
+
+	it( 'still times out a build that never reports ready', () => {
+		jest.useFakeTimers();
+
+		try {
+			const { result } = renderHook( () =>
+				useSiteGeneration( {
+					siteIdentifier: 'amber-brook',
+					graph: 'dsl',
+					steps: STEPS,
+				} )
+			);
+
+			act( () => {
+				jest.advanceTimersByTime( 5 * 60 * 1000 + 1 );
+			} );
+
+			expect( result.current.status ).toBe( 'failed' );
+			expect( result.current.failureReason ).toBe( 'timed-out' );
+		} finally {
+			jest.useRealTimers();
 		}
 	} );
 

@@ -20,6 +20,7 @@ const mockAgencySite = {
 } as unknown as AgencySite;
 
 jest.mock( '../../../../app/router/agency', () => ( {
+	...jest.requireActual( '../../../../app/router/agency' ),
 	agencySiteRoute: {
 		useParams: () => ( { siteSlug: 'example.wpcomstaging.com' } ),
 		useLoaderData: () => mockAgencySite,

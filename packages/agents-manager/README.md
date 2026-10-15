@@ -33,7 +33,7 @@ function MyApp() {
 
 Plugins register provider modules through the PHP filter `agents_manager_agent_providers` (Jetpack's `agents-manager` package). The entries reach the client as `agentsManagerData.agentProviders`, and `loadExternalProviders()` imports them.
 
-See `src/extension-types.ts` for the tool and context provider interfaces, and `LoadedProviders` in `src/utils/load-external-providers.ts` for everything else a provider module can export: suggestions, markdown components and extensions, chat components and capabilities.
+See `src/extension-types.ts` for the tool and context provider interfaces, and `LoadedProviders` in `src/utils/load-external-providers.ts` for everything else a provider module can export, such as suggestions (and opting out of the default empty-view ones), markdown components and extensions, chat components, message transforms, abilities setup, checkpoint hooks, site-build utilities and capabilities.
 
 ### Opening and closing the chat
 
@@ -74,8 +74,10 @@ The host page URL can carry these query parameters:
 | Parameter       | Description                                                                                                                                                                              |
 | --------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `ai-open`       | `ai-open=true` auto-opens the chat (docked or undocked) on page load, e.g. for links from emails. The parameter is stripped from the URL after being applied.                            |
-| `agent`         | Overrides the agent ID, for testing (e.g., `?agent=wpcom-workflow-support_chat`).                                                                                                        |
+| `agent`         | Overrides the agent ID, for testing (e.g., `?agent=wpcom-workflow-support_chat`). Ignored when the host passes an `agentId` prop.                                                        |
 | `version`       | Overrides the agent version, for testing (e.g., `?version=1.0.25`).                                                                                                                      |
+| `am_credits`    | Seeds a mock site-credits balance as a percentage, for demos and testing on pages without a site, outside Reader Chat (e.g., `?am_credits=55`). Read once when the chat mounts.          |
+| `am_plan`       | With `am_credits`, the mock plan: `paid`, or `free` (the default).                                                                                                                       |
 | `wp-agent-chat` | The chat session to resume, handed off by a same-tab link from another origin (e.g. wp-admin to Calypso) so the conversation continues there. Stripped from the URL after being applied. |
 | `wp-agent-site` | The site scope of the handed-off session. The session is resumed only on pages for that site, and stored for it otherwise.                                                               |
 
@@ -95,12 +97,13 @@ The host page URL can carry these query parameters:
 | `zendeskSmoochIntegrationKey`    | `string` (optional)                    | Index selecting a dedicated Smooch integration for new support conversations (e.g. `woo`).                               |
 | `zendeskTicketProductFieldValue` | `string` (optional)                    | Zendesk Product ticket-field value to apply to new support conversations.                                                |
 | `isInternalOnly`                 | `boolean` (optional)                   | Shows an "A8C Only" badge in the chat header when the current screen enables the agent for internal users only.          |
+| `hasMasterbarAiChatButton`       | `boolean` (optional)                   | Whether the host's masterbar renders the AI chat button, so the chat minimizes to it instead of a floating bubble.       |
 
 ### Exported Hooks and Utilities
 
-Feedback utilities are also exported: `useFeedbackAction`, `submitFeedback`, `rateMessage`, and the `FeedbackInput` component. Chat UI actions (`openAgentsManagerChat`, `closeAgentsManagerChat`, `isAgentsManagerChatVisible`), `recordAgentsManagerTracksEvent` and `getAgentsManagerInlineData()` (the server-injected `agentsManagerData` payload) are exported as well. A host rendering its own AI chat entry button reads `useAiChatEntryState()` for `isChatVisible` and wraps its label text in `<AiChatEntryLabel>`, which shows it only while the chat is hidden.
+Feedback utilities are also exported: `submitFeedback`, `rateMessage`, and the `FeedbackInput` component. Chat UI actions (`openAgentsManagerChat`, `closeAgentsManagerChat`, `isAgentsManagerChatVisible`), `recordAgentsManagerTracksEvent` and `getAgentsManagerInlineData()` (the server-injected `agentsManagerData` payload) are exported as well. A host rendering its own AI chat entry button reads `useAiChatEntryState()` for `isChatVisible` and wraps its label text in `<AiChatEntryLabel>`, which shows it only while the chat is hidden.
 
-Chats that show site credits use `formatCreditsShort()`, which gives an amount such as "800" or "8.5k" and rounds down, and `CREDITS_LOW_BALANCE`, the 10,000-credit paid-plan balance below which the credits dot turns red and the low-balance notice shows. Chats outside the dock that show the site credits dot use `CreditsMeter`, `parseLiveCreditsStatus` and `getCreditsUpgradeUrl`, which links to the same plans page as the dock. The link carries `CREDITS_UPGRADE_SOURCE` as its `source`, and Tracks events send the same value as `ref`. Checkout refuses an upgrade from most people who didn't buy the plan, so these chats pass that link through `getCreditsPurchaseOptions()` with the flags `parseCreditsAccess()` reads from the `/ai/credits` response. It keeps the link only when the response says `can_upgrade: true`. For people the response says can't upgrade, it gives a `purchaseHint` for `CreditsMeter` and a value to pass to `getCreditsNoticeMessage()` for the low and zero-balance notices. When the response doesn't say, it gives nothing. `getCreditsCtaType()` turns the same result into the `cta_type` that Tracks events send.
+Chats that show site credits use `formatCreditsShort()`, which gives an amount such as "800" or "8.5k" and rounds down, and `CREDITS_LOW_BALANCE`, the 10,000-credit paid-plan balance below which the credits dot turns red and the low-balance notice shows. Chats outside the dock that show the site credits dot use `CreditsMeter`, `parseLiveCreditsStatus` and `getCreditsUpgradeUrl`, which links to the same plans page as the dock. The link carries `CREDITS_UPGRADE_SOURCE` as its `source`, and Tracks events send the same value as `ref`. `CreditsMeter` calls its optional `onUpgradeClick` when someone clicks that link, so a chat can record the click. Checkout refuses an upgrade from most people who didn't buy the plan, so these chats pass that link through `getCreditsPurchaseOptions()` with the flags `parseCreditsAccess()` reads from the `/ai/credits` response. It keeps the link only when the response says `can_upgrade: true`. For people the response says can't upgrade, it gives a `purchaseHint` for `CreditsMeter` and a value to pass to `getCreditsNoticeMessage()` for the low and zero-balance notices. When the response doesn't say, it gives nothing. `getCreditsCtaType()` turns the same result into the `cta_type` that Tracks events send.
 
 Hosts that own a dedicated AI experience can set the [document-scoped presentation configuration](src/hooks/custom-actions/README.md#document-scoped-presentation) before loading Agents Manager to keep chat open and hide wp-admin/editor entry toggles. Chat state APIs report the effective open state, and close requests are ignored while `dismissible` is `false`.
 
@@ -116,9 +119,11 @@ import type {
 	BaseContextEntry,
 	ContextEntry,
 	Suggestion,
-	UseFeedbackActionConfig,
-	UseFeedbackActionReturn,
 	CreditsStatus,
+	CreditsAccess,
+	CreditsAskToUpgrade,
+	CreditsCtaType,
+	CreditsPurchaseOptions,
 } from '@automattic/agents-manager';
 ```
 

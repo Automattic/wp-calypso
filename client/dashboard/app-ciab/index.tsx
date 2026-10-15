@@ -46,9 +46,6 @@ boot( {
 		plugins: false,
 		commandPalette: false,
 		domainOnlySites: false,
-		siteOverview: {
-			preview: true,
-		},
 		colorScheme: false,
 		darkMode: false,
 	},

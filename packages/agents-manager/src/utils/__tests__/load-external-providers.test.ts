@@ -64,6 +64,10 @@ jest.mock( '../checkpoints', () => ( {
 	setCheckpoint: jest.fn(),
 	swapCheckpoint: jest.fn(),
 } ) );
+// The temporary WooCommerce abilities would join every ability list below.
+jest.mock( '../../abilities/woocommerce', () => ( {
+	wooFallbackToolProvider: { getAbilities: () => Promise.resolve( [] ), executeAbility: jest.fn() },
+} ) );
 
 // The abilities facade only loads the editor abilities on editor pages —
 // open the gate and resolve the load, so the merged provider and the sync

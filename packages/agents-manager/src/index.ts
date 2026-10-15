@@ -32,12 +32,7 @@ export { useAiChatEntryState } from './hooks/use-ai-chat-entry-state';
 export { default as AiChatEntryLabel } from './components/ai-chat-entry-label';
 
 // Feedback exports
-export {
-	default as useFeedbackAction,
-	submitFeedback,
-	rateMessage,
-} from './hooks/use-feedback-action';
-export type { UseFeedbackActionConfig, UseFeedbackActionReturn } from './hooks/use-feedback-action';
+export { submitFeedback, rateMessage } from './hooks/use-feedback-action';
 export { default as FeedbackInput } from './components/feedback-input';
 
 // Site credits copy, so other chats show the same amounts and low-balance limit

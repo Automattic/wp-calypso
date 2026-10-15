@@ -40,6 +40,7 @@ import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import { shouldSeeCookieBanner } from 'calypso/lib/analytics/utils';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { login } from 'calypso/lib/paths';
+import { getLegacyLaunchSiteRedirect } from 'calypso/lib/signup/legacy-launch-site-flow';
 import {
 	REDIRECTED_PLAN_FLOWS,
 	getLegacyPlanFlowRedirect,
@@ -49,6 +50,7 @@ import loginRouter, { LOGIN_SECTION_DEFINITION } from 'calypso/login';
 import sections from 'calypso/sections';
 import isSectionEnabled from 'calypso/sections-filter';
 import { serverRouter, getCacheKey } from 'calypso/server/isomorphic-routing';
+import analytics from 'calypso/server/lib/analytics';
 import { isWpMobileApp, isWcMobileApp } from 'calypso/server/lib/is-mobile-app';
 import performanceMark from 'calypso/server/lib/performance-mark/index';
 import {
@@ -77,6 +79,7 @@ import middlewareCache from '../middleware/cache.js';
 import middlewareUnsupportedBrowser from '../middleware/unsupported-browser.js';
 import { logSectionResponse } from './analytics';
 import { registerCspReportRoute } from './csp-report';
+import { getFrameHeaders } from './frame-options';
 const debug = debugFactory( 'calypso:pages' );
 
 const calypsoEnv = config( 'env_id' );
@@ -425,9 +428,7 @@ function setUpLocalLanguageRevisions( req ) {
 
 function setUpLoggedOutRoute( req, res, next ) {
 	performanceMark( req.context, 'setup_logged_out_route', true );
-	res.set( {
-		'X-Frame-Options': 'SAMEORIGIN',
-	} );
+	res.set( getFrameHeaders( { env: calypsoEnv, nodeEnv: process.env.NODE_ENV, path: req.path } ) );
 
 	const setupRequests = [];
 
@@ -455,9 +456,7 @@ function setUpLoggedInRoute( req, res, next ) {
 	let redirectUrl;
 	let start;
 
-	res.set( {
-		'X-Frame-Options': 'SAMEORIGIN',
-	} );
+	res.set( getFrameHeaders( { env: calypsoEnv, nodeEnv: process.env.NODE_ENV, path: req.path } ) );
 
 	const setupRequests = [];
 
@@ -1312,6 +1311,59 @@ export default function pages() {
 		app.use( render404ForUnknownHostname );
 	}
 
+	// Legacy `/start/<plan>` flows are now served by Stepper's onboarding flow with the plan
+	// preselected. This has to be registered ahead of the dashboard `/start` route and the section
+	// loop below, which bind `/start` for the signup section and would otherwise match first. The
+	// `/*` variant covers step segments — `/start/personal/domains` is a shape real `redirect_to`
+	// values use.
+	const legacyPlanFlowRoute = `/start/:flow(${ Object.keys( REDIRECTED_PLAN_FLOWS ).join( '|' ) })`;
+	app.get( [ legacyPlanFlowRoute, `${ legacyPlanFlowRoute }/*` ], ( req, res, next ) => {
+		if ( ! shouldRedirectLegacyPlanFlow( req.params.flow ) ) {
+			return next( 'route' );
+		}
+
+		// Last non-empty segment, so a trailing slash doesn't hide the locale.
+		const lastPathSegment = req.path.split( '/' ).filter( Boolean ).pop() ?? '';
+		const locale =
+			getLanguageSlugs().includes( lastPathSegment ) && ! isDefaultLocale( lastPathSegment )
+				? lastPathSegment
+				: '';
+
+		res.redirect( 302, getLegacyPlanFlowRedirect( req.params.flow, req.query, locale ) );
+	} );
+
+	// Legacy `/start/launch-site` is now served by Stepper; see `legacy-launch-site-flow.ts`.
+	app.get( [ '/start/launch-site', '/start/launch-site/*' ], ( req, res, next ) => {
+		// Shows who still links to the old path (the Referer is sent with the event), so we know
+		// when it can go. Only the path and caller hints are sent: the query can carry coupons and
+		// redirect URLs.
+		if ( calypsoEnv === 'production' && req.method === 'GET' ) {
+			const stringArg = ( value ) => ( typeof value === 'string' ? value : undefined );
+
+			try {
+				analytics.tracks.recordEvent(
+					'calypso_legacy_launch_site_redirect',
+					{
+						path: req.path,
+						ref: stringArg( req.query.ref ),
+						query_source: stringArg( req.query.source ),
+					},
+					req
+				);
+			} catch {
+				// Never let tracking block the redirect.
+			}
+		}
+
+		// Without a `siteSlug` the site may only be known from the signup dependency store, which
+		// lives in the browser; the client-side redirect in the signup controller fills it in.
+		if ( typeof req.query.siteSlug !== 'string' || ! req.query.siteSlug ) {
+			return next( 'route' );
+		}
+
+		res.redirect( 302, getLegacyLaunchSiteRedirect( req.query ) );
+	} );
+
 	// Special Calypso routes which also appear on `my.wordpress.com`
 	if ( isDashboardEnv() || calypsoEnv === 'development' ) {
 		const signupSectionDefinition = sections.find( ( s ) => s.name === 'signup' );
@@ -1349,26 +1401,6 @@ export default function pages() {
 				variant.isAllowedHostname( req.hostname )
 			)
 		);
-	} );
-
-	// Legacy `/start/<plan>` flows are now served by Stepper's onboarding flow with the plan
-	// preselected. This has to be registered ahead of the section loop below, which binds
-	// `/start` for the signup section and would otherwise match first. The `/*` variant covers
-	// step segments — `/start/personal/domains` is a shape real `redirect_to` values use.
-	const legacyPlanFlowRoute = `/start/:flow(${ Object.keys( REDIRECTED_PLAN_FLOWS ).join( '|' ) })`;
-	app.get( [ legacyPlanFlowRoute, `${ legacyPlanFlowRoute }/*` ], ( req, res, next ) => {
-		if ( ! shouldRedirectLegacyPlanFlow( req.params.flow ) ) {
-			return next( 'route' );
-		}
-
-		// Last non-empty segment, so a trailing slash doesn't hide the locale.
-		const lastPathSegment = req.path.split( '/' ).filter( Boolean ).pop() ?? '';
-		const locale =
-			getLanguageSlugs().includes( lastPathSegment ) && ! isDefaultLocale( lastPathSegment )
-				? lastPathSegment
-				: '';
-
-		res.redirect( 302, getLegacyPlanFlowRedirect( req.params.flow, req.query, locale ) );
 	} );
 
 	sections
