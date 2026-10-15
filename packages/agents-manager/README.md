@@ -95,6 +95,7 @@ The host page URL can carry these query parameters:
 | `zendeskSmoochIntegrationKey`    | `string` (optional)                    | Index selecting a dedicated Smooch integration for new support conversations (e.g. `woo`).                               |
 | `zendeskTicketProductFieldValue` | `string` (optional)                    | Zendesk Product ticket-field value to apply to new support conversations.                                                |
 | `isInternalOnly`                 | `boolean` (optional)                   | Shows an "A8C Only" badge in the chat header when the current screen enables the agent for internal users only.          |
+| `hasMasterbarAiChatButton`       | `boolean` (optional)                   | Whether the host's masterbar renders the AI chat button, so the chat minimizes to it instead of a floating bubble.       |
 
 ### Exported Hooks and Utilities
 
