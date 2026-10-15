@@ -1365,6 +1365,28 @@ describe( 'main app', () => {
 		} );
 	} );
 
+	describe( 'Route /start/launch-site', () => {
+		it( 'redirects to /setup/launch-site with the query', async () => {
+			const { response } = await app.run( {
+				request: {
+					url: '/start/launch-site',
+					query: { siteSlug: 'example.wordpress.com', back_to: '/sites' },
+				},
+			} );
+			expect( response.redirect ).toHaveBeenCalledWith(
+				302,
+				'/setup/launch-site?siteSlug=example.wordpress.com&back_to=%2Fsites'
+			);
+		} );
+
+		it( 'drops legacy step segments and keeps the locale', async () => {
+			const { response } = await app.run( {
+				request: { url: '/start/launch-site/domains-launch/es/' },
+			} );
+			expect( response.redirect ).toHaveBeenCalledWith( 302, '/setup/launch-site/es' );
+		} );
+	} );
+
 	describe( 'Route /cspreport', () => {
 		let customApp;
 

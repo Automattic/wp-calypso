@@ -40,6 +40,7 @@ import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import { shouldSeeCookieBanner } from 'calypso/lib/analytics/utils';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { login } from 'calypso/lib/paths';
+import { getLegacyLaunchSiteRedirect } from 'calypso/lib/signup/legacy-launch-site-flow';
 import {
 	REDIRECTED_PLAN_FLOWS,
 	getLegacyPlanFlowRedirect,
@@ -1248,6 +1249,15 @@ function jetpackCloudPages( app ) {
 	} );
 }
 
+// Last non-empty segment, so a trailing slash doesn't hide the locale.
+function getLegacyFlowLocale( requestPath ) {
+	const lastPathSegment = requestPath.split( '/' ).filter( Boolean ).pop() ?? '';
+
+	return getLanguageSlugs().includes( lastPathSegment ) && ! isDefaultLocale( lastPathSegment )
+		? lastPathSegment
+		: '';
+}
+
 export default function pages() {
 	const app = express();
 
@@ -1361,14 +1371,15 @@ export default function pages() {
 			return next( 'route' );
 		}
 
-		// Last non-empty segment, so a trailing slash doesn't hide the locale.
-		const lastPathSegment = req.path.split( '/' ).filter( Boolean ).pop() ?? '';
-		const locale =
-			getLanguageSlugs().includes( lastPathSegment ) && ! isDefaultLocale( lastPathSegment )
-				? lastPathSegment
-				: '';
+		res.redirect(
+			302,
+			getLegacyPlanFlowRedirect( req.params.flow, req.query, getLegacyFlowLocale( req.path ) )
+		);
+	} );
 
-		res.redirect( 302, getLegacyPlanFlowRedirect( req.params.flow, req.query, locale ) );
+	// Legacy `/start/launch-site` is now served by Stepper; see `legacy-launch-site-flow.ts`.
+	app.get( [ '/start/launch-site', '/start/launch-site/*' ], ( req, res ) => {
+		res.redirect( 302, getLegacyLaunchSiteRedirect( req.query, getLegacyFlowLocale( req.path ) ) );
 	} );
 
 	sections
