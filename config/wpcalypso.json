@@ -53,6 +53,7 @@
 		"difm-offer/force-treatment": false,
 		"dolly/telegram": true,
 		"domain-bundling": true,
+		"domain-search/name-pulse": false,
 		"domain-transfer-redesign": true,
 		"email-accounts/enabled": true,
 		"emails/titan-tiers": false,
