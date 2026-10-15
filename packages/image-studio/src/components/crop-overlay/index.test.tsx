@@ -87,6 +87,18 @@ describe( 'CropOverlay', () => {
 		expect( onCancel ).toHaveBeenCalledTimes( 2 );
 	} );
 
+	it( 'cancels on Escape before the unsaved-changes close handler sees it', () => {
+		const closeHandler = jest.fn();
+		document.addEventListener( 'keydown', closeHandler, true );
+		renderOverlay();
+
+		fireEvent.keyDown( document.body, { key: 'Escape' } );
+		document.removeEventListener( 'keydown', closeHandler, true );
+
+		expect( onCancel ).toHaveBeenCalledTimes( 1 );
+		expect( closeHandler ).not.toHaveBeenCalled();
+	} );
+
 	it( 'sets the cropper aspect ratio from the chosen option', async () => {
 		const user = userEvent.setup();
 		renderOverlay();

@@ -504,6 +504,8 @@ describe( 'Header', () => {
 
 			const cropButton = screen.getByLabelText( 'Crop' );
 			expect( cropButton ).toHaveAttribute( 'aria-pressed', 'true' );
+			expect( screen.getByLabelText( 'Rotate left' ) ).toBeDisabled();
+			expect( screen.getByLabelText( 'Flip vertically' ) ).toBeDisabled();
 
 			await user.click( cropButton );
 
