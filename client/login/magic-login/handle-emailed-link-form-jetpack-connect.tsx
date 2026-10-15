@@ -58,6 +58,13 @@ const HandleEmailedLinkFormJetpackConnect: FC< Props > = ( { emailAddress, token
 
 	const { setHeaders } = useLoginContext();
 
+	// Keep this first so the view is still recorded if a later mount effect throws.
+	useEffect( () => {
+		if ( ! isExpired ) {
+			dispatch( recordTracksEvent( 'calypso_login_email_link_handle_click_view' ) );
+		}
+	}, [] );
+
 	useEffect( () => {
 		if ( ! emailAddress || ! token ) {
 			dispatch( showMagicLoginLinkExpiredPage() );
@@ -103,12 +110,6 @@ const HandleEmailedLinkFormJetpackConnect: FC< Props > = ( { emailAddress, token
 
 		handleValidToken();
 	}, [ authError, dispatch, handleValidToken, hasSubmitted, isAuthenticated, isFetching ] );
-
-	useEffect( () => {
-		if ( ! isExpired ) {
-			dispatch( recordTracksEvent( 'calypso_login_email_link_handle_click_view' ) );
-		}
-	}, [] );
 
 	if ( isExpired ) {
 		return <EmailedLoginLinkExpired emailAddress={ emailAddress } isJetpack />;
