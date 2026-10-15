@@ -44,6 +44,8 @@ export type McpSiteOverride = {
 	abilities?: Record< string, unknown >;
 	/** Site-level group "enable all" intents (AIINT-471): keys are `read`, `write`, or a bare group slug (e.g. `site`). */
 	group_intents?: Record< string, boolean >;
+	/** Site allowlist for site-published (remote) abilities (AI-1329): keys are `{read|write|destructive}:{namespace}`, lowercased. Only allowed groups are stored; a missing group denies. */
+	remote_groups?: Record< string, boolean >;
 };
 
 export type McpAbilities = {

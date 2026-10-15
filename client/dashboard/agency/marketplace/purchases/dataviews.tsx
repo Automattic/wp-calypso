@@ -3,7 +3,7 @@ import {
 	JetpackLicenseSortDirection,
 	JetpackLicenseSortField,
 } from '@automattic/api-core';
-import { formatCurrency } from '@automattic/number-formatters';
+import { formatCurrency, formatNumber } from '@automattic/number-formatters';
 import {
 	ExternalLink,
 	__experimentalHStack as HStack,
@@ -124,14 +124,18 @@ function SiteCell( {
 	license,
 	isAgencyOwner,
 	isProvisioning,
+	onManageSite,
 }: {
 	license: JetpackLicense;
 	isAgencyOwner: boolean;
 	isProvisioning: boolean;
+	onManageSite: ( license: JetpackLicense ) => void;
 } ) {
 	if ( isPressableLicense( license ) && ! license.revoked_at ) {
 		return isAgencyOwner ? (
-			<ExternalLink href={ PRESSABLE_AGENCY_URL }>{ __( 'Manage in Pressable' ) }</ExternalLink>
+			<ExternalLink href={ PRESSABLE_AGENCY_URL } onClick={ () => onManageSite( license ) }>
+				{ __( 'Manage in Pressable' ) }
+			</ExternalLink>
 		) : (
 			<Text variant="muted">{ __( 'Managed by agency owner' ) }</Text>
 		);
@@ -208,7 +212,9 @@ function ProductCell( { license, locale }: { license: JetpackLicense; locale: st
 		<VStack spacing={ 0 }>
 			<HStack justify="flex-start" spacing={ 2 } expanded={ false } wrap>
 				<Text weight={ 500 }>{ getLicenseProductName( license ) }</Text>
-				{ isBundleParent( license ) && <Text variant="muted">×{ license.quantity }</Text> }
+				{ isBundleParent( license ) && (
+					<Text variant="muted">×{ formatNumber( license.quantity ?? 0 ) }</Text>
+				) }
 				{ getLicenseTags( license ).map( ( tag ) => (
 					<Badge key={ tag }>{ tag }</Badge>
 				) ) }
@@ -231,10 +237,12 @@ export function getLicenseFields( {
 	locale,
 	isAgencyOwner,
 	provisioningLicenseKeys,
+	onManageSite,
 }: {
 	locale: string;
 	isAgencyOwner: boolean;
 	provisioningLicenseKeys: Set< string >;
+	onManageSite: ( license: JetpackLicense ) => void;
 } ): Field< JetpackLicense >[] {
 	const statusLabels = getLicenseStatusLabels();
 	const renderDate = ( value: string | null ) => (
@@ -282,6 +290,7 @@ export function getLicenseFields( {
 					license={ item }
 					isAgencyOwner={ isAgencyOwner }
 					isProvisioning={ provisioningLicenseKeys.has( item.license_key ) }
+					onManageSite={ onManageSite }
 				/>
 			),
 		},

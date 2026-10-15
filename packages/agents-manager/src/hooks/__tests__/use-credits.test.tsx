@@ -167,8 +167,10 @@ describe( 'useCredits', () => {
 		const meter = () =>
 			result.current.trailingActions as React.ReactElement< {
 				onToggle: ( open: boolean ) => void;
+				onUpgradeClick?: () => void;
 			} >;
 		act( () => meter().props.onToggle( true ) );
+		act( () => meter().props.onUpgradeClick?.() );
 		act( () => result.current.notice?.onDismiss?.() );
 		completeRequest( rerender );
 		completeRequest( rerender );
@@ -178,6 +180,19 @@ describe( 'useCredits', () => {
 		} );
 		expect( recordAgentsManagerTracksEvent ).not.toHaveBeenCalled();
 	} );
+
+	it.each( [ 'free', 'paid' ] )(
+		'records nothing when a %s demo balance drains and opens the popover by itself',
+		( plan ) => {
+			jest.mocked( recordAgentsManagerTracksEvent ).mockClear();
+			seed( `?am_credits=5&am_plan=${ plan }` );
+			const { result, rerender } = renderCredits();
+			completeRequest( rerender );
+			const meter = result.current.trailingActions as React.ReactElement< { isOpen: boolean } >;
+			expect( meter.props.isOpen ).toBe( true );
+			expect( recordAgentsManagerTracksEvent ).not.toHaveBeenCalled();
+		}
+	);
 
 	it( 'drains the mocked paid pools plan-first, consistently with the aggregate', () => {
 		const pools = ( search: string ) => {

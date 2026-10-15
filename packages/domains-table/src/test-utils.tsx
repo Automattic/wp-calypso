@@ -19,7 +19,7 @@ export function renderWithProvider(
 	return rtlRender( ui, { ...renderOptions, wrapper: Wrapper } );
 }
 
-export function testSite( defaults: Partial< SiteDetails > ) {
+export function testSite( defaults: Partial< SiteDetails > ): Partial< SiteDetails > {
 	return {
 		...defaults,
 		options: {

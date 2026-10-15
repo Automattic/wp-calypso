@@ -11,6 +11,13 @@ export type StepperMiscellaneousFields = Partial< {
 		entryPoint: string;
 	};
 	site: CreatedSite;
+	migrationHandoff: {
+		siteId: number;
+		siteSlug: string;
+		from: string;
+		shouldGoToCheckout: boolean;
+		plan?: string;
+	};
 	/**
 	 * The site the create-site step made, so reaching that step again adopts it rather than asking
 	 * /sites/new for a second one.

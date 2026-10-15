@@ -7,6 +7,8 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { lazy, Suspense, useEffect } from 'react';
 import useShouldLoadAgentsManager from '../agents-manager/use-should-load-agents-manager';
 import { useAuth } from '../auth';
+import { useAppContext } from '../context';
+import { useCanShowOmnibarAiChatButton } from './use-can-show-omnibar-ai-chat-button';
 
 const AgentsManager = lazy(
 	() =>
@@ -17,6 +19,8 @@ const AgentsManager = lazy(
 
 export default function OmnibarAgentsManager( { pathname }: { pathname: string } ) {
 	const { user } = useAuth();
+	const { components } = useAppContext();
+	const canShowOmnibarAiChatButton = useCanShowOmnibarAiChatButton();
 	const queryClient = useQueryClient();
 	const { data: siteId } = useQuery( omnibarSiteIdQuery() );
 	const { data: site } = useQuery( {
@@ -43,6 +47,8 @@ export default function OmnibarAgentsManager( { pathname }: { pathname: string }
 				currentSiteId={ siteId }
 				currentRoute={ pathname }
 				isInternalOnly={ isInternalOnly }
+				// A variant's own omnibar has no AI chat button.
+				hasMasterbarAiChatButton={ ! components.omnibar && canShowOmnibarAiChatButton }
 			/>
 		</Suspense>
 	);

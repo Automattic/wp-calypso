@@ -182,6 +182,10 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 		from: partnerConfig?.id ?? queryArgs.get( 'from' ) ?? undefined,
 	} );
 
+	// V1 and V2 both put the link in the top bar; `flow` tells the two layouts apart.
+	const recordLoginLinkClick = ( origin: 'top-bar' | 'form' ) =>
+		recordTracksEvent( 'calypso_signup_login_link_click', { flow, step: stepName, origin } );
+
 	const returnToGate = () => setEditing( null );
 
 	const {
@@ -307,6 +311,7 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 				goToNextStep={ setWpAccountCreateResponse }
 				passDataToNextStep
 				logInUrl={ loginLink }
+				onLogInClick={ () => recordLoginLinkClick( 'form' ) }
 				handleSocialResponse={ handleSocialResponse }
 				socialServiceResponse={ socialServiceResponse }
 				redirectToAfterLoginUrl={ window.location.href }
@@ -406,7 +411,9 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 				leftElement={ backButton }
 				rightElement={
 					hideLoginLink || isEmailFirstVariant || isEditingEmail ? null : (
-						<Step.LinkButton href={ loginLink }>{ translate( 'Log in' ) }</Step.LinkButton>
+						<Step.LinkButton href={ loginLink } onClick={ () => recordLoginLinkClick( 'top-bar' ) }>
+							{ translate( 'Log in' ) }
+						</Step.LinkButton>
 					)
 				}
 			/>
@@ -480,6 +487,7 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 						<Button
 							className="step-wrapper__navigation-link forward"
 							href={ loginLink }
+							onClick={ () => recordLoginLinkClick( 'top-bar' ) }
 							variant="link"
 						>
 							<span>{ translate( 'Log in' ) }</span>

@@ -10,6 +10,7 @@ export const sitePreviewLinksQuery = ( siteId: number ) =>
 	queryOptions( {
 		queryKey: [ 'site', siteId, 'preview-links' ],
 		queryFn: () => fetchSitePreviewLinks( siteId ),
+		meta: { persist: false },
 	} );
 
 export const sitePreviewLinkCreateMutation = ( siteId: number ) =>

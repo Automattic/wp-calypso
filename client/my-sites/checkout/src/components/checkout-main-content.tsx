@@ -2398,7 +2398,7 @@ const CheckoutSidebarNudgeWrapper = styled.div`
 	}
 
 	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
-		row-gap: 36px;
+		row-gap: 16px;
 	}
 `;
 
@@ -2653,6 +2653,19 @@ const WPCheckoutWrapper = styled.div< {
 	& *:focus {
 		outline: ${ ( props ) => props.theme.colors.outline } solid 2px;
 	}
+
+	${ ( props ) =>
+		! props.isCheckoutUiRedesignV1 &&
+		css`
+			/* Flat sidebar cards: a hairline one step lighter than the plan
+			   option borders (Gray 10), with the same 3px radius. */
+			.checkout__summary-card,
+			.checkout-sidebar-plan-upsell.card {
+				box-shadow: none;
+				border: 1px solid var( --studio-gray-5 );
+				border-radius: 3px;
+			}
+		` }
 
 	.checkout__summary-area {
 		position: sticky;
