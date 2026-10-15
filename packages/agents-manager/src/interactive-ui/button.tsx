@@ -1,7 +1,6 @@
 import { createComponentImplementation, MarkdownContext } from '@a2ui/react/v0_9';
 import { ButtonApi, DataBindingSchema } from '@a2ui/web_core/v0_9';
 import { Button as GutenbergButton } from '@wordpress/components';
-import { useEffect, useState } from '@wordpress/element';
 import { z } from 'zod';
 
 const actionContextValue = z.union( [
@@ -29,29 +28,11 @@ const buttonApi = {
 	} ),
 };
 
-const Button = createComponentImplementation( buttonApi, ( { props, context, buildChild } ) => {
-	const [ isBusy, setIsBusy ] = useState( false );
-	useEffect( () => {
-		setIsBusy( false );
-		const subscription = context.componentModel.onUpdated.subscribe( () => setIsBusy( false ) );
-		return () => subscription.unsubscribe();
-	}, [ context.componentModel ] );
-	useEffect( () => {
-		if ( ! isBusy ) {
-			return;
-		}
-		const timeout = setTimeout( () => setIsBusy( false ), 10000 );
-		return () => clearTimeout( timeout );
-	}, [ isBusy ] );
-
+const Button = createComponentImplementation( buttonApi, ( { props, buildChild } ) => {
 	return (
 		<GutenbergButton
 			variant={ props.variant === 'primary' ? 'primary' : 'secondary' }
-			isBusy={ isBusy }
-			onClick={ () => {
-				setIsBusy( true );
-				props.action();
-			} }
+			onClick={ () => props.action() }
 		>
 			<MarkdownContext.Provider value={ undefined }>
 				{ buildChild( props.child ) }
