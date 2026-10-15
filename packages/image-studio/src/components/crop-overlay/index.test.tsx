@@ -77,14 +77,13 @@ describe( 'CropOverlay', () => {
 		expect( onApply ).not.toHaveBeenCalled();
 	} );
 
-	it( 'cancels from the Cancel button and the Escape key', async () => {
+	it( 'cancels from the Cancel button', async () => {
 		const user = userEvent.setup();
 		renderOverlay();
 
 		await user.click( screen.getByRole( 'button', { name: 'Cancel' } ) );
-		fireEvent.keyDown( document.body, { key: 'Escape' } );
 
-		expect( onCancel ).toHaveBeenCalledTimes( 2 );
+		expect( onCancel ).toHaveBeenCalledTimes( 1 );
 	} );
 
 	it( 'cancels on Escape before the unsaved-changes close handler sees it', () => {
@@ -97,6 +96,23 @@ describe( 'CropOverlay', () => {
 
 		expect( onCancel ).toHaveBeenCalledTimes( 1 );
 		expect( closeHandler ).not.toHaveBeenCalled();
+	} );
+
+	it( 'leaves Escape to a dialog opened over Image Studio', () => {
+		const dialogHandler = jest.fn();
+		renderOverlay();
+		const dialog = document.createElement( 'div' );
+		dialog.className = 'components-modal__screen-overlay';
+		const dialogButton = document.createElement( 'button' );
+		dialog.appendChild( dialogButton );
+		document.body.appendChild( dialog );
+		dialog.addEventListener( 'keydown', dialogHandler );
+
+		fireEvent.keyDown( dialogButton, { key: 'Escape' } );
+		dialog.remove();
+
+		expect( onCancel ).not.toHaveBeenCalled();
+		expect( dialogHandler ).toHaveBeenCalled();
 	} );
 
 	it( 'sets the cropper aspect ratio from the chosen option', async () => {

@@ -1,5 +1,5 @@
 import { Button, RangeControl } from '@wordpress/components';
-import { useEffect, useState } from '@wordpress/element';
+import { useEffect, useRef, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { ImageCropper, ImageCropperProvider, useImageCropper } from '@wordpress/image-cropper';
 import { getCropTransform, type ImageTransform } from '../../utils/image-edit-modifiers';
@@ -16,6 +16,7 @@ const MIN_ZOOM = 1;
 const MAX_ZOOM = 5;
 
 function CropTool( { imageUrl, disabled = false, onApply, onCancel }: CropOverlayProps ) {
+	const rootRef = useRef< HTMLDivElement >( null );
 	const { cropperState, setCropperState } = useImageCropper();
 	const [ aspectRatioSlug, setAspectRatioSlug ] = useState( 'original' );
 	const { mediaSize, croppedArea, zoom } = cropperState;
@@ -24,8 +25,8 @@ function CropTool( { imageUrl, disabled = false, onApply, onCancel }: CropOverla
 	const aspectRatios = [
 		{ slug: 'original', label: __( 'Original', __i18n_text_domain__ ), value: originalAspectRatio },
 		{ slug: '1:1', label: __( 'Square', __i18n_text_domain__ ), value: 1 },
-		{ slug: '4:3', label: __( '4:3', __i18n_text_domain__ ), value: 4 / 3 },
-		{ slug: '16:9', label: __( '16:9', __i18n_text_domain__ ), value: 16 / 9 },
+		{ slug: '4:3', label: '4:3', value: 4 / 3 },
+		{ slug: '16:9', label: '16:9', value: 16 / 9 },
 	];
 
 	const cropTransform = mediaSize && croppedArea ? getCropTransform( croppedArea ) : null;
@@ -34,11 +35,20 @@ function CropTool( { imageUrl, disabled = false, onApply, onCancel }: CropOverla
 	// capture listener. Capturing on window runs first, so Escape only leaves crop mode.
 	useEffect( () => {
 		const handleKeyDown = ( event: KeyboardEvent ) => {
-			if ( event.key === 'Escape' && ! event.defaultPrevented && ! event.isComposing ) {
-				event.preventDefault();
-				event.stopImmediatePropagation();
-				onCancel();
+			if ( event.key !== 'Escape' || event.defaultPrevented || event.isComposing ) {
+				return;
 			}
+			// A dialog opened over Image Studio (e.g. the unsaved-changes prompt) handles its own Escape.
+			const targetModal =
+				event.target instanceof Element
+					? event.target.closest( '.components-modal__screen-overlay' )
+					: null;
+			if ( targetModal && ! targetModal.contains( rootRef.current ) ) {
+				return;
+			}
+			event.preventDefault();
+			event.stopImmediatePropagation();
+			onCancel();
 		};
 		window.addEventListener( 'keydown', handleKeyDown, true );
 		return () => window.removeEventListener( 'keydown', handleKeyDown, true );
@@ -46,6 +56,7 @@ function CropTool( { imageUrl, disabled = false, onApply, onCancel }: CropOverla
 
 	return (
 		<div
+			ref={ rootRef }
 			className="image-studio-crop"
 			role="group"
 			aria-label={ __( 'Crop image', __i18n_text_domain__ ) }
