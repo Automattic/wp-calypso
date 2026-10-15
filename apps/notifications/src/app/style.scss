@@ -85,6 +85,13 @@ $wpnc-slide-easing: cubic-bezier(0.33, 0, 0, 1);
 	position: relative;
 	width: 100%;
 	height: 100%;
+
+	/* stylelint-disable-next-line unit-allowed-list */
+	@media ( -webkit-min-device-pixel-ratio: 1.25 ), ( min-resolution: 120dpi ) {
+		text-rendering: optimizeLegibility;
+		-moz-osx-font-smoothing: grayscale;
+		-webkit-font-smoothing: antialiased;
+	}
 }
 
 .wpnc-app__error {

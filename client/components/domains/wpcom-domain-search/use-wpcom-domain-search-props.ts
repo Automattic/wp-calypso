@@ -14,7 +14,11 @@ import {
 	type ContinuedDomainProduct,
 	useWPCOMDomainSearchCart,
 } from './use-wpcom-domain-search-cart';
-import { useWPCOMDomainSearchEvents } from './use-wpcom-domain-search-events';
+import {
+	getSearchUiVersion,
+	useWPCOMDomainSearchEvents,
+	withSearchUiVersion,
+} from './use-wpcom-domain-search-events';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 
 export type WPCOMDomainSearchProps = Omit<
@@ -55,6 +59,7 @@ export const useWPCOMDomainSearchProps = ( {
 }: WPCOMDomainSearchProps ) => {
 	const dispatch = useDispatch();
 	const isLoggedIn = useSelector( isUserLoggedIn );
+	const isNamePulse = !! externalConfig?.showNamePulseSearch;
 
 	const {
 		onContinue: externalOnContinue,
@@ -65,10 +70,14 @@ export const useWPCOMDomainSearchProps = ( {
 	const onContinueWithStepSubmissionTracking = useCallback(
 		( items: ContinuedDomainProduct[] ) => {
 			const firstItem = items[ 0 ];
-			dispatch( recordDomainSearchStepSubmit( { domain_name: firstItem.meta }, analyticsSection ) );
+			const action = recordDomainSearchStepSubmit(
+				{ domain_name: firstItem.meta },
+				analyticsSection
+			);
+			dispatch( withSearchUiVersion( action, getSearchUiVersion( isNamePulse ) ) );
 			externalOnContinue( items );
 		},
-		[ dispatch, analyticsSection, externalOnContinue ]
+		[ dispatch, analyticsSection, externalOnContinue, isNamePulse ]
 	);
 
 	const { cart, isNextDomainFree, freeDomainName, freeForFirstYearTlds, onContinue } =
@@ -111,6 +120,7 @@ export const useWPCOMDomainSearchProps = ( {
 		flowName,
 		analyticsSection,
 		query: query,
+		isNamePulse,
 	} );
 
 	const events: ComponentProps< typeof DomainSearch >[ 'events' ] = useMemo( () => {

@@ -6,7 +6,18 @@ import { useLocale } from '../../app/locale';
 import FlashMessage from '../../components/flash-message';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
+import { AgencyNotices } from '../components/agency-notices';
+import PaymentRiskNotice, { hasPaymentRiskNotice } from '../components/payment-risk-notice';
+import PressableUsageLimitNotice, {
+	usePressableUsageLimit,
+} from '../components/pressable-usage-limit-notice';
+import MissingPaymentSettingsNotice, {
+	useMissingPaymentSettings,
+} from '../earn/missing-payment-settings-notice';
+import { useHasCommissionActivity } from '../earn/use-has-commission-activity';
 import { getMarketplaceHostingSectionRoute } from '../marketplace/paths';
+import { useOnboardingTour } from '../onboarding-tour';
+import WelcomeBand, { useWelcomeBandVisibility } from '../onboarding-tour/welcome-band';
 import { PARTNER_DIRECTORY_ROUTE } from '../partner-directory/paths';
 import { useContactSupport } from '../support/use-contact-support';
 import { useScheduleCall } from '../tiers/use-schedule-call';
@@ -22,6 +33,10 @@ export default function AgencyOverview() {
 	const locale = useLocale();
 	const agencyId = agency?.id ?? 0;
 	const approvalStatus = agency?.approval_status;
+	const isPending = approvalStatus === 'pending';
+	const { isVisible: isWelcomeBandVisible, isLoading: isWelcomeBandLoading } =
+		useWelcomeBandVisibility( approvalStatus, agency?.tier?.id, agency?.created_at );
+	const { openTour } = useOnboardingTour();
 	const hasPartnerDirectoryListing =
 		!! agency?.profile?.partner_directory_application?.directories.some(
 			( { status } ) => status === 'approved'
@@ -29,6 +44,12 @@ export default function AgencyOverview() {
 	const { scheduleCall, isLoading: isSchedulingCall } = useScheduleCall( agency?.id );
 	const { isEligibleForPressableIntroOffer, isEligibleForPressableExpansionOffer } =
 		usePressableOfferEligibility( agency );
+	const { hasActivity, isLoading: isLoadingActivity } = useHasCommissionActivity( agencyId );
+	const pressableUsageLimit = usePressableUsageLimit( agency );
+	const missingPaymentSettings = useMissingPaymentSettings( {
+		hasCommissionActivity: hasActivity,
+		isLoadingActivity,
+	} );
 
 	if ( ! agency ) {
 		return <PageLayout header={ <PageHeader title={ __( 'Overview' ) } /> } />;
@@ -44,12 +65,45 @@ export default function AgencyOverview() {
 					locale={ locale }
 				/>
 			}
+			notices={
+				<AgencyNotices
+					candidates={ [
+						{
+							id: 'payment-risk',
+							isUrgent: true,
+							isEligible: hasPaymentRiskNotice( agency ),
+							notice: <PaymentRiskNotice agency={ agency } source="overview" />,
+						},
+						{
+							id: 'pressable-usage-limit',
+							...pressableUsageLimit,
+							notice: <PressableUsageLimitNotice agency={ agency } />,
+						},
+						{
+							id: 'missing-payment-settings',
+							...missingPaymentSettings,
+							notice: <MissingPaymentSettingsNotice hasCommissionActivity={ hasActivity } />,
+						},
+					] }
+				/>
+			}
 		>
 			<FlashMessage
 				id="route-not-allowed"
 				type="error"
 				message={ __( 'You don’t have permission to view the requested page.' ) }
 			/>
+			{ isWelcomeBandVisible && (
+				<WelcomeBand
+					isPending={ isPending }
+					sitesHref="/sites"
+					marketplaceHref="/marketplace"
+					onScheduleCall={ scheduleCall }
+					isSchedulingCall={ isSchedulingCall }
+					onTakeTour={ openTour }
+					recordTracksEvent={ recordTracksEvent }
+				/>
+			) }
 			<AgencyOverviewContent
 				agencyId={ agencyId }
 				tierId={ agency.tier?.id }
@@ -76,6 +130,11 @@ export default function AgencyOverview() {
 							onClick: () => openContactForm(),
 						},
 						{
+							id: 'relaunch-welcome-tour',
+							label: __( 'Take the full tour' ),
+							onClick: openTour,
+						},
+						{
 							id: 'program-incentives',
 							label: __( 'Program incentive details' ),
 							href: PROGRAM_INCENTIVES_URL,
@@ -85,6 +144,9 @@ export default function AgencyOverview() {
 				} }
 				onScheduleCall={ scheduleCall }
 				isSchedulingCall={ isSchedulingCall }
+				onRelaunchTour={ openTour }
+				tourLabel={ __( 'Take the full tour' ) }
+				hidesPendingCard={ isWelcomeBandVisible || isWelcomeBandLoading }
 				recordTracksEvent={ recordTracksEvent }
 			/>
 		</PageLayout>

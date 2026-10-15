@@ -130,7 +130,13 @@ describe( 'onboarding flow side effects', () => {
 } );
 
 describe( 'onboarding flow use-my-domain navigation', () => {
-	const submitUseMyDomain = ( providedDependencies: Record< string, unknown > ) => {
+	const submitUseMyDomain = ( providedDependencies: Record< string, unknown >, search = '' ) => {
+		const query = new URLSearchParams( search );
+		( useQuery as jest.Mock ).mockReturnValue( query );
+		( useSelect as jest.Mock ).mockReturnValue(
+			query.get( 'blueprint' ) ? { blueprint: query.get( 'blueprint' ) } : {}
+		);
+
 		const navigate = jest.fn();
 		const { result } = renderHook( () =>
 			// `useStepNavigation` reads `this.name`, so it must be invoked bound to the flow.
@@ -174,14 +180,30 @@ describe( 'onboarding flow use-my-domain navigation', () => {
 		expect( query.get( 'step' ) ).toBe( 'transfer-or-connect' );
 		expect( query.get( 'initialQuery' ) ).toBe( 'example.com' );
 	} );
+
+	// A connected or transferred domain needs a paid plan. The free-plan shortcut a Simple
+	// blueprint build takes after the domain step would send this order to checkout with a
+	// domain and no plan, so it still goes through the plans grid.
+	it( 'goes to the plans step for a connected domain even on a Simple blueprint build', () => {
+		const { navigate } = submitUseMyDomain(
+			{ domainCartItem: { product_slug: 'domain_map', meta: 'example.com' } },
+			'blueprint=zoom&build_dest=simple'
+		);
+
+		expect( navigate ).toHaveBeenCalledWith( 'plans' );
+		expect( mockSetPlanCartItem ).not.toHaveBeenCalled();
+	} );
 } );
 
 describe( 'onboarding flow domains navigation', () => {
 	const submitDomains = ( search: string, cartPlan?: string ) => {
-		( useQuery as jest.Mock ).mockReturnValue( new URLSearchParams( search ) );
-		( useSelect as jest.Mock ).mockReturnValue(
-			cartPlan ? { planCartItem: { product_slug: cartPlan } } : {}
-		);
+		const query = new URLSearchParams( search );
+		( useQuery as jest.Mock ).mockReturnValue( query );
+		( useSelect as jest.Mock ).mockReturnValue( {
+			...( cartPlan ? { planCartItem: { product_slug: cartPlan } } : {} ),
+			// The blueprint step stores the slug it verified; the flow reads it from the store.
+			...( query.get( 'blueprint' ) ? { blueprint: query.get( 'blueprint' ) } : {} ),
+		} );
 
 		const navigate = jest.fn();
 		const { result } = renderHook( () =>
@@ -223,6 +245,15 @@ describe( 'onboarding flow domains navigation', () => {
 		const navigate = submitDomains( '' );
 
 		expect( navigate ).toHaveBeenCalledWith( 'plans' );
+	} );
+
+	// A Simple blueprint build is a free-plan run: the grid has nothing to ask.
+	it( 'skips the plans step with an empty cart on a Simple blueprint build', () => {
+		const navigate = submitDomains( 'blueprint=zoom&build_dest=simple' );
+
+		expect( navigate ).toHaveBeenCalledWith( 'create-site', undefined, false );
+		expect( mockSetPlanCartItem ).toHaveBeenCalledWith( null );
+		expect( mockSetProductCartItems ).toHaveBeenCalledWith( [] );
 	} );
 } );
 

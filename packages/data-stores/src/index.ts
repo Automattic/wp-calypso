@@ -60,6 +60,7 @@ export { generateAdminSections } from './contextual-help/admin-sections';
 export type { LinksForSection } from './contextual-help/contextual-help';
 export * from './contextual-help/constants';
 export type {
+	CheckoutSupportVariation,
 	HelpCenterSite,
 	HelpCenterSelect,
 	Dispatch as HelpCenterDispatch,

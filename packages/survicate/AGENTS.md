@@ -246,11 +246,6 @@ never interferes with suppression. The wp-admin bundle does **not** emit it:
 Atomic custom domains the wordpress.com consent cookies are absent and the real
 module would record events for users who opted out.
 
-**Until Jetpack #52709 ships**, wp-admin still runs the older inline copy of this
-logic emitted by `jetpack-mu-wpcom/src/features/survicate/class-survicate.php`
-(Jetpack monorepo), not this package. Keep the two in sync when changing selectors
-or behavior; remove this note once wp-admin loads the `apps/survicate` bundle.
-
 **Known caveat — the display flash**: `survey_displayed` fires _after_ the survey
 renders, so closing it produces a brief show-then-hide flicker. The SDK exposes no
 pre-display veto. This is largely mitigated by the targeting pause
@@ -316,14 +311,10 @@ Simple sites pick up the new bundle immediately; Atomic sites within an hour (Je
 ## Testing in wp-admin
 
 1. Sandbox your site and `widgets.wp.com`.
-2. Until Automattic/jetpack#52709 ships, also load the Jetpack branch that enqueues the bundle: `bin/jetpack-downloader test jetpack-mu-wpcom-plugin update/survicate-shared-bundle`.
-3. `cd apps/survicate && yarn dev --sync`, then open wp-admin as an English-locale user.
-4. Run `localStorage.debug = 'survicate'` and reload to see the package's debug log.
-5. <feature-specific checks, e.g. what should close a survey or set `window._sva.disableTargeting`>
+2. `cd apps/survicate && yarn dev --sync`, then open wp-admin as an English-locale user.
+3. Run `localStorage.debug = 'survicate'` and reload to see the package's debug log.
+4. <feature-specific checks, e.g. what should close a survey or set `window._sva.disableTargeting`>
 ```
-
-Drop step 2 once Automattic/jetpack#52709 has shipped, and update this section
-to match.
 
 ## Conventions & gotchas
 

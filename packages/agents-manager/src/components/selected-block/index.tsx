@@ -5,7 +5,7 @@ import { Button, __unstableMotion as motion } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { close } from '@wordpress/icons';
-import { getSelectedTextContext } from './get-selected-text';
+import { getSelectedTextContext } from '../../utils/get-selected-text';
 import './style.scss';
 
 const animations = {

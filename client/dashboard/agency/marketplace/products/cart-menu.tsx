@@ -21,7 +21,7 @@ import { getTermSuffix } from './lib/product-pricing';
 import { getProductShortTitle } from './lib/product-title';
 import { useCartLines } from './use-cart-lines';
 import type { TermPricing } from '../use-term-pricing';
-import type { ShoppingCartItem } from './use-shopping-cart';
+import type { CartItemRef, ShoppingCartItem } from './use-shopping-cart';
 import type { AgencyProduct } from '@automattic/api-core';
 
 import './cart-menu.scss';
@@ -37,7 +37,7 @@ interface Props {
 	/** Controls the dropdown, for pages that open the cart after adding to it. */
 	open?: boolean;
 	onToggle?: ( willOpen: boolean ) => void;
-	onRemove: ( slug: string ) => void;
+	onRemove: ( item: CartItemRef ) => void;
 	onCheckout?: () => void;
 }
 
@@ -69,6 +69,7 @@ export default function CartMenu( {
 	const checkoutLines = lines.map( ( { product, item } ) => ( {
 		product,
 		quantity: item.quantity,
+		siteDomain: item.siteDomain,
 	} ) );
 
 	const checkoutButtonProps = {
@@ -140,7 +141,12 @@ export default function CartMenu( {
 					</Heading>
 					{ lines.length === 0 && <Text variant="muted">{ __( 'Your cart is empty.' ) }</Text> }
 					{ lines.map( ( { item, product, priceInfo, subtotal } ) => (
-						<HStack key={ item.slug } justify="space-between" spacing={ 4 } alignment="flex-start">
+						<HStack
+							key={ `${ item.slug }:${ item.siteDomain ?? '' }` }
+							justify="space-between"
+							spacing={ 4 }
+							alignment="flex-start"
+						>
 							<VStack spacing={ 0 }>
 								<Text>
 									{ item.quantity > 1
@@ -152,6 +158,11 @@ export default function CartMenu( {
 											)
 										: getCartProductName( product ) }
 								</Text>
+								{ item.siteDomain && (
+									<Text variant="muted" size={ 12 }>
+										{ item.siteDomain }
+									</Text>
+								) }
 								{ /* The spans keep Google Translate from crashing on sibling text nodes. */ }
 								<Text variant="muted" size={ 12 }>
 									<TextBlur
@@ -182,12 +193,26 @@ export default function CartMenu( {
 							<Button
 								variant="link"
 								isDestructive
-								aria-label={ sprintf(
-									/* translators: %s is the product name. */
-									__( 'Remove %s from the cart' ),
-									getCartProductName( product )
-								) }
-								onClick={ () => onRemove( item.slug ) }
+								aria-label={
+									item.siteDomain
+										? sprintf(
+												/* translators: %1$s is the product name, %2$s the site the add-on applies to. */
+												__( 'Remove %1$s for %2$s from the cart' ),
+												getCartProductName( product ),
+												item.siteDomain
+											)
+										: sprintf(
+												/* translators: %s is the product name. */
+												__( 'Remove %s from the cart' ),
+												getCartProductName( product )
+											)
+								}
+								onClick={ () => {
+									recordTracksEvent( 'calypso_a4a_marketplace_checkout_remove_item_click', {
+										product: item.slug,
+									} );
+									onRemove( item );
+								} }
 							>
 								{ __( 'Remove' ) }
 							</Button>

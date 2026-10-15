@@ -2,6 +2,7 @@
  * @jest-environment jsdom
  */
 import { act, renderHook } from '@testing-library/react';
+import { recordAgentsManagerTracksEvent } from '../../utils/tracks';
 import { useCredits } from '../use-credits';
 import type { CreditsPool } from '../../utils/credits';
 
@@ -26,6 +27,7 @@ jest.mock( '@wordpress/i18n', () => ( {
 	},
 } ) );
 jest.mock( '../../components/credits-meter', () => () => null );
+jest.mock( '../../utils/tracks', () => ( { recordAgentsManagerTracksEvent: jest.fn() } ) );
 
 // The seed is read when the hook mounts, so each case sets the URL first.
 function seed( search: string ) {
@@ -41,6 +43,7 @@ function renderCredits( enabled = true ) {
 				agentConfig: { agentId: 'mock', agentUrl: '', sessionId: '' },
 				siteKey: 'no-site',
 				isOpen: true,
+				isNoticeVisible: true,
 			} );
 		},
 		{
@@ -156,6 +159,40 @@ describe( 'useCredits', () => {
 		expect( result.current.notice ).toBeUndefined();
 		expect( meter().props.isOpen ).toBe( true );
 	} );
+
+	it.each( [ 'free', 'paid' ] )( 'sends no credits events from a %s demo balance', ( plan ) => {
+		jest.mocked( recordAgentsManagerTracksEvent ).mockClear();
+		seed( `?am_credits=15&am_plan=${ plan }` );
+		const { result, rerender } = renderCredits();
+		const meter = () =>
+			result.current.trailingActions as React.ReactElement< {
+				onToggle: ( open: boolean ) => void;
+				onUpgradeClick?: () => void;
+			} >;
+		act( () => meter().props.onToggle( true ) );
+		act( () => meter().props.onUpgradeClick?.() );
+		act( () => result.current.notice?.onDismiss?.() );
+		completeRequest( rerender );
+		completeRequest( rerender );
+		completeRequest( rerender );
+		act( () => {
+			result.current.beforeSubmit();
+		} );
+		expect( recordAgentsManagerTracksEvent ).not.toHaveBeenCalled();
+	} );
+
+	it.each( [ 'free', 'paid' ] )(
+		'records nothing when a %s demo balance drains and opens the popover by itself',
+		( plan ) => {
+			jest.mocked( recordAgentsManagerTracksEvent ).mockClear();
+			seed( `?am_credits=5&am_plan=${ plan }` );
+			const { result, rerender } = renderCredits();
+			completeRequest( rerender );
+			const meter = result.current.trailingActions as React.ReactElement< { isOpen: boolean } >;
+			expect( meter.props.isOpen ).toBe( true );
+			expect( recordAgentsManagerTracksEvent ).not.toHaveBeenCalled();
+		}
+	);
 
 	it( 'drains the mocked paid pools plan-first, consistently with the aggregate', () => {
 		const pools = ( search: string ) => {

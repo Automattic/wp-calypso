@@ -5,18 +5,28 @@ import { __ } from '@wordpress/i18n';
 import { close } from '@wordpress/icons';
 import { useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
+import { useAuth } from '../../app/auth';
 import { useLocale } from '../../app/locale';
 import { Callout } from '../../components/callout';
+import DifmOfferModal from '../../components/difm-offer-modal';
 import UpsellCTAButton from '../../components/upsell-cta-button';
 import { getDifmOfferCopy, useDifmOffer } from '../../utils/difm-offer';
+import { useDifmOfferEngagementTracking } from '../../utils/use-difm-offer-engagement-tracking';
 import DIFMUpsellCard from '../overview-difm-upsell-card';
-import illustrationUrl from '../overview-difm-upsell-card/upsell-illustration.svg';
+import illustrationUrl from './difm-offer-illustration.svg';
 import type { Site } from '@automattic/api-core';
 
 import './style.scss';
 
 const UPSELL_ID = 'site-overview-difm-offer';
 const UPSELL_FEATURE_ID = 'difm-offer';
+// The themes banner and the Site Setup banner record these names through Calypso's Banner,
+// so one query covers every DIFM offer surface.
+const TRACKS_EVENT_NAMES = {
+	impression: 'calypso_banner_cta_impression',
+	click: 'calypso_banner_cta_click',
+};
+const DISMISS_EVENT = 'calypso_banner_dismiss';
 
 /**
  * Fills the DIFM slot in the site overview. A user in a treatment arm of the DIFM
@@ -31,6 +41,7 @@ const UPSELL_FEATURE_ID = 'difm-offer';
 export default function DIFMOfferCard( { site }: { site: Site } ) {
 	const localeSlug = useLocale();
 	const { recordTracksEvent } = useAnalytics();
+	const { user } = useAuth();
 	const { isLoading, variation } = useDifmOffer( {
 		planSlug: site.plan?.product_slug,
 		siteCreatedAt: site.options?.created_at,
@@ -47,12 +58,18 @@ export default function DIFMOfferCard( { site }: { site: Site } ) {
 	const { mutate: saveDismissal } = useMutation( userPreferenceMutation( preferenceName ) );
 	// Hide the offer as soon as it is dismissed, without waiting for the preference to save.
 	const [ isDismissedLocally, setIsDismissedLocally ] = useState( false );
+	const engagementRef = useDifmOfferEngagementTracking( recordTracksEvent, {
+		upsell_id: UPSELL_ID,
+		upsell_feature_id: UPSELL_FEATURE_ID,
+		variation,
+	} );
+	const [ isModalOpen, setIsModalOpen ] = useState( false );
 
 	if ( isLoading ) {
 		return null;
 	}
 
-	if ( ! copy ) {
+	if ( ! copy || variation === 'control' ) {
 		return <DIFMUpsellCard site={ site } />;
 	}
 
@@ -60,26 +77,28 @@ export default function DIFMOfferCard( { site }: { site: Site } ) {
 		return null;
 	}
 
-	const tracksProperties = { variation };
+	// Banner adds cta_name and cta_size to its impression and click, and cta_name to its dismiss.
+	const tracksProperties = { variation, cta_name: UPSELL_ID, cta_size: 'regular' };
 
 	const handleDismiss = () => {
 		setIsDismissedLocally( true );
 		saveDismissal( new Date().toISOString() );
-		recordTracksEvent( 'calypso_dashboard_upsell_dismiss', {
-			...tracksProperties,
+		recordTracksEvent( DISMISS_EVENT, {
+			variation,
+			cta_name: UPSELL_ID,
 			upsell_id: UPSELL_ID,
 			upsell_feature_id: UPSELL_FEATURE_ID,
 		} );
 	};
 
 	return (
-		<div className="dashboard-difm-offer-card">
+		<div className="dashboard-difm-offer-card" ref={ engagementRef }>
 			<Callout
 				title={ copy.title }
 				titleAs="h2"
 				description={ <Text variant="muted">{ copy.description }</Text> }
 				image={ illustrationUrl }
-				imageAlt={ __( 'Responsive website design' ) }
+				imageAlt={ __( 'A designer edits a website in the site editor' ) }
 				imageVariant="full-bleed"
 				actions={
 					<UpsellCTAButton
@@ -88,9 +107,8 @@ export default function DIFMOfferCard( { site }: { site: Site } ) {
 						upsellId={ UPSELL_ID }
 						upsellFeatureId={ UPSELL_FEATURE_ID }
 						tracksProperties={ tracksProperties }
-						onClick={ () => {
-							// The offer modal opens here in a follow-up.
-						} }
+						tracksEventNames={ TRACKS_EVENT_NAMES }
+						onClick={ () => setIsModalOpen( true ) }
 					/>
 				}
 			/>
@@ -101,6 +119,15 @@ export default function DIFMOfferCard( { site }: { site: Site } ) {
 				size="small"
 				onClick={ handleDismiss }
 			/>
+			{ isModalOpen && (
+				<DifmOfferModal
+					site={ site }
+					userEmail={ user.email }
+					variation={ variation }
+					source="site-overview"
+					onClose={ () => setIsModalOpen( false ) }
+				/>
+			) }
 		</div>
 	);
 }

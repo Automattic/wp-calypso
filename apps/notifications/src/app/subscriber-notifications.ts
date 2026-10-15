@@ -1,5 +1,7 @@
 import { subscribeUnseenCount } from './client';
 import { createNotificationSound } from './notification-sound';
+import type { ClientOptions } from './client';
+import type { NotificationSoundOptions, NotificationSoundResult } from './notification-sound';
 
 export type SubscriberNotificationCandidate = {
 	targetSiteId: number;
@@ -11,10 +13,21 @@ export type SubscriberNotificationCandidate = {
 export function subscribeSubscriberNotifications(
 	wpcom: Parameters< typeof subscribeUnseenCount >[ 0 ],
 	onCount: ( count: number ) => void,
-	onConfirmed?: ( candidate: SubscriberNotificationCandidate ) => boolean | void
+	onConfirmed?: ( candidate: SubscriberNotificationCandidate ) => boolean | void,
+	{
+		onSound,
+		onError,
+		...clientOptions
+	}: ClientOptions & {
+		onSound?: (
+			result: NotificationSoundResult,
+			candidate: SubscriberNotificationCandidate
+		) => void;
+		onError?: NotificationSoundOptions[ 'onError' ];
+	} = {}
 ) {
 	let active = true;
-	const sound = onConfirmed ? createNotificationSound() : undefined;
+	const sound = onConfirmed ? createNotificationSound( { onError } ) : undefined;
 	const onSubscriberNotification = onConfirmed
 		? ( candidate: SubscriberNotificationCandidate ) => {
 				if (
@@ -33,10 +46,18 @@ export function subscribeSubscriberNotifications(
 					return;
 				}
 
-				sound?.play();
+				const result = sound?.play();
+				if ( result ) {
+					onSound?.( result, candidate );
+				}
 			}
 		: undefined;
-	const unsubscribe = subscribeUnseenCount( wpcom, onCount, onSubscriberNotification );
+	const unsubscribe = subscribeUnseenCount(
+		wpcom,
+		onCount,
+		onSubscriberNotification,
+		clientOptions
+	);
 
 	return () => {
 		active = false;

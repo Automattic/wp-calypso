@@ -15,6 +15,7 @@ import {
 	isOnboardingFlow,
 	isTailoredSignupFlow,
 	ONBOARDING_FLOW,
+	SITE_MIGRATION_FLOW,
 	Step,
 	StepContainer,
 } from '@automattic/onboarding';
@@ -28,6 +29,7 @@ import { useTranslate, TranslateResult } from 'i18n-calypso';
 import moment from 'moment';
 import { parse as parseQs } from 'qs';
 import AsyncLoad from 'calypso/components/async-load';
+import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import MarketingMessage from 'calypso/components/marketing-message';
 import Notice from 'calypso/components/notice';
@@ -126,7 +128,7 @@ export interface UnifiedPlansStepProps {
 		Extract< UrlFriendlyTermType, 'monthly' | 'yearly' | '2yearly' | '3yearly' >
 	>;
 	headerText?: string;
-	subHeaderText?: string;
+	subHeaderText?: TranslateResult;
 	highlightLabelOverrides?: { [ K in PlanSlug ]?: TranslateResult };
 	titleBadgeOverrides?: { [ K in PlanSlug ]?: TranslateResult };
 	taglineOverrides?: { [ K in PlanSlug ]?: TranslateResult };
@@ -725,6 +727,7 @@ function UnifiedPlansStep( {
 
 		return (
 			<>
+				{ flowName === SITE_MIGRATION_FLOW && <DocumentHead title={ headerText } /> }
 				{ /*
 				 * The layout mounts hidden (CSS: visibility:hidden + position:absolute) so
 				 * PlansFeaturesMain's data-fetching hooks run immediately. Step.Loading

@@ -28,11 +28,11 @@ export default function BodyCard( {
 				<VStack spacing={ 3 } justify="flex-start" className="dashboard-body-card__stack">
 					<HStack spacing={ 3 } justify="flex-start">
 						{ tile }
-						<VStack spacing={ 0 }>
+						<VStack spacing={ 0 } className="dashboard-body-card__heading">
 							<Text weight={ 600 } size={ 15 } lineHeight="20px">
 								{ title }
 							</Text>
-							<Text variant="muted" size={ 13 } className="dashboard-body-card__byline">
+							<Text variant="muted" size={ 13 } truncate className="dashboard-body-card__byline">
 								{ byline }
 							</Text>
 						</VStack>

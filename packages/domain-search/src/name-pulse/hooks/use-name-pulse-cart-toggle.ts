@@ -4,8 +4,14 @@ import { useState } from 'react';
 import { convertAvailabilityToSuggestion } from '../../helpers/convert-availability-to-suggestion';
 import { DomainPriceRule } from '../../hooks/use-suggestion';
 import { useDomainSearch } from '../../page/context';
-import { isNamePulseAvailable, toNamePulseRealtimeVerdict } from '../helpers';
+import {
+	getNamePulseTracksVendor,
+	isNamePulseAvailable,
+	toNamePulseRealtimeVerdict,
+	toNamePulseTracksSuggestion,
+} from '../helpers';
 import { setNamePulseVerdict } from './use-name-pulse-verdicts';
+import type { NamePulseRenderReport } from './use-name-pulse-result-set';
 import type { DomainAvailability, PolicyNotice } from '@automattic/api-core';
 
 export interface NamePulsePolicyNotice {
@@ -19,10 +25,13 @@ export interface NamePulsePolicyNotice {
  * and both confirm the TLD's special requirements before adding.
  */
 export const useNamePulseCartToggle = (
-	domainName: string,
+	result: Parameters< typeof toNamePulseTracksSuggestion >[ 0 ],
 	position: number,
+	// Read on click, as the render is reported after this hook runs.
+	getRendered: () => NamePulseRenderReport | undefined,
 	policyNotices: PolicyNotice[] = []
 ) => {
+	const domainName = result.domain_name;
 	const { __ } = useI18n();
 	const { cart, events, queries } = useDomainSearch();
 	const queryClient = useQueryClient();
@@ -34,6 +43,9 @@ export const useNamePulseCartToggle = (
 	const [ policyNotice, setPolicyNotice ] = useState< NamePulsePolicyNotice >();
 
 	const inCart = cart.hasItem( domainName );
+	const tracksVendor = getNamePulseTracksVendor( result.source );
+	const getRenderedPosition = () => getRendered()?.position ?? position;
+	const getTracksSuggestion = () => toNamePulseTracksSuggestion( result, getRenderedPosition() );
 
 	const {
 		mutate: toggleCart,
@@ -45,6 +57,13 @@ export const useNamePulseCartToggle = (
 				const item = cart.items.find( ( i ) => `${ i.domain }.${ i.tld }` === domainName );
 				if ( item ) {
 					await cart.onRemoveItem( item.uuid );
+					events.onNamePulseTracksEvent( 'remove_button_click', {
+						domain_name: domainName,
+						remove_source: 'row',
+						result_group: getRendered()?.group,
+						position: getRenderedPosition(),
+						root_vendor: tracksVendor,
+					} );
 				}
 				return { addedToCart: false };
 			}
@@ -56,7 +75,7 @@ export const useNamePulseCartToggle = (
 			);
 			const suggestion = convertAvailabilityToSuggestion( availability );
 
-			events.onDomainAddAvailabilityPreCheck( availability, domainName, suggestion.vendor );
+			events.onDomainAddAvailabilityPreCheck( availability, domainName, tracksVendor );
 			setNamePulseVerdict( queryClient, domainName, {
 				...toNamePulseRealtimeVerdict( availability ),
 				is_cart_check: true,
@@ -69,7 +88,8 @@ export const useNamePulseCartToggle = (
 			if ( availability.trademark_claims_notice_info && ! acceptedTrademarkClaim ) {
 				events.onTrademarkClaimsNoticeShown( {
 					...suggestion,
-					position,
+					vendor: tracksVendor,
+					position: getRenderedPosition(),
 					price_rule: DomainPriceRule.PRICE,
 				} );
 				setTrademarkClaimsNoticeInfo( availability.trademark_claims_notice_info );
@@ -83,9 +103,9 @@ export const useNamePulseCartToggle = (
 			if ( data.addedToCart && data.suggestion ) {
 				events.onAddDomainToCart(
 					domainName,
-					position,
+					getRenderedPosition(),
 					data.suggestion.is_premium ?? false,
-					data.suggestion.vendor
+					tracksVendor
 				);
 			}
 		},
@@ -98,6 +118,13 @@ export const useNamePulseCartToggle = (
 		isPending,
 		error,
 		toggleCart: () => {
+			const rendered = getRendered();
+
+			// Only a rendered card has a railcar to match.
+			if ( ! inCart && rendered ) {
+				events.onSuggestionInteract( getTracksSuggestion(), rendered.railcar );
+			}
+
 			if ( inCart || policyNotices.length === 0 ) {
 				toggleCart( { acceptedTrademarkClaim: false } );
 				return;
@@ -118,9 +145,13 @@ export const useNamePulseCartToggle = (
 		closePolicyNotice: () => ! isPending && setIsPolicyNoticeOpen( false ),
 		trademarkClaimsNoticeInfo,
 		acceptTrademarkClaim: () => {
+			events.onTrademarkClaimsNoticeAccepted( getTracksSuggestion() );
 			setTrademarkClaimsNoticeInfo( undefined );
 			toggleCart( { acceptedTrademarkClaim: true } );
 		},
-		closeTrademarkClaims: () => setTrademarkClaimsNoticeInfo( undefined ),
+		closeTrademarkClaims: () => {
+			events.onTrademarkClaimsNoticeClosed( getTracksSuggestion() );
+			setTrademarkClaimsNoticeInfo( undefined );
+		},
 	};
 };

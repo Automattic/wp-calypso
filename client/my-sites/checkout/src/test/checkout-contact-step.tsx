@@ -144,7 +144,7 @@ describe( 'Checkout contact step', () => {
 		expect( await screen.findByText( 'Enter your contact information' ) ).toBeInTheDocument();
 		expect( await screen.findByRole( 'link', { name: 'Learn more' } ) ).toHaveAttribute(
 			'href',
-			'https://wordpress.com/support/domains/private-domain-registration/#information-we-collect-and-why'
+			'https://wordpress.com/support/domains/private-domain-registration/'
 		);
 	} );
 
