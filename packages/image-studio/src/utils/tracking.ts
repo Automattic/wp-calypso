@@ -580,9 +580,9 @@ export interface UpgradeNoticeCredits {
 	state: 'low' | 'zero';
 	planTier: string;
 	creditsLeft: number | 'none';
-	/** The Upgrade link, who to ask, or `none`. */
+	/** The Upgrade or Add credits link, who to ask, or `none`. */
 	ctaType: CreditsCtaType;
-	/** The upgrade link's `source`, which checkout copies onto the purchase. */
+	/** The purchase link's `source`, which checkout copies onto the purchase. */
 	ref: string;
 }
 

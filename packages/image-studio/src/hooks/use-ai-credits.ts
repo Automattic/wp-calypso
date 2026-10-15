@@ -143,8 +143,8 @@ export function useAiCredits( {
 	// Cancelled when the credentials change or the modal closes, so an older check's answer is dropped.
 	const checkToken = useRef( { isCancelled: false } );
 	// A notice event waits for a running check to answer or fail, so it can say whether
-	// Upgrade shows; a skipped check leaves nothing to wait for. The opening check's 5-second
-	// timeout doesn't count: a late answer can still add Upgrade.
+	// Upgrade or Add credits shows; a skipped check leaves nothing to wait for. The opening
+	// check's 5-second timeout doesn't count: a late answer can still add the button.
 	const isAccessSettled = useRef( isRequestSkipped );
 	const heldNotice = useRef< { level: SiteCreditsLevel; trigger: UpgradeNoticeTrigger } | null >(
 		null
