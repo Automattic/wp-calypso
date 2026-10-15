@@ -1379,15 +1379,38 @@ describe( 'main app', () => {
 			);
 		} );
 
-		it( 'records the hit so we know when the legacy path is unused', async () => {
+		it( 'records the hit without the full query', async () => {
 			const { request } = await app.run( {
-				request: { url: '/start/launch-site/plans-launch' },
+				request: {
+					url: '/start/launch-site/plans-launch',
+					query: { ref: 'admin-bar', coupon: 'SECRET' },
+				},
 			} );
 			expect( app.getMocks().analytics.tracks.recordEvent ).toHaveBeenCalledWith(
 				'calypso_legacy_launch_site_redirect',
-				{ source: 'server', original_url: '/start/launch-site/plans-launch' },
+				{ path: '/start/launch-site/plans-launch', ref: 'admin-bar', query_source: undefined },
 				request
 			);
+		} );
+
+		it( 'still redirects when tracking throws', async () => {
+			app.getMocks().analytics.tracks.recordEvent.mockImplementationOnce( () => {
+				throw new Error( 'Fake error' );
+			} );
+			const { response } = await app.run( { request: { url: '/start/launch-site' } } );
+			expect( response.redirect ).toHaveBeenCalledWith( 302, '/setup/launch-site' );
+		} );
+
+		it( 'does not record HEAD requests', async () => {
+			await app.run( { request: { url: '/start/launch-site', method: 'HEAD' } } );
+			expect( app.getMocks().analytics.tracks.recordEvent ).not.toHaveBeenCalled();
+		} );
+
+		it( 'does not record outside production', async () => {
+			const devApp = buildApp( 'development' );
+			const { response } = await devApp.run( { request: { url: '/start/launch-site' } } );
+			expect( response.redirect ).toHaveBeenCalledWith( 302, '/setup/launch-site' );
+			expect( devApp.getMocks().analytics.tracks.recordEvent ).not.toHaveBeenCalled();
 		} );
 
 		it( 'drops legacy step segments and keeps the locale', async () => {

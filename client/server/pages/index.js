@@ -1380,12 +1380,21 @@ export default function pages() {
 
 	// Legacy `/start/launch-site` is now served by Stepper; see `legacy-launch-site-flow.ts`.
 	app.get( [ '/start/launch-site', '/start/launch-site/*' ], ( req, res ) => {
-		// Shows who still links to the old path; the Referer header is sent with the event.
-		analytics.tracks.recordEvent(
-			'calypso_legacy_launch_site_redirect',
-			{ source: 'server', original_url: req.originalUrl },
-			req
-		);
+		// Shows who still links to the old path (the Referer is sent with the event), so we know
+		// when it can go. Only the path and caller hints are sent: the query can carry coupons and
+		// redirect URLs.
+		if ( calypsoEnv === 'production' && req.method === 'GET' ) {
+			try {
+				analytics.tracks.recordEvent(
+					'calypso_legacy_launch_site_redirect',
+					{ path: req.path, ref: req.query.ref, query_source: req.query.source },
+					req
+				);
+			} catch {
+				// Never let tracking block the redirect.
+			}
+		}
+
 		res.redirect( 302, getLegacyLaunchSiteRedirect( req.query, getLegacyFlowLocale( req.path ) ) );
 	} );
 
