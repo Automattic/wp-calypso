@@ -7,7 +7,7 @@ import { useMutation, useSuspenseQuery, useQuery } from '@tanstack/react-query';
 import {
 	__experimentalVStack as VStack,
 	__experimentalHStack as HStack,
-	__experimentalText as Text,
+	__experimentalHeading as Heading,
 	ToggleControl,
 	Spinner,
 } from '@wordpress/components';
@@ -133,9 +133,9 @@ export default function RemoteAbilitiesCard( { site }: { site: Site } ) {
 					<CardDivider className="mcp-settings__sub-divider" />
 					<CardBody>
 						<VStack spacing={ 3 }>
-							<Text as="h4" weight={ 600 } size={ 14 }>
+							<Heading level={ 4 } weight={ 600 } size={ 14 }>
 								{ namespace }
-							</Text>
+							</Heading>
 							<HStack spacing={ 6 } justify="flex-start" wrap>
 								{ GROUP_CATEGORIES.filter( ( category ) => categories.has( category ) ).map(
 									( category ) => {
