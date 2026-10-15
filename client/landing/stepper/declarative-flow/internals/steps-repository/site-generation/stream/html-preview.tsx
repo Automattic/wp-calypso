@@ -9,10 +9,10 @@ export function BuildHtmlPreview( { stream }: { stream: BuildWowStreamView } ) {
 	const [ selectedRoute, setSelectedRoute ] = useState( '/' );
 	const previews = Object.values( stream.state.previews );
 	const reference = stream.state.previews[ selectedRoute ] ?? previews[ 0 ];
-	const { html, failed } = useBuildHtmlPreview( reference, stream );
+	const { html, assets, failed } = useBuildHtmlPreview( reference, stream );
 	const srcDoc = useMemo(
-		() => ( html === null ? undefined : htmlPreviewDocument( html ) ),
-		[ html ]
+		() => ( html === null ? undefined : htmlPreviewDocument( html, assets ) ),
+		[ html, assets ]
 	);
 
 	return (
