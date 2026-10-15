@@ -1,8 +1,9 @@
-import { DotcomPlans } from '@automattic/api-core';
+import { DIFM_OFFER_ARMS, DotcomPlans } from '@automattic/api-core';
 import config from '@automattic/calypso-config';
 import { englishLocales } from '@automattic/i18n-utils';
 import { __ } from '@wordpress/i18n';
 import { useExperiment } from 'calypso/lib/explat';
+import type { DifmOfferBuildRequestVariation } from '@automattic/api-core';
 
 /**
  * Registered on the calypso platform. The Site Setup banner in jetpack-mu-wpcom
@@ -25,12 +26,10 @@ export const DIFM_OFFER_MAX_SITE_AGE_DAYS = 7;
 const MS_PER_DAY = 24 * 60 * 60 * 1000;
 
 /**
- * The experiment's copy arms. Each arm shows the offer with its own copy, and `control`
- * shows no offer. The names match the ExPlat variations.
+ * One of the experiment's copy arms. Each arm shows the offer with its own copy, and
+ * `control` shows no offer.
  */
-export const DIFM_OFFER_ARMS = [ 'expert_help', 'no_time_to_build', 'skip_the_setup' ] as const;
-
-export type DifmOfferArm = ( typeof DIFM_OFFER_ARMS )[ number ];
+export type DifmOfferArm = DifmOfferBuildRequestVariation;
 
 export type DifmOfferVariation = 'control' | DifmOfferArm;
 
