@@ -2,6 +2,7 @@ import { GlobalStylesVariations } from '@automattic/global-styles';
 import { TranslateResult } from 'i18n-calypso';
 import type { StyleVariation } from '@automattic/design-picker';
 import type { GlobalStylesObject } from '@automattic/global-styles/src/types';
+
 import './style.scss';
 
 interface StyleVariationPreviewsProps {

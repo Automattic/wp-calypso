@@ -7,6 +7,7 @@ import { type JSX, MutableRefObject } from 'react';
 import NavigatorListener from '../navigator-listener';
 import { useNavigatorScreens } from './hooks';
 import type { NavigatorScreenObject } from './types';
+
 import './navigator-screens.scss';
 
 type Navigator = ReturnType< typeof useNavigator >;

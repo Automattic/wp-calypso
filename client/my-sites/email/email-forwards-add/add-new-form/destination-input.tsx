@@ -3,6 +3,7 @@ import { useTranslate } from 'i18n-calypso';
 import React, { type ComponentProps } from 'react';
 import { isValidDestination } from './utils';
 import type { DestinationsInputProps, ValidationError } from './types';
+
 import './styles.scss';
 
 type Tokens = NonNullable< ComponentProps< typeof FormTokenField >[ 'value' ] >;
