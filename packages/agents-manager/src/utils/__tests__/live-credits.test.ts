@@ -1,12 +1,13 @@
 import { getCreditsLabel, isCreditsExhausted } from '../credits';
 import {
 	buildLiveCreditsStatus,
-	getCreditsUpgradeUrl,
+	getCreditsPurchaseLink,
 	parseCreditSnapshot,
 	parseLiveCreditsStatus,
 } from '../live-credits';
 import { creditSnapshot } from './fixtures/credit-snapshot';
 import { localNumber } from './fixtures/local-number';
+import type { CreditsPlanTier } from '../credits';
 
 jest.mock( 'i18n-calypso', () => ( { getBrowserSafeLocale: () => 'en' } ) );
 jest.mock( '@wordpress/i18n', () => ( {
@@ -39,24 +40,43 @@ it( 'gives other chats the dot status for a valid snapshot and nothing for an un
 	expect( parseLiveCreditsStatus( snapshot, 123 ) ).toEqual( buildLiveCreditsStatus( snapshot ) );
 	expect( parseLiveCreditsStatus( snapshot, 456 ) ).toBeUndefined();
 } );
-it.each( [
-	{
-		name: 'links a Personal plan by site ID',
-		planTier: 'personal',
-		site: 123,
-		url: 'https://wordpress.com/plans/123?source=wp_ai_credits',
-	},
-	{
-		name: 'links a Business plan by domain',
-		planTier: 'business',
-		site: 'example.wordpress.com',
-		url: 'https://wordpress.com/plans/example.wordpress.com?source=wp_ai_credits',
-	},
-	{ name: 'gives the top plan no link', planTier: 'commerce', site: 123, url: undefined },
-	{ name: 'gives an unknown plan no link', planTier: undefined, site: 123, url: undefined },
-] as const )( 'upgrade: $name', ( { planTier, site, url } ) => {
-	const status = { ...buildLiveCreditsStatus( creditSnapshot() ), planTier };
-	expect( getCreditsUpgradeUrl( status, site ) ).toBe( url );
+describe( 'getCreditsPurchaseLink', () => {
+	const statusOn = ( planTier: CreditsPlanTier | undefined ) => ( {
+		...buildLiveCreditsStatus( creditSnapshot() ),
+		planTier,
+	} );
+
+	it.each( [ 'personal', 'premium' ] as const )( 'sends %s to the plans page', ( planTier ) => {
+		expect( getCreditsPurchaseLink( statusOn( planTier ), 'example.wordpress.com' ) ).toEqual( {
+			kind: 'upgrade',
+			url: 'https://wordpress.com/plans/example.wordpress.com?source=wp_ai_credits',
+		} );
+	} );
+
+	it.each( [ 'business', 'commerce' ] as const )(
+		'sends %s to checkout for one 100,000-credit pack',
+		( planTier ) => {
+			expect( getCreditsPurchaseLink( statusOn( planTier ), 'example.wordpress.com' ) ).toEqual( {
+				kind: 'top_up',
+				url: 'https://wordpress.com/checkout/example.wordpress.com/ai-credits-lifetime:-q-100000?source=wp_ai_credits',
+			} );
+		}
+	);
+
+	it.each( [
+		[ 'upgrade', 'personal', 'https://wordpress.com/plans/123?source=wp_ai_credits' ],
+		[
+			'credits pack',
+			'business',
+			'https://wordpress.com/checkout/123/ai-credits-lifetime:-q-100000?source=wp_ai_credits',
+		],
+	] as const )( 'links the %s by site ID', ( _kind, planTier, url ) => {
+		expect( getCreditsPurchaseLink( statusOn( planTier ), 123 )?.url ).toBe( url );
+	} );
+
+	it( 'gives an unknown plan no link', () => {
+		expect( getCreditsPurchaseLink( statusOn( undefined ), 123 ) ).toBeUndefined();
+	} );
 } );
 it.each( [
 	[ 'wpcom-site-monthly-v1', '2026-10-01T00:00:00Z', 'Oct 1' ],

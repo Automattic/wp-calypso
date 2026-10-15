@@ -63,13 +63,17 @@ const PLAN_OWNER_HINT =
 	'This plan was purchased by a different WordPress.com account. To manage this plan, log in to that account or contact the account owner.';
 
 const UPGRADE_URL = 'https://wordpress.com/plans/123?source=wp_ai_credits';
-const upgradeAction = {
+const ADD_CREDITS_URL =
+	'https://wordpress.com/checkout/123/ai-credits-lifetime:-q-100000?source=wp_ai_credits';
+/** The dot's button; the notice's adds a click handler. */
+const upgradeButton = {
 	label: 'Upgrade',
 	href: UPGRADE_URL,
 	target: '_blank',
 	rel: 'noopener noreferrer',
-	onClick: expect.any( Function ),
 };
+const upgradeAction = { ...upgradeButton, onClick: expect.any( Function ) };
+const addCreditsButton = { ...upgradeButton, label: 'Add credits', href: ADD_CREDITS_URL };
 
 /** The credit details sent with the notice events, so they join the Agent's credits events. */
 const noticeCredits = ( state: 'low' | 'zero', creditsLeft: number ) => ( {
@@ -82,7 +86,7 @@ const noticeCredits = ( state: 'low' | 'zero', creditsLeft: number ) => ( {
 } );
 const meterAt = ( percent: number, isOpen = false ) => ( {
 	status: expect.objectContaining( { plan: 'paid', percent } ),
-	upgradeUrl: UPGRADE_URL,
+	action: upgradeButton,
 	isOpen,
 	onToggle: expect.any( Function ),
 } );
@@ -253,17 +257,51 @@ describe( 'useAiCredits', () => {
 		expect( result.current.isLimitReached ).toBe( true );
 	} );
 
-	it( 'offers no upgrade on the top plan', async () => {
-		respondWith( { ai_credits: planSnapshot( 0, { plan_tier: 'commerce' } ), ...PLAN_BUYER } );
+	describe.each( [ 'business', 'commerce' ] )( 'on %s', ( planTier ) => {
+		it.each( [
+			{ who: 'the plan buyer', flags: PLAN_BUYER },
+			{ who: 'an admin who didn’t buy the plan', flags: SECOND_ADMIN },
+		] )( 'offers $who Add credits and records it as a top-up', async ( { flags } ) => {
+			respondWith( { ai_credits: planSnapshot( 0, { plan_tier: planTier } ), ...flags } );
+			const { result } = renderCredits( ImageStudioMode.Edit );
+			await waitFor( () => expect( result.current.notice ).toBeDefined() );
 
-		const { result } = renderCredits();
+			expect( result.current.notice ).toMatchObject( {
+				message: 'You’ve used all your site credits.',
+				action: { ...addCreditsButton, onClick: expect.any( Function ) },
+			} );
+			expect( result.current.meter?.action ).toEqual( addCreditsButton );
+			expect( result.current.meter?.purchaseHint ).toBeUndefined();
+			const credits = { ...noticeCredits( 'zero', 0 ), planTier, ctaType: 'top_up' };
+			expect( trackImageStudioUpgradeNoticeShown ).toHaveBeenCalledWith( {
+				mode: ImageStudioMode.Edit,
+				trigger: 'open',
+				...credits,
+			} );
 
-		await waitFor( () => expect( result.current.notice ).toBeDefined() );
-		expect( result.current.notice?.action ).toBeUndefined();
-		expect( result.current.meter?.upgradeUrl ).toBeUndefined();
-		expect( trackImageStudioUpgradeNoticeShown ).toHaveBeenCalledWith(
-			expect.objectContaining( { planTier: 'commerce', ctaType: 'none', ref: 'none' } )
-		);
+			result.current.notice?.action?.onClick?.();
+			expect( trackImageStudioUpgradeNoticeClick ).toHaveBeenCalledWith( {
+				mode: ImageStudioMode.Edit,
+				trigger: 'open',
+				...credits,
+			} );
+		} );
+
+		it( 'tells someone who can’t buy to ask a site admin, with no Add credits', async () => {
+			respondWith( { ai_credits: planSnapshot( 0, { plan_tier: planTier } ), ...EDITOR } );
+			const { result } = renderCredits();
+			await waitFor( () => expect( result.current.notice ).toBeDefined() );
+
+			expect( result.current.notice?.message ).toBe(
+				'You’ve used all your site credits. Ask a site admin to add more.'
+			);
+			expect( result.current.notice?.action ).toBeUndefined();
+			expect( result.current.meter?.action ).toBeUndefined();
+			expect( result.current.meter?.purchaseHint ).toBe( 'Ask a site admin to add more.' );
+			expect( trackImageStudioUpgradeNoticeShown ).toHaveBeenCalledWith(
+				expect.objectContaining( { planTier, ctaType: 'contact_admin', ref: 'none' } )
+			);
+		} );
 	} );
 
 	describe( 'for people who can’t upgrade the plan', () => {
@@ -336,19 +374,18 @@ describe( 'useAiCredits', () => {
 
 			expect( result.current.notice?.message ).toBe( 'You’ve used all your site credits.' );
 			expect( result.current.notice?.action ).toBeUndefined();
-			expect( result.current.meter?.upgradeUrl ).toBeUndefined();
+			expect( result.current.meter?.action ).toBeUndefined();
 			expect( result.current.meter?.purchaseHint ).toBeUndefined();
 		} );
 
-		it.each( [
-			{ who: 'an admin who didn’t buy the plan', flags: SECOND_ADMIN },
-			{ who: 'someone who can’t buy', flags: EDITOR },
-		] )( 'tells $who nothing on the top plan', async ( { flags } ) => {
-			respondWith( { ai_credits: planSnapshot( 0, { plan_tier: 'commerce' } ), ...flags } );
+		it( 'offers neither Add credits nor guidance on Business when the server sends no flags', async () => {
+			respondWith( { ai_credits: planSnapshot( 0, { plan_tier: 'business' } ) } );
 			const { result } = renderCredits();
 			await waitFor( () => expect( result.current.notice ).toBeDefined() );
 
 			expect( result.current.notice?.message ).toBe( 'You’ve used all your site credits.' );
+			expect( result.current.notice?.action ).toBeUndefined();
+			expect( result.current.meter?.action ).toBeUndefined();
 			expect( result.current.meter?.purchaseHint ).toBeUndefined();
 		} );
 
@@ -379,12 +416,48 @@ describe( 'useAiCredits', () => {
 			// The turn's balance stays, and the check still says who may buy.
 			expect( result.current.isLimitReached ).toBe( true );
 			expect( result.current.notice?.action ).toEqual( upgradeAction );
-			expect( result.current.meter?.upgradeUrl ).toBe( UPGRADE_URL );
+			expect( result.current.meter?.action?.href ).toBe( UPGRADE_URL );
 			expect( trackImageStudioUpgradeNoticeShown ).toHaveBeenCalledTimes( 1 );
 			expect( trackImageStudioUpgradeNoticeShown ).toHaveBeenCalledWith( {
 				mode: ImageStudioMode.Generate,
 				trigger: 'refresh',
 				...noticeCredits( 'zero', 0 ),
+			} );
+		} );
+
+		it( 'records Add credits as a top-up once an opening check answers after a turn', async () => {
+			let resolveFetch: ( value: unknown ) => void = () => {};
+			fetchMock.mockReturnValue(
+				new Promise( ( resolve ) => {
+					resolveFetch = resolve;
+				} )
+			);
+			const { result } = renderCredits();
+			await waitFor( () => expect( fetchMock ).toHaveBeenCalled() );
+
+			act( () => {
+				result.current.onTaskUpdate( finalUpdate( planSnapshot( 0, { plan_tier: 'business' } ) ) );
+			} );
+			expect( trackImageStudioUpgradeNoticeShown ).not.toHaveBeenCalled();
+
+			await act( async () => {
+				resolveFetch( {
+					ok: true,
+					json: async () => ( {
+						ai_credits: planSnapshot( 30_000, { plan_tier: 'business' } ),
+						...SECOND_ADMIN,
+					} ),
+				} );
+			} );
+
+			expect( result.current.notice?.action?.href ).toBe( ADD_CREDITS_URL );
+			expect( trackImageStudioUpgradeNoticeShown ).toHaveBeenCalledTimes( 1 );
+			expect( trackImageStudioUpgradeNoticeShown ).toHaveBeenCalledWith( {
+				mode: ImageStudioMode.Generate,
+				trigger: 'refresh',
+				...noticeCredits( 'zero', 0 ),
+				planTier: 'business',
+				ctaType: 'top_up',
 			} );
 		} );
 
@@ -467,7 +540,7 @@ describe( 'useAiCredits', () => {
 			} );
 
 			expect( result.current.notice?.action ).toEqual( upgradeAction );
-			expect( result.current.meter?.upgradeUrl ).toBe( UPGRADE_URL );
+			expect( result.current.meter?.action?.href ).toBe( UPGRADE_URL );
 			expect( trackImageStudioUpgradeNoticeShown ).toHaveBeenCalledTimes( 1 );
 			expect( trackImageStudioUpgradeNoticeShown ).toHaveBeenCalledWith( {
 				mode: ImageStudioMode.Generate,

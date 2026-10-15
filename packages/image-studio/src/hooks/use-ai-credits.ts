@@ -3,14 +3,14 @@ import {
 	CREDITS_UPGRADE_SOURCE,
 	getCreditsCtaType,
 	getCreditsNoticeMessage,
+	getCreditsPurchaseAction,
+	getCreditsPurchaseLink,
 	getCreditsPurchaseOptions,
-	getCreditsUpgradeUrl,
 	parseCreditsAccess,
 	parseLiveCreditsStatus,
 } from '@automattic/agents-manager';
 import { useEvent } from '@wordpress/compose';
 import { useEffect, useMemo, useRef, useState } from '@wordpress/element';
-import { __ } from '@wordpress/i18n';
 import {
 	getImageStudioBlogId,
 	getImageStudioIsDevMode,
@@ -23,6 +23,7 @@ import {
 import type { ImageStudioMode } from '../types';
 import type {
 	CreditsAccess,
+	CreditsPurchaseAction,
 	CreditsPurchaseOptions,
 	CreditsStatus,
 } from '@automattic/agents-manager';
@@ -50,15 +51,15 @@ export function getSiteCreditsLevel( remaining: number ): SiteCreditsLevel | nul
 function getNoticeCredits(
 	status: PaidCreditsStatus,
 	level: SiteCreditsLevel,
-	{ upgradeUrl, askToUpgrade }: CreditsPurchaseOptions
+	{ purchaseKind, askToUpgrade }: CreditsPurchaseOptions
 ): UpgradeNoticeCredits {
 	return {
 		meter: 'site_credits',
 		state: level === 'out' ? 'zero' : 'low',
 		planTier: status.planTier ?? 'none',
 		creditsLeft: status.remaining,
-		ctaType: getCreditsCtaType( !! upgradeUrl, askToUpgrade ),
-		ref: upgradeUrl ? CREDITS_UPGRADE_SOURCE : 'none',
+		ctaType: getCreditsCtaType( purchaseKind, askToUpgrade ),
+		ref: purchaseKind ? CREDITS_UPGRADE_SOURCE : 'none',
 	};
 }
 
@@ -104,8 +105,9 @@ export interface AiCreditsState {
 	/** The Agent's credits dot, for sites on a paid plan. */
 	meter?: {
 		status: CreditsStatus;
-		upgradeUrl?: string;
-		/** Shown instead of Upgrade to people who can't upgrade the plan. */
+		/** Upgrade or Add credits, by the site's plan. */
+		action?: CreditsPurchaseAction;
+		/** Shown instead of that button to people who can't buy it. */
 		purchaseHint?: string;
 		isOpen: boolean;
 		onToggle: ( isOpen: boolean ) => void;
@@ -165,7 +167,7 @@ export function useAiCredits( {
 				return;
 			}
 			const purchaseOptions = getCreditsPurchaseOptions(
-				getCreditsUpgradeUrl( next, blogId ),
+				getCreditsPurchaseLink( next, blogId ),
 				accessRef.current
 			);
 			trackImageStudioUpgradeNoticeShown( {
@@ -278,9 +280,13 @@ export function useAiCredits( {
 	} );
 
 	const level = status ? getSiteCreditsLevel( status.remaining ) : null;
-	const { upgradeUrl, askToUpgrade, purchaseHint } = getCreditsPurchaseOptions(
-		status && blogId !== null ? getCreditsUpgradeUrl( status, blogId ) : undefined,
+	const { purchaseUrl, purchaseKind, askToUpgrade, purchaseHint } = getCreditsPurchaseOptions(
+		status && blogId !== null ? getCreditsPurchaseLink( status, blogId ) : undefined,
 		access
+	);
+	const purchaseAction = useMemo(
+		() => getCreditsPurchaseAction( { purchaseUrl, purchaseKind } ),
+		[ purchaseUrl, purchaseKind ]
 	);
 	const isNoticeHidden = level === 'low' && isLowNoticeDismissed;
 
@@ -300,7 +306,13 @@ export function useAiCredits( {
 			onTaskUpdate,
 			beforeSubmit,
 			meter: status
-				? { status, upgradeUrl, purchaseHint, isOpen: isMeterOpen, onToggle: setIsMeterOpen }
+				? {
+						status,
+						action: purchaseAction,
+						purchaseHint,
+						isOpen: isMeterOpen,
+						onToggle: setIsMeterOpen,
+					}
 				: undefined,
 			notice:
 				status && level && ! isNoticeHidden
@@ -309,27 +321,23 @@ export function useAiCredits( {
 							message: getCreditsNoticeMessage( level, status.remaining, askToUpgrade ),
 							dismissible: level === 'low',
 							onDismiss: () => setIsLowNoticeDismissed( true ),
-							action: upgradeUrl
-								? {
-										label: __( 'Upgrade', __i18n_text_domain__ ),
-										href: upgradeUrl,
-										target: '_blank',
-										rel: 'noopener noreferrer',
-										onClick: () =>
-											trackImageStudioUpgradeNoticeClick( {
-												mode,
-												trigger: shown.current.trigger,
-												...getNoticeCredits( status, level, { upgradeUrl } ),
-											} ),
-									}
-								: undefined,
+							action: purchaseAction && {
+								...purchaseAction,
+								onClick: () =>
+									trackImageStudioUpgradeNoticeClick( {
+										mode,
+										trigger: shown.current.trigger,
+										...getNoticeCredits( status, level, { purchaseKind } ),
+									} ),
+							},
 						}
 					: undefined,
 		} ),
 		[
 			status,
 			level,
-			upgradeUrl,
+			purchaseAction,
+			purchaseKind,
 			askToUpgrade,
 			purchaseHint,
 			isNoticeHidden,

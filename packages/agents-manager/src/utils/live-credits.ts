@@ -206,29 +206,63 @@ export function buildLiveCreditsStatus( snapshot: CreditSnapshot ): CreditsStatu
 	};
 }
 
-/** Tags upgrades from the credits prompts. Checkout copies it onto the purchase, and Tracks events send it as `ref`. */
+/** Tags purchases from the credits prompts. Checkout copies it onto the purchase, and Tracks events send it as `ref`. */
 export const CREDITS_UPGRADE_SOURCE = 'wp_ai_credits';
 
-/**
- * The plans page for a plan with a higher plan to move to. Calypso's plans
- * route takes the site's domain or its ID.
- */
-export function getCreditsUpgradeUrl(
-	status: CreditsStatus,
-	site: string | number
-): string | undefined {
-	if ( ! [ 'personal', 'premium', 'business' ].includes( status.planTier ?? '' ) ) {
-		return undefined;
-	}
-	return `https://wordpress.com/plans/${ encodeURIComponent( site ) }?source=${ CREDITS_UPGRADE_SOURCE }`;
+/** The store's AI credits product. Kept here because this package doesn't depend on `@automattic/api-core`. */
+const CREDITS_TOP_UP_PRODUCT = 'ai-credits-lifetime';
+
+/** Credits one Add credits click buys: one pack, with no amount picker. */
+const CREDITS_TOP_UP_AMOUNT = 100000;
+
+/** A plan upgrade, or a credits pack. Tracks events send it as `cta_type`. */
+export type CreditsPurchaseKind = 'upgrade' | 'top_up';
+
+export interface CreditsPurchaseLink {
+	kind: CreditsPurchaseKind;
+	url: string;
 }
 
-/** Bind the plans destination to the same site as the authenticated balance. */
-export function getLiveCreditsUpgradeUrl(
+// Upgrading is the better deal on the lower plans. Business and Commerce buy a
+// credits pack instead, and Commerce has no plan to upgrade to.
+const CREDITS_PURCHASE_KIND_BY_TIER: Record< CreditsPlanTier, CreditsPurchaseKind > = {
+	personal: 'upgrade',
+	premium: 'upgrade',
+	business: 'top_up',
+	commerce: 'top_up',
+};
+
+/**
+ * The plans page or the credits pack checkout, by the site's plan. Calypso's
+ * plans and checkout routes take the site's domain or its ID.
+ */
+export function getCreditsPurchaseLink(
+	status: CreditsStatus,
+	site: string | number
+): CreditsPurchaseLink | undefined {
+	const kind = status.planTier && CREDITS_PURCHASE_KIND_BY_TIER[ status.planTier ];
+	const siteFragment = encodeURIComponent( site );
+	if ( kind === 'upgrade' ) {
+		return {
+			kind,
+			url: `https://wordpress.com/plans/${ siteFragment }?source=${ CREDITS_UPGRADE_SOURCE }`,
+		};
+	}
+	if ( kind === 'top_up' ) {
+		return {
+			kind,
+			url: `https://wordpress.com/checkout/${ siteFragment }/${ CREDITS_TOP_UP_PRODUCT }:-q-${ CREDITS_TOP_UP_AMOUNT }?source=${ CREDITS_UPGRADE_SOURCE }`,
+		};
+	}
+	return undefined;
+}
+
+/** Bind the purchase destination to the same site as the authenticated balance. */
+export function getLiveCreditsPurchaseLink(
 	status: CreditsStatus,
 	siteId: number | undefined,
 	site?: AgentsManagerSite | null
-): string | undefined {
+): CreditsPurchaseLink | undefined {
 	if (
 		! siteId ||
 		Number( site?.ID ) !== siteId ||
@@ -237,5 +271,5 @@ export function getLiveCreditsUpgradeUrl(
 	) {
 		return undefined;
 	}
-	return getCreditsUpgradeUrl( status, site.domain );
+	return getCreditsPurchaseLink( status, site.domain );
 }
