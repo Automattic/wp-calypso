@@ -1,4 +1,9 @@
-import { getAgentManager, type TaskUpdate, type UIMessage } from '@automattic/agenttic-client';
+import {
+	extractToolCallsFromMessage,
+	getAgentManager,
+	type TaskUpdate,
+	type UIMessage,
+} from '@automattic/agenttic-client';
 import {
 	type Suggestion,
 	type MarkdownComponents,
@@ -201,7 +206,31 @@ function getToolMessageData( message: Pick< UIMessage, 'content' > ):
 	}
 }
 
-function getBlockEditAgentMessageText( update: TaskUpdate ): string | undefined {
+/**
+ * Ids of the tool calls the agent makes in a task update. The tool-result echo
+ * is the client's own `user` message replaying the conversation history, so
+ * its tool calls belong to earlier turns and are never counted.
+ */
+function getAgentToolCallIds( update: TaskUpdate ): string[] {
+	const message = update.status.message;
+	if ( message?.role !== 'agent' ) {
+		return [];
+	}
+
+	return extractToolCallsFromMessage( message ).map( ( toolCall ) => toolCall.data.toolCallId );
+}
+
+/**
+ * Gets the latest block-edit `agentMessage` a task update carries.
+ *
+ * Tool results are read only for the task's own tool calls: the tool-result
+ * echo also replays the conversation history, whose block edits belong to
+ * earlier turns.
+ */
+function getBlockEditAgentMessageText(
+	update: TaskUpdate,
+	taskToolCallIds: ReadonlySet< string > | undefined
+): string | undefined {
 	const candidateTexts = update.text ? [ update.text ] : [];
 
 	for ( const message of [ update.status.message, update.agentMessage ] ) {
@@ -211,6 +240,11 @@ function getBlockEditAgentMessageText( update: TaskUpdate ): string | undefined 
 			}
 
 			if ( ! ( 'result' in part.data ) ) {
+				continue;
+			}
+
+			const { toolCallId } = part.data;
+			if ( typeof toolCallId !== 'string' || ! taskToolCallIds?.has( toolCallId ) ) {
 				continue;
 			}
 
@@ -226,7 +260,8 @@ function getBlockEditAgentMessageText( update: TaskUpdate ): string | undefined 
 		}
 	}
 
-	for ( const candidateText of candidateTexts ) {
+	for ( let index = candidateTexts.length - 1; index >= 0; index-- ) {
+		const candidateText = candidateTexts[ index ];
 		const candidateMessage = { content: [ { type: 'text' as const, text: candidateText } ] };
 		if ( isBlockEditToolId( getToolMessageData( candidateMessage )?.toolId ) ) {
 			return candidateText;
@@ -411,6 +446,7 @@ export default function OrchestratorChat( {
 		sessionIdentity: checkpointSessionIdentity,
 		streamGeneration: Symbol(),
 		pendingByTaskId: new Map< string, UIMessage >(),
+		toolCallIdsByTaskId: new Map< string, Set< string > >(),
 		byFinalMessageId: getStreamedCheckpointMessages( checkpointSessionIdentity ),
 		liveFinalMessageIds,
 		regeneratingMessageId: undefined as string | undefined,
@@ -443,6 +479,9 @@ export default function OrchestratorChat( {
 			sessionIdentity: checkpointSessionIdentity,
 			streamGeneration: isSessionBootstrap ? previousStreamedMessages.streamGeneration : Symbol(),
 			pendingByTaskId: isSessionBootstrap ? previousStreamedMessages.pendingByTaskId : new Map(),
+			toolCallIdsByTaskId: isSessionBootstrap
+				? previousStreamedMessages.toolCallIdsByTaskId
+				: new Map(),
 			byFinalMessageId,
 			liveFinalMessageIds: isSessionBootstrap
 				? previousStreamedMessages.liveFinalMessageIds
@@ -498,7 +537,18 @@ export default function OrchestratorChat( {
 							: { ...previous, ids: new Set( [ ...previous.ids, retryingToolCallId ] ) };
 					} );
 				}
-				const blockEditAgentMessageText = getBlockEditAgentMessageText( update );
+				const agentToolCallIds = getAgentToolCallIds( update );
+				if ( isCurrentStreamGeneration && agentToolCallIds.length > 0 ) {
+					const taskToolCallIds =
+						streamedMessages.toolCallIdsByTaskId.get( update.id ) ?? new Set();
+					agentToolCallIds.forEach( ( toolCallId ) => taskToolCallIds.add( toolCallId ) );
+					streamedMessages.toolCallIdsByTaskId.set( update.id, taskToolCallIds );
+				}
+
+				const blockEditAgentMessageText = getBlockEditAgentMessageText(
+					update,
+					streamedMessages.toolCallIdsByTaskId.get( update.id )
+				);
 				if ( isCurrentStreamGeneration && blockEditAgentMessageText ) {
 					const message: UIMessage = {
 						id: update.status.message?.messageId ?? update.agentMessage?.messageId ?? update.id,
@@ -535,6 +585,7 @@ export default function OrchestratorChat( {
 						}
 					}
 					streamedMessages.pendingByTaskId.delete( update.id );
+					streamedMessages.toolCallIdsByTaskId.delete( update.id );
 					streamedMessages.regeneratingMessageId = undefined;
 				}
 
@@ -676,6 +727,7 @@ export default function OrchestratorChat( {
 				} );
 				setIsRegenerating( true );
 				streamedCheckpointMessagesRef.current.pendingByTaskId.clear();
+				streamedCheckpointMessagesRef.current.toolCallIdsByTaskId.clear();
 				streamedCheckpointMessagesRef.current.regeneratingMessageId = message?.id;
 				// Drop any retained placeholders up front; the turn is being
 				// rewound, so a leftover picker would otherwise reappear once
