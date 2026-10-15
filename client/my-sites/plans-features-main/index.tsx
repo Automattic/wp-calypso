@@ -112,6 +112,7 @@ import usePlanIntentFromSiteMeta from './hooks/use-plan-intent-from-site-meta';
 import { useRenewalPricingExperiment } from './hooks/use-renewal-price-experiment';
 import useSelectedFeature from './hooks/use-selected-feature';
 import useGetFreeSubdomainSuggestion from './hooks/use-suggested-free-domain-from-paid-domain';
+import type { CheckoutAttribution } from './hooks/use-generate-action-callback';
 import type { PlanChangeLostFeature } from '@automattic/api-core';
 import type {
 	PlansIntent,
@@ -147,6 +148,8 @@ export interface PlansFeaturesMainProps {
 	onUpgradeClick?: ( cartItems?: MinimalRequestCartProduct[] | null ) => void;
 	redirectTo?: string;
 	pluginSlug?: string;
+	/** Purchase attribution (`source`, `ai_session_id`) forwarded to the upgrade checkout. */
+	checkoutAttribution?: CheckoutAttribution;
 	redirectToAddDomainFlow?: boolean;
 	hidePlanTypeSelector?: boolean;
 	paidDomainName?: string;
@@ -239,6 +242,7 @@ const PlansFeaturesMain = ( {
 	hidePlanTypeSelector,
 	redirectTo,
 	pluginSlug,
+	checkoutAttribution,
 	redirectToAddDomainFlow,
 	siteId,
 	selectedPlan,
@@ -933,6 +937,7 @@ const PlansFeaturesMain = ( {
 		enableCategorisedFeatures: showSimplifiedFeatures,
 		redirectTo,
 		pluginSlug,
+		checkoutAttribution,
 		isDelayedDowngradePending,
 		delayedDowngradeToProductSlug,
 		onRenewCurrentPlan: renewCurrentPlanWithPendingDowngrade,
