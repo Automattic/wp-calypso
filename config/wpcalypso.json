@@ -110,6 +110,7 @@
 		"migration-flow/introductory-offer": true,
 		"migration/non-wordpress-source": true,
 		"migration/ssh-migration": false,
+		"migration/reprint-flow": false,
 		"notifications/redesign": true,
 		"notifications/subscriber-alerts": true,
 		"notifications/view-settings": true,

@@ -48,6 +48,8 @@ export interface AgentsManagerProps {
 	agentId?: string;
 	/** Whether this screen is currently enabled only for internal users. */
 	isInternalOnly?: boolean;
+	/** Whether the host's masterbar renders the AI chat button, even before it's in the DOM. */
+	hasMasterbarAiChatButton?: boolean;
 	/** Zendesk conversation tags to apply when a new support conversation is created. */
 	zendeskConversationTags?: string[];
 	/** Index selecting a dedicated Smooch integration for new support conversations. */
@@ -75,6 +77,7 @@ export default function AgentsManager( {
 	currentSiteId,
 	agentId,
 	isInternalOnly = false,
+	hasMasterbarAiChatButton = false,
 	zendeskConversationTags = EMPTY_ARRAY,
 	zendeskSmoochIntegrationKey,
 	zendeskTicketProductFieldValue,
@@ -109,6 +112,7 @@ export default function AgentsManager( {
 						siteKey,
 						currentRoute,
 						isInternalOnly,
+						hasMasterbarAiChatButton,
 						zendeskConversationTags,
 						zendeskSmoochIntegrationKey,
 						zendeskTicketProductFieldValue,

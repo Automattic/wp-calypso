@@ -1,6 +1,7 @@
 import { queryClient } from '@automattic/api-queries';
 import pagejs from '@automattic/calypso-router';
 import {
+	type GroupableSiteLaunchStatuses,
 	type SiteExcerptData,
 	SitesSortKey,
 	useFilterDeletedSites,
@@ -8,7 +9,6 @@ import {
 	useSitesListGrouping,
 	useSitesListSorting,
 } from '@automattic/sites';
-import { GroupableSiteLaunchStatuses } from '@automattic/sites/src/use-sites-list-grouping';
 import { DESKTOP_BREAKPOINT, WIDE_BREAKPOINT } from '@automattic/viewport';
 import { useBreakpoint } from '@automattic/viewport-react';
 import { QueryClientProvider } from '@tanstack/react-query';

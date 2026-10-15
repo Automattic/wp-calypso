@@ -43,14 +43,14 @@ export function getStandaloneBlueprintSimpleSlug(
  * keys are kept, and each is sanitised there). Carried from the CTA through to the site-spec URL,
  * since the stepper's redirects do not keep them otherwise.
  */
-export const SPEC_META_QUERY_PARAMS = [ 'zoom_booking_url' ] as const;
+export const SPEC_META_QUERY_PARAMS = [ 'zoom_booking_url', 'site_title' ] as const;
 
 export type SpecMeta = Partial< Record< ( typeof SPEC_META_QUERY_PARAMS )[ number ], string > >;
 
 /**
- * Every spec meta entry today is a link, and the widget may well render it as one. wpcom owns
- * the allow list and the sanitising of what is stored, but that runs after the value has been
- * through the browser, so anything that is not a web URL is dropped here.
+ * A link the widget may well render as one. wpcom owns the allow list and the sanitising of
+ * what is stored, but that runs after the value has been through the browser, so anything
+ * that is not a web URL is dropped here.
  */
 function isWebUrl( value: string ): boolean {
 	try {
@@ -61,13 +61,32 @@ function isWebUrl( value: string ): boolean {
 }
 
 /**
- * The spec meta present on a query string: the allow-listed keys whose value is a web URL.
+ * One line of plain text, as a partner names a business or a person: no markup, a sane length.
+ */
+function isPlainTitle( value: string ): boolean {
+	return value.length <= 120 && ! /[<>\n\r]/.test( value );
+}
+
+/**
+ * What each allow-listed entry has to look like to be forwarded at all. wpcom sanitises again
+ * when it stores the value; this keeps anything hostile from reaching the widget.
+ */
+const SPEC_META_ACCEPTS: Record<
+	( typeof SPEC_META_QUERY_PARAMS )[ number ],
+	( value: string ) => boolean
+> = {
+	zoom_booking_url: isWebUrl,
+	site_title: isPlainTitle,
+};
+
+/**
+ * The spec meta present on a query string: the allow-listed keys whose value passes its check.
  */
 export function getSpecMetaFromQuery( query: URLSearchParams ): SpecMeta {
 	const meta: SpecMeta = {};
 	for ( const key of SPEC_META_QUERY_PARAMS ) {
 		const value = query.get( key )?.trim();
-		if ( value && isWebUrl( value ) ) {
+		if ( value && SPEC_META_ACCEPTS[ key ]( value ) ) {
 			meta[ key ] = value;
 		}
 	}
@@ -190,6 +209,12 @@ export function getBlueprintArchiveSiteSpecUrl( {
 export type BlueprintArchiveLookup = {
 	exists: boolean;
 	/**
+	 * The spec-meta names a partner's entry link can supply up front, as the blueprint declares
+	 * them. When the link carries all of them the flow needs no site-spec step: the import
+	 * confirms the spec itself. Empty when the blueprint declares none, or on an older wpcom.
+	 */
+	prefill: string[];
+	/**
 	 * The blueprint's display name (e.g. "Punk"), as plain text, for naming it to the customer.
 	 * Empty when the server does not send one.
 	 */
@@ -209,6 +234,8 @@ type BlueprintArchiveLookupResponse = {
 	suggested_plans?: unknown;
 	// Absent on a wpcom that predates the field.
 	title?: unknown;
+	// Absent on a wpcom that predates the field.
+	prefill?: unknown;
 };
 
 /**
@@ -228,7 +255,7 @@ export async function lookupBlueprintArchive(
 	{ target }: { target?: BlueprintLookupTarget } = {}
 ): Promise< BlueprintArchiveLookup > {
 	if ( ! blueprintSlug ) {
-		return { exists: false, title: '', suggestedPlans: [] };
+		return { exists: false, title: '', suggestedPlans: [], prefill: [] };
 	}
 
 	try {
@@ -251,10 +278,27 @@ export async function lookupBlueprintArchive(
 
 		const title = typeof response?.title === 'string' ? response.title.trim() : '';
 
-		return { exists: true, title, suggestedPlans };
+		const prefill = Array.isArray( response?.prefill )
+			? response.prefill.filter(
+					( name ): name is string => typeof name === 'string' && name !== ''
+				)
+			: [];
+
+		return { exists: true, title, suggestedPlans, prefill };
 	} catch {
-		return { exists: false, title: '', suggestedPlans: [] };
+		return { exists: false, title: '', suggestedPlans: [], prefill: [] };
 	}
+}
+
+/**
+ * Whether the partner's entry link settled everything the blueprint's interview would ask: the
+ * blueprint declares at least one prefill name, and the spec meta carries every one of them.
+ */
+export function isPrefillComplete( prefill: string[], specMeta: SpecMeta ): boolean {
+	return (
+		prefill.length > 0 &&
+		prefill.every( ( name ) => typeof specMeta[ name as keyof SpecMeta ] === 'string' )
+	);
 }
 
 /**
@@ -282,7 +326,8 @@ export async function startBlueprintSimpleImport(
 	siteIdentifier: string,
 	blueprintSlug: string,
 	siteId?: number | null,
-	siteValues: SpecMeta = {}
+	siteValues: SpecMeta = {},
+	{ applySpec = false }: { applySpec?: boolean } = {}
 ): Promise< ImportStatusResponse > {
 	const blogId = siteId && siteId > 0 ? siteId : await getSiteBlogId( siteIdentifier );
 
@@ -307,6 +352,9 @@ export async function startBlueprintSimpleImport(
 				...Object.entries( siteValues )
 					.filter( ( entry ): entry is [ string, string ] => typeof entry[ 1 ] === 'string' )
 					.map( ( [ name, value ] ) => [ `site_values[${ name }]`, value ] ),
+				// No site-spec step will follow: the import confirms the partner's spec itself
+				// once the content is in (identity, provenance, the configuration passes).
+				...( applySpec ? [ [ 'apply_spec', '1' ] as [ string, string ] ] : [] ),
 			],
 		},
 		{}

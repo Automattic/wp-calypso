@@ -10,6 +10,7 @@ export type RecordTracksEvent = ( name: string, properties: { [ key: string ]: s
 export type UrlData = {
 	url: string;
 	platform: ImporterPlatform;
+	site_health?: 'ok' | 'unreachable' | 'server_error' | 'blocked' | 'auth_required' | 'not_found';
 	platform_data?: {
 		is_wpcom: boolean;
 		is_wpengine: boolean;
