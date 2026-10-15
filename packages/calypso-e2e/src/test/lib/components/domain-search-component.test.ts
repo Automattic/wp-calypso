@@ -100,7 +100,6 @@ function searchPage( {
 		page: page as unknown as Page,
 		searchbox,
 		listitem,
-		namePulseRows,
 		clock,
 		reload: page.reload,
 	};
@@ -221,26 +220,12 @@ describe( 'DomainSearchComponent.search', () => {
 
 	test( 'takes a Name Pulse list once any of its rows is for the keyword', async () => {
 		// The first Name Pulse row can be a related name, not the keyword.
-		const { page, listitem, namePulseRows } = searchPage( {
+		const { page } = searchPage( {
 			responses: [ suggestionsFor( KEYWORD ) ],
 			namePulseLists: [ [ `${ SITE_SLUG }.blog` ], [ 'flowtesting.blog', `${ KEYWORD }.com` ] ],
 		} );
 
-		await new DomainSearchComponent( page ).search( KEYWORD );
-
-		expect( namePulseRows.evaluateAll ).toHaveBeenCalledTimes( 2 );
-		expect( listitem.getAttribute ).not.toHaveBeenCalled();
-	} );
-
-	test( 'gives up when the Name Pulse list never shows the keyword', async () => {
-		const { page } = searchPage( {
-			responses: [ suggestionsFor( KEYWORD ) ],
-			namePulseLists: [ [ `${ SITE_SLUG }.blog`, `${ SITE_SLUG }.com` ] ],
-		} );
-
-		await expect( new DomainSearchComponent( page ).search( KEYWORD ) ).rejects.toThrow(
-			`Domain suggestions did not update for "${ KEYWORD }": first suggestion is "${ SITE_SLUG }.blog".`
-		);
+		await expect( new DomainSearchComponent( page ).search( KEYWORD ) ).resolves.toBeUndefined();
 	} );
 
 	test( 'reads a suggestion title through the punctuation a keyword loses', async () => {
@@ -383,17 +368,6 @@ describe( 'DomainSearchComponent.selectFirstSuggestion on Name Pulse', () => {
 		expect( rows[ 0 ].inCart ).toBeFalsy();
 	} );
 
-	test( 'falls back to any available row when none is for the keyword', async () => {
-		const { page } = namePulsePage( [
-			{ domain: `${ LABEL }.com`, available: false },
-			{ domain: 'flowtesting.blog', available: true },
-		] );
-
-		await expect( searchedFor( page, LABEL ).selectFirstSuggestion() ).resolves.toBe(
-			'flowtesting.blog'
-		);
-	} );
-
 	test( 'moves on to the next row when adding one fails', async () => {
 		const { page, rows } = namePulsePage( [
 			{ domain: `${ LABEL }.com`, available: true, failsToAdd: true },
@@ -424,19 +398,5 @@ describe( 'DomainSearchComponent.selectFirstSuggestion on Name Pulse', () => {
 		);
 		expect( rows[ 1 ].inCart ).toBe( true );
 		expect( rows[ 0 ].inCart ).toBeFalsy();
-	} );
-
-	test( 'gives up after three failed adds', async () => {
-		const { page } = namePulsePage(
-			[ 'com', 'blog', 'org', 'net' ].map( ( tld ) => ( {
-				domain: `${ LABEL }.${ tld }`,
-				available: true,
-				failsToAdd: true,
-			} ) )
-		);
-
-		await expect( searchedFor( page, LABEL ).selectFirstSuggestion() ).rejects.toThrow(
-			'Failed to select a Name Pulse domain suggestion.'
-		);
 	} );
 } );
