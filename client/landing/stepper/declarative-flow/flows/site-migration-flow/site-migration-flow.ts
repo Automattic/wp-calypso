@@ -255,6 +255,16 @@ const siteMigration: FlowV2< typeof initialize > = {
 		const locale = useLocale();
 		const urlQueryParams = useQuery();
 		const fromQueryParam = urlQueryParams.get( 'from' );
+		const copySourceSlug =
+			currentStep === STEPS.SITE_MIGRATION_CHECK.slug && urlQueryParams.get( 'isWpcom' ) === 'true'
+				? getUrlParts( fromQueryParam || '' ).hostname
+				: undefined;
+		const { data: copySourceSite } = useSiteQuery( copySourceSlug, {
+			enabled: !! copySourceSlug,
+		} );
+		const { startSiteCopy } = useSiteCopy( copySourceSite ?? undefined, {
+			enabled: !! copySourceSlug,
+		} );
 		const actionQueryParam = urlQueryParams.get( 'action' );
 		const platformQueryParam = ( urlQueryParams.get( 'platform' ) ||
 			'unknown' ) as ImporterPlatform;
@@ -460,6 +470,7 @@ const siteMigration: FlowV2< typeof initialize > = {
 						( protocol === 'http:' || protocol === 'https:' )
 					) {
 						if ( action === 'copy-site' ) {
+							startSiteCopy();
 							return exitFlow( addQueryArgs( { sourceSlug: hostname }, '/setup/copy-site' ) );
 						}
 						if ( action === 'transfer-domain' ) {

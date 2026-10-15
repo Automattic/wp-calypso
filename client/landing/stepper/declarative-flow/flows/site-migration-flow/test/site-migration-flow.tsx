@@ -7,7 +7,7 @@ import { PLAN_BUSINESS_MONTHLY } from '@automattic/calypso-products';
 import { isCurrentUserLoggedIn } from '@automattic/data-stores/src/user/selectors';
 import { QueryClient, useQueryClient } from '@tanstack/react-query';
 import { act, waitFor } from '@testing-library/react';
-import { select } from '@wordpress/data';
+import { dispatch, select } from '@wordpress/data';
 import nock from 'nock';
 import { MemoryRouter, useLocation, useNavigate, useNavigationType } from 'react-router';
 import { dashboardLink } from 'calypso/dashboard/utils/link';
@@ -25,10 +25,10 @@ import { useIsSiteAdmin } from 'calypso/landing/stepper/hooks/use-is-site-admin'
 import { useSiteQuery } from 'calypso/landing/stepper/hooks/use-site';
 import { useSiteCopy } from 'calypso/landing/stepper/hooks/use-site-copy';
 import * as siteData from 'calypso/landing/stepper/hooks/use-site-data';
-import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
+import { ONBOARD_STORE, SITE_STORE } from 'calypso/landing/stepper/stores';
 import { goToCheckout } from 'calypso/landing/stepper/utils/checkout';
 import { leaveCheckout } from 'calypso/my-sites/checkout/src/lib/leave-checkout';
-import { getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
+import { getCurrentUserId, getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
 import getSiteOption from 'calypso/state/sites/selectors/get-site-option';
 import { renderHookWithProvider } from 'calypso/test-helpers/testing-library';
 import { useRecordSignupComplete } from '../../../../hooks/use-record-signup-complete';
@@ -129,9 +129,11 @@ describe( 'Site Migration Flow', () => {
 		( getSiteOption as jest.Mock ).mockReturnValue( 'https://example.wpcomstaging.com/wp-admin/' );
 		jest.mocked( getCurrentUserSiteCount ).mockReturnValue( 0 );
 		jest.mocked( useSiteQuery ).mockReturnValue( { data: null, isLoading: false } );
-		jest
-			.mocked( useSiteCopy )
-			.mockReturnValue( { shouldShowSiteCopyItem: false, isFetching: false } );
+		jest.mocked( useSiteCopy ).mockReturnValue( {
+			shouldShowSiteCopyItem: false,
+			isFetching: false,
+			startSiteCopy: jest.fn(),
+		} );
 		jest.mocked( useFlowState().get ).mockReturnValue( undefined );
 
 		const apiBaseUrl = 'https://public-api.wordpress.com';
@@ -760,6 +762,90 @@ describe( 'Site Migration Flow', () => {
 		} );
 
 		describe( 'Reprint address routes', () => {
+			it( 'initializes the source plan and marketplace purchases before opening the copy flow', async () => {
+				jest.spyOn( config, 'isEnabled' ).mockReturnValue( true );
+				const source = {
+					ID: 456,
+					site_owner: 789,
+					URL: 'https://source.wordpress.com',
+					plan: { product_slug: 'business-bundle' },
+					options: { is_wpcom_atomic: true },
+				};
+				jest.spyOn( siteData, 'useSiteData' ).mockReturnValue( {
+					siteId: 123,
+					siteSlug: 'destination.wordpress.com',
+					site: { plan: { product_slug: 'value_bundle' } },
+				} );
+				jest.mocked( useSiteQuery ).mockReturnValue( { data: source, isLoading: false } );
+				jest.mocked( getCurrentUserId ).mockReturnValue( source.site_owner );
+				jest
+					.mocked( useSiteCopy )
+					.mockImplementation(
+						jest.requireActual( 'calypso/landing/stepper/hooks/use-site-copy' ).useSiteCopy
+					);
+				dispatch( SITE_STORE ).receiveSite( source.ID, source );
+				dispatch( SITE_STORE ).finishResolution( 'getSite', [ source.ID ] );
+				nock( 'https://public-api.wordpress.com' )
+					.persist()
+					.get( '/rest/v1.1/sites/456/features' )
+					.reply( 200, { active: [ 'copy-site' ] } );
+				nock( 'https://public-api.wordpress.com' )
+					.get( '/rest/v1.2/upgrades' )
+					.reply( 200, [
+						{ blog_id: 456, product_type: 'marketplace_plugin', product_slug: 'source-plugin' },
+						{ blog_id: 456, product_type: 'marketplace_theme', product_slug: 'source-theme' },
+						{ blog_id: 123, product_type: 'marketplace_plugin', product_slug: 'other-site-plugin' },
+						{ blog_id: 456, product_type: 'plan', product_slug: 'business-bundle' },
+					] );
+				let cartAtRedirect;
+				jest.mocked( window.location.assign ).mockImplementationOnce( () => {
+					cartAtRedirect = {
+						plan: select( ONBOARD_STORE ).getPlanCartItem(),
+						products: select( ONBOARD_STORE ).getProductCartItems(),
+					};
+				} );
+				const { result } = renderHookWithProvider(
+					() => {
+						siteMigrationFlow.useSideEffect();
+						return {
+							props: siteMigrationFlow.useStepsProps(),
+							navigation: siteMigrationFlow.useStepNavigation(
+								STEPS.SITE_MIGRATION_CHECK.slug,
+								jest.fn()
+							),
+						};
+					},
+					{
+						wrapper: ( { children } ) => (
+							<MemoryRouter
+								initialEntries={ [
+									'/setup/site-migration/site-migration-check?from=https://source.wordpress.com&platform=wordpress&isWpcom=true&siteSlug=destination.wordpress.com&siteId=123',
+								] }
+							>
+								{ children }
+							</MemoryRouter>
+						),
+					}
+				);
+				await waitFor( () =>
+					expect( result.current.props[ STEPS.SITE_MIGRATION_CHECK.slug ].canCopySite ).toBe( true )
+				);
+				act( () =>
+					result.current.navigation.submit( {
+						slug: STEPS.SITE_MIGRATION_CHECK.slug,
+						providedDependencies: { action: 'copy-site', from: source.URL, platform: 'wordpress' },
+					} )
+				);
+				expect( cartAtRedirect ).toEqual( {
+					plan: { product_slug: 'business-bundle' },
+					products: [ { product_slug: 'source-plugin' }, { product_slug: 'source-theme' } ],
+				} );
+				expect( window.location.assign ).toMatchURL( {
+					path: '/setup/copy-site',
+					query: { sourceSlug: 'source.wordpress.com' },
+				} );
+			} );
+
 			it.each( [
 				[ true, false, false, true ],
 				[ false, false, false, false ],
