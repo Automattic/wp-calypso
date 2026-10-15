@@ -1,0 +1,23 @@
+<svg width="480" height="260" viewBox="0 0 480 260" fill="none" xmlns="http://www.w3.org/2000/svg">
+<rect x="68" y="50" width="344" height="160" rx="16" fill="white"/>
+<rect x="88" y="70" width="36" height="20" rx="10" fill="#0240E4"/>
+<circle cx="114" cy="80" r="7" fill="white"/>
+<text fill="#1D2327" style="white-space: pre" xml:space="preserve" font-family="SF Pro, SF Pro Text, -apple-system, BlinkMacSystemFont, system-ui, sans-serif" font-size="15" font-weight="590" letter-spacing="0em"><tspan x="134" y="85.332">Refer to clients</tspan></text>
+<path d="M102 140C109.732 140 116 133.732 116 126C116 118.268 109.732 112 102 112C94.268 112 88 118.268 88 126C88 133.732 94.268 140 102 140Z" fill="#069E08"/>
+<path d="M102.531 124.246V134.4L107.757 124.246H102.531Z" fill="white"/>
+<path d="M101.468 127.753V117.6L96.2422 127.753H101.468Z" fill="white"/>
+<text fill="#1D2327" style="white-space: pre" xml:space="preserve" font-family="SF Pro, SF Pro Text, -apple-system, BlinkMacSystemFont, system-ui, sans-serif" font-size="15" font-weight="590" letter-spacing="0em"><tspan x="128" y="131.332">Jetpack Complete</tspan></text>
+<rect x="303" y="116" width="89" height="20" rx="6" fill="#EDFAEF"/>
+<text fill="#008A20" style="white-space: pre" xml:space="preserve" font-family="SF Pro, SF Pro Text, -apple-system, BlinkMacSystemFont, system-ui, sans-serif" font-size="12" font-weight="590" letter-spacing="0em"><tspan x="311" y="130.266">Commission</tspan></text>
+<circle cx="102" cy="176" r="14" fill="#873EFF"/>
+<path d="M97.4506 171.968C98.6339 171.968 99.1227 172.47 99.1227 173.653V177.332L101.219 173.229C101.695 172.302 102.312 171.968 103.084 171.968C104.062 171.968 104.589 172.508 104.589 173.614V177.332L106.814 173.151C107.303 172.238 107.843 171.968 108.679 171.968C110.236 171.968 110.737 172.868 110.03 174.065L106.801 179.518C106.068 180.766 105.309 181.216 104.28 181.216C102.968 181.216 102.12 180.431 102.12 179.119V176.894L100.718 179.518C100.087 180.701 99.2513 181.216 98.2095 181.216C96.9104 181.216 96.0229 180.431 96.0229 179.107V174.412H95.0325C94.145 174.412 93.6562 173.962 93.6562 173.177C93.6563 172.392 94.1193 171.968 95.0325 171.968H97.4506Z" fill="white"/>
+<text fill="#1D2327" style="white-space: pre" xml:space="preserve" font-family="SF Pro, SF Pro Text, -apple-system, BlinkMacSystemFont, system-ui, sans-serif" font-size="15" font-weight="590" letter-spacing="0em"><tspan x="128" y="181.332">Woo Subscriptions</tspan></text>
+<rect x="303" y="166" width="89" height="20" rx="6" fill="#EDFAEF"/>
+<text fill="#008A20" style="white-space: pre" xml:space="preserve" font-family="SF Pro, SF Pro Text, -apple-system, BlinkMacSystemFont, system-ui, sans-serif" font-size="12" font-weight="590" letter-spacing="0em"><tspan x="311" y="180.266">Commission</tspan></text>
+<path d="M119 85V103L123.8 98.6L127 105.4L130 104.1L126.9 97.4H133L119 85Z" fill="#1D2327"/>
+<mask id="stroke0_16127_42689" maskUnits="userSpaceOnUse" x="117" y="81" width="20" height="27" fill="black">
+<rect fill="white" x="117" y="81" width="20" height="27"/>
+<path d="M119 85V103L123.8 98.6L127 105.4L130 104.1L126.9 97.4H133L119 85Z"/>
+</mask>
+<path d="M119 85V103L123.8 98.6L127 105.4L130 104.1L126.9 97.4H133L119 85Z" stroke-width="3" stroke="white" mask="url(#stroke0_16127_42689)"/>
+</svg>

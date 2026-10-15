@@ -115,8 +115,15 @@ export function EmbeddedAgentUIMessages( {
 }: {
 	className?: string;
 } = {} ) {
-	const { messages, isProcessing, error, emptyView, thinkingMessage, messagesPosition } =
-		useEmbeddedAgentUIContext();
+	const {
+		messages,
+		isProcessing,
+		isReplying,
+		error,
+		emptyView,
+		thinkingMessage,
+		messagesPosition,
+	} = useEmbeddedAgentUIContext();
 	const visibleMessages = messages.filter(
 		( message ) => getRenderableBlocks( message ).length > 0
 	);
@@ -152,7 +159,7 @@ export function EmbeddedAgentUIMessages( {
 			{ visibleMessages.map( ( message ) => (
 				<EmbeddedMessage key={ message.reactKey || message.id } message={ message } />
 			) ) }
-			{ isProcessing && <ThinkingMessage content={ thinkingMessage } /> }
+			{ isProcessing && ! isReplying && <ThinkingMessage content={ thinkingMessage } /> }
 			{ error && <div className="agenttic-embedded__error">{ error }</div> }
 		</div>
 	);

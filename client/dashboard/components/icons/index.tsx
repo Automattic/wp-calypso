@@ -21,6 +21,18 @@ export const menuDot = (
 	</SVG>
 );
 
+export const pageDot = (
+	<SVG xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">
+		<Circle cx="12" cy="12" r="4" fill="currentColor" />
+	</SVG>
+);
+
+export const pageDotFaded = (
+	<SVG xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">
+		<Circle cx="12" cy="12" r="4" fill="currentColor" fillOpacity="0.2" />
+	</SVG>
+);
+
 export const production = (
 	<SVG width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 		<Path

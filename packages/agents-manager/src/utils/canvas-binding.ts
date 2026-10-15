@@ -95,7 +95,7 @@ let bindingGeneration = 0;
 
 // The move that caused the current request to be blocked, if any. Set once a
 // request has been refused or aborted for leaving its canvas, so the model cannot
-// simply retry onto the page the user moved to.
+// simply retry onto the page the user moved to or save an interrupted request.
 //
 // Storing the move rather than a bare flag makes "blocked without a move"
 // unrepresentable, and `blockCurrentRequest()` can only ever fill it from a live
@@ -318,7 +318,7 @@ export function getCanvasMove(): CanvasMove | null {
 }
 
 /**
- * Refuse canvas writes for the remainder of the current request.
+ * Stop canvas writes and saves for the remainder of the current request.
  *
  * Latches whatever move is live right now rather than accepting one, so a block can
  * never outrun an actual move. Idempotent: an existing block is kept, never
@@ -334,6 +334,11 @@ export function blockCurrentRequest(): boolean {
 
 	blockedMove = getCanvasMove();
 
+	return null !== blockedMove;
+}
+
+/** Whether a canvas move has already stopped this request, regardless of the live canvas. */
+export function isCurrentRequestBlocked(): boolean {
 	return null !== blockedMove;
 }
 

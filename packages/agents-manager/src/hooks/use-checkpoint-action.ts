@@ -264,6 +264,9 @@ export default function useCheckpointAction(
 		if ( checkpointInfo.showResolvedEditAction ) {
 			const canAct = isActionAvailable && ( ! supportsSwap || swapAvailability === true );
 			const showDisabledAction = actionState === 'disabled';
+			// A superseded edit keeps its Undo / Redo, disabled.
+			const showUndoRedo = canAct || showDisabledAction;
+
 			let label: string = canAct
 				? __( 'Updated and Undo', __i18n_text_domain__ )
 				: __( 'Updated', __i18n_text_domain__ );
@@ -273,6 +276,7 @@ export default function useCheckpointAction(
 						? __( 'Reverted and Redo', __i18n_text_domain__ )
 						: __( 'Reverted', __i18n_text_domain__ );
 			}
+
 			return [
 				{
 					type: 'component',
@@ -282,8 +286,8 @@ export default function useCheckpointAction(
 					componentProps: {
 						initiallyReverted: isReverted,
 						...( showDisabledAction && { disabled: true } ),
-						...( canAct && { onUndo: () => applyCheckpointAction( true ) } ),
-						...( canAct &&
+						...( showUndoRedo && { onUndo: () => applyCheckpointAction( true ) } ),
+						...( showUndoRedo &&
 							supportsSwap && {
 								onRedo: () => applyCheckpointAction( false ),
 							} ),

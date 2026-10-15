@@ -16,6 +16,12 @@
 			"require": "./dist/cjs/index.js"
 		},
 		"./src/*": {
+			"types": [
+				"./src/*.ts",
+				"./src/*.tsx",
+				"./src/*/index.ts",
+				"./src/*/index.tsx"
+			],
 			"calypso:src": "./src/*"
 		}
 	},

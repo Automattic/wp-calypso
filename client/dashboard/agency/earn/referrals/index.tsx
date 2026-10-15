@@ -14,10 +14,13 @@ import { DataViewsCard } from '../../../components/dataviews';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
 import RouterLinkButton from '../../../components/router-link-button';
+import { AgencyNotices } from '../../components/agency-notices';
 import { isAgencyApproved } from '../../marketplace/is-agency-approved';
 import { MARKETPLACE_PRODUCTS_ROUTE } from '../../marketplace/paths';
 import { useMarketplaceType } from '../../marketplace/use-marketplace-type';
-import MissingPaymentSettingsNotice from '../missing-payment-settings-notice';
+import MissingPaymentSettingsNotice, {
+	useMissingPaymentSettings,
+} from '../missing-payment-settings-notice';
 import BankDetailsNotice from './bank-details-notice';
 import ConsolidatedViews from './consolidated-views';
 import { DEFAULT_VIEW } from './dataviews/views';
@@ -46,6 +49,10 @@ export default function EarnReferrals() {
 	// Counts the pre-agency window as loading, so the empty state doesn't flash.
 	const isLoading = agency === undefined || isLoadingReferrals;
 	const hasReferrals = referrals.length > 0;
+	const missingPaymentSettings = useMissingPaymentSettings( {
+		hasCommissionActivity: hasReferrals,
+		isLoadingActivity: isLoading,
+	} );
 
 	return (
 		<PageLayout
@@ -57,6 +64,7 @@ export default function EarnReferrals() {
 						! isLoading && isAgencyApproved( agency ) ? (
 							<RouterLinkButton
 								variant="primary"
+								__next40pxDefaultSize
 								to={ MARKETPLACE_PRODUCTS_ROUTE }
 								onClick={ () => {
 									updateMarketplaceType( 'referral' );
@@ -72,9 +80,19 @@ export default function EarnReferrals() {
 			notices={
 				<>
 					<NewReferralNotice />
-					<MissingPaymentSettingsNotice
-						hasCommissionActivity={ hasReferrals }
-						commissionType="referrals"
+					<AgencyNotices
+						candidates={ [
+							{
+								id: 'missing-payment-settings',
+								...missingPaymentSettings,
+								notice: (
+									<MissingPaymentSettingsNotice
+										hasCommissionActivity={ hasReferrals }
+										commissionType="referrals"
+									/>
+								),
+							},
+						] }
 					/>
 					{ ! isLoading && ! hasReferrals && <BankDetailsNotice agencyId={ agencyId } /> }
 				</>

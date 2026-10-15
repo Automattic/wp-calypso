@@ -57,12 +57,3 @@ export class HeaderBlock extends TemplatePartBlock {
 	static blockName = 'Header';
 	static blockEditorSelector = 'header[aria-label="Block: Header"]';
 }
-
-/**
- * Represents a Footer block in the full site editor.
- * This is just a Template Part block with different name and slightly different parent element markup.
- */
-export class FooterBlock extends TemplatePartBlock {
-	static blockName = 'Footer';
-	static blockEditorSelector = 'footer[aria-label="Block: Template Part"]';
-}

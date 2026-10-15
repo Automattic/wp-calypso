@@ -56,6 +56,7 @@ jest.mock( 'calypso/server/render', () => ( {
 	attachHead: jest.fn(),
 	attachI18n: jest.fn(),
 	bumpStat: jest.fn(),
+	customizeClientDataForRequest: jest.fn(),
 } ) );
 
 jest.mock( 'calypso/server/state-cache', () => new Map() );
@@ -141,10 +142,19 @@ const buildApp = ( environment ) => {
 			attachBuildTimestamp,
 			attachI18n,
 			attachHead,
+			customizeClientDataForRequest,
 			renderJsx,
 			serverRender,
 		} = require( 'calypso/server/render' );
-		mocks = { ...mocks, attachBuildTimestamp, attachI18n, attachHead, renderJsx, serverRender };
+		mocks = {
+			...mocks,
+			attachBuildTimestamp,
+			attachI18n,
+			attachHead,
+			customizeClientDataForRequest,
+			renderJsx,
+			serverRender,
+		};
 		mocks.sanitize = require( 'calypso/server/sanitize' );
 		mocks.createReduxStore = require( 'calypso/state' ).createReduxStore;
 		mocks.createReduxStore.mockImplementation( createMockStore );
@@ -489,10 +499,10 @@ const assertDefaultContext = ( { url, entry } ) => {
 	it( 'sets dashboard according to the request hostname', async () => {
 		const { request } = await app.run( {
 			request: {
-				hostname: 'my.woo.localhost',
+				hostname: 'my.a4a.localhost',
 			},
 		} );
-		expect( request.context.dashboard ).toEqual( 'ciab' );
+		expect( request.context.dashboard ).toEqual( 'a4a' );
 	} );
 
 	it( 'sets the client ip', async () => {
@@ -1651,5 +1661,23 @@ describe( 'dashboard app', () => {
 
 		expect( response.setHeader ).toHaveBeenCalledWith( 'Content-Type', 'text/plain' );
 		expect( response.send ).toHaveBeenCalledWith( 'User-agent: *\nDisallow: /\n' );
+	} );
+
+	it( 'redirects /wp-login.php to the WordPress.com login, forwarding only redirect_to', async () => {
+		app.getMocks().customizeClientDataForRequest.mockReturnValue( {
+			wpcom_login_url: 'https://wordpress.com/log-in',
+		} );
+
+		const { response } = await app.run( {
+			request: {
+				url: '/wp-login.php?action=login&redirect_to=https%3A%2F%2Fmy.wordpress.com%2Fsites',
+				hostname: 'my.wordpress.com',
+				query: { action: 'login', redirect_to: 'https://my.wordpress.com/sites' },
+			},
+		} );
+
+		expect( response.redirect ).toHaveBeenCalledWith(
+			'https://wordpress.com/log-in?redirect_to=https%3A%2F%2Fmy.wordpress.com%2Fsites'
+		);
 	} );
 } );

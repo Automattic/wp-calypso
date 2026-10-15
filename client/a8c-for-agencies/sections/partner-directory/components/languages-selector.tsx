@@ -1,10 +1,9 @@
-import { TokenItem } from '@wordpress/components/build-types/form-token-field/types';
 import { useMemo } from 'react';
-import FormTokenFieldWrapper from './form-token-field-wrapper';
+import FormTokenFieldWrapper, { type Tokens } from './form-token-field-wrapper';
 import { reverseMap, useFormSelectors } from './hooks/use-form-selectors';
 
 type Props = {
-	setLanguages: ( tokens: ( string | TokenItem )[] ) => void;
+	setLanguages: ( tokens: Tokens ) => void;
 	selectedLanguages: string[];
 };
 
@@ -20,7 +19,7 @@ const LanguagesSelector = ( { setLanguages, selectedLanguages = [] }: Props ) =>
 		return label ? [ label ] : [];
 	} );
 
-	const setLanguagesByCode = ( labels: ( string | TokenItem )[] ) => {
+	const setLanguagesByCode = ( labels: Tokens ) => {
 		setLanguages(
 			labels.map( ( label ) => languagesByLabel[ label as string ] ).filter( Boolean )
 		);

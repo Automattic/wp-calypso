@@ -2,6 +2,8 @@
  * @jest-environment jsdom
  */
 // @ts-nocheck - TODO: Fix TypeScript issues
+import { screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import React from 'react';
 import { useSiteDomains } from 'calypso/landing/stepper/hooks/use-site-domains';
 import { useSiteSetupError } from 'calypso/landing/stepper/hooks/use-site-setup-error';
@@ -20,7 +22,9 @@ jest.mock( 'calypso/lib/logstash' );
 
 describe( 'ErrorStep', () => {
 	const render = ( props?: Partial< StepProps >, renderOptions?: RenderStepOptions ) => {
-		const combinedProps = { ...mockStepProps( { flow: 'onboarding', ...props } ) };
+		const combinedProps = {
+			...mockStepProps( { flow: 'onboarding', showRetry: false, ...props } ),
+		};
 		return renderStep( <ErrorStep { ...combinedProps } />, {
 			initialState: { currentUser: { user: { localeSlug: 'en' } } },
 			...renderOptions,
@@ -34,6 +38,14 @@ describe( 'ErrorStep', () => {
 			error: 'site_setup_failed',
 			message: 'Something went wrong',
 		} );
+	} );
+
+	it( 'retries only after the user clicks the enabled recovery action', async () => {
+		const submit = jest.fn();
+		render( { showRetry: true, navigation: { submit } } );
+		expect( submit ).not.toHaveBeenCalled();
+		await userEvent.click( screen.getByRole( 'button', { name: 'Try again' } ) );
+		expect( submit ).toHaveBeenCalledWith( { action: 'retry' } );
 	} );
 
 	it( 'bumps the non-English bin of the MC stat for a non-English account locale', () => {
@@ -52,6 +64,7 @@ describe( 'ErrorStep', () => {
 
 	it( 'bumps the English bin and indexes the flow, the locale and the error', () => {
 		render();
+		expect( screen.queryByRole( 'button', { name: 'Try again' } ) ).not.toBeInTheDocument();
 
 		expect( bumpStat ).toHaveBeenCalledTimes( 1 );
 		expect( bumpStat ).toHaveBeenCalledWith( 'calypso_stepper_error_step', 'onboarding_en' );

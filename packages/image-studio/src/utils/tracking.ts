@@ -13,6 +13,7 @@ import { store as imageStudioStore, ImageStudioEntryPoint } from '../store';
 import { ImageStudioMode, type MetadataField } from '../types';
 import { getSessionId } from '../utils/session';
 import { parseErrorUrl } from './parse-error-url';
+import type { CreditsCtaType } from '@automattic/agents-manager';
 
 const TRACKS_PREFIX = 'jetpack_big_sky';
 const SITE_TYPES = [ 'simple', 'atomic', 'jetpack' ] as const;
@@ -68,6 +69,12 @@ export function getImageStudioBlogId(): number | null {
 	const parsedBlogId = typeof blogId === 'number' ? blogId : Number( blogId );
 
 	return Number.isFinite( parsedBlogId ) && parsedBlogId > 0 ? parsedBlogId : null;
+}
+
+/** Whether the page says it's in dev mode, or undefined when it doesn't say. */
+export function getImageStudioIsDevMode(): boolean | undefined {
+	const isDevMode = getImageStudioWindowData()?.isDevMode;
+	return typeof isDevMode === 'boolean' ? isDevMode : undefined;
 }
 
 export function getImageStudioSiteType(): ImageStudioSiteType {
@@ -573,7 +580,8 @@ export interface UpgradeNoticeCredits {
 	state: 'low' | 'zero';
 	planTier: string;
 	creditsLeft: number | 'none';
-	ctaType: 'upgrade' | 'none';
+	/** The Upgrade link, who to ask, or `none`. */
+	ctaType: CreditsCtaType;
 	/** The upgrade link's `source`, which checkout copies onto the purchase. */
 	ref: string;
 }

@@ -27,13 +27,8 @@ import {
 } from '../utils/agent-session';
 import { createAgentConfig } from '../utils/create-agent-config';
 import { isReaderChatAgent } from '../utils/is-reader-chat-agent';
-import {
-	loadExternalProviders,
-	type AbilitiesSetupHook,
-	type LoadedProviders,
-} from '../utils/load-external-providers';
+import { loadExternalProviders, type LoadedProviders } from '../utils/load-external-providers';
 import { isHandoffAgent, type SessionHandoff } from '../utils/session-handoff';
-import { canExposeWebMcpTools } from '../webmcp/eligibility';
 import AgentDock from './agent-dock';
 import { PersistentRouter } from './persistent-router';
 import type { JSX } from 'react';
@@ -53,6 +48,8 @@ export interface AgentsManagerProps {
 	agentId?: string;
 	/** Whether this screen is currently enabled only for internal users. */
 	isInternalOnly?: boolean;
+	/** Whether the host's masterbar renders the AI chat button, even before it's in the DOM. */
+	hasMasterbarAiChatButton?: boolean;
 	/** Zendesk conversation tags to apply when a new support conversation is created. */
 	zendeskConversationTags?: string[];
 	/** Index selecting a dedicated Smooch integration for new support conversations. */
@@ -72,30 +69,6 @@ const EMPTY_ARRAY: string[] = [];
 // on some routes) still discards when the remount lands on a different scope.
 let lastInitializedScope: string | undefined;
 
-// External editor abilities currently register from a chat-owned hook. These
-// inert chat actions let that hook mount for WebMCP without starting a chat run.
-const WEBMCP_PROVIDER_SETUP_ACTIONS = {
-	addMessage: () => {},
-	clearMessages: () => {},
-	clearSuggestions: () => {},
-	getAgentManager,
-	isProcessing: false,
-	setIsThinking: () => {},
-	deleteMarkedMessages: () => {},
-	getSessionId: () => undefined,
-	setIsBuildingSite: () => {},
-	setThinkingMessage: () => {},
-} satisfies Parameters< AbilitiesSetupHook >[ 0 ];
-
-function WebMcpProviderAbilitiesSetup( {
-	useProviderAbilitiesSetup,
-}: {
-	useProviderAbilitiesSetup: AbilitiesSetupHook;
-} ): null {
-	useProviderAbilitiesSetup( WEBMCP_PROVIDER_SETUP_ACTIONS );
-	return null;
-}
-
 export default function AgentsManager( {
 	sectionName,
 	currentUser,
@@ -104,6 +77,7 @@ export default function AgentsManager( {
 	currentSiteId,
 	agentId,
 	isInternalOnly = false,
+	hasMasterbarAiChatButton = false,
 	zendeskConversationTags = EMPTY_ARRAY,
 	zendeskSmoochIntegrationKey,
 	zendeskTicketProductFieldValue,
@@ -138,6 +112,7 @@ export default function AgentsManager( {
 						siteKey,
 						currentRoute,
 						isInternalOnly,
+						hasMasterbarAiChatButton,
 						zendeskConversationTags,
 						zendeskSmoochIntegrationKey,
 						zendeskTicketProductFieldValue,
@@ -365,7 +340,6 @@ function AgentSetup( {
 
 	const loadedProviders = loadedProvidersRef.current;
 
-	// Load empty view suggestions (handles Big Sky's theme-dependent suggestions)
 	const emptyViewSuggestions = useEmptyViewSuggestions( { loadedProviders } );
 
 	// Don't render until the setup is complete AND suggestions are ready
@@ -375,11 +349,6 @@ function AgentSetup( {
 
 	return (
 		<>
-			{ loadedProviders.useAbilitiesSetup && canExposeWebMcpTools() && (
-				<WebMcpProviderAbilitiesSetup
-					useProviderAbilitiesSetup={ loadedProviders.useAbilitiesSetup }
-				/>
-			) }
 			<AgentDock
 				emptyViewSuggestions={ emptyViewSuggestions }
 				markdownComponents={ loadedProviders.markdownComponents || {} }

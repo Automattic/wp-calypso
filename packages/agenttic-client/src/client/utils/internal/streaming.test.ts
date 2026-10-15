@@ -406,6 +406,11 @@ describe( 'parseSSEStream', () => {
 		}
 
 		expect( updates ).toHaveLength( 3 );
+		expect( updates.map( ( update ) => update.delta?.deltaType ) ).toEqual( [
+			'content',
+			'tool_argument',
+			'content',
+		] );
 
 		// After update 0 (text only).
 		expect( updates[ 0 ].text ).toBe( 'Looking up ' );

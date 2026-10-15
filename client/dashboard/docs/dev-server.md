@@ -21,5 +21,4 @@ Runs the entire Calypso, including the multi-site dashboard. These URLs are serv
 Runs only the multi-site dashboard. This command is faster than the above command as it only loads the dashboard code. Only the following URLs are served:
 
 - `my.localhost:3000`
-- `my.woo.localhost:3000`
 - `my.a4a.localhost:3000`

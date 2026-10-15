@@ -151,7 +151,7 @@ const Omnibar = ( props ) => (
 	/>
 );
 
-function CalypsoAgentsManagerLoader( { sectionName, currentRoute, siteId } ) {
+function CalypsoAgentsManagerLoader( { sectionName, currentRoute, siteId, isMasterbarVisible } ) {
 	const { routeIsEnabled, isInternalOnly } = useShouldLoadAgentsManager(
 		currentRoute,
 		siteId,
@@ -162,7 +162,13 @@ function CalypsoAgentsManagerLoader( { sectionName, currentRoute, siteId } ) {
 		return null;
 	}
 
-	return <AgentsManagerLoader sectionName={ sectionName } isInternalOnly={ isInternalOnly } />;
+	return (
+		<AgentsManagerLoader
+			sectionName={ sectionName }
+			isInternalOnly={ isInternalOnly }
+			isMasterbarVisible={ isMasterbarVisible }
+		/>
+	);
 }
 
 const READER_DARK_MODE_BODY_CLASS = 'is-reader-dark-mode';
@@ -326,6 +332,13 @@ class Layout extends Component {
 			return null;
 		}
 
+		// These pages render their own masterbar.
+		if (
+			[ 'checkout-thank-you', 'professional-email-upsell' ].includes( this.props.sectionName )
+		) {
+			return null;
+		}
+
 		let MasterbarComponent = MasterbarLoggedIn;
 		if ( config.isEnabled( 'jetpack-cloud' ) ) {
 			MasterbarComponent = JetpackCloudMasterbar;
@@ -436,6 +449,7 @@ class Layout extends Component {
 					sectionName={ this.props.sectionName }
 					currentRoute={ this.props.currentRoute }
 					siteId={ this.props.siteId }
+					isMasterbarVisible={ ! this.props.masterbarIsHidden }
 				/>
 				{ ! shouldDisableSidebarScrollSynchronizer && <SidebarScrollSynchronizer /> }
 				<SidebarOverflowDelay layoutFocus={ this.props.currentLayoutFocus } />
