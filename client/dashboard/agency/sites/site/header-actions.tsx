@@ -39,7 +39,7 @@ export default function AgencySiteHeaderActions( {
 		recordTracksEvent( 'calypso_dashboard_agency_site_overview_action_click', { action } );
 
 	// Honors a custom admin path where the site reports one.
-	const adminUrl = fullSite.options?.admin_url || getAdminUrl( site );
+	const adminUrl = ( fullSite.options?.admin_url || getAdminUrl( site ) ).replace( /\/?$/, '/' );
 	// wp-admin is reachable even when the agency can't act on the site through
 	// the connection, so only the menu depends on it.
 	const canUseMenu = canActOnSite( site ) && ! isUrlOnlySite( site );

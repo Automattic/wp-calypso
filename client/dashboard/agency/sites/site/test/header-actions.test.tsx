@@ -50,6 +50,38 @@ describe( '<AgencySiteHeaderActions>', () => {
 		);
 	} );
 
+	test( 'falls back to the default wp-admin when the site reports none', async () => {
+		mockAgency();
+
+		render( <AgencySiteHeaderActions site={ site } fullSite={ {} as Site } /> );
+
+		expect( await screen.findByRole( 'link', { name: 'WP Admin' } ) ).toHaveAttribute(
+			'href',
+			'https://example.com/wp-admin/'
+		);
+	} );
+
+	test( 'opens Settings under an admin URL without a trailing slash', async () => {
+		mockAgency();
+		const open = jest.spyOn( window, 'open' ).mockReturnValue( null );
+
+		render(
+			<AgencySiteHeaderActions
+				site={ site }
+				fullSite={ { options: { admin_url: 'https://example.com/custom-admin' } } as Site }
+			/>
+		);
+		await openMenu();
+		await userEvent.click( screen.getByRole( 'menuitem', { name: /Settings/ } ) );
+
+		expect( open ).toHaveBeenCalledWith(
+			'https://example.com/custom-admin/options-general.php',
+			'_blank',
+			'noreferrer,noopener'
+		);
+		open.mockRestore();
+	} );
+
 	test( 'keeps WP Admin but hides the menu on a disconnected site', async () => {
 		mockAgency();
 
@@ -98,6 +130,31 @@ describe( '<AgencySiteHeaderActions>', () => {
 		mockAgency( { capabilities: [] } );
 
 		render( <AgencySiteHeaderActions site={ site } fullSite={ fullSite } /> );
+		await openMenu();
+
+		expect( screen.queryByRole( 'menuitem', { name: 'Remove site' } ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'does not offer Remove site on a dev site', async () => {
+		mockAgency( { capabilities: [ 'a4a_remove_managed_sites' ] } );
+
+		render(
+			<AgencySiteHeaderActions site={ { ...site, a4a_is_dev_site: true } } fullSite={ fullSite } />
+		);
+		await openMenu();
+
+		expect( screen.queryByRole( 'menuitem', { name: 'Remove site' } ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'does not offer Remove site on a site still being set up', async () => {
+		mockAgency( { capabilities: [ 'a4a_remove_managed_sites' ] } );
+
+		render(
+			<AgencySiteHeaderActions
+				site={ { ...site, a4a_site_id: undefined } as unknown as AgencySite }
+				fullSite={ fullSite }
+			/>
+		);
 		await openMenu();
 
 		expect( screen.queryByRole( 'menuitem', { name: 'Remove site' } ) ).not.toBeInTheDocument();
