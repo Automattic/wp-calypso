@@ -48,7 +48,7 @@ afterEach( () => {
 
 describe( 'DifmOfferDeepLink', () => {
 	test( 'opens the offer with the linking source, and clears the params', async () => {
-		assignExperiment( 'treatment' );
+		assignExperiment( 'no_time_to_build' );
 		window.history.replaceState( null, '', '/?difmOffer=open&source=site-setup' );
 
 		const { recordTracksEvent } = render( <DifmOfferDeepLink site={ mockSite } /> );
@@ -77,7 +77,7 @@ describe( 'DifmOfferDeepLink', () => {
 	} );
 
 	test( 'records the site overview as the source for an unknown source', async () => {
-		assignExperiment( 'treatment' );
+		assignExperiment( 'no_time_to_build' );
 		window.history.replaceState( null, '', '/?difmOffer=open&source=newsletter' );
 
 		const { recordTracksEvent } = render( <DifmOfferDeepLink site={ mockSite } /> );
@@ -100,7 +100,7 @@ describe( 'DifmOfferDeepLink', () => {
 	} );
 
 	test( 'does not open the offer without the param', async () => {
-		assignExperiment( 'treatment' );
+		assignExperiment( 'no_time_to_build' );
 
 		render( <DifmOfferDeepLink site={ mockSite } /> );
 		// Let the stored assignment load before checking that nothing opened.

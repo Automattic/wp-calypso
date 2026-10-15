@@ -192,9 +192,16 @@ describe( 'normalizeDifmOfferVariation', () => {
 		expect( normalizeDifmOfferVariation( 'rotating' ) ).toBe( 'control' );
 	} );
 
-	it( 'returns treatment for the treatment variation', () => {
-		expect( normalizeDifmOfferVariation( 'treatment' ) ).toBe( 'treatment' );
+	it( 'returns control for the single arm the experiment had before registration', () => {
+		expect( normalizeDifmOfferVariation( 'treatment' ) ).toBe( 'control' );
 	} );
+
+	it.each( [ 'expert_help', 'no_time_to_build', 'skip_the_setup' ] )(
+		'returns the %s arm',
+		( arm ) => {
+			expect( normalizeDifmOfferVariation( arm ) ).toBe( arm );
+		}
+	);
 } );
 
 describe( 'useDifmOffer', () => {
@@ -224,7 +231,10 @@ describe( 'useDifmOffer', () => {
 	} );
 
 	it( 'returns the assigned variation for an eligible user', () => {
-		mockUseExperiment.mockReturnValue( [ false, createExperimentAssignment( 'treatment' ) ] );
+		mockUseExperiment.mockReturnValue( [
+			false,
+			createExperimentAssignment( 'no_time_to_build' ),
+		] );
 
 		const { result } = renderHook( () => useDifmOffer( eligibleInput( Date.now() ) ) );
 
@@ -234,7 +244,7 @@ describe( 'useDifmOffer', () => {
 		expect( result.current ).toEqual( {
 			isEligible: true,
 			isLoading: false,
-			variation: 'treatment',
+			variation: 'no_time_to_build',
 		} );
 	} );
 
@@ -266,7 +276,7 @@ describe( 'useDifmOffer', () => {
 		expect( result.current ).toEqual( {
 			isEligible: true,
 			isLoading: false,
-			variation: 'treatment',
+			variation: 'no_time_to_build',
 		} );
 	} );
 
@@ -299,11 +309,23 @@ describe( 'getDifmOfferCopy', () => {
 		expect( getDifmOfferCopy( 'control' ) ).toBeNull();
 	} );
 
-	it( 'returns the treatment copy', () => {
-		expect( getDifmOfferCopy( 'treatment' ) ).toEqual( {
-			title: 'No time to build your site?',
-			description: 'Let us take that off your plate. Ready in 4 days and free with Business.',
-			ctaText: 'See the offer',
-		} );
+	it.each( [
+		[
+			'expert_help',
+			'Expert help to get you started',
+			'A human builds your site based on your needs — free with Business.',
+		],
+		[
+			'no_time_to_build',
+			'No time to build your site?',
+			'Let us take that off your plate. Ready in 4 days and free with Business.',
+		],
+		[
+			'skip_the_setup',
+			'Skip the setup',
+			'For a limited time, our experts will bring your vision to life. Free with Business.',
+		],
+	] as const )( 'returns the %s copy', ( arm, title, description ) => {
+		expect( getDifmOfferCopy( arm ) ).toEqual( { title, description, ctaText: 'See the offer' } );
 	} );
 } );
