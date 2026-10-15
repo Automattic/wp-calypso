@@ -2,6 +2,7 @@ import { createElement, useCallback, useEffect, useRef } from '@wordpress/elemen
 import { __ } from '@wordpress/i18n';
 import { undo, Icon } from '@wordpress/icons';
 import ResolvedEditAction from '../components/resolved-edit-action';
+import { CHECKPOINT_ACTION_ID } from '../utils/message-actions';
 import {
 	APPLY_BLOCK_EDITS_TOOL_ID,
 	getApplyBlockEditsOutcome,
@@ -280,7 +281,7 @@ export default function useCheckpointAction(
 			return [
 				{
 					type: 'component',
-					id: 'checkpoint',
+					id: CHECKPOINT_ACTION_ID,
 					label,
 					component: ResolvedEditAction,
 					componentProps: {
@@ -303,7 +304,7 @@ export default function useCheckpointAction(
 
 		return [
 			{
-				id: 'checkpoint',
+				id: CHECKPOINT_ACTION_ID,
 				label: __( 'Undo', __i18n_text_domain__ ),
 				icon: createElement( Icon, {
 					icon: undo,

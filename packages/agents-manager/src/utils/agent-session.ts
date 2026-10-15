@@ -164,3 +164,21 @@ export function markSessionSent( sessionId: string ): void {
 		sessionStorage.removeItem( UNSENT_SESSION_KEY_PREFIX + sessionId );
 	} catch {}
 }
+
+interface SessionScope {
+	/** The site, user and agent the session belongs to. */
+	scopeIdentity: string;
+	sessionId: string;
+}
+
+/**
+ * Whether a session switch is a new chat's bootstrap: it starts with an empty
+ * session id, then switches to the server's within the same scope.
+ */
+export function isSessionBootstrap( previous: SessionScope, next: SessionScope ): boolean {
+	return (
+		previous.scopeIdentity === next.scopeIdentity &&
+		previous.sessionId === '' &&
+		next.sessionId !== ''
+	);
+}

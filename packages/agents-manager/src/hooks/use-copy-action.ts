@@ -1,5 +1,6 @@
 import { useCallback } from '@wordpress/element';
 import CopyActionButton from '../components/copy-action-button';
+import { COPY_ACTION_ID } from '../utils/message-actions';
 import {
 	getDisplayMessageFromToolData,
 	isDisplayableToolMessageTool,
@@ -69,7 +70,7 @@ export default function useCopyAction(): ( message: UIMessage ) => MessageAction
 		return [
 			{
 				type: 'component',
-				id: 'copy',
+				id: COPY_ACTION_ID,
 				component: CopyActionButton,
 				componentProps: { text, messageId: message.id },
 				order: 4,

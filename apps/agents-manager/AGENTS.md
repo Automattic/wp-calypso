@@ -27,4 +27,4 @@ The `--sync` flag uploads the bundles over SSH to `widgets.wp.com/agents-manager
 ## Pitfalls
 
 - **`wp-admin` entry point mounts into the admin bar**: It renders only when `#agents-manager-masterbar` exists. Admin screens with no admin bar (e.g. iframe requests) render no node, so the bundle loads and does nothing.
-- **Not every entry is Agents Manager UI**: `image-studio` is an independent feature, and `jetpack-ai-sidebar` is a provider bundle: its `jetpack-ai-sidebar.provider.mjs` is copied to `dist/` as-is and loaded through `import()`.
+- **Not every entry is Agents Manager UI**: `image-studio` is an independent feature, `agents-manager-gutenberg-disconnected` is a standalone editor-toolbar help link that imports nothing from `packages/agents-manager`, and `jetpack-ai-sidebar` is a provider bundle: its `jetpack-ai-sidebar.provider.mjs` is copied to `dist/` as-is and loaded through `import()`.

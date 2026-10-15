@@ -118,13 +118,13 @@ The hook accepts a single options object. All properties are optional.
 
 - **`desktopMediaQuery`** (`string`, default: `'(min-width: 1200px)'`) - Media query string to determine desktop layout.
 
-- **`onOpenSidebar`** (`() => void`, default: `() => {}`) - Callback fired when the sidebar is opened.
+- **`onOpenSidebar`** (`() => void`, default: `() => {}`) - Callback fired when `openSidebar()` runs, which the FAB and `dock()` call. Not fired when the sidebar starts open, or when `defaultOpen` reopens it as the docked layout comes back.
 
-- **`onCloseSidebar`** (`() => void`, default: `() => {}`) - Callback fired when the sidebar is closed.
+- **`onCloseSidebar`** (`() => void`, default: `() => {}`) - Callback fired when `closeSidebar()` closes the sidebar. Not fired when undocking or losing `canDock` hides it (`onUndock` fires instead).
 
-- **`onDock`** (`() => void`, default: `() => {}`) - Callback fired when the chat switches to docked (sidebar) mode.
+- **`onDock`** (`() => void`, default: `() => {}`) - Callback fired each time the docked layout is entered after the first render: `dock()`, a wider viewport or entering fullscreen.
 
-- **`onUndock`** (`() => void`, default: `() => {}`) - Callback fired when the chat switches to floating (undocked) mode.
+- **`onUndock`** (`() => void`, default: `() => {}`) - Callback fired when the chat switches from docked to floating: `undock()`, a narrower viewport, or leaving fullscreen. Also fires when the docked preference changes while `canDock` is `false`, but not on the first render.
 
 - **`isSplitScreen`** (`boolean`, default: `false`) - When `true`, the hook toggles an `is-split-screen` modifier class on the sidebar container so consumer SCSS can opt into a wider docked layout (e.g. `--am-sidebar-width: 50vw`).
 
