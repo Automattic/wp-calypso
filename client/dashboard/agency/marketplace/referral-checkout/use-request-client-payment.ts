@@ -12,6 +12,7 @@ import { store as noticesStore } from '@wordpress/notices';
 import emailValidator from 'email-validator';
 import { useMemo, useRef, useState } from 'react';
 import { useAnalytics } from '../../../app/analytics';
+import { useMilestoneFeedback } from '../../feedback';
 import { isPressableAddonProduct } from '../hosting/lib/pressable-plans';
 import { getTermProductId } from '../products/lib/checkout-url';
 import { clearStoredCart } from '../products/use-shopping-cart';
@@ -32,6 +33,13 @@ interface Options {
 	lastReferralLogoUrl: string | null;
 	/** Set when the lines are the plan of a development site, whose license the client takes over. */
 	license?: DevSiteReferral;
+}
+
+interface SentReferral {
+	email: string;
+	checkoutUrl: string;
+	flowType: ReferralFlowType;
+	isLinkCopied: boolean;
 }
 
 interface ApiError {
@@ -67,6 +75,9 @@ export function useRequestClientPayment( {
 	const { recordTracksEvent } = useAnalytics();
 	const { createErrorNotice } = useDispatch( noticesStore );
 	const { updateMarketplaceType } = useMarketplaceType();
+	const { shouldAsk: shouldAskForFeedback } = useMilestoneFeedback( 'referral-completed' );
+	// Set once a referral is sent, while the first-referral survey is open.
+	const [ sentReferral, setSentReferral ] = useState< SentReferral | null >( null );
 
 	const [ email, setEmail ] = useState( '' );
 	const [ emailError, setEmailError ] = useState< string | null >( null );
@@ -157,6 +168,24 @@ export function useRequestClientPayment( {
 		return false;
 	};
 
+	// The cart is cleared only now, so the form stays as it was behind the survey.
+	const goToReferrals = ( sent: SentReferral ) => {
+		// A development site's plan never went through the cart, which stays as it was.
+		if ( ! license ) {
+			clearStoredCart( 'referral' );
+			updateMarketplaceType( 'regular' );
+		}
+		navigate( {
+			to: '/referrals',
+			search: {
+				new_referral_order_email: sent.email,
+				new_referral_order_checkout_url: sent.checkoutUrl,
+				flow_type: sent.flowType,
+				link_copied: sent.isLinkCopied,
+			},
+		} );
+	};
+
 	const submit = async ( flowType: ReferralFlowType ) => {
 		if ( ! ( await validate() ) ) {
 			return;
@@ -180,22 +209,18 @@ export function useRequestClientPayment( {
 				flow_type: flowType,
 				logo: getReferralLogoPayload( logo, uploadedUrl ),
 			} );
-			// The link is copied for both flows.
-			const isLinkCopied = await copyToClipboard( referral.checkout_url );
-			// A development site's plan never went through the cart, which stays as it was.
-			if ( ! license ) {
-				clearStoredCart( 'referral' );
-				updateMarketplaceType( 'regular' );
+			const sent = {
+				email,
+				checkoutUrl: referral.checkout_url,
+				flowType,
+				// The link is copied for both flows.
+				isLinkCopied: await copyToClipboard( referral.checkout_url ),
+			};
+			if ( shouldAskForFeedback ) {
+				setSentReferral( sent );
+			} else {
+				goToReferrals( sent );
 			}
-			navigate( {
-				to: '/referrals',
-				search: {
-					new_referral_order_email: email,
-					new_referral_order_checkout_url: referral.checkout_url,
-					flow_type: flowType,
-					link_copied: isLinkCopied,
-				},
-			} );
 		} catch ( error ) {
 			const { code, message: errorMessage } = ( error ?? {} ) as ApiError;
 			createErrorNotice(
@@ -223,5 +248,13 @@ export function useRequestClientPayment( {
 		isBusy: isSubmitting || isUploadingLogo || isCreating,
 		send: () => runOnce( () => submit( 'send' ) ),
 		copy: () => runOnce( () => submit( 'copy' ) ),
+		/** The referral the first-referral survey is asked about, if it is open. */
+		sentReferral,
+		closeFeedback: () => {
+			if ( sentReferral ) {
+				setSentReferral( null );
+				goToReferrals( sentReferral );
+			}
+		},
 	};
 }

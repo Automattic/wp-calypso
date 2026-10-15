@@ -71,7 +71,12 @@ const freeProducts = [
 function mockApi( {
 	agency = {},
 	catalog = products,
-}: { agency?: Record< string, unknown >; catalog?: typeof products | typeof freeProducts } = {} ) {
+	isFirstReferral = false,
+}: {
+	agency?: Record< string, unknown >;
+	catalog?: typeof products | typeof freeProducts;
+	isFirstReferral?: boolean;
+} = {} ) {
 	nock( API )
 		.get( '/wpcom/v2/agency' )
 		.query( true )
@@ -93,7 +98,11 @@ function mockApi( {
 	nock( API )
 		.get( '/rest/v1.1/me/preferences' )
 		.query( true )
-		.reply( 200, { calypso_preferences: {} } )
+		.reply( 200, {
+			calypso_preferences: isFirstReferral
+				? {}
+				: { 'a4a-feedback': { 'referral-completed': { lastSkippedAt: 1757000000000 } } },
+		} )
 		.persist();
 }
 
@@ -169,6 +178,53 @@ describe( '<ReferralCheckout>', () => {
 		} );
 		await waitFor( () =>
 			expect( sessionStorage.getItem( 'referrals-shopping-card-selected-items' ) ).toBeNull()
+		);
+	} );
+
+	test( 'asks about the first referral before leaving the checkout', async () => {
+		mockApi( { isFirstReferral: true } );
+		nock( API )
+			.post( `/wpcom/v2/agency/${ AGENCY_ID }/referrals` )
+			.reply( 200, {
+				id: 9,
+				client: { id: 1, email: 'client@example.com' },
+				products: [],
+				status: 'pending',
+				checkout_url: 'https://wordpress.com/checkout/agency/referral?x=1',
+			} );
+		let savedPreferences: Record< string, unknown > | undefined;
+		nock( API )
+			.post( '/rest/v1.1/me/preferences', ( requestBody ) => {
+				savedPreferences = requestBody;
+				return true;
+			} )
+			.reply( 200, { calypso_preferences: {} } );
+		const user = userEvent.setup();
+		render( <ReferralCheckout /> );
+		await screen.findByText( 'VaultPress Backup 10GB' );
+
+		await user.type( screen.getByLabelText( 'Client’s email address' ), 'client@example.com' );
+		await user.click( screen.getByRole( 'button', { name: 'Copy referral link' } ) );
+
+		const survey = await screen.findByRole( 'dialog', {
+			name: 'Well done! You sent your first referral!',
+		} );
+		expect( survey ).toHaveTextContent( 'Your referral order for client@example.com is ready.' );
+		expect( sessionStorage.getItem( 'referrals-shopping-card-selected-items' ) ).toBe(
+			'jetpack-backup-t1:1'
+		);
+
+		await user.click( screen.getByRole( 'button', { name: 'Skip' } ) );
+
+		await waitFor( () =>
+			expect( sessionStorage.getItem( 'referrals-shopping-card-selected-items' ) ).toBeNull()
+		);
+		await waitFor( () =>
+			expect( savedPreferences ).toMatchObject( {
+				calypso_preferences: {
+					'a4a-feedback': { 'referral-completed': { lastSkippedAt: expect.any( Number ) } },
+				},
+			} )
 		);
 	} );
 
