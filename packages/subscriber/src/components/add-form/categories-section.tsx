@@ -2,10 +2,15 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { newsletterAdminUrl } from '@automattic/newsletter-urls';
 import { Button, Popover, ToggleControl, FormTokenField } from '@wordpress/components';
-import { TokenItem } from '@wordpress/components/build-types/form-token-field/types';
 import { createInterpolateElement, useRef, useState } from '@wordpress/element';
 import { info } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
+import type { ComponentProps } from 'react';
+
+type TokenItem = Exclude<
+	NonNullable< ComponentProps< typeof FormTokenField >[ 'value' ] >[ number ],
+	string
+>;
 
 interface Props {
 	siteId: number;

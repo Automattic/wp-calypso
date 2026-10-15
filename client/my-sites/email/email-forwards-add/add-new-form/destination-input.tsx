@@ -1,10 +1,14 @@
 import { FormTokenField, Notice } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import React from 'react';
+import React, { type ComponentProps } from 'react';
 import { isValidDestination } from './utils';
 import type { DestinationsInputProps, ValidationError } from './types';
-import type { TokenItem } from '@wordpress/components/build-types/form-token-field/types';
 import './styles.scss';
+
+type TokenItem = Exclude<
+	NonNullable< ComponentProps< typeof FormTokenField >[ 'value' ] >[ number ],
+	string
+>;
 
 const MAX_FORWARD_DESTINATIONS = 5;
 

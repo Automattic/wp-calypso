@@ -1,6 +1,5 @@
-import { TokenItem } from '@wordpress/components/build-types/form-token-field/types';
 import { useCallback, useMemo } from 'react';
-import FormTokenFieldWrapper from './form-token-field-wrapper';
+import FormTokenFieldWrapper, { type TokenItem } from './form-token-field-wrapper';
 import { reverseMap } from './hooks/use-form-selectors';
 
 type Props = {

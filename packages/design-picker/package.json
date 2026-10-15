@@ -14,6 +14,14 @@
 			"types": "./dist/types/index.d.ts",
 			"import": "./dist/esm/index.js",
 			"require": "./dist/cjs/index.js"
+		},
+		"./src/*": {
+			"types": [
+				"./src/*.ts",
+				"./src/*.tsx",
+				"./src/*/index.ts",
+				"./src/*/index.tsx"
+			]
 		}
 	},
 	"sideEffects": [

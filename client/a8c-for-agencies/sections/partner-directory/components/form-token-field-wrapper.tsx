@@ -1,6 +1,10 @@
 import { FormTokenField } from '@wordpress/components';
-import { TokenItem } from '@wordpress/components/build-types/form-token-field/types';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, type ComponentProps } from 'react';
+
+export type TokenItem = Exclude<
+	NonNullable< ComponentProps< typeof FormTokenField >[ 'value' ] >[ number ],
+	string
+>;
 
 type Props = {
 	onChange: ( selectedItems: ( string | TokenItem )[] ) => void;

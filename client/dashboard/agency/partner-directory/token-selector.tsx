@@ -1,6 +1,10 @@
 import { FormTokenField } from '@wordpress/components';
-import { useEffect, useMemo, useRef } from 'react';
-import type { TokenItem } from '@wordpress/components/build-types/form-token-field/types';
+import { useEffect, useMemo, useRef, type ComponentProps } from 'react';
+
+type TokenItem = Exclude<
+	NonNullable< ComponentProps< typeof FormTokenField >[ 'value' ] >[ number ],
+	string
+>;
 
 interface TokenSelectorProps {
 	label: string;

@@ -1,9 +1,11 @@
 import { createLink } from '@tanstack/react-router';
 import { Button } from '@wordpress/components';
-import { ButtonProps } from '@wordpress/components/build-types/button/types';
-import { forwardRef } from 'react';
+import { forwardRef, type ComponentProps } from 'react';
 
-function RouterLinkButton( props: ButtonProps, ref: React.Ref< HTMLAnchorElement > ) {
+function RouterLinkButton(
+	props: ComponentProps< typeof Button >,
+	ref: React.Ref< HTMLAnchorElement >
+) {
 	return <Button ref={ ref } { ...props } />;
 }
 
