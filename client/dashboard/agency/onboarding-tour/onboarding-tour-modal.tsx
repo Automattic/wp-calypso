@@ -1,3 +1,4 @@
+import { useRouter } from '@tanstack/react-router';
 import {
 	Button,
 	__experimentalHeading as Heading,
@@ -8,7 +9,7 @@ import { useViewportMatch } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
 import { close } from '@wordpress/icons';
 import clsx from 'clsx';
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import { ButtonStack } from '../../components/button-stack';
 import { Notice } from '../../components/notice';
 import PageDots from '../../components/page-dots';
@@ -60,6 +61,20 @@ export default function OnboardingTourModal( {
 			section: currentSectionId,
 		} );
 	}, [ currentSectionId, recordTracksEvent ] );
+
+	// Start each section at the top. The router restores the modal's saved scroll after every
+	// hash change, so reset it after that; the event's `hashChanged` is always false here.
+	const router = useRouter();
+	const tourRef = useRef< HTMLDivElement >( null );
+	useEffect( () => {
+		let lastHash = router.state.location.hash;
+		return router.subscribe( 'onRendered', ( { toLocation } ) => {
+			if ( toLocation.hash !== lastHash ) {
+				lastHash = toLocation.hash;
+				tourRef.current?.scrollIntoView( { block: 'start' } );
+			}
+		} );
+	}, [ router ] );
 
 	const onNext = () => {
 		recordTracksEvent( 'calypso_a4a_onboarding_tour_next_benefit_click', {
@@ -139,7 +154,7 @@ export default function OnboardingTourModal( {
 			shouldCloseOnClickOutside={ false }
 			__experimentalHideHeader
 		>
-			<div className="a4a-onboarding-tour">
+			<div className="a4a-onboarding-tour" ref={ tourRef }>
 				{ ! isMobile && (
 					<div className="a4a-onboarding-tour-aside">
 						<VStack
@@ -171,6 +186,16 @@ export default function OnboardingTourModal( {
 				) }
 
 				<div className="a4a-onboarding-tour-main">
+					<div className="a4a-onboarding-tour-close">
+						<Button
+							icon={ close }
+							label={ __( 'Close' ) }
+							onClick={ () => {
+								recordTracksEvent( 'calypso_onboarding_tour_modal_close_button_click' );
+								onClose();
+							} }
+						/>
+					</div>
 					<div
 						className="a4a-onboarding-tour-field"
 						style={ { backgroundImage: `url(${ glow })` } }
@@ -185,14 +210,6 @@ export default function OnboardingTourModal( {
 								alt=""
 							/>
 						) ) }
-						<Button
-							icon={ close }
-							label={ __( 'Close' ) }
-							onClick={ () => {
-								recordTracksEvent( 'calypso_onboarding_tour_modal_close_button_click' );
-								onClose();
-							} }
-						/>
 					</div>
 					<div className="a4a-onboarding-tour-content">
 						<VStack spacing={ 4 } justify="flex-start">
