@@ -5,6 +5,7 @@ import { check, wordpress } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useRef, useState } from 'react';
 import { BuildVisualization } from './build-visualization';
+import { getGenerationWait } from './use-site-generation';
 import type { SiteGenerationState } from './use-site-generation';
 import type { BuildWowGraph } from 'calypso/landing/stepper/utils/build-wow';
 import type { CSSProperties } from 'react';
@@ -140,18 +141,19 @@ function WaitingCanvas( {
 	onPreviewTap: () => void;
 } ) {
 	const translate = useTranslate();
-	let description = translate(
-		'This can take up to 10 minutes. No worries, you’ll receive an email when the site is ready.'
-	);
-	if ( graph === 'dsl' ) {
-		description = isStoreBuild
-			? translate(
-					'This can take up to 8 minutes. No worries, you’ll receive an email when the site is ready.'
-				)
-			: translate(
-					'This can take up to 4 minutes. No worries, you’ll receive an email when the site is ready.'
-				);
-	}
+	const { promisedMinutes } = getGenerationWait( graph, isStoreBuild );
+	const descriptions = {
+		4: translate(
+			'This can take up to 4 minutes. No worries, you’ll receive an email when the site is ready.'
+		),
+		8: translate(
+			'This can take up to 8 minutes. No worries, you’ll receive an email when the site is ready.'
+		),
+		10: translate(
+			'This can take up to 10 minutes. No worries, you’ll receive an email when the site is ready.'
+		),
+	};
+	const description = descriptions[ promisedMinutes ];
 
 	return (
 		<div className="site-generation__waiting">

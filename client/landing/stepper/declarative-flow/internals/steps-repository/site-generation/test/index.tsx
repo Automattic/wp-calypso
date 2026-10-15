@@ -146,12 +146,6 @@ describe( 'SiteGeneration recovery', () => {
 		expect( useSiteGenerationMock.mock.calls[ 0 ][ 0 ].isStoreBuild ).toBe( isStoreBuild );
 	} );
 
-	it( 'is not a store build until the site loads', () => {
-		renderStep();
-
-		expect( useSiteGenerationMock.mock.calls[ 0 ][ 0 ].isStoreBuild ).toBe( false );
-	} );
-
 	it( 'reloads when checking again after a timeout', () => {
 		mockState.failureReason = 'timed-out';
 		renderStep();

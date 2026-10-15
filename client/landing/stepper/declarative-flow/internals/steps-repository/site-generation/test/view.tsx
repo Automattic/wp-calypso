@@ -201,25 +201,23 @@ describe( 'SiteGenerationView wait estimate', () => {
 		expect( screen.getByText( /This can take up to 8 minutes\./ ) ).toBeVisible();
 	} );
 
-	it.each( [ 'blocks-first' as const, undefined ] )(
-		'promises up to 10 minutes when the graph is %s, store or not',
-		( graph ) => {
-			const { rerender } = render(
-				<SiteGenerationView graph={ graph } onReload={ jest.fn() } state={ workingState } />
-			);
-			expect( screen.getByText( /This can take up to 10 minutes\./ ) ).toBeInTheDocument();
+	it.each( [
+		[ 'blocks-first' as const, false ],
+		[ 'blocks-first' as const, true ],
+		[ undefined, false ],
+		[ undefined, true ],
+	] )( 'promises up to 10 minutes when the graph is %s (store: %s)', ( graph, isStoreBuild ) => {
+		render(
+			<SiteGenerationView
+				graph={ graph }
+				isStoreBuild={ isStoreBuild }
+				onReload={ jest.fn() }
+				state={ workingState }
+			/>
+		);
 
-			rerender(
-				<SiteGenerationView
-					graph={ graph }
-					isStoreBuild
-					onReload={ jest.fn() }
-					state={ workingState }
-				/>
-			);
-			expect( screen.getByText( /This can take up to 10 minutes\./ ) ).toBeInTheDocument();
-		}
-	);
+		expect( screen.getByText( /This can take up to 10 minutes\./ ) ).toBeVisible();
+	} );
 } );
 
 describe( 'SiteGenerationView server recovery', () => {

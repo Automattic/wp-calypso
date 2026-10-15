@@ -25,13 +25,26 @@ export type SiteGenerationState = {
 	isRetryingBuild: boolean;
 };
 
-const GENERATION_TIMEOUT_MS = 30 * 60 * 1000;
-// The wait screen promises DSL builds in up to 4 minutes, and stores, which also
-// import products and install WooCommerce, in up to 8. Stop waiting a little
-// after each promise: 5 minutes for a site, 10 for a store.
-const DSL_GENERATION_TIMEOUT_MS = 5 * 60 * 1000;
-const DSL_STORE_GENERATION_TIMEOUT_MS = 10 * 60 * 1000;
+const MINUTE_MS = 60 * 1000;
 const STEP_TIMER_STORAGE_PREFIX = 'site-generation-step-timer-v1';
+
+/**
+ * What the wait screen promises and when it stops waiting. DSL builds promise up
+ * to 4 minutes, and stores, which also import products and install WooCommerce,
+ * up to 8; each gives up a little after its promise. Other graphs promise 10 and
+ * give up at 30.
+ */
+export function getGenerationWait(
+	graph: BuildWowGraph | undefined,
+	isStoreBuild: boolean | undefined
+): { promisedMinutes: 4 | 8 | 10; timeoutMs: number } {
+	if ( graph !== 'dsl' ) {
+		return { promisedMinutes: 10, timeoutMs: 30 * MINUTE_MS };
+	}
+	return isStoreBuild
+		? { promisedMinutes: 8, timeoutMs: 10 * MINUTE_MS }
+		: { promisedMinutes: 4, timeoutMs: 5 * MINUTE_MS };
+}
 
 type GenerationFailure =
 	{ reason: 'timed-out' | 'editor-unavailable' } | { reason: 'build-failed'; ui: BuildWowUi };
@@ -102,7 +115,7 @@ export function useSiteGeneration( {
 	source,
 	specId,
 	graph,
-	isStoreBuild = false,
+	isStoreBuild,
 	steps,
 }: {
 	siteIdentifier: string | null;
@@ -120,13 +133,10 @@ export function useSiteGeneration( {
 	const [ isRetryingBuild, setIsRetryingBuild ] = useState( false );
 	const isRetryingRef = useRef( false );
 	const hasRequiredParameters = Boolean( siteIdentifier );
-	let generationTimeoutMs = GENERATION_TIMEOUT_MS;
-	if ( graph === 'dsl' ) {
-		generationTimeoutMs = isStoreBuild
-			? DSL_STORE_GENERATION_TIMEOUT_MS
-			: DSL_GENERATION_TIMEOUT_MS;
-	}
+	const { timeoutMs } = getGenerationWait( graph, isStoreBuild );
 
+	// Counted from when this attempt started, so a store plan that loads after
+	// the screen extends the deadline without restarting it or the polling.
 	useEffect( () => {
 		if ( ! siteIdentifier || failure ) {
 			return;
@@ -134,8 +144,16 @@ export function useSiteGeneration( {
 
 		const generationTimeout = window.setTimeout(
 			() => setFailure( ( previous ) => previous ?? { reason: 'timed-out' } ),
-			generationTimeoutMs
+			fallbackStartedAt + timeoutMs - Date.now()
 		);
+		return () => window.clearTimeout( generationTimeout );
+	}, [ failure, fallbackStartedAt, siteIdentifier, timeoutMs ] );
+
+	useEffect( () => {
+		if ( ! siteIdentifier || failure ) {
+			return;
+		}
+
 		const stopStatusPolling = pollForBuildWowStatus( {
 			siteIdentifier,
 			onReady: ( response ) => {
@@ -175,11 +193,8 @@ export function useSiteGeneration( {
 				} ),
 		} );
 
-		return () => {
-			window.clearTimeout( generationTimeout );
-			stopStatusPolling();
-		};
-	}, [ buildAttempt, source, failure, fallbackStartedAt, generationTimeoutMs, siteIdentifier ] );
+		return stopStatusPolling;
+	}, [ buildAttempt, source, failure, fallbackStartedAt, siteIdentifier ] );
 
 	const retryBuild = useCallback( async () => {
 		if ( ! siteIdentifier || ! specId || isRetryingRef.current ) {

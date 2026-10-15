@@ -184,9 +184,15 @@ describe( 'useSiteGeneration', () => {
 		} );
 		rerender( { isStoreBuild: true } );
 		act( () => {
-			jest.advanceTimersByTime( 9 * 60 * 1000 );
+			jest.advanceTimersByTime( 10 * 60 * 1000 - 2000 - 1 );
 		} );
 		expect( result.current.status ).toBe( 'working' );
+		expect( statusPollMock ).toHaveBeenCalledTimes( 1 );
+
+		act( () => {
+			jest.advanceTimersByTime( 1 );
+		} );
+		expect( result.current.failureReason ).toBe( 'timed-out' );
 	} );
 
 	it( 'keeps waiting on a store build past 10 minutes on other graphs', () => {
