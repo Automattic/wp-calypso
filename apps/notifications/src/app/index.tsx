@@ -136,7 +136,6 @@ const NotificationApp = ( {
 	locale = 'en',
 	isDismissible = false,
 	isViewSettingsEnabled = false,
-	isSimplifiedNoteEnabled = false,
 	preferences,
 	onPreferenceChange,
 	customEnhancer,
@@ -146,7 +145,6 @@ const NotificationApp = ( {
 	locale?: string;
 	isDismissible?: boolean;
 	isViewSettingsEnabled?: boolean;
-	isSimplifiedNoteEnabled?: boolean;
 	preferences?: NotificationPreferences;
 	onPreferenceChange?: ( key: string, value: unknown ) => Promise< unknown >;
 	customEnhancer?: any;
@@ -156,7 +154,7 @@ const NotificationApp = ( {
 	const [ isReady, setIsReady ] = useState( !! getClient() );
 
 	useEffect( () => {
-		initClient( wpcom, { includeNoteContext: isSimplifiedNoteEnabled && isViewSettingsEnabled } );
+		initClient( wpcom );
 		setIsReady( true );
 
 		store.dispatch( { type: 'APP_IS_READY' } );
@@ -167,7 +165,7 @@ const NotificationApp = ( {
 			store.dispatch( { type: SET_IS_SHOWING, isShowing: false } );
 			getClient()?.setVisibility( { isShowing: false, isVisible: ! document.hidden } );
 		};
-	}, [ wpcom, isSimplifiedNoteEnabled, isViewSettingsEnabled ] );
+	}, [ wpcom ] );
 
 	// Seeded once, whenever the host resolves them. A later value would overwrite
 	// whatever the picker has since saved.
@@ -262,7 +260,6 @@ const NotificationApp = ( {
 					client={ getClient() }
 					locale={ locale }
 					isViewSettingsEnabled={ isViewSettingsEnabled }
-					isSimplifiedNoteEnabled={ isSimplifiedNoteEnabled }
 					onPreferenceChange={ onPreferenceChange }
 				>
 					<NotificationContent isDismissible={ isDismissible } />

@@ -1,6 +1,5 @@
 import { subscribeUnseenCount } from './client';
 import { createNotificationSound } from './notification-sound';
-import type { ClientOptions } from './client';
 import type { NotificationSoundOptions, NotificationSoundResult } from './notification-sound';
 
 export type SubscriberNotificationCandidate = {
@@ -17,8 +16,7 @@ export function subscribeSubscriberNotifications(
 	{
 		onSound,
 		onError,
-		...clientOptions
-	}: ClientOptions & {
+	}: {
 		onSound?: (
 			result: NotificationSoundResult,
 			candidate: SubscriberNotificationCandidate
@@ -52,12 +50,7 @@ export function subscribeSubscriberNotifications(
 				}
 			}
 		: undefined;
-	const unsubscribe = subscribeUnseenCount(
-		wpcom,
-		onCount,
-		onSubscriberNotification,
-		clientOptions
-	);
+	const unsubscribe = subscribeUnseenCount( wpcom, onCount, onSubscriberNotification );
 
 	return () => {
 		active = false;

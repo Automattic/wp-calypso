@@ -213,7 +213,7 @@ const CommentReplyInput = ( { note, defaultValue }: { note: Note; defaultValue: 
 	}, [ keyboardShortcutsAreEnabled, handleSubmit ] );
 
 	return (
-		<VStack style={ { width: '100%' } }>
+		<VStack>
 			<form onSubmit={ handleSubmit }>
 				<HStack spacing={ 2 } alignment="flex-start">
 					<TextareaControl

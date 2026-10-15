@@ -20,7 +20,6 @@ import Post from './block-post';
 import PromptBlock from './block-prompt';
 import User from './block-user';
 import NotePreface from './preface';
-import SimplifiedActions, { NoteReply, canReply } from './simplified-actions';
 import type { Note, Block, BlockWithSignature } from '../types';
 
 const isReplyBlock = ( note: Note, block: Block ) =>
@@ -98,33 +97,13 @@ const ReplyBlock = ( { note }: { note: Note } ) => {
 	return null;
 };
 
-const hasActionBlock = ( note: Note ) =>
-	zipWithSignature( note.body, note ).some(
-		( block: BlockWithSignature ) => block.block.actions && 'user' !== block.signature.type
-	);
-
-export const SimplifiedActionBlock = ( { note, goBack }: { note: Note; goBack: () => void } ) => {
-	if ( ! hasActionBlock( note ) ) {
-		return null;
-	}
-
-	return <SimplifiedActions note={ note } goBack={ goBack } />;
-};
-
-export const ReplyFooter = ( { note }: { note: Note } ) => {
-	if ( ! hasActionBlock( note ) || ! canReply( note ) ) {
-		return null;
-	}
-
-	return (
-		<CardFooter size="small">
-			<NoteReply note={ note } />
-		</CardFooter>
-	);
-};
-
 export const ActionBlock = ( { note, goBack }: { note: Note; goBack: () => void } ) => {
-	if ( ! hasActionBlock( note ) ) {
+	const blocks: BlockWithSignature[] = zipWithSignature( note.body, note );
+	const actionBlock = blocks.findLast(
+		( block ) => block.block.actions && 'user' !== block.signature.type
+	);
+
+	if ( ! actionBlock ) {
 		return null;
 	}
 
@@ -138,16 +117,11 @@ export const ActionBlock = ( { note, goBack }: { note: Note; goBack: () => void 
 	);
 };
 
-export const NoteBody = ( {
-	note,
-	hidePendingApproval = false,
-}: {
-	note: Note;
-	hidePendingApproval?: boolean;
-} ) => {
+export const NoteBody = ( { note }: { note: Note } ) => {
 	const blocks: BlockWithSignature[] = zipWithSignature( note.body, note );
-	const isPendingApproval = useSelector( ( state ) => getIsNotePendingApproval( state, note ) );
-	const showPendingApprovalBadge = isPendingApproval && ! hidePendingApproval;
+	const showPendingApprovalBadge = useSelector( ( state ) =>
+		getIsNotePendingApproval( state, note )
+	);
 
 	const firstNonTextBlockIndex = blocks.findIndex( ( block ) => {
 		return 'text' !== block.signature.type;
