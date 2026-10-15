@@ -19,7 +19,7 @@ The `--sync` flag uploads the bundles over SSH to `widgets.wp.com/agents-manager
 
 ## Sandbox Testing
 
-1. Sandbox `widgets.wp.com` (the sites themselves do not need sandboxing).
+1. Sandbox `widgets.wp.com` (not the sites, unless `.asset.json` changes: see Pitfalls in `packages/agents-manager/AGENTS.md`).
 2. Run `yarn dev --sync` from this directory.
 3. Visit any Simple or Atomic site.
 4. Open the Agents Manager and verify your changes.

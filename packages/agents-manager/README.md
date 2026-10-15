@@ -76,7 +76,7 @@ The host page URL can carry these query parameters:
 | `ai-open`       | `ai-open=true` auto-opens the chat (docked or undocked) on page load, e.g. for links from emails. The parameter is stripped from the URL after being applied.                            |
 | `agent`         | Overrides the agent ID, for testing (e.g., `?agent=wpcom-workflow-support_chat`). Ignored when the host passes an `agentId` prop.                                                        |
 | `version`       | Overrides the agent version, for testing (e.g., `?version=1.0.25`).                                                                                                                      |
-| `am_credits`    | Seeds a mock site-credits balance as a percentage, for demos and testing without live site credits (e.g., `?am_credits=55`). Read once when the chat mounts.                             |
+| `am_credits`    | Seeds a mock site-credits balance as a percentage, for demos and testing on pages without a site, outside Reader Chat (e.g., `?am_credits=55`). Read once when the chat mounts.          |
 | `am_plan`       | With `am_credits`, the mock plan: `paid`, or `free` (the default).                                                                                                                       |
 | `wp-agent-chat` | The chat session to resume, handed off by a same-tab link from another origin (e.g. wp-admin to Calypso) so the conversation continues there. Stripped from the URL after being applied. |
 | `wp-agent-site` | The site scope of the handed-off session. The session is resumed only on pages for that site, and stored for it otherwise.                                                               |

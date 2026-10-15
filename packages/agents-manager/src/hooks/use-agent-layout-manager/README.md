@@ -122,9 +122,9 @@ The hook accepts a single options object. All properties are optional.
 
 - **`onCloseSidebar`** (`() => void`, default: `() => {}`) - Callback fired when `closeSidebar()` closes the sidebar. Not fired when undocking or losing `canDock` hides it (`onUndock` fires instead).
 
-- **`onDock`** (`() => void`, default: `() => {}`) - Callback fired each time the docked layout is entered after the first render: `dock()`, a wider viewport or entering fullscreen.
+- **`onDock`** (`() => void`, default: `() => {}`) - Callback fired each time the docked layout is entered after the chat element is created: `dock()`, a wider viewport or entering fullscreen.
 
-- **`onUndock`** (`() => void`, default: `() => {}`) - Callback fired when the chat switches from docked to floating: `undock()`, a narrower viewport, or leaving fullscreen. Also fires when the docked preference changes while `canDock` is `false`, but not on the first render.
+- **`onUndock`** (`() => void`, default: `() => {}`) - Callback fired when the chat switches from docked to floating: `undock()`, a narrower viewport, or leaving fullscreen. Also fires when the docked preference changes while `canDock` is `false`, but not when the chat element is created.
 
 - **`isSplitScreen`** (`boolean`, default: `false`) - When `true`, the hook toggles an `is-split-screen` modifier class on the sidebar container so consumer SCSS can opt into a wider docked layout (e.g. `--am-sidebar-width: 50vw`).
 
