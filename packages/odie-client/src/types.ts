@@ -1,6 +1,6 @@
 import { ODIE_ALLOWED_BOTS, ODIE_ALL_BOT_SLUGS } from './constants';
 import type { CheckoutSupportVariation } from '@automattic/data-stores';
-import type { ZendeskConversation } from '@automattic/zendesk-client';
+import type { SmoochIntegrationKey, ZendeskConversation } from '@automattic/zendesk-client';
 import type { ReactNode, PropsWithChildren, SetStateAction } from 'react';
 
 export type OdieAssistantContextInterface = {
@@ -27,6 +27,7 @@ export type OdieAssistantContextInterface = {
 	userFieldMessage?: string | null;
 	userFieldFlowName?: string | null;
 	zendeskConversationTags?: string[];
+	zendeskIntegrationKey?: SmoochIntegrationKey | null;
 	externalChatProvider?: string | null;
 	externalChatId?: string | null;
 	forceEmailSupport: boolean;
@@ -57,6 +58,7 @@ export type OdieAssistantProviderProps = {
 	userFieldMessage?: string | null;
 	userFieldFlowName?: string | null;
 	zendeskConversationTags?: string[];
+	zendeskIntegrationKey?: SmoochIntegrationKey | null;
 	externalChatProvider?: string | null;
 	externalChatId?: string | null;
 	version?: string | null;

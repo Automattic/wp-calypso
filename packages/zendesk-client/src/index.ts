@@ -21,6 +21,7 @@ export { calculateUnread } from './use-get-unread-conversations';
 
 export {
 	isTestModeEnvironment,
+	getSmoochIntegrationId,
 	getBadRatingReasons,
 	isCsatTriggerMessage,
 	isZendeskSurveyMessage,

@@ -1,4 +1,4 @@
-import type { SMOOCH_INTEGRATION_ID_CUSTOM } from '@automattic/zendesk-client';
+import type { SmoochIntegrationKey } from '@automattic/zendesk-client';
 
 /**
  * Nested feature configuration for the help center.
@@ -21,7 +21,7 @@ export type HelpCenterFeatureConfig = {
 		/** Skip fetching support status. */
 		skipSupportStatus: boolean;
 		/** Key into `SMOOCH_INTEGRATION_ID_CUSTOM` selecting a dedicated Zendesk messaging integration. Null uses the default. */
-		zendeskIntegrationKey: keyof typeof SMOOCH_INTEGRATION_ID_CUSTOM | null;
+		zendeskIntegrationKey: SmoochIntegrationKey | null;
 		/** Tags written on the Zendesk conversation at escalation, for routing triggers. */
 		zendeskConversationTags: string[];
 	};

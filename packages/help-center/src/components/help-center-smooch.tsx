@@ -5,10 +5,8 @@ import {
 	useLoadZendeskMessaging,
 	useAuthenticateZendeskMessaging,
 	fetchMessagingAuth,
+	getSmoochIntegrationId,
 	isTestModeEnvironment,
-	SMOOCH_INTEGRATION_ID,
-	SMOOCH_INTEGRATION_ID_CUSTOM,
-	SMOOCH_INTEGRATION_ID_STAGING,
 	useCanConnectToZendeskMessaging,
 } from '@automattic/zendesk-client';
 import { useQueryClient, QueryClient } from '@tanstack/react-query';
@@ -20,24 +18,21 @@ import { useChatStatus } from '../hooks';
 import { useHelpCenterTracksEvent } from '../hooks/use-help-center-tracks-event';
 import { HELP_CENTER_STORE } from '../stores';
 import { getClientId, getZendeskConversations } from './utils';
-import type { ZendeskMessage } from '@automattic/zendesk-client';
+import type { SmoochIntegrationKey, ZendeskMessage } from '@automattic/zendesk-client';
 
 type RecordTracksEvent = ReturnType< typeof useHelpCenterTracksEvent >;
 
 const initSmooch = async (
 	jwt: string,
 	externalId: string,
-	integrationKey: keyof typeof SMOOCH_INTEGRATION_ID_CUSTOM | null,
+	integrationKey: SmoochIntegrationKey | null,
 	queryClient: QueryClient,
 	recordTracksEvent: RecordTracksEvent
 ): Promise< void > => {
 	const isTestMode = isTestModeEnvironment();
-	const integrationId = integrationKey
-		? SMOOCH_INTEGRATION_ID_CUSTOM[ integrationKey ]
-		: SMOOCH_INTEGRATION_ID;
 
 	await Smooch.init( {
-		integrationId: isTestMode ? SMOOCH_INTEGRATION_ID_STAGING : integrationId,
+		integrationId: getSmoochIntegrationId( integrationKey ),
 		delegate: {
 			async onInvalidAuth() {
 				recordTracksEvent( 'calypso_smooch_messenger_auth_error' );

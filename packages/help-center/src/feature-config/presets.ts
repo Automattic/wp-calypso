@@ -109,7 +109,7 @@ const wooPreset: HelpCenterFeatureConfig = {
 		hasPremiumSupport: true,
 		skipSupportStatus: true,
 		zendeskIntegrationKey: 'woo',
-		// Placeholder until the Zendesk admins confirm the Help Center routing tag.
+		// Routes the conversation to the Woo queue (Zendesk trigger, WOOPUBR-2382).
 		zendeskConversationTags: [ 'woo_support_flow_help_center' ],
 	},
 	home: {
