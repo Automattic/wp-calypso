@@ -50,21 +50,22 @@ export const ActiveToggle = ( {
 					? activateMutate( { siteId: item.ID, pluginId: plugin?.id || '' } )
 					: deactivateMutate( { siteId: item.ID, pluginId: plugin?.id || '' } );
 
-				// Return the promise so FieldActionToggle can show notices
-				return mutation
-					.then( ( result ) => {
-						invokeSurvicateEvent( next ? 'pluginActivated' : 'pluginDeactivated' );
-						return result;
-					} )
-					.catch( ( error: unknown ) => {
-						setOptimisticActive( ( prev ) => ( {
-							...prev,
-							[ item.ID ]: previous,
-						} ) );
+				// Kept off the returned chain so a Survicate failure can't turn a success into an error notice.
+				mutation.then(
+					() => invokeSurvicateEvent( next ? 'pluginActivated' : 'pluginDeactivated' ),
+					() => {}
+				);
 
-						// rethrow so FieldActionToggle shows error notice
-						throw error;
-					} );
+				// Return the promise so FieldActionToggle can show notices
+				return mutation.catch( ( error: unknown ) => {
+					setOptimisticActive( ( prev ) => ( {
+						...prev,
+						[ item.ID ]: previous,
+					} ) );
+
+					// rethrow so FieldActionToggle shows error notice
+					throw error;
+				} );
 			} }
 			successOn={ sprintf(
 				// translators: %s is the name of the plugin.

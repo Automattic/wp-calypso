@@ -10,7 +10,7 @@ import {
 import { useDispatch } from '@wordpress/data';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useAnalytics } from '../../../app/analytics';
 import { useSitesById } from '../hooks/use-sites-by-id';
 import type { PluginListRow } from '../types';
@@ -34,6 +34,11 @@ const SURVICATE_EVENTS: Record< string, string > = {
 	deactivate: 'pluginDeactivated',
 	update: 'pluginUpdated',
 };
+
+// Module-level rather than a ref: hosts that build `RenderModal` inline remount this
+// component while the action runs, so the instance that unmounts on close may not be
+// the one whose action succeeded.
+let pendingSurvicateEvent: string | null = null;
 
 function getConfirmButtonLabel( actionId: string ) {
 	switch ( actionId ) {
@@ -269,11 +274,11 @@ export default function ActionRenderModal( {
 
 	// Survicate drops events while a modal is open, so fire once this one has unmounted.
 	// The timeout lets @automattic/survicate's modal observer resume targeting first.
-	const pendingSurvicateEvent = useRef< string | null >( null );
 	useEffect(
 		() => () => {
-			const eventName = pendingSurvicateEvent.current;
+			const eventName = pendingSurvicateEvent;
 			if ( eventName ) {
+				pendingSurvicateEvent = null;
 				setTimeout( () => invokeSurvicateEvent( eventName ) );
 			}
 		},
@@ -438,7 +443,7 @@ export default function ActionRenderModal( {
 				createSuccessNotice( buildSuccessMessage( actionId, items, successCount ), {
 					type: 'snackbar',
 				} );
-				pendingSurvicateEvent.current = SURVICATE_EVENTS[ actionId ] ?? null;
+				pendingSurvicateEvent = SURVICATE_EVENTS[ actionId ] ?? null;
 			}
 			if ( errorCount > 0 ) {
 				createErrorNotice( buildErrorMessage( actionId, items, errorCount ), {

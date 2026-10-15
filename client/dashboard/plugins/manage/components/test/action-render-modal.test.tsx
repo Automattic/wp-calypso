@@ -2,25 +2,17 @@
  * @jest-environment jsdom
  */
 
-jest.mock( '@automattic/survicate', () => ( {
-	invokeSurvicateEvent: jest.fn(),
-} ) );
-
-jest.mock( '../../hooks/use-sites-by-id', () => ( {
-	useSitesById: () => ( { isLoadingSites: false, sitesById: new Map() } ),
-} ) );
-
-jest.mock( '../../../../app/analytics', () => ( {
-	useAnalytics: () => ( { recordTracksEvent: jest.fn() } ),
-} ) );
-
-import { invokeSurvicateEvent } from '@automattic/survicate';
-import { render, screen, waitFor } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import nock from 'nock';
+import { useState } from 'react';
+import { render } from '../../../../test-utils';
 import ActionRenderModal from '../action-render-modal';
 import type { PluginListRow } from '../../types';
+import type { ActionOnExecuteResponse } from '../action-render-modal';
 
-const mockInvokeSurvicateEvent = invokeSurvicateEvent as jest.Mock;
+const mockInvokeSurvicateEvent = jest.fn();
+const survicateWindow = window as unknown as { _sva?: { invokeEvent: jest.Mock } };
 
 const item = {
 	id: 'test-plugin/test-plugin.php',
@@ -34,28 +26,85 @@ const item = {
 	sitesWithPluginNotAutoupdated: [ 1 ],
 } as unknown as PluginListRow;
 
-async function confirm( actionId: string, result = { successCount: 1, errorCount: 0 } ) {
-	const onExecute = jest.fn().mockResolvedValue( result );
-	const closeModal = jest.fn();
-	const view = render(
+const CONFIRM_LABELS: Record< string, string > = {
+	activate: 'Activate',
+	deactivate: 'Deactivate',
+	update: 'Update',
+	delete: 'Delete',
+};
+
+/**
+ * Mounts the modal the way DataViews does: it stays mounted until `closeModal`
+ * is called, then unmounts. `remountDuringAction` gives it a new key while the
+ * action runs, as hosts with an inline `RenderModal` do when a refetch
+ * re-renders them.
+ */
+function Host( {
+	actionId,
+	onExecute,
+	remountDuringAction = false,
+}: {
+	actionId: string;
+	onExecute: () => Promise< ActionOnExecuteResponse >;
+	remountDuringAction?: boolean;
+} ) {
+	const [ isOpen, setIsOpen ] = useState( true );
+	const [ instance, setInstance ] = useState( 0 );
+
+	if ( ! isOpen ) {
+		return <p>Modal closed</p>;
+	}
+
+	return (
 		<ActionRenderModal
+			key={ instance }
 			actionId={ actionId }
 			items={ [ item ] }
-			closeModal={ closeModal }
-			onExecute={ onExecute }
+			closeModal={ () => setIsOpen( false ) }
+			onExecute={ async () => {
+				if ( remountDuringAction ) {
+					setInstance( ( value ) => value + 1 );
+				}
+				return onExecute();
+			} }
+		/>
+	);
+}
+
+async function confirm(
+	actionId: string,
+	{
+		result = { successCount: 1, errorCount: 0 },
+		remountDuringAction = false,
+	}: { result?: ActionOnExecuteResponse; remountDuringAction?: boolean } = {}
+) {
+	render(
+		<Host
+			actionId={ actionId }
+			onExecute={ () => Promise.resolve( result ) }
+			remountDuringAction={ remountDuringAction }
 		/>
 	);
 
-	const buttons = screen.getAllByRole( 'button' );
-	await userEvent.click( buttons[ buttons.length - 1 ] );
-	await waitFor( () => expect( closeModal ).toHaveBeenCalled() );
-	return view;
+	await userEvent.click(
+		await screen.findByRole( 'button', { name: CONFIRM_LABELS[ actionId ] } )
+	);
+	expect( await screen.findByText( 'Modal closed' ) ).toBeVisible();
 }
 
 const flushTimers = () => new Promise( ( resolve ) => setTimeout( resolve ) );
 
-describe( 'ActionRenderModal Survicate events', () => {
+describe( '<ActionRenderModal>', () => {
+	beforeEach( () => {
+		survicateWindow._sva = { invokeEvent: mockInvokeSurvicateEvent };
+		nock( 'https://public-api.wordpress.com' )
+			.get( '/rest/v1.2/me/sites' )
+			.query( true )
+			.reply( 200, { sites: [] } );
+	} );
+
 	afterEach( () => {
+		delete survicateWindow._sva;
 		mockInvokeSurvicateEvent.mockReset();
 	} );
 
@@ -63,43 +112,45 @@ describe( 'ActionRenderModal Survicate events', () => {
 		[ 'activate', 'pluginActivated' ],
 		[ 'deactivate', 'pluginDeactivated' ],
 		[ 'update', 'pluginUpdated' ],
-	] )( 'fires %s as %s once the modal unmounts after a success', async ( actionId, eventName ) => {
-		const { unmount } = await confirm( actionId );
+	] )( 'fires %s as %s once the modal closes after a success', async ( actionId, eventName ) => {
+		await confirm( actionId );
 
-		expect( mockInvokeSurvicateEvent ).not.toHaveBeenCalled();
-		unmount();
 		await waitFor( () => expect( mockInvokeSurvicateEvent ).toHaveBeenCalledWith( eventName ) );
 		expect( mockInvokeSurvicateEvent ).toHaveBeenCalledTimes( 1 );
 	} );
 
+	test( 'fires when the modal is remounted while the action runs', async () => {
+		await confirm( 'activate', { remountDuringAction: true } );
+
+		await waitFor( () =>
+			expect( mockInvokeSurvicateEvent ).toHaveBeenCalledWith( 'pluginActivated' )
+		);
+		expect( mockInvokeSurvicateEvent ).toHaveBeenCalledTimes( 1 );
+	} );
+
 	test( 'does not fire when every site failed', async () => {
-		const { unmount } = await confirm( 'activate', { successCount: 0, errorCount: 1 } );
-		unmount();
+		await confirm( 'activate', { result: { successCount: 0, errorCount: 1 } } );
 		await flushTimers();
 
 		expect( mockInvokeSurvicateEvent ).not.toHaveBeenCalled();
 	} );
 
 	test( 'does not fire for other plugin actions', async () => {
-		const { unmount } = await confirm( 'delete' );
-		unmount();
+		await confirm( 'delete' );
 		await flushTimers();
 
 		expect( mockInvokeSurvicateEvent ).not.toHaveBeenCalled();
 	} );
 
 	test( 'does not fire when the modal is cancelled', async () => {
-		const { unmount } = render(
-			<ActionRenderModal
-				actionId="activate"
-				items={ [ item ] }
-				closeModal={ jest.fn() }
-				onExecute={ jest.fn() }
-			/>
-		);
-		unmount();
+		const onExecute = jest.fn();
+		render( <Host actionId="activate" onExecute={ onExecute } /> );
+
+		await userEvent.click( await screen.findByRole( 'button', { name: 'Cancel' } ) );
+		expect( await screen.findByText( 'Modal closed' ) ).toBeVisible();
 		await flushTimers();
 
+		expect( onExecute ).not.toHaveBeenCalled();
 		expect( mockInvokeSurvicateEvent ).not.toHaveBeenCalled();
 	} );
 } );
