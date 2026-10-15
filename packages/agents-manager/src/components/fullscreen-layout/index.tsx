@@ -5,8 +5,9 @@ import { close, menu } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useNavigationType } from 'react-router-dom';
 import { useAgentsManagerContext } from '../../contexts';
+import { useEmbeddedPageBridge } from '../../hooks/use-embedded-page-bridge';
 import { useFullscreenNavigation } from '../../hooks/use-fullscreen-navigation';
-import { SitePanelProvider } from '../../hooks/use-site-panel';
+import { SitePanelProvider, useSitePanel } from '../../hooks/use-site-panel';
 import { isEditorPage } from '../../utils/is-editor-page';
 import lazyComponent from '../../utils/lazy-component';
 import { AgentChatRoutes } from '../agent-chat-routes';
@@ -16,7 +17,7 @@ import SupportGuide from '../support-guide';
 import ZendeskChat from '../zendesk-chat';
 import { FullscreenLink } from './fullscreen-link';
 import { FullscreenSidebar } from './sidebar';
-import { SitePanel, SitePanelToggle } from './site-panel';
+import { SitePanel, SitePanelCard, SitePanelToggle } from './site-panel';
 import type AgentDock from '../agent-dock';
 import type { ComponentProps } from 'react';
 import './style.scss';
@@ -40,6 +41,8 @@ function FullscreenLayoutContent( {
 	markdownExtensions = {},
 	...providerProps
 }: ComponentProps< typeof AgentDock > ) {
+	useEmbeddedPageBridge();
+	const { isOpen: isSitePanelOpen } = useSitePanel();
 	const {
 		abort,
 		exitFullscreen,
@@ -104,7 +107,11 @@ function FullscreenLayoutContent( {
 					onClick={ () => setIsSidebarOpen( false ) }
 				/>
 			) }
-			<main className="agents-manager-fullscreen__chat">
+			<main
+				className={ clsx( 'agents-manager-fullscreen__chat', {
+					'agents-manager-fullscreen__chat--panel-card-open': isSitePanelOpen,
+				} ) }
+			>
 				<div className="agents-manager-fullscreen__chat-toolbar">
 					<SitePanelToggle />
 				</div>
@@ -143,6 +150,7 @@ function FullscreenLayoutContent( {
 					/>
 				</div>
 			</main>
+			<SitePanelCard />
 			<SitePanel />
 		</section>
 	);

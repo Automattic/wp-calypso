@@ -9,9 +9,9 @@ export function SitePanelToggle() {
 		<Button
 			className="agents-manager-fullscreen__panel-toggle"
 			variant="secondary"
-			onClick={ () => void panel.open() }
+			onClick={ () => ( panel.isOpen ? panel.close() : void panel.open() ) }
 			aria-expanded={ panel.isOpen }
-			aria-controls="agents-manager-site-panel"
+			aria-controls="agents-manager-site-panel-card"
 		>
 			{ sprintf(
 				/* translators: %s: number of referenced pages. */
@@ -22,16 +22,16 @@ export function SitePanelToggle() {
 	) : null;
 }
 
-export function SitePanel() {
+export function SitePanelCard() {
 	const panel = useSitePanel();
 	if ( ! panel.isOpen ) {
 		return null;
 	}
 	return (
 		<aside
-			id="agents-manager-site-panel"
-			className="agents-manager-fullscreen__site-panel"
-			aria-label={ __( 'Site panel', __i18n_text_domain__ ) }
+			id="agents-manager-site-panel-card"
+			className="agents-manager-fullscreen__panel-card"
+			aria-label={ __( 'Referenced pages', __i18n_text_domain__ ) }
 		>
 			<header className="agents-manager-fullscreen__panel-header">
 				<strong>{ panel.title || __( 'Referenced pages', __i18n_text_domain__ ) }</strong>
@@ -60,6 +60,21 @@ export function SitePanel() {
 			</div>
 			{ panel.isLoading && <Spinner /> }
 			{ panel.error && <p role="alert">{ panel.error }</p> }
+		</aside>
+	);
+}
+
+export function SitePanel() {
+	const panel = useSitePanel();
+	if ( ! panel.isOpen ) {
+		return null;
+	}
+	return (
+		<aside
+			id="agents-manager-site-panel"
+			className="agents-manager-fullscreen__site-panel"
+			aria-label={ __( 'Site panel', __i18n_text_domain__ ) }
+		>
 			{ panel.url && (
 				<iframe
 					ref={ panel.setFrame }

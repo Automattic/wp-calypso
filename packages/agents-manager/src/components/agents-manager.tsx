@@ -155,8 +155,16 @@ function AgentSetup( {
 	agentId?: string;
 	urlSessionHandoff: SessionHandoff | null;
 } ): JSX.Element | null {
-	const { site, siteKey, currentUser, sectionName, currentRoute, agentConfig, setAgentConfig } =
-		useAgentsManagerContext();
+	const {
+		site,
+		siteKey,
+		currentUser,
+		sectionName,
+		currentRoute,
+		agentConfig,
+		setAgentConfig,
+		agentRuntimeOverride,
+	} = useAgentsManagerContext();
 	const userId = currentUser?.ID;
 
 	const loadedProvidersRef = useRef< LoadedProviders | null >( null );
@@ -203,10 +211,10 @@ function AgentSetup( {
 	}
 
 	useWebMcpTools( {
-		toolProvider: loadedProvidersRef.current?.toolProvider,
-		scope: `${ siteKey }:${ currentRoute ?? '' }:${ window.location.pathname }${
-			window.location.search
-		}`,
+		toolProvider: agentRuntimeOverride?.toolProvider ?? loadedProvidersRef.current?.toolProvider,
+		scope:
+			agentRuntimeOverride?.url ??
+			`${ siteKey }:${ currentRoute ?? '' }:${ window.location.pathname }${ window.location.search }`,
 	} );
 
 	useEffect( () => {
@@ -231,6 +239,7 @@ function AgentSetup( {
 		}
 
 		async function initializeAgent(): Promise< void > {
+			const runtimeKey = agentRuntimeOverride?.key ?? 'host';
 			// On a scope switch (`siteKey` plus the user, which key the tab's
 			// storage), drop the previous scope's agent so its still-streaming
 			// reply can't write into this scope's session or transcript.
@@ -263,13 +272,19 @@ function AgentSetup( {
 
 			const currentConfig = agentConfigRef.current;
 			const isSameAgent = currentConfig?.agentId === agentId;
+			const isSameRuntime = currentConfig?.runtimeKey === runtimeKey;
 			// A live agent is required to skip: after a teardown the config can
 			// still match while the agent is gone, and only a fresh config makes
 			// `useAgentChat` recreate it.
 			const hasLiveAgent = getAgentManager().hasAgent( agentId );
 
 			// Already aligned with this tab's session — nothing to initialize.
-			if ( isSameAgent && currentConfig?.sessionId === sessionId && hasLiveAgent ) {
+			if (
+				isSameAgent &&
+				isSameRuntime &&
+				currentConfig?.sessionId === sessionId &&
+				hasLiveAgent
+			) {
 				return;
 			}
 
@@ -278,8 +293,21 @@ function AgentSetup( {
 			// switches navigate first), and re-initializing would refetch and
 			// clobber the live transcript. The stored session applies on the next
 			// navigation, away or back to here.
-			if ( isSameAgent && isChatViewShowing && ! isReturningToChatView && hasLiveAgent ) {
+			if (
+				isSameAgent &&
+				isSameRuntime &&
+				isChatViewShowing &&
+				! isReturningToChatView &&
+				hasLiveAgent
+			) {
 				return;
+			}
+
+			if ( isSameAgent && ! isSameRuntime && hasLiveAgent ) {
+				await discardAgent();
+				if ( isSuperseded ) {
+					return;
+				}
 			}
 
 			let providers = loadedProvidersRef.current;
@@ -307,6 +335,7 @@ function AgentSetup( {
 				agentId,
 				version,
 				onTaskUpdate: providers.onTaskUpdate,
+				runtimeOverride: agentRuntimeOverride,
 			} );
 
 			if ( isSuperseded ) {
@@ -322,6 +351,7 @@ function AgentSetup( {
 			isSuperseded = true;
 		};
 	}, [
+		agentRuntimeOverride,
 		agentId,
 		currentRoute,
 		isChatViewShowing,
