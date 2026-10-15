@@ -98,7 +98,11 @@ describe( '<SiteLaunchButton>', () => {
 		render( <SiteLaunchButton site={ createMockSite() } tracksContext="test" /> );
 
 		const launchLink = await screen.findByRole( 'link', { name: 'Launch your site' } );
-		expect( launchLink ).toHaveAttribute( 'href', expect.stringContaining( '/start/launch-site' ) );
+		expect( launchLink ).toHaveAttribute( 'href', expect.stringContaining( '/setup/launch-site' ) );
+		expect( launchLink ).not.toHaveAttribute(
+			'href',
+			expect.stringContaining( 'hide_initial_query' )
+		);
 		expect( screen.queryByRole( 'dialog' ) ).not.toBeInTheDocument();
 	} );
 
@@ -271,7 +275,7 @@ describe( '<SiteLaunchButton>', () => {
 		);
 
 		const launchLink = await screen.findByRole( 'link', { name: 'Launch your site' } );
-		expect( launchLink ).toHaveAttribute( 'href', expect.stringContaining( '/start/launch-site' ) );
+		expect( launchLink ).toHaveAttribute( 'href', expect.stringContaining( '/setup/launch-site' ) );
 		expect( screen.queryByRole( 'dialog' ) ).not.toBeInTheDocument();
 	} );
 } );
