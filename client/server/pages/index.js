@@ -77,6 +77,7 @@ import middlewareCache from '../middleware/cache.js';
 import middlewareUnsupportedBrowser from '../middleware/unsupported-browser.js';
 import { logSectionResponse } from './analytics';
 import { registerCspReportRoute } from './csp-report';
+import { getFrameHeaders } from './frame-options';
 const debug = debugFactory( 'calypso:pages' );
 
 const calypsoEnv = config( 'env_id' );
@@ -425,9 +426,7 @@ function setUpLocalLanguageRevisions( req ) {
 
 function setUpLoggedOutRoute( req, res, next ) {
 	performanceMark( req.context, 'setup_logged_out_route', true );
-	res.set( {
-		'X-Frame-Options': 'SAMEORIGIN',
-	} );
+	res.set( getFrameHeaders( { env: calypsoEnv, nodeEnv: process.env.NODE_ENV, path: req.path } ) );
 
 	const setupRequests = [];
 
@@ -455,9 +454,7 @@ function setUpLoggedInRoute( req, res, next ) {
 	let redirectUrl;
 	let start;
 
-	res.set( {
-		'X-Frame-Options': 'SAMEORIGIN',
-	} );
+	res.set( getFrameHeaders( { env: calypsoEnv, nodeEnv: process.env.NODE_ENV, path: req.path } ) );
 
 	const setupRequests = [];
 
