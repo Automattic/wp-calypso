@@ -183,7 +183,7 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 		from: partnerConfig?.id ?? queryArgs.get( 'from' ) ?? undefined,
 	} );
 
-	// V1 and V2 both put the link in the top bar; `flow` tells the two layouts apart.
+	// `origin` says which placement was clicked; `flow` tells V1 and V2 apart.
 	const recordLoginLinkClick = ( origin: 'top-bar' | 'form' ) =>
 		recordTracksEvent( 'calypso_signup_login_link_click', { flow, step: stepName, origin } );
 

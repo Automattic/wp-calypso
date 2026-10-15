@@ -111,7 +111,7 @@ const OneLoginLayout = ( {
 	const { topBarLogo, hasCustomBranding } = usePartnerBranding();
 	const signupLink = useSignupLink( { signupUrl: signupUrlProp, origin: 'login-layout' } );
 
-	const SignUpLink = () => {
+	const renderSignUpLink = () => {
 		if ( isLostPasswordView ) {
 			return null;
 		}
@@ -128,7 +128,7 @@ const OneLoginLayout = ( {
 		);
 	};
 
-	const LoginLink = () => {
+	const renderLoginLink = () => {
 		if ( ! loginUrl ) {
 			return null;
 		}
@@ -140,7 +140,7 @@ const OneLoginLayout = ( {
 		);
 	};
 
-	const NoThanksLink = () => {
+	const renderNoThanksLink = () => {
 		if ( ! noThanksRedirectUrl ) {
 			return null;
 		}
@@ -176,7 +176,7 @@ const OneLoginLayout = ( {
 	};
 
 	const topBar = (): JSX.Element => {
-		const signupOrLoginLink = isSectionSignup ? <LoginLink /> : <SignUpLink />;
+		const signupOrLoginLink = isSectionSignup ? renderLoginLink() : renderSignUpLink();
 
 		// On the main login view, desktop moves the route to signup down to the footer, matching
 		// where signup puts its route to login, and leaves this slot empty, also matching signup.
@@ -196,7 +196,7 @@ const OneLoginLayout = ( {
 				) : (
 					signupOrLoginLink
 				) }
-				{ noThanksRedirectUrl && <NoThanksLink /> }
+				{ renderNoThanksLink() }
 			</nav>
 		);
 

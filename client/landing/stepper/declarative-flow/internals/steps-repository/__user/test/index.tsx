@@ -109,10 +109,12 @@ describe( 'User email signup step', () => {
 		} );
 
 		it.each( [
-			[ 'top-bar', '/onboarding/user', 'onboarding' ],
-			[ 'form', '/onboarding/user?ref=woo-hosting-solutions-flow', 'onboarding' ],
-			[ 'top-bar', '/test-flow/user', 'test-flow' ],
-		] )( 'records a click on the %s link at %s', ( origin, url, flow ) => {
+			[ 'form', '/onboarding/user', 'onboarding', false ],
+			[ 'top-bar', '/onboarding/user', 'onboarding', true ],
+			[ 'form', '/onboarding/user?ref=woo-hosting-solutions-flow', 'onboarding', false ],
+			[ 'top-bar', '/test-flow/user', 'test-flow', false ],
+		] )( 'records a click on the %s link at %s', ( origin, url, flow, isMobile ) => {
+			setViewport( { isMobile } );
 			renderUserStep( url, {}, flow );
 			fireEvent.click( screen.getByRole( 'link', { name: 'Log in' } ) );
 			expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_signup_login_link_click', {
