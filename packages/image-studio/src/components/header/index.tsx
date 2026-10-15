@@ -8,6 +8,7 @@ import {
 	chevronLeft,
 	chevronRight,
 	close,
+	crop,
 	external,
 	flipHorizontal,
 	flipVertical,
@@ -334,6 +335,19 @@ export const Header = ( {
 										} }
 									/>
 								) ) }
+								<Button
+									variant="tertiary"
+									icon={ crop }
+									label={ __( 'Crop', __i18n_text_domain__ ) }
+									showTooltip
+									disabled={ isAiProcessing || isSaving }
+									isPressed={ activeToolbarOption === ToolbarOption.Crop }
+									onClick={ () => {
+										const isCurrentlyOpen = activeToolbarOption === ToolbarOption.Crop;
+										trackImageStudioToolClick( 'crop', isCurrentlyOpen ? 'close' : 'open' );
+										handleToolbarClick( ToolbarOption.Crop );
+									} }
+								/>
 							</div>
 							<div className="image-studio-header__toolbar-group">
 								{ classicEditorUrl && onClassicMediaEditorNavigation && (

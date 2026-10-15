@@ -115,6 +115,12 @@ function getIndividualConfig( options = {} ) {
 					if ( request === '@wordpress/abilities' ) {
 						return null;
 					}
+					// Bundle @wordpress/image-cropper: it is not a wpScript package,
+					// so no wp-image-cropper handle exists (Gutenberg bundles it into
+					// wp-block-editor), and an external would stop Image Studio loading.
+					if ( request === '@wordpress/image-cropper' ) {
+						return null;
+					}
 					// No branch for @wordpress/router or @wordpress/private-apis —
 					// core registers both handles and they must stay external. Each
 					// keeps module-scope state the editor already owns (the router's
