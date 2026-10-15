@@ -28,7 +28,6 @@ Logged-out users log in first; the steps are then worked out for their site.
 - `coupon` – Applied at checkout.
 - `dashboard` – Passed on to checkout when it is `a4a`, `ciab` or `dotcom`.
 - `new` – Pre-fills the domain search.
-- `source` – Picks the domains step's Back target (`site`, `my-home`, `general-settings`).
 
 ## After launch
 

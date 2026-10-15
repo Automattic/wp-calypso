@@ -24,6 +24,7 @@ let mockOnboard: {
 	domainCartItem?: MinimalRequestCartProduct;
 	domainCartItems?: MinimalRequestCartProduct[];
 	planCartItem?: MinimalRequestCartProduct | null;
+	productCartItems?: MinimalRequestCartProduct[] | null;
 	signupDomainOrigin?: string;
 	siteUrl?: string;
 	pendingAction?: () => Promise< unknown >;
@@ -67,6 +68,7 @@ jest.mock( '@wordpress/data', () => {
 		getDomainCartItem: () => mockOnboard.domainCartItem,
 		getDomainCartItems: () => mockOnboard.domainCartItems,
 		getPlanCartItem: () => mockOnboard.planCartItem,
+		getProductCartItems: () => mockOnboard.productCartItems,
 		getSite: () => mockSite,
 	};
 	const actions = {
@@ -78,6 +80,9 @@ jest.mock( '@wordpress/data', () => {
 		},
 		setPlanCartItem: ( item: MinimalRequestCartProduct | null ) => {
 			mockOnboard.planCartItem = item;
+		},
+		setProductCartItems: ( items: MinimalRequestCartProduct[] | null ) => {
+			mockOnboard.productCartItems = items;
 		},
 		setSignupDomainOrigin: ( origin: string ) => {
 			mockOnboard.signupDomainOrigin = origin;
@@ -150,6 +155,12 @@ const ALL_STEPS = [
 const domainItem = { product_slug: 'domain_reg', meta: 'example.com' };
 const transferItem = { product_slug: 'domain_transfer', meta: 'example.org' };
 const planItem = { product_slug: 'personal-bundle' };
+const storageItem = {
+	product_slug: 'wordpress_com_1gb_space_addon_yearly',
+	quantity: 50,
+	volume: 1,
+	extra: { feature_slug: 'storage' },
+};
 const launched = { processingResult: ProcessingResult.SUCCESS };
 
 // The submit handler is typed per step; the tests drive it with whatever each step submits.
@@ -366,13 +377,25 @@ describe( 'launch-site flow', () => {
 			} );
 
 			expect( mockOnboard.planCartItem ).toEqual( planItem );
+			expect( mockOnboard.productCartItems ).toEqual( [] );
 			expect( mockOnboard.pendingAction ).toBeDefined();
 			expect( mockOnboard.progressTitle ).toBe( 'Your site will be live shortly.' );
 			expect( navigate ).toHaveBeenCalledWith( STEPS.PROCESSING.slug );
 		} );
 
+		it( 'stores a storage add-on picked with the plan', () => {
+			submit( STEPS.UNIFIED_PLANS.slug, {
+				stepName: 'plans',
+				cartItems: [ planItem, storageItem ],
+			} );
+
+			expect( mockOnboard.planCartItem ).toEqual( planItem );
+			expect( mockOnboard.productCartItems ).toEqual( [ storageItem ] );
+		} );
+
 		it( 'clears the plan when the user keeps the one they have', () => {
 			mockOnboard.planCartItem = planItem;
+			mockOnboard.productCartItems = [ storageItem ];
 
 			const { navigate } = submit( STEPS.UNIFIED_PLANS.slug, {
 				stepName: 'plans',
@@ -380,6 +403,7 @@ describe( 'launch-site flow', () => {
 			} );
 
 			expect( mockOnboard.planCartItem ).toBeNull();
+			expect( mockOnboard.productCartItems ).toEqual( [] );
 			expect( navigate ).toHaveBeenCalledWith( STEPS.PROCESSING.slug );
 		} );
 
@@ -485,6 +509,18 @@ describe( 'launch-site flow', () => {
 			);
 		} );
 
+		it( 'adds a storage add-on picked with the plan to the cart', async () => {
+			mockOnboard.planCartItem = planItem;
+			mockOnboard.productCartItems = [ storageItem ];
+
+			await submit( STEPS.PROCESSING.slug, launched ).result;
+
+			expect( addProductsToCart ).toHaveBeenCalledWith( 'example.wordpress.com', 'launch-site', [
+				planItem,
+				storageItem,
+			] );
+		} );
+
 		it( 'keeps the chosen domain through a refresh, which only persists the single item', async () => {
 			mockOnboard.domainCartItem = domainItem;
 
@@ -521,6 +557,7 @@ describe( 'launch-site flow', () => {
 			setFlowSteps( [ STEPS.DOMAIN_SEARCH, STEPS.USE_MY_DOMAIN, STEPS.PROCESSING, STEPS.ERROR ] );
 			mockOnboard.domainCartItems = [ domainItem ];
 			mockOnboard.planCartItem = planItem;
+			mockOnboard.productCartItems = [ storageItem ];
 
 			await submit( STEPS.PROCESSING.slug, launched ).result;
 

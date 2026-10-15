@@ -203,19 +203,22 @@ const launchSiteFlow: FlowV2< typeof initialize > = {
 		const launchParams = useLaunchParams();
 		const stepSlugs = getStepSlugs( this );
 		const productsList = useSelector( getProductsList );
-		const { getDomainCartItem, getDomainCartItems, getPlanCartItem } = useSelect(
-			( select ) => ( {
-				getDomainCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getDomainCartItem,
-				getDomainCartItems: ( select( ONBOARD_STORE ) as OnboardSelect ).getDomainCartItems,
-				getPlanCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getPlanCartItem,
-			} ),
-			[]
-		);
+		const { getDomainCartItem, getDomainCartItems, getPlanCartItem, getProductCartItems } =
+			useSelect(
+				( select ) => ( {
+					getDomainCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getDomainCartItem,
+					getDomainCartItems: ( select( ONBOARD_STORE ) as OnboardSelect ).getDomainCartItems,
+					getPlanCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getPlanCartItem,
+					getProductCartItems: ( select( ONBOARD_STORE ) as OnboardSelect ).getProductCartItems,
+				} ),
+				[]
+			);
 		const {
 			setDomainCartItem,
 			setDomainCartItems,
 			setPendingAction,
 			setPlanCartItem,
+			setProductCartItems,
 			setProgressTitle,
 			setSignupDomainOrigin,
 		} = useDispatch( ONBOARD_STORE ) as OnboardActions;
@@ -266,13 +269,15 @@ const launchSiteFlow: FlowV2< typeof initialize > = {
 		// root, so only pick up what this flow's own steps could have chosen.
 		const getLaunchCartItems = () => {
 			const domainItems = stepSlugs.includes( STEPS.DOMAIN_SEARCH.slug ) ? getDomainItems() : [];
-			const planCartItem = stepSlugs.includes( STEPS.UNIFIED_PLANS.slug )
-				? getPlanCartItem()
-				: null;
+			const hasPlansStep = stepSlugs.includes( STEPS.UNIFIED_PLANS.slug );
+			const planCartItem = hasPlansStep ? getPlanCartItem() : null;
+			const productCartItems = hasPlansStep ? ( getProductCartItems() ?? [] ) : [];
 
-			return [ ...domainItems, ...( planCartItem ? [ planCartItem ] : [] ) ].map(
-				addPrivacyIfSupported
-			);
+			return [
+				...domainItems.map( addPrivacyIfSupported ),
+				...( planCartItem ? [ planCartItem ] : [] ),
+				...productCartItems,
+			];
 		};
 
 		// The site is already live, so nothing here may keep the user from moving on.
@@ -357,7 +362,11 @@ const launchSiteFlow: FlowV2< typeof initialize > = {
 				}
 
 				case STEPS.UNIFIED_PLANS.slug: {
-					setPlanCartItem( providedDependencies?.cartItems?.[ 0 ] ?? null );
+					const [ planCartItem, ...productCartItems ] = providedDependencies?.cartItems ?? [];
+
+					setPlanCartItem( planCartItem ?? null );
+					// Storage add-ons picked alongside the plan.
+					setProductCartItems( productCartItems );
 
 					return launch();
 				}
