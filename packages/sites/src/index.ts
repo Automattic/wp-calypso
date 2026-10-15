@@ -5,7 +5,7 @@ export {
 	siteLaunchStatusGroupValues,
 	DEFAULT_SITE_LAUNCH_STATUS_GROUP_VALUE,
 } from './use-sites-list-grouping';
-export type { GroupableSiteLaunchStatuses } from './use-sites-list-grouping';
+export type { GroupableSiteLaunchStatuses, Status } from './use-sites-list-grouping';
 export {
 	useSitesListSorting,
 	isValidSorting,

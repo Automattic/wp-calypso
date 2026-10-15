@@ -7,7 +7,7 @@ import { MutableRefObject, useMemo, useState } from 'react';
 import { useInlineCss } from '../hooks';
 import Sidebar from './sidebar';
 import SitePreview from './site-preview';
-import type { Category, StyleVariation } from '@automattic/design-picker/src/types';
+import type { Category, StyleVariation } from '@automattic/design-picker';
 import type { GlobalStylesObject } from '@automattic/global-styles';
 import type { useNavigator } from '@wordpress/components';
 import './style.scss';

@@ -7,7 +7,7 @@ import React from 'react';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
 import SitesDashboardBannersManager from '../sites-dashboard-banners-manager';
-import type { Status } from '@automattic/sites/src/use-sites-list-grouping';
+import type { Status } from '@automattic/sites';
 
 // Mock the Banner component
 jest.mock( 'calypso/components/banner', () => {

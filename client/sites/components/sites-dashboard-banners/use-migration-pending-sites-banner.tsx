@@ -5,7 +5,7 @@ import { useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import { isCardDismissed } from 'calypso/blocks/dismissible-card/selectors';
 import Banner from 'calypso/components/banner';
-import type { Status } from '@automattic/sites/src/use-sites-list-grouping';
+import type { Status } from '@automattic/sites';
 
 export function useMigrationPendingSitesBanner( { sitesStatuses }: { sitesStatuses: Status[] } ) {
 	const id = 'migration-pending-sites';
