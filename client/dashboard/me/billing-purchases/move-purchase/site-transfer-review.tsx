@@ -179,7 +179,19 @@ export function SiteTransferReview( { purchase, targetSite, onChangeSite }: Prop
 	const companions = getCompanionItems( preview, bundledDomainSubscriptionId );
 	const selection =
 		chosenSelection ?? getDefaultSelection( companions, bundledDomainSubscriptionId );
-	const warnings = getVisibleWarnings( preview, companions, selection );
+	const warnings = [
+		...( preview.primary?.type === 'domain' && targetSite.plan?.is_free
+			? [
+					{
+						code: 'target_has_no_paid_plan',
+						message: __(
+							'The target site doesn’t have a paid plan, so you won’t be able to set this domain as primary on the site.'
+						),
+					},
+				]
+			: [] ),
+		...getVisibleWarnings( preview, companions, selection ),
+	];
 	const sourceName = purchase.site_slug || purchase.domain;
 
 	const toggleCompanion = ( item: SiteTransferItem, isSelected: boolean ) => {
@@ -224,7 +236,14 @@ export function SiteTransferReview( { purchase, targetSite, onChangeSite }: Prop
 					);
 					navigate( {
 						to: purchaseSettingsRoute.fullPath,
-						params: { purchaseId: purchase.ID },
+						// The site-level purchase pages carry the site in the URL, and it has changed.
+						params: ( prev ) =>
+							Object.assign(
+								{},
+								prev,
+								{ purchaseId: purchase.ID },
+								'siteSlug' in prev ? { siteSlug: targetSite.slug } : {}
+							),
 					} );
 				},
 				onError: ( error ) => {

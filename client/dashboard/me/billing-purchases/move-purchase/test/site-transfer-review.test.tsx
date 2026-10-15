@@ -129,6 +129,62 @@ describe( '<SiteTransferReview />', () => {
 		expect( screen.getByText( /stays bundled with the plan/ ) ).toBeVisible();
 	} );
 
+	test( 'warns that a domain can’t be primary on a site without a paid plan', async () => {
+		const domainPurchase = {
+			...purchase,
+			product_name: 'Domain Registration',
+			product_slug: 'domain_reg',
+			meta: 'other.com',
+			is_plan: false,
+			is_domain: true,
+			included_domain: '',
+			included_domain_purchase_id: null,
+		} as Purchase;
+		mockPreview(
+			makePreview( {
+				primary: {
+					type: 'domain',
+					label: 'other.com',
+					subscription_ids: [ 10 ],
+					product_names: [ 'Domain Registration' ],
+					notes: [],
+					blocker: null,
+				},
+				warnings: [],
+				items: [],
+			} )
+		);
+
+		render(
+			<SiteTransferReview
+				purchase={ domainPurchase }
+				targetSite={ { ...targetSite, plan: { is_free: true } } as Site }
+				onChangeSite={ jest.fn() }
+			/>
+		);
+
+		expect(
+			await screen.findByText( /won’t be able to set this domain as primary/ )
+		).toBeVisible();
+	} );
+
+	test( 'does not warn about the primary domain when moving a plan', async () => {
+		mockPreview( makePreview() );
+
+		render(
+			<SiteTransferReview
+				purchase={ purchase }
+				targetSite={ { ...targetSite, plan: { is_free: true } } as Site }
+				onChangeSite={ jest.fn() }
+			/>
+		);
+
+		await screen.findByRole( 'checkbox', { name: 'bundled.com' } );
+		expect(
+			screen.queryByText( /won’t be able to set this domain as primary/ )
+		).not.toBeInTheDocument();
+	} );
+
 	test( 'explains why the plan cannot move and disables the move', async () => {
 		mockPreview(
 			makePreview( {
