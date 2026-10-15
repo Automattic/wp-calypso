@@ -51,9 +51,11 @@ function ApplicationStatusCard( {
 
 export function PendingTierCard( {
 	onRelaunchTour,
+	tourLabel = __( 'Relaunch welcome tour' ),
 	recordTracksEvent,
 }: {
 	onRelaunchTour?: () => void;
+	tourLabel?: string;
 	recordTracksEvent?: RecordTracksEvent;
 } ) {
 	return (
@@ -91,7 +93,7 @@ export function PendingTierCard( {
 							onRelaunchTour();
 						} }
 					>
-						{ __( 'Relaunch welcome tour' ) }
+						{ tourLabel }
 					</Button>
 				) }
 			</ButtonStack>
