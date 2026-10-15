@@ -1385,6 +1385,11 @@ describe( 'main app', () => {
 			} );
 			expect( response.redirect ).toHaveBeenCalledWith( 302, '/setup/launch-site/es' );
 		} );
+
+		it( 'leaves flows that only share the prefix alone', async () => {
+			const { response } = await app.run( { request: { url: '/start/launch-site-foo' } } );
+			expect( response.redirect ).not.toHaveBeenCalledWith( 302, expect.anything() );
+		} );
 	} );
 
 	describe( 'Route /cspreport', () => {
