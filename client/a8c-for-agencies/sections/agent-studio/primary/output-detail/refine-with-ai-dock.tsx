@@ -26,6 +26,7 @@ import useRefineCollateralPage, {
 	getRefineClarificationMessage,
 } from '../../data/use-refine-collateral-page';
 import type { ComponentProps } from 'react';
+
 import './refine-with-ai-dock.scss';
 
 type Message = ComponentProps< typeof AgentUI >[ 'messages' ][ number ];
