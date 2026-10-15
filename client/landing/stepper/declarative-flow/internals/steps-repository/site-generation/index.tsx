@@ -2,7 +2,7 @@ import { isEcommercePlan } from '@automattic/calypso-products';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
-import { useSite } from 'calypso/landing/stepper/hooks/use-site';
+import { useSiteQuery } from 'calypso/landing/stepper/hooks/use-site';
 import { getBuildWowGraph } from 'calypso/landing/stepper/utils/build-wow';
 import { useSiteGeneration } from './use-site-generation';
 import { SiteGenerationView } from './view';
@@ -17,8 +17,11 @@ const SiteGeneration: StepType = function SiteGeneration() {
 	const specId = query.get( 'specId' );
 	const graph = getBuildWowGraph( query );
 	// Only the store builder sends a Commerce site here, and checkout has given
-	// it the plan by now.
-	const isStoreBuild = isEcommercePlan( useSite()?.plan?.product_slug ?? '' );
+	// it the plan by now. Unknown until the site loads.
+	const { data: site, isLoading: isSiteLoading } = useSiteQuery();
+	const isStoreBuild = isSiteLoading
+		? undefined
+		: isEcommercePlan( site?.plan?.product_slug ?? '' );
 	// Fallback checklist only: the server-computed ui.steps from the status
 	// endpoint is authoritative (labels included, already localized). This
 	// list covers the moments before the first response arrives, and backends

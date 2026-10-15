@@ -153,7 +153,9 @@ function WaitingCanvas( {
 			'This can take up to 10 minutes. No worries, you’ll receive an email when the site is ready.'
 		),
 	};
-	const description = descriptions[ promisedMinutes ];
+	// Stores get a longer promise, so a DSL build shows none until that is known.
+	const description =
+		graph === 'dsl' && isStoreBuild === undefined ? null : descriptions[ promisedMinutes ];
 
 	return (
 		<div className="site-generation__waiting">
@@ -294,6 +296,7 @@ export function SiteGenerationView( {
 }: {
 	state: SiteGenerationState;
 	graph?: BuildWowGraph;
+	/** Undefined while the site's plan is still loading. */
 	isStoreBuild?: boolean;
 	onReload: () => void;
 } ) {
