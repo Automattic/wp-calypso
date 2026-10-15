@@ -1,6 +1,6 @@
 import { Site } from '@automattic/api-core';
 import { formatNumber } from '@automattic/number-formatters';
-import { invokeSurvicateEvent, isModalOpen, observeModals } from '@automattic/survicate';
+import { invokeSurvicateEventAfterModalsClose } from '@automattic/survicate';
 import {
 	__experimentalVStack as VStack,
 	__experimentalHStack as HStack,
@@ -35,22 +35,8 @@ const SURVICATE_EVENTS: Record< string, string > = {
 	update: 'pluginUpdated',
 };
 
-// Survicate drops events while a modal is open, so wait for this one to leave the DOM.
-// The timeout lets @automattic/survicate's own modal observer resume targeting first.
-function invokeSurvicateEventOnceModalsClose( eventName: string ) {
-	const invoke = () => setTimeout( () => invokeSurvicateEvent( eventName ) );
-	if ( ! isModalOpen() ) {
-		invoke();
-		return;
-	}
-	const stopObserving = observeModals(
-		() => {},
-		() => {
-			stopObserving();
-			invoke();
-		}
-	);
-}
+// Before the SDK loads each event waits for SurvicateReady; keep only the latest action's.
+let cancelSurvicateEvent = () => {};
 
 function getConfirmButtonLabel( actionId: string ) {
 	switch ( actionId ) {
@@ -455,7 +441,8 @@ export default function ActionRenderModal( {
 			setIsBusy( false );
 			closeModal?.();
 			if ( survicateEvent ) {
-				invokeSurvicateEventOnceModalsClose( survicateEvent );
+				cancelSurvicateEvent();
+				cancelSurvicateEvent = invokeSurvicateEventAfterModalsClose( survicateEvent );
 			}
 		}
 	};

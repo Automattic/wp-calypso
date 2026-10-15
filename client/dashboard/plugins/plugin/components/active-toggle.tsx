@@ -33,7 +33,9 @@ export const ActiveToggle = ( {
 	// Use optimistic value if we have one, otherwise use server value
 	const checked = optimistic ?? serverChecked;
 
-	// Before the SDK loads each event waits for SurvicateReady; keep only the latest flip's.
+	// Before the SDK loads each event waits for SurvicateReady; keep only the latest flip's,
+	// even when an earlier flip's request is the one that finishes last.
+	const latestFlip = useRef( 0 );
 	const cancelSurvicateEvent = useRef< () => void >( () => {} );
 
 	return (
@@ -55,15 +57,18 @@ export const ActiveToggle = ( {
 					: deactivateMutate( { siteId: item.ID, pluginId: plugin?.id || '' } );
 
 				// Kept off the returned chain so a Survicate failure can't turn a success into an error notice.
-				mutation.then(
-					() => {
+				const flip = ++latestFlip.current;
+				mutation
+					.then( () => {
+						if ( flip !== latestFlip.current ) {
+							return;
+						}
 						cancelSurvicateEvent.current();
 						cancelSurvicateEvent.current = invokeSurvicateEvent(
 							next ? 'pluginActivated' : 'pluginDeactivated'
 						);
-					},
-					() => {}
-				);
+					} )
+					.catch( () => {} );
 
 				// Return the promise so FieldActionToggle can show notices
 				return mutation.catch( ( error: unknown ) => {

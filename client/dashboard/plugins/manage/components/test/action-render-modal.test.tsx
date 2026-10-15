@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 
-import { act, screen, waitFor } from '@testing-library/react';
+import { act, cleanup, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { useState } from 'react';
@@ -11,8 +11,15 @@ import ActionRenderModal from '../action-render-modal';
 import type { PluginListRow } from '../../types';
 import type { ActionOnExecuteResponse } from '../action-render-modal';
 
-const mockInvokeSurvicateEvent = jest.fn();
-const survicateWindow = window as unknown as { _sva?: { invokeEvent: jest.Mock } };
+const mockCancelSurvicateEvent = jest.fn();
+const mockInvokeSurvicateEvent = jest.fn< () => void, [ string ] >(
+	() => mockCancelSurvicateEvent
+);
+
+jest.mock( '@automattic/survicate', () => ( {
+	invokeSurvicateEventAfterModalsClose: ( eventName: string ) =>
+		mockInvokeSurvicateEvent( eventName ),
+} ) );
 
 const item = {
 	id: 'test-plugin/test-plugin.php',
@@ -96,7 +103,6 @@ const flushTimers = () => new Promise( ( resolve ) => setTimeout( resolve ) );
 
 describe( '<ActionRenderModal>', () => {
 	beforeEach( () => {
-		survicateWindow._sva = { invokeEvent: mockInvokeSurvicateEvent };
 		nock( 'https://public-api.wordpress.com' )
 			.get( '/rest/v1.2/me/sites' )
 			.query( true )
@@ -104,8 +110,8 @@ describe( '<ActionRenderModal>', () => {
 	} );
 
 	afterEach( () => {
-		delete survicateWindow._sva;
-		mockInvokeSurvicateEvent.mockReset();
+		mockInvokeSurvicateEvent.mockClear();
+		mockCancelSurvicateEvent.mockClear();
 	} );
 
 	test.each( [
@@ -128,7 +134,7 @@ describe( '<ActionRenderModal>', () => {
 		expect( mockInvokeSurvicateEvent ).toHaveBeenCalledTimes( 1 );
 	} );
 
-	test( 'fires once and does not leak to a later modal when closed before the action resolves', async () => {
+	test( 'fires when the modal is closed before the action resolves', async () => {
 		let resolveAction: ( result: ActionOnExecuteResponse ) => void = () => {};
 		const { unmount } = render(
 			<Host
@@ -141,33 +147,19 @@ describe( '<ActionRenderModal>', () => {
 		unmount();
 		await act( async () => resolveAction( { successCount: 1, errorCount: 0 } ) );
 
-		await waitFor( () =>
-			expect( mockInvokeSurvicateEvent ).toHaveBeenCalledWith( 'pluginUpdated' )
-		);
-
-		render( <Host actionId="delete" onExecute={ jest.fn() } /> );
-		await userEvent.click( await screen.findByRole( 'button', { name: 'Cancel' } ) );
-		await flushTimers();
-
+		expect( mockInvokeSurvicateEvent ).toHaveBeenCalledWith( 'pluginUpdated' );
 		expect( mockInvokeSurvicateEvent ).toHaveBeenCalledTimes( 1 );
 	} );
 
-	test( 'waits for a modal that is still open', async () => {
-		const overlay = document.createElement( 'div' );
-		overlay.className = 'components-modal__screen-overlay';
-		( overlay as HTMLElement & { checkVisibility?: () => boolean } ).checkVisibility = () => true;
-		document.body.appendChild( overlay );
+	test( 'cancels the pending event of an earlier action', async () => {
+		await confirm( 'update' );
+		mockCancelSurvicateEvent.mockClear();
 
+		cleanup();
 		await confirm( 'activate' );
-		await flushTimers();
-		expect( mockInvokeSurvicateEvent ).not.toHaveBeenCalled();
 
-		overlay.remove();
-
-		await waitFor( () =>
-			expect( mockInvokeSurvicateEvent ).toHaveBeenCalledWith( 'pluginActivated' )
-		);
-		expect( mockInvokeSurvicateEvent ).toHaveBeenCalledTimes( 1 );
+		expect( mockCancelSurvicateEvent ).toHaveBeenCalledTimes( 1 );
+		expect( mockInvokeSurvicateEvent ).toHaveBeenLastCalledWith( 'pluginActivated' );
 	} );
 
 	test( 'does not fire when every site failed', async () => {

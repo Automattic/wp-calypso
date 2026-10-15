@@ -18,7 +18,11 @@ jest.mock( '@automattic/calypso-support-session', () => ( {
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { isSupportSession } from '@automattic/calypso-support-session';
 import { select, subscribe } from '@wordpress/data';
-import { invokeSurvicateEvent, observeHelpCenter } from '../invoke-event';
+import {
+	invokeSurvicateEvent,
+	invokeSurvicateEventAfterModalsClose,
+	observeHelpCenter,
+} from '../invoke-event';
 
 const mockSelect = select as jest.Mock;
 const mockSubscribe = subscribe as unknown as jest.Mock;
@@ -274,5 +278,143 @@ describe( 'observeHelpCenter', () => {
 		notifyStore();
 
 		expect( onOpen ).toHaveBeenCalledTimes( 1 );
+	} );
+} );
+
+describe( 'invokeSurvicateEventAfterModalsClose', () => {
+	function openModal(): HTMLElement {
+		const modal = document.createElement( 'div' );
+		modal.setAttribute( 'role', 'dialog' );
+		modal.setAttribute( 'aria-modal', 'true' );
+		( modal as HTMLElement & { checkVisibility?: () => boolean } ).checkVisibility = () => true;
+		document.body.appendChild( modal );
+		return modal;
+	}
+
+	// MutationObserver callbacks run as microtasks.
+	const flushMutations = () => new Promise( ( resolve ) => setTimeout( resolve, 0 ) );
+
+	beforeEach( () => {
+		window._sva = undefined;
+		setHelpCenterOpen( false );
+		mockIsSupportSession.mockReturnValue( false );
+	} );
+
+	afterEach( () => {
+		window._sva = undefined;
+		document.body.innerHTML = '';
+		mockSelect.mockReset();
+		mockRecordTracksEvent.mockReset();
+		jest.useRealTimers();
+	} );
+
+	test( 'should invoke immediately when no modal is open', () => {
+		const invokeEvent = jest.fn();
+		window._sva = { invokeEvent };
+
+		invokeSurvicateEventAfterModalsClose( 'testEvent' );
+
+		expect( invokeEvent ).toHaveBeenCalledWith( 'testEvent' );
+	} );
+
+	test( 'should wait for the open modal to close before invoking', async () => {
+		const invokeEvent = jest.fn();
+		window._sva = { invokeEvent };
+		const modal = openModal();
+
+		invokeSurvicateEventAfterModalsClose( 'testEvent' );
+		expect( invokeEvent ).not.toHaveBeenCalled();
+		expect( mockRecordTracksEvent ).not.toHaveBeenCalled();
+
+		modal.remove();
+		await flushMutations();
+
+		expect( invokeEvent ).toHaveBeenCalledTimes( 1 );
+		expect( invokeEvent ).toHaveBeenCalledWith( 'testEvent' );
+	} );
+
+	test( 'should resume paused targeting before invoking', async () => {
+		let disableTargetingWhenInvoked: boolean | undefined;
+		const sva: NonNullable< typeof window._sva > = {
+			disableTargeting: true,
+			retarget: jest.fn(),
+			invokeEvent: jest.fn( () => {
+				disableTargetingWhenInvoked = sva.disableTargeting;
+			} ),
+		};
+		window._sva = sva;
+		const modal = openModal();
+
+		invokeSurvicateEventAfterModalsClose( 'testEvent' );
+		modal.remove();
+		await flushMutations();
+
+		expect( sva.invokeEvent ).toHaveBeenCalledWith( 'testEvent' );
+		expect( disableTargetingWhenInvoked ).toBe( false );
+	} );
+
+	test( 'should keep waiting while another modal is still open', async () => {
+		const invokeEvent = jest.fn();
+		window._sva = { invokeEvent };
+		const first = openModal();
+		const second = openModal();
+
+		invokeSurvicateEventAfterModalsClose( 'testEvent' );
+
+		first.remove();
+		await flushMutations();
+		expect( invokeEvent ).not.toHaveBeenCalled();
+
+		second.remove();
+		await flushMutations();
+		expect( invokeEvent ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	test( 'should still apply the Help Center check once the modal closes', async () => {
+		const invokeEvent = jest.fn();
+		window._sva = { invokeEvent, closeSurvey: jest.fn() };
+		const modal = openModal();
+
+		invokeSurvicateEventAfterModalsClose( 'testEvent' );
+		setHelpCenterOpen( true );
+		modal.remove();
+		await flushMutations();
+
+		expect( invokeEvent ).not.toHaveBeenCalled();
+		expect( mockRecordTracksEvent ).toHaveBeenCalledWith( 'calypso_survicate_survey_suppressed', {
+			reason: 'help_center',
+			trigger: 'invoke_event',
+			event_name: 'testEvent',
+		} );
+	} );
+
+	test( 'should give up waiting after the timeout and record the suppression', () => {
+		jest.useFakeTimers();
+		const invokeEvent = jest.fn();
+		window._sva = { invokeEvent, closeSurvey: jest.fn() };
+		openModal();
+
+		invokeSurvicateEventAfterModalsClose( 'testEvent', 1000 );
+		jest.advanceTimersByTime( 1000 );
+
+		expect( invokeEvent ).not.toHaveBeenCalled();
+		expect( mockRecordTracksEvent ).toHaveBeenCalledWith( 'calypso_survicate_survey_suppressed', {
+			reason: 'modal',
+			trigger: 'invoke_event',
+			event_name: 'testEvent',
+		} );
+	} );
+
+	test( 'should not invoke after cleanup', async () => {
+		const invokeEvent = jest.fn();
+		window._sva = { invokeEvent };
+		const modal = openModal();
+
+		const cleanup = invokeSurvicateEventAfterModalsClose( 'testEvent' );
+		cleanup();
+		modal.remove();
+		await flushMutations();
+
+		expect( invokeEvent ).not.toHaveBeenCalled();
 	} );
 } );
