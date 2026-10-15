@@ -4,14 +4,15 @@ import {
 	__experimentalHStack as HStack,
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
-	__experimentalGrid as Grid,
 } from '@wordpress/components';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { useState, useMemo } from 'react';
+import Grid from '../../../components/grid';
 import ResourceCard from './resource-card';
 import type { ResourceItem, RecordTracksEvent } from './types';
 import type { View, Field } from '@wordpress/dataviews';
+import './style.scss';
 
 const initialView: View = {
 	type: 'list',
@@ -109,26 +110,28 @@ export default function BrowseAllResources( {
 					{ __( 'Browse all' ) }
 				</Heading>
 			</Spacer>
-			<DataViews< ResourceItem >
-				data={ resources }
-				fields={ fields }
-				view={ view }
-				onChangeView={ setView }
-				paginationInfo={ paginationInfo }
-				defaultLayouts={ { list: {} } }
-				getItemId={ ( item ) => String( item.id ) }
-				search
-			>
-				<HStack justify="start" style={ { paddingBlock: '16px' } }>
-					<DataViews.Search />
-					<DataViews.FiltersToggle />
-				</HStack>
-				<Spacer marginBottom={ 4 }>
-					<DataViews.FiltersToggled />
-				</Spacer>
-			</DataViews>
+			<div className="dashboard-resource-center__filters">
+				<DataViews< ResourceItem >
+					data={ resources }
+					fields={ fields }
+					view={ view }
+					onChangeView={ setView }
+					paginationInfo={ paginationInfo }
+					defaultLayouts={ { list: {} } }
+					getItemId={ ( item ) => String( item.id ) }
+					search
+				>
+					<HStack justify="start" style={ { paddingBlock: '16px' } }>
+						<DataViews.Search />
+						<DataViews.FiltersToggle />
+					</HStack>
+					<Spacer marginBottom={ 4 }>
+						<DataViews.FiltersToggled />
+					</Spacer>
+				</DataViews>
+			</div>
 			{ filteredData.length > 0 ? (
-				<Grid templateColumns="repeat( auto-fill, minmax( 280px, 1fr ) )" gap={ 8 }>
+				<Grid templateColumns="repeat( auto-fill, minmax( 280px, 1fr ) )" gap="2xl">
 					{ filteredData.map( ( item ) => (
 						<ResourceCard
 							key={ item.id }

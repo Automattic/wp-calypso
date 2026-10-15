@@ -12,16 +12,22 @@ import { useCallback, useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { usePersistentView } from '../../app/hooks/use-persistent-view';
 import { PerformanceTrackerStop } from '../../app/performance-tracking';
-import { agencySitesRoute } from '../../app/router/agency';
+import {
+	agencySitesRoute,
+	hasAnyCapability,
+	isRouteAllowedByCapabilities,
+	marketplaceRoute,
+} from '../../app/router/agency';
 import { DataViews, DataViewsCard, DataViewsEmptyStateLayout } from '../../components/dataviews';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { DEFAULT_PER_PAGE, DEFAULT_CONFIG, recordViewChanges } from '../../sites/dataviews/views';
+import { AgencyNotices } from '../components/agency-notices';
 import { DevSiteConfigurationModal } from '../marketplace/purchases/site-configuration-modal';
 import AddNewSite from './add-new-site';
 import ConnectSiteModal from './add-new-site/connect-site-modal';
 import ImportFromWPCOMModal from './add-new-site/import-from-wpcom-modal';
-import { useAgencyFields, getAgencyActions } from './dataviews';
+import { useAgencyFields, useAgencyActions } from './dataviews';
 import { hasWpcomLicenseWithoutSite } from './lib';
 import ProvisioningSiteNotices from './provisioning-notice';
 import type { AddNewSiteAction } from './add-new-site/types';
@@ -100,12 +106,7 @@ function NeedsSetupDescription( { count }: { count: number } ) {
 		),
 		{
 			count: <>{ count }</>,
-			link: (
-				<Link
-					to="/marketplace/purchases"
-					search={ { status: 'unassigned', search: 'WordPress.com' } }
-				/>
-			),
+			link: <Link to="/purchases" search={ { status: 'unassigned', search: 'WordPress.com' } } />,
 		}
 	);
 }
@@ -115,6 +116,14 @@ export default function AgencySites() {
 	const licensesReadyToSetUp = useLicensesReadyToSetUp();
 	const currentSearchParams = agencySitesRoute.useSearch();
 	const [ activeModal, setActiveModal ] = useState< 'menu' | AddNewSiteAction | null >( null );
+
+	const { data: agency } = useQuery( activeAgencyQuery() );
+	const capabilities = agency?.user?.capabilities ?? [];
+	const canRemoveSites = hasAnyCapability( capabilities, 'a4a_remove_managed_sites' );
+	// Issuing a license navigates to the Marketplace, so read the requirement off
+	// that route rather than restating its capability list here.
+	const canIssueLicenses = isRouteAllowedByCapabilities( marketplaceRoute, capabilities );
+	const actions = useAgencyActions( { canIssueLicenses, canRemoveSites } );
 
 	const { view, updateView, resetView } = usePersistentView( {
 		slug: 'agency-sites',
@@ -133,7 +142,7 @@ export default function AgencySites() {
 
 	const handleSiteClick = useCallback(
 		( site: AgencySite ) =>
-			recordTracksEvent( 'calypso_dashboard_sites_item_click', { site_id: site.blog_id } ),
+			recordTracksEvent( 'calypso_a4a_sites_item_click', { site_id: site.blog_id } ),
 		[ recordTracksEvent ]
 	);
 
@@ -165,7 +174,7 @@ export default function AgencySites() {
 						<Button
 							variant="primary"
 							onClick={ () => {
-								recordTracksEvent( 'calypso_dashboard_agency_sites_add_new_site_clicked' );
+								recordTracksEvent( 'calypso_a4a_sites_add_new_site_clicked' );
 								setActiveModal( 'menu' );
 							} }
 							__next40pxDefaultSize
@@ -175,7 +184,12 @@ export default function AgencySites() {
 					}
 				/>
 			}
-			notices={ <ProvisioningSiteNotices /> }
+			notices={
+				<>
+					<ProvisioningSiteNotices />
+					<AgencyNotices />
+				</>
+			}
 		>
 			{ activeModal === 'menu' && (
 				<Modal title={ __( 'Add new site' ) } onRequestClose={ closeModal }>
@@ -195,7 +209,7 @@ export default function AgencySites() {
 					getItemId={ ( item ) => item.blog_id.toString() }
 					data={ sites }
 					fields={ fields }
-					actions={ getAgencyActions( recordTracksEvent ) }
+					actions={ actions }
 					view={ view }
 					isLoading={ isLoading }
 					isPlaceholderData={ isPlaceholderData }

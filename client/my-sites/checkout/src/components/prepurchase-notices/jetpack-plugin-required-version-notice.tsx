@@ -2,9 +2,8 @@ import { getJetpackProductDisplayName } from '@automattic/calypso-products';
 import { LocalizeProps, useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import { preventWidows } from 'calypso/lib/formatting';
-import getSiteAdminUrl from 'calypso/state/sites/selectors/get-site-admin-url';
-import getSiteOption from 'calypso/state/sites/selectors/get-site-option';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
+import { getSiteAdminUrl, useCheckoutSite } from '../../hooks/use-checkout-site';
 import PrePurchaseNotice from './prepurchase-notice';
 import type { Product } from '@automattic/calypso-products';
 
@@ -54,20 +53,9 @@ const JetpackPluginRequiredVersionNotice = ( {
 	minVersion: string | number;
 } ) => {
 	const translate = useTranslate();
-	const siteId = useSelector( getSelectedSiteId );
-
-	let siteJetpackVersion = useSelector( ( state ) =>
-		getSiteOption( state, siteId, 'jetpack_version' )
-	);
-
-	// Validate that the site option isn't something unexpected for some reason.
-	if ( typeof siteJetpackVersion !== 'string' && typeof siteJetpackVersion !== 'number' ) {
-		siteJetpackVersion = undefined;
-	}
-
-	const pluginUpgradeUrl = useSelector( ( state ) =>
-		getSiteAdminUrl( state, siteId, 'update-core.php#update-plugins-table' )
-	);
+	const { data: site } = useCheckoutSite( useSelector( getSelectedSiteId ) );
+	const siteJetpackVersion = site?.options?.jetpack_version;
+	const pluginUpgradeUrl = getSiteAdminUrl( site, 'update-core.php#update-plugins-table' );
 
 	const message = getMessage( translate, product, siteJetpackVersion, minVersion );
 

@@ -1,7 +1,7 @@
 import { activeAgencyQuery, paginatedJetpackAgencyLicensesQuery } from '@automattic/api-queries';
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
-import { useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { useAnalytics } from '../../../app/analytics';
 import { usePersistentView } from '../../../app/hooks/use-persistent-view';
 import { useLocale } from '../../../app/locale';
@@ -12,11 +12,29 @@ import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
 import RouterLinkButton from '../../../components/router-link-button';
 import { DEFAULT_CONFIG } from '../../../sites/dataviews/views';
+import { AgencyNotices } from '../../components/agency-notices';
+import PaymentRiskNotice, { hasPaymentRiskNotice } from '../../components/payment-risk-notice';
+import PressableUsageLimitNotice, {
+	usePressableUsageLimit,
+} from '../../components/pressable-usage-limit-notice';
+import {
+	MilestoneFeedbackModal,
+	isWithinFeedbackWindow,
+	useMilestoneFeedback,
+} from '../../feedback';
 import { OWNER_ROLE } from '../../team/constants';
 import { useLicenseActions } from './actions';
-import { DEFAULT_VIEW, getLicenseFields, getLicenseId, toFetchOptions } from './dataviews';
+import {
+	DEFAULT_VIEW,
+	getLicenseFields,
+	getLicenseId,
+	recordLicenseViewChanges,
+	toFetchOptions,
+} from './dataviews';
+import { useCheckoutReturn } from './use-checkout-return';
 import { useProvisioningLicenses } from './use-provisioning-licenses';
 import type { JetpackLicense } from '@automattic/api-core';
+import type { View } from '@wordpress/dataviews';
 
 export default function MarketplacePurchases() {
 	const locale = useLocale();
@@ -25,7 +43,9 @@ export default function MarketplacePurchases() {
 	const agencyId = agency?.id ?? 0;
 	const canRevoke = hasAnyCapability( agency?.user?.capabilities ?? [], 'a4a_revoke_licenses' );
 	const isAgencyOwner = agency?.user?.role === OWNER_ROLE;
+	const pressableUsageLimit = usePressableUsageLimit( agency );
 	const currentSearchParams = marketplacePurchasesRoute.useSearch();
+	useCheckoutReturn();
 
 	const { view, updateView, resetView } = usePersistentView( {
 		slug: 'marketplace-purchases',
@@ -40,11 +60,38 @@ export default function MarketplacePurchases() {
 		placeholderData: keepPreviousData,
 	} );
 	const { provisioningLicenseKeys, isProvisioning } = useProvisioningLicenses( agencyId );
-	const fields = useMemo(
-		() => getLicenseFields( { locale, isAgencyOwner, provisioningLicenseKeys } ),
-		[ locale, isAgencyOwner, provisioningLicenseKeys ]
+	const [ isFeedbackOpen, setIsFeedbackOpen ] = useState( false );
+	const { shouldAsk } = useMilestoneFeedback( 'purchase-completed' );
+	// Memoised: useLicenseActions keys its actions off this callback's identity.
+	const onLicenseAssigned = useCallback( () => {
+		if ( shouldAsk ) {
+			setIsFeedbackOpen( true );
+		}
+	}, [ shouldAsk ] );
+	const onManageSite = useCallback(
+		( license: JetpackLicense ) => {
+			if ( shouldAsk && isWithinFeedbackWindow( license.attached_at ) ) {
+				setIsFeedbackOpen( true );
+			}
+		},
+		[ shouldAsk ]
 	);
-	const actions = useLicenseActions( { agencyId, canRevoke, isAgencyOwner, isProvisioning } );
+	const fields = useMemo(
+		() => getLicenseFields( { locale, isAgencyOwner, provisioningLicenseKeys, onManageSite } ),
+		[ locale, isAgencyOwner, provisioningLicenseKeys, onManageSite ]
+	);
+	const actions = useLicenseActions( {
+		agencyId,
+		canRevoke,
+		isAgencyOwner,
+		isProvisioning,
+		onLicenseAssigned,
+	} );
+
+	const onChangeView = ( nextView: View ) => {
+		recordLicenseViewChanges( view, nextView, recordTracksEvent );
+		updateView( nextView );
+	};
 
 	const paginationInfo = {
 		totalItems: data?.total_items ?? 0,
@@ -63,13 +110,31 @@ export default function MarketplacePurchases() {
 					) }
 					actions={
 						<RouterLinkButton
-							to="/marketplace/products"
+							to="/products"
 							variant="primary"
+							__next40pxDefaultSize
 							onClick={ () => recordTracksEvent( 'calypso_a4a_license_list_issue_license_click' ) }
 						>
 							{ __( 'Issue new license' ) }
 						</RouterLinkButton>
 					}
+				/>
+			}
+			notices={
+				<AgencyNotices
+					candidates={ [
+						{
+							id: 'payment-risk',
+							isUrgent: true,
+							isEligible: hasPaymentRiskNotice( agency ),
+							notice: <PaymentRiskNotice agency={ agency } source="purchases_licenses" />,
+						},
+						{
+							id: 'pressable-usage-limit',
+							...pressableUsageLimit,
+							notice: <PressableUsageLimitNotice agency={ agency } />,
+						},
+					] }
 				/>
 			}
 		>
@@ -82,7 +147,7 @@ export default function MarketplacePurchases() {
 					view={ view }
 					isLoading={ isLoading }
 					isPlaceholderData={ isPlaceholderData }
-					onChangeView={ updateView }
+					onChangeView={ onChangeView }
 					onReset={ resetView }
 					getItemId={ getLicenseId }
 					paginationInfo={ paginationInfo }
@@ -105,6 +170,12 @@ export default function MarketplacePurchases() {
 					}
 				/>
 			</DataViewsCard>
+			{ isFeedbackOpen && (
+				<MilestoneFeedbackModal
+					type="purchase-completed"
+					onClose={ () => setIsFeedbackOpen( false ) }
+				/>
+			) }
 		</PageLayout>
 	);
 }

@@ -7,6 +7,7 @@ import { ONBOARDING_TOUR_HASH } from 'calypso/a8c-for-agencies/components/hoc/wi
 import {
 	A4A_AGENCY_TIER_LINK,
 	A4A_AI_MCP_LINK,
+	A4A_MARKETPLACE_HOSTING_PRESSABLE_LINK,
 	A4A_MARKETPLACE_PRODUCTS_LINK,
 	A4A_PARTNER_DIRECTORY_DASHBOARD_LINK,
 	A4A_REFERRALS_DASHBOARD,
@@ -73,6 +74,7 @@ function DashboardOverviewBodyContent( {
 				partnerDirectory: A4A_PARTNER_DIRECTORY_DASHBOARD_LINK,
 				contactSupport: CONTACT_URL_HASH_FRAGMENT,
 				aiMcp: A4A_AI_MCP_LINK,
+				pressableHosting: A4A_MARKETPLACE_HOSTING_PRESSABLE_LINK,
 				helpful: [
 					{
 						id: 'contact-support',

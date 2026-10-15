@@ -10,11 +10,17 @@
 		"my.a4a.localhost": {
 			"favicon_url": "/calypso/images/favicons/favicon-a4a-dev.ico",
 			"favicon_brand": "a4a",
+			"site_name": "Automattic for Agencies",
 			"oauth_client_id": 95928,
 			"logout_url": "https://automattic.com/for/agencies",
 			"survicate_enabled": false,
 			"wpcom_login_url": false,
-			"features": { "oauth": true, "always_use_logout_url": true }
+			"features": {
+				"oauth": true,
+				"always_use_logout_url": true,
+				"checkout/stripe-upi": true,
+				"upgrades/redirect-payments": true
+			}
 		},
 		"my.woo.localhost": {
 			"oauth_client_id": 134404,
@@ -43,17 +49,18 @@
 		"dev/auth-helper": true,
 		"dev/preferences-helper": true,
 		"dev/store-sandbox-helper": true,
+		"difm-offer/force-treatment": false,
 		"dolly/telegram": true,
-		"domain-search/name-pulse": true,
 		"domain-transfer-redesign": true,
 		"emails/titan-tiers": true,
 		"marketplace-redesign": true,
 		"mcp-settings": true,
 		"me/legacy-contact": true,
+		"migration/reprint-flow": true,
+		"notifications/subscriber-alerts": true,
 		"notifications/view-settings": true,
 		"onboarding/interval-dropdown": true,
 		"performance/apm": true,
-		"plans/hosting-trial": true,
 		"plans/migration-trial": true,
 		"plans/updated-storage-labels": true,
 		"plans/upgradeable-storage": true,

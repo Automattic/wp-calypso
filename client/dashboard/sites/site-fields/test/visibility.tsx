@@ -4,7 +4,6 @@
 import { siteBySlugQuery } from '@automattic/api-queries';
 import { QueryClient } from '@tanstack/react-query';
 import { waitFor } from '@testing-library/react';
-import { LAUNCHPAD_PERSONALIZATION_EXPERIMENT } from 'calypso/lib/ai-launchpad';
 import { render } from '../../../test-utils';
 import { wpcomLink } from '../../../utils/link';
 import { Visibility } from '../index';
@@ -18,20 +17,6 @@ function createQueryClientWithSite( site: Site ) {
 	} );
 	queryClient.setQueryData( siteBySlugQuery( site.slug ).queryKey, site );
 	return queryClient;
-}
-
-// Seed a live ExPlat assignment into the storage the real useExperiment hook reads from, so it
-// resolves to the given variation through its normal code path — no module or network mocking.
-function assignPersonalizationVariation( variationName: string | null ) {
-	window.localStorage.setItem(
-		`explat-experiment--${ LAUNCHPAD_PERSONALIZATION_EXPERIMENT }`,
-		JSON.stringify( {
-			experimentName: LAUNCHPAD_PERSONALIZATION_EXPERIMENT,
-			variationName,
-			retrievedTimestamp: Date.now(),
-			ttl: 3600,
-		} )
-	);
 }
 
 const aiLaunchpadSite = {
@@ -98,15 +83,19 @@ describe( '<Visibility>', () => {
 		expect( queryByRole( 'link', { name: /Finish setup/ } ) ).not.toBeInTheDocument();
 	} );
 
-	test( 'for the no_guidance personalization variation, it hides the "Finish setup" link', async () => {
-		assignPersonalizationVariation( 'no_guidance' );
+	test( 'for no-guidance sites, it hides the "Finish setup" link', async () => {
+		const noGuidanceSite = {
+			...aiLaunchpadSite,
+			options: { ...aiLaunchpadSite.options, wpcom_ai_launchpad_no_guidance: true },
+		} as Site;
 		const { queryByRole } = render(
 			<Visibility
 				siteSlug="test.wordpress.com"
 				visibility="private"
 				status={ null }
 				isLaunched={ false }
-			/>
+			/>,
+			{ queryClient: createQueryClientWithSite( noGuidanceSite ) }
 		);
 		await waitFor( () =>
 			expect( queryByRole( 'link', { name: /Finish setup/ } ) ).not.toBeInTheDocument()

@@ -46,6 +46,7 @@
 		{ "path": "./languages" },
 		{ "path": "./launchpad" },
 		{ "path": "./mini-cart" },
+		{ "path": "./newsletter-urls" },
 		{ "path": "./odie-client" },
 		{ "path": "./omnibar" },
 		{ "path": "./onboarding" },

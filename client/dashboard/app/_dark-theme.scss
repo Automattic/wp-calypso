@@ -317,6 +317,21 @@
 	}
 }
 
+/* Date Range Picker */
+@mixin dashboard-dark-theme-date-range-picker {
+	// `@wordpress/ui`'s calendar paints its surface, weekdays and selected days
+	// with WPDS tokens that `color-scheme-dark-theme-tokens` leaves at their light defaults.
+	.daterange-calendar {
+		--wpds-color-background-surface-neutral-strong: var( --dashboard-surface__background-color );
+		--wpds-color-foreground-content-neutral: var( --dashboard__text-color );
+		--wpds-color-foreground-content-neutral-weak: var( --dashboard__text-muted-color );
+		--wpds-color-foreground-interactive-neutral-weak: var( --wp-components-color-gray-600 );
+		--wpds-color-foreground-interactive-neutral-strong: var( --wp-components-color-foreground-inverted );
+		--wpds-color-background-interactive-neutral-strong: var( --dashboard__text-color );
+		--wpds-color-background-interactive-neutral-strong-active: var( --wp-components-color-gray-700 );
+	}
+}
+
 /* Scan */
 @mixin dashboard-dark-theme-scan {
 	.site-scan-threats__type-icon {
@@ -482,6 +497,7 @@
 	@include dashboard-dark-theme-card;
 	@include dashboard-dark-theme-command-palette;
 	@include dashboard-dark-theme-dataviews;
+	@include dashboard-dark-theme-date-range-picker;
 	@include dashboard-dark-theme-destructive-secondary-button;
 	@include dashboard-dark-theme-emails;
 	@include dashboard-dark-theme-form-controls;
@@ -500,4 +516,5 @@
 	@include dashboard-dark-theme-site-launch-modal;
 	@include color-scheme-dark-theme-spinner;
 	@include color-scheme-dark-theme-summary-button;
+	@include color-scheme-dark-theme-dataviews-filters-search-widget;
 }

@@ -1,5 +1,4 @@
 import {
-	calculateTopTlds,
 	getAiTopResults,
 	getTopResults,
 	NamePulseDomainStatus,
@@ -24,40 +23,60 @@ const suggestion = (
 	status: NamePulseDomainStatus = NamePulseDomainStatus.AVAILABLE
 ): NamePulseDomainResult => ( { ...row( domain_name, status ), raw_price, source } );
 
-describe( 'calculateTopTlds', () => {
-	it( 'promotes a TLD matched in the label to the second slot without duplicating a default', () => {
-		const tlds = [ 'blog', 'com', 'org', 'net', 'app', 'dev' ];
-
-		expect( calculateTopTlds( 'testorg', tlds ) ).toEqual( [ 'blog', 'org', 'com', 'app' ] );
-		expect( calculateTopTlds( 'testcom', tlds ) ).toEqual( [ 'blog', 'com', 'app', 'dev' ] );
-	} );
-} );
-
 describe( 'getTopResults', () => {
-	it( 'features at most three rows, preferring top TLDs that are available or waiting', () => {
+	it( 'features at most three rows, in list order, that are available or waiting', () => {
 		const rows = [
-			row( 'test.net' ),
-			row( 'test.com', NamePulseDomainStatus.TAKEN ),
 			row( 'test.blog', NamePulseDomainStatus.WAITING ),
+			row( 'test.com', NamePulseDomainStatus.TAKEN ),
+			row( 'test.org' ),
+			row( 'test.net' ),
 			row( 'test.app' ),
 		];
 
-		expect(
-			getTopResults( rows, [ 'blog', 'com', 'app', 'dev' ] ).map( ( r ) => r.domain_name )
-		).toEqual( [ 'test.blog', 'test.app', 'test.net' ] );
+		expect( getTopResults( rows ).map( ( r ) => r.domain_name ) ).toEqual( [
+			'test.blog',
+			'test.org',
+			'test.net',
+		] );
 	} );
 
-	it( 'keeps a row taken by a real-time check in its slot', () => {
+	it( 'keeps a row taken by the cart check in its slot', () => {
 		const rows = [
-			{ ...row( 'test.blog', NamePulseDomainStatus.TAKEN ), is_realtime: true },
+			{ ...row( 'test.blog', NamePulseDomainStatus.TAKEN ), is_cart_check: true },
 			row( 'test.com' ),
 			row( 'test.app' ),
 			row( 'test.dev' ),
 		];
 
-		expect(
-			getTopResults( rows, [ 'blog', 'com', 'app', 'dev' ] ).map( ( r ) => r.domain_name )
-		).toEqual( [ 'test.blog', 'test.com', 'test.app' ] );
+		expect( getTopResults( rows ).map( ( r ) => r.domain_name ) ).toEqual( [
+			'test.blog',
+			'test.com',
+			'test.app',
+		] );
+	} );
+
+	it( 'drops a row taken by a real-time check the reader never asked for', () => {
+		const rows = [
+			{ ...row( 'test.blog', NamePulseDomainStatus.TAKEN ), is_realtime: true },
+			row( 'test.com' ),
+			row( 'test.org' ),
+			row( 'test.app' ),
+		];
+
+		expect( getTopResults( rows ).map( ( r ) => r.domain_name ) ).toEqual( [
+			'test.com',
+			'test.org',
+			'test.app',
+		] );
+	} );
+
+	it( 'features fewer rows when asked to', () => {
+		const rows = [ row( 'test.com' ), row( 'test.org' ), row( 'test.app' ) ];
+
+		expect( getTopResults( rows, 2 ).map( ( r ) => r.domain_name ) ).toEqual( [
+			'test.com',
+			'test.org',
+		] );
 	} );
 } );
 
@@ -74,26 +93,53 @@ describe( 'getAiTopResults', () => {
 			suggestion( 'middling.app', 20, 'ai' ),
 		];
 
-		expect( getAiTopResults( keyword, creative ).map( ( r ) => r.domain_name ) ).toEqual( [
+		expect( getAiTopResults( [ keyword, creative ] ).map( ( r ) => r.domain_name ) ).toEqual( [
 			'cheapest.dev',
 			'apple.blog',
 			'zebra.blog',
 		] );
 	} );
 
+	it( 'features fewer suggestions when asked to', () => {
+		const keyword = [
+			suggestion( 'zebra.blog', 12 ),
+			suggestion( 'apple.blog', 12 ),
+			suggestion( 'cheapest.dev', 4 ),
+		];
+
+		expect( getAiTopResults( [ keyword ], 2 ).map( ( r ) => r.domain_name ) ).toEqual( [
+			'cheapest.dev',
+			'apple.blog',
+		] );
+	} );
+
 	it( 'keeps the first copy of a domain both lists return', () => {
-		const shared = getAiTopResults(
+		const shared = getAiTopResults( [
 			[ suggestion( 'scoops.blog', 22 ) ],
-			[ suggestion( 'scoops.blog', 22, 'ai' ) ]
-		);
+			[ suggestion( 'scoops.blog', 22, 'ai' ) ],
+		] );
 
 		expect( shared ).toHaveLength( 1 );
 		expect( shared[ 0 ].source ).toBe( 'keyword' );
 	} );
 
+	it( 'ranks a row on sale by its first-year price', () => {
+		const keyword = [
+			suggestion( 'regular.org', 18 ),
+			{ ...suggestion( 'onsale.store', 60 ), sale_cost: 1 },
+			{ ...suggestion( 'onsale.blog', 30 ), sale_cost: 2 },
+		];
+
+		expect( getAiTopResults( [ keyword ] ).map( ( r ) => r.domain_name ) ).toEqual( [
+			'onsale.store',
+			'onsale.blog',
+			'regular.org',
+		] );
+	} );
+
 	it( 'sorts rows with no price last', () => {
 		expect(
-			getAiTopResults( [ row( 'unpriced.com' ), suggestion( 'priced.com', 30 ) ] ).map(
+			getAiTopResults( [ [ row( 'unpriced.com' ), suggestion( 'priced.com', 30 ) ] ] ).map(
 				( r ) => r.domain_name
 			)
 		).toEqual( [ 'priced.com', 'unpriced.com' ] );

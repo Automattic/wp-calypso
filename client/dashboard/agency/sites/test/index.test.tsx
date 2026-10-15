@@ -101,9 +101,7 @@ describe( '<AgencySites>', () => {
 
 		await userEvent.click( await addNewSiteButton() );
 
-		expect( recordTracksEvent ).toHaveBeenCalledWith(
-			'calypso_dashboard_agency_sites_add_new_site_clicked'
-		);
+		expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_a4a_sites_add_new_site_clicked' );
 	} );
 
 	test( 'reports the entry chosen inside the menu', async () => {
@@ -117,7 +115,7 @@ describe( '<AgencySites>', () => {
 		);
 
 		expect( recordTracksEvent ).toHaveBeenCalledWith(
-			'calypso_dashboard_agency_sites_new_site_action_click_item',
+			'calypso_a4a_sites_new_site_action_click_item',
 			{ action: 'jetpack-connection' }
 		);
 	} );
@@ -174,7 +172,7 @@ describe( '<AgencySites>', () => {
 		).toBeVisible();
 		expect( screen.getByRole( 'link', { name: 'Set them up in Purchases' } ) ).toHaveAttribute(
 			'href',
-			'/marketplace/purchases?status=unassigned&search=WordPress.com'
+			'/purchases?status=unassigned&search=WordPress.com'
 		);
 	} );
 

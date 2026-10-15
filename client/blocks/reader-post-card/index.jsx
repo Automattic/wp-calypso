@@ -1,9 +1,8 @@
 import { Card } from '@automattic/components';
 import { truncate } from '@automattic/js-utils';
 import clsx from 'clsx';
-import closest from 'component-closest';
 import PropTypes from 'prop-types';
-import { createRef, Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
 import ReaderPostActions from 'calypso/blocks/reader-post-actions';
@@ -58,20 +57,6 @@ class ReaderPostCard extends Component {
 		showBylineSecondarySiteLink: true,
 	};
 
-	cardRef = createRef();
-
-	// Merge the internal card ref with an optional `itemRef` from InfiniteList so the
-	// parent list can measure this item's DOM node without `findDOMNode`.
-	setCardRef = ( node ) => {
-		this.cardRef.current = node;
-		const { itemRef } = this.props;
-		if ( typeof itemRef === 'function' ) {
-			itemRef( node );
-		} else if ( itemRef ) {
-			itemRef.current = node;
-		}
-	};
-
 	state = {
 		isSuggestedFollowsModalOpen: false,
 	};
@@ -89,48 +74,44 @@ class ReaderPostCard extends Component {
 	};
 
 	handleCardClick = ( event ) => {
-		const rootNode = this.cardRef.current;
 		const selection = window.getSelection && window.getSelection();
 
 		// if the click has modifier or was not primary, ignore it
 		if ( event.button > 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey ) {
-			if ( closest( event.target, '.reader-post-card__title-link', rootNode ) ) {
+			if ( event.target.closest( '.reader-post-card__title-link' ) ) {
 				stats.recordPermalinkClick( 'card_title_with_modifier', this.props.post );
 			}
 			return;
 		}
 
-		if ( closest( event.target, '.should-scroll', rootNode ) ) {
+		if ( event.target.closest( '.should-scroll' ) ) {
 			setTimeout( function () {
 				window.scrollTo( 0, 0 );
 			}, 100 );
 		}
 
 		// declarative ignore
-		if ( closest( event.target, '.ignore-click, [rel~=external]', rootNode ) ) {
+		if ( event.target.closest( '.ignore-click, [rel~=external]' ) ) {
 			return;
 		}
 
 		// ignore clicks on comments
-		if ( closest( event.target, '.conversations__comment-list', rootNode ) ) {
+		if ( event.target.closest( '.conversations__comment-list' ) ) {
 			return;
 		}
 
 		// ignore clicks on inline comments
-		if ( closest( event.target, '.comments__comment-list', rootNode ) ) {
+		if ( event.target.closest( '.comments__comment-list' ) ) {
 			return;
 		}
 
 		// ignore clicks on anchors inside inline content
-		if (
-			closest( event.target, 'a', rootNode ) &&
-			closest( event.target, '.reader-excerpt', rootNode )
-		) {
+		if ( event.target.closest( 'a' ) && event.target.closest( '.reader-excerpt' ) ) {
 			return;
 		}
 
 		// ignore clicks to close a dialog backdrop
-		if ( closest( event.target, '.dialog__backdrop', rootNode ) ) {
+		if ( event.target.closest( '.dialog__backdrop' ) ) {
 			return;
 		}
 
@@ -281,7 +262,7 @@ class ReaderPostCard extends Component {
 
 		const onClick = ! isPostPhoto ? this.handleCardClick : noop;
 		return (
-			<Card ref={ this.setCardRef } className={ classes } onClick={ onClick } tagName="article">
+			<Card ref={ this.props.itemRef } className={ classes } onClick={ onClick } tagName="article">
 				{ ! compact && postByline }
 				{ readerPostCard }
 				{ this.props.children }

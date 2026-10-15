@@ -1,5 +1,6 @@
 import {
 	dashboardAdminBarQuery,
+	omnibarAgentsManagerEnabledQuery,
 	omnibarSiteIdQuery,
 	siteAdminBarQuery,
 	siteByIdQuery,
@@ -11,11 +12,13 @@ import { useQuery } from '@tanstack/react-query';
 import { useEffect, useMemo, useState } from 'react';
 import { dashboardLink, wpcomLink } from '../../utils/link';
 import { getSiteDisplayName } from '../../utils/site-name';
+import { useAnalytics } from '../analytics';
 import { useAppContext } from '../context';
 import { omnibarEvents } from './events';
 import { OmnibarHomeIcon } from './home';
-import { createAiChatNodeBuilder } from './plugin-ai-chat';
+import { buildAiChatPluginNode } from './plugin-ai-chat';
 import { addDashboardNode, useDashboardPlugin } from './plugin-dashboard';
+import { createFreeDomainUpsellNodeBuilder } from './plugin-free-domain-upsell-experiment';
 import { useHelpCenterPlugin } from './plugin-help-center';
 import { useLanguageSwitcherPlugin } from './plugin-language-switcher';
 import { useLaunchSitePlugin } from './plugin-launch-site';
@@ -24,7 +27,7 @@ import { useNotificationsPlugin } from './plugin-notifications';
 import { useReaderPlugin } from './plugin-reader';
 import { useShoppingCartPlugin } from './plugin-shopping-cart';
 import { buildSiteBadgeNode } from './plugin-site-badges';
-import { useStatsSparklinePlugin } from './plugin-stats-sparkline';
+import { removeUndrawnStatsNode, useStatsSparklineNodeBuilder } from './plugin-stats-sparkline';
 import { buildWpcomAccountNode } from './plugin-wpcom-account';
 import { RESPONSIVE_MENU_NODE_ID, trackOmnibarNodes, useRecordOmnibarNodeClick } from './tracking';
 import { useOmnibarUser } from './user';
@@ -90,6 +93,7 @@ function ConnectedOmnibar( {
 	sectionName?: string;
 } ) {
 	const { supports } = useAppContext();
+	const { recordTracksEvent } = useAnalytics();
 	const recordNodeClick = useRecordOmnibarNodeClick();
 	const [ hydrated, setHydrated ] = useState( false );
 	useEffect( () => {
@@ -103,6 +107,7 @@ function ConnectedOmnibar( {
 		...siteByIdQuery( siteId ?? 0 ),
 		enabled: hydrated && !! siteId,
 	} );
+	const { data: showAiChat = false } = useQuery( omnibarAgentsManagerEnabledQuery() );
 
 	const { data: { nodes: dashboardNodes } = {} } = useQuery( dashboardAdminBarQuery() );
 	const { data: { nodes: siteNodes } = {} } = useQuery( {
@@ -110,27 +115,30 @@ function ConnectedOmnibar( {
 		enabled: hydrated && !! siteId,
 	} );
 
+	const adminBarNodes = useMemo(
+		() => siteNodes ?? dashboardNodes ?? [],
+		[ siteNodes, dashboardNodes ]
+	);
+	const statsSparklineNodeBuilder = useStatsSparklineNodeBuilder( { site, adminBarNodes } );
+
 	const nodeBuilders = useMemo< OmnibarNodeBuilders >(
 		() => ( {
 			'my-wpcom-account': buildWpcomAccountNode,
 			'site-plan-badge': buildSiteBadgeNode,
 			'site-status-badge': buildSiteBadgeNode,
-			...( supports.help
-				? { 'agents-manager-ai-chat': createAiChatNodeBuilder( sectionName ) }
-				: {} ),
+			'free-domain-upsell': createFreeDomainUpsellNodeBuilder( { sectionName, recordTracksEvent } ),
+			...( statsSparklineNodeBuilder ? { stats: statsSparklineNodeBuilder } : {} ),
 			...( authUser ? { logout: createLogoutNodeBuilder( authUser ) } : {} ),
 		} ),
-		[ authUser, sectionName, supports.help ]
-	);
-
-	const adminBarNodes = useMemo(
-		() => siteNodes ?? dashboardNodes ?? [],
-		[ siteNodes, dashboardNodes ]
+		[ authUser, sectionName, recordTracksEvent, statsSparklineNodeBuilder ]
 	);
 
 	const baseOmnibarNodes = useMemo( () => {
 		const result = buildOmnibarNodesFromAdminBarNodes(
-			removeUnsupportedNodes( adminBarNodes, supports ),
+			removeUndrawnStatsNode(
+				removeUnsupportedNodes( adminBarNodes, supports ),
+				statsSparklineNodeBuilder
+			),
 			nodeBuilders,
 			createHrefResolver( siteNodes ? site?.options?.admin_url : undefined )
 		);
@@ -158,7 +166,7 @@ function ConnectedOmnibar( {
 		}
 
 		return result;
-	}, [ adminBarNodes, siteNodes, site, supports, nodeBuilders ] );
+	}, [ adminBarNodes, siteNodes, site, supports, nodeBuilders, statsSparklineNodeBuilder ] );
 
 	const readerPluginNode = useReaderPlugin( { sectionGroup } );
 	const helpCenterPluginNode = useHelpCenterPlugin( { sectionName, adminBarNodes } );
@@ -167,15 +175,17 @@ function ConnectedOmnibar( {
 		user,
 	} );
 	const { node: shoppingCartNode, panel: shoppingCartPanel } = useShoppingCartPlugin( { site } );
-	const statsSparklineNode = useStatsSparklinePlugin( { site } );
 	const { node: launchSiteNode, panel: launchSitePanel } = useLaunchSitePlugin( { site } );
 	const dashboardNode = useDashboardPlugin( { site, sectionGroup } );
+	const aiChatPluginNode = buildAiChatPluginNode( {
+		enabled: showAiChat,
+		sectionName,
+		adminBarNodes,
+	} );
 	const siteNode = addDashboardNode( baseOmnibarNodes.site, dashboardNode );
-	const siteActions = [
-		...( baseOmnibarNodes.siteActions ?? [] ),
-		statsSparklineNode,
-		launchSiteNode,
-	].filter( ( node ) => node !== undefined );
+	const siteActions = [ ...( baseOmnibarNodes.siteActions ?? [] ), launchSiteNode ].filter(
+		( node ) => node !== undefined
+	);
 
 	const plugins = baseOmnibarNodes.user
 		? [
@@ -183,8 +193,8 @@ function ConnectedOmnibar( {
 				...( shoppingCartNode ? [ shoppingCartNode ] : [] ),
 				...( supports.reader ? [ readerPluginNode ] : [] ),
 				...( supports.help ? [ helpCenterPluginNode ] : [] ),
-				// The AI chat button, plus any other node a builder claimed above.
 				...( baseOmnibarNodes.plugins ?? [] ),
+				...( aiChatPluginNode ? [ aiChatPluginNode ] : [] ),
 				...( supports.notifications ? [ notificationsPluginNode ] : [] ),
 			]
 		: [];

@@ -17,7 +17,7 @@ import styles from './chat/Chat.module.css';
 import { CollapsedView } from './views/CollapsedView';
 import { CompactView } from './views/CompactView';
 import { MinimizedView } from './views/MinimizedView';
-import type { AgentUIProps, Suggestion } from '../types';
+import type { AgentUIProps, SubmitSource, Suggestion } from '../types';
 
 interface AgentUIContainerProps extends AgentUIProps {
 	children: React.ReactNode;
@@ -41,6 +41,8 @@ export function AgentUIContainer( {
 	children,
 	messages,
 	isProcessing,
+	isStreaming,
+	isReplying,
 	error,
 	onSubmit,
 	variant = 'floating',
@@ -48,6 +50,9 @@ export function AgentUIContainer( {
 	triggerTitle,
 	placeholder,
 	notice,
+	beforeSubmit,
+	leadingActions,
+	trailingActions,
 	onOpen,
 	onExpand,
 	onClose,
@@ -179,6 +184,12 @@ export function AgentUIContainer( {
 		timeoutRefs.current.clear();
 	}, [] );
 
+	const canSubmitMessage = useCallback(
+		( message: string, source: SubmitSource ) =>
+			beforeSubmit ? beforeSubmit( message, source ) !== false : true,
+		[ beforeSubmit ]
+	);
+
 	const input = useInput( {
 		value: inputValue,
 		setValue: setInputValue,
@@ -189,6 +200,7 @@ export function AgentUIContainer( {
 			chat.setState( 'expanded' );
 			await onSubmit( message );
 		},
+		beforeSubmit: ( message ) => canSubmitMessage( message, 'input' ),
 		isProcessing,
 		isInputOverLimit,
 		floatingChatState: chat.state,
@@ -290,34 +302,47 @@ export function AgentUIContainer( {
 	);
 
 	// Handle suggestion submission
+	// Returns whether the suggestion was handed to the agent: false when the
+	// send was blocked or when the prompt only went into the composer.
 	const handleSuggestionSubmit = useCallback(
-		async ( selectedSuggestion: Suggestion, availableSuggestions: Suggestion[] ) => {
+		( selectedSuggestion: Suggestion, availableSuggestions: Suggestion[] ): boolean => {
 			const value = selectedSuggestion.prompt ?? selectedSuggestion.label;
 
 			if ( selectedSuggestion.autoSubmit ) {
 				// Auto-submit: send message directly to LLM
-				clearSuggestions?.();
 				const message = value.trim();
-				if ( message ) {
-					await onSubmit( message );
+
+				// A blocked send is a no-op: the suggestion stays in the list and the
+				// click is not reported, so hosts don't retire it as consumed. An empty
+				// prompt and a send while one is in flight (which the agent client
+				// drops) count as blocked too.
+				if ( ! message || isProcessing || ! canSubmitMessage( message, 'suggestion' ) ) {
+					return false;
 				}
-			} else {
-				// Default: populate input field for user to edit/submit
-				const valueWithSpace = value.endsWith( ' ' ) ? value : `${ value } `;
-				input.setValue( valueWithSpace );
+
 				clearSuggestions?.();
-				if ( input.textareaRef.current ) {
-					input.textareaRef.current.focus();
-					input.textareaRef.current.setSelectionRange(
-						valueWithSpace.length,
-						valueWithSpace.length
-					);
-				}
+
+				// Report the click before the send: `onSubmit` may not settle until
+				// the reply finishes streaming (or at all).
+				onSuggestionClick?.( selectedSuggestion, availableSuggestions );
+
+				void onSubmit( message );
+				return true;
+			}
+
+			// Default: populate input field for user to edit/submit
+			const valueWithSpace = value.endsWith( ' ' ) ? value : `${ value } `;
+			input.setValue( valueWithSpace );
+			clearSuggestions?.();
+			if ( input.textareaRef.current ) {
+				input.textareaRef.current.focus();
+				input.textareaRef.current.setSelectionRange( valueWithSpace.length, valueWithSpace.length );
 			}
 
 			onSuggestionClick?.( selectedSuggestion, availableSuggestions );
+			return false;
 		},
-		[ clearSuggestions, onSubmit, onSuggestionClick, input ]
+		[ clearSuggestions, onSubmit, onSuggestionClick, input, canSubmitMessage, isProcessing ]
 	);
 
 	// Handle opening the chat and call onOpen callback
@@ -383,13 +408,18 @@ export function AgentUIContainer( {
 	// Handle message submission (for button clicks)
 	const handleSubmit = useCallback( async () => {
 		const message = input.value.trim();
+
+		if ( ! canSubmitMessage( message, 'input' ) ) {
+			return;
+		}
+
 		input.clear();
 		if ( chat.state !== 'expanded' ) {
 			onExpand?.();
 		}
 		chat.setState( 'expanded' );
 		await onSubmit( message );
-	}, [ input, onSubmit, chat, onExpand ] );
+	}, [ input, onSubmit, chat, onExpand, canSubmitMessage ] );
 
 	// Handle expand (go to expanded state)
 	const handleExpand = useCallback( () => {
@@ -469,6 +499,8 @@ export function AgentUIContainer( {
 		// Core data
 		messages,
 		isProcessing,
+		isStreaming,
+		isReplying,
 		error,
 
 		// Input state
@@ -506,6 +538,10 @@ export function AgentUIContainer( {
 
 		// Notice
 		notice: computedNotice,
+
+		// Composer action slots
+		leadingActions,
+		trailingActions,
 
 		// Thinking message
 		thinkingMessage,
@@ -656,6 +692,8 @@ export function AgentUIContainer( {
 									onExpand={ handleExpand }
 									showExpandButton={ ! input.value.trim() }
 									focusOnMount={ wasClickedToOpen.current }
+									leadingActions={ leadingActions }
+									trailingActions={ trailingActions }
 									onStop={ onStop }
 									suggestions={ suggestions }
 									clearSuggestions={ clearSuggestions }

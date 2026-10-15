@@ -68,10 +68,6 @@ const loadGlobalNotices = () =>
 	import(
 		/* webpackChunkName: "async-load-calypso-components-global-notices" */ 'calypso/components/global-notices'
 	);
-const loadAgentsManagerLoader = () =>
-	import(
-		/* webpackChunkName: "async-load-calypso-layout-agents-manager-loader" */ 'calypso/layout/agents-manager-loader'
-	);
 const loadWebpackBuildMonitor = () =>
 	import(
 		/* webpackChunkName: "async-load-calypso-components-webpack-build-monitor" */ 'calypso/components/webpack-build-monitor'
@@ -288,15 +284,7 @@ async function main() {
 						( flowName === WOO_HOSTED_PLANS_FLOW ? (
 							<LazyHelpCenter currentUser={ user as UserStore.CurrentUser } />
 						) : (
-							<>
-								<AsyncHelpCenterApp requireLogin sectionName="stepper" />
-								<AsyncLoad
-									require={ loadAgentsManagerLoader }
-									placeholder={ null }
-									sectionName={ flowName }
-									loadAgentsManager
-								/>
-							</>
+							<AsyncHelpCenterApp requireLogin sectionName="stepper" />
 						) ) }
 					{ 'development' === process.env.NODE_ENV && (
 						<AsyncLoad require={ loadWebpackBuildMonitor } placeholder={ null } />

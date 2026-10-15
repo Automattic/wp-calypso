@@ -43,6 +43,14 @@ describe( 'isModalOpen', () => {
 		expect( isModalOpen() ).toBe( true );
 	} );
 
+	test( 'should detect a wp-admin UI overlay modal', () => {
+		const overlay = makeRendered( document.createElement( 'div' ) );
+		overlay.setAttribute( 'data-wp-ui-overlay-modal', '' );
+		document.body.appendChild( overlay );
+
+		expect( isModalOpen() ).toBe( true );
+	} );
+
 	test( 'should detect a WordPress popover', () => {
 		const popover = makeRendered( document.createElement( 'div' ) );
 		popover.className = 'components-popover';
@@ -55,6 +63,15 @@ describe( 'isModalOpen', () => {
 		const tooltip = makeRendered( document.createElement( 'div' ) );
 		tooltip.className = 'components-popover components-tooltip';
 		document.body.appendChild( tooltip );
+
+		expect( isModalOpen() ).toBe( false );
+	} );
+
+	test( 'should ignore block editor chrome popovers', () => {
+		const toolbar = makeRendered( document.createElement( 'div' ) );
+		toolbar.className =
+			'components-popover block-editor-block-popover block-editor-block-list__block-popover';
+		document.body.appendChild( toolbar );
 
 		expect( isModalOpen() ).toBe( false );
 	} );

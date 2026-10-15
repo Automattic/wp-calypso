@@ -12,6 +12,7 @@ export interface OmnibarNode {
 	target?: string;
 	rel?: string;
 	onClick?: ( event: React.MouseEvent ) => void;
+	onView?: () => void;
 	disabled?: boolean;
 	active?: boolean;
 	className?: string;

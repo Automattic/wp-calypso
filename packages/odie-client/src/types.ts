@@ -1,4 +1,5 @@
 import { ODIE_ALLOWED_BOTS, ODIE_ALL_BOT_SLUGS } from './constants';
+import type { CheckoutSupportVariation } from '@automattic/data-stores';
 import type { ZendeskConversation } from '@automattic/zendesk-client';
 import type { ReactNode, PropsWithChildren, SetStateAction } from 'react';
 
@@ -16,8 +17,11 @@ export type OdieAssistantContextInterface = {
 	currentUser: CurrentUser;
 	experimentVariationName: string | undefined | null;
 	hasUserEverEscalatedToHumanSupport: boolean;
+	isLoadingZendeskHistory: boolean;
 	isMinimized?: boolean;
 	isUserEligibleForPaidSupport: boolean;
+	// An open human chat can be reopened even without paid support.
+	hasOpenZendeskChat: boolean;
 	selectedSiteId?: number | null;
 	selectedSiteURL?: string | null;
 	userFieldMessage?: string | null;
@@ -28,6 +32,8 @@ export type OdieAssistantContextInterface = {
 	forceEmailSupport: boolean;
 	isChatRestricted: boolean;
 	launcherContext?: string;
+	// Set while the Help Center is open from checkout as part of the checkout support experiment.
+	checkoutSupportVariation?: CheckoutSupportVariation;
 	setExperimentVariationName: ( variationName: string | null | undefined ) => void;
 	setChat: ( chat: Chat | SetStateAction< Chat > ) => void;
 	setChatStatus: ( status: ChatStatus ) => void;
@@ -43,6 +49,7 @@ export type OdieAssistantProviderProps = {
 	isLoadingCanConnectToZendesk?: boolean;
 	botName?: string;
 	isUserEligibleForPaidSupport?: boolean;
+	hasOpenZendeskChat?: boolean;
 	isMinimized?: boolean;
 	currentUser: CurrentUser;
 	selectedSiteId?: number | null;

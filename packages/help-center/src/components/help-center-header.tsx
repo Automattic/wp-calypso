@@ -89,7 +89,7 @@ const EllipsisMenu = () => {
 		<DropdownMenu
 			icon={ moreVertical }
 			label={ __( 'Help Center Options', __i18n_text_domain__ ) }
-			// Render the popover inside the panel node so opening the menu doesn't blur the panel
+			// Render inside the panel node so the menu stacks with the panel and stays in its focus trap
 			popoverProps={ { inline: true } }
 		>
 			{ ( { onClose } ) => (

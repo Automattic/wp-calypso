@@ -217,6 +217,8 @@ interface AgentUIProps {
 	// Core chat data
 	messages: Message[];
 	isProcessing: boolean;
+	isStreaming?: boolean; // Whether the latest reply is still streaming, when that differs from `isProcessing` (the default)
+	isReplying?: boolean; // Whether reply text is streaming in. When set, it drives the thinking indicator
 	error?: string | null;
 	onSubmit: ( message: string ) => void;
 	onStop?: () => void;
@@ -508,6 +510,7 @@ interface MessageAction {
 	disabled?: boolean;
 	pressed?: boolean;
 	showLabel?: boolean;
+	visibility?: 'always' | 'latest-turn'; // `latest-turn`: inline on the latest turn; floats in a panel on hover for earlier turns, docking once pressed
 }
 
 interface Suggestion {
@@ -519,10 +522,16 @@ interface Suggestion {
 interface NoticeConfig {
 	icon?: React.ReactNode | null | false;
 	message: string;
-	action?: {
-		label: string;
-		onClick: () => void;
-	};
+	action?:
+		| { label: string; onClick: () => void; href?: never }
+		| {
+				label: string;
+				href: string;
+				target?: React.HTMLAttributeAnchorTarget;
+				rel?: string;
+				// Runs before the link opens, for example to record the click.
+				onClick?: () => void;
+		  };
 	dismissible?: boolean;
 	onDismiss?: () => void;
 }

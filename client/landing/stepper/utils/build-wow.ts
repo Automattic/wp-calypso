@@ -3,7 +3,7 @@ import { logToLogstash } from 'calypso/lib/logstash';
 import wpcom from 'calypso/lib/wp';
 import { pollUntil, PollTimeoutError } from './poll-until';
 
-const BUILD_WOW_SITE_SPEC_PATH = '/setup/ai-site-builder-spec/site-spec';
+export const BUILD_WOW_SITE_SPEC_PATH = '/setup/ai-site-builder-spec/site-spec';
 
 /**
  * Generation graphs a build may ask for. The server takes this as an enum and
@@ -11,7 +11,7 @@ const BUILD_WOW_SITE_SPEC_PATH = '/setup/ai-site-builder-spec/site-spec';
  * instead: a typo in the URL then means "whatever the deploy runs" rather than
  * a build request that fails outright.
  */
-const BUILD_WOW_GRAPHS = [ 'html-first', 'legacy' ] as const;
+const BUILD_WOW_GRAPHS = [ 'blocks-first', 'dsl' ] as const;
 export type BuildWowGraph = ( typeof BUILD_WOW_GRAPHS )[ number ];
 
 export function getBuildWowGraph( queryParams: URLSearchParams ): BuildWowGraph | undefined {
@@ -76,12 +76,14 @@ export function getBuildWowSiteSpecUrl( {
 	ref,
 	source,
 	prompt,
+	graph,
 }: {
 	siteSlug?: string | null;
 	siteId?: string | number | null;
 	ref?: string | null;
 	source?: string | null;
 	prompt?: string | null;
+	graph?: BuildWowGraph;
 } ): string {
 	return addQueryArgs( BUILD_WOW_SITE_SPEC_PATH, {
 		build_wow: '1',
@@ -90,7 +92,25 @@ export function getBuildWowSiteSpecUrl( {
 		...( ref ? { ref } : {} ),
 		...( source ? { source } : {} ),
 		...( prompt ? { prompt } : {} ),
+		...( graph ? { graph } : {} ),
 	} );
+}
+
+/**
+ * Whether a Commerce purchase on this site builds a store through build-wow.
+ * The server lets in only the accounts on the store rollout, and answers
+ * before checkout, while the site has no Commerce plan yet.
+ */
+export async function commerceUsesBuildWow( siteIdentifier: string | number ): Promise< boolean > {
+	try {
+		const response = ( await wpcom.req.get( {
+			path: `/sites/${ siteIdentifier }/big-sky/build-wow/store-builder`,
+			apiNamespace: 'wpcom/v2',
+		} ) ) as { enabled?: boolean };
+		return response?.enabled === true;
+	} catch {
+		return false;
+	}
 }
 
 export function isBuildWowSiteEditorReady( response: BuildWowResponse ): boolean {

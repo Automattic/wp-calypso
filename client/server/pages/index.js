@@ -18,17 +18,12 @@ import express from 'express';
 import { stringify } from 'qs';
 // eslint-disable-next-line no-restricted-imports
 import superagent from 'superagent'; // Don't have Node.js fetch lib yet.
-import { getDashboardFromHostname, isAllowedDashboardRoute } from 'calypso/dashboard/app/routing';
+import { getDashboardFromHostname } from 'calypso/dashboard/app/routing';
 import { isAllowedA4ADashboardHostname } from 'calypso/dashboard/app-a4a/routing';
 import {
 	A4A_DASHBOARD_SECTION_DEFINITION,
 	A4A_DASHBOARD_SECTION_PATHS,
 } from 'calypso/dashboard/app-a4a/section';
-import { isAllowedCiabDashboardHostname } from 'calypso/dashboard/app-ciab/routing';
-import {
-	CIAB_DASHBOARD_SECTION_DEFINITION,
-	CIAB_DASHBOARD_SECTION_PATHS,
-} from 'calypso/dashboard/app-ciab/section';
 import { isAllowedDotcomDashboardHostname } from 'calypso/dashboard/app-dotcom/routing';
 import {
 	DOTCOM_DASHBOARD_SECTION_DEFINITION,
@@ -63,6 +58,7 @@ import {
 	attachHead,
 	attachI18n,
 	bumpStat,
+	customizeClientDataForRequest,
 } from 'calypso/server/render';
 import sanitize from 'calypso/server/sanitize';
 import stateCache from 'calypso/server/state-cache';
@@ -81,6 +77,7 @@ import middlewareCache from '../middleware/cache.js';
 import middlewareUnsupportedBrowser from '../middleware/unsupported-browser.js';
 import { logSectionResponse } from './analytics';
 import { registerCspReportRoute } from './csp-report';
+import { getFrameHeaders } from './frame-options';
 const debug = debugFactory( 'calypso:pages' );
 
 const calypsoEnv = config( 'env_id' );
@@ -429,9 +426,7 @@ function setUpLocalLanguageRevisions( req ) {
 
 function setUpLoggedOutRoute( req, res, next ) {
 	performanceMark( req.context, 'setup_logged_out_route', true );
-	res.set( {
-		'X-Frame-Options': 'SAMEORIGIN',
-	} );
+	res.set( getFrameHeaders( { env: calypsoEnv, nodeEnv: process.env.NODE_ENV, path: req.path } ) );
 
 	const setupRequests = [];
 
@@ -440,10 +435,7 @@ function setUpLoggedOutRoute( req, res, next ) {
 	}
 
 	if ( req.cookies?.subkey ) {
-		req.context.user = {
-			...( req.context.user ?? {} ),
-			subscriptionManagementSubkey: req.cookies.subkey,
-		};
+		req.context.subscriptionManagementSubkey = req.cookies.subkey;
 	}
 
 	Promise.all( setupRequests )
@@ -462,9 +454,7 @@ function setUpLoggedInRoute( req, res, next ) {
 	let redirectUrl;
 	let start;
 
-	res.set( {
-		'X-Frame-Options': 'SAMEORIGIN',
-	} );
+	res.set( getFrameHeaders( { env: calypsoEnv, nodeEnv: process.env.NODE_ENV, path: req.path } ) );
 
 	const setupRequests = [];
 
@@ -909,6 +899,13 @@ const render404 =
 		res.status( 404 ).send( renderJsx( '404', ctx ) );
 	};
 
+const render404ForUnknownHostname = ( req, res, next ) => {
+	if ( getDashboardFromHostname( req.hostname ) ) {
+		return next();
+	}
+	render404()( req, res );
+};
+
 const DASHBOARD_VARIANTS = [
 	{
 		definition: DOTCOM_DASHBOARD_SECTION_DEFINITION,
@@ -916,13 +913,6 @@ const DASHBOARD_VARIANTS = [
 		entrypoint: 'entry-dashboard-dotcom',
 		devEnv: 'development',
 		isAllowedHostname: isAllowedDotcomDashboardHostname,
-	},
-	{
-		definition: CIAB_DASHBOARD_SECTION_DEFINITION,
-		paths: CIAB_DASHBOARD_SECTION_PATHS,
-		entrypoint: 'entry-dashboard-ciab',
-		devEnv: 'development',
-		isAllowedHostname: isAllowedCiabDashboardHostname,
 	},
 	{
 		definition: A4A_DASHBOARD_SECTION_DEFINITION,
@@ -1315,18 +1305,22 @@ export default function pages() {
 		);
 	}
 
+	if ( isDashboardEnv() ) {
+		app.use( render404ForUnknownHostname );
+	}
+
 	// Special Calypso routes which also appear on `my.wordpress.com`
 	if ( isDashboardEnv() || calypsoEnv === 'development' ) {
 		const signupSectionDefinition = sections.find( ( s ) => s.name === 'signup' );
 		handleSectionPath( signupSectionDefinition, '/start', undefined, ( req ) =>
-			isAllowedDashboardRoute( { hostname: req.hostname, path: req.path } )
+			getDashboardFromHostname( req.hostname )
 		);
 		const checkoutSectionDefinition = sections.find( ( s ) => s.name === 'checkout' );
 		handleSectionPath( checkoutSectionDefinition, '/checkout', undefined, ( req ) =>
-			isAllowedDashboardRoute( { hostname: req.hostname, path: req.path } )
+			getDashboardFromHostname( req.hostname )
 		);
 		handleSectionPath( STEPPER_SECTION_DEFINITION, '/setup', 'entry-stepper', ( req ) =>
-			isAllowedDashboardRoute( { hostname: req.hostname, path: req.path } )
+			getDashboardFromHostname( req.hostname )
 		);
 	}
 
@@ -1415,6 +1409,19 @@ export default function pages() {
 			res.send( 'User-agent: *\nDisallow: /\n' );
 		} );
 
+		// Redirect bots probing the non-existent `/wp-login.php` to the real login page.
+		app.get( '/wp-login.php', ( req, res, next ) => {
+			const { wpcom_login_url: loginUrl } = customizeClientDataForRequest( req, config.clientData );
+			if ( ! loginUrl ) {
+				return next();
+			}
+			const url = new URL( loginUrl );
+			if ( typeof req.query.redirect_to === 'string' ) {
+				url.searchParams.set( 'redirect_to', req.query.redirect_to );
+			}
+			res.redirect( url.toString() );
+		} );
+
 		// Serve the dashboard shell for any otherwise-unmatched path so the client
 		// router renders its own not-found page, instead of falling through to default.
 		DASHBOARD_VARIANTS.forEach( ( variant ) =>
@@ -1458,6 +1465,14 @@ export default function pages() {
 		}
 		const redirectUrl = localizeUrl( `https://wordpress.com/support`, req.context.locale );
 		return res.redirect( 301, redirectUrl );
+	} );
+
+	// The logged-out Speed Test Tool was retired; old report links go to the site speed guide.
+	// Unprefixed URLs get English: this route doesn't load the user, so their account locale is unknown.
+	const speedTestToolPath = `/${ getAnyLanguageRouteParam() }?/speed-test-tool`;
+	app.get( [ speedTestToolPath, `${ speedTestToolPath }/*` ], ( req, res ) => {
+		const locale = req.params.lang ?? config( 'i18n_default_locale_slug' );
+		res.redirect( 301, localizeUrl( 'https://wordpress.com/support/site-speed/', locale ) );
 	} );
 	// catchall to render 404 for all routes not explicitly allowed in client/sections
 	app.use( render404() );

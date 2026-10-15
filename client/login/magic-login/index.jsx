@@ -340,6 +340,7 @@ export class MagicLogin extends Component {
 				isFromJetpackConnector={ isFromJetpackConnector }
 				isUnifiedConnectionFlow={ isUnifiedConnectionFlow }
 				connectorPlugins={ connectorPlugins }
+				linkLogoToHome
 			>
 				{ mainContent }
 			</OneLoginLayout>

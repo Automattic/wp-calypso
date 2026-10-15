@@ -1,6 +1,7 @@
 import { paginatedAgencySitesQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
+import { addSchemeIfMissing } from 'calypso/lib/url';
 import { useSelector } from 'calypso/state';
 import { getActiveAgencyId } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import type { AgencySite } from '@automattic/api-core';
@@ -15,8 +16,16 @@ export interface ConnectableSite {
 const FIRST_PAGE_SIZE = 20;
 
 // The query sorts by URL, so the options land alphabetically without a second pass.
+//
+// `url` is the bare domain and the analysis endpoint needs a full URL, so take
+// `url_with_scheme` when the endpoint sends it and add the scheme when it does not.
 const toConnectableSites = ( list: AgencySite[] ): ConnectableSite[] =>
-	list.filter( ( site ) => !! site.url ).map( ( site ) => ( { id: site.blog_id, url: site.url } ) );
+	list
+		.filter( ( site ) => !! site.url )
+		.map( ( site ) => ( {
+			id: site.blog_id,
+			url: site.url_with_scheme ?? addSchemeIfMissing( site.url, 'https' ),
+		} ) );
 
 // The sites a user can amplify: the agency's connected sites, sourced from the
 // same dashboard endpoint that powers the Sites list so the two stay in sync.

@@ -10,7 +10,10 @@ import { useLocale } from '../../../app/locale';
 import { DataViewsCard } from '../../../components/dataviews';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
-import MissingPaymentSettingsNotice from '../missing-payment-settings-notice';
+import { AgencyNotices } from '../../components/agency-notices';
+import MissingPaymentSettingsNotice, {
+	useMissingPaymentSettings,
+} from '../missing-payment-settings-notice';
 import MigrationsCommissionsContent from './commissions-content';
 import useCanTagSitesForCommission from './hooks/use-can-tag-sites-for-commission';
 import useFetchTaggedSitesForMigration from './hooks/use-fetch-tagged-sites-for-migration';
@@ -23,6 +26,10 @@ export default function EarnMigrations() {
 	const { data: sites = [] } = useQuery( allSitesQuery() );
 	const { data, isLoading } = useFetchTaggedSitesForMigration();
 	const taggedSites = data ?? [];
+	const missingPaymentSettings = useMissingPaymentSettings( {
+		hasCommissionActivity: taggedSites.length > 0,
+		isLoadingActivity: isLoading,
+	} );
 
 	const [ isAddSitesModalOpen, setIsAddSitesModalOpen ] = useState( false );
 
@@ -43,7 +50,7 @@ export default function EarnMigrations() {
 	);
 
 	const onOpenAddSitesModal = useCallback( () => {
-		recordTracksEvent( 'calypso_a8c_migrations_commissions_tag_sites_click' );
+		recordTracksEvent( 'calypso_a4a_migrations_commissions_tag_sites_click' );
 		setIsAddSitesModalOpen( true );
 	}, [ recordTracksEvent ] );
 
@@ -55,14 +62,29 @@ export default function EarnMigrations() {
 					description={ __( 'Earn commissions for migrating sites to Automattic hosting.' ) }
 					actions={
 						canTagSitesForCommission ? (
-							<Button variant="primary" onClick={ onOpenAddSitesModal }>
+							<Button variant="primary" __next40pxDefaultSize onClick={ onOpenAddSitesModal }>
 								{ __( 'Tag sites for commission' ) }
 							</Button>
 						) : undefined
 					}
 				/>
 			}
-			notices={ <MissingPaymentSettingsNotice hasCommissionActivity={ taggedSites.length > 0 } /> }
+			notices={
+				<AgencyNotices
+					candidates={ [
+						{
+							id: 'missing-payment-settings',
+							...missingPaymentSettings,
+							notice: (
+								<MissingPaymentSettingsNotice
+									hasCommissionActivity={ taggedSites.length > 0 }
+									commissionType="migrations"
+								/>
+							),
+						},
+					] }
+				/>
+			}
 		>
 			<MigrationsCommissionsContent
 				taggedSites={ taggedSites }

@@ -1,10 +1,12 @@
 import { Visibility } from '@automattic/data-stores/src/site/types';
 import { ONBOARDING_FLOW, createSite } from '@automattic/onboarding';
+import { __ } from '@wordpress/i18n';
 import wpcom from 'calypso/lib/wp';
 import {
 	clearWowFunnelSite,
 	getRememberedWowFunnelSite,
 	getWowFunnelKey,
+	isSameWowFunnelRun,
 	logWowFunnelEvent,
 	rememberWowFunnelSite,
 } from './wow-funnel';
@@ -125,11 +127,70 @@ export async function wowFunnelSiteHasCartItems( blogId: number ): Promise< bool
 }
 
 /**
+ * What came of asking the server to discard the pending site.
+ *
+ * - `discarded`: the teardown is queued and the customer is free to start a new run.
+ * - `gone`: the site was no longer pending (paid for or reverted meanwhile), so there is nothing to
+ *   discard and the customer is just as free.
+ * - `rate_limited`: they have started over too often recently; they can only continue.
+ * - `not_ready`: the site is seconds old and its build has not started, so there is nothing to tear
+ *   down yet; trying again shortly works.
+ * - `unavailable`: this server predates discarding.
+ * - `failed`: anything else.
+ */
+export type DiscardPendingWowFunnelSiteResult =
+	'discarded' | 'gone' | 'rate_limited' | 'not_ready' | 'unavailable' | 'failed';
+
+/**
+ * Discard the customer's unpaid funnel site, at their request, so they can start a different run.
+ *
+ * Only ever called from the customer's own choice: every discard tears down an Atomic site, so the
+ * funnel never does this by itself, and the server rate-limits it.
+ * @param blogId The pending site the customer was shown. The server refuses any other.
+ * @returns What happened.
+ */
+export async function discardPendingWowFunnelSite(
+	blogId: number
+): Promise< DiscardPendingWowFunnelSiteResult > {
+	try {
+		await wpcom.req.post(
+			{
+				path: '/wow-funnel/pending/discard',
+				apiNamespace: 'wpcom/v2',
+			},
+			{ blog_id: blogId }
+		);
+		logWowFunnelEvent( 'pending_discarded', { blog_id: blogId } );
+		return 'discarded';
+	} catch ( error ) {
+		const { error: code, statusCode } = ( error ?? {} ) as { error?: string; statusCode?: number };
+		logWowFunnelEvent( 'pending_discard_error', {
+			blog_id: blogId,
+			code: code ?? null,
+			status: statusCode ?? null,
+		} );
+
+		switch ( code ) {
+			case 'wow_funnel_discard_not_pending':
+				return 'gone';
+			case 'wow_funnel_discard_rate_limited':
+				return 'rate_limited';
+			case 'wow_funnel_discard_not_ready':
+				return 'not_ready';
+			case 'rest_no_route':
+				return 'unavailable';
+			default:
+				return 'failed';
+		}
+	}
+}
+
+/**
  * Take the pending site over as this run's site.
  *
- * Remembered under the run being entered now, not the run that built it: with one unpaid site
- * allowed at a time, a different CTA cannot build its own anyway, and keying it any other way
- * would leave create-site asking for a second site the server will refuse.
+ * Only for the run that built it (see isSameWowFunnelRun): a different run is asked to continue
+ * that one or discard it, never handed the site. Remembered under the run being entered, so
+ * create-site consumes this site rather than asking for one the server will refuse.
  * @param pending    The pending site.
  * @param funnelSlug The slug of the run being entered.
  * @param funnelArgs Args of the run being entered.
@@ -187,9 +248,6 @@ async function createSiteOrAdoptPending( {
 			siteTitle ?? '',
 			'#113AF5', // accent — backend requires a value.
 			false, // useThemeHeadstart.
-			// username: only ever a last-resort blog_name seed, and the server generates the
-			// funnel's arbitrary subdomain regardless — see /sites/new's wow-funnel block.
-			'',
 			null, // partnerBundle.
 			undefined, // storedSiteUrl — empty so the server generates an arbitrary subdomain.
 			undefined, // domainItem.
@@ -215,6 +273,21 @@ async function createSiteOrAdoptPending( {
 	}
 
 	const pending = await fetchPendingWowFunnelSite();
+
+	// Only the run that built the site may take it over. A different run would carry on over a site
+	// built for something else, and its own follow-up would never run. Flow entry catches this case
+	// and asks the customer (see resumeWowFunnelRun); reaching it here means a site from another
+	// run appeared mid-flow, from a second tab.
+	if ( pending && ! isSameWowFunnelRun( pending, funnelSlug, funnelArgs ) ) {
+		logWowFunnelEvent( 'start_site_pending_mismatch', {
+			funnel: funnelSlug,
+			blog_id: pending.blogId,
+			pending_funnel: pending.funnelSlug,
+		} );
+		// Shown to the customer on the error step, so a sentence, translated.
+		throw new Error( __( 'You already have an unfinished site from another setup.' ) );
+	}
+
 	if ( pending ) {
 		logWowFunnelEvent( 'start_site_adopted_pending', {
 			funnel: funnelSlug,

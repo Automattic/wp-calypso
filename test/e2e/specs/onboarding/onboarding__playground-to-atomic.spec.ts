@@ -4,6 +4,7 @@ import {
 	RestAPIClient,
 	type NewSiteResponse,
 	type NewUserResponse,
+	watchImportFailure,
 } from '@automattic/calypso-e2e';
 import { expect, skipIfNotTrunk, tags, test } from '../../lib/pw-base';
 import { apiCancelAtomicPlan, apiCloseAccount, recordAccountLeakMarker } from '../shared';
@@ -59,7 +60,7 @@ test.describe(
 			test.setTimeout( 30 * 60 * 1000 );
 
 			let playgroundId: string;
-			let selectedFreeDomain: string;
+			const selectedFreeDomain = `${ blogName }.wordpress.com`;
 
 			await test.step( 'Given the store is configured for sandbox purchases', async () => {
 				await BrowserManager.setStoreCookie( page, { currency: 'GBP' } );
@@ -119,8 +120,7 @@ test.describe(
 
 			await test.step( 'And I choose a free WordPress.com address', async () => {
 				await componentDomainSearch.search( blogName );
-				selectedFreeDomain = await componentDomainSearch.skipPurchase();
-				expect( selectedFreeDomain ).toBe( `${ blogName }.wordpress.com` );
+				await componentDomainSearch.skipPurchase();
 			} );
 
 			await test.step( 'And I select the Business plan', async () => {
@@ -166,17 +166,38 @@ test.describe(
 			} );
 
 			await test.step( 'And the Playground import completes', async () => {
-				await expect(
-					page.getByText(
-						'Feel free to close this window. We’ll email you when your new site is ready.'
-					)
-				).toBeVisible( { timeout: 120 * 1000 } );
-				await expect( page.getByRole( 'heading', { name: 'Hooray!' } ) ).toBeVisible( {
-					timeout: 10 * 60 * 1000,
-				} );
-				await expect(
-					page.getByText( 'Congratulations. Your content was successfully imported.' )
-				).toBeVisible();
+				// WordPress.com can fail the import without the importer showing an error
+				// screen, so also stop waiting as soon as its status poll reports a failure.
+				const importFailure = watchImportFailure( page );
+				const importOutcome = ( async () => {
+					await expect(
+						page.getByText(
+							'Feel free to close this window. We’ll email you when your new site is ready.'
+						)
+					).toBeVisible( { timeout: 120 * 1000 } );
+					// The importer renders an error screen when the import fails, so stop waiting
+					// as soon as either outcome shows up instead of burning the full timeout.
+					const successHeading = page.getByRole( 'heading', { name: 'Hooray!' } );
+					const errorHeading = page.getByRole( 'heading', { name: 'Oops, something went wrong' } );
+					await expect( successHeading.or( errorHeading ) ).toBeVisible( {
+						timeout: 10 * 60 * 1000,
+					} );
+					await expect( errorHeading, 'The Playground import failed on WordPress.com' ).toBeHidden(
+						{
+							timeout: 1000,
+						}
+					);
+					await expect( successHeading ).toBeVisible();
+					await expect(
+						page.getByText( 'Congratulations. Your content was successfully imported.' )
+					).toBeVisible();
+				} )();
+				importOutcome.catch( () => {} );
+				try {
+					await Promise.race( [ importOutcome, importFailure.failed ] );
+				} finally {
+					importFailure.stop();
+				}
 			} );
 
 			await test.step( 'When I continue to the imported site', async () => {

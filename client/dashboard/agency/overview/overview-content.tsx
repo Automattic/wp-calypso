@@ -1,6 +1,7 @@
-import { __experimentalGrid as Grid, __experimentalVStack as VStack } from '@wordpress/components';
+import { __experimentalVStack as VStack } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
+import Grid from '../../components/grid';
 import { PendingTierCard, RejectedTierCard } from './application-status-cards';
 import EventCard from './event-card';
 import GrowthCard from './growth-card';
@@ -23,8 +24,10 @@ export interface AgencyOverviewLinks {
 	woopayments: string;
 	marketplace: string;
 	partnerDirectory: string;
-	contactSupport: string;
+	/** A URL, or a callback that opens contact support in-app. */
+	contactSupport: string | ( () => void );
 	aiMcp: string;
+	pressableHosting: string;
 	helpful: HelpfulLink[];
 }
 
@@ -47,6 +50,10 @@ export interface AgencyOverviewContentProps {
 	onScheduleCall?: () => void;
 	isSchedulingCall?: boolean;
 	onRelaunchTour?: () => void;
+	/** What the Pending card's tour button says. */
+	tourLabel?: string;
+	/** The welcome band is showing and already says what the Pending card would. */
+	hidesPendingCard?: boolean;
 	recordTracksEvent?: RecordTracksEvent;
 }
 
@@ -69,6 +76,8 @@ export default function AgencyOverviewContent( {
 	onScheduleCall,
 	isSchedulingCall,
 	onRelaunchTour,
+	tourLabel,
+	hidesPendingCard,
 	recordTracksEvent,
 }: AgencyOverviewContentProps ) {
 	const isSmallViewport = useViewportMatch( 'medium', '<' );
@@ -81,12 +90,18 @@ export default function AgencyOverviewContent( {
 	const lockedNote = isPending ? __( 'Unlocks when your account is activated' ) : undefined;
 
 	return (
-		<Grid columns={ isSmallViewport ? 1 : 2 } gap={ spacing }>
+		<Grid columns={ isSmallViewport ? 1 : 2 } gap={ isSmallViewport ? 'lg' : 'xl' }>
 			<VStack spacing={ spacing } justify="flex-start">
-				{ isRejected && <RejectedTierCard contactSupportHref={ links.contactSupport } /> }
-				{ isPending && (
+				{ isRejected && (
+					<RejectedTierCard
+						contactSupport={ links.contactSupport }
+						recordTracksEvent={ recordTracksEvent }
+					/>
+				) }
+				{ isPending && ! hidesPendingCard && (
 					<PendingTierCard
 						onRelaunchTour={ onRelaunchTour }
+						tourLabel={ tourLabel }
 						recordTracksEvent={ recordTracksEvent }
 					/>
 				) }
@@ -135,6 +150,8 @@ export default function AgencyOverviewContent( {
 					isEligibleForPressableIntroOffer={ isEligibleForPressableIntroOffer }
 					isEligibleForPressableExpansionOffer={ isEligibleForPressableExpansionOffer }
 					aiMcpHref={ links.aiMcp }
+					pressableHostingHref={ links.pressableHosting }
+					shouldUseRouterLink={ shouldUseRouterLink }
 					recordTracksEvent={ recordTracksEvent }
 				/>
 			</VStack>

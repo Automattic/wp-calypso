@@ -1,12 +1,11 @@
 import { RegenerateAltIcon } from '@automattic/agenttic-ui';
 import { createElement, useCallback } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import { REGENERATE_ACTION_ID } from '../utils/message-actions';
 import type { UIMessage } from '@automattic/agenttic-client';
-import type { MessageAction } from '@automattic/agenttic-ui/dist/types';
+import type { MessageAction } from '@automattic/agenttic-ui';
 
 const REGENERATE_ACTION_ORDER = 3.5;
-
-const noop = () => {};
 
 type RegenerateHandlerGetter = (
 	message?: UIMessage
@@ -20,8 +19,6 @@ interface UseRegenerateActionConfig {
 interface RegenerateActionOptions {
 	/** Whether this message is the most recent agent message. */
 	isLatestAgentMessage: boolean;
-	/** Whether a response is currently streaming. */
-	isStreaming: boolean;
 }
 
 /**
@@ -38,7 +35,7 @@ export default function useRegenerateAction( {
 	options: RegenerateActionOptions
 ) => MessageAction[] {
 	return useCallback(
-		( message: UIMessage, { isLatestAgentMessage, isStreaming }: RegenerateActionOptions ) => {
+		( message: UIMessage, { isLatestAgentMessage }: RegenerateActionOptions ) => {
 			if ( ! enabled ) {
 				return [];
 			}
@@ -46,27 +43,22 @@ export default function useRegenerateAction( {
 			const onRegenerate =
 				typeof getRegenerateHandler === 'function' ? getRegenerateHandler( message ) : null;
 
-			// Show the icon when the turn is regeneratable, or as a disabled
-			// placeholder on the latest message while its response is streaming.
-			const showStreamingPlaceholder = isLatestAgentMessage && isStreaming && ! onRegenerate;
-			if ( ! onRegenerate && ! showStreamingPlaceholder ) {
+			if ( ! onRegenerate ) {
 				return [];
 			}
 
-			// Enabled only for the latest agent message once its turn is complete.
-			const isEnabled = isLatestAgentMessage && Boolean( onRegenerate );
-
 			return [
 				{
-					id: 'regenerate',
+					id: REGENERATE_ACTION_ID,
 					label: __( 'Regenerate', __i18n_text_domain__ ),
 					tooltip: __( 'Regenerate response', __i18n_text_domain__ ),
 					icon: createElement( RegenerateAltIcon, {
 						className: 'agents-manager-message-action-icon',
 					} ),
 					order: REGENERATE_ACTION_ORDER,
-					disabled: ! isEnabled,
-					onClick: onRegenerate ?? noop,
+					disabled: ! isLatestAgentMessage,
+					onClick: onRegenerate,
+					visibility: 'latest-turn',
 				},
 			];
 		},

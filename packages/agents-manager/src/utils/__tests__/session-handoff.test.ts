@@ -10,10 +10,9 @@ const ORIGIN = 'https://example.com';
 describe( 'isHandoffAgent', () => {
 	it.each( [
 		[ 'the orchestrator', 'wp-orchestrator', true ],
-		[ 'unified chat', 'wpcom-workflow-unified_chat', true ],
 		[ 'an unresolved agent', undefined, false ],
 		[ 'reader chat', 'reader-chat', false ],
-		[ 'Plugin Compass', 'wpcom-workflow-plugin_compass', false ],
+		[ 'Custom agent', 'custom-agent', false ],
 		[ 'a host override', 'wpcom-workflow-support_chat', false ],
 	] )( 'handles %s', ( _label, agentId, expected ) => {
 		expect( isHandoffAgent( agentId ) ).toBe( expected );

@@ -1,72 +1,99 @@
-import { DomainAvailabilityStatus } from '@automattic/api-core';
-import { formatCurrency } from '@automattic/number-formatters';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Button, Tooltip, __experimentalText as Text } from '@wordpress/components';
+import { useViewportMatch } from '@wordpress/compose';
 import { sprintf } from '@wordpress/i18n';
 import { cautionFilled, cart as cartIcon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
+import { Badge } from '@wordpress/ui';
 import clsx from 'clsx';
-import { useState } from 'react';
-import { convertAvailabilityToSuggestion } from '../../helpers/convert-availability-to-suggestion';
-import { DomainPriceRule } from '../../hooks/use-suggestion';
+import { useEffect, useMemo } from 'react';
 import { useDomainSearch } from '../../page/context';
-import { DomainSearchTrademarkClaimsModal, DomainSuggestionBadge } from '../../ui';
+import { DomainSearchTrademarkClaimsModal } from '../../ui';
 import {
+	formatNamePulsePrice,
+	getNamePulseSalePrice,
 	NamePulseDomainStatus,
-	pickPricing,
+	toNamePulseRealtimeVerdict,
+	getNamePulseRenderTracksProps,
+	toNamePulseTracksSuggestion,
 	type NamePulseDomainResult,
-	type NamePulseVerdict,
+	type NamePulseResultGroup,
 } from '../helpers';
+import { useNamePulseCartToggle } from '../hooks/use-name-pulse-cart-toggle';
+import { useNamePulseLabelLimit } from '../hooks/use-name-pulse-label-limit';
+import {
+	getNamePulseRenderKey,
+	recordNamePulseRender,
+	useNamePulseResultSet,
+} from '../hooks/use-name-pulse-result-set';
 import { setNamePulseVerdict } from '../hooks/use-name-pulse-verdicts';
-import type { DomainAvailability } from '@automattic/api-core';
+import { NamePulsePolicyNoticeDialog } from './policy-notice-dialog';
+
+export type NamePulseResultRowVariant = 'row' | 'card';
 
 interface NamePulseResultRowProps {
 	result: NamePulseDomainResult;
+	group: NamePulseResultGroup;
 	position: number;
+	variant?: NamePulseResultRowVariant;
 }
 
-const isAvailableStatus = ( status: DomainAvailabilityStatus ) =>
-	status === DomainAvailabilityStatus.AVAILABLE ||
-	status === DomainAvailabilityStatus.AVAILABLE_PREMIUM;
-
-const toRealtimeVerdict = ( availability: DomainAvailability ): NamePulseVerdict => {
-	const available = isAvailableStatus( availability.status );
-
-	return {
-		status: available ? NamePulseDomainStatus.AVAILABLE : NamePulseDomainStatus.TAKEN,
-		...pickPricing( availability ),
-		cost: available ? availability.cost : undefined,
-		is_premium: availability.status === DomainAvailabilityStatus.AVAILABLE_PREMIUM,
-		is_realtime: true,
-	};
-};
-
-const formatPrice = ( amount: number, currencyCode: string ) =>
-	formatCurrency( amount, currencyCode, { stripZeros: true } );
-
-/**
- * Only `sale_cost` is a bare number, so a sale needs a known currency to render.
- */
-const hasSalePrice = ( {
-	sale_cost: saleCost,
-	currency_code: currencyCode,
-}: NamePulseDomainResult ) => typeof saleCost === 'number' && !! currencyCode;
-
-const Price = ( { result }: { result: NamePulseDomainResult } ) => {
+const Price = ( {
+	result,
+	variant,
+}: {
+	result: NamePulseDomainResult;
+	variant: NamePulseResultRowVariant;
+} ) => {
 	const { __ } = useI18n();
-	const { cost, raw_price: rawPrice, sale_cost: saleCost, currency_code: currencyCode } = result;
+	const { cost, raw_price: rawPrice, currency_code: currencyCode } = result;
 	const yearlyPrice =
-		typeof rawPrice === 'number' && currencyCode ? formatPrice( rawPrice, currencyCode ) : cost;
+		typeof rawPrice === 'number' && currencyCode
+			? formatNamePulsePrice( rawPrice, currencyCode )
+			: cost;
 
 	if ( ! yearlyPrice ) {
 		return null;
 	}
 
-	const salePrice =
-		typeof saleCost === 'number' && currencyCode
-			? formatPrice( saleCost, currencyCode )
-			: undefined;
+	const salePrice = getNamePulseSalePrice( result );
 	const isSale = !! salePrice;
+	const renewal =
+		isSale &&
+		sprintf(
+			// translators: %(price)s is the domain renewal price.
+			__( '%(price)s/year renewal' ),
+			{ price: yearlyPrice }
+		);
+
+	// A card has room for the whole offer on one line: the regular price struck
+	// through, the sale price, and the renewal price after it.
+	if ( variant === 'card' ) {
+		return (
+			<span className="name-pulse-row__price name-pulse-row__price--card">
+				{ isSale && (
+					<Text as="s" size={ 18 } lineHeight="26px" variant="muted">
+						{ yearlyPrice }
+					</Text>
+				) }
+				<Text
+					size={ 18 }
+					lineHeight="26px"
+					color={ isSale ? 'var( --domain-search-promotional-price-color )' : undefined }
+				>
+					{ salePrice ?? yearlyPrice }
+				</Text>
+				<Text size={ 11 } lineHeight="20px">
+					{ isSale ? __( '/first year' ) : __( '/year' ) }
+				</Text>
+				{ renewal && (
+					<Text size={ 11 } lineHeight="20px" variant="muted">
+						{ renewal }
+					</Text>
+				) }
+			</span>
+		);
+	}
 
 	return (
 		<span className={ clsx( 'name-pulse-row__price', isSale && 'name-pulse-row__price--sale' ) }>
@@ -81,131 +108,156 @@ const Price = ( { result }: { result: NamePulseDomainResult } ) => {
 					{ isSale ? __( '/first year' ) : __( '/year' ) }
 				</Text>
 			</span>
-			{ isSale && (
+			{ renewal && (
 				<Text size={ 12 } variant="muted">
-					{ sprintf(
-						// translators: %(price)s is the domain renewal price.
-						__( '%(price)s/year renewal' ),
-						{ price: yearlyPrice }
-					) }
+					{ renewal }
 				</Text>
 			) }
 		</span>
 	);
 };
 
-export const NamePulseResultRow = ( { result, position }: NamePulseResultRowProps ) => {
+export const NamePulseResultRow = ( {
+	result,
+	group,
+	position,
+	variant = 'row',
+}: NamePulseResultRowProps ) => {
 	const { __ } = useI18n();
-	const { cart, events, queries } = useDomainSearch();
+	const { queries, events } = useDomainSearch();
+	const resultSet = useNamePulseResultSet();
 	const queryClient = useQueryClient();
-	const [ trademarkClaimsNoticeInfo, setTrademarkClaimsNoticeInfo ] =
-		useState< DomainAvailability[ 'trademark_claims_notice_info' ] >();
+	// Below wide desktop the row is too narrow to truncate without losing most of
+	// the name, so the name wraps onto a second line instead.
+	const wrapName = useViewportMatch( 'large', '<' );
 
-	const {
-		domain_name: domainName,
-		suffix,
-		status,
-		is_premium: isPremium,
-		is_realtime: isRealtime,
-	} = result;
+	const { domain_name: domainName, suffix, source } = result;
 	const label = suffix ? domainName.slice( 0, -( suffix.length + 1 ) ) : domainName;
+
+	// The bulk check prices a premium name at its TLD's standard rate, so the row
+	// asks for a per-domain check rather than quoting a price we cannot honor.
+	// Suggestions are priced by the registry already, so they render straight away.
+	const needsPremiumPrice =
+		result.status === NamePulseDomainStatus.AVAILABLE &&
+		!! result.is_premium &&
+		! result.is_realtime &&
+		source === 'exact';
+
+	// The key is shared with the pre-cart check and the typed-domain notice, so
+	// clicking the row afterwards costs no second request, and even while disabled
+	// the query reports whatever verdict those two already fetched for the name.
+	const { data: realtimeAvailability, isError: isPremiumPriceError } = useQuery( {
+		...queries.domainAvailability( domainName ),
+		enabled: needsPremiumPrice,
+	} );
+
+	const realtimeVerdict = useMemo(
+		() => ( realtimeAvailability ? toNamePulseRealtimeVerdict( realtimeAvailability ) : undefined ),
+		[ realtimeAvailability ]
+	);
+
+	// Every other row listing this name reads the verdict from the shared cache.
+	useEffect( () => {
+		if ( realtimeVerdict ) {
+			setNamePulseVerdict( queryClient, domainName, realtimeVerdict );
+		}
+	}, [ realtimeVerdict, domainName, queryClient ] );
+
+	const row = realtimeVerdict ? { ...result, ...realtimeVerdict } : result;
+	const { status, is_premium: isPremium } = row;
 
 	const isWaiting = status === NamePulseDomainStatus.WAITING;
 	const isUnknown = status === NamePulseDomainStatus.UNKNOWN;
 	const isAvailable = status === NamePulseDomainStatus.AVAILABLE;
 	const isUnavailable = ! isWaiting && ! isUnknown && ! isAvailable;
-	// Bulk results carry no premium pricing; the badge stands in for the price
-	// until the real-time check on click fills it in.
-	const showPremiumBadge = isAvailable && isPremium && ! isRealtime;
-	const showSaleBadge = isAvailable && hasSalePrice( result );
-	// A badge eats into the name column's width, so it gets a tighter label
-	// truncation budget than a row with the space to spare.
-	const labelTruncateLimit = showSaleBadge || showPremiumBadge ? 12 : 20;
-	const inCart = cart.hasItem( domainName );
-
+	const renderKey = getNamePulseRenderKey( group, domainName );
+	const getRendered = () => resultSet?.rendered.get( renderKey );
+	// A failed check leaves the row on its badge alone: no price, and no skeleton
+	// waiting for one that is not coming.
+	const isPremiumPriceMissing = needsPremiumPrice && ! realtimeVerdict;
+	const showPremiumBadge = isAvailable && isPremium;
+	// TLDs with special requirements are rarely registered, so the requirements
+	// stay off the row and are confirmed in a dialog before the name goes to the cart.
 	const {
-		mutate: toggleCart,
+		inCart,
 		isPending,
 		error,
-	} = useMutation( {
-		mutationFn: async ( { acceptedTrademarkClaim }: { acceptedTrademarkClaim: boolean } ) => {
-			if ( inCart ) {
-				const item = cart.items.find( ( i ) => `${ i.domain }.${ i.tld }` === domainName );
-				if ( item ) {
-					await cart.onRemoveItem( item.uuid );
-				}
-				return { addedToCart: false };
-			}
+		toggleCart,
+		trademarkClaimsNoticeInfo,
+		acceptTrademarkClaim,
+		closeTrademarkClaims,
+		policyNotice,
+		isPolicyNoticeOpen,
+		confirmPolicyNotice,
+		closePolicyNotice,
+	} = useNamePulseCartToggle( row, position, getRendered, row.policy_notices );
 
-			// Bulk results are zone-file based and approximate; the real-time check runs
-			// before anything reaches the cart, and every row listing the name reads it.
-			const availability = await queryClient.ensureQueryData(
-				queries.domainAvailability( domainName )
-			);
-			const suggestion = convertAvailabilityToSuggestion( availability );
+	// Reported once per result set, when the row has a verdict, taken names included.
+	useEffect( () => {
+		const id = resultSet?.id;
 
-			events.onDomainAddAvailabilityPreCheck( availability, domainName, suggestion.vendor );
-			setNamePulseVerdict( queryClient, domainName, toRealtimeVerdict( availability ) );
+		if ( isWaiting || ! id || resultSet.rendered.has( renderKey ) ) {
+			return;
+		}
 
-			if ( ! isAvailableStatus( availability.status ) ) {
-				throw new Error( __( 'Sorry, this domain is no longer available.' ) );
-			}
-
-			if ( availability.trademark_claims_notice_info && ! acceptedTrademarkClaim ) {
-				events.onTrademarkClaimsNoticeShown( {
-					...suggestion,
-					position,
-					price_rule: DomainPriceRule.PRICE,
-				} );
-				setTrademarkClaimsNoticeInfo( availability.trademark_claims_notice_info );
-				return { addedToCart: false };
-			}
-
-			await cart.onAddItem( suggestion );
-			return { addedToCart: true, suggestion };
-		},
-		onSuccess: ( data ) => {
-			if ( data.addedToCart && data.suggestion ) {
-				events.onAddDomainToCart(
-					domainName,
-					position,
-					data.suggestion.is_premium ?? false,
-					data.suggestion.vendor
-				);
-			}
-		},
-		networkMode: 'always',
-		retry: false,
+		const report = recordNamePulseRender( { ...resultSet, id }, renderKey, group, position );
+		events.onSuggestionRender(
+			toNamePulseTracksSuggestion( row, position ),
+			undefined,
+			getNamePulseRenderTracksProps( row, report )
+		);
 	} );
+	const { nameRef, labelRef, limit: labelLimit } = useNamePulseLabelLimit( label );
+	const isCard = variant === 'card';
+	const nameSize = isCard ? 20 : undefined;
+	const suffixText = (
+		<Text
+			as="span"
+			size={ nameSize }
+			weight={ isCard ? 400 : 600 }
+			variant={ isUnavailable ? 'muted' : undefined }
+		>
+			{ suffix ? `.${ suffix }` : '' }
+		</Text>
+	);
 
 	return (
 		<div
-			className="name-pulse-row"
+			className={ clsx( 'name-pulse-row', isCard && 'name-pulse-row--card' ) }
 			data-domain={ domainName }
 			data-status={ NamePulseDomainStatus[ status ].toLowerCase() }
 		>
-			<span className="name-pulse-row__name">
-				<Tooltip text={ domainName }>
-					<span className="name-pulse-row__domain">
-						<Text
-							as="span"
-							variant="muted"
-							truncate
-							ellipsizeMode="middle"
-							limit={ labelTruncateLimit }
-						>
+			<span ref={ nameRef } className="name-pulse-row__name">
+				{ wrapName ? (
+					<span className="name-pulse-row__domain name-pulse-row__domain--wrap">
+						<Text as="span" size={ nameSize } variant="muted">
 							{ label }
 						</Text>
-						<Text as="span" weight={ 600 } variant={ isUnavailable ? 'muted' : undefined }>
-							{ suffix ? `.${ suffix }` : '' }
-						</Text>
+						<wbr />
+						{ suffixText }
 					</span>
-				</Tooltip>
-				{ showSaleBadge && (
-					<DomainSuggestionBadge variation="warning">{ __( 'Sale' ) }</DomainSuggestionBadge>
+				) : (
+					<Tooltip text={ domainName }>
+						<span className="name-pulse-row__domain">
+							<Text
+								ref={ labelRef }
+								as="span"
+								size={ nameSize }
+								variant="muted"
+								truncate
+								ellipsizeMode="middle"
+								limit={ labelLimit }
+							>
+								{ label }
+							</Text>
+							{ suffixText }
+						</span>
+					</Tooltip>
 				) }
 				{ showPremiumBadge && (
-					<DomainSuggestionBadge variation="premium">{ __( 'Premium' ) }</DomainSuggestionBadge>
+					<span className="name-pulse-row__badges">
+						<Badge intent="informational">{ __( 'Premium' ) }</Badge>
+					</span>
 				) }
 			</span>
 			<span className="name-pulse-row__status">
@@ -214,7 +266,14 @@ export const NamePulseResultRow = ( { result, position }: NamePulseResultRowProp
 				) }
 				{ isUnknown && <Text variant="muted">{ __( 'Couldn’t check' ) }</Text> }
 				{ isUnavailable && <Text variant="muted">{ __( 'Unavailable' ) }</Text> }
-				{ isAvailable && ! showPremiumBadge && <Price result={ result } /> }
+				{ isPremiumPriceMissing && ! isPremiumPriceError && (
+					<span
+						className="name-pulse-row__skeleton"
+						role="img"
+						aria-label={ __( 'Checking price…' ) }
+					/>
+				) }
+				{ isAvailable && ! isPremiumPriceMissing && <Price result={ row } variant={ variant } /> }
 				{ error && (
 					<Tooltip delay={ 0 } text={ error.message } placement="top">
 						<Button
@@ -240,27 +299,44 @@ export const NamePulseResultRow = ( { result, position }: NamePulseResultRowProp
 						isBusy={ isPending }
 						disabled={ isPending }
 						aria-pressed={ inCart }
-						onClick={ () => toggleCart( { acceptedTrademarkClaim: false } ) }
+						onClick={ toggleCart }
 					/>
 				) }
 			</span>
+			{ policyNotice && (
+				<NamePulsePolicyNoticeDialog
+					notice={ policyNotice }
+					open={ isPolicyNoticeOpen }
+					isPending={ isPending }
+					onConfirm={ confirmPolicyNotice }
+					onClose={ closePolicyNotice }
+				/>
+			) }
 			{ trademarkClaimsNoticeInfo && (
 				<DomainSearchTrademarkClaimsModal
 					domainName={ domainName }
 					trademarkClaimsNoticeInfo={ trademarkClaimsNoticeInfo }
-					onAccept={ () => {
-						setTrademarkClaimsNoticeInfo( undefined );
-						toggleCart( { acceptedTrademarkClaim: true } );
-					} }
-					onClose={ () => setTrademarkClaimsNoticeInfo( undefined ) }
+					onAccept={ acceptTrademarkClaim }
+					onClose={ closeTrademarkClaims }
 				/>
 			) }
 		</div>
 	);
 };
 
-export const NamePulseResultRowSkeleton = () => (
-	<div className="name-pulse-row name-pulse-row--skeleton" aria-hidden="true">
+export const NamePulseResultRowSkeleton = ( {
+	variant = 'row',
+}: {
+	variant?: NamePulseResultRowVariant;
+} ) => (
+	<div
+		className={ clsx(
+			'name-pulse-row',
+			'name-pulse-row--skeleton',
+			variant === 'card' && 'name-pulse-row--card'
+		) }
+		aria-hidden="true"
+	>
 		<span className="name-pulse-row__skeleton name-pulse-row__skeleton--name" />
 		<span className="name-pulse-row__skeleton" />
 	</div>

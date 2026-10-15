@@ -34,7 +34,6 @@ export const setSiteUrl = ( siteUrl: string ) => ( {
 } );
 
 export function* createSenseiSite( {
-	username = '',
 	languageSlug = '',
 	visibility = Visibility.PublicNotIndexed,
 } ) {
@@ -43,7 +42,7 @@ export function* createSenseiSite( {
 		'getState'
 	);
 
-	const siteUrl = domain?.domain_name || siteTitle || username;
+	const siteUrl = domain?.domain_name || siteTitle;
 	const lang_id = ( getLanguage( languageSlug ) as Language )?.value;
 	const blogTitle = siteTitle.trim() === '' ? __( 'Site Title' ) : siteTitle;
 

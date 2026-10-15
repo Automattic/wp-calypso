@@ -56,15 +56,6 @@ export interface PriceTierEntry {
 	flat_fee?: number | null;
 }
 
-export interface PurchasePriceTier {
-	minimumUnits: number;
-	maximumUnits?: null | number;
-	minimumPrice: number;
-	maximumPrice: number;
-	minimumPriceDisplay: string;
-	maximumPriceDisplay?: string | null;
-}
-
 /**
  * A subscription or one-time purchase.
  *

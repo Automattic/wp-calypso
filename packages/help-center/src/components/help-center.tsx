@@ -2,7 +2,6 @@
 /**
  * External Dependencies
  */
-import { useShouldUseUnifiedAgent } from '@automattic/agents-manager';
 import { initializeAnalytics } from '@automattic/calypso-analytics';
 import { HelpCenter as HelpCenterStore } from '@automattic/data-stores';
 import { useCanConnectToZendeskMessaging } from '@automattic/zendesk-client';
@@ -17,6 +16,7 @@ import {
 	type HelpCenterRequiredInformation,
 } from '../contexts/HelpCenterContext';
 import { useGetSupportInteractions } from '../hooks/use-get-support-interactions';
+import { useHasOpenZendeskChat } from '../hooks/use-has-open-zendesk-chat';
 import { HELP_CENTER_STORE } from '../stores';
 import { Container } from '../types';
 import HelpCenterContainer from './help-center-container';
@@ -29,7 +29,6 @@ const HelpCenter: React.FC< Container > = ( {
 	hidden,
 	currentRoute = window.location.pathname + window.location.search + window.location.hash,
 } ) => {
-	const shouldUseUnifiedAgent = useShouldUseUnifiedAgent();
 	const [ container, setContainer ] = useState< HTMLDivElement >();
 
 	const isHelpCenterShown = useSelect( ( select ) => {
@@ -44,6 +43,7 @@ const HelpCenter: React.FC< Container > = ( {
 		! isLoadingOpenInteractions && supportInteractionsOpen
 			? supportInteractionsOpen?.length > 0
 			: false;
+	const { hasOpenZendeskChat } = useHasOpenZendeskChat();
 	// Only check connectivity when the answer can matter: the panel is open, or Smooch
 	// may need to mount for unread notifications.
 	const { data: canConnectToZendesk } = useCanConnectToZendeskMessaging(
@@ -60,24 +60,17 @@ const HelpCenter: React.FC< Container > = ( {
 
 	// Create portal container on mount, cleanup on unmount
 	useEffect( () => {
-		let div: HTMLDivElement | undefined;
-		if ( ! shouldUseUnifiedAgent ) {
-			div = document.createElement( 'div' );
-			div.classList.add( 'help-center' );
-			document.body.appendChild( div );
-			setContainer( div );
-		}
+		const div = document.createElement( 'div' );
+		div.classList.add( 'help-center' );
+		document.body.appendChild( div );
+		setContainer( div );
 
 		return () => {
-			if ( div ) {
-				document.body.removeChild( div );
-			}
+			document.body.removeChild( div );
 		};
-		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [] );
 
-	// If unified agent flag is enabled, things will be handled by agents-manager app
-	if ( ! container || shouldUseUnifiedAgent ) {
+	if ( ! container ) {
 		return null;
 	}
 
@@ -90,7 +83,10 @@ const HelpCenter: React.FC< Container > = ( {
 				currentRoute={ currentRoute }
 			/>
 			{ canConnectToZendesk && (
-				<HelpCenterSmooch enableAuth={ isHelpCenterShown || hasOpenZendeskConversations } />
+				<HelpCenterSmooch
+					enableAuth={ isHelpCenterShown || hasOpenZendeskConversations }
+					hasOpenZendeskChat={ hasOpenZendeskChat }
+				/>
 			) }
 		</>,
 		container

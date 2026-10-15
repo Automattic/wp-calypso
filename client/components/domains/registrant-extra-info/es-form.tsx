@@ -1,5 +1,5 @@
 import { FormInputValidation, FormLabel } from '@automattic/components';
-import { camelCase } from '@automattic/js-utils';
+import { camelCase, isEmpty, pick } from '@automattic/js-utils';
 import { LocalizeProps, TranslateResult, localize } from 'i18n-calypso';
 import { PureComponent } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
@@ -7,6 +7,7 @@ import FormSelect from 'calypso/components/forms/form-select';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import Notice from 'calypso/components/notice';
+import RedEsAgreement from './red-es-agreement';
 import type { DomainContactDetails } from '@automattic/shopping-cart';
 import type {
 	DomainContactDetailsErrors,
@@ -18,6 +19,10 @@ import './style.scss';
 
 const INDIVIDUAL_ENTITY_TYPE = '1';
 
+const defaultValues = {
+	redEsAgreementAccepted: false,
+};
+
 // Red.es only accepts NIF, NIE and CIF in upper case; foreign IDs are unaffected.
 const UPPERCASED_FIELD_IDS = [ 'registrant-identification-number', 'admin-identification-number' ];
 
@@ -26,6 +31,7 @@ export interface FormProps {
 	ccTldDetails: Record< string, unknown >;
 	onContactDetailsChange?: ( payload: DomainContactDetails ) => void;
 	contactDetailsValidationErrors: DomainContactDetailsErrors;
+	domainNames?: string[];
 	isVisible?: boolean;
 	onSubmit?: () => void;
 }
@@ -95,6 +101,27 @@ export class RegistrantExtraInfoEsForm extends PureComponent< FormProps & Locali
 		];
 	}
 
+	componentDidMount() {
+		// Add defaults to the store to make accepting default values work.
+		const providedDetails = Object.keys( this.props.ccTldDetails );
+		const neededRequiredDetails = [ 'redEsAgreementAccepted' ].filter(
+			( key ) => ! providedDetails.includes( key )
+		);
+
+		// Bail early as we already have the details from a previous purchase.
+		if ( isEmpty( neededRequiredDetails ) ) {
+			return;
+		}
+
+		const payload = {
+			extra: {
+				es: pick( defaultValues, neededRequiredDetails ),
+			},
+		};
+
+		this.props.onContactDetailsChange?.( payload );
+	}
+
 	handleChangeEvent = ( event: ChangeEvent< HTMLInputElement | HTMLSelectElement > ) => {
 		const { id, value } = event.target;
 		const payload = {
@@ -151,7 +178,14 @@ export class RegistrantExtraInfoEsForm extends PureComponent< FormProps & Locali
 	}
 
 	render() {
-		const { ccTldDetails, translate } = this.props;
+		const {
+			contactDetails,
+			ccTldDetails,
+			domainNames,
+			onContactDetailsChange,
+			contactDetailsValidationErrors,
+			translate,
+		} = this.props;
 		const registrantEntityType = ( ccTldDetails?.registrantEntityType as string ) ?? '';
 		const registrantIdentificationNumber =
 			( ccTldDetails?.registrantIdentificationNumber as string ) ?? '';
@@ -200,6 +234,13 @@ export class RegistrantExtraInfoEsForm extends PureComponent< FormProps & Locali
 					</FormSettingExplanation>
 				</FormFieldset>
 				{ isOrganization && this.renderAdminIdentificationNumberField() }
+				<RedEsAgreement
+					contactDetails={ contactDetails }
+					ccTldDetails={ ccTldDetails }
+					domainNames={ domainNames ?? [] }
+					onContactDetailsChange={ onContactDetailsChange }
+					contactDetailsValidationErrors={ contactDetailsValidationErrors }
+				/>
 			</form>
 		);
 	}

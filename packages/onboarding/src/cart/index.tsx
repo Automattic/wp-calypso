@@ -11,7 +11,6 @@ import {
 	setupSiteAfterCreation,
 	isTailoredSignupFlow,
 	HUNDRED_YEAR_PLAN_FLOW,
-	isAnyHostingFlow,
 	AI_SITE_BUILDER_FLOW,
 } from '../';
 import wpcomRequest from '../wpcom-request';
@@ -29,7 +28,6 @@ interface GetNewSiteParams {
 	siteAccentColor: string;
 	useThemeHeadstart: boolean;
 	siteVisibility: Site.Visibility;
-	username: string;
 	partnerBundle: string | null;
 	sourceSlug?: string;
 	siteIntent?: string;
@@ -66,12 +64,7 @@ type NewSiteParams = {
 	validate: boolean;
 };
 
-const getBlogNameGenerationParams = ( {
-	siteUrl,
-	siteTitle,
-	flowToCheck,
-	username,
-}: GetNewSiteParams ) => {
+const getBlogNameGenerationParams = ( { siteUrl, siteTitle }: GetNewSiteParams ) => {
 	if ( siteUrl ) {
 		const blogName = siteUrl.replace( '.wordpress.com', '' );
 
@@ -90,15 +83,9 @@ const getBlogNameGenerationParams = ( {
 		};
 	}
 
-	if ( isAnyHostingFlow( flowToCheck ) ) {
-		return {
-			blog_name: '',
-			find_available_url: true,
-		};
-	}
-
+	// With no name to work from, the server generates the address.
 	return {
-		blog_name: username,
+		blog_name: '',
 		find_available_url: true,
 	};
 };
@@ -166,7 +153,6 @@ export const createSite = async (
 	siteTitle: string,
 	siteAccentColor: string,
 	useThemeHeadstart: boolean,
-	username: string,
 	partnerBundle: string | null,
 	storedSiteUrl?: string,
 	domainItem?: DomainSuggestion,
@@ -193,7 +179,6 @@ export const createSite = async (
 		siteAccentColor,
 		useThemeHeadstart,
 		siteVisibility,
-		username,
 		sourceSlug,
 		siteIntent,
 		partnerBundle,

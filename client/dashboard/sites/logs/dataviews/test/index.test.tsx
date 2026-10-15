@@ -300,9 +300,10 @@ describe( 'SiteLogsDataViews', () => {
 		await waitFor( () => expect( requestedUrlFilter() ).toBe( '/my-post/' ) );
 
 		await user.click( await screen.findByRole( 'button', { name: 'View options' } ) );
-		await user.click( await screen.findByRole( 'button', { name: 'Reset view' } ) );
+		// Role queries cost ~130ms each once the view options popover has opened.
+		await user.click( await screen.findByText( 'Reset view' ) );
 
-		await user.click( screen.getByRole( 'button', { name: 'Add filter' } ) );
+		await user.click( screen.getByLabelText( 'Add filter' ) );
 		expect( await screen.findByRole( 'menuitem', { name: 'Request URL' } ) ).toBeVisible();
 	} );
 } );

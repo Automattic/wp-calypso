@@ -1,6 +1,7 @@
 import {
 	fetchAgency,
 	fetchAgencyResources,
+	fetchAgencyProgramStats,
 	fetchAgencyScheduleCallLink,
 	fetchAgencyMcpSettings,
 	updateAgencyMcpSettings,
@@ -9,13 +10,18 @@ import {
 	uploadAgencyPartnerDirectoryLogo,
 	fetchTipaltiIFrameUrl,
 	fetchTipaltiPayee,
+	recordAgencyResourceEvent,
+	submitAgencyPressablePremiumPlanReferral,
+	submitAgencyVipPartnerOpportunity,
 } from '@automattic/api-core';
 import { queryOptions, mutationOptions } from '@tanstack/react-query';
 import { queryClient } from './query-client';
 import type {
 	Agency,
+	AgencyHostingReferral,
 	AgencyPartnerDirectoryApplicationUpdate,
 	AgencyProfileUpdate,
+	AgencyVipPartnerOpportunity,
 	McpSettings,
 	McpSettingsUpdate,
 } from '@automattic/api-core';
@@ -104,6 +110,12 @@ export const agencyResourcesQuery = () =>
 		staleTime: 5 * 60 * 1000,
 	} );
 
+export const agencyProgramStatsQuery = () =>
+	queryOptions( {
+		queryKey: [ 'agency', 'program-stats' ] as const,
+		queryFn: fetchAgencyProgramStats,
+	} );
+
 export const tipaltiIFrameUrlQuery = ( agencyId: number ) =>
 	queryOptions( {
 		queryKey: [ 'agency', agencyId, 'tipalti-iframe-url' ] as const,
@@ -160,6 +172,27 @@ export const agencyPartnerDirectoryLogoMutation = ( agencyId: number ) =>
 	mutationOptions( {
 		meta: { statId: 'agcy-pd-logo-upload' },
 		mutationFn: ( file: File ) => uploadAgencyPartnerDirectoryLogo( agencyId, file ),
+	} );
+
+export const agencyVipPartnerOpportunityMutation = ( agencyId: number ) =>
+	mutationOptions( {
+		meta: { statId: 'agcy-vip-opp-submit' },
+		mutationFn: ( referral: AgencyVipPartnerOpportunity ) =>
+			submitAgencyVipPartnerOpportunity( agencyId, referral ),
+	} );
+
+export const agencyPressablePremiumPlanReferralMutation = ( agencyId: number ) =>
+	mutationOptions( {
+		meta: { statId: 'agcy-press-prem-submit' },
+		mutationFn: ( referral: AgencyHostingReferral ) =>
+			submitAgencyPressablePremiumPlanReferral( agencyId, referral ),
+	} );
+
+export const agencyResourceEventMutation = ( agencyId: number ) =>
+	mutationOptions( {
+		meta: { statId: 'agcy-resource-record' },
+		mutationFn: ( resource: { id: number; name: string } ) =>
+			recordAgencyResourceEvent( agencyId, resource.id, resource.name ),
 	} );
 
 export const mcpSettingsQuery = ( agencyId: number ) =>

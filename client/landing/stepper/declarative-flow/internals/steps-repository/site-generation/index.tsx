@@ -2,7 +2,6 @@ import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import { getBuildWowGraph } from 'calypso/landing/stepper/utils/build-wow';
-import { getSafeEditorUrl } from './editor-url';
 import { useSiteGeneration } from './use-site-generation';
 import { SiteGenerationView } from './view';
 import type { Step as StepType } from '../../types';
@@ -12,7 +11,7 @@ const SiteGeneration: StepType = function SiteGeneration() {
 	const translate = useTranslate();
 	const query = useMemo( () => new URLSearchParams( window.location.search ), [] );
 	const siteIdentifier = query.get( 'siteId' ) || query.get( 'siteSlug' );
-	const editorUrl = getSafeEditorUrl( query.get( 'editorUrl' ) );
+	const source = query.get( 'source' );
 	const specId = query.get( 'specId' );
 	const graph = getBuildWowGraph( query );
 	// Fallback checklist only: the server-computed ui.steps from the status
@@ -31,7 +30,7 @@ const SiteGeneration: StepType = function SiteGeneration() {
 		],
 		[ translate ]
 	);
-	const state = useSiteGeneration( { siteIdentifier, editorUrl, specId, graph, steps } );
+	const state = useSiteGeneration( { siteIdentifier, source, specId, graph, steps } );
 
 	const reload = () => {
 		window.location.reload();
@@ -40,7 +39,7 @@ const SiteGeneration: StepType = function SiteGeneration() {
 	return (
 		<>
 			<DocumentHead title={ translate( 'Generating your site' ) } />
-			<SiteGenerationView onReload={ reload } state={ state } />
+			<SiteGenerationView graph={ graph } onReload={ reload } state={ state } />
 		</>
 	);
 };

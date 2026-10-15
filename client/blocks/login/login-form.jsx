@@ -63,6 +63,7 @@ import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
 import getIsBlazePro from 'calypso/state/selectors/get-is-blaze-pro';
 import getIsWoo from 'calypso/state/selectors/get-is-woo';
+import { getParamFromUrlOrOauth2Redirect } from 'calypso/state/selectors/get-param-from-url-or-oauth2-redirect';
 import getWccomFrom from 'calypso/state/selectors/get-wccom-from';
 import isWooJPCFlow from 'calypso/state/selectors/is-woo-jpc-flow';
 import ErrorNotice from './error-notice';
@@ -1061,7 +1062,7 @@ export default connect(
 			userEmail:
 				props.userEmail ||
 				getInitialQueryArguments( state )?.email_address ||
-				getCurrentQueryArguments( state )?.email_address,
+				getParamFromUrlOrOauth2Redirect( state, 'email_address' ),
 			socialService: getInitialQueryArguments( state )?.service,
 			wccomFrom: getWccomFrom( state ),
 			currentQuery,

@@ -23,28 +23,29 @@ declare const __i18n_text_domain__: string;
 declare const agentsManagerData:
 	| {
 			agentProviders?: ( string | import( './utils/load-external-providers' ).LoadedProviders )[];
-			useUnifiedExperience?: boolean;
 			agentId?: string;
-			helpCenterUrl?: string;
 			/** Dev/internal context (localhost, jurassic, proxied a11ns, internal Atomic). Drives `is_test`. */
 			isDevMode?: boolean;
 			/** Whether the current request is attributed to an Automattician for tracking. */
 			isA11n?: boolean;
 			/**
 			 * The site's own usage-tracking opt-in, where the host has one (a WooCommerce
-			 * store's). `false` stops every Tracks event; absent means allowed.
+			 * store's). `false` stops every Tracks event; absent means allowed. Also sent
+			 * in the client context, where only `true` lets the orchestrator record events.
 			 */
 			isTrackingAllowed?: boolean;
 			/** Whether the site is WordPress.com-hosted (Simple/WoA). */
 			isWpcomPlatform?: boolean;
 			/** The deployed bundle build, as `{variant}:{version}`. */
 			version?: string;
-			/** The host section the chat runs in, e.g. `wp-admin`, `gutenberg`, `ciab`. */
+			/** The host section the chat runs in, e.g. `wp-admin` or `gutenberg`. */
 			sectionName?: string;
 			/** The site's canonical identity; injected on wp-admin only. */
 			site?: { ID?: number; domain?: string };
 			emptyViewHeading?: string;
 			emptyViewHelp?: string;
+			/** Set where Big Sky is enabled; AM then sends Big Sky's page context. */
+			bigSkyEnabled?: boolean;
 	  }
 	| undefined;
 
@@ -124,6 +125,10 @@ interface AgentsManagerActions {
 	getSessionId: () => string;
 	/** The `tab_id` the chat's Tracks events carry, so a host's events can join on it. */
 	getTabId?: () => string;
+	/** The current turn's `turn_id`, or '' before the first send, so a host's requests can name the turn behind them. */
+	getTurnId?: () => string;
+	/** The id the agent knows a block by, so a host can name the block to it. */
+	getAgentBlockId?: ( clientId: string ) => string;
 	/**
 	 * Records a Tracks event in the `jetpack_big_sky_` family with its base
 	 * props. `eventName` includes the family prefix.
@@ -147,7 +152,6 @@ interface AgentsManagerActions {
 	chatNavigate: import( 'react-router-dom' ).NavigateFunction;
 	resumeChat: () => void;
 	isChatVisible: () => boolean;
-	getCurrentRoute: () => string;
 	isCompactMode?: boolean;
 	isChatEnabled?: boolean;
 	desktopMediaQuery?: string;
@@ -157,21 +161,21 @@ interface AgentsManagerActions {
 	 * instead of waiting for the `agents-manager-ready` event.
 	 */
 	isReady?: boolean;
-	/**
-	 * Set to `true` by builds that broadcast the agent's activity as window
-	 * events — `agents-manager-turn-started`, `agents-manager-turn-ended` and
-	 * `agents-manager-ability-completed`; see `utils/agent-activity-events.ts`.
-	 * A host that acts on the agent's silence (Big Sky's easy mode writes over
-	 * edits it can attribute to nobody) must check this first: against a build
-	 * without it, the agent is always silent.
-	 */
-	broadcastsAgentActivity?: boolean;
 }
 
 /**
  * Extend Window interface for cross-bundle data sharing.
  */
 interface Window {
+	/** Host configuration set before loading Agents Manager; applies to this document only. */
+	__agentsManagerConfig?: {
+		chatPresentation?: {
+			/** Allow closing or minimizing the chat. Defaults to true. */
+			dismissible?: boolean;
+			/** Show wp-admin and editor toolbar chat toggles. Defaults to true. */
+			showEntryPoints?: boolean;
+		};
+	};
 	__agentsManagerActions?: AgentsManagerActions;
 	/** Build commit injected by Calypso's server-rendered document; absent on widgets.wp.com bundles. */
 	COMMIT_SHA?: string;

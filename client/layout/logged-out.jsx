@@ -55,6 +55,7 @@ import { masterbarIsVisible } from 'calypso/state/ui/selectors';
 import BodySectionCssClass from './body-section-css-class';
 import { refreshColorScheme, getColorSchemeFromCurrentQuery } from './color-scheme';
 import HelpCenterLoader from './help-center-loader';
+import { PublicMarketplaceFooter } from './public-marketplace-footer';
 
 import './style.scss';
 
@@ -84,7 +85,6 @@ const HELP_CENTER_FAB_SECTIONS = [
 	'checkout',
 	'mailing-lists',
 	'patterns',
-	'performance-profiler',
 	'plugins',
 	'reader',
 	'site-profiler',
@@ -251,7 +251,6 @@ const LayoutLoggedOut = ( {
 	} else if (
 		[
 			'patterns',
-			'performance-profiler',
 			'plugins',
 			'reader',
 			'site-profiler',
@@ -339,21 +338,23 @@ const LayoutLoggedOut = ( {
 					<CookieBannerContainerSSR serverShow={ showGdprBanner } />
 				) }
 
+				<PublicMarketplaceFooter
+					sectionName={ sectionName }
+					currentRoute={ currentRoute }
+					isLoggedIn={ isLoggedIn }
+					hasSidebar={ Boolean( secondary ) }
+					hasSelectedSite={ false }
+				/>
+
 				{ [ 'plugins' ].includes( sectionName ) && (
 					<>
-						<GlobalFooter
-							currentRoute={ currentRoute }
-							isLoggedIn={ isLoggedIn }
-							colorway={ footerColorway }
-						/>
-
 						{ config.isEnabled( 'layout/support-article-dialog' ) && (
 							<AsyncLoad require={ loadSupportArticleDialog } placeholder={ null } />
 						) }
 					</>
 				) }
 
-				{ [ 'patterns', 'reader', 'theme', 'themes' ].includes( sectionName ) && (
+				{ [ 'patterns', 'reader' ].includes( sectionName ) && (
 					<GlobalFooter
 						currentRoute={ currentRoute }
 						isLoggedIn={ isLoggedIn }

@@ -8,7 +8,7 @@ import {
 	recordAgentsManagerTracksEvent,
 } from '@automattic/agents-manager';
 import { render, screen } from '@testing-library/react';
-import { createAiChatNodeBuilder } from '../plugin-ai-chat';
+import { buildAiChatPluginNode } from '../plugin-ai-chat';
 import type { AdminBarNode, OmnibarNode } from '@automattic/omnibar';
 
 jest.mock( '@automattic/agents-manager', () => ( {
@@ -37,10 +37,10 @@ const AI_CHAT_NODE: AdminBarNode = {
 	},
 };
 
-const buildAiChatNode = ( sectionName?: string ) =>
-	createAiChatNodeBuilder( sectionName )( AI_CHAT_NODE );
+const buildAiChatNode = ( sectionName?: string, adminBarNodes = [ AI_CHAT_NODE ] ) =>
+	buildAiChatPluginNode( { enabled: true, sectionName, adminBarNodes } )!;
 
-describe( 'createAiChatNodeBuilder', () => {
+describe( 'buildAiChatPluginNode', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
 		mockIsChatVisible.mockReturnValue( false );
@@ -69,6 +69,25 @@ describe( 'createAiChatNodeBuilder', () => {
 
 	it( 'carries the class that marks it as the chat entry button', () => {
 		expect( buildAiChatNode( 'sites' ).className ).toBe( 'masterbar__item-agents-manager-ai-chat' );
+	} );
+
+	it( 'uses the standard Agent presentation without a backend node', () => {
+		const node = buildAiChatNode( 'dashboard', [] );
+		const { container } = render( node.icon as React.ReactElement );
+
+		expect( node.label ).toBe( 'Agent' );
+		expect( node.tooltip ).toBe( 'Agent' );
+		expect( container.querySelector( '.omnibar__ai-chat-icon > svg' ) ).toBeVisible();
+	} );
+
+	it( 'returns no node when Agents Manager is disabled', () => {
+		expect(
+			buildAiChatPluginNode( {
+				enabled: false,
+				sectionName: 'dashboard',
+				adminBarNodes: [ AI_CHAT_NODE ],
+			} )
+		).toBeUndefined();
 	} );
 
 	it( 'records the masterbar event with the section and opens the chat on click', () => {

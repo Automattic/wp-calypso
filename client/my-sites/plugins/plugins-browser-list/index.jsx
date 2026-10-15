@@ -147,7 +147,9 @@ const PluginsBrowserList = ( {
 							<Card
 								tagName="ul"
 								className="plugins-browser-list__elements"
-								key={ `plugins-carousel-slide-${ index }` }
+								key={ `plugins-carousel-slide-${ index }-${ slideItems
+									.map( ( item ) => item.key )
+									.join() }` }
 							>
 								{ slideItems }
 							</Card>

@@ -1,3 +1,4 @@
+import { createUser } from '@automattic/api-core';
 import config from '@automattic/calypso-config';
 import i18n from 'i18n-calypso';
 import { getBlackboxApiKey } from 'calypso/blocks/login/utils/blackbox-sdk';
@@ -7,6 +8,7 @@ import { getLocaleSlug } from 'calypso/lib/i18n-utils';
 import getToSAcceptancePayload from 'calypso/lib/tos-acceptance-tracking';
 import wp from 'calypso/lib/wp';
 import { stringifyBody } from 'calypso/state/login/utils';
+import type { NewUserResponse } from '@automattic/api-core';
 
 function isBlackboxUserlessCheckoutEnabled() {
 	return (
@@ -24,23 +26,7 @@ function resetBlackbox() {
 	}
 }
 
-interface CreateAccountResponse {
-	success: boolean;
-	bearer_token?: string;
-	username?: string;
-	blog_details?: {
-		blogid?: string;
-	};
-}
-
-function isCreateAccountResponse( response: unknown ): response is CreateAccountResponse {
-	if ( ! response ) {
-		return false;
-	}
-	return true;
-}
-
-async function createAccountCallback( response: CreateAccountResponse ): Promise< void > {
+async function createAccountCallback( response: NewUserResponse ): Promise< void > {
 	if ( ! response.bearer_token ) {
 		return;
 	}
@@ -72,7 +58,7 @@ export async function createAccount( {
 	email: string | undefined;
 	siteId: number | undefined;
 	recaptchaClientId: number | undefined;
-} ): Promise< CreateAccountResponse > {
+} ): Promise< NewUserResponse > {
 	let newSiteParams = null;
 	try {
 		newSiteParams = JSON.parse( window.localStorage.getItem( 'siteParams' ) || '{}' );
@@ -106,7 +92,7 @@ export async function createAccount( {
 			: undefined;
 
 	try {
-		const response = await wp.req.post( '/users/new', {
+		const response = await createUser( {
 			email,
 			'g-recaptcha-error': recaptchaError,
 			'g-recaptcha-response': recaptchaToken || undefined,
@@ -123,7 +109,7 @@ export async function createAccount( {
 			...( blackboxSessionId && { blackbox_session_id: blackboxSessionId } ),
 		} );
 
-		if ( ! isCreateAccountResponse( response ) || ! response.success ) {
+		if ( ! response?.success ) {
 			throw new Error( 'Failed to create account' );
 		}
 

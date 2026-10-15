@@ -1,4 +1,4 @@
-// Plugin Compass "Describe" surface is registered as a regular marketplace
+// Plugin recommendations "Describe" surface is registered as a regular marketplace
 // category slug, then PluginsBrowser renders MarketplaceAIExperience as the
 // body when that slug is active. Keep this constant in lockstep with the
 // `describe` entry in `categories/use-categories.tsx`.

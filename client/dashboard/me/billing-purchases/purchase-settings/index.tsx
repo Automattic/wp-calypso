@@ -23,7 +23,6 @@ import { INCOMING_DOMAIN_TRANSFER_STATUSES_IN_PROGRESS } from '@automattic/urls'
 import { useQuery, useMutation, useSuspenseQuery } from '@tanstack/react-query';
 import { Link, useNavigate } from '@tanstack/react-router';
 import {
-	__experimentalGrid as Grid,
 	__experimentalText as Text,
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
@@ -66,6 +65,7 @@ import { ActionList } from '../../../components/action-list';
 import { Card, CardBody } from '../../../components/card';
 import ClipboardInputControl from '../../../components/clipboard-input-control';
 import { useFormattedTime } from '../../../components/formatted-time';
+import Grid from '../../../components/grid';
 import InlineSupportLink from '../../../components/inline-support-link';
 import { MetadataList, MetadataItem } from '../../../components/metadata-list';
 import OverviewCard from '../../../components/overview-card';
@@ -76,6 +76,7 @@ import SiteIcon from '../../../components/site-icon';
 import SiteBandwidthStat from '../../../sites/overview-plan-card/site-bandwidth-stat';
 import SiteStorageStat from '../../../sites/overview-plan-card/site-storage-stat';
 import { formatDate } from '../../../utils/datetime';
+import { isJetpackCloud } from '../../../utils/jetpack';
 import { wpcomLink } from '../../../utils/link';
 import {
 	getBillPeriodLabel,
@@ -96,7 +97,6 @@ import {
 	isDotcomPlan,
 	getRenewalUrlFromPurchase,
 	isStorageUpgradeEligible,
-	isWpcomFlexSubscription,
 	isAkismetFreeProduct,
 	isExpiredAndInGracePeriod,
 	isExpiredWithNoAutoRenewAttemptsLeft,
@@ -115,7 +115,6 @@ import {
 	getSitePurchaseStorageUpgradeUrl,
 	getUpgradedPurchaseRedirectUrl,
 } from '../../../utils/site-url';
-import BillingFlexUsageCard from '../../billing-flex-usage';
 import { useIsSplitCancelRemoveEnabled } from '../cancel-purchase/use-is-split-cancel-remove-enabled';
 import { BillingPurchaseInfoPopover } from '../dataviews';
 import { PurchasePaymentMethod } from '../purchase-payment-method';
@@ -139,9 +138,9 @@ import type { Field } from '@wordpress/dataviews';
 import './style.scss';
 
 const SPACING = {
-	DEFAULT: 6,
-	SMALL: 4,
-};
+	DEFAULT: 'xl',
+	SMALL: 'lg',
+} as const;
 
 function renewPurchase( purchase: Purchase ): void {
 	window.location.href = getRenewalUrlFromPurchase( purchase );
@@ -164,7 +163,7 @@ function getNonPlanUpgradeAction(
 	if ( isEmailPlanAtHighestTier( purchase ) ) {
 		return undefined;
 	}
-	const href = getSitePurchaseUpgradeUrl( purchase, getUpgradedPurchaseRedirectUrl() );
+	const href = getSitePurchaseUpgradeUrl( purchase, getUpgradedPurchaseRedirectUrl( purchase ) );
 	return href
 		? {
 				href,
@@ -222,7 +221,7 @@ function getHeaderUpgradeAction( purchase: Purchase ): { href: string; title: st
 	// WordPress.com plans go through the shared helper. A plan that gets nothing
 	// back has no upgrade to offer, and the non-plan path rejects it too.
 	const planAction = getPlanChangeAction( purchase, {
-		...getPlanChangeReturnUrls(),
+		...getPlanChangeReturnUrls( purchase ),
 		upgradeOnly: true,
 	} );
 	if ( planAction ) {
@@ -247,6 +246,11 @@ function upgradePurchase( upgradeUrl: string ): void {
 }
 
 function ProductLink( { purchase }: { purchase: Purchase } ) {
+	// Jetpack Cloud has no domain or email management of its own.
+	if ( isJetpackCloud() ) {
+		return null;
+	}
+
 	if (
 		( purchase.is_domain || purchase.product_slug === OFFSITE_REDIRECT ) &&
 		purchase.site_slug &&
@@ -346,7 +350,11 @@ function PurchaseActionMenu( { actions }: { actions: PurchaseHeaderAction[] } ) 
 	}
 
 	return (
-		<DropdownMenu icon={ moreVertical } label={ __( 'Quick actions' ) }>
+		<DropdownMenu
+			toggleProps={ { __next40pxDefaultSize: true } }
+			icon={ moreVertical }
+			label={ __( 'Quick actions' ) }
+		>
 			{ () => (
 				<MenuGroup>
 					{ actions.map( ( action ) => (
@@ -389,7 +397,7 @@ export function PurchaseHeaderActions( {
 		: actions.filter( ( action ) => action !== promotedAction );
 
 	return (
-		<HStack justify="space-between">
+		<>
 			{ promotedAction && (
 				<Button
 					__next40pxDefaultSize
@@ -405,7 +413,7 @@ export function PurchaseHeaderActions( {
 					<PurchaseActionMenu actions={ overflowActions } />
 				</PageHeader.ActionMenu>
 			) }
-		</HStack>
+		</>
 	);
 }
 
@@ -622,7 +630,7 @@ export function ProductChangeActionItem( { purchase }: { purchase: Purchase } ) 
 		} );
 
 	if ( isDotcomPlan( purchase ) ) {
-		const action = getPlanChangeAction( purchase, getPlanChangeReturnUrls() );
+		const action = getPlanChangeAction( purchase, getPlanChangeReturnUrls( purchase ) );
 		if ( ! action ) {
 			return null;
 		}
@@ -1358,7 +1366,13 @@ function DomainTransferInfo( { purchase }: { purchase: Purchase } ) {
 						'There was an error when initiating your domain transfer. Please <a>see the details or retry</a>.'
 					),
 					{
-						a: <a href={ domainManagementEdit( purchase.site_slug, domain.domain, null ) } />,
+						a: (
+							<a
+								href={ wpcomLink(
+									domainManagementEdit( purchase.site_slug, domain.domain, null )
+								) }
+							/>
+						),
 					}
 				) }
 			</Text>
@@ -1377,10 +1391,12 @@ function DomainTransferInfo( { purchase }: { purchase: Purchase } ) {
 					{
 						a: (
 							<a
-								href={ domainUseMyDomain(
-									purchase.site_slug,
-									purchase.meta,
-									useMyDomainInputMode.startPendingTransfer
+								href={ wpcomLink(
+									domainUseMyDomain(
+										purchase.site_slug,
+										purchase.meta,
+										useMyDomainInputMode.startPendingTransfer
+									)
 								) }
 							/>
 						),
@@ -1837,14 +1853,11 @@ export default function PurchaseSettings() {
 						<AkismetApiKeyCard />
 					) }
 				</Grid>
-				{ ( ( site && ! isRemoved( purchase ) ) || ( features && features.length > 0 ) ) && (
-					<WPComResourceMeters purchase={ purchase } site={ site } features={ features } />
-				) }
-				{ isWpcomFlexSubscription( purchase ) && (
-					<BillingFlexUsageCard purchaseId={ purchase.ID } />
-				) }
 				{ ! purchase.is_trial_plan && ! isCentennial && ! isRemoved( purchase ) && (
 					<ManageSubscriptionCard purchase={ purchase } />
+				) }
+				{ ( ( site && ! isRemoved( purchase ) ) || ( features && features.length > 0 ) ) && (
+					<WPComResourceMeters purchase={ purchase } site={ site } features={ features } />
 				) }
 				<PurchaseSettingsActions purchase={ purchase } />
 			</VStack>

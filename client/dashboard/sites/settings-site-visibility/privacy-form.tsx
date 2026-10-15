@@ -8,6 +8,7 @@ import { __ } from '@wordpress/i18n';
 import { useLayoutEffect, useMemo, useState } from 'react';
 import { useAppContext } from '../../app/context';
 import { NavigationBlocker } from '../../app/navigation-blocker';
+import { buildDashboardLink } from '../../app/routing';
 import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody } from '../../components/card';
@@ -120,7 +121,7 @@ const robotForm = {
 } satisfies Form;
 
 export function PrivacyForm( { site, settings }: { site: Site; settings: SiteSettings } ) {
-	const { queries } = useAppContext();
+	const { queries, supports } = useAppContext();
 	const { data: domains = [] } = useQuery( {
 		...queries.domainsQuery(),
 		select: ( data ) => {
@@ -189,6 +190,26 @@ export function PrivacyForm( { site, settings }: { site: Site; settings: SiteSet
 		} );
 	};
 
+	// Dashboards without their own domains route (e.g. A4A) send users to the WordPress.com dashboard.
+	const manageDomainsButton =
+		isDashboardBackport() || supports.domains ? (
+			<RouterLinkButton
+				variant="secondary"
+				to={
+					isDashboardBackport() ? `/domains/manage/${ site.slug }` : `/sites/${ site.slug }/domains`
+				}
+			>
+				{ __( 'Manage domains' ) }
+			</RouterLinkButton>
+		) : (
+			<Button
+				variant="secondary"
+				href={ buildDashboardLink( 'dotcom', `/sites/${ site.slug }/domains` ) }
+			>
+				{ __( 'Manage domains' ) }
+			</Button>
+		);
+
 	return (
 		<>
 			<Card>
@@ -216,16 +237,7 @@ export function PrivacyForm( { site, settings }: { site: Site; settings: SiteSet
 										density="medium"
 										actions={
 											hasNonWpcomDomain ? (
-												<RouterLinkButton
-													variant="secondary"
-													to={
-														isDashboardBackport()
-															? `/domains/manage/${ site.slug }`
-															: `/sites/${ site.slug }/domains`
-													}
-												>
-													{ __( 'Manage domains' ) }
-												</RouterLinkButton>
+												manageDomainsButton
 											) : (
 												<Button variant="secondary" href={ getAddSiteDomainUrl( site.slug ) }>
 													{ __( 'Add new domain' ) }

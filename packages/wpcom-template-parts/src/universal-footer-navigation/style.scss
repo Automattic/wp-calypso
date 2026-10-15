@@ -1080,6 +1080,8 @@
 	.lp-icon--custom-automattic-footer {
 		width: 150px;
 		height: auto;
+		margin: 0;
+		transform: translateY(-1px);
 		transition: color 0.15s ease-out;
 	}
 
@@ -1294,6 +1296,7 @@
 	}
 
 	.lp-footer-bottom__branding .lp-flex--inline {
+		align-items: center;
 		gap: 10px;
 		--lp-color: var(--lp-footer-secondary-color-rgb);
 		text-transform: uppercase;
@@ -1381,6 +1384,24 @@
 	@media ( min-width: 1152px ) {
 		.lp-wrapper--layout-wide\@L.lp-wrapper--layout-wide\@L {
 			max-width: 1224px;
+		}
+
+		/* Columns hug their content with 150px gaps; the gap tracks shrink evenly when space runs out. */
+		.lp-grid--type-footer.lp-grid--gutter-y-4 {
+			grid-template-columns: repeat( 4, max-content minmax( 0, 150px ) ) max-content;
+			grid-column-gap: 0;
+			justify-content: start;
+
+			@for $i from 1 through 5 {
+				> :nth-child( #{$i} ) {
+					grid-column: #{$i * 2 - 1};
+				}
+			}
+		}
+
+		/* Links stay shown and sized even if a stack is still closed, e.g. mid-resize from mobile. */
+		.lp-footer-stack::details-content {
+			content-visibility: visible;
 		}
 
 		.lp-footer-bottom--without-language {

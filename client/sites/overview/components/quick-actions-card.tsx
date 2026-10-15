@@ -5,6 +5,7 @@ import { useTranslate } from 'i18n-calypso';
 import { FC, ReactNode } from 'react';
 import { useSelector } from 'react-redux';
 import { HostingCard, HostingCardDescription } from 'calypso/components/hosting-card';
+import { useStatsAdminUrl } from 'calypso/dashboard/app/hooks/use-stats-admin-url';
 import { useActiveThemeQuery } from 'calypso/data/themes/use-active-theme-query';
 import { WriteIcon } from 'calypso/layout/masterbar/write-icon';
 import SidebarCustomIcon from 'calypso/layout/sidebar/custom-icon';
@@ -13,7 +14,6 @@ import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getCustomizeUrl from 'calypso/state/selectors/get-customize-url';
 import getEditorUrl from 'calypso/state/selectors/get-editor-url';
-import getStatsUrl from 'calypso/state/selectors/get-stats-url';
 import getThemeInstallUrl from 'calypso/state/selectors/get-theme-install-url';
 import { useSiteAdminInterfaceData } from 'calypso/state/sites/hooks';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
@@ -68,7 +68,7 @@ const QuickActionsCard: FC = () => {
 		site?.ID ? getEditorUrl( state, site?.ID ) : '#'
 	);
 	const themeInstallUrl = useSelector( ( state ) => getThemeInstallUrl( state, site?.ID ) ?? '' );
-	const statsUrl = useSelector( ( state ) => getStatsUrl( state, site?.ID ) ?? '' );
+	const statsUrl = useStatsAdminUrl( site ) ?? '';
 	const siteEditorUrl = useSelector( ( state ) =>
 		site?.ID && activeThemeData
 			? getCustomizeUrl(

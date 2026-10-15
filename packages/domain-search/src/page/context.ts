@@ -10,10 +10,11 @@ import {
 	namePulseSuggestionsQuery,
 	namePulseTldsQuery,
 } from '@automattic/api-queries';
-import { createContext, useCallback, useContext, useMemo, useState } from 'react';
+import { useEvent } from '@wordpress/compose';
+import { createContext, useCallback, useContext, useMemo, useRef, useState } from 'react';
 import { isBlogSubdomainQuery } from '../helpers';
 import { DEFAULT_FILTER } from './constants';
-import { type DomainSearchProps, type DomainSearchContextType } from './types';
+import { type DomainSearchProps, type DomainSearchContextType, type SearchTrigger } from './types';
 
 const noop = () => {};
 
@@ -29,6 +30,7 @@ export const DEFAULT_CONTEXT_VALUE: DomainSearchContextType = {
 		onMapDomainClick: noop,
 		onSubmitButtonClick: noop,
 		onQueryChange: noop,
+		onSearchStart: noop,
 		onQueryClear: noop,
 		onAddDomainToCart: noop,
 		onQueryAvailabilityCheck: noop,
@@ -46,6 +48,8 @@ export const DEFAULT_CONTEXT_VALUE: DomainSearchContextType = {
 		onPageView: noop,
 		onBundleShown: noop,
 		onBundleAddToCart: noop,
+		onNamePulseSearch: noop,
+		onNamePulseTracksEvent: noop,
 	},
 	queries: {
 		availableTlds: ( search?: string, vendor?: string ) => availableTldsQuery( vendor, search ),
@@ -96,6 +100,7 @@ export const DEFAULT_CONTEXT_VALUE: DomainSearchContextType = {
 	},
 	setFilter: () => {},
 	resetFilter: () => {},
+	lastSearchTrigger: {},
 };
 
 export const DomainSearchContext =
@@ -133,10 +138,17 @@ export const useDomainSearchContextValue = ( {
 		setIsFullCartOpen( true );
 	}, [] );
 
+	const lastSearchTrigger = useRef< SearchTrigger | undefined >( undefined );
+
 	const normalizedEvents = useMemo( () => {
+		const merged = { ...DEFAULT_CONTEXT_VALUE.events, ...events };
+
 		return {
-			...DEFAULT_CONTEXT_VALUE.events,
-			...events,
+			...merged,
+			onSearchStart: ( query: string, trigger: SearchTrigger ) => {
+				lastSearchTrigger.current = trigger;
+				merged.onSearchStart( query, trigger );
+			},
 		};
 	}, [ events ] );
 
@@ -146,6 +158,23 @@ export const useDomainSearchContextValue = ( {
 			...config,
 		};
 	}, [ config ] );
+
+	// The search input debounces setQuery, and useDebounce cancels the pending
+	// call whenever the callback identity changes. Consumers rebuild `events`
+	// and `cart` on every render, so a setQuery recreated with the memo below
+	// would drop the query typed just before an unrelated re-render.
+	const setQuery = useEvent( ( query: string, trigger: SearchTrigger ) => {
+		const normalizedQuery = query
+			.trim()
+			.toLowerCase()
+			.replace( /^(https?:\/\/)?(www[0-9]?\.)?/, '' )
+			.replace( /[^a-zA-ZÀ-ÖÙ-öù-ÿĀ-žḀ-ỿ0-9-. ]/g, '' );
+
+		if ( normalizedQuery ) {
+			normalizedEvents.onQueryChange( normalizedQuery );
+			normalizedEvents.onSearchStart( normalizedQuery, trigger );
+		}
+	} );
 
 	return useMemo( () => {
 		const allowedTlds = normalizedConfig.allowedTlds?.length
@@ -249,27 +278,20 @@ export const useDomainSearchContextValue = ( {
 			closeFullCart,
 			openFullCart,
 			query: externalQuery ?? '',
-			setQuery: ( query ) => {
-				const normalizedQuery = query
-					.trim()
-					.toLowerCase()
-					.replace( /^(https?:\/\/)?(www[0-9]?\.)?/, '' )
-					.replace( /[^a-zA-ZÀ-ÖÙ-öù-ÿĀ-žḀ-ỿ0-9-. ]/g, '' );
-
-				if ( normalizedQuery ) {
-					normalizedEvents.onQueryChange( normalizedQuery );
-				}
-			},
+			setQuery,
 			slots,
 			currentSiteUrl,
 			filter,
 			setFilter: ( filter ) => {
 				setFilter( filter );
 				normalizedEvents.onFilterApplied( filter );
+				normalizedEvents.onSearchStart( externalQuery ?? '', 'filter_apply' );
 			},
+			lastSearchTrigger,
 			resetFilter: () => {
 				setFilter( DEFAULT_FILTER );
 				normalizedEvents.onFilterReset( DEFAULT_FILTER, [ 'tlds', 'exactSldMatchesOnly' ] );
+				normalizedEvents.onSearchStart( externalQuery ?? '', 'filter_reset' );
 			},
 		};
 	}, [
@@ -277,6 +299,7 @@ export const useDomainSearchContextValue = ( {
 		closeFullCart,
 		openFullCart,
 		externalQuery,
+		setQuery,
 		cart,
 		normalizedEvents,
 		slots,

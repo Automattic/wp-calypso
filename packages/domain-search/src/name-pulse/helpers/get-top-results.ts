@@ -1,61 +1,40 @@
-import { NAME_PULSE_TOP_RESULTS_COUNT, NAME_PULSE_TOP_RESULTS_TLDS } from './constants';
+import { NAME_PULSE_TOP_RESULTS_COUNT } from './constants';
 import { NamePulseDomainStatus, type NamePulseDomainResult } from './types';
 
 /**
- * When the label ends with a TLD ("myapp" → "app") that TLD is promoted to the
- * second slot, right after `blog`.
- */
-export function calculateTopTlds( baseName: string, tlds: readonly string[] ): string[] {
-	const topTlds = [ ...NAME_PULSE_TOP_RESULTS_TLDS ];
-	const matchedTld = tlds.find( ( tld ) => baseName.endsWith( tld ) );
-
-	if ( ! matchedTld || matchedTld === 'blog' ) {
-		return topTlds;
-	}
-
-	const existingIndex = topTlds.indexOf( matchedTld );
-	if ( existingIndex !== -1 ) {
-		topTlds.splice( existingIndex, 1 );
-	}
-
-	topTlds.splice( 1, 0, matchedTld );
-
-	return topTlds.slice( 0, NAME_PULSE_TOP_RESULTS_TLDS.length );
-}
-
-/**
- * A real-time verdict means the user just clicked the row, so it holds its slot to
- * carry the outcome instead of being replaced by a backfill under the cursor.
+ * A cart check means the user just clicked the row, so it holds its slot to carry
+ * the outcome instead of being replaced by a backfill under the cursor. Every other
+ * taken name leaves, however its verdict was reached.
  */
 const isCandidate = ( result: NamePulseDomainResult ) =>
 	result.status === NamePulseDomainStatus.AVAILABLE ||
 	result.status === NamePulseDomainStatus.WAITING ||
-	!! result.is_realtime;
+	!! result.is_cart_check;
 
 /**
- * Preferred TLDs first, then backfill in list order.
+ * Features the first candidates in grid order.
  */
 export function getTopResults(
 	results: NamePulseDomainResult[],
-	topTlds: readonly string[]
+	count = NAME_PULSE_TOP_RESULTS_COUNT
 ): NamePulseDomainResult[] {
-	const preferred: NamePulseDomainResult[] = [];
-	const backfill: NamePulseDomainResult[] = [];
-
-	for ( const result of results ) {
-		if ( isCandidate( result ) ) {
-			( topTlds.includes( result.suffix ) ? preferred : backfill ).push( result );
-		}
-	}
-
-	return [ ...preferred, ...backfill ].slice( 0, NAME_PULSE_TOP_RESULTS_COUNT );
+	return results.filter( isCandidate ).slice( 0, count );
 }
+
+/**
+ * A row on sale leads with its first-year price, so that is the price it ranks by.
+ */
+const getFirstYearPrice = ( result: NamePulseDomainResult ) =>
+	result.sale_cost ?? result.raw_price ?? Infinity;
 
 /**
  * AI mode has no exact matches to feature, so the cheapest available
  * suggestions stand in; the name breaks ties to keep the order stable.
  */
-export function getAiTopResults( ...lists: NamePulseDomainResult[][] ): NamePulseDomainResult[] {
+export function getAiTopResults(
+	lists: NamePulseDomainResult[][],
+	count = NAME_PULSE_TOP_RESULTS_COUNT
+): NamePulseDomainResult[] {
 	const byName = new Map< string, NamePulseDomainResult >();
 
 	for ( const result of lists.flat() ) {
@@ -67,8 +46,8 @@ export function getAiTopResults( ...lists: NamePulseDomainResult[][] ): NamePuls
 	return Array.from( byName.values() )
 		.sort(
 			( a, b ) =>
-				( a.raw_price ?? Infinity ) - ( b.raw_price ?? Infinity ) ||
+				getFirstYearPrice( a ) - getFirstYearPrice( b ) ||
 				a.domain_name.localeCompare( b.domain_name )
 		)
-		.slice( 0, NAME_PULSE_TOP_RESULTS_COUNT );
+		.slice( 0, count );
 }

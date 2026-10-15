@@ -1,8 +1,8 @@
 import { planHasFeature, WPCOM_FEATURES_ATOMIC } from '@automattic/calypso-products';
 import { isMarketplaceProduct } from 'calypso/state/products-list/selectors';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
-import { getByPurchaseId } from './get-by-purchase-id';
-import { getSitePurchases } from './get-site-purchases';
+import { getRawByPurchaseId } from './get-raw-by-purchase-id';
+import { getRawSitePurchases } from './get-raw-site-purchases';
 import type { Purchase } from '@automattic/api-core';
 import type { AppState } from 'calypso/types';
 
@@ -28,13 +28,13 @@ export const willAtomicSiteRevertAfterPurchaseDeactivation = (
 		return false;
 	}
 
-	const purchase = getByPurchaseId( state, purchaseId );
+	const purchase = getRawByPurchaseId( state, purchaseId );
 	if ( ! purchase ) {
 		return false;
 	}
 
 	// Bail if the site not Atomic.
-	if ( ! isSiteAutomatedTransfer( state, purchase.siteId ) ) {
+	if ( ! isSiteAutomatedTransfer( state, purchase.blog_id ) ) {
 		return false;
 	}
 
@@ -48,7 +48,7 @@ export const willAtomicSiteRevertAfterPurchaseDeactivation = (
 
 	// Bail if none of the purchases to deactivate supports Atomic.
 	if (
-		! isAtomicSupportedProduct( purchase.productSlug ) &&
+		! isAtomicSupportedProduct( purchase.product_slug ) &&
 		linkedPurchases.every(
 			( linkedPurchase ) => ! isAtomicSupportedProduct( linkedPurchase.product_slug )
 		)
@@ -56,14 +56,14 @@ export const willAtomicSiteRevertAfterPurchaseDeactivation = (
 		return false;
 	}
 
-	const remainingPurchases = getSitePurchases( state, purchase.siteId ).filter(
+	const remainingPurchases = getRawSitePurchases( state, purchase.blog_id ).filter(
 		( sitePurchase ) =>
-			sitePurchase.id !== purchaseId &&
-			linkedPurchases.every( ( linkedPurchase ) => sitePurchase.id !== linkedPurchase.ID )
+			sitePurchase.ID !== purchaseId &&
+			linkedPurchases.every( ( linkedPurchase ) => sitePurchase.ID !== linkedPurchase.ID )
 	);
 
 	// If there is at least one remaining Atomic supported purchase, the site will be kept in the Atomic infra.
 	return ! remainingPurchases.some( ( sitePurchase ) =>
-		isAtomicSupportedProduct( sitePurchase.productSlug )
+		isAtomicSupportedProduct( sitePurchase.product_slug )
 	);
 };

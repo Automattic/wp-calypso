@@ -31,9 +31,10 @@ ENV COMMIT_SHA $commit_sha
 
 COPY . .
 
-## The cache image is only used for /calypso/.cache and /calypso/.yarn, so we can skip downloading browsers.
+## The cache image is only used for /calypso/.cache and /calypso/.yarn, so we can skip downloading browsers and Electron.
 ENV PLAYWRIGHT_SKIP_DOWNLOAD=true
 ENV PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1
+ENV ELECTRON_SKIP_BINARY_DOWNLOAD=1
 
 RUN yarn --inline-builds \
 	&& BUILD_TRANSLATION_CHUNKS=false yarn run build-packages:web \

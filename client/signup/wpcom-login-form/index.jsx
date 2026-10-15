@@ -1,12 +1,16 @@
 import config from '@automattic/calypso-config';
 import { useEffect, useRef } from 'react';
 
-// Calypso-only deployments that do not serve wp-login.php.
-const CALYPSO_ONLY_HOSTNAMES = [
+// Deployed origins that serve Calypso but not WordPress, so have no
+// wp-login.php of their own. Being served from one of them sends the login POST
+// to bare wordpress.com instead of to the wp-login.php of the site named in
+// `redirectTo`. Kept in sync with `config/` by `test/known-hostnames.test.js`.
+export const CALYPSO_ONLY_HOSTNAMES = [
 	'wpcalypso.wordpress.com',
 	'horizon.wordpress.com',
 	'my.wordpress.com',
 	'my.woo.ai',
+	'agencies-beta.automattic.com',
 ];
 
 // Subdomains of wordpress.com that do not serve wp-login.php.

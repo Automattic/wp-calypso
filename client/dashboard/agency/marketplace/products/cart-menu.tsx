@@ -1,4 +1,5 @@
 import { formatCurrency } from '@automattic/number-formatters';
+import { useLocation } from '@tanstack/react-router';
 import {
 	Button,
 	Dropdown,
@@ -11,19 +12,19 @@ import {
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { cart } from '@wordpress/icons';
 import { useAnalytics } from '../../../app/analytics';
+import RouterLinkButton from '../../../components/router-link-button';
 import { TextBlur } from '../../../components/text-blur';
-import { getProductCommissionPercentage } from '../../earn/referrals/lib/commissions';
-import { isPressableHostingProduct } from '../hosting/lib/pressable-plans';
-import { getEffectivePressableOwnership } from '../hosting/lib/pressable-products';
 import { WPCOM_CREATOR_PLAN_SLUG, WPCOM_HOSTING_FAMILY_SLUG } from '../lib/wpcom-hosting';
-import { useAgencyPressablePlan } from '../use-agency-pressable-plan';
-import { useOwnedWpcomSites } from '../use-owned-wpcom-sites';
-import { getCheckoutUrl } from './lib/checkout-url';
-import { getProductPriceInfo, getTermSuffix, getWpcomTieredPrice } from './lib/product-pricing';
+import { MARKETPLACE_REFERRAL_CHECKOUT_ROUTE } from '../paths';
+import { getCheckoutUrl, getLegacyCheckoutUrl } from './lib/checkout-url';
+import { getTermSuffix } from './lib/product-pricing';
 import { getProductShortTitle } from './lib/product-title';
+import { useCartLines } from './use-cart-lines';
 import type { TermPricing } from '../use-term-pricing';
-import type { ShoppingCartItem } from './use-shopping-cart';
+import type { CartItemRef, ShoppingCartItem } from './use-shopping-cart';
 import type { AgencyProduct } from '@automattic/api-core';
+
+import './cart-menu.scss';
 
 interface Props {
 	items: ShoppingCartItem[];
@@ -31,11 +32,13 @@ interface Props {
 	term: TermPricing;
 	isReferralMode: boolean;
 	isAgencyApproved: boolean;
+	/** The agency still bills through the previous system, which this checkout cannot charge. */
+	isLegacyBilling?: boolean;
 	/** Controls the dropdown, for pages that open the cart after adding to it. */
 	open?: boolean;
 	onToggle?: ( willOpen: boolean ) => void;
-	onRemove: ( slug: string ) => void;
-	onCheckout: () => void;
+	onRemove: ( item: CartItemRef ) => void;
+	onCheckout?: () => void;
 }
 
 const getCartProductName = ( product: AgencyProduct ) =>
@@ -49,78 +52,55 @@ export default function CartMenu( {
 	term,
 	isReferralMode,
 	isAgencyApproved,
+	isLegacyBilling = false,
 	open,
 	onToggle,
 	onRemove,
 	onCheckout,
 }: Props ) {
 	const { recordTracksEvent } = useAnalytics();
-	// Owned WordPress.com sites raise the volume tier, so the total matches the
-	// Hosting page wherever the cart is shown.
-	const { ownedSites: ownedWpcomSites, isReady: isOwnedSitesReady } = useOwnedWpcomSites();
-	// Pressable's introductory price only applies to agencies without a plan,
-	// so the cart checks for one itself and matches the Hosting page everywhere.
-	const { plan: pressablePlan, ownership: pressableOwnership } = useAgencyPressablePlan();
-	const applyPressableIntroductoryPrice =
-		isReferralMode ||
-		getEffectivePressableOwnership( pressableOwnership, pressablePlan, isReferralMode ) !==
-			'agency';
+	const location = useLocation();
+	const { lines, currency, total, commission, isTotalReady, hasWpcomHostingPlan } = useCartLines( {
+		items,
+		products,
+		term,
+		isReferralMode,
+	} );
+	const checkoutLines = lines.map( ( { product, item } ) => ( {
+		product,
+		quantity: item.quantity,
+		siteDomain: item.siteDomain,
+	} ) );
 
-	const lines = items
-		.map( ( item ) => {
-			const product = products.find( ( candidate ) => candidate.slug === item.slug );
-			if ( ! product ) {
-				return null;
-			}
-			const applyIntroductoryPrice =
-				! isPressableHostingProduct( product.family_slug ) || applyPressableIntroductoryPrice;
-			const priceInfo = getProductPriceInfo( product, term, { applyIntroductoryPrice } );
-			const subtotal =
-				product.family_slug === WPCOM_HOSTING_FAMILY_SLUG
-					? getWpcomTieredPrice( product, item.quantity, term, ownedWpcomSites ).discountedCost
-					: priceInfo.price * item.quantity;
-			return {
-				item,
-				product,
-				priceInfo,
-				subtotal,
-				commission: subtotal * getProductCommissionPercentage( product.slug, product.family_slug ),
-			};
-		} )
-		.filter( ( line ): line is NonNullable< typeof line > => line !== null );
-
-	// A WordPress.com line's price depends on the owned sites, so hold the
-	// amounts until they are known rather than showing a total that then drops.
-	const isTotalReady =
-		isOwnedSitesReady ||
-		! lines.some( ( { product } ) => product.family_slug === WPCOM_HOSTING_FAMILY_SLUG );
-
-	const currency = lines[ 0 ]?.product.currency ?? 'USD';
-	const { total, commission } = lines.reduce(
-		( sums, line ) => ( {
-			total: sums.total + line.subtotal,
-			commission: sums.commission + line.commission,
-		} ),
-		{ total: 0, commission: 0 }
-	);
-	const checkoutUrl = getCheckoutUrl( items, isReferralMode );
-
-	const checkoutButton = (
+	const checkoutButtonProps = {
+		variant: 'primary' as const,
+		__next40pxDefaultSize: true,
+		disabled: ! isAgencyApproved || ! isTotalReady,
+		style: { justifyContent: 'center' },
+		onClick: () => {
+			recordTracksEvent( 'calypso_a4a_marketplace_checkout_click', {
+				purchase_mode: isReferralMode ? 'referral' : 'regular',
+				term_pricing: term,
+			} );
+			onCheckout?.();
+		},
+		children: __( 'Checkout' ),
+	};
+	const checkoutButton = isReferralMode ? (
+		<RouterLinkButton
+			{ ...checkoutButtonProps }
+			to={ MARKETPLACE_REFERRAL_CHECKOUT_ROUTE }
+			search={ { from: location.pathname + location.searchStr } }
+		/>
+	) : (
 		<Button
-			variant="primary"
-			__next40pxDefaultSize
-			href={ checkoutUrl }
-			disabled={ lines.length === 0 || ! isAgencyApproved || ! isTotalReady }
-			onClick={ () => {
-				recordTracksEvent( 'calypso_a4a_marketplace_checkout_click', {
-					purchase_mode: isReferralMode ? 'referral' : 'regular',
-					term_pricing: term,
-				} );
-				onCheckout();
-			} }
-		>
-			{ __( 'Checkout' ) }
-		</Button>
+			{ ...checkoutButtonProps }
+			href={
+				isLegacyBilling
+					? getLegacyCheckoutUrl( checkoutLines )
+					: getCheckoutUrl( checkoutLines, { term, hasWpcomHostingPlan } )
+			}
+		/>
 	);
 
 	return (
@@ -128,6 +108,8 @@ export default function CartMenu( {
 			open={ open }
 			onToggle={ onToggle }
 			popoverProps={ { placement: 'bottom-end' } }
+			// Focuses the panel, not its first Remove button, which Enter would trigger.
+			focusOnMount
 			expandOnMobile
 			renderToggle={ ( { isOpen, onToggle } ) => (
 				<Button
@@ -159,7 +141,12 @@ export default function CartMenu( {
 					</Heading>
 					{ lines.length === 0 && <Text variant="muted">{ __( 'Your cart is empty.' ) }</Text> }
 					{ lines.map( ( { item, product, priceInfo, subtotal } ) => (
-						<HStack key={ item.slug } justify="space-between" spacing={ 4 } alignment="flex-start">
+						<HStack
+							key={ `${ item.slug }:${ item.siteDomain ?? '' }` }
+							justify="space-between"
+							spacing={ 4 }
+							alignment="flex-start"
+						>
 							<VStack spacing={ 0 }>
 								<Text>
 									{ item.quantity > 1
@@ -171,6 +158,11 @@ export default function CartMenu( {
 											)
 										: getCartProductName( product ) }
 								</Text>
+								{ item.siteDomain && (
+									<Text variant="muted" size={ 12 }>
+										{ item.siteDomain }
+									</Text>
+								) }
 								{ /* The spans keep Google Translate from crashing on sibling text nodes. */ }
 								<Text variant="muted" size={ 12 }>
 									<TextBlur
@@ -201,12 +193,26 @@ export default function CartMenu( {
 							<Button
 								variant="link"
 								isDestructive
-								aria-label={ sprintf(
-									/* translators: %s is the product name. */
-									__( 'Remove %s from the cart' ),
-									getCartProductName( product )
-								) }
-								onClick={ () => onRemove( item.slug ) }
+								aria-label={
+									item.siteDomain
+										? sprintf(
+												/* translators: %1$s is the product name, %2$s the site the add-on applies to. */
+												__( 'Remove %1$s for %2$s from the cart' ),
+												getCartProductName( product ),
+												item.siteDomain
+											)
+										: sprintf(
+												/* translators: %s is the product name. */
+												__( 'Remove %s from the cart' ),
+												getCartProductName( product )
+											)
+								}
+								onClick={ () => {
+									recordTracksEvent( 'calypso_a4a_marketplace_checkout_remove_item_click', {
+										product: item.slug,
+									} );
+									onRemove( item );
+								} }
 							>
 								{ __( 'Remove' ) }
 							</Button>
@@ -234,18 +240,18 @@ export default function CartMenu( {
 									</Text>
 								</HStack>
 							) }
-						</>
-					) }
-					{ isAgencyApproved ? (
-						checkoutButton
-					) : (
-						<Tooltip
-							text={ __(
-								'Your agency is not yet approved. Please wait for approval before making a purchase.'
+							{ isAgencyApproved ? (
+								checkoutButton
+							) : (
+								<Tooltip
+									text={ __(
+										'Your agency is not yet approved. Please wait for approval before making a purchase.'
+									) }
+								>
+									<span>{ checkoutButton }</span>
+								</Tooltip>
 							) }
-						>
-							<span>{ checkoutButton }</span>
-						</Tooltip>
+						</>
 					) }
 				</VStack>
 			) }

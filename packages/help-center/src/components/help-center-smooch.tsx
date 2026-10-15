@@ -86,7 +86,10 @@ const playNotificationSound = () => {
 	oscillator.stop( audioContext.currentTime + duration );
 };
 
-const HelpCenterSmooch: React.FC< { enableAuth: boolean } > = ( { enableAuth } ) => {
+const HelpCenterSmooch: React.FC< { enableAuth: boolean; hasOpenZendeskChat?: boolean } > = ( {
+	enableAuth,
+	hasOpenZendeskChat = false,
+} ) => {
 	const { isEligibleForChat } = useChatStatus();
 	const queryClient = useQueryClient();
 	const { currentUser, site } = useHelpCenterContext();
@@ -115,10 +118,15 @@ const HelpCenterSmooch: React.FC< { enableAuth: boolean } > = ( { enableAuth } )
 
 	const featureConfig = useFeatureConfig();
 	const { zendeskIntegrationKey } = featureConfig.chat;
+	// An open human chat is enough: the user must be able to get back to it, but only
+	// paid support lets them start a new one.
 	const allowChat =
 		canConnectToZendesk &&
 		enableAuth &&
-		( isEligibleForChat || hasPremiumSupport || featureConfig.chat.hasPremiumSupport );
+		( isEligibleForChat ||
+			hasPremiumSupport ||
+			featureConfig.chat.hasPremiumSupport ||
+			hasOpenZendeskChat );
 
 	const { data: authData } = useAuthenticateZendeskMessaging( allowChat, 'messenger' );
 	const authJwt = authData?.jwt;

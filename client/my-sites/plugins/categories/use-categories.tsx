@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { __, _x } from '@wordpress/i18n';
 import { useIsMarketplaceRedesignEnabled } from 'calypso/my-sites/plugins/hooks/use-is-marketplace-redesign-enabled';
 import { useSelector } from 'calypso/state';
@@ -1109,11 +1108,7 @@ export function useCategories(
 		allowed.splice( allowed.indexOf( 'paid' ), 1 );
 	}
 
-	// Plugin Compass `describe` tab requires the flag and a logged-in user.
-	if (
-		( ! isEnabled( 'plugins/plugin-compass' ) || ! isLoggedIn ) &&
-		allowed.indexOf( 'describe' ) >= 0
-	) {
+	if ( ! isLoggedIn && allowed.indexOf( 'describe' ) >= 0 ) {
 		allowed.splice( allowed.indexOf( 'describe' ), 1 );
 	}
 

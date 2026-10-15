@@ -2,11 +2,10 @@ import { DomainSuggestion } from '@automattic/api-core';
 import { PLAN_BUSINESS } from '@automattic/calypso-products';
 import { COPY_SITE_FLOW } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
-import { useDispatch, useSelect } from '@wordpress/data';
+import { useDispatch } from '@wordpress/data';
 import { addQueryArgs, getQueryArgs } from '@wordpress/url';
-import { useEffect, useState } from 'react';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
-import { ONBOARD_STORE, SITE_STORE } from 'calypso/landing/stepper/stores';
+import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import {
 	clearSignupDestinationCookie,
@@ -14,7 +13,7 @@ import {
 	persistSignupDestination,
 	setSignupCompleteFlowName,
 } from 'calypso/signup/storageUtils';
-import { useSite } from '../../../hooks/use-site';
+import { useSiteQuery } from '../../../hooks/use-site';
 import { useSiteCopy } from '../../../hooks/use-site-copy';
 import { STEPS } from '../../internals/steps';
 import {
@@ -24,49 +23,19 @@ import {
 	type ProvidedDependencies,
 	type StepperStep,
 } from '../../internals/types';
-import type { OnboardActions, SiteSelect } from '@automattic/data-stores';
+import type { OnboardActions } from '@automattic/data-stores';
 
 function useIsValidSite() {
 	const urlQueryParams = useQuery();
 	const sourceSlug = urlQueryParams.get( 'sourceSlug' );
-	const [ siteRequestStatus, setSiteRequestStatus ] = useState< 'init' | 'fetching' | 'finished' >(
-		'init'
-	);
-
-	const {
-		isFetchingSiteDetails,
-		isFetchingError,
-		site: sourceSite,
-	} = useSelect(
-		( select ) => {
-			if ( ! sourceSlug ) {
-				return {};
-			}
-			return {
-				isFetchingError: ( select( SITE_STORE ) as SiteSelect ).getFetchingSiteError(),
-				isFetchingSiteDetails: ( select( SITE_STORE ) as SiteSelect ).isFetchingSiteDetails(),
-				site: ( select( SITE_STORE ) as SiteSelect ).getSite( sourceSlug ),
-			};
-		},
-		[ sourceSlug ]
-	);
-
-	useEffect( () => {
-		if ( isFetchingSiteDetails && siteRequestStatus === 'init' ) {
-			setSiteRequestStatus( 'fetching' );
-		} else if (
-			( ! isFetchingSiteDetails && siteRequestStatus === 'fetching' ) ||
-			sourceSite?.ID
-		) {
-			setSiteRequestStatus( 'finished' );
-		}
-	}, [ isFetchingSiteDetails, siteRequestStatus, sourceSite?.ID ] );
+	const sourceQuery = useSiteQuery( sourceSlug ?? undefined, { enabled: !! sourceSlug } );
+	const sourceSite = sourceQuery.data ?? undefined;
 
 	const { shouldShowSiteCopyItem, isFetching: isFetchingSiteCopy } = useSiteCopy( sourceSite );
 	return {
 		isValidSite: shouldShowSiteCopyItem,
-		hasFetchedSiteDetails: siteRequestStatus === 'finished' && ! isFetchingSiteCopy,
-		isFetchingError,
+		hasFetchedSiteDetails: !! sourceSite?.ID && ! isFetchingSiteCopy,
+		isFetchingError: sourceQuery.isError,
 	};
 }
 
@@ -96,7 +65,7 @@ const copySite: Flow = {
 		const flowName = this.name;
 		const urlQueryParams = useQuery();
 		const sourceSiteSlug = urlQueryParams.get( 'sourceSlug' ) ?? '';
-		const sourceSite = useSite( sourceSiteSlug );
+		const { data: sourceSite } = useSiteQuery( sourceSiteSlug, { enabled: !! sourceSiteSlug } );
 		const {
 			setHideFreePlan,
 			setSignupDomainOrigin,

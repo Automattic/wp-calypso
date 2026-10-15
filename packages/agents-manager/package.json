@@ -16,6 +16,12 @@
 			"require": "./dist/cjs/index.js"
 		},
 		"./src/*": {
+			"types": [
+				"./src/*.ts",
+				"./src/*.tsx",
+				"./src/*/index.ts",
+				"./src/*/index.tsx"
+			],
 			"calypso:src": "./src/*"
 		}
 	},
@@ -69,7 +75,9 @@
 		"@wordpress/router": "^1.51.0",
 		"@wordpress/url": "^4.48.0",
 		"clsx": "^2.1.1",
+		"colord": "2.9.4",
 		"deepmerge": "^4.3.1",
+		"fast-average-color": "^9.3.0",
 		"history": "^5.3.0",
 		"i18n-calypso": "workspace:^",
 		"react-router-dom": "7.18.2",

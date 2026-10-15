@@ -117,7 +117,6 @@ const NewStatsNotices = ( { siteId, isOdysseyStats, statsPurchaseSuccess }: Stat
 	const isSiteJetpack = useSelector(
 		( state ) => !! isJetpackSite( state, siteId, { treatAtomicAsJetpackSite: true } )
 	);
-	const isAtomic = isSiteJetpack && ! isSiteJetpackNotAtomic;
 	const isOwnedByTeam51 = useSelector(
 		( state ) => getSelectedSite( state )?.site_owner === TEAM51_OWNER_ID
 	);
@@ -171,7 +170,7 @@ const NewStatsNotices = ( { siteId, isOdysseyStats, statsPurchaseSuccess }: Stat
 		config.isEnabled( 'is_odyssey' );
 
 	// Only sites that could actually accept the invitation pay for this round-trip, and the server
-	// decides the cohort on top. The same rule the registry uses, flag included: the request holds
+	// decides the cohort on top. The same rule the registry uses: the request holds
 	// every notice back while it is in flight, so a site that asks it needlessly sits on its own
 	// upsell waiting for an answer nothing will use.
 	const shouldAskStatus =
@@ -190,7 +189,6 @@ const NewStatsNotices = ( { siteId, isOdysseyStats, statsPurchaseSuccess }: Stat
 		isPremiumAnalyticsEnabled,
 		premiumAnalyticsDashboardUrl,
 		isWpcom,
-		isAtomic,
 		isVip,
 		isP2,
 		isOwnedByTeam51,
@@ -236,7 +234,6 @@ const NewStatsNotices = ( { siteId, isOdysseyStats, statsPurchaseSuccess }: Stat
 
 	usePremiumAnalyticsPreviewNotShownEvent( {
 		siteId,
-		isAtomic,
 		isWpcom,
 		// The features are not among the notices' own inputs, so they are waited on here alone:
 		// reading the tier before they land answers "no" for every site.

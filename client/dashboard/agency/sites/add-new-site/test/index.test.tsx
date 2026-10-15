@@ -88,7 +88,7 @@ describe( 'agency AddNewSite', () => {
 		expect( screen.getByText( '2 sites available' ) ).toBeVisible();
 
 		const href = screen.getByRole( 'link', { name: /on WordPress.com/ } ).getAttribute( 'href' );
-		expect( href ).toContain( '/marketplace/purchases' );
+		expect( href ).toContain( '/purchases' );
 		expect( href ).toContain( 'status=unassigned' );
 		expect( href ).toContain( 'search=WordPress.com' );
 	} );
@@ -99,7 +99,7 @@ describe( 'agency AddNewSite', () => {
 		expect( screen.queryByText( /sites? available/ ) ).not.toBeInTheDocument();
 		expect( screen.getByRole( 'link', { name: /on WordPress.com/ } ) ).toHaveAttribute(
 			'href',
-			expect.stringContaining( '/marketplace/hosting/wpcom' )
+			expect.stringContaining( '/hosting/wpcom' )
 		);
 	} );
 
@@ -119,10 +119,7 @@ describe( 'agency AddNewSite', () => {
 		} );
 
 		const pressable = screen.getByRole( 'link', { name: /Pressable/ } );
-		expect( pressable ).toHaveAttribute(
-			'href',
-			expect.stringContaining( '/marketplace/hosting/pressable' )
-		);
+		expect( pressable ).toHaveAttribute( 'href', expect.stringContaining( '/hosting/pressable' ) );
 		expect( pressable ).not.toHaveAttribute( 'target' );
 	} );
 

@@ -3,7 +3,6 @@ import A4ALogo from 'calypso/assets/images/a8c-for-agencies/events/a4a-logo.svg'
 import PressableLogo from 'calypso/assets/images/a8c-for-agencies/events/pressable-logo.svg';
 import {
 	AI_MCP_ANNOUNCEMENT_BLOG_POST_URL,
-	MARKETPLACE_HOSTING_PRESSABLE_PATH,
 	PRESSABLE_EXPANSION_OFFER_TERMS_URL,
 	PRESSABLE_INTRODUCTORY_OFFER_TERMS_URL,
 	PRESSABLE_Q3_2026_OFFER_ENDS_AT,
@@ -84,7 +83,7 @@ export const FEATURED_EVENT: FeaturedEvent | null = {
  * targets agencies without a Pressable plan through A4A, the expansion offer
  * agencies with one that missed the introductory offer.
  */
-export const PRESSABLE_INTRO_OFFER_EVENT: FeaturedEvent = {
+export const getPressableIntroOfferEvent = ( pressableHostingHref: string ): FeaturedEvent => ( {
 	id: 'a4a-pressable-promo-offer-2026-q3',
 	logo: PressableLogo,
 	logoAlt: __( 'Pressable' ),
@@ -100,7 +99,7 @@ export const PRESSABLE_INTRO_OFFER_EVENT: FeaturedEvent = {
 		{
 			id: 'view-promo-details',
 			label: __( 'View promo details' ),
-			url: MARKETPLACE_HOSTING_PRESSABLE_PATH,
+			url: pressableHostingHref,
 			variant: 'primary',
 			legacyTrackEventName:
 				'calypso_a4a_overview_events_a4a_pressable_promo_offer_q3_2026_view_promo_details_click',
@@ -115,9 +114,11 @@ export const PRESSABLE_INTRO_OFFER_EVENT: FeaturedEvent = {
 		},
 	],
 	endsAt: PRESSABLE_Q3_2026_OFFER_ENDS_AT,
-};
+} );
 
-export const PRESSABLE_EXPANSION_OFFER_EVENT: FeaturedEvent = {
+export const getPressableExpansionOfferEvent = (
+	pressableHostingHref: string
+): FeaturedEvent => ( {
 	id: 'a4a-pressable-expansion-offer-2026-q3',
 	logo: PressableLogo,
 	logoAlt: __( 'Pressable' ),
@@ -145,19 +146,19 @@ export const PRESSABLE_EXPANSION_OFFER_EVENT: FeaturedEvent = {
 		{
 			id: 'see-pressable-plans',
 			label: __( 'See Pressable plans' ),
-			url: MARKETPLACE_HOSTING_PRESSABLE_PATH,
+			url: pressableHostingHref,
 			legacyTrackEventName:
 				'calypso_a4a_overview_events_a4a_pressable_expansion_offer_see_pressable_plans_click',
 		},
 	],
 	endsAt: PRESSABLE_Q3_2026_OFFER_ENDS_AT,
-};
+} );
 
 /**
  * The MCP launch announcement, shown to every agency below the Pressable promos.
  *
  * Takes the AI & MCP href because the two shells mount that screen at different
- * paths (/resources-and-tools/ai-mcp in classic A4A, /resources/ai-mcp in the
+ * paths (/resources-and-tools/ai-mcp in classic A4A, /agency/ai in the
  * dashboard), so it arrives through AgencyOverviewLinks rather than a constant.
  */
 export const getAiMcpAnnouncement = ( aiMcpHref: string ): FeaturedEvent => ( {

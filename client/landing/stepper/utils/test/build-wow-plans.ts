@@ -2,6 +2,9 @@ import { planSupportsBuildWow } from '../build-wow-plans';
 
 describe( 'planSupportsBuildWow', () => {
 	it.each( [
+		'personal-bundle',
+		'personal-bundle-monthly',
+		'personal-bundle-2y',
 		'value_bundle',
 		'value_bundle_monthly',
 		'value_bundle-2y',
@@ -15,8 +18,6 @@ describe( 'planSupportsBuildWow', () => {
 	it.each( [
 		'free_plan',
 		'pro-plan',
-		'personal-bundle',
-		'personal-bundle-monthly',
 		'ecommerce-bundle',
 		'ecommerce-bundle-monthly',
 		'not-a-plan',

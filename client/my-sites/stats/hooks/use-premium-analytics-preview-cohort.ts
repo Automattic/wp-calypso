@@ -1,9 +1,7 @@
-import config from '@automattic/calypso-config';
 import { STATS_FEATURE_UTM_STATS } from 'calypso/my-sites/stats/constants';
 import { shouldGateStats } from 'calypso/my-sites/stats/hooks/use-should-gate-stats';
 import isPremiumAnalyticsPreviewCohort, {
 	PREMIUM_ANALYTICS_PAGE_PATH,
-	PREMIUM_ANALYTICS_PREVIEW_FLAG,
 } from 'calypso/my-sites/stats/stats-notices/premium-analytics-preview-cohort';
 import { useSelector } from 'calypso/state';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
@@ -13,7 +11,6 @@ import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
 import getSiteAdminUrl from 'calypso/state/sites/selectors/get-site-admin-url';
 import getSiteOption from 'calypso/state/sites/selectors/get-site-option';
-import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
 
 export type PremiumAnalyticsPreviewCohort = {
 	isWpcom: boolean;
@@ -24,7 +21,7 @@ export type PremiumAnalyticsPreviewCohort = {
 	hasSiteFeatures: boolean;
 	hasCommercialStats: boolean;
 	premiumAnalyticsDashboardUrl: string | null;
-	/** The cohort rule and the feature flag together, before anyone asks the site for its status. */
+	/** The cohort rule, before anyone asks the site for its status. */
 	canBeInvited: boolean;
 };
 
@@ -38,11 +35,6 @@ export type PremiumAnalyticsPreviewCohort = {
 export default function usePremiumAnalyticsPreviewCohort(
 	siteId: number | null
 ): PremiumAnalyticsPreviewCohort {
-	const isAtomic = useSelector(
-		( state ) =>
-			!! isJetpackSite( state, siteId, { treatAtomicAsJetpackSite: true } ) &&
-			! isJetpackSite( state, siteId, { treatAtomicAsJetpackSite: false } )
-	);
 	const isWpcom = useSelector( ( state ) => !! isSiteWpcom( state, siteId ) );
 	// `is_vip` is not correctly placed in Odyssey, so we need to check `options.is_vip` as well.
 	const isVip = useSelector(
@@ -87,16 +79,13 @@ export default function usePremiumAnalyticsPreviewCohort(
 		hasSiteFeatures,
 		hasCommercialStats,
 		premiumAnalyticsDashboardUrl,
-		canBeInvited:
-			config.isEnabled( PREMIUM_ANALYTICS_PREVIEW_FLAG ) &&
-			isPremiumAnalyticsPreviewCohort( {
-				isWpcom,
-				isAtomic,
-				isVip,
-				isP2,
-				canManageOptions,
-				hasCommercialStats,
-				premiumAnalyticsDashboardUrl,
-			} ),
+		canBeInvited: isPremiumAnalyticsPreviewCohort( {
+			isWpcom,
+			isVip,
+			isP2,
+			canManageOptions,
+			hasCommercialStats,
+			premiumAnalyticsDashboardUrl,
+		} ),
 	};
 }

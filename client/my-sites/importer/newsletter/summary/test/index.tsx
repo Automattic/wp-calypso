@@ -14,6 +14,7 @@ const SITE_URL = 'https://example.wordpress.com';
 const SITE_SLUG = 'example.wordpress.com';
 const ADMIN_URL = `${ SITE_URL }/wp-admin/`;
 const NEWSLETTER_URL = `${ ADMIN_URL }admin.php?page=jetpack-newsletter`;
+const SUBSCRIBERS_URL = `${ NEWSLETTER_URL }&p=%2F%3Ftab%3Dsubscribers`;
 
 const doneSteps = {
 	content: { status: 'done', content: undefined },
@@ -84,13 +85,13 @@ describe( '<Summary> next steps', () => {
 	it( 'sends subscriber management to wp-admin on a WordPress.com site', () => {
 		renderSummary();
 
-		expect( subscribersHref() ).toBe( NEWSLETTER_URL );
+		expect( subscribersHref() ).toBe( SUBSCRIBERS_URL );
 	} );
 
 	it( 'sends subscriber management to wp-admin on Jetpack 16.1 and above', () => {
 		renderSummary( { isJetpack: true, jetpackVersion: '16.1' } );
 
-		expect( subscribersHref() ).toBe( NEWSLETTER_URL );
+		expect( subscribersHref() ).toBe( SUBSCRIBERS_URL );
 	} );
 
 	it( 'keeps Jetpack Cloud below 16.1, where wp-admin has no Subscribers tab yet', () => {
@@ -109,6 +110,6 @@ describe( '<Summary> next steps', () => {
 		renderSummary( { adminUrl: null } );
 
 		expect( customizeHref() ).toBe( `${ NEWSLETTER_URL }&p=%2F%3Ftab%3Dsettings` );
-		expect( subscribersHref() ).toBe( NEWSLETTER_URL );
+		expect( subscribersHref() ).toBe( SUBSCRIBERS_URL );
 	} );
 } );

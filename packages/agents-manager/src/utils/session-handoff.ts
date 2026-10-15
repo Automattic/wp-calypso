@@ -3,7 +3,7 @@
  * wp-admin would lose the tab's conversation. The leaving page adds the session
  * and its site scope to the link's URL; the landing page stores them again.
  */
-import { ORCHESTRATOR_AGENT_ID, UNIFIED_CHAT_AGENT_ID } from '../constants';
+import { ORCHESTRATOR_AGENT_ID } from '../constants';
 
 export const SESSION_HANDOFF_PARAM = 'wp-agent-chat';
 export const SITE_HANDOFF_PARAM = 'wp-agent-site';
@@ -22,11 +22,11 @@ export interface SessionHandoff {
 
 /**
  * Only the main chat hands its session across origins: the backend looks a
- * chat up by agent, and surface-bound agents (reader chat, Plugin Compass,
+ * chat up by agent, and surface-bound agents (reader chat,
  * host overrides) have no counterpart on the other origin.
  */
 export function isHandoffAgent( agentId?: string ): boolean {
-	return agentId === ORCHESTRATOR_AGENT_ID || agentId === UNIFIED_CHAT_AGENT_ID;
+	return agentId === ORCHESTRATOR_AGENT_ID;
 }
 
 /**

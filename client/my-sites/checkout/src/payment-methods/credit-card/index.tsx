@@ -1,5 +1,4 @@
 import { PaymentLogo } from '@automattic/wpcom-checkout';
-import { useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import { Fragment } from 'react';
 import {
@@ -17,23 +16,17 @@ import {
 import { useMobileCheckoutStickySummaryExperiment } from 'calypso/my-sites/checkout/src/hooks/use-mobile-checkout-sticky-summary-experiment';
 import CreditCardFields from './credit-card-fields';
 import CreditCardPayButton from './credit-card-pay-button';
-import type { WpcomCreditCardSelectors } from './store';
-import type { CardFieldState, CardStoreType } from './types';
+import { useCreditCardStoreState } from './store';
+import type { CardStoreType } from './types';
 import type { PaymentMethod } from '@automattic/composite-checkout';
 import type { ReactNode } from 'react';
 
 export { createCreditCardPaymentMethodStore } from './store';
 
-function CreditCardSummary() {
-	const fields: CardFieldState = useSelect(
-		( select ) => ( select( 'wpcom-credit-card' ) as WpcomCreditCardSelectors ).getFields(),
-		[]
-	);
+function CreditCardSummary( { store }: { store: CardStoreType } ) {
+	const fields = useCreditCardStoreState( store, ( state ) => state.fields );
 	const cardholderName = fields.cardholderName;
-	const brand: string = useSelect(
-		( select ) => ( select( 'wpcom-credit-card' ) as WpcomCreditCardSelectors ).getBrand(),
-		[]
-	);
+	const brand = useCreditCardStoreState( store, ( state ) => state.brand || '' );
 
 	return (
 		<SummaryDetails>
@@ -119,6 +112,7 @@ export function createCreditCardMethod( {
 		hasRequiredFields: true,
 		activeContent: (
 			<CreditCardFields
+				store={ store }
 				shouldUseEbanx={ shouldUseEbanx }
 				shouldShowTaxFields={ shouldShowTaxFields }
 				allowUseForAllSubscriptions={ allowUseForAllSubscriptions }
@@ -131,7 +125,7 @@ export function createCreditCardMethod( {
 				submitButtonContent={ submitButtonContent }
 			/>
 		),
-		inactiveContent: <CreditCardSummary />,
+		inactiveContent: <CreditCardSummary store={ store } />,
 		getAriaLabel: ( __: ( text: string ) => string ) => __( 'Credit Card' ),
 	};
 }

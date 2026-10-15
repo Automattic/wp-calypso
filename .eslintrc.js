@@ -376,6 +376,20 @@ module.exports = {
 			mode: 'typescript',
 		},
 		'import/internal-regex': '^calypso/',
+		// Workspace packages resolve to their real folders. Keep them external for `import/order`
+		// in root-level files too, as they are when reached through `node_modules`.
+		'import/external-module-folders': [ 'node_modules', 'packages', 'apps' ],
+		'import/resolver': {
+			[ path.join( __dirname, 'build-tools/eslint/import-resolver-calypso-src.js' ) ]: {},
+			node: {},
+		},
+		// Workspace packages resolve to source, which can be JSX or TypeScript.
+		'import/extensions': [ '.js', '.mjs', '.cjs', '.jsx' ],
+		// As in the plugin's `import/typescript` preset, which can't be extended because it
+		// turns `import/named` off.
+		'import/parsers': {
+			'@typescript-eslint/parser': [ '.ts', '.tsx' ],
+		},
 	},
 	rules: {
 		...wpI18nConfig.rules,
@@ -570,8 +584,6 @@ module.exports = {
 				'@wordpress/edit-post': [ '__experimentalMainDashboardButton' ],
 				'@wordpress/components': [
 					'__experimentalConfirmDialog',
-					'__experimentalDivider',
-					'__experimentalGrid',
 					'__experimentalHStack',
 					'__experimentalVStack',
 					'__experimentalSpacer',

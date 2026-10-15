@@ -145,13 +145,21 @@ export interface Agency {
 	tier?: AgencyTier;
 	influenced_revenue?: number;
 	approval_status?: AgencyApprovalStatus | '';
+	/** False while an unpaid invoice or a missing payment method blocks new licenses. */
+	can_issue_licenses?: boolean;
 	profile?: AgencyProfile;
+	/** The logo the agency last uploaded for a referral email. */
+	referrals_logo?: string | null;
 	partner_directory?: {
 		allowed: boolean;
 		directories: AgencyPartnerDirectorySlug[];
 	};
 	amplify?: {
 		allowed: boolean;
+	};
+	signup_meta?: {
+		/** The site count band chosen at signup, e.g. '1-5'. */
+		number_sites?: string;
 	};
 	created_at: string;
 	billing_system?: 'billingdragon' | 'legacy';
@@ -169,6 +177,22 @@ export interface Agency {
 		};
 	};
 	notifications?: AgencyNotification[];
+	payment_notice?: AgencyPaymentNotice | null;
+}
+
+export interface AgencyPaymentNotice {
+	state: 'card_expiry' | 'renewal_failure';
+	severity: 'warning' | 'error';
+	title?: string;
+	content?: string;
+	/** Older name for the primary action, still sent alongside it. */
+	action_label?: string;
+	action_url?: string;
+	primary_action_label?: string;
+	primary_action_url?: string;
+	secondary_action_label?: string;
+	secondary_action_url?: string;
+	can_current_user_manage_payment_method?: boolean;
 }
 
 export interface AgencyPressableUsage {
@@ -266,6 +290,13 @@ export interface AgencyResourcesResponse {
 	total: number;
 }
 
+/**
+ * Response from GET /wpcom/v2/agency/stats. Public, program-wide counts.
+ */
+export interface AgencyProgramStats {
+	active_agencies: number;
+}
+
 export interface TipaltiIFrameUrl {
 	iframe_url: string;
 }
@@ -274,4 +305,34 @@ export interface TipaltiPayee {
 	Status: string;
 	IsPayable: boolean;
 	PayableReason: string[];
+}
+
+/**
+ * A client an agency refers for hosting, as the referral endpoints take it.
+ * `state` is only accepted for the US, Canada and Australia.
+ */
+export interface AgencyHostingReferral {
+	company_name: string;
+	address: string;
+	country_code: string;
+	state: string;
+	city: string;
+	zip: string;
+	first_name: string;
+	last_name: string;
+	title: string;
+	phone: string;
+	email: string;
+	website: string;
+	opportunity_description: string;
+}
+
+export interface AgencyVipPartnerOpportunity extends AgencyHostingReferral {
+	lead_type: string;
+	is_rfp: boolean;
+}
+
+export interface AgencyHostingReferralResponse {
+	status: string;
+	message: string;
 }

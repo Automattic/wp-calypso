@@ -4,7 +4,7 @@
 
 import {
 	createAgencyRoutes,
-	earnMigrationsRoute,
+	earnPayoutSettingsRoute,
 	earnReferralsRoute,
 	earnSectionRoutes,
 	hasAnyCapability,
@@ -24,6 +24,7 @@ type RouteNode = {
 const OPEN_ROUTE_PATHS = new Set( [
 	'', // the pathless `agency` guard route itself
 	'overview', // the fallback the capability guard redirects to
+	'/team/invite/accept', // the invitee has no agency yet, so no capabilities either
 ] );
 
 function collectUnguardedRoutes(
@@ -132,7 +133,7 @@ describe( 'earnSectionRoutes', () => {
 		expect( firstAllowed( [ 'a4a_read_referrals' ] ) ).toBe( earnReferralsRoute );
 	} );
 
-	test( 'sends migrations-only users to Migrations', () => {
-		expect( firstAllowed( [ 'a4a_read_migrations' ] ) ).toBe( earnMigrationsRoute );
+	test( 'lets migrations-only users reach Payout settings', () => {
+		expect( firstAllowed( [ 'a4a_read_migrations' ] ) ).toBe( earnPayoutSettingsRoute );
 	} );
 } );

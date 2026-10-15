@@ -44,8 +44,7 @@ import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import useEquivalentMonthlyTotals, {
 	getSubtotalBeforeDiscounts,
 } from 'calypso/my-sites/checkout/utils/use-equivalent-monthly-totals';
-import { useSelector } from 'calypso/state';
-import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
+import { getActivePlanSlug, useCheckoutSite } from '../hooks/use-checkout-site';
 import { useCheckoutUiRedesignExperiment } from '../hooks/use-checkout-ui-redesign-experiment';
 import getAkismetProductFeatures from '../lib/get-akismet-product-features';
 import getJetpackProductFeatures from '../lib/get-jetpack-product-features';
@@ -614,11 +613,8 @@ function CheckoutSummarySupportIfAvailable( props: {
 	const translate = useTranslate();
 	const hasEnTranslation = useHasEnTranslation();
 
-	const currentPlan = useSelector( ( state ) =>
-		props.siteId ? getCurrentPlan( state, props.siteId ) : undefined
-	);
-
-	const currentPlanSlug = currentPlan?.productSlug;
+	const { data: site } = useCheckoutSite( props.siteId );
+	const currentPlanSlug = getActivePlanSlug( site );
 
 	const isSupportAvailable =
 		props.hasDomainTransferInCart ||
@@ -755,6 +751,11 @@ const CheckoutSummaryPayButtonSlot = styled.div`
 		height: 50px;
 		box-sizing: border-box;
 	}
+
+	/* The portaled wrapper keeps the form's 24px padding; the sidebar card already pads it. */
+	.checkout-steps__submit-button-wrapper {
+		padding: 0;
+	}
 `;
 const CheckoutSummaryFeatures = styled.div`
 	padding: 24px 0;
@@ -858,14 +859,14 @@ const CheckoutSummaryTitle = styled.div`
 
 const CheckoutSubtotalSection = styled.div`
 	border-bottom: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
-	margin-bottom: 20px;
-	padding-bottom: 20px;
+	margin-bottom: 16px;
+	padding-bottom: 16px;
 `;
 
 const CheckoutSummaryAmountWrapper = styled.div`
 	border-top: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
-	padding: 20px 0 0 0;
-	margin-top: 20px;
+	padding: 16px 0 0 0;
+	margin-top: 16px;
 `;
 
 const CheckoutSummaryLineItem = styled.div< { isDiscount?: boolean } >`
@@ -877,6 +878,10 @@ const CheckoutSummaryLineItem = styled.div< { isDiscount?: boolean } >`
 	margin-bottom: 4px;
 
 	color: ${ ( props ) => ( props.isDiscount ? props.theme.colors.discount : 'inherit' ) };
+
+	& > span:last-child {
+		white-space: nowrap;
+	}
 `;
 
 export const PriceLoadingIndicator = styled.span< { width?: string; height?: string } >`
@@ -894,9 +899,9 @@ const CheckoutSummarySubtotal = styled( CheckoutSummaryLineItem )< {
 } >`
 	color: ${ ( props ) => props.theme.colors.textColorDark };
 	font-weight: ${ ( props ) => props.theme.weights.bold };
-	line-height: 26px;
+	line-height: 24px;
 	margin-bottom: 0px;
-	font-size: 20px;
+	font-size: 16px;
 	${ ( { isCheckoutUiRedesignV1 } ) =>
 		isCheckoutUiRedesignV1 &&
 		css`
@@ -911,6 +916,7 @@ const CheckoutSummarySubtotal = styled( CheckoutSummaryLineItem )< {
 		flex: 0 0 auto;
 		gap: 4px;
 		margin-left: auto;
+		white-space: nowrap;
 
 		.rtl & {
 			margin-right: auto;
@@ -931,6 +937,7 @@ const CheckoutSummaryTotalDiscount = styled( CheckoutSummaryLineItem )`
 	& .wp-checkout-order-summary__subtotal-discount {
 		color: ${ COLOR_GREEN_60 };
 		font-weight: 500;
+		white-space: nowrap;
 	}
 `;
 
@@ -940,6 +947,10 @@ const CheckoutSummaryTotal = styled( CheckoutSummaryLineItem )`
 	line-height: 26px;
 	margin-bottom: 0px;
 	font-size: 20px;
+
+	.wp-checkout-order-summary__total-price {
+		white-space: nowrap;
+	}
 `;
 
 const LoadingCopy = styled.p`

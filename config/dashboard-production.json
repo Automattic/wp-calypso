@@ -15,11 +15,18 @@
 		"agencies-beta.automattic.com": {
 			"favicon_url": "/calypso/images/favicons/favicon-a4a-prod.ico",
 			"favicon_brand": "a4a",
+			"site_name": "Automattic for Agencies",
 			"oauth_client_id": 95932,
 			"logout_url": "https://automattic.com/for/agencies",
 			"survicate_enabled": false,
 			"wpcom_login_url": false,
-			"features": { "oauth": true, "always_use_logout_url": true, "wpcom-user-bootstrap": false }
+			"features": {
+				"oauth": true,
+				"always_use_logout_url": true,
+				"wpcom-user-bootstrap": false,
+				"checkout/stripe-upi": true,
+				"upgrades/redirect-payments": true
+			}
 		}
 	},
 	"i18n_default_locale_slug": "en",
@@ -41,16 +48,17 @@
 		"dashboard/enable-percentage-rollout": true,
 		"dashboard/simulate-full-rollout": false,
 		"dashboard/wp-beta-program": true,
+		"difm-offer/force-treatment": false,
 		"dolly/telegram": true,
-		"domain-search/name-pulse": false,
 		"domain-transfer-redesign": true,
 		"emails/titan-tiers": false,
 		"marketplace-redesign": true,
 		"mcp-settings": true,
 		"me/legacy-contact": false,
+		"migration/reprint-flow": false,
+		"notifications/subscriber-alerts": true,
 		"onboarding/interval-dropdown": true,
 		"performance/apm": false,
-		"plans/hosting-trial": true,
 		"plans/migration-trial": true,
 		"plans/updated-storage-labels": true,
 		"plans/upgradeable-storage": true,

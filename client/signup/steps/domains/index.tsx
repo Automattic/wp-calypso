@@ -1,5 +1,4 @@
 import { FreeDomainSuggestion, useMyDomainInputMode } from '@automattic/api-core';
-import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import {
 	isDomainForGravatarFlow,
@@ -49,6 +48,33 @@ const getThemeSlugWithRepo = ( themeSlug: string | undefined, isPurchasingTheme:
 	return `${ repo }/${ themeSlug }`;
 };
 
+function isDashboardUrl( url: string ) {
+	try {
+		return dashboardOrigins().includes( new URL( url ).origin );
+	} catch {
+		return false;
+	}
+}
+
+/**
+ * Whether `url` points at the site the flow loaded, e.g. the wp-admin screen a launch started from.
+ * The host comes from the loaded site rather than from query args, so `back_to` can't name an
+ * arbitrary host.
+ */
+function isOnSiteHost( url: string, siteUrl?: string ) {
+	if ( ! url || ! siteUrl ) {
+		return false;
+	}
+
+	try {
+		const target = new URL( url );
+
+		return target.protocol === 'https:' && target.host === new URL( siteUrl ).host;
+	} catch {
+		return false;
+	}
+}
+
 const DomainSearchUI = (
 	props: StepProps & {
 		locale: string;
@@ -72,7 +98,7 @@ const DomainSearchUI = (
 
 	const isDomainOnlyFlow = flowName === 'domain';
 	const isOnboardingWithEmailFlow = flowName === 'onboarding-with-email';
-	const showNamePulseSearch = isEnabled( 'domain-search/name-pulse' ) && isDomainOnlyFlow;
+	const showNamePulseSearch = isDomainOnlyFlow;
 
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const site = useSelector( getSelectedSite );
@@ -320,7 +346,6 @@ const DomainSearchUI = (
 		return {
 			BeforeResults: () => {
 				if (
-					( isDomainOnlyFlow && ! config.showNamePulseSearch ) ||
 					isDomainForGravatarFlow( flowName ) ||
 					isFreeFlow( flowName ) ||
 					isOnboardingWithEmailFlow
@@ -343,7 +368,7 @@ const DomainSearchUI = (
 				return <FreeDomainForAYearPromo textOnly />;
 			},
 		};
-	}, [ flowName, isOnboardingWithEmailFlow, isDomainOnlyFlow, config.showNamePulseSearch ] );
+	}, [ flowName, isOnboardingWithEmailFlow, isDomainOnlyFlow ] );
 
 	const flowAllowsMultipleDomainsInCart = isDomainOnlyFlow;
 
@@ -400,8 +425,7 @@ const DomainSearchUI = (
 
 			const backTo = getQueryArg( window.location.href, 'back_to' )?.toString() ?? '';
 			const isSafeBackTo =
-				isRelativeUrl( backTo ) ||
-				dashboardOrigins().some( ( origin ) => backTo?.startsWith( origin ) );
+				isRelativeUrl( backTo ) || isDashboardUrl( backTo ) || isOnSiteHost( backTo, site?.URL );
 
 			if ( isSafeBackTo ) {
 				backUrl = backTo;
@@ -414,7 +438,7 @@ const DomainSearchUI = (
 			backUrl,
 			backLabelText,
 		};
-	}, [ dashboardOptIn, flowName, previousStepName, goBack, userSiteCount, __ ] );
+	}, [ dashboardOptIn, flowName, previousStepName, goBack, userSiteCount, site?.URL, __ ] );
 
 	const getUseDomainIOwnLink = () => {
 		if ( ! query || ! config.allowsUsingOwnDomain ) {

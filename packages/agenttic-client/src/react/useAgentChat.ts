@@ -112,6 +112,9 @@ export interface UIMessage {
 	reactKey?: string; // Stable key for React rendering (prevents unmount/remount during updates)
 }
 
+// Mirrors `MessageAction.visibility` in agenttic-ui.
+type MessageActionVisibility = 'always' | 'latest-turn';
+
 // Message action type for UI, resolved from condition and passed to the dumb component
 export type UIMessageAction =
 	| {
@@ -125,6 +128,7 @@ export type UIMessageAction =
 			pressed?: boolean;
 			showLabel?: boolean;
 			order?: number;
+			visibility?: MessageActionVisibility;
 	  }
 	| {
 			type: 'component';
@@ -133,6 +137,7 @@ export type UIMessageAction =
 			component: React.ComponentType< any >;
 			componentProps?: Record< string, unknown >;
 			order?: number;
+			visibility?: MessageActionVisibility;
 	  };
 
 // Internal types for message actions with conditional logic
@@ -149,6 +154,7 @@ export type MessageActionDefinition =
 			pressed?: boolean;
 			showLabel?: boolean;
 			order?: number;
+			visibility?: MessageActionVisibility;
 	  }
 	| {
 			type: 'component';
@@ -158,6 +164,7 @@ export type MessageActionDefinition =
 			componentProps?: Record< string, unknown >;
 			condition?: ( message: UIMessage ) => boolean;
 			order?: number;
+			visibility?: MessageActionVisibility;
 	  };
 
 export interface MessageActionsRegistration {
@@ -332,6 +339,7 @@ export interface UseAgentChatConfig {
 	onTaskUpdate?: ( update: TaskUpdate ) => void | Promise< void >;
 	odieBotId?: string; // Odie bot ID for server-based conversation storage (e.g., 'wpcom-agent-wp_orchestrator'). When set, enables server storage.
 	credentials?: RequestCredentials; // Set 'include' to send cookies with cross-origin requests.
+	trackReplying?: boolean; // Set to get `isReplying` (needs `enableStreaming`). Reply text then also clears the progress text.
 }
 
 // Hook return interface
@@ -344,6 +352,7 @@ export interface UseAgentChatReturn {
 	suggestions: Suggestion[];
 	progressMessage: string | null;
 	progressPhase: string | null;
+	isReplying?: boolean; // Whether reply text is streaming in. Only with `trackReplying`, during a request.
 
 	// UI management methods
 	registerSuggestions: ( suggestions: Suggestion[] ) => void;
@@ -377,6 +386,7 @@ export interface AgentChatState {
 	suggestions: Suggestion[];
 	progressMessage: string | null;
 	progressPhase: string | null;
+	isReplying: boolean;
 }
 
 export interface InternalSubmitOptions {
@@ -420,6 +430,7 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 		suggestions: [],
 		progressMessage: null,
 		progressPhase: null,
+		isReplying: false,
 	} );
 
 	// Initialize message actions
@@ -438,12 +449,16 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 		stateRef.current = state;
 	}, [ state ] );
 
-	// Keep the raw task-update observer fresh without reinitializing the agent
-	// or changing the stable onSubmit callback identity.
+	// Keep the raw task-update observer and `trackReplying` fresh without
+	// reinitializing the agent or changing the stable onSubmit callback identity.
 	const onTaskUpdateRef = useRef( config.onTaskUpdate );
 	useEffect( () => {
 		onTaskUpdateRef.current = config.onTaskUpdate;
 	}, [ config.onTaskUpdate ] );
+	const trackReplyingRef = useRef( config.trackReplying );
+	useEffect( () => {
+		trackReplyingRef.current = config.trackReplying;
+	}, [ config.trackReplying ] );
 
 	// Use a ref to always have access to the latest registrations
 	const registrationsRef = useRef( registrations );
@@ -471,7 +486,16 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 			const agentManager = getAgentManager();
 			const agentKey = agentConfig.agentId;
 
-			const hasAgent = agentManager.hasAgent( agentKey );
+			let hasAgent = agentManager.hasAgent( agentKey );
+			if (
+				hasAgent &&
+				agentManager.getAgentSessionId( agentKey ) !== ( agentConfig.sessionId || null )
+			) {
+				agentManager.abortCurrentRequest( agentKey );
+				agentManager.removeAgent( agentKey );
+				hasAgent = false;
+				setState( ( prev ) => ( { ...prev, clientMessages: [], uiMessages: [] } ) );
+			}
 
 			// Always ensure agent exists, even for new chats with empty sessionId
 			if ( ! hasAgent ) {
@@ -569,6 +593,8 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 			}
 			isSendingRef.current = true;
 
+			// Keep in-flight updates attached to the site and agent that started the request.
+			const onTaskUpdate = onTaskUpdateRef.current;
 			const agentManager = getAgentManager();
 			const agentKey = agentConfig.agentId;
 			const preserveUiOnlyMessages = internalOptions?.preserveUiOnlyMessages ?? true;
@@ -632,12 +658,14 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 						? [ ...( internalOptions?.initialUiMessages ?? prev.uiMessages ), userMessage ]
 						: ( internalOptions?.initialUiMessages ?? prev.uiMessages ),
 					isProcessing: true,
+					isReplying: false,
 					error: null,
 				} ) );
 			} else {
 				setState( ( prev ) => ( {
 					...prev,
 					isProcessing: true,
+					isReplying: false,
 					error: null,
 				} ) );
 			}
@@ -690,12 +718,29 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 					: agentManager.sendMessageStream( agentKey, message, messageOptions );
 
 				for await ( const update of stream ) {
-					if ( onTaskUpdateRef.current ) {
+					if ( onTaskUpdate ) {
 						try {
-							await onTaskUpdateRef.current( update );
+							await onTaskUpdate( update );
 						} catch ( observerError ) {
 							logger( 'Error in onTaskUpdate callback: %O', observerError );
 						}
+					}
+
+					// Reply text means the agent is talking; any other update means it's working.
+					// An empty content delta is a keep-alive and changes nothing.
+					const isContentDelta = update.delta?.deltaType === 'content';
+					const isKeepAlive = isContentDelta && ! update.delta?.content;
+					if ( trackReplyingRef.current && ! isKeepAlive ) {
+						setState( ( prev ) =>
+							prev.isReplying === isContentDelta
+								? prev
+								: {
+										...prev,
+										isReplying: isContentDelta,
+										// The progress text is stale once the reply starts.
+										...( isContentDelta && { progressMessage: null, progressPhase: null } ),
+									}
+						);
 					}
 
 					// Update progress message and phase if present
@@ -1010,6 +1055,7 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 		suggestions: state.suggestions,
 		progressMessage: state.progressMessage,
 		progressPhase: state.progressPhase,
+		isReplying: config.trackReplying && state.isProcessing ? state.isReplying : undefined,
 
 		// UI management methods
 		registerSuggestions,

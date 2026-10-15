@@ -140,6 +140,13 @@ export function RegionAddressFieldsets(
 	return fields;
 }
 
+export function isEuOrUkAddressFormat( countryCode: string ): boolean {
+	return (
+		CHECKOUT_EU_ADDRESS_FORMAT_COUNTRY_CODES.includes( countryCode ) ||
+		CHECKOUT_UK_ADDRESS_FORMAT_COUNTRY_CODES.includes( countryCode )
+	);
+}
+
 export function RegionAddressFieldsLayout( {
 	statesList,
 	countryList,

@@ -1,7 +1,7 @@
 import { Visibility } from '@automattic/data-stores';
 import wpcom from 'calypso/lib/wp'; // eslint-disable-line no-restricted-imports
 import { createSite, getNewSiteParams } from '..';
-import { HOSTING_LP_FLOW } from '../../utils/flows';
+import { HOSTING_LP_FLOW, ONBOARDING_FLOW } from '../../utils/flows';
 import wpcomRequest from '../../wpcom-request';
 
 jest.mock( 'calypso/lib/wp', () => ( { req: { post: jest.fn() } } ), { virtual: true } );
@@ -32,7 +32,6 @@ describe( 'createSite', () => {
 			'Example',
 			'#113AF5',
 			false,
-			'exampleuser',
 			null,
 			'example'
 		);
@@ -64,7 +63,6 @@ describe( 'getNewSiteParams', () => {
 			siteAccentColor: '#deface',
 			useThemeHeadstart: false,
 			siteVisibility: Visibility.Private,
-			username: 'testuser',
 			...partialParams,
 			partnerBundle: partialParams.partnerBundle ?? null,
 		} satisfies Parameters< typeof getNewSiteParams >[ 0 ];
@@ -137,40 +135,25 @@ describe( 'getNewSiteParams', () => {
 		);
 	} );
 
-	test( 'blog_name hint falls back to the username when no site URL or title is present', () => {
-		expect(
-			getNewSiteParams(
-				testParams( {
-					flowToCheck: HOSTING_LP_FLOW,
-					siteUrl: undefined,
-					siteTitle: '',
-					username: 'janedoe',
+	test.each( [ 'test-flow', ONBOARDING_FLOW, HOSTING_LP_FLOW, 'copy-site', 'do-it-for-me' ] )(
+		'%s flow sends an empty blog_name when no site URL or title is present',
+		( flowToCheck ) => {
+			expect(
+				getNewSiteParams(
+					testParams( {
+						flowToCheck,
+						siteUrl: undefined,
+						siteTitle: '',
+					} )
+				)
+			).toEqual(
+				expect.objectContaining( {
+					blog_name: '',
+					find_available_url: true,
 				} )
-			)
-		).toEqual(
-			expect.objectContaining( {
-				blog_name: '',
-				find_available_url: true,
-			} )
-		);
-	} );
-
-	test( 'Hosting flow does not fall back to username when site title and URL are missing', () => {
-		expect(
-			getNewSiteParams(
-				testParams( {
-					siteUrl: undefined,
-					siteTitle: '',
-					username: 'janedoe',
-				} )
-			)
-		).toEqual(
-			expect.objectContaining( {
-				blog_name: 'janedoe',
-				find_available_url: true,
-			} )
-		);
-	} );
+			);
+		}
+	);
 
 	test( 'blog_name hint uses the site URL when present', () => {
 		expect(
@@ -178,7 +161,6 @@ describe( 'getNewSiteParams', () => {
 				testParams( {
 					siteUrl: 'testing123.wordpress.com',
 					siteTitle: 'Testing Inc.',
-					username: 'janedoe',
 				} )
 			)
 		).toEqual(
@@ -195,7 +177,6 @@ describe( 'getNewSiteParams', () => {
 				testParams( {
 					siteUrl: 'example.com',
 					siteTitle: 'Testing Inc.',
-					username: 'janedoe',
 				} )
 			)
 		).toEqual(
@@ -212,7 +193,6 @@ describe( 'getNewSiteParams', () => {
 				testParams( {
 					siteUrl: 'mysite.tech.blog',
 					siteTitle: 'Testing Inc.',
-					username: 'janedoe',
 				} )
 			)
 		).toEqual(

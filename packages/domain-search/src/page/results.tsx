@@ -273,6 +273,11 @@ export const ResultsPage = () => {
 
 	const showCompactBanner = !! slots?.BeforeResults;
 
+	const skipSuggestion =
+		config.skippable &&
+		( isLoadingSuggestions ? <SkipSuggestion.Placeholder /> : <SkipSuggestion /> );
+	const showSkipSuggestionOnTop = config.skipSuggestionPlacement === 'top';
+
 	// One child expression, never an array: FeaturedSearchResults treats a null
 	// child as "no trailing card" when deciding the single-card layout.
 	let bundleSlot: ReactNode = null;
@@ -317,6 +322,8 @@ export const ResultsPage = () => {
 				</div>
 			) }
 
+			{ showSkipSuggestionOnTop && skipSuggestion }
+
 			{ /* Desktop in-flow promo card. CSS-hidden on mobile, where the
 			     compact banner inside the overlay supersedes it. */ }
 			{ slots?.BeforeResults && (
@@ -325,9 +332,7 @@ export const ResultsPage = () => {
 				</div>
 			) }
 			<VStack spacing={ 4 }>
-				{ config.skippable && (
-					<>{ isLoadingSuggestions ? <SkipSuggestion.Placeholder /> : <SkipSuggestion /> }</>
-				) }
+				{ ! showSkipSuggestionOnTop && skipSuggestion }
 				{ ! isLoadingSuggestions && <UnavailableSearchResult /> }
 				{ isLoadingSuggestions ? (
 					<FeaturedSearchResults.Placeholder />

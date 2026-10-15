@@ -67,6 +67,11 @@ export interface ReceiptItemCostOverride {
 	does_override_original_cost: boolean;
 	old_price_integer: number;
 	new_price_integer: number;
+	/**
+	 * The coupon code the customer applied that caused this override, or null
+	 * for any other override, including automatic sale coupons.
+	 */
+	coupon_code: string | null;
 }
 
 export interface ReceiptItem {
@@ -97,6 +102,9 @@ export interface ReceiptItem {
 	licensed_quantity: number | null;
 	new_quantity: number;
 	product: string;
+	product_id: number;
+	product_name_en: string;
+	product_type: string;
 	product_slug: string;
 	variation: string;
 	variation_slug: string;
@@ -111,6 +119,29 @@ export interface ReceiptItem {
 	saas_redirect_url: string;
 	is_plan: boolean;
 	is_domain_registration: boolean;
+	/**
+	 * True if this item is for the domain that received a free first-year domain
+	 * credit in this purchase: a plan's domain credit (from a plan bought in the
+	 * same purchase or one the site already has) or a marketplace add-on's free
+	 * .blog domain. Set on every domain product for that domain, including its
+	 * mapping. Same as `is_bundled` on a shopping cart product.
+	 *
+	 * Unrelated to `domain_bundle_group_id`.
+	 */
+	uses_free_domain_credit: boolean;
+	/**
+	 * The ID shared by domains that were bought together as a group suggested
+	 * by domain search, or null if this item was not part of such a group.
+	 * Same as `extra.domain_bundle_group_id` on a shopping cart product.
+	 *
+	 * Unrelated to `uses_free_domain_credit`.
+	 */
+	domain_bundle_group_id: string | null;
+	/**
+	 * The store product slug of the plan this item was upgraded from (for
+	 * example a Woo Express trial), or null if this item was not an upgrade.
+	 */
+	previous_plan_slug: string | null;
 }
 
 export interface Receipt {

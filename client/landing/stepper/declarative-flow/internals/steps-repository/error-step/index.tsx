@@ -17,7 +17,10 @@ const WarningsOrHoldsSection = styled.div`
 	margin-top: 40px;
 `;
 
-const ErrorStep: StepType = function ErrorStep( { flow, variantSlug } ) {
+const ErrorStep: StepType< {
+	accepts: { showRetry?: boolean };
+	submits: { action: 'retry' };
+} > = function ErrorStep( { flow, variantSlug, showRetry, navigation } ) {
 	const { __ } = useI18n();
 	const locale = useSelector( getCurrentUserLocale ) || 'en';
 	const siteDomains = useSiteDomains();
@@ -33,10 +36,8 @@ const ErrorStep: StepType = function ErrorStep( { flow, variantSlug } ) {
 		const localeBucket = 'en' === locale ? 'en' : 'non_en';
 		bumpStat( 'calypso_stepper_error_step', `${ flow }_${ localeBucket }` );
 
-		if ( ! error || ! message ) {
-			return;
-		}
-
+		// Some flows navigate here without storing an error. Log those arrivals too,
+		// so every bump of the stat above has a log line to split by error code.
 		logToLogstash( {
 			feature: 'calypso_client',
 			message: 'Error in Stepper flow',
@@ -49,7 +50,7 @@ const ErrorStep: StepType = function ErrorStep( { flow, variantSlug } ) {
 			properties: {
 				flow,
 				locale,
-				error,
+				error: error || 'no_stored_error',
 			},
 		} );
 	}, [ error, flow, locale, message, variantSlug ] );
@@ -59,6 +60,11 @@ const ErrorStep: StepType = function ErrorStep( { flow, variantSlug } ) {
 		return (
 			<>
 				{ !! errorMessage && <p className="error-step__message">{ errorMessage }</p> }
+				{ showRetry && (
+					<Step.PrimaryButton onClick={ () => navigation.submit( { action: 'retry' } ) }>
+						{ __( 'Try again' ) }
+					</Step.PrimaryButton>
+				) }
 				<WarningsOrHoldsSection>
 					<SupportCard domain={ domain } />
 				</WarningsOrHoldsSection>

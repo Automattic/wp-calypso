@@ -59,7 +59,7 @@ function mockAddressSuggestion( address: string ) {
 }
 
 function renderModal( closeModal = jest.fn() ) {
-	render( <SiteConfigurationModal license={ license } closeModal={ closeModal } /> );
+	render( <SiteConfigurationModal licenseKey={ license.license_key } closeModal={ closeModal } /> );
 	return { closeModal, user: userEvent.setup() };
 }
 

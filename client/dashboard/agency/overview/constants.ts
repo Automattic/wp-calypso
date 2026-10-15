@@ -17,10 +17,6 @@ export const PRESSABLE_INTRODUCTORY_OFFER_TERMS_URL =
 export const PRESSABLE_EXPANSION_OFFER_TERMS_URL =
 	'https://pressable.com/legal/summer-2026-expansion-incentive-terms-and-conditions/';
 
-// Resolves in the classic A4A marketplace until a dashboard Pressable hosting
-// page exists, like the links in agency/marketplace/exclusive-offers.
-export const MARKETPLACE_HOSTING_PRESSABLE_PATH = '/marketplace/hosting/pressable';
-
 export const AI_MCP_ANNOUNCEMENT_BLOG_POST_URL =
 	'https://automattic.com/for-agencies/blog/our-new-mcp-brings-automattic-for-agencies-into-your-ai-workflow/';
 

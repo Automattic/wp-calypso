@@ -1,3 +1,4 @@
+import { siteByIdQuery } from '@automattic/api-queries';
 import {
 	isDomainMapping,
 	isDomainRegistration,
@@ -6,12 +7,13 @@ import {
 import { FormStatus, useFormStatus } from '@automattic/composite-checkout';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { styled, joinClasses } from '@automattic/wpcom-checkout';
+import { useQuery } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useCallback } from 'react';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { hasP2PlusPlan } from 'calypso/lib/cart-values/cart-items';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
-import { useSelector, useDispatch } from 'calypso/state';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { useSelector } from 'calypso/state';
 import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'calypso/state/current-user/constants';
 import {
 	currentUserHasFlag,
@@ -119,38 +121,40 @@ export default function WPCheckoutOrderReview( {
 	const translate = useTranslate();
 	const cartKey = useCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
-	const reduxDispatch = useDispatch();
 
 	const onRemoveProductCancel = useCallback( () => {
-		reduxDispatch( recordTracksEvent( 'calypso_checkout_composite_cancel_delete_product' ) );
-	}, [ reduxDispatch ] );
-	const onRemoveProduct = useCallback(
-		( label: string ) => {
-			reduxDispatch(
-				recordTracksEvent( 'calypso_checkout_composite_delete_product', {
-					product_name: label,
-				} )
-			);
-		},
-		[ reduxDispatch ]
-	);
-	const onRemoveProductClick = useCallback(
-		( label: string ) => {
-			reduxDispatch(
-				recordTracksEvent( 'calypso_checkout_composite_delete_product_press', {
-					product_name: label,
-				} )
-			);
-		},
-		[ reduxDispatch ]
-	);
+		recordTracksEvent( 'calypso_checkout_composite_cancel_delete_product' );
+	}, [] );
+	const onRemoveProduct = useCallback( ( label: string ) => {
+		recordTracksEvent( 'calypso_checkout_composite_delete_product', {
+			product_name: label,
+		} );
+	}, [] );
+	const onRemoveProductClick = useCallback( ( label: string ) => {
+		recordTracksEvent( 'calypso_checkout_composite_delete_product_press', {
+			product_name: label,
+		} );
+	}, [] );
 
 	const selectedSiteData = useSelector( getSelectedSite );
 	const [ , isCheckoutUiRedesignV1 ] = useCheckoutUiRedesignExperiment();
 	const { isMobileCheckoutStickySummary } = useMobileCheckoutStickySummaryExperiment();
 
+	// A cart without a site in its key (eg: a renewal at `/checkout/renew/:id`)
+	// can still belong to a site if the server assigned one to it.
+	const cartBlogId = Number( responseCart.blog_id ) || 0;
+	const { data: cartSite } = useQuery( {
+		...siteByIdQuery( cartBlogId ),
+		enabled: ! selectedSiteData && cartBlogId > 0,
+	} );
+
 	// This is what will be displayed at the top of checkout prefixed by "Site: ".
-	const domainUrl = getDomainToDisplayInCheckoutHeader( responseCart, selectedSiteData, siteUrl );
+	const domainUrl = getDomainToDisplayInCheckoutHeader(
+		responseCart,
+		selectedSiteData,
+		siteUrl,
+		cartSite?.slug
+	);
 
 	const planIsP2Plus = hasP2PlusPlan( responseCart );
 
@@ -296,7 +300,8 @@ export function CouponFieldArea( {
 function getDomainToDisplayInCheckoutHeader(
 	responseCart: ResponseCart,
 	selectedSiteData: SiteDetails | undefined | null,
-	sitelessCheckoutSlug: string | undefined
+	sitelessCheckoutSlug: string | undefined,
+	cartSiteSlug: string | undefined
 ): string | undefined {
 	if ( hasP2PlusPlan( responseCart ) ) {
 		return undefined;
@@ -326,7 +331,7 @@ function getDomainToDisplayInCheckoutHeader(
 		return sitelessCheckoutSlug;
 	}
 
-	return undefined;
+	return cartSiteSlug;
 }
 
 function getDomainProductUrlToDisplayInCheckoutHeader(

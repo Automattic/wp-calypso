@@ -19,8 +19,21 @@ import type { AmplifyApiError, AmplifyMode } from 'calypso/a8c-for-agencies/data
 
 import './style.scss';
 
+// WordPress reports a failed `validate_callback` as `rest_invalid_param` and
+// keeps the real code under the parameter it rejected.
+function getErrorCode( error: AmplifyApiError | null ): string | null {
+	if ( 'rest_invalid_param' === error?.code ) {
+		return error.data?.details?.url?.code ?? error.code;
+	}
+	return error?.code ?? null;
+}
+
 function getErrorMessage( error: AmplifyApiError | null ) {
-	switch ( error?.code ) {
+	switch ( getErrorCode( error ) ) {
+		case 'a4a_amplify_bad_url':
+			return __(
+				'We can’t analyze that address. It needs to be a public http:// or https:// URL on a standard port.'
+			);
 		case 'site_unreachable':
 			return __(
 				'We couldn’t reach this site to analyze it. Make sure it’s online and publicly accessible, then try again.'

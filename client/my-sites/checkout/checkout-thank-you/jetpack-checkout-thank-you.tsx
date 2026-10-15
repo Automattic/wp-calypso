@@ -1,3 +1,4 @@
+import { siteBySlugQuery } from '@automattic/api-queries';
 import { Button, Card } from '@automattic/components';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
@@ -5,28 +6,14 @@ import QueryProducts from 'calypso/components/data/query-products-list';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import Main from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import wpcom from 'calypso/lib/wp';
 import { useSelector } from 'calypso/state';
 import { isProductsListFetching, getProductName } from 'calypso/state/products-list/selectors';
 import type { FunctionComponent } from 'react';
 
 interface Props {
-	site: number | string;
+	site: string;
 	productSlug: string | 'no_product';
 	isUserlessCheckoutFlow: boolean;
-}
-
-interface Site {
-	name: string;
-	URL: string;
-}
-
-function useSiteQuery( siteId: string | number ) {
-	return useQuery< Site >( {
-		queryKey: [ 'unauthorized-site', siteId ],
-		queryFn: () => wpcom.req.get( { path: `/sites/${ siteId }`, apiVersion: '1.2' } ),
-		meta: { persist: false },
-	} );
 }
 
 const JetpackCheckoutThankYou: FunctionComponent< Props > = ( {
@@ -44,7 +31,7 @@ const JetpackCheckoutThankYou: FunctionComponent< Props > = ( {
 
 	const productListFetching = useSelector( isProductsListFetching );
 
-	const siteRequest = useSiteQuery( site );
+	const siteRequest = useQuery( siteBySlugQuery( site ) );
 	const siteName = siteRequest.data?.name;
 	const siteUrl = siteRequest.data?.URL;
 	const isLoading = siteRequest.isLoading || productListFetching;

@@ -7,7 +7,6 @@ import { Badge, Button, Card, CompactCard, Gridicon } from '@automattic/componen
 import { formatCurrency } from '@automattic/number-formatters';
 import { __experimentalHStack as HStack, Tooltip } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { addQueryArgs } from '@wordpress/url';
 import DOMPurify from 'dompurify';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
@@ -17,25 +16,17 @@ import QuerySiteSettings from 'calypso/components/data/query-site-settings';
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
-import PromoCard, { PromoCardVariation } from 'calypso/components/promo-section/promo-card';
-import PromoCardCta from 'calypso/components/promo-section/promo-card/cta';
 import SectionHeader from 'calypso/components/section-header';
-import TrackComponentView from 'calypso/lib/analytics/track-component-view';
-import { preventWidows } from 'calypso/lib/formatting';
 import { useDispatch, useSelector } from 'calypso/state';
-import { bumpStat, recordTracksEvent } from 'calypso/state/analytics/actions';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getProductsForSiteId } from 'calypso/state/memberships/product-list/selectors';
 import getFeaturesBySiteId from 'calypso/state/selectors/get-site-features';
-import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
-import isVipSite from 'calypso/state/selectors/is-vip-site';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSiteSettings } from 'calypso/state/site-settings/selectors';
-import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import RecurringPaymentsPlanAddEditModal from '../components/add-edit-plan-modal';
 import FreePlanModal from '../components/free-plan-modal';
 import { Product } from '../types';
-import { getUpsellReturnUrl } from '../upsell-return-url';
 import {
 	ADD_NEW_PAYMENT_PLAN_HASH,
 	ADD_TIER_PLAN_HASH,
@@ -94,39 +85,11 @@ function ProductsList() {
 
 	const hasStripeFeature =
 		hasDonationsFeature || hasPremiumContentFeature || hasRecurringPaymentsFeature;
-	// Admins are already the only ones here; the section returns a notice for
-	// everyone else. A standalone Jetpack connection reads as a Jetpack site while
-	// its `jetpack` flag stays false, and none of these can buy a WordPress.com plan.
-	const canShowUpsell =
-		useSelector(
-			( state ) =>
-				! isVipSite( state, site?.ID ?? 0 ) &&
-				! isSiteWPForTeams( state, site?.ID ?? null ) &&
-				! ( Boolean( isJetpackSite( state, site?.ID ) ) && ! site?.jetpack )
-		) &&
-		hasLoadedFeatures &&
-		! hasStripeFeature;
 
 	const defaultToTierPanel =
 		window.location.hash === OLD_ADD_NEWSLETTER_PAYMENT_PLAN_HASH ||
 		window.location.hash === ADD_TIER_PLAN_HASH;
 	const default_product_type = defaultToTierPanel ? TYPE_TIER : null;
-
-	const upgradeNudgeProperties = {
-		cta_name: 'calypso_earn_page_payment_plans_upgrade_nudge',
-		cta_feature: FEATURE_RECURRING_PAYMENTS,
-		cta_size: 'regular',
-	};
-
-	const trackUpgrade = () => {
-		dispatch(
-			recordTracksEvent(
-				'calypso_earn_page_payment_plans_upgrade_button_click',
-				upgradeNudgeProperties
-			)
-		);
-		dispatch( bumpStat( 'calypso_earn_page', 'payment-plans-upgrade-button' ) );
-	};
 
 	function renderEllipsisMenu( productId: number, canEdit: boolean ) {
 		return (
@@ -229,42 +192,6 @@ function ProductsList() {
 			     only appears when a newsletter tier exists — avoid the extra
 			     request on donation-only / non-newsletter sites. */ }
 			{ hasNewsletterTier && site?.ID && <QuerySiteSettings siteId={ site.ID } /> }
-			{ canShowUpsell && (
-				<>
-					<TrackComponentView
-						eventName="calypso_earn_page_payment_plans_upgrade_button_view"
-						eventProperties={ upgradeNudgeProperties }
-					/>
-					<PromoCard
-						variation={ PromoCardVariation.Compact }
-						icon="credit-card"
-						title={ preventWidows(
-							translate( 'Upgrade to modify payment plans or add new plans' )
-						) }
-					>
-						<p>
-							{ preventWidows(
-								translate(
-									'Payment plans let you charge for memberships, subscriptions, and one-time offers.'
-								)
-							) }
-						</p>
-						<PromoCardCta
-							cta={ {
-								text: translate( 'Upgrade' ),
-								isPrimary: true,
-								action: {
-									url: addQueryArgs( `/plans/${ site?.slug }`, {
-										redirect_to: getUpsellReturnUrl(),
-									} ),
-									onClick: trackUpgrade,
-									selfTarget: true,
-								},
-							} }
-						/>
-					</PromoCard>
-				</>
-			) }
 			{ hasLoadedFeatures && hasStripeFeature && (
 				<SectionHeader label={ translate( 'Manage plans' ) }>
 					<Button primary compact onClick={ onAddNewPaymentPlanButtonClick }>

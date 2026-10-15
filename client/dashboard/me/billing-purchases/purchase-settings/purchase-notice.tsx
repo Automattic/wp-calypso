@@ -27,8 +27,6 @@ import {
 	hasPlanExpiryNotice,
 	isEligibleForPlanExpiryNotice,
 } from '../../../components/plan-expiry-notice';
-import { formatDate } from '../../../utils/datetime';
-import { getDowngradeTargetProductName } from '../../../utils/downgrade-target-name';
 import { wpcomLink } from '../../../utils/link';
 import {
 	isExpiredOrRemoved,
@@ -51,6 +49,7 @@ import {
 } from '../../../utils/site-url';
 import { useIsSplitCancelRemoveEnabled } from '../cancel-purchase/use-is-split-cancel-remove-enabled';
 import { CancellationOfferNotice } from './cancellation-offer-notice';
+import { getDelayedDowngradeNotice } from './get-delayed-downgrade-notice';
 import {
 	OtherRenewablePurchasesNotice,
 	shouldShowOtherRenewablePurchasesNotice,
@@ -65,6 +64,7 @@ export function PurchaseNotice( { purchase }: { purchase: Purchase } ) {
 	const { user } = useAuth();
 	const locale = useLocale();
 	const { recordTracksEvent } = useAnalytics();
+	const hasEnTranslation = useHasEnTranslation();
 	const isSplitCancelRemoveEnabled = useIsSplitCancelRemoveEnabled();
 	const {
 		refunded,
@@ -218,78 +218,66 @@ export function PurchaseNotice( { purchase }: { purchase: Purchase } ) {
 		);
 	}
 
-	// Persistent warning notice when a delayed downgrade is pending.
-	if ( purchase.is_delayed_downgrade_pending ) {
-		const targetPlanName = getDowngradeTargetProductName(
-			purchase.delayed_downgrade_to_product_slug
-		);
-		// `renew_date` is the next auto-renewal attempt date, which for annual
-		// plans is up to 30 days before expiry. The downgrade takes effect on
-		// that renewal, so it's the accurate date to show the customer.
-		const renewalDate = purchase.renew_date
-			? formatDate( new Date( purchase.renew_date ), locale, { dateStyle: 'long' } )
-			: null;
-		const getDelayedDowngradeMessage = () => {
-			if ( targetPlanName && renewalDate ) {
-				return sprintf(
-					// translators: %1$s is the name of the plan, e.g. "Personal"; %2$s is a date, e.g. "January 1, 2026"
-					__( 'Your plan is scheduled to downgrade to %1$s at your next renewal on %2$s.' ),
-					targetPlanName,
-					renewalDate
-				);
-			}
-			if ( renewalDate ) {
-				return sprintf(
-					// translators: %s is a date, e.g. "January 1, 2026"
-					__( 'Your plan is scheduled to downgrade at your next renewal on %s.' ),
-					renewalDate
-				);
-			}
-			if ( targetPlanName ) {
-				return sprintf(
-					// translators: %s is the name of the plan, e.g. "Personal"
-					__( 'Your plan is scheduled to downgrade to %s at your next renewal.' ),
-					targetPlanName
-				);
-			}
-			return __( 'Your plan is scheduled to downgrade at your next renewal.' );
-		};
+	const delayedDowngradeNotice = getDelayedDowngradeNotice( purchase, locale, hasEnTranslation );
+	if ( delayedDowngradeNotice ) {
 		return (
 			<Notice
 				variant="warning"
 				actions={
-					<Button
-						variant="secondary"
-						size="compact"
-						onClick={ () => {
-							recordTracksEvent( 'calypso_purchases_cancel_delayed_downgrade_click', {
-								purchase_id: purchase.ID,
-							} );
-							cancelDelayedDowngrade(
-								{ purchaseId: purchase.ID, enabled: false },
-								{
-									onSuccess: () =>
-										createSuccessNotice( __( 'Your scheduled downgrade has been cancelled.' ), {
-											type: 'snackbar',
-										} ),
-									onError: () =>
-										createErrorNotice(
-											__(
-												'There was a problem cancelling your scheduled downgrade. Please try again later or contact support.'
-											),
-											{ type: 'snackbar' }
-										),
+					<>
+						{ delayedDowngradeNotice.isRetryingRenewal && (
+							<Button
+								variant="primary"
+								size="compact"
+								href={
+									router.buildLocation( {
+										to: changePaymentMethodRoute.fullPath,
+										params: { purchaseId: purchase.ID },
+									} ).href
 								}
-							);
-						} }
-						disabled={ isCancellingDelayedDowngrade }
-						isBusy={ isCancellingDelayedDowngrade }
-					>
-						{ __( 'Cancel downgrade' ) }
-					</Button>
+								onClick={ () =>
+									recordTracksEvent(
+										'calypso_purchases_delayed_downgrade_update_payment_method_click',
+										{ purchase_id: purchase.ID }
+									)
+								}
+							>
+								{ __( 'Update payment method' ) }
+							</Button>
+						) }
+						<Button
+							variant="secondary"
+							size="compact"
+							onClick={ () => {
+								recordTracksEvent( 'calypso_purchases_cancel_delayed_downgrade_click', {
+									purchase_id: purchase.ID,
+								} );
+								cancelDelayedDowngrade(
+									{ purchaseId: purchase.ID, enabled: false },
+									{
+										onSuccess: () =>
+											createSuccessNotice( __( 'Your scheduled downgrade has been cancelled.' ), {
+												type: 'snackbar',
+											} ),
+										onError: () =>
+											createErrorNotice(
+												__(
+													'There was a problem cancelling your scheduled downgrade. Please try again later or contact support.'
+												),
+												{ type: 'snackbar' }
+											),
+									}
+								);
+							} }
+							disabled={ isCancellingDelayedDowngrade }
+							isBusy={ isCancellingDelayedDowngrade }
+						>
+							{ __( 'Cancel downgrade' ) }
+						</Button>
+					</>
 				}
 			>
-				{ getDelayedDowngradeMessage() }
+				{ delayedDowngradeNotice.message }
 			</Notice>
 		);
 	}
@@ -346,7 +334,7 @@ export function PurchaseNotice( { purchase }: { purchase: Purchase } ) {
 						params: { purchaseId: purchase.ID },
 					} ).href
 				}
-				viewOtherPlansUrl={ getWpcomPlanChangeUrl( purchase, getPlanChangeReturnUrls() ) }
+				viewOtherPlansUrl={ getWpcomPlanChangeUrl( purchase, getPlanChangeReturnUrls( purchase ) ) }
 				locale={ locale }
 				surface="dashboard-purchase-settings"
 				recordTracksEvent={ recordTracksEvent }
@@ -597,7 +585,7 @@ function TrialNotice( { purchase }: { purchase: Purchase } ) {
 			} );
 
 			window.location.href =
-				getSitePurchaseUpgradeUrl( purchase, getUpgradedPurchaseRedirectUrl() ) ?? '';
+				getSitePurchaseUpgradeUrl( purchase, getUpgradedPurchaseRedirectUrl( purchase ) ) ?? '';
 			return;
 		}
 

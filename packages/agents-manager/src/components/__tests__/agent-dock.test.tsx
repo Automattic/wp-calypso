@@ -14,6 +14,8 @@ const mockSetIsSplitScreen = jest.fn();
 const mockUseAgentLayoutManager = jest.fn();
 const mockResumeChat = jest.fn();
 const mockCloseSidebar = jest.fn();
+const mockUseRaiseOnFocus = jest.fn();
+const mockPortalNode = document.createElement( 'div' );
 let mockLayoutIsDocked = false;
 // Overrides the layout mock's `canDock` (which otherwise follows
 // `mockLayoutIsDocked`) so floating-but-dockable states are testable.
@@ -26,7 +28,6 @@ let mockAgentsManagerState: {
 	isSplitScreen?: boolean;
 } = { isOpen: true, isDocked: false };
 let mockHasAdminBar = false;
-let mockShouldUseUnifiedAgent = false;
 
 jest.mock(
 	'@automattic/agenttic-client',
@@ -77,22 +78,20 @@ jest.mock( '../../hooks/use-agent-layout-manager', () => ( options: unknown ) =>
 		undock: jest.fn(),
 		openSidebar: jest.fn(),
 		closeSidebar: mockCloseSidebar,
+		portalNode: mockPortalNode,
 		createAgentPortal: ( children: React.ReactNode ) => children,
 	};
 } );
+jest.mock( '../../hooks/use-raise-on-focus', () => ( {
+	__esModule: true,
+	default: ( node: HTMLElement | null, isOpen: boolean ) => mockUseRaiseOnFocus( node, isOpen ),
+} ) );
 jest.mock( '../../hooks/custom-actions', () => ( {
 	useSetupCustomActions: () => {},
-} ) );
-jest.mock( '../../hooks/use-should-use-unified-agent', () => ( {
-	useShouldUseUnifiedAgent: () => mockShouldUseUnifiedAgent,
 } ) );
 jest.mock( '../../stores', () => ( { AGENTS_MANAGER_STORE: 'agents-manager' } ) );
 jest.mock( '../agent-dock/style.scss', () => ( {} ) );
 jest.mock( '../editor-ai-chat-button', () => ( {
-	__esModule: true,
-	default: () => null,
-} ) );
-jest.mock( '../editor-help-center-button', () => ( {
 	__esModule: true,
 	default: () => null,
 } ) );
@@ -169,19 +168,11 @@ jest.mock( '../support-guide', () => ( {
 	__esModule: true,
 	default: () => <div data-testid="support-guide">Support guide</div>,
 } ) );
-jest.mock( '../support-guides', () => ( {
-	__esModule: true,
-	default: ( { onExpand }: { onExpand: () => void } ) => (
-		<div data-testid="support-guides">
-			Support guides
-			<button onClick={ onExpand }>Expand guides</button>
-		</div>
-	),
-} ) );
 
 import AgentDock from '../agent-dock';
 import { markActionOrigin, takeActionOrigin } from '../../utils/action-origin';
 import { getSessionId } from '../../utils/agent-session';
+import { setLoadedProviderIds } from '../../utils/loaded-provider-ids';
 import { recordAgentsManagerTracksEvent, recordBigSkyTracksEvent } from '../../utils/tracks';
 
 const mockRecordAgentsManagerTracksEvent = recordAgentsManagerTracksEvent as jest.Mock;
@@ -224,11 +215,12 @@ function useWpAdminAgent() {
 
 describe( 'AgentDock', () => {
 	beforeEach( () => {
+		delete window.__agentsManagerConfig;
 		jest.clearAllMocks();
+		setLoadedProviderIds( undefined );
 		takeActionOrigin( 'open' );
 		takeActionOrigin( 'send' );
 		mockHasAdminBar = false;
-		mockShouldUseUnifiedAgent = false;
 		mockLayoutIsDocked = false;
 		mockCanDock = null;
 		delete ( globalThis as { agentsManagerData?: unknown } ).agentsManagerData;
@@ -313,46 +305,22 @@ describe( 'AgentDock', () => {
 		const { onOpenSidebar } = mockUseAgentLayoutManager.mock.calls.at( -1 )[ 0 ];
 		act( () => onOpenSidebar() );
 
-		// Opening the docked sidebar must not override a route chosen from the
-		// WP admin bar (e.g. Chat history / Support guides).
+		// Opening the docked sidebar must not override the route the WP admin bar chose.
 		expect( screen.getByTestId( 'location' ).textContent ).toBe( '/history' );
 	} );
 
-	it( 'keeps the support guides view when expanding from the minimized state', () => {
+	it( 'keeps a non-dismissible chat expanded when the saved state is closed and minimized', () => {
 		useWpAdminAgent();
-		mockShouldUseUnifiedAgent = true;
+		window.__agentsManagerConfig = { chatPresentation: { dismissible: false } };
 		mockHasAdminBar = true;
-		mockAgentsManagerState = { isOpen: true, isDocked: false, isMinimized: true };
-
-		renderAgentDock( '/support-guides' );
-		fireEvent.click( screen.getByText( 'Expand guides' ) );
-
-		expect( mockResumeChat ).not.toHaveBeenCalled();
-		expect( screen.getByTestId( 'location' ).textContent ).toBe( '/support-guides' );
-	} );
-
-	it( 'keeps the support guides list without the WP admin bar trigger', () => {
-		// The route stays registered even without an entry button, so a
-		// mid-session entry-button change (Site Editor navigation) can't
-		// redirect a user off the list.
-		useWpAdminAgent();
-		mockShouldUseUnifiedAgent = true;
-
-		renderAgentDock( '/support-guides' );
-
-		expect( screen.getByTestId( 'support-guides' ) ).toBeInTheDocument();
-		expect( screen.getByTestId( 'location' ).textContent ).toBe( '/support-guides' );
-	} );
-
-	it( 'hides the support guides list without the unified agent', () => {
-		// Unknown paths fall back to `/chat`.
-		useWpAdminAgent();
-		mockHasAdminBar = true;
-
-		renderAgentDock( '/support-guides' );
-
-		expect( screen.queryByTestId( 'support-guides' ) ).toBeNull();
-		expect( screen.getByTestId( 'location' ).textContent ).toBe( '/chat' );
+		mockAgentsManagerState = { isOpen: false, isDocked: false, isMinimized: true };
+		renderAgentDock();
+		expect( mockUseAgentLayoutManager ).toHaveBeenCalledWith(
+			expect.objectContaining( { defaultOpen: true } )
+		);
+		fireEvent.click( screen.getByText( 'Close chat' ) );
+		expect( mockSetIsOpen ).not.toHaveBeenCalled();
+		delete window.__agentsManagerConfig;
 	} );
 
 	it( 'clears the minimized flag when the entry button disappears mid-session', () => {
@@ -386,7 +354,7 @@ describe( 'AgentDock', () => {
 
 	it( 'keeps the Zendesk conversation when expanding from the minimized state', () => {
 		useWpAdminAgent();
-		mockShouldUseUnifiedAgent = true;
+		setLoadedProviderIds( [ 'woocommerce-ai' ] );
 		mockHasAdminBar = true;
 		mockAgentsManagerState = { isOpen: true, isDocked: false, isMinimized: true };
 
@@ -394,6 +362,15 @@ describe( 'AgentDock', () => {
 		fireEvent.click( screen.getByText( 'Expand Zendesk' ) );
 
 		expect( screen.getByTestId( 'location' ).textContent ).toBe( '/zendesk' );
+	} );
+
+	it( 'does not register the Zendesk route without the Woo AI provider', () => {
+		useWpAdminAgent();
+
+		renderAgentDock( '/zendesk' );
+
+		expect( screen.queryByTestId( 'zendesk-chat' ) ).not.toBeInTheDocument();
+		expect( screen.getByTestId( 'location' ).textContent ).toBe( '/chat' );
 	} );
 
 	it( 'opens Reader Chat without saving shared Agents Manager state', () => {
@@ -483,7 +460,7 @@ describe( 'AgentDock', () => {
 		expect( screen.queryByText( 'View history' ) ).toBeNull();
 	} );
 
-	it( 'dual-fires the unified and Big Sky events for New chat', () => {
+	it( 'dual-fires the Agents Manager and Big Sky events for New chat', () => {
 		useWpAdminAgent();
 
 		renderAgentDock( '/history' );
@@ -660,6 +637,31 @@ describe( 'AgentDock', () => {
 		expect( screen.queryByText( 'Switch to floating' ) ).toBeNull();
 		expect( screen.queryByText( 'Switch to sidebar' ) ).toBeNull();
 	} );
+
+	it.each( [
+		{ state: 'open', isOpen: true, node: mockPortalNode, isChatOpen: true },
+		{
+			state: 'minimized',
+			isOpen: true,
+			isMinimized: true,
+			node: mockPortalNode,
+			isChatOpen: false,
+		},
+		{ state: 'hidden', isOpen: false, node: null, isChatOpen: false },
+		{ state: 'docked', isOpen: true, isLayoutDocked: true, node: null, isChatOpen: true },
+	] )(
+		'gives `useRaiseOnFocus` the node only while the chat floats and shows ($state)',
+		( { isOpen, isMinimized = false, isLayoutDocked = false, node, isChatOpen } ) => {
+			useWpAdminAgent();
+			mockHasAdminBar = true;
+			mockLayoutIsDocked = isLayoutDocked;
+			mockAgentsManagerState = { isOpen, isDocked: isLayoutDocked, isMinimized };
+
+			renderAgentDock();
+
+			expect( mockUseRaiseOnFocus ).toHaveBeenLastCalledWith( node, isChatOpen );
+		}
+	);
 
 	it.each( [
 		{

@@ -2,6 +2,10 @@ export interface AgencySite {
 	blog_id: number;
 	a4a_site_id?: number;
 	a4a_is_dev_site?: boolean;
+	// Server-side markers on the site profile. `jetpack-manage-url-only-site` and
+	// `migration-in-process` gate which actions the agency can take on a site.
+	sticker?: string[];
+	is_connection_healthy?: boolean;
 	url: string;
 	blogname?: string;
 	url_with_scheme?: string;

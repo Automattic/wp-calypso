@@ -75,15 +75,6 @@ export const isThinkingMessage = ( message: Message ): boolean => {
 };
 
 /**
- * Check if a message is a completed plan message
- * @param message
- */
-export const isCompletedPlanMessage = ( message: Message ): boolean => {
-	const text = getMessageText( message );
-	return text.includes( 'CompletedPlan' );
-};
-
-/**
  * Create a user message
  * @param text
  * @param imageUrls - Optional image URLs (will be converted to component parts)

@@ -44,12 +44,9 @@ describe( 'canvas binding', () => {
 		startNewUserRequest();
 	} );
 
-	it.each( [ 'wp-orchestrator', 'wpcom-workflow-unified_chat' ] )(
-		'treats %s as an agent that can write to the canvas',
-		( agentId ) => {
-			expect( isCanvasWritingAgent( agentId ) ).toBe( true );
-		}
-	);
+	it( 'treats the orchestrator as an agent that can write to the canvas', () => {
+		expect( isCanvasWritingAgent( 'wp-orchestrator' ) ).toBe( true );
+	} );
 
 	it.each( [ 'reader-chat', 'wpcom-workflow-support_chat', 'dolly', undefined, '' ] )(
 		'treats %s as an agent that cannot',

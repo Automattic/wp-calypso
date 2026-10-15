@@ -10,6 +10,7 @@ interface AddWooPaymentsToSiteProps {
 	excludedSiteIds: number[];
 	recordTracksEvent: RecordTracksEvent;
 	onSelectSite: ( siteId: number ) => void;
+	shouldUseRouterLink?: boolean;
 }
 
 export default function AddWooPaymentsToSite( {
@@ -17,6 +18,7 @@ export default function AddWooPaymentsToSite( {
 	excludedSiteIds,
 	recordTracksEvent,
 	onSelectSite,
+	shouldUseRouterLink,
 }: AddWooPaymentsToSiteProps ) {
 	const showModal = getQueryArg( window.location.href, 'add-woopayments-to-site' ) === 'true';
 	const [ isOpen, setIsOpen ] = useState( false );
@@ -53,6 +55,7 @@ export default function AddWooPaymentsToSite( {
 					recordTracksEvent={ recordTracksEvent }
 					onSelectSite={ onSelectSite }
 					onClose={ () => setIsOpen( false ) }
+					shouldUseRouterLink={ shouldUseRouterLink }
 				/>
 			) }
 		</>

@@ -20,6 +20,7 @@ exports[`CookieBanner renders in customized consent correctly (after customize b
           class="components-form-toggle is-checked is-disabled"
         >
           <input
+            aria-labelledby="cookie-banner__option-essential-label"
             checked=""
             class="components-form-toggle__input"
             data-testid="essential-bucket-toggle"
@@ -36,7 +37,9 @@ exports[`CookieBanner renders in customized consent correctly (after customize b
         <div
           class="cookie-banner__option-description"
         >
-          <strong>
+          <strong
+            id="cookie-banner__option-essential-label"
+          >
             essential name
           </strong>
           <p>
@@ -51,6 +54,7 @@ exports[`CookieBanner renders in customized consent correctly (after customize b
           class="components-form-toggle is-checked"
         >
           <input
+            aria-labelledby="cookie-banner__option-analytics-label"
             checked=""
             class="components-form-toggle__input"
             data-testid="analytics-bucket-toggle"
@@ -66,7 +70,9 @@ exports[`CookieBanner renders in customized consent correctly (after customize b
         <div
           class="cookie-banner__option-description"
         >
-          <strong>
+          <strong
+            id="cookie-banner__option-analytics-label"
+          >
             analytics name
           </strong>
           <p>
@@ -81,6 +87,7 @@ exports[`CookieBanner renders in customized consent correctly (after customize b
           class="components-form-toggle"
         >
           <input
+            aria-labelledby="cookie-banner__option-advertising-label"
             class="components-form-toggle__input"
             data-testid="advertising-bucket-toggle"
             type="checkbox"
@@ -95,7 +102,9 @@ exports[`CookieBanner renders in customized consent correctly (after customize b
         <div
           class="cookie-banner__option-description"
         >
-          <strong>
+          <strong
+            id="cookie-banner__option-advertising-label"
+          >
             advertising name
           </strong>
           <p>

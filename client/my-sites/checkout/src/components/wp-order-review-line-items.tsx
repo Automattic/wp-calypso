@@ -20,6 +20,7 @@ import {
 import styled from '@emotion/styled';
 import { getQueryArg } from '@wordpress/url';
 import { useState, useCallback, useMemo, useEffect, useRef } from 'react';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { has100YearPlan, getDomainRegistrations } from 'calypso/lib/cart-values/cart-items';
 import { isWcMobileApp } from 'calypso/lib/mobile-app';
 import { useGetProductVariants } from 'calypso/my-sites/checkout/src/hooks/product-variants';
@@ -29,8 +30,7 @@ import {
 	useRenewalPricingExperiment,
 } from 'calypso/my-sites/plans-features-main/hooks/use-renewal-price-experiment';
 import { getSignupCompleteFlowName } from 'calypso/signup/storageUtils';
-import { useDispatch, useSelector } from 'calypso/state';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { useSelector } from 'calypso/state';
 import {
 	getIsOnboardingAffiliateFlow,
 	getIsOnboardingUnifiedFlow,
@@ -102,7 +102,6 @@ export function WPOrderReviewLineItems( {
 	onRemoveProductClick?: ( label: string ) => void;
 	onRemoveProductCancel?: ( label: string ) => void;
 } ) {
-	const reduxDispatch = useDispatch();
 	const creditsLineItem = getCreditsLineItemFromCart( responseCart );
 	const couponLineItem = getCouponLineItemFromCart( responseCart );
 	const isOnboardingAffiliateFlow = useSelector( getIsOnboardingAffiliateFlow );
@@ -168,20 +167,12 @@ export function WPOrderReviewLineItems( {
 				}
 			}
 
-			reduxDispatch(
-				recordTracksEvent( 'calypso_checkout_variant_dropdown_open', {
-					has_wpcom_plan_in_cart: hasWPCOMPlanInCart,
-				} )
-			);
+			recordTracksEvent( 'calypso_checkout_variant_dropdown_open', {
+				has_wpcom_plan_in_cart: hasWPCOMPlanInCart,
+			} );
 			setVariantOpenId( variantOpenId !== id ? id : null );
 		},
-		[
-			akQuantityOpenId,
-			hasWPCOMPlanInCart,
-			isAkismetProMultipleLicensesCart,
-			reduxDispatch,
-			variantOpenId,
-		]
+		[ akQuantityOpenId, hasWPCOMPlanInCart, isAkismetProMultipleLicensesCart, variantOpenId ]
 	);
 
 	const handleAkQuantityToggle = useCallback(
@@ -197,13 +188,11 @@ export function WPOrderReviewLineItems( {
 
 	const changeAkismetPro500CartQuantity = useCallback< OnChangeAkProQuantity >(
 		( uuid, productSlug, productId, prevQuantity, newQuantity ) => {
-			reduxDispatch(
-				recordTracksEvent( 'calypso_checkout_akismet_pro_quantity_change', {
-					product_slug: productSlug,
-					prev_quantity: prevQuantity,
-					new_quantity: newQuantity,
-				} )
-			);
+			recordTracksEvent( 'calypso_checkout_akismet_pro_quantity_change', {
+				product_slug: productSlug,
+				prev_quantity: prevQuantity,
+				new_quantity: newQuantity,
+			} );
 			replaceProductInCart( uuid, {
 				product_slug: productSlug,
 				product_id: productId,
@@ -212,7 +201,7 @@ export function WPOrderReviewLineItems( {
 				// Nothing needs to be done here. CartMessages will display the error to the user.
 			} );
 		},
-		[ replaceProductInCart, reduxDispatch ]
+		[ replaceProductInCart ]
 	);
 
 	return (
@@ -232,12 +221,10 @@ export function WPOrderReviewLineItems( {
 								}
 								removeProductFromCart={ removeProductFromCart }
 								onRemoveBundle={ ( groupId, memberCount ) => {
-									reduxDispatch(
-										recordTracksEvent( 'calypso_domain_bundle_removed_from_cart', {
-											domain_bundle_group_id: groupId,
-											domain_count: memberCount,
-										} )
-									);
+									recordTracksEvent( 'calypso_domain_bundle_removed_from_cart', {
+										domain_bundle_group_id: groupId,
+										domain_count: memberCount,
+									} );
 								} }
 							/>
 						</WPOrderReviewListItem>

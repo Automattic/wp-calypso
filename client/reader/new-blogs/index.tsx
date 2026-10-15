@@ -1,0 +1,139 @@
+/**
+ * "Discover new blogs" — bounded, feature-flagged block in the Reader's Recent
+ * feed (READ-542). Shows a fixed 3 recommendations with a per-card
+ * "not interested" X, a "More like this" pager and a "Hide" link.
+ *
+ * The caller owns the data and the flag: it renders nothing when `recs` is
+ * empty, so cold-start users never see an empty state.
+ *
+ * See client/reader/new-blogs/README.md.
+ */
+import { Button } from '@wordpress/components';
+import { useTranslate } from 'i18n-calypso';
+import { useRef, useState } from 'react';
+import { useDispatch } from 'calypso/state';
+import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
+import NewBlogCard from './card';
+import { NEW_BLOGS_ACTIONS, recordNewBlogInteract, type NewBlogRec } from './tracks';
+import type { UseNewBlogsResult } from './use-new-blogs';
+import './style.scss';
+
+/** Fixed number of cards, per the READ-542 answers (no selector: keeps the A/B data comparable). */
+const DISPLAY_LIMIT = 3;
+
+type Props = Pick< UseNewBlogsResult, 'recs' | 'dismissBlog' | 'hide' >;
+
+export default function DiscoverNewBlogs( { recs, dismissBlog, hide }: Props ) {
+	const translate = useTranslate();
+	const dispatch = useDispatch();
+	const [ requestedPage, setPage ] = useState( 0 );
+	// Dismissing shrinks `recs`; if that empties the current page, fall back to
+	// the last page that still has cards instead of rendering nothing.
+	const lastPage = Math.max( 0, Math.ceil( recs.length / DISPLAY_LIMIT ) - 1 );
+	const page = Math.min( requestedPage, lastPage );
+	const start = page * DISPLAY_LIMIT;
+	const visible = recs.slice( start, start + DISPLAY_LIMIT );
+	const hasMore = recs.length > start + DISPLAY_LIMIT;
+
+	const impressionTrackedRef = useRef( false );
+
+	if ( visible.length === 0 ) {
+		return null;
+	}
+
+	// One module impression per mount, fired on the FIRST card impression (not on
+	// mount — the block sits below the fold), so this count and the per-card
+	// TrainTracks renders measure the same thing.
+	const handleImpression = () => {
+		if ( impressionTrackedRef.current ) {
+			return;
+		}
+		impressionTrackedRef.current = true;
+		dispatch(
+			recordReaderTracksEvent( 'calypso_reader_discover_new_blogs_render', {
+				count: visible.length,
+			} )
+		);
+	};
+
+	const recordCardEvent = (
+		name: string,
+		rec: NewBlogRec,
+		props: Record< string, unknown > = {}
+	) =>
+		dispatch(
+			recordReaderTracksEvent( name, { blog_id: rec.blogId, post_id: rec.postId, ...props } )
+		);
+
+	const handleDismiss = ( rec: NewBlogRec ) => {
+		recordCardEvent( 'calypso_reader_discover_new_blogs_dismiss', rec );
+		recordNewBlogInteract( rec, NEW_BLOGS_ACTIONS.SITE_DISMISSED );
+		dismissBlog( rec.blogId );
+	};
+
+	const handleOpen = ( rec: NewBlogRec ) => {
+		recordCardEvent( 'calypso_reader_discover_new_blogs_post_click', rec );
+		recordNewBlogInteract( rec, NEW_BLOGS_ACTIONS.POST_CLICKED );
+	};
+
+	const handleFollowToggle = ( rec: NewBlogRec, isFollowing: boolean ) => {
+		recordCardEvent( 'calypso_reader_discover_new_blogs_follow_toggle', rec, {
+			following: isFollowing,
+		} );
+		recordNewBlogInteract(
+			rec,
+			isFollowing ? NEW_BLOGS_ACTIONS.SITE_SUBSCRIBED : NEW_BLOGS_ACTIONS.SITE_UNSUBSCRIBED
+		);
+	};
+
+	const handleMore = () => {
+		dispatch(
+			recordReaderTracksEvent( 'calypso_reader_discover_new_blogs_more_click', { page: page + 1 } )
+		);
+		// "More like this" is a reaction to the cards on screen: log it against each.
+		visible.forEach( ( rec ) => recordNewBlogInteract( rec, NEW_BLOGS_ACTIONS.MORE_CLICKED ) );
+		setPage( page + 1 );
+	};
+
+	const handleHide = () => {
+		dispatch(
+			recordReaderTracksEvent( 'calypso_reader_discover_new_blogs_hide', { count: visible.length } )
+		);
+		// Hide applies to every card on screen: log the annoyance against each.
+		visible.forEach( ( rec ) => recordNewBlogInteract( rec, NEW_BLOGS_ACTIONS.MODULE_HIDDEN ) );
+		hide();
+	};
+
+	return (
+		<section className="reader-discover-new-blogs" aria-label={ translate( 'Discover new blogs' ) }>
+			<div className="reader-discover-new-blogs__header">
+				<h2 className="reader-discover-new-blogs__heading">
+					{ translate( 'Discover new blogs' ) }
+				</h2>
+				<Button variant="link" className="reader-discover-new-blogs__hide" onClick={ handleHide }>
+					{ translate( 'Hide' ) }
+				</Button>
+			</div>
+
+			<ul className="reader-discover-new-blogs__list">
+				{ visible.map( ( rec, uiPosition ) => (
+					<NewBlogCard
+						key={ `${ rec.blogId }-${ rec.postId }` }
+						rec={ rec }
+						uiPosition={ uiPosition }
+						onDismiss={ () => handleDismiss( rec ) }
+						onOpen={ () => handleOpen( rec ) }
+						onFollowToggle={ ( isFollowing ) => handleFollowToggle( rec, isFollowing ) }
+						onImpression={ handleImpression }
+					/>
+				) ) }
+			</ul>
+
+			{ hasMore && (
+				<Button variant="link" className="reader-discover-new-blogs__more" onClick={ handleMore }>
+					{ translate( 'More like this' ) }
+				</Button>
+			) }
+		</section>
+	);
+}

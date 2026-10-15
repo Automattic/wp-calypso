@@ -3,23 +3,29 @@ import {
 	JetpackLicenseSortDirection,
 	JetpackLicenseSortField,
 } from '@automattic/api-core';
-import { formatCurrency } from '@automattic/number-formatters';
+import { formatCurrency, formatNumber } from '@automattic/number-formatters';
 import {
 	ExternalLink,
 	__experimentalHStack as HStack,
 	__experimentalText as Text,
+	__experimentalVStack as VStack,
 } from '@wordpress/components';
+import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { Badge } from '@wordpress/ui';
+import { Text as DashboardText } from '../../../components/text';
 import { DEFAULT_PER_PAGE } from '../../../sites/dataviews/views';
 import { formatDate, parseDateAsUTC } from '../../../utils/datetime';
 import {
 	LICENSE_STATUS_FILTERS,
 	getLicenseDisplayStatus,
+	getLicenseRenewalDate,
 	getLicenseStatus,
 	getLicenseProductName,
 	getLicenseStatusLabels,
 	getLicenseTags,
+	getRenewalBadgeLabels,
+	getRenewalBadges,
 	getSiteHostname,
 	isBundleParent,
 	isLicenseStatus,
@@ -28,16 +34,17 @@ import {
 } from './license-status';
 import LicenseStatusBadge from './status-badge';
 import TransferredBadge from './transferred-badge';
-import type { LicenseStatus } from './license-status';
+import type { LicenseStatus, RenewalBadge } from './license-status';
 import type { FetchJetpackLicensesPageOptions, JetpackLicense } from '@automattic/api-core';
 import type { Field, View } from '@wordpress/dataviews';
+import type { ComponentProps } from 'react';
 
 export const DEFAULT_VIEW: View = {
 	type: 'table',
 	perPage: DEFAULT_PER_PAGE,
 	page: 1,
 	titleField: 'product',
-	fields: [ 'status', 'site', 'issued_at', 'cost' ],
+	fields: [ 'status', 'site', 'issued_at', 'renewal', 'cost' ],
 	sort: { field: 'issued_at', direction: 'desc' },
 };
 
@@ -70,6 +77,45 @@ export function toFetchOptions( view: View ): FetchJetpackLicensesPageOptions {
 	};
 }
 
+export function recordLicenseViewChanges(
+	oldView: View,
+	newView: View,
+	recordTracksEvent: ( eventName: string, properties?: Record< string, unknown > ) => void
+) {
+	const before = toFetchOptions( oldView );
+	const after = toFetchOptions( newView );
+	const isSortChanged =
+		before.sortField !== after.sortField || before.sortDirection !== after.sortDirection;
+
+	// Once per search rather than per keystroke, and without the search term.
+	if ( ! before.search && after.search ) {
+		recordTracksEvent( 'calypso_a4a_license_list_search' );
+	}
+
+	if ( isSortChanged ) {
+		recordTracksEvent( 'calypso_a4a_license_list_sort_button_click', {
+			sort_field: after.sortField,
+			current_sort_field: before.sortField,
+			current_sort_direction: before.sortDirection,
+		} );
+	}
+
+	if ( before.filter !== after.filter ) {
+		recordTracksEvent( 'calypso_a4a_license_list_state_filter_click', { status: after.filter } );
+	}
+
+	// A new search, filter, sort or page size also resets the page; only count real page clicks.
+	if (
+		before.page !== after.page &&
+		before.perPage === after.perPage &&
+		before.search === after.search &&
+		before.filter === after.filter &&
+		! isSortChanged
+	) {
+		recordTracksEvent( 'calypso_a4a_license_list_pagination_page_click', { page: after.page } );
+	}
+}
+
 export const getLicenseId = ( license: JetpackLicense ) => String( license.license_id );
 
 const PRESSABLE_AGENCY_URL = 'https://my.pressable.com/agency/auth';
@@ -78,14 +124,18 @@ function SiteCell( {
 	license,
 	isAgencyOwner,
 	isProvisioning,
+	onManageSite,
 }: {
 	license: JetpackLicense;
 	isAgencyOwner: boolean;
 	isProvisioning: boolean;
+	onManageSite: ( license: JetpackLicense ) => void;
 } ) {
 	if ( isPressableLicense( license ) && ! license.revoked_at ) {
 		return isAgencyOwner ? (
-			<ExternalLink href={ PRESSABLE_AGENCY_URL }>{ __( 'Manage in Pressable' ) }</ExternalLink>
+			<ExternalLink href={ PRESSABLE_AGENCY_URL } onClick={ () => onManageSite( license ) }>
+				{ __( 'Manage in Pressable' ) }
+			</ExternalLink>
 		) : (
 			<Text variant="muted">{ __( 'Managed by agency owner' ) }</Text>
 		);
@@ -124,21 +174,62 @@ function CostCell( { license }: { license: JetpackLicense } ) {
 	);
 }
 
-// TODO: classic shows the referring client's email under the product name. Port
-// it once the `referral` field on JetpackLicense is typed.
+const RENEWAL_BADGE_INTENT: Record< RenewalBadge, ComponentProps< typeof Badge >[ 'intent' ] > = {
+	expired: 'high',
+	'auto-renew-off': 'medium',
+	refundable: 'informational',
+};
+
+export function RenewalCell( { license, locale }: { license: JetpackLicense; locale: string } ) {
+	const expiry = getLicenseRenewalDate( license );
+	if ( ! expiry ) {
+		return <Text variant="muted">—</Text>;
+	}
+
+	const badges = getRenewalBadges( license );
+	const labels = getRenewalBadgeLabels();
+	return (
+		<HStack justify="flex-start" spacing={ 2 } expanded={ false }>
+			<DashboardText
+				intent={ badges.includes( 'expired' ) ? 'error' : undefined }
+				style={ { whiteSpace: 'nowrap' } }
+			>
+				{ formatDate( parseDateAsUTC( expiry ), locale, { dateStyle: 'medium', timeZone: 'UTC' } ) }
+			</DashboardText>
+			{ badges.map( ( badge ) => (
+				<Badge key={ badge } intent={ RENEWAL_BADGE_INTENT[ badge ] }>
+					{ labels[ badge ] }
+				</Badge>
+			) ) }
+		</HStack>
+	);
+}
+
 function ProductCell( { license, locale }: { license: JetpackLicense; locale: string } ) {
 	const transferredUntil = license.meta?.a4a_transferred_subscription_expiration;
+	const clientEmail = license.referral?.client?.email;
 	return (
-		<HStack justify="flex-start" spacing={ 2 } expanded={ false } wrap>
-			<Text weight={ 500 }>{ getLicenseProductName( license ) }</Text>
-			{ isBundleParent( license ) && <Text variant="muted">×{ license.quantity }</Text> }
-			{ getLicenseTags( license ).map( ( tag ) => (
-				<Badge key={ tag }>{ tag }</Badge>
-			) ) }
-			{ transferredUntil && isRecentlyTransferred( license ) && (
-				<TransferredBadge billedFrom={ transferredUntil } locale={ locale } />
+		<VStack spacing={ 0 }>
+			<HStack justify="flex-start" spacing={ 2 } expanded={ false } wrap>
+				<Text weight={ 500 }>{ getLicenseProductName( license ) }</Text>
+				{ isBundleParent( license ) && (
+					<Text variant="muted">×{ formatNumber( license.quantity ?? 0 ) }</Text>
+				) }
+				{ getLicenseTags( license ).map( ( tag ) => (
+					<Badge key={ tag }>{ tag }</Badge>
+				) ) }
+				{ transferredUntil && isRecentlyTransferred( license ) && (
+					<TransferredBadge billedFrom={ transferredUntil } locale={ locale } />
+				) }
+			</HStack>
+			{ clientEmail && (
+				<Text variant="muted" title={ clientEmail }>
+					{ createInterpolateElement( __( '<email /> owns this' ), {
+						email: <strong>{ clientEmail }</strong>,
+					} ) }
+				</Text>
 			) }
-		</HStack>
+		</VStack>
 	);
 }
 
@@ -146,10 +237,12 @@ export function getLicenseFields( {
 	locale,
 	isAgencyOwner,
 	provisioningLicenseKeys,
+	onManageSite,
 }: {
 	locale: string;
 	isAgencyOwner: boolean;
 	provisioningLicenseKeys: Set< string >;
+	onManageSite: ( license: JetpackLicense ) => void;
 } ): Field< JetpackLicense >[] {
 	const statusLabels = getLicenseStatusLabels();
 	const renderDate = ( value: string | null ) => (
@@ -197,6 +290,7 @@ export function getLicenseFields( {
 					license={ item }
 					isAgencyOwner={ isAgencyOwner }
 					isProvisioning={ provisioningLicenseKeys.has( item.license_key ) }
+					onManageSite={ onManageSite }
 				/>
 			),
 		},
@@ -226,6 +320,15 @@ export function getLicenseFields( {
 			enableSorting: true,
 			getValue: ( { item } ) => item.revoked_at ?? '',
 			render: ( { item } ) => renderDate( item.revoked_at ),
+		},
+		{
+			id: 'renewal',
+			label: __( 'Renewal/expiry' ),
+			type: 'text',
+			filterBy: false,
+			enableSorting: false,
+			getValue: ( { item } ) => getLicenseRenewalDate( item ) ?? '',
+			render: ( { item } ) => <RenewalCell license={ item } locale={ locale } />,
 		},
 		{
 			id: 'cost',

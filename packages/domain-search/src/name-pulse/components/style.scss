@@ -1,5 +1,6 @@
 @import '@wordpress/base-styles/breakpoints';
 @import '@wordpress/base-styles/colors';
+@import 'card';
 
 // `.domain-search--results` reserves space for a fixed mobile search form;
 // here the form is in flow.
@@ -22,6 +23,11 @@
 	max-width: var( --domain-search-content-max-width );
 }
 
+// Reserve scrollbar space so the layout doesn't shift when results appear.
+html:has( .name-pulse-search-input ) {
+	scrollbar-gutter: stable;
+}
+
 .name-pulse-grid {
 	display: grid;
 	grid-template-columns: repeat( 3, minmax( 0, 1fr ) );
@@ -30,7 +36,7 @@
 	overflow: hidden;
 	gap: 1px;
 
-	@media ( max-width: #{ $break-medium - 1px } ) {
+	@media ( max-width: #{ $break-large - 1px } ) {
 		grid-template-columns: repeat( 2, minmax( 0, 1fr ) );
 	}
 
@@ -45,6 +51,21 @@
 		box-shadow: 0 0 0 1px $gray-100;
 		min-width: 0;
 	}
+
+	// Each result is its own card, so the cells take the frame and the grid
+	// only spaces them out.
+	&--cards {
+		gap: 20px;
+		border: 0;
+		border-radius: 0;
+		overflow: visible;
+
+		> [role='listitem'] {
+			box-shadow: none;
+			border: 1px solid $gray-300;
+			border-radius: 8px;
+		}
+	}
 }
 
 .name-pulse-row {
@@ -57,6 +78,32 @@
 	box-sizing: border-box;
 	flex-wrap: wrap;
 
+	// On phones the price drops under the name and the cart button sits to the
+	// right of both, so the name gets the full width of its column.
+	@media ( max-width: #{ $break-small - 1px } ) {
+		display: grid;
+		grid-template-columns: minmax( 0, 1fr ) auto;
+		align-items: center;
+		gap: 0.25rem 0.75rem;
+
+		.name-pulse-row__status {
+			display: contents;
+
+			> * {
+				grid-column: 1;
+			}
+		}
+
+		.name-pulse-row__cart {
+			grid-column: 2;
+			grid-row: 1 / span 2;
+		}
+
+		.name-pulse-row__price {
+			align-items: flex-start;
+		}
+	}
+
 	&__name {
 		display: flex;
 		align-items: center;
@@ -66,19 +113,23 @@
 		// out of the row's wrap calculation, so it shrinks/truncates in place
 		// instead of pushing `&__status` onto a second line.
 		flex: 1 1 0%;
+	}
 
-		.domain-suggestion-badge {
+	&__badges {
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+		max-width: 100%;
+
+		> * {
 			flex-shrink: 0;
-			height: 20px;
-			padding-inline: 6px;
-			border-radius: 4px;
-			font-size: 11px;
 		}
 	}
 
 	&__domain {
 		display: flex;
 		min-width: 0;
+		max-width: 100%;
 
 		// The label shrinks and truncates; the suffix (the TLD) is fixed so it
 		// never loses space to the label and is never cut off.
@@ -97,6 +148,23 @@
 		// wrap independently of the `white-space: nowrap` above.
 		.components-text {
 			text-wrap: nowrap;
+		}
+
+		// Label and suffix flow as one run of text so the TLD follows the label
+		// onto the next line; `anywhere` lets a name with no break points wrap,
+		// and the `<wbr>` prefers a break before the TLD when the label fits.
+		&--wrap {
+			display: block;
+			overflow-wrap: anywhere;
+
+			> :first-child {
+				overflow: visible;
+				white-space: normal;
+			}
+
+			.components-text {
+				text-wrap: wrap;
+			}
 		}
 	}
 
@@ -152,6 +220,38 @@
 	}
 }
 
+// The name sits above the price, and the cart button closes the price line.
+// Phones get the table row instead, so this never meets the row's phone grid.
+.name-pulse-row--card {
+	display: flex;
+	flex-direction: column;
+	flex-wrap: nowrap;
+	align-items: stretch;
+	justify-content: center;
+	gap: 0;
+	min-height: 5.875rem;
+	padding: 1rem 1.5rem;
+
+	.name-pulse-row__name {
+		flex: none;
+	}
+
+	.name-pulse-row__cart {
+		margin-inline-start: auto;
+	}
+
+	.name-pulse-row__price--card {
+		flex-direction: row;
+		flex-wrap: wrap;
+		align-items: baseline;
+		column-gap: 0.25rem;
+	}
+
+	&.name-pulse-row--skeleton {
+		gap: 1.25rem;
+	}
+}
+
 .name-pulse-section__more {
 	text-align: center;
 
@@ -162,6 +262,89 @@
 		&:focus:not( :focus-visible ) {
 			box-shadow: none;
 			outline: none;
+		}
+	}
+}
+
+// The exact-match card and the bundle card split the row; either one alone
+// takes the full width, and they stack once there is no room for two.
+.name-pulse-featured {
+	display: grid;
+	grid-template-columns: repeat( auto-fit, minmax( min( 100%, 24rem ), 1fr ) );
+	gap: 1rem;
+
+	// Both cards stretch to the same bottom edge, so equal footers and
+	// bottom-aligned price rows put the two buttons on the same line, whatever
+	// the height of each price.
+	.domain-suggestion-match-reasons > li,
+	.name-pulse-bundle-card__footer {
+		display: flex;
+		align-items: center;
+		min-height: 24px;
+	}
+
+	@media ( min-width: $break-small ) {
+		.name-pulse-exact-card__price-row {
+			align-items: flex-end;
+		}
+	}
+}
+
+.name-pulse-exact-card {
+	@include name-pulse-card;
+
+	// Stretch to the bundle card's height so both footers sit on the same line.
+	> .components-v-stack {
+		height: 100%;
+	}
+
+	&__icon {
+		display: inline-flex;
+
+		svg {
+			width: 20px;
+			height: 20px;
+		}
+	}
+
+	&__domain.components-text {
+		margin: 0;
+		line-height: 1.2;
+		overflow-wrap: anywhere;
+	}
+
+	&__tld {
+		white-space: nowrap;
+	}
+
+	&__price-row {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		justify-content: space-between;
+		gap: 1rem;
+		margin-block-start: auto;
+	}
+
+	&__cta {
+		flex-shrink: 0;
+	}
+
+	&__footer {
+		@include name-pulse-card-footer;
+	}
+
+	// Same as the bundle card: the price sits above a full-width button.
+	@media ( max-width: #{ $break-small - 1px } ) {
+		&__price-row {
+			flex-direction: column;
+			align-items: flex-start;
+		}
+
+		&__cta,
+		&__cta .components-button {
+			width: 100%;
+			justify-content: center;
 		}
 	}
 }

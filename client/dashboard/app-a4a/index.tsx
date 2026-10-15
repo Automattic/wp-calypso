@@ -7,8 +7,10 @@ import {
 } from '@automattic/api-queries';
 /* eslint-enable no-restricted-imports */
 import boot from '../app/boot';
+import { A4ALoadingLogo } from './loading-logo';
 import { Logo } from './logo';
 import A4AOmnibar from './omnibar';
+import A4AOmnibarHelpCenter from './omnibar-help-center';
 import type {
 	FetchSitesOptions,
 	FetchPaginatedSitesOptions,
@@ -17,11 +19,12 @@ import type {
 import './style.scss';
 
 boot( {
-	name: 'A4A',
+	name: 'Automattic for Agencies',
 	unifiedAdminPageViewApp: 'a4a',
 	basePath: '/',
 	mainRoute: '/overview',
 	Logo,
+	LoadingLogo: A4ALoadingLogo,
 	supports: {
 		agency: {
 			overview: true,
@@ -37,6 +40,7 @@ boot( {
 			plugins: true,
 			team: true,
 			earn: true,
+			billing: true,
 		},
 		agencyClient: { subscriptions: true },
 		sites: false,
@@ -59,6 +63,7 @@ boot( {
 	optIn: false,
 	components: {
 		omnibar: A4AOmnibar,
+		helpCenter: A4AOmnibarHelpCenter,
 	},
 	queries: {
 		sitesQuery: ( fetchSiteOptions?: FetchSitesOptions ) => sitesQuery( 'all', fetchSiteOptions ),

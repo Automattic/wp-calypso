@@ -13,6 +13,10 @@ export { useUpdateZendeskUserFields } from './use-update-zendesk-user-fields';
 export { useAttachFileToConversation } from './use-attach-file';
 export { useGetUnreadConversations } from './use-get-unread-conversations';
 export { useGetZendeskConversation } from './use-get-zendesk-conversation';
+export {
+	useGetZendeskConversationHistory,
+	getZendeskConversationHistoryQueryKey,
+} from './use-get-zendesk-conversation-history';
 export { calculateUnread } from './use-get-unread-conversations';
 
 export {

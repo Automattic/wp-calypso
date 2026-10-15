@@ -4,16 +4,13 @@ import InfoPopover from 'calypso/components/info-popover';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 /**
- * The fields this reads, spelled the way each caller's object spells them: the
- * raw api-core purchase names its owner and site in snake_case, the Redux
- * camelCase purchase (SHILL-2256) in camelCase, and the site plan the
- * current-plan page renders through the same button carries only `userIsOwner`.
+ * The fields this reads: the raw api-core purchase names its owner and site in
+ * snake_case, while the site plan the current-plan page renders through the
+ * same button carries only `userIsOwner`.
  */
 type OwnedSubscription = {
 	blogname?: string;
 	domain?: string;
-	siteName?: string;
-	userId?: number;
 	userIsOwner?: boolean;
 	user_id?: number;
 };
@@ -27,8 +24,8 @@ const OwnerInfo: React.FC< OwnProps > = ( { purchase, isTransferredOwnership = f
 	const translate = useTranslate();
 	const currentUserId = useSelector( getCurrentUserId );
 
-	const isOwner = purchase.userIsOwner || currentUserId === ( purchase.user_id ?? purchase.userId );
-	const siteName = purchase.blogname ?? purchase.siteName;
+	const isOwner = purchase.userIsOwner || currentUserId === purchase.user_id;
+	const siteName = purchase.blogname;
 
 	if ( isOwner ) {
 		return null;

@@ -1,7 +1,8 @@
-import { __experimentalGrid as Grid, __experimentalVStack as VStack } from '@wordpress/components';
+import { __experimentalVStack as VStack } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
 import { Card, CardBody } from '../../components/card';
+import Grid from '../../components/grid';
 import { Text } from '../../components/text';
 
 const GRID_CARDS = [
@@ -41,16 +42,15 @@ const GRID_CARDS = [
 
 export function HostingCards() {
 	const isSmallViewport = useViewportMatch( 'medium', '<' );
-	const layout = { columns: 3, rows: 2, gap: 4 };
+	const layout = { columns: 3, rows: 2 };
 
 	if ( isSmallViewport ) {
 		layout.columns = 1;
 		layout.rows = GRID_CARDS.length;
-		layout.gap = 4;
 	}
 
 	return (
-		<Grid { ...layout }>
+		<Grid { ...layout } gap="lg">
 			{ GRID_CARDS.map( ( card ) => (
 				<Card key={ card.title }>
 					<CardBody>

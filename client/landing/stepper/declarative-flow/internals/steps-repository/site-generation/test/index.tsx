@@ -2,7 +2,8 @@
  * @jest-environment jsdom
  */
 
-import { fireEvent, render, screen } from '@testing-library/react';
+import { act, fireEvent, render, screen } from '@testing-library/react';
+import { pollForBuildWowStatus } from '../build-status-poller';
 import SiteGeneration from '../index';
 import { useSiteGeneration } from '../use-site-generation';
 import type { SiteGenerationState } from '../use-site-generation';
@@ -17,6 +18,10 @@ jest.mock( 'calypso/components/data/document-head', () => () => null );
 
 jest.mock( '../use-site-generation', () => ( {
 	useSiteGeneration: jest.fn( () => mockState ),
+} ) );
+
+jest.mock( '../build-status-poller', () => ( {
+	pollForBuildWowStatus: jest.fn( () => jest.fn() ),
 } ) );
 
 jest.mock( '../view', () => ( {
@@ -65,6 +70,42 @@ describe( 'SiteGeneration recovery', () => {
 				stepName="site-generation"
 			/>
 		);
+
+	it.each( [
+		'',
+		'https://evil.example/wp-admin/site-editor.php?spec_id=untrusted',
+		'https://old-domain.com/wp-admin/site-editor.php?source=old-source',
+		// eslint-disable-next-line no-script-url
+		'javascript:alert(1)',
+	] )( 'uses the API destination and ignores an old editorUrl parameter: %s', ( editorUrl ) => {
+		const query = new URLSearchParams( {
+			siteSlug: 'example.wordpress.com',
+			source: 'sites-dashboard',
+		} );
+		if ( editorUrl ) {
+			query.set( 'editorUrl', editorUrl );
+		}
+		window.location.search = `?${ query }`;
+		useSiteGenerationMock.mockImplementationOnce(
+			jest.requireActual( '../use-site-generation' ).useSiteGeneration
+		);
+		renderStep();
+
+		const statusPollMock = pollForBuildWowStatus as jest.Mock;
+		expect( statusPollMock ).toHaveBeenCalledTimes( 1 );
+		expect( statusPollMock.mock.calls[ 0 ][ 0 ].siteIdentifier ).toBe( 'example.wordpress.com' );
+		expect( window.location.assign ).not.toHaveBeenCalled();
+		act( () =>
+			statusPollMock.mock.calls[ 0 ][ 0 ].onReady( {
+				build_status: 'live',
+				site_editor_url:
+					'https://new-domain.com/wp-admin/site-editor.php?p=%2Fpage%2F12&canvas=edit',
+			} )
+		);
+		expect( window.location.assign ).toHaveBeenCalledWith(
+			'https://new-domain.com/wp-admin/site-editor.php?p=%2Fpage%2F12&canvas=edit&source=sites-dashboard'
+		);
+	} );
 
 	it( 'reloads when a failed build has no server retry', () => {
 		renderStep();

@@ -679,6 +679,7 @@ export class UserStep extends Component {
 						isSectionSignup
 						loginUrl={ this.getLoginUrl() }
 						noThanksRedirectUrl={ noThanksRedirectUrl }
+						linkLogoToHome={ this.props.flowName === 'account' }
 					>
 						{ this.renderSignupForm() }
 					</OneLoginLayout>

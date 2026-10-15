@@ -10,7 +10,10 @@ import { earnWooPaymentsSetupRoute } from '../../../app/router/agency';
 import { DataViewsCard } from '../../../components/dataviews';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
-import MissingPaymentSettingsNotice from '../missing-payment-settings-notice';
+import { AgencyNotices } from '../../components/agency-notices';
+import MissingPaymentSettingsNotice, {
+	useMissingPaymentSettings,
+} from '../missing-payment-settings-notice';
 import AddWooPaymentsToSite from './add-woopayments-to-site';
 import CommissionsTable from './commissions-table';
 import ConsolidatedViews from './consolidated-views';
@@ -30,6 +33,10 @@ export default function EarnWooPayments() {
 		isLoadingWooPaymentsData,
 		sitesWithPluginsStates,
 	} = useWooPaymentsDashboardData( agencyId );
+	const missingPaymentSettings = useMissingPaymentSettings( {
+		hasCommissionActivity: hasSites,
+		isLoadingActivity: isLoading,
+	} );
 	const { recordTracksEvent } = useAnalytics();
 	const locale = useLocale();
 	const { downloadCommissionsReport } = useDownloadCommissionsReport( agencyId );
@@ -60,6 +67,7 @@ export default function EarnWooPayments() {
 						excludedSiteIds={ excludedSiteIds }
 						recordTracksEvent={ recordTracksEvent }
 						onSelectSite={ navigateToSiteSetup }
+						shouldUseRouterLink
 					/>
 				) : undefined
 			}
@@ -73,7 +81,22 @@ export default function EarnWooPayments() {
 	return (
 		<PageLayout
 			header={ header }
-			notices={ <MissingPaymentSettingsNotice hasCommissionActivity={ hasSites } /> }
+			notices={
+				<AgencyNotices
+					candidates={ [
+						{
+							id: 'missing-payment-settings',
+							...missingPaymentSettings,
+							notice: (
+								<MissingPaymentSettingsNotice
+									hasCommissionActivity={ hasSites }
+									commissionType="woopayments"
+								/>
+							),
+						},
+					] }
+				/>
+			}
 		>
 			{ showEmptyState ? (
 				<WooPaymentsDashboardEmptyState />

@@ -1,7 +1,6 @@
 import { allSitesQuery, countryListQuery, userReceiptsQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { useResizeObserver } from '@wordpress/compose';
-import { filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { useState, useMemo } from 'react';
 import { useAnalytics } from '../../app/analytics';
@@ -21,6 +20,7 @@ import {
 	DESKTOP_FIELDS,
 	MOBILE_FIELDS,
 	DEFAULT_VIEW,
+	filterSortAndPaginateReceipts,
 	getFields,
 	useActions,
 } from './dataviews';
@@ -78,7 +78,7 @@ export default function BillingHistory() {
 	);
 
 	const { data: filteredReceipts, paginationInfo } = useMemo( () => {
-		return filterSortAndPaginate( receipts, view, fields );
+		return filterSortAndPaginateReceipts( receipts, view, fields );
 	}, [ receipts, view, fields ] );
 
 	const actions = useActions();

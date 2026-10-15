@@ -62,7 +62,7 @@ function AddNewSite( { onSelectAction }: AddNewSiteProps ) {
 	const Wrapper = isDesktop ? HStack : VStack;
 
 	const recordNavigation = ( action: string ) => {
-		recordTracksEvent( 'calypso_dashboard_agency_sites_new_site_action_click_item', { action } );
+		recordTracksEvent( 'calypso_a4a_sites_new_site_action_click_item', { action } );
 	};
 
 	// Both entries below change destination once the agency loads. Keeping one
@@ -79,7 +79,7 @@ function AddNewSite( { onSelectAction }: AddNewSiteProps ) {
 	// Licenses already paid for are set up from Purchases, filtered down to the
 	// ones with no site yet.
 	const wpcomPendingLicensesProps = useLinkProps( {
-		to: '/marketplace/purchases',
+		to: '/purchases',
 		search: { status: 'unassigned', search: 'WordPress.com' },
 		onClick: () => recordNavigation( 'wpcom' ),
 	} );

@@ -39,6 +39,7 @@ describe( '<ContactForm>', () => {
 			.reply( 200, [
 				{ code: 'FR', name: 'France' },
 				{ code: 'CA', name: 'Canada' },
+				{ code: 'IE', name: 'Ireland' },
 			] )
 			.get( ( uri ) => uri.startsWith( '/rest/v1.1/domains/supported-states/CA' ) )
 			.reply( 200, [
@@ -78,6 +79,59 @@ describe( '<ContactForm>', () => {
 		const provinceSelect = await screen.findByRole( 'combobox', { name: 'Select Province' } );
 		expect( await screen.findByRole( 'option', { name: 'Alberta' } ) ).toBeVisible();
 		expect( provinceSelect ).toHaveValue( '' );
+	} );
+
+	test( 'does not submit a stored state for a country whose form hides the state field', async () => {
+		const user = userEvent.setup();
+		const onSubmit = jest.fn();
+
+		render(
+			<ContactForm
+				initialData={ {
+					...frIndividualContact,
+					countryCode: 'IE',
+					phone: '+353.11234567',
+					city: 'Galway',
+					state: 'Galway',
+					postalCode: 'A65 F4E2',
+					extra: {},
+				} }
+				domainNames={ [ 'example.com' ] }
+				isSubmitting={ false }
+				onSubmit={ onSubmit }
+				validate={ alwaysValid }
+			/>
+		);
+
+		const save = await screen.findByRole( 'button', { name: 'Save' } );
+		await user.type( await screen.findByRole( 'textbox', { name: 'City' } ), 'x' );
+		await waitFor( () => expect( save ).toBeEnabled(), { timeout: 3000 } );
+		await user.click( save );
+
+		expect( onSubmit ).toHaveBeenCalledWith(
+			expect.objectContaining( { city: 'Galwayx', state: '' } )
+		);
+	} );
+
+	test( 'shows the legal owner notice below the organization field', async () => {
+		render(
+			<ContactForm
+				initialData={ frIndividualContact }
+				domainNames={ [ 'example.fr' ] }
+				isSubmitting={ false }
+				onSubmit={ jest.fn() }
+				validate={ alwaysValid }
+			/>
+		);
+
+		expect(
+			await screen.findByRole( 'textbox', { name: 'Organization (Optional)' } )
+		).toBeVisible();
+		expect(
+			screen.getByText(
+				/the listed organization will be considered the legal domain owner and that this information will be publicly visible/
+			)
+		).toBeVisible();
 	} );
 
 	test( 'lifts the .fr individual organization error once the registrant becomes an organization', async () => {

@@ -6,7 +6,7 @@ import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import MockDate from 'mockdate';
 import { render } from '../../../test-utils';
-import { PurchaseExpiryStatus } from '../index';
+import { PurchaseExpiryStatus, getPurchaseExpiryStatusText } from '../index';
 import type { Purchase } from '@automattic/api-core';
 
 // The copy counts whole calendar days in the viewer's time zone, so these
@@ -178,5 +178,36 @@ describe( '<PurchaseExpiryStatus>', () => {
 			expect( screen.getByText( /expires in 45 days/i ) ).toBeVisible();
 			expect( renewLink() ).toBeNull();
 		} );
+	} );
+} );
+
+describe( 'getPurchaseExpiryStatusText()', () => {
+	beforeEach( () => MockDate.set( NOW ) );
+	afterEach( () => MockDate.reset() );
+
+	test.each( [
+		[ 'an expiring purchase', {}, /expires in 45 days/i ],
+		[
+			'an expired purchase',
+			{ expiry_status: 'expired', expiry_date: daysFromNow( -3 ) },
+			/expired 3 days ago/i,
+		],
+		[
+			'an in-app purchase',
+			{
+				is_iap_purchase: true,
+				iap_purchase_management_link: 'https://apps.apple.com/account/subscriptions',
+			},
+			/in-app purchase/i,
+		],
+	] )( 'describes %s with nothing to click', ( _label, overrides, text ) => {
+		render(
+			<>
+				{ getPurchaseExpiryStatusText( createPurchase( overrides as Partial< Purchase > ), 'en' ) }
+			</>
+		);
+
+		expect( screen.getByText( text ) ).toBeVisible();
+		expect( renewLink() ).toBeNull();
 	} );
 } );

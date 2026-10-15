@@ -21,6 +21,7 @@ export function buildOmnibarNodesFromAdminBarNodes(
 		const omnibarNode: OmnibarNode = {
 			id: node.id,
 			title: node.meta?.menu_title || node.title || '',
+			tooltip: node.meta?.title || undefined,
 			href: node.href && resolveHref ? resolveHref( node.href ) : node.href,
 			group: node.group,
 		};
@@ -30,10 +31,13 @@ export function buildOmnibarNodesFromAdminBarNodes(
 		}
 
 		switch ( node.id ) {
-			case 'wp-logo':
+			case 'wp-logo': {
+				const doc = new DOMParser().parseFromString( node.title || '', 'text/html' );
+				omnibarNode.title = undefined;
+				omnibarNode.label = doc.querySelector( '.screen-reader-text' )?.textContent?.trim();
 				omnibarNodes.home = omnibarNode;
-				omnibarNodes.home.title = undefined;
 				break;
+			}
 			case 'site-name': {
 				const doc = new DOMParser().parseFromString( node.title || '', 'text/html' );
 				const siteIcon = doc.querySelector( 'img' );
@@ -91,6 +95,10 @@ export function buildOmnibarNodesFromAdminBarNodes(
 				// The node points at `#` and relies on an inline onclick handler.
 				omnibarNode.href = undefined;
 				omnibarNode.onClick = () => ( dispatch( 'core/commands' ) as { open: () => void } ).open();
+				siteActionNodes.push( omnibarNode );
+				break;
+			}
+			case 'stats': {
 				siteActionNodes.push( omnibarNode );
 				break;
 			}

@@ -1,10 +1,12 @@
 import {
 	createAgencySite,
+	fetchAgencyDevSiteLicense,
 	fetchAgencyMigrationCommissionSites,
 	fetchAgencyPendingSites,
 	fetchAgencySitesWithPlugins,
 	provisionAgencyDevSite,
 	provisionAgencySite,
+	removeAgencySite,
 	validateAgencySiteAddress,
 } from '@automattic/api-core';
 import { mutationOptions, queryOptions } from '@tanstack/react-query';
@@ -19,6 +21,17 @@ export const agencySitesWithPluginsQuery = ( agencyId: number, plugins: string[]
 	queryOptions( {
 		queryKey: [ 'agency', agencyId, 'sites-with-plugins', plugins ],
 		queryFn: () => fetchAgencySitesWithPlugins( agencyId, plugins ),
+	} );
+
+// The development license of one of the agency's sites, which a referral hands to the client.
+export const agencyDevSiteLicenseQuery = ( agencyId: number, blogId: number ) =>
+	queryOptions( {
+		queryKey: [ 'agency', agencyId, 'sites', blogId, 'dev-license' ] as const,
+		queryFn: () => fetchAgencyDevSiteLicense( agencyId, blogId ),
+		enabled: agencyId > 0 && blogId > 0,
+		// A site without a license is an answer, not a glitch to retry.
+		retry: false,
+		meta: { persist: false },
 	} );
 
 // Sites the agency has paid for but not yet set up.
@@ -100,6 +113,24 @@ export const provisionAgencyDevSiteMutation = ( agencyId: number ) =>
 		onSuccess: () => {
 			invalidateAgencyLicenses( agencyId );
 			queryClient.invalidateQueries( { queryKey: agencyPendingSitesQuery( agencyId ).queryKey } );
+		},
+	} );
+
+/**
+ * Removes a site from the agency's dashboard.
+ *
+ * Callers refresh the sites list themselves: the backend takes a moment to drop
+ * the site from it, so the refresh is a delayed pair rather than a single
+ * invalidation, and the modal holds itself open until it has run.
+ */
+export const agencySiteRemoveMutation = ( agencyId?: number ) =>
+	mutationOptions( {
+		meta: { statId: 'agcy-site-remove' },
+		mutationFn: ( siteId: number ) => {
+			if ( ! agencyId ) {
+				throw new Error( 'No active agency found for the current user.' );
+			}
+			return removeAgencySite( agencyId, siteId );
 		},
 	} );
 
