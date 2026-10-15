@@ -90,7 +90,8 @@ export class HandleEmailedLinkForm extends Component {
 	}
 
 	componentDidMount() {
-		if ( ! this.props.isExpired || this.props.isFetching ) {
+		const { emailAddress, token, isExpired } = this.props;
+		if ( emailAddress && token && ! isExpired ) {
 			this.props.recordTracksEvent( 'calypso_login_email_link_handle_click_view' );
 		}
 

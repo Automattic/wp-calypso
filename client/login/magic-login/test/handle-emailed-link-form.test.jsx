@@ -162,4 +162,14 @@ describe( 'HandleEmailedLinkForm view tracking', () => {
 
 		expect( recordTracksEvent ).not.toHaveBeenCalled();
 	} );
+
+	it( 'does not record the view event when the link has no token', () => {
+		const recordTracksEvent = jest.fn();
+
+		render(
+			<HandleEmailedLinkForm { ...baseProps } recordTracksEvent={ recordTracksEvent } token="" />
+		);
+
+		expect( recordTracksEvent ).not.toHaveBeenCalled();
+	} );
 } );

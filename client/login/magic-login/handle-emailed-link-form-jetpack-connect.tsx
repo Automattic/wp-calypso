@@ -60,7 +60,7 @@ const HandleEmailedLinkFormJetpackConnect: FC< Props > = ( { emailAddress, token
 
 	// Keep this first so the view is still recorded if a later mount effect throws.
 	useEffect( () => {
-		if ( ! isExpired ) {
+		if ( emailAddress && token && ! isExpired ) {
 			dispatch( recordTracksEvent( 'calypso_login_email_link_handle_click_view' ) );
 		}
 	}, [] );
