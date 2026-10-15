@@ -48,7 +48,7 @@ The PHP lives in Jetpack's [`projects/packages/agents-manager`](https://github.c
 
 ### Translations
 
-Translations are uploaded to widgets.wp.com/agents-manager/languages. They're then downloaded in Jetpack during the build process.
+The app's `translate` script builds translations into `dist/languages/`, released with the bundles to `widgets.wp.com/agents-manager/languages/`. Jetpack loads `languages/{locale}-v1.js` from there at runtime for non-English locales.
 
 ### Deployment
 
@@ -69,4 +69,4 @@ This simply means deploying Calypso as you normally would.
 This will deploy the Agents Manager app for Jetpack consumption. Along with the languages files.
 
 > [!IMPORTANT]
-> If you add new phrases to the Agents Manager. They will only be translated in Atomic sites after `jetpack-mu-plugin` is released. Which happens twice a day.
+> New phrases appear translated only after they are translated and the next Agents Manager release (above) is deployed: each release build fetches the latest translations.

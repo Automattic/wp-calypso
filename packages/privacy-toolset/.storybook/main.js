@@ -1,3 +1,3 @@
-const storybookDefaultConfig = require( '@automattic/calypso-storybook' );
+import storybookDefaultConfig from '@automattic/calypso-storybook';
 
-module.exports = { ...storybookDefaultConfig() };
+export default storybookDefaultConfig();

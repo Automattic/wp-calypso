@@ -1,5 +1,5 @@
 import { DEFAULT_EMPTY_VIEW_SUGGESTION_IDS } from '../../hooks/use-empty-view-suggestions';
-import { mergeEmptyViewSuggestions } from '../merge-empty-view-suggestions';
+import { mergeEmptyViewSuggestions } from '../empty-view-suggestions';
 
 const customChip = {
 	id: 'customize-colors',

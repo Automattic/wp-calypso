@@ -6,7 +6,6 @@ import { Card, CardBody } from '../../components/card';
 import Divider from '../../components/divider';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
-import { a4aLink } from '../../utils/link';
 import { PARTNER_DIRECTORY_ROUTE } from '../partner-directory/paths';
 import { useContactSupport } from '../support/use-contact-support';
 import DownloadBadges from './download-badges';
@@ -16,10 +15,8 @@ import TierCards from './tier-cards';
 import { useScheduleCall } from './use-schedule-call';
 import type { TierBenefitLinks } from './types';
 
-// Client reports are not part of the MSD; the classic dashboard keeps them.
 const BENEFIT_LINKS: TierBenefitLinks = {
 	'manage-sites': '/sites',
-	'create-client-reports': a4aLink( '/reports' ),
 	'manage-purchases': '/purchases',
 	'make-client-referral': '/referrals',
 	'add-woopayments-to-store': '/woopayments',

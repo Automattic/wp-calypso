@@ -89,6 +89,41 @@ describe( 'CreditsMeter', () => {
 		expect( screen.getByText( 'Resets 17 Oct' ) ).toBeInTheDocument();
 	} );
 
+	it( 'reports a click on the Upgrade link without stopping the link from opening', () => {
+		const onUpgradeClick = jest.fn();
+		render(
+			<CreditsMeter
+				status={ livePaid( 0 ) }
+				isOpen
+				onToggle={ () => {} }
+				upgradeUrl="https://wordpress.com/plans/example.wordpress.com"
+				onUpgradeClick={ onUpgradeClick }
+			/>
+		);
+		const action = screen.getByRole( 'link', { name: 'Upgrade' } );
+		expect( fireEvent.click( action ) ).toBe( true );
+		expect( onUpgradeClick ).toHaveBeenCalledTimes( 1 );
+		expect( action ).toHaveAttribute( 'href', 'https://wordpress.com/plans/example.wordpress.com' );
+		expect( action ).toHaveAttribute( 'target', '_blank' );
+	} );
+
+	it( 'keeps the demo CTA on its own handler, with no Upgrade link to report', () => {
+		const onAction = jest.fn();
+		const onUpgradeClick = jest.fn();
+		render(
+			<CreditsMeter
+				status={ freeOut }
+				isOpen
+				onToggle={ () => {} }
+				onAction={ onAction }
+				onUpgradeClick={ onUpgradeClick }
+			/>
+		);
+		fireEvent.click( screen.getByRole( 'button', { name: 'Upgrade' } ) );
+		expect( onAction ).toHaveBeenCalledTimes( 1 );
+		expect( onUpgradeClick ).not.toHaveBeenCalled();
+	} );
+
 	it.each( [ 'click', 'Enter', 'Space' ] )(
 		'focuses the popover on %s, keeps Upgrade keyboard accessible, and restores focus on Escape',
 		async ( input ) => {

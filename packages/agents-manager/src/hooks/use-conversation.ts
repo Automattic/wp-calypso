@@ -7,26 +7,21 @@ import { isUnsentSession } from '../utils/agent-session';
 import { getConversationBotId } from '../utils/conversation-bot-id';
 import { isReaderChatAgent } from '../utils/is-reader-chat-agent';
 
+// At most this many history pages are loaded per conversation.
+const MAX_PAGES = 10;
+
 interface Config {
-	maxPages?: number;
-	enabled?: boolean;
 	onSuccess?: ( messages: Message[], sessionId: string ) => void;
 }
 
 interface Result {
-	data: { messages: Message[]; sessionId?: string } | undefined;
 	isLoading: boolean;
-	isError: boolean;
 }
 
 /**
  * Fetches a conversation from the server when a `sessionId` is available.
  */
-export default function useConversation( {
-	maxPages = 10,
-	enabled = true,
-	onSuccess = () => {},
-}: Config ): Result {
+export default function useConversation( { onSuccess = () => {} }: Config ): Result {
 	const { agentConfig } = useAgentsManagerContext();
 	const { agentId, sessionId, authProvider } = agentConfig!;
 
@@ -38,7 +33,7 @@ export default function useConversation( {
 	// send does not start a fetch that replaces the live stream.
 	const isUnsent = useMemo( () => !! sessionId && isUnsentSession( sessionId ), [ sessionId ] );
 
-	const { data, isLoading, isError, error } = useQuery( {
+	const { data, isLoading, error } = useQuery( {
 		// eslint-disable-next-line @tanstack/query/exhaustive-deps -- we only want to refetch when sessionId changes
 		queryKey: [ 'agents-manager-conversation', sessionId ],
 		queryFn: async () => {
@@ -53,14 +48,14 @@ export default function useConversation( {
 					apiBaseUrl: API_BASE_URL,
 					authProvider,
 				},
-				maxPages,
+				MAX_PAGES,
 				true
 			);
 		},
 		// Public Reader Chat does not expose conversation history, and the
 		// server-side history endpoint requires permissions public readers
 		// usually do not have.
-		enabled: enabled && !! sessionId && ! isUnsent && ! isReaderChatAgent( agentId ),
+		enabled: !! sessionId && ! isUnsent && ! isReaderChatAgent( agentId ),
 		refetchOnWindowFocus: false,
 	} );
 
@@ -81,5 +76,5 @@ export default function useConversation( {
 		}
 	}, [ error ] );
 
-	return { data, isLoading, isError };
+	return { isLoading };
 }

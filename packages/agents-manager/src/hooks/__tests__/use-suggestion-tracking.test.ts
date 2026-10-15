@@ -1,16 +1,24 @@
 /**
  * @jest-environment jsdom
  */
+let mockSelectedBlockType: string | undefined;
+
 jest.mock( '../../utils/tracks', () => ( {
 	recordBigSkyTracksEvent: jest.fn(),
+} ) );
+jest.mock( '@wordpress/data', () => ( {
+	useSelect: ( mapSelect: ( select: () => object ) => unknown ) =>
+		mapSelect( () => ( {
+			getSelectedBlock: () => ( mockSelectedBlockType ? { name: mockSelectedBlockType } : null ),
+		} ) ),
 } ) );
 
 import { act, renderHook } from '@testing-library/react';
 import { recordBigSkyTracksEvent } from '../../utils/tracks';
-import useSuggestionsRenderedTracking from '../use-suggestions-rendered-tracking';
+import { useSuggestionTracking } from '../use-suggestion-tracking';
 import type { Suggestion } from '../../types';
 
-type Options = Parameters< typeof useSuggestionsRenderedTracking >[ 0 ];
+type Options = Parameters< typeof useSuggestionTracking >[ 0 ];
 
 const contextual: Suggestion[] = [
 	{ id: 'change-tone', label: 'Change tone', prompt: 'Change the tone' },
@@ -21,19 +29,20 @@ const starters: Suggestion[] = [
 	{ id: 'getting-started', label: 'Getting started', prompt: 'getting-started' },
 ];
 
-const blockOptions = ( selectedBlockType?: string, hasSuggestionsToRender = true ): Options => ( {
-	selectedBlockType,
-	contextualSuggestionIds: contextualIds,
-	hasSuggestionsToRender,
-} );
+// Selects the block before the next render, which reads it through `useSelect`.
+const blockOptions = ( selectedBlockType?: string, hasSuggestionsToRender = true ): Options => {
+	mockSelectedBlockType = selectedBlockType;
+	return { contextualSuggestionIds: contextualIds, hasSuggestionsToRender };
+};
 
 const renderTracking = ( initialProps: Options ) =>
-	renderHook( ( options: Options ) => useSuggestionsRenderedTracking( options ), {
+	renderHook( ( options: Options ) => useSuggestionTracking( options ), {
 		initialProps,
 	} );
 
-describe( 'useSuggestionsRenderedTracking', () => {
+describe( 'useSuggestionTracking', () => {
 	beforeEach( () => {
+		mockSelectedBlockType = undefined;
 		jest.mocked( recordBigSkyTracksEvent ).mockClear();
 	} );
 
@@ -47,7 +56,6 @@ describe( 'useSuggestionsRenderedTracking', () => {
 			'jetpack_big_sky_chat_suggestions_rendered',
 			{ suggestions: '|change-tone|check-grammar|', block_type: 'core/paragraph' }
 		);
-		expect( result.current.renderedSuggestionsRef.current ).toBe( contextual );
 	} );
 
 	it( 'omits the block context when the reported set is not fully contextual', () => {
@@ -98,7 +106,6 @@ describe( 'useSuggestionsRenderedTracking', () => {
 		act( () => result.current.onSuggestionsRendered( contextual ) );
 
 		rerender( blockOptions( 'core/heading', false ) );
-		expect( result.current.renderedSuggestionsRef.current ).toBe( contextual );
 		expect( recordBigSkyTracksEvent ).toHaveBeenCalledTimes( 1 );
 
 		rerender( blockOptions( 'core/heading', true ) );

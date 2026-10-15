@@ -13,32 +13,32 @@ Consuming the API? See [Public API](#public-api). Adding a new action? See [Addi
 
 ## Public API
 
-| Method                     | Signature                                               | Description                                                                                                       |
-| -------------------------- | ------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
-| `getChatState`             | `() => Promise<{ isOpen, isDocked, floatingPosition }>` | Current chat state. Waits for the store to load before resolving.                                                 |
-| `getSessionId`             | `() => string`                                          | Active session ID.                                                                                                |
-| `getTabId`                 | `() => string`                                          | The `tab_id` on the chat's Tracks events, so host events can join on it.                                          |
-| `getTurnId`                | `() => string`                                          | The current `turn_id` (the last send's), or `''` before the first send.                                           |
-| `getAgentBlockId`          | `(clientId: string) => string`                          | The id the agent knows a block by, so a host can name the block to it.                                            |
-| `recordBigSkyTracksEvent`  | `(eventName: BigSkyEventName, props?) => void`          | Record a full `jetpack_big_sky_*` event name with family base props.                                              |
-| `isChatVisible`            | `() => boolean`                                         | Whether the chat is visible (open and not minimized).                                                             |
-| `setChatOpen`              | `(isOpen: boolean) => void`                             | Open or close the chat (closing is ignored when non-dismissible). Opening also expands it from the minimized bar. |
-| `setChatDocked`            | `(isDocked: boolean) => void`                           | Dock or undock the chat.                                                                                          |
-| `setChatEnabled`           | `(isEnabled: boolean) => void`                          | Enable the chat, or disable its input while leaving the chat visible.                                             |
-| `setChatCompactMode`       | `(isCompact: boolean) => void`                          | Toggle compact mode (undocked only).                                                                              |
-| `setChatDesktopMediaQuery` | `(query: string) => void`                               | Media query used to decide whether the chat can dock into the sidebar.                                            |
-| `setChatInput` \*          | `(value: string) => void`                               | Set the chat input value and focus it.                                                                            |
-| `submitChatMessage` \*     | `(message?: string) => Promise<void>`                   | Submit a message programmatically. If omitted, submits the current input.                                         |
-| `setContextEntry`          | `(entry) => void`                                       | Add or replace a context entry: sent with the next message, or kept with `delivery: 'conversation'`.              |
-| `removeContextEntry`       | `(id: string) => void`                                  | Remove a context entry. Linked cards (`contextEntryIds`) are removed too.                                         |
-| `setContextCard`           | `(card) => void`                                        | Add or replace a card shown inside the chat.                                                                      |
-| `removeContextCard`        | `(id: string) => void`                                  | Remove a card.                                                                                                    |
-| `setSiteEditorAction`      | `(name, value) => void`                                 | Record a Site Editor action (name → value) for the chat to read.                                                  |
-| `chatNavigate`             | `NavigateFunction`                                      | The `react-router-dom` navigate function (path with options, or delta).                                           |
-| `resumeChat`               | `() => void`                                            | Reopen the chat, resuming this tab's conversation (not a new one).                                                |
-| `isReady`                  | `boolean`                                               | `true` once the API is fully populated and safe to call.                                                          |
+| Method                     | Signature                                               | Description                                                                                                          |
+| -------------------------- | ------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| `getChatState`             | `() => Promise<{ isOpen, isDocked, floatingPosition }>` | Current chat state. Waits for the store to load before resolving.                                                    |
+| `getSessionId`             | `() => string`                                          | Active session ID.                                                                                                   |
+| `getTabId`                 | `() => string`                                          | The `tab_id` on the chat's Tracks events, so host events can join on it.                                             |
+| `getTurnId`                | `() => string`                                          | The current `turn_id` (the last send's), or `''` before the first send.                                              |
+| `getAgentBlockId`          | `(clientId: string) => string`                          | The id the agent knows a block by, so a host can name the block to it.                                               |
+| `recordBigSkyTracksEvent`  | `(eventName: BigSkyEventName, props?) => void`          | Record a full `jetpack_big_sky_*` event name with family base props.                                                 |
+| `isChatVisible`            | `() => boolean`                                         | Whether the chat is visible (open and not minimized).                                                                |
+| `setChatOpen`              | `(isOpen: boolean) => void`                             | Open or close the chat (closing is ignored when non-dismissible). Opening also expands it from the minimized bar.    |
+| `setChatDocked`            | `(isDocked: boolean) => void`                           | Dock or undock the chat.                                                                                             |
+| `setChatEnabled`           | `(isEnabled: boolean) => void`                          | Enable the chat, or disable its input while leaving the chat visible.                                                |
+| `setChatCompactMode`       | `(isCompact: boolean) => void`                          | Toggle compact mode (undocked only).                                                                                 |
+| `setChatDesktopMediaQuery` | `(query: string) => void`                               | Media query used to decide whether the chat can dock into the sidebar.                                               |
+| `setChatInput` \*          | `(value: string) => void`                               | Set the chat input value and focus it.                                                                               |
+| `submitChatMessage` \*     | `(message?: string) => Promise<void>`                   | Submit a message programmatically. If omitted, submits the current input.                                            |
+| `setContextEntry`          | `(entry) => void`                                       | Add or replace a context entry: sent with the next message, or kept with `delivery: 'conversation'`.                 |
+| `removeContextEntry`       | `(id: string) => void`                                  | Remove a context entry. Linked cards (`contextEntryIds`) are removed too.                                            |
+| `setContextCard`           | `(card) => void`                                        | Add or replace a card shown inside the chat.                                                                         |
+| `removeContextCard`        | `(id: string) => void`                                  | Remove a card.                                                                                                       |
+| `setSiteEditorAction`      | `(name, value) => void`                                 | Record a Site Editor action (name → value) for the chat to read.                                                     |
+| `chatNavigate`             | `NavigateFunction`                                      | The `react-router-dom` navigate function (path with options, or delta).                                              |
+| `resumeChat`               | `() => void`                                            | Switch the chat back to this tab's conversation (not a new one). Doesn't open it: follow with `setChatOpen( true )`. |
+| `isReady`                  | `boolean`                                               | `true` once the API is fully populated and safe to call.                                                             |
 
-\* Available only while the chat panel is mounted. Always optional-chain these calls — they can be `undefined` even after `isReady` is `true`.
+\* Registered by `OrchestratorChat`, so available only while the chat screen is mounted — not on History or other screens, nor while the chat is closed on hosts with an AI chat entry button. Always optional-chain these calls — they can be `undefined` even after `isReady` is `true`.
 
 `getTabId`, `getTurnId`, `getAgentBlockId` and `recordBigSkyTracksEvent` are absent on older Agents Manager bundles — optional-chain them too.
 `BigSkyEventName` is `` `jetpack_big_sky_${ string }` `` — the full prefix is required. The bare prefix alone, or any non-conforming name, is dropped without recording.
@@ -132,6 +132,7 @@ window.__agentsManagerActions.chatNavigate( '/history' );
 
 // Reopen the chat, resuming this tab's conversation
 window.__agentsManagerActions.resumeChat();
+window.__agentsManagerActions.setChatOpen( true );
 
 // Attach context to the next chat message
 window.__agentsManagerActions.setContextEntry( {
