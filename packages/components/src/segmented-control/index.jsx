@@ -5,6 +5,7 @@ import SegmentedControlItem from './item';
 
 import './style.scss';
 
+/** @augments {Component<any, any>} */
 export default class SegmentedControl extends Component {
 	static Item = SegmentedControlItem;
 

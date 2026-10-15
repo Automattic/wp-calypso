@@ -11,6 +11,7 @@ import './style.scss';
 
 const noop = () => {};
 
+/** @augments {Component<any, any>} */
 class SelectDropdown extends Component {
 	static Item = DropdownItem;
 	static Separator = DropdownSeparator;
