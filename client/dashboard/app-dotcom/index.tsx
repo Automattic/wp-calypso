@@ -44,9 +44,6 @@ boot( {
 		plugins: true,
 		commandPalette: true,
 		domainOnlySites: true,
-		siteOverview: {
-			preview: false,
-		},
 		colorScheme: isEnabled( 'dark-mode' ),
 		darkMode: isEnabled( 'dark-mode' ),
 	},
