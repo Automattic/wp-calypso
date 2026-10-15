@@ -327,7 +327,7 @@ export const Header = ( {
 										icon={ tool.icon }
 										label={ tool.label }
 										showTooltip
-										disabled={ isAiProcessing || isSaving }
+										disabled={ isAiProcessing || isSaving || isAnnotationMode }
 										onClick={ () => {
 											trackImageStudioToolClick( tool.name );
 											onTransform?.( tool.transform );
