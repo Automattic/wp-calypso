@@ -1,6 +1,6 @@
 import { Site } from '@automattic/api-core';
 import { formatNumber } from '@automattic/number-formatters';
-import { invokeSurvicateEventAfterModalsClose } from '@automattic/survicate';
+import { invokeSurvicateEvent } from '@automattic/survicate';
 import {
 	__experimentalVStack as VStack,
 	__experimentalHStack as HStack,
@@ -10,7 +10,7 @@ import {
 import { useDispatch } from '@wordpress/data';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useAnalytics } from '../../../app/analytics';
 import { useSitesById } from '../hooks/use-sites-by-id';
 import type { PluginListRow } from '../types';
@@ -267,6 +267,17 @@ export default function ActionRenderModal( {
 		recordTracksEvent( 'calypso_dashboard_plugins_action_click', { action_id: actionId } );
 	}, [ actionId, recordTracksEvent ] );
 
+	// Survicate drops events while a modal is open, so fire once this one has unmounted.
+	const pendingSurvicateEvent = useRef< string | null >( null );
+	useEffect(
+		() => () => {
+			if ( pendingSurvicateEvent.current ) {
+				invokeSurvicateEvent( pendingSurvicateEvent.current );
+			}
+		},
+		[]
+	);
+
 	const handleCancel = () => {
 		recordTracksEvent( 'calypso_dashboard_plugins_action_cancel_click', {
 			action_id: actionId,
@@ -425,10 +436,7 @@ export default function ActionRenderModal( {
 				createSuccessNotice( buildSuccessMessage( actionId, items, successCount ), {
 					type: 'snackbar',
 				} );
-				if ( SURVICATE_EVENTS[ actionId ] ) {
-					// This modal is still mounted here; the event would be dropped without waiting.
-					invokeSurvicateEventAfterModalsClose( SURVICATE_EVENTS[ actionId ] );
-				}
+				pendingSurvicateEvent.current = SURVICATE_EVENTS[ actionId ] ?? null;
 			}
 			if ( errorCount > 0 ) {
 				createErrorNotice( buildErrorMessage( actionId, items, errorCount ), {

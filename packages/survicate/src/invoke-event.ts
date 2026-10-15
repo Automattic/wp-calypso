@@ -2,7 +2,7 @@ import { isSupportSession } from '@automattic/calypso-support-session';
 import { select, subscribe } from '@wordpress/data';
 import { closeSurvicateSurvey } from './close-survey';
 import debug from './debug';
-import { isModalOpen, observeModals } from './modal-detection';
+import { isModalOpen } from './modal-detection';
 import { recordSurveySuppressed, type SuppressionReason } from './track-suppression';
 
 const HELP_CENTER_STORE = 'automattic/help-center';
@@ -121,49 +121,5 @@ export function invokeSurvicateEvent( eventName: string ): () => void {
 
 	return () => {
 		window.removeEventListener( 'SurvicateReady', handler );
-	};
-}
-
-const MODAL_CLOSE_TIMEOUT_MS = 3000;
-
-/**
- * Invokes a Survicate event once every open modal has closed, instead of
- * dropping it as `invokeSurvicateEvent()` would. For actions confirmed in a
- * modal: the action resolves while its own dialog is still mounted, and the
- * dialog unmounts a render later.
- *
- * If a modal is still open after `timeoutMs`, the event is invoked anyway and
- * suppressed (and recorded) as usual. The Help Center and support-session
- * checks are applied at invoke time.
- * @returns A cleanup function that cancels a pending invocation.
- */
-export function invokeSurvicateEventAfterModalsClose(
-	eventName: string,
-	timeoutMs = MODAL_CLOSE_TIMEOUT_MS
-): () => void {
-	if ( ! isModalOpen() ) {
-		return invokeSurvicateEvent( eventName );
-	}
-
-	debug( 'Survicate event "%s" waiting for open modals to close', eventName );
-
-	let cancelInvoke = () => {};
-	let stopWaiting = () => {};
-
-	const invoke = () => {
-		stopWaiting();
-		cancelInvoke = invokeSurvicateEvent( eventName );
-	};
-
-	const timeout = setTimeout( invoke, timeoutMs );
-	const stopObserving = observeModals( () => {}, invoke );
-	stopWaiting = () => {
-		clearTimeout( timeout );
-		stopObserving();
-	};
-
-	return () => {
-		stopWaiting();
-		cancelInvoke();
 	};
 }
