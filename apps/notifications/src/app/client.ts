@@ -5,13 +5,11 @@ import { addListeners, removeListeners } from '../panel/state/create-listener-mi
 
 let client: any;
 
-export type ClientOptions = { includeNoteContext?: boolean };
-
-export function initClient( wpcom: any, options: ClientOptions = {} ) {
+export function initClient( wpcom: any ) {
 	initAPI( wpcom );
 
 	if ( ! client ) {
-		client = new RestClient( options );
+		client = new RestClient();
 		client.setVisibility( { isShowing: false, isVisible: ! document.hidden } );
 		document.addEventListener( 'visibilitychange', () => {
 			client.setVisibility( { isShowing: client.isShowing, isVisible: ! document.hidden } );
@@ -36,10 +34,9 @@ type SubscriberNotification = {
 export function subscribeUnseenCount(
 	wpcom: any,
 	onCount: ( count: number ) => void,
-	onSubscriberNotification?: ( notification: SubscriberNotification ) => void | Promise< void >,
-	options: ClientOptions = {}
+	onSubscriberNotification?: ( notification: SubscriberNotification ) => void | Promise< void >
 ): () => void {
-	initClient( wpcom, options );
+	initClient( wpcom );
 
 	const handlers = {
 		APP_RENDER_NOTES: [

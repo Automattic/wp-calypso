@@ -495,12 +495,6 @@
 // readable muted quote text (passes AA on the overlay panel), a neutral quote
 // bar, and the gray-400 divider used across the dark overlays (Help Center).
 .wpnc-app {
-	.components-card__header,
-	.components-card__footer,
-	.components-card__divider {
-		border-color: var( --wpnc-divider__color, #{$gray-100} );
-	}
-
 	@include ui-mixins.when-dark-theme {
 		--wpnc-quote__border-color: var( --wp-components-color-gray-600, #758095 );
 		--wpnc-quote__text-color: var( --wp-components-color-gray-700, #9aa2b1 );
@@ -514,8 +508,16 @@
 		--wpnc-code__border-color: var( --wp-components-color-gray-600, #758095 );
 		--wpnc-code__text-color: var( --wp-components-color-gray-100, #f0f0f1 );
 
-		// The list/detail pane separator ($wpnc-pane-border) misses the dashboard's
-		// border handling. Route it to the same gray-400 divider as the rest of the panel.
+		// Two frame-level dividers miss the dashboard's border handling:
+		//   - the action-block CardFooter (above Like/Reply) — the dark card
+		//     mixin themes card header/divider but not the footer, so its
+		//     border falls back to a near-invisible rgba(0,0,0,0.1).
+		//   - the list/detail pane separator — $wpnc-pane-border.
+		// Route both to the same gray-400 divider as the rest of the panel.
+		.components-card__footer {
+			border-top-color: var( --wpnc-divider__color );
+		}
+
 		.wpnc-app__list-pane,
 		.wpnc-app__detail-pane {
 			border-color: var( --wpnc-divider__color );

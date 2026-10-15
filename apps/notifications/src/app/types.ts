@@ -33,33 +33,6 @@ export type Subject = {
 	media?: Media[];
 };
 
-export type NotePost = {
-	title: string;
-	url: string;
-	date: string | null;
-	author_name: string;
-};
-
-export type NoteSite = {
-	name: string;
-	icon: string;
-};
-
-export type NoteParentComment = {
-	text: string;
-	author_name: string;
-	author_avatar: string | null;
-	author_url?: string | null;
-	date: string | null;
-	url: string;
-};
-
-export type NoteActor = {
-	name: string;
-	avatar: string;
-	url?: string | null;
-};
-
 type PostActions = { 'replyto-comment'?: boolean; 'like-post'?: boolean };
 
 type CommentActions = {
@@ -130,7 +103,6 @@ export type Note = {
 			post?: number;
 			comment?: number;
 			reply_comment?: number;
-			parent_comment?: number;
 			user?: number;
 		};
 		links?: {
@@ -141,13 +113,6 @@ export type Note = {
 			user?: string;
 			home?: string;
 		};
-		post?: NotePost;
-		site?: NoteSite;
-		parent_comment?: NoteParentComment;
-		actor?: NoteActor;
-		actor_count?: number;
-		summary?: Subject;
-		heading?: string;
 	};
 	title: string;
 	note_hash: number;
