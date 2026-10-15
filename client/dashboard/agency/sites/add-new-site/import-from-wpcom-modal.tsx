@@ -261,15 +261,20 @@ export default function ImportFromWPCOMModal( { onClose }: ImportFromWPCOMModalP
 						defaultLayouts={ { pickerTable: {} } }
 						// The picker only offers multi-selection when every action it is
 						// given supports bulk, so this action is what turns the row
-						// checkboxes and select-all on.
-						actions={ [
-							{
-								id: 'add-sites',
-								label: __( 'Add sites' ),
-								supportsBulk: true,
-								callback: handleAddSites,
-							},
-						] }
+						// checkboxes and select-all on. Without rows the picker's
+						// select-all reads as ticked (zero of zero), so it is left off.
+						actions={
+							shownSites.length
+								? [
+										{
+											id: 'add-sites',
+											label: __( 'Add sites' ),
+											supportsBulk: true,
+											callback: handleAddSites,
+										},
+									]
+								: []
+						}
 						empty={
 							<DataViewsEmptyStateLayout
 								title={ __( 'No sites to add' ) }
