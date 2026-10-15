@@ -100,7 +100,7 @@ const PaidSubscriptionsSection = ( { query }: PaidSubscriptionsSectionProps ) =>
 
 		if ( ! hasLoadedSubscribers ) {
 			return (
-				<div role="status">
+				<div className="paid-subscriptions__loading" role="status">
 					<ScreenReaderText>{ translate( 'Loading paid subscribers' ) }</ScreenReaderText>
 					<LoadingEllipsis />
 				</div>
