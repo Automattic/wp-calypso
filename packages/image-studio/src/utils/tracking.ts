@@ -255,6 +255,7 @@ type ImageStudioErrorType =
 	| 'delete_permanently_failed'
 	| 'save_metadata_failed'
 	| 'attach_to_post_failed'
+	| 'transform_failed'
 	| 'other';
 
 interface TrackImageStudioErrorOptions {
