@@ -153,7 +153,6 @@ function prepareApplyBlockEditsInput(
 		...( Array.isArray( input.deletes ) ? { deletes: input.deletes } : {} ),
 		...( typeof input.summary === 'string' ? { summary: input.summary } : {} ),
 		reverseMap,
-		suppressAssistantMessage: true,
 	};
 }
 

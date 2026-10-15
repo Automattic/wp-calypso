@@ -294,7 +294,7 @@ export default function OrchestratorChat( {
 		getCheckpointMessage,
 	} );
 	const { showFeedbackInput, submitFeedbackText, resetFeedback, getFeedbackActionsForMessage } =
-		useFeedbackAction( { registerMessageActions, messages, getTraceIdForMessage } );
+		useFeedbackAction( { messages, getTraceIdForMessage } );
 	const getRegenerateActionsForMessage = useRegenerateAction( {
 		enabled: capabilities?.supportsRegenerateAction === true,
 		getRegenerateHandler: getGatedRegenerateHandler,
