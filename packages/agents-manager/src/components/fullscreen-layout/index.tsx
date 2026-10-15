@@ -4,7 +4,9 @@ import { __ } from '@wordpress/i18n';
 import { close, menu } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useNavigationType } from 'react-router-dom';
+import { useAgentsManagerContext } from '../../contexts';
 import { useFullscreenNavigation } from '../../hooks/use-fullscreen-navigation';
+import { SitePanelProvider } from '../../hooks/use-site-panel';
 import { isEditorPage } from '../../utils/is-editor-page';
 import lazyComponent from '../../utils/lazy-component';
 import { AgentChatRoutes } from '../agent-chat-routes';
@@ -14,6 +16,7 @@ import SupportGuide from '../support-guide';
 import ZendeskChat from '../zendesk-chat';
 import { FullscreenLink } from './fullscreen-link';
 import { FullscreenSidebar } from './sidebar';
+import { SitePanel, SitePanelToggle } from './site-panel';
 import type AgentDock from '../agent-dock';
 import type { ComponentProps } from 'react';
 import './style.scss';
@@ -22,7 +25,16 @@ const PageDesignRenderer = lazyComponent(
 	() => import( /* webpackChunkName: "am-page-design-renderer" */ '../page-design-renderer' )
 );
 
-export default function FullscreenLayout( {
+export default function FullscreenLayout( props: ComponentProps< typeof AgentDock > ) {
+	const { agentConfig, siteKey } = useAgentsManagerContext();
+	return (
+		<SitePanelProvider key={ `${ siteKey }:${ agentConfig?.sessionId }` }>
+			<FullscreenLayoutContent { ...props } />
+		</SitePanelProvider>
+	);
+}
+
+function FullscreenLayoutContent( {
 	emptyViewSuggestions = [],
 	markdownComponents = {},
 	markdownExtensions = {},
@@ -93,39 +105,45 @@ export default function FullscreenLayout( {
 				/>
 			) }
 			<main className="agents-manager-fullscreen__chat">
-				<AgentChatRoutes
-					isReaderChat={ false }
-					navigationType={ navigationType }
-					chat={
-						<OrchestratorChat
-							{ ...providerProps }
-							{ ...commonProps }
-							emptyViewSuggestions={ emptyViewSuggestions }
-							markdownComponents={ fullscreenMarkdownComponents }
-							markdownExtensions={ markdownExtensions }
-							suggestionsVisible
-							isCompactMode={ false }
-							isChatInputDisabled={ isChatInputDisabled }
-							onHasMessagesChange={ onHasMessagesChange }
-						/>
-					}
-					zendesk={
-						<ZendeskChat
-							{ ...commonProps }
-							markdownComponents={ fullscreenMarkdownComponents }
-							markdownExtensions={ markdownExtensions }
-						/>
-					}
-					supportGuide={ <SupportGuide { ...commonProps } onAbort={ abort } /> }
-					history={
-						<AgentHistory
-							{ ...commonProps }
-							onAbort={ abort }
-							onSelectConversation={ selectConversation }
-						/>
-					}
-				/>
+				<div className="agents-manager-fullscreen__chat-toolbar">
+					<SitePanelToggle />
+				</div>
+				<div className="agents-manager-fullscreen__conversation">
+					<AgentChatRoutes
+						isReaderChat={ false }
+						navigationType={ navigationType }
+						chat={
+							<OrchestratorChat
+								{ ...providerProps }
+								{ ...commonProps }
+								emptyViewSuggestions={ emptyViewSuggestions }
+								markdownComponents={ fullscreenMarkdownComponents }
+								markdownExtensions={ markdownExtensions }
+								suggestionsVisible
+								isCompactMode={ false }
+								isChatInputDisabled={ isChatInputDisabled }
+								onHasMessagesChange={ onHasMessagesChange }
+							/>
+						}
+						zendesk={
+							<ZendeskChat
+								{ ...commonProps }
+								markdownComponents={ fullscreenMarkdownComponents }
+								markdownExtensions={ markdownExtensions }
+							/>
+						}
+						supportGuide={ <SupportGuide { ...commonProps } onAbort={ abort } /> }
+						history={
+							<AgentHistory
+								{ ...commonProps }
+								onAbort={ abort }
+								onSelectConversation={ selectConversation }
+							/>
+						}
+					/>
+				</div>
 			</main>
+			<SitePanel />
 		</section>
 	);
 }

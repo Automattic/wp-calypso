@@ -82,6 +82,8 @@ The host page URL can carry these query parameters:
 | `wp-agent-chat` | The chat session to resume, handed off by a same-tab link from another origin (e.g. wp-admin to Calypso) so the conversation continues there. Stripped from the URL after being applied. |
 | `wp-agent-site` | The site scope of the handed-off session. The session is resumed only on pages for that site, and stored for it otherwise.                                                               |
 
+In full-screen mode, **Referenced pages** lists same-site links from assistant replies and editor URLs from user-message context in the current session. The list uses reply link labels when available and batches title lookups for unlabeled post IDs. Site metadata, post resolution, and title requests use the WordPress.com REST proxy. Selecting a reference resolves its post ID when necessary and opens the editor in a right-hand panel (an overlay on narrow screens). Each open requests a fresh frame nonce and carries the session handoff and `am-embedded=1`. Jetpack/Atomic site-editor links use a new tab because those sites do not support framing the site editor. The embedded flag is reserved for the next phase: the editor may still show its own chat, and the panel does not yet supply tools or context to the full-screen chat.
+
 ## API Reference
 
 ### AgentsManager Props
