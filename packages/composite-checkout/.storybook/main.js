@@ -1,11 +1,11 @@
-const { join } = require( 'path' );
-const storybookDefaultConfig = require( '@automattic/calypso-storybook' );
+import { join } from 'node:path';
+import storybookDefaultConfig from '@automattic/calypso-storybook';
 
-module.exports = {
+export default {
 	...storybookDefaultConfig( {
 		stories: [ '../demo' ],
 		webpackAliases: {
-			'@automattic/composite-checkout': join( __dirname, '../src/public-api.ts' ),
+			'@automattic/composite-checkout': join( import.meta.dirname, '../src/public-api.ts' ),
 		},
 	} ),
 };

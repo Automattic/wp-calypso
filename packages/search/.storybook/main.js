@@ -1,8 +1,7 @@
-const webpack = require( 'webpack' );
-const path = require( 'path' );
-const storybookDefaultConfig = require( '@automattic/calypso-storybook' );
+import storybookDefaultConfig from '@automattic/calypso-storybook';
+import webpack from 'webpack';
 
-module.exports = {
+export default {
 	...storybookDefaultConfig( {
 		plugins: [
 			new webpack.ProvidePlugin( {

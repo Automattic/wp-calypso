@@ -394,7 +394,7 @@ export const Interactive: Story = {
 		},
 	},
 	play: async ( { canvasElement } ) => {
-		const { within, userEvent } = await import( '@storybook/test' );
+		const { within, userEvent } = await import( 'storybook/test' );
 		const canvas = within( canvasElement );
 
 		const button = canvas.getByRole( 'button' );
