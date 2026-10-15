@@ -1,9 +1,11 @@
 /**
  * @jest-environment jsdom
  */
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import controller from '../controller';
 
 jest.mock( '../main', () => () => null );
+jest.mock( 'calypso/lib/analytics/tracks', () => ( { recordTracksEvent: jest.fn() } ) );
 jest.mock( 'calypso/signup/config/flows', () => ( {} ) );
 
 describe( 'redirectLegacyFlow', () => {
@@ -41,6 +43,19 @@ describe( 'redirectLegacyFlow', () => {
 			'/setup/launch-site/es?siteSlug=example.wordpress.com'
 		);
 		expect( next ).not.toHaveBeenCalled();
+	} );
+
+	it( 'records legacy launch-site hits', () => {
+		controller.redirectLegacyFlow(
+			{ params: { flowName: 'launch-site' }, query: {}, path: '/start/launch-site' },
+			jest.fn()
+		);
+
+		expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_legacy_launch_site_redirect', {
+			source: 'client',
+			original_url: '/start/launch-site',
+			referrer: expect.any( String ),
+		} );
 	} );
 
 	it( 'still redirects legacy plan flows', () => {

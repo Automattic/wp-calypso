@@ -5,6 +5,7 @@ import { isOnboardingFlow } from '@automattic/onboarding';
 import { createElement } from 'react';
 import store from 'store';
 import { notFound } from 'calypso/controller';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { login } from 'calypso/lib/paths';
 import {
 	LEGACY_LAUNCH_SITE_FLOW,
@@ -123,6 +124,11 @@ export default {
 		}
 
 		if ( flowName === LEGACY_LAUNCH_SITE_FLOW ) {
+			recordTracksEvent( 'calypso_legacy_launch_site_redirect', {
+				source: 'client',
+				original_url: context.path,
+				referrer: document.referrer,
+			} );
 			window.location.replace( getLegacyLaunchSiteRedirect( context.query, lang ) );
 			return;
 		}

@@ -50,6 +50,7 @@ import loginRouter, { LOGIN_SECTION_DEFINITION } from 'calypso/login';
 import sections from 'calypso/sections';
 import isSectionEnabled from 'calypso/sections-filter';
 import { serverRouter, getCacheKey } from 'calypso/server/isomorphic-routing';
+import analytics from 'calypso/server/lib/analytics';
 import { isWpMobileApp, isWcMobileApp } from 'calypso/server/lib/is-mobile-app';
 import performanceMark from 'calypso/server/lib/performance-mark/index';
 import {
@@ -1379,6 +1380,12 @@ export default function pages() {
 
 	// Legacy `/start/launch-site` is now served by Stepper; see `legacy-launch-site-flow.ts`.
 	app.get( [ '/start/launch-site', '/start/launch-site/*' ], ( req, res ) => {
+		// Shows who still links to the old path; the Referer header is sent with the event.
+		analytics.tracks.recordEvent(
+			'calypso_legacy_launch_site_redirect',
+			{ source: 'server', original_url: req.originalUrl },
+			req
+		);
 		res.redirect( 302, getLegacyLaunchSiteRedirect( req.query, getLegacyFlowLocale( req.path ) ) );
 	} );
 

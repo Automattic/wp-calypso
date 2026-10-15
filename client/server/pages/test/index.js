@@ -1379,6 +1379,17 @@ describe( 'main app', () => {
 			);
 		} );
 
+		it( 'records the hit so we know when the legacy path is unused', async () => {
+			const { request } = await app.run( {
+				request: { url: '/start/launch-site/plans-launch' },
+			} );
+			expect( app.getMocks().analytics.tracks.recordEvent ).toHaveBeenCalledWith(
+				'calypso_legacy_launch_site_redirect',
+				{ source: 'server', original_url: '/start/launch-site/plans-launch' },
+				request
+			);
+		} );
+
 		it( 'drops legacy step segments and keeps the locale', async () => {
 			const { response } = await app.run( {
 				request: { url: '/start/launch-site/domains-launch/es/' },
