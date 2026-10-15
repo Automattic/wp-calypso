@@ -56,17 +56,30 @@ const getTextAreaPlaceholder = (
 
 export const OdieSendMessageButton = () => {
 	const divContainerRef = useRef< HTMLDivElement >( null );
-	const { trackEvent, chat, canConnectToZendesk, forceEmailSupport, isChatRestricted } =
-		useOdieAssistantContext();
+	const {
+		trackEvent,
+		chat,
+		canConnectToZendesk,
+		forceEmailSupport,
+		isChatRestricted,
+		isUserEligibleForPaidSupport,
+	} = useOdieAssistantContext();
 	const cantTransferToZendesk =
 		( chat.messages?.[ chat.messages.length - 1 ]?.context?.flags?.forward_to_human_support &&
 			! canConnectToZendesk ) ??
 		false;
 	const { sendMessage } = useSendChatMessage();
-	const isChatBusy = chat.status === 'loading' || chat.status === 'sending';
+	const [ searchParams ] = useSearchParams();
+	// Until a chat with a human has started, a message would go to the AI instead, so hold it.
+	const isStartingHumanChat =
+		chat.status === 'transfer' ||
+		( searchParams.get( 'provider' ) === 'zendesk' &&
+			chat.provider !== 'zendesk' &&
+			isUserEligibleForPaidSupport &&
+			! forceEmailSupport );
+	const isChatBusy = chat.status === 'loading' || chat.status === 'sending' || isStartingHumanChat;
 	const isInitialLoading = chat.status === 'loading';
 	const isLiveChat = chat.provider?.startsWith( 'zendesk' );
-	const [ searchParams ] = useSearchParams();
 	const queryFromParam = searchParams.get( 'query' ) || '';
 	// The query only starts a new conversation. It stays in the persisted route after the chat
 	// gets an interaction (and after an escalation), so it must not be applied to that chat again.
