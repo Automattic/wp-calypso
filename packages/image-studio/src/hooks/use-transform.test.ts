@@ -4,7 +4,7 @@ import { trackImageStudioError } from '../utils/tracking';
 import { useTransform } from './use-transform';
 
 let mockSelectorState: {
-	isOpen: boolean;
+	isExitConfirmed: boolean;
 	attachmentId: number | null;
 	originalAttachmentId: number | null;
 	currentImageUrl: string | null;
@@ -28,7 +28,7 @@ jest.mock( '@wordpress/data', () => ( {
 		store === 'core'
 			? {}
 			: {
-					getIsImageStudioOpen: () => mockSelectorState.isOpen,
+					getIsExitConfirmed: () => mockSelectorState.isExitConfirmed,
 					getImageStudioAttachmentId: () => mockSelectorState.attachmentId,
 					getOriginalAttachmentId: () => mockSelectorState.originalAttachmentId,
 					getImageStudioCurrentImageUrl: () => mockSelectorState.currentImageUrl,
@@ -72,7 +72,7 @@ describe( 'useTransform', () => {
 		jest.clearAllMocks();
 		jest.spyOn( window.console, 'error' ).mockImplementation( () => {} );
 		mockSelectorState = {
-			isOpen: true,
+			isExitConfirmed: false,
 			attachmentId: 42,
 			originalAttachmentId: 10,
 			currentImageUrl: 'https://example.com/current.png',
@@ -95,6 +95,8 @@ describe( 'useTransform', () => {
 				src: 'https://example.com/current.png',
 				modifiers: [ { type: 'rotate', args: { angle: 90 } } ],
 				title: 'Title',
+				caption: '',
+				description: '',
 				alt_text: 'Alt',
 			},
 		} );
@@ -178,22 +180,63 @@ describe( 'useTransform', () => {
 		expect( mockApiFetch ).toHaveBeenCalledTimes( 2 );
 	} );
 
-	it( 'deletes the new attachment when Image Studio closed during the request', async () => {
+	it( 'deletes the new attachment when exit starts during the request', async () => {
 		mockApiFetch.mockImplementation( async () => {
-			mockSelectorState.isOpen = false;
+			mockSelectorState.isExitConfirmed = true;
 			return { id: 99, source_url: 'https://example.com/edited.png' };
 		} );
 
 		const { result } = renderHook( () => useTransform() );
 		await result.current.applyImageTransform( { type: 'rotate', direction: 'right' } );
 
-		expect( mockDeleteEntityRecord ).toHaveBeenCalledWith( 'postType', 'attachment', 99, {
-			force: true,
-		} );
+		expect( mockDeleteEntityRecord ).toHaveBeenCalledWith(
+			'postType',
+			'attachment',
+			99,
+			{ force: true },
+			{ throwOnError: true }
+		);
 		expect( mockSetDraftIds ).not.toHaveBeenCalled();
 		expect( mockAddTransformedAttachmentId ).not.toHaveBeenCalled();
 		expect( mockUpdateImageStudioCanvas ).not.toHaveBeenCalled();
 		expect( mockAddNotice ).not.toHaveBeenCalled();
+		expect( mockSetImageStudioAiProcessing ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'leaves a reopened session alone and deletes the new attachment', async () => {
+		let resolveRequest: ( value: unknown ) => void = () => {};
+		mockApiFetch.mockReturnValue( new Promise( ( resolve ) => ( resolveRequest = resolve ) ) );
+
+		const { result, unmount } = renderHook( () => useTransform() );
+		const pending = result.current.applyImageTransform( { type: 'rotate', direction: 'right' } );
+		unmount();
+		renderHook( () => useTransform() );
+
+		resolveRequest( { id: 99, source_url: 'https://example.com/edited.png' } );
+		await pending;
+
+		expect( mockDeleteEntityRecord ).toHaveBeenCalledWith(
+			'postType',
+			'attachment',
+			99,
+			{ force: true },
+			{ throwOnError: true }
+		);
+		expect( mockSetDraftIds ).not.toHaveBeenCalled();
+		expect( mockUpdateImageStudioCanvas ).not.toHaveBeenCalled();
+		expect( mockSetImageStudioAiProcessing ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'explains that flipping needs a newer WordPress when core rejects the flip modifier', async () => {
+		mockApiFetch.mockRejectedValue( { code: 'rest_invalid_param' } );
+
+		const { result } = renderHook( () => useTransform() );
+		await result.current.applyImageTransform( { type: 'flip', axis: 'horizontal' } );
+
+		expect( mockAddNotice ).toHaveBeenCalledWith(
+			"This site's WordPress version can't flip images. Update WordPress to flip.",
+			'error'
+		);
 	} );
 
 	it( 'shows an error notice when there is no attachment to edit', async () => {
