@@ -85,6 +85,7 @@ const props = ( value: ReturnType< typeof useCredits > ) =>
 			onToggle: ( open: boolean ) => void;
 			onAction?: unknown;
 			upgradeUrl?: string;
+			onUpgradeClick?: () => void;
 			manageUrl?: string;
 		} >
 	 )?.props;
@@ -153,6 +154,7 @@ it.each( [ 'personal', 'premium', 'business' ] as const )(
 			href: props( result.current ).upgradeUrl,
 			target: '_blank',
 			rel: 'noopener noreferrer',
+			onClick: expect.any( Function ),
 		} );
 		act( () => expect( result.current.beforeSubmit() ).toBe( false ) );
 	}
@@ -1656,6 +1658,7 @@ describe( 'credits Tracks events', () => {
 		).toEqual( [
 			[ 'calypso_agents_manager_credits_notice_shown', 'low' ],
 			[ 'calypso_agents_manager_credits_notice_shown', 'zero' ],
+			[ 'calypso_agents_manager_credits_meter_opened', 'zero' ],
 		] );
 	} );
 
@@ -1846,17 +1849,172 @@ describe( 'credits Tracks events', () => {
 		] );
 	} );
 
-	it( 'records no popover opening when a reply uses the last credits', async () => {
-		fetchMock.mockResolvedValueOnce( response( healthy() ) );
-		const { result } = renderCredits( freshScope() );
-		await flush();
-		await receive( { ...exhausted(), plan_tier: 'business' } );
-		expect( props( result.current ).isOpen ).toBe( true );
-		expect(
-			creditsEvents().filter(
-				( [ name ] ) => name === 'calypso_agents_manager_credits_meter_opened'
-			)
-		).toEqual( [] );
+	describe( 'the popover opening by itself', () => {
+		const meterOpened = 'calypso_agents_manager_credits_meter_opened';
+		const opened = () => creditsEvents().filter( ( [ name ] ) => name === meterOpened );
+		const zero = () => ( { ...exhausted(), plan_tier: 'business' } );
+		const byItself = [
+			meterOpened,
+			{ ...base, state: 'zero', credits_left: 0, plan_tier: 'business', trigger: 'exhausted' },
+		];
+		const byClick = [ meterOpened, expect.objectContaining( { trigger: 'click', state: 'ok' } ) ];
+		// A visit that knows a healthy balance, with the chat showing.
+		const renderHealthy = async () => {
+			const scope = freshScope();
+			fetchMock.mockResolvedValueOnce( response( healthy() ) );
+			const view = renderCredits( scope );
+			await flush();
+			const showChat = ( isOpen: boolean, overrides = {} ) =>
+				view.rerender( { ...defaultOptions, ...scope, ...overrides, isOpen } );
+			const isPopoverOpen = () => props( view.result.current )?.isOpen;
+			return { scope, view, showChat, isPopoverOpen };
+		};
+
+		it( 'records once when a reply uses the last credits with the chat showing', async () => {
+			const { showChat, isPopoverOpen } = await renderHealthy();
+			await receive( zero() );
+			expect( isPopoverOpen() ).toBe( true );
+			expect( opened() ).toEqual( [ byItself ] );
+			showChat( false );
+			showChat( true );
+			expect( opened() ).toEqual( [ byItself ] );
+		} );
+
+		it( 'keeps the chat’s config while the popover opens by itself, by a click and closes', async () => {
+			const { view, isPopoverOpen } = await renderHealthy();
+			const config = mockConfig;
+			act( () => props( view.result.current ).onToggle( true ) );
+			act( () => props( view.result.current ).onToggle( false ) );
+			await receive( zero() );
+			expect( isPopoverOpen() ).toBe( true );
+			expect( mockConfig ).toBe( config );
+		} );
+
+		it.each( [ 'chat opening', 'window focus' ] )(
+			'records once when the check run on %s finds 0, after credits were used elsewhere',
+			async ( when ) => {
+				const { showChat, isPopoverOpen } = await renderHealthy();
+				if ( when === 'chat opening' ) {
+					showChat( false );
+					fetchMock.mockResolvedValueOnce( response( zero() ) );
+					showChat( true );
+				} else {
+					fetchMock.mockResolvedValueOnce( response( zero() ) );
+					act( () => window.dispatchEvent( new Event( 'focus' ) ) );
+				}
+				await flush();
+				expect( isPopoverOpen() ).toBe( true );
+				expect( opened() ).toEqual( [ byItself ] );
+			}
+		);
+
+		it( 'waits while a reply’s 0 opens it with the chat hidden, then records once when shown', async () => {
+			const { showChat, isPopoverOpen } = await renderHealthy();
+			showChat( false );
+			await receive( zero() );
+			expect( isPopoverOpen() ).toBe( true );
+			expect( opened() ).toEqual( [] );
+			showChat( true );
+			expect( opened() ).toEqual( [ byItself ] );
+			showChat( false );
+			showChat( true );
+			expect( opened() ).toEqual( [ byItself ] );
+		} );
+
+		it.each( [ 'a reply without a balance', 'the period resetting' ] )(
+			'records nothing when %s closes it before the chat is shown',
+			async ( cause ) => {
+				const { view, showChat, isPopoverOpen } = await renderHealthy();
+				showChat( false );
+				await receive( zero() );
+				expect( isPopoverOpen() ).toBe( true );
+				if ( cause === 'a reply without a balance' ) {
+					await receive( undefined );
+				} else {
+					act( () => jest.advanceTimersByTime( 10 * 24 * 60 * 60 * 1000 ) );
+				}
+				expect( view.result.current.trailingActions ).toBeUndefined();
+				showChat( true );
+				expect( opened() ).toEqual( [] );
+			}
+		);
+
+		it.each( [ 'site', 'user', 'agent' ] )(
+			'records nothing when the %s changes before the chat is shown',
+			async ( changed ) => {
+				const { scope, showChat, isPopoverOpen } = await renderHealthy();
+				const other = freshScope();
+				const overrides = {
+					site: {
+						siteKey: '456',
+						agentConfig: {
+							...scope.agentConfig,
+							authenticationScope: { siteId: 456, userId: scope.userId },
+						},
+					},
+					user: other,
+					agent: { agentConfig: { ...scope.agentConfig, agentId: 'other-agent' } },
+				}[ changed ];
+				showChat( false );
+				await receive( zero() );
+				expect( isPopoverOpen() ).toBe( true );
+				showChat( false, overrides );
+				await receive( { ...healthy(), blog_id: changed === 'site' ? 456 : 123 } );
+				showChat( true, overrides );
+				// Only the orchestrator has live credits, so another agent draws no meter at all.
+				expect( isPopoverOpen() ).not.toBe( true );
+				// Returning to the first site, user or agent starts a new visit, so the old opening can't come back.
+				showChat( false );
+				showChat( true );
+				expect( opened() ).toEqual( [] );
+			}
+		);
+
+		it.each( [ 'showing', 'hidden' ] )(
+			'records nothing when the popover was already open as a reply used the last credits, with the chat %s',
+			async ( chat ) => {
+				const { view, showChat, isPopoverOpen } = await renderHealthy();
+				act( () => props( view.result.current ).onToggle( true ) );
+				showChat( chat === 'showing' );
+				await receive( zero() );
+				showChat( true );
+				expect( isPopoverOpen() ).toBe( true );
+				expect( opened() ).toEqual( [ byClick ] );
+			}
+		);
+
+		it( 'records nothing for a visit that starts at 0', async () => {
+			const scope = freshScope();
+			fetchMock.mockResolvedValueOnce( response( zero() ) );
+			const view = renderCredits( scope );
+			await flush();
+			await receive( zero() );
+			fetchMock.mockResolvedValueOnce( response( zero() ) );
+			view.rerender( { ...defaultOptions, ...scope, isOpen: false } );
+			view.rerender( { ...defaultOptions, ...scope, isOpen: true } );
+			await flush();
+			expect( props( view.result.current ).isOpen ).toBe( false );
+			expect( opened() ).toEqual( [] );
+		} );
+
+		// Deciding on the render's closed popover would drop the opening queued after the close.
+		it.each( [ 'showing', 'hidden' ] )(
+			'records an opening queued in the same batch that closed the popover, with the chat %s',
+			async ( chat ) => {
+				const { view, showChat, isPopoverOpen } = await renderHealthy();
+				act( () => props( view.result.current ).onToggle( true ) );
+				showChat( chat === 'showing' );
+				act( () => {
+					props( view.result.current ).onToggle( false );
+					void mockConfig.onTaskUpdate?.( terminal( zero() ) );
+				} );
+				expect( isPopoverOpen() ).toBe( true );
+				showChat( true );
+				showChat( false );
+				showChat( true );
+				expect( opened() ).toEqual( [ byClick, byItself ] );
+			}
+		);
 	} );
 
 	it( 'records nothing without a live balance', async () => {
@@ -1865,6 +2023,78 @@ describe( 'credits Tracks events', () => {
 		expect( result.current.trailingActions ).toBeUndefined();
 		act( () => expect( result.current.beforeSubmit() ).toBe( true ) );
 		expect( creditsEvents() ).toEqual( [] );
+	} );
+
+	describe( 'Upgrade clicks', () => {
+		const clicked = 'calypso_agents_manager_credits_cta_clicked';
+		const clicks = () => creditsEvents().filter( ( [ name ] ) => name === clicked );
+		const upgrade = { cta_type: 'upgrade', ref: 'wp_ai_credits' };
+
+		it( 'records every click on the notice’s link with the balance’s state at the click', async () => {
+			fetchMock.mockResolvedValueOnce( response( low() ) );
+			const { result } = renderCredits( freshScope() );
+			await flush();
+			act( () => result.current.notice?.action?.onClick?.() );
+			act( () => result.current.notice?.action?.onClick?.() );
+			await receive( { ...exhausted(), plan_tier: 'personal' } );
+			act( () => result.current.notice?.action?.onClick?.() );
+			const lowClick = {
+				...base,
+				state: 'low',
+				credits_left: 5,
+				plan_tier: 'personal',
+				...upgrade,
+			};
+			expect( clicks() ).toEqual( [
+				[ clicked, lowClick ],
+				[ clicked, lowClick ],
+				[ clicked, { ...lowClick, state: 'zero', credits_left: 0 } ],
+			] );
+		} );
+
+		it( 'records a click on the popover’s link, as ok on a healthy balance', async () => {
+			fetchMock.mockResolvedValueOnce( response( healthy() ) );
+			const { result } = renderCredits( freshScope() );
+			await flush();
+			expect( result.current.notice ).toBeUndefined();
+			expect( props( result.current ).upgradeUrl ).toBeDefined();
+			act( () => props( result.current ).onUpgradeClick?.() );
+			expect( clicks() ).toEqual( [
+				[
+					clicked,
+					{
+						...base,
+						state: 'ok',
+						credits_left: CREDITS_LOW_BALANCE,
+						plan_tier: 'business',
+						...upgrade,
+					},
+				],
+			] );
+		} );
+
+		it( 'records nothing from a previous site’s links', async () => {
+			const scope = freshScope();
+			fetchMock.mockResolvedValueOnce( response( low() ) );
+			const view = renderCredits( scope );
+			await flush();
+			const oldNoticeClick = view.result.current.notice?.action?.onClick;
+			const oldMeterClick = props( view.result.current ).onUpgradeClick;
+			expect( oldNoticeClick ).toBeDefined();
+			expect( oldMeterClick ).toBeDefined();
+			view.rerender( {
+				...defaultOptions,
+				siteKey: '456',
+				userId: scope.userId,
+				agentConfig: { ...agentConfig, authenticationScope: { siteId: 456, userId: scope.userId } },
+			} );
+			await receive( { ...low(), blog_id: 456 } );
+			act( () => {
+				oldNoticeClick?.();
+				oldMeterClick?.();
+			} );
+			expect( clicks() ).toEqual( [] );
+		} );
 	} );
 } );
 

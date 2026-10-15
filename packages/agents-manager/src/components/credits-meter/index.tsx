@@ -22,6 +22,8 @@ interface Props {
 	onAction?: () => void;
 	/** Plans page for a live balance with a supported upgradeable tier. */
 	upgradeUrl?: string;
+	/** Runs when that link is clicked, for example to record the click. */
+	onUpgradeClick?: () => void;
 	/** Shown instead of a CTA to people who can't upgrade the site themselves. */
 	purchaseHint?: string;
 	/** Full balance and purchases page, when available. */
@@ -126,6 +128,7 @@ export default function CreditsMeter( {
 	onToggle,
 	onAction,
 	upgradeUrl,
+	onUpgradeClick,
 	purchaseHint,
 	manageUrl,
 }: Props ) {
@@ -196,7 +199,7 @@ export default function CreditsMeter( {
 						<Button
 							className="agents-manager-credits-meter__cta"
 							variant={ upgradeUrl || isFree ? 'primary' : 'secondary' }
-							onClick={ onAction }
+							onClick={ upgradeUrl ? onUpgradeClick : onAction }
 							href={ upgradeUrl }
 							target={ upgradeUrl ? '_blank' : undefined }
 							rel={ upgradeUrl ? 'noopener noreferrer' : undefined }
