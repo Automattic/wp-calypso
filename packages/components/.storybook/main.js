@@ -8,5 +8,4 @@ export default {
 			'./**/*.mdx',
 		],
 	} ),
-	docs: { autodocs: true },
 };
