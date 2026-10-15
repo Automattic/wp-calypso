@@ -365,9 +365,11 @@ const SignupFormSocialFirst = ( {
 						{ emailLoginBlock }
 					</>
 				) }
-				{ ( isEmailFirstVariant || showLoginLink ) && loginLinkParagraph }
+				{ isEmailFirstVariant && loginLinkParagraph }
 			</div>
 			<div className={ getVisibilityClassName( 'email' ) }>{ emailScreen }</div>
+			{ /* Below both screens, so it stays on screen after "Continue with email". */ }
+			{ showLoginLink && ! isEmailFirstVariant && loginLinkParagraph }
 		</div>
 	);
 };

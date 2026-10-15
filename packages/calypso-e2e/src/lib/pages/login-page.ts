@@ -217,10 +217,12 @@ export class LoginPage {
 
 	/**
 	 * Clicks the link through to signup: "Sign up" in the main login view's footer, or
-	 * "Create an account" in the mid-flow views' top bar.
+	 * "Create an account" in the mid-flow views' top bar. The Woo 2FA view has both.
 	 */
 	async clickCreateNewAccount(): Promise< Locator > {
-		const locator = this.page.getByRole( 'link', { name: /^(Create an account|Sign up)$/ } );
+		const locator = this.page
+			.getByRole( 'link', { name: /^(Create an account|Sign up)$/ } )
+			.first();
 		await locator.waitFor();
 		await locator.click();
 

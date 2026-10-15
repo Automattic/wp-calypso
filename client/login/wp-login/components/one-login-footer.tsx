@@ -1,4 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { type JSX } from 'react';
 import { useSelector } from 'react-redux';
@@ -13,6 +14,11 @@ interface OneLoginFooterProps {
 	 * it beside the password field.
 	 */
 	lostPasswordLink?: JSX.Element;
+	/**
+	 * Hides `lostPasswordLink` at 960px and up. Pass it when the form carries its own copy
+	 * there.
+	 */
+	lostPasswordLinkMobileOnly?: boolean;
 	/**
 	 * When `isLoginView` is false, this is the "back to login" link.
 	 */
@@ -48,10 +54,10 @@ const SignUpPrompt = ( { signupUrl }: { signupUrl?: string } ) => {
 
 	return (
 		<p className="one-login__footer-signup">
-			{ translate( "Don't have an account? {{link}}Sign up{{/link}}", {
+			{ translate( 'Don’t have an account? {{signupLink}}Sign up{{/signupLink}}', {
 				components: {
 					// eslint-disable-next-line jsx-a11y/anchor-has-content
-					link: <a href={ href } onClick={ onClick } rel="external" />,
+					signupLink: <a href={ href } onClick={ onClick } rel="external" />,
 				},
 			} ) }
 		</p>
@@ -60,6 +66,7 @@ const SignUpPrompt = ( { signupUrl }: { signupUrl?: string } ) => {
 
 const OneLoginFooter = ( {
 	lostPasswordLink,
+	lostPasswordLinkMobileOnly,
 	loginLink,
 	signupUrl,
 	isLoginView,
@@ -73,7 +80,11 @@ const OneLoginFooter = ( {
 		// hook would jump on hydration.
 		return (
 			<div className="one-login__footer">
-				<div className="one-login__footer-links-wrapper one-login__footer-mobile">
+				<div
+					className={ clsx( 'one-login__footer-links-wrapper', {
+						'one-login__footer-mobile': lostPasswordLinkMobileOnly,
+					} ) }
+				>
 					{ lostPasswordLink }
 				</div>
 				<SignUpPrompt signupUrl={ signupUrl } />

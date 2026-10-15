@@ -10,6 +10,7 @@ import { connect } from 'react-redux';
 import LoginBlock from 'calypso/blocks/login';
 import PasswordResetSuccessNotice from 'calypso/blocks/login/password-reset-success-notice';
 import SignupExistingAccountNotice from 'calypso/blocks/login/signup-existing-account-notice';
+import shouldShowContinueAsUser from 'calypso/blocks/login/utils/should-show-continue-as-user';
 import DocumentHead from 'calypso/components/data/document-head';
 import LocaleSuggestions from 'calypso/components/locale-suggestions';
 import Main from 'calypso/components/main';
@@ -34,7 +35,7 @@ import {
 } from 'calypso/state/analytics/actions';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { wasManualRenewalImmediateLoginAttempted } from 'calypso/state/immediate-login/selectors';
-import { getRedirectToOriginal } from 'calypso/state/login/selectors';
+import { getRedirectToOriginal, isTwoFactorEnabled } from 'calypso/state/login/selectors';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
@@ -238,6 +239,20 @@ export class Login extends Component {
 		);
 	}
 
+	showsContinueAsUser() {
+		return shouldShowContinueAsUser( {
+			socialConnect: this.props.socialConnect,
+			oauth2Client: this.props.oauth2Client,
+			isWCCOM: this.props.isWCCOM,
+			isBlazePro: this.props.isBlazePro,
+			isJetpack: this.props.isJetpack,
+			fromSite: this.props.fromSite,
+			twoFactorEnabled: this.props.twoFactorEnabled,
+			loginEmailAddress: this.props.currentQuery?.email_address,
+			isLoggedIn: this.props.isUserLoggedIn,
+		} );
+	}
+
 	getLoginLink() {
 		return (
 			<a
@@ -302,6 +317,13 @@ export class Login extends Component {
 			! currentRoute.startsWith( '/log-in/webauthn' ) &&
 			! currentRoute.startsWith( '/log-in/backup' );
 
+		// Main login view only. Gravatar-powered clients and Woo render their own
+		// lost-password link.
+		const lostPasswordFormLink =
+			isLoginView && ! isGravPoweredClient && ! this.props.isWoo
+				? this.getLostPasswordFormLink()
+				: undefined;
+
 		return (
 			<LoginBlock
 				action={ action }
@@ -316,13 +338,7 @@ export class Login extends Component {
 				socialServiceResponse={ socialServiceResponse }
 				domain={ domain }
 				fromSite={ fromSite }
-				// Main login view only. Gravatar-powered clients and Woo render their own
-				// lost-password link.
-				lostPasswordLink={
-					isLoginView && ! isGravPoweredClient && ! this.props.isWoo
-						? this.getLostPasswordFormLink()
-						: undefined
-				}
+				lostPasswordLink={ lostPasswordFormLink }
 				footer={
 					isGravPoweredLoginPage ? (
 						<GravPoweredLoginBlockFooter />
@@ -331,6 +347,7 @@ export class Login extends Component {
 							isLoginView={ isLoginView }
 							signupUrl={ signupUrl }
 							lostPasswordLink={ this.getLostPasswordLink() }
+							lostPasswordLinkMobileOnly={ !! lostPasswordFormLink }
 							loginLink={ this.getLoginLink() }
 							supportLink={ this.getSupportLink() }
 						/>
@@ -436,8 +453,9 @@ export class Login extends Component {
 						connectorPlugins={ this.props.connectorPlugins }
 						signupUrl={ this.props.signupUrl }
 						isLostPasswordView={ isLostPasswordView }
-						// Main login view only: on desktop its footer carries the route to signup.
-						signupLinkMobileOnly={ isLoginView }
+						// Main login view only, and only when the block renders its footer: the
+						// "Continue as" screen has none, so it keeps the top-bar link.
+						signupLinkMobileOnly={ isLoginView && ! this.showsContinueAsUser() }
 						noThanksRedirectUrl={ this.getNoThanksRedirectUrl() }
 						subHeadingProminent={ this.props.isFromJetpackConnector && ! isLostPasswordView }
 						notice={ notices }
@@ -601,6 +619,7 @@ export default connect(
 			partnerConfig: detectPartnerConfig( oauth2Client ),
 			isManualRenewalImmediateLoginAttempt: wasManualRenewalImmediateLoginAttempted( state ),
 			isUserLoggedIn: isUserLoggedIn( state ),
+			twoFactorEnabled: isTwoFactorEnabled( state ),
 			isWooPaymentsFlow: isWooCommercePaymentsOnboardingFlow( state ),
 		};
 	},

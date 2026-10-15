@@ -59,6 +59,7 @@ import ContinueAsUser from './continue-as-user';
 import ErrorNotice from './error-notice';
 import LoginForm from './login-form';
 import SignupExistingAccountNotice from './signup-existing-account-notice';
+import shouldShowContinueAsUser from './utils/should-show-continue-as-user';
 import { shouldUseMagicCode } from './utils/should-use-magic-code';
 
 import './style.scss';
@@ -214,32 +215,8 @@ class Login extends Component {
 		this.handleTwoFactorRequested( 'link' );
 	};
 
-	showContinueAsUser = () => {
-		const {
-			isJetpack,
-			oauth2Client,
-			socialConnect,
-			twoStepNonce,
-			fromSite,
-			currentUser,
-			twoFactorEnabled,
-			loginEmailAddress,
-			isWCCOM,
-			isBlazePro,
-		} = this.props;
-
-		return (
-			! twoStepNonce &&
-			! socialConnect &&
-			// Show the continue as user flow WooCommerce and Blaze Pro but not for other OAuth2 clients
-			! ( oauth2Client && ! isWCCOM && ! isBlazePro ) &&
-			! isJetpack &&
-			! fromSite &&
-			! twoFactorEnabled &&
-			! loginEmailAddress &&
-			currentUser
-		);
-	};
+	showContinueAsUser = () =>
+		shouldShowContinueAsUser( { ...this.props, isLoggedIn: !! this.props.currentUser } );
 
 	handleTwoFactorRequested = ( authType ) => {
 		if ( this.props.onTwoFactorRequested ) {

@@ -148,6 +148,18 @@ describe( 'SignupFormSocialFirst', () => {
 			);
 		} );
 
+		test( 'keeps the paragraph on screen after "Continue with email"', async () => {
+			const { container } = render( <SignupFormSocialFirst { ...defaultProps } showLoginLink /> );
+
+			await userEvent.click( screen.getByRole( 'button', { name: /Continue with email/i } ) );
+
+			const visibleScreen = container.querySelector( '.signup-form-social-first-screen.visible' );
+			expect( visibleScreen?.querySelector( 'input[type="email"]' ) ).toBeInTheDocument();
+			const loginLink = container.querySelector( loginLinkSelector );
+			expect( loginLink ).toBeInTheDocument();
+			expect( loginLink?.closest( '.signup-form-social-first-screen' ) ).toBeNull();
+		} );
+
 		test( 'omits the paragraph when unset', () => {
 			const { container } = render( <SignupFormSocialFirst { ...defaultProps } /> );
 
