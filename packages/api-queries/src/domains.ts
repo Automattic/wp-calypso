@@ -71,18 +71,20 @@ const selectBundleTriggers = ( data: BundleMetadata ) => data.bundle_triggers;
 export const bundleSuggestionQuery = (
 	query: string,
 	params: Partial< DomainSuggestionQuery > = {}
-) => ( {
-	...bundleMetadataQuery( query, params ),
-	select: selectBundleSuggestion,
-} );
+) =>
+	queryOptions( {
+		...bundleMetadataQuery( query, params ),
+		select: selectBundleSuggestion,
+	} );
 
 export const bundleTriggersQuery = (
 	query: string,
 	params: Partial< DomainSuggestionQuery > = {}
-) => ( {
-	...bundleMetadataQuery( query, params ),
-	select: selectBundleTriggers,
-} );
+) =>
+	queryOptions( {
+		...bundleMetadataQuery( query, params ),
+		select: selectBundleTriggers,
+	} );
 
 export const bundleForDomainQuery = ( fqdn: string ) =>
 	queryOptions( {

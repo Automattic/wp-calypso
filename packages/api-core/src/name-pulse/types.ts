@@ -9,9 +9,6 @@ export interface NamePulseSuggestionsQuery {
 	/** AI-generated ("creative") suggestions. */
 	use_ai?: boolean;
 
-	/** How long the endpoint waits on its providers, in milliseconds. */
-	timeout?: number;
-
 	/** Endings without the dot, e.g. `com`. AI suggestions ignore it. */
 	tlds?: string[];
 }

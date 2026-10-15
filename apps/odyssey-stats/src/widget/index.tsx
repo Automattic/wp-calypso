@@ -113,7 +113,12 @@ export function init() {
 							icon={ trendingUp }
 							action={ <DateRangeControl value={ rangeId } onChange={ onRangeChange } /> }
 						>
-							<MiniChart siteId={ currentSiteId } range={ range } />
+							<MiniChart
+								siteId={ currentSiteId }
+								statsBaseUrl={ statsBaseUrl }
+								range={ range }
+								gmtOffset={ gmtOffset }
+							/>
 						</WidgetSection>
 						<Highlights
 							siteId={ currentSiteId }

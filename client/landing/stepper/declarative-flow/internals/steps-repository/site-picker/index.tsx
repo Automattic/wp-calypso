@@ -22,13 +22,14 @@ import type { SiteExcerptData } from '@automattic/sites';
 import './styles.scss';
 
 const SitePickerStep: Step< {
+	accepts: { skipConfirmation?: boolean };
 	submits: {
 		action: 'update-query' | 'create-site' | 'select-site';
 		queryParams?: Partial< SitesDashboardQueryParams >;
 		site?: SiteExcerptData;
 		host?: string;
 	};
-} > = function SitePickerStep( { navigation } ) {
+} > = function SitePickerStep( { navigation, skipConfirmation = false } ) {
 	const { __ } = useI18n();
 	const urlQueryParams = useQuery();
 	const page = Number( urlQueryParams.get( 'page' ) ) || 1;
@@ -66,7 +67,11 @@ const SitePickerStep: Step< {
 
 	const onQueryParamChange = ( params: Partial< SitesDashboardQueryParams > ) => {
 		recordTracksEvent( 'calypso_import_site_picker_query_param_change', params );
-		navigation.submit?.( { action: 'update-query', queryParams: params } );
+		navigation.submit?.( {
+			action: 'update-query',
+			queryParams: params,
+			shouldSkipSubmitTracking: true,
+		} );
 	};
 
 	const createNewSite = () => {
@@ -82,10 +87,13 @@ const SitePickerStep: Step< {
 			title: site?.title,
 		} );
 		const host = hostingProviderData?.hosting_provider?.slug;
-		navigation.submit?.( { action: 'select-site', site, host } );
+		navigation.submit?.( { action: 'select-site', site, host, shouldSkipSubmitTracking: true } );
 	};
 
 	const onSelectSite = ( site: SiteExcerptData ) => {
+		if ( skipConfirmation ) {
+			return selectSite( site );
+		}
 		setDestinationSite( site );
 		setShowConfirmModal( true );
 	};
@@ -121,7 +129,7 @@ const SitePickerStep: Step< {
 			<DocumentHead title={ __( 'Pick your destination' ) } />
 			<StepContainer
 				stepName="site-picker"
-				goBack={ () => history.back() }
+				goBack={ navigation.goBack ?? ( () => history.back() ) }
 				stepContent={
 					<SitePicker
 						page={ page }

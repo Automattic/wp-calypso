@@ -47,9 +47,7 @@ jest.mock( '../../utils/tracks', () => ( {
 } ) );
 jest.mock( '../../hooks/use-has-ai-chat-entry-button', () => ( {
 	__esModule: true,
-	default: () =>
-		!! globalThis.document.getElementById( 'wp-admin-bar-agents-manager-ai-chat' ) ||
-		!! globalThis.document.querySelector( '.masterbar__item-agents-manager-ai-chat' ),
+	default: () => !! globalThis.document.getElementById( 'wp-admin-bar-agents-manager-ai-chat' ),
 } ) );
 jest.mock( '../chat-header/style.scss', () => ( {} ) );
 
@@ -58,12 +56,6 @@ import ChatHeader from '../chat-header';
 function installAdminBarTrigger() {
 	const el = document.createElement( 'div' );
 	el.id = 'wp-admin-bar-agents-manager-ai-chat';
-	document.body.appendChild( el );
-}
-
-function installMasterbarTrigger() {
-	const el = document.createElement( 'div' );
-	el.className = 'masterbar__item-agents-manager-ai-chat';
 	document.body.appendChild( el );
 }
 
@@ -88,7 +80,6 @@ describe( 'ChatHeader', () => {
 		mockIsInternalOnly = false;
 		document.getElementById( 'wp-admin-bar-agents-manager-ai-chat' )?.remove();
 		delete ( globalThis as { agentsManagerData?: unknown } ).agentsManagerData;
-		document.querySelector( '.masterbar__item-agents-manager-ai-chat' )?.remove();
 	} );
 
 	it.each( [ true, false ] )(
@@ -154,14 +145,6 @@ describe( 'ChatHeader', () => {
 		fireEvent.click( screen.getByText( 'Minimize' ) );
 
 		expect( mockSetIsMinimized ).toHaveBeenCalledWith( true );
-	} );
-
-	it( 'shows the Minimize button with the Calypso masterbar trigger', () => {
-		installMasterbarTrigger();
-
-		renderChatHeader();
-
-		expect( screen.getByText( 'Minimize' ) ).toBeInTheDocument();
 	} );
 
 	it( 'hides the Minimize button without an entry-point trigger', () => {

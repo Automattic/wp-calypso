@@ -81,9 +81,17 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 
 	/**
 	 * Handle the case where we are directly forwarding to Zendesk without AI first.
+	 * Check eligibility here too: the effect above only edits the params, so `isForwardingToZendesk`
+	 * stays true for this render, and the chat can be loaded without paid support (an open human chat).
 	 */
 	useEffect( () => {
-		if ( isForwardingToZendesk && ! chat.conversationId && isChatLoaded && ! forceEmailSupport ) {
+		if (
+			isForwardingToZendesk &&
+			isUserEligibleForPaidSupport &&
+			! chat.conversationId &&
+			isChatLoaded &&
+			! forceEmailSupport
+		) {
 			searchParams.delete( 'provider' );
 			searchParams.set( 'direct-zd-chat', '1' );
 			setSearchParams( searchParams );
@@ -115,6 +123,7 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 	}, [
 		navigate,
 		isForwardingToZendesk,
+		isUserEligibleForPaidSupport,
 		isChatLoaded,
 		chat?.conversationId,
 		createZendeskConversation,

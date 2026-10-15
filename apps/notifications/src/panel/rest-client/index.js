@@ -11,6 +11,8 @@ import { fetchNote, listNotes, sendLastSeenTime, subscribeToNoteStream } from '.
 
 const debug = debugFactory( 'notifications:rest-client' );
 
+const NOTE_FIELDS = 'id,type,unread,body,subject,timestamp,meta,note_hash,variant';
+
 const settings = {
 	max_refresh_ms: 180000,
 	refresh_ms: 30000,
@@ -22,7 +24,7 @@ const settings = {
 	max_limit: 1000,
 };
 
-export function Client() {
+export function Client( { includeNoteContext = false } = {} ) {
 	this.noteList = [];
 	this.gettingNotes = false;
 	this.timeout = false;
@@ -46,6 +48,7 @@ export function Client() {
 	this.subscribed = false;
 	this.firstRender = true;
 	this.locale = null;
+	this.includeNoteContext = includeNoteContext;
 	this.inbox = [];
 
 	window.addEventListener( 'storage', handleStorageEvent.bind( this ) );
@@ -175,7 +178,7 @@ function getNote( note_id, livePushMessage ) {
 	}
 
 	const parameters = {
-		fields: 'id,type,unread,body,subject,timestamp,meta,note_hash,variant',
+		fields: getNoteFields.call( this ),
 	};
 
 	fetchNote( note_id, parameters, ( error, data ) => {
@@ -210,7 +213,7 @@ function getNotes( before, livePushMessages = [] ) {
 	const loaded = this.noteList.length || notes.length;
 
 	const parameters = {
-		fields: 'id,type,unread,body,subject,timestamp,meta,note_hash,variant',
+		fields: getNoteFields.call( this ),
 		// Older pages request what's left under the cap, plus one for the anchor an
 		// inclusive `before` echoes back (de-duped below); the no-`before` refresh
 		// requests a small fixed head window.
@@ -469,7 +472,7 @@ function getFilteredNotes( before ) {
 	const filteredIds = getFilteredNoteIds( store.getState(), key ) ?? [];
 
 	const parameters = {
-		fields: 'id,type,unread,body,subject,timestamp,meta,note_hash,variant',
+		fields: getNoteFields.call( this ),
 		// No `before`: re-request a small fixed head window. With it: page an older
 		// slice, capped to what's left under max_limit plus one for the anchor an
 		// inclusive `before` echoes back (de-duped below).
@@ -870,6 +873,10 @@ function setVisibility( { isShowing, isVisible } ) {
 
 function setLocale( locale ) {
 	this.locale = locale;
+}
+
+function getNoteFields() {
+	return this.includeNoteContext ? `${ NOTE_FIELDS },note_context` : NOTE_FIELDS;
 }
 
 Client.prototype.main = main;

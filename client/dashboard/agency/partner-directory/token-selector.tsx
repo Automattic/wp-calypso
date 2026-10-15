@@ -1,6 +1,7 @@
 import { FormTokenField } from '@wordpress/components';
-import { useEffect, useMemo, useRef } from 'react';
-import type { TokenItem } from '@wordpress/components/build-types/form-token-field/types';
+import { useEffect, useMemo, useRef, type ComponentProps } from 'react';
+
+type Tokens = NonNullable< ComponentProps< typeof FormTokenField >[ 'value' ] >;
 
 interface TokenSelectorProps {
 	label: string;
@@ -41,7 +42,7 @@ export default function TokenSelector( {
 		options[ slug ] ? [ options[ slug ] ] : []
 	);
 
-	const onLabelsChange = ( tokens: ( string | TokenItem )[] ) => {
+	const onLabelsChange = ( tokens: Tokens ) => {
 		const slugs = tokens.flatMap( ( token ) => {
 			const slug = slugsByLabel[ typeof token === 'string' ? token : token.value ];
 			return slug ? [ slug ] : [];

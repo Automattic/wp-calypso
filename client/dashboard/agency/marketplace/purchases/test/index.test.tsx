@@ -294,4 +294,42 @@ describe( '<MarketplacePurchases>', () => {
 		);
 		expect( notice ).toBeVisible();
 	} );
+
+	describe( 'Manage in Pressable', () => {
+		const DAY_MS = 24 * 60 * 60 * 1000;
+
+		function mockOwnerAgency() {
+			nock( API )
+				.get( '/wpcom/v2/agency' )
+				.query( true )
+				.reply( 200, [ { id: AGENCY_ID, user: { role: 'a4a_administrator' } } ] )
+				.persist();
+		}
+
+		function pressableLicenseAttached( daysAgo: number ) {
+			// The endpoint reports UTC times without a zone: "YYYY-MM-DD HH:MM:SS".
+			const attachedAt = new Date( Date.now() - daysAgo * DAY_MS )
+				.toISOString()
+				.replace( 'T', ' ' )
+				.slice( 0, 19 );
+			return {
+				...unassignedWpcomLicense,
+				license_key: 'pressable-wp-1_abc',
+				product: 'Pressable Signature 1',
+				attached_at: attachedAt,
+			};
+		}
+
+		test( 'asks for feedback within a week of the purchase', async () => {
+			mockOwnerAgency();
+			mockPreferences();
+			mockLicenses( [ pressableLicenseAttached( 2 ) ] );
+			mockPendingSites( 'pending' );
+
+			render( <MarketplacePurchases /> );
+			await userEvent.click( await screen.findByRole( 'link', { name: /Manage in Pressable/ } ) );
+
+			expect( await screen.findByRole( 'dialog', { name: 'Purchase complete!' } ) ).toBeVisible();
+		} );
+	} );
 } );

@@ -10,6 +10,10 @@ describe( 'getPlansIntent', () => {
 		window.localStorage.clear();
 	} );
 
+	it( 'uses the shared paid migration grid for site migration', () => {
+		expect( getPlansIntent( 'site-migration' ) ).toBe( 'plans-migration' );
+	} );
+
 	it( 'maps the ai-site-builder-onboarding flow to the four paid plans intent', () => {
 		expect( getPlansIntent( 'ai-site-builder-onboarding' ) ).toBe( 'plans-ai-assembler-paid-only' );
 	} );

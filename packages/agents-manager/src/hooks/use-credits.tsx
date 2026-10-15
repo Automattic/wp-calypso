@@ -1,6 +1,6 @@
 import { useAgentChat } from '@automattic/agenttic-client';
 import { useCallback, useEffect, useMemo, useRef, useState } from '@wordpress/element';
-import { __, _n, sprintf } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import CreditsMeter from '../components/credits-meter';
 import { API_BASE_URL } from '../constants';
 import { NO_SITE } from '../utils/agent-session';
@@ -9,15 +9,20 @@ import {
 	type CreditsStatus,
 	buildMockCreditsStatus,
 	clampPercent,
-	formatCreditsShort,
 	formatPercent,
 	isCreditsExhausted,
 	isCreditsLow,
 } from '../utils/credits';
 import {
+	type CreditsAccess,
+	getCreditsCtaType,
+	getCreditsNoticeMessage,
+	getCreditsPurchaseOptions,
+	parseCreditsAccess,
+} from '../utils/credits-access';
+import {
 	type CreditsState,
 	type CreditsTracksEventName,
-	getCreditsCtaType,
 	getCreditsState,
 	getCreditsUserRole,
 	getTaskRefusalCode,
@@ -25,6 +30,7 @@ import {
 } from '../utils/credits-tracks';
 import { getAgentsManagerInlineData } from '../utils/get-agents-manager-inline-data';
 import {
+	CREDITS_UPGRADE_SOURCE,
 	buildLiveCreditsStatus,
 	getLiveCreditSiteId,
 	getLiveCreditsUpgradeUrl,
@@ -88,7 +94,7 @@ interface UseCreditsOptions {
 	isNoticeVisible: boolean;
 }
 
-interface UseCreditsResult {
+export interface UseCreditsResult {
 	chat: UseAgentChatReturn;
 	/** Dot + popover; hidden until this site returns valid allowance metadata. */
 	trailingActions?: TrailingActions;
@@ -141,11 +147,7 @@ export function useCredits( {
 	const balanceRequest = useRef< AbortController | undefined >( undefined );
 	const [ balance, setBalance ] = useState< { scope: typeof scope; snapshot: CreditSnapshot } >();
 	// Who may buy, from the balance read. Terminal updates don't carry it.
-	const [ upgradeAccess, setUpgradeAccess ] = useState< {
-		scope: typeof scope;
-		canBuyCredits?: boolean;
-		canUpgrade?: boolean;
-	} >();
+	const [ upgradeAccess, setUpgradeAccess ] = useState< { scope: typeof scope } & CreditsAccess >();
 	const upgradeAccessRef = useRef( upgradeAccess );
 	upgradeAccessRef.current = upgradeAccess;
 	const [ seed ] = useState( readMockSeed );
@@ -176,12 +178,19 @@ export function useCredits( {
 			setDismissedNoticeScope( scope );
 		}
 	}, [ scope, recordCreditsEvent ] );
-	const [ popoverScope, setPopoverScope ] = useState< typeof scope >();
-	const isPopoverOpen = popoverScope === scope;
+	// A new object per opening, so an opening by itself records once and a close drops it unrecorded.
+	const [ popover, setPopover ] = useState< { scope: typeof scope; byItself: boolean } >();
+	const isPopoverOpen = popover?.scope === scope;
 	const setIsPopoverOpen = useCallback(
-		( open: boolean ) => {
+		( open: boolean, { byItself = false } = {} ) => {
 			if ( currentScope.current === scope && scope.active ) {
-				setPopoverScope( open ? scope : undefined );
+				// Read through the updater, so this callback, and the chat config built on it, stays stable.
+				setPopover( ( current ) => {
+					if ( ! open ) {
+						return undefined;
+					}
+					return current?.scope === scope ? current : { scope, byItself };
+				} );
 			}
 		},
 		[ scope ]
@@ -277,12 +286,7 @@ export function useCredits( {
 			}
 			// A failed read keeps the last answer; checkout still enforces it.
 			if ( data ) {
-				setUpgradeAccess( {
-					scope,
-					canBuyCredits:
-						typeof data.can_buy_credits === 'boolean' ? data.can_buy_credits : undefined,
-					canUpgrade: typeof data.can_upgrade === 'boolean' ? data.can_upgrade : undefined,
-				} );
+				setUpgradeAccess( { scope, ...parseCreditsAccess( data ) } );
 			}
 			const snapshot = parseCreditSnapshot( data?.ai_credits, scope.siteId );
 			if ( snapshot && Date.parse( snapshot.resets_at ) > Date.now() ) {
@@ -398,14 +402,10 @@ export function useCredits( {
 	const isLow = status ? isCreditsLow( status ) : false;
 	const planUpgradeUrl = status ? getLiveCreditsUpgradeUrl( status, siteId, site ) : undefined;
 	const access = upgradeAccess?.scope === scope ? upgradeAccess : undefined;
-	// Upgrade only when checkout would accept it; everyone else is told who can buy, or nothing when the server can’t say.
-	const upgradeUrl = access?.canUpgrade === true ? planUpgradeUrl : undefined;
-	let askToUpgrade: 'site-admin' | 'plan-owner' | undefined;
-	if ( planUpgradeUrl && access?.canBuyCredits === false ) {
-		askToUpgrade = 'site-admin';
-	} else if ( planUpgradeUrl && access?.canUpgrade === false ) {
-		askToUpgrade = 'plan-owner';
-	}
+	const { upgradeUrl, askToUpgrade, purchaseHint } = getCreditsPurchaseOptions(
+		planUpgradeUrl,
+		access
+	);
 	// Mock and free balances send no events.
 	liveCredits.current = siteId && status ? { status, siteId, agentConfig } : undefined;
 
@@ -419,16 +419,29 @@ export function useCredits( {
 			isExhausted &&
 			! previous.isExhausted
 		) {
-			setIsPopoverOpen( true );
+			setIsPopoverOpen( true, { byItself: true } );
 		}
 		wasExhaustedRef.current = { scope, hasBalance: !! status, isExhausted };
 	}, [ scope, status, isExhausted, setIsPopoverOpen ] );
+
+	// That opening records once, when the chat first draws it, since a reply can
+	// drain the balance while the chat is collapsed or minimised.
+	const recordedOpeningRef = useRef< typeof popover >( undefined );
+	useEffect( () => {
+		if ( ! isOpen || ! isPopoverOpen || ! popover?.byItself ) {
+			return;
+		}
+		if ( recordedOpeningRef.current !== popover ) {
+			recordedOpeningRef.current = popover;
+			recordCreditsEvent( 'calypso_agents_manager_credits_meter_opened', { trigger: 'exhausted' } );
+		}
+	}, [ isOpen, isPopoverOpen, popover, recordCreditsEvent ] );
 
 	const handleAction = useCallback( () => {
 		setIsPopoverOpen( false );
 	}, [ setIsPopoverOpen ] );
 
-	// Only the dot opens the popover by a click; opening on depletion above records nothing.
+	// Only a click that opens the popover records here; an opening by itself records above.
 	const toggleMeter = useCallback(
 		( open: boolean ) => {
 			if ( open && ! isPopoverOpen ) {
@@ -439,15 +452,13 @@ export function useCredits( {
 		[ isPopoverOpen, recordCreditsEvent, setIsPopoverOpen ]
 	);
 
-	let purchaseHint: string | undefined;
-	if ( askToUpgrade === 'site-admin' ) {
-		purchaseHint = __( 'Ask a site admin to add more.', __i18n_text_domain__ );
-	} else if ( askToUpgrade === 'plan-owner' ) {
-		purchaseHint = __(
-			'This plan was purchased by a different WordPress.com account. To manage this plan, log in to that account or contact the account owner.',
-			__i18n_text_domain__
-		);
-	}
+	// Every click counts; the link opens in a new tab without waiting for the event.
+	const recordUpgradeClick = useCallback( () => {
+		recordCreditsEvent( 'calypso_agents_manager_credits_cta_clicked', {
+			cta_type: 'upgrade',
+			ref: CREDITS_UPGRADE_SOURCE,
+		} );
+	}, [ recordCreditsEvent ] );
 
 	const trailingActions = useMemo< TrailingActions | undefined >( () => {
 		if ( ! status ) {
@@ -460,10 +471,20 @@ export function useCredits( {
 				onToggle={ toggleMeter }
 				onAction={ siteId ? undefined : handleAction }
 				upgradeUrl={ upgradeUrl }
+				onUpgradeClick={ recordUpgradeClick }
 				purchaseHint={ purchaseHint }
 			/>
 		);
-	}, [ status, isPopoverOpen, toggleMeter, handleAction, siteId, upgradeUrl, purchaseHint ] );
+	}, [
+		status,
+		isPopoverOpen,
+		toggleMeter,
+		handleAction,
+		siteId,
+		upgradeUrl,
+		recordUpgradeClick,
+		purchaseHint,
+	] );
 
 	const notice = useMemo< NoticeConfig | undefined >( () => {
 		if ( siteId && status?.plan === 'paid' ) {
@@ -473,54 +494,26 @@ export function useCredits( {
 						href: upgradeUrl,
 						target: '_blank',
 						rel: 'noopener noreferrer',
+						onClick: recordUpgradeClick,
 					}
 				: undefined;
 			// A dismissed low notice must not hide the exhausted state.
 			if ( isExhausted ) {
-				let message: string = __( 'You’ve used all your site credits.', __i18n_text_domain__ );
-				if ( askToUpgrade === 'site-admin' ) {
-					message = __(
-						'You’ve used all your site credits. Ask a site admin to add more.',
-						__i18n_text_domain__
-					);
-				} else if ( askToUpgrade === 'plan-owner' ) {
-					message = __(
-						'You’ve used all your site credits. Ask the plan owner to upgrade.',
-						__i18n_text_domain__
-					);
-				}
-				return { icon: false, message, action, dismissible: false };
+				return {
+					icon: false,
+					message: getCreditsNoticeMessage( 'out', status.remaining, askToUpgrade ),
+					action,
+					dismissible: false,
+				};
 			}
 			if ( isLow && ! isLowNoticeDismissed ) {
-				let message: string = sprintf(
-					/* translators: %s: site credits left in short form, e.g. "800" or "8.5k" */
-					_n( '%s credit left.', '%s credits left.', status.remaining, __i18n_text_domain__ ),
-					formatCreditsShort( status.remaining )
-				);
-				if ( askToUpgrade === 'site-admin' ) {
-					message = sprintf(
-						/* translators: %s: site credits left in short form, e.g. "800" or "8.5k" */
-						_n(
-							'%s credit left. Ask a site admin to add more.',
-							'%s credits left. Ask a site admin to add more.',
-							status.remaining,
-							__i18n_text_domain__
-						),
-						formatCreditsShort( status.remaining )
-					);
-				} else if ( askToUpgrade === 'plan-owner' ) {
-					message = sprintf(
-						/* translators: %s: site credits left in short form, e.g. "800" or "8.5k" */
-						_n(
-							'%s credit left. Ask the plan owner to upgrade.',
-							'%s credits left. Ask the plan owner to upgrade.',
-							status.remaining,
-							__i18n_text_domain__
-						),
-						formatCreditsShort( status.remaining )
-					);
-				}
-				return { icon: false, message, action, dismissible: true, onDismiss: dismissLowNotice };
+				return {
+					icon: false,
+					message: getCreditsNoticeMessage( 'low', status.remaining, askToUpgrade ),
+					action,
+					dismissible: true,
+					onDismiss: dismissLowNotice,
+				};
 			}
 		}
 		if ( ! status || status.plan !== 'free' ) {
@@ -555,6 +548,7 @@ export function useCredits( {
 		status,
 		siteId,
 		upgradeUrl,
+		recordUpgradeClick,
 		askToUpgrade,
 		isExhausted,
 		isLow,

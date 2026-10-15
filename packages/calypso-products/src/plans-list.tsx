@@ -958,12 +958,16 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_PLUGINS_THEMES,
 	],
 	get2023PlanComparisonJetpackFeatureOverride: () => {
-		return [ FEATURE_ADVANCED_FORM_FEATURES_JP ];
+		return [
+			FEATURE_ONE_CLICK_RESTORE_V2,
+			FEATURE_PLUGIN_AUTOUPDATE_JP,
+			FEATURE_ADVANCED_FORM_FEATURES_JP,
+		];
 	},
 	// Experimental: Comparison grid Jetpack features for experiment variants.
 	// Advanced Jetpack Forms is excluded for Personal plan in experiment variants.
 	get2023PlanComparisonJetpackFeatureOverrideForExperiment: () => {
-		return [];
+		return [ FEATURE_ONE_CLICK_RESTORE_V2, FEATURE_PLUGIN_AUTOUPDATE_JP ];
 	},
 	getStorageFeature: () => FEATURE_6GB_STORAGE,
 	getPlanComparisonFeatureLabels: ( { isExperimentVariant } = {} ) => {
@@ -2094,9 +2098,7 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 	get2023PlanComparisonJetpackFeatureOverride: () => {
 		return [
 			FEATURE_REALTIME_BACKUPS_JP,
-			FEATURE_ONE_CLICK_RESTORE_V2,
 			FEATURE_UPTIME_MONITOR_JP,
-			FEATURE_PLUGIN_AUTOUPDATE_JP,
 			FEATURE_SEO_JP,
 			FEATURE_ADVANCED_FORM_FEATURES_JP,
 		];
@@ -2105,9 +2107,7 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 	get2023PlanComparisonJetpackFeatureOverrideForExperiment: () => {
 		return [
 			FEATURE_REALTIME_BACKUPS_JP,
-			FEATURE_ONE_CLICK_RESTORE_V2,
 			FEATURE_UPTIME_MONITOR_JP,
-			FEATURE_PLUGIN_AUTOUPDATE_JP,
 			FEATURE_SEO_JP,
 			FEATURE_ADVANCED_FORM_FEATURES_JP,
 			FEATURE_DONATIONS_AND_TIPS_JP,
