@@ -41,6 +41,14 @@
 	grid-column: 1;
 	grid-row: 1;
 	background: var( --color-surface-backdrop );
+
+	// Calypso's global hr reset otherwise paints over the native CardDivider.
+	.components-card-divider {
+		background: none;
+		block-size: 0;
+		border-block-end-style: solid;
+		border-block-end-width: 1px;
+	}
 }
 .site-redesign-preview {
 	flex: 1;

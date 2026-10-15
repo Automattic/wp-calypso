@@ -156,7 +156,9 @@ test( 'offers an optional Generate design for a durable draft, never a manual fo
 	expect( screen.queryByTitle( 'Original site' ) ).toBeNull();
 	expect( screen.queryByRole( 'textbox' ) ).toBeNull();
 	expect( screen.queryByText( 'Enter design preferences yourself' ) ).toBeNull();
-	expect( screen.getByText( /Approve this brief in the chat/ ) ).toBeVisible();
+	expect(
+		screen.getByText( /Approve this brief or ask the WordPress Agent for changes/ )
+	).toBeVisible();
 	expect( mockGenerate ).not.toHaveBeenCalled();
 	await userEvent.setup().click( screen.getByRole( 'button', { name: 'Generate design' } ) );
 	expect( mockGenerate ).toHaveBeenCalledTimes( 1 );
@@ -236,7 +238,9 @@ test( 'opens the revised server brief while retaining access to the previous can
 	renderWorkspace();
 	expect( screen.getByText( draft.goal ) ).toBeVisible();
 	expect( screen.getByText( /Readers/ ) ).toBeVisible();
-	expect( screen.getByText( /Approve this brief in the chat/ ) ).toBeVisible();
+	expect(
+		screen.getByText( /Approve this brief or ask the WordPress Agent for changes/ )
+	).toBeVisible();
 	expect( screen.queryByTitle( 'New design preview' ) ).toBeNull();
 } );
 

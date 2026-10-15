@@ -111,13 +111,17 @@ export default function BriefDirection( {
 	}
 	return (
 		<VStack spacing={ 6 } className="site-redesign-direction">
-			<HStack justify="flex-start" expanded={ false } spacing={ 3 } wrap>
-				<Heading level={ 1 } size={ 24 } weight={ 400 }>
-					{ __( 'Design brief' ) }
-				</Heading>
-				<Badge intent={ pending ? 'informational' : 'draft' }>
-					{ pending ? __( 'Ready to generate' ) : __( 'Behind your new design' ) }
-				</Badge>
+			<HStack alignment="center" justify="flex-start" expanded={ false } spacing={ 3 } wrap>
+				<FlexItem>
+					<Heading level={ 1 } size={ 24 } weight={ 400 }>
+						{ __( 'Design brief' ) }
+					</Heading>
+				</FlexItem>
+				<FlexItem>
+					<Badge intent="informational">
+						{ pending ? __( 'Ready to generate' ) : __( 'Behind your new design' ) }
+					</Badge>
+				</FlexItem>
 			</HStack>
 			<Card size="large">
 				<CardBody>

@@ -491,9 +491,7 @@ export function RedesignWorkspace( {
 														) }
 													{ ! applyOnly &&
 														pendingBrief &&
-														__(
-															'Approve this brief in the chat, or generate it here. You can also ask the WordPress Agent for changes.'
-														) }
+														__( 'Approve this brief or ask the WordPress Agent for changes.' ) }
 													{ ! applyOnly &&
 														! pendingBrief &&
 														canGenerate &&
