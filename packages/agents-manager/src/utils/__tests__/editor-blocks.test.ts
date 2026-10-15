@@ -13,6 +13,7 @@ import {
 	resolveBlocksRoot,
 	stageRootBlocks,
 	type EditorBlock,
+	type UndoLevel,
 } from '../editor-blocks';
 
 const block = ( clientId: string, name: string ): EditorBlock => ( {
@@ -28,23 +29,45 @@ const markNextChangeAsNotPersistent = jest.fn();
 const markLastChangeAsPersistent = jest.fn();
 const clearSelectedBlock = jest.fn();
 
+// A write that replaces the children of the block it names.
+const writeChildren = ( level: UndoLevel ) =>
+	level.write< [ string, EditorBlock[] ] >( replaceInnerBlocks, ( clientId ) => clientId );
+
 function withEditor( {
 	blocks = [],
 	postContent,
 	sectionRoot,
 	postId,
 	title,
+	parents = {},
+	controlled = [],
 }: {
 	blocks?: EditorBlock[];
 	postContent?: string;
 	sectionRoot?: string;
 	postId?: number;
 	title?: string;
+	/** Each block's parent. */
+	parents?: Record< string, string >;
+	/** The blocks whose inner blocks sync to their own record. */
+	controlled?: string[];
 } = {} ) {
 	( select as jest.Mock ).mockImplementation( ( store: string ) =>
 		store === 'core/block-editor'
 			? {
 					getBlocks: ( root?: string ) => ( root ? [] : blocks ),
+					getBlock: ( clientId: string ) =>
+						clientId in parents ? block( clientId, 'core/group' ) : null,
+					getBlockParents: ( clientId: string ) => {
+						const ancestors: string[] = [];
+
+						for ( let parent = parents[ clientId ]; parent; parent = parents[ parent ] ) {
+							ancestors.unshift( parent );
+						}
+
+						return ancestors;
+					},
+					areInnerBlocksControlled: ( clientId: string ) => controlled.includes( clientId ),
 					getBlocksByName: ( name: string ) =>
 						name === 'core/post-content' && postContent ? [ postContent ] : [],
 					getSectionRootClientId: () => sectionRoot,
@@ -158,7 +181,7 @@ describe( 'writes', () => {
 	it( 'folds several writes into one undo level', () => {
 		withEditor();
 		const level = openUndoLevel();
-		const write = level.write( replaceInnerBlocks );
+		const write = writeChildren( level );
 
 		write( 'a', blocks );
 
@@ -171,6 +194,61 @@ describe( 'writes', () => {
 		level.close();
 
 		expect( markNextChangeAsNotPersistent ).toHaveBeenCalledWith();
+		expect( markLastChangeAsPersistent ).toHaveBeenCalledTimes( 2 );
+	} );
+
+	// A record commits on the persistent mark only when the notification right
+	// before it changed its blocks; a write after the first stays transient
+	// until the close rewrites its record's blocks (WPAGENT-201).
+	it( 'rewrites the record of each write after the first, then marks it persistent', () => {
+		withEditor( {
+			postId: 1,
+			parents: { header: '', group: 'header', content: '' },
+			controlled: [ 'header', 'content' ],
+		} );
+		const level = openUndoLevel();
+		const write = writeChildren( level );
+
+		write( 'content', blocks );
+		write( 'group', blocks );
+		write( 'header', blocks );
+		replaceInnerBlocks.mockClear();
+		level.close();
+
+		expect( replaceInnerBlocks ).toHaveBeenCalledTimes( 1 );
+		expect( replaceInnerBlocks ).toHaveBeenCalledWith( 'header', [], false );
+		expect( replaceInnerBlocks.mock.invocationCallOrder[ 0 ] ).toBeLessThan(
+			markLastChangeAsPersistent.mock.invocationCallOrder.at( -1 ) as number
+		);
+	} );
+
+	it( 'rewrites the document root for a write outside every record', () => {
+		withEditor( { postId: 1, blocks, parents: { group: '' } } );
+		const level = openUndoLevel();
+		const write = writeChildren( level );
+
+		write( 'group', blocks );
+		write( 'group', blocks );
+		replaceInnerBlocks.mockClear();
+		level.close();
+
+		expect( replaceInnerBlocks ).toHaveBeenCalledWith( '', blocks, false );
+		expect( resetBlocks ).not.toHaveBeenCalled();
+	} );
+
+	it( 'rewrites nothing on another page, or for a record no longer there', () => {
+		withEditor( { postId: 1, parents: { header: '' }, controlled: [ 'header', 'gone' ] } );
+		const level = openUndoLevel();
+		const write = writeChildren( level );
+
+		write( 'header', blocks );
+		write( 'gone', blocks );
+		write( 'header', blocks );
+		withEditor( { postId: 2, parents: { header: '' }, controlled: [ 'header' ] } );
+		replaceInnerBlocks.mockClear();
+		level.close();
+
+		expect( replaceInnerBlocks ).not.toHaveBeenCalled();
 		expect( markLastChangeAsPersistent ).toHaveBeenCalledTimes( 2 );
 	} );
 

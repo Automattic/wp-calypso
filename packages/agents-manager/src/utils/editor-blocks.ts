@@ -44,6 +44,7 @@ export interface BlocksRoot {
 export const DOCUMENT_ROOT_CLIENT_ID = '__agents-manager-document-root__';
 
 interface BlockEditorSelect {
+	areInnerBlocksControlled?: ( clientId: string ) => boolean;
 	getBlock?: ( clientId: string ) => EditorBlock | null;
 	getBlocks: ( rootClientId?: string ) => EditorBlock[];
 	getBlocksByName?: ( name: string ) => string[];
@@ -251,10 +252,14 @@ export function updateBlockAttributes( clientId: string, attributes: BlockAttrib
 	requireBlockEditor().updateBlockAttributes( clientId, attributes );
 }
 
+/** The block list a write changes, by its parent: `undefined` for the document's own. */
+export type WrittenList< Args extends unknown[] > = ( ...args: Args ) => string | undefined;
+
 export interface UndoLevel {
 	/** Wraps a write so that it lands in this level. */
 	write: < Args extends unknown[] >(
-		write: ( ...args: Args ) => void
+		write: ( ...args: Args ) => void,
+		writtenList: WrittenList< Args >
 	) => ( ...args: Args ) => void;
 	/** Folds the writes into one undo record; nothing to fold is a no-op. */
 	close: () => void;
@@ -262,18 +267,50 @@ export interface UndoLevel {
 }
 
 /**
+ * The block whose inner blocks sync to their own record and hold `clientId`'s
+ * list, such as a template part or a post's content, or `''` for the
+ * document root.
+ */
+function getSyncedRoot( clientId: string | undefined ): string {
+	const blockEditor = blockEditorSelect();
+
+	if ( ! clientId ) {
+		return '';
+	}
+
+	return (
+		[ clientId, ...getBlockParents( clientId ).reverse() ].find( ( id ) =>
+			blockEditor?.areInnerBlocksControlled?.( id )
+		) ?? ''
+	);
+}
+
+const isSamePost = ( a?: CurrentPost, b?: CurrentPost ): boolean =>
+	!! a && !! b && a.id === b.id && a.type === b.type;
+
+/**
  * Block writes that undo as one level. The first write commits whatever the
  * user was typing, so that stays its own level, and opens this one; every
  * later write stays out of the undo stack until `close()` folds it in.
+ *
+ * Marking the last change as persistent is not enough to fold them: a
+ * record's `useBlockSync` commits on that mark only when the notification
+ * right before it changed its blocks, so any other notification in between
+ * (a selection, a write to another record) leaves the writes as transient
+ * edits that are neither saved nor undoable (WPAGENT-201). `close()` instead
+ * rewrites each record's blocks as they are, a real persistent change.
  */
 export function openUndoLevel(): UndoLevel {
+	const post = getCurrentPost();
+	const stagedRoots = new Set< string >();
 	let hasWritten = false;
 
 	return {
 		write:
-			( write ) =>
+			( write, writtenList ) =>
 			( ...args ) => {
 				if ( hasWritten ) {
+					stagedRoots.add( getSyncedRoot( writtenList( ...args ) ) );
 					requireBlockEditor().__unstableMarkNextChangeAsNotPersistent();
 				} else {
 					requireBlockEditor().__unstableMarkLastChangeAsPersistent();
@@ -283,9 +320,24 @@ export function openUndoLevel(): UndoLevel {
 				write( ...args );
 			},
 		close: () => {
-			if ( hasWritten ) {
-				requireBlockEditor().__unstableMarkLastChangeAsPersistent();
+			if ( ! hasWritten ) {
+				return;
 			}
+
+			const blockEditor = requireBlockEditor();
+
+			// After a move the editor holds another page, which nothing here wrote.
+			if ( isSamePost( post, getCurrentPost() ) ) {
+				stagedRoots.forEach( ( root ) => {
+					if ( ! root || getBlock( root ) ) {
+						// `replaceInnerBlocks` on `''` keeps the records nested in the
+						// document, where `resetBlocks` would rebuild and dirty them.
+						blockEditor.replaceInnerBlocks( root, getBlocks( root ), false );
+					}
+				} );
+			}
+
+			blockEditor.__unstableMarkLastChangeAsPersistent();
 		},
 		hasWritten: () => hasWritten,
 	};
