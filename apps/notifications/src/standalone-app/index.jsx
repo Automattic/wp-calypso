@@ -154,6 +154,17 @@ const NotesWrapper = ( { wpcom } ) => {
 	}, [] );
 
 	useEffect( () => {
+		const handleKeyDown = ( event ) => {
+			if ( event.key === 'Escape' && ! event.defaultPrevented ) {
+				store.dispatch( actions.ui.closePanel() );
+			}
+		};
+
+		document.addEventListener( 'keydown', handleKeyDown );
+		return () => document.removeEventListener( 'keydown', handleKeyDown );
+	}, [] );
+
+	useEffect( () => {
 		const handleMessages = ( { action, hidden, showing } ) => {
 			debug( 'message received', { action, hidden, showing } );
 
