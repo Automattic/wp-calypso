@@ -55,8 +55,8 @@ function response( url: string, body: string, status = 200 ) {
 
 /** No Name Pulse rows, so the helper uses the classic list. */
 const noNamePulseRows = () => ( {
-	count: jest.fn( async () => 0 ),
-	evaluateAll: jest.fn( async () => [] ),
+	count: async () => 0,
+	evaluateAll: async () => [],
 } );
 
 /** A page whose "Bring it over" button never appears. */
@@ -89,7 +89,7 @@ function suggestionRowPage(): Page {
 	const listitem = { first: jest.fn( () => row ) };
 	return {
 		getByRole: jest.fn( () => listitem ),
-		locator: jest.fn( noNamePulseRows ),
+		locator: noNamePulseRows,
 	} as unknown as Page;
 }
 
@@ -151,7 +151,7 @@ describe( 'domain throttle actions', () => {
 				}
 				return role === 'searchbox' ? searchbox : heading;
 			} ),
-			locator: jest.fn( noNamePulseRows ),
+			locator: noNamePulseRows,
 			reload: jest.fn(),
 			waitForResponse: jest.fn( async () =>
 				response(
@@ -186,7 +186,7 @@ describe( 'domain throttle actions', () => {
 				}
 				return role === 'searchbox' ? searchbox : {};
 			} ),
-			locator: jest.fn( noNamePulseRows ),
+			locator: noNamePulseRows,
 			reload: jest.fn(),
 			waitForResponse: jest.fn( async () =>
 				response(

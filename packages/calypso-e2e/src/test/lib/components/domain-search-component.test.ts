@@ -58,11 +58,10 @@ function searchPage( {
 	listitem.first.mockReturnValue( listitem );
 	const remainingNamePulseLists = [ ...namePulseLists ];
 	const namePulseRows = {
-		evaluateAll: jest.fn( async () =>
+		evaluateAll: async () =>
 			remainingNamePulseLists.length > 1
 				? ( remainingNamePulseLists.shift() as string[] )
-				: ( remainingNamePulseLists[ 0 ] ?? [] )
-		),
+				: ( remainingNamePulseLists[ 0 ] ?? [] ),
 	};
 
 	// Waiting is what a search spends, so the waits a test does not really make
@@ -77,7 +76,7 @@ function searchPage( {
 
 			return role === 'searchbox' ? searchbox : {};
 		} ),
-		locator: jest.fn( () => namePulseRows ),
+		locator: () => namePulseRows,
 		reload: jest.fn( async () => null ),
 		waitForTimeout: jest.fn( async ( timeout: number ) => {
 			clock.elapsed += timeout;
@@ -96,13 +95,7 @@ function searchPage( {
 		),
 	};
 
-	return {
-		page: page as unknown as Page,
-		searchbox,
-		listitem,
-		clock,
-		reload: page.reload,
-	};
+	return { page: page as unknown as Page, searchbox, listitem, clock, reload: page.reload };
 }
 
 beforeEach( () => {
@@ -252,7 +245,7 @@ interface FakeQuery {
 	excluded: string[];
 	keyword?: string;
 	withAddToCart?: boolean;
-	part?: 'add' | 'remove' | 'error';
+	part?: 'remove' | 'error';
 }
 
 /**
@@ -298,7 +291,9 @@ function namePulsePage(
 			} ),
 		} ),
 		getByRole: ( _role: string, { name }: { name: string } ) =>
-			locatorFor( { ...query, part: name === 'Remove from cart' ? 'remove' : 'add' } ),
+			name === 'Remove from cart'
+				? locatorFor( { ...query, part: 'remove' } )
+				: locatorFor( query ),
 		locator: () => locatorFor( { ...query, part: 'error' } ),
 		waitFor: async () => {
 			if ( ! inPart( query ).length ) {
@@ -326,10 +321,11 @@ function namePulsePage(
 	} );
 
 	const page = {
-		getByRole: jest.fn( ( _role: string, { name }: { name: string } ) =>
-			name === 'Add to cart' ? ADD_TO_CART : { first: () => ( { waitFor: async () => undefined } ) }
-		),
-		locator: jest.fn( ( selector: string ) => {
+		getByRole: ( _role: string, { name }: { name: string } ) =>
+			name === 'Add to cart'
+				? ADD_TO_CART
+				: { first: () => ( { waitFor: async () => undefined } ) },
+		locator: ( selector: string ) => {
 			const excluded = [ ...selector.matchAll( /:not\(\[data-domain="([^"]+)"\]\)/g ) ].map(
 				( match ) => match[ 1 ]
 			);
@@ -337,9 +333,9 @@ function namePulsePage(
 			const keyword = selector.match( /^\[data-domain\*="([^"]+)"\]$/ )?.[ 1 ];
 
 			return locatorFor( { domain, excluded, keyword } );
-		} ),
-		on: jest.fn(),
-		off: jest.fn(),
+		},
+		on: () => undefined,
+		off: () => undefined,
 		url: () => 'https://example.com/start/domain',
 	};
 
