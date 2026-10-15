@@ -494,13 +494,18 @@ export class DomainSearchComponent {
 				}
 
 				const domain = ( await candidate.getAttribute( 'data-domain' ) ) as string;
-				// By domain from here on: the candidate locator moves to another row once
-				// this one is added, and a name can be listed in more than one section.
+				// By domain from here on: the candidate locator resolves again on every
+				// action, so an earlier row turning available would take the click, and a
+				// name can be listed in more than one section.
 				const rowsForDomain = container.locator( `.name-pulse-row[data-domain="${ domain }"]` );
 				const added = rowsForDomain.getByRole( 'button', { name: 'Remove from cart' } );
 				const failed = rowsForDomain.locator( '.name-pulse-row__cart--error' );
 
-				await candidate.getByRole( 'button', { name: 'Add to cart' } ).click();
+				await rowsForDomain
+					.filter( { has: addToCart } )
+					.first()
+					.getByRole( 'button', { name: 'Add to cart' } )
+					.click();
 				await added
 					.or( failed )
 					.first()

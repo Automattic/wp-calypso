@@ -255,3 +255,193 @@ describe( 'DomainSearchComponent.search', () => {
 		await expect( new DomainSearchComponent( page ).search( keyword ) ).resolves.toBeUndefined();
 	} );
 } );
+
+interface FakeNamePulseRow {
+	domain: string;
+	available: boolean;
+	failsToAdd?: boolean;
+	inCart?: boolean;
+	failed?: boolean;
+}
+
+interface FakeQuery {
+	domain?: string;
+	excluded: string[];
+	keyword?: string;
+	withAddToCart?: boolean;
+	part?: 'add' | 'remove' | 'error';
+}
+
+/**
+ * A page listing Name Pulse rows, answering the locators selectFirstSuggestion
+ * builds from the rows' state. A row has "Add to cart" while available and not
+ * yet added; adding it puts it in the cart or, when it fails to add, swaps the
+ * button for the error one. `onDomainRead` runs after the picked row's domain is
+ * read, so a test can change the list between the read and the click.
+ */
+function namePulsePage(
+	rows: FakeNamePulseRow[],
+	{ onDomainRead }: { onDomainRead?: () => void } = {}
+) {
+	const ADD_TO_CART = Symbol( 'add to cart' );
+	const hasAddToCart = ( row: FakeNamePulseRow ) => row.available && ! row.inCart && ! row.failed;
+	const matches = ( query: FakeQuery ) =>
+		rows.filter(
+			( row ) =>
+				( ! query.domain || row.domain === query.domain ) &&
+				! query.excluded.includes( row.domain ) &&
+				( ! query.keyword || row.domain.includes( query.keyword ) ) &&
+				( ! query.withAddToCart || hasAddToCart( row ) )
+		);
+	const inPart = ( query: FakeQuery ) =>
+		matches( query ).filter( ( row ) => {
+			if ( query.part === 'remove' ) {
+				return row.inCart;
+			}
+			return query.part === 'error' ? row.failed : true;
+		} );
+
+	const locatorFor = ( query: FakeQuery ): unknown => ( {
+		filter: ( { has }: { has: unknown } ) =>
+			locatorFor( { ...query, withAddToCart: query.withAddToCart || has === ADD_TO_CART } ),
+		and: ( other: { query: FakeQuery } ) =>
+			locatorFor( { ...query, keyword: other.query.keyword ?? query.keyword } ),
+		first: () => locatorFor( query ),
+		or: ( other: { query: FakeQuery } ) => ( {
+			first: () => ( {
+				waitFor: async () => {
+					if ( ! inPart( query ).length && ! inPart( other.query ).length ) {
+						throw new Error( 'locator timeout' );
+					}
+				},
+			} ),
+		} ),
+		getByRole: ( _role: string, { name }: { name: string } ) =>
+			locatorFor( { ...query, part: name === 'Remove from cart' ? 'remove' : 'add' } ),
+		locator: () => locatorFor( { ...query, part: 'error' } ),
+		waitFor: async () => {
+			if ( ! inPart( query ).length ) {
+				throw new Error( 'locator timeout' );
+			}
+		},
+		count: async () => inPart( query ).length,
+		getAttribute: async ( name: string ) => {
+			if ( name === 'aria-label' ) {
+				return 'Couldn’t add to cart';
+			}
+			const domain = inPart( query )[ 0 ]?.domain ?? null;
+			onDomainRead?.();
+			return domain;
+		},
+		click: async () => {
+			const row = inPart( query )[ 0 ];
+			if ( ! row ) {
+				throw new Error( 'locator timeout' );
+			}
+			row.inCart = ! row.failsToAdd;
+			row.failed = !! row.failsToAdd;
+		},
+		query,
+	} );
+
+	const page = {
+		getByRole: jest.fn( ( _role: string, { name }: { name: string } ) =>
+			name === 'Add to cart' ? ADD_TO_CART : { first: () => ( { waitFor: async () => undefined } ) }
+		),
+		locator: jest.fn( ( selector: string ) => {
+			const excluded = [ ...selector.matchAll( /:not\(\[data-domain="([^"]+)"\]\)/g ) ].map(
+				( match ) => match[ 1 ]
+			);
+			const domain = selector.match( /^\.name-pulse-row\[data-domain="([^"]+)"\]$/ )?.[ 1 ];
+			const keyword = selector.match( /^\[data-domain\*="([^"]+)"\]$/ )?.[ 1 ];
+
+			return locatorFor( { domain, excluded, keyword } );
+		} ),
+		on: jest.fn(),
+		off: jest.fn(),
+		url: () => 'https://example.com/start/domain',
+	};
+
+	return { page: page as unknown as Page, rows };
+}
+
+/** A component that searched for `label`, as `search()` leaves it. */
+function searchedFor( page: Page, label: string ) {
+	const component = new DomainSearchComponent( page );
+	component[ 'searchedLabel' ] = label;
+	return component;
+}
+
+describe( 'DomainSearchComponent.selectFirstSuggestion on Name Pulse', () => {
+	const LABEL = 'e2eflowtesting1788792390563630';
+
+	test( 'prefers a row for the keyword over an earlier unrelated one', async () => {
+		// Related matches can be checked before the Top results.
+		const { page, rows } = namePulsePage( [
+			{ domain: 'flowtesting.blog', available: true },
+			{ domain: `${ LABEL }.blog`, available: true },
+		] );
+
+		await expect( searchedFor( page, LABEL ).selectFirstSuggestion() ).resolves.toBe(
+			`${ LABEL }.blog`
+		);
+		expect( rows[ 0 ].inCart ).toBeFalsy();
+	} );
+
+	test( 'falls back to any available row when none is for the keyword', async () => {
+		const { page } = namePulsePage( [
+			{ domain: `${ LABEL }.com`, available: false },
+			{ domain: 'flowtesting.blog', available: true },
+		] );
+
+		await expect( searchedFor( page, LABEL ).selectFirstSuggestion() ).resolves.toBe(
+			'flowtesting.blog'
+		);
+	} );
+
+	test( 'moves on to the next row when adding one fails', async () => {
+		const { page, rows } = namePulsePage( [
+			{ domain: `${ LABEL }.com`, available: true, failsToAdd: true },
+			{ domain: `${ LABEL }.blog`, available: true },
+		] );
+
+		await expect( searchedFor( page, LABEL ).selectFirstSuggestion() ).resolves.toBe(
+			`${ LABEL }.blog`
+		);
+		expect( rows[ 0 ].failed ).toBe( true );
+	} );
+
+	test( 'adds the domain it returns when an earlier row becomes available', async () => {
+		const { page, rows } = namePulsePage(
+			[
+				{ domain: `${ LABEL }.com`, available: false },
+				{ domain: `${ LABEL }.blog`, available: true },
+			],
+			{
+				onDomainRead: () => {
+					rows[ 0 ].available = true;
+				},
+			}
+		);
+
+		await expect( searchedFor( page, LABEL ).selectFirstSuggestion() ).resolves.toBe(
+			`${ LABEL }.blog`
+		);
+		expect( rows[ 1 ].inCart ).toBe( true );
+		expect( rows[ 0 ].inCart ).toBeFalsy();
+	} );
+
+	test( 'gives up after three failed adds', async () => {
+		const { page } = namePulsePage(
+			[ 'com', 'blog', 'org', 'net' ].map( ( tld ) => ( {
+				domain: `${ LABEL }.${ tld }`,
+				available: true,
+				failsToAdd: true,
+			} ) )
+		);
+
+		await expect( searchedFor( page, LABEL ).selectFirstSuggestion() ).rejects.toThrow(
+			'Failed to select a Name Pulse domain suggestion.'
+		);
+	} );
+} );
