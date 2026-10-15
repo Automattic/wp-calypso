@@ -1,0 +1,143 @@
+.agents-manager-fullscreen {
+	position: fixed;
+	inset: 0;
+	z-index: 100000;
+	display: flex;
+	background: #fff;
+	color: #1e1e1e;
+
+	&__sidebar-panel {
+		position: relative;
+		z-index: 2;
+		width: 260px;
+		flex: 0 0 260px;
+		min-width: 0;
+		background: #f6f7f7;
+		border-right: 1px solid #e2e4e7;
+	}
+
+	&__sidebar {
+		display: flex;
+		flex-direction: column;
+		height: 100%;
+		min-height: 0;
+	}
+
+	&__sidebar-header,
+	&__sidebar-footer {
+		flex: 0 0 auto;
+		padding: 16px;
+	}
+
+	&__sidebar-footer {
+		border-top: 1px solid #e2e4e7;
+	}
+
+	&__new-chat,
+	&__exit {
+		width: 100%;
+		justify-content: flex-start;
+		gap: 8px;
+	}
+
+	&__new-chat {
+		background: #fff;
+	}
+
+	&__sessions {
+		flex: 1;
+		min-height: 0;
+		overflow-y: auto;
+		padding: 0 12px 16px;
+	}
+
+	&__sessions .agents-manager-conversation-list-item {
+		padding: 10px 8px;
+		border: 0;
+		border-radius: 8px;
+		margin: 1px 0;
+		color: #1e1e1e;
+	}
+
+	&__status {
+		padding: 24px 8px;
+		margin: 0;
+		color: #757575;
+		font-size: 13px;
+		text-align: center;
+	}
+
+	&__chat {
+		flex: 1;
+		min-width: 0;
+		height: 100%;
+		background: #fff;
+	}
+
+	&__chat > .agenttic {
+		height: 100%;
+	}
+
+	&__chat [data-slot='messages'],
+	&__chat [data-slot='chat-footer'],
+	&__chat [data-slot='chat-compliance-disclosure'] {
+		width: min(100%, 760px);
+		margin-inline: auto;
+	}
+
+	&__top-bar,
+	&__backdrop {
+		display: none;
+	}
+}
+
+@media (max-width: 781px) {
+	.agents-manager-fullscreen {
+		flex-direction: column;
+		--agents-manager-fullscreen-top-bar-height: 60px;
+
+		&__top-bar {
+			display: flex;
+			align-items: center;
+			flex: 0 0 var(--agents-manager-fullscreen-top-bar-height);
+			position: relative;
+			z-index: 3;
+			padding-inline: 12px;
+			background: #fff;
+		}
+
+		&__chat {
+			position: relative;
+			z-index: 0;
+			min-height: 0;
+			height: auto;
+		}
+
+		&__sidebar-panel {
+			visibility: hidden;
+			position: absolute;
+			inset: var(--agents-manager-fullscreen-top-bar-height) auto 0 0;
+			width: min(86vw, 300px);
+			transform: translateX(-100%);
+			transition: transform 160ms ease;
+			box-shadow: 4px 0 20px rgba(0, 0, 0, 0.12);
+		}
+
+		&__sidebar-panel--open {
+			visibility: visible;
+			transform: translateX(0);
+		}
+
+		&__backdrop {
+			display: block;
+			position: absolute;
+			inset: var(--agents-manager-fullscreen-top-bar-height) 0 0;
+			z-index: 1;
+			width: 100%;
+			height: auto;
+			padding: 0;
+			border: 0;
+			background: rgba(0, 0, 0, 0.28);
+		}
+	}
+}

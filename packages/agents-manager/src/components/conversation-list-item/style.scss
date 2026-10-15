@@ -23,6 +23,10 @@
 		background-color: color-mix(in srgb, var(--color-foreground) 8%, transparent);
 	}
 
+	&--active {
+		background-color: color-mix(in srgb, var(--color-primary) 10%, transparent);
+	}
+
 	&__text {
 		display: flex;
 		flex-direction: column;

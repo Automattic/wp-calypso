@@ -26,10 +26,11 @@ import {
 	saveSessionId,
 } from '../utils/agent-session';
 import { createAgentConfig } from '../utils/create-agent-config';
+import { isFullscreenRequested } from '../utils/is-fullscreen-requested';
 import { isReaderChatAgent } from '../utils/is-reader-chat-agent';
 import { loadExternalProviders, type LoadedProviders } from '../utils/load-external-providers';
 import { isHandoffAgent, type SessionHandoff } from '../utils/session-handoff';
-import AgentDock from './agent-dock';
+import { AgentLayout } from './agent-layout';
 import { PersistentRouter } from './persistent-router';
 import type { JSX } from 'react';
 
@@ -167,6 +168,7 @@ function AgentSetup( {
 	const navigate = useNavigate();
 	const { pathname, state: locationState } = useLocation();
 	const isNewChat = pathname.startsWith( '/chat' ) && !! locationState?.isNewChat;
+	const isSwitchSession = pathname.startsWith( '/chat' ) && !! locationState?.switchSession;
 
 	// Mirrors `AgentDock`'s visibility: with an AI entry button the chat
 	// unmounts on close, so closing must count as leaving the chat view.
@@ -174,16 +176,14 @@ function AgentSetup( {
 		const store: AgentsManagerSelect = select( AGENTS_MANAGER_STORE );
 		return store.getAgentsManagerState();
 	}, [] );
+	const { agentId, version } = useAgentConfig( hostAgentId );
+	const isFullscreen = isFullscreenRequested( agentId );
 	const hasAiChatEntry = useHasAiChatEntryButton();
-	const isChatVisible = !! isOpen || ! hasAiChatEntry;
+	const isChatVisible = isFullscreen || !! isOpen || ! hasAiChatEntry;
 
 	// Where the conversation view (and its `useConversation` fetch) is mounted;
 	// '/' only exists transiently before the catch-all redirects to the chat.
 	const isChatViewShowing = ( pathname.startsWith( '/chat' ) || pathname === '/' ) && isChatVisible;
-
-	// `?agent=` and `?version=` come from the browser URL: `PersistentRouter` is a
-	// memory router.
-	const { agentId, version } = useAgentConfig( hostAgentId );
 
 	useSessionHandoffLinks( agentId );
 
@@ -246,15 +246,17 @@ function AgentSetup( {
 				}
 			}
 
-			if ( isNewChat ) {
+			if ( isNewChat || isSwitchSession ) {
 				await discardAgent();
 
 				if ( isSuperseded ) {
 					return;
 				}
 
-				clearSessionId( agentId, siteKey, userId );
-				// Clear route state to prevent repeated new chat initialization
+				if ( isNewChat ) {
+					clearSessionId( agentId, siteKey, userId );
+				}
+				// Clear route state to prevent repeated session initialization.
 				navigate( '/chat', { replace: true } );
 				return;
 			}
@@ -301,7 +303,7 @@ function AgentSetup( {
 				toolProvider: providers.toolProvider,
 				contextProvider: providers.contextProvider,
 				providerIds: providers.providerIds,
-				environment: sectionName || 'calypso',
+				environment: isFullscreen ? 'fullscreen' : sectionName || 'calypso',
 				agentId,
 				version,
 				onTaskUpdate: providers.onTaskUpdate,
@@ -324,6 +326,8 @@ function AgentSetup( {
 		currentRoute,
 		isChatViewShowing,
 		isNewChat,
+		isSwitchSession,
+		isFullscreen,
 		handoff,
 		handoffSiteKey,
 		navigate,
@@ -344,7 +348,8 @@ function AgentSetup( {
 	}
 
 	return (
-		<AgentDock
+		<AgentLayout
+			isFullscreen={ isFullscreen }
 			emptyViewSuggestions={ emptyViewSuggestions }
 			markdownComponents={ loadedProviders.markdownComponents || {} }
 			markdownExtensions={ loadedProviders.markdownExtensions || {} }

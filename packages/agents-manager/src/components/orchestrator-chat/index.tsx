@@ -68,6 +68,8 @@ interface Props {
 	emptyViewSuggestions: Suggestion[];
 	/** Indicates if the chat is docked in the sidebar. */
 	isDocked: boolean;
+	/** Uses the dedicated full-screen chat presentation. */
+	isFullscreen?: boolean;
 	/** Indicates if the chat is expanded (floating mode). */
 	isOpen: boolean;
 	/** Indicates if suggestions are visible in the current layout. */
@@ -107,6 +109,7 @@ interface Props {
 export default function OrchestratorChat( {
 	emptyViewSuggestions,
 	isDocked,
+	isFullscreen = false,
 	isOpen,
 	suggestionsVisible,
 	onClose,
@@ -506,6 +509,7 @@ export default function OrchestratorChat( {
 			onAbort={ stopResponse }
 			isLoadingConversation={ isLoadingConversation }
 			isDocked={ isDocked }
+			isFullscreen={ isFullscreen }
 			isOpen={ isOpen }
 			onClose={ onClose }
 			onExpand={ onExpand }

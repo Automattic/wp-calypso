@@ -73,6 +73,7 @@ The host page URL can carry these query parameters:
 
 | Parameter       | Description                                                                                                                                                                              |
 | --------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `am-fullscreen` | `am-fullscreen=1` opts into the lazy full-screen prototype for this page load (never Reader Chat). It sends the `fullscreen` environment. In Calypso and the Dashboard, the `calypso/agents-manager-internal` flag and a selected site allow loading on otherwise ineligible routes, without enabling Big Sky. |
 | `ai-open`       | `ai-open=true` auto-opens the chat (docked or undocked) on page load, e.g. for links from emails. The parameter is stripped from the URL after being applied.                            |
 | `agent`         | Overrides the agent ID, for testing (e.g., `?agent=wpcom-workflow-support_chat`). Ignored when the host passes an `agentId` prop.                                                        |
 | `version`       | Overrides the agent version, for testing (e.g., `?version=1.0.25`).                                                                                                                      |
