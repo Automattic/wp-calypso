@@ -423,3 +423,41 @@ describe( 'useInfiniteStream — local removals', () => {
 		expect( result.current.pages[ 0 ].posts ).toHaveLength( 1 );
 	} );
 } );
+
+describe( 'useInfiniteStream — de-duplication', () => {
+	it( 'renders a post once when consecutive pages overlap', async () => {
+		nock( BASE )
+			.get( LIKES_PATH )
+			.query( ( q: Record< string, string | string[] | undefined > ) => ! ( 'before' in q ) )
+			.reply( 200, {
+				posts: [ apiPost( 1 ), apiPost( 2 ) ],
+				date_range: { after: '2026-04-01', before: null },
+			} );
+
+		// Offset-paginated recommendation and search streams re-rank between
+		// requests, so successive windows can return the same post twice.
+		nock( BASE )
+			.get( LIKES_PATH )
+			.query( ( q: Record< string, string | string[] | undefined > ) => q.before === '2026-04-01' )
+			.reply( 200, {
+				posts: [ apiPost( 2 ), apiPost( 3 ) ],
+				date_range: { after: null, before: null },
+			} );
+
+		const queryClient = makeQueryClient();
+		const { Wrapper } = makeWrapper( queryClient );
+		const { result } = renderHook( () => useInfiniteStream( { streamKey: 'likes' } ), {
+			wrapper: Wrapper,
+		} );
+
+		await waitFor( () => expect( result.current.items ).toHaveLength( 2 ) );
+
+		act( () => {
+			result.current.fetchNextPage();
+		} );
+
+		await waitFor( () => expect( result.current.lastPage ).toBe( true ) );
+		expect( result.current.items ).toHaveLength( 3 );
+		expect( result.current.items ).toMatchObject( [ postKey( 1 ), postKey( 2 ), postKey( 3 ) ] );
+	} );
+} );

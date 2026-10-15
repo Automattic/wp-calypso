@@ -41,6 +41,5 @@ export const mapMailboxToEmail = ( box: EmailBox, emailAccount: EmailAccount ): 
 		providerDisplayName,
 		domainName: box.domain,
 		status,
-		canUserManage: emailAccount.can_user_add_email,
 	};
 };

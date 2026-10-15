@@ -1,25 +1,45 @@
-import { __experimentalVStack as VStack, CardFooter, ExternalLink } from '@wordpress/components';
+import {
+	__experimentalHStack as HStack,
+	__experimentalVStack as VStack,
+	CardFooter,
+	ExternalLink,
+} from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useState, useEffect, useMemo } from 'react';
 import { useSelector } from 'react-redux';
-import { getActions } from '../../panel/helpers/notes';
+import { getModerateCommentsLink } from '../../panel/helpers/notes';
 import { html } from '../../panel/indices-to-html';
 import { bumpStat } from '../../panel/rest-client/bump-stat';
 import { wpcom } from '../../panel/rest-client/wpcom';
-import getIsNoteApproved from '../../panel/state/selectors/get-is-note-approved';
+import getIsNotePendingApproval from '../../panel/state/selectors/get-is-note-pending-approval';
 import { p, zipWithSignature } from '../../panel/templates/functions';
-import PendingApprovalBadge from '../../shared/pending-approval-badge';
 import NoteActions from './actions';
 import Comment from './block-comment';
 import Post from './block-post';
 import PromptBlock from './block-prompt';
 import User from './block-user';
 import NotePreface from './preface';
+import SimplifiedActions, { NoteReply, canReply } from './simplified-actions';
 import type { Note, Block, BlockWithSignature } from '../types';
 
 const isReplyBlock = ( note: Note, block: Block ) =>
 	block.ranges && block.ranges.length > 1 && block.ranges[ 1 ].id === note.meta?.ids?.reply_comment;
+
+const PendingApprovalStrip = ( { note }: { note: Note } ) => {
+	const commentsUrl = getModerateCommentsLink( note );
+
+	return (
+		<HStack className="wpnc__pending-approval-strip" spacing={ 1.5 } justify="space-between">
+			<span className="wpnc__pending-approval-strip-text">{ __( 'Pending approval' ) }</span>
+			{ commentsUrl && (
+				<ExternalLink className="wpnc__pending-approval-strip-link" href={ commentsUrl }>
+					{ __( 'Manage comments' ) }
+				</ExternalLink>
+			) }
+		</HStack>
+	);
+};
 
 const ReplyBlock = ( { note }: { note: Note } ) => {
 	const [ replyURL, setReplyURL ] = useState< string >( '' );
@@ -78,13 +98,33 @@ const ReplyBlock = ( { note }: { note: Note } ) => {
 	return null;
 };
 
-export const ActionBlock = ( { note, goBack }: { note: Note; goBack: () => void } ) => {
-	const blocks: BlockWithSignature[] = zipWithSignature( note.body, note );
-	const actionBlock = blocks.findLast(
-		( block ) => block.block.actions && 'user' !== block.signature.type
+const hasActionBlock = ( note: Note ) =>
+	zipWithSignature( note.body, note ).some(
+		( block: BlockWithSignature ) => block.block.actions && 'user' !== block.signature.type
 	);
 
-	if ( ! actionBlock ) {
+export const SimplifiedActionBlock = ( { note, goBack }: { note: Note; goBack: () => void } ) => {
+	if ( ! hasActionBlock( note ) ) {
+		return null;
+	}
+
+	return <SimplifiedActions note={ note } goBack={ goBack } />;
+};
+
+export const ReplyFooter = ( { note }: { note: Note } ) => {
+	if ( ! hasActionBlock( note ) || ! canReply( note ) ) {
+		return null;
+	}
+
+	return (
+		<CardFooter size="small">
+			<NoteReply note={ note } />
+		</CardFooter>
+	);
+};
+
+export const ActionBlock = ( { note, goBack }: { note: Note; goBack: () => void } ) => {
+	if ( ! hasActionBlock( note ) ) {
 		return null;
 	}
 
@@ -98,15 +138,16 @@ export const ActionBlock = ( { note, goBack }: { note: Note; goBack: () => void 
 	);
 };
 
-export const NoteBody = ( { note }: { note: Note } ) => {
+export const NoteBody = ( {
+	note,
+	hidePendingApproval = false,
+}: {
+	note: Note;
+	hidePendingApproval?: boolean;
+} ) => {
 	const blocks: BlockWithSignature[] = zipWithSignature( note.body, note );
-	const isApproved = useSelector( ( state ) => getIsNoteApproved( state, note ) );
-	const actions = getActions( note );
-	const hasAction = ( types: string | string[] ) => {
-		const typeArray = Array.isArray( types ) ? types : [ types ];
-		return typeArray.some( ( type ) => actions.hasOwnProperty( type ) );
-	};
-	const showPendingApprovalBadge = hasAction( 'approve-comment' ) && ! isApproved;
+	const isPendingApproval = useSelector( ( state ) => getIsNotePendingApproval( state, note ) );
+	const showPendingApprovalBadge = isPendingApproval && ! hidePendingApproval;
 
 	const firstNonTextBlockIndex = blocks.findIndex( ( block ) => {
 		return 'text' !== block.signature.type;
@@ -147,7 +188,7 @@ export const NoteBody = ( { note }: { note: Note } ) => {
 			{ preface }
 			{ showPendingApprovalBadge && (
 				<div className="wpnc__pending-approval-section">
-					<PendingApprovalBadge note={ note } />
+					<PendingApprovalStrip note={ note } />
 				</div>
 			) }
 			<div className="wpnc__body-content">{ body }</div>

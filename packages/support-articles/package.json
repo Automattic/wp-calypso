@@ -37,6 +37,7 @@
 		"watch": "tsc --build ./tsconfig.json --watch"
 	},
 	"dependencies": {
+		"@automattic/calypso-analytics": "workspace:^",
 		"wpcom-proxy-request": "workspace:^"
 	},
 	"private": true

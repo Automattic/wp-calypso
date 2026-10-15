@@ -30,14 +30,22 @@ export const createList = ( context, next ) => {
 	next();
 };
 
+/**
+ * Returns a unique stream key for a list based on the owner and slug.
+ * @param {string} owner
+ * @param {string} slug
+ * @returns {string}
+ */
+export const getListStreamKey = ( owner, slug ) => {
+	return `list:${ JSON.stringify( { owner, slug } ) }`;
+};
+
 export const listListing = ( context, next ) => {
 	const basePath = '/reader/list/:owner/:slug';
 	const view = context.params.view || 'posts';
 	const fullAnalyticsPageTitle =
 		analyticsPageTitle + ' > List > ' + context.params.user + ' - ' + context.params.list;
 	const mcKey = 'list';
-	const streamKey =
-		'list:' + JSON.stringify( { owner: context.params.user, slug: context.params.list } );
 	const state = context.store.getState();
 
 	trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
@@ -53,8 +61,8 @@ export const listListing = ( context, next ) => {
 	context.primary = (
 		<AsyncLoad
 			require={ loadList }
-			key={ 'tag-' + context.params.user + '-' + context.params.list }
-			streamKey={ streamKey }
+			key={ 'list-' + context.params.user + '-' + context.params.list }
+			streamKey={ getListStreamKey( context.params.user, context.params.list ) }
 			owner={ encodeURIComponent( context.params.user ) }
 			slug={ encodeURIComponent( context.params.list ) }
 			view={ view }

@@ -34,7 +34,7 @@ const DPA = () => {
 						: translate( 'There was an error requesting a DPA', {
 								comment:
 									'A Data Processing Addendum (DPA) is a document to assure customers, vendors, and partners that their data handling complies with the law.',
-						  } ),
+							} ),
 					{ id: NOTICE_ID }
 				)
 			);

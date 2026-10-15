@@ -1,4 +1,5 @@
 import { translationExists } from '@automattic/i18n-utils';
+import { Spinner } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import cx from 'clsx';
 import { Fragment } from 'react';
@@ -10,6 +11,7 @@ import {
 	isHappinessEngineerMessage,
 	isZendeskChatStartedMessage,
 	isZendeskIntroMessage,
+	isZendeskSurveyMessage,
 } from '../../../utils/csat';
 import ChatWithSupportLabel from '../../chat-with-support';
 import { getMessageUniqueIdentifier } from '../utils/get-message-unique-identifier';
@@ -25,7 +27,7 @@ const EXCLUDED_MESSAGE_ROLES = [ 'zendesk-intro' ] as const;
  * @returns The presented role of the message.
  */
 function getPresentedRole( message: Message ) {
-	if ( isCSATMessage( message ) ) {
+	if ( isCSATMessage( message ) || isZendeskSurveyMessage( message ) ) {
 		return 'csat';
 	} else if ( isAttachment( message ) ) {
 		return 'attachment';
@@ -84,12 +86,7 @@ function clusterMessagesBySender( messages: Message[] ) {
 		message: Message,
 		currentGroup: {
 			role:
-				| MessageRole
-				| 'csat'
-				| 'attachment'
-				| 'feedback'
-				| 'zendesk-intro'
-				| 'business-automated';
+				MessageRole | 'csat' | 'attachment' | 'feedback' | 'zendesk-intro' | 'business-automated';
 			messages: Message[];
 		}
 	) => {
@@ -111,25 +108,40 @@ function clusterMessagesBySender( messages: Message[] ) {
 		role: MessageRole | 'csat' | 'attachment' | 'feedback' | 'zendesk-intro' | 'business-automated';
 		messages: Message[];
 	} = {
-		id: crypto.randomUUID(),
+		// A deterministic id, not crypto.randomUUID(): that was regenerated on every render (this
+		// function isn't memoized), so the Fragment keyed on it below force-remounted the entire
+		// cluster -- including any in-progress CSATForm state -- on every unrelated re-render.
+		id: String( getMessageUniqueIdentifier( messages[ 0 ], 'group-0' ) ),
 		role: getPresentedRole( messages[ 0 ] ),
 		messages: [],
 	};
 
 	const groups = [ currentGroup ];
+	let groupIndex = 1;
 
-	for ( const message of sortMessagesByTimestamp( messages ) ) {
+	const sortedMessages = sortMessagesByTimestamp( messages );
+	const lastCSATMessage = sortedMessages.filter( isCSATMessage ).at( -1 );
+
+	for ( const message of sortedMessages ) {
 		if ( EXCLUDED_MESSAGE_ROLES.includes( getPresentedRole( message ) as any ) ) {
+			continue;
+		}
+
+		// Zendesk can emit more than one CSAT prompt for the same conversation. They are all rendered
+		// with the same copy, so every extra one reads as a duplicate and lets the user submit
+		// conflicting ratings for a single ticket. Only the most recent prompt is kept.
+		if ( isCSATMessage( message ) && message !== lastCSATMessage ) {
 			continue;
 		}
 
 		if ( shouldStartNewGroup( message, currentGroup ) ) {
 			currentGroup = {
-				id: crypto.randomUUID(),
+				id: String( getMessageUniqueIdentifier( message, `group-${ groupIndex }` ) ),
 				role: getPresentedRole( message ),
 				messages: [],
 			};
 			groups.push( currentGroup );
+			groupIndex++;
 		}
 
 		currentGroup.messages.push( message );
@@ -138,12 +150,20 @@ function clusterMessagesBySender( messages: Message[] ) {
 	return groups;
 }
 
-export function MessagesClusterizer( { messages }: { messages: Message[] } ) {
+export function MessagesClusterizer( {
+	messages,
+	isLoadingZendeskHistory = false,
+}: {
+	messages: Message[];
+	isLoadingZendeskHistory?: boolean;
+} ) {
 	const groups = clusterMessagesBySender( messages );
 
 	return groups.map( ( group ) => {
 		const startingHumanSupport = group.messages.some( isZendeskChatStartedMessage );
-		const endingHumanSupport = group.messages.some( isCSATMessage );
+		const endingHumanSupport = group.messages.some(
+			( message ) => isCSATMessage( message ) || isZendeskSurveyMessage( message )
+		);
 
 		const messageHeader = () => {
 			// Real Happiness Engineer messages always show the "Happiness Engineer" override so that
@@ -187,6 +207,15 @@ export function MessagesClusterizer( { messages }: { messages: Message[] } ) {
 								: __( 'Chat with support team started', __i18n_text_domain__ )
 						}
 					/>
+				) }
+				{ startingHumanSupport && isLoadingZendeskHistory && (
+					<div
+						className="odie-chatbox-messages-cluster__history-loading"
+						role="status"
+						aria-label={ __( 'Loading earlier messages', __i18n_text_domain__ ) }
+					>
+						<Spinner />
+					</div>
 				) }
 			</Fragment>
 		);

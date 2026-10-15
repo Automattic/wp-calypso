@@ -1,19 +1,23 @@
 import { localizeUrl } from '@automattic/i18n-utils';
 import styled from '@emotion/styled';
 import { Icon } from '@wordpress/components';
-import { lock } from '@wordpress/icons';
+import { lock, reusableBlock } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
-import { CheckoutSummaryRefundWindows } from './checkout-summary-refund-windows';
+import CheckoutProcessorNotice from './checkout-processor-notice';
 import CheckoutTermsModal from './checkout-terms-modal';
-import { getRefundWindowSummary } from './refund-policies';
+import { getRefundWindowCopy } from './refund-policies';
+import {
+	getStudioCodeAiCreditsGuidelinesUrl,
+	hasStudioCodeAiCredits,
+} from './studio-code-ai-credits-guidelines';
 import type { ResponseCart } from '@automattic/shopping-cart';
 
 const Wrapper = styled.div`
 	display: flex;
 	flex-direction: column;
 	gap: 8px;
-	margin-top: 12px;
+	margin-block-start: 16px;
 	font-size: 13px;
 	color: ${ ( props ) => props.theme.colors.textColorLight };
 `;
@@ -29,17 +33,10 @@ const TrustLine = styled.div`
 	}
 `;
 
-const RefundLine = styled( TrustLine )`
-	/*
-	 * CheckoutSummaryRefundWindows renders a sibling icon + container pair when
-	 * includeRefundIcon is passed. Make both children align as if they were one row.
-	 */
-	& > * {
-		margin: 0;
-	}
-`;
-
 const Divider = styled.hr`
+	/* Reset the global hr fill so only the border draws the 1px line. */
+	height: 0;
+	background: none;
 	border: 0;
 	border-block-start: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
 	margin: 8px 0;
@@ -73,7 +70,25 @@ const LegalNotice = styled.p`
 export default function CheckoutPayButtonFooter( { cart }: { cart: ResponseCart } ) {
 	const translate = useTranslate();
 	const [ isTermsModalOpen, setIsTermsModalOpen ] = useState( false );
-	const hasRefundWindow = getRefundWindowSummary( cart ) !== null;
+	const refundWindowCopy = getRefundWindowCopy( cart, translate );
+
+	const components = {
+		tos: (
+			<a
+				href={ localizeUrl( 'https://wordpress.com/tos/' ) }
+				target="_blank"
+				rel="noopener noreferrer"
+			/>
+		),
+		pp: (
+			<a
+				href={ localizeUrl( 'https://automattic.com/privacy/' ) }
+				target="_blank"
+				rel="noopener noreferrer"
+			/>
+		),
+		readmore: <button type="button" onClick={ () => setIsTermsModalOpen( true ) } />,
+	};
 
 	return (
 		<Wrapper className="checkout-pay-button-footer">
@@ -82,38 +97,39 @@ export default function CheckoutPayButtonFooter( { cart }: { cart: ResponseCart 
 				<span>{ translate( 'SSL secure payment · 256-bit encryption' ) }</span>
 			</TrustLine>
 
-			{ hasRefundWindow && (
-				<RefundLine>
-					<CheckoutSummaryRefundWindows cart={ cart } includeRefundIcon />
-				</RefundLine>
+			{ refundWindowCopy && (
+				<TrustLine>
+					<Icon icon={ reusableBlock } size={ 18 } />
+					<span>{ refundWindowCopy }</span>
+				</TrustLine>
 			) }
 
 			<Divider />
 
 			<LegalNotice>
-				{ translate(
-					'By purchasing, you accept the {{tos}}Terms of Service{{/tos}} and {{pp}}Privacy Policy{{/pp}}. {{readmore}}View billing and renewal details{{/readmore}}',
-					{
-						components: {
-							tos: (
-								<a
-									href={ localizeUrl( 'https://wordpress.com/tos/' ) }
-									target="_blank"
-									rel="noopener noreferrer"
-								/>
-							),
-							pp: (
-								<a
-									href={ localizeUrl( 'https://automattic.com/privacy/' ) }
-									target="_blank"
-									rel="noopener noreferrer"
-								/>
-							),
-							readmore: <button type="button" onClick={ () => setIsTermsModalOpen( true ) } />,
-						},
-					}
-				) }
+				{ hasStudioCodeAiCredits( cart )
+					? translate(
+							'By checking out, you agree to our {{tos}}Terms of Service{{/tos}} and {{guidelines}}AI Credits Guidelines{{/guidelines}}, and have read our {{pp}}Privacy Policy{{/pp}}. {{readmore}}View billing and renewal details{{/readmore}}',
+							{
+								components: {
+									...components,
+									guidelines: (
+										<a
+											href={ getStudioCodeAiCreditsGuidelinesUrl() }
+											target="_blank"
+											rel="noopener noreferrer"
+										/>
+									),
+								},
+							}
+						)
+					: translate(
+							'By purchasing, you accept the {{tos}}Terms of Service{{/tos}} and {{pp}}Privacy Policy{{/pp}}. {{readmore}}View billing and renewal details{{/readmore}}',
+							{ components }
+						) }
 			</LegalNotice>
+
+			<CheckoutProcessorNotice />
 
 			<CheckoutTermsModal
 				cart={ cart }

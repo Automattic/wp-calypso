@@ -1,4 +1,9 @@
-import { fetchSiteSettings, updateSiteSettings } from '@automattic/api-core';
+import {
+	fetchSitePremiumAnalyticsSettings,
+	fetchSiteSettings,
+	isWpError,
+	updateSiteSettings,
+} from '@automattic/api-core';
 import { queryOptions, mutationOptions } from '@tanstack/react-query';
 import { queryClient } from './query-client';
 import { siteQueryFilter } from './site';
@@ -50,4 +55,20 @@ export const siteSettingsMutation = ( siteId: number ) =>
 			} );
 			queryClient.invalidateQueries( siteQueryFilter( siteId ) );
 		},
+	} );
+
+export const sitePremiumAnalyticsEnabledQuery = ( siteId: number ) =>
+	queryOptions( {
+		queryKey: [ 'site', siteId, 'premium-analytics-enabled' ],
+		// `null` for a site that never registered the setting, since TanStack Query rejects `undefined` data.
+		queryFn: async () => {
+			const settings = await fetchSitePremiumAnalyticsSettings( siteId );
+			return settings.jetpack_premium_analytics_enabled ?? null;
+		},
+		// Calypso's query client retries every error, and a 403 here will not change on a retry.
+		retry: ( failureCount, error ) =>
+			! ( isWpError( error ) && error.status >= 400 && error.status < 500 ) && failureCount < 3,
+		// Switching the dashboard off happens in wp-admin, so a stored `true` would keep linking to a
+		// page the site no longer serves until the refetch lands.
+		meta: { persist: false },
 	} );

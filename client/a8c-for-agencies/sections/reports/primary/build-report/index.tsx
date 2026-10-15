@@ -197,10 +197,10 @@ const BuildReport = () => {
 							{ isDuplicating
 								? translate(
 										'Start with your previous send. All fields are filled in. Just make updates for the new report and send.'
-								  )
+									)
 								: translate(
 										'Get started by choosing the details to include for your client below.'
-								  ) }
+									) }
 						</p>
 						{ isDuplicating && (
 							<>

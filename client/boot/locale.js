@@ -7,9 +7,11 @@ import {
 } from '@automattic/i18n-utils';
 import { setLocale as setLocaleNumberFormatters } from '@automattic/number-formatters';
 import i18n from 'i18n-calypso';
+import { getSessionLocale } from 'calypso/dashboard/app/locale/session-locale';
 import { initLanguageEmpathyMode } from 'calypso/lib/i18n-utils/empathy-mode';
 import { loadAndSetCurrencyOverrides } from 'calypso/lib/i18n-utils/load-currency-overrides';
 import { loadUserUndeployedTranslations } from 'calypso/lib/i18n-utils/switch-locale';
+import { isSupportSession } from 'calypso/lib/user/support-user-interop';
 import { LOCALE_SET } from 'calypso/state/action-types';
 import { setLocale } from 'calypso/state/ui/language/actions';
 export function getLocaleFromPathname() {
@@ -30,6 +32,13 @@ export function getLocaleFromQueryParam() {
 export const setupLocale = async ( currentUser, reduxStore ) => {
 	if ( config.isEnabled( 'i18n/empathy-mode' ) && currentUser.i18n_empathy_mode ) {
 		initLanguageEmpathyMode();
+	}
+
+	// Support session locale from the quick language switcher
+	const supportSessionLocale = isSupportSession() ? getSessionLocale() : null;
+	if ( supportSessionLocale ) {
+		await reduxStore.dispatch( setLocale( supportSessionLocale ) );
+		return;
 	}
 
 	let userLocaleSlug = currentUser.localeVariant || currentUser.localeSlug;

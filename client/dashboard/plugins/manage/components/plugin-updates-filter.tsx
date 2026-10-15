@@ -1,3 +1,4 @@
+import { formatNumber } from '@automattic/number-formatters';
 import { __experimentalHStack as HStack, Button, Icon, Tooltip } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { closeSmall } from '@wordpress/icons';
@@ -14,7 +15,7 @@ export const PluginUpdatesFilter = ( {
 	view,
 	onChangeView,
 }: {
-	siteCount: number;
+	siteCount?: number;
 	updatesField: Field< PluginListRow >;
 	view: View;
 	onChangeView: ( newView: View ) => void;
@@ -47,11 +48,14 @@ export const PluginUpdatesFilter = ( {
 		}
 	};
 
-	const label = sprintf(
-		// translators: %(siteCount)d is the number of plugins with updates available.
-		__( 'Update available (%(siteCount)d)' ),
-		{ siteCount }
-	);
+	const label =
+		siteCount === undefined
+			? __( 'Update available' )
+			: sprintf(
+					// translators: %(siteCount)s is the formatted number of plugins with updates available.
+					__( 'Update available (%(siteCount)s)' ),
+					{ siteCount: formatNumber( siteCount ) }
+				);
 
 	return currentFilter?.value === true ? (
 		<div

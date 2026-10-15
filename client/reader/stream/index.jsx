@@ -1,8 +1,9 @@
 import './style.scss';
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { isDefaultLocale } from '@automattic/i18n-utils';
 import { times } from '@automattic/js-utils';
 import clsx from 'clsx';
-import { localize } from 'i18n-calypso';
+import { localize, useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { createRef, Component, Fragment } from 'react';
 import * as React from 'react';
@@ -35,6 +36,7 @@ import UpdateNotice from 'calypso/reader/update-notice';
 import { showSelectedPost, getStreamType } from 'calypso/reader/utils';
 import XPostHelper from 'calypso/reader/xpost-helper';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { errorNotice } from 'calypso/state/notices/actions';
 import { getBlockedSites } from 'calypso/state/reader/site-blocks/selectors';
 import { viewStream } from 'calypso/state/reader-ui/actions';
 import { resetCardExpansions } from 'calypso/state/reader-ui/card-expansions/actions';
@@ -53,6 +55,7 @@ import { useStreamPostKeySelection } from './use-stream-post-key-selection';
 import {
 	getDistanceBetweenPrompts,
 	getDistanceBetweenRecs,
+	injectCustomBlock,
 	injectPrompts,
 	injectRecommendations,
 } from './utils';
@@ -95,6 +98,31 @@ const useStreamRenderAnalytics = ( pages, streamKey ) => {
 	}, [ pages, streamKey, streamType, dispatch ] );
 };
 
+/**
+ * Report stream errors to Tracks and show a notice to the user.
+ */
+const useStreamErrorReporting = ( error, streamKey ) => {
+	const dispatch = useDispatch();
+	const translate = useTranslate();
+
+	React.useEffect( () => {
+		if ( ! error ) {
+			return;
+		}
+
+		recordTracksEvent( 'calypso_reader_stream_error', {
+			stream_key: streamKey,
+			path: window.location.pathname,
+		} );
+
+		if ( error.message ) {
+			dispatch(
+				errorNotice( translate( 'Stream error: %s', { args: error.message } ), { duration: 3000 } )
+			);
+		}
+	}, [ error, streamKey, dispatch, translate ] );
+};
+
 class ReaderStream extends Component {
 	static propTypes = {
 		className: PropTypes.string,
@@ -110,6 +138,9 @@ class ReaderStream extends Component {
 		restoreScroll: PropTypes.bool,
 		hideDefaultEmptyContentIfMissing: PropTypes.bool,
 		showFollowButton: PropTypes.bool,
+		// A caller-rendered block inserted once into the list, after `inStreamBlockPosition` posts (default 0).
+		inStreamBlock: PropTypes.node,
+		inStreamBlockPosition: PropTypes.number,
 		showFollowInHeader: PropTypes.bool,
 		sidebarTabTitle: PropTypes.string,
 		streamHeader: PropTypes.func,
@@ -461,8 +492,9 @@ class ReaderStream extends Component {
 			// walk down the list of "visible" items, looking for the first item whose top extent is on screen
 			for ( let i = 0; i < visibleIndexes.length; i++ ) {
 				const visibleIndex = visibleIndexes[ i ];
-				// skip items whose top are off screen or are recommendation blocks
-				if ( visibleIndex.bounds.top > 0 && ! items[ visibleIndex.index ].isRecommendationBlock ) {
+				// skip items whose top are off screen, or synthetic blocks that aren't posts
+				const item = items[ visibleIndex.index ];
+				if ( visibleIndex.bounds.top > 0 && ! item.isRecommendationBlock && ! item.isCustomBlock ) {
 					index = visibleIndex.index;
 					break;
 				}
@@ -630,6 +662,7 @@ class ReaderStream extends Component {
 					siteId={ primarySiteId }
 					showFollowButton={ this.props.showFollowButton }
 					fixedHeaderHeight={ this.props.fixedHeaderHeight }
+					inStreamBlock={ postKey.isCustomBlock ? this.props.inStreamBlock : undefined }
 				/>
 				{ index === 0 && <ReaderPerformanceTrackerStop /> }
 			</Fragment>
@@ -718,7 +751,8 @@ class ReaderStream extends Component {
 						key={ this.props.streamKey }
 						ref={ this.setListContext }
 						items={ items }
-						lastPage={ lastPage }
+						// Avoid re-requests if the last page was already reached or if there was an error.
+						lastPage={ lastPage || !! this.props.error }
 						fetchingNextPage={ isRequesting }
 						guessedItemHeight={ GUESSED_POST_HEIGHT }
 						fetchNextPage={ this.fetchNextPage }
@@ -799,15 +833,12 @@ class ReaderStream extends Component {
 
 		const TopLevel = this.props.isMain ? ReaderMain : 'div';
 
-		if ( this.props.error ) {
-			body = (
-				<StreamError
-					onTryAgain={ this.tryAgain }
-					streamKey={ streamKey }
-					error={ this.props.error }
-					context={ this.state.selectedTab }
-				/>
-			);
+		// Only take over the panel when there is nothing to preserve. A failed
+		// `fetchNextPage` still leaves every successfully loaded page in
+		// `items`, and replacing them with an empty state throws away what the
+		// user was reading.
+		if ( this.props.error && ! items.length ) {
+			body = <StreamError onTryAgain={ this.tryAgain } streamKey={ streamKey } />;
 		}
 
 		return (
@@ -864,7 +895,11 @@ const withStreamPosts = ( WrappedComponent ) =>
 
 		useStreamRenderAnalytics( streamPostsQuery.pages, props.streamKey );
 		useStreamRenderAnalytics( recsStreamPostsQuery.pages, props.recsStreamKey );
+		useStreamErrorReporting( streamPostsQuery.error, props.streamKey );
 
+		// Depend on presence, not identity: the block is a JSX element and would
+		// otherwise rebuild the item list on every parent render.
+		const hasInStreamBlock = !! props.inStreamBlock;
 		const items = React.useMemo( () => {
 			const withRecommendations =
 				props.recsStreamKey && recsStreamPostsQuery.items.length > 0
@@ -872,15 +907,29 @@ const withStreamPosts = ( WrappedComponent ) =>
 							streamPostsQuery.items,
 							recsStreamPostsQuery.items,
 							getDistanceBetweenRecs( followsCount )
-					  )
+						)
 					: streamPostsQuery.items;
 
-			return injectPrompts( withRecommendations, getDistanceBetweenPrompts( followsCount ) );
-		}, [ followsCount, props.recsStreamKey, recsStreamPostsQuery.items, streamPostsQuery.items ] );
+			const withPrompts = injectPrompts(
+				withRecommendations,
+				getDistanceBetweenPrompts( followsCount )
+			);
+
+			return hasInStreamBlock
+				? injectCustomBlock( withPrompts, props.inStreamBlockPosition ?? 0 )
+				: withPrompts;
+		}, [
+			followsCount,
+			hasInStreamBlock,
+			props.inStreamBlockPosition,
+			props.recsStreamKey,
+			recsStreamPostsQuery.items,
+			streamPostsQuery.items,
+		] );
 
 		const streamType = getStreamType( props.streamKey ?? '' );
 		const shouldPoll =
-			! [ 'search', 'custom_recs_posts_with_images', 'discover', 'space_discover' ].includes(
+			! [ 'search', 'custom_recs_posts_with_images', 'discover', 'shelf_discover' ].includes(
 				streamType
 			) && ! props.forcePlaceholders;
 
@@ -940,7 +989,7 @@ const withStreamPosts = ( WrappedComponent ) =>
 		const canonicalSelectedPost = useCachedPost( selectedPostKey );
 		const selectedPost = canonicalSelectedPost;
 		const { postLikes } = usePostLikes( selectedPost?.site_ID, selectedPost?.ID );
-		const likedPost = selectedPost ? postLikes?.iLike ?? Boolean( selectedPost.i_like ) : null;
+		const likedPost = selectedPost ? ( postLikes?.iLike ?? Boolean( selectedPost.i_like ) ) : null;
 
 		return (
 			<WrappedComponent

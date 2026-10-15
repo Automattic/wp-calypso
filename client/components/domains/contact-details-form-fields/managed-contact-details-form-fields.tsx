@@ -2,7 +2,6 @@ import { camelCase } from '@automattic/js-utils';
 import {
 	tryToGuessPostalCodeFormat,
 	getCountryPostalCodeSupport,
-	getCountryTaxRequirements,
 	CountryListItem,
 } from '@automattic/wpcom-checkout';
 import { Notice } from '@wordpress/components';
@@ -21,7 +20,7 @@ import {
 	prepareDomainContactDetails,
 	convertDomainContactDetailsToManagedContactDetails,
 } from 'calypso/my-sites/checkout/src/types/wpcom-store-state';
-import { Input, HiddenInput } from 'calypso/my-sites/domains/components/form';
+import { Input } from 'calypso/my-sites/domains/components/form';
 import { getCountryStates } from 'calypso/state/country-states/selectors';
 import {
 	getCurrentUserEmail,
@@ -51,11 +50,7 @@ export interface FieldProps {
 	disabled: boolean;
 	isError: boolean;
 	errorMessage:
-		| React.ReactElement
-		| string
-		| number
-		| DomainContactDetailsErrors[ 'extra' ]
-		| undefined;
+		React.ReactElement | string | number | DomainContactDetailsErrors[ 'extra' ] | undefined;
 	onChange: ( event: React.ChangeEvent< HTMLInputElement > ) => void;
 	onBlur: () => void;
 	value: string | DomainContactDetailsExtra | undefined;
@@ -277,6 +272,7 @@ export class ManagedContactDetailsFormFields extends Component<
 					<FormPhoneMediaInput
 						label={ this.props.translate( 'Phone' ) }
 						name="phone"
+						enableStickyCountry={ false }
 						value={ {
 							phoneNumber: this.props.contactDetails.phone ?? '',
 							countryCode:
@@ -318,36 +314,14 @@ export class ManagedContactDetailsFormFields extends Component<
 			: false;
 
 	renderContactDetailsFields() {
-		const { translate, hasCountryStates, countriesList } = this.props;
+		const { translate, hasCountryStates } = this.props;
 		const countryCode = this.props.contactDetails.countryCode ?? '';
 		const arePostalCodesSupported = this.getCountryPostalCodeSupport( countryCode );
-		const taxRequirements =
-			countriesList?.length && countryCode
-				? getCountryTaxRequirements( countriesList, countryCode )
-				: {};
-		const isOrganizationFieldRequired =
-			taxRequirements.organization ||
-			[
-				'CCO',
-				'GOV',
-				'EDU',
-				'ASS',
-				'HOP',
-				'PRT',
-				'TDM',
-				'TRD',
-				'PLT',
-				'LAM',
-				'TRS',
-				'INB',
-				'OMK',
-				'MAJ',
-			].includes( this.props.contactDetails.extra?.ca?.legalType ?? '' );
 
 		return (
 			<div className="contact-details-form-fields__contact-details">
 				<div className="contact-details-form-fields__row">
-					<HiddenInput
+					<Input
 						label={ this.props.translate( 'Organization' ) }
 						labelClass="contact-details-form-fields__label"
 						additionalClasses="contact-details-form-fields__field"
@@ -358,8 +332,6 @@ export class ManagedContactDetailsFormFields extends Component<
 						onBlur={ this.handleBlur( 'organization' ) }
 						value={ this.props.contactDetails.organization }
 						name="organization"
-						text={ translate( '+ Add organization name' ) }
-						toggled={ this.props.contactDetails.organization || isOrganizationFieldRequired }
 						placeholder={ translate( 'Organization (optional)' ) }
 						description={
 							<Notice status="warning" isDismissible={ false }>

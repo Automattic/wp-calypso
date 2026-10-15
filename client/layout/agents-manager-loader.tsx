@@ -1,10 +1,12 @@
-import { useShouldUseUnifiedAgent } from '@automattic/agents-manager';
+import { omnibarAgentsManagerEnabledQuery, queryClient } from '@automattic/api-queries';
+import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
+import { useCanShowOmnibarAiChatButton } from 'calypso/dashboard/app/omnibar/use-can-show-omnibar-ai-chat-button';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
-import getPrimarySiteSlug from 'calypso/state/selectors/get-primary-site-slug';
-import { getSiteBySlug } from 'calypso/state/sites/selectors';
-import { getSelectedSite, isSiteSection } from 'calypso/state/ui/selectors';
+import { isSiteSection } from 'calypso/state/ui/selectors';
+import { useHelpCenterSite } from './use-help-center-site';
+import useSectionAgentProvider, { getSectionAgentProviderKey } from './use-section-agent-provider';
 
 const importAgentsManager = () =>
 	import(
@@ -13,30 +15,45 @@ const importAgentsManager = () =>
 
 export default function AgentsManagerLoader( {
 	sectionName,
-	loadAgentsManager,
+	isInternalOnly = false,
+	isMasterbarVisible,
 }: {
 	sectionName: string;
-	loadAgentsManager: boolean;
+	isInternalOnly?: boolean;
+	isMasterbarVisible: boolean;
 } ) {
-	const shouldUseUnifiedAgent = useShouldUseUnifiedAgent();
 	const user = useSelector( getCurrentUser );
-	const selectedSite = useSelector( getSelectedSite );
 	const isSiteSpecific = useSelector( isSiteSection );
-	const primarySiteSlug = useSelector( getPrimarySiteSlug );
-	const primarySite = useSelector( ( state ) => getSiteBySlug( state, primarySiteSlug ) );
+	const { selectedSite, site } = useHelpCenterSite();
+	const isPlugins = sectionName === 'plugins';
+	const isReady = useSectionAgentProvider( sectionName, !! user );
+	const canShowOmnibarAiChatButton = useCanShowOmnibarAiChatButton();
 
-	if ( ! shouldUseUnifiedAgent || ! loadAgentsManager ) {
+	useEffect( () => {
+		const { queryKey } = omnibarAgentsManagerEnabledQuery();
+		queryClient.cancelQueries( { queryKey } );
+		queryClient.setQueryData( queryKey, isReady );
+
+		return () => {
+			queryClient.setQueryData( queryKey, false );
+		};
+	}, [ isReady ] );
+
+	if ( ! isReady ) {
 		return null;
 	}
 
 	return (
 		<AsyncLoad
+			key={ getSectionAgentProviderKey( sectionName ) }
 			require={ importAgentsManager }
 			placeholder={ null }
 			currentUser={ user }
 			sectionName={ sectionName }
-			site={ selectedSite || primarySite }
-			currentSiteId={ isSiteSpecific ? selectedSite?.ID : undefined }
+			site={ isPlugins ? ( selectedSite ?? null ) : site }
+			currentSiteId={ isPlugins || isSiteSpecific ? selectedSite?.ID : undefined }
+			isInternalOnly={ isInternalOnly }
+			hasMasterbarAiChatButton={ isMasterbarVisible && canShowOmnibarAiChatButton }
 		/>
 	);
 }

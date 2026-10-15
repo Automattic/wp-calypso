@@ -26,14 +26,7 @@ const selectors = {
 	},
 	addOnComboboxButton: 'button[role="combobox"]',
 	addOnComboboxOption: ( addOn: string ) => `[role="option"]:has-text("${ addOn }")`,
-	selectPlanButton: ( name: Plans ) => {
-		if ( name === 'Free' ) {
-			// Free plan is a pseudo-button presented as a
-			// link.
-			return `button:text-matches("${ name }", "i"):visible`;
-		}
-		return `button.is-${ name.toLowerCase() }-plan:visible`;
-	},
+	selectPlanButton: ( name: Plans ) => `button.is-${ name.toLowerCase() }-plan:visible`,
 
 	// Navigation
 	mobileNavTabsToggle: 'button.section-nav__mobile-header',
@@ -167,6 +160,22 @@ export class PlansPage {
 	}
 
 	/**
+	 * Clicks the "start with a free plan" link below the plans grid.
+	 *
+	 * Unlike `openEscapeHatch`, this does not wait for an upsell modal; with a free
+	 * subdomain the free plan is selected directly.
+	 */
+	async clickStartWithFreePlan(): Promise< void > {
+		await this.page
+			.getByRole( 'button', {
+				name: 'start with a free plan',
+				exact: true,
+			} )
+			.first()
+			.click( { noWaitAfter: true } );
+	}
+
+	/**
 	 * Opens the escape hatch modal by clicking the "start with a free plan" trigger link.
 	 */
 	async openEscapeHatch(): Promise< void > {
@@ -192,15 +201,6 @@ export class PlansPage {
 			} )
 			.first();
 		await escapeHatchDialog.waitFor( { state: 'visible' } );
-	}
-
-	/**
-	 * Validates that the "No free custom domain" warning is visible in the escape hatch modal.
-	 */
-	async validateNoCustomDomainWarning( domainName: string ): Promise< void > {
-		await this.page
-			.getByText( `No free custom domain: Your site will be shown to visitors as ${ domainName }` )
-			.waitFor();
 	}
 
 	/**
@@ -257,7 +257,7 @@ export class PlansPage {
 	/**
 	 * Clicks the "Continue with Free" button in the escape hatch modal.
 	 *
-	 * This handles both the FreePlanFreeDomainDialog ("Continue with Free") and
+	 * This handles both the PaidPlanIsRequiredDialog ("Continue with Free") and
 	 * the FreePlanPaidDomainDialog ("Continue with Free plan") variants.
 	 */
 	async clickContinueWithFree(): Promise< void > {

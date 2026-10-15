@@ -16,6 +16,8 @@
 import { useDispatch } from '@wordpress/data';
 import { useState, useCallback } from '@wordpress/element';
 import { __, _n, sprintf } from '@wordpress/i18n';
+import { getBulkResponseActionOutcome } from '../utils/response-action';
+import type { OnResponseAction } from '../utils/response-action';
 
 /**
  * One generated alt-text suggestion: the target block, its image URL (for the
@@ -29,36 +31,73 @@ interface AltTextSuggestion {
 }
 
 interface ImageAltTextPickerProps {
-	images: AltTextSuggestion[];
+	images?: AltTextSuggestion[];
 	onComplete?: () => void;
+	onResponseAction?: OnResponseAction;
 }
 
-/**
- * ImageAltTextPicker component for the chat sidebar.
- *
- * Renders each image next to its suggested alt text, then applies every
- * suggestion in one action via a single common Apply button and shows a
- * confirmation.
- * @param {ImageAltTextPickerProps} props - Component props.
- * @returns {import('react').ReactElement|null} The rendered component.
- */
-export default function ImageAltTextPicker( { images, onComplete }: ImageAltTextPickerProps ) {
+const EMPTY_ALT_TEXT_SUGGESTIONS: AltTextSuggestion[] = [];
+
+function isAltTextSuggestion( image: unknown ): image is AltTextSuggestion {
+	if ( ! image || typeof image !== 'object' || Array.isArray( image ) ) {
+		return false;
+	}
+
+	const candidate = image as Record< string, unknown >;
+	return (
+		typeof candidate.clientId === 'string' &&
+		candidate.clientId.trim() !== '' &&
+		typeof candidate.alt === 'string' &&
+		candidate.alt.trim() !== ''
+	);
+}
+
+/** Renders image alt-text suggestions and applies them in one action. */
+export default function ImageAltTextPicker( {
+	images,
+	onComplete,
+	onResponseAction,
+}: ImageAltTextPickerProps ) {
 	const [ applied, setApplied ] = useState( false );
 	const { updateBlockAttributes } = useDispatch( 'core/block-editor' );
+	// The props arrive from an orchestrator tool payload, so guard the shape
+	// instead of trusting the TypeScript type.
+	const rows = Array.isArray( images )
+		? images.filter( isAltTextSuggestion )
+		: EMPTY_ALT_TEXT_SUGGESTIONS;
 
 	const handleApplyAll = useCallback( () => {
-		images.forEach( ( image ) => {
-			updateBlockAttributes( image.clientId, { alt: image.alt } );
+		let completedCount = 0;
+		// Updates stop on the first throw; earlier completions produce `partial_failed`.
+		try {
+			rows.forEach( ( image ) => {
+				updateBlockAttributes( image.clientId, { alt: image.alt } );
+				completedCount++;
+			} );
+			setApplied( true );
+		} catch ( error ) {
+			onResponseAction?.( {
+				action: 'bulk_accept',
+				target: 'image',
+				outcome: getBulkResponseActionOutcome( completedCount, 1 ),
+				itemCount: completedCount + 1,
+			} );
+			throw error;
+		}
+		onResponseAction?.( {
+			action: 'bulk_accept',
+			target: 'image',
+			outcome: 'success',
+			itemCount: completedCount,
 		} );
-		setApplied( true );
 		onComplete?.();
-	}, [ images, updateBlockAttributes, onComplete ] );
+	}, [ rows, updateBlockAttributes, onComplete, onResponseAction ] );
 
-	if ( ! images?.length ) {
+	if ( ! rows.length ) {
 		return null;
 	}
 
-	const count = images.length;
+	const count = rows.length;
 
 	return (
 		<div className="jetpack-ai-image-alt-text-picker">
@@ -66,7 +105,7 @@ export default function ImageAltTextPicker( { images, onComplete }: ImageAltText
 				{ __( 'Suggested alt text for your images:', 'jetpack' ) }
 			</p>
 			<ul className="jetpack-ai-image-alt-text-picker__list">
-				{ images.map( ( image ) => (
+				{ rows.map( ( image ) => (
 					<li key={ image.clientId } className="jetpack-ai-image-alt-text-picker__row">
 						{ image.url && (
 							<img

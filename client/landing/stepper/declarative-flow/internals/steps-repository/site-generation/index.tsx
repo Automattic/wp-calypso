@@ -1,7 +1,7 @@
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
-import { getSafeEditorUrl } from './editor-url';
+import { getBuildWowGraph } from 'calypso/landing/stepper/utils/build-wow';
 import { useSiteGeneration } from './use-site-generation';
 import { SiteGenerationView } from './view';
 import type { Step as StepType } from '../../types';
@@ -11,27 +11,35 @@ const SiteGeneration: StepType = function SiteGeneration() {
 	const translate = useTranslate();
 	const query = useMemo( () => new URLSearchParams( window.location.search ), [] );
 	const siteIdentifier = query.get( 'siteId' ) || query.get( 'siteSlug' );
-	const editorUrl = getSafeEditorUrl( query.get( 'editorUrl' ) );
+	const source = query.get( 'source' );
+	const specId = query.get( 'specId' );
+	const graph = getBuildWowGraph( query );
+	// Fallback checklist only: the server-computed ui.steps from the status
+	// endpoint is authoritative (labels included, already localized). This
+	// list covers the moments before the first response arrives, and backends
+	// that do not send the ui block yet. Keep these IDs aligned with the server
+	// so React preserves each progress row when the first response arrives.
 	const steps = useMemo(
 		() => [
-			{ id: 'preparing', label: translate( 'Preparing your site' ) },
-			{ id: 'designing', label: translate( 'Choosing your design' ) },
-			{ id: 'building', label: translate( 'Building your pages' ) },
-			{ id: 'polishing', label: translate( 'Polishing your design' ) },
-			{ id: 'finalizing', label: translate( 'Getting everything ready' ) },
+			{ id: 'prepare', label: translate( 'Preparing your site' ) },
+			{ id: 'design', label: translate( 'Creating your design' ) },
+			{ id: 'pages', label: translate( 'Building your pages' ) },
+			{ id: 'images', label: translate( 'Adding your images' ) },
+			{ id: 'polish', label: translate( 'Polishing your site' ) },
+			{ id: 'publish', label: translate( 'Doing final checks' ) },
 		],
 		[ translate ]
 	);
-	const state = useSiteGeneration( { siteIdentifier, editorUrl, steps } );
+	const state = useSiteGeneration( { siteIdentifier, source, specId, graph, steps } );
 
-	const retry = () => {
+	const reload = () => {
 		window.location.reload();
 	};
 
 	return (
 		<>
 			<DocumentHead title={ translate( 'Generating your site' ) } />
-			<SiteGenerationView onRetry={ retry } state={ state } />
+			<SiteGenerationView graph={ graph } onReload={ reload } state={ state } />
 		</>
 	);
 };

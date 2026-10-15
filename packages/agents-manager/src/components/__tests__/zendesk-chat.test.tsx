@@ -6,6 +6,10 @@ import { render } from '@testing-library/react';
 
 const mockUseManagedZendeskChat = jest.fn();
 let mockZendeskTicketProductFieldValue: string | undefined = 'woocommerce_core_product';
+let mockSite: { ID: number | string; URL: string } | null = {
+	ID: 123,
+	URL: 'https://example.com',
+};
 
 jest.mock( '@automattic/zendesk-client', () => ( {
 	useManagedZendeskChat: ( props: unknown ) => mockUseManagedZendeskChat( props ),
@@ -16,7 +20,7 @@ jest.mock( '@automattic/zendesk-client', () => ( {
 
 jest.mock( '../../contexts', () => ( {
 	useAgentsManagerContext: () => ( {
-		site: { ID: 123, URL: 'https://example.com' },
+		site: mockSite,
 		zendeskConversationTags: [ 'woo_support_flow_ai_plugin' ],
 		zendeskSmoochIntegrationKey: 'woo',
 		zendeskTicketProductFieldValue: mockZendeskTicketProductFieldValue,
@@ -39,6 +43,7 @@ describe( 'ZendeskChat', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
 		mockZendeskTicketProductFieldValue = 'woocommerce_core_product';
+		mockSite = { ID: 123, URL: 'https://example.com' };
 		mockUseManagedZendeskChat.mockReturnValue( {
 			agentticMessages: [],
 			onSubmit: jest.fn(),
@@ -93,6 +98,40 @@ describe( 'ZendeskChat', () => {
 			expect.objectContaining( {
 				conversationTicketFields: {},
 			} )
+		);
+	} );
+
+	it( 'passes the support site to managed Zendesk chat', () => {
+		render(
+			<ZendeskChat
+				chatHeaderOptions={ [] }
+				isDocked={ false }
+				isOpen
+				onClose={ jest.fn() }
+				onExpand={ jest.fn() }
+			/>
+		);
+
+		expect( mockUseManagedZendeskChat ).toHaveBeenCalledWith(
+			expect.objectContaining( { siteId: 123 } )
+		);
+	} );
+
+	it( 'passes no support site when the context has none', () => {
+		mockSite = null;
+
+		render(
+			<ZendeskChat
+				chatHeaderOptions={ [] }
+				isDocked={ false }
+				isOpen
+				onClose={ jest.fn() }
+				onExpand={ jest.fn() }
+			/>
+		);
+
+		expect( mockUseManagedZendeskChat ).toHaveBeenCalledWith(
+			expect.objectContaining( { siteId: undefined } )
 		);
 	} );
 } );

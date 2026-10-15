@@ -1,0 +1,44 @@
+@import '@wordpress/base-styles/variables';
+
+.celebration-modal {
+	// Set the font explicitly so the modal doesn't inherit the host page's font
+	// (e.g. a site theme's typography when shown over a site preview).
+	font-family: $default-font;
+
+	// The header title is styled by a rule that targets this element directly,
+	// which beats the inherited font above, so declare it here as well.
+	.components-modal__header-heading-container {
+		font-family: $default-font;
+	}
+
+	.flex-shrink-safe {
+		flex: 1;
+		min-width: 0;
+	}
+}
+
+.celebration-modal--content {
+	padding: $grid-unit-20 $grid-unit-20;
+	background-color: var( --studio-blue-5 );
+
+	a {
+		color: inherit;
+	}
+}
+
+.celebration-modal--url-container {
+	// Hide button by default
+	.components-button {
+		opacity: 0;
+		pointer-events: none;
+		transition: opacity 0.2s ease;
+	}
+
+	// Show on hover or when any child receives focus
+	&:hover .components-button,
+	&:focus-within .components-button {
+		color: inherit;
+		opacity: 1;
+		pointer-events: auto;
+	}
+}

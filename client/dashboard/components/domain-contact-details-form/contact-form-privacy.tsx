@@ -42,10 +42,10 @@ export default function ContactFormPrivacy( {
 							domain.private_domain
 								? __(
 										'Privacy protection must be enabled due to the registry’s policies. <learnMoreLink />'
-								  )
+									)
 								: __(
 										'Privacy protection is not available due to the registry’s policies. <learnMoreLink />'
-								  ),
+									),
 							{
 								learnMoreLink: (
 									<InlineSupportLink supportContext="domain-registrations-and-privacy" />

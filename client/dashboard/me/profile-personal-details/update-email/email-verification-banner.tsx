@@ -1,4 +1,4 @@
-import { resendEmailVerificationMutation } from '@automattic/api-queries';
+import { cancelPendingEmailChangeMutation } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
 import { Button } from '@wordpress/components';
@@ -9,6 +9,9 @@ import { store as noticesStore } from '@wordpress/notices';
 import { useState, useEffect } from 'react';
 import { withSnackbar } from '../../../app/snackbars/with-snackbar';
 import Notice from '../../../components/notice';
+import { formatCooldown } from '../../../utils/email-verification-resend';
+import { useEmailVerificationResend } from '../../../utils/use-email-verification-resend';
+import { useIsEmailWritePending } from '../use-email-write-pending';
 import type { UserSettings } from '@automattic/api-core';
 
 // Get email verification params from URL
@@ -19,6 +22,7 @@ function getEmailVerificationParams() {
 			isEmailVerificationComplete: false,
 			emailChangeFailed: false,
 			emailVerificationFailed: false,
+			emailChangeError: null,
 		};
 	}
 	const params = new URLSearchParams( window.location.search );
@@ -30,6 +34,7 @@ function getEmailVerificationParams() {
 		isEmailVerificationComplete: verified === '1',
 		emailChangeFailed: newEmailResult === '0',
 		emailVerificationFailed: verified === '0',
+		emailChangeError: params.get( 'new_email_error' ),
 	};
 }
 
@@ -37,18 +42,33 @@ function getEmailVerificationParams() {
 function cleanUpEmailVerificationParams() {
 	const params = new URLSearchParams( window.location.search );
 	params.delete( 'new_email_result' );
+	params.delete( 'new_email_error' );
 	params.delete( 'verified' );
 	const newUrl = window.location.pathname + ( params.toString() ? '?' + params.toString() : '' );
 	window.history.replaceState( {}, '', newUrl );
 }
 
-interface EmailVerificationBannerProps {
-	userData: UserSettings;
+// An unrecognised or absent reason falls back to the generic message, so the server can start
+// sending one without waiting on this.
+function emailChangeFailureMessage( emailChangeError: string | null ) {
+	if ( emailChangeError === 'email_in_use' ) {
+		return __(
+			'That email address is already used by another WordPress.com account. Try a different address.'
+		);
+	}
+	return __( 'The email verification link is invalid or has expired. Please request a new one.' );
 }
 
-export default function EmailVerificationBanner( { userData }: EmailVerificationBannerProps ) {
+interface EmailVerificationBannerProps {
+	userSettings: UserSettings;
+	isEmailVerified: boolean;
+}
+
+export default function EmailVerificationBanner( {
+	userSettings,
+	isEmailVerified,
+}: EmailVerificationBannerProps ) {
 	const { createErrorNotice } = useDispatch( noticesStore );
-	const [ showResendButton, setShowResendButton ] = useState( true );
 
 	// Extract verification params to avoid multiple URL parsing calls
 	const {
@@ -56,6 +76,7 @@ export default function EmailVerificationBanner( { userData }: EmailVerification
 		isEmailVerificationComplete,
 		emailChangeFailed,
 		emailVerificationFailed,
+		emailChangeError,
 	} = getEmailVerificationParams();
 
 	const [ showSuccessNotice, setShowSuccessNotice ] = useState( () => {
@@ -73,16 +94,27 @@ export default function EmailVerificationBanner( { userData }: EmailVerification
 		return null;
 	} );
 
-	const isEmailPending = userData.user_email_change_pending;
-	const pendingEmail = userData.new_user_email;
+	const pendingEmail = userSettings.new_user_email;
+	const isEmailChangePending = !! userSettings.user_email_change_pending && !! pendingEmail;
+	const {
+		resend: resendEmail,
+		isSendPending,
+		isResending: isResendPending,
+		secondsUntilResend,
+	} = useEmailVerificationResend( {
+		originalEmail: userSettings.user_email,
+		pendingEmail,
+		isEmailChangePending,
+		errorMessage: __( 'Failed to resend verification email.' ),
+	} );
+	const isAwaitingResend = secondsUntilResend > 0;
+	const shouldShowVerifyNotice = isEmailChangePending || ! isEmailVerified;
+	const unverifiedEmail = isEmailChangePending ? pendingEmail : userSettings.user_email;
 
 	useEffect( () => {
 		// Handle error cases
 		if ( emailChangeFailed || emailVerificationFailed ) {
-			createErrorNotice(
-				__( 'The email verification link is invalid or has expired. Please request a new one.' ),
-				{ type: 'snackbar' }
-			);
+			createErrorNotice( emailChangeFailureMessage( emailChangeError ), { type: 'snackbar' } );
 		}
 
 		// Clean up URL params if any verification params were present
@@ -100,34 +132,17 @@ export default function EmailVerificationBanner( { userData }: EmailVerification
 		isEmailVerificationComplete,
 		emailChangeFailed,
 		emailVerificationFailed,
+		emailChangeError,
 	] );
 
-	// Resend email
-	const { mutate: resendEmail, isPending: isResendPending } = useMutation( {
-		...withSnackbar( resendEmailVerificationMutation( pendingEmail || '' ), {
-			success: pendingEmail
-				? sprintf(
-						/* translators: %s is the user's new email address they're trying to change to */
-						__( 'We sent an email to %s. Please check your inbox to verify your email.' ),
-						pendingEmail
-				  )
-				: __( 'Verification email sent.' ),
-			error: __( 'Failed to resend verification email.' ),
-		} ),
-		onSuccess: () => {
-			setShowResendButton( false );
-		},
-		onError: () => {
-			setShowResendButton( true );
-		},
-	} );
+	const isEmailWritePending = useIsEmailWritePending();
 
-	const handleResendEmail = () => {
-		if ( ! pendingEmail ) {
-			return;
-		}
-		resendEmail();
-	};
+	const { mutate: cancelPendingEmail, isPending: isCancelPending } = useMutation(
+		withSnackbar( cancelPendingEmailChangeMutation(), {
+			success: __( 'Pending email change canceled.' ),
+			error: __( 'Failed to cancel pending email change.' ),
+		} )
+	);
 
 	if ( showSuccessNotice ) {
 		const wasEmailChange = verificationType === 'email_change';
@@ -156,37 +171,59 @@ export default function EmailVerificationBanner( { userData }: EmailVerification
 		);
 	}
 
-	// Show pending email verification notice
-	if ( ! isEmailPending || ! pendingEmail ) {
+	// Show the verification notice for a pending change or an unverified account email.
+	if ( ! shouldShowVerifyNotice || ! unverifiedEmail ) {
 		return null;
 	}
 
 	return (
-		<>
-			<Notice
-				variant="warning"
-				title={ __( 'Verify your email' ) }
-				actions={
-					showResendButton && (
-						<Button variant="link" onClick={ handleResendEmail } disabled={ isResendPending }>
-							{ __( 'Resend email' ) }
+		<Notice
+			variant="warning"
+			title={ __( 'Verify your email' ) }
+			actions={
+				<>
+					<Button
+						className="dashboard-email-verification-resend"
+						variant="primary"
+						__next40pxDefaultSize
+						onClick={ resendEmail }
+						disabled={ isEmailWritePending || isSendPending || isAwaitingResend }
+						isBusy={ isResendPending }
+					>
+						{ isAwaitingResend
+							? sprintf(
+									/* translators: %s is a countdown to when the email can be resent, e.g. 4:59 */
+									__( 'Resend email (%s)' ),
+									formatCooldown( secondsUntilResend )
+								)
+							: __( 'Resend email' ) }
+					</Button>
+					{ isEmailChangePending && (
+						<Button
+							variant="secondary"
+							__next40pxDefaultSize
+							onClick={ () => cancelPendingEmail() }
+							disabled={ isEmailWritePending }
+							isBusy={ isCancelPending }
+						>
+							{ __( 'Cancel the pending email change' ) }
 						</Button>
-					)
-				}
-			>
-				{ createInterpolateElement(
-					sprintf(
-						/* translators: %s is the user's new email address they're trying to change to */
-						__(
-							'Check your inbox at <strong>%s</strong> for the confirmation email, or click "Resend email" to get a new one.'
-						),
-						pendingEmail
+					) }
+				</>
+			}
+		>
+			{ createInterpolateElement(
+				sprintf(
+					/* translators: %s is the email address awaiting verification */
+					__(
+						'Check your inbox at <strong>%s</strong> for the confirmation email, or click "Resend email" to get a new one.'
 					),
-					{
-						strong: <strong />,
-					}
-				) }
-			</Notice>
-		</>
+					unverifiedEmail
+				),
+				{
+					strong: <strong />,
+				}
+			) }
+		</Notice>
 	);
 }

@@ -4,6 +4,7 @@ import {
 	getAccountCredential,
 	getCalypsoURL,
 	getAccountSiteURL,
+	getNewTestUser,
 	toTitleCase,
 	createSuiteTitle,
 } from '../data-helper';
@@ -11,6 +12,7 @@ import { SecretsManager } from '../secrets';
 import type { Secrets } from '../secrets';
 
 const fakeSecrets = {
+	gmailTestEmail: 'a8c.e2e@gmail.com',
 	testAccounts: {
 		basicUser: {
 			username: 'wpcomuser2',
@@ -39,6 +41,61 @@ describe( 'DataHelper Tests', function () {
 			expect( generated ).toBeGreaterThanOrEqual( min );
 			expect( expected.includes( generated ) );
 		} );
+	} );
+
+	describe( 'Test: getNewTestUser', function () {
+		// What wpcom keeps of a Gmail-aliased address when it derives the username
+		// of a passwordless signup: the local part, sanitized to alphanumerics and
+		// cut at 40 characters (`Passwordless_Helpers::generate_username`).
+		const deriveUsername = ( email: string ) =>
+			email
+				.split( '@' )[ 0 ]
+				.replace( /[^a-z0-9]/gi, '' )
+				.slice( 0, 40 );
+
+		test.each( [ '', 'blackbox', 'ftmepersonal' ] )(
+			'The username wpcom derives for the "%s" prefix keeps the whole address',
+			function ( usernamePrefix ) {
+				const { email } = getNewTestUser( { usernamePrefix } );
+				const localPart = email.split( '@' )[ 0 ].replace( /[^a-z0-9]/gi, '' );
+
+				// Anything past the cut is lost, and what is lost here is the
+				// timestamp and random suffix that make the user unique: two users
+				// generated milliseconds apart are then handed the same username and
+				// the second signup fails with `username_reserved_but_may_be_available`
+				// or `user_already_exists`.
+				expect( deriveUsername( email ) ).toBe( localPart );
+			}
+		);
+
+		test( 'The username stays inside the test-account namespace', function () {
+			const { username } = getNewTestUser( { usernamePrefix: 'ftmepersonal' } );
+
+			// wpcom gates test accounts on this prefix, e.g. discarding their Tracks
+			// events (`WPCOM_Tracks_Client::should_discard`).
+			expect( username.startsWith( 'e2eflowtesting' ) ).toBe( true );
+		} );
+
+		// Base addresses that spend the 40 characters wpcom reads before the
+		// namespace is written: the first leaves the budget short of it, the second
+		// takes the budget negative, which makes an unclamped `slice` trim from the
+		// end and stop cutting altogether.
+		test.each( [ 'e2e.flow.testing.suite@gmail.com', 'e2e.flow.testing.suite.account@gmail.com' ] )(
+			'The namespace survives the base address %s leaving no room for it',
+			function ( gmailTestEmail ) {
+				const baseEmail = fakeSecrets.gmailTestEmail;
+				fakeSecrets.gmailTestEmail = gmailTestEmail;
+
+				try {
+					const { username } = getNewTestUser( { usernamePrefix: 'ftmepersonal' } );
+					// The prefix gives way; the namespace must not, or teardown will
+					// not close the account it makes (`RestAPIClient.closeAccount`).
+					expect( username.startsWith( 'e2eflowtesting' ) ).toBe( true );
+				} finally {
+					fakeSecrets.gmailTestEmail = baseEmail;
+				}
+			}
+		);
 	} );
 
 	describe( 'Test: getCalypsoURL', function () {

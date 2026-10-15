@@ -1,12 +1,13 @@
 import { Button, DropdownMenu } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
-import { close, lineSolid, moreVertical, backup, chevronLeft, Icon } from '@wordpress/icons';
-import { useNavigate } from 'react-router-dom';
+import { close, moreVertical, chevronLeft, Icon } from '@wordpress/icons';
+import { useAgentsManagerContext } from '../../contexts';
 import useHasAiChatEntryButton from '../../hooks/use-has-ai-chat-entry-button';
 import { AGENTS_MANAGER_STORE } from '../../stores';
-import { isReaderChatHost } from '../../utils/is-reader-chat-agent';
+import { getChatPresentation } from '../../utils/chat-presentation';
 import { recordAgentsManagerTracksEvent } from '../../utils/tracks';
+import { Minimize } from '../icons';
 import type { ComponentProps } from 'react';
 import './style.scss';
 
@@ -22,13 +23,14 @@ interface Props {
 }
 
 export default function ChatHeader( { onClose, options, title, onBack, isDocked }: Props ) {
-	const navigate = useNavigate();
 	const { setIsMinimized } = useDispatch( AGENTS_MANAGER_STORE );
+	const { isInternalOnly } = useAgentsManagerContext();
 	const hasAiChatEntry = useHasAiChatEntryButton();
 
 	// Minimize only applies to the floating chat reachable from an AI chat entry button
 	// (wp-admin bar, Calypso masterbar, or editor toolbar).
-	const showMinimize = hasAiChatEntry && ! isDocked;
+	const { dismissible } = getChatPresentation();
+	const showMinimize = dismissible && hasAiChatEntry && ! isDocked;
 
 	return (
 		<div className="agents-manager-chat-header">
@@ -48,54 +50,51 @@ export default function ChatHeader( { onClose, options, title, onBack, isDocked 
 					{ title }
 				</div>
 			) }
+			{ isInternalOnly && (
+				<span
+					className="agents-manager-chat-header__internal-only"
+					title={ __(
+						'The current screen only has WordPress Agent enabled for internal use.',
+						__i18n_text_domain__
+					) }
+				>
+					{ __( 'A8C Only', __i18n_text_domain__ ) }
+				</span>
+			) }
 			<div className="agents-manager-chat-header__actions">
-				<DropdownMenu
-					className="agents-manager-chat-header__more-options"
-					controls={ options }
-					icon={ moreVertical }
-					label={ __( 'More Options', __i18n_text_domain__ ) }
-					// Render inside the panel node so opening the menu doesn't blur the panel
-					popoverProps={ {
-						className: 'agents-manager-chat-header__menu-popover',
-						inline: true,
-					} }
-					toggleProps={ { size: 'small' } }
-				/>
-				{ /*
-				 * Reader chat runs on public blog frontends where session history
-				 * isn't user-accessible (no account, per-visit local storage).
-				 */ }
-				{ ! isReaderChatHost() && (
-					<Button
-						className="agents-manager-chat-header__history-btn"
-						icon={ backup }
-						onClick={ () => {
-							recordAgentsManagerTracksEvent( 'chat_history_open' );
-							navigate( '/history' );
-						} }
-						label={ __( 'View history', __i18n_text_domain__ ) }
-						size="small"
-					/>
-				) }
 				{ showMinimize && (
 					<Button
 						className="agents-manager-chat-header__minimize-btn"
-						icon={ lineSolid }
+						icon={ <Minimize /> }
 						onClick={ () => {
-							recordAgentsManagerTracksEvent( 'chat_minimize' );
+							recordAgentsManagerTracksEvent( 'calypso_agents_manager_chat_minimize' );
 							setIsMinimized( true );
 						} }
 						label={ __( 'Minimize', __i18n_text_domain__ ) }
 						size="small"
 					/>
 				) }
-				<Button
-					className="agents-manager-chat-header__close-btn"
-					icon={ close }
-					onClick={ onClose }
-					label={ __( 'Close', __i18n_text_domain__ ) }
-					size="small"
+				<DropdownMenu
+					className="agents-manager-chat-header__more-options"
+					controls={ options }
+					icon={ moreVertical }
+					label={ __( 'More Options', __i18n_text_domain__ ) }
+					// Render inside the panel node so the menu stacks with the panel
+					popoverProps={ {
+						className: 'agents-manager-chat-header__menu-popover',
+						inline: true,
+					} }
+					toggleProps={ { size: 'small' } }
 				/>
+				{ dismissible && (
+					<Button
+						className="agents-manager-chat-header__close-btn"
+						icon={ close }
+						onClick={ onClose }
+						label={ __( 'Close', __i18n_text_domain__ ) }
+						size="small"
+					/>
+				) }
 			</div>
 		</div>
 	);

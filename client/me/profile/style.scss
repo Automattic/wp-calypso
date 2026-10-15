@@ -1,7 +1,6 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@automattic/typography/styles/variables";
 @import "calypso/assets/stylesheets/shared/mixins/breakpoints";
-@import "calypso/assets/stylesheets/shared/mixins/placeholder";
 
 .profile__settings .edit-gravatar {
 	text-align: center;
@@ -28,25 +27,6 @@
 
 .profile__settings .profile__public-url {
 	font-size: $font-body-small;
-}
-
-.profile__is_dev_account-fieldset-is-loading {
-	.components-form-toggle {
-		> * {
-			visibility: hidden;
-		}
-		.components-form-toggle__track {
-			visibility: visible;
-			border: none;
-			@include placeholder( --color-neutral-10 );
-		}
-	}
-	.components-toggle-control__label {
-		@include placeholder();
-		a {
-			color: inherit;
-		}
-	}
 }
 
 .profile__gravatar-profile-disclosure {

@@ -184,7 +184,7 @@ const makeFeedMatcher = ( { feedIds = [], feedUrls = [] }: PatchFeedUnseenCounts
 
 const patchFeed = ( feed: FeedInput, options: PatchFeedUnseenCountsOptions ): Feed => {
 	const normalized = normalizeFeed( feed );
-	const current = Number.isFinite( normalized.unseen_count ) ? normalized.unseen_count ?? 0 : 0;
+	const current = Number.isFinite( normalized.unseen_count ) ? ( normalized.unseen_count ?? 0 ) : 0;
 	return {
 		...normalized,
 		unseen_count: options.reset ? 0 : Math.max( current + ( options.delta ?? 0 ), 0 ),

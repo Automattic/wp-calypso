@@ -22,7 +22,7 @@ import useItemPrice from 'calypso/my-sites/plans/jetpack-plans/use-item-price';
 import { useSelector, useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
-import { getSitePurchases, isFetchingSitePurchases } from 'calypso/state/purchases/selectors';
+import { getRawSitePurchases, isFetchingSitePurchases } from 'calypso/state/purchases/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { PURCHASE_FLOW_UPSELLS_MATRIX } from '../constants';
 import getViewTrackerPath from '../get-view-tracker-path';
@@ -55,7 +55,7 @@ const JetpackUpsellPage: React.FC< Props > = ( {
 	const siteId = useSelector( getSelectedSiteId );
 	const currencyCode = useSelector( getCurrentUserCurrencyCode );
 	const isFetchingPurchases = useSelector( isFetchingSitePurchases );
-	const purchases = useSelector( ( state ) => getSitePurchases( state, siteId ) );
+	const purchases = useSelector( ( state ) => getRawSitePurchases( state, siteId ) );
 
 	const productItem = useMemo( () => slugToSelectorProduct( productSlug ), [ productSlug ] );
 	const upsellItem = useMemo(
@@ -72,7 +72,7 @@ const JetpackUpsellPage: React.FC< Props > = ( {
 	);
 	const isUpsellOwned = useMemo(
 		() =>
-			isFetchingPurchases ? false : !! purchases?.find( ( p ) => p.productSlug === upsellSlug ),
+			isFetchingPurchases ? false : !! purchases?.find( ( p ) => p.product_slug === upsellSlug ),
 		[ upsellSlug, purchases, isFetchingPurchases ]
 	);
 	const { intro, description, cta, features } = useMemo( () => {

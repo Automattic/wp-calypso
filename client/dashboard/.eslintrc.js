@@ -1,5 +1,7 @@
 module.exports = {
 	rules: {
+		'wpcalypso/no-conditional-text-nodes-with-siblings': 'error',
+		'wpcalypso/no-return-text-nodes': 'error',
 		'no-restricted-imports': [
 			'error',
 			{
@@ -13,7 +15,6 @@ module.exports = {
 							'calypso/data/*',
 							'!calypso/data/data-center',
 							'!calypso/data/php-versions',
-							// Allowed: calypso/lib/ai-launchpad
 							// Allowed: calypso/lib/explat
 							// Allowed: calypso/lib/color-scheme
 							// Allowed: calypso/lib/interval/use-interval (temporary)
@@ -22,7 +23,6 @@ module.exports = {
 							// Allowed: calypso/lib/wp
 							'!calypso/lib',
 							'calypso/lib/*',
-							'!calypso/lib/ai-launchpad',
 							'!calypso/lib/color-scheme',
 							'!calypso/lib/explat',
 							'!calypso/lib/interval',
@@ -63,7 +63,7 @@ module.exports = {
 							'!@automattic/components/src/breadcrumbs/types',
 							'!@automattic/components/src/logos',
 							'!@automattic/components/src/resurrected-welcome-modal',
-							'!@automattic/date-range-picker',
+							'!@automattic/components/src/experience-control',
 							'!@automattic/domain-search',
 							'!@automattic/domains-table',
 							'!@automattic/domains-table/src/utils/*',
@@ -72,8 +72,18 @@ module.exports = {
 							'!@automattic/agents-manager',
 							'!@automattic/i18n-utils',
 							'!@automattic/languages',
+							'!@automattic/language-picker',
 							'!@automattic/load-script',
+							'!@automattic/mini-cart',
 							'!@automattic/number-formatters',
+							'!@automattic/newsletter-urls',
+							'!@automattic/onboarding',
+							'@automattic/onboarding/*',
+							'!@automattic/onboarding/src',
+							'@automattic/onboarding/src/*',
+							'!@automattic/onboarding/src/utils',
+							'@automattic/onboarding/src/utils/*',
+							'!@automattic/onboarding/src/utils/email-validation',
 							'!@automattic/search',
 							'!@automattic/calypso-stripe',
 							'!@automattic/calypso-url',
@@ -87,6 +97,7 @@ module.exports = {
 							'!@automattic/browser-data-collector',
 							'!@automattic/omnibar',
 							'!@automattic/posthog',
+							'!@automattic/site-launch-modals',
 							// Please do not add exceptions which pull in Calypso code/concepts.
 							// See docs/package-imports.md for policy.
 						],
@@ -96,6 +107,11 @@ module.exports = {
 				paths: [
 					{
 						name: '@automattic/calypso-analytics',
+						importNames: [
+							'recordTracksEvent',
+							'recordTracksPageView',
+							'recordTracksPageViewWithPageParams',
+						],
 						message: 'Please import { useAnalytics } from client/dashboard/app/analytics instead.',
 					},
 					{
@@ -108,6 +124,11 @@ module.exports = {
 						name: '@automattic/components',
 						message:
 							'Do not import from the barrel file. Use specific imports like @automattic/components/src/summary-button instead. This prevents the entire package being bundled into the dashboard.',
+					},
+					{
+						name: '@automattic/onboarding',
+						message:
+							'Do not import from the barrel file. Only @automattic/onboarding/src/utils/email-validation is allowed in the dashboard; the rest of the package carries Calypso onboarding concepts.',
 					},
 					{
 						name: 'i18n-calypso',

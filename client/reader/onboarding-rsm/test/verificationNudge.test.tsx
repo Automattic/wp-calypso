@@ -81,7 +81,7 @@ describe( 'VerificationNudge', () => {
 			configurable: true,
 			value: {
 				pathname: '/reader',
-				search: '?flags=reader%2Fonboarding-rsm%2Creader%2Fforce-onboarding',
+				search: '?flags=reader%2Fforce-onboarding',
 				replace: replaceMock,
 			},
 		} );

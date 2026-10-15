@@ -5,7 +5,7 @@ import { SiteSubscriptionItem } from '@automattic/data-stores/src/reader/types';
 import { screen } from '@testing-library/react';
 import readerUi from 'calypso/state/reader-ui/reducer';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
-import ReaderSidebarRecent, { getReaderSidebarSiteName } from '../index';
+import ReaderSidebarRecent from '../index';
 
 jest.mock( '@automattic/calypso-router', () => ( {
 	__esModule: true,
@@ -17,13 +17,10 @@ jest.mock( 'calypso/reader/stats', () => ( {
 	recordGaEvent: jest.fn(),
 } ) );
 
-jest.mock( '@automattic/api-queries', () => ( {
-	...jest.requireActual( '@automattic/api-queries' ),
-	isAutomatticianQuery: () => ( {
-		queryKey: [ 'test', 'is-automattician' ],
-		queryFn: () => true,
-		initialData: true,
-	} ),
+let mockSeenPostsUiEnabled = true;
+jest.mock( 'calypso/reader/data/seen-posts', () => ( {
+	useSeenPostsPreferenceEnabled: () => mockSeenPostsUiEnabled,
+	useMarkAllAsSeenMutation: () => ( { mutate: jest.fn() } ),
 } ) );
 
 let mockSubscribedSites: Partial< SiteSubscriptionItem >[] = [];
@@ -31,6 +28,10 @@ let mockSubscribedFeedsInfo = { unseenCount: 0, feedIds: [], feedUrls: [] };
 jest.mock( 'calypso/reader/data/site-subscriptions', () => ( {
 	useSubscribedSites: () => mockSubscribedSites,
 	useSubscribedFeedsInfo: () => mockSubscribedFeedsInfo,
+} ) );
+
+jest.mock( 'calypso/reader/data/site-subscriptions/use-unsubscribe-with-undo', () => ( {
+	useUnsubscribeWithUndo: () => jest.fn(),
 } ) );
 
 function createSubscriptionItem(
@@ -60,6 +61,7 @@ describe( 'ReaderSidebarRecent unseen counts', () => {
 	afterEach( () => {
 		mockSubscribedSites = [];
 		mockSubscribedFeedsInfo = { unseenCount: 0, feedIds: [], feedUrls: [] };
+		mockSeenPostsUiEnabled = true;
 	} );
 
 	test( 'shows the total unseen count for the section, summed across all followed sites', () => {
@@ -95,98 +97,17 @@ describe( 'ReaderSidebarRecent unseen counts', () => {
 		expect( alphaRow?.querySelector( '.a8c-count' ) ).toHaveAccessibleName( '4 unread (30 days)' );
 		expect( betaRow?.querySelector( '.a8c-count' ) ).toBeNull();
 	} );
-} );
 
-// Untitled sites come back from the API URL-shaped with a trailing slash,
-// e.g. "example.wordpress.com/".
-describe( 'getReaderSidebarSiteName', () => {
-	test( 'shows the mapped custom domain when the name is the free subdomain (with trailing slash)', () => {
-		expect(
-			getReaderSidebarSiteName( {
-				name: 'exampleblog.wordpress.com/',
-				URL: 'https://example.com',
-			} )
-		).toBe( 'example.com' );
-	} );
+	test( 'hides unseen counts when seen posts UI is disabled', () => {
+		mockSeenPostsUiEnabled = false;
+		mockSubscribedFeedsInfo = { unseenCount: 8, feedIds: [], feedUrls: [] };
 
-	test( 'handles a name with protocol and trailing slash', () => {
-		expect(
-			getReaderSidebarSiteName( {
-				name: 'https://exampleblog.wordpress.com/',
-				URL: 'https://example.org',
-			} )
-		).toBe( 'example.org' );
-	} );
+		const { container } = renderRecentDropdown( [
+			createSubscriptionItem( { ID: 1, name: 'Alpha', unseen_count: 4 } ),
+			createSubscriptionItem( { ID: 2, name: 'Beta', unseen_count: 4 } ),
+		] );
 
-	test( 'shows the mapped custom domain when the site has no name at all', () => {
-		expect( getReaderSidebarSiteName( { name: '', URL: 'https://example.net' } ) ).toBe(
-			'example.net'
-		);
-	} );
-
-	test( 'keeps a real site title untouched', () => {
-		expect(
-			getReaderSidebarSiteName( { name: 'Example Site Title', URL: 'https://example.com' } )
-		).toBe( 'Example Site Title' );
-	} );
-
-	test( 'shows the clean subdomain (no trailing slash) when the site has no custom domain', () => {
-		expect(
-			getReaderSidebarSiteName( {
-				name: 'exampleblog.wordpress.com/',
-				URL: 'https://exampleblog.wordpress.com',
-			} )
-		).toBe( 'exampleblog.wordpress.com' );
-	} );
-
-	test( 'falls back to the raw name when there is no URL to derive a domain from', () => {
-		expect( getReaderSidebarSiteName( { name: 'Example Site Title', URL: '' } ) ).toBe(
-			'Example Site Title'
-		);
-	} );
-
-	test( 'derives an r/subreddit label from the URL for an unresolved subreddit', () => {
-		expect(
-			getReaderSidebarSiteName( {
-				name: '',
-				URL: 'https://www.reddit.com/r/simracing/.rss',
-			} )
-		).toBe( 'r/simracing' );
-	} );
-
-	test( 'derives a u/user label from a Reddit user URL', () => {
-		expect(
-			getReaderSidebarSiteName( {
-				name: '',
-				URL: 'https://www.reddit.com/user/spez/.rss',
-			} )
-		).toBe( 'u/spez' );
-	} );
-
-	test( 'prefers the r/subreddit handle over the generic reddit.com domain when the title is missing', () => {
-		expect(
-			getReaderSidebarSiteName( {
-				name: '',
-				URL: 'https://www.reddit.com/r/simracing/',
-			} )
-		).toBe( 'r/simracing' );
-	} );
-
-	test( 'keeps the resolved title for a subreddit once it has one', () => {
-		expect(
-			getReaderSidebarSiteName( {
-				name: 'SimRacing',
-				URL: 'https://www.reddit.com/r/simracing/',
-			} )
-		).toBe( 'SimRacing' );
-	} );
-
-	test( 'does not treat a reddit.com look-alike host as Reddit', () => {
-		expect(
-			getReaderSidebarSiteName( {
-				name: '',
-				URL: 'https://fakereddit.com/r/simracing/',
-			} )
-		).toBe( 'fakereddit.com' );
+		expect( getUnseenCount( container ) ).toBeNull();
+		expect( container.querySelector( '.a8c-count' ) ).toBeNull();
 	} );
 } );

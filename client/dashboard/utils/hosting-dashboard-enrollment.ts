@@ -2,7 +2,7 @@ import config from '@automattic/calypso-config';
 import { isSupportSession } from '@automattic/calypso-support-session';
 import type { HostingDashboardOptIn } from '@automattic/api-core';
 
-const ROLLOUT_PERCENTAGE = 50;
+const ROLLOUT_PERCENTAGE = 100;
 
 // When rollout begins, users registered after this ID (i.e. new users) are enrolled.
 const NEW_USER_ID_THRESHOLD = 282953237;
@@ -30,8 +30,7 @@ function isInRolloutCohort( userId: number | undefined ): boolean {
 }
 
 type HostingDashboardEnrollment =
-	| { enrolled: true; reason: 'opt-in' | 'forced' }
-	| { enrolled: false };
+	{ enrolled: true; reason: 'opt-in' | 'forced' } | { enrolled: false };
 
 /**
  * Is a user's default experience is the hosting dashboard, and why.
@@ -57,30 +56,6 @@ export function getHostingDashboardEnrollment(
 }
 
 /**
- * Whether the opt-in welcome modal should be shown. The modal introduces the
- * dashboard to existing users who were moved onto it by the rollout, so it is
- * limited to enrolled users who did not earlier opt in. Can't use the existing
- * `isInRolloutCohort` logic because semantics are slightly different: even
- * users who have been "forced" do not see modal if they have previously opt'd in.
- */
-export function isWelcomeModalEligible(
-	preference: HostingDashboardOptIn | undefined,
-	userId: number | undefined
-): boolean {
-	if (
-		! config.isEnabled( 'dashboard/opt-in-welcome-modal' ) ||
-		! userId ||
-		userId > NEW_USER_ID_THRESHOLD ||
-		preference?.value === 'opt-in' ||
-		isSupportSession()
-	) {
-		return false;
-	}
-
-	return userId % 100 < ROLLOUT_PERCENTAGE;
-}
-
-/**
  * Whether the user-facing opt-in toggle should be shown. Hidden for the
  * rollout cohort (the choice no longer exists) and for escape-hatched
  * users (their enrollment changes only via support tooling).
@@ -102,9 +77,9 @@ export function isOptInToggleVisible(
 }
 
 /**
- * Whether the advanced notice should be visible for this user. Hidden for
- * escape-hatched users (forced opt-in or opt-out), whose enrollment changes
- * only via support tooling.
+ * Whether the advanced notice should be visible for this user. Shown to every
+ * user once the flag is on, except escape-hatched users (forced opt-in or
+ * opt-out), whose enrollment changes only via support tooling.
  */
 export function isAdvancedNoticeVisible(
 	preference: HostingDashboardOptIn | undefined,
@@ -114,9 +89,5 @@ export function isAdvancedNoticeVisible(
 		return false;
 	}
 
-	return (
-		config.isEnabled( 'dashboard/rollout-advance-notice' ) &&
-		!! userId &&
-		userId % 100 < ROLLOUT_PERCENTAGE
-	);
+	return config.isEnabled( 'dashboard/rollout-advance-notice' ) && !! userId;
 }

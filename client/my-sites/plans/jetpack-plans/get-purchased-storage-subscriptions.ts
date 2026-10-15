@@ -1,7 +1,7 @@
 import { JETPACK_BACKUP_ADDON_PRODUCTS } from '@automattic/calypso-products';
-import { getSitePurchases } from 'calypso/state/purchases/selectors/get-site-purchases';
+import { getRawSitePurchases } from 'calypso/state/purchases/selectors/get-raw-site-purchases';
 import { TIER_1_SLUGS, TIER_2_SLUGS } from './constants';
-import type { Purchase } from 'calypso/lib/purchases/types';
+import type { Purchase } from '@automattic/api-core';
 import type { AppState } from 'calypso/types';
 
 const hasUpgradeableStorage = ( slug: string ) =>
@@ -12,8 +12,8 @@ const hasUpgradeableStorage = ( slug: string ) =>
 	);
 
 const getPurchasedStorageSubscriptions = ( state: AppState, siteId: number | null ): Purchase[] =>
-	( getSitePurchases( state, siteId ) ?? [] )
-		.filter( ( { subscriptionStatus } ) => subscriptionStatus === 'active' )
-		.filter( ( { productSlug } ) => hasUpgradeableStorage( productSlug ) );
+	( getRawSitePurchases( state, siteId ) ?? [] )
+		.filter( ( purchase ) => purchase.subscription_status === 'active' )
+		.filter( ( purchase ) => hasUpgradeableStorage( purchase.product_slug ) );
 
 export default getPurchasedStorageSubscriptions;

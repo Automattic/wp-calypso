@@ -772,7 +772,7 @@ function returnModalCopy(
 						? translate( 'When you press Continue, your plan will be removed from the cart.' )
 						: translate(
 								'When you press Continue, your plan will be removed from the cart and your site will continue to run with its current plan.'
-						  )
+							)
 				),
 			};
 		case 'domain':
@@ -828,7 +828,7 @@ function returnModalCopy(
 						? translate( 'When you press Continue, your product will be removed from the cart.' )
 						: translate(
 								'When you press Continue, your product will be removed from the cart and your site will continue to run without it.'
-						  )
+							)
 				),
 			};
 	}
@@ -1120,7 +1120,7 @@ export function LineItemSublabelAndPrice( {
 						{ isRenewalPricingExperiment
 							? translate( 'Auto-renews at %(price)s/month. Billed every month.', {
 									args: { price: actualMonthlyPrice },
-							  } )
+								} )
 							: translate( 'Billed every month' ) }
 					</LineItemSublabelTitle>
 					{ showCrossedOutPrice && (
@@ -1224,7 +1224,9 @@ export function LineItemSublabelAndPrice( {
 		return (
 			<>
 				<DefaultLineItemSublabel product={ product } />:{ ' ' }
-				{ translate( '%(price)s per month', { args: { price } } ) }
+				{ product.is_gift_purchase
+					? translate( '%(price)s (one time payment)', { args: { price } } )
+					: translate( '%(price)s per month', { args: { price } } ) }
 				<LineItemExpiryDates product={ product } />
 			</>
 		);
@@ -1234,7 +1236,9 @@ export function LineItemSublabelAndPrice( {
 		return (
 			<>
 				<DefaultLineItemSublabel product={ product } />:{ ' ' }
-				{ translate( '%(price)s per year', { args: { price } } ) }
+				{ product.is_gift_purchase
+					? translate( '%(price)s (one time payment)', { args: { price } } )
+					: translate( '%(price)s per year', { args: { price } } ) }
 				<LineItemExpiryDates product={ product } />
 			</>
 		);
@@ -1244,7 +1248,9 @@ export function LineItemSublabelAndPrice( {
 		return (
 			<>
 				<DefaultLineItemSublabel product={ product } />:{ ' ' }
-				{ translate( '%(price)s per two years', { args: { price } } ) }
+				{ product.is_gift_purchase
+					? translate( '%(price)s (one time payment)', { args: { price } } )
+					: translate( '%(price)s per two years', { args: { price } } ) }
 				<LineItemExpiryDates product={ product } />
 			</>
 		);
@@ -1254,7 +1260,9 @@ export function LineItemSublabelAndPrice( {
 		return (
 			<>
 				<DefaultLineItemSublabel product={ product } />:{ ' ' }
-				{ translate( '%(price)s per three years', { args: { price } } ) }
+				{ product.is_gift_purchase
+					? translate( '%(price)s (one time payment)', { args: { price } } )
+					: translate( '%(price)s per three years', { args: { price } } ) }
 				<LineItemExpiryDates product={ product } />
 			</>
 		);
@@ -1817,7 +1825,7 @@ function CheckoutLineItem( {
 			? formatCurrency( compareToPrice, product.currency, {
 					isSmallestUnit: true,
 					stripZeros: true,
-			  } )
+				} )
 			: undefined;
 
 	// For products with stacked cost overrides (e.g. premium domains with a
@@ -1832,7 +1840,7 @@ function CheckoutLineItem( {
 		? formatCurrency( priceBeforeDiscountsInteger, product.currency, {
 				isSmallestUnit: true,
 				stripZeros: true,
-		  } )
+			} )
 		: undefined;
 
 	const isEmail =

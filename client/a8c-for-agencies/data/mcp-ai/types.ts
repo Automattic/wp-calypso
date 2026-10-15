@@ -4,6 +4,7 @@ export interface McpAvailableAbility {
 	description: string;
 	category: string;
 	enabled: boolean;
+	readonly?: boolean;
 }
 
 export interface McpAvailableCategory {

@@ -360,7 +360,7 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 			? __(
 					"You'll need to add at least one email address " +
 						'or upload a CSV file of current subscribers to continue.'
-			  )
+				)
 			: __( "You'll need to add at least one subscriber to continue." );
 
 		return (
@@ -410,13 +410,13 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 						'Or <uploadBtn>upload a CSV file</uploadBtn> of up to 100 emails from your existing list. <Button>Learn more</Button>.'
 					),
 					interpolateElement
-			  )
+				)
 			: createInterpolateElement(
 					__(
 						'Or <uploadBtn>upload a CSV file</uploadBtn> of emails from your existing list. <Button>Learn more</Button>.'
 					),
 					interpolateElement
-			  );
+				);
 
 		return (
 			isSelectedFileValid &&

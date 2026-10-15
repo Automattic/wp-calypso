@@ -58,7 +58,7 @@ export function useDateTimeFormat( siteSlug?: string ) {
 		? {
 				dateFormat: getSiteSetting( 'date_format' ),
 				timeFormat: getSiteSetting( 'time_format' ),
-		  }
+			}
 		: getDateTimeFormatFromLocale( moment.locale() );
 
 	const phpToMomentMap = phpToMomentMapping as {

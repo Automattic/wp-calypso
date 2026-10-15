@@ -1,7 +1,6 @@
 @import "../shared-style";
 
-.is-group-jetpack-cloud.is-section-jetpack-cloud-pricing,
-.is-group-jetpack-cloud.is-section-jetpack-cloud-manage-pricing {
+.is-group-jetpack-cloud.is-section-jetpack-cloud-pricing {
 
 	@include jetpack-cloud-sections-shared-styles();
 

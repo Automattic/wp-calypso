@@ -1,11 +1,12 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import page from '@automattic/calypso-router';
-import { Button } from '@automattic/components';
+import { Button } from '@wordpress/components';
 import { Icon, chevronDown } from '@wordpress/icons';
 import { translate } from 'i18n-calypso';
 import { useCallback } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import FormattedHeader from 'calypso/components/formatted-header';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { dismissBlock } from './actions';
 
 import './mini-carousel-block.scss';
@@ -21,21 +22,22 @@ const MiniCarouselBlock = ( {
 	dismissText,
 } ) => {
 	const dispatch = useDispatch();
+	const selectedSiteId = useSelector( getSelectedSiteId );
 
 	const onClick = useCallback( () => {
-		recordTracksEvent( clickEvent );
+		recordTracksEvent( clickEvent, { blog_id: selectedSiteId } );
 		if ( href.startsWith( '/' ) ) {
 			page( href );
 			return;
 		}
 
 		location.href = href;
-	}, [ clickEvent, href ] );
+	}, [ clickEvent, href, selectedSiteId ] );
 
 	const onDismiss = useCallback( () => {
-		recordTracksEvent( dismissEvent );
+		recordTracksEvent( dismissEvent, { blog_id: selectedSiteId } );
 		dispatch( dismissBlock( dismissEvent ) );
-	}, [ dismissEvent, dispatch ] );
+	}, [ dismissEvent, dispatch, selectedSiteId ] );
 
 	return (
 		<div className="mini-carousel-block">
@@ -48,11 +50,15 @@ const MiniCarouselBlock = ( {
 				/>
 				<p className="mini-carousel-block__content-text">{ contentText }</p>
 			</div>
-			<Button primary onClick={ onClick }>
+			<Button variant="primary" __next40pxDefaultSize onClick={ onClick }>
 				{ ctaText }
 			</Button>
 			{ dismissEvent && (
-				<Button onClick={ onDismiss } className="mini-carousel-block__close-button">
+				<Button
+					onClick={ onDismiss }
+					__next40pxDefaultSize
+					className="mini-carousel-block__close-button"
+				>
 					{ dismissText ? dismissText : translate( 'Hide this' ) }
 					<Icon
 						className="mini-carousel-block__close-button-icon"

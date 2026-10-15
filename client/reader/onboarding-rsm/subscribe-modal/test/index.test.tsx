@@ -162,12 +162,47 @@ describe( 'SubscribeModal – verification nudge', () => {
 		expect( onFinish ).toHaveBeenCalledTimes( 1 );
 	} );
 
+	it( 'keeps subscribe controls inside an inert container while verification is required', () => {
+		const recommendations = [
+			{
+				feed_ID: 100,
+				site_ID: 200,
+				site_URL: 'https://site-0.example',
+				site_name: 'Site 0',
+				feed_URL: 'https://site-0.example/feed',
+				has_icon: true,
+			},
+			{
+				feed_ID: 101,
+				site_ID: 201,
+				site_URL: 'https://site-1.example',
+				site_name: 'Site 1',
+				feed_URL: 'https://site-1.example/feed',
+				has_icon: true,
+			},
+		];
+		mockedRecommendationsHook.mockReturnValue( {
+			...defaultRecommendationsHookValue,
+			combinedRecommendations: recommendations,
+			recommendations,
+		} );
+
+		renderWithProvider( <SubscribeModal onFinish={ jest.fn() } promptVerification /> );
+
+		const content = document.querySelector( '.subscribe-modal__content' );
+		expect( content ).toHaveAttribute( 'inert' );
+		expect( content ).toContainElement( screen.getByTestId( 'reader-list-item-101' ) );
+		expect( content ).not.toContainElement( screen.getByRole( 'button', { name: 'Finish' } ) );
+		expect( content ).not.toContainElement( screen.getByTestId( 'subscribe-verification-nudge' ) );
+	} );
+
 	it( 'enables the Finish button when promptVerification is false', () => {
 		renderWithProvider( <SubscribeModal onFinish={ jest.fn() } promptVerification={ false } /> );
 
 		const button = screen.getByRole( 'button', { name: 'Finish' } );
 		expect( button ).not.toHaveAttribute( 'aria-disabled', 'true' );
 		expect( button ).not.toBeDisabled();
+		expect( document.querySelector( '.subscribe-modal__content' ) ).not.toHaveAttribute( 'inert' );
 	} );
 } );
 
@@ -261,6 +296,38 @@ describe( 'SubscribeModal – site preview analytics', () => {
 			'calypso_reader_onboarding_discover_modal_site_previewed',
 			expect.anything()
 		);
+	} );
+
+	it( 'places `inert` on the preview stream wrapper, not the scroll container', () => {
+		const recommendations = [ makeRecommendation( 0 ) ];
+		mockedRecommendationsHook.mockReturnValue( {
+			...defaultRecommendationsHookValue,
+			combinedRecommendations: recommendations,
+			recommendations,
+		} );
+
+		const { container } = renderWithProvider(
+			<SubscribeModal onFinish={ jest.fn() } promptVerification={ false } />
+		);
+
+		const scrollContainer = container.querySelector< HTMLElement >(
+			'.subscribe-modal__preview-stream-container'
+		);
+		const inertWrapper = container.querySelector< HTMLElement >(
+			'.subscribe-modal__preview-stream-inner'
+		);
+
+		// The scroll container must NOT be inert: an inert element hit-tests as
+		// `pointer-events: none`, so wheel/touch scrolls fall through it to its
+		// `overflow: hidden` parent and the preview column stops scrolling. (This
+		// regressed once React 19 began emitting the `inert` attribute for real —
+		// under React 18 the boolean prop was silently dropped.)
+		expect( scrollContainer ).not.toBeNull();
+		expect( inertWrapper ).not.toBeNull();
+		expect( scrollContainer ).not.toHaveAttribute( 'inert' );
+		// `inert` still removes the non-interactive preview content from the tab
+		// order + a11y tree — just one level in, on the wrapper around the stream.
+		expect( inertWrapper ).toHaveAttribute( 'inert' );
 	} );
 
 	it( 'prefetches recommendation streams through the React Query stream cache', () => {

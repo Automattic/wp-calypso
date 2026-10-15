@@ -103,7 +103,7 @@ export default function SetupPhoneNumber( { userSettings }: { userSettings: User
 						error === 'rate_limited'
 							? __(
 									'Unable to request a code via SMS right now. Please try again after one minute.'
-							  )
+								)
 							: cause?.message || __( 'Failed to save phone number. Please try again.' );
 					createErrorNotice( errorMessage, {
 						type: 'snackbar',

@@ -36,4 +36,13 @@
 	.ReactModal__Content.ReactModal__Content--after-open.dialog.card {
 		max-width: 700px;
 	}
+
+	.ReactModal__Content.ReactModal__Content--after-open.dialog.card.website-content__explainer-video-dialog {
+		width: 90%;
+		max-width: 840px;
+	}
+
+	.website-content__explainer-video-dialog .dialog__content {
+		padding: 0;
+	}
 }

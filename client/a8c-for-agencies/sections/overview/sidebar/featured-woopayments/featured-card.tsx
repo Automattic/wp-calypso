@@ -1,6 +1,7 @@
-import { Badge, Card } from '@automattic/components';
+import { Card } from '@automattic/components';
 import { Button } from '@wordpress/components';
 import { close } from '@wordpress/icons';
+import { Badge } from '@wordpress/ui';
 import { useTranslate } from 'i18n-calypso';
 import { A4A_WOOPAYMENTS_OVERVIEW_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import WooPaymentsLogo from 'calypso/assets/images/a8c-for-agencies/product-logos/woopayments.svg';
@@ -16,7 +17,7 @@ const WooPaymentsFeaturedCard = ( { onDismiss, onClick }: Props ) => {
 	return (
 		<Card className="overview__featured-woopayments">
 			<div className="overview__featured-woopayments-top">
-				<Badge className="overview__featured-woopayments-badge">{ translate( 'Featured' ) }</Badge>
+				<Badge intent="draft">{ translate( 'Featured' ) }</Badge>
 
 				<Button
 					className="overview__featured-dismiss-button"

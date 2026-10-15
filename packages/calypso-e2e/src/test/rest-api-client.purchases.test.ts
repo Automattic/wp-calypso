@@ -14,6 +14,7 @@ const fakeSecrets = {
 		client_id: 'some_value',
 		client_secret: 'some_value',
 	},
+	storeSandboxCookieValue: 'sandbox_ticket',
 } as unknown as Secrets;
 
 jest.spyOn( SecretsManager, 'secrets', 'get' ).mockImplementation( () => fakeSecrets );
@@ -53,6 +54,32 @@ describe( 'RestAPIClient: purchases', function () {
 
 		expect( response ).toHaveLength( 2 );
 		expect( response[ 0 ].product_slug ).toBe( 'business-bundle' );
+	} );
+
+	// Tests buy against the sandboxed store (browser-side `store_sandbox` cookie),
+	// which keeps its own ownership registry. Without the same cookie these calls
+	// read the production store, find no purchase, and the Atomic site is never
+	// deprovisioned - leaking the account.
+	test( 'store-facing requests carry the store sandbox cookie', async function () {
+		const cancelURL = restAPIClient.getRequestURL( '2', '/purchases/111/cancel', 'wpcom' );
+		const matchCookie = { reqheaders: { cookie: 'store_sandbox=sandbox_ticket' } };
+
+		const purchasesScope = nock( purchasesURL.origin, matchCookie )
+			.get( purchasesURL.pathname )
+			.reply( 200, [] );
+		const cancelScope = nock( cancelURL.origin, matchCookie )
+			.post( cancelURL.pathname )
+			.reply( 200, { status: 'completed' } );
+
+		await restAPIClient.getAllPurchases();
+		await restAPIClient.cancelPurchase( '111', {
+			product_id: '1008',
+			cancel_bundled_domain: 0,
+			email_variant: 'control',
+		} );
+
+		expect( purchasesScope.isDone() ).toBe( true );
+		expect( cancelScope.isDone() ).toBe( true );
 	} );
 
 	test( 'getAllPurchases throws when the API returns an error', async function () {
@@ -102,12 +129,18 @@ describe( 'RestAPIClient: purchases', function () {
 		};
 
 		/**
-		 * Stubs GET /me/purchases with the given list.
+		 * Stubs the purchases listing with the given list. Scoped to a site when
+		 * `siteId` is given, matching what `cancelAtomicPlan` requests.
 		 *
 		 * @param {unknown[]} purchases Raw purchase objects to return.
+		 * @param {number|string} [siteId] Site the listing is scoped to.
 		 */
-		function mockPurchases( purchases: unknown[] ) {
-			nock( purchasesURL.origin ).get( purchasesURL.pathname ).reply( 200, purchases );
+		function mockPurchases( purchases: unknown[], siteId?: number | string ) {
+			const url =
+				siteId === undefined
+					? purchasesURL
+					: restAPIClient.getRequestURL( '1.2', `/sites/${ siteId }/purchases` );
+			nock( url.origin ).get( url.pathname ).reply( 200, purchases );
 		}
 
 		test( 'cancels the first Business plan when no siteId is given', async function () {
@@ -136,7 +169,7 @@ describe( 'RestAPIClient: purchases', function () {
 		} );
 
 		test( 'cancels only the Business plan matching the given siteId', async function () {
-			mockPurchases( [ otherSitePlan, businessPlan ] );
+			mockPurchases( [ otherSitePlan, businessPlan ], 5 );
 			const cancelURL = restAPIClient.getRequestURL( '2', '/purchases/111/cancel', 'wpcom' );
 			const cancelScope = nock( cancelURL.origin )
 				.post( cancelURL.pathname )
@@ -148,7 +181,7 @@ describe( 'RestAPIClient: purchases', function () {
 		} );
 
 		test( 'returns null when no Business plan matches the given siteId', async function () {
-			mockPurchases( [ businessPlan ] );
+			mockPurchases( [ businessPlan ], 999 );
 
 			const response = await restAPIClient.cancelAtomicPlan( 999 );
 

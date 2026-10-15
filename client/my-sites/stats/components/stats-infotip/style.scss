@@ -29,10 +29,6 @@
 	// rounding up to "sm" avoids narrowing existing popup content.
 	max-width: 320px;
 
-	// The popup is portaled outside the .stats subtree, so it misses the Stats
-	// --color-link override; re-apply it so in-popup links follow the accent.
-	--color-link: var(--color-accent);
-	--color-link-dark: var(--color-accent-dark);
 }
 
 .stats-infotip__description {

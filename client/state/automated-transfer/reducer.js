@@ -16,31 +16,37 @@ import {
 	withSchemaValidation,
 	withPersistence,
 } from 'calypso/state/utils';
-import { transferStates } from './constants';
+import { isNoTransferRecordError, transferStates } from './constants';
 import eligibility from './eligibility/reducer';
 import { automatedTransfer as schema } from './schema';
 
-export const status = withPersistence( ( state = null, action ) => {
-	switch ( action.type ) {
-		case ELIGIBILITY_UPDATE:
-			return state || transferStates.INQUIRING;
-		case INITIATE:
-			return transferStates.START;
-		case INITIATE_FAILURE:
-			return transferStates.FAILURE;
-		case SET_STATUS:
-			return action.status;
-		case TRANSFER_UPDATE:
-			return 'complete' === action.status ? transferStates.COMPLETE : state;
-		case REQUEST_STATUS_FAILURE:
-			// TODO : [MARKETPLACE] rely on a tangible status from the backend instead of this message
-			return action.error === 'An invalid transfer ID was passed.'
-				? transferStates.NONE
-				: transferStates.REQUEST_FAILURE;
-	}
+export const status = withPersistence(
+	( state = null, action ) => {
+		switch ( action.type ) {
+			case ELIGIBILITY_UPDATE:
+				return state || transferStates.INQUIRING;
+			case INITIATE:
+				return transferStates.START;
+			case INITIATE_FAILURE:
+				return transferStates.FAILURE;
+			case SET_STATUS:
+				return action.status;
+			case TRANSFER_UPDATE:
+				return 'complete' === action.status ? transferStates.COMPLETE : state;
+			case REQUEST_STATUS_FAILURE:
+				return isNoTransferRecordError( { error: action.errorCode, message: action.error } )
+					? transferStates.NONE
+					: transferStates.REQUEST_FAILURE;
+		}
 
-	return state;
-} );
+		return state;
+	},
+	{
+		// CLIENT_TIMEOUT is client-only. Persisting it would render a stale error on screens that
+		// stop polling once they see it, leaving nothing able to clear it.
+		serialize: ( state ) => ( state === transferStates.CLIENT_TIMEOUT ? null : state ),
+	}
+);
 
 export const fetchingStatus = ( state = false, action ) => {
 	switch ( action.type ) {

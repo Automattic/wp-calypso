@@ -1,3 +1,4 @@
+import page from '@automattic/calypso-router';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -5,7 +6,8 @@ import { SiteIcon } from 'calypso/blocks/site-icon';
 import AutoDirection from 'calypso/components/auto-direction';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import ReaderUnreadCount from 'calypso/layout/sidebar/reader-unread-count';
-import { MoreMenuActions } from 'calypso/reader/sidebar/more-menu-actions';
+import { getReaderSidebarSiteName } from 'calypso/reader/get-helpers';
+import MoreMenuActions from 'calypso/reader/sidebar/more-menu-actions';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import ReaderSidebarHelper from '../helper';
@@ -15,6 +17,8 @@ export class ReaderSidebarOrganizationsListItem extends Component {
 	static propTypes = {
 		site: PropTypes.object,
 		path: PropTypes.string,
+		fallbackPath: PropTypes.string,
+		showUnseenCounts: PropTypes.bool,
 	};
 
 	handleSidebarClick = () => {
@@ -26,7 +30,7 @@ export class ReaderSidebarOrganizationsListItem extends Component {
 	};
 
 	render() {
-		const { site, path, moment } = this.props;
+		const { site, path, moment, fallbackPath, showUnseenCounts } = this.props;
 		const computedClassName = ReaderSidebarHelper.itemLinkClass(
 			'/reader/feeds/' + site.feed_ID,
 			path
@@ -59,9 +63,16 @@ export class ReaderSidebarOrganizationsListItem extends Component {
 								feedIds={ [ feedId ] }
 								feedUrls={ [ site.feed_URL ] }
 								unseenCount={ site.unseen_count }
+								siteName={ getReaderSidebarSiteName( site ) }
+								source="reader-organization-item"
+								onUnsubscribed={ () => {
+									if ( selected && fallbackPath ) {
+										page( fallbackPath );
+									}
+								} }
 							/>
 						) }
-						<ReaderUnreadCount count={ site.unseen_count } />
+						{ showUnseenCounts && <ReaderUnreadCount count={ site.unseen_count } /> }
 					</span>
 				</MenuItemLink>
 			</MenuItem>

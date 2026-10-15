@@ -1,12 +1,19 @@
 import {
 	fetchReferrals,
 	fetchReferralCommissionPayout,
+	fetchReferralEmailPreview,
 	archiveReferral,
+	createReferral,
 	resendReferralEmail,
 } from '@automattic/api-core';
 import { queryOptions, mutationOptions } from '@tanstack/react-query';
 import { queryClient } from './query-client';
-import type { Referral, ReferralApiResponse } from '@automattic/api-core';
+import type {
+	CreateReferralParams,
+	Referral,
+	ReferralApiResponse,
+	ReferralEmailPreviewParams,
+} from '@automattic/api-core';
 
 /**
  * Groups the raw referrals list (one entry per referral order) by client, so
@@ -72,6 +79,28 @@ export const referralCommissionPayoutQuery = ( agencyId: number ) =>
 		enabled: !! agencyId,
 	} );
 
+/**
+ * Returns the referrals list with the given referral order marked archived,
+ * preserving the grouped-by-client shape produced by `referralsQuery`. Exported
+ * for hosts that run their own QueryClient and apply the optimistic update at
+ * the call site.
+ */
+export function archiveReferralInList( referrals: Referral[], referralId: number ): Referral[] {
+	return referrals.map( ( client ) => {
+		if ( ! client.referrals.some( ( order ) => order.id === referralId ) ) {
+			return client;
+		}
+		const orders = client.referrals.map( ( order ) =>
+			order.id === referralId ? { ...order, status: 'archived' } : order
+		);
+		return {
+			...client,
+			referrals: orders,
+			referralStatuses: orders.map( ( order ) => order.status ),
+		};
+	} );
+}
+
 export const archiveReferralMutation = ( agencyId: number ) => {
 	const queryKey = referralsQuery( agencyId ).queryKey;
 	return mutationOptions( {
@@ -81,22 +110,7 @@ export const archiveReferralMutation = ( agencyId: number ) => {
 			await queryClient.cancelQueries( { queryKey } );
 			const previous = queryClient.getQueryData< Referral[] >( queryKey );
 			if ( previous ) {
-				queryClient.setQueryData(
-					queryKey,
-					previous.map( ( client ) => {
-						if ( ! client.referrals.some( ( order ) => order.id === referralId ) ) {
-							return client;
-						}
-						const referrals = client.referrals.map( ( order ) =>
-							order.id === referralId ? { ...order, status: 'archived' } : order
-						);
-						return {
-							...client,
-							referrals,
-							referralStatuses: referrals.map( ( order ) => order.status ),
-						};
-					} )
-				);
+				queryClient.setQueryData( queryKey, archiveReferralInList( previous, referralId ) );
 			}
 			return { previous };
 		},
@@ -115,4 +129,44 @@ export const resendReferralEmailMutation = ( agencyId: number ) =>
 	mutationOptions( {
 		meta: { statId: 'agcy-referral-email-resend' },
 		mutationFn: ( referralId: number ) => resendReferralEmail( agencyId, referralId ),
+	} );
+
+export const createReferralMutation = ( agencyId: number ) =>
+	mutationOptions( {
+		meta: { statId: 'agcy-referral-create' },
+		mutationFn: ( params: CreateReferralParams ) => createReferral( agencyId, params ),
+	} );
+
+let lastDataUrl: { url: string; key: string } | null = null;
+
+/**
+ * A short stand-in for a logo URL in the query key. A picked file arrives as a
+ * data URL of up to several megabytes, too large to keep in a key.
+ */
+function getLogoKey( url?: string ): string | undefined {
+	if ( ! url?.startsWith( 'data:' ) ) {
+		return url;
+	}
+	if ( lastDataUrl?.url !== url ) {
+		let hash = 0;
+		for ( let i = 0; i < url.length; i++ ) {
+			hash = ( Math.imul( 31, hash ) + url.charCodeAt( i ) ) | 0;
+		}
+		lastDataUrl = { url, key: `data:${ url.length }:${ hash >>> 0 }` };
+	}
+	return lastDataUrl.key;
+}
+
+export const referralEmailPreviewQuery = ( agencyId: number, params: ReferralEmailPreviewParams ) =>
+	queryOptions( {
+		queryKey: [
+			'agency',
+			agencyId,
+			'referral-email-preview',
+			{ ...params, logo_url: getLogoKey( params.logo_url ) },
+		] as const,
+		queryFn: () => fetchReferralEmailPreview( agencyId, params ),
+		enabled: agencyId > 0 && params.product_ids.length > 0,
+		staleTime: 5 * 60 * 1000,
+		meta: { persist: false },
 	} );

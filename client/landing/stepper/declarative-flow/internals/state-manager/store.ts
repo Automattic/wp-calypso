@@ -58,5 +58,6 @@ export function useFlowState() {
 		get,
 		set,
 		sessionId: session,
+		queryKey,
 	};
 }

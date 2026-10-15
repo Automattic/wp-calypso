@@ -9,7 +9,7 @@ jest.mock( 'calypso/state/purchases/selectors' );
 
 describe( 'canPublishPluginReview', () => {
 	beforeAll( () => {
-		purchasesSelectors.getUserPurchases.mockReturnValue( [] );
+		purchasesSelectors.getRawUserPurchases.mockReturnValue( [] );
 	} );
 
 	it( 'returns true if the user is logged in and the plugin is not a marketplace product', () => {
@@ -32,8 +32,8 @@ describe( 'canPublishPluginReview', () => {
 	it( 'returns true if the user is logged in and has an active subscription for a marketplace product', () => {
 		productListSelectors.isMarketplaceProduct.mockReturnValue( true );
 		userSelectors.isUserLoggedIn.mockReturnValue( true );
-		purchasesSelectors.getUserPurchases.mockReturnValue( [
-			{ productId: 'plugin_variation__annual' },
+		purchasesSelectors.getRawUserPurchases.mockReturnValue( [
+			{ product_id: 'plugin_variation__annual' },
 		] );
 
 		const variations = [
@@ -48,8 +48,8 @@ describe( 'canPublishPluginReview', () => {
 	it( 'returns false if the user is logged in but does not have an active subscription for a marketplace product', () => {
 		productListSelectors.isMarketplaceProduct.mockReturnValue( true );
 		userSelectors.isUserLoggedIn.mockReturnValue( true );
-		purchasesSelectors.getUserPurchases.mockReturnValue( [
-			{ productId: 'plugin_variation__annual' },
+		purchasesSelectors.getRawUserPurchases.mockReturnValue( [
+			{ product_id: 'plugin_variation__annual' },
 		] );
 
 		const variations = [

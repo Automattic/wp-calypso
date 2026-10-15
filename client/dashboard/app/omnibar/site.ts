@@ -62,6 +62,15 @@ export function useSyncOmnibarSite() {
 			);
 			const originSiteId = originSiteIdParam > 0 ? originSiteIdParam : undefined;
 
+			// The route already knows its site, and everything below is async: publish it
+			// now so consumers reading this as shared state — the omnibar itself, and the
+			// site attribution on the events it records — don't spend the resolution
+			// window on the previously visited site, or on no site at all.
+			if ( routeSite && isMemberOfSite( routeSite ) ) {
+				queryClient.cancelQueries( { queryKey: omnibarSiteIdQuery().queryKey } );
+				queryClient.setQueryData( omnibarSiteIdQuery().queryKey, () => routeSite.ID );
+			}
+
 			let recentSiteIds: number[];
 			try {
 				const preferences = await queryClient.ensureQueryData( rawUserPreferencesQuery() );

@@ -1,12 +1,8 @@
-import {
-	Button,
-	CheckboxControl,
-	__experimentalDivider as Divider,
-	__experimentalVStack as VStack,
-} from '@wordpress/components';
+import { Button, CheckboxControl, __experimentalVStack as VStack } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useHelpCenter } from '../../../app/help-center';
+import Divider from '../../../components/divider';
 import { Text } from '../../../components/text';
 import { DisplayVariant } from '../../../utils/purchase';
 import { getCheckboxLabel } from './get-confirmation-copy';

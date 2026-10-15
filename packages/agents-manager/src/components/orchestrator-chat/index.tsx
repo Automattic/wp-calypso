@@ -1,154 +1,67 @@
-import { getAgentManager, useAgentChat, type UIMessage } from '@automattic/agenttic-client';
+import { getAgentManager, type TaskUpdate } from '@automattic/agenttic-client';
 import {
 	type Suggestion,
 	type MarkdownComponents,
 	type MarkdownExtensions,
 } from '@automattic/agenttic-ui';
 import { useSelect } from '@wordpress/data';
-import { useState, useCallback, useMemo, useEffect, useRef } from '@wordpress/element';
+import { useCallback, useEffect, useMemo, useRef, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { useNavigate } from 'react-router-dom';
 import { LOCAL_TOOL_RUNNING_MESSAGE } from '../../constants';
 import { useAgentsManagerContext } from '../../contexts';
 import { useRegisterCustomActions } from '../../hooks/custom-actions';
+import useAbilitiesRegistration from '../../hooks/use-abilities-registration';
 import useAgentTraceIds from '../../hooks/use-agent-trace-ids';
 import { useBroadcastConversationActivity } from '../../hooks/use-broadcast-conversation-activity';
-import useCheckpointAction from '../../hooks/use-checkpoint-action';
-import useConversation from '../../hooks/use-conversation';
+import { useBroadcastTurnActivity } from '../../hooks/use-broadcast-turn-activity';
+import { useCanvasMoveAbort } from '../../hooks/use-canvas-move-abort';
+import { useChatComposer } from '../../hooks/use-chat-composer';
+import { useChatError } from '../../hooks/use-chat-error';
+import { getCheckpointIdForMessage } from '../../hooks/use-checkpoint-action';
+import { useCheckpointAvailability } from '../../hooks/use-checkpoint-availability';
+import { useContextCardActions } from '../../hooks/use-context-card-actions';
+import { useConversationHydration } from '../../hooks/use-conversation-hydration';
 import useCopyAction from '../../hooks/use-copy-action';
+import { useCredits } from '../../hooks/use-credits';
+import { useDynamicSuggestions } from '../../hooks/use-dynamic-suggestions';
 import { usePageOrSiteEditorSurface } from '../../hooks/use-empty-view-suggestions';
 import useFeedbackAction from '../../hooks/use-feedback-action';
-import { useImageUpload } from '../../hooks/use-image-upload';
+import { useGatedRegenerateHandler } from '../../hooks/use-gated-regenerate-handler';
+import { useInlineSuggestionClick } from '../../hooks/use-inline-suggestion-click';
+import { useNavigationContinuation } from '../../hooks/use-navigation-continuation';
 import useRegenerateAction from '../../hooks/use-regenerate-action';
-import useSaveNewChatRoute from '../../hooks/use-save-new-chat-route';
+import { useResponseOutcomeTracking } from '../../hooks/use-response-outcome-tracking';
+import { useRetriedToolCalls } from '../../hooks/use-retried-tool-calls';
+import { useShowComponentRetention } from '../../hooks/use-show-component-retention';
 import useSourcesAction from '../../hooks/use-sources-action';
-import useZoomAction from '../../hooks/use-zoom-action';
-import { markSessionUsed } from '../../utils/agent-session';
+import { useStreamedCheckpointMessages } from '../../hooks/use-streamed-checkpoint-messages';
+import { useSuggestionTracking } from '../../hooks/use-suggestion-tracking';
+import { markSessionSent } from '../../utils/agent-session';
+import { convertBigSkyMessageToUIMessage } from '../../utils/convert-big-sky-message';
 import convertToolMessagesToComponents, {
 	type AgentsManagerUIMessage,
 } from '../../utils/convert-tool-messages-to-components';
-import {
-	consumeNextMessageExternalContextEntries,
-	removeExternalContextCard,
-	removeExternalContextEntry,
-	type ExternalContextCard,
-	type ExternalContextCardAction,
-} from '../../utils/external-context';
+import { getDisplayedEmptyViewSuggestions } from '../../utils/empty-view-suggestions';
 import { isReaderChatAgent } from '../../utils/is-reader-chat-agent';
-import { mergeEmptyViewSuggestions } from '../../utils/merge-empty-view-suggestions';
-import { getOrchestratorErrorMessage } from '../../utils/orchestrator-error-message';
-import { persistLastActivity } from '../../utils/persist-last-activity';
-import { getReaderChatErrorMessage } from '../../utils/reader-chat-error-message';
-import { isShowComponentTool } from '../../utils/show-component-tools';
-import { recordBigSkyTracksEvent } from '../../utils/tracks';
+import { isWooAiProvider } from '../../utils/is-woo-ai-provider';
+import { getLatestAgentMessageId, getLatestUserMessageIndex } from '../../utils/latest-message';
+import {
+	hasCheckpointAction,
+	hasDisabledCheckpointAction,
+	withComputedActions,
+} from '../../utils/message-actions';
 import AgentChat from '../agent-chat';
 import { type Options as ChatHeaderOptions } from '../chat-header';
 import type { BigSkyMessage } from '../../types';
 import type {
-	NavigationContinuationHook,
 	AbilitiesSetupHook,
 	GetChatComponent,
 	UseSuggestionsHook,
 	SiteBuildUtils,
+	TransformMessages,
 	UseCheckpointHook,
 	ProviderCapabilities,
 } from '../../utils/load-external-providers';
-
-function getLatestAgentMessageId( messages: UIMessage[] ): string | null {
-	for ( let index = messages.length - 1; index >= 0; index-- ) {
-		if ( messages[ index ].role === 'agent' ) {
-			return messages[ index ].id;
-		}
-	}
-
-	return null;
-}
-
-/**
- * Pipe-delimited list of suggestion ids (e.g. `|id1|id2|`), matching Big Sky's
- * `suggestions` / `available_suggestions` tracks-prop format.
- */
-function formatSuggestionIds( suggestions: Suggestion[] ): string {
-	return '|' + suggestions.map( ( s ) => s.id ).join( '|' ) + '|';
-}
-
-/**
- * Get `option_id` by matching Agenttic's selected prompt to the original options.
- * The current tracked dropdowns have an empty parent prompt, so Agenttic copies the
- * selected option's configured value unchanged. For example, selecting Formal
- * returns that option's value, which maps directly to the stable id `formal`.
- * Provider tests enforce the empty parent prompt requirement.
- */
-function getSelectedOptionId(
-	selectedSuggestion: Suggestion,
-	availableSuggestions: Suggestion[]
-): string | undefined {
-	const originalSuggestion = availableSuggestions.find(
-		( suggestion ) => suggestion.id === selectedSuggestion.id
-	);
-	return originalSuggestion?.options?.find(
-		( option ) => option.value === selectedSuggestion.prompt
-	)?.id;
-}
-
-function getToolMessageData( message: Pick< UIMessage, 'content' > ):
-	| {
-			toolId?: string;
-			toolCallId?: string;
-			componentType?: string;
-			summary?: string;
-	  }
-	| undefined {
-	const firstText = message.content?.[ 0 ]?.text;
-	if ( ! firstText ) {
-		return undefined;
-	}
-
-	try {
-		const parsed = JSON.parse( firstText );
-		return {
-			toolId: parsed?.tool_id,
-			toolCallId: parsed?.tool_call_id,
-			componentType: parsed?.data?.type,
-			summary: parsed?.data?.summary,
-		};
-	} catch ( _error ) {
-		return undefined;
-	}
-}
-
-function isShowComponentMessage( message: Pick< UIMessage, 'content' > ): boolean {
-	const toolData = getToolMessageData( message );
-	return isShowComponentTool( toolData?.toolId );
-}
-
-function getShowComponentIdentity( message: Pick< UIMessage, 'content' > ): string | undefined {
-	const toolData = getToolMessageData( message );
-	if ( ! toolData || ! isShowComponentTool( toolData.toolId ) ) {
-		return undefined;
-	}
-
-	return [ toolData.toolCallId, toolData.componentType, toolData.summary ]
-		.filter( Boolean )
-		.join( '|' );
-}
-
-function convertBigSkyMessageToUIMessage( message: BigSkyMessage ): UIMessage {
-	const uiMessage = {
-		// Keep Big Sky message properties without explicit mapping to keep linter happy.
-		// Big Sky messages sometimes have a `context` field used by the site build to
-		// show the progress indicator.
-		...message,
-		id: message.id,
-		role: message.role === 'assistant' ? 'agent' : 'user',
-		content: message.content,
-		timestamp: message.created_at ? message.created_at * 1000 : Date.now(),
-		archived: message.archived ?? false,
-		showIcon: message.showIcon ?? true,
-	} as UIMessage;
-
-	return uiMessage;
-}
 
 interface Props {
 	/** Suggestions displayed when the chat is empty. */
@@ -171,20 +84,22 @@ interface Props {
 	markdownExtensions: MarkdownExtensions;
 	/** Indicates if the floating chat is in compact mode. */
 	isCompactMode: boolean;
-	/** Navigation continuation hook for post-navigation conversation resumption. */
-	useNavigationContinuation?: NavigationContinuationHook;
-	/** Hook for setting up abilities that utilize React context. Invoked after custom actions registration. */
-	useAbilitiesSetup?: AbilitiesSetupHook;
+	/** The external providers' abilities-setup hook (e.g. Big Sky, jetpack-ai-sidebar). Invoked after custom actions registration. */
+	useProviderAbilitiesSetup?: AbilitiesSetupHook;
 	/** Hook for providing dynamic suggestions based on context (e.g., selected block). */
 	useSuggestions?: UseSuggestionsHook;
 	/** Get a chat component by type for rendering in agent messages. */
 	getChatComponent?: GetChatComponent;
 	/** Utilities for site building flow (e.g., progress tracking, site preview). */
 	siteBuildUtils?: SiteBuildUtils;
+	/** Rewrite the transcript before it is displayed. See `TransformMessages`. */
+	transformMessages?: TransformMessages;
 	/** Hook for saving and restoring editor state so that AI actions can be undone. */
 	useCheckpoint?: UseCheckpointHook;
 	/** Optional capability flags declared by one or more loaded providers. */
 	capabilities?: ProviderCapabilities;
+	/** Renders the chat with a disabled input. Driven by `setChatEnabled( false )`. */
+	isChatInputDisabled?: boolean;
 	/** Called when the has-messages state changes. */
 	onHasMessagesChange: ( hasMessages: boolean ) => void;
 }
@@ -200,45 +115,77 @@ export default function OrchestratorChat( {
 	markdownComponents,
 	markdownExtensions,
 	isCompactMode,
-	useNavigationContinuation,
-	useAbilitiesSetup,
+	useProviderAbilitiesSetup,
 	useSuggestions,
 	getChatComponent,
 	siteBuildUtils,
+	transformMessages,
 	useCheckpoint,
 	capabilities,
+	isChatInputDisabled,
 	onHasMessagesChange,
 }: Props ) {
-	const { agentConfig, getActiveSessionId, siteKey } = useAgentsManagerContext();
+	const { agentConfig, getTabSessionId, siteKey, site, currentUser } = useAgentsManagerContext();
+	const isReaderChat = isReaderChatAgent( agentConfig?.agentId );
 
-	const navigate = useNavigate();
-	const [ inputValue, setInputValue ] = useState( '' );
+	// Set by the providers' abilities, e.g. while Big Sky builds a site.
 	const [ isThinking, setIsThinking ] = useState( false );
 	const [ thinkingMessage, setThinkingMessage ] = useState< string | null >( null );
 	const [ isBuildingSite, setIsBuildingSite ] = useState( false );
-	const [ deletedMessageIds, setDeletedMessageIds ] = useState< Set< string > >( new Set() );
-	const [ retainedShowComponentMessages, setRetainedShowComponentMessages ] = useState<
-		Map< string, UIMessage >
-	>( new Map() );
-	const [ isRegenerating, setIsRegenerating ] = useState( false );
-	const [ hasUserSentMessage, setHasUserSentMessage ] = useState( false );
-	const currentPostId = useSelect( ( select ) => {
-		const editor = select( 'core/editor' ) as { getCurrentPostId?: () => number | string };
-		return editor?.getCurrentPostId?.();
-	}, [] );
-	const selectedBlockType = useSelect( ( select ) => {
-		try {
-			const blockEditor = select( 'core/block-editor' ) as {
-				getSelectedBlock?: () => { name?: unknown } | null;
-			};
-			const blockName = blockEditor?.getSelectedBlock?.()?.name;
-			return typeof blockName === 'string' && blockName ? blockName : undefined;
-		} catch {
-			return undefined;
-		}
-	}, [] );
-	const { isPageOrSiteEditorSurface: groupWritingSuggestions } = usePageOrSiteEditorSurface();
 
+	// Streamed task updates, recorded before the agent config's own `onTaskUpdate` runs.
+	const {
+		streamGeneration,
+		isCurrentStreamGeneration,
+		recordTaskUpdate,
+		startCheckpointRegeneration,
+		finishCheckpointRegeneration,
+		getCheckpointMessage,
+		invalidateLoadedCheckpoints,
+	} = useStreamedCheckpointMessages();
+	const { retriedToolCallIds, recordRetriedToolCall } = useRetriedToolCalls( streamGeneration );
+	const trackResponseOutcome = useResponseOutcomeTracking();
+
+	const agentChatConfig = useMemo( () => {
+		if ( ! agentConfig ) {
+			return null;
+		}
+
+		const { onTaskUpdate } = agentConfig;
+		return {
+			...agentConfig,
+			trackReplying: true,
+			onTaskUpdate: async ( update: TaskUpdate ) => {
+				// A previous session's stream must not write into this one.
+				if ( isCurrentStreamGeneration( streamGeneration ) ) {
+					recordRetriedToolCall( update );
+					recordTaskUpdate( update );
+				}
+
+				trackResponseOutcome( update );
+				await onTaskUpdate?.( update );
+			},
+		};
+	}, [
+		agentConfig,
+		isCurrentStreamGeneration,
+		recordRetriedToolCall,
+		recordTaskUpdate,
+		streamGeneration,
+		trackResponseOutcome,
+	] );
+
+	// The chat runtime, behind the credits gate.
+	const credits = useCredits( {
+		enabled: ! isReaderChat,
+		agentConfig: agentChatConfig!,
+		siteKey,
+		userId: currentUser?.ID,
+		site,
+		// The compact composer can send too, so it keeps the balance fresh.
+		isOpen: isOpen || ( ! isDocked && isCompactMode ),
+		isNoticeVisible: isOpen,
+	} );
 	const {
 		addMessage,
 		messages,
@@ -253,432 +200,41 @@ export default function OrchestratorChat( {
 		registerMessageActions,
 		getRegenerateHandler,
 		progressMessage,
-	} = useAgentChat( agentConfig! );
-	const messagesRef = useRef( messages );
+		isReplying,
+	} = credits.chat;
 	const getTraceIdForMessage = useAgentTraceIds( agentConfig );
-	const previousMessagesRef = useRef( messages );
-	const showComponentOrderRef = useRef< Map< string, number > >( new Map() );
-	const nextShowComponentOrderRef = useRef( 0 );
-	const wasProcessingRef = useRef( isProcessing );
-	messagesRef.current = messages;
 
-	// Drop all retained placeholders, keeping the map reference stable when
-	// already empty so no re-render is triggered.
-	const clearRetainedShowComponentMessages = useCallback( () => {
-		setRetainedShowComponentMessages( ( previousRetainedMessages ) =>
-			previousRetainedMessages.size > 0 ? new Map() : previousRetainedMessages
-		);
-	}, [] );
+	useCanvasMoveAbort( { isProcessing, abortCurrentRequest, addMessage } );
 
-	// A regeneration is finished once its streaming turn settles — either the new
-	// response arrives or an error restores the previous one. Re-enable component
-	// retention then so transient drops on later turns are covered again.
-	useEffect( () => {
-		const wasProcessing = wasProcessingRef.current;
-		wasProcessingRef.current = isProcessing;
-		if ( isRegenerating && wasProcessing && ! isProcessing ) {
-			setIsRegenerating( false );
-		}
-	}, [ isProcessing, isRegenerating ] );
-
-	// While a regeneration runs, the component being regenerated is deliberately
-	// dropped from the live messages (Agenttic sends `preserveUiOnlyMessages:
-	// false`), so retention must not resurrect the old picker as a stale copy.
-	const handleRegenerate = useCallback(
-		( message?: UIMessage ) => {
-			const handler = getRegenerateHandler?.( message );
-			if ( ! handler ) {
-				return handler;
-			}
-
-			return async () => {
-				setIsRegenerating( true );
-				// Drop any retained placeholders up front; the turn is being
-				// rewound, so a leftover picker would otherwise reappear once
-				// regeneration settles if the new response omits the component.
-				clearRetainedShowComponentMessages();
-				await handler();
-			};
-		},
-		[ clearRetainedShowComponentMessages, getRegenerateHandler ]
-	);
-
-	const getShowComponentOrder = useCallback( ( message: UIMessage ): number | undefined => {
-		const identity = getShowComponentIdentity( message );
-		if ( ! identity ) {
-			return undefined;
-		}
-
-		const existingOrder = showComponentOrderRef.current.get( identity );
-		if ( existingOrder !== undefined ) {
-			return existingOrder;
-		}
-
-		const nextOrder = nextShowComponentOrderRef.current++;
-		showComponentOrderRef.current.set( identity, nextOrder );
-		return nextOrder;
-	}, [] );
-
-	useEffect( () => {
-		const previousMessages = previousMessagesRef.current;
-
-		// A full history replacement (server hydration, clearing the chat) swaps
-		// every message id at once. Nothing in it was transiently dropped, and
-		// the same picker can carry a different identity in loaded history than
-		// it did live — retaining across the swap would show it as a duplicate.
-		const previousMessageIds = new Set( previousMessages.map( ( message ) => message.id ) );
-		const isHistoryReplaced =
-			previousMessages.length > 0 &&
-			! messages.some( ( message ) => previousMessageIds.has( message.id ) );
-
-		// While regenerating, the dropped component is being replaced, not lost —
-		// don't retain it either. Keep the ref current so the next run compares
-		// against the latest messages.
-		if ( isRegenerating || isHistoryReplaced ) {
-			if ( isHistoryReplaced ) {
-				clearRetainedShowComponentMessages();
-			}
-			previousMessagesRef.current = messages;
-			return;
-		}
-
-		messages.filter( isShowComponentMessage ).forEach( getShowComponentOrder );
-
-		const currentShowComponentIdentities = new Set(
-			messages.filter( isShowComponentMessage ).map( getShowComponentIdentity ).filter( Boolean )
-		);
-		const retainedCandidates = previousMessages.filter( ( previousMessage ) => {
-			const identity = getShowComponentIdentity( previousMessage );
-			return !! identity && ! currentShowComponentIdentities.has( identity );
-		} );
-
-		if ( retainedCandidates.length > 0 ) {
-			setRetainedShowComponentMessages( ( previousRetainedMessages ) => {
-				const nextRetainedMessages = new Map( previousRetainedMessages );
-				let changed = false;
-
-				for ( const message of retainedCandidates ) {
-					const identity = getShowComponentIdentity( message );
-					// One placeholder per identity, so a component that drops and
-					// returns refreshes in place instead of stacking another copy.
-					const retainedId = `retained-${ identity }`;
-					if ( ! nextRetainedMessages.has( retainedId ) ) {
-						nextRetainedMessages.set( retainedId, { ...message, id: retainedId } );
-						changed = true;
-					}
-				}
-
-				return changed ? nextRetainedMessages : previousRetainedMessages;
-			} );
-		}
-
-		previousMessagesRef.current = messages;
-	}, [ clearRetainedShowComponentMessages, getShowComponentOrder, messages, isRegenerating ] );
-
-	// Reader-chat sessions are short (usually < 50 messages) — don't waste
-	// time paginating 10 pages deep. One page covers typical use.
-	const isReaderChat = isReaderChatAgent( agentConfig?.agentId );
-	const shouldLoadConversation =
-		! isReaderChat || ( ! hasUserSentMessage && messages.length === 0 && ! isProcessing );
-	const chatError = isReaderChat
-		? getReaderChatErrorMessage( error )
-		: getOrchestratorErrorMessage( error );
-
-	const { isLoading: isLoadingConversation } = useConversation( {
-		maxPages: isReaderChat ? 1 : 10,
-		enabled: shouldLoadConversation,
-		onSuccess: ( loadedMessages, serverSessionId ) => {
-			if ( isReaderChat && ( hasUserSentMessage || messages.length > 0 || isProcessing ) ) {
-				return;
-			}
-
-			// Update the UI with the loaded messages
-			loadMessages( loadedMessages );
-			// Make sure future messages go to the right session
-			getAgentManager().updateSessionId( agentConfig!.agentId, serverSessionId );
-
-			// Sync local session ID with the server's
-			if ( agentConfig!.sessionId !== serverSessionId ) {
-				navigate( '/chat', { state: { sessionId: serverSessionId }, replace: true } );
-			}
-		},
+	// Keeps pickers on screen while a stream drops them. A regeneration rewinds
+	// them along with the turn's streamed checkpoints.
+	const { pauseRetentionForRegeneration, withRetainedShowComponents } = useShowComponentRetention( {
+		messages,
+		isProcessing,
 	} );
 
-	// Use dynamic suggestions from the external provider (e.g., Big Sky block-based suggestions)
-	const maxDynamicSuggestions = isDocked ? undefined : 3;
-	const dynamicSuggestions = useSuggestions?.( maxDynamicSuggestions, {
-		suggestionsVisible,
-	} );
-	const dynamicSuggestionsList = dynamicSuggestions?.suggestions ?? [];
-	const replaceEmptyViewSuggestions = dynamicSuggestions?.replaceEmptyViewSuggestions === true;
-	const dynamicSuggestionsKey = JSON.stringify(
-		dynamicSuggestionsList.map( ( s ) => [ s.id, s.label, s.prompt ] )
+	const handleRegenerationStart = useCallback(
+		( messageId: string | undefined ) => {
+			pauseRetentionForRegeneration();
+			startCheckpointRegeneration( messageId );
+		},
+		[ pauseRetentionForRegeneration, startCheckpointRegeneration ]
 	);
-	const contextualSuggestionIds = useMemo(
-		() =>
-			replaceEmptyViewSuggestions
-				? new Set( dynamicSuggestionsList.map( ( suggestion ) => suggestion.id ) )
-				: new Set< string >(),
-		// Track suggestion content rather than an unstable provider array.
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-		[ dynamicSuggestionsKey, replaceEmptyViewSuggestions ]
-	);
-
-	// Register dynamic suggestions whenever they change
-	useEffect( () => {
-		if ( dynamicSuggestionsList.length > 0 ) {
-			registerSuggestions?.( dynamicSuggestionsList );
-		} else {
-			// Clear suggestions when there are none
-			clearSuggestions?.();
-		}
-		// Track suggestion content, not array identity. Some merged providers
-		// return a fresh empty array on each render.
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ dynamicSuggestionsKey, registerSuggestions, clearSuggestions ] );
-
-	// Persist the chat route so the conversation can be resumed later.
-	useSaveNewChatRoute( hasUserSentMessage );
-
-	// Register an "Undo" action on agent messages with checkpoints.
-	const checkpoint = useCheckpoint?.();
-	useCheckpointAction( registerMessageActions, checkpoint );
-
-	// Register thumbs-up/down feedback actions on agent messages.
-	const { showFeedbackInput, submitFeedbackText, resetFeedback, getFeedbackActionsForMessage } =
-		useFeedbackAction( {
-			registerMessageActions,
-			messages,
-			getTraceIdForMessage,
-		} );
-
-	// Add Agenttic's built-in regenerate action on agent messages for providers
-	// that opt in. Computed during render alongside copy/feedback so the icon
-	// appears in the same paint rather than a commit later.
-	const getRegenerateActionsForMessage = useRegenerateAction( {
-		enabled: capabilities?.supportsRegenerateAction === true,
-		getRegenerateHandler: handleRegenerate,
+	const getGatedRegenerateHandler = useGatedRegenerateHandler( {
+		getRegenerateHandler,
+		beforeSubmit: credits.beforeSubmit,
+		onRegenerationStart: handleRegenerationStart,
+		onRegenerationEnd: finishCheckpointRegeneration,
 	} );
 
-	// Add a "Copy" action on plain-text agent messages.
-	const getCopyActionsForMessage = useCopyAction();
+	const chatError = useChatError( {
+		error,
+		isReaderChat,
+		takeRefusalCode: credits.takeRefusalCode,
+	} );
 
-	// Register zoom-in/zoom-out actions on agent messages.
-	useZoomAction( registerMessageActions );
-
-	// Register a "Sources" action on agent messages with sources data.
-	useSourcesAction( registerMessageActions, ! isReaderChat );
-
-	const imageUploadResult = useImageUpload();
-	// Reader chat is a public blog frontend — visitors can't upload media.
-	const imageUpload = isReaderChat ? undefined : imageUploadResult;
-	const pendingImages = imageUpload?.pendingImages || [];
-	const uploadImagesToWordPress = imageUpload?.uploadImagesToWordPress;
-	const isUploadingImages = imageUpload?.isUploadingImages ?? false;
-	const [ uploadError, setUploadError ] = useState< string | null >( null );
-
-	const setChatInput = useCallback( ( value: string ) => {
-		if ( typeof value !== 'string' ) {
-			return;
-		}
-
-		setInputValue( value );
-
-		const textarea = document.querySelector< HTMLTextAreaElement >(
-			'.agenttic [data-slot="chat-input"] [data-slot="textarea"]'
-		);
-		if ( textarea ) {
-			textarea.focus();
-			textarea.setSelectionRange( value.length, value.length );
-		}
-	}, [] );
-
-	// Whether the last `onSubmitWithImages` call actually dispatched — dropped,
-	// aborted, and failed sends deliberately leave the composer intact.
-	const submitDispatchedRef = useRef( false );
-	// Synchronous lock for the upload phase: same-tick re-entry (double-click,
-	// programmatic submit) lands before the `isUploadingImages` state does.
-	const isUploadingRef = useRef( false );
-
-	const onSubmitWithImages = useCallback(
-		async ( message: string ) => {
-			submitDispatchedRef.current = false;
-
-			// The composer is committed while a batch uploads — drop re-entrant
-			// sends (suggestion clicks, programmatic submits) instead of
-			// interleaving a second message.
-			if ( isUploadingRef.current || isUploadingImages ) {
-				return;
-			}
-
-			setHasUserSentMessage( true );
-			setUploadError( null );
-			persistLastActivity( siteKey );
-
-			recordBigSkyTracksEvent( 'chat_input_send_message', {
-				message_length: message?.length || 0,
-				has_images: pendingImages.length > 0,
-			} );
-
-			let imageData;
-			if ( pendingImages.length > 0 && uploadImagesToWordPress ) {
-				isUploadingRef.current = true;
-
-				try {
-					// Agenttic clears the (controlled) input on submit. When the message
-					// came from the composer, keep it visible while images upload: wait a
-					// microtask so the restore lands after that clear, and re-place the
-					// caret at the end (the clear leaves it at 0). Suggestion-driven and
-					// programmatic submits leave any draft alone. Agenttic dispatches the
-					// trimmed draft, hence the trim-compare.
-					if ( inputValue.trim() === message ) {
-						await Promise.resolve();
-						setChatInput( message );
-					}
-
-					const mediaObjects = await uploadImagesToWordPress();
-
-					recordBigSkyTracksEvent( 'file_upload_success', {
-						count: mediaObjects.length,
-					} );
-
-					imageData = mediaObjects.map( ( media ) => ( {
-						url: media.url,
-						metadata: {
-							id: media.id, // WordPress attachment ID
-							title: media.title,
-							fileName: media.fileName,
-							fileType: media.fileType,
-							fileSize: media.fileSize,
-							dimensions: media.dimensions,
-							uploadDate: media.uploadDate,
-							alt: media.alt,
-							caption: media.caption,
-						},
-					} ) );
-				} catch ( caughtError ) {
-					// Stop during upload: the previews are restored and a
-					// composer-typed message stays in the input — the composer is
-					// back to its pre-send state.
-					if ( caughtError instanceof Error && caughtError.name === 'AbortError' ) {
-						recordBigSkyTracksEvent( 'file_upload_cancel', {
-							count: pendingImages.length,
-						} );
-						return;
-					}
-
-					recordBigSkyTracksEvent( 'file_upload_error', {
-						count: pendingImages.length,
-					} );
-					setUploadError(
-						__( 'Failed to upload images. Please try again.', __i18n_text_domain__ )
-					);
-					return;
-				} finally {
-					isUploadingRef.current = false;
-				}
-
-				// The message dispatches now — clear the input only when it still
-				// holds this message (a suggestion-driven send may have left an
-				// unrelated draft in it).
-				setInputValue( ( currentValue ) => ( currentValue === message ? '' : currentValue ) );
-			}
-
-			submitDispatchedRef.current = true;
-			try {
-				// Images dispatch via agenttic's `imageUrls` option — the resulting
-				// `FilePart`s persist in conversation history with their metadata.
-				await ( imageData ? onSubmit( message, { imageUrls: imageData } ) : onSubmit( message ) );
-			} catch {
-				// A rejected dispatch already surfaces via agenttic's error state;
-				// put the message back (unless a newer draft replaced it) for a retry.
-				submitDispatchedRef.current = false;
-				setInputValue( ( currentValue ) => ( currentValue === '' ? message : currentValue ) );
-				return;
-			}
-
-			consumeNextMessageExternalContextEntries();
-
-			if ( isReaderChat ) {
-				markSessionUsed( agentConfig?.agentId );
-			}
-		},
-		[
-			agentConfig?.agentId,
-			inputValue,
-			isReaderChat,
-			isUploadingImages,
-			onSubmit,
-			pendingImages.length,
-			setChatInput,
-			siteKey,
-			uploadImagesToWordPress,
-		]
-	);
-
-	const handleAbort = useCallback( () => {
-		// `abortUpload` reports whether it stopped an in-flight batch, so a stop
-		// that lands just after the upload settles still aborts the agent request.
-		if ( imageUpload?.abortUpload?.() ) {
-			return;
-		}
-		abortCurrentRequest();
-	}, [ abortCurrentRequest, imageUpload ] );
-
-	const submitChatMessage = useCallback(
-		async ( message?: string ) => {
-			const submittedMessage = typeof message === 'string' ? message : inputValue;
-
-			if ( ! submittedMessage.trim() ) {
-				return;
-			}
-
-			await onSubmitWithImages( submittedMessage );
-			// Clear only a dispatched message — an aborted or failed send keeps
-			// the composer intact, and the user may have typed a new draft.
-			if ( submitDispatchedRef.current ) {
-				setInputValue( ( currentValue ) =>
-					currentValue === submittedMessage ? '' : currentValue
-				);
-			}
-		},
-		[ inputValue, onSubmitWithImages ]
-	);
-
-	useRegisterCustomActions( { setChatInput, submitChatMessage } );
-
-	const handleContextCardAction = useCallback(
-		( card: ExternalContextCard, action: ExternalContextCardAction ) => {
-			if ( ! action.prompt ) {
-				return;
-			}
-
-			// Remove the card immediately so the user gets instant collapse feedback.
-			// For 'submit' actions the linked context entry stays until the request
-			// is sent — `consumeNextMessageExternalContextEntries` runs after the
-			// awaited submit and clears it then.
-			removeExternalContextCard( card.id );
-
-			if ( action.type === 'submit' ) {
-				void submitChatMessage( action.prompt );
-				return;
-			}
-
-			setChatInput( action.prompt );
-		},
-		[ setChatInput, submitChatMessage ]
-	);
-
-	const dismissContextCard = useCallback( ( card: ExternalContextCard ) => {
-		removeExternalContextCard( card.id );
-		card.contextEntryIds?.forEach( ( entryId ) => {
-			removeExternalContextEntry( entryId );
-		} );
-	}, [] );
-
-	// Handle navigation continuation if hook is provided
-	// This allows to resume conversations after full page navigation
-	useNavigationContinuation?.( {
+	// Sending, and loading the saved conversation.
+	const { hadParkedNavigation, flushPendingNavigation } = useNavigationContinuation( {
 		isProcessing,
 		sendToolResult: async ( params ) => {
 			await onSubmit( params.message, {
@@ -688,173 +244,141 @@ export default function OrchestratorChat( {
 				sessionId: params.sessionId,
 			} );
 		},
-		sessionId: getActiveSessionId(),
-		pathname: window.location.pathname,
 	} );
 
-	// Listen for inline suggestion clicks dispatched by external providers or the Agenttic bridge below.
+	// A ref: the prompts on screen are derived below from the composer's `inputValue`.
+	const suggestionPromptsRef = useRef< Set< string > >( new Set() );
+	const {
+		inputValue,
+		setInputValue,
+		setChatInput,
+		imageUpload,
+		isUploadingImages,
+		uploadError,
+		submitComposerMessage,
+		submitChatMessage,
+		submitHostMessage,
+		stopResponse,
+	} = useChatComposer( {
+		isReaderChat,
+		onSubmit,
+		abortCurrentRequest,
+		beforeSubmit: credits.beforeSubmit,
+		flushPendingNavigation,
+		suggestionPromptsRef,
+	} );
+
+	// Marks the session as sent whichever path started the turn.
 	useEffect( () => {
-		const handleInlineSuggestionClick = ( event: Event ) => {
-			const { value, autoSubmit } = ( event as CustomEvent ).detail;
-			// Auto-submit suggestions are already sent and the input cleared by the
-			// AgentUI; repopulating it here would leave the prompt stuck in the composer.
-			if ( value && ! autoSubmit ) {
-				const inputValue = value.endsWith( ' ' ) ? value : `${ value } `;
-				setInputValue( inputValue );
+		if ( isProcessing && agentConfig?.sessionId ) {
+			markSessionSent( agentConfig.sessionId );
+		}
+	}, [ isProcessing, agentConfig?.sessionId ] );
 
-				// Focus the textarea and set cursor position to end
-				const textarea = document.querySelector< HTMLTextAreaElement >(
-					'.agenttic .Textarea-module_textarea'
-				);
-				if ( textarea ) {
-					textarea.focus();
-					textarea.setSelectionRange( inputValue.length, inputValue.length );
-				}
-			}
-		};
+	const isLoadingConversation = useConversationHydration( {
+		hadParkedNavigation,
+		loadMessages,
+		onFetch: invalidateLoadedCheckpoints,
+	} );
 
-		window.addEventListener( 'big-sky-inline-suggestion-click', handleInlineSuggestionClick );
-		return () => {
-			window.removeEventListener( 'big-sky-inline-suggestion-click', handleInlineSuggestionClick );
-		};
-	}, [] );
+	// Registered before the providers' ability setup below, whose effects may
+	// clear suggestions.
+	const { dynamicSuggestions, replaceEmptyViewSuggestions, contextualSuggestionIds } =
+		useDynamicSuggestions( { useSuggestions, isDocked, registerSuggestions, clearSuggestions } );
 
-	const handleSuggestionClick = useCallback(
-		( suggestion: Suggestion | string, availableSuggestions?: Suggestion[] ) => {
-			const value =
-				typeof suggestion === 'string' ? suggestion : suggestion.prompt ?? suggestion.label;
+	// The actions under each agent message.
+	const getCheckpointActionsForMessage = useCheckpointAvailability( {
+		messages,
+		registerMessageActions,
+		useCheckpoint,
+		getCheckpointMessage,
+	} );
+	const { showFeedbackInput, submitFeedbackText, resetFeedback, getFeedbackActionsForMessage } =
+		useFeedbackAction( { registerMessageActions, messages, getTraceIdForMessage } );
+	const getRegenerateActionsForMessage = useRegenerateAction( {
+		enabled: capabilities?.supportsRegenerateAction === true,
+		getRegenerateHandler: getGatedRegenerateHandler,
+	} );
+	const getCopyActionsForMessage = useCopyAction();
+	useSourcesAction( registerMessageActions, ! isReaderChat );
 
-			const autoSubmit = typeof suggestion !== 'string' && !! suggestion.autoSubmit;
-			const suggestionId = typeof suggestion !== 'string' ? suggestion.id : undefined;
-			const optionId =
-				typeof suggestion !== 'string'
-					? getSelectedOptionId( suggestion, availableSuggestions ?? [] )
-					: undefined;
-			const blockType =
-				typeof suggestion !== 'string' && contextualSuggestionIds.has( suggestion.id )
-					? selectedBlockType
-					: undefined;
+	// Bridges to the host page and the providers.
+	useRegisterCustomActions( { setChatInput, submitChatMessage: submitHostMessage } );
 
-			if ( typeof suggestion !== 'string' ) {
-				recordBigSkyTracksEvent( 'chat_suggestion_click', {
-					suggestion_text: suggestion.prompt || '',
-					suggestion_id: suggestion.id || '',
-					available_suggestions: formatSuggestionIds( availableSuggestions ?? [] ),
-					...( optionId ? { option_id: optionId } : {} ),
-					...( blockType ? { block_type: blockType } : {} ),
-				} );
-			}
+	const { handleContextCardAction, dismissContextCard } = useContextCardActions( {
+		beforeSubmit: credits.beforeSubmit,
+		submitChatMessage,
+		setChatInput,
+	} );
 
-			// Always dispatch so click listeners (e.g. the Jetpack sidebar hiding the
-			// clicked chip) still fire. `autoSubmit` tells the input listener to skip
-			// repopulating the composer, which the AgentUI already submitted and cleared.
-			window.dispatchEvent(
-				new CustomEvent( 'big-sky-inline-suggestion-click', {
-					detail: {
-						value,
-						autoSubmit,
-						...( suggestionId ? { suggestionId } : {} ),
-					},
-				} )
-			);
-		},
-		[ contextualSuggestionIds, selectedBlockType ]
-	);
+	const dispatchSuggestionClick = useInlineSuggestionClick( setChatInput );
 
-	// Invoke abilities setup hook to register hook-based abilities that utilize React context.
-	// Provides custom action handlers for agent and chat interaction within Big Sky's AI store.
-	// The hook is stable as `OrchestratorChat` only renders after external providers have been loaded.
-	useAbilitiesSetup?.( {
-		addMessage: ( message: BigSkyMessage ) => {
-			// Transform Big Sky message format to `UIMessage` format and add to chat.
-			addMessage( convertBigSkyMessageToUIMessage( message ) );
-		},
+	// The optional hook call is safe: this component renders only after the
+	// providers load, so the hook never changes. Big Sky reads every handler but
+	// `isProcessing`; jetpack-ai-sidebar reads `clearSuggestions` and `isProcessing`.
+	useProviderAbilitiesSetup?.( {
+		addMessage: ( message: BigSkyMessage ) =>
+			addMessage( convertBigSkyMessageToUIMessage( message ) ),
 		clearMessages: () => loadMessages( [] ),
 		clearSuggestions,
 		getAgentManager,
 		isProcessing,
 		setIsThinking,
-		deleteMarkedMessages: ( msgs ) => {
-			const deleteDecisions = msgs.map( ( msg ) => {
-				const messageFromRequest = msg as Pick< UIMessage, 'id' > &
-					Partial< Pick< UIMessage, 'content' > >;
-				const fullMessage = messageFromRequest.content
-					? ( messageFromRequest as UIMessage )
-					: messagesRef.current.find( ( message ) => message.id === msg.id );
-				const isShowComponent = !! fullMessage && isShowComponentMessage( fullMessage );
-
-				return {
-					id: msg.id,
-					foundMessage: !! fullMessage,
-					isShowComponent,
-					tool: fullMessage ? getToolMessageData( fullMessage ) : undefined,
-					shouldDelete: fullMessage ? ! isShowComponent : false,
-				};
-			} );
-
-			const deletableMessages = msgs.filter(
-				( msg ) => deleteDecisions.find( ( decision ) => decision.id === msg.id )?.shouldDelete
-			);
-			if ( deletableMessages.length === 0 ) {
-				return;
-			}
-
-			setDeletedMessageIds(
-				( prevIds ) => new Set( [ ...prevIds, ...deletableMessages.map( ( msg ) => msg.id ) ] )
-			);
-		},
-		// This ensures the same session ID is used between Big Sky and Calypso agents,
-		// so that messages will be stored in the same conversation.
-		getSessionId: getActiveSessionId,
+		// Big Sky stores its messages in the same conversation as this chat.
+		getSessionId: getTabSessionId,
 		setIsBuildingSite,
 		setThinkingMessage,
 	} );
 
-	const displayedMessages = useMemo< AgentsManagerUIMessage[] >( () => {
-		let currentMessages: AgentsManagerUIMessage[] = messages;
+	useAbilitiesRegistration();
 
+	// The transcript as displayed.
+	const currentPostId = useSelect( ( select ) => {
+		const editor = select( 'core/editor' ) as { getCurrentPostId?: () => number | string };
+		return editor?.getCurrentPostId?.();
+	}, [] );
+
+	const displayedMessages = useMemo< AgentsManagerUIMessage[] >( () => {
+		// Let the provider rewrite the whole raw transcript first, at display time,
+		// so a message restored from history is presented the same way as a new one.
+		let currentMessages: AgentsManagerUIMessage[] = transformMessages
+			? transformMessages( messages )
+			: messages;
+
+		// `local_tool_running` is a placeholder, not a reply.
 		currentMessages = currentMessages.filter(
 			( message ) =>
-				! deletedMessageIds.has( message.id ) &&
 				! message.content?.some( ( content ) => content?.text === LOCAL_TOOL_RUNNING_MESSAGE )
 		);
+		currentMessages = withRetainedShowComponents( currentMessages );
 
-		currentMessages.filter( isShowComponentMessage ).forEach( getShowComponentOrder );
+		// Read before grouping and conversion below: a checkpoint lives in the tool
+		// message's raw JSON.
+		const checkpointActionsByMessageId = new Map(
+			currentMessages.map( ( message ) => [
+				message.id,
+				getCheckpointActionsForMessage( getCheckpointMessage( message ) ),
+			] )
+		);
 
-		const currentShowComponentIdentities = new Set(
+		// Checkpoint messages of earlier turns are dimmed: only the latest turn can be undone.
+		const latestUserMessageIndex = getLatestUserMessageIndex( currentMessages );
+		const supersededCheckpointMessageIds = new Set(
 			currentMessages
-				.filter( isShowComponentMessage )
-				.map( getShowComponentIdentity )
-				.filter( Boolean )
+				.slice( 0, Math.max( latestUserMessageIndex, 0 ) )
+				.filter(
+					( message ) =>
+						getCheckpointIdForMessage( getCheckpointMessage( message ) ) !== null ||
+						( checkpointActionsByMessageId.get( message.id )?.length ?? 0 ) > 0 ||
+						hasCheckpointAction( message.actions )
+				)
+				.map( ( message ) => message.id )
 		);
-		const retainedMessagesToDisplay = [ ...retainedShowComponentMessages.values() ].filter(
-			( message ) => {
-				const identity = getShowComponentIdentity( message );
-				return !! identity && ! currentShowComponentIdentities.has( identity );
-			}
-		);
-		if ( retainedMessagesToDisplay.length > 0 ) {
-			retainedMessagesToDisplay.forEach( getShowComponentOrder );
-			currentMessages = [ ...currentMessages, ...retainedMessagesToDisplay ].sort(
-				( messageA, messageB ) => {
-					const orderA = getShowComponentOrder( messageA );
-					const orderB = getShowComponentOrder( messageB );
 
-					if ( orderA !== undefined && orderB !== undefined && orderA !== orderB ) {
-						return orderA - orderB;
-					}
-
-					return ( messageA.timestamp ?? 0 ) - ( messageB.timestamp ?? 0 );
-				}
-			);
-		}
-
-		// Group site-build messages only when needed
+		// Big Sky's site build shows its messages as one progress card, with a
+		// spinner while it styles the site.
 		const hasBuildMessages = siteBuildUtils?.hasSiteBuildMessages( currentMessages );
-
-		// Show progress card during styling phase (after structure, dock is visible)
 		if ( siteBuildUtils?.groupSiteBuildMessages && ( isBuildingSite || hasBuildMessages ) ) {
-			// Show spinner during post-layout workflow (colors, fonts, images)
 			currentMessages = siteBuildUtils.groupSiteBuildMessages(
 				currentMessages,
 				isBuildingSite ? thinkingMessage : null
@@ -865,142 +389,121 @@ export default function OrchestratorChat( {
 			messages: currentMessages,
 			getChatComponent,
 			currentPostId,
+			isProcessing,
+			canEscalateToHuman: isWooAiProvider(),
+			retriedToolCallIds,
 		} );
 
 		const latestAgentMessageId = getLatestAgentMessageId( currentMessages );
 
-		currentMessages = currentMessages.map( ( message ) => {
+		return currentMessages.map( ( message ) => {
+			const checkpointActions = checkpointActionsByMessageId.get( message.id ) ?? [];
+			const isDisabled =
+				hasDisabledCheckpointAction( checkpointActions ) ||
+				supersededCheckpointMessageIds.has( message.id );
 			const traceId = getTraceIdForMessage( message.id );
-			const messageWithTraceId = traceId ? { ...message, traceId } : message;
+			const decoratedMessage =
+				traceId || isDisabled
+					? {
+							...message,
+							...( traceId && { traceId } ),
+							...( isDisabled && { disabled: true } ),
+						}
+					: message;
 
-			if ( message.id.endsWith( '-next-step' ) ) {
-				return messageWithTraceId;
-			}
-
-			const directActions = [
+			return withComputedActions( decoratedMessage, [
+				...checkpointActions,
 				...getFeedbackActionsForMessage( message ),
 				...getCopyActionsForMessage( message ),
 				...getRegenerateActionsForMessage( message, {
 					isLatestAgentMessage: message.id === latestAgentMessageId,
-					isStreaming: isProcessing,
 				} ),
-			];
-			if ( directActions.length === 0 ) {
-				return messageWithTraceId;
-			}
-
-			const existingActions = message.actions?.filter(
-				( action ) =>
-					! action.id.startsWith( 'feedback-' ) &&
-					action.id !== 'copy' &&
-					action.id !== 'regenerate'
-			);
-
-			return {
-				...messageWithTraceId,
-				actions: [ ...( existingActions ?? [] ), ...directActions ].sort(
-					( actionA, actionB ) => ( actionA.order ?? Infinity ) - ( actionB.order ?? Infinity )
-				),
-			};
+			] );
 		} );
-
-		return currentMessages;
 	}, [
 		currentPostId,
-		deletedMessageIds,
 		getChatComponent,
+		getCheckpointActionsForMessage,
+		getCheckpointMessage,
 		getCopyActionsForMessage,
-		getShowComponentOrder,
 		getFeedbackActionsForMessage,
-		getTraceIdForMessage,
 		getRegenerateActionsForMessage,
+		getTraceIdForMessage,
 		isBuildingSite,
 		isProcessing,
 		messages,
-		retainedShowComponentMessages,
+		retriedToolCallIds,
 		siteBuildUtils,
 		thinkingMessage,
+		transformMessages,
+		withRetainedShowComponents,
 	] );
 
-	// Notify parent when has-messages state changes.
 	const messageCount = displayedMessages.length;
 	const hasMessages = messageCount > 0;
 	useEffect( () => {
 		onHasMessagesChange( hasMessages );
 	}, [ hasMessages, onHasMessagesChange ] );
 
-	// Broadcast conversation activity so other bundles can re-sync transcript cards.
+	// Lets other bundles re-sync their transcript cards.
 	useBroadcastConversationActivity( messageCount );
 
+	// Lets a host editing surface tell the agent's writes from a block settling
+	// itself on mount.
+	useBroadcastTurnActivity( agentConfig?.agentId, isProcessing );
+
+	// Empty-view suggestions and their tracking.
+	const displayedEmptyViewSuggestions = getDisplayedEmptyViewSuggestions( {
+		isVisible: suggestionsVisible,
+		isChatEmpty: ! isLoadingConversation && ! hasMessages && inputValue.length === 0,
+		emptyViewSuggestions,
+		registeredSuggestions: suggestions,
+		dynamicSuggestions,
+		replaceEmptyViewSuggestions,
+	} );
+	suggestionPromptsRef.current = new Set(
+		displayedEmptyViewSuggestions.map( ( suggestion ) => suggestion.prompt ?? suggestion.label )
+	);
+
+	const { onSuggestionsRendered, trackSuggestionClick } = useSuggestionTracking( {
+		contextualSuggestionIds,
+		hasSuggestionsToRender: ! isLoadingConversation && displayedEmptyViewSuggestions.length > 0,
+	} );
+
+	const handleSuggestionClick = useCallback(
+		( suggestion: Suggestion | string, availableSuggestions?: Suggestion[] ) => {
+			trackSuggestionClick( suggestion, availableSuggestions );
+			dispatchSuggestionClick( suggestion );
+		},
+		[ dispatchSuggestionClick, trackSuggestionClick ]
+	);
+
+	const { isPageOrSiteEditorSurface } = usePageOrSiteEditorSurface();
+
+	// The thinking indicator.
 	const latestDisplayedMessage = displayedMessages[ displayedMessages.length - 1 ];
 	const shouldSuppressTransientThinking = Boolean(
 		latestDisplayedMessage?.role === 'agent' && latestDisplayedMessage.suppressThinking
 	);
-	const showProcessingIndicator =
+	const shouldShowProcessingIndicator =
 		( isProcessing || ( isThinking && ! isBuildingSite ) ) && ! shouldSuppressTransientThinking;
-
-	// Determine which suggestions to show following Big Sky's logic:
-	// - Empty chat: show provider empty-view chips plus dynamic chips.
-	// - Active chat/input: show dynamic suggestions only.
-	let displayedEmptyViewSuggestions: Suggestion[] = [];
-	if ( ! suggestionsVisible ) {
-		// Minimized/collapsed: the chat renders no suggestions, so leave the list
-		// empty to avoid firing chat_suggestions_rendered for hidden chips.
-		displayedEmptyViewSuggestions = [];
-	} else if (
-		! isLoadingConversation &&
-		displayedMessages.length === 0 &&
-		inputValue.length === 0
-	) {
-		// Prefer the registered store, but fall back to the live `useSuggestions`
-		// output when the store is empty. Clicking a suggestion calls
-		// `clearSuggestions()`, which empties the store, and the re-registration
-		// effect is keyed on the (unchanged) hook output so it won't restore it.
-		// Persistent empty-view chips must survive that clear.
-		displayedEmptyViewSuggestions = mergeEmptyViewSuggestions(
-			emptyViewSuggestions,
-			replaceEmptyViewSuggestions || suggestions.length === 0
-				? dynamicSuggestionsList
-				: suggestions,
-			replaceEmptyViewSuggestions
-		);
-	} else if ( suggestions.length > 0 ) {
-		displayedEmptyViewSuggestions = suggestions;
-	}
-
-	// Track when a set of suggestions is rendered — the dynamic block-context
-	// suggestions or, on an empty chat, the empty-view starter chips. Mirrors
-	// Big Sky, which tracked the empty view too. Dedupe on the rendered ids so
-	// re-renders with the same set don't re-fire; a set that empties and returns
-	// to the same content isn't re-tracked.
-	const displayedSuggestionIds = displayedEmptyViewSuggestions.map( ( s ) => s.id ).join( '|' );
-	const lastTrackedSuggestionsRef = useRef< string | null >( null );
-	useEffect( () => {
-		if ( displayedEmptyViewSuggestions.length === 0 ) {
-			return;
-		}
-		if ( lastTrackedSuggestionsRef.current !== displayedSuggestionIds ) {
-			recordBigSkyTracksEvent( 'chat_suggestions_rendered', {
-				suggestions: formatSuggestionIds( displayedEmptyViewSuggestions ),
-			} );
-			lastTrackedSuggestionsRef.current = displayedSuggestionIds;
-		}
-		// `displayedEmptyViewSuggestions` identity is unstable; key on its ids.
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ displayedSuggestionIds ] );
 
 	return (
 		<AgentChat
 			messages={ displayedMessages }
-			suggestions={ suggestions }
+			suggestions={ suggestionsVisible ? suggestions : [] }
 			emptyViewSuggestions={ displayedEmptyViewSuggestions }
-			isProcessing={ showProcessingIndicator || isUploadingImages }
+			isProcessing={ shouldShowProcessingIndicator || isUploadingImages }
+			// The indicator above hides mid-reply and covers uploads; response actions
+			// follow the raw streaming state.
+			isStreaming={ isProcessing }
+			isReplying={ isReplying }
 			thinkingMessage={
 				isUploadingImages ? __( 'Uploading images…', __i18n_text_domain__ ) : progressMessage
 			}
 			error={ chatError || uploadError }
-			onSubmit={ onSubmitWithImages }
-			onAbort={ handleAbort }
+			onSubmit={ submitComposerMessage }
+			onAbort={ stopResponse }
 			isLoadingConversation={ isLoadingConversation }
 			isDocked={ isDocked }
 			isOpen={ isOpen }
@@ -1008,14 +511,19 @@ export default function OrchestratorChat( {
 			onExpand={ onExpand }
 			clearSuggestions={ clearSuggestions }
 			onSuggestionClick={ handleSuggestionClick }
+			onSuggestionsRendered={ onSuggestionsRendered }
 			chatHeaderOptions={ chatHeaderOptions }
 			markdownComponents={ markdownComponents }
 			markdownExtensions={ markdownExtensions }
 			inputValue={ inputValue }
 			onInputChange={ setInputValue }
 			isCompactMode={ isCompactMode }
-			groupWritingSuggestions={ groupWritingSuggestions }
+			groupWritingSuggestions={ isPageOrSiteEditorSurface }
 			imageUpload={ imageUpload }
+			notice={ credits.notice }
+			trailingActions={ credits.trailingActions }
+			beforeSubmit={ credits.beforeSubmit }
+			isChatInputDisabled={ isChatInputDisabled }
 			showFeedbackInput={ showFeedbackInput }
 			onSubmitFeedbackText={ submitFeedbackText }
 			onCancelFeedback={ resetFeedback }

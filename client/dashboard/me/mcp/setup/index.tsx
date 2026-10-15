@@ -13,6 +13,7 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { copy, check } from '@wordpress/icons';
 import { useState } from 'react';
+import { useMcpTracksAudienceProps } from '../../../../me/mcp/tracks';
 import { hasEnabledAccountTools } from '../../../../me/mcp/utils';
 import Breadcrumbs from '../../../app/breadcrumbs';
 import { Card, CardBody } from '../../../components/card';
@@ -26,15 +27,10 @@ import './style.scss';
 
 function McpSetupComponent() {
 	const { data: userSettings } = useSuspenseQuery( userSettingsQuery() );
+	const tracksAudienceProps = useMcpTracksAudienceProps();
 
 	type McpClient =
-		| 'claude'
-		| 'claude-code'
-		| 'chatgpt'
-		| 'cursor'
-		| 'vscode'
-		| 'continue'
-		| 'default';
+		'claude' | 'claude-code' | 'chatgpt' | 'cursor' | 'vscode' | 'continue' | 'default';
 
 	const [ selectedMcpClient, setSelectedMcpClient ] = useState< McpClient >( 'claude' );
 	const [ copyStatus, setCopyStatus ] = useState( 'idle' );
@@ -115,7 +111,10 @@ function McpSetupComponent() {
 					/>
 				}
 			>
-				<ComponentViewTracker eventName="calypso_dashboard_mcp_setup_view" />
+				<ComponentViewTracker
+					eventName="calypso_dashboard_mcp_setup_view"
+					properties={ tracksAudienceProps }
+				/>
 				<Card>
 					<CardBody>
 						<VStack spacing={ 4 }>
@@ -155,7 +154,10 @@ function McpSetupComponent() {
 				/>
 			}
 		>
-			<ComponentViewTracker eventName="calypso_dashboard_mcp_setup_view" />
+			<ComponentViewTracker
+				eventName="calypso_dashboard_mcp_setup_view"
+				properties={ tracksAudienceProps }
+			/>
 			<>
 				<Card>
 					<CardBody>

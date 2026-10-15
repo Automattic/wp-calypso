@@ -18,7 +18,7 @@ import getCancellationOfferApplyError from 'calypso/state/cancellation-offers/se
 import getCancellationOfferApplySuccess from 'calypso/state/cancellation-offers/selectors/get-cancellation-offer-apply-success';
 import isApplyingCancellationOffer from 'calypso/state/cancellation-offers/selectors/is-applying-cancellation-offer';
 import { CancellationOffer } from 'calypso/state/cancellation-offers/types';
-import type { Purchase } from 'calypso/lib/purchases/types';
+import type { Purchase } from '@automattic/api-core';
 import type { FC } from 'react';
 
 interface Props {
@@ -35,13 +35,13 @@ const JetpackCancellationOffer: FC< Props > = ( props ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const isApplyingOffer = useSelector( ( state ) =>
-		isApplyingCancellationOffer( state, purchase.id )
+		isApplyingCancellationOffer( state, purchase.ID )
 	);
 	const offerApplySuccess = useSelector( ( state ) =>
-		getCancellationOfferApplySuccess( state, purchase.id )
+		getCancellationOfferApplySuccess( state, purchase.ID )
 	);
 	const offerApplyError = useSelector( ( state ) =>
-		getCancellationOfferApplyError( state, purchase.id )
+		getCancellationOfferApplyError( state, purchase.ID )
 	);
 	const { offerHeadline, renewalCopy } = useMemo( () => {
 		const periods = offer.discountedPeriods;
@@ -51,7 +51,7 @@ const JetpackCancellationOffer: FC< Props > = ( props ) => {
 			args: {
 				periods,
 				discount: percentDiscount,
-				name: purchase.productName,
+				name: purchase.product_name,
 			},
 		};
 		const renewalCopyOptions = {
@@ -68,7 +68,7 @@ const JetpackCancellationOffer: FC< Props > = ( props ) => {
 		let offerHeadline;
 		let renewalCopy;
 
-		switch ( purchase.billPeriodDays ) {
+		switch ( purchase.bill_period_days ) {
 			case PLAN_BIENNIAL_PERIOD:
 				/* Translators: %(discount)d%% is a discount percentage like 15% or 20% */
 				offerHeadline = translate(
@@ -142,7 +142,7 @@ const JetpackCancellationOffer: FC< Props > = ( props ) => {
 	const onClickAccept = useCallback( () => {
 		// is the offer being claimed/ is there already a success or error
 		if ( ! isApplyingOffer && offerApplySuccess === false && ! offerApplyError ) {
-			dispatch( applyCancellationOffer( siteId, purchase.id ) );
+			dispatch( applyCancellationOffer( siteId, purchase.ID ) );
 			onGetDiscount(); // Takes care of analytics.
 		}
 	}, [
@@ -150,7 +150,7 @@ const JetpackCancellationOffer: FC< Props > = ( props ) => {
 		offerApplySuccess,
 		offerApplyError,
 		siteId,
-		purchase.id,
+		purchase.ID,
 		onGetDiscount,
 		dispatch,
 	] );

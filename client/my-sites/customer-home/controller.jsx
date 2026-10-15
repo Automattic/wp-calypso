@@ -1,11 +1,12 @@
 import { getAiLaunchpadStatus } from '@automattic/api-core';
 import page from '@automattic/calypso-router';
 import { captureException } from '@automattic/calypso-sentry';
-import { fetchLaunchpad } from '@automattic/data-stores';
+import { fetchLaunchpad } from '@automattic/launchpad';
+import { prefetchHomeLayout } from 'calypso/data/home/use-home-layout-query';
+import { getHomeLayoutQueryParams } from 'calypso/data/home/use-home-layout-query-params';
 import { areLaunchpadTasksCompleted } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/launchpad/task-helper';
 import { isRemovedFlow } from 'calypso/landing/stepper/utils/flow-redirect-handler';
-import { LAUNCHPAD_PERSONALIZATION_EXPERIMENT, normalizeVariation } from 'calypso/lib/ai-launchpad';
-import { loadExperimentAssignment } from 'calypso/lib/explat';
+import { getLoggedInLandingPage } from 'calypso/lib/landing-page';
 import { getQueryArgs } from 'calypso/lib/query-args';
 import { getSiteFragment } from 'calypso/lib/route';
 import { bumpStat } from 'calypso/state/analytics/actions';
@@ -24,8 +25,8 @@ import {
 import { redirectToLaunchpad } from 'calypso/utils';
 import CustomerHome from './main';
 
-export default async function renderHome( context, next ) {
-	const state = await context.store.getState();
+export default function renderHome( context, next ) {
+	const state = context.store.getState();
 	const site = getSelectedSite( state );
 
 	// Scroll to the top
@@ -36,6 +37,32 @@ export default async function renderHome( context, next ) {
 	context.primary = <CustomerHome key={ site.ID } site={ site } />;
 
 	next();
+}
+
+// Bare /home sends the user where they'd normally land, not to the site picker.
+export async function redirectToLandingPage( context, next ) {
+	let destination;
+
+	try {
+		destination = await getLoggedInLandingPage( context.store );
+	} catch ( error ) {
+		captureException( error );
+	}
+
+	if ( ! destination || destination === context.pathname ) {
+		next();
+		return;
+	}
+
+	if ( context.querystring ) {
+		destination += ( destination.includes( '?' ) ? '&' : '?' ) + context.querystring;
+	}
+
+	if ( destination.startsWith( '/' ) ) {
+		page.redirect( destination );
+	} else {
+		window.location.assign( destination );
+	}
 }
 
 export async function maybeRedirect( context, next ) {
@@ -93,18 +120,30 @@ export async function maybeRedirect( context, next ) {
 		}
 	}
 
-	// The no_guidance launchpad-personalization variation gets no guidance surface at all:
-	// keep these sites off My Home, landing them on the plain wp-admin dashboard.
-	const personalizationAssignment = await loadExperimentAssignment(
-		LAUNCHPAD_PERSONALIZATION_EXPERIMENT
-	);
-	if ( normalizeVariation( personalizationAssignment?.variationName ) === 'no_guidance' ) {
+	// My Home only goes with the legacy launchpad. Everyone else on AI Launchpad and no-guidance
+	// sites, including users who can't open Site Setup, lands on the plain wp-admin dashboard.
+	if (
+		site?.options?.wpcom_ai_launchpad_enabled ||
+		site?.options?.wpcom_ai_launchpad_no_guidance
+	) {
 		const redirectUrl = getSiteAdminUrl( state, siteId, 'index.php' );
 		if ( redirectUrl ) {
 			window.location.replace( redirectUrl );
 			return;
 		}
 	}
+
+	// Started before awaiting anything else so it overlaps the section's chunk load.
+	const launchpadPromise = fetchLaunchpad( slug ).catch( () => null );
+
+	// My Home renders a placeholder until the card layout arrives. Asking for it here puts
+	// it in flight during the rest of this middleware and the section's chunk load, rather
+	// than only once the cards mount. Deliberately not awaited — nothing here needs it.
+	prefetchHomeLayout(
+		context.queryClient,
+		siteId,
+		getHomeLayoutQueryParams( context.query )
+	).catch( () => {} );
 
 	try {
 		const isSiteLaunched = site?.launch_status === 'launched' || false;
@@ -113,7 +152,7 @@ export async function maybeRedirect( context, next ) {
 			launchpad_screen: launchpadScreenOption,
 			site_intent: siteIntentOption,
 			checklist: launchpadChecklist,
-		} = await fetchLaunchpad( slug );
+		} = ( await launchpadPromise ) ?? {};
 
 		const shouldShowLaunchpad = ! isRemovedFlow( siteIntentOption );
 

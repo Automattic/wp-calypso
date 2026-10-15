@@ -1,4 +1,4 @@
-import { getPurchaseIntroductoryOffer, logToLogstash } from '@automattic/api-core';
+import { logToLogstash } from '@automattic/api-core';
 import {
 	PLAN_MONTHLY_PERIOD,
 	type PlanSlug,
@@ -189,7 +189,7 @@ const usePricingMetaForGridPlans = ( {
 					selectedStorageOption && reflectStorageSelectionInPlanPrices
 						? storageAddOns?.find( ( addOn ) => {
 								return addOn?.addOnSlug === selectedStorageOption;
-						  } )
+							} )
 						: null;
 				const storageAddOnPriceMonthly = selectedStorageAddOn?.prices?.monthlyPrice || 0;
 				const storageAddOnPriceYearly = selectedStorageAddOn?.prices?.yearlyPrice || 0;
@@ -202,7 +202,7 @@ const usePricingMetaForGridPlans = ( {
 							full:
 								introOffer.rawPrice.full +
 								( 'year' === introOffer.intervalUnit ? storageAddOnPriceYearly : 0 ),
-					  } as const )
+						} as const )
 					: undefined;
 
 				/**
@@ -243,14 +243,14 @@ const usePricingMetaForGridPlans = ( {
 					let renewalPrice: Plans.PlanPricing[ 'originalPrice' ] | undefined;
 
 					if ( purchasedPlan ) {
-						const introductoryOffer = getPurchaseIntroductoryOffer( purchasedPlan );
+						const introductoryOffer = purchasedPlan.introductory_offer;
 						const billPeriodDays = Number( purchasedPlan.bill_period_days );
 						const term = getTermFromDuration( billPeriodDays );
 						const showIntroOfferHeadline =
 							!! showBillingDescriptionForIncreasedRenewalPrice &&
-							introductoryOffer?.isWithinPeriod;
+							Boolean( introductoryOffer?.is_within_period );
 						const currentTermPrice = showIntroOfferHeadline
-							? introductoryOffer!.costPerIntervalInteger
+							? Number( introductoryOffer!.cost_per_interval_integer )
 							: purchasedPlan.price_integer;
 						const isMonthly = billPeriodDays === PLAN_MONTHLY_PERIOD;
 

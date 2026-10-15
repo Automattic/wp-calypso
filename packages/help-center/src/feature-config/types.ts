@@ -23,6 +23,10 @@ export type HelpCenterFeatureConfig = {
 		/** Show the recent conversations section on the home screen. */
 		recentConversations: boolean;
 	};
+	contextualCta: {
+		/** Render the contextual CTAs served by the support-status endpoint. */
+		enabled: boolean;
+	};
 	moreResources: {
 		/** Show the entire More Resources section. */
 		visible: boolean;
@@ -45,4 +49,4 @@ export type HelpCenterFeatureConfig = {
  * Product identifier for the help center.
  * Each product gets a preset feature configuration.
  */
-export type HelpCenterProduct = 'wpcom' | 'a4a' | 'commerce-garden';
+export type HelpCenterProduct = 'wpcom' | 'a4a' | 'commerce-garden' | 'woo';

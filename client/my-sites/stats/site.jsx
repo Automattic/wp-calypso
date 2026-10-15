@@ -1,7 +1,7 @@
 import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { eye } from '@automattic/components/src/icons';
-import { Icon, people, starEmpty, commentContent, settings } from '@wordpress/icons';
+import { Icon, people, starEmpty, commentContent, settings, chartBar } from '@wordpress/icons';
 import clsx from 'clsx';
 import { localize, translate } from 'i18n-calypso';
 import { useState, useEffect, useCallback, useMemo } from 'react';
@@ -31,8 +31,7 @@ import {
 	STATS_PRODUCT_NAME,
 } from 'calypso/my-sites/stats/constants';
 import { useMomentInSite } from 'calypso/my-sites/stats/hooks/use-moment-site-zone';
-import useNoticeVisibilityMutation from 'calypso/my-sites/stats/hooks/use-notice-visibility-mutation';
-import { useNoticeVisibilityQuery } from 'calypso/my-sites/stats/hooks/use-notice-visibility-query';
+import usePremiumAnalyticsPreviewInvitation from 'calypso/my-sites/stats/hooks/use-premium-analytics-preview-invitation';
 import { recordCurrentScreen } from 'calypso/my-sites/stats/hooks/use-stats-navigation-history';
 import { getChartRangeParams } from 'calypso/my-sites/stats/utils';
 import {
@@ -71,6 +70,7 @@ import useStatsStrings from './hooks/use-stats-strings';
 import MiniCarousel from './mini-carousel';
 import { StatsGlobalValuesContext } from './pages/providers/global-provider';
 import StatsModuleListing from './pages/shared/stats-module-listing';
+import PremiumAnalyticsPreviewSwitchOnDialog from './premium-analytics-preview/switch-on-dialog';
 import PromoCards from './promo-cards';
 import StatsCardUpdateJetpackVersion from './stats-card-upsell/stats-card-update-jetpack-version';
 import ChartTabs from './stats-chart-tabs';
@@ -208,14 +208,36 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 	const moduleToggles = useSelector( ( state ) => getModuleToggles( state, siteId, 'traffic' ) );
 	const momentInSite = useMomentInSite( siteId );
 	const hasVideoPress = useSelector( ( state ) => siteHasFeature( state, siteId, 'videopress' ) );
-	const [ isPageSettingsTooltipDismissed, setIsPageSettingsTooltipDismissed ] = useState(
-		!! localStorage.getItem( 'notices_dismissed__traffic_page_settings' )
-	);
 
 	// Determine module visibility based on user settings, VideoPress availability, AND defaults.
 	const moduleVisibility = useMemo(
 		() => moduleVisibilityWithUserConfiguration( moduleToggles, hasVideoPress ),
 		[ hasVideoPress, moduleToggles ]
+	);
+
+	// The way into the preview that outlives the banner: an entry in the modules menu.
+	const { isInvited: isInvitedToPreview, dashboardUrl: previewDashboardUrl } =
+		usePremiumAnalyticsPreviewInvitation( siteId );
+	const [ isPreviewDialogOpen, setIsPreviewDialogOpen ] = useState( false );
+	useEffect( () => {
+		setIsPreviewDialogOpen( false );
+	}, [ siteId ] );
+	const pageModulesMenuItems = useMemo(
+		() =>
+			isInvitedToPreview && previewDashboardUrl
+				? [
+						{
+							key: 'premium-analytics-preview',
+							label: translate( 'Try the new Stats' ),
+							description: translate(
+								'Clearer charts and movable widgets. Switch it off at any time.'
+							),
+							icon: chartBar,
+							onSelect: () => setIsPreviewDialogOpen( true ),
+						},
+					]
+				: [],
+		[ isInvitedToPreview, previewDashboardUrl ]
 	);
 
 	// Find the applied shortcut with shortcut ID from the URL.
@@ -548,25 +570,6 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 		getJetpackStatsAdminVersion( state, siteId )
 	);
 
-	const { data: showSettingsTooltip, refetch: refetchNotices } = useNoticeVisibilityQuery(
-		siteId,
-		'traffic_page_settings'
-	);
-	const { mutateAsync: mutateNoticeVisbilityAsync } = useNoticeVisibilityMutation(
-		siteId,
-		'traffic_page_settings'
-	);
-
-	const onTooltipDismiss = () => {
-		if ( isPageSettingsTooltipDismissed || ! showSettingsTooltip ) {
-			return;
-		}
-
-		setIsPageSettingsTooltipDismissed( true );
-		localStorage.setItem( 'notices_dismissed__traffic_page_settings', 1 );
-		mutateNoticeVisbilityAsync().finally( refetchNotices );
-	};
-
 	// Module settings for Odyssey are not supported until stats-admin@0.9.0-alpha.
 	const isModuleSettingsSupported =
 		! config.isEnabled( 'is_running_in_jetpack_site' ) ||
@@ -587,6 +590,13 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 				isOdysseyStats={ isOdysseyStats }
 				statsPurchaseSuccess={ context.query.statsPurchaseSuccess }
 			/>
+			{ isPreviewDialogOpen && previewDashboardUrl && (
+				<PremiumAnalyticsPreviewSwitchOnDialog
+					siteId={ siteId }
+					dashboardUrl={ previewDashboardUrl }
+					onClose={ () => setIsPreviewDialogOpen( false ) }
+				/>
+			) }
 			<StickyPanel headerId={ isRunningOnWPAdmin ? 'wpadminbar' : 'header' }>
 				<StatsPeriodHeader>
 					<StatsPeriodNavigation
@@ -610,9 +620,8 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 									selectedItem="traffic"
 									moduleToggles={ moduleToggles }
 									siteId={ siteId }
-									isTooltipShown={ showSettingsTooltip && ! isPageSettingsTooltipDismissed }
-									onTooltipDismiss={ onTooltipDismiss }
 									customToggleIcon={ <Icon className="gridicon" icon={ settings } /> }
+									menuItems={ pageModulesMenuItems }
 								/>
 							)
 						}

@@ -1,5 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { useLocale } from '@automattic/i18n-utils';
+import { localizeUrl, useLocale } from '@automattic/i18n-utils';
 import { Step } from '@automattic/onboarding';
 import clsx from 'clsx';
 import { useTranslate, type TranslateResult } from 'i18n-calypso';
@@ -13,6 +13,7 @@ import { isUserLoggedIn, getCurrentUserLocale } from 'calypso/state/current-user
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import { getCurrentQueryArguments } from 'calypso/state/selectors/get-current-query-arguments';
 import { getCurrentRoute } from 'calypso/state/selectors/get-current-route';
+import isWooJPCFlow from 'calypso/state/selectors/is-woo-jpc-flow';
 import HeadingLogo from './heading-logo';
 import './one-login-layout.scss';
 
@@ -31,6 +32,11 @@ export const ensureHeadingProvided = (
 interface OneLoginLayoutProps {
 	isJetpack: boolean;
 	isFromJetpackConnector?: boolean;
+	/**
+	 * Jetpack onboarding or connector flow, which the user is completing from a
+	 * Jetpack site.
+	 */
+	isUnifiedConnectionFlow?: boolean;
 	connectorPlugins?: string[];
 	children: React.ReactNode;
 	/**
@@ -56,11 +62,22 @@ interface OneLoginLayoutProps {
 	 * default quiet ToS treatment.
 	 */
 	subHeadingProminent?: boolean;
+	/**
+	 * Rendered above the heading. Pass a component that returns `null` when it
+	 * has nothing to show, so the layout keeps its spacing.
+	 */
+	notice?: React.ReactNode;
+	/**
+	 * Links the top bar WordPress.com logo to the homepage. Never applies to
+	 * Jetpack, Woo JPC, OAuth2 client or partner-branded logins.
+	 */
+	linkLogoToHome?: boolean;
 }
 
 const OneLoginLayout = ( {
 	isJetpack,
 	isFromJetpackConnector,
+	isUnifiedConnectionFlow,
 	connectorPlugins,
 	children,
 	signupUrl: signupUrlProp,
@@ -71,6 +88,8 @@ const OneLoginLayout = ( {
 	columnWidth,
 	showLogo = true,
 	subHeadingProminent = false,
+	notice,
+	linkLogoToHome = false,
 }: OneLoginLayoutProps ) => {
 	const translate = useTranslate();
 	const urlLocale = useLocale();
@@ -81,12 +100,13 @@ const OneLoginLayout = ( {
 	const currentRoute = useSelector( getCurrentRoute );
 	const currentQuery = useSelector( getCurrentQueryArguments );
 	const oauth2Client = useSelector( getCurrentOAuth2Client );
+	const isWooJPC = useSelector( isWooJPCFlow );
 	const dispatch = useDispatch();
 	const { headingText, subHeadingText, subHeadingTextSecondary } = useLoginContext();
 	const validatedHeadingText = ensureHeadingProvided( headingText );
-	const { topBarLogo } = usePartnerBranding();
+	const { topBarLogo, hasCustomBranding } = usePartnerBranding();
 
-	const SignUpLink = () => {
+	const renderSignUpLink = () => {
 		// use '?signup_url' if explicitly passed as URL query param
 		const signupUrl: string = signupUrlProp
 			? window.location.origin + pathWithLeadingSlash( signupUrlProp )
@@ -112,7 +132,7 @@ const OneLoginLayout = ( {
 		);
 	};
 
-	const LoginLink = () => {
+	const renderLoginLink = () => {
 		if ( ! loginUrl ) {
 			return null;
 		}
@@ -124,7 +144,7 @@ const OneLoginLayout = ( {
 		);
 	};
 
-	const NoThanksLink = () => {
+	const renderNoThanksLink = () => {
 		if ( ! noThanksRedirectUrl ) {
 			return null;
 		}
@@ -144,15 +164,37 @@ const OneLoginLayout = ( {
 		);
 	};
 
+	const shouldLinkLogo =
+		linkLogoToHome &&
+		! isJetpack &&
+		! isFromJetpackConnector &&
+		! isUnifiedConnectionFlow &&
+		! isWooJPC &&
+		! oauth2Client &&
+		! hasCustomBranding;
+
+	const handleLogoClick = () => {
+		recordTracksEvent( isSectionSignup ? 'calypso_signup_logo_click' : 'calypso_login_logo_click', {
+			page: currentRoute,
+		} );
+	};
+
 	const topBar = (): JSX.Element => {
 		const rightElement = (
 			<nav className="wp-login__one-login-layout-top-right">
-				{ isSectionSignup ? <LoginLink /> : <SignUpLink /> }
-				{ noThanksRedirectUrl && <NoThanksLink /> }
+				{ isSectionSignup ? renderLoginLink() : renderSignUpLink() }
+				{ renderNoThanksLink() }
 			</nav>
 		);
 
-		return <Step.TopBar rightElement={ rightElement } logo={ topBarLogo } />;
+		return (
+			<Step.TopBar
+				rightElement={ rightElement }
+				logo={ topBarLogo }
+				logoHref={ shouldLinkLogo ? localizeUrl( 'https://wordpress.com/', locale ) : undefined }
+				onLogoClick={ shouldLinkLogo ? handleLogoClick : undefined }
+			/>
+		);
 	};
 
 	const effectiveColumnWidth: 4 | 5 | 6 | 8 | 10 = ( columnWidth ?? 6 ) as 4 | 5 | 6 | 8 | 10;
@@ -164,6 +206,7 @@ const OneLoginLayout = ( {
 			verticalAlign="center"
 		>
 			<div className="wp-login__one-login-layout-content-wrapper">
+				{ notice }
 				<div className="wp-login__one-login-layout-heading">
 					{ showLogo && (
 						<HeadingLogo

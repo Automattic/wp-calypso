@@ -1,5 +1,6 @@
 import { Notice, animations, ChatInput, AgentUIProvider } from '@automattic/agenttic-ui';
 import { motion } from 'framer-motion';
+import { IntroSuggestions } from '../message/intro-suggestions';
 import './style.scss';
 import type { Transition } from 'framer-motion';
 import type { ComponentProps } from 'react';
@@ -13,6 +14,7 @@ type AgentUIFooterProps = ComponentProps< typeof ChatInput > & {
 export function AgentUIFooter( props: AgentUIFooterProps ) {
 	return (
 		<AgentUIProvider value={ {} as any }>
+			<IntroSuggestions />
 			<motion.div
 				data-slot="chat-footer"
 				className="agenttic--chat-footer-container"

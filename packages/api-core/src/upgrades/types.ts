@@ -56,15 +56,6 @@ export interface PriceTierEntry {
 	flat_fee?: number | null;
 }
 
-export interface PurchasePriceTier {
-	minimumUnits: number;
-	maximumUnits?: null | number;
-	minimumPrice: number;
-	maximumPrice: number;
-	minimumPriceDisplay: string;
-	maximumPriceDisplay?: string | null;
-}
-
 /**
  * A subscription or one-time purchase.
  *
@@ -265,6 +256,14 @@ export interface Purchase {
 	is_removable: boolean;
 
 	/**
+	 * True if the customer can refund, cancel or remove this purchase themselves.
+	 *
+	 * Set per product, not per user. Support can still act on the purchase.
+	 * Optional in the response, so read it through `isManageableByUser()`.
+	 */
+	is_manageable_by_user?: boolean;
+
+	/**
 	 * True if this subscription has refundable receipts.
 	 *
 	 * If this is true, it means that it's possible the subscription could
@@ -323,6 +322,25 @@ export interface Purchase {
 	 * The Ownership number.
 	 */
 	ownership_id: number;
+
+	/**
+	 * True when a Jetpack Start partner provisioned this subscription and bills
+	 * the customer for it, so WordPress.com is not the merchant and self-serve
+	 * subscription management does not apply. Shown as a "Host Managed Plan" or
+	 * an "Agency Managed Plan" depending on `partner_type`.
+	 *
+	 * A4A subscriptions bought through the store carry partner details (see
+	 * `partner_name`) but are billed here, so this is false for them.
+	 */
+	is_partner_managed: boolean;
+
+	/**
+	 * True for the `is_partner_managed` subscriptions a hosting partner rather
+	 * than an agency provisioned. `is_cancelable` and `is_removable` are false
+	 * for these, since cancelling has to happen at the host; agency-provisioned
+	 * plans are bought through WordPress.com and can still be cancelled here.
+	 */
+	is_host_managed: boolean;
 
 	partner_name: string | undefined;
 	partner_slug: string | undefined;
@@ -387,8 +405,8 @@ export interface Purchase {
 	regular_price_integer: number;
 
 	/**
-	 * The date of the next scheduled auto-renewal attempt (ISO 8601), or an
-	 * empty string when no renewal is scheduled.
+	 * The date of the next scheduled auto-renewal attempt (ISO 8601), or
+	 * `undefined` when no renewal is scheduled.
 	 *
 	 * Populated only when the subscription is set to auto-renew and a renewal
 	 * attempt is still upcoming. WordPress.com begins attempting renewals before
@@ -397,12 +415,13 @@ export interface Purchase {
 	 * post-expiry grace period, so this date may fall before or after
 	 * `expiry_date`.
 	 *
-	 * An empty string means no attempt is scheduled: auto-renew is off, or the
+	 * `undefined` means no attempt is scheduled: auto-renew is off, or the
 	 * subscription is in its grace period past the final auto-renewal attempt.
 	 * It does NOT fall back to the expiry date — read `expiry_date` explicitly
-	 * where an expiry date is wanted.
+	 * where an expiry date is wanted. The server may also send an empty string
+	 * for the same "unset" meaning; treat both as falsy.
 	 */
-	renew_date: string;
+	renew_date?: string;
 
 	sale_amount?: number;
 	sale_amount_integer?: number;
@@ -450,6 +469,18 @@ export interface Purchase {
 	 * payment method attached, no auto-renew will be attempted.
 	 */
 	is_auto_renew_enabled: boolean;
+
+	/**
+	 * True if the purchase is past the UTC date of its first auto-renewal attempt.
+	 *
+	 * Once this is `true` the subscription has had at least one chance to renew
+	 * itself and has not taken it.
+	 *
+	 * The same caveats as `is_past_last_auto_renew_attempt_date` apply: it is
+	 * unaffected by whether auto-renew is actually enabled, and it is
+	 * day-granular.
+	 */
+	is_past_first_auto_renew_attempt_date: boolean;
 
 	/**
 	 * True if the purchase is past the UTC date of its final auto-renewal attempt.
@@ -539,6 +570,10 @@ export interface Purchase {
 	 * link will typically go to the plans page for the site or some other
 	 * location depending on the product. To cause these buttons to instead add
 	 * a product directly to the cart, also set `upgrade_product_slug`.
+	 *
+	 * Note that a subscription may be upgradable even if it is past its expiry
+	 * date (i.e. in its grace period). This allows lapsed customers to choose
+	 * a different plan.
 	 */
 	is_upgradable: boolean;
 
@@ -546,11 +581,9 @@ export interface Purchase {
 	 * True if this subscription's plan can be downgraded to a different, lower
 	 * plan type (eg: Business to Personal).
 	 *
-	 * Only ever true for plans. Like `is_upgradable`, this is false for A4A
-	 * plans, bundle-`included` subscriptions, and (for Jetpack plans) holding
-	 * sites. Unlike `is_upgradable`, an active subscription that is merely past
-	 * its expiry date (grace period) is still considered downgradable; only
-	 * inactive ('expired') subscriptions are excluded.
+	 * Only ever true for WordPress.com plans. Like `is_upgradable`, it may
+	 * return true for expired subscriptions that are in their grace period, to
+	 * allow lapsed customers to downgrade to a lower plan.
 	 */
 	is_plan_type_downgradable: boolean;
 
@@ -561,6 +594,26 @@ export interface Purchase {
 	 * Gated by the same eligibility rules as `is_plan_type_downgradable`.
 	 */
 	is_plan_term_downgradable: boolean;
+
+	/**
+	 * True if this subscription's plan can be downgraded instantly, right now,
+	 * rather than having the change scheduled for its next renewal.
+	 *
+	 * When this is true, `POST /wpcom/v2/upgrades/$purchase_id/cancel` with
+	 * `{ type: 'downgrade', to_product_id }` will be accepted and will provision
+	 * the lower plan immediately.
+	 *
+	 * This is not the same question as `is_refundable`, and must not be derived
+	 * from it. In particular it is true for a refundable receipt worth nothing
+	 * (a comped plan, a 100%-off coupon, or a purchase paid entirely with
+	 * credits) — the instant downgrade is still valid, it just issues no refund.
+	 * For whether any money would come back, check `total_refund_amount`.
+	 *
+	 * It is also true for a renewal that is still within its own refund window,
+	 * not only for an initial purchase, so it is unrelated to
+	 * `is_within_initial_refund_window`.
+	 */
+	is_instant_downgrade_available: boolean;
 
 	/**
 	 * True if deactivating this subscription will cause the site to be reverted
@@ -604,6 +657,18 @@ export interface Purchase {
 	 * renewal, or null when no delayed downgrade is scheduled.
 	 */
 	delayed_downgrade_to_product_slug: string | null;
+
+	/**
+	 * What the next renewal will charge once the scheduled delayed downgrade
+	 * takes effect, in the smallest unit of `currency_code` and excluding
+	 * taxes. This is priced from the billing plan pinned when the downgrade was
+	 * scheduled, so it matches the pre-renewal email and the eventual charge
+	 * rather than `price_integer`, which is the current plan's renewal price.
+	 *
+	 * Null when no delayed downgrade is scheduled or the target price cannot
+	 * be resolved; undefined from backends that predate the field.
+	 */
+	delayed_downgrade_price_integer?: number | null;
 }
 
 export type RawPurchase = Purchase & {

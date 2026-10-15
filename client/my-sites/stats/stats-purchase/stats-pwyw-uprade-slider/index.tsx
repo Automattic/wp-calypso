@@ -3,6 +3,8 @@ import { useTranslate } from 'i18n-calypso';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import TierUpgradeSlider from 'calypso/my-sites/stats/stats-purchase/tier-upgrade-slider';
 import { StatsPWYWSliderSettings } from 'calypso/my-sites/stats/stats-purchase/types';
+import { useSelector } from 'calypso/state';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import './styles.scss';
 
 function useTranslatedStrings( defaultAveragePayment: number, currencyCode: string ) {
@@ -93,6 +95,7 @@ function StatsPWYWUpgradeSlider( {
 	// TODO: Figure out how to get the actual average payment from the API in the future.
 	const defaultAveragePayment = defaultStartingValue * settings.sliderStepPrice;
 	const uiStrings = useTranslatedStrings( defaultAveragePayment, currencyCode );
+	const siteId = useSelector( getSelectedSiteId );
 
 	// New steps generation.
 	const tiers = generatePlanTiers( settings );
@@ -111,6 +114,7 @@ function StatsPWYWUpgradeSlider( {
 			recordTracksEvent( analyticsEventName, {
 				step: mappedIndex,
 				default_changed: mappedIndex !== mappedDefaultIndex,
+				blog_id: siteId,
 			} );
 		}
 		onSliderChange( mappedIndex );

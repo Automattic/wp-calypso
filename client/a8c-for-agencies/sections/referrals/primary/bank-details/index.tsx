@@ -1,4 +1,6 @@
 import { useDesktopBreakpoint } from '@automattic/viewport-react';
+import { Tooltip } from '@wordpress/components';
+import { Badge } from '@wordpress/ui';
 import { useTranslate } from 'i18n-calypso';
 import { LayoutWithGuidedTour as Layout } from 'calypso/a8c-for-agencies/components/layout/layout-with-guided-tour';
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/layout-with-payment-notification';
@@ -8,7 +10,6 @@ import {
 	A4A_MIGRATIONS_LINK,
 	A4A_WOOPAYMENTS_LINK,
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
-import StatusBadge from 'calypso/a8c-for-agencies/components/step-section-item/status-badge';
 import { getAccountStatus } from 'calypso/dashboard/agency/earn/payout-settings/get-account-status';
 import { TipaltiPayoutSettings } from 'calypso/dashboard/agency/earn/payout-settings/tipalti-payout-settings';
 import LayoutBody from 'calypso/layout/hosting-dashboard/body';
@@ -18,6 +19,7 @@ import LayoutHeader, {
 } from 'calypso/layout/hosting-dashboard/header';
 import useGetTipaltiIFrameURL from '../../hooks/use-get-tipalti-iframe-url';
 import useGetTipaltiPayee from '../../hooks/use-get-tipalti-payee';
+import type { ComponentProps } from 'react';
 
 import './style.scss';
 
@@ -61,6 +63,20 @@ const getPageInfo = (
 			};
 	}
 };
+
+function PaymentStatusBadge( {
+	intent,
+	tooltip,
+	children,
+}: {
+	intent: NonNullable< ComponentProps< typeof Badge >[ 'intent' ] >;
+	tooltip?: string;
+	children?: string;
+} ) {
+	const badge = <Badge intent={ intent }>{ children ?? '' }</Badge>;
+	return tooltip ? <Tooltip text={ tooltip }>{ badge }</Tooltip> : badge;
+}
+
 export default function ReferralsBankDetails( { type }: { type?: 'migrations' | 'woopayments' } ) {
 	const translate = useTranslate();
 	const isDesktop = useDesktopBreakpoint();
@@ -98,12 +114,9 @@ export default function ReferralsBankDetails( { type }: { type?: 'migrations' | 
 									comment: '%(status) is subscription status',
 									components: {
 										badge: (
-											<StatusBadge
-												statusProps={ {
-													children: accountStatus.status,
-													type: accountStatus.statusType,
-													tooltip: accountStatus.statusReason,
-												} }
+											<PaymentStatusBadge
+												intent={ accountStatus.badgeIntent }
+												tooltip={ accountStatus.statusReason }
 											/>
 										),
 									},

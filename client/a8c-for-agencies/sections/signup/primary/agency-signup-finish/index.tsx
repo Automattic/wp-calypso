@@ -93,6 +93,7 @@ export default function AgencySignupFinish() {
 					postal_code: signupData.postalCode,
 					state: signupData.state,
 					referer: signupData.referer,
+					...signupData.acquisition,
 				} )
 			);
 		}

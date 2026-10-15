@@ -8,8 +8,11 @@ import { fixMe, translate } from 'i18n-calypso';
 import { Dispatch, SetStateAction, useCallback, useEffect, useState } from 'react';
 import pauseSubstackBillingImg from 'calypso/assets/images/importer/pause-substack-billing.webp';
 import { Steps, StepStatus } from 'calypso/data/paid-newsletter/use-paid-newsletter-query';
+import {
+	getNewsletterPageUrl,
+	getSubscribersUrl,
+} from 'calypso/lib/subscribers/get-subscribers-url';
 import { useSelector } from 'calypso/state';
-import { isJetpackSite, getSiteAdminUrl } from 'calypso/state/sites/selectors';
 import ImporterActionButton from '../../importer-action-buttons/action-button';
 import ImporterActionButtonContainer from '../../importer-action-buttons/container';
 import { getImporterStatus, normalizeFromSite } from '../utils';
@@ -57,8 +60,17 @@ export default function Summary( {
 }: SummaryProps ) {
 	const { __ } = useI18n();
 	const prefersReducedMotion = useReducedMotion();
-	const isJetpack = useSelector( ( state ) => isJetpackSite( state, selectedSite.ID ) );
-	const siteAdminUrl = useSelector( ( state ) => getSiteAdminUrl( state, selectedSite.ID ) );
+	// The Newsletter page reads its route from `p`. Overview is the default once that tab
+	// exists, so both Settings and Subscribers have to be asked for explicitly.
+	const newsletterSettingsUrl = useSelector( ( state ) =>
+		getNewsletterPageUrl( state, selectedSite.ID, {
+			tab: 'settings',
+			fallbackSiteUrl: selectedSite.URL,
+		} )
+	);
+	const subscribersUrl = useSelector( ( state ) =>
+		getSubscribersUrl( state, selectedSite.ID, { fallbackSiteUrl: selectedSite.URL } )
+	);
 	const [ isImportCompleted, setIsImportCompleted ] = useState( false );
 	const [ importStepsResults, setImportStepsResults ] = useState< Steps | null >();
 	const importerStatus = getImporterStatus( steps );
@@ -223,10 +235,7 @@ export default function Summary( {
 				<hr />
 				<p>{ __( 'What would you like to do next?' ) }</p>
 				<ImporterActionButtonContainer noSpacing>
-					<ImporterActionButton
-						href={ `${ siteAdminUrl }admin.php?page=jetpack-newsletter` }
-						primary
-					>
+					<ImporterActionButton href={ newsletterSettingsUrl } primary>
 						{ __( 'Customize your newsletter' ) }
 					</ImporterActionButton>
 					{ steps?.content && (
@@ -234,13 +243,7 @@ export default function Summary( {
 							{ __( 'View content' ) }
 						</ImporterActionButton>
 					) }
-					<ImporterActionButton
-						href={
-							isJetpack
-								? `https://cloud.jetpack.com/subscribers/${ selectedSite.slug }`
-								: `/subscribers/${ selectedSite.slug }`
-						}
-					>
+					<ImporterActionButton href={ subscribersUrl }>
 						{ __( 'Manage subscribers' ) }
 					</ImporterActionButton>
 				</ImporterActionButtonContainer>

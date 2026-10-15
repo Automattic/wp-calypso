@@ -11,9 +11,11 @@
 // The rest are portal roots: .color-scheme/.ReactModalPortal (Popover/Dialog),
 // [data-base-ui-portal]/[data-wp-compat-overlay-slot] (@wordpress/ui), .components-modal__screen-overlay
 // (@wordpress/components Modal), .components-popover__fallback-container (@wordpress/components
-// Popover/Dropdown, document.body-appended since we render no <Popover.Slot>/SlotFillProvider).
+// Popover/Dropdown, document.body-appended since we render no <Popover.Slot>/SlotFillProvider),
+// .web-preview (the post-preview modal, RootChild-portaled into a classless document.body div —
+// the modal's own root rules are `exclude`d below for the same reason).
 const prefix =
-	':where(.jp-stats-dashboard, .color-scheme, .ReactModalPortal, [data-base-ui-portal], [data-wp-compat-overlay-slot], .components-modal__screen-overlay, .components-popover__fallback-container, .jp-stats-widget)';
+	':where(.jp-stats-dashboard, .color-scheme, .ReactModalPortal, [data-base-ui-portal], [data-wp-compat-overlay-slot], .components-modal__screen-overlay, .components-popover__fallback-container, .jp-stats-widget, .web-preview)';
 
 // `prefix` roots that are always document.body-appended and never nested inside another root, so
 // self-nesting them under `prefix` is always dead — unlike the portal roots below, which routinely
@@ -23,6 +25,7 @@ const entryPointRoots = [
 	'.jp-stats-dashboard',
 	'.jp-stats-widget',
 	'.components-popover__fallback-container',
+	'.web-preview',
 ];
 
 // The rest of `prefix`'s roots: legitimately nestable inside entryPointRoots. verify-css-scope.js
@@ -54,7 +57,24 @@ const ignoreFiles = [
 // the rule would just go dead. Leave them unscoped instead.
 const exclude = [
 	/^:root(?![\w-])/, // :root, :root[data-theme=dark] .foo
-	/(^|[\s,])(html|body)(?=$|[\s.[:#,])/, // html.rtl, body.lockscroll
+	// Production Sass output is compressed, so `body > .x` arrives here as `body>.x`. The lookahead
+	// accepts combinators for that reason — without it the compressed form gets prefixed and dies.
+	//
+	// The left side stays narrow, start-or-whitespace only, and the asymmetry is deliberate. The
+	// plugin applies `exclude` per selector, having already split on top-level commas, so anything
+	// other than whitespace before a root comes from inside an `:is()`/`:where()`/`:not()` argument
+	// list. Matching there excludes the whole rule to save one dead branch, shipping its live
+	// branches unscoped into wp-admin — worse than the dead branch, and invisible to the post-build
+	// check, which only inspects rules that were prefixed.
+	//
+	// The cost is that a root after a combinator (`.foo>body .x`) is no longer excluded, so it is
+	// prefixed and dead. That is the safe direction: verify-css-scope.js reports it as a build
+	// failure, where a leak would pass silently.
+	//
+	// Whitespace before a root inside such a list still over-matches (`:is(.foo, body .x)`), because
+	// it is indistinguishable from the descendant combinator in `.foo body .x`. Telling them apart
+	// needs paren-awareness a regex list cannot express; css-scope.test.js pins the behaviour.
+	/(^|\s)(html|body)(?=$|[\s.[:#,>+~])/, // html.rtl, body.lockscroll, body>.color-scheme
 	/^\.rtl(?![\w-])/, // .rtl button
 	/^:lang\(/, // :lang(he) .rtl
 	/^\[lang/, // [lang*=fr] .wp-brand-font
@@ -68,12 +88,18 @@ const exclude = [
 	// .color-scheme.is-<scheme> sets vars on the element that carries the class itself. Anchored
 	// to the full compound so nested rules like `.color-scheme.is-light .masterbar` still prefix.
 	/^\.color-scheme\.is-[\w-]+$/,
-	// .stats-widget-content.color-scheme: widget's primary→accent remap on its own root element.
-	/^\.stats-widget-content\.color-scheme$/,
+	// .stats-widget-content.color-scheme: widget's primary→accent remap on its own root element,
+	// and the admin-theme-colour handback compounded with the scheme (`.is-coffee` and friends).
+	/^\.stats-widget-content\.color-scheme(\.is-[\w-]+)?$/,
 	// @wordpress/components' Tooltip (Ariakit, not @wordpress/ui) portals to document.body with no
 	// class/attribute on the wrapper — only its content carries `.components-tooltip`. Nothing
 	// targets it today; excluded pre-emptively so that stays true if something ever does.
 	/^\.components-tooltip(?![\w-])/,
+	// The WebPreview modal (post detail "View Post") styling itself, incl. compound forms like
+	// `.web-preview.is-visible` and descendant rules anchored on the root. RootChild portals it
+	// into a classless document.body div, so the root has no scope ancestor; its BEM descendants
+	// (`.web-preview__*`) don't match this anchor and stay scoped via `.web-preview` in `prefix`.
+	/^\.web-preview(?![\w-])/,
 ];
 
 module.exports = { prefix, entryPointRoots, portalRoots, ignoreFiles, exclude };

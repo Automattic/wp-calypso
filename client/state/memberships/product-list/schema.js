@@ -11,6 +11,7 @@ export const metadataSchema = {
 	renewal_schedule: { type: 'string' },
 	type: { type: 'string' },
 	tier: { type: 'number' },
+	is_read_only: { type: 'boolean' },
 };
 
 /**

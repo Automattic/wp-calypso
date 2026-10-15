@@ -59,7 +59,7 @@ test.describe(
 			pageImportLetsFindYourSite,
 			sitePublic,
 		} ) => {
-			const squarespaceSiteURL = 'https://example.squarespace.com/';
+			const squarespaceSiteURL = 'https://www.squarespace.com/';
 
 			await test.step( 'When I visit the "Let\'s find your site" page as coming from the wp-admin Tools > Import page', async function () {
 				await pageImportLetsFindYourSite.visit( sitePublic.blog_details.site_slug );

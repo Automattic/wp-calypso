@@ -1,4 +1,5 @@
-import { Onboard, useLaunchpad } from '@automattic/data-stores';
+import { Onboard } from '@automattic/data-stores';
+import { useLaunchpad } from '@automattic/launchpad';
 import { useDispatch } from '@wordpress/data';
 import { useEffect } from '@wordpress/element';
 import { translate } from 'i18n-calypso';

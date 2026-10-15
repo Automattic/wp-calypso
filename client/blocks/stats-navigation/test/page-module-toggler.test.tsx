@@ -62,8 +62,6 @@ jest.mock( '@wordpress/icons', () => ( {
 const defaultProps = {
 	selectedItem: 'traffic',
 	siteId: 123,
-	isTooltipShown: false,
-	onTooltipDismiss: jest.fn(),
 	customToggleIcon: <span>Settings</span>,
 };
 
@@ -91,6 +89,7 @@ describe( 'PageModuleToggler', () => {
 		await user.click( screen.getByRole( 'button', { name: 'Settings' } ) );
 
 		expect( getToggle( 'Authors' ) ).toBeChecked();
+		expect( getToggle( 'Search terms' ) ).toBeChecked();
 		expect( getToggle( 'Videos' ) ).toBeChecked();
 
 		rerender(
@@ -120,5 +119,76 @@ describe( 'PageModuleToggler', () => {
 				traffic: { authors: true, 'search-terms': false, videos: true },
 			},
 		} );
+	} );
+
+	it( 'renders no extra section without menu items', async () => {
+		const user = userEvent.setup();
+
+		renderToggler( {} );
+
+		await user.click( screen.getByRole( 'button', { name: 'Settings' } ) );
+
+		expect( document.querySelector( '.page-modules-settings-menu' ) ).toBeNull();
+	} );
+
+	it( 'lists menu items in their own section and closes the menu on select', async () => {
+		const user = userEvent.setup();
+		const onSelect = jest.fn();
+
+		render(
+			<PageModuleToggler
+				{ ...defaultProps }
+				moduleToggles={ {} }
+				menuItems={ [
+					{
+						key: 'preview',
+						label: 'Try the new Stats',
+						icon: <svg />,
+						onSelect,
+					},
+				] }
+			/>
+		);
+
+		await user.click( screen.getByRole( 'button', { name: 'Settings' } ) );
+
+		const item = screen.getByRole( 'button', { name: 'Try the new Stats' } );
+		expect( item.closest( '.page-modules-settings-menu' ) ).not.toBeNull();
+		expect( getToggle( 'Authors' ) ).toBeChecked();
+
+		await user.click( item );
+
+		expect( onSelect ).toHaveBeenCalledTimes( 1 );
+		expect( screen.queryByRole( 'button', { name: 'Try the new Stats' } ) ).not.toBeInTheDocument();
+		// Whatever the action opens returns focus here once it closes.
+		expect( screen.getByRole( 'button', { name: 'Settings' } ) ).toHaveFocus();
+	} );
+
+	it( 'shows a menu item description without folding it into the name', async () => {
+		const user = userEvent.setup();
+
+		render(
+			<PageModuleToggler
+				{ ...defaultProps }
+				moduleToggles={ {} }
+				menuItems={ [
+					{
+						key: 'preview',
+						label: 'Try the new Stats',
+						description: 'Clearer charts, and widgets you can move and resize.',
+						icon: <svg />,
+						onSelect: jest.fn(),
+					},
+				] }
+			/>
+		);
+
+		await user.click( screen.getByRole( 'button', { name: 'Settings' } ) );
+
+		const item = screen.getByRole( 'button', { name: 'Try the new Stats' } );
+		expect( item ).toHaveAccessibleDescription(
+			'Clearer charts, and widgets you can move and resize.'
+		);
+		expect( item ).toHaveTextContent( 'Clearer charts, and widgets you can move and resize.' );
 	} );
 } );

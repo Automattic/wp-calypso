@@ -251,6 +251,7 @@ const ServerSettings = ( { fetchUpdatedData }: ServerSettingsProps ) => {
 			transferState !== transferStates.ERROR &&
 			transferState !== transferStates.COMPLETED &&
 			transferState !== transferStates.COMPLETE &&
+			transferState !== transferStates.CLIENT_TIMEOUT &&
 			transferState !== transferStates.REVERTED
 	);
 
@@ -286,7 +287,7 @@ const ServerSettings = ( { fetchUpdatedData }: ServerSettingsProps ) => {
 					feature: FEATURE_SFTP_DATABASE,
 					href: `/plans/${ siteSlug }?feature=${ encodeURIComponent( FEATURE_SFTP_DATABASE ) }`,
 					title: translate( 'Upgrade your plan to access all hosting features' ),
-			  };
+				};
 		return <HostingUpsellNudge siteId={ siteId } targetPlan={ targetPlan } />;
 	};
 

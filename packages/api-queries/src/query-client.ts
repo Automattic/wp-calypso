@@ -1,7 +1,8 @@
 import { isSupportSession } from '@automattic/calypso-support-session';
 import { createSyncStoragePersister } from '@tanstack/query-sync-storage-persister';
-import { QueryClient, defaultShouldDehydrateQuery } from '@tanstack/react-query';
+import { QueryClient } from '@tanstack/react-query';
 import { persistQueryClient } from '@tanstack/react-query-persist-client';
+import { dehydrateOptions } from './dehydrate-options';
 import { startSiteCollisionListener } from './site-collision-listener';
 
 // Open to augmentation: apps consuming this package add their own meta by extending
@@ -89,21 +90,7 @@ export function getPersistQueryClientPromise( userId?: number ): Promise< void >
 		persister,
 		buster: `${ cacheDataShapeVersion }-${ userId }`,
 		maxAge,
-		dehydrateOptions: {
-			shouldRedactErrors: () => false,
-			shouldDehydrateQuery: ( query ) => {
-				const persist = query.meta?.persist;
-				if ( persist === false ) {
-					return false;
-				}
-				// Gate the predicate behind the default check so it is never handed the
-				// data of a query that hasn't succeeded.
-				if ( ! defaultShouldDehydrateQuery( query ) ) {
-					return false;
-				}
-				return typeof persist === 'function' ? persist( query.state.data ) : true;
-			},
-		},
+		dehydrateOptions,
 	} );
 	persistence = { userId, promise, disable };
 

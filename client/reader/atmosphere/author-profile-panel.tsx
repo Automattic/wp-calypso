@@ -296,7 +296,7 @@ export function AuthorProfilePanel( {
 					count: profile.data.counts.posts,
 					label: translate( 'post', 'posts', { count: profile.data.counts.posts } ),
 				},
-		  ]
+			]
 		: [];
 
 	const composer = useOptionalComposer();

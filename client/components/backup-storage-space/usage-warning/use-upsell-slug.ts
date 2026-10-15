@@ -19,7 +19,6 @@ import {
 	getBackupRetentionDays,
 	getRewindBytesAvailable,
 } from 'calypso/state/rewind/selectors';
-import type { Purchase } from 'calypso/lib/purchases/types';
 import type { TranslateResult } from 'i18n-calypso';
 
 export type SelectorProductWithStorage = SelectorProduct & {
@@ -35,10 +34,6 @@ export const storageToUpsellProduct: Record< number, string > = {
 	[ BYTES_100GB ]: PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_100GB_MONTHLY,
 	[ BYTES_1TB ]: PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_1TB_MONTHLY,
 };
-export const isJetpackProductSlugMatch =
-	( slugList: Array< string > ) =>
-	( { subscriptionStatus, productSlug }: Purchase ) =>
-		subscriptionStatus === 'active' && slugList.includes( productSlug );
 
 export default ( siteId: number, retentionSelected?: number ) => {
 	const TEN_GIGABYTES = useJetpack10GbStorageAmountText();

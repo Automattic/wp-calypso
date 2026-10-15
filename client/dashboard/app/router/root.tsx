@@ -1,12 +1,6 @@
-import {
-	agencyQuery,
-	jetpackSiteUrlsQuery,
-	rawUserPreferencesQuery,
-	queryClient,
-} from '@automattic/api-queries';
-import { isEnabled } from '@automattic/calypso-config';
+import { agencyQuery, jetpackSiteUrlsQuery, queryClient } from '@automattic/api-queries';
 import { createRootRouteWithContext } from '@tanstack/react-router';
-import { isDashboardBackport } from '../../utils/is-dashboard-backport';
+import { TEAM_ACCEPT_INVITE_ROUTE } from '../../agency/team/paths';
 import Root from '../root';
 import NotFoundRoot from '../root/error';
 import { dashboardRedirect } from './redirect';
@@ -27,10 +21,6 @@ export const rootRoute = createRootRouteWithContext< RootRouterContext >()( {
 		if ( cause === 'enter' ) {
 			// We are priming the query cache with Jetpack URLs so we can detect "site collisions" (i.e. two sites have the same slug)
 			queryClient.prefetchQuery( jetpackSiteUrlsQuery() );
-
-			if ( ! isDashboardBackport() && isEnabled( 'dashboard/opt-in-welcome-modal' ) ) {
-				await queryClient.ensureQueryData( rawUserPreferencesQuery() );
-			}
 		}
 
 		// For agency-enabled dashboards, load the agency data and guard agency
@@ -39,7 +29,9 @@ export const rootRoute = createRootRouteWithContext< RootRouterContext >()( {
 		if ( context.config.supports.agency ) {
 			const isSignupPath =
 				location.pathname === '/signup' || location.pathname.startsWith( '/signup/' );
-			if ( ! isSignupPath ) {
+			// An invited user only becomes an agency member once they accept.
+			const isTeamInvitePath = location.pathname === TEAM_ACCEPT_INVITE_ROUTE;
+			if ( ! isSignupPath && ! isTeamInvitePath ) {
 				const agency = await queryClient.ensureQueryData( agencyQuery() );
 				if ( ! agency.isClientUser && ! agency.hasAgency ) {
 					throw dashboardRedirect( { href: '/signup', replace: true } );

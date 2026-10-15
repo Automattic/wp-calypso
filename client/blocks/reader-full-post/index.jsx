@@ -20,7 +20,6 @@ import ReaderSuggestedFollowsDialog from 'calypso/blocks/reader-suggested-follow
 import AutoDirection from 'calypso/components/auto-direction';
 import DocumentHead from 'calypso/components/data/document-head';
 import { withPostLikes } from 'calypso/components/data/post-likes';
-import { withReaderTeams } from 'calypso/components/data/with-reader-teams';
 import PostExcerpt from 'calypso/components/post-excerpt';
 import {
 	RelatedPostsFromSameSite,
@@ -33,19 +32,18 @@ import { usePostCommentsApiDisabled } from 'calypso/reader/data/comments';
 import { useFeedQuery } from 'calypso/reader/data/feed';
 import { usePost } from 'calypso/reader/data/post';
 import { withPostLikeActions } from 'calypso/reader/data/post/likes';
-import { withSeenPostsMutations } from 'calypso/reader/data/seen-posts';
+import { useCanMarkSeen, withSeenPostsMutations } from 'calypso/reader/data/seen-posts';
 import { withSite } from 'calypso/reader/data/site';
 import {
+	getCachedIsFollowingPost,
 	useSiteSubscriptionForFeed,
-	useHasSiteSubscriptionOrganization,
 } from 'calypso/reader/data/site-subscriptions';
-import { canBeMarkedAsSeen, getSiteName, isEligibleForUnseen } from 'calypso/reader/get-helpers';
+import { getSiteName } from 'calypso/reader/get-helpers';
 import readerContentWidth from 'calypso/reader/lib/content-width';
-import { isAutomatticTeamMember } from 'calypso/reader/lib/teams';
 import { markPostSeen } from 'calypso/reader/mark-post-seen';
 import { isCommentsOpen, isLoginRequiredToComment } from 'calypso/reader/post/capabilities';
 import PostExcerptLink from 'calypso/reader/post-excerpt-link';
-import { keyForPost } from 'calypso/reader/post-key';
+import { keyForPost, keysAreEqual } from 'calypso/reader/post-key';
 import { ReaderPerformanceTrackerStop } from 'calypso/reader/reader-performance-tracker';
 import { getStreamUrlFromPost } from 'calypso/reader/route';
 import { recordAction, recordGaEvent, recordTrackForPost } from 'calypso/reader/stats';
@@ -53,6 +51,7 @@ import { useStreamPostKeySelection } from 'calypso/reader/stream/use-stream-post
 import { getPostTitleFallback, showSelectedPost } from 'calypso/reader/utils';
 import XPostHelper, { isXPost } from 'calypso/reader/xpost-helper';
 import { useSelector } from 'calypso/state';
+import { getCalypsoQueryClient } from 'calypso/state/query-client';
 import {
 	setViewingFullPostKey,
 	unsetViewingFullPostKey,
@@ -62,7 +61,6 @@ import getPreviousPath from 'calypso/state/selectors/get-previous-path';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import getCurrentStream from 'calypso/state/selectors/get-reader-current-stream';
 import isNotificationsOpen from 'calypso/state/selectors/is-notifications-open';
-import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import { disableAppBanner, enableAppBanner } from 'calypso/state/ui/actions';
 import ReaderFullPostActionBar from './action-bar';
 import ContentProcessor from './content-processor';
@@ -80,15 +78,14 @@ export class FullPostView extends Component {
 		onClose: PropTypes.func,
 		referralPost: PropTypes.object,
 		referralStream: PropTypes.string,
-		isWPForTeamsItem: PropTypes.bool,
-		hasOrganization: PropTypes.bool,
+		canMarkSeen: PropTypes.bool,
 		layout: PropTypes.oneOf( [ 'default', 'recent' ] ),
 		currentPath: PropTypes.string,
 		commentsApiDisabled: PropTypes.bool,
-		teams: PropTypes.array,
 	};
 
 	hasScrolledToCommentAnchor = false;
+	hasAutoMarkedAsSeen = false;
 	readerMainWrapper = createRef();
 	commentsWrapper = createRef();
 	postContentWrapper = createRef();
@@ -110,6 +107,7 @@ export class FullPostView extends Component {
 		// Send page view
 		this.hasSentPageView = false;
 		this.hasLoaded = false;
+		this.hasAutoMarkedAsSeen = false;
 		this.setReadingStartTime();
 		this.attemptToSendPageView();
 		this.maybeDisableAppBanner();
@@ -143,19 +141,30 @@ export class FullPostView extends Component {
 	}
 
 	componentDidUpdate( prevProps ) {
+		const hasPostChanged = prevProps?.post?.ID !== this.props?.post?.ID;
+		const hasFeedChanged = prevProps?.feed?.ID !== this.props?.feed?.ID;
+		const hasSiteChanged = prevProps?.site?.ID !== this.props?.site?.ID;
+
 		// Send page view if applicable
-		if (
-			prevProps?.post?.ID !== this.props?.post?.ID ||
-			prevProps?.feed?.ID !== this.props?.feed?.ID ||
-			prevProps?.site?.ID !== this.props?.site?.ID
-		) {
+		if ( hasPostChanged || hasFeedChanged || hasSiteChanged ) {
 			this.hasSentPageView = false;
 			this.hasLoaded = false;
+
+			// Keyed on the canonical post key: `post.ID` is only unique within a
+			// site and `feed_item_ID` is absent on non-feed posts, so either alone
+			// can read two distinct posts as one.
+			const hasViewedPostChanged = ! keysAreEqual(
+				keyForPost( prevProps?.post ),
+				keyForPost( this.props?.post )
+			);
+			if ( hasViewedPostChanged ) {
+				this.hasAutoMarkedAsSeen = false;
+			}
 			this.attemptToSendPageView();
 			this.maybeDisableAppBanner();
 
 			// If the post being viewed changes, track the reading time.
-			if ( prevProps?.post?.ID !== this.props?.post?.ID ) {
+			if ( hasPostChanged ) {
 				this.trackReadingTime( prevProps.post );
 				this.trackScrollDepth( prevProps.post );
 				this.trackExitBeforeCompletion( prevProps.post );
@@ -163,6 +172,12 @@ export class FullPostView extends Component {
 				this.resetScroll();
 				this.focusPostTitle();
 			}
+		}
+
+		// Seen eligibility resolves after mount, so the mark on load is often
+		// skipped. Nothing else retries it once eligibility turns true.
+		if ( this.props.canMarkSeen && ! prevProps.canMarkSeen ) {
+			this.maybeMarkAsSeenOnLoad();
 		}
 
 		if ( this.props.shouldShowComments && ! prevProps.shouldShowComments ) {
@@ -541,31 +556,18 @@ export class FullPostView extends Component {
 		}
 
 		if ( ! this.hasLoaded && post && post._state !== 'pending' ) {
-			if ( this.isSeenEnabled() && ! post.is_seen ) {
-				this.markAsSeen();
-			}
+			this.maybeMarkAsSeenOnLoad();
 
 			recordTrackForPost(
 				'calypso_reader_article_opened',
 				post,
-				{},
+				{ is_following: getCachedIsFollowingPost( getCalypsoQueryClient(), post ) },
 				{
 					pathnameOverride: this.props.referralStream,
 				}
 			);
 			this.hasLoaded = true;
 		}
-	};
-
-	isSeenEnabled = () => {
-		const { isWPForTeamsItem, hasOrganization, post, teams } = this.props;
-		const isAutomattician = isAutomatticTeamMember( teams );
-
-		return (
-			isAutomattician ||
-			( isEligibleForUnseen( { isWPForTeamsItem, hasOrganization } ) &&
-				canBeMarkedAsSeen( { post } ) )
-		);
 	};
 
 	maybeDisableAppBanner = () => {
@@ -612,6 +614,24 @@ export class FullPostView extends Component {
 
 			focusTarget?.focus();
 		}, 100 );
+	};
+
+	// Auto-marks the viewed post as seen at most once per post.
+	maybeMarkAsSeenOnLoad = () => {
+		const { post, canMarkSeen } = this.props;
+
+		if (
+			this.hasAutoMarkedAsSeen ||
+			! canMarkSeen ||
+			! post ||
+			post._state === 'pending' ||
+			post.is_seen
+		) {
+			return;
+		}
+
+		this.hasAutoMarkedAsSeen = true;
+		this.markAsSeen();
 	};
 
 	markAsSeen = () => {
@@ -666,12 +686,12 @@ export class FullPostView extends Component {
 					text: 'Mark post as unread',
 					newCopy: translate( 'Mark post as unread' ),
 					oldCopy: translate( 'Mark post as unseen' ),
-			  } )
+				} )
 			: fixMe( {
 					text: 'Mark post as read',
 					newCopy: translate( 'Mark post as read' ),
 					oldCopy: translate( 'Mark post as seen' ),
-			  } );
+				} );
 
 		return (
 			<button
@@ -780,7 +800,7 @@ export class FullPostView extends Component {
 										post.discussion?.comment_count > 0
 									}
 									renderMarkAsSeenButton={
-										this.isSeenEnabled() ? this.renderMarkAsSeenButton : null
+										this.props.canMarkSeen ? this.renderMarkAsSeenButton : null
 									}
 									feedUrl={ feedUrl }
 									siteUrl={ post.site_URL }
@@ -917,9 +937,6 @@ export const mapStateToFullPostProps = ( state, ownProps ) => {
 
 	const props = {
 		siteId,
-		isWPForTeamsItem:
-			isSiteWPForTeams( state, blogId ) ||
-			( feed?.blog_ID ? isSiteWPForTeams( state, feed.blog_ID ) : false ),
 		notificationsOpen: isNotificationsOpen( state ),
 		post,
 		postKey,
@@ -949,9 +966,7 @@ const ConnectedFullPostView = connect( mapStateToFullPostProps, {
 	showSelectedPost,
 } )(
 	withSite(
-		withPostLikes(
-			withPostLikeActions( withSeenPostsMutations( withReaderTeams( FullPostView ) ) )
-		),
+		withPostLikes( withPostLikeActions( withSeenPostsMutations( FullPostView ) ) ),
 		getPostSiteId
 	)
 );
@@ -985,6 +1000,11 @@ export const withFullPostNavigation = ( WrappedComponent ) =>
 
 		const { data: previousPost } = usePost( previousPostKey );
 		const { data: nextPost } = usePost( nextPostKey );
+		const canMarkSeen = useCanMarkSeen( {
+			feedId: props.feedId ?? post?.feed_ID,
+			blogId: props.blogId ?? props.feed?.blog_ID ?? post?.site_ID,
+			post,
+		} );
 
 		// Pre-compute the navigation URL so the prev/next card's `<a href>`
 		// points at the destination the user lands on (middle-click /
@@ -1006,6 +1026,7 @@ export const withFullPostNavigation = ( WrappedComponent ) =>
 				nextPostKey={ nextPostKey }
 				post={ post }
 				referralPost={ referralPost }
+				canMarkSeen={ canMarkSeen }
 				commentsApiDisabled={ commentsApiDisabled }
 				previousPost={ previousPost }
 				nextPost={ nextPost }
@@ -1050,14 +1071,7 @@ const FullPostWithNavigation = withFullPostNavigation( ConnectedFullPostView );
 export default function FullPostContainer( props ) {
 	const { data: feed } = useFeedQuery( props.feedId );
 	const follow = useSiteSubscriptionForFeed( props.feedId );
-	const hasOrganization = useHasSiteSubscriptionOrganization( props.feedId, props.blogId );
 	const feedWithIcon = feed ? { ...feed, site_icon: follow?.site_icon } : feed;
 
-	return (
-		<FullPostWithNavigation
-			{ ...props }
-			feed={ feedWithIcon }
-			hasOrganization={ hasOrganization }
-		/>
-	);
+	return <FullPostWithNavigation { ...props } feed={ feedWithIcon } />;
 }

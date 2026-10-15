@@ -93,12 +93,8 @@ test.describe(
 				await componentDomainSearch.skipPurchase();
 			} );
 
-			await test.step( 'And I open the escape hatch to skip the plan', async function () {
-				await pageSignupPickPlan.openEscapeHatch();
-			} );
-
-			await test.step( 'And I continue with the Free plan', async function () {
-				await pageSignupPickPlan.continueWithFreeViaEscapeHatch( new RegExp( '.*/wp-admin.*' ) );
+			await test.step( 'And I start with the Free plan', async function () {
+				await pageSignupPickPlan.startWithFreePlan( new RegExp( '.*/wp-admin.*' ) );
 			} );
 
 			await test.step( 'Then I am redirected back to WP Admin', async function () {

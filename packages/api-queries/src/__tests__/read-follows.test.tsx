@@ -1,4 +1,5 @@
 import {
+	focusManager,
 	QueryClient,
 	QueryClientProvider,
 	useInfiniteQuery,
@@ -10,12 +11,12 @@ import {
 	followSiteMutation,
 	siteSubscriptionsQuery,
 	getAliasedSiteSubscriptionFeedUrl,
-	getSiteSubscriptionByBlogIdFromData,
 	getSiteSubscriptionByFeedIdFromData,
 	getSubscribedSitesFromData,
 	getSiteSubscriptionsCountFromData,
 	getSiteSubscriptionsFromData,
 	getSiteSubscriptionsQueryKey,
+	getHasAllSiteSubscriptionsFromData,
 	getIsSubscribedFromData,
 	getSiteSubscriptionFromData,
 	getOrganizationSiteSubscriptionsFromData,
@@ -181,6 +182,57 @@ describe( 'siteSubscriptionsQuery', () => {
 	} );
 } );
 
+describe( 'siteSubscriptionsQuery freshness', () => {
+	const page = { subscriptions: [], total_subscriptions: 0, page: 1, number: 100 };
+	const mockFollowing = () =>
+		nock( BASE ).get( '/rest/v1.2/read/following/mine' ).query( true ).reply( 200, page );
+
+	afterEach( () => {
+		focusManager.setFocused( undefined );
+		nock.cleanAll();
+	} );
+
+	it( 'refetches on window focus when data is older than the seen-count max age', async () => {
+		const client = newClient();
+		seedStaleSubscriptionData( client, 31_000 );
+		const request = mockFollowing();
+
+		renderHook( () => useInfiniteQuery( siteSubscriptionsQuery() ), {
+			wrapper: makeWrapper( client ),
+		} );
+		await focus();
+
+		await waitFor( () => expect( request.isDone() ).toBe( true ) );
+	} );
+
+	it( 'does not refetch on window focus when data is fresh', async () => {
+		const client = newClient();
+		seedStaleSubscriptionData( client, 1_000 );
+		const request = mockFollowing();
+
+		renderHook( () => useInfiniteQuery( siteSubscriptionsQuery() ), {
+			wrapper: makeWrapper( client ),
+		} );
+		await focus();
+
+		expect( client.isFetching() ).toBe( 0 );
+		expect( request.isDone() ).toBe( false );
+	} );
+
+	async function focus() {
+		await act( async () => {
+			focusManager.setFocused( false );
+			focusManager.setFocused( true );
+		} );
+	}
+
+	function seedStaleSubscriptionData( client: QueryClient, ageMs: number ) {
+		return client.setQueryData( getSiteSubscriptionsQueryKey(), makeData( [] ), {
+			updatedAt: Date.now() - ageMs,
+		} );
+	}
+} );
+
 describe( 'follow selectors and cache helpers', () => {
 	it( 'preserves requested URL aliases when the returned follow has a different feed URL', () => {
 		const client = newClient();
@@ -289,7 +341,6 @@ describe( 'follow selectors and cache helpers', () => {
 
 		expect( getSiteSubscriptionsFromData( data ) ).toEqual( [ alpha, beta ] );
 		expect( getSiteSubscriptionsCountFromData( data ) ).toBe( 2 );
-		expect( getSiteSubscriptionByBlogIdFromData( data, 22 ) ).toBe( beta );
 		expect( getSiteSubscriptionByFeedIdFromData( data, 101 ) ).toBe( alpha );
 		expect( getSiteSubscriptionFromData( data, { feedUrl: 'https://alpha.example/feed/' } ) ).toBe(
 			alpha
@@ -364,6 +415,44 @@ describe( 'follow selectors and cache helpers', () => {
 		expect(
 			getIsSubscribedFromData( getCachedData( client ), { feedUrl: 'https://example.com/feed/' } )
 		).toBe( false );
+	} );
+} );
+
+describe( 'getHasAllSiteSubscriptionsFromData', () => {
+	// Pages as the API returns them: `number` is the rows on that page.
+	const makePages = ( rowsPerPage: number[], totalCount: number | null ) => ( {
+		pages: rowsPerPage.map( ( rows, index ) => ( {
+			subscriptions: Array.from( { length: rows }, () => makeFollow() ),
+			totalCount,
+			page: index + 1,
+			number: rows,
+		} ) ),
+		pageParams: rowsPerPage.map( ( _, index ) => index + 1 ),
+	} );
+
+	it( 'is false with nothing cached', () => {
+		expect( getHasAllSiteSubscriptionsFromData( undefined ) ).toBe( false );
+	} );
+
+	it( 'is true once the requested rows cover the total, even if pages came back short', () => {
+		expect(
+			getHasAllSiteSubscriptionsFromData( makePages( [ 8, 0, 0, 2, 2, 23, 0, 0, 0 ], 814 ) )
+		).toBe( true );
+	} );
+
+	it( 'is false while pages are still to come', () => {
+		expect( getHasAllSiteSubscriptionsFromData( makePages( [ 100, 100 ], 814 ) ) ).toBe( false );
+	} );
+
+	it( 'is false past the 2,000-row cap', () => {
+		expect( getHasAllSiteSubscriptionsFromData( makePages( Array( 20 ).fill( 100 ), 2500 ) ) ).toBe(
+			false
+		);
+	} );
+
+	it( 'without a total, is true only after an empty last page', () => {
+		expect( getHasAllSiteSubscriptionsFromData( makePages( [ 100 ], null ) ) ).toBe( false );
+		expect( getHasAllSiteSubscriptionsFromData( makePages( [ 100, 0 ], null ) ) ).toBe( true );
 	} );
 } );
 

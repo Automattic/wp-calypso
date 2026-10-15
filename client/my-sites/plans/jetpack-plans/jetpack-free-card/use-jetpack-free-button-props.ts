@@ -111,7 +111,7 @@ export default function useJetpackFreeButtonProps(
 			? getUrlFromParts( {
 					...getUrlParts( adminUrlBase + 'admin.php' ),
 					search: useDashboard ? '?page=jetpack' : '?page=my-jetpack',
-			  } ).href
+				} ).href
 			: undefined;
 
 	const trackCallback = useTrackCallback( undefined, 'calypso_product_jpfree_click', {

@@ -44,8 +44,7 @@
 		"typecheck": "tsc --build --dry"
 	},
 	"dependencies": {
-		"@automattic/agenttic-client": "^0.1.80",
-		"@automattic/calypso-analytics": "workspace:^",
+		"@automattic/agenttic-client": "workspace:^",
 		"@automattic/calypso-url": "workspace:^",
 		"@automattic/components": "workspace:^",
 		"@wordpress/abilities": "^0.14.0",
@@ -58,6 +57,7 @@
 		"@wordpress/icons": "^13.3.0"
 	},
 	"devDependencies": {
+		"@automattic/calypso-analytics": "workspace:^",
 		"@automattic/calypso-typescript-config": "workspace:^",
 		"@types/react": "^18.3.1",
 		"@types/react-dom": "^18.3.1",

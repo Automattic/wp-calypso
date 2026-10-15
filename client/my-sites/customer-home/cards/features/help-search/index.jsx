@@ -4,13 +4,14 @@ import { useStillNeedHelpURL } from '@automattic/help-center/src/hooks';
 import { useDispatch as useDataStoreDispatch } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useDebounce } from 'use-debounce';
 import { RESULT_ARTICLE } from 'calypso/blocks/inline-help/constants';
 import HelpSearchCard from 'calypso/blocks/inline-help/inline-help-search-card';
 import HelpSearchResults from 'calypso/blocks/inline-help/inline-help-search-results';
 import CardHeading from 'calypso/components/card-heading';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 import './style.scss';
 
@@ -25,6 +26,7 @@ const getResultLink = ( result ) => amendYouTubeLink( result.link );
 export default function HelpSearch() {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
+	const siteId = useSelector( getSelectedSiteId );
 	const [ searchQuery, setSearchQuery ] = useState( '' );
 	const [ debouncedQuery ] = useDebounce( searchQuery, 500 );
 
@@ -69,6 +71,8 @@ export default function HelpSearch() {
 								searchQuery={ debouncedQuery }
 								onSearch={ setSearchQuery }
 								location={ HELP_COMPONENT_LOCATION }
+								blogId={ siteId }
+								siteContextSource="calypso_selected_site"
 								placeholder={ translate( 'Search support articles' ) }
 							/>
 							<HelpSearchResults

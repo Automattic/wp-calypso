@@ -86,90 +86,92 @@ export default function ProductFilter( {
 	const hasSelections = hasSelectedFilter( selectedFilters );
 
 	return (
-		<div className="product-filter-container">
-			<div ref={ ref }>
-				<DropdownMenu
-					className="product-filter"
-					label={ translate( 'Filter' ) }
-					icon={ funnel }
-					variant="product-filter"
-					open={ openDropdown }
-					onToggle={ () => setOpenDropdown( ! openDropdown ) }
-				>
-					{ () => (
-						<MenuGroup className="product-filter__group">
-							<ProductFilterItem
-								label={ translate( 'Category' ) }
-								options={ categories }
-								selectedOptions={ selectedFilters[ PRODUCT_FILTER_KEY_CATEGORIES ] }
-								onOptionClick={ ( option ) =>
-									updateFilter( PRODUCT_FILTER_KEY_CATEGORIES, option )
-								}
-							/>
-							<ProductFilterItem
-								label={ translate( 'Developed by' ) }
-								options={ vendors }
-								selectedOptions={ selectedFilters[ PRODUCT_FILTER_KEY_VENDORS ] }
-								onOptionClick={ ( option ) => updateFilter( PRODUCT_FILTER_KEY_VENDORS, option ) }
-							/>
-							<ProductFilterItem
-								label={ translate( 'Type' ) }
-								options={ types }
-								selectedOptions={ selectedFilters[ PRODUCT_FILTER_KEY_TYPES ] }
-								onOptionClick={ ( option ) => updateFilter( PRODUCT_FILTER_KEY_TYPES, option ) }
-							/>
-							<ProductFilterItem
-								label={ translate( 'Price' ) }
-								options={ prices }
-								selectedOptions={ selectedFilters[ PRODUCT_FILTER_KEY_PRICES ] }
-								onOptionClick={ ( option ) => updateFilter( PRODUCT_FILTER_KEY_PRICES, option ) }
-							/>
-						</MenuGroup>
-					) }
-				</DropdownMenu>
+		<>
+			<div className="product-filter-container">
+				<div ref={ ref }>
+					<DropdownMenu
+						className="product-filter"
+						label={ translate( 'Filter' ) }
+						icon={ funnel }
+						variant="product-filter"
+						open={ openDropdown }
+						onToggle={ () => setOpenDropdown( ! openDropdown ) }
+					>
+						{ () => (
+							<MenuGroup className="product-filter__group">
+								<ProductFilterItem
+									label={ translate( 'Category' ) }
+									options={ categories }
+									selectedOptions={ selectedFilters[ PRODUCT_FILTER_KEY_CATEGORIES ] }
+									onOptionClick={ ( option ) =>
+										updateFilter( PRODUCT_FILTER_KEY_CATEGORIES, option )
+									}
+								/>
+								<ProductFilterItem
+									label={ translate( 'Developed by' ) }
+									options={ vendors }
+									selectedOptions={ selectedFilters[ PRODUCT_FILTER_KEY_VENDORS ] }
+									onOptionClick={ ( option ) => updateFilter( PRODUCT_FILTER_KEY_VENDORS, option ) }
+								/>
+								<ProductFilterItem
+									label={ translate( 'Type' ) }
+									options={ types }
+									selectedOptions={ selectedFilters[ PRODUCT_FILTER_KEY_TYPES ] }
+									onOptionClick={ ( option ) => updateFilter( PRODUCT_FILTER_KEY_TYPES, option ) }
+								/>
+								<ProductFilterItem
+									label={ translate( 'Price' ) }
+									options={ prices }
+									selectedOptions={ selectedFilters[ PRODUCT_FILTER_KEY_PRICES ] }
+									onOptionClick={ ( option ) => updateFilter( PRODUCT_FILTER_KEY_PRICES, option ) }
+								/>
+							</MenuGroup>
+						) }
+					</DropdownMenu>
+				</div>
+
+				{ hasSelectedFilterByType( selectedFilters[ PRODUCT_FILTER_KEY_CATEGORIES ] ) && (
+					<ProductFilterSelect
+						label={ translate( 'Category' ) }
+						options={ categories }
+						selectedOptions={ selectedFilters[ PRODUCT_FILTER_KEY_CATEGORIES ] }
+						onOptionClick={ ( option ) => updateFilter( PRODUCT_FILTER_KEY_CATEGORIES, option ) }
+					/>
+				) }
+
+				{ hasSelectedFilterByType( selectedFilters[ PRODUCT_FILTER_KEY_VENDORS ] ) && (
+					<ProductFilterSelect
+						label={ translate( 'Developed by' ) }
+						options={ vendors }
+						selectedOptions={ selectedFilters[ PRODUCT_FILTER_KEY_VENDORS ] }
+						onOptionClick={ ( option ) => updateFilter( PRODUCT_FILTER_KEY_VENDORS, option ) }
+					/>
+				) }
+
+				{ hasSelectedFilterByType( selectedFilters[ PRODUCT_FILTER_KEY_TYPES ] ) && (
+					<ProductFilterSelect
+						label={ translate( 'Type' ) }
+						options={ types }
+						selectedOptions={ selectedFilters[ PRODUCT_FILTER_KEY_TYPES ] }
+						onOptionClick={ ( option ) => updateFilter( PRODUCT_FILTER_KEY_TYPES, option ) }
+					/>
+				) }
+
+				{ hasSelectedFilterByType( selectedFilters[ PRODUCT_FILTER_KEY_PRICES ] ) && (
+					<ProductFilterSelect
+						label={ translate( 'Price' ) }
+						options={ prices }
+						selectedOptions={ selectedFilters[ PRODUCT_FILTER_KEY_PRICES ] }
+						onOptionClick={ ( option ) => updateFilter( PRODUCT_FILTER_KEY_PRICES, option ) }
+					/>
+				) }
 			</div>
-
-			{ hasSelectedFilterByType( selectedFilters[ PRODUCT_FILTER_KEY_CATEGORIES ] ) && (
-				<ProductFilterSelect
-					label={ translate( 'Category' ) }
-					options={ categories }
-					selectedOptions={ selectedFilters[ PRODUCT_FILTER_KEY_CATEGORIES ] }
-					onOptionClick={ ( option ) => updateFilter( PRODUCT_FILTER_KEY_CATEGORIES, option ) }
-				/>
-			) }
-
-			{ hasSelectedFilterByType( selectedFilters[ PRODUCT_FILTER_KEY_VENDORS ] ) && (
-				<ProductFilterSelect
-					label={ translate( 'Developed by' ) }
-					options={ vendors }
-					selectedOptions={ selectedFilters[ PRODUCT_FILTER_KEY_VENDORS ] }
-					onOptionClick={ ( option ) => updateFilter( PRODUCT_FILTER_KEY_VENDORS, option ) }
-				/>
-			) }
-
-			{ hasSelectedFilterByType( selectedFilters[ PRODUCT_FILTER_KEY_TYPES ] ) && (
-				<ProductFilterSelect
-					label={ translate( 'Type' ) }
-					options={ types }
-					selectedOptions={ selectedFilters[ PRODUCT_FILTER_KEY_TYPES ] }
-					onOptionClick={ ( option ) => updateFilter( PRODUCT_FILTER_KEY_TYPES, option ) }
-				/>
-			) }
-
-			{ hasSelectedFilterByType( selectedFilters[ PRODUCT_FILTER_KEY_PRICES ] ) && (
-				<ProductFilterSelect
-					label={ translate( 'Price' ) }
-					options={ prices }
-					selectedOptions={ selectedFilters[ PRODUCT_FILTER_KEY_PRICES ] }
-					onOptionClick={ ( option ) => updateFilter( PRODUCT_FILTER_KEY_PRICES, option ) }
-				/>
-			) }
 
 			{ hasSelections && (
 				<Button className="product-filter-button" plain onClick={ resetFilters }>
 					{ translate( 'Reset filter' ) }
 				</Button>
 			) }
-		</div>
+		</>
 	);
 }

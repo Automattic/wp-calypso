@@ -2,6 +2,7 @@ import '../style.scss';
 
 import { userSettingsQuery, userSettingsMutation, siteBySlugQuery } from '@automattic/api-queries';
 import { useSuspenseQuery, useMutation } from '@tanstack/react-query';
+import { useParams } from '@tanstack/react-router';
 import {
 	__experimentalVStack as VStack,
 	__experimentalHStack as HStack,
@@ -17,7 +18,6 @@ import {
 	mergeSiteMcpAbilities,
 } from '../../../../me/mcp/utils';
 import Breadcrumbs from '../../../app/breadcrumbs';
-import { siteRoute } from '../../../app/router/sites';
 import { withSnackbar } from '../../../app/snackbars/with-snackbar';
 import { Card, CardBody, CardDivider, CardHeader } from '../../../components/card';
 import ComponentViewTracker from '../../../components/component-view-tracker';
@@ -45,7 +45,7 @@ interface McpAbility {
 }
 
 export default function SiteAIToolsWrite() {
-	const { siteSlug } = siteRoute.useParams();
+	const { siteSlug } = useParams( { strict: false } ) as { siteSlug: string };
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 	const { data: userSettings } = useSuspenseQuery( userSettingsQuery() );
 
@@ -55,7 +55,7 @@ export default function SiteAIToolsWrite() {
 	const siteAccountAbilities = siteContextToolIds.size
 		? Object.fromEntries(
 				Object.entries( accountAbilities ).filter( ( [ id ] ) => siteContextToolIds.has( id ) )
-		  )
+			)
 		: accountAbilities;
 	const mergedAbilities = mergeSiteMcpAbilities( siteAccountAbilities, siteAbilities );
 
@@ -71,7 +71,7 @@ export default function SiteAIToolsWrite() {
 					id,
 					{ ...tool, enabled: defaultToolEnabled },
 				] )
-		  );
+			);
 
 	const allTools = ( Object.entries( mcpAbilities ) as Array< [ string, McpAbility ] > ).filter(
 		( [ , tool ] ) => tool.visible !== false

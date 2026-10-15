@@ -1,3 +1,4 @@
+/* eslint-disable no-restricted-imports -- TODO: convert the hero images below to WebP, then drop this. */
 import {
 	PLAN_JETPACK_COMPLETE_MONTHLY,
 	PLAN_JETPACK_COMPLETE,
@@ -117,7 +118,7 @@ export const HeroImageAPIFamily: React.FC< HeroImageAPIFamilyProps > = ( { item 
 	const mediumScreenImage =
 		isDense && HERO_IMAGES_API_FAMILY[ item.slug ]?.md2x
 			? HERO_IMAGES_API_FAMILY[ item.slug ]?.md2x
-			: HERO_IMAGES_API_FAMILY[ item.slug ]?.md ?? largeScreenImage;
+			: ( HERO_IMAGES_API_FAMILY[ item.slug ]?.md ?? largeScreenImage );
 
 	if ( ! smallScreenImage || ! mediumScreenImage || ! largeScreenImage ) {
 		return null;
@@ -141,7 +142,7 @@ export const HeroImage: React.FC< HeroImageProps > = ( { item } ) => {
 	const mediumScreenImage =
 		isDense && HERO_IMAGES[ item.productSlug ]?.md2x
 			? HERO_IMAGES[ item.productSlug ]?.md2x
-			: HERO_IMAGES[ item.productSlug ]?.md ?? largeScreenImage;
+			: ( HERO_IMAGES[ item.productSlug ]?.md ?? largeScreenImage );
 
 	if ( ! smallScreenImage || ! mediumScreenImage || ! largeScreenImage ) {
 		return null;

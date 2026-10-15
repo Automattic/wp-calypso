@@ -13,7 +13,7 @@ import {
 } from 'calypso/my-sites/plans/jetpack-plans/constants';
 import { getYearlySlugFromMonthly } from 'calypso/my-sites/plans/jetpack-plans/convert-slug-terms';
 import { getManagePurchaseUrlFor } from 'calypso/my-sites/purchases/paths';
-import type { Purchase } from 'calypso/lib/purchases/types';
+import type { Purchase } from '@automattic/api-core';
 import type {
 	PurchaseURLCallback,
 	QueryArgs,
@@ -160,7 +160,7 @@ export const getPurchaseURLCallback =
 			return yearlySlug ? buildCheckoutURL( siteSlug, yearlySlug, urlQueryArgs ) : undefined;
 		}
 		if ( purchase ) {
-			const relativePath = getManagePurchaseUrlFor( siteSlug, purchase.id );
+			const relativePath = getManagePurchaseUrlFor( siteSlug, purchase.ID );
 			return isJetpackCloud() ? `https://wordpress.com${ relativePath }` : relativePath;
 		}
 

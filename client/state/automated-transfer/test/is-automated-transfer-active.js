@@ -17,6 +17,7 @@ describe( 'Automated Transfer', () => {
 			expect( isActive( transferStates.CONFLICTS ) ).toBe( false );
 			expect( isActive( transferStates.FAILURE ) ).toBe( false );
 			expect( isActive( transferStates.INQUIRING ) ).toBe( false );
+			expect( isActive( transferStates.CLIENT_TIMEOUT ) ).toBe( false );
 		} );
 	} );
 } );

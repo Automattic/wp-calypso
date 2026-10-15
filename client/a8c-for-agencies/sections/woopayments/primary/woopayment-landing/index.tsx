@@ -1,9 +1,4 @@
-import {
-	JetpackLicenseFilter,
-	JetpackLicenseSortField,
-	JetpackLicenseSortDirection,
-} from '@automattic/api-core';
-import { jetpackAgencyLicensesQuery } from '@automattic/api-queries';
+import { wooPaymentsLicensesQuery } from '@automattic/api-queries';
 import page from '@automattic/calypso-router';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
@@ -23,12 +18,7 @@ const WooPaymentsLanding = () => {
 	const agencyId = useSelector( getActiveAgencyId );
 
 	const { data: licenses, isFetched } = useQuery( {
-		...jetpackAgencyLicensesQuery( agencyId ?? 0, {
-			filter: JetpackLicenseFilter.Attached,
-			search: 'woopayments',
-			sortField: JetpackLicenseSortField.IssuedAt,
-			sortDirection: JetpackLicenseSortDirection.Descending,
-		} ),
+		...wooPaymentsLicensesQuery( agencyId ?? 0 ),
 		enabled: !! agencyId,
 		refetchOnWindowFocus: false,
 	} );

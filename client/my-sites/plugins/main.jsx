@@ -246,7 +246,7 @@ export class PluginsMain extends Component {
 											args: {
 												selectedSite: this.props.selectedSite.domain,
 											},
-									  } )
+										} )
 									: this.props.translate( 'Manage plugins installed on all sites' )
 							}
 						>
@@ -279,7 +279,7 @@ export class PluginsMain extends Component {
 																selectedSite: this.props.selectedSite.domain,
 															},
 														}
-												  )
+													)
 												: this.props.translate( 'Manage plugins installed on all sites' ) }
 										</div>
 									</div>

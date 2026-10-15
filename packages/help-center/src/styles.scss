@@ -20,9 +20,16 @@ a[href^='https://smooch.io/live-web-chat'] {
 	z-index: $help-center-z-index;
 	cursor: default;
 
-	// Raise above the Agents Manager panel while focused, so the last-clicked
-	// panel wins. Both panels share one base/focused scale.
-	&.is-focused {
+	// The dialog container receives programmatic focus on open (tabindex="-1");
+	// it isn't interactive itself, so don't draw a focus ring on it.
+	&:focus {
+		outline: none;
+	}
+
+	// Raise above the Agents Manager panel while focused, so the last-touched
+	// panel wins. `useRaiseOnFocus` sets the attribute, and both panels share
+	// one base/focused scale.
+	&[data-overlay-panel-focused] {
 		z-index: $help-center-z-index-focused;
 	}
 	transition: max-height 0.5s;
@@ -113,6 +120,8 @@ a[href^='https://smooch.io/live-web-chat'] {
 		height: 80vh;
 		max-height: 800px;
 		border-radius: 16px;
+		// Keeps Card's 1px border shadow alongside the elevation shadow.
+		box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1), 0 4px 8px 0 rgba(0, 0, 0, 0.2);
 		right: 50px;
 		bottom: 50px;
 
@@ -145,10 +154,10 @@ a[href^='https://smooch.io/live-web-chat'] {
 		bottom: 0;
 		left: 0;
 		right: 0;
-		/* If the masterbar is there, don't cover it, if not, go to the top. */
-		top: var( --masterbar-height, 0 );
-		max-height: calc( 100% - 45px );
-		height: calc( 100% - var( --masterbar-height, 0 ) );
+		/* Go fullscreen, covering the masterbar. */
+		top: 0;
+		max-height: 100%;
+		height: 100%;
 		animation: none;
 		transition: none;
 

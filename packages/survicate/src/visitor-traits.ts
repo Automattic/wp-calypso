@@ -9,6 +9,8 @@ declare global {
 			invokeEvent?: ( event: string ) => void;
 			closeSurvey?: () => void;
 			destroyVisitor?: () => void;
+			retarget?: () => void;
+			disableTargeting?: boolean;
 		};
 	}
 }

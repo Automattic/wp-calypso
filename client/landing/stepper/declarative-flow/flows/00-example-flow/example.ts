@@ -1,4 +1,5 @@
-import { Onboard, OnboardActions, updateLaunchpadSettings } from '@automattic/data-stores';
+import { Onboard, OnboardActions } from '@automattic/data-stores';
+import { updateLaunchpadSettings } from '@automattic/launchpad';
 import { EXAMPLE_FLOW } from '@automattic/onboarding';
 import { dispatch, useDispatch } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
@@ -105,7 +106,7 @@ const exampleFlow: FlowV2< typeof initialize > = {
 							siteIntent: Onboard.SiteIntent.Newsletter,
 						} ).then( ( siteCreationResult ) => {
 							// update site settings but return the siteCreationResult when done.
-							return saveSiteSettings( siteCreationResult.siteSlug, {
+							return saveSiteSettings( siteCreationResult.siteId, {
 								launchpad_screen: 'full',
 							} ).then( () => siteCreationResult );
 						} )

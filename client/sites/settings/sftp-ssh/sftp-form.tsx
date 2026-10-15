@@ -273,10 +273,10 @@ export const SftpForm = ( { disabled }: SftpFormProps ) => {
 	const featureExplanation = siteHasSshFeature
 		? translate(
 				"Access and edit your website's files directly by creating SFTP credentials and using an SFTP client. Optionally, enable SSH to perform advanced site operations using the command line."
-		  )
+			)
 		: translate(
 				"Access and edit your website's files directly by creating SFTP credentials and using an SFTP client."
-		  );
+			);
 
 	const form = (
 		<div className="sftp-card__wrapper">
@@ -414,7 +414,7 @@ export const SftpForm = ( { disabled }: SftpFormProps ) => {
 										a: <InlineSupportLink supportContext="hosting-sftp" showIcon={ false } />,
 									},
 								}
-						  )
+							)
 						: featureExplanation }
 				</DescriptionComponent>
 			) }

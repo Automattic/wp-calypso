@@ -5,3 +5,10 @@
 		}
 	}
 }
+
+.dashboard-notifications__popover-container {
+	position: fixed;
+	top: 0;
+	inset-inline-start: 0;
+	z-index: 1000;
+}

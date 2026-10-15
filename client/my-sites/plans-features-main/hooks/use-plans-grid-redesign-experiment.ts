@@ -1,6 +1,8 @@
+import { hasTailoredFeatureList } from '@automattic/plans-grid-next';
 import { useExperiment } from 'calypso/lib/explat';
 import { useSelector } from 'calypso/state';
 import getSite from 'calypso/state/sites/selectors/get-site';
+import type { PlansIntent } from '@automattic/plans-grid-next';
 import type { IAppState } from 'calypso/state/types';
 
 const PLANS_GRID_REDESIGN_EXPERIMENT_NAME = 'calypso_pricing_differentiation_202607';
@@ -30,7 +32,7 @@ type PlansGridRedesignExperimentResult = {
 	 */
 	usePlansGridRedesignNewDescription: boolean;
 	/**
-	 * When true, show the differentiator header (4 bullet points).
+	 * When true, show the differentiator header (4 bullet points). Signup only.
 	 */
 	showDifferentiatorHeader: boolean;
 	/**
@@ -38,11 +40,13 @@ type PlansGridRedesignExperimentResult = {
 	 */
 	usePlansGridRedesignFeatures: boolean;
 	/**
-	 * When true, show the Enterprise/VIP card at the bottom.
+	 * When true, show the Enterprise/VIP card at the bottom. Signup only, and not for
+	 * intents that curate their own plan mix; those render it as a regular column instead.
 	 */
 	showEnterpriseBottomCard: boolean;
 	/**
-	 * When true, show the WooCommerce card at the bottom.
+	 * When true, show the WooCommerce card at the bottom. Signup only, and not for
+	 * intents that curate their own plan mix; those render it as a regular column instead.
 	 */
 	showWooCommerceBottomCard: boolean;
 	/**
@@ -53,6 +57,7 @@ type PlansGridRedesignExperimentResult = {
 
 interface UsePlansGridRedesignExperimentParams {
 	flowName?: string | null;
+	intent?: PlansIntent | null;
 	isInSignup: boolean;
 	siteId?: number | null;
 }
@@ -67,6 +72,7 @@ function isPlansGridRedesignExperimentVariant(
 
 function usePlansGridRedesignExperiment( {
 	flowName,
+	intent,
 	isInSignup,
 	siteId,
 }: UsePlansGridRedesignExperimentParams ): PlansGridRedesignExperimentResult {
@@ -105,15 +111,21 @@ function usePlansGridRedesignExperiment( {
 			'six_plan_new_description',
 		].includes( variant );
 
+	// The bottom cards assume the full plan lineup. A curated intent (e.g. the hosting grid of
+	// Business/Commerce/Enterprise) would be left with one or two columns once a card is pulled out.
+	const canShowBottomCard =
+		usePlansGridRedesign && isInSignup && ! hasTailoredFeatureList( intent );
+
 	return {
 		isLoading,
 		variant,
 		usePlansGridRedesign,
 		usePlansGridRedesignNewDescription,
-		showDifferentiatorHeader: usePlansGridRedesign && variant === 'six_plan_new_features',
+		showDifferentiatorHeader:
+			usePlansGridRedesign && isInSignup && variant === 'six_plan_new_features',
 		usePlansGridRedesignFeatures: usePlansGridRedesign && variant === 'six_plan_new_features',
-		showEnterpriseBottomCard: usePlansGridRedesign && variant === 'five_plan_new_description',
-		showWooCommerceBottomCard: usePlansGridRedesign && variant === 'four_plan_new_description',
+		showEnterpriseBottomCard: canShowBottomCard && variant === 'five_plan_new_description',
+		showWooCommerceBottomCard: canShowBottomCard && variant === 'four_plan_new_description',
 		isExperimentEligible: isEligible,
 	};
 }

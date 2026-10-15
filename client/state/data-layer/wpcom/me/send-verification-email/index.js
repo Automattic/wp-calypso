@@ -53,7 +53,7 @@ export const handleError = ( action, rawError ) => [
 					id: 'email-verification-error-notice',
 					duration: 4000,
 				} ),
-		  ]
+			]
 		: [] ),
 ];
 
@@ -71,7 +71,7 @@ export const handleSuccess = ( action ) => [
 					id: 'email-verification-success-notice',
 					duration: 4000,
 				} ),
-		  ]
+			]
 		: [] ),
 ];
 

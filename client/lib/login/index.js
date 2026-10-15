@@ -209,7 +209,10 @@ export const formatPluginNames = ( pluginName, translate, langSlug = getLocaleSl
 	};
 
 	// Handle multiple plugin names separated by commas
-	const titles = pluginName.split( ',' ).map( ( name ) => allowedPluginNames[ name.trim() ] );
+	const titles = ( pluginName ?? '' ).split( ',' ).map( ( name ) => {
+		const slug = name.trim();
+		return Object.hasOwn( allowedPluginNames, slug ) ? allowedPluginNames[ slug ] : undefined;
+	} );
 	const uniqueTitles = Array.from( new Set( titles ) ).filter( ( title ) => title );
 
 	const listFormatter = new Intl.ListFormat( langSlug, {

@@ -6,13 +6,13 @@ import {
 } from '@automattic/api-queries';
 import { useQueries, useQuery } from '@tanstack/react-query';
 import { useParams } from '@tanstack/react-router';
-import { __experimentalGrid as Grid } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { filterSortAndPaginate, View } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { useMemo, useState } from 'react';
 import Breadcrumbs from '../../app/breadcrumbs';
 import { PerformanceTrackerStop } from '../../app/performance-tracking';
+import Grid from '../../components/grid';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { usePlugin } from '../plugin/use-plugin';
@@ -44,8 +44,13 @@ const searchableFields = [
 export default function PluginsList() {
 	const [ view, setView ] = useState< View >( DEFAULT_VIEW );
 	const isSmallViewport = useViewportMatch( 'xlarge', '<' );
-	const { data: sitesPlugins, isLoading: sitesPluginsLoading } = useQuery( pluginsQuery() );
-	const { sitesById } = useSitesById();
+	const {
+		data: sitesPlugins,
+		isLoading: pluginsQueryLoading,
+		isError: pluginsQueryError,
+	} = useQuery( pluginsQuery() );
+	const { sitesById, isLoadingSites } = useSitesById();
+	const sitesPluginsLoading = pluginsQueryLoading || isLoadingSites;
 	const { pluginId: pluginSlug } = useParams( { strict: false } );
 	const fields = useMemo( () => {
 		return searchableFields.map( ( searchableField ) => ( {
@@ -84,7 +89,7 @@ export default function PluginsList() {
 							slugs,
 							groupId: 'wporg',
 						} )
-				  )
+					)
 				: [],
 		combine: ( results ) => ( {
 			marketplaceSearchData: results.flatMap( ( result ) => result.data?.data.results || [] ),
@@ -150,11 +155,12 @@ export default function PluginsList() {
 					<PluginSites selectedPluginSlug={ selectedPluginSlug } />
 				) : (
 					<PluginSwitcher
-						pluginsWithIcon={ pluginsWithIcon }
+						pluginsWithIcon={ sitesPluginsLoading ? undefined : pluginsWithIcon }
 						searchableFields={ searchableFields }
 						view={ view }
 						onChangeView={ setView }
 						paginationInfo={ paginationInfo }
+						isError={ pluginsQueryError }
 					/>
 				) }
 				{ ! sitesPluginsLoading && <PerformanceTrackerStop /> }
@@ -172,14 +178,15 @@ export default function PluginsList() {
 				/>
 			}
 		>
-			<Grid columns={ 2 } gap={ 3 } templateColumns="392px 1fr">
+			<Grid gap="md" templateColumns="392px 1fr">
 				<PluginSwitcher
-					pluginsWithIcon={ pluginsWithIcon }
+					pluginsWithIcon={ sitesPluginsLoading ? undefined : pluginsWithIcon }
 					searchableFields={ searchableFields }
 					selectedPluginSlug={ selectedPluginSlug }
 					view={ view }
 					onChangeView={ setView }
 					paginationInfo={ paginationInfo }
+					isError={ pluginsQueryError }
 				/>
 
 				<PluginSites selectedPluginSlug={ selectedPluginSlug } />

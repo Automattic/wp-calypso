@@ -5,6 +5,7 @@ import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
 import { connect } from 'react-redux';
+import { getSubscribersUrl } from 'calypso/lib/subscribers/get-subscribers-url';
 import ImporterActionButton from 'calypso/my-sites/importer/importer-action-buttons/action-button';
 import BusyImportingButton from 'calypso/my-sites/importer/importer-action-buttons/busy-importing-button';
 import ImporterCloseButton from 'calypso/my-sites/importer/importer-action-buttons/close-button';
@@ -195,7 +196,7 @@ export class ImportingPane extends PureComponent {
 			return (
 				<ImporterActionButtonContainer justifyContentCenter>
 					<ImporterActionButton
-						href={ `/subscribers/${ this.props.site.slug || '' }#add-subscribers` }
+						href={ this.props.addSubscribersUrl }
 						onClick={ () => this.onClickSubstackDone( 'add-subscribers' ) }
 						primary
 					>
@@ -295,9 +296,17 @@ export class ImportingPane extends PureComponent {
 	}
 }
 
-export default connect( null, {
-	mapAuthor,
-	recordTracksEvent,
-	resetImport,
-	startImporting,
-} )( localize( ImportingPane ) );
+export default connect(
+	( state, { site } ) => ( {
+		addSubscribersUrl: getSubscribersUrl( state, site?.ID ?? null, {
+			addSubscribers: true,
+			fallbackSiteUrl: site?.URL,
+		} ),
+	} ),
+	{
+		mapAuthor,
+		recordTracksEvent,
+		resetImport,
+		startImporting,
+	}
+)( localize( ImportingPane ) );

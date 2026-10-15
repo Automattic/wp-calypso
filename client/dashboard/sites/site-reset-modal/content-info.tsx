@@ -1,4 +1,5 @@
 import { SiteResetContentSummary } from '@automattic/api-core';
+import { formatNumber } from '@automattic/number-formatters';
 import { __experimentalText as Text } from '@wordpress/components';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { wpcomLink } from '../../utils/link';
@@ -8,8 +9,6 @@ interface ContentItem {
 	url?: string;
 }
 
-type ContentType = [ keyof SiteResetContentSummary, string, string ];
-
 export default function ContentInfo( {
 	siteContent,
 	siteDomain,
@@ -17,25 +16,38 @@ export default function ContentInfo( {
 	siteContent: SiteResetContentSummary;
 	siteDomain: string;
 } ) {
-	const types: ContentType[] = [
-		[ 'post_count', 'post', wpcomLink( `/posts/${ siteDomain }` ) ],
-		[ 'page_count', 'page', wpcomLink( `/pages/${ siteDomain }` ) ],
-		[ 'media_count', 'media item', wpcomLink( `/media/${ siteDomain }` ) ],
-		[ 'plugin_count', 'plugin', `https://${ siteDomain }/wp-admin/plugins.php` ],
-	];
+	const types = [
+		[
+			'post_count',
+			/* translators: %s: formatted number of posts. */
+			_n( '%s post', '%s posts', siteContent.post_count ),
+			wpcomLink( `/posts/${ siteDomain }` ),
+		],
+		[
+			'page_count',
+			/* translators: %s: formatted number of pages. */
+			_n( '%s page', '%s pages', siteContent.page_count ),
+			wpcomLink( `/pages/${ siteDomain }` ),
+		],
+		[
+			'media_count',
+			/* translators: %s: formatted number of media items. */
+			_n( '%s media item', '%s media items', siteContent.media_count ),
+			wpcomLink( `/media/${ siteDomain }` ),
+		],
+		[
+			'plugin_count',
+			/* translators: %s: formatted number of plugins. */
+			_n( '%s plugin', '%s plugins', siteContent.plugin_count ),
+			`https://${ siteDomain }/wp-admin/plugins.php`,
+		],
+	] as const;
 
 	const content: ContentItem[] = types
-		.filter( ( [ key ]: ContentType ) => siteContent[ key ] > 0 )
-		.map( ( [ key, label, url ]: ContentType ): ContentItem => {
+		.filter( ( [ key ] ) => siteContent[ key ] > 0 )
+		.map( ( [ key, template, url ] ): ContentItem => {
 			const count: number = siteContent[ key ];
-			const text: string = sprintf(
-				/* translators: %(count)d: number of items, %(label)s: content type label (post, page) */
-				_n( '%(count)d %(label)s', '%(count)d %(label)ss', count ),
-				{
-					count,
-					label,
-				}
-			);
+			const text: string = sprintf( template, formatNumber( count ) );
 			return { text, url };
 		} );
 

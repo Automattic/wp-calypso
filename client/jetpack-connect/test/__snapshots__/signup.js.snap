@@ -149,10 +149,14 @@ exports[`JetpackSignup should render 1`] = `
                 />
               </fieldset>
               <div
+                class="login__form-blackbox-challenge"
+              />
+              <div
                 class="card logged-out-form__footer"
               >
                 <button
                   class="components-button signup-form__submit is-next-40px-default-size is-primary"
+                  disabled=""
                   type="submit"
                 >
                   Continue
@@ -340,10 +344,14 @@ exports[`JetpackSignup should render with locale suggestions 1`] = `
                 />
               </fieldset>
               <div
+                class="login__form-blackbox-challenge"
+              />
+              <div
                 class="card logged-out-form__footer"
               >
                 <button
                   class="components-button signup-form__submit is-next-40px-default-size is-primary"
+                  disabled=""
                   type="submit"
                 >
                   Continue
@@ -456,10 +464,14 @@ exports[`JetpackSignup should render with the connector branding when from=jetpa
                 />
               </fieldset>
               <div
+                class="login__form-blackbox-challenge"
+              />
+              <div
                 class="card logged-out-form__footer"
               >
                 <button
                   class="components-button signup-form__submit is-next-40px-default-size is-primary"
+                  disabled=""
                   type="submit"
                 >
                   Continue

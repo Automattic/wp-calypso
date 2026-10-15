@@ -22,3 +22,5 @@ function render() {
 - `numberOfSteps`: a number representing the total number of steps (required).
 - `size`: a number representing the base size of component in pixels (required).
 - `enableDesktopScaling`: a boolean that applys the 'desktop-scaling' class which scales the component size by 1.2x (optional)
+- `ariaLabelledBy`: the id of an element that labels the progress bar, wired to `aria-labelledby` (optional)
+- `ariaValueText`: a human-readable description of the current value (e.g. "2 of 5 steps complete"), wired to `aria-valuetext` (optional)

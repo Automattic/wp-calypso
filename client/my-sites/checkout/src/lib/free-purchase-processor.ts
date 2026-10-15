@@ -24,28 +24,23 @@ type SubmitFreePurchaseTransactionData = Omit<
 export default async function freePurchaseProcessor(
 	transactionOptions: PaymentProcessorOptions
 ): Promise< PaymentProcessorResponse > {
-	const {
-		responseCart,
-		includeDomainDetails,
-		includeGSuiteDetails,
-		contactDetails,
-		reduxDispatch,
-	} = transactionOptions;
+	const { responseCart, includeDomainDetails, includeGSuiteDetails, contactDetails } =
+		transactionOptions;
 
-	reduxDispatch( recordTransactionBeginAnalytics( { paymentMethodId: 'free-purchase' } ) );
+	recordTransactionBeginAnalytics( { paymentMethodId: 'free-purchase' } );
 
 	const taxData = doesPurchaseHaveFullCredits( responseCart )
 		? {
 				country: contactDetails?.countryCode?.value ?? '',
 				postalCode: getPostalCode( contactDetails ),
 				subdivisionCode: contactDetails?.state?.value,
-		  }
+			}
 		: {
 				// This data is intentionally empty so we do not charge taxes for free
 				// purchases that are not using credits.
 				country: '',
 				postalCode: '',
-		  };
+			};
 
 	const formattedTransactionData = prepareFreePurchaseTransaction(
 		{
