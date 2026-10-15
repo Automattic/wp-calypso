@@ -4,6 +4,7 @@ import {
 	allSitesQuery,
 	userTransferredPurchasesQuery,
 } from '@automattic/api-queries';
+import { formatNumber } from '@automattic/number-formatters';
 import { useQuery } from '@tanstack/react-query';
 import { useResizeObserver } from '@wordpress/compose';
 import { filterSortAndPaginate } from '@wordpress/dataviews';
@@ -209,22 +210,22 @@ export default function PurchasesList() {
 				<Notice>
 					{ siteFilterIds.length === 1
 						? sprintf(
-								/* translators: %d is the number of subscriptions. */
+								/* translators: %s is the number of subscriptions. */
 								_n(
-									'Includes %d subscription on this site purchased by another user.',
-									'Includes %d subscriptions on this site purchased by other users.',
+									'Includes %s subscription on this site purchased by another user.',
+									'Includes %s subscriptions on this site purchased by other users.',
 									extraOtherUsersPurchases.length
 								),
-								extraOtherUsersPurchases.length
+								formatNumber( extraOtherUsersPurchases.length )
 							)
 						: sprintf(
-								/* translators: %d is the number of subscriptions. */
+								/* translators: %s is the number of subscriptions. */
 								_n(
-									'Includes %d subscription on these sites purchased by another user.',
-									'Includes %d subscriptions on these sites purchased by other users.',
+									'Includes %s subscription on these sites purchased by another user.',
+									'Includes %s subscriptions on these sites purchased by other users.',
 									extraOtherUsersPurchases.length
 								),
-								extraOtherUsersPurchases.length
+								formatNumber( extraOtherUsersPurchases.length )
 							) }
 				</Notice>
 			) }
