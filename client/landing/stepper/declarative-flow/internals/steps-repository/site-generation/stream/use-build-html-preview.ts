@@ -17,6 +17,7 @@ export function useBuildHtmlPreview(
 	const previewUrl = stream?.info.previewUrl;
 	const runId = stream?.info.runId;
 	const blogId = stream?.info.blogId;
+	const snapshotUrl = stream?.info.snapshotUrl;
 	const authorize = stream?.authorize;
 	const route = reference?.route;
 	const epoch = reference?.epoch;
@@ -24,7 +25,15 @@ export function useBuildHtmlPreview(
 	const key = `${ blogId }:${ runId }:${ epoch }:${ route }`;
 
 	useEffect( () => {
-		if ( ! previewUrl || ! runId || ! route || ! epoch || ! documentId || ! authorize ) {
+		if (
+			! previewUrl ||
+			! snapshotUrl ||
+			! runId ||
+			! route ||
+			! epoch ||
+			! documentId ||
+			! authorize
+		) {
 			return;
 		}
 		const controller = new AbortController();
@@ -67,7 +76,7 @@ export function useBuildHtmlPreview(
 					setLoaded( {
 						key,
 						html: body.html,
-						assets: parsePreviewAssets( body.assets, blogId ?? 0 ),
+						assets: parsePreviewAssets( body.assets, snapshotUrl ),
 					} );
 					failures = 0;
 					if (
@@ -97,7 +106,7 @@ export function useBuildHtmlPreview(
 			controller.abort();
 			clearTimeout( timer );
 		};
-	}, [ previewUrl, runId, route, epoch, documentId, authorize, key, blogId ] );
+	}, [ previewUrl, snapshotUrl, runId, route, epoch, documentId, authorize, key ] );
 
 	return {
 		html: reference && loaded?.key === key ? loaded.html : null,

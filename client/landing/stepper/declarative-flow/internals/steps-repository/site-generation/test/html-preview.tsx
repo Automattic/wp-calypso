@@ -281,3 +281,82 @@ it( 'renews signed URLs without another build event and cancels renewal on unmou
 	} );
 	expect( global.fetch ).toHaveBeenCalledTimes( 2 );
 } );
+
+// A build followed from a local status server names its own feed; preview
+// assets are read from wherever that feed's snapshot is served.
+const localFeed = 'http://calypso.localhost:4001/api/calypso/sites/amber-brook/big-sky/build-wow';
+const localStream: BuildWowStreamView = {
+	...stream,
+	info: {
+		...stream.info,
+		eventsUrl: `${ localFeed }/events?run_id=run-1`,
+		snapshotUrl: `${ localFeed }/snapshot?run_id=run-1`,
+		previewUrl: `${ localFeed }/preview?run_id=run-1`,
+	},
+};
+const localAssetUrl = ( id: string, token = 'header.payload.signature' ) =>
+	`${ localFeed }/preview-assets/${ id }/content?token=${ token }`;
+const localImageAsset = {
+	id: 'a'.repeat( 64 ),
+	mime_type: 'image/png',
+	url: localAssetUrl( 'a'.repeat( 64 ) ),
+};
+
+function respondWithAssets( assets: Record< string, unknown > ) {
+	global.fetch = jest.fn().mockResolvedValue( {
+		ok: true,
+		json: async () => ( { ...payload, assets } ),
+	} );
+}
+
+it( 'accepts preview assets served by the local feed the stream names', async () => {
+	respondWithAssets( { [ imageSource ]: localImageAsset } );
+	const { result } = renderHook( () => useBuildHtmlPreview( reference, localStream ) );
+	await waitFor( () =>
+		expect( result.current.assets?.[ imageSource ] ).toEqual( localImageAsset )
+	);
+	const output = htmlPreviewDocument(
+		`<html><head></head><body><img src="${ imageSource }"></body></html>`,
+		result.current.assets
+	);
+	const csp = new DOMParser()
+		.parseFromString( output, 'text/html' )
+		.querySelector( 'meta' )?.content;
+	expect( csp ).toContain( `img-src ${ localImageAsset.url.split( '?' )[ 0 ] }` );
+} );
+
+it.each( [
+	// The WordPress.com host is only trusted when the feed itself is WordPress.com's.
+	{ url: assetUrl( 'a'.repeat( 64 ) ) },
+	{ url: localAssetUrl( 'a'.repeat( 64 ) ).replace( 'calypso.localhost', '127.0.0.1' ) },
+	{ url: localAssetUrl( 'a'.repeat( 64 ) ).replace( '/amber-brook/', '/other-site/' ) },
+	{ url: localAssetUrl( 'b'.repeat( 64 ) ) },
+	{ url: localAssetUrl( 'a'.repeat( 64 ) ).replace( 'preview-assets', 'files' ) },
+	{ url: localAssetUrl( 'a'.repeat( 64 ) ) + '&redirect=https://evil.example' },
+	{ url: localAssetUrl( 'a'.repeat( 64 ), 'not-a-token' ) },
+] )( 'drops asset references that are not on the local feed (case %#)', async ( invalid ) => {
+	respondWithAssets( { [ imageSource ]: { ...localImageAsset, ...invalid } } );
+	const { result } = renderHook( () => useBuildHtmlPreview( reference, localStream ) );
+	await waitFor( () => expect( result.current.html ).toBe( payload.html ) );
+	expect( result.current.assets ).toEqual( {} );
+} );
+
+it( 'trusts the WordPress.com host only for a feed served from WordPress.com', async () => {
+	respondWithAssets( { [ imageSource ]: localImageAsset } );
+	const { result } = renderHook( () => useBuildHtmlPreview( reference, stream ) );
+	await waitFor( () => expect( result.current.html ).toBe( payload.html ) );
+	expect( result.current.assets ).toEqual( {} );
+} );
+
+it( 'accepts no assets from a feed whose snapshot URL is itself an asset path', async () => {
+	// Without a /snapshot suffix there is no sibling to derive, and a path that
+	// happened to equal the asset path would otherwise vouch for itself.
+	respondWithAssets( { [ imageSource ]: imageAsset } );
+	const view = {
+		...stream,
+		info: { ...stream.info, snapshotUrl: assetUrl( 'a'.repeat( 64 ) ).split( '?' )[ 0 ] },
+	};
+	const { result } = renderHook( () => useBuildHtmlPreview( reference, view ) );
+	await waitFor( () => expect( result.current.html ).toBe( payload.html ) );
+	expect( result.current.assets ).toEqual( {} );
+} );
