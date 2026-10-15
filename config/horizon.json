@@ -41,6 +41,7 @@
 		"design-picker/use-assembler-styles": true,
 		"difm-offer/force-treatment": false,
 		"domain-bundling": true,
+		"domain-search/name-pulse": false,
 		"domain-transfer-redesign": true,
 		"emails/titan-tiers": false,
 		"footer-redesign/2026": true,
