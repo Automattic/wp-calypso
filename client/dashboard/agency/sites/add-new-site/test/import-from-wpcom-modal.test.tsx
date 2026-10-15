@@ -29,6 +29,7 @@ function site( overrides: Record< string, unknown > ) {
 
 interface Options {
 	sites?: Record< string, unknown >[];
+	sitesNeverLoad?: boolean;
 	managedSites?: { blog_id: number }[];
 	failManagedSites?: boolean;
 	/** Mounts the snackbar region, for the tests that assert on notice text. */
@@ -37,6 +38,7 @@ interface Options {
 
 function mockEndpoints( {
 	sites = [ site( {} ) ],
+	sitesNeverLoad = false,
 	managedSites = [],
 	failManagedSites = false,
 	withSnackbars = false,
@@ -53,7 +55,7 @@ function mockEndpoints( {
 			sitesRequestQuery = query as Record< string, string >;
 			return true;
 		} )
-		.reply( 200, { sites } );
+		.reply( 200, () => ( sitesNeverLoad ? new Promise( () => {} ) : { sites } ) );
 
 	if ( failManagedSites ) {
 		nock( BASE )
@@ -257,5 +259,13 @@ describe( 'ImportFromWPCOMModal', () => {
 		mockEndpoints( { sites: [ site( { ID: 1 } ) ], managedSites: [ { blog_id: 1 } ] } );
 
 		expect( await screen.findByText( 'No sites to add' ) ).toBeVisible();
+		expect( screen.queryByRole( 'checkbox', { checked: true } ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'leaves select-all unticked while the sites are loading', async () => {
+		mockEndpoints( { sitesNeverLoad: true } );
+
+		expect( await screen.findByRole( 'listbox', { busy: true } ) ).toBeInTheDocument();
+		expect( screen.queryByRole( 'checkbox', { checked: true } ) ).not.toBeInTheDocument();
 	} );
 } );
