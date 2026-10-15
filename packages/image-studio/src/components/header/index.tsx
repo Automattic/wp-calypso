@@ -328,7 +328,12 @@ export const Header = ( {
 										icon={ tool.icon }
 										label={ tool.label }
 										showTooltip
-										disabled={ isAiProcessing || isSaving || isAnnotationMode }
+										disabled={
+											isAiProcessing ||
+											isSaving ||
+											isAnnotationMode ||
+											activeToolbarOption === ToolbarOption.Crop
+										}
 										onClick={ () => {
 											trackImageStudioToolClick( tool.name );
 											onTransform?.( tool.transform );

@@ -30,16 +30,18 @@ function CropTool( { imageUrl, disabled = false, onApply, onCancel }: CropOverla
 
 	const cropTransform = mediaSize && croppedArea ? getCropTransform( croppedArea ) : null;
 
-	// The modal closes on Escape, so catch it first and leave crop mode instead.
+	// Escape also closes the modal or opens the unsaved-changes prompt from a document
+	// capture listener. Capturing on window runs first, so Escape only leaves crop mode.
 	useEffect( () => {
 		const handleKeyDown = ( event: KeyboardEvent ) => {
 			if ( event.key === 'Escape' && ! event.defaultPrevented && ! event.isComposing ) {
 				event.preventDefault();
+				event.stopImmediatePropagation();
 				onCancel();
 			}
 		};
-		document.addEventListener( 'keydown', handleKeyDown, true );
-		return () => document.removeEventListener( 'keydown', handleKeyDown, true );
+		window.addEventListener( 'keydown', handleKeyDown, true );
+		return () => window.removeEventListener( 'keydown', handleKeyDown, true );
 	}, [ onCancel ] );
 
 	return (
