@@ -23,7 +23,6 @@ const config = {
 		name: getAbsolutePath( '@storybook/react-vite' ),
 		options: {},
 	},
-	docs: {},
 	typescript: {
 		check: false,
 		reactDocgen: 'react-docgen-typescript',
@@ -41,14 +40,8 @@ const config = {
 					generateScopedName: '[name]__[local]___[hash:base64:5]',
 				},
 			},
-			resolve: {
-				alias: {
-					// No aliases needed currently
-				},
-			},
 			optimizeDeps: {
 				include: [ 'react', 'react-dom', 'react/jsx-dev-runtime', '@mdx-js/react' ],
-				exclude: [],
 			},
 			define: {
 				global: 'globalThis',

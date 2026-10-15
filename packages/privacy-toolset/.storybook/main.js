@@ -1,3 +1,3 @@
 import storybookDefaultConfig from '@automattic/calypso-storybook';
 
-export default { ...storybookDefaultConfig() };
+export default storybookDefaultConfig();
