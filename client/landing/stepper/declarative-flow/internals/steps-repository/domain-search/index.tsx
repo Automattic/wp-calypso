@@ -12,6 +12,7 @@ import {
 	isNewHostedSiteCreationFlow,
 	isNewsletterFlow,
 	isOnboardingFlow,
+	SITE_MIGRATION_FLOW,
 	Step,
 	StepContainer,
 } from '@automattic/onboarding';
@@ -338,6 +339,17 @@ const DomainSearchStep: StepType< {
 					signupDomainOrigin: SIGNUP_DOMAIN_ORIGIN.USE_YOUR_DOMAIN,
 				} );
 			},
+			// Omitted (not `undefined`) outside onboarding: the WPCOM wrapper wraps every event
+			// key in a function, which would render the card in other flows.
+			...( isOnboardingFlow( flow ) && {
+				onMigrateSiteClick: () => {
+					recordTracksEvent( 'calypso_domain_search_migrate_site_button_click', {
+						section: 'signup',
+						flow_name: flow,
+					} );
+					window.location.assign( `/setup/${ SITE_MIGRATION_FLOW }?ref=${ flow }` );
+				},
+			} ),
 			onContinue: ( domainCart: MinimalRequestCartProduct[] ) => {
 				const domainItem = domainCart[ 0 ];
 

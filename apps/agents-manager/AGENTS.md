@@ -19,7 +19,7 @@ The `--sync` flag uploads the bundles over SSH to `widgets.wp.com/agents-manager
 
 ## Sandbox Testing
 
-1. Sandbox `widgets.wp.com` (the sites themselves do not need sandboxing).
+1. Sandbox `widgets.wp.com` (not the sites, unless `.asset.json` changes: see Pitfalls in `packages/agents-manager/AGENTS.md`).
 2. Run `yarn dev --sync` from this directory.
 3. Visit any Simple or Atomic site.
 4. Open the Agents Manager and verify your changes.
@@ -27,4 +27,4 @@ The `--sync` flag uploads the bundles over SSH to `widgets.wp.com/agents-manager
 ## Pitfalls
 
 - **`wp-admin` entry point mounts into the admin bar**: It renders only when `#agents-manager-masterbar` exists. Admin screens with no admin bar (e.g. iframe requests) render no node, so the bundle loads and does nothing.
-- **Not every entry is Agents Manager UI**: `image-studio` is an independent feature, and `jetpack-ai-sidebar` is a provider bundle: its `jetpack-ai-sidebar.provider.mjs` is copied to `dist/` as-is and loaded through `import()`.
+- **Not every entry is Agents Manager UI**: `image-studio` is an independent feature, `agents-manager-gutenberg-disconnected` is a standalone editor-toolbar help link that imports nothing from `packages/agents-manager`, and `jetpack-ai-sidebar` is a provider bundle: its `jetpack-ai-sidebar.provider.mjs` is copied to `dist/` as-is and loaded through `import()`.

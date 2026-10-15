@@ -10,9 +10,11 @@ import {
 	APPLY_BLOCK_EDITS_TOOL_ID,
 	getApplyBlockEditsOutcome,
 	getDisplayMessageFromToolData,
+	getToolMessageData,
 	isBlockEditToolId,
 	isDisplayableToolMessageTool,
 	isVisualCheckPending,
+	parseToolMessageText,
 } from './tool-message-utils';
 import type { GetChatComponent } from './load-external-providers';
 import type { OPEN_HELP_CENTER_BUTTON_TYPE } from '../abilities/open-help-center';
@@ -88,35 +90,17 @@ export function isContextOnlyMessage( message: UIMessage ): boolean {
 }
 
 function getShowComponentSummary( message: UIMessage ): string | undefined {
-	const firstText = message.content?.[ 0 ]?.text;
-	if ( ! firstText ) {
+	const toolData = getToolMessageData( message );
+	if ( ! isShowComponentTool( toolData?.toolId ) ) {
 		return undefined;
 	}
 
-	try {
-		const parsed = JSON.parse( firstText );
-		if ( ! isShowComponentTool( parsed?.tool_id ) ) {
-			return undefined;
-		}
-
-		const summary = parsed?.data?.summary;
-		return typeof summary === 'string' ? summary.trim() || undefined : undefined;
-	} catch ( _error ) {
-		return undefined;
-	}
+	const summary = toolData?.summary;
+	return typeof summary === 'string' ? summary.trim() || undefined : undefined;
 }
 
 function isBlockEditToolMessage( message: UIMessage ): boolean {
-	const firstText = message.content?.[ 0 ]?.text;
-	if ( ! hasAgentRole( message ) || ! firstText ) {
-		return false;
-	}
-
-	try {
-		return isBlockEditToolId( JSON.parse( firstText )?.tool_id );
-	} catch ( _error ) {
-		return false;
-	}
+	return hasAgentRole( message ) && isBlockEditToolId( getToolMessageData( message )?.toolId );
 }
 
 function hasAgentRole( message: UIMessage ): boolean {
@@ -159,17 +143,9 @@ function hasLaterAgentToolMessageInSameTurn(
 			continue;
 		}
 
-		const laterText = laterMessage.content?.[ 0 ]?.text;
-		if ( ! laterText ) {
-			continue;
+		if ( typeof getToolMessageData( laterMessage )?.toolId === 'string' ) {
+			return true;
 		}
-
-		try {
-			const laterData = JSON.parse( laterText );
-			if ( typeof laterData?.tool_id === 'string' ) {
-				return true;
-			}
-		} catch ( _error ) {}
 	}
 
 	return false;
@@ -233,11 +209,9 @@ function isAwaitingVisualCheckReply( messages: UIMessage[], currentIndex: number
 			continue;
 		}
 
-		try {
-			if ( typeof JSON.parse( laterText )?.tool_id === 'string' ) {
-				continue;
-			}
-		} catch ( _error ) {}
+		if ( typeof parseToolMessageText( laterText )?.toolId === 'string' ) {
+			continue;
+		}
 
 		return false;
 	}
