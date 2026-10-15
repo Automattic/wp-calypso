@@ -1,6 +1,6 @@
 import { Site } from '@automattic/api-core';
 import { formatNumber } from '@automattic/number-formatters';
-import { invokeSurvicateEvent } from '@automattic/survicate';
+import { invokeSurvicateEvent, isModalOpen, observeModals } from '@automattic/survicate';
 import {
 	__experimentalVStack as VStack,
 	__experimentalHStack as HStack,
@@ -35,10 +35,22 @@ const SURVICATE_EVENTS: Record< string, string > = {
 	update: 'pluginUpdated',
 };
 
-// Module-level rather than a ref: hosts that build `RenderModal` inline remount this
-// component while the action runs, so the instance that unmounts on close may not be
-// the one whose action succeeded.
-let pendingSurvicateEvent: string | null = null;
+// Survicate drops events while a modal is open, so wait for this one to leave the DOM.
+// The timeout lets @automattic/survicate's own modal observer resume targeting first.
+function invokeSurvicateEventOnceModalsClose( eventName: string ) {
+	const invoke = () => setTimeout( () => invokeSurvicateEvent( eventName ) );
+	if ( ! isModalOpen() ) {
+		invoke();
+		return;
+	}
+	const stopObserving = observeModals(
+		() => {},
+		() => {
+			stopObserving();
+			invoke();
+		}
+	);
+}
 
 function getConfirmButtonLabel( actionId: string ) {
 	switch ( actionId ) {
@@ -272,19 +284,6 @@ export default function ActionRenderModal( {
 		recordTracksEvent( 'calypso_dashboard_plugins_action_click', { action_id: actionId } );
 	}, [ actionId, recordTracksEvent ] );
 
-	// Survicate drops events while a modal is open, so fire once this one has unmounted.
-	// The timeout lets @automattic/survicate's modal observer resume targeting first.
-	useEffect(
-		() => () => {
-			const eventName = pendingSurvicateEvent;
-			if ( eventName ) {
-				pendingSurvicateEvent = null;
-				setTimeout( () => invokeSurvicateEvent( eventName ) );
-			}
-		},
-		[]
-	);
-
 	const handleCancel = () => {
 		recordTracksEvent( 'calypso_dashboard_plugins_action_cancel_click', {
 			action_id: actionId,
@@ -437,13 +436,14 @@ export default function ActionRenderModal( {
 			action_id: actionId,
 		} );
 		setIsBusy( true );
+		let survicateEvent: string | undefined;
 		try {
 			const { successCount, errorCount } = await onExecute( items );
 			if ( successCount > 0 ) {
 				createSuccessNotice( buildSuccessMessage( actionId, items, successCount ), {
 					type: 'snackbar',
 				} );
-				pendingSurvicateEvent = SURVICATE_EVENTS[ actionId ] ?? null;
+				survicateEvent = SURVICATE_EVENTS[ actionId ];
 			}
 			if ( errorCount > 0 ) {
 				createErrorNotice( buildErrorMessage( actionId, items, errorCount ), {
@@ -454,6 +454,9 @@ export default function ActionRenderModal( {
 		} finally {
 			setIsBusy( false );
 			closeModal?.();
+			if ( survicateEvent ) {
+				invokeSurvicateEventOnceModalsClose( survicateEvent );
+			}
 		}
 	};
 

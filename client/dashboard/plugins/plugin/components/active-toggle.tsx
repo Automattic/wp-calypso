@@ -1,5 +1,6 @@
 import { invokeSurvicateEvent } from '@automattic/survicate';
 import { __, sprintf } from '@wordpress/i18n';
+import { useRef } from 'react';
 import FieldActionToggle from './field-action-toggle';
 import type { SiteWithPluginData } from '../use-plugin';
 import type { Dispatch, SetStateAction } from 'react';
@@ -32,6 +33,9 @@ export const ActiveToggle = ( {
 	// Use optimistic value if we have one, otherwise use server value
 	const checked = optimistic ?? serverChecked;
 
+	// Before the SDK loads each event waits for SurvicateReady; keep only the latest flip's.
+	const cancelSurvicateEvent = useRef< () => void >( () => {} );
+
 	return (
 		<FieldActionToggle
 			label={ checked ? __( 'On' ) : __( 'Off' ) }
@@ -52,7 +56,12 @@ export const ActiveToggle = ( {
 
 				// Kept off the returned chain so a Survicate failure can't turn a success into an error notice.
 				mutation.then(
-					() => invokeSurvicateEvent( next ? 'pluginActivated' : 'pluginDeactivated' ),
+					() => {
+						cancelSurvicateEvent.current();
+						cancelSurvicateEvent.current = invokeSurvicateEvent(
+							next ? 'pluginActivated' : 'pluginDeactivated'
+						);
+					},
 					() => {}
 				);
 

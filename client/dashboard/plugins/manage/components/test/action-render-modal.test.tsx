@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 
-import { screen, waitFor } from '@testing-library/react';
+import { act, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { useState } from 'react';
@@ -121,6 +121,48 @@ describe( '<ActionRenderModal>', () => {
 
 	test( 'fires when the modal is remounted while the action runs', async () => {
 		await confirm( 'activate', { remountDuringAction: true } );
+
+		await waitFor( () =>
+			expect( mockInvokeSurvicateEvent ).toHaveBeenCalledWith( 'pluginActivated' )
+		);
+		expect( mockInvokeSurvicateEvent ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	test( 'fires once and does not leak to a later modal when closed before the action resolves', async () => {
+		let resolveAction: ( result: ActionOnExecuteResponse ) => void = () => {};
+		const { unmount } = render(
+			<Host
+				actionId="update"
+				onExecute={ () => new Promise( ( resolve ) => ( resolveAction = resolve ) ) }
+			/>
+		);
+
+		await userEvent.click( await screen.findByRole( 'button', { name: 'Update' } ) );
+		unmount();
+		await act( async () => resolveAction( { successCount: 1, errorCount: 0 } ) );
+
+		await waitFor( () =>
+			expect( mockInvokeSurvicateEvent ).toHaveBeenCalledWith( 'pluginUpdated' )
+		);
+
+		render( <Host actionId="delete" onExecute={ jest.fn() } /> );
+		await userEvent.click( await screen.findByRole( 'button', { name: 'Cancel' } ) );
+		await flushTimers();
+
+		expect( mockInvokeSurvicateEvent ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	test( 'waits for a modal that is still open', async () => {
+		const overlay = document.createElement( 'div' );
+		overlay.className = 'components-modal__screen-overlay';
+		( overlay as HTMLElement & { checkVisibility?: () => boolean } ).checkVisibility = () => true;
+		document.body.appendChild( overlay );
+
+		await confirm( 'activate' );
+		await flushTimers();
+		expect( mockInvokeSurvicateEvent ).not.toHaveBeenCalled();
+
+		overlay.remove();
 
 		await waitFor( () =>
 			expect( mockInvokeSurvicateEvent ).toHaveBeenCalledWith( 'pluginActivated' )
