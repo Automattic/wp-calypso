@@ -54,9 +54,8 @@ interface SignupFormSocialFirst {
 	isEmailAtBottom?: boolean;
 	isMobileCompactVariant?: boolean;
 	/**
-	 * Answers "I already have an account" below the buttons instead of in the top bar, where the
-	 * link sits among the page furniture and gets read as chrome. The email-first variants render
-	 * it regardless, having always carried their own.
+	 * Renders the "Have an account? Log in" line below the buttons. The email-first variants
+	 * always render it.
 	 */
 	showLoginLink?: boolean;
 	allowedSocialServices?: SignupAllowedService[];

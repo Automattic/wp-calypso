@@ -63,10 +63,8 @@ export type UserStepAccepts = {
 	headerText?: string;
 	subHeaderText?: string;
 	/**
-	 * Drops the step's own "Log in" link, wherever that layout puts it: the V2 top bar, the V1
-	 * footer, or the line below the buttons. The email-first account-step variant keeps its
-	 * in-form link regardless. Existing users can still sign in via the social / email buttons
-	 * either way.
+	 * Drops the step's own "Log in" link, wherever the layout puts it. The email-first
+	 * account-step variant keeps its in-form link regardless.
 	 */
 	hideLoginLink?: boolean;
 	allowedSocialServices?: SignupAllowedService[];
@@ -286,13 +284,8 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 	const isMobileCompactLayout =
 		isStepContainerV2 && isMobileViewport && ! isWooReferrer && ! partnerConfig && ! isEditingEmail;
 
-	// Existing users land here and sign up again rather than log in, and a top-bar "Log in" reads as
-	// page furniture at the moment they need it. Below the buttons it answers the question they are
-	// actually asking.
-	//
-	// Desktop only. Below 960px signup and login both keep the top-right link they have today, and
-	// moving just one of them would introduce a third pattern rather than remove one. The email-edit
-	// screen is excluded as well, having no second account to offer, and V1 is left alone as the
+	// Desktop V2 puts "Log in" below the buttons. Below 960px signup and login both keep the
+	// top-right link, the email-edit screen has no second account to offer, and V1 is the
 	// retiring layout.
 	const showsInFormLoginLink =
 		isStepContainerV2 && isLargeViewport && ! isEditingEmail && ! hideLoginLink;

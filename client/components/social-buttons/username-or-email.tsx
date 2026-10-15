@@ -12,10 +12,8 @@ import './style.scss';
 type UsernameOrEmailButtonProps = {
 	onClick: () => void;
 	/**
-	 * Marks email out as the WordPress.com option, which is what the login page wants: its
-	 * other buttons are all third parties. Signup opts out, because there the logo reads as
-	 * branding on one button of three rather than as a provider, so email looks like the
-	 * house pick instead of a peer of Google and Apple.
+	 * Shows the WordPress.com logo on the email button. Signup opts out so email reads as a
+	 * peer of Google and Apple rather than the house pick.
 	 */
 	showWordPressLogo?: boolean;
 };
@@ -44,9 +42,7 @@ export const UsernameOrEmailButton = ( {
 					size={ 20 }
 				/>
 			) : (
-				// 20 to match the other icons' box. The glyph is scaled up in CSS rather than by
-				// raising this number, because the label's negative margin is tuned to a 20px box:
-				// a bigger box shifts the text out of line with the buttons above it.
+				// 20 to match the other icons' box; the glyph is scaled up in CSS instead.
 				<Icon
 					icon={ envelope }
 					size={ 20 }

@@ -46,9 +46,7 @@ interface OneLoginLayoutProps {
 	isLostPasswordView?: boolean;
 	/**
 	 * Keeps the "Create an account" link in the top bar below 960px only. The main login view
-	 * passes this: on desktop its footer carries the route to signup instead, matching signup,
-	 * and the top bar's right side is left empty, also matching signup. Mid-flow screens like
-	 * 2FA keep the link up there at every width.
+	 * passes this because its footer carries the route to signup on desktop.
 	 */
 	signupLinkMobileOnly?: boolean;
 	noThanksRedirectUrl?: string;
@@ -178,17 +176,8 @@ const OneLoginLayout = ( {
 	const topBar = (): JSX.Element => {
 		const signupOrLoginLink = isSectionSignup ? renderLoginLink() : renderSignUpLink();
 
-		// On the main login view, desktop moves the route to signup down to the footer, matching
-		// where signup puts its route to login, and leaves this slot empty, also matching signup.
-		// Below 960px nothing moves: both screens keep the top-right link they have today.
-		//
-		// Hidden in CSS rather than by a viewport hook, because this page is server-rendered: a
-		// hook has no viewport on the server, so it would render the mobile arrangement and then
-		// visibly jump on hydration for every desktop visitor. `display: none`, so the hidden
-		// link stays out of the accessibility tree rather than lingering as a second route.
-		//
-		// Everywhere else (2FA, magic login, the OAuth2 screen) the flag is not passed and this
-		// collapses to exactly what it rendered before.
+		// Hidden in CSS rather than by a viewport hook: the page is server-rendered, so a hook
+		// would render the mobile arrangement and jump on hydration.
 		const rightElement = (
 			<nav className="wp-login__one-login-layout-top-right">
 				{ signupLinkMobileOnly ? (

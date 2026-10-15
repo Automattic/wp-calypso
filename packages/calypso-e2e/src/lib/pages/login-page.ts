@@ -216,11 +216,8 @@ export class LoginPage {
 	}
 
 	/**
-	 * Clicks the link through to signup.
-	 *
-	 * The main login view carries this below the buttons as "Don't have an account? Sign up".
-	 * The mid-flow views (2FA, magic login, QR, and the OAuth2 authorize screen) keep
-	 * "Create an account" in the top bar, so match either. Only one is ever on screen.
+	 * Clicks the link through to signup: "Sign up" in the main login view's footer, or
+	 * "Create an account" in the mid-flow views' top bar.
 	 */
 	async clickCreateNewAccount(): Promise< Locator > {
 		const locator = this.page.getByRole( 'link', { name: /^(Create an account|Sign up)$/ } );

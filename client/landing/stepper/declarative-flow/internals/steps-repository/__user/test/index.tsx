@@ -29,10 +29,8 @@ import UserStep, { type UserStepAccepts } from '..';
 const mockUseViewportMatch = useViewportMatch as unknown as jest.Mock;
 const mockUsePartnerBranding = usePartnerBranding as unknown as jest.Mock;
 
-// Drives the two breakpoints the step reads: isMobileViewport = useViewportMatch( 'small', '<' )
-// at 660px, and isLargeViewport = useViewportMatch( 'large' ) at 960px. `isLarge` defaults to the
-// opposite of `isMobile` so the common cases stay one argument; pass both to reach the band in
-// between, where the layout is the standard one but the login link has not moved yet.
+// isMobileViewport is useViewportMatch( 'small', '<' ) at 660px and isLargeViewport is
+// useViewportMatch( 'large' ) at 960px. Pass both to reach the band in between.
 const setViewport = ( {
 	isMobile,
 	isLarge = ! isMobile,
@@ -236,8 +234,7 @@ describe( 'User email signup step', () => {
 		} );
 
 		it( 'leaves the band between the breakpoints on its top-bar link', () => {
-			// Wide enough for the standard layout, not wide enough to be a desktop. Login keeps
-			// its top-right link below 960px, so signup has to as well or the two diverge.
+			// Between 660px and 960px the login link stays in the top bar, matching login.
 			setViewport( { isMobile: false, isLarge: false } );
 
 			const { container } = renderUserStep();

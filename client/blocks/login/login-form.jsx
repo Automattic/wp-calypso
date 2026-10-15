@@ -892,12 +892,8 @@ export class LoginForm extends Component {
 						} ) }
 						aria-hidden={ isPasswordHidden }
 					>
-						{ /*
-						 * The lost-password link shares the label row, so it reads as belonging to the
-						 * field it resets. Only while the field is shown: `is-hidden` keeps the block in
-						 * the DOM off-screen for password managers, and a link there would still take
-						 * focus. Desktop only, see login-form.scss; below 960px the footer has it.
-						 */ }
+						{ /* Only while the password is shown: `is-hidden` keeps the block in the DOM,
+						   and a link there would still take focus. */ }
 						{ lostPasswordLink && ! isPasswordHidden ? (
 							<div className="login__form-password-label-row">
 								<FormLabel htmlFor="password" hasCoreStylesNoCaps>

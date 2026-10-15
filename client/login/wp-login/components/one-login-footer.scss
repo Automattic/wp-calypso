@@ -53,13 +53,9 @@
 		}
 	}
 
-	// Mirrors the signup page's "Have an account? Log in" line, so the switch between the
-	// two screens reads as one control in one place. Font family is left to inherit rather
-	// than copying signup's hardcoded "SF Pro Text": that resolves to the same face on
-	// Apple platforms, and to a better fallback everywhere else.
-	//
-	// Desktop only: below 960px the route to signup stays in the top bar, where both this
-	// screen and signup already put it, and this slot keeps the lost-password link.
+	// Mirrors the signup page's "Have an account? Log in" line. Font family inherits rather
+	// than copying signup's hardcoded "SF Pro Text". Desktop only: below 960px the top bar
+	// carries the route to signup.
 	.one-login__footer-signup {
 		display: none;
 		margin: 0;

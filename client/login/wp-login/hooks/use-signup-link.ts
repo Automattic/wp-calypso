@@ -21,10 +21,8 @@ interface UseSignupLinkParams {
 }
 
 /**
- * The signup destination and its click handling, shared by the top bar's "Create an account"
- * and the login footer's "Don't have an account? Sign up". Both routes to signup have to agree
- * on the URL and on logging a signed-in user out first, so they resolve it in one place rather
- * than each rebuilding it.
+ * The signup URL and click handling shared by the top bar's "Create an account" and the
+ * footer's "Sign up" link.
  */
 export default function useSignupLink( { signupUrl, origin }: UseSignupLinkParams ) {
 	const urlLocale = useLocale();

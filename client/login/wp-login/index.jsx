@@ -316,10 +316,8 @@ export class Login extends Component {
 				socialServiceResponse={ socialServiceResponse }
 				domain={ domain }
 				fromSite={ fromSite }
-				// Desktop only, and only on the main login view: the one that pairs with signup.
-				// Gravatar-powered clients carry their own link in their footer, and Woo renders
-				// its own "Forgot password?" inside the form, so neither gets a second one. Already
-				// null under 2FA, and never reaches the form while the password is hidden.
+				// Main login view only. Gravatar-powered clients and Woo render their own
+				// lost-password link.
 				lostPasswordLink={
 					isLoginView && ! isGravPoweredClient && ! this.props.isWoo
 						? this.getLostPasswordFormLink()
@@ -438,9 +436,7 @@ export class Login extends Component {
 						connectorPlugins={ this.props.connectorPlugins }
 						signupUrl={ this.props.signupUrl }
 						isLostPasswordView={ isLostPasswordView }
-						// Only the main login view empties its top-right slot, and only on desktop: it is
-						// the one that pairs with signup, and the one whose footer carries the route
-						// to signup there. 2FA and the other mid-flow views keep the top bar.
+						// Main login view only: on desktop its footer carries the route to signup.
 						signupLinkMobileOnly={ isLoginView }
 						noThanksRedirectUrl={ this.getNoThanksRedirectUrl() }
 						subHeadingProminent={ this.props.isFromJetpackConnector && ! isLostPasswordView }

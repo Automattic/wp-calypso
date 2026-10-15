@@ -32,12 +32,8 @@ $breakpoint-mobile: 782px; //Mobile size.
 	margin-bottom: 8px;
 }
 
-// Desktop puts the lost-password link on the password field's label row, beside the field it
-// resets, which also leaves the login top bar's right side empty, matching signup's. Below
-// 960px the footer keeps the link it has always had, so this one is hidden there rather than
-// shown twice. Link blue and a step smaller than the label, so it reads as the field's
-// secondary action rather than a second label. Hardcoded fallback rather than a `--wpds-*`
-// token, for the reason given on the badge above.
+// Desktop only: below 960px the footer carries the lost-password link. Hardcoded fallback
+// rather than a `--wpds-*` token, for the reason given on the badge above.
 .login__form-password-label-row {
 	display: flex;
 	align-items: baseline;

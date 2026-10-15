@@ -34,14 +34,9 @@
 	gap: rem( 16px );
 }
 
-// The main login view drops its top-right link at the desktop breakpoint: the route to signup
-// moves to the footer, matching signup, and nothing takes the slot, also matching signup. Below
-// 960px nothing moves. Hidden in CSS rather than by a viewport hook, because this page is
-// server-rendered and a hook would jump on hydration.
-//
-// `display: contents` so the link still sits in the parent's flex gap when shown, and
-// `display: none` so it leaves the accessibility tree when hidden, rather than lingering as a
-// second, invisible route to the same place.
+// Hidden in CSS rather than by a viewport hook: the page is server-rendered, so a hook would
+// jump on hydration. `display: contents` keeps the link in the parent's flex gap when shown;
+// `display: none` removes it from the accessibility tree when hidden.
 .wp-login__top-right-mobile {
 	display: contents;
 
