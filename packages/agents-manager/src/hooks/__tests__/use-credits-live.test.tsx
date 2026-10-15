@@ -177,6 +177,19 @@ describe( 'purchase access', () => {
 			} >
 		 )?.props.purchaseHint;
 
+	it( 'shows Upgrade with no guidance to someone who can upgrade the plan but can’t buy credits', async () => {
+		fetchMock.mockResolvedValueOnce(
+			response( { ...exhausted(), plan_tier: 'personal' }, false, true )
+		);
+		const { result } = renderCredits();
+		await flush();
+		expect( props( result.current ).upgradeUrl ).toBe(
+			'https://wordpress.com/plans/example.wordpress.com?source=wp_ai_credits'
+		);
+		expect( purchaseHint( result.current ) ).toBeUndefined();
+		expect( result.current.notice?.message ).toBe( 'You’ve used all your site credits.' );
+	} );
+
 	it( 'points someone who can’t buy to a site admin, with no purchase link', async () => {
 		fetchMock.mockResolvedValueOnce( response( { ...exhausted(), plan_tier: 'personal' }, false ) );
 		const { result } = renderCredits();
@@ -277,6 +290,18 @@ describe( 'purchase access', () => {
 		expect( purchaseHint( result.current ) ).toBeUndefined();
 		expect( result.current.notice?.message ).toBe( 'You’ve used all your site credits.' );
 		expect( result.current.notice?.action?.href ).toBe( upgradeUrl );
+	} );
+
+	it( 'offers someone who can’t buy no guidance when the server can’t tell who bought the plan', async () => {
+		fetchMock.mockResolvedValueOnce(
+			response( { ...exhausted(), plan_tier: 'personal' }, false, null )
+		);
+		const { result } = renderCredits();
+		await flush();
+		expect( props( result.current ).upgradeUrl ).toBeUndefined();
+		expect( purchaseHint( result.current ) ).toBeUndefined();
+		expect( result.current.notice?.message ).toBe( 'You’ve used all your site credits.' );
+		expect( result.current.notice?.action ).toBeUndefined();
 	} );
 
 	it( 'offers neither a link nor guidance when the server doesn’t say', async () => {
