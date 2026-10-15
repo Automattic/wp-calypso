@@ -826,21 +826,6 @@ export default function OrchestratorChat( {
 	// time paginating 10 pages deep. One page covers typical use.
 	const shouldLoadConversation =
 		! isReaderChat || ( ! hasUserSentMessage && messages.length === 0 && ! isProcessing );
-	const chatError = isReaderChat
-		? getReaderChatErrorMessage( error )
-		: getOrchestratorErrorMessage( error );
-
-	// One event per error the chat shows. `error` returns to null between
-	// attempts, so the same failure repeating on a later send counts again.
-	const { takeRefusalCode } = credits;
-	useEffect( () => {
-		if ( error ) {
-			recordAgentsManagerTracksEvent( 'calypso_agents_manager_chat_error', {
-				error_type: getOrchestratorErrorType( error, takeRefusalCode() ),
-			} );
-		}
-	}, [ error, takeRefusalCode ] );
-
 	// Resume the conversation after a `wp-admin-navigate` full page reload;
 	// while such a resume is pending, hydration below must not replace the
 	// client-held history (see the hook's docblock).
@@ -889,7 +874,11 @@ export default function OrchestratorChat( {
 		[ agentConfig, onSubmit ]
 	);
 
-	const { isLoading: isLoadingConversation, notice: replyNotice } = useConversation( {
+	const {
+		isLoading: isLoadingConversation,
+		notice: replyNotice,
+		hasFailedResume,
+	} = useConversation( {
 		maxPages: isReaderChat ? 1 : 10,
 		enabled: shouldLoadConversation,
 		waitForReply: ! isProcessing,
@@ -951,6 +940,22 @@ export default function OrchestratorChat( {
 			}
 		},
 	} );
+
+	const shownError = hasFailedResume ? null : error;
+	const chatError = isReaderChat
+		? getReaderChatErrorMessage( shownError )
+		: getOrchestratorErrorMessage( shownError );
+
+	// One event per error the chat shows. `error` returns to null between
+	// attempts, so the same failure repeating on a later send counts again.
+	const { takeRefusalCode } = credits;
+	useEffect( () => {
+		if ( shownError ) {
+			recordAgentsManagerTracksEvent( 'calypso_agents_manager_chat_error', {
+				error_type: getOrchestratorErrorType( shownError, takeRefusalCode() ),
+			} );
+		}
+	}, [ shownError, takeRefusalCode ] );
 
 	// Use dynamic suggestions from the external provider (e.g., Big Sky block-based suggestions)
 	const maxDynamicSuggestions = isDocked ? undefined : 3;

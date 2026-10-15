@@ -475,6 +475,90 @@ describe( 'useConversation', () => {
 				expect( onSuccess ).toHaveBeenCalledTimes( 1 );
 			} );
 
+			const pausedOnCall = ( toolCallId: string ): PendingClientTools => ( {
+				state: 'unanswered',
+				calls: [ { toolCallId, toolId: 'woocommerce__get_top_products', arguments: {} } ],
+			} );
+
+			it( 'gives a new set of pending calls its own wait before resuming', async () => {
+				const onResume = jest.fn().mockResolvedValue( false );
+				mockLoadedConversation( [ question, toolResult ], pausedOnCall( 'call-a' ) );
+				const { rerender } = renderHook( () =>
+					useConversation( { waitForReply: true, onSuccess: jest.fn(), onResume } )
+				);
+
+				act( () => jest.advanceTimersByTime( RESUME_AFTER_MS / 2 ) );
+				mockLoadedConversation( [ question, toolResult ], pausedOnCall( 'call-b' ) );
+				rerender();
+				act( () => jest.advanceTimersByTime( RESUME_AFTER_MS - 1 ) );
+
+				expect( onResume ).not.toHaveBeenCalled();
+
+				await act( async () => jest.advanceTimersByTime( 1 ) );
+
+				expect( onResume ).toHaveBeenCalledTimes( 1 );
+				expect( onResume.mock.calls[ 0 ][ 0 ][ 0 ].toolCallId ).toBe( 'call-b' );
+			} );
+
+			it( 'resumes a later turn that pauses again after an earlier resume', async () => {
+				const onResume = jest.fn().mockResolvedValue( false );
+				mockLoadedConversation( [ question, toolResult ], pausedOnCall( 'call-a' ) );
+				const { rerender } = renderHook( () =>
+					useConversation( { waitForReply: true, onSuccess: jest.fn(), onResume } )
+				);
+				await act( async () => jest.advanceTimersByTime( RESUME_AFTER_MS ) );
+
+				mockLoadedConversation( [ question, toolResult, reply ], pausedOnCall( 'call-b' ) );
+				rerender();
+				await act( async () => jest.advanceTimersByTime( RESUME_AFTER_MS ) );
+
+				expect( onResume ).toHaveBeenCalledTimes( 2 );
+				expect( onResume.mock.calls[ 1 ][ 0 ][ 0 ].toolCallId ).toBe( 'call-b' );
+			} );
+
+			it( 'loads a reply that landed mid-resume when the resume brings none', async () => {
+				const onSuccess = jest.fn();
+				let finishResume: ( replied: boolean ) => void = () => {};
+				const onResume = jest.fn(
+					() => new Promise< boolean >( ( resolve ) => ( finishResume = resolve ) )
+				);
+				mockLoadedConversation( [ question, toolResult ], pausedOn( 'unanswered' ) );
+				const { rerender } = renderHook( () =>
+					useConversation( { waitForReply: true, onSuccess, onResume } )
+				);
+				await act( async () => jest.advanceTimersByTime( RESUME_AFTER_MS ) );
+
+				mockLoadedConversation( [ question, toolResult, reply ] );
+				rerender();
+				await act( async () => finishResume( false ) );
+
+				expect( onSuccess ).toHaveBeenCalledTimes( 2 );
+				expect( onSuccess.mock.calls[ 1 ][ 0 ] ).toContainEqual( reply );
+			} );
+
+			it( 'reports a failed resume until the next turn starts', async () => {
+				const consoleError = jest.spyOn( console, 'error' ).mockImplementation( () => {} );
+				mockLoadedConversation( [ question, toolResult ], pausedOn( 'unanswered' ) );
+				const { result, rerender } = renderHook(
+					( props: { waitForReply: boolean } ) =>
+						useConversation( {
+							...props,
+							onSuccess: jest.fn(),
+							onResume: jest.fn().mockRejectedValue( new Error( 'already received' ) ),
+						} ),
+					{ initialProps: { waitForReply: true } }
+				);
+
+				await act( async () => jest.advanceTimersByTime( RESUME_AFTER_MS ) );
+
+				expect( result.current.hasFailedResume ).toBe( true );
+
+				rerender( { waitForReply: false } );
+
+				expect( result.current.hasFailedResume ).toBe( false );
+				consoleError.mockRestore();
+			} );
+
 			it( 'leaves a parked wp-admin-navigate call to the navigation continuation', async () => {
 				mockParkedNavigationCallId = 'call-top';
 				const onResume = jest.fn();

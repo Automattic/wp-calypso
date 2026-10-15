@@ -53,6 +53,8 @@ interface Result {
 	isLoading: boolean;
 	isError: boolean;
 	notice: NoticeConfig | undefined;
+	/** A resume failed, usually as another page answered first; the chat hides its send error until the next turn. */
+	hasFailedResume: boolean;
 }
 
 /**
@@ -89,7 +91,12 @@ export default function useConversation( {
 	const replyWaitRef = useRef( replyWait );
 	replyWaitRef.current = replyWait;
 	const loadedNewestIdRef = useRef( 0 );
-	const resumeAttemptedRef = useRef( false );
+	// The pending calls a resume answered, so the same turn is resumed once.
+	const resumedCallsRef = useRef( '' );
+	// Set when a reload lands mid-resume; it is processed if no reply comes of the resume.
+	const skippedDataRef = useRef( false );
+	const [ dataCheck, setDataCheck ] = useState( 0 );
+	const [ hasFailedResume, setHasFailedResume ] = useState( false );
 
 	const queryClient = useQueryClient();
 	const queryKey = [ 'agents-manager-conversation', sessionId ];
@@ -130,7 +137,8 @@ export default function useConversation( {
 
 	useEffect( () => {
 		setReplyWait( 'idle' );
-		resumeAttemptedRef.current = false;
+		resumedCallsRef.current = '';
+		skippedDataRef.current = false;
 	}, [ sessionId ] );
 
 	useEffect(
@@ -138,6 +146,8 @@ export default function useConversation( {
 			if ( waitForReply ) {
 				return;
 			}
+
+			setHasFailedResume( false );
 
 			// A new turn answers the Retry notice too: its Retry would resend mid-turn.
 			if ( replyWait === 'timed-out' ) {
@@ -157,8 +167,13 @@ export default function useConversation( {
 
 	useEffect(
 		() => {
+			if ( ! data ) {
+				return;
+			}
+
 			// The resume streams its reply live; a reload would replace it.
-			if ( ! data || replyWait === 'resuming' ) {
+			if ( replyWait === 'resuming' ) {
+				skippedDataRef.current = true;
 				return;
 			}
 
@@ -195,7 +210,7 @@ export default function useConversation( {
 			}
 		},
 		// eslint-disable-next-line react-hooks/exhaustive-deps -- we only want to call onSuccess when data changes
-		[ data ]
+		[ data, dataCheck ]
 	);
 
 	// Restarts with each new message: a long turn still adding results is not over.
@@ -212,11 +227,15 @@ export default function useConversation( {
 	const pendingTools = data?.pendingClientTools;
 	const pendingToolsRef = useRef( pendingTools );
 	pendingToolsRef.current = pendingTools;
+	const pendingCalls =
+		pendingTools?.state === 'unanswered'
+			? pendingTools.calls.map( ( call ) => call.toolCallId ).join( ',' )
+			: '';
 	const canResume =
 		replyWait === 'waiting' &&
 		!! onResume &&
-		pendingTools?.state === 'unanswered' &&
-		! resumeAttemptedRef.current;
+		!! pendingCalls &&
+		pendingCalls !== resumedCallsRef.current;
 
 	useEffect(
 		() => {
@@ -235,7 +254,8 @@ export default function useConversation( {
 					return;
 				}
 
-				resumeAttemptedRef.current = true;
+				resumedCallsRef.current = pendingCalls;
+				skippedDataRef.current = false;
 				setReplyWait( 'resuming' );
 				const { results, turnToolCalls } = buildToolCallResume( pending );
 				let replied = false;
@@ -245,6 +265,7 @@ export default function useConversation( {
 					// Another page answered first, or the send failed: keep waiting for a reply.
 					// eslint-disable-next-line no-console
 					console.error( '[useConversation] Error resuming the paused turn:', resumeError );
+					setHasFailedResume( true );
 				}
 				setReplyWait( ( current ) => {
 					if ( current !== 'resuming' ) {
@@ -252,12 +273,15 @@ export default function useConversation( {
 					}
 					return replied ? 'idle' : 'waiting';
 				} );
+				if ( ! replied && skippedDataRef.current ) {
+					setDataCheck( ( check ) => check + 1 );
+				}
 			}, RESUME_AFTER_MS );
 
 			return () => clearTimeout( timer );
 		},
 		// eslint-disable-next-line react-hooks/exhaustive-deps -- the latest calls are read when it fires
-		[ canResume ]
+		[ canResume, pendingCalls ]
 	);
 
 	useEffect( () => {
@@ -295,5 +319,5 @@ export default function useConversation( {
 		};
 	}
 
-	return { data, isLoading, isError, notice };
+	return { data, isLoading, isError, notice, hasFailedResume };
 }
