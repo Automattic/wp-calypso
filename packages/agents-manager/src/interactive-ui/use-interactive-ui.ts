@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from '@wordpress/element';
 import { startNewUserRequest } from '../utils/canvas-binding';
 import { startTurn } from '../utils/turn-id';
-import { executeInteractiveUiAction } from './execute-interactive-ui-action';
 import { getInteractiveUiBatches } from './interactive-ui-messages';
 import type { InteractiveUiRuntime } from './runtime';
 import type { AgentConfig } from '../utils/create-agent-config';
@@ -103,7 +102,10 @@ export default function useInteractiveUi( options: Options ) {
 					startTurn();
 					startNewUserRequest();
 					await flushPendingNavigation();
-					await executeInteractiveUiAction( action, agentConfig, onSubmit );
+					await onSubmit( JSON.stringify( { version: 'v0.9', action } ), {
+						type: 'context',
+						sessionId: agentConfig.sessionId,
+					} );
 				}
 			);
 		}
