@@ -1431,6 +1431,9 @@ describe( 'main app', () => {
 
 		it( 'does not record outside production', async () => {
 			const devApp = buildApp( 'development' );
+			devApp.withServerRender( '' );
+			devApp.withMockFilesystem();
+			devApp.withEvergreenBrowser();
 			const { response } = await devApp.run( { request: { url: '/start/launch-site', query } } );
 			expect( response.redirect ).toHaveBeenCalledWith( 302, `/setup/launch-site?${ search }` );
 			expect( devApp.getMocks().analytics.tracks.recordEvent ).not.toHaveBeenCalled();
