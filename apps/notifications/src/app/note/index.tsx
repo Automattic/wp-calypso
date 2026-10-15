@@ -17,10 +17,9 @@ import actions from '../../panel/state/actions';
 import getAllNotes from '../../panel/state/selectors/get-all-notes';
 import getIsNotePendingApproval from '../../panel/state/selectors/get-is-note-pending-approval';
 import getIsNoteRead from '../../panel/state/selectors/get-is-note-read';
-import { NoteBody, ActionBlock, ReplyFooter, SimplifiedActionBlock } from '../templates/body';
+import { NoteBody, ActionBlock } from '../templates/body';
 import CloseButton from '../templates/close-button';
 import NoteSummary from '../templates/note-summary';
-import { useIsSimplifiedNote } from '../use-is-simplified-note';
 import './style.scss';
 import type { NoteNavigation } from './hooks';
 import type { Note as NoteObject, Block } from '../types';
@@ -82,7 +81,6 @@ const Note = ( { isDismissible, noteId, setSelectedNoteId, noteNavigation }: Not
 		( state ) => !! note && getIsNotePendingApproval( state, note )
 	);
 	const isRead = useSelector( ( state ) => note && getIsNoteRead( state, note ) );
-	const isSimplified = useIsSimplifiedNote();
 
 	useEffect( () => {
 		if ( note?.id ) {
@@ -162,14 +160,9 @@ const Note = ( { isDismissible, noteId, setSelectedNoteId, noteNavigation }: Not
 					<div className={ getClasses( { note, isPendingApproval, isRead } ) }>
 						<NoteBody note={ note } />
 					</div>
-					{ isSimplified && <SimplifiedActionBlock note={ note } goBack={ goBack } /> }
 				</VStack>
 			</CardBody>
-			{ isSimplified ? (
-				<ReplyFooter note={ note } />
-			) : (
-				<ActionBlock note={ note } goBack={ goBack } />
-			) }
+			<ActionBlock note={ note } goBack={ goBack } />
 		</>
 	);
 };
