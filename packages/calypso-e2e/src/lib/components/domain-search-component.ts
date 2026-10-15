@@ -20,6 +20,10 @@ const isShoppingCartResponse = ( response: Response ): boolean => {
 	}
 };
 
+// Name Pulse rows carry their domain on `data-domain` rather than on the list
+// item's `title`; skeleton rows have no `data-domain`.
+const NAME_PULSE_ROW_SELECTOR = '.name-pulse-row[data-domain]';
+
 // `reloadAndRetry` runs the search closure three times, inside a 120s test.
 const SEARCH_BUDGET = 60 * 1000;
 
@@ -190,11 +194,24 @@ export class DomainSearchComponent {
 			// pre-fill response can land after it. Wait until the first row is
 			// a suggestion for this keyword, so selectFirstSuggestion never reads
 			// a row from another search.
+			// Name Pulse (domain-only flow) remounts its results for each query, so any
+			// of its rows matching the keyword means the list is fresh.
+			const namePulseRows = container.locator( NAME_PULSE_ROW_SELECTOR );
 			let firstTitle: string | null = null;
 			for ( let attempt = 0; attempt < 50; attempt++ ) {
-				firstTitle = await firstListitem.getAttribute( 'title' );
-				if ( titleMatchesKeyword( firstTitle ) ) {
-					return;
+				const namePulseDomains = await namePulseRows.evaluateAll( ( rows ) =>
+					rows.map( ( row ) => row.getAttribute( 'data-domain' ) )
+				);
+				if ( namePulseDomains.length ) {
+					firstTitle = namePulseDomains[ 0 ];
+					if ( namePulseDomains.some( titleMatchesKeyword ) ) {
+						return;
+					}
+				} else {
+					firstTitle = await firstListitem.getAttribute( 'title' );
+					if ( titleMatchesKeyword( firstTitle ) ) {
+						return;
+					}
 				}
 				await page.waitForTimeout( within( 200 ) );
 			}
@@ -304,7 +321,27 @@ export class DomainSearchComponent {
 	 * @returns {string} Domain that was selected.
 	 */
 	async selectFirstSuggestion( waitForContinueButton: boolean = true ): Promise< string > {
-		const targetRow = this.getContainer().getByRole( 'listitem' ).first();
+		const container = this.getContainer();
+		const namePulseRows = container.locator( NAME_PULSE_ROW_SELECTOR );
+		const isNamePulse = ( await namePulseRows.count() ) > 0;
+
+		if ( isNamePulse ) {
+			// Rows get their cart button once checked, so a later row can be ready
+			// before the first one. Wait for the first so the pick is stable.
+			await namePulseRows
+				.first()
+				.and( this.page.locator( ':not([data-status="waiting"])' ) )
+				.waitFor( { timeout: 30 * 1000 } );
+		}
+
+		// Name Pulse rows can be taken or still checking, and only available ones
+		// get the button.
+		const targetRow = isNamePulse
+			? container
+					.getByRole( 'listitem' )
+					.filter( { has: this.page.getByRole( 'button', { name: 'Add to cart' } ) } )
+					.first()
+			: container.getByRole( 'listitem' ).first();
 		const suggestion = await this.selectSuggestion( targetRow, waitForContinueButton );
 
 		if ( ! suggestion ) {
@@ -344,6 +381,15 @@ export class DomainSearchComponent {
 		// List freshness is guaranteed by search(), which waits for the
 		// suggestions response and for the DOM to reflect it before returning,
 		// so a single read of the row title is reliable here.
+		const namePulseDomain = await row.evaluate(
+			( element, selector ) => element.querySelector( selector )?.getAttribute( 'data-domain' ),
+			NAME_PULSE_ROW_SELECTOR
+		);
+
+		if ( namePulseDomain ) {
+			return this.addNamePulseRowToCart( namePulseDomain, waitForContinueButton );
+		}
+
 		const selectedDomain = await row.getAttribute( 'title' );
 
 		if ( ! selectedDomain ) {
@@ -419,6 +465,79 @@ export class DomainSearchComponent {
 		}
 
 		return selectedDomain;
+	}
+
+	/**
+	 * Adds a Name Pulse row to the cart.
+	 *
+	 * The row keeps its cart button once added, toggling it to "Remove from cart",
+	 * and the Continue button sits in the cart rather than in the row.
+	 *
+	 * @param {string} domain Domain name of the row.
+	 * @param {boolean} waitForContinueButton Whether to wait for the continue button.
+	 * @returns {string} Domain that was selected.
+	 */
+	private async addNamePulseRowToCart(
+		domain: string,
+		waitForContinueButton: boolean
+	): Promise< string > {
+		// Pinned by domain: a locator filtered on "Add to cart" would move to the
+		// next row once this one is added.
+		const row = this.getContainer()
+			.getByRole( 'listitem' )
+			.filter( { has: this.page.locator( `[data-domain="${ domain }"]` ) } )
+			.first();
+
+		const cartResponseSummaries: Promise< CartResponseDiagnostic >[] = [];
+		const trackCartResponse = ( response: Response ) => {
+			if ( isShoppingCartResponse( response ) ) {
+				cartResponseSummaries.push( summarizeCartResponse( response ) );
+			}
+		};
+
+		this.page.on( 'response', trackCartResponse );
+
+		try {
+			await row.getByRole( 'button', { name: 'Add to cart' } ).click();
+			await row
+				.getByRole( 'button', { name: 'Remove from cart' } )
+				.waitFor( { timeout: 30 * 1000 } );
+		} catch ( error ) {
+			handleActiveThrottles( [ 'domain-availability' ] );
+
+			const cartResponses = ( await Promise.allSettled( cartResponseSummaries ) ).map(
+				( result ) =>
+					result.status === 'fulfilled' ? result.value : { error: formatError( result.reason ) }
+			);
+			const rowText = normalizeText( await row.textContent( { timeout: 1000 } ).catch( () => '' ) );
+
+			throw new Error(
+				[
+					`Failed to select domain suggestion "${ domain }".`,
+					`Original error: ${ formatError( error ) }`,
+					`Diagnostics: ${ JSON.stringify(
+						{
+							currentUrl: this.page.url(),
+							rowText: rowText.slice( 0, 500 ),
+							cartResponses: cartResponses.slice( -5 ),
+						},
+						null,
+						2
+					) }`,
+				].join( '\n' )
+			);
+		} finally {
+			this.page.off( 'response', trackCartResponse );
+		}
+
+		if ( waitForContinueButton ) {
+			await this.page
+				.getByRole( 'button', { name: 'Continue' } )
+				.first()
+				.waitFor( { timeout: 30 * 1000 } );
+		}
+
+		return domain;
 	}
 
 	/**
