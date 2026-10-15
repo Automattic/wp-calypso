@@ -152,7 +152,10 @@ it( 'keeps HTML and inline CSS while stripping active markup and external resour
 	expect( doc.head.firstElementChild?.getAttribute( 'http-equiv' ) ).toBe(
 		'Content-Security-Policy'
 	);
-	expect( doc.querySelectorAll( 'meta' ) ).toHaveLength( 1 );
+	expect( doc.querySelectorAll( 'meta' ) ).toHaveLength( 2 );
+	expect( doc.querySelector( 'meta[name=referrer]' )?.getAttribute( 'content' ) ).toBe(
+		'no-referrer'
+	);
 	expect( doc.querySelector( 'meta' )?.content ).toContain( "default-src 'none'" );
 } );
 
@@ -192,4 +195,89 @@ it( 'switches between streamed pages using the same authenticated endpoint', asy
 		)
 	);
 	await screen.findByTitle( 'Site preview' );
+} );
+
+const imageSource = '/wp-content/themes/test/assets/hero.png?v=abcdef12';
+const fontSource = '/wp-content/themes/test/assets/fonts/heading.woff2';
+const assetUrl = ( id: string, token = 'header.payload.signature' ) =>
+	`https://public-api.wordpress.com/wpcom/v2/sites/123/big-sky/build-wow/preview-assets/${ id }/content?token=${ token }`;
+const imageAsset = {
+	id: 'a'.repeat( 64 ),
+	mime_type: 'image/png',
+	url: assetUrl( 'a'.repeat( 64 ) ),
+};
+const fontAsset = {
+	id: 'b'.repeat( 64 ),
+	mime_type: 'font/woff2',
+	url: assetUrl( 'b'.repeat( 64 ) ),
+};
+
+it( 'rewrites registered images, CSS backgrounds and bundled fonts with a scoped CSP', () => {
+	const output = htmlPreviewDocument(
+		`<html><head><style>@font-face{font-family:Heading;src:url('${ fontSource }')} .hero{background-image:url("${ imageSource }")} .bad{background:url(https://evil.example/track)}</style></head><body><img src="${ imageSource }" srcset="https://evil.example/track 2x" onerror="alert(1)"><img src="https://evil.example/image"><div style="background:url('${ imageSource }')"></div></body></html>`,
+		{ [ imageSource ]: imageAsset, [ fontSource ]: fontAsset }
+	);
+	const doc = new DOMParser().parseFromString( output, 'text/html' );
+	expect( doc.querySelectorAll( 'img' ) ).toHaveLength( 1 );
+	expect( doc.querySelector( 'img' )?.getAttribute( 'src' ) ).toBe( imageAsset.url );
+	expect( doc.querySelector( 'img' )?.getAttribute( 'crossorigin' ) ).toBe( 'anonymous' );
+	expect( doc.querySelector( 'img' )?.getAttribute( 'referrerpolicy' ) ).toBe( 'no-referrer' );
+	expect( doc.querySelector( '[onerror], [srcset]' ) ).toBeNull();
+	expect( doc.querySelector( 'style' )?.textContent ).toContain( fontAsset.url );
+	expect( doc.querySelector( 'style' )?.textContent ).toContain( imageAsset.url );
+	expect( doc.querySelector( '[style]' )?.getAttribute( 'style' ) ).toContain( imageAsset.url );
+	expect( output ).not.toContain( 'evil.example' );
+	const csp = doc.querySelector( 'meta' )?.content;
+	expect( csp ).toContain( `img-src ${ imageAsset.url.split( '?' )[ 0 ] }` );
+	expect( csp ).toContain( `font-src ${ fontAsset.url.split( '?' )[ 0 ] }` );
+	expect( csp ).not.toContain( 'token=' );
+	expect( csp ).toContain( "script-src 'none'" );
+} );
+
+it.each( [
+	{ url: 'https://evil.example/image' },
+	{ url: assetUrl( 'a'.repeat( 64 ) ).replace( '/sites/123/', '/sites/456/' ) },
+	{ url: assetUrl( 'a'.repeat( 64 ) ) + '&redirect=https://evil.example' },
+	{ url: assetUrl( 'b'.repeat( 64 ) ) },
+	{ mime_type: 'image/svg+xml' },
+	{ mime_type: 'text/html' },
+] )(
+	'drops invalid asset references from the authenticated response (case %#)',
+	async ( invalid ) => {
+		global.fetch = jest.fn().mockResolvedValue( {
+			ok: true,
+			json: async () => ( {
+				...payload,
+				assets: { [ imageSource ]: { ...imageAsset, ...invalid } },
+			} ),
+		} );
+		const { result } = renderHook( () => useBuildHtmlPreview( reference, stream ) );
+		await waitFor( () => expect( result.current.html ).toBe( payload.html ) );
+		expect( result.current.assets ).toEqual( {} );
+	}
+);
+
+it( 'renews signed URLs without another build event and cancels renewal on unmount', async () => {
+	jest.useFakeTimers();
+	global.fetch = jest.fn().mockImplementation( async () => ( {
+		ok: true,
+		json: async () => ( {
+			...payload,
+			assets: { [ imageSource ]: imageAsset },
+			assets_expires_at: Math.floor( Date.now() / 1000 ) + 600,
+		} ),
+	} ) );
+	const { result, unmount } = renderHook( () => useBuildHtmlPreview( reference, stream ) );
+	await act( async () => {} );
+	expect( result.current.assets?.[ imageSource ] ).toEqual( imageAsset );
+	expect( global.fetch ).toHaveBeenCalledTimes( 1 );
+	await act( async () => {
+		jest.advanceTimersByTime( 300000 );
+	} );
+	expect( global.fetch ).toHaveBeenCalledTimes( 2 );
+	unmount();
+	await act( async () => {
+		jest.advanceTimersByTime( 600000 );
+	} );
+	expect( global.fetch ).toHaveBeenCalledTimes( 2 );
 } );

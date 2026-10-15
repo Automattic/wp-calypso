@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
-import { MAX_PREVIEW_HTML_BYTES } from './html-preview-document';
+import { MAX_PREVIEW_HTML_BYTES, parsePreviewAssets } from './html-preview-document';
+import type { PreviewAssets } from './html-preview-document';
 import type { StreamPreview } from './reducer';
 import type { BuildWowStreamView } from './use-build-wow-stream';
 
@@ -7,7 +8,11 @@ export function useBuildHtmlPreview(
 	reference: StreamPreview | undefined,
 	stream: BuildWowStreamView | null
 ) {
-	const [ loaded, setLoaded ] = useState< { key: string; html: string } | null >( null );
+	const [ loaded, setLoaded ] = useState< {
+		key: string;
+		html: string;
+		assets: PreviewAssets;
+	} | null >( null );
 	const [ failedKey, setFailedKey ] = useState< string | null >( null );
 	const previewUrl = stream?.info.previewUrl;
 	const runId = stream?.info.runId;
@@ -59,7 +64,22 @@ export function useBuildHtmlPreview(
 					throw new Error( 'Invalid preview document' );
 				}
 				if ( ! controller.signal.aborted ) {
-					setLoaded( { key, html: body.html } );
+					setLoaded( {
+						key,
+						html: body.html,
+						assets: parsePreviewAssets( body.assets, blogId ?? 0 ),
+					} );
+					failures = 0;
+					if (
+						typeof body.assets_expires_at === 'number' &&
+						Number.isFinite( body.assets_expires_at )
+					) {
+						const delay = Math.max(
+							30000,
+							Math.min( 300000, body.assets_expires_at * 1000 - Date.now() - 60000 )
+						);
+						timer = setTimeout( load, delay );
+					}
 				}
 			} catch {
 				if ( controller.signal.aborted ) {
@@ -77,10 +97,11 @@ export function useBuildHtmlPreview(
 			controller.abort();
 			clearTimeout( timer );
 		};
-	}, [ previewUrl, runId, route, epoch, documentId, authorize, key ] );
+	}, [ previewUrl, runId, route, epoch, documentId, authorize, key, blogId ] );
 
 	return {
 		html: reference && loaded?.key === key ? loaded.html : null,
+		assets: reference && loaded?.key === key ? loaded.assets : undefined,
 		failed: failedKey === key,
 	};
 }
