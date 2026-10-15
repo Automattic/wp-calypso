@@ -100,6 +100,34 @@
 		justify-content: center;
 	}
 
+	// Text keeps its line height and wrapping; only the glyphs are hidden.
+	&__skeleton {
+		border-radius: 4px;
+		background: linear-gradient( 90deg, #ddd, #eee 49.5%, rgba( 238, 238, 238, 0.5 ) );
+		color: transparent;
+		animation: name-pulse-skeleton 1.2s ease-in-out infinite;
+		box-decoration-break: clone;
+
+		&--icon {
+			display: inline-block;
+			width: 20px;
+			height: 20px;
+			flex-shrink: 0;
+		}
+
+		&--badge {
+			display: inline-block;
+			width: 9rem;
+			height: 24px;
+		}
+
+		&--cta {
+			display: inline-block;
+			width: 7.5rem;
+			height: 40px;
+		}
+	}
+
 	&__footer {
 		display: flex;
 		align-items: center;

@@ -129,7 +129,8 @@ const findNotice = () => findElement( '.name-pulse-notice' );
 
 const findExactMatchCard = () => findElement( '.name-pulse-exact-card[data-domain]' );
 
-const findBundleCard = () => findElement( '.name-pulse-bundle-card' );
+const findBundleCard = () =>
+	findElement( '.name-pulse-bundle-card:not(.name-pulse-bundle-card--placeholder)' );
 
 const isAfterTopResults = ( element: HTMLElement ) =>
 	Boolean(
@@ -1043,9 +1044,42 @@ describe( 'NamePulseResults', () => {
 			);
 
 			await waitFor( () => expect( bundleForDomain ).toHaveBeenCalledWith( 'icecream.com' ) );
+			await waitFor( () =>
+				expect( document.querySelector( '.name-pulse-bundle-card' ) ).toBeNull()
+			);
 
 			expect( bundleForDomain ).toHaveBeenCalledTimes( 1 );
-			expect( document.querySelector( '.name-pulse-bundle-card' ) ).toBeNull();
+		} );
+
+		it( 'holds its place under Top results while the bundle loads', async () => {
+			render(
+				<NamePulseTestSearch
+					query="icecream"
+					showBundleSuggestions
+					bundleForDomain={ () => new Promise( () => {} ) }
+				/>
+			);
+
+			const placeholder = await screen.findByRole( 'status', { name: 'Loading domain bundle' } );
+
+			expect( placeholder ).toHaveClass( 'name-pulse-bundle-card--wide' );
+			expect( isAfterTopResults( placeholder ) ).toBe( true );
+		} );
+
+		it( 'holds its place beside the exact-match card while the bundle loads', async () => {
+			render(
+				<NamePulseTestSearch
+					query="icecream.com"
+					showBundleSuggestions
+					bundleForDomain={ () => new Promise( () => {} ) }
+				/>
+			);
+
+			await findExactMatchCard();
+			const placeholder = screen.getByRole( 'status', { name: 'Loading domain bundle' } );
+
+			expect( placeholder.closest( '.name-pulse-featured' ) ).not.toBeNull();
+			expect( placeholder ).not.toHaveClass( 'name-pulse-bundle-card--wide' );
 		} );
 
 		it( 'adds every member to the cart in one go, and explains a bundle that is gone', async () => {
