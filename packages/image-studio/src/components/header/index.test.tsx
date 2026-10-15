@@ -416,6 +416,7 @@ describe( 'Header', () => {
 			expect( screen.getByLabelText( 'Select an area of the image to edit' ) ).toBeDisabled();
 			expect( screen.getByLabelText( 'View or edit information about the image' ) ).toBeDisabled();
 			expect( screen.getByLabelText( 'Rotate left' ) ).toBeDisabled();
+			expect( screen.getByLabelText( 'Crop' ) ).toBeDisabled();
 		} );
 
 		it.each( [
@@ -466,6 +467,54 @@ describe( 'Header', () => {
 			] ) {
 				expect( screen.getByLabelText( label ) ).toBeDisabled();
 			}
+		} );
+
+		it( 'enters crop mode and leaves annotation mode when Crop is clicked', async () => {
+			const setActiveToolbarOption = jest.fn();
+			const user = userEvent.setup();
+
+			render(
+				<Header
+					{ ...defaultProps }
+					mode={ ImageStudioMode.Edit }
+					activeToolbarOption={ ToolbarOption.Annotate }
+					setActiveToolbarOption={ setActiveToolbarOption }
+				/>
+			);
+
+			await user.click( screen.getByLabelText( 'Crop' ) );
+
+			expect( setActiveToolbarOption ).toHaveBeenCalledWith( ToolbarOption.Crop );
+			expect( mockSetAnnotationMode ).toHaveBeenCalledWith( false );
+			expect( mockTrackImageStudioToolClick ).toHaveBeenCalledWith( 'crop', 'open' );
+		} );
+
+		it( 'leaves crop mode when Crop is clicked again', async () => {
+			const setActiveToolbarOption = jest.fn();
+			const user = userEvent.setup();
+
+			render(
+				<Header
+					{ ...defaultProps }
+					mode={ ImageStudioMode.Edit }
+					activeToolbarOption={ ToolbarOption.Crop }
+					setActiveToolbarOption={ setActiveToolbarOption }
+				/>
+			);
+
+			const cropButton = screen.getByLabelText( 'Crop' );
+			expect( cropButton ).toHaveAttribute( 'aria-pressed', 'true' );
+
+			await user.click( cropButton );
+
+			expect( setActiveToolbarOption ).toHaveBeenCalledWith( null );
+			expect( mockTrackImageStudioToolClick ).toHaveBeenCalledWith( 'crop', 'close' );
+		} );
+
+		it( 'disables Crop while saving', () => {
+			render( <Header { ...defaultProps } mode={ ImageStudioMode.Edit } isSaving /> );
+
+			expect( screen.getByLabelText( 'Crop' ) ).toBeDisabled();
 		} );
 
 		it( 'shows pressed state for active toolbar option', () => {

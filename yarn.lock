@@ -1687,6 +1687,7 @@ __metadata:
     "@wordpress/hooks": "npm:^5.2.0"
     "@wordpress/i18n": "npm:^7.2.0"
     "@wordpress/icons": "npm:^21.0.0"
+    "@wordpress/image-cropper": "npm:^2.2.0"
     "@wordpress/plugins": "npm:^8.2.0"
     "@wordpress/primitives": "npm:^5.2.0"
     "@wordpress/url": "npm:^5.2.0"
