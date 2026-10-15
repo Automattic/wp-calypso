@@ -5,8 +5,3 @@
 .rtl .mcp-approval-bypass.is-open .summary-button-navigation-icon {
 	transform: rotate( -90deg );
 }
-
-// Matches the card's last-row rule for summary buttons, which can't reach this wrapped one.
-.components-card > .mcp-approval-bypass:last-child:not( .is-open ) .summary-button {
-	border-block-end: none;
-}
