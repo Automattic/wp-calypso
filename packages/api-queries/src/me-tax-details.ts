@@ -6,6 +6,7 @@ export const userTaxDetailsQuery = () =>
 	queryOptions( {
 		queryKey: [ 'me', 'billing-purchases', 'tax-details' ],
 		queryFn: () => fetchUserTaxDetails(),
+		meta: { persist: false },
 	} );
 
 export const userTaxDetailsMutation = () =>
