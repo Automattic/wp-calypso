@@ -8,13 +8,16 @@ import type { ResponseCart } from '@automattic/shopping-cart';
 import type { ManagedContactDetails } from '@automattic/wpcom-checkout';
 
 const GridRow = styled.div`
-	display: -ms-grid;
 	display: grid;
 	width: 100%;
-	-ms-grid-columns: 48% 4% 48%;
-	grid-template-columns: 48% 48%;
-	grid-column-gap: 4%;
+	grid-template-columns: 1fr;
+	gap: 8px;
 	justify-items: stretch;
+
+	@media ( ${ ( props ) => props.theme.breakpoints.bigPhoneUp } ) {
+		grid-template-columns: 48% 48%;
+		column-gap: 4%;
+	}
 `;
 
 export default function WPContactFormSummary( {
@@ -42,6 +45,16 @@ export default function WPContactFormSummary( {
 		contactInfo.lastName?.value
 	);
 
+	const hasFullAddress = areThereDomainProductsInCart && ! isRenewal;
+	const addressSummary = (
+		<AddressSummary
+			responseCart={ responseCart }
+			isRenewal={ isRenewal }
+			contactInfo={ contactInfo }
+			areThereDomainProductsInCart={ areThereDomainProductsInCart }
+		/>
+	);
+
 	return (
 		<GridRow>
 			<div>
@@ -67,13 +80,9 @@ export default function WPContactFormSummary( {
 						) }
 				</SummaryDetails>
 
-				<AddressSummary
-					responseCart={ responseCart }
-					isRenewal={ isRenewal }
-					contactInfo={ contactInfo }
-					areThereDomainProductsInCart={ areThereDomainProductsInCart }
-				/>
+				{ ! hasFullAddress && addressSummary }
 			</div>
+			{ hasFullAddress && <div>{ addressSummary }</div> }
 		</GridRow>
 	);
 }

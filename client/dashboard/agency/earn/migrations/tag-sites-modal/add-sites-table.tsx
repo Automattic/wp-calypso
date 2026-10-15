@@ -73,7 +73,7 @@ export default function MigrationsAddSitesTable( {
 	const onSelectAllSites = useCallback( () => {
 		const isAllSitesSelected = selectedSites.length === availableSites.length;
 		setSelectedSites( isAllSitesSelected ? [] : availableSites );
-		recordTracksEvent( 'calypso_a8c_migrations_tag_sites_modal_select_all_sites_click', {
+		recordTracksEvent( 'calypso_a4a_migrations_tag_sites_modal_select_all_sites_click', {
 			type: isAllSitesSelected ? 'deselect' : 'select',
 		} );
 	}, [ recordTracksEvent, availableSites, selectedSites.length, setSelectedSites ] );
@@ -85,7 +85,7 @@ export default function MigrationsAddSitesTable( {
 			} else {
 				setSelectedSites( selectedSites.filter( ( site ) => site.id !== item.id ) );
 			}
-			recordTracksEvent( 'calypso_a8c_migrations_tag_sites_modal_select_site_click', {
+			recordTracksEvent( 'calypso_a4a_migrations_tag_sites_modal_select_site_click', {
 				type: checked ? 'select' : 'deselect',
 			} );
 		},

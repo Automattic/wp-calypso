@@ -1,10 +1,11 @@
 /**
  * @jest-environment jsdom
  */
-import { act, render } from '@testing-library/react';
+import { act, render, waitFor } from '@testing-library/react';
 import {
 	applyBlueprintSpec,
 	getSiteAdminUrl,
+	lookupBlueprintArchive,
 	startBlueprintArchiveImport,
 	startBlueprintSimpleImport,
 	waitForAtomicTransferComplete,
@@ -97,8 +98,17 @@ jest.mock( 'calypso/landing/stepper/utils/blueprint-archive-import', () => ( {
 	getSiteEditorUrl: jest.fn( () => 'https://example.wordpress.com/wp-admin/site-editor.php' ),
 	getSpecMetaFromQuery: ( queryParams: URLSearchParams ) => {
 		const url = queryParams.get( 'zoom_booking_url' );
-		return url ? { zoom_booking_url: url } : {};
+		const title = queryParams.get( 'site_title' );
+		return {
+			...( url ? { zoom_booking_url: url } : {} ),
+			...( title ? { site_title: title } : {} ),
+		};
 	},
+	isPrefillComplete: ( prefill: string[], specMeta: Record< string, string > ) =>
+		prefill.length > 0 && prefill.every( ( name ) => typeof specMeta[ name ] === 'string' ),
+	lookupBlueprintArchive: jest.fn( () =>
+		Promise.resolve( { exists: true, title: '', suggestedPlans: [], prefill: [] } )
+	),
 	isBlueprintCustomThemeBuild: ( queryParams: URLSearchParams ) =>
 		queryParams.get( 'build' ) === 'custom-theme',
 	logBlueprintArchiveEvent: jest.fn(),
@@ -368,6 +378,9 @@ describe( 'SiteSpec blueprint archive import', () => {
 	const confirmSpec = async () => {
 		renderSiteSpec();
 
+		// A Simple build mounts the widget only once the blueprint lookup has said an
+		// interview is needed.
+		await waitFor( () => expect( mockUseSiteSpec ).toHaveBeenCalled() );
 		const siteSpecOptions = mockUseSiteSpec.mock.calls[ 0 ][ 0 ];
 		await act( async () => {
 			await siteSpecOptions.onSpecConfirm( { spec_id: 'spec-789' } );
@@ -469,16 +482,145 @@ describe( 'SiteSpec blueprint archive import', () => {
 			);
 		} );
 
-		it( 'starts the Simple import when the interview opens, never the archive restore', () => {
+		it( 'starts the Simple import when the interview opens, never the archive restore', async () => {
 			renderSiteSpec();
 
-			expect( startBlueprintSimpleImport ).toHaveBeenCalledWith(
-				'example.wordpress.com',
-				'zoom',
-				123
+			// The booking URL from the entry link rides along, so the import can write it into
+			// the blueprint content's placeholder without an agent. The blueprint declares no
+			// prefill, so the interview runs and the import is not asked to confirm the spec.
+			await waitFor( () =>
+				expect( startBlueprintSimpleImport ).toHaveBeenCalledWith(
+					'example.wordpress.com',
+					'zoom',
+					123,
+					{ zoom_booking_url: 'https://scheduler.zoom.us/jason' },
+					{ applySpec: false }
+				)
 			);
 			// The archive restore converts the site to Atomic, which a Simple build must never do.
 			expect( startBlueprintArchiveImport ).not.toHaveBeenCalled();
+		} );
+
+		it( 'starts the import with no site values when the entry link carried none', async () => {
+			mockQueryParams = new URLSearchParams(
+				'blueprint_simple_import=1&blueprint_slug=zoom&siteSlug=example.wordpress.com&siteId=123'
+			);
+
+			renderSiteSpec();
+
+			await waitFor( () =>
+				expect( startBlueprintSimpleImport ).toHaveBeenCalledWith(
+					'example.wordpress.com',
+					'zoom',
+					123,
+					{},
+					{ applySpec: false }
+				)
+			);
+		} );
+
+		// The partner's hand-off settled everything the blueprint asks: no interview, the
+		// import confirms the spec, and this page waits on it and hands over.
+		it( 'skips the interview and hands over after the import when the partner settled the spec', async () => {
+			( lookupBlueprintArchive as jest.Mock ).mockResolvedValueOnce( {
+				exists: true,
+				title: 'zoom test',
+				suggestedPlans: [],
+				prefill: [ 'site_title' ],
+			} );
+			mockQueryParams = new URLSearchParams(
+				'blueprint_simple_import=1&blueprint_slug=zoom&siteSlug=example.wordpress.com&siteId=123&zoom_booking_url=https%3A%2F%2Fscheduler.zoom.us%2Fjason&site_title=Cedar%20Keel'
+			);
+
+			renderSiteSpec();
+
+			await waitFor( () =>
+				expect( startBlueprintSimpleImport ).toHaveBeenCalledWith(
+					'example.wordpress.com',
+					'zoom',
+					123,
+					{ zoom_booking_url: 'https://scheduler.zoom.us/jason', site_title: 'Cedar Keel' },
+					{ applySpec: true }
+				)
+			);
+			await waitFor( () => expect( mockSetPendingAction ).toHaveBeenCalled() );
+
+			// No interview widget was configured for this run.
+			expect( getBlueprintSiteSpecConfig ).not.toHaveBeenCalled();
+			expect( navigation.submit ).toHaveBeenCalled();
+
+			const pendingAction = mockSetPendingAction.mock.calls[ 0 ][ 0 ];
+			await expect( pendingAction() ).resolves.toEqual( {
+				redirectTo: 'https://example.wordpress.com/wp-admin/site-editor.php?simple=1',
+			} );
+			expect( waitForBlueprintImportComplete ).toHaveBeenCalledWith( 'example.wordpress.com' );
+			// The import applied the spec; nothing here applies it again.
+			expect( applyBlueprintSpec ).not.toHaveBeenCalled();
+		} );
+
+		// The partner supplied only part of what the blueprint asks: the interview runs.
+		it( 'runs the interview when the partner settled only part of the spec', async () => {
+			( lookupBlueprintArchive as jest.Mock ).mockResolvedValueOnce( {
+				exists: true,
+				title: 'zoom test',
+				suggestedPlans: [],
+				prefill: [ 'site_title', 'zoom_booking_url' ],
+			} );
+
+			renderSiteSpec();
+
+			await waitFor( () =>
+				expect( startBlueprintSimpleImport ).toHaveBeenCalledWith(
+					'example.wordpress.com',
+					'zoom',
+					123,
+					{ zoom_booking_url: 'https://scheduler.zoom.us/jason' },
+					{ applySpec: false }
+				)
+			);
+			await waitFor( () => expect( getBlueprintSiteSpecConfig ).toHaveBeenCalled() );
+			expect( mockSetPendingAction ).not.toHaveBeenCalled();
+			expect( navigation.submit ).not.toHaveBeenCalled();
+		} );
+
+		// The lookup is only a hint; a failing one must never keep the interview from mounting.
+		it( 'runs the interview when the blueprint lookup fails', async () => {
+			( lookupBlueprintArchive as jest.Mock ).mockRejectedValueOnce( new Error( 'network' ) );
+
+			renderSiteSpec();
+
+			await waitFor( () => expect( getBlueprintSiteSpecConfig ).toHaveBeenCalled() );
+			expect( startBlueprintSimpleImport ).toHaveBeenCalledWith(
+				'example.wordpress.com',
+				'zoom',
+				123,
+				{ zoom_booking_url: 'https://scheduler.zoom.us/jason' },
+				{ applySpec: false }
+			);
+			expect( mockSetPendingAction ).not.toHaveBeenCalled();
+		} );
+
+		// With no site-spec step to report a failed import start, the interview is the way the
+		// customer learns about it: a partner run that cannot start its import falls back to it.
+		it( 'falls back to the interview when the import cannot be started on a partner run', async () => {
+			( lookupBlueprintArchive as jest.Mock ).mockResolvedValueOnce( {
+				exists: true,
+				title: 'zoom test',
+				suggestedPlans: [],
+				prefill: [ 'site_title' ],
+			} );
+			( startBlueprintSimpleImport as jest.Mock ).mockRejectedValueOnce(
+				new Error( 'import_exists' )
+			);
+			mockQueryParams = new URLSearchParams(
+				'blueprint_simple_import=1&blueprint_slug=zoom&siteSlug=example.wordpress.com&siteId=123&site_title=Cedar%20Keel'
+			);
+
+			renderSiteSpec();
+
+			await waitFor( () => expect( getBlueprintSiteSpecConfig ).toHaveBeenCalled() );
+			expect( mockSetPendingAction ).not.toHaveBeenCalled();
+			expect( navigation.submit ).not.toHaveBeenCalled();
 		} );
 
 		it( 'waits on the import alone, applies the spec and hands over to the site editor directly', async () => {
@@ -501,13 +643,15 @@ describe( 'SiteSpec blueprint archive import', () => {
 			);
 		} );
 
-		it( 'runs the blueprint-aware interview with the spec meta the entry URL carried', () => {
+		it( 'runs the blueprint-aware interview with the spec meta the entry URL carried', async () => {
 			renderSiteSpec();
 
-			expect( getBlueprintSiteSpecConfig ).toHaveBeenCalledWith( {
-				blueprintId: 'zoom',
-				specMeta: { zoom_booking_url: 'https://scheduler.zoom.us/jason' },
-			} );
+			await waitFor( () =>
+				expect( getBlueprintSiteSpecConfig ).toHaveBeenCalledWith( {
+					blueprintId: 'zoom',
+					specMeta: { zoom_booking_url: 'https://scheduler.zoom.us/jason' },
+				} )
+			);
 		} );
 	} );
 

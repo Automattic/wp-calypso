@@ -4,7 +4,7 @@ import { getSessionId as getPostHogSessionId } from '@automattic/posthog';
 import { useDispatch } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { ONBOARD_STORE, SITE_STORE } from 'calypso/landing/stepper/stores';
@@ -16,6 +16,8 @@ import {
 	getSiteAdminUrl,
 	getSiteEditorUrl,
 	getSpecMetaFromQuery,
+	isPrefillComplete,
+	lookupBlueprintArchive,
 	isBlueprintCustomThemeBuild,
 	logBlueprintArchiveEvent,
 	startBlueprintArchiveImport,
@@ -49,6 +51,10 @@ import wpcom from 'calypso/lib/wp';
 import { buildEarlyProvisionDestination } from './early-provisioning';
 import type { Step as StepType } from '../../types';
 import './style.scss';
+
+// How long the Simple build waits for the blueprint lookup before it runs the interview
+// regardless. The lookup is one small GET; the interview must not hang on it.
+const LOOKUP_TIMEOUT_MS = 8000;
 
 function SiteSpecContainer( {
 	siteSpecConfig,
@@ -177,6 +183,21 @@ const SiteSpec: StepType = function SiteSpec( { navigation } ) {
 	const messageCountRef = useRef( 0 );
 	const isSubmittingRef = useRef( false );
 	const blueprintImportStartedRef = useRef( false );
+	// A Simple build whose partner hand-off settled everything the blueprint's interview
+	// would ask has no interview: the import confirms the spec itself and this page only
+	// waits and hands over. Null until the blueprint lookup has said which it is, so the
+	// interview widget never mounts on a run that will not use it.
+	// Undecided only on a run the kickoff below will actually start; any other Simple run
+	// (a funnel hand-off, a missing slug or site) mounts the interview as it always has.
+	const [ isPartnerSpecRun, setIsPartnerSpecRun ] = useState< boolean | null >(
+		isSimpleImport &&
+			shouldImportBlueprint &&
+			! isWowFunnelRun &&
+			blueprintArchiveSlug &&
+			blueprintArchiveSiteIdentifier
+			? null
+			: false
+	);
 	const { setPendingAction } = useDispatch( ONBOARD_STORE );
 	const { setSiteSetupError } = useDispatch( SITE_STORE );
 	// Held in a ref so the spec-confirm callback stays referentially stable: the flow hands
@@ -617,8 +638,74 @@ const SiteSpec: StepType = function SiteSpec( { navigation } ) {
 		// A Simple build runs the Playground import on the site itself; the archive restore
 		// converts the site to Atomic, which a Simple build must never do.
 		const siteId = Number( queryParams.get( 'siteId' ) ) || null;
+		const specMeta = getSpecMetaFromQuery( queryParams );
+
+		// Whether the partner's hand-off already settled the whole spec. If it did, the
+		// import is asked to confirm it, and once the import is under way this page waits
+		// on it and hands over, the way a confirmed brief would, with nothing to ask.
+		const startSimpleBuild = async () => {
+			// A lookup that fails, or does not answer in time, means an interview, as before:
+			// the interview is never gated on this call for longer than a few seconds.
+			let partnerSpec = false;
+			try {
+				const { prefill } = await Promise.race( [
+					lookupBlueprintArchive( blueprintArchiveSlug, { target: 'simple' } ),
+					new Promise< never >( ( _, reject ) =>
+						setTimeout( () => reject( new Error( 'lookup timed out' ) ), LOOKUP_TIMEOUT_MS )
+					),
+				] );
+				partnerSpec = isPrefillComplete( prefill, specMeta );
+			} catch {
+				// Interview.
+			}
+			setIsPartnerSpecRun( partnerSpec );
+
+			let started;
+			try {
+				started = await startBlueprintSimpleImport(
+					blueprintArchiveSiteIdentifier,
+					blueprintArchiveSlug,
+					siteId,
+					specMeta,
+					{ applySpec: partnerSpec }
+				);
+			} catch ( error ) {
+				// Nothing is going to apply the spec now. The interview is the way forward
+				// that reports the failure to the customer (its wait on the import ends on
+				// the error step), rather than a loading screen with no way out.
+				setIsPartnerSpecRun( false );
+				throw error;
+			}
+
+			if ( partnerSpec ) {
+				setPendingAction( async () => {
+					try {
+						await waitForBlueprintImportComplete( blueprintArchiveSiteIdentifier );
+						const siteEditorUrl = getSimpleSiteEditorUrl(
+							await getSiteAdminUrl( blueprintArchiveSiteIdentifier )
+						);
+						logBlueprintArchiveEvent( 'redirect_site_editor', {
+							site_identifier: blueprintArchiveSiteIdentifier,
+							partner_spec: true,
+						} );
+						return { redirectTo: siteEditorUrl };
+					} catch ( error ) {
+						logBlueprintArchiveEvent( 'partner_spec_error', {
+							site_identifier: blueprintArchiveSiteIdentifier,
+							error: error instanceof Error ? error.message : String( error ),
+						} );
+						// Rethrown for the processing step to report.
+						throw error;
+					}
+				} );
+				submitRef.current?.();
+			}
+
+			return started;
+		};
+
 		const start = isSimpleImport
-			? startBlueprintSimpleImport( blueprintArchiveSiteIdentifier, blueprintArchiveSlug, siteId )
+			? startSimpleBuild()
 			: startBlueprintArchiveImport( blueprintArchiveSiteIdentifier, blueprintArchiveSlug );
 
 		start
@@ -640,6 +727,7 @@ const SiteSpec: StepType = function SiteSpec( { navigation } ) {
 		blueprintArchiveSlug,
 		blueprintArchiveSiteIdentifier,
 		queryParams,
+		setPendingAction,
 	] );
 
 	let siteSpecStep = <SiteSpecContainer />;
@@ -668,6 +756,10 @@ const SiteSpec: StepType = function SiteSpec( { navigation } ) {
 				onSpecConfirm={ handleEarlyProvisionSpecConfirm }
 			/>
 		);
+	} else if ( shouldImportBlueprint && isSimpleImport && isPartnerSpecRun !== false ) {
+		// Undecided, or decided that there is nothing to ask: no interview widget, which
+		// would only open a spec session and flash its chat before the hand-off.
+		siteSpecStep = <Step.Loading />;
 	} else if ( shouldImportBlueprint ) {
 		siteSpecStep = (
 			<SiteSpecContainer

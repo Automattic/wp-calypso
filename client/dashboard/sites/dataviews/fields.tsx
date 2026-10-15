@@ -1,4 +1,5 @@
 import { queryClient } from '@automattic/api-queries';
+import { formatNumber } from '@automattic/number-formatters';
 import { __ } from '@wordpress/i18n';
 import { useMemo } from 'react';
 import { useAppContext } from '../../app/context';
@@ -82,6 +83,7 @@ function getDefaultFields( {
 		{
 			id: 'subscribers_count',
 			label: __( 'Subscribers' ),
+			render: ( { item } ) => formatNumber( item.subscribers_count ),
 		},
 		{
 			id: 'backup',

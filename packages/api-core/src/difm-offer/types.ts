@@ -1,4 +1,4 @@
-export type DifmOfferSource = 'home' | 'site-overview' | 'themes';
+export type DifmOfferSource = 'home' | 'site-overview' | 'site-setup' | 'themes';
 
 export type DifmOfferBuildRequestVariation = 'treatment';
 

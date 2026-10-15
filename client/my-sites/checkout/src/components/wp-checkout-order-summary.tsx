@@ -859,14 +859,14 @@ const CheckoutSummaryTitle = styled.div`
 
 const CheckoutSubtotalSection = styled.div`
 	border-bottom: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
-	margin-bottom: 20px;
-	padding-bottom: 20px;
+	margin-bottom: 16px;
+	padding-bottom: 16px;
 `;
 
 const CheckoutSummaryAmountWrapper = styled.div`
 	border-top: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
-	padding: 20px 0 0 0;
-	margin-top: 20px;
+	padding: 16px 0 0 0;
+	margin-top: 16px;
 `;
 
 const CheckoutSummaryLineItem = styled.div< { isDiscount?: boolean } >`
@@ -895,9 +895,9 @@ const CheckoutSummarySubtotal = styled( CheckoutSummaryLineItem )< {
 } >`
 	color: ${ ( props ) => props.theme.colors.textColorDark };
 	font-weight: ${ ( props ) => props.theme.weights.bold };
-	line-height: 26px;
+	line-height: 24px;
 	margin-bottom: 0px;
-	font-size: 20px;
+	font-size: 16px;
 	${ ( { isCheckoutUiRedesignV1 } ) =>
 		isCheckoutUiRedesignV1 &&
 		css`

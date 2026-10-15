@@ -13,6 +13,7 @@ import { store as imageStudioStore, ImageStudioEntryPoint } from '../store';
 import { ImageStudioMode, type MetadataField } from '../types';
 import { getSessionId } from '../utils/session';
 import { parseErrorUrl } from './parse-error-url';
+import type { CreditsCtaType } from '@automattic/agents-manager';
 
 const TRACKS_PREFIX = 'jetpack_big_sky';
 const SITE_TYPES = [ 'simple', 'atomic', 'jetpack' ] as const;
@@ -579,7 +580,8 @@ export interface UpgradeNoticeCredits {
 	state: 'low' | 'zero';
 	planTier: string;
 	creditsLeft: number | 'none';
-	ctaType: 'upgrade' | 'none';
+	/** The Upgrade link, who to ask, or `none`. */
+	ctaType: CreditsCtaType;
 	/** The upgrade link's `source`, which checkout copies onto the purchase. */
 	ref: string;
 }

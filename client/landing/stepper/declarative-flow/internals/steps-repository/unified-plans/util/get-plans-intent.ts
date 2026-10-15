@@ -7,6 +7,7 @@ import {
 	ONBOARDING_FLOW,
 	ONBOARDING_UNIFIED_FLOW,
 	PLAN_UPGRADE_FLOW,
+	SITE_MIGRATION_FLOW,
 	STATIC_SITE_IMPORT_FLOW,
 	WOO_HOSTED_PLANS_FLOW,
 } from '@automattic/onboarding';
@@ -70,6 +71,7 @@ export function getPlansIntent( flowName: string | null ): PlansIntent | null {
 		case WOO_HOSTED_PLANS_FLOW:
 			return 'plans-woo-hosted';
 		// Paid plans only: the import is delivered through an Atomic transfer.
+		case SITE_MIGRATION_FLOW:
 		case STATIC_SITE_IMPORT_FLOW:
 			return 'plans-migration';
 		default:

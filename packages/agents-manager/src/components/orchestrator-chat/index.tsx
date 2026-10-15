@@ -1,4 +1,9 @@
-import { getAgentManager, type TaskUpdate, type UIMessage } from '@automattic/agenttic-client';
+import {
+	extractToolCallsFromMessage,
+	getAgentManager,
+	type TaskUpdate,
+	type UIMessage,
+} from '@automattic/agenttic-client';
 import {
 	type Suggestion,
 	type MarkdownComponents,
@@ -68,7 +73,7 @@ import {
 } from '../../utils/orchestrator-error-message';
 import { getReaderChatErrorMessage } from '../../utils/reader-chat-error-message';
 import { isShowComponentTool } from '../../utils/show-component-tools';
-import { isBlockEditToolId } from '../../utils/tool-message-utils';
+import { getRetryingToolCallId, isBlockEditToolId } from '../../utils/tool-message-utils';
 import { recordAgentsManagerTracksEvent, recordBigSkyTracksEvent } from '../../utils/tracks';
 import { startTurn } from '../../utils/turn-id';
 import AgentChat from '../agent-chat';
@@ -201,7 +206,31 @@ function getToolMessageData( message: Pick< UIMessage, 'content' > ):
 	}
 }
 
-function getBlockEditAgentMessageText( update: TaskUpdate ): string | undefined {
+/**
+ * Ids of the tool calls the agent makes in a task update. The tool-result echo
+ * is the client's own `user` message replaying the conversation history, so
+ * its tool calls belong to earlier turns and are never counted.
+ */
+function getAgentToolCallIds( update: TaskUpdate ): string[] {
+	const message = update.status.message;
+	if ( message?.role !== 'agent' ) {
+		return [];
+	}
+
+	return extractToolCallsFromMessage( message ).map( ( toolCall ) => toolCall.data.toolCallId );
+}
+
+/**
+ * Gets the latest block-edit `agentMessage` a task update carries.
+ *
+ * Tool results are read only for the task's own tool calls: the tool-result
+ * echo also replays the conversation history, whose block edits belong to
+ * earlier turns.
+ */
+function getBlockEditAgentMessageText(
+	update: TaskUpdate,
+	taskToolCallIds: ReadonlySet< string > | undefined
+): string | undefined {
 	const candidateTexts = update.text ? [ update.text ] : [];
 
 	for ( const message of [ update.status.message, update.agentMessage ] ) {
@@ -211,6 +240,11 @@ function getBlockEditAgentMessageText( update: TaskUpdate ): string | undefined 
 			}
 
 			if ( ! ( 'result' in part.data ) ) {
+				continue;
+			}
+
+			const { toolCallId } = part.data;
+			if ( typeof toolCallId !== 'string' || ! taskToolCallIds?.has( toolCallId ) ) {
 				continue;
 			}
 
@@ -226,7 +260,8 @@ function getBlockEditAgentMessageText( update: TaskUpdate ): string | undefined 
 		}
 	}
 
-	for ( const candidateText of candidateTexts ) {
+	for ( let index = candidateTexts.length - 1; index >= 0; index-- ) {
+		const candidateText = candidateTexts[ index ];
 		const candidateMessage = { content: [ { type: 'text' as const, text: candidateText } ] };
 		if ( isBlockEditToolId( getToolMessageData( candidateMessage )?.toolId ) ) {
 			return candidateText;
@@ -337,6 +372,13 @@ export default function OrchestratorChat( {
 	const [ isThinking, setIsThinking ] = useState( false );
 	const [ thinkingMessage, setThinkingMessage ] = useState< string | null >( null );
 	const [ isBuildingSite, setIsBuildingSite ] = useState( false );
+	// Tool-call ids are only unique within a transcript, so retries are tagged with
+	// the stream generation, which survives the temporary-to-server session id
+	// bootstrap but changes with any other session switch.
+	const [ retriedToolCalls, setRetriedToolCalls ] = useState< {
+		streamGeneration?: symbol;
+		ids: ReadonlySet< string >;
+	} >( { ids: new Set() } );
 	const [ sourceDriftInvalidatedCheckpointIds, setSourceDriftInvalidatedCheckpointIds ] = useState<
 		Set< string >
 	>( new Set() );
@@ -404,6 +446,7 @@ export default function OrchestratorChat( {
 		sessionIdentity: checkpointSessionIdentity,
 		streamGeneration: Symbol(),
 		pendingByTaskId: new Map< string, UIMessage >(),
+		toolCallIdsByTaskId: new Map< string, Set< string > >(),
 		byFinalMessageId: getStreamedCheckpointMessages( checkpointSessionIdentity ),
 		liveFinalMessageIds,
 		regeneratingMessageId: undefined as string | undefined,
@@ -436,6 +479,9 @@ export default function OrchestratorChat( {
 			sessionIdentity: checkpointSessionIdentity,
 			streamGeneration: isSessionBootstrap ? previousStreamedMessages.streamGeneration : Symbol(),
 			pendingByTaskId: isSessionBootstrap ? previousStreamedMessages.pendingByTaskId : new Map(),
+			toolCallIdsByTaskId: isSessionBootstrap
+				? previousStreamedMessages.toolCallIdsByTaskId
+				: new Map(),
 			byFinalMessageId,
 			liveFinalMessageIds: isSessionBootstrap
 				? previousStreamedMessages.liveFinalMessageIds
@@ -455,6 +501,13 @@ export default function OrchestratorChat( {
 			);
 	}, [ checkpointScopeIdentity, checkpointSessionId, checkpointSessionIdentity ] );
 	const checkpointStreamGeneration = streamedCheckpointMessagesRef.current.streamGeneration;
+	const retriedToolCallIds = useMemo(
+		() =>
+			retriedToolCalls.streamGeneration === checkpointStreamGeneration
+				? retriedToolCalls.ids
+				: new Set< string >(),
+		[ retriedToolCalls, checkpointStreamGeneration ]
+	);
 	const reportedResponseTaskIdsRef = useRef( new Set< string >() );
 	const agentChatConfig = useMemo( () => {
 		if ( ! agentConfig ) {
@@ -464,11 +517,38 @@ export default function OrchestratorChat( {
 		const { onTaskUpdate } = agentConfig;
 		return {
 			...agentConfig,
+			trackReplying: true,
 			onTaskUpdate: async ( update: TaskUpdate ) => {
 				const streamedMessages = streamedCheckpointMessagesRef.current;
 				const isCurrentStreamGeneration =
 					streamedMessages.streamGeneration === checkpointStreamGeneration;
-				const blockEditAgentMessageText = getBlockEditAgentMessageText( update );
+
+				const retryingToolCallId = getRetryingToolCallId( update.status?.message );
+				if ( isCurrentStreamGeneration && retryingToolCallId ) {
+					setRetriedToolCalls( ( previous ) => {
+						if ( previous.streamGeneration !== checkpointStreamGeneration ) {
+							return {
+								streamGeneration: checkpointStreamGeneration,
+								ids: new Set( [ retryingToolCallId ] ),
+							};
+						}
+						return previous.ids.has( retryingToolCallId )
+							? previous
+							: { ...previous, ids: new Set( [ ...previous.ids, retryingToolCallId ] ) };
+					} );
+				}
+				const agentToolCallIds = getAgentToolCallIds( update );
+				if ( isCurrentStreamGeneration && agentToolCallIds.length > 0 ) {
+					const taskToolCallIds =
+						streamedMessages.toolCallIdsByTaskId.get( update.id ) ?? new Set();
+					agentToolCallIds.forEach( ( toolCallId ) => taskToolCallIds.add( toolCallId ) );
+					streamedMessages.toolCallIdsByTaskId.set( update.id, taskToolCallIds );
+				}
+
+				const blockEditAgentMessageText = getBlockEditAgentMessageText(
+					update,
+					streamedMessages.toolCallIdsByTaskId.get( update.id )
+				);
 				if ( isCurrentStreamGeneration && blockEditAgentMessageText ) {
 					const message: UIMessage = {
 						id: update.status.message?.messageId ?? update.agentMessage?.messageId ?? update.id,
@@ -505,6 +585,7 @@ export default function OrchestratorChat( {
 						}
 					}
 					streamedMessages.pendingByTaskId.delete( update.id );
+					streamedMessages.toolCallIdsByTaskId.delete( update.id );
 					streamedMessages.regeneratingMessageId = undefined;
 				}
 
@@ -549,6 +630,7 @@ export default function OrchestratorChat( {
 		registerMessageActions,
 		getRegenerateHandler,
 		progressMessage,
+		isReplying,
 	} = credits.chat;
 	const getTraceIdForMessage = useAgentTraceIds( agentConfig );
 	const previousMessagesRef = useRef( messages );
@@ -645,6 +727,7 @@ export default function OrchestratorChat( {
 				} );
 				setIsRegenerating( true );
 				streamedCheckpointMessagesRef.current.pendingByTaskId.clear();
+				streamedCheckpointMessagesRef.current.toolCallIdsByTaskId.clear();
 				streamedCheckpointMessagesRef.current.regeneratingMessageId = message?.id;
 				// Drop any retained placeholders up front; the turn is being
 				// rewound, so a leftover picker would otherwise reappear once
@@ -1635,6 +1718,7 @@ export default function OrchestratorChat( {
 			currentPostId,
 			isProcessing,
 			canEscalateToHuman: isWooAiProvider(),
+			retriedToolCallIds,
 		} );
 
 		const latestAgentMessageId = getLatestAgentMessageId( currentMessages );
@@ -1707,6 +1791,7 @@ export default function OrchestratorChat( {
 		isProcessing,
 		messages,
 		retainedShowComponentMessages,
+		retriedToolCallIds,
 		siteBuildUtils,
 		sourceDriftInvalidatedCheckpointIds,
 		thinkingMessage,
@@ -1841,6 +1926,7 @@ export default function OrchestratorChat( {
 			// The indicator above hides mid-reply and covers uploads; response actions
 			// follow the raw streaming state.
 			isStreaming={ isProcessing }
+			isReplying={ isReplying }
 			thinkingMessage={
 				isUploadingImages ? __( 'Uploading images…', __i18n_text_domain__ ) : progressMessage
 			}

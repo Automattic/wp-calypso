@@ -31,24 +31,6 @@ export function getCreditsUserRole( canBuyCredits?: boolean ): 'admin' | 'non_ad
 	return canBuyCredits ? 'admin' : 'non_admin';
 }
 
-/** The call to action the notice shows: the Upgrade link, or who to ask. */
-export function getCreditsCtaType(
-	hasUpgradeLink: boolean,
-	askToUpgrade?: 'site-admin' | 'plan-owner'
-): 'upgrade' | 'contact_admin' | 'contact_plan_owner' | 'none' {
-	if ( hasUpgradeLink ) {
-		return 'upgrade';
-	}
-	if ( askToUpgrade === 'site-admin' ) {
-		return 'contact_admin';
-	}
-	if ( askToUpgrade === 'plan-owner' ) {
-		return 'contact_plan_owner';
-	}
-
-	return 'none';
-}
-
 /**
  * The code a failed reply carries in its data part, such as
  * `ai_credit_allowance_exhausted`. The chat's error only gets the reply's text.

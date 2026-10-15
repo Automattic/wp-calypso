@@ -499,10 +499,10 @@ const assertDefaultContext = ( { url, entry } ) => {
 	it( 'sets dashboard according to the request hostname', async () => {
 		const { request } = await app.run( {
 			request: {
-				hostname: 'my.woo.localhost',
+				hostname: 'my.a4a.localhost',
 			},
 		} );
-		expect( request.context.dashboard ).toEqual( 'ciab' );
+		expect( request.context.dashboard ).toEqual( 'a4a' );
 	} );
 
 	it( 'sets the client ip', async () => {

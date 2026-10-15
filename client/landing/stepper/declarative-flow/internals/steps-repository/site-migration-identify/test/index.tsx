@@ -1,7 +1,8 @@
 /**
  * @jest-environment jsdom
  */
-import { screen, waitFor } from '@testing-library/react';
+import config from '@automattic/calypso-config';
+import { act, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { MemoryRouter } from 'react-router';
@@ -53,12 +54,19 @@ const API_RESPONSE_WITH_OTHER_PLATFORM: UrlData = {
 
 const MOCK_WORDPRESS_SITE_SLUG = 'test-example.wordpress.com';
 const getInput = () => screen.getByLabelText( /Site address/ );
+const originalIsEnabled = config.isEnabled;
 
 describe( 'SiteMigrationIdentify', () => {
 	beforeAll( () => nock.disableNetConnect() );
 	beforeEach( () => {
 		jest.clearAllMocks();
+		jest
+			.spyOn( config, 'isEnabled' )
+			.mockImplementation(
+				( flag ) => flag !== 'migration/reprint-flow' && originalIsEnabled( flag )
+			);
 	} );
+	afterEach( () => jest.restoreAllMocks() );
 
 	it( 'continues for WordPress and resubmits refreshed hosting data', async () => {
 		jest.mocked( useSiteSlug ).mockReturnValue( MOCK_WORDPRESS_SITE_SLUG );
@@ -100,9 +108,9 @@ describe( 'SiteMigrationIdentify', () => {
 		await userEvent.clear( getInput() );
 		await userEvent.type( getInput(), 'https://example.com' );
 		await userEvent.click( screen.getByRole( 'button', { name: /Check my site/ } ) );
-		await waitFor( () => expect( submit ).toHaveBeenCalledTimes( 3 ) );
+		await waitFor( () => expect( submit ).toHaveBeenCalledTimes( 2 ) );
 		await screen.findByRole( 'button', { name: /Check my site/ } );
-		expect( submit ).toHaveBeenCalledTimes( 3 );
+		expect( submit ).toHaveBeenCalledTimes( 2 );
 		expect( submit ).toHaveBeenLastCalledWith( expect.objectContaining( { host: 'wpengine' } ) );
 	} );
 
@@ -211,6 +219,290 @@ describe( 'SiteMigrationIdentify', () => {
 		);
 
 		expect( screen.getByRole( 'button', { name: /Back/ } ) ).toBeVisible();
+	} );
+
+	describe( 'with migration/reprint-flow enabled', () => {
+		const mockAnalysis = ( body: object, status = 200, url = 'https://example.com' ) =>
+			mockApi()
+				.get( '/wpcom/v2/imports/analyze-url' )
+				.query( { site_url: url } )
+				.reply( status, body );
+		const mockHost = ( status = 200 ) =>
+			mockApi()
+				.get( '/wpcom/v2/site-profiler/hosting-provider/example.com' )
+				.reply( status, { hosting_provider: { slug: 'bluehost' } } );
+		const checkSite = async ( url = 'https://example.com' ) => {
+			await userEvent.type( getInput(), url );
+			await userEvent.click( screen.getByRole( 'button', { name: 'Continue' } ) );
+		};
+
+		beforeEach( () => {
+			jest
+				.spyOn( config, 'isEnabled' )
+				.mockImplementation(
+					( flag ) => flag === 'migration/reprint-flow' || originalIsEnabled( flag )
+				);
+		} );
+
+		it( 'keeps the platform list available on the simplified address screen', async () => {
+			const submit = jest.fn();
+			render( { navigation: { submit } } );
+			expect( screen.getByRole( 'button', { name: 'Continue' } ) ).toBeVisible();
+			expect( screen.queryByText( /Why should you host with us/ ) ).not.toBeInTheDocument();
+			expect(
+				screen.queryByRole( 'button', { name: /Only have a backup file/ } )
+			).not.toBeInTheDocument();
+			await userEvent.click( screen.getByRole( 'button', { name: /pick your current platform/ } ) );
+			expect( submit ).toHaveBeenCalledWith( { action: 'skip_platform_identification' } );
+		} );
+
+		it( 'preserves the current address when opening the platform list before checking', async () => {
+			const submit = jest.fn();
+			render(
+				{ navigation: { submit } },
+				{ initialEntry: '/some-path?from=https://old.example.com' }
+			);
+			const platformLink = screen.getByRole( 'button', { name: /pick your current platform/ } );
+			await userEvent.click( platformLink );
+			expect( submit ).toHaveBeenLastCalledWith( {
+				action: 'skip_platform_identification',
+				from: 'https://old.example.com',
+			} );
+			await userEvent.clear( getInput() );
+			await userEvent.type( getInput(), 'new.example.com' );
+			await userEvent.click( platformLink );
+			expect( submit ).toHaveBeenLastCalledWith( {
+				action: 'skip_platform_identification',
+				from: 'https://new.example.com',
+			} );
+		} );
+
+		it( 'edits the supplied address and waits for platform and hosting checks before continuing', async () => {
+			const submit = jest.fn();
+			render(
+				{ navigation: { submit } },
+				{ initialEntry: '/some-path?from=https://old.example.com' }
+			);
+			expect( getInput() ).toHaveValue( 'https://old.example.com' );
+			let completePlatform: ( () => void ) | undefined;
+			let completeHost: ( () => void ) | undefined;
+			mockApi()
+				.get( '/wpcom/v2/imports/analyze-url' )
+				.query( { site_url: 'example.com' } )
+				.reply( 200, ( _uri, _body, callback ) => {
+					completePlatform = () => callback( null, API_RESPONSE_WORDPRESS_PLATFORM );
+				} );
+			mockApi()
+				.get( '/wpcom/v2/site-profiler/hosting-provider/example.com' )
+				.reply( 200, ( _uri, _body, callback ) => {
+					completeHost = () => callback( null, { hosting_provider: { slug: 'bluehost' } } );
+				} );
+			await userEvent.clear( getInput() );
+			await checkSite( 'example.com' );
+
+			expect( screen.getByRole( 'heading', { name: 'Checking your site' } ) ).toBeVisible();
+			expect( screen.getByText( 'Identifying your site platform' ) ).toBeVisible();
+			expect( screen.getByRole( 'link', { name: 'View site ↗' } ) ).toHaveAttribute(
+				'href',
+				'https://example.com'
+			);
+			expect( getInput() ).not.toBeVisible();
+			expect( submit ).not.toHaveBeenCalled();
+			await waitFor( () => expect( completePlatform ).toEqual( expect.any( Function ) ) );
+			await act( async () => completePlatform?.() );
+			await waitFor( () =>
+				expect( screen.getByText( 'Checking your hosting provider' ) ).toBeVisible()
+			);
+			expect( screen.getByRole( 'link', { name: 'WordPress site ↗' } ) ).toBeVisible();
+			expect( submit ).not.toHaveBeenCalled();
+			await waitFor( () => expect( completeHost ).toEqual( expect.any( Function ) ) );
+			await act( async () => completeHost?.() );
+			await waitFor( () =>
+				expect( submit ).toHaveBeenCalledWith( {
+					action: 'continue',
+					from: 'https://example.com',
+					platform: 'wordpress',
+					host: 'bluehost',
+				} )
+			);
+		} );
+
+		it( 'explains generic analysis failures and allows retrying the same address', async () => {
+			const submit = jest.fn();
+			render( { navigation: { submit } }, { initialEntry: '/some-path?hide_importer_link=true' } );
+			mockAnalysis( {}, 500 );
+			await checkSite();
+			expect( await screen.findByRole( 'alert' ) ).toHaveTextContent(
+				'We couldn’t check your site. Try again.'
+			);
+			expect( screen.getByRole( 'button', { name: /pick your current platform/ } ) ).toBeVisible();
+			expect( getInput() ).toBeVisible();
+			expect( getInput() ).toHaveValue( 'https://example.com' );
+			expect( submit ).not.toHaveBeenCalled();
+
+			mockAnalysis( API_RESPONSE_WORDPRESS_PLATFORM );
+			mockHost();
+			await userEvent.click( screen.getByRole( 'button', { name: 'Continue' } ) );
+			await waitFor( () =>
+				expect( submit ).toHaveBeenCalledWith(
+					expect.objectContaining( { from: 'https://example.com', host: 'bluehost' } )
+				)
+			);
+			expect( screen.queryByRole( 'alert' ) ).not.toBeInTheDocument();
+		} );
+
+		it.each( [
+			{ status: 200, body: { ...API_RESPONSE_WORDPRESS_PLATFORM, site_health: 'unreachable' } },
+			{ status: 500, body: { code: 'http_request_failed' } },
+			{ status: 400, body: { code: 'rest_invalid_param' } },
+		] )( 'shows the unreachable outcome for %j', async ( { status, body } ) => {
+			const submit = jest.fn();
+			render( { navigation: { submit } } );
+			mockAnalysis( body, status );
+			await checkSite();
+			expect(
+				await screen.findByRole( 'heading', { name: 'We couldn’t reach your site' } )
+			).toBeVisible();
+			expect( screen.getByText( 'Couldn’t connect', { selector: 'span' } ) ).toBeVisible();
+			expect( screen.getByRole( 'button', { name: 'Try again' } ) ).toBeEnabled();
+			expect( screen.getByRole( 'button', { name: /pick your current platform/ } ) ).toBeEnabled();
+			expect( getInput() ).not.toBeVisible();
+			expect( submit ).not.toHaveBeenCalled();
+		} );
+
+		it( 'blocks HTTP WordPress sources and continues when retry resolves to HTTPS', async () => {
+			const submit = jest.fn();
+			render( { navigation: { submit } } );
+			mockAnalysis(
+				{ ...API_RESPONSE_WORDPRESS_PLATFORM, url: 'http://example.com/', site_health: 'ok' },
+				200,
+				'http://example.com'
+			);
+			await checkSite( 'http://example.com' );
+			expect(
+				await screen.findByRole( 'heading', { name: 'Your site isn’t on HTTPS' } )
+			).toBeVisible();
+			expect( submit ).not.toHaveBeenCalled();
+			mockAnalysis(
+				{ ...API_RESPONSE_WORDPRESS_PLATFORM, site_health: 'ok' },
+				200,
+				'http://example.com'
+			);
+			mockHost();
+			await userEvent.click( screen.getByRole( 'button', { name: 'Try again' } ) );
+			await waitFor( () =>
+				expect( submit ).toHaveBeenCalledWith( {
+					action: 'continue',
+					from: 'https://example.com',
+					platform: 'wordpress',
+					host: 'bluehost',
+				} )
+			);
+		} );
+
+		it( 'retains the failed address when opening the platform list', async () => {
+			const submit = jest.fn();
+			render( { navigation: { submit } } );
+			mockAnalysis( { code: 'http_request_failed' }, 500, 'example.com' );
+			await checkSite( 'example.com' );
+			await screen.findByRole( 'heading', { name: 'We couldn’t reach your site' } );
+			expect( submit ).not.toHaveBeenCalled();
+			await userEvent.click( screen.getByRole( 'button', { name: /pick your current platform/ } ) );
+			expect( submit ).toHaveBeenCalledTimes( 1 );
+			expect( submit ).toHaveBeenCalledWith( {
+				action: 'skip_platform_identification',
+				from: 'https://example.com',
+			} );
+		} );
+
+		it( 'does not complete or reopen an outcome when Back cancels a retry', async () => {
+			const submit = jest.fn();
+			render( { navigation: { submit } } );
+			mockAnalysis( { code: 'http_request_failed' }, 500 );
+			await checkSite();
+			await screen.findByRole( 'heading', { name: 'We couldn’t reach your site' } );
+			let completeRetry: ( () => void ) | undefined;
+			mockApi()
+				.get( '/wpcom/v2/imports/analyze-url' )
+				.query( { site_url: 'https://example.com' } )
+				.reply( 200, ( _uri, _body, callback ) => {
+					completeRetry = () => callback( null, API_RESPONSE_WORDPRESS_PLATFORM );
+				} );
+			await userEvent.click( screen.getByRole( 'button', { name: 'Try again' } ) );
+			await screen.findByRole( 'heading', { name: 'Checking your site' } );
+			await waitFor( () => expect( completeRetry ).toEqual( expect.any( Function ) ) );
+			await userEvent.click( screen.getByRole( 'button', { name: 'Back' } ) );
+			await act( async () => completeRetry?.() );
+			expect( getInput() ).toBeVisible();
+			expect( getInput() ).toHaveValue( 'https://example.com' );
+			expect( submit ).not.toHaveBeenCalled();
+		} );
+
+		it( 'continues a healthy source when only the hosting check fails', async () => {
+			const submit = jest.fn();
+			render( { navigation: { submit } } );
+			mockAnalysis( { ...API_RESPONSE_WORDPRESS_PLATFORM, site_health: 'ok' } );
+			mockHost( 500 );
+			await checkSite();
+			await waitFor( () =>
+				expect( submit ).toHaveBeenCalledWith(
+					expect.objectContaining( { from: 'https://example.com', host: undefined } )
+				)
+			);
+			expect(
+				screen.queryByRole( 'heading', { name: 'We couldn’t reach your site' } )
+			).not.toBeInTheDocument();
+		} );
+
+		it( 'passes the WordPress.com detection result to avoid offering a full-site copy', async () => {
+			const submit = jest.fn();
+			render( { navigation: { submit } } );
+			mockAnalysis( {
+				...API_RESPONSE_WORDPRESS_PLATFORM,
+				platform_data: { is_wpcom: true, is_wpengine: false, is_pressable: false },
+			} );
+			mockApi()
+				.get( '/wpcom/v2/site-profiler/hosting-provider/example.com' )
+				.reply( 200, { hosting_provider: { slug: 'automattic' } } );
+			await checkSite();
+			await waitFor( () =>
+				expect( submit ).toHaveBeenCalledWith( expect.objectContaining( { isWpcom: true } ) )
+			);
+		} );
+	} );
+
+	it.each( [
+		{ enabled: false, platform: 'wordpress' },
+		{ enabled: true, platform: 'squarespace' },
+	] )( 'keeps legacy HTTP continuation for %j', async ( { enabled, platform } ) => {
+		jest
+			.spyOn( config, 'isEnabled' )
+			.mockImplementation( ( flag ) =>
+				flag === 'migration/reprint-flow' ? enabled : originalIsEnabled( flag )
+			);
+		const submit = jest.fn();
+		render( { navigation: { submit } } );
+		mockApi()
+			.get( '/wpcom/v2/imports/analyze-url' )
+			.query( { site_url: 'http://example.com' } )
+			.reply( 200, {
+				...API_RESPONSE_WORDPRESS_PLATFORM,
+				url: 'http://example.com/',
+				platform,
+				site_health: 'blocked',
+			} );
+		mockApi()
+			.get( '/wpcom/v2/site-profiler/hosting-provider/example.com' )
+			.reply( 200, { hosting_provider: { slug: 'bluehost' } } );
+		await userEvent.type( getInput(), 'http://example.com' );
+		await userEvent.click(
+			screen.getByRole( 'button', { name: enabled ? 'Continue' : 'Check my site' } )
+		);
+		await waitFor( () =>
+			expect( submit ).toHaveBeenCalledWith(
+				expect.objectContaining( { from: 'http://example.com/', platform } )
+			)
+		);
 	} );
 
 	it( 'hides the back button and link by default', async () => {

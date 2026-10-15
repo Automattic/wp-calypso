@@ -1,0 +1,14 @@
+<svg width="480" height="260" viewBox="0 0 480 260" fill="none" xmlns="http://www.w3.org/2000/svg">
+<rect x="80" y="56" width="320" height="68" rx="16" fill="white"/>
+<circle cx="116" cy="90" r="20" fill="#E5F1FF"/>
+<text fill="#0240E4" style="white-space: pre" xml:space="preserve" font-family="SF Pro, SF Pro Text, -apple-system, BlinkMacSystemFont, system-ui, sans-serif" font-size="15" font-weight="590" letter-spacing="0em"><tspan x="104" y="95.332">AM</tspan></text>
+<text fill="#1D2327" style="white-space: pre" xml:space="preserve" font-family="SF Pro, SF Pro Text, -apple-system, BlinkMacSystemFont, system-ui, sans-serif" font-size="15" font-weight="590" letter-spacing="0em"><tspan x="148" y="86.332">Alex Morgan</tspan></text>
+<text fill="#646970" style="white-space: pre" xml:space="preserve" font-family="SF Pro, SF Pro Text, -apple-system, BlinkMacSystemFont, system-ui, sans-serif" font-size="13" letter-spacing="0em"><tspan x="148" y="104.621">Agency owner</tspan></text>
+<rect x="80" y="136" width="320" height="68" rx="16" fill="white"/>
+<circle cx="116" cy="170" r="20" fill="#E5F1FF"/>
+<text fill="#0240E4" style="white-space: pre" xml:space="preserve" font-family="SF Pro, SF Pro Text, -apple-system, BlinkMacSystemFont, system-ui, sans-serif" font-size="15" font-weight="590" letter-spacing="0em"><tspan x="106" y="175.332">SR</tspan></text>
+<text fill="#1D2327" style="white-space: pre" xml:space="preserve" font-family="SF Pro, SF Pro Text, -apple-system, BlinkMacSystemFont, system-ui, sans-serif" font-size="15" font-weight="590" letter-spacing="0em"><tspan x="148" y="166.332">Sam Rivera</tspan></text>
+<text fill="#646970" style="white-space: pre" xml:space="preserve" font-family="SF Pro, SF Pro Text, -apple-system, BlinkMacSystemFont, system-ui, sans-serif" font-size="13" letter-spacing="0em"><tspan x="148" y="184.621">Team member</tspan></text>
+<rect x="284" y="160" width="100" height="20" rx="6" fill="#F5E6B3"/>
+<text fill="#4F3500" style="white-space: pre" xml:space="preserve" font-family="SF Pro, SF Pro Text, -apple-system, BlinkMacSystemFont, system-ui, sans-serif" font-size="12" font-weight="590" letter-spacing="0em"><tspan x="292" y="174.266">Invite pending</tspan></text>
+</svg>

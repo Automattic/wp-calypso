@@ -5,7 +5,9 @@ import {
 } from '../../components/difm-offer-modal';
 
 export interface DifmOfferSearch {
-	difmOffer?: typeof DIFM_OFFER_PURCHASED_SEARCH.difmOffer;
+	// `open` comes from another surface's deep link. See deep-link.tsx.
+	difmOffer?: typeof DIFM_OFFER_PURCHASED_SEARCH.difmOffer | 'open';
+	source?: string;
 }
 
 /**
