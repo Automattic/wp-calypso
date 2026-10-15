@@ -1,9 +1,9 @@
 import { isEcommercePlan } from '@automattic/calypso-products';
 import { useTranslate } from 'i18n-calypso';
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import { useSiteQuery } from 'calypso/landing/stepper/hooks/use-site';
-import { getBuildWowGraph } from 'calypso/landing/stepper/utils/build-wow';
+import { getBuildWowGraph, logBuildWowEvent } from 'calypso/landing/stepper/utils/build-wow';
 import { useSiteGeneration } from './use-site-generation';
 import { SiteGenerationView } from './view';
 import type { Step as StepType } from '../../types';
@@ -16,12 +16,20 @@ const SiteGeneration: StepType = function SiteGeneration() {
 	const source = query.get( 'source' );
 	const specId = query.get( 'specId' );
 	const graph = getBuildWowGraph( query );
-	// Only the store builder sends a Commerce site here, and checkout has given
-	// it the plan by now. Unknown until the site loads.
-	const { data: site, isLoading: isSiteLoading } = useSiteQuery();
+	// In the client flows today, a Commerce site reaches this screen only through
+	// the store builder, and checkout has given it the plan by then. Unknown until
+	// the site loads; a site that fails to load waits as a plain build.
+	const { data: site, isLoading: isSiteLoading, isError: isSiteError } = useSiteQuery();
 	const isStoreBuild = isSiteLoading
 		? undefined
 		: isEcommercePlan( site?.plan?.product_slug ?? '' );
+	useEffect( () => {
+		if ( isSiteError ) {
+			logBuildWowEvent( 'site_generation_site_unavailable', {
+				site_identifier: siteIdentifier,
+			} );
+		}
+	}, [ isSiteError, siteIdentifier ] );
 	// Fallback checklist only: the server-computed ui.steps from the status
 	// endpoint is authoritative (labels included, already localized). This
 	// list covers the moments before the first response arrives, and backends

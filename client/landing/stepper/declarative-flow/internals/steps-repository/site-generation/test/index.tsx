@@ -3,13 +3,18 @@
  */
 
 import { act, fireEvent, render, screen } from '@testing-library/react';
+import { logBuildWowEvent } from 'calypso/landing/stepper/utils/build-wow';
 import { pollForBuildWowStatus } from '../build-status-poller';
 import SiteGeneration from '../index';
 import { useSiteGeneration } from '../use-site-generation';
 import type { SiteGenerationState } from '../use-site-generation';
 
 let mockState: SiteGenerationState;
-let mockSiteQuery: { data: { plan?: { product_slug: string } } | null; isLoading: boolean };
+let mockSiteQuery: {
+	data: { plan?: { product_slug: string } } | null;
+	isLoading: boolean;
+	isError?: boolean;
+};
 
 jest.mock( 'i18n-calypso', () => ( {
 	...jest.requireActual( 'i18n-calypso' ),
@@ -17,6 +22,11 @@ jest.mock( 'i18n-calypso', () => ( {
 } ) );
 
 jest.mock( 'calypso/components/data/document-head', () => () => null );
+
+jest.mock( 'calypso/landing/stepper/utils/build-wow', () => ( {
+	...jest.requireActual( 'calypso/landing/stepper/utils/build-wow' ),
+	logBuildWowEvent: jest.fn(),
+} ) );
 
 jest.mock( 'calypso/landing/stepper/hooks/use-site', () => ( {
 	useSiteQuery: () => mockSiteQuery,
@@ -144,6 +154,16 @@ describe( 'SiteGeneration recovery', () => {
 		renderStep();
 
 		expect( useSiteGenerationMock.mock.calls[ 0 ][ 0 ].isStoreBuild ).toBe( isStoreBuild );
+	} );
+
+	it( 'waits as a plain build and logs when the site fails to load', () => {
+		mockSiteQuery = { data: null, isLoading: false, isError: true };
+		renderStep();
+
+		expect( useSiteGenerationMock.mock.calls[ 0 ][ 0 ].isStoreBuild ).toBe( false );
+		expect( logBuildWowEvent ).toHaveBeenCalledWith( 'site_generation_site_unavailable', {
+			site_identifier: '123',
+		} );
 	} );
 
 	it( 'does not know whether it is a store build while the site loads', () => {
