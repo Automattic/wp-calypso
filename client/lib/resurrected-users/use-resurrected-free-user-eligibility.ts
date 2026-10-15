@@ -8,6 +8,7 @@ import {
 	isSubscription,
 } from 'calypso/me/purchases/lib/raw-purchase-helpers';
 import { useSelector } from 'calypso/state';
+import { getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
 import getUserSettings from 'calypso/state/selectors/get-user-settings';
 import { isFetchingUserSettings } from 'calypso/state/user-settings/selectors';
 import {
@@ -44,6 +45,7 @@ function hasActivePaidSubscription( purchases: Purchase[] | undefined ): boolean
 export function useResurrectedFreeUserEligibility(): EligibilityResult {
 	const userSettings = useSelector( getUserSettings );
 	const isUserSettingsFetching = useSelector( isFetchingUserSettings );
+	const siteCount = useSelector( getCurrentUserSiteCount );
 
 	const { data: purchases, isPending: isLoadingPurchases } = useQuery( userPurchasesQuery() );
 
@@ -74,7 +76,9 @@ export function useResurrectedFreeUserEligibility(): EligibilityResult {
 	const isResurrected = config.isEnabled( WELCOME_BACK_90_DAY_ELIGIBILITY_FLAG )
 		? isResurrectedThreeMonths
 		: isResurrectedSixMonths;
-	const baseEligibility = isResurrected && hasActiveSubscriptions === false;
+	// The treatment CTAs (site editor, new post, themes) need a site to land on.
+	const hasSites = ( siteCount ?? 0 ) > 0;
+	const baseEligibility = isResurrected && hasActiveSubscriptions === false && hasSites;
 	const [ isExperimentLoading, experimentAssignment ] = useExperiment(
 		RESURRECTED_FREE_USERS_EXPERIMENT,
 		{

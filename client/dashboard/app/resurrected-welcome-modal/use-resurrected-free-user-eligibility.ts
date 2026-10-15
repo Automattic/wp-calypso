@@ -2,6 +2,7 @@ import { userPurchasesQuery, userSettingsQuery } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
 import { useQuery } from '@tanstack/react-query';
 import { useExperiment } from 'calypso/lib/explat';
+import { useAuth } from '../auth';
 import {
 	RESURRECTED_FREE_USERS_EXPERIMENT,
 	RESURRECTION_DAY_LIMIT_3M,
@@ -59,6 +60,7 @@ function hasActivePaidSubscription( purchases: Purchase[] | undefined ): boolean
 }
 
 export function useResurrectedFreeUserEligibility(): EligibilityResult {
+	const { user } = useAuth();
 	const userSettingsQueryResult = useQuery( userSettingsQuery() );
 	const userPurchasesQueryResult = useQuery( userPurchasesQuery() );
 
@@ -75,7 +77,9 @@ export function useResurrectedFreeUserEligibility(): EligibilityResult {
 		? isResurrectedThreeMonths
 		: isResurrectedSixMonths;
 	const hasActiveSubscriptions = hasActivePaidSubscription( userPurchasesQueryResult.data );
-	const baseEligibility = isResurrected && hasActiveSubscriptions === false;
+	// The treatment CTAs (site editor, new post, themes) need a site to land on.
+	const hasSites = user.site_count > 0;
+	const baseEligibility = isResurrected && hasActiveSubscriptions === false && hasSites;
 
 	const [ isExperimentLoading, experimentAssignment ] = useExperiment(
 		RESURRECTED_FREE_USERS_EXPERIMENT,

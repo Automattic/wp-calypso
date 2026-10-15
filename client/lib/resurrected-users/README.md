@@ -1,8 +1,9 @@
 # Resurrected Free Users – Welcome Back Modal
 
 This module powers the welcome-back modal for eligible resurrected free users. A user is
-eligible after 180 days of inactivity when they have no active paid subscriptions. The inactivity
-threshold is 90 days while the experiment eligibility flag is enabled.
+eligible after 180 days of inactivity when they have at least one site and no active paid
+subscriptions. The inactivity threshold is 90 days while the experiment eligibility flag is
+enabled.
 
 ## Components
 

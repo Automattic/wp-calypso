@@ -57,16 +57,18 @@ const reducers = {
 const createState = ( {
 	lastSeenOffsetDays = 400,
 	fetchingUserSettings = false,
+	siteCount = 1,
 }: {
 	lastSeenOffsetDays?: number;
 	fetchingUserSettings?: boolean;
+	siteCount?: number;
 } = {} ) => {
 	const nowInSeconds = Math.floor( Date.now() / 1000 );
 
 	return {
 		currentUser: {
 			id: 123,
-			user: {},
+			user: { ID: 123, site_count: siteCount },
 			flags: [],
 		},
 		userSettings: {
@@ -135,6 +137,20 @@ describe( 'useResurrectedFreeUserEligibility', () => {
 		expect( result.current.isForcedVariation ).toBe( false );
 		expect( mockUseExperiment ).toHaveBeenCalledWith( RESURRECTED_FREE_USERS_EXPERIMENT, {
 			isEligible: true,
+		} );
+	} );
+
+	it( 'does not mark the user as eligible when they have no sites', async () => {
+		mockPurchases();
+
+		const { result } = renderEligibilityHook(
+			createState( { lastSeenOffsetDays: 400, siteCount: 0 } )
+		);
+
+		await waitFor( () => expect( result.current.isLoading ).toBe( false ) );
+		expect( result.current.isEligible ).toBe( false );
+		expect( mockUseExperiment ).toHaveBeenCalledWith( RESURRECTED_FREE_USERS_EXPERIMENT, {
+			isEligible: false,
 		} );
 	} );
 

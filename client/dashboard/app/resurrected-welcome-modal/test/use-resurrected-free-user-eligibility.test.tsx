@@ -8,6 +8,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook, waitFor } from '@testing-library/react';
 import nock from 'nock';
 import { useExperiment } from 'calypso/lib/explat';
+import { useAuth } from '../../auth';
 import {
 	RESURRECTED_FREE_USERS_EXPERIMENT,
 	WELCOME_BACK_90_DAY_ELIGIBILITY_FLAG,
@@ -20,8 +21,18 @@ import type { ReactNode } from 'react';
 jest.mock( 'calypso/lib/explat', () => ( {
 	useExperiment: jest.fn(),
 } ) );
+jest.mock( '../../auth', () => ( {
+	useAuth: jest.fn(),
+} ) );
 
 const mockUseExperiment = jest.mocked( useExperiment );
+const mockUseAuth = jest.mocked( useAuth );
+
+function mockSiteCount( siteCount: number ) {
+	mockUseAuth.mockReturnValue( {
+		user: { ID: 1, site_count: siteCount },
+	} as ReturnType< typeof useAuth > );
+}
 const DAY_IN_SECONDS = 24 * 60 * 60;
 
 function timestampDaysAgo( days: number ): number {
@@ -92,6 +103,7 @@ describe( 'useResurrectedFreeUserEligibility', () => {
 		disable( WELCOME_BACK_90_DAY_ELIGIBILITY_FLAG );
 		disable( WELCOME_BACK_MODAL_FORCE_FLAG );
 		mockUseExperiment.mockReturnValue( [ false, null ] );
+		mockSiteCount( 1 );
 	} );
 
 	afterEach( () => {
@@ -154,6 +166,21 @@ describe( 'useResurrectedFreeUserEligibility', () => {
 		expect( result.current.isResurrectedThreeMonths ).toBe( false );
 		expect( result.current.isEligible ).toBe( false );
 		expect( mockUseExperiment ).toHaveBeenLastCalledWith( RESURRECTED_FREE_USERS_EXPERIMENT, {
+			isEligible: false,
+		} );
+	} );
+
+	test( 'does not assign a user without sites to the experiment', async () => {
+		mockUserSettings( timestampDaysAgo( 200 ) );
+		mockPurchases();
+		mockSiteCount( 0 );
+
+		const { result } = renderEligibilityHook();
+
+		await waitFor( () => expect( result.current.isLoading ).toBe( false ) );
+
+		expect( result.current.isEligible ).toBe( false );
+		expect( mockUseExperiment ).toHaveBeenCalledWith( RESURRECTED_FREE_USERS_EXPERIMENT, {
 			isEligible: false,
 		} );
 	} );
