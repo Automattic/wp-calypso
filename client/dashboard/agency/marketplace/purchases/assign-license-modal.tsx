@@ -8,24 +8,30 @@ import { Link } from '@tanstack/react-router';
 import {
 	Button,
 	RadioControl,
+	__experimentalHStack as HStack,
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
+import { DataViews as WPDataViews } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useMemo, useState } from 'react';
 import { useAnalytics } from '../../../app/analytics';
 import { useAuth } from '../../../app/auth';
+import { useLocale } from '../../../app/locale';
 import { ButtonStack } from '../../../components/button-stack';
-import { DataViews } from '../../../components/dataviews';
+import { DataViews, DataViewsCard } from '../../../components/dataviews';
+import { SectionHeader } from '../../../components/section-header';
+import { formatDate, parseDateAsUTC } from '../../../utils/datetime';
 import type { AgencySite } from '@automattic/api-core';
 import type { Field, View } from '@wordpress/dataviews';
 
 import './style.scss';
 
-const SITES_PER_PAGE = 10;
+// Few enough rows that the modal fits on a laptop screen without scrolling.
+const SITES_PER_PAGE = 5;
 
 const CONNECT_USER_HELP_URL =
 	'https://agencieshelp.automattic.com/knowledge-base/invite-and-manage-team-members/#limitations-for-the-team-member-role';
@@ -43,6 +49,8 @@ const DEFAULT_SITES_VIEW: View = {
 interface Props {
 	licenseKey: string;
 	productName: string;
+	issuedAt: string;
+	clientEmail?: string;
 	closeModal?: () => void;
 	onAssigned?: () => void;
 }
@@ -50,11 +58,15 @@ interface Props {
 export default function AssignLicenseModal( {
 	licenseKey,
 	productName,
+	issuedAt,
+	clientEmail,
 	closeModal,
 	onAssigned,
 }: Props ) {
 	const { recordTracksEvent } = useAnalytics();
 	const { user } = useAuth();
+	const locale = useLocale();
+	const issuedDate = formatDate( parseDateAsUTC( issuedAt ), locale );
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const { data: agency } = useQuery( activeAgencyQuery() );
 	const agencyId = agency?.id;
@@ -153,32 +165,77 @@ export default function AssignLicenseModal( {
 
 	return (
 		<VStack spacing={ 6 }>
-			<Text>
-				{ createInterpolateElement(
-					__(
-						'If you don’t see the site in the list, connect it first via the <a>Sites Dashboard</a>.'
-					),
-					{ a: <Link to="/sites" /> }
+			<VStack spacing={ 1 }>
+				<Text size={ 15 } weight={ 500 }>
+					{ productName }
+				</Text>
+				{ issuedDate && (
+					<Text variant="muted">
+						{ sprintf(
+							/* translators: %s is the date the license was issued. */
+							__( 'Issued %s' ),
+							issuedDate
+						) }
+					</Text>
 				) }
-			</Text>
-			<div className="dashboard-marketplace-purchases__site-picker">
-				<DataViews< AgencySite >
-					data={ sites }
-					fields={ fields }
-					view={ view }
-					onChangeView={ setView }
-					getItemId={ ( item ) => String( item.blog_id ) }
-					isItemClickable={ () => true }
-					onClickItem={ setSelectedSite }
-					isLoading={ isLoading }
-					isPlaceholderData={ isPlaceholderData }
-					paginationInfo={ {
-						totalItems,
-						totalPages: Math.ceil( totalItems / ( view.perPage ?? SITES_PER_PAGE ) ),
-					} }
-					defaultLayouts={ { table: {} } }
+				<Text variant="muted">
+					{ sprintf(
+						/* translators: %s is the license key. */
+						__( 'License key: %s' ),
+						licenseKey
+					) }
+				</Text>
+				{ clientEmail && (
+					<Text variant="muted">
+						{ sprintf(
+							/* translators: %s is the email address of the referral's client. */
+							__( 'Client: %s' ),
+							clientEmail
+						) }
+					</Text>
+				) }
+			</VStack>
+			<VStack spacing={ 3 }>
+				<SectionHeader
+					level={ 3 }
+					title={ __( 'Select a site' ) }
+					description={ createInterpolateElement(
+						__(
+							'If you don’t see the site in the list, connect it first via the <a>Sites Dashboard</a>.'
+						),
+						{ a: <Link to="/sites" /> }
+					) }
 				/>
-			</div>
+				<VStack className="dashboard-marketplace-purchases__site-list" justify="flex-start">
+					<DataViewsCard>
+						<DataViews< AgencySite >
+							data={ sites }
+							fields={ fields }
+							view={ view }
+							onChangeView={ setView }
+							getItemId={ ( item ) => String( item.blog_id ) }
+							isItemClickable={ () => true }
+							onClickItem={ setSelectedSite }
+							isLoading={ isLoading }
+							isPlaceholderData={ isPlaceholderData }
+							paginationInfo={ {
+								totalItems,
+								totalPages: Math.ceil( totalItems / ( view.perPage ?? SITES_PER_PAGE ) ),
+							} }
+							defaultLayouts={ { table: {} } }
+						>
+							{ /* A one-column site list has nothing to filter or configure, so only the search is kept. */ }
+							<HStack className="dataviews__view-actions" alignment="top" justify="space-between">
+								<HStack className="dataviews__search" justify="flex-start">
+									<WPDataViews.Search />
+								</HStack>
+							</HStack>
+							<WPDataViews.Layout />
+							<WPDataViews.Pagination />
+						</DataViews>
+					</DataViewsCard>
+				</VStack>
+			</VStack>
 			<ButtonStack justify="flex-end">
 				<Button
 					__next40pxDefaultSize
