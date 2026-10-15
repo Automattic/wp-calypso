@@ -9,16 +9,7 @@ const getAbsolutePath = ( value ) =>
 
 const config = {
 	stories: [ '../src/**/*.stories.@(js|jsx|ts|tsx)', '../src/**/*.mdx' ],
-	addons: [
-		'@storybook/addon-a11y',
-		{
-			name: '@storybook/addon-docs',
-			options: {
-				configureJSX: true,
-				mdxPluginOptions: {},
-			},
-		},
-	],
+	addons: [ '@storybook/addon-a11y', '@storybook/addon-docs' ],
 	framework: {
 		name: getAbsolutePath( '@storybook/react-vite' ),
 		options: {},
