@@ -11,7 +11,10 @@ export function getFeedbackCopy( type: FeedbackType, args: FeedbackCopyArgs = {}
 	switch ( type ) {
 		case 'referral-completed':
 			return {
-				title: __( 'Well done! You sent your first referral!' ),
+				title:
+					args.referralFlow === 'copy'
+						? __( 'Well done! You created your first referral!' )
+						: __( 'Well done! You sent your first referral!' ),
 				description:
 					args.referralFlow === 'copy'
 						? sprintf(

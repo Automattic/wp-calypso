@@ -14,7 +14,6 @@ import { useAuth } from '../../../app/auth';
 import { marketplaceReferralCheckoutRoute } from '../../../app/router/agency';
 import { Notice } from '../../../components/notice';
 import RouterLinkButton from '../../../components/router-link-button';
-import { MilestoneFeedbackModal } from '../../feedback';
 import { MARKETPLACE_PRODUCTS_ROUTE } from '../paths';
 import { getCheckoutUrl, getLegacyCheckoutUrl } from '../products/lib/checkout-url';
 import { useCartLines } from '../products/use-cart-lines';
@@ -175,16 +174,6 @@ export default function ReferralCheckout() {
 					logoUrl={ preview.logoUrl }
 					term={ termPricing }
 					onClose={ () => setPreview( null ) }
-				/>
-			) }
-			{ request.sentReferral && (
-				<MilestoneFeedbackModal
-					type="referral-completed"
-					args={ {
-						email: request.sentReferral.email,
-						referralFlow: request.sentReferral.flowType,
-					} }
-					onClose={ request.closeFeedback }
 				/>
 			) }
 		</div>
