@@ -25,6 +25,8 @@ interface WooAbility {
 	properties: Args;
 	required?: string[];
 	defaults?: Args;
+	/** Trims what `_fields` can't, before the agent sees the response. */
+	transform?: ( response: Args ) => Args;
 }
 
 const ID = { type: 'integer', minimum: 1 };
@@ -44,7 +46,7 @@ const PRODUCT = {
 };
 
 // `_fields` keeps responses small, and leaves the customer's name, email, phone
-// and address out of orders.
+// and address out of orders. It can't filter inside a list, such as `line_items`.
 const PRODUCT_FIELDS =
 	'id,name,status,type,sku,price,regular_price,sale_price,stock_status,stock_quantity,categories,tags,permalink';
 const ORDER_FIELDS =
@@ -57,6 +59,21 @@ const WOO_ABILITIES: WooAbility[] = [
 		path: `/wc/v3/orders/{order_id}?_fields=${ ORDER_FIELDS }`,
 		properties: { order_id: ID },
 		required: [ 'order_id' ],
+		// A line item's `meta_data` can hold details the customer entered, such as add-on fields.
+		transform: ( { line_items: lineItems, ...order } ) => ( {
+			...order,
+			line_items: ( lineItems as Args[] | undefined )?.map(
+				( { id, name, product_id, quantity, subtotal, total, sku } ) => ( {
+					id,
+					name,
+					product_id,
+					quantity,
+					subtotal,
+					total,
+					sku,
+				} )
+			),
+		} ),
 	},
 	{
 		name: 'woocommerce/search-products',
@@ -107,6 +124,7 @@ function toAbility( {
 	properties,
 	required,
 	defaults,
+	transform,
 }: WooAbility ) {
 	const callback = async ( input: unknown ) => {
 		// Keep only the declared arguments; an empty object can arrive as `[]`.
@@ -120,7 +138,11 @@ function toAbility( {
 
 		let hasInvalidId = false;
 		const requestPath = path.replace( /{(\w+)}/g, ( _, key: string ) => {
-			const id = Number( args[ key ] );
+			// `Number()` alone would turn `true` into 1 and `[ 42 ]` into 42.
+			const value = args[ key ];
+			const isNumeric =
+				typeof value === 'number' || ( typeof value === 'string' && /^\d+$/.test( value ) );
+			const id = isNumeric ? Number( value ) : NaN;
 			hasInvalidId ||= ! ( Number.isInteger( id ) && id > 0 );
 			delete args[ key ];
 			return String( id );
@@ -131,12 +153,14 @@ function toAbility( {
 		}
 
 		try {
-			const response = await apiFetch(
+			const response = await apiFetch< Args >(
 				method
 					? { path: requestPath, method, data: args }
 					: { path: addQueryArgs( requestPath, args ) }
 			);
-			return successResult( `${ name } succeeded.`, { response } );
+			return successResult( `${ name } succeeded.`, {
+				response: transform ? transform( response ) : response,
+			} );
 		} catch ( error ) {
 			return errorResult( ( error as { message?: string } )?.message ?? String( error ) );
 		}
