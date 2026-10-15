@@ -570,7 +570,7 @@ describe( 'NamePulseResults', () => {
 		// The bulk check offers the typed name, but its own check is still running:
 		// it waits in the card's slot rather than as a priced row.
 		const placeholder = await screen.findByRole( 'status', {
-			name: 'Loading featured domain suggestion',
+			name: 'Loading exact match',
 		} );
 		expect( placeholder.closest( '.name-pulse-featured' ) ).toHaveAttribute( 'aria-busy', 'true' );
 		await findRow( 'icecream.org' );

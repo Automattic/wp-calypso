@@ -334,6 +334,19 @@ html:has( .name-pulse-search-input ) {
 		@include name-pulse-card-footer;
 	}
 
+	&__skeleton {
+		@include name-pulse-card-skeleton;
+
+		&--badge {
+			width: 5.5rem;
+		}
+	}
+
+	.domain-suggestion-match-reason__text &__skeleton--icon {
+		margin-inline-end: 8px;
+		vertical-align: middle;
+	}
+
 	// Same as the bundle card: the price sits above a full-width button.
 	@media ( max-width: #{ $break-small - 1px } ) {
 		&__price-row {

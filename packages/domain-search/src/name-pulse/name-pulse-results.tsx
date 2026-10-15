@@ -2,10 +2,13 @@ import { Button, VisuallyHidden, __experimentalVStack as VStack } from '@wordpre
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { useDomainSearch } from '../page/context';
-import { DomainSearchNotice, DomainSuggestion } from '../ui';
+import { DomainSearchNotice } from '../ui';
 import { NamePulseBundleCard, NamePulseBundleCardPlaceholder } from './components/bundle-card';
 import { NamePulseCart } from './components/cart';
-import { NamePulseExactMatchCard } from './components/exact-match-card';
+import {
+	NamePulseExactMatchCard,
+	NamePulseExactMatchCardPlaceholder,
+} from './components/exact-match-card';
 import { NamePulseSearchNotice } from './components/notice';
 import { NamePulseResultsSection } from './components/results-section';
 import { NamePulseSearchInput } from './components/search-input';
@@ -105,7 +108,10 @@ export const NamePulseResults = () => {
 									availability={ exactMatch.availability }
 								/>
 							) : (
-								<DomainSuggestion.Featured.Placeholder />
+								<NamePulseExactMatchCardPlaceholder
+									domainName={ exactMatch.domainName }
+									tld={ exactMatch.tld }
+								/>
 							) }
 							{ bundleCard }
 						</div>
