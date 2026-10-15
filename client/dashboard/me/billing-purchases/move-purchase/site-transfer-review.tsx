@@ -238,7 +238,7 @@ export function SiteTransferReview( { purchase, targetSite, onChangeSite }: Prop
 					navigate( {
 						to: purchaseSettingsRoute.fullPath,
 						// The site-level purchase pages carry the site in the URL, and it has changed.
-						params: ( prev ) =>
+						params: ( prev: Record< string, unknown > ) =>
 							Object.assign(
 								{},
 								prev,
