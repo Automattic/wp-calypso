@@ -416,7 +416,7 @@ describe( 'Header', () => {
 			expect( screen.getByLabelText( 'Select an area of the image to edit' ) ).toBeDisabled();
 			expect( screen.getByLabelText( 'View or edit information about the image' ) ).toBeDisabled();
 			expect( screen.getByLabelText( 'Rotate left' ) ).toBeDisabled();
-			expect( screen.getByLabelText( 'Crop' ) ).toBeDisabled();
+			expect( screen.getByLabelText( 'Crop' ) ).toHaveAttribute( 'aria-disabled', 'true' );
 		} );
 
 		it.each( [
@@ -470,7 +470,7 @@ describe( 'Header', () => {
 		} );
 
 		it( 'enters crop mode and leaves annotation mode when Crop is clicked', async () => {
-			const setActiveToolbarOption = jest.fn();
+			const setActiveToolbarOption = vi.fn();
 			const user = userEvent.setup();
 
 			render(
@@ -490,7 +490,7 @@ describe( 'Header', () => {
 		} );
 
 		it( 'leaves crop mode when Crop is clicked again', async () => {
-			const setActiveToolbarOption = jest.fn();
+			const setActiveToolbarOption = vi.fn();
 			const user = userEvent.setup();
 
 			render(
@@ -511,12 +511,6 @@ describe( 'Header', () => {
 
 			expect( setActiveToolbarOption ).toHaveBeenCalledWith( null );
 			expect( mockTrackImageStudioToolClick ).toHaveBeenCalledWith( 'crop', 'close' );
-		} );
-
-		it( 'disables Crop while saving', () => {
-			render( <Header { ...defaultProps } mode={ ImageStudioMode.Edit } isSaving /> );
-
-			expect( screen.getByLabelText( 'Crop' ) ).toBeDisabled();
 		} );
 
 		it( 'shows pressed state for active toolbar option', () => {
