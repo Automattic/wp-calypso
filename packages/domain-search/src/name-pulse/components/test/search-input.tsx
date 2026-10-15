@@ -100,4 +100,47 @@ describe( 'NamePulseSearchInput', () => {
 		expect( onQueryChange ).toHaveBeenLastCalledWith( 'coffee' );
 		expect( screen.getByRole( 'searchbox' ) ).toHaveValue( '' );
 	} );
+
+	describe( 'when the search bar is scrolled above the viewport', () => {
+		const scrollIntoView = jest.fn();
+
+		beforeEach( () => {
+			Element.prototype.scrollIntoView = scrollIntoView;
+		} );
+
+		afterEach( () => {
+			// @ts-expect-error jsdom does not implement scrollIntoView.
+			delete Element.prototype.scrollIntoView;
+			scrollIntoView.mockClear();
+			jest.restoreAllMocks();
+		} );
+
+		const placeSearchBarAt = ( top: number ) =>
+			jest.spyOn( HTMLElement.prototype, 'getBoundingClientRect' ).mockImplementation( function (
+				this: HTMLElement
+			) {
+				return {
+					top: this.classList.contains( 'name-pulse-search-input' ) ? top : 0,
+				} as DOMRect;
+			} );
+
+		it( 'scrolls the whole bar back into view when the query is edited', async () => {
+			placeSearchBarAt( -120 );
+			const { user, input } = renderInput();
+
+			await user.type( input, 'x' );
+
+			expect( scrollIntoView ).toHaveBeenCalledWith( { block: 'start' } );
+			expect( scrollIntoView.mock.contexts[ 0 ] ).toHaveClass( 'name-pulse-search-input' );
+		} );
+
+		it( 'leaves the page where it is while the bar is in view', async () => {
+			placeSearchBarAt( 40 );
+			const { user, input } = renderInput();
+
+			await user.type( input, 'ice' );
+
+			expect( scrollIntoView ).not.toHaveBeenCalled();
+		} );
+	} );
 } );
