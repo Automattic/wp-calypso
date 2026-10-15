@@ -33,7 +33,8 @@ export function useCanvasMoveAbort( {
 	abortCurrentRequest,
 	addMessage,
 }: UseCanvasMoveAbortOptions ) {
-	const agentId = useAgentsManagerContext().agentConfig?.agentId;
+	const { agentConfig } = useAgentsManagerContext();
+	const agentId = agentConfig?.agentId;
 
 	// Only a trigger for the effect below. Needs the post type as well as the id:
 	// a page and a template can share an id, and a move between them must not

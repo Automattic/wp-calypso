@@ -48,7 +48,7 @@ export function useChatComposer( {
 	const uploadImagesToWordPress = imageUpload?.uploadImagesToWordPress;
 	const isUploadingImages = imageUpload?.isUploadingImages ?? false;
 
-	// Whether the last `sendMessage` call dispatched. Dropped, stopped and
+	// Whether the last `submitComposerMessage` call dispatched. Dropped, stopped and
 	// failed sends leave the composer intact on purpose.
 	const wasLastSendDispatchedRef = useRef( false );
 
@@ -72,7 +72,7 @@ export function useChatComposer( {
 		}
 	}, [] );
 
-	const sendMessage = useCallback(
+	const submitComposerMessage = useCallback(
 		async ( message: string ) => {
 			wasLastSendDispatchedRef.current = false;
 
@@ -174,11 +174,11 @@ export function useChatComposer( {
 				// First, so this message follows the parked call's tool result. Never throws.
 				await flushPendingNavigation();
 
-				// Images dispatch via agenttic's `imageUrls` option — the resulting
+				// Images dispatch via Agenttic's `imageUrls` option — the resulting
 				// `FilePart`s persist in conversation history with their metadata.
 				await ( imageUrls ? onSubmit( message, { imageUrls } ) : onSubmit( message ) );
 			} catch {
-				// A rejected dispatch already surfaces via agenttic's error state;
+				// A rejected dispatch already surfaces via Agenttic's error state;
 				// put the message back (unless a newer draft replaced it) for a retry.
 				wasLastSendDispatchedRef.current = false;
 				setInputValue( ( currentValue ) => ( currentValue === '' ? message : currentValue ) );
@@ -218,7 +218,7 @@ export function useChatComposer( {
 				return;
 			}
 
-			// Agenttic gates composer sends before `sendMessage`; context cards and
+			// Agenttic gates composer sends before `submitComposerMessage`; context cards and
 			// the host bridge come here, so gate them too. A blocked send consumes
 			// any origin the bridge marked, so it can't label the next send.
 			if ( ! beforeSubmit() ) {
@@ -226,14 +226,14 @@ export function useChatComposer( {
 				return;
 			}
 
-			await sendMessage( message );
+			await submitComposerMessage( message );
 
 			// Clear only a dispatched message, and only if no new draft replaced it.
 			if ( wasLastSendDispatchedRef.current ) {
 				setInputValue( ( currentValue ) => ( currentValue === message ? '' : currentValue ) );
 			}
 		},
-		[ beforeSubmit, sendMessage ]
+		[ beforeSubmit, submitComposerMessage ]
 	);
 
 	const submitHostMessage = useCallback(
@@ -257,7 +257,7 @@ export function useChatComposer( {
 		imageUpload,
 		isUploadingImages,
 		uploadError,
-		sendMessage,
+		submitComposerMessage,
 		submitChatMessage,
 		submitHostMessage,
 		stopResponse,

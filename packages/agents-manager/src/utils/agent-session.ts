@@ -173,7 +173,7 @@ interface SessionScope {
 
 /**
  * Whether a session switch is a new chat's bootstrap: it starts with an empty
- * session id, then switches to the server's within the same scope.
+ * session ID, then switches to the server's within the same scope.
  */
 export function isSessionBootstrap( previous: SessionScope, next: SessionScope ): boolean {
 	return (

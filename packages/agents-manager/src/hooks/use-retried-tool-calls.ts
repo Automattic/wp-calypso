@@ -12,7 +12,7 @@ interface RetriedToolCalls {
  * interim "No changes needed" outcome is hidden.
  *
  * Tool-call ids are only unique within a transcript, so retries are tagged with
- * the stream generation, which survives a new chat's session id bootstrap
+ * the stream generation, which survives a new chat's session ID bootstrap
  * (`isSessionBootstrap()`) but changes with any other session switch.
  */
 export function useRetriedToolCalls( streamGeneration: symbol ) {

@@ -122,7 +122,7 @@ export function useShowComponentRetention( {
 		clearRetainedMessages();
 	}, [ clearRetainedMessages ] );
 
-	/** Adds the retained copies of dropped components back, in their first-seen order. */
+	// Adds the retained copies of dropped components back, in their first-seen order.
 	const withRetainedShowComponents = useCallback(
 		( currentMessages: AgentsManagerUIMessage[] ): AgentsManagerUIMessage[] => {
 			currentMessages.forEach( getShowComponentOrder );

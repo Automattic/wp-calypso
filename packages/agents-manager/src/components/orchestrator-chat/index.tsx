@@ -138,8 +138,8 @@ export default function OrchestratorChat( {
 		streamGeneration,
 		isCurrentStreamGeneration,
 		recordTaskUpdate,
-		startRegeneration: startCheckpointRegeneration,
-		finishRegeneration: finishCheckpointRegeneration,
+		startCheckpointRegeneration,
+		finishCheckpointRegeneration,
 		getCheckpointMessage,
 		invalidateLoadedCheckpoints,
 	} = useStreamedCheckpointMessages();
@@ -255,7 +255,7 @@ export default function OrchestratorChat( {
 		imageUpload,
 		isUploadingImages,
 		uploadError,
-		sendMessage,
+		submitComposerMessage,
 		submitChatMessage,
 		submitHostMessage,
 		stopResponse,
@@ -502,7 +502,7 @@ export default function OrchestratorChat( {
 				isUploadingImages ? __( 'Uploading images…', __i18n_text_domain__ ) : progressMessage
 			}
 			error={ chatError || uploadError }
-			onSubmit={ sendMessage }
+			onSubmit={ submitComposerMessage }
 			onAbort={ stopResponse }
 			isLoadingConversation={ isLoadingConversation }
 			isDocked={ isDocked }

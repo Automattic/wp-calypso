@@ -178,7 +178,7 @@ export function useStreamedCheckpointMessages() {
 		[]
 	);
 
-	/** Records a task update. The caller drops updates from an earlier stream generation. */
+	// The caller drops updates from an earlier stream generation.
 	const recordTaskUpdate = useCallback( ( update: TaskUpdate ) => {
 		const state = stateRef.current;
 
@@ -232,20 +232,18 @@ export function useStreamedCheckpointMessages() {
 		state.regeneratingMessageId = undefined;
 	}, [] );
 
-	const startRegeneration = useCallback( ( messageId: string | undefined ) => {
+	const startCheckpointRegeneration = useCallback( ( messageId: string | undefined ) => {
 		stateRef.current.pendingByTaskId.clear();
 		stateRef.current.toolCallIdsByTaskId.clear();
 		stateRef.current.regeneratingMessageId = messageId;
 	}, [] );
 
-	const finishRegeneration = useCallback( () => {
+	const finishCheckpointRegeneration = useCallback( () => {
 		stateRef.current.regeneratingMessageId = undefined;
 	}, [] );
 
-	/**
-	 * The streamed message behind a message, which carries its checkpoint. A new
-	 * identity per session (the `void` below) tells memoized callers it changed.
-	 */
+	// The streamed message behind a message, which carries its checkpoint. A new
+	// identity per session (the `void` below) tells memoized callers it changed.
 	const getCheckpointMessage = useCallback(
 		( message: UIMessage ): UIMessage => {
 			void sessionIdentity;
@@ -254,7 +252,7 @@ export function useStreamedCheckpointMessages() {
 		[ sessionIdentity ]
 	);
 
-	/** Invalidates the checkpoints in a loaded transcript that weren't streamed in this page load. */
+	// Invalidates the checkpoints in a loaded transcript that weren't streamed in this page load.
 	const invalidateLoadedCheckpoints = useCallback( ( loadedMessages: Message[] ) => {
 		const { byFinalMessageId, liveFinalMessageIds } = stateRef.current;
 
@@ -277,8 +275,8 @@ export function useStreamedCheckpointMessages() {
 		streamGeneration: stateRef.current.streamGeneration,
 		isCurrentStreamGeneration,
 		recordTaskUpdate,
-		startRegeneration,
-		finishRegeneration,
+		startCheckpointRegeneration,
+		finishCheckpointRegeneration,
 		getCheckpointMessage,
 		invalidateLoadedCheckpoints,
 	};

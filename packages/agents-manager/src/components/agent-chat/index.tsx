@@ -399,7 +399,7 @@ export default function AgentChat( {
 							/>
 						) }
 						{ isEditorPage() && <SelectedBlock /> }
-						{ /* Disabling the input takes both props: agenttic forwards `readOnly` to the
+						{ /* Disabling the input takes both props: Agenttic forwards `readOnly` to the
 						     textarea but uses `disabled` only to gate submitting (button and Enter).
 						     Uploads set only `readOnly`, so the stop button stays active, and
 						     `isChatInputDisabled` wins over the pending-images `false`, which lets
