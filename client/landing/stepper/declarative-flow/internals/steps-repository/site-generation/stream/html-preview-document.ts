@@ -7,9 +7,25 @@ export type PreviewAssets = Record< string, PreviewAsset >;
 const IMAGE_MIMES = [ 'image/png', 'image/jpeg', 'image/webp', 'image/gif', 'image/avif' ];
 const FONT_MIMES = [ 'font/woff2', 'font/woff' ];
 
-export function parsePreviewAssets( value: unknown, blogId: number ): PreviewAssets {
+/**
+ * Keeps the assets a preview document may load. They must be served by the same
+ * feed as the document: the snapshot URL names the host and the site path, and
+ * the asset endpoint is its sibling. That URL was already vetted when the feed
+ * was accepted (https, or loopback http on the page's own host), so this adds no
+ * new origin to trust. For WordPress.com it is the one host and path used before.
+ */
+export function parsePreviewAssets( value: unknown, snapshotUrl: string ): PreviewAssets {
 	const assets: PreviewAssets = {};
 	if ( ! value || typeof value !== 'object' || Array.isArray( value ) ) {
+		return assets;
+	}
+	let feed: URL;
+	try {
+		feed = new URL( snapshotUrl );
+	} catch {
+		return assets;
+	}
+	if ( ! /\/snapshot$/.test( feed.pathname ) ) {
 		return assets;
 	}
 	for ( const [ source, asset ] of Object.entries( value ).slice( 0, 96 ) ) {
@@ -31,12 +47,12 @@ export function parsePreviewAssets( value: unknown, blogId: number ): PreviewAss
 		try {
 			const parsed = new URL( url );
 			if (
-				parsed.origin !== 'https://public-api.wordpress.com' ||
+				parsed.origin !== feed.origin ||
 				parsed.username ||
 				parsed.password ||
 				parsed.hash ||
 				parsed.pathname !==
-					`/wpcom/v2/sites/${ blogId }/big-sky/build-wow/preview-assets/${ id }/content` ||
+					feed.pathname.replace( /\/snapshot$/, `/preview-assets/${ id }/content` ) ||
 				! /^[a-zA-Z0-9_-]+\.[a-zA-Z0-9_-]+\.[a-zA-Z0-9_-]+$/.test(
 					parsed.searchParams.get( 'token' ) ?? ''
 				) ||

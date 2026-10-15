@@ -1,8 +1,11 @@
 import { useEffect, useState } from 'react';
 import { logBuildWowEvent } from 'calypso/landing/stepper/utils/build-wow';
+import { getBuildWowApiOverride } from '../poller';
 import { subscribeToBuildWowStream } from './subscribe';
 import type { BuildWowStreamState } from './reducer';
 import type { BuildWowStreamInfo } from './types';
+
+const LOCAL_FEED_AUTHORIZATION = 'Bearer local-status-server';
 
 export type BuildWowStreamView = {
 	info: BuildWowStreamInfo;
@@ -28,8 +31,15 @@ export function useBuildWowStream( info: BuildWowStreamInfo | null ): BuildWowSt
 		// Site-scoped: a Bearer for this blog, the WordPress.com OAuth token where
 		// Calypso has one, otherwise a JWT minted through the proxy. Loaded on
 		// demand so runs without a feed never pull in the agents-manager code.
+		// A feed from a local status server (?build_wow_api=) ignores credentials
+		// and names no WordPress.com site, so it gets a placeholder and never sees
+		// the signed-in user's token.
+		const isLocalFeed = getBuildWowApiOverride() !== null;
 		let authProvider: ( () => Promise< Record< string, string > > ) | undefined;
 		const authorize = async () => {
+			if ( isLocalFeed ) {
+				return LOCAL_FEED_AUTHORIZATION;
+			}
 			try {
 				if ( ! authProvider ) {
 					const { createCalypsoAuthProvider } =
