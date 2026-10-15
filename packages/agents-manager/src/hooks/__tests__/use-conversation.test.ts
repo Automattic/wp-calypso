@@ -559,6 +559,30 @@ describe( 'useConversation', () => {
 				consoleError.mockRestore();
 			} );
 
+			it( 'stops reporting a failed resume when the chat changes', async () => {
+				const consoleError = jest.spyOn( console, 'error' ).mockImplementation( () => {} );
+				mockLoadedConversation( [ question, toolResult ], pausedOn( 'unanswered' ) );
+				const { result, rerender } = renderHook( () =>
+					useConversation( {
+						waitForReply: true,
+						onSuccess: jest.fn(),
+						onResume: jest.fn().mockRejectedValue( new Error( 'already received' ) ),
+					} )
+				);
+
+				await act( async () => jest.advanceTimersByTime( RESUME_AFTER_MS ) );
+
+				expect( result.current.hasFailedResume ).toBe( true );
+
+				mockUseAgentsManagerContext.mockReturnValue( {
+					agentConfig: { agentId: 'wp-orchestrator', sessionId: 'other-session', authProvider: {} },
+				} );
+				rerender();
+
+				expect( result.current.hasFailedResume ).toBe( false );
+				consoleError.mockRestore();
+			} );
+
 			it( 'leaves a parked wp-admin-navigate call to the navigation continuation', async () => {
 				mockParkedNavigationCallId = 'call-top';
 				const onResume = jest.fn();

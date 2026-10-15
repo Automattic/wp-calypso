@@ -139,6 +139,7 @@ export default function useConversation( {
 		setReplyWait( 'idle' );
 		resumedCallsRef.current = '';
 		skippedDataRef.current = false;
+		setHasFailedResume( false );
 	}, [ sessionId ] );
 
 	useEffect(
