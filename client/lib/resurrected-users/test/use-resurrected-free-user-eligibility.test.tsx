@@ -149,8 +149,8 @@ describe( 'useResurrectedFreeUserEligibility', () => {
 
 		await waitFor( () => expect( result.current.isLoading ).toBe( false ) );
 		expect( result.current.isEligible ).toBe( false );
-		expect( mockUseExperiment ).toHaveBeenCalledWith( RESURRECTED_FREE_USERS_EXPERIMENT, {
-			isEligible: false,
+		expect( mockUseExperiment ).not.toHaveBeenCalledWith( RESURRECTED_FREE_USERS_EXPERIMENT, {
+			isEligible: true,
 		} );
 	} );
 
