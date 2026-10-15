@@ -39,6 +39,7 @@ export {
 } from './hooks/use-feedback-action';
 export type { UseFeedbackActionConfig, UseFeedbackActionReturn } from './hooks/use-feedback-action';
 export { default as FeedbackInput } from './components/feedback-input';
+export { default as useAgentTraceIds } from './hooks/use-agent-trace-ids';
 
 // Site credits copy, so other chats show the same amounts and low-balance limit
 export { CREDITS_LOW_BALANCE, formatCreditsShort } from './utils/credits';

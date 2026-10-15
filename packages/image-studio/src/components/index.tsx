@@ -1,4 +1,4 @@
-import { CreditsMeter } from '@automattic/agents-manager';
+import { CreditsMeter, useAgentTraceIds } from '@automattic/agents-manager';
 import { getAgentManager, useAgentChat, UseAgentChatConfig } from '@automattic/agenttic-client';
 import { AgentUI, cn, ThinkingMessage } from '@automattic/agenttic-ui';
 import {
@@ -385,7 +385,9 @@ const ImageStudioContent = withInstanceId(
 			null
 		);
 		const [ isSaving, setIsSaving ] = useState( false );
+		const getTraceIdForMessage = useAgentTraceIds( agentConfigState );
 		const { handleFeedback, handleSubmitFeedbackText } = useImageStudioFeedback( {
+			getTraceIdForMessage,
 			authProvider: agentConfigState?.authProvider,
 			sessionId: agentConfigState?.sessionId,
 			displayImageUrl: isVideoMode ? currentVideoUrl : displayImageUrl,
