@@ -268,11 +268,13 @@ export default function ActionRenderModal( {
 	}, [ actionId, recordTracksEvent ] );
 
 	// Survicate drops events while a modal is open, so fire once this one has unmounted.
+	// The timeout lets @automattic/survicate's modal observer resume targeting first.
 	const pendingSurvicateEvent = useRef< string | null >( null );
 	useEffect(
 		() => () => {
-			if ( pendingSurvicateEvent.current ) {
-				invokeSurvicateEvent( pendingSurvicateEvent.current );
+			const eventName = pendingSurvicateEvent.current;
+			if ( eventName ) {
+				setTimeout( () => invokeSurvicateEvent( eventName ) );
 			}
 		},
 		[]

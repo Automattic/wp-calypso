@@ -52,6 +52,8 @@ async function confirm( actionId: string, result = { successCount: 1, errorCount
 	return view;
 }
 
+const flushTimers = () => new Promise( ( resolve ) => setTimeout( resolve ) );
+
 describe( 'ActionRenderModal Survicate events', () => {
 	afterEach( () => {
 		mockInvokeSurvicateEvent.mockReset();
@@ -66,13 +68,14 @@ describe( 'ActionRenderModal Survicate events', () => {
 
 		expect( mockInvokeSurvicateEvent ).not.toHaveBeenCalled();
 		unmount();
-		expect( mockInvokeSurvicateEvent ).toHaveBeenCalledWith( eventName );
+		await waitFor( () => expect( mockInvokeSurvicateEvent ).toHaveBeenCalledWith( eventName ) );
 		expect( mockInvokeSurvicateEvent ).toHaveBeenCalledTimes( 1 );
 	} );
 
 	test( 'does not fire when every site failed', async () => {
 		const { unmount } = await confirm( 'activate', { successCount: 0, errorCount: 1 } );
 		unmount();
+		await flushTimers();
 
 		expect( mockInvokeSurvicateEvent ).not.toHaveBeenCalled();
 	} );
@@ -80,11 +83,12 @@ describe( 'ActionRenderModal Survicate events', () => {
 	test( 'does not fire for other plugin actions', async () => {
 		const { unmount } = await confirm( 'delete' );
 		unmount();
+		await flushTimers();
 
 		expect( mockInvokeSurvicateEvent ).not.toHaveBeenCalled();
 	} );
 
-	test( 'does not fire when the modal is cancelled', () => {
+	test( 'does not fire when the modal is cancelled', async () => {
 		const { unmount } = render(
 			<ActionRenderModal
 				actionId="activate"
@@ -94,6 +98,7 @@ describe( 'ActionRenderModal Survicate events', () => {
 			/>
 		);
 		unmount();
+		await flushTimers();
 
 		expect( mockInvokeSurvicateEvent ).not.toHaveBeenCalled();
 	} );
