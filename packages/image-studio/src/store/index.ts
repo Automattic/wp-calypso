@@ -66,6 +66,7 @@ export interface ImageStudioState {
 	isAnnotationMode: boolean;
 	isAnnotationSaving: boolean;
 	annotatedAttachmentIds: number[];
+	transformedAttachmentIds: number[];
 	// Controls transition fade state when swapping images
 	imageStudioTransitioning: boolean;
 	// Reference to annotation canvas for imperative methods
@@ -195,6 +196,11 @@ type AddAnnotatedAttachmentIdAction = {
 	payload: number;
 };
 
+type AddTransformedAttachmentIdAction = {
+	type: 'ADD_TRANSFORMED_ATTACHMENT_ID';
+	payload: number;
+};
+
 type SetLastSavedAttachmentIdAction = {
 	type: 'SET_LAST_SAVED_ATTACHMENT_ID';
 	payload: number | null;
@@ -287,6 +293,7 @@ type ImageStudioAction =
 	| SetHasUpdatedMetadataAction
 	| SetIsAnnotationSavingAction
 	| AddAnnotatedAttachmentIdAction
+	| AddTransformedAttachmentIdAction
 	| SetCanvasMetadataAction
 	| SetLastSavedAttachmentIdAction
 	| AddSavedAttachmentIdAction
@@ -348,6 +355,7 @@ const initialState: ImageStudioState = {
 	annotationCanvasRef: null,
 	isAnnotationSaving: false,
 	annotatedAttachmentIds: [],
+	transformedAttachmentIds: [],
 	imageStudioAiProcessingSources: {},
 	originalAttachmentId: null,
 	draftIds: [],
@@ -388,6 +396,7 @@ const reducer = (
 				isImageStudioOpen: true,
 				imageStudioAttachmentId: action.payload.attachmentId,
 				annotatedAttachmentIds: [],
+				transformedAttachmentIds: [],
 				imageStudioAiProcessingSources: {},
 				// Set originalAttachmentId to the attachmentId if opening with existing image, null if generating from scratch
 				originalAttachmentId: action.payload.attachmentId,
@@ -412,6 +421,7 @@ const reducer = (
 			return {
 				...initialState,
 				annotatedAttachmentIds: [],
+				transformedAttachmentIds: [],
 				imageStudioAiProcessingSources: {},
 				draftIds: [],
 				savedAttachmentIds: [],
@@ -508,6 +518,12 @@ const reducer = (
 				annotatedAttachmentIds: [ ...state.annotatedAttachmentIds, action.payload ],
 			};
 
+		case 'ADD_TRANSFORMED_ATTACHMENT_ID':
+			return {
+				...state,
+				transformedAttachmentIds: [ ...state.transformedAttachmentIds, action.payload ],
+			};
+
 		case 'SET_LAST_SAVED_ATTACHMENT_ID':
 			return {
 				...state,
@@ -595,6 +611,7 @@ const reducer = (
 				lastSavedAttachmentId: null,
 				hasUpdatedMetadata: false,
 				annotatedAttachmentIds: [],
+				transformedAttachmentIds: [],
 				isAnnotationMode: false,
 				isAnnotationSaving: false,
 				annotationCanvasRef: null,
@@ -673,6 +690,7 @@ const reducer = (
 				draftIds: [],
 				savedAttachmentIds: [],
 				annotatedAttachmentIds: [],
+				transformedAttachmentIds: [],
 			};
 
 		default:
@@ -711,6 +729,9 @@ export interface ImageStudioActions {
 	setHasUpdatedMetadata: ( hasUpdated: boolean ) => Promise< SetHasUpdatedMetadataAction >;
 	setIsAnnotationSaving: ( isSaving: boolean ) => Promise< SetIsAnnotationSavingAction >;
 	addAnnotatedAttachmentId: ( attachmentId: number ) => Promise< AddAnnotatedAttachmentIdAction >;
+	addTransformedAttachmentId: (
+		attachmentId: number
+	) => Promise< AddTransformedAttachmentIdAction >;
 	setCanvasMetadata: ( ( metadata: CanvasMetadata | null ) => Promise< SetCanvasMetadataAction > ) &
 		( ( metadata: CanvasMetadata | null ) => Promise< SetCanvasMetadataAction > );
 	setLastSavedAttachmentId: (
@@ -837,6 +858,13 @@ const actions = {
 	addAnnotatedAttachmentId( attachmentId: number ): AddAnnotatedAttachmentIdAction {
 		return {
 			type: 'ADD_ANNOTATED_ATTACHMENT_ID',
+			payload: attachmentId,
+		};
+	},
+
+	addTransformedAttachmentId( attachmentId: number ): AddTransformedAttachmentIdAction {
+		return {
+			type: 'ADD_TRANSFORMED_ATTACHMENT_ID',
 			payload: attachmentId,
 		};
 	},
@@ -991,6 +1019,7 @@ export interface ImageStudioSelectors {
 	getCanvasMetadata: ( state: ImageStudioState ) => CanvasMetadata | null;
 	getIsAnnotationSaving: ( state: ImageStudioState ) => boolean;
 	getAnnotatedAttachmentIds: ( state: ImageStudioState ) => number[];
+	getTransformedAttachmentIds: ( state: ImageStudioState ) => number[];
 	getLastSavedAttachmentId: ( state: ImageStudioState ) => number | null;
 	getSavedAttachmentIds: ( state: ImageStudioState ) => number[];
 	getHasUnsavedChanges: ( state: ImageStudioState ) => boolean;
@@ -1074,6 +1103,10 @@ const selectors = {
 
 	getAnnotatedAttachmentIds( state: ImageStudioState ): number[] {
 		return state.annotatedAttachmentIds;
+	},
+
+	getTransformedAttachmentIds( state: ImageStudioState ): number[] {
+		return state.transformedAttachmentIds;
 	},
 
 	getLastSavedAttachmentId( state: ImageStudioState ): number | null {
