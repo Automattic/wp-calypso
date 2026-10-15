@@ -295,6 +295,48 @@ describe( '<MarketplacePurchases>', () => {
 		expect( notice ).toBeVisible();
 	} );
 
+	test( 'applies the Sites banner filter to that visit only', async () => {
+		mockAgency();
+		mockPreferences();
+		mockPendingSites( 'pending' );
+		const licenseQueries: Record< string, string >[] = [];
+		nock( API )
+			.get( '/wpcom/v2/jetpack-licensing/licenses' )
+			.query( ( query ) => {
+				licenseQueries.push( query as Record< string, string > );
+				return true;
+			} )
+			.reply( 200, { items: [ unassignedWpcomLicense ], total_items: 1, total_pages: 1 } )
+			.persist();
+		const savedViews: unknown[] = [];
+		nock( API )
+			.post( '/rest/v1.1/me/preferences', ( body ) => {
+				savedViews.push( body );
+				return true;
+			} )
+			.reply( 200, {} )
+			.persist();
+		window.history.replaceState( {}, '', '/purchases?status=unassigned&search=WordPress.com' );
+
+		const { unmount, queryClient } = render( <MarketplacePurchases /> );
+		await screen.findByText( 'Not assigned' );
+		expect( licenseQueries.at( -1 ) ).toMatchObject( {
+			filter: 'detached',
+			search: 'WordPress.com',
+		} );
+
+		unmount();
+		window.history.replaceState( {}, '', '/purchases' );
+		render( <MarketplacePurchases />, { queryClient } );
+		await screen.findByText( 'Not assigned' );
+
+		await waitFor( () =>
+			expect( licenseQueries.at( -1 ) ).toMatchObject( { filter: 'not_revoked' } )
+		);
+		expect( licenseQueries.at( -1 ) ).not.toHaveProperty( 'search' );
+		expect( savedViews ).toEqual( [] );
+	} );
+
 	describe( 'Manage in Pressable', () => {
 		const DAY_MS = 24 * 60 * 60 * 1000;
 
