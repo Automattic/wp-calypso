@@ -1,4 +1,3 @@
-@import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/colors";
 @import "@wordpress/base-styles/variables";
 @import "@wordpress/base-styles/mixins";
@@ -17,10 +16,6 @@
 
 		.dashboard-callout__content {
 			padding: $grid-unit-20;
-
-			@include break-medium {
-				padding: $grid-unit-30;
-			}
 		}
 	}
 }
@@ -29,10 +24,6 @@
 	padding: $grid-unit-20;
 	@include body-medium;
 	color: var(--dashboard__text-muted-color);
-
-	@include break-medium {
-		padding: $grid-unit-30;
-	}
 
 	> * {
 		flex: 1 0;
