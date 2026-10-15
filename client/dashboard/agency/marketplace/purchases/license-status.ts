@@ -29,24 +29,17 @@ export function isLicenseStatus( value: unknown ): value is LicenseStatus {
 	return typeof value === 'string' && Object.hasOwn( LICENSE_STATUS_FILTERS, value );
 }
 
-// Display-only: add-ons are live once bought, but have no site to be assigned to.
-export type LicenseDisplayStatus = LicenseStatus | 'active';
-
-export const getLicenseDisplayStatusLabels = (): Record< LicenseDisplayStatus, string > => ( {
-	...getLicenseStatusLabels(),
-	active: __( 'Active' ),
-} );
-
-// Bundle parents are never assigned to a site themselves, so they show no status.
-export function getLicenseDisplayStatus( license: JetpackLicense ): LicenseDisplayStatus | null {
+// Bundle parents and Pressable add-ons are never assigned to a site themselves,
+// so the classic list shows no assignment status for them.
+export function getLicenseDisplayStatus( license: JetpackLicense ): LicenseStatus | null {
 	const status = getLicenseStatus( license );
-	if ( status === 'revoked' ) {
-		return status;
+	if (
+		status !== 'revoked' &&
+		( isBundleParent( license ) || isPressableAddonLicense( license ) )
+	) {
+		return null;
 	}
-	if ( isPressableAddonLicense( license ) ) {
-		return 'active';
-	}
-	return isBundleParent( license ) ? null : status;
+	return status;
 }
 
 // A bundle's parent license holds the quantity; its child licenses are the
@@ -65,8 +58,6 @@ export function isPartnerLicense( license: JetpackLicense ): boolean {
 export function isWpcomHostingLicense( license: JetpackLicense ): boolean {
 	return license.license_key.startsWith( 'wpcom-hosting' );
 }
-
-export const PRESSABLE_AGENCY_URL = 'https://my.pressable.com/agency/auth';
 
 // Pressable licenses are managed in Pressable by the agency owner, not per site.
 export function isPressableLicense( license: JetpackLicense ): boolean {

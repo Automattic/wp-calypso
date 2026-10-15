@@ -16,9 +16,9 @@ import { Badge } from '@wordpress/ui';
 import { Text as DashboardText } from '../../../components/text';
 import { DEFAULT_PER_PAGE } from '../../../sites/dataviews/views';
 import { formatDate, parseDateAsUTC } from '../../../utils/datetime';
+import { PRESSABLE_AGENCY_URL } from '../hosting/lib/pressable-plans';
 import {
 	LICENSE_STATUS_FILTERS,
-	PRESSABLE_AGENCY_URL,
 	getLicenseDisplayStatus,
 	getLicenseRenewalDate,
 	getLicenseStatus,

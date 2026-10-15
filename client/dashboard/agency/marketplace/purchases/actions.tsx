@@ -9,10 +9,10 @@ import { useCallback, useMemo } from 'react';
 import { useAnalytics } from '../../../app/analytics';
 import { wpcomLink } from '../../../utils/link';
 import { urlToSlug } from '../../../utils/url';
+import { PRESSABLE_AGENCY_URL } from '../hosting/lib/pressable-plans';
 import { getCrmDownloadsRoute, getMarketplaceHostingSectionRoute } from '../paths';
 import AssignLicenseModal from './assign-license-modal';
 import {
-	PRESSABLE_AGENCY_URL,
 	getLicenseProductName,
 	getLicenseStatus,
 	isAutoRenewDisabled,
