@@ -2,7 +2,7 @@ import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 
-/** @augments {Component<any, any>} */
+/** @augments {Component<any>} */
 class SegmentedControlItem extends Component {
 	static propTypes = {
 		children: PropTypes.node.isRequired,

@@ -25,8 +25,8 @@ export const useAddMedia = () => {
 
 	const addMedia = useCallback(
 		/**
-		 * @param {*} file
-		 * @param {*} site
+		 * @param file
+		 * @param site
 		 * @param {number} [postId]
 		 */
 		( file, site, postId ) => {
