@@ -45,6 +45,7 @@ export default function Showcase( {
 		<VStack spacing={ 4 }>
 			<SectionHeader
 				level={ 2 }
+				inset
 				title={ title }
 				actions={ <RowArrows canScroll={ canScroll } page={ page } labels={ arrowLabels } /> }
 			/>

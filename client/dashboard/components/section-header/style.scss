@@ -7,6 +7,11 @@
 	position: relative;
 	z-index: 1;
 
+	// Matches the inline padding of the dashboard Card.
+	&.is-inset {
+		padding-inline: $grid-unit-20;
+	}
+
 	.dashboard-section-header__heading-row {
 		min-height: var( --dashboard-section-header__heading-row-min-height, 32px );
 	}

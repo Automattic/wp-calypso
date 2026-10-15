@@ -495,6 +495,7 @@ export default function MarketplaceProducts() {
 					{ pickedCategory ? (
 						<SectionHeader
 							level={ 2 }
+							inset
 							title={
 								<>
 									{ getSectionTitle( pickedCategory ) }
@@ -511,7 +512,7 @@ export default function MarketplaceProducts() {
 							decoration={ <CategoryMark section={ pickedCategory } /> }
 						/>
 					) : (
-						<SectionHeader level={ 2 } title={ resultCount } />
+						<SectionHeader level={ 2 } title={ resultCount } inset />
 					) }
 					{ filteredItems.length === 0 ? (
 						<VStack spacing={ 1 }>
@@ -533,6 +534,7 @@ export default function MarketplaceProducts() {
 						<VStack key={ section.key } spacing={ 4 }>
 							<SectionHeader
 								level={ 2 }
+								inset
 								title={ getSectionTitle( section.key ) }
 								decoration={ <CategoryMark section={ section.key } /> }
 							/>
