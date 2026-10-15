@@ -131,6 +131,12 @@ const findExactMatchCard = () => findElement( '.name-pulse-exact-card[data-domai
 
 const findBundleCard = () => findElement( '.name-pulse-bundle-card' );
 
+const bundlePlaceholder = () =>
+	document.querySelector< HTMLElement >( '.name-pulse-bundle-card-placeholder' );
+
+const exactHeadingPlaceholder = () =>
+	document.querySelector( '[data-section="exact"] > [aria-hidden="true"]' );
+
 const isAfterTopResults = ( element: HTMLElement ) =>
 	Boolean(
 		( document.querySelector( '[data-section="top"]' ) as HTMLElement ).compareDocumentPosition(
@@ -166,6 +172,8 @@ describe( 'NamePulseResults', () => {
 
 		expect( screen.getByRole( 'heading', { name: 'Top results' } ) ).toBeInTheDocument();
 		expect( screen.queryByRole( 'heading', { name: /Exact match/ } ) ).not.toBeInTheDocument();
+		// The heading's line is held, so the rows do not drop when it arrives.
+		expect( exactHeadingPlaceholder() ).not.toBeNull();
 		expect( skeletonsIn( 'top' ) ).toBe( 3 );
 		expect( skeletonsIn( 'exact' ) ).toBe( NAME_PULSE_PAGE_SIZE );
 		expect( rowFor( 'icecream.net' ) ).toBeNull();
@@ -181,6 +189,7 @@ describe( 'NamePulseResults', () => {
 		expect(
 			screen.getByRole( 'heading', { name: 'Exact match for “icecream”' } )
 		).toBeInTheDocument();
+		expect( exactHeadingPlaceholder() ).toBeNull();
 		expect( within( rowFor( 'icecream.net' ) ).getByText( '/year' ) ).toBeInTheDocument();
 		expect(
 			within( rowFor( 'icecream.net' ) ).getByRole( 'button', { name: 'Add to cart' } )
@@ -1031,6 +1040,43 @@ describe( 'NamePulseResults', () => {
 			expect( bundle ).toHaveClass( 'name-pulse-bundle-card--wide' );
 		} );
 
+		it( 'holds its slot under Top results while it loads, so the exact matches below do not move', async () => {
+			let resolveBundle: ( bundle: BundleSuggestion | null ) => void = () => {};
+			const bundleForDomain = jest.fn(
+				() =>
+					new Promise< BundleSuggestion | null >( ( resolve ) => {
+						resolveBundle = resolve;
+					} )
+			);
+
+			render(
+				<NamePulseTestSearch
+					query="icecream"
+					showBundleSuggestions
+					bundleForDomain={ bundleForDomain }
+				/>
+			);
+
+			const exactSection = document.querySelector( '[data-section="exact"]' ) as HTMLElement;
+			const placeholder = bundlePlaceholder() as HTMLElement;
+
+			expect( placeholder ).toHaveClass( 'name-pulse-bundle-card--wide' );
+			expect( isAfterTopResults( placeholder ) ).toBe( true );
+			expect( placeholder.nextElementSibling ).toBe( exactSection );
+
+			await waitFor( () => expect( bundleForDomain ).toHaveBeenCalledWith( 'icecream.com' ) );
+			expect( await findRow( 'icecream.net' ) ).toBeInTheDocument();
+			expect( bundlePlaceholder() ).toBe( placeholder );
+
+			await act( async () => {
+				resolveBundle( buildNamePulseBundle( 'icecream.com' ) );
+			} );
+
+			const bundle = await findBundleCard();
+			expect( bundlePlaceholder() ).toBeNull();
+			expect( bundle.nextElementSibling ).toBe( exactSection );
+		} );
+
 		it( 'renders nothing when no anchor has a bundle', async () => {
 			const bundleForDomain = jest.fn( async () => null );
 
@@ -1045,6 +1091,7 @@ describe( 'NamePulseResults', () => {
 			await waitFor( () => expect( bundleForDomain ).toHaveBeenCalledWith( 'icecream.com' ) );
 
 			expect( bundleForDomain ).toHaveBeenCalledTimes( 1 );
+			await waitFor( () => expect( bundlePlaceholder() ).toBeNull() );
 			expect( document.querySelector( '.name-pulse-bundle-card' ) ).toBeNull();
 		} );
 

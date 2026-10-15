@@ -1,3 +1,4 @@
+import { LoadingPlaceholder } from '@automattic/components';
 import { useIsMutating, useMutation } from '@tanstack/react-query';
 import { Button } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
@@ -203,6 +204,59 @@ export const NamePulseBundleCard = ( { bundle, isWide = false }: NamePulseBundle
 				<Icon icon={ shield } size={ 20 } />
 				{ __( 'Claim popular domain extensions to avoid copycats' ) }
 			</p>
+		</div>
+	);
+};
+
+/**
+ * Built from the card's layout classes so it holds the card's height at every
+ * width, and the card can replace it without moving the results below.
+ */
+export const NamePulseBundleCardPlaceholder = ( { isWide = false }: { isWide?: boolean } ) => {
+	const { __ } = useI18n();
+
+	return (
+		<div
+			className={ clsx(
+				'name-pulse-bundle-card-placeholder',
+				isWide && 'name-pulse-bundle-card--wide'
+			) }
+			aria-hidden="true"
+		>
+			<div className="name-pulse-bundle-card__header">
+				<LoadingPlaceholder width="9rem" height="1.25rem" />
+				<LoadingPlaceholder width="8rem" height="1.5rem" />
+			</div>
+			<div className="name-pulse-bundle-card__lineup">
+				<div className="name-pulse-bundle-card__tlds">
+					<LoadingPlaceholder width="11rem" height="1.4em" />
+				</div>
+				<div className="name-pulse-bundle-card__domains">
+					<LoadingPlaceholder width="16rem" height="1.4em" />
+				</div>
+			</div>
+			<div className="name-pulse-bundle-card__offer">
+				<div className="name-pulse-bundle-card__price">
+					<div className="name-pulse-bundle-card__amounts">
+						<LoadingPlaceholder width="7rem" height="1.4em" />
+					</div>
+					<div className="name-pulse-bundle-card__renewal">
+						<LoadingPlaceholder width="12rem" height="1.4em" />
+					</div>
+				</div>
+				<LoadingPlaceholder
+					className="name-pulse-bundle-card__cta"
+					width="7.5rem"
+					height="2.5rem"
+				/>
+			</div>
+			{ /* The real text, hidden, so the footer wraps onto as many lines as the card's. */ }
+			<div className="name-pulse-bundle-card__footer">
+				<LoadingPlaceholder width="1.25rem" height="1.25rem" />
+				<LoadingPlaceholder className="name-pulse-bundle-card-placeholder__text" width="auto">
+					{ __( 'Claim popular domain extensions to avoid copycats' ) }
+				</LoadingPlaceholder>
+			</div>
 		</div>
 	);
 };

@@ -349,6 +349,14 @@ html:has( .name-pulse-search-input ) {
 	}
 }
 
+.name-pulse-exact-card-placeholder {
+	@extend .name-pulse-exact-card;
+
+	* {
+		max-width: 100%;
+	}
+}
+
 @keyframes name-pulse-skeleton {
 	0%,
 	100% {

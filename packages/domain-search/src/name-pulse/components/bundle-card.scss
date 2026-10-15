@@ -122,6 +122,18 @@
 	}
 }
 
+.name-pulse-bundle-card-placeholder {
+	@extend .name-pulse-bundle-card;
+
+	* {
+		max-width: 100%;
+	}
+
+	&__text {
+		color: transparent;
+	}
+}
+
 // Under Top results the card spans the row, so the price and button move
 // beside the TLDs.
 .name-pulse-bundle-card--wide {

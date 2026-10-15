@@ -1,4 +1,5 @@
 import { DomainAvailabilityStatus, type DomainAvailability } from '@automattic/api-core';
+import { LoadingPlaceholder } from '@automattic/components';
 import { useIsMutating } from '@tanstack/react-query';
 import {
 	__experimentalHStack as HStack,
@@ -196,5 +197,38 @@ export const NamePulseExactMatchCard = ( {
 				/>
 			) }
 		</DomainSuggestionContainerContext.Provider>
+	);
+};
+
+/**
+ * Laid out like the card, so the verdict replacing it does not move the
+ * results below.
+ */
+export const NamePulseExactMatchCardPlaceholder = () => {
+	const { __ } = useI18n();
+
+	return (
+		<div
+			className="name-pulse-exact-card-placeholder"
+			role="status"
+			aria-busy="true"
+			aria-label={ __( 'Loading featured domain suggestion' ) }
+		>
+			<VStack spacing={ 4 }>
+				<LoadingPlaceholder width="12rem" height="1.5rem" />
+				<LoadingPlaceholder width="14rem" height="2.4rem" />
+				<div className="name-pulse-exact-card__price-row">
+					<LoadingPlaceholder width="6.5rem" height="2.1rem" />
+					<LoadingPlaceholder
+						className="name-pulse-exact-card__cta"
+						width="7.875rem"
+						height="2.5rem"
+					/>
+				</div>
+				<div className="name-pulse-exact-card__footer">
+					<LoadingPlaceholder width="12rem" height="1.5rem" />
+				</div>
+			</VStack>
+		</div>
 	);
 };

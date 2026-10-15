@@ -1,3 +1,4 @@
+import { LoadingPlaceholder } from '@automattic/components';
 import {
 	Button,
 	__experimentalText as Text,
@@ -22,7 +23,7 @@ import {
 
 interface NamePulseResultsSectionProps {
 	id: NamePulseSectionId;
-	/** Omitted while the heading text is not known yet (the skeletons still render). */
+	/** Omitted while the heading text is not known yet; a placeholder holds its line. */
 	title?: string;
 	results: NamePulseDomainResult[];
 	isLoading?: boolean;
@@ -81,9 +82,13 @@ export const NamePulseResultsSection = ( {
 
 	return (
 		<VStack spacing={ 3 } className="name-pulse-section" data-section={ id }>
-			{ title && (
+			{ title ? (
 				<Text as="h2" size={ 18 } weight={ 500 }>
 					{ title }
+				</Text>
+			) : (
+				<Text as="div" size={ 18 } aria-hidden="true">
+					<LoadingPlaceholder width="14rem" height="1.4em" />
 				</Text>
 			) }
 			<div
