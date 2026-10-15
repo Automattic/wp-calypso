@@ -82,6 +82,10 @@ describe( 'useMarkNotesRead', () => {
 		nock( 'https://public-api.wordpress.com' )
 			.post( /\/notifications\/read/ )
 			.reply( 200, { success: true } );
+		nock( 'https://public-api.wordpress.com' )
+			.get( '/rest/v1.1/notifications/' )
+			.query( true )
+			.reply( 200, { notes: [ makeNote( { id: 1, read: 1 } ), makeNote( { id: 2 } ) ] } );
 
 		const wrapper = createWrapper( createQueryClient() );
 		const { result } = renderHook(
@@ -101,5 +105,34 @@ describe( 'useMarkNotesRead', () => {
 				{ id: 2, read: 0 },
 			] )
 		);
+	} );
+
+	it( 'restores the unread state when marking as read fails', async () => {
+		nock( 'https://public-api.wordpress.com' )
+			.get( '/rest/v1.1/notifications/' )
+			.query( true )
+			.times( 2 )
+			.reply( 200, { notes: [ makeNote( { id: 1 } ), makeNote( { id: 2 } ) ] } );
+		nock( 'https://public-api.wordpress.com' )
+			.post( /\/notifications\/read/ )
+			.reply( 500, { error: 'server_error', message: 'Something went wrong' } );
+
+		const wrapper = createWrapper( createQueryClient() );
+		const { result } = renderHook(
+			() => ( { notes: useCommentNotes(), markRead: useMarkNotesRead() } ),
+			{ wrapper }
+		);
+
+		await waitFor( () => expect( result.current.notes.isSuccess ).toBe( true ) );
+
+		act( () => {
+			result.current.markRead.mutate( [ 1 ] );
+		} );
+
+		await waitFor( () => expect( result.current.markRead.isError ).toBe( true ) );
+		expect( result.current.notes.data?.map( ( { id, read } ) => ( { id, read } ) ) ).toEqual( [
+			{ id: 1, read: 0 },
+			{ id: 2, read: 0 },
+		] );
 	} );
 } );

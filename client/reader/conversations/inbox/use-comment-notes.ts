@@ -33,10 +33,25 @@ export function useMarkNotesRead() {
 			wpcom.req.post( { path: '/notifications/read' }, null, {
 				counts: Object.fromEntries( noteIds.map( ( id ) => [ id, 9999 ] ) ),
 			} ),
-		onMutate: ( noteIds ) => {
+		onMutate: async ( noteIds ) => {
+			try {
+				await queryClient.cancelQueries( { queryKey: COMMENT_NOTES_QUERY_KEY } );
+			} catch {
+				// Cancelling is best-effort; the optimistic update below must still happen.
+			}
+			const previous = queryClient.getQueriesData< Note[] >( {
+				queryKey: COMMENT_NOTES_QUERY_KEY,
+			} );
 			queryClient.setQueriesData< Note[] >( { queryKey: COMMENT_NOTES_QUERY_KEY }, ( notes ) =>
 				notes?.map( ( note ) => ( noteIds.includes( note.id ) ? { ...note, read: 1 } : note ) )
 			);
+			return { previous };
 		},
+		onError: ( _error, _noteIds, context ) => {
+			context?.previous.forEach( ( [ queryKey, notes ] ) =>
+				queryClient.setQueryData( queryKey, notes )
+			);
+		},
+		onSettled: () => queryClient.invalidateQueries( { queryKey: COMMENT_NOTES_QUERY_KEY } ),
 	} );
 }

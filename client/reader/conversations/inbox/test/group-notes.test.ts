@@ -109,6 +109,33 @@ describe( 'groupNotesByPost', () => {
 		] );
 	} );
 
+	it( 'reads the commenter from a subject user range when the body has none', () => {
+		const text = 'Ana replied to your comment';
+		const [ conversation ] = groupNotesByPost( [
+			makeNote( {
+				id: 1,
+				icon: 'https://example.com/icon.png',
+				subject: [
+					{ text, ranges: [ { type: 'user', indices: [ 0, 3 ], id: 5, parent: null } ] },
+					{ text: 'Excerpt' },
+				],
+				body: [ { type: 'comment', text: 'A reply' } ],
+			} ),
+		] );
+
+		expect( conversation.commenters ).toEqual( [
+			{ name: 'Ana', avatar: 'https://example.com/icon.png' },
+		] );
+	} );
+
+	it( 'does not treat a comment block as the commenter', () => {
+		const [ conversation ] = groupNotesByPost( [
+			makeNote( { id: 1, body: [ { type: 'comment', text: 'A reply' } ] } ),
+		] );
+
+		expect( conversation.commenters ).toEqual( [] );
+	} );
+
 	it( 'skips notes without site or post ids', () => {
 		expect( groupNotesByPost( [ makeNote( { id: 1, meta: { ids: { site: 10 } } } ) ] ) ).toEqual(
 			[]

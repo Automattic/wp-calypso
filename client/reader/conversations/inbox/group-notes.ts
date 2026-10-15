@@ -30,10 +30,22 @@ const getPostTitle = ( note: Note ): string => {
 };
 
 const getCommenter = ( note: Note ): Commenter | null => {
-	const userBlock = note.body?.find( ( block ) => block.type === 'user' ) ?? note.body?.[ 0 ];
-	const name = userBlock?.text;
-	const avatar = userBlock?.media?.[ 0 ]?.url ?? note.icon;
-	return name ? { name, avatar } : null;
+	const userBlock = note.body?.find( ( block ) => block.type === 'user' );
+	if ( userBlock?.text ) {
+		return { name: userBlock.text, avatar: userBlock.media?.[ 0 ]?.url ?? note.icon };
+	}
+
+	// Some comment and reply notes only identify the actor through a `user` range in the subject.
+	const subject = note.subject?.[ 0 ];
+	const userRange = subject?.ranges?.find( ( { type } ) => type === 'user' );
+	if ( subject && userRange && userRange.indices[ 1 ] > userRange.indices[ 0 ] ) {
+		return {
+			name: subject.text.slice( userRange.indices[ 0 ], userRange.indices[ 1 ] ),
+			avatar: note.icon,
+		};
+	}
+
+	return null;
 };
 
 export const getConversationKey = ( siteId: number | string, postId: number | string ) =>
