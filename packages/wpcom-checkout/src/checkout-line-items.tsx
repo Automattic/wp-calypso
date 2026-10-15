@@ -190,10 +190,13 @@ const LineItemSublabelTitle = styled.div`
 
 const LineItemPriceWrapper = styled.span`
 	display: flex;
-	flex: 0 0 auto;
+	flex: 0 1 auto;
+	flex-wrap: wrap;
+	min-width: 0;
 	gap: 4px;
 	margin-left: 12px;
 	font-size: inherit;
+	overflow-wrap: anywhere;
 
 	.rtl & {
 		margin-right: 12px;
