@@ -215,8 +215,7 @@ class Login extends Component {
 		this.handleTwoFactorRequested( 'link' );
 	};
 
-	showContinueAsUser = () =>
-		shouldShowContinueAsUser( { ...this.props, isLoggedIn: !! this.props.currentUser } );
+	showContinueAsUser = () => shouldShowContinueAsUser( this.props );
 
 	handleTwoFactorRequested = ( authType ) => {
 		if ( this.props.onTwoFactorRequested ) {

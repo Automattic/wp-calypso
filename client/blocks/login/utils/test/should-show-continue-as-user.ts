@@ -1,3 +1,7 @@
+/**
+ * Run with:
+ * yarn test-client client/blocks/login/utils/test/should-show-continue-as-user.ts
+ */
 import shouldShowContinueAsUser from '../should-show-continue-as-user';
 
 describe( 'shouldShowContinueAsUser', () => {

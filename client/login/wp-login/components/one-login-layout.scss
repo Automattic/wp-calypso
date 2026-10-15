@@ -1,4 +1,6 @@
 @import "@automattic/typography/styles/variables";
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
 
 .wp-login__one-login-layout-content-wrapper {
 	display: flex;
@@ -40,7 +42,7 @@
 .wp-login__top-right-mobile {
 	display: contents;
 
-	@media ( min-width: 960px ) {
+	@include break-large {
 		display: none;
 	}
 }

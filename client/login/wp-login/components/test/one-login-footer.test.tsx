@@ -1,4 +1,6 @@
 /**
+ * Run with:
+ * yarn test-client client/login/wp-login/components/test/one-login-footer.test.tsx
  * @jest-environment jsdom
  */
 import { screen } from '@testing-library/react';

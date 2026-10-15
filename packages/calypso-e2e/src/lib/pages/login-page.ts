@@ -243,7 +243,8 @@ export class LoginPage {
 	 * Clicks the "Lost your password?" link.
 	 */
 	async clickRetrievePassword(): Promise< Locator > {
-		const locator = await this.page.locator( ':text-is("Lost your password?")' );
+		// Two copies exist on the main login view, one hidden per viewport width.
+		const locator = this.page.locator( ':text-is("Lost your password?"):visible' );
 		await locator.click();
 
 		return locator;

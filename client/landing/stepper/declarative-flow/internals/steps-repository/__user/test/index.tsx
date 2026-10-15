@@ -29,7 +29,7 @@ import UserStep, { type UserStepAccepts } from '..';
 const mockUseViewportMatch = useViewportMatch as unknown as jest.Mock;
 const mockUsePartnerBranding = usePartnerBranding as unknown as jest.Mock;
 
-// isMobileViewport is useViewportMatch( 'small', '<' ) at 660px and isLargeViewport is
+// isMobileViewport is useViewportMatch( 'small', '<' ) at 600px and isLargeViewport is
 // useViewportMatch( 'large' ) at 960px. Pass both to reach the band in between.
 const setViewport = ( {
 	isMobile,
@@ -234,7 +234,7 @@ describe( 'User email signup step', () => {
 		} );
 
 		it( 'leaves the band between the breakpoints on its top-bar link', () => {
-			// Between 660px and 960px the login link stays in the top bar, matching login.
+			// Between 600px and 960px the login link stays in the top bar, matching login.
 			setViewport( { isMobile: false, isLarge: false } );
 
 			const { container } = renderUserStep();

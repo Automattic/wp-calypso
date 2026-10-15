@@ -1,4 +1,6 @@
 @import "@automattic/typography/styles/variables";
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
 
 .one-login__footer {
 	display: flex;
@@ -68,7 +70,7 @@
 			text-decoration: underline;
 		}
 
-		@media ( min-width: 960px ) {
+		@include break-large {
 			display: block;
 		}
 	}
@@ -76,7 +78,7 @@
 	// The other half of that swap: the lost-password link is the footer's on mobile, and the
 	// top bar's on desktop.
 	.one-login__footer-mobile {
-		@media ( min-width: 960px ) {
+		@include break-large {
 			display: none;
 		}
 	}

@@ -10,13 +10,12 @@ import './one-login-footer.scss';
 
 interface OneLoginFooterProps {
 	/**
-	 * When `isLoginView` is true, the "lost password" link. Shown below 960px only; desktop puts
-	 * it beside the password field.
+	 * When `isLoginView` is true, the "lost password" link.
 	 */
 	lostPasswordLink?: JSX.Element;
 	/**
 	 * Hides `lostPasswordLink` at 960px and up. Pass it when the form carries its own copy
-	 * there.
+	 * there; Woo and Gravatar-powered logins do not, and keep the footer's at every width.
 	 */
 	lostPasswordLinkMobileOnly?: boolean;
 	/**
