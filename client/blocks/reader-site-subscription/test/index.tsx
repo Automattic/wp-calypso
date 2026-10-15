@@ -91,6 +91,8 @@ describe( 'ReaderSiteSubscription', () => {
 		expect( screen.getByText( date ) ).toBeInTheDocument();
 		expect( screen.getByAltText( 'Test Site' ) ).toBeInTheDocument();
 		const siteLink = screen.getByRole( 'link', { name: /example\.com/ } );
+		expect( siteLink ).toHaveAttribute( 'href', 'https://example.com' );
+		expect( siteLink ).toHaveAttribute( 'rel', 'noopener noreferrer' );
 		expect( siteLink ).toHaveAttribute( 'target', '_blank' );
 		expect( screen.getByRole( 'img', { name: '(opens in a new tab)' } ) ).toBeInTheDocument();
 		expect( screen.getByRole( 'button', { name: 'Unsubscribe' } ) ).toBeEnabled();

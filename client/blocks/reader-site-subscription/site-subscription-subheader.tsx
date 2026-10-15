@@ -59,7 +59,7 @@ const SiteSubscriptionSubheader = ( {
 			<Link
 				key={ url }
 				className="site-subscription-header__site-link"
-				href={ localizeUrl( url ) }
+				href={ url }
 				openInNewTab
 				rel="noopener noreferrer"
 				tone="neutral"
