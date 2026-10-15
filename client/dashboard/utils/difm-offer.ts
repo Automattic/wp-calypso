@@ -5,10 +5,10 @@ import { __ } from '@wordpress/i18n';
 import { useExperiment } from 'calypso/lib/explat';
 
 /**
- * Placeholder name until DATSCI-1787 names the experiment. ExPlat returns no
- * assignment for an unregistered experiment, so every caller gets `control`.
+ * Registered on the calypso platform. The Site Setup banner in jetpack-mu-wpcom
+ * assigns the same experiment on the server, so a user gets one variation on every surface.
  */
-export const DIFM_OFFER_EXPERIMENT = 'wpcom_difm_post_signup_offer_placeholder';
+export const DIFM_OFFER_EXPERIMENT = 'calypso_difm_free_with_upgrade_wpadmin_202610_v1';
 
 /**
  * A QA flag that puts an eligible user in `treatment` without an ExPlat assignment.
