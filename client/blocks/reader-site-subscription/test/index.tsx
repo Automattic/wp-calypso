@@ -90,7 +90,9 @@ describe( 'ReaderSiteSubscription', () => {
 		expect( screen.getByText( /100 subscribers/i ) ).toBeInTheDocument();
 		expect( screen.getByText( date ) ).toBeInTheDocument();
 		expect( screen.getByAltText( 'Test Site' ) ).toBeInTheDocument();
-		expect( screen.getByRole( 'link', { name: 'example.com' } ) ).toBeInTheDocument();
+		const siteLink = screen.getByRole( 'link', { name: /example\.com/ } );
+		expect( siteLink ).toHaveAttribute( 'target', '_blank' );
+		expect( screen.getByRole( 'img', { name: '(opens in a new tab)' } ) ).toBeInTheDocument();
 		expect( screen.getByRole( 'button', { name: 'Unsubscribe' } ) ).toBeEnabled();
 	} );
 
