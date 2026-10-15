@@ -70,6 +70,7 @@ const ThreadItem = ( {
 							justify="flex-start"
 							spacing={ 2 }
 							wrap
+							style={ { rowGap: 0 } }
 						>
 							{ name }
 							{ meta }
