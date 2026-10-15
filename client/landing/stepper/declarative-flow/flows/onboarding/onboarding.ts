@@ -39,7 +39,9 @@ import { useQuery } from '../../../hooks/use-query';
 import { ONBOARD_STORE, SITE_STORE } from '../../../stores';
 import {
 	getBlueprintArchiveSiteSpecUrl,
+	getSpecMetaFromQuery,
 	getStandaloneBlueprintArchiveSlug,
+	getStandaloneBlueprintSimpleSlug,
 	isBlueprintCustomThemeBuild,
 } from '../../../utils/blueprint-archive-import';
 import {
@@ -383,6 +385,14 @@ const onboarding: FlowV2< typeof initialize > = {
 			playgroundId,
 			buildDest
 		);
+		// build_dest=simple: the blueprint goes onto the Simple site the flow creates, on the free
+		// plan, and the spec interview still runs. No plans grid and no checkout — the run is
+		// decided by the CTA, the way a preselected plan decides it for the paid flows.
+		const blueprintSimpleSlug = getStandaloneBlueprintSimpleSlug(
+			blueprint,
+			playgroundId,
+			buildDest
+		);
 		const wowFunnelSlug = getWowFunnelSlug( queryParams );
 		const wowFunnelDest = getWowFunnelDest( queryParams, wowFunnelSlug );
 
@@ -444,6 +454,21 @@ const onboarding: FlowV2< typeof initialize > = {
 					siteId: providedDependencies.siteId as number,
 				};
 
+				// build_dest=simple: land on the AI site-spec too, which starts the Simple
+				// blueprint import on the site just created and, on confirm, waits for it,
+				// applies the spec and hands over to the site's own editor. The blueprint step
+				// already verified the blueprint exists for a Simple build.
+				if ( blueprintSimpleSlug ) {
+					return getBlueprintArchiveSiteSpecUrl( {
+						siteSlug: providedDependencies.siteSlug as string,
+						siteId: providedDependencies.siteId as number,
+						blueprintSlug: blueprintSimpleSlug,
+						ref: refParameter,
+						simpleImport: true,
+						specMeta: getSpecMetaFromQuery( queryParams ),
+					} );
+				}
+
 				// build_dest=wow: skip the Playground-based importer and land on the AI
 				// site-spec, which kicks off the background transfer-to-Atomic +
 				// blueprint-archive import and, on confirm, polls the import and
@@ -494,7 +519,32 @@ const onboarding: FlowV2< typeof initialize > = {
 		 * goes straight to site creation. The free-plan and email-verification branches in the
 		 * plans handler below only apply when no plan was picked, so nothing is skipped here.
 		 */
-		const navigateAfterDomain = () => {
+		const navigateAfterDomain = ( { requiresPaidPlan = false } = {} ) => {
+			// A Simple blueprint build is a free-plan run by definition, so the plans grid has
+			// nothing to ask either. Same bookkeeping as the free branch of the plans handler
+			// below, including its email-verification gate: a fully free order never reaches
+			// checkout, so this is where the gate is met. A connected or transferred domain is
+			// the exception: it needs a paid plan, so that run still picks one on the grid and
+			// reaches the same destination through checkout's redirect.
+			if ( blueprintSimpleSlug && ! requiresPaidPlan ) {
+				setPlanCartItem( null );
+				setProductCartItems( [] );
+				setSignupDomainOrigin(
+					signupDomainOrigin === 'choose-later' ? signupDomainOrigin : SIGNUP_DOMAIN_ORIGIN.FREE
+				);
+				setSignupCompleteFlowName( flowName );
+
+				if ( postPlanSelectionEmailVerification ) {
+					return navigate(
+						'email-verification?next=create-site' as typeof currentStepSlug,
+						undefined,
+						false
+					);
+				}
+
+				return navigate( 'create-site', undefined, false );
+			}
+
 			if ( ! shouldSkipPlans ) {
 				return navigate( 'plans' );
 			}
@@ -549,6 +599,8 @@ const onboarding: FlowV2< typeof initialize > = {
 						setSignupDomainOrigin( SIGNUP_DOMAIN_ORIGIN.USE_YOUR_DOMAIN );
 						setHideFreePlan( true );
 						setDomainCartItem( providedDependencies.domainCartItem );
+
+						return navigateAfterDomain( { requiresPaidPlan: true } );
 					}
 
 					return navigateAfterDomain();
@@ -789,7 +841,7 @@ const onboarding: FlowV2< typeof initialize > = {
 									// straight from checkout to their destination — no
 									// post-checkout-onboarding hop, no chooser.
 									redirect_to:
-										blueprintArchiveSlug || isKnownWowFunnel( wowFunnelSlug )
+										blueprintArchiveSlug || blueprintSimpleSlug || isKnownWowFunnel( wowFunnelSlug )
 											? destination
 											: redirectTo,
 									signup: 1,
@@ -805,8 +857,12 @@ const onboarding: FlowV2< typeof initialize > = {
 									steps_total: checkoutStepperPosition.total,
 								} )
 							);
-						} else if ( blueprintArchiveSlug || isKnownWowFunnel( wowFunnelSlug ) ) {
-							// build_dest=wow and the WoW funnel never show the
+						} else if (
+							blueprintArchiveSlug ||
+							blueprintSimpleSlug ||
+							isKnownWowFunnel( wowFunnelSlug )
+						) {
+							// build_dest=wow, build_dest=simple and the WoW funnel never show the
 							// setup-your-site-ai chooser; go straight to their destination.
 							// This can stay ahead of the domain branches below: a connected or
 							// transferred domain forces a paid plan (use-my-domain hides the free
@@ -974,7 +1030,7 @@ const onboarding: FlowV2< typeof initialize > = {
 					// that does not need one. Resume only while it is still unpaid.
 					const site = await resolveSelect( SITE_STORE )
 						.getSite( remembered.siteSlug )
-						.catch( () => null );
+						.catch( () => undefined );
 
 					if ( ! wowFunnelSiteIsPaid( site ) ) {
 						return;

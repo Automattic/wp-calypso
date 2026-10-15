@@ -1,0 +1,11 @@
+@import "@wordpress/base-styles/variables";
+
+.dashboard-difm-offer-card {
+	position: relative;
+}
+
+.dashboard-difm-offer-card__dismiss {
+	position: absolute;
+	inset-block-start: $grid-unit-10;
+	inset-inline-end: $grid-unit-10;
+}

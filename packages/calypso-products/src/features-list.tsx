@@ -1899,9 +1899,11 @@ const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_NEWSLETTERS_RSS ]: {
 		getSlug: () => FEATURE_NEWSLETTERS_RSS,
-		getTitle: () => i18n.translate( 'Built-in newsletters & RSS' ),
+		getTitle: () => i18n.translate( 'Built-in newsletter with unlimited subscribers' ),
 		getDescription: () =>
-			i18n.translate( 'Let your followers subscribe to your content as a newsletter or via RSS.' ),
+			i18n.translate(
+				'Email every post to unlimited subscribers, with an RSS feed included. On the Free plan you can import up to 100 subscribers from another platform. Imports are unlimited on paid plans.'
+			),
 	},
 	[ FEATURE_POST_EDITS_HISTORY ]: {
 		getSlug: () => FEATURE_POST_EDITS_HISTORY,

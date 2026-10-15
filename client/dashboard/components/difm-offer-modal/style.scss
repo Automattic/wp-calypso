@@ -1,0 +1,109 @@
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/colors';
+@import '@wordpress/base-styles/mixins';
+@import '@wordpress/base-styles/variables';
+
+.difm-offer-modal {
+	// Clip the illustration to the modal's rounded corners.
+	overflow: hidden;
+
+	@include break-medium {
+		&.components-modal__frame {
+			width: 800px;
+		}
+	}
+
+	// The illustration bleeds to the modal edges, so the main column sets its own padding.
+	.components-modal__content {
+		padding: 0;
+	}
+}
+
+.difm-offer-modal__layout {
+	display: flex;
+	align-items: stretch;
+	min-height: 100%;
+}
+
+.difm-offer-modal__illustration {
+	display: none;
+	flex: 0 0 260px;
+	width: 260px;
+	object-fit: cover;
+
+	@include break-medium {
+		display: block;
+	}
+}
+
+.difm-offer-modal__main {
+	display: flex;
+	flex: 1;
+	flex-direction: column;
+	gap: $grid-unit-30;
+	min-width: 0;
+	padding: $grid-unit-30;
+}
+
+.difm-offer-modal__header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	min-height: $grid-unit-40;
+}
+
+.difm-offer-modal__progress {
+	width: 80px;
+	height: 4px;
+	overflow: hidden;
+	border-radius: $radius-full;
+	background: var(--wp-components-color-gray-200, $gray-200);
+}
+
+.difm-offer-modal__progress-bar {
+	height: 100%;
+	border-radius: $radius-full;
+	background: var(--wp-admin-theme-color);
+}
+
+.difm-offer-modal__body {
+	display: flex;
+	flex: 1;
+	flex-direction: column;
+	gap: $grid-unit-50;
+	justify-content: space-between;
+}
+
+.difm-offer-modal__features {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+
+	li {
+		display: flex;
+		align-items: flex-start;
+		gap: $grid-unit-05;
+		line-height: $grid-unit-30;
+	}
+
+	svg {
+		flex: 0 0 auto;
+		fill: currentColor;
+	}
+}
+
+.difm-offer-modal__site-summary {
+	display: flex;
+	flex-wrap: wrap;
+	gap: $grid-unit-10 $grid-unit-30;
+	padding: $grid-unit-15 $grid-unit-15;
+	border-radius: $radius-small;
+	background: var(--wp-components-color-gray-200, $gray-100);
+}
+
+.difm-offer-modal__footer {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: $grid-unit-10;
+}

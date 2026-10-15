@@ -1,13 +1,22 @@
-import { DotcomPlans } from '@automattic/api-core';
+import { DIFM_OFFER_ARMS, DotcomPlans } from '@automattic/api-core';
+import config from '@automattic/calypso-config';
 import { englishLocales } from '@automattic/i18n-utils';
 import { __ } from '@wordpress/i18n';
 import { useExperiment } from 'calypso/lib/explat';
+import type { DifmOfferBuildRequestVariation } from '@automattic/api-core';
 
 /**
- * Placeholder name until DATSCI-1787 names the experiment. ExPlat returns no
- * assignment for an unregistered experiment, so every caller gets `control`.
+ * Registered on the calypso platform. The Site Setup banner in jetpack-mu-wpcom
+ * assigns the same experiment on the server, so a user gets one variation on every surface.
  */
-export const DIFM_OFFER_EXPERIMENT = 'wpcom_difm_post_signup_offer_placeholder';
+export const DIFM_OFFER_EXPERIMENT = 'calypso_difm_free_with_upgrade_wpadmin_202610_v1';
+
+/**
+ * A QA flag that puts an eligible user in `DIFM_OFFER_FORCED_ARM` without an ExPlat assignment.
+ * Every config file sets it to false. Turn it on with `?flags=difm-offer/force-treatment`,
+ * which Calypso honours only for Automatticians, so real users cannot turn it on.
+ */
+export const DIFM_OFFER_FORCE_TREATMENT_FLAG = 'difm-offer/force-treatment';
 
 /**
  * The upper bound on site age is an open question for product and data.
@@ -17,9 +26,17 @@ export const DIFM_OFFER_MAX_SITE_AGE_DAYS = 7;
 const MS_PER_DAY = 24 * 60 * 60 * 1000;
 
 /**
- * Placeholder variations for copy angles A, B and C.
+ * One of the experiment's copy arms. Each arm shows the offer with its own copy, and
+ * `control` shows no offer.
  */
-export type DifmOfferVariation = 'control' | 'skip_setup' | 'expert_help' | 'no_time';
+export type DifmOfferArm = DifmOfferBuildRequestVariation;
+
+export type DifmOfferVariation = 'control' | DifmOfferArm;
+
+/**
+ * The arm that the QA flag forces.
+ */
+export const DIFM_OFFER_FORCED_ARM: DifmOfferArm = 'no_time_to_build';
 
 export interface DifmOfferEligibilityInput {
 	planSlug?: string;
@@ -49,16 +66,7 @@ export interface DifmOfferResult {
 export function normalizeDifmOfferVariation(
 	variationName: string | null | undefined
 ): DifmOfferVariation {
-	switch ( variationName ) {
-		case 'skip_setup':
-			return 'skip_setup';
-		case 'expert_help':
-			return 'expert_help';
-		case 'no_time':
-			return 'no_time';
-		default:
-			return 'control';
-	}
+	return DIFM_OFFER_ARMS.find( ( arm ) => arm === variationName ) ?? 'control';
 }
 
 const ELIGIBLE_PLAN_SLUGS = new Set< string >( [
@@ -126,14 +134,19 @@ export function isEligibleForDifmOffer(
  */
 export function useDifmOffer( input: DifmOfferEligibilityInput ): DifmOfferResult {
 	const isEligible = isEligibleForDifmOffer( input );
+	const isForcedTreatment = isEligible && config.isEnabled( DIFM_OFFER_FORCE_TREATMENT_FLAG );
 
-	// Always call the hook, and let `isEligible` keep ineligible users out of the experiment.
+	// Always call the hook. Keep ineligible users and forced testers out of the experiment.
 	const [ isLoading, experimentAssignment ] = useExperiment( DIFM_OFFER_EXPERIMENT, {
-		isEligible,
+		isEligible: isEligible && ! isForcedTreatment,
 	} );
 
 	if ( ! isEligible ) {
 		return { isEligible, isLoading: false, variation: 'control' };
+	}
+
+	if ( isForcedTreatment ) {
+		return { isEligible, isLoading: false, variation: DIFM_OFFER_FORCED_ARM };
 	}
 
 	return {
@@ -150,33 +163,32 @@ export interface DifmOfferCopy {
 }
 
 /**
- * Banner copy for each variation, from the copy review on the design post. Every
- * placement renders this copy with its own surface's components, so the variations
- * differ only in copy. `control` gets no banner.
+ * Banner copy for each arm, from the Figma copy variations. Every placement renders this
+ * copy with its own surface's components. `control` gets no banner.
  */
 export function getDifmOfferCopy( variation: DifmOfferVariation ): DifmOfferCopy | null {
 	const ctaText = __( 'See the offer' );
 
 	switch ( variation ) {
-		case 'skip_setup':
-			return {
-				title: __( 'Skip the setup' ),
-				description: __(
-					'For a limited time, our experts will bring your vision to life. Free with Business.'
-				),
-				ctaText,
-			};
 		case 'expert_help':
 			return {
 				title: __( 'Expert help to get you started' ),
 				description: __( 'A human builds your site based on your needs — free with Business.' ),
 				ctaText,
 			};
-		case 'no_time':
+		case 'no_time_to_build':
 			return {
 				title: __( 'No time to build your site?' ),
 				description: __(
 					'Let us take that off your plate. Ready in 4 days and free with Business.'
+				),
+				ctaText,
+			};
+		case 'skip_the_setup':
+			return {
+				title: __( 'Skip the setup' ),
+				description: __(
+					'For a limited time, our experts will bring your vision to life. Free with Business.'
 				),
 				ctaText,
 			};

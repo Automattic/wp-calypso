@@ -97,7 +97,6 @@ import {
 	isDotcomPlan,
 	getRenewalUrlFromPurchase,
 	isStorageUpgradeEligible,
-	isWpcomFlexSubscription,
 	isAkismetFreeProduct,
 	isExpiredAndInGracePeriod,
 	isExpiredWithNoAutoRenewAttemptsLeft,
@@ -116,7 +115,6 @@ import {
 	getSitePurchaseStorageUpgradeUrl,
 	getUpgradedPurchaseRedirectUrl,
 } from '../../../utils/site-url';
-import BillingFlexUsageCard from '../../billing-flex-usage';
 import { useIsSplitCancelRemoveEnabled } from '../cancel-purchase/use-is-split-cancel-remove-enabled';
 import { BillingPurchaseInfoPopover } from '../dataviews';
 import { PurchasePaymentMethod } from '../purchase-payment-method';
@@ -352,7 +350,11 @@ function PurchaseActionMenu( { actions }: { actions: PurchaseHeaderAction[] } ) 
 	}
 
 	return (
-		<DropdownMenu icon={ moreVertical } label={ __( 'Quick actions' ) }>
+		<DropdownMenu
+			toggleProps={ { __next40pxDefaultSize: true } }
+			icon={ moreVertical }
+			label={ __( 'Quick actions' ) }
+		>
 			{ () => (
 				<MenuGroup>
 					{ actions.map( ( action ) => (
@@ -395,7 +397,7 @@ export function PurchaseHeaderActions( {
 		: actions.filter( ( action ) => action !== promotedAction );
 
 	return (
-		<HStack justify="space-between">
+		<>
 			{ promotedAction && (
 				<Button
 					__next40pxDefaultSize
@@ -411,7 +413,7 @@ export function PurchaseHeaderActions( {
 					<PurchaseActionMenu actions={ overflowActions } />
 				</PageHeader.ActionMenu>
 			) }
-		</HStack>
+		</>
 	);
 }
 
@@ -1856,9 +1858,6 @@ export default function PurchaseSettings() {
 				) }
 				{ ( ( site && ! isRemoved( purchase ) ) || ( features && features.length > 0 ) ) && (
 					<WPComResourceMeters purchase={ purchase } site={ site } features={ features } />
-				) }
-				{ isWpcomFlexSubscription( purchase ) && (
-					<BillingFlexUsageCard purchaseId={ purchase.ID } />
 				) }
 				<PurchaseSettingsActions purchase={ purchase } />
 			</VStack>

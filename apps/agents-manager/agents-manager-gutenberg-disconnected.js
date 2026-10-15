@@ -7,7 +7,7 @@
  * - Full Agents Manager functionality is not needed
  *
  * Registers a Gutenberg plugin that adds a help icon button to the editor.
- * The button links directly to the help center URL.
+ * The button links directly to the help center.
  */
 
 /* global agentsManagerData */
@@ -17,6 +17,8 @@ import { Button, Fill } from '@wordpress/components';
 import { useMediaQuery } from '@wordpress/compose';
 import { createElement } from '@wordpress/element';
 import { registerPlugin } from '@wordpress/plugins';
+
+const HELP_CENTER_URL = 'https://wordpress.com/help';
 
 /**
  * Simple help icon SVG component
@@ -43,12 +45,6 @@ function HelpIcon() {
 function AgentsManagerHelpButton() {
 	const isDesktop = useMediaQuery( '(min-width: 480px)' );
 
-	// Get help center URL from inline data or use default
-	const helpCenterUrl =
-		typeof agentsManagerData !== 'undefined' && agentsManagerData?.helpCenterUrl
-			? agentsManagerData.helpCenterUrl
-			: 'https://wordpress.com/help';
-
 	const handleClick = () => {
 		recordTracksEvent(
 			'calypso_inlinehelp_show',
@@ -67,7 +63,7 @@ function AgentsManagerHelpButton() {
 
 	const button = createElement( Button, {
 		className: 'agents-manager-help-center',
-		href: helpCenterUrl,
+		href: HELP_CENTER_URL,
 		icon: createElement( HelpIcon ),
 		label: 'Help',
 		size: 'compact',

@@ -5,11 +5,13 @@ import { addListeners, removeListeners } from '../panel/state/create-listener-mi
 
 let client: any;
 
-export function initClient( wpcom: any ) {
+export type ClientOptions = { includeNoteContext?: boolean };
+
+export function initClient( wpcom: any, options: ClientOptions = {} ) {
 	initAPI( wpcom );
 
 	if ( ! client ) {
-		client = new RestClient();
+		client = new RestClient( options );
 		client.setVisibility( { isShowing: false, isVisible: ! document.hidden } );
 		document.addEventListener( 'visibilitychange', () => {
 			client.setVisibility( { isShowing: client.isShowing, isVisible: ! document.hidden } );
@@ -24,13 +26,41 @@ export function getClient() {
 	return client;
 }
 
-export function subscribeUnseenCount( wpcom: any, onCount: ( count: number ) => void ): () => void {
-	initClient( wpcom );
+type SubscriberNotification = {
+	targetSiteId: number;
+	receivedAt: number;
+	type: 'follow';
+	wasVisibleAtReceipt: boolean;
+};
+
+export function subscribeUnseenCount(
+	wpcom: any,
+	onCount: ( count: number ) => void,
+	onSubscriberNotification?: ( notification: SubscriberNotification ) => void | Promise< void >,
+	options: ClientOptions = {}
+): () => void {
+	initClient( wpcom, options );
 
 	const handlers = {
 		APP_RENDER_NOTES: [
-			( _store: unknown, action: unknown ) =>
-				onCount( ( action as { newNoteCount: number } ).newNoteCount ),
+			( _store: unknown, action: unknown ) => {
+				const { newNoteCount, subscriberNotifications } = action as {
+					newNoteCount: number;
+					subscriberNotifications?: SubscriberNotification[];
+				};
+				onCount( newNoteCount );
+				subscriberNotifications?.forEach( ( notification ) => {
+					if (
+						notification.type === 'follow' &&
+						typeof notification.wasVisibleAtReceipt === 'boolean' &&
+						Number.isSafeInteger( notification.targetSiteId ) &&
+						notification.targetSiteId > 0 &&
+						Number.isSafeInteger( notification.receivedAt )
+					) {
+						void onSubscriberNotification?.( notification );
+					}
+				} );
+			},
 		],
 	};
 

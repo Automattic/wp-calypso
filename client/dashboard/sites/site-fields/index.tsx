@@ -6,6 +6,7 @@ import {
 	siteEngagementStatsQuery,
 	siteUptimeQuery,
 } from '@automattic/api-queries';
+import { formatNumber } from '@automattic/number-formatters';
 import { useQuery } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
 import {
@@ -236,7 +237,8 @@ export function AsyncEngagementStat( {
 			return <IneligibleIndicator />;
 		}
 
-		return stats?.currentData[ type ];
+		const value = stats?.currentData[ type ];
+		return typeof value === 'number' ? formatNumber( value ) : value;
 	};
 
 	return (

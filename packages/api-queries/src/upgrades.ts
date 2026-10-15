@@ -24,12 +24,14 @@ export const userPurchasesQuery = () =>
 	queryOptions( {
 		queryKey: [ 'upgrades' ],
 		queryFn: () => fetchUserPurchases(),
+		meta: { persist: false },
 	} );
 
 export function userTransferredPurchasesQuery() {
 	return queryOptions( {
 		queryKey: [ 'upgrades', 'transferred' ],
 		queryFn: () => fetchUserTransferredPurchases(),
+		meta: { persist: false },
 	} );
 }
 
@@ -43,6 +45,7 @@ export const purchaseQuery = ( purchaseId: number ) =>
 	queryOptions( {
 		queryKey: [ 'upgrades', purchaseId ],
 		queryFn: () => fetchPurchase( purchaseId ),
+		meta: { persist: false },
 	} );
 
 /**

@@ -58,6 +58,7 @@ import { OnboardingProgress } from 'calypso/landing/stepper/declarative-flow/int
 import { useShowOnboardingProgress } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/components/onboarding-progress/use-show-onboarding-progress';
 import { useInitialIsInStepContainerV2FlowContext } from 'calypso/layout/utils';
 import isAkismetCheckout from 'calypso/lib/akismet/is-akismet-checkout';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import {
 	hasGoogleApps,
 	hasDomainRegistration,
@@ -90,7 +91,6 @@ import SitePreview from 'calypso/my-sites/customer-home/cards/features/site-prev
 import useOneDollarOfferTrack from 'calypso/my-sites/plans/hooks/use-onedollar-offer-track';
 import { siteHasPaidPlan } from 'calypso/signup/steps/site-picker/site-picker-submit';
 import { useDispatch as useReduxDispatch, useSelector } from 'calypso/state';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice, removeNotice } from 'calypso/state/notices/actions';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import { getIsOnboardingAffiliateFlow } from 'calypso/state/signup/flow/selectors';
@@ -115,7 +115,6 @@ import badgeGenericSrc from './assets/icons/badge-generic.svg';
 import badgeSecurity from './assets/icons/security.svg';
 import CheckoutNextSteps from './checkout-next-steps';
 import { CheckoutSidebarPlanUpsell } from './checkout-sidebar-plan-upsell';
-import CheckoutTrustCards from './checkout-trust-cards';
 import DIFMOfferRequestNotice from './difm-offer-request-notice';
 import { EmptyCart, shouldShowEmptyCartPage } from './empty-cart';
 import { handleProgressStepSelect } from './handle-progress-step-select';
@@ -215,13 +214,22 @@ function ConditionalContactDetailsMessage( {
 	}
 	return (
 		<ContactDetailsFormDescription>
-			{ isMobileCheckoutStickySummary
-				? translate(
-						'Required for domain registration. Your details are protected for eligible domains.'
-					)
-				: translate(
+			{ isMobileCheckoutStickySummary ? (
+				translate(
+					'Required for domain registration. Your details are protected for eligible domains.'
+				)
+			) : (
+				<>
+					{ translate(
 						'Registering a domain name requires valid contact information. Privacy Protection is included for all eligible domains to protect your personal information.'
-					) }
+					) }{ ' ' }
+					<InlineSupportLink
+						supportContext="domain-contact-information-requirements"
+						showText={ false }
+						linkTitle={ translate( 'Learn more' ) }
+					/>
+				</>
+			) }
 		</ContactDetailsFormDescription>
 	);
 }
@@ -262,15 +270,7 @@ const ContactFormTitle = () => {
 				? translate( 'Contact information' )
 				: translate( 'Enter your contact information' );
 
-		return (
-			<>
-				{ titleText }{ ' ' }
-				<InlineSupportLink
-					supportContext="domain-contact-information-requirements"
-					showIcon={ false }
-				/>
-			</>
-		);
+		return <>{ titleText }</>;
 	}
 
 	if ( contactDetailsType === 'gsuite' ) {
@@ -997,7 +997,6 @@ export default function CheckoutMainContent( {
 									showErrorMessageBriefly,
 									applyDomainContactValidationResults,
 									clearDomainContactErrorMessages,
-									reduxDispatch,
 									translate,
 									shouldDisplayValidationErrors
 								);
@@ -1054,12 +1053,10 @@ export default function CheckoutMainContent( {
 										prepareDomainContactValidationRequest( contactInfo )
 									);
 
-									reduxDispatch(
-										recordTracksEvent( 'calypso_checkout_composite_step_complete', {
-											step: 1,
-											step_name: 'contact-form',
-										} )
-									);
+									recordTracksEvent( 'calypso_checkout_composite_step_complete', {
+										step: 1,
+										step_name: 'contact-form',
+									} );
 								}
 								return validationResponse;
 							} }
@@ -1207,7 +1204,6 @@ export default function CheckoutMainContent( {
 					) }
 					{ checkoutSummary }
 					{ checkoutMainContent }
-					{ isLargeViewport && <CheckoutTrustCards cart={ responseCart } /> }
 				</WPCheckoutWrapper>
 			</SubmitButtonSlotContext.Provider>
 		);
@@ -1295,10 +1291,7 @@ export default function CheckoutMainContent( {
 						if ( isLargeViewport ) {
 							return (
 								<>
-									<div className="checkout-main-column">
-										{ checkoutMainContent }
-										<CheckoutTrustCards cart={ responseCart } />
-									</div>
+									<div className="checkout-main-column">{ checkoutMainContent }</div>
 									{ checkoutSummary }
 								</>
 							);
@@ -2405,7 +2398,7 @@ const CheckoutSidebarNudgeWrapper = styled.div`
 	}
 
 	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
-		row-gap: 36px;
+		row-gap: 16px;
 	}
 `;
 
@@ -2640,8 +2633,7 @@ const WPCheckoutWrapper = styled.div< {
 	grid-template-columns: 1fr;
 	grid-template-areas:
 		'sidebar-content'
-		'main-content'
-		'trust-cards';
+		'main-content';
 	align-content: start;
 	justify-content: center;
 	justify-items: center;
@@ -2649,9 +2641,7 @@ const WPCheckoutWrapper = styled.div< {
 
 	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
 		grid-template-columns: 1fr minmax( 500px, 688px ) 475px 1fr;
-		grid-template-areas:
-			'main-content main-content sidebar-content sidebar-content'
-			'. trust-cards sidebar-content sidebar-content';
+		grid-template-areas: 'main-content main-content sidebar-content sidebar-content';
 		justify-items: end;
 	}
 
@@ -2660,14 +2650,22 @@ const WPCheckoutWrapper = styled.div< {
 		width: 100%;
 	}
 
-	& > .checkout-trust-cards {
-		grid-area: trust-cards;
-		justify-self: center;
-	}
-
 	& *:focus {
 		outline: ${ ( props ) => props.theme.colors.outline } solid 2px;
 	}
+
+	${ ( props ) =>
+		! props.isCheckoutUiRedesignV1 &&
+		css`
+			/* Flat sidebar cards: a hairline one step lighter than the plan
+			   option borders (Gray 10), with the same 3px radius. */
+			.checkout__summary-card,
+			.checkout-sidebar-plan-upsell.card {
+				box-shadow: none;
+				border: 1px solid var( --studio-gray-5 );
+				border-radius: 3px;
+			}
+		` }
 
 	.checkout__summary-area {
 		position: sticky;
@@ -2721,8 +2719,7 @@ const WPCheckoutWrapper = styled.div< {
 			grid-template-areas:
 				'checkout-title-area'
 				'sidebar-content'
-				'main-content'
-				'trust-cards';
+				'main-content';
 			.checkout-sidebar-content {
 				background: ${ colorStudio.colors[ 'White' ] };
 			}
@@ -3074,7 +3071,7 @@ const WPCheckoutMainContent = styled.div< {
 	isMobileCheckoutStickySummary?: boolean;
 } >`
 	grid-area: main-content;
-	margin-top: 50px;
+	margin-top: 48px;
 
 	@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
 		padding: 0 24px;
@@ -3087,6 +3084,7 @@ const WPCheckoutMainContent = styled.div< {
 		padding-block: 0;
 		padding-inline-start: 24px;
 		padding-inline-end: 64px;
+		margin-bottom: 48px;
 	}
 
 	/* On narrower desktops the 64px between form and sidebar is too tight

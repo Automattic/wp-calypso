@@ -1,43 +1,9 @@
 import { buildA4ADashboardLink, isAllowedA4ADashboardHostname } from '../app-a4a/routing';
-import {
-	buildCiabDashboardLink,
-	isAllowedCiabDashboardHostname,
-	isAllowedCiabLegacyRoute,
-} from '../app-ciab/routing';
+import { buildCiabDashboardLink } from '../app-ciab/routing';
 import { buildDotcomDashboardLink, isAllowedDotcomDashboardHostname } from '../app-dotcom/routing';
 import type { DashboardType } from './types';
 
-/**
- * Checks if the given route is allowed on the requesting dashboard hostname.
- * All routes are allowed on dotcom and A4A. On CIAB, route policy is delegated to
- * the CIAB routing module.
- */
-export function isAllowedDashboardRoute( {
-	hostname,
-	path,
-}: {
-	hostname?: string;
-	path?: string;
-} ): boolean {
-	if ( isAllowedDotcomDashboardHostname( hostname ) ) {
-		return true;
-	}
-
-	if ( isAllowedCiabDashboardHostname( hostname ) ) {
-		return isAllowedCiabLegacyRoute( path );
-	}
-
-	if ( isAllowedA4ADashboardHostname( hostname ) ) {
-		return true;
-	}
-
-	return false;
-}
-
 export function getDashboardFromHostname( hostname?: string ): DashboardType | undefined {
-	if ( isAllowedCiabDashboardHostname( hostname ) ) {
-		return 'ciab';
-	}
 	if ( isAllowedDotcomDashboardHostname( hostname ) ) {
 		return 'dotcom';
 	}

@@ -39,11 +39,6 @@ const selectors = {
 	// Details popover
 	detailsButton: `${ panel } button[aria-label="Details"]`,
 
-	// Document Actions dropdown
-	documentActionsDropdown: `${ panel } button[aria-label="Show template details"]`,
-	documentActionsDropdownItem: ( itemSelector: string ) => `.popover-slot ${ itemSelector }`,
-	documentActionsDropdownShowAll: '.popover-slot .edit-site-template-details__show-all-button',
-
 	// Undo/Redo
 	undoButton: 'button[aria-disabled=false][aria-label="Undo"]',
 	redoButton: 'button[aria-disabled=false][aria-label="Redo"]',
@@ -343,9 +338,21 @@ export class EditorToolbarComponent {
 			'[role="menuitemcheckbox"][aria-controls="jetpack-sidebar:jetpack"]'
 		);
 
+		// Gutenberg 24.2 moved plugin sidebar items from the top level of the
+		// Options menu into a "Panels" submenu.
+		const panelsSubmenu = editorParent.getByRole( 'menuitem', {
+			name: await this.translateFromPage( 'Panels' ),
+			exact: true,
+		} );
+
 		const maxAttempts = 3;
 		for ( let attempt = 1; attempt <= maxAttempts; attempt++ ) {
 			await this.openMoreOptionsMenu();
+
+			await menuItem.or( panelsSubmenu ).first().waitFor();
+			if ( await panelsSubmenu.isVisible() ) {
+				await panelsSubmenu.click();
+			}
 
 			if ( await this.targetIsOpen( menuItem ) ) {
 				// The Jetpack entry is already selected; close the menu and let
@@ -679,24 +686,6 @@ export class EditorToolbarComponent {
 	async saveSiteEditor(): Promise< void > {
 		const editorParent = await this.editor.parent();
 		const locator = editorParent.locator( selectors.saveSiteEditorButton );
-		await locator.click();
-	}
-
-	/**
-	 * Click the document actions icon for the full site editor.
-	 */
-	async clickDocumentActionsIcon(): Promise< void > {
-		const editorParent = await this.editor.parent();
-		const locator = editorParent.locator( selectors.documentActionsDropdown );
-		await locator.click();
-	}
-
-	/**
-	 * Click the document actions icon for the full site editor.
-	 */
-	async clickDocumentActionsDropdownItem( itemName: string ): Promise< void > {
-		const editorParent = await this.editor.parent();
-		const locator = editorParent.locator( selectors.documentActionsDropdownItem( itemName ) );
 		await locator.click();
 	}
 }

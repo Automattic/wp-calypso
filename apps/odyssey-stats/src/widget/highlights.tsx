@@ -1,91 +1,61 @@
-import { SegmentedControl } from '@automattic/components';
 import { formatNumber } from '@automattic/number-formatters';
-import { Icon, external } from '@wordpress/icons';
-import clsx from 'clsx';
+import { TabPanel } from '@wordpress/components';
+import { Icon, chartBar, external } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import moment from 'moment';
-import { useState, FunctionComponent } from 'react';
+import { FunctionComponent, useState } from 'react';
 import useReferrersQuery from '../hooks/use-referrers-query';
 import useTopPostsQuery from '../hooks/use-top-posts-query';
+import { ResolvedDateRange } from '../lib/date-ranges';
 import { HighLightItem } from '../typings';
+import GrowHeight from './grow-height';
+import recordWidgetEvent, { recordWidgetEventThenFollow } from './record-widget-event';
 import useStatsLink from './use-stats-link';
+import WidgetSection from './widget-section';
+import type { MouseEvent } from 'react';
 
 import './highlights.scss';
 
-interface ItemWrapperProps {
-	siteId: number;
-	statsBaseUrl: string;
-	isItemLink: boolean;
+type ClickHandler = ( event: MouseEvent< HTMLAnchorElement > ) => void;
+
+interface ItemLinkProps {
 	item: HighLightItem;
-	isItemLinkExternal: boolean;
+	href: string;
+	isExternal: boolean;
+	onClick: ClickHandler;
 }
 
 interface TopColumnProps {
 	items: Array< HighLightItem >;
-	viewAllUrl: string;
-	viewAllText: string;
-	title: string;
+	itemHref: ( item: HighLightItem ) => string;
+	isExternal: boolean;
 	isLoading: boolean;
-	statsBaseUrl: string;
-	siteId: number;
-	isItemLinkExternal?: boolean;
-	isItemLink?: boolean;
-	className?: null | string;
+	viewAllUrl: string;
+	onItemClick: ClickHandler;
+	onViewAllClick: ClickHandler;
 }
 
 interface HighlightsProps {
 	siteId: number;
-	gmtOffset: number;
 	statsBaseUrl: string;
+	range: ResolvedDateRange;
+	gmtOffset: number;
 }
 
 const HIGHLIGHT_ITEMS_LIMIT = 5;
 const HIGHLIGHT_TAB_TOP_POSTS_PAGES = 'topPostsAndPages';
 const HIGHLIGHT_TAB_TOP_REFERRERS = 'topReferrers';
 
-const postAndPageLink = ( baseUrl: string, siteId: number, postId: number ) => {
-	return `${ baseUrl }/stats/post/${ postId }/${ siteId }`;
-};
-
-const externalLink = ( item: HighLightItem ) => {
-	// Url is for referrers and href is for top posts and pages.
-	return item.url || item.href;
-};
-
-const ItemWrapper: FunctionComponent< ItemWrapperProps > = ( {
-	statsBaseUrl,
-	siteId,
-	isItemLink,
-	item,
-	isItemLinkExternal,
-} ) => {
+const ItemLink: FunctionComponent< ItemLinkProps > = ( { item, href, isExternal, onClick } ) => {
 	const translate = useTranslate();
-	const statsLink = useStatsLink( siteId );
 
-	const renderedItem = (
-		<div>
-			<p>{ item.title }</p>
-			<span>
-				{ translate( '%(views)s Views', {
-					args: {
-						views: formatNumber( item.views ),
-					},
-				} ) }
-			</span>
-		</div>
-	);
-
-	return isItemLink ? (
+	// The bare figure is what the design shows; screen readers get the worded version so
+	// the number is not announced without its unit.
+	return (
 		<a
-			href={
-				isItemLinkExternal
-					? externalLink( item )
-					: statsLink(
-							postAndPageLink( statsBaseUrl, siteId, item.id ),
-							item.id > 0 ? `/post/${ item.id }?preset=last-7-days` : null
-						)
-			}
-			target={ isItemLinkExternal ? '_blank' : '_self' }
+			className="stats-widget-highlights-card__item"
+			href={ href }
+			target={ isExternal ? '_blank' : '_self' }
+			onClick={ onClick }
 			rel="noopener noreferrer"
 			title={ translate( 'View detailed stats for %(title)s', {
 				args: {
@@ -95,157 +65,197 @@ const ItemWrapper: FunctionComponent< ItemWrapperProps > = ( {
 				comment: 'Text for anchor linking to a stats page for a given post/page',
 			} ) }
 		>
-			{ renderedItem }
-			{ isItemLinkExternal && <Icon className="stats-icon" icon={ external } size={ 18 } /> }
+			<span className="stats-widget-highlights-card__title">
+				<span className="stats-widget-highlights-card__title-text">{ item.title }</span>
+				{ isExternal && <Icon className="stats-icon" icon={ external } size={ 16 } /> }
+			</span>
+			<span className="stats-widget-highlights-card__value" aria-hidden="true">
+				{ formatNumber( item.views ) }
+			</span>
+			<span className="screen-reader-text">
+				{ translate( '%(views)s Views', {
+					args: {
+						views: formatNumber( item.views ),
+					},
+				} ) }
+				{ isExternal && ` ${ translate( '(opens in a new tab)' ) }` }
+			</span>
 		</a>
-	) : (
-		renderedItem
 	);
 };
 
 const TopColumn: FunctionComponent< TopColumnProps > = ( {
 	items,
-	viewAllUrl,
-	viewAllText,
-	title,
+	itemHref,
+	isExternal,
 	isLoading,
-	statsBaseUrl,
-	siteId,
-	isItemLink = false,
-	isItemLinkExternal = false,
-	className = null,
+	viewAllUrl,
+	onItemClick,
+	onViewAllClick,
 } ) => {
 	const translate = useTranslate();
 
 	return (
-		<div className={ clsx( 'stats-widget-highlights-card', className ) }>
-			<label className="stats-widget-highlights-card__title">{ title }</label>
-			{ items.length === 0 && (
-				<p className="stats-widget-highlights-card__empty">
-					{ isLoading ? `${ translate( 'Loading' ) }...` : translate( 'No data to show' ) }
-				</p>
-			) }
-			{ items.length > 0 && (
-				<ul className="stats-widget-highlights-card__list">
-					{ items.slice( 0, HIGHLIGHT_ITEMS_LIMIT ).map( ( item, idx ) => (
-						<li key={ idx }>
-							<ItemWrapper
-								item={ item }
-								statsBaseUrl={ statsBaseUrl }
-								siteId={ siteId }
-								isItemLink={ isItemLink }
-								isItemLinkExternal={ isItemLinkExternal }
-							/>
-						</li>
-					) ) }
-				</ul>
-			) }
+		<div className="stats-widget-highlights-card">
+			<GrowHeight>
+				{ items.length === 0 && isLoading && (
+					// One row, not a full list: how many items come back is unknown, and the one
+					// thing a loading list can promise is that there is at least one.
+					<div className="stats-widget-highlights-card__list stats-widget-highlights-card__skeleton">
+						<span className="screen-reader-text">{ translate( 'Loading…' ) }</span>
+						<div className="stats-widget-highlights-card__item" aria-hidden="true">
+							<span className="stats-widget-highlights-card__skeleton-bar is-title" />
+							<span className="stats-widget-highlights-card__skeleton-bar is-value" />
+						</div>
+					</div>
+				) }
+				{ items.length === 0 && ! isLoading && (
+					<p className="stats-widget-highlights-card__empty">{ translate( 'No data to show' ) }</p>
+				) }
+				{ items.length > 0 && (
+					<ul className="stats-widget-highlights-card__list">
+						{ items.slice( 0, HIGHLIGHT_ITEMS_LIMIT ).map( ( item, idx ) => (
+							<li key={ idx }>
+								<ItemLink
+									item={ item }
+									href={ itemHref( item ) }
+									isExternal={ isExternal }
+									onClick={ onItemClick }
+								/>
+							</li>
+						) ) }
+					</ul>
+				) }
+			</GrowHeight>
 			<div className="stats-widget-highlights-card__view-all">
-				<a href={ viewAllUrl }>{ viewAllText }</a>
+				<a href={ viewAllUrl } onClick={ onViewAllClick }>
+					{ translate( 'See more' ) }
+				</a>
 			</div>
 		</div>
 	);
 };
 
-export default function Highlights( { siteId, gmtOffset, statsBaseUrl }: HighlightsProps ) {
+export default function Highlights( { siteId, statsBaseUrl, range, gmtOffset }: HighlightsProps ) {
 	const translate = useTranslate();
 	const statsLink = useStatsLink( siteId );
+	const { startDate, endDate } = range;
 
-	const headingTitle = translate( '7 Day Highlights' );
-	const topPostsAndPagesTitle = translate( 'Top Posts & Pages' );
-	const topReferrersTitle = translate( 'Top Referrers' );
+	// "See more" and the post rows open the days the lists cover, on Stats or Premium Analytics.
+	const linkRange = { from: startDate, to: endDate, gmtOffset };
+	const viewAllPostsStatsUrl = statsLink(
+		`${ statsBaseUrl }/stats/day/posts/${ siteId }?chartStart=${ startDate }&chartEnd=${ endDate }`,
+		'/reports/posts',
+		linkRange
+	);
+	const viewAllReferrerStatsUrl = statsLink(
+		`${ statsBaseUrl }/stats/day/referrers/${ siteId }?chartStart=${ startDate }&chartEnd=${ endDate }`,
+		'/reports/referrers',
+		linkRange
+	);
+	const postHref = ( item: HighLightItem ) =>
+		statsLink(
+			`${ statsBaseUrl }/stats/post/${ item.id }/${ siteId }`,
+			item.id > 0 ? `/post/${ item.id }` : null,
+			linkRange
+		);
+	const referrerHref = ( item: HighLightItem ) => item.url || item.href;
 
-	const moduleTabs = [
+	const {
+		data: topPostsAndPages = [],
+		isPending: isPendingPostsAndPages,
+		isError: isPostsAndPagesError,
+	} = useTopPostsQuery( siteId, range );
+
+	const {
+		data: topReferrers = [],
+		isPending: isPendingReferrers,
+		isError: isReferrersError,
+	} = useReferrersQuery( siteId, range );
+
+	// Held here rather than left to TabPanel, which remounts when the section comes back after
+	// an empty range and reports its initial tab as it does; only a change is a user's click.
+	const [ selectedTab, setSelectedTab ] = useState< string >( HIGHLIGHT_TAB_TOP_POSTS_PAGES );
+
+	// Drop the section only once both lists have answered empty. A failed request also falls
+	// back to `[]`, so errors are excluded: those lists say "No data to show" instead.
+	const isEmpty =
+		! isPendingPostsAndPages &&
+		! isPendingReferrers &&
+		! isPostsAndPagesError &&
+		! isReferrersError &&
+		topPostsAndPages.length === 0 &&
+		topReferrers.length === 0;
+
+	if ( isEmpty ) {
+		return null;
+	}
+
+	const tabs = [
 		{
-			value: HIGHLIGHT_TAB_TOP_POSTS_PAGES,
-			label: topPostsAndPagesTitle,
+			name: HIGHLIGHT_TAB_TOP_POSTS_PAGES,
+			title: translate( 'Top Posts & Pages' ),
+			items: topPostsAndPages,
+			isLoading: isPendingPostsAndPages,
+			viewAllUrl: viewAllPostsStatsUrl,
+			itemHref: postHref,
+			isExternal: false,
+			trackingName: 'top_posts' as const,
+			itemEvent: 'post_clicked' as const,
 		},
 		{
-			value: HIGHLIGHT_TAB_TOP_REFERRERS,
-			label: topReferrersTitle,
+			name: HIGHLIGHT_TAB_TOP_REFERRERS,
+			title: translate( 'Top Referrers' ),
+			items: topReferrers,
+			isLoading: isPendingReferrers,
+			viewAllUrl: viewAllReferrerStatsUrl,
+			itemHref: referrerHref,
+			isExternal: true,
+			trackingName: 'top_referrers' as const,
+			itemEvent: 'referrer_clicked' as const,
 		},
 	];
 
-	// Default to the first tab `topPostsAndPages`.
-	const [ selectedTab, setSelectedTab ] = useState( HIGHLIGHT_TAB_TOP_POSTS_PAGES );
-
-	const queryDate = moment()
-		.utcOffset( Number.isFinite( gmtOffset ) ? gmtOffset : 0 )
-		.format( 'YYYY-MM-DD' );
-	const viewAllPostsStatsUrl = statsLink(
-		`${ statsBaseUrl }/stats/day/posts/${ siteId }?startDate=${ queryDate }&summarize=1&num=7`,
-		'/reports/posts?preset=last-7-days'
-	);
-	const viewAllReferrerStatsUrl = statsLink(
-		`${ statsBaseUrl }/stats/day/referrers/${ siteId }?startDate=${ queryDate }&summarize=1&num=7`,
-		'/reports/referrers?preset=last-7-days'
-	);
-
-	const { data: topPostsAndPages = [], isFetching: isFetchingPostsAndPages } = useTopPostsQuery(
-		siteId,
-		'day',
-		7,
-		queryDate
-	);
-
-	const { data: topReferrers = [], isFetching: isFetchingReferrers } = useReferrersQuery(
-		siteId,
-		'day',
-		7,
-		queryDate
-	);
-
 	return (
-		<div className="stats-widget-highlights stats-widget-card" aria-label={ headingTitle }>
-			<div className="stats-widget-highlights__header">
-				<label>{ headingTitle }</label>
-			</div>
-			<div className="stats-widget-highlights__tabs">
-				<SegmentedControl primary>
-					{ moduleTabs.map( ( tab ) => {
-						return (
-							<SegmentedControl.Item
-								key={ tab.value }
-								selected={ tab.value === selectedTab }
-								onClick={ () => setSelectedTab( tab.value ) }
-							>
-								{ tab.label }
-							</SegmentedControl.Item>
-						);
-					} ) }
-				</SegmentedControl>
-			</div>
-			<div className="stats-widget-highlights__body">
-				<TopColumn
-					className={ clsx( 'stats-widget-highlights__column', {
-						'stats-widget-highlights__column--show-in-mobile':
-							selectedTab === HIGHLIGHT_TAB_TOP_POSTS_PAGES,
-					} ) }
-					title={ topPostsAndPagesTitle }
-					viewAllUrl={ viewAllPostsStatsUrl }
-					viewAllText={ translate( 'View all posts & pages stats' ) }
-					items={ topPostsAndPages }
-					isLoading={ isFetchingPostsAndPages }
-					statsBaseUrl={ statsBaseUrl }
-					siteId={ siteId }
-					isItemLink
-				/>
-				<TopColumn
-					className={ clsx( 'stats-widget-highlights__column', {
-						'stats-widget-highlights__column--show-in-mobile':
-							selectedTab === HIGHLIGHT_TAB_TOP_REFERRERS,
-					} ) }
-					title={ topReferrersTitle }
-					viewAllUrl={ viewAllReferrerStatsUrl }
-					viewAllText={ translate( 'View all referrer stats' ) }
-					items={ topReferrers }
-					isLoading={ isFetchingReferrers }
-					statsBaseUrl={ statsBaseUrl }
-					siteId={ siteId }
-					isItemLink
-					isItemLinkExternal
-				/>
-			</div>
-		</div>
+		<WidgetSection
+			title={ translate( 'Popular content & referrers' ) }
+			icon={ chartBar }
+			className="stats-widget-highlights"
+		>
+			<TabPanel
+				className="stats-widget-highlights__tabs"
+				tabs={ tabs.map( ( { name, title } ) => ( { name, title } ) ) }
+				initialTabName={ selectedTab }
+				onSelect={ ( tabName: string ) => {
+					if ( tabName === selectedTab ) {
+						return;
+					}
+					setSelectedTab( tabName );
+					const selected = tabs.find( ( candidate ) => candidate.name === tabName );
+					if ( selected ) {
+						recordWidgetEvent( 'highlights_tab_clicked', { tab: selected.trackingName } );
+					}
+				} }
+			>
+				{ ( tab ) => {
+					const active = tabs.find( ( candidate ) => candidate.name === tab.name ) ?? tabs[ 0 ];
+
+					return (
+						<TopColumn
+							items={ active.items }
+							itemHref={ active.itemHref }
+							isExternal={ active.isExternal }
+							isLoading={ active.isLoading }
+							viewAllUrl={ active.viewAllUrl }
+							onItemClick={ recordWidgetEventThenFollow( active.itemEvent ) }
+							onViewAllClick={ recordWidgetEventThenFollow( 'see_more_clicked', {
+								tab: active.trackingName,
+								range: range.id,
+							} ) }
+						/>
+					);
+				} }
+			</TabPanel>
+		</WidgetSection>
 	);
 }

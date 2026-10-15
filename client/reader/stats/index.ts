@@ -85,7 +85,6 @@ const Routes: RoutesMapping[] = [
 	{ route: exactMatch( '/discover' ), tracking: 'discover_recommended' },
 	{ route: startsWith( '/discover/freshly-pressed' ), tracking: 'freshly-pressed' },
 	{ route: startsWith( '/discover/add-new' ), tracking: 'discover_addnew' },
-	{ route: startsWith( '/discover/reddit' ), tracking: 'discover_reddit' },
 	{ route: startsWith( '/discover/latest' ), tracking: 'discover_latest' },
 	{ route: startsWith( '/discover/recommended' ), tracking: 'discover_recommended' },
 	{

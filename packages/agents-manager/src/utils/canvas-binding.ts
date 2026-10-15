@@ -50,7 +50,6 @@ const CANVAS_WRITING_AGENT_IDS = new Set< string >( [ ORCHESTRATOR_AGENT_ID ] );
 
 /**
  * Whether this agent's turns can write to the editor canvas.
- *
  * @param agentId The resolved agent id, from `useAgentConfig`.
  * @returns Whether canvas binding applies to it.
  */
@@ -95,7 +94,7 @@ let bindingGeneration = 0;
 
 // The move that caused the current request to be blocked, if any. Set once a
 // request has been refused or aborted for leaving its canvas, so the model cannot
-// simply retry onto the page the user moved to.
+// simply retry onto the page the user moved to or save an interrupted request.
 //
 // Storing the move rather than a bare flag makes "blocked without a move"
 // unrepresentable, and `blockCurrentRequest()` can only ever fill it from a live
@@ -119,13 +118,12 @@ function getEditorStore(): EditorSelectStore {
 /**
  * Compose a canvas key.
  *
- * Exported so a component's `useSelect` and this module cannot drift on the format
+ * Exported so `useCanvasMoveAbort`'s `useSelect` and this module cannot drift on the format
  * — a mismatch would read as a permanent move and refuse every canvas write.
  *
  * Carries the post type as well as the id because ids are only unique within one:
  * a page and a template can share an id, and treating them as the same canvas
  * would let a write aimed at one land on the other.
- *
  * @param postType The editor's current post type.
  * @param postId   The editor's current post id.
  * @returns The key, or null when either half is missing.
@@ -143,7 +141,6 @@ export function buildCanvasKey(
 
 /**
  * The canvas open right now.
- *
  * @returns The key, or null when the editor store cannot name one.
  */
 export function resolveCanvasKey(): string | null {
@@ -192,7 +189,6 @@ function settleNavigationArrival(): void {
  *
  * The rollback restores the binding that was there rather than the live canvas:
  * if the user left while the failed navigation ran, that is still a move to catch.
- *
  * @param next The binding the navigation takes.
  * @returns The rollback, a no-op once anything else has taken the binding.
  */
@@ -238,7 +234,6 @@ export function bindToOpenCanvas(): void {
  * Used in place of `clearCanvasBinding()` for a navigation whose destination is
  * knowable, which keeps the request guarded across the move instead of leaving it
  * unbound until something happens to rebind it.
- *
  * @param canvasKey The destination canvas key.
  * @returns A rollback for a navigation that never happens; see `handBindingToNavigation`.
  */
@@ -252,7 +247,6 @@ export function bindToNavigationTarget( canvasKey: string ): () => void {
  * Called before a navigation ability runs, not after: the navigation changes the
  * canvas while it executes, and a binding still in place at that moment would read
  * as a move and abort the agent's own request.
- *
  * @returns A rollback for a navigation that never happens; see `handBindingToNavigation`.
  */
 export function clearCanvasBinding(): () => void {
@@ -286,7 +280,6 @@ export function startNewUserRequest(): void {
  *
  * The latch-free reading. Use it to decide whether something just moved; use
  * `getBlockingMove()` to decide whether a write may proceed.
- *
  * @returns The move, or null when the live canvas still matches.
  */
 export function getCanvasMove(): CanvasMove | null {
@@ -318,13 +311,12 @@ export function getCanvasMove(): CanvasMove | null {
 }
 
 /**
- * Refuse canvas writes for the remainder of the current request.
+ * Stop canvas writes and saves for the remainder of the current request.
  *
  * Latches whatever move is live right now rather than accepting one, so a block can
  * never outrun an actual move. Idempotent: an existing block is kept, never
  * replaced, so every later refusal still names the pages the request was blocked
  * for rather than a binding that has since moved on.
- *
  * @returns Whether a block is in place.
  */
 export function blockCurrentRequest(): boolean {
@@ -337,9 +329,13 @@ export function blockCurrentRequest(): boolean {
 	return null !== blockedMove;
 }
 
+/** Whether a canvas move has already stopped this request, regardless of the live canvas. */
+export function isCurrentRequestBlocked(): boolean {
+	return null !== blockedMove;
+}
+
 /**
  * Whether a pending canvas write would land somewhere it was not meant to.
- *
  * @returns The move, or null when the write may proceed.
  */
 export function getBlockingMove(): CanvasMove | null {

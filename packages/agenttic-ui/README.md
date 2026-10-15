@@ -218,6 +218,7 @@ interface AgentUIProps {
 	messages: Message[];
 	isProcessing: boolean;
 	isStreaming?: boolean; // Whether the latest reply is still streaming, when that differs from `isProcessing` (the default)
+	isReplying?: boolean; // Whether reply text is streaming in. When set, it drives the thinking indicator
 	error?: string | null;
 	onSubmit: ( message: string ) => void;
 	onStop?: () => void;
@@ -528,7 +529,8 @@ interface NoticeConfig {
 				href: string;
 				target?: React.HTMLAttributeAnchorTarget;
 				rel?: string;
-				onClick?: never;
+				// Runs before the link opens, for example to record the click.
+				onClick?: () => void;
 		  };
 	dismissible?: boolean;
 	onDismiss?: () => void;

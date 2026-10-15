@@ -1,4 +1,4 @@
-import { HostingFeatures, DotcomFeatures, LogType, fetchTwoStep } from '@automattic/api-core';
+import { HostingFeatures, DotcomFeatures, LogType } from '@automattic/api-core';
 import {
 	bigSkyPluginQuery,
 	bulkDomainUpdateStatusQuery,
@@ -58,7 +58,6 @@ import {
 	canViewHundredYearPlanSettings,
 } from '../../sites/features';
 import { VALUES_SEVERITY } from '../../sites/logs/dataviews/constants';
-import { reauthRequiredLink } from '../../utils/link';
 import {
 	getActivityLogHiddenGroups,
 	hasHostingFeature,
@@ -72,8 +71,14 @@ import { getSiteTypeFeatureSupports } from '../../utils/site-type-feature-suppor
 import { isSelfHostedJetpackConnected } from '../../utils/site-types';
 import { userHasNoLiveSites } from '../../utils/user';
 import { AUTH_QUERY_KEY } from '../auth';
-import { dashboardRedirect, redirectAsNotAllowed } from './redirect';
+import {
+	dashboardRedirect,
+	redirectAsNotAllowed,
+	redirectIfTwoStepReauthRequired,
+} from './redirect';
 import { rootRoute } from './root';
+import type { DifmOfferSearch } from '../../sites/overview-difm-offer-card/thank-you';
+import type { StaticSiteImportSearch } from '../../sites/overview-static-site-import';
 import type { AppConfig } from '../context';
 import type { DifmWebsiteContentResponse, Site, User } from '@automattic/api-core';
 import type { AnyRoute } from '@tanstack/react-router';
@@ -219,6 +224,20 @@ export const siteOverviewRoute = createRoute( {
 	staticData: { availableToInaccessibleJetpackSites: true },
 	getParentRoute: () => siteRoute,
 	path: '/',
+	validateSearch: ( search ): StaticSiteImportSearch & DifmOfferSearch => {
+		const asString = ( value: unknown ) => ( typeof value === 'string' ? value : undefined );
+		return {
+			importSessionId: asString( search.importSessionId ),
+			from: asString( search.from ),
+			platform: asString( search.platform ),
+			domainChoice: asString( search.domainChoice ),
+			difmOffer:
+				search.difmOffer === 'purchased' || search.difmOffer === 'open'
+					? search.difmOffer
+					: undefined,
+			source: asString( search.source ),
+		};
+	},
 	loader: async ( { params: { siteSlug }, preload } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
 		if ( preload ) {
@@ -840,16 +859,6 @@ export const siteSettingsSiteVisibilityRoute = createRoute( {
 	} ),
 	getParentRoute: () => siteSettingsRoute,
 	path: 'site-visibility',
-	beforeLoad: async ( { cause, params: { siteSlug } } ) => {
-		if ( cause === 'preload' ) {
-			return;
-		}
-
-		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
-		if ( site.is_wpcom_flex ) {
-			throw redirectAsNotAllowed( { to: siteSettingsRoute.fullPath, params: { siteSlug } } );
-		}
-	},
 	loader: async ( { context, params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
 
@@ -890,10 +899,7 @@ export const siteSettingsAIToolsRoute = createRoute( {
 		}
 
 		if ( cause === 'enter' ) {
-			const twoStep = await fetchTwoStep();
-			if ( twoStep.two_step_reauthorization_required ) {
-				throw dashboardRedirect( { href: reauthRequiredLink(), reloadDocument: true } );
-			}
+			await redirectIfTwoStepReauthRequired();
 		}
 	},
 	loader: async ( { params: { siteSlug } } ) => {
@@ -1748,7 +1754,15 @@ export const siteMigrationOverviewRoute = createRoute( {
 			return;
 		}
 
-		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+		let site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+		if ( ! isSiteMigrationInProgress( site ) ) {
+			// A cached site can predate its migration, as when arriving from the flow that just started one.
+			// So read it again before turning anyone away, unless it was read moments ago for this navigation.
+			site = await queryClient
+				.fetchQuery( { ...siteBySlugQuery( siteSlug ), staleTime: 1000, retry: false } )
+				.catch( () => site );
+		}
+
 		if ( ! isSiteMigrationInProgress( site ) ) {
 			throw dashboardRedirect( { to: siteOverviewRoute.fullPath, params: { siteSlug } } );
 		}

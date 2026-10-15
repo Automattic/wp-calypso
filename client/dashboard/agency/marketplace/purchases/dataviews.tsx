@@ -3,7 +3,7 @@ import {
 	JetpackLicenseSortDirection,
 	JetpackLicenseSortField,
 } from '@automattic/api-core';
-import { formatCurrency } from '@automattic/number-formatters';
+import { formatCurrency, formatNumber } from '@automattic/number-formatters';
 import {
 	ExternalLink,
 	__experimentalHStack as HStack,
@@ -77,6 +77,45 @@ export function toFetchOptions( view: View ): FetchJetpackLicensesPageOptions {
 	};
 }
 
+export function recordLicenseViewChanges(
+	oldView: View,
+	newView: View,
+	recordTracksEvent: ( eventName: string, properties?: Record< string, unknown > ) => void
+) {
+	const before = toFetchOptions( oldView );
+	const after = toFetchOptions( newView );
+	const isSortChanged =
+		before.sortField !== after.sortField || before.sortDirection !== after.sortDirection;
+
+	// Once per search rather than per keystroke, and without the search term.
+	if ( ! before.search && after.search ) {
+		recordTracksEvent( 'calypso_a4a_license_list_search' );
+	}
+
+	if ( isSortChanged ) {
+		recordTracksEvent( 'calypso_a4a_license_list_sort_button_click', {
+			sort_field: after.sortField,
+			current_sort_field: before.sortField,
+			current_sort_direction: before.sortDirection,
+		} );
+	}
+
+	if ( before.filter !== after.filter ) {
+		recordTracksEvent( 'calypso_a4a_license_list_state_filter_click', { status: after.filter } );
+	}
+
+	// A new search, filter, sort or page size also resets the page; only count real page clicks.
+	if (
+		before.page !== after.page &&
+		before.perPage === after.perPage &&
+		before.search === after.search &&
+		before.filter === after.filter &&
+		! isSortChanged
+	) {
+		recordTracksEvent( 'calypso_a4a_license_list_pagination_page_click', { page: after.page } );
+	}
+}
+
 export const getLicenseId = ( license: JetpackLicense ) => String( license.license_id );
 
 const PRESSABLE_AGENCY_URL = 'https://my.pressable.com/agency/auth';
@@ -85,14 +124,18 @@ function SiteCell( {
 	license,
 	isAgencyOwner,
 	isProvisioning,
+	onManageSite,
 }: {
 	license: JetpackLicense;
 	isAgencyOwner: boolean;
 	isProvisioning: boolean;
+	onManageSite: ( license: JetpackLicense ) => void;
 } ) {
 	if ( isPressableLicense( license ) && ! license.revoked_at ) {
 		return isAgencyOwner ? (
-			<ExternalLink href={ PRESSABLE_AGENCY_URL }>{ __( 'Manage in Pressable' ) }</ExternalLink>
+			<ExternalLink href={ PRESSABLE_AGENCY_URL } onClick={ () => onManageSite( license ) }>
+				{ __( 'Manage in Pressable' ) }
+			</ExternalLink>
 		) : (
 			<Text variant="muted">{ __( 'Managed by agency owner' ) }</Text>
 		);
@@ -169,7 +212,9 @@ function ProductCell( { license, locale }: { license: JetpackLicense; locale: st
 		<VStack spacing={ 0 }>
 			<HStack justify="flex-start" spacing={ 2 } expanded={ false } wrap>
 				<Text weight={ 500 }>{ getLicenseProductName( license ) }</Text>
-				{ isBundleParent( license ) && <Text variant="muted">×{ license.quantity }</Text> }
+				{ isBundleParent( license ) && (
+					<Text variant="muted">×{ formatNumber( license.quantity ?? 0 ) }</Text>
+				) }
 				{ getLicenseTags( license ).map( ( tag ) => (
 					<Badge key={ tag }>{ tag }</Badge>
 				) ) }
@@ -192,10 +237,12 @@ export function getLicenseFields( {
 	locale,
 	isAgencyOwner,
 	provisioningLicenseKeys,
+	onManageSite,
 }: {
 	locale: string;
 	isAgencyOwner: boolean;
 	provisioningLicenseKeys: Set< string >;
+	onManageSite: ( license: JetpackLicense ) => void;
 } ): Field< JetpackLicense >[] {
 	const statusLabels = getLicenseStatusLabels();
 	const renderDate = ( value: string | null ) => (
@@ -243,6 +290,7 @@ export function getLicenseFields( {
 					license={ item }
 					isAgencyOwner={ isAgencyOwner }
 					isProvisioning={ provisioningLicenseKeys.has( item.license_key ) }
+					onManageSite={ onManageSite }
 				/>
 			),
 		},

@@ -51,9 +51,11 @@ function ApplicationStatusCard( {
 
 export function PendingTierCard( {
 	onRelaunchTour,
+	tourLabel = __( 'Relaunch welcome tour' ),
 	recordTracksEvent,
 }: {
 	onRelaunchTour?: () => void;
+	tourLabel?: string;
 	recordTracksEvent?: RecordTracksEvent;
 } ) {
 	return (
@@ -91,7 +93,7 @@ export function PendingTierCard( {
 							onRelaunchTour();
 						} }
 					>
-						{ __( 'Relaunch welcome tour' ) }
+						{ tourLabel }
 					</Button>
 				) }
 			</ButtonStack>
@@ -99,7 +101,16 @@ export function PendingTierCard( {
 	);
 }
 
-export function RejectedTierCard( { contactSupportHref }: { contactSupportHref: string } ) {
+export function RejectedTierCard( {
+	contactSupport,
+	recordTracksEvent,
+}: {
+	contactSupport: string | ( () => void );
+	recordTracksEvent?: RecordTracksEvent;
+} ) {
+	const onContactSupportClick = () =>
+		recordTracksEvent?.( 'calypso_a4a_overview_contact_support_click' );
+
 	return (
 		<ApplicationStatusCard
 			decoration={
@@ -117,7 +128,20 @@ export function RejectedTierCard( { contactSupportHref }: { contactSupportHref: 
 					__(
 						'Please <a>contact support</a> to discuss this further if you think this was done in error.'
 					),
-					{ a: <a href={ contactSupportHref } /> }
+					{
+						a:
+							typeof contactSupport === 'function' ? (
+								<Button
+									variant="link"
+									onClick={ () => {
+										onContactSupportClick();
+										contactSupport();
+									} }
+								/>
+							) : (
+								<a href={ contactSupport } onClick={ onContactSupportClick } />
+							),
+					}
 				) }
 			</Text>
 		</ApplicationStatusCard>

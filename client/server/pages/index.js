@@ -18,17 +18,12 @@ import express from 'express';
 import { stringify } from 'qs';
 // eslint-disable-next-line no-restricted-imports
 import superagent from 'superagent'; // Don't have Node.js fetch lib yet.
-import { getDashboardFromHostname, isAllowedDashboardRoute } from 'calypso/dashboard/app/routing';
+import { getDashboardFromHostname } from 'calypso/dashboard/app/routing';
 import { isAllowedA4ADashboardHostname } from 'calypso/dashboard/app-a4a/routing';
 import {
 	A4A_DASHBOARD_SECTION_DEFINITION,
 	A4A_DASHBOARD_SECTION_PATHS,
 } from 'calypso/dashboard/app-a4a/section';
-import { isAllowedCiabDashboardHostname } from 'calypso/dashboard/app-ciab/routing';
-import {
-	CIAB_DASHBOARD_SECTION_DEFINITION,
-	CIAB_DASHBOARD_SECTION_PATHS,
-} from 'calypso/dashboard/app-ciab/section';
 import { isAllowedDotcomDashboardHostname } from 'calypso/dashboard/app-dotcom/routing';
 import {
 	DOTCOM_DASHBOARD_SECTION_DEFINITION,
@@ -54,7 +49,6 @@ import loginRouter, { LOGIN_SECTION_DEFINITION } from 'calypso/login';
 import sections from 'calypso/sections';
 import isSectionEnabled from 'calypso/sections-filter';
 import { serverRouter, getCacheKey } from 'calypso/server/isomorphic-routing';
-import analytics from 'calypso/server/lib/analytics';
 import { isWpMobileApp, isWcMobileApp } from 'calypso/server/lib/is-mobile-app';
 import performanceMark from 'calypso/server/lib/performance-mark/index';
 import {
@@ -64,6 +58,7 @@ import {
 	attachHead,
 	attachI18n,
 	bumpStat,
+	customizeClientDataForRequest,
 } from 'calypso/server/render';
 import sanitize from 'calypso/server/sanitize';
 import stateCache from 'calypso/server/state-cache';
@@ -82,6 +77,7 @@ import middlewareCache from '../middleware/cache.js';
 import middlewareUnsupportedBrowser from '../middleware/unsupported-browser.js';
 import { logSectionResponse } from './analytics';
 import { registerCspReportRoute } from './csp-report';
+import { getFrameHeaders } from './frame-options';
 const debug = debugFactory( 'calypso:pages' );
 
 const calypsoEnv = config( 'env_id' );
@@ -430,9 +426,7 @@ function setUpLocalLanguageRevisions( req ) {
 
 function setUpLoggedOutRoute( req, res, next ) {
 	performanceMark( req.context, 'setup_logged_out_route', true );
-	res.set( {
-		'X-Frame-Options': 'SAMEORIGIN',
-	} );
+	res.set( getFrameHeaders( { env: calypsoEnv, nodeEnv: process.env.NODE_ENV, path: req.path } ) );
 
 	const setupRequests = [];
 
@@ -460,9 +454,7 @@ function setUpLoggedInRoute( req, res, next ) {
 	let redirectUrl;
 	let start;
 
-	res.set( {
-		'X-Frame-Options': 'SAMEORIGIN',
-	} );
+	res.set( getFrameHeaders( { env: calypsoEnv, nodeEnv: process.env.NODE_ENV, path: req.path } ) );
 
 	const setupRequests = [];
 
@@ -890,73 +882,10 @@ const setUpSectionContext = ( section, entrypoint ) => ( req, res, next ) => {
 	next();
 };
 
-// The dashboard host has no wp-login.php, so these 404s are either scanners or a
-// redirect of ours built against the wrong host. Collect enough to tell them apart.
-const logWpLoginNotFound = ( req ) => {
-	const getStringQueryArg = ( name ) =>
-		typeof req.query[ name ] === 'string' ? req.query[ name ].slice( 0, 500 ) : undefined;
-	// Query strings, fragments and userinfo can carry nonces and auth codes, so only keep
-	// the origin and path.
-	const stripUrl = ( value ) => {
-		if ( typeof value !== 'string' ) {
-			return undefined;
-		}
-		try {
-			const url = new URL( value );
-			return `${ url.origin }${ url.pathname }`.slice( 0, 500 );
-		} catch {
-			return value.split( /[?#]/ )[ 0 ].slice( 0, 500 );
-		}
-	};
-	const hasLoggedInCookie = !! req.cookies.wordpress_logged_in;
-	// Browsers send Sec-Fetch-* on every request; most scanners don't.
-	const secFetchSite = req.get( 'sec-fetch-site' );
-	let secFetchSiteStat = 'unset';
-	if ( secFetchSite !== undefined ) {
-		secFetchSiteStat = [ 'cross-site', 'same-origin', 'same-site', 'none' ].includes( secFetchSite )
-			? secFetchSite
-			: 'other';
-	}
-
-	bumpStat(
-		'dashboard-404-wp-login',
-		`${ hasLoggedInCookie ? 'cookie' : 'no-cookie' }:${ secFetchSiteStat }`
-	);
-
-	analytics.logstash.log( {
-		feature: 'calypso_ssr',
-		message: 'Dashboard wp-login.php 404',
-		severity: 'info',
-		tags: [ 'dashboard', 'dashboard-404-wp-login' ],
-		properties: {
-			env: calypsoEnv,
-			app_version: process.env.COMMIT_SHA,
-			hostname: req.hostname,
-			path: req.path,
-			// Values are omitted since they can carry nonces and auth codes.
-			query_keys: Object.keys( req.query ),
-			action: getStringQueryArg( 'action' ),
-			redirect_to: stripUrl( req.query.redirect_to ),
-			referer: stripUrl( req.get( 'referer' ) ),
-			user_agent: req.get( 'user-agent' ),
-			accept: req.get( 'accept' )?.slice( 0, 200 ),
-			has_logged_in_cookie: hasLoggedInCookie,
-			sec_fetch_site: secFetchSite,
-			sec_fetch_mode: req.get( 'sec-fetch-mode' ),
-			sec_fetch_dest: req.get( 'sec-fetch-dest' ),
-			sec_fetch_user: req.get( 'sec-fetch-user' ),
-			country_code: req.get( 'x-geoip-country-code' ),
-		},
-	} );
-};
-
 const setNotFoundStatus = ( req, res, next ) => {
 	res.status( 404 );
 	// bumpStat only accepts 32 chars max for the value
 	bumpStat( 'dashboard-404', req.path.slice( 0, 32 ) );
-	if ( req.path === '/wp-login.php' ) {
-		logWpLoginNotFound( req );
-	}
 	next();
 };
 
@@ -970,6 +899,13 @@ const render404 =
 		res.status( 404 ).send( renderJsx( '404', ctx ) );
 	};
 
+const render404ForUnknownHostname = ( req, res, next ) => {
+	if ( getDashboardFromHostname( req.hostname ) ) {
+		return next();
+	}
+	render404()( req, res );
+};
+
 const DASHBOARD_VARIANTS = [
 	{
 		definition: DOTCOM_DASHBOARD_SECTION_DEFINITION,
@@ -977,13 +913,6 @@ const DASHBOARD_VARIANTS = [
 		entrypoint: 'entry-dashboard-dotcom',
 		devEnv: 'development',
 		isAllowedHostname: isAllowedDotcomDashboardHostname,
-	},
-	{
-		definition: CIAB_DASHBOARD_SECTION_DEFINITION,
-		paths: CIAB_DASHBOARD_SECTION_PATHS,
-		entrypoint: 'entry-dashboard-ciab',
-		devEnv: 'development',
-		isAllowedHostname: isAllowedCiabDashboardHostname,
 	},
 	{
 		definition: A4A_DASHBOARD_SECTION_DEFINITION,
@@ -1376,18 +1305,22 @@ export default function pages() {
 		);
 	}
 
+	if ( isDashboardEnv() ) {
+		app.use( render404ForUnknownHostname );
+	}
+
 	// Special Calypso routes which also appear on `my.wordpress.com`
 	if ( isDashboardEnv() || calypsoEnv === 'development' ) {
 		const signupSectionDefinition = sections.find( ( s ) => s.name === 'signup' );
 		handleSectionPath( signupSectionDefinition, '/start', undefined, ( req ) =>
-			isAllowedDashboardRoute( { hostname: req.hostname, path: req.path } )
+			getDashboardFromHostname( req.hostname )
 		);
 		const checkoutSectionDefinition = sections.find( ( s ) => s.name === 'checkout' );
 		handleSectionPath( checkoutSectionDefinition, '/checkout', undefined, ( req ) =>
-			isAllowedDashboardRoute( { hostname: req.hostname, path: req.path } )
+			getDashboardFromHostname( req.hostname )
 		);
 		handleSectionPath( STEPPER_SECTION_DEFINITION, '/setup', 'entry-stepper', ( req ) =>
-			isAllowedDashboardRoute( { hostname: req.hostname, path: req.path } )
+			getDashboardFromHostname( req.hostname )
 		);
 	}
 
@@ -1474,6 +1407,19 @@ export default function pages() {
 		app.get( '/robots.txt', ( _req, res ) => {
 			res.setHeader( 'Content-Type', 'text/plain' );
 			res.send( 'User-agent: *\nDisallow: /\n' );
+		} );
+
+		// Redirect bots probing the non-existent `/wp-login.php` to the real login page.
+		app.get( '/wp-login.php', ( req, res, next ) => {
+			const { wpcom_login_url: loginUrl } = customizeClientDataForRequest( req, config.clientData );
+			if ( ! loginUrl ) {
+				return next();
+			}
+			const url = new URL( loginUrl );
+			if ( typeof req.query.redirect_to === 'string' ) {
+				url.searchParams.set( 'redirect_to', req.query.redirect_to );
+			}
+			res.redirect( url.toString() );
 		} );
 
 		// Serve the dashboard shell for any otherwise-unmatched path so the client

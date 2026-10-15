@@ -20,11 +20,11 @@ import useCreatePaymentSubmittedAndProcessingCallback from 'calypso/my-sites/che
 import existingCardProcessor from 'calypso/my-sites/checkout/src/lib/existing-card-processor';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { useDispatch, useSelector } from 'calypso/state';
-import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
-import { isJetpackSite, getSiteId } from 'calypso/state/sites/selectors';
+import { getSiteId } from 'calypso/state/sites/selectors';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import CheckoutQueryClientProvider from '../checkout-query-client-provider';
+import { isJetpackNotAtomicSite, useCheckoutSite } from '../src/hooks/use-checkout-site';
 import useCountryList from '../src/hooks/use-country-list';
 import { useStoredPaymentMethods } from '../src/hooks/use-stored-payment-methods';
 import { updateCartContactDetailsForCheckout } from '../src/lib/update-cart-contact-details-for-checkout';
@@ -146,10 +146,8 @@ function PurchaseModalWrapper( props: PurchaseModalProps ) {
 	const countries = useCountryList();
 
 	const selectedSiteId = useSelector( getSelectedSiteId );
-	const isJetpackNotAtomic = useSelector(
-		( state ) =>
-			!! isJetpackSite( state, selectedSiteId ) && ! isAtomicSite( state, selectedSiteId )
-	);
+	const { data: site } = useCheckoutSite( selectedSiteId );
+	const isJetpackNotAtomic = isJetpackNotAtomicSite( site );
 	const isAkismetSitelessCheckout = responseCart.products.some(
 		( product ) => product.extra.isAkismetSitelessCheckout
 	);

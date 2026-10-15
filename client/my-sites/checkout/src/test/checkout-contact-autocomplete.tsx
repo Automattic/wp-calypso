@@ -8,7 +8,6 @@ import nock from 'nock';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { isMarketplaceProduct } from 'calypso/state/products-list/selectors';
 import { getPlansBySiteId } from 'calypso/state/sites/plans/selectors/get-plans-by-site';
-import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { resetCheckoutStores } from '../lib/checkout-stores';
 import {
 	planWithoutDomain,
@@ -31,8 +30,6 @@ import {
 import { MockCheckout } from './util/mock-checkout';
 import type { CartKey } from '@automattic/shopping-cart';
 
-jest.mock( 'calypso/state/sites/selectors' );
-jest.mock( 'calypso/state/selectors/is-site-automated-transfer' );
 jest.mock( 'calypso/state/sites/plans/selectors/get-plans-by-site' );
 jest.mock( 'calypso/my-sites/checkout/use-cart-key' );
 jest.mock( 'calypso/lib/analytics/utils/refresh-country-code-cookie-gdpr' );
@@ -58,7 +55,6 @@ describe( 'Checkout contact step', () => {
 	} ) );
 	mockGetSiteDomainsEndpoint( [] );
 	isMarketplaceProduct.mockImplementation( () => false );
-	isJetpackSite.mockImplementation( () => false );
 	mockMatchMediaOnWindow();
 
 	beforeEach( () => {

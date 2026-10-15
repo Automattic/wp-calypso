@@ -9,7 +9,6 @@ import nock from 'nock';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { isMarketplaceProduct } from 'calypso/state/products-list/selectors';
 import { getPlansBySiteId } from 'calypso/state/sites/plans/selectors/get-plans-by-site';
-import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { resetCheckoutStores } from '../lib/checkout-stores';
 import {
 	domainProduct,
@@ -35,8 +34,6 @@ import { MockCheckout } from './util/mock-checkout';
 import type { CartKey, ResponseCartProduct } from '@automattic/shopping-cart';
 import type { ContactDetailsType } from '@automattic/wpcom-checkout';
 
-jest.mock( 'calypso/state/sites/selectors' );
-jest.mock( 'calypso/state/selectors/is-site-automated-transfer' );
 jest.mock( 'calypso/state/sites/plans/selectors/get-plans-by-site' );
 jest.mock( 'calypso/my-sites/checkout/use-cart-key' );
 jest.mock( 'calypso/lib/analytics/utils/refresh-country-code-cookie-gdpr' );
@@ -64,7 +61,6 @@ describe( 'Checkout contact step extra tax fields', () => {
 	} ) );
 	mockGetSiteDomainsEndpoint( [] );
 	isMarketplaceProduct.mockImplementation( () => false );
-	isJetpackSite.mockImplementation( () => false );
 	mockMatchMediaOnWindow();
 
 	const mockSetCartEndpoint = mockSetCartEndpointWith( {

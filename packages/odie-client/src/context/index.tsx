@@ -47,6 +47,7 @@ export const OdieAssistantContext = createContext< OdieAssistantContextInterface
 	isChatLoaded: false,
 	isMinimized: false,
 	isUserEligibleForPaidSupport: false,
+	hasOpenZendeskChat: false,
 	setChat: noop,
 	setChatStatus: noop,
 	setExperimentVariationName: noop,
@@ -67,6 +68,7 @@ export const OdieAssistantProvider: React.FC< OdieAssistantProviderProps > = ( {
 	newLoggedOutInteractionsBotSlug,
 	newInteractionsBotVersion,
 	isUserEligibleForPaidSupport = true,
+	hasOpenZendeskChat = false,
 	canConnectToZendesk = false,
 	isLoadingCanConnectToZendesk = false,
 	selectedSiteId,
@@ -82,22 +84,24 @@ export const OdieAssistantProvider: React.FC< OdieAssistantProviderProps > = ( {
 	launcherContext,
 	children,
 } ) => {
-	const { dynamicNewInteractionsBotSlug, isMinimized, isChatLoaded } = useSelect(
-		( select ) => {
-			const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
+	const { dynamicNewInteractionsBotSlug, isMinimized, isChatLoaded, checkoutSupportVariation } =
+		useSelect(
+			( select ) => {
+				const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
 
-			const odieBotNameSlug = isOdieAllowedBot( store.getOdieBotNameSlug() )
-				? ( store.getOdieBotNameSlug() as OdieAllowedBots )
-				: newInteractionsBotSlug;
+				const odieBotNameSlug = isOdieAllowedBot( store.getOdieBotNameSlug() )
+					? ( store.getOdieBotNameSlug() as OdieAllowedBots )
+					: newInteractionsBotSlug;
 
-			return {
-				dynamicNewInteractionsBotSlug: odieBotNameSlug,
-				isMinimized: store.getIsMinimized(),
-				isChatLoaded: store.getIsChatLoaded(),
-			};
-		},
-		[ newInteractionsBotSlug ]
-	);
+				return {
+					dynamicNewInteractionsBotSlug: odieBotNameSlug,
+					isMinimized: store.getIsMinimized(),
+					isChatLoaded: store.getIsChatLoaded(),
+					checkoutSupportVariation: store.getCheckoutSupportVariation(),
+				};
+			},
+			[ newInteractionsBotSlug ]
+		);
 
 	const navigate = useNavigate();
 
@@ -110,7 +114,7 @@ export const OdieAssistantProvider: React.FC< OdieAssistantProviderProps > = ( {
 	 * This is where we manage the state of the chat.
 	 */
 	const { mainChatState, setMainChatState, isLoadingZendeskHistory } = useGetCombinedChat(
-		isUserEligibleForPaidSupport && canConnectToZendesk,
+		( isUserEligibleForPaidSupport || hasOpenZendeskChat ) && canConnectToZendesk,
 		isLoadingCanConnectToZendesk
 	);
 
@@ -188,6 +192,7 @@ export const OdieAssistantProvider: React.FC< OdieAssistantProviderProps > = ( {
 				isMinimized,
 				experimentVariationName,
 				isUserEligibleForPaidSupport,
+				hasOpenZendeskChat,
 				canConnectToZendesk,
 				isLoadingCanConnectToZendesk,
 				hasUserEverEscalatedToHumanSupport,
@@ -205,6 +210,7 @@ export const OdieAssistantProvider: React.FC< OdieAssistantProviderProps > = ( {
 				forceEmailSupport,
 				isChatRestricted,
 				launcherContext,
+				checkoutSupportVariation,
 			} }
 		>
 			{ children }

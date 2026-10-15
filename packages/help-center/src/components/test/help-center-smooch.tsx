@@ -41,7 +41,8 @@ jest.mock( '@automattic/odie-client/src/utils/csat', () => ( {
 } ) );
 
 jest.mock( '@automattic/zendesk-client', () => ( {
-	useLoadZendeskMessaging: () => ( { isMessagingScriptLoaded: true } ),
+	// Like the real hook, only load the script when chat is allowed.
+	useLoadZendeskMessaging: ( allowChat: boolean ) => ( { isMessagingScriptLoaded: allowChat } ),
 	useAuthenticateZendeskMessaging: () => ( {
 		data: { jwt: 'test-jwt', externalId: 'test-ext-id', isLoggedIn: true },
 	} ),
@@ -59,11 +60,14 @@ jest.mock( '@automattic/data-stores', () => ( {
 	},
 } ) );
 
+// Changed by the open human chat tests.
+let mockIsEligibleForChat = true;
+
 // Mock the real on-disk modules that are transitively loaded via src/hooks.
 // Without these, the entire dependency graph tries to load, pulling in
 // @wordpress/components, @wordpress/rich-text, etc., which fail in jsdom.
 jest.mock( '../../hooks', () => ( {
-	useChatStatus: () => ( { isEligibleForChat: true } ),
+	useChatStatus: () => ( { isEligibleForChat: mockIsEligibleForChat } ),
 } ) );
 
 jest.mock( '../../stores', () => ( {
@@ -236,5 +240,36 @@ describe( 'HelpCenterSmooch – onInvalidAuth refreshes the messenger auth (regr
 		// The query function fetches the messenger auth with the widget login flow.
 		fetchArgs.queryFn();
 		expect( fetchMessagingAuth ).toHaveBeenCalledWith( 'messenger', true );
+	} );
+} );
+
+describe( 'HelpCenterSmooch – open human chats', () => {
+	beforeEach( () => {
+		jest.clearAllMocks();
+		mockSmooch.render.mockImplementation( () => {} );
+		mockSmooch.init.mockResolvedValue( undefined );
+		mockIsEligibleForChat = false;
+	} );
+
+	afterEach( () => {
+		mockIsEligibleForChat = true;
+	} );
+
+	it( 'starts the chat for a user without paid support who has an open human chat', async () => {
+		await act( async () => {
+			render( <HelpCenterSmooch enableAuth hasOpenZendeskChat /> );
+			await new Promise( ( r ) => setTimeout( r, 0 ) );
+		} );
+
+		expect( mockSmooch.init ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'does not start the chat for a user without paid support or an open human chat', async () => {
+		await act( async () => {
+			render( <HelpCenterSmooch enableAuth /> );
+			await new Promise( ( r ) => setTimeout( r, 0 ) );
+		} );
+
+		expect( mockSmooch.init ).not.toHaveBeenCalled();
 	} );
 } );

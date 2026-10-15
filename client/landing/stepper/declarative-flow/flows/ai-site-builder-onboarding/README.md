@@ -9,10 +9,13 @@ Paid-only onboarding for the AI Site Builder (Big Sky). Replaces the free-trial
 2. Choose a domain.
 3. Confirm the plan picker shows only Personal, Premium, Business, and Commerce — no Free, no Enterprise.
 4. Complete checkout.
-5. Confirm that buying any plan (all of Personal, Premium, Business, and Commerce carry the Atomic
-   feature build-wow needs) lands checkout on the build-wow site spec
+5. Confirm that buying Personal, Premium, or Business lands checkout on the build-wow site spec
    (`/setup/ai-site-builder-spec/site-spec?build_wow=1`), the same destination as the
    post-checkout "Create a custom design" card.
+   For Commerce, an account on the store rollout (the server's `big-sky/build-wow/store-builder`
+   route) goes straight to the build-wow site spec. Any other account waits on
+   `wait-for-commerce-atomic` until WooCommerce is active, then opens the legacy Big Sky Site Spec
+   editor.
 6. Confirm `source`, `ref`, and a `?prompt=` query param passed at entry are carried over to the
    build-wow site spec.
 7. With the `site-spec` feature disabled, confirm checkout lands in the legacy Big Sky Site Spec

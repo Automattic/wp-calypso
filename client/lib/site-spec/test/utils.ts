@@ -267,6 +267,30 @@ describe( 'SiteSpec Utils', () => {
 			expect( result.features?.siteBrief ).toBe( 'next' );
 		} );
 
+		it( 'should hand spec meta to the widget through a collector', () => {
+			const result = getBlueprintSiteSpecConfig( {
+				blueprintId: 'zoom',
+				specMeta: { zoom_booking_url: 'https://scheduler.zoom.us/jason' },
+			} );
+
+			expect( result.collector ).toBeInstanceOf( Function );
+			// Meta only: it is stamped into the spec, and must not open the conversation on
+			// the agent's behalf.
+			// Synchronous, so the widget settles the first screen before its first paint.
+			expect( result.collector?.() ).toEqual( {
+				meta: { zoom_booking_url: 'https://scheduler.zoom.us/jason' },
+			} );
+		} );
+
+		it( 'should attach no collector when there is no spec meta', () => {
+			expect( getBlueprintSiteSpecConfig( { blueprintId: 'zoom' } ) ).not.toHaveProperty(
+				'collector'
+			);
+			expect(
+				getBlueprintSiteSpecConfig( { blueprintId: 'zoom', specMeta: { zoom_booking_url: '' } } )
+			).not.toHaveProperty( 'collector' );
+		} );
+
 		it( 'should offer social links only', () => {
 			// `links` is a sub-feature of the next brief, so it only means
 			// anything alongside the siteBrief assertion above.

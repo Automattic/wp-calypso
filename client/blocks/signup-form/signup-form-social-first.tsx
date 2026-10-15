@@ -30,6 +30,7 @@ interface SignupFormSocialFirst {
 	flowName: string;
 	redirectToAfterLoginUrl: string;
 	logInUrl: string;
+	onLogInClick?: () => void;
 	socialServiceResponse: object;
 	handleSocialResponse: (
 		service: string,
@@ -105,6 +106,7 @@ const SignupFormSocialFirst = ( {
 	flowName,
 	redirectToAfterLoginUrl,
 	logInUrl,
+	onLogInClick,
 	socialServiceResponse,
 	handleSocialResponse,
 	onCreateAccountSuccess,
@@ -252,7 +254,7 @@ const SignupFormSocialFirst = ( {
 	const loginLinkParagraph = (
 		<p className="signup-form-social-first__login-link">
 			{ createInterpolateElement( __( 'Have an account? <link>Log in</link>' ), {
-				link: <Step.LinkButton href={ logInUrl } />,
+				link: <Step.LinkButton href={ logInUrl } onClick={ onLogInClick } />,
 			} ) }
 		</p>
 	);

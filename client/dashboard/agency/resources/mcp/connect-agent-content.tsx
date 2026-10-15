@@ -174,6 +174,7 @@ export default function McpConnectAgent( {
 									<Button
 										style={ { width: 'fit-content' } }
 										variant="primary"
+										size="compact"
 										href={ selectedAgent.installAction.deepLink }
 										onClick={ onInstallActionClick }
 									>

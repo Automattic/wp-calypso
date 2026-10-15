@@ -10,7 +10,7 @@ import {
 	trackImageStudioSidebarClose,
 } from '../../utils/tracking';
 import { ConfirmationDialog } from '../confirmation-dialog';
-import { EditableField } from './editable-field';
+import { EditableField, type RegenerateCredits } from './editable-field';
 import { FileDetails } from './file-details';
 import './style.scss';
 
@@ -44,12 +44,15 @@ export function ImageStudioSidebar( { onClose, title, children }: ImageStudioSid
 }
 
 interface ImageStudioAltTextSidebarProps {
+	/** Shared with the chat, so a regeneration updates and respects the same balance. */
+	credits?: RegenerateCredits;
 	onClose: () => void;
 	onDeletePermanently?: () => Promise< void >;
 	canDeletePermanently?: boolean;
 }
 
 export function ImageStudioAltTextSidebar( {
+	credits,
 	onClose,
 	onDeletePermanently,
 	canDeletePermanently,
@@ -102,6 +105,7 @@ export function ImageStudioAltTextSidebar( {
 				onSave={ ( value ) => handleSave( MetadataField.Title, value ) }
 				field={ MetadataField.Title }
 				attachmentId={ normalizedAttachmentId }
+				credits={ credits }
 			/>
 			<EditableField
 				label={ __( 'Caption', __i18n_text_domain__ ) }
@@ -110,6 +114,7 @@ export function ImageStudioAltTextSidebar( {
 				isTextarea
 				field={ MetadataField.Caption }
 				attachmentId={ normalizedAttachmentId }
+				credits={ credits }
 			/>
 			<EditableField
 				label={ __( 'Description', __i18n_text_domain__ ) }
@@ -118,6 +123,7 @@ export function ImageStudioAltTextSidebar( {
 				isTextarea
 				field={ MetadataField.Description }
 				attachmentId={ normalizedAttachmentId }
+				credits={ credits }
 			/>
 			<EditableField
 				label={ __( 'Alt Text', __i18n_text_domain__ ) }
@@ -126,6 +132,7 @@ export function ImageStudioAltTextSidebar( {
 				isTextarea
 				field={ MetadataField.AltText }
 				attachmentId={ normalizedAttachmentId }
+				credits={ credits }
 			/>
 			<p className="image-studio-alt-text-sidebar__help-text">
 				{ __(

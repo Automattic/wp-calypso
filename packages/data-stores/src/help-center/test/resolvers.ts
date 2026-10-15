@@ -122,6 +122,7 @@ describe( 'Help Center resolvers', () => {
 		const dispatch = jest.fn();
 		const select = {
 			hasLoggedOutOdieChat: jest.fn( () => false ),
+			isHelpCenterShown: jest.fn( () => undefined ),
 		};
 
 		await isHelpCenterShown()( {
@@ -134,6 +135,25 @@ describe( 'Help Center resolvers', () => {
 			show: true,
 		} );
 	} );
+
+	it.each( [ false, true ] )(
+		'leaves the Help Center as it is when it was set to %s while the preference loaded',
+		async ( shownMeanwhile ) => {
+			mockGetPersistedPreference.mockResolvedValue( true );
+			const dispatch = jest.fn();
+			const select = {
+				hasLoggedOutOdieChat: jest.fn( () => false ),
+				isHelpCenterShown: jest.fn( () => shownMeanwhile ),
+			};
+
+			await isHelpCenterShown()( {
+				dispatch,
+				select,
+			} as unknown as HelpCenterThunkProps );
+
+			expect( dispatch ).not.toHaveBeenCalled();
+		}
+	);
 
 	it( 'restores router history when no navigation was requested', async () => {
 		const routerHistory = {

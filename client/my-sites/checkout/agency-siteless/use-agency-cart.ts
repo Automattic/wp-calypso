@@ -1,6 +1,10 @@
 import { createRequestCartProduct } from '@automattic/shopping-cart';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
+import {
+	getPressableMemoryTarget,
+	matchesCartEntry,
+} from 'calypso/dashboard/agency/marketplace/products/lib/pressable-memory-addon';
 import { getBillingProductId } from '../agency-checkout/lib/billing-product-id';
 import { useFilledAgencyCart } from '../agency-checkout/use-filled-agency-cart';
 import type { AgencyCartEntry } from '../agency-checkout/lib/agency-checkout-params';
@@ -19,10 +23,11 @@ export default function useAgencyCart( entries: AgencyCartEntry[], term: AgencyC
 	const buildLines = useCallback< BuildAgencyCartLines >(
 		( agencyId, products ) =>
 			entries.flatMap( ( entry ) => {
-				const product = products.find( ( candidate ) => candidate.slug === entry.slug );
+				const product = products.find( ( candidate ) => matchesCartEntry( candidate, entry ) );
 				if ( ! product ) {
 					return [];
 				}
+				const siteDomain = getPressableMemoryTarget( product );
 				return Array.from( { length: entry.quantity }, ( _, cartItemIndex ) =>
 					createRequestCartProduct( {
 						product_id: getBillingProductId( product, term ),
@@ -31,6 +36,7 @@ export default function useAgencyCart( entries: AgencyCartEntry[], term: AgencyC
 							isA4ASitelessCheckout: true,
 							agency_id: agencyId,
 							cart_item_index: cartItemIndex,
+							...( siteDomain ? { a4a_pressable_site_domain: siteDomain } : {} ),
 						},
 					} )
 				);
