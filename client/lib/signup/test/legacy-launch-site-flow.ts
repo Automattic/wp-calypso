@@ -32,14 +32,4 @@ describe( 'getLegacyLaunchSiteRedirect', () => {
 		expect( url.searchParams.has( 'new' ) ).toBe( false );
 		expect( url.searchParams.has( 'source' ) ).toBe( false );
 	} );
-
-	it( 'keeps the locale', () => {
-		expect( target( { siteSlug: 'example.wordpress.com' }, 'es' ).pathname ).toBe(
-			'/setup/launch-site/es'
-		);
-	} );
-
-	it( 'drops the default locale', () => {
-		expect( getLegacyLaunchSiteRedirect( {}, 'en' ) ).toBe( '/setup/launch-site' );
-	} );
 } );

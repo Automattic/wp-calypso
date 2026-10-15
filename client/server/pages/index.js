@@ -1250,15 +1250,6 @@ function jetpackCloudPages( app ) {
 	} );
 }
 
-// Last non-empty segment, so a trailing slash doesn't hide the locale.
-function getLegacyFlowLocale( requestPath ) {
-	const lastPathSegment = requestPath.split( '/' ).filter( Boolean ).pop() ?? '';
-
-	return getLanguageSlugs().includes( lastPathSegment ) && ! isDefaultLocale( lastPathSegment )
-		? lastPathSegment
-		: '';
-}
-
 export default function pages() {
 	const app = express();
 
@@ -1325,18 +1316,23 @@ export default function pages() {
 
 	// Legacy `/start/<plan>` flows are now served by Stepper's onboarding flow with the plan
 	// preselected. This has to be registered ahead of the dashboard `/start` route and the section
-	// loop below, which bind `/start` for the signup section and would otherwise match first. The `/*` variant covers
-	// step segments — `/start/personal/domains` is a shape real `redirect_to` values use.
+	// loop below, which bind `/start` for the signup section and would otherwise match first. The
+	// `/*` variant covers step segments — `/start/personal/domains` is a shape real `redirect_to`
+	// values use.
 	const legacyPlanFlowRoute = `/start/:flow(${ Object.keys( REDIRECTED_PLAN_FLOWS ).join( '|' ) })`;
 	app.get( [ legacyPlanFlowRoute, `${ legacyPlanFlowRoute }/*` ], ( req, res, next ) => {
 		if ( ! shouldRedirectLegacyPlanFlow( req.params.flow ) ) {
 			return next( 'route' );
 		}
 
-		res.redirect(
-			302,
-			getLegacyPlanFlowRedirect( req.params.flow, req.query, getLegacyFlowLocale( req.path ) )
-		);
+		// Last non-empty segment, so a trailing slash doesn't hide the locale.
+		const lastPathSegment = req.path.split( '/' ).filter( Boolean ).pop() ?? '';
+		const locale =
+			getLanguageSlugs().includes( lastPathSegment ) && ! isDefaultLocale( lastPathSegment )
+				? lastPathSegment
+				: '';
+
+		res.redirect( 302, getLegacyPlanFlowRedirect( req.params.flow, req.query, locale ) );
 	} );
 
 	// Legacy `/start/launch-site` is now served by Stepper; see `legacy-launch-site-flow.ts`.
@@ -1368,7 +1364,7 @@ export default function pages() {
 			return next( 'route' );
 		}
 
-		res.redirect( 302, getLegacyLaunchSiteRedirect( req.query, getLegacyFlowLocale( req.path ) ) );
+		res.redirect( 302, getLegacyLaunchSiteRedirect( req.query ) );
 	} );
 
 	// Special Calypso routes which also appear on `my.wordpress.com`

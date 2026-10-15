@@ -127,7 +127,7 @@ export default {
 			const siteSlug =
 				context.query?.siteSlug || getSignupDependencyStore( context.store.getState() )?.siteSlug;
 			window.location.replace(
-				getLegacyLaunchSiteRedirect( { ...context.query, ...( siteSlug && { siteSlug } ) }, lang )
+				getLegacyLaunchSiteRedirect( { ...context.query, ...( siteSlug && { siteSlug } ) } )
 			);
 			return;
 		}

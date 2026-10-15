@@ -39,7 +39,7 @@ describe( 'redirectLegacyFlow', () => {
 		);
 
 		expect( window.location.replace ).toHaveBeenCalledWith(
-			'/setup/launch-site/es?siteSlug=example.wordpress.com'
+			'/setup/launch-site?siteSlug=example.wordpress.com'
 		);
 		expect( next ).not.toHaveBeenCalled();
 	} );
@@ -64,8 +64,8 @@ describe( 'redirectLegacyFlow', () => {
 		);
 	} );
 
-	it( 'drops the default locale, like the server redirect', () => {
-		run( { flowName: 'launch-site', lang: 'en' }, { siteSlug: 'example.wordpress.com' } );
+	it( 'drops the locale, like the server redirect', () => {
+		run( { flowName: 'launch-site', lang: 'es' }, { siteSlug: 'example.wordpress.com' } );
 
 		expect( window.location.replace ).toHaveBeenCalledWith(
 			'/setup/launch-site?siteSlug=example.wordpress.com'

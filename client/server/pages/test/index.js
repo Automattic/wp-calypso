@@ -1439,11 +1439,11 @@ describe( 'main app', () => {
 			expect( devApp.getMocks().analytics.tracks.recordEvent ).not.toHaveBeenCalled();
 		} );
 
-		it( 'drops legacy step segments and keeps the locale', async () => {
+		it( 'drops legacy step and locale segments', async () => {
 			const { response } = await app.run( {
 				request: { url: '/start/launch-site/domains-launch/es/', query },
 			} );
-			expect( response.redirect ).toHaveBeenCalledWith( 302, `/setup/launch-site/es?${ search }` );
+			expect( response.redirect ).toHaveBeenCalledWith( 302, `/setup/launch-site?${ search }` );
 		} );
 
 		it( 'leaves flows that only share the prefix alone', async () => {
