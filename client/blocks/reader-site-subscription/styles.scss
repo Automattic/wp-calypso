@@ -70,7 +70,7 @@
 					overflow: hidden;
 					text-overflow: ellipsis;
 
-					&:not(.external-link) {
+					&:not(.site-subscription-header__site-link) {
 						min-width: max-content;
 					}
 				}
