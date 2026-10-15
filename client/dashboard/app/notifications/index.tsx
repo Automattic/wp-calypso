@@ -36,11 +36,12 @@ export default function Notifications( {
 	const [ hasUnseenNotifications, setHasUnseenNotifications ] = useState( user.has_unseen_notes );
 	const [ anchorEl, setAnchorEl ] = useState< HTMLElement | null >( null );
 	const isViewSettingsEnabled = config.isEnabled( 'notifications/view-settings' );
+	const isSimplifiedNoteEnabled = isViewSettingsEnabled;
 	const onNotificationCount = useCallback( ( count: number ) => {
 		setHasUnseenNotifications( count > 0 );
 		omnibarEvents.notificationsUnseenCount.emit( count );
 	}, [] );
-	useSubscriberAlerts( onNotificationCount );
+	useSubscriberAlerts( onNotificationCount, isSimplifiedNoteEnabled );
 
 	// Both share one query key, so this is a single request — and it is skipped entirely
 	// without the picker, where nothing reads either value.
@@ -209,6 +210,7 @@ export default function Notifications( {
 						locale={ locale }
 						isDismissible={ isMobileViewport }
 						isViewSettingsEnabled={ isViewSettingsEnabled }
+						isSimplifiedNoteEnabled={ isSimplifiedNoteEnabled }
 						preferences={ notificationPreferences }
 						onPreferenceChange={ handlePreferenceChange }
 						actionHandlers={ actionHandlers }

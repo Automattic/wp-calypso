@@ -17,6 +17,8 @@ import actions from '../../panel/state/actions';
 import getAllNotes from '../../panel/state/selectors/get-all-notes';
 import getIsNotePendingApproval from '../../panel/state/selectors/get-is-note-pending-approval';
 import getIsNoteRead from '../../panel/state/selectors/get-is-note-read';
+import SimplifiedNote, { hasNoteContext } from '../note-simplified';
+import { getTemporaryNoteTitle } from '../note-simplified/labels';
 import { NoteBody, ActionBlock, ReplyFooter, SimplifiedActionBlock } from '../templates/body';
 import CloseButton from '../templates/close-button';
 import NoteSummary from '../templates/note-summary';
@@ -94,6 +96,8 @@ const Note = ( { isDismissible, noteId, setSelectedNoteId, noteNavigation }: Not
 		return null;
 	}
 
+	const isSimplifiedNote = isSimplified && hasNoteContext( note );
+
 	return (
 		<>
 			<CardHeader
@@ -116,7 +120,7 @@ const Note = ( { isDismissible, noteId, setSelectedNoteId, noteNavigation }: Not
 							/>
 						) }
 						<Heading level={ 3 } size={ 15 } weight={ 500 }>
-							{ note.title }
+							{ isSimplifiedNote ? getTemporaryNoteTitle( note ) : note.title }
 						</Heading>
 					</HStack>
 					<HStack justify="flex-end" style={ { width: 'auto', flexShrink: 0 } }>
@@ -145,8 +149,9 @@ const Note = ( { isDismissible, noteId, setSelectedNoteId, noteNavigation }: Not
 				</HStack>
 			</CardHeader>
 			<CardBody size="small" style={ { maxHeight: 'unset' } }>
-				<VStack justify="flex-start" spacing={ 4 }>
-					{ !! note.header?.length && (
+				<VStack justify="flex-start" spacing={ isSimplifiedNote ? 6 : 4 }>
+					{ isSimplifiedNote && <SimplifiedNote note={ note } /> }
+					{ ! isSimplifiedNote && !! note.header?.length && (
 						<>
 							<NoteSummary header={ note.header } url={ note.url } />
 							<hr
@@ -159,13 +164,15 @@ const Note = ( { isDismissible, noteId, setSelectedNoteId, noteNavigation }: Not
 							/>
 						</>
 					) }
-					<div className={ getClasses( { note, isPendingApproval, isRead } ) }>
-						<NoteBody note={ note } />
-					</div>
-					{ isSimplified && <SimplifiedActionBlock note={ note } goBack={ goBack } /> }
+					{ ! isSimplifiedNote && (
+						<div className={ getClasses( { note, isPendingApproval, isRead } ) }>
+							<NoteBody note={ note } />
+						</div>
+					) }
+					{ isSimplifiedNote && <SimplifiedActionBlock note={ note } goBack={ goBack } /> }
 				</VStack>
 			</CardBody>
-			{ isSimplified ? (
+			{ isSimplifiedNote ? (
 				<ReplyFooter note={ note } />
 			) : (
 				<ActionBlock note={ note } goBack={ goBack } />
