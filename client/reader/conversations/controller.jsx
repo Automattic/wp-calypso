@@ -43,6 +43,30 @@ export function conversations( context, next ) {
 	next();
 }
 
+const loadInbox = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-reader-conversations-inbox" */ 'calypso/reader/conversations/inbox'
+	).then( ( { ConversationsInbox } ) => ( { default: ConversationsInbox } ) );
+
+export function conversationsInbox( context, next ) {
+	trackPageLoad(
+		'/reader/conversations/inbox',
+		'Reader > Conversations > Inbox',
+		'conversations-inbox'
+	);
+
+	context.primary = (
+		<AsyncLoad
+			require={ loadInbox }
+			key="conversations-inbox"
+			siteId={ context.params.siteId }
+			postId={ context.params.postId }
+			placeholder={ null }
+		/>
+	);
+	next();
+}
+
 export function conversationsA8c( context, next ) {
 	const basePath = sectionify( context.path );
 	const mcKey = 'conversations-a8c';
