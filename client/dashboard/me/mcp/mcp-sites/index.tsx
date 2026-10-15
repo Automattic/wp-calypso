@@ -40,7 +40,7 @@ function SiteManageButton( { site }: { site: Site } ) {
 			return null;
 		}
 		return (
-			<Button variant="tertiary" size="compact" href={ href }>
+			<Button variant="tertiary" size="compact" __next40pxDefaultSize href={ href }>
 				{ __( 'Manage' ) }
 			</Button>
 		);

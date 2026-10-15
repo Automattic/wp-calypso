@@ -275,7 +275,12 @@ export default function McpAddSitePage( { path } ) {
 															</HStack>
 															<HStack spacing={ 4 } justify="flex-end" expanded={ false }>
 																{ manageHref && (
-																	<Button variant="tertiary" size="compact" href={ manageHref }>
+																	<Button
+																		variant="tertiary"
+																		size="compact"
+																		__next40pxDefaultSize
+																		href={ manageHref }
+																	>
 																		{ translate( 'Manage' ) }
 																	</Button>
 																) }
