@@ -123,7 +123,12 @@ export default {
 		}
 
 		if ( flowName === LEGACY_LAUNCH_SITE_FLOW ) {
-			window.location.replace( getLegacyLaunchSiteRedirect( context.query, lang ) );
+			// The legacy flow fell back to the stored site when the query had none.
+			const siteSlug =
+				context.query?.siteSlug || getSignupDependencyStore( context.store.getState() )?.siteSlug;
+			window.location.replace(
+				getLegacyLaunchSiteRedirect( { ...context.query, ...( siteSlug && { siteSlug } ) }, lang )
+			);
 			return;
 		}
 

@@ -38,4 +38,8 @@ describe( 'getLegacyLaunchSiteRedirect', () => {
 			'/setup/launch-site/es'
 		);
 	} );
+
+	it( 'drops the default locale', () => {
+		expect( getLegacyLaunchSiteRedirect( {}, 'en' ) ).toBe( '/setup/launch-site' );
+	} );
 } );

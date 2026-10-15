@@ -1323,6 +1323,54 @@ export default function pages() {
 		app.use( render404ForUnknownHostname );
 	}
 
+	// Legacy `/start/<plan>` flows are now served by Stepper's onboarding flow with the plan
+	// preselected. This has to be registered ahead of the dashboard `/start` route and the section
+	// loop below, which bind `/start` for the signup section and would otherwise match first. The `/*` variant covers
+	// step segments — `/start/personal/domains` is a shape real `redirect_to` values use.
+	const legacyPlanFlowRoute = `/start/:flow(${ Object.keys( REDIRECTED_PLAN_FLOWS ).join( '|' ) })`;
+	app.get( [ legacyPlanFlowRoute, `${ legacyPlanFlowRoute }/*` ], ( req, res, next ) => {
+		if ( ! shouldRedirectLegacyPlanFlow( req.params.flow ) ) {
+			return next( 'route' );
+		}
+
+		res.redirect(
+			302,
+			getLegacyPlanFlowRedirect( req.params.flow, req.query, getLegacyFlowLocale( req.path ) )
+		);
+	} );
+
+	// Legacy `/start/launch-site` is now served by Stepper; see `legacy-launch-site-flow.ts`.
+	app.get( [ '/start/launch-site', '/start/launch-site/*' ], ( req, res, next ) => {
+		// Shows who still links to the old path (the Referer is sent with the event), so we know
+		// when it can go. Only the path and caller hints are sent: the query can carry coupons and
+		// redirect URLs.
+		if ( calypsoEnv === 'production' && req.method === 'GET' ) {
+			const stringArg = ( value ) => ( typeof value === 'string' ? value : undefined );
+
+			try {
+				analytics.tracks.recordEvent(
+					'calypso_legacy_launch_site_redirect',
+					{
+						path: req.path,
+						ref: stringArg( req.query.ref ),
+						query_source: stringArg( req.query.source ),
+					},
+					req
+				);
+			} catch {
+				// Never let tracking block the redirect.
+			}
+		}
+
+		// Without a `siteSlug` the site may only be known from the signup dependency store, which
+		// lives in the browser; the client-side redirect in the signup controller fills it in.
+		if ( typeof req.query.siteSlug !== 'string' || ! req.query.siteSlug ) {
+			return next( 'route' );
+		}
+
+		res.redirect( 302, getLegacyLaunchSiteRedirect( req.query, getLegacyFlowLocale( req.path ) ) );
+	} );
+
 	// Special Calypso routes which also appear on `my.wordpress.com`
 	if ( isDashboardEnv() || calypsoEnv === 'development' ) {
 		const signupSectionDefinition = sections.find( ( s ) => s.name === 'signup' );
@@ -1360,42 +1408,6 @@ export default function pages() {
 				variant.isAllowedHostname( req.hostname )
 			)
 		);
-	} );
-
-	// Legacy `/start/<plan>` flows are now served by Stepper's onboarding flow with the plan
-	// preselected. This has to be registered ahead of the section loop below, which binds
-	// `/start` for the signup section and would otherwise match first. The `/*` variant covers
-	// step segments — `/start/personal/domains` is a shape real `redirect_to` values use.
-	const legacyPlanFlowRoute = `/start/:flow(${ Object.keys( REDIRECTED_PLAN_FLOWS ).join( '|' ) })`;
-	app.get( [ legacyPlanFlowRoute, `${ legacyPlanFlowRoute }/*` ], ( req, res, next ) => {
-		if ( ! shouldRedirectLegacyPlanFlow( req.params.flow ) ) {
-			return next( 'route' );
-		}
-
-		res.redirect(
-			302,
-			getLegacyPlanFlowRedirect( req.params.flow, req.query, getLegacyFlowLocale( req.path ) )
-		);
-	} );
-
-	// Legacy `/start/launch-site` is now served by Stepper; see `legacy-launch-site-flow.ts`.
-	app.get( [ '/start/launch-site', '/start/launch-site/*' ], ( req, res ) => {
-		// Shows who still links to the old path (the Referer is sent with the event), so we know
-		// when it can go. Only the path and caller hints are sent: the query can carry coupons and
-		// redirect URLs.
-		if ( calypsoEnv === 'production' && req.method === 'GET' ) {
-			try {
-				analytics.tracks.recordEvent(
-					'calypso_legacy_launch_site_redirect',
-					{ path: req.path, ref: req.query.ref, query_source: req.query.source },
-					req
-				);
-			} catch {
-				// Never let tracking block the redirect.
-			}
-		}
-
-		res.redirect( 302, getLegacyLaunchSiteRedirect( req.query, getLegacyFlowLocale( req.path ) ) );
 	} );
 
 	sections

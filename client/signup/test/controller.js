@@ -25,9 +25,10 @@ describe( 'redirectLegacyFlow', () => {
 		} );
 	} );
 
-	const run = ( params, query = {} ) => {
+	const run = ( params, query = {}, dependencyStore = {} ) => {
 		const next = jest.fn();
-		controller.redirectLegacyFlow( { params, query }, next );
+		const store = { getState: () => ( { signup: { dependencyStore } } ) };
+		controller.redirectLegacyFlow( { params, query, store }, next );
 		return next;
 	};
 
@@ -41,6 +42,34 @@ describe( 'redirectLegacyFlow', () => {
 			'/setup/launch-site/es?siteSlug=example.wordpress.com'
 		);
 		expect( next ).not.toHaveBeenCalled();
+	} );
+
+	it( 'falls back to the stored site when the query has none', () => {
+		run( { flowName: 'launch-site' }, {}, { siteSlug: 'stored.wordpress.com' } );
+
+		expect( window.location.replace ).toHaveBeenCalledWith(
+			'/setup/launch-site?siteSlug=stored.wordpress.com'
+		);
+	} );
+
+	it( 'prefers the query site over the stored one', () => {
+		run(
+			{ flowName: 'launch-site' },
+			{ siteSlug: 'example.wordpress.com' },
+			{ siteSlug: 'stored.wordpress.com' }
+		);
+
+		expect( window.location.replace ).toHaveBeenCalledWith(
+			'/setup/launch-site?siteSlug=example.wordpress.com'
+		);
+	} );
+
+	it( 'drops the default locale, like the server redirect', () => {
+		run( { flowName: 'launch-site', lang: 'en' }, { siteSlug: 'example.wordpress.com' } );
+
+		expect( window.location.replace ).toHaveBeenCalledWith(
+			'/setup/launch-site?siteSlug=example.wordpress.com'
+		);
 	} );
 
 	it( 'still redirects legacy plan flows', () => {

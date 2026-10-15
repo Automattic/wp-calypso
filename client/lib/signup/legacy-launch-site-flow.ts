@@ -1,3 +1,5 @@
+import { isDefaultLocale } from '@automattic/i18n-utils';
+
 /**
  * Legacy `/start/launch-site` is served by Stepper's `/setup/launch-site`. Links to the old path
  * still arrive from wp-admin, wpcom, emails and bookmarks, so it stays as a redirect. Legacy step
@@ -9,7 +11,7 @@ export const LEGACY_LAUNCH_SITE_FLOW = 'launch-site';
 /**
  * The Stepper URL legacy `/start/launch-site` redirects to.
  * @param query  Parsed query string of the incoming request.
- * @param locale Locale slug to append, when it isn't the default.
+ * @param locale Locale slug to append; the default locale is dropped.
  */
 export function getLegacyLaunchSiteRedirect(
 	query: Record< string, unknown > = {},
@@ -25,5 +27,7 @@ export function getLegacyLaunchSiteRedirect(
 
 	const search = new URLSearchParams( forwarded ).toString();
 
-	return `/setup/launch-site${ locale ? `/${ locale }` : '' }${ search ? `?${ search }` : '' }`;
+	const localeSuffix = locale && ! isDefaultLocale( locale ) ? `/${ locale }` : '';
+
+	return `/setup/launch-site${ localeSuffix }${ search ? `?${ search }` : '' }`;
 }
