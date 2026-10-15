@@ -6,7 +6,8 @@ import { act, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { useState } from 'react';
-import { render, screen, waitFor } from '../../test-utils';
+import { render } from '../../../../test-utils';
+import ActionRenderModal from '../action-render-modal';
 import type { PluginListRow } from '../../types';
 import type { ActionOnExecuteResponse } from '../action-render-modal';
 
