@@ -338,7 +338,8 @@ export function trackImageStudioToolClick(
 		| 'rotate_left'
 		| 'rotate_right'
 		| 'flip_horizontal'
-		| 'flip_vertical',
+		| 'flip_vertical'
+		| 'crop',
 	action?: 'open' | 'close'
 ): void {
 	const properties: Record< string, string > = {};

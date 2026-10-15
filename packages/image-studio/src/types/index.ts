@@ -48,6 +48,7 @@ export enum ImageStudioMode {
 export enum ToolbarOption {
 	Annotate = 'annotate',
 	AltText = 'alt-text',
+	Crop = 'crop',
 }
 
 export enum MetadataField {

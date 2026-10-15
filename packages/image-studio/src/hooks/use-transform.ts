@@ -1,5 +1,5 @@
 /**
- * Applies deterministic image edits (rotate, flip) with WordPress core's
+ * Applies deterministic image edits (rotate, flip, crop) with WordPress core's
  * `POST /wp/v2/media/<id>/edit` route and shows the new attachment as a draft, with no model call.
  */
 import apiFetch from '@wordpress/api-fetch';
