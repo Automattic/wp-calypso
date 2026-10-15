@@ -5,10 +5,7 @@ import { isValidDestination } from './utils';
 import type { DestinationsInputProps, ValidationError } from './types';
 import './styles.scss';
 
-type TokenItem = Exclude<
-	NonNullable< ComponentProps< typeof FormTokenField >[ 'value' ] >[ number ],
-	string
->;
+type Tokens = NonNullable< ComponentProps< typeof FormTokenField >[ 'value' ] >;
 
 const MAX_FORWARD_DESTINATIONS = 5;
 
@@ -28,7 +25,7 @@ export function DestinationsInput( props: DestinationsInputProps ) {
 		);
 	}
 
-	function handleChange( newValues: Array< string | TokenItem > ) {
+	function handleChange( newValues: Tokens ) {
 		onChange( ( newValues as string[] ).map( ( el ) => el.toLowerCase().trim() ) );
 	}
 

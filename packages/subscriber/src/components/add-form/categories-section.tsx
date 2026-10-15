@@ -7,10 +7,7 @@ import { info } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import type { ComponentProps } from 'react';
 
-type TokenItem = Exclude<
-	NonNullable< ComponentProps< typeof FormTokenField >[ 'value' ] >[ number ],
-	string
->;
+type Tokens = NonNullable< ComponentProps< typeof FormTokenField >[ 'value' ] >;
 
 interface Props {
 	siteId: number;
@@ -34,7 +31,7 @@ export const CategoriesSection: React.FC< Props > = ( {
 	const [ showInfoPopover, setShowInfoPopover ] = useState( false );
 	const infoButtonRef = useRef< HTMLButtonElement >( null );
 
-	const handleCategoryChange = ( tokens: ( string | TokenItem )[] ) => {
+	const handleCategoryChange = ( tokens: Tokens ) => {
 		// Filter out any invalid category names.
 		const validTokens = tokens
 			.map( ( token ) => {
