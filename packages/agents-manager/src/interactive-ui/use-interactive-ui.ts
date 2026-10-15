@@ -21,12 +21,14 @@ interface Options {
  * Updates the interactive UI after the agent finishes responding. Keeps the user's
  * input when new messages arrive, and rebuilds the UI if earlier messages change.
  * Sends UI actions back to the agent without showing them as chat messages.
+ * Reports SDK loading failures so forms can offer a retry.
  */
 export default function useInteractiveUi( options: Options ) {
 	const latestOptionsRef = useRef( options );
 	latestOptionsRef.current = options;
 
 	const [ interactiveUiSdk, setInteractiveUiSdk ] = useState< typeof import( '.' ) >();
+	const [ hasLoadError, setHasLoadError ] = useState( false );
 	const [ runtimeRevision, setRuntimeRevision ] = useState( 0 );
 
 	const messageBatches = useMemo(
@@ -46,20 +48,20 @@ export default function useInteractiveUi( options: Options ) {
 
 	// Load the interactive UI SDK dynamically to reduce the initial bundle size.
 	useEffect( () => {
-		if ( ! hasMessageBatches || interactiveUiSdk ) {
+		if ( ! hasMessageBatches || interactiveUiSdk || hasLoadError ) {
 			return;
 		}
 
 		let isUiLoadCancelled = false;
 		void import( /* webpackChunkName: "am-interactive-ui" */ '.' ).then(
 			( interactiveUiModule ) => ! isUiLoadCancelled && setInteractiveUiSdk( interactiveUiModule ),
-			() => {}
+			() => ! isUiLoadCancelled && setHasLoadError( true )
 		);
 
 		return () => {
 			isUiLoadCancelled = true;
 		};
-	}, [ hasMessageBatches, interactiveUiSdk ] );
+	}, [ hasMessageBatches, interactiveUiSdk, hasLoadError ] );
 
 	// Dispose of the interactive UI runtime when the conversation session changes or the component unmounts.
 	useEffect( () => {
@@ -128,10 +130,18 @@ export default function useInteractiveUi( options: Options ) {
 		() => ( {
 			runtime: conversationSession.runtime,
 			sdk: interactiveUiSdk,
+			hasLoadError,
+			retryLoad: () => setHasLoadError( false ),
 			revision: runtimeRevision,
 			isDisabled: options.isProcessing,
 		} ),
-		[ conversationSession.runtime, interactiveUiSdk, runtimeRevision, options.isProcessing ]
+		[
+			conversationSession.runtime,
+			interactiveUiSdk,
+			hasLoadError,
+			runtimeRevision,
+			options.isProcessing,
+		]
 	);
 }
 

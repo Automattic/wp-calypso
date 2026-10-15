@@ -1,4 +1,6 @@
+import { Button } from '@wordpress/components';
 import { Component } from '@wordpress/element';
+import { __ } from '@wordpress/i18n';
 import type { InteractiveUiPresentation } from './use-interactive-ui';
 import type { ReactNode } from 'react';
 
@@ -30,7 +32,17 @@ export default function InteractiveUi( {
 	messageId: string;
 	presentation: InteractiveUiPresentation;
 } ) {
-	const { runtime, sdk, revision, isDisabled } = presentation;
+	const { runtime, sdk, revision, isDisabled, hasLoadError, retryLoad } = presentation;
+	if ( hasLoadError ) {
+		return (
+			<div role="alert">
+				<p>{ __( 'This form could not be loaded.', __i18n_text_domain__ ) }</p>
+				<Button variant="secondary" onClick={ retryLoad }>
+					{ __( 'Try again', __i18n_text_domain__ ) }
+				</Button>
+			</div>
+		);
+	}
 	if ( ! runtime || ! sdk ) {
 		return null;
 	}
@@ -40,6 +52,7 @@ export default function InteractiveUi( {
 		return surface?.componentsModel.has( surface.rootId ) ? (
 			<fieldset
 				key={ surfaceId }
+				data-agenttic-isolated
 				disabled={ isDisabled }
 				style={ { border: 0, padding: 0, margin: 0, minWidth: 0 } }
 			>

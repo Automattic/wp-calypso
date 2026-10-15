@@ -45,6 +45,7 @@ export function attachInteractiveUiPresentation(
 				( content ) =>
 					content.type !== 'component' ||
 					content.component !== InteractiveUi ||
+					presentation.hasLoadError ||
 					presentation.runtime?.getSurfaceIds( message.id ).length
 			)
 			.map( ( content ) =>
