@@ -870,6 +870,8 @@ const CheckoutSummaryAmountWrapper = styled.div`
 `;
 
 const CheckoutSummaryLineItem = styled.div< { isDiscount?: boolean } >`
+	display: flex;
+	flex-wrap: wrap;
 	font-size: 14px;
 	justify-content: space-between;
 	line-height: 20px;
