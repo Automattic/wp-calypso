@@ -50,6 +50,7 @@ import {
 	hasDisabledCheckpointAction,
 	withComputedActions,
 } from '../../utils/message-actions';
+import { broadcastTaskUpdateToolResults } from '../../utils/tool-result-broadcast';
 import AgentChat from '../agent-chat';
 import { type Options as ChatHeaderOptions } from '../chat-header';
 import type { BigSkyMessage } from '../../types';
@@ -160,6 +161,7 @@ export default function OrchestratorChat( {
 				if ( isCurrentStreamGeneration( streamGeneration ) ) {
 					recordRetriedToolCall( update );
 					recordTaskUpdate( update );
+					broadcastTaskUpdateToolResults( update );
 				}
 
 				trackResponseOutcome( update );
