@@ -1,6 +1,8 @@
+import { isEcommercePlan } from '@automattic/calypso-products';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
+import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { getBuildWowGraph } from 'calypso/landing/stepper/utils/build-wow';
 import { useSiteGeneration } from './use-site-generation';
 import { SiteGenerationView } from './view';
@@ -14,6 +16,9 @@ const SiteGeneration: StepType = function SiteGeneration() {
 	const source = query.get( 'source' );
 	const specId = query.get( 'specId' );
 	const graph = getBuildWowGraph( query );
+	// Only the store builder sends a Commerce site here, and checkout has given
+	// it the plan by now.
+	const isStoreBuild = isEcommercePlan( useSite()?.plan?.product_slug ?? '' );
 	// Fallback checklist only: the server-computed ui.steps from the status
 	// endpoint is authoritative (labels included, already localized). This
 	// list covers the moments before the first response arrives, and backends
@@ -30,7 +35,14 @@ const SiteGeneration: StepType = function SiteGeneration() {
 		],
 		[ translate ]
 	);
-	const state = useSiteGeneration( { siteIdentifier, source, specId, graph, steps } );
+	const state = useSiteGeneration( {
+		siteIdentifier,
+		source,
+		specId,
+		graph,
+		isStoreBuild,
+		steps,
+	} );
 
 	const reload = () => {
 		window.location.reload();
@@ -39,7 +51,12 @@ const SiteGeneration: StepType = function SiteGeneration() {
 	return (
 		<>
 			<DocumentHead title={ translate( 'Generating your site' ) } />
-			<SiteGenerationView graph={ graph } onReload={ reload } state={ state } />
+			<SiteGenerationView
+				graph={ graph }
+				isStoreBuild={ isStoreBuild }
+				onReload={ reload }
+				state={ state }
+			/>
 		</>
 	);
 };

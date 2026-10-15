@@ -9,12 +9,18 @@ import { useSiteGeneration } from '../use-site-generation';
 import type { SiteGenerationState } from '../use-site-generation';
 
 let mockState: SiteGenerationState;
+let mockSite: { plan?: { product_slug: string } } | null;
 
 jest.mock( 'i18n-calypso', () => ( {
+	...jest.requireActual( 'i18n-calypso' ),
 	useTranslate: () => ( text: string ) => text,
 } ) );
 
 jest.mock( 'calypso/components/data/document-head', () => () => null );
+
+jest.mock( 'calypso/landing/stepper/hooks/use-site', () => ( {
+	useSite: () => mockSite,
+} ) );
 
 jest.mock( '../use-site-generation', () => ( {
 	useSiteGeneration: jest.fn( () => mockState ),
@@ -37,6 +43,7 @@ describe( 'SiteGeneration recovery', () => {
 
 	beforeEach( () => {
 		jest.clearAllMocks();
+		mockSite = null;
 		mockState = {
 			status: 'failed',
 			failureReason: 'build-failed',
@@ -127,6 +134,22 @@ describe( 'SiteGeneration recovery', () => {
 			'polish',
 			'publish',
 		] );
+	} );
+
+	it.each( [
+		[ 'ecommerce-bundle', true ],
+		[ 'business-bundle', false ],
+	] )( 'treats a site on %s as a store build: %s', ( productSlug, isStoreBuild ) => {
+		mockSite = { plan: { product_slug: productSlug } };
+		renderStep();
+
+		expect( useSiteGenerationMock.mock.calls[ 0 ][ 0 ].isStoreBuild ).toBe( isStoreBuild );
+	} );
+
+	it( 'is not a store build until the site loads', () => {
+		renderStep();
+
+		expect( useSiteGenerationMock.mock.calls[ 0 ][ 0 ].isStoreBuild ).toBe( false );
 	} );
 
 	it( 'reloads when checking again after a timeout', () => {

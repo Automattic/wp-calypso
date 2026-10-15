@@ -26,8 +26,11 @@ export type SiteGenerationState = {
 };
 
 const GENERATION_TIMEOUT_MS = 30 * 60 * 1000;
-// The wait screen promises DSL builds in about 4 minutes; past 5, stop waiting.
+// The wait screen promises DSL builds in up to 4 minutes, and stores, which also
+// import products and install WooCommerce, in up to 8. Stop waiting a little
+// after each promise: 5 minutes for a site, 10 for a store.
 const DSL_GENERATION_TIMEOUT_MS = 5 * 60 * 1000;
+const DSL_STORE_GENERATION_TIMEOUT_MS = 10 * 60 * 1000;
 const STEP_TIMER_STORAGE_PREFIX = 'site-generation-step-timer-v1';
 
 type GenerationFailure =
@@ -99,6 +102,7 @@ export function useSiteGeneration( {
 	source,
 	specId,
 	graph,
+	isStoreBuild = false,
 	steps,
 }: {
 	siteIdentifier: string | null;
@@ -106,6 +110,7 @@ export function useSiteGeneration( {
 	specId?: string | null;
 	/** Graph the build was queued with, so a retry rebuilds on the same one. */
 	graph?: BuildWowGraph;
+	isStoreBuild?: boolean;
 	steps: Array< Pick< SiteGenerationStep, 'id' | 'label' > >;
 } ): SiteGenerationState {
 	const [ serverSteps, setServerSteps ] = useState< SiteGenerationStep[] | null >( null );
@@ -115,7 +120,12 @@ export function useSiteGeneration( {
 	const [ isRetryingBuild, setIsRetryingBuild ] = useState( false );
 	const isRetryingRef = useRef( false );
 	const hasRequiredParameters = Boolean( siteIdentifier );
-	const generationTimeoutMs = graph === 'dsl' ? DSL_GENERATION_TIMEOUT_MS : GENERATION_TIMEOUT_MS;
+	let generationTimeoutMs = GENERATION_TIMEOUT_MS;
+	if ( graph === 'dsl' ) {
+		generationTimeoutMs = isStoreBuild
+			? DSL_STORE_GENERATION_TIMEOUT_MS
+			: DSL_GENERATION_TIMEOUT_MS;
+	}
 
 	useEffect( () => {
 		if ( ! siteIdentifier || failure ) {

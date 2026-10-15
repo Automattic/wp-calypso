@@ -132,20 +132,26 @@ function ElapsedTime( { startedAt }: { startedAt: number } ) {
 
 function WaitingCanvas( {
 	graph,
+	isStoreBuild,
 	onPreviewTap,
 }: {
 	graph?: BuildWowGraph;
+	isStoreBuild?: boolean;
 	onPreviewTap: () => void;
 } ) {
 	const translate = useTranslate();
-	const description =
-		graph === 'dsl'
+	let description = translate(
+		'This can take up to 10 minutes. No worries, you’ll receive an email when the site is ready.'
+	);
+	if ( graph === 'dsl' ) {
+		description = isStoreBuild
 			? translate(
-					'This can take up to 4 minutes. No worries, you’ll receive an email when the site is ready.'
+					'This can take up to 8 minutes. No worries, you’ll receive an email when the site is ready.'
 				)
 			: translate(
-					'This can take up to 10 minutes. No worries, you’ll receive an email when the site is ready.'
+					'This can take up to 4 minutes. No worries, you’ll receive an email when the site is ready.'
 				);
+	}
 
 	return (
 		<div className="site-generation__waiting">
@@ -281,10 +287,12 @@ function BuildProgress( { state }: { state: SiteGenerationState } ) {
 export function SiteGenerationView( {
 	state,
 	graph,
+	isStoreBuild,
 	onReload,
 }: {
 	state: SiteGenerationState;
 	graph?: BuildWowGraph;
+	isStoreBuild?: boolean;
 	onReload: () => void;
 } ) {
 	const translate = useTranslate();
@@ -329,7 +337,11 @@ export function SiteGenerationView( {
 					{ state.status === 'failed' ? (
 						<ErrorCanvas state={ state } onReload={ onReload } />
 					) : (
-						<WaitingCanvas graph={ graph } onPreviewTap={ cycleTint } />
+						<WaitingCanvas
+							graph={ graph }
+							isStoreBuild={ isStoreBuild }
+							onPreviewTap={ cycleTint }
+						/>
 					) }
 				</div>
 			</section>
