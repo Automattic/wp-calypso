@@ -149,7 +149,7 @@ const Note = ( { isDismissible, noteId, setSelectedNoteId, noteNavigation }: Not
 				</HStack>
 			</CardHeader>
 			<CardBody size="small" style={ { maxHeight: 'unset' } }>
-				<VStack justify="flex-start" spacing={ 4 }>
+				<VStack justify="flex-start" spacing={ isSimplifiedNote ? 6 : 4 }>
 					{ isSimplifiedNote && <SimplifiedNote note={ note } /> }
 					{ ! isSimplifiedNote && !! note.header?.length && (
 						<>
