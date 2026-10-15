@@ -1585,6 +1585,7 @@ export default function OrchestratorChat( {
 		agentConfig,
 		onSubmit,
 		beforeSubmit: () => ! isUploadingRef.current && credits.beforeSubmit(),
+		flushPendingNavigation,
 	} );
 	const convertedMessages = useMemo< AgentsManagerUIMessage[] >( () => {
 		// The stable checkpoint getter reads these values through refs.

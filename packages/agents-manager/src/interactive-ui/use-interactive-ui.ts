@@ -14,6 +14,7 @@ interface Options {
 	agentConfig: AgentConfig | null;
 	onSubmit: UseAgentChatReturn[ 'onSubmit' ];
 	beforeSubmit: () => boolean;
+	flushPendingNavigation: () => Promise< void >;
 }
 
 /**
@@ -90,7 +91,8 @@ export default function useInteractiveUi( options: Options ) {
 		if ( messageBatches.length > 0 && ! conversationSession.runtime ) {
 			conversationSession.runtime = interactiveUiSdk.createInteractiveUiRuntime(
 				async ( action ) => {
-					const { agentConfig, isProcessing, onSubmit, beforeSubmit } = latestOptionsRef.current;
+					const { agentConfig, isProcessing, onSubmit, beforeSubmit, flushPendingNavigation } =
+						latestOptionsRef.current;
 
 					if ( ! agentConfig || isProcessing || ! beforeSubmit() ) {
 						return;
@@ -98,6 +100,7 @@ export default function useInteractiveUi( options: Options ) {
 
 					startTurn();
 					startNewUserRequest();
+					await flushPendingNavigation();
 					await executeInteractiveUiAction( action, agentConfig, onSubmit );
 				}
 			);
