@@ -39,7 +39,7 @@ export default function useInteractiveUi( options: Options ) {
 		() => ( {
 			conversationId: options.conversationId,
 			runtime: undefined as InteractiveUiRuntime | undefined,
-			appliedBatchSignatures: [] as string[],
+			processedBatchSignatures: [] as string[],
 		} ),
 		[ options.conversationId ]
 	);
@@ -66,7 +66,7 @@ export default function useInteractiveUi( options: Options ) {
 		return () => {
 			conversationSession.runtime?.dispose();
 			conversationSession.runtime = undefined;
-			conversationSession.appliedBatchSignatures = [];
+			conversationSession.processedBatchSignatures = [];
 		};
 	}, [ conversationSession ] );
 
@@ -76,15 +76,15 @@ export default function useInteractiveUi( options: Options ) {
 			return;
 		}
 
-		// Dispose of the current runtime if any of the applied batch signatures have changed.
+		// Dispose of the current runtime if any of the processed batch signatures have changed.
 		if (
-			conversationSession.appliedBatchSignatures.some(
+			conversationSession.processedBatchSignatures.some(
 				( signature, index ) => signature !== messageBatches[ index ]?.signature
 			)
 		) {
 			conversationSession.runtime?.dispose();
 			conversationSession.runtime = undefined;
-			conversationSession.appliedBatchSignatures = [];
+			conversationSession.processedBatchSignatures = [];
 		}
 
 		// Create a new runtime if there are message batches and no current runtime.
@@ -106,21 +106,21 @@ export default function useInteractiveUi( options: Options ) {
 			);
 		}
 
-		try {
-			// Process any new message batches that have not been applied yet.
-			for ( const batch of messageBatches.slice(
-				conversationSession.appliedBatchSignatures.length
-			) ) {
+		// Process any new message batches that have not been attempted yet.
+		for ( const batch of messageBatches.slice(
+			conversationSession.processedBatchSignatures.length
+		) ) {
+			try {
 				conversationSession.runtime?.processMessages( batch.operations, batch.messageId );
+			} catch ( error ) {
+				// eslint-disable-next-line no-console
+				console.error( '[AgentsManager] Failed to process an interactive UI batch:', error );
 			}
-		} catch ( error ) {
-			// eslint-disable-next-line no-console
-			console.error( '[AgentsManager] Failed to process an interactive UI batch:', error );
-			conversationSession.runtime?.dispose();
-			conversationSession.runtime = undefined;
 		}
 
-		conversationSession.appliedBatchSignatures = messageBatches.map( ( batch ) => batch.signature );
+		conversationSession.processedBatchSignatures = messageBatches.map(
+			( batch ) => batch.signature
+		);
 		setRuntimeRevision( ( currentRevision ) => currentRevision + 1 );
 	}, [ messageBatches, options.isProcessing, interactiveUiSdk, conversationSession ] );
 
