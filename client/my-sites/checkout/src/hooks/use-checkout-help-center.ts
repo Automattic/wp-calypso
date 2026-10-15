@@ -1,4 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import config from '@automattic/calypso-config';
 import { HelpCenter, HelpCenterSelect } from '@automattic/data-stores';
 import {
 	useProductsCustomOptions,
@@ -15,9 +16,22 @@ import { useTranslate } from 'i18n-calypso';
 import { useExperiment } from 'calypso/lib/explat';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { useSelector } from 'calypso/state';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { getSectionName, getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { loadCheckoutSupportVariation } from '../lib/checkout-support-routing';
 
 const HELP_CENTER_STORE = HelpCenter.register();
+
+// Checkouts for other brands, which the checkout support experiment leaves out.
+const OTHER_BRAND_CHECKOUT_PATHS = [
+	'/checkout/jetpack',
+	'/checkout/akismet',
+	'/checkout/agency',
+	'/checkout/marketplace',
+	'/checkout/passport',
+];
 
 // Checkout has no admin bar node to read the arm from, so it asks ExPlat itself.
 const GET_HELP_EXPERIMENT = 'calypso_help_center_get_help_chat_forward';
@@ -31,6 +45,11 @@ export const useCheckoutHelpCenter = (): {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId );
 	const siteSlug = useSelector( getSelectedSiteSlug );
+	const isLoggedIn = useSelector( isUserLoggedIn );
+	const sectionName = useSelector( getSectionName );
+	const isJetpackNotAtomic = useSelector(
+		( state ) => !! siteId && !! isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId )
+	);
 
 	const cartKey = useCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
@@ -44,6 +63,19 @@ export const useCheckoutHelpCenter = (): {
 	} = useProductsWithPremiumSupport( responseCart.products, 'checkout' );
 	const helpCenterOptions = useProductsCustomOptions( responseCart.products );
 
+	// Only the WordPress.com checkout itself is in the checkout support experiment: not the pending
+	// and thank-you pages, which share this hook, not checkouts for other brands, whose buyers
+	// shouldn't be sent to WordPress.com support, and not carts that already go straight to a human.
+	const isOtherBrandCheckout =
+		isJetpackNotAtomic ||
+		OTHER_BRAND_CHECKOUT_PATHS.some( ( path ) => window.location.pathname.startsWith( path ) );
+	const canJoinCheckoutSupportExperiment =
+		config.isEnabled( 'checkout/support-routing' ) &&
+		sectionName === 'checkout' &&
+		isLoggedIn &&
+		! isOtherBrandCheckout &&
+		! hasPremiumSupport;
+
 	const [ , experimentAssignment ] = useExperiment( GET_HELP_EXPERIMENT );
 	const isGetHelpTreatment = experimentAssignment?.variationName === 'treatment';
 
@@ -53,7 +85,7 @@ export const useCheckoutHelpCenter = (): {
 		( select ) => ( select( HELP_CENTER_STORE ) as HelpCenterSelect ).isHelpCenterShown(),
 		[]
 	);
-	const toggleHelpCenter = () => {
+	const toggleHelpCenter = async () => {
 		recordTracksEvent( `calypso_thank_you_inlinehelp_${ isShowingHelpCenter ? 'close' : 'show' }`, {
 			force_site_id: true,
 			location: 'thank-you-help-center',
@@ -69,7 +101,17 @@ export const useCheckoutHelpCenter = (): {
 			}
 		}
 
-		setShowHelpCenter( ! isShowingHelpCenter, { hasPremiumSupport, ...helpCenterOptions } );
+		// Assign the variation only when opening, so only people who ask for help are in the experiment.
+		const checkoutSupportVariation =
+			! isShowingHelpCenter && canJoinCheckoutSupportExperiment
+				? await loadCheckoutSupportVariation()
+				: undefined;
+
+		setShowHelpCenter( ! isShowingHelpCenter, {
+			hasPremiumSupport,
+			...helpCenterOptions,
+			checkoutSupportVariation,
+		} );
 		if ( hasPremiumSupport ) {
 			const urlWithQueryArgs = addQueryArgs( '/odie?provider=zendesk', {
 				userFieldMessage,
@@ -78,6 +120,14 @@ export const useCheckoutHelpCenter = (): {
 				siteId,
 			} );
 			setNavigateToRoute( urlWithQueryArgs );
+		} else if ( checkoutSupportVariation === 'human_only' ) {
+			// The variation grants premium support, so users without a paid plan reach a human too.
+			setNavigateToRoute(
+				addQueryArgs( '/odie?provider=zendesk', {
+					siteUrl: siteSlug ?? undefined,
+					siteId: siteId ?? undefined,
+				} )
+			);
 		} else {
 			setNavigateToRoute( '/odie' );
 		}
