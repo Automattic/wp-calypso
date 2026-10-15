@@ -52,6 +52,8 @@ export interface AgencyOverviewContentProps {
 	onRelaunchTour?: () => void;
 	/** What the Pending card's tour button says. */
 	tourLabel?: string;
+	/** The welcome band is showing and already says what the Pending card would. */
+	hidesPendingCard?: boolean;
 	recordTracksEvent?: RecordTracksEvent;
 }
 
@@ -75,6 +77,7 @@ export default function AgencyOverviewContent( {
 	isSchedulingCall,
 	onRelaunchTour,
 	tourLabel,
+	hidesPendingCard,
 	recordTracksEvent,
 }: AgencyOverviewContentProps ) {
 	const isSmallViewport = useViewportMatch( 'medium', '<' );
@@ -95,7 +98,7 @@ export default function AgencyOverviewContent( {
 						recordTracksEvent={ recordTracksEvent }
 					/>
 				) }
-				{ isPending && (
+				{ isPending && ! hidesPendingCard && (
 					<PendingTierCard
 						onRelaunchTour={ onRelaunchTour }
 						tourLabel={ tourLabel }

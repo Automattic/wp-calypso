@@ -17,6 +17,7 @@ import MissingPaymentSettingsNotice, {
 import { useHasCommissionActivity } from '../earn/use-has-commission-activity';
 import { getMarketplaceHostingSectionRoute } from '../marketplace/paths';
 import { useOnboardingTour } from '../onboarding-tour';
+import WelcomeBand, { useWelcomeBandVisibility } from '../onboarding-tour/welcome-band';
 import { PARTNER_DIRECTORY_ROUTE } from '../partner-directory/paths';
 import { useContactSupport } from '../support/use-contact-support';
 import { useScheduleCall } from '../tiers/use-schedule-call';
@@ -32,6 +33,9 @@ export default function AgencyOverview() {
 	const locale = useLocale();
 	const agencyId = agency?.id ?? 0;
 	const approvalStatus = agency?.approval_status;
+	const isPending = approvalStatus === 'pending';
+	const { isVisible: isWelcomeBandVisible, isLoading: isWelcomeBandLoading } =
+		useWelcomeBandVisibility( approvalStatus, agency?.tier?.id, agency?.created_at );
 	const { openTour } = useOnboardingTour();
 	const hasPartnerDirectoryListing =
 		!! agency?.profile?.partner_directory_application?.directories.some(
@@ -89,6 +93,17 @@ export default function AgencyOverview() {
 				type="error"
 				message={ __( 'You don’t have permission to view the requested page.' ) }
 			/>
+			{ isWelcomeBandVisible && (
+				<WelcomeBand
+					isPending={ isPending }
+					sitesHref="/sites"
+					marketplaceHref="/marketplace"
+					onScheduleCall={ scheduleCall }
+					isSchedulingCall={ isSchedulingCall }
+					onTakeTour={ openTour }
+					recordTracksEvent={ recordTracksEvent }
+				/>
+			) }
 			<AgencyOverviewContent
 				agencyId={ agencyId }
 				tierId={ agency.tier?.id }
@@ -131,6 +146,7 @@ export default function AgencyOverview() {
 				isSchedulingCall={ isSchedulingCall }
 				onRelaunchTour={ openTour }
 				tourLabel={ __( 'Take the full tour' ) }
+				hidesPendingCard={ isWelcomeBandVisible || isWelcomeBandLoading }
 				recordTracksEvent={ recordTracksEvent }
 			/>
 		</PageLayout>
