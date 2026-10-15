@@ -1,10 +1,11 @@
 import { renderHook } from '@testing-library/react';
 import apiFetch from '@wordpress/api-fetch';
+import { type Mock, vi } from 'vitest';
 import { trackImageStudioError } from '../utils/tracking';
 import { useTransform } from './use-transform';
 
 let mockSelectorState: {
-	isOpen: boolean;
+	isExitConfirmed: boolean;
 	attachmentId: number | null;
 	originalAttachmentId: number | null;
 	currentImageUrl: string | null;
@@ -13,22 +14,22 @@ let mockSelectorState: {
 	canvasMetadata: Record< string, string | null > | null;
 };
 
-const mockAddNotice = jest.fn();
-const mockSetDraftIds = jest.fn();
-const mockAddTransformedAttachmentId = jest.fn();
-const mockUpdateImageStudioCanvas = jest.fn();
-const mockSetImageStudioOriginalImageUrl = jest.fn();
-const mockSetImageStudioAiProcessing = jest.fn();
-const mockDeleteEntityRecord = jest.fn();
+const mockAddNotice = vi.fn();
+const mockSetDraftIds = vi.fn();
+const mockAddTransformedAttachmentId = vi.fn();
+const mockUpdateImageStudioCanvas = vi.fn();
+const mockSetImageStudioOriginalImageUrl = vi.fn();
+const mockSetImageStudioAiProcessing = vi.fn();
+const mockDeleteEntityRecord = vi.fn();
 
-jest.mock( '@wordpress/api-fetch', () => jest.fn() );
+vi.mock( '@wordpress/api-fetch', () => ( { default: vi.fn() } ) );
 
-jest.mock( '@wordpress/data', () => ( {
-	select: jest.fn( ( store ) =>
+vi.mock( '@wordpress/data', () => ( {
+	select: vi.fn( ( store ) =>
 		store === 'core'
 			? {}
 			: {
-					getIsImageStudioOpen: () => mockSelectorState.isOpen,
+					getIsExitConfirmed: () => mockSelectorState.isExitConfirmed,
 					getImageStudioAttachmentId: () => mockSelectorState.attachmentId,
 					getOriginalAttachmentId: () => mockSelectorState.originalAttachmentId,
 					getImageStudioCurrentImageUrl: () => mockSelectorState.currentImageUrl,
@@ -37,7 +38,7 @@ jest.mock( '@wordpress/data', () => ( {
 					getCanvasMetadata: () => mockSelectorState.canvasMetadata,
 				}
 	),
-	useDispatch: jest.fn( ( store ) => ( {
+	useDispatch: vi.fn( ( store ) => ( {
 		deleteEntityRecord: store === 'core' ? mockDeleteEntityRecord : undefined,
 		addNotice: mockAddNotice,
 		setDraftIds: mockSetDraftIds,
@@ -48,31 +49,31 @@ jest.mock( '@wordpress/data', () => ( {
 	} ) ),
 } ) );
 
-jest.mock( '@wordpress/core-data', () => ( {
+vi.mock( '@wordpress/core-data', () => ( {
 	store: 'core',
 } ) );
 
-jest.mock( '../utils/tracking', () => ( {
-	trackImageStudioError: jest.fn(),
+vi.mock( '../utils/tracking', () => ( {
+	trackImageStudioError: vi.fn(),
 } ) );
 
-jest.mock( '@wordpress/i18n', () => ( {
+vi.mock( '@wordpress/i18n', () => ( {
 	__: ( str: string ) => str,
 } ) );
 
-jest.mock( '../store', () => ( {
+vi.mock( '../store', () => ( {
 	store: 'image-studio',
 } ) );
 
-const mockApiFetch = apiFetch as unknown as jest.Mock;
-const mockTrackImageStudioError = trackImageStudioError as jest.Mock;
+const mockApiFetch = apiFetch as unknown as Mock;
+const mockTrackImageStudioError = trackImageStudioError as Mock;
 
 describe( 'useTransform', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
-		jest.spyOn( window.console, 'error' ).mockImplementation( () => {} );
+		vi.clearAllMocks();
+		vi.spyOn( window.console, 'error' ).mockImplementation( () => {} );
 		mockSelectorState = {
-			isOpen: true,
+			isExitConfirmed: false,
 			attachmentId: 42,
 			originalAttachmentId: 10,
 			currentImageUrl: 'https://example.com/current.png',
@@ -95,6 +96,8 @@ describe( 'useTransform', () => {
 				src: 'https://example.com/current.png',
 				modifiers: [ { type: 'rotate', args: { angle: 90 } } ],
 				title: 'Title',
+				caption: '',
+				description: '',
 				alt_text: 'Alt',
 			},
 		} );
@@ -178,22 +181,63 @@ describe( 'useTransform', () => {
 		expect( mockApiFetch ).toHaveBeenCalledTimes( 2 );
 	} );
 
-	it( 'deletes the new attachment when Image Studio closed during the request', async () => {
+	it( 'deletes the new attachment when exit starts during the request', async () => {
 		mockApiFetch.mockImplementation( async () => {
-			mockSelectorState.isOpen = false;
+			mockSelectorState.isExitConfirmed = true;
 			return { id: 99, source_url: 'https://example.com/edited.png' };
 		} );
 
 		const { result } = renderHook( () => useTransform() );
 		await result.current.applyImageTransform( { type: 'rotate', direction: 'right' } );
 
-		expect( mockDeleteEntityRecord ).toHaveBeenCalledWith( 'postType', 'attachment', 99, {
-			force: true,
-		} );
+		expect( mockDeleteEntityRecord ).toHaveBeenCalledWith(
+			'postType',
+			'attachment',
+			99,
+			{ force: true },
+			{ throwOnError: true }
+		);
 		expect( mockSetDraftIds ).not.toHaveBeenCalled();
 		expect( mockAddTransformedAttachmentId ).not.toHaveBeenCalled();
 		expect( mockUpdateImageStudioCanvas ).not.toHaveBeenCalled();
 		expect( mockAddNotice ).not.toHaveBeenCalled();
+		expect( mockSetImageStudioAiProcessing ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'leaves a reopened session alone and deletes the new attachment', async () => {
+		let resolveRequest: ( value: unknown ) => void = () => {};
+		mockApiFetch.mockReturnValue( new Promise( ( resolve ) => ( resolveRequest = resolve ) ) );
+
+		const { result, unmount } = renderHook( () => useTransform() );
+		const pending = result.current.applyImageTransform( { type: 'rotate', direction: 'right' } );
+		unmount();
+		renderHook( () => useTransform() );
+
+		resolveRequest( { id: 99, source_url: 'https://example.com/edited.png' } );
+		await pending;
+
+		expect( mockDeleteEntityRecord ).toHaveBeenCalledWith(
+			'postType',
+			'attachment',
+			99,
+			{ force: true },
+			{ throwOnError: true }
+		);
+		expect( mockSetDraftIds ).not.toHaveBeenCalled();
+		expect( mockUpdateImageStudioCanvas ).not.toHaveBeenCalled();
+		expect( mockSetImageStudioAiProcessing ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'explains that flipping needs a newer WordPress when core rejects the flip modifier', async () => {
+		mockApiFetch.mockRejectedValue( { code: 'rest_invalid_param' } );
+
+		const { result } = renderHook( () => useTransform() );
+		await result.current.applyImageTransform( { type: 'flip', axis: 'horizontal' } );
+
+		expect( mockAddNotice ).toHaveBeenCalledWith(
+			"This site's WordPress version can't flip images. Update WordPress to flip.",
+			'error'
+		);
 	} );
 
 	it( 'shows an error notice when there is no attachment to edit', async () => {
