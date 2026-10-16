@@ -490,8 +490,12 @@ export default function OrchestratorChat( {
 	} );
 
 	const handleSuggestionClick = useCallback(
-		( suggestion: Suggestion | string, availableSuggestions?: Suggestion[] ) => {
-			trackSuggestionClick( suggestion, availableSuggestions );
+		(
+			suggestion: Suggestion | string,
+			availableSuggestions?: Suggestion[],
+			isInMessage?: boolean
+		) => {
+			trackSuggestionClick( suggestion, availableSuggestions, isInMessage );
 			dispatchSuggestionClick( suggestion );
 		},
 		[ dispatchSuggestionClick, trackSuggestionClick ]

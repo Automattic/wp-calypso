@@ -116,19 +116,18 @@ describe( 'useSuggestionTracking', () => {
 		);
 	} );
 
-	it( 'tracks a click in a message with its own list once nothing is fed', () => {
+	it( 'tracks a click in a message with its own list', () => {
 		const design: Suggestion[] = [
 			'customize-colors',
 			'change-page-layout',
 			'choose-new-fonts',
 			'edit-pages',
 		].map( ( id ) => ( { id, label: id, prompt: id } ) );
-		const { result, rerender } = renderTracking( blockOptions() );
+		const { result } = renderTracking( blockOptions() );
 		act( () => result.current.onSuggestionsRendered( design.slice( 0, 3 ) ) );
-		rerender( blockOptions( undefined, false ) );
 		jest.mocked( recordBigSkyTracksEvent ).mockClear();
 
-		act( () => result.current.trackSuggestionClick( design[ 0 ], design ) );
+		act( () => result.current.trackSuggestionClick( design[ 0 ], design, true ) );
 
 		expect( recordBigSkyTracksEvent ).toHaveBeenCalledWith(
 			'jetpack_big_sky_chat_suggestion_click',

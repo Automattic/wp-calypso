@@ -106,7 +106,11 @@ export function useSuggestionTracking( {
 	}, [ hasSuggestionsToRender, trackRenderedSuggestions ] );
 
 	const trackSuggestionClick = useCallback(
-		( suggestion: Suggestion | string, availableSuggestions?: Suggestion[] ) => {
+		(
+			suggestion: Suggestion | string,
+			availableSuggestions?: Suggestion[],
+			isInMessage = false
+		) => {
 			if ( typeof suggestion === 'string' ) {
 				return;
 			}
@@ -125,10 +129,10 @@ export function useSuggestionTracking( {
 				? selectedBlockType
 				: undefined;
 
-			// What Agenttic reported as rendered was on screen, so it wins while chips
-			// are fed. Agenttic keeps that set after they go.
+			// What Agenttic reported as rendered was on screen, so it wins, except for a
+			// list in a message, which Agenttic doesn't report.
 			const isRendered =
-				hasSuggestionsToRender &&
+				! isInMessage &&
 				renderedSuggestions.some(
 					( renderedSuggestion ) => renderedSuggestion.id === suggestion.id
 				);
@@ -142,7 +146,7 @@ export function useSuggestionTracking( {
 				...( blockType ? { block_type: blockType } : {} ),
 			} );
 		},
-		[ contextualSuggestionIds, hasSuggestionsToRender, selectedBlockType ]
+		[ contextualSuggestionIds, selectedBlockType ]
 	);
 
 	return { onSuggestionsRendered, trackSuggestionClick };

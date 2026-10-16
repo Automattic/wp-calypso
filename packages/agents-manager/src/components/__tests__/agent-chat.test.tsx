@@ -407,17 +407,22 @@ describe( 'AgentChat', () => {
 		expect( onSuggestionClick ).toHaveBeenCalledWith( suggestion, [ suggestion ] );
 	} );
 
-	it( 'reports the list a transcript suggestion comes from', () => {
+	it( 'reports the list a suggestion in a message comes from', () => {
 		const footerSuggestion = { id: 'translate', label: 'Translate', prompt: 'Translate this' };
 		const listSuggestions = [
 			{ id: 'customize-colors', label: 'Customize colors', prompt: 'Show me palettes' },
 		];
 		const onSuggestionClick = jest.fn();
 
-		renderAgentChat( { isOpen: true, suggestions: [ footerSuggestion ], onSuggestionClick } );
+		renderAgentChat( {
+			isOpen: true,
+			messages: [ { id: 'site-ready', role: 'agent', content: [] } ] as never,
+			suggestions: [ footerSuggestion ],
+			onSuggestionClick,
+		} );
 		act( () => mockContainerSuggestionClick( listSuggestions[ 0 ], listSuggestions ) );
 
-		expect( onSuggestionClick ).toHaveBeenCalledWith( listSuggestions[ 0 ], listSuggestions );
+		expect( onSuggestionClick ).toHaveBeenCalledWith( listSuggestions[ 0 ], listSuggestions, true );
 	} );
 
 	it( 'preserves the selected prompt from an inline dropdown suggestion', async () => {
@@ -439,9 +444,11 @@ describe( 'AgentChat', () => {
 
 		await user.click( screen.getByRole( 'button', { name: 'Change tone: Formal' } ) );
 
-		expect( onSuggestionClick ).toHaveBeenCalledWith( { ...suggestion, prompt: option.value }, [
-			suggestion,
-		] );
+		expect( onSuggestionClick ).toHaveBeenCalledWith(
+			{ ...suggestion, prompt: option.value },
+			[ suggestion ],
+			false
+		);
 	} );
 
 	it( 'preserves the selected prompt from an empty-view dropdown suggestion', async () => {

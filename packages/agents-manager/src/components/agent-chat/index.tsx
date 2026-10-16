@@ -72,10 +72,11 @@ interface Props {
 	onExpand: () => void;
 	/** Called to clear the suggestions. */
 	clearSuggestions?: () => void;
-	/** Called when a suggestion is clicked. */
+	/** Called when a suggestion is clicked; `isInMessage` for a list inside a message. */
 	onSuggestionClick?: (
 		selectedSuggestion: Suggestion | string,
-		availableSuggestions?: Suggestion[]
+		availableSuggestions?: Suggestion[],
+		isInMessage?: boolean
 	) => void;
 	/** Called with the suggestions Agenttic actually renders (after truncation, only while visible). */
 	onSuggestionsRendered?: ( shown: Suggestion[] ) => void;
@@ -224,6 +225,7 @@ export default function AgentChat( {
 		() => formatWritingSuggestionLabels( suggestions, shouldFormatWritingSuggestions ),
 		[ shouldFormatWritingSuggestions, suggestions ]
 	);
+	const hasMessages = messages.length > 0;
 	const handleDisplayedSuggestionClick = useCallback(
 		( selectedSuggestion: Suggestion | string, availableSuggestions?: Suggestion[] ) => {
 			// Footer chips map back to their unformatted originals; any other list
@@ -234,13 +236,16 @@ export default function AgentChat( {
 			const knownSuggestions = isFooterSuggestion
 				? suggestions
 				: ( availableSuggestions ?? suggestions );
+			// The empty view shows only before the first message.
+			const isInMessage = ! isFooterSuggestion && hasMessages;
 
 			onSuggestionClick?.(
 				getSuggestionClickPayload( selectedSuggestion, knownSuggestions ),
-				knownSuggestions
+				knownSuggestions,
+				isInMessage
 			);
 		},
-		[ onSuggestionClick, suggestions ]
+		[ hasMessages, onSuggestionClick, suggestions ]
 	);
 
 	const messageRenderer = useMemo(
