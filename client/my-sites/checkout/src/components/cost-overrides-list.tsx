@@ -546,9 +546,7 @@ function SingleProductAndCostOverridesList( {
 					/>
 				) }
 			</ProductTitleAreaForCostOverridesList>
-			{ isA4ATitanInboxProduct( product ) && (
-				<A4ATitanInboxMeta product={ product } responseCart={ responseCart } compact />
-			) }
+			{ isA4ATitanInboxProduct( product ) && <A4ATitanInboxMeta product={ product } compact /> }
 			{ ! isCartUpdating && (
 				<LineItemCostOverrides
 					product={ product }

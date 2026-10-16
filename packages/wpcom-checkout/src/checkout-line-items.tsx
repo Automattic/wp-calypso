@@ -1528,7 +1528,8 @@ function IntroductoryOfferCallout( {
 	);
 
 	const planSlug = product.product_slug;
-	// The Titan meta already states the trial or renewal terms in full.
+	// Titan inbox line items show only the domain and inbox count; the totals
+	// and terms of service carry the trial and renewal terms.
 	if (
 		( isRenewalPricingExperiment && isWpComPlan( planSlug ) ) ||
 		isA4ATitanInboxProduct( product )
@@ -2021,9 +2022,7 @@ function CheckoutLineItem( {
 
 			{ isEmail && <EmailMeta product={ product } isRenewal={ isRenewal } /> }
 
-			{ isA4ATitanInboxProduct( product ) && (
-				<A4ATitanInboxMeta product={ product } responseCart={ responseCart } />
-			) }
+			{ isA4ATitanInboxProduct( product ) && <A4ATitanInboxMeta product={ product } /> }
 
 			{ children }
 
