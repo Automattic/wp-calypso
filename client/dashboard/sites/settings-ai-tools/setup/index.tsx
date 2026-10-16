@@ -30,12 +30,14 @@ function SiteAIToolsSetup() {
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 	const { data: userSettings } = useSuspenseQuery( userSettingsQuery() );
 
-	type McpClient = 'claude' | 'claude-code' | 'cursor' | 'vscode' | 'continue' | 'default';
+	type McpClient =
+		'chatgpt' | 'claude' | 'claude-code' | 'cursor' | 'vscode' | 'continue' | 'default';
 
-	const [ selectedMcpClient, setSelectedMcpClient ] = useState< McpClient >( 'claude' );
+	const [ selectedMcpClient, setSelectedMcpClient ] = useState< McpClient >( 'chatgpt' );
 	const [ copyStatus, setCopyStatus ] = useState( 'idle' );
 
 	const mcpClientOptions: Array< { label: string; value: McpClient } > = [
+		{ label: 'ChatGPT/Codex', value: 'chatgpt' },
 		{ label: 'Claude', value: 'claude' },
 		{ label: 'Claude Code', value: 'claude-code' },
 		{ label: 'Cursor', value: 'cursor' },
@@ -44,7 +46,7 @@ function SiteAIToolsSetup() {
 		{ label: __( 'Other MCP client' ), value: 'default' },
 	];
 
-	const clientDocumentation: Record< McpClient, string > = {
+	const clientDocumentation: Record< Exclude< McpClient, 'chatgpt' >, string > = {
 		claude: 'https://docs.claude.com/en/docs/mcp',
 		'claude-code': 'https://code.claude.com/docs/en/mcp',
 		vscode: 'https://code.visualstudio.com/docs/copilot/customization/mcp-servers',
@@ -53,7 +55,7 @@ function SiteAIToolsSetup() {
 		default: 'https://modelcontextprotocol.io/docs/develop/connect-local-servers',
 	};
 
-	const clientDocumentationLabels: Record< McpClient, string > = {
+	const clientDocumentationLabels: Record< Exclude< McpClient, 'chatgpt' >, string > = {
 		claude: __( 'Claude documentation' ),
 		'claude-code': __( 'Claude Code documentation' ),
 		vscode: __( 'VS Code documentation' ),
@@ -163,7 +165,8 @@ function SiteAIToolsSetup() {
 					</CardBody>
 				</Card>
 
-				{ ( selectedMcpClient === 'claude' ||
+				{ ( selectedMcpClient === 'chatgpt' ||
+					selectedMcpClient === 'claude' ||
 					selectedMcpClient === 'claude-code' ||
 					selectedMcpClient === 'cursor' ) && (
 					<Card>
@@ -171,6 +174,25 @@ function SiteAIToolsSetup() {
 							<VStack spacing={ 2 }>
 								<SectionHeader level={ 3 } title={ __( 'Quick setup' ) } />
 								<VStack spacing={ 4 }>
+									{ /* Quick Setup for ChatGPT */ }
+									{ selectedMcpClient === 'chatgpt' && (
+										<VStack spacing={ 4 }>
+											<Text as="p" variant="muted">
+												{ __(
+													'Install the WordPress.com plugin in ChatGPT, then sign in with your WordPress.com account when prompted.'
+												) }
+											</Text>
+											<Button
+												variant="primary"
+												href="https://chatgpt.com/plugins/wordpress-com"
+												target="_blank"
+												className="mcp-setup__action-button"
+											>
+												{ __( 'Install in ChatGPT' ) }
+											</Button>
+										</VStack>
+									) }
+
 									{ /* Quick Setup for Claude */ }
 									{ selectedMcpClient === 'claude' && (
 										<ol className="mcp-setup__steps">
@@ -292,39 +314,41 @@ function SiteAIToolsSetup() {
 					</Card>
 				) }
 
-				<Card>
-					<CardBody>
-						<VStack spacing={ 1 }>
-							<HStack justify="space-between" alignment="center">
-								<SectionHeader level={ 3 } title={ __( 'Manual setup' ) } />
-								<Button
-									icon={ copyStatus === 'success' ? check : copy }
-									variant="tertiary"
-									iconSize={ 20 }
-									onClick={ copyToClipboard }
-									aria-label={ __( 'Copy configuration to clipboard' ) }
-								/>
-							</HStack>
-							<VStack spacing={ 2 }>
-								<Text as="p" variant="muted">
-									{ __( 'Copy this configuration into your client\u2019s MCP settings.' ) }
-								</Text>
-								<TextareaControl
-									className="mcp-setup__config-textarea"
-									__nextHasNoMarginBottom
-									value={ JSON.stringify( generateMcpConfig( selectedMcpClient ), null, 2 ) }
-									onChange={ () => {} }
-									readOnly
-								/>
-								{ clientDocumentation[ selectedMcpClient ] && (
-									<ExternalLink href={ clientDocumentation[ selectedMcpClient ] }>
-										{ clientDocumentationLabels[ selectedMcpClient ] }
-									</ExternalLink>
-								) }
+				{ selectedMcpClient !== 'chatgpt' && (
+					<Card>
+						<CardBody>
+							<VStack spacing={ 1 }>
+								<HStack justify="space-between" alignment="center">
+									<SectionHeader level={ 3 } title={ __( 'Manual setup' ) } />
+									<Button
+										icon={ copyStatus === 'success' ? check : copy }
+										variant="tertiary"
+										iconSize={ 20 }
+										onClick={ copyToClipboard }
+										aria-label={ __( 'Copy configuration to clipboard' ) }
+									/>
+								</HStack>
+								<VStack spacing={ 2 }>
+									<Text as="p" variant="muted">
+										{ __( 'Copy this configuration into your client\u2019s MCP settings.' ) }
+									</Text>
+									<TextareaControl
+										className="mcp-setup__config-textarea"
+										__nextHasNoMarginBottom
+										value={ JSON.stringify( generateMcpConfig( selectedMcpClient ), null, 2 ) }
+										onChange={ () => {} }
+										readOnly
+									/>
+									{ clientDocumentation[ selectedMcpClient ] && (
+										<ExternalLink href={ clientDocumentation[ selectedMcpClient ] }>
+											{ clientDocumentationLabels[ selectedMcpClient ] }
+										</ExternalLink>
+									) }
+								</VStack>
 							</VStack>
-						</VStack>
-					</CardBody>
-				</Card>
+						</CardBody>
+					</Card>
+				) }
 			</>
 		</PageLayout>
 	);
