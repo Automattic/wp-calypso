@@ -9,6 +9,7 @@ import { useCallback, useMemo } from 'react';
 import { useAnalytics } from '../../../app/analytics';
 import { wpcomLink } from '../../../utils/link';
 import { urlToSlug } from '../../../utils/url';
+import { PRESSABLE_AGENCY_URL } from '../hosting/lib/pressable-plans';
 import { getCrmDownloadsRoute, getMarketplaceHostingSectionRoute } from '../paths';
 import AssignLicenseModal from './assign-license-modal';
 import {
@@ -122,6 +123,13 @@ export function getLicenseActions( {
 				recordTracksEvent( 'calypso_a4a_licenses_debug_site_click' );
 				openExternal( `https://jptools.wordpress.com/debug/?url=${ items[ 0 ].siteurl }` );
 			},
+		},
+		{
+			id: 'manage-in-pressable',
+			label: __( 'Manage in Pressable' ),
+			isEligible: ( item ) =>
+				canAct( item ) && isPressableLicense( item ) && getLicenseStatus( item ) !== 'revoked',
+			callback: () => openExternal( PRESSABLE_AGENCY_URL ),
 		},
 		{
 			id: 'upgrade',
