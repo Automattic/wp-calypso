@@ -64,6 +64,8 @@ interface ApplyBlockEditsResultData {
 	message: string;
 	/** What the attached pictures do and do not show, one sentence each. */
 	captureNotes?: string[];
+	/** Edited text blocks measured below their contrast threshold; absent when none were measured. */
+	contrastFailures?: number;
 	error?: string;
 	details?: Record< string, unknown >;
 	outcome?: ApplyBlockEditsOutcome;
@@ -416,20 +418,25 @@ export async function applyBlockEditsCallback(
 	// and moved nothing. The contrast is measured against what the canvas
 	// renders behind the text, not what the blocks set: an unstyled group can
 	// paint a theme colour the attributes never mention, and dark on dark is
-	// easy to miss in a scaled-down picture. Kept out of `message`, which the
-	// user may see as the reply.
+	// easy to miss in a scaled-down picture. The server acts on the failure
+	// count rather than the notes' wording, so the field is left out when no
+	// text was measured. Kept out of `message`, which the user may see as the
+	// reply.
 	if ( fileParts ) {
+		const contrast = describeTextContrast( changedClientIds );
 		const captureNotes = [
 			describeCaptureShape( fileParts ),
 			describeReferenceFraming( referenceClientIds, getUnframedClientIds( referenceClientIds ) ),
-			...describeTextContrast( changedClientIds ),
+			...( contrast?.notes ?? [] ),
 			...describeMeasuredLayout( changedClientIds ),
 			layoutBefore && result.outcome === 'updated' ? describeUnmoved( layoutBefore ) : '',
 		].filter( Boolean );
 
-		if ( captureNotes.length ) {
-			result = { ...result, captureNotes };
-		}
+		result = {
+			...result,
+			...( captureNotes.length > 0 && { captureNotes } ),
+			...( typeof contrast?.failures === 'number' && { contrastFailures: contrast.failures } ),
+		};
 	}
 
 	// `visualCheckPending` ships only with an image: the chat withholds the

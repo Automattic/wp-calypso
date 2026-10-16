@@ -52,6 +52,17 @@ interface Backdrop {
 	clientId?: string;
 }
 
+/** The capture notes on the edited text's contrast, and how many of its blocks fall below their threshold. */
+export interface TextContrast {
+	notes: string[];
+	/**
+	 * Measured blocks below their threshold; blocks that could not be measured
+	 * do not count. `null` when none could be measured, so 0 always means
+	 * measured and readable.
+	 */
+	failures: number | null;
+}
+
 interface Measured {
 	clientId: string;
 	text: Rgba;
@@ -405,30 +416,32 @@ function listLabels( labels: string[] ): string {
 
 /**
  * The contrast of the edited text against what renders behind it: a note for
- * each kind of failure, worst first, or one note that all of it passes, and a
- * note counting the blocks whose backdrop could not be read. A block with no
- * visible text is skipped, and a canvas that is not mounted gives nothing.
+ * each kind of failure, worst first, or one note that all of it passes unless
+ * a cap cut the reading short, and a note counting the blocks whose backdrop
+ * could not be read; with the number of blocks that fail, which the server
+ * reads rather than the wording. A block with no visible text is skipped.
  * Never throws: the notes ride along with an edit and must not fail it.
  * @param clientIds The edited blocks.
- * @returns Capture notes, one sentence or so each.
+ * @returns The notes and the count, or `null` when there is no canvas, no
+ * text to measure, or the measuring failed.
  */
-export function describeTextContrast( clientIds: string[] ): string[] {
+export function describeTextContrast( clientIds: string[] ): TextContrast | null {
 	try {
 		return measureTextContrast( clientIds );
 	} catch ( error ) {
 		// eslint-disable-next-line no-console
 		console.error( '[AgentsManager] Failed to measure the text contrast:', error );
 
-		return [];
+		return null;
 	}
 }
 
-function measureTextContrast( clientIds: string[] ): string[] {
+function measureTextContrast( clientIds: string[] ): TextContrast | null {
 	const canvasDocument = clientIds.length ? getCanvasDocument() : null;
 	const view = canvasDocument?.defaultView;
 
 	if ( ! canvasDocument || ! view ) {
-		return [];
+		return null;
 	}
 
 	const { findShortId } = createShortIdLookup();
@@ -478,19 +491,22 @@ function measureTextContrast( clientIds: string[] ): string[] {
 		} );
 	}
 
+	if ( ! textBlocks ) {
+		return null;
+	}
+
+	const failing = measured.filter( ( item ) => item.ratio < item.needs );
 	const failures = new Map< string, Measured[] >();
 
-	measured
-		.filter( ( item ) => item.ratio < item.needs )
-		.forEach( ( item ) => {
-			const key = [
-				toHex( item.text ),
-				toHex( item.backdrop.colour ),
-				item.backdrop.clientId ?? '',
-			].join( '|' );
+	failing.forEach( ( item ) => {
+		const key = [
+			toHex( item.text ),
+			toHex( item.backdrop.colour ),
+			item.backdrop.clientId ?? '',
+		].join( '|' );
 
-			failures.set( key, [ ...( failures.get( key ) ?? [] ), item ] );
-		} );
+		failures.set( key, [ ...( failures.get( key ) ?? [] ), item ] );
+	} );
 
 	const notes = [ ...failures.values() ]
 		.map( ( items ) => ( {
@@ -536,5 +552,5 @@ function measureTextContrast( clientIds: string[] ): string[] {
 		);
 	}
 
-	return notes;
+	return { notes, failures: measured.length ? failing.length : null };
 }

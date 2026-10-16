@@ -80,6 +80,11 @@ export const applyBlockEditsAbility: Ability = {
 						description:
 							'Sentences about what the attached screenshots do and do not show, kept apart from the message.',
 					},
+					contrastFailures: {
+						type: 'number',
+						description:
+							'How many edited text blocks measured below WCAG AA contrast against what renders behind them.',
+					},
 					outcome: {
 						type: 'string',
 						enum: [ 'updated', 'no-changes' ],
