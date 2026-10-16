@@ -9,7 +9,7 @@ import {
 	userSettingsQuery,
 } from '@automattic/api-queries';
 import '@testing-library/jest-dom';
-import { screen, waitFor, within } from '@testing-library/react';
+import { act, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { render } from '../../../test-utils';
@@ -297,6 +297,23 @@ describe( '<RemoteAbilitiesSection>', () => {
 		expect( screen.getByRole( 'checkbox', { name: 'Update form' } ) ).toBeVisible();
 		expect( document.getElementById( 'jetpack-forms/update-form' ) ).not.toBeNull();
 		expect( screen.queryByRole( 'checkbox', { name: 'Check comment' } ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'a hash arriving after mount opens the matching card', async () => {
+		seed( { abilities: catalog } );
+		const { router } = render( <RemoteAbilitiesSection site={ JETPACK_SITE } category="write" />, {
+			queryClient,
+		} );
+
+		expect( screen.queryByRole( 'checkbox', { name: 'Update form' } ) ).not.toBeInTheDocument();
+
+		await act( async () => {
+			router.navigate( { to: '.', hash: 'jetpack-forms' } );
+		} );
+
+		await waitFor( () => {
+			expect( screen.getByRole( 'checkbox', { name: 'Update form' } ) ).toBeVisible();
+		} );
 	} );
 
 	test( 'shows saved groups with a notice when the catalog cannot be loaded', async () => {

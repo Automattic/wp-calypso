@@ -1,3 +1,4 @@
+import { useLocation } from '@tanstack/react-router';
 import {
 	Button,
 	__experimentalHStack as HStack,
@@ -17,8 +18,8 @@ import type { ReactNode } from 'react';
  * /me/preferences/mcp pages: collapsed by default, with a group intent toggle
  * and a chevron that reveals the tools. `id` anchors the card itself and
  * `toolAnchors` the rows inside it, so a server response can deep-link a
- * group or a single tool; a matching location hash opens the card and scrolls
- * the target into view.
+ * group or a single tool: whenever the location hash matches, the card opens
+ * and the target scrolls into view.
  */
 export default function McpGroupCard( {
 	id,
@@ -39,23 +40,22 @@ export default function McpGroupCard( {
 	disabled?: boolean;
 	children?: ReactNode;
 } ) {
-	const initialHash = useRef( '' );
-	if ( initialHash.current === '' && typeof window !== 'undefined' ) {
-		initialHash.current = window.location.hash.replace( /^#/, '' );
-	}
-	const [ isOpen, setIsOpen ] = useState( () => {
-		const hash = initialHash.current;
-		return hash === id || hash.startsWith( `${ id }/` ) || toolAnchors.includes( hash );
-	} );
+	const location = useLocation();
+	const hash = ( location.hash ?? '' ).replace( /^#/, '' );
+	const [ isOpen, setIsOpen ] = useState( false );
+	// Auto-open once per matching hash value, so a manual collapse afterwards
+	// isn't fought, but a fresh anchor link opens the card again.
+	const handledHash = useRef( '' );
 
 	useEffect( () => {
-		if ( isOpen && initialHash.current ) {
+		const matches = hash === id || hash.startsWith( `${ id }/` ) || toolAnchors.includes( hash );
+		if ( hash && matches && handledHash.current !== hash ) {
+			handledHash.current = hash;
+			setIsOpen( true );
 			// jsdom has no scrollIntoView, hence the optional call.
-			document.getElementById( initialHash.current )?.scrollIntoView?.( { block: 'start' } );
+			document.getElementById( hash )?.scrollIntoView?.( { block: 'start' } );
 		}
-		// Anchor expansion happens once, on mount.
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [] );
+	}, [ hash, id, toolAnchors ] );
 
 	return (
 		<Card id={ id }>
