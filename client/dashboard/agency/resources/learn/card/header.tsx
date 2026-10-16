@@ -12,13 +12,18 @@ import type { ReactNode } from 'react';
 interface ResourceCardHeaderProps {
 	resource: AgencyEnablementResource;
 	title: ReactNode;
+	children?: ReactNode;
 }
 
 /**
  * The branded top of a resource card. Colors come from `data-product` in
  * style.scss, so a new product only needs a palette entry there.
  */
-export default function ResourceCardHeader( { resource, title }: ResourceCardHeaderProps ) {
+export default function ResourceCardHeader( {
+	resource,
+	title,
+	children,
+}: ResourceCardHeaderProps ) {
 	return (
 		<div className="dashboard-resources-learn__card-header" data-product={ resource.product }>
 			<ResourceIllustration resource={ resource } />
@@ -37,6 +42,7 @@ export default function ResourceCardHeader( { resource, title }: ResourceCardHea
 			<Heading level={ 3 } color="inherit" className="dashboard-resources-learn__card-title">
 				{ title }
 			</Heading>
+			{ children }
 		</div>
 	);
 }

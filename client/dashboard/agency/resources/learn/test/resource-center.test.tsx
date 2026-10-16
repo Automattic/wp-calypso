@@ -27,6 +27,7 @@ function resource( overrides: Partial< AgencyEnablementResource > = {} ) {
 		content_type: 'guide',
 		format: 'pdf',
 		is_featured: false,
+		is_recommended: false,
 		created_at: '2026-01-01T00:00:00Z',
 		...overrides,
 	} satisfies AgencyEnablementResource;
@@ -244,6 +245,29 @@ describe( '<ResourceCenter>', () => {
 			{ resource_id: 2, resource_name: 'Jetpack battle card', is_read: true }
 		);
 		expect( onReadIdsChange ).toHaveBeenCalledWith( [ 2 ] );
+	} );
+
+	test( 'shows the recommended resources, which open their details', async () => {
+		renderLibrary( {
+			resources: [
+				...resources,
+				resource( { id: 4, name: 'Recommended guide', is_recommended: true } ),
+			],
+		} );
+
+		const section = await screen.findByRole( 'region', { name: 'Recommended for you' } );
+		await userEvent.click( within( section ).getByRole( 'link', { name: 'Recommended guide' } ) );
+
+		expect( await screen.findByRole( 'dialog', { name: 'Recommended guide' } ) ).toBeVisible();
+	} );
+
+	test( 'leaves out the recommendations when there are none', async () => {
+		renderLibrary();
+
+		expect( await screen.findByRole( 'link', { name: 'Woo case study' } ) ).toBeVisible();
+		expect(
+			screen.queryByRole( 'region', { name: 'Recommended for you' } )
+		).not.toBeInTheDocument();
 	} );
 
 	test( 'reveals more results on request', async () => {

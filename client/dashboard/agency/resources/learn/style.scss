@@ -34,6 +34,36 @@ $resource-brands: (
 	display: contents;
 }
 
+// A row of branded tiles that scrolls sideways, a little over two at a time.
+.dashboard-resources-learn__recommendations {
+	display: flex;
+	gap: $grid-unit-20;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+	overflow-x: auto;
+	scroll-snap-type: x mandatory;
+	overscroll-behavior-inline: contain;
+	scrollbar-width: thin;
+}
+
+.dashboard-resources-learn__recommendation {
+	flex: 0 0 calc( ( 100% - #{$grid-unit-20} * 2 ) / 2.25 );
+	min-inline-size: 280px;
+	scroll-snap-align: start;
+	border-radius: $radius-large;
+	overflow: hidden;
+
+	.dashboard-resources-learn__card-header {
+		block-size: 100%;
+		min-block-size: 240px;
+	}
+
+	.dashboard-resources-learn__link::after {
+		border-radius: $radius-large;
+	}
+}
+
 // The DataViews wrapper paints its own surface; the filter bar sits on the page background.
 .dashboard-resources-learn__filters {
 	--wp-dataviews-color-background: transparent;

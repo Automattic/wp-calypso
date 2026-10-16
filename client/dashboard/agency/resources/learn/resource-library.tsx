@@ -16,6 +16,7 @@ import { DEFAULT_LAYOUTS } from './dataviews/views';
 import ResourceGrid from './resource-grid';
 import ResourceLink from './resource-link';
 import ResourceModal from './resource-modal';
+import ResourceRecommendations from './resource-recommendations';
 import StageFilter from './stage-filter';
 import { getNeighbors, useResourceSelection } from './use-resource-selection';
 import { useRevealMore } from './use-reveal-more';
@@ -75,6 +76,11 @@ export default function ResourceLibrary( {
 
 	const isList = view.type === 'table';
 
+	const recommended = useMemo(
+		() => resources.filter( ( resource ) => resource.is_recommended ),
+		[ resources ]
+	);
+
 	// The modal moves through every match, not only those loaded so far.
 	const neighbors = getNeighbors( filteredData, selectedId );
 	// A shared link can name a resource the saved filters hide; show it anyway,
@@ -85,6 +91,7 @@ export default function ResourceLibrary( {
 
 	return (
 		<div ref={ containerRef } className="dashboard-resources-learn__results">
+			<ResourceRecommendations resources={ recommended } onSelectResource={ selection.select } />
 			<div className="dashboard-resources-learn__filters">
 				<DataViews< AgencyEnablementResource >
 					data={ visibleResources }
