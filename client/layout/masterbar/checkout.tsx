@@ -1,10 +1,14 @@
-import { AutomatticLogo } from '@automattic/components';
+import { AutomatticLogo, GravatarTextLogo } from '@automattic/components';
 import { checkoutTheme } from '@automattic/composite-checkout';
 import { Step } from '@automattic/onboarding';
 import { ThemeProvider } from '@emotion/react';
 import { useViewportMatch } from '@wordpress/compose';
 import { Icon, help } from '@wordpress/icons';
 import clsx from 'clsx';
+import A4ALogo from 'calypso/a8c-for-agencies/components/a4a-logo';
+import AkismetLogo from 'calypso/components/akismet-logo';
+import JetpackLogo from 'calypso/components/jetpack-logo';
+import PassportLogo from 'calypso/components/passport-logo';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import {
 	AGENCY_CHECKOUT_PATH,
@@ -117,6 +121,29 @@ const CheckoutMasterbar = ( {
 		/>
 	);
 
+	const getBrandLogo = () => {
+		if ( isAgencyCheckout ) {
+			// The wordmark sits in the middle third of its viewBox, so this box
+			// renders it at roughly the WordPress wordmark's height.
+			return <AutomatticLogo width={ 183 } height={ 40 } />;
+		}
+
+		switch ( checkoutType ) {
+			case 'jetpack':
+				return <JetpackLogo className="masterbar__jetpack-wordmark" full size={ 24 } />;
+			case 'akismet':
+				return <AkismetLogo className="masterbar__akismet-wordmark" />;
+			case 'passport':
+				return <PassportLogo className="masterbar__passport-wordmark" />;
+			case 'gravatar':
+				return <GravatarTextLogo />;
+			case 'a4a':
+				return <A4ALogo full size={ 14 } />;
+		}
+
+		return undefined;
+	};
+
 	return (
 		<Masterbar
 			className={ clsx( 'masterbar--is-checkout', 'masterbar--is-checkout-redesign-v1', {
@@ -128,11 +155,8 @@ const CheckoutMasterbar = ( {
 			} ) }
 		>
 			<Step.TopBar
-				logo={
-					// The wordmark sits in the middle third of its viewBox, so this box
-					// renders it at roughly the WordPress wordmark's height.
-					isAgencyCheckout ? <AutomatticLogo width={ 183 } height={ 40 } /> : undefined
-				}
+				logo={ getBrandLogo() }
+				hideLogo={ checkoutType === 'woo-hosted' }
 				leftElement={ agencyBackButton || leaveCheckoutButton || undefined }
 				rightElement={
 					<>
