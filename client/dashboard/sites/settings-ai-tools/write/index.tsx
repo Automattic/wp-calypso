@@ -103,16 +103,19 @@ export default function SiteAIToolsWrite() {
 	} );
 	const remoteNamespaces = collectNamespaces( remoteAbilities, savedRemoteGroups, TOOL_CATEGORY );
 	const remoteGroupKeys = [ ...remoteNamespaces.values() ].flatMap( ( group ) => group.keys );
-	const remoteAbilityKeys = [ ...remoteNamespaces.values() ].flatMap( ( group ) =>
-		group.abilities.map( ( ability ) =>
+	const remoteAbilityKeys = [ ...remoteNamespaces.values() ].flatMap( ( group ) => [
+		...group.abilityKeys,
+		...group.abilities.map( ( ability ) =>
 			getRemoteAbilityKey( ability.name, ability.meta?.annotations )
-		)
-	);
+		),
+	] );
 
 	const pageAllEnabled =
 		allTools.length > 0 &&
 		allTools.every( ( [ , tool ] ) => tool.enabled ) &&
-		remoteGroupKeys.every( ( key ) => savedRemoteGroups[ key ] === true ) &&
+		[ ...remoteGroupKeys, ...remoteAbilityKeys ].every(
+			( key ) => savedRemoteGroups[ key ] === true
+		) &&
 		[ ...remoteNamespaces.values() ].every( ( group ) =>
 			group.abilities.every( ( ability ) =>
 				isRemoteAbilityEnabled( savedRemoteGroups, ability.name, ability.meta?.annotations )

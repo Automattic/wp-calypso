@@ -322,8 +322,10 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 				).length;
 				return;
 			}
-			total += group.keys.length;
-			enabled += group.keys.filter( ( key ) => savedRemoteGroups[ key ] === true ).length;
+			total += group.keys.length + group.abilityKeys.length;
+			enabled += [ ...group.keys, ...group.abilityKeys ].filter(
+				( key ) => savedRemoteGroups[ key ] === true
+			).length;
 		} );
 		return { total, enabled };
 	};

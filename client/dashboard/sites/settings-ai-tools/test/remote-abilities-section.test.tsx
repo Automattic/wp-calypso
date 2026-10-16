@@ -212,10 +212,26 @@ describe( '<RemoteAbilitiesSection>', () => {
 		seed( { abilities: catalog, remoteGroups: { 'write:akismet/check-comment': true } } );
 		render( <RemoteAbilitiesSection site={ JETPACK_SITE } category="write" />, { queryClient } );
 
+		expect( screen.queryByRole( 'heading', { name: 'Akismet/check Comment' } ) ).toBeNull();
+
 		await user.click( getPluginExpander( 'Akismet' ) );
 
 		expect( screen.getByRole( 'checkbox', { name: 'Check comment' } ) ).toBeChecked();
 		expect( screen.getByRole( 'checkbox', { name: 'Delete spam' } ) ).not.toBeChecked();
+	} );
+
+	test( 'saved ability-level keys fold into their namespace card instead of creating new cards', () => {
+		seed( {
+			remoteGroups: {
+				'write:akismet/check-comment': true,
+				'write:akismet/delete-spam': true,
+			},
+		} );
+		render( <RemoteAbilitiesSection site={ JETPACK_SITE } category="write" />, { queryClient } );
+
+		expect( screen.getByRole( 'heading', { name: 'Akismet' } ) ).toBeVisible();
+		expect( screen.queryByRole( 'heading', { name: 'Akismet/check Comment' } ) ).toBeNull();
+		expect( screen.queryByRole( 'heading', { name: 'Akismet/delete Spam' } ) ).toBeNull();
 	} );
 
 	test( 'a destructive ability toggle saves the destructive ability key with no labeling', async () => {

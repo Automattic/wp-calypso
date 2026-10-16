@@ -26,7 +26,10 @@ import type { Site, SiteAbility } from '@automattic/api-core';
 export type RemoteAbilityCategory = 'read' | 'write';
 
 type NamespaceGroup = {
+	/** Group-level keys ("{read|write|destructive}:{namespace}"). */
 	keys: string[];
+	/** Ability-level keys from the saved allowlist ("{group}/{ability}"). */
+	abilityKeys: string[];
 	abilities: SiteAbility[];
 };
 
@@ -51,13 +54,13 @@ export function collectNamespaces(
 ): Map< string, NamespaceGroup > {
 	const namespaces = new Map< string, NamespaceGroup >();
 	const entry = ( namespace: string ): NamespaceGroup => {
-		const group = namespaces.get( namespace ) ?? { keys: [], abilities: [] };
+		const group = namespaces.get( namespace ) ?? { keys: [], abilityKeys: [], abilities: [] };
 		namespaces.set( namespace, group );
 		return group;
 	};
-	const addKey = ( group: NamespaceGroup, groupKey: string ) => {
-		if ( ! group.keys.includes( groupKey ) ) {
-			group.keys.push( groupKey );
+	const addKey = ( keys: string[], groupKey: string ) => {
+		if ( ! keys.includes( groupKey ) ) {
+			keys.push( groupKey );
 		}
 	};
 
@@ -68,19 +71,20 @@ export function collectNamespaces(
 		const groupKey = getRemoteAbilityGroupKey( ability.name, ability.meta?.annotations );
 		const namespace = groupKey.split( ':' )[ 1 ];
 		const group = entry( namespace );
-		addKey( group, groupKey );
+		addKey( group.keys, groupKey );
 		group.abilities.push( ability );
 	} );
 
 	Object.keys( savedGroups ).forEach( ( groupKey ) => {
-		const [ kind, namespace ] = groupKey.split( ':' );
-		if ( ! namespace ) {
+		const [ kind, rest ] = groupKey.split( ':' );
+		if ( ! rest ) {
 			return;
 		}
 		if ( ( kind === 'read' ? 'read' : 'write' ) !== category ) {
 			return;
 		}
-		addKey( entry( namespace ), groupKey );
+		const [ namespace, abilityPath ] = rest.split( '/' );
+		addKey( abilityPath ? entry( namespace ).abilityKeys : entry( namespace ).keys, groupKey );
 	} );
 
 	return new Map( [ ...namespaces.entries() ].sort( ( [ a ], [ b ] ) => a.localeCompare( b ) ) );
@@ -166,6 +170,7 @@ export default function RemoteAbilitiesSection( {
 				const namespaceEnabled =
 					group.keys.length > 0 &&
 					group.keys.every( ( key ) => savedGroups[ key ] === true ) &&
+					group.abilityKeys.every( ( key ) => savedGroups[ key ] === true ) &&
 					group.abilities.every( ( ability ) =>
 						isRemoteAbilityEnabled( savedGroups, ability.name, ability.meta?.annotations )
 					);
@@ -176,6 +181,7 @@ export default function RemoteAbilitiesSection( {
 					enabled
 						? [
 								...group.keys,
+								...group.abilityKeys,
 								...group.abilities.map( ( ability ) =>
 									getRemoteAbilityKey( ability.name, ability.meta?.annotations )
 								),
