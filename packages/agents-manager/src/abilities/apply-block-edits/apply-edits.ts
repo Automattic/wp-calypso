@@ -55,10 +55,9 @@ const wait = ( ms: number ) => new Promise< void >( ( resolve ) => setTimeout( r
 const createWriters = ( level: UndoLevel ) => {
 	const guarded = < Args extends unknown[] >(
 		write: ( ...args: Args ) => void,
-		writtenList: WrittenList< Args >,
-		recreated?: ( ...args: Args ) => string
+		writtenList: WrittenList< Args >
 	) => {
-		const inLevel = level.write( write, writtenList, recreated );
+		const inLevel = level.write( write, writtenList );
 
 		return ( ...args: Args ) => {
 			assertCanvasUnmoved();
@@ -69,7 +68,7 @@ const createWriters = ( level: UndoLevel ) => {
 	return {
 		insert: guarded( insertBlock, ( _block, _index, rootClientId ) => rootClientId ),
 		remove: guarded( removeBlock, getBlockRootClientId ),
-		replace: guarded( replaceBlock, getBlockRootClientId, ( clientId ) => clientId ),
+		replace: guarded( replaceBlock, getBlockRootClientId ),
 		replaceChildren: guarded( replaceInnerBlocks, ( clientId ) => clientId ),
 		updateAttributes: guarded( updateBlockAttributes, getBlockRootClientId ),
 	};

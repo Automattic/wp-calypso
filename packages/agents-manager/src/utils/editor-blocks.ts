@@ -259,9 +259,7 @@ export interface UndoLevel {
 	/** Wraps a write so that it lands in this level. */
 	write: < Args extends unknown[] >(
 		write: ( ...args: Args ) => void,
-		writtenList: WrittenList< Args >,
-		/** The block the write recreates under new clientIds, children and all. */
-		recreated?: ( ...args: Args ) => string
+		writtenList: WrittenList< Args >
 	) => ( ...args: Args ) => void;
 	/** Folds the writes into one undo record; nothing to fold is a no-op. */
 	close: () => void;
@@ -287,74 +285,50 @@ function getSyncedRoot( clientId: string | undefined ): string {
 	);
 }
 
-const isSamePost = ( a?: CurrentPost, b?: CurrentPost ): boolean =>
-	!! a && !! b && a.id === b.id && a.type === b.type;
-
 /**
  * Block writes that undo as one level. The first write commits whatever the
- * user was typing, so that stays its own level, and opens this one; every
- * later write stays out of the undo stack until `close()` folds it in.
+ * user was typing, so that stays its own level. In each record the writes
+ * change (a template part, a post's content, the document), the first write
+ * that lands opens this level as a persistent change; every later one stays
+ * out of the undo stack and is folded into it.
  *
- * Marking the last change as persistent is not enough to fold them: a
- * record's `useBlockSync` commits on that mark only when the notification
- * right before it changed its blocks, so any other notification in between
- * (a selection, a write to another record) leaves the writes as transient
- * edits that are neither saved nor undoable (WPAGENT-201). `close()` instead
- * rewrites each record's blocks as they are, a real persistent change.
- *
- * A write that recreates a block takes the records inside it to new
- * clientIds, which `close()` cannot find: those are committed before it.
+ * Only a write that lands can open the level: one that a restricted list
+ * drops changes nothing, so a later write marked transient would leave the
+ * record without a `content` edit to save, and fold into whatever undo record
+ * came before (WPAGENT-201).
  */
 export function openUndoLevel(): UndoLevel {
-	const post = getCurrentPost();
-	const stagedRoots = new Set< string >();
+	const openedRoots = new Set< string >();
 	let hasWritten = false;
-
-	// `replaceInnerBlocks` on `''` keeps the records nested in the document,
-	// where `resetBlocks` would rebuild and dirty them.
-	const commit = ( root: string ) =>
-		requireBlockEditor().replaceInnerBlocks( root, getBlocks( root ), false );
 
 	return {
 		write:
-			( write, writtenList, recreated ) =>
+			( write, writtenList ) =>
 			( ...args ) => {
-				if ( hasWritten ) {
-					const recreatedId = recreated?.( ...args );
+				const root = getSyncedRoot( writtenList( ...args ) );
+				const isOpen = openedRoots.has( root );
 
-					if ( recreatedId ) {
-						stagedRoots.forEach( ( root ) => {
-							if ( root === recreatedId || getBlockParents( root ).includes( recreatedId ) ) {
-								commit( root );
-								stagedRoots.delete( root );
-							}
-						} );
-					}
-
-					stagedRoots.add( getSyncedRoot( writtenList( ...args ) ) );
-					requireBlockEditor().__unstableMarkNextChangeAsNotPersistent();
-				} else {
+				if ( ! hasWritten ) {
 					requireBlockEditor().__unstableMarkLastChangeAsPersistent();
 					hasWritten = true;
 				}
 
+				if ( isOpen ) {
+					requireBlockEditor().__unstableMarkNextChangeAsNotPersistent();
+				}
+
+				const blocksBefore = getBlocks( root );
+
 				write( ...args );
+
+				if ( ! isOpen && getBlocks( root ) !== blocksBefore ) {
+					openedRoots.add( root );
+				}
 			},
 		close: () => {
-			if ( ! hasWritten ) {
-				return;
+			if ( hasWritten ) {
+				requireBlockEditor().__unstableMarkLastChangeAsPersistent();
 			}
-
-			// After a move the editor holds another page, which nothing here wrote.
-			if ( isSamePost( post, getCurrentPost() ) ) {
-				stagedRoots.forEach( ( root ) => {
-					if ( ! root || getBlock( root ) ) {
-						commit( root );
-					}
-				} );
-			}
-
-			requireBlockEditor().__unstableMarkLastChangeAsPersistent();
 		},
 		hasWritten: () => hasWritten,
 	};

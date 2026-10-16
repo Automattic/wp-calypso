@@ -29,9 +29,19 @@ const markNextChangeAsNotPersistent = jest.fn();
 const markLastChangeAsPersistent = jest.fn();
 const clearSelectedBlock = jest.fn();
 
-// A write that replaces the children of the block it names.
-const writeChildren = ( level: UndoLevel ) =>
-	level.write< [ string, EditorBlock[] ] >( replaceInnerBlocks, ( clientId ) => clientId );
+// Each record's blocks, by its clientId (`''` for the document), as the writes leave them.
+let records: Record< string, EditorBlock[] > = {};
+const NO_BLOCKS: EditorBlock[] = [];
+
+// A write to the list of the block it names, which lands in `record`, or is
+// dropped without one, as a restricted list does.
+const land = jest.fn( ( _clientId: string, record?: string ) => {
+	if ( record !== undefined ) {
+		records[ record ] = [ ...( records[ record ] ?? [] ) ];
+	}
+} );
+const writeTo = ( level: UndoLevel ) =>
+	level.write< [ string, string? ] >( land, ( clientId ) => clientId );
 
 function withEditor( {
 	blocks = [],
@@ -55,7 +65,7 @@ function withEditor( {
 	( select as jest.Mock ).mockImplementation( ( store: string ) =>
 		store === 'core/block-editor'
 			? {
-					getBlocks: ( root?: string ) => ( root ? [] : blocks ),
+					getBlocks: ( root?: string ) => records[ root ?? '' ] ?? ( root ? NO_BLOCKS : blocks ),
 					getBlock: ( clientId: string ) =>
 						clientId in parents ? block( clientId, 'core/group' ) : null,
 					getBlockParents: ( clientId: string ) => {
@@ -89,7 +99,10 @@ function withEditor( {
 	} );
 }
 
-beforeEach( () => jest.clearAllMocks() );
+beforeEach( () => {
+	jest.clearAllMocks();
+	records = {};
+} );
 
 describe( 'resolveBlocksRoot', () => {
 	it.each( [
@@ -182,133 +195,73 @@ describe( 'writes', () => {
 	it( 'folds several writes into one undo level', () => {
 		withEditor();
 		const level = openUndoLevel();
-		const write = writeChildren( level );
+		const write = writeTo( level );
 
-		write( 'a', blocks );
+		write( 'a', '' );
 
 		expect( level.hasWritten() ).toBe( true );
 		expect( markLastChangeAsPersistent ).toHaveBeenCalledTimes( 1 );
 		expect( markNextChangeAsNotPersistent ).not.toHaveBeenCalled();
-		expect( replaceInnerBlocks ).toHaveBeenCalledWith( 'a', blocks );
+		expect( land ).toHaveBeenCalledWith( 'a', '' );
 
-		write( 'b', blocks );
+		write( 'b', '' );
 		level.close();
 
+		expect( markNextChangeAsNotPersistent ).toHaveBeenCalledTimes( 1 );
 		expect( markNextChangeAsNotPersistent ).toHaveBeenCalledWith();
 		expect( markLastChangeAsPersistent ).toHaveBeenCalledTimes( 2 );
 	} );
 
-	// A record commits on the persistent mark only when the notification right
-	// before it changed its blocks; a write after the first stays transient
-	// until the close rewrites its record's blocks (WPAGENT-201).
-	it( 'rewrites the record of each write after the first, then marks it persistent', () => {
-		withEditor( {
-			postId: 1,
-			parents: { header: '', group: 'header', content: '' },
-			controlled: [ 'header', 'content' ],
-		} );
+	// A write that changes nothing opens no undo record: a later write marked
+	// transient would fold into the record before it, and leave its own record
+	// with nothing to save (WPAGENT-201).
+	it( 'opens the level on the first write that lands', () => {
+		withEditor( { parents: { header: '', button: 'header' }, controlled: [ 'header' ] } );
 		const level = openUndoLevel();
-		const write = writeChildren( level );
+		const write = writeTo( level );
 
-		write( 'content', blocks );
-		write( 'group', blocks );
-		write( 'header', blocks );
-		replaceInnerBlocks.mockClear();
-		level.close();
+		write( 'header' );
+		write( 'header', 'header' );
 
-		expect( replaceInnerBlocks ).toHaveBeenCalledTimes( 1 );
-		expect( replaceInnerBlocks ).toHaveBeenCalledWith( 'header', [], false );
-		expect( replaceInnerBlocks.mock.invocationCallOrder[ 0 ] ).toBeLessThan(
-			markLastChangeAsPersistent.mock.invocationCallOrder.at( -1 ) as number
-		);
+		expect( markLastChangeAsPersistent ).toHaveBeenCalledTimes( 1 );
+		expect( markNextChangeAsNotPersistent ).not.toHaveBeenCalled();
+
+		write( 'button', 'header' );
+
+		expect( markNextChangeAsNotPersistent ).toHaveBeenCalledTimes( 1 );
 	} );
 
-	it( 'rewrites the nearest record, every time, for a record nested in another', () => {
+	it( 'opens the level in each record it writes', () => {
 		withEditor( {
-			postId: 1,
+			parents: { header: '', button: 'header', paragraph: '' },
+			controlled: [ 'header' ],
+		} );
+		const level = openUndoLevel();
+		const write = writeTo( level );
+
+		write( 'button', 'header' );
+		write( 'paragraph', '' );
+
+		expect( markNextChangeAsNotPersistent ).not.toHaveBeenCalled();
+
+		write( 'button', 'header' );
+		write( 'paragraph', '' );
+
+		expect( markNextChangeAsNotPersistent ).toHaveBeenCalledTimes( 2 );
+	} );
+
+	it( 'writes to the nearest record, every time, for a record nested in another', () => {
+		withEditor( {
 			parents: { header: '', nav: 'header', item: 'nav', link: 'item' },
 			controlled: [ 'header', 'nav' ],
 		} );
 		const level = openUndoLevel();
-		const write = writeChildren( level );
+		const write = writeTo( level );
 
-		write( 'header', blocks );
-		write( 'link', blocks );
-		write( 'link', blocks );
-		replaceInnerBlocks.mockClear();
-		level.close();
+		write( 'link', 'nav' );
+		write( 'link', 'nav' );
 
-		expect( replaceInnerBlocks ).toHaveBeenCalledTimes( 1 );
-		expect( replaceInnerBlocks ).toHaveBeenCalledWith( 'nav', [], false );
-	} );
-
-	// Recreating the group takes the menu to a new clientId, which the close
-	// cannot find, while the menu record still holds the staged edit.
-	it( 'commits a staged record before a write recreates a block around it', () => {
-		withEditor( {
-			postId: 1,
-			parents: { heading: '', group: '', nav: 'group', item: 'nav' },
-			controlled: [ 'nav' ],
-		} );
-		const level = openUndoLevel();
-		const replace = jest.fn();
-		const recreate = level.write< [ string ] >(
-			replace,
-			() => undefined,
-			( clientId ) => clientId
-		);
-
-		writeChildren( level )( 'heading', blocks );
-		writeChildren( level )( 'item', blocks );
-		replaceInnerBlocks.mockClear();
-		markNextChangeAsNotPersistent.mockClear();
-		recreate( 'group' );
-
-		expect( replaceInnerBlocks ).toHaveBeenCalledTimes( 1 );
-		expect( replaceInnerBlocks ).toHaveBeenCalledWith( 'nav', [], false );
-		expect( replaceInnerBlocks.mock.invocationCallOrder[ 0 ] ).toBeLessThan(
-			markNextChangeAsNotPersistent.mock.invocationCallOrder[ 0 ]
-		);
-		expect( markNextChangeAsNotPersistent.mock.invocationCallOrder[ 0 ] ).toBeLessThan(
-			replace.mock.invocationCallOrder[ 0 ]
-		);
-
-		withEditor( { postId: 1, blocks, parents: { heading: '', 'new-group': '' } } );
-		replaceInnerBlocks.mockClear();
-		level.close();
-
-		expect( replaceInnerBlocks ).toHaveBeenCalledTimes( 1 );
-		expect( replaceInnerBlocks ).toHaveBeenCalledWith( '', blocks, false );
-	} );
-
-	it( 'rewrites the document root for a write outside every record', () => {
-		withEditor( { postId: 1, blocks, parents: { group: '' } } );
-		const level = openUndoLevel();
-		const write = writeChildren( level );
-
-		write( 'group', blocks );
-		write( 'group', blocks );
-		replaceInnerBlocks.mockClear();
-		level.close();
-
-		expect( replaceInnerBlocks ).toHaveBeenCalledWith( '', blocks, false );
-		expect( resetBlocks ).not.toHaveBeenCalled();
-	} );
-
-	it( 'rewrites nothing on another page, or for a record no longer there', () => {
-		withEditor( { postId: 1, parents: { header: '' }, controlled: [ 'header', 'gone' ] } );
-		const level = openUndoLevel();
-		const write = writeChildren( level );
-
-		write( 'header', blocks );
-		write( 'gone', blocks );
-		write( 'header', blocks );
-		withEditor( { postId: 2, parents: { header: '' }, controlled: [ 'header' ] } );
-		replaceInnerBlocks.mockClear();
-		level.close();
-
-		expect( replaceInnerBlocks ).not.toHaveBeenCalled();
-		expect( markLastChangeAsPersistent ).toHaveBeenCalledTimes( 2 );
+		expect( markNextChangeAsNotPersistent ).toHaveBeenCalledTimes( 1 );
 	} );
 
 	it( 'closes nothing when nothing was written', () => {
