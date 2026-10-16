@@ -22,7 +22,7 @@ import { addDashboardNode, useDashboardPlugin } from './plugin-dashboard';
 import { createFreeDomainUpsellNodeBuilder } from './plugin-free-domain-upsell-experiment';
 import { useHelpCenterNodeBuilder } from './plugin-help-center';
 import { useLanguageSwitcherPlugin } from './plugin-language-switcher';
-import { useLaunchSitePlugin } from './plugin-launch-site';
+import { useLaunchSiteNodeBuilder } from './plugin-launch-site';
 import { createLogoutNodeBuilder } from './plugin-logout';
 import { useNotificationsNodeBuilder } from './plugin-notifications';
 import { createReaderNodeBuilder } from './plugin-reader';
@@ -125,6 +125,9 @@ function ConnectedOmnibar( {
 	);
 	const helpCenterNodeBuilder = useHelpCenterNodeBuilder( { sectionName } );
 	const notificationsNodeBuilder = useNotificationsNodeBuilder( { user } );
+	const { nodeBuilder: launchSiteNodeBuilder, panel: launchSitePanel } = useLaunchSiteNodeBuilder( {
+		site,
+	} );
 
 	const nodeBuilders = useMemo< OmnibarNodeBuilders >(
 		() => ( {
@@ -133,6 +136,7 @@ function ConnectedOmnibar( {
 			'site-status-badge': buildSiteBadgeNode,
 			'free-domain-upsell': createFreeDomainUpsellNodeBuilder( { sectionName, recordTracksEvent } ),
 			stats: createStatsSparklineNodeBuilder( { siteId } ),
+			'launch-site': launchSiteNodeBuilder,
 			...( supports.commandPalette ? {} : { 'command-palette': () => null } ),
 			...( authUser ? { logout: createLogoutNodeBuilder( authUser ) } : {} ),
 			...( supports.reader ? { reader: createReaderNodeBuilder( { sectionGroup } ) } : {} ),
@@ -148,6 +152,7 @@ function ConnectedOmnibar( {
 			recordTracksEvent,
 			helpCenterNodeBuilder,
 			notificationsNodeBuilder,
+			launchSiteNodeBuilder,
 		]
 	);
 
@@ -187,7 +192,6 @@ function ConnectedOmnibar( {
 		user,
 	} );
 	const { node: shoppingCartNode, panel: shoppingCartPanel } = useShoppingCartPlugin( { site } );
-	const { node: launchSiteNode, panel: launchSitePanel } = useLaunchSitePlugin( { site } );
 	const dashboardNode = useDashboardPlugin( { site, sectionGroup } );
 	const aiChatPluginNode = buildAiChatPluginNode( {
 		enabled: showAiChat,
@@ -195,9 +199,6 @@ function ConnectedOmnibar( {
 		adminBarNodes,
 	} );
 	const siteNode = addDashboardNode( baseOmnibarNodes.site, dashboardNode );
-	const siteActions = [ ...( baseOmnibarNodes.siteActions ?? [] ), launchSiteNode ].filter(
-		( node ) => node !== undefined
-	);
 
 	const plugins = baseOmnibarNodes.user
 		? insertBefore(
@@ -215,7 +216,6 @@ function ConnectedOmnibar( {
 		{
 			...baseOmnibarNodes,
 			site: siteNode,
-			siteActions,
 			plugins,
 		},
 		recordNodeClick

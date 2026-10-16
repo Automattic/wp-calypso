@@ -104,7 +104,8 @@ export function buildOmnibarNodesFromAdminBarNodes(
 				siteActionNodes.push( omnibarNode );
 				break;
 			}
-			case 'stats': {
+			case 'stats':
+			case 'launch-site': {
 				siteActionNodes.push( omnibarNode );
 				break;
 			}
