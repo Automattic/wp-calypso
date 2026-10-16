@@ -2129,7 +2129,6 @@ __metadata:
     i18n-calypso: "workspace:^"
     msw: "npm:^2.2.14"
     msw-storybook-addon: "npm:^2.0.7"
-    react-intersection-observer: "npm:^9.4.3"
     react-transition-group: "npm:^4.4.5"
     resize-observer-polyfill: "npm:^1.5.1"
     storybook: "npm:^10.6.2"
