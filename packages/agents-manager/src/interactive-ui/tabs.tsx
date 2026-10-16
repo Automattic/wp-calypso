@@ -24,7 +24,13 @@ export const Tabs = createComponentImplementation(
 		} ) );
 		return (
 			<TabPanel key={ JSON.stringify( props.tabs.map( ( tab ) => tab.child ) ) } tabs={ tabs }>
-				{ ( tab ) => buildChild( props.tabs[ Number( tab.name ) ].child ) }
+				{ ( selectedTab ) =>
+					props.tabs.map( ( tab, index ) => (
+						<div key={ index } hidden={ selectedTab.name !== String( index ) }>
+							{ buildChild( tab.child ) }
+						</div>
+					) )
+				}
 			</TabPanel>
 		);
 	}
