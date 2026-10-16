@@ -102,12 +102,16 @@ const Note = ( { isDismissible, noteId, setSelectedNoteId, noteNavigation }: Not
 		<>
 			<CardHeader
 				size="small"
-				style={ {
-					position: 'sticky',
-					top: 0,
-					background: 'var( --color-surface, #fff )',
-					zIndex: 1,
-				} }
+				style={
+					isSimplifiedNote
+						? undefined
+						: {
+								position: 'sticky',
+								top: 0,
+								background: 'var( --color-surface, #fff )',
+								zIndex: 1,
+							}
+				}
 			>
 				<HStack>
 					<HStack justify="flex-start">

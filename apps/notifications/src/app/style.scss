@@ -158,6 +158,15 @@ $wpnc-slide-easing: cubic-bezier(0.33, 0, 0, 1);
 		min-height: 0;
 		overflow-y: auto;
 	}
+
+	&:has(.wpnc-simplified) {
+		overflow-y: auto;
+
+		> .components-card-body {
+			flex: none;
+			overflow-y: visible;
+		}
+	}
 }
 
 // Below xlarge: single column. List slides toward the inline-start edge
