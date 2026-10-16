@@ -366,17 +366,17 @@
 	height: 300px;
 	margin: 24px 0 0;
 	max-width: 100%;
+	overflow: hidden;
 
-	&:hover {
+	&.is-zoomable:hover {
 		cursor: zoom-in;
 	}
 
 	&.is-expanded {
 		background-position: center !important;
 		border-radius: 4px;
-		min-width: 100%;
 		max-width: 100%;
-		background-size: cover;
+		overflow: hidden;
 
 		&:hover {
 			cursor: pointer;

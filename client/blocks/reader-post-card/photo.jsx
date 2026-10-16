@@ -7,13 +7,16 @@ import cssSafeUrl from 'calypso/lib/css-safe-url';
 
 const noop = () => {};
 
+// Collapsed frame height from `.reader-post-card__photo` in style.scss.
+const COLLAPSED_PHOTO_HEIGHT = 300;
+
 class PostPhoto extends Component {
 	state = {
-		cardWidth: 800,
+		cardWidth: 0,
 	};
 
 	handleClick = ( event ) => {
-		if ( this.props.isExpanded ) {
+		if ( this.props.isExpanded || ! this.imageFillsCollapsedSlot() ) {
 			this.props.onClick( event );
 			return;
 		}
@@ -22,6 +25,14 @@ class PostPhoto extends Component {
 		const { post, site, postKey } = this.props;
 		this.props.expandCard( { post, site, postKey } );
 	};
+
+	imageFillsCollapsedSlot() {
+		const { width: naturalWidth, height: naturalHeight } = this.props.post?.canonical_media ?? {};
+		const { cardWidth } = this.state;
+
+		// Cover upscales a photo that is smaller than the slot on either axis.
+		return cardWidth > 0 && naturalWidth > cardWidth && naturalHeight > COLLAPSED_PHOTO_HEIGHT;
+	}
 
 	getViewportHeight = () =>
 		Math.max( document.documentElement.clientHeight, window.innerHeight || 0 );
@@ -36,11 +47,13 @@ class PostPhoto extends Component {
 	getMaxPhotoHeight = () => this.getViewportHeight() - 176;
 
 	setCardWidth = () => {
-		if ( this.widthDivRef ) {
-			const cardWidth = this.widthDivRef.getClientRects()[ 0 ].width;
-			if ( cardWidth > 0 ) {
-				this.setState( { cardWidth } );
-			}
+		if ( ! this.widthDivRef ) {
+			return;
+		}
+
+		const cardWidth = this.widthDivRef.getClientRects()[ 0 ]?.width;
+		if ( cardWidth > 0 ) {
+			this.setState( { cardWidth } );
 		}
 	};
 
@@ -60,14 +73,13 @@ class PostPhoto extends Component {
 	renderFeaturedImage() {
 		const { post, title } = this.props;
 		const imageUrl = post.canonical_media.src;
-		const imageSize = {
-			height: post.canonical_media.height,
-			width: post.canonical_media.width,
-		};
+		const naturalWidth = post.canonical_media.width;
+		const naturalHeight = post.canonical_media.height;
+		const fillsCollapsedSlot = ! this.props.isExpanded && this.imageFillsCollapsedSlot();
 
 		const featuredImageStyle = {
 			backgroundImage: 'url(' + cssSafeUrl( imageUrl ) + ')',
-			backgroundSize: this.props.isExpanded ? 'contain' : 'cover',
+			backgroundSize: fillsCollapsedSlot ? 'cover' : 'contain',
 			backgroundRepeat: 'no-repeat',
 			backgroundPosition: 'center',
 		};
@@ -75,27 +87,34 @@ class PostPhoto extends Component {
 		let newWidth;
 		let newHeight;
 		if ( this.props.isExpanded ) {
-			const cardWidth = this.state.cardWidth;
-			const { width: naturalWidth, height: naturalHeight } = imageSize;
+			const { cardWidth } = this.state;
+			const maxPhotoHeight = this.getMaxPhotoHeight();
 
-			newHeight = Math.min(
-				( naturalHeight / naturalWidth ) * cardWidth,
-				this.getMaxPhotoHeight()
-			);
-			newWidth = ( naturalWidth / naturalHeight ) * newHeight;
-			featuredImageStyle.height = newHeight;
-			featuredImageStyle.width = newWidth;
+			if ( naturalWidth > 0 && naturalHeight > 0 && cardWidth > 0 ) {
+				const scale = Math.min( 1, cardWidth / naturalWidth, maxPhotoHeight / naturalHeight );
+				newWidth = naturalWidth * scale;
+				newHeight = naturalHeight * scale;
+				featuredImageStyle.height = newHeight;
+				featuredImageStyle.width = newWidth;
+			} else {
+				featuredImageStyle.maxWidth = '100%';
+			}
 		}
 
 		const classes = clsx( {
 			'reader-post-card__photo': true,
 			'is-expanded': this.props.isExpanded,
+			'is-zoomable': fillsCollapsedSlot,
 		} );
 
 		// force to non-breaking space if `title` is empty so that the title h1 doesn't collapse and complicate things
 		const linkTitle = title || '\xa0';
 		const divStyle = this.props.isExpanded
-			? { height: newHeight, width: newWidth, margin: '0 auto' }
+			? {
+					margin: '0 auto',
+					maxWidth: '100%',
+					...( newWidth > 0 && newHeight > 0 ? { height: newHeight, width: newWidth } : {} ),
+				}
 			: {};
 
 		return (
