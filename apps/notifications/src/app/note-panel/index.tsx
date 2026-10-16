@@ -118,7 +118,17 @@ const NotePanel = ( {
 							<Heading level={ 3 } size={ 15 } weight={ 500 }>
 								{ __( 'Notifications' ) }
 							</Heading>
-							{ isSimplified && <Badge intent="informational">1.0.0-beta</Badge> }
+							{ isSimplified && (
+								<Badge
+									className="wpnc-app__beta-badge"
+									intent="informational"
+									render={
+										<a href="https://wp.me/p9zg7s-dv" target="_blank" rel="noopener noreferrer" />
+									}
+								>
+									{ __( 'Beta' ) }
+								</Badge>
+							) }
 						</HStack>
 						<HStack justify="flex-end">
 							<NotePanelActions />
