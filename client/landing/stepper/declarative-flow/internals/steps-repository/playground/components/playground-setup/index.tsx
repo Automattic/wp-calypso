@@ -1,11 +1,11 @@
 import { useI18n } from '@wordpress/react-i18n';
 import { useRef, useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
+import ProgressScreen from 'calypso/blocks/importer/components/progress-screen';
 import DocumentHead from 'calypso/components/data/document-head';
 import Loading from 'calypso/components/loading';
 import { useSiteData } from 'calypso/landing/stepper/hooks/use-site-data';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { useInterval } from 'calypso/lib/interval';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { SESSION_KEY_FROM_PLAYGROUND_PUBLISH } from '../../lib/constants';
 import { useImportBlueprint } from '../../lib/import-blueprint';
@@ -16,7 +16,9 @@ import {
 } from '../../lib/import-playground';
 import { PlaygroundIframe } from '../playground-iframe';
 import type { Step } from '../../../../types';
+import type { PlaygroundImportProgress } from '../../lib/import-playground';
 import type { PlaygroundClient } from '../../lib/types';
+import type { ImportJob } from 'calypso/blocks/importer/types';
 import './style.scss';
 
 export const PlaygroundSetupStep: Step< {
@@ -32,22 +34,7 @@ export const PlaygroundSetupStep: Step< {
 	const [ query ] = useSearchParams();
 	const { mutateAsync: importBlueprint } = useImportBlueprint();
 
-	const importMessages = [
-		{ title: __( 'Packing up your products and settings' ), duration: 8000 },
-		{ title: __( 'Uploading to WordPress.com' ), duration: 12000 },
-		{ title: __( 'Restoring your store' ), duration: 15000 },
-		{ title: __( 'This usually takes about a minute, hang tight' ), duration: 15000 },
-		{ title: __( 'Applying your store configuration' ), duration: 12000 },
-		{ title: __( 'Almost there' ), duration: null as number | null },
-	];
-	const [ messageIndex, setMessageIndex ] = useState( 0 );
-	const [ fakeProgress, setFakeProgress ] = useState( 0 );
-
-	useInterval(
-		() => setMessageIndex( ( i ) => i + 1 ),
-		messageIndex < importMessages.length - 1 ? importMessages[ messageIndex ].duration : null
-	);
-	useInterval( () => setFakeProgress( ( p ) => Math.min( p + 1, 95 ) ), 1000 );
+	const [ progress, setProgress ] = useState< PlaygroundImportProgress | null >( null );
 
 	useEffect( () => {
 		// If blueprint exists, import it and then submit
@@ -94,7 +81,10 @@ export const PlaygroundSetupStep: Step< {
 			const importStartedAt = Date.now();
 			recordTracksEvent( 'calypso_playground_woo_import_started', { site_id: siteId } );
 			try {
-				await importPlaygroundSite( playgroundSlug, siteId, { waitForCompletion: true } );
+				await importPlaygroundSite( playgroundSlug, siteId, {
+					waitForCompletion: true,
+					onProgress: setProgress,
+				} );
 				recordTracksEvent( 'calypso_playground_woo_import_succeeded', {
 					site_id: siteId,
 					duration_seconds: Math.round( ( Date.now() - importStartedAt ) / 1000 ),
@@ -108,7 +98,10 @@ export const PlaygroundSetupStep: Step< {
 				throw error;
 			}
 		} else {
-			await importPlaygroundSite( playgroundSlug, siteId, { waitForCompletion: false } );
+			await importPlaygroundSite( playgroundSlug, siteId, {
+				waitForCompletion: false,
+				onProgress: setProgress,
+			} );
 		}
 
 		submit( {
@@ -117,12 +110,28 @@ export const PlaygroundSetupStep: Step< {
 		} );
 	};
 
+	const getStatus = () => {
+		if ( progress?.phase === 'importing' ) {
+			return <ProgressScreen job={ progress.job as ImportJob } showHeading />;
+		}
+
+		if ( progress?.phase === 'uploading' ) {
+			return <Loading title={ __( 'Uploading to WordPress.com' ) } progress={ progress.percent } />;
+		}
+
+		if ( progress?.phase === 'packing' ) {
+			return <Loading title={ __( 'Packing up your site' ) } />;
+		}
+
+		return <Loading title={ __( 'Preparing your site' ) } />;
+	};
+
 	const getStepContent = () => {
 		const hasBlueprint = query.get( 'blueprint' );
 
 		return (
 			<>
-				<Loading title={ importMessages[ messageIndex ].title } progress={ fakeProgress } />
+				{ getStatus() }
 				{ ! hasBlueprint && (
 					<PlaygroundIframe
 						className="playground__onboarding-iframe"

@@ -17,6 +17,11 @@ const EXPORT_EXCLUDE_PATTERNS = [
 	'/wp-content/mu-plugins/',
 ];
 
+export type PlaygroundImportProgress =
+	| { phase: 'packing' }
+	| { phase: 'uploading'; percent?: number }
+	| { phase: 'importing'; job: ReturnType< typeof fromApi > };
+
 export class ImportTimeoutError extends Error {
 	constructor() {
 		super( 'Import timed out.' );
@@ -121,18 +126,35 @@ foreach ( $plugins as $slug ) {
  * importer machinery (e.g. the entrepreneur flow). The default path starts
  * ready uploads immediately, then routes to importerWordpress for fallback
  * state transitions and completion monitoring.
+ *
+ * onProgress reports each phase as it happens: packing the Playground site,
+ * uploading it (with the browser's upload percentage when known), and, when
+ * waiting for completion, every polled import job status.
  */
 export async function importPlaygroundSite(
 	playgroundSlug: string,
 	siteId: number,
-	{ waitForCompletion = false }: { waitForCompletion?: boolean } = {}
+	{
+		waitForCompletion = false,
+		onProgress,
+	}: {
+		waitForCompletion?: boolean;
+		onProgress?: ( progress: PlaygroundImportProgress ) => void;
+	} = {}
 ): Promise< string | undefined > {
+	onProgress?.( { phase: 'packing' } );
 	const siteZip = await getSiteZip( playgroundSlug );
 
+	onProgress?.( { phase: 'uploading' } );
 	const importer = await uploadExportFile( siteId, {
 		importStatus: { importStatus: 'importer-ready-for-upload', siteId, type: 'wordpress' },
 		file: siteZip,
 		autoStart: true,
+		onprogress: ( event: ProgressEvent ) =>
+			onProgress?.( {
+				phase: 'uploading',
+				percent: event.lengthComputable ? ( 100 * event.loaded ) / event.total : undefined,
+			} ),
 	} );
 	const importerStatus = fromApi( importer );
 	let started = false;
@@ -163,6 +185,7 @@ export async function importPlaygroundSite(
 		} );
 
 		const status = fromApi( raw );
+		onProgress?.( { phase: 'importing', job: status } );
 
 		if ( status.importerState === appStates.IMPORT_FAILURE ) {
 			throw new ImportFailureError();
