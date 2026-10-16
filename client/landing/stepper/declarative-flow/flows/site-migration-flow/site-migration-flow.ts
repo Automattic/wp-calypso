@@ -70,6 +70,20 @@ const BASE_STEPS = [
 
 function initialize() {
 	const { pathname, search, hash } = window.location;
+	const queryParams = new URLSearchParams( search );
+	if (
+		config.isEnabled( 'migration/reprint-flow' ) &&
+		matchPath( '/setup/site-migration/sitePicker/:lang?', pathname ) &&
+		/^(?:[a-z]{2}(?:-[a-z]{2})?\/)?move-lp$/.test( queryParams.get( 'ref' ) || '' ) &&
+		queryParams.get( 'start' ) === 'true'
+	) {
+		queryParams.delete( 'start' );
+		window.location.replace(
+			pathname.replace( '/sitePicker', `/${ STEPS.SITE_MIGRATION_IDENTIFY.slug }` ) +
+				`?${ queryParams }${ hash }`
+		);
+		return false as const;
+	}
 	if (
 		! config.isEnabled( 'migration/reprint-flow' ) &&
 		( matchPath( '/setup/:flow/site-migration-check/:lang?', pathname ) ||
