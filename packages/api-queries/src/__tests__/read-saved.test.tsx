@@ -8,7 +8,12 @@ import {
 	unsaveReadPostMutation,
 } from '../read-saved';
 import { getStreamInfiniteQueryKey } from '../read-streams';
-import type { ReadSavedKeyEntry, ReadSavedKeysResponse } from '@automattic/api-core';
+import type {
+	ReadSavedKey,
+	ReadSavedKeyEntry,
+	ReadSavedKeysResponse,
+	ReadSavedPostResponse,
+} from '@automattic/api-core';
 import type { ReactNode } from 'react';
 
 const BASE = 'https://public-api.wordpress.com';
@@ -275,5 +280,107 @@ describe( 'unsaveReadPostMutation', () => {
 
 		expect( client.getQueryState( readSavedKeysQuery().queryKey )?.isInvalidated ).toBe( true );
 		expect( client.getQueryState( savedStreamQueryKey )?.isInvalidated ).toBe( true );
+	} );
+} );
+
+describe( 'overlapping saves and unsaves', () => {
+	const OTHER_KEY = { blog_id: 200, post_id: 2 };
+
+	// Runs a mutation through the real TanStack lifecycle, with a request the
+	// test settles by hand.
+	const start = (
+		client: QueryClient,
+		factory: typeof saveReadPostMutation | typeof unsaveReadPostMutation,
+		key: ReadSavedKey
+	) => {
+		let resolve!: () => void;
+		let reject!: () => void;
+		const request = new Promise< ReadSavedPostResponse >( ( res, rej ) => {
+			resolve = () => res( { saved: factory === saveReadPostMutation, key, total: 0 } );
+			reject = () => rej( new Error( 'Request failed' ) );
+		} );
+		const done = client
+			.getMutationCache()
+			.build( client, { ...factory( client ), mutationFn: () => request } )
+			.execute( { key, source: SOURCE } )
+			.catch( () => undefined );
+
+		return { resolve, reject, done };
+	};
+
+	// Lets each mutation's async `onMutate` finish before the next one starts.
+	const flush = () => new Promise( ( resolve ) => setTimeout( resolve, 0 ) );
+
+	it( 'invalidates when concurrent writes settle in the same tick', async () => {
+		const client = newClient();
+		setKeys( client, [] );
+		seedSavedStream( client );
+		const first = start( client, saveReadPostMutation, POST_KEY );
+		const second = start( client, saveReadPostMutation, OTHER_KEY );
+		await flush();
+
+		first.resolve();
+		second.resolve();
+		await Promise.all( [ first.done, second.done ] );
+
+		expect( client.getQueryState( readSavedKeysQuery().queryKey )?.isInvalidated ).toBe( true );
+		expect( client.getQueryState( savedStreamQueryKey )?.isInvalidated ).toBe( true );
+	} );
+
+	it( 'does not let an older failed save undo a newer save of the same post', async () => {
+		const client = newClient();
+		setKeys( client, [] );
+		const firstSave = start( client, saveReadPostMutation, POST_KEY );
+		await flush();
+		const unsave = start( client, unsaveReadPostMutation, POST_KEY );
+		await flush();
+		const secondSave = start( client, saveReadPostMutation, POST_KEY );
+		await flush();
+
+		firstSave.reject();
+		await firstSave.done;
+
+		expect( getKeyIds( client ) ).toEqual( [ 'blog-100-post-1' ] );
+
+		unsave.resolve();
+		secondSave.resolve();
+		await Promise.all( [ unsave.done, secondSave.done ] );
+	} );
+
+	it( 'does not let an older failed unsave restore a post a newer unsave removed', async () => {
+		const client = newClient();
+		setKeys( client, [ entry( POST_KEY ) ] );
+		const firstUnsave = start( client, unsaveReadPostMutation, POST_KEY );
+		await flush();
+		const save = start( client, saveReadPostMutation, POST_KEY );
+		await flush();
+		const secondUnsave = start( client, unsaveReadPostMutation, POST_KEY );
+		await flush();
+
+		firstUnsave.reject();
+		await firstUnsave.done;
+
+		expect( getKeyIds( client ) ).toEqual( [] );
+
+		save.resolve();
+		secondUnsave.resolve();
+		await Promise.all( [ save.done, secondUnsave.done ] );
+	} );
+
+	it( 'rolls back the newest write to a post when it fails', async () => {
+		const client = newClient();
+		setKeys( client, [] );
+		const save = start( client, saveReadPostMutation, POST_KEY );
+		await flush();
+		const unsave = start( client, unsaveReadPostMutation, POST_KEY );
+		await flush();
+
+		unsave.reject();
+		await unsave.done;
+
+		expect( getKeyIds( client ) ).toEqual( [ 'blog-100-post-1' ] );
+
+		save.resolve();
+		await save.done;
 	} );
 } );

@@ -26,8 +26,6 @@ export const getReadSavedKeyId = ( key: ReadSavedKey ): string =>
 		? `feed-item-${ key.feed_item_id }`
 		: `blog-${ key.blog_id }-post-${ key.post_id }`;
 
-const READ_SAVED_MUTATION_KEY = [ 'read', 'saved' ] as const;
-
 interface RemovedSavedKey {
 	entry: ReadSavedKeyEntry;
 	index: number;
@@ -99,12 +97,57 @@ function restoreSavedKey( queryClient: QueryClient, { entry, index }: RemovedSav
 	queryClient.setQueryData( queryKey, { keys, total: data.total + 1 } );
 }
 
-function invalidateSaved( queryClient: QueryClient ) {
-	// Saves on several cards can be in flight at once, each with its own
-	// optimistic write. A refetch while another is in flight would overwrite
-	// that write with server data from before it, so only the last to settle
-	// refetches. `onSettled` runs while its own mutation still counts.
-	if ( queryClient.isMutating( { mutationKey: READ_SAVED_MUTATION_KEY } ) > 1 ) {
+/**
+ * Saves and unsaves that have started but not settled, per QueryClient.
+ *
+ * Saves on several cards can be in flight at once, each with its own
+ * optimistic write. A refetch while another is in flight would overwrite that
+ * write with server data from before it, so only the last write to settle
+ * refetches. This counts writes itself rather than asking `isMutating()`:
+ * writes that settle in the same tick each still see the others as pending,
+ * so none of them would refetch.
+ *
+ * `latest` holds the newest write to each key. Only that write may roll back,
+ * so an older failure can't undo a newer save or unsave of the same post. When
+ * several writes to one post fail, the refetch after the last one settles
+ * corrects what's shown.
+ */
+interface SavedWrites {
+	pending: number;
+	latest: Map< string, symbol >;
+}
+
+const savedWritesByClient = new WeakMap< QueryClient, SavedWrites >();
+
+function getSavedWrites( queryClient: QueryClient ): SavedWrites {
+	let writes = savedWritesByClient.get( queryClient );
+	if ( ! writes ) {
+		writes = { pending: 0, latest: new Map() };
+		savedWritesByClient.set( queryClient, writes );
+	}
+	return writes;
+}
+
+function startSavedWrite( queryClient: QueryClient, key: ReadSavedKey ): symbol {
+	const writes = getSavedWrites( queryClient );
+	const write = Symbol( 'saved write' );
+	writes.pending++;
+	writes.latest.set( getReadSavedKeyId( key ), write );
+	return write;
+}
+
+function isLatestSavedWrite( queryClient: QueryClient, key: ReadSavedKey, write?: symbol ) {
+	return !! write && getSavedWrites( queryClient ).latest.get( getReadSavedKeyId( key ) ) === write;
+}
+
+function settleSavedWrite( queryClient: QueryClient, key: ReadSavedKey, write?: symbol ) {
+	const writes = getSavedWrites( queryClient );
+	if ( isLatestSavedWrite( queryClient, key, write ) ) {
+		writes.latest.delete( getReadSavedKeyId( key ) );
+	}
+
+	writes.pending = Math.max( 0, writes.pending - 1 );
+	if ( writes.pending > 0 ) {
 		return;
 	}
 
@@ -117,20 +160,26 @@ function invalidateSaved( queryClient: QueryClient ) {
 // from the consuming component.
 
 export const saveReadPostMutation = ( queryClient: QueryClient ) =>
-	mutationOptions< ReadSavedPostResponse, Error, ReadSavedPostParams, { added: boolean } >( {
+	mutationOptions<
+		ReadSavedPostResponse,
+		Error,
+		ReadSavedPostParams,
+		{ write: symbol; added: boolean }
+	>( {
 		meta: { statId: 'read-post-save' },
-		mutationKey: [ ...READ_SAVED_MUTATION_KEY, 'new' ],
 		mutationFn: saveReadPost,
 		onMutate: async ( { key } ) => {
+			const write = startSavedWrite( queryClient, key );
 			await cancelSavedKeysQuery( queryClient );
-			return { added: addSavedKey( queryClient, key ) };
+			return { write, added: addSavedKey( queryClient, key ) };
 		},
 		onError: ( _error, { key }, context ) => {
-			if ( context?.added ) {
+			if ( context?.added && isLatestSavedWrite( queryClient, key, context.write ) ) {
 				removeSavedKey( queryClient, key );
 			}
 		},
-		onSettled: () => invalidateSaved( queryClient ),
+		onSettled: ( _data, _error, { key }, context ) =>
+			settleSavedWrite( queryClient, key, context?.write ),
 	} );
 
 export const unsaveReadPostMutation = ( queryClient: QueryClient ) =>
@@ -138,19 +187,20 @@ export const unsaveReadPostMutation = ( queryClient: QueryClient ) =>
 		ReadSavedPostResponse,
 		Error,
 		ReadSavedPostParams,
-		{ removed: RemovedSavedKey | undefined }
+		{ write: symbol; removed: RemovedSavedKey | undefined }
 	>( {
 		meta: { statId: 'read-post-unsave' },
-		mutationKey: [ ...READ_SAVED_MUTATION_KEY, 'delete' ],
 		mutationFn: unsaveReadPost,
 		onMutate: async ( { key } ) => {
+			const write = startSavedWrite( queryClient, key );
 			await cancelSavedKeysQuery( queryClient );
-			return { removed: removeSavedKey( queryClient, key ) };
+			return { write, removed: removeSavedKey( queryClient, key ) };
 		},
-		onError: ( _error, _params, context ) => {
-			if ( context?.removed ) {
+		onError: ( _error, { key }, context ) => {
+			if ( context?.removed && isLatestSavedWrite( queryClient, key, context.write ) ) {
 				restoreSavedKey( queryClient, context.removed );
 			}
 		},
-		onSettled: () => invalidateSaved( queryClient ),
+		onSettled: ( _data, _error, { key }, context ) =>
+			settleSavedWrite( queryClient, key, context?.write ),
 	} );
