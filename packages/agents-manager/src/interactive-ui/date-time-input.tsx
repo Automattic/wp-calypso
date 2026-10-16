@@ -1,9 +1,11 @@
 import { createComponentImplementation } from '@a2ui/react/v0_9';
 import { DateTimeInputApi, DataBindingSchema } from '@a2ui/web_core/v0_9';
 import { TextControl } from '@wordpress/components';
+import { useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { z } from 'zod';
 import useInputValue from './use-input-value';
+import type { FocusEvent } from 'react';
 
 const dynamicString = z.union( [ z.string(), DataBindingSchema ] );
 
@@ -28,6 +30,7 @@ export default createComponentImplementation(
 	},
 	( { props, context } ) => {
 		const [ value, onChange ] = useInputValue( props.value ?? '', props.setValue, context );
+		const [ errorMessage, setErrorMessage ] = useState( '' );
 		if ( ! props.enableDate && ! props.enableTime ) {
 			return null;
 		}
@@ -49,11 +52,19 @@ export default createComponentImplementation(
 		};
 		return (
 			<TextControl
+				className={
+					errorMessage ? 'agents-manager-interactive-ui__date-time-input--error' : undefined
+				}
 				type={ type }
 				label={ props.label ?? __( 'Date and time', __i18n_text_domain__ ) }
 				value={ normalize( value ) }
 				min={ normalize( props.min ) || undefined }
 				max={ normalize( props.max ) || undefined }
+				help={ errorMessage }
+				aria-invalid={ !! errorMessage }
+				onBlur={ ( event: FocusEvent< HTMLInputElement > ) =>
+					setErrorMessage( event.currentTarget.validationMessage )
+				}
 				onChange={ onChange }
 			/>
 		);

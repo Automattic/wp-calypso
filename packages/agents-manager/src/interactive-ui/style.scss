@@ -21,6 +21,10 @@
 		margin: 0;
 	}
 
+	.agents-manager-interactive-ui__date-time-input--error .components-base-control__help {
+		color: $alert-red;
+	}
+
 	.agents-manager-interactive-ui__divider {
 		align-self: stretch;
 		border-top: 1px solid #ddd;
