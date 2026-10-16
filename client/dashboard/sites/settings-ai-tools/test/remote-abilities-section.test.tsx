@@ -113,14 +113,25 @@ function mockRemoteGroupsSave( activeSite: Site, expectedGroups: Record< string,
 		} );
 }
 
-function getPluginIntent( plugin: string ) {
+function getPluginCard( plugin: string ): HTMLElement {
 	const heading = screen.getByRole( 'heading', { name: plugin } );
-	return within( heading.parentElement as HTMLElement ).getByRole( 'checkbox', {
-		name: 'Enable all',
-	} );
+	const card = heading.closest( 'div[id]' );
+	if ( ! card ) {
+		throw new Error( `No card found for ${ plugin }` );
+	}
+	return card as HTMLElement;
+}
+
+function getPluginIntent( plugin: string ) {
+	return within( getPluginCard( plugin ) ).getByRole( 'checkbox', { name: 'Enable all' } );
+}
+
+function getPluginExpander( plugin: string ) {
+	return within( getPluginCard( plugin ) ).getByRole( 'button', { name: 'Show operations' } );
 }
 
 beforeEach( () => {
+	window.location.hash = '';
 	queryClient.clear();
 	queryClient.setDefaultOptions( {
 		queries: {
@@ -136,29 +147,40 @@ beforeEach( () => {
 } );
 
 describe( '<RemoteAbilitiesSection>', () => {
-	test( 'read page lists read abilities as toggles with descriptions, excluding writes', () => {
+	test( 'plugin cards are collapsed by default and expand to show ability toggles', async () => {
+		const user = userEvent.setup();
 		seed( { abilities: catalog, remoteGroups: { 'read:jetpack-forms': true } } );
 		render( <RemoteAbilitiesSection site={ JETPACK_SITE } category="read" />, { queryClient } );
 
 		expect( screen.getByRole( 'heading', { name: 'Site-published abilities' } ) ).toBeVisible();
 		expect( getPluginIntent( 'Jetpack Forms' ) ).toBeChecked();
+		expect( screen.queryByRole( 'checkbox', { name: 'Get form' } ) ).not.toBeInTheDocument();
+
+		await user.click( getPluginExpander( 'Jetpack Forms' ) );
+
 		expect( screen.getByRole( 'checkbox', { name: 'Get form' } ) ).toBeChecked();
 		expect( screen.getByText( 'Read a single form.' ) ).toBeVisible();
 		expect( screen.queryByRole( 'checkbox', { name: 'Update form' } ) ).not.toBeInTheDocument();
 		expect( screen.queryByRole( 'heading', { name: 'Akismet' } ) ).not.toBeInTheDocument();
 	} );
 
-	test( 'write page lists write and destructive abilities with no destructive labeling', () => {
+	test( 'write page lists write and destructive abilities with no destructive labeling', async () => {
+		const user = userEvent.setup();
 		seed( { abilities: catalog, remoteGroups: { 'write:akismet': true } } );
 		render( <RemoteAbilitiesSection site={ JETPACK_SITE } category="write" />, { queryClient } );
 
 		expect( getPluginIntent( 'Akismet' ) ).toBeChecked();
 		expect( getPluginIntent( 'Jetpack Forms' ) ).not.toBeChecked();
+
+		await user.click( getPluginExpander( 'Jetpack Forms' ) );
 		expect( screen.getByRole( 'checkbox', { name: 'Update form' } ) ).toBeVisible();
 		expect( screen.getByText( 'Change a form’s fields.' ) ).toBeVisible();
 		expect( screen.getByRole( 'checkbox', { name: 'Delete form' } ) ).toBeVisible();
 		expect( screen.getByText( 'Delete a form and its responses.' ) ).toBeVisible();
+
+		await user.click( getPluginExpander( 'Akismet' ) );
 		expect( screen.getByRole( 'checkbox', { name: 'Check comment' } ) ).toBeChecked();
+
 		expect( screen.queryByRole( 'checkbox', { name: 'Get form' } ) ).not.toBeInTheDocument();
 		expect( screen.queryByText( 'Destructive' ) ).not.toBeInTheDocument();
 	} );
@@ -171,6 +193,7 @@ describe( '<RemoteAbilitiesSection>', () => {
 		const saveScope = mockRemoteGroupsSave( JETPACK_SITE, {
 			'write:jetpack-forms': true,
 		} );
+		await user.click( getPluginExpander( 'Jetpack Forms' ) );
 		await user.click( screen.getByRole( 'checkbox', { name: 'Update form' } ) );
 
 		await waitFor( () => {
@@ -186,6 +209,7 @@ describe( '<RemoteAbilitiesSection>', () => {
 		const saveScope = mockRemoteGroupsSave( JETPACK_SITE, {
 			'destructive:jetpack-forms': true,
 		} );
+		await user.click( getPluginExpander( 'Jetpack Forms' ) );
 		await user.click( screen.getByRole( 'checkbox', { name: 'Delete form' } ) );
 
 		await waitFor( () => {
@@ -210,9 +234,26 @@ describe( '<RemoteAbilitiesSection>', () => {
 		} );
 		await waitFor( () => {
 			expect( getPluginIntent( 'Jetpack Forms' ) ).toBeChecked();
-			expect( screen.getByRole( 'checkbox', { name: 'Update form' } ) ).toBeChecked();
-			expect( screen.getByRole( 'checkbox', { name: 'Delete form' } ) ).toBeChecked();
 		} );
+	} );
+
+	test( 'a plugin anchor hash opens that card on load', () => {
+		window.location.hash = '#jetpack-forms';
+		seed( { abilities: catalog } );
+		render( <RemoteAbilitiesSection site={ JETPACK_SITE } category="write" />, { queryClient } );
+
+		expect( screen.getByRole( 'checkbox', { name: 'Update form' } ) ).toBeVisible();
+		expect( screen.queryByRole( 'checkbox', { name: 'Check comment' } ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'an ability anchor hash opens the card containing it on load', () => {
+		window.location.hash = '#jetpack-forms/update-form';
+		seed( { abilities: catalog } );
+		render( <RemoteAbilitiesSection site={ JETPACK_SITE } category="write" />, { queryClient } );
+
+		expect( screen.getByRole( 'checkbox', { name: 'Update form' } ) ).toBeVisible();
+		expect( document.getElementById( 'jetpack-forms/update-form' ) ).not.toBeNull();
+		expect( screen.queryByRole( 'checkbox', { name: 'Check comment' } ) ).not.toBeInTheDocument();
 	} );
 
 	test( 'shows saved groups with a notice when the catalog cannot be loaded', async () => {
@@ -222,7 +263,10 @@ describe( '<RemoteAbilitiesSection>', () => {
 
 		expect( await screen.findByText( /can’t be loaded right now/ ) ).toBeVisible();
 		expect( getPluginIntent( 'Akismet' ) ).toBeChecked();
-		expect( screen.queryByRole( 'checkbox', { name: 'Check comment' } ) ).not.toBeInTheDocument();
+		// Nothing published locally, so there is nothing to expand.
+		expect(
+			within( getPluginCard( 'Akismet' ) ).queryByRole( 'button', { name: 'Show operations' } )
+		).not.toBeInTheDocument();
 
 		await waitFor( () => {
 			expect( failureScope.isDone() ).toBe( true );
