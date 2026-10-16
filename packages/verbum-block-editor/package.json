@@ -65,9 +65,9 @@
 		"@typescript-eslint/eslint-plugin": "^8.71.1",
 		"@typescript-eslint/parser": "^8.71.1",
 		"@wordpress/eslint-plugin": "^25.4.0",
-		"@wordpress/stylelint-config": "^23.40.0",
-		"stylelint": "^16.26.1",
-		"stylelint-scss": "^6.14.0",
+		"@wordpress/stylelint-config": "^26.1.0",
+		"stylelint": "^17.16.0",
+		"stylelint-scss": "^7.3.0",
 		"typescript": "^6.0.3"
 	},
 	"peerDependencies": {
@@ -82,7 +82,7 @@
 		"react-dom": "^18.3.1 || ^19.0.0",
 		"redux": "^5.0.1",
 		"stylelint": "*",
-		"stylelint-scss": "^6.14.0",
+		"stylelint-scss": "^7.3.0",
 		"webpack": "*"
 	},
 	"private": true

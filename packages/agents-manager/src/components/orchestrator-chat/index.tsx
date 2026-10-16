@@ -261,6 +261,7 @@ export default function OrchestratorChat( {
 		submitComposerMessage,
 		submitChatMessage,
 		submitHostMessage,
+		submitRetryMessage,
 		submitContextMessage,
 		stopResponse,
 	} = useChatComposer( {
@@ -279,10 +280,12 @@ export default function OrchestratorChat( {
 		}
 	}, [ isProcessing, agentConfig?.sessionId ] );
 
-	const isLoadingConversation = useConversationHydration( {
+	const { isLoading: isLoadingConversation, notice: replyNotice } = useConversationHydration( {
 		hadParkedNavigation,
 		loadMessages,
 		onFetch: invalidateLoadedCheckpoints,
+		isProcessing,
+		onRetry: submitRetryMessage,
 	} );
 
 	// Registered before the providers' ability setup below, whose effects may
@@ -536,7 +539,7 @@ export default function OrchestratorChat( {
 			isCompactMode={ isCompactMode }
 			groupWritingSuggestions={ isPageOrSiteEditorSurface }
 			imageUpload={ imageUpload }
-			notice={ credits.notice }
+			notice={ credits.notice ?? replyNotice }
 			trailingActions={ credits.trailingActions }
 			beforeSubmit={ credits.beforeSubmit }
 			isChatInputDisabled={ isChatInputDisabled }

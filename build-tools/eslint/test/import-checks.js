@@ -1,16 +1,14 @@
 /**
  * @jest-environment node
  */
+const { spawnSync } = require( 'child_process' );
 const fs = require( 'fs' );
 const path = require( 'path' );
-const { loadESLint } = require( 'eslint' );
 
 const repoRoot = path.resolve( __dirname, '../../..' );
 
 // Without this, broken imports of workspace packages pass lint whenever packages aren't built.
-test( 'import rules check workspace packages from source', async () => {
-	const ESLint = await loadESLint( { useFlatConfig: false } );
-	const eslint = new ESLint( { cwd: repoRoot } );
+test( 'import rules check workspace packages from source', () => {
 	const code = [
 		"import { isJetpackBackupSlug, missingExport } from '@automattic/calypso-products';",
 		"import { missingApiExport } from '@automattic/api-core';",
@@ -18,9 +16,30 @@ test( 'import rules check workspace packages from source', async () => {
 		'export default [ isJetpackBackupSlug, missingExport, missingApiExport, clsx, missingClsxExport ];',
 	].join( '\n' );
 
-	const [ result ] = await eslint.lintText( code, {
-		filePath: path.join( repoRoot, 'client/import-checks-fixture.js' ),
-	} );
+	// A separate Node process, as in CI: Jest can't require() ES-module plugins such as
+	// eslint-plugin-jsdoc without --experimental-vm-modules.
+	const eslint = spawnSync(
+		process.execPath,
+		[
+			path.join( repoRoot, 'node_modules/eslint/bin/eslint.js' ),
+			'--format=json',
+			'--stdin',
+			'--stdin-filename',
+			path.join( repoRoot, 'client/import-checks-fixture.js' ),
+		],
+		{
+			cwd: repoRoot,
+			input: code,
+			encoding: 'utf8',
+			env: { ...process.env, ESLINT_USE_FLAT_CONFIG: 'false' },
+		}
+	);
+	expect( eslint.error ).toBeUndefined();
+	// Exit 1 is the fixture's lint errors; 2 means ESLint itself failed, with the reason in stderr.
+	if ( eslint.status !== 1 ) {
+		throw new Error( `ESLint exited with ${ eslint.status }:\n${ eslint.stderr }` );
+	}
+	const [ result ] = JSON.parse( eslint.stdout );
 
 	expect(
 		result.messages.filter( ( m ) => m.ruleId === 'import/named' ).map( ( m ) => m.message )

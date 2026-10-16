@@ -43,6 +43,8 @@ export const NamePulseSearchInput = ( { showFilter = false }: { showFilter?: boo
 					setLocalQuery( value );
 
 					if ( trimmedValue ) {
+						// Reloading results while scrolled down pushes the page further down.
+						window.scrollTo( { top: 0 } );
 						setQuery( trimmedValue, 'input_changed' );
 					} else {
 						if ( query ) {

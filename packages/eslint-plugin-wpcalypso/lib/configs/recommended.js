@@ -140,6 +140,13 @@ module.exports = {
 		'jsdoc/require-returns-description': 'error',
 		'jsdoc/require-returns-type': 'off',
 		'jsdoc/valid-types': 'off',
+		// Added to plugin:jsdoc/recommended after v50; not yet adopted here.
+		'jsdoc/escape-inline-tags': 'off',
+		'jsdoc/reject-any-type': 'off',
+		'jsdoc/reject-function-type': 'off',
+		'jsdoc/require-throws-type': 'off',
+		'jsdoc/require-yields-type': 'off',
+		'jsdoc/ts-no-empty-object-type': 'off',
 
 		// wpcalypso plugin
 		'wpcalypso/i18n-ellipsis': 'error',
