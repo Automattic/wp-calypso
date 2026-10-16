@@ -5,6 +5,7 @@ import './style.scss';
 
 export interface Props extends PropsWithChildren {
 	align?: 'center' | 'left' | 'right';
+	as?: 'header' | 'div';
 	brandFont?: boolean;
 	className?: string;
 	compactOnMobile?: boolean;
@@ -20,6 +21,7 @@ export interface Props extends PropsWithChildren {
 
 const FormattedHeader: FC< Props > = ( {
 	align = 'center',
+	as: Header = 'header',
 	brandFont = false,
 	children,
 	className,
@@ -49,7 +51,7 @@ const FormattedHeader: FC< Props > = ( {
 	);
 
 	return (
-		<header id={ id } className={ classes }>
+		<Header id={ id } className={ classes }>
 			<div>
 				{ ! isSecondary && (
 					<h1 className={ headerClasses }>
@@ -67,7 +69,7 @@ const FormattedHeader: FC< Props > = ( {
 				) }
 			</div>
 			{ children }
-		</header>
+		</Header>
 	);
 };
 
