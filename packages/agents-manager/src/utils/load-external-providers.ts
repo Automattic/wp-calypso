@@ -613,8 +613,7 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 		void preloadAmEditorContentContext();
 	}
 
-	// AM's editor suggestions ship in the editor abilities chunk, which loads on editor pages
-	// only. Load it alongside the providers.
+	// AM's editor suggestions, loaded alongside the providers; `null` off editor pages.
 	const editorSuggestionsPromise = isBigSkySite ? loadAmEditorSuggestions() : null;
 
 	let mergedToolProvider: ToolProvider | undefined;
@@ -857,7 +856,8 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 		allUseSuggestions.push( editorSuggestions.useBlockSuggestions );
 	}
 
-	// Merge useSuggestions: combine from all providers, dedupe by id.
+	// Merge useSuggestions: the first provider that replaces the empty view wins;
+	// otherwise combine them, deduped by id.
 	const mergedUseSuggestions = mergeUseSuggestionsHooks( allUseSuggestions );
 
 	// Merge useCheckpoint: run every provider's hook, search all stores by id.

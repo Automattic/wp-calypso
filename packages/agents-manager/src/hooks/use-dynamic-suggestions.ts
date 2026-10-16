@@ -20,8 +20,8 @@ interface UseDynamicSuggestionsOptions {
  * chips register again for each newly selected block, even if unchanged.
  * `contextualSuggestionIds` lists the ones that replace the empty-view
  * suggestions, so tracking can tag them with the selected block.
- * `showEditorEmptyViewSuggestions` registers AM's design chips instead, for a
- * provider to offer next steps (Big Sky does after a site build).
+ * `showEditorEmptyViewSuggestions` lets a provider show AM's design chips, as
+ * Big Sky does after a site build.
  */
 export function useDynamicSuggestions( {
 	useSuggestions,
