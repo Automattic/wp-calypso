@@ -8,7 +8,6 @@ import {
 /* eslint-enable no-restricted-imports */
 import boot from '../app/boot';
 import { A4ALoadingLogo } from './loading-logo';
-import { Logo } from './logo';
 import A4AOmnibar from './omnibar';
 import A4AOmnibarHelpCenter from './omnibar-help-center';
 import type {
@@ -23,7 +22,7 @@ boot( {
 	unifiedAdminPageViewApp: 'a4a',
 	basePath: '/',
 	mainRoute: '/overview',
-	Logo,
+	Logo: null,
 	LoadingLogo: A4ALoadingLogo,
 	supports: {
 		agency: {
