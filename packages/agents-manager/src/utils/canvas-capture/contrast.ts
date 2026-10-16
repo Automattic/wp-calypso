@@ -338,12 +338,20 @@ function hasOverlay(
 	);
 }
 
-/** Whether the element or anything around it is drawn faded, which its colours do not show. */
-function isFaded( element: Element, view: Window ): boolean {
+/**
+ * Whether the element or anything around it renders other than its colours
+ * say: faded, filtered, or blended with what is behind it.
+ */
+function isAltered( element: Element, view: Window ): boolean {
 	for ( let current: Element | null = element; current; current = current.parentElement ) {
-		const opacity = parseFloat( view.getComputedStyle( current ).opacity );
+		const style = view.getComputedStyle( current );
 
-		if ( opacity < 1 ) {
+		if (
+			parseFloat( style.opacity ) < 1 ||
+			isSet( style.filter ) ||
+			isSet( style.backdropFilter ) ||
+			isSet( style.mixBlendMode )
+		) {
 			return true;
 		}
 	}
@@ -414,7 +422,7 @@ function isLargeText( style: CSSStyleDeclaration ): boolean {
 function measureRun( element: Element, view: Window ): Run | null {
 	const style = view.getComputedStyle( element );
 	const colour = parseColour( style.color );
-	const backdrop = isFaded( element, view ) ? null : findBackdrop( element, view );
+	const backdrop = isAltered( element, view ) ? null : findBackdrop( element, view );
 
 	if ( ! colour || ! backdrop ) {
 		return null;

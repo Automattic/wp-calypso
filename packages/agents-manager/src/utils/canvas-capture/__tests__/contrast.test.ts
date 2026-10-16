@@ -509,6 +509,24 @@ describe( 'text it cannot measure', () => {
 		expect( notesOf( [ 'faded' ] ) ).toEqual( [ UNMEASURED_ONE ] );
 	} );
 
+	it.each( [
+		[ 'filtered', { filter: 'brightness(0)' } ],
+		[ 'blended', { mixBlendMode: 'difference' } ],
+		[ 'behind a backdrop filter', { backdropFilter: 'blur(4px)' } ],
+	] )( 'leaves %s text to the picture', ( _, styles ) => {
+		// Black on white reads 21:1 from the colours, whatever the filter does to them.
+		mountCanvas( [
+			{
+				clientId: 'altered',
+				name: 'core/group',
+				computed: { '': styles },
+				children: [ text( 'ueo8', { color: 'rgb(0, 0, 0)', fontSize: '16px' } ) ],
+			},
+		] );
+
+		expect( notesOf( [ 'altered' ] ) ).toEqual( [ UNMEASURED_ONE ] );
+	} );
+
 	it( 'leaves a colour it cannot read to the picture', () => {
 		mountCanvas( [ { ...text( 'ueo8' ), textComputed: { color: 'oklch(0.5 0.1 200)' } } ] );
 
