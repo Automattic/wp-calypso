@@ -1,5 +1,6 @@
 import { getReadSavedKeyId, readSavedKeysQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
+import { useCallback } from 'react';
 import { savedKeyForPost } from './saved-key-for-post';
 import type { ReadSavedKeysResponse } from '@automattic/api-core';
 import type { Post } from 'calypso/reader/data/post';
@@ -15,9 +16,17 @@ export function useSavedPostKeys( options?: SavedPostKeysQueryOptions ) {
 	return useQuery( { ...readSavedKeysQuery(), ...options } );
 }
 
-// Module-level so each observer only rebuilds the set when the keys change.
-const selectSavedKeyIds = ( data: ReadSavedKeysResponse ) =>
-	new Set( data.keys.map( getReadSavedKeyId ) );
+// Every card reads the same keys response, so build its lookup once and share it.
+const savedKeyIdsByResponse = new WeakMap< ReadSavedKeysResponse, Set< string > >();
+
+function getSavedKeyIds( data: ReadSavedKeysResponse ) {
+	let ids = savedKeyIdsByResponse.get( data );
+	if ( ! ids ) {
+		ids = new Set( data.keys.map( getReadSavedKeyId ) );
+		savedKeyIdsByResponse.set( data, ids );
+	}
+	return ids;
+}
 
 /**
  * Whether the current user has saved the post. Reflects a save or unsave as
@@ -28,12 +37,18 @@ export function useIsPostSaved(
 	options?: SavedPostKeysQueryOptions
 ): boolean {
 	const key = post ? savedKeyForPost( post ) : null;
-	const { data: savedKeyIds } = useQuery( {
+	const keyId = key ? getReadSavedKeyId( key ) : null;
+	// Selecting a boolean means a card only re-renders when its own post flips.
+	const select = useCallback(
+		( data: ReadSavedKeysResponse ) => keyId !== null && getSavedKeyIds( data ).has( keyId ),
+		[ keyId ]
+	);
+	const { data: isSaved = false } = useQuery( {
 		...readSavedKeysQuery(),
 		...options,
-		select: selectSavedKeyIds,
-		enabled: !! key && ( options?.enabled ?? true ),
+		select,
+		enabled: keyId !== null && ( options?.enabled ?? true ),
 	} );
 
-	return !! key && !! savedKeyIds?.has( getReadSavedKeyId( key ) );
+	return isSaved;
 }

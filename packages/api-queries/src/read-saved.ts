@@ -26,10 +26,7 @@ export const getReadSavedKeyId = ( key: ReadSavedKey ): string =>
 		? `feed-item-${ key.feed_item_id }`
 		: `blog-${ key.blog_id }-post-${ key.post_id }`;
 
-interface RemovedSavedKey {
-	entry: ReadSavedKeyEntry;
-	index: number;
-}
+const savedKeysQueryKey = readSavedKeysQuery().queryKey;
 
 const findSavedKeyIndex = ( data: ReadSavedKeysResponse, key: ReadSavedKey ) => {
 	const id = getReadSavedKeyId( key );
@@ -38,7 +35,7 @@ const findSavedKeyIndex = ( data: ReadSavedKeysResponse, key: ReadSavedKey ) => 
 
 async function cancelSavedKeysQuery( queryClient: QueryClient ) {
 	try {
-		await queryClient.cancelQueries( { queryKey: readSavedKeysQuery().queryKey } );
+		await queryClient.cancelQueries( { queryKey: savedKeysQueryKey } );
 	} catch {
 		// Best effort: if this rejects, `onMutate` must still resolve so the
 		// optimistic write and the request go ahead.
@@ -46,55 +43,43 @@ async function cancelSavedKeysQuery( queryClient: QueryClient ) {
 }
 
 /**
- * Optimistically add a key to the keys query. Returns whether it was added, so
- * a failed save undoes only its own change.
+ * Optimistically insert an entry into the keys query, unless its key is
+ * already there. Returns whether it was inserted.
  */
-function addSavedKey( queryClient: QueryClient, key: ReadSavedKey ): boolean {
-	const queryKey = readSavedKeysQuery().queryKey;
-	const data = queryClient.getQueryData( queryKey );
-	if ( ! data || findSavedKeyIndex( data, key ) !== -1 ) {
-		return false;
-	}
-
-	queryClient.setQueryData( queryKey, {
-		keys: [ { ...key, date_saved: new Date().toISOString() }, ...data.keys ],
-		total: data.total + 1,
-	} );
-	return true;
-}
-
-/**
- * Optimistically remove a key from the keys query. Returns what was removed, so
- * a failed unsave restores only its own change.
- */
-function removeSavedKey(
-	queryClient: QueryClient,
-	key: ReadSavedKey
-): RemovedSavedKey | undefined {
-	const queryKey = readSavedKeysQuery().queryKey;
-	const data = queryClient.getQueryData( queryKey );
-	const index = data ? findSavedKeyIndex( data, key ) : -1;
-	if ( ! data || index === -1 ) {
-		return undefined;
-	}
-
-	queryClient.setQueryData( queryKey, {
-		keys: data.keys.filter( ( _entry, i ) => i !== index ),
-		total: Math.max( 0, data.total - 1 ),
-	} );
-	return { entry: data.keys[ index ], index };
-}
-
-function restoreSavedKey( queryClient: QueryClient, { entry, index }: RemovedSavedKey ) {
-	const queryKey = readSavedKeysQuery().queryKey;
-	const data = queryClient.getQueryData( queryKey );
+function insertSavedKey( queryClient: QueryClient, entry: ReadSavedKeyEntry, index = 0 ) {
+	const data = queryClient.getQueryData( savedKeysQueryKey );
 	if ( ! data || findSavedKeyIndex( data, entry ) !== -1 ) {
-		return;
+		return false;
 	}
 
 	const keys = [ ...data.keys ];
 	keys.splice( index, 0, entry );
-	queryClient.setQueryData( queryKey, { keys, total: data.total + 1 } );
+	queryClient.setQueryData( savedKeysQueryKey, { keys, total: data.total + 1 } );
+	return true;
+}
+
+/**
+ * Optimistically remove a key from the keys query. Returns how to put it back
+ * where it was, or nothing if the key wasn't there.
+ */
+function removeSavedKey( queryClient: QueryClient, key: ReadSavedKey ) {
+	const data = queryClient.getQueryData( savedKeysQueryKey );
+	if ( ! data ) {
+		return undefined;
+	}
+	const index = findSavedKeyIndex( data, key );
+	if ( index === -1 ) {
+		return undefined;
+	}
+
+	const entry = data.keys[ index ];
+	queryClient.setQueryData( savedKeysQueryKey, {
+		keys: data.keys.filter( ( _entry, i ) => i !== index ),
+		total: Math.max( 0, data.total - 1 ),
+	} );
+	return () => {
+		insertSavedKey( queryClient, entry, index );
+	};
 }
 
 /**
@@ -128,31 +113,60 @@ function getSavedWrites( queryClient: QueryClient ): SavedWrites {
 	return writes;
 }
 
-function startSavedWrite( queryClient: QueryClient, key: ReadSavedKey ): symbol {
-	const writes = getSavedWrites( queryClient );
-	const write = Symbol( 'saved write' );
-	writes.pending++;
-	writes.latest.set( getReadSavedKeyId( key ), write );
-	return write;
+interface SavedWriteContext {
+	write: symbol;
+	undo?: () => void;
 }
 
-function isLatestSavedWrite( queryClient: QueryClient, key: ReadSavedKey, write?: symbol ) {
-	return !! write && getSavedWrites( queryClient ).latest.get( getReadSavedKeyId( key ) ) === write;
-}
+/**
+ * The lifecycle saves and unsaves share. `apply` makes the optimistic change
+ * and returns how to undo it, or nothing if it changed nothing.
+ */
+function savedWriteCallbacks(
+	queryClient: QueryClient,
+	apply: ( key: ReadSavedKey ) => ( () => void ) | undefined
+) {
+	return {
+		onMutate: async ( { key }: ReadSavedPostParams ): Promise< SavedWriteContext > => {
+			const writes = getSavedWrites( queryClient );
+			const write = Symbol( 'saved write' );
+			writes.pending++;
+			writes.latest.set( getReadSavedKeyId( key ), write );
 
-function settleSavedWrite( queryClient: QueryClient, key: ReadSavedKey, write?: symbol ) {
-	const writes = getSavedWrites( queryClient );
-	if ( isLatestSavedWrite( queryClient, key, write ) ) {
-		writes.latest.delete( getReadSavedKeyId( key ) );
-	}
+			await cancelSavedKeysQuery( queryClient );
+			return { write, undo: apply( key ) };
+		},
+		onError: ( _error: Error, { key }: ReadSavedPostParams, context?: SavedWriteContext ) => {
+			const isLatest =
+				!! context &&
+				getSavedWrites( queryClient ).latest.get( getReadSavedKeyId( key ) ) === context.write;
+			if ( isLatest ) {
+				context.undo?.();
+			}
+		},
+		onSettled: (
+			_data: ReadSavedPostResponse | undefined,
+			_error: Error | null,
+			{ key }: ReadSavedPostParams,
+			context?: SavedWriteContext
+		) => {
+			const writes = getSavedWrites( queryClient );
+			const id = getReadSavedKeyId( key );
+			if ( context && writes.latest.get( id ) === context.write ) {
+				writes.latest.delete( id );
+			}
 
-	writes.pending = Math.max( 0, writes.pending - 1 );
-	if ( writes.pending > 0 ) {
-		return;
-	}
+			writes.pending = Math.max( 0, writes.pending - 1 );
+			if ( writes.pending > 0 ) {
+				return;
+			}
 
-	void queryClient.invalidateQueries( { queryKey: readSavedKeysQuery().queryKey } );
-	void queryClient.invalidateQueries( { queryKey: getStreamInfiniteQueryKeyPrefix( 'saved' ) } );
+			void queryClient.invalidateQueries( { queryKey: savedKeysQueryKey } );
+			void queryClient.invalidateQueries( {
+				queryKey: getStreamInfiniteQueryKeyPrefix( 'saved' ),
+			} );
+		},
+	};
 }
 
 // Calypso boots its own QueryClient (see `client/state/query-client.ts`), so
@@ -160,47 +174,19 @@ function settleSavedWrite( queryClient: QueryClient, key: ReadSavedKey, write?: 
 // from the consuming component.
 
 export const saveReadPostMutation = ( queryClient: QueryClient ) =>
-	mutationOptions<
-		ReadSavedPostResponse,
-		Error,
-		ReadSavedPostParams,
-		{ write: symbol; added: boolean }
-	>( {
+	mutationOptions< ReadSavedPostResponse, Error, ReadSavedPostParams, SavedWriteContext >( {
 		meta: { statId: 'read-post-save' },
 		mutationFn: saveReadPost,
-		onMutate: async ( { key } ) => {
-			const write = startSavedWrite( queryClient, key );
-			await cancelSavedKeysQuery( queryClient );
-			return { write, added: addSavedKey( queryClient, key ) };
-		},
-		onError: ( _error, { key }, context ) => {
-			if ( context?.added && isLatestSavedWrite( queryClient, key, context.write ) ) {
-				removeSavedKey( queryClient, key );
-			}
-		},
-		onSettled: ( _data, _error, { key }, context ) =>
-			settleSavedWrite( queryClient, key, context?.write ),
+		...savedWriteCallbacks( queryClient, ( key ) =>
+			insertSavedKey( queryClient, { ...key, date_saved: new Date().toISOString() } )
+				? () => removeSavedKey( queryClient, key )
+				: undefined
+		),
 	} );
 
 export const unsaveReadPostMutation = ( queryClient: QueryClient ) =>
-	mutationOptions<
-		ReadSavedPostResponse,
-		Error,
-		ReadSavedPostParams,
-		{ write: symbol; removed: RemovedSavedKey | undefined }
-	>( {
+	mutationOptions< ReadSavedPostResponse, Error, ReadSavedPostParams, SavedWriteContext >( {
 		meta: { statId: 'read-post-unsave' },
 		mutationFn: unsaveReadPost,
-		onMutate: async ( { key } ) => {
-			const write = startSavedWrite( queryClient, key );
-			await cancelSavedKeysQuery( queryClient );
-			return { write, removed: removeSavedKey( queryClient, key ) };
-		},
-		onError: ( _error, { key }, context ) => {
-			if ( context?.removed && isLatestSavedWrite( queryClient, key, context.write ) ) {
-				restoreSavedKey( queryClient, context.removed );
-			}
-		},
-		onSettled: ( _data, _error, { key }, context ) =>
-			settleSavedWrite( queryClient, key, context?.write ),
+		...savedWriteCallbacks( queryClient, ( key ) => removeSavedKey( queryClient, key ) ),
 	} );

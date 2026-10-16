@@ -12,6 +12,7 @@ import type {
 	ReadSavedKey,
 	ReadSavedKeyEntry,
 	ReadSavedKeysResponse,
+	ReadSavedPostParams,
 	ReadSavedPostResponse,
 } from '@automattic/api-core';
 import type { ReactNode } from 'react';
@@ -20,7 +21,10 @@ const BASE = 'https://public-api.wordpress.com';
 const SOURCE = 'reader-web';
 
 const POST_KEY = { blog_id: 100, post_id: 1 };
+const OTHER_KEY = { blog_id: 200, post_id: 2 };
 const FEED_ITEM_KEY = { feed_item_id: 9000 };
+
+type SavedWriteFactory = typeof saveReadPostMutation | typeof unsaveReadPostMutation;
 
 const makeWrapper = ( client: QueryClient ) =>
 	function Wrapper( { children }: { children: ReactNode } ) {
@@ -29,8 +33,12 @@ const makeWrapper = ( client: QueryClient ) =>
 
 const newClient = () => new QueryClient( { defaultOptions: { queries: { retry: false } } } );
 
-const entry = ( key: object, date_saved = '2026-10-01T00:00:00+00:00' ) =>
-	( { ...key, date_saved } ) as ReadSavedKeyEntry;
+const params = ( key: ReadSavedKey = POST_KEY ): ReadSavedPostParams => ( { key, source: SOURCE } );
+
+const entry = (
+	key: ReadSavedKey,
+	date_saved = '2026-10-01T00:00:00+00:00'
+): ReadSavedKeyEntry => ( { ...key, date_saved } );
 
 const setKeys = ( client: QueryClient, keys: ReadSavedKeyEntry[] ) =>
 	client.setQueryData< ReadSavedKeysResponse >( readSavedKeysQuery().queryKey, {
@@ -53,11 +61,21 @@ const savedStreamQueryKey = getStreamInfiniteQueryKey( {
 const seedSavedStream = ( client: QueryClient ) =>
 	client.setQueryData( savedStreamQueryKey, { pages: [], pageParams: [] } );
 
-const renderMutation = (
-	client: QueryClient,
-	factory: typeof saveReadPostMutation | typeof unsaveReadPostMutation
-) =>
+const getSavedQueriesInvalidated = ( client: QueryClient ) => ( {
+	keys: client.getQueryState( readSavedKeysQuery().queryKey )?.isInvalidated,
+	stream: client.getQueryState( savedStreamQueryKey )?.isInvalidated,
+} );
+
+const renderMutation = ( client: QueryClient, factory: SavedWriteFactory ) =>
 	renderHook( () => useMutation( factory( client ) ), { wrapper: makeWrapper( client ) } ).result;
+
+const mutateExpectingFailure = (
+	result: ReturnType< typeof renderMutation >,
+	variables: ReadSavedPostParams
+) =>
+	act( async () => {
+		await expect( result.current.mutateAsync( variables ) ).rejects.toBeTruthy();
+	} );
 
 afterEach( () => nock.cleanAll() );
 
@@ -107,7 +125,7 @@ describe( 'saveReadPostMutation', () => {
 			} );
 		const result = renderMutation( client, saveReadPostMutation );
 
-		await act( () => result.current.mutateAsync( { key: POST_KEY, source: SOURCE } ) );
+		await act( () => result.current.mutateAsync( params() ) );
 
 		expect( request.isDone() ).toBe( true );
 		expect( idsDuringRequest ).toEqual( [ 'blog-100-post-1', 'feed-item-9000' ] );
@@ -121,7 +139,7 @@ describe( 'saveReadPostMutation', () => {
 			.reply( 200, { saved: true, key: FEED_ITEM_KEY, total: 1 } );
 		const result = renderMutation( client, saveReadPostMutation );
 
-		await act( () => result.current.mutateAsync( { key: FEED_ITEM_KEY, source: SOURCE } ) );
+		await act( () => result.current.mutateAsync( params( FEED_ITEM_KEY ) ) );
 
 		expect( request.isDone() ).toBe( true );
 	} );
@@ -134,11 +152,7 @@ describe( 'saveReadPostMutation', () => {
 			.reply( 403, { code: 'saved_limit_reached', message: 'Limit reached.' } );
 		const result = renderMutation( client, saveReadPostMutation );
 
-		await act( async () => {
-			await expect(
-				result.current.mutateAsync( { key: POST_KEY, source: SOURCE } )
-			).rejects.toBeTruthy();
-		} );
+		await mutateExpectingFailure( result, params() );
 
 		expect( getKeyIds( client ) ).toEqual( [ 'feed-item-9000' ] );
 		expect( getKeys( client )?.total ).toBe( 1 );
@@ -150,11 +164,7 @@ describe( 'saveReadPostMutation', () => {
 		nock( BASE ).post( '/wpcom/v2/read/saved/new' ).reply( 500, { code: 'oops' } );
 		const result = renderMutation( client, saveReadPostMutation );
 
-		await act( async () => {
-			await expect(
-				result.current.mutateAsync( { key: POST_KEY, source: SOURCE } )
-			).rejects.toBeTruthy();
-		} );
+		await mutateExpectingFailure( result, params() );
 
 		expect( getKeyIds( client ) ).toEqual( [ 'blog-100-post-1' ] );
 		expect( getKeys( client )?.total ).toBe( 1 );
@@ -168,7 +178,7 @@ describe( 'saveReadPostMutation', () => {
 			.reply( 200, { saved: true, key: POST_KEY, total: 1 } );
 		const result = renderMutation( client, saveReadPostMutation );
 
-		await act( () => result.current.mutateAsync( { key: POST_KEY, source: SOURCE } ) );
+		await act( () => result.current.mutateAsync( params() ) );
 
 		expect( request.isDone() ).toBe( true );
 	} );
@@ -182,47 +192,9 @@ describe( 'saveReadPostMutation', () => {
 			.reply( 200, { saved: true, key: POST_KEY, total: 1 } );
 		const result = renderMutation( client, saveReadPostMutation );
 
-		await act( () => result.current.mutateAsync( { key: POST_KEY, source: SOURCE } ) );
+		await act( () => result.current.mutateAsync( params() ) );
 
-		expect( client.getQueryState( readSavedKeysQuery().queryKey )?.isInvalidated ).toBe( true );
-		expect( client.getQueryState( savedStreamQueryKey )?.isInvalidated ).toBe( true );
-	} );
-
-	it( 'only invalidates after the last of several concurrent saves settles', async () => {
-		const client = newClient();
-		setKeys( client, [] );
-		const otherKey = { blog_id: 200, post_id: 2 };
-		const replies: Array< () => void > = [];
-		nock( BASE )
-			.post( '/wpcom/v2/read/saved/new' )
-			.twice()
-			.reply( ( _uri, _body, callback ) => {
-				replies.push( () => callback( null, [ 200, { saved: true, key: POST_KEY, total: 1 } ] ) );
-			} );
-		const invalidateQueries = jest.spyOn( client, 'invalidateQueries' );
-		const first = renderMutation( client, saveReadPostMutation );
-		const second = renderMutation( client, saveReadPostMutation );
-
-		let firstDone: Promise< unknown > = Promise.resolve();
-		let secondDone: Promise< unknown > = Promise.resolve();
-		act( () => {
-			firstDone = first.current.mutateAsync( { key: POST_KEY, source: SOURCE } );
-			secondDone = second.current.mutateAsync( { key: otherKey, source: SOURCE } );
-		} );
-		await waitFor( () => expect( replies ).toHaveLength( 2 ) );
-		expect( getKeyIds( client ) ).toEqual( [ 'blog-200-post-2', 'blog-100-post-1' ] );
-
-		await act( async () => {
-			replies[ 0 ]();
-			await firstDone;
-		} );
-		expect( invalidateQueries ).not.toHaveBeenCalled();
-
-		await act( async () => {
-			replies[ 1 ]();
-			await secondDone;
-		} );
-		expect( invalidateQueries ).toHaveBeenCalledTimes( 2 );
+		expect( getSavedQueriesInvalidated( client ) ).toEqual( { keys: true, stream: true } );
 	} );
 } );
 
@@ -239,7 +211,7 @@ describe( 'unsaveReadPostMutation', () => {
 			} );
 		const result = renderMutation( client, unsaveReadPostMutation );
 
-		await act( () => result.current.mutateAsync( { key: POST_KEY, source: SOURCE } ) );
+		await act( () => result.current.mutateAsync( params() ) );
 
 		expect( request.isDone() ).toBe( true );
 		expect( idsDuringRequest ).toEqual( [ 'feed-item-9000' ] );
@@ -248,23 +220,18 @@ describe( 'unsaveReadPostMutation', () => {
 
 	it( 'puts the key back where it was when the unsave fails', async () => {
 		const client = newClient();
-		const removed = entry( POST_KEY, '2026-09-01T00:00:00+00:00' );
-		setKeys( client, [ entry( FEED_ITEM_KEY ), removed, entry( { blog_id: 300, post_id: 3 } ) ] );
+		const keys = [
+			entry( FEED_ITEM_KEY ),
+			entry( POST_KEY, '2026-09-01T00:00:00+00:00' ),
+			entry( { blog_id: 300, post_id: 3 } ),
+		];
+		setKeys( client, keys );
 		nock( BASE ).post( '/wpcom/v2/read/saved/delete' ).reply( 500, { code: 'oops' } );
 		const result = renderMutation( client, unsaveReadPostMutation );
 
-		await act( async () => {
-			await expect(
-				result.current.mutateAsync( { key: POST_KEY, source: SOURCE } )
-			).rejects.toBeTruthy();
-		} );
+		await mutateExpectingFailure( result, params() );
 
-		expect( getKeys( client )?.keys ).toEqual( [
-			entry( FEED_ITEM_KEY ),
-			removed,
-			entry( { blog_id: 300, post_id: 3 } ),
-		] );
-		expect( getKeys( client )?.total ).toBe( 3 );
+		expect( getKeys( client ) ).toEqual( { keys, total: 3 } );
 	} );
 
 	it( 'invalidates the keys query and the saved stream once it settles', async () => {
@@ -276,33 +243,26 @@ describe( 'unsaveReadPostMutation', () => {
 			.reply( 200, { saved: false, key: POST_KEY, total: 0 } );
 		const result = renderMutation( client, unsaveReadPostMutation );
 
-		await act( () => result.current.mutateAsync( { key: POST_KEY, source: SOURCE } ) );
+		await act( () => result.current.mutateAsync( params() ) );
 
-		expect( client.getQueryState( readSavedKeysQuery().queryKey )?.isInvalidated ).toBe( true );
-		expect( client.getQueryState( savedStreamQueryKey )?.isInvalidated ).toBe( true );
+		expect( getSavedQueriesInvalidated( client ) ).toEqual( { keys: true, stream: true } );
 	} );
 } );
 
 describe( 'overlapping saves and unsaves', () => {
-	const OTHER_KEY = { blog_id: 200, post_id: 2 };
-
 	// Runs a mutation through the real TanStack lifecycle, with a request the
 	// test settles by hand.
-	const start = (
-		client: QueryClient,
-		factory: typeof saveReadPostMutation | typeof unsaveReadPostMutation,
-		key: ReadSavedKey
-	) => {
+	const start = ( client: QueryClient, factory: SavedWriteFactory, key: ReadSavedKey ) => {
 		let resolve!: () => void;
 		let reject!: () => void;
 		const request = new Promise< ReadSavedPostResponse >( ( res, rej ) => {
-			resolve = () => res( { saved: factory === saveReadPostMutation, key, total: 0 } );
+			resolve = () => res( { saved: true, key, total: 0 } );
 			reject = () => rej( new Error( 'Request failed' ) );
 		} );
 		const done = client
 			.getMutationCache()
 			.build( client, { ...factory( client ), mutationFn: () => request } )
-			.execute( { key, source: SOURCE } )
+			.execute( params( key ) )
 			.catch( () => undefined );
 
 		return { resolve, reject, done };
@@ -310,6 +270,24 @@ describe( 'overlapping saves and unsaves', () => {
 
 	// Lets each mutation's async `onMutate` finish before the next one starts.
 	const flush = () => new Promise( ( resolve ) => setTimeout( resolve, 0 ) );
+
+	it( 'only invalidates after the last of several concurrent writes settles', async () => {
+		const client = newClient();
+		setKeys( client, [] );
+		const invalidateQueries = jest.spyOn( client, 'invalidateQueries' );
+		const first = start( client, saveReadPostMutation, POST_KEY );
+		const second = start( client, saveReadPostMutation, OTHER_KEY );
+		await flush();
+		expect( getKeyIds( client ) ).toEqual( [ 'blog-200-post-2', 'blog-100-post-1' ] );
+
+		first.resolve();
+		await first.done;
+		expect( invalidateQueries ).not.toHaveBeenCalled();
+
+		second.resolve();
+		await second.done;
+		expect( invalidateQueries ).toHaveBeenCalledTimes( 2 );
+	} );
 
 	it( 'invalidates when concurrent writes settle in the same tick', async () => {
 		const client = newClient();
@@ -323,8 +301,7 @@ describe( 'overlapping saves and unsaves', () => {
 		second.resolve();
 		await Promise.all( [ first.done, second.done ] );
 
-		expect( client.getQueryState( readSavedKeysQuery().queryKey )?.isInvalidated ).toBe( true );
-		expect( client.getQueryState( savedStreamQueryKey )?.isInvalidated ).toBe( true );
+		expect( getSavedQueriesInvalidated( client ) ).toEqual( { keys: true, stream: true } );
 	} );
 
 	it( 'does not let an older failed save undo a newer save of the same post', async () => {

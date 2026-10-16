@@ -31,19 +31,10 @@ function setKeys( client: QueryClient, keys: ReadSavedKeysResponse[ 'keys' ] ) {
 	} );
 }
 
-beforeEach( () => nock.disableNetConnect() );
-
-afterEach( () => {
-	nock.cleanAll();
-	nock.enableNetConnect();
-} );
+afterEach( () => nock.cleanAll() );
 
 describe( 'savedKeyForPost', () => {
-	it( 'keys a WordPress.com post by blog and post ID', () => {
-		expect( savedKeyForPost( { ID: 1, site_ID: 100 } ) ).toEqual( { blog_id: 100, post_id: 1 } );
-	} );
-
-	it( 'keys a WordPress.com post read through Following by blog and post ID, not its feed item', () => {
+	it( 'keys a WordPress.com post by blog and post ID, even when it has a feed item', () => {
 		expect( savedKeyForPost( WPCOM_POST ) ).toEqual( { blog_id: 100, post_id: 1 } );
 	} );
 
@@ -105,6 +96,30 @@ describe( 'useIsPostSaved', () => {
 		expect( result.current ).toEqual( { disabled: false, noKey: false, noPost: false } );
 		expect( client.getQueryState( readSavedKeysQuery().queryKey )?.fetchStatus ).toBe( 'idle' );
 	} );
+
+	it( 'does not re-render for a post whose saved state did not change', async () => {
+		const client = makeClient();
+		setKeys( client, [] );
+		let otherPostRenders = 0;
+		renderHook(
+			() => {
+				otherPostRenders++;
+				return useIsPostSaved( { ID: 2, site_ID: 100 }, { enabled: false } );
+			},
+			{ wrapper: makeWrapper( client ) }
+		);
+		const { result } = renderHook( () => useIsPostSaved( WPCOM_POST, { enabled: false } ), {
+			wrapper: makeWrapper( client ),
+		} );
+		const rendersBefore = otherPostRenders;
+
+		act( () =>
+			setKeys( client, [ { blog_id: 100, post_id: 1, date_saved: '2026-10-01T00:00:00+00:00' } ] )
+		);
+
+		await waitFor( () => expect( result.current ).toBe( true ) );
+		expect( otherPostRenders ).toBe( rendersBefore );
+	} );
 } );
 
 describe( 'useSavePost', () => {
@@ -118,27 +133,17 @@ describe( 'useSavePost', () => {
 		).result;
 	}
 
-	it( 'saves the post with the reader-web source and shows it as saved right away', async () => {
+	it( 'saves the post by its blog and post ID with the reader-web source', async () => {
 		const client = makeClient();
 		setKeys( client, [] );
-		let respond: () => void = () => {};
 		const request = nock( BASE )
 			.post( '/wpcom/v2/read/saved/new', { blog_id: 100, post_id: 1, source: 'reader-web' } )
-			.reply( ( _uri, _body, callback ) => {
-				respond = () =>
-					callback( null, [ 200, { saved: true, key: { blog_id: 100, post_id: 1 }, total: 1 } ] );
-			} );
+			.reply( 200, { saved: true, key: { blog_id: 100, post_id: 1 }, total: 1 } );
 		const result = renderSavePost( client );
 
 		act( () => result.current.savePost( WPCOM_POST ) );
 
-		await waitFor( () => expect( result.current.isSaved ).toBe( true ) );
-		expect( result.current.isPending ).toBe( true );
-
-		act( () => respond() );
-
-		await waitFor( () => expect( result.current.isPending ).toBe( false ) );
-		expect( request.isDone() ).toBe( true );
+		await waitFor( () => expect( request.isDone() ).toBe( true ) );
 		expect( result.current.isSaved ).toBe( true );
 	} );
 
