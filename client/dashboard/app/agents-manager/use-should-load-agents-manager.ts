@@ -1,3 +1,4 @@
+import { isFullscreenRequested } from '@automattic/agents-manager/src/utils/is-fullscreen-requested';
 import { bigSkyPluginQuery, queryClient } from '@automattic/api-queries';
 import { isEnabled } from '@automattic/calypso-config';
 import { useQuery } from '@tanstack/react-query';
@@ -63,6 +64,8 @@ export default function useShouldLoadAgentsManager(
 	siteId?: number | null,
 	isMarketplace = false
 ): AgentsManagerEligibility {
+	const isFullscreen =
+		isFullscreenRequested() && isEnabled( 'calypso/agents-manager-internal' ) && !! siteId;
 	const routeEligibility = useMemo(
 		() => getAgentsManagerEligibility( currentRoute, true, isMarketplace ),
 		[ currentRoute, isMarketplace ]
@@ -70,11 +73,19 @@ export default function useShouldLoadAgentsManager(
 	const { data: pluginStatus } = useQuery(
 		{
 			...bigSkyPluginQuery( siteId ?? 0 ),
-			enabled: routeEligibility.routeIsEnabled && ! isMarketplaceRoute( currentRoute ) && !! siteId,
+			enabled:
+				! isFullscreen &&
+				routeEligibility.routeIsEnabled &&
+				! isMarketplaceRoute( currentRoute ) &&
+				!! siteId,
 			staleTime: 5 * 60 * 1000,
 		},
 		queryClient
 	);
+
+	if ( isFullscreen ) {
+		return { routeIsEnabled: true, isInternalOnly: true };
+	}
 
 	return {
 		...routeEligibility,

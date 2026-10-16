@@ -26,10 +26,11 @@ import {
 	saveSessionId,
 } from '../utils/agent-session';
 import { createAgentConfig } from '../utils/create-agent-config';
+import { isFullscreenRequested } from '../utils/is-fullscreen-requested';
 import { isReaderChatAgent } from '../utils/is-reader-chat-agent';
 import { loadExternalProviders, type LoadedProviders } from '../utils/load-external-providers';
 import { isHandoffAgent, type SessionHandoff } from '../utils/session-handoff';
-import AgentDock from './agent-dock';
+import { AgentLayout } from './agent-layout';
 import { PersistentRouter } from './persistent-router';
 import type { JSX } from 'react';
 
@@ -154,8 +155,16 @@ function AgentSetup( {
 	agentId?: string;
 	urlSessionHandoff: SessionHandoff | null;
 } ): JSX.Element | null {
-	const { site, siteKey, currentUser, sectionName, currentRoute, agentConfig, setAgentConfig } =
-		useAgentsManagerContext();
+	const {
+		site,
+		siteKey,
+		currentUser,
+		sectionName,
+		currentRoute,
+		agentConfig,
+		setAgentConfig,
+		agentRuntimeOverride,
+	} = useAgentsManagerContext();
 	const userId = currentUser?.ID;
 
 	const loadedProvidersRef = useRef< LoadedProviders | null >( null );
@@ -167,6 +176,7 @@ function AgentSetup( {
 	const navigate = useNavigate();
 	const { pathname, state: locationState } = useLocation();
 	const isNewChat = pathname.startsWith( '/chat' ) && !! locationState?.isNewChat;
+	const isSwitchSession = pathname.startsWith( '/chat' ) && !! locationState?.switchSession;
 
 	// Mirrors `AgentDock`'s visibility: with an AI entry button the chat
 	// unmounts on close, so closing must count as leaving the chat view.
@@ -174,16 +184,14 @@ function AgentSetup( {
 		const store: AgentsManagerSelect = select( AGENTS_MANAGER_STORE );
 		return store.getAgentsManagerState();
 	}, [] );
+	const { agentId, version } = useAgentConfig( hostAgentId );
+	const isFullscreen = isFullscreenRequested( agentId );
 	const hasAiChatEntry = useHasAiChatEntryButton();
-	const isChatVisible = !! isOpen || ! hasAiChatEntry;
+	const isChatVisible = isFullscreen || !! isOpen || ! hasAiChatEntry;
 
 	// Where the conversation view (and its `useConversation` fetch) is mounted;
 	// '/' only exists transiently before the catch-all redirects to the chat.
 	const isChatViewShowing = ( pathname.startsWith( '/chat' ) || pathname === '/' ) && isChatVisible;
-
-	// `?agent=` and `?version=` come from the browser URL: `PersistentRouter` is a
-	// memory router.
-	const { agentId, version } = useAgentConfig( hostAgentId );
 
 	useSessionHandoffLinks( agentId );
 
@@ -203,10 +211,10 @@ function AgentSetup( {
 	}
 
 	useWebMcpTools( {
-		toolProvider: loadedProvidersRef.current?.toolProvider,
-		scope: `${ siteKey }:${ currentRoute ?? '' }:${ window.location.pathname }${
-			window.location.search
-		}`,
+		toolProvider: agentRuntimeOverride?.toolProvider ?? loadedProvidersRef.current?.toolProvider,
+		scope:
+			agentRuntimeOverride?.url ??
+			`${ siteKey }:${ currentRoute ?? '' }:${ window.location.pathname }${ window.location.search }`,
 	} );
 
 	useEffect( () => {
@@ -231,6 +239,7 @@ function AgentSetup( {
 		}
 
 		async function initializeAgent(): Promise< void > {
+			const runtimeKey = agentRuntimeOverride?.key ?? 'host';
 			// On a scope switch (`siteKey` plus the user, which key the tab's
 			// storage), drop the previous scope's agent so its still-streaming
 			// reply can't write into this scope's session or transcript.
@@ -246,28 +255,36 @@ function AgentSetup( {
 				}
 			}
 
-			if ( isNewChat ) {
+			if ( isNewChat || isSwitchSession ) {
 				await discardAgent();
 
 				if ( isSuperseded ) {
 					return;
 				}
 
-				clearSessionId( agentId, siteKey, userId );
-				// Clear route state to prevent repeated new chat initialization
+				if ( isNewChat ) {
+					clearSessionId( agentId, siteKey, userId );
+				}
+				// Clear route state to prevent repeated session initialization.
 				navigate( '/chat', { replace: true } );
 				return;
 			}
 
 			const currentConfig = agentConfigRef.current;
 			const isSameAgent = currentConfig?.agentId === agentId;
+			const isSameRuntime = currentConfig?.runtimeKey === runtimeKey;
 			// A live agent is required to skip: after a teardown the config can
 			// still match while the agent is gone, and only a fresh config makes
 			// `useAgentChat` recreate it.
 			const hasLiveAgent = getAgentManager().hasAgent( agentId );
 
 			// Already aligned with this tab's session — nothing to initialize.
-			if ( isSameAgent && currentConfig?.sessionId === sessionId && hasLiveAgent ) {
+			if (
+				isSameAgent &&
+				isSameRuntime &&
+				currentConfig?.sessionId === sessionId &&
+				hasLiveAgent
+			) {
 				return;
 			}
 
@@ -276,8 +293,21 @@ function AgentSetup( {
 			// switches navigate first), and re-initializing would refetch and
 			// clobber the live transcript. The stored session applies on the next
 			// navigation, away or back to here.
-			if ( isSameAgent && isChatViewShowing && ! isReturningToChatView && hasLiveAgent ) {
+			if (
+				isSameAgent &&
+				isSameRuntime &&
+				isChatViewShowing &&
+				! isReturningToChatView &&
+				hasLiveAgent
+			) {
 				return;
+			}
+
+			if ( isSameAgent && ! isSameRuntime && hasLiveAgent ) {
+				await discardAgent();
+				if ( isSuperseded ) {
+					return;
+				}
 			}
 
 			let providers = loadedProvidersRef.current;
@@ -301,10 +331,11 @@ function AgentSetup( {
 				toolProvider: providers.toolProvider,
 				contextProvider: providers.contextProvider,
 				providerIds: providers.providerIds,
-				environment: sectionName || 'calypso',
+				environment: isFullscreen ? 'fullscreen' : sectionName || 'calypso',
 				agentId,
 				version,
 				onTaskUpdate: providers.onTaskUpdate,
+				runtimeOverride: agentRuntimeOverride,
 			} );
 
 			if ( isSuperseded ) {
@@ -320,10 +351,13 @@ function AgentSetup( {
 			isSuperseded = true;
 		};
 	}, [
+		agentRuntimeOverride,
 		agentId,
 		currentRoute,
 		isChatViewShowing,
 		isNewChat,
+		isSwitchSession,
+		isFullscreen,
 		handoff,
 		handoffSiteKey,
 		navigate,
@@ -344,7 +378,8 @@ function AgentSetup( {
 	}
 
 	return (
-		<AgentDock
+		<AgentLayout
+			isFullscreen={ isFullscreen }
 			emptyViewSuggestions={ emptyViewSuggestions }
 			markdownComponents={ loadedProviders.markdownComponents || {} }
 			markdownExtensions={ loadedProviders.markdownExtensions || {} }

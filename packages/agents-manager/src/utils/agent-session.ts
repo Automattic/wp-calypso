@@ -22,6 +22,9 @@ const SESSION_STORAGE_KEY = 'agents-manager-session-id';
 /** Marks a client-minted session no turn has been sent in yet. */
 const UNSENT_SESSION_KEY_PREFIX = 'agents-manager-unsent-session:';
 
+/** A tab's active session changed, including when the server assigns a new ID. */
+export const AGENT_SESSION_CHANGED_EVENT = 'agents-manager-session-changed';
+
 /** Scope placeholders for a chat with no selected site, or no logged-in user. */
 export const NO_SITE = 'no-site';
 const NO_USER = 'no-user';
@@ -96,7 +99,13 @@ export function saveSessionId(
 	userId?: string | number
 ): void {
 	try {
-		sessionStorage.setItem( getTabSessionKey( agentId, siteKey, userId ), sessionId );
+		const key = getTabSessionKey( agentId, siteKey, userId );
+		const previousSessionId = sessionStorage.getItem( key );
+		sessionStorage.setItem( key, sessionId );
+
+		if ( previousSessionId !== sessionId ) {
+			window.dispatchEvent( new CustomEvent( AGENT_SESSION_CHANGED_EVENT ) );
+		}
 	} catch ( error ) {
 		// eslint-disable-next-line no-console
 		console.error( '[agent-session] Error saving session ID:', error );
