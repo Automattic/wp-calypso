@@ -118,7 +118,7 @@ const NotePanel = ( {
 							<Heading level={ 3 } size={ 15 } weight={ 500 }>
 								{ __( 'Notifications' ) }
 							</Heading>
-							{ isSimplified && <Badge intent="informational">{ __( 'Internal' ) }</Badge> }
+							{ isSimplified && <Badge intent="informational">1.0.0-beta</Badge> }
 						</HStack>
 						<HStack justify="flex-end">
 							<NotePanelActions />
