@@ -152,6 +152,8 @@ const text = ( clientId: string, textStyle: Styles = NAVY_TEXT ): CanvasBlock =>
 	textStyle,
 } );
 
+const notesOf = ( clientIds: string[] ) => describeTextContrast( clientIds )?.notes ?? [];
+
 afterEach( () => {
 	document.body.innerHTML = '';
 	jest.resetAllMocks();
@@ -174,9 +176,12 @@ describe( 'failures', () => {
 			] ),
 		] );
 
-		expect( describeTextContrast( [ 'sect' ] ) ).toEqual( [
-			'Text contrast too low: heading (ueo8) and paragraph (qalw) — #14213D text on #1D2630, 1.04:1 (needs 4.5:1). The #1D2630 comes from group (c25n), which sets no background of its own, so the colour comes from the theme or global styles.',
-		] );
+		expect( describeTextContrast( [ 'sect' ] ) ).toEqual( {
+			notes: [
+				'Text contrast too low: heading (ueo8) and paragraph (qalw) — #14213D text on #1D2630, 1.04:1 (needs 4.5:1). The #1D2630 comes from group (c25n), which sets no background of its own, so the colour comes from the theme or global styles.',
+			],
+			failures: 2,
+		} );
 	} );
 
 	it( 'says when the backdrop is the group’s own background', () => {
@@ -190,7 +195,7 @@ describe( 'failures', () => {
 			},
 		] );
 
-		expect( describeTextContrast( [ 'c25n' ] ) ).toEqual( [
+		expect( notesOf( [ 'c25n' ] ) ).toEqual( [
 			"Text contrast too low: paragraph (qalw) — #14213D text on #1D2630, 1.04:1 (needs 4.5:1). The #1D2630 comes from group (c25n)'s own background.",
 		] );
 	} );
@@ -198,7 +203,7 @@ describe( 'failures', () => {
 	it( 'says when nothing paints the backdrop, and rounds a ratio just short of the threshold down', () => {
 		mountCanvas( [ text( 'grey', GREY_TEXT ) ] );
 
-		expect( describeTextContrast( [ 'grey' ] ) ).toEqual( [
+		expect( notesOf( [ 'grey' ] ) ).toEqual( [
 			'Text contrast too low: paragraph (grey) — #777777 text on #FFFFFF, 4.47:1 (needs 4.5:1). The #FFFFFF comes from the page background.',
 		] );
 	} );
@@ -221,7 +226,7 @@ describe( 'failures', () => {
 			] ),
 		] );
 
-		expect( describeTextContrast( [ 'sect' ] ) ).toEqual( [
+		expect( notesOf( [ 'sect' ] ) ).toEqual( [
 			'Text contrast too low: paragraph (qalw) — #565654 text on #7A7875, 1.67:1 (needs 4.5:1). The #7A7875 comes from group (tint), which sets no background of its own, so the colour comes from the theme or global styles.',
 		] );
 	} );
@@ -236,7 +241,7 @@ describe( 'failures', () => {
 			text( 'body', { color: mid, fontSize: '19px' } ),
 		] );
 
-		expect( describeTextContrast( [ 'big', 'bold', 'body' ] ) ).toEqual( [
+		expect( notesOf( [ 'big', 'bold', 'body' ] ) ).toEqual( [
 			expect.stringMatching(
 				/^Text contrast too low: paragraph \(body\) — #828282 text on #FFFFFF, 3\.84:1 \(needs 4\.5:1\)/
 			),
@@ -261,7 +266,7 @@ describe( 'failures', () => {
 			},
 		] );
 
-		expect( describeTextContrast( [ 'c25n' ] ) ).toEqual( [
+		expect( notesOf( [ 'c25n' ] ) ).toEqual( [
 			expect.stringContaining(
 				'heading (ueo8) and paragraph (qalw) — #14213D text on #1D2630, 1.04:1 (needs 4.5:1).'
 			),
@@ -279,7 +284,7 @@ describe( 'failures', () => {
 			},
 		] );
 
-		const notes = describeTextContrast( [ 'grey', 'c25n' ] );
+		const notes = notesOf( [ 'grey', 'c25n' ] );
 
 		expect( notes ).toHaveLength( 2 );
 		expect( notes[ 0 ] ).toMatch(
@@ -296,9 +301,18 @@ it( 'says all the edited text passes when it does', () => {
 		] ),
 	] );
 
-	expect( describeTextContrast( [ 'sect' ] ) ).toEqual( [
-		'Text contrast: all 1 edited text block(s) measure at least 4.5:1 (3:1 for large text) against what renders behind them.',
-	] );
+	expect( describeTextContrast( [ 'sect' ] ) ).toEqual( {
+		notes: [
+			'Text contrast: all 1 edited text block(s) measure at least 4.5:1 (3:1 for large text) against what renders behind them.',
+		],
+		failures: 0,
+	} );
+} );
+
+it( 'gives no count when there is no text to measure', () => {
+	mountCanvas( [ { clientId: 'spacer', name: 'core/spacer' } ] );
+
+	expect( describeTextContrast( [ 'spacer' ] ) ).toBeNull();
 } );
 
 it( 'says nothing of a block the canvas does not display', () => {
@@ -311,7 +325,7 @@ it( 'says nothing of a block the canvas does not display', () => {
 		},
 	] );
 
-	expect( describeTextContrast( [ 'gone' ] ) ).toEqual( [] );
+	expect( notesOf( [ 'gone' ] ) ).toEqual( [] );
 } );
 
 describe( 'text it cannot measure', () => {
@@ -327,7 +341,10 @@ describe( 'text it cannot measure', () => {
 			},
 		] );
 
-		expect( describeTextContrast( [ 'cover' ] ) ).toEqual( [ UNMEASURED_ONE ] );
+		expect( describeTextContrast( [ 'cover' ] ) ).toEqual( {
+			notes: [ UNMEASURED_ONE ],
+			failures: null,
+		} );
 	} );
 
 	it( 'leaves text over a cover’s overlay to the picture, rather than reading the page behind it', () => {
@@ -345,7 +362,7 @@ describe( 'text it cannot measure', () => {
 			},
 		] );
 
-		expect( describeTextContrast( [ 'cover' ] ) ).toEqual( [ UNMEASURED_ONE ] );
+		expect( notesOf( [ 'cover' ] ) ).toEqual( [ UNMEASURED_ONE ] );
 	} );
 
 	it( 'leaves text over a positioned image to the picture', () => {
@@ -362,7 +379,7 @@ describe( 'text it cannot measure', () => {
 			},
 		] );
 
-		expect( describeTextContrast( [ 'cover' ] ) ).toEqual( [ UNMEASURED_ONE ] );
+		expect( notesOf( [ 'cover' ] ) ).toEqual( [ UNMEASURED_ONE ] );
 	} );
 
 	it( 'leaves text over a painted pseudo-element to the picture', () => {
@@ -381,7 +398,7 @@ describe( 'text it cannot measure', () => {
 			},
 		] );
 
-		expect( describeTextContrast( [ 'band' ] ) ).toEqual( [ UNMEASURED_ONE ] );
+		expect( notesOf( [ 'band' ] ) ).toEqual( [ UNMEASURED_ONE ] );
 	} );
 
 	it( 'leaves faded text to the picture', () => {
@@ -394,13 +411,13 @@ describe( 'text it cannot measure', () => {
 			},
 		] );
 
-		expect( describeTextContrast( [ 'faded' ] ) ).toEqual( [ UNMEASURED_ONE ] );
+		expect( notesOf( [ 'faded' ] ) ).toEqual( [ UNMEASURED_ONE ] );
 	} );
 
 	it( 'leaves a colour it cannot read to the picture', () => {
 		mountCanvas( [ { ...text( 'ueo8' ), textComputed: { color: 'oklch(0.5 0.1 200)' } } ] );
 
-		expect( describeTextContrast( [ 'ueo8' ] ) ).toEqual( [ UNMEASURED_ONE ] );
+		expect( notesOf( [ 'ueo8' ] ) ).toEqual( [ UNMEASURED_ONE ] );
 	} );
 } );
 
@@ -414,7 +431,7 @@ describe( 'what counts as text', () => {
 			},
 		] );
 
-		expect( describeTextContrast( [ 'fb' ] ) ).toEqual( [] );
+		expect( notesOf( [ 'fb' ] ) ).toEqual( [] );
 	} );
 
 	it( 'skips the editor’s own interface inside a block', () => {
@@ -432,7 +449,7 @@ describe( 'what counts as text', () => {
 			},
 		] );
 
-		expect( describeTextContrast( [ 'img' ] ) ).toEqual( [] );
+		expect( notesOf( [ 'img' ] ) ).toEqual( [] );
 	} );
 
 	it( 'measures the first visible text, past text that is hidden', () => {
@@ -455,7 +472,7 @@ describe( 'what counts as text', () => {
 			},
 		] );
 
-		expect( describeTextContrast( [ 'c25n' ] ) ).toEqual( [
+		expect( notesOf( [ 'c25n' ] ) ).toEqual( [
 			'Text contrast: all 1 edited text block(s) measure at least 4.5:1 (3:1 for large text) against what renders behind them.',
 		] );
 	} );
@@ -477,7 +494,7 @@ describe( 'overlays', () => {
 	it( 'still measures text clear of a positioned shape', () => {
 		mountCanvas( [ groupWithBadge( { top: 0, left: 900, width: 40, height: 40 } ) ] );
 
-		expect( describeTextContrast( [ 'c25n' ] ) ).toEqual( [
+		expect( notesOf( [ 'c25n' ] ) ).toEqual( [
 			expect.stringMatching(
 				/^Text contrast too low: paragraph \(qalw\) — #14213D text on #1D2630/
 			),
@@ -487,7 +504,7 @@ describe( 'overlays', () => {
 	it( 'leaves text under a positioned shape to the picture', () => {
 		mountCanvas( [ groupWithBadge( { top: 90, left: 0, width: 40, height: 40 } ) ] );
 
-		expect( describeTextContrast( [ 'c25n' ] ) ).toEqual( [ UNMEASURED_ONE ] );
+		expect( notesOf( [ 'c25n' ] ) ).toEqual( [ UNMEASURED_ONE ] );
 	} );
 } );
 
@@ -504,7 +521,7 @@ describe( 'limits', () => {
 			},
 		] );
 
-		const notes = describeTextContrast( [ 'c25n' ] );
+		const notes = notesOf( [ 'c25n' ] );
 
 		expect( notes ).toHaveLength( 4 );
 		notes.forEach( ( note ) => expect( note ).toMatch( /^Text contrast too low/ ) );
@@ -515,7 +532,7 @@ describe( 'limits', () => {
 			section( Array.from( { length: 41 }, ( _, index ) => text( `p${ index }` ) ) ),
 		] );
 
-		expect( describeTextContrast( [ 'sect' ] ) ).toEqual( [] );
+		expect( notesOf( [ 'sect' ] ) ).toEqual( [] );
 	} );
 
 	it( 'claims no pass for all the text when the walk stopped short of some blocks', () => {
@@ -526,7 +543,7 @@ describe( 'limits', () => {
 
 		mountCanvas( [ section( [ text( 'first' ), ...spacers, text( 'last' ) ] ) ] );
 
-		expect( describeTextContrast( [ 'sect' ] ) ).toEqual( [] );
+		expect( notesOf( [ 'sect' ] ) ).toEqual( [] );
 	} );
 
 	it( 'notes what passed and what it could not measure together', () => {
@@ -542,7 +559,7 @@ describe( 'limits', () => {
 			] ),
 		] );
 
-		expect( describeTextContrast( [ 'sect' ] ) ).toEqual( [
+		expect( notesOf( [ 'sect' ] ) ).toEqual( [
 			'Text contrast: all 1 edited text block(s) measure at least 4.5:1 (3:1 for large text) against what renders behind them.',
 			UNMEASURED_ONE,
 		] );
