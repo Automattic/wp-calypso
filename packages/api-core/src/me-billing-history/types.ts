@@ -169,8 +169,6 @@ export interface Receipt {
 	cc_num: string;
 	cc_name: string;
 	cc_email: string;
-	/** @deprecated Do not use. */
-	credit: string;
 	items: ReceiptItem[];
 	tax_vendor_info?: TaxVendorInfo;
 	/**
