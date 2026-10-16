@@ -23,7 +23,7 @@ export interface OmnibarNode {
 
 export type OmnibarNodeBuilders = Record<
 	string,
-	( adminBarNode: AdminBarNode ) => Partial< OmnibarNode >
+	( adminBarNode: AdminBarNode ) => Partial< OmnibarNode > | null
 >;
 
 export type OmnibarHrefResolver = ( href: string ) => string;

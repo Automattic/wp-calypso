@@ -7,7 +7,7 @@ import {
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { check, chevronLeft, Icon } from '@wordpress/icons';
+import { chevronLeft } from '@wordpress/icons';
 import { useState } from 'react';
 import { useAnalytics } from '../../../app/analytics';
 import { useAuth } from '../../../app/auth';
@@ -98,7 +98,12 @@ export default function ReferralCheckout() {
 
 	return (
 		<div className="referral-checkout">
-			<HStack className="referral-checkout__top-bar" justify="flex-start" spacing={ 6 }>
+			<HStack
+				className="referral-checkout__top-bar"
+				justify="flex-start"
+				spacing={ 6 }
+				expanded={ false }
+			>
 				<AutomatticLogo width={ 183 } height={ 40 } />
 				<RouterLinkButton to={ backTo } variant="link" icon={ chevronLeft }>
 					{ __( 'Back' ) }
@@ -107,14 +112,9 @@ export default function ReferralCheckout() {
 			{ notice ?? (
 				<div className="referral-checkout__body">
 					<VStack className="referral-checkout__main" spacing={ 6 }>
-						<HStack spacing={ 3 } justify="flex-start" alignment="center" expanded={ false }>
-							<span className="referral-checkout__title-check">
-								<Icon icon={ check } size={ 24 } />
-							</span>
-							<Heading level={ 1 } size={ 28 } weight={ 500 }>
-								{ __( 'Request client payment' ) }
-							</Heading>
-						</HStack>
+						<Heading level={ 1 } size={ 28 } weight={ 500 }>
+							{ __( 'Request client payment' ) }
+						</Heading>
 						{ isFreeOnly ? (
 							<Notice variant="info">
 								{ __(

@@ -7,6 +7,10 @@ import store from 'store';
 import { notFound } from 'calypso/controller';
 import { login } from 'calypso/lib/paths';
 import {
+	LEGACY_LAUNCH_SITE_FLOW,
+	getLegacyLaunchSiteRedirect,
+} from 'calypso/lib/signup/legacy-launch-site-flow';
+import {
 	getLegacyPlanFlowRedirect,
 	shouldRedirectLegacyPlanFlow,
 } from 'calypso/lib/signup/legacy-plan-flows';
@@ -110,14 +114,25 @@ export default {
 	// The server redirect only sees hard navigations; `/start` is also a client route, so an
 	// in-app link reaches this router instead. Runs before anything touches signup state so
 	// the hand-off to Stepper leaves nothing half-written behind.
-	redirectLegacyPlanFlow( context, next ) {
+	redirectLegacyFlow( context, next ) {
 		const { flowName, lang } = context.params;
 
-		if ( ! shouldRedirectLegacyPlanFlow( flowName ) ) {
-			return next();
+		if ( shouldRedirectLegacyPlanFlow( flowName ) ) {
+			window.location.replace( getLegacyPlanFlowRedirect( flowName, context.query, lang ) );
+			return;
 		}
 
-		window.location.replace( getLegacyPlanFlowRedirect( flowName, context.query, lang ) );
+		if ( flowName === LEGACY_LAUNCH_SITE_FLOW ) {
+			// The legacy flow fell back to the stored site when the query had none.
+			const siteSlug =
+				context.query?.siteSlug || getSignupDependencyStore( context.store.getState() )?.siteSlug;
+			window.location.replace(
+				getLegacyLaunchSiteRedirect( { ...context.query, ...( siteSlug && { siteSlug } ) } )
+			);
+			return;
+		}
+
+		next();
 	},
 
 	async redirectToFlow( context, next ) {

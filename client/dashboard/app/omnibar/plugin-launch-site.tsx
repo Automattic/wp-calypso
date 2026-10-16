@@ -1,10 +1,10 @@
-import { __ } from '@wordpress/i18n';
+import { parseAdminBarTitle } from '@automattic/omnibar';
 import { useSiteLaunch } from '../../sites/site-launch-button/use-site-launch';
 import { dashboardLinkWithBackport } from '../../utils/link';
 import { useAnalytics } from '../analytics';
 import { useAppContext } from '../context';
 import type { Site } from '@automattic/api-core';
-import type { OmnibarNode } from '@automattic/omnibar';
+import type { AdminBarNode, OmnibarNode } from '@automattic/omnibar';
 
 import './plugin-launch-site.scss';
 
@@ -23,8 +23,8 @@ function LaunchRocketIcon() {
 
 const NO_SITE = { ID: 0, slug: '', name: '' } as Site;
 
-export function useLaunchSitePlugin( { site }: { site?: Site } ): {
-	node?: OmnibarNode;
+export function useLaunchSiteNodeBuilder( { site }: { site?: Site } ): {
+	nodeBuilder: ( adminBarNode: AdminBarNode ) => Partial< OmnibarNode > | null;
 	panel?: React.ReactNode;
 } {
 	const { queries } = useAppContext();
@@ -47,22 +47,20 @@ export function useLaunchSitePlugin( { site }: { site?: Site } ): {
 			recordTracksEvent,
 		} );
 
-	if ( ! isLaunchable ) {
-		return {};
-	}
-
 	const disabled = isLoading || isExperimentLoading || isDisabled || isBusy;
 
 	return {
-		node: {
-			id: 'launch-site',
-			title: __( 'Launch site' ),
-			icon: <LaunchRocketIcon />,
-			className: 'omnibar__launch-site color-scheme is-global',
-			disabled,
-			href,
-			onClick,
-		},
-		panel: modal,
+		nodeBuilder: ( adminBarNode ) =>
+			isLaunchable
+				? {
+						title: parseAdminBarTitle( adminBarNode ).text,
+						icon: <LaunchRocketIcon />,
+						className: 'omnibar__launch-site color-scheme is-global',
+						disabled,
+						href,
+						onClick,
+					}
+				: null,
+		panel: isLaunchable ? modal : undefined,
 	};
 }

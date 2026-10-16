@@ -80,7 +80,7 @@ describe( 'DifmOfferBanner', () => {
 	} );
 
 	test( 'renders the variation copy for an eligible assigned user', () => {
-		mockOffer( { isEligible: true, isLoading: false, variation: 'treatment' } );
+		mockOffer( { isEligible: true, isLoading: false, variation: 'no_time_to_build' } );
 		renderBanner();
 
 		expect( screen.getByText( 'No time to build your site?' ) ).toBeVisible();
@@ -95,7 +95,7 @@ describe( 'DifmOfferBanner', () => {
 	} );
 
 	test( 'gives the CTA no destination', () => {
-		mockOffer( { isEligible: true, isLoading: false, variation: 'treatment' } );
+		mockOffer( { isEligible: true, isLoading: false, variation: 'no_time_to_build' } );
 		renderBanner();
 
 		const cta = screen.getByRole( 'button', { name: 'See the offer' } );
@@ -103,14 +103,14 @@ describe( 'DifmOfferBanner', () => {
 	} );
 
 	test( 'records the impression and click with the variation', async () => {
-		mockOffer( { isEligible: true, isLoading: false, variation: 'treatment' } );
+		mockOffer( { isEligible: true, isLoading: false, variation: 'no_time_to_build' } );
 		renderBanner();
 
 		const expectedProperties = expect.objectContaining( {
 			cta_name: 'themes-difm-offer',
 			upsell_id: 'themes-difm-offer',
 			upsell_feature_id: 'difm-offer',
-			variation: 'treatment',
+			variation: 'no_time_to_build',
 		} );
 
 		expect( recordTracksEvent ).toHaveBeenCalledWith(
@@ -127,7 +127,7 @@ describe( 'DifmOfferBanner', () => {
 	} );
 
 	test( 'records a hover on the banner with the location', () => {
-		mockOffer( { isEligible: true, isLoading: false, variation: 'treatment' } );
+		mockOffer( { isEligible: true, isLoading: false, variation: 'no_time_to_build' } );
 		const { container } = renderBanner();
 		jest.useFakeTimers();
 
@@ -140,12 +140,12 @@ describe( 'DifmOfferBanner', () => {
 		expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_difm_offer_banner_hover', {
 			upsell_id: 'themes-difm-offer',
 			upsell_feature_id: 'difm-offer',
-			variation: 'treatment',
+			variation: 'no_time_to_build',
 		} );
 	} );
 
 	test( 'opens the offer modal and records its events with the Themes source', async () => {
-		mockOffer( { isEligible: true, isLoading: false, variation: 'treatment' } );
+		mockOffer( { isEligible: true, isLoading: false, variation: 'no_time_to_build' } );
 		renderBanner();
 
 		await userEvent.click( screen.getByRole( 'button', { name: 'See the offer' } ) );
@@ -156,14 +156,14 @@ describe( 'DifmOfferBanner', () => {
 		expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_dashboard_upsell_impression', {
 			path: '/themes/:site',
 			source: 'themes',
-			variation: 'treatment',
+			variation: 'no_time_to_build',
 			upsell_id: 'difm-offer-modal',
 			upsell_feature_id: 'difm-offer',
 		} );
 	} );
 
 	test( 'saves the dismissal and hides the banner when closed', async () => {
-		mockOffer( { isEligible: true, isLoading: false, variation: 'treatment' } );
+		mockOffer( { isEligible: true, isLoading: false, variation: 'no_time_to_build' } );
 		const { container } = renderBanner();
 
 		await userEvent.click( container.querySelector( '.banner__close-icon' ) as Element );
@@ -176,7 +176,7 @@ describe( 'DifmOfferBanner', () => {
 	} );
 
 	test( 'records the dismissal with the variation', async () => {
-		mockOffer( { isEligible: true, isLoading: false, variation: 'treatment' } );
+		mockOffer( { isEligible: true, isLoading: false, variation: 'no_time_to_build' } );
 		const { container } = renderBanner();
 
 		await userEvent.click( container.querySelector( '.banner__close-icon' ) as Element );
@@ -187,13 +187,13 @@ describe( 'DifmOfferBanner', () => {
 				cta_name: 'themes-difm-offer',
 				upsell_id: 'themes-difm-offer',
 				upsell_feature_id: 'difm-offer',
-				variation: 'treatment',
+				variation: 'no_time_to_build',
 			} )
 		);
 	} );
 
 	test( 'renders nothing once dismissed', () => {
-		mockOffer( { isEligible: true, isLoading: false, variation: 'treatment' } );
+		mockOffer( { isEligible: true, isLoading: false, variation: 'no_time_to_build' } );
 		const { container } = renderBanner( SITE_ID, {
 			remoteValues: { [ DISMISSED_PREFERENCE ]: '2026-10-08T00:00:00.000Z' },
 		} );
@@ -201,7 +201,7 @@ describe( 'DifmOfferBanner', () => {
 	} );
 
 	test( 'renders nothing while preferences load', () => {
-		mockOffer( { isEligible: true, isLoading: false, variation: 'treatment' } );
+		mockOffer( { isEligible: true, isLoading: false, variation: 'no_time_to_build' } );
 		const { container } = renderBanner( SITE_ID, { remoteValues: null } );
 		expect( container ).toBeEmptyDOMElement();
 	} );
@@ -213,25 +213,25 @@ describe( 'DifmOfferBanner', () => {
 	} );
 
 	test( 'renders nothing for an ineligible user', () => {
-		mockOffer( { isEligible: false, isLoading: false, variation: 'treatment' } );
+		mockOffer( { isEligible: false, isLoading: false, variation: 'no_time_to_build' } );
 		const { container } = renderBanner();
 		expect( container ).toBeEmptyDOMElement();
 	} );
 
 	test( 'renders nothing while the assignment loads', () => {
-		mockOffer( { isEligible: true, isLoading: true, variation: 'treatment' } );
+		mockOffer( { isEligible: true, isLoading: true, variation: 'no_time_to_build' } );
 		const { container } = renderBanner();
 		expect( container ).toBeEmptyDOMElement();
 	} );
 
 	test( 'renders nothing while the upsell card shows', () => {
-		mockOffer( { isEligible: true, isLoading: false, variation: 'treatment' } );
+		mockOffer( { isEligible: true, isLoading: false, variation: 'no_time_to_build' } );
 		const { container } = renderBanner( SITE_ID, { upsellCardDisplayed: true } );
 		expect( container ).toBeEmptyDOMElement();
 	} );
 
 	test( 'renders nothing without a selected site', () => {
-		mockOffer( { isEligible: true, isLoading: false, variation: 'treatment' } );
+		mockOffer( { isEligible: true, isLoading: false, variation: 'no_time_to_build' } );
 		const { container } = renderBanner( null );
 		expect( container ).toBeEmptyDOMElement();
 	} );
