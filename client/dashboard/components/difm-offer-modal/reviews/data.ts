@@ -28,6 +28,7 @@ export function getDifmOfferReviews(): DifmOfferReview[] {
 				'The designers listened to what I was looking for in a site and then took that and created a beautiful professional website in lightning fast speed! Thank you so much!'
 			),
 			reviewer: 'Michelle Hennesay',
+			url: 'https://www.trustpilot.com/reviews/69fddff112c8c3941b0edfb4',
 		},
 		{
 			id: 'jennifer-board',
@@ -51,6 +52,7 @@ export function getDifmOfferReviews(): DifmOfferReview[] {
 				"The Express Website Design Team did a great job designing a professional website I can take pride in. They used the content I provided and integrated it with the design seamlessly. What's more, the site was completed within a week of handing off the copy and artwork to them. Very impressive!"
 			),
 			reviewer: 'Steve Sonn',
+			url: 'https://www.trustpilot.com/reviews/6a31a275989f28ce4d1e55b1',
 		},
 		{
 			id: 'pablo',
