@@ -147,6 +147,18 @@ it( 'keeps links inert even when page CSS or re-parsed markup re-enables them', 
 	}
 } );
 
+it( 'keeps dropped elements out when the frame re-parses the output', () => {
+	const output = htmlPreviewDocument(
+		`<html><body><h1>Hello</h1><form><math><mtext></form><form><mglyph><style></math>
+		<img src="https://other.example/image"><meta http-equiv="refresh" content="0;url=https://other.example">
+		<iframe srcdoc="unsafe"></iframe><link rel="preconnect" href="https://other.example">`
+	);
+	const doc = new DOMParser().parseFromString( output, 'text/html' );
+	expect( doc.querySelector( 'h1' )?.textContent ).toBe( 'Hello' );
+	expect( doc.querySelector( 'img, iframe, link, meta[http-equiv=refresh]' ) ).toBeNull();
+	expect( '<!doctype html>' + doc.documentElement.outerHTML ).toBe( output );
+} );
+
 it( 'renders authored markup inert while dropping what loads or redirects', () => {
 	const output = htmlPreviewDocument( `<!doctype html><html><head>
 		<meta http-equiv="refresh" content="0;url=https://other.example">

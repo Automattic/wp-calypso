@@ -99,18 +99,13 @@ function rewriteCssAssets(
 
 // Generated markup is untrusted. The boundary is the frame: its sandbox and CSP
 // allow no script, network or popups, and the inert body stops clicks and keys
-// from navigating it. Dropping elements is not a boundary, since markup that
-// changes meaning when re-parsed can bring them back; it only removes what would
-// change how the page renders or fight the asset rewriting.
+// from navigating it. Dropping only removes what would change how the page
+// renders or fight the asset rewriting.
 const DROPPED_ELEMENTS = 'script, meta, base, link, noscript, template, iframe, object, embed';
 const DROPPED_ATTRIBUTES = [ 'nonce', 'srcset', 'sizes' ];
+const MAX_DROP_PASSES = 4;
 
-/** Keep generated markup isolated; only registered preview assets may load. */
-export function htmlPreviewDocument(
-	html: string,
-	assets: PreviewAssets = {},
-	preserveImageSlots = false
-): string {
+function parseWithoutDropped( html: string ): Document {
 	const root = new DOMParser().parseFromString( html, 'text/html' );
 	root.querySelectorAll( DROPPED_ELEMENTS ).forEach( ( node ) => node.remove() );
 	for ( const element of root.querySelectorAll( '*' ) ) {
@@ -119,6 +114,36 @@ export function htmlPreviewDocument(
 			element.removeAttribute( 'src' );
 		}
 	}
+	return root;
+}
+
+/**
+ * Markup that changes meaning when re-parsed can bring dropped elements back
+ * once the frame parses the output, so drop until the result re-parses to the
+ * same tree. Markup that never settles renders as an empty page.
+ */
+function settledWithoutDropped( html: string ): Document {
+	let markup = html;
+	for ( let pass = 0; pass < MAX_DROP_PASSES; pass++ ) {
+		const root = parseWithoutDropped( markup );
+		const output = root.documentElement.outerHTML;
+		if (
+			new DOMParser().parseFromString( output, 'text/html' ).documentElement.outerHTML === output
+		) {
+			return root;
+		}
+		markup = output;
+	}
+	return new DOMParser().parseFromString( '', 'text/html' );
+}
+
+/** Keep generated markup isolated; only registered preview assets may load. */
+export function htmlPreviewDocument(
+	html: string,
+	assets: PreviewAssets = {},
+	preserveImageSlots = false
+): string {
+	const root = settledWithoutDropped( html );
 	for ( const image of root.querySelectorAll( 'img' ) ) {
 		const asset = assets[ image.getAttribute( 'src' ) ?? '' ];
 		if ( ! asset || ! IMAGE_MIMES.includes( asset.mime_type ) ) {
