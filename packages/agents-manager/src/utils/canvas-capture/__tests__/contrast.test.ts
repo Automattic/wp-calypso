@@ -527,6 +527,19 @@ describe( 'text it cannot measure', () => {
 		expect( notesOf( [ 'altered' ] ) ).toEqual( [ UNMEASURED_ONE ] );
 	} );
 
+	it( 'reads the text fill colour the glyphs are painted in, over `color`', () => {
+		mountCanvas( [
+			{
+				...text( 'fill', { color: 'rgb(0, 0, 0)', fontSize: '16px' } ),
+				textComputed: { webkitTextFillColor: 'rgb(255, 255, 255)' },
+			},
+		] );
+
+		expect( notesOf( [ 'fill' ] ) ).toEqual( [
+			'Text contrast too low: paragraph (fill) — #FFFFFF text on #FFFFFF, 1:1 (needs 4.5:1). The #FFFFFF comes from the page background.',
+		] );
+	} );
+
 	it( 'leaves a colour it cannot read to the picture', () => {
 		mountCanvas( [ { ...text( 'ueo8' ), textComputed: { color: 'oklch(0.5 0.1 200)' } } ] );
 
