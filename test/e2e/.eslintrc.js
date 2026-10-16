@@ -37,5 +37,7 @@ module.exports = {
 		...nodeConfig.rules,
 
 		'jsdoc/tag-lines': [ 'off' ],
+		// Playwright fixtures name their callback `use`, which this rule mistakes for React's `use` hook.
+		'react-hooks/rules-of-hooks': 'off',
 	},
 };

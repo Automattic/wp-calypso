@@ -198,11 +198,12 @@ function getReaderConfig( options = {} ) {
 			...webpackConfig.resolve,
 			alias: {
 				...( webpackConfig.resolve?.alias || {} ),
-				// Share one Smooch instance across bundles (see smooch-shim.js).
-				smooch$: path.join( __dirname, '../../build-tools/webpack/smooch-shim.js' ),
 				// Keep libvips' inlined WASM out of the frontend bundle. See
 				// reader-chat-vips-stub.js.
 				'@wordpress/vips/worker$': path.join( __dirname, 'reader-chat-vips-stub.js' ),
+				// Keep the Zendesk client and Smooch out of the frontend bundle. See
+				// reader-chat-zendesk-client-stub.js.
+				'@automattic/zendesk-client$': path.join( __dirname, 'reader-chat-zendesk-client-stub.js' ),
 				'../agent-history': path.join( __dirname, 'reader-chat-route-stub.js' ),
 				'../support-guide': path.join( __dirname, 'reader-chat-route-stub.js' ),
 				'../zendesk-chat': path.join( __dirname, 'reader-chat-route-stub.js' ),

@@ -1,4 +1,5 @@
 import type {
+	Message,
 	PendingClientTools,
 	ToolResultInput,
 	TurnToolCall,
@@ -23,11 +24,11 @@ export const INTERRUPTED_TOOL_RESULT = {
  * @param pending The calls the server reports the turn is waiting on.
  */
 export function buildToolCallResume( pending: PendingClientTools ): {
-	results: ToolResultInput[];
+	toolResults: ToolResultInput[];
 	turnToolCalls: TurnToolCall[];
 } {
 	return {
-		results: pending.calls.map( ( { toolCallId, toolId } ) => ( {
+		toolResults: pending.calls.map( ( { toolCallId, toolId } ) => ( {
 			toolCallId,
 			toolId,
 			result: INTERRUPTED_TOOL_RESULT,
@@ -38,4 +39,19 @@ export function buildToolCallResume( pending: PendingClientTools ): {
 			arguments: args,
 		} ) ),
 	};
+}
+
+/**
+ * Whether a resume brought a reply: a new agent message with text. The send
+ * rewrites history (drops stale results), so a reply is a message it did not have.
+ * @param messageIdsBefore The ids of the messages in history before the resume.
+ * @param history          The conversation history after the resume.
+ */
+export function hasNewAgentReply( messageIdsBefore: Set< string >, history: Message[] ): boolean {
+	return history.some(
+		( message ) =>
+			! messageIdsBefore.has( message.messageId ) &&
+			message.role === 'agent' &&
+			message.parts.some( ( part ) => part.type === 'text' && part.text.trim() )
+	);
 }

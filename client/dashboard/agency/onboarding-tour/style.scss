@@ -6,6 +6,9 @@
 // The modal's own content padding with its header hidden; the drawing pulls into it.
 $modal-padding: $grid-unit-30;
 
+$close-size: $button-size;
+$close-inset: $grid-unit-10;
+
 // The tour fills the modal edge to edge, as in the design: our own grid pulls into the modal's
 // padding on every side instead of changing it. The modal hugs its content, so the grid's
 // width is the modal's, as in the design: 220px of sections and 480px of content.
@@ -21,7 +24,12 @@ $modal-padding: $grid-unit-30;
 	}
 }
 
+// The section list stays in view while a long section scrolls: it takes its own height and
+// sticks over the modal's own padding at the top.
 .a4a-onboarding-tour-aside {
+	position: sticky;
+	inset-block-start: -$modal-padding;
+	align-self: start;
 	padding: 16px 12px;
 }
 
@@ -37,26 +45,29 @@ $modal-padding: $grid-unit-30;
 	padding: $modal-padding;
 }
 
+// Stays in the corner while a long section scrolls; it takes no height, so the field still
+// starts at the top.
+.a4a-onboarding-tour-close {
+	position: sticky;
+	inset-block-start: -$modal-padding;
+	z-index: 1;
+	display: flex;
+	justify-content: flex-end;
+	block-size: 0;
+	padding-inline-end: $close-inset;
+	translate: 0 $close-inset;
+}
+
 // The field behind every drawing: a soft glow in the A4A blues (set inline) under a grain
-// tile. The close button sits in its corner, in front: the field is its own stacking context
-// and the drawing layers sit behind its content.
+// tile. The field is its own stacking context, so the drawing layers sit behind it.
 .a4a-onboarding-tour-field {
 	position: relative;
-	display: flex;
-	align-items: flex-start;
-	justify-content: flex-end;
 	overflow: hidden;
 	isolation: isolate;
 	block-size: 200px;
-	padding: 8px;
 	background-color: var( --dashboard-marketplace-referral__tint-color );
 	background-position: center;
 	background-size: cover;
-
-	// The only rounded corner is the modal's own.
-	@include break-small {
-		border-start-end-radius: $radius-large;
-	}
 
 	@include break-medium {
 		block-size: 260px;
@@ -100,6 +111,7 @@ $modal-padding: $grid-unit-30;
 // screen readers and the tab order too.
 .a4a-onboarding-tour-slides {
 	display: grid;
+	padding-inline-end: $close-inset * 2 + $close-size - $modal-padding;
 }
 
 .a4a-onboarding-tour-slide {
@@ -109,6 +121,20 @@ $modal-padding: $grid-unit-30;
 	&.is-current {
 		visibility: visible;
 	}
+}
+
+// The buttons stay in view when the modal is too short for the whole section and scrolls,
+// set apart by a line. The row reaches the panel's edges and takes the place of the content's
+// padding below; it sticks over the modal's own padding so no text shows under it.
+.a4a-onboarding-tour-actions {
+	position: sticky;
+	inset-block-end: -$modal-padding;
+	margin-block: 0 ( -$modal-padding );
+	margin-inline: ( -$modal-padding );
+	padding-block: 16px $modal-padding;
+	padding-inline: $modal-padding;
+	border-block-start: 1px solid $gray-100;
+	background-color: $white;
 }
 
 .a4a-onboarding-tour-button-label {

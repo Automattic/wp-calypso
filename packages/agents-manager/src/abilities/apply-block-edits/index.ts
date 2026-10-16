@@ -39,10 +39,6 @@ export const applyBlockEditsAbility: Ability = {
 				description:
 					'Deprecated. This tool always returns to the agent with a success or error message.',
 			},
-			suppressAssistantMessage: {
-				type: 'boolean',
-				description: 'Whether to suppress assistant message',
-			},
 			visualCheckPending: {
 				type: 'boolean',
 				description:

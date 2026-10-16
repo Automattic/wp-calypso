@@ -830,10 +830,15 @@ export const useManagedZendeskChat = ( {
 		isLoadingConversation: isSettingUpSmooch || ! conversation,
 		hasInteractionEnded: hasCSAT,
 		onTypingStatusChange: ( typingStatus: boolean ) => {
+			// Without an id, Smooch signals whichever conversation it loaded last.
+			if ( ! conversation?.id ) {
+				return;
+			}
+
 			if ( typingStatus ) {
-				Smooch?.startTyping( conversation?.id );
+				Smooch?.startTyping( conversation.id );
 			} else {
-				Smooch?.stopTyping( conversation?.id );
+				Smooch?.stopTyping( conversation.id );
 			}
 		},
 		onSubmit: onSubmitWithAttachments,

@@ -3,7 +3,6 @@ import {
 	loadAllMessagesFromServer,
 	loadChatFromServer,
 	type Message,
-	type PendingClientTools,
 	type ServerLoadResult,
 	type ToolResultInput,
 	type TurnToolCall,
@@ -35,23 +34,24 @@ export const RESUME_AFTER_MS = 10_000;
 
 type ReplyWait = 'idle' | 'waiting' | 'resuming' | 'timed-out';
 
+// At most this many history pages are loaded per conversation.
+const MAX_PAGES = 10;
+
 interface Config {
-	maxPages?: number;
-	enabled?: boolean;
 	/** Whether an unanswered question may be waited on; false while a turn runs. */
 	waitForReply?: boolean;
+	/** Called with the unanswered question when the user picks Retry. */
 	onRetry?: ( question: string ) => void;
 	/** Answers a paused turn's browser tool calls; resolves to whether a reply arrived. */
-	onResume?: ( results: ToolResultInput[], turnToolCalls: TurnToolCall[] ) => Promise< boolean >;
+	onResume?: (
+		toolResults: ToolResultInput[],
+		turnToolCalls: TurnToolCall[]
+	) => Promise< boolean >;
 	onSuccess?: ( messages: Message[], sessionId: string ) => void;
 }
 
 interface Result {
-	data:
-		| { messages: Message[]; sessionId?: string; pendingClientTools?: PendingClientTools }
-		| undefined;
 	isLoading: boolean;
-	isError: boolean;
 	notice: NoticeConfig | undefined;
 	/** A resume failed, usually as another page answered first; the chat hides its send error until the next turn. */
 	hasFailedResume: boolean;
@@ -69,8 +69,6 @@ interface Result {
  * a resume that loses to another page just keeps waiting.
  */
 export default function useConversation( {
-	maxPages = 10,
-	enabled = true,
 	waitForReply = false,
 	onRetry,
 	onResume,
@@ -102,7 +100,7 @@ export default function useConversation( {
 	const queryKey = [ 'agents-manager-conversation', sessionId ];
 
 	// eslint-disable-next-line @tanstack/query/exhaustive-deps -- we only want to refetch when sessionId changes
-	const { data, isLoading, isError, error } = useQuery( {
+	const { data, isLoading, error } = useQuery( {
 		queryKey,
 		queryFn: async () => {
 			const urlSearchParams = new URLSearchParams( window.location.search );
@@ -120,12 +118,12 @@ export default function useConversation( {
 				};
 			}
 
-			return await loadAllMessagesFromServer( sessionId, config, maxPages, true );
+			return await loadAllMessagesFromServer( sessionId, config, MAX_PAGES, true );
 		},
 		// Public Reader Chat does not expose conversation history, and the
 		// server-side history endpoint requires permissions public readers
 		// usually do not have.
-		enabled: enabled && !! sessionId && ! isUnsent && ! isReaderChatAgent( agentId ),
+		enabled: !! sessionId && ! isUnsent && ! isReaderChatAgent( agentId ),
 		refetchOnWindowFocus: false,
 		refetchInterval: replyWait === 'waiting' ? REPLY_POLL_INTERVAL_MS : false,
 		// The wait's cap keeps running in a background tab, so polling has to as well.
@@ -258,22 +256,25 @@ export default function useConversation( {
 				resumedCallsRef.current = pendingCalls;
 				skippedDataRef.current = false;
 				setReplyWait( 'resuming' );
-				const { results, turnToolCalls } = buildToolCallResume( pending );
+				const { toolResults, turnToolCalls } = buildToolCallResume( pending );
+
 				let replied = false;
 				try {
-					replied = ( await onResume?.( results, turnToolCalls ) ) ?? false;
+					replied = ( await onResume?.( toolResults, turnToolCalls ) ) ?? false;
 				} catch ( resumeError ) {
 					// Another page answered first, or the send failed: keep waiting for a reply.
 					// eslint-disable-next-line no-console
-					console.error( '[useConversation] Error resuming the paused turn:', resumeError );
+					console.error( '[AgentsManager] Error resuming the paused turn:', resumeError );
 					setHasFailedResume( true );
 				}
+
 				setReplyWait( ( current ) => {
 					if ( current !== 'resuming' ) {
 						return current;
 					}
 					return replied ? 'idle' : 'waiting';
 				} );
+
 				if ( ! replied && skippedDataRef.current ) {
 					setDataCheck( ( check ) => check + 1 );
 				}
@@ -320,5 +321,5 @@ export default function useConversation( {
 		};
 	}
 
-	return { data, isLoading, isError, notice, hasFailedResume };
+	return { isLoading, notice, hasFailedResume };
 }

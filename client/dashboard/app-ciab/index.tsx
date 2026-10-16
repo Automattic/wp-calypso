@@ -46,10 +46,6 @@ boot( {
 		plugins: false,
 		commandPalette: false,
 		domainOnlySites: false,
-		startStoreRoute: true,
-		siteOverview: {
-			preview: true,
-		},
 		colorScheme: false,
 		darkMode: false,
 	},

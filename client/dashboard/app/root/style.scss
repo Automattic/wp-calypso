@@ -8,7 +8,7 @@
 // A route with `isFullscreen` static data takes the whole screen: no sidebar
 // (the root skips it) and no omnibar, which lives outside the React root.
 .dashboard-root__layout.is-fullscreen {
-	// stylelint-disable-next-line length-zero-no-unit -- the value feeds calc(), which needs a unit.
+	// The value feeds calc(), which needs a unit.
 	--masterbar-height: 0px;
 }
 

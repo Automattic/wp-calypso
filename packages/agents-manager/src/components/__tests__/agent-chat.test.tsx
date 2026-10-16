@@ -29,6 +29,7 @@ jest.mock(
 			suggestions = [],
 			onSuggestionClick,
 			onSuggestionsRendered,
+			onTypingStatusChange,
 		}: {
 			children: ReactNode;
 			emptyView: ReactNode;
@@ -40,9 +41,10 @@ jest.mock(
 				availableSuggestions: Suggestion[]
 			) => void;
 			onSuggestionsRendered?: ( shown: Suggestion[] ) => void;
+			onTypingStatusChange?: ( isTyping: boolean ) => void;
 		} ) {
 			mockContainerProps( { floatingChatState, triggerTitle } );
-			mockContainerCallbacks( { onSuggestionsRendered } );
+			mockContainerCallbacks( { onSuggestionsRendered, onTypingStatusChange } );
 			return (
 				<div>
 					{ emptyView }
@@ -663,6 +665,14 @@ describe( 'AgentChat', () => {
 		renderAgentChat( { onSuggestionsRendered } );
 
 		expect( mockContainerCallbacks ).toHaveBeenLastCalledWith( { onSuggestionsRendered } );
+	} );
+
+	it( 'forwards the typing status callback to the Agenttic container', () => {
+		const onTypingStatusChange = jest.fn();
+
+		renderAgentChat( { onTypingStatusChange } );
+
+		expect( mockContainerCallbacks ).toHaveBeenLastCalledWith( { onTypingStatusChange } );
 	} );
 
 	it( 'keeps collapsed writing suggestions out of what Agenttic renders', async () => {

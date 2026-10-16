@@ -34,12 +34,16 @@ jest.mock( 'react-router-dom', () => ( {
 	useNavigate: () => jest.fn(),
 } ) );
 
+// Arguments: whether Zendesk chats can be loaded, and whether that is still being checked.
+const mockUseGetCombinedChat = jest.fn< object, [ boolean, boolean ] >( () => ( {
+	mainChatState: { messages: [] },
+	setMainChatState: jest.fn(),
+	isLoadingZendeskHistory: false,
+} ) );
+
 jest.mock( '../../hooks', () => ( {
-	useGetCombinedChat: () => ( {
-		mainChatState: { messages: [] },
-		setMainChatState: jest.fn(),
-		isLoadingZendeskHistory: false,
-	} ),
+	useGetCombinedChat: ( canConnectToZendesk: boolean, isLoadingCanConnectToZendesk: boolean ) =>
+		mockUseGetCombinedChat( canConnectToZendesk, isLoadingCanConnectToZendesk ),
 } ) );
 
 const VariationReader = () => {
@@ -75,5 +79,57 @@ describe( 'OdieAssistantProvider – checkout support variation', () => {
 		renderProvider();
 
 		expect( screen.getByTestId( 'variation' ).textContent ).toBe( 'none' );
+	} );
+} );
+
+describe( 'OdieAssistantProvider – loading human chats from Zendesk', () => {
+	const renderWith = ( props: {
+		isUserEligibleForPaidSupport: boolean;
+		hasOpenZendeskChat: boolean;
+		canConnectToZendesk: boolean;
+	} ) =>
+		render(
+			<OdieAssistantProvider
+				newInteractionsBotSlug="wpcom-workflow-support_chat"
+				newLoggedOutInteractionsBotSlug="wpcom-workflow-chat_loggedout"
+				currentUser={ { display_name: 'Me' } }
+				{ ...props }
+			/>
+		);
+
+	const canLoadZendeskChats = () => mockUseGetCombinedChat.mock.calls.at( -1 )?.[ 0 ];
+
+	beforeEach( () => {
+		mockUseGetCombinedChat.mockClear();
+	} );
+
+	it( 'loads them for a user without paid support who has an open human chat', () => {
+		renderWith( {
+			isUserEligibleForPaidSupport: false,
+			hasOpenZendeskChat: true,
+			canConnectToZendesk: true,
+		} );
+
+		expect( canLoadZendeskChats() ).toBe( true );
+	} );
+
+	it( 'does not load them for a user without paid support or an open human chat', () => {
+		renderWith( {
+			isUserEligibleForPaidSupport: false,
+			hasOpenZendeskChat: false,
+			canConnectToZendesk: true,
+		} );
+
+		expect( canLoadZendeskChats() ).toBe( false );
+	} );
+
+	it( 'does not load them when Zendesk cannot be reached', () => {
+		renderWith( {
+			isUserEligibleForPaidSupport: false,
+			hasOpenZendeskChat: true,
+			canConnectToZendesk: false,
+		} );
+
+		expect( canLoadZendeskChats() ).toBe( false );
 	} );
 } );

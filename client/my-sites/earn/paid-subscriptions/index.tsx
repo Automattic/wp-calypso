@@ -1,4 +1,4 @@
-import { Card, Button, Gridicon } from '@automattic/components';
+import { Card, Button, Gridicon, ScreenReaderText } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { orderBy } from '@automattic/js-utils';
 import { formatCurrency } from '@automattic/number-formatters';
@@ -9,6 +9,7 @@ import { shallowEqual } from 'react-redux';
 import QueryMembershipsEarnings from 'calypso/components/data/query-memberships-earnings';
 import QueryMembershipsSettings from 'calypso/components/data/query-memberships-settings';
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
+import EmptyContent from 'calypso/components/empty-content';
 import Gravatar from 'calypso/components/gravatar';
 import InfiniteScroll from 'calypso/components/infinite-scroll';
 import InlineSupportLink from 'calypso/components/inline-support-link';
@@ -24,7 +25,9 @@ import { requestSubscribers } from 'calypso/state/memberships/subscribers/action
 import {
 	getTotalSubscribersForSiteId,
 	getOwnershipsForSiteId,
+	hasLoadedSubscribersForSiteId,
 } from 'calypso/state/memberships/subscribers/selectors';
+import getRequest from 'calypso/state/selectors/get-request';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import {
 	PLAN_YEARLY_FREQUENCY,
@@ -54,6 +57,12 @@ const PaidSubscriptionsSection = ( { query }: PaidSubscriptionsSectionProps ) =>
 	const totalSubscribers = useSelector( ( state ) =>
 		getTotalSubscribersForSiteId( state, site?.ID )
 	);
+	const hasLoadedSubscribers = useSelector( ( state ) =>
+		hasLoadedSubscribersForSiteId( state, site?.ID )
+	);
+	const subscribersRequestStatus = useSelector(
+		( state ) => getRequest( state, requestSubscribers( site?.ID, 0 ) ).status
+	);
 
 	const fetchNextSubscriberPage = useCallback(
 		( force: boolean ) => {
@@ -76,6 +85,28 @@ const PaidSubscriptionsSection = ( { query }: PaidSubscriptionsSectionProps ) =>
 	);
 
 	function renderSubscriberList() {
+		if ( subscribersRequestStatus === 'failure' && ! hasLoadedSubscribers ) {
+			return (
+				<div role="alert">
+					<EmptyContent
+						title={ translate( 'Sorry, something went wrong.' ) }
+						line={ translate( 'We couldn’t load your paid subscribers. Please try again.' ) }
+						action={ translate( 'Try again' ) }
+						actionCallback={ () => fetchNextSubscriberPage( true ) }
+					/>
+				</div>
+			);
+		}
+
+		if ( ! hasLoadedSubscribers ) {
+			return (
+				<div className="paid-subscriptions__loading" role="status">
+					<ScreenReaderText>{ translate( 'Loading paid subscribers' ) }</ScreenReaderText>
+					<LoadingEllipsis />
+				</div>
+			);
+		}
+
 		return (
 			<div>
 				{ Object.values( paid_subscriptions ).length === 0 && (

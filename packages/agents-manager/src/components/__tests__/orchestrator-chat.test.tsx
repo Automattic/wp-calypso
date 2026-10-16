@@ -341,6 +341,9 @@ jest.mock(
 	} ),
 	{ virtual: true }
 );
+jest.mock( '@wordpress/components', () => ( {
+	Button: 'button',
+} ) );
 jest.mock( '@wordpress/data', () => {
 	const { useEffect, useReducer, useRef } =
 		jest.requireActual< typeof import( 'react' ) >( 'react' );

@@ -433,6 +433,7 @@ describe( 'useConversation', () => {
 				[ 'brings no reply', jest.fn().mockResolvedValue( false ) ],
 				[ 'loses the race', jest.fn().mockRejectedValue( new Error( 'already received' ) ) ],
 			] )( 'goes back to waiting, once, when the resume %s', async ( _case, onResume ) => {
+				const consoleError = jest.spyOn( console, 'error' ).mockImplementation( () => {} );
 				const { result, rerender } = renderPaused( onResume, 'unanswered' );
 
 				await act( async () => jest.advanceTimersByTime( RESUME_AFTER_MS ) );
@@ -445,6 +446,7 @@ describe( 'useConversation', () => {
 				await act( async () => jest.advanceTimersByTime( RESUME_AFTER_MS ) );
 
 				expect( onResume ).toHaveBeenCalledTimes( 1 );
+				consoleError.mockRestore();
 			} );
 
 			it( 'logs a failed resume', async () => {
@@ -454,7 +456,7 @@ describe( 'useConversation', () => {
 				await act( async () => jest.advanceTimersByTime( RESUME_AFTER_MS ) );
 
 				expect( consoleError ).toHaveBeenCalledWith(
-					'[useConversation] Error resuming the paused turn:',
+					'[AgentsManager] Error resuming the paused turn:',
 					expect.any( Error )
 				);
 				consoleError.mockRestore();
