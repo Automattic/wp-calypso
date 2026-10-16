@@ -445,7 +445,9 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 						<VStack spacing={ 4 }>
 							<SectionHeader
 								title={ __( 'WordPress Agent' ) }
-								description={ __( 'Helps with site setup, content, design, and more.' ) }
+								description={ __(
+									'Built into your WordPress dashboard to help with site setup, content, and design. No need to connect ChatGPT, Claude, or other AI models.'
+								) }
 								actions={ ! isAvailable ? <UpgradeRequiredBadge /> : undefined }
 								level={ 3 }
 							/>
