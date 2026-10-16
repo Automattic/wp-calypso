@@ -259,7 +259,9 @@ export interface UndoLevel {
 	/** Wraps a write so that it lands in this level. */
 	write: < Args extends unknown[] >(
 		write: ( ...args: Args ) => void,
-		writtenList: WrittenList< Args >
+		writtenList: WrittenList< Args >,
+		/** The block the write recreates under new clientIds, children and all. */
+		recreated?: ( ...args: Args ) => string
 	) => ( ...args: Args ) => void;
 	/** Folds the writes into one undo record; nothing to fold is a no-op. */
 	close: () => void;
@@ -299,17 +301,36 @@ const isSamePost = ( a?: CurrentPost, b?: CurrentPost ): boolean =>
  * (a selection, a write to another record) leaves the writes as transient
  * edits that are neither saved nor undoable (WPAGENT-201). `close()` instead
  * rewrites each record's blocks as they are, a real persistent change.
+ *
+ * A write that recreates a block takes the records inside it to new
+ * clientIds, which `close()` cannot find: those are committed before it.
  */
 export function openUndoLevel(): UndoLevel {
 	const post = getCurrentPost();
 	const stagedRoots = new Set< string >();
 	let hasWritten = false;
 
+	// `replaceInnerBlocks` on `''` keeps the records nested in the document,
+	// where `resetBlocks` would rebuild and dirty them.
+	const commit = ( root: string ) =>
+		requireBlockEditor().replaceInnerBlocks( root, getBlocks( root ), false );
+
 	return {
 		write:
-			( write, writtenList ) =>
+			( write, writtenList, recreated ) =>
 			( ...args ) => {
 				if ( hasWritten ) {
+					const recreatedId = recreated?.( ...args );
+
+					if ( recreatedId ) {
+						stagedRoots.forEach( ( root ) => {
+							if ( root === recreatedId || getBlockParents( root ).includes( recreatedId ) ) {
+								commit( root );
+								stagedRoots.delete( root );
+							}
+						} );
+					}
+
 					stagedRoots.add( getSyncedRoot( writtenList( ...args ) ) );
 					requireBlockEditor().__unstableMarkNextChangeAsNotPersistent();
 				} else {
@@ -324,20 +345,16 @@ export function openUndoLevel(): UndoLevel {
 				return;
 			}
 
-			const blockEditor = requireBlockEditor();
-
 			// After a move the editor holds another page, which nothing here wrote.
 			if ( isSamePost( post, getCurrentPost() ) ) {
 				stagedRoots.forEach( ( root ) => {
 					if ( ! root || getBlock( root ) ) {
-						// `replaceInnerBlocks` on `''` keeps the records nested in the
-						// document, where `resetBlocks` would rebuild and dirty them.
-						blockEditor.replaceInnerBlocks( root, getBlocks( root ), false );
+						commit( root );
 					}
 				} );
 			}
 
-			blockEditor.__unstableMarkLastChangeAsPersistent();
+			requireBlockEditor().__unstableMarkLastChangeAsPersistent();
 		},
 		hasWritten: () => hasWritten,
 	};

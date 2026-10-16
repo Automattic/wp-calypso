@@ -242,6 +242,45 @@ describe( 'writes', () => {
 		expect( replaceInnerBlocks ).toHaveBeenCalledWith( 'nav', [], false );
 	} );
 
+	// Recreating the group takes the menu to a new clientId, which the close
+	// cannot find, while the menu record still holds the staged edit.
+	it( 'commits a staged record before a write recreates a block around it', () => {
+		withEditor( {
+			postId: 1,
+			parents: { heading: '', group: '', nav: 'group', item: 'nav' },
+			controlled: [ 'nav' ],
+		} );
+		const level = openUndoLevel();
+		const replace = jest.fn();
+		const recreate = level.write< [ string ] >(
+			replace,
+			() => undefined,
+			( clientId ) => clientId
+		);
+
+		writeChildren( level )( 'heading', blocks );
+		writeChildren( level )( 'item', blocks );
+		replaceInnerBlocks.mockClear();
+		markNextChangeAsNotPersistent.mockClear();
+		recreate( 'group' );
+
+		expect( replaceInnerBlocks ).toHaveBeenCalledTimes( 1 );
+		expect( replaceInnerBlocks ).toHaveBeenCalledWith( 'nav', [], false );
+		expect( replaceInnerBlocks.mock.invocationCallOrder[ 0 ] ).toBeLessThan(
+			markNextChangeAsNotPersistent.mock.invocationCallOrder[ 0 ]
+		);
+		expect( markNextChangeAsNotPersistent.mock.invocationCallOrder[ 0 ] ).toBeLessThan(
+			replace.mock.invocationCallOrder[ 0 ]
+		);
+
+		withEditor( { postId: 1, blocks, parents: { heading: '', 'new-group': '' } } );
+		replaceInnerBlocks.mockClear();
+		level.close();
+
+		expect( replaceInnerBlocks ).toHaveBeenCalledTimes( 1 );
+		expect( replaceInnerBlocks ).toHaveBeenCalledWith( '', blocks, false );
+	} );
+
 	it( 'rewrites the document root for a write outside every record', () => {
 		withEditor( { postId: 1, blocks, parents: { group: '' } } );
 		const level = openUndoLevel();

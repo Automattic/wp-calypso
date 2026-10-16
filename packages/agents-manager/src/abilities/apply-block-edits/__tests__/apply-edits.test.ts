@@ -83,12 +83,15 @@ const beforeWrite = jest.fn( async () => {} );
 const writes: unknown[] = [];
 // The block list each write names as the one it changes.
 const writtenLists: ( string | undefined )[] = [];
+// The block each write recreates, if any.
+const recreatedBlocks: ( string | undefined )[] = [];
 const level: UndoLevel = {
 	write:
-		( write, writtenList ) =>
+		( write, writtenList, recreated ) =>
 		( ...args ) => {
 			writes.push( write );
 			writtenLists.push( writtenList( ...args ) );
+			recreatedBlocks.push( recreated?.( ...args ) );
 			write( ...args );
 		},
 	close: jest.fn(),
@@ -115,6 +118,7 @@ beforeEach( () => {
 	controlled = {};
 	writes.length = 0;
 	writtenLists.length = 0;
+	recreatedBlocks.length = 0;
 
 	jest.mocked( createBlock ).mockImplementation( ( name, attributes = {}, innerBlocks = [] ) => ( {
 		clientId: `new-${ name }`,
@@ -786,4 +790,19 @@ it( 'names the block list each write changes', async () => {
 	} );
 
 	expect( writtenLists ).toEqual( [ 'tp', 'g', 'tp' ] );
+} );
+
+it( 'names the block a type change recreates', async () => {
+	useTree( [
+		block( 'g', 'core/group', {}, [ block( 'h', 'core/heading', { content: 'Hi' } ) ] ),
+	] );
+
+	await run( {
+		updates: [
+			{ clientId: 'ref-h', name: 'core/heading', attributes: { content: 'Hey' } },
+			{ clientId: 'ref-g', name: 'core/columns' },
+		],
+	} );
+
+	expect( recreatedBlocks ).toEqual( [ undefined, 'g' ] );
 } );
