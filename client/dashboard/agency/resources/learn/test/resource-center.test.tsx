@@ -98,14 +98,32 @@ describe( '<ResourceCenter>', () => {
 		expect( getCardTitles() ).toEqual( [ 'Jetpack battle card' ] );
 	} );
 
-	test( 'narrows the results by stage', async () => {
-		renderLibrary();
+	test( 'narrows the results by stage, and records the change', async () => {
+		const { recordTracksEvent } = renderLibrary();
 
 		await userEvent.click(
 			await screen.findByRole( 'radio', { name: 'Sell: Prepare for client conversations.' } )
 		);
 
 		expect( getCardTitles() ).toEqual( [ 'Jetpack battle card' ] );
+		expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_a4a_resource_center_view_change', {
+			layout: 'grid',
+			filters: 'stage:sell',
+		} );
+	} );
+
+	test( "doesn't record searches", async () => {
+		const { recordTracksEvent } = renderLibrary();
+
+		await userEvent.type(
+			await screen.findByRole( 'searchbox', { name: 'Search resources' } ),
+			'compares'
+		);
+
+		expect( recordTracksEvent ).not.toHaveBeenCalledWith(
+			'calypso_a4a_resource_center_view_change',
+			expect.anything()
+		);
 	} );
 
 	test( "narrows the results by a card's badge", async () => {
@@ -164,7 +182,7 @@ describe( '<ResourceCenter>', () => {
 	} );
 
 	test( 'reveals more results on request', async () => {
-		renderLibrary( {
+		const { recordTracksEvent } = renderLibrary( {
 			resources: Array.from( { length: 30 }, ( _, index ) =>
 				resource( { id: index + 1, name: `Resource ${ index + 1 }` } )
 			),
@@ -177,5 +195,6 @@ describe( '<ResourceCenter>', () => {
 		expect( screen.getByText( 'Showing 30 of 30 resources' ) ).toBeVisible();
 		expect( screen.getByRole( 'link', { name: 'Resource 25' } ) ).toHaveFocus();
 		expect( screen.queryByRole( 'button', { name: 'Load more' } ) ).not.toBeInTheDocument();
+		expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_a4a_resource_center_load_more' );
 	} );
 } );

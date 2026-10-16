@@ -33,6 +33,7 @@ interface ResourceLibraryProps {
 	view: View;
 	onChangeView: ( view: View ) => void;
 	onOpenResource: ( resource: AgencyEnablementResource ) => void;
+	onLoadMore: () => void;
 }
 
 export default function ResourceLibrary( {
@@ -40,6 +41,7 @@ export default function ResourceLibrary( {
 	view,
 	onChangeView,
 	onOpenResource,
+	onLoadMore,
 }: ResourceLibraryProps ) {
 	// Stable across renders, so memoized cards don't re-render while searching.
 	const filterResources: FilterResources = useEvent( ( field, value ) =>
@@ -150,7 +152,14 @@ export default function ResourceLibrary( {
 							) }
 						</Text>
 						{ hasMore && (
-							<Button variant="secondary" __next40pxDefaultSize onClick={ revealMore }>
+							<Button
+								variant="secondary"
+								__next40pxDefaultSize
+								onClick={ () => {
+									revealMore();
+									onLoadMore();
+								} }
+							>
 								{ __( 'Load more' ) }
 							</Button>
 						) }
