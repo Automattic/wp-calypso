@@ -18,7 +18,6 @@ const getUserSocialStepOrFallback = () =>
 export function generateFlows( {
 	getRedirectDestination = noop,
 	getSignupDestination = noop,
-	getLaunchDestination = noop,
 	getDomainSignupFlowDestination = noop,
 	getEmailSignupFlowDestination = noop,
 	getWithThemeDestination = noop,
@@ -271,20 +270,6 @@ export function generateFlows( {
 			providesDependenciesInQuery: [ 'siteSlug', 'siteId' ],
 			description: 'A flow to test updating an existing site with `Signup`',
 			lastModified: '2017-01-19',
-		},
-		{
-			name: 'launch-site',
-			steps: [ 'domains-launch', 'plans-launch', 'launch' ],
-			destination: getLaunchDestination,
-			description: 'A flow to launch a private site.',
-			providesDependenciesInQuery: [ 'siteSlug', 'back_to', 'redirect_to' ],
-			optionalDependenciesInQuery: [ 'back_to', 'redirect_to' ],
-			hideProgressIndicator: true,
-			lastModified: '2019-11-22',
-			excludeFromManageSiteFlows: true,
-			get pageTitle() {
-				return translate( 'Launch your site' );
-			},
 		},
 		{
 			name: 'reader',

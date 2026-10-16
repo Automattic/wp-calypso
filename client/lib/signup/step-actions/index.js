@@ -762,15 +762,6 @@ function addPrivacyProtectionIfSupported( item, state ) {
 	return item;
 }
 
-export function launchSiteApi( callback, dependencies ) {
-	const { siteSlug } = dependencies;
-
-	wpcom.req
-		.post( `/sites/${ siteSlug }/launch` )
-		.then( () => callback( null ) )
-		.catch( ( error ) => callback( error ) );
-}
-
 export function createAccount(
 	callback,
 	dependencies,
@@ -967,41 +958,6 @@ function shouldExcludeStep( stepName, fulfilledDependencies ) {
 	);
 
 	return isEmpty( dependenciesNotProvided );
-}
-
-function excludeDomainStep( stepName, tracksEventValue, submitSignupStep ) {
-	let fulfilledDependencies = [];
-	const domainItem = undefined;
-	const domainCart = undefined;
-
-	submitSignupStep( { stepName, domainItem, wasSkipped: true }, { domainItem, domainCart } );
-	recordExcludeStepEvent( stepName, tracksEventValue );
-
-	fulfilledDependencies = [ 'domainItem', 'domainCart', 'siteId', 'siteSlug', 'themeItem' ];
-
-	if ( shouldExcludeStep( stepName, fulfilledDependencies ) ) {
-		flows.excludeStep( stepName );
-	}
-}
-
-export function isDomainFulfilled( stepName, defaultDependencies, nextProps ) {
-	const { siteDomains, submitSignupStep, flowName } = nextProps;
-
-	// Prevent duplicate processing for launch-site flow's domains-launch step
-	if (
-		flowName === 'launch-site' &&
-		stepName === 'domains-launch' &&
-		flows.excludedSteps.includes( stepName )
-	) {
-		return;
-	}
-
-	const customDomains = siteDomains?.filter( ( siteDomain ) => ! siteDomain.isWPCOMDomain ) ?? [];
-
-	if ( customDomains.length > 0 ) {
-		const tracksEventValue = customDomains.map( ( siteDomain ) => siteDomain.domain ).join( ', ' );
-		excludeDomainStep( stepName, tracksEventValue, submitSignupStep );
-	}
 }
 
 export function maybeRemoveStepForUserlessCheckout( stepName, defaultDependencies, nextProps ) {
