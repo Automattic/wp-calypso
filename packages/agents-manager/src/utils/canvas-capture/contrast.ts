@@ -201,7 +201,9 @@ const isDisplayed = ( element: Element, view: Window ): boolean =>
 /**
  * The elements directly holding the block's visible text, each once, in
  * document order: the block's own element, its links, spans and highlights,
- * a button's link. `truncated` when the block held more than are read.
+ * a button's link. Text inside a nested block is that block's, so it is left
+ * for that block to be measured by, and counted once. `truncated` when the
+ * block held more than are read.
  */
 function findTextElements(
 	blockElement: Element,
@@ -215,7 +217,21 @@ function findTextElements(
 		}
 	}
 
-	const walker = blockElement.ownerDocument.createTreeWalker( blockElement, NodeFilter.SHOW_TEXT );
+	const walker = blockElement.ownerDocument.createTreeWalker(
+		blockElement,
+		NodeFilter.SHOW_ELEMENT | NodeFilter.SHOW_TEXT,
+		{
+			acceptNode: ( node ) => {
+				if ( node.nodeType === Node.TEXT_NODE ) {
+					return NodeFilter.FILTER_ACCEPT;
+				}
+
+				return ( node as Element ).hasAttribute( 'data-block' )
+					? NodeFilter.FILTER_REJECT
+					: NodeFilter.FILTER_SKIP;
+			},
+		}
+	);
 
 	for ( let node = walker.nextNode(); node; node = walker.nextNode() ) {
 		const parent = node.parentElement;
@@ -414,11 +430,11 @@ function setsOwnBackground( clientId: string ): boolean {
 }
 
 /**
- * The edited blocks and their descendants that hold no blocks of their own,
- * and whether the walk stopped short of them all.
+ * The edited blocks and their descendants, each parent before its children,
+ * and whether the walk stopped short of them all. Parents count too: a
+ * details block's summary and a list item's text are their own, not a child's.
  */
-function collectLeaves( clientIds: string[] ): { leaves: string[]; truncated: boolean } {
-	const leaves: string[] = [];
+function collectBlocks( clientIds: string[] ): { blocks: string[]; truncated: boolean } {
 	const visited = new Set< string >();
 	let truncated = false;
 
@@ -434,21 +450,12 @@ function collectLeaves( clientIds: string[] ): { leaves: string[]; truncated: bo
 		}
 
 		visited.add( clientId );
-
-		const children = getBlocks( clientId );
-
-		if ( ! children.length ) {
-			leaves.push( clientId );
-
-			return;
-		}
-
-		children.forEach( ( child ) => walk( child.clientId ) );
+		getBlocks( clientId ).forEach( ( child ) => walk( child.clientId ) );
 	};
 
 	clientIds.forEach( walk );
 
-	return { leaves, truncated };
+	return { blocks: [ ...visited ], truncated };
 }
 
 function listLabels( labels: string[] ): string {
@@ -505,10 +512,10 @@ function measureTextContrast( clientIds: string[] ): TextContrast | null {
 	const measured: Measured[] = [];
 	let unmeasured = 0;
 	let textBlocks = 0;
-	const { leaves, truncated } = collectLeaves( clientIds );
+	const { blocks, truncated } = collectBlocks( clientIds );
 	let capped = truncated;
 
-	for ( const clientId of leaves ) {
+	for ( const clientId of blocks ) {
 		const blockElement = canvasDocument.querySelector( `[data-block="${ clientId }"]` );
 		const { elements, truncated: tooManyRuns } = blockElement
 			? findTextElements( blockElement, view )
