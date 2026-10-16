@@ -1,0 +1,5 @@
+// DataViews top-aligns body cells, so the checkbox lines up with the site name
+// rather than the 48px site icon that sets the row height.
+.a4a-import-from-wpcom-modal .dataviews-view-table__checkbox-column {
+	vertical-align: middle;
+}

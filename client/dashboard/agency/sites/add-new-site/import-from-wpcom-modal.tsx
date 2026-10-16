@@ -31,6 +31,8 @@ import { getImportableSites } from './lib';
 import type { Site } from '@automattic/api-core';
 import type { Field, View } from '@wordpress/dataviews';
 
+import './style.scss';
+
 // How long the backend takes to make a freshly imported site queryable.
 const SITE_INDEXING_DELAY_MS = 1000;
 
@@ -229,6 +231,7 @@ export default function ImportFromWPCOMModal( { onClose }: ImportFromWPCOMModalP
 
 	return (
 		<Modal
+			className="a4a-import-from-wpcom-modal"
 			title={ __( 'Add sites via WordPress.com connection' ) }
 			onRequestClose={ onClose }
 			size="large"
