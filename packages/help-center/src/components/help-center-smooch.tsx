@@ -292,7 +292,9 @@ const HelpCenterSmooch: React.FC< { enableAuth: boolean; hasOpenZendeskChat?: bo
 		if ( isChatLoaded && getZendeskConversations ) {
 			const allConversations = getZendeskConversations();
 			getUnreadNotifications( allConversations );
-			setZendeskClientId( getClientId( allConversations ) );
+			setZendeskClientId(
+				getClientId( allConversations, getSmoochIntegrationId( zendeskIntegrationKey ) )
+			);
 			Smooch.on( 'message:received', getUnreadListener );
 			Smooch.on( 'message:sent', clientIdListener );
 			Smooch.on( 'disconnected', disconnectedListener );
@@ -323,6 +325,7 @@ const HelpCenterSmooch: React.FC< { enableAuth: boolean; hasOpenZendeskChat?: bo
 		disconnectedListener,
 		reconnectingListener,
 		connectedListener,
+		zendeskIntegrationKey,
 	] );
 
 	return <div ref={ smoochRef } style={ { display: 'none' } }></div>;
