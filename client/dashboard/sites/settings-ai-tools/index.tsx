@@ -42,6 +42,7 @@ import { useState } from 'react';
 import { useMcpTracksAudienceProps } from '../../../me/mcp/tracks';
 import {
 	getAccountMcpAbilities,
+	getRemoteAbilityGroupKey,
 	getSiteContextToolIds,
 	getSiteLevelEnabled,
 	getSiteMcpAbilities,
@@ -85,22 +86,13 @@ interface McpAbility {
 }
 
 /**
- * Badge for one access level, spanning wpcom tools and the site-published
- * remote groups on the same page. `toolsEnabled` counts the wpcom tools in
- * `tools` that are effectively on; each enabled remote group key adds one more.
+ * Badge for one access level, spanning wpcom tools and the site's published
+ * abilities on the same page.
  */
-function getAccessBadge(
-	tools: Array< [ string, McpAbility ] >,
-	toolsEnabled: number,
-	remoteKeys: string[],
-	savedRemoteGroups: Record< string, boolean >
-) {
-	const total = tools.length + remoteKeys.length;
+function getAccessBadge( total: number, enabledCount: number ) {
 	if ( total === 0 ) {
 		return { text: __( 'All enabled' ), intent: 'stable' as const };
 	}
-	const enabledCount =
-		toolsEnabled + remoteKeys.filter( ( key ) => savedRemoteGroups[ key ] === true ).length;
 	if ( enabledCount === total ) {
 		return { text: __( 'All enabled' ), intent: 'stable' as const };
 	}
@@ -316,21 +308,37 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 		...siteAbilitiesQuery( site.ID, wpLocale || undefined ),
 		enabled: config.isEnabled( 'mcp-settings' ) && isAvailable && isMcpEnabled && !! site.jetpack,
 	} );
-	const remoteKeys = ( category: 'read' | 'write' ) =>
-		[ ...collectNamespaces( remoteAbilities, savedRemoteGroups, category ).values() ].flatMap(
-			( group ) => group.keys
-		);
+	// Count published abilities individually; an ability counts as enabled when
+	// its group key is allowed. Saved-only groups (catalog unreachable) fall
+	// back to counting their keys.
+	const remoteCounts = ( category: 'read' | 'write' ) => {
+		let total = 0;
+		let enabled = 0;
+		collectNamespaces( remoteAbilities, savedRemoteGroups, category ).forEach( ( group ) => {
+			if ( group.abilities.length > 0 ) {
+				total += group.abilities.length;
+				enabled += group.abilities.filter(
+					( ability ) =>
+						savedRemoteGroups[
+							getRemoteAbilityGroupKey( ability.name, ability.meta?.annotations )
+						] === true
+				).length;
+				return;
+			}
+			total += group.keys.length;
+			enabled += group.keys.filter( ( key ) => savedRemoteGroups[ key ] === true ).length;
+		} );
+		return { total, enabled };
+	};
+	const readRemote = remoteCounts( 'read' );
+	const writeRemote = remoteCounts( 'write' );
 	const readBadge = getAccessBadge(
-		readTools,
-		enabledToolCount( readTools ),
-		remoteKeys( 'read' ),
-		savedRemoteGroups
+		readTools.length + readRemote.total,
+		enabledToolCount( readTools ) + readRemote.enabled
 	);
 	const writeBadge = getAccessBadge(
-		writeTools,
-		enabledToolCount( writeTools ),
-		remoteKeys( 'write' ),
-		savedRemoteGroups
+		writeTools.length + writeRemote.total,
+		enabledToolCount( writeTools ) + writeRemote.enabled
 	);
 	const mcpMutation = useMutation(
 		withSnackbar( userSettingsMutation(), {
